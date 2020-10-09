@@ -88,5 +88,8 @@
     <ClInclude Include="..\..\libs\scene\Group.h">
       <Filter>scene</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\scene\EntitySelector.h">
+      <Filter>scene</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

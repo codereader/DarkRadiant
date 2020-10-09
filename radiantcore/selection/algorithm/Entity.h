@@ -37,5 +37,16 @@ void bindEntities(const cmd::ArgumentList& args);
  */
 void connectSelectedEntities(const cmd::ArgumentList& args);
 
+/**
+ * greebo: (De-)selects all entities that reference the given model path
+ * in their "model" spawnarg.
+ */
+void selectItemsByModel(const std::string& model);
+void deselectItemsByModel(const std::string& model);
+
+// Command target to (de-)select items by model
+void selectItemsByModelCmd(const cmd::ArgumentList& args);
+void deselectItemsByModelCmd(const cmd::ArgumentList& args);
+
 } // namespace algorithm
 } // namespace selection

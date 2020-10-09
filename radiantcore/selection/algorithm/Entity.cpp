@@ -3,6 +3,7 @@
 #include <limits>
 #include "i18n.h"
 #include "itransformable.h"
+#include "ieclass.h"
 #include "selectionlib.h"
 #include "imainframe.h"
 #include "iregistry.h"
@@ -12,6 +13,7 @@
 #include "gamelib.h"
 #include "command/ExecutionFailure.h"
 #include "command/ExecutionNotPossible.h"
+#include "scene/EntitySelector.h"
 
 #include "selection/algorithm/General.h"
 #include "selection/algorithm/Shader.h"
@@ -241,6 +243,68 @@ void connectSelectedEntities(const cmd::ArgumentList& args)
 		throw cmd::ExecutionNotPossible(
 			_("Exactly two entities must be selected for this operation."));
 	}
+}
+
+bool entityReferencesModel(const Entity& entity, const std::string& searchString)
+{
+    auto model = entity.getKeyValue("model");
+
+    if (searchString == model)
+    {
+        return true;
+    }
+
+    // The entity might still reference the model through a model def
+    auto modelDef = GlobalEntityClassManager().findModel(model);
+
+    return modelDef && modelDef->mesh == searchString;
+}
+
+void selectItemsByModel(const std::string& model)
+{
+    if (!GlobalSceneGraph().root()) return;
+
+    scene::EntitySelector selector([&](const Entity& entity)
+    {
+        return entityReferencesModel(entity, model);
+    }, true);
+
+    GlobalSceneGraph().root()->traverse(selector);
+}
+
+void deselectItemsByModel(const std::string& model)
+{
+    if (!GlobalSceneGraph().root()) return;
+    
+    scene::EntitySelector deselector([&](const Entity& entity)
+    {
+        return entityReferencesModel(entity, model);
+    }, false);
+
+    GlobalSceneGraph().root()->traverse(deselector);
+}
+
+// Command target to (de-)select items by model
+void selectItemsByModelCmd(const cmd::ArgumentList& args)
+{
+    if (args.size() != 1)
+    {
+        rMessage() << "Usage: SelectItemsByModel <modelpath>" << std::endl;
+        return;
+    }
+
+    selectItemsByModel(args[0].getString());
+}
+
+void deselectItemsByModelCmd(const cmd::ArgumentList& args)
+{
+    if (args.size() != 1)
+    {
+        rMessage() << "Usage: DeselectItemsByModel <modelpath>" << std::endl;
+        return;
+    }
+
+    deselectItemsByModel(args[0].getString());
 }
 
 } // namespace algorithm

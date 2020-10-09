@@ -970,6 +970,9 @@ void registerCommands()
 	GlobalCommandSystem().addCommand("SelectItemsByShader", selectItemsByShaderCmd, { cmd::ARGTYPE_STRING });
 	GlobalCommandSystem().addCommand("DeselectItemsByShader", deselectItemsByShaderCmd, { cmd::ARGTYPE_STRING });
 
+    GlobalCommandSystem().addCommand("SelectItemsByModel", selectItemsByModelCmd, { cmd::ARGTYPE_STRING });
+    GlobalCommandSystem().addCommand("DeselectItemsByModel", deselectItemsByModelCmd, { cmd::ARGTYPE_STRING });
+
 	GlobalCommandSystem().addCommand("FlipTextureX", flipTextureS);
 	GlobalCommandSystem().addCommand("FlipTextureY", flipTextureT);
 
