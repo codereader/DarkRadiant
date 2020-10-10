@@ -3,6 +3,7 @@
 #include "itextstream.h"
 #include "imodelsurface.h"
 #include "imap.h"
+#include "ishaders.h"
 
 namespace model
 {

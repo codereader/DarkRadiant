@@ -1,6 +1,7 @@
 #include "ModelInfoTab.h"
 
 #include "i18n.h"
+#include "icommandsystem.h"
 #include "string/convert.h"
 
 #include <wx/sizer.h>

@@ -13,6 +13,7 @@
 
 #include <wx/sizer.h>
 #include <wx/artprov.h>
+#include <wx/button.h>
 #include <sigc++/functors/mem_fun.h>
 
 #include <functional>

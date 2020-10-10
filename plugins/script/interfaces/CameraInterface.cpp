@@ -1,5 +1,6 @@
 #include "CameraInterface.h"
 
+#include "math/Vector3.h"
 #include <pybind11/pybind11.h>
 
 namespace script
