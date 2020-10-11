@@ -3,6 +3,8 @@
 #include "i18n.h"
 #include "itextstream.h"
 #include "icounter.h"
+#include "imodel.h"
+#include "itransformable.h"
 
 #include "EntitySettings.h"
 
