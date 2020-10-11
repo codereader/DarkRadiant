@@ -5,6 +5,7 @@
     <ClCompile Include="..\..\..\test\HeadlessOpenGLContext.cpp" />
     <ClCompile Include="..\..\..\test\Camera.cpp" />
     <ClCompile Include="..\..\..\test\SelectionAlgorithm.cpp" />
+    <ClCompile Include="..\..\..\test\ModelScale.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\HeadlessOpenGLContext.h" />

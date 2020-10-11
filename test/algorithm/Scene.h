@@ -4,6 +4,7 @@
 #include "inode.h"
 #include "ientity.h"
 #include "ibrush.h"
+#include "imodel.h"
 
 namespace test::algorithm
 {
@@ -58,6 +59,55 @@ inline scene::INodePtr findFirstBrushWithMaterial(const scene::INodePtr& parent,
     {
         return brush->getIBrush().hasShader(material);
     });
+}
+
+inline scene::INodePtr findFirstEntity(const scene::INodePtr& parent,
+    const std::function<bool(IEntityNode&)>& predicate)
+{
+    IEntityNodePtr candidate;
+
+    parent->foreachNode([&](const scene::INodePtr& node)
+    {
+        auto entity = std::dynamic_pointer_cast<IEntityNode>(node);
+
+        if (entity && predicate(*entity))
+        {
+            candidate = entity;
+            return false;
+        }
+
+        return true;
+    });
+
+    return candidate;
+}
+
+inline scene::INodePtr getEntityByName(const scene::INodePtr& parent, const std::string& name)
+{
+    return findFirstEntity(parent, [&](IEntityNode& entity)
+    {
+        return entity.getEntity().getKeyValue("name") == name;
+    });
+}
+
+inline model::ModelNodePtr findChildModel(const scene::INodePtr& parent)
+{
+    model::ModelNodePtr candidate;
+
+    parent->foreachNode([&](const scene::INodePtr& node)
+    {
+        auto model = Node_getModel(node);
+
+        if (model)
+        {
+            candidate = model;
+            return false;
+        }
+
+        return true;
+    });
+
+    return candidate;
 }
 
 }
