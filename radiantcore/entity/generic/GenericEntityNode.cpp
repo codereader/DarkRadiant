@@ -53,6 +53,7 @@ scene::INodePtr GenericEntityNode::clone() const
 {
 	GenericEntityNodePtr node(new GenericEntityNode(*this));
 	node->construct();
+    node->constructClone(*this);
 
 	return node;
 }

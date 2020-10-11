@@ -232,6 +232,7 @@ scene::INodePtr SpeakerNode::clone() const
 {
 	SpeakerNodePtr node(new SpeakerNode(*this));
 	node->construct();
+    node->constructClone(*this);
 
 	return node;
 }

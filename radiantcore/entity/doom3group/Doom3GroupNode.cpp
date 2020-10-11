@@ -222,6 +222,7 @@ scene::INodePtr Doom3GroupNode::clone() const
 {
 	Doom3GroupNodePtr clone(new Doom3GroupNode(*this));
 	clone->construct();
+    clone->constructClone(*this);
 
 	return clone;
 }

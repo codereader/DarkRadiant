@@ -135,6 +135,7 @@ public:
 	const ShaderPtr& getColourShader() const;
 
 	ModelKey& getModelKey(); // needed by the Doom3Group class, could be a fixme
+    const ModelKey& getModelKey() const;
 
 	const ShaderPtr& getWireShader() const override;
 	const ShaderPtr& getFillShader() const;
@@ -153,6 +154,9 @@ protected:
 	 * Subclasses must make sure to have this base method called if they override this.
 	 */
 	virtual void construct();
+
+    // Called after cloning and construct to perform additional setup
+    virtual void constructClone(const EntityNode& original);
 
 	// Signal method to be overridden by subclasses.
 	// Don't forget to call the base class implementation as this will

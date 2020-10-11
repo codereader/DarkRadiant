@@ -253,6 +253,7 @@ scene::INodePtr LightNode::clone() const
 {
 	LightNodePtr node(new LightNode(*this));
 	node->construct();
+    node->constructClone(*this);
 
 	return node;
 }

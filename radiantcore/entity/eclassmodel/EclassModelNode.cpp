@@ -99,6 +99,7 @@ scene::INodePtr EclassModelNode::clone() const
 {
 	EclassModelNodePtr node(new EclassModelNode(*this));
 	node->construct();
+    node->constructClone(*this);
 
 	return node;
 }
