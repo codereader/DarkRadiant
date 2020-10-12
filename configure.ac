@@ -209,53 +209,72 @@ fi
 
 AC_SUBST([FILESYSTEM_LIBS])
 
-# PyBind11 if required
+# Check if we have a python interpreter and python-config, otherwise disable scripting
+if test "$python_scripting" = 'yes'
+then
+    # Check for any Python interpreter (minimum version >= 2.0), this will set $PYTHON on success
+    PC_PROG_PYTHON()
+
+    if test ! -z "$PYTHON"
+    then
+        # Check for the python-config (this will set $PYTHON_CONFIG on success)
+        PC_PYTHON_PROG_PYTHON_CONFIG()
+
+        if test -z "$PYTHON_CONFIG"; then
+            # No python-config found
+            AC_MSG_NOTICE([No python-config binary found])
+            python_scripting='no'
+        fi
+    else
+        # No interpreter found
+        AC_MSG_NOTICE([No python interpreter found])
+        python_scripting='no'
+    fi
+fi
+
+# Python scripting still required, check for PyBind11
 if test "$python_scripting" = 'yes'
 then
     AM_CONDITIONAL([SYSTEM_HAS_PYBIND11], [false]) # default to "not found"
     
-    AC_CHECK_PROGS([PYTHON_CONFIG], [python-config], [])
-    if test ! -z "$PYTHON_CONFIG"
-    then
-        # Python 3.8 requires the --embed switch to produce working linker flags
-        PC_PYTHON_VERIFY_VERSION([>=], [3.8.0],
-            [PYTHON_LIBS=`$PYTHON_CONFIG --libs --embed`],
-            [PYTHON_LIBS=`$PYTHON_CONFIG --libs`])
+    # Python 3.8 requires the --embed switch to produce working linker flags
+    PC_PYTHON_VERIFY_VERSION([>=], [3.8.0],
+        [PYTHON_LIBS=`$PYTHON_CONFIG --libs --embed`],
+        [PYTHON_LIBS=`$PYTHON_CONFIG --libs`])
 
-        PYTHON_CPPFLAGS=`$PYTHON_CONFIG --includes`
-        PYBIND11_CPPFLAGS=``
-        
-        # Add the path to the pybind11 library if we got one from the arguments
-        if test "x$pybind11_include_path" != x ; then
-           PYBIND11_CPPFLAGS="-I$pybind11_include_path"
-        fi
-        
-        # pybind11.h is including Python.h, need to help it find the Python.h header
-        CPPFLAGS="$USER_CPPFLAGS $PYTHON_CPPFLAGS $PYBIND11_CPPFLAGS"
-        
-        AC_MSG_NOTICE([Checking for pybind11 headers...])
-        found_local_pybind11=no
-        
-        # Check for a system-provided pybind11, otherwise fall back on
-        # the pybind11 headers we ship in the libs/pybind folder
-        AC_CHECK_HEADER([pybind11/pybind11.h], [found_local_pybind11=yes], [found_local_pybind11=no])
-
-        if test "$found_local_pybind11" = 'yes'
-        then
-                AC_MSG_NOTICE([Using the system-provided pybind11 headers])
-            else
-                AC_MSG_NOTICE([Using the pybind11 headers shipped with the sources])
-        fi
-
-        AM_CONDITIONAL([SYSTEM_HAS_PYBIND11], [test "$found_local_pybind11" = 'yes'])
-        
-        script_module='script'
-        AC_SUBST([script_module])
-        AC_SUBST([PYTHON_CPPFLAGS])
-        AC_SUBST([PYTHON_LIBS])
-        AC_SUBST([PYBIND11_CPPFLAGS])
-        AC_SUBST([SYSTEM_HAS_PYBIND11]) # Used by Makefile.am in plugins/script/
+    PYTHON_CPPFLAGS=`$PYTHON_CONFIG --includes`
+    PYBIND11_CPPFLAGS=``
+    
+    # Add the path to the pybind11 library if we got one from the arguments
+    if test "x$pybind11_include_path" != x ; then
+        PYBIND11_CPPFLAGS="-I$pybind11_include_path"
     fi
+    
+    # pybind11.h is including Python.h, need to help it find the Python.h header
+    CPPFLAGS="$USER_CPPFLAGS $PYTHON_CPPFLAGS $PYBIND11_CPPFLAGS"
+    
+    AC_MSG_NOTICE([Checking for pybind11 headers...])
+    found_local_pybind11=no
+    
+    # Check for a system-provided pybind11, otherwise fall back on
+    # the pybind11 headers we ship in the libs/pybind folder
+    AC_CHECK_HEADER([pybind11/pybind11.h], [found_local_pybind11=yes], [found_local_pybind11=no])
+
+    if test "$found_local_pybind11" = 'yes'
+    then
+        AC_MSG_NOTICE([Using the system-provided pybind11 headers])
+    else
+        AC_MSG_NOTICE([Using the pybind11 headers shipped with the sources])
+    fi
+
+    AM_CONDITIONAL([SYSTEM_HAS_PYBIND11], [test "$found_local_pybind11" = 'yes'])
+    
+    script_module='script'
+    AC_SUBST([script_module])
+    AC_SUBST([PYTHON_CPPFLAGS])
+    AC_SUBST([PYTHON_LIBS])
+    AC_SUBST([PYBIND11_CPPFLAGS])
+    AC_SUBST([SYSTEM_HAS_PYBIND11]) # Used by Makefile.am in plugins/script/
 else
     AM_CONDITIONAL([SYSTEM_HAS_PYBIND11], [false])
 fi
