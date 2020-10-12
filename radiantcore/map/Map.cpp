@@ -329,9 +329,6 @@ bool Map::save(const MapFormatPtr& mapFormat)
 
     _saveInProgress = true;
 
-    // Disable screen updates for the scope of this function
-    radiant::ScopedLongRunningOperation blocker(_("Saving Map..."));
-
     emitMapEvent(MapSaving);
 
     util::ScopeTimer timer("map save");
@@ -385,8 +382,6 @@ IMapExporter::Ptr Map::createMapExporter(IMapWriter& writer,
 
 bool Map::import(const std::string& filename)
 {
-    radiant::ScopedLongRunningOperation blocker(_("Importing..."));
-
     bool success = false;
 
     IMapResourcePtr resource = GlobalMapResourceManager().loadFromPath(filename);
@@ -420,9 +415,6 @@ void Map::saveDirect(const std::string& filename, const MapFormatPtr& mapFormat)
 {
     if (_saveInProgress) return; // safeguard
 
-    // Disable screen updates for the scope of this function
-    radiant::ScopedLongRunningOperation blocker(_("Saving..."));
-
     _saveInProgress = true;
 
 	MapFormatPtr format = mapFormat;
@@ -447,9 +439,6 @@ void Map::saveDirect(const std::string& filename, const MapFormatPtr& mapFormat)
 void Map::saveSelected(const std::string& filename, const MapFormatPtr& mapFormat)
 {
     if (_saveInProgress) return; // safeguard
-
-    // Disable screen updates for the scope of this function
-    radiant::ScopedLongRunningOperation blocker(_("Saving..."));
 
     _saveInProgress = true;
 

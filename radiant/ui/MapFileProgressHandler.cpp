@@ -1,9 +1,12 @@
 #include "MapFileProgressHandler.h"
 
+#include <thread>
+#include <chrono>
 #include "imap.h"
 #include "iradiant.h"
 #include "i18n.h"
 #include <sigc++/functors/mem_fun.h>
+#include <wx/thread.h>
 
 #include "wxutil/ModalProgressDialog.h"
 #include "wxutil/dialog/MessageBox.h"
@@ -133,7 +136,15 @@ void MapFileProgressHandler::handleFileOperation(map::FileOperation& msg)
 	// Release the lock, and give the UI a chance to process
 	lock.reset();
 
-	wxTheApp->ProcessPendingEvents();
+    // Give the main thread a chance to process
+    if (wxThread::IsMain())
+    {
+        wxTheApp->ProcessPendingEvents();
+    }
+    else
+    {
+        std::this_thread::sleep_for(std::chrono::microseconds(10));
+    }
 }
 
 }
