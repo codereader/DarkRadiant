@@ -83,10 +83,10 @@ void SkinChooser::populateWindow()
 	// Single column to display the skin name
 	_treeView->AppendIconTextColumn(_("Skin"), _columns.displayName.getColumnIndex(), 
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
+    _treeView->AddSearchColumn(_columns.displayName);
 
 	// Connect up selection changed callback
-	_treeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED,
-		wxDataViewEventHandler(SkinChooser::_onSelChanged), NULL, this);
+	_treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &SkinChooser::_onSelChanged, this);
 
 	// Preview
     _preview.reset(new wxutil::ModelPreview(splitter));
