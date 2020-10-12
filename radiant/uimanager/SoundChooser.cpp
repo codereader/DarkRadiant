@@ -75,6 +75,7 @@ public:
                 wxDataViewIconText(leafName, isFolder ? _folderIcon : _shaderIcon));
             row[_columns.shaderName] = !isFolder ?  shader.getName() : std::string();
             row[_columns.isFolder] = isFolder;
+            row.SendItemAdded();
         });
     }
 };

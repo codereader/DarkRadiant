@@ -83,6 +83,8 @@ public:
      * and cannot mix between these two, as this variant here does not keep track
      * of the "path-is-explicit" property and therefore doesn't support the
      * forEachNode() method being called with a Visitor.
+     *
+     * Note: the callback needs to invoke row.SendItemAdded() when done.
      */
     void addPath(const std::string& path, const ColumnPopulationCallback& func);
 
