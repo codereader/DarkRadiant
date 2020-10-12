@@ -218,7 +218,10 @@ then
     if test ! -z "$PYTHON"
     then
         # Check for the python-config (this will set $PYTHON_CONFIG on success)
-        PC_PYTHON_PROG_PYTHON_CONFIG()
+        # Prefer python3-config if Python is reporting version >= 3.0
+        PC_PYTHON_VERIFY_VERSION([>=], [3.0.0],
+            [PC_PYTHON_PROG_PYTHON_CONFIG(["python3-config" "python-config"])],
+            [PC_PYTHON_PROG_PYTHON_CONFIG(["python-config"])])
 
         if test -z "$PYTHON_CONFIG"; then
             # No python-config found
