@@ -76,10 +76,19 @@ MouseTool::Result ClipperTool::onMouseMove(Event& ev)
         }
 
         // Check, if we have a clip point operation running
-        if (GlobalClipper().getMovingClip() != NULL)
+        if (GlobalClipper().getMovingClip() != nullptr)
         {
-            GlobalClipper().getMovingClipCoords() = xyEvent.getWorldPos();
-            xyEvent.getView().snapToGrid(GlobalClipper().getMovingClipCoords());
+            // Leave the third coordinate of the clip point untouched (#5356)
+            auto viewType = xyEvent.getViewType();
+            int missingDim = viewType == XY ? 2 : viewType == YZ ? 0 : 1;
+            auto& clipCoords = GlobalClipper().getMovingClipCoords();
+            
+            Vector3 newWorldPos = xyEvent.getWorldPos();
+            newWorldPos[missingDim] = clipCoords[missingDim];
+
+            xyEvent.getView().snapToGrid(newWorldPos);
+
+            GlobalClipper().getMovingClipCoords() = newWorldPos;
             GlobalClipper().update();
 
             GlobalMainFrame().updateAllWindows();
