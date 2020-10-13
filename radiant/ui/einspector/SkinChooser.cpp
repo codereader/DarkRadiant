@@ -29,7 +29,7 @@ namespace
 // Constructor
 SkinChooser::SkinChooser() :
 	DialogBase(_(WINDOW_TITLE)),
-	_treeStore(nullptr),
+	_treeStore(new wxutil::TreeModel(_columns)),
 	_treeView(nullptr),
 	_lastSkin("")
 {
@@ -42,7 +42,7 @@ SkinChooser& SkinChooser::Instance()
 {
 	SkinChooserPtr& instancePtr = InstancePtr();
 
-	if (instancePtr == NULL)
+	if (!instancePtr)
 	{
 		// Not yet instantiated, do it now
 		instancePtr.reset(new SkinChooser);
@@ -73,9 +73,6 @@ void SkinChooser::populateWindow()
                                                       wxDefaultSize, wxSP_3D | wxSP_LIVE_UPDATE);
     splitter->SetMinimumPaneSize(10); // disallow unsplitting
 
-	// Create the treestore
-	_treeStore = new wxutil::TreeModel(_columns);
-
 	// Create the tree view
     _treeView = wxutil::TreeView::CreateWithModel(splitter, _treeStore, wxDV_NO_HEADER);
 	_treeView->SetMinClientSize(wxSize(GetSize().GetWidth() / 5, -1));
@@ -84,7 +81,7 @@ void SkinChooser::populateWindow()
 	_treeView->AppendIconTextColumn(_("Skin"), _columns.displayName.getColumnIndex(), 
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
     _treeView->AddSearchColumn(_columns.displayName);
-
+    
 	// Connect up selection changed callback
 	_treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &SkinChooser::_onSelChanged, this);
 
@@ -132,55 +129,14 @@ int SkinChooser::ShowModal()
 	return returnCode;
 }
 
-namespace
-{
-
-/*
- * Visitor class to fill in column data for the skins tree.
- */
-class SkinTreeVisitor : 
-	public wxutil::VFSTreePopulator::Visitor
-{
-private:
-	const SkinChooser::TreeColumns& _columns;
-
-	wxIcon _skinIcon;
-	wxIcon _folderIcon;
-
-public:
-	SkinTreeVisitor(const SkinChooser::TreeColumns& columns) :
-		_columns(columns)
-	{
-		_skinIcon.CopyFromBitmap(
-			wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + SKIN_ICON));
-		_folderIcon.CopyFromBitmap(
-			wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + FOLDER_ICON));
-	}
-
-    virtual ~SkinTreeVisitor() {}
-
-	// Required visit function
-	void visit(wxutil::TreeModel& /* store */, wxutil::TreeModel::Row& row,
-			   const std::string& path, bool isExplicit)
-	{
-		// Get the display path, everything after rightmost slash
-		std::string displayPath = path.substr(path.rfind("/") + 1);
-
-		row[_columns.displayName] = wxVariant(wxDataViewIconText(displayPath,
-			isExplicit ? _skinIcon : _folderIcon));
-		row[_columns.fullName] = path;
-
-		row.SendItemAdded();
-	}
-};
-
-} // namespace
-
 // Populate the list of skins
 void SkinChooser::populateSkins()
 {
+    // Create the treestore
+    wxutil::TreeModel::Ptr treeStore(new wxutil::TreeModel(_columns));
+
 	// Clear the treestore
-	_treeStore->Clear();
+    treeStore->Clear();
 
 	wxIcon folderIcon;
 	folderIcon.CopyFromBitmap(
@@ -191,53 +147,57 @@ void SkinChooser::populateSkins()
 		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + SKIN_ICON));
 
 	// Add the "Matching skins" toplevel node
-	wxutil::TreeModel::Row matchingSkins = _treeStore->AddItem();
+	wxutil::TreeModel::Row matchingSkins = treeStore->AddItem();
 
 	matchingSkins[_columns.displayName] = wxVariant(wxDataViewIconText(_("Matching skins"), folderIcon));
 	matchingSkins[_columns.fullName] = "";
-
-	matchingSkins.SendItemAdded();
+	matchingSkins[_columns.isFolder] = true;
 
 	// Get the skins for the associated model, and add them as matching skins
 	const StringList& matchList = GlobalModelSkinCache().getSkinsForModel(_model);
 
-	for (StringList::const_iterator i = matchList.begin();
-		 i != matchList.end();
-		 ++i)
-	{
-		wxutil::TreeModel::Row skinRow = _treeStore->AddItem(matchingSkins.getItem());
+    for (const auto& skin : matchList)
+    {
+        wxutil::TreeModel::Row skinRow = treeStore->AddItem(matchingSkins.getItem());
 
-		skinRow[_columns.displayName] = wxVariant(wxDataViewIconText(*i, skinIcon));
-		skinRow[_columns.fullName] = *i;
-
-		skinRow.SendItemAdded();
-	}
+        skinRow[_columns.displayName] = wxVariant(wxDataViewIconText(skin, skinIcon));
+        skinRow[_columns.fullName] = skin;
+        skinRow[_columns.isFolder] = false;
+    }
 
 	// Add "All skins" toplevel node
-	wxutil::TreeModel::Row allSkins = _treeStore->AddItem();
+	wxutil::TreeModel::Row allSkins = treeStore->AddItem();
 
 	allSkins[_columns.displayName] = wxVariant(wxDataViewIconText(_("All skins"), folderIcon));
 	allSkins[_columns.fullName] = "";
-
-	allSkins.SendItemAdded();
+    allSkins[_columns.isFolder] = true;
 
 	// Get the list of skins for the model
 	const StringList& skins = GlobalModelSkinCache().getAllSkins();
 
 	// Create a TreePopulator for the tree store and pass in each of the
 	// skin names.
-	wxutil::VFSTreePopulator pop(_treeStore, allSkins.getItem());
+	wxutil::VFSTreePopulator pop(treeStore, allSkins.getItem());
 
-	for (StringList::const_iterator i = skins.begin();
-		 i != skins.end();
-		 ++i)
+	for (const auto& skin : skins)
 	{
-		pop.addPath(*i);
+        pop.addPath(skin, [&] (wxutil::TreeModel::Row& row, 
+            const std::string& leafName, bool isFolder)
+        {
+            // Get the display path, everything after rightmost slash
+            std::string displayPath = leafName.substr(leafName.rfind("/") + 1);
+
+            row[_columns.displayName] = wxVariant(wxDataViewIconText(displayPath,
+                !isFolder ? skinIcon : folderIcon));
+            row[_columns.fullName] = leafName;
+            row[_columns.isFolder] = isFolder;
+        });
 	}
 
-	// Visit the tree populator in order to fill in the column data
-	SkinTreeVisitor visitor(_columns);
-	pop.forEachNode(visitor);
+    treeStore->SortModelFoldersFirst(_columns.displayName, _columns.isFolder);
+
+    _treeView->AssociateModel(treeStore.get());
+    _treeStore = treeStore;
 
 	// Make sure the "matching skins" item is expanded
 	_treeView->Expand(matchingSkins.getItem());
