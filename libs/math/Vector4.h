@@ -44,8 +44,9 @@ public:
         _v[3] = w_;
     }
 
-    // Construct a BasicVector4 out of a Vector3 plus a fourth argument
-    BasicVector4(const BasicVector3<Element>& other, Element w_) {
+    // Construct a BasicVector4 out of a Vector3 plus a W value (default 1)
+    BasicVector4(const BasicVector3<Element>& other, Element w_ = 1)
+    {
         _v[0] = other.x();
         _v[1] = other.y();
         _v[2] = other.z();
@@ -53,32 +54,16 @@ public:
     }
 
     // Return non-constant references to the components
-    Element& x() {
-        return _v[0];
-    }
-    Element& y() {
-        return _v[1];
-    }
-    Element& z() {
-        return _v[2];
-    }
-    Element& w() {
-        return _v[3];
-    }
+    Element& x() { return _v[0]; }
+    Element& y() { return _v[1]; }
+    Element& z() { return _v[2]; }
+    Element& w() { return _v[3]; }
 
     // Return constant references to the components
-    const Element& x() const {
-        return _v[0];
-    }
-    const Element& y() const {
-        return _v[1];
-    }
-    const Element& z() const {
-        return _v[2];
-    }
-    const Element& w() const {
-        return _v[3];
-    }
+    const Element& x() const { return _v[0]; }
+    const Element& y() const { return _v[1]; }
+    const Element& z() const { return _v[2]; }
+    const Element& w() const { return _v[3]; }
 
     Element index(std::size_t i) const {
         return _v[i];

@@ -967,14 +967,18 @@ void Light::updateProjection() const
 	//rMessage() << "  Frustum Plane " << 4 << ": " << _frustum.front.normal() << ", dist: " << _frustum.front.dist() << std::endl;
 	//rMessage() << "  Frustum Plane " << 5 << ": " << _frustum.back.normal() << ", dist: " << _frustum.back.dist() << std::endl;
 
+    const Vector3& t = _lightTargetTransformed;
+    const Vector3& u = _lightUpTransformed;
+    const Vector3& r = _lightRightTransformed;
+
     // Pre-calculate the local2Texture matrix which will be needed in getLightTextureTransformation()
     // The only thing missing in this matrix will be the world rotation and world translation
     _localToTexture = Matrix4::getIdentity();
 
     // Scale the light volume such that it is in a [-0.5..0.5] cube, including light origin
-    Vector3 boundsOrigin = (_lightTargetTransformed - _lightStartTransformed) * 0.5f;
-    Vector3 boundsExtents = _lightUpTransformed + _lightRightTransformed;
-    boundsExtents.z() = fabs(_lightTargetTransformed.z() * 0.5f);
+    Vector3 boundsOrigin = (t - _lightStartTransformed) * 0.5f;
+    Vector3 boundsExtents = u + r;
+    boundsExtents.z() = fabs(t.z() * 0.5f);
 
     AABB bounds(boundsOrigin, boundsExtents);
 
@@ -1003,6 +1007,19 @@ void Light::updateProjection() const
 
     // Now move the cube to [0..1] and we're done
     _localToTexture.premultiplyBy(Matrix4::getTranslation(Vector3(0.5f, 0.5f, 0)));
+
+#if defined(DEBUG_LIGHT_MATRIX)
+    Vector4 o(0, 0, 0, 1);
+    Vector4 topRight = t + u + r;
+    Vector4 bottomLeft = t - u - r;
+
+    std::cout << "_localToTexture:"
+        << "\n\tOrigin -> " << (_localToTexture * o)
+        << "\n\tt (" << t << ") -> " << (_localToTexture * t)
+        << "\n\tt + u + r (" << topRight << ") -> " << (_localToTexture * topRight)
+        << "\n\tt - u - r (" << bottomLeft << ") -> " << (_localToTexture * bottomLeft)
+        << "\n";
+#endif
 }
 
 const ShaderPtr& Light::getShader() const
