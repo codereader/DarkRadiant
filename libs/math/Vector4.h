@@ -1,5 +1,7 @@
 #pragma once
 
+#include <sstream>
+
 /* greebo: This file contains the templated class definition of the three-component vector
  *
  * BasicVector4: A vector with three components of type <Element>
@@ -70,6 +72,21 @@ public:
     }
     Element& index(std::size_t i) {
         return _v[i];
+    }
+
+    /**
+     * \brief
+     * Return a readable (pretty-printed) string representation of the vector
+     *
+     * We need a dedicated function for this because the standard operator<< is
+     * already used for serialisation to the less readable space-separated text
+     * format.
+     */
+    std::string pp() const
+    {
+        std::stringstream ss;
+        ss << "(" << x() << ", " << y() << ", " << z() << ", " << w() << ")";
+        return ss.str();
     }
 
     /** Compare this BasicVector4 against another for equality.

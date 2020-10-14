@@ -1009,15 +1009,18 @@ void Light::updateProjection() const
     _localToTexture.premultiplyBy(Matrix4::getTranslation(Vector3(0.5f, 0.5f, 0)));
 
 #if defined(DEBUG_LIGHT_MATRIX)
+    Vector4 t4(t);
     Vector4 o(0, 0, 0, 1);
     Vector4 topRight = t + u + r;
     Vector4 bottomLeft = t - u - r;
 
     std::cout << "_localToTexture:"
-        << "\n\tOrigin -> " << (_localToTexture * o)
-        << "\n\tt (" << t << ") -> " << (_localToTexture * t)
-        << "\n\tt + u + r (" << topRight << ") -> " << (_localToTexture * topRight)
-        << "\n\tt - u - r (" << bottomLeft << ") -> " << (_localToTexture * bottomLeft)
+        << "\n\tOrigin -> " << (_localToTexture * o).pp()
+        << "\n\tt: " << t4.pp() << " -> " << (_localToTexture * t4).pp()
+        << "\n\tt + u + r: " << topRight.pp() << " -> "
+                             << (_localToTexture * topRight).pp()
+        << "\n\tt - u - r: " << bottomLeft.pp() << " -> "
+                             << (_localToTexture * bottomLeft).pp()
         << "\n";
 #endif
 }
