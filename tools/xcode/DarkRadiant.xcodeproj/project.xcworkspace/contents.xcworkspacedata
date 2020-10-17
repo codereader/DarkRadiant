@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:DarkRadiant.xcodeproj">
+      location = "self:/Users/greebo/DarkRadiant/tools/xcode/DarkRadiant.xcodeproj">
    </FileRef>
 </Workspace>
