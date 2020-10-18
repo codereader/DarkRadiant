@@ -2,6 +2,7 @@
 
 #include <set>
 #include <map>
+#include <memory>
 #include "ilogwriter.h"
 
 #include "LogStream.h"
