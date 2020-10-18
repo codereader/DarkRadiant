@@ -2,6 +2,19 @@
 
 namespace wxutil
 {
+    
+    namespace
+    {
+        inline wxWindow* FindTopLevelWindow()
+        {
+            if (module::GlobalModuleRegistry().moduleExists(MODULE_MAINFRAME))
+            {
+                return GlobalMainFrame().getWxTopLevelWindow();
+            }
+            
+            return nullptr;
+        }
+    }
 
 void DialogBase::_onDelete(wxCloseEvent& ev)
 {
@@ -16,7 +29,7 @@ void DialogBase::_onDelete(wxCloseEvent& ev)
 }
 
 DialogBase::DialogBase(const std::string& title, wxWindow* parent)
-: wxDialog(parent ? parent : GlobalMainFrame().getWxTopLevelWindow(),
+: wxDialog(parent ? parent : FindTopLevelWindow(),
            wxID_ANY, title, wxDefaultPosition, wxDefaultSize,
            wxCAPTION | wxSYSTEM_MENU | wxRESIZE_BORDER)
 {
