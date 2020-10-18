@@ -333,6 +333,92 @@
 		3AA6E08D23BB50DE00BF9AD7 /* stimresponseeditor.xrc in Resources */ = {isa = PBXBuildFile; fileRef = 3AA6E08C23BB50DE00BF9AD7 /* stimresponseeditor.xrc */; };
 		3AA6E08E23BB510900BF9AD7 /* stimresponseeditor.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AA6E08C23BB50DE00BF9AD7 /* stimresponseeditor.xrc */; };
 		3AA6E08F23BB539B00BF9AD7 /* stimresponseeditor.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AA6E08C23BB50DE00BF9AD7 /* stimresponseeditor.xrc */; };
+		3AC88729253C1D5100E6CCCE /* DirChooser.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FE11E50278400A62BC1 /* DirChooser.h */; };
+		3AC8872A253C1D5100E6CCCE /* SelectionTestWalkers.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AFF06DD253C01D5002B1472 /* SelectionTestWalkers.h */; };
+		3AC8872B253C1D5100E6CCCE /* GuiView.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1E11FD1A529008A1B2D /* GuiView.h */; };
+		3AC8872C253C1D5100E6CCCE /* FileChooser.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FE71E50278400A62BC1 /* FileChooser.h */; };
+		3AC8872D253C1D5100E6CCCE /* PanedPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0120041E50278400A62BC1 /* PanedPosition.h */; };
+		3AC8872E253C1D5100E6CCCE /* IconTextMenuItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FF51E50278400A62BC1 /* IconTextMenuItem.h */; };
+		3AC8872F253C1D5100E6CCCE /* EntityClassChooser.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AFF0635253AE829002B1472 /* EntityClassChooser.h */; };
+		3AC88730253C1D5100E6CCCE /* Modifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FFD1E50278400A62BC1 /* Modifier.h */; };
+		3AC88731253C1D5100E6CCCE /* precompiled.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AFF06E9253C130E002B1472 /* precompiled.h */; };
+		3AC88732253C1D5100E6CCCE /* KeyEventFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FE41E50278400A62BC1 /* KeyEventFilter.h */; };
+		3AC88734253C1D5100E6CCCE /* VFSTreePopulator.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A01201A1E50278400A62BC1 /* VFSTreePopulator.h */; };
+		3AC88735253C1D5100E6CCCE /* NonModalEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0120021E50278400A62BC1 /* NonModalEntry.h */; };
+		3AC88737253C1D5100E6CCCE /* WindowPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A01201F1E50278400A62BC1 /* WindowPosition.h */; };
+		3AC88738253C1D5100E6CCCE /* MessageboxDialogAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FDE1E50278400A62BC1 /* MessageboxDialogAdapter.h */; };
+		3AC88739253C1D5100E6CCCE /* ChoiceHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FCE1E50278400A62BC1 /* ChoiceHelper.h */; };
+		3AC8873A253C1D5100E6CCCE /* FreezePointer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FE91E50278400A62BC1 /* FreezePointer.h */; };
+		3AC8873C253C1D5100E6CCCE /* TreeModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0120141E50278400A62BC1 /* TreeModel.h */; };
+		3AC8873D253C1D5100E6CCCE /* IConv.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FEE1E50278400A62BC1 /* IConv.h */; };
+		3AC8873E253C1D5100E6CCCE /* SourceView.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0120121E50278400A62BC1 /* SourceView.h */; };
+		3AC8873F253C1D5100E6CCCE /* RenderPreview.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A01200D1E50278400A62BC1 /* RenderPreview.h */; };
+		3AC88740253C1D5100E6CCCE /* ModelPreview.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0120091E50278400A62BC1 /* ModelPreview.h */; };
+		3AC88741253C1D5100E6CCCE /* DialogElements.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FDB1E50278400A62BC1 /* DialogElements.h */; };
+		3AC88742253C1D5100E6CCCE /* PathEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0120061E50278400A62BC1 /* PathEntry.h */; };
+		3AC88743253C1D5100E6CCCE /* MessageBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FDD1E50278400A62BC1 /* MessageBox.h */; };
+		3AC88744253C1D5100E6CCCE /* Dialog.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FD91E50278400A62BC1 /* Dialog.h */; };
+		3AC88745253C1D5100E6CCCE /* Button.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AFF0633253AE829002B1472 /* Button.h */; };
+		3AC88746253C1D5100E6CCCE /* TreeView.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0120181E50278400A62BC1 /* TreeView.h */; };
+		3AC88747253C1D5100E6CCCE /* SingleIdleCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FE51E50278400A62BC1 /* SingleIdleCallback.h */; };
+		3AC88748253C1D5100E6CCCE /* CommandMenuItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FF41E50278400A62BC1 /* CommandMenuItem.h */; };
+		3AC88749253C1D5100E6CCCE /* TransientWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A01201D1E50278400A62BC1 /* TransientWindow.h */; };
+		3AC8874A253C1D5100E6CCCE /* ModalProgressDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FFC1E50278400A62BC1 /* ModalProgressDialog.h */; };
+		3AC8874B253C1D5100E6CCCE /* KeyValueTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FF01E50278400A62BC1 /* KeyValueTable.h */; };
+		3AC8874C253C1D5100E6CCCE /* MenuItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FF61E50278400A62BC1 /* MenuItem.h */; };
+		3AC8874D253C1D5100E6CCCE /* TreeModelFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0120161E50278400A62BC1 /* TreeModelFilter.h */; };
+		3AC8874E253C1D5100E6CCCE /* ConsoleView.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FD21E50278400A62BC1 /* ConsoleView.h */; };
+		3AC8874F253C1D5100E6CCCE /* GLWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FED1E50278400A62BC1 /* GLWidget.h */; };
+		3AC88750253C1D5100E6CCCE /* ControlButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FD31E50278400A62BC1 /* ControlButton.h */; };
+		3AC88751253C1D5100E6CCCE /* SerialisableWidgets.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0120101E50278400A62BC1 /* SerialisableWidgets.h */; };
+		3AC88752253C1D5100E6CCCE /* MouseButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FFE1E50278400A62BC1 /* MouseButton.h */; };
+		3AC88753253C1D5100E6CCCE /* GLContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AFF0636253AE829002B1472 /* GLContext.h */; };
+		3AC88754253C1D5100E6CCCE /* MultiMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0120011E50278400A62BC1 /* MultiMonitor.h */; };
+		3AC88755253C1D5100E6CCCE /* MouseToolHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0120001E50278400A62BC1 /* MouseToolHandler.h */; };
+		3AC88756253C1D5100E6CCCE /* DialogBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FDA1E50278400A62BC1 /* DialogBase.h */; };
+		3AC88757253C1D5100E6CCCE /* PopupMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FF81E50278400A62BC1 /* PopupMenu.h */; };
+		3AC88758253C1D5100E6CCCE /* GLWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AA6E08623BB4E9F00BF9AD7 /* GLWidget.h */; };
+		3AC8875A253C1D5100E6CCCE /* ScrollWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AA6E08823BB4EF200BF9AD7 /* ScrollWindow.h */; };
+		3AC8875B253C1D5100E6CCCE /* DeferredMotionDelta.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FD61E50278400A62BC1 /* DeferredMotionDelta.h */; };
+		3AC8875C253C1D5100E6CCCE /* Splitter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AFF0638253AE829002B1472 /* Splitter.h */; };
+		3AC8875D253C1D5100E6CCCE /* XmlResourceBasedWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0120201E50278400A62BC1 /* XmlResourceBasedWidget.h */; };
+		3AC8875E253C1D5100E6CCCE /* ScopeTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A01200E1E50278400A62BC1 /* ScopeTimer.h */; };
+		3AC8875F253C1D5100E6CCCE /* ScrollEventPropagationFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FDF1E50278400A62BC1 /* ScrollEventPropagationFilter.h */; };
+		3AC88760253C1D5100E6CCCE /* ParticlePreview.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A01200B1E50278400A62BC1 /* ParticlePreview.h */; };
+		3AC88761253C1D5100E6CCCE /* EntryAbortedException.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FE21E50278400A62BC1 /* EntryAbortedException.h */; };
+		3AC88762253C1D5100E6CCCE /* GLFont.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FEB1E50278400A62BC1 /* GLFont.h */; };
+		3AC88763253C1D5100E6CCCE /* GuiRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1DF1FD1A529008A1B2D /* GuiRenderer.h */; };
+		3AC88768253C1D7200E6CCCE /* clip.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDFF91E50CB120062D9AF /* clip.c */; };
+		3AC88769253C1D7200E6CCCE /* envelope.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDFFA1E50CB120062D9AF /* envelope.c */; };
+		3AC8876A253C1D7200E6CCCE /* list.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDFFB1E50CB120062D9AF /* list.c */; };
+		3AC8876B253C1D7200E6CCCE /* lwio.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDFFC1E50CB120062D9AF /* lwio.c */; };
+		3AC8876C253C1D7200E6CCCE /* lwo2.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDFFD1E50CB120062D9AF /* lwo2.c */; };
+		3AC8876D253C1D7200E6CCCE /* lwo2.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDFFE1E50CB120062D9AF /* lwo2.h */; };
+		3AC8876E253C1D7200E6CCCE /* lwob.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDFFF1E50CB120062D9AF /* lwob.c */; };
+		3AC8876F253C1D7200E6CCCE /* pntspols.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0001E50CB120062D9AF /* pntspols.c */; };
+		3AC88770253C1D7200E6CCCE /* surface.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0011E50CB120062D9AF /* surface.c */; };
+		3AC88771253C1D7200E6CCCE /* vecmath.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0021E50CB120062D9AF /* vecmath.c */; };
+		3AC88772253C1D7200E6CCCE /* vmap.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0031E50CB120062D9AF /* vmap.c */; };
+		3AC88773253C1D7200E6CCCE /* picointernal.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0061E50CB120062D9AF /* picointernal.c */; };
+		3AC88774253C1D7200E6CCCE /* picointernal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0071E50CB120062D9AF /* picointernal.h */; };
+		3AC88775253C1D7200E6CCCE /* picomodel.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0081E50CB120062D9AF /* picomodel.c */; };
+		3AC88776253C1D7200E6CCCE /* picomodules.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0091E50CB120062D9AF /* picomodules.c */; };
+		3AC88777253C1D7200E6CCCE /* pm_3ds.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE00A1E50CB120062D9AF /* pm_3ds.c */; };
+		3AC88778253C1D7200E6CCCE /* pm_ase.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE00B1E50CB120062D9AF /* pm_ase.c */; };
+		3AC88779253C1D7200E6CCCE /* pm_fm.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE00C1E50CB120062D9AF /* pm_fm.c */; };
+		3AC8877A253C1D7200E6CCCE /* pm_fm.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE00D1E50CB120062D9AF /* pm_fm.h */; };
+		3AC8877B253C1D7200E6CCCE /* pm_lwo.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE00E1E50CB120062D9AF /* pm_lwo.c */; };
+		3AC8877C253C1D7200E6CCCE /* pm_md2.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE00F1E50CB120062D9AF /* pm_md2.c */; };
+		3AC8877D253C1D7200E6CCCE /* pm_md3.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0101E50CB120062D9AF /* pm_md3.c */; };
+		3AC8877E253C1D7200E6CCCE /* pm_mdc.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0111E50CB120062D9AF /* pm_mdc.c */; };
+		3AC8877F253C1D7200E6CCCE /* pm_ms3d.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0121E50CB120062D9AF /* pm_ms3d.c */; };
+		3AC88780253C1D7200E6CCCE /* pm_obj.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0131E50CB120062D9AF /* pm_obj.c */; };
+		3AC88781253C1D7200E6CCCE /* pm_terrain.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0141E50CB120062D9AF /* pm_terrain.c */; };
+		3AC88785253C1E2500E6CCCE /* libpicomodel.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AC88767253C1D5100E6CCCE /* libpicomodel.a */; };
+		3AC88786253C1E9800E6CCCE /* ApplicationContextBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF06B1253BF564002B1472 /* ApplicationContextBase.cpp */; };
+		3AC88787253C1E9800E6CCCE /* CoreModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF06B3253BF564002B1472 /* CoreModule.cpp */; };
+		3AC88788253C1E9800E6CCCE /* DynamicLibrary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF06B5253BF564002B1472 /* DynamicLibrary.cpp */; };
+		3AC88789253C1E9800E6CCCE /* StaticModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF06B8253BF564002B1472 /* StaticModule.cpp */; };
 		3AE2104E1E5980AF00F5A0A6 /* script.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE0B21E50D8D50062D9AF /* script.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3AE210511E5980B000F5A0A6 /* sound.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE19E1E50DD620062D9AF /* sound.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3AE210561E59811500F5A0A6 /* dm.conversation.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE2701E50E1520062D9AF /* dm.conversation.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -1295,32 +1381,6 @@
 		3AFF04EB253ADE43002B1472 /* PicoModelNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F3CF23B1B637008A1B2D /* PicoModelNode.cpp */; };
 		3AFF04EC253ADE43002B1472 /* RenderablePicoModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F3D123B1B637008A1B2D /* RenderablePicoModel.cpp */; };
 		3AFF04ED253ADE43002B1472 /* RenderablePicoSurface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F3D323B1B637008A1B2D /* RenderablePicoSurface.cpp */; };
-		3AFF04F0253ADE89002B1472 /* picointernal.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0061E50CB120062D9AF /* picointernal.c */; };
-		3AFF04F1253ADE89002B1472 /* picointernal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE0071E50CB120062D9AF /* picointernal.h */; };
-		3AFF04F2253ADE89002B1472 /* picomodel.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0081E50CB120062D9AF /* picomodel.c */; };
-		3AFF04F3253ADE89002B1472 /* picomodules.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0091E50CB120062D9AF /* picomodules.c */; };
-		3AFF04F4253ADE89002B1472 /* pm_3ds.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE00A1E50CB120062D9AF /* pm_3ds.c */; };
-		3AFF04F5253ADE89002B1472 /* pm_ase.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE00B1E50CB120062D9AF /* pm_ase.c */; };
-		3AFF04F6253ADE89002B1472 /* pm_fm.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE00C1E50CB120062D9AF /* pm_fm.c */; };
-		3AFF04F7253ADE89002B1472 /* pm_fm.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE00D1E50CB120062D9AF /* pm_fm.h */; };
-		3AFF04F8253ADE89002B1472 /* pm_lwo.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE00E1E50CB120062D9AF /* pm_lwo.c */; };
-		3AFF04F9253ADE89002B1472 /* pm_md2.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE00F1E50CB120062D9AF /* pm_md2.c */; };
-		3AFF04FA253ADE89002B1472 /* pm_md3.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0101E50CB120062D9AF /* pm_md3.c */; };
-		3AFF04FB253ADE89002B1472 /* pm_mdc.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0111E50CB120062D9AF /* pm_mdc.c */; };
-		3AFF04FC253ADE89002B1472 /* pm_ms3d.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0121E50CB120062D9AF /* pm_ms3d.c */; };
-		3AFF04FD253ADE89002B1472 /* pm_obj.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0131E50CB120062D9AF /* pm_obj.c */; };
-		3AFF04FE253ADE89002B1472 /* pm_terrain.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0141E50CB120062D9AF /* pm_terrain.c */; };
-		3AFF04FF253ADEB7002B1472 /* clip.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDFF91E50CB120062D9AF /* clip.c */; };
-		3AFF0500253ADEB7002B1472 /* envelope.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDFFA1E50CB120062D9AF /* envelope.c */; };
-		3AFF0501253ADEB7002B1472 /* list.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDFFB1E50CB120062D9AF /* list.c */; };
-		3AFF0502253ADEB7002B1472 /* lwio.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDFFC1E50CB120062D9AF /* lwio.c */; };
-		3AFF0503253ADEB7002B1472 /* lwo2.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDFFD1E50CB120062D9AF /* lwo2.c */; };
-		3AFF0504253ADEB7002B1472 /* lwo2.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBDFFE1E50CB120062D9AF /* lwo2.h */; };
-		3AFF0505253ADEB7002B1472 /* lwob.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBDFFF1E50CB120062D9AF /* lwob.c */; };
-		3AFF0506253ADEB7002B1472 /* pntspols.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0001E50CB120062D9AF /* pntspols.c */; };
-		3AFF0507253ADEB7002B1472 /* surface.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0011E50CB120062D9AF /* surface.c */; };
-		3AFF0508253ADEB7002B1472 /* vecmath.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0021E50CB120062D9AF /* vecmath.c */; };
-		3AFF0509253ADEB7002B1472 /* vmap.c in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE0031E50CB120062D9AF /* vmap.c */; };
 		3AFF050B253ADF3F002B1472 /* ModelScalePreserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF043524548B8E002B1472 /* ModelScalePreserver.cpp */; };
 		3AFF050C253ADF3F002B1472 /* ModelExporter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F1401F496ACB008A1B2D /* ModelExporter.cpp */; };
 		3AFF050D253ADF3F002B1472 /* ScaledModelExporter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF743BB1E4F861A003465B5 /* ScaledModelExporter.cpp */; };
@@ -1571,13 +1631,9 @@
 		3AFF06AA253BF4D3002B1472 /* GuiRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE6F1DF1FD1A529008A1B2D /* GuiRenderer.h */; };
 		3AFF06AF253BF52C002B1472 /* libmodule.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AFF06AE253BF4D3002B1472 /* libmodule.a */; };
 		3AFF06B0253BF53E002B1472 /* libmodule.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AFF06AE253BF4D3002B1472 /* libmodule.a */; };
-		3AFF06BA253BF564002B1472 /* ApplicationContextBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF06B1253BF564002B1472 /* ApplicationContextBase.cpp */; };
 		3AFF06BB253BF564002B1472 /* ApplicationContextBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AFF06B2253BF564002B1472 /* ApplicationContextBase.h */; };
-		3AFF06BC253BF564002B1472 /* CoreModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF06B3253BF564002B1472 /* CoreModule.cpp */; };
 		3AFF06BD253BF564002B1472 /* CoreModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AFF06B4253BF564002B1472 /* CoreModule.h */; };
-		3AFF06BE253BF564002B1472 /* DynamicLibrary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF06B5253BF564002B1472 /* DynamicLibrary.cpp */; };
 		3AFF06BF253BF564002B1472 /* DynamicLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AFF06B6253BF564002B1472 /* DynamicLibrary.h */; };
-		3AFF06C0253BF564002B1472 /* StaticModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF06B8253BF564002B1472 /* StaticModule.cpp */; };
 		3AFF06C1253BF564002B1472 /* StaticModule.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AFF06B9253BF564002B1472 /* StaticModule.h */; };
 		3AFF06D2253BFCB5002B1472 /* libmathlib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF746641E4FACC9003465B5 /* libmathlib.a */; };
 		3AFF06D3253BFCB5002B1472 /* libscene.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A0120731E502F7800A62BC1 /* libscene.a */; };
@@ -1593,6 +1649,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		3AC88783253C1E1E00E6CCCE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3ADBCC691E4E4B7C00CA94F6 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3AC88721253C1D5100E6CCCE;
+			remoteInfo = picomodel;
+		};
 		3AF475831E6B210F006B26C2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3ADBCC691E4E4B7C00CA94F6 /* Project object */;
@@ -2799,6 +2862,8 @@
 		3AA6E08823BB4EF200BF9AD7 /* ScrollWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScrollWindow.h; path = ../../libs/wxutil/ScrollWindow.h; sourceTree = SOURCE_ROOT; };
 		3AA6E08C23BB50DE00BF9AD7 /* stimresponseeditor.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = stimresponseeditor.xrc; path = ../../install/ui/stimresponseeditor.xrc; sourceTree = SOURCE_ROOT; };
 		3AAAC7201E617F700019C4F2 /* package_bundle.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = package_bundle.sh; sourceTree = SOURCE_ROOT; };
+		3AC88767253C1D5100E6CCCE /* libpicomodel.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libpicomodel.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		3AC88782253C1DB900E6CCCE /* picomodel.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = picomodel.xcconfig; sourceTree = "<group>"; };
 		3ADBCC9F1E4E4EDC00CA94F6 /* wxWidgets.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = wxWidgets.framework; path = ../../../../../opt/local/Library/Frameworks/wxWidgets.framework; sourceTree = "<group>"; };
 		3AE20CD31E59687300F5A0A6 /* DarkRadiant.app */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DarkRadiant.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AE20CD51E59687300F5A0A6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -4355,6 +4420,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		3AC88727253C1D5100E6CCCE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		3AEBE0AF1E50D8D50062D9AF /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -4475,6 +4547,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3AC88785253C1E2500E6CCCE /* libpicomodel.a in Frameworks */,
 				3AFF06D6253BFCEB002B1472 /* OpenGL.framework in Frameworks */,
 				3AFF06D2253BFCB5002B1472 /* libmathlib.a in Frameworks */,
 				3AFF06D3253BFCB5002B1472 /* libscene.a in Frameworks */,
@@ -4897,6 +4970,7 @@
 		3A01240E1E50420C00A62BC1 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				3AC88715253C1D0A00E6CCCE /* picomodel */,
 				3AF746651E4FACC9003465B5 /* mathlib */,
 				3AFF0653253BF46F002B1472 /* module */,
 				3A0120741E502F7800A62BC1 /* scene */,
@@ -4927,8 +5001,32 @@
 				3AFF064A253B6966002B1472 /* dm.difficulty.xcconfig */,
 				3AFF06DA253BFF12002B1472 /* jpeg.xcconfig */,
 				3AFF06DB253BFF64002B1472 /* png.xcconfig */,
+				3AC88782253C1DB900E6CCCE /* picomodel.xcconfig */,
 			);
 			name = Configuration;
+			sourceTree = "<group>";
+		};
+		3AC88715253C1D0A00E6CCCE /* picomodel */ = {
+			isa = PBXGroup;
+			children = (
+				3AFF04EF253ADE52002B1472 /* lwo */,
+				3AEBE0061E50CB120062D9AF /* picointernal.c */,
+				3AEBE0071E50CB120062D9AF /* picointernal.h */,
+				3AEBE0081E50CB120062D9AF /* picomodel.c */,
+				3AEBE0091E50CB120062D9AF /* picomodules.c */,
+				3AEBE00A1E50CB120062D9AF /* pm_3ds.c */,
+				3AEBE00B1E50CB120062D9AF /* pm_ase.c */,
+				3AEBE00C1E50CB120062D9AF /* pm_fm.c */,
+				3AEBE00D1E50CB120062D9AF /* pm_fm.h */,
+				3AEBE00E1E50CB120062D9AF /* pm_lwo.c */,
+				3AEBE00F1E50CB120062D9AF /* pm_md2.c */,
+				3AEBE0101E50CB120062D9AF /* pm_md3.c */,
+				3AEBE0111E50CB120062D9AF /* pm_mdc.c */,
+				3AEBE0121E50CB120062D9AF /* pm_ms3d.c */,
+				3AEBE0131E50CB120062D9AF /* pm_obj.c */,
+				3AEBE0141E50CB120062D9AF /* pm_terrain.c */,
+			);
+			name = picomodel;
 			sourceTree = "<group>";
 		};
 		3ADBCC681E4E4B7C00CA94F6 = {
@@ -4958,6 +5056,7 @@
 				3AEBE0B21E50D8D50062D9AF /* script.so */,
 				3AEBE19E1E50DD620062D9AF /* sound.so */,
 				3AFF06AE253BF4D3002B1472 /* libmodule.a */,
+				3AC88767253C1D5100E6CCCE /* libpicomodel.a */,
 			);
 			sourceTree = "<group>";
 		};
@@ -7475,7 +7574,6 @@
 		3AFF04E8253ADE1E002B1472 /* picomodel */ = {
 			isa = PBXGroup;
 			children = (
-				3AFF04EE253ADE49002B1472 /* lib */,
 				3AE6F3CB23B1B637008A1B2D /* PicoModelLoader.cpp */,
 				3AE6F3CC23B1B637008A1B2D /* PicoModelLoader.h */,
 				3AE6F3CD23B1B637008A1B2D /* PicoModelModule.cpp */,
@@ -7488,29 +7586,6 @@
 				3AE6F3D423B1B637008A1B2D /* RenderablePicoSurface.h */,
 			);
 			name = picomodel;
-			sourceTree = "<group>";
-		};
-		3AFF04EE253ADE49002B1472 /* lib */ = {
-			isa = PBXGroup;
-			children = (
-				3AFF04EF253ADE52002B1472 /* lwo */,
-				3AEBE0061E50CB120062D9AF /* picointernal.c */,
-				3AEBE0071E50CB120062D9AF /* picointernal.h */,
-				3AEBE0081E50CB120062D9AF /* picomodel.c */,
-				3AEBE0091E50CB120062D9AF /* picomodules.c */,
-				3AEBE00A1E50CB120062D9AF /* pm_3ds.c */,
-				3AEBE00B1E50CB120062D9AF /* pm_ase.c */,
-				3AEBE00C1E50CB120062D9AF /* pm_fm.c */,
-				3AEBE00D1E50CB120062D9AF /* pm_fm.h */,
-				3AEBE00E1E50CB120062D9AF /* pm_lwo.c */,
-				3AEBE00F1E50CB120062D9AF /* pm_md2.c */,
-				3AEBE0101E50CB120062D9AF /* pm_md3.c */,
-				3AEBE0111E50CB120062D9AF /* pm_mdc.c */,
-				3AEBE0121E50CB120062D9AF /* pm_ms3d.c */,
-				3AEBE0131E50CB120062D9AF /* pm_obj.c */,
-				3AEBE0141E50CB120062D9AF /* pm_terrain.c */,
-			);
-			name = lib;
 			sourceTree = "<group>";
 		};
 		3AFF04EF253ADE52002B1472 /* lwo */ = {
@@ -7750,6 +7825,71 @@
 				3AFF0624253AE7EC002B1472 /* Clone.h in Headers */,
 				3AFF0625253AE7EC002B1472 /* EntityBreakdown.h in Headers */,
 				3A01208C1E50300A00A62BC1 /* InstanceWalkers.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AC88728253C1D5100E6CCCE /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AC88729253C1D5100E6CCCE /* DirChooser.h in Headers */,
+				3AC8872A253C1D5100E6CCCE /* SelectionTestWalkers.h in Headers */,
+				3AC8872B253C1D5100E6CCCE /* GuiView.h in Headers */,
+				3AC8872C253C1D5100E6CCCE /* FileChooser.h in Headers */,
+				3AC8872D253C1D5100E6CCCE /* PanedPosition.h in Headers */,
+				3AC8872E253C1D5100E6CCCE /* IconTextMenuItem.h in Headers */,
+				3AC8872F253C1D5100E6CCCE /* EntityClassChooser.h in Headers */,
+				3AC88730253C1D5100E6CCCE /* Modifier.h in Headers */,
+				3AC88731253C1D5100E6CCCE /* precompiled.h in Headers */,
+				3AC88732253C1D5100E6CCCE /* KeyEventFilter.h in Headers */,
+				3AC8877A253C1D7200E6CCCE /* pm_fm.h in Headers */,
+				3AC88734253C1D5100E6CCCE /* VFSTreePopulator.h in Headers */,
+				3AC88735253C1D5100E6CCCE /* NonModalEntry.h in Headers */,
+				3AC88737253C1D5100E6CCCE /* WindowPosition.h in Headers */,
+				3AC88738253C1D5100E6CCCE /* MessageboxDialogAdapter.h in Headers */,
+				3AC88739253C1D5100E6CCCE /* ChoiceHelper.h in Headers */,
+				3AC8873A253C1D5100E6CCCE /* FreezePointer.h in Headers */,
+				3AC8873C253C1D5100E6CCCE /* TreeModel.h in Headers */,
+				3AC8873D253C1D5100E6CCCE /* IConv.h in Headers */,
+				3AC8873E253C1D5100E6CCCE /* SourceView.h in Headers */,
+				3AC8873F253C1D5100E6CCCE /* RenderPreview.h in Headers */,
+				3AC88740253C1D5100E6CCCE /* ModelPreview.h in Headers */,
+				3AC88741253C1D5100E6CCCE /* DialogElements.h in Headers */,
+				3AC88742253C1D5100E6CCCE /* PathEntry.h in Headers */,
+				3AC88743253C1D5100E6CCCE /* MessageBox.h in Headers */,
+				3AC88744253C1D5100E6CCCE /* Dialog.h in Headers */,
+				3AC88745253C1D5100E6CCCE /* Button.h in Headers */,
+				3AC88746253C1D5100E6CCCE /* TreeView.h in Headers */,
+				3AC88747253C1D5100E6CCCE /* SingleIdleCallback.h in Headers */,
+				3AC88774253C1D7200E6CCCE /* picointernal.h in Headers */,
+				3AC88748253C1D5100E6CCCE /* CommandMenuItem.h in Headers */,
+				3AC88749253C1D5100E6CCCE /* TransientWindow.h in Headers */,
+				3AC8874A253C1D5100E6CCCE /* ModalProgressDialog.h in Headers */,
+				3AC8874B253C1D5100E6CCCE /* KeyValueTable.h in Headers */,
+				3AC8874C253C1D5100E6CCCE /* MenuItem.h in Headers */,
+				3AC8874D253C1D5100E6CCCE /* TreeModelFilter.h in Headers */,
+				3AC8874E253C1D5100E6CCCE /* ConsoleView.h in Headers */,
+				3AC8874F253C1D5100E6CCCE /* GLWidget.h in Headers */,
+				3AC88750253C1D5100E6CCCE /* ControlButton.h in Headers */,
+				3AC8876D253C1D7200E6CCCE /* lwo2.h in Headers */,
+				3AC88751253C1D5100E6CCCE /* SerialisableWidgets.h in Headers */,
+				3AC88752253C1D5100E6CCCE /* MouseButton.h in Headers */,
+				3AC88753253C1D5100E6CCCE /* GLContext.h in Headers */,
+				3AC88754253C1D5100E6CCCE /* MultiMonitor.h in Headers */,
+				3AC88755253C1D5100E6CCCE /* MouseToolHandler.h in Headers */,
+				3AC88756253C1D5100E6CCCE /* DialogBase.h in Headers */,
+				3AC88757253C1D5100E6CCCE /* PopupMenu.h in Headers */,
+				3AC88758253C1D5100E6CCCE /* GLWidget.h in Headers */,
+				3AC8875A253C1D5100E6CCCE /* ScrollWindow.h in Headers */,
+				3AC8875B253C1D5100E6CCCE /* DeferredMotionDelta.h in Headers */,
+				3AC8875C253C1D5100E6CCCE /* Splitter.h in Headers */,
+				3AC8875D253C1D5100E6CCCE /* XmlResourceBasedWidget.h in Headers */,
+				3AC8875E253C1D5100E6CCCE /* ScopeTimer.h in Headers */,
+				3AC8875F253C1D5100E6CCCE /* ScrollEventPropagationFilter.h in Headers */,
+				3AC88760253C1D5100E6CCCE /* ParticlePreview.h in Headers */,
+				3AC88761253C1D5100E6CCCE /* EntryAbortedException.h in Headers */,
+				3AC88762253C1D5100E6CCCE /* GLFont.h in Headers */,
+				3AC88763253C1D5100E6CCCE /* GuiRenderer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8023,7 +8163,6 @@
 				3AFF045B253AB5B2002B1472 /* ConversationKeyExtractor.h in Headers */,
 				3AFF04C9253ADC33002B1472 /* SharedOpenGLContextModule.h in Headers */,
 				3AFF045C253AB5B2002B1472 /* ActorNodeFinder.h in Headers */,
-				3AFF04F1253ADE89002B1472 /* picointernal.h in Headers */,
 				3AFF045D253AB5B2002B1472 /* CommandEditor.h in Headers */,
 				3AFF045E253AB5B2002B1472 /* ConversationDialog.h in Headers */,
 				3AFF0562253AE1F1002B1472 /* ImageLoader.h in Headers */,
@@ -8031,12 +8170,10 @@
 				3AFF045F253AB5B2002B1472 /* ConversationEntity.h in Headers */,
 				3AFF0599253AE39A002B1472 /* BrushByPlaneClipper.h in Headers */,
 				3AFF0460253AB5B2002B1472 /* ConversationCommandLibrary.h in Headers */,
-				3AFF04F7253ADE89002B1472 /* pm_fm.h in Headers */,
 				3AFF05A6253AE3D1002B1472 /* Camera.h in Headers */,
 				3AFF0591253AE342002B1472 /* EntityModule.h in Headers */,
 				3AFF048F253ABB78002B1472 /* ColourSchemeManager.h in Headers */,
 				3AFF0461253AB5B2002B1472 /* Conversation.h in Headers */,
-				3AFF0504253ADEB7002B1472 /* lwo2.h in Headers */,
 				3AFF0462253AB5B2002B1472 /* ConversationEditor.h in Headers */,
 				3AFF059B253AE39A002B1472 /* SplitAlgorithm.h in Headers */,
 			);
@@ -8143,6 +8280,23 @@
 			name = scene;
 			productName = scene;
 			productReference = 3A0120731E502F7800A62BC1 /* libscene.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		3AC88721253C1D5100E6CCCE /* picomodel */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3AC88764253C1D5100E6CCCE /* Build configuration list for PBXNativeTarget "picomodel" */;
+			buildPhases = (
+				3AC88722253C1D5100E6CCCE /* Sources */,
+				3AC88727253C1D5100E6CCCE /* Frameworks */,
+				3AC88728253C1D5100E6CCCE /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = picomodel;
+			productName = wxutil;
+			productReference = 3AC88767253C1D5100E6CCCE /* libpicomodel.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		3AE20CD21E59687300F5A0A6 /* DarkRadiant */ = {
@@ -8395,6 +8549,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				3AC88784253C1E1E00E6CCCE /* PBXTargetDependency */,
 				3AFF06D5253BFCC3002B1472 /* PBXTargetDependency */,
 				3AFF06CB253BF5B2002B1472 /* PBXTargetDependency */,
 				3AFF06CD253BF5B2002B1472 /* PBXTargetDependency */,
@@ -8508,6 +8663,7 @@
 				3AEBE2AB1E50E1780062D9AF /* dm.objectives */,
 				3AEBE2BA1E50E17F0062D9AF /* dm.stimresponse */,
 				3AFF0654253BF4D3002B1472 /* module */,
+				3AC88721253C1D5100E6CCCE /* picomodel */,
 			);
 		};
 /* End PBXProject section */
@@ -8593,6 +8749,36 @@
 				3A01208E1E50300A00A62BC1 /* Node.cpp in Sources */,
 				3AFF0631253AE7EC002B1472 /* Traverse.cpp in Sources */,
 				3AFF0629253AE7EC002B1472 /* LayerUsageBreakdown.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3AC88722253C1D5100E6CCCE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3AC8876C253C1D7200E6CCCE /* lwo2.c in Sources */,
+				3AC88768253C1D7200E6CCCE /* clip.c in Sources */,
+				3AC88776253C1D7200E6CCCE /* picomodules.c in Sources */,
+				3AC88773253C1D7200E6CCCE /* picointernal.c in Sources */,
+				3AC8876F253C1D7200E6CCCE /* pntspols.c in Sources */,
+				3AC88781253C1D7200E6CCCE /* pm_terrain.c in Sources */,
+				3AC8877C253C1D7200E6CCCE /* pm_md2.c in Sources */,
+				3AC8876B253C1D7200E6CCCE /* lwio.c in Sources */,
+				3AC8877E253C1D7200E6CCCE /* pm_mdc.c in Sources */,
+				3AC88771253C1D7200E6CCCE /* vecmath.c in Sources */,
+				3AC88775253C1D7200E6CCCE /* picomodel.c in Sources */,
+				3AC88778253C1D7200E6CCCE /* pm_ase.c in Sources */,
+				3AC88779253C1D7200E6CCCE /* pm_fm.c in Sources */,
+				3AC88772253C1D7200E6CCCE /* vmap.c in Sources */,
+				3AC8876E253C1D7200E6CCCE /* lwob.c in Sources */,
+				3AC88770253C1D7200E6CCCE /* surface.c in Sources */,
+				3AC8877D253C1D7200E6CCCE /* pm_md3.c in Sources */,
+				3AC8876A253C1D7200E6CCCE /* list.c in Sources */,
+				3AC88769253C1D7200E6CCCE /* envelope.c in Sources */,
+				3AC8877B253C1D7200E6CCCE /* pm_lwo.c in Sources */,
+				3AC88777253C1D7200E6CCCE /* pm_3ds.c in Sources */,
+				3AC88780253C1D7200E6CCCE /* pm_obj.c in Sources */,
+				3AC8877F253C1D7200E6CCCE /* pm_ms3d.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8992,7 +9178,6 @@
 				3AFF0530253AE06B002B1472 /* Import.cpp in Sources */,
 				3AFF047B253ABA04002B1472 /* MapExpression.cpp in Sources */,
 				3AFF0539253AE0A6002B1472 /* MapModules.cpp in Sources */,
-				3AFF0506253ADEB7002B1472 /* pntspols.c in Sources */,
 				3AFF051D253ADFF4002B1472 /* Doom3AasFile.cpp in Sources */,
 				3AFF04CE253ADCA6002B1472 /* General.cpp in Sources */,
 				3AFF057C253AE2D4002B1472 /* SpeakerRenderables.cpp in Sources */,
@@ -9008,8 +9193,6 @@
 				3AFF04B3253ABD4D002B1472 /* TranslateManipulator.cpp in Sources */,
 				3AFF05AA253AE41B002B1472 /* CollisionModel.cpp in Sources */,
 				3AFF04BD253ADB16002B1472 /* SceneGraphFactory.cpp in Sources */,
-				3AFF0509253ADEB7002B1472 /* vmap.c in Sources */,
-				3AFF04FB253ADE89002B1472 /* pm_mdc.c in Sources */,
 				3AFF0571253AE272002B1472 /* CurveEditInstance.cpp in Sources */,
 				3AFF0569253AE222002B1472 /* GlyphInfo.cpp in Sources */,
 				3AFF04DB253ADD3E002B1472 /* RenderableParticleStage.cpp in Sources */,
@@ -9025,14 +9208,11 @@
 				3AFF05A7253AE3D1002B1472 /* CameraManager.cpp in Sources */,
 				3AFF049D253ABCB1002B1472 /* General.cpp in Sources */,
 				3AFF04DE253ADD6E002B1472 /* ComplexName.cpp in Sources */,
-				3AFF04F3253ADE89002B1472 /* picomodules.c in Sources */,
 				3AFF058A253AE32F002B1472 /* NamespaceManager.cpp in Sources */,
 				3AFF047E253ABA04002B1472 /* ShaderTemplate.cpp in Sources */,
 				3AFF0522253AE020002B1472 /* Patch.cpp in Sources */,
 				3AFF054E253AE18F002B1472 /* COutRedirector.cpp in Sources */,
-				3AFF04F9253ADE89002B1472 /* pm_md2.c in Sources */,
 				3AFF0565253AE1F1002B1472 /* PNGLoader.cpp in Sources */,
-				3AFF0507253ADEB7002B1472 /* surface.c in Sources */,
 				3AFF0583253AE32F002B1472 /* Doom3Entity.cpp in Sources */,
 				3AFF04CB253ADC3E002B1472 /* LinearLightList.cpp in Sources */,
 				3AFF04A7253ABD19002B1472 /* RadiantSelectionSystem.cpp in Sources */,
@@ -9065,14 +9245,11 @@
 				3AFF046E253AB93F002B1472 /* UndoSystem.cpp in Sources */,
 				3AFF048C253ABB78002B1472 /* ColourScheme.cpp in Sources */,
 				3AFF04C1253ADB89002B1472 /* GLProgramFactory.cpp in Sources */,
-				3AFF0508253ADEB7002B1472 /* vecmath.c in Sources */,
 				3AFF049C253ABCB1002B1472 /* Entity.cpp in Sources */,
 				3AFF04A4253ABCB1002B1472 /* Transformation.cpp in Sources */,
 				3AFF046F253AB96C002B1472 /* DeflatedInputStream.cpp in Sources */,
-				3AFF04F5253ADE89002B1472 /* pm_ase.c in Sources */,
 				3AFF057F253AE2ED002B1472 /* TargetKeyCollection.cpp in Sources */,
 				3AFF056D253AE23A002B1472 /* XMLFilter.cpp in Sources */,
-				3AFF04FD253ADE89002B1472 /* pm_obj.c in Sources */,
 				3AFF05B2253AE445002B1472 /* TexDef.cpp in Sources */,
 				3AFF04D6253ADD3E002B1472 /* ParticleNode.cpp in Sources */,
 				3AFF059A253AE39A002B1472 /* SplitAlgorithm.cpp in Sources */,
@@ -9093,7 +9270,6 @@
 				3AFF053E253AE0A6002B1472 /* CounterManager.cpp in Sources */,
 				3AFF04B5253ABD6A002B1472 /* SelectionSet.cpp in Sources */,
 				3AFF0474253AB976002B1472 /* RegistryTree.cpp in Sources */,
-				3AFF04F8253ADE89002B1472 /* pm_lwo.c in Sources */,
 				3AFF0546253AE0A6002B1472 /* RegionManager.cpp in Sources */,
 				3AFF04D4253ADCA6002B1472 /* PatchTesselation.cpp in Sources */,
 				3AFF0553253AE18F002B1472 /* StringLogDevice.cpp in Sources */,
@@ -9104,7 +9280,6 @@
 				3AFF0532253AE06B002B1472 /* Models.cpp in Sources */,
 				3AFF058B253AE32F002B1472 /* RotationKey.cpp in Sources */,
 				3AFF0517253ADF6C002B1472 /* MD5Skeleton.cpp in Sources */,
-				3AFF04FC253ADE89002B1472 /* pm_ms3d.c in Sources */,
 				3AFF0555253AE1B6002B1472 /* LayerModule.cpp in Sources */,
 				3AFF04CF253ADCA6002B1472 /* Prefab.cpp in Sources */,
 				3AFF0561253AE1F1002B1472 /* ImageLoader.cpp in Sources */,
@@ -9123,7 +9298,6 @@
 				3AFF04B9253ABD7F002B1472 /* ShaderClipboard.cpp in Sources */,
 				3AFF0585253AE32F002B1472 /* EntitySettings.cpp in Sources */,
 				3AFF04A0253ABCB1002B1472 /* Patch.cpp in Sources */,
-				3AFF0502253ADEB7002B1472 /* lwio.c in Sources */,
 				3AFF050F253ADF3F002B1472 /* Lwo2Chunk.cpp in Sources */,
 				3AFF052E253AE048002B1472 /* Doom3MapWriter.cpp in Sources */,
 				3AFF06D8253BFD34002B1472 /* ddslib.cpp in Sources */,
@@ -9133,7 +9307,6 @@
 				3AFF04E4253ADDFC002B1472 /* ModelCache.cpp in Sources */,
 				3AFF04D9253ADD3E002B1472 /* RenderableParticle.cpp in Sources */,
 				3AFF0533253AE06B002B1472 /* MapExporter.cpp in Sources */,
-				3AFF0501253ADEB7002B1472 /* list.c in Sources */,
 				3AFF0527253AE031002B1472 /* PortableMapWriter.cpp in Sources */,
 				3AFF0513253ADF6C002B1472 /* MD5AnimationCache.cpp in Sources */,
 				3AFF04E2253ADDAB002B1472 /* ModuleRegistry.cpp in Sources */,
@@ -9151,7 +9324,6 @@
 				3AFF044A253AB5B2002B1472 /* ConversationCommand.cpp in Sources */,
 				3AFF044B253AB5B2002B1472 /* CommandEditor.cpp in Sources */,
 				3AFF06D7253BFD31002B1472 /* dds.cpp in Sources */,
-				3AFF04FA253ADE89002B1472 /* pm_md3.c in Sources */,
 				3AFF0570253AE272002B1472 /* CurveCatmullRom.cpp in Sources */,
 				3AFF056F253AE272002B1472 /* Curve.cpp in Sources */,
 				3AFF0510253ADF3F002B1472 /* Lwo2Exporter.cpp in Sources */,
@@ -9180,8 +9352,6 @@
 				3AFF0587253AE32F002B1472 /* KeyValueObserver.cpp in Sources */,
 				3AFF04A3253ABCB1002B1472 /* Shader.cpp in Sources */,
 				3AFF04D3253ADCA6002B1472 /* PatchRenderables.cpp in Sources */,
-				3AFF04F2253ADE89002B1472 /* picomodel.c in Sources */,
-				3AFF0500253ADEB7002B1472 /* envelope.c in Sources */,
 				3AFF04D5253ADD3E002B1472 /* ParticleDef.cpp in Sources */,
 				3AFF04E0253ADD6E002B1472 /* NamespaceFactory.cpp in Sources */,
 				3AFF05B0253AE445002B1472 /* FacePlane.cpp in Sources */,
@@ -9198,7 +9368,6 @@
 				3AFF0538253AE08A002B1472 /* InfoFileManager.cpp in Sources */,
 				3AFF04D1253ADCA6002B1472 /* PatchModule.cpp in Sources */,
 				3AFF052F253AE048002B1472 /* Doom3PrefabFormat.cpp in Sources */,
-				3AFF04FE253ADE89002B1472 /* pm_terrain.c in Sources */,
 				3AFF0540253AE0A6002B1472 /* MapFileManager.cpp in Sources */,
 				3AFF0582253AE32F002B1472 /* AngleKey.cpp in Sources */,
 				3AFF0577253AE2A7002B1472 /* GenericEntityNode.cpp in Sources */,
@@ -9212,7 +9381,6 @@
 				3AFF044F253AB5B2002B1472 /* ConversationEditor.cpp in Sources */,
 				3AFF04B0253ABD4D002B1472 /* ModelScaleManipulator.cpp in Sources */,
 				3AFF06E0253C01D9002B1472 /* SelectionTestWalkers.cpp in Sources */,
-				3AFF0505253ADEB7002B1472 /* lwob.c in Sources */,
 				3AFF0526253AE031002B1472 /* PortableMapReader.cpp in Sources */,
 				3AFF0545253AE0A6002B1472 /* PointFile.cpp in Sources */,
 				3AFF0574253AE283002B1472 /* Doom3GroupNode.cpp in Sources */,
@@ -9224,7 +9392,6 @@
 				3AFF0521253AE020002B1472 /* BrushDef3.cpp in Sources */,
 				3AFF04DC253ADD3E002B1472 /* StageDef.cpp in Sources */,
 				3AFF0581253AE2ED002B1472 /* TargetManager.cpp in Sources */,
-				3AFF04F0253ADE89002B1472 /* picointernal.c in Sources */,
 				3AFF050E253ADF3F002B1472 /* AseExporter.cpp in Sources */,
 				3AFF0450253AB5B2002B1472 /* CommandArgumentItem.cpp in Sources */,
 				3AFF0472253AB96C002B1472 /* Doom3FileSystemModule.cpp in Sources */,
@@ -9239,15 +9406,12 @@
 				3AFF04C2253ADB89002B1472 /* OpenGLShader.cpp in Sources */,
 				3AFF047A253ABA04002B1472 /* Doom3ShaderSystem.cpp in Sources */,
 				3AFF0573253AE283002B1472 /* Doom3Group.cpp in Sources */,
-				3AFF04F4253ADE89002B1472 /* pm_3ds.c in Sources */,
 				3AFF053F253AE0A6002B1472 /* Map.cpp in Sources */,
 				3AFF04B4253ABD6A002B1472 /* SelectionSetModule.cpp in Sources */,
 				3AFF04AB253ABD35002B1472 /* SelectionGroupInfoFileModule.cpp in Sources */,
-				3AFF04F6253ADE89002B1472 /* pm_fm.c in Sources */,
 				3AFF055F253AE1F1002B1472 /* BMPLoader.cpp in Sources */,
 				3AFF04BF253ADB77002B1472 /* GLSLBumpProgram.cpp in Sources */,
 				3AFF050C253ADF3F002B1472 /* ModelExporter.cpp in Sources */,
-				3AFF0503253ADEB7002B1472 /* lwo2.c in Sources */,
 				3AFF04AD253ABD4D002B1472 /* DragManipulator.cpp in Sources */,
 				3AFF052D253AE048002B1472 /* Doom3MapReader.cpp in Sources */,
 				3AFF04EA253ADE43002B1472 /* PicoModelModule.cpp in Sources */,
@@ -9259,7 +9423,6 @@
 				3AFF057B253AE2D4002B1472 /* SpeakerNode.cpp in Sources */,
 				3AFF0480253ABA18002B1472 /* GLTextureManager.cpp in Sources */,
 				3AFF04B6253ABD6A002B1472 /* SelectionSetInfoFileModule.cpp in Sources */,
-				3AFF04FF253ADEB7002B1472 /* clip.c in Sources */,
 				3AFF057A253AE2BF002B1472 /* Renderables.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -9268,16 +9431,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3AFF06BA253BF564002B1472 /* ApplicationContextBase.cpp in Sources */,
-				3AFF06BC253BF564002B1472 /* CoreModule.cpp in Sources */,
-				3AFF06BE253BF564002B1472 /* DynamicLibrary.cpp in Sources */,
-				3AFF06C0253BF564002B1472 /* StaticModule.cpp in Sources */,
+				3AC88787253C1E9800E6CCCE /* CoreModule.cpp in Sources */,
+				3AC88788253C1E9800E6CCCE /* DynamicLibrary.cpp in Sources */,
+				3AC88786253C1E9800E6CCCE /* ApplicationContextBase.cpp in Sources */,
+				3AC88789253C1E9800E6CCCE /* StaticModule.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		3AC88784253C1E1E00E6CCCE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3AC88721253C1D5100E6CCCE /* picomodel */;
+			targetProxy = 3AC88783253C1E1E00E6CCCE /* PBXContainerItemProxy */;
+		};
 		3AF475841E6B210F006B26C2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 3AEDE3991E4EEA1F005A8641 /* DarkRadiantMain */;
@@ -9560,6 +9728,101 @@
 		3A01207C1E502F7800A62BC1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		3AC88765253C1D5100E6CCCE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3AC88782253C1DB900E6CCCE /* picomodel.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				EXECUTABLE_PREFIX = lib;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = YES;
+				GCC_ENABLE_CPP_RTTI = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		3AC88766253C1D5100E6CCCE /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3AC88782253C1DB900E6CCCE /* picomodel.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -10759,7 +11022,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = NO;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -10781,8 +11044,6 @@
 				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_CPP_EXCEPTIONS = YES;
-				GCC_ENABLE_CPP_RTTI = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -10811,7 +11072,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = NO;
+				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -10832,8 +11093,6 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_EXTENSION = so;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_CPP_EXCEPTIONS = YES;
-				GCC_ENABLE_CPP_RTTI = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/../../radiantcore/precompiled.cpp";
@@ -10962,6 +11221,15 @@
 			buildConfigurations = (
 				3A01207B1E502F7800A62BC1 /* Debug */,
 				3A01207C1E502F7800A62BC1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3AC88764253C1D5100E6CCCE /* Build configuration list for PBXNativeTarget "picomodel" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3AC88765253C1D5100E6CCCE /* Debug */,
+				3AC88766253C1D5100E6CCCE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
