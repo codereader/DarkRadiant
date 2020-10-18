@@ -196,11 +196,11 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
 
 	_textureChangedListener = GlobalRadiantCore().getMessageBus().addListener(
 		radiant::IMessage::Type::TextureChanged,
-		radiant::TypeListener(UserInterfaceModule::HandleTextureChanged));
+        radiant::TypeListener<radiant::TextureChangedMessage>(UserInterfaceModule::HandleTextureChanged));
 
 	_notificationListener = GlobalRadiantCore().getMessageBus().addListener(
 		radiant::IMessage::Type::Notification,
-		radiant::TypeListener(UserInterfaceModule::HandleNotificationMessage));
+        radiant::TypeListener<radiant::NotificationMessage>(UserInterfaceModule::HandleNotificationMessage));
 
 	// Initialise the AAS UI
 	AasControlDialog::Init();

@@ -156,7 +156,7 @@ void RadiantApp::onStartupEvent(wxCommandEvent& ev)
 	// in which case the GameManager will dispatch a message asking 
 	// for showing a dialog or similar. Connect the listener.
 	_coreModule->get()->getMessageBus().addListener(radiant::IMessage::Type::GameConfigNeeded,
-		radiant::TypeListener(ui::GameSetupDialog::HandleGameConfigMessage));
+        radiant::TypeListener<game::ConfigurationNeeded>(ui::GameSetupDialog::HandleGameConfigMessage));
 	
 	// Pick up all the statically defined modules and register them
 	module::internal::StaticModuleList::RegisterModules();

@@ -17,7 +17,7 @@ private:
 	typedef std::set<ILogDevice*> LogDevices;
 	LogDevices _devices;
 
-	std::map<LogLevel, LogStream> _streams;
+    std::map<LogLevel, std::unique_ptr<LogStream>> _streams;
 
 public:
 	LogWriter();

@@ -11,7 +11,7 @@ LogWriter::LogWriter()
 {
 	for (auto level : AllLogLevels)
 	{
-		_streams.emplace(level, level);
+        _streams.emplace(level, std::make_unique<LogStream>(level));
 	}
 }
 
@@ -30,7 +30,7 @@ void LogWriter::write(const char* p, std::size_t length, LogLevel level)
 std::ostream& LogWriter::getLogStream(LogLevel level)
 {
 	assert(_streams.find(level) != _streams.end());
-	return _streams.at(level);
+	return *_streams.at(level);
 }
 
 std::mutex& LogWriter::getStreamLock()
