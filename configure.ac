@@ -383,6 +383,7 @@ AC_CONFIG_FILES([install/darkradiant.desktop install/i18n//Makefile.in
                  Makefile
                  radiant/Makefile
                  radiantcore/Makefile
+                 test/Makefile
                  install/i18n/Makefile.in
                  doc/Makefile
                  libs/Makefile
