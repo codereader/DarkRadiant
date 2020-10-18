@@ -419,6 +419,9 @@
 		3AC88787253C1E9800E6CCCE /* CoreModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF06B3253BF564002B1472 /* CoreModule.cpp */; };
 		3AC88788253C1E9800E6CCCE /* DynamicLibrary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF06B5253BF564002B1472 /* DynamicLibrary.cpp */; };
 		3AC88789253C1E9800E6CCCE /* StaticModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF06B8253BF564002B1472 /* StaticModule.cpp */; };
+		3AC8878E253C230D00E6CCCE /* MRU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AC8878B253C230D00E6CCCE /* MRU.cpp */; };
+		3AC8878F253C230D00E6CCCE /* MRU.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AC8878C253C230D00E6CCCE /* MRU.h */; };
+		3AC88790253C230D00E6CCCE /* MRUList.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AC8878D253C230D00E6CCCE /* MRUList.h */; };
 		3AE2104E1E5980AF00F5A0A6 /* script.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE0B21E50D8D50062D9AF /* script.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3AE210511E5980B000F5A0A6 /* sound.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE19E1E50DD620062D9AF /* sound.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3AE210561E59811500F5A0A6 /* dm.conversation.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE2701E50E1520062D9AF /* dm.conversation.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -1244,31 +1247,9 @@
 		3AFF044324548BFF002B1472 /* FilterContextMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF043D24548BFF002B1472 /* FilterContextMenu.cpp */; };
 		3AFF044424548BFF002B1472 /* FilterMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF043F24548BFF002B1472 /* FilterMenu.cpp */; };
 		3AFF044524548BFF002B1472 /* FilterOrthoContextMenuItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF044124548BFF002B1472 /* FilterOrthoContextMenuItem.cpp */; };
-		3AFF0448253AB5B2002B1472 /* plugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE2DD1E50E21D0062D9AF /* plugin.cpp */; };
-		3AFF0449253AB5B2002B1472 /* ConversationDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE2D21E50E21D0062D9AF /* ConversationDialog.cpp */; };
-		3AFF044A253AB5B2002B1472 /* ConversationCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE2CC1E50E21D0062D9AF /* ConversationCommand.cpp */; };
-		3AFF044B253AB5B2002B1472 /* CommandEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE2C91E50E21D0062D9AF /* CommandEditor.cpp */; };
-		3AFF044C253AB5B2002B1472 /* ConversationCommandLibrary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE2D01E50E21D0062D9AF /* ConversationCommandLibrary.cpp */; };
-		3AFF044D253AB5B2002B1472 /* ConversationCommandInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE2CE1E50E21D0062D9AF /* ConversationCommandInfo.cpp */; };
-		3AFF044E253AB5B2002B1472 /* ConversationKeyExtractor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE2D91E50E21D0062D9AF /* ConversationKeyExtractor.cpp */; };
-		3AFF044F253AB5B2002B1472 /* ConversationEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE2D41E50E21D0062D9AF /* ConversationEditor.cpp */; };
-		3AFF0450253AB5B2002B1472 /* CommandArgumentItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE2C71E50E21D0062D9AF /* CommandArgumentItem.cpp */; };
-		3AFF0451253AB5B2002B1472 /* ConversationEntity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AEBE2D61E50E21D0062D9AF /* ConversationEntity.cpp */; };
 		3AFF0453253AB5B2002B1472 /* libxmlutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF746AB1E4FADF3003465B5 /* libxmlutil.a */; };
 		3AFF0454253AB5B2002B1472 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AEBDCDE1E50A8350062D9AF /* CoreFoundation.framework */; };
 		3AFF0455253AB5B2002B1472 /* libwxutil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A011FC31E50275700A62BC1 /* libwxutil.a */; };
-		3AFF0457253AB5B2002B1472 /* ConversationCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE2CD1E50E21D0062D9AF /* ConversationCommand.h */; };
-		3AFF0458253AB5B2002B1472 /* ConversationCommandInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE2CF1E50E21D0062D9AF /* ConversationCommandInfo.h */; };
-		3AFF0459253AB5B2002B1472 /* ConversationEntityFinder.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE2D81E50E21D0062D9AF /* ConversationEntityFinder.h */; };
-		3AFF045A253AB5B2002B1472 /* CommandArgumentItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE2C81E50E21D0062D9AF /* CommandArgumentItem.h */; };
-		3AFF045B253AB5B2002B1472 /* ConversationKeyExtractor.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE2DA1E50E21D0062D9AF /* ConversationKeyExtractor.h */; };
-		3AFF045C253AB5B2002B1472 /* ActorNodeFinder.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE2C61E50E21D0062D9AF /* ActorNodeFinder.h */; };
-		3AFF045D253AB5B2002B1472 /* CommandEditor.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE2CA1E50E21D0062D9AF /* CommandEditor.h */; };
-		3AFF045E253AB5B2002B1472 /* ConversationDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE2D31E50E21D0062D9AF /* ConversationDialog.h */; };
-		3AFF045F253AB5B2002B1472 /* ConversationEntity.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE2D71E50E21D0062D9AF /* ConversationEntity.h */; };
-		3AFF0460253AB5B2002B1472 /* ConversationCommandLibrary.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE2D11E50E21D0062D9AF /* ConversationCommandLibrary.h */; };
-		3AFF0461253AB5B2002B1472 /* Conversation.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE2CB1E50E21D0062D9AF /* Conversation.h */; };
-		3AFF0462253AB5B2002B1472 /* ConversationEditor.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AEBE2D51E50E21D0062D9AF /* ConversationEditor.h */; };
 		3AFF0469253AB896002B1472 /* CommandSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F2A1239F4B8F008A1B2D /* CommandSystem.cpp */; };
 		3AFF046C253AB901002B1472 /* Radiant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF046A253AB901002B1472 /* Radiant.cpp */; };
 		3AFF046D253AB901002B1472 /* Radiant.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AFF046B253AB901002B1472 /* Radiant.h */; };
@@ -2864,6 +2845,9 @@
 		3AAAC7201E617F700019C4F2 /* package_bundle.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = package_bundle.sh; sourceTree = SOURCE_ROOT; };
 		3AC88767253C1D5100E6CCCE /* libpicomodel.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libpicomodel.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AC88782253C1DB900E6CCCE /* picomodel.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = picomodel.xcconfig; sourceTree = "<group>"; };
+		3AC8878B253C230D00E6CCCE /* MRU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MRU.cpp; path = ../../radiantcore/map/mru/MRU.cpp; sourceTree = SOURCE_ROOT; };
+		3AC8878C253C230D00E6CCCE /* MRU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MRU.h; path = ../../radiantcore/map/mru/MRU.h; sourceTree = SOURCE_ROOT; };
+		3AC8878D253C230D00E6CCCE /* MRUList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MRUList.h; path = ../../radiantcore/map/mru/MRUList.h; sourceTree = SOURCE_ROOT; };
 		3ADBCC9F1E4E4EDC00CA94F6 /* wxWidgets.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = wxWidgets.framework; path = ../../../../../opt/local/Library/Frameworks/wxWidgets.framework; sourceTree = "<group>"; };
 		3AE20CD31E59687300F5A0A6 /* DarkRadiant.app */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DarkRadiant.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AE20CD51E59687300F5A0A6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -5027,6 +5011,16 @@
 				3AEBE0141E50CB120062D9AF /* pm_terrain.c */,
 			);
 			name = picomodel;
+			sourceTree = "<group>";
+		};
+		3AC8878A253C22EA00E6CCCE /* mru */ = {
+			isa = PBXGroup;
+			children = (
+				3AC8878B253C230D00E6CCCE /* MRU.cpp */,
+				3AC8878C253C230D00E6CCCE /* MRU.h */,
+				3AC8878D253C230D00E6CCCE /* MRUList.h */,
+			);
+			name = mru;
 			sourceTree = "<group>";
 		};
 		3ADBCC681E4E4B7C00CA94F6 = {
@@ -7513,6 +7507,7 @@
 		3AFF04DD253ADD64002B1472 /* map */ = {
 			isa = PBXGroup;
 			children = (
+				3AC8878A253C22EA00E6CCCE /* mru */,
 				3AE6F375239F5D35008A1B2D /* aas */,
 				3AF7437A1E4F861A003465B5 /* algorithm */,
 				3AF743881E4F861A003465B5 /* AutoSaver.cpp */,
@@ -8147,34 +8142,24 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3AFF0457253AB5B2002B1472 /* ConversationCommand.h in Headers */,
 				3AFF051B253ADF91002B1472 /* MessageBus.h in Headers */,
-				3AFF0458253AB5B2002B1472 /* ConversationCommandInfo.h in Headers */,
 				3AFF0564253AE1F1002B1472 /* JPEGLoader.h in Headers */,
 				3AFF0495253ABBBA002B1472 /* LocalisationModule.h in Headers */,
-				3AFF0459253AB5B2002B1472 /* ConversationEntityFinder.h in Headers */,
 				3AFF048D253ABB78002B1472 /* ColourScheme.h in Headers */,
-				3AFF045A253AB5B2002B1472 /* CommandArgumentItem.h in Headers */,
 				3AFF0560253AE1F1002B1472 /* BMPLoader.h in Headers */,
 				3AFF05A8253AE3D1002B1472 /* CameraManager.h in Headers */,
 				3AFF054C253AE111002B1472 /* RenderableAasFile.h in Headers */,
 				3AFF046D253AB901002B1472 /* Radiant.h in Headers */,
 				3AFF0566253AE1F1002B1472 /* PNGLoader.h in Headers */,
-				3AFF045B253AB5B2002B1472 /* ConversationKeyExtractor.h in Headers */,
+				3AC88790253C230D00E6CCCE /* MRUList.h in Headers */,
+				3AC8878F253C230D00E6CCCE /* MRU.h in Headers */,
 				3AFF04C9253ADC33002B1472 /* SharedOpenGLContextModule.h in Headers */,
-				3AFF045C253AB5B2002B1472 /* ActorNodeFinder.h in Headers */,
-				3AFF045D253AB5B2002B1472 /* CommandEditor.h in Headers */,
-				3AFF045E253AB5B2002B1472 /* ConversationDialog.h in Headers */,
 				3AFF0562253AE1F1002B1472 /* ImageLoader.h in Headers */,
 				3AFF0497253ABBBA002B1472 /* LocalisationProvider.h in Headers */,
-				3AFF045F253AB5B2002B1472 /* ConversationEntity.h in Headers */,
 				3AFF0599253AE39A002B1472 /* BrushByPlaneClipper.h in Headers */,
-				3AFF0460253AB5B2002B1472 /* ConversationCommandLibrary.h in Headers */,
 				3AFF05A6253AE3D1002B1472 /* Camera.h in Headers */,
 				3AFF0591253AE342002B1472 /* EntityModule.h in Headers */,
 				3AFF048F253ABB78002B1472 /* ColourSchemeManager.h in Headers */,
-				3AFF0461253AB5B2002B1472 /* Conversation.h in Headers */,
-				3AFF0462253AB5B2002B1472 /* ConversationEditor.h in Headers */,
 				3AFF059B253AE39A002B1472 /* SplitAlgorithm.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -9185,7 +9170,6 @@
 				3AFF0572253AE272002B1472 /* CurveNURBS.cpp in Sources */,
 				3AFF0529253AE048002B1472 /* Quake3MapReader.cpp in Sources */,
 				3AFF0525253AE031002B1472 /* PortableMapFormat.cpp in Sources */,
-				3AFF0448253AB5B2002B1472 /* plugin.cpp in Sources */,
 				3AFF04EB253ADE43002B1472 /* PicoModelNode.cpp in Sources */,
 				3AFF059F253AE3A8002B1472 /* ClipPoint.cpp in Sources */,
 				3AFF04D7253ADD3E002B1472 /* ParticleParameter.cpp in Sources */,
@@ -9216,6 +9200,7 @@
 				3AFF0583253AE32F002B1472 /* Doom3Entity.cpp in Sources */,
 				3AFF04CB253ADC3E002B1472 /* LinearLightList.cpp in Sources */,
 				3AFF04A7253ABD19002B1472 /* RadiantSelectionSystem.cpp in Sources */,
+				3AC8878E253C230D00E6CCCE /* MRU.cpp in Sources */,
 				3AFF0548253AE0C7002B1472 /* MapFormatManager.cpp in Sources */,
 				3AFF056B253AE23A002B1472 /* XmlFilterEventAdapter.cpp in Sources */,
 				3AFF0486253ABB59002B1472 /* PreferencePage.cpp in Sources */,
@@ -9265,7 +9250,6 @@
 				3AFF049E253ABCB1002B1472 /* Group.cpp in Sources */,
 				3AFF0567253AE222002B1472 /* FontLoader.cpp in Sources */,
 				3AFF0586253AE32F002B1472 /* KeyValue.cpp in Sources */,
-				3AFF0449253AB5B2002B1472 /* ConversationDialog.cpp in Sources */,
 				3AFF0588253AE32F002B1472 /* ModelKey.cpp in Sources */,
 				3AFF053E253AE0A6002B1472 /* CounterManager.cpp in Sources */,
 				3AFF04B5253ABD6A002B1472 /* SelectionSet.cpp in Sources */,
@@ -9321,8 +9305,6 @@
 				3AFF0541253AE0A6002B1472 /* MapPosition.cpp in Sources */,
 				3AFF0580253AE2ED002B1472 /* TargetLineNode.cpp in Sources */,
 				3AFF052B253AE048002B1472 /* Quake4MapReader.cpp in Sources */,
-				3AFF044A253AB5B2002B1472 /* ConversationCommand.cpp in Sources */,
-				3AFF044B253AB5B2002B1472 /* CommandEditor.cpp in Sources */,
 				3AFF06D7253BFD31002B1472 /* dds.cpp in Sources */,
 				3AFF0570253AE272002B1472 /* CurveCatmullRom.cpp in Sources */,
 				3AFF056F253AE272002B1472 /* Curve.cpp in Sources */,
@@ -9343,7 +9325,6 @@
 				3AFF0484253ABB59002B1472 /* GameManager.cpp in Sources */,
 				3AFF04A9253ABD19002B1472 /* TransformationVisitors.cpp in Sources */,
 				3AFF04DA253ADD3E002B1472 /* RenderableParticleBunch.cpp in Sources */,
-				3AFF044C253AB5B2002B1472 /* ConversationCommandLibrary.cpp in Sources */,
 				3AFF04B8253ABD7F002B1472 /* ClosestTexturableFinder.cpp in Sources */,
 				3AFF05B5253AE445002B1472 /* Winding.cpp in Sources */,
 				3AFF04E5253ADDFC002B1472 /* ModelFormatManager.cpp in Sources */,
@@ -9355,7 +9336,6 @@
 				3AFF04D5253ADD3E002B1472 /* ParticleDef.cpp in Sources */,
 				3AFF04E0253ADD6E002B1472 /* NamespaceFactory.cpp in Sources */,
 				3AFF05B0253AE445002B1472 /* FacePlane.cpp in Sources */,
-				3AFF044D253AB5B2002B1472 /* ConversationCommandInfo.cpp in Sources */,
 				3AFF05AE253AE445002B1472 /* Face.cpp in Sources */,
 				3AFF047C253ABA04002B1472 /* ShaderExpression.cpp in Sources */,
 				3AFF04D8253ADD3E002B1472 /* ParticlesManager.cpp in Sources */,
@@ -9363,7 +9343,6 @@
 				3AFF04AF253ABD4D002B1472 /* ManipulatorComponents.cpp in Sources */,
 				3AFF04E9253ADE43002B1472 /* PicoModelLoader.cpp in Sources */,
 				3AFF05AF253AE445002B1472 /* FaceInstance.cpp in Sources */,
-				3AFF044E253AB5B2002B1472 /* ConversationKeyExtractor.cpp in Sources */,
 				3AFF04BB253ADB16002B1472 /* Octree.cpp in Sources */,
 				3AFF0538253AE08A002B1472 /* InfoFileManager.cpp in Sources */,
 				3AFF04D1253ADCA6002B1472 /* PatchModule.cpp in Sources */,
@@ -9378,7 +9357,6 @@
 				3AFF052A253AE048002B1472 /* Quake4MapFormat.cpp in Sources */,
 				3AFF0512253ADF6C002B1472 /* MD5Anim.cpp in Sources */,
 				3AFF0471253AB96C002B1472 /* Doom3FileSystem.cpp in Sources */,
-				3AFF044F253AB5B2002B1472 /* ConversationEditor.cpp in Sources */,
 				3AFF04B0253ABD4D002B1472 /* ModelScaleManipulator.cpp in Sources */,
 				3AFF06E0253C01D9002B1472 /* SelectionTestWalkers.cpp in Sources */,
 				3AFF0526253AE031002B1472 /* PortableMapReader.cpp in Sources */,
@@ -9393,7 +9371,6 @@
 				3AFF04DC253ADD3E002B1472 /* StageDef.cpp in Sources */,
 				3AFF0581253AE2ED002B1472 /* TargetManager.cpp in Sources */,
 				3AFF050E253ADF3F002B1472 /* AseExporter.cpp in Sources */,
-				3AFF0450253AB5B2002B1472 /* CommandArgumentItem.cpp in Sources */,
 				3AFF0472253AB96C002B1472 /* Doom3FileSystemModule.cpp in Sources */,
 				3AFF0511253ADF3F002B1472 /* WavefrontExporter.cpp in Sources */,
 				3AFF058C253AE32F002B1472 /* RotationMatrix.cpp in Sources */,
@@ -9415,7 +9392,6 @@
 				3AFF04AD253ABD4D002B1472 /* DragManipulator.cpp in Sources */,
 				3AFF052D253AE048002B1472 /* Doom3MapReader.cpp in Sources */,
 				3AFF04EA253ADE43002B1472 /* PicoModelModule.cpp in Sources */,
-				3AFF0451253AB5B2002B1472 /* ConversationEntity.cpp in Sources */,
 				3AFF04A5253ABCC5002B1472 /* Clipboard.cpp in Sources */,
 				3AFF04E7253ADDFC002B1472 /* NullModelNode.cpp in Sources */,
 				3AFF0552253AE18F002B1472 /* LogWriter.cpp in Sources */,
