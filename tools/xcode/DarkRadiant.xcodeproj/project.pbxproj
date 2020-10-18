@@ -1587,6 +1587,9 @@
 		3AFF06D9253BFD38002B1472 /* TGALoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F36C239F5C9F008A1B2D /* TGALoader.cpp */; };
 		3AFF06DF253C01D5002B1472 /* SelectionTestWalkers.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AFF06DD253C01D5002B1472 /* SelectionTestWalkers.h */; };
 		3AFF06E0253C01D9002B1472 /* SelectionTestWalkers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF06DC253C01D5002B1472 /* SelectionTestWalkers.cpp */; };
+		3AFF06E1253C04C8002B1472 /* DarkRadiantCore.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AFF0466253AB5B3002B1472 /* DarkRadiantCore.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		3AFF06EB253C130F002B1472 /* precompiled.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AFF06E9253C130E002B1472 /* precompiled.h */; };
+		3AFF06EC253C131A002B1472 /* precompiled.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF06E8253C130E002B1472 /* precompiled.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1781,6 +1784,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 6;
 			files = (
+				3AFF06E1253C04C8002B1472 /* DarkRadiantCore.so in CopyFiles */,
 				3AE210561E59811500F5A0A6 /* dm.conversation.so in CopyFiles */,
 				3AE210571E59811500F5A0A6 /* dm.difficulty.so in CopyFiles */,
 				3AE210581E59811500F5A0A6 /* dm.editing.so in CopyFiles */,
@@ -4332,6 +4336,8 @@
 		3AFF06DB253BFF64002B1472 /* png.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = png.xcconfig; sourceTree = "<group>"; };
 		3AFF06DC253C01D5002B1472 /* SelectionTestWalkers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SelectionTestWalkers.cpp; path = ../../radiantcore/selection/SelectionTestWalkers.cpp; sourceTree = "<group>"; };
 		3AFF06DD253C01D5002B1472 /* SelectionTestWalkers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SelectionTestWalkers.h; path = ../../radiantcore/selection/SelectionTestWalkers.h; sourceTree = "<group>"; };
+		3AFF06E8253C130E002B1472 /* precompiled.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = precompiled.cpp; path = ../../radiantcore/precompiled.cpp; sourceTree = SOURCE_ROOT; };
+		3AFF06E9253C130E002B1472 /* precompiled.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = precompiled.h; path = ../../radiantcore/precompiled.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -7354,6 +7360,8 @@
 				3AF743BD1E4F861A003465B5 /* modulesystem */,
 				3AE6F3E123B1B723008A1B2D /* particles */,
 				3AF743D11E4F861A003465B5 /* patch */,
+				3AFF06E8253C130E002B1472 /* precompiled.cpp */,
+				3AFF06E9253C130E002B1472 /* precompiled.h */,
 				3AFF046A253AB901002B1472 /* Radiant.cpp */,
 				3AFF046B253AB901002B1472 /* Radiant.h */,
 				3AF743ED1E4F861A003465B5 /* rendersystem */,
@@ -8046,6 +8054,7 @@
 				3AFF067A253BF4D3002B1472 /* IconTextMenuItem.h in Headers */,
 				3AFF067B253BF4D3002B1472 /* EntityClassChooser.h in Headers */,
 				3AFF067C253BF4D3002B1472 /* Modifier.h in Headers */,
+				3AFF06EB253C130F002B1472 /* precompiled.h in Headers */,
 				3AFF067D253BF4D3002B1472 /* KeyEventFilter.h in Headers */,
 				3AFF06BF253BF564002B1472 /* DynamicLibrary.h in Headers */,
 				3AFF067E253BF4D3002B1472 /* VFSTreePopulator.h in Headers */,
@@ -9104,6 +9113,7 @@
 				3AFF056C253AE23A002B1472 /* BasicFilterSystem.cpp in Sources */,
 				3AFF04BE253ADB77002B1472 /* GenericVFPProgram.cpp in Sources */,
 				3AFF0556253AE1B6002B1472 /* LayerInfoFileModule.cpp in Sources */,
+				3AFF06EC253C131A002B1472 /* precompiled.cpp in Sources */,
 				3AFF05AC253AE445002B1472 /* BrushModule.cpp in Sources */,
 				3AFF05A5253AE3D1002B1472 /* Camera.cpp in Sources */,
 				3AFF04ED253ADE43002B1472 /* RenderablePicoSurface.cpp in Sources */,
@@ -10765,7 +10775,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@executable_path/";
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../modules/";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -10775,6 +10785,8 @@
 				GCC_ENABLE_CPP_RTTI = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SRCROOT)/../../radiantcore/precompiled.cpp";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -10815,7 +10827,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@executable_path/";
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../modules/";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				EXECUTABLE_EXTENSION = so;
@@ -10823,6 +10835,8 @@
 				GCC_ENABLE_CPP_EXCEPTIONS = YES;
 				GCC_ENABLE_CPP_RTTI = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SRCROOT)/../../radiantcore/precompiled.cpp";
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;

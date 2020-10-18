@@ -1,5 +1,5 @@
 /**
- * greebo: Precompiled header file used by the main module.
+ * greebo: Precompiled header file used by the core module.
  */
 #pragma once
 
