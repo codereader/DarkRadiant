@@ -4326,6 +4326,8 @@
 		3AFF06B6253BF564002B1472 /* DynamicLibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DynamicLibrary.h; path = ../../libs/module/DynamicLibrary.h; sourceTree = "<group>"; };
 		3AFF06B8253BF564002B1472 /* StaticModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StaticModule.cpp; path = ../../libs/module/StaticModule.cpp; sourceTree = "<group>"; };
 		3AFF06B9253BF564002B1472 /* StaticModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StaticModule.h; path = ../../libs/module/StaticModule.h; sourceTree = "<group>"; };
+		3AFF06DA253BFF12002B1472 /* jpeg.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = jpeg.xcconfig; sourceTree = "<group>"; };
+		3AFF06DB253BFF64002B1472 /* png.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = png.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -4913,6 +4915,8 @@
 				3AEDE3951E4ED9C3005A8641 /* wxwidgets.xcconfig */,
 				3AEBDC881E5067630062D9AF /* zlib.xcconfig */,
 				3AFF064A253B6966002B1472 /* dm.difficulty.xcconfig */,
+				3AFF06DA253BFF12002B1472 /* jpeg.xcconfig */,
+				3AFF06DB253BFF64002B1472 /* png.xcconfig */,
 			);
 			name = Configuration;
 			sourceTree = "<group>";

@@ -1,0 +1,10 @@
+//
+//  png.xcconfig
+//  DarkRadiant
+//
+//  Created by greebo on 18/10/20.
+//
+//
+PNGCPP_HEADER_SEARCH_PATHS = "/opt/local/include/"
+PNGCPP_LIBRARY_SEARCH_PATHS = "/opt/local/lib/"
+PNGCPP_LINKFLAGS = "-lpng"

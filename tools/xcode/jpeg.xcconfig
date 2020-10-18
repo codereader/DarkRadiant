@@ -1,0 +1,10 @@
+//
+//  jpeg.xcconfig
+//  DarkRadiant
+//
+//  Created by greebo on 18/10/20.
+//
+//
+JPEGCPP_HEADER_SEARCH_PATHS = "/opt/local/include/"
+JPEGCPP_LIBRARY_SEARCH_PATHS = "/opt/local/lib/"
+JPEGCPP_LINKFLAGS = "-ljpeg"
