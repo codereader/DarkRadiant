@@ -1585,6 +1585,8 @@
 		3AFF06D7253BFD31002B1472 /* dds.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F361239F5C9F008A1B2D /* dds.cpp */; };
 		3AFF06D8253BFD34002B1472 /* ddslib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F365239F5C9F008A1B2D /* ddslib.cpp */; };
 		3AFF06D9253BFD38002B1472 /* TGALoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F36C239F5C9F008A1B2D /* TGALoader.cpp */; };
+		3AFF06DF253C01D5002B1472 /* SelectionTestWalkers.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AFF06DD253C01D5002B1472 /* SelectionTestWalkers.h */; };
+		3AFF06E0253C01D9002B1472 /* SelectionTestWalkers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF06DC253C01D5002B1472 /* SelectionTestWalkers.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -4328,6 +4330,8 @@
 		3AFF06B9253BF564002B1472 /* StaticModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StaticModule.h; path = ../../libs/module/StaticModule.h; sourceTree = "<group>"; };
 		3AFF06DA253BFF12002B1472 /* jpeg.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = jpeg.xcconfig; sourceTree = "<group>"; };
 		3AFF06DB253BFF64002B1472 /* png.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = png.xcconfig; sourceTree = "<group>"; };
+		3AFF06DC253C01D5002B1472 /* SelectionTestWalkers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SelectionTestWalkers.cpp; path = ../../radiantcore/selection/SelectionTestWalkers.cpp; sourceTree = "<group>"; };
+		3AFF06DD253C01D5002B1472 /* SelectionTestWalkers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SelectionTestWalkers.h; path = ../../radiantcore/selection/SelectionTestWalkers.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -6535,6 +6539,8 @@
 		3AF744121E4F861A003465B5 /* selection */ = {
 			isa = PBXGroup;
 			children = (
+				3AFF06DC253C01D5002B1472 /* SelectionTestWalkers.cpp */,
+				3AFF06DD253C01D5002B1472 /* SelectionTestWalkers.h */,
 				3AF744131E4F861A003465B5 /* algorithm */,
 				3AF7442C1E4F861B003465B5 /* BasicSelectable.h */,
 				3AF7442F1E4F861B003465B5 /* BestSelector.h */,
@@ -8033,6 +8039,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3AFF0676253BF4D3002B1472 /* DirChooser.h in Headers */,
+				3AFF06DF253C01D5002B1472 /* SelectionTestWalkers.h in Headers */,
 				3AFF0677253BF4D3002B1472 /* GuiView.h in Headers */,
 				3AFF0678253BF4D3002B1472 /* FileChooser.h in Headers */,
 				3AFF0679253BF4D3002B1472 /* PanedPosition.h in Headers */,
@@ -9194,6 +9201,7 @@
 				3AFF0471253AB96C002B1472 /* Doom3FileSystem.cpp in Sources */,
 				3AFF044F253AB5B2002B1472 /* ConversationEditor.cpp in Sources */,
 				3AFF04B0253ABD4D002B1472 /* ModelScaleManipulator.cpp in Sources */,
+				3AFF06E0253C01D9002B1472 /* SelectionTestWalkers.cpp in Sources */,
 				3AFF0505253ADEB7002B1472 /* lwob.c in Sources */,
 				3AFF0526253AE031002B1472 /* PortableMapReader.cpp in Sources */,
 				3AFF0545253AE0A6002B1472 /* PointFile.cpp in Sources */,
