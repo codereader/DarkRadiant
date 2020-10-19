@@ -401,12 +401,11 @@ namespace module
 	private:
 		const char* const _moduleName;
 		ModuleType* _instancePtr;
-		IModuleRegistry::InstanceId _registryInstanceId;
+
 	public:
 		InstanceReference(const char* const moduleName) :
 			_moduleName(moduleName),
-			_instancePtr(nullptr),
-			_registryInstanceId(0)
+			_instancePtr(nullptr)
 		{
 			acquireReference();
 		}
@@ -414,25 +413,26 @@ namespace module
 		// Cast-operator used to access the module reference
 		inline operator ModuleType&()
 		{
-#ifdef MODULE_REFERENCES_SUPPORT_INVALIDATION
 			// Check if we have an instance or if it is outdated
-			if (_instancePtr == nullptr ||
-				_registryInstanceId != GlobalModuleRegistry().getInstanceId())
-			{
+			if (_instancePtr == nullptr)
+            {
 				acquireReference();
 			}
-#endif
+
 			return *_instancePtr;
 		}
 
 	private:
 		void acquireReference()
 		{
-			_instancePtr = std::dynamic_pointer_cast<ModuleType>(
-				GlobalModuleRegistry().getModule(_moduleName)).get();
-			// Save the instance ID of the registry - if this ever changes 
-			// the above reference is treated as invalid
-			_registryInstanceId = GlobalModuleRegistry().getInstanceId();
+            auto& registry = GlobalModuleRegistry();
+
+			_instancePtr = std::dynamic_pointer_cast<ModuleType>(registry.getModule(_moduleName)).get();
+
+            registry.signal_allModulesUninitialised().connect([this]
+            {
+                _instancePtr = nullptr;
+            });
 		}
 	};
 
