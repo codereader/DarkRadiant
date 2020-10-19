@@ -2,8 +2,9 @@ AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs \
                $(XML_CFLAGS)
 
 bin_PROGRAMS = test
+testdir = $(pkglibdir)/bin/
 test_CPPFLAGS = $(AM_CPPFLAGS) 
-test_LDFLAGS = -lgtest -lgtest_main \
+test_LDFLAGS = -lgtest -lgtest_main -lX11 \
                 $(XML_LIBS) \
                 $(GLEW_LIBS) \
                 $(GL_LIBS) \

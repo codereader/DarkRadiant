@@ -1,6 +1,6 @@
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = libs radiantcore radiant plugins install/i18n doc #test
+SUBDIRS = libs radiantcore radiant plugins install/i18n doc test
 
 # Install data and stuff
 gamedir = $(pkgdatadir)/games
