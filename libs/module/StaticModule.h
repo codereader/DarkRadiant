@@ -28,8 +28,12 @@ namespace internal
 /**
  * Static container holding the modules registered by
  * the StaticModule<T> helper. They will be picked up
- * and acquired by the ModuleRegistry, after which point
- * this list will be cleared.
+ * and acquired by the ModuleRegistry. 
+ * To support scenarios like the unit test runner (where the 
+ * modules are repeatedly loaded, initialised and shut down
+ * again) the module list is not cleared after registration,
+ * such that another startup event will have the full set of 
+ * modules properly registered.
  */
 typedef std::function<RegisterableModulePtr()> ModuleCreationFunc;
 
@@ -37,9 +41,6 @@ class StaticModuleList :
     private std::list<ModuleCreationFunc>
 {
 public:
-
-    ~StaticModuleList();
-
     static void Add(const ModuleCreationFunc& creationFunc);
 
     // Creates all pre-registered modules and submits them to the registry
