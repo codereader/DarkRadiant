@@ -726,11 +726,15 @@ Matrix4 Light::getLightTextureTransformation() const
     }
 }
 
-/* This is needed for the drag manipulator to check the aabb of the light volume only (excl. the light center)
- */
+// AABB for light volume only (excluding the light_center which might be
+// outside the volume), used for drag manipulator and render culling.
 AABB Light::lightAABB() const
 {
-    return AABB(_originTransformed, m_doom3Radius.m_radiusTransformed);
+    if (isProjected())
+        // Return Frustum AABB in *world* space
+        return _frustum.getTransformedBy(_owner.localToParent()).getAABB();
+    else
+        return AABB(_originTransformed, m_doom3Radius.m_radiusTransformed);
 }
 
 bool Light::intersectsAABB(const AABB& other) const
