@@ -16,6 +16,7 @@
 #include <cmath>
 #include <istream>
 #include <ostream>
+#include <sstream>
 
 #include <float.h>
 #include "math/pi.h"
@@ -98,16 +99,22 @@ public:
     const Element& y() const { return _v[1]; }
     const Element& z() const { return _v[2]; }
 
-    /** Compare this BasicVector3 against another for equality.
-     */
+    /// Return human readable debug string (pretty print)
+    std::string pp() const
+    {
+        std::stringstream ss;
+        ss << "[" << x() << ", " << y() << ", " << z() << "]";
+        return ss.str();
+    }
+
+    /// Compare this BasicVector3 against another for equality.
     bool operator== (const BasicVector3& other) const {
         return (other.x() == x()
                 && other.y() == y()
                 && other.z() == z());
     }
 
-    /** Compare this BasicVector3 against another for inequality.
-     */
+    /// Compare this BasicVector3 against another for inequality.
     bool operator!= (const BasicVector3& other) const {
         return !(*this == other);
     }

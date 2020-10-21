@@ -652,7 +652,7 @@ public:
         // Calculate intersections between lights and renderables we have received
         calculateLightIntersections();
 
-        // For each shader in the map
+        // Render legacy renderables with submitted light lists
         for (auto i = _legacyRenderables.begin();
              i != _legacyRenderables.end();
              ++i)
@@ -666,6 +666,19 @@ public:
                 const LegacyLitRenderable& lr = *j;
                 shader->addRenderable(lr.renderable, lr.local2World,
                                       lr.lights, lr.entity);
+            }
+        }
+
+        // Render objects with calculated light lists
+        for (auto i = _litRenderables.begin(); i != _litRenderables.end(); ++i)
+        {
+            Shader* shader = i->first;
+            wxASSERT(shader);
+            for (auto j = i->second.begin(); j != i->second.end(); ++j)
+            {
+                const LitRenderable& lr = *j;
+                shader->addRenderable(lr.renderable, lr.local2World,
+                                      &lr.lights, lr.entity);
             }
         }
 
@@ -747,7 +760,7 @@ public:
     }
 
     void addLitRenderable(Shader& shader,
-                          OpenGLRenderable& renderable,
+                          const OpenGLRenderable& renderable,
                           const Matrix4& localToWorld,
                           const LitObject& litObject,
                           const IRenderEntity* entity = nullptr) override

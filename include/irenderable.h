@@ -80,7 +80,7 @@ public:
      *
      */
     virtual void addLitRenderable(Shader& shader,
-                                  OpenGLRenderable& renderable,
+                                  const OpenGLRenderable& renderable,
                                   const Matrix4& localToWorld,
                                   const LitObject& litObject,
                                   const IRenderEntity* entity = nullptr) = 0;
