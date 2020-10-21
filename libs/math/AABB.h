@@ -281,13 +281,11 @@ inline void AABB::getPlanes(Plane3 planes[6]) const
 	planes[5] = Plane3(-g_vector3_axes[2], -(origin[2] - extents[2]));
 }
 
-/**
- * Stream insertion for AABB class.
- */
+/// Stream insertion for AABB class.
 inline std::ostream& operator<< (std::ostream& os, const AABB& aabb)
 {
-	os << "AABB(origin=" << aabb.getOrigin() << ", extents=" << aabb.getExtents() << ")";
-	return os;
+	return os << "AABB(origin=" << aabb.getOrigin().pp()
+              << ", extents=" << aabb.getExtents().pp() << ")";
 }
 
 class AABBExtendByPoint
