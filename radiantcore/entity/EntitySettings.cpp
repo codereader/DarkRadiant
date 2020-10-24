@@ -39,10 +39,12 @@ void EntitySettings::initialiseAndObserveKey(const std::string& key, bool& targe
 
 EntitySettingsPtr& EntitySettings::InstancePtr()
 {
-	static EntitySettingsPtr _entitySettingsInstancePtr(new EntitySettings);
+	static EntitySettingsPtr _entitySettingsInstancePtr;
 
-	// Put an assertion here to catch calls after shutdown
-	assert(_entitySettingsInstancePtr);
+	if (!_entitySettingsInstancePtr)
+	{
+		_entitySettingsInstancePtr.reset(new EntitySettings);
+	}
 
 	return _entitySettingsInstancePtr;
 }
