@@ -202,12 +202,12 @@ darkradiant_SOURCES = main.cpp \
                       map/StartupMapLoader.cpp \
                       log/Console.cpp
 
-check_PROGRAMS = facePlaneTest vfsTest shadersTest
-TESTS = $(check_PROGRAMS)
+#check_PROGRAMS = facePlaneTest vfsTest shadersTest
+#TESTS = $(check_PROGRAMS)
 
-facePlaneTest_SOURCES = test/facePlaneTest.cpp \
-                        brush/FacePlane.cpp
-facePlaneTest_LDADD = $(top_builddir)/libs/math/libmath.la
+#facePlaneTest_SOURCES = test/facePlaneTest.cpp \
+#                        brush/FacePlane.cpp
+#facePlaneTest_LDADD = $(top_builddir)/libs/math/libmath.la
 
 #vfsTest_SOURCES = test/vfsTest.cpp $(VFS_SOURCES)
 #vfsTest_LDFLAGS = $(FILESYSTEM_LIBS) $(Z_LIBS)

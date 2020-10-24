@@ -306,6 +306,14 @@ else
     AC_MSG_NOTICE([Using the fmtlib headers shipped with the sources (header-only mode)])
 fi
 
+# Check for google test framework
+AC_CHECK_HEADER([gtest/gtest.h], [test_subdir=test], [test_subdir=''])
+# We assume that if gtest_main is present, gtest is present too
+AC_CHECK_LIB([gtest_main], [main], 
+    [AC_MSG_NOTICE(Google test headers and libraries are present)], 
+    [test_subdir=''])
+AC_SUBST([test_subdir])
+
 # dynamic link library
 AC_CHECK_LIB([dl], [main],
              [DL_LIBS='-ldl'],
@@ -452,5 +460,12 @@ fi
 #else
 #    echo " Use system fmtlib:     no"
 #fi
+
+if test -n "$test_subdir"
+then
+    echo " DarkRadiant Tests:     yes"
+else
+    echo " DarkRadiant Tests:     no"
+fi
 
 echo " Use boost.filesystem:  $use_boost_filesystem"

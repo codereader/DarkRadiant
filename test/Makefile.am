@@ -1,10 +1,12 @@
 AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs \
                $(XML_CFLAGS)
 
-bin_PROGRAMS = test
-testdir = $(pkglibdir)/bin/
-test_CPPFLAGS = $(AM_CPPFLAGS) 
-test_LDFLAGS = -lgtest -lgtest_main -lX11 \
+check_PROGRAMS = drtest
+TESTS = $(check_PROGRAMS)
+
+drtestdir = $(pkglibdir)/bin/
+drtest_CPPFLAGS = $(AM_CPPFLAGS) 
+drtest_LDFLAGS = -lgtest -lgtest_main -lX11 \
                 $(XML_LIBS) \
                 $(GLEW_LIBS) \
                 $(GL_LIBS) \
@@ -18,12 +20,12 @@ test_LDFLAGS = -lgtest -lgtest_main -lX11 \
                 $(INTL_LIBS) \
                 $(WX_LIBS) \
                 $(Z_LIBS)
-test_LDADD = $(top_builddir)/libs/scene/libscenegraph.la \
+drtest_LDADD = $(top_builddir)/libs/scene/libscenegraph.la \
             $(top_builddir)/libs/wxutil/libwxutil.la \
             $(top_builddir)/libs/xmlutil/libxmlutil.la \
             $(top_builddir)/libs/math/libmath.la \
             $(top_builddir)/libs/module/libmodule.la
-test_SOURCES = Camera.cpp \
+drtest_SOURCES = Camera.cpp \
                 CSG.cpp \
                 HeadlessOpenGLContext.cpp \
                 ModelScale.cpp \

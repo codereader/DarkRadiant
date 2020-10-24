@@ -13,6 +13,7 @@
 #include "HeadlessOpenGLContext.h"
 #include "module/CoreModule.h"
 #include "messages/GameConfigNeededMessage.h"
+#include "messages/NotificationMessage.h"
 
 namespace test
 {
@@ -32,6 +33,7 @@ protected:
 	std::unique_ptr<module::CoreModule> _coreModule;
 
 	std::size_t _gameSetupListener;
+	std::size_t _notificationListener;
 
 	std::shared_ptr<gl::HeadlessOpenGLContextModule> _glContextModule;
 
@@ -72,6 +74,11 @@ protected:
 			radiant::TypeListener<game::ConfigurationNeeded>(
 				sigc::mem_fun(this, &RadiantTest::handleGameConfigMessage)));
 
+		_notificationListener = _coreModule->get()->getMessageBus().addListener(
+			radiant::IMessage::Type::Notification,
+			radiant::TypeListener<radiant::NotificationMessage>(
+				sigc::mem_fun(this, &RadiantTest::handleNotification)));
+
 		try
 		{
 			// Startup the application
@@ -89,6 +96,7 @@ protected:
 
 	void TearDown() override
 	{
+		_coreModule->get()->getMessageBus().removeListener(_notificationListener);
 		_coreModule->get()->getMessageBus().removeListener(_gameSetupListener);
 
 		// Issue a shutdown() call to all the modules
@@ -125,6 +133,24 @@ protected:
 
 		message.setConfig(config);
 		message.setHandled(true);
+	}
+
+	void handleNotification(radiant::NotificationMessage& msg)
+	{
+		switch (msg.getType())
+		{
+		case radiant::NotificationMessage::Information:
+			rMessage() << msg.getMessage() << std::endl;
+			break;
+
+		case radiant::NotificationMessage::Warning:
+			rWarning() << msg.getMessage() << std::endl;
+			break;
+
+		case radiant::NotificationMessage::Error:
+			rError() << msg.getMessage() << std::endl;
+			break;
+		};
 	}
 };
 
