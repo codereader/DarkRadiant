@@ -1,4 +1,5 @@
-AM_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/libs \
+AM_CPPFLAGS = -DTESTRESOURCEDIR='"$(abs_top_builddir)/test/resources"' \
+              -I$(top_srcdir)/include -I$(top_srcdir)/libs \
                $(XML_CFLAGS)
 
 check_PROGRAMS = drtest

@@ -46,10 +46,20 @@ public:
 	// Returns the path to the test/resources/ folder shipped with the DR sources
 	virtual std::string getTestResourcePath() const
 	{
-		fs::path applicationPath = getApplicationPath();
-		applicationPath /= "../test/resources/tdm/";
-
-		return os::standardPathWithSlash(applicationPath.string());
+#if defined(POSIX) 
+	#if defined(TESTRESOURCEDIR) && !defined(ENABLE_RELOCATION)
+		fs::path testResourcePath(TESTRESOURCEDIR);
+		testResourcePath /= "tdm/";
+	#else
+		// make check will compile the test binary to $top_builddir/test/.libs/
+		fs::path testResourcePath = getApplicationPath();
+		testResourcePath /= "../../test/resources/tdm/";
+	#endif
+#else
+		fs::path testResourcePath = getApplicationPath();
+		testResourcePath /= "../test/resources/tdm/";
+#endif
+		return os::standardPathWithSlash(testResourcePath.string());
 	}
 
 	std::string getSettingsPath() const override
