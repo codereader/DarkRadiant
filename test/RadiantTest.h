@@ -92,6 +92,8 @@ protected:
 		}
 
 		_glContextModule->createContext();
+
+        GlobalMapModule().createNewMap();
 	}
 
 	void TearDown() override

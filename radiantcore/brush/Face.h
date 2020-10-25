@@ -111,7 +111,7 @@ public:
 
 	void setRenderSystem(const RenderSystemPtr& renderSystem);
 
-	void transform(const Matrix4& matrix);
+	void transform(const Matrix4& matrix) override;
 
 	void assign_planepts(const PlanePoints planepts);
 

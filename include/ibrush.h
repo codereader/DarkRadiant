@@ -177,6 +177,9 @@ public:
 	 */
 	virtual ShiftScaleRotation getShiftScaleRotation() = 0;
 	virtual void setShiftScaleRotation(const ShiftScaleRotation& scr) = 0;
+
+    // Transforms this face plane with the given transformation matrix
+    virtual void transform(const Matrix4& transformation) = 0;
 };
 
 // Plane classification info used by splitting and CSG algorithms

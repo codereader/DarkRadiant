@@ -85,6 +85,11 @@ public:
                float_equal_epsilon(_dist, other._dist, EPSILON_DIST);
     }
 
+    bool operator!= (const Plane3& other) const
+    {
+        return !operator==(other);
+    }
+
     // Subtracts plane equations: the returned plane is (a1-a2)*x + (b1-b2)*y + (c1-c2)*z + (d1-d2) = 0
     Plane3  operator-(const Plane3& other) const
     {
