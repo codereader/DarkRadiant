@@ -8,7 +8,9 @@
 namespace test
 {
 
-TEST_F(RadiantTest, CSGMergeTwoRegularWorldspawnBrushes)
+using CsgTest = RadiantTest;
+
+TEST_F(CsgTest, CSGMergeTwoRegularWorldspawnBrushes)
 {
     loadMap("csg_merge.map");
 
@@ -42,7 +44,7 @@ TEST_F(RadiantTest, CSGMergeTwoRegularWorldspawnBrushes)
     ASSERT_TRUE(Node_getIBrush(brushWithMaterial1)->getNumFaces() == 6);
 }
 
-TEST_F(RadiantTest, CSGMergeFourRegularWorldspawnBrushes)
+TEST_F(CsgTest, CSGMergeFourRegularWorldspawnBrushes)
 {
     loadMap("csg_merge.map");
 
@@ -84,7 +86,7 @@ TEST_F(RadiantTest, CSGMergeFourRegularWorldspawnBrushes)
     ASSERT_TRUE(Node_getIBrush(brushWithMaterial1)->getNumFaces() == 6);
 }
 
-TEST_F(RadiantTest, CSGMergeTwoFuncStaticBrushes)
+TEST_F(CsgTest, CSGMergeTwoFuncStaticBrushes)
 {
     loadMap("csg_merge.map");
 
@@ -127,7 +129,7 @@ TEST_F(RadiantTest, CSGMergeTwoFuncStaticBrushes)
 
 // #5344: Check that selecting a couple of brushes will only merge those
 // which share the same parent entity
-TEST_F(RadiantTest, CSGMergeBrushesOfMixedEntitySelection)
+TEST_F(CsgTest, CSGMergeBrushesOfMixedEntitySelection)
 {
     loadMap("csg_merge.map");
 
@@ -187,7 +189,7 @@ TEST_F(RadiantTest, CSGMergeBrushesOfMixedEntitySelection)
 }
 
 // Issue #5336: Crash when using CSG Merge on brushes that are part of worldspawn and a func_static
-TEST_F(RadiantTest, CSGMergeWithFuncStatic)
+TEST_F(CsgTest, CSGMergeWithFuncStatic)
 {
     loadMap("csg_merge_with_func_static.map");
 

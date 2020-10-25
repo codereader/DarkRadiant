@@ -68,6 +68,7 @@
     <ClCompile Include="..\..\..\test\Math.cpp" />
     <ClCompile Include="..\..\..\test\ModelScale.cpp" />
     <ClCompile Include="..\..\..\test\SelectionAlgorithm.cpp" />
+    <ClCompile Include="..\..\..\test\VFS.cpp" />
   </ItemGroup>
   <ItemDefinitionGroup />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

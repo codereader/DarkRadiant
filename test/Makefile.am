@@ -30,4 +30,5 @@ drtest_SOURCES = Camera.cpp \
                 Math.cpp \
                 FacePlane.cpp \
                 ModelScale.cpp \
-                SelectionAlgorithm.cpp
+                SelectionAlgorithm.cpp \
+                VFS.cpp

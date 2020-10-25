@@ -8,6 +8,7 @@
     <ClCompile Include="..\..\..\test\ModelScale.cpp" />
     <ClCompile Include="..\..\..\test\Math.cpp" />
     <ClCompile Include="..\..\..\test\FacePlane.cpp" />
+    <ClCompile Include="..\..\..\test\VFS.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\HeadlessOpenGLContext.h" />
