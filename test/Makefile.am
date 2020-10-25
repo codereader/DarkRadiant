@@ -29,6 +29,7 @@ drtest_SOURCES = Camera.cpp \
                 HeadlessOpenGLContext.cpp \
                 Math.cpp \
                 FacePlane.cpp \
+                Materials.cpp \
                 ModelScale.cpp \
                 SelectionAlgorithm.cpp \
                 VFS.cpp

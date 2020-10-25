@@ -2,6 +2,7 @@
 
 #include "iimage.h"
 #include "imodule.h"
+#include "ifilesystem.h"
 #include <sigc++/signal.h>
 
 #include "math/Vector3.h"
@@ -193,6 +194,9 @@ public:
   
   // get shader file name (ie the file where this one is defined)
   virtual const char* getShaderFileName() const = 0;
+
+    // Returns the VFS info structure of the file this shader is defined in
+    virtual const vfs::FileInfo& getShaderFileInfo() const = 0;
 
     /**
      * \brief

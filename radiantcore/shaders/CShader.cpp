@@ -21,11 +21,11 @@ namespace shaders
 /* Constructor. Sets the name and the ShaderDefinition to use.
  */
 CShader::CShader(const std::string& name, const ShaderDefinition& definition) :
-	_template(definition.shaderTemplate),
-	_fileName(definition.file.name),
-	_name(name),
-	m_bInUse(false),
-	_visible(true)
+    _template(definition.shaderTemplate),
+    _fileInfo(definition.file),
+    _name(name),
+    m_bInUse(false),
+    _visible(true)
 {
 	// Realise the shader
 	realise();
@@ -131,8 +131,9 @@ int CShader::getMaterialFlags() const
 }
 
 // test if it's a true shader, or a default shader created to wrap around a texture
-bool CShader::IsDefault() const {
-	return _fileName.empty();
+bool CShader::IsDefault() const
+{
+	return _fileInfo.name.empty();
 }
 
 // get the cull type
@@ -177,8 +178,14 @@ Material::Coverage CShader::getCoverage() const
 }
 
 // get shader file name (ie the file where this one is defined)
-const char* CShader::getShaderFileName() const {
-	return _fileName.c_str();
+const char* CShader::getShaderFileName() const
+{
+	return _fileInfo.name.c_str();
+}
+
+const vfs::FileInfo& CShader::getShaderFileInfo() const
+{
+    return _fileInfo;
 }
 
 std::string CShader::getDefinition()

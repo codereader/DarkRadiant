@@ -9,6 +9,7 @@
     <ClCompile Include="..\..\..\test\Math.cpp" />
     <ClCompile Include="..\..\..\test\FacePlane.cpp" />
     <ClCompile Include="..\..\..\test\VFS.cpp" />
+    <ClCompile Include="..\..\..\test\Materials.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\HeadlessOpenGLContext.h" />

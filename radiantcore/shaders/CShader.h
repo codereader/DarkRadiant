@@ -16,7 +16,7 @@ private:
 	ShaderTemplatePtr _template;
 
 	// The shader file name (i.e. the file where this one is defined)
-	std::string _fileName;
+	vfs::FileInfo _fileInfo;
 
 	// Name of shader
 	std::string _name;
@@ -97,6 +97,8 @@ public:
 
 	// get shader file name (ie the file where this one is defined)
 	const char* getShaderFileName() const;
+
+    const vfs::FileInfo& getShaderFileInfo() const override;
 
 	// Returns the description string of this material
 	std::string getDescription() const;
