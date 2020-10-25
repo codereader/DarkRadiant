@@ -9,15 +9,6 @@ AM_CPPFLAGS = -DPKGLIBDIR='"$(pkglibdir)"' \
               $(XML_CFLAGS) \
               $(FTGL_CFLAGS)
 
-# Clusters of source files common to executable and tests
-#VFS_SOURCES = vfs/DeflatedInputStream.cpp \
-#              vfs/DirectoryArchive.cpp \
-#              vfs/Doom3FileSystem.cpp \
-#              vfs/ZipArchive.cpp
-#SHADERS_SOURCES = shaders/Doom3ShaderLayer.cpp \
-#                  shaders/TableDefinition.cpp \
-#                  shaders/textures/GLTextureManager.cpp
-
 # DarkRadiant executable
 bin_PROGRAMS = darkradiant
 darkradiant_CPPFLAGS = $(AM_CPPFLAGS) 
@@ -201,16 +192,3 @@ darkradiant_SOURCES = main.cpp \
                       settings/LocalisationProvider.cpp \
                       map/StartupMapLoader.cpp \
                       log/Console.cpp
-
-#check_PROGRAMS = facePlaneTest vfsTest shadersTest
-#TESTS = $(check_PROGRAMS)
-
-#facePlaneTest_SOURCES = test/facePlaneTest.cpp \
-#                        brush/FacePlane.cpp
-#facePlaneTest_LDADD = $(top_builddir)/libs/math/libmath.la
-
-#vfsTest_SOURCES = test/vfsTest.cpp $(VFS_SOURCES)
-#vfsTest_LDFLAGS = $(FILESYSTEM_LIBS) $(Z_LIBS)
-
-#shadersTest_SOURCES = test/shadersTest.cpp $(SHADERS_SOURCES) #$(VFS_SOURCES)
-#shadersTest_LDFLAGS = $(FILESYSTEM_LIBS) $(Z_LIBS)
