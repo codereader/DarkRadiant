@@ -27,5 +27,6 @@ drtest_LDADD = $(top_builddir)/libs/scene/libscenegraph.la \
 drtest_SOURCES = Camera.cpp \
                 CSG.cpp \
                 HeadlessOpenGLContext.cpp \
+                Math.cpp \
                 ModelScale.cpp \
                 SelectionAlgorithm.cpp

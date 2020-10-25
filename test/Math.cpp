@@ -1,0 +1,560 @@
+#include "RadiantTest.h"
+
+#include "math/Matrix4.h"
+#include "math/Quaternion.h"
+
+namespace test
+{
+
+namespace
+{
+    double angle = 30.0;
+
+    double cosAngle = cos(degrees_to_radians(angle));
+    double sinAngle = sin(degrees_to_radians(angle));
+    double EPSILON = 0.00001f;
+}
+
+TEST(Matrix4, getIdentity)
+{
+    const Matrix4 identity = Matrix4::getIdentity();
+
+    EXPECT_TRUE(identity.xx() == 1) << "Wrong values in identity matrix";
+    EXPECT_TRUE(identity.xy() == 0) << "Wrong values in identity matrix";
+    EXPECT_TRUE(identity.xz() == 0) << "Wrong values in identity matrix";
+    EXPECT_TRUE(identity.xw() == 0) << "Wrong values in identity matrix";
+
+    EXPECT_TRUE(identity.yx() == 0) << "Wrong values in identity matrix";
+    EXPECT_TRUE(identity.yy() == 1) << "Wrong values in identity matrix";
+    EXPECT_TRUE(identity.yz() == 0) << "Wrong values in identity matrix";
+    EXPECT_TRUE(identity.yw() == 0) << "Wrong values in identity matrix";
+
+    EXPECT_TRUE(identity.zx() == 0) << "Wrong values in identity matrix";
+    EXPECT_TRUE(identity.zy() == 0) << "Wrong values in identity matrix";
+    EXPECT_TRUE(identity.zz() == 1) << "Wrong values in identity matrix";
+    EXPECT_TRUE(identity.zw() == 0) << "Wrong values in identity matrix";
+
+    EXPECT_TRUE(identity.tx() == 0) << "Wrong values in identity matrix";
+    EXPECT_TRUE(identity.ty() == 0) << "Wrong values in identity matrix";
+    EXPECT_TRUE(identity.tz() == 0) << "Wrong values in identity matrix";
+    EXPECT_TRUE(identity.tw() == 1) << "Wrong values in identity matrix";
+
+    Matrix4 identity2;
+
+    identity2.xx() = 1;
+    identity2.xy() = 0;
+    identity2.xz() = 0;
+    identity2.xw() = 0;
+
+    identity2.yx() = 0;
+    identity2.yy() = 1;
+    identity2.yz() = 0;
+    identity2.yw() = 0;
+
+    identity2.zx() = 0;
+    identity2.zy() = 0;
+    identity2.zz() = 1;
+    identity2.zw() = 0;
+
+    identity2.tx() = 0;
+    identity2.ty() = 0;
+    identity2.tz() = 0;
+    identity2.tw() = 1;
+
+    EXPECT_TRUE(identity == identity2) << "Explicitly constructed identity not equal to Matrix4::getIdentity()";
+}
+
+TEST(Matrix4, getRotationAboutXDegrees)
+{
+    double angle = 30.0;
+    double cosAngle = cos(degrees_to_radians(angle));
+    double sinAngle = sin(degrees_to_radians(angle));
+    
+    // Test X rotation
+    auto xRot = Matrix4::getRotationAboutXDegrees(angle);
+
+    EXPECT_DOUBLE_EQ(xRot.xx(), 1), "Matrix rotation constructor failed";
+    EXPECT_DOUBLE_EQ(xRot.xy(), 0) << "Matrix rotation constructor failed";
+    EXPECT_DOUBLE_EQ(xRot.xz(), 0) << "Matrix rotation constructor failed";
+    EXPECT_DOUBLE_EQ(xRot.xw(), 0) << "Matrix rotation constructor failed";
+    
+    EXPECT_DOUBLE_EQ(xRot.yx(), 0) << "Matrix rotation constructor failed";
+    EXPECT_DOUBLE_EQ(xRot.yy(), cosAngle) << "Matrix rotation constructor failed";
+    EXPECT_DOUBLE_EQ(xRot.yz(), sinAngle) << "Matrix rotation constructor failed";
+    EXPECT_DOUBLE_EQ(xRot.yw(), 0) << "Matrix rotation constructor failed";
+    
+    EXPECT_DOUBLE_EQ(xRot.zx(), 0) << "Matrix rotation constructor failed";
+    EXPECT_DOUBLE_EQ(xRot.zy(), -sinAngle) << "Matrix rotation constructor failed";
+    EXPECT_DOUBLE_EQ(xRot.zz(), cosAngle) << "Matrix rotation constructor failed";
+    EXPECT_DOUBLE_EQ(xRot.zw(), 0) << "Matrix rotation constructor failed";
+    
+    EXPECT_DOUBLE_EQ(xRot.tx(), 0) << "Matrix rotation constructor failed";
+    EXPECT_DOUBLE_EQ(xRot.ty(), 0) << "Matrix rotation constructor failed";
+    EXPECT_DOUBLE_EQ(xRot.tz(), 0) << "Matrix rotation constructor failed";
+    EXPECT_DOUBLE_EQ(xRot.tw(), 1) << "Matrix rotation constructor failed";
+}
+
+TEST(Matrix4, getRotationAboutYDegrees)
+{
+    double angle = 30.0;
+    double cosAngle = cos(degrees_to_radians(angle));
+    double sinAngle = sin(degrees_to_radians(angle));
+
+    // Test Y rotation
+    auto yRot = Matrix4::getRotationAboutYDegrees(angle);
+
+    EXPECT_DOUBLE_EQ(yRot.xx(), cosAngle) << "Matrix rotation constructor failed";
+    EXPECT_DOUBLE_EQ(yRot.xy(), 0) << "Matrix rotation constructor failed";
+    EXPECT_DOUBLE_EQ(yRot.xz(), -sinAngle) << "Matrix rotation constructor failed";
+    EXPECT_DOUBLE_EQ(yRot.xw(), 0) << "Matrix rotation constructor failed";
+
+    EXPECT_DOUBLE_EQ(yRot.yx(), 0) << "Matrix rotation constructor failed";
+    EXPECT_DOUBLE_EQ(yRot.yy(), 1) << "Matrix rotation constructor failed";
+    EXPECT_DOUBLE_EQ(yRot.yz(), 0) << "Matrix rotation constructor failed";
+    EXPECT_DOUBLE_EQ(yRot.yw(), 0) << "Matrix rotation constructor failed";
+
+    EXPECT_DOUBLE_EQ(yRot.zx(), sinAngle) << "Matrix rotation constructor failed";
+    EXPECT_DOUBLE_EQ(yRot.zy(), 0) << "Matrix rotation constructor failed";
+    EXPECT_DOUBLE_EQ(yRot.zz(), cosAngle) << "Matrix rotation constructor failed";
+    EXPECT_DOUBLE_EQ(yRot.zw(), 0) << "Matrix rotation constructor failed";
+
+    EXPECT_DOUBLE_EQ(yRot.tx(), 0) << "Matrix rotation constructor failed";
+    EXPECT_DOUBLE_EQ(yRot.ty(), 0) << "Matrix rotation constructor failed";
+    EXPECT_DOUBLE_EQ(yRot.tz(), 0) << "Matrix rotation constructor failed";
+    EXPECT_DOUBLE_EQ(yRot.tw(), 1) << "Matrix rotation constructor failed";
+}
+
+TEST(Matrix4, getRotationAboutZDegrees)
+{
+    double angle = 30.0;
+    double cosAngle = cos(degrees_to_radians(angle));
+    double sinAngle = sin(degrees_to_radians(angle));
+
+    // Test Z rotation
+    auto zRot = Matrix4::getRotationAboutZDegrees(angle);
+
+    EXPECT_DOUBLE_EQ(zRot.xx(), cosAngle) <<"Matrix rotation constructor failed";
+    EXPECT_DOUBLE_EQ(zRot.xy(), sinAngle) <<"Matrix rotation constructor failed";
+    EXPECT_DOUBLE_EQ(zRot.xz(), 0) <<"Matrix rotation constructor failed";
+    EXPECT_DOUBLE_EQ(zRot.xw(), 0) <<"Matrix rotation constructor failed";
+
+    EXPECT_DOUBLE_EQ(zRot.yx(), -sinAngle) <<"Matrix rotation constructor failed";
+    EXPECT_DOUBLE_EQ(zRot.yy(), cosAngle) <<"Matrix rotation constructor failed";
+    EXPECT_DOUBLE_EQ(zRot.yz(), 0) <<"Matrix rotation constructor failed";
+    EXPECT_DOUBLE_EQ(zRot.yw(), 0) <<"Matrix rotation constructor failed";
+
+    EXPECT_DOUBLE_EQ(zRot.zx(), 0) <<"Matrix rotation constructor failed";
+    EXPECT_DOUBLE_EQ(zRot.zy(), 0) <<"Matrix rotation constructor failed";
+    EXPECT_DOUBLE_EQ(zRot.zz(), 1) <<"Matrix rotation constructor failed";
+    EXPECT_DOUBLE_EQ(zRot.zw(), 0) <<"Matrix rotation constructor failed";
+
+    EXPECT_DOUBLE_EQ(zRot.tx(), 0) <<"Matrix rotation constructor failed";
+    EXPECT_DOUBLE_EQ(zRot.ty(), 0) <<"Matrix rotation constructor failed";
+    EXPECT_DOUBLE_EQ(zRot.tz(), 0) <<"Matrix rotation constructor failed";
+    EXPECT_DOUBLE_EQ(zRot.tw(), 1) <<"Matrix rotation constructor failed";
+}
+
+TEST(Matrix4, getRotationForEulerXYZDegrees)
+{
+    // Test euler angle constructors
+    Vector3 euler(30, -55, 75);
+
+    // Convert degrees to radians
+    double pi = 3.141592653589793238462643383f;
+    double cx = cos(euler[0] * c_pi / 180.0f);
+    double sx = sin(euler[0] * c_pi / 180.0f);
+    double cy = cos(euler[1] * c_pi / 180.0f);
+    double sy = sin(euler[1] * c_pi / 180.0f);
+    double cz = cos(euler[2] * c_pi / 180.0f);
+    double sz = sin(euler[2] * c_pi / 180.0f);
+
+    Matrix4 eulerXYZ = Matrix4::getRotationForEulerXYZDegrees(euler);
+
+    EXPECT_DOUBLE_EQ(eulerXYZ.xx(), cy * cz) <<"Matrix getRotationForEulerXYZDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerXYZ.xy(), cy * sz) <<"Matrix getRotationForEulerXYZDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerXYZ.xz(), -sy) <<"Matrix getRotationForEulerXYZDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerXYZ.xw(), 0) <<"Matrix getRotationForEulerXYZDegrees failed";
+
+    EXPECT_DOUBLE_EQ(eulerXYZ.yx(), sx * sy * cz - cx * sz) <<"Matrix getRotationForEulerXYZDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerXYZ.yy(), sx * sy * sz + cx * cz) <<"Matrix getRotationForEulerXYZDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerXYZ.yz(), sx * cy) <<"Matrix getRotationForEulerXYZDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerXYZ.yw(), 0) <<"Matrix getRotationForEulerXYZDegrees failed";
+
+    EXPECT_DOUBLE_EQ(eulerXYZ.zx(), cx * sy * cz + sx * sz) <<"Matrix getRotationForEulerXYZDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerXYZ.zy(), cx * sy * sz - sx * cz) <<"Matrix getRotationForEulerXYZDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerXYZ.zz(), cx * cy) <<"Matrix getRotationForEulerXYZDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerXYZ.zw(), 0) <<"Matrix getRotationForEulerXYZDegrees failed";
+
+    EXPECT_DOUBLE_EQ(eulerXYZ.tx(), 0) <<"Matrix getRotationForEulerXYZDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerXYZ.ty(), 0) <<"Matrix getRotationForEulerXYZDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerXYZ.tz(), 0) <<"Matrix getRotationForEulerXYZDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerXYZ.tw(), 1) <<"Matrix getRotationForEulerXYZDegrees failed";
+
+    // Test Euler Angle retrieval (XYZ)
+    Vector3 testEuler = eulerXYZ.getEulerAnglesXYZDegrees();
+
+    EXPECT_DOUBLE_EQ(testEuler.x(), euler.x()) << "getEulerAnglesXYZDegrees fault at x()";
+    EXPECT_DOUBLE_EQ(testEuler.y(), euler.y()) << "getEulerAnglesXYZDegrees fault at y()";
+    EXPECT_DOUBLE_EQ(testEuler.z(), euler.z()) << "getEulerAnglesXYZDegrees fault at z()";
+}
+
+TEST(Matrix4, getRotationForEulerYZXDegrees)
+{
+    // Test euler angle constructors
+    Vector3 euler(30, -55, 75);
+
+    // Convert degrees to radians
+    double pi = 3.141592653589793238462643383f;
+    double cx = cos(euler[0] * c_pi / 180.0f);
+    double sx = sin(euler[0] * c_pi / 180.0f);
+    double cy = cos(euler[1] * c_pi / 180.0f);
+    double sy = sin(euler[1] * c_pi / 180.0f);
+    double cz = cos(euler[2] * c_pi / 180.0f);
+    double sz = sin(euler[2] * c_pi / 180.0f);
+
+    Matrix4 eulerYZX = Matrix4::getRotationForEulerYZXDegrees(euler);
+
+    EXPECT_DOUBLE_EQ(eulerYZX.xx(), cy * cz) << "Matrix getRotationForEulerYZXDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerYZX.xy(), cx * cy * sz + sx * sy) << "Matrix getRotationForEulerYZXDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerYZX.xz(), sx * cy * sz - cx * sy) << "Matrix getRotationForEulerYZXDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerYZX.xw(), 0) << "Matrix getRotationForEulerYZXDegrees failed";
+
+    EXPECT_DOUBLE_EQ(eulerYZX.yx(), -sz) << "Matrix getRotationForEulerYZXDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerYZX.yy(), cx * cz) << "Matrix getRotationForEulerYZXDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerYZX.yz(), sx * cz) << "Matrix getRotationForEulerYZXDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerYZX.yw(), 0) << "Matrix getRotationForEulerYZXDegrees failed";
+
+    EXPECT_DOUBLE_EQ(eulerYZX.zx(), sy * cz) << "Matrix getRotationForEulerYZXDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerYZX.zy(), cx * sy * sz - sx * cy) << "Matrix getRotationForEulerYZXDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerYZX.zz(), sx * sy * sz + cx * cy) << "Matrix getRotationForEulerYZXDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerYZX.zw(), 0) << "Matrix getRotationForEulerYZXDegrees failed";
+
+    EXPECT_DOUBLE_EQ(eulerYZX.tx(), 0) << "Matrix getRotationForEulerYZXDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerYZX.ty(), 0) << "Matrix getRotationForEulerYZXDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerYZX.tz(), 0) << "Matrix getRotationForEulerYZXDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerYZX.tw(), 1) << "Matrix getRotationForEulerYZXDegrees failed";
+}
+
+TEST(Matrix4, getRotationForEulerXZYDegrees)
+{
+    // Test euler angle constructors
+    Vector3 euler(30, -55, 75);
+
+    // Convert degrees to radians
+    double pi = 3.141592653589793238462643383f;
+    double cx = cos(euler[0] * c_pi / 180.0f);
+    double sx = sin(euler[0] * c_pi / 180.0f);
+    double cy = cos(euler[1] * c_pi / 180.0f);
+    double sy = sin(euler[1] * c_pi / 180.0f);
+    double cz = cos(euler[2] * c_pi / 180.0f);
+    double sz = sin(euler[2] * c_pi / 180.0f);
+
+    Matrix4 eulerXZY = Matrix4::getRotationForEulerXZYDegrees(euler);
+
+    EXPECT_DOUBLE_EQ(eulerXZY.xx(), cy * cz) << "Matrix getRotationForEulerXZYDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerXZY.xy(), sz) << "Matrix getRotationForEulerXZYDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerXZY.xz(), -sy * cz) << "Matrix getRotationForEulerXZYDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerXZY.xw(), 0) << "Matrix getRotationForEulerXZYDegrees failed";
+
+    EXPECT_DOUBLE_EQ(eulerXZY.yx(), sx * sy - cx * cy * sz) << "Matrix getRotationForEulerXZYDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerXZY.yy(), cx * cz) << "Matrix getRotationForEulerXZYDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerXZY.yz(), cx * sy * sz + sx * cy) << "Matrix getRotationForEulerXZYDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerXZY.yw(), 0) << "Matrix getRotationForEulerXZYDegrees failed";
+
+    EXPECT_DOUBLE_EQ(eulerXZY.zx(), sx * cy * sz + cx * sy) << "Matrix getRotationForEulerXZYDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerXZY.zy(), -sx * cz) << "Matrix getRotationForEulerXZYDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerXZY.zz(), cx * cy - sx * sy * sz) << "Matrix getRotationForEulerXZYDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerXZY.zw(), 0) << "Matrix getRotationForEulerXZYDegrees failed";
+
+    EXPECT_DOUBLE_EQ(eulerXZY.tx(), 0) << "Matrix getRotationForEulerXZYDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerXZY.ty(), 0) << "Matrix getRotationForEulerXZYDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerXZY.tz(), 0) << "Matrix getRotationForEulerXZYDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerXZY.tw(), 1) << "Matrix getRotationForEulerXZYDegrees failed";
+}
+
+TEST(Matrix4, getRotationForEulerYXZDegrees)
+{
+    // Test euler angle constructors
+    Vector3 euler(30, -55, 75);
+
+    // Convert degrees to radians
+    double pi = 3.141592653589793238462643383f;
+    double cx = cos(euler[0] * c_pi / 180.0f);
+    double sx = sin(euler[0] * c_pi / 180.0f);
+    double cy = cos(euler[1] * c_pi / 180.0f);
+    double sy = sin(euler[1] * c_pi / 180.0f);
+    double cz = cos(euler[2] * c_pi / 180.0f);
+    double sz = sin(euler[2] * c_pi / 180.0f);
+
+    Matrix4 eulerYXZ = Matrix4::getRotationForEulerYXZDegrees(euler);
+
+    EXPECT_DOUBLE_EQ(eulerYXZ.xx(), cy * cz - sx * sy * sz) << "Matrix getRotationForEulerYXZDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerYXZ.xy(), cy * sz + sx * sy * cz) << "Matrix getRotationForEulerYXZDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerYXZ.xz(), -cx * sy) << "Matrix getRotationForEulerYXZDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerYXZ.xw(), 0) << "Matrix getRotationForEulerYXZDegrees failed";
+
+    EXPECT_DOUBLE_EQ(eulerYXZ.yx(), -cx * sz) << "Matrix getRotationForEulerYXZDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerYXZ.yy(), cx * cz) << "Matrix getRotationForEulerYXZDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerYXZ.yz(), sx) << "Matrix getRotationForEulerYXZDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerYXZ.yw(), 0) << "Matrix getRotationForEulerYXZDegrees failed";
+
+    EXPECT_DOUBLE_EQ(eulerYXZ.zx(), sy * cz + sx * cy * sz) << "Matrix getRotationForEulerYXZDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerYXZ.zy(), sy * sz - sx * cy * cz) << "Matrix getRotationForEulerYXZDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerYXZ.zz(), cx * cy) << "Matrix getRotationForEulerYXZDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerYXZ.zw(), 0) << "Matrix getRotationForEulerYXZDegrees failed";
+
+    EXPECT_DOUBLE_EQ(eulerYXZ.tx(), 0) << "Matrix getRotationForEulerYXZDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerYXZ.ty(), 0) << "Matrix getRotationForEulerYXZDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerYXZ.tz(), 0) << "Matrix getRotationForEulerYXZDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerYXZ.tw(), 1) << "Matrix getRotationForEulerYXZDegrees failed";
+
+    // Test Euler Angle retrieval (YXZ)
+    Vector3 testEuler = eulerYXZ.getEulerAnglesYXZDegrees();
+
+    EXPECT_DOUBLE_EQ(testEuler.x(), euler.x()) << "getEulerAnglesYXZDegrees fault at x()";
+    EXPECT_DOUBLE_EQ(testEuler.y(), euler.y()) << "getEulerAnglesYXZDegrees fault at y()";
+    EXPECT_DOUBLE_EQ(testEuler.z(), euler.z()) << "getEulerAnglesYXZDegrees fault at z()";
+}
+
+TEST(Matrix4, getRotationForEulerZXYDegrees)
+{
+    // Test euler angle constructors
+    Vector3 euler(30, -55, 75);
+
+    // Convert degrees to radians
+    double pi = 3.141592653589793238462643383f;
+    double cx = cos(euler[0] * c_pi / 180.0f);
+    double sx = sin(euler[0] * c_pi / 180.0f);
+    double cy = cos(euler[1] * c_pi / 180.0f);
+    double sy = sin(euler[1] * c_pi / 180.0f);
+    double cz = cos(euler[2] * c_pi / 180.0f);
+    double sz = sin(euler[2] * c_pi / 180.0f);
+
+    Matrix4 eulerZXY = Matrix4::getRotationForEulerZXYDegrees(euler);
+
+    EXPECT_DOUBLE_EQ(eulerZXY.xx(), cy * cz + sx * sy * sz) << "Matrix getRotationForEulerZXYDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerZXY.xy(), cx * sz) << "Matrix getRotationForEulerZXYDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerZXY.xz(), sx * cy * sz - sy * cz) << "Matrix getRotationForEulerZXYDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerZXY.xw(), 0) << "Matrix getRotationForEulerZXYDegrees failed";
+
+    EXPECT_DOUBLE_EQ(eulerZXY.yx(), sx * sy * cz - cy * sz) << "Matrix getRotationForEulerZXYDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerZXY.yy(), cx * cz) << "Matrix getRotationForEulerZXYDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerZXY.yz(), sx * cy * cz + sy * sz) << "Matrix getRotationForEulerZXYDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerZXY.yw(), 0) << "Matrix getRotationForEulerZXYDegrees failed";
+
+    EXPECT_DOUBLE_EQ(eulerZXY.zx(), cx * sy) << "Matrix getRotationForEulerZXYDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerZXY.zy(), -sx) << "Matrix getRotationForEulerZXYDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerZXY.zz(), cx * cy) << "Matrix getRotationForEulerZXYDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerZXY.zw(), 0) << "Matrix getRotationForEulerZXYDegrees failed";
+
+    EXPECT_DOUBLE_EQ(eulerZXY.tx(), 0) << "Matrix getRotationForEulerZXYDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerZXY.ty(), 0) << "Matrix getRotationForEulerZXYDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerZXY.tz(), 0) << "Matrix getRotationForEulerZXYDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerZXY.tw(), 1) << "Matrix getRotationForEulerZXYDegrees failed";
+
+    // Test Euler Angle retrieval (ZXY)
+    Vector3 testEuler = eulerZXY.getEulerAnglesZXYDegrees();
+
+    EXPECT_DOUBLE_EQ(testEuler.x(), euler.x()) << "getEulerAnglesZXYDegrees fault at x()";
+    EXPECT_DOUBLE_EQ(testEuler.y(), euler.y()) << "getEulerAnglesZXYDegrees fault at y()";
+    EXPECT_DOUBLE_EQ(testEuler.z(), euler.z()) << "getEulerAnglesZXYDegrees fault at z()";
+}
+
+TEST(Matrix4, getRotationForEulerZYXDegrees)
+{
+    // Test euler angle constructors
+    Vector3 euler(30, -55, 75);
+
+    // Convert degrees to radians
+    double pi = 3.141592653589793238462643383f;
+    double cx = cos(euler[0] * c_pi / 180.0f);
+    double sx = sin(euler[0] * c_pi / 180.0f);
+    double cy = cos(euler[1] * c_pi / 180.0f);
+    double sy = sin(euler[1] * c_pi / 180.0f);
+    double cz = cos(euler[2] * c_pi / 180.0f);
+    double sz = sin(euler[2] * c_pi / 180.0f);
+
+    Matrix4 eulerZYX = Matrix4::getRotationForEulerZYXDegrees(euler);
+
+    EXPECT_DOUBLE_EQ(eulerZYX.xx(), cy * cz) << "Matrix getRotationForEulerZYXDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerZYX.xy(), cx * sz + sx * sy * cz) << "Matrix getRotationForEulerZYXDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerZYX.xz(), sx * sz - cx * sy * cz) << "Matrix getRotationForEulerZYXDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerZYX.xw(), 0) << "Matrix getRotationForEulerZYXDegrees failed";
+
+    EXPECT_DOUBLE_EQ(eulerZYX.yx(), -cy * sz) << "Matrix getRotationForEulerZYXDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerZYX.yy(), cx * cz - sx * sy * sz) << "Matrix getRotationForEulerZYXDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerZYX.yz(), sx * cz + cx * sy * sz) << "Matrix getRotationForEulerZYXDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerZYX.yw(), 0) << "Matrix getRotationForEulerZYXDegrees failed";
+
+    EXPECT_DOUBLE_EQ(eulerZYX.zx(), sy) << "Matrix getRotationForEulerZYXDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerZYX.zy(), -sx * cy) << "Matrix getRotationForEulerZYXDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerZYX.zz(), cx * cy) << "Matrix getRotationForEulerZYXDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerZYX.zw(), 0) << "Matrix getRotationForEulerZYXDegrees failed";
+
+    EXPECT_DOUBLE_EQ(eulerZYX.tx(), 0) << "Matrix getRotationForEulerZYXDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerZYX.ty(), 0) << "Matrix getRotationForEulerZYXDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerZYX.tz(), 0) << "Matrix getRotationForEulerZYXDegrees failed";
+    EXPECT_DOUBLE_EQ(eulerZYX.tw(), 1) << "Matrix getRotationForEulerZYXDegrees failed";
+
+    // Test Euler Angle retrieval (ZYX)
+    Vector3 testEuler = eulerZYX.getEulerAnglesZYXDegrees();
+
+    EXPECT_DOUBLE_EQ(testEuler.x(), euler.x()) << "getEulerAnglesZYXDegrees fault at x()";
+    EXPECT_DOUBLE_EQ(testEuler.y(), euler.y()) << "getEulerAnglesZYXDegrees fault at y()";
+    EXPECT_DOUBLE_EQ(testEuler.z(), euler.z()) << "getEulerAnglesZYXDegrees fault at z()";
+}
+
+TEST(Matrix4, Multiplication)
+{
+    auto a = Matrix4::byColumns(3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59);
+    auto b = Matrix4::byColumns(61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137);
+
+    auto c = a.getMultipliedBy(b);
+
+    EXPECT_TRUE(c.xx() == 6252) << "Matrix multiplication failed";
+    EXPECT_TRUE(c.xy() == 7076) << "Matrix multiplication failed";
+    EXPECT_TRUE(c.xz() == 8196) << "Matrix multiplication failed";
+    EXPECT_TRUE(c.xw() == 9430) << "Matrix multiplication failed";
+
+    EXPECT_TRUE(c.yx() == 8068) << "Matrix multiplication failed";
+    EXPECT_TRUE(c.yy() == 9124) << "Matrix multiplication failed";
+    EXPECT_TRUE(c.yz() == 10564) << "Matrix multiplication failed";
+    EXPECT_TRUE(c.yw() == 12150) << "Matrix multiplication failed";
+
+    EXPECT_TRUE(c.zx() == 9432) << "Matrix multiplication failed";
+    EXPECT_TRUE(c.zy() == 10696) << "Matrix multiplication failed";
+    EXPECT_TRUE(c.zz() == 12400) << "Matrix multiplication failed";
+    EXPECT_TRUE(c.zw() == 14298) << "Matrix multiplication failed";
+
+    EXPECT_TRUE(c.tx() == 11680) << "Matrix multiplication failed";
+    EXPECT_TRUE(c.ty() == 13224) << "Matrix multiplication failed";
+    EXPECT_TRUE(c.tz() == 15312) << "Matrix multiplication failed";
+    EXPECT_TRUE(c.tw() == 17618) << "Matrix multiplication failed";
+
+    // Test Pre-Multiplication
+    EXPECT_TRUE(b.getMultipliedBy(a) == a.getPremultipliedBy(b)) << "Matrix pre-multiplication mismatch";
+
+    // Create an affine matrix
+    Matrix4 affineA = a;
+
+    affineA.xw() = 0;
+    affineA.yw() = 0;
+    affineA.zw() = 0;
+    affineA.tw() = 1;
+
+    EXPECT_TRUE(affineA.isAffine()) << "Affine check failed";
+}
+
+TEST(Matrix4, Transformation)
+{
+    auto a = Matrix4::byColumns(3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59);
+
+    {
+        Vector3 v(61, 67, 71);
+
+        Vector3 transformed = a.transformPoint(v);
+
+        EXPECT_TRUE(transformed.x() == 3156) << "Vector3 transformation failed";
+        EXPECT_TRUE(transformed.y() == 3692) << "Vector3 transformation failed";
+        EXPECT_TRUE(transformed.z() == 4380) << "Vector3 transformation failed";
+
+        Vector3 transformedDir = a.transformDirection(v);
+
+        EXPECT_TRUE(transformedDir.x() == 3113) << "Vector3 direction transformation failed";
+        EXPECT_TRUE(transformedDir.y() == 3645) << "Vector3 direction transformation failed";
+        EXPECT_TRUE(transformedDir.z() == 4327) << "Vector3 direction transformation failed";
+    }
+
+    {
+        Vector4 vector(83, 89, 97, 101);
+        Vector4 transformed = a.transform(vector);
+
+        EXPECT_TRUE(transformed.x() == 8562) << "Vector4 transformation failed";
+        EXPECT_TRUE(transformed.y() == 9682) << "Vector4 transformation failed";
+        EXPECT_TRUE(transformed.z() == 11214) << "Vector4 transformation failed";
+        EXPECT_TRUE(transformed.w() == 12896) << "Vector4 transformation failed";
+    }
+
+    EXPECT_TRUE(a.t().x() == 43) << "Matrix4::t failed";
+    EXPECT_TRUE(a.t().y() == 47) << "Matrix4::t failed";
+    EXPECT_TRUE(a.t().z() == 53) << "Matrix4::t failed";
+}
+
+TEST(Matrix4, getDeterminant)
+{
+    Matrix4 a = Matrix4::byColumns(3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59);
+
+    EXPECT_TRUE(a.getDeterminant() == -448) << "Matrix determinant calculation failed";
+}
+
+TEST(Matrix4, getFullInverse)
+{
+    auto a = Matrix4::byColumns(3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59);
+
+    auto inv = a.getFullInverse();
+
+    EXPECT_DOUBLE_EQ(inv.xx(), 0.39285714285714285) << "Matrix inversion failed on xx";
+    EXPECT_DOUBLE_EQ(inv.xy(), -0.71428571428571419) << "Matrix inversion failed on xy";
+    EXPECT_DOUBLE_EQ(inv.xz(), -0.3214285714285714) << "Matrix inversion failed on xz";
+    EXPECT_DOUBLE_EQ(inv.xw(), 0.42857142857142855) << "Matrix inversion failed on xw";
+
+    EXPECT_DOUBLE_EQ(inv.yx(), -0.27678571428571425) << "Matrix inversion failed on yx";
+    EXPECT_DOUBLE_EQ(inv.yy(), 0.4464285714285714) << "Matrix inversion failed on yy";
+    EXPECT_DOUBLE_EQ(inv.yz(), -0.33035714285714285) << "Matrix inversion failed on yz";
+    EXPECT_DOUBLE_EQ(inv.yw(), 0.10714285714285714) << "Matrix inversion failed on yw";
+
+    EXPECT_DOUBLE_EQ(inv.zx(), -0.6696428571428571) << "Matrix inversion failed on zx";
+    EXPECT_DOUBLE_EQ(inv.zy(), 0.6607142857142857) << "Matrix inversion failed on zy";
+    EXPECT_DOUBLE_EQ(inv.zz(), 0.99107142857142849) << "Matrix inversion failed on zz";
+    EXPECT_DOUBLE_EQ(inv.zw(), -0.8214285714285714) << "Matrix inversion failed on zw";
+
+    EXPECT_DOUBLE_EQ(inv.tx(), 0.5357142857142857) << "Matrix inversion failed on tx";
+    EXPECT_DOUBLE_EQ(inv.ty(), -0.42857142857142855) << "Matrix inversion failed on ty";
+    EXPECT_DOUBLE_EQ(inv.tz(), -0.39285714285714285) << "Matrix inversion failed on tz";
+    EXPECT_DOUBLE_EQ(inv.tw(), 0.3571428571428571) << "Matrix inversion failed on tw";
+}
+
+TEST(Quaternion, Multiplication)
+{
+    Quaternion q1(3, 5, 7, 11);
+    Quaternion q2(13, 17, 19, 23);
+
+    Quaternion product = q1.getMultipliedBy(q2);
+
+    EXPECT_TRUE(product.x() == 188) << "Quaternion multiplication failed on x";
+    EXPECT_TRUE(product.y() == 336) << "Quaternion multiplication failed on y";
+    EXPECT_TRUE(product.z() == 356) << "Quaternion multiplication failed on z";
+    EXPECT_TRUE(product.w() == -4) << "Quaternion multiplication failed on w";
+
+    Quaternion q1multiplied = q1;
+    q1multiplied.multiplyBy(q2);
+
+    EXPECT_TRUE(q1multiplied.x() == 188) << "Quaternion in-place multiplication failed on x";
+    EXPECT_TRUE(q1multiplied.y() == 336) << "Quaternion in-place multiplication failed on y";
+    EXPECT_TRUE(q1multiplied.z() == 356) << "Quaternion in-place multiplication failed on z";
+    EXPECT_TRUE(q1multiplied.w() == -4) << "Quaternion in-place multiplication failed on w";
+
+    Quaternion q1inverted = q1.getInverse();
+
+    EXPECT_TRUE(q1inverted.x() == -3) << "Quaternion inversion failed on x";
+    EXPECT_TRUE(q1inverted.y() == -5) << "Quaternion inversion failed on y";
+    EXPECT_TRUE(q1inverted.z() == -7) << "Quaternion inversion failed on z";
+    EXPECT_TRUE(q1inverted.w() == 11) << "Quaternion inversion failed on w";
+
+    Quaternion normalised = q1.getNormalised();
+
+    EXPECT_DOUBLE_EQ(normalised.x(), 0.2100420126042014) << "Quaternion normalisation failed on x";
+    EXPECT_DOUBLE_EQ(normalised.y(), 0.3500700210070024) << "Quaternion normalisation failed on y";
+    EXPECT_DOUBLE_EQ(normalised.z(), 0.4900980294098034) << "Quaternion normalisation failed on z";
+    EXPECT_DOUBLE_EQ(normalised.w(), 0.7701540462154052) << "Quaternion normalisation failed on w";
+
+    Vector3 point(13, 17, 19);
+
+    Vector3 transformed = q1.transformPoint(point);
+
+    EXPECT_TRUE(transformed.x() == q1.w() * q1.w() * point.x() + 2 * q1.y() * q1.w() * point.z() - 2 * q1.z() * q1.w() * point.y() + q1.x() * q1.x() * point.x() + 2 * q1.y() * q1.x() * point.y() + 2 * q1.z() * q1.x() * point.z() - q1.z() * q1.z() * point.x() - q1.y() * q1.y() * point.x(), "Quaternion point transformation failed on x");
+    EXPECT_TRUE(transformed.y() == 2 * q1.x() * q1.y() * point.x() + q1.y() * q1.y() * point.y() + 2 * q1.z() * q1.y() * point.z() + 2 * q1.w() * q1.z() * point.x() - q1.z() * q1.z() * point.y() + q1.w() * q1.w() * point.y() - 2 * q1.x() * q1.w() * point.z() - q1.x() * q1.x() * point.y(), "Quaternion point transformation failed on y");
+    EXPECT_TRUE(transformed.z() == 2 * q1.x() * q1.z() * point.x() + 2 * q1.y() * q1.z() * point.y() + q1.z() * q1.z() * point.z() - 2 * q1.w() * q1.y() * point.x() - q1.y() * q1.y() * point.z() + 2 * q1.w() * q1.x() * point.y() - q1.x() * q1.x() * point.z() + q1.w() * q1.w() * point.z(), "Quaternion point transformation failed on z");
+}
+
+}
