@@ -73,7 +73,7 @@ TEST(Matrix4, getRotationAboutXDegrees)
     // Test X rotation
     auto xRot = Matrix4::getRotationAboutXDegrees(angle);
 
-    EXPECT_DOUBLE_EQ(xRot.xx(), 1), "Matrix rotation constructor failed";
+    EXPECT_DOUBLE_EQ(xRot.xx(), 1) << "Matrix rotation constructor failed";
     EXPECT_DOUBLE_EQ(xRot.xy(), 0) << "Matrix rotation constructor failed";
     EXPECT_DOUBLE_EQ(xRot.xz(), 0) << "Matrix rotation constructor failed";
     EXPECT_DOUBLE_EQ(xRot.xw(), 0) << "Matrix rotation constructor failed";
@@ -552,9 +552,9 @@ TEST(Quaternion, Multiplication)
 
     Vector3 transformed = q1.transformPoint(point);
 
-    EXPECT_TRUE(transformed.x() == q1.w() * q1.w() * point.x() + 2 * q1.y() * q1.w() * point.z() - 2 * q1.z() * q1.w() * point.y() + q1.x() * q1.x() * point.x() + 2 * q1.y() * q1.x() * point.y() + 2 * q1.z() * q1.x() * point.z() - q1.z() * q1.z() * point.x() - q1.y() * q1.y() * point.x(), "Quaternion point transformation failed on x");
-    EXPECT_TRUE(transformed.y() == 2 * q1.x() * q1.y() * point.x() + q1.y() * q1.y() * point.y() + 2 * q1.z() * q1.y() * point.z() + 2 * q1.w() * q1.z() * point.x() - q1.z() * q1.z() * point.y() + q1.w() * q1.w() * point.y() - 2 * q1.x() * q1.w() * point.z() - q1.x() * q1.x() * point.y(), "Quaternion point transformation failed on y");
-    EXPECT_TRUE(transformed.z() == 2 * q1.x() * q1.z() * point.x() + 2 * q1.y() * q1.z() * point.y() + q1.z() * q1.z() * point.z() - 2 * q1.w() * q1.y() * point.x() - q1.y() * q1.y() * point.z() + 2 * q1.w() * q1.x() * point.y() - q1.x() * q1.x() * point.z() + q1.w() * q1.w() * point.z(), "Quaternion point transformation failed on z");
+    EXPECT_TRUE(transformed.x() == q1.w() * q1.w() * point.x() + 2 * q1.y() * q1.w() * point.z() - 2 * q1.z() * q1.w() * point.y() + q1.x() * q1.x() * point.x() + 2 * q1.y() * q1.x() * point.y() + 2 * q1.z() * q1.x() * point.z() - q1.z() * q1.z() * point.x() - q1.y() * q1.y() * point.x()) << "Quaternion point transformation failed on x";
+    EXPECT_TRUE(transformed.y() == 2 * q1.x() * q1.y() * point.x() + q1.y() * q1.y() * point.y() + 2 * q1.z() * q1.y() * point.z() + 2 * q1.w() * q1.z() * point.x() - q1.z() * q1.z() * point.y() + q1.w() * q1.w() * point.y() - 2 * q1.x() * q1.w() * point.z() - q1.x() * q1.x() * point.y()) << "Quaternion point transformation failed on y";
+    EXPECT_TRUE(transformed.z() == 2 * q1.x() * q1.z() * point.x() + 2 * q1.y() * q1.z() * point.y() + q1.z() * q1.z() * point.z() - 2 * q1.w() * q1.y() * point.x() - q1.y() * q1.y() * point.z() + 2 * q1.w() * q1.x() * point.y() - q1.x() * q1.x() * point.z() + q1.w() * q1.w() * point.z()) << "Quaternion point transformation failed on z";
 }
 
 }
