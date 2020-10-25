@@ -43,15 +43,19 @@ CoreModule::~CoreModule()
 	destroy();
 }
 
+std::string CoreModule::Filename()
+{
+	return std::string(CORE_MODULE_LIBRARY) + MODULE_FILE_EXTENSION;
+}
+
 std::string CoreModule::findCoreModule(IApplicationContext& context)
 {
-	std::string coreModuleFile = std::string(CORE_MODULE_LIBRARY) + MODULE_FILE_EXTENSION;
 	auto libraryPaths = context.getLibraryPaths();
 
 	for (auto libPath : libraryPaths)
 	{
 		fs::path coreModulePath = libPath;
-		coreModulePath /= coreModuleFile;
+		coreModulePath /= Filename();
 
 		if (fs::exists(coreModulePath))
 		{

@@ -8,6 +8,7 @@
 #include "os/path.h"
 
 #include "ModuleRegistry.h"
+#include "module/CoreModule.h"
 
 #include "string/case_conv.h"
 
@@ -35,6 +36,12 @@ void ModuleLoader::processModuleFile(const fs::path& file)
 
 	std::string fullName = file.string();
 	rConsole() << "ModuleLoader: Loading module '" << fullName << "'" << std::endl;
+
+	// Skip the core module binary
+	if (file.filename() == CoreModule::Filename())
+	{
+		return;
+	}
 
 	// Create the encapsulator class
 	auto library = std::make_shared<DynamicLibrary>(fullName);

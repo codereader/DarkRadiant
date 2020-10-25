@@ -40,6 +40,9 @@ public:
 
 	radiant::IRadiant* get();
 
+	// Returns the name of the shared library containing the core module
+	static std::string Filename();
+
 private:
 	std::string findCoreModule(IApplicationContext& context);
 	void destroy();
