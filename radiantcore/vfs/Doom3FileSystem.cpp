@@ -277,7 +277,7 @@ void Doom3FileSystem::initDirectory(const std::string& inputPath)
     }
     catch (os::DirectoryNotFoundException&)
     {
-        rConsole() << "[vfs] Directory '" << path << "' not found." << std::endl;
+        rError() << "[vfs] Directory '" << path << "' not found." << std::endl;
     }
 
     if (filenameList.empty())
@@ -541,7 +541,7 @@ const SearchPaths& Doom3FileSystem::getVfsSearchPaths()
     // Should not be called before the list is initialised
     if (_vfsSearchPaths.empty())
     {
-        rConsole() << "Warning: VFS search paths not yet initialised." << std::endl;
+        rWarning() << "Warning: VFS search paths not yet initialised." << std::endl;
     }
 
     return _vfsSearchPaths;

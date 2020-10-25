@@ -28,7 +28,7 @@ void ToolbarManager::initialise()
 	}
 	catch (std::runtime_error& e)
 	{
-        rConsole() << "ToolbarManager: Warning: " << e.what() << std::endl;
+        rError() << "ToolbarManager: Warning: " << e.what() << std::endl;
 	}
 }
 

@@ -398,7 +398,7 @@ ImagePtr ScaleExpression::getImage() const {
     std::size_t height = img->getHeight();
 
     if (scaleRed < 0 || scaleGreen < 0 || scaleBlue < 0 || scaleAlpha < 0) {
-        rConsole() << "[shaders] ScaleExpression: Invalid scale values found." << std::endl;
+        rWarning() << "[shaders] ScaleExpression: Invalid scale values found." << std::endl;
 		return img;
 	}
 

@@ -156,7 +156,7 @@ void BasicFilterSystem::initialiseModule(const IApplicationContext& ctx)
 	xml::NodeList filters = game->getLocalXPath(RKEY_GAME_FILTERS);
 	xml::NodeList userFilters = GlobalRegistry().findXPath(RKEY_USER_FILTERS);
 
-    rConsole() << "[filters] Loaded " << (filters.size() + userFilters.size())
+    rMessage() << "[filters] Loaded " << (filters.size() + userFilters.size())
 			  << " filters from registry." << std::endl;
 
 	// Read-only filters

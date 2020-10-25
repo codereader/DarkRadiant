@@ -85,7 +85,7 @@ std::string Game::getKeyValue(const std::string& key) const
 		return found[0].getAttributeValue(key);
 	}
      
-	rConsole() << "Game: Keyvalue '" << key << "' not found for game type '" << _name << "'" << std::endl;
+	rError() << "Game: Keyvalue '" << key << "' not found for game type '" << _name << "'" << std::endl;
 
 	return "";
 }

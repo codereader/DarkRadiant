@@ -35,7 +35,7 @@ void ModuleLoader::processModuleFile(const fs::path& file)
 	if (string::to_lower_copy(file.extension().string()) != MODULE_FILE_EXTENSION) return;
 
 	std::string fullName = file.string();
-	rConsole() << "ModuleLoader: Loading module '" << fullName << "'" << std::endl;
+	rMessage() << "ModuleLoader: Loading module '" << fullName << "'" << std::endl;
 
 	// Skip the core module binary
 	if (file.filename() == CoreModule::Filename())
@@ -110,7 +110,7 @@ void ModuleLoader::loadModules(const std::string& libraryPath)
     std::string pluginsPath = stdRoot + PLUGINS_DIR;
 #endif
 
-    rConsole() << "ModuleLoader: loading modules from " << libraryPath << std::endl;
+    rMessage() << "ModuleLoader: loading modules from " << libraryPath << std::endl;
 
     // Load modules first, then plugins
 	loadModulesFromPath(modulesPath);
@@ -125,7 +125,7 @@ void ModuleLoader::loadModules(const std::string& libraryPath)
 
 void ModuleLoader::loadModulesFromPath(const std::string& path)
 {
-	rConsole() << "ModuleLoader: loading modules from " << path << std::endl;
+	rMessage() << "ModuleLoader: loading modules from " << path << std::endl;
 
 	// In case the folder is non-existent, catch the exception
 	try
@@ -137,7 +137,7 @@ void ModuleLoader::loadModulesFromPath(const std::string& path)
 	}
 	catch (os::DirectoryNotFoundException&)
 	{
-		rConsole() << "ModuleLoader::loadModules(): modules directory '"
+		rError() << "ModuleLoader::loadModules(): modules directory '"
 			<< path << "' not found." << std::endl;
 	}
 }

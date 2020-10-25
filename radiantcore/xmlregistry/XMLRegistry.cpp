@@ -302,7 +302,7 @@ void XMLRegistry::initialiseModule(const IApplicationContext& ctx)
     // Load the XML files from the runtime data directory
     std::string base = ctx.getRuntimeDataPath();
 
-    rConsole() << "XMLRegistry: looking for XML files in " << base << std::endl;
+    rMessage() << "XMLRegistry: looking for XML files in " << base << std::endl;
 
     try
     {

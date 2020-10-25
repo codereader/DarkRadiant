@@ -171,10 +171,10 @@ void GLProgramFactory::assertProgramLinked(GLuint program)
 
     std::string validLog = getProgramInfoLog(program);
 
-    // Output to console
-    rConsole() << "[renderer] GLSL program "
+    // Output to stream
+    rMessage() << "[renderer] GLSL program "
               << (validStatus == GL_TRUE ? "IS " : "IS NOT ") << "valid.\n";
-    rConsole() << "Info:\n" << validLog << std::endl;
+    rMessage() << "Info:\n" << validLog << std::endl;
 
 #endif
 }

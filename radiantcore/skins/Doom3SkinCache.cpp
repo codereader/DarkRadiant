@@ -118,7 +118,7 @@ void Doom3SkinCache::parseFile(std::istream& contents, const std::string& filena
 			// Is this already defined?
 			if (found != _namedSkins.end()) 
             {
-                rConsole() << "[skins] in " << filename << ": skin " + skinName +
+                rWarning() << "[skins] in " << filename << ": skin " + skinName +
 						     " previously defined in " +
 							 found->second->getSkinFileName() + "!" << std::endl;
 				// Don't insert the skin into the list
@@ -133,7 +133,7 @@ void Doom3SkinCache::parseFile(std::istream& contents, const std::string& filena
 		}
 		catch (parser::ParseException& e)
         {
-            rConsole() << "[skins]: in " << filename << ": " << e.what() << std::endl;
+            rWarning() << "[skins]: in " << filename << ": " << e.what() << std::endl;
 		}
 	}
 }
@@ -169,7 +169,7 @@ Doom3ModelSkinPtr Doom3SkinCache::parseSkin(parser::DefTokeniser& tok)
 
 		if (value == "}")
         {
-            rConsole() << "[skins] Warning: '}' found where shader name expected in skin: "
+            rWarning() << "[skins] Warning: '}' found where shader name expected in skin: "
 					  << skinName << std::endl;
 		}
 

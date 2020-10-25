@@ -56,7 +56,7 @@ PreferencePage& PreferencePage::createOrFindPage(const std::string& path)
 
 	if (parts.empty())
 	{
-		rConsole() << "Cannot resolve empty preference path: " << path << std::endl;
+		rError() << "Cannot resolve empty preference path: " << path << std::endl;
 		throw std::logic_error("Cannot resolve empty preference path.");
 	}
 

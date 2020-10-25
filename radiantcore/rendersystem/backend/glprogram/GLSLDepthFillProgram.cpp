@@ -17,7 +17,7 @@ namespace {
 void GLSLDepthFillProgram::create()
 {
     // Create the program object
-    rConsole() << "[renderer] Creating GLSL depthfill program" << std::endl;
+    rMessage() << "[renderer] Creating GLSL depthfill program" << std::endl;
 
     _programObj = GLProgramFactory::createGLSLProgram(
         DEPTHFILL_VP_FILENAME, DEPTHFILL_FP_FILENAME

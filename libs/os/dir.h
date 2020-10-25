@@ -59,7 +59,7 @@ inline bool makeDirectory(const std::string& name)
 		if (fs::create_directory(dirPath))
 		{
 			// Directory has been created, set permissions
-			rConsole() << "Directory " << dirPath << " created successfully." << std::endl;
+			rMessage() << "Directory " << dirPath << " created successfully." << std::endl;
 
 #ifdef DR_USE_STD_FILESYSTEM
 

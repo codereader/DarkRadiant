@@ -88,7 +88,7 @@ void Radiant::startup()
 	}
 	catch (const std::exception& e)
 	{
-		rConsole() << "Exception initialising modules: " << e.what() << std::endl;
+		rError() << "Exception initialising modules: " << e.what() << std::endl;
 		throw StartupFailure(e.what()); // translate the exception
 	}
 }

@@ -83,7 +83,7 @@ TexturePtr CameraCubeMapDecl::bindTexture(const std::string& name) const
         bindDirection("_forward", GL_TEXTURE_CUBE_MAP_POSITIVE_Z);
         bindDirection("_back", GL_TEXTURE_CUBE_MAP_NEGATIVE_Z);
 
-        rConsole() << "[shaders] bound cubemap texture " << texnum << std::endl;
+        rMessage() << "[shaders] bound cubemap texture " << texnum << std::endl;
 
         // Unbind and create texture object
         glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
@@ -92,7 +92,7 @@ TexturePtr CameraCubeMapDecl::bindTexture(const std::string& name) const
     }
     catch (const std::runtime_error& e)
     {
-        rConsoleError() << "[shaders] Unable to bind camera cubemap '"
+        rError() << "[shaders] Unable to bind camera cubemap '"
                   << name << "': " << e.what() << std::endl;
 
         return TexturePtr();

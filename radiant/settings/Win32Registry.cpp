@@ -26,7 +26,7 @@ std::string Win32Registry::getKeyValue(const std::string& key, const std::string
 	);
 
 	if (retVal != ERROR_SUCCESS) {
-        rConsole() << "Win32Registry: Could not open registry key: " << key << std::endl;
+        rError() << "Win32Registry: Could not open registry key: " << key << std::endl;
 		return "";
 	}
 
@@ -49,7 +49,7 @@ std::string Win32Registry::getKeyValue(const std::string& key, const std::string
 	RegCloseKey(hkey);
 
 	if (retVal != ERROR_SUCCESS) {
-        rConsole() << "Win32Registry: Could not query value: " << value << std::endl;
+        rError() << "Win32Registry: Could not query value: " << value << std::endl;
 		return "";
 	}
 

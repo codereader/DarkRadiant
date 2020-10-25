@@ -47,7 +47,7 @@ void TextureProjection::setTransform(float width, float height, const Matrix4& t
     if ((transform[0] != 0 || transform[4] != 0) && (transform[1] != 0 || transform[5] != 0)) {
         matrix = TextureMatrix(transform);
     } else {
-        rConsole() << "invalid texture matrix" << std::endl;
+        rError() << "invalid texture matrix" << std::endl;
     }
 }
 
@@ -219,7 +219,7 @@ void TextureProjection::flipTexture(unsigned int flipAxis)
     // Check for x flip (x-component not zero)
     if (flipAxis == 0)
     {
-        // Invert the x scale and rotate 180°
+        // Invert the x scale and rotate 180ï¿½
         auto scale = texdef.getScale();
         scale[0] *= -1;
         texdef.setScale(scale);
@@ -228,7 +228,7 @@ void TextureProjection::flipTexture(unsigned int flipAxis)
     }
     else if (flipAxis == 1)
     {
-        // Invert the y scale and rotate 180°
+        // Invert the y scale and rotate 180ï¿½
         auto scale = texdef.getScale();
         scale[1] *= -1;
         texdef.setScale(scale);

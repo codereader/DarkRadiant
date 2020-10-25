@@ -311,7 +311,7 @@ void OpenGLRenderSystem::extensionsInitialised()
     haveGLSL = false;
 #endif
 
-    rConsole() << "[OpenGLRenderSystem] GLSL shading "
+    rMessage() << "[OpenGLRenderSystem] GLSL shading "
                << (haveGLSL ? "IS" : "IS NOT" ) << " available.\n";
 
     // Set the flag in the openGL module
