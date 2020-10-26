@@ -7,7 +7,7 @@ AM_CPPFLAGS = -DPKGLIBDIR='"$(pkglibdir)"' \
 AM_CXXFLAGS = -fPIC
 
 pkglib_LTLIBRARIES = libmodule.la
-libmodule_la_LDFLAGS = -release @PACKAGE_VERSION@
+libmodule_la_LDFLAGS = -static $(DL_LIBS) -release @PACKAGE_VERSION@
 libmodule_la_SOURCES = CoreModule.cpp \
                      DynamicLibrary.cpp \
 					 ApplicationContextBase.cpp \

@@ -13,7 +13,8 @@ libradiantcore_la_CPPFLAGS = -DPKGLIBDIR='"$(pkglibdir)"' \
 
 libradiantcore_la_LIBADD = $(top_builddir)/libs/scene/libscenegraph.la \
              $(top_builddir)/libs/xmlutil/libxmlutil.la \
-             $(top_builddir)/libs/math/libmath.la
+             $(top_builddir)/libs/math/libmath.la \
+             $(top_builddir)/libs/module/libmodule.la
 
 libradiantcore_la_LDFLAGS = -module -avoid-version \
                     $(XML_LIBS) \
