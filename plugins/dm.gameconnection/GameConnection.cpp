@@ -80,7 +80,7 @@ void GameConnection::think() {
             int responseSeqno, lineLen;
             int ret = sscanf(_response.data(), "response %d\n%n", &responseSeqno, &lineLen);
             assert(ret == 1);
-            assert(responseSeqno == _seqnoInProgress);
+            assert(static_cast<std::size_t>(responseSeqno) == _seqnoInProgress);
             _response.erase(_response.begin(), _response.begin() + lineLen);
             //mark request as "no longer in progress"
             //note: response can be used in outer function

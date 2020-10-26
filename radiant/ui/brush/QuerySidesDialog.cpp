@@ -100,6 +100,9 @@ void QuerySidesDialog::Show(const cmd::ArgumentList& args)
 			minSides = static_cast<int>(brush::SPHERE_MIN_SIDES);
 			maxSides = static_cast<int>(brush::SPHERE_MAX_SIDES);
 			break;
+
+		default:
+			throw cmd::ExecutionFailure(fmt::format(_("Unknown brush type ID: {0}"), type));
 		};
 
 		auto* dialog = new QuerySidesDialog(minSides, maxSides);
@@ -116,7 +119,7 @@ void QuerySidesDialog::Show(const cmd::ArgumentList& args)
 	}
 	else
 	{
-		throw cmd::ExecutionFailure(fmt::format(_("Unknown brush type ID: "), input));
+		throw cmd::ExecutionFailure(fmt::format(_("Unknown brush type ID: {0}"), input));
 	}
 }
 

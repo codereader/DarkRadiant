@@ -259,6 +259,8 @@ void MapPositionManager::onMapEvent(IMap::MapEvent ev)
 	case IMap::MapUnloaded:
 		clearPositions();
 		break;
+	default:
+		return;
 	};
 }
 

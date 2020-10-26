@@ -114,7 +114,7 @@ void MRU::loadMRUMap(const cmd::ArgumentList& args)
 
 	int index = args[0].getInt();
 
-	if (index < 1 || index > _numMaxFiles)
+	if (index < 1 || static_cast<std::size_t>(index) > _numMaxFiles)
 	{
 		throw cmd::ExecutionFailure(fmt::format(_("Index out of range: {0:d}"), index));
 	}
@@ -122,7 +122,7 @@ void MRU::loadMRUMap(const cmd::ArgumentList& args)
 	// Look up the item with the given index and execute it
 	foreachItem([=](std::size_t n, const std::string& filename)
 	{
-		if (index == n)
+		if (static_cast<std::size_t>(index) == n)
 		{
 			GlobalCommandSystem().executeCommand("OpenMap", filename);
 		}

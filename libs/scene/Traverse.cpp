@@ -21,9 +21,11 @@ class IncludeSelectedWalker :
 		else
 			return Node_isSelected(node);
 	}
+	
 	bool hasSelectedParent() const {
 		return m_selected != 0;
 	}
+
 	bool hasSelectedChildren(const scene::INodePtr& node) const {
 		bool selected = false;
 		node->foreachNode([&] (const scene::INodePtr& child) -> bool {
@@ -38,9 +40,9 @@ class IncludeSelectedWalker :
 public:
 	IncludeSelectedWalker(scene::NodeVisitor& walker) :
 		m_walker(walker),
+		m_subsetOverride(nullptr),
 		m_selected(0),
-		m_skip(false),
-		m_subsetOverride(nullptr)
+		m_skip(false)
 	{}
 
 	//stgatilov: override subset of selected nodes

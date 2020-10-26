@@ -189,6 +189,9 @@ void ShaderClipboard::onMapEvent(IMap::MapEvent ev)
 		}
 		clear();
 		break;
+
+	default:
+		return;
 	};
 }
 

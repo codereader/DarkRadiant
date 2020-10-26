@@ -1978,7 +1978,7 @@ void Patch::constructBevel(const AABB& aabb, EViewType viewType)
         aabb.origin + aabb.extents
     };
 
-    std::size_t dim1, dim2, constDim;
+    std::size_t dim1 = 0, dim2 = 0, constDim = 0;
     assignDimsForViewType(viewType, dim1, dim2, constDim);
 
     std::size_t lowlowhigh[3] = { 0, 0, 2 };
@@ -2028,7 +2028,7 @@ void Patch::constructEndcap(const AABB& aabb, EViewType viewType)
     };
 
     // Define the "row" dimension, e.g. z for an XY-oriented patch
-    std::size_t dim1, dim2, constDim;
+    std::size_t dim1 = 0, dim2 = 0, constDim = 0;
     assignDimsForViewType(viewType, dim1, dim2, constDim);
 
     setDims(5, 3);
@@ -2107,7 +2107,7 @@ void Patch::ConstructPrefab(const AABB& aabb, EPatchPrefab eType, EViewType view
         // greebo: Determine which dimensions are assigned, depending on the view type
 
         // Define the "row" dimension, e.g. z for an XY-oriented cylinder
-        std::size_t colDim1, colDim2, rowDim;
+        std::size_t colDim1 = 0, colDim2 = 0, rowDim = 0;
         assignDimsForViewType(viewType, colDim1, colDim2, rowDim);
 
         // As first measure, assign a closed, axis-aligned loop of vertices for each patch row

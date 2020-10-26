@@ -96,7 +96,7 @@ void FileChooser::construct()
 
 	_dialog->SetWildcard(wildcard);
 
-	for (int i = 0; i < _fileFilters.size(); ++i)
+	for (std::size_t i = 0; i < _fileFilters.size(); ++i)
 	{
 		if (_fileFilters[i].isDefaultFilter)
 		{

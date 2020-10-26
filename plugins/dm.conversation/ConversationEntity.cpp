@@ -105,7 +105,7 @@ void ConversationEntity::deleteConversation(int index)
 
 int ConversationEntity::moveConversation(int index, bool moveUp)
 {
-	if (moveUp && index <= 1 || !moveUp && index >= getHighestIndex())
+	if ((moveUp && index <= 1) || (!moveUp && index >= getHighestIndex()))
 	{
 		return index; // no change
 	}

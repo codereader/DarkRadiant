@@ -5,7 +5,9 @@ struct Colour4b
 {
 	unsigned char r, g, b, a;
 
-	Colour4b() {}
+	Colour4b() :
+		r(0), g(0), b(0), a(0)
+	{}
 
 	Colour4b(unsigned char _r, unsigned char _g,
 			 unsigned char _b, unsigned char _a) :

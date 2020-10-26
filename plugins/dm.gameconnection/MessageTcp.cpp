@@ -51,7 +51,7 @@ bool MessageTcp::readMessage(std::vector<char> &message) {
     if (strcmp(magic, "]   ") != 0)
         goto zomg;
 
-    if (remains < len + 12)
+    if (remains < static_cast<std::size_t>(len) + 12)
         return false;
 
     message.reserve(len + 1);
