@@ -42,7 +42,7 @@ void TextureProjection::assign(const TextureProjection& other)
  * definitions. Checks the matrix for validity and passes it on to
  * the according internal texture definitions (TexDef or BPTexDef)
  */
-void TextureProjection::setTransform(float width, float height, const Matrix4& transform) {
+void TextureProjection::setTransform(double width, double height, const Matrix4& transform) {
     // Check the matrix for validity
     if ((transform[0] != 0 || transform[4] != 0) && (transform[1] != 0 || transform[5] != 0)) {
         matrix = TextureMatrix(transform);
@@ -58,17 +58,17 @@ Matrix4 TextureProjection::getTransform() const {
     return matrix.getTransform();
 }
 
-void TextureProjection::shift(float s, float t)
+void TextureProjection::shift(double s, double t)
 {
     matrix.shift(s, t);
 }
 
-void TextureProjection::scale(float s, float t, std::size_t shaderWidth, std::size_t shaderHeight)
+void TextureProjection::scale(double s, double t, std::size_t shaderWidth, std::size_t shaderHeight)
 {
     matrix.scale(s, t, shaderWidth, shaderHeight);
 }
 
-void TextureProjection::rotate(float angle, std::size_t shaderWidth, std::size_t shaderHeight)
+void TextureProjection::rotate(double angle, std::size_t shaderWidth, std::size_t shaderHeight)
 {
     matrix.rotate(angle, shaderWidth, shaderHeight);
 }

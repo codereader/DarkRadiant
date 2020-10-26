@@ -360,13 +360,13 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
     dbsPass.m_blend_dst = GL_ONE;
 }
 
-void OpenGLShader::applyAlphaTestToPass(OpenGLState& pass, float alphaTest)
+void OpenGLShader::applyAlphaTestToPass(OpenGLState& pass, double alphaTest)
 {
     if (alphaTest > 0)
     {
         pass.setRenderFlag(RENDER_ALPHATEST);
         pass.alphaFunc = GL_GEQUAL; // alpha >= threshold
-        pass.alphaThreshold = alphaTest;
+        pass.alphaThreshold = static_cast<GLfloat>(alphaTest);
     }
 }
 
@@ -780,10 +780,10 @@ void OpenGLShader::construct(const std::string& name)
             else if (name == "$XY_OVERLAY")
             {
               Vector3 colorSelBrushes = GlobalColourSchemeManager().getColour("selected_brush");
-              state.setColour(colorSelBrushes[0],
-                              colorSelBrushes[1],
-                              colorSelBrushes[2],
-                              1);
+              state.setColour(static_cast<float>(colorSelBrushes[0]),
+                              static_cast<float>(colorSelBrushes[1]),
+                              static_cast<float>(colorSelBrushes[2]),
+                              static_cast<float>(1));
               state.setRenderFlag(RENDER_LINESTIPPLE);
               state.setSortPosition(OpenGLState::SORT_OVERLAY_FIRST);
               state.m_linewidth = 2;
@@ -792,10 +792,10 @@ void OpenGLShader::construct(const std::string& name)
 			else if (name == "$XY_OVERLAY_GROUP")
 			{
 				Vector3 colorSelBrushes = GlobalColourSchemeManager().getColour("selected_group_items");
-				state.setColour(colorSelBrushes[0],
-					colorSelBrushes[1],
-					colorSelBrushes[2],
-					1);
+                state.setColour(static_cast<float>(colorSelBrushes[0]),
+                    static_cast<float>(colorSelBrushes[1]),
+                    static_cast<float>(colorSelBrushes[2]),
+                    static_cast<float>(1));
 				state.setRenderFlag(RENDER_LINESTIPPLE);
 				state.setSortPosition(OpenGLState::SORT_OVERLAY_FIRST);
 				state.m_linewidth = 2;

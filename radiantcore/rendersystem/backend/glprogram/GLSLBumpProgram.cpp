@@ -29,10 +29,10 @@ void GLSLBumpProgram::create()
     xml::NodeList scaleList = currentGame->getLocalXPath(LOCAL_RKEY_LIGHTSCALE);
 	if (!scaleList.empty())
     {
-		_lightScale = string::convert<double>(scaleList[0].getContent());
+		_lightScale = string::convert<float>(scaleList[0].getContent());
 	}
 	else {
-		_lightScale = 1.0;
+		_lightScale = 1.0f;
 	}
 
     // Create the program object
@@ -127,6 +127,8 @@ void GLSLBumpProgram::applyRenderParams(const Vector3& viewer,
                                         const Matrix4& objectToWorld,
                                         const Params& parms)
 {
+    debug::assertNoGlErrors();
+
     Matrix4 worldToObject(objectToWorld);
     worldToObject.invert();
 
@@ -137,15 +139,21 @@ void GLSLBumpProgram::applyRenderParams(const Vector3& viewer,
     local2light.multiplyBy(objectToWorld); // local->world->light
 
     // Set lighting parameters in the shader
-    glUniform3f(
-        _locViewOrigin, viewer.x(), viewer.y(), viewer.z()
+    glUniform3f(_locViewOrigin, 
+        static_cast<float>(viewer.x()), 
+        static_cast<float>(viewer.y()), 
+        static_cast<float>(viewer.z())
     );
-    glUniform3f(
-        _locLightOrigin, localLight.x(), localLight.y(), localLight.z()
+    glUniform3f(_locLightOrigin, 
+        static_cast<float>(localLight.x()), 
+        static_cast<float>(localLight.y()), 
+        static_cast<float>(localLight.z())
     );
     glUniform3f(
         _locLightColour,
-        parms.lightColour.x(), parms.lightColour.y(), parms.lightColour.z()
+        static_cast<float>(parms.lightColour.x()), 
+        static_cast<float>(parms.lightColour.y()), 
+        static_cast<float>(parms.lightColour.z())
     );
     glUniform1f(_locLightScale, _lightScale);
 

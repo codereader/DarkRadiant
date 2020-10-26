@@ -19,7 +19,7 @@ namespace {
         return (y - x).getLengthSquared() < (ON_EPSILON * ON_EPSILON);
     }
 
-    inline float max_extent_2d(const Vector3& extents, int axis)
+    inline Vector3::ElementType max_extent_2d(const Vector3& extents, int axis)
     {
         switch(axis)
         {
@@ -29,7 +29,7 @@ namespace {
         }
     }
 
-    inline float max_extent(const Vector3& extents)
+    inline Vector3::ElementType max_extent(const Vector3& extents)
     {
         return std::max(std::max(extents[0], extents[1]), extents[2]);
     }
@@ -687,7 +687,7 @@ void Brush::constructPrism(const AABB& bounds, std::size_t sides, int axis, cons
     Vector3 mins(bounds.origin - bounds.extents);
     Vector3 maxs(bounds.origin + bounds.extents);
 
-    float radius = max_extent_2d(bounds.extents, axis);
+    auto radius = max_extent_2d(bounds.extents, axis);
     const Vector3& mid = bounds.origin;
     Vector3 planepts[3];
 
@@ -764,7 +764,7 @@ void Brush::constructCone(const AABB& bounds, std::size_t sides, const std::stri
     Vector3 mins(bounds.origin - bounds.extents);
     Vector3 maxs(bounds.origin + bounds.extents);
 
-    float radius = max_extent(bounds.extents);
+    auto radius = max_extent(bounds.extents);
     const Vector3& mid = bounds.origin;
     Vector3 planepts[3];
 
@@ -819,7 +819,7 @@ void Brush::constructSphere(const AABB& bounds, std::size_t sides, const std::st
     clear();
     reserve(sides*sides);
 
-    float radius = max_extent(bounds.extents);
+    auto radius = max_extent(bounds.extents);
     const Vector3& mid = bounds.origin;
     Vector3 planepts[3];
 
@@ -866,8 +866,8 @@ void Brush::constructSphere(const AABB& bounds, std::size_t sides, const std::st
 // greebo: this code is modeled after http://geomalgorithms.com/a13-_intersect-4.html
 bool Brush::getIntersection(const Ray& ray, Vector3& intersection)
 {
-	float tEnter = 0;		// maximum entering segment parameter
-	float tLeave = 5000;	// minimum leaving segment parameter (let's assume 5000 units for now)
+	double tEnter = 0;		// maximum entering segment parameter
+	double tLeave = 5000;	// minimum leaving segment parameter (let's assume 5000 units for now)
 
 	Vector3 direction = ray.direction.getNormalised(); // normalise the ray direction
 
@@ -877,8 +877,8 @@ bool Brush::getIntersection(const Ray& ray, Vector3& intersection)
 
 		if (!face.contributes()) continue; // skip non-contributing faces
 
-		float n = -(ray.origin - face.getWinding().front().vertex).dot(face.getPlane3().normal());
-		float d = direction.dot(face.getPlane3().normal());
+		auto n = -(ray.origin - face.getWinding().front().vertex).dot(face.getPlane3().normal());
+        auto d = direction.dot(face.getPlane3().normal());
 		
 		if (d == 0) // is the ray parallel to the face?
 		{
@@ -893,7 +893,7 @@ bool Brush::getIntersection(const Ray& ray, Vector3& intersection)
 			}
 		}
 
-		float t = n / d;
+		auto t = n / d;
 		
 		if (d < 0)
 		{

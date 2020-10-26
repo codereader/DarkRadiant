@@ -35,13 +35,13 @@ public:
 
     void assign(const TextureProjection& other);
 
-    void setTransform(float width, float height, const Matrix4& transform);
+    void setTransform(double width, double height, const Matrix4& transform);
     Matrix4 getTransform() const;
 
 	// s and t are texture coordinates, not pixels
-    void shift(float s, float t);
-    void scale(float s, float t, std::size_t shaderWidth, std::size_t shaderHeight);
-    void rotate(float angle, std::size_t shaderWidth, std::size_t shaderHeight);
+    void shift(double s, double t);
+    void scale(double s, double t, std::size_t shaderWidth, std::size_t shaderHeight);
+    void rotate(double angle, std::size_t shaderWidth, std::size_t shaderHeight);
 
     // Normalise projection for a given texture width and height.
     void normalise(float width, float height);

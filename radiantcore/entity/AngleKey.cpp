@@ -16,7 +16,7 @@ void AngleKey::angleChanged(const std::string& value)
     _angleChanged();
 }
 
-void AngleKey::writeToEntity(float angle, Entity* entity)
+void AngleKey::writeToEntity(double angle, Entity* entity)
 {
     // To resolve #3150, let's keep existing "angle" keys even if their value is "0"
     bool hadAngleValue = !entity->getKeyValue("angle").empty();

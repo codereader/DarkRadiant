@@ -35,13 +35,13 @@ void PatchTesselation::generateNormals()
 	// wrapped patched may not get a valid normal here
 	if (norm.normalise() != 0.0f)
 	{
-		float offset = vertices[0].vertex.dot(norm);
+		auto offset = vertices[0].vertex.dot(norm);
 
 		std::size_t i = 0;
 
 		for (i = 1; i < width * height; i++)
 		{
-			float d = vertices[i].vertex.dot(norm);
+			auto d = vertices[i].vertex.dot(norm);
 
 			if (fabs(d - offset) > COPLANAR_EPSILON)
 			{
@@ -199,14 +199,14 @@ void PatchTesselation::generateNormals()
 
 void PatchTesselation::sampleSinglePatchPoint(const ArbitraryMeshVertex ctrl[3][3], float u, float v, ArbitraryMeshVertex& out) const
 {
-	float vCtrl[3][8];
+	double vCtrl[3][8];
 
 	// find the control points for the v coordinate
 	for (std::size_t vPoint = 0; vPoint < 3; vPoint++)
 	{
 		for (std::size_t axis = 0; axis < 8; axis++)
 		{
-			float a, b, c;
+			double a, b, c;
 
 			if (axis < 3)
 			{
@@ -227,9 +227,9 @@ void PatchTesselation::sampleSinglePatchPoint(const ArbitraryMeshVertex ctrl[3][
 				c = ctrl[2][vPoint].texcoord[axis - 6];
 			}
 
-			float qA = a - 2.0f * b + c;
-			float qB = 2.0f * b - 2.0f * a;
-			float qC = a;
+			double qA = a - 2.0 * b + c;
+			double qB = 2.0 * b - 2.0 * a;
+			double qC = a;
 
 			vCtrl[vPoint][axis] = qA * u * u + qB * u + qC;
 		}
@@ -238,12 +238,12 @@ void PatchTesselation::sampleSinglePatchPoint(const ArbitraryMeshVertex ctrl[3][
 	// interpolate the v value
 	for (std::size_t axis = 0; axis < 8; axis++)
 	{
-		float a = vCtrl[0][axis];
-		float b = vCtrl[1][axis];
-		float c = vCtrl[2][axis];
-		float qA = a - 2.0f * b + c;
-		float qB = 2.0f * b - 2.0f * a;
-		float qC = a;
+		double a = vCtrl[0][axis];
+		double b = vCtrl[1][axis];
+		double c = vCtrl[2][axis];
+		double qA = a - 2.0 * b + c;
+		double qB = 2.0 * b - 2.0 * a;
+		double qC = a;
 
 		if (axis < 3)
 		{
@@ -656,7 +656,7 @@ namespace
 
 void calculateFaceTangent(FaceTangents& ft, const ArbitraryMeshVertex& a, const ArbitraryMeshVertex& b, const ArbitraryMeshVertex& c)
 {
-	float		d0[5], d1[5];
+	double d0[5], d1[5];
 
 	d0[0] = b.vertex[0] - a.vertex[0];
 	d0[1] = b.vertex[1] - a.vertex[1];
@@ -670,16 +670,16 @@ void calculateFaceTangent(FaceTangents& ft, const ArbitraryMeshVertex& a, const 
 	d1[3] = c.texcoord[0] - a.texcoord[0];
 	d1[4] = c.texcoord[1] - a.texcoord[1];
 
-	float area = d0[3] * d1[4] - d0[4] * d1[3];
+	double area = d0[3] * d1[4] - d0[4] * d1[3];
 
-	if (fabs(area) < 1e-20f)
+	if (fabs(area) < 1e-20)
 	{
 		ft.tangents[0].set(0, 0, 0);
 		ft.tangents[1].set(0, 0, 0);
 		return;
 	}
 
-	float inva = area < 0.0f ? -1 : 1;		// was = 1.0f / area;
+	double inva = area < 0.0 ? -1 : 1;		// was = 1.0f / area;
 
 	Vector3 temp;
 
@@ -784,7 +784,7 @@ void PatchTesselation::deriveTangents()
 	// to the surface normal.
 	for (ArbitraryMeshVertex& vert : vertices)
 	{
-		float d = vert.tangent.dot(vert.normal);
+		auto d = vert.tangent.dot(vert.normal);
 		vert.tangent = vert.tangent - vert.normal * d;
 		vert.tangent.normalise();
 

@@ -192,7 +192,7 @@ BrushSplitType Winding::classifyPlane(const Plane3& plane) const
 	return split;
 }
 
-PlaneClassification Winding::classifyDistance(const float distance, const float epsilon)
+PlaneClassification Winding::classifyDistance(const double distance, const double epsilon)
 {
 	if (distance > epsilon) {
 		return ePlaneFront;
@@ -228,7 +228,7 @@ std::size_t Winding::opposite(const std::size_t index, const std::size_t other) 
 {
 	ASSERT_MESSAGE(index < size() && other < size(), "Winding::opposite: index out of range");
 
-	float dist_best = 0;
+	double dist_best = 0;
 	std::size_t index_best = brush::c_brush_maxFaces;
 
 	Ray edge = Ray::createForPoints((*this)[index].vertex, (*this)[other].vertex);
@@ -239,7 +239,7 @@ std::size_t Winding::opposite(const std::size_t index, const std::size_t other) 
 			continue;
 		}
 
-		float dist_squared = edge.getSquaredDistance((*this)[i].vertex);
+		auto dist_squared = edge.getSquaredDistance((*this)[i].vertex);
 
 		if (dist_squared > dist_best) {
 			dist_best = dist_squared;
@@ -259,13 +259,13 @@ Vector3 Winding::centroid(const Plane3& plane) const
 {
 	Vector3 centroid(0,0,0);
 
-	float area2 = 0, x_sum = 0, y_sum = 0;
+	double area2 = 0, x_sum = 0, y_sum = 0;
 	const ProjectionAxis axis = projectionaxis_for_normal(plane.normal());
 	const indexremap_t remap = indexremap_for_projectionaxis(axis);
 
 	for (std::size_t i = size() - 1, j = 0; j < size(); i = j, ++j)
 	{
-		const float ai = (*this)[i].vertex[remap.x]
+		const auto ai = (*this)[i].vertex[remap.x]
 				* (*this)[j].vertex[remap.y] - (*this)[j].vertex[remap.x]
 				* (*this)[i].vertex[remap.y];
 

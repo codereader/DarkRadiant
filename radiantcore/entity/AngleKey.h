@@ -44,7 +44,7 @@ public:
 
     // Writes the given angle value as angle spawnarg to the given entity
     // Doesn't remove a pre-existing angle key even if its future value will be 0
-    static void writeToEntity(float angle, Entity* entity);
+    static void writeToEntity(double angle, Entity* entity);
 
     // Returns the new angle value rotated by the given quaternion
     static float getRotatedValue(float angle, const Quaternion& rotation);

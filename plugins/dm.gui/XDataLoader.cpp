@@ -167,8 +167,8 @@ const bool XDataLoader::parseXDataDef(parser::DefTokeniser& tok, const std::stri
 	//cleaning up:
 	if ( _maxGuiNumber+1 > _numPages)		//Append missing GUI-errormessages... Until now, it wasn't clear how many guipages are actually discarded.
 	{
-		int diff = _maxGuiNumber + 1 - _maxPageCount;
-		for (unsigned int n = _guiPageError.size()-diff; n<_guiPageError.size(); n++)
+		auto diff = _maxGuiNumber + 1 - _maxPageCount;
+		for (auto n = _guiPageError.size()-diff; n<_guiPageError.size(); n++)
 		{
 			reportError(_guiPageError[n]);
 		}

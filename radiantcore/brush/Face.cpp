@@ -437,8 +437,8 @@ void Face::setTexdef(const TexDef& texDef)
     projection.matrix = TextureMatrix(texDef);
 
     // The bprimitive texdef needs to be scaled using our current texture dims
-    float width = _shader.getWidth();
-    float height = _shader.getHeight();
+    auto width = static_cast<double>(_shader.getWidth());
+    auto height = static_cast<double>(_shader.getHeight());
 
     projection.matrix.coords[0][0] /= width;
     projection.matrix.coords[0][1] /= width;
@@ -511,7 +511,7 @@ void Face::applyShaderFromFace(const Face& other)
     Vector2 dist = thisVerts[0]->texcoord - otherVerts[0]->texcoord;
 
     // Shift the texture to match
-    shiftTexdef(dist.x(), dist.y());
+    shiftTexdef(static_cast<float>(dist.x()), static_cast<float>(dist.y()));
 }
 
 void Face::shiftTexdef(float s, float t)
@@ -652,7 +652,7 @@ void Face::normaliseTexture() {
     shift[0] = (fabs(texcoord[1]) > 1.0E-4) ? -floored[1] * sign[1] * _shader.getHeight() : 0.0f;
 
     // Shift the texture (note the minus sign, the FaceTexDef negates it yet again).
-    _texdef.shift(-shift[0], shift[1]);
+    _texdef.shift(static_cast<float>(-shift[0]), static_cast<float>(shift[1]));
 
     texdefChanged();
 }

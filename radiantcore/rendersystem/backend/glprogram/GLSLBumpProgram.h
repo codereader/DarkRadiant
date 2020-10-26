@@ -11,7 +11,7 @@ class GLSLBumpProgram
 : public GLProgram
 {
 	// The value all lights should be scaled by, obtained from the game description
-	double _lightScale;
+	float _lightScale;
 
     // Uniform/program-local parameter IDs.
     int _locLightOrigin;

@@ -48,8 +48,8 @@ public:
 		};
 
 		// Check if the AABB is contained
-		float dist1 = fabs(other.origin[axis1] - box.origin[axis1]) + fabs(other.extents[axis1]);
-		float dist2 = fabs(other.origin[axis2] - box.origin[axis2]) + fabs(other.extents[axis2]);
+		auto dist1 = fabs(other.origin[axis1] - box.origin[axis1]) + fabs(other.extents[axis1]);
+		auto dist2 = fabs(other.origin[axis2] - box.origin[axis2]) + fabs(other.extents[axis2]);
 
 		return (dist1 < fabs(box.extents[axis1]) && dist2 < fabs(box.extents[axis2]));
 	}

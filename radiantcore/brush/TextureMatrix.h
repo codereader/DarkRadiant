@@ -7,7 +7,7 @@ class Matrix4;
 // Encapsulates the 2x3 matrix transforming world coordinates into texture space
 struct TextureMatrix
 {
-	float coords[2][3];
+	double coords[2][3];
 
 	// Constructor
 	TextureMatrix();
@@ -20,13 +20,13 @@ struct TextureMatrix
 	TextureMatrix(const TexDef& texdef);
 
 	// shift a texture (texture adjustments) along it's current texture axes
-	void shift(float s, float t);
+	void shift(double s, double t);
 
 	// Scales texture by the given float values (1.05 scales texture to 105%)
-	void scale(float s, float t, std::size_t shaderWidth, std::size_t shaderHeight);
+	void scale(double s, double t, std::size_t shaderWidth, std::size_t shaderHeight);
 
 	// apply same rotation as the spinner button of the surface inspector
-	void rotate(float angle, std::size_t shaderWidth, std::size_t shaderHeight);
+	void rotate(double angle, std::size_t shaderWidth, std::size_t shaderHeight);
 
 	/* greebo: This removes the texture scaling from the
 	 * coordinates. The resulting coordinates are absolute

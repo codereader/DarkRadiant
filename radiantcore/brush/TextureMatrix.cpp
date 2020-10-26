@@ -4,7 +4,8 @@
 #include "math/Vector2.h"
 
 // Constructor with empty arguments
-TextureMatrix::TextureMatrix() {
+TextureMatrix::TextureMatrix()
+{
 	coords[0][0] = 2.0f;
 	coords[0][1] = 0.f;
 	coords[0][2] = 0.f;
@@ -15,7 +16,8 @@ TextureMatrix::TextureMatrix() {
 
 // Construct the BP Definition out of the transformation matrix
 // Basically copies over the values from the according components
-TextureMatrix::TextureMatrix(const Matrix4& transform) {
+TextureMatrix::TextureMatrix(const Matrix4& transform)
+{
 	coords[0][0] = transform.xx();
 	coords[0][1] = transform.yx();
 	coords[0][2] = transform.tx();
@@ -27,13 +29,13 @@ TextureMatrix::TextureMatrix(const Matrix4& transform) {
 // Construct a TextureMatrix out of "fake" shift scale rot definitions
 TextureMatrix::TextureMatrix(const TexDef& texdef)
 {
-	float r = degrees_to_radians(-texdef.getRotation());
-	float c = cos(r);
-	float s = sin(r);
+	auto r = degrees_to_radians(-texdef.getRotation());
+	auto c = cos(r);
+	auto s = sin(r);
 
 	auto scale = texdef.getScale();
-	float x = 1.0f / scale[0];
-	float y = 1.0f / scale[1];
+	auto x = 1.0 / scale[0];
+	auto y = 1.0 / scale[1];
 
 	auto shift = texdef.getShift();
 	coords[0][0] = x * c;
@@ -45,7 +47,7 @@ TextureMatrix::TextureMatrix(const TexDef& texdef)
 }
 
 // shift a texture (texture adjustments) along it's current texture axes
-void TextureMatrix::shift(float s, float t)
+void TextureMatrix::shift(double s, double t)
 {
 	// x and y are geometric values, which we must compute as ST increments
 	// this depends on the texture size and the pixel/texel ratio
@@ -56,7 +58,7 @@ void TextureMatrix::shift(float s, float t)
 }
 
 // apply same scale as the spinner button of the surface inspector
-void TextureMatrix::scale(float s, float t, std::size_t shaderWidth, std::size_t shaderHeight)
+void TextureMatrix::scale(double s, double t, std::size_t shaderWidth, std::size_t shaderHeight)
 {
     // We need to have the shader dimensions applied before calling getFakeTexCoords()
     applyShaderDimensions(shaderWidth, shaderHeight);
@@ -95,7 +97,7 @@ void TextureMatrix::scale(float s, float t, std::size_t shaderWidth, std::size_t
 }
 
 // apply same rotation as the spinner button of the surface inspector
-void TextureMatrix::rotate(float angle, std::size_t shaderWidth, std::size_t shaderHeight)
+void TextureMatrix::rotate(double angle, std::size_t shaderWidth, std::size_t shaderHeight)
 {
     // We need to have the shader dimensions applied before calling getFakeTexCoords()
     applyShaderDimensions(shaderWidth, shaderHeight);
@@ -158,7 +160,7 @@ TexDef TextureMatrix::getFakeTexCoords() const
 	texdef._shift[1] = coords[1][2];
 
 	// determine whether or not an axis is flipped using a 2d cross-product
-	float cross = Vector2(coords[0][0], coords[0][1]).crossProduct(Vector2(coords[1][0], coords[1][1]));
+	auto cross = Vector2(coords[0][0], coords[0][1]).crossProduct(Vector2(coords[1][0], coords[1][1]));
 
 	if (cross < 0)
 	{
@@ -166,13 +168,14 @@ TexDef TextureMatrix::getFakeTexCoords() const
 		// we pick one (rather arbitrarily) using the following convention: If the X-axis is between
 		// 0 and 180, we assume it's the Y-axis that flipped, otherwise we assume it's the X-axis and
 		// subtract out 180 degrees to compensate.
-		if (texdef._rotate >= 180.0f)
+		if (texdef._rotate >= 180.0)
 		{
-		      texdef._rotate -= 180.0f;
-		      texdef._scale[0] = -texdef._scale[0];
+		    texdef._rotate -= 180.0;
+		    texdef._scale[0] = -texdef._scale[0];
 		}
-		else {
-		      texdef._scale[1] = -texdef._scale[1];
+		else 
+        {
+		    texdef._scale[1] = -texdef._scale[1];
 		}
 	}
 

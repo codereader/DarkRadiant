@@ -433,21 +433,27 @@ Vector2 getSelectedFaceShaderSize()
 	if (FaceInstance::Selection().size() == 1)
 	{
 		// Get the last selected face instance from the global
-		FaceInstance& faceInstance = *FaceInstance::Selection().back();
+		auto& faceInstance = *FaceInstance::Selection().back();
 
-		returnValue[0] = faceInstance.getFace().getFaceShader().getWidth();
-		returnValue[1] = faceInstance.getFace().getFaceShader().getHeight();
+		returnValue[0] = static_cast<Vector2::ElementType>(faceInstance.getFace().getFaceShader().getWidth());
+		returnValue[1] = static_cast<Vector2::ElementType>(faceInstance.getFace().getFaceShader().getHeight());
 	}
 
 	return returnValue;
 }
 
-void fitTexture(const float repeatS, const float repeatT)
+void fitTexture(const double repeatS, const double repeatT)
 {
 	UndoableCommand command("fitTexture");
 
-	GlobalSelectionSystem().foreachFace([&] (IFace& face) { face.fitTexture(repeatS, repeatT); });
-	GlobalSelectionSystem().foreachPatch([&] (IPatch& patch) { patch.fitTexture(repeatS, repeatT); });
+	GlobalSelectionSystem().foreachFace([&] (IFace& face) 
+    { 
+        face.fitTexture(static_cast<float>(repeatS), static_cast<float>(repeatT));
+    });
+	GlobalSelectionSystem().foreachPatch([&] (IPatch& patch)
+    { 
+        patch.fitTexture(static_cast<float>(repeatS), static_cast<float>(repeatT));
+    });
 
 	SceneChangeNotify();
 	// Update the Texture Tools
@@ -518,8 +524,14 @@ void shiftTexture(const Vector2& shift)
 
 	UndoableCommand undo(command);
 
-	GlobalSelectionSystem().foreachFace([&] (IFace& face) { face.shiftTexdefByPixels(shift[0], shift[1]); });
-	GlobalSelectionSystem().foreachPatch([&] (IPatch& patch) { patch.translateTexture(shift[0], shift[1]); });
+	GlobalSelectionSystem().foreachFace([&] (IFace& face) 
+    { 
+        face.shiftTexdefByPixels(static_cast<float>(shift[0]), static_cast<float>(shift[1]));
+    });
+	GlobalSelectionSystem().foreachPatch([&] (IPatch& patch)
+    { 
+        patch.translateTexture(static_cast<float>(shift[0]), static_cast<float>(shift[1]));
+    });
 
 	SceneChangeNotify();
 	// Update the Texture Tools
@@ -550,8 +562,14 @@ void scaleTexture(const Vector2& scale)
 		}
 	}
 
-	GlobalSelectionSystem().foreachFace([&] (IFace& face) { face.scaleTexdef(scale[0], scale[1]); });
-	GlobalSelectionSystem().foreachPatch([&] (IPatch& patch) { patch.scaleTexture(patchScale[0], patchScale[1]); });
+	GlobalSelectionSystem().foreachFace([&] (IFace& face) 
+    {
+        face.scaleTexdef(static_cast<float>(scale[0]), static_cast<float>(scale[1]));
+    });
+	GlobalSelectionSystem().foreachPatch([&] (IPatch& patch)
+    { 
+        patch.scaleTexture(static_cast<float>(patchScale[0]), static_cast<float>(patchScale[1]));
+    });
 
 	SceneChangeNotify();
 	// Update the Texture Tools

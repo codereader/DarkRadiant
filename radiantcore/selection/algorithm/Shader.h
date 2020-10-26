@@ -102,7 +102,7 @@ namespace selection
 	/** greebo: Rescales the texture of the selected primitives to fit
 	 * <repeatX> times horizontally and <repeatY> times vertically
 	 */
-	void fitTexture(const float repeatS, const float repeatT);
+	void fitTexture(const double repeatS, const double repeatT);
 
 	// Command target wrapping the above
 	void fitTextureCmd(const cmd::ArgumentList& args);

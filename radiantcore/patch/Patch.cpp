@@ -1924,8 +1924,8 @@ void Patch::constructPlane(const AABB& aabb, int axis, std::size_t width, std::s
   vStart[y] = aabb.origin[y] - aabb.extents[y];
   vStart[z] = aabb.origin[z];
 
-  float xAdj = std::abs((vStart[x] - (aabb.origin[x] + aabb.extents[x])) / (float)(_width - 1));
-  float yAdj = std::abs((vStart[y] - (aabb.origin[y] + aabb.extents[y])) / (float)(_height - 1));
+  auto xAdj = std::abs((vStart[x] - (aabb.origin[x] + aabb.extents[x])) / static_cast<Vector3::ElementType>(_width - 1));
+  auto yAdj = std::abs((vStart[y] - (aabb.origin[y] + aabb.extents[y])) / static_cast<Vector3::ElementType>(_height - 1));
 
   Vector3 vTmp;
   vTmp[z] = vStart[z];
@@ -2287,7 +2287,7 @@ Vector3 getAverageNormal(const Vector3& normal1, const Vector3& normal2, double 
 
     // Now calculate the length correction out of the angle
     // of the two normals
-    float factor = cos(n1.angle(n2) * 0.5);
+    auto factor = cos(n1.angle(n2) * 0.5);
 
     // Stretch the normal to fit the required thickness
     normal *= thickness;

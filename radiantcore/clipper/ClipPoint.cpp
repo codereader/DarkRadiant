@@ -32,37 +32,46 @@ void ClipPoint::Draw(int num, float scale) {
 	Draw(string::to_string(num), scale);
 }
 
-void ClipPoint::Draw(const std::string& label, float scale) {
+void ClipPoint::Draw(const std::string& label, float scale)
+{
 	// draw point
-	glBegin (GL_POINTS);
+	glBegin(GL_POINTS);
 	glVertex3dv(_coords);
 	glEnd();
 
-	float offset = 2.0f / scale;
+	double offset = 2.0 / scale;
 
 	// draw label
-	glRasterPos3f (_coords[0] + offset, _coords[1] + offset, _coords[2] + offset);
+	glRasterPos3d(_coords[0] + offset, _coords[1] + offset, _coords[2] + offset);
 	GlobalOpenGL().drawString(label);
 }
 
-float fDiff(float f1, float f2) {
-	if (f1 > f2)
-		return f1 - f2;
-	else
-		return f2 - f1;
+namespace
+{
+    template<typename T>
+    T fDiff(T f1, T f2)
+    {
+        if (f1 > f2)
+            return f1 - f2;
+        else
+            return f2 - f1;
+    }
 }
 
-double ClipPoint::intersect(const Vector3& point, EViewType viewtype, float scale) {
+double ClipPoint::intersect(const Vector3& point, EViewType viewtype, float scale)
+{
 	int nDim1 = (viewtype == YZ) ? 1 : 0;
 	int nDim2 = (viewtype == XY) ? 1 : 2;
-	double screenDistanceSquared(
-	    Vector2(
-	        fDiff(_coords[nDim1], point[nDim1]) * scale,
-	        fDiff(_coords[nDim2], point[nDim2]) * scale).getLengthSquared()
-	);
-	if (screenDistanceSquared < 8*8) {
+
+    double screenDistanceSquared = Vector2(
+        fDiff(_coords[nDim1], point[nDim1]) * scale,
+        fDiff(_coords[nDim2], point[nDim2]) * scale).getLengthSquared();
+
+	if (screenDistanceSquared < 8*8) 
+    {
 		return screenDistanceSquared;
 	}
+
 	return FLT_MAX;
 }
 

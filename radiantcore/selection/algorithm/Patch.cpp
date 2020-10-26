@@ -197,7 +197,7 @@ void thickenPatches(const cmd::ArgumentList& args)
 		return;
 	}
 
-	double thickness = args[0].getDouble();
+	float thickness = static_cast<float>(args[0].getDouble());
 	bool createSeams = args[1].getInt() != 0;
 	int axis = args[2].getInt();
 
