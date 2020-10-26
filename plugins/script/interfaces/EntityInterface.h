@@ -14,6 +14,8 @@ namespace script
 class EntityVisitor
 {
 public:
+    virtual ~EntityVisitor() {}
+
     virtual void visit(const std::string& key, const std::string& value) = 0;
 };
 

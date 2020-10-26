@@ -55,6 +55,7 @@ public:
 	class Visitor
 	{
 	public:
+        virtual ~Visitor() {}
 		virtual void visit(const ISelectionSetPtr& set) = 0;
 	};
 
