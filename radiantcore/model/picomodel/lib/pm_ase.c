@@ -626,7 +626,7 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 				_ase_error_return("Node name parse error");
 
 			/* remember node name */
-			strncpy( lastNodeName,ptr,sizeof(lastNodeName) );
+			strncpy( lastNodeName,ptr,sizeof(lastNodeName)-1 );
 		}
 		/* model mesh (originally contained within geomobject) */
 		else if (!_pico_stricmp(p->token,"*mesh"))

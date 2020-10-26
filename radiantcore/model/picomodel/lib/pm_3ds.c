@@ -424,7 +424,8 @@ static int GetMeshShader (T3dsLoaderPers *pers)
 
 			/* extract file name */
 			name = _pico_nopath( mapName );
-			strncpy( temp, name, sizeof(temp) );
+			memset( temp, 0, sizeof(temp) );
+			strncpy( temp, name, sizeof(temp)-1 );
 
 			/* remove file extension */
 			/* name = _pico_setfext( name,"" ); */
@@ -731,7 +732,7 @@ static picoModel_t *_3ds_load( PM_PARAMS_LOAD )
 	}
 	/* get model's base name (eg. jeep from c:\models\jeep.3ds) */
 	memset( basename,0,sizeof(basename) );
-	strncpy( basename,_pico_nopath(fileName),sizeof(basename) );
+	strncpy( basename,_pico_nopath(fileName),sizeof(basename)-1 );
 	_pico_setfext( basename,"" );
 
 	/* initialize persistant vars (formerly static) */

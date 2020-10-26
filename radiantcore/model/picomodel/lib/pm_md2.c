@@ -332,7 +332,9 @@ static int _md2_canload( PM_PARAMS_CANLOAD )
 
 
 // _md2_load() loads a quake2 md2 model file.
-
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstringop-truncation"
+#pragma GCC diagnostic ignored "-Wformat-truncation"
 
 static picoModel_t *_md2_load( PM_PARAMS_LOAD )
 {
@@ -341,7 +343,7 @@ static picoModel_t *_md2_load( PM_PARAMS_LOAD )
 	index_LUT_t		*p_index_LUT;
 	md2Triangle_t	*p_md2Triangle;
 
-	char			skinname[ MD2_MAX_SKINNAME ];
+	char			skinname[ MD2_MAX_SKINNAME + 1 ];
  	md2_t			*md2;
  	md2St_t			*texCoord;
 	md2Frame_t		*frame;
@@ -458,8 +460,8 @@ static picoModel_t *_md2_load( PM_PARAMS_LOAD )
 
 		/* detox Skin name */
 		if (skinname[0] == '.') {/* special case ufoai skinpath */
-			char path[MD2_MAX_SKINNAME];
-			char skinnameRelative[MD2_MAX_SKINNAME];
+			char path[MD2_MAX_SKINNAME+1];
+			char skinnameRelative[MD2_MAX_SKINNAME+1];
 			strncpy(path, fileName, MD2_MAX_SKINNAME);
 			strncpy(skinnameRelative, skinname, MD2_MAX_SKINNAME);
 			_pico_unixify(path);
@@ -566,7 +568,7 @@ static picoModel_t *_md2_load( PM_PARAMS_LOAD )
 	return picoModel;
 }
 
-
+#pragma GCC diagnostic pop
 
 /* pico file format module definition */
 const picoModule_t picoModuleMD2 =
