@@ -216,36 +216,29 @@ then
     # Try python3-config first
     AC_PATH_PROG(PYTHON_CONFIG, [python3-config])
 
-    if test -z "$PYTHON_CONFIG"
+    if test ! -z "$PYTHON_CONFIG"
     then
+        # Python3 config is present, check for the Python3 runtime version
+        AC_PATH_PROGS(PYTHON, [python3 python])
+        PC_PYTHON_VERIFY_VERSION([>=], [3.0.0], 
+            [AC_MSG_NOTICE([python3-config and python3 runtime are ok])],
+            [python_scripting='no'])
+    else
         # No python3-config found, try to fall back to python-config
         AC_PATH_PROG(PYTHON_CONFIG, [python-config])
 
         if test ! -z "$PYTHON_CONFIG"
         then
             # Require a runtime that is not 3.0+
-            PC_PROG_PYTHON([python2], [2.7.0], [2.999.999])
-
-            if test ! -z "$PYTHON"
-            then
-                AC_MSG_NOTICE([python-config and python runtime are ok])
-            else
-                AC_MSG_NOTICE([python-config present, but python runtime doesn't match])
-                python_scripting='no'
-            fi
-            #PC_PYTHON_VERIFY_VERSION([<], [3.0.0], 
-            #    [AC_MSG_NOTICE([python-config and python runtime are ok])],
-            #    [python_scripting='no'])
+            AC_PATH_PROGS(PYTHON, [python2 python])
+            PC_PYTHON_VERIFY_VERSION([<], [3.0.0], 
+                [AC_MSG_NOTICE([python-config and python2 runtime are ok])],
+                [python_scripting='no'])
         else
             # No python-config found
             AC_MSG_NOTICE([Neither python3-config nor python-config binary found])
             python_scripting='no'
         fi
-    else
-        # Python3 config is present, check for the Python3 runtime version
-        PC_PYTHON_VERIFY_VERSION([>=], [3.0.0], 
-            [AC_MSG_NOTICE([python3-config and python3 runtime are ok])],
-            [python_scripting='no'])
     fi
 fi
 
