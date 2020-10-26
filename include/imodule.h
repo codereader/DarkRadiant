@@ -31,7 +31,7 @@
  * As long as no external module/plugin files are removed this number is safe to stay 
  * as it is. Keep this number compatible to std::size_t, i.e. unsigned.
  */
-#define MODULE_COMPATIBILITY_LEVEL 20200419
+#define MODULE_COMPATIBILITY_LEVEL 20201026
 
 // A function taking an error title and an error message string, invoked in debug builds
 // for things like ASSERT_MESSAGE and ERROR_MESSAGE
