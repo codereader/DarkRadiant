@@ -26,6 +26,7 @@ drtest_LDADD = $(top_builddir)/libs/scene/libscenegraph.la \
             $(top_builddir)/libs/module/libmodule.la
 drtest_SOURCES = math/Matrix4.cpp \
                  math/Vector3.cpp \
+                 math/Plane3.cpp \
                  math/Quaternion.cpp \
                  Camera.cpp \
                  CSG.cpp \
