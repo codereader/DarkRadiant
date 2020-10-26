@@ -212,26 +212,40 @@ AC_SUBST([FILESYSTEM_LIBS])
 # Check if we have a python interpreter and python-config, otherwise disable scripting
 if test "$python_scripting" = 'yes'
 then
-    # Check for any Python interpreter (minimum version >= 2.0), this will set $PYTHON on success
-    PC_PROG_PYTHON()
+    # Check for the python-config (this will set $PYTHON_CONFIG on success)
+    # Try python3-config first
+    AC_PATH_PROG(PYTHON_CONFIG, [python3-config])
 
-    if test ! -z "$PYTHON"
+    if test -z "$PYTHON_CONFIG"
     then
-        # Check for the python-config (this will set $PYTHON_CONFIG on success)
-        # Prefer python3-config if Python is reporting version >= 3.0
-        PC_PYTHON_VERIFY_VERSION([>=], [3.0.0],
-            [PC_PYTHON_PROG_PYTHON_CONFIG(["python3-config" "python-config"])],
-            [PC_PYTHON_PROG_PYTHON_CONFIG(["python-config"])])
+        # No python3-config found, try to fall back to python-config
+        AC_PATH_PROG(PYTHON_CONFIG, [python-config])
 
-        if test -z "$PYTHON_CONFIG"; then
+        if test ! -z "$PYTHON_CONFIG"
+        then
+            # Require a runtime that is not 3.0+
+            PC_PROG_PYTHON([python2], [2.7.0], [2.999.999])
+
+            if test ! -z "$PYTHON"
+            then
+                AC_MSG_NOTICE([python-config and python runtime are ok])
+            else
+                AC_MSG_NOTICE([python-config present, but python runtime doesn't match])
+                python_scripting='no'
+            fi
+            #PC_PYTHON_VERIFY_VERSION([<], [3.0.0], 
+            #    [AC_MSG_NOTICE([python-config and python runtime are ok])],
+            #    [python_scripting='no'])
+        else
             # No python-config found
-            AC_MSG_NOTICE([No python-config binary found])
+            AC_MSG_NOTICE([Neither python3-config nor python-config binary found])
             python_scripting='no'
         fi
     else
-        # No interpreter found
-        AC_MSG_NOTICE([No python interpreter found])
-        python_scripting='no'
+        # Python3 config is present, check for the Python3 runtime version
+        PC_PYTHON_VERIFY_VERSION([>=], [3.0.0], 
+            [AC_MSG_NOTICE([python3-config and python3 runtime are ok])],
+            [python_scripting='no'])
     fi
 fi
 
