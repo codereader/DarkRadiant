@@ -24,12 +24,14 @@ drtest_LDADD = $(top_builddir)/libs/scene/libscenegraph.la \
             $(top_builddir)/libs/xmlutil/libxmlutil.la \
             $(top_builddir)/libs/math/libmath.la \
             $(top_builddir)/libs/module/libmodule.la
-drtest_SOURCES = Camera.cpp \
-                CSG.cpp \
-                HeadlessOpenGLContext.cpp \
-                Math.cpp \
-                FacePlane.cpp \
-                Materials.cpp \
-                ModelScale.cpp \
-                SelectionAlgorithm.cpp \
-                VFS.cpp
+drtest_SOURCES = math/Matrix4.cpp \
+                 math/Vector3.cpp \
+                 math/Quaternion.cpp \
+                 Camera.cpp \
+                 CSG.cpp \
+                 HeadlessOpenGLContext.cpp \
+                 FacePlane.cpp \
+                 Materials.cpp \
+                 ModelScale.cpp \
+                 SelectionAlgorithm.cpp \
+                 VFS.cpp

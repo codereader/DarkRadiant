@@ -6,10 +6,18 @@
     <ClCompile Include="..\..\..\test\Camera.cpp" />
     <ClCompile Include="..\..\..\test\SelectionAlgorithm.cpp" />
     <ClCompile Include="..\..\..\test\ModelScale.cpp" />
-    <ClCompile Include="..\..\..\test\Math.cpp" />
     <ClCompile Include="..\..\..\test\FacePlane.cpp" />
     <ClCompile Include="..\..\..\test\VFS.cpp" />
     <ClCompile Include="..\..\..\test\Materials.cpp" />
+    <ClCompile Include="..\..\..\test\math\Quaternion.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\math\Matrix4.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\test\math\Vector3.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\HeadlessOpenGLContext.h" />
@@ -25,6 +33,9 @@
   <ItemGroup>
     <Filter Include="algorithm">
       <UniqueIdentifier>{519b0a02-8afc-4b67-9fa3-aeed09412562}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="math">
+      <UniqueIdentifier>{42d9ba18-ca4a-4ee3-9e61-0ace3e7c1881}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -66,7 +66,9 @@
     <ClCompile Include="..\..\..\test\FacePlane.cpp" />
     <ClCompile Include="..\..\..\test\HeadlessOpenGLContext.cpp" />
     <ClCompile Include="..\..\..\test\Materials.cpp" />
-    <ClCompile Include="..\..\..\test\Math.cpp" />
+    <ClCompile Include="..\..\..\test\math\Matrix4.cpp" />
+    <ClCompile Include="..\..\..\test\math\Quaternion.cpp" />
+    <ClCompile Include="..\..\..\test\math\Vector3.cpp" />
     <ClCompile Include="..\..\..\test\ModelScale.cpp" />
     <ClCompile Include="..\..\..\test\SelectionAlgorithm.cpp" />
     <ClCompile Include="..\..\..\test\VFS.cpp" />
