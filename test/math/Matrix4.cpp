@@ -63,6 +63,42 @@ TEST(Matrix4, getIdentity)
     EXPECT_TRUE(identity == identity2) << "Explicitly constructed identity not equal to Matrix4::getIdentity()";
 }
 
+TEST(Matrix4, ConstructByRows)
+{
+    auto m = Matrix4::byRows(1, 2.5, 3, 0.34,
+        51, -6, 7, 9,
+        9, 100, 11, 20,
+        13.11, 24, 15, 32);
+
+    // Check individual values
+    EXPECT_EQ(m.xx(), 1);
+    EXPECT_EQ(m.xy(), 51);
+    EXPECT_EQ(m.xz(), 9);
+    EXPECT_EQ(m.xw(), 13.11);
+
+    EXPECT_EQ(m.yx(), 2.5);
+    EXPECT_EQ(m.yy(), -6);
+    EXPECT_EQ(m.yz(), 100);
+    EXPECT_EQ(m.yw(), 24);
+
+    EXPECT_EQ(m.zx(), 3);
+    EXPECT_EQ(m.zy(), 7);
+    EXPECT_EQ(m.zz(), 11);
+    EXPECT_EQ(m.zw(), 15);
+
+    EXPECT_EQ(m.tx(), 0.34);
+    EXPECT_EQ(m.ty(), 9);
+    EXPECT_EQ(m.tz(), 20);
+    EXPECT_EQ(m.tw(), 32);
+
+    // Check vector components
+    EXPECT_EQ(m.x(), Vector4(1, 51, 9, 13.11));
+    EXPECT_EQ(m.y(), Vector4(2.5, -6, 100, 24));
+    EXPECT_EQ(m.z(), Vector4(3, 7, 11, 15));
+    EXPECT_EQ(m.t(), Vector4(0.34, 9, 20, 32));
+    EXPECT_EQ(m.translation(), Vector3(0.34, 9, 20));
+}
+
 TEST(Matrix4, getRotationAboutXDegrees)
 {
     double angle = 30.0;
