@@ -19,25 +19,25 @@ TEST(Matrix4, getIdentity)
 {
     const Matrix4 identity = Matrix4::getIdentity();
 
-    EXPECT_TRUE(identity.xx() == 1) << "Wrong values in identity matrix";
-    EXPECT_TRUE(identity.xy() == 0) << "Wrong values in identity matrix";
-    EXPECT_TRUE(identity.xz() == 0) << "Wrong values in identity matrix";
-    EXPECT_TRUE(identity.xw() == 0) << "Wrong values in identity matrix";
+    EXPECT_EQ(identity.xx(), 1) << "Wrong values in identity matrix";
+    EXPECT_EQ(identity.xy(), 0) << "Wrong values in identity matrix";
+    EXPECT_EQ(identity.xz(), 0) << "Wrong values in identity matrix";
+    EXPECT_EQ(identity.xw(), 0) << "Wrong values in identity matrix";
 
-    EXPECT_TRUE(identity.yx() == 0) << "Wrong values in identity matrix";
-    EXPECT_TRUE(identity.yy() == 1) << "Wrong values in identity matrix";
-    EXPECT_TRUE(identity.yz() == 0) << "Wrong values in identity matrix";
-    EXPECT_TRUE(identity.yw() == 0) << "Wrong values in identity matrix";
+    EXPECT_EQ(identity.yx(), 0) << "Wrong values in identity matrix";
+    EXPECT_EQ(identity.yy(), 1) << "Wrong values in identity matrix";
+    EXPECT_EQ(identity.yz(), 0) << "Wrong values in identity matrix";
+    EXPECT_EQ(identity.yw(), 0) << "Wrong values in identity matrix";
 
-    EXPECT_TRUE(identity.zx() == 0) << "Wrong values in identity matrix";
-    EXPECT_TRUE(identity.zy() == 0) << "Wrong values in identity matrix";
-    EXPECT_TRUE(identity.zz() == 1) << "Wrong values in identity matrix";
-    EXPECT_TRUE(identity.zw() == 0) << "Wrong values in identity matrix";
+    EXPECT_EQ(identity.zx(), 0) << "Wrong values in identity matrix";
+    EXPECT_EQ(identity.zy(), 0) << "Wrong values in identity matrix";
+    EXPECT_EQ(identity.zz(), 1) << "Wrong values in identity matrix";
+    EXPECT_EQ(identity.zw(), 0) << "Wrong values in identity matrix";
 
-    EXPECT_TRUE(identity.tx() == 0) << "Wrong values in identity matrix";
-    EXPECT_TRUE(identity.ty() == 0) << "Wrong values in identity matrix";
-    EXPECT_TRUE(identity.tz() == 0) << "Wrong values in identity matrix";
-    EXPECT_TRUE(identity.tw() == 1) << "Wrong values in identity matrix";
+    EXPECT_EQ(identity.tx(), 0) << "Wrong values in identity matrix";
+    EXPECT_EQ(identity.ty(), 0) << "Wrong values in identity matrix";
+    EXPECT_EQ(identity.tz(), 0) << "Wrong values in identity matrix";
+    EXPECT_EQ(identity.tw(), 1) << "Wrong values in identity matrix";
 
     Matrix4 identity2;
 
@@ -411,28 +411,28 @@ TEST(Matrix4, Multiplication)
 
     auto c = a.getMultipliedBy(b);
 
-    EXPECT_TRUE(c.xx() == 6252) << "Matrix multiplication failed";
-    EXPECT_TRUE(c.xy() == 7076) << "Matrix multiplication failed";
-    EXPECT_TRUE(c.xz() == 8196) << "Matrix multiplication failed";
-    EXPECT_TRUE(c.xw() == 9430) << "Matrix multiplication failed";
+    EXPECT_EQ(c.xx(), 6252) << "Matrix multiplication failed";
+    EXPECT_EQ(c.xy(), 7076) << "Matrix multiplication failed";
+    EXPECT_EQ(c.xz(), 8196) << "Matrix multiplication failed";
+    EXPECT_EQ(c.xw(), 9430) << "Matrix multiplication failed";
 
-    EXPECT_TRUE(c.yx() == 8068) << "Matrix multiplication failed";
-    EXPECT_TRUE(c.yy() == 9124) << "Matrix multiplication failed";
-    EXPECT_TRUE(c.yz() == 10564) << "Matrix multiplication failed";
-    EXPECT_TRUE(c.yw() == 12150) << "Matrix multiplication failed";
+    EXPECT_EQ(c.yx(), 8068) << "Matrix multiplication failed";
+    EXPECT_EQ(c.yy(), 9124) << "Matrix multiplication failed";
+    EXPECT_EQ(c.yz(), 10564) << "Matrix multiplication failed";
+    EXPECT_EQ(c.yw(), 12150) << "Matrix multiplication failed";
 
-    EXPECT_TRUE(c.zx() == 9432) << "Matrix multiplication failed";
-    EXPECT_TRUE(c.zy() == 10696) << "Matrix multiplication failed";
-    EXPECT_TRUE(c.zz() == 12400) << "Matrix multiplication failed";
-    EXPECT_TRUE(c.zw() == 14298) << "Matrix multiplication failed";
+    EXPECT_EQ(c.zx(), 9432) << "Matrix multiplication failed";
+    EXPECT_EQ(c.zy(), 10696) << "Matrix multiplication failed";
+    EXPECT_EQ(c.zz(), 12400) << "Matrix multiplication failed";
+    EXPECT_EQ(c.zw(), 14298) << "Matrix multiplication failed";
 
-    EXPECT_TRUE(c.tx() == 11680) << "Matrix multiplication failed";
-    EXPECT_TRUE(c.ty() == 13224) << "Matrix multiplication failed";
-    EXPECT_TRUE(c.tz() == 15312) << "Matrix multiplication failed";
-    EXPECT_TRUE(c.tw() == 17618) << "Matrix multiplication failed";
+    EXPECT_EQ(c.tx(), 11680) << "Matrix multiplication failed";
+    EXPECT_EQ(c.ty(), 13224) << "Matrix multiplication failed";
+    EXPECT_EQ(c.tz(), 15312) << "Matrix multiplication failed";
+    EXPECT_EQ(c.tw(), 17618) << "Matrix multiplication failed";
 
     // Test Pre-Multiplication
-    EXPECT_TRUE(b.getMultipliedBy(a) == a.getPremultipliedBy(b)) << "Matrix pre-multiplication mismatch";
+    EXPECT_EQ(b.getMultipliedBy(a), a.getPremultipliedBy(b)) << "Matrix pre-multiplication mismatch";
 
     // Create an affine matrix
     Matrix4 affineA = a;
@@ -454,37 +454,37 @@ TEST(Matrix4, Transformation)
 
         Vector3 transformed = a.transformPoint(v);
 
-        EXPECT_TRUE(transformed.x() == 3156) << "Vector3 transformation failed";
-        EXPECT_TRUE(transformed.y() == 3692) << "Vector3 transformation failed";
-        EXPECT_TRUE(transformed.z() == 4380) << "Vector3 transformation failed";
+        EXPECT_EQ(transformed.x(), 3156) << "Vector3 transformation failed";
+        EXPECT_EQ(transformed.y(), 3692) << "Vector3 transformation failed";
+        EXPECT_EQ(transformed.z(), 4380) << "Vector3 transformation failed";
 
         Vector3 transformedDir = a.transformDirection(v);
 
-        EXPECT_TRUE(transformedDir.x() == 3113) << "Vector3 direction transformation failed";
-        EXPECT_TRUE(transformedDir.y() == 3645) << "Vector3 direction transformation failed";
-        EXPECT_TRUE(transformedDir.z() == 4327) << "Vector3 direction transformation failed";
+        EXPECT_EQ(transformedDir.x(), 3113) << "Vector3 direction transformation failed";
+        EXPECT_EQ(transformedDir.y(), 3645) << "Vector3 direction transformation failed";
+        EXPECT_EQ(transformedDir.z(), 4327) << "Vector3 direction transformation failed";
     }
 
     {
         Vector4 vector(83, 89, 97, 101);
         Vector4 transformed = a.transform(vector);
 
-        EXPECT_TRUE(transformed.x() == 8562) << "Vector4 transformation failed";
-        EXPECT_TRUE(transformed.y() == 9682) << "Vector4 transformation failed";
-        EXPECT_TRUE(transformed.z() == 11214) << "Vector4 transformation failed";
-        EXPECT_TRUE(transformed.w() == 12896) << "Vector4 transformation failed";
+        EXPECT_EQ(transformed.x(), 8562) << "Vector4 transformation failed";
+        EXPECT_EQ(transformed.y(), 9682) << "Vector4 transformation failed";
+        EXPECT_EQ(transformed.z(), 11214) << "Vector4 transformation failed";
+        EXPECT_EQ(transformed.w(), 12896) << "Vector4 transformation failed";
     }
 
-    EXPECT_TRUE(a.t().x() == 43) << "Matrix4::t failed";
-    EXPECT_TRUE(a.t().y() == 47) << "Matrix4::t failed";
-    EXPECT_TRUE(a.t().z() == 53) << "Matrix4::t failed";
+    EXPECT_EQ(a.t().x(), 43) << "Matrix4::t failed";
+    EXPECT_EQ(a.t().y(), 47) << "Matrix4::t failed";
+    EXPECT_EQ(a.t().z(), 53) << "Matrix4::t failed";
 }
 
 TEST(Matrix4, getDeterminant)
 {
     Matrix4 a = Matrix4::byColumns(3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59);
 
-    EXPECT_TRUE(a.getDeterminant() == -448) << "Matrix determinant calculation failed";
+    EXPECT_EQ(a.getDeterminant(), -448) << "Matrix determinant calculation failed";
 }
 
 TEST(Matrix4, getFullInverse)
@@ -521,40 +521,66 @@ TEST(Quaternion, Multiplication)
 
     Quaternion product = q1.getMultipliedBy(q2);
 
-    EXPECT_TRUE(product.x() == 188) << "Quaternion multiplication failed on x";
-    EXPECT_TRUE(product.y() == 336) << "Quaternion multiplication failed on y";
-    EXPECT_TRUE(product.z() == 356) << "Quaternion multiplication failed on z";
-    EXPECT_TRUE(product.w() == -4) << "Quaternion multiplication failed on w";
+    EXPECT_EQ(product.x(), 188) << "Quaternion multiplication failed on x";
+    EXPECT_EQ(product.y(), 336) << "Quaternion multiplication failed on y";
+    EXPECT_EQ(product.z(), 356) << "Quaternion multiplication failed on z";
+    EXPECT_EQ(product.w(), -4) << "Quaternion multiplication failed on w";
+}
 
+TEST(Quaternion, InPlaceMultiplication)
+{
+    Quaternion q1(3, 5, 7, 11);
+    Quaternion q2(13, 17, 19, 23);
     Quaternion q1multiplied = q1;
     q1multiplied.multiplyBy(q2);
 
-    EXPECT_TRUE(q1multiplied.x() == 188) << "Quaternion in-place multiplication failed on x";
-    EXPECT_TRUE(q1multiplied.y() == 336) << "Quaternion in-place multiplication failed on y";
-    EXPECT_TRUE(q1multiplied.z() == 356) << "Quaternion in-place multiplication failed on z";
-    EXPECT_TRUE(q1multiplied.w() == -4) << "Quaternion in-place multiplication failed on w";
+    EXPECT_EQ(q1multiplied.x(), 188) << "Quaternion in-place multiplication failed on x";
+    EXPECT_EQ(q1multiplied.y(), 336) << "Quaternion in-place multiplication failed on y";
+    EXPECT_EQ(q1multiplied.z(), 356) << "Quaternion in-place multiplication failed on z";
+    EXPECT_EQ(q1multiplied.w(), -4) << "Quaternion in-place multiplication failed on w";
+}
 
+TEST(Quaternion, getInverse)
+{
+    Quaternion q1(3, 5, 7, 11);
     Quaternion q1inverted = q1.getInverse();
 
-    EXPECT_TRUE(q1inverted.x() == -3) << "Quaternion inversion failed on x";
-    EXPECT_TRUE(q1inverted.y() == -5) << "Quaternion inversion failed on y";
-    EXPECT_TRUE(q1inverted.z() == -7) << "Quaternion inversion failed on z";
-    EXPECT_TRUE(q1inverted.w() == 11) << "Quaternion inversion failed on w";
+    EXPECT_EQ(q1inverted.x(), -3) << "Quaternion inversion failed on x";
+    EXPECT_EQ(q1inverted.y(), -5) << "Quaternion inversion failed on y";
+    EXPECT_EQ(q1inverted.z(), -7) << "Quaternion inversion failed on z";
+    EXPECT_EQ(q1inverted.w(), 11) << "Quaternion inversion failed on w";
+}
 
+TEST(Quaternion, getNormalised)
+{
+    Quaternion q1(3, 5, 7, 11);
     Quaternion normalised = q1.getNormalised();
 
     EXPECT_DOUBLE_EQ(normalised.x(), 0.2100420126042014) << "Quaternion normalisation failed on x";
     EXPECT_DOUBLE_EQ(normalised.y(), 0.3500700210070024) << "Quaternion normalisation failed on y";
     EXPECT_DOUBLE_EQ(normalised.z(), 0.4900980294098034) << "Quaternion normalisation failed on z";
     EXPECT_DOUBLE_EQ(normalised.w(), 0.7701540462154052) << "Quaternion normalisation failed on w";
+}
 
+TEST(Quaternion, transformPoint)
+{
+    Quaternion q1(3, 5, 7, 11);
     Vector3 point(13, 17, 19);
 
     Vector3 transformed = q1.transformPoint(point);
 
-    EXPECT_TRUE(transformed.x() == q1.w() * q1.w() * point.x() + 2 * q1.y() * q1.w() * point.z() - 2 * q1.z() * q1.w() * point.y() + q1.x() * q1.x() * point.x() + 2 * q1.y() * q1.x() * point.y() + 2 * q1.z() * q1.x() * point.z() - q1.z() * q1.z() * point.x() - q1.y() * q1.y() * point.x()) << "Quaternion point transformation failed on x";
-    EXPECT_TRUE(transformed.y() == 2 * q1.x() * q1.y() * point.x() + q1.y() * q1.y() * point.y() + 2 * q1.z() * q1.y() * point.z() + 2 * q1.w() * q1.z() * point.x() - q1.z() * q1.z() * point.y() + q1.w() * q1.w() * point.y() - 2 * q1.x() * q1.w() * point.z() - q1.x() * q1.x() * point.y()) << "Quaternion point transformation failed on y";
-    EXPECT_TRUE(transformed.z() == 2 * q1.x() * q1.z() * point.x() + 2 * q1.y() * q1.z() * point.y() + q1.z() * q1.z() * point.z() - 2 * q1.w() * q1.y() * point.x() - q1.y() * q1.y() * point.z() + 2 * q1.w() * q1.x() * point.y() - q1.x() * q1.x() * point.z() + q1.w() * q1.w() * point.z()) << "Quaternion point transformation failed on z";
+    EXPECT_EQ(transformed.x(), q1.w() * q1.w() * point.x() + 2 * q1.y() * q1.w() * point.z() - 2 * q1.z() * q1.w() * point.y() + q1.x() * q1.x() * point.x() + 2 * q1.y() * q1.x() * point.y() + 2 * q1.z() * q1.x() * point.z() - q1.z() * q1.z() * point.x() - q1.y() * q1.y() * point.x()) << "Quaternion point transformation failed on x";
+    EXPECT_EQ(transformed.y(), 2 * q1.x() * q1.y() * point.x() + q1.y() * q1.y() * point.y() + 2 * q1.z() * q1.y() * point.z() + 2 * q1.w() * q1.z() * point.x() - q1.z() * q1.z() * point.y() + q1.w() * q1.w() * point.y() - 2 * q1.x() * q1.w() * point.z() - q1.x() * q1.x() * point.y()) << "Quaternion point transformation failed on y";
+    EXPECT_EQ(transformed.z(), 2 * q1.x() * q1.z() * point.x() + 2 * q1.y() * q1.z() * point.y() + q1.z() * q1.z() * point.z() - 2 * q1.w() * q1.y() * point.x() - q1.y() * q1.y() * point.z() + 2 * q1.w() * q1.x() * point.y() - q1.x() * q1.x() * point.z() + q1.w() * q1.w() * point.z()) << "Quaternion point transformation failed on z";
+}
+
+TEST(Vector3, Constructor)
+{
+    Vector3 vec(1.0, 2.0, 3.5);
+
+    EXPECT_EQ(vec.x(), 1.0);
+    EXPECT_EQ(vec.y(), 2.0);
+    EXPECT_EQ(vec.z(), 3.5);
 }
 
 }
