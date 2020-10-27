@@ -332,9 +332,11 @@ static int _md2_canload( PM_PARAMS_CANLOAD )
 
 
 // _md2_load() loads a quake2 md2 model file.
+#ifdef __linux__
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wstringop-truncation"
 #pragma GCC diagnostic ignored "-Wformat-truncation"
+#endif
 
 static picoModel_t *_md2_load( PM_PARAMS_LOAD )
 {
@@ -568,7 +570,9 @@ static picoModel_t *_md2_load( PM_PARAMS_LOAD )
 	return picoModel;
 }
 
+#ifdef __linux__
 #pragma GCC diagnostic pop
+#endif
 
 /* pico file format module definition */
 const picoModule_t picoModuleMD2 =
