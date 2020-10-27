@@ -24,7 +24,7 @@ When installing Studio please make sure to enable the "Desktop Development with 
 
 Since DarkRadiant uses a couple of open-source libraries that are not available on Windows by default, you will also need to download and install the dependencies. A 7-Zip package containing the necessary files is available at the URL below ([Get 7-zip here](http://www.7-zip.org/)):
 
-https://github.com/codereader/DarkRadiant/releases/download/2.7.0/windeps.7z  
+https://github.com/codereader/DarkRadiant/releases/download/2.9.0/windeps.7z  
 
 The dependencies packages need to be extracted into the main DarkRadiant
 source directory, i.e. alongside the `include/` and `radiant/` directories.
@@ -57,6 +57,7 @@ To compile DarkRadiant, a number of libraries (with development headers) and a s
 * libalut-dev 
 * libvorbis-dev
 * pybind11-dev
+* libgtest-dev
 
 This does not include core development tools such as g++ or the git client
 to download the sources (use sudo apt-get install git for that). One possible set of packages might be:
