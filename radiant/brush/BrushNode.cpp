@@ -309,19 +309,6 @@ bool BrushNode::intersectsLight(const RendererLight& light) const {
 	return light.intersectsAABB(worldAABB());
 }
 
-void BrushNode::insertLight(const RendererLight& light) {
-	const Matrix4& l2w = localToWorld();
-	for (FaceInstances::iterator i = m_faceInstances.begin(); i != m_faceInstances.end(); ++i) {
-		i->addLight(l2w, light);
-	}
-}
-
-void BrushNode::clearLights() {
-	for (FaceInstances::const_iterator i = m_faceInstances.begin(); i != m_faceInstances.end(); ++i) {
-		i->m_lights.clear();
-	}
-}
-
 void BrushNode::renderComponents(RenderableCollector& collector, const VolumeTest& volume) const
 {
 	m_brush.evaluateBRep();
@@ -454,7 +441,6 @@ void BrushNode::renderSolid(RenderableCollector& collector,
         // Skip invisible faces before traversing further
         if (!forceVisible && !faceInst.faceIsVisible()) continue;
 
-        //faceInst.renderSolid(collector, volume, *_renderEntity);
         const Face& face = faceInst.getFace();
         if (face.intersectVolume(volume))
         {

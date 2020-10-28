@@ -33,8 +33,6 @@ private:
 	static FaceInstanceSet _selectedFaceInstances;
 
 public:
-	mutable render::lib::VectorLightList m_lights;
-
 	FaceInstance(Face& face, const SelectionChangedSlot& observer);
 	FaceInstance(const FaceInstance& other);
 
@@ -143,8 +141,6 @@ public:
 	const Vector3& centroid() const;
 
 	void connectivityChanged();
-
-	void addLight(const Matrix4& localToWorld, const RendererLight& light);
 
 	bool faceIsVisible() const
 	{

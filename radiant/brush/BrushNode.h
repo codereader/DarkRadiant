@@ -138,8 +138,6 @@ public:
 
 	// LitObject implementation
 	bool intersectsLight(const RendererLight& light) const override;
-	void insertLight(const RendererLight& light) override;
-	void clearLights() override;
 
 	// Renderable implementation
 	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const override;
