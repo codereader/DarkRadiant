@@ -191,20 +191,6 @@ const AABB& Patch::localAABB() const
     return _localAABB;
 }
 
-void Patch::renderSolid(RenderableCollector& collector, const VolumeTest& volume,
-                         const Matrix4& localToWorld, const IRenderEntity& entity, const LightList& lights) const
-{
-    // Defer the tesselation calculation to the last minute
-    const_cast<Patch&>(*this).updateTesselation();
-
-    collector.addRenderable(*_shader.getGLShader(), _solidRenderable,
-                            localToWorld, &lights, &entity);
-
-#if DEBUG_PATCH_NTB_VECTORS
-    _renderableVectors.render(collector, volume, localToWorld);
-#endif
-}
-
 void Patch::renderWireframe(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld, const IRenderEntity& entity) const
 {
     // Defer the tesselation calculation to the last minute
@@ -300,7 +286,6 @@ void Patch::transform(const Matrix4& matrix)
 void Patch::transformChanged()
 {
     _transformChanged = true;
-    _node.lightsChanged();
     _tesselationChanged = true;
 }
 
@@ -1093,7 +1078,6 @@ void Patch::updateAABB()
         _localAABB = aabb;
 
         _node.boundsChanged();
-        _node.lightsChanged();
     }
 }
 
