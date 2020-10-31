@@ -139,7 +139,7 @@ PKG_CHECK_MODULES([FTGL], [ftgl])
 
 # GLEW
 AC_CHECK_HEADER([GL/glew.h], [], [AC_MSG_ERROR([GLEW not found])])
-AC_CHECK_LIB([GLEW], [main],
+AC_CHECK_LIB([GLEW], [glewInit],
              [GLEW_LIBS='-lGLEW'],
              [AC_MSG_ERROR([GLEW not found])])
 AC_SUBST([GLEW_LIBS])
@@ -157,7 +157,7 @@ if test "$build_osx" != "no"; then
 fi
 
 if test "$build_linux" != "no"; then
-    AC_CHECK_LIB([GL], [main],
+    AC_CHECK_LIB([GL], [glBegin],
              [GL_LIBS='-lGL'],
              [AC_MSG_ERROR([GL library not found.])])
 	AC_CHECK_LIB([GLU], [gluBuild2DMipmaps],
@@ -322,7 +322,7 @@ AC_CHECK_LIB([gtest_main], [main],
 AC_SUBST([test_subdir])
 
 # dynamic link library
-AC_CHECK_LIB([dl], [main],
+AC_CHECK_LIB([dl], [dlopen],
              [DL_LIBS='-ldl'],
              [AC_MSG_ERROR([DL library not found])])
 AC_SUBST([DL_LIBS])
@@ -344,7 +344,7 @@ else
              [sound_module=''])
 fi
 
-AC_CHECK_LIB([alut], [main],
+AC_CHECK_LIB([alut], [alutInit],
              [ALUT_LIBS='-lalut'],
              [sound_module=''],
              [$AL_LIBS])
