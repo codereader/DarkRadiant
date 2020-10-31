@@ -3,6 +3,7 @@
 #include <string>
 #include "iregistry.h"
 
+#include <cmath>
 #include <sigc++/signal.h>
 
 namespace ui
