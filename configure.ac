@@ -204,7 +204,17 @@ then
     FILESYSTEM_LIBS="$(BOOST_FILESYSTEM_LIBS) $(BOOST_SYSTEM_LIBS)"
 else
     AC_MSG_NOTICE([Will use std::filesystem instead of boost.filesystem])
-    FILESYSTEM_LIBS="-lstdc++fs"
+
+    # GCC9 removed the need to link against libstdc++fs, so check if this library is required
+    AC_LINK_IFELSE([
+        AC_LANG_SOURCE(
+            [[
+            #include <filesystem>
+            int main() { std::filesystem::path p; return 0; }
+            ]]
+        )],
+        [FILESYSTEM_LIBS=""],
+        [FILESYSTEM_LIBS="-lstdc++fs"])
 fi
 
 AC_SUBST([FILESYSTEM_LIBS])
