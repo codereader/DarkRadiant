@@ -31,6 +31,11 @@ namespace
     const std::string RKEY_SHOW_CAMERA_TOOLBAR = RKEY_CAMERA_ROOT + "/showToolbar";
 }
 
+inline float calculateFarPlaneDistance(int cubicScale)
+{
+    return pow(2.0, (cubicScale + 7) / 2.0);
+}
+
 enum CameraDrawMode 
 {
 	RENDER_MODE_WIREFRAME,
@@ -88,7 +93,7 @@ public:
 
 	// Gets/Sets the cubic scale member variable (is automatically constrained [1..MAX_CUBIC_SCALE])
 	int cubicScale() const;
-	void setCubicScale(const int& scale);
+	void setCubicScale(int scale);
 
 	// Enables/disables the cubic clipping
 	void toggleFarClip(bool newState);

@@ -5,6 +5,7 @@
 #include "ipreferencesystem.h"
 
 #include "registry/registry.h"
+#include "util/ScopedBoolLock.h"
 #include "GlobalCameraWndManager.h"
 
 namespace ui
@@ -119,56 +120,55 @@ void CameraSettings::keyChanged()
 	if (_callbackActive) {
 		return;
 	}
-	else {
-		_callbackActive = true;
+		
+    util::ScopedBoolLock lock(_callbackActive);
 
-		// Load the values from the registry
-		_toggleFreelook = registry::getValue<bool>(RKEY_TOGGLE_FREE_MOVE);
-		_movementSpeed = registry::getValue<int>(RKEY_MOVEMENT_SPEED);
-		_angleSpeed = registry::getValue<int>(RKEY_ROTATION_SPEED);
-		_invertMouseVerticalAxis = registry::getValue<bool>(RKEY_INVERT_MOUSE_VERTICAL_AXIS);
-		_farClipEnabled = registry::getValue<bool>(RKEY_ENABLE_FARCLIP);
-		_solidSelectionBoxes = registry::getValue<bool>(RKEY_SOLID_SELECTION_BOXES);
+	// Load the values from the registry
+	_toggleFreelook = registry::getValue<bool>(RKEY_TOGGLE_FREE_MOVE);
+	_movementSpeed = registry::getValue<int>(RKEY_MOVEMENT_SPEED);
+	_angleSpeed = registry::getValue<int>(RKEY_ROTATION_SPEED);
+	_invertMouseVerticalAxis = registry::getValue<bool>(RKEY_INVERT_MOUSE_VERTICAL_AXIS);
+	_farClipEnabled = registry::getValue<bool>(RKEY_ENABLE_FARCLIP);
+	_solidSelectionBoxes = registry::getValue<bool>(RKEY_SOLID_SELECTION_BOXES);
 
-		GlobalEventManager().setToggled("ToggleCubicClip", _farClipEnabled);
+	GlobalEventManager().setToggled("ToggleCubicClip", _farClipEnabled);
 
-		// Determine the draw mode represented by the integer registry value
-		importDrawMode(registry::getValue<int>(RKEY_DRAWMODE));
+	// Determine the draw mode represented by the integer registry value
+	importDrawMode(registry::getValue<int>(RKEY_DRAWMODE));
 
-		// Check if a global camwindow is set
-		CamWndPtr cam = GlobalCamera().getActiveCamWnd();
+	// Check if a global camwindow is set
+	CamWndPtr cam = GlobalCamera().getActiveCamWnd();
 
-		if (cam)
+    GlobalCamera().foreachCamWnd([&](CamWnd& cam)
+    {
+        bool freeMovedWasEnabled = cam.freeMoveEnabled();
+
+        // Disable free move if it was enabled during key change (e.g. LightingMode Toggle)
+        if (freeMovedWasEnabled)
         {
-            bool freeMovedWasEnabled = cam->freeMoveEnabled();
+            cam.disableFreeMove();
+        }
 
-			// Disable free move if it was enabled during key change (e.g. LightingMode Toggle)
-			if (freeMovedWasEnabled)
-            {
-				cam->disableFreeMove();
-			}
+        // Disconnect the handlers for the old state and re-connect after reading the registry value
+        cam.removeHandlersMove();
 
-			// Disconnect the handlers for the old state and re-connect after reading the registry value
-			cam->removeHandlersMove();
+        // Check the value and take the according actions
+        _discreteMovement = registry::getValue<bool>(RKEY_DISCRETE_MOVEMENT);
 
-			// Check the value and take the according actions
-			_discreteMovement = registry::getValue<bool>(RKEY_DISCRETE_MOVEMENT);
+        // Reconnect the new handlers
+        cam.addHandlersMove();
 
-			// Reconnect the new handlers
-			cam->addHandlersMove();
+        cam.setFarClipPlaneEnabled(_farClipEnabled);
+        cam.setFarClipPlaneDistance(calculateFarPlaneDistance(_cubicScale));
 
-			cam->updateFarClipPlane();
+        if (freeMovedWasEnabled)
+        {
+            cam.enableFreeMove();
+        }
+    });
 
-            if (freeMovedWasEnabled)
-            {
-                cam->enableFreeMove();
-            }
-
-			// Call the update method in case the render mode has changed
-			GlobalCamera().update();
-		}
-	}
-	_callbackActive = false;
+	// Call the update method in case the render mode has changed
+	GlobalCamera().update();
 }
 
 CameraDrawMode CameraSettings::getRenderMode() const 
@@ -226,7 +226,7 @@ bool CameraSettings::discreteMovement() const {
 	return _discreteMovement;
 }
 
-void CameraSettings::setCubicScale(const int& scale)
+void CameraSettings::setCubicScale(int scale)
 {
 	// Update the internal value
 	_cubicScale = scale;

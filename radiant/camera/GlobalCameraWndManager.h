@@ -102,7 +102,9 @@ public:
     void foreachMouseTool(const std::function<void(const ui::MouseToolPtr&)>& func);
 
 public:
-	// Callbacks for the named camera KeyEvents
+    void foreachCamWnd(const std::function<void(CamWnd&)>& action);
+	
+    // Callbacks for the named camera KeyEvents
 	void onMoveForwardKey(ui::KeyEventType eventType);
 	void onMoveBackKey(ui::KeyEventType eventType);
 	void onMoveLeftKey(ui::KeyEventType eventType);

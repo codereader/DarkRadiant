@@ -54,6 +54,7 @@ Camera::Camera(render::IRenderView& view, const std::function<void(bool)>& reque
 	_requestRedraw(requestRedraw),
 	_fieldOfView(75.0f),
 	_farClipPlane(32768),
+	_farClipPlaneEnabled(true),
 	_width(0),
 	_height(0),
 	_projection(Matrix4::getIdentity()),
@@ -255,9 +256,20 @@ void Camera::setFarClipPlaneDistance(float distance)
 	updateProjection();
 }
 
+bool Camera::getFarClipPlaneEnabled() const
+{
+    return _farClipPlaneEnabled;
+}
+
+void Camera::setFarClipPlaneEnabled(bool enabled)
+{
+    _farClipPlaneEnabled = enabled;
+    updateProjection();
+}
+
 void Camera::updateProjection()
 {
-	auto farClip = getFarClipPlaneDistance();
+    auto farClip = _farClipPlaneEnabled ? getFarClipPlaneDistance() : 32768.0f;
 	_projection = projection_for_camera(farClip / 4096.0f, farClip, _fieldOfView, _width, _height);
 
 	_view.construct(_projection, _modelview, _width, _height);

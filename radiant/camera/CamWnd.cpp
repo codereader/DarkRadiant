@@ -31,6 +31,7 @@
 #include "debugging/gl.h"
 #include <wx/sizer.h>
 #include "util/ScopedBoolLock.h"
+#include "CameraSettings.h"
 #include <functional>
 #include <sigc++/retype_return.h>
 #include "render/VectorLightList.h"
@@ -58,11 +59,6 @@ namespace
     const unsigned int MOVE_PITCHUP = 1 << 8;
     const unsigned int MOVE_PITCHDOWN = 1 << 9;
     const unsigned int MOVE_ALL = MOVE_FORWARD | MOVE_BACK | MOVE_ROTRIGHT | MOVE_ROTLEFT | MOVE_STRAFERIGHT | MOVE_STRAFELEFT | MOVE_UP | MOVE_DOWN | MOVE_PITCHUP | MOVE_PITCHDOWN;
-
-    inline float calculateFarPlaneDistance(int cubicScale)
-    {
-        return pow(2.0, (cubicScale + 7) / 2.0);
-    }
 }
 
 inline Vector2 windowvector_for_widget_centre(wxutil::GLWidget& widget)
@@ -93,7 +89,8 @@ CamWnd::CamWnd(wxWindow* parent) :
     Bind(wxEVT_TIMER, &CamWnd::onFrame, this, _timer.GetId());
     Bind(wxEVT_TIMER, &CamWnd::onFreeMoveTimer, this, _freeMoveTimer.GetId());
 
-    updateFarClipPlane();
+    setFarClipPlaneDistance(calculateFarPlaneDistance(getCameraSettings()->cubicScale()));
+    setFarClipPlaneEnabled(getCameraSettings()->farClipEnabled());
 
     constructGUIComponents();
 
@@ -1219,35 +1216,12 @@ const Frustum& CamWnd::getViewFrustum() const
 
 void CamWnd::onFarClipPlaneOutClick(wxCommandEvent& ev)
 {
-    farClipPlaneOut();
+    GlobalCommandSystem().executeCommand("CubicClipZoomOut");
 }
 
 void CamWnd::onFarClipPlaneInClick(wxCommandEvent& ev)
 {
-    farClipPlaneIn();
-}
-
-void CamWnd::farClipPlaneOut()
-{
-    auto newCubicScale = getCameraSettings()->cubicScale() + 1;
-    getCameraSettings()->setCubicScale(newCubicScale);
-
-    _camera->setFarClipPlaneDistance(calculateFarPlaneDistance(newCubicScale));
-    update();
-}
-
-void CamWnd::farClipPlaneIn()
-{
-    auto newCubicScale = getCameraSettings()->cubicScale() - 1;
-    getCameraSettings()->setCubicScale(newCubicScale);
-
-    _camera->setFarClipPlaneDistance(calculateFarPlaneDistance(newCubicScale));
-    update();
-}
-
-void CamWnd::updateFarClipPlane()
-{
-    _camera->setFarClipPlaneDistance(calculateFarPlaneDistance(getCameraSettings()->cubicScale()));
+    GlobalCommandSystem().executeCommand("CubicClipZoomIn");
 }
 
 float CamWnd::getFarClipPlaneDistance() const
@@ -1258,6 +1232,16 @@ float CamWnd::getFarClipPlaneDistance() const
 void CamWnd::setFarClipPlaneDistance(float distance)
 {
     _camera->setFarClipPlaneDistance(distance);
+}
+
+bool CamWnd::getFarClipPlaneEnabled() const
+{
+    return _camera->getFarClipPlaneEnabled();
+}
+
+void CamWnd::setFarClipPlaneEnabled(bool enabled)
+{
+    _camera->setFarClipPlaneEnabled(enabled);
 }
 
 void CamWnd::onGLResize(wxSizeEvent& ev)

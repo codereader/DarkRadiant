@@ -208,38 +208,15 @@ void GlobalCameraWndManager::benchmark()
 	doWithActiveCamWnd([](CamWnd& camWnd) { camWnd.benchmark(); });
 }
 
-void GlobalCameraWndManager::update() {
-	// Issue the update call to all cameras
-	for (CamWndMap::iterator i = _cameras.begin(); i != _cameras.end(); /* in-loop */ ) {
-		CamWndPtr cam = i->second.lock();
-
-		if (cam != NULL) {
-			cam->update();
-			++i;
-		}
-		else {
-			_cameras.erase(i++);
-		}
-	}
+void GlobalCameraWndManager::update()
+{
+    foreachCamWnd([](CamWnd& cam) { cam.update(); });
 }
 
 void GlobalCameraWndManager::forceDraw()
 {
     // Issue the update call to all cameras
-    for (CamWndMap::iterator i = _cameras.begin(); i != _cameras.end(); /* in-loop */)
-    {
-        CamWndPtr cam = i->second.lock();
-
-        if (cam)
-        {
-            cam->forceRedraw();
-            ++i;
-        }
-        else
-        {
-            _cameras.erase(i++);
-        }
-    }
+    foreachCamWnd([](CamWnd& cam) { cam.forceRedraw(); });
 }
 
 void GlobalCameraWndManager::changeFloorUp(const cmd::ArgumentList& args)
@@ -258,12 +235,26 @@ void GlobalCameraWndManager::toggleLightingMode(const cmd::ArgumentList& args) {
 
 void GlobalCameraWndManager::farClipPlaneIn(const cmd::ArgumentList& args)
 {
-	doWithActiveCamWnd([](CamWnd& camWnd) { camWnd.farClipPlaneIn(); });
+    auto newCubicScale = getCameraSettings()->cubicScale() - 1;
+    getCameraSettings()->setCubicScale(newCubicScale);
+
+    foreachCamWnd([=](CamWnd& camWnd)
+    {
+        camWnd.setFarClipPlaneDistance(calculateFarPlaneDistance(newCubicScale));
+        camWnd.update();
+    });
 }
 
 void GlobalCameraWndManager::farClipPlaneOut(const cmd::ArgumentList& args)
 {
-	doWithActiveCamWnd([](CamWnd& camWnd) { camWnd.farClipPlaneOut(); });
+    auto newCubicScale = getCameraSettings()->cubicScale() + 1;
+    getCameraSettings()->setCubicScale(newCubicScale);
+
+    foreachCamWnd([=](CamWnd& camWnd)
+    {
+        camWnd.setFarClipPlaneDistance(calculateFarPlaneDistance(newCubicScale));
+        camWnd.update();
+    });
 }
 
 // --------------- Keyboard movement methods ------------------------------------------
@@ -319,6 +310,23 @@ void GlobalCameraWndManager::moveCameraCmd(const cmd::ArgumentList& args)
 		rWarning() << "Unknown direction: " << arg << std::endl;
 		rMessage() << "Possible dDirections are: <up|down|forward|back|left|right>" << std::endl;
 	}
+}
+
+void GlobalCameraWndManager::foreachCamWnd(const std::function<void(CamWnd&)>& action)
+{
+    for (auto i = _cameras.begin(); i != _cameras.end(); /* in-loop */)
+    {
+        auto cam = i->second.lock();
+
+        if (!cam)
+        {
+            _cameras.erase(i++);
+            continue;
+        }
+         
+        ++i;
+        action(*cam);
+    }
 }
 
 void GlobalCameraWndManager::doWithActiveCamWnd(const std::function<void(CamWnd&)>& action)

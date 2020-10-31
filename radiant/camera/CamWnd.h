@@ -161,11 +161,10 @@ public:
     void removeHandlersMove();
 
     // Increases/decreases the far clip plane distance
-    void farClipPlaneIn();
-    void farClipPlaneOut();
-    void updateFarClipPlane();
     float getFarClipPlaneDistance() const override;
     void setFarClipPlaneDistance(float distance) override;
+    bool getFarClipPlaneEnabled() const override;
+    void setFarClipPlaneEnabled(bool enabled) override;
 
     void startRenderTime();
     void stopRenderTime();

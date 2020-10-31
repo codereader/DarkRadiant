@@ -54,6 +54,8 @@ public:
 	// Cubic clipping
 	virtual float getFarClipPlaneDistance() const = 0;
 	virtual void setFarClipPlaneDistance(float distance) = 0;
+	virtual bool getFarClipPlaneEnabled() const = 0;
+	virtual void setFarClipPlaneEnabled(bool enabled) = 0;
 };
 
 class IFreeMoveView :

@@ -21,6 +21,7 @@ class Camera :
 
 	float _fieldOfView;
 	float _farClipPlane;
+	bool _farClipPlaneEnabled;
 	int _width;
 	int _height;
 
@@ -42,6 +43,8 @@ public:
 
 	float getFarClipPlaneDistance() const override;
 	void setFarClipPlaneDistance(float distance) override;
+    bool getFarClipPlaneEnabled() const override;
+    void setFarClipPlaneEnabled(bool enabled) override;
 
 	void freemoveUpdateAxes();
 	void moveUpdateAxes();
