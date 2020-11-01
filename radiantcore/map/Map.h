@@ -146,16 +146,10 @@ public:
 	 */
 	void saveDirect(const std::string& filename, const MapFormatPtr& mapFormat = MapFormatPtr());
 
-	/** greebo: Creates a new map file.
-	 *
-	 * Note: Can't be called "new" as this is a reserved word...
-	 */
-	void createNew();
-
 	void rename(const std::string& filename);
 
-	void exportSelected(std::ostream& out);
-	void exportSelected(std::ostream& out, const MapFormatPtr& format);
+	void exportSelected(std::ostream& out) override;
+	void exportSelected(std::ostream& out, const MapFormatPtr& format) override;
 
 	// free all map elements, reinitialize the structures that depend on them
 	void freeMap();

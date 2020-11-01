@@ -160,6 +160,12 @@ public:
 	// This is mainly a service method for external code, like the gameconnection.
 	virtual map::IMapExporter::Ptr createMapExporter(map::IMapWriter& writer, 
 		const scene::IMapRootNodePtr& root, std::ostream& mapStream) = 0;
+
+    // Exports the current selection to the given output stream, using the map's format
+    virtual void exportSelected(std::ostream& out) = 0;
+
+    // Exports the current selection to the given output stream, using the given map format
+    virtual void exportSelected(std::ostream& out, const map::MapFormatPtr& format) = 0;
 };
 typedef std::shared_ptr<IMap> IMapPtr;
 
