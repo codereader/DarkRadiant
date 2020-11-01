@@ -814,7 +814,8 @@ void Map::exportSelected(std::ostream& out, const MapFormatPtr& format)
     assert(format);
 
     // Create our main MapExporter walker for traversal
-    MapExporter exporter(*format->getMapWriter(), GlobalSceneGraph().root(), out);
+    auto writer = format->getMapWriter();
+    MapExporter exporter(*writer, GlobalSceneGraph().root(), out);
 
     // Pass the traverseSelected function and start writing selected nodes
     exporter.exportMap(GlobalSceneGraph().root(), scene::traverseSelected);
