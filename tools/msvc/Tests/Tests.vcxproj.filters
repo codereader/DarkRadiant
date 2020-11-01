@@ -21,6 +21,7 @@
     <ClCompile Include="..\..\..\test\math\Plane3.cpp">
       <Filter>math</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\test\MapExport.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\HeadlessOpenGLContext.h" />

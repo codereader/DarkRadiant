@@ -34,21 +34,25 @@
     <Import Project="..\properties\DarkRadiant Base Debug x64.props" />
     <Import Project="..\properties\Tests.props" />
     <Import Project="..\properties\GLEW.props" />
+    <Import Project="..\properties\libxml2.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="..\properties\DarkRadiant Base Debug Win32.props" />
     <Import Project="..\properties\Tests.props" />
     <Import Project="..\properties\GLEW.props" />
+    <Import Project="..\properties\libxml2.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="..\properties\DarkRadiant Base Release Win32.props" />
     <Import Project="..\properties\Tests.props" />
     <Import Project="..\properties\GLEW.props" />
+    <Import Project="..\properties\libxml2.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="..\properties\DarkRadiant Base Release x64.props" />
     <Import Project="..\properties\Tests.props" />
     <Import Project="..\properties\GLEW.props" />
+    <Import Project="..\properties\libxml2.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <ItemGroup>
@@ -65,6 +69,7 @@
     <ClCompile Include="..\..\..\test\CSG.cpp" />
     <ClCompile Include="..\..\..\test\FacePlane.cpp" />
     <ClCompile Include="..\..\..\test\HeadlessOpenGLContext.cpp" />
+    <ClCompile Include="..\..\..\test\MapExport.cpp" />
     <ClCompile Include="..\..\..\test\Materials.cpp" />
     <ClCompile Include="..\..\..\test\math\Matrix4.cpp" />
     <ClCompile Include="..\..\..\test\math\Plane3.cpp" />
