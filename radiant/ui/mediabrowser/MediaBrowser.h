@@ -99,6 +99,8 @@ private:
 	sigc::connection _materialDefsUnloaded;
 	sigc::connection _shaderClipboardConn;
 
+	bool _blockShaderClipboardUpdates;
+
 private:
 	void construct();
 

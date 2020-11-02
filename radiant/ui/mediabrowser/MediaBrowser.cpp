@@ -28,6 +28,7 @@
 #include "registry/registry.h"
 #include "shaderlib.h"
 #include "string/string.h"
+#include "util/ScopedBoolLock.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "ui/common/MaterialDefinitionView.h"
 #include "ui/mainframe/ScreenUpdateBlocker.h"
@@ -397,7 +398,8 @@ MediaBrowser::MediaBrowser() :
 	_mode(TreeMode::ShowAll),
 	_favourites(new Favourites),
 	_preview(nullptr),
-	_isPopulated(false)
+	_isPopulated(false),
+	_blockShaderClipboardUpdates(false)
 {}
 
 void MediaBrowser::construct()
@@ -948,6 +950,8 @@ void MediaBrowser::_onExpose(wxPaintEvent& ev)
 
 void MediaBrowser::handleSelectionChange()
 {
+	util::ScopedBoolLock lock(_blockShaderClipboardUpdates);
+
 	// Update the preview if a texture is selected
 	if (!isDirectorySelected())
 	{
@@ -1039,6 +1043,11 @@ void MediaBrowser::shutdownModule()
 
 void MediaBrowser::onShaderClipboardSourceChanged()
 {
+	if (_blockShaderClipboardUpdates)
+	{
+		return;
+	}
+
 	setSelection(GlobalShaderClipboard().getShaderName());
 }
 
