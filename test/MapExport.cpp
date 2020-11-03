@@ -7,13 +7,15 @@
 #include "scenelib.h"
 #include "string/predicate.h"
 #include "xmlutil/Document.h"
+#include "messages/MapFileOperation.h"
 
 namespace test
 {
 
-using MapExportTest = RadiantTest;
+namespace
+{
 
-TEST_F(MapExportTest, exportSelectedWithFormat)
+void createAndSelectSingleBrush()
 {
     auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
 
@@ -22,6 +24,15 @@ TEST_F(MapExportTest, exportSelectedWithFormat)
 
     GlobalSelectionSystem().setSelectedAll(false);
     Node_setSelected(brushNode, true);
+}
+
+}
+
+using MapExportTest = RadiantTest;
+
+TEST_F(MapExportTest, exportSelectedWithFormat)
+{
+    createAndSelectSingleBrush();
 
     auto format = GlobalMapFormatManager().getMapFormatByName(map::PORTABLE_MAP_FORMAT_NAME);
 
@@ -34,6 +45,31 @@ TEST_F(MapExportTest, exportSelectedWithFormat)
     auto result = output.str();
     ASSERT_TRUE(string::starts_with(result, "<?xml version=\"1.0\" encoding=\"utf-8\"?>"));
     ASSERT_TRUE(result.find("<map") != std::string::npos);
+}
+
+TEST_F(MapExportTest, exportSelectedDoesNotSendMessages)
+{
+    createAndSelectSingleBrush();
+
+    auto format = GlobalMapFormatManager().getMapFormatByName(map::PORTABLE_MAP_FORMAT_NAME);
+
+    bool messageReceived = false;
+
+    // Subscribe to the messages potentially sent by the MapExporter
+    auto listener = GlobalRadiantCore().getMessageBus().addListener(
+        radiant::IMessage::Type::MapFileOperation,
+        radiant::TypeListener<map::FileOperation>([&](map::FileOperation& msg)
+    { 
+        messageReceived = true; 
+    }));
+
+    std::ostringstream output;
+    GlobalMapModule().exportSelected(output, format);
+    output.flush();
+
+    GlobalRadiantCore().getMessageBus().removeListener(listener);
+
+    ASSERT_FALSE(messageReceived, "Received a FileOperation message while exporting the selection");
 }
 
 }
