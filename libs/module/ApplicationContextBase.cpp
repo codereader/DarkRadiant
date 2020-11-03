@@ -303,7 +303,7 @@ void ApplicationContextBase::initialise(int argc, char* argv[])
                   << "'" << _homePath << "'" << std::endl;
     }
 
-    _cachePath = _settingsPath;
+    _cachePath = _homePath;
 
     {
         // get path to the editor
@@ -324,6 +324,7 @@ void ApplicationContextBase::initialise(int argc, char* argv[])
         // Make sure we have forward slashes
         _appPath = os::standardPath(appPathNarrow);
     }
+
     // Initialise the relative paths
     initPaths();
 }
@@ -347,6 +348,7 @@ void ApplicationContextBase::initPaths()
     // Ensure that the homepath ends with a slash
     _homePath = os::standardPathWithSlash(_homePath);
     _appPath = os::standardPathWithSlash(_appPath);
+    _cachePath = os::standardPathWithSlash(_cachePath);
 
     // Make sure the home/settings folder exists (attempt to create it)
     _settingsPath = _homePath;
