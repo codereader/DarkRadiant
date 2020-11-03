@@ -1,4 +1,4 @@
-#include "PicoModelNode.h"
+#include "StaticModelNode.h"
 
 #include "StaticModelSurface.h"
 #include "ivolumetest.h"
@@ -13,89 +13,89 @@
 namespace model {
 
 // greebo: Construct a new StaticModel instance, we re-use the surfaces only
-PicoModelNode::PicoModelNode(const StaticModelPtr& picoModel) :
+StaticModelNode::StaticModelNode(const StaticModelPtr& picoModel) :
     _picoModel(new StaticModel(*picoModel)), 
     _name(picoModel->getFilename()),
     _lightList(GlobalRenderSystem().attachLitObject(*this))
 {
-    Node::setTransformChangedCallback(std::bind(&PicoModelNode::lightsChanged, this));
+    Node::setTransformChangedCallback(std::bind(&StaticModelNode::lightsChanged, this));
 
     // Update the skin
     skinChanged("");
 }
 
-PicoModelNode::~PicoModelNode() {
+StaticModelNode::~StaticModelNode() {
     GlobalRenderSystem().detachLitObject(*this);
 }
 
-void PicoModelNode::onInsertIntoScene(scene::IMapRootNode& root)
+void StaticModelNode::onInsertIntoScene(scene::IMapRootNode& root)
 {
     _picoModel->connectUndoSystem(root.getUndoChangeTracker());
     
     Node::onInsertIntoScene(root);
 }
 
-void PicoModelNode::onRemoveFromScene(scene::IMapRootNode& root)
+void StaticModelNode::onRemoveFromScene(scene::IMapRootNode& root)
 {
     _picoModel->disconnectUndoSystem(root.getUndoChangeTracker());
 
     Node::onRemoveFromScene(root);
 }
 
-const IModel& PicoModelNode::getIModel() const
+const IModel& StaticModelNode::getIModel() const
 {
     return *_picoModel;
 }
 
-IModel& PicoModelNode::getIModel() 
+IModel& StaticModelNode::getIModel() 
 {
     return *_picoModel;
 }
 
-bool PicoModelNode::hasModifiedScale()
+bool StaticModelNode::hasModifiedScale()
 {
     return _picoModel->getScale() != Vector3(1, 1, 1);
 }
 
-Vector3 PicoModelNode::getModelScale()
+Vector3 StaticModelNode::getModelScale()
 {
 	return _picoModel->getScale();
 }
 
-const AABB& PicoModelNode::localAABB() const {
+const AABB& StaticModelNode::localAABB() const {
     return _picoModel->localAABB();
 }
 
 // SelectionTestable implementation
-void PicoModelNode::testSelect(Selector& selector, SelectionTest& test) {
+void StaticModelNode::testSelect(Selector& selector, SelectionTest& test) {
     _picoModel->testSelect(selector, test, localToWorld());
 }
 
-std::string PicoModelNode::name() const {
+std::string StaticModelNode::name() const {
     return _picoModel->getFilename();
 }
 
-scene::INode::Type PicoModelNode::getNodeType() const
+scene::INode::Type StaticModelNode::getNodeType() const
 {
     return Type::Model;
 }
 
-const StaticModelPtr& PicoModelNode::getModel() const {
+const StaticModelPtr& StaticModelNode::getModel() const {
     return _picoModel;
 }
 
-void PicoModelNode::setModel(const StaticModelPtr& model) {
+void StaticModelNode::setModel(const StaticModelPtr& model) {
     _picoModel = model;
 }
 
 // LitObject test function
-bool PicoModelNode::intersectsLight(const RendererLight& light) const
+bool StaticModelNode::intersectsLight(const RendererLight& light) const
 {
     return light.intersectsAABB(worldAABB());
 }
 
 // Add a light to this model instance
-void PicoModelNode::insertLight(const RendererLight& light)
+void StaticModelNode::insertLight(const RendererLight& light)
 {
     // Calculate transform from the superclass
     const Matrix4& l2w = localToWorld();
@@ -109,12 +109,12 @@ void PicoModelNode::insertLight(const RendererLight& light)
 }
 
 // Clear all lights from this model instance
-void PicoModelNode::clearLights()
+void StaticModelNode::clearLights()
 {
     _intersectingLights.clear();
 }
 
-void PicoModelNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+void StaticModelNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
 {
     _lightList.calculateIntersectingLights();
 
@@ -131,7 +131,7 @@ void PicoModelNode::renderSolid(RenderableCollector& collector, const VolumeTest
     }
 }
 
-void PicoModelNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
+void StaticModelNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
 {
     assert(_renderEntity);
 
@@ -145,7 +145,7 @@ void PicoModelNode::renderWireframe(RenderableCollector& collector, const Volume
     }
 }
 
-void PicoModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)
+void StaticModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
     Node::setRenderSystem(renderSystem);
 
@@ -153,13 +153,13 @@ void PicoModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 }
 
 // Traceable implementation
-bool PicoModelNode::getIntersection(const Ray& ray, Vector3& intersection)
+bool StaticModelNode::getIntersection(const Ray& ray, Vector3& intersection)
 {
     return _picoModel->getIntersection(ray, intersection, localToWorld());
 }
 
 // Skin changed notify
-void PicoModelNode::skinChanged(const std::string& newSkinName)
+void StaticModelNode::skinChanged(const std::string& newSkinName)
 {
     // The new skin name is stored locally
     _skin = newSkinName;
@@ -174,12 +174,12 @@ void PicoModelNode::skinChanged(const std::string& newSkinName)
 }
 
 // Returns the name of the currently active skin
-std::string PicoModelNode::getSkin() const
+std::string StaticModelNode::getSkin() const
 {
     return _skin;
 }
 
-void PicoModelNode::_onTransformationChanged()
+void StaticModelNode::_onTransformationChanged()
 {
     // Always revert to our original state before evaluating
     if (getTransformationType() & TransformationType::Scale)
@@ -196,7 +196,7 @@ void PicoModelNode::_onTransformationChanged()
     }
 }
 
-void PicoModelNode::_applyTransformation()
+void StaticModelNode::_applyTransformation()
 {
     if (getTransformationType() & TransformationType::Scale)
     {

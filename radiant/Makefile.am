@@ -151,7 +151,7 @@ darkradiant_SOURCES = main.cpp \
                       modelfile/Lwo2Exporter.cpp \
                       modelfile/PicoModelLoader.cpp \
                       modelfile/PicoModelModule.cpp \
-                      modelfile/PicoModelNode.cpp \
+                      modelfile/StaticModelNode.cpp \
                       modelfile/StaticModel.cpp \
                       modelfile/StaticModelSurface.cpp \
                       modelfile/WavefrontExporter.cpp \

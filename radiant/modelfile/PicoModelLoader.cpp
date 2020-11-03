@@ -8,7 +8,7 @@
 
 #include "os/path.h"
 
-#include "PicoModelNode.h"
+#include "StaticModelNode.h"
 
 #include "idatastream.h"
 #include "string/case_conv.h"
@@ -63,7 +63,7 @@ scene::INodePtr PicoModelLoader::loadModel(const std::string& modelName)
 	if (picoModel)
 	{
 		// Load was successful, construct a modelnode using this resource
-		return std::make_shared<PicoModelNode>(picoModel);
+		return std::make_shared<StaticModelNode>(picoModel);
 	}
 	else
 	{

@@ -17,7 +17,7 @@ namespace model {
  * \brief
  * Scenegraph node representing a static model
  */
-class PicoModelNode :
+class StaticModelNode :
 	public scene::Node,
 	public ModelNode,
 	public SelectionTestable,
@@ -26,7 +26,6 @@ class PicoModelNode :
 	public ITraceable,
     public Transformable
 {
-private:
 	// The actual model
 	StaticModelPtr _picoModel;
 
@@ -43,11 +42,13 @@ private:
 	std::string _skin;
 
 public:
-	/** Construct a PicoModelNode with a reference to the loaded picoModel.
-	 */
-	PicoModelNode(const StaticModelPtr& picoModel);
+    typedef std::shared_ptr<StaticModelNode> Ptr;
 
-	virtual ~PicoModelNode();
+	/** Construct a StaticModelNode with a reference to the loaded picoModel.
+	 */
+	StaticModelNode(const StaticModelPtr& picoModel);
+
+	virtual ~StaticModelNode();
 
 	virtual void onInsertIntoScene(scene::IMapRootNode& root) override;
 	virtual void onRemoveFromScene(scene::IMapRootNode& root) override;
@@ -106,6 +107,5 @@ protected:
 	virtual void _onTransformationChanged() override;
 	virtual void _applyTransformation() override;
 };
-typedef std::shared_ptr<PicoModelNode> PicoModelNodePtr;
 
 } // namespace model

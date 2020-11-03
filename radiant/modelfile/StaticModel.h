@@ -126,7 +126,7 @@ public:
 	void connectUndoSystem(IMapFileChangeTracker& changeTracker);
 	void disconnectUndoSystem(IMapFileChangeTracker& changeTracker);
 
-    // Delegated render methods called by PicoModelNode (not part of any
+    // Delegated render methods called by StaticModelNode (not part of any
     // interface)
 	void renderSolid(RenderableCollector& rend, const Matrix4& localToWorld,
 		const IRenderEntity& entity, const LightSources& lights) const;
