@@ -53,6 +53,8 @@ private:
 	std::size_t _entityNum;
 	std::size_t _primitiveNum;
 
+    bool _sendProgressMessages;
+
 public:
 	// The constructor prepares the scene and the output stream
 	MapExporter(IMapWriter& writer, const scene::IMapRootNodePtr& root,
@@ -71,6 +73,12 @@ public:
 	// NodeVisitor implementation, is called by the traversal func passed to MapResource
 	bool pre(const scene::INodePtr& node) override;
 	void post(const scene::INodePtr& node) override;
+
+    // Send FileProgress messages through the MessageBus while exporting
+    void enableProgressMessages();
+
+    // Don't send any progress messages through the MessageBus while exporting
+    void disableProgressMessages();
 
 private:
 	// Common code shared by the constructors
