@@ -1,5 +1,5 @@
-#include "RenderablePicoModel.h"
-#include "RenderablePicoSurface.h"
+#include "StaticModel.h"
+#include "StaticModelSurface.h"
 
 #include "ivolumetest.h"
 #include "iselectiontest.h"
@@ -16,7 +16,7 @@ namespace model
 {
 
 // Constructor
-RenderablePicoModel::RenderablePicoModel(picoModel_t* mod, const std::string& fExt) :
+StaticModel::StaticModel(picoModel_t* mod, const std::string& fExt) :
     _scaleTransformed(1,1,1),
     _scale(1,1,1),
     _undoStateSaver(nullptr),
@@ -25,7 +25,7 @@ RenderablePicoModel::RenderablePicoModel(picoModel_t* mod, const std::string& fE
     // Get the number of surfaces to create
     int nSurf = PicoGetModelNumSurfaces(mod);
 
-    // Create a RenderablePicoSurface for each surface in the structure
+    // Create a StaticModelSurface for each surface in the structure
     for (int n = 0; n < nSurf; ++n)
     {
         // Retrieve the surface, discarding it if it is null or non-triangulated (?)
@@ -37,8 +37,8 @@ RenderablePicoModel::RenderablePicoModel(picoModel_t* mod, const std::string& fE
         // Fix the normals of the surface (?)
         PicoFixSurfaceNormals(surf);
 
-        // Create the RenderablePicoSurface object and add it to the vector
-        RenderablePicoSurfacePtr rSurf(new RenderablePicoSurface(surf, fExt));
+        // Create the StaticModelSurface object and add it to the vector
+        StaticModelSurfacePtr rSurf(new StaticModelSurface(surf, fExt));
 
         _surfVec.push_back(Surface(rSurf));
 
@@ -47,7 +47,7 @@ RenderablePicoModel::RenderablePicoModel(picoModel_t* mod, const std::string& fE
     }
 }
 
-RenderablePicoModel::RenderablePicoModel(const RenderablePicoModel& other) :
+StaticModel::StaticModel(const StaticModel& other) :
     _surfVec(other._surfVec.size()),
     _scaleTransformed(other._scaleTransformed),
     _scale(other._scale), // use scale of other model
@@ -61,13 +61,13 @@ RenderablePicoModel::RenderablePicoModel(const RenderablePicoModel& other) :
     for (std::size_t i = 0; i < other._surfVec.size(); ++i)
     {
         // Copy-construct the other surface, inheriting any applied scale
-        _surfVec[i].surface = std::make_shared<RenderablePicoSurface>(*(other._surfVec[i].surface));
+        _surfVec[i].surface = std::make_shared<StaticModelSurface>(*(other._surfVec[i].surface));
         _surfVec[i].originalSurface = other._surfVec[i].originalSurface;
         _surfVec[i].surface->setActiveMaterial(_surfVec[i].surface->getDefaultMaterial());
     }
 }
 
-void RenderablePicoModel::connectUndoSystem(IMapFileChangeTracker& changeTracker)
+void StaticModel::connectUndoSystem(IMapFileChangeTracker& changeTracker)
 {
     assert(_undoStateSaver == nullptr);
 
@@ -77,7 +77,7 @@ void RenderablePicoModel::connectUndoSystem(IMapFileChangeTracker& changeTracker
     _undoStateSaver = GlobalUndoSystem().getStateSaver(*this, changeTracker);
 }
 
-void RenderablePicoModel::disconnectUndoSystem(IMapFileChangeTracker& changeTracker)
+void StaticModel::disconnectUndoSystem(IMapFileChangeTracker& changeTracker)
 {
     assert(_undoStateSaver != nullptr);
 
@@ -86,7 +86,7 @@ void RenderablePicoModel::disconnectUndoSystem(IMapFileChangeTracker& changeTrac
     GlobalUndoSystem().releaseStateSaver(*this);
 }
 
-void RenderablePicoModel::foreachVisibleSurface(const std::function<void(const Surface& s)>& func) const
+void StaticModel::foreachVisibleSurface(const std::function<void(const Surface& s)>& func) const
 {
     for (const Surface& surface : _surfVec)
     {
@@ -102,7 +102,7 @@ void RenderablePicoModel::foreachVisibleSurface(const std::function<void(const S
     }
 }
 
-void RenderablePicoModel::renderSolid(RenderableCollector& rend,
+void StaticModel::renderSolid(RenderableCollector& rend,
                                       const Matrix4& localToWorld,
                                       const IRenderEntity& entity,
                                       const LightSources& lights) const
@@ -116,7 +116,7 @@ void RenderablePicoModel::renderSolid(RenderableCollector& rend,
     });
 }
 
-void RenderablePicoModel::renderWireframe(RenderableCollector& rend, const Matrix4& localToWorld,
+void StaticModel::renderWireframe(RenderableCollector& rend, const Matrix4& localToWorld,
     const IRenderEntity& entity) const
 {
     // Submit renderables from each surface
@@ -128,7 +128,7 @@ void RenderablePicoModel::renderWireframe(RenderableCollector& rend, const Matri
     });
 }
 
-void RenderablePicoModel::setRenderSystem(const RenderSystemPtr& renderSystem)
+void StaticModel::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
     _renderSystem = renderSystem;
 
@@ -136,7 +136,7 @@ void RenderablePicoModel::setRenderSystem(const RenderSystemPtr& renderSystem)
 }
 
 // OpenGL (back-end) render function
-void RenderablePicoModel::render(const RenderInfo& info) const
+void StaticModel::render(const RenderInfo& info) const
 {
 // greebo: No GL state changes in render methods!
 #if 0
@@ -175,18 +175,18 @@ void RenderablePicoModel::render(const RenderInfo& info) const
     }
 }
 
-std::string RenderablePicoModel::getFilename() const 
+std::string StaticModel::getFilename() const 
 {
     return _filename;
 }
 
-void RenderablePicoModel::setFilename(const std::string& name)
+void StaticModel::setFilename(const std::string& name)
 {
     _filename = name;
 }
 
 // Return vertex count of this model
-int RenderablePicoModel::getVertexCount() const 
+int StaticModel::getVertexCount() const 
 {
     int sum = 0;
 
@@ -199,7 +199,7 @@ int RenderablePicoModel::getVertexCount() const
 }
 
 // Return poly count of this model
-int RenderablePicoModel::getPolyCount() const
+int StaticModel::getPolyCount() const
 {
     int sum = 0;
 
@@ -211,14 +211,14 @@ int RenderablePicoModel::getPolyCount() const
     return sum;
 }
 
-const IModelSurface& RenderablePicoModel::getSurface(unsigned surfaceNum) const
+const IModelSurface& StaticModel::getSurface(unsigned surfaceNum) const
 {
     assert(surfaceNum >= 0 && surfaceNum < _surfVec.size());
     return *(_surfVec[surfaceNum].surface);
 }
 
 // Apply the given skin to this model
-void RenderablePicoModel::applySkin(const ModelSkin& skin)
+void StaticModel::applySkin(const ModelSkin& skin)
 {
     // Apply the skin to each surface, then try to capture shaders
     for (SurfaceList::iterator i = _surfVec.begin();
@@ -250,7 +250,7 @@ void RenderablePicoModel::applySkin(const ModelSkin& skin)
     updateMaterialList();
 }
 
-void RenderablePicoModel::captureShaders()
+void StaticModel::captureShaders()
 {
     RenderSystemPtr renderSystem = _renderSystem.lock();
 
@@ -269,7 +269,7 @@ void RenderablePicoModel::captureShaders()
 }
 
 // Update the list of active materials
-void RenderablePicoModel::updateMaterialList() const
+void StaticModel::updateMaterialList() const
 {
     _materialList.clear();
 
@@ -280,7 +280,7 @@ void RenderablePicoModel::updateMaterialList() const
 }
 
 // Return the list of active skins for this model
-const StringList& RenderablePicoModel::getActiveMaterials() const
+const StringList& StaticModel::getActiveMaterials() const
 {
     // If the material list is empty, populate it
     if (_materialList.empty())
@@ -293,7 +293,7 @@ const StringList& RenderablePicoModel::getActiveMaterials() const
 }
 
 // Perform selection test
-void RenderablePicoModel::testSelect(Selector& selector,
+void StaticModel::testSelect(Selector& selector,
                                      SelectionTest& test,
                                      const Matrix4& localToWorld)
 {
@@ -313,7 +313,7 @@ void RenderablePicoModel::testSelect(Selector& selector,
     }
 }
 
-bool RenderablePicoModel::getIntersection(const Ray& ray, Vector3& intersection, const Matrix4& localToWorld)
+bool StaticModel::getIntersection(const Ray& ray, Vector3& intersection, const Matrix4& localToWorld)
 {
     Vector3 bestIntersection = ray.origin;
 
@@ -346,34 +346,34 @@ bool RenderablePicoModel::getIntersection(const Ray& ray, Vector3& intersection,
     }
 }
 
-const RenderablePicoModel::SurfaceList& RenderablePicoModel::getSurfaces() const
+const StaticModel::SurfaceList& StaticModel::getSurfaces() const
 {
     return _surfVec;
 }
 
-std::string RenderablePicoModel::getModelPath() const
+std::string StaticModel::getModelPath() const
 {
     return _modelPath;
 }
 
-void RenderablePicoModel::setModelPath(const std::string& modelPath)
+void StaticModel::setModelPath(const std::string& modelPath)
 {
     _modelPath = modelPath;
 }
 
-void RenderablePicoModel::revertScale()
+void StaticModel::revertScale()
 {
     _scaleTransformed = _scale;
 }
 
-void RenderablePicoModel::evaluateScale(const Vector3& scale)
+void StaticModel::evaluateScale(const Vector3& scale)
 {
     _scaleTransformed *= scale;
 
     applyScaleToSurfaces();
 }
 
-void RenderablePicoModel::applyScaleToSurfaces()
+void StaticModel::applyScaleToSurfaces()
 {
     _localAABB = AABB();
 
@@ -385,7 +385,7 @@ void RenderablePicoModel::applyScaleToSurfaces()
         if (surf.surface == surf.originalSurface)
         {
             // Copy-construct the surface
-            surf.surface = std::make_shared<RenderablePicoSurface>(*surf.originalSurface);
+            surf.surface = std::make_shared<StaticModelSurface>(*surf.originalSurface);
         }
 
         // Apply the scale, on top of the original surface, this should save us from
@@ -398,7 +398,7 @@ void RenderablePicoModel::applyScaleToSurfaces()
 }
 
 // Freeze transform, move the applied scale to the original model
-void RenderablePicoModel::freezeScale()
+void StaticModel::freezeScale()
 {
     undoSave();
 
@@ -406,7 +406,7 @@ void RenderablePicoModel::freezeScale()
     _scale = _scaleTransformed;
 }
 
-void RenderablePicoModel::undoSave()
+void StaticModel::undoSave()
 {
     if (_undoStateSaver != nullptr)
     {
@@ -414,12 +414,12 @@ void RenderablePicoModel::undoSave()
     }
 }
 
-IUndoMementoPtr RenderablePicoModel::exportState() const
+IUndoMementoPtr StaticModel::exportState() const
 {
     return IUndoMementoPtr(new undo::BasicUndoMemento<Vector3>(_scale));
 }
 
-void RenderablePicoModel::importState(const IUndoMementoPtr& state)
+void StaticModel::importState(const IUndoMementoPtr& state)
 {
     undoSave();
 
@@ -429,7 +429,7 @@ void RenderablePicoModel::importState(const IUndoMementoPtr& state)
     applyScaleToSurfaces();
 }
 
-const Vector3& RenderablePicoModel::getScale() const
+const Vector3& StaticModel::getScale() const
 {
     return _scale;
 }

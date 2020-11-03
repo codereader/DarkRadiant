@@ -57,8 +57,8 @@ scene::INodePtr PicoModelLoader::loadModel(const std::string& modelName)
 	}
 
 	// The cached model should be an PicoModel, otherwise we're in the wrong movie
-	RenderablePicoModelPtr picoModel =
-		std::dynamic_pointer_cast<RenderablePicoModel>(model);
+	StaticModelPtr picoModel =
+		std::dynamic_pointer_cast<StaticModel>(model);
 
 	if (picoModel)
 	{
@@ -105,8 +105,8 @@ IModelPtr PicoModelLoader::loadModelFromPath(const std::string& name)
 		return IModelPtr();
 	}
 
-	RenderablePicoModelPtr modelObj(
-		new RenderablePicoModel(model, fExt)
+	StaticModelPtr modelObj(
+		new StaticModel(model, fExt)
 	);
 
 	// Set the filename

@@ -152,8 +152,8 @@ darkradiant_SOURCES = main.cpp \
                       modelfile/PicoModelLoader.cpp \
                       modelfile/PicoModelModule.cpp \
                       modelfile/PicoModelNode.cpp \
-                      modelfile/RenderablePicoModel.cpp \
-                      modelfile/RenderablePicoSurface.cpp \
+                      modelfile/StaticModel.cpp \
+                      modelfile/StaticModelSurface.cpp \
                       modelfile/WavefrontExporter.cpp \
                       modelfile/picomodel/pm_md3.c \
                       modelfile/picomodel/pm_md2.c \

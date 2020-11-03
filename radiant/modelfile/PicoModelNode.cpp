@@ -1,6 +1,6 @@
 #include "PicoModelNode.h"
 
-#include "RenderablePicoSurface.h"
+#include "StaticModelSurface.h"
 #include "ivolumetest.h"
 #include "ishaders.h"
 #include "iscenegraph.h"
@@ -12,9 +12,9 @@
 
 namespace model {
 
-// greebo: Construct a new RenderablePicoModel instance, we re-use the surfaces only
-PicoModelNode::PicoModelNode(const RenderablePicoModelPtr& picoModel) :
-    _picoModel(new RenderablePicoModel(*picoModel)), 
+// greebo: Construct a new StaticModel instance, we re-use the surfaces only
+PicoModelNode::PicoModelNode(const StaticModelPtr& picoModel) :
+    _picoModel(new StaticModel(*picoModel)), 
     _name(picoModel->getFilename()),
     _lightList(GlobalRenderSystem().attachLitObject(*this))
 {
@@ -80,11 +80,11 @@ scene::INode::Type PicoModelNode::getNodeType() const
     return Type::Model;
 }
 
-const RenderablePicoModelPtr& PicoModelNode::getModel() const {
+const StaticModelPtr& PicoModelNode::getModel() const {
     return _picoModel;
 }
 
-void PicoModelNode::setModel(const RenderablePicoModelPtr& model) {
+void PicoModelNode::setModel(const StaticModelPtr& model) {
     _picoModel = model;
 }
 

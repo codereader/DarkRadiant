@@ -8,11 +8,15 @@
 #include "irenderable.h"
 #include "pivot.h"
 #include "render/VectorLightList.h"
-#include "RenderablePicoModel.h"
+#include "StaticModel.h"
 #include "scene/Node.h"
 
 namespace model {
 
+/**
+ * \brief
+ * Scenegraph node representing a static model
+ */
 class PicoModelNode :
 	public scene::Node,
 	public ModelNode,
@@ -24,7 +28,7 @@ class PicoModelNode :
 {
 private:
 	// The actual model
-	RenderablePicoModelPtr _picoModel;
+	StaticModelPtr _picoModel;
 
 	std::string _name;
 
@@ -41,7 +45,7 @@ private:
 public:
 	/** Construct a PicoModelNode with a reference to the loaded picoModel.
 	 */
-	PicoModelNode(const RenderablePicoModelPtr& picoModel);
+	PicoModelNode(const StaticModelPtr& picoModel);
 
 	virtual ~PicoModelNode();
 
@@ -75,8 +79,8 @@ public:
 	virtual std::string name() const override;
 	Type getNodeType() const override;
 
-	const RenderablePicoModelPtr& getModel() const;
-	void setModel(const RenderablePicoModelPtr& model);
+	const StaticModelPtr& getModel() const;
+	void setModel(const StaticModelPtr& model);
 
 	// LitObject test function
 	bool intersectsLight(const RendererLight& light) const override;

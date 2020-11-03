@@ -14,8 +14,8 @@ class Ray;
 /* FORWARD DECLS */
 namespace model
 {
-	class RenderablePicoSurface;
-	typedef std::shared_ptr<RenderablePicoSurface> RenderablePicoSurfacePtr;
+	class StaticModelSurface;
+	typedef std::shared_ptr<StaticModelSurface> StaticModelSurfacePtr;
 }
 class RenderableCollector;
 class RendererLight;
@@ -26,13 +26,15 @@ namespace model
 {
 
 /**
- * Renderable class containing a model loaded via the picomodel library. A
- * RenderablePicoModel is made up of one or more RenderablePicoSurface objects,
- * each of which contains a number of polygons with the same texture. Rendering
- * a RenderablePicoModel involves rendering all of its surfaces, submitting 
- * their geometry via OpenGL calls.
+ * \brief
+ * IModel implementing class representing a static model
+ *
+ * A StaticModel is made up of one or more StaticModelSurface
+ * objects, each of which contains a number of polygons with the same texture.
+ * Rendering a StaticModel involves rendering all of its surfaces,
+ * submitting their geometry via OpenGL calls.
  */
-class RenderablePicoModel : 
+class StaticModel : 
 	public IModel,
 	public IUndoable
 {
@@ -42,10 +44,10 @@ private:
 	struct Surface
 	{
 		// The (shared) surface object
-		RenderablePicoSurfacePtr surface;
+		StaticModelSurfacePtr surface;
 
 		// The (unmodified) surface object
-		RenderablePicoSurfacePtr originalSurface;
+		StaticModelSurfacePtr originalSurface;
 
 		// The shader this surface is using
 		ShaderPtr shader;
@@ -54,7 +56,7 @@ private:
 		{}
 
 		// Constructor
-		Surface(const RenderablePicoSurfacePtr& surface_) :
+		Surface(const StaticModelSurfacePtr& surface_) :
 			surface(surface_),
 			originalSurface(surface)
 		{}
@@ -113,13 +115,13 @@ public:
 	 * loaded from picomodel, and a string filename extension to allow the
 	 * correct handling of material paths (which differs between ASE and LWO)
 	 */
-	RenderablePicoModel(picoModel_t* mod, const std::string& fExt);
+	StaticModel(picoModel_t* mod, const std::string& fExt);
 
 	/**
 	 * Copy constructor: re-use the surfaces from the other model
 	 * but make it possible to assign custom skins to the surfaces.
 	 */
-	RenderablePicoModel(const RenderablePicoModel& other);
+	StaticModel(const StaticModel& other);
 
 	void connectUndoSystem(IMapFileChangeTracker& changeTracker);
 	void disconnectUndoSystem(IMapFileChangeTracker& changeTracker);
@@ -211,7 +213,7 @@ public:
 	bool getIntersection(const Ray& ray, Vector3& intersection, const Matrix4& localToWorld);
 
 	/**
-	 * Return the list of RenderablePicoSurface objects.
+	 * Return the list of StaticModelSurface objects.
 	 */
 	const SurfaceList& getSurfaces() const;
 
@@ -231,6 +233,6 @@ public:
 	// Returns the current base scale of this model
 	const Vector3& getScale() const;
 };
-typedef std::shared_ptr<RenderablePicoModel> RenderablePicoModelPtr;
+typedef std::shared_ptr<StaticModel> StaticModelPtr;
 
 }
