@@ -129,9 +129,9 @@ public:
     // Delegated render methods called by StaticModelNode (not part of any
     // interface)
 	void renderSolid(RenderableCollector& rend, const Matrix4& localToWorld,
-		const IRenderEntity& entity, const LightSources& lights) const;
+                     const IRenderEntity& entity, const LitObject& litObj) const;
 	void renderWireframe(RenderableCollector& rend, const Matrix4& localToWorld,
-		const IRenderEntity& entity) const;
+                         const IRenderEntity& entity) const;
 
 	void setRenderSystem(const RenderSystemPtr& renderSystem);
 

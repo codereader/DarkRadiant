@@ -14,12 +14,9 @@ namespace model {
 
 // greebo: Construct a new StaticModel instance, we re-use the surfaces only
 StaticModelNode::StaticModelNode(const StaticModelPtr& picoModel) :
-    _picoModel(new StaticModel(*picoModel)), 
-    _name(picoModel->getFilename()),
-    _lightList(GlobalRenderSystem().attachLitObject(*this))
+    _model(new StaticModel(*picoModel)), 
+    _name(picoModel->getFilename())
 {
-    Node::setTransformChangedCallback(std::bind(&StaticModelNode::lightsChanged, this));
-
     // Update the skin
     skinChanged("");
 }
@@ -30,49 +27,49 @@ StaticModelNode::~StaticModelNode() {
 
 void StaticModelNode::onInsertIntoScene(scene::IMapRootNode& root)
 {
-    _picoModel->connectUndoSystem(root.getUndoChangeTracker());
+    _model->connectUndoSystem(root.getUndoChangeTracker());
     
     Node::onInsertIntoScene(root);
 }
 
 void StaticModelNode::onRemoveFromScene(scene::IMapRootNode& root)
 {
-    _picoModel->disconnectUndoSystem(root.getUndoChangeTracker());
+    _model->disconnectUndoSystem(root.getUndoChangeTracker());
 
     Node::onRemoveFromScene(root);
 }
 
 const IModel& StaticModelNode::getIModel() const
 {
-    return *_picoModel;
+    return *_model;
 }
 
 IModel& StaticModelNode::getIModel() 
 {
-    return *_picoModel;
+    return *_model;
 }
 
 bool StaticModelNode::hasModifiedScale()
 {
-    return _picoModel->getScale() != Vector3(1, 1, 1);
+    return _model->getScale() != Vector3(1, 1, 1);
 }
 
 Vector3 StaticModelNode::getModelScale()
 {
-	return _picoModel->getScale();
+	return _model->getScale();
 }
 
 const AABB& StaticModelNode::localAABB() const {
-    return _picoModel->localAABB();
+    return _model->localAABB();
 }
 
 // SelectionTestable implementation
 void StaticModelNode::testSelect(Selector& selector, SelectionTest& test) {
-    _picoModel->testSelect(selector, test, localToWorld());
+    _model->testSelect(selector, test, localToWorld());
 }
 
 std::string StaticModelNode::name() const {
-    return _picoModel->getFilename();
+    return _model->getFilename();
 }
 
 scene::INode::Type StaticModelNode::getNodeType() const
@@ -81,11 +78,11 @@ scene::INode::Type StaticModelNode::getNodeType() const
 }
 
 const StaticModelPtr& StaticModelNode::getModel() const {
-    return _picoModel;
+    return _model;
 }
 
 void StaticModelNode::setModel(const StaticModelPtr& model) {
-    _picoModel = model;
+    _model = model;
 }
 
 // LitObject test function
@@ -94,40 +91,18 @@ bool StaticModelNode::intersectsLight(const RendererLight& light) const
     return light.intersectsAABB(worldAABB());
 }
 
-// Add a light to this model instance
-void StaticModelNode::insertLight(const RendererLight& light)
-{
-    // Calculate transform from the superclass
-    const Matrix4& l2w = localToWorld();
-
-    // If the light's AABB intersects the oriented AABB of this model instance,
-    // add the light to our light list
-    if (light.intersectsAABB(AABB::createFromOrientedAABB(_picoModel->localAABB(), l2w)))
-    {
-        _intersectingLights.addLight(light);
-    }
-}
-
-// Clear all lights from this model instance
-void StaticModelNode::clearLights()
-{
-    _intersectingLights.clear();
-}
-
 void StaticModelNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
 {
-    _lightList.calculateIntersectingLights();
-
     assert(_renderEntity);
 
-    // Test the model's intersection volume, if it intersects pass on the render call
     const Matrix4& l2w = localToWorld();
 
-    if (volume.TestAABB(_picoModel->localAABB(), l2w) != VOLUME_OUTSIDE)
+    // Test the model's intersection volume, if it intersects pass on the
+    // render call
+    if (volume.TestAABB(_model->localAABB(), l2w) != VOLUME_OUTSIDE)
     {
         // Submit the model's geometry
-        _picoModel->renderSolid(collector, l2w, *_renderEntity,
-                                _intersectingLights);
+        _model->renderSolid(collector, l2w, *_renderEntity, *this);
     }
 }
 
@@ -138,10 +113,10 @@ void StaticModelNode::renderWireframe(RenderableCollector& collector, const Volu
     // Test the model's intersection volume, if it intersects pass on the render call
     const Matrix4& l2w = localToWorld();
 
-    if (volume.TestAABB(_picoModel->localAABB(), l2w) != VOLUME_OUTSIDE)
+    if (volume.TestAABB(_model->localAABB(), l2w) != VOLUME_OUTSIDE)
     {
         // Submit the model's geometry
-        _picoModel->renderWireframe(collector, l2w, *_renderEntity);
+        _model->renderWireframe(collector, l2w, *_renderEntity);
     }
 }
 
@@ -149,13 +124,13 @@ void StaticModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
     Node::setRenderSystem(renderSystem);
 
-    _picoModel->setRenderSystem(renderSystem);
+    _model->setRenderSystem(renderSystem);
 }
 
 // Traceable implementation
 bool StaticModelNode::getIntersection(const Ray& ray, Vector3& intersection)
 {
-    return _picoModel->getIntersection(ray, intersection, localToWorld());
+    return _model->getIntersection(ray, intersection, localToWorld());
 }
 
 // Skin changed notify
@@ -167,7 +142,7 @@ void StaticModelNode::skinChanged(const std::string& newSkinName)
     // greebo: Acquire the ModelSkin reference from the SkinCache
     // Note: This always returns a valid reference
     ModelSkin& skin = GlobalModelSkinCache().capture(_skin);
-    _picoModel->applySkin(skin);
+    _model->applySkin(skin);
 
     // Refresh the scene (TODO: get rid of that)
     GlobalSceneGraph().sceneChanged();
@@ -184,15 +159,15 @@ void StaticModelNode::_onTransformationChanged()
     // Always revert to our original state before evaluating
     if (getTransformationType() & TransformationType::Scale)
     {
-        _picoModel->revertScale();
-        _picoModel->evaluateScale(getScale());
+        _model->revertScale();
+        _model->evaluateScale(getScale());
     }
     else if (getTransformationType() == TransformationType::NoTransform)
     {
         // Transformation has been changed but no transform mode is set,
         // so the reason we got here is a cancelTransform() call, revert everything
-        _picoModel->revertScale();
-        _picoModel->evaluateScale(Vector3(1,1,1));
+        _model->revertScale();
+        _model->evaluateScale(Vector3(1,1,1));
     }
 }
 
@@ -200,9 +175,9 @@ void StaticModelNode::_applyTransformation()
 {
     if (getTransformationType() & TransformationType::Scale)
     {
-        _picoModel->revertScale();
-        _picoModel->evaluateScale(getScale());
-        _picoModel->freezeScale();
+        _model->revertScale();
+        _model->evaluateScale(getScale());
+        _model->freezeScale();
     }
 }
 

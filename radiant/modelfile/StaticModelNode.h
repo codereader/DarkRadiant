@@ -27,16 +27,9 @@ class StaticModelNode :
     public Transformable
 {
 	// The actual model
-	StaticModelPtr _picoModel;
+	StaticModelPtr _model;
 
 	std::string _name;
-
-	// Vector of RendererLight references which illuminate this instance, set
-	// with addLight() and clearLights()
-    render::lib::VectorLightList _intersectingLights;
-
-	// The light list from the shader cache when we attach
-	LightList& _lightList;
 
 	// The name of this model's skin
 	std::string _skin;
@@ -68,12 +61,6 @@ public:
 	// Bounded implementation
 	virtual const AABB& localAABB() const override;
 
-	// Lights changed function
-	void lightsChanged()
-    {
-		_lightList.setDirty();
-	}
-
 	// SelectionTestable implementation
 	void testSelect(Selector& selector, SelectionTest& test) override;
 
@@ -85,10 +72,6 @@ public:
 
 	// LitObject test function
 	bool intersectsLight(const RendererLight& light) const override;
-	// Add a light to this model instance
-	void insertLight(const RendererLight& light) override;
-	// Clear all lights from this model instance
-	void clearLights() override;
 
 	// Renderable implementation
   	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;

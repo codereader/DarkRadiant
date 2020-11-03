@@ -103,21 +103,22 @@ void StaticModel::foreachVisibleSurface(const std::function<void(const Surface& 
 }
 
 void StaticModel::renderSolid(RenderableCollector& rend,
-                                      const Matrix4& localToWorld,
-                                      const IRenderEntity& entity,
-                                      const LightSources& lights) const
+                              const Matrix4& localToWorld,
+                              const IRenderEntity& entity,
+                              const LitObject& litObject) const
 {
     // Submit renderables from each surface
     foreachVisibleSurface([&](const Surface& s)
     {
         // Submit the ordinary shader for material-based rendering
-        rend.addRenderable(*s.shader, *s.surface, localToWorld,
-                           &lights, &entity);
+        rend.addLitRenderable(*s.shader, *s.surface, localToWorld,
+                              litObject, &entity);
     });
 }
 
-void StaticModel::renderWireframe(RenderableCollector& rend, const Matrix4& localToWorld,
-    const IRenderEntity& entity) const
+void StaticModel::renderWireframe(RenderableCollector& rend,
+                                  const Matrix4& localToWorld,
+                                  const IRenderEntity& entity) const
 {
     // Submit renderables from each surface
     foreachVisibleSurface([&](const Surface& s)
