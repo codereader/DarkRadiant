@@ -158,7 +158,7 @@ public:
     // IEntityClass implementation
     std::string getName() const override;
     const IEntityClass* getParent() const override;
-    sigc::signal<void> changedSignal() const override;
+    sigc::signal<void>& changedSignal() override;
     bool isFixedSize() const override;
     AABB getBounds() const override;
     bool isLight() const override;

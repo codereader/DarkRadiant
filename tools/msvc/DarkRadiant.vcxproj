@@ -250,6 +250,7 @@
     <ClCompile Include="..\..\radiant\ui\Documentation.cpp" />
     <ClCompile Include="..\..\radiant\ui\eclasstree\EClassTree.cpp" />
     <ClCompile Include="..\..\radiant\ui\eclasstree\EClassTreeBuilder.cpp" />
+    <ClCompile Include="..\..\radiant\ui\EntityClassColourManager.cpp" />
     <ClCompile Include="..\..\radiant\ui\entitylist\EntityList.cpp" />
     <ClCompile Include="..\..\radiant\ui\entitylist\GraphTreeModel.cpp" />
     <ClCompile Include="..\..\radiant\ui\filters\editor\FilterDialog.cpp" />

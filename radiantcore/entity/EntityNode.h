@@ -169,6 +169,9 @@ private:
 
 	// Private function target - wraps to virtual protected signal
 	void _modelKeyChanged(const std::string& value);
+
+    void acquireShaders();
+    void acquireShaders(const RenderSystemPtr& renderSystem);
 };
 
 } // namespace entity

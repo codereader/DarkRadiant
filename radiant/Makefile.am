@@ -45,7 +45,8 @@ darkradiant_SOURCES = main.cpp \
                       eventmanager/Toggle.cpp \
                       eventmanager/WidgetToggle.cpp \
                       render/OpenGLModule.cpp \
-					  ui/UserInterfaceModule.cpp \
+                      ui/EntityClassColourManager.cpp \
+                      ui/UserInterfaceModule.cpp \
                       ui/Documentation.cpp \
                       ui/eclasstree/EClassTree.cpp \
                       ui/eclasstree/EClassTreeBuilder.cpp \

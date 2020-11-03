@@ -117,6 +117,9 @@ void EntityNode::onEntityClassChanged()
 {
 	// By default, we notify the KeyObservers attached to this entity
 	_keyObservers.refreshObservers();
+
+    // The colour might have changed too, so re-acquire the shaders if possible
+    acquireShaders();
 }
 
 void EntityNode::addKeyObserver(const std::string& key, KeyObserver& observer)
@@ -269,20 +272,30 @@ void EntityNode::renderWireframe(RenderableCollector& collector,
 	}
 }
 
+void EntityNode::acquireShaders()
+{
+    acquireShaders(getRenderSystem());
+}
+
+void EntityNode::acquireShaders(const RenderSystemPtr& renderSystem)
+{
+    if (renderSystem)
+    {
+        _fillShader = renderSystem->capture(_entity.getEntityClass()->getFillShader());
+        _wireShader = renderSystem->capture(_entity.getEntityClass()->getWireShader());
+    }
+    else
+    {
+        _fillShader.reset();
+        _wireShader.reset();
+    }
+}
+
 void EntityNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
 	SelectableNode::setRenderSystem(renderSystem);
 
-	if (renderSystem)
-	{
-		_fillShader = renderSystem->capture(_entity.getEntityClass()->getFillShader());
-		_wireShader = renderSystem->capture(_entity.getEntityClass()->getWireShader());
-	}
-	else
-	{
-		_fillShader.reset();
-		_wireShader.reset();
-	}
+    acquireShaders(renderSystem);
 
 	// The colour key is maintaining a shader object as well
 	_colourKey.setRenderSystem(renderSystem);

@@ -215,7 +215,7 @@ class IEntityClass
 public:
 
     /// Signal emitted when entity class contents are changed or reloaded
-    virtual sigc::signal<void> changedSignal() const = 0;
+    virtual sigc::signal<void>& changedSignal() = 0;
 
     /// Get the name of this entity class
     virtual std::string getName() const = 0;

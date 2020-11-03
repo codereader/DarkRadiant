@@ -667,6 +667,9 @@
     <ClCompile Include="..\..\radiant\ui\common\SoundShaderDefinitionView.cpp">
       <Filter>src\ui\common</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\EntityClassColourManager.cpp">
+      <Filter>src\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h">

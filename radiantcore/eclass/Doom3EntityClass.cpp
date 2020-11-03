@@ -232,7 +232,7 @@ const IEntityClass* Doom3EntityClass::getParent() const
     return _parent;
 }
 
-sigc::signal<void> Doom3EntityClass::changedSignal() const
+sigc::signal<void>& Doom3EntityClass::changedSignal()
 {
     return _changedSignal;
 }
@@ -295,6 +295,8 @@ void Doom3EntityClass::setColour(const Vector3& colour)
         fmt::format("({0:f} {1:f} {2:f})", _colour[0], _colour[1], _colour[2]);
 
     _wireShader = fmt::format("<{0:f} {1:f} {2:f}>", _colour[0], _colour[1], _colour[2]);
+
+    _changedSignal.emit();
 }
 
 const Vector3& Doom3EntityClass::getColour() const {

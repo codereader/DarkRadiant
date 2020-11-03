@@ -24,7 +24,10 @@ void OpenGLModule::sharedContextDestroyed()
 
 void OpenGLModule::drawString(const std::string& string) const
 {
-	ftglRenderFont(_font->getFtglFont(),string.c_str(),0xFFFF);//FTGL_RENDER_ALL);
+    if (_font)
+    {
+        ftglRenderFont(_font->getFtglFont(), string.c_str(), 0xFFFF);//FTGL_RENDER_ALL);
+    }
 }
 
 void OpenGLModule::drawChar(char character) const
