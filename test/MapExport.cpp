@@ -69,7 +69,7 @@ TEST_F(MapExportTest, exportSelectedDoesNotSendMessages)
 
     GlobalRadiantCore().getMessageBus().removeListener(listener);
 
-    ASSERT_FALSE(messageReceived, "Received a FileOperation message while exporting the selection");
+    EXPECT_FALSE(messageReceived) << "Received a FileOperation message while exporting the selection";
 }
 
 }
