@@ -36,6 +36,7 @@ darkradiant_SOURCES = main.cpp \
                       camera/CameraSettings.cpp \
                       camera/CamWnd.cpp \
                       camera/FloatingCamWnd.cpp \
+                      clipboard/ClipboardModule.cpp \
                       eventmanager/Accelerator.cpp \
                       eventmanager/EventManager.cpp \
                       eventmanager/GlobalKeyEventFilter.cpp \
