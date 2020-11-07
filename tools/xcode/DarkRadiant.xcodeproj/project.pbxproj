@@ -422,6 +422,8 @@
 		3AC8878E253C230D00E6CCCE /* MRU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AC8878B253C230D00E6CCCE /* MRU.cpp */; };
 		3AC8878F253C230D00E6CCCE /* MRU.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AC8878C253C230D00E6CCCE /* MRU.h */; };
 		3AC88790253C230D00E6CCCE /* MRUList.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AC8878D253C230D00E6CCCE /* MRUList.h */; };
+		3AC88794253C24D500E6CCCE /* ClipboardModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AC88792253C24D500E6CCCE /* ClipboardModule.cpp */; };
+		3AC88796253C250900E6CCCE /* EntityClassColourManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AC88795253C250900E6CCCE /* EntityClassColourManager.cpp */; };
 		3AE2104E1E5980AF00F5A0A6 /* script.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE0B21E50D8D50062D9AF /* script.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3AE210511E5980B000F5A0A6 /* sound.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE19E1E50DD620062D9AF /* sound.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3AE210561E59811500F5A0A6 /* dm.conversation.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE2701E50E1520062D9AF /* dm.conversation.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -2848,6 +2850,9 @@
 		3AC8878B253C230D00E6CCCE /* MRU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MRU.cpp; path = ../../radiantcore/map/mru/MRU.cpp; sourceTree = SOURCE_ROOT; };
 		3AC8878C253C230D00E6CCCE /* MRU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MRU.h; path = ../../radiantcore/map/mru/MRU.h; sourceTree = SOURCE_ROOT; };
 		3AC8878D253C230D00E6CCCE /* MRUList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MRUList.h; path = ../../radiantcore/map/mru/MRUList.h; sourceTree = SOURCE_ROOT; };
+		3AC88792253C24D500E6CCCE /* ClipboardModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ClipboardModule.cpp; path = ../../radiant/clipboard/ClipboardModule.cpp; sourceTree = SOURCE_ROOT; };
+		3AC88793253C24D500E6CCCE /* ClipboardModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ClipboardModule.h; path = ../../radiant/clipboard/ClipboardModule.h; sourceTree = SOURCE_ROOT; };
+		3AC88795253C250900E6CCCE /* EntityClassColourManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EntityClassColourManager.cpp; path = ../../radiant/ui/EntityClassColourManager.cpp; sourceTree = SOURCE_ROOT; };
 		3ADBCC9F1E4E4EDC00CA94F6 /* wxWidgets.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = wxWidgets.framework; path = ../../../../../opt/local/Library/Frameworks/wxWidgets.framework; sourceTree = "<group>"; };
 		3AE20CD31E59687300F5A0A6 /* DarkRadiant.app */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DarkRadiant.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AE20CD51E59687300F5A0A6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -5023,6 +5028,15 @@
 			name = mru;
 			sourceTree = "<group>";
 		};
+		3AC88791253C24BA00E6CCCE /* clipboard */ = {
+			isa = PBXGroup;
+			children = (
+				3AC88792253C24D500E6CCCE /* ClipboardModule.cpp */,
+				3AC88793253C24D500E6CCCE /* ClipboardModule.h */,
+			);
+			name = clipboard;
+			sourceTree = "<group>";
+		};
 		3ADBCC681E4E4B7C00CA94F6 = {
 			isa = PBXGroup;
 			children = (
@@ -6188,6 +6202,7 @@
 		3AEDE39B1E4EEA1F005A8641 /* DarkRadiant */ = {
 			isa = PBXGroup;
 			children = (
+				3AC88791253C24BA00E6CCCE /* clipboard */,
 				3AFF0604253AE741002B1472 /* ApplicationContext.h */,
 				3AF743371E4F861A003465B5 /* camera */,
 				3AE6F328239F4E46008A1B2D /* eventmanager */,
@@ -6832,6 +6847,7 @@
 		3AF744971E4F861B003465B5 /* ui */ = {
 			isa = PBXGroup;
 			children = (
+				3AC88795253C250900E6CCCE /* EntityClassColourManager.cpp */,
 				3AF744981E4F861B003465B5 /* aas */,
 				3AF7449D1E4F861B003465B5 /* about */,
 				3AFF05F3253AE705002B1472 /* AutoSaveRequestHandler.h */,
@@ -9049,6 +9065,7 @@
 				3AE6F2831FF78CDB008A1B2D /* EClassTree.cpp in Sources */,
 				3AFF05CB253AE546002B1472 /* FiltersMainMenu.cpp in Sources */,
 				3AF7460D1E4F861B003465B5 /* CommandEntry.cpp in Sources */,
+				3AC88796253C250900E6CCCE /* EntityClassColourManager.cpp in Sources */,
 				3AFF044324548BFF002B1472 /* FilterContextMenu.cpp in Sources */,
 				3AF746221E4F861B003465B5 /* SkinPropertyEditor.cpp in Sources */,
 				3AE6F20D1FDC229F008A1B2D /* GameSetupPage.cpp in Sources */,
@@ -9064,6 +9081,7 @@
 				3AE6F1FD1FD1A9B7008A1B2D /* RadiantApp.cpp in Sources */,
 				3AF745C31E4F861B003465B5 /* precompiled.cpp in Sources */,
 				3AE6F27D1FF78CD0008A1B2D /* EntityList.cpp in Sources */,
+				3AC88794253C24D500E6CCCE /* ClipboardModule.cpp in Sources */,
 				3AF7458E1E4F861B003465B5 /* Console.cpp in Sources */,
 				3AF745951E4F861B003465B5 /* main.cpp in Sources */,
 				3AE6F342239F4FE1008A1B2D /* MouseToolManager.cpp in Sources */,
