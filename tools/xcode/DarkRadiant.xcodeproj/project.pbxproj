@@ -424,6 +424,8 @@
 		3AC88790253C230D00E6CCCE /* MRUList.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AC8878D253C230D00E6CCCE /* MRUList.h */; };
 		3AC88794253C24D500E6CCCE /* ClipboardModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AC88792253C24D500E6CCCE /* ClipboardModule.cpp */; };
 		3AC88796253C250900E6CCCE /* EntityClassColourManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AC88795253C250900E6CCCE /* EntityClassColourManager.cpp */; };
+		3AC88A3A2556707000E6CCCE /* PatchSurface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AC88A382556707000E6CCCE /* PatchSurface.cpp */; };
+		3AC88A3B2556707000E6CCCE /* PatchSurface.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AC88A392556707000E6CCCE /* PatchSurface.h */; };
 		3AE2104E1E5980AF00F5A0A6 /* script.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE0B21E50D8D50062D9AF /* script.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3AE210511E5980B000F5A0A6 /* sound.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE19E1E50DD620062D9AF /* sound.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3AE210561E59811500F5A0A6 /* dm.conversation.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE2701E50E1520062D9AF /* dm.conversation.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -2853,6 +2855,8 @@
 		3AC88792253C24D500E6CCCE /* ClipboardModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ClipboardModule.cpp; path = ../../radiant/clipboard/ClipboardModule.cpp; sourceTree = SOURCE_ROOT; };
 		3AC88793253C24D500E6CCCE /* ClipboardModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ClipboardModule.h; path = ../../radiant/clipboard/ClipboardModule.h; sourceTree = SOURCE_ROOT; };
 		3AC88795253C250900E6CCCE /* EntityClassColourManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EntityClassColourManager.cpp; path = ../../radiant/ui/EntityClassColourManager.cpp; sourceTree = SOURCE_ROOT; };
+		3AC88A382556707000E6CCCE /* PatchSurface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PatchSurface.cpp; path = ../../radiantcore/model/export/PatchSurface.cpp; sourceTree = SOURCE_ROOT; };
+		3AC88A392556707000E6CCCE /* PatchSurface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PatchSurface.h; path = ../../radiantcore/model/export/PatchSurface.h; sourceTree = SOURCE_ROOT; };
 		3ADBCC9F1E4E4EDC00CA94F6 /* wxWidgets.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = wxWidgets.framework; path = ../../../../../opt/local/Library/Frameworks/wxWidgets.framework; sourceTree = "<group>"; };
 		3AE20CD31E59687300F5A0A6 /* DarkRadiant.app */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DarkRadiant.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AE20CD51E59687300F5A0A6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -7620,6 +7624,8 @@
 		3AFF050A253ADF08002B1472 /* export */ = {
 			isa = PBXGroup;
 			children = (
+				3AC88A382556707000E6CCCE /* PatchSurface.cpp */,
+				3AC88A392556707000E6CCCE /* PatchSurface.h */,
 				3AFF043524548B8E002B1472 /* ModelScalePreserver.cpp */,
 				3AFF043624548B8E002B1472 /* ModelScalePreserver.h */,
 				3AE6F1401F496ACB008A1B2D /* ModelExporter.cpp */,
@@ -8159,6 +8165,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3AFF051B253ADF91002B1472 /* MessageBus.h in Headers */,
+				3AC88A3B2556707000E6CCCE /* PatchSurface.h in Headers */,
 				3AFF0564253AE1F1002B1472 /* JPEGLoader.h in Headers */,
 				3AFF0495253ABBBA002B1472 /* LocalisationModule.h in Headers */,
 				3AFF048D253ABB78002B1472 /* ColourScheme.h in Headers */,
@@ -9401,6 +9408,7 @@
 				3AFF04C2253ADB89002B1472 /* OpenGLShader.cpp in Sources */,
 				3AFF047A253ABA04002B1472 /* Doom3ShaderSystem.cpp in Sources */,
 				3AFF0573253AE283002B1472 /* Doom3Group.cpp in Sources */,
+				3AC88A3A2556707000E6CCCE /* PatchSurface.cpp in Sources */,
 				3AFF053F253AE0A6002B1472 /* Map.cpp in Sources */,
 				3AFF04B4253ABD6A002B1472 /* SelectionSetModule.cpp in Sources */,
 				3AFF04AB253ABD35002B1472 /* SelectionGroupInfoFileModule.cpp in Sources */,
