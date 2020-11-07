@@ -7,6 +7,7 @@
 #include "i18n.h"
 #include <sigc++/functors/mem_fun.h>
 #include <wx/thread.h>
+#include <wx/app.h>
 
 #include "wxutil/ModalProgressDialog.h"
 #include "wxutil/dialog/MessageBox.h"
