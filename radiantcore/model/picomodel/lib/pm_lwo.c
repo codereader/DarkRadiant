@@ -296,9 +296,6 @@ static picoModel_t *_lwo_load( PM_PARAMS_LOAD )
 				continue;
 			}
 
-			/* We haven't discarded this polygon, so bump the surface polycount */
-			surfacePolyCount++;
-
 			for( j = 0, v = pol->v; j < 3; j++, v++ )
 			{
 				pt = &layer->point.pt[ v->index ];
@@ -412,6 +409,9 @@ static picoModel_t *_lwo_load( PM_PARAMS_LOAD )
 					numverts++;
 				}
 			}
+
+            /* We haven't discarded this polygon, so bump the surface polycount */
+            surfacePolyCount++;
 		}
 
 		/* free the hashtable */
