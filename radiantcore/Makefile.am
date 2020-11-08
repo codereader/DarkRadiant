@@ -172,6 +172,7 @@ libradiantcore_la_SOURCES = Radiant.cpp \
                 model/export/Lwo2Exporter.cpp \
                 model/export/ModelExporter.cpp \
                 model/export/ModelScalePreserver.cpp \
+                model/export/PatchSurface.cpp \
                 model/export/ScaledModelExporter.cpp \
                 model/export/WavefrontExporter.cpp \
                 model/picomodel/PicoModelLoader.cpp \

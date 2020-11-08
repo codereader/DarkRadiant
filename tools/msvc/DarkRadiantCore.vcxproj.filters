@@ -997,6 +997,9 @@
     <ClCompile Include="..\..\radiantcore\camera\CameraManager.cpp">
       <Filter>src\camera</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\model\export\PatchSurface.cpp">
+      <Filter>src\model\export</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">

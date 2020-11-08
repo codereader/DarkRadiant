@@ -145,6 +145,7 @@
     <ClCompile Include="..\..\radiantcore\model\export\Lwo2Exporter.cpp" />
     <ClCompile Include="..\..\radiantcore\model\export\ModelExporter.cpp" />
     <ClCompile Include="..\..\radiantcore\model\export\ModelScalePreserver.cpp" />
+    <ClCompile Include="..\..\radiantcore\model\export\PatchSurface.cpp" />
     <ClCompile Include="..\..\radiantcore\model\export\ScaledModelExporter.cpp" />
     <ClCompile Include="..\..\radiantcore\model\export\WavefrontExporter.cpp" />
     <ClCompile Include="..\..\radiantcore\model\md5\MD5Anim.cpp" />

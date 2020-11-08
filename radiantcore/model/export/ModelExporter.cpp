@@ -36,19 +36,6 @@ ArbitraryMeshVertex convertWindingVertex(const WindingVertex& in)
 	return out;
 }
 
-// Adapter methods to convert patch vertices to ArbitraryMeshVertex type
-ArbitraryMeshVertex convertPatchVertex(const VertexNT& in)
-{
-	ArbitraryMeshVertex out;
-
-	out.vertex = in.vertex;
-	out.normal = in.normal;
-	out.texcoord = in.texcoord;
-	out.colour.set(1.0, 1.0, 1.0);
-
-	return out;
-}
-
 // Create a polygon out of 3 vertices defined in counter-clockwise winding
 // Only the normal will be calculated, texcoord, tangent and bitangents will be zero
 model::ModelPolygon createPolyCCW(const Vertex3f& a, const Vertex3f& b, const Vertex3f& c)
@@ -200,35 +187,9 @@ void ModelExporter::processPatch(const scene::INodePtr& node)
 	PatchMesh mesh = patch->getTesselatedPatchMesh();
     Matrix4 exportTransform = node->localToWorld().getPremultipliedBy(_centerTransform);
 
-#if 0
-	std::vector<model::ModelPolygon> polys;
-
-	for (std::size_t h = 0; h < mesh.height - 1; ++h)
-	{
-		for (std::size_t w = 0; w < mesh.width - 1; ++w)
-		{
-			model::ModelPolygon poly;
-
-			poly.a = convertPatchVertex(mesh.vertices[w + (h*mesh.width)]);
-			poly.b = convertPatchVertex(mesh.vertices[w + 1 + (h*mesh.width)]);
-			poly.c = convertPatchVertex(mesh.vertices[w + mesh.width + (h*mesh.width)]);
-
-			polys.push_back(poly);
-				
-			poly.a = convertPatchVertex(mesh.vertices[w + 1 + (h*mesh.width)]);
-			poly.b = convertPatchVertex(mesh.vertices[w + 1 + mesh.width + (h*mesh.width)]);
-			poly.c = convertPatchVertex(mesh.vertices[w + mesh.width + (h*mesh.width)]);
-
-			polys.push_back(poly);
-		}
-	}
-
-	_exporter->addPolygons(materialName, polys, exportTransform);
-#else
     // Convert the patch mesh to an indexed surface
     PatchSurface surface(materialName, mesh);
     _exporter->addSurface(surface, exportTransform);
-#endif
 }
 
 void ModelExporter::processBrush(const scene::INodePtr& node)
