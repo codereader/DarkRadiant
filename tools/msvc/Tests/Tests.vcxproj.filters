@@ -23,6 +23,7 @@
     </ClCompile>
     <ClCompile Include="..\..\..\test\ModelExport.cpp" />
     <ClCompile Include="..\..\..\test\MapExport.cpp" />
+    <ClCompile Include="..\..\..\test\Models.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\HeadlessOpenGLContext.h" />
