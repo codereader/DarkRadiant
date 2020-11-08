@@ -69,3 +69,4 @@ Makefile.in
 /tools/msvc/Tests/x64
 /tools/msvc/x64
 /tools/msvc/packages
+/install/*.testdurations

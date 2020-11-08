@@ -34,6 +34,7 @@ drtest_SOURCES = math/Matrix4.cpp \
                  FacePlane.cpp \
                  Materials.cpp \
                  MapExport.cpp \
+                 ModelExport.cpp \
                  ModelScale.cpp \
                  SelectionAlgorithm.cpp \
                  VFS.cpp

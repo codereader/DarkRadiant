@@ -4,6 +4,7 @@
 #include "inode.h"
 #include "ientity.h"
 #include "ibrush.h"
+#include "ipatch.h"
 #include "imodel.h"
 
 namespace test::algorithm
@@ -58,6 +59,37 @@ inline scene::INodePtr findFirstBrushWithMaterial(const scene::INodePtr& parent,
     return findFirstBrush(parent, [&](const IBrushNodePtr& brush)
     {
         return brush->getIBrush().hasShader(material);
+    });
+}
+
+// Finds the first matching child patch of the given parent node matching the given predicate
+inline scene::INodePtr findFirstPatch(const scene::INodePtr& parent,
+    const std::function<bool(const IPatchNodePtr&)>& predicate)
+{
+    scene::INodePtr candidate;
+
+    parent->foreachNode([&](const scene::INodePtr& node)
+    {
+        auto patchNode = std::dynamic_pointer_cast<IPatchNode>(node);
+
+        if (patchNode && predicate(patchNode))
+        {
+            candidate = node;
+            return false;
+        }
+
+        return true;
+    });
+
+    return candidate;
+}
+
+// Finds the first matching child patch of the given parent node, with the given material
+inline scene::INodePtr findFirstPatchWithMaterial(const scene::INodePtr& parent, const std::string& material)
+{
+    return findFirstPatch(parent, [&](const IPatchNodePtr& patch)
+    {
+        return patch->getPatch().getShader() == material;
     });
 }
 

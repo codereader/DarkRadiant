@@ -121,9 +121,9 @@ protected:
 		_coreModule->get()->getModuleRegistry().registerModule(_glContextModule);
 	}
 
-	virtual void loadMap(const std::string& modRelativePath)
+	virtual void loadMap(const std::string& mapsRelativePath)
 	{
-		GlobalCommandSystem().executeCommand("OpenMap", modRelativePath);
+		GlobalCommandSystem().executeCommand("OpenMap", mapsRelativePath);
 	}
 
 	void handleGameConfigMessage(game::ConfigurationNeeded& message)
