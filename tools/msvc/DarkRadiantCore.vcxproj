@@ -857,6 +857,7 @@
     <ClInclude Include="..\..\radiantcore\model\export\ModelExporter.h" />
     <ClInclude Include="..\..\radiantcore\model\export\ModelExporterBase.h" />
     <ClInclude Include="..\..\radiantcore\model\export\ModelScalePreserver.h" />
+    <ClInclude Include="..\..\radiantcore\model\export\PatchSurface.h" />
     <ClInclude Include="..\..\radiantcore\model\export\ScaledModelExporter.h" />
     <ClInclude Include="..\..\radiantcore\model\export\WavefrontExporter.h" />
     <ClInclude Include="..\..\radiantcore\model\md5\MD5Anim.h" />

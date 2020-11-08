@@ -13,6 +13,8 @@
 #include <stdexcept>
 #include <fstream>
 
+#include "PatchSurface.h"
+
 namespace model
 {
 
@@ -196,7 +198,9 @@ void ModelExporter::processPatch(const scene::INodePtr& node)
 	if (!isExportableMaterial(materialName)) return;
 
 	PatchMesh mesh = patch->getTesselatedPatchMesh();
+    Matrix4 exportTransform = node->localToWorld().getPremultipliedBy(_centerTransform);
 
+#if 0
 	std::vector<model::ModelPolygon> polys;
 
 	for (std::size_t h = 0; h < mesh.height - 1; ++h)
@@ -219,9 +223,12 @@ void ModelExporter::processPatch(const scene::INodePtr& node)
 		}
 	}
 
-	Matrix4 exportTransform = node->localToWorld().getPremultipliedBy(_centerTransform);
-
 	_exporter->addPolygons(materialName, polys, exportTransform);
+#else
+    // Convert the patch mesh to an indexed surface
+    PatchSurface surface(materialName, mesh);
+    _exporter->addSurface(surface, exportTransform);
+#endif
 }
 
 void ModelExporter::processBrush(const scene::INodePtr& node)

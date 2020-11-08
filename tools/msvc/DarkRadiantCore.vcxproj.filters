@@ -2034,5 +2034,8 @@
     <ClInclude Include="..\..\radiantcore\camera\CameraManager.h">
       <Filter>src\camera</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiantcore\model\export\PatchSurface.h">
+      <Filter>src\model\export</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
