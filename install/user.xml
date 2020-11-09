@@ -265,7 +265,7 @@
       <toolbutton name="groupSelected" action="GroupSelected" tooltip="Group selected items" icon="group_selection.png"/>
       <toolbutton name="unGroupSelected" action="UngroupSelected" tooltip="Ungroup selected items" icon="ungroup_selection.png"/>
       <separator/>
-      <toolbutton name="capcurrentcurve" action="CapCurrentCurve" tooltip="Put caps on the current patch" icon="curve_cap.png"/>
+      <toolbutton name="capcurrentcurve" action="PatchCapDialog" tooltip="Put caps on the current patch" icon="curve_cap.png"/>
       <separator/>
       <toolbutton name="curvecreate" action="CreateCurveNURBS" tooltip="Creates a NURBS curve" icon="curve_create.png"/>
       <toolbutton name="curveconvert" action="CurveConvertType" tooltip="Convert the selected curve (NURBS &lt;-&gt; CatmullRom)" icon="curve_convert.png"/>
