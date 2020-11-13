@@ -160,13 +160,13 @@ void MRU::initialiseModule(const IApplicationContext& ctx)
 	GlobalCommandSystem().addCommand(LOAD_MRU_MAP_CMD,
 		std::bind(&MRU::loadMRUMap, this, std::placeholders::_1), { cmd::ARGTYPE_INT });
 
-	// Create shortcuts for the items we hold
+	// Create shortcuts for the items we can hold
 	for (std::size_t i = 1; i <= _numMaxFiles; i++)
 	{
 		auto statementName = fmt::format(LOAD_MRU_STATEMENT_FORMAT, i);
 		auto statementValue = fmt::format("{0} {1:d}", LOAD_MRU_MAP_CMD, i);
 
-		GlobalCommandSystem().addStatement(statementName, statementValue);
+		GlobalCommandSystem().addStatement(statementName, statementValue, false);
 	}
 
 	// Load the most recently used files list from the registry
