@@ -39,7 +39,12 @@ LayerControl::LayerControl(wxWindow* parent, int layerID) :
 	_toggle = new wxBitmapToggleButton(parent, wxID_ANY, 
 		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + ICON_LAYER_VISIBLE));
 	_toggle->SetMaxSize(wxSize(30, -1));
-	_toggle->Connect(wxEVT_TOGGLEBUTTON, wxCommandEventHandler(LayerControl::onToggle), NULL, this);
+	_toggle->Bind(wxEVT_TOGGLEBUTTON, &LayerControl::onToggle, this);
+
+#ifdef __WXMSW__
+    // Eat the double click event to not receive additional onToggle callbacks
+    _toggle->Bind(wxEVT_LEFT_DCLICK, [](wxMouseEvent& ev) {});
+#endif
 
 	Vector3 selColour = GlobalColourSchemeManager().getColour("selected_brush");
 	_activeColour = wxColour(static_cast<unsigned char>(selColour[0] * 255),
