@@ -129,9 +129,9 @@ std::pair<std::size_t, std::size_t> getNodeIndices(const scene::INodePtr& node)
 			result.first = walker.getIndex(); // might throw
 
 			PrimitiveFindIndexWalker brushWalker(node);
-			parent->traverse(brushWalker);
+			parent->traverseChildren(brushWalker);
 
-			result.second = walker.getIndex(); // might throw
+			result.second = brushWalker.getIndex(); // might throw
 		}
 	}
 	else
