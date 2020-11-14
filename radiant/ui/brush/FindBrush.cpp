@@ -27,8 +27,8 @@ void FindBrushDialog::Show(const cmd::ArgumentList& args)
 	}
 	else
 	{
-		dialog->setElementValue(entityEntry, 0);
-		dialog->setElementValue(brushEntry, 0);
+		dialog->setElementValue(entityEntry, "0");
+		dialog->setElementValue(brushEntry, "0");
 	}
 
 	if (dialog->run() == ui::IDialog::RESULT_OK)
