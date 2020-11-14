@@ -470,13 +470,23 @@ void ConversationEditor::onValidateActors(wxCommandEvent& ev)
 
 void ConversationEditor::onActorEdited(wxDataViewEvent& ev)
 {
+    if (ev.IsEditCancelled())
+    {
+        return;
+    }
+
 	wxutil::TreeModel::Row row(ev.GetItem(), *_actorStore);
 
 	// The iter points to the edited cell now, get the actor number
 	int actorNum = row[_actorColumns.actorNumber].getInteger();
 
-	// Update the conversation from the row value (ev.GetValue() doesn't work)
-	std::string actor = row[_actorColumns.displayName];
+#if wxCHECK_VERSION(3, 1, 0)
+    // wx 3.1+ delivers the new value through the event
+    std::string actor = ev.GetValue().GetString().ToStdString();
+#else
+    // wx 3.0.x already has the value set in the model
+    std::string actor = row[_actorColumns.displayName];
+#endif
 	_conversation.actors[actorNum] = actor;
 
 	// Update all command widgets
