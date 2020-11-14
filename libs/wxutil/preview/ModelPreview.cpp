@@ -9,6 +9,7 @@
 #include "math/AABB.h"
 #include "modelskin.h"
 #include "entitylib.h"
+#include "scenelib.h"
 #include "scene/Node.h"
 #include "scene/BasicRootNode.h"
 #include "wxutil/dialog/MessageBox.h"
@@ -159,8 +160,12 @@ void ModelPreview::prepareScene()
 
 	_modelNode = GlobalModelCache().getModelNode(_model);
 
-	if (_modelNode)
+    if (_modelNode)
 	{
+        // Workaround until #5408 is implemented: remove all remnants from the entity
+        scene::NodeRemover remover;
+        _entity->traverseChildren(remover);
+
 		_entity->addChildNode(_modelNode);
 
 		// Apply the skin
