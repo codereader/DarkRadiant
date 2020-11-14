@@ -100,24 +100,24 @@ void MissionInfoEditDialog::populateWindow()
 	// Replace the list control with our own TreeView
 	wxWindow* existing = findNamedObject<wxWindow>(this, "MissionInfoEditDialogMissionTitleList");
 
-	wxutil::TreeView* treeview = wxutil::TreeView::CreateWithModel(existing->GetParent(), _missionTitleStore, wxDV_SINGLE);
+	_missionTitleView = wxutil::TreeView::CreateWithModel(existing->GetParent(), _missionTitleStore, wxDV_SINGLE);
 
-	treeview->SetName("MissionInfoEditDialogMissionTitleList");
-	treeview->SetMinSize(wxSize(-1, 150));
+	_missionTitleView->SetName("MissionInfoEditDialogMissionTitleList");
+	_missionTitleView->SetMinSize(wxSize(-1, 150));
 
 	// Display name column with icon
-	treeview->AppendTextColumn(_("#"), _missionTitleColumns.number.getColumnIndex(),
+	_missionTitleView->AppendTextColumn(_("#"), _missionTitleColumns.number.getColumnIndex(),
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
 
-	treeview->AppendTextColumn(_("Title"), _missionTitleColumns.title.getColumnIndex(),
+	_missionTitleView->AppendTextColumn(_("Title"), _missionTitleColumns.title.getColumnIndex(),
 		wxDATAVIEW_CELL_EDITABLE, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
 
-	treeview->Connect(wxEVT_DATAVIEW_ITEM_EDITING_DONE,
+	_missionTitleView->Connect(wxEVT_DATAVIEW_ITEM_EDITING_DONE,
 		wxDataViewEventHandler(MissionInfoEditDialog::onTitleEdited), nullptr, this);
-	treeview->Connect(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU,
+	_missionTitleView->Connect(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU,
 		wxDataViewEventHandler(MissionInfoEditDialog::onTitleContextMenu), nullptr, this);
 
-	existing->GetContainingSizer()->Replace(existing, treeview);
+	existing->GetContainingSizer()->Replace(existing, _missionTitleView);
 	existing->Destroy();
 
 	// Add the preview widget
@@ -216,6 +216,11 @@ void MissionInfoEditDialog::onEditReadme(wxCommandEvent& ev)
 
 void MissionInfoEditDialog::onTitleEdited(wxDataViewEvent& ev)
 {
+	if (ev.IsEditCancelled())
+    {
+        return;
+    }
+
 	wxutil::TreeModel::Row row(ev.GetItem(), *_missionTitleStore);
 
 	int titleNum = row[_missionTitleColumns.number].getInteger();
@@ -224,9 +229,17 @@ void MissionInfoEditDialog::onTitleEdited(wxDataViewEvent& ev)
 
 	assert(titleNum >= 0 && titleNum < static_cast<int>(list.size()));
 
-	if (ev.GetColumn() == _missionTitleColumns.title.getColumnIndex())
+	// The ev.GetColumn() method returns -1 for wx3.0, but GetDataViewColumn is populated
+	if (ev.GetDataViewColumn() == _missionTitleView->GetColumn(_missionTitleColumns.title.getColumnIndex()))
 	{
-		list[titleNum] = static_cast<std::string>(ev.GetValue());
+#if wxCHECK_VERSION(3, 1, 0)
+        // wx 3.1+ delivers the new value through the event
+        std::string title = ev.GetValue().GetString().ToStdString();
+#else
+        // wx 3.0.x already has the value set in the model
+        std::string title = row[_missionTitleColumns.title];
+#endif
+		list[titleNum] = title;
 		_darkmodTxt->setMissionTitles(list);
 	}
 }

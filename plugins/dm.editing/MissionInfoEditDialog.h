@@ -5,6 +5,7 @@
 #include "wxutil/dialog/DialogBase.h"
 #include "wxutil/XmlResourceBasedWidget.h"
 #include "wxutil/TreeModel.h"
+#include "wxutil/TreeView.h"
 #include "wxutil/menu/PopupMenu.h"
 
 #include "DarkmodTxt.h"
@@ -38,6 +39,7 @@ private:
 
 	MissionTitleColumns _missionTitleColumns;
 	wxutil::TreeModel::Ptr _missionTitleStore;
+	wxutil::TreeView* _missionTitleView;
 
 	// Context menu
 	wxutil::PopupMenuPtr _missionTitlesContextMenu;
