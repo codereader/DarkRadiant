@@ -108,7 +108,7 @@ void WindowPosition::loadFromPath(const std::string& path)
 
 void WindowPosition::applyPosition()
 {
-	if (_window == NULL) return;
+	if (_window == nullptr) return;
 
 	// On multi-monitor setups, wxWidgets offers a virtual big screen with
 	// coordinates going from 0,0 to whatever lower-rightmost point there is
@@ -116,11 +116,10 @@ void WindowPosition::applyPosition()
 	// Sanity check the window position
 	wxRect targetPos = wxRect(_position[0], _position[1], _size[0], _size[1]);
 	
-	const int TOL = 30;
+	const int TOL = 8;
 
 	// Employ a few pixels tolerance to allow for placement very near the borders
-	if (wxDisplay::GetFromPoint(targetPos.GetTopLeft() + wxPoint(TOL, TOL)) == wxNOT_FOUND ||
-		wxDisplay::GetFromPoint(targetPos.GetBottomRight() - wxPoint(TOL, TOL)) == wxNOT_FOUND)
+	if (wxDisplay::GetFromPoint(targetPos.GetTopLeft() + wxPoint(TOL, TOL)) == wxNOT_FOUND)
 	{
 		// Window probably ends up invisible, refuse these coords
 		_window->CenterOnParent();
@@ -170,7 +169,14 @@ void WindowPosition::onResize(wxSizeEvent& ev)
 
 void WindowPosition::onMove(wxMoveEvent& ev)
 {
-	setPosition(ev.GetPosition().x, ev.GetPosition().y);
+    if (_window == nullptr) return;
+
+    // The position passed in the wxMoveEvent seems (on my Win10 system) 
+    // to be off by about x=8,y=51
+    // Call GetScreenPosition to get the real coordinates
+	//setPosition(ev.GetPosition().x, ev.GetPosition().y);
+    _window->GetScreenPosition(&_position[0], &_position[1]);
+
 	ev.Skip();
 }
 
