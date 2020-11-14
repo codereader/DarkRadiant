@@ -475,8 +475,9 @@ void ConversationEditor::onActorEdited(wxDataViewEvent& ev)
 	// The iter points to the edited cell now, get the actor number
 	int actorNum = row[_actorColumns.actorNumber].getInteger();
 
-	// Update the conversation
-	_conversation.actors[actorNum] = static_cast<std::string>(ev.GetValue());
+	// Update the conversation from the row value (ev.GetValue() doesn't work)
+	std::string actor = row[_actorColumns.displayName];
+	_conversation.actors[actorNum] = actor;
 
 	// Update all command widgets
     updateCommandList();
