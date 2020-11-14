@@ -274,8 +274,21 @@ TreeModel::Row TreeModel::GetRootItem()
 
 void TreeModel::Clear()
 {
-	_rootNode->values.clear();
+	// To work around a problem in wxGTK 3.0.5+, trigger 
+	// an ItemRemoved call for all top-level children before 
+	// actually deleting them.
+	// The Cleared() call below might query GetParent() calls
+	// for nodes that are still present in the internal tree
+	wxDataViewItemArray children;
+	GetChildren(_rootNode->item, children);
 
+	if (!children.empty())
+	{
+		ItemsDeleted(_rootNode->item, children);
+	}
+
+	// Now it should be safe to free all the nodes
+	_rootNode->values.clear();
 	_rootNode->children.clear();
 	
 	Cleared();
@@ -576,7 +589,7 @@ wxDataViewItem TreeModel::GetParent(const wxDataViewItem& item) const
 	// It's ok to ask for invisible root node's parent
 	if (!item.IsOk())
 	{
-		return wxDataViewItem(NULL);
+		return wxDataViewItem(NULL);	
 	}
 
 	Node* owningNode = static_cast<Node*>(item.GetID());
