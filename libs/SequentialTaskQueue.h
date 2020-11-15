@@ -22,7 +22,7 @@ private:
     mutable std::mutex _queueLock;
     std::list<std::function<void()>> _queue;
 
-    mutable std::mutex _currentLock;
+    mutable std::recursive_mutex _currentLock;
     std::future<void> _current;
     std::future<void> _finished;
 
@@ -69,7 +69,7 @@ public:
 private:
     bool isIdle() const
     {
-        std::lock_guard<std::mutex> lock(_currentLock);
+        std::lock_guard<std::recursive_mutex> lock(_currentLock);
         return !_current.valid() || _current.wait_for(std::chrono::seconds(0)) == std::future_status::ready;
     }
 
@@ -99,7 +99,7 @@ private:
         }
 
         // Wrap the given task in our own lambda to start the next task right afterwards
-        std::lock_guard<std::mutex> lock(_currentLock);
+        std::lock_guard<std::recursive_mutex> lock(_currentLock);
         _current = std::async(std::launch::async, [this, task]()
         {
             task();
@@ -107,12 +107,15 @@ private:
             {
                 // Move our own task to the finished lane, 
                 // to avoid blocking when assigning a new future
-                std::lock_guard<std::mutex> lock(_currentLock);
+                std::lock_guard<std::recursive_mutex> lock(_currentLock);
                 _finished = std::move(_current);
-            }
 
-            // _current is now empty, so we can start a new task
-            startNextTask();
+                // _current is now empty, so we can start a new task
+                // We still hold the _currentLock such that no other thread will
+                // check the _current future in isIdle in the meantime.
+                // Since the mutex is recursive, this thread can assign to _current
+                startNextTask();
+            }
         });
     }
 };
