@@ -207,3 +207,13 @@ Matrix4 TextureMatrix::getTransform() const {
 
 	return transform;
 }
+
+bool TextureMatrix::isSane() const
+{
+    return !std::isnan(coords[0][0]) && !std::isinf(coords[0][0]) &&
+           !std::isnan(coords[0][1]) && !std::isinf(coords[0][1]) &&
+           !std::isnan(coords[0][2]) && !std::isinf(coords[0][2]) &&
+           !std::isnan(coords[1][0]) && !std::isinf(coords[1][0]) &&
+           !std::isnan(coords[1][1]) && !std::isinf(coords[1][1]) &&
+           !std::isnan(coords[1][2]) && !std::isinf(coords[1][2]);
+}

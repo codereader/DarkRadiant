@@ -57,6 +57,9 @@ struct TextureMatrix
 	 * components, they are just copied into the right places.
 	 */
 	Matrix4 getTransform() const;
+
+    // Checks if any of the matrix components are NaN or INF (in which case the matrix is not sane)
+    bool isSane() const;
 };
 
 inline std::ostream& operator<<(std::ostream& st, const TextureMatrix& texdef)
