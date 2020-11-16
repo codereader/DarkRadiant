@@ -115,17 +115,17 @@ void RenderPreview::setupToolbars(bool enableAnimation)
 
     wxToolBar* renderToolbar = findNamedObject<wxToolBar>(_mainPanel, "RenderPreviewRenderModeToolbar");
 
-    renderToolbar->Connect(getToolBarToolByLabel(renderToolbar, "texturedModeButton")->GetId(),
-                           wxEVT_TOOL, wxCommandEventHandler(RenderPreview::onRenderModeChanged), NULL, this);
-    renderToolbar->Connect(getToolBarToolByLabel(renderToolbar, "lightingModeButton")->GetId(),
-                           wxEVT_TOOL, wxCommandEventHandler(RenderPreview::onRenderModeChanged), NULL, this);
+    renderToolbar->Bind(wxEVT_TOOL, &RenderPreview::onRenderModeChanged, this, 
+        getToolBarToolByLabel(renderToolbar, "texturedModeButton")->GetId());
+    renderToolbar->Bind(wxEVT_TOOL, &RenderPreview::onRenderModeChanged, this,
+        getToolBarToolByLabel(renderToolbar, "lightingModeButton")->GetId());
 
     updateActiveRenderModeButton();
 
 	wxToolBar* utilToolbar = findNamedObject<wxToolBar>(_mainPanel, "RenderPreviewUtilToolbar");
 
-	utilToolbar->Connect(getToolBarToolByLabel(utilToolbar, "gridButton")->GetId(),
-		wxEVT_TOOL, wxCommandEventHandler(RenderPreview::onGridButtonClick), NULL, this);
+	utilToolbar->Bind(wxEVT_TOOL, &RenderPreview::onGridButtonClick, this,
+        getToolBarToolByLabel(utilToolbar, "gridButton")->GetId());
 
 	utilToolbar->ToggleTool(getToolBarToolByLabel(utilToolbar, "gridButton")->GetId(), _renderGrid);
 }
