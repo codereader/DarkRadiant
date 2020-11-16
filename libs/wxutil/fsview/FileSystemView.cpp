@@ -1,0 +1,195 @@
+#include "FileSystemView.h"
+
+#include "i18n.h"
+#include "iuimanager.h"
+#include <wx/artprov.h>
+
+namespace wxutil
+{
+
+wxDEFINE_EVENT(EV_FSVIEW_SELECTION_CHANGED, FileSystemView::SelectionChangedEvent);
+
+FileSystemView::SelectionChangedEvent::SelectionChangedEvent(int id) :
+    wxEvent(id, EV_FSVIEW_SELECTION_CHANGED)
+{}
+
+FileSystemView::SelectionChangedEvent::SelectionChangedEvent(const std::string& selectedPath, bool isFolder, int id) :
+    wxEvent(id, EV_FSVIEW_SELECTION_CHANGED),
+    _selectedPath(selectedPath),
+    _isFolder(isFolder)
+{}
+
+wxEvent* FileSystemView::SelectionChangedEvent::Clone() const
+{
+    return new FileSystemView::SelectionChangedEvent(*this);
+}
+
+const std::string& FileSystemView::SelectionChangedEvent::GetSelectedPath() const
+{
+    return _selectedPath;
+}
+
+bool FileSystemView::SelectionChangedEvent::SelectionIsFolder()
+{
+    return _isFolder;
+}
+
+FileSystemView::FileSystemView(wxWindow* parent, const TreeModel::Ptr& model, long style) :
+    TreeView(parent, model, style),
+    _treeStore(model)
+{
+    // Single visible column, containing the directory/shader name and the icon
+    AppendIconTextColumn(_("File"), Columns().filename.getColumnIndex(),
+        wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+
+    // Get selection and connect the changed callback
+    Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &FileSystemView::OnSelectionChanged, this);
+    Bind(EV_TREEMODEL_POPULATION_FINISHED, &FileSystemView::OnTreeStorePopulationFinished, this);
+
+    // Use the TreeModel's full string search function
+    AddSearchColumn(Columns().filename);
+}
+
+const fsview::TreeColumns& FileSystemView::Columns()
+{
+    static fsview::TreeColumns _columns;
+    return _columns;
+}
+
+FileSystemView* FileSystemView::Create(wxWindow* parent, long style)
+{
+    TreeModel::Ptr model(new TreeModel(Columns()));
+    return new FileSystemView(parent, model, style);
+}
+
+const std::string& FileSystemView::GetBasePath() const
+{
+    return _basePath;
+}
+
+void FileSystemView::SetBasePath(const std::string& basePath)
+{
+    _basePath = basePath;
+}
+
+void FileSystemView::Populate(const std::string& preselectPath)
+{
+    _populated = true;
+
+    if (_populator && _populator->GetBasePath() == GetBasePath())
+    {
+        // Population already running for this path
+        return;
+    }
+
+    // Clear the existing run first (this waits for it to finish)
+    _populator.reset();
+
+    // Clear the treestore
+    _treeStore->Clear();
+
+    wxutil::TreeModel::Row row = _treeStore->AddItem();
+
+    wxIcon prefabIcon;
+    prefabIcon.CopyFromBitmap(
+        wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "cmenu_add_prefab.png"));
+
+    row[Columns().filename] = wxVariant(wxDataViewIconText(_("Loading..."), prefabIcon));
+    row[Columns().isFolder] = false;
+    row[Columns().vfspath] = "__loadingnode__"; // to prevent that item from being found
+    row.SendItemAdded();
+
+    _populator.reset(new fsview::Populator(Columns(), this, GetBasePath()));
+
+    // Start the thread, will send an event when finished
+    _populator->Populate();
+}
+
+void FileSystemView::SelectPath(const std::string& path)
+{
+    // #4490: Only preselect if path is not empty, wxGTK will buffer that
+    // and call ExpandAncestors() on a stale wxDataViewItem in its internal idle routine
+    if (path.empty()) return;
+
+    // Find and select the item
+    SelectItem(_treeStore->FindString(path, Columns().vfspath));
+}
+
+std::string FileSystemView::GetSelectedPath()
+{
+    wxDataViewItem item = GetSelection();
+
+    if (!item.IsOk()) return "";
+
+    wxutil::TreeModel::Row row(item, *GetModel());
+
+    return row[Columns().vfspath];
+}
+
+bool FileSystemView::GetIsFolderSelected()
+{
+    wxDataViewItem item = GetSelection();
+
+    if (!item.IsOk()) return false;
+
+    wxutil::TreeModel::Row row(item, *GetModel());
+
+    return row[Columns().isFolder].getBool();
+}
+
+void FileSystemView::SelectItem(const wxDataViewItem& item)
+{
+    if (!item.IsOk()) return;
+     
+    Select(item);
+    EnsureVisible(item);
+    HandleSelectionChange();
+}
+
+TreeModel::Ptr FileSystemView::CreateDefaultModel()
+{
+    _treeStore.reset(new TreeModel(Columns()));
+    return _treeStore;
+}
+
+void FileSystemView::HandleSelectionChange()
+{
+    auto selectedPath = GetSelectedPath();
+
+    SelectionChangedEvent event(GetSelectedPath(), GetIsFolderSelected(), this->GetId());
+    event.SetEventObject(this);
+    
+    HandleWindowEvent(event);
+}
+
+void FileSystemView::OnSelectionChanged(wxDataViewEvent& ev)
+{
+    HandleSelectionChange();
+}
+
+void FileSystemView::OnTreeStorePopulationFinished(TreeModel::PopulationFinishedEvent& ev)
+{
+    _treeStore = ev.GetTreeModel();
+
+    wxDataViewItem preselectItem;
+
+    if (!_preselectPath.empty())
+    {
+        // Find and select the classname
+        preselectItem = _treeStore->FindString(_preselectPath, Columns().vfspath);
+    }
+
+    AssociateModel(_treeStore.get());
+
+    if (preselectItem.IsOk())
+    {
+        SelectItem(preselectItem);
+    }
+
+    _populator.reset();
+
+    // Auto-size the first level
+    TriggerColumnSizeEvent();
+}
+
+}

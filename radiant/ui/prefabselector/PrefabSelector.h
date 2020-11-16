@@ -7,7 +7,7 @@
 #include "wxutil/preview/ModelPreview.h"
 #include "wxutil/WindowPosition.h"
 #include "wxutil/PanedPosition.h"
-#include "wxutil/TreeView.h"
+#include "wxutil/fsview/FileSystemView.h"
 #include "wxutil/PathEntry.h"
 #include "ui/common/MapPreview.h"
 
@@ -61,11 +61,8 @@ private:
 	// Model preview widget
 	std::unique_ptr<ui::MapPreview> _preview;
 
-	// Tree store containing prefab names and paths 
-	wxutil::TreeModel::Ptr _treeStore;
-
-	// Main tree view with model hierarchy
-	wxutil::TreeView* _treeView;
+	// Main tree view with the folder hierarchy
+	wxutil::FileSystemView* _treeView;
 
 	// The window position tracker
 	wxutil::WindowPosition _position;
@@ -116,17 +113,16 @@ private:
 
     void clearPreview();
 
-	// Return the value from the selected column, or an empty string if nothing selected
-	std::string getSelectedValue(const wxutil::TreeModel::Column& col);
+	// Return the selected prefab path
+	std::string getSelectedPath();
 	bool getInsertAsGroup();
 
     void handleSelectionChange();
 	void updateUsageInfo();
     void addCustomPathToRecentList();
 
-	void onSelectionChanged(wxDataViewEvent& ev);
+	void onSelectionChanged(wxutil::FileSystemView::SelectionChangedEvent& ev);
     void onPrefabPathSelectionChanged();
-	void onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev);
 	void onRescanPrefabs(wxCommandEvent& ev);
 
 	void onMainFrameShuttingDown();
