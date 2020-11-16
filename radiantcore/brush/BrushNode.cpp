@@ -572,6 +572,11 @@ const Vector3& BrushNode::getUntransformedOrigin()
     return _untransformedOrigin;
 }
 
+bool BrushNode::facesAreForcedVisible()
+{
+    return isForcedVisible();
+}
+
 void BrushNode::_onTransformationChanged()
 {
 	m_brush.transformChanged();

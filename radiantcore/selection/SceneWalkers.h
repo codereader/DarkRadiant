@@ -193,15 +193,9 @@ protected:
 	{
 		Brush* brush = Node_getBrush(node);
 
-		if (brush != NULL)
+		if (brush != nullptr)
 		{
-			brush->forEachFace([&] (Face& face)
-			{
-				if (face.isVisible())
-				{
-					_functor(face);
-				}
-			});
+            brush->forEachVisibleFace(_functor);
 		}
 	}
 };

@@ -4,6 +4,7 @@
 #include "iselection.h"
 #include "ibrush.h"
 #include "igroupnode.h"
+#include "iscenegraph.h"
 #include "ientity.h"
 #include "ipatch.h"
 #include "math/Vector3.h"
@@ -185,6 +186,8 @@ inline void applyShaderToSelection(const std::string& shaderName)
 {
     GlobalSelectionSystem().foreachFace([&](IFace& face) { face.setShader(shaderName); });
     GlobalSelectionSystem().foreachPatch([&](IPatch& patch) { patch.setShader(shaderName); });
+
+    SceneChangeNotify();
 }
 
 /**

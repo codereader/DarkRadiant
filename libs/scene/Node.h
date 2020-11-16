@@ -99,9 +99,6 @@ public:
 	bool visible() const override;
 	bool excluded() const override;
 
-	// Set the "forced visible" flag, only to be used internally by subclasses
-	void setForcedVisibility(bool forceVisible, bool includeChildren) override;
-
 	// Layered implementation
 	virtual void addToLayer(int layerId) override;
     virtual void removeFromLayer(int layerId) override;
@@ -198,6 +195,9 @@ public:
 	virtual void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 
 protected:
+    // Set the "forced visible" flag, only to be used internally by subclasses
+	void setForcedVisibility(bool forceVisible, bool includeChildren) override;
+
 	// Method for subclasses to check whether this node is forcedly visible
 	bool isForcedVisible() const;
 

@@ -129,6 +129,19 @@ void Brush::forEachFace(const std::function<void(Face&)>& functor) const
     for (const FacePtr& face : m_faces) functor(*face);
 }
 
+void Brush::forEachVisibleFace(const std::function<void(Face&)>& functor) const
+{
+    bool forceVisible = _owner.facesAreForcedVisible();
+
+    for (const auto& face : m_faces)
+    {
+        if (forceVisible || face->isVisible())
+        {
+            functor(*face);
+        }
+    }
+}
+
 void Brush::connectUndoSystem(IMapFileChangeTracker& changeTracker)
 {
     assert(_undoStateSaver == nullptr);

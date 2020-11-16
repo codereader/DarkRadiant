@@ -165,6 +165,11 @@ public:
     // Returns the center of the untransformed world AABB
     const Vector3& getUntransformedOrigin() override;
 
+    // Returns true if this node is visible due to its selection status 
+    // even though it might otherwise be filtered or hidden
+    // Should only be used by the internal Brush object
+    bool facesAreForcedVisible();
+
 protected:
 	// Gets called by the Transformable implementation whenever
 	// scale, rotation or translation is changed.

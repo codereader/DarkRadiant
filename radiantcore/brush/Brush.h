@@ -173,6 +173,10 @@ public:
 
 	void forEachFace(const std::function<void(Face&)>& functor) const;
 
+    // Call the functor for each visible face (including those faces that are filtered out
+    // but are forcedly visible due to the brush being selected)
+    void forEachVisibleFace(const std::function<void(Face&)>& functor) const;
+
 	void connectUndoSystem(IMapFileChangeTracker& map);
 	void disconnectUndoSystem(IMapFileChangeTracker& map);
 
