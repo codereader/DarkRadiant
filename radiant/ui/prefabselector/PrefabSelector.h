@@ -32,21 +32,6 @@ class PrefabSelector :
 	public wxutil::DialogBase
 {
 public:
-	// Treemodel definition
-	struct TreeColumns :
-		public wxutil::TreeModel::ColumnRecord
-	{
-		TreeColumns() :
-			filename(add(wxutil::TreeModel::Column::IconText)),
-			vfspath(add(wxutil::TreeModel::Column::String)),
-			isFolder(add(wxutil::TreeModel::Column::Boolean))
-		{}
-
-		wxutil::TreeModel::Column filename;	// e.g. "chair1.pfb"
-		wxutil::TreeModel::Column vfspath;	// e.g. "prefabs/chair1.pfb"
-		wxutil::TreeModel::Column isFolder;	// whether this is a folder
-	};
-
 	struct Result
 	{
 		std::string prefabPath; // VFS path of the prefab
@@ -55,8 +40,6 @@ public:
 
 private:
 	wxPanel* _dialogPanel;
-
-	TreeColumns _columns;
 
 	// Model preview widget
 	std::unique_ptr<ui::MapPreview> _preview;
@@ -70,10 +53,6 @@ private:
 
 	// Last selected prefab, 
 	std::string _lastPrefab;
-
-	// TRUE if the treeview has been populated
-	bool _populated;
-	std::unique_ptr<PrefabPopulator> _populator;
 
 	IMapResourcePtr _mapResource;
 
@@ -117,7 +96,6 @@ private:
 	std::string getSelectedPath();
 	bool getInsertAsGroup();
 
-    void handleSelectionChange();
 	void updateUsageInfo();
     void addCustomPathToRecentList();
 

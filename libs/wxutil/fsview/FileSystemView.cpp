@@ -7,6 +7,11 @@
 namespace wxutil
 {
 
+namespace
+{
+    const char* const DEFAULT_FILE_ICON = "file.png";
+}
+
 wxDEFINE_EVENT(EV_FSVIEW_SELECTION_CHANGED, FileSystemView::SelectionChangedEvent);
 
 FileSystemView::SelectionChangedEvent::SelectionChangedEvent(int id) :
@@ -36,7 +41,8 @@ bool FileSystemView::SelectionChangedEvent::SelectionIsFolder()
 
 FileSystemView::FileSystemView(wxWindow* parent, const TreeModel::Ptr& model, long style) :
     TreeView(parent, model, style),
-    _treeStore(model)
+    _treeStore(model),
+    _fileIcon(DEFAULT_FILE_ICON)
 {
     // Single visible column, containing the directory/shader name and the icon
     AppendIconTextColumn(_("File"), Columns().filename.getColumnIndex(),
@@ -72,9 +78,15 @@ void FileSystemView::SetBasePath(const std::string& basePath)
     _basePath = basePath;
 }
 
+void FileSystemView::SetDefaultFileIcon(const std::string& fileIcon)
+{
+    _fileIcon = fileIcon;
+}
+
 void FileSystemView::Populate(const std::string& preselectPath)
 {
     _populated = true;
+    _preselectPath = preselectPath;
 
     if (_populator && _populator->GetBasePath() == GetBasePath())
     {
@@ -100,6 +112,7 @@ void FileSystemView::Populate(const std::string& preselectPath)
     row.SendItemAdded();
 
     _populator.reset(new fsview::Populator(Columns(), this, GetBasePath()));
+    _populator->SetDefaultFileIcon(_fileIcon);
 
     // Start the thread, will send an event when finished
     _populator->Populate();

@@ -421,9 +421,6 @@
     <ClCompile Include="..\..\radiant\ui\prefabselector\PrefabSelector.cpp">
       <Filter>src\ui\prefabselector</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\ui\prefabselector\PrefabPopulator.cpp">
-      <Filter>src\ui\prefabselector</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\xyview\tools\BrushCreatorTool.cpp">
       <Filter>src\xyview\tools</Filter>
     </ClCompile>
@@ -949,9 +946,6 @@
       <Filter>src\ui\mainframe</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\prefabselector\PrefabSelector.h">
-      <Filter>src\ui\prefabselector</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\prefabselector\PrefabPopulator.h">
       <Filter>src\ui\prefabselector</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\xyview\tools\BrushCreatorTool.h">

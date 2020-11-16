@@ -53,7 +53,6 @@ darkradiant_SOURCES = main.cpp \
                       ui/eclasstree/EClassTreeBuilder.cpp \
                       ui/entitylist/EntityList.cpp \
                       ui/entitylist/GraphTreeModel.cpp \
-                      ui/prefabselector/PrefabPopulator.cpp \
                       ui/prefabselector/PrefabSelector.cpp \
                       ui/texturebrowser/TextureBrowser.cpp \
                       ui/texturebrowser/TextureBrowserManager.cpp \

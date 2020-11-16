@@ -61,6 +61,8 @@ public:
     void visit(wxutil::TreeModel& store, wxutil::TreeModel::Row& row,
         const std::string& path, bool isExplicit);
 
+    void SetDefaultFileIcon(const std::string& fileIcon);
+
 protected:
     // Thread entry point
     ExitCode Entry();

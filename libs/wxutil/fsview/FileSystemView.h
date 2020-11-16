@@ -15,6 +15,7 @@ private:
     TreeModel::Ptr _treeStore;
 
     std::string _basePath;
+    std::string _fileIcon;
 
     // TRUE if the treeview has been populated
     bool _populated;
@@ -51,6 +52,9 @@ public:
 
     // Sets the base path of this view. This can be either an absolute filesystem path or a VFS path
     void SetBasePath(const std::string& basePath);
+
+    // Set the default icon used for files (e.g. "cmenu_add_prefab.png", relative to the bitmaps/ folder)
+    void SetDefaultFileIcon(const std::string& fileIcon);
 
     // (Re-)populates the tree view, looking for files in the defined paths
     // If the preselectPath argument is not empty, the item will be selected after population

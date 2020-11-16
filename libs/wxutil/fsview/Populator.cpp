@@ -15,7 +15,7 @@ namespace fsview
 namespace
 {
     const char* const FOLDER_ICON = "folder.png";
-    const char* const FILE_ICON = "cmenu_add_prefab.png";
+    const char* const FILE_ICON = "file.png";
 }
 
 Populator::Populator(const TreeColumns& columns,
@@ -40,6 +40,11 @@ Populator::~Populator()
     {
         Delete();
     }
+}
+
+void Populator::SetDefaultFileIcon(const std::string& fileIcon)
+{
+    _fileIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + fileIcon));
 }
 
 void Populator::visitFile(const vfs::FileInfo& fileInfo)

@@ -24,7 +24,6 @@
 #include <wx/textctrl.h>
 #include <wx/radiobut.h>
 
-#include "PrefabPopulator.h"
 #include "entitylib.h"
 
 #include "string/trim.h"
@@ -56,7 +55,6 @@ PrefabSelector::PrefabSelector() :
 	DialogBase(_(PREFABSELECTOR_TITLE)),
     _treeView(nullptr),
 	_lastPrefab(""),
-	_populated(false),
     _description(nullptr),
     _useModPath(nullptr),
     _useCustomPath(nullptr),
@@ -226,16 +224,8 @@ void PrefabSelector::addCustomPathToRecentList()
 
 int PrefabSelector::ShowModal()
 {
-	if (!_populated)
-	{
-		// Populate the tree
-		populatePrefabs();
-	}
-	else if (!_lastPrefab.empty()) 
-	{
-		// Preselect the item, tree is already loaded
-        _treeView->SelectPath(_lastPrefab);
-	}
+	// Populate the tree
+	populatePrefabs();
 
 	// Enter the main loop
 	int returnCode = DialogBase::ShowModal();
