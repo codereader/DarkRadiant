@@ -1,7 +1,6 @@
 #include "Populator.h"
 
 #include "iuimanager.h"
-#include "ifiletypes.h"
 #include "os/path.h"
 
 #include <wx/artprov.h>
@@ -19,13 +18,15 @@ namespace
 }
 
 Populator::Populator(const TreeColumns& columns,
-    wxEvtHandler* finishedHandler, const std::string& basePath) :
+    wxEvtHandler* finishedHandler, const std::string& basePath, 
+    const std::set<std::string>& fileExtensions) :
     wxThread(wxTHREAD_JOINABLE),
     _columns(columns),
     _treeStore(new wxutil::TreeModel(_columns)),
     _finishedHandler(finishedHandler),
     _treePopulator(_treeStore),
-    _basePath(os::standardPathWithSlash(basePath))
+    _basePath(os::standardPathWithSlash(basePath)),
+    _fileExtensions(fileExtensions)
 {
     _fileIcon.CopyFromBitmap(
         wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + FILE_ICON));
@@ -76,12 +77,9 @@ void Populator::SearchForFilesMatchingExtension(const std::string& extension)
 
 wxThread::ExitCode Populator::Entry()
 {
-    // Get the first extension from the list of possible patterns (e.g. *.pfb or *.map)
-    FileTypePatterns patterns = GlobalFiletypes().getPatternsForType(filetype::TYPE_PREFAB);
-
-    for (const auto& pattern : patterns)
+    for (const auto& extension : _fileExtensions)
     {
-        SearchForFilesMatchingExtension(pattern.extension);
+        SearchForFilesMatchingExtension(extension);
 
         if (TestDestroy()) return static_cast<wxThread::ExitCode>(0);
     }

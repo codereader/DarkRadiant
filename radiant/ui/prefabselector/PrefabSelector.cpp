@@ -1,6 +1,7 @@
 #include "PrefabSelector.h"
 
 #include "ifilesystem.h"
+#include "ifiletypes.h"
 #include "itextstream.h"
 #include "i18n.h"
 #include "iradiant.h"
@@ -316,6 +317,18 @@ void PrefabSelector::setupTreeView(wxWindow* parent)
 {
     _treeView = wxutil::FileSystemView::Create(parent, wxBORDER_STATIC | wxDV_NO_HEADER);
     _treeView->Bind(wxutil::EV_FSVIEW_SELECTION_CHANGED, &PrefabSelector::onSelectionChanged, this);
+
+    // Get the extensions from all possible patterns (e.g. *.pfb or *.pfbx)
+    FileTypePatterns patterns = GlobalFiletypes().getPatternsForType(filetype::TYPE_PREFAB);
+
+    std::set<std::string> fileExtensions;
+
+    for (const auto & pattern : patterns)
+    {
+        fileExtensions.insert(pattern.extension);
+    }
+
+    _treeView->SetFileExtensions(fileExtensions);
 }
 
 std::string PrefabSelector::getPrefabFolder()

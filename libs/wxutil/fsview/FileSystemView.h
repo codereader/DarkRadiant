@@ -22,6 +22,8 @@ private:
     std::unique_ptr<fsview::Populator> _populator;
     std::string _preselectPath;
 
+    std::set<std::string> _fileExtensions;
+
 public:
     class SelectionChangedEvent :
         public wxEvent
@@ -52,6 +54,10 @@ public:
 
     // Sets the base path of this view. This can be either an absolute filesystem path or a VFS path
     void SetBasePath(const std::string& basePath);
+
+    // Define the set of file extensions to list in the tree (e.g. "map" or "pfbx")
+    // Use a single "*" extension to list all files.
+    void SetFileExtensions(const std::set<std::string>& fileExtensions);
 
     // Set the default icon used for files (e.g. "cmenu_add_prefab.png", relative to the bitmaps/ folder)
     void SetDefaultFileIcon(const std::string& fileIcon);

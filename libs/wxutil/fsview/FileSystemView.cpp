@@ -44,6 +44,8 @@ FileSystemView::FileSystemView(wxWindow* parent, const TreeModel::Ptr& model, lo
     _treeStore(model),
     _fileIcon(DEFAULT_FILE_ICON)
 {
+    _fileExtensions.insert("*"); // list all files by default
+
     // Single visible column, containing the directory/shader name and the icon
     AppendIconTextColumn(_("File"), Columns().filename.getColumnIndex(),
         wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
@@ -76,6 +78,11 @@ const std::string& FileSystemView::GetBasePath() const
 void FileSystemView::SetBasePath(const std::string& basePath)
 {
     _basePath = basePath;
+}
+
+void FileSystemView::SetFileExtensions(const std::set<std::string>& fileExtensions)
+{
+    _fileExtensions = fileExtensions;
 }
 
 void FileSystemView::SetDefaultFileIcon(const std::string& fileIcon)
@@ -111,7 +118,7 @@ void FileSystemView::Populate(const std::string& preselectPath)
     row[Columns().vfspath] = "__loadingnode__"; // to prevent that item from being found
     row.SendItemAdded();
 
-    _populator.reset(new fsview::Populator(Columns(), this, GetBasePath()));
+    _populator.reset(new fsview::Populator(Columns(), this, GetBasePath(), _fileExtensions));
     _populator->SetDefaultFileIcon(_fileIcon);
 
     // Start the thread, will send an event when finished

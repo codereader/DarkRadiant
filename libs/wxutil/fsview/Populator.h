@@ -46,10 +46,13 @@ private:
 
     std::string _basePath;
 
+    std::set<std::string> _fileExtensions;
+
 public:
     Populator(const TreeColumns& columns,
         wxEvtHandler* finishedHandler,
-        const std::string& basePath);
+        const std::string& basePath,
+        const std::set<std::string>& fileExtensions);
 
     ~Populator(); // waits for thread to finish
 
