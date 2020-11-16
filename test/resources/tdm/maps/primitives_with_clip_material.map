@@ -1,0 +1,114 @@
+Version 2
+// entity 0
+{
+"classname" "worldspawn"
+// primitive 0
+{
+brushDef3
+{
+( 0 0 1 -136 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+( 0 1 0 -128 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+( 1 0 0 -192 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+( 0 -1 0 -192 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+( -1 0 0 -128 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+( 0 0 -1 128 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+}
+}
+// primitive 1
+{
+brushDef3
+{
+( 0 0 1 -128 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+( 0 1 0 -136 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+( 1 0 0 -192 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+( 0 0 -1 -64 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+( -1 0 0 -128 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+( 0 -1 0 128 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+}
+}
+// primitive 2
+{
+brushDef3
+{
+( 0 0 1 -128 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+( 0 1 0 -128 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+( 1 0 0 -200 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+( 0 0 -1 -64 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+( 0 -1 0 -192 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+( -1 0 0 192 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+}
+}
+// primitive 3
+{
+brushDef3
+{
+( 0 1 0 -128 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+( 1 0 0 -192 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+( 0 0 -1 -72 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+( 0 -1 0 -192 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+( -1 0 0 -128 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+( 0 0 1 64 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+}
+}
+// primitive 4
+{
+brushDef3
+{
+( 0 0 1 -128 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+( 1 0 0 -192 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+( 0 0 -1 -64 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+( 0 -1 0 -200 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+( -1 0 0 -128 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+( 0 1 0 192 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+}
+}
+// primitive 5
+{
+brushDef3
+{
+( 0 0 1 -128 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+( 0 1 0 -128 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+( 0 0 -1 -64 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+( 0 -1 0 -192 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+( -1 0 0 -136 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+( 1 0 0 128 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+}
+}
+// primitive 6
+{
+brushDef3
+{
+( 0 0 1 -16 ) ( ( 0.015625 0 127 ) ( 0 0.015625 0 ) ) "textures/common/caulk" 0 0 0
+( 0 1 0 -104 ) ( ( 0.015625 0 0 ) ( 0 0.015625 0 ) ) "textures/common/caulk" 0 0 0
+( 1 0 0 -120 ) ( ( 0.015625 0 127 ) ( 0 0.015625 0 ) ) "textures/common/caulk" 0 0 0
+( 0 0 -1 -40 ) ( ( 0.015625 0 127 ) ( 0 0.015625 0 ) ) "textures/common/caulk" 0 0 0
+( 0 -1 0 56 ) ( ( 0.015625 0 0 ) ( 0 0.015625 127.875 ) ) "textures/common/caulk" 0 0 0
+( -1 0 0 72 ) ( ( 0.015625 0 1 ) ( 0 0.015625 0 ) ) "textures/common/caulk" 0 0 0
+}
+}
+// primitive 7
+{
+brushDef3
+{
+( 0 0 1 -16 ) ( ( 0.015625 0 127 ) ( 0 0.015625 1.625 ) ) "textures/common/clip" 0 0 0
+( 0 1 0 -104 ) ( ( 0.015625 0 126.375 ) ( 0 0.015625 0 ) ) "textures/common/clip" 0 0 0
+( 1 0 0 -16 ) ( ( 0.015625 0 127 ) ( 0 0.015625 0 ) ) "textures/common/clip" 0 0 0
+( 0 0 -1 -40 ) ( ( 0.015625 0 127 ) ( 0 0.015625 126.375 ) ) "textures/common/clip" 0 0 0
+( 0 -1 0 56 ) ( ( 0.015625 0 1.625 ) ( 0 0.015625 127.875 ) ) "textures/common/clip" 0 0 0
+( -1 0 0 -32 ) ( ( 0.015625 0 1 ) ( 0 0.015625 0 ) ) "textures/common/clip" 0 0 0
+}
+}
+// primitive 8
+{
+patchDef2
+{
+"textures/common/clip"
+( 3 3 0 0 0 )
+(
+( ( -96 56 -12 0 0 ) ( -96 80 -12 0 -0.375 ) ( -96 104 -12 0 -0.75 ) )
+( ( -72 56 -12 0.375 0 ) ( -72 80 -12 0.375 -0.375 ) ( -72 104 -12 0.375 -0.75 ) )
+( ( -48 56 -12 0.75 0 ) ( -48 80 -12 0.75 -0.375 ) ( -48 104 -12 0.75 -0.75 ) )
+)
+}
+}
+}

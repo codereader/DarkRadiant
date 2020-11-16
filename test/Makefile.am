@@ -37,5 +37,6 @@ drtest_SOURCES = math/Matrix4.cpp \
                  Models.cpp \
                  ModelExport.cpp \
                  ModelScale.cpp \
+                 Selection.cpp \
                  SelectionAlgorithm.cpp \
                  VFS.cpp
