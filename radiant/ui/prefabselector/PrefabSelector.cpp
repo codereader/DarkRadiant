@@ -44,6 +44,7 @@ namespace
 	const std::string RKEY_SPLIT_POS = RKEY_BASE + "splitPos";
 
 	const char* const PREFAB_FOLDER = "prefabs/";
+    const char* const PREFAB_FILE_ICON = "cmenu_add_prefab.png";
 
     const std::string RKEY_LAST_CUSTOM_PREFAB_PATH = RKEY_BASE + "lastPrefabPath";
     const std::string RKEY_RECENT_PREFAB_PATHS = RKEY_BASE + "recentPaths";
@@ -329,6 +330,7 @@ void PrefabSelector::setupTreeView(wxWindow* parent)
     }
 
     _treeView->SetFileExtensions(fileExtensions);
+    _treeView->SetDefaultFileIcon(PREFAB_FILE_ICON);
 }
 
 std::string PrefabSelector::getPrefabFolder()
