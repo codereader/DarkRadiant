@@ -7,6 +7,7 @@
 
 #include "entitylib.h"
 #include "gamelib.h"
+#include "selectionlib.h"
 
 #include "string/replace.h"
 
@@ -192,7 +193,7 @@ IEntityNodePtr Doom3EntityModule::createEntityFromSelection(const std::string& n
 
         if (!material.empty())
         {
-            selection::algorithm::applyShaderToSelection(material);
+            selection::applyShaderToSelection(material);
         }
 
         // If we had primitives to reparent, the new entity should inherit the layer info from them

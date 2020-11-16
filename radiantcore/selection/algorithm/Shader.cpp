@@ -29,18 +29,6 @@ namespace selection
 namespace algorithm
 {
 
-void applyShaderToSelection(const std::string& shaderName)
-{
-	UndoableCommand undo("setShader");
-
-	GlobalSelectionSystem().foreachFace([&] (IFace& face) { face.setShader(shaderName); });
-	GlobalSelectionSystem().foreachPatch([&] (IPatch& patch) { patch.setShader(shaderName); });
-
-	SceneChangeNotify();
-	// Update the Texture Tools
-	radiant::TextureChangedMessage::Send();
-}
-
 void applyShaderToSelectionCmd(const cmd::ArgumentList& args)
 {
 	if (args.size() != 1 || args[0].getString().empty())
@@ -49,6 +37,7 @@ void applyShaderToSelectionCmd(const cmd::ArgumentList& args)
 		return;
 	}
 
+	UndoableCommand undo("setShader");
 	applyShaderToSelection(args[0].getString());
 }
 

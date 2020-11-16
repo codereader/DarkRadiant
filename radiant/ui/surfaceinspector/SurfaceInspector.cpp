@@ -464,10 +464,7 @@ SurfaceInspector& SurfaceInspector::Instance()
 void SurfaceInspector::emitShader()
 {
 	// Apply it to the selection
-	GlobalCommandSystem().executeCommand("SetShaderOnSelection", _shaderEntry->GetValue().ToStdString());
-
-	// Update the TexTool instance as well
-	ui::TexTool::Instance().draw();
+    selection::applyShaderToSelection(_shaderEntry->GetValue().ToStdString());
 }
 
 void SurfaceInspector::emitTexDef()
@@ -647,14 +644,26 @@ void SurfaceInspector::onShaderEntryActivate(wxCommandEvent& ev)
 
 void SurfaceInspector::onShaderSelect(wxCommandEvent& ev)
 {
+    // Remember this shader, we need it for the final apply call
+    std::string previousShader = _shaderEntry->GetValue().ToStdString();
+
 	// Instantiate the modal dialog, will block execution
-	ShaderChooser* chooser = new ShaderChooser(this, _shaderEntry);
+	auto* chooser = new ShaderChooser(this, _shaderEntry);
 
     chooser->signal_shaderChanged().connect(
         sigc::mem_fun(this, &SurfaceInspector::emitShader)
     );
 
-    chooser->ShowModal();
+    if (chooser->ShowModal() == wxID_OK && _shaderEntry->GetValue().ToStdString() != previousShader)
+    {
+        // Revert the shader first, this is the starting point for the transaction
+        selection::applyShaderToSelection(previousShader);
+
+        // Perform the final apply, opening an UndoableCommand first
+        UndoableCommand cmd("ApplyShaderToSelection " + _shaderEntry->GetValue().ToStdString());
+        selection::applyShaderToSelection(_shaderEntry->GetValue().ToStdString());
+    }
+
 	chooser->Destroy();
 }
 

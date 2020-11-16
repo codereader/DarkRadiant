@@ -178,6 +178,16 @@ inline std::string getShaderFromSelection()
 }
 
 /**
+ * Applies the given shader to the current selection.
+ * This doesn't create an UndoableCommand, this has to be done by the caller.
+ */
+inline void applyShaderToSelection(const std::string& shaderName)
+{
+    GlobalSelectionSystem().foreachFace([&](IFace& face) { face.setShader(shaderName); });
+    GlobalSelectionSystem().foreachPatch([&](IPatch& patch) { patch.setShader(shaderName); });
+}
+
+/**
  * Tests the current selection and returns true if the selection is suitable
  * for reparenting the selected primitives to the (last) selected entity.
  */

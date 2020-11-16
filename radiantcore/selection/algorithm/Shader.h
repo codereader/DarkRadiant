@@ -23,10 +23,6 @@ namespace selection
 	namespace algorithm
     {
 
-	/** greebo: Applies the given shader to the current selection.
-	 */
-	void applyShaderToSelection(const std::string& shaderName);
-
 	// Command wrapper of the above
 	void applyShaderToSelectionCmd(const cmd::ArgumentList& args);
 

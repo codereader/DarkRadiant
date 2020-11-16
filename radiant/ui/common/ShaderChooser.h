@@ -15,9 +15,6 @@ namespace ui
 /* A dialog containing a ShaderSelector widget combo and OK/Cancel
  * buttons. The ShaderSelector subclass is automatically populated with
  * all shaders matching the "texture/" prefix.
- *
- * Use the LightShaderChooser class if you need an implementation to choose
- * light shaders only.
  */
 class ShaderChooser :
 	public wxutil::DialogBase,
