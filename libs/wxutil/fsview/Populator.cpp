@@ -1,8 +1,10 @@
 #include "Populator.h"
 
 #include "iuimanager.h"
+#include "ifiletypes.h"
 #include "iarchive.h"
 #include "os/path.h"
+#include "string/case_conv.h"
 #include "os/filesize.h"
 
 #include <wx/artprov.h>
@@ -115,14 +117,44 @@ void Populator::Populate()
     Run();
 }
 
+const wxIcon& Populator::GetIconForFile(const std::string& path)
+{
+    auto extension = string::to_lower_copy(os::getExtension(path));
+    auto foundIcon = _iconsPerExtension.find(extension);
+
+    if (foundIcon != _iconsPerExtension.end())
+    {
+        return foundIcon->second;
+    }
+
+    // Try to find an icon in the file type registry
+    auto iconName = GlobalFiletypes().getIconForExtension(extension);
+
+    if (!iconName.empty())
+    {
+        wxIcon customIcon;
+        customIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + iconName));
+
+        foundIcon = _iconsPerExtension.emplace(extension, customIcon).first;
+    }
+    else
+    {
+        // No special icon, use the default file icon
+        foundIcon = _iconsPerExtension.emplace(extension, _fileIcon).first;
+    }
+
+    return foundIcon->second;
+}
+
 void Populator::visit(wxutil::TreeModel& /* store */, wxutil::TreeModel::Row& row,
     const std::string& path, bool isExplicit)
 {
     if (TestDestroy()) return;
 
+    auto filename = path.substr(path.rfind("/") + 1);
     // Get the display path, everything after rightmost slash
-    row[_columns.filename] = wxVariant(wxDataViewIconText(path.substr(path.rfind("/") + 1),
-        isExplicit ? _fileIcon : _folderIcon));
+    row[_columns.filename] = wxVariant(wxDataViewIconText(filename,
+        isExplicit ? GetIconForFile(filename) : _folderIcon));
     row[_columns.vfspath] = _basePath + path;
     row[_columns.isFolder] = !isExplicit;
 
