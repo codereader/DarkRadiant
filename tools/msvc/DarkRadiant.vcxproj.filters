@@ -173,6 +173,9 @@
     <Filter Include="src\ui\script">
       <UniqueIdentifier>{28ae583f-8545-491c-abcc-5e459c3d357b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ui\mapselector">
+      <UniqueIdentifier>{6ddb8b69-4e5a-4c82-b7d4-aa1306342340}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\main.cpp">
@@ -666,6 +669,9 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\EntityClassColourManager.cpp">
       <Filter>src\ui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\mapselector\MapSelector.cpp">
+      <Filter>src\ui\mapselector</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1283,6 +1289,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\common\SoundShaderDefinitionView.h">
       <Filter>src\ui\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\mapselector\MapSelector.h">
+      <Filter>src\ui\mapselector</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

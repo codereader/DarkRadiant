@@ -4,6 +4,7 @@
 		<menuItem name="new" caption="&amp;New Map" command="NewMap" />
 		<menuSeparator />
 		<menuItem name="open" caption="&amp;Open..." command="OpenMap" />
+		<menuItem name="openMapFromProject" caption="&amp;Open Map from Project..." command="OpenMapFromProject" />
 		<menuItem name="import" caption="&amp;Import map..." command="ImportMap" />
 		<menuItem name="loadprefab" caption="Import &amp;prefab..." command="LoadPrefab" />
 		<menuSeparator />

@@ -702,17 +702,26 @@ void Map::openMap(const cmd::ArgumentList& args)
     }
     else if (!candidate.empty())
     {
-        // Next, try to look up the map in the regular maps path
-        fs::path mapsPath = GlobalGameManager().getMapPath();
-        fs::path fullMapPath = mapsPath / candidate;
-
-        if (os::fileOrDirExists(fullMapPath.string()))
+        // Try to open this file from the VFS (this will hit physical files
+        // in the active project as well as files in registered PK4)
+        if (GlobalFileSystem().openTextFile(candidate))
         {
-            mapToLoad = fullMapPath.string();
+            mapToLoad = candidate;
         }
         else
         {
-            throw cmd::ExecutionFailure(fmt::format(_("File doesn't exist: {0}"), fullMapPath.string()));
+            // Next, try to look up the map in the regular maps path
+            fs::path mapsPath = GlobalGameManager().getMapPath();
+            fs::path fullMapPath = mapsPath / candidate;
+
+            if (os::fileOrDirExists(fullMapPath.string()))
+            {
+                mapToLoad = fullMapPath.string();
+            }
+            else
+            {
+                throw cmd::ExecutionFailure(fmt::format(_("File doesn't exist: {0}"), candidate));
+            }
         }
     }
 
