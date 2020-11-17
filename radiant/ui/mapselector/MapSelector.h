@@ -5,6 +5,7 @@
 #include "wxutil/dialog/DialogBase.h"
 #include "wxutil/fsview/FileSystemView.h"
 #include "wxutil/WindowPosition.h"
+#include "wxutil/PathEntry.h"
 
 class wxStdDialogButtonSizer;
 
@@ -22,6 +23,10 @@ private:
     // Main tree view with the folder hierarchy
     wxutil::FileSystemView* _treeView;
 
+    wxRadioButton* _useModPath;
+    wxRadioButton* _useCustomPath;
+    wxutil::PathEntry* _customPath;
+
     // The window position tracker
     wxutil::WindowPosition _position;
 
@@ -34,6 +39,7 @@ private:
 
     // Helper functions to configure GUI components
     void setupTreeView(wxWindow* parent);
+    void setupPathSelector(wxSizer* parentSizer);
 
     // Populate the tree view with files
     void populateTree();
@@ -48,6 +54,7 @@ private:
     void onRescanPath(wxCommandEvent& ev);
     void onSelectionChanged(wxutil::FileSystemView::SelectionChangedEvent& ev);
     void updateButtonSensitivity();
+    void onPathSelectionChanged();
 
 public:
     int ShowModal() override;

@@ -28,6 +28,8 @@ MapSelector::MapSelector() :
     wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
     GetSizer()->Add(vbox, 1, wxEXPAND | wxALL, 12);
 
+    setupPathSelector(vbox);
+
     setupTreeView(this);
     vbox->Add(_treeView, 1, wxEXPAND);
 
@@ -107,8 +109,54 @@ void MapSelector::setupTreeView(wxWindow* parent)
     _treeView->SetFileExtensions(fileExtensions);
 }
 
+void MapSelector::setupPathSelector(wxSizer* parentSizer)
+{
+    // Path selection box
+    wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
+
+    _useModPath = new wxRadioButton(this, wxID_ANY, _("Browse mod resources"),
+        wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
+
+    _useCustomPath = new wxRadioButton(this, wxID_ANY, _("Browse custom PAK:"));
+    _customPath = new wxutil::PathEntry(this, filetype::TYPE_PAK, true);
+
+    // Connect to the changed event
+    _customPath->Bind(wxutil::EV_PATH_ENTRY_CHANGED, [&](wxCommandEvent& ev)
+    {
+        _useCustomPath->SetValue(true);
+        onPathSelectionChanged();
+    });
+
+    hbox->Add(_useModPath, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
+    hbox->Add(_useCustomPath, 0, wxLEFT | wxALIGN_CENTER_VERTICAL, 6);
+    hbox->Add(_customPath, 1, wxLEFT, 6);
+
+    parentSizer->Add(hbox, 0, wxBOTTOM | wxEXPAND, 12);
+
+    // Wire up the signals
+    _useModPath->Bind(wxEVT_RADIOBUTTON, [&](wxCommandEvent& ev)
+    {
+        onPathSelectionChanged();
+    });
+
+    _useCustomPath->Bind(wxEVT_RADIOBUTTON, [&](wxCommandEvent& ev)
+    {
+        onPathSelectionChanged();
+    });
+}
+
+void MapSelector::onPathSelectionChanged()
+{
+    populateTree();
+}
+
 std::string MapSelector::getBaseFolder()
 {
+    if (_useCustomPath->GetValue() && !_customPath->getValue().empty())
+    {
+        return _customPath->getValue();
+    }
+
     return ""; // use an empty path which resembles the VFS root
 }
 
