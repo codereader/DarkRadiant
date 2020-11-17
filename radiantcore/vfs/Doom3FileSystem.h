@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Archive.h"
+#include "iarchive.h"
 #include "ifilesystem.h"
 
 namespace vfs
@@ -20,7 +20,7 @@ private:
 	struct ArchiveDescriptor
 	{
 		std::string name;
-		ArchivePtr archive;
+		IArchive::Ptr archive;
 		bool is_pakfile;
 	};
 
@@ -42,6 +42,7 @@ public:
 
 	ArchiveFilePtr openFileInAbsolutePath(const std::string& filename) override;
 	ArchiveTextFilePtr openTextFileInAbsolutePath(const std::string& filename) override;
+    IArchive::Ptr openArchiveInAbsolutePath(const std::string& pathToArchive) override;
 
 	// Call the specified callback function for each file matching extension
 	// inside basedir.

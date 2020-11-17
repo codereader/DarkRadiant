@@ -14,11 +14,7 @@
 #include <algorithm>
 
 #include "imodule.h"
-
-class ArchiveFile;
-typedef std::shared_ptr<ArchiveFile> ArchiveFilePtr;
-class ArchiveTextFile;
-typedef std::shared_ptr<ArchiveTextFile> ArchiveTextFilePtr;
+#include "iarchive.h"
 
 namespace vfs
 {
@@ -170,6 +166,11 @@ public:
 	/// \brief Returns the file identified by \p filename opened in text mode, or NULL if not found.
 	/// This is a variant of openTextFile taking an absolute path as argument.
 	virtual ArchiveTextFilePtr openTextFileInAbsolutePath(const std::string& filename) = 0;
+
+    // Opens an independent archive located in the given physical path.
+    // (This archive can be located somewhere outside the current VFS hierarchy.)
+    // Loading this archive won't have any effect on the VFS setup, it is opened stand-alone.
+    virtual IArchive::Ptr openArchiveInAbsolutePath(const std::string& pathToArchive) = 0;
 
 	/// \brief Calls the visitor function for each file under \p basedir matching \p extension.
 	/// Use "*" as \p extension to match all file extensions.

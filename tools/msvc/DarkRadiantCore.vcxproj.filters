@@ -1047,9 +1047,6 @@
     <ClInclude Include="..\..\radiantcore\xmlregistry\XMLRegistry.h">
       <Filter>src\xmlregistry</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\vfs\Archive.h">
-      <Filter>src\vfs</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\vfs\DeflatedArchiveFile.h">
       <Filter>src\vfs</Filter>
     </ClInclude>

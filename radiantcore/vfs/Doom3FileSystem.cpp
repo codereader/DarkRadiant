@@ -30,6 +30,7 @@
 #include "string/encoding.h"
 #include "os/path.h"
 #include "os/dir.h"
+#include "os/file.h"
 
 #include "string/split.h"
 #include "debugging/ScopedDebugTimer.h"
@@ -120,13 +121,14 @@ public:
 };
 
 /*
- * Archive::Visitor class used in GlobalFileSystem().foreachFile().
+ * IArchive::Visitor class used in GlobalFileSystem().foreachFile().
  * It's filtering out the files matching the defined extension only.
  * The directory part is cut off the filename.
  * On top of that, this class maintains a list of visited files to avoid
  * hitting the same file twice (it might be present in more than one Archive).
  */
-class FileVisitor: public Archive::Visitor
+class FileVisitor : 
+    public IArchive::Visitor
 {
     // Maximum traversal depth
     std::size_t _maxDepth;
@@ -444,6 +446,17 @@ ArchiveTextFilePtr Doom3FileSystem::openTextFileInAbsolutePath(const std::string
     }
 
     return ArchiveTextFilePtr();
+}
+
+IArchive::Ptr Doom3FileSystem::openArchiveInAbsolutePath(const std::string& pathToArchive)
+{
+    if (!os::fileIsReadable(pathToArchive))
+    {
+        rWarning() << "Requested file is not readable: " << pathToArchive << std::endl;
+        return IArchive::Ptr();
+    }
+
+    return std::make_shared<archive::ZipArchive>(pathToArchive);
 }
 
 void Doom3FileSystem::forEachFile(const std::string& basedir,

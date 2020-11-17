@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Archive.h"
+#include "iarchive.h"
 
 /**
  * greebo: This wraps around a certain path in the "real"
@@ -10,7 +10,7 @@
  * added to the list of PK4 archives, using this class.
  */
 class DirectoryArchive :
-	public Archive
+	public IArchive
 {
 	std::string _root;
 

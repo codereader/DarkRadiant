@@ -1016,7 +1016,6 @@
     <ClInclude Include="..\..\radiantcore\undo\Stack.h" />
     <ClInclude Include="..\..\radiantcore\undo\StackFiller.h" />
     <ClInclude Include="..\..\radiantcore\undo\UndoSystem.h" />
-    <ClInclude Include="..\..\radiantcore\vfs\Archive.h" />
     <ClInclude Include="..\..\radiantcore\vfs\DeflatedArchiveFile.h" />
     <ClInclude Include="..\..\radiantcore\vfs\DeflatedArchiveTextFile.h" />
     <ClInclude Include="..\..\radiantcore\vfs\DeflatedInputStream.h" />
