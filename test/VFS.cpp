@@ -1,6 +1,7 @@
 #include "RadiantTest.h"
 
 #include "ifilesystem.h"
+#include "os/path.h"
 
 namespace test
 {
@@ -118,6 +119,26 @@ TEST_F(VfsTest, assetsLstFileHandling)
     // The assets.lst should be converted into visibility information, but NOT
     // returned as an actual file to the calling code.
     EXPECT_EQ(fileVis.count("assets.lst"), 0);
+}
+
+TEST_F(VfsTest, openArchiveInAbsolutePath)
+{
+    fs::path pk4Path = _context.getTestResourcePath();
+    pk4Path /= "tdm_example_mtrs.pk4";
+
+    auto archive = GlobalFileSystem().openArchiveInAbsolutePath(pk4Path.string());
+
+    EXPECT_TRUE(archive) << "Could not open " << pk4Path.string();
+
+    // Check file existence
+    ASSERT_TRUE(archive->containsFile("materials/tdm_bloom_afx.mtr"));
+    
+    // Check file read access
+    auto file = archive->openTextFile("materials/tdm_bloom_afx.mtr");
+
+    std::istream fileStream(&(file->getInputStream()));
+    std::string contents(std::istreambuf_iterator<char>(fileStream), {});
+    ASSERT_NE(contents.find("textures/AFX/AFXmodulate"), std::string::npos);
 }
 
 }
