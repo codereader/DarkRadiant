@@ -15,14 +15,16 @@ struct TreeColumns :
     public TreeModel::ColumnRecord
 {
     TreeColumns() :
-        filename(add(wxutil::TreeModel::Column::IconText)),
-        vfspath(add(wxutil::TreeModel::Column::String)),
-        isFolder(add(wxutil::TreeModel::Column::Boolean))
+        filename(add(TreeModel::Column::IconText)),
+        vfspath(add(TreeModel::Column::String)),
+        isFolder(add(TreeModel::Column::Boolean)),
+        size(add(TreeModel::Column::String))
     {}
 
-    wxutil::TreeModel::Column filename;	// e.g. "chair1.pfb"
-    wxutil::TreeModel::Column vfspath;	// e.g. "prefabs/chair1.pfb"
-    wxutil::TreeModel::Column isFolder;	// whether this is a folder
+    TreeModel::Column filename; // e.g. "chair1.pfb"
+    TreeModel::Column vfspath;  // e.g. "prefabs/chair1.pfb"
+    TreeModel::Column isFolder; // whether this is a folder
+    TreeModel::Column size;     // file size string
 };
 
 class Populator :

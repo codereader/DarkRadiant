@@ -50,6 +50,9 @@ FileSystemView::FileSystemView(wxWindow* parent, const TreeModel::Ptr& model, lo
     AppendIconTextColumn(_("File"), Columns().filename.getColumnIndex(),
         wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
+    AppendTextColumn(_("Size"), Columns().size.getColumnIndex(),
+        wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_RIGHT, wxDATAVIEW_COL_SORTABLE);
+
     // Get selection and connect the changed callback
     Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &FileSystemView::OnSelectionChanged, this);
     Bind(EV_TREEMODEL_POPULATION_FINISHED, &FileSystemView::OnTreeStorePopulationFinished, this);

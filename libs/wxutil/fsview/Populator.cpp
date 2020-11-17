@@ -1,7 +1,9 @@
 #include "Populator.h"
 
 #include "iuimanager.h"
+#include "iarchive.h"
 #include "os/path.h"
+#include "os/filesize.h"
 
 #include <wx/artprov.h>
 
@@ -123,6 +125,10 @@ void Populator::visit(wxutil::TreeModel& /* store */, wxutil::TreeModel::Row& ro
         isExplicit ? _fileIcon : _folderIcon));
     row[_columns.vfspath] = _basePath + path;
     row[_columns.isFolder] = !isExplicit;
+
+    // Get the file size if possible
+    auto file = GlobalFileSystem().openFile(_basePath + path);
+    row[_columns.size] =  os::getFormattedFileSize(file ? file->size() : -1);
 }
 
 }
