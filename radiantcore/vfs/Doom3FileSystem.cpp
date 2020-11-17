@@ -352,6 +352,11 @@ void Doom3FileSystem::shutdown()
     rMessage() << "Filesystem shut down" << std::endl;
 }
 
+const VirtualFileSystem::ExtensionSet& Doom3FileSystem::getArchiveExtensions() const
+{
+    return _allowedExtensions;
+}
+
 void Doom3FileSystem::addObserver(Observer& observer)
 {
     _observers.insert(&observer);

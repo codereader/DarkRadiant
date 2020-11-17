@@ -1,7 +1,9 @@
 #include "MapSelector.h"
 
 #include "i18n.h"
+#include "ifilesystem.h"
 
+#include "string/case_conv.h"
 #include <wx/sizer.h>
 #include <wx/button.h>
 
@@ -88,6 +90,14 @@ void MapSelector::setupTreeView(wxWindow* parent)
     for (const auto& pattern : patterns)
     {
         fileExtensions.insert(pattern.extension);
+    }
+
+    // Add all PK extensions too
+    const auto& pakExtensions = GlobalFileSystem().getArchiveExtensions();
+
+    for (const auto& extension : pakExtensions)
+    {
+        fileExtensions.insert(string::to_lower_copy(extension));
     }
 
     _treeView->SetFileExtensions(fileExtensions);

@@ -34,6 +34,8 @@ public:
 	void initialise(const SearchPaths& vfsSearchPaths, const ExtensionSet& allowedExtensions) override;
 	void shutdown() override;
 
+    const ExtensionSet& getArchiveExtensions() const override;
+
 	int getFileCount(const std::string& filename) override;
 	ArchiveFilePtr openFile(const std::string& filename) override;
 	ArchiveTextFilePtr openTextFile(const std::string& filename) override;

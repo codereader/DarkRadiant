@@ -146,6 +146,9 @@ public:
 	/// \brief Shuts down the filesystem.
 	virtual void shutdown() = 0;
 
+    // Returns the extension set this VFS instance has been initialised with
+    virtual const ExtensionSet& getArchiveExtensions() const = 0;
+
 	// greebo: Adds/removes observers to/from the VFS
 	virtual void addObserver(Observer& observer) = 0;
 	virtual void removeObserver(Observer& observer) = 0;
