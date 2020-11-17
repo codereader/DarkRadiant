@@ -69,6 +69,7 @@
     <ClCompile Include="..\..\..\test\CSG.cpp" />
     <ClCompile Include="..\..\..\test\Face.cpp" />
     <ClCompile Include="..\..\..\test\FacePlane.cpp" />
+    <ClCompile Include="..\..\..\test\FileTypes.cpp" />
     <ClCompile Include="..\..\..\test\HeadlessOpenGLContext.cpp" />
     <ClCompile Include="..\..\..\test\MapExport.cpp" />
     <ClCompile Include="..\..\..\test\Materials.cpp" />
