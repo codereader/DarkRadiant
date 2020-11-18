@@ -1,6 +1,6 @@
 #pragma once
 
-#include <mutex>
+#include <map>
 #include "imessagebus.h"
 #include "itextstream.h"
 
@@ -11,13 +11,11 @@ class MessageBus :
 	public IMessageBus
 {
 private:
-    std::recursive_mutex _lock;
-
     // Listener and its registration handle
-    typedef std::pair<std::size_t, Listener> ListenerPlusId;
-
-    // Maps message types to Listeners
-    std::multimap<std::size_t, ListenerPlusId> _listeners;
+    using Channel = std::map<std::size_t, Listener>;
+    
+    // Maps message types to a set of listeners
+    std::map<std::size_t, Channel> _channels;
 
     bool _processingMessage;
     std::size_t _nextId;
@@ -29,23 +27,28 @@ public:
 
     std::size_t addListener(std::size_t messageType, const Listener& listener) override
     {
-        std::lock_guard<std::recursive_mutex> guard(_lock);
+        auto channel = _channels.find(messageType);
 
-        auto id = _nextId++;
-        _listeners.emplace(messageType, std::make_pair(id, listener));
+        if (channel == _channels.end())
+        {
+            channel = _channels.emplace(messageType, Channel()).first;
+        }
 
-        return id;
+        auto subscriberId = _nextId++;
+        channel->second.emplace(subscriberId, listener);
+
+        return subscriberId;
     }
 
     void removeListener(std::size_t listenerId) override
     {
-        std::lock_guard<std::recursive_mutex> guard(_lock);
-
-        for (auto it = _listeners.begin(); it != _listeners.end(); ++it)
+        for (auto& channel : _channels)
         {
-            if (it->second.first == listenerId)
+            auto l = channel.second.find(listenerId);
+
+            if (l != channel.second.end())
             {
-                _listeners.erase(it);
+                channel.second.erase(l);
                 return;
             }
         }
@@ -55,15 +58,18 @@ public:
 
     void sendMessage(IMessage& message) override
     {
-        std::lock_guard<std::recursive_mutex> guard(_lock);
+        auto channel = _channels.find(message.getId());
 
-        // Get the message type ID
-        auto msgId = message.getId();
-
-        for (auto it = _listeners.lower_bound(msgId); 
-             it != _listeners.end() && it != _listeners.upper_bound(msgId); /* in-loop */)
+        if (channel == _channels.end())
         {
-            (*it++).second.second(message);
+            rWarning() << "MessageBus: No channel for message ID " << message.getId() << std::endl;
+            return;
+        }
+
+        for (auto it = channel->second.begin();
+             it != channel->second.end(); /* in-loop */)
+        {
+            (*it++).second(message);
         }
     }
 };
