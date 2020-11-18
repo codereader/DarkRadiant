@@ -103,7 +103,7 @@ Get-ChildItem -Path $portableFilesFolder | Remove-Item -Recurse -Force
 Write-Host ("Copying files...")
 
 $installFolder = Get-Item "..\..\install"
-$excludes = @('*.exp', '*.lib', '*.iobj', '*.ipdb', '*.suo', '*.pgd', '*.fbp', 'darkradiant.desktop.in')
+$excludes = @('*.exp', '*.lib', '*.iobj', '*.ipdb', '*.suo', '*.pgd', '*.fbp', 'darkradiant.desktop.in', 'Tests.*')
 
 Get-ChildItem $installFolder -Recurse -Exclude $excludes | Copy-Item -Destination { Join-Path $portableFilesFolder $_.FullName.Substring($installFolder.FullName.Length) }
 
