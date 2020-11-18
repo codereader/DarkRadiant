@@ -38,7 +38,7 @@ void OpenGLModule::drawChar(char character) const
 
 int OpenGLModule::getFontHeight() 
 {
-	return _font->getPixelHeight();
+	return _font ? _font->getPixelHeight() : 0;
 }
 
 const std::string& OpenGLModule::getName() const
