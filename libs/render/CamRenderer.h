@@ -16,10 +16,9 @@ class CamRenderer: public RenderableCollector
     // The VolumeTest object for object culling
     const VolumeTest& _view;
 
-#if 0
     // Render statistics
-    render::RenderStatistics& _renderStats;
-#endif
+    int _totalLights = 0;
+    int _visibleLights = 0;
 
     // Highlight state
     bool _highlightFaces = false;
@@ -97,9 +96,6 @@ public:
     CamRenderer(const VolumeTest& view, Shader* primHighlightShader = nullptr,
                 Shader* faceHighlightShader = nullptr)
     : _view(view),
-#if 0
-      _renderStats(stats),
-#endif
       _highlightedPrimitiveShader(primHighlightShader),
       _highlightedFaceShader(faceHighlightShader)
     {}
@@ -142,6 +138,12 @@ public:
         }
     }
 
+    /// Obtain the visible light count
+    int getVisibleLights() const { return _visibleLights; }
+
+    /// Obtain the total light count
+    int getTotalLights() const { return _totalLights; }
+
     // RenderableCollector implementation
 
     bool supportsFullMaterials() const override { return true; }
@@ -163,23 +165,17 @@ public:
     {
         // Determine if this light is visible within the view frustum
         VolumeIntersectionValue viv = _view.TestAABB(light.lightAABB());
-        if (viv == VOLUME_OUTSIDE)
-        {
-            // Not interested
-#if 0
-            _renderStats.addLight(false);
-#endif
-        }
-        else
+        if (viv != VOLUME_OUTSIDE)
         {
             // Store the light in our list of scene lights
             _sceneLights.push_back(&light);
 
             // Count the light for the stats display
-#if 0
-            _renderStats.addLight(true);
-#endif
+            ++_visibleLights;
         }
+
+        // Count total lights
+        ++_totalLights;
     }
 
     void addRenderable(Shader& shader, const OpenGLRenderable& renderable,

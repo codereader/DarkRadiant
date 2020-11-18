@@ -685,8 +685,12 @@ void CamWnd::Cam_Draw()
     {
         // Front end (renderable collection from scene)
         render::CamRenderer renderer(_view, _primitiveHighlightShader.get(),
-                                     _faceHighlightShader.get() /*, _renderStats */);
+                                     _faceHighlightShader.get());
         render::RenderableCollectionWalker::CollectRenderablesInScene(renderer, _view);
+
+        // Accumulate render statistics
+        _renderStats.setLightCount(renderer.getVisibleLights(),
+                                   renderer.getTotalLights());
         _renderStats.frontEndComplete();
 
         // Render any active mousetools
