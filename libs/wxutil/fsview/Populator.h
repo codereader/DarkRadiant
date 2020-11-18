@@ -75,6 +75,7 @@ protected:
 
     void visitFile(const vfs::FileInfo& fileInfo);
     void SearchForFilesMatchingExtension(const std::string& extension);
+    void SearchArchiveForFilesMatchingExtension(const std::string& extension);
     const wxIcon& GetIconForFile(const std::string& path);
 };
 

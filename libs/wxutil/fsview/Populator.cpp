@@ -63,13 +63,34 @@ void Populator::visitFile(const vfs::FileInfo& fileInfo)
     _treePopulator.addPath(fileInfo.name);
 }
 
+void Populator::SearchArchiveForFilesMatchingExtension(const std::string& extension)
+{
+    // Try to open this file as archive
+    auto archive = GlobalFileSystem().openArchiveInAbsolutePath(_basePath);
+
+    if (!archive)
+    {
+        rMessage() << "Cannot search the file " << _basePath << " as archive." << std::endl;
+        return;
+    }
+
+    // TODO
+}
+
 void Populator::SearchForFilesMatchingExtension(const std::string& extension)
 {
     if (path_is_absolute(_basePath.c_str()))
     {
-        // Traverse a folder somewhere in the filesystem
-        GlobalFileSystem().forEachFileInAbsolutePath(_basePath, extension,
-            std::bind(&Populator::visitFile, this, std::placeholders::_1), 0);
+        if (os::isDirectory(_basePath))
+        {
+            // Traverse a folder somewhere in the filesystem
+            GlobalFileSystem().forEachFileInAbsolutePath(_basePath, extension,
+                std::bind(&Populator::visitFile, this, std::placeholders::_1), 0);
+        }
+        else 
+        {
+            SearchArchiveForFilesMatchingExtension(extension);
+        }
     }
     else
     {

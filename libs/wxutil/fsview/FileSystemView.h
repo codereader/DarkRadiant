@@ -8,6 +8,15 @@
 namespace wxutil
 {
 
+/**
+ * Specialised Tree View class sutiable for displaying a hierarchy of
+ * files and folders, based on a given file extension filter.
+ * The base path can be set to the root of DarkRadiant's VFS or on of its
+ * subdirectories. It's also capable of displaying the contents of an
+ * arbitrary archive file, located somewhere in the physical filesystem.
+ * 
+ * Use the static constructor to create an instance of this widget.
+ */
 class FileSystemView :
     public TreeView
 {
@@ -53,6 +62,8 @@ public:
     const std::string& GetBasePath() const;
 
     // Sets the base path of this view. This can be either an absolute filesystem path or a VFS path
+    // It's also valid to pass an absolute path to a PAK file as base path,
+    // which causes the view to open this file and show its contents.
     void SetBasePath(const std::string& basePath);
 
     // Define the set of file extensions to list in the tree (e.g. "map" or "pfbx")
