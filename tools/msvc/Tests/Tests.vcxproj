@@ -76,6 +76,7 @@
     <ClCompile Include="..\..\..\test\math\Plane3.cpp" />
     <ClCompile Include="..\..\..\test\math\Quaternion.cpp" />
     <ClCompile Include="..\..\..\test\math\Vector3.cpp" />
+    <ClCompile Include="..\..\..\test\MessageBus.cpp" />
     <ClCompile Include="..\..\..\test\ModelExport.cpp" />
     <ClCompile Include="..\..\..\test\Models.cpp" />
     <ClCompile Include="..\..\..\test\ModelScale.cpp" />

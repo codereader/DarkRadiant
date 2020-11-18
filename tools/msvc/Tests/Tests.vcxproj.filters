@@ -26,6 +26,7 @@
     <ClCompile Include="..\..\..\test\Models.cpp" />
     <ClCompile Include="..\..\..\test\Face.cpp" />
     <ClCompile Include="..\..\..\test\Selection.cpp" />
+    <ClCompile Include="..\..\..\test\MessageBus.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\HeadlessOpenGLContext.h" />
