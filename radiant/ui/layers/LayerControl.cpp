@@ -104,7 +104,7 @@ wxToggleButton* LayerControl::getToggle()
 
 void LayerControl::update()
 {
-	util::ScopedBoolLock{_updateActive};
+	util::ScopedBoolLock lock{_updateActive};
 
 	if (!GlobalMapModule().getRoot())
 	{
