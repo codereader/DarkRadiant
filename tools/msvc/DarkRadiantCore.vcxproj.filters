@@ -2037,5 +2037,11 @@
     <ClInclude Include="..\..\radiantcore\model\export\PatchSurface.h">
       <Filter>src\model\export</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiantcore\vfs\AssetsList.h">
+      <Filter>src\vfs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\vfs\FileVisitor.h">
+      <Filter>src\vfs</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

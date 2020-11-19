@@ -1016,12 +1016,14 @@
     <ClInclude Include="..\..\radiantcore\undo\Stack.h" />
     <ClInclude Include="..\..\radiantcore\undo\StackFiller.h" />
     <ClInclude Include="..\..\radiantcore\undo\UndoSystem.h" />
+    <ClInclude Include="..\..\radiantcore\vfs\AssetsList.h" />
     <ClInclude Include="..\..\radiantcore\vfs\DeflatedArchiveFile.h" />
     <ClInclude Include="..\..\radiantcore\vfs\DeflatedArchiveTextFile.h" />
     <ClInclude Include="..\..\radiantcore\vfs\DeflatedInputStream.h" />
     <ClInclude Include="..\..\radiantcore\vfs\DirectoryArchive.h" />
     <ClInclude Include="..\..\radiantcore\vfs\DirectoryArchiveTextFile.h" />
     <ClInclude Include="..\..\radiantcore\vfs\Doom3FileSystem.h" />
+    <ClInclude Include="..\..\radiantcore\vfs\FileVisitor.h" />
     <ClInclude Include="..\..\radiantcore\vfs\GenericFileSystem.h" />
     <ClInclude Include="..\..\radiantcore\vfs\SortedFilenames.h" />
     <ClInclude Include="..\..\radiantcore\vfs\StoredArchiveFile.h" />

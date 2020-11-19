@@ -181,11 +181,19 @@ public:
 
 	// Similar to forEachFile, this routine traverses an absolute path
 	// searching for files matching a certain extension and invoking
-	// the givne visitor functor on each occurrence.
+	// the given visitor functor on each occurrence.
 	virtual void forEachFileInAbsolutePath(const std::string& path,
 		const std::string& extension,
 		const VisitorFunc& visitorFunc,
 		std::size_t depth = 1) = 0;
+
+    // Similar to forEachFile, this routine traverses an archive in the given path
+    // searching for files matching a certain extension and invoking
+    // the given visitor functor on each occurrence.
+    virtual void forEachFileInArchive(const std::string& absoluteArchivePath,
+        const std::string& extension,
+        const VisitorFunc& visitorFunc,
+        std::size_t depth = 1) = 0;
 
 	/// \brief Returns the absolute filename for a relative \p name, or "" if not found.
 	virtual std::string findFile(const std::string& name) = 0;

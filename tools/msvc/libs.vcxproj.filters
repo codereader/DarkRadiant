@@ -268,12 +268,6 @@
     <ClInclude Include="..\..\libs\os\filesize.h">
       <Filter>os</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\libs\vfs\FileVisitor.h">
-      <Filter>vfs</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\libs\vfs\AssetsList.h">
-      <Filter>vfs</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">
@@ -314,9 +308,6 @@
     </Filter>
     <Filter Include="time">
       <UniqueIdentifier>{ac5674ae-1705-4c6c-8b17-955f44c154c8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="vfs">
-      <UniqueIdentifier>{5cab04de-0db0-4436-b207-293e6fbb5b7a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

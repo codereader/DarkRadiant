@@ -29,7 +29,7 @@ Populator::Populator(const TreeColumns& columns,
     _treeStore(new wxutil::TreeModel(_columns)),
     _finishedHandler(finishedHandler),
     _treePopulator(_treeStore),
-    _basePath(os::standardPathWithSlash(basePath)),
+    _basePath(basePath),
     _fileExtensions(fileExtensions)
 {
     _fileIcon.CopyFromBitmap(
@@ -63,20 +63,6 @@ void Populator::visitFile(const vfs::FileInfo& fileInfo)
     _treePopulator.addPath(fileInfo.name);
 }
 
-void Populator::SearchArchiveForFilesMatchingExtension(const std::string& extension)
-{
-    // Try to open this file as archive
-    auto archive = GlobalFileSystem().openArchiveInAbsolutePath(_basePath);
-
-    if (!archive)
-    {
-        rMessage() << "Cannot search the file " << _basePath << " as archive." << std::endl;
-        return;
-    }
-
-    // TODO
-}
-
 void Populator::SearchForFilesMatchingExtension(const std::string& extension)
 {
     if (path_is_absolute(_basePath.c_str()))
@@ -84,18 +70,20 @@ void Populator::SearchForFilesMatchingExtension(const std::string& extension)
         if (os::isDirectory(_basePath))
         {
             // Traverse a folder somewhere in the filesystem
-            GlobalFileSystem().forEachFileInAbsolutePath(_basePath, extension,
+            GlobalFileSystem().forEachFileInAbsolutePath(os::standardPathWithSlash(_basePath), extension,
                 std::bind(&Populator::visitFile, this, std::placeholders::_1), 0);
         }
         else 
         {
-            SearchArchiveForFilesMatchingExtension(extension);
+            // Try to open this file as archive
+            GlobalFileSystem().forEachFileInArchive(_basePath, extension,
+                std::bind(&Populator::visitFile, this, std::placeholders::_1), 0);
         }
     }
     else
     {
         // Traverse the VFS
-        GlobalFileSystem().forEachFile(_basePath, extension,
+        GlobalFileSystem().forEachFile(os::standardPathWithSlash(_basePath), extension,
             std::bind(&Populator::visitFile, this, std::placeholders::_1), 0);
     }
 }

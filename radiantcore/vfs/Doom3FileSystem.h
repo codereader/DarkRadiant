@@ -54,6 +54,11 @@ public:
 		const VisitorFunc& visitorFunc,
 		std::size_t depth = 1) override;
 
+    void forEachFileInArchive(const std::string& absoluteArchivePath,
+        const std::string& extension,
+        const VisitorFunc& visitorFunc,
+        std::size_t depth = 1) override;
+
 	std::string findFile(const std::string& name) override;
 	std::string findRoot(const std::string& name) override;
 

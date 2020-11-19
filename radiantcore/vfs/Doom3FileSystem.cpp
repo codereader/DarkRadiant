@@ -41,7 +41,7 @@
 #include "SortedFilenames.h"
 #include "ZipArchive.h"
 #include "module/StaticModule.h"
-#include "vfs/FileVisitor.h"
+#include "FileVisitor.h"
 
 namespace vfs
 {
@@ -302,6 +302,20 @@ void Doom3FileSystem::forEachFileInAbsolutePath(const std::string& path,
     FileVisitor fileVisitor(visitorFunc, "", extension, depth);
 
     tempArchive.traverse(fileVisitor, "/");
+}
+
+void Doom3FileSystem::forEachFileInArchive(const std::string& absoluteArchivePath,
+    const std::string& extension,
+    const VisitorFunc& visitorFunc,
+    std::size_t depth)
+{
+    // Construct a temporary ZipArchive from the given path
+    archive::ZipArchive tempArchive(absoluteArchivePath);
+
+    // Construct our FileVisitor filtering out the right elements
+    FileVisitor fileVisitor(visitorFunc, "", extension, depth);
+
+    tempArchive.traverse(fileVisitor, "");
 }
 
 std::string Doom3FileSystem::findFile(const std::string& name)
