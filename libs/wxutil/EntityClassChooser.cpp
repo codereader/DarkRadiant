@@ -81,14 +81,13 @@ public:
         // of the DISPLAY_FOLDER_KEY.
         addPath(
             eclass->getModName() + folderPath + "/" + eclass->getName(),
-            [this](wxutil::TreeModel::Row& row, const std::string& path,
-                   bool isFolder)
+            [this](wxutil::TreeModel::Row& row, const std::string& path, 
+                const std::string& leafName, bool isFolder)
             {
                 // Get the display name by stripping off everything before the
                 // last slash
                 row[_columns.name] = wxVariant(
-                    wxDataViewIconText(path.substr(path.rfind("/") + 1),
-                                       !isFolder ? _entityIcon : _folderIcon)
+                    wxDataViewIconText(leafName, !isFolder ? _entityIcon : _folderIcon)
                 );
                 row[_columns.isFolder] = isFolder;
                 row.SendItemAdded();

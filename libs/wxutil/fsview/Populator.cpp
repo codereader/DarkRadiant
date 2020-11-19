@@ -60,7 +60,26 @@ void Populator::visitFile(const vfs::FileInfo& fileInfo)
     }
 
     // Let the VFSTreePopulator do the insertion
-    _treePopulator.addPath(fileInfo.name);
+    _treePopulator.addPath(fileInfo.name, [&](TreeModel::Row& row, 
+        const std::string& path, const std::string& leafName,
+        bool isFolder)
+    {
+        // The population callback will be called multiple times for deeper files,
+        // but only one of them will be have isFolder == false, which is our actual file
+        
+        // Get the display path, everything after rightmost slash
+        row[_columns.filename] = wxVariant(wxDataViewIconText(leafName,
+            isFolder ? _folderIcon : GetIconForFile(leafName)));
+        row[_columns.vfspath] = _basePath + path;
+        row[_columns.isFolder] = isFolder;
+
+        if (!isFolder)
+        {
+            // Get the file size if possible
+            auto file = GlobalFileSystem().openFile(_basePath + path);
+            row[_columns.size] = os::getFormattedFileSize(file ? file->size() : -1);
+        }
+    });
 }
 
 void Populator::SearchForFilesMatchingExtension(const std::string& extension)
@@ -96,11 +115,6 @@ wxThread::ExitCode Populator::Entry()
 
         if (TestDestroy()) return static_cast<wxThread::ExitCode>(0);
     }
-
-    // Visit the tree populator in order to fill in the column data
-    _treePopulator.forEachNode(*this);
-
-    if (TestDestroy()) return static_cast<wxThread::ExitCode>(0);
 
     // Sort the model before returning it
     _treeStore->SortModelFoldersFirst(_columns.filename, _columns.isFolder);
@@ -153,23 +167,6 @@ const wxIcon& Populator::GetIconForFile(const std::string& path)
     }
 
     return foundIcon->second;
-}
-
-void Populator::visit(wxutil::TreeModel& /* store */, wxutil::TreeModel::Row& row,
-    const std::string& path, bool isExplicit)
-{
-    if (TestDestroy()) return;
-
-    auto filename = path.substr(path.rfind("/") + 1);
-    // Get the display path, everything after rightmost slash
-    row[_columns.filename] = wxVariant(wxDataViewIconText(filename,
-        isExplicit ? GetIconForFile(filename) : _folderIcon));
-    row[_columns.vfspath] = _basePath + path;
-    row[_columns.isFolder] = !isExplicit;
-
-    // Get the file size if possible
-    auto file = GlobalFileSystem().openFile(_basePath + path);
-    row[_columns.size] =  os::getFormattedFileSize(file ? file->size() : -1);
 }
 
 }

@@ -182,7 +182,7 @@ void SkinChooser::populateSkins()
 	for (const auto& skin : skins)
 	{
         pop.addPath(skin, [&] (wxutil::TreeModel::Row& row, 
-            const std::string& leafName, bool isFolder)
+            const std::string& path, const std::string& leafName, bool isFolder)
         {
             // Get the display path, everything after rightmost slash
             std::string displayPath = leafName.substr(leafName.rfind("/") + 1);

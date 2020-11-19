@@ -28,7 +28,6 @@ struct TreeColumns :
 };
 
 class Populator :
-    public wxutil::VFSTreePopulator::Visitor,
     public wxThread
 {
 private:
@@ -63,9 +62,6 @@ public:
     const std::string& GetBasePath() const;
 
     void Populate();
-
-    void visit(wxutil::TreeModel& store, wxutil::TreeModel::Row& row,
-        const std::string& path, bool isExplicit);
 
     void SetDefaultFileIcon(const std::string& fileIcon);
 
