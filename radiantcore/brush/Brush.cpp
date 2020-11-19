@@ -480,7 +480,8 @@ void Brush::onFacePlaneChanged()
 
 void Brush::onFaceShaderChanged()
 {
-    onFacePlaneChanged();
+    // When the face shader changes, no geometry change is happening
+    // therefore no call to onFacePlaneChanged() is necessary
 
     // Queue an UI update of the texture tools if any of them is listening
 	signal_faceShaderChanged().emit();
