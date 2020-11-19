@@ -120,18 +120,13 @@ void LayerControl::update()
 
 	bool isActive = layerSystem.getActiveLayer() == _layerID; 
 
-	std::string imageName;
-	
-	if (isActive)
-	{
-		imageName = layerIsVisible ? ICON_LAYER_ACTIVE_VISIBLE : ICON_LAYER_ACTIVE_HIDDEN;
-	}
-	else
-	{
-		imageName = layerIsVisible ? ICON_LAYER_VISIBLE : ICON_LAYER_HIDDEN;
-	}
+	std::string toggledImage = isActive ? ICON_LAYER_ACTIVE_VISIBLE : ICON_LAYER_VISIBLE;
+	std::string untoggledImage = isActive ? ICON_LAYER_ACTIVE_HIDDEN : ICON_LAYER_HIDDEN;
 
-	_toggle->SetBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + imageName));
+    // Bitmap for disabled state
+	_toggle->SetBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + untoggledImage));
+    // Bitmap for depressed state (active toggle state)
+	_toggle->SetBitmapPressed(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + toggledImage));
 
 	// Don't allow deleting or renaming layer 0
 	_deleteButton->Enable(_layerID != 0);
