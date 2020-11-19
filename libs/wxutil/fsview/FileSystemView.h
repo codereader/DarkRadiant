@@ -33,6 +33,8 @@ private:
 
     std::set<std::string> _fileExtensions;
 
+    sigc::signal<void> _signalTreePopulated;
+
 public:
     class SelectionChangedEvent :
         public wxEvent
@@ -82,6 +84,10 @@ public:
 
     std::string GetSelectedPath();
     bool GetIsFolderSelected();
+
+    void ExpandPath(const std::string& path);
+
+    sigc::signal<void>& signal_TreePopulated();
 
 private:
     TreeModel::Ptr CreateDefaultModel();

@@ -66,11 +66,12 @@ void Populator::visitFile(const vfs::FileInfo& fileInfo)
     {
         // The population callback will be called multiple times for deeper files,
         // but only one of them will be have isFolder == false, which is our actual file
-        
+        std::string fullPath = _basePath + path;
+
         // Get the display path, everything after rightmost slash
         row[_columns.filename] = wxVariant(wxDataViewIconText(leafName,
             isFolder ? _folderIcon : GetIconForFile(leafName)));
-        row[_columns.vfspath] = _basePath + path;
+        row[_columns.vfspath] = isFolder ? os::standardPathWithSlash(fullPath) : fullPath;
         row[_columns.isFolder] = isFolder;
 
         if (!isFolder)

@@ -112,11 +112,11 @@ void FileSystemView::Populate(const std::string& preselectPath)
 
     wxutil::TreeModel::Row row = _treeStore->AddItem();
 
-    wxIcon prefabIcon;
-    prefabIcon.CopyFromBitmap(
-        wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "cmenu_add_prefab.png"));
+    wxIcon loadingIcon;
+    loadingIcon.CopyFromBitmap(
+        wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + _fileIcon));
 
-    row[Columns().filename] = wxVariant(wxDataViewIconText(_("Loading..."), prefabIcon));
+    row[Columns().filename] = wxVariant(wxDataViewIconText(_("Loading..."), loadingIcon));
     row[Columns().isFolder] = false;
     row[Columns().vfspath] = "__loadingnode__"; // to prevent that item from being found
     row.SendItemAdded();
@@ -136,6 +136,13 @@ void FileSystemView::SelectPath(const std::string& path)
 
     // Find and select the item
     SelectItem(_treeStore->FindString(path, Columns().vfspath));
+}
+
+void FileSystemView::ExpandPath(const std::string& path)
+{
+    if (path.empty()) return;
+
+    Expand(_treeStore->FindString(path, Columns().vfspath));
 }
 
 std::string FileSystemView::GetSelectedPath()
@@ -213,6 +220,14 @@ void FileSystemView::OnTreeStorePopulationFinished(TreeModel::PopulationFinished
 
     // Auto-size the first level
     TriggerColumnSizeEvent();
+
+    // Call client code
+    _signalTreePopulated.emit();
+}
+
+sigc::signal<void>& FileSystemView::signal_TreePopulated()
+{
+    return _signalTreePopulated;
 }
 
 }

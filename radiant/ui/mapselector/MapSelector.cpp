@@ -34,7 +34,7 @@ MapSelector::MapSelector() :
     vbox->Add(_treeView, 1, wxEXPAND);
 
     _buttons = CreateStdDialogButtonSizer(wxOK | wxCANCEL);
-    wxButton* reloadButton = new wxButton(this, wxID_ANY, _("Rescan"));
+    wxButton* reloadButton = new wxButton(this, wxID_ANY, _("Refresh"));
     reloadButton->Bind(wxEVT_BUTTON, &MapSelector::onRescanPath, this);
 
     _buttons->Prepend(reloadButton, 0, wxRIGHT, 32);
@@ -87,7 +87,8 @@ void MapSelector::setupTreeView(wxWindow* parent)
 {
     _treeView = wxutil::FileSystemView::Create(parent, wxBORDER_STATIC | wxDV_NO_HEADER);
     _treeView->Bind(wxutil::EV_FSVIEW_SELECTION_CHANGED, &MapSelector::onSelectionChanged, this);
-    _treeView->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &MapSelector::OnItemActivated, this);;
+    _treeView->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &MapSelector::onItemActivated, this);;
+    _treeView->signal_TreePopulated().connect(sigc::mem_fun(this, &MapSelector::onFileViewTreePopulated));
 
     // Get the extensions from all possible patterns (e.g. *.map or *.mapx)
     FileTypePatterns patterns = GlobalFiletypes().getPatternsForType(filetype::TYPE_MAP);
@@ -185,7 +186,7 @@ void MapSelector::onSelectionChanged(wxutil::FileSystemView::SelectionChangedEve
     updateButtonSensitivity();
 }
 
-void MapSelector::OnItemActivated(wxDataViewEvent& ev)
+void MapSelector::onItemActivated(wxDataViewEvent& ev)
 {
     auto selectedPath = _treeView->GetSelectedPath();
     auto extension = string::to_lower_copy(os::getExtension(selectedPath));
@@ -199,6 +200,11 @@ void MapSelector::OnItemActivated(wxDataViewEvent& ev)
         _customPath->setValue(os::standardPathWithSlash(rootPath) + selectedPath);
         onPathSelectionChanged();
     }
+}
+
+void MapSelector::onFileViewTreePopulated()
+{
+    _treeView->ExpandPath("maps/");
 }
 
 std::string MapSelector::getSelectedPath()
