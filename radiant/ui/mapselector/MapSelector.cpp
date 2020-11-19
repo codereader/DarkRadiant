@@ -87,6 +87,7 @@ void MapSelector::setupTreeView(wxWindow* parent)
 {
     _treeView = wxutil::FileSystemView::Create(parent, wxBORDER_STATIC | wxDV_NO_HEADER);
     _treeView->Bind(wxutil::EV_FSVIEW_SELECTION_CHANGED, &MapSelector::onSelectionChanged, this);
+    _treeView->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &MapSelector::OnItemActivated, this);;
 
     // Get the extensions from all possible patterns (e.g. *.map or *.mapx)
     FileTypePatterns patterns = GlobalFiletypes().getPatternsForType(filetype::TYPE_MAP);
@@ -182,6 +183,22 @@ void MapSelector::updateButtonSensitivity()
 void MapSelector::onSelectionChanged(wxutil::FileSystemView::SelectionChangedEvent& ev)
 {
     updateButtonSensitivity();
+}
+
+void MapSelector::OnItemActivated(wxDataViewEvent& ev)
+{
+    auto selectedPath = _treeView->GetSelectedPath();
+    auto extension = string::to_lower_copy(os::getExtension(selectedPath));
+
+    // Check if this is a physical file
+    auto rootPath = GlobalFileSystem().findFile(selectedPath);
+
+    if (!rootPath.empty() && GlobalFileSystem().getArchiveExtensions().count(extension) > 0)
+    {
+        _useCustomPath->SetValue(true);
+        _customPath->setValue(os::standardPathWithSlash(rootPath) + selectedPath);
+        onPathSelectionChanged();
+    }
 }
 
 std::string MapSelector::getSelectedPath()

@@ -52,6 +52,7 @@ private:
     std::string getSelectedPath();
 
     void onRescanPath(wxCommandEvent& ev);
+    void OnItemActivated(wxDataViewEvent& ev);
     void onSelectionChanged(wxutil::FileSystemView::SelectionChangedEvent& ev);
     void updateButtonSensitivity();
     void onPathSelectionChanged();
