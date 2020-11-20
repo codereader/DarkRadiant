@@ -8,6 +8,10 @@
 #include "wxutil/GLFont.h"
 #include "wxutil/GLWidget.h"
 
+#ifndef NDEBUG
+//#define ENABLE_KHR_DEBUG_EXTENSION
+#endif
+
 /// Implementation of OpenGLBinding module
 class OpenGLModule :
 	public OpenGLBinding
@@ -36,4 +40,9 @@ public:
 private:
 	void sharedContextCreated();
 	void sharedContextDestroyed();
+
+#ifdef ENABLE_KHR_DEBUG_EXTENSION
+    static void onGLDebugMessage(GLenum source, GLenum type, GLuint id, GLenum severity, 
+        GLsizei length, const GLchar* message, const void* userParam);
+#endif
 };

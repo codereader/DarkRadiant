@@ -11,10 +11,28 @@ OpenGLModule::OpenGLModule() :
 	_unknownError("Unknown error.")
 {}
 
+#ifdef ENABLE_KHR_DEBUG_EXTENSION
+void OpenGLModule::onGLDebugMessage(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, 
+    const GLchar* message, const void* userParam)
+{
+    rError() << "OpenGL says: " << message << std::endl;
+}
+#endif
+
 void OpenGLModule::sharedContextCreated()
 {
 	// Initialise the font before firing the extension initialised signal
 	_font.reset(new wxutil::GLFont(wxutil::GLFont::FONT_SANS, 14));
+
+#ifdef ENABLE_KHR_DEBUG_EXTENSION
+    // Debugging
+    if (glewGetExtension("GL_KHR_debug"))
+    {
+        glDebugMessageCallback(onGLDebugMessage, this);
+        glEnable(GL_DEBUG_OUTPUT);
+        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+    }
+#endif
 }
 
 void OpenGLModule::sharedContextDestroyed()
