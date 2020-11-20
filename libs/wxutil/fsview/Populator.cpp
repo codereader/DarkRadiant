@@ -192,7 +192,8 @@ wxDataViewItem Populator::insertBasePathItem()
     if (!path_is_absolute(_basePath.c_str()))
     {
         // Prepend the mod name to the base path
-        realBasePath = fmt::format("{0}:{1}", game::current::getModPath(_basePath),
+        realBasePath = fmt::format("{0}:{1}", 
+            GlobalGameManager().currentGame()->getKeyValue("name"),
             !_basePath.empty() ? _basePath : "/");
     }
 
