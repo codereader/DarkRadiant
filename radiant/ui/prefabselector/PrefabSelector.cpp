@@ -340,11 +340,11 @@ std::string PrefabSelector::getPrefabFolder()
     // Only search in custom paths if it is absolute
     if (_useCustomPath->GetValue() && !customPath.empty() && path_is_absolute(customPath.c_str()))
     {
-        return customPath;
+        return os::standardPathWithSlash(customPath);
     }
     else if (_useRecentPath->GetValue() && !_recentPathSelector->GetStringSelection().IsEmpty())
     {
-        return _recentPathSelector->GetStringSelection().ToStdString();
+        return os::standardPathWithSlash(_recentPathSelector->GetStringSelection().ToStdString());
     }
     else
     {
