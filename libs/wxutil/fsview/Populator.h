@@ -18,13 +18,15 @@ struct TreeColumns :
         filename(add(TreeModel::Column::IconText)),
         vfspath(add(TreeModel::Column::String)),
         isFolder(add(TreeModel::Column::Boolean)),
-        size(add(TreeModel::Column::String))
+        size(add(TreeModel::Column::String)),
+        isPhysical(add(TreeModel::Column::Boolean))
     {}
 
-    TreeModel::Column filename; // e.g. "chair1.pfb"
-    TreeModel::Column vfspath;  // e.g. "prefabs/chair1.pfb"
-    TreeModel::Column isFolder; // whether this is a folder
-    TreeModel::Column size;     // file size string
+    TreeModel::Column filename;    // e.g. "chair1.pfb"
+    TreeModel::Column vfspath;     // e.g. "prefabs/chair1.pfb"
+    TreeModel::Column isFolder;    // whether this is a folder
+    TreeModel::Column size;        // file size string
+    TreeModel::Column isPhysical;  // file size string
 };
 
 class Populator :

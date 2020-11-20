@@ -6,8 +6,10 @@
 #include "os/path.h"
 #include "string/case_conv.h"
 #include "os/filesize.h"
+#include "gamelib.h"
 
 #include <wx/artprov.h>
+#include <fmt/format.h>
 
 namespace wxutil
 {
@@ -69,7 +71,7 @@ void Populator::visitFile(const vfs::FileInfo& fileInfo)
     {
         // The population callback will be called multiple times for deeper files,
         // but only one of them will be have isFolder == false, which is our actual file
-        std::string fullPath = _basePath + path;
+        std::string fullPath = os::standardPathWithSlash(_basePath) + path;
 
         // Get the display path, everything after rightmost slash
         row[_columns.filename] = wxVariant(wxDataViewIconText(leafName,
@@ -81,6 +83,7 @@ void Populator::visitFile(const vfs::FileInfo& fileInfo)
         {
             // Get the file size if possible
             row[_columns.size] = os::getFormattedFileSize(fileInfo.getSize());
+            row[_columns.isPhysical] = fileInfo.getIsPhysicalFile();
         }
     });
 }
@@ -179,9 +182,18 @@ wxDataViewItem Populator::insertBasePathItem()
     row[_columns.vfspath] = _basePath;
     row[_columns.isFolder] = true;
 
-    bool basePathIsFolder = os::isDirectory(_basePath);
-    row[_columns.filename] = wxVariant(wxDataViewIconText(_basePath,
-        basePathIsFolder ? _folderIcon : GetIconForFile(_basePath)));
+    std::string realBasePath = _basePath;
+
+    if (!path_is_absolute(_basePath.c_str()))
+    {
+        // Prepend the mod name to the base path
+        realBasePath = fmt::format("{0}:{1}", game::current::getModPath(_basePath),
+            !_basePath.empty() ? _basePath : "/");
+    }
+
+    bool basePathIsFolder = os::isDirectory(realBasePath);
+    row[_columns.filename] = wxVariant(wxDataViewIconText(realBasePath,
+        basePathIsFolder ? _folderIcon : GetIconForFile(realBasePath)));
 
     return row.getItem();
 }
