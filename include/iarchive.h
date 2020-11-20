@@ -91,7 +91,7 @@ public:
         virtual ~Visitor() {}
 
         // Invoked for each file in an Archive
-        virtual void visitFile(const std::string& name) = 0;
+        virtual void visitFile(const std::string& name, IArchiveFileInfoProvider& infoProvider) = 0;
 
         // Invoked for each directory in an Archive. Return true to skip the directory.
         virtual bool visitDirectory(const std::string& name, std::size_t depth) = 0;

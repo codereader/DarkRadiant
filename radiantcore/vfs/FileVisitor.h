@@ -64,7 +64,7 @@ public:
     }
 
     // Archive::Visitor interface
-    void visitFile(const std::string& name) override
+    void visitFile(const std::string& name, IArchiveFileInfoProvider& infoProvider) override
     {
 #ifdef OS_CASE_INSENSITIVE
         // The name should start with the directory, "def/" for instance, case-insensitively.
@@ -112,7 +112,7 @@ public:
         // Suitable file, call the callback and add to visited file set
         vfs::Visibility vis = _assetsList ? _assetsList->getVisibility(subname)
             : Visibility::NORMAL;
-        _visitorFunc(vfs::FileInfo{ _directory, subname, vis });
+        _visitorFunc(vfs::FileInfo(_directory, subname, vis, infoProvider));
 
         _visitedFiles.insert(subname);
     }

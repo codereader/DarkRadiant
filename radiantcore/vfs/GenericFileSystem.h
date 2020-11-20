@@ -164,7 +164,7 @@ public:
 	/// Traverses the entire tree if \p root is "".
 	/// Calls \p visitor.file() with the path to each file relative to the filesystem root.
 	/// Calls \p visitor.directory() with the path to each directory relative to the filesystem root.
-	void traverse(IArchive::Visitor& visitor, const std::string& root)
+	void traverse(IArchive::Visitor& visitor, const std::string& root, IArchiveFileInfoProvider& infoProvider)
 	{
 		unsigned int start_depth = getPathDepth(root.c_str());
 		unsigned int skip_depth = 0;
@@ -180,7 +180,7 @@ public:
 			{
 				if (!i->second.isDirectory())
 				{
-					visitor.visitFile(i->first.string());
+					visitor.visitFile(i->first.string(), infoProvider);
 				}
 				else if (visitor.visitDirectory(i->first.string(), i->first.depth() - start_depth))
 				{

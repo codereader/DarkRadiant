@@ -77,8 +77,7 @@ void Populator::visitFile(const vfs::FileInfo& fileInfo)
         if (!isFolder)
         {
             // Get the file size if possible
-            auto file = GlobalFileSystem().openFile(_basePath + path);
-            row[_columns.size] = os::getFormattedFileSize(file ? file->size() : -1);
+            row[_columns.size] = os::getFormattedFileSize(fileInfo.getSize());
         }
     });
 }
