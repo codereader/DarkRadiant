@@ -25,11 +25,14 @@ class IArchiveFileInfoProvider
 public:
     virtual ~IArchiveFileInfoProvider() {}
 
-    // Get file size of the file given by the relative path (like "def/func.def")
+    // Get file size of the file given by the relative path (like "def/func.def") in bytes
     virtual std::size_t getFileSize(const std::string& relativePath) = 0;
 
     // Returns true if this file is an actual file on disk (as opposed to a file in a PAK)
     virtual bool getIsPhysical(const std::string& relativePath) = 0;
+
+    // Returns the absolute file system path to the archive the given file is located in
+    virtual std::string getArchivePath(const std::string& relativePath) = 0;
 };
 
 /**

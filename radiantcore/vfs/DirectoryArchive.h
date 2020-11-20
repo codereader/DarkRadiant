@@ -31,5 +31,6 @@ public:
 
     std::size_t getFileSize(const std::string& relativePath) override;
     bool getIsPhysical(const std::string& relativePath) override;
+    std::string getArchivePath(const std::string& relativePath) override;
 };
 typedef std::shared_ptr<DirectoryArchive> DirectoryArchivePtr;

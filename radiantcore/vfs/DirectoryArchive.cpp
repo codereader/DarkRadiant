@@ -110,3 +110,8 @@ bool DirectoryArchive::getIsPhysical(const std::string& relativePath)
     // this whole class represents a physical directory, we don't even check
     return true;
 }
+
+std::string DirectoryArchive::getArchivePath(const std::string& relativePath)
+{
+    return _root;
+}

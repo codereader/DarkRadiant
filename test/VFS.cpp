@@ -62,11 +62,17 @@ TEST_F(VfsTest, GetArchiveFileInfo)
     fs::path physicalFilePath = _context.getTestResourcePath();
     physicalFilePath /= physicalFile;
 
+    fs::path pk4Path = _context.getTestResourcePath();
+    pk4Path /= "tdm_example_mtrs.pk4";
+    
     EXPECT_EQ(foundFiles.find(physicalFile)->second.getSize(), os::getFileSize(physicalFilePath.string()));
     EXPECT_EQ(foundFiles.find(physicalFile)->second.getIsPhysicalFile(), true);
+    EXPECT_EQ(foundFiles.find(physicalFile)->second.getArchivePath(), _context.getTestResourcePath());
 
     EXPECT_EQ(foundFiles.find(fileInPak)->second.getSize(), 1096); // that file should have 1096 bytes
     EXPECT_EQ(foundFiles.find(fileInPak)->second.getIsPhysicalFile(), false);
+    // The PK4 file is located right in the test resources folder
+    EXPECT_EQ(foundFiles.find(fileInPak)->second.getArchivePath(), pk4Path.string());
 }
 
 TEST_F(VfsTest, VisitMaterialsFolderOnly)

@@ -158,6 +158,11 @@ bool ZipArchive::getIsPhysical(const std::string& relativePath)
     return false;
 }
 
+std::string ZipArchive::getArchivePath(const std::string& relativePath)
+{
+    return _fullPath;
+}
+
 void ZipArchive::readZipRecord()
 {
 	ZipMagic magic;

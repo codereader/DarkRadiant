@@ -99,14 +99,22 @@ public:
             return topDir + (topDir.back() == '/' ? "" : "/") + name;
     }
 
+    // See IArchiveFileInfoProvider::getFileSize
     std::size_t getSize() const
     {
         return _infoProvider ? _infoProvider->getFileSize(fullPath()) : 0;
     }
 
+    // See IArchiveFileInfoProvider::getIsPhysicalFile
     bool getIsPhysicalFile() const
     {
         return _infoProvider ? _infoProvider->getIsPhysical(fullPath()) : false;
+    }
+
+    // See IArchiveFileInfoProvider::getArchivePath
+    std::string getArchivePath() const
+    {
+        return _infoProvider ? _infoProvider->getArchivePath(fullPath()) : "";
     }
 
     /// Equality comparison with another FileInfo
