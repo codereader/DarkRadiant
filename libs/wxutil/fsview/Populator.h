@@ -19,7 +19,9 @@ struct TreeColumns :
         vfspath(add(TreeModel::Column::String)),
         isFolder(add(TreeModel::Column::Boolean)),
         size(add(TreeModel::Column::String)),
-        isPhysical(add(TreeModel::Column::Boolean))
+        isPhysical(add(TreeModel::Column::Boolean)),
+        archivePath(add(TreeModel::Column::String)),
+        archiveDisplay(add(TreeModel::Column::String))
     {}
 
     TreeModel::Column filename;    // e.g. "chair1.pfb"
@@ -27,6 +29,8 @@ struct TreeColumns :
     TreeModel::Column isFolder;    // whether this is a folder
     TreeModel::Column size;        // file size string
     TreeModel::Column isPhysical;  // file size string
+    TreeModel::Column archivePath;  // path to containing archive
+    TreeModel::Column archiveDisplay;  // string to display the parent container
 };
 
 class Populator :

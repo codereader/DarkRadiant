@@ -207,12 +207,18 @@ void MapSelector::onItemActivated(wxDataViewEvent& ev)
     // Check if this is a physical file
     auto rootPath = GlobalFileSystem().findFile(selectedPath);
 
-    if (!rootPath.empty() && GlobalFileSystem().getArchiveExtensions().count(extension) > 0)
+    if (GlobalFileSystem().getArchiveExtensions().count(extension) == 0)
     {
-        _useCustomPath->SetValue(true);
-        _customPath->setValue(os::standardPathWithSlash(rootPath) + selectedPath);
-        onPathSelectionChanged();
+        return; // not an archive
     }
+
+    auto pathToPak = !rootPath.empty() ?
+        os::standardPathWithSlash(rootPath) + selectedPath :
+        selectedPath;
+
+    _useCustomPath->SetValue(true);
+    _customPath->setValue(pathToPak);
+    onPathSelectionChanged();
 }
 
 void MapSelector::onFileViewTreePopulated()

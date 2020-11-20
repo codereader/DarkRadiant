@@ -49,7 +49,8 @@ FileSystemView::FileSystemView(wxWindow* parent, const TreeModel::Ptr& model, lo
     // Single visible column, containing the directory/shader name and the icon
     AppendIconTextColumn(_("File"), Columns().filename.getColumnIndex(),
         wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
-
+    AppendTextColumn(_("Location"), Columns().archiveDisplay.getColumnIndex(),
+        wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_RIGHT, wxDATAVIEW_COL_SORTABLE);
     AppendTextColumn(_("Size"), Columns().size.getColumnIndex(),
         wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_RIGHT, wxDATAVIEW_COL_SORTABLE);
 

@@ -1,5 +1,6 @@
 #include "Populator.h"
 
+#include "i18n.h"
 #include "iuimanager.h"
 #include "ifiletypes.h"
 #include "iarchive.h"
@@ -81,8 +82,17 @@ void Populator::visitFile(const vfs::FileInfo& fileInfo)
         if (!isFolder)
         {
             // Get the file size if possible
+            bool isPhysical = fileInfo.getIsPhysicalFile();
+            auto archivePath = fileInfo.getArchivePath();
+
             row[_columns.size] = os::getFormattedFileSize(fileInfo.getSize());
-            row[_columns.isPhysical] = fileInfo.getIsPhysicalFile();
+            row[_columns.isPhysical] = isPhysical;
+            row[_columns.archivePath] = archivePath;
+
+            if (!isPhysical)
+            {
+                row[_columns.archiveDisplay] = fmt::format(_("[in {0}]"), os::getFilename(archivePath));
+            }
         }
     });
 }
