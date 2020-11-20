@@ -141,4 +141,22 @@ TEST_F(VfsTest, openArchiveInAbsolutePath)
     ASSERT_NE(contents.find("textures/AFX/AFXmodulate"), std::string::npos);
 }
 
+TEST_F(VfsTest, VisitEachFileInArchive)
+{
+    fs::path pk4Path = _context.getTestResourcePath();
+    pk4Path /= "tdm_example_mtrs.pk4";
+    
+    // Use a visitor to walk the tree
+    std::set<std::string> foundFiles;
+    GlobalFileSystem().forEachFileInArchive(
+        pk4Path.string(), "*",
+        [&](const vfs::FileInfo& fi) { foundFiles.insert(fi.name); },
+        0
+    );
+
+    EXPECT_EQ(foundFiles.count("materials/tdm_ai_monsters_spiders.mtr"), 1);
+    EXPECT_EQ(foundFiles.count("materials/tdm_ai_nobles.mtr"), 1);
+    EXPECT_EQ(foundFiles.count("materials/tdm_bloom_afx.mtr"), 1);
+}
+
 }
