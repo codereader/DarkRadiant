@@ -156,10 +156,16 @@ void MapSelector::setupPathSelector(wxSizer* parentSizer)
 
 void MapSelector::onPathSelectionChanged()
 {
-    populateTree();
+    // Re-populate the tree if the base path is different
+    auto basePath = getBasePath();
+
+    if (_treeView->GetBasePath() != basePath)
+    {
+        populateTree();
+    }
 }
 
-std::string MapSelector::getBaseFolder()
+std::string MapSelector::getBasePath()
 {
     if (_useCustomPath->GetValue() && !_customPath->getValue().empty())
     {
@@ -171,7 +177,7 @@ std::string MapSelector::getBaseFolder()
 
 void MapSelector::populateTree()
 {
-    _treeView->SetBasePath(getBaseFolder());
+    _treeView->SetBasePath(getBasePath());
     _treeView->Populate();
 }
 

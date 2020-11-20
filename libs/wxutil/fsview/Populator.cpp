@@ -71,12 +71,11 @@ void Populator::visitFile(const vfs::FileInfo& fileInfo)
     {
         // The population callback will be called multiple times for deeper files,
         // but only one of them will be have isFolder == false, which is our actual file
-        std::string fullPath = os::standardPathWithSlash(_basePath) + path;
+        std::string vfsPath = _rootPath + path;
 
-        // Get the display path, everything after rightmost slash
         row[_columns.filename] = wxVariant(wxDataViewIconText(leafName,
             isFolder ? _folderIcon : GetIconForFile(leafName)));
-        row[_columns.vfspath] = isFolder ? os::standardPathWithSlash(fullPath) : fullPath;
+        row[_columns.vfspath] = isFolder ? os::standardPathWithSlash(vfsPath) : vfsPath;
         row[_columns.isFolder] = isFolder;
 
         if (!isFolder)
@@ -94,12 +93,16 @@ void Populator::SearchForFilesMatchingExtension(const std::string& extension)
     {
         if (os::isDirectory(_basePath))
         {
+            _rootPath = os::standardPathWithSlash(_basePath);
+
             // Traverse a folder somewhere in the filesystem
             GlobalFileSystem().forEachFileInAbsolutePath(os::standardPathWithSlash(_basePath), extension,
                 std::bind(&Populator::visitFile, this, std::placeholders::_1), 0);
         }
         else 
         {
+            _rootPath = "";
+
             // Try to open this file as archive
             GlobalFileSystem().forEachFileInArchive(_basePath, extension,
                 std::bind(&Populator::visitFile, this, std::placeholders::_1), 0);
@@ -107,8 +110,10 @@ void Populator::SearchForFilesMatchingExtension(const std::string& extension)
     }
     else
     {
-        // Traverse the VFS
-        GlobalFileSystem().forEachFile(os::standardPathWithSlash(_basePath), extension,
+        _rootPath = os::standardPathWithSlash(_basePath);
+
+        // Traverse the VFS using that root path
+        GlobalFileSystem().forEachFile(_rootPath, extension,
             std::bind(&Populator::visitFile, this, std::placeholders::_1), 0);
     }
 }

@@ -46,7 +46,7 @@ private:
 
     // Get the path that should be used for map population
     // This reflects the settings made by the user on the top of the selector window
-    std::string getBaseFolder();
+    std::string getBasePath();
 
     // Return the selected map path
     std::string getSelectedPath();

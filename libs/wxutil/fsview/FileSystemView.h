@@ -85,7 +85,8 @@ public:
     std::string GetSelectedPath();
     bool GetIsFolderSelected();
 
-    void ExpandPath(const std::string& path);
+    // Expands the given path, which is relative to the base path (e.g. "maps/")
+    void ExpandPath(const std::string& relativePath);
 
     sigc::signal<void>& signal_TreePopulated();
 

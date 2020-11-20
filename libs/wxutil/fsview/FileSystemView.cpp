@@ -138,11 +138,11 @@ void FileSystemView::SelectPath(const std::string& path)
     SelectItem(_treeStore->FindString(path, Columns().vfspath));
 }
 
-void FileSystemView::ExpandPath(const std::string& path)
+void FileSystemView::ExpandPath(const std::string& relativePath)
 {
-    if (path.empty()) return;
+    if (relativePath.empty()) return;
 
-    Expand(_treeStore->FindString(path, Columns().vfspath));
+    Expand(_treeStore->FindString(relativePath, Columns().vfspath));
 }
 
 std::string FileSystemView::GetSelectedPath()

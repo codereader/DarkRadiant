@@ -35,7 +35,15 @@ class Populator :
 private:
     const TreeColumns& _columns;
 
+    // The path to inspect, which can be either a VFS-relative path
+    // (or even an empty string for the VFS root) or an absolute path
+    // that points to a physical directory or a PAK file. 
     std::string _basePath;
+
+    // Will be preprended to each item's VFS path
+    // When inspecting physical PK4s, this will be an empty string
+    // such that the VFS path of each item shows up as relative path
+    std::string _rootPath;
 
     // The tree store to populate
     wxutil::TreeModel::Ptr _treeStore;
