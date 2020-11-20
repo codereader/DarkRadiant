@@ -17,6 +17,21 @@
 
 class InputStream;
 
+// Interface providing additional info about a given file
+// used by the FileInfo structure to load extended info
+// file like size, containing archive, physical path, etc.
+class IArchiveFileInfoProvider
+{
+public:
+    virtual ~IArchiveFileInfoProvider() {}
+
+    // Get file size of the file given by the relative path (like "def/func.def")
+    virtual std::size_t getFileSize(const std::string& relativePath) = 0;
+
+    // Returns true if this file is an actual file on disk (as opposed to a file in a PAK)
+    virtual bool getIsPhysical(const std::string& relativePath) = 0;
+};
+
 /**
  * A file opened in binary mode.
  * \ingroup vfs

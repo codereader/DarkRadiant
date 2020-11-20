@@ -57,8 +57,30 @@ inline std::ostream& operator<< (std::ostream& s, const Visibility& v)
 }
 
 /// Metadata about a file in the virtual filesystem
-struct FileInfo
+class FileInfo
 {
+private:
+    // Info provider to load additional info on demand, used by e.g. getSize()
+    IArchiveFileInfoProvider* _infoProvider;
+public:
+    FileInfo(const std::string& topDir_, const std::string& name_,
+        Visibility visibility_) :
+        _infoProvider(nullptr),
+        topDir(topDir_),
+        name(name_),
+        visibility(visibility_)
+    {}
+
+    FileInfo(const std::string& topDir_, const std::string& name_, 
+        Visibility visibility_, IArchiveFileInfoProvider& infoProvider) :
+        FileInfo(topDir_, name_, visibility_)
+    {
+        _infoProvider = &infoProvider;
+    }
+
+    FileInfo(const FileInfo& other) = default;
+    FileInfo& operator=(const FileInfo& other) = default;
+
     /// Top-level directory (if any), e.g. "def" or "models"
     std::string topDir;
 
@@ -75,6 +97,11 @@ struct FileInfo
             return name;
         else
             return topDir + (topDir.back() == '/' ? "" : "/") + name;
+    }
+
+    std::size_t getSize() const
+    {
+        return _infoProvider ? _infoProvider->getFileSize(fullPath()) : 0;
     }
 
     /// Equality comparison with another FileInfo
