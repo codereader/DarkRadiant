@@ -104,6 +104,11 @@ public:
         return _infoProvider ? _infoProvider->getFileSize(fullPath()) : 0;
     }
 
+    std::size_t getIsPhysicalFile() const
+    {
+        return _infoProvider ? _infoProvider->getIsPhysical(fullPath()) : false;
+    }
+
     /// Equality comparison with another FileInfo
     bool operator== (const FileInfo& rhs) const
     {

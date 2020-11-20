@@ -2,6 +2,7 @@
 
 #include "ifilesystem.h"
 #include "os/path.h"
+#include "os/file.h"
 
 namespace test
 {
@@ -29,15 +30,43 @@ TEST_F(VfsTest, FilePrerequisites)
 TEST_F(VfsTest, VisitEntireTree)
 {
     // Use a visitor to walk the tree
-    std::set<std::string> foundFiles;
+    std::map<std::string, vfs::FileInfo> foundFiles;
     GlobalFileSystem().forEachFile(
         "", "*",
-        [&](const vfs::FileInfo& fi) { foundFiles.insert(fi.name); },
+        [&](const vfs::FileInfo& fi) { foundFiles.emplace(fi.name, fi); },
         0
     );
     EXPECT_EQ(foundFiles.count("dummy"), 0);
     EXPECT_EQ(foundFiles.count("materials/example.mtr"), 1);
     EXPECT_EQ(foundFiles.count("models/darkmod/test/unit_cube.ase"), 1);
+}
+
+TEST_F(VfsTest, GetArchiveFileInfo)
+{
+    // Use a visitor to walk the tree
+    std::map<std::string, vfs::FileInfo> foundFiles;
+    GlobalFileSystem().forEachFile(
+        "", "*",
+        [&](const vfs::FileInfo& fi) { foundFiles.emplace(fi.name, fi); },
+        0
+    );
+
+    // Inspect a physical file that is in the test resources
+    std::string physicalFile = "materials/example.mtr";
+    std::string fileInPak = "materials/tdm_bloom_afx.mtr"; // this is in tdm_example_mtrs.pk4
+
+    EXPECT_EQ(foundFiles.count(physicalFile), 1); // physical file
+    EXPECT_EQ(foundFiles.count(fileInPak), 1); // file in pk4
+    
+    // Get the file size of example.mtr
+    fs::path physicalFilePath = _context.getTestResourcePath();
+    physicalFilePath /= physicalFile;
+
+    EXPECT_EQ(foundFiles.find(physicalFile)->second.getSize(), os::getFileSize(physicalFilePath.string()));
+    EXPECT_EQ(foundFiles.find(physicalFile)->second.getIsPhysicalFile(), true);
+
+    EXPECT_EQ(foundFiles.find(fileInPak)->second.getSize(), 1096); // that file should have 1096 bytes
+    EXPECT_EQ(foundFiles.find(fileInPak)->second.getIsPhysicalFile(), false);
 }
 
 TEST_F(VfsTest, VisitMaterialsFolderOnly)
