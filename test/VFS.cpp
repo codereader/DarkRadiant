@@ -188,4 +188,19 @@ TEST_F(VfsTest, VisitEachFileInArchive)
     EXPECT_EQ(foundFiles.count("materials/tdm_bloom_afx.mtr"), 1);
 }
 
+TEST_F(VfsTest, VisitEachFileInAbsolutePath)
+{
+    // Use a visitor to walk the tree
+    std::set<std::string> foundFiles;
+    GlobalFileSystem().forEachFileInAbsolutePath(
+        _context.getTestResourcePath(), "*",
+        [&](const vfs::FileInfo& fi) { foundFiles.insert(fi.name); },
+        0
+    );
+
+    EXPECT_EQ(foundFiles.count("tdm_example_mtrs.pk4"), 1);
+    EXPECT_EQ(foundFiles.count("models/moss_patch.ase"), 1);
+    EXPECT_EQ(foundFiles.count("materials/___NONEXISTENTFILE.mtr"), 0);
+}
+
 }

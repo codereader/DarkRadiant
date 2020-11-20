@@ -301,7 +301,7 @@ void Doom3FileSystem::forEachFileInAbsolutePath(const std::string& path,
     // Construct our FileVisitor filtering out the right elements
     FileVisitor fileVisitor(visitorFunc, "", extension, depth);
 
-    tempArchive.traverse(fileVisitor, "/");
+    tempArchive.traverse(fileVisitor, "");
 }
 
 void Doom3FileSystem::forEachFileInArchive(const std::string& absoluteArchivePath,
