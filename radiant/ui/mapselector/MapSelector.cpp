@@ -125,7 +125,14 @@ void MapSelector::setupPathSelector(wxSizer* parentSizer)
     // Connect to the changed event
     _customPath->Bind(wxutil::EV_PATH_ENTRY_CHANGED, [&](wxCommandEvent& ev)
     {
-        _useCustomPath->SetValue(true);
+        if (!_customPath->getValue().empty())
+        {
+            _useCustomPath->SetValue(true);
+        }
+        else
+        {
+            _useModPath->SetValue(true);
+        }
         onPathSelectionChanged();
     });
 

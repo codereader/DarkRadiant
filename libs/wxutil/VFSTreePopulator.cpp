@@ -16,6 +16,11 @@ VFSTreePopulator::~VFSTreePopulator()
 	_iters.clear();
 }
 
+void VFSTreePopulator::setTopLevelItem(const wxDataViewItem& topLevel)
+{
+    _topLevel = topLevel;
+}
+
 // Interface add function
 void VFSTreePopulator::addPath(const std::string& path)
 {

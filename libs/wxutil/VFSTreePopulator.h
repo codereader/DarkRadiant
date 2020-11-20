@@ -63,6 +63,10 @@ public:
 	 */
 	virtual ~VFSTreePopulator();
 
+    // wxDataViewItem pointing to the toplevel node, under which all paths should
+    // be added.Default is empty to indicate that paths should be added under
+    void setTopLevelItem(const wxDataViewItem& topLevel);
+
 	/** Add a single VFS string to the tree, which will be split automatically
 	 * and inserted at the correct place in the tree.
 	 */

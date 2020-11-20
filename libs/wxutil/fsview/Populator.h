@@ -33,8 +33,12 @@ class Populator :
 private:
     const TreeColumns& _columns;
 
+    std::string _basePath;
+
     // The tree store to populate
     wxutil::TreeModel::Ptr _treeStore;
+
+    wxDataViewItem _basePathItem;
 
     // The event handler to notify on completion
     wxEvtHandler* _finishedHandler;
@@ -45,8 +49,6 @@ private:
     wxIcon _fileIcon;
     wxIcon _folderIcon;
     std::map<std::string, wxIcon> _iconsPerExtension;
-
-    std::string _basePath;
 
     std::set<std::string> _fileExtensions;
 
@@ -72,6 +74,7 @@ protected:
     void visitFile(const vfs::FileInfo& fileInfo);
     void SearchForFilesMatchingExtension(const std::string& extension);
     const wxIcon& GetIconForFile(const std::string& path);
+    wxDataViewItem insertBasePathItem();
 };
 
 }

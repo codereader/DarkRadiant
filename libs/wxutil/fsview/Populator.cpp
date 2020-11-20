@@ -26,16 +26,19 @@ Populator::Populator(const TreeColumns& columns,
     const std::set<std::string>& fileExtensions) :
     wxThread(wxTHREAD_JOINABLE),
     _columns(columns),
+    _basePath(basePath),
     _treeStore(new wxutil::TreeModel(_columns)),
     _finishedHandler(finishedHandler),
     _treePopulator(_treeStore),
-    _basePath(basePath),
     _fileExtensions(fileExtensions)
 {
     _fileIcon.CopyFromBitmap(
         wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + FILE_ICON));
     _folderIcon.CopyFromBitmap(
         wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + FOLDER_ICON));
+
+    _basePathItem = insertBasePathItem();
+    _treePopulator.setTopLevelItem(_basePathItem);
 }
 
 Populator::~Populator()
@@ -167,6 +170,20 @@ const wxIcon& Populator::GetIconForFile(const std::string& path)
     }
 
     return foundIcon->second;
+}
+
+wxDataViewItem Populator::insertBasePathItem()
+{
+    auto row = _treeStore->AddItem();
+    row[_columns.filename] = _basePath;
+    row[_columns.vfspath] = _basePath;
+    row[_columns.isFolder] = true;
+
+    bool basePathIsFolder = os::isDirectory(_basePath);
+    row[_columns.filename] = wxVariant(wxDataViewIconText(_basePath,
+        basePathIsFolder ? _folderIcon : GetIconForFile(_basePath)));
+
+    return row.getItem();
 }
 
 }
