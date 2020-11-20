@@ -50,6 +50,8 @@ private:
 
     // Return the selected map path
     std::string getSelectedPath();
+    // Return the archive path of the selection
+    std::string getArchivePath();
 
     void onRescanPath(wxCommandEvent& ev);
     void onItemActivated(wxDataViewEvent& ev);
@@ -61,10 +63,16 @@ private:
 public:
     int ShowModal() override;
 
+    struct Result
+    {
+        std::string archivePath;  // path to containing archive
+        std::string selectedPath; // relative path within the archive
+    };
+
     /**
     * Display the Selector return the path of the file selected by the user.
     */
-    static std::string ChooseMapFile();
+    static Result ChooseMapFile();
 
     static void OpenMapFromProject(const cmd::ArgumentList& args);
 };

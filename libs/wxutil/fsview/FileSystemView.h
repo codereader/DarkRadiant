@@ -85,6 +85,9 @@ public:
     std::string GetSelectedPath();
     bool GetIsFolderSelected();
 
+    // Returns the path to the archive (directory/PK4) of the selected path
+    std::string GetArchivePathOfSelection();
+
     // Expands the given path, which is relative to the base path (e.g. "maps/")
     void ExpandPath(const std::string& relativePath);
 

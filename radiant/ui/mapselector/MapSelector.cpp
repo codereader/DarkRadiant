@@ -34,6 +34,7 @@ MapSelector::MapSelector() :
     vbox->Add(_treeView, 1, wxEXPAND);
 
     _buttons = CreateStdDialogButtonSizer(wxOK | wxCANCEL);
+    _buttons->GetAffirmativeButton()->SetLabel(_("Open"));
     wxButton* reloadButton = new wxButton(this, wxID_ANY, _("Refresh"));
     reloadButton->Bind(wxEVT_BUTTON, &MapSelector::onRescanPath, this);
 
@@ -58,14 +59,15 @@ int MapSelector::ShowModal()
     return DialogBase::ShowModal();
 }
 
-std::string MapSelector::ChooseMapFile()
+MapSelector::Result MapSelector::ChooseMapFile()
 {
     auto* dialog = new MapSelector();
-    std::string returnValue = "";
+    Result returnValue;
 
     if (dialog->ShowModal() == wxID_OK)
     {
-        returnValue = dialog->getSelectedPath();
+        returnValue.selectedPath = dialog->getSelectedPath();
+        returnValue.archivePath = dialog->getArchivePath();
     }
 
     // Use the instance to select a model.
@@ -74,11 +76,22 @@ std::string MapSelector::ChooseMapFile()
 
 void MapSelector::OpenMapFromProject(const cmd::ArgumentList& args)
 {
-    auto mapPath = ChooseMapFile();
+    auto result = ChooseMapFile();
 
-    if (!mapPath.empty())
+    if (result.selectedPath.empty())
     {
-        GlobalCommandSystem().executeCommand("OpenMap", mapPath);
+        return;
+    }
+
+    auto extension = string::to_lower_copy(os::getExtension(result.archivePath));
+
+    if (!os::isDirectory(result.archivePath) && GlobalFileSystem().getArchiveExtensions().count(extension) > 0)
+    {
+        GlobalCommandSystem().executeCommand("OpenMapFromArchive", result.archivePath, result.selectedPath);
+    }
+    else
+    {
+        GlobalCommandSystem().executeCommand("OpenMap", result.selectedPath);
     }
 }
 
@@ -229,6 +242,11 @@ void MapSelector::onFileViewTreePopulated()
 std::string MapSelector::getSelectedPath()
 {
     return _treeView->GetSelectedPath();
+}
+
+std::string MapSelector::getArchivePath()
+{
+    return _treeView->GetArchivePathOfSelection();
 }
 
 }

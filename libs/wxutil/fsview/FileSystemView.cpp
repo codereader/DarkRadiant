@@ -168,6 +168,17 @@ bool FileSystemView::GetIsFolderSelected()
     return row[Columns().isFolder].getBool();
 }
 
+std::string FileSystemView::GetArchivePathOfSelection()
+{
+    wxDataViewItem item = GetSelection();
+
+    if (!item.IsOk()) return "";
+
+    wxutil::TreeModel::Row row(item, *GetModel());
+
+    return row[Columns().archivePath];
+}
+
 void FileSystemView::SelectItem(const wxDataViewItem& item)
 {
     if (!item.IsOk()) return;
