@@ -8,11 +8,13 @@
 #include "messages/FileSelectionRequest.h"
 #include "algorithm/Scene.h"
 #include "os/file.h"
+#include <sigc++/connection.h>
 
 namespace test
 {
 
 using MapLoadingTest = RadiantTest;
+using MapSavingTest = RadiantTest;
 
 TEST_F(MapLoadingTest, openMapWithEmptyStringAsksForPath)
 {
@@ -179,6 +181,27 @@ TEST_F(MapLoadingTest, openNonExistentMap)
 
     // No worldspawn in this map, it should be empty
     EXPECT_FALSE(algorithm::getEntityByName(GlobalMapModule().getRoot(), "world"));
+}
+
+TEST_F(MapSavingTest, saveMapWithoutModification)
+{
+    loadMap("altar.map");
+    checkAltarScene();
+
+    bool mapSavedFired = false;
+    sigc::connection conn = GlobalMapModule().signal_mapEvent().connect([&](IMap::MapEvent ev)
+    {
+        mapSavedFired |= ev == IMap::MapEvent::MapSaved;
+    });
+
+    EXPECT_FALSE(GlobalMapModule().isModified());
+
+    GlobalCommandSystem().executeCommand("SaveMap");
+
+    // SaveMap should trigger even though the map is not modified
+    EXPECT_TRUE(mapSavedFired);
+
+    conn.disconnect();
 }
 
 }

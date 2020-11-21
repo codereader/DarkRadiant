@@ -356,7 +356,7 @@ bool Map::save(const MapFormatPtr& mapFormat)
 
     // Redraw the views, sometimes the backbuffer containing 
     // the previous frame will remain visible
-    GlobalMainFrame().updateAllWindows();
+    SceneChangeNotify();
 
     return success;
 }
