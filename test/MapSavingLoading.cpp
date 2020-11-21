@@ -7,6 +7,7 @@
 #include "icommandsystem.h"
 #include "messages/FileSelectionRequest.h"
 #include "algorithm/Scene.h"
+#include "os/file.h"
 
 namespace test
 {
@@ -123,6 +124,46 @@ TEST_F(MapLoadingTest, openMapFromAbsolutePath)
 
     // Check if the scene contains what we expect
     checkAltarScene();
+}
+
+TEST_F(MapLoadingTest, openMapFromModRelativePath)
+{
+    std::string modRelativePath = "maps/altar.map";
+
+    // The map is located in maps/altar.map folder, check that it physically exists
+    fs::path mapPath = _context.getTestResourcePath();
+    mapPath /= modRelativePath;
+    EXPECT_TRUE(os::fileOrDirExists(mapPath));
+    
+    GlobalCommandSystem().executeCommand("OpenMap", modRelativePath);
+
+    // Check if the scene contains what we expect
+    checkAltarScene();
+}
+
+TEST_F(MapLoadingTest, openMapFromMapsFolder)
+{
+    std::string mapName = "altar.map";
+
+    // The map is located in maps/altar.map folder, check that it physically exists
+    fs::path mapPath = _context.getTestResourcePath();
+    mapPath /= "maps";
+    mapPath /= mapName;
+    EXPECT_TRUE(os::fileOrDirExists(mapPath));
+
+    GlobalCommandSystem().executeCommand("OpenMap", mapName);
+
+    // Check if the scene contains what we expect
+    checkAltarScene();
+}
+
+TEST_F(MapLoadingTest, openNonExistentMap)
+{
+    std::string mapName = "idontexist.map";
+    GlobalCommandSystem().executeCommand("OpenMap", mapName);
+
+    // No worldspawn in this map, it should be empty
+    EXPECT_FALSE(algorithm::getEntityByName(GlobalMapModule().getRoot(), "world"));
 }
 
 }
