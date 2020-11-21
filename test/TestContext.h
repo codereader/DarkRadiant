@@ -16,6 +16,7 @@ class TestContext :
 {
 private:
 	std::string _settingsFolder;
+	std::string _tempDataPath;
 
 public:
 	TestContext()
@@ -27,6 +28,13 @@ public:
 
 		os::removeDirectory(_settingsFolder);
 		os::makeDirectory(_settingsFolder);
+
+        auto tempDataFolder = os::getTemporaryPath() / "dr_temp_data";
+
+        _tempDataPath = os::standardPathWithSlash(tempDataFolder.string());
+
+        os::removeDirectory(_tempDataPath);
+        os::makeDirectory(_tempDataPath);
 
 		setErrorHandlingFunction([&](const std::string& title, const std::string& message)
 		{
@@ -41,6 +49,11 @@ public:
 		{
 			os::removeDirectory(_settingsFolder);
 		}
+
+        if (!_tempDataPath.empty())
+        {
+            os::removeDirectory(_tempDataPath);
+        }
 	}
 
 	// Returns the path to the test/resources/ folder shipped with the DR sources
@@ -66,6 +79,13 @@ public:
 	{
 		return _settingsFolder;
 	}
+
+    // Path to a directory where any stuff can be written to
+    // This folder will be purged once on context destruction
+    std::string getTemporaryDataPath() const
+    {
+        return _tempDataPath;
+    }
 
 	std::vector<std::string> getLibraryPaths() const override
 	{

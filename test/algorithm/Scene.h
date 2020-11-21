@@ -142,4 +142,23 @@ inline model::ModelNodePtr findChildModel(const scene::INodePtr& parent)
     return candidate;
 }
 
+// Returns the number of children of the given parent node matching the given predicate
+inline std::size_t getChildCount(const scene::INodePtr& parent, 
+    const std::function<bool(const scene::INodePtr&)>& predicate)
+{
+    std::size_t count = 0;
+
+    parent->foreachNode([&](const scene::INodePtr& node)
+    {
+        if (predicate(node))
+        {
+            ++count;
+        }
+
+        return true;
+    });
+
+    return count;
+}
+
 }

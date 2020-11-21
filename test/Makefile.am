@@ -33,6 +33,7 @@ drtest_SOURCES = math/Matrix4.cpp \
                  HeadlessOpenGLContext.cpp \
                  FacePlane.cpp \
                  FileTypes.cpp \
+                 MapSavingLoading.cpp \
                  Materials.cpp \
                  MapExport.cpp \
                  MessageBus.cpp \

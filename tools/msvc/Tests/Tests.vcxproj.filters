@@ -28,6 +28,7 @@
     <ClCompile Include="..\..\..\test\Selection.cpp" />
     <ClCompile Include="..\..\..\test\FileTypes.cpp" />
     <ClCompile Include="..\..\..\test\MessageBus.cpp" />
+    <ClCompile Include="..\..\..\test\MapSavingLoading.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\HeadlessOpenGLContext.h" />
