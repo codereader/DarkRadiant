@@ -157,6 +157,21 @@ TEST_F(MapLoadingTest, openMapFromMapsFolder)
     checkAltarScene();
 }
 
+TEST_F(MapLoadingTest, openMapFromModPak)
+{
+    std::string modRelativePath = "maps/altar_in_pk4.map";
+
+    // The map is located in maps/ folder within the altar.pk4, check that it doesn't physically exist
+    fs::path mapPath = _context.getTestResourcePath();
+    mapPath /= modRelativePath;
+    EXPECT_FALSE(os::fileOrDirExists(mapPath));
+
+    GlobalCommandSystem().executeCommand("OpenMap", modRelativePath);
+
+    // Check if the scene contains what we expect
+    checkAltarScene();
+}
+
 TEST_F(MapLoadingTest, openNonExistentMap)
 {
     std::string mapName = "idontexist.map";
