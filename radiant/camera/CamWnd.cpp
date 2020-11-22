@@ -804,7 +804,7 @@ void CamWnd::performFreeMove(int dx, int dy)
             origin += _camera->getForwardVector() * strafespeed * dy * forwardStrafeFactor;
         }
         else {
-            origin += _camera->getForwardVector() * strafespeed * dy;
+            origin += _camera->getUpVector() * strafespeed * dy;
         }
     }
     else // free rotation
