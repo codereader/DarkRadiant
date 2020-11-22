@@ -143,10 +143,16 @@ public:
 	// Initialises the filesystem using the given search order.
 	virtual void initialise(const SearchPaths& vfsSearchPaths, const ExtensionSet& allowedArchiveExtensions) = 0;
 
+    // Returns true if the filesystem has already been initialised
+    virtual bool isInitialised() const = 0;
+
 	/// \brief Shuts down the filesystem.
 	virtual void shutdown() = 0;
 
 	// greebo: Adds/removes observers to/from the VFS
+    // Observers should also check isInitialised() after adding themselves
+    // since the VFS might have been initialised already. Calling addObserver()
+    // won't call onFileSystemInitialise() if that's the case.
 	virtual void addObserver(Observer& observer) = 0;
 	virtual void removeObserver(Observer& observer) = 0;
 

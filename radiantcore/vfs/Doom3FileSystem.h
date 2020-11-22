@@ -32,6 +32,7 @@ private:
 
 public:
 	void initialise(const SearchPaths& vfsSearchPaths, const ExtensionSet& allowedExtensions) override;
+    bool isInitialised() const override;
 	void shutdown() override;
 
 	int getFileCount(const std::string& filename) override;

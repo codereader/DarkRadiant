@@ -304,7 +304,7 @@ void Doom3FileSystem::initialise(const SearchPaths& vfsSearchPaths, const Extens
         return;
     }
 
-    if (!_vfsSearchPaths.empty())
+    if (isInitialised())
     {
         // We've been initialised with some paths already, shutdown first
         shutdown();
@@ -334,6 +334,11 @@ void Doom3FileSystem::initialise(const SearchPaths& vfsSearchPaths, const Extens
     {
         observer->onFileSystemInitialise();
     }
+}
+
+bool Doom3FileSystem::isInitialised() const
+{
+    return !_vfsSearchPaths.empty();
 }
 
 void Doom3FileSystem::shutdown()

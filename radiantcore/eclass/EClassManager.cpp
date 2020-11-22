@@ -290,7 +290,11 @@ void EClassManager::initialiseModule(const IApplicationContext& ctx)
 	rMessage() << "EntityClassDoom3::initialiseModule called." << std::endl;
 
 	GlobalFileSystem().addObserver(*this);
-	realise();
+
+    if (GlobalFileSystem().isInitialised())
+    {
+        realise();
+    }
 
 	GlobalCommandSystem().addCommand("ReloadDefs", std::bind(&EClassManager::reloadDefsCmd, this, std::placeholders::_1));
 }
