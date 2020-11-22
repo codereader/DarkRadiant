@@ -2,6 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define DarkRadiantVersion "2.9.0"
+#define VCRedistDir "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Redist\MSVC\14.28.29325\"
 
 [Setup]
 AppName=DarkRadiant
@@ -28,9 +29,9 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Files]
 Source: "..\..\install\darkradiant.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\install\*"; Excludes: "*.pdb,*.exp,*.lib,*.in,*.fbp,*.iobj,*.ipdb, Tests.*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Redist\MSVC\14.28.29325\x86\Microsoft.VC142.CRT\msvcp140.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Redist\MSVC\14.28.29325\x86\Microsoft.VC142.CRT\vcruntime140.dll"; DestDir: "{app}"; Flags: ignoreversion
-;Source: "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Redist\MSVC\14.28.29325\x86\Microsoft.VC142.CRT\vcruntime140_1.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#VCRedistDir}\x86\Microsoft.VC142.CRT\msvcp140.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#VCRedistDir}\x86\Microsoft.VC142.CRT\vcruntime140.dll"; DestDir: "{app}"; Flags: ignoreversion
+;Source: "{#VCRedistDir}\x86\Microsoft.VC142.CRT\vcruntime140_1.dll"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

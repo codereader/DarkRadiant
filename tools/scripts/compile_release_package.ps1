@@ -33,7 +33,7 @@ if ((Get-Command "compil32" -ErrorAction SilentlyContinue) -eq $null)
     return
 }
 
-if ((Get-Command "msbuild" -ErrorAction SilentlyContinue) -eq $null)
+if ((Get-Command "msbuild" -ErrorAction SilentlyContinue) -eq $null -or $env:VCToolsRedistDir -eq $null)
 {
     Write-Host -ForegroundColor Red "For this script to run, please make sure that you've opened the corresponding studio developer command prompt."
     return
@@ -72,14 +72,14 @@ if ($target -eq "x86")
     $platform = "Win32"
     $issFile = "..\innosetup\darkradiant.iss"
     $portablePath = "DarkRadiant_install"
-	$redistSource = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Redist\MSVC\14.28.29325\x86\Microsoft.VC142.CRT"
+	$redistSource = Join-Path $env:VCToolsRedistDir "x86\Microsoft.VC142.CRT"
 } 
 else
 {
     $platform = "x64"
     $issFile = "..\innosetup\darkradiant.x64.iss"
     $portablePath = "DarkRadiant_install.x64"
-	$redistSource = "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Redist\MSVC\14.28.29325\x64\Microsoft.VC142.CRT"
+	$redistSource = Join-Path $env:VCToolsRedistDir "x64\Microsoft.VC142.CRT"
 }
 
 if (-not $SkipBuild)
@@ -129,6 +129,8 @@ $innoSetupFilename = Join-Path "..\innosetup\" ($innoSetupFilenameTemplate -f $f
 Write-Host ("Writing version {0} to InnoSetup file" -f $foundVersionString)
 $issContent = Get-Content $issFile
 $issContent = $issContent -replace '#define DarkRadiantVersion "(.+)"', ('#define DarkRadiantVersion "{0}"' -f $foundVersionString)
+Write-Host ("Writing redist folder {0} to InnoSetup file" -f $env:VCToolsRedistDir)
+$issContent = $issContent -replace '#define VCRedistDir "(.+)"', ('#define VCRedistDir "{0}"' -f $env:VCToolsRedistDir)
 Set-Content -Path $issFile -Value $issContent
 
 # Compile the installer package
