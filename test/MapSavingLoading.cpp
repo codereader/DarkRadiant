@@ -1,6 +1,7 @@
 #include "RadiantTest.h"
 
 #include "imap.h"
+#include "imapformat.h"
 #include "iradiant.h"
 #include "iselectiongroup.h"
 #include "ilightnode.h"
@@ -202,6 +203,76 @@ TEST_F(MapSavingTest, saveMapWithoutModification)
     EXPECT_TRUE(mapSavedFired);
 
     conn.disconnect();
+}
+
+TEST_F(MapSavingTest, saveMapDoesntChangeMap)
+{
+    std::string modRelativePath = "maps/altar.map";
+
+    // The map is located in maps/altar.map folder, check that it physically exists
+    fs::path mapPath = _context.getTestResourcePath();
+    mapPath /= modRelativePath;
+    auto originalModificationDate = fs::last_write_time(mapPath);
+
+    GlobalCommandSystem().executeCommand("OpenMap", modRelativePath);
+    checkAltarScene();
+
+    GlobalCommandSystem().executeCommand("SaveMap");
+
+    // Check that the file got modified
+    EXPECT_NE(fs::last_write_time(mapPath), originalModificationDate);
+
+    // Load it again and check the scene
+    GlobalCommandSystem().executeCommand("OpenMap", modRelativePath);
+    checkAltarScene();
+}
+
+TEST_F(MapSavingTest, saveAs)
+{
+    std::string modRelativePath = "maps/altar.map";
+
+    // The map is located in maps/altar.map folder, check that it physically exists
+    fs::path mapPath = _context.getTestResourcePath();
+    mapPath /= modRelativePath;
+    auto originalModificationDate = fs::last_write_time(mapPath);
+
+    GlobalCommandSystem().executeCommand("OpenMap", modRelativePath);
+    checkAltarScene();
+
+    // Select the format based on the extension
+    auto format = GlobalMapFormatManager().getMapFormatForFilename(modRelativePath);
+    fs::path tempPath = _context.getTemporaryDataPath();
+    tempPath /= "altar_copy.map";
+
+    // Subscribe to the event asking for the target path
+    auto msgSubscription = GlobalRadiantCore().getMessageBus().addListener(
+        radiant::IMessage::Type::FileSelectionRequest,
+        radiant::TypeListener<radiant::FileSelectionRequest>(
+            [&](radiant::FileSelectionRequest& msg)
+    {
+        msg.setHandled(true);
+        msg.setResult(radiant::FileSelectionRequest::Result
+        { 
+            tempPath.string(), 
+            format ->getMapFormatName()
+        });
+    }));
+
+    EXPECT_FALSE(os::fileOrDirExists(tempPath));
+
+    GlobalCommandSystem().executeCommand("SaveMapAs");
+
+    // Check that the file got created
+    EXPECT_TRUE(os::fileOrDirExists(tempPath));
+
+    // The map path should have been changed
+    EXPECT_EQ(GlobalMapModule().getMapName(), tempPath.string());
+
+    // Load it again and check the scene
+    GlobalCommandSystem().executeCommand("OpenMap", tempPath.string());
+    checkAltarScene();
+
+    GlobalRadiantCore().getMessageBus().removeListener(msgSubscription);
 }
 
 }
