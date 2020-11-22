@@ -9,6 +9,7 @@
 #include "iradiant.h"
 #include "igame.h"
 #include "ipreferencesystem.h"
+#include "icommandsystem.h"
 
 #include "registry/registry.h"
 
