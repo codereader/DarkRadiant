@@ -2,6 +2,7 @@
 
 #include "iregistry.h"
 #include "iscript.h"
+#include "iscriptinterface.h"
 #include <pybind11/pybind11.h>
 
 namespace script

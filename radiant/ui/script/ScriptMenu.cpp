@@ -31,7 +31,7 @@ ScriptMenu::ScriptMenu()
 	typedef std::multimap<std::string, std::string> SortedCommands;
 	SortedCommands sortedCommands;
 
-	GlobalScriptingSystem().foreachScriptCommand([&](const IScriptCommand& cmd)
+	GlobalScriptingSystem().foreachScriptCommand([&](const script::IScriptCommand& cmd)
 	{
 		sortedCommands.insert(std::make_pair(cmd.getDisplayName(), cmd.getName()));
 	});

@@ -3,6 +3,7 @@
 #include <pybind11/pybind11.h>
 
 #include "iscript.h"
+#include "iscriptinterface.h"
 #include "iselectiongroup.h"
 
 #include "SceneGraphInterface.h"

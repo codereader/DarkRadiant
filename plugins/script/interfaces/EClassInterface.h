@@ -2,6 +2,7 @@
 
 #include "ieclass.h"
 #include "iscript.h"
+#include "iscriptinterface.h"
 
 #include <pybind11/pybind11.h>
 

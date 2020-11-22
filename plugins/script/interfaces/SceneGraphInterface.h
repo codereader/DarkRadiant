@@ -2,6 +2,7 @@
 
 #include "inode.h"
 #include "iscript.h"
+#include "iscriptinterface.h"
 #include "iscenegraph.h"
 #include "math/AABB.h"
 

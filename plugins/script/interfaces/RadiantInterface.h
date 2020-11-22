@@ -2,6 +2,7 @@
 
 #include "iradiant.h"
 #include "iscript.h"
+#include "iscriptinterface.h"
 
 #include "EntityInterface.h"
 

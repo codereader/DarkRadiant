@@ -1,7 +1,7 @@
 #pragma once
 
 #include "iscript.h"
-
+#include "iscriptinterface.h"
 #include "igame.h"
 #include <vector>
 

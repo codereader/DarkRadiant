@@ -4,6 +4,7 @@
 
 #include "ishaders.h"
 #include "iscript.h"
+#include "iscriptinterface.h"
 
 namespace script
 {

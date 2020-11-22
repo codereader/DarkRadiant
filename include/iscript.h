@@ -3,10 +3,6 @@
 #include "imodule.h"
 #include <sigc++/signal.h>
 
-// Forward-declare the stuff in <pybind11/pybind11.h>
-namespace pybind11 { class module; class dict; }
-namespace py = pybind11;
-
 namespace script
 {
 
@@ -20,19 +16,8 @@ struct ExecutionResult
 };
 typedef std::shared_ptr<ExecutionResult> ExecutionResultPtr;
 
-} // namespace script
-
-class IScriptInterface
-{
-public:
-    virtual ~IScriptInterface() {}
-
-	/**
-	* This method is called by the Scripting System to let this class
-	* add its objects to the Python context.
-	*/
-	virtual void registerInterface(py::module& scope, py::dict& globals) = 0;
-};
+// Declared in iscriptinterface.h
+class IScriptInterface;
 typedef std::shared_ptr<IScriptInterface> IScriptInterfacePtr;
 
 // Represents a named, executable .py script file
@@ -86,12 +71,14 @@ public:
 };
 typedef std::shared_ptr<IScriptingSystem> IScriptingSystemPtr;
 
+} // namespace script
+
 // String identifier for the script module
 const char* const MODULE_SCRIPTING_SYSTEM("ScriptingSystem");
 
 // This is the accessor for the scripting system
-inline IScriptingSystem& GlobalScriptingSystem()
+inline script::IScriptingSystem& GlobalScriptingSystem()
 {
-	static module::InstanceReference<IScriptingSystem> _reference(MODULE_SCRIPTING_SYSTEM);
+	static module::InstanceReference<script::IScriptingSystem> _reference(MODULE_SCRIPTING_SYSTEM);
 	return _reference;
 }

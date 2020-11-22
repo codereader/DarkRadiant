@@ -1,6 +1,7 @@
 #pragma once
 
 #include "iscript.h"
+#include "iscriptinterface.h"
 #include "icameraview.h"
 
 #include "MathInterface.h"

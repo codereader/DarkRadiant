@@ -5,6 +5,7 @@
 #include <pybind11/pybind11.h>
 
 #include "iscript.h"
+#include "iscriptinterface.h"
 #include "PythonConsoleWriter.h"
 #include "icommandsystem.h"
 
