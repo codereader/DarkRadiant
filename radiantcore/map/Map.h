@@ -84,7 +84,7 @@ public:
 
 	/** greebo: Returns true if the map has not been named yet.
 	 */
-	bool isUnnamed() const;
+	bool isUnnamed() const override;
 
 	/** greebo: Updates the name of the map (and triggers an update
 	 * 			of the mainframe window title)
@@ -124,6 +124,13 @@ public:
 	 * a dialog window).
 	 */
 	void saveCopyAs();
+
+    /**
+     * Saves a copy of the current map to the given path, using the 
+     * given format (which may be an empty reference, in which case the map format
+     * will be guessed from the filename).
+     */
+    void saveCopyAs(const std::string& absolutePath, const MapFormatPtr& mapFormat = MapFormatPtr());
 
 	/** greebo: Saves the current selection to the target <filename>.
 	 */

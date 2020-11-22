@@ -101,7 +101,6 @@
     <ClCompile Include="..\..\radiantcore\map\algorithm\MapImporter.cpp" />
     <ClCompile Include="..\..\radiantcore\map\algorithm\Models.cpp" />
     <ClCompile Include="..\..\radiantcore\map\algorithm\Skins.cpp" />
-    <ClCompile Include="..\..\radiantcore\map\AutoSaver.cpp" />
     <ClCompile Include="..\..\radiantcore\map\CounterManager.cpp" />
     <ClCompile Include="..\..\radiantcore\map\EditingStopwatch.cpp" />
     <ClCompile Include="..\..\radiantcore\map\EditingStopwatchInfoFileModule.cpp" />
@@ -802,11 +801,9 @@
     <ClInclude Include="..\..\radiantcore\map\algorithm\MapImporter.h" />
     <ClInclude Include="..\..\radiantcore\map\algorithm\Models.h" />
     <ClInclude Include="..\..\radiantcore\map\algorithm\Skins.h" />
-    <ClInclude Include="..\..\radiantcore\map\AutoSaver.h" />
     <ClInclude Include="..\..\radiantcore\map\CounterManager.h" />
     <ClInclude Include="..\..\radiantcore\map\EditingStopwatch.h" />
     <ClInclude Include="..\..\radiantcore\map\EditingStopwatchInfoFileModule.h" />
-    <ClInclude Include="..\..\radiantcore\map\EntityBreakdown.h" />
     <ClInclude Include="..\..\radiantcore\map\format\Doom3MapFormat.h" />
     <ClInclude Include="..\..\radiantcore\map\format\Doom3MapReader.h" />
     <ClInclude Include="..\..\radiantcore\map\format\Doom3MapWriter.h" />

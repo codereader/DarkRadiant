@@ -571,22 +571,34 @@ bool Map::saveAs()
 
 void Map::saveCopyAs()
 {
-    // Let's see if we can remember a
-    if (_lastCopyMapName.empty()) {
+    // Let's see if we can remember a map name from a previous save
+    if (_lastCopyMapName.empty())
+    {
         _lastCopyMapName = getMapName();
     }
 
-	MapFileSelection fileInfo =
-        MapFileManager::getMapFileSelection(false, _("Save Copy As..."), filetype::TYPE_MAP, _lastCopyMapName);
+	auto fileInfo = MapFileManager::getMapFileSelection(false, 
+        _("Save Copy As..."), filetype::TYPE_MAP, _lastCopyMapName);
 
 	if (!fileInfo.fullPath.empty())
 	{
-        // Remember the last name
-        _lastCopyMapName = fileInfo.fullPath;
-
-        // Return the result of the actual save method
-		saveDirect(fileInfo.fullPath, fileInfo.mapFormat);
+        saveCopyAs(fileInfo.fullPath, fileInfo.mapFormat);
     }
+}
+
+void Map::saveCopyAs(const std::string& absolutePath, const MapFormatPtr& mapFormat)
+{
+    if (absolutePath.empty())
+    {
+        rWarning() << "Map::saveCopyAs: path must not be empty" << std::endl;
+        return;
+    }
+
+    // Remember the last name
+    _lastCopyMapName = absolutePath;
+
+    // Return the result of the actual save method
+    saveDirect(absolutePath, mapFormat);
 }
 
 void Map::loadPrefabAt(const cmd::ArgumentList& args)
@@ -640,7 +652,16 @@ void Map::loadPrefabAt(const cmd::ArgumentList& args)
 
 void Map::saveMapCopyAs(const cmd::ArgumentList& args)
 {
-    GlobalMap().saveCopyAs();
+    if (args.size() == 0 || args[0].getString().empty())
+    {
+        // Use the overload without arguments, it will ask for a file name
+        GlobalMap().saveCopyAs();
+    }
+    else
+    {
+        // Pass the first argument we got
+        GlobalMap().saveCopyAs(args[0].getString());
+    }
 }
 
 void Map::registerCommands()
@@ -653,7 +674,7 @@ void Map::registerCommands()
     GlobalCommandSystem().addCommand("SaveSelectedAsPrefab", Map::saveSelectedAsPrefab);
     GlobalCommandSystem().addCommand("SaveMap", Map::saveMap);
     GlobalCommandSystem().addCommand("SaveMapAs", Map::saveMapAs);
-    GlobalCommandSystem().addCommand("SaveMapCopyAs", Map::saveMapCopyAs);
+    GlobalCommandSystem().addCommand("SaveMapCopyAs", Map::saveMapCopyAs, { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
     GlobalCommandSystem().addCommand("ExportMap", Map::exportMap);
     GlobalCommandSystem().addCommand("SaveSelected", Map::exportSelection);
 	GlobalCommandSystem().addCommand("ReloadSkins", map::algorithm::reloadSkins);

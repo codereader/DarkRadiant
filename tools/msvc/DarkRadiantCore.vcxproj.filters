@@ -925,9 +925,6 @@
     <ClCompile Include="..\..\radiantcore\map\infofile\InfoFileManager.cpp">
       <Filter>src\map\infofile</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiantcore\map\AutoSaver.cpp">
-      <Filter>src\map</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiantcore\map\EditingStopwatch.cpp">
       <Filter>src\map</Filter>
     </ClCompile>
@@ -1953,16 +1950,10 @@
     <ClInclude Include="..\..\radiantcore\map\infofile\InfoFileManager.h">
       <Filter>src\map\infofile</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\map\AutoSaver.h">
-      <Filter>src\map</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\map\EditingStopwatch.h">
       <Filter>src\map</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\map\EditingStopwatchInfoFileModule.h">
-      <Filter>src\map</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\map\EntityBreakdown.h">
       <Filter>src\map</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\map\Map.h">

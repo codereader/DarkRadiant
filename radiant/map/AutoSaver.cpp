@@ -21,7 +21,6 @@
 #include <limits.h>
 #include "string/string.h"
 #include "string/convert.h"
-#include "map/Map.h"
 #include "module/StaticModule.h"
 #include "messages/NotificationMessage.h"
 #include "messages/AutomaticMapSaveRequest.h"
@@ -141,7 +140,7 @@ void AutoMapSaver::saveSnapshot()
 		rMessage() << "Autosaving snapshot to " << filename << std::endl;
 
 		// Dump to map to the next available filename
-		GlobalMap().saveDirect(filename);
+        GlobalCommandSystem().executeCommand("SaveMapCopyAs", filename);
 
 		handleSnapshotSizeLimit(existingSnapshots, snapshotPath, mapName);
 	}
@@ -255,7 +254,7 @@ void AutoMapSaver::checkSave()
 	if (_enabled)
 	{
 		// only snapshot if not working on an unnamed map
-		if (_snapshotsEnabled && !GlobalMap().isUnnamed())
+		if (_snapshotsEnabled && !GlobalMapModule().isUnnamed())
 		{
 			try
 			{
@@ -268,7 +267,7 @@ void AutoMapSaver::checkSave()
 		}
 		else
 		{
-			if (GlobalMap().isUnnamed())
+			if (GlobalMapModule().isUnnamed())
 			{
 				// Get the maps path (within the mod path)
 				std::string autoSaveFilename = GlobalGameManager().getMapPath();
@@ -283,12 +282,12 @@ void AutoMapSaver::checkSave()
 				rMessage() << "Autosaving unnamed map to " << autoSaveFilename << std::endl;
 
 				// Invoke the save call
-				GlobalMap().saveDirect(autoSaveFilename);
+                GlobalCommandSystem().executeCommand("SaveMapCopyAs", autoSaveFilename);
 			}
 			else
 			{
 				// Construct the new filename (e.g. "test_autosave.map")
-				std::string filename = GlobalMap().getMapName();
+				std::string filename = GlobalMapModule().getMapName();
 				std::string extension = os::getExtension(filename);
 
 				// Cut off the extension
@@ -299,7 +298,7 @@ void AutoMapSaver::checkSave()
 				rMessage() << "Autosaving map to " << filename << std::endl;
 
 				// Invoke the save call
-				GlobalMap().saveDirect(filename);
+                GlobalCommandSystem().executeCommand("SaveMapCopyAs", filename);
 			}
 		}
 	}
@@ -387,7 +386,7 @@ void AutoMapSaver::initialiseModule(const IApplicationContext& ctx)
 	));
 
 	// Get notified when the map is loaded afresh
-	_signalConnections.push_back(GlobalMap().signal_mapEvent().connect(
+	_signalConnections.push_back(GlobalMapModule().signal_mapEvent().connect(
 		sigc::mem_fun(*this, &AutoMapSaver::onMapEvent)
 	));
 

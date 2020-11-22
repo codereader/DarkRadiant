@@ -135,6 +135,9 @@ public:
 	*/
 	virtual std::string getMapName() const = 0;
 
+    // Returns true if this map is still unnamed (never saved yet)
+    virtual bool isUnnamed() const = 0;
+
 	/**
 	 * Signal fired when the name of this map is changing.
 	 */

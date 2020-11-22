@@ -192,5 +192,6 @@ darkradiant_SOURCES = main.cpp \
                       settings/Win32Registry.cpp \
                       settings/LocalisationModule.cpp \
                       settings/LocalisationProvider.cpp \
+                      map/AutoSaver.cpp \
                       map/StartupMapLoader.cpp \
                       log/Console.cpp
