@@ -64,11 +64,10 @@ public:
 	// greebo: Returns the named colour, returns <0,0,0> if not found
 	virtual Vector3 getColour(const std::string& colourName) = 0;
 
-	virtual void saveScheme(const std::string& name) = 0;
 	virtual void deleteScheme(const std::string& name) = 0;
 	virtual void copyScheme(const std::string& fromName, const std::string& toName) = 0;
 
-	// Loads/Saves all the schemes from the registry
+	// Loads/Saves all the schemes from/to the registry
 	virtual void loadColourSchemes() = 0;
 	virtual void saveColourSchemes() = 0;
 

@@ -438,4 +438,30 @@ TEST_F(ColourSchemeTestWithUserColours, RestoreChangedColourFromRegistry)
     EXPECT_NE(GlobalColourSchemeManager().getColourScheme(SCHEME_DARKRADIANT_DEFAULT).getColour("default_brush").getColour(), newValue);
 }
 
+TEST_F(ColourSchemeTestWithUserColours, ForeachScheme)
+{
+    // Use a vector to record visited nodes to catch duplicate names
+    std::vector<std::string> visitedSchemes;
+    GlobalColourSchemeManager().foreachScheme([&](const std::string& name, colours::IColourScheme&)
+    {
+        visitedSchemes.push_back(name);
+    });
+
+    std::set<std::string> expectedSchemeNames = {
+        SCHEME_DARKRADIANT_DEFAULT,
+        SCHEME_QE3,
+        SCHEME_BLACK_AND_GREEN,
+        SCHEME_MAYA_MAX,
+        SCHEME_SUPER_MAL,
+        "MyMaya" // custom theme
+    };
+
+    EXPECT_EQ(expectedSchemeNames.size(), visitedSchemes.size());
+    
+    for (auto expectedScheme : expectedSchemeNames)
+    {
+        EXPECT_EQ(std::count(visitedSchemes.begin(), visitedSchemes.end(), expectedScheme), 1);
+    }
+}
+
 }

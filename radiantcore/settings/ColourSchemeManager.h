@@ -28,7 +28,7 @@ public:
 	void setActive(const std::string& name) override;
 
 	// Returns the requested colour from the currently active scheme
-	Vector3 	getColour(const std::string& colourName);
+	Vector3 getColour(const std::string& colourName);
 
 	ColourScheme& getActiveScheme() override;
 	ColourScheme& getColourScheme(const std::string& name) override;
@@ -38,7 +38,6 @@ public:
 	void saveColourSchemes();
 
 	// Saves the specified scheme into the registry
-	void saveScheme(const std::string& name) override;
 	void deleteScheme(const std::string& name) override;
 	void copyScheme(const std::string& fromName, const std::string& toName) override;
 
@@ -49,6 +48,9 @@ public:
 	const StringSet& getDependencies() const override;
 	void initialiseModule(const IApplicationContext& ctx) override;
 	void shutdownModule() override;
+
+private:
+	void saveScheme(const std::string& name);
 };
 
 } // namespace
