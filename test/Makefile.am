@@ -29,6 +29,7 @@ drtest_SOURCES = math/Matrix4.cpp \
                  math/Plane3.cpp \
                  math/Quaternion.cpp \
                  Camera.cpp \
+                 ColourSchemes.cpp \
                  CSG.cpp \
                  HeadlessOpenGLContext.cpp \
                  FacePlane.cpp \
