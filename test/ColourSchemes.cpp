@@ -1,6 +1,7 @@
 #include "RadiantTest.h"
 
 #include "icolourscheme.h"
+#include "iregistry.h"
 #include "math/Vector3.h"
 #include "os/path.h"
 #include "string/convert.h"
@@ -96,6 +97,50 @@ TEST_F(ColourSchemeTestWithEmptySettings, LoadDefaultSchemes)
                 << " doesn't match the default value " << defaultColour.second;
         }
     }
+}
+
+TEST_F(ColourSchemeTestWithEmptySettings, DefaultSchemeIsActive)
+{
+    EXPECT_EQ(GlobalColourSchemeManager().getActiveScheme().getName(), "DarkRadiant Default");
+}
+
+TEST_F(ColourSchemeTestWithEmptySettings, ChangeActiveScheme)
+{
+    auto newSchemeName = "Super Mal";
+    GlobalColourSchemeManager().setActive(newSchemeName);
+    EXPECT_EQ(GlobalColourSchemeManager().getActiveScheme().getName(), newSchemeName);
+}
+
+TEST_F(ColourSchemeTestWithEmptySettings, ActiveSchemePersisted)
+{
+    // Check the current default
+    auto activeSchemes = GlobalRegistry().findXPath("user/ui/colourschemes//colourscheme[@active='1']");
+    EXPECT_EQ(activeSchemes.size(), 1);
+    EXPECT_EQ(activeSchemes[0].getAttributeValue("name"), "DarkRadiant Default");
+
+    auto newSchemeName = "Super Mal";
+    GlobalColourSchemeManager().setActive(newSchemeName);
+
+    // Export the state to the registry
+    GlobalColourSchemeManager().saveColourSchemes();
+
+    // By this time, the colour scheme should be saved to the registry
+    // This is checking implementation details, but it might be worth it
+    activeSchemes = GlobalRegistry().findXPath("user/ui/colourschemes//colourscheme[@active='1']");
+    EXPECT_EQ(activeSchemes.size(), 1);
+    EXPECT_EQ(activeSchemes[0].getAttributeValue("name"), newSchemeName);
+
+    // Save to disk
+    GlobalRegistry().saveToDisk();
+
+    // Check the XML files if the active flag was set
+    std::string savedColoursFile = _context.getSettingsPath() + "colours.xml";
+    EXPECT_TRUE(fs::exists(savedColoursFile)) << "Could not find saved colours file: " << savedColoursFile;
+
+    xml::Document doc(savedColoursFile);
+    auto schemes = doc.findXPath("//colourscheme[@active='1']");
+    EXPECT_EQ(schemes.size(), 1) << "More than one scheme set to active in " << savedColoursFile;
+    EXPECT_EQ(schemes[0].getAttributeValue("name"), newSchemeName);
 }
 
 }
