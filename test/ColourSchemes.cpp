@@ -212,7 +212,7 @@ void modifySchemeColour(const std::string& schemeToModify, const std::string& co
 
 }
 
-TEST_F(ColourSchemeTestWithEmptySettings, ColourChangePersisted)
+TEST_F(ColourSchemeTestWithEmptySettings, SystemThemeColourChangePersisted)
 {
     Vector3 newValue(0.99, 0.99, 0.99);
     modifySchemeColour(SCHEME_DARKRADIANT_DEFAULT, "default_brush", newValue);
@@ -365,7 +365,7 @@ TEST_F(ColourSchemeTestWithUserColours, SavedUserSchemesAreNotReadOnly)
 
 TEST_F(ColourSchemeTestWithUserColours, ColourChangePersisted)
 {
-    // This is the same test as TEST_F(ColourSchemeTestWithEmptySettings, CopiedSchemePersisted) above
+    // This is the same test as TEST_F(ColourSchemeTestWithEmptySettings, SystemThemeColourChangePersisted) above
     Vector3 newValue(0.99, 0.99, 0.99);
     modifySchemeColour(SCHEME_DARKRADIANT_DEFAULT, "default_brush", newValue);
     modifySchemeColour("MyMaya", "default_brush", newValue);
@@ -403,6 +403,39 @@ TEST_F(ColourSchemeTestWithUserColours, DeleteUserTheme)
     xml::Document doc(savedColoursFile);
     auto schemes = doc.findXPath("//colourscheme[@name='" + userThemeName + "']");
     EXPECT_TRUE(schemes.empty());
+}
+
+TEST_F(ColourSchemeTestWithUserColours, RestoreDeletedThemeFromRegistry)
+{
+    std::string userThemeName = "MyMaya";
+    EXPECT_TRUE(GlobalColourSchemeManager().schemeExists(userThemeName));
+
+    // Delete the user theme
+    GlobalColourSchemeManager().deleteScheme(userThemeName);
+    EXPECT_FALSE(GlobalColourSchemeManager().schemeExists(userThemeName));
+
+    // Restore the changes from the registry
+    GlobalColourSchemeManager().restoreColourSchemes();
+
+    // The user theme should be there again
+    EXPECT_TRUE(GlobalColourSchemeManager().schemeExists(userThemeName));
+}
+
+TEST_F(ColourSchemeTestWithUserColours, RestoreChangedColourFromRegistry)
+{
+    Vector3 newValue(0.99, 0.99, 0.99);
+    modifySchemeColour(SCHEME_DARKRADIANT_DEFAULT, "default_brush", newValue);
+    modifySchemeColour("MyMaya", "default_brush", newValue);
+
+    EXPECT_EQ(GlobalColourSchemeManager().getColourScheme("MyMaya").getColour("default_brush").getColour(), newValue);
+    EXPECT_EQ(GlobalColourSchemeManager().getColourScheme(SCHEME_DARKRADIANT_DEFAULT).getColour("default_brush").getColour(), newValue);
+
+    // Restore the changes from the registry
+    GlobalColourSchemeManager().restoreColourSchemes();
+
+    // The changes should be undone
+    EXPECT_NE(GlobalColourSchemeManager().getColourScheme("MyMaya").getColour("default_brush").getColour(), newValue);
+    EXPECT_NE(GlobalColourSchemeManager().getColourScheme(SCHEME_DARKRADIANT_DEFAULT).getColour("default_brush").getColour(), newValue);
 }
 
 }
