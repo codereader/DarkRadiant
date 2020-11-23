@@ -26,7 +26,7 @@ TEST_F(ModelExportTest, ExportPatchMesh)
     // Choose a file in our temp data folder
     std::string modRelativePath = "models/temp/temp_patch.lwo";
 
-    fs::path outputFilename = _context.getTestResourcePath();
+    fs::path outputFilename = _context.getTestProjectPath();
     outputFilename /= modRelativePath;
     os::makeDirectory(outputFilename.parent_path().string());
 

@@ -131,7 +131,7 @@ protected:
 		game::GameConfiguration config;
 
 		config.gameType = "The Dark Mod 2.0 (Standalone)";
-		config.enginePath = _context.getTestResourcePath();
+		config.enginePath = _context.getTestProjectPath();
 
 		message.setConfig(config);
 		message.setHandled(true);

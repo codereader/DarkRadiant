@@ -10,9 +10,30 @@
 namespace test
 {
 
+namespace
+{
+    const char* const SCHEME_DARKRADIANT_DEFAULT = "DarkRadiant Default";
+    const char* const SCHEME_QE3 = "QE3Radiant Original";
+    const char* const SCHEME_BLACK_AND_GREEN = "Black & Green";
+    const char* const SCHEME_MAYA_MAX = "Maya/Max/Lightwave Emulation";
+    const char* const SCHEME_SUPER_MAL = "Super Mal";
+}
+
 class ColourSchemeTest :
     public RadiantTest
 {};
+
+class ColourSchemeTestWithIncompleteScheme :
+    public ColourSchemeTest
+{
+public:
+    void SetUp() override
+    {
+        // TODO
+
+        RadiantTest::SetUp();
+    }
+};
 
 class ColourSchemeTestWithEmptySettings :
     public ColourSchemeTest
@@ -68,11 +89,11 @@ std::size_t getItemCountInScheme(const colours::IColourScheme& scheme)
 TEST_F(ColourSchemeTestWithEmptySettings, LoadDefaultSchemes)
 {
     auto defaultSchemeNames = {
-        "DarkRadiant Default",
+        SCHEME_DARKRADIANT_DEFAULT,
         "QE3Radiant Original",
         "Black & Green",
         "Maya/Max/Lightwave Emulation",
-        "Super Mal"
+        SCHEME_SUPER_MAL
     };
 
     // Check the default colours.xml file
@@ -101,12 +122,12 @@ TEST_F(ColourSchemeTestWithEmptySettings, LoadDefaultSchemes)
 
 TEST_F(ColourSchemeTestWithEmptySettings, DefaultSchemeIsActive)
 {
-    EXPECT_EQ(GlobalColourSchemeManager().getActiveScheme().getName(), "DarkRadiant Default");
+    EXPECT_EQ(GlobalColourSchemeManager().getActiveScheme().getName(), SCHEME_DARKRADIANT_DEFAULT);
 }
 
 TEST_F(ColourSchemeTestWithEmptySettings, ChangeActiveScheme)
 {
-    auto newSchemeName = "Super Mal";
+    auto newSchemeName = SCHEME_SUPER_MAL;
     GlobalColourSchemeManager().setActive(newSchemeName);
     EXPECT_EQ(GlobalColourSchemeManager().getActiveScheme().getName(), newSchemeName);
 }
@@ -116,9 +137,9 @@ TEST_F(ColourSchemeTestWithEmptySettings, ActiveSchemePersisted)
     // Check the current default
     auto activeSchemes = GlobalRegistry().findXPath("user/ui/colourschemes//colourscheme[@active='1']");
     EXPECT_EQ(activeSchemes.size(), 1);
-    EXPECT_EQ(activeSchemes[0].getAttributeValue("name"), "DarkRadiant Default");
+    EXPECT_EQ(activeSchemes[0].getAttributeValue("name"), SCHEME_DARKRADIANT_DEFAULT);
 
-    auto newSchemeName = "Super Mal";
+    auto newSchemeName = SCHEME_SUPER_MAL;
     GlobalColourSchemeManager().setActive(newSchemeName);
 
     // Export the state to the registry
@@ -141,6 +162,66 @@ TEST_F(ColourSchemeTestWithEmptySettings, ActiveSchemePersisted)
     auto schemes = doc.findXPath("//colourscheme[@active='1']");
     EXPECT_EQ(schemes.size(), 1) << "More than one scheme set to active in " << savedColoursFile;
     EXPECT_EQ(schemes[0].getAttributeValue("name"), newSchemeName);
+}
+
+TEST_F(ColourSchemeTestWithEmptySettings, ColourChangePersisted)
+{
+    auto& scheme = GlobalColourSchemeManager().getColourScheme(SCHEME_DARKRADIANT_DEFAULT);
+
+    Vector3 newValue(0.99, 0.99, 0.99);
+
+    EXPECT_NE(scheme.getColour("default_brush").getColour(), newValue) << "Test setup failure: colour is already set to new RGB values";
+
+    // Modify one colour
+    scheme.getColour("default_brush").getColour() = newValue;
+
+    // Export the state to the registry
+    GlobalColourSchemeManager().saveColourSchemes();
+
+    // Save to disk
+    GlobalRegistry().saveToDisk();
+
+    // Check the XML files if the colour was set
+    std::string savedColoursFile = _context.getSettingsPath() + "colours.xml";
+    EXPECT_TRUE(fs::exists(savedColoursFile)) << "Could not find saved colours file: " << savedColoursFile;
+
+    auto savedScheme = loadSchemeFromXml(SCHEME_DARKRADIANT_DEFAULT, savedColoursFile);
+    EXPECT_EQ(savedScheme["default_brush"], newValue);
+}
+
+TEST_F(ColourSchemeTestWithEmptySettings, CopiedSchemePersisted)
+{
+    auto newSchemeName = "My Copied Scheme";
+
+    // Make a copy of the default scheme
+    GlobalColourSchemeManager().copyScheme(SCHEME_DARKRADIANT_DEFAULT, newSchemeName);
+
+    // Export the state to the registry
+    GlobalColourSchemeManager().saveColourSchemes();
+
+    // Save to disk
+    GlobalRegistry().saveToDisk();
+
+    // Check the XML files if the colour was set
+    std::string savedColoursFile = _context.getSettingsPath() + "colours.xml";
+    EXPECT_TRUE(fs::exists(savedColoursFile)) << "Could not find saved colours file: " << savedColoursFile;
+
+    auto savedCopiedScheme = loadSchemeFromXml(newSchemeName, savedColoursFile);
+    auto savedDefaultScheme = loadSchemeFromXml(SCHEME_DARKRADIANT_DEFAULT, savedColoursFile);
+
+    EXPECT_EQ(savedCopiedScheme.size(), savedDefaultScheme.size());
+
+    // The values must be equal
+    for (const auto& pair : savedDefaultScheme)
+    {
+        EXPECT_EQ(savedCopiedScheme[pair.first], pair.second);
+    }
+}
+
+TEST_F(ColourSchemeTestWithIncompleteScheme, SchemeUpgrade)
+{
+    // The colours.xml should be loaded and the missing colours should be added
+
 }
 
 }

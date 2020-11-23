@@ -43,8 +43,8 @@ public:
 		}
 	}
 
-	// Returns the path to the test/resources/ folder shipped with the DR sources
-	virtual std::string getTestResourcePath() const
+	// Returns the path to the test/resources/tdm/ folder shipped with the DR sources
+	virtual std::string getTestProjectPath() const
 	{
 #if defined(POSIX) 
 	#if defined(TESTRESOURCEDIR) && !defined(ENABLE_RELOCATION)
