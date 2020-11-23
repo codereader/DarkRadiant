@@ -19,9 +19,7 @@ namespace
     const char* const SCHEME_SUPER_MAL = "Super Mal";
 }
 
-class ColourSchemeTest :
-    public RadiantTest
-{};
+using ColourSchemeTest = RadiantTest;
 
 class ColourSchemeTestWithIncompleteScheme :
     public ColourSchemeTest
@@ -29,7 +27,14 @@ class ColourSchemeTestWithIncompleteScheme :
 public:
     void SetUp() override
     {
-        // TODO
+        fs::path incompleteFile = _context.getTestResourcePath();
+        incompleteFile /= "settings/colours_incomplete.xml";
+
+        fs::path targetFile = _context.getSettingsPath();
+        targetFile /= "colours.xml";
+
+        fs::remove(targetFile);
+        fs::copy(incompleteFile, targetFile);
 
         RadiantTest::SetUp();
     }
@@ -221,7 +226,23 @@ TEST_F(ColourSchemeTestWithEmptySettings, CopiedSchemePersisted)
 TEST_F(ColourSchemeTestWithIncompleteScheme, SchemeUpgrade)
 {
     // The colours.xml should be loaded and the missing colours should be added
+    auto missingColour = "selected_group_items";
 
+    auto& activeScheme = GlobalColourSchemeManager().getActiveScheme();
+
+    // Super Mal must be tagged as active
+    EXPECT_EQ(activeScheme.getName(), SCHEME_SUPER_MAL);
+
+    // The "selected_group_items" colour definition is missing in that file
+    // it should have been set to the defaults of the factory super mal
+
+    // Load the factory defaults
+    std::string defaultColoursFile = _context.getRuntimeDataPath() + "colours.xml";
+    EXPECT_TRUE(fs::exists(defaultColoursFile)) << "Could not find factory colours file: " << defaultColoursFile;
+
+    auto defaultScheme = loadSchemeFromXml(SCHEME_SUPER_MAL, defaultColoursFile);
+
+    EXPECT_EQ(defaultScheme[missingColour], activeScheme.getColour(missingColour).getColour());
 }
 
 }

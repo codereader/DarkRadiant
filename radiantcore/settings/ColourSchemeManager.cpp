@@ -141,6 +141,7 @@ void ColourSchemeManager::loadColourSchemes()
 	}
 
 	std::string schemeName = "";
+    _activeScheme = "";
 
 	// Cycle through all found scheme nodes
 	for (const auto& node : schemeNodes)
@@ -154,7 +155,7 @@ void ColourSchemeManager::loadColourSchemes()
 			_colourSchemes[schemeName] = ColourScheme(node);
 
 			// Check, if this is the currently active scheme
-			if (node.getAttributeValue("active") == "1")
+			if (_activeScheme.empty() && node.getAttributeValue("active") == "1")
 			{
 				_activeScheme = schemeName;
 			}
