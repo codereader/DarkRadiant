@@ -43,21 +43,25 @@ public:
 		}
 	}
 
-	// Returns the path to the test/resources/tdm/ folder shipped with the DR sources
-	virtual std::string getTestProjectPath() const
+    // Returns the path to the test/resources/tdm/ folder shipped with the DR sources
+    virtual std::string getTestProjectPath() const
+    {
+        return getTestResourcePath() + "tdm/";
+    }
+
+	virtual std::string getTestResourcePath() const
 	{
 #if defined(POSIX) 
 	#if defined(TESTRESOURCEDIR) && !defined(ENABLE_RELOCATION)
 		fs::path testResourcePath(TESTRESOURCEDIR);
-		testResourcePath /= "tdm/";
 	#else
 		// make check will compile the test binary to $top_builddir/test/.libs/
 		fs::path testResourcePath = getApplicationPath();
-		testResourcePath /= "../../test/resources/tdm/";
+		testResourcePath /= "../../test/resources/";
 	#endif
 #else
 		fs::path testResourcePath = getApplicationPath();
-		testResourcePath /= "../test/resources/tdm/";
+		testResourcePath /= "../test/resources/";
 #endif
 		return os::standardPathWithSlash(testResourcePath.string());
 	}
