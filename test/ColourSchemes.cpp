@@ -19,7 +19,23 @@ namespace
     const char* const SCHEME_SUPER_MAL = "Super Mal";
 }
 
-using ColourSchemeTest = RadiantTest;
+class ColourSchemeTest :
+    public RadiantTest
+{
+protected:
+    void copySchemeFileToSettingsPath(const std::string& schemeFile)
+    {
+        fs::path schemeFilePath = _context.getTestResourcePath();
+        schemeFilePath /= "settings/";
+        schemeFilePath /= schemeFile;
+
+        fs::path targetFile = _context.getSettingsPath();
+        targetFile /= "colours.xml";
+
+        fs::remove(targetFile);
+        fs::copy(schemeFilePath, targetFile);
+    }
+};
 
 class ColourSchemeTestWithIncompleteScheme :
     public ColourSchemeTest
@@ -27,14 +43,25 @@ class ColourSchemeTestWithIncompleteScheme :
 public:
     void SetUp() override
     {
-        fs::path incompleteFile = _context.getTestResourcePath();
-        incompleteFile /= "settings/colours_incomplete.xml";
+        copySchemeFileToSettingsPath("colours_incomplete.xml");
 
-        fs::path targetFile = _context.getSettingsPath();
-        targetFile /= "colours.xml";
+        RadiantTest::SetUp();
+    }
+};
 
-        fs::remove(targetFile);
-        fs::copy(incompleteFile, targetFile);
+class ColourSchemeTestWithUserColours :
+    public ColourSchemeTest
+{
+protected:
+    fs::path _userDefinedSchemePath;
+public:
+    void SetUp() override
+    {
+        // Store the value locally, the test case wants to have it
+        _userDefinedSchemePath = _context.getTestResourcePath();
+        _userDefinedSchemePath /= "settings/colours_userdefined.xml";
+
+        copySchemeFileToSettingsPath("colours_userdefined.xml");
 
         RadiantTest::SetUp();
     }
@@ -95,9 +122,9 @@ TEST_F(ColourSchemeTestWithEmptySettings, LoadDefaultSchemes)
 {
     auto defaultSchemeNames = {
         SCHEME_DARKRADIANT_DEFAULT,
-        "QE3Radiant Original",
-        "Black & Green",
-        "Maya/Max/Lightwave Emulation",
+        SCHEME_QE3,
+        SCHEME_BLACK_AND_GREEN,
+        SCHEME_MAYA_MAX,
         SCHEME_SUPER_MAL
     };
 
@@ -241,8 +268,58 @@ TEST_F(ColourSchemeTestWithIncompleteScheme, SchemeUpgrade)
     EXPECT_TRUE(fs::exists(defaultColoursFile)) << "Could not find factory colours file: " << defaultColoursFile;
 
     auto defaultScheme = loadSchemeFromXml(SCHEME_SUPER_MAL, defaultColoursFile);
-
     EXPECT_EQ(defaultScheme[missingColour], activeScheme.getColour(missingColour).getColour());
+
+    // When saving, the scheme should now be complete
+    GlobalColourSchemeManager().saveColourSchemes();
+    GlobalRegistry().saveToDisk();
+
+    std::string savedColoursFile = _context.getSettingsPath() + "colours.xml";
+    EXPECT_TRUE(fs::exists(savedColoursFile)) << "Could not find saved colours file: " << savedColoursFile;
+
+    auto savedScheme = loadSchemeFromXml(SCHEME_SUPER_MAL, savedColoursFile);
+    EXPECT_EQ(savedScheme.size(), defaultScheme.size());
+
+    // All colour keys must be present
+    for (const auto& pair : savedScheme)
+    {
+        EXPECT_EQ(savedScheme.count(pair.first), 1);
+    }
+}
+
+TEST_F(ColourSchemeTestWithUserColours, RestoreActiveSchemeFromUserFile)
+{
+    auto& activeScheme = GlobalColourSchemeManager().getActiveScheme();
+
+    // The "MyMaya" custom theme is tagged as active in the file
+    EXPECT_EQ(activeScheme.getName(), "MyMaya");
+}
+
+TEST_F(ColourSchemeTestWithUserColours, RestoreAllSchemesFromUserFile)
+{
+    // Compare the schemes that we know are stored in the file
+    // The colours_userdefined.xml file specifically changes the "camera_background"
+    // colour in the SCHEME_BLACK_AND_GREEN theme, plus it adds a custom theme named MyMaya
+    auto storedSchemeNames = {
+        SCHEME_DARKRADIANT_DEFAULT,
+        SCHEME_QE3,
+        SCHEME_BLACK_AND_GREEN,
+        SCHEME_MAYA_MAX,
+        SCHEME_SUPER_MAL,
+        "MyMaya" // custom theme
+    };
+
+    for (auto schemeName : storedSchemeNames)
+    {
+        auto& loadedScheme = GlobalColourSchemeManager().getColourScheme(schemeName);
+        auto storedScheme = loadSchemeFromXml(schemeName, _userDefinedSchemePath.string());
+
+        // Check colour values
+        for (const auto& pair : storedScheme)
+        {
+            EXPECT_EQ(loadedScheme.getColour(pair.first).getColour(), pair.second);
+        }
+    }
 }
 
 }
