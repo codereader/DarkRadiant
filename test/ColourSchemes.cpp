@@ -54,6 +54,7 @@ class ColourSchemeTestWithUserColours :
 {
 protected:
     fs::path _userDefinedSchemePath;
+
 public:
     void SetUp() override
     {
@@ -196,21 +197,28 @@ TEST_F(ColourSchemeTestWithEmptySettings, ActiveSchemePersisted)
     EXPECT_EQ(schemes[0].getAttributeValue("name"), newSchemeName);
 }
 
-TEST_F(ColourSchemeTestWithEmptySettings, ColourChangePersisted)
+namespace
 {
-    auto& scheme = GlobalColourSchemeManager().getColourScheme(SCHEME_DARKRADIANT_DEFAULT);
 
-    Vector3 newValue(0.99, 0.99, 0.99);
+void modifySchemeColour(const std::string& schemeToModify, const std::string& colourName, const Vector3& newValue)
+{
+    auto& scheme = GlobalColourSchemeManager().getColourScheme(schemeToModify);
 
-    EXPECT_NE(scheme.getColour("default_brush").getColour(), newValue) << "Test setup failure: colour is already set to new RGB values";
+    EXPECT_NE(scheme.getColour(colourName).getColour(), newValue) << "Test setup failure: colour is already set to new RGB values";
 
     // Modify one colour
-    scheme.getColour("default_brush").getColour() = newValue;
+    scheme.getColour(colourName).getColour() = newValue;
+}
 
-    // Export the state to the registry
+}
+
+TEST_F(ColourSchemeTestWithEmptySettings, ColourChangePersisted)
+{
+    Vector3 newValue(0.99, 0.99, 0.99);
+    modifySchemeColour(SCHEME_DARKRADIANT_DEFAULT, "default_brush", newValue);
+
+    // Export the state to the registry and save it to disk
     GlobalColourSchemeManager().saveColourSchemes();
-
-    // Save to disk
     GlobalRegistry().saveToDisk();
 
     // Check the XML files if the colour was set
@@ -320,6 +328,81 @@ TEST_F(ColourSchemeTestWithUserColours, RestoreAllSchemesFromUserFile)
             EXPECT_EQ(loadedScheme.getColour(pair.first).getColour(), pair.second);
         }
     }
+}
+
+TEST_F(ColourSchemeTestWithUserColours, SavedUserSchemesAreNotReadOnly)
+{
+    // When saving user-defined schemes the readonly tag should only be present
+    // on the non-system themes
+    GlobalColourSchemeManager().saveColourSchemes();
+    GlobalRegistry().saveToDisk();
+
+    std::string savedColoursFile = _context.getSettingsPath() + "colours.xml";
+    EXPECT_TRUE(fs::exists(savedColoursFile)) << "Could not find saved colours file: " << savedColoursFile;
+
+    std::set<std::string> readOnlySchemes = {
+        SCHEME_DARKRADIANT_DEFAULT,
+        SCHEME_QE3,
+        SCHEME_BLACK_AND_GREEN,
+        SCHEME_MAYA_MAX,
+        SCHEME_SUPER_MAL
+    };
+
+    auto userScheme = "MyMaya";
+
+    xml::Document doc(savedColoursFile);
+    auto schemes = doc.findXPath("//colourscheme");
+    EXPECT_EQ(schemes.size(), readOnlySchemes.size() + 1); // readOnlySchemes + one user scheme
+
+    for (auto schemeNode : schemes)
+    {
+        auto name = schemeNode.getAttributeValue("name");
+
+        // Scheme should be read-only for the system ones only
+        EXPECT_EQ(schemeNode.getAttributeValue("readonly") == "1", readOnlySchemes.count(name) == 1);
+    }
+}
+
+TEST_F(ColourSchemeTestWithUserColours, ColourChangePersisted)
+{
+    // This is the same test as TEST_F(ColourSchemeTestWithEmptySettings, CopiedSchemePersisted) above
+    Vector3 newValue(0.99, 0.99, 0.99);
+    modifySchemeColour(SCHEME_DARKRADIANT_DEFAULT, "default_brush", newValue);
+    modifySchemeColour("MyMaya", "default_brush", newValue);
+
+    // Export the state to the registry and save it to disk
+    GlobalColourSchemeManager().saveColourSchemes();
+    GlobalRegistry().saveToDisk();
+
+    // Check the XML files if the colour was set
+    std::string savedColoursFile = _context.getSettingsPath() + "colours.xml";
+    EXPECT_TRUE(fs::exists(savedColoursFile)) << "Could not find saved colours file: " << savedColoursFile;
+
+    auto savedDefaultScheme = loadSchemeFromXml(SCHEME_DARKRADIANT_DEFAULT, savedColoursFile);
+    EXPECT_EQ(savedDefaultScheme["default_brush"], newValue);
+
+    auto savedUserScheme = loadSchemeFromXml("MyMaya", savedColoursFile);
+    EXPECT_EQ(savedDefaultScheme["default_brush"], newValue);
+}
+
+TEST_F(ColourSchemeTestWithUserColours, DeleteUserTheme)
+{
+    std::string userThemeName = "MyMaya";
+    EXPECT_TRUE(GlobalColourSchemeManager().schemeExists(userThemeName));
+
+    GlobalColourSchemeManager().deleteScheme(userThemeName);
+
+    // Export the state to the registry and save it to disk
+    GlobalColourSchemeManager().saveColourSchemes();
+    GlobalRegistry().saveToDisk();
+
+    // Check the XML files if the scheme was actually removed
+    std::string savedColoursFile = _context.getSettingsPath() + "colours.xml";
+    EXPECT_TRUE(fs::exists(savedColoursFile)) << "Could not find saved colours file: " << savedColoursFile;
+
+    xml::Document doc(savedColoursFile);
+    auto schemes = doc.findXPath("//colourscheme[@name='" + userThemeName + "']");
+    EXPECT_TRUE(schemes.empty());
 }
 
 }
