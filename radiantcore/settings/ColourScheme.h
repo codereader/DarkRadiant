@@ -96,10 +96,10 @@ public:
 	bool isReadOnly() const override;
 
     // set the read-only status of this scheme
-	void setReadOnly(bool isReadOnly) override;
+	void setReadOnly(bool isReadOnly);
 
 	// Tries to add any missing items from the given scheme into this one
-	void mergeMissingItemsFromScheme(const IColourScheme& other) override;
+	void mergeMissingItemsFromScheme(const IColourScheme& other);
 };
 
 } // namespace

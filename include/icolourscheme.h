@@ -34,12 +34,6 @@ public:
 
 	// returns true if the scheme is read-only
 	virtual bool isReadOnly() const = 0;
-
-	// set the read-only status of this scheme
-	virtual void setReadOnly(bool isReadOnly) = 0;
-
-	// Tries to add any missing items from the given scheme into this one
-	virtual void mergeMissingItemsFromScheme(const IColourScheme& other) = 0;
 };
 
 class IColourSchemeManager :
