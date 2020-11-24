@@ -34,6 +34,9 @@ public:
 
     // Removes the override colour for the given entity class
     virtual void removeOverrideColour(const std::string& eclass) = 0;
+
+    // Removes all registered overrides
+    virtual void clearOverrideColours() = 0;
 };
 
 }

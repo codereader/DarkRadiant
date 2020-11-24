@@ -100,7 +100,7 @@ TEST_F(Quake4WorldspawnColourTest, SchemeBrushColourIsUsed)
 TEST_F(RadiantTest, SchemeBrushColourIsUsed)
 {
     // This setup does have a worldspawn
-    EXPECT_TRUE(GlobalEntityClassManager().findClass("worldspawn"));
+    EXPECT_TRUE(GlobalEntityClassManager().findOrInsert("worldspawn", true));
 
     // Create a worldspawn
     auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();

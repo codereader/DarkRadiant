@@ -47,10 +47,10 @@ public:
 	const std::string& getName() const override;
 	const StringSet& getDependencies() const override;
 	void initialiseModule(const IApplicationContext& ctx) override;
-	void shutdownModule() override;
 
 private:
 	void saveScheme(const std::string& name);
+	void emitEclassOverrides();
 };
 
 } // namespace

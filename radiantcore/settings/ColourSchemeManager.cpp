@@ -1,6 +1,7 @@
 #include "ColourSchemeManager.h"
 #include "iregistry.h"
 #include "itextstream.h"
+#include "ieclasscolours.h"
 
 #include "module/StaticModule.h"
 
@@ -122,6 +123,8 @@ void ColourSchemeManager::saveColourSchemes()
 	// Flush the whole colour scheme structure and re-load it from the registry.
 	// This is to remove any remaining artifacts.
 	restoreColourSchemes();
+
+    emitEclassOverrides();
 }
 
 void ColourSchemeManager::loadColourSchemes()
@@ -209,6 +212,7 @@ const StringSet& ColourSchemeManager::getDependencies() const
 	if (_dependencies.empty())
 	{
 		_dependencies.insert(MODULE_XMLREGISTRY);
+		_dependencies.insert(MODULE_ECLASS_COLOUR_MANAGER);
 	}
 
 	return _dependencies;
@@ -219,10 +223,20 @@ void ColourSchemeManager::initialiseModule(const IApplicationContext& ctx)
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 
 	loadColourSchemes();
+    emitEclassOverrides();
 }
 
-void ColourSchemeManager::shutdownModule()
-{}
+void ColourSchemeManager::emitEclassOverrides()
+{
+    auto& colourManager = GlobalEclassColourManager();
+    colourManager.clearOverrideColours();
+
+    // Apply the overrides for the known entity classes
+    auto& activeScheme = getActiveScheme();
+
+    colourManager.addOverrideColour("worldspawn", activeScheme.getColour("default_brush").getColour());
+    colourManager.addOverrideColour("light", activeScheme.getColour("light_volumes").getColour());
+}
 
 module::StaticModule<ColourSchemeManager> colourSchemeManagerModule;
 

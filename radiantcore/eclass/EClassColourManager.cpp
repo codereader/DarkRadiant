@@ -39,6 +39,11 @@ void EClassColourManager::removeOverrideColour(const std::string& eclass)
     _overrides.erase(eclass);
 }
 
+void EClassColourManager::clearOverrideColours()
+{
+    _overrides.clear();
+}
+
 const std::string& EClassColourManager::getName() const
 {
     static std::string _name(MODULE_ECLASS_COLOUR_MANAGER);
