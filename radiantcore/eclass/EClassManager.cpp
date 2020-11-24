@@ -1,6 +1,7 @@
 #include "EClassManager.h"
 
 #include "iarchive.h"
+#include "ieclasscolours.h"
 #include "i18n.h"
 #include "iregistry.h"
 #include "icommandsystem.h"
@@ -63,6 +64,9 @@ IEntityClassPtr EClassManager::findOrInsert(const std::string& name, bool has_br
     // greebo: Changed fallback behaviour when unknown entites are encountered to TRUE
     // so that brushes of unknown entites don't get lost (issue #240)
     eclass = Doom3EntityClass::create(lName, true);
+
+    // Any overrides should also apply to entityDefs that are crated on the fly
+    GlobalEclassColourManager().applyColours(eclass);
 
     // Try to insert the class
     return insertUnique(eclass);
@@ -179,8 +183,23 @@ void EClassManager::loadDefAndResolveInheritance()
 {
     parseDefFiles();
     resolveInheritance();
+    applyColours();
 
 	_defsLoadedSignal.emit();
+}
+
+void EClassManager::applyColours()
+{
+    GlobalEclassColourManager().foreachOverrideColour([&](const std::string& eclass, const Vector3& colour)
+    {
+        auto foundEclass = _entityClasses.find(string::to_lower_copy(eclass));
+
+        if (foundEclass != _entityClasses.end())
+        {
+            rDebug() << "Applying colour " << colour << " to eclass " << eclass << std::endl;
+            foundEclass->second->setColour(colour);
+        }
+    });
 }
 
 void EClassManager::realise()
@@ -278,6 +297,7 @@ const StringSet& EClassManager::getDependencies() const
 		_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
 		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
+		_dependencies.insert(MODULE_ECLASS_COLOUR_MANAGER);
 	}
 
 	return _dependencies;

@@ -93,6 +93,9 @@ private:
     // Worker function usually done in a separate thread
     void loadDefAndResolveInheritance();
 
+    // Applies possible colour overrides to all affected eclasses
+    void applyColours();
+
 	// Tries to insert the given eclass, not overwriting existing ones
 	// In either case, the eclass in the map is returned
 	Doom3EntityClassPtr insertUnique(const Doom3EntityClassPtr& eclass);

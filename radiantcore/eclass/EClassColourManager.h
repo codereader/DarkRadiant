@@ -17,6 +17,7 @@ public:
 
     void addOverrideColour(const std::string& eclass, const Vector3& colour) override;
     void applyColours(const IEntityClassPtr& eclass) override;
+    void foreachOverrideColour(const std::function<void(const std::string&, const Vector3&)>& functor) override;
     void removeOverrideColour(const std::string& eclass) override;
 
     // RegisterableModule implementation

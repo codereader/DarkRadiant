@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include "imodule.h"
 #include "ieclass.h"
 #include "math/Vector3.h"
@@ -27,6 +28,9 @@ public:
 
     // Applies a possible colour override to the given entity class
     virtual void applyColours(const IEntityClassPtr& eclass) = 0;
+
+    // Visit each override definition with the given functor
+    virtual void foreachOverrideColour(const std::function<void(const std::string&, const Vector3&)>& functor) = 0;
 
     // Removes the override colour for the given entity class
     virtual void removeOverrideColour(const std::string& eclass) = 0;
