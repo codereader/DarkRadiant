@@ -9,6 +9,7 @@ namespace eclass
 void EClassColourManager::addOverrideColour(const std::string& eclass, const Vector3& colour)
 {
     _overrides[eclass] = colour;
+    _overrideChangedSignal.emit(eclass);
 }
 
 void EClassColourManager::applyColours(const IEntityClassPtr& eclass)
@@ -37,11 +38,28 @@ void EClassColourManager::foreachOverrideColour(
 void EClassColourManager::removeOverrideColour(const std::string& eclass)
 {
     _overrides.erase(eclass);
+    _overrideChangedSignal.emit(eclass);
 }
 
 void EClassColourManager::clearOverrideColours()
 {
-    _overrides.clear();
+    for (auto i = _overrides.begin(); i != _overrides.end(); ++i)
+    {
+        // Copy the eclass name to a local
+        auto eclass = i->first;
+
+        // Delete from map
+        _overrides.erase(i++);
+
+        // Fire signal, this might call applyColours which will
+        // find the colour has have been removed
+        _overrideChangedSignal.emit(eclass);
+    }
+}
+
+sigc::signal<void, const std::string&>& EClassColourManager::sig_overrideColourChanged()
+{
+    return _overrideChangedSignal;
 }
 
 const std::string& EClassColourManager::getName() const

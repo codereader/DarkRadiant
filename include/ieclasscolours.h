@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <sigc++/signal.h>
 #include "imodule.h"
 #include "ieclass.h"
 #include "math/Vector3.h"
@@ -37,6 +38,9 @@ public:
 
     // Removes all registered overrides
     virtual void clearOverrideColours() = 0;
+
+    // Signal invoked when an override of a specific eclass is added, changed or removed
+    virtual sigc::signal<void, const std::string&>& sig_overrideColourChanged() = 0;
 };
 
 }
