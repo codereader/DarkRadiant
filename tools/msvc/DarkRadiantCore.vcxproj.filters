@@ -997,6 +997,9 @@
     <ClCompile Include="..\..\radiantcore\model\export\PatchSurface.cpp">
       <Filter>src\model\export</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\eclass\EClassColourManager.cpp">
+      <Filter>src\eclass</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
@@ -2030,6 +2033,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\model\export\PatchSurface.h">
       <Filter>src\model\export</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\eclass\EClassColourManager.h">
+      <Filter>src\eclass</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

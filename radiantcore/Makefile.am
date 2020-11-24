@@ -52,6 +52,7 @@ libradiantcore_la_SOURCES = Radiant.cpp \
                 clipper/SplitAlgorithm.cpp \
                 commandsystem/CommandSystem.cpp \
                 eclass/Doom3EntityClass.cpp \
+                eclass/EClassColourManager.cpp \
                 eclass/EClassManager.cpp \
                 entity/ShaderParms.cpp \
                 entity/EntitySettings.cpp \

@@ -39,6 +39,7 @@
     <ClCompile Include="..\..\radiantcore\clipper\ClipPoint.cpp" />
     <ClCompile Include="..\..\radiantcore\clipper\SplitAlgorithm.cpp" />
     <ClCompile Include="..\..\radiantcore\eclass\Doom3EntityClass.cpp" />
+    <ClCompile Include="..\..\radiantcore\eclass\EClassColourManager.cpp" />
     <ClCompile Include="..\..\radiantcore\eclass\EClassManager.cpp" />
     <ClCompile Include="..\..\radiantcore\entity\AngleKey.cpp" />
     <ClCompile Include="..\..\radiantcore\entity\curve\Curve.cpp" />
@@ -716,6 +717,7 @@
     <ClInclude Include="..\..\radiantcore\clipper\SplitAlgorithm.h" />
     <ClInclude Include="..\..\radiantcore\eclass\Doom3EntityClass.h" />
     <ClInclude Include="..\..\radiantcore\eclass\Doom3ModelDef.h" />
+    <ClInclude Include="..\..\radiantcore\eclass\EClassColourManager.h" />
     <ClInclude Include="..\..\radiantcore\eclass\EClassManager.h" />
     <ClInclude Include="..\..\radiantcore\entity\AngleKey.h" />
     <ClInclude Include="..\..\radiantcore\entity\ColourKey.h" />
