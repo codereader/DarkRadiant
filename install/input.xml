@@ -205,7 +205,7 @@
 		<commandRemapping oldname="CameraRight" newname="CameraMoveRight" />
 		<commandRemapping oldname="CameraUp" newname="CameraMoveUp" />
 		<commandRemapping oldname="CameraDown" newname="CameraMoveDown" />
-        <commandRemapping oldname="SimplePatchMesh" newname="CreateSimplePatchMesh" />
+        <commandRemapping oldname="SimplePatchMesh" newname="CreateSimplePatchDialog" />
         <commandRemapping oldname="CapCurrentCurve" newname="PatchCapDialog" />
         <commandRemapping oldname="ThickenPatch" newname="ThickenPatchDialog" />
 	</commandRemappings>
