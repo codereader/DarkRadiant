@@ -315,11 +315,16 @@ void EClassManager::initialiseModule(const IApplicationContext& ctx)
     }
 
 	GlobalCommandSystem().addCommand("ReloadDefs", std::bind(&EClassManager::reloadDefsCmd, this, std::placeholders::_1));
+
+    _eclassColoursChanged = GlobalEclassColourManager().sig_overrideColourChanged().connect(
+        sigc::mem_fun(this, &EClassManager::onEclassOverrideColourChanged));
 }
 
 void EClassManager::shutdownModule()
 {
 	rMessage() << "EntityClassDoom3::shutdownModule called." << std::endl;
+
+    _eclassColoursChanged.disconnect();
 
 	GlobalFileSystem().removeObserver(*this);
 
@@ -332,6 +337,29 @@ void EClassManager::shutdownModule()
 	// Clear member structures
 	_entityClasses.clear();
 	_models.clear();
+}
+
+void EClassManager::onEclassOverrideColourChanged(const std::string& eclass, bool overrideRemoved)
+{
+    // An override colour in the IColourManager instance has changed
+    // Do we have an affected eclass with that name?
+    auto foundEclass = _entityClasses.find(eclass);
+
+    if (foundEclass == _entityClasses.end())
+    {
+        return;
+    }
+
+    // If the override was removed, we just reset the colour
+    // We perform this switch to avoid firing the eclass changed signal twice
+    if (overrideRemoved)
+    {
+        foundEclass->second->resetColour();
+    }
+    else
+    {
+        GlobalEclassColourManager().applyColours(foundEclass->second);
+    }
 }
 
 // This takes care of relading the entityDefs and refreshing the scenegraph

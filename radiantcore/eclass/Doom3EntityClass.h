@@ -165,6 +165,8 @@ public:
     const Vector3& getColour() const override;
     /// Set the display colour
     void setColour(const Vector3& colour) override;
+    // Resets the colour to the value defined in the attributes
+    void resetColour();
     const std::string& getWireShader() const override;
     const std::string& getFillShader() const override;
     EntityClassAttribute& getAttribute(const std::string& name) override;

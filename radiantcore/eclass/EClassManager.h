@@ -1,5 +1,6 @@
 #pragma once
 
+#include <sigc++/connection.h>
 #include "ieclass.h"
 #include "icommandsystem.h"
 #include "ifilesystem.h"
@@ -50,6 +51,8 @@ class EClassManager :
 
     sigc::signal<void> _defsLoadedSignal;
     sigc::signal<void> _defsReloadedSignal;
+
+    sigc::connection _eclassColoursChanged;
 
 public:
     // Constructor
@@ -111,6 +114,8 @@ private:
 	void resolveInheritance();
 
 	void reloadDefsCmd(const cmd::ArgumentList& args);
+
+    void onEclassOverrideColourChanged(const std::string& eclass, bool overrideRemoved);
 };
 typedef std::shared_ptr<EClassManager> EClassManagerPtr;
 

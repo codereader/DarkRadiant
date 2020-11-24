@@ -299,6 +299,22 @@ void Doom3EntityClass::setColour(const Vector3& colour)
     _changedSignal.emit();
 }
 
+void Doom3EntityClass::resetColour()
+{
+    // (Re)set the colour
+    const EntityClassAttribute& colourAttr = getAttribute("editor_color");
+
+    if (!colourAttr.getValue().empty())
+    {
+        setColour(string::convert<Vector3>(colourAttr.getValue()));
+    }
+    else
+    {
+        // If no colour is set, assign the default entity colour to this class
+        setColour(DefaultEntityColour);
+    }
+}
+
 const Vector3& Doom3EntityClass::getColour() const {
     return _colour;
 }
@@ -436,18 +452,7 @@ void Doom3EntityClass::resolveInheritance(EntityClasses& classmap)
         _colourTransparent = true;
     }
 
-    // (Re)set the colour
-    const EntityClassAttribute& colourAttr = getAttribute("editor_color");
-
-    if (!colourAttr.getValue().empty())
-    {
-        setColour(string::convert<Vector3>(colourAttr.getValue()));
-    }
-    else
-    {
-        // If no colour is set, assign the default entity colour to this class
-        setColour(DefaultEntityColour);
-    }
+    resetColour();
 }
 
 bool Doom3EntityClass::isOfType(const std::string& className)
