@@ -198,6 +198,11 @@ void ColourSchemeEditor::updateColourSelectors()
 
 void ColourSchemeEditor::updateWindows()
 {
+    // Force an eclass update for previewing purposes
+    // If the colours are reverted later, this will be cleaned up
+    // by the Ok/Cancel handling code anyway
+    GlobalColourSchemeManager().emitEclassOverrides();
+
 	signal_ColoursChanged().emit();
 
 	// Call the update, so all colours can be previewed

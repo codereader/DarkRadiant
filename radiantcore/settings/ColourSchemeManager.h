@@ -28,21 +28,22 @@ public:
 	void setActive(const std::string& name) override;
 
 	// Returns the requested colour from the currently active scheme
-	Vector3 getColour(const std::string& colourName);
+	Vector3 getColour(const std::string& colourName) override;
 
 	ColourScheme& getActiveScheme() override;
 	ColourScheme& getColourScheme(const std::string& name) override;
 
 	// Loads/saves all the schemes from the registry
-	void loadColourSchemes();
-	void saveColourSchemes();
+	void loadColourSchemes() override;
+	void saveColourSchemes() override;
 
 	// Saves the specified scheme into the registry
 	void deleteScheme(const std::string& name) override;
 	void copyScheme(const std::string& fromName, const std::string& toName) override;
 
 	// Reverts all changes to the current objects and re-load them from the registry
-	void restoreColourSchemes();
+	void restoreColourSchemes() override;
+	void emitEclassOverrides() override;
 
 	const std::string& getName() const override;
 	const StringSet& getDependencies() const override;
@@ -50,7 +51,6 @@ public:
 
 private:
 	void saveScheme(const std::string& name);
-	void emitEclassOverrides();
 };
 
 } // namespace

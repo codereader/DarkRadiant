@@ -53,6 +53,7 @@ void ColourSchemeManager::restoreColourSchemes()
 	// Clear the whole colourScheme map and reload it from the registry
 	_colourSchemes.clear();
 	loadColourSchemes();
+    emitEclassOverrides();
 }
 
 void ColourSchemeManager::deleteScheme(const std::string& name)
@@ -123,8 +124,6 @@ void ColourSchemeManager::saveColourSchemes()
 	// Flush the whole colour scheme structure and re-load it from the registry.
 	// This is to remove any remaining artifacts.
 	restoreColourSchemes();
-
-    emitEclassOverrides();
 }
 
 void ColourSchemeManager::loadColourSchemes()

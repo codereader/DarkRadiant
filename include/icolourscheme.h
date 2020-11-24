@@ -67,6 +67,12 @@ public:
 
 	// Reverts all changes to the current objects and re-load them from the registry
 	virtual void restoreColourSchemes() = 0;
+
+    // Explicitly store the entity class overrides in the EclassColourManager
+    // This is done by restore/saveColourSchemes automatically and doesn't need to be
+    // called by client code. This is used to let the colour scheme editor force an 
+    // update of the eclasses in the current scene to allow for a better preview
+    virtual void emitEclassOverrides() = 0;
 };
 
 }
