@@ -84,6 +84,7 @@
     <ClCompile Include="..\..\..\test\Selection.cpp" />
     <ClCompile Include="..\..\..\test\SelectionAlgorithm.cpp" />
     <ClCompile Include="..\..\..\test\VFS.cpp" />
+    <ClCompile Include="..\..\..\test\WorldspawnColour.cpp" />
   </ItemGroup>
   <ItemDefinitionGroup />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

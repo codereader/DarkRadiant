@@ -126,7 +126,7 @@ protected:
 		GlobalCommandSystem().executeCommand("OpenMap", mapsRelativePath);
 	}
 
-	void handleGameConfigMessage(game::ConfigurationNeeded& message)
+	virtual void handleGameConfigMessage(game::ConfigurationNeeded& message)
 	{
 		game::GameConfiguration config;
 
