@@ -112,4 +112,62 @@ TEST_F(RadiantTest, SchemeBrushColourIsUsed)
     EXPECT_EQ(Node_getEntity(worldspawn)->getEntityClass()->getWireShader(), schemeWireShader);
 }
 
+TEST_F(RadiantTest, SchemeBrushColourChange)
+{
+    // Create a worldspawn
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+
+    // The eclass wire shader should match the colour defined in the scheme
+    const auto& schemeColour = GlobalColourSchemeManager().getActiveScheme().getColour("default_brush").getColour();
+    auto schemeWireShader = fmt::format("<{0:f} {1:f} {2:f}>", schemeColour[0], schemeColour[1], schemeColour[2]);
+
+    EXPECT_EQ(Node_getEntity(worldspawn)->getEntityClass()->getWireShader(), schemeWireShader);
+
+    // Modify the brush colour
+    Vector3 changedColour(0.25, 0.9, 0.99);
+    auto changedWireShader = fmt::format("<{0:f} {1:f} {2:f}>", changedColour[0], changedColour[1], changedColour[2]);
+
+    GlobalColourSchemeManager().getActiveScheme().getColour("default_brush").getColour() = changedColour;
+
+    // This in itself doesn't affect the entity yet
+    EXPECT_EQ(Node_getEntity(worldspawn)->getEntityClass()->getWireShader(), schemeWireShader);
+
+    // But calling saveColourSchemes should update the wire shader
+    GlobalColourSchemeManager().saveColourSchemes();
+
+    EXPECT_EQ(Node_getEntity(worldspawn)->getEntityClass()->getWireShader(), changedWireShader);
+}
+
+TEST_F(RadiantTest, SchemeBrushColourRevert)
+{
+    // Create a worldspawn
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+
+    // The eclass wire shader should match the colour defined in the scheme
+    const auto& schemeColour = GlobalColourSchemeManager().getActiveScheme().getColour("default_brush").getColour();
+    auto schemeWireShader = fmt::format("<{0:f} {1:f} {2:f}>", schemeColour[0], schemeColour[1], schemeColour[2]);
+
+    EXPECT_EQ(Node_getEntity(worldspawn)->getEntityClass()->getWireShader(), schemeWireShader);
+
+    // Modify the brush colour
+    Vector3 changedColour(0.25, 0.9, 0.99);
+    auto changedWireShader = fmt::format("<{0:f} {1:f} {2:f}>", changedColour[0], changedColour[1], changedColour[2]);
+
+    GlobalColourSchemeManager().getActiveScheme().getColour("default_brush").getColour() = changedColour;
+
+    // This in itself doesn't affect the entity yet
+    EXPECT_EQ(Node_getEntity(worldspawn)->getEntityClass()->getWireShader(), schemeWireShader);
+
+    // This should update the eclasses, but not save anything to the registry
+    GlobalColourSchemeManager().emitEclassOverrides();
+
+    EXPECT_EQ(Node_getEntity(worldspawn)->getEntityClass()->getWireShader(), changedWireShader);
+
+    // Revert the colour schemes to the values in the registry
+    GlobalColourSchemeManager().restoreColourSchemes();
+
+    // We should be back at the theme colour we had before
+    EXPECT_EQ(Node_getEntity(worldspawn)->getEntityClass()->getWireShader(), schemeWireShader);
+}
+
 }
