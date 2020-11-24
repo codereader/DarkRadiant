@@ -172,8 +172,6 @@ void EClassManager::resolveInheritance()
 
 void EClassManager::ensureDefsLoaded()
 {
-    assert(_realised);
-
     _defLoader.ensureFinished();
 }
 
