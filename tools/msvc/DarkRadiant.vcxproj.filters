@@ -667,9 +667,6 @@
     <ClCompile Include="..\..\radiant\ui\common\SoundShaderDefinitionView.cpp">
       <Filter>src\ui\common</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\ui\EntityClassColourManager.cpp">
-      <Filter>src\ui</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\map\AutoSaver.cpp">
       <Filter>src\map</Filter>
     </ClCompile>
@@ -1181,9 +1178,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\filters\editor\FilterEditor.h">
       <Filter>src\ui\filters\editor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\EntityClassColourManager.h">
-      <Filter>src\ui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\LongRunningOperationHandler.h">
       <Filter>src\ui</Filter>

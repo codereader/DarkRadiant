@@ -7,7 +7,6 @@
 #include "iorthocontextmenu.h"
 #include "icommandsystem.h"
 
-#include "EntityClassColourManager.h"
 #include "LongRunningOperationHandler.h"
 #include "FileSelectionRequestHandler.h"
 #include "AutoSaveRequestHandler.h"
@@ -37,7 +36,6 @@ class UserInterfaceModule :
 	public RegisterableModule
 {
 private:
-	std::unique_ptr<EntityClassColourManager> _eClassColourManager;
 	std::unique_ptr<LongRunningOperationHandler> _longOperationHandler;
 	std::unique_ptr<MapFileProgressHandler> _mapFileProgressHandler;
 	std::unique_ptr<AutoSaveRequestHandler> _autoSaveRequestHandler;

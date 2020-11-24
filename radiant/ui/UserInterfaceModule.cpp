@@ -181,7 +181,6 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
 		[]() { return cmd::ExecutionNotPossible::ToBool(selection::checkUngroupSelectedAvailable); }),
 		IOrthoContextMenu::SECTION_SELECTION_GROUPS);
 
-	_eClassColourManager.reset(new EntityClassColourManager);
 	_longOperationHandler.reset(new LongRunningOperationHandler);
 	_mapFileProgressHandler.reset(new MapFileProgressHandler);
 	_autoSaveRequestHandler.reset(new AutoSaveRequestHandler);
@@ -230,7 +229,6 @@ void UserInterfaceModule::shutdownModule()
 	_entitySettingsConn.disconnect();
 
 	_longOperationHandler.reset();
-	_eClassColourManager.reset();
 	_mapFileProgressHandler.reset();
 	_fileSelectionRequestHandler.reset();
 	_autoSaveRequestHandler.reset();
