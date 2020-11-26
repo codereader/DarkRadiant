@@ -2,6 +2,7 @@
 
 #include <cstddef>
 #include "inode.h"
+#include "iundo.h"
 #include "ientity.h"
 #include "ibrush.h"
 #include "ipatch.h"
@@ -120,6 +121,15 @@ inline scene::INodePtr getEntityByName(const scene::INodePtr& parent, const std:
     {
         return entity.getEntity().getKeyValue("name") == name;
     });
+}
+
+// Modifies a key/value of the worldspawn entity (in an Undoable transaction)
+inline void setWorldspawnKeyValue(const std::string& key, const std::string& value)
+{
+    auto entity = GlobalMapModule().findOrInsertWorldspawn();
+
+    UndoableCommand cmd("modifyKeyValue");
+    Node_getEntity(entity)->setKeyValue(key, value);
 }
 
 inline model::ModelNodePtr findChildModel(const scene::INodePtr& parent)

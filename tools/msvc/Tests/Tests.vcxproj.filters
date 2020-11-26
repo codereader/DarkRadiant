@@ -37,6 +37,9 @@
     <ClInclude Include="..\..\..\test\algorithm\Scene.h">
       <Filter>algorithm</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\test\algorithm\XmlUtils.h">
+      <Filter>algorithm</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

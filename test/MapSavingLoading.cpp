@@ -1,6 +1,7 @@
 #include "RadiantTest.h"
 
 #include <fstream>
+#include "iundo.h"
 #include "imap.h"
 #include "imapformat.h"
 #include "iradiant.h"
@@ -9,6 +10,7 @@
 #include "icommandsystem.h"
 #include "messages/FileSelectionRequest.h"
 #include "algorithm/Scene.h"
+#include "algorithm/XmlUtils.h"
 #include "os/file.h"
 #include <sigc++/connection.h>
 
@@ -206,6 +208,36 @@ TEST_F(MapSavingTest, saveMapWithoutModification)
     conn.disconnect();
 }
 
+TEST_F(MapSavingTest, saveMapClearsModifiedFlag)
+{
+    // Create a copy of the original map, we're modifying it
+    fs::path mapPath = _context.getTestResourcePath();
+    mapPath /= "maps/altar.map";
+
+    fs::path tempPath = _context.getTemporaryDataPath();
+    tempPath /= "altar_modified_flag_test.map";
+    
+    // Copy both .map and .darkradiant file
+    fs::copy(mapPath, tempPath);
+    fs::copy(fs::path(mapPath).replace_extension("darkradiant"), fs::path(tempPath).replace_extension("darkradiant"));
+
+    GlobalCommandSystem().executeCommand("OpenMap", tempPath.string());
+    checkAltarScene();
+
+    EXPECT_FALSE(GlobalMapModule().isModified());
+
+    // Modify the worldspawn key values (in an Undoable transaction)
+    algorithm::setWorldspawnKeyValue("dummykey", "dummyvalue");
+
+    // This should mark the map as modified
+    EXPECT_TRUE(GlobalMapModule().isModified());
+
+    GlobalCommandSystem().executeCommand("SaveMap");
+
+    // Modified flag should be cleared now
+    EXPECT_FALSE(GlobalMapModule().isModified());
+}
+
 TEST_F(MapSavingTest, saveMapDoesntChangeMap)
 {
     std::string modRelativePath = "maps/altar.map";
@@ -272,6 +304,56 @@ TEST_F(MapSavingTest, saveAs)
     // Load it again and check the scene
     GlobalCommandSystem().executeCommand("OpenMap", tempPath.string());
     checkAltarScene();
+
+    GlobalRadiantCore().getMessageBus().removeListener(msgSubscription);
+}
+
+TEST_F(MapSavingTest, saveAsWithFormatWillContinueUsingThatFormat)
+{
+    std::string modRelativePath = "maps/altar.map";
+
+    GlobalCommandSystem().executeCommand("OpenMap", modRelativePath);
+    checkAltarScene();
+
+    // Select the format based on the mapx extension
+    fs::path tempPath = _context.getTemporaryDataPath();
+    tempPath /= "altar_copy.mapx";
+
+    auto format = GlobalMapFormatManager().getMapFormatForFilename(tempPath.string());
+    EXPECT_EQ(format->getMapFormatName(), map::PORTABLE_MAP_FORMAT_NAME);
+
+    // Subscribe to the event asking for the target path
+    auto msgSubscription = GlobalRadiantCore().getMessageBus().addListener(
+        radiant::IMessage::Type::FileSelectionRequest,
+        radiant::TypeListener<radiant::FileSelectionRequest>(
+            [&](radiant::FileSelectionRequest& msg)
+    {
+        msg.setHandled(true);
+        msg.setResult(radiant::FileSelectionRequest::Result
+            {
+                tempPath.string(),
+                format->getMapFormatName()
+            });
+    }));
+
+    EXPECT_FALSE(os::fileOrDirExists(tempPath));
+
+    GlobalCommandSystem().executeCommand("SaveMapAs");
+
+    // Check that the file got created
+    EXPECT_TRUE(os::fileOrDirExists(tempPath));
+    algorithm::assertFileIsMapxFile(tempPath.string());
+
+    // The map path should have been changed
+    EXPECT_EQ(GlobalMapModule().getMapName(), tempPath.string());
+
+    // Modify something in the map and save again
+    algorithm::setWorldspawnKeyValue("dummykey222", "dummyvalue");
+
+    GlobalCommandSystem().executeCommand("SaveMap");
+
+    // Check that file, it should still be using the portable format
+    algorithm::assertFileIsMapxFile(tempPath.string());
 
     GlobalRadiantCore().getMessageBus().removeListener(msgSubscription);
 }
@@ -358,13 +440,8 @@ TEST_F(MapSavingTest, saveCopyAsMapx)
     // Check that the file got created
     EXPECT_TRUE(os::fileOrDirExists(tempPath));
 
-    // Minimal assertion: we got a file that appears to start like an XML document
-    std::ifstream tempFile(tempPath.string());
-    std::stringstream content;
-    content << tempFile.rdbuf();
-
-    ASSERT_TRUE(string::starts_with(content.str(), "<?xml version=\"1.0\" encoding=\"utf-8\"?>"));
-    ASSERT_TRUE(content.str().find("<map") != std::string::npos);
+    // Check the output file
+    algorithm::assertFileIsMapxFile(tempPath.string());
 
     // The map path should NOT have been changed
     EXPECT_EQ(GlobalMapModule().getMapName(), modRelativePath);

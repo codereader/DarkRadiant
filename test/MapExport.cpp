@@ -8,6 +8,7 @@
 #include "string/predicate.h"
 #include "xmlutil/Document.h"
 #include "messages/MapFileOperation.h"
+#include "algorithm/XmlUtils.h"
 
 namespace test
 {
@@ -42,9 +43,7 @@ TEST_F(MapExportTest, exportSelectedWithFormat)
     output.flush();
 
     // Minimal assertion: we got a string that appears to start like an XML document
-    auto result = output.str();
-    ASSERT_TRUE(string::starts_with(result, "<?xml version=\"1.0\" encoding=\"utf-8\"?>"));
-    ASSERT_TRUE(result.find("<map") != std::string::npos);
+    algorithm::assertStringIsMapxFile(output.str());
 }
 
 TEST_F(MapExportTest, exportSelectedDoesNotSendMessages)
