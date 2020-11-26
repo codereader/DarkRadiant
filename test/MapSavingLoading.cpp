@@ -11,11 +11,50 @@
 #include "messages/FileSelectionRequest.h"
 #include "algorithm/Scene.h"
 #include "algorithm/XmlUtils.h"
+#include "algorithm/Primitives.h"
 #include "os/file.h"
 #include <sigc++/connection.h>
 
 namespace test
 {
+
+namespace
+{
+
+class FileSelectionHelper
+{
+private:
+    std::size_t _msgSubscription;
+    std::string _path;
+    map::MapFormatPtr _format;
+
+public:
+    FileSelectionHelper(const std::string& path, const map::MapFormatPtr& format) :
+        _path(path),
+        _format(format)
+    {
+        // Subscribe to the event asking for the target path
+        _msgSubscription = GlobalRadiantCore().getMessageBus().addListener(
+            radiant::IMessage::Type::FileSelectionRequest,
+            radiant::TypeListener<radiant::FileSelectionRequest>(
+                [this](radiant::FileSelectionRequest& msg)
+        {
+            msg.setHandled(true);
+            msg.setResult(radiant::FileSelectionRequest::Result
+            {
+                _path,
+                _format->getMapFormatName()
+            });
+        }));
+    }
+
+    ~FileSelectionHelper()
+    {
+        GlobalRadiantCore().getMessageBus().removeListener(_msgSubscription);
+    }
+};
+
+}
 
 using MapLoadingTest = RadiantTest;
 using MapSavingTest = RadiantTest;
@@ -260,6 +299,112 @@ TEST_F(MapSavingTest, saveMapDoesntChangeMap)
     checkAltarScene();
 }
 
+TEST_F(MapSavingTest, saveMapCreatesInfoFile)
+{
+    // Ensure a worldspawn entity, this is enough
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+
+    // Respond to the file selection request when saving
+    fs::path tempPath = _context.getTemporaryDataPath();
+    tempPath /= "just_a_worldspawn.map";
+    auto infoFilePath = fs::path(tempPath).replace_extension("darkradiant");
+    
+    auto format = GlobalMapFormatManager().getMapFormatForFilename(tempPath.string());
+
+    FileSelectionHelper responder(tempPath.string(), format);
+
+    EXPECT_FALSE(os::fileOrDirExists(tempPath));
+    EXPECT_FALSE(os::fileOrDirExists(infoFilePath));
+
+    // Save the map
+    GlobalCommandSystem().executeCommand("SaveMap");
+
+    EXPECT_TRUE(os::fileOrDirExists(tempPath));
+    EXPECT_TRUE(os::fileOrDirExists(infoFilePath));
+}
+
+namespace
+{
+
+// Shared algorithm to create a 6-brush map with layers
+void doCheckSaveMapPreservesLayerInfo(const std::string& savePath, const map::MapFormatPtr& format)
+{
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+
+    auto brush1 = algorithm::createCubicBrush(worldspawn, Vector3(400, 400, 400), "shader1");
+    auto brush2 = algorithm::createCubicBrush(worldspawn, Vector3(500, 100, 200), "shader2");
+    auto brush3 = algorithm::createCubicBrush(worldspawn, Vector3(300, 100, 200), "shader3");
+    auto brush4 = algorithm::createCubicBrush(worldspawn, Vector3(300, 100, 700), "shader4");
+    auto brush5 = algorithm::createCubicBrush(worldspawn, Vector3(300, 600, 700), "shader5");
+    auto brush6 = algorithm::createCubicBrush(worldspawn, Vector3(300, 900, 700), "shader6");
+
+    int layerId1 = GlobalMapModule().getRoot()->getLayerManager().createLayer("Layer1");
+    int layerId2 = GlobalMapModule().getRoot()->getLayerManager().createLayer("Layer2");
+    int layerId3 = GlobalMapModule().getRoot()->getLayerManager().createLayer("Layer3");
+    int layerId4 = GlobalMapModule().getRoot()->getLayerManager().createLayer("Layer4");
+
+    // Assign worldspawn to layers
+    worldspawn->assignToLayers(scene::LayerList{ 0, layerId1, layerId2, layerId3, layerId4 });
+
+    // Assign brushes to layers
+    brush1->assignToLayers(scene::LayerList{ 0, layerId1 });
+    brush2->assignToLayers(scene::LayerList{ layerId1, layerId2 });
+    brush3->assignToLayers(scene::LayerList{ layerId3, layerId2 });
+    brush4->assignToLayers(scene::LayerList{ 0, layerId4 });
+    brush5->assignToLayers(scene::LayerList{ 0, layerId4 });
+    brush6->assignToLayers(scene::LayerList{ layerId2, layerId4 });
+
+    // Clear any referenes to the old scene
+    worldspawn = brush1 = brush2 = brush3 = brush4 = brush5 = brush6 = scene::INodePtr();
+
+    // Respond to the file selection request when saving
+    FileSelectionHelper responder(savePath, format);
+
+    // Save the map
+    GlobalCommandSystem().executeCommand("SaveMap");
+
+    // Clear the map, load from that file
+    GlobalCommandSystem().executeCommand("OpenMap", savePath);
+
+    // Refresh the node references from the new map
+    worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    brush1 = algorithm::findFirstBrushWithMaterial(worldspawn, "shader1");
+    brush2 = algorithm::findFirstBrushWithMaterial(worldspawn, "shader2");
+    brush3 = algorithm::findFirstBrushWithMaterial(worldspawn, "shader3");
+    brush4 = algorithm::findFirstBrushWithMaterial(worldspawn, "shader4");
+    brush5 = algorithm::findFirstBrushWithMaterial(worldspawn, "shader5");
+    brush6 = algorithm::findFirstBrushWithMaterial(worldspawn, "shader6");
+
+    // Check the layers
+    EXPECT_EQ(worldspawn->getLayers(), scene::LayerList({ 0, layerId1, layerId2, layerId3, layerId4 }));
+    EXPECT_EQ(brush1->getLayers(), scene::LayerList({ 0, layerId1 }));
+    EXPECT_EQ(brush2->getLayers(), scene::LayerList({ layerId1, layerId2 }));
+    EXPECT_EQ(brush3->getLayers(), scene::LayerList({ layerId3, layerId2 }));
+    EXPECT_EQ(brush4->getLayers(), scene::LayerList({ 0, layerId4 }));
+    EXPECT_EQ(brush5->getLayers(), scene::LayerList({ 0, layerId4 }));
+    EXPECT_EQ(brush6->getLayers(), scene::LayerList({ layerId2, layerId4 }));
+}
+
+}
+
+TEST_F(MapSavingTest, saveMapPreservesLayerInfo)
+{
+    fs::path tempPath = _context.getTemporaryDataPath();
+    tempPath /= "six_brushes_with_layers.map";
+    auto format = GlobalMapFormatManager().getMapFormatForFilename(tempPath.string());
+
+    doCheckSaveMapPreservesLayerInfo(tempPath.string(), format);
+}
+
+TEST_F(MapSavingTest, saveMapxPreservesLayerInfo)
+{
+    fs::path tempPath = _context.getTemporaryDataPath();
+    tempPath /= "six_brushes_with_layers.mapx";
+    auto format = GlobalMapFormatManager().getMapFormatForFilename(tempPath.string());
+
+    doCheckSaveMapPreservesLayerInfo(tempPath.string(), format);
+}
+
 TEST_F(MapSavingTest, saveAs)
 {
     std::string modRelativePath = "maps/altar.map";
@@ -277,21 +422,10 @@ TEST_F(MapSavingTest, saveAs)
     fs::path tempPath = _context.getTemporaryDataPath();
     tempPath /= "altar_copy.map";
 
-    // Subscribe to the event asking for the target path
-    auto msgSubscription = GlobalRadiantCore().getMessageBus().addListener(
-        radiant::IMessage::Type::FileSelectionRequest,
-        radiant::TypeListener<radiant::FileSelectionRequest>(
-            [&](radiant::FileSelectionRequest& msg)
-    {
-        msg.setHandled(true);
-        msg.setResult(radiant::FileSelectionRequest::Result
-        { 
-            tempPath.string(), 
-            format ->getMapFormatName()
-        });
-    }));
-
     EXPECT_FALSE(os::fileOrDirExists(tempPath));
+    
+    // Respond to the event asking for the target path
+    FileSelectionHelper responder(tempPath.string(), format);
 
     GlobalCommandSystem().executeCommand("SaveMapAs");
 
@@ -304,8 +438,6 @@ TEST_F(MapSavingTest, saveAs)
     // Load it again and check the scene
     GlobalCommandSystem().executeCommand("OpenMap", tempPath.string());
     checkAltarScene();
-
-    GlobalRadiantCore().getMessageBus().removeListener(msgSubscription);
 }
 
 TEST_F(MapSavingTest, saveAsWithFormatWillContinueUsingThatFormat)
@@ -322,19 +454,7 @@ TEST_F(MapSavingTest, saveAsWithFormatWillContinueUsingThatFormat)
     auto format = GlobalMapFormatManager().getMapFormatForFilename(tempPath.string());
     EXPECT_EQ(format->getMapFormatName(), map::PORTABLE_MAP_FORMAT_NAME);
 
-    // Subscribe to the event asking for the target path
-    auto msgSubscription = GlobalRadiantCore().getMessageBus().addListener(
-        radiant::IMessage::Type::FileSelectionRequest,
-        radiant::TypeListener<radiant::FileSelectionRequest>(
-            [&](radiant::FileSelectionRequest& msg)
-    {
-        msg.setHandled(true);
-        msg.setResult(radiant::FileSelectionRequest::Result
-            {
-                tempPath.string(),
-                format->getMapFormatName()
-            });
-    }));
+    FileSelectionHelper responder(tempPath.string(), format);
 
     EXPECT_FALSE(os::fileOrDirExists(tempPath));
 
@@ -354,8 +474,6 @@ TEST_F(MapSavingTest, saveAsWithFormatWillContinueUsingThatFormat)
 
     // Check that file, it should still be using the portable format
     algorithm::assertFileIsMapxFile(tempPath.string());
-
-    GlobalRadiantCore().getMessageBus().removeListener(msgSubscription);
 }
 
 TEST_F(MapSavingTest, saveCopyAs)
@@ -372,19 +490,7 @@ TEST_F(MapSavingTest, saveCopyAs)
     fs::path tempPath = _context.getTemporaryDataPath();
     tempPath /= "altar_copy.map";
 
-    // Subscribe to the event asking for the target path
-    auto msgSubscription = GlobalRadiantCore().getMessageBus().addListener(
-        radiant::IMessage::Type::FileSelectionRequest,
-        radiant::TypeListener<radiant::FileSelectionRequest>(
-            [&](radiant::FileSelectionRequest& msg)
-    {
-        msg.setHandled(true);
-        msg.setResult(radiant::FileSelectionRequest::Result
-            {
-                tempPath.string(),
-                format->getMapFormatName()
-            });
-    }));
+    FileSelectionHelper responder(tempPath.string(), format);
 
     EXPECT_FALSE(os::fileOrDirExists(tempPath));
 
@@ -399,8 +505,6 @@ TEST_F(MapSavingTest, saveCopyAs)
     // Load the copy and verify the scene
     GlobalCommandSystem().executeCommand("OpenMap", tempPath.string());
     checkAltarScene();
-
-    GlobalRadiantCore().getMessageBus().removeListener(msgSubscription);
 }
 
 TEST_F(MapSavingTest, saveCopyAsMapx)
@@ -419,19 +523,7 @@ TEST_F(MapSavingTest, saveCopyAsMapx)
     auto format = GlobalMapFormatManager().getMapFormatForFilename(tempPath.string());
     EXPECT_EQ(format->getMapFormatName(), map::PORTABLE_MAP_FORMAT_NAME);
 
-    // Subscribe to the event asking for the target path
-    auto msgSubscription = GlobalRadiantCore().getMessageBus().addListener(
-        radiant::IMessage::Type::FileSelectionRequest,
-        radiant::TypeListener<radiant::FileSelectionRequest>(
-            [&](radiant::FileSelectionRequest& msg)
-    {
-        msg.setHandled(true);
-        msg.setResult(radiant::FileSelectionRequest::Result
-            {
-                tempPath.string(),
-                format->getMapFormatName()
-            });
-    }));
+    FileSelectionHelper responder(tempPath.string(), format);
 
     EXPECT_FALSE(os::fileOrDirExists(tempPath));
 
@@ -451,8 +543,6 @@ TEST_F(MapSavingTest, saveCopyAsMapx)
     checkAltarScene();
 
     EXPECT_EQ(GlobalMapModule().getMapName(), tempPath);
-
-    GlobalRadiantCore().getMessageBus().removeListener(msgSubscription);
 }
 
 }
