@@ -1,5 +1,6 @@
 #include "RadiantTest.h"
 
+#include <fstream>
 #include "imap.h"
 #include "imapformat.h"
 #include "iradiant.h"
@@ -271,6 +272,108 @@ TEST_F(MapSavingTest, saveAs)
     // Load it again and check the scene
     GlobalCommandSystem().executeCommand("OpenMap", tempPath.string());
     checkAltarScene();
+
+    GlobalRadiantCore().getMessageBus().removeListener(msgSubscription);
+}
+
+TEST_F(MapSavingTest, saveCopyAs)
+{
+    std::string modRelativePath = "maps/altar.map";
+
+    GlobalCommandSystem().executeCommand("OpenMap", modRelativePath);
+    checkAltarScene();
+
+    EXPECT_EQ(GlobalMapModule().getMapName(), modRelativePath);
+
+    // Select the format based on the extension
+    auto format = GlobalMapFormatManager().getMapFormatForFilename(modRelativePath);
+    fs::path tempPath = _context.getTemporaryDataPath();
+    tempPath /= "altar_copy.map";
+
+    // Subscribe to the event asking for the target path
+    auto msgSubscription = GlobalRadiantCore().getMessageBus().addListener(
+        radiant::IMessage::Type::FileSelectionRequest,
+        radiant::TypeListener<radiant::FileSelectionRequest>(
+            [&](radiant::FileSelectionRequest& msg)
+    {
+        msg.setHandled(true);
+        msg.setResult(radiant::FileSelectionRequest::Result
+            {
+                tempPath.string(),
+                format->getMapFormatName()
+            });
+    }));
+
+    EXPECT_FALSE(os::fileOrDirExists(tempPath));
+
+    GlobalCommandSystem().executeCommand("SaveMapCopyAs");
+
+    // Check that the file got created
+    EXPECT_TRUE(os::fileOrDirExists(tempPath));
+
+    // The map path should NOT have been changed
+    EXPECT_EQ(GlobalMapModule().getMapName(), modRelativePath);
+
+    // Load the copy and verify the scene
+    GlobalCommandSystem().executeCommand("OpenMap", tempPath.string());
+    checkAltarScene();
+
+    GlobalRadiantCore().getMessageBus().removeListener(msgSubscription);
+}
+
+TEST_F(MapSavingTest, saveCopyAsMapx)
+{
+    std::string modRelativePath = "maps/altar.map";
+
+    GlobalCommandSystem().executeCommand("OpenMap", modRelativePath);
+    checkAltarScene();
+
+    EXPECT_EQ(GlobalMapModule().getMapName(), modRelativePath);
+
+    // Select the format based on the mapx extension
+    fs::path tempPath = _context.getTemporaryDataPath();
+    tempPath /= "altar_copy.mapx";
+
+    auto format = GlobalMapFormatManager().getMapFormatForFilename(tempPath.string());
+    EXPECT_EQ(format->getMapFormatName(), map::PORTABLE_MAP_FORMAT_NAME);
+
+    // Subscribe to the event asking for the target path
+    auto msgSubscription = GlobalRadiantCore().getMessageBus().addListener(
+        radiant::IMessage::Type::FileSelectionRequest,
+        radiant::TypeListener<radiant::FileSelectionRequest>(
+            [&](radiant::FileSelectionRequest& msg)
+    {
+        msg.setHandled(true);
+        msg.setResult(radiant::FileSelectionRequest::Result
+            {
+                tempPath.string(),
+                format->getMapFormatName()
+            });
+    }));
+
+    EXPECT_FALSE(os::fileOrDirExists(tempPath));
+
+    GlobalCommandSystem().executeCommand("SaveMapCopyAs");
+
+    // Check that the file got created
+    EXPECT_TRUE(os::fileOrDirExists(tempPath));
+
+    // Minimal assertion: we got a file that appears to start like an XML document
+    std::ifstream tempFile(tempPath.string());
+    std::stringstream content;
+    content << tempFile.rdbuf();
+
+    ASSERT_TRUE(string::starts_with(content.str(), "<?xml version=\"1.0\" encoding=\"utf-8\"?>"));
+    ASSERT_TRUE(content.str().find("<map") != std::string::npos);
+
+    // The map path should NOT have been changed
+    EXPECT_EQ(GlobalMapModule().getMapName(), modRelativePath);
+
+    // Load the portable format map and verify the scene
+    GlobalCommandSystem().executeCommand("OpenMap", tempPath.string());
+    checkAltarScene();
+
+    EXPECT_EQ(GlobalMapModule().getMapName(), tempPath);
 
     GlobalRadiantCore().getMessageBus().removeListener(msgSubscription);
 }
