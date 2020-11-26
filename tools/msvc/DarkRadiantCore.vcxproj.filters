@@ -2043,5 +2043,8 @@
     <ClInclude Include="..\..\radiantcore\vfs\FileVisitor.h">
       <Filter>src\vfs</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\NodeCounter.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

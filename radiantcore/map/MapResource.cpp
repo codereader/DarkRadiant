@@ -36,6 +36,7 @@
 #include "infofile/InfoFileExporter.h"
 #include "scene/ChildPrimitives.h"
 #include "messages/MapFileOperation.h"
+#include "NodeCounter.h"
 
 namespace map
 {
@@ -50,32 +51,6 @@ namespace
 			path_is_absolute(name.c_str()) ? name : GlobalFileSystem().findFile(name)
 		);
 	}
-
-	class NodeCounter :
-		public scene::NodeVisitor
-	{
-	private:
-		std::size_t _count;
-	public:
-		NodeCounter() :
-			_count(0)
-		{}
-
-		bool pre(const scene::INodePtr& node)
-		{
-			if (Node_isPrimitive(node) || Node_isEntity(node))
-			{
-				_count++;
-			}
-			
-			return true;
-		}
-
-		std::size_t getCount() const
-		{
-			return _count;
-		}
-	};
 }
 
 std::string MapResource::_infoFileExt;

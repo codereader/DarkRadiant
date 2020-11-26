@@ -847,6 +847,7 @@
     <ClInclude Include="..\..\radiantcore\map\namespace\Namespace.h" />
     <ClInclude Include="..\..\radiantcore\map\namespace\NamespaceFactory.h" />
     <ClInclude Include="..\..\radiantcore\map\namespace\UniqueNameSet.h" />
+    <ClInclude Include="..\..\radiantcore\map\NodeCounter.h" />
     <ClInclude Include="..\..\radiantcore\map\PointFile.h" />
     <ClInclude Include="..\..\radiantcore\map\RegionManager.h" />
     <ClInclude Include="..\..\radiantcore\map\RegionWalkers.h" />
