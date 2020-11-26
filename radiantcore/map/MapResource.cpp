@@ -330,7 +330,7 @@ void MapResource::loadInfoFile(const RootNodePtr& root, const std::string& filen
 	try
 	{
 		std::string infoFilename(filename.substr(0, filename.rfind('.')));
-		infoFilename += game::current::getValue<std::string>(GKEY_INFO_FILE_EXTENSION);
+		infoFilename += getInfoFileExtension();
 
 		openFileStream(infoFilename, [&](std::istream& infoFileStream)
 		{
