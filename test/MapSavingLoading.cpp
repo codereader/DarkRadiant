@@ -621,7 +621,33 @@ TEST_F(MapSavingTest, saveMapCreatesBackup)
 
 TEST_F(MapSavingTest, saveMapxCreatesBackup)
 {
-    // TODO
+    std::string modRelativePath = "maps/altar.map";
+
+    GlobalCommandSystem().executeCommand("OpenMap", modRelativePath);
+    checkAltarScene();
+
+    // Select the format based on the mapx extension
+    auto mapxPath = fs::path(_context.getTemporaryDataPath()) / "altar_saveMapxCreatesBackup.mapx";
+
+    auto format = GlobalMapFormatManager().getMapFormatForFilename(mapxPath.string());
+    EXPECT_EQ(format->getMapFormatName(), map::PORTABLE_MAP_FORMAT_NAME);
+
+    FileSelectionHelper responder(mapxPath.string(), format);
+
+    GlobalCommandSystem().executeCommand("SaveMapAs");
+
+    // Mapx file should be there, the backup should be missing
+    EXPECT_TRUE(os::fileOrDirExists(mapxPath));
+    EXPECT_FALSE(os::fileOrDirExists(fs::path(mapxPath).replace_extension("bak")));
+
+    // Now we have a .mapx file lying around, overwrite it to create a backup
+    GlobalCommandSystem().executeCommand("SaveMap");
+
+    // Mapx backup should be there now
+    EXPECT_TRUE(os::fileOrDirExists(fs::path(mapxPath).replace_extension("bak")));
+    
+    fs::remove(mapxPath);
+    fs::remove(fs::path(mapxPath).replace_extension("bak"));
 }
 
 TEST_F(MapSavingTest, saveMapReplacesOldBackup)
