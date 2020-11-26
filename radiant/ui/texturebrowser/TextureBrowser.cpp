@@ -361,7 +361,13 @@ void TextureBrowser::queueDraw()
 {
     if (_wxGLWidget != nullptr)
     {
-		_wxGLWidget->Refresh();
+		_wxGLWidget->Refresh(false);
+
+#if defined(__WXGTK__) && !wxCHECK_VERSION(3, 1, 3)
+        // Just calling Refresh doesn't cut it before wxGTK 3.1.3
+        // the GLWidget::OnPaint event is never invoked unless we call Update()
+        _wxGLWidget->Update();
+#endif
     }
 }
 

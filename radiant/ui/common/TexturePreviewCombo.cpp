@@ -52,7 +52,14 @@ void TexturePreviewCombo::SetTexture(const std::string& tex)
 {
     _texName = tex;
     refreshInfoTable();
-    _glWidget->Refresh();
+
+    _glWidget->Refresh(false);
+	
+#if defined(__WXGTK__) && !wxCHECK_VERSION(3, 1, 3)
+	// Just calling Refresh doesn't cut it before wxGTK 3.1.3
+	// the GLWidget::OnPaint event is never invoked unless we call Update()
+    _glWidget->Update();
+#endif
 }
 
 // Refresh the info table
