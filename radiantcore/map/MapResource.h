@@ -25,8 +25,6 @@ private:
 	std::string _path;
 	std::string _name;
 
-	static std::string _infoFileExt;
-
 	// File extension of this resource
 	std::string _extension;
 
@@ -68,6 +66,9 @@ private:
 	// Opens a stream for the given path, which might be VFS path or an absolute one. The streamProcessor
 	// function is then called with the opened stream. Throws std::runtime_error on stream open failure.
 	void openFileStream(const std::string& path, const std::function<void(std::istream&)>& streamProcessor);
+
+    // Returns the extension of the auxiliary info file (including the leading dot character)
+    static std::string getInfoFileExtension();
 
 	// Checks if file can be overwritten (throws on failure)
 	static void throwIfNotWriteable(const fs::path& path);

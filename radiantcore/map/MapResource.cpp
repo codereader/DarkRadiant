@@ -53,8 +53,6 @@ namespace
 	}
 }
 
-std::string MapResource::_infoFileExt;
-
 // Constructor
 MapResource::MapResource(const std::string& name) :
 	_originalName(name),
@@ -63,16 +61,6 @@ MapResource::MapResource(const std::string& name) :
 	// Initialise the paths, this is all needed for realisation
     _path = rootPath(_originalName);
 	_name = os::getRelativePath(_originalName, _path);
-
-	if (_infoFileExt.empty())
-	{
-		_infoFileExt = game::current::getValue<std::string>(GKEY_INFO_FILE_EXTENSION);
-	}
-
-	if (!_infoFileExt.empty() && _infoFileExt[0] != '.') 
-	{
-		_infoFileExt = "." + _infoFileExt;
-	}
 }
 
 void MapResource::rename(const std::string& fullPath)
@@ -152,7 +140,7 @@ bool MapResource::saveBackup()
 		}
 
 		fs::path auxFile = fullpath;
-		auxFile.replace_extension(_infoFileExt);
+		auxFile.replace_extension(getInfoFileExtension());
 
 		fs::path backup = fullpath;
 		backup.replace_extension(".bak");
@@ -425,6 +413,18 @@ void MapResource::openFileStream(const std::string& path, const std::function<vo
 	}
 }
 
+std::string MapResource::getInfoFileExtension()
+{
+    std::string extension = game::current::getValue<std::string>(GKEY_INFO_FILE_EXTENSION);
+
+    if (!extension.empty() && extension[0] != '.')
+    {
+        extension = "." + extension;
+    }
+
+    return extension;
+}
+
 void MapResource::throwIfNotWriteable(const fs::path& path)
 {
 	// Check writeability of the given file
@@ -443,7 +443,7 @@ void MapResource::saveFile(const MapFormat& format, const scene::IMapRootNodePtr
 	// Actual output file paths
 	fs::path outFile = filename;
 	fs::path auxFile = outFile;
-	auxFile.replace_extension(_infoFileExt);
+	auxFile.replace_extension(getInfoFileExtension());
 
 	// Check writeability of the primary output file
 	throwIfNotWriteable(outFile);
