@@ -56,8 +56,51 @@ public:
 
 }
 
-using MapLoadingTest = RadiantTest;
-using MapSavingTest = RadiantTest;
+class MapFileTestBase : 
+    public RadiantTest
+{
+private:
+    std::list<fs::path> _pathsToCleanupAfterTest;
+
+protected:
+    virtual void TearDown() override
+    {
+        for (const auto& path : _pathsToCleanupAfterTest)
+        {
+            fs::remove(path);
+        }
+
+        RadiantTest::TearDown();
+    }
+
+    // Creates a copy of the given map (including the .darkradiant file) in the temp data path
+    // The copy will be removed in the TearDown() method
+    fs::path createMapCopyInTempDataPath(const std::string& modRelativeMapPath, const std::string& newFilename)
+    {
+        fs::path mapPath = _context.getTestResourcePath();
+        mapPath /= modRelativeMapPath;
+
+        fs::path targetPath = _context.getTemporaryDataPath();
+        targetPath /= newFilename;
+
+        fs::path targetInfoFilePath = fs::path(targetPath).replace_extension("darkradiant");
+
+        _pathsToCleanupAfterTest.push_back(targetPath);
+        _pathsToCleanupAfterTest.push_back(targetInfoFilePath);
+
+        // Copy both .map and .darkradiant file
+        fs::remove(targetPath);
+        fs::remove(targetInfoFilePath);
+
+        fs::copy(mapPath, targetPath);
+        fs::copy(fs::path(mapPath).replace_extension("darkradiant"), targetInfoFilePath);
+
+        return targetPath;
+    }
+};
+
+using MapLoadingTest = MapFileTestBase;
+using MapSavingTest = MapFileTestBase;
 
 TEST_F(MapLoadingTest, openMapWithEmptyStringAsksForPath)
 {
@@ -151,20 +194,8 @@ void checkAltarScene()
 TEST_F(MapLoadingTest, openMapFromAbsolutePath)
 {
     // Generate an absolute path to a map in a temporary folder
-    fs::path mapPath = _context.getTestResourcePath();
-    mapPath /= "maps/altar.map";
-    auto drFilePath = mapPath;
-    drFilePath.replace_extension("darkradiant");
-
-    // Copy to temp/
-    fs::path temporaryMap = _context.getTemporaryDataPath();
-    temporaryMap /= "temp_altar.map";
-    auto temporaryDrFile = temporaryMap;
-    temporaryDrFile.replace_extension("darkradiant");
-
-    ASSERT_TRUE(fs::copy_file(mapPath, temporaryMap));
-    ASSERT_TRUE(fs::copy_file(drFilePath, temporaryDrFile));
-
+    auto temporaryMap = createMapCopyInTempDataPath("maps/altar.map", "temp_altar.map");
+    
     GlobalCommandSystem().executeCommand("OpenMap", temporaryMap.string());
 
     // Check if the scene contains what we expect
@@ -228,7 +259,9 @@ TEST_F(MapLoadingTest, openNonExistentMap)
 
 TEST_F(MapSavingTest, saveMapWithoutModification)
 {
-    loadMap("altar.map");
+    auto tempPath = createMapCopyInTempDataPath("maps/altar.map", "altar_saveMapWithoutModification.map");
+    
+    GlobalCommandSystem().executeCommand("OpenMap", tempPath.string());
     checkAltarScene();
 
     bool mapSavedFired = false;
@@ -249,16 +282,7 @@ TEST_F(MapSavingTest, saveMapWithoutModification)
 
 TEST_F(MapSavingTest, saveMapClearsModifiedFlag)
 {
-    // Create a copy of the original map, we're modifying it
-    fs::path mapPath = _context.getTestResourcePath();
-    mapPath /= "maps/altar.map";
-
-    fs::path tempPath = _context.getTemporaryDataPath();
-    tempPath /= "altar_modified_flag_test.map";
-    
-    // Copy both .map and .darkradiant file
-    fs::copy(mapPath, tempPath);
-    fs::copy(fs::path(mapPath).replace_extension("darkradiant"), fs::path(tempPath).replace_extension("darkradiant"));
+    auto tempPath = createMapCopyInTempDataPath("maps/altar.map", "altar_modified_flag_test.map");
 
     GlobalCommandSystem().executeCommand("OpenMap", tempPath.string());
     checkAltarScene();
@@ -279,12 +303,23 @@ TEST_F(MapSavingTest, saveMapClearsModifiedFlag)
 
 TEST_F(MapSavingTest, saveMapDoesntChangeMap)
 {
-    std::string modRelativePath = "maps/altar.map";
+    // Create a copy of the map file in the mod-relative maps/ folder
+    fs::path mapPath = _context.getTestResourcePath();
+    mapPath /= "maps/altar.map";
 
     // The map is located in maps/altar.map folder, check that it physically exists
-    fs::path mapPath = _context.getTestResourcePath();
-    mapPath /= modRelativePath;
-    auto originalModificationDate = fs::last_write_time(mapPath);
+    std::string modRelativePath = "maps/altar_saveMapDoesntChangeMap.map";
+    fs::path copiedMap = _context.getTestResourcePath();
+    copiedMap /= modRelativePath;
+
+    fs::remove(copiedMap);
+    fs::remove(fs::path(copiedMap).replace_extension("darkradiant"));
+
+    fs::remove(copiedMap);
+    fs::copy(mapPath, copiedMap);
+    fs::copy(fs::path(mapPath).replace_extension("darkradiant"), fs::path(copiedMap).replace_extension("darkradiant"));
+
+    auto originalModificationDate = fs::last_write_time(copiedMap);
 
     GlobalCommandSystem().executeCommand("OpenMap", modRelativePath);
     checkAltarScene();
@@ -292,11 +327,16 @@ TEST_F(MapSavingTest, saveMapDoesntChangeMap)
     GlobalCommandSystem().executeCommand("SaveMap");
 
     // Check that the file got modified
-    EXPECT_NE(fs::last_write_time(mapPath), originalModificationDate);
+    EXPECT_NE(fs::last_write_time(copiedMap), originalModificationDate);
 
     // Load it again and check the scene
     GlobalCommandSystem().executeCommand("OpenMap", modRelativePath);
     checkAltarScene();
+
+    fs::remove(copiedMap);
+    fs::remove(fs::path(copiedMap).replace_extension("bak"));
+    fs::remove(fs::path(copiedMap).replace_extension("darkradiant"));
+    fs::remove(fs::path(copiedMap).replace_extension("darkradiant").string() + ".bak");
 }
 
 TEST_F(MapSavingTest, saveMapCreatesInfoFile)
@@ -543,6 +583,85 @@ TEST_F(MapSavingTest, saveCopyAsMapx)
     checkAltarScene();
 
     EXPECT_EQ(GlobalMapModule().getMapName(), tempPath);
+}
+
+// Check that the overwriting an existing map file will create a backup set
+TEST_F(MapSavingTest, saveMapCreatesBackup)
+{
+    auto mapPath = createMapCopyInTempDataPath("maps/altar.map", "altar_saveMapCreatesBackup.map");
+
+    auto originalSize = fs::file_size(mapPath);
+    auto originalModDate = fs::last_write_time(mapPath);
+
+    GlobalCommandSystem().executeCommand("OpenMap", mapPath.string());
+    checkAltarScene();
+
+    fs::path mapBackupPath = mapPath.replace_extension("bak");
+    fs::path infoFileBackupPath = mapPath.replace_extension("darkradiant").string() + ".bak";
+
+    EXPECT_FALSE(os::fileOrDirExists(mapBackupPath));
+    EXPECT_FALSE(os::fileOrDirExists(infoFileBackupPath));
+
+    GlobalCommandSystem().executeCommand("SaveMap");
+
+    // Check that the target file got modified
+    EXPECT_NE(fs::last_write_time(mapPath), originalModDate);
+
+    // Check that the backup files exist now
+    EXPECT_TRUE(os::fileOrDirExists(mapBackupPath));
+    EXPECT_TRUE(os::fileOrDirExists(infoFileBackupPath));
+
+    // The backup should have the write time of the original map
+    EXPECT_EQ(fs::last_write_time(mapBackupPath), originalModDate);
+
+    // Remove the backup at the end of this test
+    fs::remove(mapBackupPath);
+    fs::remove(infoFileBackupPath);
+}
+
+TEST_F(MapSavingTest, saveMapxCreatesBackup)
+{
+    // TODO
+}
+
+TEST_F(MapSavingTest, saveMapReplacesOldBackup)
+{
+    auto mapPath = createMapCopyInTempDataPath("maps/altar.map", "altar_saveMapReplacesOldBackup.map");
+
+    // Create two fake backup files
+    fs::path mapBackupPath = fs::path(mapPath).replace_extension("bak");
+
+    std::ofstream fakeBackup(mapBackupPath.string());
+    fakeBackup << "123=map";
+    fakeBackup.flush();
+    fakeBackup.close();
+
+    auto originalBackupSize = fs::file_size(mapBackupPath);
+    auto originalBackupModTime = fs::last_write_time(mapBackupPath);
+
+    fs::path infoFileBackupPath = fs::path(mapPath).replace_extension("darkradiant").string() + ".bak";
+
+    std::ofstream fakeInfoBackup(infoFileBackupPath.string());
+    fakeInfoBackup << "123=info";
+    fakeInfoBackup.flush();
+    fakeInfoBackup.close();
+
+    auto originalInfoBackupSize = fs::file_size(infoFileBackupPath);
+    auto originalInfoBackupModTime = fs::last_write_time(infoFileBackupPath);
+
+    // Open the map, verify the scene
+    GlobalCommandSystem().executeCommand("OpenMap", mapPath.string());
+    checkAltarScene();
+
+    // Overwrite the map, this should replace the backups
+    GlobalCommandSystem().executeCommand("SaveMap");
+
+    // Check that the backup files got modified
+    EXPECT_NE(fs::last_write_time(mapBackupPath), originalBackupModTime);
+    EXPECT_NE(fs::last_write_time(infoFileBackupPath), originalInfoBackupModTime);
+
+    EXPECT_NE(fs::file_size(mapBackupPath), originalBackupSize);
+    EXPECT_NE(fs::file_size(infoFileBackupPath), originalInfoBackupSize);
 }
 
 }
