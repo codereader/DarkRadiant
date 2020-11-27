@@ -255,13 +255,6 @@ RootNodePtr MapResource::loadMapNode()
 {
 	RootNodePtr rootNode;
 
-	// greebo: Check if we have valid settings
-	// The _path might be empty if we're loading from a folder outside the mod
-	if (_name.empty() && _extension.empty())
-	{
-        return rootNode;
-	}
-
 	// Build the map path
 	std::string fullpath = getAbsoluteResourcePath();
 

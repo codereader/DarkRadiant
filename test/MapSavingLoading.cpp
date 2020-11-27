@@ -284,6 +284,15 @@ TEST_F(MapLoadingTest, openWithInvalidPath)
     EXPECT_FALSE(algorithm::getEntityByName(GlobalMapModule().getRoot(), "world"));
 }
 
+TEST_F(MapLoadingTest, openWithInvalidPathInsideMod)
+{
+    // Pass a directory name to it
+    GlobalCommandSystem().executeCommand("OpenMap", _context.getTestResourcePath());
+
+    // No worldspawn in this map, it should be empty
+    EXPECT_FALSE(algorithm::getEntityByName(GlobalMapModule().getRoot(), "world"));
+}
+
 TEST_F(MapSavingTest, saveMapWithoutModification)
 {
     auto tempPath = createMapCopyInTempDataPath("altar.map", "altar_saveMapWithoutModification.map");
