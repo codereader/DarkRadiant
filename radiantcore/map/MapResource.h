@@ -19,7 +19,14 @@ class MapResource :
 private:
     scene::IMapRootNodePtr _mapRoot;
 
+    // Contains the absolute base path (e.g. c:/games/darkmod/) if the resourcePath
+    // points to a directory which is part of the VFS search paths. 
+    // Will be an empty string if the resource is pointing to a path outside the VFS.
 	std::string _path;
+
+    // Either contains the path relative to the base path (e.g. "maps/arkham.map")
+    // or the full absolute path to the map (in case the resource path 
+    // is pointing to a path outside the VFS)
 	std::string _name;
 
 	// File extension of this resource
@@ -27,7 +34,7 @@ private:
 
 public:
 	// Constructor
-	MapResource(const std::string& name);
+	MapResource(const std::string& resourcePath);
 
 	void rename(const std::string& fullPath) override;
 
@@ -43,6 +50,9 @@ public:
 						 const GraphTraversalFunc& traverse, const std::string& filename);
 
 private:
+    void constructPaths(const std::string& resourcePath);
+    std::string getAbsoluteResourcePath();
+
 	void mapSave();
 	void onMapChanged();
 

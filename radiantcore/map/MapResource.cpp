@@ -53,24 +53,42 @@ namespace
 	}
 }
 
-// Constructor
-MapResource::MapResource(const std::string& name) :
-	_extension(os::getExtension(name))
+MapResource::MapResource(const std::string& resourcePath)
 {
-	// Initialise the paths, this is all needed for realisation
-    _path = rootPath(name);
-	_name = os::getRelativePath(name, _path);
+    constructPaths(resourcePath);
 }
 
 void MapResource::rename(const std::string& fullPath)
 {
-	// Save the paths locally and split them into parts
-	_extension = os::getExtension(fullPath);
-	_path = rootPath(fullPath);
-	_name = os::getRelativePath(fullPath, _path);
+    constructPaths(fullPath);
 
 	// Rename the map root as well
     _mapRoot->setName(_name);
+}
+
+void MapResource::constructPaths(const std::string& resourcePath)
+{
+    _extension = os::getExtension(resourcePath);
+
+    // Try to find a folder part of the VFS and use that as base path
+    // Will result to an empty string if the path is outside the VFS
+    _path = rootPath(resourcePath);
+
+    // Try to create a relative path, based on the VFS directories
+    // If no relative path can be deducted, use the absolute resourcePath 
+    // in unmodified form.
+    _name = os::getRelativePath(resourcePath, _path);
+}
+
+std::string MapResource::getAbsoluteResourcePath()
+{
+    // Concatenate path+name, since they either contain base + relative:
+    //      _path == "c:/games/darkmod/"
+    //      _name == "maps/arkham.map"
+    // or an empty _path with _name holding the full path:
+    //      _path == ""
+    //      _name == "c:/some/non/vfs/folder/arkham.map"
+    return _path + _name;
 }
 
 bool MapResource::load()
@@ -101,7 +119,7 @@ void MapResource::save(const MapFormatPtr& mapFormat)
 
 	rMessage() << "Using " << format->getMapFormatName() << " format to save the resource." << std::endl;
 	
-	std::string fullpath = _path + _name;
+	std::string fullpath = getAbsoluteResourcePath();
 
 	// Save a backup of the existing file (rename it to .bak) if it exists in the first place
 	if (os::fileOrDirExists(fullpath) && !saveBackup())
@@ -125,7 +143,7 @@ void MapResource::save(const MapFormatPtr& mapFormat)
 
 bool MapResource::saveBackup()
 {
-	fs::path fullpath = (_path + _name);
+	fs::path fullpath = getAbsoluteResourcePath();
 
 	if (path_is_absolute(fullpath.string().c_str()))
 	{
@@ -243,7 +261,7 @@ RootNodePtr MapResource::loadMapNode()
 	}
 
 	// Build the map path
-	std::string fullpath = _path + _name;
+	std::string fullpath = getAbsoluteResourcePath();
 
 	// Open a stream (from physical file or VFS)
 	openFileStream(fullpath, [&](std::istream& mapStream)
@@ -376,7 +394,7 @@ void MapResource::openFileStream(const std::string& path, const std::function<vo
 		if (file.failed())
 		{
 			rError() << "failure" << std::endl;
-			throw std::runtime_error(fmt::format(_("Failure opening file:\n{0}"), path));
+			throw OperationException(fmt::format(_("Failure opening file:\n{0}"), path));
 		}
 
 		std::istream stream(&file);
@@ -395,7 +413,7 @@ void MapResource::openFileStream(const std::string& path, const std::function<vo
 		if (!vfsFile)
 		{
 			rError() << "failure" << std::endl;
-			throw std::runtime_error(fmt::format(_("Failure opening file:\n{0}"), path));
+			throw OperationException(fmt::format(_("Failure opening file:\n{0}"), path));
 		}
 
 		rMessage() << "success." << std::endl;
