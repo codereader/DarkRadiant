@@ -55,21 +55,19 @@ namespace
 
 // Constructor
 MapResource::MapResource(const std::string& name) :
-	_originalName(name),
 	_extension(os::getExtension(name))
 {
 	// Initialise the paths, this is all needed for realisation
-    _path = rootPath(_originalName);
-	_name = os::getRelativePath(_originalName, _path);
+    _path = rootPath(name);
+	_name = os::getRelativePath(name, _path);
 }
 
 void MapResource::rename(const std::string& fullPath)
 {
 	// Save the paths locally and split them into parts
-	_originalName = fullPath;
 	_extension = os::getExtension(fullPath);
-	_path = rootPath(_originalName);
-	_name = os::getRelativePath(_originalName, _path);
+	_path = rootPath(fullPath);
+	_name = os::getRelativePath(fullPath, _path);
 
 	// Rename the map root as well
     _mapRoot->setName(_name);

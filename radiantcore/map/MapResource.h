@@ -19,9 +19,6 @@ class MapResource :
 private:
     scene::IMapRootNodePtr _mapRoot;
 
-	// Name given during construction
-	std::string _originalName;
-
 	std::string _path;
 	std::string _name;
 
