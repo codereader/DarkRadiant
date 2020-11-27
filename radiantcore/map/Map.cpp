@@ -24,7 +24,6 @@
 #include "imapformat.h"
 
 #include "registry/registry.h"
-#include "stream/TextFileInputStream.h"
 #include "entitylib.h"
 #include "gamelib.h"
 #include "os/path.h"

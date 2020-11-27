@@ -36,7 +36,6 @@
 #endif
 
 #include <string>
-#include "stream/TextFileInputStream.h"
 
 namespace {
 

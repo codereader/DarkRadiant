@@ -21,7 +21,6 @@
 #include "os/file.h"
 #include "os/fs.h"
 #include "scene/Traverse.h"
-#include "stream/TextFileInputStream.h"
 #include "scenelib.h"
 
 #include <functional>
@@ -384,15 +383,13 @@ void MapResource::openFileStream(const std::string& path, const std::function<vo
 	{
 		rMessage() << "Open file " << path << " from filesystem...";
 
-		TextFileInputStream file(path);
+        std::ifstream stream(path);
 
-		if (file.failed())
-		{
-			rError() << "failure" << std::endl;
-			throw OperationException(fmt::format(_("Failure opening file:\n{0}"), path));
-		}
-
-		std::istream stream(&file);
+        if (!stream)
+        {
+            rError() << "failure" << std::endl;
+            throw OperationException(fmt::format(_("Failure opening file:\n{0}"), path));
+        }
 
 		rMessage() << "success." << std::endl;
 
