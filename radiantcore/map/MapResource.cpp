@@ -68,7 +68,9 @@ void MapResource::rename(const std::string& fullPath)
 
 void MapResource::constructPaths(const std::string& resourcePath)
 {
-    _extension = os::getExtension(resourcePath);
+    // Since the resource path can contain dots like this ".." 
+    // pass the filename part only to getExtension().
+    _extension = os::getExtension(os::getFilename(resourcePath));
 
     // Try to find a folder part of the VFS and use that as base path
     // Will result to an empty string if the path is outside the VFS
