@@ -309,19 +309,6 @@ bool BrushNode::intersectsLight(const RendererLight& light) const {
 	return light.intersectsAABB(worldAABB());
 }
 
-void BrushNode::insertLight(const RendererLight& light) {
-	const Matrix4& l2w = localToWorld();
-	for (FaceInstances::iterator i = m_faceInstances.begin(); i != m_faceInstances.end(); ++i) {
-		i->addLight(l2w, light);
-	}
-}
-
-void BrushNode::clearLights() {
-	for (FaceInstances::const_iterator i = m_faceInstances.begin(); i != m_faceInstances.end(); ++i) {
-		i->m_lights.clear();
-	}
-}
-
 void BrushNode::renderComponents(RenderableCollector& collector, const VolumeTest& volume) const
 {
 	m_brush.evaluateBRep();
@@ -449,13 +436,27 @@ void BrushNode::renderSolid(RenderableCollector& collector,
 	bool forceVisible = isForcedVisible();
 
     // Submit the lights and renderable geometry for each face
-	for (const FaceInstance& face : m_faceInstances)
+    for (const FaceInstance& faceInst : m_faceInstances)
     {
 		// Skip invisible faces before traversing further
-		if (!forceVisible && !face.faceIsVisible()) continue;
+        if (!forceVisible && !faceInst.faceIsVisible()) continue;
+
+        const Face& face = faceInst.getFace();
+        if (face.intersectVolume(volume))
+        {
+            bool highlight = faceInst.selectedComponents();
+            if (highlight)
+                collector.setHighlightFlag(RenderableCollector::Highlight::Faces, true);
 
 		// greebo: BrushNodes have always an identity l2w, don't do any transforms
-		face.renderSolid(collector, volume, *_renderEntity);
+            collector.addLitRenderable(
+                *face.getFaceShader().getGLShader(), face.getWinding(),
+                Matrix4::getIdentity(), *this, _renderEntity
+            );
+
+            if (highlight)
+                collector.setHighlightFlag(RenderableCollector::Highlight::Faces, false);
+        }
     }
 
 	renderSelectedPoints(collector, volume, localToWorld);

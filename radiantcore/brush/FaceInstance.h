@@ -33,8 +33,6 @@ private:
 	static FaceInstanceSet _selectedFaceInstances;
 
 public:
-	mutable render::lib::VectorLightList m_lights;
-
 	FaceInstance(Face& face, const SelectionChangedSlot& observer);
 	FaceInstance(const FaceInstance& other);
 
@@ -111,8 +109,6 @@ public:
 	bool intersectVolume(const VolumeTest& volume, const Matrix4& localToWorld) const;
 
 	// Frontend render methods for submitting the face to the given collector
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume,
-		const IRenderEntity& entity) const;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume,
 		const IRenderEntity& entity) const;
 
@@ -145,8 +141,6 @@ public:
 	const Vector3& centroid() const;
 
 	void connectivityChanged();
-
-	void addLight(const Matrix4& localToWorld, const RendererLight& light);
 
 	bool faceIsVisible() const
 	{

@@ -36,6 +36,7 @@ class Patch :
 	public Snappable,
 	public IUndoable
 {
+    friend class PatchNode;
 	PatchNode& _node;
 
 	typedef std::set<IPatch::Observer*> Observers;
@@ -119,9 +120,7 @@ public:
 	// Return the interally stored AABB
 	const AABB& localAABB() const override;
 
-	// Render functions: solid mode, wireframe mode and components
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume, 
-		const Matrix4& localToWorld, const IRenderEntity& entity, const LightList& lights) const;
+	// Render functions: wireframe mode and components
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume, 
 		const Matrix4& localToWorld, const IRenderEntity& entity) const;
 

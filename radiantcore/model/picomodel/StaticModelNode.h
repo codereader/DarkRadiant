@@ -8,12 +8,16 @@
 #include "irenderable.h"
 #include "pivot.h"
 #include "render/VectorLightList.h"
-#include "RenderablePicoModel.h"
+#include "StaticModel.h"
 #include "scene/Node.h"
 
 namespace model {
 
-class PicoModelNode :
+/**
+ * \brief
+ * Scenegraph node representing a static model
+ */
+class StaticModelNode :
 	public scene::Node,
 	public ModelNode,
 	public SelectionTestable,
@@ -22,28 +26,22 @@ class PicoModelNode :
 	public ITraceable,
     public Transformable
 {
-private:
 	// The actual model
-	RenderablePicoModelPtr _picoModel;
+	StaticModelPtr _model;
 
 	std::string _name;
-
-	// Vector of RendererLight references which illuminate this instance, set
-	// with addLight() and clearLights()
-    render::lib::VectorLightList _intersectingLights;
-
-	// The light list from the shader cache when we attach
-	LightList& _lightList;
 
 	// The name of this model's skin
 	std::string _skin;
 
 public:
-	/** Construct a PicoModelNode with a reference to the loaded picoModel.
-	 */
-	PicoModelNode(const RenderablePicoModelPtr& picoModel);
+    typedef std::shared_ptr<StaticModelNode> Ptr;
 
-	virtual ~PicoModelNode();
+	/** Construct a StaticModelNode with a reference to the loaded picoModel.
+	 */
+	StaticModelNode(const StaticModelPtr& picoModel);
+
+	virtual ~StaticModelNode();
 
 	virtual void onInsertIntoScene(scene::IMapRootNode& root) override;
 	virtual void onRemoveFromScene(scene::IMapRootNode& root) override;
@@ -63,27 +61,17 @@ public:
 	// Bounded implementation
 	virtual const AABB& localAABB() const override;
 
-	// Lights changed function
-	void lightsChanged()
-    {
-		_lightList.setDirty();
-	}
-
 	// SelectionTestable implementation
 	void testSelect(Selector& selector, SelectionTest& test) override;
 
 	virtual std::string name() const override;
 	Type getNodeType() const override;
 
-	const RenderablePicoModelPtr& getModel() const;
-	void setModel(const RenderablePicoModelPtr& model);
+	const StaticModelPtr& getModel() const;
+	void setModel(const StaticModelPtr& model);
 
 	// LitObject test function
 	bool intersectsLight(const RendererLight& light) const override;
-	// Add a light to this model instance
-	void insertLight(const RendererLight& light) override;
-	// Clear all lights from this model instance
-	void clearLights() override;
 
 	// Renderable implementation
   	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
@@ -102,6 +90,5 @@ protected:
 	virtual void _onTransformationChanged() override;
 	virtual void _applyTransformation() override;
 };
-typedef std::shared_ptr<PicoModelNode> PicoModelNodePtr;
 
 } // namespace model

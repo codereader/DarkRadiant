@@ -11,13 +11,10 @@ PatchNode::PatchNode(patch::PatchDefType type) :
 	scene::SelectableNode(),
 	m_dragPlanes(std::bind(&PatchNode::selectedChangedComponent, this, std::placeholders::_1)),
 	m_render_selected(GL_POINTS),
-	m_lightList(&GlobalRenderSystem().attachLitObject(*this)),
 	m_patch(*this),
     _untransformedOriginChanged(true)
 {
 	m_patch.setFixedSubdivisions(type == patch::PatchDefType::Def3, Subdivisions(m_patch.getSubdivisions()));
-
-	SelectableNode::setTransformChangedCallback(Callback(std::bind(&PatchNode::lightsChanged, this)));
 }
 
 // Copy Constructor
@@ -35,11 +32,9 @@ PatchNode::PatchNode(const PatchNode& other) :
 	Transformable(other),
 	m_dragPlanes(std::bind(&PatchNode::selectedChangedComponent, this, std::placeholders::_1)),
 	m_render_selected(GL_POINTS),
-	m_lightList(&GlobalRenderSystem().attachLitObject(*this)),
 	m_patch(other.m_patch, *this), // create the patch out of the <other> one
     _untransformedOriginChanged(true)
 {
-	SelectableNode::setTransformChangedCallback(Callback(std::bind(&PatchNode::lightsChanged, this)));
 }
 
 PatchNode::~PatchNode()
@@ -82,11 +77,6 @@ Patch& PatchNode::getPatchInternal() {
 
 IPatch& PatchNode::getPatch() {
 	return m_patch;
-}
-
-void PatchNode::lightsChanged()
-{
-	m_lightList->setDirty();
 }
 
 // Snappable implementation
@@ -282,12 +272,21 @@ void PatchNode::renderSolid(RenderableCollector& collector, const VolumeTest& vo
 	// Don't render invisible shaders
 	if (!isForcedVisible() && !m_patch.hasVisibleMaterial()) return;
 
+    // Defer the tesselation calculation to the last minute
 	const_cast<Patch&>(m_patch).evaluateTransform();
+    const_cast<Patch&>(m_patch).updateTesselation();
 
 	assert(_renderEntity); // patches rendered without parent - no way!
 
-	// Pass the call to the patch instance, it adds the renderable
-	m_patch.renderSolid(collector, volume, localToWorld(), *_renderEntity, *m_lightList);
+    // Render the patch itself
+    collector.addLitRenderable(
+        *m_patch._shader.getGLShader(), m_patch._solidRenderable,
+        localToWorld(), *this, _renderEntity
+    );
+
+#if DEBUG_PATCH_NTB_VECTORS
+    m_patch._renderableVectors.render(collector, volume, localToWorld());
+#endif
 
 	// Render the selected components
 	renderComponentsSelected(collector, volume);

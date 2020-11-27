@@ -12,8 +12,6 @@
 #include "irender.h"
 
 #include "../FreezePointer.h"
-#include "render/SimpleFrontendRenderer.h"
-#include "render/SceneRenderWalker.h"
 #include "render/NopVolumeTest.h"
 
 class wxToolBarToolBase;
@@ -91,12 +89,8 @@ protected:
     // The backend rendersystem instance
     RenderSystemPtr _renderSystem;
 
-    // The front-end renderer, collecting the OpenGLRenderables
-    render::SimpleFrontendRenderer _renderer;
+    // Dummy VolumeTest
     render::NopVolumeTest _volumeTest;
-
-    // The scene adaptor passing nodes into our front-end renderer
-    render::SceneRenderWalker _sceneWalker;
 
     // Current viewer position and view angles
     Vector3 _viewOrigin;

@@ -19,12 +19,15 @@ class Ray;
 namespace model
 {
 
-/* Renderable class containing a series of polygons textured with the same
- * material. RenderablePicoSurface objects are composited into a RenderablePicoModel
- * object to create a renderable static mesh.
+/**
+ * \brief
+ * Renderable class containing a series of polygons textured with the same
+ * material.
+ *
+ * StaticModelSurface objects are composited into a StaticModel object to
+ * create a renderable static mesh.
  */
-
-class RenderablePicoSurface :
+class StaticModelSurface :
 	public IIndexedModelSurface,
 	public OpenGLRenderable
 {
@@ -75,17 +78,17 @@ public:
 	 * Constructor. Accepts a picoSurface_t struct and the file extension to determine
 	 * how to assign materials.
 	 */
-	RenderablePicoSurface(picoSurface_t* surf, const std::string& fExt);
+	StaticModelSurface(picoSurface_t* surf, const std::string& fExt);
 
 	/**
 	 * Copy-constructor.
 	 */
-	RenderablePicoSurface(const RenderablePicoSurface& other);
+	StaticModelSurface(const StaticModelSurface& other);
 
 	/**
 	 * Destructor.
 	 */
-	~RenderablePicoSurface();
+	~StaticModelSurface();
 
 	/**
 	 * Render function from OpenGLRenderable
@@ -125,8 +128,8 @@ public:
 	// the exact point in the given Vector3, returns false if no intersection was found.
 	bool getIntersection(const Ray& ray, Vector3& intersection, const Matrix4& localToWorld);
 
-	void applyScale(const Vector3& scale, const RenderablePicoSurface& originalSurface);
+	void applyScale(const Vector3& scale, const StaticModelSurface& originalSurface);
 };
-typedef std::shared_ptr<RenderablePicoSurface> RenderablePicoSurfacePtr;
+typedef std::shared_ptr<StaticModelSurface> StaticModelSurfacePtr;
 
 }

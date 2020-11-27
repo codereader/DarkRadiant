@@ -177,9 +177,9 @@ libradiantcore_la_SOURCES = Radiant.cpp \
                 model/export/WavefrontExporter.cpp \
                 model/picomodel/PicoModelLoader.cpp \
                 model/picomodel/PicoModelModule.cpp \
-                model/picomodel/PicoModelNode.cpp \
-                model/picomodel/RenderablePicoModel.cpp \
-                model/picomodel/RenderablePicoSurface.cpp \
+                model/picomodel/StaticModelNode.cpp \
+                model/picomodel/StaticModel.cpp \
+                model/picomodel/StaticModelSurface.cpp \
                 model/picomodel/lib/pm_md3.c \
                 model/picomodel/lib/pm_md2.c \
                 model/picomodel/lib/pm_obj.c \
