@@ -2046,5 +2046,8 @@
     <ClInclude Include="..\..\radiantcore\map\NodeCounter.h">
       <Filter>src\map</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\MapResourceLoader.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

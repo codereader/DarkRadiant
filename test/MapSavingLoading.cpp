@@ -227,6 +227,8 @@ TEST_F(MapLoadingTest, openMapFromAbsolutePath)
 
     // Check if the scene contains what we expect
     checkAltarScene();
+
+    EXPECT_EQ(GlobalMapModule().getMapName(), temporaryMap.string());
 }
 
 TEST_F(MapLoadingTest, openMapFromModRelativePath)
@@ -242,6 +244,9 @@ TEST_F(MapLoadingTest, openMapFromModRelativePath)
 
     // Check if the scene contains what we expect
     checkAltarScene();
+
+    // Right now, even when opening from the mod folder, the map name is showing the absolute path
+    //EXPECT_EQ(GlobalMapModule().getMapName(), "maps/" + mapName);
 }
 
 TEST_F(MapLoadingTest, openMapFromMapsFolder)
@@ -258,6 +263,9 @@ TEST_F(MapLoadingTest, openMapFromMapsFolder)
 
     // Check if the scene contains what we expect
     checkAltarScene();
+
+    // Right now, even when opening from the mod folder, the map name is showing the absolute path
+    //EXPECT_EQ(GlobalMapModule().getMapName(), "maps/" + mapName);
 }
 
 TEST_F(MapLoadingTest, openMapFromModPak)
@@ -273,6 +281,8 @@ TEST_F(MapLoadingTest, openMapFromModPak)
 
     // Check if the scene contains what we expect
     checkAltarScene();
+
+    EXPECT_EQ(GlobalMapModule().getMapName(), modRelativePath);
 }
 
 TEST_F(MapLoadingTest, openNonExistentMap)
@@ -282,6 +292,8 @@ TEST_F(MapLoadingTest, openNonExistentMap)
 
     // No worldspawn in this map, it should be empty
     EXPECT_FALSE(algorithm::getEntityByName(GlobalMapModule().getRoot(), "world"));
+
+    EXPECT_EQ(GlobalMapModule().getMapName(), "unnamed.map");
 }
 
 TEST_F(MapLoadingTest, openWithInvalidPath)
@@ -291,6 +303,8 @@ TEST_F(MapLoadingTest, openWithInvalidPath)
 
     // No worldspawn in this map, it should be empty
     EXPECT_FALSE(algorithm::getEntityByName(GlobalMapModule().getRoot(), "world"));
+
+    EXPECT_EQ(GlobalMapModule().getMapName(), "unnamed.map");
 }
 
 TEST_F(MapLoadingTest, openWithInvalidPathInsideMod)
@@ -300,6 +314,8 @@ TEST_F(MapLoadingTest, openWithInvalidPathInsideMod)
 
     // No worldspawn in this map, it should be empty
     EXPECT_FALSE(algorithm::getEntityByName(GlobalMapModule().getRoot(), "world"));
+
+    EXPECT_EQ(GlobalMapModule().getMapName(), "unnamed.map");
 }
 
 TEST_F(MapLoadingTest, openMapWithoutInfoFile)
@@ -313,6 +329,8 @@ TEST_F(MapLoadingTest, openMapWithoutInfoFile)
     GlobalCommandSystem().executeCommand("OpenMap", tempPath.string());
     
     checkAltarSceneGeometry();
+
+    EXPECT_EQ(GlobalMapModule().getMapName(), tempPath.string());
 }
 
 TEST_F(MapSavingTest, saveMapWithoutModification)

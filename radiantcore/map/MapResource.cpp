@@ -36,6 +36,7 @@
 #include "scene/ChildPrimitives.h"
 #include "messages/MapFileOperation.h"
 #include "NodeCounter.h"
+#include "MapResourceLoader.h"
 
 namespace map
 {
@@ -98,6 +99,12 @@ bool MapResource::load()
     {
 		// Map not loaded yet, acquire map root node from loader
 		_mapRoot = loadMapNode();
+
+        if (_mapRoot)
+        {
+            _mapRoot->setName(_name);
+        }
+
 		connectMap();
 		mapSave();
 	}
@@ -228,7 +235,7 @@ void MapResource::clear()
 	connectMap();
 }
 
-void MapResource::onMapChanged() 
+void MapResource::onMapChanged()
 {
 	GlobalMap().setModified(true);
 }
@@ -255,12 +262,57 @@ RootNodePtr MapResource::loadMapNode()
 	RootNodePtr rootNode;
 
 	// Build the map path
-	std::string fullpath = getAbsoluteResourcePath();
+	auto fullpath = getAbsoluteResourcePath();
 
 	// Open a stream (from physical file or VFS)
 	openFileStream(fullpath, [&](std::istream& mapStream)
 	{
-		rootNode = loadMapNodeFromStream(mapStream, fullpath);
+        try
+        {
+            // Get the mapformat
+            auto format = algorithm::determineMapFormat(mapStream, _extension);
+
+            if (!format)
+            {
+                throw OperationException(_("Could not determine map format"));
+            }
+
+            // Instantiate a loader to process the map file stream
+            MapResourceLoader loader(mapStream, *format);
+
+            // Load the root from the primary stream (throws on failure or cancel)
+            rootNode = loader.load();
+
+            // Check if an info file is supported by this map format
+            if (format->allowInfoFileCreation())
+            {
+                try
+                {
+                    // Load for an additional info file
+                    auto infoFilename = fullpath.substr(0, fullpath.rfind('.'));
+                    infoFilename += getInfoFileExtension();
+
+                    openFileStream(infoFilename, [&](std::istream& infoFileStream)
+                    {
+                        loader.loadInfoFile(infoFileStream, rootNode);
+                    });
+                }
+                catch (const std::runtime_error& ex)
+                {
+                    rWarning() << ex.what() << std::endl;
+                }
+            }
+        }
+        catch (FileOperation::OperationCancelled&)
+        {
+            // User cancelled, don't show a complicated failure message
+            throw OperationException(_("Map loading cancelled"));
+        }
+        catch (const OperationException& ex)
+        {
+            // Re-throw the exception, adding the map file path to the message
+            throw OperationException(fmt::format(_("Failure reading map file:\n{0}\n\n{1}"), fullpath, ex.what()));
+        }
 	});
 
 	return rootNode;
