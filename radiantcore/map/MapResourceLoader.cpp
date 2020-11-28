@@ -46,7 +46,7 @@ RootNodePtr MapResourceLoader::load()
         scene::NodeRemover remover;
         root->traverseChildren(remover);
 
-        throw; // leak this exception
+        throw IMapResource::OperationException(_("Map loading cancelled"), true); // cancelled flag set
     }
     catch (IMapReader::FailureException& e)
     {

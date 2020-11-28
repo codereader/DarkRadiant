@@ -304,15 +304,11 @@ RootNodePtr MapResource::loadMapNode()
             }
         }
     }
-    catch (FileOperation::OperationCancelled&)
-    {
-        // User cancelled, don't show a complicated failure message
-        throw OperationException(_("Map loading cancelled"));
-    }
     catch (const OperationException& ex)
     {
-        // Re-throw the exception, adding the map file path to the message
-        throw OperationException(fmt::format(_("Failure reading map file:\n{0}\n\n{1}"), fullpath, ex.what()));
+        // Re-throw the exception, prepending the map file path to the message (if not cancelled)
+        throw ex.operationCancelled() ? ex : 
+            OperationException(fmt::format(_("Failure reading map file:\n{0}\n\n{1}"), fullpath, ex.what()));
     }
 
 	return rootNode;

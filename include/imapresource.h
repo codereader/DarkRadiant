@@ -30,14 +30,32 @@ public:
 	virtual bool load() = 0;
 
 	// Exception type thrown by the the MapResource implementation
-	struct OperationException :
+	class OperationException :
 		public std::runtime_error 
 	{
+    private:
+        bool _cancelled;
+
+    public:
 		OperationException(const std::string& msg) :
-			runtime_error(msg)
-		{
-			rError() << "MapResource operation failed: " << msg << std::endl;
-		}
+            OperationException(msg, false)
+		{}
+
+        OperationException(const std::string& msg, bool cancelled) :
+            runtime_error(msg),
+            _cancelled(cancelled)
+        {
+            if (!_cancelled)
+            {
+                rError() << "MapResource operation failed: " << msg << std::endl;
+            }
+        }
+
+        // Returns true if the operation has been cancelled by the user
+        bool operationCancelled() const
+        {
+            return _cancelled;
+        }
 	};
 
 	/**

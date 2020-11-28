@@ -30,9 +30,7 @@ public:
 
     // Process the stream passed to the constructor, returns
     // the root node
-    // Throws exceptions on failure: 
-    // - FileOperation::OperationCancelled in case the user cancelled
-    // - IMapResource::OperationException in other cases
+    // Throws IMapResource::OperationException on failure or cancel
     RootNodePtr load();
 
     // Load the info file from the given stream, apply it to the root node
