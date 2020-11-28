@@ -9,6 +9,7 @@
 #include "ilightnode.h"
 #include "icommandsystem.h"
 #include "messages/FileSelectionRequest.h"
+#include "messages/MapFileOperation.h"
 #include "algorithm/Scene.h"
 #include "algorithm/XmlUtils.h"
 #include "algorithm/Primitives.h"
@@ -331,6 +332,47 @@ TEST_F(MapLoadingTest, openMapWithoutInfoFile)
     checkAltarSceneGeometry();
 
     EXPECT_EQ(GlobalMapModule().getMapName(), tempPath.string());
+}
+
+TEST_F(MapLoadingTest, loadingCanBeCancelled)
+{
+    std::string mapName = "altar.map";
+    std::string otherMap = "altar_loadingCanBeCancelled.map";
+    auto tempPath = createMapCopyInTempDataPath(mapName, otherMap);
+
+    // Load a valid map first
+    GlobalCommandSystem().executeCommand("OpenMap", mapName);
+    checkAltarScene();
+
+    bool cancelIssued = false;
+
+    // Subscribe to the map file operation progress event to cancel loading
+    // Subscribe to the event we expect to be fired
+    auto msgSubscription = GlobalRadiantCore().getMessageBus().addListener(
+        radiant::IMessage::Type::MapFileOperation,
+        radiant::TypeListener<map::FileOperation>(
+            [&](map::FileOperation& msg)
+    {
+        if (msg.getOperationType() == map::FileOperation::Type::Import &&
+            msg.getMessageType() == map::FileOperation::Started)
+        {
+            // set the flag before, since cancelOperation will be throwing an exception
+            cancelIssued = true;
+            msg.cancelOperation();
+        }
+    }));
+
+    // Now load the other map and cancel the operation
+    GlobalCommandSystem().executeCommand("OpenMap", tempPath.string());
+
+    // Operation should have been actively cancelled
+    EXPECT_TRUE(cancelIssued);
+
+    // Map should be empty
+    EXPECT_FALSE(algorithm::getEntityByName(GlobalMapModule().getRoot(), "world"));
+    EXPECT_EQ(GlobalMapModule().getMapName(), "unnamed.map");
+
+    GlobalRadiantCore().getMessageBus().removeListener(msgSubscription);
 }
 
 TEST_F(MapSavingTest, saveMapWithoutModification)
