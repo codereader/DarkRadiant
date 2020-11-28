@@ -132,6 +132,7 @@
     <ClCompile Include="..\..\radiantcore\map\MapPositionManager.cpp" />
     <ClCompile Include="..\..\radiantcore\map\MapPropertyInfoFileModule.cpp" />
     <ClCompile Include="..\..\radiantcore\map\MapResource.cpp" />
+    <ClCompile Include="..\..\radiantcore\map\MapResourceLoader.cpp" />
     <ClCompile Include="..\..\radiantcore\map\MapResourceManager.cpp" />
     <ClCompile Include="..\..\radiantcore\map\mru\MRU.cpp" />
     <ClCompile Include="..\..\radiantcore\map\namespace\ComplexName.cpp" />

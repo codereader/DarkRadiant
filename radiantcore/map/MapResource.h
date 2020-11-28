@@ -60,15 +60,8 @@ private:
 	bool saveBackup();
 
 	RootNodePtr loadMapNode();
-    RootNodePtr loadMapNodeFromStream(std::istream& stream, const std::string& fullPath);
 
 	void connectMap();
-
-	bool loadFile(std::istream& mapStream, const MapFormat& format, 
-                  const RootNodePtr& root, const std::string& filename);
-
-	void loadInfoFile(const RootNodePtr& root, const std::string& filename, const NodeIndexMap& nodeMap);
-	void loadInfoFileFromStream(std::istream& infoFileStream, const RootNodePtr& root, const NodeIndexMap& nodeMap);
 
 	// Opens a stream for the given path, which might be VFS path or an absolute one. The streamProcessor
 	// function is then called with the opened stream. Throws std::runtime_error on stream open failure.

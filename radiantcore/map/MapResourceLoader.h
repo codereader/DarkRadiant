@@ -1,16 +1,13 @@
 #pragma once
 
 #include <istream>
+
 #include "imapresource.h"
 #include "itextstream.h"
 #include "imapformat.h"
 
-#include "fmt/format.h"
-#include "scene/ChildPrimitives.h"
-#include "scenelib.h"
-
-#include "algorithm/MapImporter.h"
 #include "infofile/InfoFile.h"
+#include "RootNode.h"
 
 namespace map
 {
@@ -25,82 +22,21 @@ private:
     std::istream& _stream;
     const MapFormat& _format;
 
+    // Maps entity,primitive indices to nodes, used in infofile parsing code
     NodeIndexMap _indexMapping;
 
 public:
-    MapResourceLoader(std::istream& stream, const MapFormat& format) :
-        _stream(stream),
-        _format(format)
-    {}
+    MapResourceLoader(std::istream& stream, const MapFormat& format);
 
-    RootNodePtr load()
-    {
-        // Create a new map root node
-        auto root = std::make_shared<RootNode>("");
+    // Process the stream passed to the constructor, returns
+    // the root node
+    // Throws exceptions on failure: 
+    // - FileOperation::OperationCancelled in case the user cancelled
+    // - IMapResource::OperationException in other cases
+    RootNodePtr load();
 
-        try
-        {
-            // Our importer taking care of scene insertion
-            MapImporter importFilter(root, _stream);
-
-            // Acquire a map reader/parser
-            IMapReaderPtr reader = _format.getMapReader(importFilter);
-
-            rMessage() << "Using " << _format.getMapFormatName() << " format to load the data." << std::endl;
-
-            // Start parsing
-            reader->readFromStream(_stream);
-
-            // Prepare child primitives
-            scene::addOriginToChildPrimitives(root);
-
-            // Move the index mapping to this class before destroying the import filter
-            _indexMapping.swap(importFilter.getNodeMap());
-
-            return root;
-        }
-        catch (FileOperation::OperationCancelled&)
-        {
-            // Clear out the root node, otherwise we end up with half a map
-            scene::NodeRemover remover;
-            root->traverseChildren(remover);
-
-            throw; // leak this exception
-        }
-        catch (IMapReader::FailureException& e)
-        {
-            // Clear out the root node, otherwise we end up with half a map
-            scene::NodeRemover remover;
-            root->traverseChildren(remover);
-
-            // Convert the exception, pass the same message
-            throw IMapResource::OperationException(e.what());
-        }
-    }
-
-    void loadInfoFile(std::istream& stream, const RootNodePtr& root)
-    {
-        if (!stream.good())
-        {
-            rError() << "[MapResource] No valid info file stream" << std::endl;
-            return;
-        }
-
-        rMessage() << "Parsing info file..." << std::endl;
-
-        try
-        {
-            // Read the infofile
-            InfoFile infoFile(stream, root, _indexMapping);
-
-            // Start parsing, this will throw if any errors occur
-            infoFile.parse();
-        }
-        catch (parser::ParseException& e)
-        {
-            rError() << "[MapResource] Unable to parse info file: " << e.what() << std::endl;
-        }
-    }
+    // Load the info file from the given stream, apply it to the root node
+    void loadInfoFile(std::istream& stream, const RootNodePtr& root);
 };
 
 }

@@ -155,6 +155,7 @@ libradiantcore_la_SOURCES = Radiant.cpp \
                 map/MapPositionManager.cpp \
                 map/MapPropertyInfoFileModule.cpp \
                 map/MapResource.cpp \
+                map/MapResourceLoader.cpp \
                 map/MapResourceManager.cpp \
                 map/PointFile.cpp \
                 map/RegionManager.cpp \
