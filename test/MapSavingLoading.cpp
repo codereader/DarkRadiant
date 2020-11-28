@@ -141,7 +141,8 @@ TEST_F(MapLoadingTest, openMapWithEmptyStringAsksForPath)
     GlobalRadiantCore().getMessageBus().removeListener(msgSubscription);
 }
 
-void checkAltarScene()
+// Checks the main map info (brushes, entities, spawnargs), no layers or grouping
+void checkAltarSceneGeometry()
 {
     auto root = GlobalMapModule().getRoot();
     auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
@@ -184,6 +185,14 @@ void checkAltarScene()
     auto religiousSymbol = Node_getEntity(algorithm::getEntityByName(root, "religious_symbol_1"));
     EXPECT_EQ(religiousSymbol->getKeyValue("classname"), "altar_moveable_loot_religious_symbol");
     EXPECT_EQ(religiousSymbol->getKeyValue("origin"), "-0.0448253 12.0322 -177");
+}
+
+// Check entire map including geometry, entities, layers, groups
+void checkAltarScene()
+{
+    checkAltarSceneGeometry();
+
+    auto root = GlobalMapModule().getRoot();
 
     // Check layers
     EXPECT_TRUE(root->getLayerManager().getLayerID("Default") != -1);
@@ -291,6 +300,19 @@ TEST_F(MapLoadingTest, openWithInvalidPathInsideMod)
 
     // No worldspawn in this map, it should be empty
     EXPECT_FALSE(algorithm::getEntityByName(GlobalMapModule().getRoot(), "world"));
+}
+
+TEST_F(MapLoadingTest, openMapWithoutInfoFile)
+{
+    auto tempPath = createMapCopyInTempDataPath("altar.map", "altar_openMapWithoutInfoFile.map");
+    
+    fs::remove(fs::path(tempPath).replace_extension("darkradiant"));
+
+    EXPECT_FALSE(os::fileOrDirExists(fs::path(tempPath).replace_extension("darkradiant")));
+
+    GlobalCommandSystem().executeCommand("OpenMap", tempPath.string());
+    
+    checkAltarSceneGeometry();
 }
 
 TEST_F(MapSavingTest, saveMapWithoutModification)
