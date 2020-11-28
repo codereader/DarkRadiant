@@ -129,9 +129,8 @@ public:
 	 */
 	void saveSelected(const std::string& filename, const MapFormatPtr& mapFormat = MapFormatPtr());
 
-	/** greebo: Loads the map from the given filename
-	 */
-	void load(const std::string& filename);
+	// Loads the map from the given filename
+    void load(const std::string& filename);
 
 	/** greebo: Imports the contents from the given filename.
 	 *
@@ -188,6 +187,7 @@ public:
 	static void exportSelection(const cmd::ArgumentList& args);
 	static void newMap(const cmd::ArgumentList& args);
 	static void openMap(const cmd::ArgumentList& args);
+	static void openMapFromArchive(const cmd::ArgumentList& args);
 	static void importMap(const cmd::ArgumentList& args);
 	static void saveMap(const cmd::ArgumentList& args);
 	static void saveMapAs(const cmd::ArgumentList& args);
@@ -227,7 +227,17 @@ private:
 	// Creates a fresh worldspawn node and inserts it into the root scene node
 	scene::INodePtr createWorldspawn();
 
+    // Defines a map location
+    struct MapLocation
+    {
+        std::string path;
+        bool isArchive;
+        std::string archiveRelativePath;
+    };
+    void loadMapResourceFromLocation(const MapLocation& location);
+
 	void loadMapResourceFromPath(const std::string& path);
+	void loadMapResourceFromArchive(const std::string& archive, const std::string& archiveRelativePath);
 
 	void emitMapEvent(MapEvent ev);
 

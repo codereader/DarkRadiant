@@ -83,10 +83,25 @@ void Map::clearMapResource()
 
 void Map::loadMapResourceFromPath(const std::string& path)
 {
+    // Create a MapLocation defining a physical file, and forward the call
+    loadMapResourceFromLocation(MapLocation{path, false, ""});
+}
+
+void Map::loadMapResourceFromArchive(const std::string& archive, const std::string& archiveRelativePath)
+{
+    // Create a MapLocation defining an archive file, and forward the call
+    loadMapResourceFromLocation(MapLocation{ archive, true, archiveRelativePath });
+}
+
+void Map::loadMapResourceFromLocation(const MapLocation& location)
+{
+    rMessage() << "Loading map from " << location.path << 
+        (location.isArchive ? " [" + location.archiveRelativePath + "]" : "") << std::endl;
+
 	// Map loading started
 	emitMapEvent(MapLoading);
 
-	_resource = GlobalMapResourceManager().loadFromPath(_mapName);
+	_resource = GlobalMapResourceManager().loadFromPath(location.path);
 
     if (!_resource)
     {
@@ -95,12 +110,14 @@ void Map::loadMapResourceFromPath(const std::string& path)
 
     try
     {
+        util::ScopeTimer timer("map load");
+
         if (isUnnamed() || !_resource->load())
         {
             clearMapResource();
         }
     }
-    catch (IMapResource::OperationException& ex)
+    catch (const IMapResource::OperationException& ex)
     {
         radiant::NotificationMessage::SendError(ex.what());
         clearMapResource();
@@ -123,6 +140,19 @@ void Map::loadMapResourceFromPath(const std::string& path)
 
     // Map loading finished, emit the signal
     emitMapEvent(MapLoaded);
+
+    rMessage() << "--- LoadMapFile ---\n";
+    rMessage() << _mapName << "\n";
+
+    rMessage() << GlobalCounters().getCounter(counterBrushes).get() << " brushes\n";
+    rMessage() << GlobalCounters().getCounter(counterPatches).get() << " patches\n";
+    rMessage() << GlobalCounters().getCounter(counterEntities).get() << " entities\n";
+
+    // Let the filtersystem update the filtered status of all instances
+    GlobalFilterSystem().update();
+
+    // Clear the modified flag
+    setModified(false);
 }
 
 void Map::setMapName(const std::string& newName)
@@ -297,29 +327,10 @@ const scene::INodePtr& Map::findOrInsertWorldspawn()
     return _worldSpawnNode;
 }
 
-void Map::load(const std::string& filename) {
-    rMessage() << "Loading map from " << filename << "\n";
-
+void Map::load(const std::string& filename)
+{
     setMapName(filename);
-
-    {
-        util::ScopeTimer timer("map load");
-
-		loadMapResourceFromPath(_mapName);
-    }
-
-    rMessage() << "--- LoadMapFile ---\n";
-    rMessage() << _mapName << "\n";
-
-    rMessage() << GlobalCounters().getCounter(counterBrushes).get() << " brushes\n";
-    rMessage() << GlobalCounters().getCounter(counterPatches).get() << " patches\n";
-    rMessage() << GlobalCounters().getCounter(counterEntities).get() << " entities\n";
-
-    // Let the filtersystem update the filtered status of all instances
-    GlobalFilterSystem().update();
-
-    // Clear the modified flag
-    setModified(false);
+    loadMapResourceFromPath(_mapName);
 }
 
 bool Map::save(const MapFormatPtr& mapFormat)
@@ -646,6 +657,7 @@ void Map::registerCommands()
 {
     GlobalCommandSystem().addCommand("NewMap", Map::newMap);
     GlobalCommandSystem().addCommand("OpenMap", Map::openMap, { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
+    GlobalCommandSystem().addCommand("OpenMapFromArchive", Map::openMapFromArchive, { cmd::ARGTYPE_STRING, cmd::ARGTYPE_STRING });
     GlobalCommandSystem().addCommand("ImportMap", Map::importMap);
     GlobalCommandSystem().addCommand(LOAD_PREFAB_AT_CMD, std::bind(&Map::loadPrefabAt, this, std::placeholders::_1), 
         { cmd::ARGTYPE_STRING, cmd::ARGTYPE_VECTOR3, cmd::ARGTYPE_INT|cmd::ARGTYPE_OPTIONAL });
@@ -730,6 +742,32 @@ void Map::openMap(const cmd::ArgumentList& args)
 
         GlobalMap().freeMap();
         GlobalMap().load(mapToLoad);
+    }
+}
+
+void Map::openMapFromArchive(const cmd::ArgumentList& args)
+{
+    if (args.size() != 2)
+    {
+        rWarning() << "Usage: OpenMapFromArchive <pathToPakFile> <pathWithinArchive>" << std::endl;
+        return;
+    }
+
+    if (!GlobalMap().askForSave(_("Open Map"))) return;
+
+    std::string pathToArchive = args[0].getString();
+    std::string relativePath = args[1].getString();
+
+    if (!os::fileOrDirExists(pathToArchive))
+    {
+        throw cmd::ExecutionFailure(fmt::format(_("File not found: {0}"), pathToArchive));
+    }
+
+    if (!pathToArchive.empty())
+    {
+        GlobalMap().freeMap();
+        GlobalMap().setMapName(relativePath);
+        GlobalMap().loadMapResourceFromArchive(pathToArchive, relativePath);
     }
 }
 

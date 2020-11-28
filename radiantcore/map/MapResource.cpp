@@ -97,12 +97,6 @@ bool MapResource::load()
     {
 		// Map not loaded yet, acquire map root node from loader
 		_mapRoot = loadMapNode();
-
-        if (_mapRoot)
-        {
-            _mapRoot->setName(_name);
-        }
-
 		connectMap();
 		mapSave();
 	}
@@ -280,6 +274,11 @@ RootNodePtr MapResource::loadMapNode()
 
         // Load the root from the primary stream (throws on failure or cancel)
         rootNode = loader.load();
+
+        if (rootNode)
+        {
+            rootNode->setName(_name);
+        }
 
         // Check if an info file is supported by this map format
         if (format->allowInfoFileCreation())
