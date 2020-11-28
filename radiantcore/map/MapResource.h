@@ -8,6 +8,7 @@
 #include <set>
 #include "RootNode.h"
 #include "os/fs.h"
+#include "stream/MapResourceStream.h"
 
 namespace map
 {
@@ -63,9 +64,9 @@ private:
 
 	void connectMap();
 
-	// Opens a stream for the given path, which might be VFS path or an absolute one. The streamProcessor
-	// function is then called with the opened stream. Throws std::runtime_error on stream open failure.
-	void openFileStream(const std::string& path, const std::function<void(std::istream&)>& streamProcessor);
+	// Opens a stream for the given path, which might be VFS path or an absolute one. 
+    // Throws IMapResource::OperationException on stream open failure.
+	stream::MapResourceStream::Ptr openFileStream(const std::string& path);
 
     // Returns the extension of the auxiliary info file (including the leading dot character)
     static std::string getInfoFileExtension();

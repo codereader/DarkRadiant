@@ -29,11 +29,9 @@
 #include "infofile/InfoFile.h"
 #include "string/string.h"
 
-#include "algorithm/MapImporter.h"
 #include "algorithm/MapExporter.h"
 #include "algorithm/Import.h"
 #include "infofile/InfoFileExporter.h"
-#include "scene/ChildPrimitives.h"
 #include "messages/MapFileOperation.h"
 #include "NodeCounter.h"
 #include "MapResourceLoader.h"
@@ -264,102 +262,73 @@ RootNodePtr MapResource::loadMapNode()
 	// Build the map path
 	auto fullpath = getAbsoluteResourcePath();
 
-	// Open a stream (from physical file or VFS)
-	openFileStream(fullpath, [&](std::istream& mapStream)
-	{
-        try
+	// Open a stream (from physical file or VFS) - will throw on failure
+    auto stream = openFileStream(fullpath);
+
+    try
+    {
+        // Get the mapformat
+        auto format = algorithm::determineMapFormat(stream->getStream(), _extension);
+
+        if (!format)
         {
-            // Get the mapformat
-            auto format = algorithm::determineMapFormat(mapStream, _extension);
+            throw OperationException(_("Could not determine map format"));
+        }
 
-            if (!format)
+        // Instantiate a loader to process the map file stream
+        MapResourceLoader loader(stream->getStream(), *format);
+
+        // Load the root from the primary stream (throws on failure or cancel)
+        rootNode = loader.load();
+
+        // Check if an info file is supported by this map format
+        if (format->allowInfoFileCreation())
+        {
+            try
             {
-                throw OperationException(_("Could not determine map format"));
-            }
+                // Load for an additional info file
+                auto infoFilename = fullpath.substr(0, fullpath.rfind('.'));
+                infoFilename += getInfoFileExtension();
 
-            // Instantiate a loader to process the map file stream
-            MapResourceLoader loader(mapStream, *format);
+                auto infoFileStream = openFileStream(infoFilename);
 
-            // Load the root from the primary stream (throws on failure or cancel)
-            rootNode = loader.load();
-
-            // Check if an info file is supported by this map format
-            if (format->allowInfoFileCreation())
-            {
-                try
+                if (infoFileStream->isOpen())
                 {
-                    // Load for an additional info file
-                    auto infoFilename = fullpath.substr(0, fullpath.rfind('.'));
-                    infoFilename += getInfoFileExtension();
-
-                    openFileStream(infoFilename, [&](std::istream& infoFileStream)
-                    {
-                        loader.loadInfoFile(infoFileStream, rootNode);
-                    });
-                }
-                catch (const std::runtime_error& ex)
-                {
-                    rWarning() << ex.what() << std::endl;
+                    loader.loadInfoFile(infoFileStream->getStream(), rootNode);
                 }
             }
+            catch (const OperationException& ex)
+            {
+                // Info file load file does not stop us, just issue a warning
+                rWarning() << ex.what() << std::endl;
+            }
         }
-        catch (FileOperation::OperationCancelled&)
-        {
-            // User cancelled, don't show a complicated failure message
-            throw OperationException(_("Map loading cancelled"));
-        }
-        catch (const OperationException& ex)
-        {
-            // Re-throw the exception, adding the map file path to the message
-            throw OperationException(fmt::format(_("Failure reading map file:\n{0}\n\n{1}"), fullpath, ex.what()));
-        }
-	});
+    }
+    catch (FileOperation::OperationCancelled&)
+    {
+        // User cancelled, don't show a complicated failure message
+        throw OperationException(_("Map loading cancelled"));
+    }
+    catch (const OperationException& ex)
+    {
+        // Re-throw the exception, adding the map file path to the message
+        throw OperationException(fmt::format(_("Failure reading map file:\n{0}\n\n{1}"), fullpath, ex.what()));
+    }
 
 	return rootNode;
 }
 
-void MapResource::openFileStream(const std::string& path, const std::function<void(std::istream&)>& streamProcessor)
+stream::MapResourceStream::Ptr MapResource::openFileStream(const std::string& path)
 {
-	if (path_is_absolute(path.c_str()))
-	{
-		rMessage() << "Open file " << path << " from filesystem...";
+    // Call the factory method to acquire a stream
+    auto stream = stream::MapResourceStream::OpenFromPath(path);
 
-        std::ifstream stream(path);
+    if (!stream->isOpen())
+    {
+        throw OperationException(fmt::format(_("Could not open file:\n{0}"), path));
+    }
 
-        if (!stream)
-        {
-            rError() << "failure" << std::endl;
-            throw OperationException(fmt::format(_("Failure opening file:\n{0}"), path));
-        }
-
-		rMessage() << "success." << std::endl;
-
-		streamProcessor(stream);
-	}
-	else
-	{
-		// Not an absolute path, might as well be a VFS path, so try to load it from the PAKs
-		rMessage() << "Trying to open file " << path << " from VFS...";
-
-		ArchiveTextFilePtr vfsFile = GlobalFileSystem().openTextFile(path);
-
-		if (!vfsFile)
-		{
-			rError() << "failure" << std::endl;
-			throw OperationException(fmt::format(_("Failure opening file:\n{0}"), path));
-		}
-
-		rMessage() << "success." << std::endl;
-
-		std::istream vfsStream(&(vfsFile->getInputStream()));
-
-		// Deflated text files don't support stream positioning (seeking)
-		// so load everything into one large string and create a new buffer
-		std::stringstream stringStream;
-		stringStream << vfsStream.rdbuf();
-
-		streamProcessor(stringStream);
-	}
+    return stream;
 }
 
 std::string MapResource::getInfoFileExtension()

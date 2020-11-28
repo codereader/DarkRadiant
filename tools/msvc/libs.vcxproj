@@ -223,6 +223,7 @@
     <ClInclude Include="..\..\libs\stream\BufferInputStream.h" />
     <ClInclude Include="..\..\libs\stream\ExportStream.h" />
     <ClInclude Include="..\..\libs\stream\FileInputStream.h" />
+    <ClInclude Include="..\..\libs\stream\MapResourceStream.h" />
     <ClInclude Include="..\..\libs\stream\PointerInputStream.h" />
     <ClInclude Include="..\..\libs\stream\ScopedArchiveBuffer.h" />
     <ClInclude Include="..\..\libs\stream\TextFileInputStream.h" />
