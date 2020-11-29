@@ -58,6 +58,9 @@ protected:
     // May return an empty reference, may throw OperationException on failure
     virtual stream::MapResourceStream::Ptr openInfofileStream();
 
+    // Returns the extension of the auxiliary info file (including the leading dot character)
+    static std::string getInfoFileExtension();
+
 private:
     void constructPaths(const std::string& resourcePath);
     std::string getAbsoluteResourcePath();
@@ -75,9 +78,6 @@ private:
 	// Opens a stream for the given path, which might be VFS path or an absolute one. 
     // Throws IMapResource::OperationException on stream open failure.
 	stream::MapResourceStream::Ptr openFileStream(const std::string& path);
-
-    // Returns the extension of the auxiliary info file (including the leading dot character)
-    static std::string getInfoFileExtension();
 
 	// Checks if file can be overwritten (throws on failure)
 	static void throwIfNotWriteable(const fs::path& path);

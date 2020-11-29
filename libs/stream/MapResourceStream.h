@@ -5,6 +5,7 @@
 #include <fstream>
 #include "os/path.h"
 #include "itextstream.h"
+#include "iarchive.h"
 #include "ifilesystem.h"
 
 namespace stream
@@ -30,6 +31,9 @@ public:
     // Factory method which will return a stream reference for the given path
     // Will always return a non-empty reference
     static Ptr OpenFromPath(const std::string& path);
+
+    // Factory method which will return a stream reference of the given ArchiveTextFile
+    static Ptr OpenFromArchiveFile(const ArchiveTextFilePtr& archive);
 };
 
 namespace detail
@@ -70,26 +74,26 @@ public:
 };
 
 /**
- * MapResourceStream implementation working with a VFS file.
- * Since VFS deflated file streams are not seekable, the whole 
+ * MapResourceStream implementation working with a PAK file.
+ * Since deflated file streams are not seekable, the whole 
  * file contents are pre-loaded into a seekable stringstream.
  */
-class VfsMapResourceStream :
+class ArchivedMapResourceStream :
     public MapResourceStream
 {
 private:
-    ArchiveTextFilePtr _vfsFile;
+    ArchiveTextFilePtr _archiveFile;
 
     std::stringstream _contentStream;
 
 public:
-    VfsMapResourceStream(const std::string& path)
+    ArchivedMapResourceStream(const std::string& path)
     {
         rMessage() << "Trying to open file " << path << " from VFS...";
 
-        _vfsFile = GlobalFileSystem().openTextFile(path);
+        _archiveFile = GlobalFileSystem().openTextFile(path);
 
-        if (!_vfsFile)
+        if (!_archiveFile)
         {
             rError() << "failure" << std::endl;
             return;
@@ -97,7 +101,18 @@ public:
 
         rMessage() << "success." << std::endl;
 
-        std::istream vfsStream(&(_vfsFile->getInputStream()));
+        std::istream vfsStream(&(_archiveFile->getInputStream()));
+
+        // Load everything into one large string
+        _contentStream << vfsStream.rdbuf();
+    }
+
+    ArchivedMapResourceStream(const ArchiveTextFilePtr& archive) :
+        _archiveFile(archive)
+    {
+        rMessage() << "Opened text file in PAK: " << archive->getName() << std::endl;
+
+        std::istream vfsStream(&(_archiveFile->getInputStream()));
 
         // Load everything into one large string
         _contentStream << vfsStream.rdbuf();
@@ -105,7 +120,7 @@ public:
 
     bool isOpen() const override
     {
-        return _vfsFile != nullptr;
+        return _archiveFile != nullptr;
     }
 
     std::istream& getStream() override
@@ -125,8 +140,13 @@ inline MapResourceStream::Ptr MapResourceStream::OpenFromPath(const std::string&
     else
     {
         // Not an absolute path, might as well be a VFS path, so try to load it from the PAKs
-        return std::make_shared<detail::VfsMapResourceStream>(path);
+        return std::make_shared<detail::ArchivedMapResourceStream>(path);
     }
+}
+
+inline MapResourceStream::Ptr MapResourceStream::OpenFromArchiveFile(const ArchiveTextFilePtr& archive)
+{
+    return std::make_shared<detail::ArchivedMapResourceStream>(archive);
 }
 
 }

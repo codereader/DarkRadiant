@@ -326,8 +326,6 @@ stream::MapResourceStream::Ptr MapResource::openInfofileStream()
     try
     {
         auto fullpath = getAbsoluteResourcePath();
-
-        // Load for an additional info file
         auto infoFilename = fullpath.substr(0, fullpath.rfind('.'));
         infoFilename += getInfoFileExtension();
 
