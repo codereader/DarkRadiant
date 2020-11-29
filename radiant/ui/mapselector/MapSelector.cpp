@@ -20,7 +20,7 @@ namespace
 MapSelector::MapSelector() :
     DialogBase(_(MAPSELECTOR_TITLE)),
     _treeView(nullptr),
-    _buttons(nullptr),
+    _openButton(nullptr),
     _handlingSelectionChange(false)
 {
     SetSizer(new wxBoxSizer(wxVERTICAL));
@@ -33,14 +33,20 @@ MapSelector::MapSelector() :
     setupTreeView(this);
     vbox->Add(_treeView, 1, wxEXPAND);
 
-    _buttons = CreateStdDialogButtonSizer(wxOK | wxCANCEL);
-    _buttons->GetAffirmativeButton()->SetLabel(_("Open"));
-    wxButton* reloadButton = new wxButton(this, wxID_ANY, _("Refresh"));
-    reloadButton->Bind(wxEVT_BUTTON, &MapSelector::onRescanPath, this);
+    auto* cancelButton = new wxButton(this, wxID_CANCEL, _("Cancel"));
+    _openButton = new wxButton(this, wxID_ANY, _("Open"));
+    _reloadButton = new wxButton(this, wxID_ANY, _("Refresh"));
 
-    _buttons->Prepend(reloadButton, 0, wxRIGHT, 32);
+    _openButton->Bind(wxEVT_BUTTON, &MapSelector::onOpenPath, this);
+    _reloadButton->Bind(wxEVT_BUTTON, &MapSelector::onRescanPath, this);
 
-    vbox->Add(_buttons, 0, wxALIGN_RIGHT | wxTOP, 12);
+    auto* buttonSizer = new wxBoxSizer(wxHORIZONTAL);
+
+    buttonSizer->Add(_reloadButton, 0, wxRIGHT, 24);
+    buttonSizer->Add(_openButton, 0, wxRIGHT, 6);
+    buttonSizer->Add(cancelButton, 0, wxRIGHT, 0);
+
+    vbox->Add(buttonSizer, 0, wxALIGN_RIGHT | wxTOP, 12);
 
     // Set the default size of the window
     _position.connect(this);
@@ -53,7 +59,7 @@ int MapSelector::ShowModal()
 {
     // Populate the tree
     populateTree();
-    updateButtonSensitivity();
+    updateButtons();
 
     // Enter the main loop
     return DialogBase::ShowModal();
@@ -194,25 +200,34 @@ void MapSelector::populateTree()
     _treeView->Populate();
 }
 
+void MapSelector::onOpenPath(wxCommandEvent& ev)
+{
+    handleItemActivated();
+}
+
 void MapSelector::onRescanPath(wxCommandEvent& ev)
 {
+    _reloadButton->Disable();
     populateTree();
 }
 
-void MapSelector::updateButtonSensitivity()
+void MapSelector::updateButtons()
 {
-    auto fileExtension = string::to_lower_copy(os::getExtension(_treeView->GetSelectedPath()));
-    bool okIsEnabled = !_treeView->GetIsFolderSelected() && _mapFileExtensions.count(fileExtension) > 0;
+    if (!_treeView->GetSelection().IsOk() || _treeView->GetIsFolderSelected())
+    {
+        _openButton->Disable();
+        return;
+    }
 
-    _buttons->GetAffirmativeButton()->Enable(okIsEnabled);
+    _openButton->Enable();
 }
 
 void MapSelector::onSelectionChanged(wxutil::FileSystemView::SelectionChangedEvent& ev)
 {
-    updateButtonSensitivity();
+    updateButtons();
 }
 
-void MapSelector::onItemActivated(wxDataViewEvent& ev)
+void MapSelector::handleItemActivated()
 {
     auto selectedPath = _treeView->GetSelectedPath();
     auto extension = string::to_lower_copy(os::getExtension(selectedPath));
@@ -241,9 +256,15 @@ void MapSelector::onItemActivated(wxDataViewEvent& ev)
     EndModal(wxID_OK);
 }
 
+void MapSelector::onItemActivated(wxDataViewEvent& ev)
+{
+    handleItemActivated();
+}
+
 void MapSelector::onFileViewTreePopulated()
 {
     _treeView->ExpandPath("maps/");
+    _reloadButton->Enable();
 }
 
 std::string MapSelector::getSelectedPath()

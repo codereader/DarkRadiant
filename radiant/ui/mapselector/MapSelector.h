@@ -6,6 +6,7 @@
 #include "wxutil/fsview/FileSystemView.h"
 #include "wxutil/WindowPosition.h"
 #include "wxutil/PathEntry.h"
+#include <wx/button.h>
 
 class wxStdDialogButtonSizer;
 
@@ -18,7 +19,8 @@ class MapSelector :
 {
 private:
     wxPanel* _dialogPanel;
-    wxStdDialogButtonSizer* _buttons;
+    wxButton* _openButton;
+    wxButton* _reloadButton;
 
     // Main tree view with the folder hierarchy
     wxutil::FileSystemView* _treeView;
@@ -53,12 +55,14 @@ private:
     // Return the archive path of the selection
     std::string getArchivePath();
 
+    void onOpenPath(wxCommandEvent& ev);
     void onRescanPath(wxCommandEvent& ev);
     void onItemActivated(wxDataViewEvent& ev);
     void onSelectionChanged(wxutil::FileSystemView::SelectionChangedEvent& ev);
     void onFileViewTreePopulated();
-    void updateButtonSensitivity();
+    void updateButtons();
     void onPathSelectionChanged();
+    void handleItemActivated();
 
 public:
     int ShowModal() override;
