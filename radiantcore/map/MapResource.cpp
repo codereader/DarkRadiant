@@ -104,6 +104,11 @@ bool MapResource::load()
 	return _mapRoot != nullptr;
 }
 
+bool MapResource::isReadOnly()
+{
+    return !FileIsWriteable(getAbsoluteResourcePath());
+}
+
 void MapResource::save(const MapFormatPtr& mapFormat)
 {
 	// For saving, take the default map format for this game type
@@ -156,7 +161,7 @@ bool MapResource::saveBackup()
 		}
 
 		fs::path auxFile = fullpath;
-		auxFile.replace_extension(getInfoFileExtension());
+		auxFile.replace_extension(GetInfoFileExtension());
 
 		fs::path backup = fullpath;
 		backup.replace_extension(".bak");
@@ -327,7 +332,7 @@ stream::MapResourceStream::Ptr MapResource::openInfofileStream()
     {
         auto fullpath = getAbsoluteResourcePath();
         auto infoFilename = fullpath.substr(0, fullpath.rfind('.'));
-        infoFilename += getInfoFileExtension();
+        infoFilename += GetInfoFileExtension();
 
         return openFileStream(infoFilename);
     }
@@ -339,7 +344,7 @@ stream::MapResourceStream::Ptr MapResource::openInfofileStream()
     }
 }
 
-std::string MapResource::getInfoFileExtension()
+std::string MapResource::GetInfoFileExtension()
 {
     std::string extension = game::current::getValue<std::string>(GKEY_INFO_FILE_EXTENSION);
 
@@ -351,10 +356,15 @@ std::string MapResource::getInfoFileExtension()
     return extension;
 }
 
+bool MapResource::FileIsWriteable(const fs::path& path)
+{
+    return !os::fileOrDirExists(path.string()) || os::fileIsWritable(path);
+}
+
 void MapResource::throwIfNotWriteable(const fs::path& path)
 {
 	// Check writeability of the given file
-	if (os::fileOrDirExists(path.string()) && !os::fileIsWritable(path))
+	if (!FileIsWriteable(path))
 	{
 		// File is write-protected
 		rError() << "File is write-protected." << std::endl;
@@ -369,7 +379,7 @@ void MapResource::saveFile(const MapFormat& format, const scene::IMapRootNodePtr
 	// Actual output file paths
 	fs::path outFile = filename;
 	fs::path auxFile = outFile;
-	auxFile.replace_extension(getInfoFileExtension());
+	auxFile.replace_extension(GetInfoFileExtension());
 
 	// Check writeability of the primary output file
 	throwIfNotWriteable(outFile);

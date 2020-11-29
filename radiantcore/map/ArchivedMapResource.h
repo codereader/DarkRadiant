@@ -39,7 +39,7 @@ protected:
         try
         {
             auto infoFilename = _filePathWithinArchive.substr(0, _filePathWithinArchive.rfind('.'));
-            infoFilename += getInfoFileExtension();
+            infoFilename += GetInfoFileExtension();
 
             return openFileInArchive(infoFilename);
         }

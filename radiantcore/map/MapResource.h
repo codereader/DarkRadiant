@@ -36,13 +36,14 @@ public:
 	// Constructor
 	MapResource(const std::string& resourcePath);
 
-	void rename(const std::string& fullPath) override;
+	virtual void rename(const std::string& fullPath) override;
 
-	bool load() override;
-	void save(const MapFormatPtr& mapFormat = MapFormatPtr()) override;
+	virtual bool load() override;
+    virtual bool isReadOnly() override;
+	virtual void save(const MapFormatPtr& mapFormat = MapFormatPtr()) override;
 
-	const scene::IMapRootNodePtr& getRootNode() override;
-    void clear() override;
+	virtual const scene::IMapRootNodePtr& getRootNode() override;
+    virtual void clear() override;
 
 	// Save the map contents to the given filename using the given MapFormat export module
 	// Throws an OperationException if anything prevents successful completion
@@ -59,7 +60,11 @@ protected:
     virtual stream::MapResourceStream::Ptr openInfofileStream();
 
     // Returns the extension of the auxiliary info file (including the leading dot character)
-    static std::string getInfoFileExtension();
+    static std::string GetInfoFileExtension();
+
+    // Returns true if the file can be written to. Also returns true if the file
+    // doesn't exist (assuming the file can always be created).
+    static bool FileIsWriteable(const fs::path& path);
 
 private:
     void constructPaths(const std::string& resourcePath);

@@ -664,7 +664,7 @@ void Map::registerCommands()
     GlobalCommandSystem().addCommand(LOAD_PREFAB_AT_CMD, std::bind(&Map::loadPrefabAt, this, std::placeholders::_1), 
         { cmd::ARGTYPE_STRING, cmd::ARGTYPE_VECTOR3, cmd::ARGTYPE_INT|cmd::ARGTYPE_OPTIONAL });
     GlobalCommandSystem().addCommand("SaveSelectedAsPrefab", Map::saveSelectedAsPrefab);
-    GlobalCommandSystem().addCommand("SaveMap", Map::saveMap);
+    GlobalCommandSystem().addCommand("SaveMap", std::bind(&Map::saveMapCmd, this, std::placeholders::_1));
     GlobalCommandSystem().addCommand("SaveMapAs", Map::saveMapAs);
     GlobalCommandSystem().addCommand("SaveMapCopyAs", Map::saveMapCopyAs);
     GlobalCommandSystem().addCommand("ExportMap", Map::exportMap);
@@ -789,16 +789,16 @@ void Map::saveMapAs(const cmd::ArgumentList& args) {
     GlobalMap().saveAs();
 }
 
-void Map::saveMap(const cmd::ArgumentList& args)
+void Map::saveMapCmd(const cmd::ArgumentList& args)
 {
-    if (GlobalMap().isUnnamed())
+    if (isUnnamed() || (_resource && _resource->isReadOnly()))
     {
-        GlobalMap().saveAs();
+        saveAs();
     }
     // greebo: Always let the map be saved, regardless of the modified status.
     else /*if(GlobalMap().isModified())*/
     {
-        GlobalMap().save();
+        save();
     }
 }
 

@@ -189,7 +189,7 @@ public:
 	static void openMap(const cmd::ArgumentList& args);
 	static void openMapFromArchive(const cmd::ArgumentList& args);
 	static void importMap(const cmd::ArgumentList& args);
-	static void saveMap(const cmd::ArgumentList& args);
+	void saveMapCmd(const cmd::ArgumentList& args);
 	static void saveMapAs(const cmd::ArgumentList& args);
 	static void exportMap(const cmd::ArgumentList& args);
 

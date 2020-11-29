@@ -58,6 +58,14 @@ public:
         }
 	};
 
+    /**
+     * Returns true if this resource refers to a read-only location.
+     * This returns true for archived resources (loaded from PAK files),
+     * but might be returning true for other resource types too (e.g. when
+     * this process is lacking write access to the resource).
+     */
+    virtual bool isReadOnly() = 0;
+
 	/**
 	* Save this resource
 	*
