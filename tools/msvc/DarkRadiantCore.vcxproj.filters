@@ -1003,6 +1003,9 @@
     <ClCompile Include="..\..\radiantcore\map\MapResourceLoader.cpp">
       <Filter>src\map</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\map\ArchivedMapResource.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">

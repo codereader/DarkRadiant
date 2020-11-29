@@ -339,6 +339,12 @@ bool Map::save(const MapFormatPtr& mapFormat)
 {
     if (_saveInProgress) return false; // safeguard
 
+    if (_resource->isReadOnly())
+    {
+        rError() << "This map is read-only and cannot be saved." << std::endl;
+        return false;
+    }
+
     _saveInProgress = true;
 
     emitMapEvent(MapSaving);

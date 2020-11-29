@@ -101,6 +101,7 @@
     <ClCompile Include="..\..\radiantcore\map\algorithm\MapImporter.cpp" />
     <ClCompile Include="..\..\radiantcore\map\algorithm\Models.cpp" />
     <ClCompile Include="..\..\radiantcore\map\algorithm\Skins.cpp" />
+    <ClCompile Include="..\..\radiantcore\map\ArchivedMapResource.cpp" />
     <ClCompile Include="..\..\radiantcore\map\AutoSaver.cpp" />
     <ClCompile Include="..\..\radiantcore\map\CounterManager.cpp" />
     <ClCompile Include="..\..\radiantcore\map\EditingStopwatch.cpp" />

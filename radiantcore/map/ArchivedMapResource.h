@@ -1,13 +1,20 @@
 #pragma once
 
-#include "i18n.h"
-#include "ifilesystem.h"
+#include "iarchive.h"
 #include "MapResource.h"
 #include "stream/MapResourceStream.h"
 
 namespace map
 {
 
+/**
+ * MapResource specialising on loading map files from archives
+ * just as PK4 files, which may be located outside the VFS search
+ * paths.
+ * 
+ * ArchivedMapResources are read-only and don't implement the save()
+ * methods.
+ */
 class ArchivedMapResource :
     public MapResource
 {
@@ -18,73 +25,19 @@ private:
     IArchive::Ptr _archive;
 
 public:
-    ArchivedMapResource(const std::string& archivePath, const std::string& filePathWithinArchive) :
-        MapResource(filePathWithinArchive),
-        _archivePath(archivePath),
-        _filePathWithinArchive(filePathWithinArchive)
-    {}
+    ArchivedMapResource(const std::string& archivePath, const std::string& filePathWithinArchive);
 
-    virtual bool isReadOnly() override
-    {
-        return true;
-    }
+    virtual bool isReadOnly() override;
+    virtual void save(const MapFormatPtr& mapFormat = MapFormatPtr()) override;
 
 protected:
-    virtual stream::MapResourceStream::Ptr openMapfileStream() override
-    {
-        ensureArchiveOpened();
-
-        return openFileInArchive(_filePathWithinArchive);
-    }
-
-    virtual stream::MapResourceStream::Ptr openInfofileStream() override
-    {
-        ensureArchiveOpened();
-
-        try
-        {
-            auto infoFilename = _filePathWithinArchive.substr(0, _filePathWithinArchive.rfind('.'));
-            infoFilename += GetInfoFileExtension();
-
-            return openFileInArchive(infoFilename);
-        }
-        catch (const OperationException& ex)
-        {
-            // Info file load file does not stop us, just issue a warning
-            rWarning() << ex.what() << std::endl;
-            return stream::MapResourceStream::Ptr();
-        }
-    }
+    virtual stream::MapResourceStream::Ptr openMapfileStream() override;
+    virtual stream::MapResourceStream::Ptr openInfofileStream() override;
 
 private:
-    stream::MapResourceStream::Ptr openFileInArchive(const std::string& filePathWithinArchive)
-    {
-        assert(_archive);
+    stream::MapResourceStream::Ptr openFileInArchive(const std::string& filePathWithinArchive);
 
-        auto archiveFile = _archive->openTextFile(filePathWithinArchive);
-
-        if (!archiveFile)
-        {
-            throw OperationException(fmt::format(_("Could not open file in archive: {0}"), _archivePath));
-        }
-
-        return stream::MapResourceStream::OpenFromArchiveFile(archiveFile);
-    }
-
-    void ensureArchiveOpened()
-    {
-        if (_archive)
-        {
-            return;
-        }
-
-        _archive = GlobalFileSystem().openArchiveInAbsolutePath(_archivePath);
-
-        if (!_archive)
-        {
-            throw OperationException(fmt::format(_("Could not open archive: {0}"), _archivePath));
-        }
-    }
+    void ensureArchiveOpened();
 };
 
 }
