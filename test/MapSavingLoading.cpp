@@ -883,6 +883,9 @@ TEST_F(MapSavingTest, saveArchivedMapWillAskForFilename)
     checkAltarScene();
 
     bool eventFired = false;
+    fs::path outputPath = _context.getTemporaryDataPath();
+    outputPath /= "altar_packed_copy.map";
+    auto format = GlobalMapFormatManager().getMapFormatForFilename(outputPath.string());
 
     // Subscribe to the event asking for the target path
     auto msgSubscription = GlobalRadiantCore().getMessageBus().addListener(
@@ -891,13 +894,25 @@ TEST_F(MapSavingTest, saveArchivedMapWillAskForFilename)
             [&](radiant::FileSelectionRequest& msg)
     {
         eventFired = true;
-        msg.setHandled(false);
+        msg.setHandled(true);
+        msg.setResult(radiant::FileSelectionRequest::Result
+        {
+            outputPath.string(),
+            format->getMapFormatName()
+        });
     }));
 
     // This should ask the user for a file location, i.e. fire the above event
     GlobalCommandSystem().executeCommand("SaveMap");
 
     EXPECT_TRUE(eventFired) << "Radiant didn't ask for a new filename when saving an archived map";
+
+    eventFired = false;
+
+    // Save again, this should no longer ask for a location
+    GlobalCommandSystem().executeCommand("SaveMap");
+    
+    EXPECT_FALSE(eventFired);
 
     GlobalRadiantCore().getMessageBus().removeListener(msgSubscription);
 }

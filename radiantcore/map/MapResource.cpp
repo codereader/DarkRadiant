@@ -226,6 +226,11 @@ const scene::IMapRootNodePtr& MapResource::getRootNode()
 	return _mapRoot;
 }
 
+void MapResource::setRootNode(const scene::IMapRootNodePtr& root)
+{
+    _mapRoot = root;
+}
+
 void MapResource::clear()
 {
     _mapRoot = std::make_shared<RootNode>("");

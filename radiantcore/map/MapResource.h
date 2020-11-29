@@ -43,6 +43,7 @@ public:
 	virtual void save(const MapFormatPtr& mapFormat = MapFormatPtr()) override;
 
 	virtual const scene::IMapRootNodePtr& getRootNode() override;
+    virtual void setRootNode(const scene::IMapRootNodePtr& root) override;
     virtual void clear() override;
 
 	// Save the map contents to the given filename using the given MapFormat export module

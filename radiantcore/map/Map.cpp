@@ -548,37 +548,39 @@ bool Map::saveAs()
 {
     if (_saveInProgress) return false; // safeguard
 
-    MapFileSelection fileInfo =
-        MapFileManager::getMapFileSelection(false, _("Save Map"), filetype::TYPE_MAP, getMapName());
+    auto fileInfo = MapFileManager::getMapFileSelection(false, 
+        _("Save Map"), filetype::TYPE_MAP, getMapName());
 
-	if (!fileInfo.fullPath.empty())
-	{
-        // Remember the old name, we might need to revert
-        std::string oldFilename = _mapName;
-
-        // Rename the file and try to save
-        rename(fileInfo.fullPath);
-
-        // Try to save the file, this might fail
-		bool success = save(fileInfo.mapFormat);
-
-        if (success)
-		{
-            GlobalMRU().insert(fileInfo.fullPath);
-        }
-        else if (!success)
-		{
-            // Revert the name change if the file could not be saved
-            rename(oldFilename);
-        }
-
-        return success;
-    }
-    else
-	{
+    if (fileInfo.fullPath.empty())
+    {
         // Invalid filename entered, return false
         return false;
     }
+
+    // Remember the old resource, we might need to revert
+    auto oldResource = _resource;
+
+    // Create a new resource pointing to the given path...
+    _resource = GlobalMapResourceManager().createFromPath(fileInfo.fullPath);
+        
+    // ...and import the existing root node into that resource
+    _resource->setRootNode(oldResource->getRootNode());
+
+    // Try to save the resource, this might fail
+    if (!save(fileInfo.mapFormat))
+    {
+        // Failure, revert the change
+        _resource = oldResource;
+        return false;
+    }
+
+    // Resource save was successful, notify about this name change
+    rename(fileInfo.fullPath);
+
+    // add an MRU entry on success
+    GlobalMRU().insert(fileInfo.fullPath);
+
+    return true;
 }
 
 void Map::saveCopyAs()
@@ -841,12 +843,15 @@ void Map::saveSelectedAsPrefab(const cmd::ArgumentList& args)
     }
 }
 
-void Map::rename(const std::string& filename) {
-    if (_mapName != filename) {
+void Map::rename(const std::string& filename)
+{
+    if (_mapName != filename)
+    {
         setMapName(filename);
         SceneChangeNotify();
     }
-    else {
+    else
+    {
         _resource->save();
         setModified(false);
     }

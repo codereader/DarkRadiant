@@ -80,6 +80,10 @@ public:
 
     virtual const scene::IMapRootNodePtr& getRootNode() = 0;
 
+    // Sets the root node of this resource. The use case is to create a resource
+    // around an existing map root for e.g. saving a read-only resource to a new path
+    virtual void setRootNode(const scene::IMapRootNodePtr& root) = 0;
+
     virtual void clear() = 0;
 };
 typedef std::shared_ptr<IMapResource> IMapResourcePtr;
