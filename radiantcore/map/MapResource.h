@@ -2,7 +2,6 @@
 
 #include "imapresource.h"
 #include "imapformat.h"
-#include "imapinfofile.h"
 #include "imodel.h"
 #include "imap.h"
 #include <set>
@@ -50,6 +49,15 @@ public:
 	static void saveFile(const MapFormat& format, const scene::IMapRootNodePtr& root,
 						 const GraphTraversalFunc& traverse, const std::string& filename);
 
+protected:
+    // Implementation-specific method to open the stream of the primary .map or .mapx file
+    // May return an empty reference, may throw OperationException on failure
+    virtual stream::MapResourceStream::Ptr openMapfileStream();
+
+    // Implementation-specific method to open the info file stream (.darkradiant) file
+    // May return an empty reference, may throw OperationException on failure
+    virtual stream::MapResourceStream::Ptr openInfofileStream();
+
 private:
     void constructPaths(const std::string& resourcePath);
     std::string getAbsoluteResourcePath();
@@ -74,8 +82,5 @@ private:
 	// Checks if file can be overwritten (throws on failure)
 	static void throwIfNotWriteable(const fs::path& path);
 };
-// Resource pointer types
-typedef std::shared_ptr<MapResource> MapResourcePtr;
-typedef std::weak_ptr<MapResource> MapResourceWeakPtr;
 
 } // namespace map

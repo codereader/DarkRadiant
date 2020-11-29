@@ -2052,5 +2052,8 @@
     <ClInclude Include="..\..\radiantcore\map\MapResourceLoader.h">
       <Filter>src\map</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\ArchivedMapResource.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

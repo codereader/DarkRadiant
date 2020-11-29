@@ -253,11 +253,13 @@ RootNodePtr MapResource::loadMapNode()
 {
 	RootNodePtr rootNode;
 
-	// Build the map path
-	auto fullpath = getAbsoluteResourcePath();
+	// Open a stream - will throw on failure
+    auto stream = openMapfileStream();
 
-	// Open a stream (from physical file or VFS) - will throw on failure
-    auto stream = openFileStream(fullpath);
+    if (!stream || !stream->isOpen())
+    {
+        throw OperationException(_("Could not open map stream"));
+    }
 
     try
     {
@@ -283,23 +285,11 @@ RootNodePtr MapResource::loadMapNode()
         // Check if an info file is supported by this map format
         if (format->allowInfoFileCreation())
         {
-            try
-            {
-                // Load for an additional info file
-                auto infoFilename = fullpath.substr(0, fullpath.rfind('.'));
-                infoFilename += getInfoFileExtension();
+            auto infoFileStream = openInfofileStream();
 
-                auto infoFileStream = openFileStream(infoFilename);
-
-                if (infoFileStream->isOpen())
-                {
-                    loader.loadInfoFile(infoFileStream->getStream(), rootNode);
-                }
-            }
-            catch (const OperationException& ex)
+            if (infoFileStream && infoFileStream->isOpen())
             {
-                // Info file load file does not stop us, just issue a warning
-                rWarning() << ex.what() << std::endl;
+                loader.loadInfoFile(infoFileStream->getStream(), rootNode);
             }
         }
     }
@@ -307,7 +297,7 @@ RootNodePtr MapResource::loadMapNode()
     {
         // Re-throw the exception, prepending the map file path to the message (if not cancelled)
         throw ex.operationCancelled() ? ex : 
-            OperationException(fmt::format(_("Failure reading map file:\n{0}\n\n{1}"), fullpath, ex.what()));
+            OperationException(fmt::format(_("Failure reading map file:\n{0}\n\n{1}"), getAbsoluteResourcePath(), ex.what()));
     }
 
 	return rootNode;
@@ -324,6 +314,31 @@ stream::MapResourceStream::Ptr MapResource::openFileStream(const std::string& pa
     }
 
     return stream;
+}
+
+stream::MapResourceStream::Ptr MapResource::openMapfileStream()
+{
+    return openFileStream(getAbsoluteResourcePath());
+}
+
+stream::MapResourceStream::Ptr MapResource::openInfofileStream()
+{
+    try
+    {
+        auto fullpath = getAbsoluteResourcePath();
+
+        // Load for an additional info file
+        auto infoFilename = fullpath.substr(0, fullpath.rfind('.'));
+        infoFilename += getInfoFileExtension();
+
+        return openFileStream(infoFilename);
+    }
+    catch (const OperationException& ex)
+    {
+        // Info file load file does not stop us, just issue a warning
+        rWarning() << ex.what() << std::endl;
+        return stream::MapResourceStream::Ptr();
+    }
 }
 
 std::string MapResource::getInfoFileExtension()

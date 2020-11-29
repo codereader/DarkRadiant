@@ -6,14 +6,20 @@
 #include "os/path.h"
 #include "module/StaticModule.h"
 #include "MapResource.h"
+#include "ArchivedMapResource.h"
 
 namespace map
 {
 
-IMapResourcePtr MapResourceManager::loadFromPath(const std::string& path)
+IMapResourcePtr MapResourceManager::createFromPath(const std::string& path)
 {
-	// Create a new MapResource and return it.
 	return std::make_shared<MapResource>(path);
+}
+
+IMapResourcePtr MapResourceManager::createFromArchiveFile(const std::string& archivePath,
+    const std::string& filePathWithinArchive)
+{
+    return std::make_shared<ArchivedMapResource>(archivePath, filePathWithinArchive);
 }
 
 MapResourceManager::ExportEvent& MapResourceManager::signal_onResourceExporting()
@@ -26,7 +32,6 @@ MapResourceManager::ExportEvent& MapResourceManager::signal_onResourceExported()
 	return _resourceExported;
 }
 
-// RegisterableModule implementation
 const std::string& MapResourceManager::getName() const
 {
 	static std::string _name(MODULE_MAPRESOURCEMANAGER);
@@ -49,7 +54,7 @@ const StringSet& MapResourceManager::getDependencies() const
 
 void MapResourceManager::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << "MapResourceManager::initialiseModule called." << std::endl;
+	rMessage() << getName() << "::initialiseModule called." << std::endl;
 }
 
 // Define the MapResourceManager registerable module

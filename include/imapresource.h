@@ -83,9 +83,18 @@ class IMapResourceManager :
 {
 public:
 	/**
-	 * Load the named map resource from VFS or from a physical path.
+	 * Create a named map resource from VFS or from a physical path.
 	 */
-	virtual IMapResourcePtr loadFromPath(const std::string& path) = 0;
+	virtual IMapResourcePtr createFromPath(const std::string& path) = 0;
+
+    /**
+     * Create a named map resource that is contained within a PAK archive
+     * outside the VFS.
+     * archivePath is the absolute path to the archive file, e.g. "/home/greebo/outpost.pk4"
+     * filePathWithinArchive is the relative path within the archive, e.g. "maps/outpost.map"
+     */
+    virtual IMapResourcePtr createFromArchiveFile(const std::string& archivePath, 
+        const std::string& filePathWithinArchive) = 0;
 
 	// Signal emitted when a MapExport is starting / is finished
 	typedef sigc::signal<void, const scene::IMapRootNodePtr&> ExportEvent;

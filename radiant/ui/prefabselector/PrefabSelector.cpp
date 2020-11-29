@@ -402,7 +402,7 @@ void PrefabSelector::onSelectionChanged(wxutil::FileSystemView::SelectionChanged
 
     const auto& prefabPath = ev.GetSelectedPath();
 
-    _mapResource = GlobalMapResourceManager().loadFromPath(prefabPath);
+    _mapResource = GlobalMapResourceManager().createFromPath(prefabPath);
 
     if (!_mapResource)
     {

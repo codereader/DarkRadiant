@@ -101,7 +101,9 @@ void Map::loadMapResourceFromLocation(const MapLocation& location)
 	// Map loading started
 	emitMapEvent(MapLoading);
 
-	_resource = GlobalMapResourceManager().loadFromPath(location.path);
+	_resource = location.isArchive ? 
+        GlobalMapResourceManager().createFromArchiveFile(location.path, location.archiveRelativePath) :
+        GlobalMapResourceManager().createFromPath(location.path);
 
     if (!_resource)
     {
@@ -394,7 +396,7 @@ bool Map::import(const std::string& filename)
 {
     bool success = false;
 
-    IMapResourcePtr resource = GlobalMapResourceManager().loadFromPath(filename);
+    IMapResourcePtr resource = GlobalMapResourceManager().createFromPath(filename);
 
     try
     {
