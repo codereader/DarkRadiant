@@ -4,6 +4,7 @@
 #include "iundo.h"
 #include "imap.h"
 #include "imapformat.h"
+#include "ifilesystem.h"
 #include "iradiant.h"
 #include "iselectiongroup.h"
 #include "ilightnode.h"
@@ -284,6 +285,29 @@ TEST_F(MapLoadingTest, openMapFromModPak)
     checkAltarScene();
 
     EXPECT_EQ(GlobalMapModule().getMapName(), modRelativePath);
+}
+
+TEST_F(MapLoadingTest, openMapFromArchive)
+{
+    auto pakPath = fs::path(_context.getTestResourcePath()) / ".." / "map_loading_test.pk4";
+    std::string archiveRelativePath = "maps/altar_packed.map";
+
+    GlobalCommandSystem().executeCommand("OpenMapFromArchive", pakPath.string(), archiveRelativePath);
+
+    // Check if the scene contains what we expect
+    checkAltarScene();
+}
+
+TEST_F(MapLoadingTest, openMapFromArchiveWithoutInfoFile)
+{
+    auto pakPath = fs::path(_context.getTestResourcePath()) / ".." / "map_loading_test.pk4";
+    std::string archiveRelativePath = "maps/altar_packed_without_dr_file.map";
+
+    GlobalCommandSystem().executeCommand("OpenMapFromArchive", pakPath.string(), archiveRelativePath);
+
+    // Check if the scene contains what we expect, just the geometry since the map 
+    // is lacking its .darkradiant file
+    checkAltarSceneGeometry();
 }
 
 TEST_F(MapLoadingTest, openNonExistentMap)
