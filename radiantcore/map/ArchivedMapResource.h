@@ -24,6 +24,11 @@ public:
         _filePathWithinArchive(filePathWithinArchive)
     {}
 
+    virtual bool isReadOnly() override
+    {
+        return true;
+    }
+
 protected:
     virtual stream::MapResourceStream::Ptr openMapfileStream() override
     {

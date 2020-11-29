@@ -872,4 +872,34 @@ TEST_F(MapSavingTest, saveMapOpenedInAbsolutePath)
     fs::remove(tempPath.replace_extension("darkradiant").string() + ".bak");
 }
 
+TEST_F(MapSavingTest, saveArchivedMapWillAskForFilename)
+{
+    // A map that has been loaded from an archive file is not writeable
+    // the map saving algorithm should detect this and ask for a new file location
+    auto pakPath = fs::path(_context.getTestResourcePath()) / ".." / "map_loading_test.pk4";
+    std::string archiveRelativePath = "maps/altar_packed.map";
+    
+    GlobalCommandSystem().executeCommand("OpenMapFromArchive", pakPath.string(), archiveRelativePath);
+    checkAltarScene();
+
+    bool eventFired = false;
+
+    // Subscribe to the event asking for the target path
+    auto msgSubscription = GlobalRadiantCore().getMessageBus().addListener(
+        radiant::IMessage::Type::FileSelectionRequest,
+        radiant::TypeListener<radiant::FileSelectionRequest>(
+            [&](radiant::FileSelectionRequest& msg)
+    {
+        eventFired = true;
+        msg.setHandled(false);
+    }));
+
+    // This should ask the user for a file location, i.e. fire the above event
+    GlobalCommandSystem().executeCommand("SaveMap");
+
+    EXPECT_TRUE(eventFired) << "Radiant didn't ask for a new filename when saving an archived map";
+
+    GlobalRadiantCore().getMessageBus().removeListener(msgSubscription);
+}
+
 }
