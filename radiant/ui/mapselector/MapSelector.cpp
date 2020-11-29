@@ -217,21 +217,28 @@ void MapSelector::onItemActivated(wxDataViewEvent& ev)
     auto selectedPath = _treeView->GetSelectedPath();
     auto extension = string::to_lower_copy(os::getExtension(selectedPath));
 
-    // Check if this is a physical file
-    auto rootPath = GlobalFileSystem().findFile(selectedPath);
-
-    if (GlobalFileSystem().getArchiveExtensions().count(extension) == 0)
+    if (GlobalFileSystem().getArchiveExtensions().count(extension) > 0)
     {
-        return; // not an archive
+        // Check if this is a physical file
+        auto rootPath = GlobalFileSystem().findFile(selectedPath);
+
+        auto pathToPak = !rootPath.empty() ?
+            os::standardPathWithSlash(rootPath) + selectedPath :
+            selectedPath;
+
+        _useCustomPath->SetValue(true);
+        _customPath->setValue(pathToPak);
+        onPathSelectionChanged();
+        return;
     }
 
-    auto pathToPak = !rootPath.empty() ?
-        os::standardPathWithSlash(rootPath) + selectedPath :
-        selectedPath;
+    // If this is a file item, double-click will select and close the dialog
+    if (_treeView->GetIsFolderSelected())
+    {
+        return;
+    }
 
-    _useCustomPath->SetValue(true);
-    _customPath->setValue(pathToPak);
-    onPathSelectionChanged();
+    EndModal(wxID_OK);
 }
 
 void MapSelector::onFileViewTreePopulated()
