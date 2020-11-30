@@ -17,6 +17,8 @@
 #include "os/file.h"
 #include <sigc++/connection.h>
 
+using namespace std::chrono_literals;
+
 namespace test
 {
 
@@ -594,7 +596,6 @@ TEST_F(MapSavingTest, saveAs)
     // The map is located in maps/altar.map folder, check that it physically exists
     fs::path mapPath = _context.getTestResourcePath();
     mapPath /= modRelativePath;
-    auto originalModificationDate = fs::last_write_time(mapPath);
 
     GlobalCommandSystem().executeCommand("OpenMap", modRelativePath);
     checkAltarScene();
@@ -804,6 +805,11 @@ TEST_F(MapSavingTest, saveMapReplacesOldBackup)
     fakeBackup.flush();
     fakeBackup.close();
 
+    // Fake the mod time too, it needs to be different from the time
+    // the above stream closes the file (otherwise the test might fail if it's fast enough)
+    auto fakeTime = fs::last_write_time(mapBackupPath);
+    fs::last_write_time(mapBackupPath, fakeTime + 1h);
+
     auto originalBackupSize = fs::file_size(mapBackupPath);
     auto originalBackupModTime = fs::last_write_time(mapBackupPath);
 
@@ -813,6 +819,9 @@ TEST_F(MapSavingTest, saveMapReplacesOldBackup)
     fakeInfoBackup << "123=info";
     fakeInfoBackup.flush();
     fakeInfoBackup.close();
+
+    fakeTime = fs::last_write_time(infoFileBackupPath);
+    fs::last_write_time(infoFileBackupPath, fakeTime + 1h);
 
     auto originalInfoBackupSize = fs::file_size(infoFileBackupPath);
     auto originalInfoBackupModTime = fs::last_write_time(infoFileBackupPath);
