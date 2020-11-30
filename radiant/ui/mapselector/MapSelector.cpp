@@ -1,6 +1,7 @@
 #include "MapSelector.h"
 
 #include "i18n.h"
+#include "ifiletypes.h"
 #include "ifilesystem.h"
 
 #include "string/case_conv.h"
@@ -19,8 +20,13 @@ namespace
 
 MapSelector::MapSelector() :
     DialogBase(_(MAPSELECTOR_TITLE)),
-    _treeView(nullptr),
+    _dialogPanel(nullptr),
     _openButton(nullptr),
+    _reloadButton(nullptr),
+    _treeView(nullptr),
+    _useModPath(nullptr),
+    _useCustomPath(nullptr),
+    _customPath(nullptr),
     _handlingSelectionChange(false)
 {
     SetSizer(new wxBoxSizer(wxVERTICAL));

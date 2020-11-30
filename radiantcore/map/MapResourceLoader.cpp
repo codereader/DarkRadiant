@@ -1,5 +1,6 @@
 #include "MapResourceLoader.h"
 
+#include "i18n.h"
 #include "fmt/format.h"
 #include "scene/ChildPrimitives.h"
 #include "scenelib.h"

@@ -57,6 +57,7 @@ darkradiant_SOURCES = main.cpp \
                       ui/texturebrowser/TextureBrowser.cpp \
                       ui/texturebrowser/TextureBrowserManager.cpp \
                       ui/findshader/FindShader.cpp \
+                      ui/mapselector/MapSelector.cpp \
                       ui/mapinfo/MapInfoDialog.cpp \
                       ui/mapinfo/EntityInfoTab.cpp \
                       ui/mapinfo/ShaderInfoTab.cpp \

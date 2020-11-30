@@ -7,6 +7,7 @@
 #include "wxutil/WindowPosition.h"
 #include "wxutil/PathEntry.h"
 #include <wx/button.h>
+#include <wx/radiobut.h>
 
 class wxStdDialogButtonSizer;
 
