@@ -44,7 +44,7 @@ void OpenGLModule::drawString(const std::string& string) const
 {
     if (_font)
     {
-        ftglRenderFont(_font->getFtglFont(), string.c_str(), 0xFFFF);//FTGL_RENDER_ALL);
+        FTGL::ftglRenderFont(_font->getFtglFont(), string.c_str(), FTGL::RENDER_ALL);
     }
 }
 

@@ -10,7 +10,7 @@ namespace wxutil
 
 GLFont::GLFont(Style style, unsigned int size) :
 	_pixelHeight(0),
-	_ftglFont(NULL)
+	_ftglFont(nullptr)
 {
     // Load the locally-provided TTF font file
 	std::string fontpath = module::GlobalModuleRegistry()
@@ -24,7 +24,7 @@ GLFont::GLFont(Style style, unsigned int size) :
 
 	if (_ftglFont)
 	{
-		ftglSetFontFaceSize(_ftglFont,size,0);
+        FTGL::ftglSetFontFaceSize(_ftglFont, size, 0);
 		_pixelHeight = static_cast<int>(FTGL::ftglGetFontLineHeight(_ftglFont));
 	}
 	else
@@ -38,7 +38,7 @@ GLFont::~GLFont()
 	if (_ftglFont)
 	{
 		FTGL::ftglDestroyFont(_ftglFont);
-		_ftglFont = NULL;
+		_ftglFont = nullptr;
 	}
 }
 
