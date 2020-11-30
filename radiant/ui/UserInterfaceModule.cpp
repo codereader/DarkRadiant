@@ -59,6 +59,7 @@
 #include "ui/brush/QuerySidesDialog.h"
 #include "ui/brush/FindBrush.h"
 #include "ui/mousetool/RegistrationHelper.h"
+#include "ui/mapselector/MapSelector.h"
 
 #include <wx/version.h>
 
@@ -406,6 +407,7 @@ void UserInterfaceModule::registerUICommands()
 	GlobalEventManager().addRegistryToggle("TogTexLock", RKEY_ENABLE_TEXTURE_LOCK);
 
 	GlobalCommandSystem().addCommand("LoadPrefab", ui::loadPrefabDialog);
+	GlobalCommandSystem().addCommand("OpenMapFromProject", ui::MapSelector::OpenMapFromProject);
 }
 
 void UserInterfaceModule::HandleTextureChanged(radiant::TextureChangedMessage& msg)

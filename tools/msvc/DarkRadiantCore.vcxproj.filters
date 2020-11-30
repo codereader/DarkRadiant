@@ -997,6 +997,12 @@
     <ClCompile Include="..\..\radiantcore\model\export\PatchSurface.cpp">
       <Filter>src\model\export</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\map\MapResourceLoader.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\map\ArchivedMapResource.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\radiantcore\eclass\EClassColourManager.cpp">
       <Filter>src\eclass</Filter>
     </ClCompile>
@@ -1046,9 +1052,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\xmlregistry\XMLRegistry.h">
       <Filter>src\xmlregistry</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\vfs\Archive.h">
-      <Filter>src\vfs</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\vfs\DeflatedArchiveFile.h">
       <Filter>src\vfs</Filter>
@@ -2033,6 +2036,21 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\model\export\PatchSurface.h">
       <Filter>src\model\export</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\vfs\AssetsList.h">
+      <Filter>src\vfs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\vfs\FileVisitor.h">
+      <Filter>src\vfs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\NodeCounter.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\MapResourceLoader.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\ArchivedMapResource.h">
+      <Filter>src\map</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\eclass\EClassColourManager.h">
       <Filter>src\eclass</Filter>

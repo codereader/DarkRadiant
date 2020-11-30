@@ -63,6 +63,10 @@ public:
 	 */
 	virtual ~VFSTreePopulator();
 
+    // wxDataViewItem pointing to the toplevel node, under which all paths should
+    // be added.Default is empty to indicate that paths should be added under
+    void setTopLevelItem(const wxDataViewItem& topLevel);
+
 	/** Add a single VFS string to the tree, which will be split automatically
 	 * and inserted at the correct place in the tree.
 	 */
@@ -70,6 +74,7 @@ public:
 
     // Column population function. The inserted Row will be passed as argument.
     typedef std::function<void(TreeModel::Row& row, 
+                               const std::string& path,
                                const std::string& leafName, 
                                bool isFolder)> ColumnPopulationCallback;
 
@@ -78,6 +83,10 @@ public:
      * argument to allow for immediate population of the TreeStore's column values. 
      * As soon as the item has been created in the correct spot of the tree 
      * the callback will be invoked passing the TreeModel::Row as argument.
+     * 
+     * Note that the callback can be invoked multiple times for one single addPath()
+     * call, since this method will automatically insert missing parent folder items
+     * when it encounters them.
      *
      * Client code needs to decide between this or the regular addPath() method
      * and cannot mix between these two, as this variant here does not keep track

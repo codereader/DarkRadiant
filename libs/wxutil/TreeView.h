@@ -30,7 +30,7 @@ protected:
 
 	bool _collapseRecursively;
 
-	TreeView(wxWindow* parent, TreeModel::Ptr model, long style);
+	TreeView(wxWindow* parent, const TreeModel::Ptr& model, long style);
 
 public:
     typedef wxWindowPtr<TreeView> Ptr;
@@ -40,7 +40,7 @@ public:
 
 	// Construct a TreeView using the given TreeModel, which will be associated
 	// with this view (refcount is automatically decreased by one).
-	static TreeView* CreateWithModel(wxWindow* parent, TreeModel::Ptr model, long style = wxDV_SINGLE);
+	static TreeView* CreateWithModel(wxWindow* parent, const TreeModel::Ptr& model, long style = wxDV_SINGLE);
 
 	virtual ~TreeView();
 

@@ -52,6 +52,25 @@ FileTypePatterns FileTypeRegistry::getPatternsForType(const std::string& fileTyp
 	return i != _fileTypes.end() ? i->second : FileTypePatterns();
 }
 
+std::string FileTypeRegistry::getIconForExtension(const std::string& extension)
+{
+    auto extLower = string::to_lower_copy(extension);
+
+    // We pick the first icon in any of the patterns matching the extension
+    for (const auto& patterns : _fileTypes)
+    {
+        for (const auto& pattern : patterns.second)
+        {
+            if (pattern.extension == extension && !pattern.icon.empty())
+            {
+                return pattern.icon;
+            }
+        }
+    }
+
+    return std::string();
+}
+
 const std::string& FileTypeRegistry::getName() const
 {
 	static std::string _name(MODULE_FILETYPES);

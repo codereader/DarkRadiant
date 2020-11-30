@@ -24,7 +24,6 @@
 #include "imapformat.h"
 
 #include "registry/registry.h"
-#include "stream/TextFileInputStream.h"
 #include "entitylib.h"
 #include "gamelib.h"
 #include "os/path.h"
@@ -84,10 +83,27 @@ void Map::clearMapResource()
 
 void Map::loadMapResourceFromPath(const std::string& path)
 {
+    // Create a MapLocation defining a physical file, and forward the call
+    loadMapResourceFromLocation(MapLocation{path, false, ""});
+}
+
+void Map::loadMapResourceFromArchive(const std::string& archive, const std::string& archiveRelativePath)
+{
+    // Create a MapLocation defining an archive file, and forward the call
+    loadMapResourceFromLocation(MapLocation{ archive, true, archiveRelativePath });
+}
+
+void Map::loadMapResourceFromLocation(const MapLocation& location)
+{
+    rMessage() << "Loading map from " << location.path << 
+        (location.isArchive ? " [" + location.archiveRelativePath + "]" : "") << std::endl;
+
 	// Map loading started
 	emitMapEvent(MapLoading);
 
-	_resource = GlobalMapResourceManager().loadFromPath(_mapName);
+	_resource = location.isArchive ? 
+        GlobalMapResourceManager().createFromArchiveFile(location.path, location.archiveRelativePath) :
+        GlobalMapResourceManager().createFromPath(location.path);
 
     if (!_resource)
     {
@@ -96,12 +112,14 @@ void Map::loadMapResourceFromPath(const std::string& path)
 
     try
     {
+        util::ScopeTimer timer("map load");
+
         if (isUnnamed() || !_resource->load())
         {
             clearMapResource();
         }
     }
-    catch (IMapResource::OperationException& ex)
+    catch (const IMapResource::OperationException& ex)
     {
         radiant::NotificationMessage::SendError(ex.what());
         clearMapResource();
@@ -124,6 +142,19 @@ void Map::loadMapResourceFromPath(const std::string& path)
 
     // Map loading finished, emit the signal
     emitMapEvent(MapLoaded);
+
+    rMessage() << "--- LoadMapFile ---\n";
+    rMessage() << _mapName << "\n";
+
+    rMessage() << GlobalCounters().getCounter(counterBrushes).get() << " brushes\n";
+    rMessage() << GlobalCounters().getCounter(counterPatches).get() << " patches\n";
+    rMessage() << GlobalCounters().getCounter(counterEntities).get() << " entities\n";
+
+    // Let the filtersystem update the filtered status of all instances
+    GlobalFilterSystem().update();
+
+    // Clear the modified flag
+    setModified(false);
 }
 
 void Map::setMapName(const std::string& newName)
@@ -298,34 +329,21 @@ const scene::INodePtr& Map::findOrInsertWorldspawn()
     return _worldSpawnNode;
 }
 
-void Map::load(const std::string& filename) {
-    rMessage() << "Loading map from " << filename << "\n";
-
+void Map::load(const std::string& filename)
+{
     setMapName(filename);
-
-    {
-        util::ScopeTimer timer("map load");
-
-		loadMapResourceFromPath(_mapName);
-    }
-
-    rMessage() << "--- LoadMapFile ---\n";
-    rMessage() << _mapName << "\n";
-
-    rMessage() << GlobalCounters().getCounter(counterBrushes).get() << " brushes\n";
-    rMessage() << GlobalCounters().getCounter(counterPatches).get() << " patches\n";
-    rMessage() << GlobalCounters().getCounter(counterEntities).get() << " entities\n";
-
-    // Let the filtersystem update the filtered status of all instances
-    GlobalFilterSystem().update();
-
-    // Clear the modified flag
-    setModified(false);
+    loadMapResourceFromPath(_mapName);
 }
 
 bool Map::save(const MapFormatPtr& mapFormat)
 {
     if (_saveInProgress) return false; // safeguard
+
+    if (_resource->isReadOnly())
+    {
+        rError() << "This map is read-only and cannot be saved." << std::endl;
+        return false;
+    }
 
     _saveInProgress = true;
 
@@ -356,7 +374,7 @@ bool Map::save(const MapFormatPtr& mapFormat)
 
     // Redraw the views, sometimes the backbuffer containing 
     // the previous frame will remain visible
-    GlobalMainFrame().updateAllWindows();
+    SceneChangeNotify();
 
     return success;
 }
@@ -384,7 +402,7 @@ bool Map::import(const std::string& filename)
 {
     bool success = false;
 
-    IMapResourcePtr resource = GlobalMapResourceManager().loadFromPath(filename);
+    IMapResourcePtr resource = GlobalMapResourceManager().createFromPath(filename);
 
     try
     {
@@ -536,37 +554,39 @@ bool Map::saveAs()
 {
     if (_saveInProgress) return false; // safeguard
 
-    MapFileSelection fileInfo =
-        MapFileManager::getMapFileSelection(false, _("Save Map"), filetype::TYPE_MAP, getMapName());
+    auto fileInfo = MapFileManager::getMapFileSelection(false, 
+        _("Save Map"), filetype::TYPE_MAP, getMapName());
 
-	if (!fileInfo.fullPath.empty())
-	{
-        // Remember the old name, we might need to revert
-        std::string oldFilename = _mapName;
-
-        // Rename the file and try to save
-        rename(fileInfo.fullPath);
-
-        // Try to save the file, this might fail
-		bool success = save(fileInfo.mapFormat);
-
-        if (success)
-		{
-            GlobalMRU().insert(fileInfo.fullPath);
-        }
-        else if (!success)
-		{
-            // Revert the name change if the file could not be saved
-            rename(oldFilename);
-        }
-
-        return success;
-    }
-    else
-	{
+    if (fileInfo.fullPath.empty())
+    {
         // Invalid filename entered, return false
         return false;
     }
+
+    // Remember the old resource, we might need to revert
+    auto oldResource = _resource;
+
+    // Create a new resource pointing to the given path...
+    _resource = GlobalMapResourceManager().createFromPath(fileInfo.fullPath);
+        
+    // ...and import the existing root node into that resource
+    _resource->setRootNode(oldResource->getRootNode());
+
+    // Try to save the resource, this might fail
+    if (!save(fileInfo.mapFormat))
+    {
+        // Failure, revert the change
+        _resource = oldResource;
+        return false;
+    }
+
+    // Resource save was successful, notify about this name change
+    rename(fileInfo.fullPath);
+
+    // add an MRU entry on success
+    GlobalMRU().insert(fileInfo.fullPath);
+
+    return true;
 }
 
 void Map::saveCopyAs()
@@ -668,11 +688,12 @@ void Map::registerCommands()
 {
     GlobalCommandSystem().addCommand("NewMap", Map::newMap);
     GlobalCommandSystem().addCommand("OpenMap", Map::openMap, { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
+    GlobalCommandSystem().addCommand("OpenMapFromArchive", Map::openMapFromArchive, { cmd::ARGTYPE_STRING, cmd::ARGTYPE_STRING });
     GlobalCommandSystem().addCommand("ImportMap", Map::importMap);
     GlobalCommandSystem().addCommand(LOAD_PREFAB_AT_CMD, std::bind(&Map::loadPrefabAt, this, std::placeholders::_1), 
         { cmd::ARGTYPE_STRING, cmd::ARGTYPE_VECTOR3, cmd::ARGTYPE_INT|cmd::ARGTYPE_OPTIONAL });
     GlobalCommandSystem().addCommand("SaveSelectedAsPrefab", Map::saveSelectedAsPrefab);
-    GlobalCommandSystem().addCommand("SaveMap", Map::saveMap);
+    GlobalCommandSystem().addCommand("SaveMap", std::bind(&Map::saveMapCmd, this, std::placeholders::_1));
     GlobalCommandSystem().addCommand("SaveMapAs", Map::saveMapAs);
     GlobalCommandSystem().addCommand("SaveMapCopyAs", Map::saveMapCopyAs, { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
     GlobalCommandSystem().addCommand("ExportMap", Map::exportMap);
@@ -723,17 +744,26 @@ void Map::openMap(const cmd::ArgumentList& args)
     }
     else if (!candidate.empty())
     {
-        // Next, try to look up the map in the regular maps path
-        fs::path mapsPath = GlobalGameManager().getMapPath();
-        fs::path fullMapPath = mapsPath / candidate;
-
-        if (os::fileOrDirExists(fullMapPath.string()))
+        // Try to open this file from the VFS (this will hit physical files
+        // in the active project as well as files in registered PK4)
+        if (GlobalFileSystem().openTextFile(candidate))
         {
-            mapToLoad = fullMapPath.string();
+            mapToLoad = candidate;
         }
         else
         {
-            throw cmd::ExecutionFailure(fmt::format(_("File doesn't exist: {0}"), fullMapPath.string()));
+            // Next, try to look up the map in the regular maps path
+            fs::path mapsPath = GlobalGameManager().getMapPath();
+            fs::path fullMapPath = mapsPath / candidate;
+
+            if (os::fileOrDirExists(fullMapPath.string()))
+            {
+                mapToLoad = fullMapPath.string();
+            }
+            else
+            {
+                throw cmd::ExecutionFailure(fmt::format(_("File doesn't exist: {0}"), candidate));
+            }
         }
     }
 
@@ -743,6 +773,32 @@ void Map::openMap(const cmd::ArgumentList& args)
 
         GlobalMap().freeMap();
         GlobalMap().load(mapToLoad);
+    }
+}
+
+void Map::openMapFromArchive(const cmd::ArgumentList& args)
+{
+    if (args.size() != 2)
+    {
+        rWarning() << "Usage: OpenMapFromArchive <pathToPakFile> <pathWithinArchive>" << std::endl;
+        return;
+    }
+
+    if (!GlobalMap().askForSave(_("Open Map"))) return;
+
+    std::string pathToArchive = args[0].getString();
+    std::string relativePath = args[1].getString();
+
+    if (!os::fileOrDirExists(pathToArchive))
+    {
+        throw cmd::ExecutionFailure(fmt::format(_("File not found: {0}"), pathToArchive));
+    }
+
+    if (!pathToArchive.empty())
+    {
+        GlobalMap().freeMap();
+        GlobalMap().setMapName(relativePath);
+        GlobalMap().loadMapResourceFromArchive(pathToArchive, relativePath);
     }
 }
 
@@ -762,16 +818,16 @@ void Map::saveMapAs(const cmd::ArgumentList& args) {
     GlobalMap().saveAs();
 }
 
-void Map::saveMap(const cmd::ArgumentList& args)
+void Map::saveMapCmd(const cmd::ArgumentList& args)
 {
-    if (GlobalMap().isUnnamed())
+    if (isUnnamed() || (_resource && _resource->isReadOnly()))
     {
-        GlobalMap().saveAs();
+        saveAs();
     }
     // greebo: Always let the map be saved, regardless of the modified status.
     else /*if(GlobalMap().isModified())*/
     {
-        GlobalMap().save();
+        save();
     }
 }
 
@@ -814,12 +870,15 @@ void Map::saveSelectedAsPrefab(const cmd::ArgumentList& args)
     }
 }
 
-void Map::rename(const std::string& filename) {
-    if (_mapName != filename) {
+void Map::rename(const std::string& filename)
+{
+    if (_mapName != filename)
+    {
         setMapName(filename);
         SceneChangeNotify();
     }
-    else {
+    else
+    {
         _resource->save();
         setModified(false);
     }

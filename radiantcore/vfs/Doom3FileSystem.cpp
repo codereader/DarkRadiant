@@ -30,6 +30,7 @@
 #include "string/encoding.h"
 #include "os/path.h"
 #include "os/dir.h"
+#include "os/file.h"
 
 #include "string/split.h"
 #include "debugging/ScopedDebugTimer.h"
@@ -40,202 +41,10 @@
 #include "SortedFilenames.h"
 #include "ZipArchive.h"
 #include "module/StaticModule.h"
+#include "FileVisitor.h"
 
 namespace vfs
 {
-
-namespace
-{
-
-// Representation of an assets.lst file, containing visibility information for
-// assets within a particular folder.
-class AssetsList
-{
-    std::map<std::string, Visibility> _visibilities;
-
-    // Convert visibility string to enum value
-    static Visibility toVisibility(const std::string& input)
-    {
-        if (string::starts_with(input, "hid" /* 'hidden' or 'hide'*/))
-        {
-            return Visibility::HIDDEN;
-        }
-        else if (input == "normal")
-        {
-            return Visibility::NORMAL;
-        }
-        else
-        {
-            rWarning() << "AssetsList: failed to parse visibility '" << input
-                       << "'" << std::endl;
-            return Visibility::NORMAL;
-        }
-    }
-
-public:
-
-    static constexpr const char* FILENAME = "assets.lst";
-
-    // Construct with possible ArchiveTextFile pointer containing an assets.lst
-    // file to parse.
-    explicit AssetsList(ArchiveTextFilePtr inputFile)
-    {
-        if (inputFile)
-        {
-            // Read lines from the file
-            std::istream stream(&inputFile->getInputStream());
-            while (stream.good())
-            {
-                std::string line;
-                std::getline(stream, line);
-
-                // Attempt to parse the line as "asset=visibility"
-                std::vector<std::string> tokens;
-                string::split(tokens, line, "=");
-
-                // Parsing was a success if we have two tokens
-                if (tokens.size() == 2)
-                {
-                    std::string filename = tokens[0];
-                    Visibility v = toVisibility(tokens[1]);
-                    _visibilities[filename] = v;
-                }
-            }
-        }
-    }
-
-    // Return visibility for a given file
-    Visibility getVisibility(const std::string& fileName) const
-    {
-        auto i = _visibilities.find(fileName);
-        if (i == _visibilities.end())
-        {
-            return Visibility::NORMAL;
-        }
-        else
-        {
-            return i->second;
-        }
-    }
-};
-
-/*
- * Archive::Visitor class used in GlobalFileSystem().foreachFile().
- * It's filtering out the files matching the defined extension only.
- * The directory part is cut off the filename.
- * On top of that, this class maintains a list of visited files to avoid
- * hitting the same file twice (it might be present in more than one Archive).
- */
-class FileVisitor: public Archive::Visitor
-{
-    // Maximum traversal depth
-    std::size_t _maxDepth;
-
-    // User-supplied functor to invoke for each file
-    VirtualFileSystem::VisitorFunc _visitorFunc;
-
-    // Optional AssetsList containing visibility information
-    const AssetsList* _assetsList = nullptr;
-
-    // Set of already-visited files to avoid visiting the same file twice
-    std::set<std::string> _visitedFiles;
-
-    // Directory to search within
-    std::string _directory;
-
-    // Extension to match
-    std::string _extension;
-
-    // The length of the directory name
-    std::size_t _dirPrefixLength;
-
-    bool _visitAll;
-
-    std::size_t _extLength;
-
-public:
-
-    // Constructor. Pass "*" as extension to have it visit all files.
-    FileVisitor(const VirtualFileSystem::VisitorFunc& visitorFunc,
-                const std::string& dir, const std::string& ext,
-                std::size_t maxDepth)
-    : _maxDepth(maxDepth), _visitorFunc(visitorFunc), _directory(dir),
-      _extension(ext), _dirPrefixLength(_directory.length()),
-      _visitAll(_extension == "*"), _extLength(_extension.length())
-    {}
-
-    void setAssetsList(const AssetsList& list)
-    {
-        _assetsList = &list;
-    }
-
-    // Archive::Visitor interface
-
-    void visitFile(const std::string& name)
-    {
-#ifdef OS_CASE_INSENSITIVE
-        // The name should start with the directory, "def/" for instance, case-insensitively.
-        assert(string::to_lower_copy(name.substr(0, _dirPrefixLength)) == _directory);
-#else
-        // Linux: The name should start with the directory, "def/" for instance, including case.
-        assert(name.substr(0, _dirPrefixLength) == _directory);
-#endif
-
-        // Cut off the base directory prefix
-        std::string subname = name.substr(_dirPrefixLength);
-
-        // Check for matching file extension
-        if (!_visitAll)
-        {
-            // The dot must be at the right position
-            if (subname.length() <= _extLength || subname[subname.length() - _extLength - 1] != '.')
-            {
-                return;
-            }
-
-            // And the extension must match
-            std::string ext = subname.substr(subname.length() - _extLength);
-
-#ifdef OS_CASE_INSENSITIVE
-            // Treat extensions case-insensitively in Windows
-            string::to_lower(ext);
-#endif
-
-            if (ext != _extension)
-            {
-                return; // extension mismatch
-            }
-        }
-
-        if (_visitedFiles.find(subname) != _visitedFiles.end())
-        {
-            return; // already visited
-        }
-
-        // Don't return assets.lst itself
-        if (subname == AssetsList::FILENAME)
-            return;
-
-        // Suitable file, call the callback and add to visited file set
-        vfs::Visibility vis = _assetsList ? _assetsList->getVisibility(subname)
-                                          : Visibility::NORMAL;
-        _visitorFunc(vfs::FileInfo{_directory, subname, vis});
-
-        _visitedFiles.insert(subname);
-    }
-
-    bool visitDirectory(const std::string& name, std::size_t depth)
-    {
-        if (depth == _maxDepth)
-        {
-            return true;
-        }
-
-        return false;
-    }
-};
-
-}
 
 void Doom3FileSystem::initDirectory(const std::string& inputPath)
 {
@@ -357,6 +166,11 @@ void Doom3FileSystem::shutdown()
     rMessage() << "Filesystem shut down" << std::endl;
 }
 
+const VirtualFileSystem::ExtensionSet& Doom3FileSystem::getArchiveExtensions() const
+{
+    return _allowedExtensions;
+}
+
 void Doom3FileSystem::addObserver(Observer& observer)
 {
     _observers.insert(&observer);
@@ -446,6 +260,17 @@ ArchiveTextFilePtr Doom3FileSystem::openTextFileInAbsolutePath(const std::string
     return ArchiveTextFilePtr();
 }
 
+IArchive::Ptr Doom3FileSystem::openArchiveInAbsolutePath(const std::string& pathToArchive)
+{
+    if (!os::fileIsReadable(pathToArchive))
+    {
+        rWarning() << "Requested file is not readable: " << pathToArchive << std::endl;
+        return IArchive::Ptr();
+    }
+
+    return std::make_shared<archive::ZipArchive>(pathToArchive);
+}
+
 void Doom3FileSystem::forEachFile(const std::string& basedir,
                                   const std::string& extension,
                                   const VisitorFunc& visitorFunc,
@@ -481,7 +306,21 @@ void Doom3FileSystem::forEachFileInAbsolutePath(const std::string& path,
     // Construct our FileVisitor filtering out the right elements
     FileVisitor fileVisitor(visitorFunc, "", extension, depth);
 
-    tempArchive.traverse(fileVisitor, "/");
+    tempArchive.traverse(fileVisitor, "");
+}
+
+void Doom3FileSystem::forEachFileInArchive(const std::string& absoluteArchivePath,
+    const std::string& extension,
+    const VisitorFunc& visitorFunc,
+    std::size_t depth)
+{
+    // Construct a temporary ZipArchive from the given path
+    archive::ZipArchive tempArchive(absoluteArchivePath);
+
+    // Construct our FileVisitor filtering out the right elements
+    FileVisitor fileVisitor(visitorFunc, "", extension, depth);
+
+    tempArchive.traverse(fileVisitor, "");
 }
 
 std::string Doom3FileSystem::findFile(const std::string& name)

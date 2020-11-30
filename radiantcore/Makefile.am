@@ -145,6 +145,8 @@ libradiantcore_la_SOURCES = Radiant.cpp \
                 map/namespace/ComplexName.cpp \
                 map/namespace/Namespace.cpp \
                 map/namespace/NamespaceFactory.cpp \
+                map/ArchivedMapResource.cpp \
+                map/AutoSaver.cpp \
                 map/CounterManager.cpp \
                 map/EditingStopwatch.cpp \
                 map/EditingStopwatchInfoFileModule.cpp \
@@ -155,6 +157,7 @@ libradiantcore_la_SOURCES = Radiant.cpp \
                 map/MapPositionManager.cpp \
                 map/MapPropertyInfoFileModule.cpp \
                 map/MapResource.cpp \
+                map/MapResourceLoader.cpp \
                 map/MapResourceManager.cpp \
                 map/PointFile.cpp \
                 map/RegionManager.cpp \

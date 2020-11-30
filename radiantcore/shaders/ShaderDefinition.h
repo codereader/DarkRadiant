@@ -24,7 +24,7 @@ struct ShaderDefinition
     /* Constructor
      */
     explicit ShaderDefinition(const ShaderTemplatePtr& templ,
-                              const vfs::FileInfo& f = vfs::FileInfo()):
+                              const vfs::FileInfo& f):
         shaderTemplate(templ),
         file(f)
     {}

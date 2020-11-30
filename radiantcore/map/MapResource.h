@@ -2,12 +2,12 @@
 
 #include "imapresource.h"
 #include "imapformat.h"
-#include "imapinfofile.h"
 #include "imodel.h"
 #include "imap.h"
 #include <set>
 #include "RootNode.h"
 #include "os/fs.h"
+#include "stream/MapResourceStream.h"
 
 namespace map
 {
@@ -19,35 +19,58 @@ class MapResource :
 private:
     scene::IMapRootNodePtr _mapRoot;
 
-	// Name given during construction
-	std::string _originalName;
-
+    // Contains the absolute base path (e.g. c:/games/darkmod/) if the resourcePath
+    // points to a directory which is part of the VFS search paths. 
+    // Will be an empty string if the resource is pointing to a path outside the VFS.
 	std::string _path;
-	std::string _name;
 
-	static std::string _infoFileExt;
+    // Either contains the path relative to the base path (e.g. "maps/arkham.map")
+    // or the full absolute path to the map (in case the resource path 
+    // is pointing to a path outside the VFS)
+	std::string _name;
 
 	// File extension of this resource
 	std::string _extension;
 
 public:
 	// Constructor
-	MapResource(const std::string& name);
+	MapResource(const std::string& resourcePath);
 
-	void rename(const std::string& fullPath) override;
+	virtual void rename(const std::string& fullPath) override;
 
-	bool load() override;
-	void save(const MapFormatPtr& mapFormat = MapFormatPtr()) override;
+	virtual bool load() override;
+    virtual bool isReadOnly() override;
+	virtual void save(const MapFormatPtr& mapFormat = MapFormatPtr()) override;
 
-	const scene::IMapRootNodePtr& getRootNode() override;
-    void clear() override;
+	virtual const scene::IMapRootNodePtr& getRootNode() override;
+    virtual void setRootNode(const scene::IMapRootNodePtr& root) override;
+    virtual void clear() override;
 
 	// Save the map contents to the given filename using the given MapFormat export module
 	// Throws an OperationException if anything prevents successful completion
 	static void saveFile(const MapFormat& format, const scene::IMapRootNodePtr& root,
 						 const GraphTraversalFunc& traverse, const std::string& filename);
 
+protected:
+    // Implementation-specific method to open the stream of the primary .map or .mapx file
+    // May return an empty reference, may throw OperationException on failure
+    virtual stream::MapResourceStream::Ptr openMapfileStream();
+
+    // Implementation-specific method to open the info file stream (.darkradiant) file
+    // May return an empty reference, may throw OperationException on failure
+    virtual stream::MapResourceStream::Ptr openInfofileStream();
+
+    // Returns the extension of the auxiliary info file (including the leading dot character)
+    static std::string GetInfoFileExtension();
+
+    // Returns true if the file can be written to. Also returns true if the file
+    // doesn't exist (assuming the file can always be created).
+    static bool FileIsWriteable(const fs::path& path);
+
 private:
+    void constructPaths(const std::string& resourcePath);
+    std::string getAbsoluteResourcePath();
+
 	void mapSave();
 	void onMapChanged();
 
@@ -55,25 +78,15 @@ private:
 	bool saveBackup();
 
 	RootNodePtr loadMapNode();
-    RootNodePtr loadMapNodeFromStream(std::istream& stream, const std::string& fullPath);
 
 	void connectMap();
 
-	bool loadFile(std::istream& mapStream, const MapFormat& format, 
-                  const RootNodePtr& root, const std::string& filename);
-
-	void loadInfoFile(const RootNodePtr& root, const std::string& filename, const NodeIndexMap& nodeMap);
-	void loadInfoFileFromStream(std::istream& infoFileStream, const RootNodePtr& root, const NodeIndexMap& nodeMap);
-
-	// Opens a stream for the given path, which might be VFS path or an absolute one. The streamProcessor
-	// function is then called with the opened stream. Throws std::runtime_error on stream open failure.
-	void openFileStream(const std::string& path, const std::function<void(std::istream&)>& streamProcessor);
+	// Opens a stream for the given path, which might be VFS path or an absolute one. 
+    // Throws IMapResource::OperationException on stream open failure.
+	stream::MapResourceStream::Ptr openFileStream(const std::string& path);
 
 	// Checks if file can be overwritten (throws on failure)
 	static void throwIfNotWriteable(const fs::path& path);
 };
-// Resource pointer types
-typedef std::shared_ptr<MapResource> MapResourcePtr;
-typedef std::weak_ptr<MapResource> MapResourceWeakPtr;
 
 } // namespace map

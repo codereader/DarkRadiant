@@ -102,6 +102,7 @@
     <ClCompile Include="..\..\radiantcore\map\algorithm\MapImporter.cpp" />
     <ClCompile Include="..\..\radiantcore\map\algorithm\Models.cpp" />
     <ClCompile Include="..\..\radiantcore\map\algorithm\Skins.cpp" />
+    <ClCompile Include="..\..\radiantcore\map\ArchivedMapResource.cpp" />
     <ClCompile Include="..\..\radiantcore\map\CounterManager.cpp" />
     <ClCompile Include="..\..\radiantcore\map\EditingStopwatch.cpp" />
     <ClCompile Include="..\..\radiantcore\map\EditingStopwatchInfoFileModule.cpp" />
@@ -132,6 +133,7 @@
     <ClCompile Include="..\..\radiantcore\map\MapPositionManager.cpp" />
     <ClCompile Include="..\..\radiantcore\map\MapPropertyInfoFileModule.cpp" />
     <ClCompile Include="..\..\radiantcore\map\MapResource.cpp" />
+    <ClCompile Include="..\..\radiantcore\map\MapResourceLoader.cpp" />
     <ClCompile Include="..\..\radiantcore\map\MapResourceManager.cpp" />
     <ClCompile Include="..\..\radiantcore\map\mru\MRU.cpp" />
     <ClCompile Include="..\..\radiantcore\map\namespace\ComplexName.cpp" />
@@ -803,6 +805,7 @@
     <ClInclude Include="..\..\radiantcore\map\algorithm\MapImporter.h" />
     <ClInclude Include="..\..\radiantcore\map\algorithm\Models.h" />
     <ClInclude Include="..\..\radiantcore\map\algorithm\Skins.h" />
+    <ClInclude Include="..\..\radiantcore\map\ArchivedMapResource.h" />
     <ClInclude Include="..\..\radiantcore\map\CounterManager.h" />
     <ClInclude Include="..\..\radiantcore\map\EditingStopwatch.h" />
     <ClInclude Include="..\..\radiantcore\map\EditingStopwatchInfoFileModule.h" />
@@ -838,6 +841,7 @@
     <ClInclude Include="..\..\radiantcore\map\MapPositionManager.h" />
     <ClInclude Include="..\..\radiantcore\map\MapPropertyInfoFileModule.h" />
     <ClInclude Include="..\..\radiantcore\map\MapResource.h" />
+    <ClInclude Include="..\..\radiantcore\map\MapResourceLoader.h" />
     <ClInclude Include="..\..\radiantcore\map\MapResourceManager.h" />
     <ClInclude Include="..\..\radiantcore\map\ModelBreakdown.h" />
     <ClInclude Include="..\..\radiantcore\map\mru\MRU.h" />
@@ -846,6 +850,7 @@
     <ClInclude Include="..\..\radiantcore\map\namespace\Namespace.h" />
     <ClInclude Include="..\..\radiantcore\map\namespace\NamespaceFactory.h" />
     <ClInclude Include="..\..\radiantcore\map\namespace\UniqueNameSet.h" />
+    <ClInclude Include="..\..\radiantcore\map\NodeCounter.h" />
     <ClInclude Include="..\..\radiantcore\map\PointFile.h" />
     <ClInclude Include="..\..\radiantcore\map\RegionManager.h" />
     <ClInclude Include="..\..\radiantcore\map\RegionWalkers.h" />
@@ -1015,13 +1020,14 @@
     <ClInclude Include="..\..\radiantcore\undo\Stack.h" />
     <ClInclude Include="..\..\radiantcore\undo\StackFiller.h" />
     <ClInclude Include="..\..\radiantcore\undo\UndoSystem.h" />
-    <ClInclude Include="..\..\radiantcore\vfs\Archive.h" />
+    <ClInclude Include="..\..\radiantcore\vfs\AssetsList.h" />
     <ClInclude Include="..\..\radiantcore\vfs\DeflatedArchiveFile.h" />
     <ClInclude Include="..\..\radiantcore\vfs\DeflatedArchiveTextFile.h" />
     <ClInclude Include="..\..\radiantcore\vfs\DeflatedInputStream.h" />
     <ClInclude Include="..\..\radiantcore\vfs\DirectoryArchive.h" />
     <ClInclude Include="..\..\radiantcore\vfs\DirectoryArchiveTextFile.h" />
     <ClInclude Include="..\..\radiantcore\vfs\Doom3FileSystem.h" />
+    <ClInclude Include="..\..\radiantcore\vfs\FileVisitor.h" />
     <ClInclude Include="..\..\radiantcore\vfs\GenericFileSystem.h" />
     <ClInclude Include="..\..\radiantcore\vfs\SortedFilenames.h" />
     <ClInclude Include="..\..\radiantcore\vfs\StoredArchiveFile.h" />

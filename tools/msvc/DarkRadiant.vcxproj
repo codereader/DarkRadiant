@@ -268,6 +268,7 @@
     <ClCompile Include="..\..\radiant\ui\MapCommands.cpp" />
     <ClCompile Include="..\..\radiant\ui\MapFileProgressHandler.cpp" />
     <ClCompile Include="..\..\radiant\ui\mapinfo\LayerInfoTab.cpp" />
+    <ClCompile Include="..\..\radiant\ui\mapselector\MapSelector.cpp" />
     <ClCompile Include="..\..\radiant\ui\modelexport\ExportAsModelDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\modelexport\ExportCollisionModelDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\modelselector\MaterialsList.cpp" />
@@ -329,7 +330,6 @@
     <ClCompile Include="..\..\radiant\ui\patch\PatchCreateDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\patch\PatchInspector.cpp" />
     <ClCompile Include="..\..\radiant\ui\patch\PatchThickenDialog.cpp" />
-    <ClCompile Include="..\..\radiant\ui\prefabselector\PrefabPopulator.cpp" />
     <ClCompile Include="..\..\radiant\ui\prefabselector\PrefabSelector.cpp" />
     <ClCompile Include="..\..\radiant\ui\prefdialog\GameSetupDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\prefdialog\GameSetupPage.cpp" />
@@ -455,6 +455,7 @@
     <ClInclude Include="..\..\radiant\ui\MapCommands.h" />
     <ClInclude Include="..\..\radiant\ui\MapFileProgressHandler.h" />
     <ClInclude Include="..\..\radiant\ui\mapinfo\LayerInfoTab.h" />
+    <ClInclude Include="..\..\radiant\ui\mapselector\MapSelector.h" />
     <ClInclude Include="..\..\radiant\ui\modelexport\ExportAsModelDialog.h" />
     <ClInclude Include="..\..\radiant\ui\modelexport\ExportCollisionModelDialog.h" />
     <ClInclude Include="..\..\radiant\ui\modelselector\MaterialsList.h" />
@@ -527,7 +528,6 @@
     <ClInclude Include="..\..\radiant\ui\patch\PatchCreateDialog.h" />
     <ClInclude Include="..\..\radiant\ui\patch\PatchInspector.h" />
     <ClInclude Include="..\..\radiant\ui\patch\PatchThickenDialog.h" />
-    <ClInclude Include="..\..\radiant\ui\prefabselector\PrefabPopulator.h" />
     <ClInclude Include="..\..\radiant\ui\prefabselector\PrefabSelector.h" />
     <ClInclude Include="..\..\radiant\ui\prefdialog\GameSetupDialog.h" />
     <ClInclude Include="..\..\radiant\ui\prefdialog\GameSetupPage.h" />

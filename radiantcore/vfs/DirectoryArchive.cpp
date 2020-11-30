@@ -87,7 +87,7 @@ void DirectoryArchive::traverse(Visitor& visitor, const std::string& root)
 			else
 			{
 				// File
-				visitor.visitFile(candidateStr.substr(rootLen));
+				visitor.visitFile(candidateStr.substr(rootLen), *this);
 			}
 		}
 		catch (const std::system_error& ex)
@@ -97,4 +97,21 @@ void DirectoryArchive::traverse(Visitor& visitor, const std::string& root)
 				"(Exception: " << ex.what() << ")" << std::endl;
 		}
 	}
+}
+
+std::size_t DirectoryArchive::getFileSize(const std::string& relativePath)
+{
+    UnixPath path(_root);
+    return os::getFileSize(std::string(path) + relativePath);
+}
+
+bool DirectoryArchive::getIsPhysical(const std::string& relativePath)
+{
+    // this whole class represents a physical directory, we don't even check
+    return true;
+}
+
+std::string DirectoryArchive::getArchivePath(const std::string& relativePath)
+{
+    return _root;
 }

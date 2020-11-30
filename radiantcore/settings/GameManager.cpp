@@ -4,6 +4,7 @@
 #include "iregistry.h"
 #include "iradiant.h"
 #include "imessagebus.h"
+#include "ifiletypes.h"
 #include "icommandsystem.h"
 #include "itextstream.h"
 #include "ifilesystem.h"
@@ -24,6 +25,7 @@
 #include "messages/GameConfigNeededMessage.h"
 
 #include <sigc++/bind.h>
+#include <fmt/format.h>
 
 #include <iostream>
 
@@ -34,6 +36,7 @@ namespace
 {
 	const char* const GKEY_PREFAB_FOLDER = "/mapFormat/prefabFolder";
 	const char* const GKEY_MAPS_FOLDER = "/mapFormat/mapFolder";
+    const char* const PAK_ICON = "package.png";
 }
 
 Manager::Manager()
@@ -301,6 +304,13 @@ void Manager::initialiseVfs()
 
 	vfs::VirtualFileSystem::ExtensionSet extensions;
 	string::split(extensions, currentGame()->getKeyValue("archivetypes"), " ");
+
+    for (const auto& extension : extensions)
+    {
+        auto extLower = string::to_lower_copy(extension);
+        GlobalFiletypes().registerPattern(filetype::TYPE_PAK, 
+            FileTypePattern(fmt::format(_("{0} File"), string::to_upper_copy(extension)), extLower, "*." + extLower, PAK_ICON));
+    }
 
 	if (!_config.modPath.empty())
 	{

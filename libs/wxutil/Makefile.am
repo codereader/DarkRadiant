@@ -23,6 +23,8 @@ libwxutil_la_LIBADD = $(top_builddir)/libs/xmlutil/libxmlutil.la \
 libwxutil_la_SOURCES = ConsoleView.cpp \
                        EntityClassChooser.cpp \
                        FreezePointer.cpp \
+                       fsview/FileSystemView.cpp \
+                       fsview/Populator.cpp \
                        GLWidget.cpp \
                        KeyValueTable.cpp \
                        PanedPosition.cpp \

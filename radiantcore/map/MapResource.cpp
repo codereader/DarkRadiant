@@ -21,7 +21,6 @@
 #include "os/file.h"
 #include "os/fs.h"
 #include "scene/Traverse.h"
-#include "stream/TextFileInputStream.h"
 #include "scenelib.h"
 
 #include <functional>
@@ -30,12 +29,12 @@
 #include "infofile/InfoFile.h"
 #include "string/string.h"
 
-#include "algorithm/MapImporter.h"
 #include "algorithm/MapExporter.h"
 #include "algorithm/Import.h"
 #include "infofile/InfoFileExporter.h"
-#include "scene/ChildPrimitives.h"
 #include "messages/MapFileOperation.h"
+#include "NodeCounter.h"
+#include "MapResourceLoader.h"
 
 namespace map
 {
@@ -50,66 +49,46 @@ namespace
 			path_is_absolute(name.c_str()) ? name : GlobalFileSystem().findFile(name)
 		);
 	}
-
-	class NodeCounter :
-		public scene::NodeVisitor
-	{
-	private:
-		std::size_t _count;
-	public:
-		NodeCounter() :
-			_count(0)
-		{}
-
-		bool pre(const scene::INodePtr& node)
-		{
-			if (Node_isPrimitive(node) || Node_isEntity(node))
-			{
-				_count++;
-			}
-			
-			return true;
-		}
-
-		std::size_t getCount() const
-		{
-			return _count;
-		}
-	};
 }
 
-std::string MapResource::_infoFileExt;
-
-// Constructor
-MapResource::MapResource(const std::string& name) :
-	_originalName(name),
-	_extension(os::getExtension(name))
+MapResource::MapResource(const std::string& resourcePath)
 {
-	// Initialise the paths, this is all needed for realisation
-    _path = rootPath(_originalName);
-	_name = os::getRelativePath(_originalName, _path);
-
-	if (_infoFileExt.empty())
-	{
-		_infoFileExt = game::current::getValue<std::string>(GKEY_INFO_FILE_EXTENSION);
-	}
-
-	if (!_infoFileExt.empty() && _infoFileExt[0] != '.') 
-	{
-		_infoFileExt = "." + _infoFileExt;
-	}
+    constructPaths(resourcePath);
 }
 
 void MapResource::rename(const std::string& fullPath)
 {
-	// Save the paths locally and split them into parts
-	_originalName = fullPath;
-	_extension = os::getExtension(fullPath);
-	_path = rootPath(_originalName);
-	_name = os::getRelativePath(_originalName, _path);
+    constructPaths(fullPath);
 
 	// Rename the map root as well
     _mapRoot->setName(_name);
+}
+
+void MapResource::constructPaths(const std::string& resourcePath)
+{
+    // Since the resource path can contain dots like this ".." 
+    // pass the filename part only to getExtension().
+    _extension = os::getExtension(os::getFilename(resourcePath));
+
+    // Try to find a folder part of the VFS and use that as base path
+    // Will result to an empty string if the path is outside the VFS
+    _path = rootPath(resourcePath);
+
+    // Try to create a relative path, based on the VFS directories
+    // If no relative path can be deducted, use the absolute resourcePath 
+    // in unmodified form.
+    _name = os::getRelativePath(resourcePath, _path);
+}
+
+std::string MapResource::getAbsoluteResourcePath()
+{
+    // Concatenate path+name, since they either contain base + relative:
+    //      _path == "c:/games/darkmod/"
+    //      _name == "maps/arkham.map"
+    // or an empty _path with _name holding the full path:
+    //      _path == ""
+    //      _name == "c:/some/non/vfs/folder/arkham.map"
+    return _path + _name;
 }
 
 bool MapResource::load()
@@ -123,6 +102,11 @@ bool MapResource::load()
 	}
 
 	return _mapRoot != nullptr;
+}
+
+bool MapResource::isReadOnly()
+{
+    return !FileIsWriteable(getAbsoluteResourcePath());
 }
 
 void MapResource::save(const MapFormatPtr& mapFormat)
@@ -140,7 +124,7 @@ void MapResource::save(const MapFormatPtr& mapFormat)
 
 	rMessage() << "Using " << format->getMapFormatName() << " format to save the resource." << std::endl;
 	
-	std::string fullpath = _path + _name;
+	std::string fullpath = getAbsoluteResourcePath();
 
 	// Save a backup of the existing file (rename it to .bak) if it exists in the first place
 	if (os::fileOrDirExists(fullpath) && !saveBackup())
@@ -164,7 +148,7 @@ void MapResource::save(const MapFormatPtr& mapFormat)
 
 bool MapResource::saveBackup()
 {
-	fs::path fullpath = (_path + _name);
+	fs::path fullpath = getAbsoluteResourcePath();
 
 	if (path_is_absolute(fullpath.string().c_str()))
 	{
@@ -177,7 +161,7 @@ bool MapResource::saveBackup()
 		}
 
 		fs::path auxFile = fullpath;
-		auxFile.replace_extension(_infoFileExt);
+		auxFile.replace_extension(GetInfoFileExtension());
 
 		fs::path backup = fullpath;
 		backup.replace_extension(".bak");
@@ -242,13 +226,18 @@ const scene::IMapRootNodePtr& MapResource::getRootNode()
 	return _mapRoot;
 }
 
+void MapResource::setRootNode(const scene::IMapRootNodePtr& root)
+{
+    _mapRoot = root;
+}
+
 void MapResource::clear()
 {
     _mapRoot = std::make_shared<RootNode>("");
 	connectMap();
 }
 
-void MapResource::onMapChanged() 
+void MapResource::onMapChanged()
 {
 	GlobalMap().setModified(true);
 }
@@ -274,186 +263,113 @@ RootNodePtr MapResource::loadMapNode()
 {
 	RootNodePtr rootNode;
 
-	// greebo: Check if we have valid settings
-	// The _path might be empty if we're loading from a folder outside the mod
-	if (_name.empty() && _extension.empty())
-	{
-        return rootNode;
-	}
+	// Open a stream - will throw on failure
+    auto stream = openMapfileStream();
 
-	// Build the map path
-	std::string fullpath = _path + _name;
+    if (!stream || !stream->isOpen())
+    {
+        throw OperationException(_("Could not open map stream"));
+    }
 
-	// Open a stream (from physical file or VFS)
-	openFileStream(fullpath, [&](std::istream& mapStream)
-	{
-		rootNode = loadMapNodeFromStream(mapStream, fullpath);
-	});
+    try
+    {
+        // Get the mapformat
+        auto format = algorithm::determineMapFormat(stream->getStream(), _extension);
+
+        if (!format)
+        {
+            throw OperationException(_("Could not determine map format"));
+        }
+
+        // Instantiate a loader to process the map file stream
+        MapResourceLoader loader(stream->getStream(), *format);
+
+        // Load the root from the primary stream (throws on failure or cancel)
+        rootNode = loader.load();
+
+        if (rootNode)
+        {
+            rootNode->setName(_name);
+        }
+
+        // Check if an info file is supported by this map format
+        if (format->allowInfoFileCreation())
+        {
+            auto infoFileStream = openInfofileStream();
+
+            if (infoFileStream && infoFileStream->isOpen())
+            {
+                loader.loadInfoFile(infoFileStream->getStream(), rootNode);
+            }
+        }
+    }
+    catch (const OperationException& ex)
+    {
+        // Re-throw the exception, prepending the map file path to the message (if not cancelled)
+        throw ex.operationCancelled() ? ex : 
+            OperationException(fmt::format(_("Failure reading map file:\n{0}\n\n{1}"), getAbsoluteResourcePath(), ex.what()));
+    }
 
 	return rootNode;
 }
 
-RootNodePtr MapResource::loadMapNodeFromStream(std::istream& stream, const std::string& fullpath)
+stream::MapResourceStream::Ptr MapResource::openFileStream(const std::string& path)
 {
-	// Get the mapformat
-	auto format = map::algorithm::determineMapFormat(stream, _extension);
+    // Call the factory method to acquire a stream
+    auto stream = stream::MapResourceStream::OpenFromPath(path);
 
-	if (!format)
-	{
-		throw OperationException(fmt::format(_("Could not determine map format of file:\n{0}"), fullpath));
-	}
+    if (!stream->isOpen())
+    {
+        throw OperationException(fmt::format(_("Could not open file:\n{0}"), path));
+    }
 
-	// Create a new map root node
-    auto root = std::make_shared<RootNode>(_name);
-
-	if (loadFile(stream, *format, root, fullpath))
-	{
-		return root;
-	}
-
-    return RootNodePtr();
+    return stream;
 }
 
-bool MapResource::loadFile(std::istream& mapStream, const MapFormat& format, const RootNodePtr& root, const std::string& filename)
+stream::MapResourceStream::Ptr MapResource::openMapfileStream()
 {
-	try
-	{
-		// Our importer taking care of scene insertion
-		MapImporter importFilter(root, mapStream);
-
-		// Acquire a map reader/parser
-		IMapReaderPtr reader = format.getMapReader(importFilter);
-
-		rMessage() << "Using " << format.getMapFormatName() << " format to load the data." << std::endl;
-
-		// Start parsing
-		reader->readFromStream(mapStream);
-
-		// Prepare child primitives
-		scene::addOriginToChildPrimitives(root);
-
-		if (!format.allowInfoFileCreation())
-		{
-			// No info file handling, just return success
-			return true;
-		}
-
-		// Check for an additional info file
-		loadInfoFile(root, filename, importFilter.getNodeMap());
-
-		return true;
-	}
-	catch (map::FileOperation::OperationCancelled&)
-	{
-		// Clear out the root node, otherwise we end up with half a map
-		scene::NodeRemover remover;
-		root->traverseChildren(remover);
-
-		throw OperationException(_("Map loading cancelled"));
-	}
-	catch (IMapReader::FailureException& e)
-	{
-		// Clear out the root node, otherwise we end up with half a map
-		scene::NodeRemover remover;
-		root->traverseChildren(remover);
-		
-		throw OperationException(
-				fmt::format(_("Failure reading map file:\n{0}\n\n{1}"), filename, e.what()));
-	}
+    return openFileStream(getAbsoluteResourcePath());
 }
 
-void MapResource::loadInfoFile(const RootNodePtr& root, const std::string& filename, const NodeIndexMap& nodeMap)
+stream::MapResourceStream::Ptr MapResource::openInfofileStream()
 {
-	try
-	{
-		std::string infoFilename(filename.substr(0, filename.rfind('.')));
-		infoFilename += game::current::getValue<std::string>(GKEY_INFO_FILE_EXTENSION);
+    try
+    {
+        auto fullpath = getAbsoluteResourcePath();
+        auto infoFilename = fullpath.substr(0, fullpath.rfind('.'));
+        infoFilename += GetInfoFileExtension();
 
-		openFileStream(infoFilename, [&](std::istream& infoFileStream)
-		{
-			loadInfoFileFromStream(infoFileStream, root, nodeMap);
-		});
-	}
-	catch (std::runtime_error& ex)
-	{
-		rWarning() << ex.what() << std::endl;
-	}
+        return openFileStream(infoFilename);
+    }
+    catch (const OperationException& ex)
+    {
+        // Info file load file does not stop us, just issue a warning
+        rWarning() << ex.what() << std::endl;
+        return stream::MapResourceStream::Ptr();
+    }
 }
 
-void MapResource::loadInfoFileFromStream(std::istream& infoFileStream, const RootNodePtr& root, const NodeIndexMap& nodeMap)
+std::string MapResource::GetInfoFileExtension()
 {
-	if (!infoFileStream.good())
-	{
-		rError() << "[MapResource] No valid info file stream" << std::endl;
-		return;
-	}
+    std::string extension = game::current::getValue<std::string>(GKEY_INFO_FILE_EXTENSION);
 
-	rMessage() << "Parsing info file..." << std::endl;
+    if (!extension.empty() && extension[0] != '.')
+    {
+        extension = "." + extension;
+    }
 
-	try
-	{
-		// Read the infofile
-		InfoFile infoFile(infoFileStream, root, nodeMap);
-
-		// Start parsing, this will throw if any errors occur
-		infoFile.parse();
-	}
-	catch (parser::ParseException& e)
-	{
-		rError() << "[MapResource] Unable to parse info file: " << e.what() << std::endl;
-	}
+    return extension;
 }
 
-void MapResource::openFileStream(const std::string& path, const std::function<void(std::istream&)>& streamProcessor)
+bool MapResource::FileIsWriteable(const fs::path& path)
 {
-	if (path_is_absolute(path.c_str()))
-	{
-		rMessage() << "Open file " << path << " from filesystem...";
-
-		TextFileInputStream file(path);
-
-		if (file.failed())
-		{
-			rError() << "failure" << std::endl;
-			throw std::runtime_error(fmt::format(_("Failure opening file:\n{0}"), path));
-		}
-
-		std::istream stream(&file);
-
-		rMessage() << "success." << std::endl;
-
-		streamProcessor(stream);
-	}
-	else
-	{
-		// Not an absolute path, might as well be a VFS path, so try to load it from the PAKs
-		rMessage() << "Trying to open file " << path << " from VFS...";
-
-		ArchiveTextFilePtr vfsFile = GlobalFileSystem().openTextFile(path);
-
-		if (!vfsFile)
-		{
-			rError() << "failure" << std::endl;
-			throw std::runtime_error(fmt::format(_("Failure opening file:\n{0}"), path));
-		}
-
-		rMessage() << "success." << std::endl;
-
-		std::istream vfsStream(&(vfsFile->getInputStream()));
-
-		// Deflated text files don't support stream positioning (seeking)
-		// so load everything into one large string and create a new buffer
-		std::stringstream stringStream;
-		stringStream << vfsStream.rdbuf();
-
-		streamProcessor(stringStream);
-	}
+    return !os::fileOrDirExists(path.string()) || os::fileIsWritable(path);
 }
 
 void MapResource::throwIfNotWriteable(const fs::path& path)
 {
 	// Check writeability of the given file
-	if (os::fileOrDirExists(path.string()) && !os::fileIsWritable(path))
+	if (!FileIsWriteable(path))
 	{
 		// File is write-protected
 		rError() << "File is write-protected." << std::endl;
@@ -468,7 +384,7 @@ void MapResource::saveFile(const MapFormat& format, const scene::IMapRootNodePtr
 	// Actual output file paths
 	fs::path outFile = filename;
 	fs::path auxFile = outFile;
-	auxFile.replace_extension(_infoFileExt);
+	auxFile.replace_extension(GetInfoFileExtension());
 
 	// Check writeability of the primary output file
 	throwIfNotWriteable(outFile);

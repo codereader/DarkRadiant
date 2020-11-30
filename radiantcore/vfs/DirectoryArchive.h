@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Archive.h"
+#include "iarchive.h"
 
 /**
  * greebo: This wraps around a certain path in the "real"
@@ -9,8 +9,9 @@
  * A real folder is treated like any other "archive" and gets
  * added to the list of PK4 archives, using this class.
  */
-class DirectoryArchive :
-	public Archive
+class DirectoryArchive final :
+	public IArchive,
+    public IArchiveFileInfoProvider
 {
 	std::string _root;
 
@@ -23,12 +24,13 @@ public:
 	// Pass the root path to the constructor
 	DirectoryArchive(const std::string& root);
 
-	virtual ArchiveFilePtr openFile(const std::string& name) override;
+	ArchiveFilePtr openFile(const std::string& name) override;
+	ArchiveTextFilePtr openTextFile(const std::string& name) override;
+	bool containsFile(const std::string& name) override;
+	void traverse(Visitor& visitor, const std::string& root) override;
 
-	virtual ArchiveTextFilePtr openTextFile(const std::string& name) override;
-
-	virtual bool containsFile(const std::string& name) override;
-
-	virtual void traverse(Visitor& visitor, const std::string& root) override;
+    std::size_t getFileSize(const std::string& relativePath) override;
+    bool getIsPhysical(const std::string& relativePath) override;
+    std::string getArchivePath(const std::string& relativePath) override;
 };
 typedef std::shared_ptr<DirectoryArchive> DirectoryArchivePtr;

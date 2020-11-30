@@ -265,6 +265,12 @@
     <ClInclude Include="..\..\libs\stream\ExportStream.h">
       <Filter>stream</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\os\filesize.h">
+      <Filter>os</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\stream\MapResourceStream.h">
+      <Filter>stream</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">
