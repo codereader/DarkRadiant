@@ -59,15 +59,15 @@ TEST_F(VfsTest, GetArchiveFileInfo)
     EXPECT_EQ(foundFiles.count(fileInPak), 1); // file in pk4
     
     // Get the file size of example.mtr
-    fs::path physicalFilePath = _context.getTestResourcePath();
+    fs::path physicalFilePath = _context.getTestProjectPath();
     physicalFilePath /= physicalFile;
 
-    fs::path pk4Path = _context.getTestResourcePath();
+    fs::path pk4Path = _context.getTestProjectPath();
     pk4Path /= "tdm_example_mtrs.pk4";
     
     EXPECT_EQ(foundFiles.find(physicalFile)->second.getSize(), os::getFileSize(physicalFilePath.string()));
     EXPECT_EQ(foundFiles.find(physicalFile)->second.getIsPhysicalFile(), true);
-    EXPECT_EQ(foundFiles.find(physicalFile)->second.getArchivePath(), _context.getTestResourcePath());
+    EXPECT_EQ(foundFiles.find(physicalFile)->second.getArchivePath(), _context.getTestProjectPath());
 
     EXPECT_EQ(foundFiles.find(fileInPak)->second.getSize(), 1096); // that file should have 1096 bytes
     EXPECT_EQ(foundFiles.find(fileInPak)->second.getIsPhysicalFile(), false);
@@ -158,7 +158,7 @@ TEST_F(VfsTest, assetsLstFileHandling)
 
 TEST_F(VfsTest, openArchiveInAbsolutePath)
 {
-    fs::path pk4Path = _context.getTestResourcePath();
+    fs::path pk4Path = _context.getTestProjectPath();
     pk4Path /= "tdm_example_mtrs.pk4";
 
     auto archive = GlobalFileSystem().openArchiveInAbsolutePath(pk4Path.string());
@@ -178,7 +178,7 @@ TEST_F(VfsTest, openArchiveInAbsolutePath)
 
 TEST_F(VfsTest, VisitEachFileInArchive)
 {
-    fs::path pk4Path = _context.getTestResourcePath();
+    fs::path pk4Path = _context.getTestProjectPath();
     pk4Path /= "tdm_example_mtrs.pk4";
     
     // Use a visitor to walk the tree
@@ -199,7 +199,7 @@ TEST_F(VfsTest, VisitEachFileInAbsolutePath)
     // Use a visitor to walk the tree
     std::set<std::string> foundFiles;
     GlobalFileSystem().forEachFileInAbsolutePath(
-        _context.getTestResourcePath(), "*",
+        _context.getTestProjectPath(), "*",
         [&](const vfs::FileInfo& fi) { foundFiles.insert(fi.name); },
         0
     );

@@ -91,7 +91,7 @@ protected:
     // The copy will be removed in the TearDown() method
     fs::path createMapCopyInModMapsPath(const std::string& mapToCopy, const std::string& newFilename)
     {
-        fs::path targetPath = _context.getTestResourcePath();
+        fs::path targetPath = _context.getTestProjectPath();
         targetPath /= "maps/";
         targetPath /= newFilename;
 
@@ -101,7 +101,7 @@ protected:
 private:
     fs::path createMapCopy(const std::string& mapToCopy, const fs::path& targetPath)
     {
-        fs::path mapPath = _context.getTestResourcePath();
+        fs::path mapPath = _context.getTestProjectPath();
         mapPath /= "maps/";
         mapPath /= mapToCopy;
 
@@ -240,7 +240,7 @@ TEST_F(MapLoadingTest, openMapFromModRelativePath)
     std::string modRelativePath = "maps/altar.map";
 
     // The map is located in maps/altar.map folder, check that it physically exists
-    fs::path mapPath = _context.getTestResourcePath();
+    fs::path mapPath = _context.getTestProjectPath();
     mapPath /= modRelativePath;
     EXPECT_TRUE(os::fileOrDirExists(mapPath));
     
@@ -258,7 +258,7 @@ TEST_F(MapLoadingTest, openMapFromMapsFolder)
     std::string mapName = "altar.map";
 
     // The map is located in maps/altar.map folder, check that it physically exists
-    fs::path mapPath = _context.getTestResourcePath();
+    fs::path mapPath = _context.getTestProjectPath();
     mapPath /= "maps";
     mapPath /= mapName;
     EXPECT_TRUE(os::fileOrDirExists(mapPath));
@@ -277,7 +277,7 @@ TEST_F(MapLoadingTest, openMapFromModPak)
     std::string modRelativePath = "maps/altar_in_pk4.map";
 
     // The map is located in maps/ folder within the altar.pk4, check that it doesn't physically exist
-    fs::path mapPath = _context.getTestResourcePath();
+    fs::path mapPath = _context.getTestProjectPath();
     mapPath /= modRelativePath;
     EXPECT_FALSE(os::fileOrDirExists(mapPath));
 
@@ -291,7 +291,7 @@ TEST_F(MapLoadingTest, openMapFromModPak)
 
 TEST_F(MapLoadingTest, openMapFromArchive)
 {
-    auto pakPath = fs::path(_context.getTestResourcePath()) / ".." / "map_loading_test.pk4";
+    auto pakPath = fs::path(_context.getTestResourcePath()) / "map_loading_test.pk4";
     std::string archiveRelativePath = "maps/altar_packed.map";
 
     GlobalCommandSystem().executeCommand("OpenMapFromArchive", pakPath.string(), archiveRelativePath);
@@ -302,7 +302,7 @@ TEST_F(MapLoadingTest, openMapFromArchive)
 
 TEST_F(MapLoadingTest, openMapFromArchiveWithoutInfoFile)
 {
-    auto pakPath = fs::path(_context.getTestResourcePath()) / ".." / "map_loading_test.pk4";
+    auto pakPath = fs::path(_context.getTestResourcePath()) / "map_loading_test.pk4";
     std::string archiveRelativePath = "maps/altar_packed_without_dr_file.map";
 
     GlobalCommandSystem().executeCommand("OpenMapFromArchive", pakPath.string(), archiveRelativePath);
@@ -337,7 +337,7 @@ TEST_F(MapLoadingTest, openWithInvalidPath)
 TEST_F(MapLoadingTest, openWithInvalidPathInsideMod)
 {
     // Pass a directory name to it
-    GlobalCommandSystem().executeCommand("OpenMap", _context.getTestResourcePath());
+    GlobalCommandSystem().executeCommand("OpenMap", _context.getTestProjectPath());
 
     // No worldspawn in this map, it should be empty
     EXPECT_FALSE(algorithm::getEntityByName(GlobalMapModule().getRoot(), "world"));
@@ -448,12 +448,12 @@ TEST_F(MapSavingTest, saveMapClearsModifiedFlag)
 TEST_F(MapSavingTest, saveMapDoesntChangeMap)
 {
     // Create a copy of the map file in the mod-relative maps/ folder
-    fs::path mapPath = _context.getTestResourcePath();
+    fs::path mapPath = _context.getTestProjectPath();
     mapPath /= "maps/altar.map";
 
     // The map is located in maps/altar.map folder, check that it physically exists
     std::string modRelativePath = "maps/altar_saveMapDoesntChangeMap.map";
-    fs::path copiedMap = _context.getTestResourcePath();
+    fs::path copiedMap = _context.getTestProjectPath();
     copiedMap /= modRelativePath;
 
     fs::remove(copiedMap);
@@ -594,8 +594,9 @@ TEST_F(MapSavingTest, saveAs)
     std::string modRelativePath = "maps/altar.map";
 
     // The map is located in maps/altar.map folder, check that it physically exists
-    fs::path mapPath = _context.getTestResourcePath();
+    fs::path mapPath = _context.getTestProjectPath();
     mapPath /= modRelativePath;
+    EXPECT_TRUE(os::fileOrDirExists(mapPath));
 
     GlobalCommandSystem().executeCommand("OpenMap", modRelativePath);
     checkAltarScene();
@@ -885,7 +886,7 @@ TEST_F(MapSavingTest, saveArchivedMapWillAskForFilename)
 {
     // A map that has been loaded from an archive file is not writeable
     // the map saving algorithm should detect this and ask for a new file location
-    auto pakPath = fs::path(_context.getTestResourcePath()) / ".." / "map_loading_test.pk4";
+    auto pakPath = fs::path(_context.getTestResourcePath()) / "map_loading_test.pk4";
     std::string archiveRelativePath = "maps/altar_packed.map";
     
     GlobalCommandSystem().executeCommand("OpenMapFromArchive", pakPath.string(), archiveRelativePath);

@@ -58,6 +58,7 @@ const StringSet& Manager::getDependencies() const
 		_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
 		_dependencies.insert(MODULE_PREFERENCESYSTEM);
+		_dependencies.insert(MODULE_FILETYPES);
 	}
 
 	return _dependencies;
