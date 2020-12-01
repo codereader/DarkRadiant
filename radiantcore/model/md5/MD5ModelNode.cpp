@@ -6,30 +6,12 @@
 #include "iscenegraph.h"
 #include <functional>
 
-namespace md5 {
-
-// Local helper
-inline void Surface_addLight(const MD5Surface& surface,
-                             render::lib::VectorLightList& lights,
-                             const Matrix4& localToWorld,
-                             const RendererLight& light)
+namespace md5
 {
-    if (light.intersectsAABB(
-            AABB::createFromOrientedAABB(surface.localAABB(), localToWorld)
-        )
-    )
-    {
-        lights.addLight(light);
-    }
-}
 
 MD5ModelNode::MD5ModelNode(const MD5ModelPtr& model) :
-    _model(new MD5Model(*model)), // create a copy of the incoming model, we need our own instance
-    _surfaceLightLists(_model->size())
+    _model(new MD5Model(*model)) // create a copy of the incoming model, we need our own instance
 {
-    _lightList = &GlobalRenderSystem().attachLitObject(*this);
-
-    Node::setTransformChangedCallback((std::bind(&MD5ModelNode::lightsChanged, this)));
 }
 
 const model::IModel& MD5ModelNode::getIModel() const {
@@ -50,14 +32,8 @@ Vector3 MD5ModelNode::getModelScale()
 	return Vector3(1, 1, 1); // not supported
 }
 
-void MD5ModelNode::lightsChanged()
-{
-    _lightList->setDirty();
-}
-
 MD5ModelNode::~MD5ModelNode()
 {
-    GlobalRenderSystem().detachLitObject(*this);
 }
 
 void MD5ModelNode::setModel(const MD5ModelPtr& model) {
@@ -96,29 +72,8 @@ bool MD5ModelNode::intersectsLight(const RendererLight& light) const
     return light.intersectsAABB(worldAABB());
 }
 
-void MD5ModelNode::insertLight(const RendererLight& light) {
-    const Matrix4& l2w = localToWorld();
-
-    _surfaceLightLists.resize(_model->size());
-
-    SurfaceLightLists::iterator j = _surfaceLightLists.begin();
-    for (MD5Model::const_iterator i = _model->begin(); i != _model->end(); ++i) {
-        Surface_addLight(*i->surface, *j++, l2w, light);
-    }
-}
-
-void MD5ModelNode::clearLights() {
-    for (SurfaceLightLists::iterator i = _surfaceLightLists.begin();
-         i != _surfaceLightLists.end(); ++i)
-    {
-        i->clear();
-    }
-}
-
 void MD5ModelNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
 {
-    _lightList->calculateIntersectingLights();
-
     assert(_renderEntity);
 
     render(collector, volume, localToWorld(), *_renderEntity);
@@ -147,31 +102,21 @@ void MD5ModelNode::render(RenderableCollector& collector, const VolumeTest& volu
         return;
     }
 
-    SurfaceLightLists::const_iterator j = _surfaceLightLists.begin();
-
     // greebo: Iterate over all MD5 surfaces and render them
-    for (MD5Model::const_iterator i = _model->begin();
-         i != _model->end();
-         ++i, ++j)
+    for (auto i = _model->begin(); i != _model->end(); ++i)
     {
         assert(i->shader);
 
         // Get the Material to test the shader name against the filter system
         const MaterialPtr& surfaceShader = i->shader->getMaterial();
-
         if (surfaceShader->isVisible())
         {
-            if (collector.supportsFullMaterials())
-            {
-                assert(i->shader); // shader must be captured at this point
-                collector.addRenderable(*i->shader, *i->surface, localToWorld,
-                                        &(*j), &entity);
-            }
-            else
-            {
-                collector.addRenderable(*entity.getWireShader(), *i->surface,
-                                        localToWorld, nullptr, &entity);
-            }
+            assert(i->shader); // shader must be captured at this point
+            collector.addLitRenderable(
+                collector.supportsFullMaterials() ? *i->shader
+                                                  : *entity.getWireShader(),
+                *i->surface, localToWorld, *this, &entity
+            );
         }
     }
 
