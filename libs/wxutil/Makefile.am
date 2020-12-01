@@ -39,7 +39,6 @@ libwxutil_la_SOURCES = ConsoleView.cpp \
                        preview/RenderPreview.cpp \
                        preview/GuiRenderer.cpp \
                        preview/GuiView.cpp \
-                       GLFont.cpp \
                        menu/PopupMenu.cpp \
                        PathEntry.cpp \
                        Splitter.cpp \

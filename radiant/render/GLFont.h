@@ -3,7 +3,7 @@
 #include <memory>
 #include <FTGL/ftgl.h>
 
-namespace wxutil
+namespace gl
 {
 
 class GLFont

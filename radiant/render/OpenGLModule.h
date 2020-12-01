@@ -5,7 +5,7 @@
 #include <string>
 #include <sigc++/connection.h>
 
-#include "wxutil/GLFont.h"
+#include "GLFont.h"
 #include "wxutil/GLWidget.h"
 
 #ifndef NDEBUG
@@ -19,7 +19,7 @@ class OpenGLModule :
 private:
 	const std::string _unknownError;
 
-	wxutil::GLFontPtr _font;
+	gl::GLFontPtr _font;
 
 	sigc::connection _contextCreated;
 	sigc::connection _contextDestroyed;

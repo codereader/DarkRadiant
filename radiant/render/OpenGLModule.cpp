@@ -22,7 +22,7 @@ void OpenGLModule::onGLDebugMessage(GLenum source, GLenum type, GLuint id, GLenu
 void OpenGLModule::sharedContextCreated()
 {
 	// Initialise the font before firing the extension initialised signal
-	_font.reset(new wxutil::GLFont(wxutil::GLFont::FONT_SANS, 14));
+	_font.reset(new gl::GLFont(gl::GLFont::FONT_SANS, 14));
 
 #ifdef ENABLE_KHR_DEBUG_EXTENSION
     // Debugging

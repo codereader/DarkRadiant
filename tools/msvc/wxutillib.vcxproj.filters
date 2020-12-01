@@ -88,7 +88,6 @@
     <ClInclude Include="..\..\libs\wxutil\EntryAbortedException.h" />
     <ClInclude Include="..\..\libs\wxutil\FileChooser.h" />
     <ClInclude Include="..\..\libs\wxutil\FreezePointer.h" />
-    <ClInclude Include="..\..\libs\wxutil\GLFont.h" />
     <ClInclude Include="..\..\libs\wxutil\GLWidget.h" />
     <ClInclude Include="..\..\libs\wxutil\IConv.h" />
     <ClInclude Include="..\..\libs\wxutil\KeyValueTable.h" />
@@ -151,7 +150,6 @@
     <ClCompile Include="..\..\libs\wxutil\DirChooser.cpp" />
     <ClCompile Include="..\..\libs\wxutil\FileChooser.cpp" />
     <ClCompile Include="..\..\libs\wxutil\FreezePointer.cpp" />
-    <ClCompile Include="..\..\libs\wxutil\GLFont.cpp" />
     <ClCompile Include="..\..\libs\wxutil\GLWidget.cpp" />
     <ClCompile Include="..\..\libs\wxutil\KeyValueTable.cpp" />
     <ClCompile Include="..\..\libs\wxutil\TreeView.cpp" />

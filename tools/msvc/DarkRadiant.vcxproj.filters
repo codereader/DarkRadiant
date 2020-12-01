@@ -673,6 +673,9 @@
     <ClCompile Include="..\..\radiant\ui\mapselector\MapSelector.cpp">
       <Filter>src\ui\mapselector</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\render\GLFont.cpp">
+      <Filter>src\render</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h">
@@ -1292,6 +1295,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\mapselector\MapSelector.h">
       <Filter>src\ui\mapselector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\render\GLFont.h">
+      <Filter>src\render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

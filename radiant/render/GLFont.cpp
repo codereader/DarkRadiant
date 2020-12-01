@@ -5,7 +5,7 @@
 #include "imodule.h"
 #include <iostream>
 
-namespace wxutil
+namespace gl
 {
 
 GLFont::GLFont(Style style, unsigned int size) :
