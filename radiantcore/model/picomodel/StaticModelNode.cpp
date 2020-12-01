@@ -21,9 +21,8 @@ StaticModelNode::StaticModelNode(const StaticModelPtr& picoModel) :
     skinChanged("");
 }
 
-StaticModelNode::~StaticModelNode() {
-    GlobalRenderSystem().detachLitObject(*this);
-}
+StaticModelNode::~StaticModelNode()
+{}
 
 void StaticModelNode::onInsertIntoScene(scene::IMapRootNode& root)
 {

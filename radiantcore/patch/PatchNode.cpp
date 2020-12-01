@@ -38,9 +38,7 @@ PatchNode::PatchNode(const PatchNode& other) :
 }
 
 PatchNode::~PatchNode()
-{
-	GlobalRenderSystem().detachLitObject(*this);
-}
+{}
 
 scene::INode::Type PatchNode::getNodeType() const
 {

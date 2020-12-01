@@ -652,61 +652,6 @@ public:
     /// Set the shader program to use.
     virtual void setShaderProgram(ShaderProgram prog) = 0;
 
-    /* LIGHT MANAGEMENT */
-
-    /**
-     * \brief
-     * Add a lit object to the renderer.
-     *
-     * The renderer will create and return a reference to a LightList associated
-     * with this particular LitObject. The lit object can use the public
-     * LightList interface to trigger a recalculation of light intersections, or
-     * to set the dirty flag indicating to the LightList that a recalculation is
-     * necessary.
-     *
-     * \internal
-     * When the LightList implementation performs the intersection calculation,
-     * it will use the LitObject's intersectsLight method to do so, and if the
-     * intersection is detected, the insertLight method will be invoked on the
-     * LitObject. This means that (1) the renderer stores a LightList for each
-     * object, (2) the object itself has a reference to the LightList owned by
-     * the renderer, and (3) the LitObject interface allows the object to
-     * maintain ANOTHER list of intersecting lights, added with insertLight().
-     * This seems like a lot of indirection, but it might have something to do
-     * with allowing objects with multiple sub-components to submit only a
-     * subset of lights for each component.
-     *
-     * \param object
-     * The lit object to add.
-     *
-     * \return
-     * A reference to a LightList which manages the lights that intersect the
-     * submitted object.
-     */
-    virtual LightList& attachLitObject(LitObject& object) = 0;
-
-    virtual void detachLitObject(LitObject& cullable) = 0;
-
-    virtual void litObjectChanged(LitObject& cullable) = 0;
-
-    /**
-     * \brief
-     * Attach a light source to the renderer.
-     */
-    virtual void attachLight(RendererLight& light) = 0;
-
-    /**
-     * \brief
-     * Detach a light source from the renderer.
-     */
-    virtual void detachLight(RendererLight& light) = 0;
-
-    /**
-     * \brief
-     * Indicate that the scene lights have changed.
-     */
-    virtual void lightChanged() = 0;
-
     virtual void attachRenderable(const Renderable& renderable) = 0;
     virtual void detachRenderable(const Renderable& renderable) = 0;
     virtual void forEachRenderable(const RenderableCallback& callback) const = 0;

@@ -48,7 +48,6 @@ BrushNode::BrushNode(const BrushNode& other) :
 
 BrushNode::~BrushNode()
 {
-	GlobalRenderSystem().detachLitObject(*this);
 	m_brush.detach(*this); // BrushObserver
 }
 
