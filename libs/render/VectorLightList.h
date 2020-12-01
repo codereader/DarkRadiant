@@ -12,13 +12,8 @@ namespace lib
  * \brief
  * A simple container of lights
  *
- * This is used by particular object types to store the list of intersecting
- * lights passed into LitObject::insertLight() as a result of an earlier call
- * to LightList::calculateIntersectingLights().
- *
- * Objects may use their insertLight() method to perform additional
- * optimisations to exclude lights for object-specific reasons, then store the
- * minimised light list in a VectorLightList for subsequent rendering.
+ * This is used by the CamRenderer to build a list of lights submitted with
+ * addLight().
  */
 class VectorLightList: public LightSources
 {

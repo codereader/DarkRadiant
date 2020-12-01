@@ -7,7 +7,6 @@
 #include "backend/OpenGLStateManager.h"
 #include "backend/OpenGLShader.h"
 #include "backend/OpenGLStateLess.h"
-#include "LinearLightList.h"
 
 namespace render
 {

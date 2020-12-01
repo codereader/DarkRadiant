@@ -230,7 +230,6 @@ libradiantcore_la_SOURCES = Radiant.cpp \
                 rendersystem/backend/OpenGLShader.cpp \
                 rendersystem/backend/GLProgramFactory.cpp \
                 rendersystem/backend/OpenGLShaderPass.cpp \
-                rendersystem/LinearLightList.cpp \
                 rendersystem/OpenGLRenderSystem.cpp \
                 rendersystem/RenderSystemFactory.cpp \
                 rendersystem/SharedOpenGLContextModule.cpp \
