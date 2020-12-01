@@ -22,7 +22,7 @@ void OpenGLModule::onGLDebugMessage(GLenum source, GLenum type, GLuint id, GLenu
 void OpenGLModule::sharedContextCreated()
 {
 	// Initialise the font before firing the extension initialised signal
-	_font.reset(new gl::GLFont(gl::GLFont::FONT_SANS, 14));
+	_font.reset(new gl::GLFont(IGLFont::Style::Sans, 14));
 
 #ifdef ENABLE_KHR_DEBUG_EXTENSION
     // Debugging
@@ -40,11 +40,17 @@ void OpenGLModule::sharedContextDestroyed()
 	_font.reset();
 }
 
+IGLFont::Ptr OpenGLModule::getFont(IGLFont::Style style, std::size_t size)
+{
+    // No caching in this first implementation
+    return std::make_shared<gl::GLFont>(style, size);
+}
+
 void OpenGLModule::drawString(const std::string& string) const
 {
     if (_font)
     {
-        FTGL::ftglRenderFont(_font->getFtglFont(), string.c_str(), FTGL::RENDER_ALL);
+        _font->drawString(string);
     }
 }
 
@@ -56,7 +62,7 @@ void OpenGLModule::drawChar(char character) const
 
 int OpenGLModule::getFontHeight() 
 {
-	return _font ? _font->getPixelHeight() : 0;
+	return _font ? _font->getLineHeight() : 0;
 }
 
 const std::string& OpenGLModule::getName() const

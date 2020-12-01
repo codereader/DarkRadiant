@@ -19,13 +19,15 @@ class OpenGLModule :
 private:
 	const std::string _unknownError;
 
-	gl::GLFontPtr _font;
+	IGLFont::Ptr _font;
 
 	sigc::connection _contextCreated;
 	sigc::connection _contextDestroyed;
 
 public:
 	OpenGLModule();
+
+    IGLFont::Ptr getFont(IGLFont::Style style, std::size_t size) override;
 
 	void drawString(const std::string& string) const override;
 	void drawChar(char character) const override;

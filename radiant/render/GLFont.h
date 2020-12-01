@@ -2,39 +2,28 @@
 
 #include <memory>
 #include <FTGL/ftgl.h>
+#include "igl.h"
 
 namespace gl
 {
 
-class GLFont
+class GLFont :
+    public IGLFont
 {
 private:
-	int _pixelHeight;
-	FTGL::FTGLfont* _ftglFont;	
+	float _lineHeight;
+	FTGL::FTGLfont* _ftglFont;
 
 public:
-	enum Style
-	{
-		FONT_SANS,	// free sans
-		FONT_MONO,	// free mono
-	};
-
 	// the constructor will allocate the FTGL font
 	GLFont(Style style, unsigned int size);
 
 	// Destructor frees the FTGL object again
 	~GLFont();
 
-	FTGL::FTGLfont* getFtglFont()
-	{
-		return _ftglFont;
-	}
+    float getLineHeight() const override;
 
-	int getPixelHeight() const
-	{
-		return _pixelHeight;
-	}
+    void drawString(const std::string& string) override;
 };
-typedef std::shared_ptr<GLFont> GLFontPtr;
 
 } // namespace
