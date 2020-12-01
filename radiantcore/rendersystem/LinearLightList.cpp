@@ -13,7 +13,6 @@ void LinearLightList::calculateIntersectingLights() const
         m_dirty = false;
 
         _activeLights.clear();
-        _litObject.clearLights();
 
         // Determine which lights intersect object
         for (RendererLight* light : _allLights)
@@ -21,7 +20,6 @@ void LinearLightList::calculateIntersectingLights() const
             if (_litObject.intersectsLight(*light))
             {
                 _activeLights.push_back(light);
-                _litObject.insertLight(*light);
             }
         }
     }

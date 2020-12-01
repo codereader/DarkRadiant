@@ -12,7 +12,6 @@
 // Constructor
 BrushNode::BrushNode() :
 	scene::SelectableNode(),
-	m_lightList(&GlobalRenderSystem().attachLitObject(*this)),
 	m_brush(*this),
 	_selectedPoints(GL_POINTS),
 	_faceCentroidPointsCulled(GL_POINTS),
@@ -21,8 +20,6 @@ BrushNode::BrushNode() :
     _untransformedOriginChanged(true)
 {
 	m_brush.attach(*this); // BrushObserver
-
-	SelectableNode::setTransformChangedCallback(std::bind(&BrushNode::lightsChanged, this));
 }
 
 // Copy Constructor
@@ -39,7 +36,6 @@ BrushNode::BrushNode(const BrushNode& other) :
 	PlaneSelectable(other),
 	LitObject(other),
 	Transformable(other),
-	m_lightList(&GlobalRenderSystem().attachLitObject(*this)),
 	m_brush(*this, other.m_brush),
 	_selectedPoints(GL_POINTS),
 	_faceCentroidPointsCulled(GL_POINTS),
@@ -59,11 +55,6 @@ BrushNode::~BrushNode()
 scene::INode::Type BrushNode::getNodeType() const
 {
 	return Type::Brush;
-}
-
-void BrushNode::lightsChanged()
-{
-	m_lightList->setDirty();
 }
 
 const AABB& BrushNode::localAABB() const {
@@ -428,8 +419,6 @@ void BrushNode::renderSolid(RenderableCollector& collector,
                             const VolumeTest& volume,
                             const Matrix4& localToWorld) const
 {
-	m_lightList->calculateIntersectingLights();
-
 	assert(_renderEntity); // brushes rendered without parent entity - no way!
 
 	// Check for the override status of this brush
