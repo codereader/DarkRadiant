@@ -43,6 +43,7 @@ class XYWndManager :
 	bool _showWorkzone;
 
 	unsigned int _defaultBlockSize;
+    int _fontSize;
 
 private:
 
@@ -68,6 +69,7 @@ public:
 	bool showAxes() const;
 	bool showWorkzone() const;
 	bool showSizeInfo() const;
+	int fontSize() const;
 
 	unsigned int defaultBlockSize() const;
 

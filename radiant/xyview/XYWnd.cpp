@@ -233,7 +233,7 @@ void XYWnd::releaseStates()
 
 void XYWnd::ensureFont()
 {
-    _font = GlobalOpenGL().getFont(IGLFont::Style::Sans, 14);
+    _font = GlobalOpenGL().getFont(IGLFont::Style::Sans, GlobalXYWnd().fontSize());
 }
 
 const std::string XYWnd::getViewTypeTitle(EViewType viewtype) {
@@ -286,6 +286,13 @@ void XYWnd::queueDraw()
 void XYWnd::onSceneGraphChange() {
     // Pass the call to queueDraw.
     queueDraw();
+}
+
+void XYWnd::updateFont()
+{
+    // Clear out the font reference, it will be re-acquired
+    // during the next draw call
+    _font.reset();
 }
 
 void XYWnd::setActive(bool b) {

@@ -154,6 +154,8 @@ public:
     // greebo: This gets called upon scene change
     void onSceneGraphChange() override;
 
+    void updateFont();
+
 protected:
     // Disconnects all widgets and unsubscribes as observer
     void destroyXYView();
