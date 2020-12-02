@@ -72,12 +72,6 @@ void OpenGLModule::drawString(const std::string& string) const
     }
 }
 
-void OpenGLModule::drawChar(char character) const
-{
-	std::string str(1,character);
-	drawString(str);
-}
-
 int OpenGLModule::getFontHeight() 
 {
 	return _font ? _font->getLineHeight() : 0;

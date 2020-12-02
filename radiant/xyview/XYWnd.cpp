@@ -899,7 +899,7 @@ void XYWnd::drawGrid()
 
     if (GlobalXYWnd().showAxes())
     {
-        const char g_AxisName[3] = { 'X', 'Y', 'Z' };
+        const char* g_AxisName[3] = { "X", "Y", "Z" };
 
         const std::string colourNameX = (_viewType == YZ) ? "axis_y" : "axis_x";
         const std::string colourNameY = (_viewType == XY) ? "axis_y" : "axis_z";
@@ -925,14 +925,14 @@ void XYWnd::drawGrid()
         // now print axis symbols
         glColor3dv (colourX);
         glRasterPos2f ( _origin[nDim1] - w + 55 / _scale, _origin[nDim2] + h - 55 / _scale );
-        GlobalOpenGL().drawChar(g_AxisName[nDim1]);
+        _font->drawString(g_AxisName[nDim1]);
         glRasterPos2f (28 / _scale, -10 / _scale );
-        GlobalOpenGL().drawChar(g_AxisName[nDim1]);
+        _font->drawString(g_AxisName[nDim1]);
         glColor3dv (colourY);
         glRasterPos2f ( _origin[nDim1] - w + 25 / _scale, _origin[nDim2] + h - 30 / _scale );
-        GlobalOpenGL().drawChar(g_AxisName[nDim2]);
+        _font->drawString(g_AxisName[nDim2]);
         glRasterPos2f ( -10 / _scale, 28 / _scale );
-        GlobalOpenGL().drawChar(g_AxisName[nDim2]);
+        _font->drawString(g_AxisName[nDim2]);
 
     }
 

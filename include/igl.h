@@ -90,10 +90,6 @@ public:
     // Deprecated
     /// \brief Renders \p string at the current raster-position of the current context.
     virtual void drawString(const std::string& string) const = 0;
-
-    // Deprecated
-    /// \brief Renders \p character at the current raster-position of the current context.
-    virtual void drawChar(char character) const = 0;
 };
 
 inline OpenGLBinding& GlobalOpenGL() 

@@ -33,7 +33,6 @@ public:
     IGLFont::Ptr getFont(IGLFont::Style style, std::size_t size) override;
 
 	void drawString(const std::string& string) const override;
-	void drawChar(char character) const override;
 	int getFontHeight() override;
 
 	// RegisterableModule implementation
