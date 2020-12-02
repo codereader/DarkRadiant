@@ -7,6 +7,7 @@
 #include "math/Matrix4.h"
 #include "../XmlResourceBasedWidget.h"
 
+#include "igl.h"
 #include "ifiltermenu.h"
 #include "iscenegraph.h"
 #include "irender.h"
@@ -124,6 +125,8 @@ protected:
     // The filters menu
     ui::IFilterMenuPtr _filtersMenu;
 	wxToolBarToolBase* _filterTool;
+
+    IGLFont::Ptr _glFont;
 
 protected:
     const scene::GraphPtr& getScene();

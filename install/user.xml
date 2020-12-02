@@ -198,6 +198,8 @@
     </particleEditor>
     <renderPreview>
       <showGrid value="1" />
+      <fontSize value="14" />
+      <fontStyle value="Sans" />
     </renderPreview>
     <camera>
       <toggleFreeMove value="1" />
