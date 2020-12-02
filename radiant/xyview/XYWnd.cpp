@@ -233,7 +233,8 @@ void XYWnd::releaseStates()
 
 void XYWnd::ensureFont()
 {
-    _font = GlobalOpenGL().getFont(IGLFont::Style::Sans, GlobalXYWnd().fontSize());
+    const auto& manager = GlobalXYWnd();
+    _font = GlobalOpenGL().getFont(manager.fontStyle(), manager.fontSize());
 }
 
 const std::string XYWnd::getViewTypeTitle(EViewType viewtype) {

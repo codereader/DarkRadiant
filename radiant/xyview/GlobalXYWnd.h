@@ -44,6 +44,7 @@ class XYWndManager :
 
 	unsigned int _defaultBlockSize;
     int _fontSize;
+    IGLFont::Style _fontStyle;
 
 private:
 
@@ -70,6 +71,7 @@ public:
 	bool showWorkzone() const;
 	bool showSizeInfo() const;
 	int fontSize() const;
+    IGLFont::Style fontStyle() const;
 
 	unsigned int defaultBlockSize() const;
 

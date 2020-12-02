@@ -159,6 +159,7 @@
       <showAxes value="1" />
       <showWorkzone value="0" />
       <fontSize value="14" />
+      <fontStyle value="Sans" />
       <overlay>
         <visible value="0" />
         <transparency value="0.3" />
