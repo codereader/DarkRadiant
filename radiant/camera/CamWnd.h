@@ -4,6 +4,7 @@
 #include "imousetool.h"
 #include "icameraview.h"
 #include "ieventmanager.h"
+#include "igl.h"
 #include "irender.h"
 #include "wxutil/GLWidget.h"
 #include "wxutil/FreezePointer.h"
@@ -95,6 +96,8 @@ class CamWnd :
 
     bool _strafe; // true when in strafemode toggled by the ctrl-key
     bool _strafeForward; // true when in strafemode by ctrl-key and shift is pressed for forward strafing
+
+    IGLFont::Ptr _glFont;
 
 public:
     // Constructor and destructor
@@ -211,6 +214,7 @@ private:
     void onStopTimeButtonClick(wxCommandEvent& ev);
     void updateToolbarVisibility();
 
+    void ensureFont();
     void Cam_Draw();
     bool onRender();
     void drawTime();

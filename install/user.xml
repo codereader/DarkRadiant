@@ -214,6 +214,8 @@
       <cubicScale value="13" />
       <drawMode value="2" />
       <window xPosition="37" yPosition="100" width="450" height="430" />
+      <fontSize value="14" />
+      <fontStyle value="Sans" />
     </camera>
     <toolbar name="view" align="horizontal">
       <toolbutton name="open" action="OpenMap" tooltip="Open a map file" icon="file_open.png"/>

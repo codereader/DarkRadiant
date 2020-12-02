@@ -835,6 +835,14 @@ void CamWnd::onDeferredMotionDelta(int x, int y)
     queueDraw();
 }
 
+void CamWnd::ensureFont()
+{
+    if (!_glFont)
+    {
+        _glFont = GlobalOpenGL().getFont(getCameraSettings()->fontStyle(), getCameraSettings()->fontSize());
+    }
+}
+
 void CamWnd::Cam_Draw()
 {
     wxSize glSize = _wxGLWidget->GetSize();
@@ -851,6 +859,8 @@ void CamWnd::Cam_Draw()
     {
         return; // otherwise we'll receive OpenGL errors in ortho rendering below
     }
+
+    ensureFont();
 
     glViewport(0, 0, width, height);
 
@@ -1051,7 +1061,7 @@ void CamWnd::Cam_Draw()
     if (!statString.empty())
         statString += " | ";
     statString += _renderStats.getStatString();
-    GlobalOpenGL().drawString(statString);
+    _glFont->drawString(statString);
 
     drawTime();
 
@@ -1430,7 +1440,7 @@ void CamWnd::drawTime()
     glOrtho(0, static_cast<float>(width), 0, static_cast<float>(height), -100, 100);
 
     glScalef(1, -1, 1);
-    glTranslatef(static_cast<float>(width) - 90, -static_cast<float>(height), 0);
+    glTranslatef(static_cast<float>(width) - 105, -static_cast<float>(height), 0);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -1453,10 +1463,10 @@ void CamWnd::drawTime()
     glColor3f(1.f, 1.f, 1.f);
     glLineWidth(1);
 
-    glRasterPos3f(1.0f, static_cast<float>(height) - 1.0f, 0.0f);
+    glRasterPos3f(1.0f, static_cast<float>(height) - 4.0f, 0.0f);
 
     std::size_t time = GlobalRenderSystem().getTime();
-    GlobalOpenGL().drawString(fmt::format("Time: {0:.3f} sec.", (time * 0.001f)));
+    _glFont->drawString(fmt::format("Time: {0:.3f} sec.", (time * 0.001f)));
 }
 
 void CamWnd::handleFreeMoveKeyEvent(KeyEventType eventType, unsigned int movementFlags)
