@@ -233,6 +233,11 @@ void XYWnd::releaseStates()
 
 void XYWnd::ensureFont()
 {
+    if (_font)
+    {
+        return;
+    }
+
     const auto& manager = GlobalXYWnd();
     _font = GlobalOpenGL().getFont(manager.fontStyle(), manager.fontSize());
 }

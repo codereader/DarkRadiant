@@ -24,6 +24,9 @@ private:
 	sigc::connection _contextCreated;
 	sigc::connection _contextDestroyed;
 
+    // Map the font+size combo to weak pointers
+    std::map<std::pair<IGLFont::Style, int>, std::weak_ptr<IGLFont>> _fontCache;
+
 public:
 	OpenGLModule();
 
