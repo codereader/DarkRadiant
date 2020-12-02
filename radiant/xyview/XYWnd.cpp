@@ -144,6 +144,8 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
 // Destructor
 XYWnd::~XYWnd()
 {
+    _font.reset();
+
     destroyXYView();
 
     // Store the current position and scale to the registry, so that it may be
@@ -227,6 +229,11 @@ void XYWnd::releaseStates()
 {
 	_selectedShader.reset();
 	_selectedShaderGroup.reset();
+}
+
+void XYWnd::ensureFont()
+{
+    _font = GlobalOpenGL().getFont(IGLFont::Style::Sans, 14);
 }
 
 const std::string XYWnd::getViewTypeTitle(EViewType viewtype) {
@@ -853,14 +860,14 @@ void XYWnd::drawGrid()
         {
             glRasterPos2d (x, offx);
             sprintf(text, "%g", x);
-            GlobalOpenGL().drawString(text);
+            _font->drawString(text);
         }
 
         for (double y = yb - fmod(yb, stepy); y <= ye ; y += stepy)
         {
             glRasterPos2f (offy, y);
             sprintf (text, "%g", y);
-            GlobalOpenGL().drawString(text);
+            _font->drawString(text);
         }
 
         if (isActive())
@@ -873,7 +880,7 @@ void XYWnd::drawGrid()
         {
             glRasterPos2d( _origin[nDim1] - w + 35 / _scale, _origin[nDim2] + h - 20 / _scale );
 
-            GlobalOpenGL().drawString(getViewTypeTitle(_viewType));
+            _font->drawString(getViewTypeTitle(_viewType));
         }
     }
 
@@ -1003,7 +1010,7 @@ void XYWnd::drawBlockGrid()
             for (y=yb ; y<ye ; y+=blockSize) {
                 glRasterPos2f (x+(blockSize/2), y+(blockSize/2));
                 sprintf (text, "%i,%i",(int)floor(x/blockSize), (int)floor(y/blockSize) );
-                GlobalOpenGL().drawString(text);
+                _font->drawString(text);
             }
     }
 
@@ -1107,17 +1114,17 @@ void XYWnd::drawSizeInfo(int nDim1, int nDim2, const Vector3& vMinBounds, const 
 
     glRasterPos3f (Betwixt(vMinBounds[nDim1], vMaxBounds[nDim1]),  vMinBounds[nDim2] - 20.0f  / _scale, 0.0f);
     dimensions << g_pDimStrings[nDim1] << vSize[nDim1];
-    GlobalOpenGL().drawString(dimensions.str());
+    _font->drawString(dimensions.str());
     dimensions.str("");
 
     glRasterPos3f (vMaxBounds[nDim1] + 16.0f  / _scale, Betwixt(vMinBounds[nDim2], vMaxBounds[nDim2]), 0.0f);
     dimensions << g_pDimStrings[nDim2] << vSize[nDim2];
-    GlobalOpenGL().drawString(dimensions.str());
+    _font->drawString(dimensions.str());
     dimensions.str("");
 
     glRasterPos3f (vMinBounds[nDim1] + 4, vMaxBounds[nDim2] + 8 / _scale, 0.0f);
     dimensions << "(" << g_pOrgStrings[0][0] << vMinBounds[nDim1] << "  " << g_pOrgStrings[0][1] << vMaxBounds[nDim2] << ")";
-    GlobalOpenGL().drawString(dimensions.str());
+    _font->drawString(dimensions.str());
   }
   else if (_viewType == XZ)
   {
@@ -1146,17 +1153,17 @@ void XYWnd::drawSizeInfo(int nDim1, int nDim2, const Vector3& vMinBounds, const 
 
     glRasterPos3f (Betwixt(vMinBounds[nDim1], vMaxBounds[nDim1]), 0, vMinBounds[nDim2] - 20.0f  / _scale);
     dimensions << g_pDimStrings[nDim1] << vSize[nDim1];
-    GlobalOpenGL().drawString(dimensions.str());
+    _font->drawString(dimensions.str());
     dimensions.str("");
 
     glRasterPos3f (vMaxBounds[nDim1] + 16.0f  / _scale, 0, Betwixt(vMinBounds[nDim2], vMaxBounds[nDim2]));
     dimensions << g_pDimStrings[nDim2] << vSize[nDim2];
-    GlobalOpenGL().drawString(dimensions.str());
+    _font->drawString(dimensions.str());
     dimensions.str("");
 
     glRasterPos3f (vMinBounds[nDim1] + 4, 0, vMaxBounds[nDim2] + 8 / _scale);
     dimensions << "(" << g_pOrgStrings[1][0] << vMinBounds[nDim1] << "  " << g_pOrgStrings[1][1] << vMaxBounds[nDim2] << ")";
-    GlobalOpenGL().drawString(dimensions.str());
+    _font->drawString(dimensions.str());
   }
   else
   {
@@ -1185,17 +1192,17 @@ void XYWnd::drawSizeInfo(int nDim1, int nDim2, const Vector3& vMinBounds, const 
 
     glRasterPos3f (0, Betwixt(vMinBounds[nDim1], vMaxBounds[nDim1]),  vMinBounds[nDim2] - 20.0f  / _scale);
     dimensions << g_pDimStrings[nDim1] << vSize[nDim1];
-    GlobalOpenGL().drawString(dimensions.str());
+    _font->drawString(dimensions.str());
     dimensions.str("");
 
     glRasterPos3f (0, vMaxBounds[nDim1] + 16.0f  / _scale, Betwixt(vMinBounds[nDim2], vMaxBounds[nDim2]));
     dimensions << g_pDimStrings[nDim2] << vSize[nDim2];
-    GlobalOpenGL().drawString(dimensions.str());
+    _font->drawString(dimensions.str());
     dimensions.str("");
 
     glRasterPos3f (0, vMinBounds[nDim1] + 4.0f, vMaxBounds[nDim2] + 8 / _scale);
     dimensions << "(" << g_pOrgStrings[2][0] << vMinBounds[nDim1] << "  " << g_pOrgStrings[2][1] << vMaxBounds[nDim2] << ")";
-    GlobalOpenGL().drawString(dimensions.str());
+    _font->drawString(dimensions.str());
   }
 }
 
@@ -1278,6 +1285,8 @@ void XYWnd::updateModelview() {
 
 void XYWnd::draw()
 {
+    ensureFont();
+
     // clear
     glViewport(0, 0, _width, _height);
     Vector3 colourGridBack = GlobalColourSchemeManager().getColour("grid_background");

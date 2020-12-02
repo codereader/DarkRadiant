@@ -86,6 +86,8 @@ protected:
 
     sigc::connection _sigCameraChanged;
 
+    IGLFont::Ptr _font;
+
 public:
     // Constructor, this allocates the GL widget
     XYWnd(int uniqueId, wxWindow* parent);
@@ -167,6 +169,7 @@ protected:
 private:
     XYMouseToolEvent createMouseEvent(const Vector2& point, const Vector2& delta = Vector2(0, 0));
 
+    void ensureFont();
     void onContextMenu();
     void drawSizeInfo(int nDim1, int nDim2, const Vector3& vMinBounds, const Vector3& vMaxBounds);
     void drawCameraIcon();
