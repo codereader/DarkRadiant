@@ -55,28 +55,20 @@ public:
 
     void addRenderable(Shader& shader,
                        const OpenGLRenderable& renderable,
-                       const Matrix4& world, const LightSources*,
-                       const IRenderEntity* entity) override
+                       const Matrix4& localToWorld,
+                       const LitObject* /* litObject */,
+                       const IRenderEntity* entity = nullptr) override
     {
         if (_state.highlightPrimitives)
         {
             if (_state.highlightAsGroupMember)
-                _selectedShaderGroup->addRenderable(renderable, world,
+                _selectedShaderGroup->addRenderable(renderable, localToWorld,
                                                     nullptr, entity);
             else
-                _selectedShader->addRenderable(renderable, world, nullptr, entity);
+                _selectedShader->addRenderable(renderable, localToWorld, nullptr, entity);
         }
 
-        shader.addRenderable(renderable, world, nullptr, entity);
-    }
-
-    void addLitRenderable(Shader& shader,
-                          const OpenGLRenderable& renderable,
-                          const Matrix4& localToWorld,
-                          const LitObject& /* litObject */,
-                          const IRenderEntity* entity = nullptr) override
-    {
-        addRenderable(shader, renderable, localToWorld, nullptr, entity);
+        shader.addRenderable(renderable, localToWorld, nullptr, entity);
     }
 
     void render(const Matrix4& modelview, const Matrix4& projection)

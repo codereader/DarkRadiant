@@ -436,10 +436,10 @@ void BrushNode::renderSolid(RenderableCollector& collector,
             if (highlight)
                 collector.setHighlightFlag(RenderableCollector::Highlight::Faces, true);
 
-		// greebo: BrushNodes have always an identity l2w, don't do any transforms
-            collector.addLitRenderable(
+            // greebo: BrushNodes have always an identity l2w, don't do any transforms
+            collector.addRenderable(
                 *face.getFaceShader().getGLShader(), face.getWinding(),
-                Matrix4::getIdentity(), *this, _renderEntity
+                Matrix4::getIdentity(), this, _renderEntity
             );
 
             if (highlight)

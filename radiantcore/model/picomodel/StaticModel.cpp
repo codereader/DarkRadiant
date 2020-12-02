@@ -111,8 +111,8 @@ void StaticModel::renderSolid(RenderableCollector& rend,
     foreachVisibleSurface([&](const Surface& s)
     {
         // Submit the ordinary shader for material-based rendering
-        rend.addLitRenderable(*s.shader, *s.surface, localToWorld,
-                              litObject, &entity);
+        rend.addRenderable(*s.shader, *s.surface, localToWorld,
+                           &litObject, &entity);
     });
 }
 

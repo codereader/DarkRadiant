@@ -29,34 +29,13 @@ class CamRenderer: public RenderableCollector
     // All lights we have received from the scene
     std::list<const RendererLight*> _sceneLights;
 
-    // Legacy lit renderable which provided its own LightSources to
-    // addRenderable()
-    struct LegacyLitRenderable
-    {
-        const OpenGLRenderable& renderable;
-        const LightSources* lights = nullptr;
-        Matrix4 local2World;
-        const IRenderEntity* entity = nullptr;
-
-        LegacyLitRenderable(const OpenGLRenderable& r, const LightSources* l,
-                            const Matrix4& l2w, const IRenderEntity* e)
-        : renderable(r), lights(l), local2World(l2w), entity(e)
-        {}
-    };
-    using LegacyLitRenderables = std::vector<LegacyLitRenderable>;
-
-    // Legacy renderables with their own light lists. No processing needed;
-    // just store them until it's time to submit to shaders.
-    using LegacyRenderablesByShader = std::map<Shader*, LegacyLitRenderables>;
-    LegacyRenderablesByShader _legacyRenderables;
-
-    // Lit renderable provided via addLitRenderable(), for which we construct
-    // the light list with lights received via addLight().
+    // Lit renderable provided via addRenderable(), for which we construct the
+    // light list with lights received via addLight().
     struct LitRenderable
     {
         // Renderable information submitted with addLitObject()
         const OpenGLRenderable& renderable;
-        const LitObject& litObject;
+        const LitObject* litObject = nullptr;
         Matrix4 local2World;
         const IRenderEntity* entity = nullptr;
 
@@ -83,7 +62,7 @@ class CamRenderer: public RenderableCollector
                 // the scene
                 for (const RendererLight* l: _sceneLights)
                 {
-                    if (j->litObject.intersectsLight(*l))
+                    if (j->litObject && j->litObject->intersectsLight(*l))
                         j->lights.addLight(*l);
                 }
             }
@@ -106,23 +85,6 @@ public:
     {
         // Calculate intersections between lights and renderables we have received
         calculateLightIntersections();
-
-        // Render legacy renderables with submitted light lists
-        for (auto i = _legacyRenderables.begin();
-             i != _legacyRenderables.end();
-             ++i)
-        {
-            // Iterate over the list of renderables for this shader, submitting
-            // each one
-            Shader* shader = i->first;
-            wxASSERT(shader);
-            for (auto j = i->second.begin(); j != i->second.end(); ++j)
-            {
-                const LegacyLitRenderable& lr = *j;
-                shader->addRenderable(lr.renderable, lr.local2World,
-                                      lr.lights, lr.entity);
-            }
-        }
 
         // Render objects with calculated light lists
         for (auto i = _litRenderables.begin(); i != _litRenderables.end(); ++i)
@@ -178,47 +140,11 @@ public:
         ++_totalLights;
     }
 
-    void addRenderable(Shader& shader, const OpenGLRenderable& renderable,
-                       const Matrix4& world, const LightSources* lights,
-                       const IRenderEntity* entity) override
-    {
-        if (_highlightPrimitives && _highlightedPrimitiveShader)
-            _highlightedPrimitiveShader->addRenderable(renderable, world,
-                                                       lights, entity);
-
-        if (_highlightFaces && _highlightedFaceShader)
-            _highlightedFaceShader->addRenderable(renderable, world,
-                                                 lights, entity);
-
-        // Construct an entry for this shader in the map if it is the first
-        // time we've seen it
-        auto iter = _legacyRenderables.find(&shader);
-        if (iter == _legacyRenderables.end())
-        {
-            // Add an entry for this shader, and pre-allocate some space in the
-            // vector to avoid too many expansions during scenegraph traversal.
-            LegacyLitRenderables emptyList;
-            emptyList.reserve(1024);
-
-            auto result = _legacyRenderables.insert(
-                std::make_pair(&shader, std::move(emptyList))
-            );
-            wxASSERT(result.second);
-            iter = result.first;
-        }
-        wxASSERT(iter != _legacyRenderables.end());
-
-        // Add the renderable and its lights to the list of lit renderables for
-        // this shader
-        wxASSERT(iter->first == &shader);
-        iter->second.emplace_back(renderable, lights, world, entity);
-    }
-
-    void addLitRenderable(Shader& shader,
-                          const OpenGLRenderable& renderable,
-                          const Matrix4& localToWorld,
-                          const LitObject& litObject,
-                          const IRenderEntity* entity = nullptr) override
+    void addRenderable(Shader& shader,
+                       const OpenGLRenderable& renderable,
+                       const Matrix4& localToWorld,
+                       const LitObject* litObject = nullptr,
+                       const IRenderEntity* entity = nullptr) override
     {
         if (_highlightPrimitives && _highlightedPrimitiveShader)
             _highlightedPrimitiveShader->addRenderable(renderable, localToWorld,

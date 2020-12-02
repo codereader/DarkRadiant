@@ -33,34 +33,8 @@ public:
     virtual ~RenderableCollector() {}
 
     /**
-    * Submit an OpenGLRenderable object for rendering using the given shader.
-    *
-    * \param shader
-    * The Shader object this Renderable will be attached to.
-    *
-    * \param renderable
-    * The renderable object to submit.
-    *
-    * \param world
-    * The local to world transform that should be applied to this object when
-    * it is rendered.
-    *
-    * \param lights
-    * Optional LightSources containing lights illuminating this Renderable.
-    *
-    * \param entity
-    * Optional IRenderEntity exposing parameters which affect the rendering of
-    * this Renderable.
-    */
-    virtual void addRenderable(Shader& shader,
-                               const OpenGLRenderable& renderable,
-                               const Matrix4& world,
-                               const LightSources* lights = nullptr,
-                               const IRenderEntity* entity = nullptr) = 0;
-
-    /**
      * \brief
-     * Submit a renderable object to be illuminated by scene lights.
+     * Submit a renderable object
      *
      * This method allows renderable geometry to be submitted under the control
      * of a LitObject which will determine whether and how the renderable is
@@ -68,22 +42,36 @@ public:
      * will be considered for lighting by the lights which are submitted to the
      * same RenderableCollector using addLight().
      *
-     * Most of the parameters have identical meanings to those in
-     * addRenderable().
+     * Objects may be submitted without a LitObject if they are not affected by
+     * scene lights.
+     *
+     * \param shader
+     * The Shader object this Renderable will be attached to.
+     *
+     * \param renderable
+     * The renderable object to submit.
+     *
+     * \param localToWorld
+     * The local to world transform that should be applied to this object when
+     * it is rendered.
+     *
+     * \param entity
+     * Optional IRenderEntity exposing parameters which affect the rendering of
+     * this Renderable.
      *
      * \param litObject
-     * A LitObject determining lighting interactions for this renderable. This
-     * may or may not be the same actual object as the OpenGLRenderable,
-     * depending on how the object tree is set up. If a single LitObject
-     * contains multiple renderables, a separate call to this method must be
-     * made for each renderable (with the same litObject parameter).
-     *
+     * Optional LitObject determining lighting interactions for this
+     * renderable. This may or may not be the same actual object as the
+     * OpenGLRenderable, depending on how the object class hierarchy is set up.
+     * If a single LitObject contains multiple renderables, a separate call to
+     * this method must be made for each renderable (with the same litObject
+     * parameter).
      */
-    virtual void addLitRenderable(Shader& shader,
-                                  const OpenGLRenderable& renderable,
-                                  const Matrix4& localToWorld,
-                                  const LitObject& litObject,
-                                  const IRenderEntity* entity = nullptr) = 0;
+    virtual void addRenderable(Shader& shader,
+                               const OpenGLRenderable& renderable,
+                               const Matrix4& localToWorld,
+                               const LitObject* litObject = nullptr,
+                               const IRenderEntity* entity = nullptr) = 0;
 
     /**
      * \brief

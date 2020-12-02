@@ -277,9 +277,9 @@ void PatchNode::renderSolid(RenderableCollector& collector, const VolumeTest& vo
 	assert(_renderEntity); // patches rendered without parent - no way!
 
     // Render the patch itself
-    collector.addLitRenderable(
+    collector.addRenderable(
         *m_patch._shader.getGLShader(), m_patch._solidRenderable,
-        localToWorld(), *this, _renderEntity
+        localToWorld(), this, _renderEntity
     );
 
 #if DEBUG_PATCH_NTB_VECTORS
