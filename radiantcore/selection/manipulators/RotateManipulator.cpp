@@ -166,7 +166,7 @@ void RotateManipulator::render(const RenderInfo& info) const
 		glRasterPos3dv(_pivot2World._worldSpace.t().getVector3() - Vector3(10, 10, 10));
 
 		double angle = static_cast<double>(c_RAD2DEGMULT * _rotateAxis.getCurAngle());
-		GlobalOpenGL().drawString(fmt::format("Rotate: {0:3.2f} degrees", angle));
+        _glFont->drawString(fmt::format("Rotate: {0:3.2f} degrees", angle));
 	}
 }
 
@@ -306,5 +306,6 @@ void RotateManipulator::rotate(const Quaternion& rotation)
 // Static members
 ShaderPtr RotateManipulator::_stateOuter;
 ShaderPtr RotateManipulator::_pivotPointShader;
+IGLFont::Ptr RotateManipulator::_glFont;
 
 }

@@ -55,6 +55,7 @@ private:
 public:
 	static ShaderPtr _stateOuter;
 	static ShaderPtr _pivotPointShader;
+    static IGLFont::Ptr _glFont;
 
 	// Constructor
 	RotateManipulator(ManipulationPivot& pivot, std::size_t segments, float radius);

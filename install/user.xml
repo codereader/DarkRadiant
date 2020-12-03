@@ -63,6 +63,8 @@
     <dragResizeEntitiesSymmetrically value="1" />
     <transientComponentSelection value="1" />
     <offsetClonedObjects value="1" />
+    <manipulatorFontSize value="14" />
+    <manipulatorFontStyle value="Sans" />
     <transformDialog>
       <window xPosition="150" yPosition="200" width="260" height="314" />
       <rotXStep value="45" />

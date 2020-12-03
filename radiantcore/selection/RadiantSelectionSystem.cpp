@@ -30,6 +30,12 @@
 namespace selection
 {
 
+namespace
+{
+    const std::string RKEY_MANIPULATOR_FONTSTYLE = "user/ui/manipulatorFontStyle";
+    const std::string RKEY_MANIPULATOR_FONTSIZE = "user/ui/manipulatorFontSize";
+}
+
 // --------- RadiantSelectionSystem Implementation ------------------------------------------
 
 RadiantSelectionSystem::RadiantSelectionSystem() :
@@ -862,10 +868,15 @@ const Matrix4& RadiantSelectionSystem::getPivot2World()
 
 void RadiantSelectionSystem::captureShaders()
 {
+    auto manipulatorFontStyle = registry::getValue<std::string>(RKEY_MANIPULATOR_FONTSTYLE) == "Sans" ?
+        IGLFont::Style::Sans : IGLFont::Style::Mono;
+    auto manipulatorFontSize = registry::getValue<int>(RKEY_MANIPULATOR_FONTSIZE);
+
     TranslateManipulator::_stateWire = GlobalRenderSystem().capture("$WIRE_OVERLAY");
     TranslateManipulator::_stateFill = GlobalRenderSystem().capture("$FLATSHADE_OVERLAY");
     RotateManipulator::_stateOuter = GlobalRenderSystem().capture("$WIRE_OVERLAY");
 	RotateManipulator::_pivotPointShader = GlobalRenderSystem().capture("$POINT");
+	RotateManipulator::_glFont = GlobalOpenGL().getFont(manipulatorFontStyle, manipulatorFontSize);
 	ModelScaleManipulator::_lineShader = GlobalRenderSystem().capture("$WIRE_OVERLAY");
 	ModelScaleManipulator::_pointShader = GlobalRenderSystem().capture("$POINT");
 }
@@ -874,6 +885,7 @@ void RadiantSelectionSystem::releaseShaders()
 {
     TranslateManipulator::_stateWire.reset();
     TranslateManipulator::_stateFill.reset();
+    RotateManipulator::_glFont.reset();
 	RotateManipulator::_stateOuter.reset();
 	RotateManipulator::_pivotPointShader.reset();
     ModelScaleManipulator::_lineShader.reset();
