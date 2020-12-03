@@ -3,6 +3,7 @@
 #include "i18n.h"
 #include "iundo.h"
 #include "igrid.h"
+#include "igl.h"
 #include "iselectiongroup.h"
 #include "iradiant.h"
 #include "ieventmanager.h"
@@ -970,6 +971,7 @@ const StringSet& RadiantSelectionSystem::getDependencies() const
         _dependencies.insert(MODULE_SCENEGRAPH);
 		_dependencies.insert(MODULE_MAP);
 		_dependencies.insert(MODULE_PREFERENCESYSTEM);
+		_dependencies.insert(MODULE_OPENGL);
     }
 
     return _dependencies;
