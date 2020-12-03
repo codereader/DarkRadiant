@@ -33,8 +33,6 @@ class PatchNode :
 	// An array of renderable points
 	mutable RenderablePointVector m_render_selected;
 
-	LightList* m_lightList;
-
 	Patch m_patch;
 
 	// An internal AABB variable to calculate the bounding box of the selected components (has to be mutable)
@@ -61,8 +59,6 @@ public:
 
 	std::string name() const override;
 	Type getNodeType() const override;
-
-	void lightsChanged();
 
 	// Bounded implementation
 	const AABB& localAABB() const override;

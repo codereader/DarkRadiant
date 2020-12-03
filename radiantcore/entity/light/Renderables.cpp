@@ -62,7 +62,7 @@ void drawCenterNormal(const Vector3& a, const Vector3& b, const Vector3& c, cons
 	const Vector3& direction, float length)
 {
 	Vector3 middle = (a + b + c + d) / 4;
-	
+
 	glBegin(GL_LINES);
 
 	glVertex3dv(middle);
@@ -74,56 +74,104 @@ void drawCenterNormal(const Vector3& a, const Vector3& b, const Vector3& c, cons
 }
 #endif
 
-void RenderLightProjection::render(const RenderInfo& info) const {
+/* greebo: draws a frustum defined by 8 vertices
+ * points[0] to points[3] define the top area vertices (clockwise starting from the "upper right" corner)
+ * points[4] to points[7] define the base rectangle (clockwise starting from the "upper right" corner)
+ */
+inline void drawFrustum(const Vector3 points[8])
+{
+  typedef unsigned int index_t;
+  index_t indices[24] = {
+    0, 4, // top up right to bottom up right
+    1, 5, // top down right to bottom down right
+    2, 6, // top down left to bottom down left
+    3, 7, // top up left to bottom up left
 
-	// greebo: These four define the base area and are always needed to draw the light
-	Vector3 backUpperLeft = Plane3::intersect(_frustum.left, _frustum.top, _frustum.back);
-	Vector3 backLowerLeft = Plane3::intersect(_frustum.left, _frustum.bottom, _frustum.back);
-	Vector3 backUpperRight = Plane3::intersect(_frustum.right, _frustum.top, _frustum.back);
-	Vector3 backLowerRight = Plane3::intersect(_frustum.right, _frustum.bottom, _frustum.back);
+    0, 1, // top up right to top down right
+    1, 2, // top down right to top down left
+    2, 3, // top down left to top up left
+    3, 0, // top up left to top up right
 
-	// Move all points to world space
-	backUpperLeft += _origin;
-	backLowerLeft += _origin;
-	backUpperRight += _origin;
-	backLowerRight += _origin;
+    4, 5, // bottom up right to bottom down right
+    5, 6, // bottom down right to bottom down left
+    6, 7, // bottom down left to bottom up left
+    7, 4, // bottom up left to bottom up right
+  };
+  glVertexPointer(3, GL_DOUBLE, 0, points);
+  glDrawElements(GL_LINES, sizeof(indices)/sizeof(index_t), GL_UNSIGNED_INT, indices);
+}
 
-	if (_start != Vector3(0,0,0))
-	{
-		// Calculate the vertices defining the top area
-		Vector3 frontUpperLeft = Plane3::intersect(_frustum.left, _frustum.top, _frustum.front);
-		Vector3 frontLowerLeft = Plane3::intersect(_frustum.left, _frustum.bottom, _frustum.front);
-		Vector3 frontUpperRight = Plane3::intersect(_frustum.right, _frustum.top, _frustum.front);
-		Vector3 frontLowerRight = Plane3::intersect(_frustum.right, _frustum.bottom, _frustum.front);
+/* greebo: draws a pyramid defined by 5 vertices
+ * points[0] is the top of the pyramid
+ * points[1] to points[4] is the base rectangle
+ */
+inline void drawPyramid(const Vector3 points[5])
+{
+  typedef unsigned int index_t;
+  index_t indices[16] = {
+    0, 1, // top to first
+    0, 2, // top to second
+    0, 3, // top to third
+    0, 4, // top to fourth
+    1, 2, // first to second
+    2, 3, // second to third
+    3, 4, // third to second
+    4, 1, // fourth to first
+  };
+  glVertexPointer(3, GL_DOUBLE, 0, points);
+  glDrawElements(GL_LINES, sizeof(indices)/sizeof(index_t), GL_UNSIGNED_INT, indices);
+}
 
-		frontUpperLeft += _origin;
-		frontLowerLeft += _origin;
-		frontUpperRight += _origin;
-		frontLowerRight += _origin;
+void RenderLightProjection::render(const RenderInfo& info) const
+{
+    // greebo: These four define the base area and are always needed to draw the light
+    Vector3 backUpperLeft = _frustum.getCornerPoint(Frustum::BACK, Frustum::TOP_LEFT);
+    Vector3 backLowerLeft = _frustum.getCornerPoint(Frustum::BACK, Frustum::BOTTOM_LEFT);
+    Vector3 backUpperRight = _frustum.getCornerPoint(Frustum::BACK, Frustum::TOP_RIGHT);
+    Vector3 backLowerRight = _frustum.getCornerPoint(Frustum::BACK, Frustum::BOTTOM_RIGHT);
 
-		Vector3 frustum[8] = { frontUpperLeft, frontLowerLeft, frontLowerRight, frontUpperRight,
-							   backUpperLeft, backLowerLeft, backLowerRight, backUpperRight };
-		drawFrustum(frustum);
+    // Move all points to world space
+    backUpperLeft += _origin;
+    backLowerLeft += _origin;
+    backUpperRight += _origin;
+    backLowerRight += _origin;
+
+    if (_start != Vector3(0,0,0))
+    {
+        // Calculate the vertices defining the top area
+        Vector3 frontUpperLeft = _frustum.getCornerPoint(Frustum::FRONT, Frustum::TOP_LEFT);
+        Vector3 frontLowerLeft = _frustum.getCornerPoint(Frustum::FRONT, Frustum::BOTTOM_LEFT);
+        Vector3 frontUpperRight = _frustum.getCornerPoint(Frustum::FRONT, Frustum::TOP_RIGHT);
+        Vector3 frontLowerRight = _frustum.getCornerPoint(Frustum::FRONT, Frustum::BOTTOM_RIGHT);
+
+        frontUpperLeft += _origin;
+        frontLowerLeft += _origin;
+        frontUpperRight += _origin;
+        frontLowerRight += _origin;
+
+        Vector3 frustum[8] = { frontUpperLeft, frontLowerLeft, frontLowerRight, frontUpperRight,
+                               backUpperLeft, backLowerLeft, backLowerRight, backUpperRight };
+        drawFrustum(frustum);
 
 #ifdef DRAW_LIGHT_FRUSTUM_NORMALS
-		float length = 20;
-		
-		drawCenterNormal(backUpperLeft, frontUpperLeft, backLowerLeft, frontLowerLeft, _frustum.left.normal(), length);
-		drawCenterNormal(backLowerLeft, frontLowerLeft, frontLowerRight, backLowerRight, _frustum.bottom.normal(), length);
-		drawCenterNormal(frontUpperRight, backUpperRight, backLowerRight, frontLowerRight, _frustum.right.normal(), length);
-		drawCenterNormal(backUpperLeft, backUpperRight, frontUpperRight, frontUpperLeft, _frustum.top.normal(), length);
-		drawCenterNormal(frontUpperLeft, frontLowerLeft, frontLowerRight, frontUpperRight, _frustum.front.normal(), length);
-		drawCenterNormal(backUpperLeft, backLowerLeft, backLowerRight, backUpperRight, _frustum.back.normal(), length);
-#endif
-	}
-	else {
-		// no light_start, just use the top vertex (doesn't need to be mirrored)
-		Vector3 top = Plane3::intersect(_frustum.left, _frustum.right, _frustum.top);
-		top += _origin;
+        float length = 20;
 
-		Vector3 pyramid[5] = { top, backUpperLeft, backLowerLeft, backLowerRight, backUpperRight };
-		drawPyramid(pyramid);
-	}
+        drawCenterNormal(backUpperLeft, frontUpperLeft, backLowerLeft, frontLowerLeft, _frustum.left.normal(), length);
+        drawCenterNormal(backLowerLeft, frontLowerLeft, frontLowerRight, backLowerRight, _frustum.bottom.normal(), length);
+        drawCenterNormal(frontUpperRight, backUpperRight, backLowerRight, frontLowerRight, _frustum.right.normal(), length);
+        drawCenterNormal(backUpperLeft, backUpperRight, frontUpperRight, frontUpperLeft, _frustum.top.normal(), length);
+        drawCenterNormal(frontUpperLeft, frontLowerLeft, frontLowerRight, frontUpperRight, _frustum.front.normal(), length);
+        drawCenterNormal(backUpperLeft, backLowerLeft, backLowerRight, backUpperRight, _frustum.back.normal(), length);
+#endif
+    }
+    else {
+        // no light_start, just use the top vertex (doesn't need to be mirrored)
+        Vector3 top = Plane3::intersect(_frustum.left, _frustum.right, _frustum.top);
+        top += _origin;
+
+        Vector3 pyramid[5] = { top, backUpperLeft, backLowerLeft, backLowerRight, backUpperRight };
+        drawPyramid(pyramid);
+    }
 }
 
 } // namespace entity

@@ -16,13 +16,7 @@ class MD5ModelNode :
 	public SkinnedModel,
 	public ITraceable
 {
-private:
 	MD5ModelPtr _model;
-
-	LightList* _lightList;
-
-	typedef std::vector<render::lib::VectorLightList> SurfaceLightLists;
-	SurfaceLightLists _surfaceLightLists;
 
 	// The name of this model's skin
 	std::string _skin;
@@ -36,8 +30,6 @@ public:
 	model::IModel& getIModel() override;
 	bool hasModifiedScale() override;
 	Vector3 getModelScale() override;
-
-	void lightsChanged();
 
 	// returns the contained model
 	void setModel(const MD5ModelPtr& model);
@@ -57,8 +49,6 @@ public:
 
 	// LitObject implementation
 	bool intersectsLight(const RendererLight& light) const override;
-	void insertLight(const RendererLight& light) override;
-	void clearLights() override;
 
 	// Renderable implementation
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;

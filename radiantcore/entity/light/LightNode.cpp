@@ -72,7 +72,6 @@ AABB LightNode::getSelectAABB() const
 }
 
 void LightNode::lightChanged() {
-	GlobalRenderSystem().lightChanged();
 }
 
 const AABB& LightNode::localAABB() const {
@@ -88,16 +87,12 @@ void LightNode::onInsertIntoScene(scene::IMapRootNode& root)
 {
 	// Call the base class first
 	EntityNode::onInsertIntoScene(root);
-
-	GlobalRenderSystem().attachLight(_light);
 }
 
 void LightNode::onRemoveFromScene(scene::IMapRootNode& root)
 {
 	// Call the base class first
 	EntityNode::onRemoveFromScene(root);
-
-	GlobalRenderSystem().detachLight(_light);
 
 	// De-select all child components as well
 	setSelectedComponents(false, SelectionSystem::eVertex);

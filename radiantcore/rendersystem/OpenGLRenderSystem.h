@@ -7,7 +7,6 @@
 #include "backend/OpenGLStateManager.h"
 #include "backend/OpenGLShader.h"
 #include "backend/OpenGLStateLess.h"
-#include "LinearLightList.h"
 
 namespace render
 {
@@ -23,7 +22,6 @@ class OpenGLRenderSystem
 : public RenderSystem,
   public OpenGLStateManager
 {
-private:
 	// Map of named Shader objects
 	typedef std::map<std::string, OpenGLShaderPtr> ShaderMap;
 	ShaderMap _shaders;
@@ -45,21 +43,12 @@ private:
 	// Render time
 	std::size_t _time;
 
-	// Lights
-	RendererLights m_lights;
-	bool m_lightsChanged;
-	typedef std::map<LitObject*, LinearLightList> LightLists;
-	LightLists m_lightLists;
-
 	sigc::signal<void> _sigExtensionsInitialised;
 
 	sigc::connection _materialDefsLoaded;
 	sigc::connection _materialDefsUnloaded;
 	sigc::connection _sharedContextCreated;
 	sigc::connection _sharedContextDestroyed;
-
-private:
-	void propagateLightChangedFlagToAllLights();
 
 public:
 
@@ -93,15 +82,6 @@ public:
 
 	bool shaderProgramsAvailable() const override;
 	void setShaderProgramsAvailable(bool available) override;
-
-	LightList& attachLitObject(LitObject& cullable) override;
-	void detachLitObject(LitObject& cullable) override;
-	void litObjectChanged(LitObject& cullable) override;
-
-    // Attach and detach light sources
-	void attachLight(RendererLight& light) override;
-	void detachLight(RendererLight& light) override;
-	void lightChanged() override;
 
 	typedef std::set<const Renderable*> Renderables;
 	Renderables m_renderables;

@@ -4,6 +4,7 @@
 #include <functional>
 
 #include "math/Vector3.h"
+#include "math/AABB.h"
 
 #include "ShaderLayer.h"
 #include <sigc++/signal.h>
@@ -231,7 +232,8 @@ typedef std::shared_ptr<RendererLight> RendererLightPtr;
 /// Debug stream insertion for RendererLight
 inline std::ostream& operator<< (std::ostream& os, const RendererLight& l)
 {
-    return os << "RendererLight(origin=" << l.worldOrigin() << ")";
+    return os << "RendererLight(origin=" << l.worldOrigin().pp()
+              << ", lightAABB=" << l.lightAABB() << ")";
 }
 
 /**
@@ -239,16 +241,7 @@ inline std::ostream& operator<< (std::ostream& os, const RendererLight& l)
  * Interface for an object which can test its intersection with a RendererLight.
  *
  * Objects which implement this interface define a intersectsLight() function
- * which determines whether the given light intersects the object. They also
- * provide methods to allow the renderer to provide the list of lights which
- * will be illuminating the object, subsequent to the intersection test.
- *
- * \todo
- * This interface seems to exist because of the design decision that lit objects
- * should maintain a list of lights which illuminate them. This is a poor
- * design because this should be the responsibility of the renderer. When the
- * renderer is refactored to process the scene light-by-light this class will
- * not be necessary.
+ * which determines whether the given light intersects the object.
  */
 class LitObject
 {
@@ -257,12 +250,6 @@ public:
 
     /// Test if the given light intersects the LitObject
     virtual bool intersectsLight(const RendererLight& light) const = 0;
-
-    /// Add a light to the set of lights which do intersect this object
-    virtual void insertLight(const RendererLight& light) {}
-
-    /// Clear out all lights in the set of lights intersecting this object
-    virtual void clearLights() {}
 };
 typedef std::shared_ptr<LitObject> LitObjectPtr;
 
@@ -315,92 +302,6 @@ inline std::ostream& operator<< (std::ostream& s, const LightSources* ls)
     else
         return s << "[no lightsources]";
 }
-
-/**
- * \brief
- * A list of lights which might (but don't necessarily) intersect a LitObject
- *
- * A LightList is responsible for calculating which lights intersect a
- * particular object. Although there is nothing exposed in the interface, the
- * LightList holds a reference to a single lit object, and it is the
- * intersection with this object which is calculated.
- *
- * LightLists are constructed by the RenderSystem and returned to each
- * LitObject as the result of calling RenderSystem::attachLitObject(). The
- * LitObject is then responsible for storing the LightList and passing it (or a
- * more optimised LightSources container based on additional tests) to the
- * RenderableCollector at render time.
- *
- * \internal
- * As of 2011-01-09/r6927 the calling sequence seems to be as follows:
- *
- * 1. Illuminated object (e.g. patch, brush) adds itself to the RenderSystem
- * with attachLitObject() at construction.
- * 2. attachLitObject() returns a reference to a (newly-created) LightList which
- * manages the lights intersecting this lit object. The lit object stores this
- * reference internally, while the LightList implementation also stores a
- * reference to the LitObject.
- * 3. When the lit object's renderSolid() method is invoked to set up a render,
- * it invokes LightList::calculateIntersectingLights() on the stored LightList
- * reference.
- * 4. calculateIntersectingLights() first checks to see if the lights need
- * updating, which is true if EITHER this LightList's setDirty() method OR the
- * RenderSystem's lightChanged() has been called since the last calculation. If
- * no update is needed, it returns.
- * 5. If an update IS needed, the LightList iterates over all lights in the
- * scene, and tests if each one intersects its associated lit object (which is
- * the one that just invoked calculateIntersectingLights(), although nothing
- * enforces this). This intersection test is performed by passing the light to
- * the LitObject::intersectsLight() method.
- * 6. For each light which passes the intersection test, the LightList both adds
- * it to its internal list of "active" (i.e. intersecting) lights for its
- * object, and passes it to the object's insertLight() method. Some object
- * classes then use insertLight() to populate another internal LightList subject
- * to additional (internal) intersection tests, but this is not required.
- * 7. At this point, calculateIntersectingLights() has finished, and returns
- * control to its calling renderSolid() method.
- * 8. The renderSolid() method (or another method it calls) passes a LightList
- * to the RenderableCollector with setLights(). The light list it passes may be
- * the original list returned from attachLitObject(), or the additional internal
- * list populated in step 6.
- * 9. The RenderableCollector state machine stores the LightList as the
- * "current" light list.
- * 10. Any subsequent renderables submitted with
- * RenderableCollector::addRenderable() are associated with the current
- * LightList passed in the previous step, and passed to the current Shader.
- * 11. The OpenGLShader accepts the renderable and LightList, and adds them to
- * its internal OpenGLShaderPasses: once only if RENDER_BUMP is not active, not
- * at all if RENDER_BUMP is active but the LightList is NULL, or once for each
- * light in the LightList otherwise.
- * 12. The OpenGLShaderPass now contains a list of TransformedRenderable
- * structures, each associating a single renderable with a single light.
- * Multiple TransformedRenderable will exist for the same renderable if there
- * were multiple lights illuminating it.
- */
-class LightList
-: public LightSources
-{
-public:
-    virtual ~LightList() {}
-
-    /**
-     * \brief
-     * Trigger the LightList to recalculate which lights intersect its object
-     *
-     * For each light, this method will call the LitObject::intersectsLight()
-     * method to test whether the light intersects the contained lit object. If
-     * the light does intersect, it will be passed to the object's
-     * insertLight() method for internal storage (and possibly further
-     * intersection tests). The LightList will also store all the intersecting
-     * lights internally, and expose them through its own forEachLight()
-     * method, for objects which do not wish to perform additional tests but
-     * just return the LightList to the renderer directly.
-     */
-    virtual void calculateIntersectingLights() const = 0;
-
-    /// Set the dirty flag, informing the LightList that an update is required
-    virtual void setDirty() = 0;
-};
 
 const int c_attr_TexCoord0 = 1;
 const int c_attr_Tangent = 3;
@@ -664,61 +565,6 @@ public:
 
     /// Set the shader program to use.
     virtual void setShaderProgram(ShaderProgram prog) = 0;
-
-    /* LIGHT MANAGEMENT */
-
-    /**
-     * \brief
-     * Add a lit object to the renderer.
-     *
-     * The renderer will create and return a reference to a LightList associated
-     * with this particular LitObject. The lit object can use the public
-     * LightList interface to trigger a recalculation of light intersections, or
-     * to set the dirty flag indicating to the LightList that a recalculation is
-     * necessary.
-     *
-     * \internal
-     * When the LightList implementation performs the intersection calculation,
-     * it will use the LitObject's intersectsLight method to do so, and if the
-     * intersection is detected, the insertLight method will be invoked on the
-     * LitObject. This means that (1) the renderer stores a LightList for each
-     * object, (2) the object itself has a reference to the LightList owned by
-     * the renderer, and (3) the LitObject interface allows the object to
-     * maintain ANOTHER list of intersecting lights, added with insertLight().
-     * This seems like a lot of indirection, but it might have something to do
-     * with allowing objects with multiple sub-components to submit only a
-     * subset of lights for each component.
-     *
-     * \param object
-     * The lit object to add.
-     *
-     * \return
-     * A reference to a LightList which manages the lights that intersect the
-     * submitted object.
-     */
-    virtual LightList& attachLitObject(LitObject& object) = 0;
-
-    virtual void detachLitObject(LitObject& cullable) = 0;
-
-    virtual void litObjectChanged(LitObject& cullable) = 0;
-
-    /**
-     * \brief
-     * Attach a light source to the renderer.
-     */
-    virtual void attachLight(RendererLight& light) = 0;
-
-    /**
-     * \brief
-     * Detach a light source from the renderer.
-     */
-    virtual void detachLight(RendererLight& light) = 0;
-
-    /**
-     * \brief
-     * Indicate that the scene lights have changed.
-     */
-    virtual void lightChanged() = 0;
 
     virtual void attachRenderable(const Renderable& renderable) = 0;
     virtual void detachRenderable(const Renderable& renderable) = 0;

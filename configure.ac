@@ -1,4 +1,4 @@
-AC_INIT([darkradiant], [2.9.0])
+AC_INIT([darkradiant], [2.9.1])
 AM_INIT_AUTOMAKE([subdir-objects])
 AM_SILENT_RULES([yes])
 
@@ -392,6 +392,7 @@ fi
 if test "$reloc_build" != 'no'
 then
     CPPFLAGS="-DENABLE_RELOCATION $CPPFLAGS"
+    LDFLAGS="$LDFLAGS '-Wl,-rpath,\$\$ORIGIN/../lib/darkradiant'"
 fi
 
 AC_SUBST([CPPFLAGS])

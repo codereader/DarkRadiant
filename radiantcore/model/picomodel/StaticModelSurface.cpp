@@ -1,4 +1,4 @@
-#include "RenderablePicoSurface.h"
+#include "StaticModelSurface.h"
 
 #include "itextstream.h"
 #include "modelskin.h"
@@ -12,7 +12,7 @@
 namespace model {
 
 // Constructor. Copy the provided picoSurface_t structure into this object
-RenderablePicoSurface::RenderablePicoSurface(picoSurface_t* surf,
+StaticModelSurface::StaticModelSurface(picoSurface_t* surf,
 											 const std::string& fExt)
 : _defaultMaterial(""),
   _dlRegular(0),
@@ -94,7 +94,7 @@ RenderablePicoSurface::RenderablePicoSurface(picoSurface_t* surf,
 	createDisplayLists();
 }
 
-RenderablePicoSurface::RenderablePicoSurface(const RenderablePicoSurface& other) :
+StaticModelSurface::StaticModelSurface(const StaticModelSurface& other) :
 	_defaultMaterial(other._defaultMaterial),
 	_vertices(other._vertices),
 	_indices(other._indices),
@@ -107,7 +107,7 @@ RenderablePicoSurface::RenderablePicoSurface(const RenderablePicoSurface& other)
 	createDisplayLists();
 }
 
-std::string RenderablePicoSurface::cleanupShaderName(const std::string& inName)
+std::string StaticModelSurface::cleanupShaderName(const std::string& inName)
 {
 	const std::string baseFolder = "base";	//FIXME: should be from game.xml
 	std::size_t basePos;
@@ -150,7 +150,7 @@ std::string RenderablePicoSurface::cleanupShaderName(const std::string& inName)
 }
 
 // Destructor. Release the GL display lists.
-RenderablePicoSurface::~RenderablePicoSurface()
+StaticModelSurface::~StaticModelSurface()
 {
 	glDeleteLists(_dlRegular, 1);
 	glDeleteLists(_dlProgramNoVCol, 1);
@@ -158,7 +158,7 @@ RenderablePicoSurface::~RenderablePicoSurface()
 }
 
 // Convert byte pointers to colour vector
-Vector3 RenderablePicoSurface::getColourVector(unsigned char* array) {
+Vector3 StaticModelSurface::getColourVector(unsigned char* array) {
 	if (array) {
 		return Vector3(array[0] / 255.0f, array[1] / 255.0f, array[2] / 255.0f);
 	}
@@ -168,7 +168,7 @@ Vector3 RenderablePicoSurface::getColourVector(unsigned char* array) {
 }
 
 // Tangent calculation
-void RenderablePicoSurface::calculateTangents() {
+void StaticModelSurface::calculateTangents() {
 
 	// Calculate the tangents and bitangents using the indices into the vertex
 	// array.
@@ -195,7 +195,7 @@ void RenderablePicoSurface::calculateTangents() {
 }
 
 // Back-end render function
-void RenderablePicoSurface::render(const RenderInfo& info) const
+void StaticModelSurface::render(const RenderInfo& info) const
 {
 	// Invoke appropriate display list
 	if (info.checkFlag(RENDER_PROGRAM))
@@ -216,7 +216,7 @@ void RenderablePicoSurface::render(const RenderInfo& info) const
 }
 
 // Construct a list for GLProgram mode, either with or without vertex colour
-GLuint RenderablePicoSurface::compileProgramList(bool includeColour)
+GLuint StaticModelSurface::compileProgramList(bool includeColour)
 {
     GLuint list = glGenLists(1);
 	assert(list != 0); // check if we run out of display lists
@@ -256,7 +256,7 @@ GLuint RenderablePicoSurface::compileProgramList(bool includeColour)
 }
 
 // Construct the two display lists
-void RenderablePicoSurface::createDisplayLists()
+void StaticModelSurface::createDisplayLists()
 {
 	// Generate the lists for lighting mode
     _dlProgramNoVCol = compileProgramList(false);
@@ -286,7 +286,7 @@ void RenderablePicoSurface::createDisplayLists()
 }
 
 // Perform selection test for this surface
-void RenderablePicoSurface::testSelect(Selector& selector,
+void StaticModelSurface::testSelect(Selector& selector,
 									   SelectionTest& test,
 									   const Matrix4& localToWorld) const
 {
@@ -310,23 +310,23 @@ void RenderablePicoSurface::testSelect(Selector& selector,
 	}
 }
 
-int RenderablePicoSurface::getNumVertices() const
+int StaticModelSurface::getNumVertices() const
 {
 	return static_cast<int>(_vertices.size());
 }
 
-int RenderablePicoSurface::getNumTriangles() const
+int StaticModelSurface::getNumTriangles() const
 {
 	return static_cast<int>(_indices.size() / 3); // 3 indices per triangle
 }
 
-const ArbitraryMeshVertex& RenderablePicoSurface::getVertex(int vertexIndex) const
+const ArbitraryMeshVertex& StaticModelSurface::getVertex(int vertexIndex) const
 {
 	assert(vertexIndex >= 0 && vertexIndex < static_cast<int>(_vertices.size()));
 	return _vertices[vertexIndex];
 }
 
-ModelPolygon RenderablePicoSurface::getPolygon(int polygonIndex) const
+ModelPolygon StaticModelSurface::getPolygon(int polygonIndex) const
 {
 	assert(polygonIndex >= 0 && polygonIndex*3 < static_cast<int>(_indices.size()));
 
@@ -343,37 +343,37 @@ ModelPolygon RenderablePicoSurface::getPolygon(int polygonIndex) const
 	return poly;
 }
 
-const std::vector<ArbitraryMeshVertex>& RenderablePicoSurface::getVertexArray() const
+const std::vector<ArbitraryMeshVertex>& StaticModelSurface::getVertexArray() const
 {
 	return _vertices;
 }
 
-const std::vector<unsigned int>& RenderablePicoSurface::getIndexArray() const
+const std::vector<unsigned int>& StaticModelSurface::getIndexArray() const
 {
 	return _indices;
 }
 
-const std::string& RenderablePicoSurface::getDefaultMaterial() const
+const std::string& StaticModelSurface::getDefaultMaterial() const
 {
 	return _defaultMaterial;
 }
 
-void RenderablePicoSurface::setDefaultMaterial(const std::string& defaultMaterial)
+void StaticModelSurface::setDefaultMaterial(const std::string& defaultMaterial)
 {
 	_defaultMaterial = defaultMaterial;
 }
 
-const std::string& RenderablePicoSurface::getActiveMaterial() const
+const std::string& StaticModelSurface::getActiveMaterial() const
 {
 	return _activeMaterial;
 }
 
-void RenderablePicoSurface::setActiveMaterial(const std::string& activeMaterial)
+void StaticModelSurface::setActiveMaterial(const std::string& activeMaterial)
 {
 	_activeMaterial = activeMaterial;
 }
 
-bool RenderablePicoSurface::getIntersection(const Ray& ray, Vector3& intersection, const Matrix4& localToWorld)
+bool StaticModelSurface::getIntersection(const Ray& ray, Vector3& intersection, const Matrix4& localToWorld)
 {
 	Vector3 bestIntersection = ray.origin;
 	Vector3 triIntersection;
@@ -414,11 +414,11 @@ bool RenderablePicoSurface::getIntersection(const Ray& ray, Vector3& intersectio
 	}
 }
 
-void RenderablePicoSurface::applyScale(const Vector3& scale, const RenderablePicoSurface& originalSurface)
+void StaticModelSurface::applyScale(const Vector3& scale, const StaticModelSurface& originalSurface)
 {
 	if (scale.x() == 0 || scale.y() == 0 || scale.z() == 0)
 	{
-		rMessage() << "RenderablePicoSurface: Cannot apply scale with a zero diagonal element" << std::endl;
+		rMessage() << "StaticModelSurface: Cannot apply scale with a zero diagonal element" << std::endl;
 		return;
 	}
 

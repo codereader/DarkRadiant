@@ -8,7 +8,7 @@
 
 #include "os/path.h"
 
-#include "PicoModelNode.h"
+#include "StaticModelNode.h"
 
 #include "idatastream.h"
 #include "string/case_conv.h"
@@ -57,13 +57,13 @@ scene::INodePtr PicoModelLoader::loadModel(const std::string& modelName)
 	}
 
 	// The cached model should be an PicoModel, otherwise we're in the wrong movie
-	RenderablePicoModelPtr picoModel =
-		std::dynamic_pointer_cast<RenderablePicoModel>(model);
+	StaticModelPtr picoModel =
+		std::dynamic_pointer_cast<StaticModel>(model);
 
 	if (picoModel)
 	{
 		// Load was successful, construct a modelnode using this resource
-		return std::make_shared<PicoModelNode>(picoModel);
+		return std::make_shared<StaticModelNode>(picoModel);
 	}
 	else
 	{
@@ -105,8 +105,8 @@ IModelPtr PicoModelLoader::loadModelFromPath(const std::string& name)
 		return IModelPtr();
 	}
 
-	RenderablePicoModelPtr modelObj(
-		new RenderablePicoModel(model, fExt)
+	StaticModelPtr modelObj(
+		new StaticModel(model, fExt)
 	);
 
 	// Set the filename

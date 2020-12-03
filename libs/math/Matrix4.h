@@ -392,7 +392,10 @@ public:
     void invertFull();
 
     /** 
+     * \brief
      * Returns the given 3-component point transformed by this matrix.
+     *
+     * The point is assumed to have a W component of 1.
      */
     template<typename Element>
     BasicVector3<Element> transformPoint(const BasicVector3<Element>& point) const;
@@ -676,6 +679,35 @@ public:
      */
     std::size_t clipTriangle(const Vector3& p0, const Vector3& p1, const Vector3& p2, Vector4 clipped[9]) const;
 };
+
+// ===========================================================================
+// Operators
+// ===========================================================================
+
+/**
+ * \brief
+ * Multiply a 4-component vector by this matrix.
+ *
+ * Equivalent to m.transform(v).
+ */
+template<typename T>
+BasicVector4<T> operator* (const Matrix4& m, const BasicVector4<T>& v)
+{
+    return m.transform(v);
+}
+
+/**
+ * \brief
+ * Multiply a 3-component vector by this matrix.
+ *
+ * The vector is upgraded to a 4-component vector with a W component of 1, i.e.
+ * equivalent to m.transformPoint(v).
+ */
+template<typename T>
+BasicVector3<T> operator* (const Matrix4& m, const BasicVector3<T>& v)
+{
+    return m.transformPoint(v);
+}
 
 // =========================================================================================
 // Inlined member definitions 

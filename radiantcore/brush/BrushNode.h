@@ -31,8 +31,6 @@ class BrushNode :
 	public Transformable,
 	public ITraceable
 {
-	LightList* m_lightList;
-
 	// The actual contained brush (NO reference)
 	Brush m_brush;
 
@@ -83,8 +81,6 @@ public:
 	}
 
 	Type getNodeType() const override;
-
-	void lightsChanged();
 
 	// Bounded implementation
 	virtual const AABB& localAABB() const override;
@@ -138,8 +134,6 @@ public:
 
 	// LitObject implementation
 	bool intersectsLight(const RendererLight& light) const override;
-	void insertLight(const RendererLight& light) override;
-	void clearLights() override;
 
 	// Renderable implementation
 	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const override;

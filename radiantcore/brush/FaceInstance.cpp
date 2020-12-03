@@ -163,27 +163,6 @@ bool FaceInstance::intersectVolume(const VolumeTest& volume, const Matrix4& loca
 	return m_face->intersectVolume(volume, localToWorld);
 }
 
-void FaceInstance::renderSolid(RenderableCollector& collector, const VolumeTest& volume,
-	const IRenderEntity& entity) const
-{
-	if (m_face->intersectVolume(volume))
-	{
-		bool highlight = selectedComponents();
-
-		if (highlight)
-		{
-			collector.setHighlightFlag(RenderableCollector::Highlight::Faces, true);
-		}
-
-		m_face->renderSolid(collector, Matrix4::getIdentity(), entity, m_lights);
-
-		if (highlight)
-		{
-			collector.setHighlightFlag(RenderableCollector::Highlight::Faces, false);
-		}
-	}
-}
-
 void FaceInstance::renderWireframe(RenderableCollector& collector, const VolumeTest& volume,
 	const IRenderEntity& entity) const
 {
@@ -446,19 +425,6 @@ void FaceInstance::connectivityChanged() {
 	m_selectableVertices.setSelected(false);
 	m_edgeSelection.clear();
 	m_selectableEdges.setSelected(false);
-}
-
-void FaceInstance::addLight(const Matrix4& localToWorld, const RendererLight& light)
-{
-	const Plane3& facePlane = getFace().plane3();
-
-	Plane3 tmp = Plane3(facePlane.normal(), -facePlane.dist())
-                 .transformed(localToWorld);
-
-	if (!tmp.testPoint(light.worldOrigin()) || !tmp.testPoint(light.getLightOrigin()))
-    {
-		m_lights.addLight(light);
-	}
 }
 
 void FaceInstance::updateFaceVisibility()

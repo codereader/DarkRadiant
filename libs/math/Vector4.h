@@ -1,5 +1,7 @@
 #pragma once
 
+#include <sstream>
+
 /* greebo: This file contains the templated class definition of the three-component vector
  *
  * BasicVector4: A vector with three components of type <Element>
@@ -44,8 +46,9 @@ public:
         _v[3] = w_;
     }
 
-    // Construct a BasicVector4 out of a Vector3 plus a fourth argument
-    BasicVector4(const BasicVector3<Element>& other, Element w_) {
+    // Construct a BasicVector4 out of a Vector3 plus a W value (default 1)
+    BasicVector4(const BasicVector3<Element>& other, Element w_ = 1)
+    {
         _v[0] = other.x();
         _v[1] = other.y();
         _v[2] = other.z();
@@ -53,38 +56,37 @@ public:
     }
 
     // Return non-constant references to the components
-    Element& x() {
-        return _v[0];
-    }
-    Element& y() {
-        return _v[1];
-    }
-    Element& z() {
-        return _v[2];
-    }
-    Element& w() {
-        return _v[3];
-    }
+    Element& x() { return _v[0]; }
+    Element& y() { return _v[1]; }
+    Element& z() { return _v[2]; }
+    Element& w() { return _v[3]; }
 
     // Return constant references to the components
-    const Element& x() const {
-        return _v[0];
-    }
-    const Element& y() const {
-        return _v[1];
-    }
-    const Element& z() const {
-        return _v[2];
-    }
-    const Element& w() const {
-        return _v[3];
-    }
+    const Element& x() const { return _v[0]; }
+    const Element& y() const { return _v[1]; }
+    const Element& z() const { return _v[2]; }
+    const Element& w() const { return _v[3]; }
 
     Element index(std::size_t i) const {
         return _v[i];
     }
     Element& index(std::size_t i) {
         return _v[i];
+    }
+
+    /**
+     * \brief
+     * Return a readable (pretty-printed) string representation of the vector
+     *
+     * We need a dedicated function for this because the standard operator<< is
+     * already used for serialisation to the less readable space-separated text
+     * format.
+     */
+    std::string pp() const
+    {
+        std::stringstream ss;
+        ss << "(" << x() << ", " << y() << ", " << z() << ", " << w() << ")";
+        return ss.str();
     }
 
     /** Compare this BasicVector4 against another for equality.

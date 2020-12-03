@@ -15,9 +15,9 @@ class RenderStatistics
     // Time for the render front-end only
     long _feTime = 0;
 
-    // Count of lights (visible and culled)
+    // Count of lights
     int _visibleLights = 0;
-    int _culledLights = 0;
+    int _totalLights = 0;
 
 public:
 
@@ -29,7 +29,7 @@ public:
         long beTime = totTime - _feTime;
 
         return "lights: " + std::to_string(_visibleLights)
-             + " / " + std::to_string(_visibleLights + _culledLights)
+             + " / " + std::to_string(_totalLights)
              + " | f/e: " + std::to_string(_feTime) + " ms"
              + " | b/e: " + std::to_string(beTime) + " ms"
              + " | tot: " + std::to_string(totTime) + " ms"
@@ -42,19 +42,17 @@ public:
         _feTime = _timer.Time();
     }
 
-    /// Increment the light count
-    void addLight(bool visible)
+    /// Set the light count
+    void setLightCount(int visible, int total)
     {
-        if (visible)
-            ++_visibleLights;
-        else
-            ++_culledLights;
+        _visibleLights += visible;
+        _totalLights += total;
     }
 
     /// Reset statistics at the beginning of a frame render
     void resetStats()
     {
-        _visibleLights = _culledLights = 0;
+        _visibleLights = _totalLights = 0;
 
         _feTime = 0;
         _timer.Start();

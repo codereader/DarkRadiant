@@ -475,7 +475,6 @@ void Brush::onFacePlaneChanged()
 {
     m_planeChanged = true;
     aabbChanged();
-    _owner.lightsChanged();
 }
 
 void Brush::onFaceShaderChanged()

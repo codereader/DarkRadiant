@@ -10,6 +10,8 @@
 #include "math/AABB.h"
 #include "util/ScopedBoolLock.h"
 #include "registry/registry.h"
+#include "render/CamRenderer.h"
+#include "render/SceneRenderWalker.h"
 
 #include "../GLWidget.h"
 #include <wx/sizer.h>
@@ -43,7 +45,6 @@ RenderPreview::RenderPreview(wxWindow* parent, bool enableAnimation) :
     _initialised(false),
 	_renderGrid(registry::getValue<bool>(RKEY_RENDERPREVIEW_SHOWGRID)),
     _renderSystem(GlobalRenderSystemFactory().createRenderSystem()),
-    _sceneWalker(_renderer, _volumeTest),
     _viewOrigin(0, 0, 0),
     _viewAngles(0, 0, 0),
     _modelView(Matrix4::getIdentity()),
@@ -483,14 +484,14 @@ bool RenderPreview::drawPreview()
 	}
 
 	// Front-end render phase, collect OpenGLRenderable objects from the scene
-    getScene()->foreachVisibleNodeInVolume(_volumeTest, _sceneWalker);
+    render::CamRenderer renderer(_volumeTest);
+    render::SceneRenderWalker sceneWalker(renderer, _volumeTest);
+    getScene()->foreachVisibleNodeInVolume(_volumeTest, sceneWalker);
 
     RenderStateFlags flags = getRenderFlagsFill();
 
-    // Hack-inject the model rotation matrix just before the render pass
-    //Matrix4 modelView = _volumeTest.GetModelview().getMultipliedBy(_modelRotation);
-
     // Launch the back end rendering
+    renderer.submitToShaders();
     _renderSystem->render(flags, _volumeTest.GetModelview(), projection);
 
     // Give subclasses an opportunity to render their own on-screen stuff
@@ -510,7 +511,9 @@ void RenderPreview::renderWireFrame()
     Matrix4 projection = getProjectionMatrix(0.1f, 10000, PREVIEW_FOV, _previewWidth, _previewHeight);
 
     // Front-end render phase, collect OpenGLRenderable objects from the scene
-    getScene()->foreachVisibleNodeInVolume(_volumeTest, _sceneWalker);
+    render::CamRenderer renderer(_volumeTest);
+    render::SceneRenderWalker sceneWalker(renderer, _volumeTest);
+    getScene()->foreachVisibleNodeInVolume(_volumeTest, sceneWalker);
 
     // Launch the back end rendering
     _renderSystem->render(flags, _volumeTest.GetModelview(), projection);

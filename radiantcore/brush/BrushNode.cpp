@@ -12,7 +12,6 @@
 // Constructor
 BrushNode::BrushNode() :
 	scene::SelectableNode(),
-	m_lightList(&GlobalRenderSystem().attachLitObject(*this)),
 	m_brush(*this),
 	_selectedPoints(GL_POINTS),
 	_faceCentroidPointsCulled(GL_POINTS),
@@ -21,8 +20,6 @@ BrushNode::BrushNode() :
     _untransformedOriginChanged(true)
 {
 	m_brush.attach(*this); // BrushObserver
-
-	SelectableNode::setTransformChangedCallback(std::bind(&BrushNode::lightsChanged, this));
 }
 
 // Copy Constructor
@@ -39,7 +36,6 @@ BrushNode::BrushNode(const BrushNode& other) :
 	PlaneSelectable(other),
 	LitObject(other),
 	Transformable(other),
-	m_lightList(&GlobalRenderSystem().attachLitObject(*this)),
 	m_brush(*this, other.m_brush),
 	_selectedPoints(GL_POINTS),
 	_faceCentroidPointsCulled(GL_POINTS),
@@ -52,18 +48,12 @@ BrushNode::BrushNode(const BrushNode& other) :
 
 BrushNode::~BrushNode()
 {
-	GlobalRenderSystem().detachLitObject(*this);
 	m_brush.detach(*this); // BrushObserver
 }
 
 scene::INode::Type BrushNode::getNodeType() const
 {
 	return Type::Brush;
-}
-
-void BrushNode::lightsChanged()
-{
-	m_lightList->setDirty();
 }
 
 const AABB& BrushNode::localAABB() const {
@@ -309,19 +299,6 @@ bool BrushNode::intersectsLight(const RendererLight& light) const {
 	return light.intersectsAABB(worldAABB());
 }
 
-void BrushNode::insertLight(const RendererLight& light) {
-	const Matrix4& l2w = localToWorld();
-	for (FaceInstances::iterator i = m_faceInstances.begin(); i != m_faceInstances.end(); ++i) {
-		i->addLight(l2w, light);
-	}
-}
-
-void BrushNode::clearLights() {
-	for (FaceInstances::const_iterator i = m_faceInstances.begin(); i != m_faceInstances.end(); ++i) {
-		i->m_lights.clear();
-	}
-}
-
 void BrushNode::renderComponents(RenderableCollector& collector, const VolumeTest& volume) const
 {
 	m_brush.evaluateBRep();
@@ -441,21 +418,33 @@ void BrushNode::renderSolid(RenderableCollector& collector,
                             const VolumeTest& volume,
                             const Matrix4& localToWorld) const
 {
-	m_lightList->calculateIntersectingLights();
-
 	assert(_renderEntity); // brushes rendered without parent entity - no way!
 
 	// Check for the override status of this brush
 	bool forceVisible = isForcedVisible();
 
     // Submit the lights and renderable geometry for each face
-	for (const FaceInstance& face : m_faceInstances)
+    for (const FaceInstance& faceInst : m_faceInstances)
     {
 		// Skip invisible faces before traversing further
-		if (!forceVisible && !face.faceIsVisible()) continue;
+        if (!forceVisible && !faceInst.faceIsVisible()) continue;
 
-		// greebo: BrushNodes have always an identity l2w, don't do any transforms
-		face.renderSolid(collector, volume, *_renderEntity);
+        const Face& face = faceInst.getFace();
+        if (face.intersectVolume(volume))
+        {
+            bool highlight = faceInst.selectedComponents();
+            if (highlight)
+                collector.setHighlightFlag(RenderableCollector::Highlight::Faces, true);
+
+            // greebo: BrushNodes have always an identity l2w, don't do any transforms
+            collector.addRenderable(
+                *face.getFaceShader().getGLShader(), face.getWinding(),
+                Matrix4::getIdentity(), this, _renderEntity
+            );
+
+            if (highlight)
+                collector.setHighlightFlag(RenderableCollector::Highlight::Faces, false);
+        }
     }
 
 	renderSelectedPoints(collector, volume, localToWorld);

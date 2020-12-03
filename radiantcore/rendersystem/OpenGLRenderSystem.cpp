@@ -45,7 +45,6 @@ OpenGLRenderSystem::OpenGLRenderSystem() :
     _glProgramFactory(std::make_shared<GLProgramFactory>()),
     _currentShaderProgram(SHADER_PROGRAM_NONE),
     _time(0),
-    m_lightsChanged(true),
     m_traverseRenderablesMutex(false)
 {
     // For the static default rendersystem, the MaterialManager is not existent yet,
@@ -347,69 +346,6 @@ bool OpenGLRenderSystem::shaderProgramsAvailable() const
 void OpenGLRenderSystem::setShaderProgramsAvailable(bool available)
 {
     _shaderProgramsAvailable = available;
-}
-
-LightList& OpenGLRenderSystem::attachLitObject(LitObject& object)
-{
-    return m_lightLists.insert(
-        LightLists::value_type(
-            &object,
-            LinearLightList(
-                object,
-                m_lights,
-                std::bind(
-                    &OpenGLRenderSystem::propagateLightChangedFlagToAllLights,
-                    this
-                )
-            )
-        )
-    ).first->second;
-}
-
-void OpenGLRenderSystem::detachLitObject(LitObject& object) 
-{
-    m_lightLists.erase(&object);
-}
-
-void OpenGLRenderSystem::litObjectChanged(LitObject& object) 
-{
-    LightLists::iterator i = m_lightLists.find(&object);
-    assert(i != m_lightLists.end());
-
-    i->second.setDirty();
-}
-
-void OpenGLRenderSystem::attachLight(RendererLight& light)
-{
-    ASSERT_MESSAGE(m_lights.find(&light) == m_lights.end(), "light could not be attached");
-    m_lights.insert(&light);
-    lightChanged();
-}
-
-void OpenGLRenderSystem::detachLight(RendererLight& light)
-{
-    ASSERT_MESSAGE(m_lights.find(&light) != m_lights.end(), "light could not be detached");
-    m_lights.erase(&light);
-    lightChanged();
-}
-
-void OpenGLRenderSystem::lightChanged()
-{
-    m_lightsChanged = true;
-}
-
-void OpenGLRenderSystem::propagateLightChangedFlagToAllLights()
-{
-    if (m_lightsChanged)
-    {
-        m_lightsChanged = false;
-        for (LightLists::iterator i = m_lightLists.begin();
-             i != m_lightLists.end();
-             ++i) 
-        {
-            i->second.setDirty();
-        }
-    }
 }
 
 void OpenGLRenderSystem::insertSortedState(const OpenGLStates::value_type& val) {
