@@ -1,0 +1,11 @@
+add_library(scenegraph
+            ChildPrimitives.cpp
+            InstanceWalkers.cpp
+            LayerUsageBreakdown.cpp
+            ModelFinder.cpp
+            Node.cpp
+            SelectableNode.cpp
+            SelectionIndex.cpp
+            TraversableNodeSet.cpp
+            Traverse.cpp)
+target_compile_options(scenegraph PUBLIC ${SIGC_CFLAGS})
