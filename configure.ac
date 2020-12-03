@@ -392,6 +392,7 @@ fi
 if test "$reloc_build" != 'no'
 then
     CPPFLAGS="-DENABLE_RELOCATION $CPPFLAGS"
+    LDFLAGS="$LDFLAGS '-Wl,-rpath,\$\$ORIGIN/../lib/darkradiant'"
 fi
 
 AC_SUBST([CPPFLAGS])
