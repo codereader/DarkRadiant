@@ -25,9 +25,12 @@ include(${wxWidgets_USE_FILE})
 include_directories(libs libs/libfmt include)
 add_compile_definitions(POSIX WXINTL_NO_GETTEXT_MACRO)
 
-# Subdirectories
+# Supporting libraries
 add_subdirectory(libs/math)
 add_subdirectory(libs/xmlutil)
 add_subdirectory(libs/scene)
 add_subdirectory(libs/wxutil)
 add_subdirectory(libs/module)
+
+# Main radiant components
+add_subdirectory(radiantcore)
