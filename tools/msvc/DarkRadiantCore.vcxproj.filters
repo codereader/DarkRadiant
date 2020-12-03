@@ -352,9 +352,6 @@
     <ClCompile Include="..\..\radiantcore\eclass\EClassManager.cpp">
       <Filter>src\eclass</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiantcore\rendersystem\LinearLightList.cpp">
-      <Filter>src\rendersystem</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiantcore\rendersystem\OpenGLRenderSystem.cpp">
       <Filter>src\rendersystem</Filter>
     </ClCompile>
@@ -626,15 +623,6 @@
       <Filter>src\model\picomodel</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\model\picomodel\PicoModelModule.cpp">
-      <Filter>src\model\picomodel</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiantcore\model\picomodel\PicoModelNode.cpp">
-      <Filter>src\model\picomodel</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiantcore\model\picomodel\RenderablePicoModel.cpp">
-      <Filter>src\model\picomodel</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiantcore\model\picomodel\RenderablePicoSurface.cpp">
       <Filter>src\model\picomodel</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\model\picomodel\lib\lwo\clip.c">
@@ -1006,6 +994,15 @@
     <ClCompile Include="..\..\radiantcore\eclass\EClassColourManager.cpp">
       <Filter>src\eclass</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\model\picomodel\StaticModel.cpp">
+      <Filter>src\model\picomodel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\model\picomodel\StaticModelNode.cpp">
+      <Filter>src\model\picomodel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\model\picomodel\StaticModelSurface.cpp">
+      <Filter>src\model\picomodel</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
@@ -1268,9 +1265,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\eclass\EClassManager.h">
       <Filter>src\eclass</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\rendersystem\LinearLightList.h">
-      <Filter>src\rendersystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\rendersystem\OpenGLRenderSystem.h">
       <Filter>src\rendersystem</Filter>
@@ -1642,15 +1636,6 @@
       <Filter>src\model\picomodel</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\model\picomodel\PicoModelModule.h">
-      <Filter>src\model\picomodel</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\model\picomodel\PicoModelNode.h">
-      <Filter>src\model\picomodel</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\model\picomodel\RenderablePicoModel.h">
-      <Filter>src\model\picomodel</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\model\picomodel\RenderablePicoSurface.h">
       <Filter>src\model\picomodel</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\model\picomodel\lib\lwo\lwo2.h">
@@ -2054,6 +2039,15 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\eclass\EClassColourManager.h">
       <Filter>src\eclass</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\model\picomodel\StaticModel.h">
+      <Filter>src\model\picomodel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\model\picomodel\StaticModelNode.h">
+      <Filter>src\model\picomodel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\model\picomodel\StaticModelSurface.h">
+      <Filter>src\model\picomodel</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

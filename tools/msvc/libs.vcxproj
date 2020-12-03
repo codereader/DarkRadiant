@@ -193,6 +193,7 @@
     <ClInclude Include="..\..\libs\registry\Widgets.h" />
     <ClInclude Include="..\..\libs\render.h" />
     <ClInclude Include="..\..\libs\render\ArbitraryMeshVertex.h" />
+    <ClInclude Include="..\..\libs\render\CamRenderer.h" />
     <ClInclude Include="..\..\libs\render\Colour4.h" />
     <ClInclude Include="..\..\libs\render\Colour4b.h" />
     <ClInclude Include="..\..\libs\render\NopVolumeTest.h" />
@@ -200,7 +201,6 @@
     <ClInclude Include="..\..\libs\render\RenderablePivot.h" />
     <ClInclude Include="..\..\libs\render\RenderableSpacePartition.h" />
     <ClInclude Include="..\..\libs\render\SceneRenderWalker.h" />
-    <ClInclude Include="..\..\libs\render\SimpleFrontendRenderer.h" />
     <ClInclude Include="..\..\libs\render\TexCoord2f.h" />
     <ClInclude Include="..\..\libs\render\VectorLightList.h" />
     <ClInclude Include="..\..\libs\render\Vertex3f.h" />

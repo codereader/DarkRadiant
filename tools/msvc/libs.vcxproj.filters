@@ -176,9 +176,6 @@
     <ClInclude Include="..\..\libs\string\tokeniser.h">
       <Filter>string</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\libs\render\SimpleFrontendRenderer.h">
-      <Filter>render</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\libs\KeyValueStore.h" />
     <ClInclude Include="..\..\libs\string\encoding.h">
       <Filter>string</Filter>
@@ -270,6 +267,9 @@
     </ClInclude>
     <ClInclude Include="..\..\libs\stream\MapResourceStream.h">
       <Filter>stream</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\render\CamRenderer.h">
+      <Filter>render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
