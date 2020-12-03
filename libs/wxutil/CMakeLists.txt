@@ -1,0 +1,22 @@
+add_library(wxutil
+            ConsoleView.cpp
+            DirChooser.cpp
+            EntityClassChooser.cpp
+            FileChooser.cpp
+            FreezePointer.cpp
+            GLFont.cpp
+            GLWidget.cpp
+            KeyValueTable.cpp
+            ModalProgressDialog.cpp
+            MouseToolHandler.cpp
+            PanedPosition.cpp
+            PathEntry.cpp
+            SerialisableWidgets.cpp
+            SourceView.cpp
+            Splitter.cpp
+            TreeModel.cpp
+            TreeModelFilter.cpp
+            TreeView.cpp
+            VFSTreePopulator.cpp
+            WindowPosition.cpp)
+target_compile_options(wxutil PUBLIC ${SIGC_CFLAGS} ${FTGL_CFLAGS})
