@@ -31,7 +31,6 @@ pkg_check_modules(PNG libpng REQUIRED)
 # Locate wxWidgets
 find_package(wxWidgets REQUIRED
              COMPONENTS base core stc adv gl xrc)
-message("Using wxWidgets file ${wxWidgets_USE_FILE}")
 include(${wxWidgets_USE_FILE})
 
 # Global includes and flags
@@ -41,6 +40,12 @@ add_compile_definitions(POSIX
                         FMT_HEADER_ONLY
                         HAVE_STD_FILESYSTEM)
 add_link_options(LINKER:-z,defs)
+
+# Generate config.h
+set(CORE_MODULE_LIBRARY "libradiantcore")
+configure_file(config.h.in config.h)
+add_compile_definitions(HAVE_CONFIG_H)
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 # Supporting libraries
 add_subdirectory(libs/math)

@@ -1,3 +1,6 @@
 
 /* Core module file, e.g. "libradiantcore" */
 #cmakedefine CORE_MODULE_LIBRARY "@CORE_MODULE_LIBRARY@"
+
+/* Project version */
+#define PACKAGE_VERSION "@CMAKE_PROJECT_VERSION@"
