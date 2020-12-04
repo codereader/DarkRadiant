@@ -9,6 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Build shared libraries by default
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
+set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib/darkradiant")
 
 # Define GNU-style directory structure by default, and pass directories to the
 # code with defines
@@ -51,3 +52,10 @@ add_subdirectory(libs/module)
 # Main radiant components
 add_subdirectory(radiantcore)
 add_subdirectory(radiant)
+
+# Installation
+install(TARGETS darkradiant math xmlutil scenegraph wxutil module
+        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION lib/darkradiant)
+install(TARGETS radiantcore
+        LIBRARY DESTINATION lib/darkradiant/modules)
