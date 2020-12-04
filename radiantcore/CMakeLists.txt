@@ -1,4 +1,4 @@
-add_library(radiantcore
+add_library(radiantcore MODULE
             brush/Brush.cpp
             brush/BrushModule.cpp
             brush/BrushNode.cpp

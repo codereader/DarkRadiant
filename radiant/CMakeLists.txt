@@ -166,4 +166,5 @@ add_executable(darkradiant
                xyview/XYWnd.cpp)
 target_compile_options(darkradiant PRIVATE ${SIGC_CFLAGS} ${FREETYPE_CFLAGS})
 target_include_directories(darkradiant PRIVATE .)
-target_link_libraries(darkradiant PRIVATE radiantcore)
+target_link_libraries(darkradiant PRIVATE
+                      math xmlutil scenegraph wxutil module)
