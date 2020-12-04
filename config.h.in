@@ -1,0 +1,3 @@
+
+/* Core module file, e.g. "libradiantcore" */
+#cmakedefine CORE_MODULE_LIBRARY "@CORE_MODULE_LIBRARY@"
