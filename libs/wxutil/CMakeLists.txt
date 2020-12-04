@@ -1,5 +1,8 @@
 add_library(wxutil
             ConsoleView.cpp
+            dialog/DialogBase.cpp
+            dialog/Dialog.cpp
+            dialog/MessageBox.cpp
             DirChooser.cpp
             EntityClassChooser.cpp
             FileChooser.cpp
@@ -7,10 +10,16 @@ add_library(wxutil
             GLFont.cpp
             GLWidget.cpp
             KeyValueTable.cpp
+            menu/PopupMenu.cpp
             ModalProgressDialog.cpp
             MouseToolHandler.cpp
             PanedPosition.cpp
             PathEntry.cpp
+            preview/GuiRenderer.cpp
+            preview/GuiView.cpp
+            preview/ModelPreview.cpp
+            preview/ParticlePreview.cpp
+            preview/RenderPreview.cpp
             SerialisableWidgets.cpp
             SourceView.cpp
             Splitter.cpp
@@ -18,5 +27,15 @@ add_library(wxutil
             TreeModelFilter.cpp
             TreeView.cpp
             VFSTreePopulator.cpp
-            WindowPosition.cpp)
+            WindowPosition.cpp
+            window/TransientWindow.cpp)
 target_compile_options(wxutil PUBLIC ${SIGC_CFLAGS} ${FTGL_CFLAGS})
+target_link_libraries(wxutil PUBLIC
+                      math
+                      scenegraph
+                      xmlutil
+                      ${wxWidgets_LIBRARIES}
+                      ${SIGC_LIBRARIES}
+                      ${FTGL_LIBRARIES}
+                      ${GLEW_LIBRARIES}
+                      ${GL_LIBRARIES})

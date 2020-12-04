@@ -152,6 +152,29 @@ add_library(radiantcore
             model/picomodel/StaticModel.cpp
             model/picomodel/StaticModelNode.cpp
             model/picomodel/StaticModelSurface.cpp
+            model/picomodel/lib/lwo/clip.c
+            model/picomodel/lib/lwo/envelope.c
+            model/picomodel/lib/lwo/list.c
+            model/picomodel/lib/lwo/lwio.c
+            model/picomodel/lib/lwo/lwo2.c
+            model/picomodel/lib/lwo/lwob.c
+            model/picomodel/lib/lwo/pntspols.c
+            model/picomodel/lib/lwo/surface.c
+            model/picomodel/lib/lwo/vecmath.c
+            model/picomodel/lib/lwo/vmap.c
+            model/picomodel/lib/picointernal.c
+            model/picomodel/lib/picomodel.c
+            model/picomodel/lib/picomodules.c
+            model/picomodel/lib/pm_3ds.c
+            model/picomodel/lib/pm_ase.c
+            model/picomodel/lib/pm_fm.c
+            model/picomodel/lib/pm_lwo.c
+            model/picomodel/lib/pm_md2.c
+            model/picomodel/lib/pm_md3.c
+            model/picomodel/lib/pm_mdc.c
+            model/picomodel/lib/pm_ms3d.c
+            model/picomodel/lib/pm_obj.c
+            model/picomodel/lib/pm_terrain.c
             modulesystem/ModuleLoader.cpp
             modulesystem/ModuleRegistry.cpp
             particles/ParticleDef.cpp
@@ -246,3 +269,6 @@ add_library(radiantcore
             xmlregistry/XMLRegistry.cpp)
 target_compile_options(radiantcore PUBLIC ${SIGC_CFLAGS})
 target_include_directories(radiantcore PRIVATE .)
+target_link_libraries(radiantcore PUBLIC
+                      math xmlutil scenegraph wxutil module
+                      ${JPEG_LIBRARIES} ${PNG_LIBRARIES})
