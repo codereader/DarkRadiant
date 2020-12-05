@@ -161,10 +161,21 @@ void bulge(const cmd::ArgumentList& args)
 	}
 }
 
+// Adapter method, since the ODRadiant patches allows accessing the patch controls
+// with row and col indices outside the control array bounds, with wrap around behaviour
+inline PatchControl& getControl(IPatch& patch, int row, int col)
+{
+    if (col < 0 || col >= patch.getWidth() || row < 0 || row >= patch.getHeight())
+    {
+        return patch.ctrlAt(row % patch.getHeight(), col % patch.getWidth());
+    }
+
+    return patch.ctrlAt(row, col);
+}
+
 PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodePtr& patchNode2,
     int sourceCol1, int sourceCol2, int sourceRow1, int sourceRow2, bool invert1, bool invert2)
 {
-    float		sScale, tScale;
     float		s, t;
     int			col1, col2;
     int			row1, row2;
@@ -216,7 +227,7 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
 
                 for (h = 0; h < patch1.getHeight(); h++)
                 {
-                    newPatch.ctrlAt(h, out) = patch1.ctrlAt(in, col1);
+                    getControl(newPatch, h, out) = getControl(patch1, in, col1);
 
                     in += invert1 ? -1 : 1;
                 }
@@ -230,7 +241,7 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
 
                 for (h = 0; h < patch2.getHeight(); h++)
                 {
-                    newPatch.ctrlAt(h, out) = patch2.ctrlAt(in, col2);
+                    getControl(newPatch, h, out) = getControl(patch2, in, col2);
 
                     in += invert2 ? -1 : 1;
                 }
@@ -269,7 +280,7 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
 
                 for (h = 0; h < patch1.getHeight(); h++)
                 {
-                    newPatch.ctrlAt(h, out) = patch1.ctrlAt(in, col1);
+                    getControl(newPatch, h, out) = getControl(patch1, in, col1);
 
                     in += invert1 ? -1 : 1;
                 }
@@ -283,7 +294,7 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
 
                 for (w = 0; w < patch2.getWidth(); w++)
                 {
-                    newPatch.ctrlAt(w, out) = patch2.ctrlAt(row2, in);
+                    getControl(newPatch, w, out) = getControl(patch2, row2, in);
 
                     in += invert2 ? -1 : 1;
                 }
@@ -326,7 +337,7 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
 
                 for (w = 0; w < patch1.getWidth(); w++)
                 {
-                    newPatch.ctrlAt(out, w) = patch1.ctrlAt(row1, in);
+                    getControl(newPatch, out, w) = getControl(patch1, row1, in);
 
                     in += invert1 ? -1 : 1;
                 }
@@ -340,7 +351,7 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
 
                 for (w = 0; w < patch2.getWidth(); w++)
                 {
-                    newPatch.ctrlAt(out, w) = patch2.ctrlAt(row2, in);
+                    getControl(newPatch, out, w) = getControl(patch2, row2, in);
 
                     in += invert1 ? -1 : 1;
                 }
@@ -379,7 +390,7 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
 
                 for (w = 0; w < patch1.getWidth(); w++)
                 {
-                    newPatch.ctrlAt(out, w) = patch1.ctrlAt(row1, in);
+                    getControl(newPatch, out, w) = getControl(patch1, row1, in);
 
                     in += invert1 ? -1 : 1;
                 }
@@ -393,7 +404,7 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
 
                 for (h = 0; h < patch2.getHeight(); h++)
                 {
-                    newPatch.ctrlAt(out, h) = patch2.ctrlAt(in, col2);
+                    getControl(newPatch, out, h) = getControl(patch2, in, col2);
 
                     in += invert1 ? -1 : 1;
                 }
@@ -402,22 +413,6 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
             }
         }
     }
-
-#if 0
-    // Generate the texture coords
-    GetTextureMappingScales(newPatch->material->editorImage, &sScale, &tScale);
-
-    for (w = 0; w < newPatch->width; w++) {
-        s = Patch_WidthDistanceTo(newPatch, w);
-
-        for (h = 0; h < newPatch->height; h++) {
-            t = Patch_HeightDistanceTo(newPatch, h);
-
-            newPatch.ctrlAt(h, w).st[0] = s * sScale;
-            newPatch.ctrlAt(h, w).st[1] = 1.0f - t * tScale;
-        }
-    }
-#endif
 
     newPatch.controlPointsChanged();
 
@@ -457,14 +452,14 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
             adj1 = 0;
             adj2 = 0;
 
-            if (patch1.ctrlAt(row1, 0).vertex.isEqual(patch2.ctrlAt(row2, 0).vertex, WELD_EPSILON))
+            if (getControl(patch1, row1, 0).vertex.isEqual(getControl(patch2, row2, 0).vertex, WELD_EPSILON))
             {}
-            else if (patch1.ctrlAt(row1, 0).vertex.isEqual(patch2.ctrlAt(patch2.getWidth() - 1, row2).vertex, WELD_EPSILON))
+            else if (getControl(patch1, row1, 0).vertex.isEqual(getControl(patch2, patch2.getWidth() - 1, row2).vertex, WELD_EPSILON))
             {
                 col2 = patch2.getWidth() - 1;
                 adj2 = -1;
             }
-            else if (patch1.ctrlAt(patch1.getWidth() - 1, row1).vertex.isEqual(patch2.ctrlAt(patch2.getWidth() - 1, row2).vertex, WELD_EPSILON))
+            else if (getControl(patch1, patch1.getWidth() - 1, row1).vertex.isEqual(getControl(patch2, patch2.getWidth() - 1, row2).vertex, WELD_EPSILON))
             {
                 col2 = patch2.getWidth() - 1;
                 adj2 = -1;
@@ -472,7 +467,7 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
                 col1 = patch1.getWidth() - 1;
                 adj1 = -1;
             }
-            else if (patch1.ctrlAt(patch1.getWidth() - 1, row1).vertex.isEqual(patch2.ctrlAt(row2, 0).vertex, WELD_EPSILON))
+            else if (getControl(patch1, patch1.getWidth() - 1, row1).vertex.isEqual(getControl(patch2, row2, 0).vertex, WELD_EPSILON))
             {
                 col1 = patch1.getWidth() - 1;
                 adj1 = -1;
@@ -488,7 +483,7 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
 
                 for (col = 0; col < patch1.getWidth(); col++, col2 += adj2, col1 += adj1)
                 {
-                    if (!patch1.ctrlAt(row1, col1).vertex.isEqual(patch2.ctrlAt(row2, col2).vertex, WELD_EPSILON))
+                    if (!getControl(patch1, row1, col1).vertex.isEqual(getControl(patch2, row2, col2).vertex, WELD_EPSILON))
                     {
                         match = false;
                         break;
@@ -536,14 +531,14 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
             row2 = 0;
             adj2 = 1;
 
-            if (patch1.ctrlAt(row1, 0).vertex.isEqual(patch2.ctrlAt(0, col2).vertex, WELD_EPSILON))
+            if (getControl(patch1, row1, 0).vertex.isEqual(getControl(patch2, 0, col2).vertex, WELD_EPSILON))
             {}
-            else if (patch1.ctrlAt(row1, 0).vertex.isEqual(patch2.ctrlAt(patch2.getHeight() - 1, col2).vertex, WELD_EPSILON))
+            else if (getControl(patch1, row1, 0).vertex.isEqual(getControl(patch2, patch2.getHeight() - 1, col2).vertex, WELD_EPSILON))
             {
                 row2 = patch2.getHeight() - 1;
                 adj2 = -1;
             }
-            else if (patch1.ctrlAt(row1, patch1.getWidth() - 1).vertex.isEqual(patch2.ctrlAt(patch2.getHeight() - 1, col2).vertex, WELD_EPSILON))
+            else if (getControl(patch1, row1, patch1.getWidth() - 1).vertex.isEqual(getControl(patch2, patch2.getHeight() - 1, col2).vertex, WELD_EPSILON))
             {
                 row2 = patch2.getHeight() - 1;
                 adj2 = -1;
@@ -551,7 +546,7 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
                 col1 = patch1.getWidth() - 1;
                 adj1 = -1;
             }
-            else if (patch1.ctrlAt(row1, patch1.getWidth() - 1).vertex.isEqual(patch2.ctrlAt(0, col2).vertex, WELD_EPSILON))
+            else if (getControl(patch1, row1, patch1.getWidth() - 1).vertex.isEqual(getControl(patch2, 0, col2).vertex, WELD_EPSILON))
             {
                 col1 = patch1.getWidth() - 1;
                 adj1 = -1;
@@ -567,7 +562,7 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
 
                 for (col = 0; col < patch1.getWidth(); col++, col1 += adj1, row2 += adj2)
                 {
-                    if (!patch1.ctrlAt(row1, col1).vertex.isEqual(patch2.ctrlAt(row2, col2).vertex, WELD_EPSILON))
+                    if (!getControl(patch1, row1, col1).vertex.isEqual(getControl(patch2, row2, col2).vertex, WELD_EPSILON))
                     {
                         match = false;
                         break;
@@ -615,14 +610,14 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
             col2 = 0;
             adj2 = 1;
 
-            if (patch1.ctrlAt(0, col1).vertex.isEqual(patch2.ctrlAt(row2, 0).vertex, WELD_EPSILON))
+            if (getControl(patch1, 0, col1).vertex.isEqual(getControl(patch2, row2, 0).vertex, WELD_EPSILON))
             {}
-            else if (patch1.ctrlAt(0, col1).vertex.isEqual(patch2.ctrlAt(patch2.getWidth() - 1, row2).vertex, WELD_EPSILON))
+            else if (getControl(patch1, 0, col1).vertex.isEqual(getControl(patch2, patch2.getWidth() - 1, row2).vertex, WELD_EPSILON))
             {
                 col2 = patch2.getWidth() - 1;
                 adj2 = -1;
             }
-            else if (patch1.ctrlAt(patch1.getHeight() - 1, col1).vertex.isEqual(patch2.ctrlAt(patch2.getWidth() - 1, row2).vertex, WELD_EPSILON))
+            else if (getControl(patch1, patch1.getHeight() - 1, col1).vertex.isEqual(getControl(patch2, patch2.getWidth() - 1, row2).vertex, WELD_EPSILON))
             {
                 col2 = patch2.getWidth() - 1;
                 adj2 = -1;
@@ -630,7 +625,7 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
                 row1 = patch2.getHeight() - 1;
                 adj1 = -1;
             }
-            else if (patch1.ctrlAt(patch1.getHeight() - 1, col1).vertex.isEqual(patch2.ctrlAt(row2, 0).vertex, WELD_EPSILON))
+            else if (getControl(patch1, patch1.getHeight() - 1, col1).vertex.isEqual(getControl(patch2, row2, 0).vertex, WELD_EPSILON))
             {
                 row1 = patch2.getHeight() - 1;
                 adj2 = -1;
@@ -646,7 +641,7 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
 
                 for (row = 0; row < patch1.getHeight(); row++, row1 += adj1, col2 += adj2)
                 {
-                    if (!patch1.ctrlAt(row1, col1).vertex.isEqual(patch2.ctrlAt(row2, col2).vertex, WELD_EPSILON))
+                    if (!getControl(patch1, row1, col1).vertex.isEqual(getControl(patch2, row2, col2).vertex, WELD_EPSILON))
                     {
                         match = false;
                         break;
@@ -694,14 +689,14 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
             row2 = 0;
             adj2 = 1;
 
-            if (patch1.ctrlAt(0, col1).vertex.isEqual(patch2.ctrlAt(0, col2).vertex, WELD_EPSILON))
+            if (getControl(patch1, 0, col1).vertex.isEqual(getControl(patch2, 0, col2).vertex, WELD_EPSILON))
             {}
-            else if (patch1.ctrlAt(0, col1).vertex.isEqual(patch2.ctrlAt(patch2.getHeight() - 1, col2).vertex, WELD_EPSILON))
+            else if (getControl(patch1, 0, col1).vertex.isEqual(getControl(patch2, patch2.getHeight() - 1, col2).vertex, WELD_EPSILON))
             {
                 row2 = patch2.getHeight() - 1;
                 adj2 = -1;
             }
-            else if (patch1.ctrlAt(patch1.getHeight() - 1, col1).vertex.isEqual(patch2.ctrlAt(patch2.getHeight() - 1, col2).vertex, WELD_EPSILON))
+            else if (getControl(patch1, patch1.getHeight() - 1, col1).vertex.isEqual(getControl(patch2, patch2.getHeight() - 1, col2).vertex, WELD_EPSILON))
             {
                 row2 = patch2.getHeight() - 1;
                 adj2 = -1;
@@ -709,7 +704,7 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
                 row1 = patch1.getHeight() - 1;
                 adj1 = -1;
             }
-            else if (patch1.ctrlAt(patch1.getHeight() - 1, col1).vertex.isEqual(patch2.ctrlAt(0, col2).vertex, WELD_EPSILON))
+            else if (getControl(patch1, patch1.getHeight() - 1, col1).vertex.isEqual(getControl(patch2, 0, col2).vertex, WELD_EPSILON))
             {
                 row1 = patch1.getHeight() - 1;
                 adj1 = -1;
@@ -725,7 +720,7 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
 
                 for (row = 0; row < patch1.getHeight(); row++, row1 += adj1, row2 += adj2)
                 {
-                    if (!patch1.ctrlAt(row1, col1).vertex.isEqual(patch2.ctrlAt(row2, col2).vertex, WELD_EPSILON))
+                    if (!getControl(patch1, row1, col1).vertex.isEqual(getControl(patch2, row2, col2).vertex, WELD_EPSILON))
                     {
                         match = false;
                         break;
@@ -770,6 +765,8 @@ void weldPatches(const PatchNodePtr& patchNode1, const PatchNodePtr& patchNode2)
 
     mergedPatch->assignToLayers(patchNode1->getLayers());
     // TODO: selection grouping
+
+    mergedPatch->getPatch().scaleTextureNaturally();
 
     Node_setSelected(mergedPatch, true);
 
