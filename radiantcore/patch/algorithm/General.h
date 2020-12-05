@@ -27,6 +27,8 @@ void stitchTextures(const cmd::ArgumentList& args);
 
 void bulge(const cmd::ArgumentList& args);
 
+void weldSelectedPatches(const cmd::ArgumentList& args);
+
 } // namespace
 
 } // namespace

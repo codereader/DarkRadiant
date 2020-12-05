@@ -116,6 +116,7 @@ void PatchModule::registerPatchCommands()
 		{ cmd::ARGTYPE_DOUBLE, cmd::ARGTYPE_INT, cmd::ARGTYPE_INT }); // thickness, create_seams, axis
 	GlobalCommandSystem().addCommand("StitchPatchTexture", patch::algorithm::stitchTextures);
 	GlobalCommandSystem().addCommand("BulgePatch", patch::algorithm::bulge, { cmd::ARGTYPE_DOUBLE });
+	GlobalCommandSystem().addCommand("WeldSelectedPatches", patch::algorithm::weldSelectedPatches);
 }
 
 module::StaticModule<PatchModule> patchModule;
