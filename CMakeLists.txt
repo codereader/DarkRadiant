@@ -67,9 +67,26 @@ add_subdirectory(libs/module)
 add_subdirectory(radiantcore)
 add_subdirectory(radiant)
 
-# Installation
+# Install built targets
 install(TARGETS darkradiant math xmlutil scenegraph wxutil module
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib/darkradiant)
 install(TARGETS radiantcore
         LIBRARY DESTINATION lib/darkradiant/modules)
+
+# Install resources
+set(PKG_DATA_DIR "${CMAKE_INSTALL_DATADIR}/darkradiant")
+
+file(GLOB XML_FILES "${PROJECT_SOURCE_DIR}/install/*.xml")
+install(FILES ${XML_FILES} DESTINATION ${PKG_DATA_DIR})
+
+install(DIRECTORY install/games DESTINATION ${PKG_DATA_DIR})
+install(DIRECTORY install/bitmaps DESTINATION ${PKG_DATA_DIR})
+install(DIRECTORY install/gl DESTINATION ${PKG_DATA_DIR})
+install(DIRECTORY install/ui DESTINATION ${PKG_DATA_DIR}
+        FILES_MATCHING PATTERN "*.ttf" PATTERN "*.xrc")
+
+# Install scripts
+set(PKG_LIB_DIR "${CMAKE_INSTALL_LIBDIR}/darkradiant")
+install(DIRECTORY install/scripts DESTINATION ${PKG_LIB_DIR}
+        FILES_MATCHING PATTERN "*.py")
