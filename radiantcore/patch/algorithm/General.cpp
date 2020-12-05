@@ -216,7 +216,7 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
 
                 for (h = 0; h < patch1.getHeight(); h++)
                 {
-                    newPatch.ctrlAt(out, h) = patch1.ctrlAt(col1, in);
+                    newPatch.ctrlAt(h, out) = patch1.ctrlAt(in, col1);
 
                     in += invert1 ? -1 : 1;
                 }
@@ -230,7 +230,7 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
 
                 for (h = 0; h < patch2.getHeight(); h++)
                 {
-                    newPatch.ctrlAt(out, h) = patch2.ctrlAt(col2, in);
+                    newPatch.ctrlAt(h, out) = patch2.ctrlAt(in, col2);
 
                     in += invert2 ? -1 : 1;
                 }
@@ -269,7 +269,7 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
 
                 for (h = 0; h < patch1.getHeight(); h++)
                 {
-                    newPatch.ctrlAt(out, h) = patch1.ctrlAt(col1, in);
+                    newPatch.ctrlAt(h, out) = patch1.ctrlAt(in, col1);
 
                     in += invert1 ? -1 : 1;
                 }
@@ -283,7 +283,7 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
 
                 for (w = 0; w < patch2.getWidth(); w++)
                 {
-                    newPatch.ctrlAt(out, w) = patch2.ctrlAt(in, row2);
+                    newPatch.ctrlAt(w, out) = patch2.ctrlAt(row2, in);
 
                     in += invert2 ? -1 : 1;
                 }
@@ -326,7 +326,7 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
 
                 for (w = 0; w < patch1.getWidth(); w++)
                 {
-                    newPatch.ctrlAt(w, out) = patch1.ctrlAt(in, row1);
+                    newPatch.ctrlAt(out, w) = patch1.ctrlAt(row1, in);
 
                     in += invert1 ? -1 : 1;
                 }
@@ -340,7 +340,7 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
 
                 for (w = 0; w < patch2.getWidth(); w++)
                 {
-                    newPatch.ctrlAt(w, out) = patch2.ctrlAt(in, row2);
+                    newPatch.ctrlAt(out, w) = patch2.ctrlAt(row2, in);
 
                     in += invert1 ? -1 : 1;
                 }
@@ -379,7 +379,7 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
 
                 for (w = 0; w < patch1.getWidth(); w++)
                 {
-                    newPatch.ctrlAt(w, out) = patch1.ctrlAt(in, row1);
+                    newPatch.ctrlAt(out, w) = patch1.ctrlAt(row1, in);
 
                     in += invert1 ? -1 : 1;
                 }
@@ -393,7 +393,7 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
 
                 for (h = 0; h < patch2.getHeight(); h++)
                 {
-                    newPatch.ctrlAt(h, out) = patch2.ctrlAt(col2, in);
+                    newPatch.ctrlAt(out, h) = patch2.ctrlAt(in, col2);
 
                     in += invert1 ? -1 : 1;
                 }
@@ -413,11 +413,13 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
         for (h = 0; h < newPatch->height; h++) {
             t = Patch_HeightDistanceTo(newPatch, h);
 
-            newPatch.ctrlAt(w, h).st[0] = s * sScale;
-            newPatch.ctrlAt(w, h).st[1] = 1.0f - t * tScale;
+            newPatch.ctrlAt(h, w).st[0] = s * sScale;
+            newPatch.ctrlAt(h, w).st[1] = 1.0f - t * tScale;
         }
     }
 #endif
+
+    newPatch.controlPointsChanged();
 
     return newPatchNode;
 }
@@ -455,9 +457,9 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
             adj1 = 0;
             adj2 = 0;
 
-            if (patch1.ctrlAt(0, row1).vertex.isEqual(patch2.ctrlAt(0, row2).vertex, WELD_EPSILON))
+            if (patch1.ctrlAt(row1, 0).vertex.isEqual(patch2.ctrlAt(row2, 0).vertex, WELD_EPSILON))
             {}
-            else if (patch1.ctrlAt(0, row1).vertex.isEqual(patch2.ctrlAt(patch2.getWidth() - 1, row2).vertex, WELD_EPSILON))
+            else if (patch1.ctrlAt(row1, 0).vertex.isEqual(patch2.ctrlAt(patch2.getWidth() - 1, row2).vertex, WELD_EPSILON))
             {
                 col2 = patch2.getWidth() - 1;
                 adj2 = -1;
@@ -470,7 +472,7 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
                 col1 = patch1.getWidth() - 1;
                 adj1 = -1;
             }
-            else if (patch1.ctrlAt(patch1.getWidth() - 1, row1).vertex.isEqual(patch2.ctrlAt(0, row2).vertex, WELD_EPSILON))
+            else if (patch1.ctrlAt(patch1.getWidth() - 1, row1).vertex.isEqual(patch2.ctrlAt(row2, 0).vertex, WELD_EPSILON))
             {
                 col1 = patch1.getWidth() - 1;
                 adj1 = -1;
@@ -486,7 +488,7 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
 
                 for (col = 0; col < patch1.getWidth(); col++, col2 += adj2, col1 += adj1)
                 {
-                    if (!patch1.ctrlAt(col1, row1).vertex.isEqual(patch2.ctrlAt(col2, row2).vertex, WELD_EPSILON))
+                    if (!patch1.ctrlAt(row1, col1).vertex.isEqual(patch2.ctrlAt(row2, col2).vertex, WELD_EPSILON))
                     {
                         match = false;
                         break;
@@ -534,14 +536,14 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
             row2 = 0;
             adj2 = 1;
 
-            if (patch1.ctrlAt(0, row1).vertex.isEqual(patch2.ctrlAt(col2, 0).vertex, WELD_EPSILON))
+            if (patch1.ctrlAt(row1, 0).vertex.isEqual(patch2.ctrlAt(0, col2).vertex, WELD_EPSILON))
             {}
-            else if (patch1.ctrlAt(0, row1).vertex.isEqual(patch2.ctrlAt(col2, patch2.getHeight() - 1).vertex, WELD_EPSILON))
+            else if (patch1.ctrlAt(row1, 0).vertex.isEqual(patch2.ctrlAt(patch2.getHeight() - 1, col2).vertex, WELD_EPSILON))
             {
                 row2 = patch2.getHeight() - 1;
                 adj2 = -1;
             }
-            else if (patch1.ctrlAt(patch1.getWidth() - 1, row1).vertex.isEqual(patch2.ctrlAt(col2, patch2.getHeight() - 1).vertex, WELD_EPSILON))
+            else if (patch1.ctrlAt(row1, patch1.getWidth() - 1).vertex.isEqual(patch2.ctrlAt(patch2.getHeight() - 1, col2).vertex, WELD_EPSILON))
             {
                 row2 = patch2.getHeight() - 1;
                 adj2 = -1;
@@ -549,7 +551,7 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
                 col1 = patch1.getWidth() - 1;
                 adj1 = -1;
             }
-            else if (patch1.ctrlAt(patch1.getWidth() - 1, row1).vertex.isEqual(patch2.ctrlAt(col2, 0).vertex, WELD_EPSILON))
+            else if (patch1.ctrlAt(row1, patch1.getWidth() - 1).vertex.isEqual(patch2.ctrlAt(0, col2).vertex, WELD_EPSILON))
             {
                 col1 = patch1.getWidth() - 1;
                 adj1 = -1;
@@ -565,7 +567,7 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
 
                 for (col = 0; col < patch1.getWidth(); col++, col1 += adj1, row2 += adj2)
                 {
-                    if (!patch1.ctrlAt(col1, row1).vertex.isEqual(patch2.ctrlAt(col2, row2).vertex, WELD_EPSILON))
+                    if (!patch1.ctrlAt(row1, col1).vertex.isEqual(patch2.ctrlAt(row2, col2).vertex, WELD_EPSILON))
                     {
                         match = false;
                         break;
@@ -613,22 +615,22 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
             col2 = 0;
             adj2 = 1;
 
-            if (patch1.ctrlAt(col1, 0).vertex.isEqual(patch2.ctrlAt(0, row2).vertex, WELD_EPSILON))
+            if (patch1.ctrlAt(0, col1).vertex.isEqual(patch2.ctrlAt(row2, 0).vertex, WELD_EPSILON))
             {}
-            else if (patch1.ctrlAt(col1, 0).vertex.isEqual(patch2.ctrlAt(patch2.getWidth() - 1, row2).vertex, WELD_EPSILON))
+            else if (patch1.ctrlAt(0, col1).vertex.isEqual(patch2.ctrlAt(patch2.getWidth() - 1, row2).vertex, WELD_EPSILON))
             {
                 col2 = patch2.getWidth() - 1;
                 adj2 = -1;
             }
-            else if (patch1.ctrlAt(col1, patch1.getHeight() - 1).vertex.isEqual(patch2.ctrlAt(patch2.getWidth() - 1, row2).vertex, WELD_EPSILON))
+            else if (patch1.ctrlAt(patch1.getHeight() - 1, col1).vertex.isEqual(patch2.ctrlAt(patch2.getWidth() - 1, row2).vertex, WELD_EPSILON))
             {
                 col2 = patch2.getWidth() - 1;
                 adj2 = -1;
 
                 row1 = patch2.getHeight() - 1;
-                adj2 = -1;
+                adj1 = -1;
             }
-            else if (patch1.ctrlAt(col1, patch1.getHeight() - 1).vertex.isEqual(patch2.ctrlAt(0, row2).vertex, WELD_EPSILON))
+            else if (patch1.ctrlAt(patch1.getHeight() - 1, col1).vertex.isEqual(patch2.ctrlAt(row2, 0).vertex, WELD_EPSILON))
             {
                 row1 = patch2.getHeight() - 1;
                 adj2 = -1;
@@ -644,7 +646,7 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
 
                 for (row = 0; row < patch1.getHeight(); row++, row1 += adj1, col2 += adj2)
                 {
-                    if (!patch1.ctrlAt(col1, row1).vertex.isEqual(patch2.ctrlAt(col2, row2).vertex, WELD_EPSILON))
+                    if (!patch1.ctrlAt(row1, col1).vertex.isEqual(patch2.ctrlAt(row2, col2).vertex, WELD_EPSILON))
                     {
                         match = false;
                         break;
@@ -692,14 +694,14 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
             row2 = 0;
             adj2 = 1;
 
-            if (patch1.ctrlAt(col1, 0).vertex.isEqual(patch2.ctrlAt(col2, 0).vertex, WELD_EPSILON))
+            if (patch1.ctrlAt(0, col1).vertex.isEqual(patch2.ctrlAt(0, col2).vertex, WELD_EPSILON))
             {}
-            else if (patch1.ctrlAt(col1, 0).vertex.isEqual(patch2.ctrlAt(col2, patch2.getHeight() - 1).vertex, WELD_EPSILON))
+            else if (patch1.ctrlAt(0, col1).vertex.isEqual(patch2.ctrlAt(patch2.getHeight() - 1, col2).vertex, WELD_EPSILON))
             {
                 row2 = patch2.getHeight() - 1;
                 adj2 = -1;
             }
-            else if (patch1.ctrlAt(col1, patch1.getHeight() - 1).vertex.isEqual(patch2.ctrlAt(col2, patch2.getHeight() - 1).vertex, WELD_EPSILON))
+            else if (patch1.ctrlAt(patch1.getHeight() - 1, col1).vertex.isEqual(patch2.ctrlAt(patch2.getHeight() - 1, col2).vertex, WELD_EPSILON))
             {
                 row2 = patch2.getHeight() - 1;
                 adj2 = -1;
@@ -707,7 +709,7 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
                 row1 = patch1.getHeight() - 1;
                 adj1 = -1;
             }
-            else if (patch1.ctrlAt(col1, patch1.getHeight() - 1).vertex.isEqual(patch2.ctrlAt(col2, 0).vertex, WELD_EPSILON))
+            else if (patch1.ctrlAt(patch1.getHeight() - 1, col1).vertex.isEqual(patch2.ctrlAt(0, col2).vertex, WELD_EPSILON))
             {
                 row1 = patch1.getHeight() - 1;
                 adj1 = -1;
@@ -723,7 +725,7 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
 
                 for (row = 0; row < patch1.getHeight(); row++, row1 += adj1, row2 += adj2)
                 {
-                    if (!patch1.ctrlAt(col1, row1).vertex.isEqual(patch2.ctrlAt(col2, row2).vertex, WELD_EPSILON))
+                    if (!patch1.ctrlAt(row1, col1).vertex.isEqual(patch2.ctrlAt(row2, col2).vertex, WELD_EPSILON))
                     {
                         match = false;
                         break;
