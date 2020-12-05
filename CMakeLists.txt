@@ -42,6 +42,9 @@ find_package(wxWidgets REQUIRED
              COMPONENTS base core stc adv gl xrc)
 include(${wxWidgets_USE_FILE})
 
+# Locate Python
+find_package(Python REQUIRED COMPONENTS Development)
+
 # Global includes and flags
 include_directories(libs libs/libfmt include)
 add_compile_definitions(POSIX
@@ -63,6 +66,9 @@ add_subdirectory(libs/scene)
 add_subdirectory(libs/wxutil)
 add_subdirectory(libs/module)
 
+# Plugins and modules
+add_subdirectory(plugins/script)
+
 # Main radiant components
 add_subdirectory(radiantcore)
 add_subdirectory(radiant)
@@ -71,7 +77,7 @@ add_subdirectory(radiant)
 install(TARGETS darkradiant math xmlutil scenegraph wxutil module
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib/darkradiant)
-install(TARGETS radiantcore
+install(TARGETS radiantcore script
         LIBRARY DESTINATION lib/darkradiant/modules)
 
 # Install resources
