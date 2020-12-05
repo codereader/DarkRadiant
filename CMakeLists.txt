@@ -11,6 +11,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib/darkradiant")
 
+# Debug or release mode
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release)
+endif()
+add_compile_definitions(
+    $<$<CONFIG:Debug>:_DEBUG>
+    $<$<CONFIG:Release>:NDEBUG>
+)
+
 # Define GNU-style directory structure by default, and pass directories to the
 # code with defines
 include(GNUInstallDirs)
