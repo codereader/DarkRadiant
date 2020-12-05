@@ -85,6 +85,7 @@
     <ClCompile Include="..\..\..\test\ModelExport.cpp" />
     <ClCompile Include="..\..\..\test\Models.cpp" />
     <ClCompile Include="..\..\..\test\ModelScale.cpp" />
+    <ClCompile Include="..\..\..\test\PatchWelding.cpp" />
     <ClCompile Include="..\..\..\test\Selection.cpp" />
     <ClCompile Include="..\..\..\test\SelectionAlgorithm.cpp" />
     <ClCompile Include="..\..\..\test\VFS.cpp" />
