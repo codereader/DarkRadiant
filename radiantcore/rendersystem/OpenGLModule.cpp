@@ -42,7 +42,7 @@ void OpenGLModule::sharedContextDestroyed()
 
 IGLFont::Ptr OpenGLModule::getFont(IGLFont::Style style, std::size_t size)
 {
-    auto cacheKey = std::make_pair(style, size);
+    auto cacheKey = std::make_pair(style, static_cast<int>(size));
     auto cachedFont = _fontCache.find(cacheKey);
 
     // Try to look up and lock a shared_ptr in our cache
@@ -57,7 +57,7 @@ IGLFont::Ptr OpenGLModule::getFont(IGLFont::Style style, std::size_t size)
     }
 
     // No cache hit, create new instance
-    auto font = std::make_shared<gl::GLFont>(style, size);
+    auto font = std::make_shared<gl::GLFont>(style, static_cast<unsigned int>(size));
 
     _fontCache[cacheKey] = font;
     
@@ -74,7 +74,7 @@ void OpenGLModule::drawString(const std::string& string) const
 
 int OpenGLModule::getFontHeight() 
 {
-	return _font ? _font->getLineHeight() : 0;
+	return _font ? static_cast<int>(_font->getLineHeight()) : 0;
 }
 
 const std::string& OpenGLModule::getName() const
