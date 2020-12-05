@@ -6,7 +6,6 @@
 #include <sigc++/connection.h>
 
 #include "GLFont.h"
-#include "wxutil/GLWidget.h"
 
 #ifndef NDEBUG
 //#define ENABLE_KHR_DEBUG_EXTENSION

@@ -619,6 +619,8 @@
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\OpenGLShader.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\OpenGLShaderPass.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\debug\SpacePartitionRenderer.cpp" />
+    <ClCompile Include="..\..\radiantcore\rendersystem\GLFont.cpp" />
+    <ClCompile Include="..\..\radiantcore\rendersystem\OpenGLModule.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\OpenGLRenderSystem.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\RenderSystemFactory.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\SharedOpenGLContextModule.cpp" />
@@ -939,6 +941,8 @@
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\OpenGLStateLess.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\OpenGLStateManager.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\debug\SpacePartitionRenderer.h" />
+    <ClInclude Include="..\..\radiantcore\rendersystem\GLFont.h" />
+    <ClInclude Include="..\..\radiantcore\rendersystem\OpenGLModule.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\OpenGLRenderSystem.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\RenderSystemFactory.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\SharedOpenGLContextModule.h" />

@@ -190,9 +190,6 @@
     <ClCompile Include="..\..\radiant\camera\FloatingCamWnd.cpp">
       <Filter>src\camera</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\render\OpenGLModule.cpp">
-      <Filter>src\render</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\textool\TexTool.cpp">
       <Filter>src\textool</Filter>
     </ClCompile>
@@ -673,9 +670,6 @@
     <ClCompile Include="..\..\radiant\ui\mapselector\MapSelector.cpp">
       <Filter>src\ui\mapselector</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\render\GLFont.cpp">
-      <Filter>src\render</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h">
@@ -686,9 +680,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\camera\FloatingCamWnd.h">
       <Filter>src\camera</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\render\OpenGLModule.h">
-      <Filter>src\render</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\textool\Rectangle.h">
       <Filter>src\textool</Filter>
@@ -1295,9 +1286,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\mapselector\MapSelector.h">
       <Filter>src\ui\mapselector</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\render\GLFont.h">
-      <Filter>src\render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

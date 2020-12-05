@@ -45,8 +45,6 @@ darkradiant_SOURCES = main.cpp \
                       eventmanager/Statement.cpp \
                       eventmanager/Toggle.cpp \
                       eventmanager/WidgetToggle.cpp \
-                      render/GLFont.cpp \
-                      render/OpenGLModule.cpp \
                       ui/UserInterfaceModule.cpp \
                       ui/Documentation.cpp \
                       ui/eclasstree/EClassTree.cpp \

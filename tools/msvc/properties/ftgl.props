@@ -13,6 +13,10 @@
     <Lib>
       <AdditionalLibraryDirectories>$(PlatformDepsDir)ftgl\lib;$(PlatformDepsDir)fontconfig\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
+    <Link>
+      <AdditionalDependencies>ftgl$(LibSuffix)-vc$(PlatformToolsetVersion).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(PlatformDepsDir)ftgl\lib;$(PlatformDepsDir)fontconfig\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
   </ItemDefinitionGroup>
   <ItemGroup />
 </Project>
