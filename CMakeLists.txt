@@ -23,7 +23,6 @@ add_compile_definitions(
 # Define GNU-style directory structure by default, and pass directories to the
 # code with defines
 include(GNUInstallDirs)
-add_compile_definitions(LOCALEDIR="${CMAKE_INSTALL_FULL_LOCALEDIR}")
 
 # Locate system packages
 include(FindPkgConfig)

@@ -4,3 +4,6 @@
 
 /* Project version */
 #define PACKAGE_VERSION "@CMAKE_PROJECT_VERSION@"
+
+/* Locale directory */
+#define LOCALEDIR "@CMAKE_INSTALL_FULL_LOCALEDIR@"
