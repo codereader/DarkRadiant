@@ -9,6 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Build shared libraries by default
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
+option(SKIP_DM_PLUGINS "Don't build Dark Mod specific plugins" OFF)
 set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib/darkradiant")
 
 # Debug or release mode
@@ -65,19 +66,36 @@ add_subdirectory(libs/scene)
 add_subdirectory(libs/wxutil)
 add_subdirectory(libs/module)
 
-# Plugins and modules
+# Mandatory modules
 add_subdirectory(plugins/script)
+
+# Dark Mod plugins
+if (NOT SKIP_DM_PLUGINS)
+    add_subdirectory(plugins/dm.stimresponse)
+    add_subdirectory(plugins/dm.objectives)
+    add_subdirectory(plugins/dm.difficulty)
+    add_subdirectory(plugins/dm.editing)
+    add_subdirectory(plugins/dm.gui)
+    add_subdirectory(plugins/dm.gameconnection)
+endif()
 
 # Main radiant components
 add_subdirectory(radiantcore)
 add_subdirectory(radiant)
 
-# Install built targets
+# Install main targets
 install(TARGETS darkradiant math xmlutil scenegraph wxutil module
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib/darkradiant)
 install(TARGETS radiantcore script
         LIBRARY DESTINATION lib/darkradiant/modules)
+
+# Install Dark Mod plugins
+if (NOT SKIP_DM_PLUGINS)
+    install(TARGETS dm_stimresponse dm_objectives dm_difficulty dm_editing
+                    dm_gui dm_gameconnection
+            LIBRARY DESTINATION lib/darkradiant/plugins)
+endif()
 
 # Install resources
 set(PKG_DATA_DIR "${CMAKE_INSTALL_DATADIR}/darkradiant")
