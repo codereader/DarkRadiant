@@ -2061,5 +2061,8 @@
     <ClInclude Include="..\..\radiantcore\rendersystem\OpenGLModule.h">
       <Filter>src\rendersystem</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiantcore\patch\algorithm\PatchIterators.h">
+      <Filter>src\patch\algorithm</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
