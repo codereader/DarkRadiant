@@ -36,6 +36,9 @@ pkg_check_modules(GL gl REQUIRED)
 pkg_check_modules(GLEW glew REQUIRED)
 pkg_check_modules(JPEG libjpeg REQUIRED)
 pkg_check_modules(PNG libpng REQUIRED)
+pkg_check_modules(AL openal REQUIRED)
+pkg_check_modules(OGG ogg REQUIRED)
+pkg_check_modules(VORBIS vorbisfile REQUIRED)
 
 # Locate wxWidgets
 find_package(wxWidgets REQUIRED
@@ -68,6 +71,7 @@ add_subdirectory(libs/module)
 
 # Mandatory modules
 add_subdirectory(plugins/script)
+add_subdirectory(plugins/sound)
 
 # Dark Mod plugins
 if (NOT SKIP_DM_PLUGINS)
@@ -87,7 +91,7 @@ add_subdirectory(radiant)
 install(TARGETS darkradiant math xmlutil scenegraph wxutil module
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib/darkradiant)
-install(TARGETS radiantcore script
+install(TARGETS radiantcore script sound
         LIBRARY DESTINATION lib/darkradiant/modules)
 
 # Install Dark Mod plugins
