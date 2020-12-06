@@ -12,6 +12,7 @@
 #include "string/convert.h"
 #include "scenelib.h"
 #include "command/ExecutionFailure.h"
+#include "PatchIterators.h"
 
 namespace patch
 {
@@ -419,6 +420,31 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
     return newPatchNode;
 }
 
+namespace
+{
+
+// Returns true if all the elements in the given sequences are equal
+inline bool isEqual(const PatchControlIterator& sequence1, const PatchControlIterator& sequence2)
+{
+    // If the iterators are invalid from the start, return false
+    if (!sequence1.isValid() || !sequence2.isValid())
+    {
+        return false;
+    }
+
+    for (auto p1 = sequence1, p2 = sequence2; p1.isValid() && p2.isValid(); ++p1, ++p2)
+    {
+        if (p1->vertex != p2->vertex)
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+}
+
 PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodePtr& patchNode2)
 {
     constexpr double WELD_EPSILON = 0.001;
@@ -439,6 +465,19 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
 
     if (patch1.getWidth() == patch2.getWidth())
     {
+        // Row dimensions match, compare the first and last row of this patch to the 
+        // first and last row of the other patch
+        SinglePatchRowIterator patch1FirstRow(patch1, 0);
+        SinglePatchRowIterator patch1LastRow(patch1, patch1.getWidth() - 1);
+        
+        SinglePatchRowIterator patch2FirstRow(patch2, 0);
+        SinglePatchRowIterator patch2LastRow(patch2, patch2.getWidth() - 1);
+
+        if (isEqual(patch1FirstRow, patch2FirstRow))
+        {
+
+        }
+
         row1 = 0;
         row2 = 0;
 

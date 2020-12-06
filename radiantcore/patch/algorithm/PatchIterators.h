@@ -34,7 +34,7 @@ protected:
     // Moves this iterator forward by one step
     Forwarder _forward;
 
-protected:
+public:
     PatchControlIterator(IPatch& patch, int row, int col, Forwarder forward) :
         _patch(patch),
         _row(row),
@@ -45,7 +45,6 @@ protected:
     PatchControlIterator(const PatchControlIterator& other) = default;
     PatchControlIterator& operator=(const PatchControlIterator& other) = default;
 
-public:
     // Post-increment i++
     PatchControlIterator operator++(int)
     {
@@ -121,11 +120,11 @@ private:
 };
 
 // An iterator traversing a single row of a patch
-class PatchRowIterator :
+class SinglePatchRowIterator :
     public PatchControlIterator
 {
 public:
-    PatchRowIterator(IPatch& patch, std::size_t row) :
+    SinglePatchRowIterator(IPatch& patch, std::size_t row) :
         PatchControlIterator(patch, static_cast<int>(row), 0, moveToNextCol)
     {}
 
@@ -137,11 +136,11 @@ private:
 };
 
 // An iterator traversing a single column of a patch
-class PatchColumnIterator :
+class SinglePatchColumnIterator :
     public PatchControlIterator
 {
 public:
-    PatchColumnIterator(IPatch& patch, std::size_t col) :
+    SinglePatchColumnIterator(IPatch& patch, std::size_t col) :
         PatchControlIterator(patch, 0, static_cast<int>(col), moveToNextRow)
     {}
 
@@ -149,6 +148,78 @@ private:
     static void moveToNextRow(PatchControlIterator& it)
     {
         it.set(it.getRow() + 1, it.getColumn());
+    }
+};
+
+// An iterator traversing a the given patch column-wise, iterating over
+// one row after the other (which are optionally constrained to [startRow..endRow])
+class ColumnWisePatchIterator :
+    public PatchControlIterator
+{
+public:
+    ColumnWisePatchIterator(IPatch& patch) :
+        ColumnWisePatchIterator(patch, 0, patch.getHeight() - 1)
+    {
+        assert(patch.getHeight() > 0);
+    }
+
+    ColumnWisePatchIterator(IPatch& patch, std::size_t startRow, std::size_t endRow) :
+        PatchControlIterator(patch, startRow, 0, std::bind(ColumnWisePatchIterator::moveNext, std::placeholders::_1, patch, endRow))
+    {}
+
+private:
+    static void moveNext(PatchControlIterator& it, const IPatch& patch, std::size_t endRow)
+    {
+        auto nextColumn = it.getColumn() + 1;
+        auto nextRow = it.getRow();
+
+        if (nextColumn >= patch.getWidth())
+        {
+            // Advance to the next row
+            // If that doesn't succeed, just leave the indices out of bounds
+            if (++nextRow <= endRow)
+            {
+                nextColumn = 0;
+            }
+        }
+
+        it.set(nextRow, nextColumn);
+    }
+};
+
+// An iterator traversing a the given patch row-wise, iterating over
+// one column after the other (which are optionally constrained to [startColumn..endColumn])
+class RowWisePatchIterator :
+    public PatchControlIterator
+{
+public:
+    RowWisePatchIterator(IPatch& patch) :
+        RowWisePatchIterator(patch, 0, patch.getWidth() - 1)
+    {
+        assert(patch.getWidth() > 0);
+    }
+
+    RowWisePatchIterator(IPatch& patch, std::size_t startColumn, std::size_t endColumn) :
+        PatchControlIterator(patch, startColumn, 0, std::bind(RowWisePatchIterator::moveNext, std::placeholders::_1, patch, endColumn))
+    {}
+
+private:
+    static void moveNext(PatchControlIterator& it, const IPatch& patch, std::size_t endColumn)
+    {
+        auto nextRow = it.getRow() + 1;
+        auto nextColumn = it.getColumn();
+
+        if (nextRow >= patch.getHeight())
+        {
+            // Advance to the next column
+            // If that doesn't succeed, just leave the indices out of bounds
+            if (++nextColumn <= endColumn)
+            {
+                nextRow = 0;
+            }
+        }
+
+        it.set(nextRow, nextColumn);
     }
 };
 
