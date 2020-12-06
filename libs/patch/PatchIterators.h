@@ -164,7 +164,8 @@ public:
     }
 
     ColumnWisePatchIterator(IPatch& patch, std::size_t startRow, std::size_t endRow) :
-        PatchControlIterator(patch, startRow, 0, std::bind(ColumnWisePatchIterator::moveNext, std::placeholders::_1, patch, endRow))
+        PatchControlIterator(patch, startRow, 0, 
+            std::bind(ColumnWisePatchIterator::moveNext, std::placeholders::_1, std::ref(patch), endRow))
     {}
 
 private:
@@ -200,7 +201,8 @@ public:
     }
 
     RowWisePatchIterator(IPatch& patch, std::size_t startColumn, std::size_t endColumn) :
-        PatchControlIterator(patch, startColumn, 0, std::bind(RowWisePatchIterator::moveNext, std::placeholders::_1, patch, endColumn))
+        PatchControlIterator(patch, startColumn, 0, 
+            std::bind(RowWisePatchIterator::moveNext, std::placeholders::_1, std::ref(patch), endColumn))
     {}
 
 private:

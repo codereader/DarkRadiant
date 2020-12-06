@@ -900,7 +900,6 @@
     <ClInclude Include="..\..\radiantcore\particles\RenderableParticleStage.h" />
     <ClInclude Include="..\..\radiantcore\particles\StageDef.h" />
     <ClInclude Include="..\..\radiantcore\patch\algorithm\General.h" />
-    <ClInclude Include="..\..\radiantcore\patch\algorithm\PatchIterators.h" />
     <ClInclude Include="..\..\radiantcore\patch\algorithm\Prefab.h" />
     <ClInclude Include="..\..\radiantcore\patch\Patch.h" />
     <ClInclude Include="..\..\radiantcore\patch\PatchConstants.h" />

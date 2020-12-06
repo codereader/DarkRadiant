@@ -12,7 +12,7 @@
 #include "string/convert.h"
 #include "scenelib.h"
 #include "command/ExecutionFailure.h"
-#include "PatchIterators.h"
+#include "patch/PatchIterators.h"
 
 namespace patch
 {
