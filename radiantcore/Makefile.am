@@ -146,7 +146,6 @@ libradiantcore_la_SOURCES = Radiant.cpp \
                 map/namespace/Namespace.cpp \
                 map/namespace/NamespaceFactory.cpp \
                 map/ArchivedMapResource.cpp \
-                map/AutoSaver.cpp \
                 map/CounterManager.cpp \
                 map/EditingStopwatch.cpp \
                 map/EditingStopwatchInfoFileModule.cpp \

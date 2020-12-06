@@ -2,6 +2,7 @@
 
 #include "iscenegraph.h"
 #include "iorthoview.h"
+#include "igl.h"
 
 #include "math/Vector3.h"
 #include "math/Matrix4.h"

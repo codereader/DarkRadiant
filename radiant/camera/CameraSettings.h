@@ -4,6 +4,7 @@
 #include "iregistry.h"
 
 #include <cmath>
+#include "igl.h"
 #include <sigc++/signal.h>
 
 namespace ui
