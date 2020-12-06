@@ -101,6 +101,11 @@ if (NOT SKIP_DM_PLUGINS)
             LIBRARY DESTINATION lib/darkradiant/plugins)
 endif()
 
+# Generate and install the .desktop file
+configure_file(install/darkradiant.desktop.in install/darkradiant.desktop)
+install(FILES install/darkradiant.desktop
+        DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
+
 # Install resources
 set(PKG_DATA_DIR "${CMAKE_INSTALL_DATADIR}/darkradiant")
 
