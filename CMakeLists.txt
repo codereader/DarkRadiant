@@ -103,7 +103,7 @@ endif()
 
 # Generate and install the .desktop file
 configure_file(install/darkradiant.desktop.in install/darkradiant.desktop)
-install(FILES install/darkradiant.desktop
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/install/darkradiant.desktop
         DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
 
 # Install resources
