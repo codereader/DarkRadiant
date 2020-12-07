@@ -88,7 +88,7 @@ add_subdirectory(radiantcore)
 add_subdirectory(radiant)
 
 # Install main targets
-install(TARGETS darkradiant math xmlutil scenegraph wxutil module
+install(TARGETS darkradiant math xmlutil scenegraph wxutil
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib/darkradiant)
 install(TARGETS radiantcore script sound
