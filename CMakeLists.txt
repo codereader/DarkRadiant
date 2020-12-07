@@ -119,6 +119,5 @@ install(DIRECTORY install/ui DESTINATION ${PKG_DATA_DIR}
         FILES_MATCHING PATTERN "*.ttf" PATTERN "*.xrc")
 
 # Install scripts
-set(PKG_LIB_DIR "${CMAKE_INSTALL_LIBDIR}/darkradiant")
-install(DIRECTORY install/scripts DESTINATION ${PKG_LIB_DIR}
+install(DIRECTORY install/scripts DESTINATION ${PKG_DATA_DIR}
         FILES_MATCHING PATTERN "*.py")
