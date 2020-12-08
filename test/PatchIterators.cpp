@@ -147,12 +147,14 @@ TEST_F(PatchIteratorTest, IterateOverWholePatchRowWiseColumnBackwards)
     EXPECT_EQ(expected, expectedValues.end()); // assume no underflow
 }
 
-void iterateOverPartialPatchColumnWise(IPatch& patch, std::size_t startCol, std::size_t endCol, bool rowBackwards)
+void iterateOverPartialPatchColumnWise(IPatch& patch, int startCol, int endCol, bool rowBackwards)
 {
     std::vector<Vector3> expectedValues;
 
     // Fill the vector with the expected values
-    for (auto col = startCol; col <= endCol; ++col)
+    int step = startCol <= endCol ? +1 : -1;
+
+    for (auto col = startCol; col != endCol + step; col += step)
     {
         if (rowBackwards)
         {
@@ -197,6 +199,15 @@ TEST_F(PatchIteratorTest, IterateOverPartialPatchColumnWise)
     iterateOverPartialPatchColumnWise(patch->getPatch(), 1, 3, false);
     iterateOverPartialPatchColumnWise(patch->getPatch(), 4, 4, false);
     iterateOverPartialPatchColumnWise(patch->getPatch(), 3, 4, false);
+
+    iterateOverPartialPatchColumnWise(patch->getPatch(), 4, 0, false);
+    iterateOverPartialPatchColumnWise(patch->getPatch(), 3, 0, false);
+    iterateOverPartialPatchColumnWise(patch->getPatch(), 0, 0, false);
+    iterateOverPartialPatchColumnWise(patch->getPatch(), 4, 0, false);
+    iterateOverPartialPatchColumnWise(patch->getPatch(), 4, 3, false);
+    iterateOverPartialPatchColumnWise(patch->getPatch(), 3, 1, false);
+    iterateOverPartialPatchColumnWise(patch->getPatch(), 4, 4, false);
+    iterateOverPartialPatchColumnWise(patch->getPatch(), 4, 3, false);
 }
 
 TEST_F(PatchIteratorTest, IterateOverPartialPatchColumnWiseRowBackwards)
@@ -212,14 +223,25 @@ TEST_F(PatchIteratorTest, IterateOverPartialPatchColumnWiseRowBackwards)
     iterateOverPartialPatchColumnWise(patch->getPatch(), 1, 3, true);
     iterateOverPartialPatchColumnWise(patch->getPatch(), 4, 4, true);
     iterateOverPartialPatchColumnWise(patch->getPatch(), 3, 4, true);
+
+    iterateOverPartialPatchColumnWise(patch->getPatch(), 4, 0, true);
+    iterateOverPartialPatchColumnWise(patch->getPatch(), 3, 0, true);
+    iterateOverPartialPatchColumnWise(patch->getPatch(), 0, 0, true);
+    iterateOverPartialPatchColumnWise(patch->getPatch(), 4, 0, true);
+    iterateOverPartialPatchColumnWise(patch->getPatch(), 4, 3, true);
+    iterateOverPartialPatchColumnWise(patch->getPatch(), 3, 1, true);
+    iterateOverPartialPatchColumnWise(patch->getPatch(), 4, 4, true);
+    iterateOverPartialPatchColumnWise(patch->getPatch(), 4, 3, true);
 }
 
-void iterateOverPartialPatchRowWise(IPatch& patch, std::size_t startRow, std::size_t endRow, bool columnBackwards)
+void iterateOverPartialPatchRowWise(IPatch& patch, int startRow, int endRow, bool columnBackwards)
 {
     std::vector<Vector3> expectedValues;
 
     // Fill the vector with the expected values
-    for (auto row = startRow; row <= endRow; ++row)
+    int step = startRow <= endRow ? +1 : -1;
+
+    for (auto row = startRow; row != endRow + step; row += step)
     {
         if (columnBackwards)
         {
@@ -264,6 +286,15 @@ TEST_F(PatchIteratorTest, IterateOverPartialPatchRowWise)
     iterateOverPartialPatchRowWise(patch->getPatch(), 1, 3, false);
     iterateOverPartialPatchRowWise(patch->getPatch(), 6, 6, false);
     iterateOverPartialPatchRowWise(patch->getPatch(), 3, 4, false);
+
+    iterateOverPartialPatchRowWise(patch->getPatch(), 6, 0, false);
+    iterateOverPartialPatchRowWise(patch->getPatch(), 3, 0, false);
+    iterateOverPartialPatchRowWise(patch->getPatch(), 0, 0, false);
+    iterateOverPartialPatchRowWise(patch->getPatch(), 4, 0, false);
+    iterateOverPartialPatchRowWise(patch->getPatch(), 6, 3, false);
+    iterateOverPartialPatchRowWise(patch->getPatch(), 3, 1, false);
+    iterateOverPartialPatchRowWise(patch->getPatch(), 6, 6, false);
+    iterateOverPartialPatchRowWise(patch->getPatch(), 4, 3, false);
 }
 
 TEST_F(PatchIteratorTest, IterateOverPartialPatchRowWiseColumnBackwards)
@@ -279,6 +310,15 @@ TEST_F(PatchIteratorTest, IterateOverPartialPatchRowWiseColumnBackwards)
     iterateOverPartialPatchRowWise(patch->getPatch(), 1, 3, true);
     iterateOverPartialPatchRowWise(patch->getPatch(), 6, 6, true);
     iterateOverPartialPatchRowWise(patch->getPatch(), 3, 4, true);
+
+    iterateOverPartialPatchRowWise(patch->getPatch(), 6, 0, true);
+    iterateOverPartialPatchRowWise(patch->getPatch(), 3, 0, true);
+    iterateOverPartialPatchRowWise(patch->getPatch(), 0, 0, true);
+    iterateOverPartialPatchRowWise(patch->getPatch(), 4, 0, true);
+    iterateOverPartialPatchRowWise(patch->getPatch(), 6, 3, true);
+    iterateOverPartialPatchRowWise(patch->getPatch(), 3, 1, true);
+    iterateOverPartialPatchRowWise(patch->getPatch(), 6, 6, true);
+    iterateOverPartialPatchRowWise(patch->getPatch(), 4, 3, true);
 }
 
 void iterateOverSingleColum(IPatch& patch, std::size_t colToTest)

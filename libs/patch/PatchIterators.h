@@ -206,11 +206,12 @@ public:
 
     ColumnWisePatchIteratorBase(IPatch& patch, std::size_t startColumn, std::size_t endColumn, int rowDelta) :
         PatchControlIterator(patch, rowDelta > 0 ? 0 : patch.getHeight() - 1, startColumn, 
-            std::bind(ColumnWisePatchIteratorBase::moveNext, std::placeholders::_1, std::ref(patch), endColumn, rowDelta))
+            std::bind(ColumnWisePatchIteratorBase::moveNext, std::placeholders::_1, std::ref(patch), 
+                endColumn, startColumn <= endColumn ? +1 : -1, rowDelta))
     {}
 
 private:
-    static void moveNext(PatchControlIterator& it, const IPatch& patch, std::size_t endColumn, int rowDelta)
+    static void moveNext(PatchControlIterator& it, const IPatch& patch, std::size_t endColumn, int columnDelta, int rowDelta)
     {
         auto nextRow = it.getRow() + rowDelta;
         auto nextColumn = it.getColumn();
@@ -220,7 +221,10 @@ private:
         {
             // Advance to the next column
             // If that doesn't succeed, just leave the indices out of bounds
-            if (++nextColumn <= endColumn)
+            nextColumn += columnDelta;
+
+            if (columnDelta > 0 && nextColumn <= endColumn ||
+                columnDelta < 0 && nextColumn >= endColumn)
             {
                 nextRow = rowDelta > 0 ? 0 : patch.getHeight() - 1;
             }
@@ -273,11 +277,12 @@ public:
 
     RowWisePatchIteratorBase(IPatch& patch, std::size_t startRow, std::size_t endRow, int columnDelta) :
         PatchControlIterator(patch, startRow, columnDelta > 0 ? 0 : patch.getWidth() - 1,
-            std::bind(RowWisePatchIteratorBase::moveNext, std::placeholders::_1, std::ref(patch), endRow, columnDelta))
+            std::bind(RowWisePatchIteratorBase::moveNext, std::placeholders::_1, std::ref(patch), 
+                endRow, startRow <= endRow ? +1 : -1, columnDelta))
     {}
 
 private:
-    static void moveNext(PatchControlIterator& it, const IPatch& patch, std::size_t endRow, int columnDelta)
+    static void moveNext(PatchControlIterator& it, const IPatch& patch, std::size_t endRow, int rowDelta, int columnDelta)
     {
         auto nextColumn = it.getColumn() + columnDelta;
         auto nextRow = it.getRow();
@@ -287,7 +292,10 @@ private:
         {
             // Advance to the next row
             // If that doesn't succeed, just leave the indices out of bounds
-            if (++nextRow <= endRow)
+            nextRow += rowDelta;
+
+            if (rowDelta > 0 && nextRow <= endRow ||
+                rowDelta < 0 && nextRow >= endRow)
             {
                 nextColumn = columnDelta > 0 ? 0 : patch.getWidth() - 1;
             }
