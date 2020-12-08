@@ -118,6 +118,10 @@ install(DIRECTORY install/gl DESTINATION ${PKG_DATA_DIR})
 install(DIRECTORY install/ui DESTINATION ${PKG_DATA_DIR}
         FILES_MATCHING PATTERN "*.ttf" PATTERN "*.xrc")
 
+# Install locale data
+install(DIRECTORY install/i18n/de TYPE LOCALE
+        FILES_MATCHING PATTERN "*.mo")
+
 # Install scripts
 install(DIRECTORY install/scripts DESTINATION ${PKG_DATA_DIR}
         FILES_MATCHING PATTERN "*.py")
