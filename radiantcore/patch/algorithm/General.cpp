@@ -424,28 +424,46 @@ namespace
 {
 
 // Returns true if all the elements in the given sequences are equal
-inline bool isEqual(const PatchControlIterator& sequence1, const PatchControlIterator& sequence2)
+inline bool isEqual(const PatchControlIterator& sequence1, const PatchControlIterator& sequence2, double epsilon)
 {
     // If the iterators are invalid from the start, return false
     if (!sequence1.isValid() || !sequence2.isValid())
     {
+        rMessage() << "Sequences are not valid" << std::endl;
         return false;
     }
 
     for (auto p1 = sequence1, p2 = sequence2; p1.isValid() && p2.isValid(); ++p1, ++p2)
     {
-        if (p1->vertex != p2->vertex)
+        rMessage() << "P1: " << p1->vertex << ", P2: " << p2->vertex << std::endl;
+
+        if (!p1->vertex.isEqual(p2->vertex, epsilon))
         {
+            rMessage() << "Sequences are not equal" << std::endl;
             return false;
         }
     }
 
+    rMessage() << "Sequences are equal" << std::endl;
+
     return true;
 }
 
+// Copies all values from source to target, until the source sequence is depleted
+// Returns the new position of the target iterator
+inline void assignPatchControls(const PatchControlIterator& source, PatchControlIterator& target)
+{
+    auto& t = target;
+    for (auto s = source; s.isValid() && t.isValid(); ++s, ++t)
+    {
+        t->vertex = s->vertex;
+        t->texcoord = s->texcoord;
+    }
 }
 
-PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodePtr& patchNode2)
+}
+
+scene::INodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodePtr& patchNode2)
 {
     constexpr double WELD_EPSILON = 0.001;
 
@@ -473,11 +491,50 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
         SinglePatchRowIterator patch2FirstRow(patch2, 0);
         SinglePatchRowIterator patch2LastRow(patch2, patch2.getWidth() - 1);
 
-        if (isEqual(patch1FirstRow, patch2FirstRow))
+        rMessage() << "Comparing P1FirstRow to P2FirstRow" << std::endl;
+        if (isEqual(patch1FirstRow, patch2FirstRow, WELD_EPSILON))
         {
+            auto newPatchNode = GlobalPatchModule().createPatch(patch1.subdivisionsFixed() ? PatchDefType::Def3 : PatchDefType::Def2);
+            auto& newPatch = std::dynamic_pointer_cast<IPatchNode>(newPatchNode)->getPatch();
+            newPatch.setDims(patch1.getWidth(), patch1.getHeight() + patch2.getHeight() - 1);
 
+            // prepend
+            // use rows of other patch
         }
 
+        rMessage() << "Comparing P1FirstRow to P2LastRow" << std::endl;
+        if (isEqual(patch1FirstRow, patch2LastRow, WELD_EPSILON))
+        {
+            // prepend
+            // use rows of other patch from end
+        }
+
+        rMessage() << "Comparing P1LastRow to P2FirstRow" << std::endl;
+        if (isEqual(patch1LastRow, patch2FirstRow, WELD_EPSILON))
+        {
+            auto sceneNode = GlobalPatchModule().createPatch(patch1.subdivisionsFixed() ? PatchDefType::Def3 : PatchDefType::Def2);
+            auto& newPatch = std::dynamic_pointer_cast<IPatchNode>(sceneNode)->getPatch();
+            newPatch.setDims(patch1.getWidth(), patch1.getHeight() + patch2.getHeight() - 1);
+            
+            RowWisePatchIterator p1(patch1);
+            RowWisePatchIterator p2(patch2, 1, patch2.getWidth() - 1); // skip the first row of the second patch
+            RowWisePatchIterator target(newPatch);
+
+            assignPatchControls(p1, target);
+            assignPatchControls(p2, target);
+
+            newPatch.controlPointsChanged();
+
+            return sceneNode;
+        }
+
+        rMessage() << "Comparing P1LastRow to P2LastRow" << std::endl;
+        if (isEqual(patch1LastRow, patch2LastRow, WELD_EPSILON))
+        {
+            // append
+            // use rows of other patch from end
+        }
+#if 0
         row1 = 0;
         row2 = 0;
 
@@ -553,7 +610,10 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
                 break;
             }
         }
+#endif
     }
+
+    return scene::INodePtr();
 
     if (patch1.getWidth() == patch2.getHeight())
     {
@@ -798,14 +858,18 @@ PatchNodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodeP
 void weldPatches(const PatchNodePtr& patchNode1, const PatchNodePtr& patchNode2)
 {
     auto mergedPatch = createdMergedPatch(patchNode1, patchNode2);
-    assert(mergedPatch);
+
+    if (!mergedPatch)
+    {
+        throw cmd::ExecutionFailure(_("Failed to weld patches."));
+    }
 
     patchNode1->getParent()->addChildNode(mergedPatch);
 
     mergedPatch->assignToLayers(patchNode1->getLayers());
     // TODO: selection grouping
 
-    mergedPatch->getPatch().scaleTextureNaturally();
+    std::dynamic_pointer_cast<IPatchNode>(mergedPatch)->getPatch().scaleTextureNaturally();
 
     Node_setSelected(mergedPatch, true);
 

@@ -11,13 +11,18 @@ namespace test
 
 using PatchWeldingTest = RadiantTest;
 
+class PatchWelding3x3 :
+    public PatchWeldingTest,
+    public testing::WithParamInterface<const char*>
+{};
+
+namespace
+{
+
 inline scene::INodePtr findPatchWithNumber(const std::string& number)
 {
     return algorithm::findFirstPatchWithMaterial(GlobalMapModule().getRoot(), "textures/numbers/" + number);
 }
-
-namespace
-{
 
 void performPatchWeldingTest(const std::string& number1, const std::string& number2, int expectedRows, int expectedCols)
 {
@@ -64,12 +69,25 @@ void assumePatchWeldingFails(const std::string& number1, const std::string& numb
 
 }
 
-// Patch 1 = 3x3, Patch 2 = 3x3 to the "left"
-TEST_F(PatchWeldingTest, WeldPatches1And2)
+// Patch 1 is sharing its first row with another patch
+TEST_P(PatchWelding3x3, WeldPatch1WithOther3x3)
 {
-    loadMap("weld_patches.mapx");
+    loadMap("weld_patches2.mapx");
 
-    // Welding patches 1 and 2 should produce a 3rows x 5cols patch
+    auto otherPatch = GetParam();
+
+    // Welding should produce a 5rows x 3cols patch
+    performPatchWeldingTest("1", otherPatch, 5, 3);
+}
+
+INSTANTIATE_TEST_CASE_P(WeldPatch1WithOther3x3, PatchWelding3x3, testing::Values("2", "3", "4", "5"));
+
+#if 0
+TEST_F(PatchWeldingTest, Weld3x3Patches1And5)
+{
+    loadMap("weld_patches2.mapx");
+
+    // Welding should produce a 3rows x 5cols patch
     performPatchWeldingTest("1", "2", 3, 5);
 }
 
@@ -163,4 +181,13 @@ TEST_F(PatchWeldingTest, WeldPatches11And12)
     performPatchWeldingTest("11", "12", 5, 9);
 }
 
+// Patches 13 are 14 are matching at first row : first row
+TEST_F(PatchWeldingTest, WeldPatches13And14)
+{
+    loadMap("weld_patches.mapx");
+
+    // Welding the two cylinders produce a 5rows x 3cols patch
+    performPatchWeldingTest("13", "14", 5, 3);
+}
+#endif
 }

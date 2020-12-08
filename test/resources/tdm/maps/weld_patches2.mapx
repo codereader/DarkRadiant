@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="utf-8"?>
+<map version="1" format="portable">
+  <layers>
+    <layer id="0" name="Default"/>
+  </layers>
+  <selectionGroups/>
+  <selectionSets/>
+  <properties>
+    <property key="EditTimeInSeconds" value="6749"/>
+    <property key="LastCameraAngle" value="-48 131.4 0"/>
+    <property key="LastCameraPosition" value="336.246 -465.363 434.976"/>
+    <property key="LastShaderClipboardMaterial" value="textures/numbers/20"/>
+  </properties>
+  <entity number="0">
+    <primitives>
+      <patch number="0" width="3" height="3" fixedSubdivisions="true" subdivisionsX="2" subdivisionsY="2">
+        <material name="textures/numbers/1"/>
+        <controlVertices>
+          <controlVertex row="0" column="0" x="-120.000000" y="-176.000000" z="0" u="0" v="0"/>
+          <controlVertex row="1" column="0" x="-120.000000" y="-136.000000" z="0" u="0" v="-0.500000"/>
+          <controlVertex row="2" column="0" x="-120.000000" y="-96.000000" z="0" u="0" v="-1.000000"/>
+          <controlVertex row="0" column="1" x="-80.000000" y="-168.000000" z="0" u="0.500000" v="0"/>
+          <controlVertex row="1" column="1" x="-80.000000" y="-136.000000" z="0" u="0.500000" v="-0.500000"/>
+          <controlVertex row="2" column="1" x="-80.000000" y="-88.000000" z="0" u="0.500000" v="-1.000000"/>
+          <controlVertex row="0" column="2" x="-40.000000" y="-176.000000" z="0" u="1.000000" v="0"/>
+          <controlVertex row="1" column="2" x="-40.000000" y="-136.000000" z="0" u="1.000000" v="-0.500000"/>
+          <controlVertex row="2" column="2" x="-40.000000" y="-96.000000" z="0" u="1.000000" v="-1.000000"/>
+        </controlVertices>
+        <layers>
+          <layer id="0"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </patch>
+      <patch number="1" width="3" height="3" fixedSubdivisions="true" subdivisionsX="2" subdivisionsY="2">
+        <material name="textures/numbers/2"/>
+        <controlVertices>
+          <controlVertex row="0" column="0" x="-120.000000" y="-176.000000" z="0" u="0" v="0"/>
+          <controlVertex row="1" column="0" x="-120.000000" y="-216.000000" z="64.000000" u="0" v="-0.500000"/>
+          <controlVertex row="2" column="0" x="-120.000000" y="-256.000000" z="64.000000" u="0" v="-1.000000"/>
+          <controlVertex row="0" column="1" x="-80.000000" y="-168.000000" z="0" u="0.500000" v="0"/>
+          <controlVertex row="1" column="1" x="-80.000000" y="-216.000000" z="64.000000" u="0.500000" v="-0.500000"/>
+          <controlVertex row="2" column="1" x="-80.000000" y="-256.000000" z="64.000000" u="0.500000" v="-1.000000"/>
+          <controlVertex row="0" column="2" x="-40.000000" y="-176.000000" z="0" u="1.000000" v="0"/>
+          <controlVertex row="1" column="2" x="-40.000000" y="-216.000000" z="64.000000" u="1.000000" v="-0.500000"/>
+          <controlVertex row="2" column="2" x="-40.000000" y="-256.000000" z="64.000000" u="1.000000" v="-1.000000"/>
+        </controlVertices>
+        <layers>
+          <layer id="0"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </patch>
+      <patch number="2" width="3" height="3" fixedSubdivisions="true" subdivisionsX="2" subdivisionsY="2">
+        <material name="textures/numbers/3"/>
+        <controlVertices>
+          <controlVertex row="0" column="0" x="-120.000000" y="-256.000000" z="40.000000" u="0" v="0"/>
+          <controlVertex row="1" column="0" x="-120.000000" y="-216.000000" z="40.000000" u="0" v="-0.500000"/>
+          <controlVertex row="2" column="0" x="-120.000000" y="-176.000000" z="0" u="0" v="-1.000000"/>
+          <controlVertex row="0" column="1" x="-80.000000" y="-256.000000" z="40.000000" u="0.500000" v="0"/>
+          <controlVertex row="1" column="1" x="-80.000000" y="-216.000000" z="40.000000" u="0.500000" v="-0.500000"/>
+          <controlVertex row="2" column="1" x="-80.000000" y="-168.000000" z="0" u="0.500000" v="-1.000000"/>
+          <controlVertex row="0" column="2" x="-40.000000" y="-256.000000" z="40.000000" u="1.000000" v="0"/>
+          <controlVertex row="1" column="2" x="-40.000000" y="-216.000000" z="40.000000" u="1.000000" v="-0.500000"/>
+          <controlVertex row="2" column="2" x="-40.000000" y="-176.000000" z="0" u="1.000000" v="-1.000000"/>
+        </controlVertices>
+        <layers>
+          <layer id="0"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </patch>
+      <patch number="3" width="3" height="3" fixedSubdivisions="true" subdivisionsX="2" subdivisionsY="2">
+        <material name="textures/numbers/4"/>
+        <controlVertices>
+          <controlVertex row="0" column="0" x="-39.999997" y="-175.999997" z="0" u="0" v="0"/>
+          <controlVertex row="1" column="0" x="-39.999997" y="-216.000000" z="-32.000000" u="0" v="-0.500000"/>
+          <controlVertex row="2" column="0" x="-39.999997" y="-256.000003" z="-32.000000" u="0" v="-1.000000"/>
+          <controlVertex row="0" column="1" x="-80.000000" y="-167.999997" z="0" u="0.500000" v="0"/>
+          <controlVertex row="1" column="1" x="-80.000000" y="-216.000000" z="-32.000000" u="0.500000" v="-0.500000"/>
+          <controlVertex row="2" column="1" x="-80.000000" y="-256.000003" z="-32.000000" u="0.500000" v="-1.000000"/>
+          <controlVertex row="0" column="2" x="-120.000003" y="-175.999997" z="0" u="1.000000" v="0"/>
+          <controlVertex row="1" column="2" x="-120.000003" y="-216.000000" z="-32.000000" u="1.000000" v="-0.500000"/>
+          <controlVertex row="2" column="2" x="-120.000003" y="-256.000003" z="-32.000000" u="1.000000" v="-1.000000"/>
+        </controlVertices>
+        <layers>
+          <layer id="0"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </patch>
+      <patch number="4" width="3" height="3" fixedSubdivisions="true" subdivisionsX="2" subdivisionsY="2">
+        <material name="textures/numbers/5"/>
+        <controlVertices>
+          <controlVertex row="0" column="0" x="-39.999997" y="-255.999997" z="-64.000000" u="0" v="0"/>
+          <controlVertex row="1" column="0" x="-39.999997" y="-216.000000" z="-64.000000" u="0" v="-0.500000"/>
+          <controlVertex row="2" column="0" x="-39.999997" y="-176.000003" z="0" u="0" v="-1.000000"/>
+          <controlVertex row="0" column="1" x="-80.000000" y="-255.999997" z="-64.000000" u="0.500000" v="0"/>
+          <controlVertex row="1" column="1" x="-80.000000" y="-216.000000" z="-64.000000" u="0.500000" v="-0.500000"/>
+          <controlVertex row="2" column="1" x="-80.000000" y="-168.000003" z="0" u="0.500000" v="-1.000000"/>
+          <controlVertex row="0" column="2" x="-120.000003" y="-255.999997" z="-64.000000" u="1.000000" v="0"/>
+          <controlVertex row="1" column="2" x="-120.000003" y="-216.000000" z="-64.000000" u="1.000000" v="-0.500000"/>
+          <controlVertex row="2" column="2" x="-120.000003" y="-176.000003" z="0" u="1.000000" v="-1.000000"/>
+        </controlVertices>
+        <layers>
+          <layer id="0"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </patch>
+      <patch number="5" width="3" height="3" fixedSubdivisions="true" subdivisionsX="2" subdivisionsY="2">
+        <material name="textures/numbers/7"/>
+        <controlVertices>
+          <controlVertex row="0" column="0" x="-0.000000" y="-176.000000" z="0" u="0" v="0"/>
+          <controlVertex row="1" column="0" x="-0.000000" y="-216.000000" z="64.000000" u="0" v="-0.500000"/>
+          <controlVertex row="2" column="0" x="-0.000000" y="-256.000000" z="64.000000" u="0" v="-1.000000"/>
+          <controlVertex row="0" column="1" x="40.000000" y="-168.000000" z="0" u="0.500000" v="0"/>
+          <controlVertex row="1" column="1" x="40.000000" y="-216.000000" z="64.000000" u="0.500000" v="-0.500000"/>
+          <controlVertex row="2" column="1" x="40.000000" y="-256.000000" z="64.000000" u="0.500000" v="-1.000000"/>
+          <controlVertex row="0" column="2" x="80.000000" y="-176.000000" z="0" u="1.000000" v="0"/>
+          <controlVertex row="1" column="2" x="80.000000" y="-216.000000" z="64.000000" u="1.000000" v="-0.500000"/>
+          <controlVertex row="2" column="2" x="80.000000" y="-256.000000" z="64.000000" u="1.000000" v="-1.000000"/>
+        </controlVertices>
+        <layers>
+          <layer id="0"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </patch>
+      <patch number="6" width="3" height="3" fixedSubdivisions="true" subdivisionsX="2" subdivisionsY="2">
+        <material name="textures/numbers/8"/>
+        <controlVertices>
+          <controlVertex row="0" column="0" x="0" y="-256.000000" z="40.000000" u="0" v="0"/>
+          <controlVertex row="1" column="0" x="0" y="-216.000000" z="40.000000" u="0" v="-0.500000"/>
+          <controlVertex row="2" column="0" x="0" y="-176.000000" z="0" u="0" v="-1.000000"/>
+          <controlVertex row="0" column="1" x="40.000000" y="-256.000000" z="40.000000" u="0.500000" v="0"/>
+          <controlVertex row="1" column="1" x="40.000000" y="-216.000000" z="40.000000" u="0.500000" v="-0.500000"/>
+          <controlVertex row="2" column="1" x="40.000000" y="-168.000000" z="0" u="0.500000" v="-1.000000"/>
+          <controlVertex row="0" column="2" x="80.000000" y="-256.000000" z="40.000000" u="1.000000" v="0"/>
+          <controlVertex row="1" column="2" x="80.000000" y="-216.000000" z="40.000000" u="1.000000" v="-0.500000"/>
+          <controlVertex row="2" column="2" x="80.000000" y="-176.000000" z="0" u="1.000000" v="-1.000000"/>
+        </controlVertices>
+        <layers>
+          <layer id="0"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </patch>
+      <patch number="7" width="3" height="3" fixedSubdivisions="true" subdivisionsX="2" subdivisionsY="2">
+        <material name="textures/numbers/9"/>
+        <controlVertices>
+          <controlVertex row="0" column="0" x="80.000003" y="-175.999997" z="0" u="0" v="0"/>
+          <controlVertex row="1" column="0" x="80.000003" y="-216.000000" z="-32.000000" u="0" v="-0.500000"/>
+          <controlVertex row="2" column="0" x="80.000003" y="-256.000003" z="-32.000000" u="0" v="-1.000000"/>
+          <controlVertex row="0" column="1" x="40.000000" y="-167.999997" z="0" u="0.500000" v="0"/>
+          <controlVertex row="1" column="1" x="40.000000" y="-216.000000" z="-32.000000" u="0.500000" v="-0.500000"/>
+          <controlVertex row="2" column="1" x="40.000000" y="-256.000003" z="-32.000000" u="0.500000" v="-1.000000"/>
+          <controlVertex row="0" column="2" x="-0.000003" y="-175.999997" z="0" u="1.000000" v="0"/>
+          <controlVertex row="1" column="2" x="-0.000003" y="-216.000000" z="-32.000000" u="1.000000" v="-0.500000"/>
+          <controlVertex row="2" column="2" x="-0.000003" y="-256.000003" z="-32.000000" u="1.000000" v="-1.000000"/>
+        </controlVertices>
+        <layers>
+          <layer id="0"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </patch>
+      <patch number="8" width="3" height="3" fixedSubdivisions="true" subdivisionsX="2" subdivisionsY="2">
+        <material name="textures/numbers/10"/>
+        <controlVertices>
+          <controlVertex row="0" column="0" x="80.000003" y="-255.999997" z="-64.000000" u="0" v="0"/>
+          <controlVertex row="1" column="0" x="80.000003" y="-216.000000" z="-64.000000" u="0" v="-0.500000"/>
+          <controlVertex row="2" column="0" x="80.000003" y="-176.000003" z="0" u="0" v="-1.000000"/>
+          <controlVertex row="0" column="1" x="40.000000" y="-255.999997" z="-64.000000" u="0.500000" v="0"/>
+          <controlVertex row="1" column="1" x="40.000000" y="-216.000000" z="-64.000000" u="0.500000" v="-0.500000"/>
+          <controlVertex row="2" column="1" x="40.000000" y="-168.000003" z="0" u="0.500000" v="-1.000000"/>
+          <controlVertex row="0" column="2" x="-0.000003" y="-255.999997" z="-64.000000" u="1.000000" v="0"/>
+          <controlVertex row="1" column="2" x="-0.000003" y="-216.000000" z="-64.000000" u="1.000000" v="-0.500000"/>
+          <controlVertex row="2" column="2" x="-0.000003" y="-176.000003" z="0" u="1.000000" v="-1.000000"/>
+        </controlVertices>
+        <layers>
+          <layer id="0"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </patch>
+      <patch number="9" width="3" height="3" fixedSubdivisions="true" subdivisionsX="2" subdivisionsY="2">
+        <material name="textures/numbers/6"/>
+        <controlVertices>
+          <controlVertex row="0" column="0" x="0" y="-96.000000" z="0" u="0" v="0"/>
+          <controlVertex row="1" column="0" x="0" y="-136.000000" z="0" u="0" v="-0.500000"/>
+          <controlVertex row="2" column="0" x="0" y="-176.000000" z="0" u="0" v="-1.000000"/>
+          <controlVertex row="0" column="1" x="40.000000" y="-88.000000" z="0" u="0.500000" v="0"/>
+          <controlVertex row="1" column="1" x="40.000000" y="-136.000000" z="0" u="0.500000" v="-0.500000"/>
+          <controlVertex row="2" column="1" x="40.000000" y="-168.000000" z="0" u="0.500000" v="-1.000000"/>
+          <controlVertex row="0" column="2" x="80.000000" y="-96.000000" z="0" u="1.000000" v="0"/>
+          <controlVertex row="1" column="2" x="80.000000" y="-136.000000" z="0" u="1.000000" v="-0.500000"/>
+          <controlVertex row="2" column="2" x="80.000000" y="-176.000000" z="0" u="1.000000" v="-1.000000"/>
+        </controlVertices>
+        <layers>
+          <layer id="0"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </patch>
+      <patch number="10" width="3" height="3" fixedSubdivisions="true" subdivisionsX="2" subdivisionsY="2">
+        <material name="textures/numbers/13"/>
+        <controlVertices>
+          <controlVertex row="0" column="0" x="120.000000" y="-256.000000" z="40.000000" u="0" v="0"/>
+          <controlVertex row="1" column="0" x="120.000000" y="-216.000000" z="40.000000" u="0" v="-0.500000"/>
+          <controlVertex row="2" column="0" x="120.000000" y="-176.000000" z="0" u="0" v="-1.000000"/>
+          <controlVertex row="0" column="1" x="160.000000" y="-256.000000" z="40.000000" u="0.500000" v="0"/>
+          <controlVertex row="1" column="1" x="160.000000" y="-216.000000" z="40.000000" u="0.500000" v="-0.500000"/>
+          <controlVertex row="2" column="1" x="160.000000" y="-172.000000" z="0" u="0.500000" v="-1.000000"/>
+          <controlVertex row="0" column="2" x="200.000000" y="-256.000000" z="40.000000" u="1.000000" v="0"/>
+          <controlVertex row="1" column="2" x="200.000000" y="-216.000000" z="40.000000" u="1.000000" v="-0.500000"/>
+          <controlVertex row="2" column="2" x="200.000000" y="-176.000000" z="0" u="1.000000" v="-1.000000"/>
+        </controlVertices>
+        <layers>
+          <layer id="0"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </patch>
+      <patch number="11" width="3" height="3" fixedSubdivisions="true" subdivisionsX="2" subdivisionsY="2">
+        <material name="textures/numbers/12"/>
+        <controlVertices>
+          <controlVertex row="0" column="0" x="120.000000" y="-176.000000" z="0" u="0" v="0"/>
+          <controlVertex row="1" column="0" x="120.000000" y="-216.000000" z="64.000000" u="0" v="-0.500000"/>
+          <controlVertex row="2" column="0" x="120.000000" y="-256.000000" z="64.000000" u="0" v="-1.000000"/>
+          <controlVertex row="0" column="1" x="160.000000" y="-172.000000" z="0" u="0.500000" v="0"/>
+          <controlVertex row="1" column="1" x="160.000000" y="-216.000000" z="64.000000" u="0.500000" v="-0.500000"/>
+          <controlVertex row="2" column="1" x="160.000000" y="-256.000000" z="64.000000" u="0.500000" v="-1.000000"/>
+          <controlVertex row="0" column="2" x="200.000000" y="-176.000000" z="0" u="1.000000" v="0"/>
+          <controlVertex row="1" column="2" x="200.000000" y="-216.000000" z="64.000000" u="1.000000" v="-0.500000"/>
+          <controlVertex row="2" column="2" x="200.000000" y="-256.000000" z="64.000000" u="1.000000" v="-1.000000"/>
+        </controlVertices>
+        <layers>
+          <layer id="0"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </patch>
+      <patch number="12" width="3" height="3" fixedSubdivisions="true" subdivisionsX="2" subdivisionsY="2">
+        <material name="textures/numbers/14"/>
+        <controlVertices>
+          <controlVertex row="0" column="0" x="200.000003" y="-175.999997" z="0" u="0" v="0"/>
+          <controlVertex row="1" column="0" x="200.000003" y="-216.000000" z="-32.000000" u="0" v="-0.500000"/>
+          <controlVertex row="2" column="0" x="200.000003" y="-256.000003" z="-32.000000" u="0" v="-1.000000"/>
+          <controlVertex row="0" column="1" x="160.000000" y="-171.999997" z="0" u="0.500000" v="0"/>
+          <controlVertex row="1" column="1" x="160.000000" y="-216.000000" z="-32.000000" u="0.500000" v="-0.500000"/>
+          <controlVertex row="2" column="1" x="160.000000" y="-256.000003" z="-32.000000" u="0.500000" v="-1.000000"/>
+          <controlVertex row="0" column="2" x="119.999997" y="-175.999997" z="0" u="1.000000" v="0"/>
+          <controlVertex row="1" column="2" x="119.999997" y="-216.000000" z="-32.000000" u="1.000000" v="-0.500000"/>
+          <controlVertex row="2" column="2" x="119.999997" y="-256.000003" z="-32.000000" u="1.000000" v="-1.000000"/>
+        </controlVertices>
+        <layers>
+          <layer id="0"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </patch>
+      <patch number="13" width="3" height="3" fixedSubdivisions="true" subdivisionsX="2" subdivisionsY="2">
+        <material name="textures/numbers/15"/>
+        <controlVertices>
+          <controlVertex row="0" column="0" x="200.000003" y="-255.999997" z="-64.000000" u="0" v="0"/>
+          <controlVertex row="1" column="0" x="200.000003" y="-216.000000" z="-64.000000" u="0" v="-0.500000"/>
+          <controlVertex row="2" column="0" x="200.000003" y="-176.000003" z="0" u="0" v="-1.000000"/>
+          <controlVertex row="0" column="1" x="160.000000" y="-255.999997" z="-64.000000" u="0.500000" v="0"/>
+          <controlVertex row="1" column="1" x="160.000000" y="-216.000000" z="-64.000000" u="0.500000" v="-0.500000"/>
+          <controlVertex row="2" column="1" x="160.000000" y="-172.000003" z="0" u="0.500000" v="-1.000000"/>
+          <controlVertex row="0" column="2" x="119.999997" y="-255.999997" z="-64.000000" u="1.000000" v="0"/>
+          <controlVertex row="1" column="2" x="119.999997" y="-216.000000" z="-64.000000" u="1.000000" v="-0.500000"/>
+          <controlVertex row="2" column="2" x="119.999997" y="-176.000003" z="0" u="1.000000" v="-1.000000"/>
+        </controlVertices>
+        <layers>
+          <layer id="0"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </patch>
+      <patch number="14" width="3" height="3" fixedSubdivisions="true" subdivisionsX="2" subdivisionsY="2">
+        <material name="textures/numbers/11"/>
+        <controlVertices>
+          <controlVertex row="0" column="0" x="120.000000" y="-176.000000" z="0" u="0" v="0"/>
+          <controlVertex row="1" column="0" x="160.000000" y="-172.000000" z="0" u="0" v="-0.500000"/>
+          <controlVertex row="2" column="0" x="200.000000" y="-176.000000" z="0" u="0" v="-1.000000"/>
+          <controlVertex row="0" column="1" x="120.000000" y="-136.000000" z="0" u="0.500000" v="0"/>
+          <controlVertex row="1" column="1" x="160.000000" y="-136.000000" z="0" u="0.500000" v="-0.500000"/>
+          <controlVertex row="2" column="1" x="200.000000" y="-136.000000" z="0" u="0.500000" v="-1.000000"/>
+          <controlVertex row="0" column="2" x="120.000000" y="-96.000000" z="0" u="1.000000" v="0"/>
+          <controlVertex row="1" column="2" x="160.000000" y="-96.000000" z="0" u="1.000000" v="-0.500000"/>
+          <controlVertex row="2" column="2" x="200.000000" y="-96.000000" z="0" u="1.000000" v="-1.000000"/>
+        </controlVertices>
+        <layers>
+          <layer id="0"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </patch>
+      <patch number="15" width="3" height="3" fixedSubdivisions="true" subdivisionsX="2" subdivisionsY="2">
+        <material name="textures/numbers/18"/>
+        <controlVertices>
+          <controlVertex row="0" column="0" x="240.000000" y="-256.000000" z="40.000000" u="0" v="0"/>
+          <controlVertex row="1" column="0" x="240.000000" y="-216.000000" z="40.000000" u="0" v="-0.500000"/>
+          <controlVertex row="2" column="0" x="240.000000" y="-176.000000" z="0" u="0" v="-1.000000"/>
+          <controlVertex row="0" column="1" x="280.000000" y="-256.000000" z="40.000000" u="0.500000" v="0"/>
+          <controlVertex row="1" column="1" x="280.000000" y="-216.000000" z="40.000000" u="0.500000" v="-0.500000"/>
+          <controlVertex row="2" column="1" x="280.000000" y="-172.000000" z="0" u="0.500000" v="-1.000000"/>
+          <controlVertex row="0" column="2" x="320.000000" y="-256.000000" z="40.000000" u="1.000000" v="0"/>
+          <controlVertex row="1" column="2" x="320.000000" y="-216.000000" z="40.000000" u="1.000000" v="-0.500000"/>
+          <controlVertex row="2" column="2" x="320.000000" y="-176.000000" z="0" u="1.000000" v="-1.000000"/>
+        </controlVertices>
+        <layers>
+          <layer id="0"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </patch>
+      <patch number="16" width="3" height="3" fixedSubdivisions="true" subdivisionsX="2" subdivisionsY="2">
+        <material name="textures/numbers/16"/>
+        <controlVertices>
+          <controlVertex row="0" column="0" x="320.000000" y="-176.000000" z="0" u="0" v="0"/>
+          <controlVertex row="1" column="0" x="280.000000" y="-172.000000" z="0" u="0" v="-0.500000"/>
+          <controlVertex row="2" column="0" x="240.000000" y="-176.000000" z="0" u="0" v="-1.000000"/>
+          <controlVertex row="0" column="1" x="320.000000" y="-136.000000" z="0" u="0.500000" v="0"/>
+          <controlVertex row="1" column="1" x="280.000000" y="-136.000000" z="0" u="0.500000" v="-0.500000"/>
+          <controlVertex row="2" column="1" x="240.000000" y="-136.000000" z="0" u="0.500000" v="-1.000000"/>
+          <controlVertex row="0" column="2" x="320.000000" y="-96.000000" z="0" u="1.000000" v="0"/>
+          <controlVertex row="1" column="2" x="280.000000" y="-96.000000" z="0" u="1.000000" v="-0.500000"/>
+          <controlVertex row="2" column="2" x="240.000000" y="-96.000000" z="0" u="1.000000" v="-1.000000"/>
+        </controlVertices>
+        <layers>
+          <layer id="0"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </patch>
+      <patch number="17" width="3" height="3" fixedSubdivisions="true" subdivisionsX="2" subdivisionsY="2">
+        <material name="textures/numbers/17"/>
+        <controlVertices>
+          <controlVertex row="0" column="0" x="240.000000" y="-176.000000" z="0" u="0" v="0"/>
+          <controlVertex row="1" column="0" x="240.000000" y="-216.000000" z="64.000000" u="0" v="-0.500000"/>
+          <controlVertex row="2" column="0" x="240.000000" y="-256.000000" z="64.000000" u="0" v="-1.000000"/>
+          <controlVertex row="0" column="1" x="280.000000" y="-172.000000" z="0" u="0.500000" v="0"/>
+          <controlVertex row="1" column="1" x="280.000000" y="-216.000000" z="64.000000" u="0.500000" v="-0.500000"/>
+          <controlVertex row="2" column="1" x="280.000000" y="-256.000000" z="64.000000" u="0.500000" v="-1.000000"/>
+          <controlVertex row="0" column="2" x="320.000000" y="-176.000000" z="0" u="1.000000" v="0"/>
+          <controlVertex row="1" column="2" x="320.000000" y="-216.000000" z="64.000000" u="1.000000" v="-0.500000"/>
+          <controlVertex row="2" column="2" x="320.000000" y="-256.000000" z="64.000000" u="1.000000" v="-1.000000"/>
+        </controlVertices>
+        <layers>
+          <layer id="0"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </patch>
+      <patch number="18" width="3" height="3" fixedSubdivisions="true" subdivisionsX="2" subdivisionsY="2">
+        <material name="textures/numbers/19"/>
+        <controlVertices>
+          <controlVertex row="0" column="0" x="320.000003" y="-175.999997" z="0" u="0" v="0"/>
+          <controlVertex row="1" column="0" x="320.000003" y="-216.000000" z="-32.000000" u="0" v="-0.500000"/>
+          <controlVertex row="2" column="0" x="320.000003" y="-256.000003" z="-32.000000" u="0" v="-1.000000"/>
+          <controlVertex row="0" column="1" x="280.000000" y="-171.999997" z="0" u="0.500000" v="0"/>
+          <controlVertex row="1" column="1" x="280.000000" y="-216.000000" z="-32.000000" u="0.500000" v="-0.500000"/>
+          <controlVertex row="2" column="1" x="280.000000" y="-256.000003" z="-32.000000" u="0.500000" v="-1.000000"/>
+          <controlVertex row="0" column="2" x="239.999997" y="-175.999997" z="0" u="1.000000" v="0"/>
+          <controlVertex row="1" column="2" x="239.999997" y="-216.000000" z="-32.000000" u="1.000000" v="-0.500000"/>
+          <controlVertex row="2" column="2" x="239.999997" y="-256.000003" z="-32.000000" u="1.000000" v="-1.000000"/>
+        </controlVertices>
+        <layers>
+          <layer id="0"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </patch>
+      <patch number="19" width="3" height="3" fixedSubdivisions="true" subdivisionsX="2" subdivisionsY="2">
+        <material name="textures/numbers/20"/>
+        <controlVertices>
+          <controlVertex row="0" column="0" x="320.000003" y="-255.999997" z="-64.000000" u="0" v="0"/>
+          <controlVertex row="1" column="0" x="320.000003" y="-216.000000" z="-64.000000" u="0" v="-0.500000"/>
+          <controlVertex row="2" column="0" x="320.000003" y="-176.000003" z="0" u="0" v="-1.000000"/>
+          <controlVertex row="0" column="1" x="280.000000" y="-255.999997" z="-64.000000" u="0.500000" v="0"/>
+          <controlVertex row="1" column="1" x="280.000000" y="-216.000000" z="-64.000000" u="0.500000" v="-0.500000"/>
+          <controlVertex row="2" column="1" x="280.000000" y="-172.000003" z="0" u="0.500000" v="-1.000000"/>
+          <controlVertex row="0" column="2" x="239.999997" y="-255.999997" z="-64.000000" u="1.000000" v="0"/>
+          <controlVertex row="1" column="2" x="239.999997" y="-216.000000" z="-64.000000" u="1.000000" v="-0.500000"/>
+          <controlVertex row="2" column="2" x="239.999997" y="-176.000003" z="0" u="1.000000" v="-1.000000"/>
+        </controlVertices>
+        <layers>
+          <layer id="0"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </patch>
+    </primitives>
+    <keyValues>
+      <keyValue key="classname" value="worldspawn"/>
+      <keyValue key="patch1" value="3x3"/>
+      <keyValue key="patch10" value="5 rows x3 cols"/>
+      <keyValue key="patch2" value="3x3"/>
+      <keyValue key="patch3" value="3x3"/>
+      <keyValue key="patch4" value="3x3"/>
+      <keyValue key="patch5" value="3x3"/>
+      <keyValue key="patch6" value="3 rows x5 cols"/>
+      <keyValue key="patch7" value="3x3"/>
+      <keyValue key="patch8" value="3 rows x5 cols"/>
+      <keyValue key="patch9" value="3 rows x5 cols"/>
+    </keyValues>
+    <layers>
+      <layer id="0"/>
+    </layers>
+    <selectionGroups/>
+    <selectionSets/>
+  </entity>
+</map>
