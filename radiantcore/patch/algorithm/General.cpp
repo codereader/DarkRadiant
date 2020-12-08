@@ -498,11 +498,11 @@ scene::INodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNo
     };
 
     // Construct edge iterators for the first patch
-    // Iterator, EdgeLocation, Edge Length
-    auto patch1FirstRow = std::make_tuple(SinglePatchRowIterator(patch1, 0), Begin, Row, patch1.getWidth());
-    auto patch1FirstCol = std::make_tuple(SinglePatchColumnIterator(patch1, 0), Begin, Column, patch1.getHeight());
-    auto patch1LastRow = std::make_tuple(SinglePatchRowIterator(patch1, patch1.getHeight() - 1), End, Row, patch1.getWidth());
-    auto patch1LastCol = std::make_tuple(SinglePatchColumnIterator(patch1, patch1.getWidth() - 1), End, Column, patch1.getHeight());
+    // Iterator, Starting Point for copying data to new patch, Edge Length
+    auto patch1FirstRow = std::make_tuple(SinglePatchRowIterator(patch1, 0), RowWisePatchIterator(patch1, patch1.getHeight() - 1, 1), Row, patch1.getWidth());
+    auto patch1FirstCol = std::make_tuple(SinglePatchColumnIterator(patch1, 0), ColumnWisePatchIterator(patch1, patch1.getWidth() - 1, 1), Column, patch1.getHeight());
+    auto patch1LastRow = std::make_tuple(SinglePatchRowIterator(patch1, patch1.getHeight() - 1), RowWisePatchIterator(patch1, 0, patch1.getHeight() - 2), Row, patch1.getWidth());
+    auto patch1LastCol = std::make_tuple(SinglePatchColumnIterator(patch1, patch1.getWidth() - 1), ColumnWisePatchIterator(patch1, 0, patch1.getWidth() - 2), Column, patch1.getHeight());
 
     // We'll be comparing each of the above edges to all other four edges of the second patch
     // and we're doing it in forward and backward iteration, so we're trying to orient patch 2
@@ -517,7 +517,7 @@ scene::INodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNo
     auto patch2LastRowReverse = std::make_tuple(RowWisePatchReverseIterator(patch2, patch2.getHeight() - 1, 0), End, patch2.getWidth());
     auto patch2LastColReverse = std::make_tuple(ColumnWisePatchReverseIterator(patch2, patch2.getWidth() - 1, 0), End, patch2.getHeight());
     
-    std::vector<std::tuple<PatchControlIterator, EdgeLocation, EdgeType, std::size_t>> patch1Edges =
+    std::vector<std::tuple<PatchControlIterator, PatchControlIterator, EdgeType, std::size_t>> patch1Edges =
         { patch1FirstRow, patch1FirstCol, patch1LastRow, patch1LastCol };
 
     std::vector<std::tuple<PatchControlIterator, EdgeLocation, std::size_t>> patch2Edges =
@@ -535,7 +535,7 @@ scene::INodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNo
                 continue; // length don't match
             }
 
-            if (!firstNItemsAreEqual(std::get<0>(patch1Edge), std::get<0>(patch2Edge), std::get<2>(patch1Edge), WELD_EPSILON))
+            if (!firstNItemsAreEqual(std::get<0>(patch1Edge), std::get<0>(patch2Edge), std::get<3>(patch1Edge), WELD_EPSILON))
             {
                 continue;
             }
@@ -555,21 +555,24 @@ scene::INodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNo
             auto& newPatch = std::dynamic_pointer_cast<IPatchNode>(newPatchNode)->getPatch();
             newPatch.setDims(numNewColumns, numNewRows);
 
-            if (std::get<1>(patch1Edge) == Begin)
+            if (std::get<2>(patch1Edge) == Row)
             {
-                if (std::get<2>(patch1Edge) == Row)
-                {
-                    RowWisePatchIterator target(newPatch);
-                    RowWisePatchIterator source(patch1, patch1.getHeight() - 1, 1);
+                RowWisePatchIterator target(newPatch);
 
-                    assignPatchControls(source, target);
-                    assignPatchControls(std::get<0>(patch2Edge), target);
-
-                    newPatch.controlPointsChanged();
-
-                    return newPatchNode;
-                }
+                assignPatchControls(std::get<1>(patch1Edge), target);
+                assignPatchControls(std::get<0>(patch2Edge), target);
             }
+            else
+            {
+                ColumnWisePatchIterator target(newPatch);
+
+                assignPatchControls(std::get<1>(patch1Edge), target);
+                assignPatchControls(std::get<0>(patch2Edge), target);
+            }
+
+            newPatch.controlPointsChanged();
+
+            return newPatchNode;
         }
     }
 
