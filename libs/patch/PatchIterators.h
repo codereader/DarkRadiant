@@ -119,36 +119,78 @@ private:
     }
 };
 
-// An iterator traversing a single row of a patch
-class SinglePatchRowIterator :
+// An iterator traversing a single row of a patch (in defined order)
+class SinglePatchRowIteratorBase :
     public PatchControlIterator
 {
 public:
-    SinglePatchRowIterator(IPatch& patch, std::size_t row) :
-        PatchControlIterator(patch, static_cast<int>(row), 0, moveToNextCol)
+    SinglePatchRowIteratorBase(IPatch& patch, std::size_t row, std::size_t startCol, int delta) :
+        PatchControlIterator(patch, static_cast<int>(row), startCol, 
+            std::bind(SinglePatchRowIteratorBase::moveToNextCol, std::placeholders::_1, delta))
     {}
 
 private:
-    static void moveToNextCol(PatchControlIterator& it)
+    static void moveToNextCol(PatchControlIterator& it, int delta)
     {
-        it.set(it.getRow(), it.getColumn() + 1);
+        it.set(it.getRow(), it.getColumn() + delta);
+    }
+};
+
+// An iterator traversing a single row of a patch
+class SinglePatchRowIterator :
+    public SinglePatchRowIteratorBase
+{
+public:
+    SinglePatchRowIterator(IPatch& patch, std::size_t row) :
+        SinglePatchRowIteratorBase(patch, static_cast<int>(row), 0, +1)
+    {}
+};
+
+// An iterator traversing a single row of a patch in reverse order (starting from the highest column)
+class SinglePatchRowReverseIterator :
+    public SinglePatchRowIteratorBase
+{
+public:
+    SinglePatchRowReverseIterator(IPatch& patch, std::size_t row) :
+        SinglePatchRowIteratorBase(patch, static_cast<int>(row), static_cast<int>(patch.getWidth() - 1), -1)
+    {}
+};
+
+// An iterator traversing a single column of a patch (in defined order)
+class SinglePatchColumnIteratorBase :
+    public PatchControlIterator
+{
+public:
+    SinglePatchColumnIteratorBase(IPatch& patch, std::size_t col, std::size_t startRow, int delta) :
+        PatchControlIterator(patch, startRow, static_cast<int>(col), 
+            std::bind(SinglePatchColumnIteratorBase::moveToNextRow, std::placeholders::_1, delta))
+    {}
+
+private:
+    static void moveToNextRow(PatchControlIterator& it, int delta)
+    {
+        it.set(it.getRow() + delta, it.getColumn());
     }
 };
 
 // An iterator traversing a single column of a patch
 class SinglePatchColumnIterator :
-    public PatchControlIterator
+    public SinglePatchColumnIteratorBase
 {
 public:
-    SinglePatchColumnIterator(IPatch& patch, std::size_t col) :
-        PatchControlIterator(patch, 0, static_cast<int>(col), moveToNextRow)
+    SinglePatchColumnIterator(IPatch& patch, std::size_t row) :
+        SinglePatchColumnIteratorBase(patch, static_cast<int>(row), 0, +1)
     {}
+};
 
-private:
-    static void moveToNextRow(PatchControlIterator& it)
-    {
-        it.set(it.getRow() + 1, it.getColumn());
-    }
+// An iterator traversing a single column of a patch in reverse order (starting from the highest row)
+class SinglePatchColumnReverseIterator :
+    public SinglePatchColumnIteratorBase
+{
+public:
+    SinglePatchColumnReverseIterator(IPatch& patch, std::size_t row) :
+        SinglePatchColumnIteratorBase(patch, static_cast<int>(row), static_cast<int>(patch.getHeight() - 1), -1)
+    {}
 };
 
 // An iterator traversing a given patch column-wise, iterating over

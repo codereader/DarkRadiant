@@ -194,6 +194,27 @@ void iterateOverSingleColum(IPatch& patch, std::size_t colToTest)
     EXPECT_EQ(expected, expectedValues.end()); // assume no underflow
 }
 
+void iterateOverSingleColumReversely(IPatch& patch, std::size_t colToTest)
+{
+    std::vector<Vector3> expectedValues;
+
+    // Fill the vector with the expected values
+    for (auto row = static_cast<int>(patch.getHeight()) - 1; row >= 0; --row)
+    {
+        expectedValues.push_back(patch.ctrlAt(row, colToTest).vertex);
+    }
+
+    patch::SinglePatchColumnReverseIterator it(patch, colToTest);
+    auto expected = expectedValues.begin();
+
+    while (it.isValid())
+    {
+        EXPECT_EQ((it++)->vertex, *(expected++));
+    }
+
+    EXPECT_EQ(expected, expectedValues.end()); // assume no underflow
+}
+
 TEST_F(PatchIteratorTest, IterateOverSingleColumn)
 {
     auto patch = createWorldspawnPatch(5, 7);
@@ -203,6 +224,17 @@ TEST_F(PatchIteratorTest, IterateOverSingleColumn)
     iterateOverSingleColum(patch->getPatch(), 2);
     iterateOverSingleColum(patch->getPatch(), 3);
     iterateOverSingleColum(patch->getPatch(), 4);
+}
+
+TEST_F(PatchIteratorTest, IterateOverSingleColumnReversely)
+{
+    auto patch = createWorldspawnPatch(5, 7);
+
+    iterateOverSingleColumReversely(patch->getPatch(), 0);
+    iterateOverSingleColumReversely(patch->getPatch(), 1);
+    iterateOverSingleColumReversely(patch->getPatch(), 2);
+    iterateOverSingleColumReversely(patch->getPatch(), 3);
+    iterateOverSingleColumReversely(patch->getPatch(), 4);
 }
 
 void iterateOverSingleRow(IPatch& patch, std::size_t rowToTest)
@@ -226,6 +258,27 @@ void iterateOverSingleRow(IPatch& patch, std::size_t rowToTest)
     EXPECT_EQ(expected, expectedValues.end()); // assume no underflow
 }
 
+void iterateOverSingleRowReversely(IPatch& patch, std::size_t rowToTest)
+{
+    std::vector<Vector3> expectedValues;
+
+    // Fill the vector with the expected values
+    for (auto col = static_cast<int>(patch.getWidth()) - 1; col >= 0; --col)
+    {
+        expectedValues.push_back(patch.ctrlAt(rowToTest, col).vertex);
+    }
+
+    patch::SinglePatchRowReverseIterator it(patch, rowToTest);
+    auto expected = expectedValues.begin();
+
+    while (it.isValid())
+    {
+        EXPECT_EQ((it++)->vertex, *(expected++));
+    }
+
+    EXPECT_EQ(expected, expectedValues.end()); // assume no underflow
+}
+
 TEST_F(PatchIteratorTest, IterateOverSingleRow)
 {
     auto patch = createWorldspawnPatch(5, 7);
@@ -237,6 +290,19 @@ TEST_F(PatchIteratorTest, IterateOverSingleRow)
     iterateOverSingleRow(patch->getPatch(), 4);
     iterateOverSingleRow(patch->getPatch(), 5);
     iterateOverSingleRow(patch->getPatch(), 6);
+}
+
+TEST_F(PatchIteratorTest, IterateOverSingleRowReversely)
+{
+    auto patch = createWorldspawnPatch(5, 7);
+
+    iterateOverSingleRowReversely(patch->getPatch(), 0);
+    iterateOverSingleRowReversely(patch->getPatch(), 1);
+    iterateOverSingleRowReversely(patch->getPatch(), 2);
+    iterateOverSingleRowReversely(patch->getPatch(), 3);
+    iterateOverSingleRowReversely(patch->getPatch(), 4);
+    iterateOverSingleRowReversely(patch->getPatch(), 5);
+    iterateOverSingleRowReversely(patch->getPatch(), 6);
 }
 
 }
