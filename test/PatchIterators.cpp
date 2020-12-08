@@ -69,6 +69,32 @@ TEST_F(PatchIteratorTest, IterateOverWholePatchColumnWise)
     EXPECT_EQ(expected, expectedValues.end()); // assume no underflow
 }
 
+TEST_F(PatchIteratorTest, IterateOverWholePatchColumnWiseRowBackwards)
+{
+    auto patch = createWorldspawnPatch(3, 5);
+
+    std::vector<Vector3> expectedValues;
+
+    // Fill the vector with the expected values
+    for (auto col = 0; col < patch->getPatch().getWidth(); ++col)
+    {
+        for (auto row = static_cast<int>(patch->getPatch().getHeight()) -1; row >= 0; --row)
+        {
+            expectedValues.push_back(patch->getPatch().ctrlAt(row, col).vertex);
+        }
+    }
+
+    patch::ColumnWisePatchReverseIterator it(patch->getPatch());
+    auto expected = expectedValues.begin();
+
+    while (it.isValid())
+    {
+        EXPECT_EQ((it++)->vertex, *(expected++));
+    }
+
+    EXPECT_EQ(expected, expectedValues.end()); // assume no underflow
+}
+
 TEST_F(PatchIteratorTest, IterateOverWholePatchRowWise)
 {
     auto patch = createWorldspawnPatch(3, 5);
@@ -95,20 +121,59 @@ TEST_F(PatchIteratorTest, IterateOverWholePatchRowWise)
     EXPECT_EQ(expected, expectedValues.end()); // assume no underflow
 }
 
-void iterateOverPartialPatchColumnWise(IPatch& patch, std::size_t startCol, std::size_t endCol)
+TEST_F(PatchIteratorTest, IterateOverWholePatchRowWiseColumnBackwards)
+{
+    auto patch = createWorldspawnPatch(3, 5);
+
+    std::vector<Vector3> expectedValues;
+
+    // Fill the vector with the expected values
+    for (auto row = 0; row < patch->getPatch().getHeight(); ++row)
+    {
+        for (auto col = static_cast<int>(patch->getPatch().getWidth()) - 1; col >= 0; --col)
+        {
+            expectedValues.push_back(patch->getPatch().ctrlAt(row, col).vertex);
+        }
+    }
+
+    patch::RowWisePatchReverseIterator it(patch->getPatch());
+    auto expected = expectedValues.begin();
+
+    while (it.isValid())
+    {
+        EXPECT_EQ((it++)->vertex, *(expected++));
+    }
+
+    EXPECT_EQ(expected, expectedValues.end()); // assume no underflow
+}
+
+void iterateOverPartialPatchColumnWise(IPatch& patch, std::size_t startCol, std::size_t endCol, bool rowBackwards)
 {
     std::vector<Vector3> expectedValues;
 
     // Fill the vector with the expected values
     for (auto col = startCol; col <= endCol; ++col)
     {
-        for (auto row = 0; row < patch.getHeight(); ++row)
+        if (rowBackwards)
         {
-            expectedValues.push_back(patch.ctrlAt(row, col).vertex);
+            for (auto row = static_cast<int>(patch.getHeight()) - 1; row >= 0; --row)
+            {
+                expectedValues.push_back(patch.ctrlAt(row, col).vertex);
+            }
+        }
+        else
+        {
+            for (auto row = 0; row < patch.getHeight(); ++row)
+            {
+                expectedValues.push_back(patch.ctrlAt(row, col).vertex);
+            }
         }
     }
 
-    patch::ColumnWisePatchIterator it(patch, startCol, endCol);
+    auto it = !rowBackwards ?
+        static_cast<patch::PatchControlIterator>(patch::ColumnWisePatchIterator(patch, startCol, endCol)) :
+        patch::ColumnWisePatchReverseIterator(patch, startCol, endCol);
+
     auto expected = expectedValues.begin();
 
     while (it.isValid())
@@ -124,30 +189,58 @@ TEST_F(PatchIteratorTest, IterateOverPartialPatchColumnWise)
     auto patch = createWorldspawnPatch(5, 7);
 
     // Try various start and end column configs
-    iterateOverPartialPatchColumnWise(patch->getPatch(), 0, 4);
-    iterateOverPartialPatchColumnWise(patch->getPatch(), 0, 3);
-    iterateOverPartialPatchColumnWise(patch->getPatch(), 0, 0);
-    iterateOverPartialPatchColumnWise(patch->getPatch(), 0, 4);
-    iterateOverPartialPatchColumnWise(patch->getPatch(), 3, 4);
-    iterateOverPartialPatchColumnWise(patch->getPatch(), 1, 3);
-    iterateOverPartialPatchColumnWise(patch->getPatch(), 4, 4);
-    iterateOverPartialPatchColumnWise(patch->getPatch(), 3, 4);
+    iterateOverPartialPatchColumnWise(patch->getPatch(), 0, 4, false);
+    iterateOverPartialPatchColumnWise(patch->getPatch(), 0, 3, false);
+    iterateOverPartialPatchColumnWise(patch->getPatch(), 0, 0, false);
+    iterateOverPartialPatchColumnWise(patch->getPatch(), 0, 4, false);
+    iterateOverPartialPatchColumnWise(patch->getPatch(), 3, 4, false);
+    iterateOverPartialPatchColumnWise(patch->getPatch(), 1, 3, false);
+    iterateOverPartialPatchColumnWise(patch->getPatch(), 4, 4, false);
+    iterateOverPartialPatchColumnWise(patch->getPatch(), 3, 4, false);
 }
 
-void iterateOverPartialPatchRowWise(IPatch& patch, std::size_t startRow, std::size_t endRow)
+TEST_F(PatchIteratorTest, IterateOverPartialPatchColumnWiseRowBackwards)
+{
+    auto patch = createWorldspawnPatch(5, 7);
+
+    // Try various start and end column configs
+    iterateOverPartialPatchColumnWise(patch->getPatch(), 0, 4, true);
+    iterateOverPartialPatchColumnWise(patch->getPatch(), 0, 3, true);
+    iterateOverPartialPatchColumnWise(patch->getPatch(), 0, 0, true);
+    iterateOverPartialPatchColumnWise(patch->getPatch(), 0, 4, true);
+    iterateOverPartialPatchColumnWise(patch->getPatch(), 3, 4, true);
+    iterateOverPartialPatchColumnWise(patch->getPatch(), 1, 3, true);
+    iterateOverPartialPatchColumnWise(patch->getPatch(), 4, 4, true);
+    iterateOverPartialPatchColumnWise(patch->getPatch(), 3, 4, true);
+}
+
+void iterateOverPartialPatchRowWise(IPatch& patch, std::size_t startRow, std::size_t endRow, bool columnBackwards)
 {
     std::vector<Vector3> expectedValues;
 
     // Fill the vector with the expected values
     for (auto row = startRow; row <= endRow; ++row)
     {
-        for (auto col = 0; col < patch.getWidth(); ++col)
+        if (columnBackwards)
         {
-            expectedValues.push_back(patch.ctrlAt(row, col).vertex);
+            for (auto col = static_cast<int>(patch.getWidth()) - 1; col >= 0; --col)
+            {
+                expectedValues.push_back(patch.ctrlAt(row, col).vertex);
+            }
+        }
+        else
+        {
+            for (auto col = 0; col < patch.getWidth(); ++col)
+            {
+                expectedValues.push_back(patch.ctrlAt(row, col).vertex);
+            }
         }
     }
 
-    patch::RowWisePatchIterator it(patch, startRow, endRow);
+    auto it = !columnBackwards ?
+        static_cast<patch::PatchControlIterator>(patch::RowWisePatchIterator(patch, startRow, endRow)) :
+        patch::RowWisePatchReverseIterator(patch, startRow, endRow);
+
     auto expected = expectedValues.begin();
 
     while (it.isValid())
@@ -163,14 +256,29 @@ TEST_F(PatchIteratorTest, IterateOverPartialPatchRowWise)
     auto patch = createWorldspawnPatch(5, 7);
 
     // Try various start and end column configs
-    iterateOverPartialPatchRowWise(patch->getPatch(), 0, 6);
-    iterateOverPartialPatchRowWise(patch->getPatch(), 0, 3);
-    iterateOverPartialPatchRowWise(patch->getPatch(), 0, 0);
-    iterateOverPartialPatchRowWise(patch->getPatch(), 0, 4);
-    iterateOverPartialPatchRowWise(patch->getPatch(), 3, 6);
-    iterateOverPartialPatchRowWise(patch->getPatch(), 1, 3);
-    iterateOverPartialPatchRowWise(patch->getPatch(), 6, 6);
-    iterateOverPartialPatchRowWise(patch->getPatch(), 3, 4);
+    iterateOverPartialPatchRowWise(patch->getPatch(), 0, 6, false);
+    iterateOverPartialPatchRowWise(patch->getPatch(), 0, 3, false);
+    iterateOverPartialPatchRowWise(patch->getPatch(), 0, 0, false);
+    iterateOverPartialPatchRowWise(patch->getPatch(), 0, 4, false);
+    iterateOverPartialPatchRowWise(patch->getPatch(), 3, 6, false);
+    iterateOverPartialPatchRowWise(patch->getPatch(), 1, 3, false);
+    iterateOverPartialPatchRowWise(patch->getPatch(), 6, 6, false);
+    iterateOverPartialPatchRowWise(patch->getPatch(), 3, 4, false);
+}
+
+TEST_F(PatchIteratorTest, IterateOverPartialPatchRowWiseColumnBackwards)
+{
+    auto patch = createWorldspawnPatch(5, 7);
+
+    // Try various start and end column configs
+    iterateOverPartialPatchRowWise(patch->getPatch(), 0, 6, true);
+    iterateOverPartialPatchRowWise(patch->getPatch(), 0, 3, true);
+    iterateOverPartialPatchRowWise(patch->getPatch(), 0, 0, true);
+    iterateOverPartialPatchRowWise(patch->getPatch(), 0, 4, true);
+    iterateOverPartialPatchRowWise(patch->getPatch(), 3, 6, true);
+    iterateOverPartialPatchRowWise(patch->getPatch(), 1, 3, true);
+    iterateOverPartialPatchRowWise(patch->getPatch(), 6, 6, true);
+    iterateOverPartialPatchRowWise(patch->getPatch(), 3, 4, true);
 }
 
 void iterateOverSingleColum(IPatch& patch, std::size_t colToTest)
