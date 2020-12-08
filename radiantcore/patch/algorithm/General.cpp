@@ -433,7 +433,10 @@ inline bool isEqual(const PatchControlIterator& sequence1, const PatchControlIte
         return false;
     }
 
-    for (auto p1 = sequence1, p2 = sequence2; p1.isValid() && p2.isValid(); ++p1, ++p2)
+    auto p1 = sequence1;
+    auto p2 = sequence2;
+
+    for (; p1.isValid() && p2.isValid(); ++p1, ++p2)
     {
         rMessage() << "P1: " << p1->vertex << ", P2: " << p2->vertex << std::endl;
 
@@ -446,7 +449,8 @@ inline bool isEqual(const PatchControlIterator& sequence1, const PatchControlIte
 
     rMessage() << "Sequences are equal" << std::endl;
 
-    return true;
+    // Sequences must be exhausted, otherwise we have different lengths
+    return !p1.isValid() && !p2.isValid();
 }
 
 // Copies all values from source to target, until the source sequence is depleted
@@ -467,11 +471,13 @@ scene::INodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNo
 {
     constexpr double WELD_EPSILON = 0.001;
 
+#if 0
     // Algorithm ported from ODRadiant https://svn.code.sf.net/p/odblur/code/code/OverDose%20Tools/ODRadiant/Patch.cpp) rev8348
     int		col, col1, col2;
     int		row, row1, row2;
     int		adj1, adj2;
     bool	match;
+#endif
 
     if (patchNode1->getParent() != patchNode2->getParent())
     {
@@ -481,60 +487,117 @@ scene::INodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNo
     auto& patch1 = patchNode1->getPatch();
     auto& patch2 = patchNode2->getPatch();
 
+    // Construct an edge iterator for the first patch
+    SinglePatchRowIterator patch1FirstRow(patch1, 0);
+    SinglePatchColumnIterator patch1FirstCol(patch1, 0);
+    SinglePatchRowIterator patch1LastRow(patch1, patch1.getHeight() - 1);
+    SinglePatchColumnIterator patch1LastCol(patch1, patch1.getWidth() - 1);
+
+    // We'll be comparing each of these edges to all other four edges of the second patch
+    // and we're doing it in forward and backward iteration
+    SinglePatchRowIterator patch2FirstRow(patch2, 0);
+    SinglePatchColumnIterator patch2FirstCol(patch2, 0);
+    SinglePatchRowIterator patch2LastRow(patch2, patch2.getHeight() - 1);
+    SinglePatchColumnIterator patch2LastCol(patch2, patch2.getWidth() - 1);
+
+    SinglePatchRowReverseIterator patch2FirstRowReverse(patch2, 0);
+    SinglePatchColumnReverseIterator patch2FirstColReverse(patch2, 0);
+    SinglePatchRowReverseIterator patch2LastRowReverse(patch2, patch2.getHeight() - 1);
+    SinglePatchColumnReverseIterator patch2LastColReverse(patch2, patch2.getWidth() - 1);
+
+    std::vector<PatchControlIterator> patch1Edges = { patch1FirstRow, patch1FirstCol, patch1LastRow, patch1LastCol };
+    std::vector<PatchControlIterator> patch2Edges = 
+    {
+        patch2FirstRow, patch2FirstCol, patch2LastRow, patch2LastCol,
+        patch2FirstRowReverse, patch2FirstColReverse, patch2LastRowReverse, patch2LastColReverse
+    };
+
+    for (const auto& patch1Edge : patch1Edges)
+    {
+        for (const auto& patch2Edge : patch2Edges)
+        {
+            if (isEqual(patch1Edge, patch2Edge, WELD_EPSILON))
+            {
+                // Found a shared edge
+                rMessage() << "Found a shared edge" << std::endl;
+            }
+        }
+    }
+
+#if 0
+    rMessage() << "Comparing P1FirstRow to P2FirstRow" << std::endl;
+    if (isEqual(patch1FirstRow, patch2FirstRow, WELD_EPSILON))
+    {
+        auto newPatchNode = GlobalPatchModule().createPatch(patch1.subdivisionsFixed() ? PatchDefType::Def3 : PatchDefType::Def2);
+        auto& newPatch = std::dynamic_pointer_cast<IPatchNode>(newPatchNode)->getPatch();
+        newPatch.setDims(patch1.getWidth(), patch1.getHeight() + patch2.getHeight() - 1);
+
+        // prepend
+        // use rows of other patch
+    }
+
+    rMessage() << "Comparing P1FirstRow to P2FirstRowReverse" << std::endl;
+    if (isEqual(patch1FirstRow, patch2FirstRowReverse, WELD_EPSILON))
+    {
+        int i = 0;
+    }
+
+    rMessage() << "Comparing P1FirstRow to P2LastRow" << std::endl;
+    if (isEqual(patch1FirstRow, patch2LastRow, WELD_EPSILON))
+    {
+        int i = 0;
+        // prepend
+        // use rows of other patch from end
+    }
+
+    rMessage() << "Comparing P1FirstRow to P2LastRowReverse" << std::endl;
+    if (isEqual(patch1FirstRow, patch2LastRowReverse, WELD_EPSILON))
+    {
+        int i = 0;
+    }
+
+    rMessage() << "Comparing P1LastRow to P2FirstRow" << std::endl;
+    if (isEqual(patch1LastRow, patch2FirstRow, WELD_EPSILON))
+    {
+        auto sceneNode = GlobalPatchModule().createPatch(patch1.subdivisionsFixed() ? PatchDefType::Def3 : PatchDefType::Def2);
+        auto& newPatch = std::dynamic_pointer_cast<IPatchNode>(sceneNode)->getPatch();
+        newPatch.setDims(patch1.getWidth(), patch1.getHeight() + patch2.getHeight() - 1);
+            
+        RowWisePatchIterator p1(patch1);
+        RowWisePatchIterator p2(patch2, 1, patch2.getWidth() - 1); // skip the first row of the second patch
+        RowWisePatchIterator target(newPatch);
+
+        assignPatchControls(p1, target);
+        assignPatchControls(p2, target);
+
+        newPatch.controlPointsChanged();
+
+        return sceneNode;
+    }
+
+    rMessage() << "Comparing P1LastRow to P2FirstRowReverse" << std::endl;
+    if (isEqual(patch1LastRow, patch2FirstRowReverse, WELD_EPSILON))
+    {
+        int i = 6;
+    }
+
+    rMessage() << "Comparing P1LastRow to P2LastRow" << std::endl;
+    if (isEqual(patch1LastRow, patch2LastRow, WELD_EPSILON))
+    {
+        int i = 0;
+        // append
+        // use rows of other patch from end
+    }
+
+    rMessage() << "Comparing P1LastRow to P2LastRowReverse" << std::endl;
+    if (isEqual(patch1LastRow, patch2LastRowReverse, WELD_EPSILON))
+    {
+        int i = 6;
+    }
+#endif
+#if 0
     if (patch1.getWidth() == patch2.getWidth())
     {
-        // Row dimensions match, compare the first and last row of this patch to the 
-        // first and last row of the other patch
-        SinglePatchRowIterator patch1FirstRow(patch1, 0);
-        SinglePatchRowIterator patch1LastRow(patch1, patch1.getWidth() - 1);
-        
-        SinglePatchRowIterator patch2FirstRow(patch2, 0);
-        SinglePatchRowIterator patch2LastRow(patch2, patch2.getWidth() - 1);
-
-        rMessage() << "Comparing P1FirstRow to P2FirstRow" << std::endl;
-        if (isEqual(patch1FirstRow, patch2FirstRow, WELD_EPSILON))
-        {
-            auto newPatchNode = GlobalPatchModule().createPatch(patch1.subdivisionsFixed() ? PatchDefType::Def3 : PatchDefType::Def2);
-            auto& newPatch = std::dynamic_pointer_cast<IPatchNode>(newPatchNode)->getPatch();
-            newPatch.setDims(patch1.getWidth(), patch1.getHeight() + patch2.getHeight() - 1);
-
-            // prepend
-            // use rows of other patch
-        }
-
-        rMessage() << "Comparing P1FirstRow to P2LastRow" << std::endl;
-        if (isEqual(patch1FirstRow, patch2LastRow, WELD_EPSILON))
-        {
-            // prepend
-            // use rows of other patch from end
-        }
-
-        rMessage() << "Comparing P1LastRow to P2FirstRow" << std::endl;
-        if (isEqual(patch1LastRow, patch2FirstRow, WELD_EPSILON))
-        {
-            auto sceneNode = GlobalPatchModule().createPatch(patch1.subdivisionsFixed() ? PatchDefType::Def3 : PatchDefType::Def2);
-            auto& newPatch = std::dynamic_pointer_cast<IPatchNode>(sceneNode)->getPatch();
-            newPatch.setDims(patch1.getWidth(), patch1.getHeight() + patch2.getHeight() - 1);
-            
-            RowWisePatchIterator p1(patch1);
-            RowWisePatchIterator p2(patch2, 1, patch2.getWidth() - 1); // skip the first row of the second patch
-            RowWisePatchIterator target(newPatch);
-
-            assignPatchControls(p1, target);
-            assignPatchControls(p2, target);
-
-            newPatch.controlPointsChanged();
-
-            return sceneNode;
-        }
-
-        rMessage() << "Comparing P1LastRow to P2LastRow" << std::endl;
-        if (isEqual(patch1LastRow, patch2LastRow, WELD_EPSILON))
-        {
-            // append
-            // use rows of other patch from end
-        }
-#if 0
         row1 = 0;
         row2 = 0;
 
@@ -610,11 +673,12 @@ scene::INodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNo
                 break;
             }
         }
-#endif
     }
+#endif
 
     return scene::INodePtr();
 
+#if 0
     if (patch1.getWidth() == patch2.getHeight())
     {
         row1 = 0;
@@ -851,7 +915,7 @@ scene::INodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNo
             }
         }
     }
-
+#endif
     throw cmd::ExecutionFailure(_("Unable to weld patches, no suitable edges of same length found"));
 }
 
