@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.12)
 
 # Project name and version
-project(darkradiant VERSION 2.9.2)
+project(darkradiant VERSION 2.9.1)
 
 # C++ standard
 set(CMAKE_CXX_STANDARD 17)

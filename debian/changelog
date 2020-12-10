@@ -1,3 +1,13 @@
+darkradiant (2.9.1~focal5) focal; urgency=medium
+
+  * First package built using the new CMake build system.
+  * Fix an assertion failure on showing the Stim/Response editor.
+  * Introduce preference to set the font and size of numeric text in the 2D
+    view.
+  * Maps can now be loaded directly from within the PK4 resource tree.
+
+ -- Matthew Mott <orbweaver3d@gmail.com>  Thu, 10 Dec 2020 15:43:35 +0000
+
 darkradiant (2.9.1~focal1) focal; urgency=medium
 
   * 2.9.1 release for Focal.
