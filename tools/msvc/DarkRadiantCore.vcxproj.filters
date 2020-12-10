@@ -352,9 +352,6 @@
     <ClCompile Include="..\..\radiantcore\eclass\EClassManager.cpp">
       <Filter>src\eclass</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiantcore\rendersystem\LinearLightList.cpp">
-      <Filter>src\rendersystem</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiantcore\rendersystem\OpenGLRenderSystem.cpp">
       <Filter>src\rendersystem</Filter>
     </ClCompile>
@@ -626,15 +623,6 @@
       <Filter>src\model\picomodel</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\model\picomodel\PicoModelModule.cpp">
-      <Filter>src\model\picomodel</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiantcore\model\picomodel\PicoModelNode.cpp">
-      <Filter>src\model\picomodel</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiantcore\model\picomodel\RenderablePicoModel.cpp">
-      <Filter>src\model\picomodel</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiantcore\model\picomodel\RenderablePicoSurface.cpp">
       <Filter>src\model\picomodel</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\model\picomodel\lib\lwo\clip.c">
@@ -997,8 +985,29 @@
     <ClCompile Include="..\..\radiantcore\model\export\PatchSurface.cpp">
       <Filter>src\model\export</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\map\MapResourceLoader.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\map\ArchivedMapResource.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\radiantcore\eclass\EClassColourManager.cpp">
       <Filter>src\eclass</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\model\picomodel\StaticModel.cpp">
+      <Filter>src\model\picomodel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\model\picomodel\StaticModelNode.cpp">
+      <Filter>src\model\picomodel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\model\picomodel\StaticModelSurface.cpp">
+      <Filter>src\model\picomodel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\rendersystem\GLFont.cpp">
+      <Filter>src\rendersystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\rendersystem\OpenGLModule.cpp">
+      <Filter>src\rendersystem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1046,9 +1055,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\xmlregistry\XMLRegistry.h">
       <Filter>src\xmlregistry</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\vfs\Archive.h">
-      <Filter>src\vfs</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\vfs\DeflatedArchiveFile.h">
       <Filter>src\vfs</Filter>
@@ -1265,9 +1271,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\eclass\EClassManager.h">
       <Filter>src\eclass</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\rendersystem\LinearLightList.h">
-      <Filter>src\rendersystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\rendersystem\OpenGLRenderSystem.h">
       <Filter>src\rendersystem</Filter>
@@ -1639,15 +1642,6 @@
       <Filter>src\model\picomodel</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\model\picomodel\PicoModelModule.h">
-      <Filter>src\model\picomodel</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\model\picomodel\PicoModelNode.h">
-      <Filter>src\model\picomodel</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\model\picomodel\RenderablePicoModel.h">
-      <Filter>src\model\picomodel</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\model\picomodel\RenderablePicoSurface.h">
       <Filter>src\model\picomodel</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\model\picomodel\lib\lwo\lwo2.h">
@@ -2034,8 +2028,38 @@
     <ClInclude Include="..\..\radiantcore\model\export\PatchSurface.h">
       <Filter>src\model\export</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiantcore\vfs\AssetsList.h">
+      <Filter>src\vfs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\vfs\FileVisitor.h">
+      <Filter>src\vfs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\NodeCounter.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\MapResourceLoader.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\ArchivedMapResource.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\radiantcore\eclass\EClassColourManager.h">
       <Filter>src\eclass</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\model\picomodel\StaticModel.h">
+      <Filter>src\model\picomodel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\model\picomodel\StaticModelNode.h">
+      <Filter>src\model\picomodel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\model\picomodel\StaticModelSurface.h">
+      <Filter>src\model\picomodel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\GLFont.h">
+      <Filter>src\rendersystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\OpenGLModule.h">
+      <Filter>src\rendersystem</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

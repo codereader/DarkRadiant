@@ -69,7 +69,8 @@ public:
             shader.getModName() + "/" + shaderNameForwardSlashes;
 
         // Sort the shader into the tree and set the values
-        addPath(fullPath, [&](wxutil::TreeModel::Row& row, const std::string& leafName, bool isFolder)
+        addPath(fullPath, [&](wxutil::TreeModel::Row& row, const std::string& path, 
+            const std::string& leafName, bool isFolder)
         {
             row[_columns.displayName] = wxVariant(
                 wxDataViewIconText(leafName, isFolder ? _folderIcon : _shaderIcon));

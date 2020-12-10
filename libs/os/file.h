@@ -99,7 +99,7 @@ inline bool fileOrDirExists(const fs::path& path)
 	}
 }
 
-// Returns the file size in bytes, or static_cast<uintmax_t>(-1)
+// Returns the file size in bytes, or static_cast<std::size_t>(-1)
 inline std::size_t getFileSize(const std::string& path)
 {
 	try

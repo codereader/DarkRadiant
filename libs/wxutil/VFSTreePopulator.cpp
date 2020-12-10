@@ -16,11 +16,16 @@ VFSTreePopulator::~VFSTreePopulator()
 	_iters.clear();
 }
 
+void VFSTreePopulator::setTopLevelItem(const wxDataViewItem& topLevel)
+{
+    _topLevel = topLevel;
+}
+
 // Interface add function
 void VFSTreePopulator::addPath(const std::string& path)
 {
 	// Pass an empty ColumnPopulationCallback
-    addRecursive(path, [](TreeModel::Row&, const std::string&, bool) {});
+    addRecursive(path, [](TreeModel::Row&, const std::string&, const std::string&, bool) {});
 
     // Add the explicit path to the set, we need it later
     // when being visited by the Visitor implementation
@@ -66,7 +71,7 @@ const wxDataViewItem& VFSTreePopulator::addRecursive(const std::string& path,
 
     // Call the population callback. If recursionLevel > 0 we had at least one
     // path split operation, so this must be a folder
-    func(row, slashPos != std::string::npos ? path.substr(slashPos+1) : path, recursionLevel > 0);
+    func(row, path, slashPos != std::string::npos ? path.substr(slashPos+1) : path, recursionLevel > 0);
 
 	// Add a copy of the wxDataViewItem to our hashmap and return it
 	std::pair<NamedIterMap::iterator, bool> result = _iters.insert(

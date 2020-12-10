@@ -153,8 +153,9 @@
     <ClInclude Include="..\..\libs\wxutil\event\SingleIdleCallback.h" />
     <ClInclude Include="..\..\libs\wxutil\FileChooser.h" />
     <ClInclude Include="..\..\libs\wxutil\FreezePointer.h" />
+    <ClInclude Include="..\..\libs\wxutil\fsview\FileSystemView.h" />
+    <ClInclude Include="..\..\libs\wxutil\fsview\Populator.h" />
     <ClInclude Include="..\..\libs\wxutil\GLContext.h" />
-    <ClInclude Include="..\..\libs\wxutil\GLFont.h" />
     <ClInclude Include="..\..\libs\wxutil\GLWidget.h" />
     <ClInclude Include="..\..\libs\wxutil\IConv.h" />
     <ClInclude Include="..\..\libs\wxutil\KeyValueTable.h" />
@@ -197,7 +198,8 @@
     <ClCompile Include="..\..\libs\wxutil\EntityClassChooser.cpp" />
     <ClCompile Include="..\..\libs\wxutil\FileChooser.cpp" />
     <ClCompile Include="..\..\libs\wxutil\FreezePointer.cpp" />
-    <ClCompile Include="..\..\libs\wxutil\GLFont.cpp" />
+    <ClCompile Include="..\..\libs\wxutil\fsview\FileSystemView.cpp" />
+    <ClCompile Include="..\..\libs\wxutil\fsview\Populator.cpp" />
     <ClCompile Include="..\..\libs\wxutil\GLWidget.cpp" />
     <ClCompile Include="..\..\libs\wxutil\KeyValueTable.cpp" />
     <ClCompile Include="..\..\libs\wxutil\menu\PopupMenu.cpp" />

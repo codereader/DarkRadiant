@@ -5,12 +5,12 @@
 #include "imodule.h"
 #include <iostream>
 
-namespace wxutil
+namespace gl
 {
 
 GLFont::GLFont(Style style, unsigned int size) :
-	_pixelHeight(0),
-	_ftglFont(NULL)
+    _lineHeight(0),
+	_ftglFont(nullptr)
 {
     // Load the locally-provided TTF font file
 	std::string fontpath = module::GlobalModuleRegistry()
@@ -18,14 +18,14 @@ GLFont::GLFont(Style style, unsigned int size) :
                            .getRuntimeDataPath()
                            + "ui/fonts/";
 
-	fontpath += style == FONT_SANS ? "FreeSans.ttf" : "FreeMono.ttf";
+	fontpath += style == Style::Sans ? "FreeSans.ttf" : "FreeMono.ttf";
 
 	_ftglFont = FTGL::ftglCreatePixmapFont(fontpath.c_str());
 
 	if (_ftglFont)
 	{
-		ftglSetFontFaceSize(_ftglFont,size,0);
-		_pixelHeight = static_cast<int>(FTGL::ftglGetFontLineHeight(_ftglFont));
+        FTGL::ftglSetFontFaceSize(_ftglFont, size, 0);
+        _lineHeight = FTGL::ftglGetFontLineHeight(_ftglFont);
 	}
 	else
 	{
@@ -38,8 +38,18 @@ GLFont::~GLFont()
 	if (_ftglFont)
 	{
 		FTGL::ftglDestroyFont(_ftglFont);
-		_ftglFont = NULL;
+		_ftglFont = nullptr;
 	}
+}
+
+float GLFont::getLineHeight() const
+{
+    return _lineHeight;
+}
+
+void GLFont::drawString(const std::string& string)
+{
+    FTGL::ftglRenderFont(_ftglFont, string.c_str(), FTGL::RENDER_ALL);
 }
 
 } // namespace

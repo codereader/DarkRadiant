@@ -14,7 +14,9 @@ private:
 	ExportEvent _resourceExported;
 
 public:
-	IMapResourcePtr loadFromPath(const std::string& path) override;
+	IMapResourcePtr createFromPath(const std::string& path) override;
+    IMapResourcePtr createFromArchiveFile(const std::string& archivePath,
+        const std::string& filePathWithinArchive) override;
 
 	ExportEvent& signal_onResourceExporting() override;
 	ExportEvent& signal_onResourceExported() override;

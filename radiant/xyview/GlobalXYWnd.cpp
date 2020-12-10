@@ -45,6 +45,8 @@ namespace
 	const std::string RKEY_SHOW_WORKZONE = RKEY_XYVIEW_ROOT + "/showWorkzone";
 	const std::string RKEY_DEFAULT_BLOCKSIZE = "user/ui/xyview/defaultBlockSize";
 	const std::string RKEY_TRANSLATE_CONSTRAINED = "user/ui/xyview/translateConstrained";
+	const std::string RKEY_FONT_SIZE = "user/ui/xyview/fontSize";
+	const std::string RKEY_FONT_STYLE = "user/ui/xyview/fontStyle";
 
     const int DEFAULT_CHASE_MOUSE_CAP = 32; // pixels per chase moue timer interval
 }
@@ -198,6 +200,8 @@ void XYWndManager::constructPreferences()
 	page.appendCheckBox(_("Show Workzone"), RKEY_SHOW_WORKZONE);
 	page.appendCheckBox(_("Translate Manipulator always constrained to Axis"), RKEY_TRANSLATE_CONSTRAINED);
 	page.appendCheckBox(_("Higher Selection Priority for Entities"), RKEY_HIGHER_ENTITY_PRIORITY);
+    page.appendCombo(_("Font Style"), RKEY_FONT_STYLE, { "Sans", "Mono" }, true);
+    page.appendSpinner(_("Font Size"), RKEY_FONT_SIZE, 4, 48, 0);
 }
 
 // Load/Reload the values from the registry
@@ -215,7 +219,15 @@ void XYWndManager::refreshFromRegistry()
 	_showAxes = registry::getValue<bool>(RKEY_SHOW_AXES);
 	_showWorkzone = registry::getValue<bool>(RKEY_SHOW_WORKZONE);
 	_defaultBlockSize = registry::getValue<int>(RKEY_DEFAULT_BLOCKSIZE);
+    _fontSize = registry::getValue<int>(RKEY_FONT_SIZE);
+    _fontStyle = registry::getValue<std::string>(RKEY_FONT_STYLE) == "Sans" ? IGLFont::Style::Sans : IGLFont::Style::Mono;
+
 	updateAllViews();
+
+    for (const auto& xyWnd : _xyWnds)
+    {
+        xyWnd.second->updateFont();
+    }
 }
 
 bool XYWndManager::chaseMouse() const {
@@ -265,6 +277,16 @@ bool XYWndManager::showGrid() const {
 
 bool XYWndManager::showSizeInfo() const {
 	return _showSizeInfo;
+}
+
+int XYWndManager::fontSize() const
+{
+    return _fontSize;
+}
+
+IGLFont::Style XYWndManager::fontStyle() const
+{
+    return _fontStyle;
 }
 
 void XYWndManager::updateAllViews(bool force)
@@ -667,6 +689,8 @@ void XYWndManager::initialiseModule(const IApplicationContext& ctx)
 	observeKey(RKEY_SHOW_AXES);
 	observeKey(RKEY_SHOW_WORKZONE);
 	observeKey(RKEY_DEFAULT_BLOCKSIZE);
+	observeKey(RKEY_FONT_SIZE);
+	observeKey(RKEY_FONT_STYLE);
 
 	// Trigger loading the values of the observed registry keys
 	refreshFromRegistry();

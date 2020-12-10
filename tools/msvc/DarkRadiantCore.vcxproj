@@ -102,6 +102,7 @@
     <ClCompile Include="..\..\radiantcore\map\algorithm\MapImporter.cpp" />
     <ClCompile Include="..\..\radiantcore\map\algorithm\Models.cpp" />
     <ClCompile Include="..\..\radiantcore\map\algorithm\Skins.cpp" />
+    <ClCompile Include="..\..\radiantcore\map\ArchivedMapResource.cpp" />
     <ClCompile Include="..\..\radiantcore\map\CounterManager.cpp" />
     <ClCompile Include="..\..\radiantcore\map\EditingStopwatch.cpp" />
     <ClCompile Include="..\..\radiantcore\map\EditingStopwatchInfoFileModule.cpp" />
@@ -132,6 +133,7 @@
     <ClCompile Include="..\..\radiantcore\map\MapPositionManager.cpp" />
     <ClCompile Include="..\..\radiantcore\map\MapPropertyInfoFileModule.cpp" />
     <ClCompile Include="..\..\radiantcore\map\MapResource.cpp" />
+    <ClCompile Include="..\..\radiantcore\map\MapResourceLoader.cpp" />
     <ClCompile Include="..\..\radiantcore\map\MapResourceManager.cpp" />
     <ClCompile Include="..\..\radiantcore\map\mru\MRU.cpp" />
     <ClCompile Include="..\..\radiantcore\map\namespace\ComplexName.cpp" />
@@ -576,9 +578,9 @@
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\model\picomodel\PicoModelLoader.cpp" />
     <ClCompile Include="..\..\radiantcore\model\picomodel\PicoModelModule.cpp" />
-    <ClCompile Include="..\..\radiantcore\model\picomodel\PicoModelNode.cpp" />
-    <ClCompile Include="..\..\radiantcore\model\picomodel\RenderablePicoModel.cpp" />
-    <ClCompile Include="..\..\radiantcore\model\picomodel\RenderablePicoSurface.cpp" />
+    <ClCompile Include="..\..\radiantcore\model\picomodel\StaticModel.cpp" />
+    <ClCompile Include="..\..\radiantcore\model\picomodel\StaticModelNode.cpp" />
+    <ClCompile Include="..\..\radiantcore\model\picomodel\StaticModelSurface.cpp" />
     <ClCompile Include="..\..\radiantcore\particles\ParticleDef.cpp" />
     <ClCompile Include="..\..\radiantcore\particles\ParticleNode.cpp" />
     <ClCompile Include="..\..\radiantcore\particles\ParticleParameter.cpp" />
@@ -617,7 +619,8 @@
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\OpenGLShader.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\OpenGLShaderPass.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\debug\SpacePartitionRenderer.cpp" />
-    <ClCompile Include="..\..\radiantcore\rendersystem\LinearLightList.cpp" />
+    <ClCompile Include="..\..\radiantcore\rendersystem\GLFont.cpp" />
+    <ClCompile Include="..\..\radiantcore\rendersystem\OpenGLModule.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\OpenGLRenderSystem.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\RenderSystemFactory.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\SharedOpenGLContextModule.cpp" />
@@ -803,6 +806,7 @@
     <ClInclude Include="..\..\radiantcore\map\algorithm\MapImporter.h" />
     <ClInclude Include="..\..\radiantcore\map\algorithm\Models.h" />
     <ClInclude Include="..\..\radiantcore\map\algorithm\Skins.h" />
+    <ClInclude Include="..\..\radiantcore\map\ArchivedMapResource.h" />
     <ClInclude Include="..\..\radiantcore\map\CounterManager.h" />
     <ClInclude Include="..\..\radiantcore\map\EditingStopwatch.h" />
     <ClInclude Include="..\..\radiantcore\map\EditingStopwatchInfoFileModule.h" />
@@ -838,6 +842,7 @@
     <ClInclude Include="..\..\radiantcore\map\MapPositionManager.h" />
     <ClInclude Include="..\..\radiantcore\map\MapPropertyInfoFileModule.h" />
     <ClInclude Include="..\..\radiantcore\map\MapResource.h" />
+    <ClInclude Include="..\..\radiantcore\map\MapResourceLoader.h" />
     <ClInclude Include="..\..\radiantcore\map\MapResourceManager.h" />
     <ClInclude Include="..\..\radiantcore\map\ModelBreakdown.h" />
     <ClInclude Include="..\..\radiantcore\map\mru\MRU.h" />
@@ -846,6 +851,7 @@
     <ClInclude Include="..\..\radiantcore\map\namespace\Namespace.h" />
     <ClInclude Include="..\..\radiantcore\map\namespace\NamespaceFactory.h" />
     <ClInclude Include="..\..\radiantcore\map\namespace\UniqueNameSet.h" />
+    <ClInclude Include="..\..\radiantcore\map\NodeCounter.h" />
     <ClInclude Include="..\..\radiantcore\map\PointFile.h" />
     <ClInclude Include="..\..\radiantcore\map\RegionManager.h" />
     <ClInclude Include="..\..\radiantcore\map\RegionWalkers.h" />
@@ -880,9 +886,9 @@
     <ClInclude Include="..\..\radiantcore\model\picomodel\lib\pm_fm.h" />
     <ClInclude Include="..\..\radiantcore\model\picomodel\PicoModelLoader.h" />
     <ClInclude Include="..\..\radiantcore\model\picomodel\PicoModelModule.h" />
-    <ClInclude Include="..\..\radiantcore\model\picomodel\PicoModelNode.h" />
-    <ClInclude Include="..\..\radiantcore\model\picomodel\RenderablePicoModel.h" />
-    <ClInclude Include="..\..\radiantcore\model\picomodel\RenderablePicoSurface.h" />
+    <ClInclude Include="..\..\radiantcore\model\picomodel\StaticModel.h" />
+    <ClInclude Include="..\..\radiantcore\model\picomodel\StaticModelNode.h" />
+    <ClInclude Include="..\..\radiantcore\model\picomodel\StaticModelSurface.h" />
     <ClInclude Include="..\..\radiantcore\particles\ParticleDef.h" />
     <ClInclude Include="..\..\radiantcore\particles\ParticleNode.h" />
     <ClInclude Include="..\..\radiantcore\particles\ParticleParameter.h" />
@@ -935,7 +941,8 @@
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\OpenGLStateLess.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\OpenGLStateManager.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\debug\SpacePartitionRenderer.h" />
-    <ClInclude Include="..\..\radiantcore\rendersystem\LinearLightList.h" />
+    <ClInclude Include="..\..\radiantcore\rendersystem\GLFont.h" />
+    <ClInclude Include="..\..\radiantcore\rendersystem\OpenGLModule.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\OpenGLRenderSystem.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\RenderSystemFactory.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\SharedOpenGLContextModule.h" />
@@ -1015,13 +1022,14 @@
     <ClInclude Include="..\..\radiantcore\undo\Stack.h" />
     <ClInclude Include="..\..\radiantcore\undo\StackFiller.h" />
     <ClInclude Include="..\..\radiantcore\undo\UndoSystem.h" />
-    <ClInclude Include="..\..\radiantcore\vfs\Archive.h" />
+    <ClInclude Include="..\..\radiantcore\vfs\AssetsList.h" />
     <ClInclude Include="..\..\radiantcore\vfs\DeflatedArchiveFile.h" />
     <ClInclude Include="..\..\radiantcore\vfs\DeflatedArchiveTextFile.h" />
     <ClInclude Include="..\..\radiantcore\vfs\DeflatedInputStream.h" />
     <ClInclude Include="..\..\radiantcore\vfs\DirectoryArchive.h" />
     <ClInclude Include="..\..\radiantcore\vfs\DirectoryArchiveTextFile.h" />
     <ClInclude Include="..\..\radiantcore\vfs\Doom3FileSystem.h" />
+    <ClInclude Include="..\..\radiantcore\vfs\FileVisitor.h" />
     <ClInclude Include="..\..\radiantcore\vfs\GenericFileSystem.h" />
     <ClInclude Include="..\..\radiantcore\vfs\SortedFilenames.h" />
     <ClInclude Include="..\..\radiantcore\vfs\StoredArchiveFile.h" />

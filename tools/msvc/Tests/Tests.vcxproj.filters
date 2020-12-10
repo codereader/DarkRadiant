@@ -26,7 +26,9 @@
     <ClCompile Include="..\..\..\test\Models.cpp" />
     <ClCompile Include="..\..\..\test\Face.cpp" />
     <ClCompile Include="..\..\..\test\Selection.cpp" />
+    <ClCompile Include="..\..\..\test\FileTypes.cpp" />
     <ClCompile Include="..\..\..\test\MessageBus.cpp" />
+    <ClCompile Include="..\..\..\test\MapSavingLoading.cpp" />
     <ClCompile Include="..\..\..\test\ColourSchemes.cpp" />
     <ClCompile Include="..\..\..\test\WorldspawnColour.cpp" />
   </ItemGroup>
@@ -35,6 +37,12 @@
     <ClInclude Include="..\..\..\test\RadiantTest.h" />
     <ClInclude Include="..\..\..\test\TestContext.h" />
     <ClInclude Include="..\..\..\test\algorithm\Scene.h">
+      <Filter>algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\algorithm\XmlUtils.h">
+      <Filter>algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\algorithm\Primitives.h">
       <Filter>algorithm</Filter>
     </ClInclude>
   </ItemGroup>

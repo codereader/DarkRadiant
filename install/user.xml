@@ -63,6 +63,8 @@
     <dragResizeEntitiesSymmetrically value="1" />
     <transientComponentSelection value="1" />
     <offsetClonedObjects value="1" />
+    <manipulatorFontSize value="14" />
+    <manipulatorFontStyle value="Sans" />
     <transformDialog>
       <window xPosition="150" yPosition="200" width="260" height="314" />
       <rotXStep value="45" />
@@ -158,6 +160,8 @@
       <showOutline value="0" />
       <showAxes value="1" />
       <showWorkzone value="0" />
+      <fontSize value="14" />
+      <fontStyle value="Sans" />
       <overlay>
         <visible value="0" />
         <transparency value="0.3" />
@@ -196,6 +200,8 @@
     </particleEditor>
     <renderPreview>
       <showGrid value="1" />
+      <fontSize value="14" />
+      <fontStyle value="Sans" />
     </renderPreview>
     <camera>
       <toggleFreeMove value="1" />
@@ -210,6 +216,8 @@
       <cubicScale value="13" />
       <drawMode value="2" />
       <window xPosition="37" yPosition="100" width="450" height="430" />
+      <fontSize value="14" />
+      <fontStyle value="Sans" />
     </camera>
     <toolbar name="view" align="horizontal">
       <toolbutton name="open" action="OpenMap" tooltip="Open a map file" icon="file_open.png"/>

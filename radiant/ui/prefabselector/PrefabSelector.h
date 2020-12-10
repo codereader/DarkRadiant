@@ -7,7 +7,7 @@
 #include "wxutil/preview/ModelPreview.h"
 #include "wxutil/WindowPosition.h"
 #include "wxutil/PanedPosition.h"
-#include "wxutil/TreeView.h"
+#include "wxutil/fsview/FileSystemView.h"
 #include "wxutil/PathEntry.h"
 #include "ui/common/MapPreview.h"
 
@@ -32,21 +32,6 @@ class PrefabSelector :
 	public wxutil::DialogBase
 {
 public:
-	// Treemodel definition
-	struct TreeColumns :
-		public wxutil::TreeModel::ColumnRecord
-	{
-		TreeColumns() :
-			filename(add(wxutil::TreeModel::Column::IconText)),
-			vfspath(add(wxutil::TreeModel::Column::String)),
-			isFolder(add(wxutil::TreeModel::Column::Boolean))
-		{}
-
-		wxutil::TreeModel::Column filename;	// e.g. "chair1.pfb"
-		wxutil::TreeModel::Column vfspath;	// e.g. "prefabs/chair1.pfb"
-		wxutil::TreeModel::Column isFolder;	// whether this is a folder
-	};
-
 	struct Result
 	{
 		std::string prefabPath; // VFS path of the prefab
@@ -56,16 +41,11 @@ public:
 private:
 	wxPanel* _dialogPanel;
 
-	TreeColumns _columns;
-
 	// Model preview widget
 	std::unique_ptr<ui::MapPreview> _preview;
 
-	// Tree store containing prefab names and paths 
-	wxutil::TreeModel::Ptr _treeStore;
-
-	// Main tree view with model hierarchy
-	wxutil::TreeView* _treeView;
+	// Main tree view with the folder hierarchy
+	wxutil::FileSystemView* _treeView;
 
 	// The window position tracker
 	wxutil::WindowPosition _position;
@@ -73,10 +53,6 @@ private:
 
 	// Last selected prefab, 
 	std::string _lastPrefab;
-
-	// TRUE if the treeview has been populated
-	bool _populated;
-	std::unique_ptr<PrefabPopulator> _populator;
 
 	IMapResourcePtr _mapResource;
 
@@ -116,17 +92,15 @@ private:
 
     void clearPreview();
 
-	// Return the value from the selected column, or an empty string if nothing selected
-	std::string getSelectedValue(const wxutil::TreeModel::Column& col);
+	// Return the selected prefab path
+	std::string getSelectedPath();
 	bool getInsertAsGroup();
 
-    void handleSelectionChange();
 	void updateUsageInfo();
     void addCustomPathToRecentList();
 
-	void onSelectionChanged(wxDataViewEvent& ev);
+	void onSelectionChanged(wxutil::FileSystemView::SelectionChangedEvent& ev);
     void onPrefabPathSelectionChanged();
-	void onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev);
 	void onRescanPrefabs(wxCommandEvent& ev);
 
 	void onMainFrameShuttingDown();

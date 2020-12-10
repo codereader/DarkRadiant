@@ -53,6 +53,7 @@ public:
 	bool addPrimitiveToEntity(const scene::INodePtr& primitive, const scene::INodePtr& entity) override;
 
 	const NodeIndexMap& getNodeMap() const;
+	NodeIndexMap& getNodeMap();
 
 private:
 	float getProgressFraction();

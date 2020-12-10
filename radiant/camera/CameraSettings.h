@@ -4,6 +4,7 @@
 #include "iregistry.h"
 
 #include <cmath>
+#include "igl.h"
 #include <sigc++/signal.h>
 
 namespace ui
@@ -30,6 +31,8 @@ namespace
 	const std::string RKEY_TOGGLE_FREE_MOVE = RKEY_CAMERA_ROOT + "/toggleFreeMove";
 	const std::string RKEY_CAMERA_WINDOW_STATE = RKEY_CAMERA_ROOT + "/window";
     const std::string RKEY_SHOW_CAMERA_TOOLBAR = RKEY_CAMERA_ROOT + "/showToolbar";
+    const std::string RKEY_CAMERA_FONT_SIZE = RKEY_CAMERA_ROOT + "/fontSize";
+    const std::string RKEY_CAMERA_FONT_STYLE = RKEY_CAMERA_ROOT + "/fontStyle";
 }
 
 inline float calculateFarPlaneDistance(int cubicScale)
@@ -99,6 +102,9 @@ public:
 	// Enables/disables the cubic clipping
 	void toggleFarClip(bool newState);
 	void setFarClip(bool farClipEnabled);
+
+    int fontSize() const;
+    IGLFont::Style fontStyle() const;
 
 	// Adds the elements to the "camera" preference page
 	void constructPreferencePage();

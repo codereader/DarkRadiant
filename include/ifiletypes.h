@@ -7,9 +7,6 @@
 /**
  * Simple structure to store a file pattern (e.g. "*.map") 
  * along with its name (e.g. "Map files") and extension.
- *
- * If a module has been registering itself for a certain
- * filetype/extension combo, its name is in associatedModule.
  */
 struct FileTypePattern
 {
@@ -22,13 +19,18 @@ struct FileTypePattern
 	// The mask pattern ("*.map")
 	std::string pattern;
 
+    // Optional icon string, referring to an image in the bitmaps folder
+    std::string icon;
+
 	// Constructor with optional initialisation parameters
 	FileTypePattern(const std::string& name_ = "", 
 					const std::string& extension_ = "", 
-					const std::string& pattern_ = "") : 
+					const std::string& pattern_ = "",
+                    const std::string& icon_ = "") :
 		name(name_),
 		extension(extension_),
-		pattern(pattern_)
+		pattern(pattern_),
+        icon(icon_)
 	{}
 };
 typedef std::list<FileTypePattern> FileTypePatterns;
@@ -68,6 +70,12 @@ public:
 	 * @returns: a list of FileTypePatterns containing extension, display name, etc.
 	 */
 	virtual FileTypePatterns getPatternsForType(const std::string& fileType) = 0;
+
+    /**
+     * Tries to find an icon file for the given extension. If not empty,
+     * the returned string refers to a filename in the bitmaps/ folder.
+     */
+    virtual std::string getIconForExtension(const std::string& extension) = 0;
 };
 
 namespace filetype
@@ -79,6 +87,7 @@ const char* const TYPE_MAP_EXPORT = "mapexport";
 const char* const TYPE_PREFAB = "prefab";
 const char* const TYPE_REGION = "region";
 const char* const TYPE_MODEL_EXPORT = "modelexport";
+const char* const TYPE_PAK = "pak";
 
 }
 

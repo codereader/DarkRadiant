@@ -143,7 +143,24 @@ bool ZipArchive::containsFile(const std::string& name)
 
 void ZipArchive::traverse(Visitor& visitor, const std::string& root)
 {
-	_filesystem.traverse(visitor, root);
+	_filesystem.traverse(visitor, root, *this);
+}
+
+std::size_t ZipArchive::getFileSize(const std::string& relativePath)
+{
+    auto i = _filesystem.find(relativePath);
+    return i != _filesystem.end() ? i->second.getRecord()->file_size : 0;
+}
+
+bool ZipArchive::getIsPhysical(const std::string& relativePath)
+{
+    // this archive is a ZIP file, so no physicality here
+    return false;
+}
+
+std::string ZipArchive::getArchivePath(const std::string& relativePath)
+{
+    return _fullPath;
 }
 
 void ZipArchive::readZipRecord()

@@ -14,11 +14,7 @@
 #include <algorithm>
 
 #include "imodule.h"
-
-class ArchiveFile;
-typedef std::shared_ptr<ArchiveFile> ArchiveFilePtr;
-class ArchiveTextFile;
-typedef std::shared_ptr<ArchiveTextFile> ArchiveTextFilePtr;
+#include "iarchive.h"
 
 namespace vfs
 {
@@ -61,8 +57,30 @@ inline std::ostream& operator<< (std::ostream& s, const Visibility& v)
 }
 
 /// Metadata about a file in the virtual filesystem
-struct FileInfo
+class FileInfo
 {
+private:
+    // Info provider to load additional info on demand, used by e.g. getSize()
+    IArchiveFileInfoProvider* _infoProvider;
+public:
+    FileInfo(const std::string& topDir_, const std::string& name_,
+        Visibility visibility_) :
+        _infoProvider(nullptr),
+        topDir(topDir_),
+        name(name_),
+        visibility(visibility_)
+    {}
+
+    FileInfo(const std::string& topDir_, const std::string& name_, 
+        Visibility visibility_, IArchiveFileInfoProvider& infoProvider) :
+        FileInfo(topDir_, name_, visibility_)
+    {
+        _infoProvider = &infoProvider;
+    }
+
+    FileInfo(const FileInfo& other) = default;
+    FileInfo& operator=(const FileInfo& other) = default;
+
     /// Top-level directory (if any), e.g. "def" or "models"
     std::string topDir;
 
@@ -79,6 +97,24 @@ struct FileInfo
             return name;
         else
             return topDir + (topDir.back() == '/' ? "" : "/") + name;
+    }
+
+    // See IArchiveFileInfoProvider::getFileSize
+    std::size_t getSize() const
+    {
+        return _infoProvider ? _infoProvider->getFileSize(fullPath()) : 0;
+    }
+
+    // See IArchiveFileInfoProvider::getIsPhysicalFile
+    bool getIsPhysicalFile() const
+    {
+        return _infoProvider ? _infoProvider->getIsPhysical(fullPath()) : false;
+    }
+
+    // See IArchiveFileInfoProvider::getArchivePath
+    std::string getArchivePath() const
+    {
+        return _infoProvider ? _infoProvider->getArchivePath(fullPath()) : "";
     }
 
     /// Equality comparison with another FileInfo
@@ -149,6 +185,9 @@ public:
 	/// \brief Shuts down the filesystem.
 	virtual void shutdown() = 0;
 
+    // Returns the extension set this VFS instance has been initialised with
+    virtual const ExtensionSet& getArchiveExtensions() const = 0;
+
 	// greebo: Adds/removes observers to/from the VFS
     // Observers should also check isInitialised() after adding themselves
     // since the VFS might have been initialised already. Calling addObserver()
@@ -174,6 +213,11 @@ public:
 	/// This is a variant of openTextFile taking an absolute path as argument.
 	virtual ArchiveTextFilePtr openTextFileInAbsolutePath(const std::string& filename) = 0;
 
+    // Opens an independent archive located in the given physical path.
+    // (This archive can be located somewhere outside the current VFS hierarchy.)
+    // Loading this archive won't have any effect on the VFS setup, it is opened stand-alone.
+    virtual IArchive::Ptr openArchiveInAbsolutePath(const std::string& pathToArchive) = 0;
+
 	/// \brief Calls the visitor function for each file under \p basedir matching \p extension.
 	/// Use "*" as \p extension to match all file extensions.
 	virtual void forEachFile(const std::string& basedir,
@@ -183,11 +227,19 @@ public:
 
 	// Similar to forEachFile, this routine traverses an absolute path
 	// searching for files matching a certain extension and invoking
-	// the givne visitor functor on each occurrence.
+	// the given visitor functor on each occurrence.
 	virtual void forEachFileInAbsolutePath(const std::string& path,
 		const std::string& extension,
 		const VisitorFunc& visitorFunc,
 		std::size_t depth = 1) = 0;
+
+    // Similar to forEachFile, this routine traverses an archive in the given path
+    // searching for files matching a certain extension and invoking
+    // the given visitor functor on each occurrence.
+    virtual void forEachFileInArchive(const std::string& absoluteArchivePath,
+        const std::string& extension,
+        const VisitorFunc& visitorFunc,
+        std::size_t depth = 1) = 0;
 
 	/// \brief Returns the absolute filename for a relative \p name, or "" if not found.
 	virtual std::string findFile(const std::string& name) = 0;

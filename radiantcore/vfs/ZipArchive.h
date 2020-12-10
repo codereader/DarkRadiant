@@ -17,8 +17,9 @@ namespace archive
  *
  * Archives are owned and instantiated by the GlobalFileSystem instance.
  */
-class ZipArchive :
-	public Archive
+class ZipArchive final :
+	public IArchive,
+    public IArchiveFileInfoProvider
 {
 private:
 	class ZipRecord
@@ -59,10 +60,14 @@ public:
 	virtual ~ZipArchive();
 
 	// Archive implementation
-	virtual ArchiveFilePtr openFile(const std::string& name) override;
-	virtual ArchiveTextFilePtr openTextFile(const std::string& name) override;
+	ArchiveFilePtr openFile(const std::string& name) override;
+	ArchiveTextFilePtr openTextFile(const std::string& name) override;
 	bool containsFile(const std::string& name) override;
 	void traverse(Visitor& visitor, const std::string& root) override;
+
+    std::size_t getFileSize(const std::string& relativePath) override;
+    bool getIsPhysical(const std::string& relativePath) override;
+    std::string getArchivePath(const std::string& relativePath) override;
 
 private:
 	void readZipRecord();

@@ -249,6 +249,17 @@ void CameraSettings::setFarClip(bool farClipEnabled)
     registry::setValue(RKEY_ENABLE_FARCLIP, farClipEnabled);
 }
 
+int CameraSettings::fontSize() const
+{
+    return registry::getValue<int>(RKEY_CAMERA_FONT_SIZE);
+}
+
+IGLFont::Style CameraSettings::fontStyle() const
+{
+    return registry::getValue<std::string>(RKEY_CAMERA_FONT_STYLE) == "Sans" ?
+        IGLFont::Style::Sans : IGLFont::Style::Mono;
+}
+
 void CameraSettings::toggleFarClip(bool)
 {
 	setFarClip(!_farClipEnabled);

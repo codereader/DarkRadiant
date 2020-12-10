@@ -108,6 +108,11 @@ const NodeIndexMap& MapImporter::getNodeMap() const
 	return _nodes;
 }
 
+NodeIndexMap& MapImporter::getNodeMap()
+{
+    return _nodes;
+}
+
 float MapImporter::getProgressFraction()
 {
 	long readBytes = static_cast<long>(_inputStream.tellg());

@@ -55,8 +55,25 @@ inline gl::ISharedGLContextHolder& GlobalOpenGLContext()
 
 const char* const MODULE_OPENGL("OpenGL");
 
-namespace wxutil { class GLWidget; }
-class wxGLContext;
+class IGLFont
+{
+public:
+    using Ptr = std::shared_ptr<IGLFont>;
+
+    enum class Style
+    {
+        Sans,	// free sans
+        Mono,	// free mono
+    };
+
+    virtual ~IGLFont() {}
+
+    // Returns the line spacing of this font
+    virtual float getLineHeight() const = 0;
+
+    /// \brief Renders \p string at the current raster-position of the current context.
+    virtual void drawString(const std::string& string) = 0;
+};
 
 class OpenGLBinding :
     public RegisterableModule
@@ -64,13 +81,15 @@ class OpenGLBinding :
 public:
     virtual ~OpenGLBinding() {}
 
+    // Acquires a shared reference to the font of the given style and size
+    virtual IGLFont::Ptr getFont(IGLFont::Style style, std::size_t size) = 0;
+
+    // Deprecated
     virtual int getFontHeight() = 0;
 
+    // Deprecated
     /// \brief Renders \p string at the current raster-position of the current context.
     virtual void drawString(const std::string& string) const = 0;
-
-    /// \brief Renders \p character at the current raster-position of the current context.
-    virtual void drawChar(char character) const = 0;
 };
 
 inline OpenGLBinding& GlobalOpenGL() 

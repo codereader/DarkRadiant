@@ -173,6 +173,9 @@
     <Filter Include="src\ui\script">
       <UniqueIdentifier>{28ae583f-8545-491c-abcc-5e459c3d357b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ui\mapselector">
+      <UniqueIdentifier>{6ddb8b69-4e5a-4c82-b7d4-aa1306342340}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\main.cpp">
@@ -186,9 +189,6 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\camera\FloatingCamWnd.cpp">
       <Filter>src\camera</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\render\OpenGLModule.cpp">
-      <Filter>src\render</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\textool\TexTool.cpp">
       <Filter>src\textool</Filter>
@@ -419,9 +419,6 @@
       <Filter>src\xyview</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\prefabselector\PrefabSelector.cpp">
-      <Filter>src\ui\prefabselector</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\ui\prefabselector\PrefabPopulator.cpp">
       <Filter>src\ui\prefabselector</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\xyview\tools\BrushCreatorTool.cpp">
@@ -670,6 +667,9 @@
     <ClCompile Include="..\..\radiant\map\AutoSaver.cpp">
       <Filter>src\map</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\mapselector\MapSelector.cpp">
+      <Filter>src\ui\mapselector</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h">
@@ -680,9 +680,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\camera\FloatingCamWnd.h">
       <Filter>src\camera</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\render\OpenGLModule.h">
-      <Filter>src\render</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\textool\Rectangle.h">
       <Filter>src\textool</Filter>
@@ -949,9 +946,6 @@
       <Filter>src\ui\mainframe</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\prefabselector\PrefabSelector.h">
-      <Filter>src\ui\prefabselector</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\prefabselector\PrefabPopulator.h">
       <Filter>src\ui\prefabselector</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\xyview\tools\BrushCreatorTool.h">
@@ -1289,6 +1283,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\map\AutoSaver.h">
       <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\mapselector\MapSelector.h">
+      <Filter>src\ui\mapselector</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

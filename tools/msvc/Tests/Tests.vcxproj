@@ -59,7 +59,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\test\algorithm\Primitives.h" />
     <ClInclude Include="..\..\..\test\algorithm\Scene.h" />
+    <ClInclude Include="..\..\..\test\algorithm\XmlUtils.h" />
     <ClInclude Include="..\..\..\test\HeadlessOpenGLContext.h" />
     <ClInclude Include="..\..\..\test\RadiantTest.h" />
     <ClInclude Include="..\..\..\test\TestContext.h" />
@@ -70,8 +72,10 @@
     <ClCompile Include="..\..\..\test\CSG.cpp" />
     <ClCompile Include="..\..\..\test\Face.cpp" />
     <ClCompile Include="..\..\..\test\FacePlane.cpp" />
+    <ClCompile Include="..\..\..\test\FileTypes.cpp" />
     <ClCompile Include="..\..\..\test\HeadlessOpenGLContext.cpp" />
     <ClCompile Include="..\..\..\test\MapExport.cpp" />
+    <ClCompile Include="..\..\..\test\MapSavingLoading.cpp" />
     <ClCompile Include="..\..\..\test\Materials.cpp" />
     <ClCompile Include="..\..\..\test\math\Matrix4.cpp" />
     <ClCompile Include="..\..\..\test\math\Plane3.cpp" />

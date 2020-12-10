@@ -5,7 +5,6 @@
 #include <vector>
 #include "string/case_conv.h"
 
-#include "stream/TextFileInputStream.h"
 #include "os/path.h"
 #include <memory>
 

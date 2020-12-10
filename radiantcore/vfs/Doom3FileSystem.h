@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Archive.h"
+#include "iarchive.h"
 #include "ifilesystem.h"
 
 namespace vfs
@@ -20,7 +20,7 @@ private:
 	struct ArchiveDescriptor
 	{
 		std::string name;
-		ArchivePtr archive;
+		IArchive::Ptr archive;
 		bool is_pakfile;
 	};
 
@@ -35,12 +35,15 @@ public:
     bool isInitialised() const override;
 	void shutdown() override;
 
+    const ExtensionSet& getArchiveExtensions() const override;
+
 	int getFileCount(const std::string& filename) override;
 	ArchiveFilePtr openFile(const std::string& filename) override;
 	ArchiveTextFilePtr openTextFile(const std::string& filename) override;
 
 	ArchiveFilePtr openFileInAbsolutePath(const std::string& filename) override;
 	ArchiveTextFilePtr openTextFileInAbsolutePath(const std::string& filename) override;
+    IArchive::Ptr openArchiveInAbsolutePath(const std::string& pathToArchive) override;
 
 	// Call the specified callback function for each file matching extension
 	// inside basedir.
@@ -51,6 +54,11 @@ public:
 		const std::string& extension,
 		const VisitorFunc& visitorFunc,
 		std::size_t depth = 1) override;
+
+    void forEachFileInArchive(const std::string& absoluteArchivePath,
+        const std::string& extension,
+        const VisitorFunc& visitorFunc,
+        std::size_t depth = 1) override;
 
 	std::string findFile(const std::string& name) override;
 	std::string findRoot(const std::string& name) override;

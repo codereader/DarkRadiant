@@ -16,6 +16,9 @@
     <Filter Include="event">
       <UniqueIdentifier>{2c067d1b-6efd-41e1-a8c6-5d69eafbd95a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="fsview">
+      <UniqueIdentifier>{1e1ff470-f754-4dac-baec-a0fe56287b84}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\libs\wxutil\dialog\DialogBase.h">
@@ -85,7 +88,6 @@
     <ClInclude Include="..\..\libs\wxutil\EntryAbortedException.h" />
     <ClInclude Include="..\..\libs\wxutil\FileChooser.h" />
     <ClInclude Include="..\..\libs\wxutil\FreezePointer.h" />
-    <ClInclude Include="..\..\libs\wxutil\GLFont.h" />
     <ClInclude Include="..\..\libs\wxutil\GLWidget.h" />
     <ClInclude Include="..\..\libs\wxutil\IConv.h" />
     <ClInclude Include="..\..\libs\wxutil\KeyValueTable.h" />
@@ -106,6 +108,12 @@
     <ClInclude Include="..\..\libs\wxutil\Splitter.h" />
     <ClInclude Include="..\..\libs\wxutil\GLContext.h" />
     <ClInclude Include="..\..\libs\wxutil\EntityClassChooser.h" />
+    <ClInclude Include="..\..\libs\wxutil\fsview\FileSystemView.h">
+      <Filter>fsview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\fsview\Populator.h">
+      <Filter>fsview</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\wxutil\dialog\MessageBox.cpp">
@@ -142,7 +150,6 @@
     <ClCompile Include="..\..\libs\wxutil\DirChooser.cpp" />
     <ClCompile Include="..\..\libs\wxutil\FileChooser.cpp" />
     <ClCompile Include="..\..\libs\wxutil\FreezePointer.cpp" />
-    <ClCompile Include="..\..\libs\wxutil\GLFont.cpp" />
     <ClCompile Include="..\..\libs\wxutil\GLWidget.cpp" />
     <ClCompile Include="..\..\libs\wxutil\KeyValueTable.cpp" />
     <ClCompile Include="..\..\libs\wxutil\TreeView.cpp" />
@@ -158,6 +165,12 @@
     </ClCompile>
     <ClCompile Include="..\..\libs\wxutil\Splitter.cpp" />
     <ClCompile Include="..\..\libs\wxutil\EntityClassChooser.cpp" />
+    <ClCompile Include="..\..\libs\wxutil\fsview\FileSystemView.cpp">
+      <Filter>fsview</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\wxutil\fsview\Populator.cpp">
+      <Filter>fsview</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\libs\wxutil\Makefile.am" />

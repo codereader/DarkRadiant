@@ -1,6 +1,7 @@
 #include "PrefabSelector.h"
 
 #include "ifilesystem.h"
+#include "ifiletypes.h"
 #include "itextstream.h"
 #include "i18n.h"
 #include "iradiant.h"
@@ -24,7 +25,6 @@
 #include <wx/textctrl.h>
 #include <wx/radiobut.h>
 
-#include "PrefabPopulator.h"
 #include "entitylib.h"
 
 #include "string/trim.h"
@@ -44,6 +44,7 @@ namespace
 	const std::string RKEY_SPLIT_POS = RKEY_BASE + "splitPos";
 
 	const char* const PREFAB_FOLDER = "prefabs/";
+    const char* const PREFAB_FILE_ICON = "cmenu_add_prefab.png";
 
     const std::string RKEY_LAST_CUSTOM_PREFAB_PATH = RKEY_BASE + "lastPrefabPath";
     const std::string RKEY_RECENT_PREFAB_PATHS = RKEY_BASE + "recentPaths";
@@ -54,10 +55,8 @@ namespace
 
 PrefabSelector::PrefabSelector() :
 	DialogBase(_(PREFABSELECTOR_TITLE)),
-	_treeStore(new wxutil::TreeModel(_columns)),
-	_treeView(nullptr),
+    _treeView(nullptr),
 	_lastPrefab(""),
-	_populated(false),
     _description(nullptr),
     _useModPath(nullptr),
     _useCustomPath(nullptr),
@@ -78,7 +77,7 @@ PrefabSelector::PrefabSelector() :
 		wxDefaultPosition, wxDefaultSize, wxSP_3D | wxSP_LIVE_UPDATE);
     splitter->SetMinimumPaneSize(10); // disallow unsplitting
 
-	setupTreeView(splitter);
+    setupTreeView(splitter);
 	
 	wxPanel* previewPanel = new wxPanel(splitter, wxID_ANY);
 	previewPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
@@ -128,8 +127,8 @@ PrefabSelector::PrefabSelector() :
 	_panedPosition.connect(splitter);
 	_panedPosition.loadFromPath(RKEY_SPLIT_POS);
 
-	Connect(wxutil::EV_TREEMODEL_POPULATION_FINISHED,
-		TreeModelPopulationFinishedHandler(PrefabSelector::onTreeStorePopulationFinished), NULL, this);
+    // Update the controls right now, this also triggers a prefab rescan
+    onPrefabPathSelectionChanged();
 }
 
 void PrefabSelector::setupPathSelector(wxSizer* parentSizer)
@@ -201,9 +200,6 @@ void PrefabSelector::setupPathSelector(wxSizer* parentSizer)
     {
         onPrefabPathSelectionChanged();
     });
-
-    // Update the controls right now, this also triggers a prefab rescan
-    onPrefabPathSelectionChanged();
 }
 
 void PrefabSelector::addCustomPathToRecentList()
@@ -230,28 +226,8 @@ void PrefabSelector::addCustomPathToRecentList()
 
 int PrefabSelector::ShowModal()
 {
-	if (!_populated)
-	{
-		// Populate the tree
-		populatePrefabs();
-	}
-	else if (!_lastPrefab.empty()) 
-	{
-		// #4490: Only preselect if path is not empty, wxGTK will buffer that
-		// and call ExpandAncestors() on a stale wxDataViewItem in its internal idle routine
-
-		// Preselect the item, tree is already loaded
-		// Find and select the classname
-		wxDataViewItem preselectItem = _treeStore->FindString(_lastPrefab, _columns.vfspath);
-
-		if (preselectItem.IsOk())
-		{
-			_treeView->Select(preselectItem);
-			_treeView->EnsureVisible(preselectItem);
-
-			handleSelectionChange();
-		}
-	}
+	// Populate the tree
+	populatePrefabs();
 
 	// Enter the main loop
 	int returnCode = DialogBase::ShowModal();
@@ -283,7 +259,7 @@ PrefabSelector& PrefabSelector::Instance()
 {
 	PrefabSelectorPtr& instancePtr = InstancePtr();
 
-	if (instancePtr == NULL)
+	if (!instancePtr)
 	{
 		// Not yet instantiated, do it now
 		instancePtr.reset(new PrefabSelector);
@@ -327,7 +303,7 @@ PrefabSelector::Result PrefabSelector::ChoosePrefab(const std::string& curPrefab
 
 	if (Instance().ShowModal() == wxID_OK)
 	{
-		returnValue.prefabPath = Instance().getSelectedValue(Instance()._columns.vfspath);
+		returnValue.prefabPath = Instance().getSelectedPath();
 		returnValue.insertAsGroup = Instance().getInsertAsGroup();
 	}
 
@@ -340,18 +316,21 @@ PrefabSelector::Result PrefabSelector::ChoosePrefab(const std::string& curPrefab
 // Helper function to create the TreeView
 void PrefabSelector::setupTreeView(wxWindow* parent)
 {
-	_treeView = wxutil::TreeView::CreateWithModel(parent, _treeStore, wxBORDER_STATIC | wxDV_NO_HEADER);
+    _treeView = wxutil::FileSystemView::Create(parent, wxBORDER_STATIC | wxDV_NO_HEADER);
+    _treeView->Bind(wxutil::EV_FSVIEW_SELECTION_CHANGED, &PrefabSelector::onSelectionChanged, this);
 
-	// Single visible column, containing the directory/shader name and the icon
-	_treeView->AppendIconTextColumn(_("Prefab"), _columns.filename.getColumnIndex(),
-		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+    // Get the extensions from all possible patterns (e.g. *.pfb or *.pfbx)
+    FileTypePatterns patterns = GlobalFiletypes().getPatternsForType(filetype::TYPE_PREFAB);
 
-	// Get selection and connect the changed callback
-	_treeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED,
-		wxDataViewEventHandler(PrefabSelector::onSelectionChanged), NULL, this);
+    std::set<std::string> fileExtensions;
 
-	// Use the TreeModel's full string search function
-	_treeView->AddSearchColumn(_columns.filename);
+    for (const auto & pattern : patterns)
+    {
+        fileExtensions.insert(pattern.extension);
+    }
+
+    _treeView->SetFileExtensions(fileExtensions);
+    _treeView->SetDefaultFileIcon(PREFAB_FILE_ICON);
 }
 
 std::string PrefabSelector::getPrefabFolder()
@@ -361,11 +340,11 @@ std::string PrefabSelector::getPrefabFolder()
     // Only search in custom paths if it is absolute
     if (_useCustomPath->GetValue() && !customPath.empty() && path_is_absolute(customPath.c_str()))
     {
-        return customPath;
+        return os::standardPathWithSlash(customPath);
     }
     else if (_useRecentPath->GetValue() && !_recentPathSelector->GetStringSelection().IsEmpty())
     {
-        return _recentPathSelector->GetStringSelection().ToStdString();
+        return os::standardPathWithSlash(_recentPathSelector->GetStringSelection().ToStdString());
     }
     else
     {
@@ -376,63 +355,8 @@ std::string PrefabSelector::getPrefabFolder()
 
 void PrefabSelector::populatePrefabs()
 {
-	_populated = true;
-
-    if (_populator && _populator->getPrefabPath() == getPrefabFolder())
-    {
-        // Population already running for this path
-        return;
-    }
-
-    // Clear the existing run first (this waits for it to finish)
-    _populator.reset();
-
-	// Clear the treestore first
-	_treeStore->Clear();
-
-	wxutil::TreeModel::Row row = _treeStore->AddItem();
-
-	wxIcon prefabIcon;
-	prefabIcon.CopyFromBitmap(
-		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "cmenu_add_prefab.png"));
-
-	row[_columns.filename] = wxVariant(wxDataViewIconText(_("Loading..."), prefabIcon));
-	row[_columns.isFolder] = false;
-	row[_columns.vfspath] = "__loadingnode__"; // to pevent that item from being found
-	row.SendItemAdded();
-
-    _populator.reset(new PrefabPopulator(_columns, this, getPrefabFolder()));
-
-	// Start the thread, will send an event when finished
-	_populator->populate();
-}
-
-void PrefabSelector::onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev)
-{
-	_treeStore = ev.GetTreeModel();
-
-	wxDataViewItem preselectItem;
-
-	if (!_lastPrefab.empty())
-	{
-		// Find and select the classname
-		preselectItem = _treeStore->FindString(_lastPrefab, _columns.vfspath);
-	}
-
-	_treeView->AssociateModel(_treeStore.get());
-
-	if (preselectItem.IsOk())
-	{
-		_treeView->Select(preselectItem);
-		_treeView->EnsureVisible(preselectItem);
-
-		handleSelectionChange();
-	}
-
-    _populator.reset();
-
-    // Auto-size the first level
-    _treeView->TriggerColumnSizeEvent();
+    _treeView->SetBasePath(getPrefabFolder());
+    _treeView->Populate(_lastPrefab);
 }
 
 void PrefabSelector::onRescanPrefabs(wxCommandEvent& ev)
@@ -441,15 +365,9 @@ void PrefabSelector::onRescanPrefabs(wxCommandEvent& ev)
 }
 
 // Get the value from the selected column
-std::string PrefabSelector::getSelectedValue(const wxutil::TreeModel::Column& col)
+std::string PrefabSelector::getSelectedPath()
 {
-	wxDataViewItem item = _treeView->GetSelection();
-
-	if (!item.IsOk()) return "";
-
-	wxutil::TreeModel::Row row(item, *_treeView->GetModel());
-
-	return row[col];
+	return _treeView->GetSelectedPath();
 }
 
 bool PrefabSelector::getInsertAsGroup()
@@ -466,74 +384,60 @@ void PrefabSelector::clearPreview()
     _description->SetValue("");
 }
 
-void PrefabSelector::handleSelectionChange()
+void PrefabSelector::onSelectionChanged(wxutil::FileSystemView::SelectionChangedEvent& ev)
 {
-	if (_handlingSelectionChange)
-	{
-		return;
-	}
+    util::ScopedBoolLock lock(_handlingSelectionChange);
 
-	util::ScopedBoolLock lock(_handlingSelectionChange);
-	
-	wxDataViewItem item = _treeView->GetSelection();
-
-    if (!item.IsOk())
+    if (ev.GetSelectedPath().empty())
     {
         clearPreview();
         return;
     }
 
-    wxutil::TreeModel::Row row(item, *_treeView->GetModel());
-
-    if (row[_columns.isFolder].getBool())
+    if (ev.SelectionIsFolder())
     {
         clearPreview();
         return;
     }
 
-    std::string prefabPath = row[_columns.vfspath];
+    const auto& prefabPath = ev.GetSelectedPath();
 
-	_mapResource = GlobalMapResourceManager().loadFromPath(prefabPath);
+    _mapResource = GlobalMapResourceManager().createFromPath(prefabPath);
 
-	if (!_mapResource)
-	{
+    if (!_mapResource)
+    {
         clearPreview();
-		return;
-	}
+        return;
+    }
 
-	_lastPrefab = prefabPath;
+    _lastPrefab = prefabPath;
 
-	// Suppress the map loading dialog to avoid user
-	// getting stuck in the "drag filename" operation
-	registry::ScopedKeyChanger<bool> changer(
-		RKEY_MAP_SUPPRESS_LOAD_STATUS_DIALOG, true
-	);
+    // Suppress the map loading dialog to avoid user
+    // getting stuck in the "drag filename" operation
+    registry::ScopedKeyChanger<bool> changer(
+        RKEY_MAP_SUPPRESS_LOAD_STATUS_DIALOG, true
+    );
 
-	if (_mapResource->load())
-	{
-		// Get the node from the resource
+    if (_mapResource->load())
+    {
+        // Get the node from the resource
         const auto& root = _mapResource->getRootNode();
 
-		assert(root);
+        assert(root);
 
-		// Set the new rootnode
-		_preview->setRootNode(root);
+        // Set the new rootnode
+        _preview->setRootNode(root);
 
-		_preview->getWidget()->Refresh();
-	}
-	else
-	{
-		// Map load failed
-		rWarning() << "Could not load prefab: " << prefabPath << std::endl;
+        _preview->getWidget()->Refresh();
+    }
+    else
+    {
+        // Map load failed
+        rWarning() << "Could not load prefab: " << prefabPath << std::endl;
         clearPreview();
-	}
+    }
 
-	updateUsageInfo();
-}
-
-void PrefabSelector::onSelectionChanged(wxDataViewEvent& ev)
-{
-	handleSelectionChange();
+    updateUsageInfo();
 }
 
 void PrefabSelector::onPrefabPathSelectionChanged()

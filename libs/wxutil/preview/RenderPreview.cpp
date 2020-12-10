@@ -2,7 +2,6 @@
 
 #include "ifilter.h"
 #include "i18n.h"
-#include "igl.h"
 #include "icameraview.h"
 #include "iscenegraphfactory.h"
 #include "irendersystemfactory.h"
@@ -35,7 +34,9 @@ namespace
     const std::string PAUSE_BUTTON("pauseButton");
     const std::string STOP_BUTTON("stopButton");
 
-	const std::string RKEY_RENDERPREVIEW_SHOWGRID("ui/renderPreview/showGrid");
+	const std::string RKEY_RENDERPREVIEW_SHOWGRID("user/ui/renderPreview/showGrid");
+	const std::string RKEY_RENDERPREVIEW_FONTSIZE("user/ui/renderPreview/fontSize");
+	const std::string RKEY_RENDERPREVIEW_FONTSTYLE("user/ui/renderPreview/fontStyle");
 }
 
 RenderPreview::RenderPreview(wxWindow* parent, bool enableAnimation) :
@@ -57,7 +58,7 @@ RenderPreview::RenderPreview(wxWindow* parent, bool enableAnimation) :
     _filtersMenu(GlobalUIManager().createFilterMenu()),
 	_filterTool(nullptr)
 {
-	Connect(wxEVT_TIMER, wxTimerEventHandler(RenderPreview::_onFrame), NULL, this);
+	Bind(wxEVT_TIMER, &RenderPreview::_onFrame, this);
 
     // Insert GL widget
 	_mainPanel->GetSizer()->Prepend(_glWidget, 1, wxEXPAND);
@@ -431,6 +432,14 @@ bool RenderPreview::drawPreview()
 
     util::ScopedBoolLock lock(_renderingInProgress);
 
+    if (!_glFont)
+    {
+        auto fontSize = registry::getValue<int>(RKEY_RENDERPREVIEW_FONTSIZE);
+        auto fontStyle = registry::getValue<std::string>(RKEY_RENDERPREVIEW_FONTSTYLE) == "Sans" ? 
+            IGLFont::Style::Sans : IGLFont::Style::Mono;
+        _glFont = GlobalOpenGL().getFont(fontStyle, fontSize);
+    }
+
     glViewport(0, 0, _previewWidth, _previewHeight);
 
     // Set up the render and clear the drawing area in any case
@@ -785,7 +794,7 @@ void RenderPreview::drawTime()
 
     glRasterPos3f(1.0f, static_cast<float>(_previewHeight) - 1.0f, 0.0f);
 
-    GlobalOpenGL().drawString(fmt::format("{0:.3f} sec.", (_renderSystem->getTime() * 0.001f)));
+    _glFont->drawString(fmt::format("{0:.3f} sec.", (_renderSystem->getTime() * 0.001f)));
 }
 
 void RenderPreview::onGLKeyPress(wxKeyEvent& ev)

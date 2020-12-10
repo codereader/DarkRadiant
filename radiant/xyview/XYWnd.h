@@ -2,6 +2,7 @@
 
 #include "iscenegraph.h"
 #include "iorthoview.h"
+#include "igl.h"
 
 #include "math/Vector3.h"
 #include "math/Matrix4.h"
@@ -86,6 +87,8 @@ protected:
 
     sigc::connection _sigCameraChanged;
 
+    IGLFont::Ptr _font;
+
 public:
     // Constructor, this allocates the GL widget
     XYWnd(int uniqueId, wxWindow* parent);
@@ -152,6 +155,8 @@ public:
     // greebo: This gets called upon scene change
     void onSceneGraphChange() override;
 
+    void updateFont();
+
 protected:
     // Disconnects all widgets and unsubscribes as observer
     void destroyXYView();
@@ -167,6 +172,7 @@ protected:
 private:
     XYMouseToolEvent createMouseEvent(const Vector2& point, const Vector2& delta = Vector2(0, 0));
 
+    void ensureFont();
     void onContextMenu();
     void drawSizeInfo(int nDim1, int nDim2, const Vector3& vMinBounds, const Vector3& vMaxBounds);
     void drawCameraIcon();

@@ -5,8 +5,7 @@
 #include <string>
 #include <sigc++/connection.h>
 
-#include "wxutil/GLFont.h"
-#include "wxutil/GLWidget.h"
+#include "GLFont.h"
 
 #ifndef NDEBUG
 //#define ENABLE_KHR_DEBUG_EXTENSION
@@ -19,16 +18,20 @@ class OpenGLModule :
 private:
 	const std::string _unknownError;
 
-	wxutil::GLFontPtr _font;
+	IGLFont::Ptr _font;
 
 	sigc::connection _contextCreated;
 	sigc::connection _contextDestroyed;
 
+    // Map the font+size combo to weak pointers
+    std::map<std::pair<IGLFont::Style, int>, std::weak_ptr<IGLFont>> _fontCache;
+
 public:
 	OpenGLModule();
 
+    IGLFont::Ptr getFont(IGLFont::Style style, std::size_t size) override;
+
 	void drawString(const std::string& string) const override;
-	void drawChar(char character) const override;
 	int getFontHeight() override;
 
 	// RegisterableModule implementation
