@@ -3,11 +3,12 @@ add_library(wxutil
             dialog/DialogBase.cpp
             dialog/Dialog.cpp
             dialog/MessageBox.cpp
+            fsview/FileSystemView.cpp
+            fsview/Populator.cpp
             DirChooser.cpp
             EntityClassChooser.cpp
             FileChooser.cpp
             FreezePointer.cpp
-            GLFont.cpp
             GLWidget.cpp
             KeyValueTable.cpp
             menu/PopupMenu.cpp

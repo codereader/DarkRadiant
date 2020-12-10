@@ -18,7 +18,6 @@ add_executable(darkradiant
                map/StartupMapLoader.cpp
                precompiled.cpp
                RadiantApp.cpp
-               render/OpenGLModule.cpp
                selection/ManipulateMouseTool.cpp
                selection/SelectionMouseTools.cpp
                settings/LocalisationModule.cpp
@@ -97,6 +96,7 @@ add_executable(darkradiant
                ui/mainframe/ScreenUpdateBlocker.cpp
                ui/mainframe/SplitPaneLayout.cpp
                ui/mainframe/TopLevelFrame.cpp
+               ui/mapselector/MapSelector.cpp
                uimanager/animationpreview/AnimationPreview.cpp
                uimanager/animationpreview/MD5AnimationChooser.cpp
                uimanager/animationpreview/MD5AnimationViewer.cpp
@@ -138,7 +138,6 @@ add_executable(darkradiant
                ui/patch/PatchCreateDialog.cpp
                ui/patch/PatchInspector.cpp
                ui/patch/PatchThickenDialog.cpp
-               ui/prefabselector/PrefabPopulator.cpp
                ui/prefabselector/PrefabSelector.cpp
                ui/prefdialog/GameSetupDialog.cpp
                ui/prefdialog/GameSetupPage.cpp

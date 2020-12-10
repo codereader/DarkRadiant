@@ -89,6 +89,7 @@ add_library(radiantcore MODULE
             map/algorithm/MapImporter.cpp
             map/algorithm/Models.cpp
             map/algorithm/Skins.cpp
+            map/ArchivedMapResource.cpp
             map/CounterManager.cpp
             map/EditingStopwatch.cpp
             map/EditingStopwatchInfoFileModule.cpp
@@ -119,6 +120,7 @@ add_library(radiantcore MODULE
             map/MapPositionManager.cpp
             map/MapPropertyInfoFileModule.cpp
             map/MapResource.cpp
+            map/MapResourceLoader.cpp
             map/MapResourceManager.cpp
             map/mru/MRU.cpp
             map/namespace/ComplexName.cpp
@@ -201,6 +203,8 @@ add_library(radiantcore MODULE
             rendersystem/backend/OpenGLShader.cpp
             rendersystem/backend/OpenGLShaderPass.cpp
             rendersystem/debug/SpacePartitionRenderer.cpp
+            rendersystem/GLFont.cpp
+            rendersystem/OpenGLModule.cpp
             rendersystem/OpenGLRenderSystem.cpp
             rendersystem/RenderSystemFactory.cpp
             rendersystem/SharedOpenGLContextModule.cpp
