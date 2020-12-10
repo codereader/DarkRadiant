@@ -11,6 +11,7 @@
 
 #include "string/convert.h"
 #include "scenelib.h"
+#include "selectionlib.h"
 #include "command/ExecutionFailure.h"
 #include "patch/PatchIterators.h"
 
@@ -499,28 +500,28 @@ scene::INodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNo
 
     // Construct edge iterators for the first patch
     // Iterator, Starting Point for copying data to new patch, Edge Length
-    auto patch1FirstRow = std::make_tuple(SinglePatchRowIterator(patch1, 0), RowWisePatchIterator(patch1, patch1.getHeight() - 1, 1), Row, patch1.getWidth());
-    auto patch1FirstCol = std::make_tuple(SinglePatchColumnIterator(patch1, 0), ColumnWisePatchIterator(patch1, patch1.getWidth() - 1, 1), Column, patch1.getHeight());
-    auto patch1LastRow = std::make_tuple(SinglePatchRowIterator(patch1, patch1.getHeight() - 1), RowWisePatchIterator(patch1, 0, patch1.getHeight() - 2), Row, patch1.getWidth());
-    auto patch1LastCol = std::make_tuple(SinglePatchColumnIterator(patch1, patch1.getWidth() - 1), ColumnWisePatchIterator(patch1, 0, patch1.getWidth() - 2), Column, patch1.getHeight());
+    auto patch1FirstRow = std::make_tuple(SinglePatchRowIterator(patch1, 0), RowWisePatchIterator(patch1, patch1.getHeight() - 1, 1), Row, patch1.getWidth(), "patch1FirstRow");
+    auto patch1FirstCol = std::make_tuple(SinglePatchColumnIterator(patch1, 0), ColumnWisePatchIterator(patch1, patch1.getWidth() - 1, 1), Column, patch1.getHeight(), "patch1FirstCol");
+    auto patch1LastRow = std::make_tuple(SinglePatchRowIterator(patch1, patch1.getHeight() - 1), RowWisePatchIterator(patch1, 0, patch1.getHeight() - 2), Row, patch1.getWidth(), "patch1LastRow");
+    auto patch1LastCol = std::make_tuple(SinglePatchColumnIterator(patch1, patch1.getWidth() - 1), ColumnWisePatchIterator(patch1, 0, patch1.getWidth() - 2), Column, patch1.getHeight(), "patch1LastCol");
 
     // We'll be comparing each of the above edges to all other four edges of the second patch
     // and we're doing it in forward and backward iteration, so we're trying to orient patch 2
     // such that the edge vertices are matching up with patch 1
-    auto patch2FirstRow = std::make_tuple(RowWisePatchIterator(patch2), Begin, patch2.getWidth());
-    auto patch2FirstCol = std::make_tuple(ColumnWisePatchIterator(patch2), Begin, patch2.getHeight());
-    auto patch2LastRow = std::make_tuple(RowWisePatchIterator(patch2, patch2.getHeight() - 1, 0), End, patch2.getWidth());
-    auto patch2LastCol = std::make_tuple(ColumnWisePatchIterator(patch2, patch2.getWidth() - 1, 0), End, patch2.getHeight());
+    auto patch2FirstRow = std::make_tuple(RowWisePatchIterator(patch2), Begin, patch2.getWidth(), "patch2FirstRow");
+    auto patch2FirstCol = std::make_tuple(ColumnWisePatchIterator(patch2), Begin, patch2.getHeight(), "patch2FirstCol");
+    auto patch2LastRow = std::make_tuple(RowWisePatchIterator(patch2, patch2.getHeight() - 1, 0), End, patch2.getWidth(), "patch2LastRow");
+    auto patch2LastCol = std::make_tuple(ColumnWisePatchIterator(patch2, patch2.getWidth() - 1, 0), End, patch2.getHeight(), "patch2LastCol");
 
-    auto patch2FirstRowReverse = std::make_tuple(RowWisePatchReverseIterator(patch2), Begin, patch2.getWidth());
-    auto patch2FirstColReverse = std::make_tuple(ColumnWisePatchReverseIterator(patch2), Begin, patch2.getHeight());
-    auto patch2LastRowReverse = std::make_tuple(RowWisePatchReverseIterator(patch2, patch2.getHeight() - 1, 0), End, patch2.getWidth());
-    auto patch2LastColReverse = std::make_tuple(ColumnWisePatchReverseIterator(patch2, patch2.getWidth() - 1, 0), End, patch2.getHeight());
+    auto patch2FirstRowReverse = std::make_tuple(RowWisePatchReverseIterator(patch2), Begin, patch2.getWidth(), "patch2FirstRowReverse");
+    auto patch2FirstColReverse = std::make_tuple(ColumnWisePatchReverseIterator(patch2), Begin, patch2.getHeight(), "patch2FirstColReverse");
+    auto patch2LastRowReverse = std::make_tuple(RowWisePatchReverseIterator(patch2, patch2.getHeight() - 1, 0), End, patch2.getWidth(), "patch2LastRowReverse");
+    auto patch2LastColReverse = std::make_tuple(ColumnWisePatchReverseIterator(patch2, patch2.getWidth() - 1, 0), End, patch2.getHeight(), "patch2LastColReverse");
     
-    std::vector<std::tuple<PatchControlIterator, PatchControlIterator, EdgeType, std::size_t>> patch1Edges =
+    std::vector<std::tuple<PatchControlIterator, PatchControlIterator, EdgeType, std::size_t, const char*>> patch1Edges =
         { patch1FirstRow, patch1FirstCol, patch1LastRow, patch1LastCol };
 
-    std::vector<std::tuple<PatchControlIterator, EdgeLocation, std::size_t>> patch2Edges =
+    std::vector<std::tuple<PatchControlIterator, EdgeLocation, std::size_t, const char*>> patch2Edges =
     {
         patch2FirstRow, patch2FirstCol, patch2LastRow, patch2LastCol,
         patch2FirstRowReverse, patch2FirstColReverse, patch2LastRowReverse, patch2LastColReverse
@@ -534,6 +535,8 @@ scene::INodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNo
             {
                 continue; // length don't match
             }
+
+            rMessage() << "Comparing " << std::get<4>(patch1Edge) << " to " << std::get<3>(patch2Edge) << std::endl;
 
             if (!firstNItemsAreEqual(std::get<0>(patch1Edge), std::get<0>(patch2Edge), std::get<3>(patch1Edge), WELD_EPSILON))
             {
@@ -1001,16 +1004,19 @@ void weldSelectedPatches(const cmd::ArgumentList& args)
         return;
     }
 
-    // Get the list of selected patches
-    auto patches = selection::algorithm::getSelectedPatches();
+    auto& selectionInfo = GlobalSelectionSystem().getSelectionInfo();
 
-    if (patches.size() != 2)
+    // We need to have two patches selected
+    if (selectionInfo.totalCount != 2 || selectionInfo.patchCount != 2)
     {
         throw cmd::ExecutionFailure(_("Cannot weld patches, select two patches to weld them."));
     }
 
+    auto patch1 = std::dynamic_pointer_cast<PatchNode>(GlobalSelectionSystem().penultimateSelected());
+    auto patch2 = std::dynamic_pointer_cast<PatchNode>(GlobalSelectionSystem().ultimateSelected());
+
     UndoableCommand cmd("WeldSelectedPatches");
-    weldPatches(patches[0], patches[1]);
+    weldPatches(patch1, patch2);
 }
 
 } // namespace
