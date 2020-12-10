@@ -87,10 +87,10 @@ INSTANTIATE_TEST_CASE_P(WeldPatch1WithOther3x3, PatchWelding3x3,
                     std::tuple{ "1", "3", 5, 3 }, 
                     std::tuple{ "1", "4", 5, 3 }, 
                     std::tuple{ "1", "5", 5, 3 },
-                    std::tuple{ "2", "1", 1, 1 }, // TODO
-                    std::tuple{ "3", "1", 1, 1 }, // TODO
-                    std::tuple{ "4", "1", 1, 1 }, // TODO
-                    std::tuple{ "5", "1", 1, 1 })); // TODO
+                    std::tuple{ "2", "1", 5, 3 },
+                    std::tuple{ "3", "1", 5, 3 },
+                    std::tuple{ "4", "1", 5, 3 },
+                    std::tuple{ "5", "1", 5, 3 }));
 
 // Patch 6 is sharing its last row
 INSTANTIATE_TEST_CASE_P(WeldPatch6WithOther3x3, PatchWelding3x3,
@@ -98,21 +98,21 @@ INSTANTIATE_TEST_CASE_P(WeldPatch6WithOther3x3, PatchWelding3x3,
                     std::tuple{ "6", "8", 5, 3 }, 
                     std::tuple{ "6", "9", 5, 3 }, 
                     std::tuple{ "6", "10", 5, 3 },
-                    std::tuple{ "7", "6", 1, 1 }, // TODO
-                    std::tuple{ "8", "6", 1, 1 }, // TODO
-                    std::tuple{ "9", "6", 1, 1 }, // TODO
-                    std::tuple{ "10", "6", 1, 1 })); // TODO
+                    std::tuple{ "7", "6", 5, 3 },
+                    std::tuple{ "8", "6", 5, 3 },
+                    std::tuple{ "9", "6", 5, 3 },
+                    std::tuple{ "10", "6", 5, 3 }));
 
-// Patch 11 is sharing a column
+// Patch 11 is sharing a row
 INSTANTIATE_TEST_CASE_P(WeldPatch11WithOther3x3, PatchWelding3x3,
     testing::Values(std::tuple{ "11", "12", 3, 5 }, 
                     std::tuple{ "11", "13", 3, 5 }, 
                     std::tuple{ "11", "14", 3, 5 }, 
                     std::tuple{ "11", "15", 3, 5 },
-                    std::tuple{ "12", "11", 1, 1 }, // TODO
-                    std::tuple{ "13", "11", 1, 1 }, // TODO
-                    std::tuple{ "14", "11", 1, 1 }, // TODO
-                    std::tuple{ "15", "11", 1, 1 })); // TODO
+                    std::tuple{ "12", "11", 5, 3 },
+                    std::tuple{ "13", "11", 5, 3 },
+                    std::tuple{ "14", "11", 5, 3 },
+                    std::tuple{ "15", "11", 5, 3 }));
 
 // Patch 16 is sharing a column
 INSTANTIATE_TEST_CASE_P(WeldPatch16WithOther3x3, PatchWelding3x3,
@@ -120,10 +120,10 @@ INSTANTIATE_TEST_CASE_P(WeldPatch16WithOther3x3, PatchWelding3x3,
                     std::tuple{ "16", "18", 3, 5 }, 
                     std::tuple{ "16", "19", 3, 5 }, 
                     std::tuple{ "16", "20", 3, 5 },
-                    std::tuple{ "17", "16", 1, 1 }, // TODO
-                    std::tuple{ "18", "16", 1, 1 }, // TODO
-                    std::tuple{ "19", "16", 1, 1 }, // TODO
-                    std::tuple{ "20", "16", 1, 1 })); // TODO
+                    std::tuple{ "17", "16", 5, 3 },
+                    std::tuple{ "18", "16", 5, 3 },
+                    std::tuple{ "19", "16", 5, 3 },
+                    std::tuple{ "20", "16", 5, 3 }));
 
 #if 0
 TEST_F(PatchWeldingTest, Weld3x3Patches1And5)
