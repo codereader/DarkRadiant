@@ -125,89 +125,8 @@ INSTANTIATE_TEST_CASE_P(WeldPatch16WithOther3x3, PatchWelding3x3,
                     std::tuple{ "19", "16", 5, 3 },
                     std::tuple{ "20", "16", 5, 3 }));
 
-#if 0
-TEST_F(PatchWeldingTest, Weld3x3Patches1And5)
-{
-    loadMap("weld_patches2.mapx");
-
-    // Welding should produce a 3rows x 5cols patch
-    performPatchWeldingTest("1", "2", 3, 5);
-}
-
-// Patch 1 = 3x3, Patch 4 = 3x3 to the "right"
-TEST_F(PatchWeldingTest, WeldPatches1And4)
-{
-    loadMap("weld_patches.mapx");
-
-    // Welding patches 1 and 4 should produce a 3rows x 5cols patch
-    performPatchWeldingTest("1", "4", 3, 5);
-}
-
-// Patch 1 = 3x3, Patch 3 = 3x3 adjacent at the "top"
-TEST_F(PatchWeldingTest, WeldPatches1And3)
-{
-    loadMap("weld_patches.mapx");
-
-    // Welding patches 1 and 3 should produce a 5rows x 3cols patch
-    performPatchWeldingTest("1", "3", 5, 3);
-}
-
-// Patch 1 = 3x3, Patch 5 = 3x3 adjacent at the "bottom"
-TEST_F(PatchWeldingTest, WeldPatches1And5)
-{
-    loadMap("weld_patches.mapx");
-
-    // Welding patches 1 and 5 should produce a 5rows x 3cols patch
-    performPatchWeldingTest("1", "5", 5, 3);
-}
-
-// Patch 6 = 3rows x 5cols, Patch 8 = 3rows x 5cols adjacent to the right, both are func_static children
-TEST_F(PatchWeldingTest, WeldPatches6And8)
-{
-    loadMap("weld_patches.mapx");
-
-    // Welding patches 6 and 8 should produce a 3rows x 9cols patch
-    performPatchWeldingTest("6", "8", 3, 9);
-}
-
-// Patch 6 = 3rows x 5cols, Patch 9 = 3rows x 5cols adjacent at the top, both are func_static children
-TEST_F(PatchWeldingTest, WeldPatches6And9)
-{
-    loadMap("weld_patches.mapx");
-
-    // Welding patches 6 and 9 should produce a 5rows x 5cols patch
-    performPatchWeldingTest("6", "9", 5, 5);
-}
-
-// Patch 6 = 3rows x 5cols, Patch 10 = 5rows x 3cols adjacent at the bottom, both are func_static children
-TEST_F(PatchWeldingTest, WeldPatches6And10)
-{
-    loadMap("weld_patches.mapx");
-
-    // Welding patches 6 and 10 should produce a 5rows x 5cols patch
-    performPatchWeldingTest("6", "10", 5, 5);
-}
-
-// Patch 6 = 3rows x 5cols, Patch 7 = 3rows x 3cols adjacent at the bottom, both are func_static children
-TEST_F(PatchWeldingTest, WeldPatches6And7)
-{
-    loadMap("weld_patches.mapx");
-
-    // Welding patches 6 and 7 should produce a 3rows x 7cols patch
-    performPatchWeldingTest("6", "7", 3, 7);
-}
-
-// Patch 7 and Patch 8 are not adjacent
-TEST_F(PatchWeldingTest, WeldPatches7And8)
-{
-    loadMap("weld_patches.mapx");
-
-    // Patches have the same parent, but are not adjacent
-    assumePatchWeldingFails("7", "8");
-}
-
 // Patch 4 = worldspawn, Patch 7 = func_static 
-TEST_F(PatchWeldingTest, WeldPatches4And7)
+TEST_F(PatchWeldingTest, TryToWeldPatchesOfDifferentParents)
 {
     loadMap("weld_patches.mapx");
 
@@ -215,8 +134,16 @@ TEST_F(PatchWeldingTest, WeldPatches4And7)
     assumePatchWeldingFails("4", "7");
 }
 
+// Patches 2 and 4 are not touching
+TEST_F(PatchWeldingTest, TryToWeldNontouchingPatches)
+{
+    loadMap("weld_patches.mapx");
+
+    assumePatchWeldingFails("4", "7");
+}
+
 // Patches 11 are 12 are two cylinders stack upon each other
-TEST_F(PatchWeldingTest, WeldPatches11And12)
+TEST_F(PatchWeldingTest, WeldStackedCylinders)
 {
     loadMap("weld_patches.mapx");
 
@@ -224,13 +151,4 @@ TEST_F(PatchWeldingTest, WeldPatches11And12)
     performPatchWeldingTest("11", "12", 5, 9);
 }
 
-// Patches 13 are 14 are matching at first row : first row
-TEST_F(PatchWeldingTest, WeldPatches13And14)
-{
-    loadMap("weld_patches.mapx");
-
-    // Welding the two cylinders produce a 5rows x 3cols patch
-    performPatchWeldingTest("13", "14", 5, 3);
-}
-#endif
 }
