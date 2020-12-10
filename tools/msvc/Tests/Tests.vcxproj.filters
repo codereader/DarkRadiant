@@ -47,6 +47,7 @@
     <ClInclude Include="..\..\..\test\algorithm\Primitives.h">
       <Filter>algorithm</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\test\TestLogFile.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
