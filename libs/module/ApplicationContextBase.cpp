@@ -50,10 +50,10 @@ std::string ApplicationContextBase::getLibraryBasePath() const
 #if defined(__APPLE__)
 	return _appPath;
 #elif defined(POSIX)
-#   if defined(PKGLIBDIR)
-	return PKGLIBDIR;
-#   elif defined(ENABLE_RELOCATION)
+#   if defined(ENABLE_RELOCATION)
 	return _appPath + "../lib/darkradiant/";
+#   elif defined(PKGLIBDIR)
+	return PKGLIBDIR;
 #   else
 #   error "Either PKGLIBDIR or ENABLE_RELOCATION must be defined"
 #   endif
@@ -78,10 +78,10 @@ std::string ApplicationContextBase::getRuntimeDataPath() const
 
     return path;
 #elif defined(POSIX)
-#   if defined(PKGDATADIR)
-    return std::string(PKGDATADIR) + "/";
-#   elif defined(ENABLE_RELOCATION)
+#   if defined(ENABLE_RELOCATION)
     return _appPath + "../share/darkradiant/";
+#   elif defined(PKGDATADIR)
+    return std::string(PKGDATADIR) + "/";
 #   else
 #   error "Either PKGDATADIR or ENABLE_RELOCATION must be defined"
 #   endif
@@ -93,10 +93,10 @@ std::string ApplicationContextBase::getRuntimeDataPath() const
 std::string ApplicationContextBase::getHTMLPath() const
 {
 #if defined(POSIX)
-#if defined(HTMLDIR)
-    return std::string(HTMLDIR) + "/";
-#elif defined(ENABLE_RELOCATION)
+#if defined(ENABLE_RELOCATION)
     return _appPath + "../share/doc/darkradiant/";
+#elif defined(HTMLDIR)
+    return std::string(HTMLDIR) + "/";
 #else
 #error "Either HTMLDIR or ENABLE_RELOCATION must be defined"
 #endif

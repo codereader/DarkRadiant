@@ -19,8 +19,8 @@ include(GNUInstallDirs)
 # Set up core build paths
 set(CORE_MODULE_LIBRARY "libradiantcore")
 set(PKGDATADIR "${CMAKE_INSTALL_FULL_DATADIR}/darkradiant")
+set(PKGLIBDIR "${CMAKE_INSTALL_FULL_LIBDIR}/darkradiant")
 if (NOT ${ENABLE_RELOCATION})
-    set(PKGLIBDIR "${CMAKE_INSTALL_FULL_LIBDIR}/darkradiant")
     set(HTMLDIR "${CMAKE_INSTALL_FULL_DATADIR}/doc/darkradiant")
 endif()
 
@@ -104,16 +104,15 @@ add_subdirectory(radiant)
 
 # Install main targets
 install(TARGETS darkradiant math xmlutil scenegraph wxutil
-        RUNTIME DESTINATION bin
-        LIBRARY DESTINATION lib/darkradiant)
+        LIBRARY DESTINATION ${PKGLIBDIR})
 install(TARGETS radiantcore script sound
-        LIBRARY DESTINATION lib/darkradiant/modules)
+        LIBRARY DESTINATION ${PKGLIBDIR}/modules)
 
 # Install Dark Mod plugins
 if (${ENABLE_DM_PLUGINS})
     install(TARGETS dm_stimresponse dm_objectives dm_difficulty dm_editing
                     dm_gui dm_gameconnection
-            LIBRARY DESTINATION lib/darkradiant/plugins)
+            LIBRARY DESTINATION ${PKGLIBDIR}/plugins)
 endif()
 
 # Generate and install the .desktop file
