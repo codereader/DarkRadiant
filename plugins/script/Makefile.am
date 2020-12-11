@@ -42,4 +42,5 @@ script_la_SOURCES = ScriptingSystem.cpp \
                interfaces/SelectionSetInterface.cpp \
                interfaces/SelectionGroupInterface.cpp \
                interfaces/SoundInterface.cpp \
-               interfaces/GameInterface.cpp
+               interfaces/GameInterface.cpp \
+               interfaces/LayerInterface.cpp
