@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Expose some build options
-option(SKIP_DM_PLUGINS "Don't build Dark Mod specific plugins" OFF)
+option(ENABLE_DM_PLUGINS "Build Dark Mod specific plugins" ON)
 option(ENABLE_RELOCATION
        "Avoid hard-coded absolute paths to libraries or resources"
        ON)
@@ -89,7 +89,7 @@ add_subdirectory(plugins/script)
 add_subdirectory(plugins/sound)
 
 # Dark Mod plugins
-if (NOT SKIP_DM_PLUGINS)
+if (${ENABLE_DM_PLUGINS})
     add_subdirectory(plugins/dm.stimresponse)
     add_subdirectory(plugins/dm.objectives)
     add_subdirectory(plugins/dm.difficulty)
@@ -110,7 +110,7 @@ install(TARGETS radiantcore script sound
         LIBRARY DESTINATION lib/darkradiant/modules)
 
 # Install Dark Mod plugins
-if (NOT SKIP_DM_PLUGINS)
+if (${ENABLE_DM_PLUGINS})
     install(TARGETS dm_stimresponse dm_objectives dm_difficulty dm_editing
                     dm_gui dm_gameconnection
             LIBRARY DESTINATION lib/darkradiant/plugins)
