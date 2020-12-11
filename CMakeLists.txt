@@ -7,10 +7,30 @@ project(darkradiant VERSION 2.9.1)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+# Expose some build options
+option(SKIP_DM_PLUGINS "Don't build Dark Mod specific plugins" OFF)
+option(ENABLE_RELOCATION
+       "Avoid hard-coded absolute paths to libraries or resources"
+       ON)
+
+# Define GNU-style directory structure by default
+include(GNUInstallDirs)
+
+# Set up core build paths
+set(CORE_MODULE_LIBRARY "libradiantcore")
+set(PKGDATADIR "${CMAKE_INSTALL_FULL_DATADIR}/darkradiant")
+if (NOT ${ENABLE_RELOCATION})
+    set(PKGLIBDIR "${CMAKE_INSTALL_FULL_LIBDIR}/darkradiant")
+    set(HTMLDIR "${CMAKE_INSTALL_FULL_DATADIR}/doc/darkradiant")
+endif()
+
 # Build shared libraries by default
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
-option(SKIP_DM_PLUGINS "Don't build Dark Mod specific plugins" OFF)
-set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib/darkradiant")
+if (${ENABLE_RELOCATION})
+    set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib/darkradiant")
+else()
+    set(CMAKE_INSTALL_RPATH "${PKGLIBDIR}")
+endif()
 
 # Debug or release mode
 if(NOT CMAKE_BUILD_TYPE)
@@ -20,10 +40,6 @@ add_compile_definitions(
     $<$<CONFIG:Debug>:_DEBUG>
     $<$<CONFIG:Release>:NDEBUG>
 )
-
-# Define GNU-style directory structure by default, and pass directories to the
-# code with defines
-include(GNUInstallDirs)
 
 # Locate system packages
 include(FindPkgConfig)
@@ -57,7 +73,6 @@ add_compile_definitions(POSIX
 add_link_options(LINKER:-z,defs)
 
 # Generate config.h
-set(CORE_MODULE_LIBRARY "libradiantcore")
 configure_file(config.h.in config.h)
 add_compile_definitions(HAVE_CONFIG_H)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
@@ -107,15 +122,13 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/install/darkradiant.desktop
         DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
 
 # Install resources
-set(PKG_DATA_DIR "${CMAKE_INSTALL_DATADIR}/darkradiant")
-
 file(GLOB XML_FILES "${PROJECT_SOURCE_DIR}/install/*.xml")
-install(FILES ${XML_FILES} DESTINATION ${PKG_DATA_DIR})
+install(FILES ${XML_FILES} DESTINATION ${PKGDATADIR})
 
-install(DIRECTORY install/games DESTINATION ${PKG_DATA_DIR})
-install(DIRECTORY install/bitmaps DESTINATION ${PKG_DATA_DIR})
-install(DIRECTORY install/gl DESTINATION ${PKG_DATA_DIR})
-install(DIRECTORY install/ui DESTINATION ${PKG_DATA_DIR}
+install(DIRECTORY install/games DESTINATION ${PKGDATADIR})
+install(DIRECTORY install/bitmaps DESTINATION ${PKGDATADIR})
+install(DIRECTORY install/gl DESTINATION ${PKGDATADIR})
+install(DIRECTORY install/ui DESTINATION ${PKGDATADIR}
         FILES_MATCHING PATTERN "*.ttf" PATTERN "*.xrc")
 
 # Install locale data
@@ -123,5 +136,5 @@ install(DIRECTORY install/i18n/de TYPE LOCALE
         FILES_MATCHING PATTERN "*.mo")
 
 # Install scripts
-install(DIRECTORY install/scripts DESTINATION ${PKG_DATA_DIR}
+install(DIRECTORY install/scripts DESTINATION ${PKGDATADIR}
         FILES_MATCHING PATTERN "*.py")

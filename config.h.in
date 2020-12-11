@@ -5,5 +5,17 @@
 /* Project version */
 #define PACKAGE_VERSION "@CMAKE_PROJECT_VERSION@"
 
+/* Defined if this is a relocatable build */
+#cmakedefine ENABLE_RELOCATION
+
 /* Locale directory */
 #define LOCALEDIR "@CMAKE_INSTALL_FULL_LOCALEDIR@"
+
+/* Package library directory (e.g. /usr/lib/darkradiant) */
+#cmakedefine PKGLIBDIR "@PKGLIBDIR@"
+
+/* Package data directory (e.g. /usr/share/darkradiant) */
+#cmakedefine PKGDATADIR "@PKGDATADIR@"
+
+/* HTML directory (e.g. /usr/share/doc/darkradiant) */
+#cmakedefine HTMLDIR "@HTMLDIR@"
