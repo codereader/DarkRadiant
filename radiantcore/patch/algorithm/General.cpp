@@ -221,97 +221,94 @@ scene::INodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNo
 {
     constexpr double WELD_EPSILON = 0.001;
 
-    if (patchNode1->getParent() != patchNode2->getParent())
-    {
-        throw cmd::ExecutionFailure(_("Patches have different parent entities, cannot weld."));
-    }
-
     auto& patch1 = patchNode1->getPatch();
     auto& patch2 = patchNode2->getPatch();
 
-    // Construct edge iterators for the first patch
-    // Iterator, Starting Point for copying data to new patch, Edge Length
-    auto patch1FirstRow = std::make_pair(PatchEdge{ SinglePatchRowIterator(patch1, 0), patch1.getWidth(), EdgeType::Row }, RowWisePatchIterator(patch1, patch1.getHeight() - 1, 1));
-    auto patch1FirstCol = std::make_pair(PatchEdge{ SinglePatchColumnIterator(patch1, 0), patch1.getHeight(), EdgeType::Column }, ColumnWisePatchIterator(patch1, patch1.getWidth() - 1, 1));
-    auto patch1LastRow = std::make_pair(PatchEdge{ SinglePatchRowIterator(patch1, patch1.getHeight() - 1), patch1.getWidth(), EdgeType::Row }, RowWisePatchIterator(patch1, 0, patch1.getHeight() - 2));
-    auto patch1LastCol = std::make_pair(PatchEdge{ SinglePatchColumnIterator(patch1, patch1.getWidth() - 1), patch1.getHeight(), EdgeType::Column }, ColumnWisePatchIterator(patch1, 0, patch1.getWidth() - 2));
-
-    // We'll be comparing each of the above edges to all other four edges of the second patch
-    // and we're doing it in forward and backward iteration, so we're trying to orient patch 2
-    // such that the edge vertices are matching up with patch 1
-    auto patch2FirstRow = PatchEdge{ RowWisePatchIterator(patch2), patch2.getWidth(), EdgeType::Row };
-    auto patch2FirstCol = PatchEdge{ ColumnWisePatchIterator(patch2), patch2.getHeight(), EdgeType::Column };
-    auto patch2LastRow = PatchEdge{ RowWisePatchIterator(patch2, patch2.getHeight() - 1, 0), patch2.getWidth(), EdgeType::Row };
-    auto patch2LastCol = PatchEdge{ ColumnWisePatchIterator(patch2, patch2.getWidth() - 1, 0), patch2.getHeight(), EdgeType::Column };
-
-    auto patch2FirstRowReverse = PatchEdge{ RowWisePatchReverseIterator(patch2), patch2.getWidth(), EdgeType::Row };
-    auto patch2FirstColReverse = PatchEdge{ ColumnWisePatchReverseIterator(patch2), patch2.getHeight(), EdgeType::Column };
-    auto patch2LastRowReverse = PatchEdge{ RowWisePatchReverseIterator(patch2, patch2.getHeight() - 1, 0), patch2.getWidth(), EdgeType::Row };
-    auto patch2LastColReverse = PatchEdge{ ColumnWisePatchReverseIterator(patch2, patch2.getWidth() - 1, 0), patch2.getHeight(), EdgeType::Column };
-    
+    // Start with the first patch, construct some edges to compare: first row, last row, first col, last col
+    // Associate Edge to the Starting Point for copying data to new patch
     std::vector<std::pair<PatchEdge, PatchControlIterator>> patch1Edges =
-        { patch1FirstRow, patch1FirstCol, patch1LastRow, patch1LastCol };
-
-    std::vector<PatchEdge> patch2Edges =
     {
-        patch2FirstRow, patch2FirstCol, patch2LastRow, patch2LastCol,
-        patch2FirstRowReverse, patch2FirstColReverse, patch2LastRowReverse, patch2LastColReverse
+        { PatchEdge{ SinglePatchRowIterator(patch1, 0), patch1.getWidth(), EdgeType::Row }, RowWisePatchIterator(patch1, patch1.getHeight() - 1, 1) },
+        { PatchEdge{ SinglePatchColumnIterator(patch1, 0), patch1.getHeight(), EdgeType::Column }, ColumnWisePatchIterator(patch1, patch1.getWidth() - 1, 1) },
+        { PatchEdge{ SinglePatchRowIterator(patch1, patch1.getHeight() - 1), patch1.getWidth(), EdgeType::Row }, RowWisePatchIterator(patch1, 0, patch1.getHeight() - 2) },
+        { PatchEdge{ SinglePatchColumnIterator(patch1, patch1.getWidth() - 1), patch1.getHeight(), EdgeType::Column }, ColumnWisePatchIterator(patch1, 0, patch1.getWidth() - 2) }
     };
 
-    for (const auto& patch1Edge : patch1Edges)
+    // We'll be comparing each of the above edges to all other four edges of the second patch
+    // and we're doing it in forward and backwards direction: we're trying to orient patch 2
+    // such that the edge vertices are matching up with patch 1
+    std::vector<PatchEdge> patch2Edges =
     {
+        { RowWisePatchIterator(patch2), patch2.getWidth(), EdgeType::Row },
+        { ColumnWisePatchIterator(patch2), patch2.getHeight(), EdgeType::Column },
+        { RowWisePatchIterator(patch2, patch2.getHeight() - 1, 0), patch2.getWidth(), EdgeType::Row },
+        { ColumnWisePatchIterator(patch2, patch2.getWidth() - 1, 0), patch2.getHeight(), EdgeType::Column },
+        
+        { RowWisePatchReverseIterator(patch2), patch2.getWidth(), EdgeType::Row },
+        { ColumnWisePatchReverseIterator(patch2), patch2.getHeight(), EdgeType::Column },
+        { RowWisePatchReverseIterator(patch2, patch2.getHeight() - 1, 0), patch2.getWidth(), EdgeType::Row },
+        { ColumnWisePatchReverseIterator(patch2, patch2.getWidth() - 1, 0), patch2.getHeight(), EdgeType::Column }
+    };
+
+    // As soon as we've found a matching edge, we know exactly how the resulting merged patch
+    // should look like. We know the dimensions and we know whether we need to expand the 
+    // patch row-wise or column-wise.
+    for (const auto& p1Iter : patch1Edges)
+    {
+        const auto& patch1Edge = p1Iter.first;
+        const auto& patch1FillData = p1Iter.second;
+
         for (const auto& patch2Edge : patch2Edges)
         {
-            if (patch1Edge.first.edgeLength != patch2Edge.edgeLength)
+            if (patch1Edge.edgeLength != patch2Edge.edgeLength)
             {
                 continue; // length doesn't match
             }
 
-            if (!firstNItemsAreEqual(patch1Edge.first.iterator, patch2Edge.iterator, patch1Edge.first.edgeLength, WELD_EPSILON))
+            if (!firstNItemsAreEqual(patch1Edge.iterator, patch2Edge.iterator, patch1Edge.edgeLength, WELD_EPSILON))
             {
                 continue;
             }
 
-            // Expand the patch dimensions
+            // Calculate the patch dimensions
             std::size_t numNewRows = patch1.getHeight();
             std::size_t numNewColumns = patch1.getWidth();
-            std::size_t numNewElements = patch2.getWidth() * patch2.getHeight() / patch2Edge.edgeLength - 1;
+            std::size_t numNewEdges = patch2.getWidth() * patch2.getHeight() / patch2Edge.edgeLength - 1;
 
-            auto& dimensionToExpand = patch1Edge.first.edgeType == EdgeType::Row ? numNewRows : numNewColumns;
-            dimensionToExpand += numNewElements;
+            auto& dimensionToExpand = patch1Edge.edgeType == EdgeType::Row ? numNewRows : numNewColumns;
+            dimensionToExpand += numNewEdges;
 
+            // Create the new patch
             auto newPatchNode = GlobalPatchModule().createPatch(patch1.subdivisionsFixed() ? PatchDefType::Def3 : PatchDefType::Def2);
             auto& newPatch = std::dynamic_pointer_cast<IPatchNode>(newPatchNode)->getPatch();
             newPatch.setDims(numNewColumns, numNewRows);
 
-            if (patch1Edge.first.edgeType == EdgeType::Row)
-            {
-                // Load the control points row-wise into the new patch
-                RowWisePatchIterator target(newPatch);
+            // Load the control points into the new patch, row-wise or column-wise
+            PatchControlIterator target = patch1Edge.edgeType == EdgeType::Row ?
+                static_cast<PatchControlIterator>(RowWisePatchIterator(newPatch)) :
+                static_cast<PatchControlIterator>(ColumnWisePatchIterator(newPatch));
 
-                assignPatchControls(patch1Edge.second, target);
-                assignPatchControls(patch2Edge.iterator, target);
-            }
-            else
-            {
-                // Load the control points column-wise into the new patch
-                ColumnWisePatchIterator target(newPatch);
-
-                assignPatchControls(patch1Edge.second, target);
-                assignPatchControls(patch2Edge.iterator, target);
-            }
+            // Load all data of the first patch (minus the matching edge) plus all data of the second patch
+            assignPatchControls(patch1FillData, target);
+            assignPatchControls(patch2Edge.iterator, target);
 
             newPatch.controlPointsChanged();
 
-            return newPatchNode;
+            return newPatchNode; // success
         }
     }
 
+    // Failure
     throw cmd::ExecutionFailure(_("Unable to weld patches, no suitable edges of same length found"));
 }
 
 void weldPatches(const PatchNodePtr& patchNode1, const PatchNodePtr& patchNode2)
 {
+    if (patchNode1->getParent() != patchNode2->getParent())
+    {
+        throw cmd::ExecutionFailure(_("Patches have different parent entities, cannot weld."));
+    }
+
     auto mergedPatch = createdMergedPatch(patchNode1, patchNode2);
 
     patchNode1->getParent()->addChildNode(mergedPatch);
