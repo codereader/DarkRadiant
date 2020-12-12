@@ -125,7 +125,7 @@ class SinglePatchRowIteratorBase :
 {
 public:
     SinglePatchRowIteratorBase(IPatch& patch, std::size_t row, std::size_t startCol, int delta) :
-        PatchControlIterator(patch, static_cast<int>(row), startCol, 
+        PatchControlIterator(patch, static_cast<int>(row), static_cast<int>(startCol), 
             std::bind(SinglePatchRowIteratorBase::moveToNextCol, std::placeholders::_1, delta))
     {}
 
@@ -162,7 +162,7 @@ class SinglePatchColumnIteratorBase :
 {
 public:
     SinglePatchColumnIteratorBase(IPatch& patch, std::size_t col, std::size_t startRow, int delta) :
-        PatchControlIterator(patch, startRow, static_cast<int>(col), 
+        PatchControlIterator(patch, static_cast<int>(startRow), static_cast<int>(col), 
             std::bind(SinglePatchColumnIteratorBase::moveToNextRow, std::placeholders::_1, delta))
     {}
 
@@ -205,7 +205,7 @@ public:
     {}
 
     ColumnWisePatchIteratorBase(IPatch& patch, std::size_t startColumn, std::size_t endColumn, int rowDelta) :
-        PatchControlIterator(patch, rowDelta > 0 ? 0 : patch.getHeight() - 1, startColumn, 
+        PatchControlIterator(patch, rowDelta > 0 ? 0 : static_cast<int>(patch.getHeight()) - 1, static_cast<int>(startColumn), 
             std::bind(ColumnWisePatchIteratorBase::moveNext, std::placeholders::_1, std::ref(patch), 
                 endColumn, startColumn <= endColumn ? +1 : -1, rowDelta))
     {}
@@ -226,7 +226,7 @@ private:
             if (columnDelta > 0 && nextColumn <= endColumn ||
                 columnDelta < 0 && nextColumn >= endColumn)
             {
-                nextRow = rowDelta > 0 ? 0 : patch.getHeight() - 1;
+                nextRow = rowDelta > 0 ? 0 : static_cast<int>(patch.getHeight()) - 1;
             }
         }
 
@@ -276,7 +276,7 @@ public:
     {}
 
     RowWisePatchIteratorBase(IPatch& patch, std::size_t startRow, std::size_t endRow, int columnDelta) :
-        PatchControlIterator(patch, startRow, columnDelta > 0 ? 0 : patch.getWidth() - 1,
+        PatchControlIterator(patch, static_cast<int>(startRow), columnDelta > 0 ? 0 : static_cast<int>(patch.getWidth()) - 1,
             std::bind(RowWisePatchIteratorBase::moveNext, std::placeholders::_1, std::ref(patch), 
                 endRow, startRow <= endRow ? +1 : -1, columnDelta))
     {}
@@ -297,7 +297,7 @@ private:
             if (rowDelta > 0 && nextRow <= endRow ||
                 rowDelta < 0 && nextRow >= endRow)
             {
-                nextColumn = columnDelta > 0 ? 0 : patch.getWidth() - 1;
+                nextColumn = columnDelta > 0 ? 0 : static_cast<int>(patch.getWidth()) - 1;
             }
         }
 

@@ -216,12 +216,6 @@ scene::INodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNo
     auto& patch1 = patchNode1->getPatch();
     auto& patch2 = patchNode2->getPatch();
 
-    enum EdgeLocation
-    {
-        Begin,
-        End,
-    };
-
     enum EdgeType
     {
         Row,
@@ -230,28 +224,28 @@ scene::INodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNo
 
     // Construct edge iterators for the first patch
     // Iterator, Starting Point for copying data to new patch, Edge Length
-    auto patch1FirstRow = std::make_tuple(SinglePatchRowIterator(patch1, 0), RowWisePatchIterator(patch1, patch1.getHeight() - 1, 1), Row, patch1.getWidth(), "patch1FirstRow");
-    auto patch1FirstCol = std::make_tuple(SinglePatchColumnIterator(patch1, 0), ColumnWisePatchIterator(patch1, patch1.getWidth() - 1, 1), Column, patch1.getHeight(), "patch1FirstCol");
-    auto patch1LastRow = std::make_tuple(SinglePatchRowIterator(patch1, patch1.getHeight() - 1), RowWisePatchIterator(patch1, 0, patch1.getHeight() - 2), Row, patch1.getWidth(), "patch1LastRow");
-    auto patch1LastCol = std::make_tuple(SinglePatchColumnIterator(patch1, patch1.getWidth() - 1), ColumnWisePatchIterator(patch1, 0, patch1.getWidth() - 2), Column, patch1.getHeight(), "patch1LastCol");
+    auto patch1FirstRow = std::make_tuple(SinglePatchRowIterator(patch1, 0), RowWisePatchIterator(patch1, patch1.getHeight() - 1, 1), Row, patch1.getWidth());
+    auto patch1FirstCol = std::make_tuple(SinglePatchColumnIterator(patch1, 0), ColumnWisePatchIterator(patch1, patch1.getWidth() - 1, 1), Column, patch1.getHeight());
+    auto patch1LastRow = std::make_tuple(SinglePatchRowIterator(patch1, patch1.getHeight() - 1), RowWisePatchIterator(patch1, 0, patch1.getHeight() - 2), Row, patch1.getWidth());
+    auto patch1LastCol = std::make_tuple(SinglePatchColumnIterator(patch1, patch1.getWidth() - 1), ColumnWisePatchIterator(patch1, 0, patch1.getWidth() - 2), Column, patch1.getHeight());
 
     // We'll be comparing each of the above edges to all other four edges of the second patch
     // and we're doing it in forward and backward iteration, so we're trying to orient patch 2
     // such that the edge vertices are matching up with patch 1
-    auto patch2FirstRow = std::make_tuple(RowWisePatchIterator(patch2), Begin, patch2.getWidth(), "patch2FirstRow");
-    auto patch2FirstCol = std::make_tuple(ColumnWisePatchIterator(patch2), Begin, patch2.getHeight(), "patch2FirstCol");
-    auto patch2LastRow = std::make_tuple(RowWisePatchIterator(patch2, patch2.getHeight() - 1, 0), End, patch2.getWidth(), "patch2LastRow");
-    auto patch2LastCol = std::make_tuple(ColumnWisePatchIterator(patch2, patch2.getWidth() - 1, 0), End, patch2.getHeight(), "patch2LastCol");
+    auto patch2FirstRow = std::make_pair(RowWisePatchIterator(patch2), patch2.getWidth());
+    auto patch2FirstCol = std::make_pair(ColumnWisePatchIterator(patch2), patch2.getHeight());
+    auto patch2LastRow = std::make_pair(RowWisePatchIterator(patch2, patch2.getHeight() - 1, 0), patch2.getWidth());
+    auto patch2LastCol = std::make_pair(ColumnWisePatchIterator(patch2, patch2.getWidth() - 1, 0), patch2.getHeight());
 
-    auto patch2FirstRowReverse = std::make_tuple(RowWisePatchReverseIterator(patch2), Begin, patch2.getWidth(), "patch2FirstRowReverse");
-    auto patch2FirstColReverse = std::make_tuple(ColumnWisePatchReverseIterator(patch2), Begin, patch2.getHeight(), "patch2FirstColReverse");
-    auto patch2LastRowReverse = std::make_tuple(RowWisePatchReverseIterator(patch2, patch2.getHeight() - 1, 0), End, patch2.getWidth(), "patch2LastRowReverse");
-    auto patch2LastColReverse = std::make_tuple(ColumnWisePatchReverseIterator(patch2, patch2.getWidth() - 1, 0), End, patch2.getHeight(), "patch2LastColReverse");
+    auto patch2FirstRowReverse = std::make_pair(RowWisePatchReverseIterator(patch2), patch2.getWidth());
+    auto patch2FirstColReverse = std::make_pair(ColumnWisePatchReverseIterator(patch2), patch2.getHeight());
+    auto patch2LastRowReverse = std::make_pair(RowWisePatchReverseIterator(patch2, patch2.getHeight() - 1, 0), patch2.getWidth());
+    auto patch2LastColReverse = std::make_pair(ColumnWisePatchReverseIterator(patch2, patch2.getWidth() - 1, 0), patch2.getHeight());
     
-    std::vector<std::tuple<PatchControlIterator, PatchControlIterator, EdgeType, std::size_t, const char*>> patch1Edges =
+    std::vector<std::tuple<PatchControlIterator, PatchControlIterator, EdgeType, std::size_t>> patch1Edges =
         { patch1FirstRow, patch1FirstCol, patch1LastRow, patch1LastCol };
 
-    std::vector<std::tuple<PatchControlIterator, EdgeLocation, std::size_t, const char*>> patch2Edges =
+    std::vector<std::pair<PatchControlIterator, std::size_t>> patch2Edges =
     {
         patch2FirstRow, patch2FirstCol, patch2LastRow, patch2LastCol,
         patch2FirstRowReverse, patch2FirstColReverse, patch2LastRowReverse, patch2LastColReverse
@@ -261,14 +255,12 @@ scene::INodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNo
     {
         for (const auto& patch2Edge : patch2Edges)
         {
-            if (std::get<3>(patch1Edge) != std::get<2>(patch2Edge))
+            if (std::get<3>(patch1Edge) != patch2Edge.second)
             {
-                continue; // length don't match
+                continue; // length doesn't match
             }
 
-            //rMessage() << "Comparing " << std::get<4>(patch1Edge) << " to " << std::get<3>(patch2Edge) << std::endl;
-
-            if (!firstNItemsAreEqual(std::get<0>(patch1Edge), std::get<0>(patch2Edge), std::get<3>(patch1Edge), WELD_EPSILON))
+            if (!firstNItemsAreEqual(std::get<0>(patch1Edge), patch2Edge.first, std::get<3>(patch1Edge), WELD_EPSILON))
             {
                 continue;
             }
@@ -276,7 +268,7 @@ scene::INodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNo
             // Expand the patch dimensions
             std::size_t numNewRows = patch1.getHeight();
             std::size_t numNewColumns = patch1.getWidth();
-            std::size_t numNewElements = patch2.getWidth() * patch2.getHeight() / std::get<2>(patch2Edge) - 1;
+            std::size_t numNewElements = patch2.getWidth() * patch2.getHeight() / patch2Edge.second - 1;
 
             auto& dimensionToExpand = std::get<2>(patch1Edge) == Row ? numNewRows : numNewColumns;
             dimensionToExpand += numNewElements;
@@ -287,17 +279,19 @@ scene::INodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNo
 
             if (std::get<2>(patch1Edge) == Row)
             {
+                // Load the control points row-wise into the new patch
                 RowWisePatchIterator target(newPatch);
 
                 assignPatchControls(std::get<1>(patch1Edge), target);
-                assignPatchControls(std::get<0>(patch2Edge), target);
+                assignPatchControls(patch2Edge.first, target);
             }
             else
             {
+                // Load the control points column-wise into the new patch
                 ColumnWisePatchIterator target(newPatch);
 
                 assignPatchControls(std::get<1>(patch1Edge), target);
-                assignPatchControls(std::get<0>(patch2Edge), target);
+                assignPatchControls(patch2Edge.first, target);
             }
 
             newPatch.controlPointsChanged();
