@@ -4,6 +4,7 @@
 #include "iselection.h"
 #include "ibrush.h"
 #include "igroupnode.h"
+#include "iselectiongroup.h"
 #include "iscenegraph.h"
 #include "ientity.h"
 #include "ipatch.h"
@@ -220,6 +221,32 @@ inline bool curSelectionIsSuitableForReparent()
 	}
 
 	return true;
+}
+
+// Replaces the group assignments of the given node with the given groups
+inline void assignNodeToSelectionGroups(const scene::INodePtr& node, const IGroupSelectable::GroupIds& groups)
+{
+    auto groupSelectable = std::dynamic_pointer_cast<IGroupSelectable>(node);
+    
+    if (!groupSelectable)
+    {
+        return;
+    }
+    
+    const auto& groupIds = groupSelectable->getGroupIds();
+
+    auto previousGroups = groupSelectable->getGroupIds();
+
+    for (auto id : previousGroups)
+    {
+        groupSelectable->removeFromGroup(id);
+    }
+
+    // Add one by one, keeping the order intact
+    for (auto id : groupIds)
+    {
+        groupSelectable->addToGroup(id);
+    }
 }
 
 } // namespace selection

@@ -314,7 +314,13 @@ void weldPatches(const PatchNodePtr& patchNode1, const PatchNodePtr& patchNode2)
     patchNode1->getParent()->addChildNode(mergedPatch);
 
     mergedPatch->assignToLayers(patchNode1->getLayers());
-    // TODO: selection grouping
+
+    auto patch1GroupSelectable = std::dynamic_pointer_cast<IGroupSelectable>(patchNode1);
+
+    if (patch1GroupSelectable)
+    {
+        selection::assignNodeToSelectionGroups(mergedPatch, patch1GroupSelectable->getGroupIds());
+    }
 
     std::dynamic_pointer_cast<IPatchNode>(mergedPatch)->getPatch().scaleTextureNaturally();
 

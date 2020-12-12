@@ -2,6 +2,7 @@
 
 #include "icommandsystem.h"
 #include "iselection.h"
+#include "iselectiongroup.h"
 #include "ipatch.h"
 #include "algorithm/Scene.h"
 #include "scenelib.h"
@@ -24,7 +25,7 @@ inline scene::INodePtr findPatchWithNumber(const std::string& number)
     return algorithm::findFirstPatchWithMaterial(GlobalMapModule().getRoot(), "textures/numbers/" + number);
 }
 
-void performPatchWeldingTest(const std::string& number1, const std::string& number2, int expectedRows, int expectedCols)
+scene::INodePtr performPatchWelding(const std::string& number1, const std::string& number2)
 {
     auto firstPatch = findPatchWithNumber(number1);
     auto secondPatch = findPatchWithNumber(number2);
@@ -41,7 +42,12 @@ void performPatchWeldingTest(const std::string& number1, const std::string& numb
     EXPECT_FALSE(firstPatch->getParent());
     EXPECT_FALSE(secondPatch->getParent());
 
-    auto merged = std::dynamic_pointer_cast<IPatchNode>(GlobalSelectionSystem().ultimateSelected());
+    return GlobalSelectionSystem().ultimateSelected();
+}
+
+void verifyPatchDimensions(const scene::INodePtr& mergedPatchNode, int expectedRows, int expectedCols)
+{
+    auto merged = std::dynamic_pointer_cast<IPatchNode>(mergedPatchNode);
     EXPECT_EQ(merged->getPatch().getHeight(), expectedRows);
     EXPECT_EQ(merged->getPatch().getWidth(), expectedCols);
 }
@@ -78,7 +84,7 @@ TEST_P(PatchWelding3x3, WeldWithOther3x3Patch)
     auto expectedRows = std::get<2>(GetParam());
     auto expectedColumns = std::get<3>(GetParam());
 
-    performPatchWeldingTest(firstPatch, secondPatch, expectedRows, expectedColumns);
+    verifyPatchDimensions(performPatchWelding(firstPatch, secondPatch), expectedRows, expectedColumns);
 }
 
 // Patch 1 is sharing its first row
@@ -148,7 +154,43 @@ TEST_F(PatchWeldingTest, WeldStackedCylinders)
     loadMap("weld_patches.mapx");
 
     // Welding the two cylinders produce a 5rows x 9cols patch
-    performPatchWeldingTest("11", "12", 5, 9);
+    verifyPatchDimensions(performPatchWelding("11", "12"), 5, 9);
+}
+
+TEST_F(PatchWeldingTest, WeldedPatchInheritsLayers)
+{
+    loadMap("weld_patches.mapx");
+
+    auto firstPatch = findPatchWithNumber("1");
+    auto firstPatchLayers = firstPatch->getLayers();
+
+    // Check the setup
+    EXPECT_EQ(firstPatchLayers, scene::LayerList({ 0, 1 })) << "Patch 1 doesn't have the layers it's expected to, test map changed?";
+
+    // Patch 1 has layers (Default,2), Patch 2 has Layer 2 only
+    // After merging we expect the merged patch to have the layers as patch 1 had
+    auto mergedNode = performPatchWelding("1", "2");
+
+    EXPECT_EQ(mergedNode->getLayers(), firstPatchLayers);
+}
+
+TEST_F(PatchWeldingTest, WeldedPatchInheritsSelectionGroups)
+{
+    loadMap("weld_patches.mapx");
+
+    auto firstPatch = findPatchWithNumber("1");
+
+    auto firstPatchSelectionGroup = std::dynamic_pointer_cast<IGroupSelectable>(firstPatch);
+    auto firstPatchGroups = firstPatchSelectionGroup->getGroupIds();
+
+    // Check the setup
+    //EXPECT_EQ(firstPatch, scene::LayerList({ 0, 1 })) << "Patch 1 doesn't have the layers it's expected to, test map changed?";
+
+    // After merging we expect the merged patch to have the same groups as patch 1 had
+    auto mergedNode = performPatchWelding("1", "2");
+    auto mergedNodeSelectionGroup = std::dynamic_pointer_cast<IGroupSelectable>(firstPatch);
+    
+    EXPECT_EQ(mergedNodeSelectionGroup->getGroupIds(), firstPatchGroups);
 }
 
 }
