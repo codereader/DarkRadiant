@@ -217,6 +217,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\plugins\script\interfaces\CameraInterface.h" />
+    <ClInclude Include="..\..\plugins\script\interfaces\LayerInterface.h" />
     <ClInclude Include="..\..\plugins\script\interfaces\SelectionGroupInterface.h" />
     <ClInclude Include="..\..\plugins\script\precompiled.h" />
     <ClInclude Include="..\..\plugins\script\PythonConsoleWriter.h" />
@@ -247,6 +248,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\plugins\script\interfaces\CameraInterface.cpp" />
+    <ClCompile Include="..\..\plugins\script\interfaces\LayerInterface.cpp" />
     <ClCompile Include="..\..\plugins\script\interfaces\SceneGraphInterface.cpp" />
     <ClCompile Include="..\..\plugins\script\interfaces\SelectionGroupInterface.cpp" />
     <ClCompile Include="..\..\plugins\script\precompiled.cpp">
