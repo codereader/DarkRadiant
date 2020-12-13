@@ -330,6 +330,52 @@ void weldPatches(const PatchNodePtr& patchNode1, const PatchNodePtr& patchNode2)
     scene::removeNodeFromParent(patchNode2);
 }
 
+void weldPatchPool()
+{
+    auto selectedPatches = selection::algorithm::getSelectedPatches();
+
+    // Sort these patches into buckets according to their parents
+    // This step may not be strictly necessary as weldPatches() checks the parents
+    // but we might save a bit of unnecessary comparison work
+    std::map<scene::INodePtr, std::vector<PatchNodePtr>> patchesByEntity;
+
+    for (const auto& patch : selectedPatches)
+    {
+        patchesByEntity[patch->getParent()].push_back(patch);
+    }
+
+    std::size_t numPatchesCreated = 0;
+
+    for (const auto& pair : patchesByEntity)
+    {
+        // Try to combine each patch of this list with the rest of them O(2n)
+        for (auto p1 = pair.second.begin(); p1 != pair.second.end(); ++p1)
+        {
+            if (!(*p1)->getParent()) continue; // patch has been merged already
+
+            for (auto p2 = p1 + 1; p2 != pair.second.end(); ++p2)
+            {
+                if (!(*p2)->getParent()) continue;// patch has been merged already
+                
+                try
+                {
+                    weldPatches(*p1, *p2);
+                    ++numPatchesCreated;
+                }
+                catch (const cmd::ExecutionFailure&)
+                {
+                    continue; // failed to merge these two
+                }
+            }
+        }
+    }
+
+    if (numPatchesCreated == 0)
+    {
+        throw cmd::ExecutionFailure(_("Cannot weld, patches need have the same parent entity."));
+    }
+}
+
 void weldSelectedPatches(const cmd::ArgumentList& args)
 {
     if (args.size() > 0)
@@ -340,17 +386,26 @@ void weldSelectedPatches(const cmd::ArgumentList& args)
 
     auto& selectionInfo = GlobalSelectionSystem().getSelectionInfo();
 
-    // We need to have two patches selected
-    if (selectionInfo.totalCount != 2 || selectionInfo.patchCount != 2)
+    if (selectionInfo.totalCount == 2 || selectionInfo.patchCount == 2)
     {
-        throw cmd::ExecutionFailure(_("Cannot weld patches, select two patches to weld them."));
+        // Special handling for exactly two selected patches: the selection order is important
+        // Merge them and preserve the properties of the first selected patch
+        auto patch1 = std::dynamic_pointer_cast<PatchNode>(GlobalSelectionSystem().penultimateSelected());
+        auto patch2 = std::dynamic_pointer_cast<PatchNode>(GlobalSelectionSystem().ultimateSelected());
+
+        UndoableCommand cmd("WeldSelectedPatches");
+        weldPatches(patch1, patch2);
     }
-
-    auto patch1 = std::dynamic_pointer_cast<PatchNode>(GlobalSelectionSystem().penultimateSelected());
-    auto patch2 = std::dynamic_pointer_cast<PatchNode>(GlobalSelectionSystem().ultimateSelected());
-
-    UndoableCommand cmd("WeldSelectedPatches");
-    weldPatches(patch1, patch2);
+    else if (selectionInfo.patchCount >= 2)
+    {
+        // We have many things with at least two patches selected, try to find a matching combo
+        UndoableCommand cmd("WeldSelectedPatches");
+        weldPatchPool();
+    }
+    else
+    {
+        throw cmd::ExecutionFailure(_("Cannot weld patches, select (at least) two patches with the same parent entity."));
+    }
 }
 
 } // namespace
