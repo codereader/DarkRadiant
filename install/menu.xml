@@ -307,7 +307,8 @@
 		<menuItem name="capselection" caption="Cap Selection..." command="PatchCapDialog" icon="curve_cap.png" />
 		<menuSeparator />
 		<menuItem name="stitchTextures" caption="Stitch Patch Textures" command="StitchPatchTexture" />
-    <menuItem name="bulgePatch" caption="Bulge Patch..." command="BulgePatchDialog" />
+        <menuItem name="bulgePatch" caption="Bulge Patch..." command="BulgePatchDialog" />
+        <menuItem name="weldPatches" caption="Weld/Merge Patches" command="WeldSelectedPatches" />
 	</subMenu>
 
 	<subMenu name="curve" caption="&amp;Curve">

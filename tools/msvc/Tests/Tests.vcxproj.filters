@@ -31,6 +31,8 @@
     <ClCompile Include="..\..\..\test\MapSavingLoading.cpp" />
     <ClCompile Include="..\..\..\test\ColourSchemes.cpp" />
     <ClCompile Include="..\..\..\test\WorldspawnColour.cpp" />
+    <ClCompile Include="..\..\..\test\PatchWelding.cpp" />
+    <ClCompile Include="..\..\..\test\PatchIterators.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\HeadlessOpenGLContext.h" />
@@ -45,6 +47,7 @@
     <ClInclude Include="..\..\..\test\algorithm\Primitives.h">
       <Filter>algorithm</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\test\TestLogFile.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

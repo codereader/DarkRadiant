@@ -271,6 +271,9 @@
     <ClInclude Include="..\..\libs\render\CamRenderer.h">
       <Filter>render</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\patch\PatchIterators.h">
+      <Filter>patch</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">
@@ -311,6 +314,9 @@
     </Filter>
     <Filter Include="time">
       <UniqueIdentifier>{ac5674ae-1705-4c6c-8b17-955f44c154c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="patch">
+      <UniqueIdentifier>{b88685b4-a515-4b1d-b6aa-2c1499b227df}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

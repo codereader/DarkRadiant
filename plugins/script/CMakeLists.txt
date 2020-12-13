@@ -8,6 +8,7 @@ add_library(script MODULE
             interfaces/FileSystemInterface.cpp
             interfaces/GameInterface.cpp
             interfaces/GridInterface.cpp
+            interfaces/LayerInterface.cpp
             interfaces/MapInterface.cpp
             interfaces/MathInterface.cpp
             interfaces/ModelInterface.cpp

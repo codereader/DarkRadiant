@@ -65,6 +65,7 @@
     <ClInclude Include="..\..\..\test\HeadlessOpenGLContext.h" />
     <ClInclude Include="..\..\..\test\RadiantTest.h" />
     <ClInclude Include="..\..\..\test\TestContext.h" />
+    <ClInclude Include="..\..\..\test\TestLogFile.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\test\Camera.cpp" />
@@ -85,6 +86,8 @@
     <ClCompile Include="..\..\..\test\ModelExport.cpp" />
     <ClCompile Include="..\..\..\test\Models.cpp" />
     <ClCompile Include="..\..\..\test\ModelScale.cpp" />
+    <ClCompile Include="..\..\..\test\PatchIterators.cpp" />
+    <ClCompile Include="..\..\..\test\PatchWelding.cpp" />
     <ClCompile Include="..\..\..\test\Selection.cpp" />
     <ClCompile Include="..\..\..\test\SelectionAlgorithm.cpp" />
     <ClCompile Include="..\..\..\test\VFS.cpp" />

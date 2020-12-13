@@ -10,6 +10,7 @@
 #include "icommandsystem.h"
 
 #include "TestContext.h"
+#include "TestLogFile.h"
 #include "HeadlessOpenGLContext.h"
 #include "module/CoreModule.h"
 #include "messages/GameConfigNeededMessage.h"
@@ -37,6 +38,8 @@ protected:
 
 	std::shared_ptr<gl::HeadlessOpenGLContextModule> _glContextModule;
 
+    std::unique_ptr<TestLogFile> _testLogFile;
+
 protected:
 	RadiantTest()
 	{
@@ -54,6 +57,8 @@ protected:
 
 			module::RegistryReference::Instance().setRegistry(radiant->getModuleRegistry());
 			module::initialiseStreams(radiant->getLogWriter());
+
+            initTestLog();
 		}
 		catch (module::CoreModule::FailureException & ex)
 		{
@@ -107,11 +112,22 @@ protected:
 
 	~RadiantTest()
 	{
+        _coreModule->get()->getLogWriter().detach(_testLogFile.get());
+        _testLogFile->close();
+        _testLogFile.reset();
+
 		module::shutdownStreams();
 		_coreModule.reset();
 	}
 
 protected:
+    void initTestLog()
+    {
+        auto fullPath = _context.getCacheDataPath() + "test.log";
+        _testLogFile.reset(new TestLogFile(fullPath));
+        _coreModule->get()->getLogWriter().attach(_testLogFile.get());
+    }
+
 	virtual void setupGameFolder()
 	{}
 
