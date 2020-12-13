@@ -309,22 +309,30 @@ void weldPatches(const PatchNodePtr& patchNode1, const PatchNodePtr& patchNode2)
         throw cmd::ExecutionFailure(_("Patches have different parent entities, cannot weld."));
     }
 
-    auto mergedPatch = createdMergedPatch(patchNode1, patchNode2);
+    auto mergedPatchNode = createdMergedPatch(patchNode1, patchNode2);
 
-    patchNode1->getParent()->addChildNode(mergedPatch);
+    patchNode1->getParent()->addChildNode(mergedPatchNode);
 
-    mergedPatch->assignToLayers(patchNode1->getLayers());
+    mergedPatchNode->assignToLayers(patchNode1->getLayers());
 
     auto patch1GroupSelectable = std::dynamic_pointer_cast<IGroupSelectable>(patchNode1);
 
     if (patch1GroupSelectable)
     {
-        selection::assignNodeToSelectionGroups(mergedPatch, patch1GroupSelectable->getGroupIds());
+        selection::assignNodeToSelectionGroups(mergedPatchNode, patch1GroupSelectable->getGroupIds());
     }
 
-    std::dynamic_pointer_cast<IPatchNode>(mergedPatch)->getPatch().scaleTextureNaturally();
+    auto& mergedPatch = std::dynamic_pointer_cast<IPatchNode>(mergedPatchNode)->getPatch();
 
-    Node_setSelected(mergedPatch, true);
+    // Preserve fixed subdivision setting of the first patch
+    if (patchNode1->getPatch().subdivisionsFixed())
+    {
+        mergedPatch.setFixedSubdivisions(true, patchNode1->getPatch().getSubdivisions());
+    }
+
+    mergedPatch.scaleTextureNaturally();
+
+    Node_setSelected(mergedPatchNode, true);
 
     scene::removeNodeFromParent(patchNode1);
     scene::removeNodeFromParent(patchNode2);
