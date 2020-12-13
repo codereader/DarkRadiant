@@ -193,4 +193,67 @@ TEST_F(PatchWeldingTest, WeldedPatchInheritsSelectionGroups)
     EXPECT_EQ(mergedNodeSelectionGroup->getGroupIds(), firstPatchGroups);
 }
 
+TEST_F(PatchWeldingTest, WeldMultipleSelectedPatches)
+{
+    loadMap("weld_patches.mapx");
+
+    // Select all patches with the material 13
+    GlobalMapModule().findOrInsertWorldspawn()->foreachNode([&](const scene::INodePtr& node)
+    {
+        auto patchNode = std::dynamic_pointer_cast<IPatchNode>(node);
+
+        if (patchNode && patchNode->getPatch().getShader() == "textures/numbers/13")
+        {
+            Node_setSelected(node, true);
+        }
+
+        return true;
+    });
+
+    // Check the setup
+    EXPECT_EQ(GlobalSelectionSystem().countSelected(), 6) << "Expected 6 patches with material 13, test map changed?";
+
+    // Execute the weld patches command three times, regardless of the order only one should remain
+    GlobalCommandSystem().executeCommand("WeldSelectedPatches");
+    GlobalCommandSystem().executeCommand("WeldSelectedPatches");
+    GlobalCommandSystem().executeCommand("WeldSelectedPatches");
+
+    EXPECT_EQ(GlobalSelectionSystem().countSelected(), 1) << "Expected 1 remaining patch with material 13";
+
+    // We might get a 7x9 or a 9x7 patch
+    auto& result = std::dynamic_pointer_cast<IPatchNode>(GlobalSelectionSystem().ultimateSelected())->getPatch();
+
+    EXPECT_EQ(std::max(result.getWidth(), result.getHeight()), 9);
+    EXPECT_EQ(std::min(result.getWidth(), result.getHeight()), 7);
+}
+
+
+TEST_F(PatchWeldingTest, WeldingIsUndoable)
+{
+    loadMap("weld_patches.mapx");
+
+    {
+        auto firstPatch = findPatchWithNumber("1");
+        auto secondPatch = findPatchWithNumber("2");
+
+        EXPECT_TRUE(firstPatch && firstPatch->getParent());
+        EXPECT_TRUE(secondPatch && secondPatch->getParent());
+
+        Node_setSelected(firstPatch, true);
+        Node_setSelected(secondPatch, true);
+    }
+
+    GlobalCommandSystem().executeCommand("WeldSelectedPatches");
+    
+    // Patches should be gone now
+    EXPECT_FALSE(findPatchWithNumber("1"));
+    EXPECT_FALSE(findPatchWithNumber("2"));
+
+    GlobalCommandSystem().executeCommand("Undo");
+
+    // Patches should be back again
+    EXPECT_TRUE(findPatchWithNumber("1"));
+    EXPECT_TRUE(findPatchWithNumber("2"));
+}
+
 }
