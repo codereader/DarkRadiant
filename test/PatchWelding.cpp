@@ -203,7 +203,7 @@ TEST_F(PatchWeldingTest, WeldingPreservesFixedSubdivisions)
 
     // Check the setup
     EXPECT_TRUE(firstPatchNode->getPatch().subdivisionsFixed()) << "Patch 1 isn't set to fixed subdivisions 5x2, test map changed?";
-    EXPECT_EQ(firstPatchNode->getPatch().getSubdivisions(), Subdivisions({ 5, 2 })) << "Patch 1 isn't set to fixed subdivisions 5x2, test map changed?";
+    EXPECT_EQ(firstPatchNode->getPatch().getSubdivisions(), Subdivisions(5, 2)) << "Patch 1 isn't set to fixed subdivisions 5x2, test map changed?";
 
     // After merging we expect the merged patch to have the same subdivisions as patch 1 had
     auto mergedNode = performPatchWelding("1", "2");
@@ -211,7 +211,7 @@ TEST_F(PatchWeldingTest, WeldingPreservesFixedSubdivisions)
     auto merged = std::dynamic_pointer_cast<IPatchNode>(mergedNode);
 
     EXPECT_TRUE(merged->getPatch().subdivisionsFixed()) << "Merged patch is supposed to have fixed subdivisions 5x2";
-    EXPECT_EQ(merged->getPatch().getSubdivisions(), Subdivisions({ 5, 2 })) << "Merged patch is supposed to have fixed subdivisions 5x2";
+    EXPECT_EQ(merged->getPatch().getSubdivisions(), Subdivisions(5, 2)) << "Merged patch is supposed to have fixed subdivisions 5x2";
 }
 
 TEST_F(PatchWeldingTest, WeldingPreservesNonfixedSubdivisions)

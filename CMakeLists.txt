@@ -55,6 +55,7 @@ pkg_check_modules(PNG libpng REQUIRED)
 pkg_check_modules(AL openal REQUIRED)
 pkg_check_modules(OGG ogg REQUIRED)
 pkg_check_modules(VORBIS vorbisfile REQUIRED)
+pkg_check_modules(X11 x11 REQUIRED)
 
 # Locate wxWidgets
 find_package(wxWidgets REQUIRED
@@ -101,6 +102,13 @@ endif()
 # Main radiant components
 add_subdirectory(radiantcore)
 add_subdirectory(radiant)
+
+# Tests
+pkg_check_modules(GTEST gtest)
+pkg_check_modules(GTEST_MAIN gtest_main)
+if (${GTEST_FOUND} AND ${GTEST_MAIN_FOUND})
+    add_subdirectory(test)
+endif()
 
 # Install main targets
 install(TARGETS darkradiant math xmlutil scenegraph wxutil
