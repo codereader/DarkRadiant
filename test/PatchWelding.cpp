@@ -42,10 +42,37 @@ scene::INodePtr performPatchWelding(const std::string& number1, const std::strin
     EXPECT_FALSE(firstPatch->getParent());
     EXPECT_FALSE(secondPatch->getParent());
 
+    // Check patch orientation
+    auto& refPatch = std::dynamic_pointer_cast<IPatchNode>(firstPatch)->getPatch();
+
+    auto mergedPatchNode = GlobalSelectionSystem().ultimateSelected();
+    auto& mergedPatch = std::dynamic_pointer_cast<IPatchNode>(mergedPatchNode)->getPatch();
+
+    auto refVertex = refPatch.getTesselatedPatchMesh().vertices[0];
+    auto mergedMesh = mergedPatch.getTesselatedPatchMesh();
+    bool vertexFound = false;
+
+    // Find a matching 3D vertex and compare its normals, they should match
+    for (auto h = 0; h < mergedMesh.height; ++h)
+    {
+        for (auto w = 0; w < mergedMesh.width; ++w)
+        {
+            const auto& mergedVertex = mergedMesh.vertices[h * mergedMesh.width + w];
+
+            if (mergedVertex.vertex.isEqual(refVertex.vertex, 0.01))
+            {
+                vertexFound = true;
+                EXPECT_LT(std::abs(mergedVertex.normal.angle(refVertex.normal)), c_half_pi);
+            }
+        }
+    }
+
+    EXPECT_TRUE(vertexFound) << "Didn't find a matching vertex to compare the normals.";
+
     return GlobalSelectionSystem().ultimateSelected();
 }
 
-void verifyPatchDimensions(const scene::INodePtr& mergedPatchNode, int expectedRows, int expectedCols)
+void verifyMergedPatch(const scene::INodePtr& mergedPatchNode, int expectedRows, int expectedCols)
 {
     auto merged = std::dynamic_pointer_cast<IPatchNode>(mergedPatchNode);
     EXPECT_EQ(merged->getPatch().getHeight(), expectedRows);
@@ -84,7 +111,7 @@ TEST_P(PatchWelding3x3, WeldWithOther3x3Patch)
     auto expectedRows = std::get<2>(GetParam());
     auto expectedColumns = std::get<3>(GetParam());
 
-    verifyPatchDimensions(performPatchWelding(firstPatch, secondPatch), expectedRows, expectedColumns);
+    verifyMergedPatch(performPatchWelding(firstPatch, secondPatch), expectedRows, expectedColumns);
 }
 
 // Patch 1 is sharing its first row
@@ -154,7 +181,7 @@ TEST_F(PatchWeldingTest, WeldStackedCylinders)
     loadMap("weld_patches.mapx");
 
     // Welding the two cylinders produce a 5rows x 9cols patch
-    verifyPatchDimensions(performPatchWelding("11", "12"), 5, 9);
+    verifyMergedPatch(performPatchWelding("11", "12"), 5, 9);
 }
 
 TEST_F(PatchWeldingTest, WeldedPatchInheritsLayers)

@@ -166,6 +166,8 @@ void bulge(const cmd::ArgumentList& args)
 namespace
 {
 
+constexpr double WELD_EPSILON = 0.001;
+
 // Returns true if <num> elements in the given sequences are equal
 inline bool firstNItemsAreEqual(const PatchControlIterator& sequence1, 
     const PatchControlIterator& sequence2, std::size_t num, double epsilon)
@@ -215,12 +217,39 @@ struct PatchEdge
     EdgeType edgeType;
 };
 
+void correctPatchOrientation(const IPatch& originalPatch, IPatch& mergedPatch)
+{
+    auto refVertex = originalPatch.getTesselatedPatchMesh().vertices[0];
+    auto mergedMesh = mergedPatch.getTesselatedPatchMesh();
+    bool vertexFound = false;
+
+    // Find a matching 3D vertex and compare its normals, they should match
+    for (auto h = 0; h < mergedMesh.height; ++h)
+    {
+        for (auto w = 0; w < mergedMesh.width; ++w)
+        {
+            const auto& mergedVertex = mergedMesh.vertices[h * mergedMesh.width + w];
+
+            if (!mergedVertex.vertex.isEqual(refVertex.vertex, WELD_EPSILON))
+            {
+                continue;
+            }
+
+            // Found a matching vertex, its normal might have changed after merging, 
+            // but the overall direction its facing should be ok, so assume they're equal +/-half_pi
+            if (std::abs(mergedVertex.normal.angle(refVertex.normal)) > c_half_pi)
+            {
+                rMessage() << "Reversing patch matrix" << std::endl;
+                mergedPatch.invertMatrix();
+            }
+        }
+    }
+}
+
 }
 
 scene::INodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNodePtr& patchNode2)
 {
-    constexpr double WELD_EPSILON = 0.001;
-
     auto& patch1 = patchNode1->getPatch();
     auto& patch2 = patchNode2->getPatch();
 
@@ -293,6 +322,8 @@ scene::INodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNo
             assignPatchControls(patch2Edge.iterator, target);
 
             newPatch.controlPointsChanged();
+
+            correctPatchOrientation(patch1, newPatch);
 
             return newPatchNode; // success
         }
