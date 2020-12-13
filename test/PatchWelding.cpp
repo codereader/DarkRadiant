@@ -205,7 +205,7 @@ TEST_F(PatchWeldingTest, WeldingPreservesFixedSubdivisions)
     EXPECT_TRUE(firstPatchNode->getPatch().subdivisionsFixed()) << "Patch 1 isn't set to fixed subdivisions 5x2, test map changed?";
     EXPECT_EQ(firstPatchNode->getPatch().getSubdivisions(), Subdivisions({ 5, 2 })) << "Patch 1 isn't set to fixed subdivisions 5x2, test map changed?";
 
-    // After merging we expect the merged patch to have the same groups as patch 1 had
+    // After merging we expect the merged patch to have the same subdivisions as patch 1 had
     auto mergedNode = performPatchWelding("1", "2");
 
     auto merged = std::dynamic_pointer_cast<IPatchNode>(mergedNode);
@@ -225,12 +225,31 @@ TEST_F(PatchWeldingTest, WeldingPreservesNonfixedSubdivisions)
     // Check the setup
     EXPECT_FALSE(firstPatchNode->getPatch().subdivisionsFixed()) << "Patch 2 is set to fixed subdivisions, test map changed?";
 
-    // After merging we expect the merged patch to have the same groups as patch 1 had
+    // After merging we expect the merged patch to have the same subdivisions as patch 2 had
     auto mergedNode = performPatchWelding("2", "1");
 
     auto merged = std::dynamic_pointer_cast<IPatchNode>(mergedNode);
 
     EXPECT_FALSE(merged->getPatch().subdivisionsFixed()) << "Merged patch should not have fixed subdivisions set";
+}
+
+TEST_F(PatchWeldingTest, WeldingInheritsMaterial)
+{
+    loadMap("weld_patches.mapx");
+
+    // Patch 1 has material "1"
+    auto firstPatch = findPatchWithNumber("1");
+    auto firstPatchNode = std::dynamic_pointer_cast<IPatchNode>(firstPatch);
+
+    // Check the setup
+    EXPECT_EQ(firstPatchNode->getPatch().getShader(), "textures/numbers/1") << "Patch 1 should have textures/numbers/1, test map changed?";
+
+    // After merging we expect the merged patch to have the same material as patch 1 had
+    auto mergedNode = performPatchWelding("1", "2");
+
+    auto merged = std::dynamic_pointer_cast<IPatchNode>(mergedNode);
+
+    EXPECT_EQ(merged->getPatch().getShader(), "textures/numbers/1") << "Merged patch should have textures/numbers/1";
 }
 
 TEST_F(PatchWeldingTest, WeldMultipleSelectedPatches)
@@ -285,13 +304,13 @@ TEST_F(PatchWeldingTest, WeldingIsUndoable)
 
     GlobalCommandSystem().executeCommand("WeldSelectedPatches");
     
-    // Patches should be gone now
-    EXPECT_FALSE(findPatchWithNumber("1"));
+    // Patch 2 should be gone now
+    EXPECT_TRUE(findPatchWithNumber("1")); // this is the merged patch
     EXPECT_FALSE(findPatchWithNumber("2"));
 
     GlobalCommandSystem().executeCommand("Undo");
 
-    // Patches should be back again
+    // Both patches should be back again
     EXPECT_TRUE(findPatchWithNumber("1"));
     EXPECT_TRUE(findPatchWithNumber("2"));
 }

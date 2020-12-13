@@ -324,6 +324,9 @@ void weldPatches(const PatchNodePtr& patchNode1, const PatchNodePtr& patchNode2)
 
     auto& mergedPatch = std::dynamic_pointer_cast<IPatchNode>(mergedPatchNode)->getPatch();
 
+    // Preserve the materials
+    mergedPatch.setShader(patchNode1->getPatch().getShader());
+
     // Preserve fixed subdivision setting of the first patch
     if (patchNode1->getPatch().subdivisionsFixed())
     {
