@@ -336,7 +336,8 @@ public:
      * The angle as defined by the arccos( (a*b) / (|a|*|b|) )
      */
     template<typename OtherT>
-    Element angle(const BasicVector3<OtherT>& other) const {
+    Element angle(const BasicVector3<OtherT>& other) const
+    {
         BasicVector3<Element> aNormalised = getNormalised();
         BasicVector3<OtherT> otherNormalised = other.getNormalised();
 
@@ -344,11 +345,16 @@ public:
 
         // greebo: Sanity correction: Make sure the dot product
         // of two normalised vectors is not greater than 1
-        if (dot > 1.0) {
+        if (dot > 1.0)
+        {
             dot = 1;
         }
+        else if (dot < -1.0)
+        {
+            dot = -1.0;
+        }
 
-        return acos( dot );
+        return acos(dot);
     }
 
     /* Cross-product this vector with another Vector3, returning the result
