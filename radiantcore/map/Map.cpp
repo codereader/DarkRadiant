@@ -345,6 +345,13 @@ bool Map::save(const MapFormatPtr& mapFormat)
         return false;
     }
 
+    // Check if the map file has been modified in the meantime
+    if (_resource->fileHasBeenModifiedSinceLastSave())
+    {
+        radiant::NotificationMessage::SendError("File has been modified in the meantime");
+        return false;
+    }
+
     _saveInProgress = true;
 
     emitMapEvent(MapSaving);

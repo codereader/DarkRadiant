@@ -32,6 +32,11 @@ private:
 	// File extension of this resource
 	std::string _extension;
 
+    // The modification time this resource had when it was loaded
+    // This is used to protect accidental overwrites of files that
+    // have been modified since the last load time
+    fs::file_time_type _lastKnownModificationTime;
+
 public:
 	// Constructor
 	MapResource(const std::string& resourcePath);
@@ -45,6 +50,9 @@ public:
 	virtual const scene::IMapRootNodePtr& getRootNode() override;
     virtual void setRootNode(const scene::IMapRootNodePtr& root) override;
     virtual void clear() override;
+
+    // Check if the file has been modified since it was last saved
+    virtual bool fileHasBeenModifiedSinceLastSave() override;
 
 	// Save the map contents to the given filename using the given MapFormat export module
 	// Throws an OperationException if anything prevents successful completion

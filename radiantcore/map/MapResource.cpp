@@ -237,6 +237,13 @@ void MapResource::clear()
 	connectMap();
 }
 
+bool MapResource::fileHasBeenModifiedSinceLastSave()
+{
+    auto fullPath = getAbsoluteResourcePath();
+
+    return os::fileOrDirExists(fullPath) && fs::last_write_time(fullPath) > _lastKnownModificationTime;
+}
+
 void MapResource::onMapChanged()
 {
 	GlobalMap().setModified(true);
@@ -322,6 +329,9 @@ stream::MapResourceStream::Ptr MapResource::openFileStream(const std::string& pa
     {
         throw OperationException(fmt::format(_("Could not open file:\n{0}"), path));
     }
+
+    // Remember the last modification time
+    _lastKnownModificationTime = fs::last_write_time(path);
 
     return stream;
 }

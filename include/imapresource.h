@@ -85,6 +85,9 @@ public:
     virtual void setRootNode(const scene::IMapRootNodePtr& root) = 0;
 
     virtual void clear() = 0;
+
+    // Check if the file has been modified since it was last saved
+    virtual bool fileHasBeenModifiedSinceLastSave() = 0;
 };
 typedef std::shared_ptr<IMapResource> IMapResourcePtr;
 
