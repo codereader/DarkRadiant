@@ -313,3 +313,60 @@ group.foreachNode(gropWalker)
 camview = GlobalCameraManager.getActiveView()
 print(camview.getCameraOrigin())
 camview.setCameraOrigin(dr.Vector3(50,0,50))
+
+# Layer Functionality
+def printLayers():
+    class LayerPrinter(dr.LayerVisitor):
+        def visit(self, layerID, layerName):
+            print(layerID, layerName)
+    layerPrinter = LayerPrinter()
+    GlobalLayerManager.foreachLayer(layerPrinter)
+    print("=================")
+
+print("Layers:")
+printLayers()
+
+print("Test create")
+print(GlobalLayerManager.createLayer("One"))	
+print(GlobalLayerManager.createLayer("Two"))
+print(GlobalLayerManager.createLayer("Forty-two", 42))
+print(GlobalLayerManager.createLayer("TwoAgain", 2))
+printLayers()
+
+print("Test delete")
+print(GlobalLayerManager.deleteLayer("NotALayer"))
+print(GlobalLayerManager.deleteLayer("TwoAgain"))
+printLayers()
+
+print("Test get")
+print(GlobalLayerManager.getLayerID("Forty-two"))
+print(GlobalLayerManager.getLayerName(42))
+
+print("Test exists")
+print(GlobalLayerManager.layerExists(123))
+print(GlobalLayerManager.layerExists(42))
+
+print("Test rename")
+print(GlobalLayerManager.renameLayer(42, "Forty-two"))
+print(GlobalLayerManager.renameLayer(42, "Two"))
+print(GlobalLayerManager.renameLayer(42, "HHGTTG"))
+
+print("Test active")
+GlobalLayerManager.setActiveLayer(3)
+print(GlobalLayerManager.getActiveLayer())
+GlobalLayerManager.setActiveLayer(2)
+print(GlobalLayerManager.getActiveLayer())
+
+print("Test visible")
+GlobalLayerManager.setLayerVisibility("One", False)
+print(GlobalLayerManager.layerIsVisible("One"))
+GlobalLayerManager.setLayerVisibility("One", True)
+print(GlobalLayerManager.layerIsVisible("One"))
+
+GlobalLayerManager.setLayerVisibility(1, False)
+print(GlobalLayerManager.layerIsVisible(1))
+GlobalLayerManager.setLayerVisibility(1, True)
+print(GlobalLayerManager.layerIsVisible(1))
+
+GlobalLayerManager.setSelected(0, True)
+GlobalLayerManager.moveSelectionToLayer(1)
