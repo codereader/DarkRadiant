@@ -1,3 +1,7 @@
+# libradiantcore.so is already in the lib/darkradiant/modules directory, so the
+# utility libraries are one directory level above
+set(CMAKE_INSTALL_RPATH "$ORIGIN/..")
+
 add_library(radiantcore MODULE
             brush/Brush.cpp
             brush/BrushModule.cpp
