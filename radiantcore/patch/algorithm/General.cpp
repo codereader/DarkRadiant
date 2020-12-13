@@ -217,32 +217,29 @@ struct PatchEdge
     EdgeType edgeType;
 };
 
-void correctPatchOrientation(const IPatch& originalPatch, IPatch& mergedPatch)
+inline bool meshesAreFacingOppositeDirections(const PatchMesh& mesh1, const PatchMesh& mesh2)
 {
-    auto refVertex = originalPatch.getTesselatedPatchMesh().vertices[0];
-    auto mergedMesh = mergedPatch.getTesselatedPatchMesh();
-    bool vertexFound = false;
-
-    // Find a matching 3D vertex and compare its normals, they should match
-    for (auto h = 0; h < mergedMesh.height; ++h)
+    // Find the first matching 3D vertex and return it
+    for (const auto& v1 : mesh1.vertices)
     {
-        for (auto w = 0; w < mergedMesh.width; ++w)
+        for (const auto& v2 : mesh2.vertices)
         {
-            const auto& mergedVertex = mergedMesh.vertices[h * mergedMesh.width + w];
-
-            if (!mergedVertex.vertex.isEqual(refVertex.vertex, WELD_EPSILON))
+            if (v1.vertex.isEqual(v2.vertex, 0.01))
             {
-                continue;
-            }
-
-            // Found a matching vertex, its normal might have changed after merging, 
-            // but the overall direction its facing should be ok, so assume they're equal +/-half_pi
-            if (std::abs(mergedVertex.normal.angle(refVertex.normal)) > c_half_pi)
-            {
-                rMessage() << "Reversing patch matrix" << std::endl;
-                mergedPatch.invertMatrix();
+                return std::abs(v1.normal.angle(v2.normal)) > c_half_pi;
             }
         }
+    }
+
+    return false;
+}
+
+void correctPatchOrientation(const IPatch& originalPatch, IPatch& mergedPatch)
+{
+    if (meshesAreFacingOppositeDirections(originalPatch.getTesselatedPatchMesh(), mergedPatch.getTesselatedPatchMesh()))
+    {
+        rMessage() << "Reversing patch matrix" << std::endl;
+        mergedPatch.invertMatrix();
     }
 }
 
