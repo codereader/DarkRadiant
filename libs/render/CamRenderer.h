@@ -71,7 +71,7 @@ class CamRenderer: public RenderableCollector
 
 public:
 
-    // Initialise CamRenderer with optional highlight shaders
+    /// Initialise CamRenderer with optional highlight shaders
     CamRenderer(const VolumeTest& view, Shader* primHighlightShader = nullptr,
                 Shader* faceHighlightShader = nullptr)
     : _view(view),
@@ -79,12 +79,24 @@ public:
       _highlightedFaceShader(faceHighlightShader)
     {}
 
-    // Instruct the CamRenderer to push its sorted renderables to their
-    // respective shaders
-    void submitToShaders()
+    /**
+     * \brief
+     * Instruct the CamRenderer to push its sorted renderables to their
+     * respective shaders.
+     *
+     * \param useLights
+     * true if lighting calculations should be performed and light lists sent
+     * to shaders; false if lights should be ignored (e.g. in fullbright render
+     * mode).
+     */
+    void submitToShaders(bool useLights = true)
     {
-        // Calculate intersections between lights and renderables we have received
-        calculateLightIntersections();
+        if (useLights)
+        {
+            // Calculate intersections between lights and renderables we have
+            // received
+            calculateLightIntersections();
+        }
 
         // Render objects with calculated light lists
         for (auto i = _litRenderables.begin(); i != _litRenderables.end(); ++i)
@@ -95,7 +107,8 @@ public:
             {
                 const LitRenderable& lr = *j;
                 shader->addRenderable(lr.renderable, lr.local2World,
-                                      &lr.lights, lr.entity);
+                                      useLights ? &lr.lights : nullptr,
+                                      lr.entity);
             }
         }
     }
