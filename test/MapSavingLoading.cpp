@@ -10,6 +10,7 @@
 #include "ilightnode.h"
 #include "icommandsystem.h"
 #include "messages/FileSelectionRequest.h"
+#include "messages/FileOverwriteConfirmation.h"
 #include "messages/MapFileOperation.h"
 #include "algorithm/Scene.h"
 #include "algorithm/XmlUtils.h"
@@ -53,6 +54,41 @@ public:
     }
 
     ~FileSelectionHelper()
+    {
+        GlobalRadiantCore().getMessageBus().removeListener(_msgSubscription);
+    }
+};
+
+class FileOverwriteHelper
+{
+private:
+    std::size_t _msgSubscription;
+    bool _shouldOverwrite;
+    bool _messageReceived;
+
+public:
+    FileOverwriteHelper(bool shouldOverwrite) :
+        _shouldOverwrite(shouldOverwrite),
+        _messageReceived(false)
+    {
+        // Subscribe to the event asking for the target path
+        _msgSubscription = GlobalRadiantCore().getMessageBus().addListener(
+            radiant::IMessage::Type::FileOverwriteConfirmation,
+            radiant::TypeListener<radiant::FileOverwriteConfirmation>(
+                [this](radiant::FileOverwriteConfirmation& msg)
+        {
+            _messageReceived = true;
+            msg.confirmOverwrite(_shouldOverwrite);
+            msg.setHandled(true);
+        }));
+    }
+
+    bool messageReceived() const
+    {
+        return _messageReceived;
+    }
+
+    ~FileOverwriteHelper()
     {
         GlobalRadiantCore().getMessageBus().removeListener(_msgSubscription);
     }
@@ -925,6 +961,181 @@ TEST_F(MapSavingTest, saveArchivedMapWillAskForFilename)
     EXPECT_FALSE(eventFired);
 
     GlobalRadiantCore().getMessageBus().removeListener(msgSubscription);
+}
+
+TEST_F(MapSavingTest, savingUnnamedMapDoesntWarnAboutOverwrite)
+{
+    EXPECT_TRUE(GlobalMapModule().isUnnamed());
+
+    fs::path outputPath = _context.getTemporaryDataPath();
+    outputPath /= "whatevername.mapx";
+    auto format = GlobalMapFormatManager().getMapFormatForFilename(outputPath.string());
+
+    EXPECT_FALSE(os::fileOrDirExists(outputPath));
+
+    // Save to a temporary path
+    FileSelectionHelper saveHelper(outputPath.string(), format);
+    FileOverwriteHelper overwriteHelper(false); // don't overwrite
+
+    // This should ask the user for a file location, i.e. fire the above event
+    // but shouldn't warn about for overwriting (file doesn't exist)
+    GlobalCommandSystem().executeCommand("SaveMap");
+
+    // File should have been created without overwrite event
+    EXPECT_TRUE(os::fileOrDirExists(outputPath));
+    EXPECT_FALSE(overwriteHelper.messageReceived());
+}
+
+TEST_F(MapSavingTest, savingUnnamedMapDoesntWarnAboutOverwriteWhenFileExists)
+{
+    EXPECT_TRUE(GlobalMapModule().isUnnamed());
+
+    fs::path outputPath = _context.getTemporaryDataPath();
+    outputPath /= "whatevername.mapx";
+    auto format = GlobalMapFormatManager().getMapFormatForFilename(outputPath.string());
+
+    std::ofstream stream(outputPath);
+    stream << "Test";
+    stream.flush();
+    stream.close();
+
+    EXPECT_TRUE(os::fileOrDirExists(outputPath));
+
+    // Save to a temporary path
+    FileSelectionHelper saveHelper(outputPath.string(), format);
+    FileOverwriteHelper overwriteHelper(false); // don't overwrite
+
+    // This should ask the user for a file location, i.e. fire the above event
+    // but shouldn't warn about for overwriting (file doesn't exist)
+    GlobalCommandSystem().executeCommand("SaveMap");
+
+    // File should have been created without overwrite event
+    algorithm::assertFileIsMapxFile(outputPath.string());
+    EXPECT_FALSE(overwriteHelper.messageReceived());
+
+    // Remove the backup file
+    fs::remove(outputPath.replace_extension("bak"));
+}
+
+TEST_F(MapSavingTest, savingOpenedMapFileDoesntWarnAboutOverwrite)
+{
+    std::string mapFileName = "altar_savingOpenedMapFileDoesntAskForOverwrite.map";
+    auto tempPath = createMapCopyInTempDataPath("altar.map", mapFileName);
+
+    GlobalCommandSystem().executeCommand("OpenMap", tempPath.string());
+    checkAltarScene();
+
+    auto originalModDate = fs::last_write_time(tempPath);
+
+    // Monitor the event
+    FileOverwriteHelper overwriteHelper(false); // don't overwrite
+
+    GlobalCommandSystem().executeCommand("SaveMap");
+
+    // File should have been modified, no asking for overwrite
+    EXPECT_NE(fs::last_write_time(tempPath), originalModDate);
+    EXPECT_FALSE(overwriteHelper.messageReceived());
+
+    // Remove the backups
+    fs::remove(tempPath.replace_extension("bak"));
+    fs::remove(tempPath.replace_extension("darkradiant").string() + ".bak");
+}
+
+TEST_F(MapSavingTest, saveAsDoesntWarnAboutOverwrite)
+{
+    std::string modRelativePath = "maps/altar.map";
+
+    GlobalCommandSystem().executeCommand("OpenMap", modRelativePath);
+    checkAltarScene();
+
+    // Select the format based on the extension
+    fs::path tempPath = _context.getTemporaryDataPath();
+    tempPath /= "altar_saveAsDoesntWarnAboutOverwrite.map";
+    auto format = GlobalMapFormatManager().getMapFormatForFilename(tempPath.string());
+
+    EXPECT_FALSE(os::fileOrDirExists(tempPath));
+
+    // Respond to the event asking for the target path
+    FileSelectionHelper responder(tempPath.string(), format);
+    FileOverwriteHelper overwriteHelper(false); // don't overwrite
+
+    GlobalCommandSystem().executeCommand("SaveMapAs");
+
+    // Check that the file got created
+    EXPECT_TRUE(os::fileOrDirExists(tempPath));
+    EXPECT_FALSE(overwriteHelper.messageReceived());
+}
+
+TEST_F(MapSavingTest, saveWarnsAboutOverwrite)
+{
+    std::string mapFileName = "altar_saveWarnsAboutOverwrite.map";
+    auto tempPath = createMapCopyInTempDataPath("altar.map", mapFileName);
+
+    // Set the modification time back a bit, the unit test might be moving fast
+    auto fakeModDate = fs::last_write_time(tempPath) - 5s;
+    fs::last_write_time(tempPath, fakeModDate);
+
+    GlobalCommandSystem().executeCommand("OpenMap", tempPath.string());
+    checkAltarScene();
+
+    // Modify the file by replacing its contents
+    std::ofstream stream(tempPath);
+    stream << "Test";
+    stream.flush();
+    stream.close();
+
+    // File date must have been changed
+    EXPECT_NE(fs::last_write_time(tempPath), fakeModDate);
+
+    // Monitor the warn about overwrite event
+    FileOverwriteHelper overwriteHelper(true); // confirm overwrite
+
+    GlobalCommandSystem().executeCommand("SaveMap");
+
+    // Check that the event was fired
+    EXPECT_TRUE(overwriteHelper.messageReceived());
+
+    // File should have been written
+    GlobalCommandSystem().executeCommand("OpenMap", tempPath.string());
+    checkAltarScene();
+}
+
+TEST_F(MapSavingTest, saveWarnsAboutOverwriteAndUserCancels)
+{
+    std::string mapFileName = "altar_saveWarnsAboutOverwriteAndUserCancels.map";
+    auto tempPath = createMapCopyInTempDataPath("altar.map", mapFileName);
+
+    // Set the modification time back a bit, the unit test might be moving fast
+    auto fakeModDate = fs::last_write_time(tempPath) - 5s;
+    fs::last_write_time(tempPath, fakeModDate);
+
+    GlobalCommandSystem().executeCommand("OpenMap", tempPath.string());
+    checkAltarScene();
+
+    // Modify the file by replacing its contents
+    constexpr const char* tempContents = "Test345";
+    std::ofstream stream(tempPath);
+    stream << tempContents;
+    stream.flush();
+    stream.close();
+
+    // File date must have been changed
+    EXPECT_NE(fs::last_write_time(tempPath), fakeModDate);
+
+    // Monitor the warn about overwrite event
+    FileOverwriteHelper overwriteHelper(false); // block overwrite
+
+    GlobalCommandSystem().executeCommand("SaveMap");
+
+    // Check that the event was fired
+    EXPECT_TRUE(overwriteHelper.messageReceived());
+
+    // File should not have been replaced
+    std::ifstream writtenFile(tempPath);
+    std::stringstream contents;
+    contents << writtenFile.rdbuf();
+
+    EXPECT_EQ(contents.str(), tempContents);
 }
 
 }
