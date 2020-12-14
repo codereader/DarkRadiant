@@ -186,6 +186,7 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
 	_mapFileProgressHandler.reset(new MapFileProgressHandler);
 	_autoSaveRequestHandler.reset(new AutoSaveRequestHandler);
 	_fileSelectionRequestHandler.reset(new FileSelectionRequestHandler);
+    _fileOverwriteConfirmationHandler.reset(new FileOverwriteConfirmationHandler);
 
 	initialiseEntitySettings();
 
@@ -231,6 +232,7 @@ void UserInterfaceModule::shutdownModule()
 
 	_longOperationHandler.reset();
 	_mapFileProgressHandler.reset();
+    _fileOverwriteConfirmationHandler.reset();
 	_fileSelectionRequestHandler.reset();
 	_autoSaveRequestHandler.reset();
 	_shaderClipboardStatus.reset();

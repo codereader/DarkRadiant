@@ -24,7 +24,8 @@ private:
 public:
     FileOverwriteConfirmation(const std::string& title, const std::string& message) :
         _title(title),
-        _message(message)
+        _message(message),
+        _confirmed(false)
     {}
 
     const std::string& getTitle() const

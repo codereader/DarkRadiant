@@ -1287,6 +1287,9 @@
     <ClInclude Include="..\..\radiant\ui\mapselector\MapSelector.h">
       <Filter>src\ui\mapselector</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\FileOverwriteConfirmationHandler.h">
+      <Filter>src\ui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />
