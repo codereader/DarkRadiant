@@ -43,6 +43,7 @@
 #include "model/export/ModelScalePreserver.h"
 #include "map/algorithm/Skins.h"
 #include "messages/ScopedLongRunningOperation.h"
+#include "messages/FileOverwriteConfirmation.h"
 #include "selection/algorithm/Primitives.h"
 #include "selection/algorithm/Group.h"
 #include "scene/Group.h"
@@ -346,9 +347,10 @@ bool Map::save(const MapFormatPtr& mapFormat)
     }
 
     // Check if the map file has been modified in the meantime
-    if (_resource->fileHasBeenModifiedSinceLastSave())
+    if (_resource->fileHasBeenModifiedSinceLastSave() && !radiant::FileOverwriteConfirmation::SendAndReceiveAnswer(
+            fmt::format(_("The file {0} has been modified since it was last saved,\nperhaps by another application. "
+                "Do you really want to overwrite the file?"), _mapName), _("File modification detected")))
     {
-        radiant::NotificationMessage::SendError("File has been modified in the meantime");
         return false;
     }
 

@@ -274,6 +274,9 @@
     <ClInclude Include="..\..\libs\patch\PatchIterators.h">
       <Filter>patch</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\messages\FileOverwriteConfirmation.h">
+      <Filter>messages</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

@@ -49,6 +49,7 @@ public:
         Notification,
         TextureChanged,
         ApplicationIsActiveQuery,
+        FileOverwriteConfirmation,
 
         UserDefinedMessagesGoHigherThanThis = 999,
     };
