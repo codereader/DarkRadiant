@@ -262,7 +262,7 @@ bool PatchNode::getIntersection(const Ray& ray, Vector3& intersection)
 }
 
 bool PatchNode::intersectsLight(const RendererLight& light) const {
-	return light.intersectsAABB(worldAABB());
+	return light.lightAABB().intersects(worldAABB());
 }
 
 void PatchNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const

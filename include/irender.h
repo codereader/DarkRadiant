@@ -194,9 +194,6 @@ public:
      */
     virtual Matrix4 getLightTextureTransformation() const = 0;
 
-    /// Return true if this light intersects the given AABB
-	virtual bool intersectsAABB(const AABB& aabb) const = 0;
-
     /**
      * \brief
      * Return the AABB of the illuminated volume.

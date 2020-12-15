@@ -262,7 +262,6 @@ public:
     const IRenderEntity& getLightEntity() const override;
     const Vector3& worldOrigin() const override;
     Matrix4 getLightTextureTransformation() const override;
-    bool intersectsAABB(const AABB& other) const override;
     Vector3 getLightOrigin() const override;
     const ShaderPtr& getShader() const override;
 

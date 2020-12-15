@@ -69,7 +69,7 @@ bool MD5ModelNode::getIntersection(const Ray& ray, Vector3& intersection)
 
 bool MD5ModelNode::intersectsLight(const RendererLight& light) const
 {
-    return light.intersectsAABB(worldAABB());
+    return light.lightAABB().intersects(worldAABB());
 }
 
 void MD5ModelNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const

@@ -87,7 +87,7 @@ void StaticModelNode::setModel(const StaticModelPtr& model) {
 // LitObject test function
 bool StaticModelNode::intersectsLight(const RendererLight& light) const
 {
-    return light.intersectsAABB(worldAABB());
+    return light.lightAABB().intersects(worldAABB());
 }
 
 void StaticModelNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
