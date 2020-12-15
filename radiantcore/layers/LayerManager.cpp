@@ -15,6 +15,7 @@
 #include "LayerInfoFileModule.h"
 
 #include <functional>
+#include <climits>
 
 namespace scene
 {

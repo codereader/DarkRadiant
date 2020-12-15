@@ -758,7 +758,9 @@ void CamWnd::Cam_Draw()
         }
 
         // Back end (submit to shaders and do the actual render)
-        renderer.submitToShaders();
+        renderer.submitToShaders(
+            getCameraSettings()->getRenderMode() == RENDER_MODE_LIGHTING
+        );
         GlobalRenderSystem().render(allowedRenderFlags, _camera->getModelView(),
                                     _camera->getProjection(), _view.getViewer());
     }

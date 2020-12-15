@@ -14,6 +14,7 @@
 #include <fmt/format.h>
 #include "string/case_conv.h"
 #include <regex>
+#include <climits>
 
 #include "ModelExporter.h"
 

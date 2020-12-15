@@ -44,7 +44,7 @@ placed into the `install/` folder.
 
 ## Prerequisites
 
-To compile DarkRadiant, a number of libraries (with development headers) and a standards-compliant C++11 compiler (GCC 5.3+) are required. On an Ubuntu system, the requirements may include any or all of the following packages:
+To compile DarkRadiant, a number of libraries (with development headers) and a standards-compliant C++17 compiler are required. On an Ubuntu system, the requirements may include any or all of the following packages:
 
 * zlib1g-dev 
 * libjpeg62-dev 
@@ -62,24 +62,29 @@ To compile DarkRadiant, a number of libraries (with development headers) and a s
 This does not include core development tools such as g++ or the git client
 to download the sources (use sudo apt-get install git for that). One possible set of packages might be:
 
-`sudo apt-get install git automake libtool g++ gettext pkg-config`
+`sudo apt-get install git cmake g++ gettext pkg-config`
 
 More required package lists for various Linux distributions are [listed in the Wiki Article](https://wiki.thedarkmod.com/index.php?title=DarkRadiant_-_Compiling_in_Linux).
 
 ## Build
 
-To build DarkRadiant the standard Autotools build process is used:
+To build DarkRadiant the standard CMake build process is used:
 
 ```
-./autogen.sh
-./configure
+cmake .
 make
 sudo make install
 ```
 
-The available configure options are listed with `./configure --help`. There are
-options for debug builds, and enabling or disabling various optional components
-such as audio support and the Dark Mod-specific plugins (`--enable-darkmod-plugins`).
+To install somewhere other than the default of `/usr/local`, use the `CMAKE_INSTALL_PREFIX` variable.
+
+```
+cmake -DCMAKE_INSTALL_PREFIX=/opt/darkradiant
+make
+sudo make install
+```
+
+Other useful variables are `CMAKE_BUILD_TYPE` to choose Debug or Release builds, `ENABLE_DM_PLUGINS` to disable the building of Dark Mod specific plugins (enabled by default), and `ENABLE_RELOCATION` to control whether DarkRadiant uses hard-coded absolute paths like `/usr/lib` or paths relative to the binary (useful for certain package formats like Snappy or FlatPak).
 
 # Compiling on macOS
 

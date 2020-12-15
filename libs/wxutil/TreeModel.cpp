@@ -274,6 +274,7 @@ TreeModel::Row TreeModel::GetRootItem()
 
 void TreeModel::Clear()
 {
+#if wxCHECK_VERSION(3, 0, 5)
 	// To work around a problem in wxGTK 3.0.5+, trigger 
 	// an ItemRemoved call for all top-level children before 
 	// actually deleting them.
@@ -286,6 +287,7 @@ void TreeModel::Clear()
 	{
 		ItemsDeleted(_rootNode->item, children);
 	}
+#endif
 
 	// Now it should be safe to free all the nodes
 	_rootNode->values.clear();

@@ -9,6 +9,8 @@
 #include "selection/SelectionVolume.h"
 #include "igl.h"
 
+#include <climits>
+
 namespace ui
 {
 

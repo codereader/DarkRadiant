@@ -15,6 +15,8 @@
 #include "command/ExecutionFailure.h"
 #include "patch/PatchIterators.h"
 
+#include <map>
+
 namespace patch
 {
 

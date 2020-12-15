@@ -1,13 +1,19 @@
 # Linux build files
-*.o
-*.lo
-*.la
 Makefile
-.libs
-.deps
+CMakeFiles
+CMakeCache.txt
+cmake_install.cmake
+/config.h
+/install_manifest.txt
+/radiant/darkradiant
+/install/darkradiant.desktop
+*.o
+*.so
+*.a
 
 # Editor temporary files
 *.swp
+tags
 
 # Windows directories
 w32deps

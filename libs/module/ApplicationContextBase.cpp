@@ -32,15 +32,15 @@ std::string ApplicationContextBase::getApplicationPath() const
 std::vector<std::string> ApplicationContextBase::getLibraryPaths() const
 {
 	auto libBasePath = os::standardPathWithSlash(getLibraryBasePath());
-	
+
 #if defined(__APPLE__) && defined(DR_MODULES_NEXT_TO_APP)
 	// Xcode output goes to the application folder right now
 	return { libBasePath };
 #else
-	return 
-	{ 
-		libBasePath + MODULES_DIR, 
-		libBasePath + PLUGINS_DIR 
+	return
+	{
+		libBasePath + MODULES_DIR,
+		libBasePath + PLUGINS_DIR
 	};
 #endif
 }
@@ -50,10 +50,12 @@ std::string ApplicationContextBase::getLibraryBasePath() const
 #if defined(__APPLE__)
 	return _appPath;
 #elif defined(POSIX)
-#   if defined(PKGLIBDIR) && !defined(ENABLE_RELOCATION)
+#   if defined(ENABLE_RELOCATION)
+	return _appPath + "../lib/darkradiant/";
+#   elif defined(PKGLIBDIR)
 	return PKGLIBDIR;
 #   else
-	return _appPath + "../lib/darkradiant/";
+#   error "Either PKGLIBDIR or ENABLE_RELOCATION must be defined"
 #   endif
 #else // !defined(POSIX)
 	return _appPath;
@@ -66,20 +68,22 @@ std::string ApplicationContextBase::getRuntimeDataPath() const
     // The Resources are in the Bundle folder Contents/Resources/, whereas the
     // application binary is located in Contents/MacOS/
     std::string path = getApplicationPath() + "../Resources/";
-    
+
     // When launching the app from Xcode, the Resources/ folder
     // is next to the binary
     if (!fs::exists(path))
     {
         path = getApplicationPath() + "Resources/";
     }
-    
+
     return path;
 #elif defined(POSIX)
-#   if defined(PKGDATADIR) && !defined(ENABLE_RELOCATION)
+#   if defined(ENABLE_RELOCATION)
+    return _appPath + "../share/darkradiant/";
+#   elif defined(PKGDATADIR)
     return std::string(PKGDATADIR) + "/";
 #   else
-    return _appPath + "../share/darkradiant/";
+#   error "Either PKGDATADIR or ENABLE_RELOCATION must be defined"
 #   endif
 #else
     return getApplicationPath();
@@ -89,10 +93,12 @@ std::string ApplicationContextBase::getRuntimeDataPath() const
 std::string ApplicationContextBase::getHTMLPath() const
 {
 #if defined(POSIX)
-#if defined(HTMLDIR) && !defined(ENABLE_RELOCATION)
+#if defined(ENABLE_RELOCATION)
+    return _appPath + "../share/doc/darkradiant/";
+#elif defined(HTMLDIR)
     return std::string(HTMLDIR) + "/";
 #else
-    return _appPath + "../share/doc/darkradiant/";
+#error "Either HTMLDIR or ENABLE_RELOCATION must be defined"
 #endif
 #else
     // TODO: implement correct path for macOS and Windows
