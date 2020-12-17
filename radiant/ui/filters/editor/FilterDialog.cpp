@@ -161,7 +161,7 @@ void FilterDialog::createFiltersPanel()
 	wxPanel* parent = findNamedObject<wxPanel>(this, "FilterDialogTreeViewPanel");
 
 	// Create a new treeview
-	_filterView = wxutil::TreeView::CreateWithModel(parent, _filterStore);
+	_filterView = wxutil::TreeView::CreateWithModel(parent, _filterStore.get());
 
 	_filterView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
 		wxDataViewEventHandler(FilterDialog::onFilterSelectionChanged), NULL, this);

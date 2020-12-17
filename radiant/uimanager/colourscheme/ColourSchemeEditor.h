@@ -18,10 +18,10 @@ namespace wxutil { class TreeView; }
 namespace ui
 {
 
+/// Dialog for choosing and editing colour schemes
 class ColourSchemeEditor :
 	public wxutil::DialogBase
 {
-private:
 	// The treeview and its selection pointer
 	wxutil::TreeView* _treeView;
 

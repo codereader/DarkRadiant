@@ -35,7 +35,7 @@ void ClassEditor::createListView(wxWindow* parent)
 		new wxutil::TreeModel(SREntity::getColumns(), true)
 	);
 
-	_list = wxutil::TreeView::CreateWithModel(parent, dummyModel);
+	_list = wxutil::TreeView::CreateWithModel(parent, dummyModel.get());
 
 	_list->SetMinClientSize(wxSize(TREE_VIEW_WIDTH, TREE_VIEW_HEIGHT));
 	parent->GetSizer()->Add(_list, 1, wxEXPAND);

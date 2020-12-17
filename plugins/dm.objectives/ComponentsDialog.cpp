@@ -107,7 +107,7 @@ void ComponentsDialog::createListView()
 {
 	// Create tree view and connect selection changed callback
 	wxPanel* treeViewPanel = findNamedObject<wxPanel>(this, "ObjCompListViewPanel");
-	_componentView = wxutil::TreeView::CreateWithModel(treeViewPanel, _componentList);
+	_componentView = wxutil::TreeView::CreateWithModel(treeViewPanel, _componentList.get());
 	treeViewPanel->GetSizer()->Add(_componentView, 1, wxEXPAND);
 	treeViewPanel->SetMinClientSize(wxSize(-1, 90));
 

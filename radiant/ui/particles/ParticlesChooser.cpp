@@ -59,7 +59,7 @@ ParticlesChooser::ParticlesChooser() :
 // Create the tree view
 wxWindow* ParticlesChooser::createTreeView(wxWindow* parent)
 {
-	_treeView = wxutil::TreeView::CreateWithModel(parent, _particlesList);
+	_treeView = wxutil::TreeView::CreateWithModel(parent, _particlesList.get());
 	_treeView->SetSize(300, -1);
 
 	// Single text column

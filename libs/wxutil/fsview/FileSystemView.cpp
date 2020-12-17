@@ -40,7 +40,7 @@ bool FileSystemView::SelectionChangedEvent::SelectionIsFolder()
 }
 
 FileSystemView::FileSystemView(wxWindow* parent, const TreeModel::Ptr& model, long style) :
-    TreeView(parent, model, style),
+    TreeView(parent, model.get(), style),
     _treeStore(model),
     _fileIcon(DEFAULT_FILE_ICON)
 {

@@ -30,7 +30,7 @@ const Columns& COLUMNS()
 }
 
 KeyValueTable::KeyValueTable(wxWindow* parent) : 
-	wxutil::TreeView(parent, TreeModel::Ptr(), wxDV_NO_HEADER | wxDV_SINGLE),
+	wxutil::TreeView(parent, nullptr, wxDV_NO_HEADER | wxDV_SINGLE),
 	_store(new wxutil::TreeModel(COLUMNS(), true)) // list model
 {
 	AssociateModel(_store.get());

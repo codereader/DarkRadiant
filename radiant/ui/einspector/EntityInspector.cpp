@@ -444,7 +444,7 @@ wxWindow* EntityInspector::createTreeViewPane(wxWindow* parent)
 
     _kvStore = new wxutil::TreeModel(_columns, true); // this is a list model
 
-    _keyValueTreeView = wxutil::TreeView::CreateWithModel(treeViewPanel, _kvStore, wxDV_MULTIPLE);
+    _keyValueTreeView = wxutil::TreeView::CreateWithModel(treeViewPanel, _kvStore.get(), wxDV_MULTIPLE);
 
     // Search in both name and value columns
     _keyValueTreeView->AddSearchColumn(_columns.name);

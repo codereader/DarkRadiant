@@ -31,7 +31,7 @@ AIVocalSetChooserDialog::AIVocalSetChooserDialog() :
 		_preview = new AIVocalSetPreview(this);
 	}
 
-	_setView = wxutil::TreeView::CreateWithModel(this, _setStore, wxDV_NO_HEADER);
+	_setView = wxutil::TreeView::CreateWithModel(this, _setStore.get(), wxDV_NO_HEADER);
 	_setView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED,
 		wxDataViewEventHandler(AIVocalSetChooserDialog::onSetSelectionChanged), NULL, this);
 

@@ -72,7 +72,7 @@ void ObjectiveConditionsDialog::setupConditionsPanel()
 	wxPanel* condPanel = findNamedObject<wxPanel>(this, "ObjCondDialogConditionViewPanel");
 
 	// Tree view listing the conditions
-	_conditionsView = wxutil::TreeView::CreateWithModel(condPanel, _objectiveConditionList, wxDV_NO_HEADER);
+	_conditionsView = wxutil::TreeView::CreateWithModel(condPanel, _objectiveConditionList.get(), wxDV_NO_HEADER);
 	condPanel->GetSizer()->Add(_conditionsView, 1, wxEXPAND);
 
 	_conditionsView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED,

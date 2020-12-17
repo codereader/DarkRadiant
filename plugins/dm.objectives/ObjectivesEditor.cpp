@@ -91,7 +91,7 @@ void ObjectivesEditor::setupEntitiesPanel()
 	wxPanel* entityPanel = findNamedObject<wxPanel>(this, "ObjDialogEntityPanel");
 
 	// Entity Tree View
-	_objectiveEntityView = wxutil::TreeView::CreateWithModel(entityPanel, _objectiveEntityList, wxDV_NO_HEADER);
+	_objectiveEntityView = wxutil::TreeView::CreateWithModel(entityPanel, _objectiveEntityList.get(), wxDV_NO_HEADER);
 	entityPanel->GetSizer()->Add(_objectiveEntityView, 1, wxEXPAND);
 
 	_objectiveEntityView->AppendToggleColumn(_("Start"), _objEntityColumns.startActive.getColumnIndex(),
@@ -124,7 +124,7 @@ void ObjectivesEditor::setupObjectivesPanel()
 	wxPanel* panel = findNamedObject<wxPanel>(this, "ObjDialogObjectivesPanel");
 
 	// Entity Tree View
-	_objectiveView = wxutil::TreeView::CreateWithModel(panel, _objectiveList);
+	_objectiveView = wxutil::TreeView::CreateWithModel(panel, _objectiveList.get());
 	panel->GetSizer()->Add(_objectiveView, 1, wxEXPAND);
 
 	// Key and value text columns

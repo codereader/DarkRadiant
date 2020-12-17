@@ -119,7 +119,7 @@ void EClassTree::populateWindow()
 
 void EClassTree::createEClassTreeView(wxWindow* parent)
 {
-	_eclassView = wxutil::TreeView::CreateWithModel(parent, _eclassStore);
+	_eclassView = wxutil::TreeView::CreateWithModel(parent, _eclassStore.get());
 
 	// Use the TreeModel's full string search function
 	_eclassView->AddSearchColumn(_eclassColumns.name);
@@ -139,7 +139,7 @@ void EClassTree::createPropertyTreeView(wxWindow* parent)
 	_propertyStore = new wxutil::TreeModel(_propertyColumns, true);
 
     // Create the TreeView widget and link it to the model
-	_propertyView = wxutil::TreeView::CreateWithModel(parent, _propertyStore);
+	_propertyView = wxutil::TreeView::CreateWithModel(parent, _propertyStore.get());
 
     // Create the Property column
 	_propertyView->AppendTextColumn(_("Property"), _propertyColumns.name.getColumnIndex(),

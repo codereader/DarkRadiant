@@ -99,7 +99,7 @@ XdFileChooserDialog::XdFileChooserDialog(const std::string& defName,
 		_("The requested definition has been found in multiple Files. Choose the file:"));
 
 	// Create the list of files:
-	_treeview = wxutil::TreeView::CreateWithModel(this, _listStore, wxDV_NO_HEADER);
+	_treeview = wxutil::TreeView::CreateWithModel(this, _listStore.get(), wxDV_NO_HEADER);
 
 	_treeview->AppendTextColumn(_("File"), _columns.name.getColumnIndex(),
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);

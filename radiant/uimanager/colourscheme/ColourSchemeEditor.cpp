@@ -67,7 +67,7 @@ void ColourSchemeEditor::constructWindow()
 	wxBoxSizer* treeViewVbox = new wxBoxSizer(wxVERTICAL);
 	hbox->Add(treeViewVbox, 0, wxEXPAND | wxRIGHT, 6);
 
-	_treeView = wxutil::TreeView::CreateWithModel(this, _listStore, wxDV_NO_HEADER);
+	_treeView = wxutil::TreeView::CreateWithModel(this, _listStore.get(), wxDV_NO_HEADER);
 	_treeView->SetMinClientSize(wxSize(200, -1));
 	treeViewVbox->Add(_treeView, 1, wxEXPAND | wxBOTTOM, 6);
 

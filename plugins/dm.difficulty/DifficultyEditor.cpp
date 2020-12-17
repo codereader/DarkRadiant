@@ -47,7 +47,7 @@ void DifficultyEditor::populateWindow()
 
 	wxPanel* viewPanel = findNamedObject<wxPanel>(_editor, "DifficultyEditorTreeViewPanel");
 
-	_settingsView = wxutil::TreeView::CreateWithModel(viewPanel, _settings->getTreeStore());
+	_settingsView = wxutil::TreeView::CreateWithModel(viewPanel, _settings->getTreeStore().get());
 	_settingsView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
 		wxDataViewEventHandler(DifficultyEditor::onSettingSelectionChange), NULL, this);
 	viewPanel->GetSizer()->Add(_settingsView, 1, wxEXPAND);

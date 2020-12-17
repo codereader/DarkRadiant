@@ -74,7 +74,7 @@ void SkinChooser::populateWindow()
     splitter->SetMinimumPaneSize(10); // disallow unsplitting
 
 	// Create the tree view
-    _treeView = wxutil::TreeView::CreateWithModel(splitter, _treeStore, wxDV_NO_HEADER);
+    _treeView = wxutil::TreeView::CreateWithModel(splitter, _treeStore.get(), wxDV_NO_HEADER);
 	_treeView->SetMinClientSize(wxSize(GetSize().GetWidth() / 5, -1));
 	
 	// Single column to display the skin name
