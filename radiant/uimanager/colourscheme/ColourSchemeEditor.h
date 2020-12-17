@@ -22,22 +22,8 @@ namespace ui
 class ColourSchemeEditor :
 	public wxutil::DialogBase
 {
-	// The treeview and its selection pointer
-	wxutil::TreeView* _treeView;
-
-	struct Columns :
-		public wxutil::TreeModel::ColumnRecord
-	{
-		Columns() : 
-			name(add(wxutil::TreeModel::Column::String))
-		{}
-
-		wxutil::TreeModel::Column name;
-	};
-
-	// The list store containing the list of ColourSchemes
-	Columns _columns;
-	wxutil::TreeModel::Ptr _listStore;
+    // The list of available colour schemes
+    wxDataViewListCtrl* _schemeList = nullptr;
 
 	// The vbox containing the colour buttons and its frame
 	wxPanel* _colourFrame;
