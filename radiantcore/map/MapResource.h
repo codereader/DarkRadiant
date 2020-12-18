@@ -79,6 +79,7 @@ private:
     void constructPaths(const std::string& resourcePath);
     std::string getAbsoluteResourcePath();
 
+    void refreshLastModifiedTime();
 	void mapSave();
 	void onMapChanged();
 

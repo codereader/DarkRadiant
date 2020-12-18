@@ -143,6 +143,8 @@ void MapResource::save(const MapFormatPtr& mapFormat)
 	// Save the actual file (throws on fail)
 	saveFile(*format, _mapRoot, scene::traverse, fullpath);
 
+    refreshLastModifiedTime();
+
 	mapSave();
 }
 
@@ -309,6 +311,8 @@ RootNodePtr MapResource::loadMapNode()
                 loader.loadInfoFile(infoFileStream->getStream(), rootNode);
             }
         }
+
+        refreshLastModifiedTime();
     }
     catch (const OperationException& ex)
     {
@@ -329,9 +333,6 @@ stream::MapResourceStream::Ptr MapResource::openFileStream(const std::string& pa
     {
         throw OperationException(fmt::format(_("Could not open file:\n{0}"), path));
     }
-
-    // Remember the last modification time
-    _lastKnownModificationTime = fs::last_write_time(path);
 
     return stream;
 }
@@ -356,6 +357,17 @@ stream::MapResourceStream::Ptr MapResource::openInfofileStream()
         // Info file load file does not stop us, just issue a warning
         rWarning() << ex.what() << std::endl;
         return stream::MapResourceStream::Ptr();
+    }
+}
+
+void MapResource::refreshLastModifiedTime()
+{
+    auto fullPath = getAbsoluteResourcePath();
+
+    if (os::fileOrDirExists(fullPath))
+    {
+        // Remember the last modified timestamp after a successful load
+        _lastKnownModificationTime = fs::last_write_time(fullPath);
     }
 }
 
