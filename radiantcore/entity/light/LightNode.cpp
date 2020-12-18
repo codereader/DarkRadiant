@@ -21,7 +21,9 @@ LightNode::LightNode(const IEntityClassPtr& eclass) :
 	_lightUpInstance(_light.upTransformed(), _light.targetTransformed(), std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
 	_lightStartInstance(_light.startTransformed(), std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
 	_lightEndInstance(_light.endTransformed(), std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
-	_dragPlanes(std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1))
+	_dragPlanes(std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
+    _renderableRadius(_light._lightBox.origin),
+    _renderableFrustum(_light._lightBox.origin, _light._lightStartTransformed, _light._frustum)
 {}
 
 LightNode::LightNode(const LightNode& other) :
@@ -39,7 +41,9 @@ LightNode::LightNode(const LightNode& other) :
 	_lightUpInstance(_light.upTransformed(), _light.targetTransformed(), std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
 	_lightStartInstance(_light.startTransformed(), std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
 	_lightEndInstance(_light.endTransformed(), std::bind(&LightNode::selectedChangedComponent, this,std::placeholders:: _1)),
-	_dragPlanes(std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1))
+	_dragPlanes(std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
+    _renderableRadius(_light._lightBox.origin),
+    _renderableFrustum(_light._lightBox.origin, _light._lightStartTransformed, _light._frustum)
 {}
 
 LightNodePtr LightNode::Create(const IEntityClassPtr& eclass)
@@ -271,7 +275,7 @@ void LightNode::renderSolid(RenderableCollector& collector, const VolumeTest& vo
 
     // Re-use the same method as in wireframe rendering for the moment
     const bool lightIsSelected = isSelected();
-    _light.renderWireframe(
+    renderLightVolume(
         collector, volume, localToWorld(), lightIsSelected
     );
 
@@ -283,11 +287,46 @@ void LightNode::renderWireframe(RenderableCollector& collector, const VolumeTest
 	EntityNode::renderWireframe(collector, volume);
 
 	const bool lightIsSelected = isSelected();
-	_light.renderWireframe(
+	renderLightVolume(
 		collector, volume, localToWorld(), lightIsSelected
 	);
 
 	renderInactiveComponents(collector, volume, lightIsSelected);
+}
+
+void LightNode::renderLightVolume(RenderableCollector& collector,
+                                  const VolumeTest& volume,
+                                  const Matrix4& localToWorld,
+                                  bool selected) const
+{
+    // Main render, submit the diamond that represents the light entity
+    collector.addRenderable(*getColourShader(), *this, localToWorld);
+
+    // Render bounding box if selected or the showAllLighRadii flag is set
+    if (selected || EntitySettings::InstancePtr()->getShowAllLightRadii())
+    {
+        if (_light.isProjected())
+        {
+            // greebo: This is not much of an performance impact as the
+            // projection gets only recalculated when it has actually changed.
+            _light.updateProjection();
+            collector.addRenderable(*getColourShader(), _renderableFrustum, localToWorld);
+        }
+        else
+        {
+            updateRenderableRadius();
+            collector.addRenderable(*getColourShader(), _renderableRadius, localToWorld);
+        }
+    }
+}
+
+/* greebo: Calculates the corners of the light radii box and rotates them according the rotation matrix.
+ */
+void LightNode::updateRenderableRadius() const
+{
+    // greebo: Don't rotate the light radius box, that's done via local2world
+    AABB lightbox(_light._lightBox.origin, _light.m_doom3Radius.m_radiusTransformed);
+    lightbox.getCorners(_renderableRadius.m_points);
 }
 
 void LightNode::setRenderSystem(const RenderSystemPtr& renderSystem)
@@ -385,6 +424,45 @@ void LightNode::renderInactiveComponents(RenderableCollector& collector, const V
 			_light.renderLightCentre(collector, volume, localToWorld());
 		}
 	}
+}
+
+// Backend render function (GL calls)
+void LightNode::render(const RenderInfo& info) const
+{
+    // Revert the light "diamond" to default extents for drawing
+    AABB tempAABB(_light._lightBox.origin, Vector3(8, 8, 8));
+
+    // Calculate the light vertices of this bounding box and store them into <points>
+    Vector3 max(tempAABB.origin + tempAABB.extents);
+    Vector3 min(tempAABB.origin - tempAABB.extents);
+    Vector3 mid(tempAABB.origin);
+
+    // top, bottom, tleft, tright, bright, bleft
+    Vector3 points[6] =
+    {
+        Vector3(mid[0], mid[1], max[2]),
+        Vector3(mid[0], mid[1], min[2]),
+        Vector3(min[0], max[1], mid[2]),
+        Vector3(max[0], max[1], mid[2]),
+        Vector3(max[0], min[1], mid[2]),
+        Vector3(min[0], min[1], mid[2])
+    };
+
+    // greebo: Draw the small cube representing the light origin.
+    typedef unsigned int index_t;
+    const index_t indices[24] = {
+        0, 2, 3,
+        0, 3, 4,
+        0, 4, 5,
+        0, 5, 2,
+        1, 2, 5,
+        1, 5, 4,
+        1, 4, 3,
+        1, 3, 2
+    };
+
+    glVertexPointer(3, GL_DOUBLE, 0, points);
+    glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(index_t), RenderIndexTypeID, indices);
 }
 
 void LightNode::evaluateTransform()

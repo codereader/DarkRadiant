@@ -49,7 +49,6 @@ class LightNode;
  * just the bare bone light.
  */
 class Light :
-    public OpenGLRenderable,
     public Bounded,
     public Snappable,
     public RendererLight
@@ -71,9 +70,6 @@ class Light :
 	Doom3LightRadius m_doom3Radius;
 
 	// Renderable components of this light
-	RenderLightRadiiBox _renderableRadius;
-    RenderLightProjection _renderableFrustum;
-
 	RenderableLightTarget _rCentre;
 	RenderableLightTarget _rTarget;
 
@@ -112,8 +108,8 @@ class Light :
 	bool m_useLightStart;
 	bool m_useLightEnd;
 
-  mutable AABB m_doom3AABB;
-  mutable Matrix4 m_doom3Rotation;
+    mutable AABB m_doom3AABB;
+    mutable Matrix4 m_doom3Rotation;
 
     // Frustum for projected light (used for rendering the light volume)
     mutable Frustum _frustum;
@@ -130,9 +126,9 @@ class Light :
     // The 8x8 box representing the light object itself
     AABB _lightBox;
 
-  Callback m_transformChanged;
-  Callback m_boundsChanged;
-  Callback m_evaluateTransform;
+    Callback m_transformChanged;
+    Callback m_boundsChanged;
+    Callback m_evaluateTransform;
 
     KeyObserverDelegate _rotationObserver;
 	KeyObserverDelegate _angleObserver;
@@ -154,9 +150,6 @@ private:
 
     // Ensure the start and end points are set to sensible values
 	void checkStartEnd();
-
-    // Update the bounds of the renderable radius box
-	void updateRenderableRadius() const;
 
 public:
 
@@ -200,8 +193,6 @@ public:
 		  const Callback& lightRadiusChanged);
 
 	~Light();
-
-	void render(const RenderInfo& info) const;
 
 	const AABB& localAABB() const;
 	AABB lightAABB() const;

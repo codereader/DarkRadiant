@@ -30,8 +30,6 @@ Light::Light(Doom3Entity& entity,
     m_originKey(std::bind(&Light::originChanged, this)),
     _originTransformed(ORIGINKEY_IDENTITY),
     m_rotationKey(std::bind(&Light::rotationChanged, this)),
-    _renderableRadius(_lightBox.origin),
-    _renderableFrustum(_lightBox.origin, _lightStartTransformed, _frustum),
     _rCentre(m_doom3Radius.m_centerTransformed, _lightBox.origin, m_doom3Radius._centerColour),
     _rTarget(_lightTargetTransformed, _lightBox.origin, _colourLightTarget),
     _rUp(_lightUpTransformed, _lightTargetTransformed, _lightBox.origin, _colourLightUp),
@@ -57,8 +55,6 @@ Light::Light(const Light& other,
   m_originKey(std::bind(&Light::originChanged, this)),
   _originTransformed(ORIGINKEY_IDENTITY),
   m_rotationKey(std::bind(&Light::rotationChanged, this)),
-  _renderableRadius(_lightBox.origin),
-  _renderableFrustum(_lightBox.origin, _lightStartTransformed, _frustum),
   _rCentre(m_doom3Radius.m_centerTransformed, _lightBox.origin, m_doom3Radius._centerColour),
   _rTarget(_lightTargetTransformed, _lightBox.origin, _colourLightTarget),
   _rUp(_lightUpTransformed, _lightTargetTransformed, _lightBox.origin, _colourLightUp),
@@ -313,47 +309,6 @@ void Light::lightRotationChanged(const std::string& value) {
     rotationChanged();
 }
 
-/* greebo: Calculates the corners of the light radii box and rotates them according the rotation matrix.
- */
-void Light::updateRenderableRadius() const
-{
-#if 0
-    // Get the rotation matrix
-    Matrix4 rotation = m_rotation.getMatrix4();
-
-    // Calculate the corners of the light radius box and store them into
-    // <_renderableRadius.m_points> For the first calculation an AABB with
-    // origin 0,0,0 is needed, the vectors get added to the origin AFTER they
-    // are transformed by the rotation matrix
-    aabb_corners(
-        AABB(Vector3(0, 0, 0), m_doom3Radius.m_radiusTransformed),
-        _renderableRadius.m_points
-    );
-
-    // Transform each point with the given rotation matrix and add the vectors to the light origin
-    matrix4_transform_point(rotation, _renderableRadius.m_points[0]);
-    _renderableRadius.m_points[0] += _lightBox.origin;
-    matrix4_transform_point(rotation, _renderableRadius.m_points[1]);
-    _renderableRadius.m_points[1] += _lightBox.origin;
-    matrix4_transform_point(rotation, _renderableRadius.m_points[2]);
-    _renderableRadius.m_points[2] += _lightBox.origin;
-    matrix4_transform_point(rotation, _renderableRadius.m_points[3]);
-    _renderableRadius.m_points[3] += _lightBox.origin;
-    matrix4_transform_point(rotation, _renderableRadius.m_points[4]);
-    _renderableRadius.m_points[4] += _lightBox.origin;
-    matrix4_transform_point(rotation, _renderableRadius.m_points[5]);
-    _renderableRadius.m_points[5] += _lightBox.origin;
-    matrix4_transform_point(rotation, _renderableRadius.m_points[6]);
-    _renderableRadius.m_points[6] += _lightBox.origin;
-    matrix4_transform_point(rotation, _renderableRadius.m_points[7]);
-    _renderableRadius.m_points[7] += _lightBox.origin;
-#endif
-
-    // greebo: Don't rotate the light radius box, that's done via local2world
-    AABB lightbox(_lightBox.origin, m_doom3Radius.m_radiusTransformed);
-    lightbox.getCorners(_renderableRadius.m_points);
-}
-
 /* greebo: Snaps the current light origin to the grid.
  *
  * Note: This gets called when the light as a whole is selected, NOT in vertex editing mode
@@ -488,45 +443,6 @@ void Light::freezeTransform()
     }
 }
 
-// Backend render function (GL calls)
-void Light::render(const RenderInfo& info) const
-{
-    // Revert the light "diamond" to default extents for drawing
-    AABB tempAABB(_lightBox.origin, Vector3(8, 8, 8));
-
-    // Calculate the light vertices of this bounding box and store them into <points>
-    Vector3 max(tempAABB.origin + tempAABB.extents);
-    Vector3 min(tempAABB.origin - tempAABB.extents);
-    Vector3 mid(tempAABB.origin);
-
-    // top, bottom, tleft, tright, bright, bleft
-    Vector3 points[6] =
-    {
-        Vector3(mid[0], mid[1], max[2]),
-        Vector3(mid[0], mid[1], min[2]),
-        Vector3(min[0], max[1], mid[2]),
-        Vector3(max[0], max[1], mid[2]),
-        Vector3(max[0], min[1], mid[2]),
-        Vector3(min[0], min[1], mid[2])
-    };
-
-    // greebo: Draw the small cube representing the light origin.
-    typedef unsigned int index_t;
-    const index_t indices[24] = {
-        0, 2, 3,
-        0, 3, 4,
-        0, 4, 5,
-        0, 5, 2,
-        1, 2, 5,
-        1, 5, 4,
-        1, 4, 3,
-        1, 3, 2
-    };
-
-    glVertexPointer(3, GL_DOUBLE, 0, points);
-    glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(index_t), RenderIndexTypeID, indices);
-}
-
 Doom3LightRadius& Light::getDoom3Radius() {
     return m_doom3Radius;
 }
@@ -560,32 +476,6 @@ void Light::renderLightCentre(RenderableCollector& collector,
                               const Matrix4& localToWorld) const 
 {
 	collector.addRenderable(*_rCentre.getShader(), _rCentre, localToWorld);
-}
-
-void Light::renderWireframe(RenderableCollector& collector,
-                            const VolumeTest& volume,
-                            const Matrix4& localToWorld,
-                            bool selected) const
-{
-    // Main render, submit the diamond that represents the light entity
-    collector.addRenderable(*_owner.getColourShader(), *this, localToWorld);
-
-    // Render bounding box if selected or the showAllLighRadii flag is set
-    if (selected || EntitySettings::InstancePtr()->getShowAllLightRadii())
-    {
-        if (isProjected())
-        {
-            // greebo: This is not much of an performance impact as the
-            // projection gets only recalculated when it has actually changed.
-            updateProjection();
-            collector.addRenderable(*_owner.getColourShader(), _renderableFrustum, localToWorld);
-        }
-        else
-        {
-            updateRenderableRadius();
-            collector.addRenderable(*_owner.getColourShader(), _renderableRadius, localToWorld);
-        }
-    }
 }
 
 void Light::setRenderSystem(const RenderSystemPtr& renderSystem)

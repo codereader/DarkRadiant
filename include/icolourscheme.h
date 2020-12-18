@@ -17,6 +17,7 @@ public:
 	virtual Vector3& getColour() = 0;
 };
 
+/// Interface for a single colour scheme
 class IColourScheme
 {
 public:
@@ -36,6 +37,7 @@ public:
 	virtual bool isReadOnly() const = 0;
 };
 
+/// Module providing access to current and available colour schemes
 class IColourSchemeManager :
 	public RegisterableModule
 {
@@ -53,6 +55,7 @@ public:
 
 	virtual void setActive(const std::string& name) = 0;
 
+    /// Get a reference to the currently active colour scheme
 	virtual IColourScheme& getActiveScheme() = 0;
 
 	// greebo: Returns the named colour, returns <0,0,0> if not found
