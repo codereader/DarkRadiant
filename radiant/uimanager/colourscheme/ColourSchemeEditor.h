@@ -47,6 +47,7 @@ private:
 	// private helper functions
 	void populateTree();
 	void constructWindow();
+    wxBoxSizer* constructListButtons();
 	wxSizer* constructColourSelector(colours::IColourItem& colour, const std::string& name);
 	void updateColourSelectors();
 
@@ -73,8 +74,6 @@ private:
 	// Callbacks
 	void callbackSelChanged(wxDataViewEvent& ev);
 	void callbackColorChanged(wxColourPickerEvent& ev, colours::IColourItem& item);
-	void callbackDelete(wxCommandEvent& ev);
-	void callbackCopy(wxCommandEvent& ev);
 
 	// Updates the windows after a colour change
 	static void updateWindows();

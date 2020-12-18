@@ -14,6 +14,8 @@
 #include <wx/sizer.h>
 #include <wx/clrpicker.h>
 #include <wx/stattext.h>
+#include <wx/statline.h>
+#include <wx/checkbox.h>
 
 namespace ui
 {
@@ -54,22 +56,38 @@ void ColourSchemeEditor::populateTree()
     );
 }
 
+wxBoxSizer* ColourSchemeEditor::constructListButtons()
+{
+    wxBoxSizer* buttonBox = new wxBoxSizer(wxHORIZONTAL);
+
+    _deleteButton = new wxButton(this, wxID_DELETE, _("Delete"));
+    wxButton* copyButton = new wxButton(this, wxID_COPY, _("Copy"));
+
+    buttonBox->Add(copyButton, 1, wxEXPAND | wxRIGHT, 6);
+    buttonBox->Add(_deleteButton, 1, wxEXPAND);
+
+    copyButton->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { copyScheme(); });
+    _deleteButton->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { deleteScheme(); });
+
+    return buttonBox;
+}
+
 void ColourSchemeEditor::constructWindow()
 {
-    wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* mainHBox = new wxBoxSizer(wxHORIZONTAL);
 
-    GetSizer()->Add(hbox, 1, wxEXPAND | wxALL, 12);
+    GetSizer()->Add(mainHBox, 1, wxEXPAND | wxALL, 12);
     GetSizer()->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0,
         wxALIGN_RIGHT | wxLEFT | wxBOTTOM | wxRIGHT, 12);
 
     // Create the scheme list and the buttons
-    wxBoxSizer* treeViewVbox = new wxBoxSizer(wxVERTICAL);
-    hbox->Add(treeViewVbox, 0, wxEXPAND | wxRIGHT, 6);
+    wxBoxSizer* leftVBox = new wxBoxSizer(wxVERTICAL);
+    mainHBox->Add(leftVBox, 0, wxEXPAND | wxRIGHT, 6);
 
     _schemeList = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition,
                                      wxDefaultSize, wxDV_NO_HEADER);
-    _schemeList->SetMinClientSize(wxSize(200, -1));
-    treeViewVbox->Add(_schemeList, 1, wxEXPAND | wxBOTTOM, 6);
+    _schemeList->SetMinClientSize(wxSize(256, -1));
+    leftVBox->Add(_schemeList, 1, wxEXPAND | wxBOTTOM, 6);
 
     // Create a text column to show the scheme name
     _schemeList->AppendTextColumn(
@@ -82,21 +100,19 @@ void ColourSchemeEditor::constructWindow()
         wxDataViewEventHandler(ColourSchemeEditor::callbackSelChanged), NULL, this);
 
     // Treeview buttons
-    wxBoxSizer* buttonBox = new wxBoxSizer(wxHORIZONTAL);
-    treeViewVbox->Add(buttonBox, 0, wxEXPAND, 6);
+    leftVBox->Add(constructListButtons(), 0, wxEXPAND, 6);
 
-    _deleteButton = new wxButton(this, wxID_DELETE, _("Delete"));
-    wxButton* copyButton = new wxButton(this, wxID_COPY, _("Copy"));
-
-    buttonBox->Add(copyButton, 1, wxEXPAND | wxRIGHT, 6);
-    buttonBox->Add(_deleteButton, 1, wxEXPAND);
-
-    copyButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ColourSchemeEditor::callbackCopy), NULL, this);
-    _deleteButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ColourSchemeEditor::callbackDelete), NULL, this);
+    // Options panel below the copy/delete buttons
+    wxStaticLine* sep = new wxStaticLine(this);
+    leftVBox->Add(sep, 0, wxEXPAND | wxTOP, 6);
+    wxCheckBox* overrideLightsCB = new wxCheckBox(
+        this, wxID_ANY, _("Override light volume colour")
+    );
+    leftVBox->Add(overrideLightsCB, 0, wxEXPAND | wxTOP, 6);
 
     // The Box containing the Colour, pack it into the right half of the hbox
     _colourFrame = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL | wxDOUBLE_BORDER);
-    hbox->Add(_colourFrame, 1, wxEXPAND);
+    mainHBox->Add(_colourFrame, 1, wxEXPAND);
 }
 
 void ColourSchemeEditor::selectActiveScheme()
@@ -285,16 +301,6 @@ void ColourSchemeEditor::copyScheme()
 
 	// Highlight the copied scheme
 	selectActiveScheme();
-}
-
-void ColourSchemeEditor::callbackCopy(wxCommandEvent& ev)
-{
-	copyScheme();
-}
-
-void ColourSchemeEditor::callbackDelete(wxCommandEvent& ev)
-{
-	deleteScheme();
 }
 
 void ColourSchemeEditor::callbackColorChanged(wxColourPickerEvent& ev, colours::IColourItem& item)
