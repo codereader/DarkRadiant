@@ -114,7 +114,10 @@ void LayerInfoFileModule::writeBlocks(std::ostream& stream)
 	stream << "\t{" << std::endl;
 
 	// Write the output buffer to the stream
-	stream << _output.rdbuf();
+    if (_output.tellp() > 0)
+    {
+	    stream << _output.rdbuf();
+    }
 
 	// Closing braces of NodeToLayerMapping block
 	stream << "\t}" << std::endl;
