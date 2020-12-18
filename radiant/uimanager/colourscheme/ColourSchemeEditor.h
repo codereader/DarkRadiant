@@ -48,6 +48,7 @@ private:
 	void populateTree();
 	void constructWindow();
     wxBoxSizer* constructListButtons();
+    void addOptionsPanel(wxBoxSizer& vbox);
 	wxSizer* constructColourSelector(colours::IColourItem& colour, const std::string& name);
 	void updateColourSelectors();
 

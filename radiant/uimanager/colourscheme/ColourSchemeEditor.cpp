@@ -9,6 +9,7 @@
 #include "wxutil/dialog/Dialog.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/TreeView.h"
+#include "registry/registry.h"
 
 #include <wx/panel.h>
 #include <wx/sizer.h>
@@ -22,7 +23,9 @@ namespace ui
 
 namespace
 {
-	const char* const EDITOR_WINDOW_TITLE = N_("Edit Colour Schemes");
+    const char* const EDITOR_WINDOW_TITLE = N_("Edit Colour Schemes");
+
+    constexpr const char* RKEY_OVERRIDE_LIGHTCOL = "user/ui/colour/overrideLightColour";
 }
 
 ColourSchemeEditor::ColourSchemeEditor() :
@@ -72,6 +75,29 @@ wxBoxSizer* ColourSchemeEditor::constructListButtons()
     return buttonBox;
 }
 
+void ColourSchemeEditor::addOptionsPanel(wxBoxSizer& vbox)
+{
+    wxStaticLine* sep = new wxStaticLine(this);
+    vbox.Add(sep, 0, wxEXPAND | wxTOP, 6);
+
+    // Override light colour checkbox
+    wxCheckBox* overrideLightsCB = new wxCheckBox(
+        this, wxID_ANY, _("Override light volume colour")
+    );
+    overrideLightsCB->SetValue(
+        registry::getValue(RKEY_OVERRIDE_LIGHTCOL, false)
+    );
+    overrideLightsCB->Bind(
+        wxEVT_CHECKBOX,
+        [this](wxCommandEvent& ev)
+        {
+            registry::setValue(RKEY_OVERRIDE_LIGHTCOL, ev.IsChecked());
+        }
+    );
+
+    vbox.Add(overrideLightsCB, 0, wxEXPAND | wxTOP, 6);
+}
+
 void ColourSchemeEditor::constructWindow()
 {
     wxBoxSizer* mainHBox = new wxBoxSizer(wxHORIZONTAL);
@@ -103,12 +129,7 @@ void ColourSchemeEditor::constructWindow()
     leftVBox->Add(constructListButtons(), 0, wxEXPAND, 6);
 
     // Options panel below the copy/delete buttons
-    wxStaticLine* sep = new wxStaticLine(this);
-    leftVBox->Add(sep, 0, wxEXPAND | wxTOP, 6);
-    wxCheckBox* overrideLightsCB = new wxCheckBox(
-        this, wxID_ANY, _("Override light volume colour")
-    );
-    leftVBox->Add(overrideLightsCB, 0, wxEXPAND | wxTOP, 6);
+    addOptionsPanel(*leftVBox);
 
     // The Box containing the Colour, pack it into the right half of the hbox
     _colourFrame = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL | wxDOUBLE_BORDER);
