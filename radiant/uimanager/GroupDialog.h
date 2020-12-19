@@ -12,6 +12,12 @@ class wxNotebook;
 class wxBookCtrlEvent;
 class wxImageList;
 
+namespace ui
+{
+
+class GroupDialog;
+typedef std::shared_ptr<GroupDialog> GroupDialogPtr;
+
 /**
  * greebo: The GroupDialog class creates the Window and the Notebook widget
  * as soon as construct() is called.
@@ -24,18 +30,10 @@ class wxImageList;
  * The name passed to the addPage() method can be used to directly toggle
  * the notebook widgets via setPage(<name>).
  */
-
-namespace ui
-{
-
-class GroupDialog;
-typedef std::shared_ptr<GroupDialog> GroupDialogPtr;
-
 class GroupDialog : 
 	public wxutil::TransientWindow,
 	public IGroupDialog
 {
-private:
 	// Pages, sorted by position
 	typedef std::map<int, Page> Pages;
 

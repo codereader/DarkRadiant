@@ -88,7 +88,7 @@ void GroupDialog::populateWindow()
 	panel->SetSizer(new wxBoxSizer(wxVERTICAL));
 	
 	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
-	panel->GetSizer()->Add(vbox, 1, wxEXPAND | wxALL, 12);
+	panel->GetSizer()->Add(vbox, 1, wxEXPAND);
 
 	_notebook = new wxNotebook(panel, wxID_ANY, 
 		wxDefaultPosition, wxDefaultSize, wxNB_TOP, "GroupDialogNB");

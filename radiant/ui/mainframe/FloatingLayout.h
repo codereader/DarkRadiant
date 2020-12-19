@@ -14,8 +14,15 @@ typedef std::shared_ptr<FloatingCamWnd> FloatingCamWndPtr;
 class FloatingLayout;
 typedef std::shared_ptr<FloatingLayout> FloatingLayoutPtr;
 
-class FloatingLayout :
-	public IMainFrameLayout
+/**
+ * \brief
+ * Original GIMP-style layout with multiple floating windows
+ *
+ * This layout is the most flexible, as it allows windows to be positioned and
+ * resized arbitrarily, but it is also more cumbersome to set up because the
+ * default window positions are not likely to be desirable.
+ */
+class FloatingLayout: public IMainFrameLayout
 {
 	// The floating camera window
 	FloatingCamWndPtr _floatingCamWnd;
