@@ -54,6 +54,10 @@ namespace
 MapResource::MapResource(const std::string& resourcePath)
 {
     constructPaths(resourcePath);
+
+    // Check the last modified time, to be able to save over this resource
+    // right after construction, as it happens in Map::saveAs
+    refreshLastModifiedTime();
 }
 
 void MapResource::rename(const std::string& fullPath)

@@ -1066,6 +1066,43 @@ TEST_F(MapSavingTest, saveAsDoesntWarnAboutOverwrite)
     EXPECT_FALSE(overwriteHelper.messageReceived());
 }
 
+TEST_F(MapSavingTest, saveAsDoesntWarnAboutOverwriteWhenFileExists)
+{
+    std::string modRelativePath = "maps/altar.map";
+
+    GlobalCommandSystem().executeCommand("OpenMap", modRelativePath);
+    checkAltarScene();
+
+    // Select the format based on the extension
+    fs::path tempPath = _context.getTemporaryDataPath();
+    tempPath /= "altar_saveAsDoesntWarnAboutOverwrite.map";
+    auto format = GlobalMapFormatManager().getMapFormatForFilename(tempPath.string());
+
+    EXPECT_FALSE(os::fileOrDirExists(tempPath));
+
+    // Create the file with some dummy content
+    std::ofstream stream(tempPath);
+    stream << "Test";
+    stream.flush();
+    stream.close();
+    // Set modification time back by 5s
+    auto fakeModDate = fs::last_write_time(tempPath) - 5s;
+    fs::last_write_time(tempPath, fakeModDate);
+
+    EXPECT_TRUE(os::fileOrDirExists(tempPath));
+
+    // Respond to the event asking for the target path
+    FileSelectionHelper responder(tempPath.string(), format);
+    FileOverwriteHelper overwriteHelper(false); // don't overwrite
+
+    GlobalCommandSystem().executeCommand("SaveMapAs");
+
+    // File date must have been changed
+    EXPECT_NE(fs::last_write_time(tempPath), fakeModDate);
+
+    EXPECT_FALSE(overwriteHelper.messageReceived());
+}
+
 TEST_F(MapSavingTest, saveWarnsAboutOverwrite)
 {
     std::string mapFileName = "altar_saveWarnsAboutOverwrite.map";
