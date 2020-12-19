@@ -33,6 +33,7 @@
     <ClCompile Include="..\..\..\test\WorldspawnColour.cpp" />
     <ClCompile Include="..\..\..\test\PatchWelding.cpp" />
     <ClCompile Include="..\..\..\test\PatchIterators.cpp" />
+    <ClCompile Include="..\..\..\test\ImageLoading.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\HeadlessOpenGLContext.h" />

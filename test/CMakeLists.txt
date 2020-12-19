@@ -6,6 +6,7 @@ add_executable(drtest
                FacePlane.cpp
                FileTypes.cpp
                HeadlessOpenGLContext.cpp
+               ImageLoading.cpp
                MapExport.cpp
                MapSavingLoading.cpp
                Materials.cpp

@@ -1,0 +1,9 @@
+textures/pngs/twentyone_8bit
+{
+    diffusemap textures/pngs/twentyone_8bit
+}
+
+textures/pngs/twentyone_16bit
+{
+    diffusemap textures/pngs/twentyone_16bit
+}
