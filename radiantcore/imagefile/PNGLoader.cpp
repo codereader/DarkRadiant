@@ -33,7 +33,6 @@ void user_read_data(png_structp png_ptr, png_bytep data, png_uint_32 length)
 
 RGBAImagePtr LoadPNGBuff(unsigned char* fbuffer)
 {
-	png_byte** row_pointers;
 	png_bytep p_fbuffer;
 
 	p_fbuffer = fbuffer;
@@ -124,35 +123,43 @@ RGBAImagePtr LoadPNGBuff(unsigned char* fbuffer)
 		png_set_filler(png_ptr, 0xff, PNG_FILLER_AFTER);
 	}
 
+    // Since the RGBA image supports 8-bit only, tell PNG to scale it down if the file is 16 bits
+#ifdef PNG_READ_SCALE_16_TO_8_SUPPORTED
+    png_set_scale_16(png_ptr);
+#else
+    png_set_strip_16(png_ptr);
+#endif
+
 	// read the sucker in one chunk
 	png_read_update_info(png_ptr, info_ptr);
 
 	color_type = png_get_color_type(png_ptr, info_ptr);
 	bit_depth = png_get_bit_depth(png_ptr, info_ptr);
 
-	int width = png_get_image_width(png_ptr, info_ptr);
-	int height = png_get_image_height(png_ptr, info_ptr);
+    auto width = png_get_image_width(png_ptr, info_ptr);
+	auto height = png_get_image_height(png_ptr, info_ptr);
 
 	// allocate the pixel buffer, and the row pointers
 	RGBAImagePtr image(new RGBAImage(width, height));
 
-	row_pointers = (png_byte**)malloc((height) * sizeof(png_byte*));
+    // Allocate a set of row pointers
+    std::vector<png_byte*> rowPointers(height);
+    auto pixelBuffer = image->getPixels();
+    constexpr auto bytesPerPixel = sizeof(RGBAPixel) / sizeof(uint8_t);
 
-	for (int i = 0; i < height; i++)
+    for (decltype(height) i = 0; i < height; ++i)
 	{
-		row_pointers[i] = (png_byte*)(image->getPixels()) + i * 4 * (width);
+        rowPointers[i] = static_cast<png_byte*>(pixelBuffer + i * width * bytesPerPixel);
 	}
 
 	// actual read
-	png_read_image(png_ptr, row_pointers);
+	png_read_image(png_ptr, rowPointers.data());
 
 	/* read rest of file, and get additional chunks in info_ptr - REQUIRED */
 	png_read_end(png_ptr, info_ptr);
 
 	/* free up the memory structure */
 	png_destroy_read_struct(&png_ptr, &info_ptr, png_infopp_NULL);
-
-	free(row_pointers);
 
 	return image;
 }
