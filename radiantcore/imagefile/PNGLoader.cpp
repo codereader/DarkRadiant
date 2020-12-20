@@ -130,6 +130,11 @@ RGBAImagePtr LoadPNGBuff(unsigned char* fbuffer)
     png_set_strip_16(png_ptr);
 #endif
 
+#ifdef PNG_READ_GRAY_TO_RGB_SUPPORTED
+    // This converts Grey and Grey+Alpha to RGBA
+    png_set_gray_to_rgb(png_ptr);
+#endif
+
 	// read the sucker in one chunk
 	png_read_update_info(png_ptr, info_ptr);
 
