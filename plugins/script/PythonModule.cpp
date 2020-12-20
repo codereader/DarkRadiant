@@ -5,6 +5,14 @@
 #define QUOTE(x) Str(x)
 #define PYBIND11_VERSION_STR (QUOTE(PYBIND11_VERSION_MAJOR) "." QUOTE(PYBIND11_VERSION_MINOR) "." QUOTE(PYBIND11_VERSION_PATCH))
 
+#if (PYBIND11_VERSION_MAJOR > 2) || (PYBIND11_VERSION_MAJOR == 2 && PYBIND11_VERSION_MINOR >= 2)
+#define DR_PYBIND_HAS_EMBED_H
+#endif
+
+#ifdef DR_PYBIND_HAS_EMBED_H
+#include <pybind11/embed.h>
+#endif
+
 #include "itextstream.h"
 
 namespace script
@@ -19,7 +27,31 @@ PythonModule::PythonModule(const NamedInterfaces& interfaceList) :
 
 PythonModule::~PythonModule()
 {
+    // Release the references to trigger the internal cleanup before Py_Finalize
+    _module.dec_ref();
+    _module.release();
+
+    _globals.dec_ref();
+    _globals.release();
+
+    // The finalize_interpreter() function is not available in older versions
+#ifdef DR_PYBIND_HAS_EMBED_H
+    py::finalize_interpreter();
+#else 
+    Py_Finalize();
+#endif
+
     _instance = nullptr;
+}
+
+void PythonModule::initialise()
+{
+    // The initialize_interpreter() function is not available in older versions
+#ifdef DR_PYBIND_HAS_EMBED_H
+    py::initialize_interpreter();
+#else
+    Py_Initialize();
+#endif
 }
 
 void PythonModule::registerModule()

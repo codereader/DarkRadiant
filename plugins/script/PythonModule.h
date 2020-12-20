@@ -32,6 +32,9 @@ public:
     PythonModule(const NamedInterfaces& interfaceList);
     ~PythonModule();
 
+    // Starts up the interpreter, imports the darkradiant module
+    void initialise();
+
 	static const char* NAME();
 
 	// Get the module object

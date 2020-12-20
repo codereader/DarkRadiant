@@ -5,14 +5,6 @@
 #include <pybind11/stl_bind.h>
 #include <pybind11/eval.h>
 
-#if (PYBIND11_VERSION_MAJOR > 2) || (PYBIND11_VERSION_MAJOR == 2 && PYBIND11_VERSION_MINOR >= 2)
-#define DR_PYBIND_HAS_EMBED_H
-#endif
-
-#ifdef DR_PYBIND_HAS_EMBED_H
-#include <pybind11/embed.h>
-#endif
-
 #include "i18n.h"
 #include "itextstream.h"
 #include "iradiant.h"
@@ -189,12 +181,8 @@ sigc::signal<void>& ScriptingSystem::signal_onScriptsReloaded()
 
 void ScriptingSystem::initialise()
 {
-	// The finalize_interpreter() function is not available in older versions
-#ifdef DR_PYBIND_HAS_EMBED_H
-	py::initialize_interpreter();
-#else
-	Py_Initialize();
-#endif
+    // Fire up the interpreter
+    _pythonModule->initialise();
 
 	{
 		try
@@ -471,13 +459,6 @@ void ScriptingSystem::shutdownModule()
 	_interfaces.clear();
 
     _pythonModule.reset();
-
-	// The finalize_interpreter() function is not available in older versions
-#ifdef DR_PYBIND_HAS_EMBED_H
-	py::finalize_interpreter();
-#else 
-	Py_Finalize();
-#endif
 }
 
 } // namespace script
