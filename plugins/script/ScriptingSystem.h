@@ -23,7 +23,6 @@ class ScriptingSystem :
 {
 private:
 	bool _initialised;
-	NamedInterfaces _interfaces;
     std::unique_ptr<PythonModule> _pythonModule;
 
 	// The path where the script files are hosted
@@ -79,8 +78,6 @@ public:
 
 private:
 	void executeScriptFile(const std::string& filename, bool setExecuteCommandAttr);
-
-	bool interfaceExists(const std::string& name);
 
 	void reloadScripts();
 

@@ -54,36 +54,9 @@ ScriptingSystem::ScriptingSystem() :
 	_initialised(false)
 {}
 
-void ScriptingSystem::addInterface(const std::string& name, const IScriptInterfacePtr& iface) {
-	// Check if exists
-	if (interfaceExists(name)) {
-		rError() << "Cannot add script interface " << name
-			<< ", this interface is already registered." << std::endl;
-		return;
-	}
-
-	// Try to insert
-	_interfaces.push_back(NamedInterface(name, iface));
-
-	if (_initialised) 
-	{
-		// Add the interface at once, all the others are already added
-		iface->registerInterface(_pythonModule->getModule(), _pythonModule->getGlobals());
-	}
-}
-
-bool ScriptingSystem::interfaceExists(const std::string& name)
+void ScriptingSystem::addInterface(const std::string& name, const IScriptInterfacePtr& iface)
 {
-	// Traverse the interface list
-	for (const NamedInterface& i : _interfaces)
-	{
-		if (i.first == name)
-		{
-			return true;
-		}
-	}
-
-	return false;
+    _pythonModule->addInterface(NamedInterface(name, iface));
 }
 
 void ScriptingSystem::executeScriptFile(const std::string& filename)
@@ -335,7 +308,7 @@ void ScriptingSystem::initialiseModule(const IApplicationContext& ctx)
 #endif
 
 	// Set up the python interpreter
-    _pythonModule.reset(new PythonModule(_interfaces));
+    _pythonModule.reset(new PythonModule);
 
 	// Add the built-in interfaces (the order is important, as we don't have dependency-resolution yet)
 	addInterface("Math", std::make_shared<MathInterface>());
@@ -396,9 +369,6 @@ void ScriptingSystem::shutdownModule()
 	_commands.clear();
 
 	_scriptPath.clear();
-
-	// Free all interfaces
-	_interfaces.clear();
 
     _pythonModule.reset();
 }

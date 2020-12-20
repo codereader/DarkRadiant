@@ -16,16 +16,18 @@ namespace
     constexpr const char* ModuleName = "darkradiant";
 }
 
-PythonModule::PythonModule(const NamedInterfaces& interfaceList) :
-    _namedInterfaces(interfaceList),
+PythonModule::PythonModule() :
     _outputWriter(false, _outputBuffer),
-    _errorWriter(true, _errorBuffer)
+    _errorWriter(true, _errorBuffer),
+    _interpreterInitialised(false)
 {
     registerModule();
 }
 
 PythonModule::~PythonModule()
 {
+    _namedInterfaces.clear();
+
     // Release the references to trigger the internal cleanup before Py_Finalize
     _module.dec_ref();
     _module.release();
@@ -136,33 +138,31 @@ py::dict& PythonModule::getGlobals()
 #if PY_MAJOR_VERSION >= 3
 PyObject* PythonModule::InitModule()
 {
-	return InitModuleImpl();
+    if (!_instance) throw new std::runtime_error("_instance reference not set");
+	return _instance->initialiseModule();
 }
 #else
 void PythonModule::InitModule()
 {
-	InitModuleImpl();
+    if (!_instance) throw new std::runtime_error("_instance reference not set");
+    _instance->initialiseModule();
 }
 #endif
 
-PyObject* PythonModule::InitModuleImpl()
+PyObject* PythonModule::initialiseModule()
 {
 	try
 	{
-		if (!_instance)
-		{
-            throw new std::runtime_error("_instance reference not set");
-		}
-
-        _instance->_module = py::module::create_extension_module(ModuleName, "DarkRadiant Main Module", &_moduleDef);
+        static py::module::module_def _moduleDef;
+        _module = py::module::create_extension_module(ModuleName, "DarkRadiant Main Module", &_moduleDef);
 
         // Add the registered interfaces
-        for (const auto& i : _instance->_namedInterfaces)
+        for (const auto& i : _namedInterfaces)
         {
             // Handle each interface in its own try/catch block
             try
             {
-                i.second->registerInterface(_instance->getModule(), _instance->getGlobals());
+                i.second->registerInterface(getModule(), getGlobals());
             }
             catch (const py::error_already_set& ex)
             {
@@ -176,10 +176,12 @@ PyObject* PythonModule::InitModuleImpl()
 
 		for (auto i = globals.begin(); i != globals.end(); ++i)
 		{
-            _instance->getGlobals()[(*i).first] = (*i).second;
+            getGlobals()[(*i).first] = (*i).second;
 		}
 
-		return _instance->getModule().ptr();
+        _interpreterInitialised = true;
+
+		return getModule().ptr();
 	}
 	catch (py::error_already_set& e)
 	{
@@ -194,7 +196,39 @@ PyObject* PythonModule::InitModuleImpl()
 	}
 }
 
+void PythonModule::addInterface(const NamedInterface& iface)
+{
+    // Check if exists
+    if (interfaceExists(iface.first))
+    {
+        rError() << "A script interface with the name " << iface.first << " is already registered." << std::endl;
+        return;
+    }
+
+    // Try to insert
+    _namedInterfaces.emplace_back(iface);
+
+    if (_interpreterInitialised)
+    {
+        // Add the interface at once, all the others are already added
+        iface.second->registerInterface(getModule(), getGlobals());
+    }
+}
+
+bool PythonModule::interfaceExists(const std::string& name)
+{
+    // Traverse the interface list
+    for (const auto& namedInterface : _namedInterfaces)
+    {
+        if (namedInterface.first == name)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 PythonModule* PythonModule::_instance = nullptr;
-py::module::module_def PythonModule::_moduleDef;
 
 }

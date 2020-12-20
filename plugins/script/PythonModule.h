@@ -16,13 +16,12 @@ namespace script
 class PythonModule final
 {
 private:
-	// Python objects and initialisation stuff
+	// Python module and global dictionary
 	py::module _module;
 	py::dict _globals;
-    static py::module::module_def _moduleDef;
 
-    // Reference to the list owned by the ScriptingSystem
-	const NamedInterfaces& _namedInterfaces;
+    // List of registered interfaces
+	NamedInterfaces _namedInterfaces;
 
     PythonModule(const PythonModule& other) = delete;
     PythonModule& operator=(const PythonModule& other) = delete;
@@ -38,8 +37,10 @@ private:
     PythonConsoleWriter _outputWriter;
     PythonConsoleWriter _errorWriter;
 
+    bool _interpreterInitialised;
+
 public:
-    PythonModule(const NamedInterfaces& interfaceList);
+    PythonModule();
     ~PythonModule();
 
     // Starts up the interpreter, imports the darkradiant module
@@ -53,9 +54,13 @@ public:
 	// Get the globals
 	py::dict& getGlobals();
 
+    void addInterface(const NamedInterface& iface);
+
 private:
     // Register the darkradiant module with the inittab pointing to InitModule
     void registerModule();
+
+    bool interfaceExists(const std::string& name);
 
 	// Endpoint called by the Python interface to acquire the module
 #if PY_MAJOR_VERSION >= 3
@@ -64,7 +69,7 @@ private:
 	static void InitModule();
 #endif
 
-	static PyObject* InitModuleImpl();
+	PyObject* initialiseModule();
 };
 
 }
