@@ -24,9 +24,13 @@ add_executable(drtest
                Selection.cpp
                VFS.cpp
                WorldspawnColour.cpp)
+               
+find_package(Threads REQUIRED)
+ 
 target_compile_options(drtest PUBLIC ${SIGC_CFLAGS})
 target_link_libraries(drtest PUBLIC
                       math xmlutil scenegraph module
                       ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES}
-                      ${SIGC_LIBRARIES} ${GLEW_LIBRARIES} ${X11_LIBRARIES})
+                      ${SIGC_LIBRARIES} ${GLEW_LIBRARIES} ${X11_LIBRARIES}
+                      PRIVATE Threads::Threads)
 install(TARGETS drtest)
