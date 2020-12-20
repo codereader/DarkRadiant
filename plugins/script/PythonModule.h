@@ -10,7 +10,7 @@ namespace py = pybind11;
 namespace script
 {
 
-class PythonModule
+class PythonModule final
 {
 private:
 	// Python objects and initialisation stuff
@@ -21,23 +21,28 @@ private:
     // Reference to the list owned by the ScriptingSystem
 	const NamedInterfaces& _namedInterfaces;
 
-    static std::unique_ptr<PythonModule> _instance;
-
-    PythonModule(const NamedInterfaces& interfaceList);
     PythonModule(const PythonModule& other) = delete;
     PythonModule& operator=(const PythonModule& other) = delete;
 
+    // We need a static reference to the current object, since 
+    // PyImport_AppendInittab doesn't allow us to pass user data
+    static PythonModule* _instance;
+
 public:
+    PythonModule(const NamedInterfaces& interfaceList);
+    ~PythonModule();
+
 	static const char* NAME();
 
 	// Get the module object
-	static py::module& GetModule();
+	py::module& getModule();
 
 	// Get the globals
-	static py::dict& GetGlobals();
+	py::dict& getGlobals();
 
-	// Destroys the module and the globals object, no more calls to GetModule() and GetGlobals() afterwards!
-	static void Destroy();
+private:
+    // Register the darkradiant module with the inittab pointing to InitModule
+    void registerModule();
 
 	// Endpoint called by the Python interface to acquire the module
 #if PY_MAJOR_VERSION >= 3
@@ -46,9 +51,6 @@ public:
 	static void InitModule();
 #endif
 
-    static void Construct(const NamedInterfaces& interfaceList);
-
-private:
 	static PyObject* InitModuleImpl();
 };
 

@@ -30,6 +30,7 @@ private:
 
 	bool _initialised;
 	NamedInterfaces _interfaces;
+    std::unique_ptr<PythonModule> _pythonModule;
 
 	// The path where the script files are hosted
 	std::string _scriptPath;

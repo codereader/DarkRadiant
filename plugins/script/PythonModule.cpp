@@ -12,16 +12,23 @@ namespace script
 
 PythonModule::PythonModule(const NamedInterfaces& interfaceList) :
     _namedInterfaces(interfaceList)
-{}
-
-void PythonModule::Construct(const NamedInterfaces& interfaceList)
 {
-    _instance.reset(new PythonModule(interfaceList));
+    _instance = this;
+    registerModule();
+}
 
+PythonModule::~PythonModule()
+{
+    _instance = nullptr;
+}
+
+void PythonModule::registerModule()
+{
     rMessage() << "Registering darkradiant module to Python using pybind11 version " <<
         PYBIND11_VERSION_STR << std::endl;
 
-    // Register the darkradiant module to Python
+    // Register the darkradiant module to Python, the InitModule function
+    // will be called as soon as the module is imported
     int result = PyImport_AppendInittab(NAME(), InitModule);
 
     if (result == -1)
@@ -36,19 +43,14 @@ const char* PythonModule::NAME()
 	return "darkradiant";
 }
 
-py::module& PythonModule::GetModule()
+py::module& PythonModule::getModule()
 {
-    return _instance->_module;
+    return _module;
 }
 
-py::dict& PythonModule::GetGlobals()
+py::dict& PythonModule::getGlobals()
 {
-    return _instance->_globals;
-}
-
-void PythonModule::Destroy()
-{
-    _instance.reset();
+    return _globals;
 }
 
 #if PY_MAJOR_VERSION >= 3
@@ -86,7 +88,7 @@ PyObject* PythonModule::InitModuleImpl()
             // Handle each interface in its own try/catch block
             try
             {
-                i.second->registerInterface(GetModule(), GetGlobals());
+                i.second->registerInterface(_instance->getModule(), _instance->getGlobals());
             }
             catch (const py::error_already_set& ex)
             {
@@ -100,10 +102,10 @@ PyObject* PythonModule::InitModuleImpl()
 
 		for (auto i = globals.begin(); i != globals.end(); ++i)
 		{
-			GetGlobals()[(*i).first] = (*i).second;
+            _instance->getGlobals()[(*i).first] = (*i).second;
 		}
 
-		return GetModule().ptr();
+		return _instance->getModule().ptr();
 	}
 	catch (py::error_already_set& e)
 	{
@@ -118,7 +120,7 @@ PyObject* PythonModule::InitModuleImpl()
 	}
 }
 
-std::unique_ptr<PythonModule> PythonModule::_instance;
+PythonModule* PythonModule::_instance = nullptr;
 py::module::module_def PythonModule::_moduleDef;
 
 }

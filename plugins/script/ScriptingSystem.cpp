@@ -78,7 +78,7 @@ void ScriptingSystem::addInterface(const std::string& name, const IScriptInterfa
 	if (_initialised) 
 	{
 		// Add the interface at once, all the others are already added
-		iface->registerInterface(PythonModule::GetModule(), PythonModule::GetGlobals());
+		iface->registerInterface(_pythonModule->getModule(), _pythonModule->getGlobals());
 	}
 }
 
@@ -123,7 +123,7 @@ void ScriptingSystem::executeScriptFile(const std::string& filename, bool setExe
 		}
 
 		// Attempt to run the specified script
-		py::eval_file(filePath, PythonModule::GetGlobals(), locals);
+		py::eval_file(filePath, _pythonModule->getGlobals(), locals);
 	}
     catch (std::invalid_argument& e)
     {
@@ -153,7 +153,7 @@ ExecutionResultPtr ScriptingSystem::executeString(const std::string& scriptStrin
 		fullScript.append(scriptString);
 
 		// Attempt to run the specified script
-		py::eval<py::eval_statements>(fullScript, PythonModule::GetGlobals());
+		py::eval<py::eval_statements>(fullScript, _pythonModule->getGlobals());
 	}
 	catch (py::error_already_set& ex)
 	{
@@ -203,7 +203,7 @@ void ScriptingSystem::initialise()
 			py::module::import(PythonModule::NAME());
 
 			// Construct the console writer interface
-			PythonConsoleWriterClass consoleWriter(PythonModule::GetModule(), "PythonConsoleWriter");
+			PythonConsoleWriterClass consoleWriter(_pythonModule->getModule(), "PythonConsoleWriter");
 			consoleWriter.def(py::init<bool, std::string&>());
 			consoleWriter.def("write", &PythonConsoleWriter::write);
 			consoleWriter.def("flush", &PythonConsoleWriter::flush);
@@ -213,7 +213,7 @@ void ScriptingSystem::initialise()
 			py::module::import("sys").attr("stdout") = &_outputWriter;
 
 			// String vector is used in multiple places
-			py::bind_vector< std::vector<std::string> >(PythonModule::GetModule(), "StringVector");
+			py::bind_vector< std::vector<std::string> >(_pythonModule->getModule(), "StringVector");
 		}
 		catch (const py::error_already_set& ex)
 		{
@@ -285,7 +285,7 @@ void ScriptingSystem::loadCommandScript(const std::string& scriptFilename)
 		locals["__executeCommand__"] = false;
 
 		// Attempt to run the specified script
-		py::eval_file(_scriptPath + scriptFilename, PythonModule::GetGlobals(), locals);
+		py::eval_file(_scriptPath + scriptFilename, _pythonModule->getGlobals(), locals);
 
 		std::string cmdName;
 		std::string cmdDisplayName;
@@ -405,7 +405,7 @@ void ScriptingSystem::initialiseModule(const IApplicationContext& ctx)
 #endif
 
 	// Set up the python interpreter
-    PythonModule::Construct(_interfaces);
+    _pythonModule.reset(new PythonModule(_interfaces));
 
 	// Add the built-in interfaces (the order is important, as we don't have dependency-resolution yet)
 	addInterface("Math", std::make_shared<MathInterface>());
@@ -470,7 +470,7 @@ void ScriptingSystem::shutdownModule()
 	// Free all interfaces
 	_interfaces.clear();
 
-	PythonModule::Destroy();
+    _pythonModule.reset();
 
 	// The finalize_interpreter() function is not available in older versions
 #ifdef DR_PYBIND_HAS_EMBED_H
