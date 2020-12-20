@@ -7,3 +7,20 @@ textures/pngs/twentyone_16bit
 {
     diffusemap textures/pngs/twentyone_16bit
 }
+
+textures/pngs/transparent_greyscale
+{	
+	DECAL_MACRO
+	noShadows
+	nonsolid
+	noimpact
+	translucent
+
+	qer_editorimage textures/pngs/transparent_greyscale
+	description "256 x 256"
+
+	{       
+		blend 	gl_src_alpha, gl_one_minus_src_alpha
+		map		textures/pngs/transparent_greyscale
+	}
+}
