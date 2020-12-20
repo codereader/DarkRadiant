@@ -28,6 +28,10 @@ add_executable(drtest
 find_package(Threads REQUIRED)
  
 target_compile_options(drtest PUBLIC ${SIGC_CFLAGS})
+
+get_filename_component(TESTRESOURCEDIR "./resources" ABSOLUTE)
+add_compile_definitions(TESTRESOURCEDIR="${TESTRESOURCEDIR}")
+
 target_link_libraries(drtest PUBLIC
                       math xmlutil scenegraph module
                       ${GTEST_LIBRARIES} ${GTEST_MAIN_LIBRARIES}
