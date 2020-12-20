@@ -52,7 +52,7 @@ void PythonModule::initialise()
         py::module::import(ModuleName);
 
         // Construct the console writer interface
-        PythonConsoleWriterClass consoleWriter(getModule(), "PythonConsoleWriter");
+        PythonConsoleWriterClass consoleWriter(_module, "PythonConsoleWriter");
         consoleWriter.def(py::init<bool, std::string&>());
         consoleWriter.def("write", &PythonConsoleWriter::write);
         consoleWriter.def("flush", &PythonConsoleWriter::flush);
@@ -62,7 +62,7 @@ void PythonModule::initialise()
         py::module::import("sys").attr("stdout") = &_outputWriter;
 
         // String vector is used in multiple places
-        py::bind_vector< std::vector<std::string> >(getModule(), "StringVector");
+        py::bind_vector< std::vector<std::string> >(_module, "StringVector");
     }
     catch (const py::error_already_set& ex)
     {
@@ -125,11 +125,6 @@ ExecutionResultPtr PythonModule::executeString(const std::string& scriptString)
     return result;
 }
 
-py::module& PythonModule::getModule()
-{
-    return _module;
-}
-
 py::dict& PythonModule::getGlobals()
 {
     return _globals;
@@ -162,7 +157,7 @@ PyObject* PythonModule::initialiseModule()
             // Handle each interface in its own try/catch block
             try
             {
-                i.second->registerInterface(getModule(), getGlobals());
+                i.second->registerInterface(_module, getGlobals());
             }
             catch (const py::error_already_set& ex)
             {
@@ -181,7 +176,7 @@ PyObject* PythonModule::initialiseModule()
 
         _interpreterInitialised = true;
 
-		return getModule().ptr();
+		return _module.ptr();
 	}
 	catch (py::error_already_set& e)
 	{
@@ -205,13 +200,13 @@ void PythonModule::addInterface(const NamedInterface& iface)
         return;
     }
 
-    // Try to insert
+    // Add to the list to hold the reference
     _namedInterfaces.emplace_back(iface);
 
+    // Initialise the interface at once, if the module is already alive
     if (_interpreterInitialised)
     {
-        // Add the interface at once, all the others are already added
-        iface.second->registerInterface(getModule(), getGlobals());
+        iface.second->registerInterface(_module, getGlobals());
     }
 }
 

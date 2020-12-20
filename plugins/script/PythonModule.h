@@ -48,10 +48,7 @@ public:
 
     ExecutionResultPtr executeString(const std::string& scriptString);
 
-	// Get the module object
-	py::module& getModule();
-
-	// Get the globals
+	// Get the global object dictionary of this module
 	py::dict& getGlobals();
 
     void addInterface(const NamedInterface& iface);
