@@ -6,6 +6,7 @@
 #define PYBIND11_VERSION_STR (QUOTE(PYBIND11_VERSION_MAJOR) "." QUOTE(PYBIND11_VERSION_MINOR) "." QUOTE(PYBIND11_VERSION_PATCH))
 
 #include <pybind11/embed.h>
+#include <pybind11/stl_bind.h>
 #include "itextstream.h"
 
 namespace script
