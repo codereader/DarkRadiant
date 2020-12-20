@@ -9,14 +9,14 @@
 
 #pragma once
 
-#include "common.h"
+#include "detail/common.h"
 #include "operators.h"
 
 #include <algorithm>
 #include <sstream>
 
-NAMESPACE_BEGIN(pybind11)
-NAMESPACE_BEGIN(detail)
+PYBIND11_NAMESPACE_BEGIN(PYBIND11_NAMESPACE)
+PYBIND11_NAMESPACE_BEGIN(detail)
 
 /* SFINAE helper class used by 'is_comparable */
 template <typename T>  struct container_traits {
@@ -66,10 +66,7 @@ template <typename, typename, typename... Args> void vector_if_insertion_operato
 template <typename, typename, typename... Args> void vector_modifiers(const Args &...) { }
 
 template<typename Vector, typename Class_>
-void vector_if_copy_constructible(enable_if_t<
-    std::is_copy_constructible<Vector>::value &&
-    std::is_copy_constructible<typename Vector::value_type>::value, Class_> &cl) {
-
+void vector_if_copy_constructible(enable_if_t<is_copy_constructible<Vector>::value, Class_> &cl) {
     cl.def(init<const Vector &>(), "Copy constructor");
 }
 
@@ -113,40 +110,77 @@ void vector_if_equal_operator(enable_if_t<is_comparable<Vector>::value, Class_> 
 // (Technically, some of these (pop and __delitem__) don't actually require copyability, but it seems
 // silly to allow deletion but not insertion, so include them here too.)
 template <typename Vector, typename Class_>
-void vector_modifiers(enable_if_t<std::is_copy_constructible<typename Vector::value_type>::value, Class_> &cl) {
+void vector_modifiers(enable_if_t<is_copy_constructible<typename Vector::value_type>::value, Class_> &cl) {
     using T = typename Vector::value_type;
     using SizeType = typename Vector::size_type;
     using DiffType = typename Vector::difference_type;
+
+    auto wrap_i = [](DiffType i, SizeType n) {
+        if (i < 0)
+            i += n;
+        if (i < 0 || (SizeType)i >= n)
+            throw index_error();
+        return i;
+    };
 
     cl.def("append",
            [](Vector &v, const T &value) { v.push_back(value); },
            arg("x"),
            "Add an item to the end of the list");
 
-    cl.def("__init__", [](Vector &v, iterable it) {
-        new (&v) Vector();
-        try {
-            v.reserve(len(it));
-            for (handle h : it)
-               v.push_back(h.cast<T>());
-        } catch (...) {
-            v.~Vector();
-            throw;
-        }
-    });
+    cl.def(init([](iterable it) {
+        auto v = std::unique_ptr<Vector>(new Vector());
+        v->reserve(len_hint(it));
+        for (handle h : it)
+           v->push_back(h.cast<T>());
+        return v.release();
+    }));
+
+    cl.def("clear",
+        [](Vector &v) {
+            v.clear();
+        },
+        "Clear the contents"
+    );
 
     cl.def("extend",
        [](Vector &v, const Vector &src) {
-           v.reserve(v.size() + src.size());
            v.insert(v.end(), src.begin(), src.end());
        },
        arg("L"),
        "Extend the list by appending all the items in the given list"
     );
 
+    cl.def("extend",
+       [](Vector &v, iterable it) {
+           const size_t old_size = v.size();
+           v.reserve(old_size + len_hint(it));
+           try {
+               for (handle h : it) {
+                   v.push_back(h.cast<T>());
+               }
+           } catch (const cast_error &) {
+               v.erase(v.begin() + static_cast<typename Vector::difference_type>(old_size), v.end());
+               try {
+                   v.shrink_to_fit();
+               } catch (const std::exception &) {
+                   // Do nothing
+               }
+               throw;
+           }
+       },
+       arg("L"),
+       "Extend the list by appending all the items in the given list"
+    );
+
     cl.def("insert",
-        [](Vector &v, SizeType i, const T &x) {
-            v.insert(v.begin() + (DiffType) i, x);
+        [](Vector &v, DiffType i, const T &x) {
+            // Can't use wrap_i; i == v.size() is OK
+            if (i < 0)
+                i += v.size();
+            if (i < 0 || (SizeType)i > v.size())
+                throw index_error();
+            v.insert(v.begin() + i, x);
         },
         arg("i") , arg("x"),
         "Insert an item at a given position."
@@ -164,11 +198,10 @@ void vector_modifiers(enable_if_t<std::is_copy_constructible<typename Vector::va
     );
 
     cl.def("pop",
-        [](Vector &v, SizeType i) {
-            if (i >= v.size())
-                throw index_error();
-            T t = v[i];
-            v.erase(v.begin() + (DiffType) i);
+        [wrap_i](Vector &v, DiffType i) {
+            i = wrap_i(i, v.size());
+            T t = v[(SizeType) i];
+            v.erase(v.begin() + i);
             return t;
         },
         arg("i"),
@@ -176,10 +209,9 @@ void vector_modifiers(enable_if_t<std::is_copy_constructible<typename Vector::va
     );
 
     cl.def("__setitem__",
-        [](Vector &v, SizeType i, const T &t) {
-            if (i >= v.size())
-                throw index_error();
-            v[i] = t;
+        [wrap_i](Vector &v, DiffType i, const T &t) {
+            i = wrap_i(i, v.size());
+            v[(SizeType)i] = t;
         }
     );
 
@@ -191,7 +223,7 @@ void vector_modifiers(enable_if_t<std::is_copy_constructible<typename Vector::va
             if (!slice.compute(v.size(), &start, &stop, &step, &slicelength))
                 throw error_already_set();
 
-            Vector *seq = new Vector();
+            auto *seq = new Vector();
             seq->reserve((size_t) slicelength);
 
             for (size_t i=0; i<slicelength; ++i) {
@@ -222,10 +254,9 @@ void vector_modifiers(enable_if_t<std::is_copy_constructible<typename Vector::va
     );
 
     cl.def("__delitem__",
-        [](Vector &v, SizeType i) {
-            if (i >= v.size())
-                throw index_error();
-            v.erase(v.begin() + DiffType(i));
+        [wrap_i](Vector &v, DiffType i) {
+            i = wrap_i(i, v.size());
+            v.erase(v.begin() + i);
         },
         "Delete the list elements at index ``i``"
     );
@@ -261,13 +292,21 @@ template <typename Vector, typename Class_>
 void vector_accessor(enable_if_t<!vector_needs_copy<Vector>::value, Class_> &cl) {
     using T = typename Vector::value_type;
     using SizeType = typename Vector::size_type;
+    using DiffType = typename Vector::difference_type;
     using ItType   = typename Vector::iterator;
 
+    auto wrap_i = [](DiffType i, SizeType n) {
+        if (i < 0)
+            i += n;
+        if (i < 0 || (SizeType)i >= n)
+            throw index_error();
+        return i;
+    };
+
     cl.def("__getitem__",
-        [](Vector &v, SizeType i) -> T & {
-            if (i >= v.size())
-                throw index_error();
-            return v[i];
+        [wrap_i](Vector &v, DiffType i) -> T & {
+            i = wrap_i(i, v.size());
+            return v[(SizeType)i];
         },
         return_value_policy::reference_internal // ref + keepalive
     );
@@ -287,12 +326,15 @@ template <typename Vector, typename Class_>
 void vector_accessor(enable_if_t<vector_needs_copy<Vector>::value, Class_> &cl) {
     using T = typename Vector::value_type;
     using SizeType = typename Vector::size_type;
+    using DiffType = typename Vector::difference_type;
     using ItType   = typename Vector::iterator;
     cl.def("__getitem__",
-        [](const Vector &v, SizeType i) -> T {
-            if (i >= v.size())
+        [](const Vector &v, DiffType i) -> T {
+            if (i < 0 && (i += v.size()) < 0)
                 throw index_error();
-            return v[i];
+            if ((SizeType)i >= v.size())
+                throw index_error();
+            return v[(SizeType)i];
         }
     );
 
@@ -345,23 +387,30 @@ vector_buffer(Class_& cl) {
     format_descriptor<T>::format();
 
     cl.def_buffer([](Vector& v) -> buffer_info {
-        return buffer_info(v.data(), sizeof(T), format_descriptor<T>::format(), 1, {v.size()}, {sizeof(T)});
+        return buffer_info(v.data(), static_cast<ssize_t>(sizeof(T)), format_descriptor<T>::format(), 1, {v.size()}, {sizeof(T)});
     });
 
-    cl.def("__init__", [](Vector& vec, buffer buf) {
+    cl.def(init([](buffer buf) {
         auto info = buf.request();
-        if (info.ndim != 1 || info.strides[0] <= 0 || info.strides[0] % sizeof(T))
+        if (info.ndim != 1 || info.strides[0] % static_cast<ssize_t>(sizeof(T)))
             throw type_error("Only valid 1D buffers can be copied to a vector");
-        if (!detail::compare_buffer_info<T>::compare(info) || sizeof(T) != info.itemsize)
+        if (!detail::compare_buffer_info<T>::compare(info) || (ssize_t) sizeof(T) != info.itemsize)
             throw type_error("Format mismatch (Python: " + info.format + " C++: " + format_descriptor<T>::format() + ")");
-        new (&vec) Vector();
-        vec.reserve(info.shape[0]);
+
         T *p = static_cast<T*>(info.ptr);
-        auto step = info.strides[0] / sizeof(T);
+        ssize_t step = info.strides[0] / static_cast<ssize_t>(sizeof(T));
         T *end = p + info.shape[0] * step;
-        for (; p < end; p += step)
-            vec.push_back(*p);
-    });
+        if (step == 1) {
+            return Vector(p, end);
+        }
+        else {
+            Vector vec;
+            vec.reserve((size_t) info.shape[0]);
+            for (; p != end; p += step)
+                vec.push_back(*p);
+            return vec;
+        }
+    }));
 
     return;
 }
@@ -369,16 +418,22 @@ vector_buffer(Class_& cl) {
 template <typename Vector, typename Class_, typename... Args>
 enable_if_t<!detail::any_of<std::is_same<Args, buffer_protocol>...>::value> vector_buffer(Class_&) {}
 
-NAMESPACE_END(detail)
+PYBIND11_NAMESPACE_END(detail)
 
 //
 // std::vector
 //
 template <typename Vector, typename holder_type = std::unique_ptr<Vector>, typename... Args>
-class_<Vector, holder_type> bind_vector(module &m, std::string const &name, Args&&... args) {
+class_<Vector, holder_type> bind_vector(handle scope, std::string const &name, Args&&... args) {
     using Class_ = class_<Vector, holder_type>;
 
-    Class_ cl(m, name.c_str(), std::forward<Args>(args)...);
+    // If the value_type is unregistered (e.g. a converting type) or is itself registered
+    // module-local then make the vector binding module-local as well:
+    using vtype = typename Vector::value_type;
+    auto vtype_info = detail::get_type_info(typeid(vtype));
+    bool local = !vtype_info || vtype_info->module_local;
+
+    Class_ cl(scope, name.c_str(), pybind11::module_local(local), std::forward<Args>(args)...);
 
     // Declare the buffer interface if a buffer_protocol() is passed in
     detail::vector_buffer<Vector, Class_, Args...>(cl);
@@ -461,7 +516,7 @@ class_<Vector, holder_type> bind_vector(module &m, std::string const &name, Args
 // std::map, std::unordered_map
 //
 
-NAMESPACE_BEGIN(detail)
+PYBIND11_NAMESPACE_BEGIN(detail)
 
 /* Fallback functions */
 template <typename, typename, typename... Args> void map_if_insertion_operator(const Args &...) { }
@@ -469,7 +524,7 @@ template <typename, typename, typename... Args> void map_assignment(const Args &
 
 // Map assignment when copy-assignable: just copy the value
 template <typename Map, typename Class_>
-void map_assignment(enable_if_t<std::is_copy_assignable<typename Map::mapped_type>::value, Class_> &cl) {
+void map_assignment(enable_if_t<is_copy_assignable<typename Map::mapped_type>::value, Class_> &cl) {
     using KeyType = typename Map::key_type;
     using MappedType = typename Map::mapped_type;
 
@@ -485,8 +540,8 @@ void map_assignment(enable_if_t<std::is_copy_assignable<typename Map::mapped_typ
 // Not copy-assignable, but still copy-constructible: we can update the value by erasing and reinserting
 template<typename Map, typename Class_>
 void map_assignment(enable_if_t<
-        !std::is_copy_assignable<typename Map::mapped_type>::value &&
-        std::is_copy_constructible<typename Map::mapped_type>::value,
+        !is_copy_assignable<typename Map::mapped_type>::value &&
+        is_copy_constructible<typename Map::mapped_type>::value,
         Class_> &cl) {
     using KeyType = typename Map::key_type;
     using MappedType = typename Map::mapped_type;
@@ -527,15 +582,25 @@ template <typename Map, typename Class_> auto map_if_insertion_operator(Class_ &
 }
 
 
-NAMESPACE_END(detail)
+PYBIND11_NAMESPACE_END(detail)
 
 template <typename Map, typename holder_type = std::unique_ptr<Map>, typename... Args>
-class_<Map, holder_type> bind_map(module &m, const std::string &name, Args&&... args) {
+class_<Map, holder_type> bind_map(handle scope, const std::string &name, Args&&... args) {
     using KeyType = typename Map::key_type;
     using MappedType = typename Map::mapped_type;
     using Class_ = class_<Map, holder_type>;
 
-    Class_ cl(m, name.c_str(), std::forward<Args>(args)...);
+    // If either type is a non-module-local bound type then make the map binding non-local as well;
+    // otherwise (e.g. both types are either module-local or converting) the map will be
+    // module-local.
+    auto tinfo = detail::get_type_info(typeid(MappedType));
+    bool local = !tinfo || tinfo->module_local;
+    if (local) {
+        tinfo = detail::get_type_info(typeid(KeyType));
+        local = !tinfo || tinfo->module_local;
+    }
+
+    Class_ cl(scope, name.c_str(), pybind11::module_local(local), std::forward<Args>(args)...);
 
     cl.def(init<>());
 
@@ -567,6 +632,15 @@ class_<Map, holder_type> bind_map(module &m, const std::string &name, Args&&... 
         return_value_policy::reference_internal // ref + keepalive
     );
 
+    cl.def("__contains__",
+        [](Map &m, const KeyType &k) -> bool {
+            auto it = m.find(k);
+            if (it == m.end())
+              return false;
+           return true;
+        }
+    );
+
     // Assignment provided only if the type is copyable
     detail::map_assignment<Map, Class_>(cl);
 
@@ -575,7 +649,7 @@ class_<Map, holder_type> bind_map(module &m, const std::string &name, Args&&... 
                auto it = m.find(k);
                if (it == m.end())
                    throw key_error();
-               return m.erase(it);
+               m.erase(it);
            }
     );
 
@@ -584,4 +658,4 @@ class_<Map, holder_type> bind_map(module &m, const std::string &name, Args&&... 
     return cl;
 }
 
-NAMESPACE_END(pybind11)
+PYBIND11_NAMESPACE_END(PYBIND11_NAMESPACE)
