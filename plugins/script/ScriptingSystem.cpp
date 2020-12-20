@@ -187,24 +187,6 @@ sigc::signal<void>& ScriptingSystem::signal_onScriptsReloaded()
 	return _sigScriptsReloaded;
 }
 
-void ScriptingSystem::addInterfacesToModule(py::module& mod, py::dict& globals)
-{
-	// Add the registered interfaces
-	for (NamedInterface& i : _interfaces)
-	{
-		// Handle each interface in its own try/catch block
-		try
-		{
-			i.second->registerInterface(mod, globals);
-		}
-		catch (const py::error_already_set& ex)
-		{
-			rError() << "Error while initialising interface " << i.first << ": " << std::endl;
-			rError() << ex.what() << std::endl;
-		}
-	}
-}
-
 void ScriptingSystem::initialise()
 {
 	// The finalize_interpreter() function is not available in older versions
@@ -422,9 +404,8 @@ void ScriptingSystem::initialiseModule(const IApplicationContext& ctx)
 	_scriptPath = ctx.getRuntimeDataPath() + "scripts/";
 #endif
 
-	// When Python asks for the object, let's register our interfaces to the py::module
-	PythonModule::RegisterToPython(
-		std::bind(&ScriptingSystem::addInterfacesToModule, this, std::placeholders::_1, std::placeholders::_2));
+	// Set up the python interpreter
+    PythonModule::Construct(_interfaces);
 
 	// Add the built-in interfaces (the order is important, as we don't have dependency-resolution yet)
 	addInterface("Math", std::make_shared<MathInterface>());
@@ -489,7 +470,7 @@ void ScriptingSystem::shutdownModule()
 	// Free all interfaces
 	_interfaces.clear();
 
-	PythonModule::Clear();
+	PythonModule::Destroy();
 
 	// The finalize_interpreter() function is not available in older versions
 #ifdef DR_PYBIND_HAS_EMBED_H

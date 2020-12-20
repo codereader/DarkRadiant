@@ -10,6 +10,27 @@
 namespace script
 {
 
+PythonModule::PythonModule(const NamedInterfaces& interfaceList) :
+    _namedInterfaces(interfaceList)
+{}
+
+void PythonModule::Construct(const NamedInterfaces& interfaceList)
+{
+    _instance.reset(new PythonModule(interfaceList));
+
+    rMessage() << "Registering darkradiant module to Python using pybind11 version " <<
+        PYBIND11_VERSION_STR << std::endl;
+
+    // Register the darkradiant module to Python
+    int result = PyImport_AppendInittab(NAME(), InitModule);
+
+    if (result == -1)
+    {
+        rError() << "Could not initialise Python module" << std::endl;
+        return;
+    }
+}
+
 const char* PythonModule::NAME()
 {
 	return "darkradiant";
@@ -17,45 +38,17 @@ const char* PythonModule::NAME()
 
 py::module& PythonModule::GetModule()
 {
-	if (!_module)
-	{
-		_module.reset(new py::module(NAME()));
-	}
-
-	return *_module;
-}
-
-void PythonModule::RegisterToPython(const ModuleRegistrationCallback& callback)
-{
-	_registrationCallback = callback;
-
-        rMessage() << "Registering darkradiant module to Python using pybind11 version " << 
-            PYBIND11_VERSION_STR << std::endl;
-        
-	// Register the darkradiant module to Python
-	int result = PyImport_AppendInittab(NAME(), InitModule);
-
-	if (result == -1)
-	{
-		rError() << "Could not initialise Python module" << std::endl;
-		return;
-	}
+    return _instance->_module;
 }
 
 py::dict& PythonModule::GetGlobals()
 {
-	if (!_globals)
-	{
-		_globals.reset(new py::dict);
-	}
-
-	return *_globals;
+    return _instance->_globals;
 }
 
-void PythonModule::Clear()
+void PythonModule::Destroy()
 {
-	_module.reset();
-	_globals.reset();
+    _instance.reset();
 }
 
 #if PY_MAJOR_VERSION >= 3
@@ -74,21 +67,43 @@ PyObject* PythonModule::InitModuleImpl()
 {
 	try
 	{
-		// Acquire modules here (through callback?)
-		if (_registrationCallback)
+		// Work through the known list of interfaces
+		if (!_instance)
 		{
-			_registrationCallback(GetModule(), GetGlobals());
+            throw new std::runtime_error("PythonModule not instantiated, call PythonModule::Construct first");
 		}
 
-		py::object main = py::module::import("__main__");
-		py::dict globals = main.attr("__dict__").cast<py::dict>();
+#if (PYBIND11_VERSION_MAJOR > 2) || (PYBIND11_VERSION_MAJOR == 2 && PYBIND11_VERSION_MINOR >= 6)
+        // pybind11 2.6+ have deprecated the py::module constructors, use py::module::create_extension_module
+        _instance->_module = py::module::create_extension_module(NAME(), "DarkRadiant Main Module", &_moduleDef);
+#else
+        _instance->_module = py::module(NAME());
+#endif
+
+        // Add the registered interfaces
+        for (const auto& i : _instance->_namedInterfaces)
+        {
+            // Handle each interface in its own try/catch block
+            try
+            {
+                i.second->registerInterface(GetModule(), GetGlobals());
+            }
+            catch (const py::error_already_set& ex)
+            {
+                rError() << "Error while initialising interface " << i.first << ": " << std::endl;
+                rError() << ex.what() << std::endl;
+            }
+        }
+
+		auto main = py::module::import("__main__");
+		auto globals = main.attr("__dict__").cast<py::dict>();
 
 		for (auto i = globals.begin(); i != globals.end(); ++i)
 		{
 			GetGlobals()[(*i).first] = (*i).second;
 		}
 
-		return _module->ptr();
+		return GetModule().ptr();
 	}
 	catch (py::error_already_set& e)
 	{
@@ -103,8 +118,7 @@ PyObject* PythonModule::InitModuleImpl()
 	}
 }
 
-std::unique_ptr<py::module> PythonModule::_module;
-std::unique_ptr<py::dict> PythonModule::_globals;
-PythonModule::ModuleRegistrationCallback PythonModule::_registrationCallback;
+std::unique_ptr<PythonModule> PythonModule::_instance;
+py::module::module_def PythonModule::_moduleDef;
 
 }

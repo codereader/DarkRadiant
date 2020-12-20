@@ -2,16 +2,14 @@
 
 #include <map>
 #include <vector>
-#include <pybind11/pybind11.h>
 
 #include "iscript.h"
 #include "iscriptinterface.h"
 #include "PythonConsoleWriter.h"
 #include "icommandsystem.h"
+#include "PythonModule.h"
 
 #include "ScriptCommand.h"
-
-namespace py = pybind11;
 
 namespace script 
 {
@@ -31,10 +29,7 @@ private:
 	PythonConsoleWriter _errorWriter;
 
 	bool _initialised;
-
-	typedef std::pair<std::string, IScriptInterfacePtr> NamedInterface;
-	typedef std::vector<NamedInterface> Interfaces;
-	Interfaces _interfaces;
+	NamedInterfaces _interfaces;
 
 	// The path where the script files are hosted
 	std::string _scriptPath;
@@ -91,8 +86,6 @@ private:
 	void executeScriptFile(const std::string& filename, bool setExecuteCommandAttr);
 
 	bool interfaceExists(const std::string& name);
-
-	void addInterfacesToModule(py::module& mod, py::dict&);
 
 	void reloadScripts();
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "iscriptinterface.h"
 #include <functional>
 #include <memory>
 #include <pybind11/pybind11.h>
@@ -13,11 +14,18 @@ class PythonModule
 {
 private:
 	// Python objects and initialisation stuff
-	static std::unique_ptr<py::module> _module;
-	static std::unique_ptr<py::dict> _globals;
+	py::module _module;
+	py::dict _globals;
+    static py::module::module_def _moduleDef;
 
-	typedef std::function<void(py::module&, py::dict&)> ModuleRegistrationCallback;
-	static ModuleRegistrationCallback _registrationCallback;
+    // Reference to the list owned by the ScriptingSystem
+	const NamedInterfaces& _namedInterfaces;
+
+    static std::unique_ptr<PythonModule> _instance;
+
+    PythonModule(const NamedInterfaces& interfaceList);
+    PythonModule(const PythonModule& other) = delete;
+    PythonModule& operator=(const PythonModule& other) = delete;
 
 public:
 	static const char* NAME();
@@ -28,10 +36,8 @@ public:
 	// Get the globals
 	static py::dict& GetGlobals();
 
-	static void RegisterToPython(const ModuleRegistrationCallback& callback);
-
 	// Destroys the module and the globals object, no more calls to GetModule() and GetGlobals() afterwards!
-	static void Clear();
+	static void Destroy();
 
 	// Endpoint called by the Python interface to acquire the module
 #if PY_MAJOR_VERSION >= 3
@@ -39,6 +45,8 @@ public:
 #else
 	static void InitModule();
 #endif
+
+    static void Construct(const NamedInterfaces& interfaceList);
 
 private:
 	static PyObject* InitModuleImpl();
