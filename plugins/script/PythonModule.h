@@ -47,8 +47,6 @@ public:
 
     ExecutionResultPtr executeString(const std::string& scriptString);
 
-	static const char* NAME();
-
 	// Get the module object
 	py::module& getModule();
 

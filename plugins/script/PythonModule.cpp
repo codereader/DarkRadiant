@@ -18,12 +18,16 @@
 namespace script
 {
 
+namespace
+{
+    constexpr const char* ModuleName = "darkradiant";
+}
+
 PythonModule::PythonModule(const NamedInterfaces& interfaceList) :
     _namedInterfaces(interfaceList),
     _outputWriter(false, _outputBuffer),
     _errorWriter(true, _errorBuffer)
 {
-    _instance = this;
     registerModule();
 }
 
@@ -42,8 +46,6 @@ PythonModule::~PythonModule()
 #else 
     Py_Finalize();
 #endif
-
-    _instance = nullptr;
 }
 
 void PythonModule::initialise()
@@ -58,7 +60,11 @@ void PythonModule::initialise()
     try
     {
         // Import the darkradiant module
-        py::module::import(PythonModule::NAME());
+        // This is triggering the call to InitModule as passed to the inittab
+        // so we need to set the static _instance pointer right before and clear it afterwards
+        _instance = this;
+
+        py::module::import(ModuleName);
 
         // Construct the console writer interface
         PythonConsoleWriterClass consoleWriter(getModule(), "PythonConsoleWriter");
@@ -77,6 +83,9 @@ void PythonModule::initialise()
     {
         rError() << ex.what() << std::endl;
     }
+
+    // Not needed anymore
+    _instance = nullptr;
 }
 
 void PythonModule::registerModule()
@@ -86,7 +95,7 @@ void PythonModule::registerModule()
 
     // Register the darkradiant module to Python, the InitModule function
     // will be called as soon as the module is imported
-    int result = PyImport_AppendInittab(NAME(), InitModule);
+    int result = PyImport_AppendInittab(ModuleName, InitModule);
 
     if (result == -1)
     {
@@ -107,8 +116,8 @@ ExecutionResultPtr PythonModule::executeString(const std::string& scriptString)
 
     try
     {
-        std::string fullScript = "import " + std::string(NAME()) + " as DR\n"
-            "from " + std::string(NAME()) + " import *\n";
+        std::string fullScript = "import " + std::string(ModuleName) + " as DR\n"
+            "from " + std::string(ModuleName) + " import *\n";
         fullScript.append(scriptString);
 
         // Attempt to run the specified script
@@ -129,11 +138,6 @@ ExecutionResultPtr PythonModule::executeString(const std::string& scriptString)
     _errorBuffer.clear();
 
     return result;
-}
-
-const char* PythonModule::NAME()
-{
-	return "darkradiant";
 }
 
 py::module& PythonModule::getModule()
@@ -162,17 +166,16 @@ PyObject* PythonModule::InitModuleImpl()
 {
 	try
 	{
-		// Work through the known list of interfaces
 		if (!_instance)
 		{
-            throw new std::runtime_error("PythonModule not instantiated, call PythonModule::Construct first");
+            throw new std::runtime_error("_instance reference not set");
 		}
 
 #if (PYBIND11_VERSION_MAJOR > 2) || (PYBIND11_VERSION_MAJOR == 2 && PYBIND11_VERSION_MINOR >= 6)
         // pybind11 2.6+ have deprecated the py::module constructors, use py::module::create_extension_module
-        _instance->_module = py::module::create_extension_module(NAME(), "DarkRadiant Main Module", &_moduleDef);
+        _instance->_module = py::module::create_extension_module(ModuleName, "DarkRadiant Main Module", &_moduleDef);
 #else
-        _instance->_module = py::module(NAME());
+        _instance->_module = py::module(ModuleName);
 #endif
 
         // Add the registered interfaces
