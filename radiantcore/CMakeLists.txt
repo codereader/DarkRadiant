@@ -279,4 +279,4 @@ target_compile_options(radiantcore PUBLIC ${SIGC_CFLAGS})
 target_include_directories(radiantcore PRIVATE .)
 target_link_libraries(radiantcore PUBLIC
                       math xmlutil scenegraph wxutil module
-                      ${JPEG_LIBRARIES} ${PNG_LIBRARIES})
+                      ${JPEG_LIBRARIES} ${PNG_LIBRARIES} ${ZLIB_LIBRARIES})

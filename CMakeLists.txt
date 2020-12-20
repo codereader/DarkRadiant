@@ -56,6 +56,7 @@ pkg_check_modules(AL openal REQUIRED)
 pkg_check_modules(OGG ogg REQUIRED)
 pkg_check_modules(VORBIS vorbisfile REQUIRED)
 pkg_check_modules(X11 x11 REQUIRED)
+pkg_check_modules(ZLIB zlib REQUIRED)
 
 # Locate wxWidgets
 find_package(wxWidgets REQUIRED
