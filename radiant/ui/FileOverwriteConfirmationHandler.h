@@ -2,6 +2,7 @@
 
 #include "idialogmanager.h"
 #include "iradiant.h"
+#include "i18n.h"
 #include "messages/FileOverwriteConfirmation.h"
 
 namespace ui
