@@ -1,9 +1,12 @@
 #pragma once
 
+#include "iscript.h"
 #include "iscriptinterface.h"
 #include <functional>
 #include <memory>
 #include <pybind11/pybind11.h>
+
+#include "PythonConsoleWriter.h"
 
 namespace py = pybind11;
 
@@ -28,12 +31,21 @@ private:
     // PyImport_AppendInittab doesn't allow us to pass user data
     static PythonModule* _instance;
 
+    // Console and Error output handling
+    std::string _outputBuffer;
+    std::string _errorBuffer;
+
+    PythonConsoleWriter _outputWriter;
+    PythonConsoleWriter _errorWriter;
+
 public:
     PythonModule(const NamedInterfaces& interfaceList);
     ~PythonModule();
 
     // Starts up the interpreter, imports the darkradiant module
     void initialise();
+
+    ExecutionResultPtr executeString(const std::string& scriptString);
 
 	static const char* NAME();
 

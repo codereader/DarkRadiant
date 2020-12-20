@@ -22,12 +22,6 @@ class ScriptingSystem :
 	public IScriptingSystem
 {
 private:
-	std::string _outputBuffer;
-	std::string _errorBuffer;
-
-	PythonConsoleWriter _outputWriter;
-	PythonConsoleWriter _errorWriter;
-
 	bool _initialised;
 	NamedInterfaces _interfaces;
     std::unique_ptr<PythonModule> _pythonModule;

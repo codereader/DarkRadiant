@@ -19,7 +19,9 @@ namespace script
 {
 
 PythonModule::PythonModule(const NamedInterfaces& interfaceList) :
-    _namedInterfaces(interfaceList)
+    _namedInterfaces(interfaceList),
+    _outputWriter(false, _outputBuffer),
+    _errorWriter(true, _errorBuffer)
 {
     _instance = this;
     registerModule();
@@ -52,6 +54,29 @@ void PythonModule::initialise()
 #else
     Py_Initialize();
 #endif
+
+    try
+    {
+        // Import the darkradiant module
+        py::module::import(PythonModule::NAME());
+
+        // Construct the console writer interface
+        PythonConsoleWriterClass consoleWriter(getModule(), "PythonConsoleWriter");
+        consoleWriter.def(py::init<bool, std::string&>());
+        consoleWriter.def("write", &PythonConsoleWriter::write);
+        consoleWriter.def("flush", &PythonConsoleWriter::flush);
+
+        // Redirect stdio output to our local ConsoleWriter instances
+        py::module::import("sys").attr("stderr") = &_errorWriter;
+        py::module::import("sys").attr("stdout") = &_outputWriter;
+
+        // String vector is used in multiple places
+        py::bind_vector< std::vector<std::string> >(getModule(), "StringVector");
+    }
+    catch (const py::error_already_set& ex)
+    {
+        rError() << ex.what() << std::endl;
+    }
 }
 
 void PythonModule::registerModule()
@@ -68,6 +93,42 @@ void PythonModule::registerModule()
         rError() << "Could not initialise Python module" << std::endl;
         return;
     }
+}
+
+ExecutionResultPtr PythonModule::executeString(const std::string& scriptString)
+{
+    ExecutionResultPtr result = std::make_shared<ExecutionResult>();
+
+    result->errorOccurred = false;
+
+    // Clear the output buffers before starting to execute
+    _outputBuffer.clear();
+    _errorBuffer.clear();
+
+    try
+    {
+        std::string fullScript = "import " + std::string(NAME()) + " as DR\n"
+            "from " + std::string(NAME()) + " import *\n";
+        fullScript.append(scriptString);
+
+        // Attempt to run the specified script
+        py::eval<py::eval_statements>(fullScript, getGlobals());
+    }
+    catch (py::error_already_set& ex)
+    {
+        _errorBuffer.append(ex.what());
+        result->errorOccurred = true;
+
+        rError() << "Error executing script: " << ex.what() << std::endl;
+    }
+
+    result->output += _outputBuffer + "\n";
+    result->output += _errorBuffer + "\n";
+
+    _outputBuffer.clear();
+    _errorBuffer.clear();
+
+    return result;
 }
 
 const char* PythonModule::NAME()
