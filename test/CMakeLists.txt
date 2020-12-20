@@ -7,6 +7,7 @@ add_executable(drtest
                FileTypes.cpp
                HeadlessOpenGLContext.cpp
                ImageLoading.cpp
+               LayerManipulation.cpp
                MapExport.cpp
                MapSavingLoading.cpp
                Materials.cpp

@@ -76,6 +76,7 @@
     <ClCompile Include="..\..\..\test\FileTypes.cpp" />
     <ClCompile Include="..\..\..\test\HeadlessOpenGLContext.cpp" />
     <ClCompile Include="..\..\..\test\ImageLoading.cpp" />
+    <ClCompile Include="..\..\..\test\LayerManipulation.cpp" />
     <ClCompile Include="..\..\..\test\MapExport.cpp" />
     <ClCompile Include="..\..\..\test\MapSavingLoading.cpp" />
     <ClCompile Include="..\..\..\test\Materials.cpp" />
