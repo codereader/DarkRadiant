@@ -5,14 +5,7 @@
 #define QUOTE(x) Str(x)
 #define PYBIND11_VERSION_STR (QUOTE(PYBIND11_VERSION_MAJOR) "." QUOTE(PYBIND11_VERSION_MINOR) "." QUOTE(PYBIND11_VERSION_PATCH))
 
-#if (PYBIND11_VERSION_MAJOR > 2) || (PYBIND11_VERSION_MAJOR == 2 && PYBIND11_VERSION_MINOR >= 2)
-#define DR_PYBIND_HAS_EMBED_H
-#endif
-
-#ifdef DR_PYBIND_HAS_EMBED_H
 #include <pybind11/embed.h>
-#endif
-
 #include "itextstream.h"
 
 namespace script
@@ -40,22 +33,12 @@ PythonModule::~PythonModule()
     _globals.dec_ref();
     _globals.release();
 
-    // The finalize_interpreter() function is not available in older versions
-#ifdef DR_PYBIND_HAS_EMBED_H
     py::finalize_interpreter();
-#else 
-    Py_Finalize();
-#endif
 }
 
 void PythonModule::initialise()
 {
-    // The initialize_interpreter() function is not available in older versions
-#ifdef DR_PYBIND_HAS_EMBED_H
     py::initialize_interpreter();
-#else
-    Py_Initialize();
-#endif
 
     try
     {
@@ -171,12 +154,7 @@ PyObject* PythonModule::InitModuleImpl()
             throw new std::runtime_error("_instance reference not set");
 		}
 
-#if (PYBIND11_VERSION_MAJOR > 2) || (PYBIND11_VERSION_MAJOR == 2 && PYBIND11_VERSION_MINOR >= 6)
-        // pybind11 2.6+ have deprecated the py::module constructors, use py::module::create_extension_module
         _instance->_module = py::module::create_extension_module(ModuleName, "DarkRadiant Main Module", &_moduleDef);
-#else
-        _instance->_module = py::module(ModuleName);
-#endif
 
         // Add the registered interfaces
         for (const auto& i : _instance->_namedInterfaces)
