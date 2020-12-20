@@ -16,56 +16,63 @@
 namespace ui
 {
 
-// Blank ctor
+static const int RANGE_MAX = 32767;
+static const int RANGE_MIN = -32767;
 
+wxSpinCtrl* makeSpinCtrl(wxPanel* parent)
+{
+    wxSpinCtrl* ctrl = new wxSpinCtrl(parent, wxID_ANY);
+
+    // Set an appropriate minimum size based on the expected contents
+    static const wxSize minSize = ctrl->GetSizeFromTextSize(
+        ctrl->GetTextExtent(std::to_string(RANGE_MIN)).GetWidth()
+    );
+	ctrl->SetMinSize(minSize);
+
+    // Set value and range
+    ctrl->SetValue(0);
+    ctrl->SetRange(RANGE_MIN, RANGE_MAX);
+
+    return ctrl;
+}
+
+// Blank ctor
 Vector3PropertyEditor::Vector3PropertyEditor() {}
 
 // Constructor. Create the widgets here
 Vector3PropertyEditor::Vector3PropertyEditor(wxWindow* parent, Entity* entity,
-											 const std::string& name)
+                                             const std::string& name)
 : PropertyEditor(entity),
   _key(name)
 {
-	// Construct the main widget (will be managed by the base class)
-	wxPanel* mainVBox = new wxPanel(parent, wxID_ANY);
-	mainVBox->SetSizer(new wxBoxSizer(wxHORIZONTAL));
+    // Construct the main widget (will be managed by the base class)
+    wxPanel* mainVBox = new wxPanel(parent, wxID_ANY);
+    mainVBox->SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
-	// Register the main widget in the base class
-	setMainWidget(mainVBox);
+    // Register the main widget in the base class
+    setMainWidget(mainVBox);
 
     // Create the spin buttons 
-	_xValue = new wxSpinCtrl(mainVBox, wxID_ANY);
-    _yValue = new wxSpinCtrl(mainVBox, wxID_ANY);
-	_zValue = new wxSpinCtrl(mainVBox, wxID_ANY);
-
-	_xValue->SetMinSize(wxSize(75, -1));
-	_yValue->SetMinSize(wxSize(75, -1));
-	_zValue->SetMinSize(wxSize(75, -1));
-	
-	_xValue->SetValue(0);
-	_yValue->SetValue(0);
-	_zValue->SetValue(0);
-
-	_xValue->SetRange(-32767, 32767);
-	_yValue->SetRange(-32767, 32767);
-	_zValue->SetRange(-32767, 32767);
+    _xValue = makeSpinCtrl(mainVBox);
+    _yValue = makeSpinCtrl(mainVBox);
+    _zValue = makeSpinCtrl(mainVBox);
 
     // Add the spin buttons to the HBox with labels
-	mainVBox->GetSizer()->Add(new wxStaticText(mainVBox, wxID_ANY, _("X: ")), 0, wxALIGN_CENTER_VERTICAL | wxALL, 3);
-	mainVBox->GetSizer()->Add(_xValue, 0, wxALIGN_CENTER_VERTICAL | wxALL, 3);
-	mainVBox->GetSizer()->Add(new wxStaticText(mainVBox, wxID_ANY, _(" Y: ")), 0, wxALIGN_CENTER_VERTICAL | wxALL, 3);
-	mainVBox->GetSizer()->Add(_yValue, 0, wxALIGN_CENTER_VERTICAL | wxALL, 3);
-	mainVBox->GetSizer()->Add(new wxStaticText(mainVBox, wxID_ANY, _(" Z: ")), 0, wxALIGN_CENTER_VERTICAL | wxALL, 3);
-	mainVBox->GetSizer()->Add(_zValue, 0, wxALIGN_CENTER_VERTICAL | wxALL, 3);
+    mainVBox->GetSizer()->Add(new wxStaticText(mainVBox, wxID_ANY, _("X: ")), 0, wxALIGN_CENTER_VERTICAL | wxALL, 3);
+    mainVBox->GetSizer()->Add(_xValue, 0, wxALIGN_CENTER_VERTICAL | wxALL, 3);
+    mainVBox->GetSizer()->Add(new wxStaticText(mainVBox, wxID_ANY, _(" Y: ")), 0, wxALIGN_CENTER_VERTICAL | wxALL, 3);
+    mainVBox->GetSizer()->Add(_yValue, 0, wxALIGN_CENTER_VERTICAL | wxALL, 3);
+    mainVBox->GetSizer()->Add(new wxStaticText(mainVBox, wxID_ANY, _(" Z: ")), 0, wxALIGN_CENTER_VERTICAL | wxALL, 3);
+    mainVBox->GetSizer()->Add(_zValue, 0, wxALIGN_CENTER_VERTICAL | wxALL, 3);
 
-	// Create the apply button
-	wxButton* applyButton = new wxButton(mainVBox, wxID_APPLY, _("Apply..."));
-	applyButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(Vector3PropertyEditor::_onApply), NULL, this);
+    // Create the apply button
+    wxButton* applyButton = new wxButton(mainVBox, wxID_APPLY, _("Apply..."));
+    applyButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(Vector3PropertyEditor::_onApply), NULL, this);
 
-	mainVBox->GetSizer()->Add(applyButton, 0, wxALIGN_CENTER_VERTICAL | wxALL, 6);
+    mainVBox->GetSizer()->Add(applyButton, 0, wxALIGN_CENTER_VERTICAL | wxALL, 6);
 
-	// Populate the spin boxes from the keyvalue
-	updateFromEntity();
+    // Populate the spin boxes from the keyvalue
+    updateFromEntity();
 }
 
 void Vector3PropertyEditor::updateFromEntity()
