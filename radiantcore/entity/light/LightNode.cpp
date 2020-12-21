@@ -105,9 +105,17 @@ void LightNode::onRemoveFromScene(scene::IMapRootNode& root)
 
 void LightNode::testSelect(Selector& selector, SelectionTest& test)
 {
-	EntityNode::testSelect(selector, test);
+    // Generic entity selection
+    EntityNode::testSelect(selector, test);
 
-	_light.testSelect(selector, test, localToWorld());
+    // Light specific selection
+    test.BeginMesh(localToWorld());
+    SelectionIntersection best;
+    aabb_testselect(_light._lightBox, test, best);
+    if (best.isValid())
+    {
+        selector.addIntersection(best);
+    }
 }
 
 // greebo: Returns true if drag planes or one or more light vertices are selected

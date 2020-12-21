@@ -490,20 +490,6 @@ void Light::setRenderSystem(const RenderSystemPtr& renderSystem)
     m_shader.setRenderSystem(renderSystem);
 }
 
-void Light::testSelect(Selector& selector, SelectionTest& test, const Matrix4& localToWorld)
-{
-    test.BeginMesh(localToWorld);
-
-    SelectionIntersection best;
-
-    aabb_testselect(_lightBox, test, best);
-
-    if (best.isValid())
-    {
-        selector.addIntersection(best);
-    }
-}
-
 void Light::translate(const Vector3& translation)
 {
     _originTransformed += translation;

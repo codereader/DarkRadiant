@@ -215,8 +215,6 @@ public:
 	// Returns a reference to the member class Doom3LightRadius (used to set colours)
 	Doom3LightRadius& getDoom3Radius();
 
-	void testSelect(Selector& selector, SelectionTest& test, const Matrix4& localToWorld);
-
 	void translate(const Vector3& translation);
 
     /**
