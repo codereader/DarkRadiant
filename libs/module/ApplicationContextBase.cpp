@@ -50,8 +50,8 @@ std::string ApplicationContextBase::getLibraryBasePath() const
 #if defined(__APPLE__)
 	return _appPath;
 #elif defined(POSIX)
-#   if defined(ENABLE_RELOCATION)
-	return _appPath + "../lib/darkradiant/";
+#   if defined(ENABLE_RELOCATION) && defined(RELATIVE_LIBDIR)
+	return _appPath + RELATIVE_LIBDIR;
 #   elif defined(PKGLIBDIR)
 	return PKGLIBDIR;
 #   else
