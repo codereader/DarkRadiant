@@ -48,10 +48,7 @@ class LightNode;
  * Note: All the selection stuff is handled by the LightInstance class. This is
  * just the bare bone light.
  */
-class Light :
-    public Bounded,
-    public Snappable,
-    public RendererLight
+class Light: public RendererLight
 {
 	friend class LightNode;
 
