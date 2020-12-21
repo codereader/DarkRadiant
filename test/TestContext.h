@@ -65,7 +65,7 @@ public:
 	virtual std::string getTestResourcePath() const
 	{
 #if defined(POSIX) 
-	#if defined(TESTRESOURCEDIR) && !defined(ENABLE_RELOCATION)
+	#if defined(TESTRESOURCEDIR)
 		fs::path testResourcePath(TESTRESOURCEDIR);
 	#else
 		// make check will compile the test binary to $top_builddir/test/.libs/
