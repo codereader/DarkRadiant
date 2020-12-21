@@ -144,7 +144,6 @@ private:
 
     // Render the light volume including bounds and origin
     void renderLightVolume(RenderableCollector& collector,
-                           const VolumeTest& volume,
                            const Matrix4& localToWorld, bool selected) const;
 
     // Update the bounds of the renderable radius box

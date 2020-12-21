@@ -10,6 +10,7 @@
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/TreeView.h"
 #include "registry/registry.h"
+#include "registry/Widgets.h"
 
 #include <wx/panel.h>
 #include <wx/sizer.h>
@@ -24,8 +25,6 @@ namespace ui
 namespace
 {
     const char* const EDITOR_WINDOW_TITLE = N_("Edit Colour Schemes");
-
-    constexpr const char* RKEY_OVERRIDE_LIGHTCOL = "user/ui/colour/overrideLightColour";
 }
 
 ColourSchemeEditor::ColourSchemeEditor() :
@@ -84,16 +83,7 @@ void ColourSchemeEditor::addOptionsPanel(wxBoxSizer& vbox)
     wxCheckBox* overrideLightsCB = new wxCheckBox(
         this, wxID_ANY, _("Override light volume colour")
     );
-    overrideLightsCB->SetValue(
-        registry::getValue(RKEY_OVERRIDE_LIGHTCOL, false)
-    );
-    overrideLightsCB->Bind(
-        wxEVT_CHECKBOX,
-        [this](wxCommandEvent& ev)
-        {
-            registry::setValue(RKEY_OVERRIDE_LIGHTCOL, ev.IsChecked());
-        }
-    );
+    registry::bindWidget(overrideLightsCB, colours::RKEY_OVERRIDE_LIGHTCOL);
 
     vbox.Add(overrideLightsCB, 0, wxEXPAND | wxTOP, 6);
 }

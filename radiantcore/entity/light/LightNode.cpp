@@ -1,8 +1,11 @@
 #include "LightNode.h"
 
 #include "itextstream.h"
+#include "icolourscheme.h"
 #include "../EntitySettings.h"
 #include <functional>
+
+#include "registry/CachedKey.h"
 
 namespace entity {
 
@@ -283,32 +286,36 @@ void LightNode::renderSolid(RenderableCollector& collector, const VolumeTest& vo
 
     // Re-use the same method as in wireframe rendering for the moment
     const bool lightIsSelected = isSelected();
-    renderLightVolume(
-        collector, volume, localToWorld(), lightIsSelected
-    );
+    renderLightVolume(collector, localToWorld(), lightIsSelected);
 
     renderInactiveComponents(collector, volume, lightIsSelected);
 }
 
 void LightNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
 {
-	EntityNode::renderWireframe(collector, volume);
+    EntityNode::renderWireframe(collector, volume);
 
-	const bool lightIsSelected = isSelected();
-	renderLightVolume(
-		collector, volume, localToWorld(), lightIsSelected
-	);
+    const bool lightIsSelected = isSelected();
+    renderLightVolume(collector, localToWorld(), lightIsSelected);
 
-	renderInactiveComponents(collector, volume, lightIsSelected);
+    renderInactiveComponents(collector, volume, lightIsSelected);
 }
 
 void LightNode::renderLightVolume(RenderableCollector& collector,
-                                  const VolumeTest& volume,
                                   const Matrix4& localToWorld,
                                   bool selected) const
 {
+    // Obtain the appropriate Shader for the light volume colour
+    static registry::CachedKey<bool> _overrideColKey(
+        colours::RKEY_OVERRIDE_LIGHTCOL
+    );
+    Shader* colourShader = _overrideColKey.get() ? EntityNode::_wireShader.get()
+                                                 : _colourKey.getWireShader();
+    if (!colourShader)
+        return;
+
     // Main render, submit the diamond that represents the light entity
-    collector.addRenderable(*getColourShader(), *this, localToWorld);
+    collector.addRenderable(*colourShader, *this, localToWorld);
 
     // Render bounding box if selected or the showAllLighRadii flag is set
     if (selected || EntitySettings::InstancePtr()->getShowAllLightRadii())
@@ -318,12 +325,12 @@ void LightNode::renderLightVolume(RenderableCollector& collector,
             // greebo: This is not much of an performance impact as the
             // projection gets only recalculated when it has actually changed.
             _light.updateProjection();
-            collector.addRenderable(*getColourShader(), _renderableFrustum, localToWorld);
+            collector.addRenderable(*colourShader, _renderableFrustum, localToWorld);
         }
         else
         {
             updateRenderableRadius();
-            collector.addRenderable(*getColourShader(), _renderableRadius, localToWorld);
+            collector.addRenderable(*colourShader, _renderableRadius, localToWorld);
         }
     }
 }

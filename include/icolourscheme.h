@@ -7,6 +7,13 @@
 namespace colours
 {
 
+/**
+ * Registry key set when light volumes should be rendered in a single colour
+ * set by the colourscheme, rather than the colour contained in their _color
+ * key.
+ */
+constexpr const char* RKEY_OVERRIDE_LIGHTCOL = "user/ui/colour/overrideLightColour";
+
 class IColourItem
 {
 public:
