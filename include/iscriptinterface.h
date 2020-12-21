@@ -1,6 +1,8 @@
 #pragma once
 
 #include <memory>
+#include <vector>
+#include <utility>
 #include <pybind11/pybind11.h>
 namespace py = pybind11;
 
@@ -10,6 +12,8 @@ namespace script
 class IScriptInterface
 {
 public:
+    using Ptr = std::shared_ptr<IScriptInterface>;
+
     virtual ~IScriptInterface() {}
 
 	/**
@@ -18,6 +22,8 @@ public:
 	*/
 	virtual void registerInterface(py::module& scope, py::dict& globals) = 0;
 };
-typedef std::shared_ptr<IScriptInterface> IScriptInterfacePtr;
+
+using NamedInterface = std::pair<std::string, IScriptInterface::Ptr>;
+using NamedInterfaces = std::vector<NamedInterface>;
 
 }
