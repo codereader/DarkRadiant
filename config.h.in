@@ -14,6 +14,10 @@
 /* Package library directory (e.g. /usr/lib/darkradiant) */
 #cmakedefine PKGLIBDIR "@PKGLIBDIR@"
 
+/* Relative library directory from binary (e.g. ../lib/darkradiant). Only
+ * defined if ENABLE_RELOCATION is defined. */
+#cmakedefine RELATIVE_LIBDIR "@RELATIVE_LIBDIR@"
+
 /* Package data directory (e.g. /usr/share/darkradiant) */
 #cmakedefine PKGDATADIR "@PKGDATADIR@"
 
