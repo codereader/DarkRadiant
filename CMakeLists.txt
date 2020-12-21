@@ -27,7 +27,7 @@ endif()
 # Build shared libraries by default
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 if (${ENABLE_RELOCATION})
-    set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib/darkradiant")
+    set(CMAKE_INSTALL_RPATH "$ORIGIN/../${CMAKE_INSTALL_LIBDIR}/darkradiant")
 else()
     set(CMAKE_INSTALL_RPATH "${PKGLIBDIR}")
 endif()
@@ -56,6 +56,7 @@ pkg_check_modules(AL openal REQUIRED)
 pkg_check_modules(OGG ogg REQUIRED)
 pkg_check_modules(VORBIS vorbisfile REQUIRED)
 pkg_check_modules(X11 x11 REQUIRED)
+pkg_check_modules(ZLIB zlib REQUIRED)
 
 # Locate wxWidgets
 find_package(wxWidgets REQUIRED

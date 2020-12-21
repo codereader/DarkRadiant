@@ -300,11 +300,7 @@ void ScriptingSystem::initialiseModule(const IApplicationContext& ctx)
 		.connect(sigc::mem_fun(this, &ScriptingSystem::initialise));
 
 	// Construct the script path
-#if defined(POSIX) && defined(PKGLIBDIR)
-	_scriptPath = std::string(PKGLIBDIR) + "/scripts/";
-#else
 	_scriptPath = ctx.getRuntimeDataPath() + "scripts/";
-#endif
 
 	// Set up the python interpreter
     _pythonModule.reset(new PythonModule);

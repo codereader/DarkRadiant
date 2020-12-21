@@ -296,7 +296,7 @@ void BrushNode::DEBUG_verify() {
 }
 
 bool BrushNode::intersectsLight(const RendererLight& light) const {
-	return light.intersectsAABB(worldAABB());
+	return light.lightAABB().intersects(worldAABB());
 }
 
 void BrushNode::renderComponents(RenderableCollector& collector, const VolumeTest& volume) const

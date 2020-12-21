@@ -731,59 +731,17 @@ Matrix4 Light::getLightTextureTransformation() const
 AABB Light::lightAABB() const
 {
     if (isProjected())
-        // Return Frustum AABB in *world* space
-        return _frustum.getTransformedBy(_owner.localToParent()).getAABB();
-    else
-    return AABB(_originTransformed, m_doom3Radius.m_radiusTransformed);
-}
-
-bool Light::intersectsAABB(const AABB& other) const
-{
-    bool returnVal;
-
-    if (isProjected())
     {
-        // Update the projection, including the Frustum (we don't care about the
-        // projection matrix itself).
+        // Make sure our frustum is up to date
         updateProjection();
 
-        // Construct a transformation with the rotation and translation of the
-        // frustum
-        Matrix4 transRot = Matrix4::getIdentity();
-        transRot.translateBy(worldOrigin());
-        transRot.multiplyBy(rotation());
-
-        // Transform the frustum with the rotate/translate matrix and test its
-        // intersection with the AABB
-		Frustum frustumTrans = _frustum.getTransformedBy(transRot);
-
-		VolumeIntersectionValue intersects = frustumTrans.testIntersection(other);
-
-        returnVal = intersects != VOLUME_OUTSIDE;
+        // Return Frustum AABB in *world* space
+        return _frustum.getTransformedBy(_owner.localToParent()).getAABB();
     }
     else
     {
-        // test against an AABB which contains the rotated bounds of this light.
-        AABB bounds = localAABB();
-        bounds.origin += worldOrigin();
-
-        returnVal = other.intersects(AABB(
-            bounds.origin,
-            Vector3(
-                static_cast<float>(fabs(m_rotation[0] * bounds.extents[0])
-                                    + fabs(m_rotation[3] * bounds.extents[1])
-                                    + fabs(m_rotation[6] * bounds.extents[2])),
-                static_cast<float>(fabs(m_rotation[1] * bounds.extents[0])
-                                    + fabs(m_rotation[4] * bounds.extents[1])
-                                    + fabs(m_rotation[7] * bounds.extents[2])),
-                static_cast<float>(fabs(m_rotation[2] * bounds.extents[0])
-                                    + fabs(m_rotation[5] * bounds.extents[1])
-                                    + fabs(m_rotation[8] * bounds.extents[2]))
-            )
-        ));
+        return AABB(_originTransformed, m_doom3Radius.m_radiusTransformed);
     }
-
-    return returnVal;
 }
 
 const Matrix4& Light::rotation() const {

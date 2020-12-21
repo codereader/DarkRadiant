@@ -135,18 +135,17 @@ void RegularLayout::restoreStateFromPath(const std::string& path)
 {
     // Trigger a proper resize event before setting the sash position
     GlobalMainFrame().getWxTopLevelWindow()->SendSizeEvent();
-    wxTheApp->Yield();
 
-	// Now load the paned positions from the registry
-	if (GlobalRegistry().keyExists(path + "/pane[@name='horizontal']"))
-	{
-		_regular.posHPane.loadFromPath(path + "/pane[@name='horizontal']");
-	}
+    // Now load the paned positions from the registry
+    if (GlobalRegistry().keyExists(path + "/pane[@name='horizontal']"))
+    {
+        _regular.posHPane.loadFromPath(path + "/pane[@name='horizontal']");
+    }
 
-	if (GlobalRegistry().keyExists(path + "/pane[@name='texcam']"))
-	{
-		_regular.posTexCamPane.loadFromPath(path + "/pane[@name='texcam']");
-	}
+    if (GlobalRegistry().keyExists(path + "/pane[@name='texcam']"))
+    {
+        _regular.posTexCamPane.loadFromPath(path + "/pane[@name='texcam']");
+    }
 }
 
 void RegularLayout::restoreStateFromRegistry()
