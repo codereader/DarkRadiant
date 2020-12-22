@@ -8,11 +8,11 @@ namespace ui
 {
 
 /**
- * greebo: This is the base for classes handling the selection-related mouse operations, 
- * like Alt-Shift-Click, Selection toggles and drag selections.
+ * \brief
+ * Abstract base class for all for classes handling the selection-related mouse
+ * operations, like Alt-Shift-Click, Selection toggles and drag selections.
 */
-class SelectMouseTool :
-    public MouseTool
+class SelectMouseTool: public MouseTool
 {
 protected:
     // Base epsilon value as read from the registry
@@ -46,11 +46,12 @@ protected:
 };
 
 /**
- * Drag-selection tool class. Renders an overlay rectangle on the device
- * during the active selection phase.
+ * \brief
+ * Basic mouse selection tool handling left click and left drag selection.
+ *
+ * Renders an overlay rectangle on the device during an active drag operation.
  */
-class DragSelectionMouseTool :
-    public SelectMouseTool
+class BasicSelectionTool: public SelectMouseTool
 {
 private:
 
@@ -85,10 +86,10 @@ protected:
 };
 
 /**
- * Face-only variant of the DragSelectionMouseTool.
+ * Face-only variant of the BasicSelectionTool.
  */
 class DragSelectionMouseToolFaceOnly :
-    public DragSelectionMouseTool
+    public BasicSelectionTool
 {
 public:
     const std::string& getName() override;

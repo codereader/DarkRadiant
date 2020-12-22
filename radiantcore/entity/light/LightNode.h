@@ -15,13 +15,14 @@ typedef std::shared_ptr<LightNode> LightNodePtr;
 
 /// Scenegraph node representing a light
 class LightNode :
-	public EntityNode,
-	public ILightNode,
-	public Snappable,
-	public ComponentSelectionTestable,
-	public ComponentEditable,
-	public ComponentSnappable,
-	public PlaneSelectable
+    public EntityNode,
+    public ILightNode,
+    public Snappable,
+    public ComponentSelectionTestable,
+    public ComponentEditable,
+    public ComponentSnappable,
+    public PlaneSelectable,
+    public OpenGLRenderable
 {
 	Light _light;
 
@@ -36,6 +37,10 @@ class LightNode :
 
 	// dragplanes for lightresizing using mousedrag
     selection::DragPlanes _dragPlanes;
+
+	// Renderable components of this light
+	RenderLightRadiiBox _renderableRadius;
+    RenderLightProjection _renderableFrustum;
 
 	// a temporary variable for calculating the AABB of all (selected) components
 	mutable AABB m_aabb_component;
@@ -113,6 +118,9 @@ public:
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const override;
 
+    // OpenGLRenderable implementation
+    void render(const RenderInfo& info) const;
+
 	const Matrix4& rotation() const;
 
     // Returns the original "origin" value
@@ -131,10 +139,15 @@ protected:
 	void construct() override;
 
 private:
-	void renderInactiveComponents(RenderableCollector& collector, const VolumeTest& volume, const bool selected) const;
+    void renderInactiveComponents(RenderableCollector& collector, const VolumeTest& volume, const bool selected) const;
+    void evaluateTransform();
 
-	void evaluateTransform();
+    // Render the light volume including bounds and origin
+    void renderLightVolume(RenderableCollector& collector,
+                           const Matrix4& localToWorld, bool selected) const;
 
+    // Update the bounds of the renderable radius box
+    void updateRenderableRadius() const;
 }; // class LightNode
 
 } // namespace entity

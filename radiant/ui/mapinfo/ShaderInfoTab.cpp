@@ -24,7 +24,7 @@ namespace
 ShaderInfoTab::ShaderInfoTab(wxWindow* parent) :
 	wxPanel(parent, wxID_ANY),
 	_listStore(new wxutil::TreeModel(_columns, true)),
-	_treeView(wxutil::TreeView::CreateWithModel(this, _listStore)),
+	_treeView(wxutil::TreeView::CreateWithModel(this, _listStore.get())),
 	_popupMenu(new wxutil::PopupMenu)
 {
 	// Create all the widgets

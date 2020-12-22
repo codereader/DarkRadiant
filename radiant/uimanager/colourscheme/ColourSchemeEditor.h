@@ -18,26 +18,12 @@ namespace wxutil { class TreeView; }
 namespace ui
 {
 
+/// Dialog for choosing and editing colour schemes
 class ColourSchemeEditor :
 	public wxutil::DialogBase
 {
-private:
-	// The treeview and its selection pointer
-	wxutil::TreeView* _treeView;
-
-	struct Columns :
-		public wxutil::TreeModel::ColumnRecord
-	{
-		Columns() : 
-			name(add(wxutil::TreeModel::Column::String))
-		{}
-
-		wxutil::TreeModel::Column name;
-	};
-
-	// The list store containing the list of ColourSchemes
-	Columns _columns;
-	wxutil::TreeModel::Ptr _listStore;
+    // The list of available colour schemes
+    wxDataViewListCtrl* _schemeList = nullptr;
 
 	// The vbox containing the colour buttons and its frame
 	wxPanel* _colourFrame;
@@ -61,6 +47,8 @@ private:
 	// private helper functions
 	void populateTree();
 	void constructWindow();
+    wxBoxSizer* constructListButtons();
+    void addOptionsPanel(wxBoxSizer& vbox);
 	wxSizer* constructColourSelector(colours::IColourItem& colour, const std::string& name);
 	void updateColourSelectors();
 
@@ -87,8 +75,6 @@ private:
 	// Callbacks
 	void callbackSelChanged(wxDataViewEvent& ev);
 	void callbackColorChanged(wxColourPickerEvent& ev, colours::IColourItem& item);
-	void callbackDelete(wxCommandEvent& ev);
-	void callbackCopy(wxCommandEvent& ev);
 
 	// Updates the windows after a colour change
 	static void updateWindows();

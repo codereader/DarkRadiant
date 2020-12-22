@@ -151,7 +151,7 @@ void ParticleEditor::setupParticleDefList()
 {
 	wxPanel* panel = findNamedObject<wxPanel>(this, "ParticleEditorDefinitionView");
 
-	_defView = wxutil::TreeView::CreateWithModel(panel, _defList, wxDV_NO_HEADER);
+	_defView = wxutil::TreeView::CreateWithModel(panel, _defList.get(), wxDV_NO_HEADER);
 	panel->GetSizer()->Add(_defView, 1, wxEXPAND);
 
 	// Single text column
@@ -200,7 +200,7 @@ void ParticleEditor::setupParticleStageList()
 {
 	wxPanel* panel = findNamedObject<wxPanel>(this, "ParticleEditorStageView");
 
-	_stageView = wxutil::TreeView::CreateWithModel(panel, _stageList, wxDV_NO_HEADER);
+	_stageView = wxutil::TreeView::CreateWithModel(panel, _stageList.get(), wxDV_NO_HEADER);
 	panel->GetSizer()->Add(_stageView, 1, wxEXPAND);
 
 	// Single text column

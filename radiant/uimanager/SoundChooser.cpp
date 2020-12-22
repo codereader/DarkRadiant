@@ -188,7 +188,7 @@ wxWindow* SoundChooser::createTreeView(wxWindow* parent)
     _treeStore = new wxutil::TreeModel(_columns);
 
     // Tree view with single text icon column
-	_treeView = wxutil::TreeView::CreateWithModel(parent, _treeStore);
+	_treeView = wxutil::TreeView::CreateWithModel(parent, _treeStore.get());
 
     _treeView->AppendIconTextColumn(_("Soundshader"), _columns.displayName.getColumnIndex(), 
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);

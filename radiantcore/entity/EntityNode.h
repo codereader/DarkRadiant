@@ -130,10 +130,6 @@ public:
 	void addKeyObserver(const std::string& key, KeyObserver& observer);
 	void removeKeyObserver(const std::string& key, KeyObserver& observer);
 
-	// Returns the colour as defined in the _color spawnarg
-	const Vector3& getColour() const;
-	const ShaderPtr& getColourShader() const;
-
 	ModelKey& getModelKey(); // needed by the Doom3Group class, could be a fixme
     const ModelKey& getModelKey() const;
 

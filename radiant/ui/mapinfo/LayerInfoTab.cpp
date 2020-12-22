@@ -47,7 +47,7 @@ void LayerInfoTab::populateTab()
 	_listStore = new wxutil::TreeModel(_columns, true);
 
 	// Create the treeview and pack two columns into it
-	_treeView = wxutil::TreeView::CreateWithModel(this, _listStore);
+	_treeView = wxutil::TreeView::CreateWithModel(this, _listStore.get());
 
 	_treeView->AppendTextColumn(_("Layer"), _columns.layerName.getColumnIndex(),
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);

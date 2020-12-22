@@ -59,7 +59,7 @@ void ConversationDialog::populateWindow()
 	wxPanel* entityPanel = findNamedObject<wxPanel>(this, "ConvDialogEntityPanel");
 
 	// Entity Tree View
-	_entityView = wxutil::TreeView::CreateWithModel(entityPanel, _entityList, wxDV_NO_HEADER);
+	_entityView = wxutil::TreeView::CreateWithModel(entityPanel, _entityList.get(), wxDV_NO_HEADER);
 	entityPanel->GetSizer()->Add(_entityView, 1, wxEXPAND);
 
 	_entityView->AppendTextColumn("", _convEntityColumns.displayName.getColumnIndex(),
@@ -78,7 +78,7 @@ void ConversationDialog::populateWindow()
 
 	wxPanel* convPanel = findNamedObject<wxPanel>(this, "ConvDialogConversationPanel");
 
-	_convView = wxutil::TreeView::CreateWithModel(convPanel, _convList);
+	_convView = wxutil::TreeView::CreateWithModel(convPanel, _convList.get());
 
 	// Key and value text columns
 	_convView->AppendTextColumn("#", _convColumns.index.getColumnIndex(),

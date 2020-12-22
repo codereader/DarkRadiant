@@ -308,16 +308,6 @@ std::size_t EntityNode::getHighlightFlags()
 	return isGroupMember() ? (Highlight::Selected | Highlight::GroupMember) : Highlight::Selected;
 }
 
-const Vector3& EntityNode::getColour() const
-{
-	return _colourKey.getColour();
-}
-
-const ShaderPtr& EntityNode::getColourShader() const
-{
-	return _colourKey.getWireShader();
-}
-
 ModelKey& EntityNode::getModelKey()
 {
 	return _modelKey;

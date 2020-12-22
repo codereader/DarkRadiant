@@ -55,7 +55,7 @@ void CommandList::populateWindow()
 	// Create a new liststore item and define its columns
 	_listStore = new wxutil::TreeModel(_columns, true);
 
-	_treeView = wxutil::TreeView::CreateWithModel(this, _listStore);
+	_treeView = wxutil::TreeView::CreateWithModel(this, _listStore.get());
 	
 	_treeView->AppendTextColumn(_("Command"), _columns.command.getColumnIndex(),
 		wxDATAVIEW_CELL_INERT, wxCOL_SORTABLE | wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);

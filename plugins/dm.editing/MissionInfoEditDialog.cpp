@@ -100,7 +100,7 @@ void MissionInfoEditDialog::populateWindow()
 	// Replace the list control with our own TreeView
 	wxWindow* existing = findNamedObject<wxWindow>(this, "MissionInfoEditDialogMissionTitleList");
 
-	_missionTitleView = wxutil::TreeView::CreateWithModel(existing->GetParent(), _missionTitleStore, wxDV_SINGLE);
+	_missionTitleView = wxutil::TreeView::CreateWithModel(existing->GetParent(), _missionTitleStore.get(), wxDV_SINGLE);
 
 	_missionTitleView->SetName("MissionInfoEditDialogMissionTitleList");
 	_missionTitleView->SetMinSize(wxSize(-1, 150));

@@ -246,7 +246,7 @@ void ResponseEditor::createEffectWidgets()
 	wxutil::TreeModel::Ptr dummyModel(
         new wxutil::TreeModel(StimResponse::getColumns(), true)
     );
-	_effectWidgets.view = wxutil::TreeView::CreateWithModel(effectsPanel, dummyModel);
+	_effectWidgets.view = wxutil::TreeView::CreateWithModel(effectsPanel, dummyModel.get());
 
 	_effectWidgets.view->SetMinClientSize(wxSize(-1, 150));
 	effectsPanel->GetSizer()->Add(_effectWidgets.view, 1, wxEXPAND);

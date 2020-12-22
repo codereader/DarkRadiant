@@ -47,26 +47,26 @@ MouseTool::Result SelectMouseTool::onMouseUp(Event& ev)
 
 // DragSelection
 
-const std::string& DragSelectionMouseTool::getName()
+const std::string& BasicSelectionTool::getName()
 {
-    static std::string name("DragSelectionMouseTool");
+    static std::string name("BasicSelectionTool");
     return name;
 }
 
-const std::string& DragSelectionMouseTool::getDisplayName()
+const std::string& BasicSelectionTool::getDisplayName()
 {
     static std::string displayName(_("Select"));
     return displayName;
 }
 
-MouseTool::Result DragSelectionMouseTool::onMouseDown(Event& ev)
+MouseTool::Result BasicSelectionTool::onMouseDown(Event& ev)
 {
     _start = _current = ev.getDevicePosition();
 
     return SelectMouseTool::onMouseDown(ev);
 }
 
-MouseTool::Result DragSelectionMouseTool::onMouseMove(Event& ev)
+MouseTool::Result BasicSelectionTool::onMouseMove(Event& ev)
 {
     _current = ev.getDevicePosition();
 
@@ -75,12 +75,12 @@ MouseTool::Result DragSelectionMouseTool::onMouseMove(Event& ev)
     return Result::Continued;
 }
 
-void DragSelectionMouseTool::onMouseCaptureLost(IInteractiveView& view)
+void BasicSelectionTool::onMouseCaptureLost(IInteractiveView& view)
 {
     onCancel(view); // same behaviour as cancel
 }
 
-DragSelectionMouseTool::Result DragSelectionMouseTool::onCancel(IInteractiveView& view)
+BasicSelectionTool::Result BasicSelectionTool::onCancel(IInteractiveView& view)
 {
     // Reset the mouse position to zero
     _start = _current = Vector2(0.0f, 0.0f);
@@ -93,7 +93,7 @@ DragSelectionMouseTool::Result DragSelectionMouseTool::onCancel(IInteractiveView
     return Result::Finished;
 }
 
-void DragSelectionMouseTool::renderOverlay()
+void BasicSelectionTool::renderOverlay()
 {
     // Define the blend function for transparency
     glEnable(GL_BLEND);
@@ -124,7 +124,7 @@ void DragSelectionMouseTool::renderOverlay()
     glDisable(GL_BLEND);
 }
 
-void DragSelectionMouseTool::testSelect(MouseTool::Event& ev)
+void BasicSelectionTool::testSelect(MouseTool::Event& ev)
 {
     bool isFaceOperation = selectFacesOnly();
 
@@ -164,7 +164,7 @@ void DragSelectionMouseTool::testSelect(MouseTool::Event& ev)
     _dragSelectionRect = selection::Rectangle();
 }
 
-void DragSelectionMouseTool::updateDragSelectionRectangle(Event& ev)
+void BasicSelectionTool::updateDragSelectionRectangle(Event& ev)
 {
     // get the mouse position relative to the starting point
     Vector2 delta(_current - _start);
