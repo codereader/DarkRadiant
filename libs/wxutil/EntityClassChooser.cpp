@@ -351,7 +351,7 @@ void EntityClassChooser::setupTreeView()
 
     wxPanel* parent = findNamedObject<wxPanel>(this, "EntityClassChooserLeftPane");
 
-    _treeView = wxutil::TreeView::CreateWithModel(parent, _treeStore);
+    _treeView = wxutil::TreeView::CreateWithModel(parent, _treeStore.get());
     _treeView->AddSearchColumn(_columns.name);
 
     _treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &EntityClassChooser::onSelectionChanged, this);

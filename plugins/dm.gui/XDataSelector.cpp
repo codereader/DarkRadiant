@@ -43,7 +43,7 @@ XDataSelector::XDataSelector(const XData::StringVectorMap& files, ReadableEditor
 	GetSizer()->Add(vbox, 1, wxEXPAND | wxALL, 12);
 
 	// Create the treeview
-	_view = wxutil::TreeView::CreateWithModel(this, _store, wxDV_NO_HEADER);
+	_view = wxutil::TreeView::CreateWithModel(this, _store.get(), wxDV_NO_HEADER);
 
 	_view->AppendIconTextColumn(_("Xdata Path"), _columns.name.getColumnIndex(),
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);

@@ -31,7 +31,7 @@ namespace
 }
 
 MaterialsList::MaterialsList(wxWindow* parent, const RenderSystemPtr& renderSystem) :
-	wxutil::TreeView(parent, wxutil::TreeModel::Ptr(), wxDV_SINGLE),
+	wxutil::TreeView(parent, nullptr, wxDV_SINGLE),
 	_store(new wxutil::TreeModel(COLUMNS(), true)),
 	_renderSystem(renderSystem)
 {

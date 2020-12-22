@@ -60,7 +60,7 @@ void EntityList::populateWindow()
 
 	// Configure the treeview
 	_treeView = wxutil::TreeView::CreateWithModel(
-        this, _treeModel.getModel(), 
+        this, _treeModel.getModel().get(), 
 #if defined(__linux__)
 		wxDV_MULTIPLE
 #else

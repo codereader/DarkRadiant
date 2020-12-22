@@ -56,10 +56,11 @@ public:
 		captureShader();
 	}
 
-	const ShaderPtr& getWireShader() const
-	{
-		return _wireShader;
-	}
+    /// Return a non-owning (possibly null) pointer to the Shader
+    Shader* getWireShader() const
+    {
+        return _wireShader.get();
+    }
 
 private:
 

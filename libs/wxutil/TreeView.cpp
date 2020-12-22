@@ -49,7 +49,7 @@ private:
 	void _onTreeViewCharHook(wxKeyEvent& keyEvent);
 };
 
-TreeView::TreeView(wxWindow* parent, const TreeModel::Ptr& model, long style) :
+TreeView::TreeView(wxWindow* parent, wxDataViewModel* model, long style) :
 	wxDataViewCtrl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style),
 	_collapseRecursively(true)
 {
@@ -57,7 +57,7 @@ TreeView::TreeView(wxWindow* parent, const TreeModel::Ptr& model, long style) :
 
 	if (model)
 	{
-		AssociateModel(model.get());
+		AssociateModel(model);
 	}
 
 	Bind(wxEVT_CHAR, &TreeView::_onChar, this);
@@ -67,12 +67,10 @@ TreeView::TreeView(wxWindow* parent, const TreeModel::Ptr& model, long style) :
 
 TreeView* TreeView::Create(wxWindow* parent, long style)
 {
-	return new TreeView(parent, TreeModel::Ptr(), style);
+	return new TreeView(parent, nullptr, style);
 }
 
-// Construct a TreeView using the given TreeModel, which will be associated
-// with this view (refcount is automatically decreased by one).
-TreeView* TreeView::CreateWithModel(wxWindow* parent, const TreeModel::Ptr& model, long style)
+TreeView* TreeView::CreateWithModel(wxWindow* parent, wxDataViewModel* model, long style)
 {
 	return new TreeView(parent, model, style);
 }

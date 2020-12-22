@@ -33,7 +33,7 @@ AIHeadChooserDialog::AIHeadChooserDialog() :
 	GetSizer()->Add(splitter, 1, wxEXPAND | wxALL, 12);
 	GetSizer()->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT | wxBOTTOM | wxRIGHT, 12);
 
-	_headsView = wxutil::TreeView::CreateWithModel(splitter, _headStore, wxDV_NO_HEADER);
+	_headsView = wxutil::TreeView::CreateWithModel(splitter, _headStore.get(), wxDV_NO_HEADER);
 	_headsView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED,
         wxDataViewEventHandler(AIHeadChooserDialog::onHeadSelectionChanged), NULL, this);
 

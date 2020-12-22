@@ -83,7 +83,7 @@ void ConversationEditor::populateWindow()
 	// Actor Panel
 	wxPanel* actorPanel = findNamedObject<wxPanel>(this, "ConvEditorActorPanel");
 
-	_actorView = wxutil::TreeView::CreateWithModel(actorPanel, _actorStore);
+	_actorView = wxutil::TreeView::CreateWithModel(actorPanel, _actorStore.get());
 	_actorView->SetSize(wxSize(350, 160));
 	actorPanel->GetSizer()->Add(_actorView, 1, wxEXPAND);
 
@@ -112,7 +112,7 @@ void ConversationEditor::populateWindow()
 	// Command Panel
 	wxPanel* commandPanel = findNamedObject<wxPanel>(this, "ConvEditorCommandPanel");
 	
-	_commandView = wxutil::TreeView::CreateWithModel(commandPanel, _commandStore);
+	_commandView = wxutil::TreeView::CreateWithModel(commandPanel, _commandStore.get());
 	_commandView->SetSize(wxSize(350, 200));
 	commandPanel->GetSizer()->Add(_commandView, 1, wxEXPAND);
 

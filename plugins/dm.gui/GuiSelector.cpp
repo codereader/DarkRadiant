@@ -138,7 +138,7 @@ void GuiSelector::populateWindow()
 
 	// One-Sided Readables Tab
 	auto tempOneSidedModel = wxutil::TreeModel::Ptr(new wxutil::TreeModel(_columns));
-	_oneSidedView = wxutil::TreeView::CreateWithModel(_notebook, tempOneSidedModel, wxDV_NO_HEADER);
+	_oneSidedView = wxutil::TreeView::CreateWithModel(_notebook, tempOneSidedModel.get(), wxDV_NO_HEADER);
 	_oneSidedView->AppendIconTextColumn(_("Gui Path"), _columns.name.getColumnIndex(),
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 	_oneSidedView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
@@ -148,7 +148,7 @@ void GuiSelector::populateWindow()
 
 	// Two-Sided Readables Tab
 	auto tempTwoSidedModel = wxutil::TreeModel::Ptr(new wxutil::TreeModel(_columns));
-	_twoSidedView = wxutil::TreeView::CreateWithModel(_notebook, tempTwoSidedModel, wxDV_NO_HEADER);
+	_twoSidedView = wxutil::TreeView::CreateWithModel(_notebook, tempTwoSidedModel.get(), wxDV_NO_HEADER);
 	_twoSidedView->AppendIconTextColumn(_("Gui Path"), _columns.name.getColumnIndex(),
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 	_twoSidedView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 

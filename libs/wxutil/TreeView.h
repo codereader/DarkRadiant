@@ -30,7 +30,7 @@ protected:
 
 	bool _collapseRecursively;
 
-	TreeView(wxWindow* parent, const TreeModel::Ptr& model, long style);
+	TreeView(wxWindow* parent, wxDataViewModel* model, long style);
 
 public:
     typedef wxWindowPtr<TreeView> Ptr;
@@ -38,9 +38,18 @@ public:
 	// Create a TreeView without model (single-selection mode)
 	static TreeView* Create(wxWindow* parent, long style = wxDV_SINGLE);
 
-	// Construct a TreeView using the given TreeModel, which will be associated
-	// with this view (refcount is automatically decreased by one).
-	static TreeView* CreateWithModel(wxWindow* parent, const TreeModel::Ptr& model, long style = wxDV_SINGLE);
+    /**
+     * \brief
+     * Construct a TreeView with an associated model
+     *
+     * \param parent
+     * The parent window of the tree view widget
+     *
+     * \param model
+     * Data model to supply data for the tree view. May be null.
+     */
+    static TreeView* CreateWithModel(wxWindow* parent, wxDataViewModel* model,
+                                     long style = wxDV_SINGLE);
 
 	virtual ~TreeView();
 

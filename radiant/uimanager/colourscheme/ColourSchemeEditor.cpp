@@ -9,23 +9,26 @@
 #include "wxutil/dialog/Dialog.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/TreeView.h"
+#include "registry/registry.h"
+#include "registry/Widgets.h"
 
 #include <wx/panel.h>
 #include <wx/sizer.h>
 #include <wx/clrpicker.h>
 #include <wx/stattext.h>
+#include <wx/statline.h>
+#include <wx/checkbox.h>
 
-namespace ui 
+namespace ui
 {
 
 namespace
 {
-	const char* const EDITOR_WINDOW_TITLE = N_("Edit Colour Schemes");
+    const char* const EDITOR_WINDOW_TITLE = N_("Edit Colour Schemes");
 }
 
 ColourSchemeEditor::ColourSchemeEditor() :
-	DialogBase(_(EDITOR_WINDOW_TITLE)),
-	_listStore(new wxutil::TreeModel(_columns, true))
+	DialogBase(_(EDITOR_WINDOW_TITLE))
 {
 	SetSizer(new wxBoxSizer(wxVERTICAL));
 
@@ -45,97 +48,119 @@ ColourSchemeEditor::ColourSchemeEditor() :
 
 void ColourSchemeEditor::populateTree()
 {
-	GlobalColourSchemeManager().foreachScheme([&](const std::string& name, colours::IColourScheme&)
-	{
-		wxutil::TreeModel::Row row = _listStore->AddItem();
+	GlobalColourSchemeManager().foreachScheme(
+        [&](const std::string& name, colours::IColourScheme&)
+        {
+            wxVector<wxVariant> row;
+            row.push_back(wxVariant(name));
+            _schemeList->AppendItem(row);
+        }
+    );
+}
 
-		row[_columns.name] = name;
+wxBoxSizer* ColourSchemeEditor::constructListButtons()
+{
+    wxBoxSizer* buttonBox = new wxBoxSizer(wxHORIZONTAL);
 
-		row.SendItemAdded();
-	});
+    _deleteButton = new wxButton(this, wxID_DELETE, _("Delete"));
+    wxButton* copyButton = new wxButton(this, wxID_COPY, _("Copy"));
+
+    buttonBox->Add(copyButton, 1, wxEXPAND | wxRIGHT, 6);
+    buttonBox->Add(_deleteButton, 1, wxEXPAND);
+
+    copyButton->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { copyScheme(); });
+    _deleteButton->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { deleteScheme(); });
+
+    return buttonBox;
+}
+
+void ColourSchemeEditor::addOptionsPanel(wxBoxSizer& vbox)
+{
+    wxStaticLine* sep = new wxStaticLine(this);
+    vbox.Add(sep, 0, wxEXPAND | wxTOP, 6);
+
+    // Override light colour checkbox
+    wxCheckBox* overrideLightsCB = new wxCheckBox(
+        this, wxID_ANY, _("Override light volume colour")
+    );
+    registry::bindWidget(overrideLightsCB, colours::RKEY_OVERRIDE_LIGHTCOL);
+
+    vbox.Add(overrideLightsCB, 0, wxEXPAND | wxTOP, 6);
 }
 
 void ColourSchemeEditor::constructWindow()
 {
-	wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* mainHBox = new wxBoxSizer(wxHORIZONTAL);
 
-	GetSizer()->Add(hbox, 1, wxEXPAND | wxALL, 12);
-	GetSizer()->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, 
-		wxALIGN_RIGHT | wxLEFT | wxBOTTOM | wxRIGHT, 12);
+    GetSizer()->Add(mainHBox, 1, wxEXPAND | wxALL, 12);
+    GetSizer()->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0,
+        wxALIGN_RIGHT | wxLEFT | wxBOTTOM | wxRIGHT, 12);
 
-	// Create the treeview and the buttons
-	wxBoxSizer* treeViewVbox = new wxBoxSizer(wxVERTICAL);
-	hbox->Add(treeViewVbox, 0, wxEXPAND | wxRIGHT, 6);
+    // Create the scheme list and the buttons
+    wxBoxSizer* leftVBox = new wxBoxSizer(wxVERTICAL);
+    mainHBox->Add(leftVBox, 0, wxEXPAND | wxRIGHT, 6);
 
-	_treeView = wxutil::TreeView::CreateWithModel(this, _listStore, wxDV_NO_HEADER);
-	_treeView->SetMinClientSize(wxSize(200, -1));
-	treeViewVbox->Add(_treeView, 1, wxEXPAND | wxBOTTOM, 6);
+    _schemeList = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition,
+                                     wxDefaultSize, wxDV_NO_HEADER);
+    _schemeList->SetMinClientSize(wxSize(256, -1));
+    leftVBox->Add(_schemeList, 1, wxEXPAND | wxBOTTOM, 6);
 
-	// Create a new column and set its parameters
-	_treeView->AppendTextColumn(_("Colour"), _columns.name.getColumnIndex(),
-		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+    // Create a text column to show the scheme name
+    _schemeList->AppendTextColumn(
+        _("Colour scheme"), wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE,
+        wxALIGN_LEFT, wxDATAVIEW_COL_SORTABLE
+    );
 
-	// Connect the signal AFTER selecting the active scheme
-	_treeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED,
-		wxDataViewEventHandler(ColourSchemeEditor::callbackSelChanged), NULL, this);
+    // Connect the signal AFTER selecting the active scheme
+    _schemeList->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED,
+        wxDataViewEventHandler(ColourSchemeEditor::callbackSelChanged), NULL, this);
 
-	// Treeview buttons
-	wxBoxSizer* buttonBox = new wxBoxSizer(wxHORIZONTAL);
-	treeViewVbox->Add(buttonBox, 0, wxEXPAND, 6);
+    // Treeview buttons
+    leftVBox->Add(constructListButtons(), 0, wxEXPAND, 6);
 
-	_deleteButton = new wxButton(this, wxID_DELETE, _("Delete"));
-	wxButton* copyButton = new wxButton(this, wxID_COPY, _("Copy"));
+    // Options panel below the copy/delete buttons
+    addOptionsPanel(*leftVBox);
 
-	buttonBox->Add(copyButton, 1, wxEXPAND | wxRIGHT, 6);
-	buttonBox->Add(_deleteButton, 1, wxEXPAND);
-
-	copyButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ColourSchemeEditor::callbackCopy), NULL, this);
-	_deleteButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ColourSchemeEditor::callbackDelete), NULL, this);
-
-	// The Box containing the Colour, pack it into the right half of the hbox
-	_colourFrame = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL | wxDOUBLE_BORDER);
-	hbox->Add(_colourFrame, 1, wxEXPAND);
+    // The Box containing the Colour, pack it into the right half of the hbox
+    _colourFrame = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL | wxDOUBLE_BORDER);
+    mainHBox->Add(_colourFrame, 1, wxEXPAND);
 }
 
 void ColourSchemeEditor::selectActiveScheme()
 {
-	wxDataViewItem found = _listStore->FindString(
-		GlobalColourSchemeManager().getActiveScheme().getName(), _columns.name);
+    // Find a row matching the active colour scheme name
+    wxString name = GlobalColourSchemeManager().getActiveScheme().getName();
+    unsigned r = 0;
+    for ( ; r < _schemeList->GetItemCount(); ++r)
+    {
+        wxString rowName = _schemeList->GetTextValue(r, 0);
+        if (rowName == name)
+            break;
+    }
 
-	_treeView->Select(found);
+	_schemeList->SelectRow(r);
 	selectionChanged();
 }
 
 void ColourSchemeEditor::deleteSchemeFromList()
 {
-	wxDataViewItem item = _treeView->GetSelection();
-
-	if (item.IsOk())
-	{
-		_listStore->RemoveItem(item);
-	}
+    // Delete the selected row
+	int row = _schemeList->GetSelectedRow();
+	if (row != wxNOT_FOUND)
+		_schemeList->DeleteItem(row);
 
 	// Select the first scheme
-	wxDataViewItemArray children;
-
-	if (_listStore->GetChildren(_listStore->GetRoot(), children) > 0)
-	{
-		_treeView->Select(*children.begin());
-		selectionChanged();
-	}
+    if (_schemeList->GetItemCount() > 0)
+        _schemeList->SelectRow(0);
 }
 
 std::string ColourSchemeEditor::getSelectedScheme()
 {
-	wxDataViewItem item = _treeView->GetSelection();
-
-	if (item.IsOk())
-	{
-		wxutil::TreeModel::Row row(item, *_listStore);
-		return row[_columns.name];
-	}
-
-	return "";
+	int row = _schemeList->GetSelectedRow();
+	if (row != wxNOT_FOUND)
+		return _schemeList->GetTextValue(row, 0).ToStdString();
+    else
+        return "";
 }
 
 wxSizer* ColourSchemeEditor::constructColourSelector(colours::IColourItem& colour, const std::string& name)
@@ -160,7 +185,7 @@ wxSizer* ColourSchemeEditor::constructColourSelector(colours::IColourItem& colou
 	{
 		callbackColorChanged(ev, colour);
 	});
-	
+
 	// Create the description label
 	wxStaticText* label = new wxStaticText(_colourFrame, wxID_ANY, description);
 
@@ -281,22 +306,12 @@ void ColourSchemeEditor::copyScheme()
 	GlobalColourSchemeManager().setActive(newName);
 
 	// Add the new list item to the ListStore
-	wxutil::TreeModel::Row row = _listStore->AddItem();
-	row[_columns.name] = newName;
-	row.SendItemAdded();
+    wxVector<wxVariant> rowData;
+    rowData.push_back(wxVariant(newName));
+    _schemeList->AppendItem(rowData);
 
 	// Highlight the copied scheme
 	selectActiveScheme();
-}
-
-void ColourSchemeEditor::callbackCopy(wxCommandEvent& ev)
-{
-	copyScheme();
-}
-
-void ColourSchemeEditor::callbackDelete(wxCommandEvent& ev)
-{
-	deleteScheme();
 }
 
 void ColourSchemeEditor::callbackColorChanged(wxColourPickerEvent& ev, colours::IColourItem& item)
@@ -306,7 +321,7 @@ void ColourSchemeEditor::callbackColorChanged(wxColourPickerEvent& ev, colours::
 
 	// Update the colourItem class
 	item.getColour().set(
-		static_cast<double>(colour.Red()) / 255.0, 
+		static_cast<double>(colour.Red()) / 255.0,
 		static_cast<double>(colour.Green()) / 255.0,
 		static_cast<double>(colour.Blue()) / 255.0);
 
@@ -323,7 +338,7 @@ void ColourSchemeEditor::callbackSelChanged(wxDataViewEvent& ev)
 int ColourSchemeEditor::ShowModal()
 {
 	int returnCode = DialogBase::ShowModal();
-	
+
 	if (returnCode == wxID_OK)
 	{
 		GlobalColourSchemeManager().setActive(getSelectedScheme());
