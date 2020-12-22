@@ -83,6 +83,11 @@ void ColourSchemeEditor::addOptionsPanel(wxBoxSizer& vbox)
     wxCheckBox* overrideLightsCB = new wxCheckBox(
         this, wxID_ANY, _("Override light volume colour")
     );
+    overrideLightsCB->SetToolTip(
+        _("Render all light volumes in a single colour set by the colour "
+          "scheme, rather than a per-entity colour controlled by the _color "
+          "spawnarg")
+    );
     registry::bindWidget(overrideLightsCB, colours::RKEY_OVERRIDE_LIGHTCOL);
 
     vbox.Add(overrideLightsCB, 0, wxEXPAND | wxTOP, 6);
