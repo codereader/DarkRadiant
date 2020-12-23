@@ -8,8 +8,11 @@ cmake_install.cmake
 /radiant/darkradiant
 /install/darkradiant.desktop
 *.o
+*.lo
 *.so
 *.a
+*.la
+.deps
 
 # Editor temporary files
 *.swp
