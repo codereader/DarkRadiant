@@ -148,9 +148,14 @@ install(DIRECTORY install/ui DESTINATION ${PKGDATADIR}
         FILES_MATCHING PATTERN "*.ttf" PATTERN "*.xrc")
 
 # Install locale data
+if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.14")
+# CMake 3.14 and above support TYPE LOCALE, they deduct DESTINATION themselves
 install(DIRECTORY install/i18n/de TYPE LOCALE
-	#DESTINATION ${PKGDATADIR} 
         FILES_MATCHING PATTERN "*.mo")
+else()
+install(DIRECTORY install/i18n/de DESTINATION ${CMAKE_INSTALL_LOCALEDIR} 
+        FILES_MATCHING PATTERN "*.mo")
+endif()
 
 # Install scripts
 install(DIRECTORY install/scripts DESTINATION ${PKGDATADIR}
