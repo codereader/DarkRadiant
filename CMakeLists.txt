@@ -149,7 +149,7 @@ install(DIRECTORY install/ui DESTINATION ${PKGDATADIR}
 
 # Install locale data
 install(DIRECTORY install/i18n/de TYPE LOCALE
-	DESTINATION ${PKGDATADIR} 
+	#DESTINATION ${PKGDATADIR} 
         FILES_MATCHING PATTERN "*.mo")
 
 # Install scripts
