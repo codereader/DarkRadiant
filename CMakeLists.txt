@@ -7,6 +7,11 @@ project(darkradiant VERSION 2.10.0)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+# GCC 8 and earlier require explicit linking against stdc++fs
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 9)
+	link_libraries(stdc++fs)
+endif()
+
 # Expose some build options
 option(ENABLE_DM_PLUGINS "Build Dark Mod specific plugins" ON)
 option(ENABLE_RELOCATION
