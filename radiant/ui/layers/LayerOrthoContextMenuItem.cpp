@@ -56,36 +56,17 @@ void LayerOrthoContextMenuItem::preShow()
 
 void LayerOrthoContextMenuItem::AddToLayer(int layerID)
 {
-	DoWithMapLayerManager([=](scene::ILayerManager& manager)
-	{
-		manager.addSelectionToLayer(layerID);
-	});
+    GlobalCommandSystem().executeCommand("AddSelectionToLayer", cmd::Argument(layerID));
 }
 
 void LayerOrthoContextMenuItem::MoveToLayer(int layerID)
 {
-	DoWithMapLayerManager([=](scene::ILayerManager& manager)
-	{
-		manager.moveSelectionToLayer(layerID);
-	});
+    GlobalCommandSystem().executeCommand("MoveSelectionToLayer", cmd::Argument(layerID));
 }
 
 void LayerOrthoContextMenuItem::RemoveFromLayer(int layerID)
 {
-	DoWithMapLayerManager([=](scene::ILayerManager& manager)
-	{
-		manager.removeSelectionFromLayer(layerID);
-	});
-}
-
-void LayerOrthoContextMenuItem::DoWithMapLayerManager(const std::function<void(scene::ILayerManager&)>& func)
-{
-	if (!GlobalMapModule().getRoot())
-	{
-		return;
-	}
-
-	func(GlobalMapModule().getRoot()->getLayerManager());
+    GlobalCommandSystem().executeCommand("RemoveSelectionFromLayer", cmd::Argument(layerID));
 }
 
 } // namespace

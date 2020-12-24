@@ -38,9 +38,6 @@ public:
 	static void AddToLayer(int layerID);
 	static void MoveToLayer(int layerID);
 	static void RemoveFromLayer(int layerID);
-
-private:
-	static void DoWithMapLayerManager(const std::function<void(scene::ILayerManager&)>& func);
 };
 typedef std::shared_ptr<LayerOrthoContextMenuItem> LayerOrthoContextMenuItemPtr;
 
