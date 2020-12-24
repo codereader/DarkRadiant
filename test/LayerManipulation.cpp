@@ -49,7 +49,14 @@ TEST_F(LayerTest, DeleteLayerMarksMapAsModified)
     EXPECT_TRUE(GlobalMapModule().isModified());
 }
 
-void performMoveOrAddToLayerTest(bool moveToLayer)
+enum class LayerAction
+{
+    AddToLayer,
+    RemoveFromLayer,
+    MoveToLayer,
+};
+
+void performMoveOrAddToLayerTest(LayerAction action)
 {
     auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
 
@@ -64,13 +71,17 @@ void performMoveOrAddToLayerTest(bool moveToLayer)
     auto layerId = GlobalMapModule().getRoot()->getLayerManager().getLayerID("Second Layer");
     EXPECT_NE(layerId, -1);
 
-    if (moveToLayer)
+    switch (action)
     {
-        GlobalCommandSystem().executeCommand("MoveSelectionToLayer", cmd::Argument(layerId));
-    }
-    else
-    {
+    case LayerAction::AddToLayer:
         GlobalCommandSystem().executeCommand("AddSelectionToLayer", cmd::Argument(layerId));
+        break;
+    case LayerAction::MoveToLayer:
+        GlobalCommandSystem().executeCommand("MoveSelectionToLayer", cmd::Argument(layerId));
+        break;
+    case LayerAction::RemoveFromLayer:
+        GlobalCommandSystem().executeCommand("RemoveSelectionFromLayer", cmd::Argument(layerId));
+        break;
     }
 
     EXPECT_TRUE(GlobalMapModule().isModified());
@@ -80,14 +91,21 @@ TEST_F(LayerTest, AddingToLayerMarksMapAsModified)
 {
     loadMap("general_purpose.mapx");
 
-    performMoveOrAddToLayerTest(false);
+    performMoveOrAddToLayerTest(LayerAction::AddToLayer);
 }
 
 TEST_F(LayerTest, MovingToLayerMarksMapAsModified)
 {
     loadMap("general_purpose.mapx");
 
-    performMoveOrAddToLayerTest(true);
+    performMoveOrAddToLayerTest(LayerAction::MoveToLayer);
+}
+
+TEST_F(LayerTest, RemovingFromLayerMarksMapAsModified)
+{
+    loadMap("general_purpose.mapx");
+
+    performMoveOrAddToLayerTest(LayerAction::RemoveFromLayer);
 }
 
 }

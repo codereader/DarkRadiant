@@ -16,6 +16,7 @@ namespace
 
 const char* const COMMAND_PREFIX_ADDTOLAYER("AddSelectionToLayer");
 const char* const COMMAND_PREFIX_MOVETOLAYER("MoveSelectionToLayer");
+const char* const COMMAND_PREFIX_REMOVEFROMLAYER("RemoveSelectionFromLayer");
 const char* const COMMAND_PREFIX_SHOWLAYER("ShowLayer");
 const char* const COMMAND_PREFIX_HIDELAYER("HideLayer");
 
@@ -66,6 +67,10 @@ public:
 		GlobalCommandSystem().addCommand(COMMAND_PREFIX_MOVETOLAYER,
 			std::bind(&LayerModule::moveSelectionToLayer, this, std::placeholders::_1),
 			{ cmd::ARGTYPE_INT });
+        
+        GlobalCommandSystem().addCommand(COMMAND_PREFIX_REMOVEFROMLAYER,
+			std::bind(&LayerModule::removeSelectionFromLayer, this, std::placeholders::_1),
+			{ cmd::ARGTYPE_INT });
 
 		GlobalCommandSystem().addCommand(COMMAND_PREFIX_SHOWLAYER,
 			std::bind(&LayerModule::showLayer, this, std::placeholders::_1),
@@ -97,6 +102,7 @@ private:
 		DoWithMapLayerManager([&](ILayerManager& manager)
 		{
 			manager.addSelectionToLayer(args[0].getInt());
+            GlobalMapModule().setModified(true);
 		});
 	}
 
@@ -111,6 +117,22 @@ private:
 		DoWithMapLayerManager([&](ILayerManager& manager)
 		{
 			manager.moveSelectionToLayer(args[0].getInt());
+            GlobalMapModule().setModified(true);
+		});
+	}
+
+    void removeSelectionFromLayer(const cmd::ArgumentList& args)
+	{
+		if (args.size() != 1)
+		{
+			rError() << "Usage: " << COMMAND_PREFIX_REMOVEFROMLAYER << " <LayerID> " << std::endl;
+			return;
+		}
+
+		DoWithMapLayerManager([&](ILayerManager& manager)
+		{
+			manager.removeSelectionFromLayer(args[0].getInt());
+            GlobalMapModule().setModified(true);
 		});
 	}
 

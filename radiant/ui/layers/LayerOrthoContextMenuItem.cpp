@@ -59,7 +59,6 @@ void LayerOrthoContextMenuItem::AddToLayer(int layerID)
 	DoWithMapLayerManager([=](scene::ILayerManager& manager)
 	{
 		manager.addSelectionToLayer(layerID);
-		GlobalMapModule().setModified(true);
 	});
 }
 
@@ -68,7 +67,6 @@ void LayerOrthoContextMenuItem::MoveToLayer(int layerID)
 	DoWithMapLayerManager([=](scene::ILayerManager& manager)
 	{
 		manager.moveSelectionToLayer(layerID);
-		GlobalMapModule().setModified(true);
 	});
 }
 
@@ -77,7 +75,6 @@ void LayerOrthoContextMenuItem::RemoveFromLayer(int layerID)
 	DoWithMapLayerManager([=](scene::ILayerManager& manager)
 	{
 		manager.removeSelectionFromLayer(layerID);
-		GlobalMapModule().setModified(true);
 	});
 }
 
