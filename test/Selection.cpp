@@ -162,6 +162,15 @@ void performBrushSelectionTest(const std::string& materialName)
     performSelectionTest(brush);
 }
 
+void performPatchSelectionTest(const std::string& materialName)
+{
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto patch = algorithm::findFirstPatchWithMaterial(worldspawn, materialName);
+    EXPECT_TRUE(patch);
+
+    performSelectionTest(patch);
+}
+
 TEST_F(SelectionTest, BrushesFacingTowardsXYAreSelectable)
 {
     loadMap("selection_test.map");
@@ -175,6 +184,20 @@ TEST_F(SelectionTest, BrushesFacingAwayFromXYAreSelectable)
     loadMap("selection_test.map");
 
     performBrushSelectionTest("textures/numbers/2");
+}
+
+TEST_F(SelectionTest, PatchesFacingTowardsXYAreSelectable)
+{
+    loadMap("selection_test.map");
+
+    performPatchSelectionTest("textures/numbers/1");
+}
+
+TEST_F(SelectionTest, PatchesFacingAwayFromXYAreSelectable)
+{
+    loadMap("selection_test.map");
+
+    performPatchSelectionTest("textures/numbers/2");
 }
 
 }
