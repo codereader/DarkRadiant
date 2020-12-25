@@ -83,7 +83,7 @@ void LayerControlDialog::createButtons()
 	wxButton* createButton = new wxButton(_dialogPanel, wxID_ANY, _("New"));
 	createButton->SetBitmap(wxArtProvider::GetBitmap(wxART_PLUS));
 
-	wxutil::button::connectToCommand(createButton, "CreateNewLayer");
+	wxutil::button::connectToCommand(createButton, "CreateNewLayerDialog");
 
 	hideShowBox->Add(_showAllLayers, 1, wxEXPAND | wxTOP, 6);
 	hideShowBox->Add(_hideAllLayers, 1, wxEXPAND | wxLEFT | wxTOP, 6);

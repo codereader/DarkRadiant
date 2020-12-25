@@ -29,9 +29,6 @@ private:
 public:
 	LayerContextMenu(OnSelectionFunc& onSelection);
 
-	// scene::LayerSystem::Visitor implementation
-	void visit(int layerID, const std::string& layerName);
-
 	// Loads layer names into the menu, clears existing items first
 	void populate();
 

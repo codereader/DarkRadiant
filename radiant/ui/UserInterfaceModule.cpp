@@ -124,9 +124,9 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
 	// Register LayerControlDialog
 	GlobalCommandSystem().addCommand("ToggleLayerControlDialog", LayerControlDialog::toggle);
 
-	// Create a new menu item connected to the CreateNewLayer command
+	// Create a new menu item connected to the CreateNewLayerDialog command
 	GlobalOrthoContextMenu().addItem(std::make_shared<wxutil::CommandMenuItem>(
-			new wxutil::IconTextMenuItem(_(CREATE_LAYER_TEXT), LAYER_ICON), "CreateNewLayer"),
+			new wxutil::IconTextMenuItem(_(CREATE_LAYER_TEXT), LAYER_ICON), "CreateNewLayerDialog"),
 		IOrthoContextMenu::SECTION_LAYER
 	);
 
@@ -387,7 +387,7 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addCommand("ParticlesEditor", ParticleEditor::DisplayDialog);
 
 	// Register the "create layer" command
-	GlobalCommandSystem().addCommand("CreateNewLayer", CreateLayerDialog::CreateNewLayer,
+	GlobalCommandSystem().addCommand("CreateNewLayerDialog", CreateLayerDialog::CreateNewLayer,
 		{ cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
 
 	GlobalCommandSystem().addCommand("BulgePatchDialog", BulgePatchDialog::BulgePatchCmd);

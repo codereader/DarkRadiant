@@ -14,11 +14,12 @@ namespace scene
 namespace
 {
 
-const char* const COMMAND_PREFIX_ADDTOLAYER("AddSelectionToLayer");
-const char* const COMMAND_PREFIX_MOVETOLAYER("MoveSelectionToLayer");
-const char* const COMMAND_PREFIX_REMOVEFROMLAYER("RemoveSelectionFromLayer");
-const char* const COMMAND_PREFIX_SHOWLAYER("ShowLayer");
-const char* const COMMAND_PREFIX_HIDELAYER("HideLayer");
+const char* const COMMAND_CREATELAYER("CreateLayer");
+const char* const COMMAND_ADDTOLAYER("AddSelectionToLayer");
+const char* const COMMAND_MOVETOLAYER("MoveSelectionToLayer");
+const char* const COMMAND_REMOVEFROMLAYER("RemoveSelectionFromLayer");
+const char* const COMMAND_SHOWLAYER("ShowLayer");
+const char* const COMMAND_HIDELAYER("HideLayer");
 
 inline void DoWithMapLayerManager(const std::function<void(scene::ILayerManager&)>& func)
 {
@@ -60,25 +61,29 @@ public:
 	{
 		rMessage() << getName() << "::initialiseModule called." << std::endl;
 
-		GlobalCommandSystem().addCommand(COMMAND_PREFIX_ADDTOLAYER,
+		GlobalCommandSystem().addCommand(COMMAND_ADDTOLAYER,
 			std::bind(&LayerModule::addSelectionToLayer, this, std::placeholders::_1),
 			{ cmd::ARGTYPE_INT });
 
-		GlobalCommandSystem().addCommand(COMMAND_PREFIX_MOVETOLAYER,
+		GlobalCommandSystem().addCommand(COMMAND_MOVETOLAYER,
 			std::bind(&LayerModule::moveSelectionToLayer, this, std::placeholders::_1),
 			{ cmd::ARGTYPE_INT });
         
-        GlobalCommandSystem().addCommand(COMMAND_PREFIX_REMOVEFROMLAYER,
+        GlobalCommandSystem().addCommand(COMMAND_REMOVEFROMLAYER,
 			std::bind(&LayerModule::removeSelectionFromLayer, this, std::placeholders::_1),
 			{ cmd::ARGTYPE_INT });
 
-		GlobalCommandSystem().addCommand(COMMAND_PREFIX_SHOWLAYER,
+		GlobalCommandSystem().addCommand(COMMAND_SHOWLAYER,
 			std::bind(&LayerModule::showLayer, this, std::placeholders::_1),
 			{ cmd::ARGTYPE_INT });
 
-		GlobalCommandSystem().addCommand(COMMAND_PREFIX_HIDELAYER,
+		GlobalCommandSystem().addCommand(COMMAND_HIDELAYER,
 			std::bind(&LayerModule::hideLayer, this, std::placeholders::_1),
 			{ cmd::ARGTYPE_INT });
+
+        GlobalCommandSystem().addCommand(COMMAND_CREATELAYER,
+            std::bind(&LayerModule::createLayer, this, std::placeholders::_1),
+            { cmd::ARGTYPE_STRING });
 
 		GlobalMapInfoFileManager().registerInfoFileModule(
 			std::make_shared<LayerInfoFileModule>()
@@ -91,11 +96,26 @@ public:
 	}
 
 private:
+    void createLayer(const cmd::ArgumentList& args)
+    {
+        if (args.size() != 1)
+        {
+            rError() << "Usage: " << COMMAND_CREATELAYER << " <LayerName> " << std::endl;
+            return;
+        }
+
+        DoWithMapLayerManager([&](ILayerManager& manager)
+        {
+            manager.createLayer(args[0].getString());
+            GlobalMapModule().setModified(true);
+        });
+    }
+
 	void addSelectionToLayer(const cmd::ArgumentList& args)
 	{
 		if (args.size() != 1)
 		{
-			rError() << "Usage: " << COMMAND_PREFIX_ADDTOLAYER << " <LayerID> " << std::endl;
+			rError() << "Usage: " << COMMAND_ADDTOLAYER << " <LayerID> " << std::endl;
 			return;
 		}
 
@@ -110,7 +130,7 @@ private:
 	{
 		if (args.size() != 1)
 		{
-			rError() << "Usage: " << COMMAND_PREFIX_MOVETOLAYER << " <LayerID> " << std::endl;
+			rError() << "Usage: " << COMMAND_MOVETOLAYER << " <LayerID> " << std::endl;
 			return;
 		}
 
@@ -125,7 +145,7 @@ private:
 	{
 		if (args.size() != 1)
 		{
-			rError() << "Usage: " << COMMAND_PREFIX_REMOVEFROMLAYER << " <LayerID> " << std::endl;
+			rError() << "Usage: " << COMMAND_REMOVEFROMLAYER << " <LayerID> " << std::endl;
 			return;
 		}
 
@@ -140,7 +160,7 @@ private:
 	{
 		if (args.size() != 1)
 		{
-			rError() << "Usage: " << COMMAND_PREFIX_SHOWLAYER << " <LayerID> " << std::endl;
+			rError() << "Usage: " << COMMAND_SHOWLAYER << " <LayerID> " << std::endl;
 			return;
 		}
 
@@ -154,7 +174,7 @@ private:
 	{
 		if (args.size() != 1)
 		{
-			rError() << "Usage: " << COMMAND_PREFIX_HIDELAYER << " <LayerID> " << std::endl;
+			rError() << "Usage: " << COMMAND_HIDELAYER << " <LayerID> " << std::endl;
 			return;
 		}
 

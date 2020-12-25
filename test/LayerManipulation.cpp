@@ -16,7 +16,7 @@ TEST_F(LayerTest, CreateLayerMarksMapAsModified)
 
     EXPECT_FALSE(GlobalMapModule().isModified());
 
-    GlobalMapModule().getRoot()->getLayerManager().createLayer("Testlayer");
+    GlobalCommandSystem().executeCommand("CreateLayer", cmd::Argument("TestLayer"));
 
     EXPECT_TRUE(GlobalMapModule().isModified());
 }
