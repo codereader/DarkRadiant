@@ -3,6 +3,7 @@
 #include "itextstream.h"
 #include "imapinfofile.h"
 #include "imap.h"
+#include "i18n.h"
 
 #include "module/StaticModule.h"
 #include "command/ExecutionFailure.h"

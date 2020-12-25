@@ -1,5 +1,6 @@
 #include "LayerOrthoContextMenuItem.h"
 
+#include "icommandsystem.h"
 #include "ilayer.h"
 #include "imap.h"
 #include "iuimanager.h"
