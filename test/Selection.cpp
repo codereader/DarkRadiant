@@ -7,11 +7,15 @@
 #include "ibrush.h"
 #include "ipatch.h"
 #include "ientity.h"
+#include "ishaders.h"
 #include "ieclass.h"
 #include "algorithm/Scene.h"
 #include "scenelib.h"
 #include "selectionlib.h"
 #include "string/convert.h"
+#include "render/View.h"
+#include "selection/SelectionVolume.h"
+#include "Rectangle.h"
 
 namespace test
 {
@@ -75,6 +79,102 @@ TEST_F(SelectionTest, LightBoundsChangedAfterRadiusChange)
     // assuming that the LightNode recalculates its AABB
     auto changedBounds = string::convert<Vector3>(entity->getKeyValue("light_radius"));
     EXPECT_TRUE(GlobalSelectionSystem().getWorkZone().bounds.getExtents().isEqual(changedBounds, 0.01));
+}
+
+void constructCenteredXyView(render::View& view, const Vector3& origin)
+{
+    double scale = 1.0;
+
+    Matrix4 projection;
+
+    projection[0] = 1.0 / static_cast<double>(640 / 2);
+    projection[5] = 1.0 / static_cast<double>(640 / 2);
+    projection[10] = 1.0 / (32768 * scale);
+
+    projection[12] = 0.0;
+    projection[13] = 0.0;
+    projection[14] = -1.0;
+
+    projection[1] = projection[2] = projection[3] =
+        projection[4] = projection[6] = projection[7] =
+        projection[8] = projection[9] = projection[11] = 0.0;
+
+    projection[15] = 1.0f;
+
+    // Modelview
+    Matrix4 modelView;
+
+    // Translate the view to the center of the brush
+    modelView[12] = -origin.x() * scale;
+    modelView[13] = -origin.y() * scale;
+    modelView[14] = 32768 * scale;
+
+    // axis base
+    modelView[0] = scale;
+    modelView[1] = 0;
+    modelView[2] = 0;
+
+    modelView[4] = 0;
+    modelView[5] = scale;
+    modelView[6] = 0;
+
+    modelView[8] = 0;
+    modelView[9] = 0;
+    modelView[10] = -scale;
+
+    modelView[3] = modelView[7] = modelView[11] = 0;
+    modelView[15] = 1;
+
+    view.construct(projection, modelView, 640, 640);
+}
+
+void performSelectionTest(const scene::INodePtr& node)
+{
+    render::View xyView;
+
+    // Move the orthoview exactly to the center of this object
+    constructCenteredXyView(xyView, node->worldAABB().origin);
+
+    // Selection Point
+    auto rectangle = selection::Rectangle::ConstructFromPoint(Vector2(0, 0), Vector2(8.0 / 640, 8.0 / 640));
+    ConstructSelectionTest(xyView, rectangle);
+
+    EXPECT_FALSE(Node_isSelected(node));
+
+    SelectionVolume test(xyView);
+    GlobalSelectionSystem().selectPoint(test, SelectionSystem::eToggle, false);
+
+    EXPECT_TRUE(Node_isSelected(node));
+}
+
+void performBrushSelectionTest(const std::string& materialName)
+{
+    // Filter caulk faces
+    auto material = GlobalMaterialManager().getMaterialForName("textures/common/caulk");
+    material->setVisible(false);
+
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto brush = algorithm::findFirstBrushWithMaterial(worldspawn, materialName);
+    EXPECT_TRUE(brush);
+
+    Node_getIBrush(brush)->updateFaceVisibility();
+
+    performSelectionTest(brush);
+}
+
+TEST_F(SelectionTest, BrushesFacingTowardsXYAreSelectable)
+{
+    loadMap("selection_test.map");
+
+    performBrushSelectionTest("textures/numbers/1");
+}
+
+// #5444: Brushes faces facing away were unselectable in orthoview
+TEST_F(SelectionTest, BrushesFacingAwayFromXYAreSelectable)
+{
+    loadMap("selection_test.map");
+
+    performBrushSelectionTest("textures/numbers/2");
 }
 
 }
