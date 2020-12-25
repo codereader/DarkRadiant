@@ -135,8 +135,8 @@ void ObjectivesEditor::setupObjectivesPanel()
 	_objectiveView->AppendTextColumn(_("Diff."), _objectiveColumns.difficultyLevel.getColumnIndex(),
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
 
-	_objectiveView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
-		wxDataViewEventHandler(ObjectivesEditor::_onObjectiveSelectionChanged), NULL, this);
+	_objectiveView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &ObjectivesEditor::_onObjectiveSelectionChanged, this);
+	_objectiveView->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &ObjectivesEditor::_onObjectiveActivated, this);
     
 	wxButton* addButton = findNamedObject<wxButton>(this, "ObjDialogAddObjectiveButton");
 	addButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ObjectivesEditor::_onAddObjective), NULL, this);
@@ -399,6 +399,14 @@ void ObjectivesEditor::_onObjectiveSelectionChanged(wxDataViewEvent& ev)
 	updateObjectiveButtonPanel();
 }
 
+void ObjectivesEditor::_onObjectiveActivated(wxDataViewEvent& ev)
+{
+    if (ev.GetItem().IsOk())
+    {
+        doEditObjective();
+    }
+}
+
 void ObjectivesEditor::updateEditorButtonPanel()
 {
 	wxButton* delEntityButton = findNamedObject<wxButton>(this, "ObjDialogDeleteEntityButton");
@@ -515,17 +523,22 @@ void ObjectivesEditor::_onAddObjective(wxCommandEvent& ev)
 	refreshObjectivesList();
 }
 
+void ObjectivesEditor::doEditObjective()
+{
+    // Display the ComponentsDialog
+    ComponentsDialog* compDialog = new ComponentsDialog(this, getCurrentObjective());
+
+    compDialog->ShowModal(); // show and block
+    compDialog->Destroy();
+
+    // Repopulate the objective list
+    refreshObjectivesList();
+}
+
 // Edit an existing objective
 void ObjectivesEditor::_onEditObjective(wxCommandEvent& ev)
 {
-	// Display the ComponentsDialog
-	ComponentsDialog* compDialog = new ComponentsDialog(this, getCurrentObjective());
-	
-	compDialog->ShowModal(); // show and block
-	compDialog->Destroy();
-
-	// Repopulate the objective list
-	refreshObjectivesList();
+    doEditObjective();
 }
 
 void ObjectivesEditor::_onMoveUpObjective(wxCommandEvent& ev)

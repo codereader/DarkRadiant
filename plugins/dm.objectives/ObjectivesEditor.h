@@ -69,6 +69,7 @@ private:
 	void _onStartActiveCellToggled(wxDataViewEvent& ev);
 	void _onEntitySelectionChanged(wxDataViewEvent& ev);
 	void _onObjectiveSelectionChanged(wxDataViewEvent& ev);
+	void _onObjectiveActivated(wxDataViewEvent& ev);
 	void _onAddEntity(wxCommandEvent& ev);
 	void _onDeleteEntity(wxCommandEvent& ev);
 	void _onAddObjective(wxCommandEvent& ev);
@@ -81,6 +82,7 @@ private:
 	void _onEditObjConditions(wxCommandEvent& ev);
 
     void handleEntitySelectionChange();
+    void doEditObjective();
 
 	// Populate the dialog widgets with appropriate state from the map
 	void populateWidgets();
