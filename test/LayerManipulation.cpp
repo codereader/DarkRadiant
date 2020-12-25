@@ -28,9 +28,10 @@ TEST_F(LayerTest, RenameLayerMarksMapAsModified)
     auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
 
     EXPECT_FALSE(GlobalMapModule().isModified());
-    EXPECT_NE(layerManager.getLayerID("Second Layer"), -1);
+    auto layerId = layerManager.getLayerID("Second Layer");
+    EXPECT_NE(layerId, -1);
 
-    layerManager.renameLayer(layerManager.getLayerID("Second Layer"), "Renamed Layer");
+    GlobalCommandSystem().executeCommand("RenameLayer", cmd::Argument(layerId), cmd::Argument("Renamed Layer"));
 
     EXPECT_TRUE(GlobalMapModule().isModified());
 }

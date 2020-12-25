@@ -216,6 +216,7 @@ void LayerControl::onRename(wxCommandEvent& ev)
 		if (success)
 		{
 			// Stop here, the control might already have been destroyed
+            GlobalMapModule().setModified(true);
 			return;
 		}
 		else

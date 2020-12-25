@@ -16,6 +16,7 @@ namespace
 {
 
 const char* const COMMAND_CREATELAYER("CreateLayer");
+const char* const COMMAND_RENAMELAYER("RenameLayer");
 const char* const COMMAND_DELETELAYER("DeleteLayer");
 const char* const COMMAND_ADDTOLAYER("AddSelectionToLayer");
 const char* const COMMAND_MOVETOLAYER("MoveSelectionToLayer");
@@ -87,6 +88,10 @@ public:
             std::bind(&LayerModule::createLayer, this, std::placeholders::_1),
             { cmd::ARGTYPE_STRING });
 
+        GlobalCommandSystem().addCommand(COMMAND_RENAMELAYER,
+            std::bind(&LayerModule::renameLayer, this, std::placeholders::_1),
+            { cmd::ARGTYPE_INT, cmd::ARGTYPE_STRING });
+
         GlobalCommandSystem().addCommand(COMMAND_DELETELAYER,
             std::bind(&LayerModule::deleteLayer, this, std::placeholders::_1),
             { cmd::ARGTYPE_INT });
@@ -113,6 +118,28 @@ private:
         DoWithMapLayerManager([&](ILayerManager& manager)
         {
             manager.createLayer(args[0].getString());
+            GlobalMapModule().setModified(true);
+        });
+    }
+
+    void renameLayer(const cmd::ArgumentList& args)
+    {
+        if (args.size() != 2)
+        {
+            rError() << "Usage: " << COMMAND_RENAMELAYER << " <LayerID> <NewLayerName>" << std::endl;
+            return;
+        }
+
+        DoWithMapLayerManager([&](ILayerManager& manager)
+        {
+            auto layerName = manager.getLayerName(args[0].getInt());
+
+            if (args[1].getString().empty())
+            {
+                throw cmd::ExecutionFailure(_("Cannot use an empty string as new layer name"));
+            }
+
+            manager.renameLayer(args[0].getInt(), args[1].getString());
             GlobalMapModule().setModified(true);
         });
     }
