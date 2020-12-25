@@ -177,7 +177,7 @@ void LayerControl::onDelete(wxCommandEvent& ev)
 
 	if (box->run() == IDialog::RESULT_YES)
 	{
-		layerSystem.deleteLayer(layerSystem.getLayerName(_layerID));
+        GlobalCommandSystem().executeCommand("DeleteLayer", cmd::Argument(_layerID));
 	}
 }
 

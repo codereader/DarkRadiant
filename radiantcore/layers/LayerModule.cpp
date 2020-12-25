@@ -5,6 +5,7 @@
 #include "imap.h"
 
 #include "module/StaticModule.h"
+#include "command/ExecutionFailure.h"
 #include "LayerManager.h"
 #include "LayerInfoFileModule.h"
 
@@ -15,6 +16,7 @@ namespace
 {
 
 const char* const COMMAND_CREATELAYER("CreateLayer");
+const char* const COMMAND_DELETELAYER("DeleteLayer");
 const char* const COMMAND_ADDTOLAYER("AddSelectionToLayer");
 const char* const COMMAND_MOVETOLAYER("MoveSelectionToLayer");
 const char* const COMMAND_REMOVEFROMLAYER("RemoveSelectionFromLayer");
@@ -85,6 +87,10 @@ public:
             std::bind(&LayerModule::createLayer, this, std::placeholders::_1),
             { cmd::ARGTYPE_STRING });
 
+        GlobalCommandSystem().addCommand(COMMAND_DELETELAYER,
+            std::bind(&LayerModule::deleteLayer, this, std::placeholders::_1),
+            { cmd::ARGTYPE_INT });
+
 		GlobalMapInfoFileManager().registerInfoFileModule(
 			std::make_shared<LayerInfoFileModule>()
 		);
@@ -107,6 +113,28 @@ private:
         DoWithMapLayerManager([&](ILayerManager& manager)
         {
             manager.createLayer(args[0].getString());
+            GlobalMapModule().setModified(true);
+        });
+    }
+
+    void deleteLayer(const cmd::ArgumentList& args)
+    {
+        if (args.size() != 1)
+        {
+            rError() << "Usage: " << COMMAND_DELETELAYER << " <LayerID> " << std::endl;
+            return;
+        }
+
+        DoWithMapLayerManager([&](ILayerManager& manager)
+        {
+            auto layerName = manager.getLayerName(args[0].getInt());
+
+            if (layerName.empty())
+            {
+                throw cmd::ExecutionFailure(_("This layer ID doesn't exist"));
+            }
+
+            manager.deleteLayer(layerName);
             GlobalMapModule().setModified(true);
         });
     }

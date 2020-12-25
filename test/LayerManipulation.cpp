@@ -42,9 +42,10 @@ TEST_F(LayerTest, DeleteLayerMarksMapAsModified)
     auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
 
     EXPECT_FALSE(GlobalMapModule().isModified());
-    EXPECT_NE(layerManager.getLayerID("Second Layer"), -1);
+    auto layerId = layerManager.getLayerID("Second Layer");
+    EXPECT_NE(layerId, -1);
 
-    layerManager.deleteLayer("Second Layer");
+    GlobalCommandSystem().executeCommand("DeleteLayer", cmd::Argument(layerId));
 
     EXPECT_TRUE(GlobalMapModule().isModified());
 }
