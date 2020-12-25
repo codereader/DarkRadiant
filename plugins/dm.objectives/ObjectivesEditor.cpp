@@ -192,6 +192,16 @@ void ObjectivesEditor::populateWidgets()
     );
 	GlobalSceneGraph().root()->traverse(finder);
 
+    // Select the first entity in the list for convenience
+    wxDataViewItemArray children;
+    _objectiveEntityList->GetChildren(_objectiveEntityList->GetRoot(), children);
+    
+    if (!children.empty())
+    {
+        _objectiveEntityView->Select(children.front());
+        handleEntitySelectionChange();
+    }
+
 	// Set the worldspawn entity and populate the active-at-start column
 	_worldSpawn = finder.getWorldSpawn();
 	if (_worldSpawn != NULL)
@@ -331,6 +341,11 @@ void ObjectivesEditor::_onStartActiveCellToggled(wxDataViewEvent& ev)
 
 // Callback for objective entity selection changed in list box
 void ObjectivesEditor::_onEntitySelectionChanged(wxDataViewEvent& ev)
+{
+    handleEntitySelectionChange();
+}
+
+void ObjectivesEditor::handleEntitySelectionChange()
 {
 	// Clear the objectives list
 	_objectiveList->Clear();

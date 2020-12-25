@@ -62,9 +62,6 @@ private:
 	// Widget construction helpers
 	void setupEntitiesPanel();
 	void setupObjectivesPanel();
-	void createObjectiveEditPanel();
-	void createLogicPanel();
-	void createButtons();
 
 	// callbacks
 	void _onCancel(wxCommandEvent& ev);
@@ -82,6 +79,8 @@ private:
 	void _onClearObjectives(wxCommandEvent& ev);
 	void _onEditLogic(wxCommandEvent& ev);
 	void _onEditObjConditions(wxCommandEvent& ev);
+
+    void handleEntitySelectionChange();
 
 	// Populate the dialog widgets with appropriate state from the map
 	void populateWidgets();
