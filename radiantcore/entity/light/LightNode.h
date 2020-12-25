@@ -72,11 +72,6 @@ public:
 	 */
 	AABB getSelectAABB() const override;
 
-	/*greebo: This is a callback function that gets connected in the constructor
-	* Don't know exactly what it does, but it seems to notify the shader cache that the light has moved or
-	* something like that.*/
-	void lightChanged();
-
 	/* greebo: This snaps the components to the grid.
 	 *
 	 * Note: if none are selected, ALL the components are snapped to the grid (I hope this is intentional)
@@ -148,6 +143,8 @@ private:
 
     // Update the bounds of the renderable radius box
     void updateRenderableRadius() const;
+
+    void onLightRadiusChanged();
 }; // class LightNode
 
 } // namespace entity

@@ -17,7 +17,7 @@ LightNode::LightNode(const IEntityClassPtr& eclass) :
 		   *this,
 		   Callback(std::bind(&scene::Node::transformChanged, this)),
 		   Callback(std::bind(&scene::Node::boundsChanged, this)),
-		   Callback(std::bind(&LightNode::lightChanged, this))),
+		   Callback(std::bind(&LightNode::onLightRadiusChanged, this))),
 	_lightCenterInstance(_light.getDoom3Radius().m_centerTransformed, std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
 	_lightTargetInstance(_light.targetTransformed(), std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
 	_lightRightInstance(_light.rightTransformed(), _light.targetTransformed(), std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
@@ -37,7 +37,7 @@ LightNode::LightNode(const LightNode& other) :
            _entity,
            Callback(std::bind(&Node::transformChanged, this)),
 		   Callback(std::bind(&Node::boundsChanged, this)),
-		   Callback(std::bind(&LightNode::lightChanged, this))),
+		   Callback(std::bind(&LightNode::onLightRadiusChanged, this))),
 	_lightCenterInstance(_light.getDoom3Radius().m_centerTransformed, std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
 	_lightTargetInstance(_light.targetTransformed(), std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
 	_lightRightInstance(_light.rightTransformed(), _light.targetTransformed(), std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
@@ -78,7 +78,10 @@ AABB LightNode::getSelectAABB() const
 	return returnValue;
 }
 
-void LightNode::lightChanged() {
+void LightNode::onLightRadiusChanged()
+{
+    // Light radius changed, mark bounds as dirty
+    boundsChanged();
 }
 
 const AABB& LightNode::localAABB() const {
