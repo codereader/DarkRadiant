@@ -12,6 +12,14 @@
 namespace ui
 {
 
+namespace
+{
+    inline std::string getGridStatusText()
+    {
+        return fmt::format("{0:g}", GlobalGrid().getGridSize());
+    }
+}
+
 const std::string& GridUserInterface::getName() const
 {
 	static std::string _name("GridUserInterface");
@@ -39,7 +47,7 @@ void GridUserInterface::initialiseModule(const IApplicationContext& ctx)
 	// Add the grid status bar element
 	GlobalUIManager().getStatusBarManager().addTextElement("GridStatus", "grid_up.png", 
 		IStatusBarManager::POS_GRID, _("Current Grid Size"));
-	GlobalUIManager().getStatusBarManager().setText("GridStatus", "-");
+	GlobalUIManager().getStatusBarManager().setText("GridStatus", getGridStatusText());
 
 	_gridChangedConn = GlobalGrid().signal_gridChanged().connect(
 		std::bind(&GridUserInterface::onGridChanged, this)
@@ -72,8 +80,7 @@ void GridUserInterface::onGridChanged()
 		GlobalEventManager().setToggled(item.second, GlobalGrid().getGridPower() == item.first);
 	}
 
-	GlobalUIManager().getStatusBarManager().setText("GridStatus", 
-		fmt::format("{0:g}", GlobalGrid().getGridSize()));
+	GlobalUIManager().getStatusBarManager().setText("GridStatus", getGridStatusText());
 
 	GlobalMainFrame().updateAllWindows();
 }
