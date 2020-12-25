@@ -1,0 +1,11 @@
+entityDef light
+{
+    "editor_light"				"1"
+	"editor_color"				"0 1 0"
+	"editor_mins"				"-8 -8 -8"
+	"editor_maxs"				"8 8 8"
+	"editor_rotatable"			"1"
+
+	"editor_displayFolder"		"Lights/Sources"
+	"spawnclass"				"idLight"
+}
