@@ -71,8 +71,10 @@ void BrushNode::snapComponents(float snap) {
 	}
 }
 
-void BrushNode::testSelect(Selector& selector, SelectionTest& test) {
-	test.BeginMesh(localToWorld());
+void BrushNode::testSelect(Selector& selector, SelectionTest& test)
+{
+    // BeginMesh(true): Attempt to treat brush faces twosided when in orthoview
+	test.BeginMesh(localToWorld(), true);
 
 	SelectionIntersection best;
 	for (FaceInstances::iterator i = m_faceInstances.begin(); i != m_faceInstances.end(); ++i)
