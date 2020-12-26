@@ -28,18 +28,16 @@ Radiant::Radiant(IApplicationContext& context) :
 	// Set the stream references for rMessage(), redirect std::cout, etc.
 	applog::LogStream::InitialiseStreams(getLogWriter());
 
+    // Initialise the GlobalErorrHandler() function object, which is used by ASSERT_MESSAGE
+    // This is usually a function owned by the UI module to show a popup
+    GlobalErrorHandler() = _context.getErrorHandlingFunction();
+
 	// Attach the logfile to the logwriter
 	createLogFile();
 
 	_moduleRegistry.reset(new module::ModuleRegistry(_context));
 
 	_languageManager.reset(new language::LanguageManager);
-#if 0
-#ifndef POSIX
-	// Initialise the language based on the settings in the user settings folder
-	language::LanguageManager().init(_context);
-#endif
-#endif
 }
 
 Radiant::~Radiant()
