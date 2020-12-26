@@ -102,6 +102,7 @@ private:
 	void onSelectionChanged(wxutil::FileSystemView::SelectionChangedEvent& ev);
     void onPrefabPathSelectionChanged();
 	void onRescanPrefabs(wxCommandEvent& ev);
+    void onFileViewTreePopulated();
 
 	void onMainFrameShuttingDown();
 

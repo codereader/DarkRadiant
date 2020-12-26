@@ -318,6 +318,7 @@ void PrefabSelector::setupTreeView(wxWindow* parent)
 {
     _treeView = wxutil::FileSystemView::Create(parent, wxBORDER_STATIC | wxDV_NO_HEADER);
     _treeView->Bind(wxutil::EV_FSVIEW_SELECTION_CHANGED, &PrefabSelector::onSelectionChanged, this);
+    _treeView->signal_TreePopulated().connect(sigc::mem_fun(this, &PrefabSelector::onFileViewTreePopulated));
 
     // Get the extensions from all possible patterns (e.g. *.pfb or *.pfbx)
     FileTypePatterns patterns = GlobalFiletypes().getPatternsForType(filetype::TYPE_PREFAB);
@@ -470,6 +471,11 @@ void PrefabSelector::updateUsageInfo()
 	}
 
 	_description->SetValue(usage);
+}
+
+void PrefabSelector::onFileViewTreePopulated()
+{
+    _treeView->ExpandTopLevelItems();
 }
 
 } // namespace ui
