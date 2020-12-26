@@ -109,6 +109,7 @@
     <ClInclude Include="..\..\include\icounter.h" />
     <ClInclude Include="..\..\include\icurve.h" />
     <ClInclude Include="..\..\include\idatastream.h" />
+    <ClInclude Include="..\..\include\idecltypes.h" />
     <ClInclude Include="..\..\include\idialogmanager.h" />
     <ClInclude Include="..\..\include\ieclass.h" />
     <ClInclude Include="..\..\include\ieclasscolours.h" />
@@ -116,6 +117,7 @@
     <ClInclude Include="..\..\include\ientity.h" />
     <ClInclude Include="..\..\include\ientityinspector.h" />
     <ClInclude Include="..\..\include\ieventmanager.h" />
+    <ClInclude Include="..\..\include\ifavourites.h" />
     <ClInclude Include="..\..\include\ifilechooser.h" />
     <ClInclude Include="..\..\include\ifilesystem.h" />
     <ClInclude Include="..\..\include\ifiletypes.h" />
