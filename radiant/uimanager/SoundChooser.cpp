@@ -173,7 +173,7 @@ SoundChooser::SoundChooser(wxWindow* parent) :
         std::bind(&SoundChooser::testShowShaderDefinition, this)
     );
 
-	FitToScreen(0.5f, 0.5f);
+	FitToScreen(0.5f, 0.7f);
 
     // Connect the finish callback to load the treestore
     Bind(wxutil::EV_TREEMODEL_POPULATION_FINISHED, &SoundChooser::_onTreeStorePopulationFinished, this);
@@ -322,6 +322,9 @@ void SoundChooser::setTreeViewModel()
         assert(_treeStore);
         setSelectedShader(_shaderToSelect);
     }
+
+    // Make sure the top-level items are expanded
+    _treeView->ExpandTopLevelItems();
 }
 
 void SoundChooser::_onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev)
