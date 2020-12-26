@@ -41,6 +41,9 @@ namespace fs = std::experimental::filesystem::v1;
 
 namespace fs = boost::filesystem;
 
+// add a time type alias to be compatible with std::filesystem
+namespace boost { namespace filesystem { typedef std::size_t file_time_type; } }
+
 #endif
 
 #include "string/predicate.h"

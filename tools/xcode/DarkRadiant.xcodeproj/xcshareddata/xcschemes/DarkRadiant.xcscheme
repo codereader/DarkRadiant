@@ -378,7 +378,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "3AEBDFF21E50CAEE0062D9AF"
+               BlueprintIdentifier = "3AC88721253C1D5100E6CCCE"
                BuildableName = "libpicomodel.a"
                BlueprintName = "picomodel"
                ReferencedContainer = "container:DarkRadiant.xcodeproj">
@@ -574,7 +574,7 @@
       </AdditionalOptions>
    </TestAction>
    <LaunchAction
-      buildConfiguration = "Debug"
+      buildConfiguration = "Release"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
@@ -583,11 +583,8 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <PathRunnable
-         runnableDebuggingMode = "0"
-         FilePath = "/Users/greebo/Library/Developer/Xcode/DerivedData/DarkRadiant-etcbgzsvthtrgcekiotxfvvchrpb/Build/Products/Debug/DarkRadiantMain">
-      </PathRunnable>
-      <MacroExpansion>
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3AEDE3991E4EEA1F005A8641"
@@ -595,7 +592,7 @@
             BlueprintName = "DarkRadiantMain"
             ReferencedContainer = "container:DarkRadiant.xcodeproj">
          </BuildableReference>
-      </MacroExpansion>
+      </BuildableProductRunnable>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>

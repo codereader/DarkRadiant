@@ -92,7 +92,9 @@ std::string ApplicationContextBase::getRuntimeDataPath() const
 
 std::string ApplicationContextBase::getHTMLPath() const
 {
-#if defined(POSIX)
+#if defined(__APPLE__)
+    return getRuntimeDataPath();
+#elif defined(POSIX)
 #if defined(ENABLE_RELOCATION)
     return _appPath + "../share/doc/darkradiant/";
 #elif defined(HTMLDIR)
@@ -101,7 +103,7 @@ std::string ApplicationContextBase::getHTMLPath() const
 #error "Either HTMLDIR or ENABLE_RELOCATION must be defined"
 #endif
 #else
-    // TODO: implement correct path for macOS and Windows
+    // TODO: implement correct path for Windows
     return getRuntimeDataPath();
 #endif
 }
