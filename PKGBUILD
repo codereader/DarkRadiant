@@ -8,7 +8,7 @@ url="https://www.darkradiant.net/"
 license=("GPL")
 depends=(wxgtk ftgl glew freealut libvorbis python libsigc++)
 makedepends=(cmake git)
-source=("$pkgname::git+https://github.com/codereader/DarkRadiant.git#branch=2.10.0")
+source=("$pkgname::git+https://github.com/codereader/DarkRadiant.git#tag=2.10.0")
 md5sums=("SKIP")
 
 build() {

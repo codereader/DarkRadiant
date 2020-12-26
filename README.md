@@ -24,7 +24,7 @@ When installing Studio please make sure to enable the "Desktop Development with 
 
 Since DarkRadiant uses a couple of open-source libraries that are not available on Windows by default, you will also need to download and install the dependencies. A 7-Zip package containing the necessary files is available at the URL below ([Get 7-zip here](http://www.7-zip.org/)):
 
-https://github.com/codereader/DarkRadiant/releases/download/2.9.0/windeps.7z  
+https://github.com/codereader/DarkRadiant/releases/download/2.10.0/windeps.7z  
 
 The dependencies packages need to be extracted into the main DarkRadiant
 source directory, i.e. alongside the `include/` and `radiant/` directories.
@@ -47,7 +47,7 @@ placed into the `install/` folder.
 To compile DarkRadiant, a number of libraries (with development headers) and a standards-compliant C++17 compiler are required. On an Ubuntu system, the requirements may include any or all of the following packages:
 
 * zlib1g-dev 
-* libjpeg62-dev 
+* libjpeg-dev 
 * libwxgtk3.0-dev 
 * libxml2-dev 
 * libsigc++-2.0-dev 
@@ -56,7 +56,6 @@ To compile DarkRadiant, a number of libraries (with development headers) and a s
 * libglew-dev 
 * libalut-dev 
 * libvorbis-dev
-* pybind11-dev
 * libgtest-dev
 
 This does not include core development tools such as g++ or the git client
