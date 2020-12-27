@@ -84,8 +84,6 @@ private:
     class Populator;
     std::unique_ptr<Populator> _populator;
 
-	std::unique_ptr<Favourites> _favourites;
-
 	// Context menu
 	wxutil::PopupMenuPtr _popupMenu;
 

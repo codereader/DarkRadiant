@@ -9,6 +9,7 @@
 #include "ishaders.h"
 #include "ishaderclipboard.h"
 #include "ieventmanager.h"
+#include "ifavourites.h"
 
 #include "wxutil/MultiMonitor.h"
 
@@ -136,7 +137,7 @@ struct ShaderNameFunctor
 	// TreeStore to populate
 	wxutil::TreeModel& _store;
 	const MediaBrowser::TreeColumns& _columns;
-	const MediaBrowser::Favourites& _favourites;
+	const std::set<std::string>& _favourites;
 	wxDataViewItem _root;
 
 	std::string _otherMaterialsPath;
@@ -149,7 +150,7 @@ struct ShaderNameFunctor
 	wxIcon _folderIcon;
 	wxIcon _textureIcon;
 
-	ShaderNameFunctor(wxutil::TreeModel& store, const MediaBrowser::TreeColumns& columns, const MediaBrowser::Favourites& favourites) :
+	ShaderNameFunctor(wxutil::TreeModel& store, const MediaBrowser::TreeColumns& columns, const std::set<std::string>& favourites) :
 		_store(store),
 		_columns(columns),
 		_favourites(favourites),
@@ -227,7 +228,7 @@ struct ShaderNameFunctor
 
 		std::string leafName = slashPos != std::string::npos ? name.substr(slashPos + 1) : name;
 
-		bool isFavourite = _favourites.find(name) != _favourites.end();
+		bool isFavourite = _favourites.count(name) > 0;
 
 		row[_columns.iconAndName] = wxVariant(wxDataViewIconText(leafName, _textureIcon)); 
 		row[_columns.leafName] = leafName;
@@ -254,7 +255,7 @@ private:
     const MediaBrowser::TreeColumns& _columns;
 
 	// The set of favourites
-	const MediaBrowser::Favourites& _favourites;
+	std::set<std::string> _favourites;
 
     // The tree store to populate. We must operate on our own tree store, since
     // updating the MediaBrowser's tree store from a different thread
@@ -354,12 +355,13 @@ protected:
 public:
 
     // Construct and initialise variables
-    Populator(const MediaBrowser::TreeColumns& cols, wxEvtHandler* finishedHandler, const MediaBrowser::Favourites& favourites) : 
+    Populator(const MediaBrowser::TreeColumns& cols, wxEvtHandler* finishedHandler) : 
 		wxThread(wxTHREAD_JOINABLE),
 		_finishedHandler(finishedHandler),
-		_columns(cols),
-		_favourites(favourites)
-    {}
+		_columns(cols)
+    {
+        _favourites = GlobalFavouritesManager().getFavourites(decl::Type::Material);
+    }
 
 	~Populator()
 	{
@@ -396,7 +398,6 @@ MediaBrowser::MediaBrowser() :
 	_treeView(nullptr),
 	_treeStore(nullptr),
 	_mode(TreeMode::ShowAll),
-	_favourites(new Favourites),
 	_preview(nullptr),
 	_isPopulated(false),
 	_blockShaderClipboardUpdates(false)
@@ -680,11 +681,8 @@ void MediaBrowser::populate()
 
 		row.SendItemAdded();
 
-		// Load list from registry
-		_favourites->loadFromRegistry();
-
 		// Start the background thread
-		_populator.reset(new Populator(_columns, this, *_favourites));
+		_populator.reset(new Populator(_columns, this));
 		_populator->populate();
 	}
 }
@@ -894,11 +892,11 @@ void MediaBrowser::setFavouriteRecursively(wxutil::TreeModel::Row& row, bool isF
 	// Keep track of this choice
 	if (isFavourite)
 	{
-		_favourites->insert(row[_columns.fullName]);
+        GlobalFavouritesManager().addFavourite(decl::Type::Material, row[_columns.fullName]);
 	}
 	else
 	{
-		_favourites->erase(row[_columns.fullName]);
+        GlobalFavouritesManager().removeFavourite(decl::Type::Material, row[_columns.fullName]);
 	}
 
 	row.SendItemChanged();
@@ -928,8 +926,7 @@ void MediaBrowser::_onSetFavourite(bool isFavourite)
 	setFavouriteRecursively(row, isFavourite);
 
 	// Store to registry on each change
-	_favourites->saveToRegistry();
-
+	// TODO: ? _favourites->saveToRegistry();
 }
 
 void MediaBrowser::_onContextMenu(wxDataViewEvent& ev)
