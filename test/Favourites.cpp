@@ -10,6 +10,9 @@ class FavouritesTest :
     public RadiantTest
 {
 protected:
+    // A function that is invoked after modules have been shut down
+    std::function<void()> checkAfterShutdown;
+
     void copyUserXmlFileToSettingsPath(const std::string& userXmlFile)
     {
         fs::path sourcePath = _context.getTestResourcePath();
@@ -21,6 +24,16 @@ protected:
 
         fs::remove(targetPath);
         fs::copy(sourcePath, targetPath);
+    }
+
+    void TearDown() override
+    {
+        RadiantTest::TearDown();
+
+        if (checkAfterShutdown)
+        {
+            checkAfterShutdown();
+        }
     }
 };
 
@@ -102,6 +115,40 @@ TEST_F(FavouritesTest, AddingEmptyPaths)
 
     // Empty strings always evaluate to false
     EXPECT_FALSE(GlobalFavouritesManager().isFavourite(decl::Type::Material, ""));
+}
+
+TEST_F(FavouritesTest, FavouritesArePersisted)
+{
+    EXPECT_TRUE(GlobalFavouritesManager().getFavourites(decl::Type::Material).empty());
+
+    // Add caulk and clip
+    GlobalFavouritesManager().addFavourite(decl::Type::Material, "textures/common/caulk");
+    GlobalFavouritesManager().addFavourite(decl::Type::Material, "textures/common/clip");
+
+    EXPECT_EQ(GlobalFavouritesManager().getFavourites(decl::Type::Material).size(), 2);
+    EXPECT_EQ(GlobalFavouritesManager().getFavourites(decl::Type::Material).count("textures/common/caulk"), 1);
+    EXPECT_EQ(GlobalFavouritesManager().getFavourites(decl::Type::Material).count("textures/common/clip"), 1);
+
+    checkAfterShutdown = [&]()
+    {
+        fs::path userXml = _context.getSettingsPath();
+        userXml /= "user.xml";
+
+        xml::Document doc(userXml.string());
+
+        auto savedNodes = doc.findXPath("/user/ui/favourites/materials//favourite");
+
+        EXPECT_EQ(savedNodes.size(), 2);
+
+        std::set<std::string> savedFavourites;
+        for (const auto& node : savedNodes)
+        {
+            savedFavourites.emplace(node.getAttributeValue("value"));
+        }
+
+        EXPECT_EQ(savedFavourites.count("textures/common/caulk"), 1);
+        EXPECT_EQ(savedFavourites.count("textures/common/clip"), 1);
+    };
 }
 
 TEST_F(FavouritesTestWithLegacyFavourites, LegacyFavouritesAreImported)
