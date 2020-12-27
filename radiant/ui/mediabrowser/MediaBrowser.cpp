@@ -12,6 +12,7 @@
 #include "ifavourites.h"
 
 #include "wxutil/MultiMonitor.h"
+#include "wxutil/TreeViewItemStyle.h"
 
 #include <wx/thread.h>
 
@@ -104,23 +105,6 @@ public:
 
 namespace 
 {
-
-// Get the item format for favourites / non-favourites
-inline wxDataViewItemAttr getItemFormat(bool isFavourite)
-{
-	if (isFavourite)
-	{
-		wxDataViewItemAttr blueBold;
-		blueBold.SetColour(wxColor(0, 0, 255));
-		blueBold.SetBold(true);
-
-		return blueBold;
-	}
-	else
-	{
-		return wxDataViewItemAttr();
-	}
-}
 
 /* Callback functor for processing shader names */
 struct ShaderNameCompareFunctor
@@ -238,7 +222,7 @@ struct ShaderNameFunctor
 		row[_columns.isFavourite] = isFavourite;
 
 		// Formatting
-		row[_columns.iconAndName] = getItemFormat(isFavourite);
+		row[_columns.iconAndName] = wxutil::TreeViewItemStyle::Declaration(isFavourite);
 	}
 };
 
@@ -887,7 +871,7 @@ void MediaBrowser::setFavouriteRecursively(wxutil::TreeModel::Row& row, bool isF
 
 	// Not a folder, set the desired status on this item
 	row[_columns.isFavourite] = isFavourite;
-	row[_columns.iconAndName] = getItemFormat(isFavourite);
+	row[_columns.iconAndName] = wxutil::TreeViewItemStyle::Declaration(isFavourite);
 
 	// Keep track of this choice
 	if (isFavourite)

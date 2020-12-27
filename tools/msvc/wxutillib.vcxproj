@@ -184,6 +184,7 @@
     <ClInclude Include="..\..\libs\wxutil\TreeModel.h" />
     <ClInclude Include="..\..\libs\wxutil\TreeModelFilter.h" />
     <ClInclude Include="..\..\libs\wxutil\TreeView.h" />
+    <ClInclude Include="..\..\libs\wxutil\TreeViewItemStyle.h" />
     <ClInclude Include="..\..\libs\wxutil\VFSTreePopulator.h" />
     <ClInclude Include="..\..\libs\wxutil\WindowPosition.h" />
     <ClInclude Include="..\..\libs\wxutil\window\TransientWindow.h" />

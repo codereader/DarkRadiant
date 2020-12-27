@@ -9,10 +9,11 @@
 #include "gamelib.h"
 
 #include <wx/thread.h>
-
 #include <wx/button.h>
 #include <wx/panel.h>
 #include <wx/splitter.h>
+
+#include "TreeViewItemStyle.h"
 
 #include "string/string.h"
 #include "eclass.h"
@@ -32,23 +33,6 @@ namespace
 
     // Registry XPath to lookup key that specifies the display folder
     const char* const FOLDER_KEY_PATH = "/entityChooser/displayFolderKey";
-
-    // Get the item format for favourites / non-favourites
-    inline wxDataViewItemAttr getItemFormat(bool isFavourite)
-    {
-        if (isFavourite)
-        {
-            wxDataViewItemAttr blueBold;
-            blueBold.SetColour(wxColor(0, 0, 255));
-            blueBold.SetBold(true);
-
-            return blueBold;
-        }
-        else
-        {
-            return wxDataViewItemAttr();
-        }
-    }
 }
 
 /*
@@ -56,14 +40,14 @@ namespace
  * taking account of display folders and mod names.
  */
 class EntityClassTreePopulator:
-    public wxutil::VFSTreePopulator,
+    public VFSTreePopulator,
     public EntityClassVisitor
 {
     // TreeStore to populate
-    wxutil::TreeModel::Ptr _store;
+    TreeModel::Ptr _store;
 
     // Column definition
-    const wxutil::EntityClassChooser::TreeColumns& _columns;
+    const EntityClassChooser::TreeColumns& _columns;
 
     // Key that specifies the display folder
     std::string _folderKey;
@@ -76,9 +60,9 @@ class EntityClassTreePopulator:
 public:
 
     // Constructor
-    EntityClassTreePopulator(wxutil::TreeModel::Ptr store,
+    EntityClassTreePopulator(TreeModel::Ptr store,
                              const EntityClassChooser::TreeColumns& columns)
-    : wxutil::VFSTreePopulator(store),
+    : VFSTreePopulator(store),
       _store(store),
       _columns(columns),
       _folderKey(game::current::getValue<std::string>(FOLDER_KEY_PATH))
@@ -104,7 +88,7 @@ public:
         // of the DISPLAY_FOLDER_KEY.
         addPath(
             eclass->getModName() + folderPath + "/" + eclass->getName(),
-            [&](wxutil::TreeModel::Row& row, const std::string& path, 
+            [&](TreeModel::Row& row, const std::string& path, 
                 const std::string& leafName, bool isFolder)
             {
                 bool isFavourite = !isFolder && _favourites.count(leafName) > 0;
@@ -116,7 +100,7 @@ public:
                 );
                 row[_columns.isFolder] = isFolder;
                 row[_columns.isFavourite] = isFavourite;
-                row[_columns.name] = getItemFormat(isFavourite); // assign attributes
+                row[_columns.name] = TreeViewItemStyle::Declaration(isFavourite); // assign attributes
                 row.SendItemAdded();
             }
         );
@@ -133,7 +117,7 @@ class EntityClassChooser::ThreadedEntityClassLoader :
     // The tree store to populate. We must operate on our own tree store, since
     // updating the EntityClassChooser's tree store from a different thread
     // wouldn't be safe
-    wxutil::TreeModel::Ptr _treeStore;
+    TreeModel::Ptr _treeStore;
 
     // The class to be notified on finish
     wxEvtHandler* _finishedHandler;
@@ -162,7 +146,7 @@ public:
         ScopedDebugTimer timer("ThreadedEntityClassLoader::run()");
 
         // Create new treestoree
-        _treeStore = new wxutil::TreeModel(_columns);
+        _treeStore = new TreeModel(_columns);
 
         // Populate it with the list of entity classes by using a visitor class.
         EntityClassTreePopulator visitor(_treeStore, _columns);
@@ -175,7 +159,7 @@ public:
 
         if (!TestDestroy())
         {
-            wxQueueEvent(_finishedHandler, new wxutil::TreeModel::PopulationFinishedEvent(_treeStore));
+            wxQueueEvent(_finishedHandler, new TreeModel::PopulationFinishedEvent(_treeStore));
         }
 
         return static_cast<ExitCode>(0);
@@ -184,13 +168,13 @@ public:
 
 // Main constructor
 EntityClassChooser::EntityClassChooser()
-: wxutil::DialogBase(_(ECLASS_CHOOSER_TITLE)),
+: DialogBase(_(ECLASS_CHOOSER_TITLE)),
   _treeStore(nullptr),
   _treeView(nullptr),
   _selectedName("")
 {
     // Connect the finish callback to load the treestore
-    Bind(wxutil::EV_TREEMODEL_POPULATION_FINISHED, &EntityClassChooser::onTreeStorePopulationFinished, this);
+    Bind(EV_TREEMODEL_POPULATION_FINISHED, &EntityClassChooser::onTreeStorePopulationFinished, this);
 
     loadNamedPanel(this, "EntityClassChooserMainPanel");
 
@@ -206,7 +190,7 @@ EntityClassChooser::EntityClassChooser()
     // Add model preview to right-hand-side of main container
     wxPanel* rightPanel = findNamedObject<wxPanel>(this, "EntityClassChooserRightPane");
 
-    _modelPreview.reset(new wxutil::ModelPreview(rightPanel));
+    _modelPreview.reset(new ModelPreview(rightPanel));
 
     rightPanel->GetSizer()->Add(_modelPreview->getWidget(), 1, wxEXPAND);
 
@@ -371,14 +355,14 @@ void EntityClassChooser::setTreeViewModel()
 void EntityClassChooser::setupTreeView()
 {
     // Use the TreeModel's full string search function
-    _treeStore = new wxutil::TreeModel(_columns);
-    wxutil::TreeModel::Row row = _treeStore->AddItem();
+    _treeStore = new TreeModel(_columns);
+    TreeModel::Row row = _treeStore->AddItem();
 
     row[_columns.name] = wxVariant(wxDataViewIconText(_("Loading...")));
 
     wxPanel* parent = findNamedObject<wxPanel>(this, "EntityClassChooserLeftPane");
 
-    _treeView = wxutil::TreeView::CreateWithModel(parent, _treeStore.get());
+    _treeView = TreeView::CreateWithModel(parent, _treeStore.get());
     _treeView->AddSearchColumn(_columns.name);
 
     _treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &EntityClassChooser::onSelectionChanged, this);
@@ -408,7 +392,7 @@ void EntityClassChooser::updateSelection()
 
     if (item.IsOk())
     {
-        wxutil::TreeModel::Row row(item, *_treeStore);
+        TreeModel::Row row(item, *_treeStore);
 
         if (!row[_columns.isFolder].getBool())
         {
@@ -464,7 +448,7 @@ void EntityClassChooser::onSelectionChanged(wxDataViewEvent& ev)
     updateSelection();
 }
 
-void EntityClassChooser::onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev)
+void EntityClassChooser::onTreeStorePopulationFinished(TreeModel::PopulationFinishedEvent& ev)
 {
     _treeView->UnselectAll();
 

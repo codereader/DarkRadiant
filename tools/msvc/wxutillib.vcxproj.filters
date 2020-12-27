@@ -114,6 +114,7 @@
     <ClInclude Include="..\..\libs\wxutil\fsview\Populator.h">
       <Filter>fsview</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\TreeViewItemStyle.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\wxutil\dialog\MessageBox.cpp">

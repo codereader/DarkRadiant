@@ -24,31 +24,31 @@ typedef std::shared_ptr<EntityClassChooser> EntityClassChooserPtr;
  * of a class to create at the current location.
  */
 class EntityClassChooser :
-    public wxutil::DialogBase,
-    private wxutil::XmlResourceBasedWidget
+    public DialogBase,
+    private XmlResourceBasedWidget
 {
 public:
     // Treemodel definition
     struct TreeColumns :
-        public wxutil::TreeModel::ColumnRecord
+        public TreeModel::ColumnRecord
     {
         TreeColumns() :
-            name(add(wxutil::TreeModel::Column::IconText)),
-            isFolder(add(wxutil::TreeModel::Column::Boolean)),
-            isFavourite(add(wxutil::TreeModel::Column::Boolean))
+            name(add(TreeModel::Column::IconText)),
+            isFolder(add(TreeModel::Column::Boolean)),
+            isFavourite(add(TreeModel::Column::Boolean))
         {}
 
-        wxutil::TreeModel::Column name;
-        wxutil::TreeModel::Column isFolder;
-        wxutil::TreeModel::Column isFavourite;
+        TreeModel::Column name;
+        TreeModel::Column isFolder;
+        TreeModel::Column isFavourite;
     };
 
 private:
     TreeColumns _columns;
 
     // Tree model holding the classnames
-    wxutil::TreeModel::Ptr _treeStore;
-    wxutil::TreeView* _treeView;
+    TreeModel::Ptr _treeStore;
+    TreeView* _treeView;
 
     // Delegated object for loading entity classes in a separate thread
     class ThreadedEntityClassLoader;
@@ -61,9 +61,9 @@ private:
     std::string _classToHighlight;
 
     // Model preview widget
-    wxutil::ModelPreviewPtr _modelPreview;
+    ModelPreviewPtr _modelPreview;
 
-    wxutil::PanedPosition _panedPosition;
+    PanedPosition _panedPosition;
 
     sigc::connection _defsReloaded;
 
@@ -88,7 +88,7 @@ private:
     void onOK(wxCommandEvent& ev);
     void onSelectionChanged(wxDataViewEvent& ev);
     void onDeleteEvent(wxCloseEvent& ev);
-    void onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev);
+    void onTreeStorePopulationFinished(TreeModel::PopulationFinishedEvent& ev);
     
     void onMainFrameShuttingDown();
     
