@@ -719,6 +719,7 @@
     <ClInclude Include="..\..\radiantcore\clipper\Clipper.h" />
     <ClInclude Include="..\..\radiantcore\clipper\ClipPoint.h" />
     <ClInclude Include="..\..\radiantcore\clipper\SplitAlgorithm.h" />
+    <ClInclude Include="..\..\radiantcore\decl\FavouriteSet.h" />
     <ClInclude Include="..\..\radiantcore\decl\FavouritesManager.h" />
     <ClInclude Include="..\..\radiantcore\eclass\Doom3EntityClass.h" />
     <ClInclude Include="..\..\radiantcore\eclass\Doom3ModelDef.h" />

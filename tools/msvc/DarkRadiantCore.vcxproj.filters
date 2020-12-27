@@ -2070,5 +2070,8 @@
     <ClInclude Include="..\..\radiantcore\decl\FavouritesManager.h">
       <Filter>src\decl</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiantcore\decl\FavouriteSet.h">
+      <Filter>src\decl</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

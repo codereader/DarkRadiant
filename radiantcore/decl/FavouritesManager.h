@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ifavourites.h"
+#include "FavouriteSet.h"
 
 namespace decl
 {
@@ -9,7 +10,7 @@ class FavouritesManager :
     public IFavouritesManager
 {
 private:
-    std::map<Type, std::set<std::string>> _favouritesByType;
+    std::map<Type, FavouriteSet> _favouritesByType;
 
 public:
     void addFavourite(decl::Type type, const std::string& path) override;
