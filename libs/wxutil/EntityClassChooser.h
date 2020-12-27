@@ -34,11 +34,13 @@ public:
     {
         TreeColumns() :
             name(add(wxutil::TreeModel::Column::IconText)),
-            isFolder(add(wxutil::TreeModel::Column::Boolean))
+            isFolder(add(wxutil::TreeModel::Column::Boolean)),
+            isFavourite(add(wxutil::TreeModel::Column::Boolean))
         {}
 
         wxutil::TreeModel::Column name;
         wxutil::TreeModel::Column isFolder;
+        wxutil::TreeModel::Column isFavourite;
     };
 
 private:

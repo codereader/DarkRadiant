@@ -11,6 +11,7 @@ namespace
     const char* const RKEY_MEDIABROWSER_LEGACY_ROOT = "user/ui/mediaBrowser/favourites";
     const char* const RKEY_FAVOURITES_ROOT = "user/ui/favourites";
     const char* const RKEY_SUBPATH_MATERIALS = "/materials";
+    const char* const RKEY_SUBPATH_ENTITYDEFS = "/entityDefs";
 }
 
 void FavouritesManager::addFavourite(decl::Type type, const std::string& path)
@@ -86,6 +87,7 @@ void FavouritesManager::initialiseModule(const IApplicationContext&)
     // Load from the regular paths
     std::string root = RKEY_FAVOURITES_ROOT;
     _favouritesByType[Type::Material].loadFromRegistry(root + RKEY_SUBPATH_MATERIALS);
+    _favouritesByType[Type::EntityDef].loadFromRegistry(root + RKEY_SUBPATH_ENTITYDEFS);
 }
 
 void FavouritesManager::shutdownModule()
@@ -95,6 +97,7 @@ void FavouritesManager::shutdownModule()
 
     // Save favourites to registry
     _favouritesByType[Type::Material].saveToRegistry(root + RKEY_SUBPATH_MATERIALS);
+    _favouritesByType[Type::EntityDef].saveToRegistry(root + RKEY_SUBPATH_ENTITYDEFS);
 }
 
 module::StaticModule<FavouritesManager> favouritesManagerModule;

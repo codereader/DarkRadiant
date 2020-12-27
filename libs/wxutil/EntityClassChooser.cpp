@@ -3,6 +3,7 @@
 #include "VFSTreePopulator.h"
 
 #include "i18n.h"
+#include "ifavourites.h"
 #include "imainframe.h"
 #include "iuimanager.h"
 #include "gamelib.h"
@@ -31,10 +32,27 @@ namespace
 
     // Registry XPath to lookup key that specifies the display folder
     const char* const FOLDER_KEY_PATH = "/entityChooser/displayFolderKey";
+
+    // Get the item format for favourites / non-favourites
+    inline wxDataViewItemAttr getItemFormat(bool isFavourite)
+    {
+        if (isFavourite)
+        {
+            wxDataViewItemAttr blueBold;
+            blueBold.SetColour(wxColor(0, 0, 255));
+            blueBold.SetBold(true);
+
+            return blueBold;
+        }
+        else
+        {
+            return wxDataViewItemAttr();
+        }
+    }
 }
 
 /*
- * EntityClassVisitor which populates a Gtk::TreeStore with entity classnames
+ * EntityClassVisitor which populates a treeStore with entity classnames
  * taking account of display folders and mod names.
  */
 class EntityClassTreePopulator:
@@ -53,6 +71,8 @@ class EntityClassTreePopulator:
     wxIcon _folderIcon;
     wxIcon _entityIcon;
 
+    std::set<std::string> _favourites;
+
 public:
 
     // Constructor
@@ -65,6 +85,9 @@ public:
     {
         _folderIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + FOLDER_ICON));
         _entityIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + ENTITY_ICON));
+
+        // Get the list of favourite eclasses
+        _favourites = GlobalFavouritesManager().getFavourites(decl::Type::EntityDef);
     }
 
     // EntityClassVisitor implementation
@@ -81,15 +104,19 @@ public:
         // of the DISPLAY_FOLDER_KEY.
         addPath(
             eclass->getModName() + folderPath + "/" + eclass->getName(),
-            [this](wxutil::TreeModel::Row& row, const std::string& path, 
+            [&](wxutil::TreeModel::Row& row, const std::string& path, 
                 const std::string& leafName, bool isFolder)
             {
+                bool isFavourite = !isFolder && _favourites.count(leafName) > 0;
+
                 // Get the display name by stripping off everything before the
                 // last slash
                 row[_columns.name] = wxVariant(
                     wxDataViewIconText(leafName, !isFolder ? _entityIcon : _folderIcon)
                 );
                 row[_columns.isFolder] = isFolder;
+                row[_columns.isFavourite] = isFavourite;
+                row[_columns.name] = getItemFormat(isFavourite); // assign attributes
                 row.SendItemAdded();
             }
         );

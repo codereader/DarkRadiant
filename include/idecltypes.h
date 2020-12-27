@@ -7,6 +7,7 @@ namespace decl
 enum class Type
 {
     Material,
+    EntityDef,
 };
 
 }
