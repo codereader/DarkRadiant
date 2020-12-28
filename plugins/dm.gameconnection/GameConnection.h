@@ -38,9 +38,10 @@ public:
     //flush all async commands (e.g. camera update) and wait until everything finishes
     void finish();
 
-    //make sure camera observer is present iff enable == true, and attach/detach it to global camera
-    void setCameraSyncEnabled(bool enable);
-    //copy camera position from the game to DR view
+    /// Enable dynamic sync of camera to game position
+    bool setCameraSyncEnabled(bool enable);
+
+    /// Trigger one-off sync of game position back to Radiant camera
     void backSyncCamera();
 
     //pause game if it is live, unpause if it is paused

@@ -231,9 +231,9 @@ const StringSet& GameConnection::getDependencies() const
 void GameConnection::initialiseModule(const IApplicationContext& ctx)
 {
     // Construct toggles
-    GlobalEventManager().addToggle(
+    GlobalEventManager().addAdvancedToggle(
         "GameConnectionToggleCameraSync",
-        [this](bool v) { setCameraSyncEnabled(v); }
+        [this](bool v) { return setCameraSyncEnabled(v); }
     );
     GlobalEventManager().addToggle(
         "GameConnectionToggleAutoMapReload",
@@ -382,13 +382,14 @@ bool GameConnection::sendPendingCameraUpdate() {
     return false;
 }
 
-void GameConnection::setCameraSyncEnabled(bool enable) {
+bool GameConnection::setCameraSyncEnabled(bool enable)
+{
     if (!enable) {
         _cameraChangedSignal.disconnect();
     }
     if (enable) {
         if (!connect())
-            return;
+            return false;
         _cameraChangedSignal.disconnect();
         _cameraChangedSignal = GlobalCameraManager().signal_cameraChanged().connect(
             sigc::mem_fun(this, &GameConnection::updateCamera)
@@ -400,6 +401,7 @@ void GameConnection::setCameraSyncEnabled(bool enable) {
         updateCamera();
         finish();
     }
+    return true;
 }
 
 void GameConnection::backSyncCamera() {

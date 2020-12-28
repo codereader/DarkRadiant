@@ -33,7 +33,7 @@ private:
     }
 
     // Dummy callback for the Toggle base class, we don't need any callbacks...
-    static void doNothing(bool) {}
+    static bool doNothing(bool) { return true; }
 
 public:
 

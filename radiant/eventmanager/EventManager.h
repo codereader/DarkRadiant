@@ -64,7 +64,7 @@ public:
 	IEventPtr addKeyEvent(const std::string& name, const KeyStateChangeCallback& keyStateChangeCallback) override;
 	IEventPtr addWidgetToggle(const std::string& name) override;
 	IEventPtr addRegistryToggle(const std::string& name, const std::string& registryKey) override;
-	IEventPtr addToggle(const std::string& name, const ToggleCallback& onToggled) override;
+	IEventPtr addAdvancedToggle(const std::string& name, const AdvancedToggleCallback& onToggled) override;
 
 	void setToggled(const std::string& name, const bool toggled) override;
 
