@@ -213,11 +213,12 @@ const StringSet& GameConnection::getDependencies() const
 
 void GameConnection::initialiseModule(const IApplicationContext& ctx)
 {
+    GlobalEventManager().addToggle(
+        "GameConnectionToggleCameraSync",
+        [this](bool v) { setCameraSyncEnabled(v); }
+    );
+
     // Add commands
-    GlobalCommandSystem().addCommand("GameConnectionCameraSyncEnable",
-        [this](const cmd::ArgumentList&) { setCameraSyncEnabled(true); });
-    GlobalCommandSystem().addCommand("GameConnectionCameraSyncDisable",
-        [this](const cmd::ArgumentList&) { setCameraSyncEnabled(false); });
     GlobalCommandSystem().addCommand("GameConnectionBackSyncCamera",
         [this](const cmd::ArgumentList&) { backSyncCamera(); });
     GlobalCommandSystem().addCommand("GameConnectionReloadMap",
@@ -242,12 +243,13 @@ void GameConnection::initialiseModule(const IApplicationContext& ctx)
     // Add menu items
     IMenuManager& mm = GlobalUIManager().getMenuManager();
     mm.insert("main/help", "connection", ui::menuFolder, _("Connection"), "", "");
+
     mm.add("main/connection", "cameraSyncEnable", ui::menuItem,
-           _("Enable camera synchronization"), "", "GameConnectionCameraSyncEnable");
-    mm.add("main/connection", "cameraSyncDisable", ui::menuItem,
-           _("Disable camera synchronization"), "", "GameConnectionCameraSyncDisable");
+           _("Game position follows DarkRadiant camera"), "", "GameConnectionToggleCameraSync");
     mm.add("main/connection", "backSyncCamera", ui::menuItem,
-           _("Sync camera back now"), "", "GameConnectionBackSyncCamera");
+           _("Move camera to current game position"), "", "GameConnectionBackSyncCamera");
+    mm.add("main/connection", "postCameraSep", ui::menuSeparator);
+
     mm.add("main/connection", "reloadMap", ui::menuItem,
            _("Reload map from .map file"), "", "GameConnectionReloadMap");
     mm.add("main/connection", "reloadMapAutoEnable", ui::menuItem,

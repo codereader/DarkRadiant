@@ -67,21 +67,21 @@ public:
 	 */
 	virtual void setVisibility(const std::string& path, bool visible) = 0;
 
-	/** greebo: Adds a new item as child under the given path.
-	 *
-	 * @insertPath: the path where to insert the item: "main/filters"
-	 * @name: the name of the new item
-	 * @type: the item type (usually menuFolder / menuItem)
-	 * @caption: the display string of the menu item (incl. mnemonic)
-	 * @icon: the icon filename (can be empty)
-	 * @eventname: the event name (e.g. "ToggleShowSizeInfo")
-	 */
-	virtual void add(const std::string& insertPath,
-						   const std::string& name,
-						   ui::eMenuItemType type,
-						   const std::string& caption,
-						   const std::string& icon,
-						   const std::string& eventName) = 0;
+    /** greebo: Adds a new item as child under the given path.
+     *
+     * @insertPath: the path where to insert the item: "main/filters"
+     * @name: the name of the new item
+     * @type: the item type (usually menuFolder / menuItem)
+     * @caption: the display string of the menu item (incl. mnemonic)
+     * @icon: the icon filename (can be empty)
+     * @eventname: the event name (e.g. "ToggleShowSizeInfo")
+     */
+    virtual void add(const std::string& insertPath,
+                     const std::string& name,
+                     ui::eMenuItemType type,
+                     const std::string& caption = "",
+                     const std::string& icon = "",
+                     const std::string& eventName = "") = 0;
 
 	/** greebo: Inserts a new menuItem as sibling _before_ the given insertPath.
 	 *
