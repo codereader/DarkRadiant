@@ -19,6 +19,7 @@ Dialog::Dialog(const std::string& title, wxWindow* parent) :
 	_highestUsedHandle(0),
     _focusWidget(0)
 {
+	_elementsTable->AddGrowableCol(1);
 	_dialog->SetSizer(new wxBoxSizer(wxVERTICAL));
 
 	_dialog->GetSizer()->Add(_elementsTable, 1, wxEXPAND | wxALL, 12);
