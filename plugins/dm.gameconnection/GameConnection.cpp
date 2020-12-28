@@ -11,6 +11,7 @@
 #include "iselection.h"
 #include "iuimanager.h"
 #include "ieventmanager.h"
+#include "idialogmanager.h"
 
 #include "scene/Traverse.h"
 
@@ -131,6 +132,18 @@ bool GameConnection::isAlive() const {
     return _connection && _connection->isAlive();
 }
 
+namespace
+{
+    void showError(const std::string& text)
+    {
+        auto dlg = GlobalDialogManager().createMessageBox(
+            _("Game connection error"), text, ui::IDialog::MESSAGE_ERROR
+        );
+        if (dlg)
+            dlg->run();
+    }
+}
+
 bool GameConnection::connect() {
     if (isAlive())
         return true;    //already connected
@@ -141,20 +154,24 @@ bool GameConnection::connect() {
         assert(!_connection);
     }
 
-    //connection using clsocket
+    // Make connection using clsocket
+    // TODO: make port configurable, as it is in TDM?
     std::unique_ptr<CActiveSocket> connection(new CActiveSocket());
-    if (!connection->Initialize())
+    if (!connection->Initialize()
+        || !connection->SetNonblocking()
+        || !connection->Open(DEFAULT_HOST, DEFAULT_PORT))
+    {
+        showError(_("Failed to connect to game process"));
         return false;
-    if (!connection->SetNonblocking())
-        return false;
-    //TODO: make port configurable, as it is in TDM?
-    if (!connection->Open(DEFAULT_HOST, DEFAULT_PORT))
-        return false;
+    }
 
     _connection.reset(new MessageTcp());
     _connection->init(std::move(connection));
     if (!_connection->isAlive())
+    {
+        showError(_("Failed to connect to game process"));
         return false;
+    }
 
     _thinkTimer.reset(new wxTimer());
     _thinkTimer->Bind(wxEVT_TIMER, &GameConnection::onTimerEvent, this);
