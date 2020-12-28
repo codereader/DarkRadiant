@@ -213,9 +213,14 @@ const StringSet& GameConnection::getDependencies() const
 
 void GameConnection::initialiseModule(const IApplicationContext& ctx)
 {
+    // Construct toggles
     GlobalEventManager().addToggle(
         "GameConnectionToggleCameraSync",
         [this](bool v) { setCameraSyncEnabled(v); }
+    );
+    GlobalEventManager().addToggle(
+        "GameConnectionToggleAutoMapReload",
+        [this](bool v) { setAutoReloadMapEnabled(v); }
     );
 
     // Add commands
@@ -223,10 +228,6 @@ void GameConnection::initialiseModule(const IApplicationContext& ctx)
         [this](const cmd::ArgumentList&) { backSyncCamera(); });
     GlobalCommandSystem().addCommand("GameConnectionReloadMap",
         [this](const cmd::ArgumentList&) { reloadMap(); });
-    GlobalCommandSystem().addCommand("GameConnectionReloadMapAutoEnable",
-        [this](const cmd::ArgumentList&) { setAutoReloadMapEnabled(true); });
-    GlobalCommandSystem().addCommand("GameConnectionReloadMapAutoDisable",
-        [this](const cmd::ArgumentList&) { setAutoReloadMapEnabled(false); });
     GlobalCommandSystem().addCommand("GameConnectionUpdateMapOff",
         [this](const cmd::ArgumentList&) { setUpdateMapLevel(false, false); });
     GlobalCommandSystem().addCommand("GameConnectionUpdateMapOn",
@@ -250,12 +251,12 @@ void GameConnection::initialiseModule(const IApplicationContext& ctx)
            _("Move camera to current game position"), "", "GameConnectionBackSyncCamera");
     mm.add("main/connection", "postCameraSep", ui::menuSeparator);
 
-    mm.add("main/connection", "reloadMap", ui::menuItem,
-           _("Reload map from .map file"), "", "GameConnectionReloadMap");
     mm.add("main/connection", "reloadMapAutoEnable", ui::menuItem,
-           _("Enable automation .map reload on save"), "", "GameConnectionReloadMapAutoEnable");
-    mm.add("main/connection", "reloadMapAutoDisable", ui::menuItem,
-           _("Disable automation .map reload on save"), "", "GameConnectionReloadMapAutoDisable");
+           _("Game reloads .map file on save"), "", "GameConnectionToggleAutoMapReload");
+    mm.add("main/connection", "reloadMap", ui::menuItem,
+           _("Tell game to reload .map file now"), "", "GameConnectionReloadMap");
+    mm.add("main/connection", "postMapFileSep", ui::menuSeparator);
+
     mm.add("main/connection", "updateMapOff", ui::menuItem,
            _("Disable map update mode"), "", "GameConnectionUpdateMapOff");
     mm.add("main/connection", "updateMapOn", ui::menuItem,
@@ -264,6 +265,8 @@ void GameConnection::initialiseModule(const IApplicationContext& ctx)
            _("Always update map immediately after change"), "", "GameConnectionUpdateMapAlways");
     mm.add("main/connection", "updateMap", ui::menuItem,
            _("Update map right now"), "", "GameConnectionUpdateMap");
+    mm.add("main/connection", "postHotReloadSep", ui::menuSeparator);
+
     mm.add("main/connection", "pauseGame", ui::menuItem,
            _("Pause game"), "", "GameConnectionPauseGame");
     mm.add("main/connection", "respawnSelected", ui::menuItem,
