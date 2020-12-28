@@ -18,7 +18,7 @@ class PythonModule final
 private:
 	// Python module and global dictionary
 	py::module _module;
-	py::dict _globals;
+	std::unique_ptr<py::dict> _globals;
 
     // List of registered interfaces
 	NamedInterfaces _namedInterfaces;

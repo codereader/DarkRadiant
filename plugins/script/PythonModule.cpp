@@ -33,8 +33,7 @@ PythonModule::~PythonModule()
     _module.dec_ref();
     _module.release();
 
-    _globals.dec_ref();
-    _globals.release();
+    _globals.reset();
 
     py::finalize_interpreter();
 }
@@ -128,7 +127,12 @@ ExecutionResultPtr PythonModule::executeString(const std::string& scriptString)
 
 py::dict& PythonModule::getGlobals()
 {
-    return _globals;
+    if (!_globals)
+    {
+        _globals.reset(new py::dict);
+    }
+
+    return *_globals;
 }
 
 #if PY_MAJOR_VERSION >= 3
