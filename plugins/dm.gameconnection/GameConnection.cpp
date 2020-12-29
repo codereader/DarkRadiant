@@ -184,8 +184,9 @@ bool GameConnection::connect() {
     return true;
 }
 
-void GameConnection::disconnect(bool force) {
-    setAutoReloadMapEnabled(false);
+void GameConnection::disconnect(bool force)
+{
+    _autoReloadMap = false;
     setUpdateMapLevel(false, false);
     setCameraSyncEnabled(false);
     if (force) {
@@ -235,9 +236,9 @@ void GameConnection::initialiseModule(const IApplicationContext& ctx)
         "GameConnectionToggleCameraSync",
         [this](bool v) { return setCameraSyncEnabled(v); }
     );
-    GlobalEventManager().addToggle(
+    GlobalEventManager().addAdvancedToggle(
         "GameConnectionToggleAutoMapReload",
-        [this](bool v) { setAutoReloadMapEnabled(v); }
+        [this](bool v) { return setAutoReloadMapEnabled(v); }
     );
     GlobalEventManager().addToggle(
         "GameConnectionToggleHotReload",
@@ -470,8 +471,13 @@ void GameConnection::onMapEvent(IMap::MapEvent ev) {
     }
 }
 
-void GameConnection::setAutoReloadMapEnabled(bool enable) {
+bool GameConnection::setAutoReloadMapEnabled(bool enable)
+{
+    if (!connect())
+        return false;
+
     _autoReloadMap = enable;
+    return true;
 }
 
 void GameConnection::setUpdateMapLevel(bool on, bool always) {

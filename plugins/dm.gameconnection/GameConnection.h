@@ -38,7 +38,13 @@ public:
     //flush all async commands (e.g. camera update) and wait until everything finishes
     void finish();
 
-    /// Enable dynamic sync of camera to game position
+    /**
+     * \brief
+     * Enable dynamic sync of camera to game position
+     *
+     * \return
+     * true on success, false if connection failed.
+     */
     bool setCameraSyncEnabled(bool enable);
 
     /// Trigger one-off sync of game position back to Radiant camera
@@ -51,8 +57,16 @@ public:
 
     //ask TDM to reload .map file from disk
     void reloadMap();
-    //when enabled, forces TDM to reload .map from disk automatically after every map save
-    void setAutoReloadMapEnabled(bool enable);
+
+    /**
+     * \brief
+     * Instruct TDM to reload .map from disk automatically after every map save
+     *
+     * \return
+     * true on success, false if the game connection failed.
+     */
+    bool setAutoReloadMapEnabled(bool enable);
+
     //implementation of "update map" level toggling
     void setUpdateMapLevel(bool on, bool always);
     //send map update to TDM right now
