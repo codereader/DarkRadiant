@@ -67,8 +67,15 @@ public:
      */
     bool setAutoReloadMapEnabled(bool enable);
 
-    //implementation of "update map" level toggling
-    void setUpdateMapLevel(bool on, bool always);
+    /**
+     * \brief
+     * Enable hot reload of map entity changes.
+     *
+     * \return
+     * true on success, false if the game connection failed.
+     */
+    bool setMapHotReload(bool on);
+
     //send map update to TDM right now
     void doUpdateMap();
 
@@ -113,7 +120,9 @@ private:
     //set to true when "update map" is set to "always"
     bool _updateMapAlways = false;
 
-    
+    // Enable or disable the map observer
+    void activateMapObserver(bool on);
+
     //every request should get unique seqno, otherwise we won't be able to distinguish their responses
     std::size_t generateNewSequenceNumber();
     //prepend seqno to specified request and send it to game

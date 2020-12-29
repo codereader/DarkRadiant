@@ -187,7 +187,8 @@ bool GameConnection::connect() {
 void GameConnection::disconnect(bool force)
 {
     _autoReloadMap = false;
-    setUpdateMapLevel(false, false);
+    activateMapObserver(false);
+    _updateMapAlways = false;
     setCameraSyncEnabled(false);
     if (force) {
         //drop everything pending 
@@ -240,13 +241,9 @@ void GameConnection::initialiseModule(const IApplicationContext& ctx)
         "GameConnectionToggleAutoMapReload",
         [this](bool v) { return setAutoReloadMapEnabled(v); }
     );
-    GlobalEventManager().addToggle(
+    GlobalEventManager().addAdvancedToggle(
         "GameConnectionToggleHotReload",
-        [this](bool v) { setUpdateMapLevel(v, false); }
-    );
-    GlobalEventManager().addToggle(
-        "GameConnectionToggleHotReloadAlways",
-        [this](bool v) { setUpdateMapLevel(true, v); }
+        [this](bool v) { return setMapHotReload(v); }
     );
 
     // Add commands
@@ -277,12 +274,10 @@ void GameConnection::initialiseModule(const IApplicationContext& ctx)
            _("Tell game to reload .map file now"), "", "GameConnectionReloadMap");
     mm.add("main/connection", "postMapFileSep", ui::menuSeparator);
 
-    mm.add("main/connection", "updateMapOff", ui::menuItem,
-           _("Enable hot reload of unsaved map changes"), "", "GameConnectionToggleHotReload");
-    mm.add("main/connection", "updateMapAlways", ui::menuItem,
-           _("Hot reload after every change"), "", "GameConnectionToggleHotReloadAlways");
+    mm.add("main/connection", "mapHotReload", ui::menuItem,
+           _("Update entities on every change"), "", "GameConnectionToggleHotReload");
     mm.add("main/connection", "updateMap", ui::menuItem,
-           _("Update map right now"), "", "GameConnectionUpdateMap");
+           _("Update entities now"), "", "GameConnectionUpdateMap");
     mm.add("main/connection", "postHotReloadSep", ui::menuSeparator);
 
     mm.add("main/connection", "pauseGame", ui::menuItem,
@@ -473,21 +468,31 @@ void GameConnection::onMapEvent(IMap::MapEvent ev) {
 
 bool GameConnection::setAutoReloadMapEnabled(bool enable)
 {
-    if (!connect())
+    if (enable && !connect())
         return false;
 
     _autoReloadMap = enable;
     return true;
 }
 
-void GameConnection::setUpdateMapLevel(bool on, bool always) {
+void GameConnection::activateMapObserver(bool on)
+{
     if (on && !_mapObserver.isEnabled()) {
         //save map to file, and reload from file, to ensure DR and TDM are in sync
         GlobalCommandSystem().executeCommand("SaveMap");
         reloadMap();
     }
     _mapObserver.setEnabled(on);
-    _updateMapAlways = always;
+}
+
+bool GameConnection::setMapHotReload(bool on)
+{
+    if (on && !connect())
+        return false;
+
+    activateMapObserver(on);
+    _updateMapAlways = on;
+    return true;
 }
 
 /**
@@ -532,9 +537,14 @@ std::string saveMapDiff(const DiffEntityStatuses& entityStatuses)
     return outStream.str();
 }
 
-void GameConnection::doUpdateMap() {
+void GameConnection::doUpdateMap()
+{
     if (!connect())
         return;
+
+    activateMapObserver(true);
+
+    // Get map diff
     std::string diff = saveMapDiff(_mapObserver.getChanges());
     if (diff.empty()) {
         return; //TODO: fail
