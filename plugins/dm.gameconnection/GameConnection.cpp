@@ -239,18 +239,20 @@ void GameConnection::initialiseModule(const IApplicationContext& ctx)
         "GameConnectionToggleAutoMapReload",
         [this](bool v) { setAutoReloadMapEnabled(v); }
     );
+    GlobalEventManager().addToggle(
+        "GameConnectionToggleHotReload",
+        [this](bool v) { setUpdateMapLevel(v, false); }
+    );
+    GlobalEventManager().addToggle(
+        "GameConnectionToggleHotReloadAlways",
+        [this](bool v) { setUpdateMapLevel(true, v); }
+    );
 
     // Add commands
     GlobalCommandSystem().addCommand("GameConnectionBackSyncCamera",
         [this](const cmd::ArgumentList&) { backSyncCamera(); });
     GlobalCommandSystem().addCommand("GameConnectionReloadMap",
         [this](const cmd::ArgumentList&) { reloadMap(); });
-    GlobalCommandSystem().addCommand("GameConnectionUpdateMapOff",
-        [this](const cmd::ArgumentList&) { setUpdateMapLevel(false, false); });
-    GlobalCommandSystem().addCommand("GameConnectionUpdateMapOn",
-        [this](const cmd::ArgumentList&) { setUpdateMapLevel(true, false); });
-    GlobalCommandSystem().addCommand("GameConnectionUpdateMapAlways",
-        [this](const cmd::ArgumentList&) { setUpdateMapLevel(true, true); });
     GlobalCommandSystem().addCommand("GameConnectionUpdateMap",
         [this](const cmd::ArgumentList&) { doUpdateMap(); });
     GlobalCommandSystem().addCommand("GameConnectionPauseGame",
@@ -275,11 +277,9 @@ void GameConnection::initialiseModule(const IApplicationContext& ctx)
     mm.add("main/connection", "postMapFileSep", ui::menuSeparator);
 
     mm.add("main/connection", "updateMapOff", ui::menuItem,
-           _("Disable map update mode"), "", "GameConnectionUpdateMapOff");
-    mm.add("main/connection", "updateMapOn", ui::menuItem,
-           _("Enable map update mode"), "", "GameConnectionUpdateMapOn");
+           _("Enable hot reload of unsaved map changes"), "", "GameConnectionToggleHotReload");
     mm.add("main/connection", "updateMapAlways", ui::menuItem,
-           _("Always update map immediately after change"), "", "GameConnectionUpdateMapAlways");
+           _("Hot reload after every change"), "", "GameConnectionToggleHotReloadAlways");
     mm.add("main/connection", "updateMap", ui::menuItem,
            _("Update map right now"), "", "GameConnectionUpdateMap");
     mm.add("main/connection", "postHotReloadSep", ui::menuSeparator);
