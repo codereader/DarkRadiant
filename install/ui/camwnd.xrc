@@ -49,18 +49,6 @@
 								<bitmap stock_id="darkradiant:lightingMode.png" stock_client="wxART_TOOLBAR">undefined.png</bitmap>
 								<radio>1</radio>
 							</object>
-						</object>
-					</object>
-					<object class="sizeritem">
-						<option>0</option>
-						<flag>wxBOTTOM|wxEXPAND|wxRIGHT|wxTOP</flag>
-						<border>3</border>
-						<object class="wxToolBar" name="MiscToolbar">
-							<style>wxTB_HORIZONTAL|wxTB_NODIVIDER</style>
-							<bitmapsize></bitmapsize>
-							<margins></margins>
-							<packing>1</packing>
-							<separation>5</separation>
 							<object class="separator" />
 							<object class="tool" name="startTimeButton">
 								<label>startTimeButton</label>

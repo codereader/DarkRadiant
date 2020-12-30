@@ -73,6 +73,9 @@ class CamWnd :
     // The GL widget
     wxutil::GLWidget* _wxGLWidget;
 
+    // Camera toolbar
+    wxToolBar* _camToolbar = nullptr;
+
     std::size_t _mapValidHandle;
 
     // Timer for animation
