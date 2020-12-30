@@ -21,6 +21,7 @@ add_library(wxutil
             preview/ModelPreview.cpp
             preview/ParticlePreview.cpp
             preview/RenderPreview.cpp
+            ResourceTreeView.cpp
             SerialisableWidgets.cpp
             SourceView.cpp
             Splitter.cpp

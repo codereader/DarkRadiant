@@ -115,6 +115,7 @@
       <Filter>fsview</Filter>
     </ClInclude>
     <ClInclude Include="..\..\libs\wxutil\TreeViewItemStyle.h" />
+    <ClInclude Include="..\..\libs\wxutil\ResourceTreeView.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\wxutil\dialog\MessageBox.cpp">
@@ -172,6 +173,7 @@
     <ClCompile Include="..\..\libs\wxutil\fsview\Populator.cpp">
       <Filter>fsview</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\libs\wxutil\ResourceTreeView.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\libs\wxutil\Makefile.am" />

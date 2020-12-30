@@ -176,6 +176,7 @@
     <ClInclude Include="..\..\libs\wxutil\preview\ModelPreview.h" />
     <ClInclude Include="..\..\libs\wxutil\preview\ParticlePreview.h" />
     <ClInclude Include="..\..\libs\wxutil\preview\RenderPreview.h" />
+    <ClInclude Include="..\..\libs\wxutil\ResourceTreeView.h" />
     <ClInclude Include="..\..\libs\wxutil\ScopeTimer.h" />
     <ClInclude Include="..\..\libs\wxutil\ScrollWindow.h" />
     <ClInclude Include="..\..\libs\wxutil\SerialisableWidgets.h" />
@@ -213,6 +214,7 @@
     <ClCompile Include="..\..\libs\wxutil\preview\ModelPreview.cpp" />
     <ClCompile Include="..\..\libs\wxutil\preview\ParticlePreview.cpp" />
     <ClCompile Include="..\..\libs\wxutil\preview\RenderPreview.cpp" />
+    <ClCompile Include="..\..\libs\wxutil\ResourceTreeView.cpp" />
     <ClCompile Include="..\..\libs\wxutil\SerialisableWidgets.cpp" />
     <ClCompile Include="..\..\libs\wxutil\SourceView.cpp" />
     <ClCompile Include="..\..\libs\wxutil\Splitter.cpp" />

@@ -5,10 +5,12 @@
 
 #include "wxutil/preview/ModelPreview.h"
 #include "wxutil/dialog/DialogBase.h"
+#include "wxutil/TreeModelFilter.h"
 #include "wxutil/TreeModel.h"
 #include "wxutil/TreeView.h"
 #include "wxutil/XmlResourceBasedWidget.h"
 #include "wxutil/PanedPosition.h"
+#include "wxutil/menu/PopupMenu.h"
 
 #include <memory>
 #include <sigc++/connection.h>
@@ -48,6 +50,7 @@ private:
 
     // Tree model holding the classnames
     TreeModel::Ptr _treeStore;
+    wxutil::TreeModelFilter::Ptr _treeModelFilter;
     TreeView* _treeView;
 
     // Delegated object for loading entity classes in a separate thread
@@ -66,6 +69,18 @@ private:
     PanedPosition _panedPosition;
 
     sigc::connection _defsReloaded;
+
+    PopupMenuPtr _popupMenu;
+
+    
+    wxDataViewItem _emptyFavouritesLabel;
+
+    enum class TreeMode
+    {
+        ShowAll,
+        ShowFavourites,
+    };
+    TreeMode _mode;
 
 private:
     // Constructor. Creates the GTK widgets.
@@ -90,6 +105,11 @@ private:
     void onDeleteEvent(wxCloseEvent& ev);
     void onTreeStorePopulationFinished(TreeModel::PopulationFinishedEvent& ev);
     
+    bool _testAddToFavourites();
+    bool _testRemoveFromFavourites();
+    void _onSetFavourite(bool isFavourite);
+    void setFavouriteRecursively(wxutil::TreeModel::Row& row, bool isFavourite);
+
     void onMainFrameShuttingDown();
     
     // This is where the static shared_ptr of the singleton instance is held.

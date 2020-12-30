@@ -1,6 +1,7 @@
 #include "EntityClassChooser.h"
 #include "TreeModel.h"
 #include "VFSTreePopulator.h"
+#include "wxutil/menu/IconTextMenuItem.h"
 
 #include "i18n.h"
 #include "ifavourites.h"
@@ -33,6 +34,9 @@ namespace
 
     // Registry XPath to lookup key that specifies the display folder
     const char* const FOLDER_KEY_PATH = "/entityChooser/displayFolderKey";
+
+    const char* const ADD_TO_FAVOURITES = N_("Add to Favourites");
+    const char* const REMOVE_FROM_FAVOURITES = N_("Remove from Favourites");
 }
 
 /*
@@ -225,6 +229,19 @@ EntityClassChooser::EntityClassChooser()
     // window's height to allow shrinking
     _modelPreview->getWidget()->SetMinClientSize(
         wxSize(GetSize().GetWidth() * 0.4f, GetSize().GetHeight() * 0.2f));
+
+    _popupMenu.reset(new wxutil::PopupMenu);
+
+    _popupMenu->addItem(
+        new StockIconTextMenuItem(_(ADD_TO_FAVOURITES), wxART_ADD_BOOKMARK),
+        std::bind(&EntityClassChooser::_onSetFavourite, this, true),
+        std::bind(&EntityClassChooser::_testAddToFavourites, this)
+    );
+    _popupMenu->addItem(
+        new StockIconTextMenuItem(_(REMOVE_FROM_FAVOURITES), wxART_DEL_BOOKMARK),
+        std::bind(&EntityClassChooser::_onSetFavourite, this, false),
+        std::bind(&EntityClassChooser::_testRemoveFromFavourites, this)
+    );
 }
 
 // Display the singleton instance
@@ -456,5 +473,83 @@ void EntityClassChooser::onTreeStorePopulationFinished(TreeModel::PopulationFini
     setTreeViewModel();
 }
 
+void EntityClassChooser::setFavouriteRecursively(wxutil::TreeModel::Row& row, bool isFavourite)
+{
+    if (row[_columns.isFolder].getBool())
+    {
+        // Enter recursion for this folder
+        wxDataViewItemArray children;
+        _treeModelFilter->GetChildren(row.getItem(), children);
+
+        for (const wxDataViewItem& child : children)
+        {
+            wxutil::TreeModel::Row childRow(child, *_treeModelFilter);
+            setFavouriteRecursively(childRow, isFavourite);
+        }
+
+        return;
+    }
+
+    // Not a folder, set the desired status on this item
+    row[_columns.isFavourite] = isFavourite;
+    row[_columns.name] = wxutil::TreeViewItemStyle::Declaration(isFavourite);
+
+    // Keep track of this choice
+    if (isFavourite)
+    {
+        GlobalFavouritesManager().addFavourite(decl::Type::EntityDef, row[_columns.name]);
+    }
+    else
+    {
+        GlobalFavouritesManager().removeFavourite(decl::Type::EntityDef, row[_columns.name]);
+    }
+
+    row.SendItemChanged();
+#if 0
+    if (_mode != TreeMode::ShowAll)
+    {
+        if (!_treeModelFilter->ItemIsVisible(row))
+        {
+            row.SendItemDeleted();
+        }
+        else
+        {
+            row.SendItemAdded();
+        }
+    }
+#endif
+}
+
+void EntityClassChooser::_onSetFavourite(bool isFavourite)
+{
+    wxDataViewItem item = _treeView->GetSelection();
+
+    if (!item.IsOk()) return;
+
+    // Grab this item and enter recursion, propagating the favourite status
+    wxutil::TreeModel::Row row(item, *_treeView->GetModel());
+
+    setFavouriteRecursively(row, isFavourite);
+}
+
+bool EntityClassChooser::_testAddToFavourites()
+{
+#if 0 // TODO
+    // Adding favourites is allowed for any folder and non-favourite items 
+    return _treeView->isDirectorySelected() || (!getSelection().empty() && !isFavouriteSelected());
+#else 
+    return false;
+#endif
+}
+
+bool EntityClassChooser::_testRemoveFromFavourites()
+{
+#if 0
+    // We can run remove from favourites on any folder or on favourites themselves
+    return isDirectorySelected() || isFavouriteSelected();
+#else
+    return false;
+#endif
+}
 
 } // namespace ui

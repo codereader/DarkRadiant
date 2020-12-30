@@ -670,6 +670,9 @@
     <ClCompile Include="..\..\radiant\ui\mapselector\MapSelector.cpp">
       <Filter>src\ui\mapselector</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\mediabrowser\MediaBrowserTreeView.cpp">
+      <Filter>src\ui\mediabrowser</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h">
@@ -1289,6 +1292,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\FileOverwriteConfirmationHandler.h">
       <Filter>src\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\mediabrowser\MediaBrowserTreeView.h">
+      <Filter>src\ui\mediabrowser</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
