@@ -66,13 +66,6 @@ void GlobalCameraWndManager::registerCommands()
 	GlobalCommandSystem().addCommand("CameraAngleDown", std::bind(&GlobalCameraWndManager::pitchDownDiscrete, this, std::placeholders::_1));
 
 	// Bind the events to the commands
-	GlobalEventManager().addToggle(
-        "ToggleCubicClip",
-        std::bind(&CameraSettings::toggleFarClip, getCameraSettings(), std::placeholders::_1)
-    );
-	// Set the default status of the cubic clip
-	GlobalEventManager().setToggled("ToggleCubicClip", getCameraSettings()->farClipEnabled());
-
 	GlobalEventManager().addWidgetToggle("ToggleCamera");
 	GlobalEventManager().setToggled("ToggleCamera", true);
 

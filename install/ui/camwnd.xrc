@@ -63,6 +63,13 @@
 								<bitmap stock_id="darkradiant:media-playback-stop.png" stock_client="wxART_TOOLBAR">undefined.png</bitmap>
 							</object>
 							<object class="separator" />
+							<object class="tool" name="clipPlaneToggleButton">
+								<label>clipPlaneToggleButton</label>
+								<tooltip>Enable or disable far clip plane</tooltip>
+								<longhelp></longhelp>
+								<bitmap>../bitmaps/view_cubicclipping.png</bitmap>
+								<toggle>1</toggle>
+							</object>
 							<object class="tool" name="clipPlaneInButton">
 								<label>clipPlaneInButton</label>
 								<tooltip>Clip plane in</tooltip>

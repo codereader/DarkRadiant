@@ -73,8 +73,11 @@ class CamWnd :
     // The GL widget
     wxutil::GLWidget* _wxGLWidget;
 
-    // Camera toolbar
+    // Camera toolbar and associated button IDs
     wxToolBar* _camToolbar = nullptr;
+    int _farClipInID = wxID_NONE;
+    int _farClipOutID = wxID_NONE;
+    int _farClipToggleID = wxID_NONE;
 
     std::size_t _mapValidHandle;
 

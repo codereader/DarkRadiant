@@ -195,6 +195,17 @@
                                 <object class="toolSeparator" expanded="0">
                                     <property name="permission">protected</property>
                                 </object>
+                                <object class="tool" expanded="1">
+                                    <property name="bitmap">Load From File; ../bitmaps/view_cubicclipping.png</property>
+                                    <property name="context_menu">0</property>
+                                    <property name="id">wxID_ANY</property>
+                                    <property name="kind">wxITEM_CHECK</property>
+                                    <property name="label">clipPlaneToggleButton</property>
+                                    <property name="name">clipPlaneToggleButton</property>
+                                    <property name="permission">protected</property>
+                                    <property name="statusbar"></property>
+                                    <property name="tooltip">Enable or disable far clip plane</property>
+                                </object>
                                 <object class="tool" expanded="0">
                                     <property name="bitmap">Load From Art Provider; darkradiant:farClipIn.png; wxART_TOOLBAR</property>
                                     <property name="context_menu">0</property>

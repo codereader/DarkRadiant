@@ -44,10 +44,6 @@ namespace
 {
     const std::size_t MSEC_PER_FRAME = 16;
 
-    const char* const FAR_CLIP_IN_TEXT = N_("Move far clip plane closer");
-    const char* const FAR_CLIP_OUT_TEXT = N_("Move far clip plane further away");
-    const char* const FAR_CLIP_DISABLED_TEXT = N_(" (currently disabled in preferences)");
-
     const unsigned int MOVE_NONE = 0;
     const unsigned int MOVE_FORWARD = 1 << 0;
     const unsigned int MOVE_BACK = 1 << 1;
@@ -162,13 +158,18 @@ void CamWnd::constructToolbar()
     _mainWxWidget->GetParent()->Bind(wxEVT_COMMAND_TOOL_CLICKED, &CamWnd::onRenderModeButtonsChanged, this, lightingBtn->GetId());
 
     // Far clip buttons.
-    const wxToolBarToolBase* clipPlaneInButton = getToolBarToolByLabel(_camToolbar, "clipPlaneInButton");
-    const wxToolBarToolBase* clipPlaneOutButton = getToolBarToolByLabel(_camToolbar, "clipPlaneOutButton");
-
-    _mainWxWidget->GetParent()->Bind(wxEVT_COMMAND_TOOL_CLICKED, &CamWnd::onFarClipPlaneInClick, this, clipPlaneInButton->GetId());
-    _mainWxWidget->GetParent()->Bind(wxEVT_COMMAND_TOOL_CLICKED, &CamWnd::onFarClipPlaneOutClick, this, clipPlaneOutButton->GetId());
-
+    _farClipInID = getToolID(_camToolbar, "clipPlaneInButton");
+    _farClipOutID = getToolID(_camToolbar, "clipPlaneOutButton");
+    _farClipToggleID = getToolID(_camToolbar, "clipPlaneToggleButton");
     setFarClipButtonSensitivity();
+
+    _camToolbar->Bind(wxEVT_TOOL, &CamWnd::onFarClipPlaneInClick, this, _farClipInID);
+    _camToolbar->Bind(wxEVT_TOOL, &CamWnd::onFarClipPlaneOutClick, this, _farClipOutID);
+    _camToolbar->Bind(
+        wxEVT_TOOL,
+        [](wxCommandEvent&) { getCameraSettings()->toggleFarClip(true); },
+        _farClipToggleID
+    );
 
     GlobalRegistry().signalForKey(RKEY_ENABLE_FARCLIP).connect(
         sigc::mem_fun(*this, &CamWnd::setFarClipButtonSensitivity)
@@ -211,20 +212,13 @@ void CamWnd::onGLExtensionsInitialised()
 
 void CamWnd::setFarClipButtonSensitivity()
 {
-    // Only enabled if cubic clipping is enabled.
+    // Get far clip toggle setting from registry
     bool enabled = registry::getValue<bool>(RKEY_ENABLE_FARCLIP, true);
 
-    wxToolBarToolBase* clipPlaneInButton =
-        const_cast<wxToolBarToolBase*>(getToolBarToolByLabel(_camToolbar, "clipPlaneInButton"));
-    wxToolBarToolBase* clipPlaneOutButton =
-        const_cast<wxToolBarToolBase*>(getToolBarToolByLabel(_camToolbar, "clipPlaneOutButton"));
-
-    _camToolbar->EnableTool(clipPlaneInButton->GetId(), enabled);
-    _camToolbar->EnableTool(clipPlaneOutButton->GetId(), enabled);
-
-    // Update tooltips so users know why they are disabled
-    clipPlaneInButton->SetShortHelp(fmt::format("{0}{1}", _(FAR_CLIP_IN_TEXT), (enabled ? "" : _(FAR_CLIP_DISABLED_TEXT))));
-    clipPlaneOutButton->SetShortHelp(fmt::format("{0}{1}", _(FAR_CLIP_OUT_TEXT), (enabled ? "" : _(FAR_CLIP_DISABLED_TEXT))));
+    // Set toggle button state and sensitivity of in/out buttons
+    _camToolbar->ToggleTool(_farClipToggleID, enabled);
+    _camToolbar->EnableTool(_farClipInID, enabled);
+    _camToolbar->EnableTool(_farClipOutID, enabled);
 }
 
 void CamWnd::constructGUIComponents()

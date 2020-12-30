@@ -42,6 +42,16 @@ protected:
 		return NULL;
 	}
 
+    /// Look up a toolbar tool by label and return its ID
+    static int getToolID(wxToolBarBase* toolbar, const std::string& label)
+    {
+        auto tool = getToolBarToolByLabel(toolbar, label);
+        if (tool)
+            return tool->GetId();
+        else
+            return wxID_NONE;
+    }
+
 	// Find a named panel among the parent's children
 	wxPanel* findNamedPanel(wxWindow* parent, const std::string& name)
 	{

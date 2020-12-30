@@ -131,8 +131,6 @@ void CameraSettings::keyChanged()
 	_farClipEnabled = registry::getValue<bool>(RKEY_ENABLE_FARCLIP);
 	_solidSelectionBoxes = registry::getValue<bool>(RKEY_SOLID_SELECTION_BOXES);
 
-	GlobalEventManager().setToggled("ToggleCubicClip", _farClipEnabled);
-
 	// Determine the draw mode represented by the integer registry value
 	importDrawMode(registry::getValue<int>(RKEY_DRAWMODE));
 
