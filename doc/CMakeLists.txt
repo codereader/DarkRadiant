@@ -4,3 +4,6 @@ add_custom_command(OUTPUT manual.html
 add_custom_target(doc ALL DEPENDS manual.html)
 install(FILES manual.html
         DESTINATION ${CMAKE_INSTALL_DOCDIR})
+install(DIRECTORY img
+        DESTINATION ${CMAKE_INSTALL_DOCDIR}
+        FILES_MATCHING PATTERN "*.png")
