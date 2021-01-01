@@ -118,9 +118,17 @@ if (${GTEST_FOUND} AND ${GTEST_MAIN_FOUND})
     add_subdirectory(test)
 endif()
 
+# Documentation
+find_program(ASCIIDOCTOR asciidoctor)
+if (ASCIIDOCTOR)
+    add_subdirectory(doc)
+else()
+    message(WARNING "asciidoctor not found; documentation will not be generated")
+endif()
+
 # Install main targets
 install(TARGETS darkradiant math xmlutil scenegraph wxutil
-	RUNTIME DESTINATION bin
+        RUNTIME DESTINATION bin
         LIBRARY DESTINATION ${PKGLIBDIR})
 install(TARGETS radiantcore script sound
         LIBRARY DESTINATION ${PKGLIBDIR}/modules)
