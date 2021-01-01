@@ -78,11 +78,11 @@ void MediaBrowser::construct()
 
 	_showAll->Bind(wxEVT_RADIOBUTTON, [&](wxCommandEvent& ev)
 	{
-		handleTreeModeChanged();
+        setTreeModeFromControls();
 	});
 	_showFavourites->Bind(wxEVT_RADIOBUTTON, [&](wxCommandEvent& ev)
 	{
-		handleTreeModeChanged();
+        setTreeModeFromControls();
 	});
 
 	// Add the info pane
@@ -149,7 +149,7 @@ void MediaBrowser::onMaterialDefsUnloaded()
     _treeView->clear();
 }
 
-void MediaBrowser::handleTreeModeChanged()
+void MediaBrowser::setTreeModeFromControls()
 {
     _treeView->setTreeMode(_showAll->GetValue() ? 
         MediaBrowserTreeView::TreeMode::ShowAll : 

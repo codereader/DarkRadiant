@@ -310,23 +310,15 @@ public:
 
 MediaBrowserTreeView::MediaBrowserTreeView(wxWindow* parent) :
     ResourceTreeView(parent, _columns, wxDV_NO_HEADER),
-    _isPopulated(false),
-    _mode(TreeMode::ShowAll)
+    _isPopulated(false)
 {
-    _treeStore = new wxutil::TreeModel(_columns);
-    // The wxWidgets algorithm sucks at sorting large flat lists of strings,
-    // so we do that ourselves
-    _treeStore->SetHasDefaultCompare(false);
-
-    wxDataViewColumn* textCol = AppendIconTextColumn(
-        _("Shader"), _columns.iconAndName.getColumnIndex(), wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE);
-
-    AddSearchColumn(_columns.iconAndName);
+    auto* textCol = AppendIconTextColumn(_("Shader"), _columns.iconAndName.getColumnIndex(),
+        wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE);
 
     SetExpanderColumn(textCol);
     textCol->SetWidth(300);
 
-    AssociateModel(_treeStore.get());
+    AddSearchColumn(_columns.iconAndName);
 
     Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &MediaBrowserTreeView::_onTreeViewItemActivated, this);
     Bind(wxutil::EV_TREEMODEL_POPULATION_FINISHED, &MediaBrowserTreeView::_onTreeStorePopulationFinished, this);
@@ -338,22 +330,11 @@ const MediaBrowserTreeView::TreeColumns& MediaBrowserTreeView::getColumns() cons
     return _columns;
 }
 
-MediaBrowserTreeView::TreeMode MediaBrowserTreeView::getTreeMode() const
-{
-    return _mode;
-}
-
 void MediaBrowserTreeView::setTreeMode(MediaBrowserTreeView::TreeMode mode)
 {
-    _mode = mode;
-    handleTreeModeChanged();
-}
-
-void MediaBrowserTreeView::handleTreeModeChanged()
-{
     std::string previouslySelectedItem = getSelection();
-
-    setupTreeViewAndFilter();
+    
+    ResourceTreeView::setTreeMode(mode);
 
     // Try to select the same item we had as before
     setSelection(previouslySelectedItem);
@@ -363,14 +344,13 @@ void MediaBrowserTreeView::populate()
 {
     if (_isPopulated) return;
 
+    // Clear our treestore and put a single item in it
+    clear();
+
     // Set the flag to true to avoid double-entering this function
     _isPopulated = true;
 
-    // Clear our treestore and put a single item in it
-    _treeStore->Clear();
-    _emptyFavouritesLabel = wxDataViewItem();
-
-    wxutil::TreeModel::Row row = _treeStore->AddItem();
+    wxutil::TreeModel::Row row = getTreeModel()->AddItem();
 
     wxIcon icon;
     icon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + TEXTURE_ICON));
@@ -389,68 +369,14 @@ void MediaBrowserTreeView::clear()
 {
     // Stop any populator thread that might be running
     _populator.reset();
-
-    // Clear the media browser on MaterialManager unrealisation
-    _treeStore->Clear();
-    _emptyFavouritesLabel = wxDataViewItem();
-
     _isPopulated = false;
+
+    ResourceTreeView::clear();
 }
 
 void MediaBrowserTreeView::_onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev)
 {
-    _emptyFavouritesLabel = wxDataViewItem();
-
-    _treeStore = ev.GetTreeModel();
-
-    // Set up the filter model
-    setupTreeViewAndFilter();
-}
-
-void MediaBrowserTreeView::setupTreeViewAndFilter()
-{
-    if (!_treeStore) return;
-
-    // Set up the filter model
-    _treeModelFilter.reset(new wxutil::TreeModelFilter(_treeStore));
-
-    _treeModelFilter->SetVisibleFunc([this](wxutil::TreeModel::Row& row)
-    {
-        return treeModelFilterFunc(row);
-    });
-
-    AssociateModel(_treeModelFilter.get());
-
-    // Remove the dummy label in any case
-    if (_emptyFavouritesLabel.IsOk())
-    {
-        _treeStore->RemoveItem(_emptyFavouritesLabel);
-        _emptyFavouritesLabel = wxDataViewItem();
-    }
-
-    if (_mode == TreeMode::ShowFavourites)
-    {
-        wxDataViewItemArray visibleChildren;
-        if (_treeModelFilter->GetChildren(_treeModelFilter->GetRoot(), visibleChildren) == 0)
-        {
-            // All items filtered out, show the dummy label
-            if (!_emptyFavouritesLabel.IsOk())
-            {
-                wxutil::TreeModel::Row row = _treeStore->AddItem();
-                _emptyFavouritesLabel = row.getItem();
-
-                wxIcon icon;
-                icon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + TEXTURE_ICON));
-                row[_columns.iconAndName] = wxVariant(wxDataViewIconText(_("No favourites added so far"), icon));
-                row[_columns.isFavourite] = true;
-                row[_columns.isFolder] = false;
-
-                row.SendItemAdded();
-            }
-        }
-
-        ExpandTopLevelItems();
-    }
+    setTreeModel(ev.GetTreeModel());
 }
 
 void MediaBrowserTreeView::setSelection(const std::string& fullName)
@@ -463,26 +389,7 @@ void MediaBrowserTreeView::setSelection(const std::string& fullName)
     // Make sure the treestore is finished loading
     _populator->waitUntilFinished();
 
-    // If the selection string is empty, collapse the treeview and return with
-    // no selection
-    if (fullName.empty())
-    {
-        Collapse(_treeStore->GetRoot());
-        return;
-    }
-
-    // Find the requested element
-    wxDataViewItem item = _treeStore->FindString(fullName, _columns.fullName);
-
-    if (item.IsOk())
-    {
-        Select(item);
-        EnsureVisible(item);
-
-        // Send a selection change event
-        wxDataViewEvent ev(wxEVT_DATAVIEW_SELECTION_CHANGED, this, item);
-        ProcessWindowEvent(ev);
-    }
+    ResourceTreeView::setSelection(fullName);
 }
 
 void MediaBrowserTreeView::_onExpose(wxPaintEvent& ev)
@@ -494,23 +401,6 @@ void MediaBrowserTreeView::_onExpose(wxPaintEvent& ev)
     }
 
     ev.Skip();
-}
-
-void MediaBrowserTreeView::setFavouriteRecursively(wxutil::TreeModel::Row& row, bool isFavourite)
-{
-    ResourceTreeView::setFavouriteRecursively(row, isFavourite);
-
-    if (_mode != TreeMode::ShowAll)
-    {
-        if (!_treeModelFilter->ItemIsVisible(row))
-        {
-            row.SendItemDeleted();
-        }
-        else
-        {
-            row.SendItemAdded();
-        }
-    }
 }
 
 void MediaBrowserTreeView::populateContextMenu(wxutil::PopupMenu& popupMenu)
@@ -543,33 +433,6 @@ void MediaBrowserTreeView::populateContextMenu(wxutil::PopupMenu& popupMenu)
     );
 
     ResourceTreeView::populateContextMenu(popupMenu);
-}
-
-bool MediaBrowserTreeView::treeModelFilterFunc(wxutil::TreeModel::Row& row)
-{
-    if (_mode == TreeMode::ShowAll) return true; // everything is visible
-
-    // Favourites mode, check if this item or any descendant is visible
-    if (row[_columns.isFavourite].getBool())
-    {
-        return true;
-    }
-
-    wxDataViewItemArray children;
-    _treeStore->GetChildren(row.getItem(), children);
-
-    // Enter the recursion for each of the children and bail out on the first visible one
-    for (const wxDataViewItem& child : children)
-    {
-        wxutil::TreeModel::Row childRow(child, *_treeStore);
-
-        if (treeModelFilterFunc(childRow))
-        {
-            return true;
-        }
-    }
-
-    return false;
 }
 
 void MediaBrowserTreeView::_onLoadInTexView()

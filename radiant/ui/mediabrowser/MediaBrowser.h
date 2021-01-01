@@ -55,7 +55,7 @@ private:
 private:
 	void construct();
 	void _onTreeViewSelectionChanged(wxDataViewEvent& ev);
-	void handleTreeModeChanged();
+	void setTreeModeFromControls();
 
 public:
 	/** Constructor creates widgets.

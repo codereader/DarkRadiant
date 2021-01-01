@@ -7,7 +7,7 @@
 #include "wxutil/dialog/DialogBase.h"
 #include "wxutil/TreeModelFilter.h"
 #include "wxutil/TreeModel.h"
-#include "wxutil/TreeView.h"
+#include "wxutil/ResourceTreeView.h"
 #include "wxutil/XmlResourceBasedWidget.h"
 #include "wxutil/PanedPosition.h"
 #include "wxutil/menu/PopupMenu.h"
@@ -29,29 +29,13 @@ class EntityClassChooser :
     public DialogBase,
     private XmlResourceBasedWidget
 {
-public:
-    // Treemodel definition
-    struct TreeColumns :
-        public TreeModel::ColumnRecord
-    {
-        TreeColumns() :
-            name(add(TreeModel::Column::IconText)),
-            isFolder(add(TreeModel::Column::Boolean)),
-            isFavourite(add(TreeModel::Column::Boolean))
-        {}
-
-        TreeModel::Column name;
-        TreeModel::Column isFolder;
-        TreeModel::Column isFavourite;
-    };
-
 private:
-    TreeColumns _columns;
+    ResourceTreeView::Columns _columns;
 
     // Tree model holding the classnames
     TreeModel::Ptr _treeStore;
-    wxutil::TreeModelFilter::Ptr _treeModelFilter;
-    TreeView* _treeView;
+    TreeModelFilter::Ptr _treeModelFilter;
+    ResourceTreeView* _treeView;
 
     // Delegated object for loading entity classes in a separate thread
     class ThreadedEntityClassLoader;
@@ -70,9 +54,6 @@ private:
 
     sigc::connection _defsReloaded;
 
-    PopupMenuPtr _popupMenu;
-
-    
     wxDataViewItem _emptyFavouritesLabel;
 
     enum class TreeMode
@@ -105,11 +86,6 @@ private:
     void onDeleteEvent(wxCloseEvent& ev);
     void onTreeStorePopulationFinished(TreeModel::PopulationFinishedEvent& ev);
     
-    bool _testAddToFavourites();
-    bool _testRemoveFromFavourites();
-    void _onSetFavourite(bool isFavourite);
-    void setFavouriteRecursively(wxutil::TreeModel::Row& row, bool isFavourite);
-
     void onMainFrameShuttingDown();
     
     // This is where the static shared_ptr of the singleton instance is held.

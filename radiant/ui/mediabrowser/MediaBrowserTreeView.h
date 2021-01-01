@@ -22,12 +22,6 @@ public:
         wxutil::TreeModel::Column isOtherMaterialsFolder;
     };
 
-    enum class TreeMode
-    {
-        ShowAll,
-        ShowFavourites,
-    };
-
 private:
     // Populates the Media Browser in its own thread
     class Populator;
@@ -36,35 +30,25 @@ private:
     // false, if the tree is not yet initialised.
     bool _isPopulated;
 
-    TreeMode _mode;
-
     MediaBrowserTreeView::TreeColumns _columns;
-    wxutil::TreeModel::Ptr _treeStore;
-    wxutil::TreeModelFilter::Ptr _treeModelFilter;
-    wxDataViewItem _emptyFavouritesLabel;
 
 public:
     MediaBrowserTreeView(wxWindow* parent);
 
     const TreeColumns& getColumns() const;
 
-    TreeMode getTreeMode() const;
-    void setTreeMode(TreeMode mode);
-
-    void setSelection(const std::string& fullName);
+    void setSelection(const std::string& fullName) override;
 
     // Clear all items, stop any populator thread
-    void clear();
+    void clear() override;
+
+    void setTreeMode(TreeMode mode) override;
 
     // Populates the treeview
     void populate();
 
 protected:
-    void setFavouriteRecursively(wxutil::TreeModel::Row& row, bool isFavourite) override;
     void populateContextMenu(wxutil::PopupMenu& popupMenu) override;
-
-    // Evaulation function for item visibility
-    bool treeModelFilterFunc(wxutil::TreeModel::Row& row);
 
 private:
     bool _testSingleTexSel();
@@ -76,9 +60,6 @@ private:
     void _onTreeViewItemActivated(wxDataViewEvent& ev);
     void _onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev);
     void _onExpose(wxPaintEvent& ev);
-
-    void handleTreeModeChanged();
-    void setupTreeViewAndFilter();
 };
 
 }

@@ -34,9 +34,6 @@ namespace
 
     // Registry XPath to lookup key that specifies the display folder
     const char* const FOLDER_KEY_PATH = "/entityChooser/displayFolderKey";
-
-    const char* const ADD_TO_FAVOURITES = N_("Add to Favourites");
-    const char* const REMOVE_FROM_FAVOURITES = N_("Remove from Favourites");
 }
 
 /*
@@ -51,7 +48,7 @@ class EntityClassTreePopulator:
     TreeModel::Ptr _store;
 
     // Column definition
-    const EntityClassChooser::TreeColumns& _columns;
+    const ResourceTreeView::Columns& _columns;
 
     // Key that specifies the display folder
     std::string _folderKey;
@@ -65,7 +62,7 @@ public:
 
     // Constructor
     EntityClassTreePopulator(TreeModel::Ptr store,
-                             const EntityClassChooser::TreeColumns& columns)
+                             const ResourceTreeView::Columns& columns)
     : VFSTreePopulator(store),
       _store(store),
       _columns(columns),
@@ -99,12 +96,15 @@ public:
 
                 // Get the display name by stripping off everything before the
                 // last slash
-                row[_columns.name] = wxVariant(
+                row[_columns.iconAndName] = wxVariant(
                     wxDataViewIconText(leafName, !isFolder ? _entityIcon : _folderIcon)
                 );
+                row[_columns.fullName] = leafName;
+                row[_columns.leafName] = leafName;
+
                 row[_columns.isFolder] = isFolder;
                 row[_columns.isFavourite] = isFavourite;
-                row[_columns.name] = TreeViewItemStyle::Declaration(isFavourite); // assign attributes
+                row[_columns.iconAndName] = TreeViewItemStyle::Declaration(isFavourite); // assign attributes
                 row.SendItemAdded();
             }
         );
@@ -116,7 +116,7 @@ class EntityClassChooser::ThreadedEntityClassLoader :
     public wxThread
 {
     // Column specification struct
-    const EntityClassChooser::TreeColumns& _columns;
+    const ResourceTreeView::Columns& _columns;
 
     // The tree store to populate. We must operate on our own tree store, since
     // updating the EntityClassChooser's tree store from a different thread
@@ -129,7 +129,7 @@ class EntityClassChooser::ThreadedEntityClassLoader :
 public:
 
     // Construct and initialise variables
-    ThreadedEntityClassLoader(const EntityClassChooser::TreeColumns& cols,
+    ThreadedEntityClassLoader(const ResourceTreeView::Columns& cols,
                               wxEvtHandler* finishedHandler) :
         wxThread(wxTHREAD_JOINABLE),
         _columns(cols),
@@ -159,7 +159,7 @@ public:
         if (TestDestroy()) return static_cast<ExitCode>(0);
 
         // Ensure model is sorted before giving it to the tree view
-        _treeStore->SortModelFoldersFirst(_columns.name, _columns.isFolder);
+        _treeStore->SortModelFoldersFirst(_columns.leafName, _columns.isFolder);
 
         if (!TestDestroy())
         {
@@ -229,19 +229,6 @@ EntityClassChooser::EntityClassChooser()
     // window's height to allow shrinking
     _modelPreview->getWidget()->SetMinClientSize(
         wxSize(GetSize().GetWidth() * 0.4f, GetSize().GetHeight() * 0.2f));
-
-    _popupMenu.reset(new wxutil::PopupMenu);
-
-    _popupMenu->addItem(
-        new StockIconTextMenuItem(_(ADD_TO_FAVOURITES), wxART_ADD_BOOKMARK),
-        std::bind(&EntityClassChooser::_onSetFavourite, this, true),
-        std::bind(&EntityClassChooser::_testAddToFavourites, this)
-    );
-    _popupMenu->addItem(
-        new StockIconTextMenuItem(_(REMOVE_FROM_FAVOURITES), wxART_DEL_BOOKMARK),
-        std::bind(&EntityClassChooser::_onSetFavourite, this, false),
-        std::bind(&EntityClassChooser::_testRemoveFromFavourites, this)
-    );
 }
 
 // Display the singleton instance
@@ -310,7 +297,7 @@ void EntityClassChooser::setSelectedEntityClass(const std::string& eclass)
     // selection
     if (_treeStore != nullptr)
     {
-        wxDataViewItem item = _treeStore->FindString(eclass, _columns.name);
+        wxDataViewItem item = _treeStore->FindString(eclass, _columns.leafName);
 
         if (item.IsOk())
         {
@@ -375,17 +362,17 @@ void EntityClassChooser::setupTreeView()
     _treeStore = new TreeModel(_columns);
     TreeModel::Row row = _treeStore->AddItem();
 
-    row[_columns.name] = wxVariant(wxDataViewIconText(_("Loading...")));
+    row[_columns.iconAndName] = wxVariant(wxDataViewIconText(_("Loading...")));
 
     wxPanel* parent = findNamedObject<wxPanel>(this, "EntityClassChooserLeftPane");
 
-    _treeView = TreeView::CreateWithModel(parent, _treeStore.get());
-    _treeView->AddSearchColumn(_columns.name);
+    _treeView = new ResourceTreeView(parent, _treeStore, _columns);
+    _treeView->AddSearchColumn(_columns.leafName);
 
     _treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &EntityClassChooser::onSelectionChanged, this);
 
     // Single column with icon and name
-    _treeView->AppendIconTextColumn(_("Classname"), _columns.name.getColumnIndex(),
+    _treeView->AppendIconTextColumn(_("Classname"), _columns.iconAndName.getColumnIndex(),
         wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
     parent->GetSizer()->Prepend(_treeView, 1, wxEXPAND | wxBOTTOM | wxRIGHT, 6);
@@ -417,8 +404,7 @@ void EntityClassChooser::updateSelection()
             findNamedObject<wxButton>(this, "EntityClassChooserAddButton")->Enable(true);
 
             // Set the panel text with the usage information
-            wxDataViewIconText iconAndName = static_cast<wxDataViewIconText>(row[_columns.name]);
-            std::string selName = iconAndName.GetText().ToStdString();
+            std::string selName = row[_columns.leafName];
 
             updateUsageInfo(selName);
 
@@ -471,85 +457,6 @@ void EntityClassChooser::onTreeStorePopulationFinished(TreeModel::PopulationFini
 
     _treeStore = ev.GetTreeModel();
     setTreeViewModel();
-}
-
-void EntityClassChooser::setFavouriteRecursively(wxutil::TreeModel::Row& row, bool isFavourite)
-{
-    if (row[_columns.isFolder].getBool())
-    {
-        // Enter recursion for this folder
-        wxDataViewItemArray children;
-        _treeModelFilter->GetChildren(row.getItem(), children);
-
-        for (const wxDataViewItem& child : children)
-        {
-            wxutil::TreeModel::Row childRow(child, *_treeModelFilter);
-            setFavouriteRecursively(childRow, isFavourite);
-        }
-
-        return;
-    }
-
-    // Not a folder, set the desired status on this item
-    row[_columns.isFavourite] = isFavourite;
-    row[_columns.name] = wxutil::TreeViewItemStyle::Declaration(isFavourite);
-
-    // Keep track of this choice
-    if (isFavourite)
-    {
-        GlobalFavouritesManager().addFavourite(decl::Type::EntityDef, row[_columns.name]);
-    }
-    else
-    {
-        GlobalFavouritesManager().removeFavourite(decl::Type::EntityDef, row[_columns.name]);
-    }
-
-    row.SendItemChanged();
-#if 0
-    if (_mode != TreeMode::ShowAll)
-    {
-        if (!_treeModelFilter->ItemIsVisible(row))
-        {
-            row.SendItemDeleted();
-        }
-        else
-        {
-            row.SendItemAdded();
-        }
-    }
-#endif
-}
-
-void EntityClassChooser::_onSetFavourite(bool isFavourite)
-{
-    wxDataViewItem item = _treeView->GetSelection();
-
-    if (!item.IsOk()) return;
-
-    // Grab this item and enter recursion, propagating the favourite status
-    wxutil::TreeModel::Row row(item, *_treeView->GetModel());
-
-    setFavouriteRecursively(row, isFavourite);
-}
-
-bool EntityClassChooser::_testAddToFavourites()
-{
-#if 0 // TODO
-    // Adding favourites is allowed for any folder and non-favourite items 
-    return _treeView->isDirectorySelected() || (!getSelection().empty() && !isFavouriteSelected());
-#else 
-    return false;
-#endif
-}
-
-bool EntityClassChooser::_testRemoveFromFavourites()
-{
-#if 0
-    // We can run remove from favourites on any folder or on favourites themselves
-    return isDirectorySelected() || isFavouriteSelected();
-#else
-    return false;
-#endif
 }
 
 } // namespace ui

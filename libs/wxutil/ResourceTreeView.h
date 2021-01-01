@@ -2,6 +2,7 @@
 
 #include "TreeView.h"
 #include "TreeModel.h"
+#include "TreeModelFilter.h"
 #include "menu/PopupMenu.h"
 
 namespace wxutil
@@ -9,9 +10,15 @@ namespace wxutil
 
 /**
  * A specialised tree view for display resources like materials,
- * prefabs, sound shaders and the like.
- * It ships with a context menu that offers default actions for
- * managing favourites.
+ * prefabs, sound shaders and the like. It defines the default Column set
+ * to use for any treestore that is associated to this view - this set can
+ * be derived from and extended to display more sophisticated models.
+ * 
+ * This tree control supports two "modes", one showing all elements in the tree,
+ * and the other showing favourites only: see getTreeMode()/setTreeMode().
+ * 
+ * It ships with a context menu that can be customised by subclasses,
+ * to extend the default actions aimed at managing favourites.
  */
 class ResourceTreeView :
     public TreeView
@@ -37,26 +44,51 @@ public:
         TreeModel::Column isFavourite;
     };
 
+    // Filter modes used by this tree view
+    enum class TreeMode
+    {
+        ShowAll,
+        ShowFavourites,
+    };
+
 private:
     // Context menu
     PopupMenuPtr _popupMenu;
 
     const Columns& _columns;
 
+    TreeMode _mode;
+
+    TreeModel::Ptr _treeStore;
+    TreeModelFilter::Ptr _treeModelFilter;
+    wxDataViewItem _emptyFavouritesLabel;
+
+public:
+    ResourceTreeView(wxWindow* parent, const Columns& columns, long style = wxDV_SINGLE);
+    ResourceTreeView(wxWindow* parent, const TreeModel::Ptr& model, const Columns& columns, long style = wxDV_SINGLE);
+
+    // Returns a reference to the model we're using
+    virtual const TreeModel::Ptr& getTreeModel();
+    virtual void setTreeModel(const TreeModel::Ptr& treeModel);
+
+    virtual TreeMode getTreeMode() const;
+    virtual void setTreeMode(TreeMode mode);
+
+    // Returns the full name of the selection (or an empty string)
+    virtual std::string getSelection();
+    virtual void setSelection(const std::string& fullName);
+
+    virtual void clear();
+
+    virtual bool isDirectorySelected();
+    virtual bool isFavouriteSelected();
+
 protected:
     virtual void populateContextMenu(wxutil::PopupMenu& popupMenu);
 
     virtual void setFavouriteRecursively(TreeModel::Row& row, bool isFavourite);
 
-public:
-    ResourceTreeView(wxWindow* parent, const Columns& columns, long style = wxDV_SINGLE);
-    ResourceTreeView(wxWindow* parent, wxDataViewModel* model, const Columns& columns, long style = wxDV_SINGLE);
-
-    // Returns the full name of the selection (or an empty string)
-    std::string getSelection();
-
-    bool isDirectorySelected();
-    bool isFavouriteSelected();
+    virtual void setupTreeModelFilter();
 
 private:
     void _onContextMenu(wxDataViewEvent& ev);
@@ -64,6 +96,9 @@ private:
     bool _testAddToFavourites();
     bool _testRemoveFromFavourites();
     void _onSetFavourite(bool isFavourite);
+
+    // Evaulation function for item visibility
+    bool treeModelFilterFunc(TreeModel::Row& row);
 };
 
 }
