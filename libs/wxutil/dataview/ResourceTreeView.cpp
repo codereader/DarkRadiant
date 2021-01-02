@@ -23,7 +23,8 @@ ResourceTreeView::ResourceTreeView(wxWindow* parent, const TreeModel::Ptr& model
                                    const ResourceTreeView::Columns& columns, long style) :
     TreeView(parent, nullptr, style), // associate the model later
     _columns(columns),
-    _mode(TreeMode::ShowAll)
+    _mode(TreeMode::ShowAll),
+    _expandTopLevelItemsAfterPopulation(false)
 {
     // Note that we need to avoid accessing the _columns reference in the constructor
     // since it is likely owned by subclasses and might not be ready yet
@@ -169,10 +170,11 @@ std::string ResourceTreeView::getSelection()
 
 void ResourceTreeView::setSelection(const std::string& fullName)
 {
-    // Wait for any running populator
     if (_populator)
     {
-        _populator->EnsurePopulated();
+        // Postpone the selection, store the name
+        _itemToSelectAfterPopulation = fullName;
+        return;
     }
 
     // If the selection string is empty, collapse the treeview and return with
@@ -195,6 +197,8 @@ void ResourceTreeView::setSelection(const std::string& fullName)
         wxDataViewEvent ev(wxEVT_DATAVIEW_SELECTION_CHANGED, this, item);
         ProcessWindowEvent(ev);
     }
+
+    _itemToSelectAfterPopulation.clear();
 }
 
 void ResourceTreeView::clear()
@@ -203,6 +207,7 @@ void ResourceTreeView::clear()
     _populator.reset();
     _treeStore->Clear();
     _emptyFavouritesLabel = wxDataViewItem();
+    _itemToSelectAfterPopulation.clear();
 }
 
 void ResourceTreeView::populate(const IResourceTreePopulator::Ptr& populator)
@@ -219,10 +224,17 @@ void ResourceTreeView::populate(const IResourceTreePopulator::Ptr& populator)
 
     row.SendItemAdded();
 
+    // It will fire the TreeModel::PopulationFinishedEvent when done, point it to ourselves
+    populator->SetFinishedHandler(this);
+
     // Start population (this might be a thread or not)
-    // In any case this will fire the TreeModel::PopulationFinishedEvent when done
     _populator = populator;
     _populator->Populate();
+}
+
+void ResourceTreeView::setExpandTopLevelItemsAfterPopulation(bool expand)
+{
+    _expandTopLevelItemsAfterPopulation = expand;
 }
 
 void ResourceTreeView::_onTreeStorePopulationFinished(TreeModel::PopulationFinishedEvent& ev)
@@ -230,6 +242,17 @@ void ResourceTreeView::_onTreeStorePopulationFinished(TreeModel::PopulationFinis
     UnselectAll();
     setTreeModel(ev.GetTreeModel());
     _populator.reset();
+
+    if (_expandTopLevelItemsAfterPopulation)
+    {
+        ExpandTopLevelItems();
+    }
+
+    // Populator is empty now, check if we need to pre-select anything
+    if (!_itemToSelectAfterPopulation.empty())
+    {
+        setSelection(_itemToSelectAfterPopulation);
+    }
 }
 
 void ResourceTreeView::_onContextMenu(wxDataViewEvent& ev)

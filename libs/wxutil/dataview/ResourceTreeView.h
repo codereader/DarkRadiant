@@ -67,6 +67,9 @@ private:
     // The currently active populator object
     IResourceTreePopulator::Ptr _populator;
 
+    bool _expandTopLevelItemsAfterPopulation;
+    std::string _itemToSelectAfterPopulation;
+
 public:
     ResourceTreeView(wxWindow* parent, const Columns& columns, long style = wxDV_SINGLE);
     ResourceTreeView(wxWindow* parent, const TreeModel::Ptr& model, const Columns& columns, long style = wxDV_SINGLE);
@@ -91,6 +94,8 @@ public:
 
     // Populate this tree using the given populator object
     virtual void populate(const IResourceTreePopulator::Ptr& populator);
+
+    void setExpandTopLevelItemsAfterPopulation(bool expand);
 
 protected:
     virtual void populateContextMenu(wxutil::PopupMenu& popupMenu);

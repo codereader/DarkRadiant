@@ -119,8 +119,8 @@ private:
     const ResourceTreeView::Columns& _columns;
 
 public:
-    ThreadedEntityClassLoader(const ResourceTreeView::Columns& cols, wxEvtHandler* finishedHandler) :
-        ThreadedResourceTreePopulator(cols, finishedHandler),
+    ThreadedEntityClassLoader(const ResourceTreeView::Columns& cols) :
+        ThreadedResourceTreePopulator(cols),
         _columns(cols)
     {}
 
@@ -149,9 +149,6 @@ EntityClassChooser::EntityClassChooser()
   _treeView(nullptr),
   _selectedName("")
 {
-    // Connect the finish callback to load the treestore
-    Bind(EV_TREEMODEL_POPULATION_FINISHED, &EntityClassChooser::onTreeStorePopulationFinished, this);
-
     loadNamedPanel(this, "EntityClassChooserMainPanel");
 
     // Connect button signals
@@ -225,7 +222,7 @@ EntityClassChooser& EntityClassChooser::Instance()
 {
     EntityClassChooserPtr& instancePtr = InstancePtr();
 
-    if (instancePtr == NULL)
+    if (!instancePtr)
     {
         // Not yet instantiated, do it now
         instancePtr.reset(new EntityClassChooser);
@@ -259,28 +256,12 @@ void EntityClassChooser::onMainFrameShuttingDown()
 
 void EntityClassChooser::loadEntityClasses()
 {
-    _eclassLoader.reset(new ThreadedEntityClassLoader(_columns, this));
-    _eclassLoader->Populate();
+    _treeView->populate(std::make_shared<ThreadedEntityClassLoader>(_columns));
 }
 
 void EntityClassChooser::setSelectedEntityClass(const std::string& eclass)
 {
-    // Select immediately if possible, otherwise remember class name for later
-    // selection
-    if (_treeStore != nullptr)
-    {
-        wxDataViewItem item = _treeStore->FindString(eclass, _columns.leafName);
-
-        if (item.IsOk())
-        {
-            _treeView->Select(item);
-            _classToHighlight.clear();
-
-            return;
-        }
-    }
-
-    _classToHighlight = eclass;
+    _treeView->setSelection(eclass);
 }
 
 const std::string& EntityClassChooser::getSelectedEntityClass() const
@@ -313,21 +294,6 @@ int EntityClassChooser::ShowModal()
     return returnCode;
 }
 
-void EntityClassChooser::setTreeViewModel()
-{
-    _treeView->setTreeModel(_treeStore);
-
-    // Expand the first layer
-    _treeView->ExpandTopLevelItems();
-
-    // Pre-select the given class if requested by setSelectedEntityClass()
-    if (!_classToHighlight.empty())
-    {
-        assert(_treeStore);
-        setSelectedEntityClass(_classToHighlight);
-    }
-}
-
 void EntityClassChooser::setupTreeView()
 {
     _treeStore = new TreeModel(_columns);
@@ -339,6 +305,7 @@ void EntityClassChooser::setupTreeView()
 
     _treeView = new ResourceTreeView(parent, _treeStore, _columns);
     _treeView->AddSearchColumn(_columns.iconAndName);
+    _treeView->setExpandTopLevelItemsAfterPopulation(true);
 
     _treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &EntityClassChooser::onSelectionChanged, this);
 
@@ -357,7 +324,7 @@ void EntityClassChooser::updateUsageInfo(const std::string& eclass)
 
     // Set the usage panel to the IEntityClass' usage information string
     auto* usageText = findNamedObject<wxTextCtrl>(this, "EntityClassChooserUsageText");
-    usageText->SetValue(eclass::getUsage(*e));
+    usageText->SetValue(e ? eclass::getUsage(*e) : "");
 }
 
 void EntityClassChooser::updateSelection()
@@ -420,14 +387,6 @@ void EntityClassChooser::onOK(wxCommandEvent& ev)
 void EntityClassChooser::onSelectionChanged(wxDataViewEvent& ev)
 {
     updateSelection();
-}
-
-void EntityClassChooser::onTreeStorePopulationFinished(TreeModel::PopulationFinishedEvent& ev)
-{
-    _treeView->UnselectAll();
-
-    _treeStore = ev.GetTreeModel();
-    setTreeViewModel();
 }
 
 } // namespace ui

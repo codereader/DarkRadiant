@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <wx/event.h>
 
 namespace wxutil
 {
@@ -21,6 +22,9 @@ public:
     using Ptr = std::shared_ptr<IResourceTreePopulator>;
 
     virtual ~IResourceTreePopulator() {}
+
+    // Define the event handler that is notified once population is done
+    virtual void SetFinishedHandler(wxEvtHandler* finishedHandler) = 0;
 
     // Will start the population and block until population is done.
     virtual void EnsurePopulated() = 0;

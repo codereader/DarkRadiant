@@ -172,8 +172,8 @@ private:
 
 public:
     // Construct and initialise variables
-    MediaPopulator(const MediaBrowserTreeView::TreeColumns& columns, wxEvtHandler* finishedHandler) :
-        ThreadedResourceTreePopulator(columns, finishedHandler),
+    MediaPopulator(const MediaBrowserTreeView::TreeColumns& columns) :
+        ThreadedResourceTreePopulator(columns),
         _columns(columns)
     {
         _favourites = GlobalFavouritesManager().getFavourites(decl::Type::Material);
@@ -303,7 +303,7 @@ void MediaBrowserTreeView::setTreeMode(MediaBrowserTreeView::TreeMode mode)
 
 void MediaBrowserTreeView::populate()
 {
-    ResourceTreeView::populate(std::make_shared<MediaPopulator>(_columns, this));
+    ResourceTreeView::populate(std::make_shared<MediaPopulator>(_columns));
 }
 
 void MediaBrowserTreeView::populateContextMenu(wxutil::PopupMenu& popupMenu)

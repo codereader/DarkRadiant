@@ -44,9 +44,6 @@ private:
     // Last selected classname
     std::string _selectedName;
 
-    // Class we should select when the treemodel is populated
-    std::string _classToHighlight;
-
     // Model preview widget
     ModelPreviewPtr _modelPreview;
 
@@ -67,7 +64,6 @@ private:
     // Constructor. Creates the GTK widgets.
     EntityClassChooser();
 
-    void setTreeViewModel();
     void loadEntityClasses();
 
     // Widget construction helpers
@@ -84,7 +80,6 @@ private:
     void onOK(wxCommandEvent& ev);
     void onSelectionChanged(wxDataViewEvent& ev);
     void onDeleteEvent(wxCloseEvent& ev);
-    void onTreeStorePopulationFinished(TreeModel::PopulationFinishedEvent& ev);
     
     void onMainFrameShuttingDown();
     

@@ -12,10 +12,9 @@ struct ThreadAbortedException : public std::runtime_error
 };
 
 // Construct and initialise variables
-ThreadedResourceTreePopulator::ThreadedResourceTreePopulator(const TreeModel::ColumnRecord& columns, 
-                                                             wxEvtHandler* finishedHandler) :
+ThreadedResourceTreePopulator::ThreadedResourceTreePopulator(const TreeModel::ColumnRecord& columns) :
     wxThread(wxTHREAD_JOINABLE),
-    _finishedHandler(finishedHandler),
+    _finishedHandler(nullptr),
     _columns(columns),
     _started(false)
 {}
@@ -64,6 +63,11 @@ wxThread::ExitCode ThreadedResourceTreePopulator::Entry()
     return static_cast<ExitCode>(0);
 }
 
+void ThreadedResourceTreePopulator::SetFinishedHandler(wxEvtHandler* finishedHandler)
+{
+    _finishedHandler = finishedHandler;
+}
+
 void ThreadedResourceTreePopulator::EnsurePopulated()
 {
     // Start the thread now if we have to
@@ -81,6 +85,11 @@ void ThreadedResourceTreePopulator::EnsurePopulated()
 
 void ThreadedResourceTreePopulator::Populate()
 {
+    if (_finishedHandler == nullptr)
+    {
+        throw std::runtime_error("Cannot start population without a finished handler");
+    }
+
     if (IsRunning())
     {
         return;

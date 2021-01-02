@@ -58,11 +58,13 @@ protected:
 
 public:
     // Construct and initialise variables
-    ThreadedResourceTreePopulator(const TreeModel::ColumnRecord& columns, wxEvtHandler* finishedHandler);
+    ThreadedResourceTreePopulator(const TreeModel::ColumnRecord& columns);
 
     virtual ~ThreadedResourceTreePopulator();
 
     // IResourceTreePopulator implementation
+
+    virtual void SetFinishedHandler(wxEvtHandler* finishedHandler) override;
 
     // Blocks until the worker thread is done.
     virtual void EnsurePopulated() override;
