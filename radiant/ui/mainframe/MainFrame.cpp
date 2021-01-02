@@ -354,6 +354,7 @@ void MainFrame::onTopLevelFrameClose(wxCloseEvent& ev)
 	
     // Destroy the actual window
     _topLevelWindow->Destroy();
+    _topLevelWindow = nullptr;
 
     // wxWidgets is supposed to quit when the main window is destroyed, but
     // it doesn't so we need to exit the main loop manually. Probably we
@@ -369,7 +370,7 @@ wxFrame* MainFrame::getWxTopLevelWindow()
 
 wxBoxSizer* MainFrame::getWxMainContainer()
 {
-	return _topLevelWindow != NULL ? _topLevelWindow->getMainContainer() : NULL;
+	return _topLevelWindow != nullptr ? _topLevelWindow->getMainContainer() : nullptr;
 }
 
 bool MainFrame::isActiveApp()
