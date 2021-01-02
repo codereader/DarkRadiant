@@ -111,9 +111,10 @@ public:
 };
 
 // Local class for loading entity class definitions in a separate thread
-class ThreadedEntityClassLoader :
-    public wxutil::ThreadedResourceTreePopulator
+class ThreadedEntityClassLoader final :
+    public ThreadedResourceTreePopulator
 {
+private:
     // Column specification struct
     const ResourceTreeView::Columns& _columns;
 
@@ -123,14 +124,19 @@ public:
         _columns(cols)
     {}
 
-    void PopulateModel(const wxutil::TreeModel::Ptr& model) override
+    ~ThreadedEntityClassLoader()
+    {
+        EnsureStopped();
+    }
+
+    void PopulateModel(const TreeModel::Ptr& model) override
     {
         // Populate it with the list of entity classes by using a visitor class.
         EntityClassTreePopulator visitor(model, _columns);
         GlobalEntityClassManager().forEachEntityClass(visitor);
     }
 
-    void SortModel(const wxutil::TreeModel::Ptr& model) override
+    void SortModel(const TreeModel::Ptr& model) override
     {
         model->SortModelFoldersFirst(_columns.leafName, _columns.isFolder);
     }
