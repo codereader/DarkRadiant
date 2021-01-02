@@ -70,6 +70,8 @@ private:
     bool _expandTopLevelItemsAfterPopulation;
     std::string _fullNameToSelectAfterPopulation;
 
+    std::vector<ui::IMenuItemPtr> _customMenuItems;
+
 public:
     ResourceTreeView(wxWindow* parent, const Columns& columns, long style = wxDV_SINGLE);
     ResourceTreeView(wxWindow* parent, const TreeModel::Ptr& model, const Columns& columns, long style = wxDV_SINGLE);
@@ -96,6 +98,11 @@ public:
     virtual void Populate(const IResourceTreePopulator::Ptr& populator);
 
     void SetExpandTopLevelItemsAfterPopulation(bool expand);
+
+    // Add a custom menu item to this control's popup menu (will be added at the top)
+    // Client code that derive from this class can use the protected PopulateContextMenu
+    // hook as an alternative to this method.
+    void AddCustomMenuItem(const ui::IMenuItemPtr& item);
 
 protected:
     virtual void PopulateContextMenu(wxutil::PopupMenu& popupMenu);

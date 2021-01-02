@@ -134,6 +134,19 @@ void ResourceTreeView::SetTreeMode(ResourceTreeView::TreeMode mode)
 
 void ResourceTreeView::PopulateContextMenu(wxutil::PopupMenu& popupMenu)
 {
+    // Add the pre-registered items first (with an auto-separator)
+    if (popupMenu.GetMenuItemCount() > 0)
+    {
+        popupMenu.addSeparator();
+    }
+
+    for (const auto& customItem : _customMenuItems)
+    {
+        popupMenu.addItem(customItem);
+    }
+
+    _customMenuItems.clear();
+
     if (popupMenu.GetMenuItemCount() > 0)
     {
         popupMenu.addSeparator();
@@ -237,6 +250,11 @@ void ResourceTreeView::Populate(const IResourceTreePopulator::Ptr& populator)
 void ResourceTreeView::SetExpandTopLevelItemsAfterPopulation(bool expand)
 {
     _expandTopLevelItemsAfterPopulation = expand;
+}
+
+void ResourceTreeView::AddCustomMenuItem(const ui::IMenuItemPtr& item)
+{
+    _customMenuItems.push_back(item);
 }
 
 void ResourceTreeView::_onTreeStorePopulationFinished(TreeModel::PopulationFinishedEvent& ev)
