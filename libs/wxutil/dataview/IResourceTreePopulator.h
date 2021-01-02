@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ResourceTreeView.h"
+#include <memory>
 
 namespace wxutil
 {

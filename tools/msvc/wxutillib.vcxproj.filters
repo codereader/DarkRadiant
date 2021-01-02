@@ -209,5 +209,8 @@
     <ClCompile Include="..\..\libs\wxutil\dataview\VFSTreePopulator.cpp">
       <Filter>dataview</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\libs\wxutil\dataview\ThreadedResourceTreePopulator.cpp">
+      <Filter>dataview</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

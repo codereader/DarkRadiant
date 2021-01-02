@@ -26,14 +26,6 @@ class ThreadedResourceTreePopulator :
     protected wxThread
 {
 private:
-    // Custom exception type thrown when a thread is cancelled
-    struct ThreadAbortedException : public std::runtime_error
-    {
-        ThreadAbortedException() : 
-            runtime_error("Thread aborted")
-        {}
-    };
-
     // The event handler to notify on completion
     wxEvtHandler* _finishedHandler;
 
@@ -50,13 +42,7 @@ private:
 protected:
     // Wrapper around TestDestroy that escalated by throwing a 
     // ThreadAbortedException when cancellation has been requested
-    void ThrowIfCancellationRequested()
-    {
-        if (TestDestroy())
-        {
-            throw ThreadAbortedException();
-        }
-    }
+    void ThrowIfCancellationRequested();
 
     // Needed method to load data into the allocated tree model
     // This is called from within the worker thread
@@ -66,88 +52,26 @@ protected:
     virtual void SortModel(const TreeModel::Ptr& model)
     {}
 
-    // The worker function that will run in a separate thread
-    virtual wxThread::ExitCode Entry() override
-    {
-        try
-        {
-            // Create new treestore
-            _treeStore = new TreeModel(_columns);
-            _treeStore->SetHasDefaultCompare(false);
-
-            PopulateModel(_treeStore);
-
-            ThrowIfCancellationRequested();
-
-            // Sort the model while we're still in the worker thread
-            SortModel(_treeStore);
-
-            ThrowIfCancellationRequested();
-
-            wxQueueEvent(_finishedHandler, new TreeModel::PopulationFinishedEvent(_treeStore));
-        }
-        catch (const ThreadAbortedException&)
-        {
-            // Thread aborted due to Cancel request, exit now
-        }
-
-        return static_cast<ExitCode>(0);
-    }
+    // The required entry point for wxWidgets that contains the calls
+    // to PopulateModel/SortModel as well as the exception handling
+    wxThread::ExitCode Entry() override final;
 
 public:
     // Construct and initialise variables
-    ThreadedResourceTreePopulator(const TreeModel::ColumnRecord& columns, wxEvtHandler* finishedHandler) :
-        wxThread(wxTHREAD_JOINABLE),
-        _finishedHandler(finishedHandler),
-        _columns(columns),
-        _started(false)
-    {}
+    ThreadedResourceTreePopulator(const TreeModel::ColumnRecord& columns, wxEvtHandler* finishedHandler);
 
-    virtual ~ThreadedResourceTreePopulator()
-    {
-        // When running into crashes with a calling thread waiting for this
-        // method, this might be due to the deriving class methods referencing
-        // members that have already been destructed at this point.
-        // Be sure to call EnsureStopped() in the subclass destructor.
-        EnsureStopped();
-    }
+    virtual ~ThreadedResourceTreePopulator();
 
-    // Blocks until the worker thread is done. 
-    virtual void EnsurePopulated() override
-    {
-        // Start the thread now if we have to
-        if (!_started)
-        {
-            Populate();
-        }
+    // IResourceTreePopulator implementation
 
-        // Wait for any running thread
-        if (IsRunning())
-        {
-            Wait();
-        }
-    }
+    // Blocks until the worker thread is done.
+    virtual void EnsurePopulated() override;
 
     // Start the thread, if it isn't already running
-    virtual void Populate() override
-    {
-        if (IsRunning())
-        {
-            return;
-        }
+    virtual void Populate() override;
 
-        // Set the latch
-        _started = true;
-        wxThread::Run();
-    }
-
-    virtual void EnsureStopped() override
-    {
-        if (IsAlive())
-        {
-            Delete(); // cancel the running thread
-        }
-    }
+    // Blocks and waits until the worker thread is done
+    virtual void EnsureStopped() override;
 };
 
 }
