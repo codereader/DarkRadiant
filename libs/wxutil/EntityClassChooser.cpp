@@ -1,6 +1,7 @@
 #include "EntityClassChooser.h"
 #include "dataview/TreeModel.h"
 #include "dataview/TreeViewItemStyle.h"
+#include "dataview/ThreadedResourceTreePopulator.h"
 #include "dataview/VFSTreePopulator.h"
 #include "menu/IconTextMenuItem.h"
 
@@ -10,7 +11,6 @@
 #include "iuimanager.h"
 #include "gamelib.h"
 
-#include <wx/thread.h>
 #include <wx/button.h>
 #include <wx/panel.h>
 #include <wx/splitter.h>
@@ -60,7 +60,7 @@ class EntityClassTreePopulator:
 public:
 
     // Constructor
-    EntityClassTreePopulator(TreeModel::Ptr store,
+    EntityClassTreePopulator(const TreeModel::Ptr& store,
                              const ResourceTreeView::Columns& columns)
     : VFSTreePopulator(store),
       _store(store),
@@ -111,61 +111,28 @@ public:
 };
 
 // Local class for loading entity class definitions in a separate thread
-class EntityClassChooser::ThreadedEntityClassLoader :
-    public wxThread
+class ThreadedEntityClassLoader :
+    public wxutil::ThreadedResourceTreePopulator
 {
     // Column specification struct
     const ResourceTreeView::Columns& _columns;
 
-    // The tree store to populate. We must operate on our own tree store, since
-    // updating the EntityClassChooser's tree store from a different thread
-    // wouldn't be safe
-    TreeModel::Ptr _treeStore;
-
-    // The class to be notified on finish
-    wxEvtHandler* _finishedHandler;
-
 public:
-
-    // Construct and initialise variables
-    ThreadedEntityClassLoader(const ResourceTreeView::Columns& cols,
-                              wxEvtHandler* finishedHandler) :
-        wxThread(wxTHREAD_JOINABLE),
-        _columns(cols),
-        _finishedHandler(finishedHandler)
+    ThreadedEntityClassLoader(const ResourceTreeView::Columns& cols, wxEvtHandler* finishedHandler) :
+        ThreadedResourceTreePopulator(cols, finishedHandler),
+        _columns(cols)
     {}
 
-    ~ThreadedEntityClassLoader()
+    void PopulateModel(const wxutil::TreeModel::Ptr& model) override
     {
-        if (IsRunning())
-        {
-            Delete();
-        }
+        // Populate it with the list of entity classes by using a visitor class.
+        EntityClassTreePopulator visitor(model, _columns);
+        GlobalEntityClassManager().forEachEntityClass(visitor);
     }
 
-    // The worker function that will execute in the thread
-    ExitCode Entry()
+    void SortModel(const wxutil::TreeModel::Ptr& model) override
     {
-        ScopedDebugTimer timer("ThreadedEntityClassLoader::run()");
-
-        // Create new treestoree
-        _treeStore = new TreeModel(_columns);
-
-        // Populate it with the list of entity classes by using a visitor class.
-        EntityClassTreePopulator visitor(_treeStore, _columns);
-        GlobalEntityClassManager().forEachEntityClass(visitor);
-
-        if (TestDestroy()) return static_cast<ExitCode>(0);
-
-        // Ensure model is sorted before giving it to the tree view
-        _treeStore->SortModelFoldersFirst(_columns.leafName, _columns.isFolder);
-
-        if (!TestDestroy())
-        {
-            wxQueueEvent(_finishedHandler, new TreeModel::PopulationFinishedEvent(_treeStore));
-        }
-
-        return static_cast<ExitCode>(0);
+        model->SortModelFoldersFirst(_columns.leafName, _columns.isFolder);
     }
 };
 
@@ -287,7 +254,7 @@ void EntityClassChooser::onMainFrameShuttingDown()
 void EntityClassChooser::loadEntityClasses()
 {
     _eclassLoader.reset(new ThreadedEntityClassLoader(_columns, this));
-    _eclassLoader->Run();
+    _eclassLoader->Populate();
 }
 
 void EntityClassChooser::setSelectedEntityClass(const std::string& eclass)

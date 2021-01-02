@@ -8,6 +8,7 @@
 #include "TextureDirectoryLoader.h"
 #include "wxutil/ModalProgressDialog.h"
 #include "wxutil/dataview/TreeViewItemStyle.h"
+#include "wxutil/dataview/ThreadedResourceTreePopulator.h"
 #include "string/string.h"
 #include "shaderlib.h"
 
@@ -329,6 +330,7 @@ void MediaBrowserTreeView::clear()
 
 void MediaBrowserTreeView::_onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev)
 {
+    UnselectAll();
     setTreeModel(ev.GetTreeModel());
 }
 

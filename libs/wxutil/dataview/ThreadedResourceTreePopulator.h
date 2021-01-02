@@ -12,6 +12,9 @@ namespace wxutil
  * Threaded resource tree populator implementation class.
  * Subclasses need to implement the abstract members to add
  * the needed insertion or sorting logic.
+ * 
+ * At the end of the thread execution this populator will send
+ *  a wxutil::TreeModel::PopulationFinishedEvent to the handler.
  */
 class ThreadedResourceTreePopulator :
     public IResourceTreePopulator,
@@ -72,7 +75,7 @@ public:
         _started(false)
     {}
 
-    ~ThreadedResourceTreePopulator()
+    virtual ~ThreadedResourceTreePopulator()
     {
         if (IsAlive())
         {

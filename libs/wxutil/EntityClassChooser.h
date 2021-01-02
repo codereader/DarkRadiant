@@ -8,6 +8,7 @@
 #include "dataview/TreeModelFilter.h"
 #include "dataview/TreeModel.h"
 #include "dataview/ResourceTreeView.h"
+#include "dataview/IResourceTreePopulator.h"
 #include "XmlResourceBasedWidget.h"
 #include "PanedPosition.h"
 #include "menu/PopupMenu.h"
@@ -38,8 +39,7 @@ private:
     ResourceTreeView* _treeView;
 
     // Delegated object for loading entity classes in a separate thread
-    class ThreadedEntityClassLoader;
-    std::unique_ptr<ThreadedEntityClassLoader> _eclassLoader; // PIMPL idiom
+    std::unique_ptr<wxutil::IResourceTreePopulator> _eclassLoader;
 
     // Last selected classname
     std::string _selectedName;
