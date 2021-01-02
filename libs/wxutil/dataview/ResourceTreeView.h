@@ -97,7 +97,7 @@ private:
     bool _testRemoveFromFavourites();
     void _onSetFavourite(bool isFavourite);
 
-    // Evaulation function for item visibility
+    // Evaluation function for item visibility
     bool treeModelFilterFunc(TreeModel::Row& row);
 };
 

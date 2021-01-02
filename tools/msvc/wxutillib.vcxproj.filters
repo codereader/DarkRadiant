@@ -133,6 +133,9 @@
     <ClInclude Include="..\..\libs\wxutil\dataview\VFSTreePopulator.h">
       <Filter>dataview</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\dataview\ResourceTreePopulator.h">
+      <Filter>dataview</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\wxutil\dialog\MessageBox.cpp">

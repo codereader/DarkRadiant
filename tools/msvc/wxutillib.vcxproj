@@ -140,6 +140,7 @@
     <ClInclude Include="..\..\libs\wxutil\ConsoleView.h" />
     <ClInclude Include="..\..\libs\wxutil\ControlButton.h" />
     <ClInclude Include="..\..\libs\wxutil\dataview\KeyValueTable.h" />
+    <ClInclude Include="..\..\libs\wxutil\dataview\ResourceTreePopulator.h" />
     <ClInclude Include="..\..\libs\wxutil\dataview\ResourceTreeView.h" />
     <ClInclude Include="..\..\libs\wxutil\dataview\TreeModel.h" />
     <ClInclude Include="..\..\libs\wxutil\dataview\TreeModelFilter.h" />

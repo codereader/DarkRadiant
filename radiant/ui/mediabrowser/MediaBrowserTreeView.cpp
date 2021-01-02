@@ -160,151 +160,100 @@ struct ShaderNameFunctor
     }
 };
 
-class MediaBrowserTreeView::Populator :
-    public wxThread
+class Populator :
+    public wxutil::ResourceTreePopulator
 {
 private:
-    // The event handler to notify on completion
-    wxEvtHandler* _finishedHandler;
-
-    // Column specification struct
     const MediaBrowserTreeView::TreeColumns& _columns;
 
     // The set of favourites
     std::set<std::string> _favourites;
 
-    // The tree store to populate. We must operate on our own tree store, since
-    // updating the MediaBrowser's tree store from a different thread
-    // wouldn't be safe
-    wxutil::TreeModel::Ptr _treeStore;
-
-protected:
-
-    // The worker function that will execute in the thread
-    wxThread::ExitCode Entry()
-    {
-        // Create new treestoree
-        _treeStore = new wxutil::TreeModel(_columns);
-        _treeStore->SetHasDefaultCompare(false);
-
-        ShaderNameFunctor functor(*_treeStore, _columns, _favourites);
-        GlobalMaterialManager().foreachShaderName(std::bind(&ShaderNameFunctor::visit, &functor, std::placeholders::_1));
-
-        if (TestDestroy()) return static_cast<ExitCode>(0);
-
-        // Sort the model while we're still in the worker thread
-        _treeStore->SortModel(std::bind(&MediaBrowserTreeView::Populator::sortFunction,
-            this, std::placeholders::_1, std::placeholders::_2));
-
-        if (!TestDestroy())
-        {
-            wxQueueEvent(_finishedHandler, new wxutil::TreeModel::PopulationFinishedEvent(_treeStore));
-        }
-
-        return static_cast<ExitCode>(0);
-    }
-
-private:
-    bool sortFunction(const wxDataViewItem& a, const wxDataViewItem& b)
-    {
-        // Check if A or B are folders
-        wxVariant aIsFolder, bIsFolder;
-        _treeStore->GetValue(aIsFolder, a, _columns.isFolder.getColumnIndex());
-        _treeStore->GetValue(bIsFolder, b, _columns.isFolder.getColumnIndex());
-
-        if (aIsFolder)
-        {
-            // A is a folder, check if B is as well
-            if (bIsFolder)
-            {
-                // A and B are both folders
-                wxVariant aIsOtherMaterialsFolder, bIsOtherMaterialsFolder;
-
-                _treeStore->GetValue(aIsOtherMaterialsFolder, a, _columns.isOtherMaterialsFolder.getColumnIndex());
-                _treeStore->GetValue(bIsOtherMaterialsFolder, b, _columns.isOtherMaterialsFolder.getColumnIndex());
-
-                // Special treatment for "Other Materials" folder, which always comes last
-                if (aIsOtherMaterialsFolder)
-                {
-                    return false;
-                }
-
-                if (bIsOtherMaterialsFolder)
-                {
-                    return true;
-                }
-
-                // Compare folder names
-                // greebo: We're not checking for equality here, shader names are unique
-                wxVariant aName, bName;
-                _treeStore->GetValue(aName, a, _columns.leafName.getColumnIndex());
-                _treeStore->GetValue(bName, b, _columns.leafName.getColumnIndex());
-
-                return aName.GetString().CmpNoCase(bName.GetString()) < 0;
-            }
-            else
-            {
-                // A is a folder, B is not, A sorts before
-                return true;
-            }
-        }
-        else
-        {
-            // A is not a folder, check if B is one
-            if (bIsFolder)
-            {
-                // A is not a folder, B is, so B sorts before A
-                return false;
-            }
-            else
-            {
-                // Neither A nor B are folders, compare names
-                // greebo: We're not checking for equality here, shader names are unique
-                wxVariant aName, bName;
-                _treeStore->GetValue(aName, a, _columns.leafName.getColumnIndex());
-                _treeStore->GetValue(bName, b, _columns.leafName.getColumnIndex());
-
-                return aName.GetString().CmpNoCase(bName.GetString()) < 0;
-            }
-        }
-    }
-
 public:
-
     // Construct and initialise variables
-    Populator(const MediaBrowserTreeView::TreeColumns& cols, wxEvtHandler* finishedHandler) :
-        wxThread(wxTHREAD_JOINABLE),
-        _finishedHandler(finishedHandler),
-        _columns(cols)
+    Populator(const MediaBrowserTreeView::TreeColumns& columns, wxEvtHandler* finishedHandler) :
+        ResourceTreePopulator(columns, finishedHandler),
+        _columns(columns)
     {
         _favourites = GlobalFavouritesManager().getFavourites(decl::Type::Material);
     }
 
-    ~Populator()
+protected:
+    void PopulateModel(const wxutil::TreeModel::Ptr& model) override
     {
-        if (IsRunning())
-        {
-            Delete(); // cancel the running thread
-        }
+        model->SetHasDefaultCompare(false);
+
+        ShaderNameFunctor functor(*model, _columns, _favourites);
+        GlobalMaterialManager().foreachShaderName(std::bind(&ShaderNameFunctor::visit, &functor, std::placeholders::_1));
     }
 
-    void waitUntilFinished()
+    // Special sort algorithm to sort the "Other Materials" separately
+    void SortModel(const wxutil::TreeModel::Ptr& model) override
     {
-        if (IsRunning())
+        // Sort the model while we're still in the worker thread
+        model->SortModel([&](const wxDataViewItem& a, const wxDataViewItem& b)
         {
-            Wait();
-        }
-    }
+            // Check if A or B are folders
+            wxVariant aIsFolder, bIsFolder;
+            model->GetValue(aIsFolder, a, _columns.isFolder.getColumnIndex());
+            model->GetValue(bIsFolder, b, _columns.isFolder.getColumnIndex());
 
-    // Start loading entity classes in a new thread
-    void populate()
-    {
-        if (IsRunning())
-        {
-            return;
-        }
+            if (aIsFolder)
+            {
+                // A is a folder, check if B is as well
+                if (bIsFolder)
+                {
+                    // A and B are both folders
+                    wxVariant aIsOtherMaterialsFolder, bIsOtherMaterialsFolder;
 
-        Run();
+                    model->GetValue(aIsOtherMaterialsFolder, a, _columns.isOtherMaterialsFolder.getColumnIndex());
+                    model->GetValue(bIsOtherMaterialsFolder, b, _columns.isOtherMaterialsFolder.getColumnIndex());
+
+                    // Special treatment for "Other Materials" folder, which always comes last
+                    if (aIsOtherMaterialsFolder)
+                    {
+                        return false;
+                    }
+
+                    if (bIsOtherMaterialsFolder)
+                    {
+                        return true;
+                    }
+
+                    // Compare folder names
+                    // greebo: We're not checking for equality here, shader names are unique
+                    wxVariant aName, bName;
+                    model->GetValue(aName, a, _columns.leafName.getColumnIndex());
+                    model->GetValue(bName, b, _columns.leafName.getColumnIndex());
+
+                    return aName.GetString().CmpNoCase(bName.GetString()) < 0;
+                }
+                else
+                {
+                    // A is a folder, B is not, A sorts before
+                    return true;
+                }
+            }
+            else
+            {
+                // A is not a folder, check if B is one
+                if (bIsFolder)
+                {
+                    // A is not a folder, B is, so B sorts before A
+                    return false;
+                }
+                else
+                {
+                    // Neither A nor B are folders, compare names
+                    // greebo: We're not checking for equality here, shader names are unique
+                    wxVariant aName, bName;
+                    model->GetValue(aName, a, _columns.leafName.getColumnIndex());
+                    model->GetValue(bName, b, _columns.leafName.getColumnIndex());
+
+                    return aName.GetString().CmpNoCase(bName.GetString()) < 0;
+                }
+            }
+        });
     }
 };
 
@@ -366,7 +315,7 @@ void MediaBrowserTreeView::populate()
 
     // Start the background thread
     _populator.reset(new Populator(_columns, this));
-    _populator->populate();
+    _populator->Run();
 }
 
 void MediaBrowserTreeView::clear()
@@ -391,7 +340,7 @@ void MediaBrowserTreeView::setSelection(const std::string& fullName)
     }
 
     // Make sure the treestore is finished loading
-    _populator->waitUntilFinished();
+    _populator->WaitUntilFinished();
 
     ResourceTreeView::setSelection(fullName);
 }
