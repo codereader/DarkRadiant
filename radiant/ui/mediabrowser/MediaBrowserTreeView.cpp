@@ -276,7 +276,6 @@ MediaBrowserTreeView::MediaBrowserTreeView(wxWindow* parent) :
 
     Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &MediaBrowserTreeView::_onTreeViewItemActivated, this);
     Bind(wxutil::EV_TREEMODEL_POPULATION_FINISHED, &MediaBrowserTreeView::_onTreeStorePopulationFinished, this);
-    Bind(wxEVT_PAINT, &MediaBrowserTreeView::_onExpose, this);
 }
 
 const MediaBrowserTreeView::TreeColumns& MediaBrowserTreeView::getColumns() const
@@ -340,17 +339,6 @@ void MediaBrowserTreeView::setSelection(const std::string& fullName)
     _populator->EnsurePopulated();
 
     ResourceTreeView::setSelection(fullName);
-}
-
-void MediaBrowserTreeView::_onExpose(wxPaintEvent& ev)
-{
-    // Populate the tree view if it is not already populated
-    if (!_isPopulated)
-    {
-        populate();
-    }
-
-    ev.Skip();
 }
 
 void MediaBrowserTreeView::populateContextMenu(wxutil::PopupMenu& popupMenu)

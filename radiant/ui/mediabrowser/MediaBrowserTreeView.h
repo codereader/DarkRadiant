@@ -59,7 +59,6 @@ private:
     void _onSelectItems(bool select);
     void _onTreeViewItemActivated(wxDataViewEvent& ev);
     void _onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev);
-    void _onExpose(wxPaintEvent& ev);
 };
 
 }

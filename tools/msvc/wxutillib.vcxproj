@@ -227,10 +227,6 @@
     <ClCompile Include="..\..\libs\wxutil\WindowPosition.cpp" />
     <ClCompile Include="..\..\libs\wxutil\window\TransientWindow.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\libs\wxutil\Makefile.am" />
-    <None Include="..\..\libs\wxutil\Makefile.in" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -210,8 +210,4 @@
       <Filter>dataview</Filter>
     </ClCompile>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\libs\wxutil\Makefile.am" />
-    <None Include="..\..\libs\wxutil\Makefile.in" />
-  </ItemGroup>
 </Project>
