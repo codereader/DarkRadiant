@@ -3,7 +3,7 @@
 #include "iuimanager.h"
 #include "itextstream.h"
 #include "string/string.h"
-#include "wxutil/TreeModel.h"
+#include "wxutil/dataview/TreeModel.h"
 #include "entitylib.h"
 #include "registry/registry.h"
 #include "SREntity.h"

@@ -6,7 +6,7 @@
 #include "precompiled_main.h"
 
 // Some S/R editor specifics
-#include "wxutil/TreeModel.h"
+#include "wxutil/dataview/TreeModel.h"
 #include "wxutil/dialog/MessageBox.h"
 
 #include <fmt/format.h>

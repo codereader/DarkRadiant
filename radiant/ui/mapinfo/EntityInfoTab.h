@@ -3,7 +3,7 @@
 #include "scene/EntityBreakdown.h"
 
 #include <wx/panel.h>
-#include "wxutil/TreeView.h"
+#include "wxutil/dataview/TreeView.h"
 
 namespace ui
 {

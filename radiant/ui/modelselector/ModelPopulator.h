@@ -1,6 +1,6 @@
 #pragma once
 
-#include "wxutil/VFSTreePopulator.h"
+#include "wxutil/dataview/VFSTreePopulator.h"
 #include "wxutil/ModalProgressDialog.h"
 #include "imainframe.h"
 #include "iregistry.h"

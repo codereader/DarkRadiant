@@ -8,7 +8,7 @@
 #include "iscenegraph.h"
 #include "string/string.h"
 
-#include "wxutil/TreeModel.h"
+#include "wxutil/dataview/TreeModel.h"
 #include "wxutil/dialog/MessageBox.h"
 
 #include "RandomOrigin.h"

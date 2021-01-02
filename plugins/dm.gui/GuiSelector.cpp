@@ -1,6 +1,6 @@
 #include "GuiSelector.h"
 
-#include "wxutil/VFSTreePopulator.h"
+#include "wxutil/dataview/VFSTreePopulator.h"
 
 #include "i18n.h"
 #include "imainframe.h"

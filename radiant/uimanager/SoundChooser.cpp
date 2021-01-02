@@ -5,7 +5,7 @@
 #include "isound.h"
 #include "imainframe.h"
 
-#include "wxutil/VFSTreePopulator.h"
+#include "wxutil/dataview/VFSTreePopulator.h"
 #include "wxutil/menu/IconTextMenuItem.h"
 #include "debugging/ScopedDebugTimer.h"
 #include "ui/common/SoundShaderDefinitionView.h"

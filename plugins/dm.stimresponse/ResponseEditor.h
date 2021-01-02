@@ -2,7 +2,7 @@
 
 #include "ClassEditor.h"
 #include "wxutil/XmlResourceBasedWidget.h"
-#include "wxutil/TreeView.h"
+#include "wxutil/dataview/TreeView.h"
 #include <memory>
 
 namespace ui

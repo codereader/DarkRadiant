@@ -1,8 +1,8 @@
 #pragma once
 
 #include <sigc++/signal.h>
-#include "../TreeModel.h"
-#include "../TreeView.h"
+#include "../dataview/TreeModel.h"
+#include "../dataview/TreeView.h"
 #include "Populator.h"
 
 namespace wxutil

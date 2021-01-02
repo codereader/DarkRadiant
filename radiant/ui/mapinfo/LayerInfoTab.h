@@ -1,7 +1,7 @@
 #pragma once
 
 #include <wx/panel.h>
-#include "wxutil/TreeView.h"
+#include "wxutil/dataview/TreeView.h"
 
 namespace ui
 {

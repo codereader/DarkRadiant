@@ -3,7 +3,7 @@
 #include "i18n.h"
 #include "iuimanager.h"
 
-#include "wxutil/TreeView.h"
+#include "wxutil/dataview/TreeView.h"
 #include "wxutil/ChoiceHelper.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/EntityClassChooser.h"

@@ -3,7 +3,7 @@
 #include "inode.h"
 #include "ientity.h"
 #include <memory>
-#include "wxutil/TreeModel.h"
+#include "wxutil/dataview/TreeModel.h"
 
 #include "Conversation.h"
 

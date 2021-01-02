@@ -3,7 +3,7 @@
 #include "wxutil/dialog/DialogBase.h"
 
 #include "wxutil/preview/ParticlePreview.h"
-#include "wxutil/TreeModel.h"
+#include "wxutil/dataview/TreeModel.h"
 
 #include "iparticles.h"
 #include <string>

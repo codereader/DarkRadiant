@@ -5,7 +5,7 @@
 #include "icommandsystem.h"
 #include "icolourscheme.h"
 
-#include "wxutil/TreeModel.h"
+#include "wxutil/dataview/TreeModel.h"
 
 class wxButton;
 class wxPanel;

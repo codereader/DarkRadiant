@@ -2,8 +2,8 @@
 
 #include "iresourcechooser.h"
 #include "wxutil/dialog/DialogBase.h"
-#include "wxutil/TreeModel.h"
-#include "wxutil/TreeView.h"
+#include "wxutil/dataview/TreeModel.h"
+#include "wxutil/dataview/TreeView.h"
 #include "wxutil/menu/PopupMenu.h"
 
 #include "SoundShaderPreview.h"

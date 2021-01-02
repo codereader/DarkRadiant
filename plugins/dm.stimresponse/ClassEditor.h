@@ -4,7 +4,7 @@
 #include "StimTypes.h"
 
 #include <wx/event.h>
-#include "wxutil/TreeView.h"
+#include "wxutil/dataview/TreeView.h"
 
 class wxTextCtrl;
 class wxButton;

@@ -1,7 +1,8 @@
 #include "EntityClassChooser.h"
-#include "TreeModel.h"
-#include "VFSTreePopulator.h"
-#include "wxutil/menu/IconTextMenuItem.h"
+#include "dataview/TreeModel.h"
+#include "dataview/TreeViewItemStyle.h"
+#include "dataview/VFSTreePopulator.h"
+#include "menu/IconTextMenuItem.h"
 
 #include "i18n.h"
 #include "ifavourites.h"
@@ -13,8 +14,6 @@
 #include <wx/button.h>
 #include <wx/panel.h>
 #include <wx/splitter.h>
-
-#include "TreeViewItemStyle.h"
 
 #include "string/string.h"
 #include "eclass.h"

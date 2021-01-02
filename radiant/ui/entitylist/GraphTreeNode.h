@@ -1,6 +1,6 @@
 #pragma once
 
-#include "wxutil/TreeModel.h"
+#include "wxutil/dataview/TreeModel.h"
 
 namespace ui
 {

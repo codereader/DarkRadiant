@@ -12,9 +12,9 @@
 #include "wxutil/preview/ModelPreview.h"
 #include "wxutil/WindowPosition.h"
 #include "wxutil/PanedPosition.h"
-#include "wxutil/TreeModelFilter.h"
+#include "wxutil/dataview/TreeModelFilter.h"
 #include "wxutil/XmlResourceBasedWidget.h"
-#include "wxutil/KeyValueTable.h"
+#include "wxutil/dataview/KeyValueTable.h"
 
 #include <string>
 

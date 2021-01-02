@@ -7,7 +7,7 @@
 #include "ui/common/MaterialDefinitionView.h"
 #include "TextureDirectoryLoader.h"
 #include "wxutil/ModalProgressDialog.h"
-#include "wxutil/TreeViewItemStyle.h"
+#include "wxutil/dataview/TreeViewItemStyle.h"
 #include "string/string.h"
 #include "shaderlib.h"
 

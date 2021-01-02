@@ -20,7 +20,7 @@
 #include "scenelib.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/menu/IconTextMenuItem.h"
-#include "wxutil/TreeModel.h"
+#include "wxutil/dataview/TreeModel.h"
 #include "xmlutil/Document.h"
 
 #include <map>

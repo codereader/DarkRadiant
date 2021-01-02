@@ -4,8 +4,8 @@
 #include <mutex>
 #include <map>
 #include <memory>
-#include "wxutil/TreeModel.h"
-#include "wxutil/TreeView.h"
+#include "wxutil/dataview/TreeModel.h"
+#include "wxutil/dataview/TreeView.h"
 #include "SequentialTaskQueue.h"
 
 #include <wx/panel.h>

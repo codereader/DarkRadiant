@@ -12,7 +12,7 @@
 
 #include <map>
 #include <string>
-#include "wxutil/TreeView.h"
+#include "wxutil/dataview/TreeView.h"
 
 /* FORWARD DECLS */
 class Entity;

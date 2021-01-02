@@ -1,8 +1,8 @@
 #pragma once
 
-#include "wxutil/ResourceTreeView.h"
+#include "wxutil/dataview/ResourceTreeView.h"
 #include "wxutil/menu/IconTextMenuItem.h"
-#include "wxutil/TreeModelFilter.h"
+#include "wxutil/dataview/TreeModelFilter.h"
 
 namespace ui
 {

@@ -8,7 +8,7 @@
 
 #include "debugging/ScopedDebugTimer.h"
 
-#include "wxutil/TreeView.h"
+#include "wxutil/dataview/TreeView.h"
 
 #include <wx/sizer.h>
 #include <wx/thread.h>

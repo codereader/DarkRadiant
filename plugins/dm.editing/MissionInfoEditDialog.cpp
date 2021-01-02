@@ -9,7 +9,7 @@
 #include <fmt/format.h>
 #include <wx/button.h>
 #include <wx/textctrl.h>
-#include "wxutil/TreeView.h"
+#include "wxutil/dataview/TreeView.h"
 #include "wxutil/preview/GuiView.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/menu/IconTextMenuItem.h"

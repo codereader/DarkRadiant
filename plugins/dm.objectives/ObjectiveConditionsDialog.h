@@ -3,7 +3,7 @@
 #include "wxutil/dialog/DialogBase.h"
 #include "wxutil/XmlResourceBasedWidget.h"
 #include "wxutil/WindowPosition.h"
-#include "wxutil/TreeView.h"
+#include "wxutil/dataview/TreeView.h"
 
 #include "ObjectiveCondition.h"
 #include "ObjectiveEntity.h"

@@ -3,7 +3,7 @@
 #include "scene/ShaderBreakdown.h"
 
 #include "wxutil/menu/PopupMenu.h"
-#include "wxutil/TreeView.h"
+#include "wxutil/dataview/TreeView.h"
 #include <wx/panel.h>
 
 namespace ui

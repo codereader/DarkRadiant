@@ -4,7 +4,7 @@
 #include <vector>
 #include <memory>
 #include "wxutil/GLWidget.h"
-#include "wxutil/TreeView.h"
+#include "wxutil/dataview/TreeView.h"
 
 #include <wx/panel.h>
 

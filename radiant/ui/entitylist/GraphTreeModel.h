@@ -5,7 +5,7 @@
 #include "iscenegraph.h"
 #include "GraphTreeNode.h"
 
-#include "wxutil/TreeModel.h"
+#include "wxutil/dataview/TreeModel.h"
 
 namespace ui
 {

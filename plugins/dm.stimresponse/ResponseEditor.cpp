@@ -1,6 +1,6 @@
 #include "ResponseEditor.h"
 
-#include "wxutil/TreeModel.h"
+#include "wxutil/dataview/TreeModel.h"
 #include "wxutil/menu/IconTextMenuItem.h"
 #include "string/convert.h"
 

@@ -2,7 +2,7 @@
 
 #include "i18n.h"
 #include "ifavourites.h"
-#include "menu/IconTextMenuItem.h"
+#include "../menu/IconTextMenuItem.h"
 #include "TreeViewItemStyle.h"
 
 namespace wxutil

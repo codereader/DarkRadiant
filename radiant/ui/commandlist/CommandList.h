@@ -3,8 +3,8 @@
 #include <string>
 #include "icommandsystem.h"
 #include "wxutil/dialog/DialogBase.h"
-#include "wxutil/TreeModel.h"
-#include "wxutil/TreeView.h"
+#include "wxutil/dataview/TreeModel.h"
+#include "wxutil/dataview/TreeView.h"
 
 class wxButton;
 

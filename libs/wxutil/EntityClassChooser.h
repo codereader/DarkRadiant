@@ -3,14 +3,14 @@
 #include "iradiant.h"
 #include "ieclass.h"
 
-#include "wxutil/preview/ModelPreview.h"
-#include "wxutil/dialog/DialogBase.h"
-#include "wxutil/TreeModelFilter.h"
-#include "wxutil/TreeModel.h"
-#include "wxutil/ResourceTreeView.h"
-#include "wxutil/XmlResourceBasedWidget.h"
-#include "wxutil/PanedPosition.h"
-#include "wxutil/menu/PopupMenu.h"
+#include "preview/ModelPreview.h"
+#include "dialog/DialogBase.h"
+#include "dataview/TreeModelFilter.h"
+#include "dataview/TreeModel.h"
+#include "dataview/ResourceTreeView.h"
+#include "XmlResourceBasedWidget.h"
+#include "PanedPosition.h"
+#include "menu/PopupMenu.h"
 
 #include <memory>
 #include <sigc++/connection.h>

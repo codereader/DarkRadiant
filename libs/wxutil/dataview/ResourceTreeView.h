@@ -3,7 +3,7 @@
 #include "TreeView.h"
 #include "TreeModel.h"
 #include "TreeModelFilter.h"
-#include "menu/PopupMenu.h"
+#include "../menu/PopupMenu.h"
 
 namespace wxutil
 {

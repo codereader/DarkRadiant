@@ -8,7 +8,7 @@
 #include "wxutil/preview/ModelPreview.h"
 #include <string>
 
-#include "wxutil/TreeModel.h"
+#include "wxutil/dataview/TreeModel.h"
 
 namespace wxutil { class TreeView; }
 

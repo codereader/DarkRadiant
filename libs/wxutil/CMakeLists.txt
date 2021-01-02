@@ -1,5 +1,10 @@
 add_library(wxutil
             ConsoleView.cpp
+            dataview/ResourceTreeView.cpp
+            dataview/TreeModel.cpp
+            dataview/TreeModelFilter.cpp
+            dataview/TreeView.cpp
+            dataview/VFSTreePopulator.cpp
             dialog/DialogBase.cpp
             dialog/Dialog.cpp
             dialog/MessageBox.cpp
@@ -21,14 +26,9 @@ add_library(wxutil
             preview/ModelPreview.cpp
             preview/ParticlePreview.cpp
             preview/RenderPreview.cpp
-            ResourceTreeView.cpp
             SerialisableWidgets.cpp
             SourceView.cpp
             Splitter.cpp
-            TreeModel.cpp
-            TreeModelFilter.cpp
-            TreeView.cpp
-            VFSTreePopulator.cpp
             WindowPosition.cpp
             window/TransientWindow.cpp)
 target_compile_options(wxutil PUBLIC ${SIGC_CFLAGS} ${FTGL_CFLAGS})

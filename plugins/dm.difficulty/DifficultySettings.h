@@ -4,7 +4,7 @@
 #include "entitylib.h"
 #include <map>
 #include <memory>
-#include "wxutil/TreeModel.h"
+#include "wxutil/dataview/TreeModel.h"
 
 #include "DifficultyEntity.h"
 #include "Setting.h"

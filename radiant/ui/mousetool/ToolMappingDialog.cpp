@@ -7,7 +7,7 @@
 #include <wx/button.h>
 #include "wxutil/Modifier.h"
 #include "wxutil/MouseButton.h"
-#include "wxutil/TreeModelFilter.h"
+#include "wxutil/dataview/TreeModelFilter.h"
 #include "wxutil/dialog/MessageBox.h"
 #include <functional>
 

@@ -139,6 +139,13 @@
     <ClInclude Include="..\..\libs\wxutil\ChoiceHelper.h" />
     <ClInclude Include="..\..\libs\wxutil\ConsoleView.h" />
     <ClInclude Include="..\..\libs\wxutil\ControlButton.h" />
+    <ClInclude Include="..\..\libs\wxutil\dataview\KeyValueTable.h" />
+    <ClInclude Include="..\..\libs\wxutil\dataview\ResourceTreeView.h" />
+    <ClInclude Include="..\..\libs\wxutil\dataview\TreeModel.h" />
+    <ClInclude Include="..\..\libs\wxutil\dataview\TreeModelFilter.h" />
+    <ClInclude Include="..\..\libs\wxutil\dataview\TreeView.h" />
+    <ClInclude Include="..\..\libs\wxutil\dataview\TreeViewItemStyle.h" />
+    <ClInclude Include="..\..\libs\wxutil\dataview\VFSTreePopulator.h" />
     <ClInclude Include="..\..\libs\wxutil\DeferredMotionDelta.h" />
     <ClInclude Include="..\..\libs\wxutil\dialog\Dialog.h" />
     <ClInclude Include="..\..\libs\wxutil\dialog\DialogBase.h" />
@@ -158,7 +165,6 @@
     <ClInclude Include="..\..\libs\wxutil\GLContext.h" />
     <ClInclude Include="..\..\libs\wxutil\GLWidget.h" />
     <ClInclude Include="..\..\libs\wxutil\IConv.h" />
-    <ClInclude Include="..\..\libs\wxutil\KeyValueTable.h" />
     <ClInclude Include="..\..\libs\wxutil\menu\CommandMenuItem.h" />
     <ClInclude Include="..\..\libs\wxutil\menu\IconTextMenuItem.h" />
     <ClInclude Include="..\..\libs\wxutil\menu\MenuItem.h" />
@@ -176,23 +182,23 @@
     <ClInclude Include="..\..\libs\wxutil\preview\ModelPreview.h" />
     <ClInclude Include="..\..\libs\wxutil\preview\ParticlePreview.h" />
     <ClInclude Include="..\..\libs\wxutil\preview\RenderPreview.h" />
-    <ClInclude Include="..\..\libs\wxutil\ResourceTreeView.h" />
     <ClInclude Include="..\..\libs\wxutil\ScopeTimer.h" />
     <ClInclude Include="..\..\libs\wxutil\ScrollWindow.h" />
     <ClInclude Include="..\..\libs\wxutil\SerialisableWidgets.h" />
     <ClInclude Include="..\..\libs\wxutil\SourceView.h" />
     <ClInclude Include="..\..\libs\wxutil\Splitter.h" />
-    <ClInclude Include="..\..\libs\wxutil\TreeModel.h" />
-    <ClInclude Include="..\..\libs\wxutil\TreeModelFilter.h" />
-    <ClInclude Include="..\..\libs\wxutil\TreeView.h" />
-    <ClInclude Include="..\..\libs\wxutil\TreeViewItemStyle.h" />
-    <ClInclude Include="..\..\libs\wxutil\VFSTreePopulator.h" />
     <ClInclude Include="..\..\libs\wxutil\WindowPosition.h" />
     <ClInclude Include="..\..\libs\wxutil\window\TransientWindow.h" />
     <ClInclude Include="..\..\libs\wxutil\XmlResourceBasedWidget.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\wxutil\ConsoleView.cpp" />
+    <ClCompile Include="..\..\libs\wxutil\dataview\KeyValueTable.cpp" />
+    <ClCompile Include="..\..\libs\wxutil\dataview\ResourceTreeView.cpp" />
+    <ClCompile Include="..\..\libs\wxutil\dataview\TreeModel.cpp" />
+    <ClCompile Include="..\..\libs\wxutil\dataview\TreeModelFilter.cpp" />
+    <ClCompile Include="..\..\libs\wxutil\dataview\TreeView.cpp" />
+    <ClCompile Include="..\..\libs\wxutil\dataview\VFSTreePopulator.cpp" />
     <ClCompile Include="..\..\libs\wxutil\dialog\Dialog.cpp" />
     <ClCompile Include="..\..\libs\wxutil\dialog\DialogBase.cpp" />
     <ClCompile Include="..\..\libs\wxutil\dialog\MessageBox.cpp" />
@@ -203,7 +209,6 @@
     <ClCompile Include="..\..\libs\wxutil\fsview\FileSystemView.cpp" />
     <ClCompile Include="..\..\libs\wxutil\fsview\Populator.cpp" />
     <ClCompile Include="..\..\libs\wxutil\GLWidget.cpp" />
-    <ClCompile Include="..\..\libs\wxutil\KeyValueTable.cpp" />
     <ClCompile Include="..\..\libs\wxutil\menu\PopupMenu.cpp" />
     <ClCompile Include="..\..\libs\wxutil\ModalProgressDialog.cpp" />
     <ClCompile Include="..\..\libs\wxutil\MouseToolHandler.cpp" />
@@ -214,14 +219,9 @@
     <ClCompile Include="..\..\libs\wxutil\preview\ModelPreview.cpp" />
     <ClCompile Include="..\..\libs\wxutil\preview\ParticlePreview.cpp" />
     <ClCompile Include="..\..\libs\wxutil\preview\RenderPreview.cpp" />
-    <ClCompile Include="..\..\libs\wxutil\ResourceTreeView.cpp" />
     <ClCompile Include="..\..\libs\wxutil\SerialisableWidgets.cpp" />
     <ClCompile Include="..\..\libs\wxutil\SourceView.cpp" />
     <ClCompile Include="..\..\libs\wxutil\Splitter.cpp" />
-    <ClCompile Include="..\..\libs\wxutil\TreeModel.cpp" />
-    <ClCompile Include="..\..\libs\wxutil\TreeModelFilter.cpp" />
-    <ClCompile Include="..\..\libs\wxutil\TreeView.cpp" />
-    <ClCompile Include="..\..\libs\wxutil\VFSTreePopulator.cpp" />
     <ClCompile Include="..\..\libs\wxutil\WindowPosition.cpp" />
     <ClCompile Include="..\..\libs\wxutil\window\TransientWindow.cpp" />
   </ItemGroup>
