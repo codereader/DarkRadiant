@@ -106,7 +106,7 @@ void TexTool::populateWindow()
 
 	// Load the texture toolbar from the registry
     IToolbarManager& tbCreator = GlobalUIManager().getToolbarManager();
-	wxToolBar* textoolbar = tbCreator.getToolbar("textool", this);
+	wxToolBar* textoolbar = tbCreator.createToolbar("textool", this);
 
 	if (textoolbar != NULL)
 	{

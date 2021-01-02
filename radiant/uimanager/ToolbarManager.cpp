@@ -32,7 +32,7 @@ void ToolbarManager::initialise()
 	}
 }
 
-wxToolBar* ToolbarManager::getToolbar(const std::string& toolbarName, wxWindow* parent)
+wxToolBar* ToolbarManager::createToolbar(const std::string& toolbarName, wxWindow* parent)
 {
 	// Check if the toolbarName exists
 	if (toolbarExists(toolbarName))
@@ -46,7 +46,7 @@ wxToolBar* ToolbarManager::getToolbar(const std::string& toolbarName, wxWindow* 
 
 		if (!toolbarList.empty())
 		{
-			return createToolbar(toolbarList[0], parent);
+			return createToolbarFromNode(toolbarList[0], parent);
 		}
 		else {
 			rError() << "ToolbarManager: Critical: Could not instantiate " << toolbarName << std::endl;
@@ -108,7 +108,7 @@ wxToolBarToolBase* ToolbarManager::createToolItem(wxToolBar* toolbar, const xml:
 	return toolItem;
 }
 
-wxToolBar* ToolbarManager::createToolbar(xml::Node& node, wxWindow* parent)
+wxToolBar* ToolbarManager::createToolbarFromNode(xml::Node& node, wxWindow* parent)
 {
 	// Get all action children elements
 	xml::NodeList toolItemList = node.getChildren();

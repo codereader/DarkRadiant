@@ -29,7 +29,7 @@ class ToolbarManager :
 
 public:
 	// Returns the toolbar that is named toolbarName
-	wxToolBar* getToolbar(const std::string& toolbarName, wxWindow* parent);
+	wxToolBar* createToolbar(const std::string& name, wxWindow* parent) override;
 
 	// Load toolbars from registry
 	void initialise();
@@ -41,11 +41,8 @@ private:
 	 */
 	void loadToolbars();
 
-	/**
-	 * Creates a toolbar based on the data found in the passed xmlNode
-	 * Returns the fully populated wxToolBar.
-	 */
-	wxToolBar* createToolbar(xml::Node& node, wxWindow* parent);
+    // Construct toolbar widget from XML node
+	wxToolBar* createToolbarFromNode(xml::Node& node, wxWindow* parent);
 
 	/**
 	 * Checks the passed xmlNode for a recognized item (ToolButton, ToggleToolButton, Separator)

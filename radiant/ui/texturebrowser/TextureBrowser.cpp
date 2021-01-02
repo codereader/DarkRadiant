@@ -270,7 +270,7 @@ TextureBrowser::TextureBrowser(wxWindow* parent) :
     {
         IToolbarManager& tbCreator = GlobalUIManager().getToolbarManager();
 
-        _textureToolbar = tbCreator.getToolbar("texture", texbox);
+        _textureToolbar = tbCreator.createToolbar("texture", texbox);
 
         if (_textureToolbar != NULL)
         {
