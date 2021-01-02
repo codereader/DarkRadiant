@@ -256,12 +256,12 @@ void EntityClassChooser::onMainFrameShuttingDown()
 
 void EntityClassChooser::loadEntityClasses()
 {
-    _treeView->populate(std::make_shared<ThreadedEntityClassLoader>(_columns));
+    _treeView->Populate(std::make_shared<ThreadedEntityClassLoader>(_columns));
 }
 
 void EntityClassChooser::setSelectedEntityClass(const std::string& eclass)
 {
-    _treeView->setSelection(eclass);
+    _treeView->SetSelectedFullname(eclass);
 }
 
 const std::string& EntityClassChooser::getSelectedEntityClass() const
@@ -305,7 +305,7 @@ void EntityClassChooser::setupTreeView()
 
     _treeView = new ResourceTreeView(parent, _treeStore, _columns);
     _treeView->AddSearchColumn(_columns.iconAndName);
-    _treeView->setExpandTopLevelItemsAfterPopulation(true);
+    _treeView->SetExpandTopLevelItemsAfterPopulation(true);
 
     _treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &EntityClassChooser::onSelectionChanged, this);
 

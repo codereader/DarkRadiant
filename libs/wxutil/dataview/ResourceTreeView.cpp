@@ -56,12 +56,12 @@ ResourceTreeView::~ResourceTreeView()
     }
 }
 
-const TreeModel::Ptr& ResourceTreeView::getTreeModel()
+const TreeModel::Ptr& ResourceTreeView::GetTreeModel()
 {
     return _treeStore;
 }
 
-void ResourceTreeView::setTreeModel(const TreeModel::Ptr& model)
+void ResourceTreeView::SetTreeModel(const TreeModel::Ptr& model)
 {
     _treeStore = model;
     _emptyFavouritesLabel = wxDataViewItem();
@@ -73,17 +73,17 @@ void ResourceTreeView::setTreeModel(const TreeModel::Ptr& model)
         return;
     }
 
-    setupTreeModelFilter();
+    SetupTreeModelFilter();
 }
 
-void ResourceTreeView::setupTreeModelFilter()
+void ResourceTreeView::SetupTreeModelFilter()
 {
     // Set up the filter
     _treeModelFilter.reset(new TreeModelFilter(_treeStore));
 
     _treeModelFilter->SetVisibleFunc([this](TreeModel::Row& row)
     {
-        return treeModelFilterFunc(row);
+        return _treeModelFilterFunc(row);
     });
 
     AssociateModel(_treeModelFilter.get());
@@ -120,19 +120,19 @@ void ResourceTreeView::setupTreeModelFilter()
     }
 }
 
-ResourceTreeView::TreeMode ResourceTreeView::getTreeMode() const
+ResourceTreeView::TreeMode ResourceTreeView::GetTreeMode() const
 {
     return _mode;
 }
 
-void ResourceTreeView::setTreeMode(ResourceTreeView::TreeMode mode)
+void ResourceTreeView::SetTreeMode(ResourceTreeView::TreeMode mode)
 {
     _mode = mode;
 
-    setupTreeModelFilter();
+    SetupTreeModelFilter();
 }
 
-void ResourceTreeView::populateContextMenu(wxutil::PopupMenu& popupMenu)
+void ResourceTreeView::PopulateContextMenu(wxutil::PopupMenu& popupMenu)
 {
     if (popupMenu.GetMenuItemCount() > 0)
     {
@@ -152,7 +152,7 @@ void ResourceTreeView::populateContextMenu(wxutil::PopupMenu& popupMenu)
     );
 }
 
-std::string ResourceTreeView::getSelection()
+std::string ResourceTreeView::GetSelectedFullname()
 {
     // Get the selected value
     wxDataViewItem item = GetSelection();
@@ -168,12 +168,12 @@ std::string ResourceTreeView::getSelection()
     return row[_columns.fullName];
 }
 
-void ResourceTreeView::setSelection(const std::string& fullName)
+void ResourceTreeView::SetSelectedFullname(const std::string& fullName)
 {
     if (_populator)
     {
         // Postpone the selection, store the name
-        _itemToSelectAfterPopulation = fullName;
+        _fullNameToSelectAfterPopulation = fullName;
         return;
     }
 
@@ -181,12 +181,12 @@ void ResourceTreeView::setSelection(const std::string& fullName)
     // no selection
     if (fullName.empty())
     {
-        Collapse(getTreeModel()->GetRoot());
+        Collapse(GetTreeModel()->GetRoot());
         return;
     }
 
     // Find the requested element
-    auto item = getTreeModel()->FindString(fullName, _columns.fullName);
+    auto item = GetTreeModel()->FindString(fullName, _columns.fullName);
 
     if (item.IsOk())
     {
@@ -198,25 +198,25 @@ void ResourceTreeView::setSelection(const std::string& fullName)
         ProcessWindowEvent(ev);
     }
 
-    _itemToSelectAfterPopulation.clear();
+    _fullNameToSelectAfterPopulation.clear();
 }
 
-void ResourceTreeView::clear()
+void ResourceTreeView::Clear()
 {
     // Clear any data and/or active population objects
     _populator.reset();
     _treeStore->Clear();
     _emptyFavouritesLabel = wxDataViewItem();
-    _itemToSelectAfterPopulation.clear();
+    _fullNameToSelectAfterPopulation.clear();
 }
 
-void ResourceTreeView::populate(const IResourceTreePopulator::Ptr& populator)
+void ResourceTreeView::Populate(const IResourceTreePopulator::Ptr& populator)
 {
     // Remove any data or running populators first
-    clear();
+    Clear();
 
     // Add the loading icon to the tree
-    TreeModel::Row row = getTreeModel()->AddItem();
+    TreeModel::Row row = GetTreeModel()->AddItem();
 
     row[_columns.iconAndName] = wxVariant(wxDataViewIconText(_("Loading resources...")));
     row[_columns.isFavourite] = true;
@@ -232,7 +232,7 @@ void ResourceTreeView::populate(const IResourceTreePopulator::Ptr& populator)
     _populator->Populate();
 }
 
-void ResourceTreeView::setExpandTopLevelItemsAfterPopulation(bool expand)
+void ResourceTreeView::SetExpandTopLevelItemsAfterPopulation(bool expand)
 {
     _expandTopLevelItemsAfterPopulation = expand;
 }
@@ -240,7 +240,7 @@ void ResourceTreeView::setExpandTopLevelItemsAfterPopulation(bool expand)
 void ResourceTreeView::_onTreeStorePopulationFinished(TreeModel::PopulationFinishedEvent& ev)
 {
     UnselectAll();
-    setTreeModel(ev.GetTreeModel());
+    SetTreeModel(ev.GetTreeModel());
     _populator.reset();
 
     if (_expandTopLevelItemsAfterPopulation)
@@ -249,9 +249,9 @@ void ResourceTreeView::_onTreeStorePopulationFinished(TreeModel::PopulationFinis
     }
 
     // Populator is empty now, check if we need to pre-select anything
-    if (!_itemToSelectAfterPopulation.empty())
+    if (!_fullNameToSelectAfterPopulation.empty())
     {
-        setSelection(_itemToSelectAfterPopulation);
+        SetSelectedFullname(_fullNameToSelectAfterPopulation);
     }
 }
 
@@ -261,7 +261,7 @@ void ResourceTreeView::_onContextMenu(wxDataViewEvent& ev)
     {
         _popupMenu.reset(new wxutil::PopupMenu());
 
-        populateContextMenu(*_popupMenu);
+        PopulateContextMenu(*_popupMenu);
     }
 
     _popupMenu->show(this);
@@ -270,16 +270,16 @@ void ResourceTreeView::_onContextMenu(wxDataViewEvent& ev)
 bool ResourceTreeView::_testAddToFavourites()
 {
     // Adding favourites is allowed for any folder and non-favourite items 
-    return isDirectorySelected() || (GetSelection().IsOk() && !isFavouriteSelected());
+    return IsDirectorySelected() || (GetSelection().IsOk() && !IsFavouriteSelected());
 }
 
 bool ResourceTreeView::_testRemoveFromFavourites()
 {
     // We can run remove from favourites on any folder or on favourites themselves
-    return isDirectorySelected() || isFavouriteSelected();
+    return IsDirectorySelected() || IsFavouriteSelected();
 }
 
-void ResourceTreeView::setFavouriteRecursively(TreeModel::Row& row, bool isFavourite)
+void ResourceTreeView::SetFavouriteRecursively(TreeModel::Row& row, bool isFavourite)
 {
     if (row[_columns.isFolder].getBool())
     {
@@ -290,7 +290,7 @@ void ResourceTreeView::setFavouriteRecursively(TreeModel::Row& row, bool isFavou
         for (const wxDataViewItem& child : children)
         {
             TreeModel::Row childRow(child, *GetModel());
-            setFavouriteRecursively(childRow, isFavourite);
+            SetFavouriteRecursively(childRow, isFavourite);
         }
 
         return;
@@ -322,13 +322,13 @@ void ResourceTreeView::_onSetFavourite(bool isFavourite)
     // Grab this item and enter recursion, propagating the favourite status
     TreeModel::Row row(item, *GetModel());
 
-    setFavouriteRecursively(row, isFavourite);
+    SetFavouriteRecursively(row, isFavourite);
 
     // Store to registry on each change
     // TODO: ? _favourites->saveToRegistry();
 }
 
-bool ResourceTreeView::isDirectorySelected()
+bool ResourceTreeView::IsDirectorySelected()
 {
     wxDataViewItem item = GetSelection();
 
@@ -339,7 +339,7 @@ bool ResourceTreeView::isDirectorySelected()
     return row[_columns.isFolder].getBool();
 }
 
-bool ResourceTreeView::isFavouriteSelected()
+bool ResourceTreeView::IsFavouriteSelected()
 {
     wxDataViewItem item = GetSelection();
 
@@ -350,7 +350,7 @@ bool ResourceTreeView::isFavouriteSelected()
     return row[_columns.isFavourite].getBool();
 }
 
-bool ResourceTreeView::treeModelFilterFunc(wxutil::TreeModel::Row& row)
+bool ResourceTreeView::_treeModelFilterFunc(wxutil::TreeModel::Row& row)
 {
     if (_mode == TreeMode::ShowAll) return true; // everything is visible
 
@@ -368,7 +368,7 @@ bool ResourceTreeView::treeModelFilterFunc(wxutil::TreeModel::Row& row)
     {
         wxutil::TreeModel::Row childRow(child, *_treeStore);
 
-        if (treeModelFilterFunc(childRow))
+        if (_treeModelFilterFunc(childRow))
         {
             return true;
         }

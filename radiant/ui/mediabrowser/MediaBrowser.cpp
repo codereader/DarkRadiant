@@ -73,8 +73,8 @@ void MediaBrowser::construct()
 	// Connect up the selection changed callback
 	_treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &MediaBrowser::_onTreeViewSelectionChanged, this);
 
-	_showAll->SetValue(_treeView->getTreeMode() == MediaBrowserTreeView::TreeMode::ShowAll);
-	_showFavourites->SetValue(_treeView->getTreeMode() == MediaBrowserTreeView::TreeMode::ShowFavourites);
+	_showAll->SetValue(_treeView->GetTreeMode() == MediaBrowserTreeView::TreeMode::ShowAll);
+	_showFavourites->SetValue(_treeView->GetTreeMode() == MediaBrowserTreeView::TreeMode::ShowFavourites);
 
 	_showAll->Bind(wxEVT_RADIOBUTTON, [&](wxCommandEvent& ev)
 	{
@@ -130,28 +130,28 @@ void MediaBrowser::onMainFrameConstructed()
 
 std::string MediaBrowser::getSelection()
 {
-    return _treeView->getSelection();
+    return _treeView->GetSelectedFullname();
 }
 
 // Set the selection in the treeview
 void MediaBrowser::setSelection(const std::string& selection)
 {
-    _treeView->setSelection(selection);
+    _treeView->SetSelectedFullname(selection);
 }
 
 void MediaBrowser::onMaterialDefsLoaded()
 {
-    _treeView->populate();
+    _treeView->Populate();
 }
 
 void MediaBrowser::onMaterialDefsUnloaded()
 {
-    _treeView->clear();
+    _treeView->Clear();
 }
 
 void MediaBrowser::setTreeModeFromControls()
 {
-    _treeView->setTreeMode(_showAll->GetValue() ? 
+    _treeView->SetTreeMode(_showAll->GetValue() ? 
         MediaBrowserTreeView::TreeMode::ShowAll : 
         MediaBrowserTreeView::TreeMode::ShowFavourites);
 }
@@ -161,7 +161,7 @@ void MediaBrowser::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
     util::ScopedBoolLock lock(_blockShaderClipboardUpdates);
 
     // Update the preview if a texture is selected
-    if (!_treeView->isDirectorySelected())
+    if (!_treeView->IsDirectorySelected())
     {
         _preview->SetTexture(getSelection());
         GlobalShaderClipboard().setSourceShader(getSelection());
@@ -230,7 +230,7 @@ void MediaBrowser::initialiseModule(const IApplicationContext& ctx)
 	);
 
 	// Start loading materials
-	_treeView->populate();
+	_treeView->Populate();
 
 	_shaderClipboardConn = GlobalShaderClipboard().signal_sourceChanged().connect(
 		sigc::mem_fun(this, &MediaBrowser::onShaderClipboardSourceChanged)

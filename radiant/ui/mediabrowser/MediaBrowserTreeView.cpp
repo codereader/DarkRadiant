@@ -281,32 +281,32 @@ MediaBrowserTreeView::MediaBrowserTreeView(wxWindow* parent) :
 
     // The wxWidgets algorithm sucks at sorting large flat lists of strings,
     // so we do that ourselves
-    getTreeModel()->SetHasDefaultCompare(false);
+    GetTreeModel()->SetHasDefaultCompare(false);
 
     Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &MediaBrowserTreeView::_onTreeViewItemActivated, this);
 }
 
-const MediaBrowserTreeView::TreeColumns& MediaBrowserTreeView::getColumns() const
+const MediaBrowserTreeView::TreeColumns& MediaBrowserTreeView::GetColumns() const
 {
     return _columns;
 }
 
-void MediaBrowserTreeView::setTreeMode(MediaBrowserTreeView::TreeMode mode)
+void MediaBrowserTreeView::SetTreeMode(MediaBrowserTreeView::TreeMode mode)
 {
-    std::string previouslySelectedItem = getSelection();
+    std::string previouslySelectedItem = GetSelectedFullname();
     
-    ResourceTreeView::setTreeMode(mode);
+    ResourceTreeView::SetTreeMode(mode);
 
     // Try to select the same item we had as before
-    setSelection(previouslySelectedItem);
+    SetSelectedFullname(previouslySelectedItem);
 }
 
-void MediaBrowserTreeView::populate()
+void MediaBrowserTreeView::Populate()
 {
-    ResourceTreeView::populate(std::make_shared<MediaPopulator>(_columns));
+    ResourceTreeView::Populate(std::make_shared<MediaPopulator>(_columns));
 }
 
-void MediaBrowserTreeView::populateContextMenu(wxutil::PopupMenu& popupMenu)
+void MediaBrowserTreeView::PopulateContextMenu(wxutil::PopupMenu& popupMenu)
 {
     // Construct the popup context menu
     popupMenu.addItem(
@@ -335,14 +335,14 @@ void MediaBrowserTreeView::populateContextMenu(wxutil::PopupMenu& popupMenu)
         std::bind(&MediaBrowserTreeView::_testSingleTexSel, this)
     );
 
-    ResourceTreeView::populateContextMenu(popupMenu);
+    ResourceTreeView::PopulateContextMenu(popupMenu);
 }
 
 void MediaBrowserTreeView::_onLoadInTexView()
 {
     // Use a TextureDirectoryLoader functor to search the directory. This
     // may throw an exception if cancelled by user.
-    TextureDirectoryLoader loader(getSelection());
+    TextureDirectoryLoader loader(GetSelectedFullname());
 
     try
     {
@@ -357,7 +357,7 @@ void MediaBrowserTreeView::_onLoadInTexView()
 bool MediaBrowserTreeView::_testLoadInTexView()
 {
     // "Load in textures view" requires a directory selection
-    if (isDirectorySelected())
+    if (IsDirectorySelected())
         return true;
     else
         return false;
@@ -366,20 +366,17 @@ bool MediaBrowserTreeView::_testLoadInTexView()
 void MediaBrowserTreeView::_onApplyToSel()
 {
     // Pass shader name to the selection system
-    GlobalCommandSystem().executeCommand("SetShaderOnSelection", getSelection());
+    GlobalCommandSystem().executeCommand("SetShaderOnSelection", GetSelectedFullname());
 }
 
 bool MediaBrowserTreeView::_testSingleTexSel()
 {
-    if (!isDirectorySelected() && !getSelection().empty())
-        return true;
-    else
-        return false;
+    return !IsDirectorySelected() && !GetSelectedFullname().empty();
 }
 
 void MediaBrowserTreeView::_onShowShaderDefinition()
 {
-    std::string shaderName = getSelection();
+    std::string shaderName = GetSelectedFullname();
 
     // Construct a shader view and pass the shader name
     auto view = new MaterialDefinitionView(shaderName);
@@ -389,7 +386,7 @@ void MediaBrowserTreeView::_onShowShaderDefinition()
 
 void MediaBrowserTreeView::_onSelectItems(bool select)
 {
-    std::string shaderName = getSelection();
+    std::string shaderName = GetSelectedFullname();
 
     if (select)
     {
@@ -403,9 +400,9 @@ void MediaBrowserTreeView::_onSelectItems(bool select)
 
 void MediaBrowserTreeView::_onTreeViewItemActivated(wxDataViewEvent& ev)
 {
-    std::string selection = getSelection();
+    std::string selection = GetSelectedFullname();
 
-    if (!isDirectorySelected() && !selection.empty())
+    if (!IsDirectorySelected() && !selection.empty())
     {
         // Pass shader name to the selection system
         GlobalCommandSystem().executeCommand("SetShaderOnSelection", selection);

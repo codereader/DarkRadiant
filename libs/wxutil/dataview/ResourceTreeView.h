@@ -68,7 +68,7 @@ private:
     IResourceTreePopulator::Ptr _populator;
 
     bool _expandTopLevelItemsAfterPopulation;
-    std::string _itemToSelectAfterPopulation;
+    std::string _fullNameToSelectAfterPopulation;
 
 public:
     ResourceTreeView(wxWindow* parent, const Columns& columns, long style = wxDV_SINGLE);
@@ -77,32 +77,32 @@ public:
     virtual ~ResourceTreeView();
 
     // Returns a reference to the model we're using
-    virtual const TreeModel::Ptr& getTreeModel();
-    virtual void setTreeModel(const TreeModel::Ptr& treeModel);
+    virtual const TreeModel::Ptr& GetTreeModel();
+    virtual void SetTreeModel(const TreeModel::Ptr& treeModel);
 
-    virtual TreeMode getTreeMode() const;
-    virtual void setTreeMode(TreeMode mode);
+    virtual TreeMode GetTreeMode() const;
+    virtual void SetTreeMode(TreeMode mode);
 
     // Returns the full name of the selection (or an empty string)
-    virtual std::string getSelection();
-    virtual void setSelection(const std::string& fullName);
+    virtual std::string GetSelectedFullname();
+    virtual void SetSelectedFullname(const std::string& fullName);
 
-    virtual void clear();
+    virtual void Clear();
 
-    virtual bool isDirectorySelected();
-    virtual bool isFavouriteSelected();
+    virtual bool IsDirectorySelected();
+    virtual bool IsFavouriteSelected();
 
     // Populate this tree using the given populator object
-    virtual void populate(const IResourceTreePopulator::Ptr& populator);
+    virtual void Populate(const IResourceTreePopulator::Ptr& populator);
 
-    void setExpandTopLevelItemsAfterPopulation(bool expand);
+    void SetExpandTopLevelItemsAfterPopulation(bool expand);
 
 protected:
-    virtual void populateContextMenu(wxutil::PopupMenu& popupMenu);
+    virtual void PopulateContextMenu(wxutil::PopupMenu& popupMenu);
 
-    virtual void setFavouriteRecursively(TreeModel::Row& row, bool isFavourite);
+    virtual void SetFavouriteRecursively(TreeModel::Row& row, bool isFavourite);
 
-    virtual void setupTreeModelFilter();
+    virtual void SetupTreeModelFilter();
 
 private:
     void _onContextMenu(wxDataViewEvent& ev);
@@ -113,7 +113,7 @@ private:
     void _onSetFavourite(bool isFavourite);
 
     // Evaluation function for item visibility
-    bool treeModelFilterFunc(TreeModel::Row& row);
+    bool _treeModelFilterFunc(TreeModel::Row& row);
 };
 
 }

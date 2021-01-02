@@ -28,15 +28,15 @@ private:
 public:
     MediaBrowserTreeView(wxWindow* parent);
 
-    const TreeColumns& getColumns() const;
+    const TreeColumns& GetColumns() const;
 
-    void setTreeMode(TreeMode mode) override;
+    void SetTreeMode(TreeMode mode) override;
 
     // Loads all the materials
-    void populate();
+    void Populate();
 
 protected:
-    void populateContextMenu(wxutil::PopupMenu& popupMenu) override;
+    void PopulateContextMenu(wxutil::PopupMenu& popupMenu) override;
 
 private:
     bool _testSingleTexSel();
