@@ -207,11 +207,13 @@ void ResourceTreeView::Clear()
     _populator.reset();
     _treeStore->Clear();
     _emptyFavouritesLabel = wxDataViewItem();
-    _fullNameToSelectAfterPopulation.clear();
 }
 
 void ResourceTreeView::Populate(const IResourceTreePopulator::Ptr& populator)
 {
+    // Try to keep the current selection intact after population
+    _fullNameToSelectAfterPopulation = GetSelectedFullname();
+
     // Remove any data or running populators first
     Clear();
 
@@ -242,6 +244,9 @@ void ResourceTreeView::_onTreeStorePopulationFinished(TreeModel::PopulationFinis
     UnselectAll();
     SetTreeModel(ev.GetTreeModel());
     _populator.reset();
+
+    // Trigger a column size event on the first-level row
+    TriggerColumnSizeEvent();
 
     if (_expandTopLevelItemsAfterPopulation)
     {

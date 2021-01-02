@@ -5,6 +5,7 @@
 #include "isound.h"
 #include "imainframe.h"
 
+#include "wxutil/dataview/ThreadedResourceTreePopulator.h"
 #include "wxutil/dataview/VFSTreePopulator.h"
 #include "wxutil/menu/IconTextMenuItem.h"
 #include "debugging/ScopedDebugTimer.h"
@@ -37,14 +38,14 @@ class SoundShaderPopulator :
     public wxutil::VFSTreePopulator
 {
 private:
-    const SoundChooser::TreeColumns& _columns;
+    const wxutil::ResourceTreeView::Columns& _columns;
 
     wxIcon _shaderIcon;
     wxIcon _folderIcon;
 public:
     // Constructor
-    SoundShaderPopulator(wxutil::TreeModel::Ptr treeStore,
-                         const SoundChooser::TreeColumns& columns) :
+    SoundShaderPopulator(const wxutil::TreeModel::Ptr& treeStore,
+                         const wxutil::ResourceTreeView::Columns& columns) :
                          VFSTreePopulator(treeStore),
                          _columns(columns)
     {
@@ -72,9 +73,11 @@ public:
         addPath(fullPath, [&](wxutil::TreeModel::Row& row, const std::string& path, 
             const std::string& leafName, bool isFolder)
         {
-            row[_columns.displayName] = wxVariant(
+            row[_columns.iconAndName] = wxVariant(
                 wxDataViewIconText(leafName, isFolder ? _folderIcon : _shaderIcon));
-            row[_columns.shaderName] = !isFolder ?  shader.getName() : std::string();
+            auto actualLeafName = !isFolder ? shader.getName() : std::string();
+            row[_columns.leafName] = actualLeafName;
+            row[_columns.fullName] = actualLeafName;
             row[_columns.isFolder] = isFolder;
             row.SendItemAdded();
         });
@@ -83,75 +86,52 @@ public:
 
 
 // Local class for loading sound shader definitions in a separate thread
-class SoundChooser::ThreadedSoundShaderLoader :
-    public wxThread
+class ThreadedSoundShaderLoader :
+    public wxutil::ThreadedResourceTreePopulator
 {
     // Column specification struct
-    const SoundChooser::TreeColumns& _columns;
-
-    // The tree store to populate. We must operate on our own tree store, since
-    // updating the EntityClassChooser's tree store from a different thread
-    // wouldn't be safe
-    wxutil::TreeModel::Ptr _treeStore;
-
-    // The class to be notified on finish
-    wxEvtHandler* _finishedHandler;
+    const wxutil::ResourceTreeView::Columns& _columns;
 
 public:
 
     // Construct and initialise variables
-    ThreadedSoundShaderLoader(const SoundChooser::TreeColumns& cols,
-                              wxEvtHandler* finishedHandler) :
-                              wxThread(wxTHREAD_JOINABLE),
-        _columns(cols),
-        _finishedHandler(finishedHandler)
+    ThreadedSoundShaderLoader(const wxutil::ResourceTreeView::Columns& columns) :
+        ThreadedResourceTreePopulator(columns),
+        _columns(columns)
     {}
 
     ~ThreadedSoundShaderLoader()
     {
-        if (IsRunning())
-        {
-            Delete();
-        }
+        EnsureStopped();
     }
 
-    // The worker function that will execute in the thread
-    ExitCode Entry()
+    void PopulateModel(const wxutil::TreeModel::Ptr& model) override
     {
         ScopedDebugTimer timer("ThreadedSoundShaderLoader::run()");
 
-        // Create new treestoree
-        _treeStore = new wxutil::TreeModel(_columns);
-
         // Populate it with the list of sound shaders by using a visitor class.
-        SoundShaderPopulator visitor(_treeStore, _columns);
-        
+        SoundShaderPopulator visitor(model, _columns);
+
         // Visit all sound shaders and collect them for later insertion
-        GlobalSoundManager().forEachShader(
-            std::bind(&SoundShaderPopulator::addShader, std::ref(visitor), std::placeholders::_1)
-        );
-
-        if (TestDestroy()) return static_cast<ExitCode>(0);
-
-        // angua: Ensure sound shaders are sorted before giving them to the tree view
-        _treeStore->SortModelFoldersFirst(_columns.displayName, _columns.isFolder);
-
-        if (!TestDestroy())
+        GlobalSoundManager().forEachShader([&](const ISoundShader& shader)
         {
-            wxQueueEvent(_finishedHandler, new wxutil::TreeModel::PopulationFinishedEvent(_treeStore));
-        }
+            ThrowIfCancellationRequested();
+            visitor.addShader(shader);
+        });
+    }
 
-        return static_cast<ExitCode>(0);
+    void SortModel(const wxutil::TreeModel::Ptr& model) override
+    {
+        // angua: Ensure sound shaders are sorted before giving them to the tree view
+        model->SortModelFoldersFirst(_columns.iconAndName, _columns.isFolder);
     }
 };
 
 // Constructor
 SoundChooser::SoundChooser(wxWindow* parent) :
 	DialogBase(_("Choose sound"), parent),
-	_treeStore(nullptr),
 	_treeView(nullptr),
-	_preview(new SoundShaderPreview(this)),
-    _loadingShaders(false)
+	_preview(new SoundShaderPreview(this))
 {
 	SetSizer(new wxBoxSizer(wxVERTICAL));
 	
@@ -175,9 +155,6 @@ SoundChooser::SoundChooser(wxWindow* parent) :
 
 	FitToScreen(0.5f, 0.7f);
 
-    // Connect the finish callback to load the treestore
-    Bind(wxutil::EV_TREEMODEL_POPULATION_FINISHED, &SoundChooser::_onTreeStorePopulationFinished, this);
-
     // Load the shaders
     loadSoundShaders();
 }
@@ -185,16 +162,15 @@ SoundChooser::SoundChooser(wxWindow* parent) :
 // Create the tree view
 wxWindow* SoundChooser::createTreeView(wxWindow* parent)
 {
-    _treeStore = new wxutil::TreeModel(_columns);
-
     // Tree view with single text icon column
-	_treeView = wxutil::TreeView::CreateWithModel(parent, _treeStore.get());
+	_treeView = new wxutil::ResourceTreeView(parent, _columns);
 
-    _treeView->AppendIconTextColumn(_("Soundshader"), _columns.displayName.getColumnIndex(), 
+    _treeView->AppendIconTextColumn(_("Soundshader"), _columns.iconAndName.getColumnIndex(), 
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
 	// Use the TreeModel's full string search function
-	_treeView->AddSearchColumn(_columns.displayName);
+	_treeView->AddSearchColumn(_columns.iconAndName);
+    _treeView->SetExpandTopLevelItemsAfterPopulation(true);
 
 	// Get selection and connect the changed callback
 	_treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &SoundChooser::_onSelectionChange, this);
@@ -206,21 +182,7 @@ wxWindow* SoundChooser::createTreeView(wxWindow* parent)
 
 void SoundChooser::loadSoundShaders()
 {
-    // Clear the tree and display a new item
-    _treeStore->Clear();
-
-    wxutil::TreeModel::Row row = _treeStore->AddItem();
-    row[_columns.displayName] = wxVariant(wxDataViewIconText(_("Loading...")));
-    row[_columns.shaderName] = wxString();
-    row[_columns.isFolder] = false;
-
-    row.SendItemAdded();
-
-    _loadingShaders = true;
-
-    // Spawn a new thread to load the items
-    _shaderLoader.reset(new ThreadedSoundShaderLoader(_columns, this));
-    _shaderLoader->Run();
+    _treeView->Populate(std::make_shared<ThreadedSoundShaderLoader>(_columns));
 }
 
 const std::string& SoundChooser::getSelectedShader() const
@@ -231,26 +193,7 @@ const std::string& SoundChooser::getSelectedShader() const
 // Set the selected sound shader, and focuses the treeview to the new selection
 void SoundChooser::setSelectedShader(const std::string& shader)
 {
-    // Select immediately if possible, otherwise remember class name for later
-    // selection
-    if (!_loadingShaders)
-    {
-        wxDataViewItem item = _treeStore->FindString(shader, _columns.shaderName);
-
-        if (item.IsOk())
-        {
-            _treeView->Select(item);
-            _treeView->EnsureVisible(item);
-            handleSelectionChange();
-
-            _shaderToSelect.clear();
-
-            return;
-        }
-    }
-
-    // Remember this for later code
-    _shaderToSelect = shader;
+    _treeView->SetSelectedFullname(shader);
 }
 
 void SoundChooser::handleSelectionChange()
@@ -259,11 +202,11 @@ void SoundChooser::handleSelectionChange()
 
     if (item.IsOk())
     {
-        wxutil::TreeModel::Row row(item, *_treeStore);
+        wxutil::TreeModel::Row row(item, *_treeView->GetTreeModel());
 
         bool isFolder = row[_columns.isFolder].getBool();
 
-        _selectedShader = isFolder ? "" : static_cast<std::string>(row[_columns.shaderName]);
+        _selectedShader = isFolder ? "" : static_cast<std::string>(row[_columns.fullName]);
     }
     else
     {
@@ -285,7 +228,7 @@ void SoundChooser::_onItemActivated(wxDataViewEvent& ev)
 
 	if (item.IsOk())
 	{
-		wxutil::TreeModel::Row row(item, *_treeStore);
+		wxutil::TreeModel::Row row(item, *_treeView->GetTreeModel());
 
 		bool isFolder = row[_columns.isFolder].getBool();
 
@@ -307,32 +250,6 @@ void SoundChooser::_onItemActivated(wxDataViewEvent& ev)
 		// It's a regular item, try to play it back
 		_preview->playRandomSoundFile();
 	}
-}
-
-void SoundChooser::setTreeViewModel()
-{
-    _treeView->AssociateModel(_treeStore.get());
-
-    // Trigger a column size event on the first-level row
-    _treeView->TriggerColumnSizeEvent();
-
-    // Pre-select the given class if requested by setSelectedShader()
-    if (!_shaderToSelect.empty())
-    {
-        assert(_treeStore);
-        setSelectedShader(_shaderToSelect);
-    }
-
-    // Make sure the top-level items are expanded
-    _treeView->ExpandTopLevelItems();
-}
-
-void SoundChooser::_onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev)
-{
-    _loadingShaders = false;
-
-    _treeStore = ev.GetTreeModel();
-    setTreeViewModel();
 }
 
 void SoundChooser::_onContextMenu(wxDataViewEvent& ev)
@@ -369,23 +286,11 @@ int SoundChooser::ShowModal()
 
 void SoundChooser::_onReloadSounds(wxCommandEvent& ev)
 {
-    // Remember the last selected shader
-    _shaderToSelect = getSelectedShader();
-
     _preview->setSoundShader(std::string());
 
     // Send the command to the SoundManager
     // After parsing it will fire the sounds reloaded signal => onShadersReloaded()
     GlobalCommandSystem().executeCommand("ReloadSounds");
-
-    _treeStore->Clear();
-
-    wxutil::TreeModel::Row row = _treeStore->AddItem();
-    row[_columns.displayName] = wxVariant(wxDataViewIconText(_("Loading...")));
-    row[_columns.shaderName] = wxString();
-    row[_columns.isFolder] = false;
-
-    row.SendItemAdded();
 }
 
 void SoundChooser::onShadersReloaded()
