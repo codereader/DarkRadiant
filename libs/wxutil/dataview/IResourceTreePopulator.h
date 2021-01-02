@@ -29,6 +29,10 @@ public:
     // This might spawn a worker thread which performs the
     // population in the background - use EnsurePopulated to synchronise.
     virtual void Populate() = 0;
+
+    // In threaded implementations this method should cancel the
+    // async method and block until it's finished
+    virtual void EnsureStopped() = 0;
 };
 
 }

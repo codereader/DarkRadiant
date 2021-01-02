@@ -3,6 +3,7 @@
 #include "TreeView.h"
 #include "TreeModel.h"
 #include "TreeModelFilter.h"
+#include "IResourceTreePopulator.h"
 #include "../menu/PopupMenu.h"
 
 namespace wxutil
@@ -63,9 +64,14 @@ private:
     TreeModelFilter::Ptr _treeModelFilter;
     wxDataViewItem _emptyFavouritesLabel;
 
+    // The currently active populator object
+    IResourceTreePopulator::Ptr _populator;
+
 public:
     ResourceTreeView(wxWindow* parent, const Columns& columns, long style = wxDV_SINGLE);
     ResourceTreeView(wxWindow* parent, const TreeModel::Ptr& model, const Columns& columns, long style = wxDV_SINGLE);
+
+    virtual ~ResourceTreeView();
 
     // Returns a reference to the model we're using
     virtual const TreeModel::Ptr& getTreeModel();
@@ -83,6 +89,9 @@ public:
     virtual bool isDirectorySelected();
     virtual bool isFavouriteSelected();
 
+    // Populate this tree using the given populator object
+    virtual void populate(const IResourceTreePopulator::Ptr& populator);
+
 protected:
     virtual void populateContextMenu(wxutil::PopupMenu& popupMenu);
 
@@ -92,6 +101,7 @@ protected:
 
 private:
     void _onContextMenu(wxDataViewEvent& ev);
+    void _onTreeStorePopulationFinished(TreeModel::PopulationFinishedEvent& ev);
 
     bool _testAddToFavourites();
     bool _testRemoveFromFavourites();

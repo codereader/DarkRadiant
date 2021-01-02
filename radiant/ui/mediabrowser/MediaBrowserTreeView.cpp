@@ -161,7 +161,7 @@ struct ShaderNameFunctor
     }
 };
 
-class Populator :
+class MediaPopulator final :
     public wxutil::ThreadedResourceTreePopulator
 {
 private:
@@ -172,11 +172,17 @@ private:
 
 public:
     // Construct and initialise variables
-    Populator(const MediaBrowserTreeView::TreeColumns& columns, wxEvtHandler* finishedHandler) :
+    MediaPopulator(const MediaBrowserTreeView::TreeColumns& columns, wxEvtHandler* finishedHandler) :
         ThreadedResourceTreePopulator(columns, finishedHandler),
         _columns(columns)
     {
         _favourites = GlobalFavouritesManager().getFavourites(decl::Type::Material);
+    }
+
+    ~MediaPopulator()
+    {
+        // Stop the worker while the class is still intact
+        EnsureStopped();
     }
 
 protected:
@@ -259,8 +265,7 @@ protected:
 };
 
 MediaBrowserTreeView::MediaBrowserTreeView(wxWindow* parent) :
-    ResourceTreeView(parent, _columns, wxDV_NO_HEADER),
-    _isPopulated(false)
+    ResourceTreeView(parent, _columns, wxDV_NO_HEADER)
 {
     auto* textCol = AppendIconTextColumn(_("Shader"), _columns.iconAndName.getColumnIndex(),
         wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE);
@@ -275,7 +280,6 @@ MediaBrowserTreeView::MediaBrowserTreeView(wxWindow* parent) :
     getTreeModel()->SetHasDefaultCompare(false);
 
     Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &MediaBrowserTreeView::_onTreeViewItemActivated, this);
-    Bind(wxutil::EV_TREEMODEL_POPULATION_FINISHED, &MediaBrowserTreeView::_onTreeStorePopulationFinished, this);
 }
 
 const MediaBrowserTreeView::TreeColumns& MediaBrowserTreeView::getColumns() const
@@ -295,50 +299,7 @@ void MediaBrowserTreeView::setTreeMode(MediaBrowserTreeView::TreeMode mode)
 
 void MediaBrowserTreeView::populate()
 {
-    if (_isPopulated) return;
-
-    // Clear our treestore and put a single item in it
-    clear();
-
-    // Set the flag to true to avoid double-entering this function
-    _isPopulated = true;
-
-    wxutil::TreeModel::Row row = getTreeModel()->AddItem();
-
-    wxIcon icon;
-    icon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + TEXTURE_ICON));
-    row[_columns.iconAndName] = wxVariant(wxDataViewIconText(_("Loading, please wait..."), icon));
-    row[_columns.isFavourite] = true;
-    row[_columns.isFolder] = false;
-
-    row.SendItemAdded();
-
-    // Start the background thread
-    _populator.reset(new Populator(_columns, this));
-    _populator->Populate();
-}
-
-void MediaBrowserTreeView::clear()
-{
-    // Stop any populator thread that might be running
-    _populator.reset();
-    _isPopulated = false;
-
-    ResourceTreeView::clear();
-}
-
-void MediaBrowserTreeView::_onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev)
-{
-    UnselectAll();
-    setTreeModel(ev.GetTreeModel());
-}
-
-void MediaBrowserTreeView::setSelection(const std::string& fullName)
-{
-    // Make sure the treestore is loaded
-    _populator->EnsurePopulated();
-
-    ResourceTreeView::setSelection(fullName);
+    ResourceTreeView::populate(std::make_shared<MediaPopulator>(_columns, this));
 }
 
 void MediaBrowserTreeView::populateContextMenu(wxutil::PopupMenu& popupMenu)

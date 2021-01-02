@@ -1,7 +1,6 @@
 #pragma once
 
 #include "wxutil/dataview/ResourceTreeView.h"
-#include "wxutil/dataview/IResourceTreePopulator.h"
 #include "wxutil/menu/IconTextMenuItem.h"
 #include "wxutil/dataview/TreeModelFilter.h"
 
@@ -24,12 +23,6 @@ public:
     };
 
 private:
-    // Populates the Media Browser in its own thread
-    std::unique_ptr<wxutil::IResourceTreePopulator> _populator;
-
-    // false, if the tree is not yet initialised.
-    bool _isPopulated;
-
     MediaBrowserTreeView::TreeColumns _columns;
 
 public:
@@ -37,14 +30,9 @@ public:
 
     const TreeColumns& getColumns() const;
 
-    void setSelection(const std::string& fullName) override;
-
-    // Clear all items, stop any populator thread
-    void clear() override;
-
     void setTreeMode(TreeMode mode) override;
 
-    // Populates the treeview
+    // Loads all the materials
     void populate();
 
 protected:
@@ -58,7 +46,6 @@ private:
     void _onLoadInTexView();
     void _onSelectItems(bool select);
     void _onTreeViewItemActivated(wxDataViewEvent& ev);
-    void _onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev);
 };
 
 }

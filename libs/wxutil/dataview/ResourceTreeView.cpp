@@ -39,6 +39,20 @@ ResourceTreeView::ResourceTreeView(wxWindow* parent, const TreeModel::Ptr& model
     AssociateModel(_treeStore.get());
 
     Bind(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, &ResourceTreeView::_onContextMenu, this);
+    Bind(EV_TREEMODEL_POPULATION_FINISHED, &ResourceTreeView::_onTreeStorePopulationFinished, this);
+}
+
+ResourceTreeView::~ResourceTreeView()
+{
+    if (_populator)
+    {
+        // This call isn't strictly necessary if the implementing thread
+        // populators are equipped with proper destructors.
+        // In case some user code is missing such a CancelAndWait call in their
+        // destructor, let's call it here while the object is still intact.
+        _populator->EnsureStopped();
+        _populator.reset();
+    }
 }
 
 const TreeModel::Ptr& ResourceTreeView::getTreeModel()
@@ -155,6 +169,12 @@ std::string ResourceTreeView::getSelection()
 
 void ResourceTreeView::setSelection(const std::string& fullName)
 {
+    // Wait for any running populator
+    if (_populator)
+    {
+        _populator->EnsurePopulated();
+    }
+
     // If the selection string is empty, collapse the treeview and return with
     // no selection
     if (fullName.empty())
@@ -179,9 +199,37 @@ void ResourceTreeView::setSelection(const std::string& fullName)
 
 void ResourceTreeView::clear()
 {
-    // Clear the media browser on MaterialManager unrealisation
+    // Clear any data and/or active population objects
+    _populator.reset();
     _treeStore->Clear();
     _emptyFavouritesLabel = wxDataViewItem();
+}
+
+void ResourceTreeView::populate(const IResourceTreePopulator::Ptr& populator)
+{
+    // Remove any data or running populators first
+    clear();
+
+    // Add the loading icon to the tree
+    TreeModel::Row row = getTreeModel()->AddItem();
+
+    row[_columns.iconAndName] = wxVariant(wxDataViewIconText(_("Loading resources...")));
+    row[_columns.isFavourite] = true;
+    row[_columns.isFolder] = false;
+
+    row.SendItemAdded();
+
+    // Start population (this might be a thread or not)
+    // In any case this will fire the TreeModel::PopulationFinishedEvent when done
+    _populator = populator;
+    _populator->Populate();
+}
+
+void ResourceTreeView::_onTreeStorePopulationFinished(TreeModel::PopulationFinishedEvent& ev)
+{
+    UnselectAll();
+    setTreeModel(ev.GetTreeModel());
+    _populator.reset();
 }
 
 void ResourceTreeView::_onContextMenu(wxDataViewEvent& ev)

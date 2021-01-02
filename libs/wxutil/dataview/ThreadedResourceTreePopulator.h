@@ -15,6 +15,10 @@ namespace wxutil
  * 
  * At the end of the thread execution this populator will send
  *  a wxutil::TreeModel::PopulationFinishedEvent to the handler.
+ * 
+ * Note: if a subclass is introducing additional class members
+ * that are used in the PopulateModel/SortModel methods, it's mandatory
+ * for the subclass destructor to call EnsureStopped().
  */
 class ThreadedResourceTreePopulator :
     public IResourceTreePopulator,
@@ -77,14 +81,15 @@ public:
 
     virtual ~ThreadedResourceTreePopulator()
     {
-        if (IsAlive())
-        {
-            Delete(); // cancel the running thread
-        }
+        // When running into crashes with a calling thread waiting for this
+        // method, this might be due to the deriving class methods referencing
+        // members that have already been destructed at this point.
+        // Be sure to call EnsureStopped() in the subclass destructor.
+        EnsureStopped();
     }
 
     // Blocks until the worker thread is done. 
-    void EnsurePopulated() override
+    virtual void EnsurePopulated() override
     {
         // Start the thread now if we have to
         if (!_started)
@@ -100,7 +105,7 @@ public:
     }
 
     // Start the thread, if it isn't already running
-    void Populate() override
+    virtual void Populate() override
     {
         if (IsRunning())
         {
@@ -110,6 +115,14 @@ public:
         // Set the latch
         _started = true;
         wxThread::Run();
+    }
+
+    virtual void EnsureStopped() override
+    {
+        if (IsAlive())
+        {
+            Delete(); // cancel the running thread
+        }
     }
 };
 
