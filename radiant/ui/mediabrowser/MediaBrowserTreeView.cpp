@@ -161,7 +161,7 @@ struct ShaderNameFunctor
 };
 
 class Populator :
-    public wxutil::ResourceTreePopulator
+    public wxutil::ThreadedResourceTreePopulator
 {
 private:
     const MediaBrowserTreeView::TreeColumns& _columns;
@@ -172,7 +172,7 @@ private:
 public:
     // Construct and initialise variables
     Populator(const MediaBrowserTreeView::TreeColumns& columns, wxEvtHandler* finishedHandler) :
-        ResourceTreePopulator(columns, finishedHandler),
+        ThreadedResourceTreePopulator(columns, finishedHandler),
         _columns(columns)
     {
         _favourites = GlobalFavouritesManager().getFavourites(decl::Type::Material);
@@ -315,7 +315,7 @@ void MediaBrowserTreeView::populate()
 
     // Start the background thread
     _populator.reset(new Populator(_columns, this));
-    _populator->Run();
+    _populator->Populate();
 }
 
 void MediaBrowserTreeView::clear()
@@ -334,13 +334,8 @@ void MediaBrowserTreeView::_onTreeStorePopulationFinished(wxutil::TreeModel::Pop
 
 void MediaBrowserTreeView::setSelection(const std::string& fullName)
 {
-    if (!_isPopulated)
-    {
-        populate();
-    }
-
-    // Make sure the treestore is finished loading
-    _populator->WaitUntilFinished();
+    // Make sure the treestore is loaded
+    _populator->EnsurePopulated();
 
     ResourceTreeView::setSelection(fullName);
 }

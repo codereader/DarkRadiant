@@ -1,7 +1,7 @@
 #pragma once
 
 #include "wxutil/dataview/ResourceTreeView.h"
-#include "wxutil/dataview/ResourceTreePopulator.h"
+#include "wxutil/dataview/ThreadedResourceTreePopulator.h"
 #include "wxutil/menu/IconTextMenuItem.h"
 #include "wxutil/dataview/TreeModelFilter.h"
 
@@ -25,7 +25,7 @@ public:
 
 private:
     // Populates the Media Browser in its own thread
-    std::unique_ptr<wxutil::ResourceTreePopulator> _populator;
+    std::unique_ptr<wxutil::ThreadedResourceTreePopulator> _populator;
 
     // false, if the tree is not yet initialised.
     bool _isPopulated;

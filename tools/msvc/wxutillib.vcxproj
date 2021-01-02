@@ -139,9 +139,10 @@
     <ClInclude Include="..\..\libs\wxutil\ChoiceHelper.h" />
     <ClInclude Include="..\..\libs\wxutil\ConsoleView.h" />
     <ClInclude Include="..\..\libs\wxutil\ControlButton.h" />
+    <ClInclude Include="..\..\libs\wxutil\dataview\IResourceTreePopulator.h" />
     <ClInclude Include="..\..\libs\wxutil\dataview\KeyValueTable.h" />
-    <ClInclude Include="..\..\libs\wxutil\dataview\ResourceTreePopulator.h" />
     <ClInclude Include="..\..\libs\wxutil\dataview\ResourceTreeView.h" />
+    <ClInclude Include="..\..\libs\wxutil\dataview\ThreadedResourceTreePopulator.h" />
     <ClInclude Include="..\..\libs\wxutil\dataview\TreeModel.h" />
     <ClInclude Include="..\..\libs\wxutil\dataview\TreeModelFilter.h" />
     <ClInclude Include="..\..\libs\wxutil\dataview\TreeView.h" />

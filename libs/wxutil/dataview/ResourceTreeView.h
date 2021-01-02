@@ -27,7 +27,7 @@ public:
     // The base structure defining a few needed default column.
     // Subclasses may derive from this struct to expand it
     struct Columns :
-        public wxutil::TreeModel::ColumnRecord
+        public TreeModel::ColumnRecord
     {
         Columns() :
             iconAndName(add(TreeModel::Column::IconText)),

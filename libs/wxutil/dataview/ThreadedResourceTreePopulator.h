@@ -3,16 +3,18 @@
 #include <wx/thread.h>
 #include <wx/event.h>
 #include "TreeModel.h"
+#include "IResourceTreePopulator.h"
 
 namespace wxutil
 {
 
 /**
- * Threaded helper class to load data into a ResourceTreeView.
+ * Threaded resource tree populator implementation class.
  * Subclasses need to implement the abstract members to add
  * the needed insertion or sorting logic.
  */
-class ResourceTreePopulator :
+class ThreadedResourceTreePopulator :
+    public IResourceTreePopulator,
     protected wxThread
 {
 private:
@@ -25,6 +27,9 @@ private:
     // The tree store to populate. We must operate on our own tree store, since
     // updating the target tree store from a different thread isn't safe
     TreeModel::Ptr _treeStore;
+
+    // Whether this thread has been started at all
+    bool _started;
 
 protected:
 
@@ -60,24 +65,31 @@ protected:
 
 public:
     // Construct and initialise variables
-    ResourceTreePopulator(const TreeModel::ColumnRecord& columns, wxEvtHandler* finishedHandler) :
+    ThreadedResourceTreePopulator(const TreeModel::ColumnRecord& columns, wxEvtHandler* finishedHandler) :
         wxThread(wxTHREAD_JOINABLE),
         _finishedHandler(finishedHandler),
-        _columns(columns)
+        _columns(columns),
+        _started(false)
     {}
 
-    ~ResourceTreePopulator()
+    ~ThreadedResourceTreePopulator()
     {
-        if (IsRunning())
+        if (IsAlive())
         {
             Delete(); // cancel the running thread
         }
     }
 
     // Blocks until the worker thread is done. 
-    // Returns immediately if the thread is not running
-    void WaitUntilFinished()
+    void EnsurePopulated() override
     {
+        // Start the thread now if we have to
+        if (!_started)
+        {
+            Populate();
+        }
+
+        // Wait for any running thread
         if (IsRunning())
         {
             Wait();
@@ -85,13 +97,15 @@ public:
     }
 
     // Start the thread, if it isn't already running
-    void Run()
+    void Populate() override
     {
         if (IsRunning())
         {
             return;
         }
 
+        // Set the latch
+        _started = true;
         wxThread::Run();
     }
 };

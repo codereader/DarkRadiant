@@ -133,7 +133,10 @@
     <ClInclude Include="..\..\libs\wxutil\dataview\VFSTreePopulator.h">
       <Filter>dataview</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\libs\wxutil\dataview\ResourceTreePopulator.h">
+    <ClInclude Include="..\..\libs\wxutil\dataview\IResourceTreePopulator.h">
+      <Filter>dataview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\dataview\ThreadedResourceTreePopulator.h">
       <Filter>dataview</Filter>
     </ClInclude>
   </ItemGroup>
