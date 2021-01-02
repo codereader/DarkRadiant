@@ -191,7 +191,11 @@ protected:
         model->SetHasDefaultCompare(false);
 
         ShaderNameFunctor functor(*model, _columns, _favourites);
-        GlobalMaterialManager().foreachShaderName(std::bind(&ShaderNameFunctor::visit, &functor, std::placeholders::_1));
+        GlobalMaterialManager().foreachShaderName([&](const std::string& name)
+        {
+            ThrowIfCancellationRequested();
+            functor.visit(name);
+        });
     }
 
     // Special sort algorithm to sort the "Other Materials" separately

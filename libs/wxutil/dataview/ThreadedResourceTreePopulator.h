@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stdexcept>
 #include <wx/thread.h>
 #include <wx/event.h>
 #include "TreeModel.h"
@@ -25,6 +26,14 @@ class ThreadedResourceTreePopulator :
     protected wxThread
 {
 private:
+    // Custom exception type thrown when a thread is cancelled
+    struct ThreadAbortedException : public std::runtime_error
+    {
+        ThreadAbortedException() : 
+            runtime_error("Thread aborted")
+        {}
+    };
+
     // The event handler to notify on completion
     wxEvtHandler* _finishedHandler;
 
@@ -39,6 +48,15 @@ private:
     bool _started;
 
 protected:
+    // Wrapper around TestDestroy that escalated by throwing a 
+    // ThreadAbortedException when cancellation has been requested
+    void ThrowIfCancellationRequested()
+    {
+        if (TestDestroy())
+        {
+            throw ThreadAbortedException();
+        }
+    }
 
     // Needed method to load data into the allocated tree model
     // This is called from within the worker thread
@@ -51,20 +69,26 @@ protected:
     // The worker function that will run in a separate thread
     virtual wxThread::ExitCode Entry() override
     {
-        // Create new treestore
-        _treeStore = new TreeModel(_columns);
-        _treeStore->SetHasDefaultCompare(false);
-
-        PopulateModel(_treeStore);
-
-        if (TestDestroy()) return static_cast<ExitCode>(0);
-
-        // Sort the model while we're still in the worker thread
-        SortModel(_treeStore);
-
-        if (!TestDestroy())
+        try
         {
+            // Create new treestore
+            _treeStore = new TreeModel(_columns);
+            _treeStore->SetHasDefaultCompare(false);
+
+            PopulateModel(_treeStore);
+
+            ThrowIfCancellationRequested();
+
+            // Sort the model while we're still in the worker thread
+            SortModel(_treeStore);
+
+            ThrowIfCancellationRequested();
+
             wxQueueEvent(_finishedHandler, new TreeModel::PopulationFinishedEvent(_treeStore));
+        }
+        catch (const ThreadAbortedException&)
+        {
+            // Thread aborted due to Cancel request, exit now
         }
 
         return static_cast<ExitCode>(0);
