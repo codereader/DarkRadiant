@@ -30,9 +30,6 @@ private:
 	// Last selected shader
 	std::string _selectedShader;
 
-	// Context menu
-	wxutil::PopupMenuPtr _popupMenu;
-
     sigc::connection _shadersReloaded;
 
 private:
@@ -46,7 +43,6 @@ private:
 	// callbacks
 	void _onSelectionChange(wxDataViewEvent& ev);
 	void _onItemActivated(wxDataViewEvent& ev);
-	void _onContextMenu(wxDataViewEvent& ev);
     void _onReloadSounds(wxCommandEvent& ev);
 
 	void onShowShaderDefinition();

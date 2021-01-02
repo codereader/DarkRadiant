@@ -8,6 +8,7 @@
 #include "wxutil/dataview/ThreadedResourceTreePopulator.h"
 #include "wxutil/dataview/VFSTreePopulator.h"
 #include "wxutil/menu/IconTextMenuItem.h"
+#include "wxutil/menu/MenuItem.h"
 #include "debugging/ScopedDebugTimer.h"
 #include "ui/common/SoundShaderDefinitionView.h"
 #include "ui/UserInterfaceModule.h"
@@ -79,6 +80,7 @@ public:
             row[_columns.leafName] = actualLeafName;
             row[_columns.fullName] = actualLeafName;
             row[_columns.isFolder] = isFolder;
+            row[_columns.isFavourite] = false;
             row.SendItemAdded();
         });
     }
@@ -145,13 +147,11 @@ SoundChooser::SoundChooser(wxWindow* parent) :
     GetSizer()->Add(_preview, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 12);
 	GetSizer()->Add(buttonSizer, 0, wxALIGN_RIGHT | wxBOTTOM | wxLEFT | wxRIGHT, 12);
 
-    _popupMenu.reset(new wxutil::PopupMenu);
-
-    _popupMenu->addItem(
+    _treeView->AddCustomMenuItem(std::make_shared<wxutil::MenuItem>(
         new wxutil::IconTextMenuItem(_(SHOW_SHADER_DEF_TEXT), SHOW_SHADER_DEF_ICON),
         std::bind(&SoundChooser::onShowShaderDefinition, this),
         std::bind(&SoundChooser::testShowShaderDefinition, this)
-    );
+    ));
 
 	FitToScreen(0.5f, 0.7f);
 
@@ -175,7 +175,6 @@ wxWindow* SoundChooser::createTreeView(wxWindow* parent)
 	// Get selection and connect the changed callback
 	_treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &SoundChooser::_onSelectionChange, this);
 	_treeView->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &SoundChooser::_onItemActivated, this);
-    _treeView->Bind(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, &SoundChooser::_onContextMenu, this);
 
 	return _treeView;
 }
@@ -250,11 +249,6 @@ void SoundChooser::_onItemActivated(wxDataViewEvent& ev)
 		// It's a regular item, try to play it back
 		_preview->playRandomSoundFile();
 	}
-}
-
-void SoundChooser::_onContextMenu(wxDataViewEvent& ev)
-{
-    _popupMenu->show(_treeView);
 }
 
 void SoundChooser::onShowShaderDefinition()
