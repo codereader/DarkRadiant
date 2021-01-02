@@ -343,7 +343,7 @@ int EntityClassChooser::ShowModal()
 
 void EntityClassChooser::setTreeViewModel()
 {
-    _treeView->AssociateModel(_treeStore.get());
+    _treeView->setTreeModel(_treeStore);
 
     // Expand the first layer
     _treeView->ExpandTopLevelItems();
@@ -358,7 +358,6 @@ void EntityClassChooser::setTreeViewModel()
 
 void EntityClassChooser::setupTreeView()
 {
-    // Use the TreeModel's full string search function
     _treeStore = new TreeModel(_columns);
     TreeModel::Row row = _treeStore->AddItem();
 
@@ -367,7 +366,7 @@ void EntityClassChooser::setupTreeView()
     wxPanel* parent = findNamedObject<wxPanel>(this, "EntityClassChooserLeftPane");
 
     _treeView = new ResourceTreeView(parent, _treeStore, _columns);
-    _treeView->AddSearchColumn(_columns.leafName);
+    _treeView->AddSearchColumn(_columns.iconAndName);
 
     _treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &EntityClassChooser::onSelectionChanged, this);
 

@@ -36,10 +36,6 @@ ResourceTreeView::ResourceTreeView(wxWindow* parent, const TreeModel::Ptr& model
         _treeStore.reset(new TreeModel(_columns));
     }
 
-    // The wxWidgets algorithm sucks at sorting large flat lists of strings,
-    // so we do that ourselves
-    _treeStore->SetHasDefaultCompare(false);
-
     AssociateModel(_treeStore.get());
 
     Bind(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, &ResourceTreeView::_onContextMenu, this);

@@ -320,6 +320,10 @@ MediaBrowserTreeView::MediaBrowserTreeView(wxWindow* parent) :
 
     AddSearchColumn(_columns.iconAndName);
 
+    // The wxWidgets algorithm sucks at sorting large flat lists of strings,
+    // so we do that ourselves
+    getTreeModel()->SetHasDefaultCompare(false);
+
     Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &MediaBrowserTreeView::_onTreeViewItemActivated, this);
     Bind(wxutil::EV_TREEMODEL_POPULATION_FINISHED, &MediaBrowserTreeView::_onTreeStorePopulationFinished, this);
     Bind(wxEVT_PAINT, &MediaBrowserTreeView::_onExpose, this);
