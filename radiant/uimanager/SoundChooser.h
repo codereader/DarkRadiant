@@ -35,7 +35,7 @@ private:
 private:
 
 	// Widget construction
-	wxWindow* createTreeView(wxWindow* parent);
+    wxutil::ResourceTreeView* createTreeView(wxWindow* parent);
 
     void loadSoundShaders();
     void handleSelectionChange();
