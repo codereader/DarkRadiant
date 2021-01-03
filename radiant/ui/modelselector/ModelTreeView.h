@@ -80,6 +80,7 @@ public:
         row[_columns.isSkin] = false;
         row[_columns.isFolder] = false;
         row[_columns.isFolder] = std::string();
+        row[_columns.isFavourite] = false;
 
         row.SendItemAdded();
         _progressItem = row.getItem();

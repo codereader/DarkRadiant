@@ -80,7 +80,6 @@ private:
 	// TRUE if the treeview has been populated
 	bool _populated;
     std::unique_ptr<ModelPopulator> _populator;
-    bool _showSkins;
 
     // The model to highlight on show
     std::string _preselectedModel;
@@ -123,7 +122,6 @@ private:
 	void onCancel(wxCommandEvent& ev);
 	void onReloadModels(wxCommandEvent& ev);
 	void onReloadSkins(wxCommandEvent& ev);
-	void onIdleReloadTree(wxIdleEvent& ev);
     void onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev);
 
 	// Update the info table with information from the currently-selected model, and

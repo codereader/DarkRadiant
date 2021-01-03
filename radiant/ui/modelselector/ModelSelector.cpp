@@ -26,6 +26,7 @@
 #include <wx/splitter.h>
 #include <wx/checkbox.h>
 #include "wxutil/dataview/ResourceTreeViewToolbar.h"
+#include "ui/UserInterfaceModule.h"
 
 #include <functional>
 
@@ -52,7 +53,6 @@ ModelSelector::ModelSelector() :
 	_lastModel(""),
 	_lastSkin(""),
 	_populated(false),
-    _showSkins(true),
 	_showOptions(true)
 {
     // Set the default size of the window
@@ -205,24 +205,8 @@ ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel,
                                                 bool showOptions,
                                                 bool showSkins)
 {
-    _showSkins = showSkins;
-    _preselectedModel = curModel;
-
-    if (!_populated)
-    {
-        // Populate the tree of models
-        populateModels();
-    }
-
-#if !defined(__linux__)
-    // Trigger a rebuild of the tree
-    _treeView->Rebuild();
-#endif
-
-    if (_populated)
-    {
-        preSelectModel();
-    }
+    _treeView->SetShowSkins(showSkins);
+    _treeView->SetSelectedFullname(curModel);
 
     showInfoForSelectedModel();
 
@@ -263,25 +247,15 @@ ModelSelectorResult ModelSelector::chooseModel(const std::string& curModel,
     return Instance().showAndBlock(curModel, showOptions, showSkins);
 }
 
-void ModelSelector::onIdleReloadTree(wxIdleEvent& ev)
-{
-	Disconnect(wxEVT_IDLE, wxIdleEventHandler(ModelSelector::onIdleReloadTree), nullptr, this);
-
-	populateModels();
-}
-
 void ModelSelector::onSkinsOrModelsReloaded()
 {
     // Clear the flag, this triggers a new population next time the dialog is shown
     _populated = false;
 
-	// In the case we're already shown, post a refresh event when the app is idle
-	// We might be called from a worker thread, so don't deadlock the app
-	if (IsShownOnScreen())
-	{
-        // TODO: Use dispatcher
-		Connect(wxEVT_IDLE, wxIdleEventHandler(ModelSelector::onIdleReloadTree), nullptr, this);
-	}
+    GetUserInterfaceModule().dispatch([this] ()
+    {
+        populateModels();
+    });
 }
 
 void ModelSelector::onModelLoaded(const model::ModelNodePtr& modelNode)
@@ -353,15 +327,15 @@ void ModelSelector::showInfoForSelectedModel()
 
     // Get the model name, if this is blank we are looking at a directory,
     // so leave the table empty
-    std::string mName = _treeView->GetSelectedFullname();
-    if (mName.empty())
-        return;
+    std::string modelName = _treeView->GetSelectedFullname();
+    
+    if (modelName.empty()) return;
 
     // Get the skin if set
     std::string skinName = _treeView->GetSelectedSkin();
 
     // Pass the model and skin to the preview widget
-    _modelPreview->setModel(mName);
+    _modelPreview->setModel(modelName);
     _modelPreview->setSkin(skinName);
 }
 
@@ -387,9 +361,6 @@ void ModelSelector::onReloadModels(wxCommandEvent& ev)
 	findNamedObject<wxButton>(this, "ModelSelectorReloadModelsButton")->Enable(false);
 	findNamedObject<wxButton>(this, "ModelSelectorReloadSkinsButton")->Enable(false);
 
-	// Remember the selected model before reloading
-	_preselectedModel = _treeView->GetSelectedFullname();
-
 	// This will fire the models reloaded signal after some time
 	GlobalModelCache().refreshModels(false);
 }
@@ -398,8 +369,6 @@ void ModelSelector::onReloadSkins(wxCommandEvent& ev)
 {
 	findNamedObject<wxButton>(this, "ModelSelectorReloadModelsButton")->Enable(false);
 	findNamedObject<wxButton>(this, "ModelSelectorReloadSkinsButton")->Enable(false);
-
-	_preselectedModel = _treeView->GetSelectedFullname();
 
 	// When this is done, the skins reloaded signal is fired
 	GlobalModelSkinCache().refresh();
