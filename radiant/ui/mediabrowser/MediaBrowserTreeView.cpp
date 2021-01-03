@@ -1,5 +1,6 @@
 #include "MediaBrowserTreeView.h"
 
+#include <map>
 #include "i18n.h"
 #include "ifavourites.h"
 #include "iuimanager.h"
@@ -63,7 +64,7 @@ struct ShaderNameFunctor
 
     // Maps of names to corresponding treemodel items, for both intermediate
     // paths and explicitly presented paths
-    typedef std::map<std::string, wxDataViewItem, ShaderNameCompareFunctor> NamedIterMap;
+    using NamedIterMap = std::map<std::string, wxDataViewItem, ShaderNameCompareFunctor>;
     NamedIterMap _iters;
 
     wxIcon _folderIcon;

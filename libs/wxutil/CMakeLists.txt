@@ -1,5 +1,6 @@
 add_library(wxutil
             ConsoleView.cpp
+            dataview/KeyValueTable.cpp
             dataview/ResourceTreeView.cpp
             dataview/ThreadedResourceTreePopulator.cpp
             dataview/TreeModel.cpp
@@ -16,7 +17,6 @@ add_library(wxutil
             FileChooser.cpp
             FreezePointer.cpp
             GLWidget.cpp
-            KeyValueTable.cpp
             menu/PopupMenu.cpp
             ModalProgressDialog.cpp
             MouseToolHandler.cpp

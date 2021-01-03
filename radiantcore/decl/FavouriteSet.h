@@ -2,6 +2,7 @@
 
 #include <string>
 #include <set>
+#include "iregistry.h"
 
 namespace decl
 {
