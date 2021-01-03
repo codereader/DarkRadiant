@@ -5,7 +5,7 @@
 #include <functional>
 #include <memory>
 #include "util/Noncopyable.h"
-#include <list>
+#include <vector>
 
 #include <wx/menu.h>
 
@@ -24,7 +24,7 @@ class PopupMenu :
 {
 private:
 	// List of menu items
-	typedef std::list<ui::IMenuItemPtr> MenuItemList;
+	typedef std::vector<ui::IMenuItemPtr> MenuItemList;
 	MenuItemList _menuItems;
 
 private:
@@ -80,6 +80,13 @@ public:
 
 protected:
 	virtual void foreachMenuItem(const std::function<void(const ui::IMenuItemPtr&)>& functor);
+
+    // Returns true if the given item is visible for the projected menuPosition
+    virtual bool itemIsVisible(int index, int menuPosition);
+
+private:
+    void attachItem(const ui::IMenuItemPtr& item, int position);
+    void detachItem(const ui::IMenuItemPtr& item);
 };
 typedef std::shared_ptr<PopupMenu> PopupMenuPtr;
 
