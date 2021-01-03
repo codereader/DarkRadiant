@@ -212,9 +212,8 @@ void ResourceTreeView::SetSelectedFullname(const std::string& fullName)
         Select(item);
         EnsureVisible(item);
 
-        // Send a selection change event
-        wxDataViewEvent ev(wxEVT_DATAVIEW_SELECTION_CHANGED, this, item);
-        ProcessWindowEvent(ev);
+        // Send an artificial selection change event
+        SendSelectionChangeEvent(item);
     }
 
     _fullNameToSelectAfterPopulation.clear();
