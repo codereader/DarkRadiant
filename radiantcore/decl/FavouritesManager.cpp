@@ -16,7 +16,7 @@ namespace
 
 void FavouritesManager::addFavourite(decl::Type type, const std::string& path)
 {
-    if (path.empty()) return;
+    if (path.empty() || type == decl::Type::None) return;
 
     auto set = _favouritesByType.find(type);
 
@@ -30,7 +30,7 @@ void FavouritesManager::addFavourite(decl::Type type, const std::string& path)
 
 void FavouritesManager::removeFavourite(decl::Type type, const std::string& path)
 {
-    if (path.empty()) return;
+    if (path.empty() || type == decl::Type::None) return;
 
     auto set = _favouritesByType.find(type);
 
@@ -44,7 +44,7 @@ void FavouritesManager::removeFavourite(decl::Type type, const std::string& path
 
 bool FavouritesManager::isFavourite(decl::Type type, const std::string& path)
 {
-    if (path.empty()) return false;
+    if (path.empty() || type == decl::Type::None) return false;
 
     auto set = _favouritesByType.find(type);
 
@@ -53,6 +53,11 @@ bool FavouritesManager::isFavourite(decl::Type type, const std::string& path)
 
 std::set<std::string> FavouritesManager::getFavourites(decl::Type type)
 {
+    if (type == decl::Type::None)
+    {
+        return std::set<std::string>();
+    }
+
     auto set = _favouritesByType.find(type);
 
     return set != _favouritesByType.end() ? set->second.get() : std::set<std::string>();

@@ -86,6 +86,36 @@ TEST_F(FavouritesTest, AddingAndRemovingFavourites)
     EXPECT_FALSE(GlobalFavouritesManager().isFavourite(decl::Type::Material, "textures/common/clip"));
 }
 
+TEST_F(FavouritesTest, AddingNoneTypes)
+{
+    // Should always be empty
+    EXPECT_TRUE(GlobalFavouritesManager().getFavourites(decl::Type::None).empty());
+
+    // None reports always false
+    EXPECT_FALSE(GlobalFavouritesManager().isFavourite(decl::Type::None, "textures/common/clip"));
+
+    // Add clip to None category
+    GlobalFavouritesManager().addFavourite(decl::Type::None, "textures/common/clip");
+
+    // Should still be empty
+    EXPECT_TRUE(GlobalFavouritesManager().getFavourites(decl::Type::None).empty());
+
+    // Should still report as false
+    EXPECT_FALSE(GlobalFavouritesManager().isFavourite(decl::Type::None, "textures/common/clip"));
+}
+
+TEST_F(FavouritesTest, RemovingNoneTypes)
+{
+    // Should always be empty
+    EXPECT_TRUE(GlobalFavouritesManager().getFavourites(decl::Type::None).empty());
+
+    // Remove clip to None category - it's not there, but it shouldn't crash
+    GlobalFavouritesManager().removeFavourite(decl::Type::None, "textures/common/clip");
+
+    // Should still be empty
+    EXPECT_TRUE(GlobalFavouritesManager().getFavourites(decl::Type::None).empty());
+}
+
 TEST_F(FavouritesTest, RemovingNonExistent)
 {
     EXPECT_TRUE(GlobalFavouritesManager().getFavourites(decl::Type::Material).empty());
