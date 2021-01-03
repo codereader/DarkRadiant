@@ -1,5 +1,6 @@
 #pragma once
 
+#include "idecltypes.h"
 #include "TreeView.h"
 #include "TreeModel.h"
 #include "TreeModelFilter.h"
@@ -72,6 +73,8 @@ private:
 
     std::vector<ui::IMenuItemPtr> _customMenuItems;
 
+    decl::Type _declType;
+
 public:
     ResourceTreeView(wxWindow* parent, const Columns& columns, long style = wxDV_SINGLE);
     ResourceTreeView(wxWindow* parent, const TreeModel::Ptr& model, const Columns& columns, long style = wxDV_SINGLE);
@@ -90,6 +93,11 @@ public:
     virtual void SetSelectedFullname(const std::string& fullName);
 
     virtual void Clear();
+
+    // Enable favourite management for the given declaration type
+    virtual void EnableFavouriteManagement(decl::Type declType);
+    // Disable favourite management features
+    virtual void DisableFavouriteManagement();
 
     virtual bool IsDirectorySelected();
     virtual bool IsFavouriteSelected();

@@ -24,7 +24,8 @@ ResourceTreeView::ResourceTreeView(wxWindow* parent, const TreeModel::Ptr& model
     TreeView(parent, nullptr, style), // associate the model later
     _columns(columns),
     _mode(TreeMode::ShowAll),
-    _expandTopLevelItemsAfterPopulation(false)
+    _expandTopLevelItemsAfterPopulation(false),
+    _declType(decl::Type::None)
 {
     // Note that we need to avoid accessing the _columns reference in the constructor
     // since it is likely owned by subclasses and might not be ready yet
@@ -127,9 +128,12 @@ ResourceTreeView::TreeMode ResourceTreeView::GetTreeMode() const
 
 void ResourceTreeView::SetTreeMode(ResourceTreeView::TreeMode mode)
 {
-    _mode = mode;
+    if (_mode != mode)
+    {
+        _mode = mode;
 
-    SetupTreeModelFilter();
+        SetupTreeModelFilter();
+    }
 }
 
 void ResourceTreeView::PopulateContextMenu(wxutil::PopupMenu& popupMenu)
@@ -155,13 +159,15 @@ void ResourceTreeView::PopulateContextMenu(wxutil::PopupMenu& popupMenu)
     popupMenu.addItem(
         new StockIconTextMenuItem(_(ADD_TO_FAVOURITES), wxART_ADD_BOOKMARK),
         std::bind(&ResourceTreeView::_onSetFavourite, this, true),
-        std::bind(&ResourceTreeView::_testAddToFavourites, this)
+        std::bind(&ResourceTreeView::_testAddToFavourites, this),
+        [this]() { return _declType != decl::Type::None; }
     );
 
     popupMenu.addItem(
         new StockIconTextMenuItem(_(REMOVE_FROM_FAVOURITES), wxART_DEL_BOOKMARK),
         std::bind(&ResourceTreeView::_onSetFavourite, this, false),
-        std::bind(&ResourceTreeView::_testRemoveFromFavourites, this)
+        std::bind(&ResourceTreeView::_testRemoveFromFavourites, this),
+        [this]() { return _declType != decl::Type::None; }
     );
 }
 
@@ -220,6 +226,17 @@ void ResourceTreeView::Clear()
     _populator.reset();
     _treeStore->Clear();
     _emptyFavouritesLabel = wxDataViewItem();
+}
+
+void ResourceTreeView::EnableFavouriteManagement(decl::Type declType)
+{
+    _declType = declType;
+}
+
+void ResourceTreeView::DisableFavouriteManagement()
+{
+    _declType = decl::Type::None;
+    SetTreeMode(TreeMode::ShowAll);
 }
 
 void ResourceTreeView::Populate(const IResourceTreePopulator::Ptr& populator)
