@@ -9,6 +9,7 @@
 #include "wxutil/dataview/ThreadedResourceTreePopulator.h"
 #include "wxutil/dataview/VFSTreePopulator.h"
 #include "wxutil/dataview/TreeViewItemStyle.h"
+#include "wxutil/dataview/ResourceTreeViewToolbar.h"
 #include "wxutil/menu/IconTextMenuItem.h"
 #include "wxutil/menu/MenuItem.h"
 #include "debugging/ScopedDebugTimer.h"
@@ -85,9 +86,8 @@ public:
 
             row[_columns.iconAndName] = wxVariant(
                 wxDataViewIconText(leafName, isFolder ? _folderIcon : _shaderIcon));
-            auto actualLeafName = !isFolder ? shader.getName() : std::string();
-            row[_columns.leafName] = actualLeafName;
-            row[_columns.fullName] = actualLeafName;
+            row[_columns.leafName] = shader.getName();
+            row[_columns.fullName] = path;
             row[_columns.isFolder] = isFolder;
             row[_columns.isFavourite] = isFavourite;
             row[_columns.iconAndName] = wxutil::TreeViewItemStyle::Declaration(isFavourite); // assign attributes
@@ -153,7 +153,11 @@ SoundChooser::SoundChooser(wxWindow* parent) :
 
     buttonSizer->Prepend(reloadButton, 0, wxRIGHT, 32);
 
-	GetSizer()->Add(createTreeView(this), 1, wxEXPAND | wxALL, 12);
+    auto* treeView = createTreeView(this);
+    auto* toolbar = new wxutil::ResourceTreeViewToolbar(this, treeView);
+
+	GetSizer()->Add(toolbar, 0, wxEXPAND | wxALIGN_LEFT | wxALL, 12);
+	GetSizer()->Add(treeView, 1, wxEXPAND | wxLEFT | wxRIGHT, 12);
     GetSizer()->Add(_preview, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 12);
 	GetSizer()->Add(buttonSizer, 0, wxALIGN_RIGHT | wxBOTTOM | wxLEFT | wxRIGHT, 12);
 
@@ -170,7 +174,7 @@ SoundChooser::SoundChooser(wxWindow* parent) :
 }
 
 // Create the tree view
-wxWindow* SoundChooser::createTreeView(wxWindow* parent)
+wxutil::ResourceTreeView* SoundChooser::createTreeView(wxWindow* parent)
 {
     // Tree view with single text icon column
 	_treeView = new wxutil::ResourceTreeView(parent, _columns);
