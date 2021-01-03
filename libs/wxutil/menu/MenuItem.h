@@ -28,6 +28,15 @@ public:
 	  _visibilityTest(visTest)
 	{}
 
+    virtual ~MenuItem()
+    {
+        // Remove this item if it is orphaned
+        if (_menuItem != nullptr && _menuItem->GetMenu() == nullptr)
+        {
+            delete _menuItem;
+        }
+    }
+
 	virtual wxMenuItem* getMenuItem()
 	{
 		return _menuItem;

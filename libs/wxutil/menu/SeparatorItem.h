@@ -21,6 +21,15 @@ public:
         _visibilityTest(visTest)
     {}
 
+    virtual ~SeparatorItem()
+    {
+        // Remove this item if it is orphaned
+        if (_menuItem != nullptr && _menuItem->GetMenu() == nullptr)
+        {
+            delete _menuItem;
+        }
+    }
+
     wxMenuItem* getMenuItem() override
     {
         return _menuItem;
