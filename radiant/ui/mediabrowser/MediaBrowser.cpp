@@ -11,6 +11,7 @@
 #include "ifavourites.h"
 
 #include "wxutil/MultiMonitor.h"
+#include "wxutil/dataview/ResourceTreeViewToolbar.h"
 
 #include <wx/sizer.h>
 #include <wx/radiobut.h>
@@ -56,34 +57,14 @@ void MediaBrowser::construct()
 	_mainWidget = new wxPanel(_tempParent, wxID_ANY); 
 	_mainWidget->SetSizer(new wxBoxSizer(wxVERTICAL));
 
-	// Hbox for the favourites selection widgets
-	wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
-
-	_showAll = new wxRadioButton(_mainWidget, wxID_ANY, _("Show All"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
-	_showFavourites = new wxRadioButton(_mainWidget, wxID_ANY, _("Show Favourites"));
-	
-	hbox->Add(_showAll, 0, wxRIGHT, 0);
-	hbox->Add(_showFavourites, 0, wxLEFT, 6);
-
-	_mainWidget->GetSizer()->Add(hbox, 0, wxALIGN_LEFT | wxALL, 6);
-
 	_treeView = new MediaBrowserTreeView(_mainWidget);
+    auto* toolbar = new wxutil::ResourceTreeViewToolbar(_mainWidget, _treeView);
+
+	_mainWidget->GetSizer()->Add(toolbar, 0, wxALIGN_LEFT | wxALL, 6);
 	_mainWidget->GetSizer()->Add(_treeView, 1, wxEXPAND);
 
 	// Connect up the selection changed callback
 	_treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &MediaBrowser::_onTreeViewSelectionChanged, this);
-
-	_showAll->SetValue(_treeView->GetTreeMode() == MediaBrowserTreeView::TreeMode::ShowAll);
-	_showFavourites->SetValue(_treeView->GetTreeMode() == MediaBrowserTreeView::TreeMode::ShowFavourites);
-
-	_showAll->Bind(wxEVT_RADIOBUTTON, [&](wxCommandEvent& ev)
-	{
-        setTreeModeFromControls();
-	});
-	_showFavourites->Bind(wxEVT_RADIOBUTTON, [&](wxCommandEvent& ev)
-	{
-        setTreeModeFromControls();
-	});
 
 	// Add the info pane
 	_preview = new TexturePreviewCombo(_mainWidget);
@@ -147,13 +128,6 @@ void MediaBrowser::onMaterialDefsLoaded()
 void MediaBrowser::onMaterialDefsUnloaded()
 {
     _treeView->Clear();
-}
-
-void MediaBrowser::setTreeModeFromControls()
-{
-    _treeView->SetTreeMode(_showAll->GetValue() ? 
-        MediaBrowserTreeView::TreeMode::ShowAll : 
-        MediaBrowserTreeView::TreeMode::ShowFavourites);
 }
 
 void MediaBrowser::_onTreeViewSelectionChanged(wxDataViewEvent& ev)

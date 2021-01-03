@@ -38,9 +38,6 @@ private:
 
 	wxWindow* _mainWidget;
 
-	wxRadioButton* _showAll;
-	wxRadioButton* _showFavourites;
-
 	MediaBrowserTreeView* _treeView;
 
 	// Texture preview combo (GL widget and info table)
@@ -55,7 +52,6 @@ private:
 private:
 	void construct();
 	void _onTreeViewSelectionChanged(wxDataViewEvent& ev);
-	void setTreeModeFromControls();
 
 public:
 	/** Constructor creates widgets.
