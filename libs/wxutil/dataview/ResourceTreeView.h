@@ -64,6 +64,7 @@ private:
     TreeModel::Ptr _treeStore;
     TreeModelFilter::Ptr _treeModelFilter;
     wxDataViewItem _emptyFavouritesLabel;
+    wxDataViewItem _progressItem;
 
     // The currently active populator object
     IResourceTreePopulator::Ptr _populator;
@@ -123,6 +124,7 @@ protected:
 
 private:
     void _onContextMenu(wxDataViewEvent& ev);
+    void _onTreeStorePopulationProgress(TreeModel::PopulationProgressEvent& ev);
     void _onTreeStorePopulationFinished(TreeModel::PopulationFinishedEvent& ev);
 
     bool _testAddToFavourites();

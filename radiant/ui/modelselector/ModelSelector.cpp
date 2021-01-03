@@ -52,7 +52,6 @@ ModelSelector::ModelSelector() :
     _materialsList(nullptr),
 	_lastModel(""),
 	_lastSkin(""),
-	_populated(false),
 	_showOptions(true)
 {
     // Set the default size of the window
@@ -178,28 +177,6 @@ void ModelSelector::onTreeStorePopulationFinished(wxutil::TreeModel::PopulationF
 	findNamedObject<wxButton>(this, "ModelSelectorReloadSkinsButton")->Enable(true);
 }
 
-void ModelSelector::preSelectModel()
-{
-    // If an empty string was passed for the current model, use the last selected one
-    std::string previouslySelected = (!_preselectedModel.empty()) ? _preselectedModel : _lastModel;
-
-    if (!previouslySelected.empty())
-    {
-        wxutil::TreeModel* model = static_cast<wxutil::TreeModel*>(_treeView->GetModel());
-
-        // Lookup the model path in the treemodel
-        wxDataViewItem found = model->FindString(previouslySelected, _columns.fullName);
-
-        if (found.IsOk())
-        {
-            _treeView->Select(found);
-            _treeView->EnsureVisible(found);
-
-            showInfoForSelectedModel();
-        }
-    }
-}
-
 // Show the dialog and enter recursive main loop
 ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel,
                                                 bool showOptions,
@@ -249,9 +226,6 @@ ModelSelectorResult ModelSelector::chooseModel(const std::string& curModel,
 
 void ModelSelector::onSkinsOrModelsReloaded()
 {
-    // Clear the flag, this triggers a new population next time the dialog is shown
-    _populated = false;
-
     GetUserInterfaceModule().dispatch([this] ()
     {
         populateModels();
@@ -303,9 +277,7 @@ void ModelSelector::setupTreeView(wxWindow* parent)
 
 void ModelSelector::populateModels()
 {
-    // Spawn the population thread
-    _populator.reset(new ModelPopulator(_columns, _treeView));
-    _populator->Run();
+    _treeView->Populate(std::make_shared<ModelPopulator>(_columns, _treeView));
 }
 
 void ModelSelector::Populate()

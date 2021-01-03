@@ -63,6 +63,11 @@ wxThread::ExitCode ThreadedResourceTreePopulator::Entry()
     return static_cast<ExitCode>(0);
 }
 
+void ThreadedResourceTreePopulator::PostEvent(wxEvent* ev)
+{
+    wxQueueEvent(_finishedHandler, ev);
+}
+
 void ThreadedResourceTreePopulator::SetFinishedHandler(wxEvtHandler* finishedHandler)
 {
     _finishedHandler = finishedHandler;

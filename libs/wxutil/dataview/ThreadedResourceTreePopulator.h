@@ -56,6 +56,9 @@ protected:
     // to PopulateModel/SortModel as well as the exception handling
     wxThread::ExitCode Entry() override final;
 
+    // Queues an event to the attached finished handler
+    void PostEvent(wxEvent* ev);
+
 public:
     // Construct and initialise variables
     ThreadedResourceTreePopulator(const TreeModel::ColumnRecord& columns);

@@ -77,13 +77,6 @@ private:
 	std::string _lastModel;
 	std::string _lastSkin;
 
-	// TRUE if the treeview has been populated
-	bool _populated;
-    std::unique_ptr<ModelPopulator> _populator;
-
-    // The model to highlight on show
-    std::string _preselectedModel;
-
     // Whether to show advanced options panel
     bool _showOptions;
 
@@ -108,7 +101,6 @@ private:
 	// Helper functions to configure GUI components
     void setupAdvancedPanel(wxWindow* parent);
     void setupTreeView(wxWindow* parent);
-    void preSelectModel();
 
 	// Populate the tree view with models
 	void populateModels();

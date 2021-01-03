@@ -42,6 +42,7 @@ ResourceTreeView::ResourceTreeView(wxWindow* parent, const TreeModel::Ptr& model
 
     Bind(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, &ResourceTreeView::_onContextMenu, this);
     Bind(EV_TREEMODEL_POPULATION_FINISHED, &ResourceTreeView::_onTreeStorePopulationFinished, this);
+    Bind(EV_TREEMODEL_POPULATION_PROGRESS, &ResourceTreeView::_onTreeStorePopulationProgress, this);
 }
 
 ResourceTreeView::~ResourceTreeView()
@@ -280,11 +281,31 @@ void ResourceTreeView::AddCustomMenuItem(const ui::IMenuItemPtr& item)
     _customMenuItems.push_back(item);
 }
 
+void ResourceTreeView::_onTreeStorePopulationProgress(TreeModel::PopulationProgressEvent& ev)
+{
+    if (!_progressItem.IsOk())
+    {
+        wxutil::TreeModel::Row row = GetTreeModel()->AddItem();
+
+        row[_columns.iconAndName] = wxVariant(wxDataViewIconText(_("Loading...")));
+        row[_columns.isFolder] = false;
+        row[_columns.isFavourite] = false;
+
+        row.SendItemAdded();
+        _progressItem = row.getItem();
+    }
+
+    wxutil::TreeModel::Row row(_progressItem, *GetModel());
+    row[_columns.iconAndName] = wxVariant(wxDataViewIconText(ev.GetMessage()));
+    row.SendItemChanged();
+}
+
 void ResourceTreeView::_onTreeStorePopulationFinished(TreeModel::PopulationFinishedEvent& ev)
 {
     UnselectAll();
     SetTreeModel(ev.GetTreeModel());
     _populator.reset();
+    _progressItem = wxDataViewItem();
 
     // Trigger a column size event on the first-level row
     TriggerColumnSizeEvent();

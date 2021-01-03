@@ -38,8 +38,6 @@ public:
         _columns(columns),
         _showSkins(true)
     {
-        constexpr const char* MODEL_ICON = "model16green.png";
-
         // Single visible column, containing the directory/shader name and the icon
         AppendIconTextColumn(
             _("Model Path"), _columns.iconAndName.getColumnIndex(),
@@ -50,10 +48,6 @@ public:
         // Use the TreeModel's full string search function
         AddSearchColumn(_columns.iconAndName);
         EnableFavouriteManagement(decl::Type::Model);
-
-        Bind(wxutil::EV_TREEMODEL_POPULATION_PROGRESS, &ModelTreeView::onTreeStorePopulationProgress, this);
-
-        _modelIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + MODEL_ICON));
     }
 
     void SetShowSkins(bool showSkins)
@@ -72,22 +66,6 @@ public:
         return row[_columns.skin];
     }
 
-    void Populate(const wxutil::IResourceTreePopulator::Ptr& populator) override
-    {
-        wxutil::TreeModel::Row row = GetTreeModel()->AddItem();
-
-        row[_columns.iconAndName] = wxVariant(wxDataViewIconText(_("Loading..."), _modelIcon));
-        row[_columns.isSkin] = false;
-        row[_columns.isFolder] = false;
-        row[_columns.isFolder] = std::string();
-        row[_columns.isFavourite] = false;
-
-        row.SendItemAdded();
-        _progressItem = row.getItem();
-
-        ResourceTreeView::Populate(populator);
-    }
-
 protected:
     bool IsTreeModelRowVisible(wxutil::TreeModel::Row& row) override
     {
@@ -98,22 +76,6 @@ protected:
 
         // Pass to the base class
         return ResourceTreeView::IsTreeModelRowVisible(row);
-    }
-
-private:
-    void onTreeStorePopulationProgress(wxutil::TreeModel::PopulationProgressEvent& ev)
-    {
-        if (!_progressItem.IsOk()) return;
-
-#if 0
-        if (_populator && !_populator->IsAlive())
-        {
-            return; // we might be in the process of being destructed
-        }
-#endif
-        wxutil::TreeModel::Row row(_progressItem, *GetModel());
-        row[_columns.iconAndName] = wxVariant(wxDataViewIconText(ev.GetMessage(), _modelIcon));
-        row.SendItemChanged();
     }
 };
 
