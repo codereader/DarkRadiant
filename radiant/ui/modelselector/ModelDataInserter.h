@@ -63,11 +63,13 @@ public:
 		std::string fullPath = isExplicit ? (MODELS_FOLDER + path) : "";
 
 		// Pixbuf depends on model type
-		row[_columns.filename] = wxVariant(wxDataViewIconText(displayName, isExplicit ? _modelIcon : _folderIcon));
-		row[_columns.vfspath] = fullPath;
+		row[_columns.iconAndName] = wxVariant(wxDataViewIconText(displayName, isExplicit ? _modelIcon : _folderIcon));
+		row[_columns.fullName] = fullPath;
+		row[_columns.leafName] = displayName;
 		row[_columns.skin] = std::string();
         row[_columns.isSkin] = false;
 		row[_columns.isFolder] = !isExplicit;
+		row[_columns.isFavourite] = false;
 
 		if (!_includeSkins) return; // done
 
@@ -75,17 +77,17 @@ public:
 		// children if so
 		const StringList& skinList = GlobalModelSkinCache().getSkinsForModel(fullPath);
 
-		for (StringList::const_iterator i = skinList.begin();
-			 i != skinList.end();
-			 ++i)
+		for (const auto& skinName : skinList)
 		{
 			wxutil::TreeModel::Row skinRow = store.AddItem(row.getItem());
 
-			skinRow[_columns.filename] = wxVariant(wxDataViewIconText(*i, _skinIcon));
-			skinRow[_columns.vfspath] = fullPath;
-			skinRow[_columns.skin] = *i;
+			skinRow[_columns.iconAndName] = wxVariant(wxDataViewIconText(skinName, _skinIcon));
+			skinRow[_columns.fullName] = fullPath;
+			skinRow[_columns.leafName] = skinName;
+			skinRow[_columns.skin] = skinName;
             skinRow[_columns.isSkin] = true;
 			skinRow[_columns.isFolder] = false;
+            skinRow[_columns.isFavourite] = false;
 		}
 	}
 };

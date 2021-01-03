@@ -197,7 +197,7 @@ void ModelSelector::onTreeStorePopulationProgress(wxutil::TreeModel::PopulationP
     }
 
     wxutil::TreeModel::Row row(_progressItem, *_treeStore);
-    row[_columns.filename] = wxVariant(wxDataViewIconText(ev.GetMessage(), _modelIcon));
+    row[_columns.iconAndName] = wxVariant(wxDataViewIconText(ev.GetMessage(), _modelIcon));
     row.SendItemChanged();
 }
 
@@ -240,7 +240,7 @@ void ModelSelector::preSelectModel()
         wxutil::TreeModel* model = static_cast<wxutil::TreeModel*>(_treeView->GetModel());
 
         // Lookup the model path in the treemodel
-        wxDataViewItem found = model->FindString(previouslySelected, _columns.vfspath);
+        wxDataViewItem found = model->FindString(previouslySelected, _columns.fullName);
 
         if (found.IsOk())
         {
@@ -378,7 +378,7 @@ void ModelSelector::setupTreeView(wxWindow* parent)
 
 	// Single visible column, containing the directory/shader name and the icon
 	_treeView->AppendIconTextColumn(
-        _("Model Path"), _columns.filename.getColumnIndex(), 
+        _("Model Path"), _columns.iconAndName.getColumnIndex(), 
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE,
         wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE
     );
@@ -388,7 +388,7 @@ void ModelSelector::setupTreeView(wxWindow* parent)
 		wxDataViewEventHandler(ModelSelector::onSelectionChanged), NULL, this);
 
     // Use the TreeModel's full string search function
-	_treeView->AddSearchColumn(_columns.filename);
+	_treeView->AddSearchColumn(_columns.iconAndName);
 
 	parent->GetSizer()->Prepend(_treeView.get(), 1, wxEXPAND);
     parent->GetSizer()->Layout();
@@ -401,7 +401,7 @@ void ModelSelector::populateModels()
     _treeStore->Clear();
 
     wxutil::TreeModel::Row row = _treeStore->AddItem();
-    row[_columns.filename] = wxVariant(wxDataViewIconText(_("Loading..."), _modelIcon));
+    row[_columns.iconAndName] = wxVariant(wxDataViewIconText(_("Loading..."), _modelIcon));
     row[_columns.isSkin] = false;
     row[_columns.isFolder] = false;
     row[_columns.isFolder] = std::string();
@@ -445,7 +445,7 @@ void ModelSelector::showInfoForSelectedModel()
 
     // Get the model name, if this is blank we are looking at a directory,
     // so leave the table empty
-    std::string mName = getSelectedValue(_columns.vfspath);
+    std::string mName = getSelectedValue(_columns.fullName);
     if (mName.empty())
         return;
 
@@ -460,7 +460,7 @@ void ModelSelector::showInfoForSelectedModel()
 void ModelSelector::onOK(wxCommandEvent& ev)
 {
     // Remember the selected model then exit from the recursive main loop
-    _lastModel = getSelectedValue(_columns.vfspath);
+    _lastModel = getSelectedValue(_columns.fullName);
     _lastSkin = getSelectedValue(_columns.skin);
 
 	_panedPosition.saveToPath(RKEY_SPLIT_POS);
@@ -480,7 +480,7 @@ void ModelSelector::onReloadModels(wxCommandEvent& ev)
 	findNamedObject<wxButton>(this, "ModelSelectorReloadSkinsButton")->Enable(false);
 
 	// Remember the selected model before reloading
-	_preselectedModel = getSelectedValue(_columns.vfspath);
+	_preselectedModel = getSelectedValue(_columns.fullName);
 
 	// This will fire the models reloaded signal after some time
 	GlobalModelCache().refreshModels(false);
@@ -491,7 +491,7 @@ void ModelSelector::onReloadSkins(wxCommandEvent& ev)
 	findNamedObject<wxButton>(this, "ModelSelectorReloadModelsButton")->Enable(false);
 	findNamedObject<wxButton>(this, "ModelSelectorReloadSkinsButton")->Enable(false);
 
-	_preselectedModel = getSelectedValue(_columns.vfspath);
+	_preselectedModel = getSelectedValue(_columns.fullName);
 
 	// When this is done, the skins reloaded signal is fired
 	GlobalModelSkinCache().refresh();

@@ -110,7 +110,7 @@ public:
             if (TestDestroy()) return static_cast<wxThread::ExitCode>(0);
 
             // Sort the model before returning it
-            _treeStore->SortModelFoldersFirst(_columns.filename, _columns.isFolder);
+            _treeStore->SortModelFoldersFirst(_columns.iconAndName, _columns.isFolder);
 
             if (!TestDestroy())
             {

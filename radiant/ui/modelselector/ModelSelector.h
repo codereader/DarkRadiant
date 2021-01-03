@@ -12,6 +12,7 @@
 #include "wxutil/preview/ModelPreview.h"
 #include "wxutil/WindowPosition.h"
 #include "wxutil/PanedPosition.h"
+#include "wxutil/dataview/ResourceTreeView.h"
 #include "wxutil/dataview/TreeModelFilter.h"
 #include "wxutil/XmlResourceBasedWidget.h"
 #include "wxutil/dataview/KeyValueTable.h"
@@ -52,21 +53,17 @@ class ModelSelector :
 public:
 	// Treemodel definition
 	struct TreeColumns :
-		public wxutil::TreeModel::ColumnRecord
+		public wxutil::ResourceTreeView::Columns
 	{
 		TreeColumns() :
-			filename(add(wxutil::TreeModel::Column::IconText)),
-			vfspath(add(wxutil::TreeModel::Column::String)),
 			skin(add(wxutil::TreeModel::Column::String)),
-            isSkin(add(wxutil::TreeModel::Column::Boolean)),
-			isFolder(add(wxutil::TreeModel::Column::Boolean))
+            isSkin(add(wxutil::TreeModel::Column::Boolean))
 		{}
 
-		wxutil::TreeModel::Column filename;	// e.g. "chair1.lwo"
-		wxutil::TreeModel::Column vfspath;	// e.g. "models/darkmod/props/chair1.lwo"
+        // iconAndName column contains the filename, e.g. "chair1.lwo"
+        // fullPath column contains the VFS path, e.g. "models/darkmod/props/chair1.lwo"
 		wxutil::TreeModel::Column skin;		// e.g. "chair1_brown_wood", or "" for no skin
         wxutil::TreeModel::Column isSkin;	// TRUE if this is a skin entry, FALSE if actual model or folder
-		wxutil::TreeModel::Column isFolder;	// whether this is a folder
 	};
 
 private:
