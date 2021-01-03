@@ -116,9 +116,9 @@ void ResourceTreeView::SetupTreeModelFilter()
                 row.SendItemAdded();
             }
         }
-
-        ExpandTopLevelItems();
     }
+
+    ExpandTopLevelItems();
 }
 
 ResourceTreeView::TreeMode ResourceTreeView::GetTreeMode() const
@@ -128,11 +128,18 @@ ResourceTreeView::TreeMode ResourceTreeView::GetTreeMode() const
 
 void ResourceTreeView::SetTreeMode(ResourceTreeView::TreeMode mode)
 {
-    if (_mode != mode)
-    {
-        _mode = mode;
+    if (_mode == mode) return;
 
-        SetupTreeModelFilter();
+    // Try to keep the selection intact when switching modes
+    auto previousSelection = GetSelectedFullname();
+
+    _mode = mode;
+
+    SetupTreeModelFilter();
+
+    if (!previousSelection.empty())
+    {
+        SetSelectedFullname(previousSelection);
     }
 }
 
