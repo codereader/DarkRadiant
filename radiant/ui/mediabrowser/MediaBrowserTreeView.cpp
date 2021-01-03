@@ -278,6 +278,7 @@ MediaBrowserTreeView::MediaBrowserTreeView(wxWindow* parent) :
     textCol->SetWidth(300);
 
     AddSearchColumn(_columns.iconAndName);
+    EnableFavouriteManagement(decl::Type::Material);
 
     // The wxWidgets algorithm sucks at sorting large flat lists of strings,
     // so we do that ourselves
