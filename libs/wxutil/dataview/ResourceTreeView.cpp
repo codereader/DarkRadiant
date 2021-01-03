@@ -84,7 +84,7 @@ void ResourceTreeView::SetupTreeModelFilter()
 
     _treeModelFilter->SetVisibleFunc([this](TreeModel::Row& row)
     {
-        return _treeModelFilterFunc(row);
+        return IsTreeModelRowVisible(row);
     });
 
     AssociateModel(_treeModelFilter.get());
@@ -396,7 +396,7 @@ bool ResourceTreeView::IsFavouriteSelected()
     return row[_columns.isFavourite].getBool();
 }
 
-bool ResourceTreeView::_treeModelFilterFunc(wxutil::TreeModel::Row& row)
+bool ResourceTreeView::IsTreeModelRowVisible(wxutil::TreeModel::Row& row)
 {
     if (_mode == TreeMode::ShowAll) return true; // everything is visible
 
@@ -414,7 +414,7 @@ bool ResourceTreeView::_treeModelFilterFunc(wxutil::TreeModel::Row& row)
     {
         wxutil::TreeModel::Row childRow(child, *_treeStore);
 
-        if (_treeModelFilterFunc(childRow))
+        if (IsTreeModelRowVisible(childRow))
         {
             return true;
         }

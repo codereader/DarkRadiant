@@ -119,6 +119,8 @@ protected:
 
     virtual void SetupTreeModelFilter();
 
+    virtual bool IsTreeModelRowVisible(TreeModel::Row& row);
+
 private:
     void _onContextMenu(wxDataViewEvent& ev);
     void _onTreeStorePopulationFinished(TreeModel::PopulationFinishedEvent& ev);
@@ -126,9 +128,6 @@ private:
     bool _testAddToFavourites();
     bool _testRemoveFromFavourites();
     void _onSetFavourite(bool isFavourite);
-
-    // Evaluation function for item visibility
-    bool _treeModelFilterFunc(TreeModel::Row& row);
 };
 
 }

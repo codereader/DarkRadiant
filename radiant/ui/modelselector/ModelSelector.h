@@ -1,6 +1,7 @@
 #pragma once
 
 #include "MaterialsList.h"
+#include "ModelTreeView.h"
 
 #include <sigc++/connection.h>
 
@@ -50,38 +51,16 @@ class ModelSelector :
 	public wxutil::DialogBase,
     private wxutil::XmlResourceBasedWidget
 {
-public:
-	// Treemodel definition
-	struct TreeColumns :
-		public wxutil::ResourceTreeView::Columns
-	{
-		TreeColumns() :
-			skin(add(wxutil::TreeModel::Column::String)),
-            isSkin(add(wxutil::TreeModel::Column::Boolean))
-		{}
-
-        // iconAndName column contains the filename, e.g. "chair1.lwo"
-        // fullPath column contains the VFS path, e.g. "models/darkmod/props/chair1.lwo"
-		wxutil::TreeModel::Column skin;		// e.g. "chair1_brown_wood", or "" for no skin
-        wxutil::TreeModel::Column isSkin;	// TRUE if this is a skin entry, FALSE if actual model or folder
-	};
-
 private:
 	wxPanel* _dialogPanel;
 
-	TreeColumns _columns;
+	ModelTreeView::TreeColumns _columns;
 
 	// Model preview widget
     wxutil::ModelPreviewPtr _modelPreview;
 
-	// Tree store containing model names (including skins)
-	wxutil::TreeModel::Ptr _treeStore;
-
-    // Tree model filter for dynamically excluding the skins
-    wxutil::TreeModelFilter::Ptr _treeModelFilter;
-
     // Main tree view with model hierarchy
-	wxutil::TreeView::Ptr _treeView;
+	ModelTreeView* _treeView;
 
     // Key/value table for model information
     wxutil::KeyValueTable* _infoTable;
@@ -108,9 +87,6 @@ private:
 
     // Whether to show advanced options panel
     bool _showOptions;
-
-    wxIcon _modelIcon;
-    wxDataViewItem _progressItem;
 
 	sigc::connection _modelsReloadedConn;
 	sigc::connection _skinsReloadedConn;
@@ -140,9 +116,6 @@ private:
 
 	void showInfoForSelectedModel();
 
-	// Return the value from the selected column, or an empty string if nothing selected
-	std::string getSelectedValue(const wxutil::TreeModel::Column& col);
-
 	void cancelDialog();
 
 	// wx callbacks
@@ -151,7 +124,6 @@ private:
 	void onReloadModels(wxCommandEvent& ev);
 	void onReloadSkins(wxCommandEvent& ev);
 	void onIdleReloadTree(wxIdleEvent& ev);
-    void onTreeStorePopulationProgress(wxutil::TreeModel::PopulationProgressEvent& ev);
     void onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev);
 
 	// Update the info table with information from the currently-selected model, and

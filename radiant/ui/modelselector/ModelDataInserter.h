@@ -26,7 +26,7 @@ class ModelDataInserter :
 	public wxutil::VFSTreePopulator::Visitor
 {
 private:
-	const ModelSelector::TreeColumns& _columns;
+	const ModelTreeView::TreeColumns& _columns;
 
 	bool _includeSkins;
 
@@ -38,7 +38,7 @@ public:
 	/**
 	 * greebo: Pass TRUE to the constructor to add skins to the store.
 	 */
-	ModelDataInserter(const ModelSelector::TreeColumns& columns, bool includeSkins) :
+	ModelDataInserter(const ModelTreeView::TreeColumns& columns, bool includeSkins) :
 		_columns(columns),
 		_includeSkins(includeSkins)
 	{

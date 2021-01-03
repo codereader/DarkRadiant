@@ -30,7 +30,7 @@ namespace ui
 class ModelPopulator :
     public wxThread
 {
-    const ModelSelector::TreeColumns& _columns;
+    const ModelTreeView::TreeColumns& _columns;
 
     // The working copy to populate
     wxutil::TreeModel::Ptr _treeStore;
@@ -55,7 +55,7 @@ class ModelPopulator :
 public:
 
 	// Constructor sets the populator
-    ModelPopulator(const ModelSelector::TreeColumns& columns, 
+    ModelPopulator(const ModelTreeView::TreeColumns& columns,
                    wxEvtHandler* finishedHandler) :
         wxThread(wxTHREAD_JOINABLE),
         _columns(columns),

@@ -514,6 +514,7 @@
     <ClInclude Include="..\..\radiant\ui\modelselector\ModelDataInserter.h" />
     <ClInclude Include="..\..\radiant\ui\modelselector\ModelPopulator.h" />
     <ClInclude Include="..\..\radiant\ui\modelselector\ModelSelector.h" />
+    <ClInclude Include="..\..\radiant\ui\modelselector\ModelTreeView.h" />
     <ClInclude Include="..\..\radiant\ui\mousetool\BindToolDialog.h" />
     <ClInclude Include="..\..\radiant\ui\mousetool\RegistrationHelper.h" />
     <ClInclude Include="..\..\radiant\ui\mousetool\ToolMappingDialog.h" />

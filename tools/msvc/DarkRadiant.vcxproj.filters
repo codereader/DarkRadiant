@@ -1296,6 +1296,9 @@
     <ClInclude Include="..\..\radiant\ui\mediabrowser\MediaBrowserTreeView.h">
       <Filter>src\ui\mediabrowser</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\modelselector\ModelTreeView.h">
+      <Filter>src\ui\modelselector</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />

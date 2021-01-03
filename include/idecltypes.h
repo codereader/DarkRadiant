@@ -10,6 +10,7 @@ enum class Type
     Material,
     EntityDef,
     SoundShader,
+    Model,
 };
 
 }
