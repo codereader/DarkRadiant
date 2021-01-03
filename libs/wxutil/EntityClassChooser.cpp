@@ -1,7 +1,9 @@
 #include "EntityClassChooser.h"
+
 #include "dataview/TreeModel.h"
 #include "dataview/TreeViewItemStyle.h"
 #include "dataview/ThreadedResourceTreePopulator.h"
+#include "dataview/ResourceTreeViewToolbar.h"
 #include "dataview/VFSTreePopulator.h"
 
 #include "i18n.h"
@@ -307,7 +309,10 @@ void EntityClassChooser::setupTreeView()
     _treeView->AppendIconTextColumn(_("Classname"), _columns.iconAndName.getColumnIndex(),
         wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
+    auto* toolbar = new wxutil::ResourceTreeViewToolbar(parent, _treeView);
+
     parent->GetSizer()->Prepend(_treeView, 1, wxEXPAND | wxBOTTOM | wxRIGHT, 6);
+    parent->GetSizer()->Prepend(toolbar, 0, wxALIGN_LEFT | wxBOTTOM | wxLEFT | wxRIGHT, 6);
 }
 
 // Update the usage information
