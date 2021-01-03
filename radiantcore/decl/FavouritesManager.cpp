@@ -12,6 +12,7 @@ namespace
     const char* const RKEY_FAVOURITES_ROOT = "user/ui/favourites";
     const char* const RKEY_SUBPATH_MATERIALS = "/materials";
     const char* const RKEY_SUBPATH_ENTITYDEFS = "/entityDefs";
+    const char* const RKEY_SUBPATH_SOUNDSHADERS = "/soundShaders";
 }
 
 void FavouritesManager::addFavourite(decl::Type type, const std::string& path)
@@ -93,6 +94,7 @@ void FavouritesManager::initialiseModule(const IApplicationContext&)
     std::string root = RKEY_FAVOURITES_ROOT;
     _favouritesByType[Type::Material].loadFromRegistry(root + RKEY_SUBPATH_MATERIALS);
     _favouritesByType[Type::EntityDef].loadFromRegistry(root + RKEY_SUBPATH_ENTITYDEFS);
+    _favouritesByType[Type::SoundShader].loadFromRegistry(root + RKEY_SUBPATH_SOUNDSHADERS);
 }
 
 void FavouritesManager::shutdownModule()
@@ -103,6 +105,7 @@ void FavouritesManager::shutdownModule()
     // Save favourites to registry
     _favouritesByType[Type::Material].saveToRegistry(root + RKEY_SUBPATH_MATERIALS);
     _favouritesByType[Type::EntityDef].saveToRegistry(root + RKEY_SUBPATH_ENTITYDEFS);
+    _favouritesByType[Type::SoundShader].saveToRegistry(root + RKEY_SUBPATH_SOUNDSHADERS);
 }
 
 module::StaticModule<FavouritesManager> favouritesManagerModule;

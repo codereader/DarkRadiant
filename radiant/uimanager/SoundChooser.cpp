@@ -4,9 +4,11 @@
 #include "iuimanager.h"
 #include "isound.h"
 #include "imainframe.h"
+#include "ifavourites.h"
 
 #include "wxutil/dataview/ThreadedResourceTreePopulator.h"
 #include "wxutil/dataview/VFSTreePopulator.h"
+#include "wxutil/dataview/TreeViewItemStyle.h"
 #include "wxutil/menu/IconTextMenuItem.h"
 #include "wxutil/menu/MenuItem.h"
 #include "debugging/ScopedDebugTimer.h"
@@ -43,6 +45,8 @@ private:
 
     wxIcon _shaderIcon;
     wxIcon _folderIcon;
+
+    std::set<std::string> _favourites;
 public:
     // Constructor
     SoundShaderPopulator(const wxutil::TreeModel::Ptr& treeStore,
@@ -52,6 +56,9 @@ public:
     {
         _shaderIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + SHADER_ICON));
         _folderIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + FOLDER_ICON));
+
+        // Get the list of favourite eclasses
+        _favourites = GlobalFavouritesManager().getFavourites(decl::Type::SoundShader);
     }
 
     // Invoked for each sound shader
@@ -74,13 +81,16 @@ public:
         addPath(fullPath, [&](wxutil::TreeModel::Row& row, const std::string& path, 
             const std::string& leafName, bool isFolder)
         {
+            bool isFavourite = !isFolder && _favourites.count(leafName) > 0;
+
             row[_columns.iconAndName] = wxVariant(
                 wxDataViewIconText(leafName, isFolder ? _folderIcon : _shaderIcon));
             auto actualLeafName = !isFolder ? shader.getName() : std::string();
             row[_columns.leafName] = actualLeafName;
             row[_columns.fullName] = actualLeafName;
             row[_columns.isFolder] = isFolder;
-            row[_columns.isFavourite] = false;
+            row[_columns.isFavourite] = isFavourite;
+            row[_columns.iconAndName] = wxutil::TreeViewItemStyle::Declaration(isFavourite); // assign attributes
             row.SendItemAdded();
         });
     }
