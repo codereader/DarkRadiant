@@ -15,13 +15,15 @@ public:
         public wxutil::ResourceTreeView::Columns
     {
         TreeColumns() :
+            modelPath(add(wxutil::TreeModel::Column::String)),
             skin(add(wxutil::TreeModel::Column::String)),
             isSkin(add(wxutil::TreeModel::Column::Boolean))
         {}
 
         // iconAndName column contains the filename, e.g. "chair1.lwo"
-        // fullPath column contains the VFS path, e.g. "models/darkmod/props/chair1.lwo"
+        // fullPath column contains the VFS path to the model plus skin info, e.g. "models/darkmod/props/chair1.lwo[/skinName]"
         wxutil::TreeModel::Column skin;		// e.g. "chair1_brown_wood", or "" for no skin
+        wxutil::TreeModel::Column modelPath;// e.g. "models/darkmod/props/chair1.lwo"
         wxutil::TreeModel::Column isSkin;	// TRUE if this is a skin entry, FALSE if actual model or folder
     };
 
@@ -70,15 +72,14 @@ public:
         }
     }
 
+    std::string GetSelectedModelPath()
+    {
+        return GetColumnValue(_columns.modelPath);
+    }
+
     std::string GetSelectedSkin()
     {
-        auto item = GetSelection();
-
-        if (!item.IsOk()) return "";
-
-        wxutil::TreeModel::Row row(item, *GetModel());
-
-        return row[_columns.skin];
+        return GetColumnValue(_columns.skin);
     }
 
 protected:
@@ -91,6 +92,18 @@ protected:
 
         // Pass to the base class
         return ResourceTreeView::IsTreeModelRowVisible(row);
+    }
+
+private:
+    std::string GetColumnValue(const wxutil::TreeModel::Column& column)
+    {
+        auto item = GetSelection();
+
+        if (!item.IsOk()) return "";
+
+        wxutil::TreeModel::Row row(item, *GetModel());
+
+        return row[column];
     }
 };
 

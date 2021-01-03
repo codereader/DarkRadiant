@@ -58,7 +58,7 @@ public:
         _shaderIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + SHADER_ICON));
         _folderIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + FOLDER_ICON));
 
-        // Get the list of favourite eclasses
+        // Get the list of favourites
         _favourites = GlobalFavouritesManager().getFavourites(decl::Type::SoundShader);
     }
 

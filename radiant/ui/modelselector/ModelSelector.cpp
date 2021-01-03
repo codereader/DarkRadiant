@@ -297,7 +297,7 @@ void ModelSelector::showInfoForSelectedModel()
 
     // Get the model name, if this is blank we are looking at a directory,
     // so leave the table empty
-    std::string modelName = _treeView->GetSelectedFullname();
+    std::string modelName = _treeView->GetSelectedModelPath();
     
     if (modelName.empty()) return;
 
@@ -312,7 +312,7 @@ void ModelSelector::showInfoForSelectedModel()
 void ModelSelector::onOK(wxCommandEvent& ev)
 {
     // Remember the selected model then exit from the recursive main loop
-    _lastModel = _treeView->GetSelectedFullname();
+    _lastModel = _treeView->GetSelectedModelPath();
     _lastSkin = _treeView->GetSelectedSkin();
 
 	_panedPosition.saveToPath(RKEY_SPLIT_POS);
