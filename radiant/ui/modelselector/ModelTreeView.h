@@ -52,7 +52,22 @@ public:
 
     void SetShowSkins(bool showSkins)
     {
+        if (_showSkins == showSkins)
+        {
+            return;
+        }
+
+        // Try to keep the selection intact when switching modes
+        auto previousSelection = GetSelectedFullname();
+
         _showSkins = showSkins;
+
+        SetupTreeModelFilter(); // refresh the view
+
+        if (!previousSelection.empty())
+        {
+            SetSelectedFullname(previousSelection);
+        }
     }
 
     std::string GetSelectedSkin()
