@@ -11,6 +11,7 @@ enum class Type
     EntityDef,
     SoundShader,
     Model,
+    Particle,
 };
 
 }
