@@ -1,9 +1,11 @@
 #include "ResourceTreeView.h"
 
 #include "i18n.h"
+#include "iuimanager.h"
 #include "ifavourites.h"
 #include "../menu/IconTextMenuItem.h"
 #include "TreeViewItemStyle.h"
+#include <wx/artprov.h>
 
 namespace wxutil
 {
@@ -59,6 +61,8 @@ ResourceTreeView::ResourceTreeView(wxWindow* parent, const TreeModel::Ptr& model
     Bind(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, &ResourceTreeView::_onContextMenu, this);
     Bind(EV_TREEMODEL_POPULATION_FINISHED, &ResourceTreeView::_onTreeStorePopulationFinished, this);
     Bind(EV_TREEMODEL_POPULATION_PROGRESS, &ResourceTreeView::_onTreeStorePopulationProgress, this);
+
+    _progressIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + ICON_LOADING));
 }
 
 ResourceTreeView::~ResourceTreeView()
@@ -273,9 +277,10 @@ void ResourceTreeView::Populate(const IResourceTreePopulator::Ptr& populator)
     // Add the loading icon to the tree
     TreeModel::Row row = GetTreeModel()->AddItem();
 
-    row[_columns.iconAndName] = wxVariant(wxDataViewIconText(_("Loading resources...")));
+    row[_columns.iconAndName] = wxVariant(wxDataViewIconText(_("Loading resources..."), _progressIcon));
     row[_columns.isFavourite] = true;
     row[_columns.isFolder] = false;
+    _progressItem = row.getItem();
 
     row.SendItemAdded();
 
@@ -299,20 +304,10 @@ void ResourceTreeView::AddCustomMenuItem(const ui::IMenuItemPtr& item)
 
 void ResourceTreeView::_onTreeStorePopulationProgress(TreeModel::PopulationProgressEvent& ev)
 {
-    if (!_progressItem.IsOk())
-    {
-        wxutil::TreeModel::Row row = GetTreeModel()->AddItem();
-
-        row[_columns.iconAndName] = wxVariant(wxDataViewIconText(_("Loading...")));
-        row[_columns.isFolder] = false;
-        row[_columns.isFavourite] = true; // make this a favourite such that it doesn't get filtered out
-
-        row.SendItemAdded();
-        _progressItem = row.getItem();
-    }
+    if (!_progressItem.IsOk()) return;
 
     wxutil::TreeModel::Row row(_progressItem, *GetModel());
-    row[_columns.iconAndName] = wxVariant(wxDataViewIconText(ev.GetMessage()));
+    row[_columns.iconAndName] = wxVariant(wxDataViewIconText(ev.GetMessage(), _progressIcon));
     row.SendItemChanged();
 }
 
