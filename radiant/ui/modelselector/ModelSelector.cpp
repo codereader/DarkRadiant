@@ -91,8 +91,6 @@ ModelSelector::ModelSelector() :
 	_panedPosition.connect(splitter);
 	_panedPosition.loadFromPath(RKEY_SPLIT_POS);
 
-    Bind(wxutil::EV_TREEMODEL_POPULATION_FINISHED, &ModelSelector::onTreeStorePopulationFinished, this);
-
 	// Connect to the model cache event to get notified on reloads
 	_modelsReloadedConn = GlobalModelCache().signal_modelsReloaded().connect(
 		sigc::mem_fun(this, &ModelSelector::onSkinsOrModelsReloaded));
@@ -170,9 +168,8 @@ void ModelSelector::onMainFrameShuttingDown()
     InstancePtr().reset();
 }
 
-void ModelSelector::onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev)
+void ModelSelector::onTreeViewPopulationFinished(wxutil::ResourceTreeView::PopulationFinishedEvent& ev)
 {
-    // TODO
 	findNamedObject<wxButton>(this, "ModelSelectorReloadModelsButton")->Enable(true);
 	findNamedObject<wxButton>(this, "ModelSelectorReloadSkinsButton")->Enable(true);
 }
@@ -267,6 +264,7 @@ void ModelSelector::setupTreeView(wxWindow* parent)
 
 	// Get selection and connect the changed callback
 	_treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &ModelSelector::onSelectionChanged, this);
+	_treeView->Bind(wxutil::EV_TREEVIEW_POPULATION_FINISHED, &ModelSelector::onTreeViewPopulationFinished, this);
 
     auto* toolbar = new wxutil::ResourceTreeViewToolbar(parent, _treeView);
 

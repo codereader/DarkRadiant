@@ -15,6 +15,22 @@ namespace
     const char* const ICON_LOADING = "icon_classname.png";
 }
 
+// Event implementation
+ResourceTreeView::PopulationFinishedEvent::PopulationFinishedEvent(int id) :
+    wxEvent(id, EV_TREEVIEW_POPULATION_FINISHED)
+{}
+
+ResourceTreeView::PopulationFinishedEvent::PopulationFinishedEvent(const PopulationFinishedEvent& event) :
+    wxEvent(event)
+{}
+
+wxEvent* ResourceTreeView::PopulationFinishedEvent::Clone() const
+{
+    return new PopulationFinishedEvent(*this);
+}
+
+wxDEFINE_EVENT(EV_TREEVIEW_POPULATION_FINISHED, ResourceTreeView::PopulationFinishedEvent);
+
 ResourceTreeView::ResourceTreeView(wxWindow* parent, const ResourceTreeView::Columns& columns, long style) :
     ResourceTreeView(parent, TreeModel::Ptr(), columns, style)
 {}
@@ -289,7 +305,7 @@ void ResourceTreeView::_onTreeStorePopulationProgress(TreeModel::PopulationProgr
 
         row[_columns.iconAndName] = wxVariant(wxDataViewIconText(_("Loading...")));
         row[_columns.isFolder] = false;
-        row[_columns.isFavourite] = false;
+        row[_columns.isFavourite] = true; // make this a favourite such that it doesn't get filtered out
 
         row.SendItemAdded();
         _progressItem = row.getItem();
@@ -320,6 +336,9 @@ void ResourceTreeView::_onTreeStorePopulationFinished(TreeModel::PopulationFinis
     {
         SetSelectedFullname(_fullNameToSelectAfterPopulation);
     }
+
+    // Emit the finished event
+    wxQueueEvent(this, new PopulationFinishedEvent());
 }
 
 void ResourceTreeView::_onContextMenu(wxDataViewEvent& ev)

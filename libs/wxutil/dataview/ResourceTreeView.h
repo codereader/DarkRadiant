@@ -53,6 +53,17 @@ public:
         ShowFavourites,
     };
 
+    // Event type emitted when the tree view is ready
+    class PopulationFinishedEvent :
+        public wxEvent
+    {
+    public:
+        PopulationFinishedEvent(int id = 0);
+        PopulationFinishedEvent(const PopulationFinishedEvent& event);
+
+        wxEvent* Clone() const;
+    };
+
 private:
     // Context menu
     PopupMenuPtr _popupMenu;
@@ -131,5 +142,8 @@ private:
     bool _testRemoveFromFavourites();
     void _onSetFavourite(bool isFavourite);
 };
+
+// Emitted when the tree view is done populating
+wxDECLARE_EVENT(EV_TREEVIEW_POPULATION_FINISHED, ResourceTreeView::PopulationFinishedEvent);
 
 }

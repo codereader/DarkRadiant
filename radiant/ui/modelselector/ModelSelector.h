@@ -114,7 +114,7 @@ private:
 	void onCancel(wxCommandEvent& ev);
 	void onReloadModels(wxCommandEvent& ev);
 	void onReloadSkins(wxCommandEvent& ev);
-    void onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev);
+    void onTreeViewPopulationFinished(wxutil::ResourceTreeView::PopulationFinishedEvent& ev);
 
 	// Update the info table with information from the currently-selected model, and
 	// update the displayed model.
