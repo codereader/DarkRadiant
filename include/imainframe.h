@@ -37,9 +37,6 @@ class IMainFrame :
 	public RegisterableModule
 {
 public:
-	// Constructs the toplevel mainframe window and issues the "radiant startup" signal
-	virtual void construct() = 0;
-
 	// Returns TRUE if screen updates are enabled
 	virtual bool screenUpdatesEnabled() = 0;
 
@@ -68,17 +65,18 @@ public:
 	 */
 	virtual wxBoxSizer* getWxMainContainer() = 0;
 
-	enum Toolbar
-	{
-		TOOLBAR_HORIZONTAL,	// the "view" toolbar (on the top)
-		TOOLBAR_VERTICAL,	// the "edit" toolbar (on the left)
-	};
+    /// Identifiers for application toolbars
+    enum class Toolbar
+    {
+        /// Top horizontal toolbar, containing mostly view-related options
+        TOP,
 
-	/**
-	 * greebo: Returns a toolbar widget, as specified by the
-	 * passed enum value.
-	 */
-	virtual wxToolBar* getToolbar(Toolbar type) = 0;
+        /// Left vertical toolbar, containing various edit options
+        LEFT
+    };
+
+    /// Obtain a pointer to an application toolbar
+	virtual wxToolBar* getToolbar(Toolbar toolbarID) = 0;
 
 	/**
 	 * Updates all viewports which are child of the toplevel window.

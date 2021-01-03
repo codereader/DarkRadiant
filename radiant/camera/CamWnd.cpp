@@ -931,21 +931,6 @@ void CamWnd::setCameraOrigin(const Vector3& origin)
     _camera->setCameraOrigin(origin);
 }
 
-const Vector3& CamWnd::getRightVector() const
-{
-    return _camera->getRightVector();
-}
-
-const Vector3& CamWnd::getUpVector() const
-{
-    return _camera->getUpVector();
-}
-
-const Vector3& CamWnd::getForwardVector() const
-{
-    return _camera->getForwardVector();
-}
-
 const Vector3& CamWnd::getCameraAngles() const
 {
     return _camera->getCameraAngles();
@@ -954,21 +939,6 @@ const Vector3& CamWnd::getCameraAngles() const
 void CamWnd::setCameraAngles(const Vector3& angles)
 {
     _camera->setCameraAngles(angles);
-}
-
-void CamWnd::setOriginAndAngles(const Vector3& newOrigin, const Vector3& newAngles)
-{
-    _camera->setOriginAndAngles(newOrigin, newAngles);
-}
-
-const Matrix4& CamWnd::getModelView() const
-{
-    return _camera->getModelView();
-}
-
-const Matrix4& CamWnd::getProjection() const
-{
-    return _camera->getProjection();
 }
 
 const Frustum& CamWnd::getViewFrustum() const
@@ -1046,7 +1016,7 @@ CameraMouseToolEvent CamWnd::createMouseEvent(const Vector2& point, const Vector
     Vector2 normalisedDeviceCoords = device_constrained(
         window_to_normalised_device(actualPoint, _camera->getDeviceWidth(), _camera->getDeviceHeight()));
 
-    return CameraMouseToolEvent(*this, normalisedDeviceCoords, delta);
+    return CameraMouseToolEvent(*_camera, *this, normalisedDeviceCoords, delta);
 }
 
 MouseTool::Result CamWnd::processMouseDownEvent(const MouseToolPtr& tool, const Vector2& point)

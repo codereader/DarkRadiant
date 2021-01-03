@@ -41,7 +41,6 @@ namespace ui
 /// Main 3D view widget
 class CamWnd :
     public wxEvtHandler,
-    public camera::ICameraView,
     public camera::IFreeMoveView,
     public scene::Graph::Observer,
     public util::Noncopyable,
@@ -60,7 +59,7 @@ class CamWnd :
     render::View _view;
 
     // The contained camera
-    ICameraView::Ptr _camera;
+    camera::ICameraView::Ptr _camera;
 
     static ShaderPtr _faceHighlightShader;
     static ShaderPtr _primitiveHighlightShader;
@@ -135,20 +134,14 @@ public:
 
     camera::ICameraView& getCamera();
 
-    const Vector3& getCameraOrigin() const override;
-    void setCameraOrigin(const Vector3& origin) override;
+    /// \see ICameraView::getCameraAngles
+    const Vector3& getCameraAngles() const;
 
-    const Vector3& getRightVector() const override;
-    const Vector3& getUpVector() const override;
-    const Vector3& getForwardVector() const override;
+    /// \see ICameraView::setCameraAngles
+    void setCameraAngles(const Vector3& angles);
 
-    const Vector3& getCameraAngles() const override;
-    void setCameraAngles(const Vector3& angles) override;
-
-    void setOriginAndAngles(const Vector3& newOrigin, const Vector3& newAngles) override;
-
-    virtual const Matrix4& getModelView() const override;
-    virtual const Matrix4& getProjection() const override;
+    /// \see ICameraView::getCameraOrigin
+    const Vector3& getCameraOrigin() const;
 
     const Frustum& getViewFrustum() const;
 
@@ -170,10 +163,10 @@ public:
     void removeHandlersMove();
 
     // Increases/decreases the far clip plane distance
-    float getFarClipPlaneDistance() const override;
-    void setFarClipPlaneDistance(float distance) override;
-    bool getFarClipPlaneEnabled() const override;
-    void setFarClipPlaneEnabled(bool enabled) override;
+    float getFarClipPlaneDistance() const;
+    void setFarClipPlaneDistance(float distance);
+    bool getFarClipPlaneEnabled() const;
+    void setFarClipPlaneEnabled(bool enabled);
 
     void startRenderTime();
     void stopRenderTime();
@@ -225,6 +218,9 @@ private:
     bool onRender();
     void drawTime();
     void requestRedraw(bool force);
+
+    // Motion and ICameraView related
+    void setCameraOrigin(const Vector3& origin);
 
     CameraMouseToolEvent createMouseEvent(const Vector2& point, const Vector2& delta = Vector2(0, 0));
 

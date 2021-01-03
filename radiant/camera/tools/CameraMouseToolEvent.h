@@ -10,23 +10,25 @@ namespace ui
 class CameraMouseToolEvent :
     public MouseToolEvent
 {
-private:
-    camera::ICameraView& _view;
+    camera::ICameraView& _camView;
 
 public:
-    CameraMouseToolEvent(camera::ICameraView& view, const Vector2& devicePos) :
-        MouseToolEvent(view, devicePos),
-        _view(view)
+    CameraMouseToolEvent(camera::ICameraView& camView, IInteractiveView& iView,
+                         const Vector2& devicePos) :
+        MouseToolEvent(iView, devicePos),
+        _camView(camView)
     {}
 
-    CameraMouseToolEvent(camera::ICameraView& view, const Vector2& devicePos, const Vector2& delta) :
-        MouseToolEvent(view, devicePos, delta),
-        _view(view)
+    CameraMouseToolEvent(camera::ICameraView& camView, IInteractiveView& iView,
+                         const Vector2& devicePos, const Vector2& delta) :
+        MouseToolEvent(iView, devicePos, delta),
+        _camView(camView)
     {}
 
+    /// Return the ICameraView which generated this event
     camera::ICameraView& getView()
     {
-        return _view;
+        return _camView;
     }
 };
 

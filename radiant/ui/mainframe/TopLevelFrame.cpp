@@ -28,15 +28,13 @@ TopLevelFrame::TopLevelFrame() :
 
 	// Instantiate the ToolbarManager and retrieve the view toolbar widget
 	IToolbarManager& tbCreator = GlobalUIManager().getToolbarManager();
-
 	wxToolBar* viewToolbar = tbCreator.createToolbar("view", this);
-
-	if (viewToolbar != NULL)
+	if (viewToolbar)
 	{
-		_toolbars[IMainFrame::TOOLBAR_HORIZONTAL] = viewToolbar;
+		_toolbars[IMainFrame::Toolbar::TOP] = viewToolbar;
 
 		// Pack it into the main window
-		_topLevelContainer->Add(_toolbars[IMainFrame::TOOLBAR_HORIZONTAL].get(), 0, wxEXPAND);
+		_topLevelContainer->Add(_toolbars[IMainFrame::Toolbar::TOP].get(), 0, wxEXPAND);
 	}
 	else
 	{
@@ -48,13 +46,12 @@ TopLevelFrame::TopLevelFrame() :
 
 	// Get the edit toolbar widget
 	wxToolBar* editToolbar = tbCreator.createToolbar("edit", this);
-
-	if (editToolbar != NULL)
+	if (editToolbar)
 	{
-		_toolbars[IMainFrame::TOOLBAR_VERTICAL] = editToolbar;
+		_toolbars[IMainFrame::Toolbar::LEFT] = editToolbar;
 
 		// Pack it into the main window
-		_mainContainer->Add(_toolbars[IMainFrame::TOOLBAR_VERTICAL].get(), 0, wxEXPAND);
+		_mainContainer->Add(_toolbars[IMainFrame::Toolbar::LEFT].get(), 0, wxEXPAND);
 	}
 	else
 	{
