@@ -3,7 +3,6 @@
 #include "dataview/TreeViewItemStyle.h"
 #include "dataview/ThreadedResourceTreePopulator.h"
 #include "dataview/VFSTreePopulator.h"
-#include "menu/IconTextMenuItem.h"
 
 #include "i18n.h"
 #include "ifavourites.h"
@@ -143,11 +142,10 @@ public:
 };
 
 // Main constructor
-EntityClassChooser::EntityClassChooser()
-: DialogBase(_(ECLASS_CHOOSER_TITLE)),
-  _treeStore(nullptr),
-  _treeView(nullptr),
-  _selectedName("")
+EntityClassChooser::EntityClassChooser() : 
+    DialogBase(_(ECLASS_CHOOSER_TITLE)),
+    _treeView(nullptr),
+    _selectedName("")
 {
     loadNamedPanel(this, "EntityClassChooserMainPanel");
 
@@ -296,14 +294,9 @@ int EntityClassChooser::ShowModal()
 
 void EntityClassChooser::setupTreeView()
 {
-    _treeStore = new TreeModel(_columns);
-    TreeModel::Row row = _treeStore->AddItem();
-
-    row[_columns.iconAndName] = wxVariant(wxDataViewIconText(_("Loading...")));
-
     wxPanel* parent = findNamedObject<wxPanel>(this, "EntityClassChooserLeftPane");
 
-    _treeView = new ResourceTreeView(parent, _treeStore, _columns);
+    _treeView = new ResourceTreeView(parent, _columns);
     _treeView->AddSearchColumn(_columns.iconAndName);
     _treeView->SetExpandTopLevelItemsAfterPopulation(true);
     _treeView->EnableFavouriteManagement(decl::Type::EntityDef);
@@ -335,7 +328,7 @@ void EntityClassChooser::updateSelection()
 
     if (item.IsOk())
     {
-        TreeModel::Row row(item, *_treeStore);
+        TreeModel::Row row(item, *_treeView->GetModel());
 
         if (!row[_columns.isFolder].getBool())
         {
