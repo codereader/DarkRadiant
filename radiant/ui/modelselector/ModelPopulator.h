@@ -43,8 +43,7 @@ private:
 public:
 
 	// Constructor sets the populator
-    ModelPopulator(const ModelTreeView::TreeColumns& columns,
-                   wxEvtHandler* finishedHandler) :
+    ModelPopulator(const ModelTreeView::TreeColumns& columns) :
         ThreadedResourceTreePopulator(columns),
         _columns(columns),
 		_count(0),

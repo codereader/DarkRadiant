@@ -7,6 +7,8 @@
 #include "ModelSelector.h"
 #include <wx/artprov.h>
 
+#include "ModelTreeView.h"
+
 namespace ui
 {
 

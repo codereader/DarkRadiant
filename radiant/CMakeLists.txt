@@ -127,6 +127,7 @@ add_executable(darkradiant
                ui/modelexport/ExportCollisionModelDialog.cpp
                ui/modelselector/MaterialsList.cpp
                ui/modelselector/ModelSelector.cpp
+               ui/modelselector/ModelTreeView.cpp
                ui/mousetool/BindToolDialog.cpp
                ui/mousetool/ToolMappingDialog.cpp
                ui/ortho/OrthoContextMenu.cpp

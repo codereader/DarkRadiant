@@ -1,6 +1,4 @@
 #include "ModelSelector.h"
-#include "ModelPopulator.h"
-#include "ModelDataInserter.h"
 
 #include "math/Vector3.h"
 #include "ifilesystem.h"
@@ -259,7 +257,7 @@ void ModelSelector::onModelLoaded(const model::ModelNodePtr& modelNode)
 // Helper function to create the TreeView
 void ModelSelector::setupTreeView(wxWindow* parent)
 {
-	_treeView = new ModelTreeView(parent, _columns);
+	_treeView = new ModelTreeView(parent);
     _treeView->SetMinSize(wxSize(200, 200));
 
 	// Get selection and connect the changed callback
@@ -275,7 +273,7 @@ void ModelSelector::setupTreeView(wxWindow* parent)
 
 void ModelSelector::populateModels()
 {
-    _treeView->Populate(std::make_shared<ModelPopulator>(_columns, _treeView));
+    _treeView->Populate();
 }
 
 void ModelSelector::Populate()

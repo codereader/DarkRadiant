@@ -318,6 +318,7 @@
     <ClCompile Include="..\..\radiant\ui\mapinfo\ShaderInfoTab.cpp" />
     <ClCompile Include="..\..\radiant\ui\mediabrowser\MediaBrowser.cpp" />
     <ClCompile Include="..\..\radiant\ui\modelselector\ModelSelector.cpp" />
+    <ClCompile Include="..\..\radiant\ui\modelselector\ModelTreeView.cpp" />
     <ClCompile Include="..\..\radiant\ui\mousetool\BindToolDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\mousetool\ToolMappingDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\ortho\OrthoContextMenu.cpp" />

@@ -54,8 +54,6 @@ class ModelSelector :
 private:
 	wxPanel* _dialogPanel;
 
-	ModelTreeView::TreeColumns _columns;
-
 	// Model preview widget
     wxutil::ModelPreviewPtr _modelPreview;
 

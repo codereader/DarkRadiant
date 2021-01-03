@@ -409,9 +409,6 @@ void ResourceTreeView::_onSetFavourite(bool isFavourite)
     TreeModel::Row row(item, *GetModel());
 
     SetFavouriteRecursively(row, isFavourite);
-
-    // Store to registry on each change
-    // TODO: ? _favourites->saveToRegistry();
 }
 
 bool ResourceTreeView::IsDirectorySelected()

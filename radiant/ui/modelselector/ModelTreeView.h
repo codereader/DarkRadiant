@@ -1,7 +1,6 @@
 #pragma once
 
 #include "wxutil/dataview/ResourceTreeView.h"
-#include <wx/artprov.h>
 
 namespace ui
 {
@@ -29,82 +28,27 @@ public:
 
 private:
     bool _showSkins;
-    const TreeColumns& _columns;
+    TreeColumns _columns;
 
     wxDataViewItem _progressItem;
     wxIcon _modelIcon;
 
 public:
-    ModelTreeView(wxWindow* parent, const TreeColumns& columns) :
-        ResourceTreeView(parent, columns, wxBORDER_STATIC | wxDV_NO_HEADER),
-        _columns(columns),
-        _showSkins(true)
-    {
-        // Single visible column, containing the directory/shader name and the icon
-        AppendIconTextColumn(
-            _("Model Path"), _columns.iconAndName.getColumnIndex(),
-            wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE,
-            wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE
-        );
+    ModelTreeView(wxWindow* parent);
 
-        // Use the TreeModel's full string search function
-        AddSearchColumn(_columns.iconAndName);
-        EnableFavouriteManagement(decl::Type::Model);
-    }
+    // Start populating the model tree in the background
+    void Populate();
 
-    void SetShowSkins(bool showSkins)
-    {
-        if (_showSkins == showSkins)
-        {
-            return;
-        }
+    void SetShowSkins(bool showSkins);
 
-        // Try to keep the selection intact when switching modes
-        auto previousSelection = GetSelectedFullname();
-
-        _showSkins = showSkins;
-
-        SetupTreeModelFilter(); // refresh the view
-
-        if (!previousSelection.empty())
-        {
-            SetSelectedFullname(previousSelection);
-        }
-    }
-
-    std::string GetSelectedModelPath()
-    {
-        return GetColumnValue(_columns.modelPath);
-    }
-
-    std::string GetSelectedSkin()
-    {
-        return GetColumnValue(_columns.skin);
-    }
+    std::string GetSelectedModelPath();
+    std::string GetSelectedSkin();
 
 protected:
-    bool IsTreeModelRowVisible(wxutil::TreeModel::Row& row) override
-    {
-        if (!_showSkins && row[_columns.isSkin].getBool())
-        {
-            return false; // it's a skin, and we shouldn't show it
-        }
-
-        // Pass to the base class
-        return ResourceTreeView::IsTreeModelRowVisible(row);
-    }
+    bool IsTreeModelRowVisible(wxutil::TreeModel::Row& row) override;
 
 private:
-    std::string GetColumnValue(const wxutil::TreeModel::Column& column)
-    {
-        auto item = GetSelection();
-
-        if (!item.IsOk()) return "";
-
-        wxutil::TreeModel::Row row(item, *GetModel());
-
-        return row[column];
-    }
+    std::string GetColumnValue(const wxutil::TreeModel::Column& column);
 };
 
 }
