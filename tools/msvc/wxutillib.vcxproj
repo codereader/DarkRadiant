@@ -171,6 +171,7 @@
     <ClInclude Include="..\..\libs\wxutil\menu\IconTextMenuItem.h" />
     <ClInclude Include="..\..\libs\wxutil\menu\MenuItem.h" />
     <ClInclude Include="..\..\libs\wxutil\menu\PopupMenu.h" />
+    <ClInclude Include="..\..\libs\wxutil\menu\SeparatorItem.h" />
     <ClInclude Include="..\..\libs\wxutil\ModalProgressDialog.h" />
     <ClInclude Include="..\..\libs\wxutil\Modifier.h" />
     <ClInclude Include="..\..\libs\wxutil\MouseButton.h" />

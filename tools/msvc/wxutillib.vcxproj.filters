@@ -139,6 +139,9 @@
     <ClInclude Include="..\..\libs\wxutil\dataview\ThreadedResourceTreePopulator.h">
       <Filter>dataview</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\menu\SeparatorItem.h">
+      <Filter>menu</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\wxutil\dialog\MessageBox.cpp">

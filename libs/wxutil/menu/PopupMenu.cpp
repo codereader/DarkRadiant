@@ -1,4 +1,5 @@
 #include "PopupMenu.h"
+#include "SeparatorItem.h"
 
 namespace wxutil
 {
@@ -34,7 +35,9 @@ void PopupMenu::addItem(const ui::IMenuItemPtr& item)
 
 void PopupMenu::addSeparator()
 {
-	AppendSeparator();
+    addItem(std::make_shared<SeparatorItem>(
+        new wxMenuItem(this, wxID_ANY, wxEmptyString, wxEmptyString, wxITEM_SEPARATOR))
+    );
 }
 
 void PopupMenu::show(wxWindow* parent)
