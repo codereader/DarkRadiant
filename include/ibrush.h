@@ -96,6 +96,13 @@ struct ShiftScaleRotation
 	double	shift[2];
 	double	rotate;
 	double	scale[2];
+
+    ShiftScaleRotation()
+    {
+        shift[0] = shift[1] = 0;
+        rotate = 0;
+        scale[0] = scale[1] = 1;
+    }
 };
 
 // Interface for a face plane
