@@ -3,7 +3,7 @@
 #include "wxutil/dialog/DialogBase.h"
 #include <set>
 #include <map>
-#include "wxutil/TreeView.h"
+#include "wxutil/dataview/TreeView.h"
 
 #include "AIVocalSetPreview.h"
 

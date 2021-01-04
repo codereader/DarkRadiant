@@ -3,9 +3,9 @@
 #include "i18n.h"
 #include "iuimanager.h"
 
-#include "wxutil/TreeModel.h"
-#include "wxutil/TreeView.h"
-#include "wxutil/VFSTreePopulator.h"
+#include "wxutil/dataview/TreeModel.h"
+#include "wxutil/dataview/TreeView.h"
+#include "wxutil/dataview/VFSTreePopulator.h"
 
 #include "texturelib.h"
 #include "string/string.h"

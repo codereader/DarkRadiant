@@ -6,7 +6,7 @@
 
 #include "inode.h"
 #include <memory>
-#include "wxutil/TreeModel.h"
+#include "wxutil/dataview/TreeModel.h"
 
 // FORWARD DECLS
 namespace objectives { class TargetList; }

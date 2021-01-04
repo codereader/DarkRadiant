@@ -1,7 +1,7 @@
 #pragma once
 
 #include "gui/GuiManager.h"
-#include "wxutil/VFSTreePopulator.h"
+#include "wxutil/dataview/VFSTreePopulator.h"
 #include "wxutil/ModalProgressDialog.h"
 #include "EventRateLimiter.h"
 #include "imainframe.h"

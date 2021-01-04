@@ -1,7 +1,7 @@
 #pragma once
 
-#include "wxutil/TreeView.h"
-#include "wxutil/TreeModel.h"
+#include "wxutil/dataview/TreeView.h"
+#include "wxutil/dataview/TreeModel.h"
 #include <memory>
 #include <sigc++/signal.h>
 

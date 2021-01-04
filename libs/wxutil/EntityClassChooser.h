@@ -3,12 +3,11 @@
 #include "iradiant.h"
 #include "ieclass.h"
 
-#include "wxutil/preview/ModelPreview.h"
-#include "wxutil/dialog/DialogBase.h"
-#include "wxutil/TreeModel.h"
-#include "wxutil/TreeView.h"
-#include "wxutil/XmlResourceBasedWidget.h"
-#include "wxutil/PanedPosition.h"
+#include "preview/ModelPreview.h"
+#include "dialog/DialogBase.h"
+#include "dataview/ResourceTreeView.h"
+#include "XmlResourceBasedWidget.h"
+#include "PanedPosition.h"
 
 #include <memory>
 #include <sigc++/connection.h>
@@ -24,52 +23,26 @@ typedef std::shared_ptr<EntityClassChooser> EntityClassChooserPtr;
  * of a class to create at the current location.
  */
 class EntityClassChooser :
-    public wxutil::DialogBase,
-    private wxutil::XmlResourceBasedWidget
+    public DialogBase,
+    private XmlResourceBasedWidget
 {
-public:
-    // Treemodel definition
-    struct TreeColumns :
-        public wxutil::TreeModel::ColumnRecord
-    {
-        TreeColumns() :
-            name(add(wxutil::TreeModel::Column::IconText)),
-            isFolder(add(wxutil::TreeModel::Column::Boolean))
-        {}
-
-        wxutil::TreeModel::Column name;
-        wxutil::TreeModel::Column isFolder;
-    };
-
 private:
-    TreeColumns _columns;
-
-    // Tree model holding the classnames
-    wxutil::TreeModel::Ptr _treeStore;
-    wxutil::TreeView* _treeView;
-
-    // Delegated object for loading entity classes in a separate thread
-    class ThreadedEntityClassLoader;
-    std::unique_ptr<ThreadedEntityClassLoader> _eclassLoader; // PIMPL idiom
+    ResourceTreeView::Columns _columns;
+    ResourceTreeView* _treeView;
 
     // Last selected classname
     std::string _selectedName;
 
-    // Class we should select when the treemodel is populated
-    std::string _classToHighlight;
-
     // Model preview widget
-    wxutil::ModelPreviewPtr _modelPreview;
+    ModelPreviewPtr _modelPreview;
 
-    wxutil::PanedPosition _panedPosition;
+    PanedPosition _panedPosition;
 
     sigc::connection _defsReloaded;
 
 private:
-    // Constructor. Creates the GTK widgets.
     EntityClassChooser();
 
-    void setTreeViewModel();
     void loadEntityClasses();
 
     // Widget construction helpers
@@ -86,7 +59,6 @@ private:
     void onOK(wxCommandEvent& ev);
     void onSelectionChanged(wxDataViewEvent& ev);
     void onDeleteEvent(wxCloseEvent& ev);
-    void onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev);
     
     void onMainFrameShuttingDown();
     
@@ -114,4 +86,4 @@ public:
     static std::string chooseEntityClass(const std::string& preselectEclass = std::string());
 };
 
-} // namespace ui
+} // namespace

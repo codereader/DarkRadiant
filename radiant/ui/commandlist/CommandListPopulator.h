@@ -2,7 +2,7 @@
 
 #include "ieventmanager.h"
 #include "CommandList.h"
-#include "wxutil/TreeModel.h"
+#include "wxutil/dataview/TreeModel.h"
 
 /* greebo: The CommandListPopulator is an Event visitor class that cycles
  * through all the registered events and stores the name and the associated

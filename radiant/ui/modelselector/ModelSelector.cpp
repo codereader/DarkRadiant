@@ -1,6 +1,4 @@
 #include "ModelSelector.h"
-#include "ModelPopulator.h"
-#include "ModelDataInserter.h"
 
 #include "math/Vector3.h"
 #include "ifilesystem.h"
@@ -25,6 +23,8 @@
 #include <wx/panel.h>
 #include <wx/splitter.h>
 #include <wx/checkbox.h>
+#include "wxutil/dataview/ResourceTreeViewToolbar.h"
+#include "ui/UserInterfaceModule.h"
 
 #include <functional>
 
@@ -45,18 +45,13 @@ namespace
 ModelSelector::ModelSelector() : 
 	DialogBase(_(MODELSELECTOR_TITLE)),
 	_dialogPanel(loadNamedPanel(this, "ModelSelectorPanel")),
-    _treeStore(new wxutil::TreeModel(_columns)),
-	_treeModelFilter(new wxutil::TreeModelFilter(_treeStore)),
+    _treeView(nullptr),
 	_infoTable(nullptr),
     _materialsList(nullptr),
 	_lastModel(""),
 	_lastSkin(""),
-	_populated(false),
-    _showSkins(true),
 	_showOptions(true)
 {
-    _modelIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + MODEL_ICON));
-
     // Set the default size of the window
     _position.connect(this);
     _position.readPosition();
@@ -78,18 +73,12 @@ ModelSelector::ModelSelector() :
 	setupAdvancedPanel(leftPanel);
 
     // Connect buttons
-    findNamedObject<wxButton>(this, "ModelSelectorOkButton")->Connect(
-        wxEVT_BUTTON, wxCommandEventHandler(ModelSelector::onOK), NULL, this);
-    findNamedObject<wxButton>(this, "ModelSelectorCancelButton")->Connect(
-        wxEVT_BUTTON, wxCommandEventHandler(ModelSelector::onCancel), NULL, this);
+    findNamedObject<wxButton>(this, "ModelSelectorOkButton")->Bind(wxEVT_BUTTON, &ModelSelector::onOK, this);
+    findNamedObject<wxButton>(this, "ModelSelectorCancelButton")->Bind(wxEVT_BUTTON, &ModelSelector::onCancel, this);
+	findNamedObject<wxButton>(this, "ModelSelectorReloadModelsButton")->Bind(wxEVT_BUTTON, &ModelSelector::onReloadModels, this);
+	findNamedObject<wxButton>(this, "ModelSelectorReloadSkinsButton")->Bind(wxEVT_BUTTON, &ModelSelector::onReloadSkins, this);
 
-	findNamedObject<wxButton>(this, "ModelSelectorReloadModelsButton")->Connect(
-		wxEVT_BUTTON, wxCommandEventHandler(ModelSelector::onReloadModels), NULL, this);
-
-	findNamedObject<wxButton>(this, "ModelSelectorReloadSkinsButton")->Connect(
-		wxEVT_BUTTON, wxCommandEventHandler(ModelSelector::onReloadSkins), NULL, this);
-
-	Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(ModelSelector::_onDeleteEvent), NULL, this);
+	Bind(wxEVT_CLOSE_WINDOW, &ModelSelector::_onDeleteEvent, this);
 
 	FitToScreen(0.8f, 0.8f);
 
@@ -99,11 +88,6 @@ ModelSelector::ModelSelector() :
 
 	_panedPosition.connect(splitter);
 	_panedPosition.loadFromPath(RKEY_SPLIT_POS);
-
-    Connect(wxutil::EV_TREEMODEL_POPULATION_FINISHED,
-            TreeModelPopulationFinishedHandler(ModelSelector::onTreeStorePopulationFinished), NULL, this);
-    Connect(wxutil::EV_TREEMODEL_POPULATION_PROGRESS,
-            TreeModelPopulationProgressHandler(ModelSelector::onTreeStorePopulationProgress), NULL, this);
 
 	// Connect to the model cache event to get notified on reloads
 	_modelsReloadedConn = GlobalModelCache().signal_modelsReloaded().connect(
@@ -150,7 +134,7 @@ ModelSelector& ModelSelector::Instance()
 {
     ModelSelectorPtr& instancePtr = InstancePtr();
 
-    if (instancePtr == NULL)
+    if (!instancePtr)
     {
         // Not yet instantiated, do it now
         instancePtr.reset(new ModelSelector);
@@ -177,79 +161,15 @@ void ModelSelector::onMainFrameShuttingDown()
 	_modelsReloadedConn.disconnect();
 	_skinsReloadedConn.disconnect();
 
-	// Model references are kept by this class, release them before shutting down
-	_treeView.reset();
-    _treeStore.reset(nullptr);
-    _treeModelFilter.reset(nullptr);
-
     // Destroy the window
 	SendDestroyEvent();
     InstancePtr().reset();
 }
 
-void ModelSelector::onTreeStorePopulationProgress(wxutil::TreeModel::PopulationProgressEvent& ev)
+void ModelSelector::onTreeViewPopulationFinished(wxutil::ResourceTreeView::PopulationFinishedEvent& ev)
 {
-    if (!_progressItem.IsOk()) return;
-
-    if (_populator && !_populator->IsAlive())
-    {
-        return; // we might be in the process of being destructed
-    }
-
-    wxutil::TreeModel::Row row(_progressItem, *_treeStore);
-    row[_columns.filename] = wxVariant(wxDataViewIconText(ev.GetMessage(), _modelIcon));
-    row.SendItemChanged();
-}
-
-void ModelSelector::onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev)
-{
-    // Store the treemodel and create a new filter
-    _treeStore = ev.GetTreeModel();
-    _treeModelFilter.reset(new wxutil::TreeModelFilter(_treeStore));
-
-    // Choose the model based on the "showSkins" setting
-    _treeModelFilter->SetVisibleFunc([this](wxutil::TreeModel::Row& row)->bool
-    {
-        return _showSkins || !row[_columns.isSkin].getBool();
-    });
-
-    _treeView->AssociateModel(_treeModelFilter.get());
-
-    // Trigger resize of the column
-    _treeView->TriggerColumnSizeEvent();
-
-    // Time to highlight the node the dialog as asked to select
-    preSelectModel();
-
-    // Set the flag, we're done
-    _populated = true;
-	_populator.reset();
-    _progressItem = wxDataViewItem();
-
 	findNamedObject<wxButton>(this, "ModelSelectorReloadModelsButton")->Enable(true);
 	findNamedObject<wxButton>(this, "ModelSelectorReloadSkinsButton")->Enable(true);
-}
-
-void ModelSelector::preSelectModel()
-{
-    // If an empty string was passed for the current model, use the last selected one
-    std::string previouslySelected = (!_preselectedModel.empty()) ? _preselectedModel : _lastModel;
-
-    if (!previouslySelected.empty())
-    {
-        wxutil::TreeModel* model = static_cast<wxutil::TreeModel*>(_treeView->GetModel());
-
-        // Lookup the model path in the treemodel
-        wxDataViewItem found = model->FindString(previouslySelected, _columns.vfspath);
-
-        if (found.IsOk())
-        {
-            _treeView->Select(found);
-            _treeView->EnsureVisible(found);
-
-            showInfoForSelectedModel();
-        }
-    }
 }
 
 // Show the dialog and enter recursive main loop
@@ -257,30 +177,8 @@ ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel,
                                                 bool showOptions,
                                                 bool showSkins)
 {
-    _showSkins = showSkins;
-    _preselectedModel = curModel;
-
-    if (!_populated)
-    {
-        // Populate the tree of models
-        populateModels();
-    }
-
-    // Choose the model based on the "showSkins" setting
-    _treeModelFilter->SetVisibleFunc([showSkins, this](wxutil::TreeModel::Row& row)->bool
-    {
-        return showSkins || !row[_columns.isSkin].getBool();
-    });
-
-#if !defined(__linux__)
-    // Trigger a rebuild of the tree
-    _treeView->Rebuild();
-#endif
-
-    if (_populated)
-    {
-        preSelectModel();
-    }
+    _treeView->SetShowSkins(showSkins);
+    _treeView->SetSelectedFullname(curModel);
 
     showInfoForSelectedModel();
 
@@ -321,24 +219,12 @@ ModelSelectorResult ModelSelector::chooseModel(const std::string& curModel,
     return Instance().showAndBlock(curModel, showOptions, showSkins);
 }
 
-void ModelSelector::onIdleReloadTree(wxIdleEvent& ev)
-{
-	Disconnect(wxEVT_IDLE, wxIdleEventHandler(ModelSelector::onIdleReloadTree), nullptr, this);
-
-	populateModels();
-}
-
 void ModelSelector::onSkinsOrModelsReloaded()
 {
-    // Clear the flag, this triggers a new population next time the dialog is shown
-    _populated = false;
-
-	// In the case we're already shown, post a refresh event when the app is idle
-	// We might be called from a worker thread, so don't deadlock the app
-	if (IsShownOnScreen())
-	{
-		Connect(wxEVT_IDLE, wxIdleEventHandler(ModelSelector::onIdleReloadTree), nullptr, this);
-	}
+    GetUserInterfaceModule().dispatch([this] ()
+    {
+        populateModels();
+    });
 }
 
 void ModelSelector::onModelLoaded(const model::ModelNodePtr& modelNode)
@@ -371,64 +257,28 @@ void ModelSelector::onModelLoaded(const model::ModelNodePtr& modelNode)
 // Helper function to create the TreeView
 void ModelSelector::setupTreeView(wxWindow* parent)
 {
-	_treeView = wxutil::TreeView::Create(parent, wxBORDER_STATIC | wxDV_NO_HEADER);
+	_treeView = new ModelTreeView(parent);
     _treeView->SetMinSize(wxSize(200, 200));
 
-    _treeView->AssociateModel(_treeModelFilter.get());
-
-	// Single visible column, containing the directory/shader name and the icon
-	_treeView->AppendIconTextColumn(
-        _("Model Path"), _columns.filename.getColumnIndex(), 
-		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE,
-        wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE
-    );
-
 	// Get selection and connect the changed callback
-	_treeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
-		wxDataViewEventHandler(ModelSelector::onSelectionChanged), NULL, this);
+	_treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &ModelSelector::onSelectionChanged, this);
+	_treeView->Bind(wxutil::EV_TREEVIEW_POPULATION_FINISHED, &ModelSelector::onTreeViewPopulationFinished, this);
 
-    // Use the TreeModel's full string search function
-	_treeView->AddSearchColumn(_columns.filename);
+    auto* toolbar = new wxutil::ResourceTreeViewToolbar(parent, _treeView);
 
-	parent->GetSizer()->Prepend(_treeView.get(), 1, wxEXPAND);
+	parent->GetSizer()->Prepend(_treeView, 1, wxEXPAND);
+    parent->GetSizer()->Prepend(toolbar, 0, wxALIGN_LEFT | wxBOTTOM | wxLEFT | wxRIGHT, 6);
     parent->GetSizer()->Layout();
 }
 
-// Populate the tree view with models
 void ModelSelector::populateModels()
 {
-    // Clear the treestore first
-    _treeStore->Clear();
-
-    wxutil::TreeModel::Row row = _treeStore->AddItem();
-    row[_columns.filename] = wxVariant(wxDataViewIconText(_("Loading..."), _modelIcon));
-    row[_columns.isSkin] = false;
-    row[_columns.isFolder] = false;
-    row[_columns.isFolder] = std::string();
-
-    row.SendItemAdded();
-    _progressItem = row.getItem();
-
-    // Spawn the population thread
-    _populator.reset(new ModelPopulator(_columns, this));
-    _populator->Run();
+    _treeView->Populate();
 }
 
 void ModelSelector::Populate()
 {
     Instance().populateModels();
-}
-
-// Get the value from the selected column
-std::string ModelSelector::getSelectedValue(const wxutil::TreeModel::Column& col)
-{
-	wxDataViewItem item = _treeView->GetSelection();
-
-	if (!item.IsOk()) return "";
-
-	wxutil::TreeModel::Row row(item, *_treeView->GetModel());
-
-	return row[col];
 }
 
 void ModelSelector::onSelectionChanged(wxDataViewEvent& ev)
@@ -445,23 +295,23 @@ void ModelSelector::showInfoForSelectedModel()
 
     // Get the model name, if this is blank we are looking at a directory,
     // so leave the table empty
-    std::string mName = getSelectedValue(_columns.vfspath);
-    if (mName.empty())
-        return;
+    std::string modelName = _treeView->GetSelectedModelPath();
+    
+    if (modelName.empty()) return;
 
     // Get the skin if set
-    std::string skinName = getSelectedValue(_columns.skin);
+    std::string skinName = _treeView->GetSelectedSkin();
 
     // Pass the model and skin to the preview widget
-    _modelPreview->setModel(mName);
+    _modelPreview->setModel(modelName);
     _modelPreview->setSkin(skinName);
 }
 
 void ModelSelector::onOK(wxCommandEvent& ev)
 {
     // Remember the selected model then exit from the recursive main loop
-    _lastModel = getSelectedValue(_columns.vfspath);
-    _lastSkin = getSelectedValue(_columns.skin);
+    _lastModel = _treeView->GetSelectedModelPath();
+    _lastSkin = _treeView->GetSelectedSkin();
 
 	_panedPosition.saveToPath(RKEY_SPLIT_POS);
 
@@ -479,9 +329,6 @@ void ModelSelector::onReloadModels(wxCommandEvent& ev)
 	findNamedObject<wxButton>(this, "ModelSelectorReloadModelsButton")->Enable(false);
 	findNamedObject<wxButton>(this, "ModelSelectorReloadSkinsButton")->Enable(false);
 
-	// Remember the selected model before reloading
-	_preselectedModel = getSelectedValue(_columns.vfspath);
-
 	// This will fire the models reloaded signal after some time
 	GlobalModelCache().refreshModels(false);
 }
@@ -490,8 +337,6 @@ void ModelSelector::onReloadSkins(wxCommandEvent& ev)
 {
 	findNamedObject<wxButton>(this, "ModelSelectorReloadModelsButton")->Enable(false);
 	findNamedObject<wxButton>(this, "ModelSelectorReloadSkinsButton")->Enable(false);
-
-	_preselectedModel = getSelectedValue(_columns.vfspath);
 
 	// When this is done, the skins reloaded signal is fired
 	GlobalModelSkinCache().refresh();

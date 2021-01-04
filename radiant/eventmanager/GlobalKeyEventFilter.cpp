@@ -8,7 +8,7 @@
 #include <wx/combobox.h>
 #include <wx/spinctrl.h>
 #include <wx/stc/stc.h>
-#include "wxutil/TreeView.h"
+#include "wxutil/dataview/TreeView.h"
 #include "wxutil/Modifier.h"
 #include "wxutil/dialog/DialogBase.h"
 

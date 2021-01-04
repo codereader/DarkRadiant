@@ -3,7 +3,7 @@
 #include <vector>
 #include <list>
 #include <string>
-#include "wxutil/TreeModel.h"
+#include "wxutil/dataview/TreeModel.h"
 #include <memory>
 
 #include "StimResponse.h"

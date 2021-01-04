@@ -3,44 +3,33 @@
 #include "wxutil/dialog/DialogBase.h"
 
 #include "wxutil/preview/ParticlePreview.h"
-#include "wxutil/TreeModel.h"
+#include "wxutil/dataview/ResourceTreeView.h"
 
 #include "iparticles.h"
 #include <string>
 #include <map>
 #include <memory>
-
-namespace wxutil
-{
-	class TreeView;
-}
+#include <sigc++/trackable.h>
 
 namespace ui
 {
-
-class ParticlesChooser;
-typedef std::shared_ptr<ParticlesChooser> ParticlesChooserPtr;
 
 /**
  * \brief
  * Chooser dialog for selection and preview of particle systems.
  */
 class ParticlesChooser : 
-	public wxutil::DialogBase
+	public wxutil::DialogBase,
+    public sigc::trackable
 {
 private:
-	class ThreadedParticlesLoader;
-	std::unique_ptr<ThreadedParticlesLoader> _particlesLoader;
+    wxutil::ResourceTreeView::Columns _columns;
 
-	// Tree store for shaders, and the tree selection
-	wxutil::TreeModel::Ptr _particlesList;
-	wxutil::TreeView* _treeView;
+	// Tree view listing all the particles
+	wxutil::ResourceTreeView* _treeView;
 
 	// Last selected particle
 	std::string _selectedParticle;
-
-	// The particle to highlight once shown
-	std::string _preSelectParticle;
 
 	// The preview widget
     wxutil::ParticlePreviewPtr _preview;
@@ -53,20 +42,14 @@ private:
 	ParticlesChooser();
 
 	// WIDGET CONSTRUCTION 
-	wxWindow* createTreeView(wxWindow* parent);
-
-	// Static instance owner
-	static ParticlesChooser& getInstance();
-	static ParticlesChooserPtr& getInstancePtr();
+	wxutil::ResourceTreeView* createTreeView(wxWindow* parent);
 
 	// Populate the list of particles
 	void populateParticleList();
-	void onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev);
 
 	void setSelectedParticle(const std::string& particleName);
 
 private:
-	void onMainFrameShuttingDown();
 	void reloadParticles();
 
 public:

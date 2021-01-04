@@ -10,8 +10,8 @@
 #include <wx/sizer.h>
 #include <wx/splitter.h>
 
-#include "wxutil/TreeView.h"
-#include "wxutil/VFSTreePopulator.h"
+#include "wxutil/dataview/TreeView.h"
+#include "wxutil/dataview/VFSTreePopulator.h"
 
 namespace ui
 {

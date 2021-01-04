@@ -3,7 +3,7 @@
 #include "iscenegraph.h"
 #include "iregistry.h"
 #include "entitylib.h"
-#include "wxutil/TreeModel.h"
+#include "wxutil/dataview/TreeModel.h"
 #include "ResponseEditor.h"
 #include <iostream>
 #include "i18n.h"

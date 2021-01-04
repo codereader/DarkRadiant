@@ -1,5 +1,12 @@
 add_library(wxutil
             ConsoleView.cpp
+            dataview/KeyValueTable.cpp
+            dataview/ResourceTreeView.cpp
+            dataview/ThreadedResourceTreePopulator.cpp
+            dataview/TreeModel.cpp
+            dataview/TreeModelFilter.cpp
+            dataview/TreeView.cpp
+            dataview/VFSTreePopulator.cpp
             dialog/DialogBase.cpp
             dialog/Dialog.cpp
             dialog/MessageBox.cpp
@@ -10,7 +17,6 @@ add_library(wxutil
             FileChooser.cpp
             FreezePointer.cpp
             GLWidget.cpp
-            KeyValueTable.cpp
             menu/PopupMenu.cpp
             ModalProgressDialog.cpp
             MouseToolHandler.cpp
@@ -24,10 +30,6 @@ add_library(wxutil
             SerialisableWidgets.cpp
             SourceView.cpp
             Splitter.cpp
-            TreeModel.cpp
-            TreeModelFilter.cpp
-            TreeView.cpp
-            VFSTreePopulator.cpp
             WindowPosition.cpp
             window/TransientWindow.cpp)
 target_compile_options(wxutil PUBLIC ${SIGC_CFLAGS} ${FTGL_CFLAGS})

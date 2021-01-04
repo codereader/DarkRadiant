@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ieclass.h"
-#include "wxutil/VFSTreePopulator.h"
+#include "wxutil/dataview/VFSTreePopulator.h"
 #include <wx/icon.h>
 #include <wx/thread.h>
 

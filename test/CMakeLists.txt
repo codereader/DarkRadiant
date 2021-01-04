@@ -4,6 +4,7 @@ add_executable(drtest
                CSG.cpp
                Face.cpp
                FacePlane.cpp
+               Favourites.cpp
                FileTypes.cpp
                HeadlessOpenGLContext.cpp
                ImageLoading.cpp

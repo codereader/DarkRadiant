@@ -5,7 +5,7 @@
 #include "idialogmanager.h"
 #include "wxutil/XmlResourceBasedWidget.h"
 #include "wxutil/preview/ParticlePreview.h"
-#include "wxutil/TreeView.h"
+#include "wxutil/dataview/TreeView.h"
 #include "wxutil/WindowPosition.h"
 #include "wxutil/PanedPosition.h"
 

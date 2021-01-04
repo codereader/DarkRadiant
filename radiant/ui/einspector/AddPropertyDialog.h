@@ -3,7 +3,7 @@
 #include <wx/dialog.h>
 
 #include "wxutil/dialog/DialogBase.h"
-#include "wxutil/TreeView.h"
+#include "wxutil/dataview/TreeView.h"
 #include "wxutil/XmlResourceBasedWidget.h"
 
 #include <string>

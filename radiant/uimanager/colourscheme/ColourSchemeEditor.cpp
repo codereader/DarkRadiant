@@ -8,7 +8,7 @@
 
 #include "wxutil/dialog/Dialog.h"
 #include "wxutil/dialog/MessageBox.h"
-#include "wxutil/TreeView.h"
+#include "wxutil/dataview/TreeView.h"
 #include "registry/registry.h"
 #include "registry/Widgets.h"
 

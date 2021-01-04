@@ -10,7 +10,7 @@
 #include "string/string.h"
 #include "wxutil/menu/PopupMenu.h"
 #include "wxutil/PanedPosition.h"
-#include "wxutil/TreeView.h"
+#include "wxutil/dataview/TreeView.h"
 #include "wxutil/event/SingleIdleCallback.h"
 
 #include <wx/event.h>

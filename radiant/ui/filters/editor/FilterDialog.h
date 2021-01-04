@@ -4,7 +4,7 @@
 #include "wxutil/dialog/DialogBase.h"
 #include <map>
 #include "Filter.h"
-#include "wxutil/TreeView.h"
+#include "wxutil/dataview/TreeView.h"
 #include "wxutil/XmlResourceBasedWidget.h"
 
 class wxButton;

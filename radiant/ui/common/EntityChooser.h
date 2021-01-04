@@ -3,7 +3,7 @@
 #include "wxutil/dialog/DialogBase.h"
 #include <memory>
 
-#include "wxutil/TreeView.h"
+#include "wxutil/dataview/TreeView.h"
 
 namespace ui
 {

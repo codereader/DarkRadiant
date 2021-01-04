@@ -269,6 +269,7 @@
     <ClCompile Include="..\..\radiant\ui\MapFileProgressHandler.cpp" />
     <ClCompile Include="..\..\radiant\ui\mapinfo\LayerInfoTab.cpp" />
     <ClCompile Include="..\..\radiant\ui\mapselector\MapSelector.cpp" />
+    <ClCompile Include="..\..\radiant\ui\mediabrowser\MediaBrowserTreeView.cpp" />
     <ClCompile Include="..\..\radiant\ui\modelexport\ExportAsModelDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\modelexport\ExportCollisionModelDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\modelselector\MaterialsList.cpp" />
@@ -317,6 +318,7 @@
     <ClCompile Include="..\..\radiant\ui\mapinfo\ShaderInfoTab.cpp" />
     <ClCompile Include="..\..\radiant\ui\mediabrowser\MediaBrowser.cpp" />
     <ClCompile Include="..\..\radiant\ui\modelselector\ModelSelector.cpp" />
+    <ClCompile Include="..\..\radiant\ui\modelselector\ModelTreeView.cpp" />
     <ClCompile Include="..\..\radiant\ui\mousetool\BindToolDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\mousetool\ToolMappingDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\ortho\OrthoContextMenu.cpp" />
@@ -456,6 +458,7 @@
     <ClInclude Include="..\..\radiant\ui\MapFileProgressHandler.h" />
     <ClInclude Include="..\..\radiant\ui\mapinfo\LayerInfoTab.h" />
     <ClInclude Include="..\..\radiant\ui\mapselector\MapSelector.h" />
+    <ClInclude Include="..\..\radiant\ui\mediabrowser\MediaBrowserTreeView.h" />
     <ClInclude Include="..\..\radiant\ui\modelexport\ExportAsModelDialog.h" />
     <ClInclude Include="..\..\radiant\ui\modelexport\ExportCollisionModelDialog.h" />
     <ClInclude Include="..\..\radiant\ui\modelselector\MaterialsList.h" />
@@ -512,6 +515,7 @@
     <ClInclude Include="..\..\radiant\ui\modelselector\ModelDataInserter.h" />
     <ClInclude Include="..\..\radiant\ui\modelselector\ModelPopulator.h" />
     <ClInclude Include="..\..\radiant\ui\modelselector\ModelSelector.h" />
+    <ClInclude Include="..\..\radiant\ui\modelselector\ModelTreeView.h" />
     <ClInclude Include="..\..\radiant\ui\mousetool\BindToolDialog.h" />
     <ClInclude Include="..\..\radiant\ui\mousetool\RegistrationHelper.h" />
     <ClInclude Include="..\..\radiant\ui\mousetool\ToolMappingDialog.h" />

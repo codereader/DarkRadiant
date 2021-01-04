@@ -191,6 +191,9 @@
     <Filter Include="src\camera">
       <UniqueIdentifier>{b17ee1c1-2993-4dfd-8dfb-799552f45b5e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\decl">
+      <UniqueIdentifier>{90b48fa3-7e87-4565-8475-083668a5ad90}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiantcore\modulesystem\ModuleLoader.cpp">
@@ -1008,6 +1011,9 @@
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\rendersystem\OpenGLModule.cpp">
       <Filter>src\rendersystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\decl\FavouritesManager.cpp">
+      <Filter>src\decl</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2060,6 +2066,12 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\rendersystem\OpenGLModule.h">
       <Filter>src\rendersystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\decl\FavouritesManager.h">
+      <Filter>src\decl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\decl\FavouriteSet.h">
+      <Filter>src\decl</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

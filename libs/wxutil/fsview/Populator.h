@@ -2,7 +2,7 @@
 
 #include <wx/thread.h>
 #include "ifilesystem.h"
-#include "wxutil/VFSTreePopulator.h"
+#include "wxutil/dataview/VFSTreePopulator.h"
 
 namespace wxutil
 {

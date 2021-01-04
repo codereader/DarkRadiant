@@ -8,7 +8,7 @@
 #include "iradiant.h"
 #include "wxutil/dialog/DialogBase.h"
 #include "wxutil/XmlResourceBasedWidget.h"
-#include "wxutil/TreeView.h"
+#include "wxutil/dataview/TreeView.h"
 
 #include "ConversationEntity.h"
 

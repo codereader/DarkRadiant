@@ -8,6 +8,7 @@
 #include "icolourscheme.h"
 #include "igroupdialog.h"
 #include "iradiant.h"
+#include "ifavourites.h"
 #include "ipreferencesystem.h"
 #include "imediabrowser.h"
 #include "ishaderclipboard.h"
@@ -222,6 +223,7 @@ TextureBrowser::TextureBrowser(wxWindow* parent) :
     _showTextureFilter(registry::getValue<bool>(RKEY_TEXTURE_SHOW_FILTER)),
     _showTextureScrollbar(registry::getValue<bool>(RKEY_TEXTURE_SHOW_SCROLLBAR)),
     _hideUnused(registry::getValue<bool>(RKEY_TEXTURES_HIDE_UNUSED)),
+    _showFavouritesOnly(registry::getValue<bool>(RKEY_TEXTURES_SHOW_FAVOURITES_ONLY)),
     _showOtherMaterials(registry::getValue<bool>(RKEY_TEXTURES_SHOW_OTHER_MATERIALS)),
     _uniformTextureSize(registry::getValue<int>(RKEY_TEXTURE_UNIFORM_SIZE)),
     _maxNameLength(registry::getValue<int>(RKEY_TEXTURE_MAX_NAME_LENGTH)),
@@ -234,6 +236,7 @@ TextureBrowser::TextureBrowser(wxWindow* parent) :
     observeKey(RKEY_TEXTURE_MOUSE_WHEEL_INCR);
     observeKey(RKEY_TEXTURE_SHOW_FILTER);
     observeKey(RKEY_TEXTURE_MAX_NAME_LENGTH);
+    observeKey(RKEY_TEXTURES_SHOW_FAVOURITES_ONLY);
 
     _shader = texdef_name_default();
 
@@ -259,7 +262,7 @@ TextureBrowser::TextureBrowser(wxWindow* parent) :
     GlobalMaterialManager().signal_activeShadersChanged().connect(
         sigc::mem_fun(this, &TextureBrowser::onActiveShadersChanged));
 
-    Connect(wxEVT_IDLE, wxIdleEventHandler(TextureBrowser::onIdle), nullptr, this);
+    Bind(wxEVT_IDLE, &TextureBrowser::onIdle, this);
 
     SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
@@ -307,15 +310,15 @@ TextureBrowser::TextureBrowser(wxWindow* parent) :
     {
         _wxGLWidget = new wxutil::GLWidget(texbox, std::bind(&TextureBrowser::onRender, this), "TextureBrowser");
 
-        _wxGLWidget->Connect(wxEVT_SIZE, wxSizeEventHandler(TextureBrowser::onGLResize), NULL, this);
-        _wxGLWidget->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(TextureBrowser::onGLMouseScroll), NULL, this);
+        _wxGLWidget->Bind(wxEVT_SIZE, &TextureBrowser::onGLResize, this);
+        _wxGLWidget->Bind(wxEVT_MOUSEWHEEL, &TextureBrowser::onGLMouseScroll, this);
 
-        _wxGLWidget->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(TextureBrowser::onGLMouseButtonPress), NULL, this);
-        _wxGLWidget->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(TextureBrowser::onGLMouseButtonPress), NULL, this);
-        _wxGLWidget->Connect(wxEVT_LEFT_UP, wxMouseEventHandler(TextureBrowser::onGLMouseButtonRelease), NULL, this);
-        _wxGLWidget->Connect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(TextureBrowser::onGLMouseButtonPress), NULL, this);
-        _wxGLWidget->Connect(wxEVT_RIGHT_DCLICK, wxMouseEventHandler(TextureBrowser::onGLMouseButtonPress), NULL, this);
-        _wxGLWidget->Connect(wxEVT_RIGHT_UP, wxMouseEventHandler(TextureBrowser::onGLMouseButtonRelease), NULL, this);
+        _wxGLWidget->Bind(wxEVT_LEFT_DOWN, &TextureBrowser::onGLMouseButtonPress, this);
+        _wxGLWidget->Bind(wxEVT_LEFT_DCLICK, &TextureBrowser::onGLMouseButtonPress, this);
+        _wxGLWidget->Bind(wxEVT_LEFT_UP, &TextureBrowser::onGLMouseButtonRelease, this);
+        _wxGLWidget->Bind(wxEVT_RIGHT_DOWN, &TextureBrowser::onGLMouseButtonPress, this);
+        _wxGLWidget->Bind(wxEVT_RIGHT_DCLICK, &TextureBrowser::onGLMouseButtonPress, this);
+        _wxGLWidget->Bind(wxEVT_RIGHT_UP, &TextureBrowser::onGLMouseButtonRelease, this);
 
         texbox->GetSizer()->Add(_wxGLWidget, 1, wxEXPAND);
     }
@@ -325,10 +328,8 @@ TextureBrowser::TextureBrowser(wxWindow* parent) :
     // Scrollbar
     {
         _scrollbar = new wxScrollBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSB_VERTICAL);
-        _scrollbar->Connect(wxEVT_SCROLL_CHANGED,
-                            wxScrollEventHandler(TextureBrowser::onScrollChanged), NULL, this);
-        _scrollbar->Connect(wxEVT_SCROLL_THUMBTRACK,
-                            wxScrollEventHandler(TextureBrowser::onScrollChanged), NULL, this);
+        _scrollbar->Bind(wxEVT_SCROLL_CHANGED, &TextureBrowser::onScrollChanged, this);
+        _scrollbar->Bind(wxEVT_SCROLL_THUMBTRACK, &TextureBrowser::onScrollChanged, this);
 
         GetSizer()->Add(_scrollbar, 0, wxEXPAND);
 
@@ -343,6 +344,9 @@ TextureBrowser::TextureBrowser(wxWindow* parent) :
     }
 
     updateScroll();
+
+    GlobalFavouritesManager().getSignalForType(decl::Type::Material).connect(
+        sigc::mem_fun(this, &TextureBrowser::onFavouritesChanged));
 }
 
 TextureBrowser::~TextureBrowser()
@@ -390,6 +394,7 @@ void TextureBrowser::filterChanged()
 void TextureBrowser::keyChanged()
 {
     _hideUnused = registry::getValue<bool>(RKEY_TEXTURES_HIDE_UNUSED);
+    _showFavouritesOnly = registry::getValue<bool>(RKEY_TEXTURES_SHOW_FAVOURITES_ONLY);
     _showOtherMaterials = registry::getValue<bool>(RKEY_TEXTURES_SHOW_OTHER_MATERIALS);
     _showTextureFilter = registry::getValue<bool>(RKEY_TEXTURE_SHOW_FILTER);
     _uniformTextureSize = registry::getValue<int>(RKEY_TEXTURE_UNIFORM_SIZE);
@@ -419,6 +424,11 @@ void TextureBrowser::keyChanged()
 
     queueUpdate();
     _originInvalid = true;
+}
+
+void TextureBrowser::onFavouritesChanged()
+{
+    _updateNeeded = true;
 }
 
 // Return the display width of a texture in the texture browser
@@ -526,6 +536,8 @@ bool TextureBrowser::materialIsVisible(const MaterialPtr& material)
         return false;
     }
 
+    auto materialName = material->getName();
+
     if (!_showOtherMaterials && !string::istarts_with(material->getName(), GlobalTexturePrefix_get()))
     {
         return false;
@@ -536,9 +548,14 @@ bool TextureBrowser::materialIsVisible(const MaterialPtr& material)
         return false;
     }
 
+    if (_showFavouritesOnly && _favourites.count(materialName) == 0)
+    {
+        return false;
+    }
+
     if (!getFilter().empty())
     {
-        std::string textureNameCache(material->getName());
+        std::string textureNameCache(materialName);
         std::string textureName = shader_get_textureName(textureNameCache.c_str()); // can't use temporary material->getName() here
 
 		if (_filterIgnoresTexturePath)
@@ -621,6 +638,8 @@ void TextureBrowser::performUpdate()
 
     CurrentPosition layout;
     _entireSpaceHeight = 0;
+    // Update the favourites
+    _favourites = GlobalFavouritesManager().getFavourites(decl::Type::Material);
 
     GlobalMaterialManager().foreachMaterial([&](const MaterialPtr& mat)
     {

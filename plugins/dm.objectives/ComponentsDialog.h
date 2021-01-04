@@ -11,7 +11,7 @@
 
 #include "wxutil/XmlResourceBasedWidget.h"
 #include "wxutil/dialog/DialogBase.h"
-#include "wxutil/TreeView.h"
+#include "wxutil/dataview/TreeView.h"
 #include <sigc++/connection.h>
 
 class wxChoice;

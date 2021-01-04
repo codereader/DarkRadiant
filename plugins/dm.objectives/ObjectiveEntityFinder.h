@@ -6,7 +6,7 @@
 
 #include <string>
 #include <fmt/format.h>
-#include "wxutil/TreeModel.h"
+#include "wxutil/dataview/TreeModel.h"
 
 namespace objectives
 {

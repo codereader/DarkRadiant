@@ -122,10 +122,12 @@ add_executable(darkradiant
                ui/mapinfo/ModelInfoTab.cpp
                ui/mapinfo/ShaderInfoTab.cpp
                ui/mediabrowser/MediaBrowser.cpp
+               ui/mediabrowser/MediaBrowserTreeView.cpp
                ui/modelexport/ExportAsModelDialog.cpp
                ui/modelexport/ExportCollisionModelDialog.cpp
                ui/modelselector/MaterialsList.cpp
                ui/modelselector/ModelSelector.cpp
+               ui/modelselector/ModelTreeView.cpp
                ui/mousetool/BindToolDialog.cpp
                ui/mousetool/ToolMappingDialog.cpp
                ui/ortho/OrthoContextMenu.cpp

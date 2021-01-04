@@ -186,6 +186,22 @@ void TreeView::Rebuild()
 }
 #endif
 
+void TreeView::SendSelectionChangeEvent(const wxDataViewItem& item)
+{
+    // In wxWidgets 3.1.x the wxDataViewEvent constructors have changed, switch on it
+#if wxCHECK_VERSION(3, 1, 0)
+    wxDataViewEvent le(wxEVT_DATAVIEW_SELECTION_CHANGED, this, item);
+#else
+    wxDataViewEvent le(wxEVT_DATAVIEW_SELECTION_CHANGED, GetId());
+
+    le.SetEventObject(this);
+    le.SetModel(GetModel());
+    le.SetItem(item);
+#endif
+
+    ProcessWindowEvent(le);
+}
+
 void TreeView::CollapseChildren(const wxDataViewItem& item)
 {
 	// Collapse all children that are currently expanded
@@ -579,18 +595,7 @@ void TreeView::JumpToSearchMatch(const wxDataViewItem& item)
 		EnsureVisible(item);
 
 		// Synthesise a selection changed signal
-		// In wxWidgets 3.1.x the wxDataViewEvent constructors have changed, switch on it
-#if wxCHECK_VERSION(3, 1, 0)
-		wxDataViewEvent le(wxEVT_DATAVIEW_SELECTION_CHANGED, this, item);
-#else
-		wxDataViewEvent le(wxEVT_DATAVIEW_SELECTION_CHANGED, GetId());
-
-		le.SetEventObject(this);
-		le.SetModel(GetModel());
-		le.SetItem(item);
-#endif
-
-		ProcessWindowEvent(le);
+        SendSelectionChangeEvent(item);
 	}
 }
 

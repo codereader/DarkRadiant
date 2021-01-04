@@ -2,7 +2,7 @@
 
 #include "wxutil/dialog/DialogBase.h"
 #include "wxutil/preview/ModelPreview.h"
-#include "wxutil/TreeView.h"
+#include "wxutil/dataview/TreeView.h"
 
 #include <set>
 #include <map>

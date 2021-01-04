@@ -19,6 +19,9 @@
     <Filter Include="fsview">
       <UniqueIdentifier>{1e1ff470-f754-4dac-baec-a0fe56287b84}</UniqueIdentifier>
     </Filter>
+    <Filter Include="dataview">
+      <UniqueIdentifier>{77e3b8d8-cacc-4872-a5f5-a7c5d07f0551}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\libs\wxutil\dialog\DialogBase.h">
@@ -74,10 +77,6 @@
     <ClInclude Include="..\..\libs\wxutil\PathEntry.h" />
     <ClInclude Include="..\..\libs\wxutil\SerialisableWidgets.h" />
     <ClInclude Include="..\..\libs\wxutil\SourceView.h" />
-    <ClInclude Include="..\..\libs\wxutil\TreeModel.h" />
-    <ClInclude Include="..\..\libs\wxutil\TreeModelFilter.h" />
-    <ClInclude Include="..\..\libs\wxutil\TreeView.h" />
-    <ClInclude Include="..\..\libs\wxutil\VFSTreePopulator.h" />
     <ClInclude Include="..\..\libs\wxutil\WindowPosition.h" />
     <ClInclude Include="..\..\libs\wxutil\XmlResourceBasedWidget.h" />
     <ClInclude Include="..\..\libs\wxutil\ChoiceHelper.h" />
@@ -90,7 +89,6 @@
     <ClInclude Include="..\..\libs\wxutil\FreezePointer.h" />
     <ClInclude Include="..\..\libs\wxutil\GLWidget.h" />
     <ClInclude Include="..\..\libs\wxutil\IConv.h" />
-    <ClInclude Include="..\..\libs\wxutil\KeyValueTable.h" />
     <ClInclude Include="..\..\libs\wxutil\ScopeTimer.h" />
     <ClInclude Include="..\..\libs\wxutil\event\KeyEventFilter.h">
       <Filter>event</Filter>
@@ -113,6 +111,39 @@
     </ClInclude>
     <ClInclude Include="..\..\libs\wxutil\fsview\Populator.h">
       <Filter>fsview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\dataview\KeyValueTable.h">
+      <Filter>dataview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\dataview\ResourceTreeView.h">
+      <Filter>dataview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\dataview\TreeModel.h">
+      <Filter>dataview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\dataview\TreeModelFilter.h">
+      <Filter>dataview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\dataview\TreeView.h">
+      <Filter>dataview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\dataview\TreeViewItemStyle.h">
+      <Filter>dataview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\dataview\VFSTreePopulator.h">
+      <Filter>dataview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\dataview\IResourceTreePopulator.h">
+      <Filter>dataview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\dataview\ThreadedResourceTreePopulator.h">
+      <Filter>dataview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\menu\SeparatorItem.h">
+      <Filter>menu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\dataview\ResourceTreeViewToolbar.h">
+      <Filter>dataview</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -142,17 +173,12 @@
     <ClCompile Include="..\..\libs\wxutil\PathEntry.cpp" />
     <ClCompile Include="..\..\libs\wxutil\SerialisableWidgets.cpp" />
     <ClCompile Include="..\..\libs\wxutil\SourceView.cpp" />
-    <ClCompile Include="..\..\libs\wxutil\TreeModel.cpp" />
-    <ClCompile Include="..\..\libs\wxutil\TreeModelFilter.cpp" />
-    <ClCompile Include="..\..\libs\wxutil\VFSTreePopulator.cpp" />
     <ClCompile Include="..\..\libs\wxutil\WindowPosition.cpp" />
     <ClCompile Include="..\..\libs\wxutil\ConsoleView.cpp" />
     <ClCompile Include="..\..\libs\wxutil\DirChooser.cpp" />
     <ClCompile Include="..\..\libs\wxutil\FileChooser.cpp" />
     <ClCompile Include="..\..\libs\wxutil\FreezePointer.cpp" />
     <ClCompile Include="..\..\libs\wxutil\GLWidget.cpp" />
-    <ClCompile Include="..\..\libs\wxutil\KeyValueTable.cpp" />
-    <ClCompile Include="..\..\libs\wxutil\TreeView.cpp" />
     <ClCompile Include="..\..\libs\wxutil\MouseToolHandler.cpp" />
     <ClCompile Include="..\..\libs\wxutil\preview\GuiRenderer.cpp">
       <Filter>preview</Filter>
@@ -171,9 +197,26 @@
     <ClCompile Include="..\..\libs\wxutil\fsview\Populator.cpp">
       <Filter>fsview</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\libs\wxutil\Makefile.am" />
-    <None Include="..\..\libs\wxutil\Makefile.in" />
+    <ClCompile Include="..\..\libs\wxutil\dataview\KeyValueTable.cpp">
+      <Filter>dataview</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\wxutil\dataview\ResourceTreeView.cpp">
+      <Filter>dataview</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\wxutil\dataview\TreeModel.cpp">
+      <Filter>dataview</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\wxutil\dataview\TreeModelFilter.cpp">
+      <Filter>dataview</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\wxutil\dataview\TreeView.cpp">
+      <Filter>dataview</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\wxutil\dataview\VFSTreePopulator.cpp">
+      <Filter>dataview</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\wxutil\dataview\ThreadedResourceTreePopulator.cpp">
+      <Filter>dataview</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

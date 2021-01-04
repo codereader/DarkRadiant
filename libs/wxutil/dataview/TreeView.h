@@ -84,6 +84,10 @@ public:
     void Rebuild();
 #endif
 
+protected:
+    // Synthesises a selection change event to notify any handlers
+    void SendSelectionChangeEvent(const wxDataViewItem& item);
+
 private:
 	void CollapseChildren(const wxDataViewItem& item);
 

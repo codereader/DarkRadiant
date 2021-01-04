@@ -1,6 +1,7 @@
 #pragma once
 
 #include "MaterialsList.h"
+#include "ModelTreeView.h"
 
 #include <sigc++/connection.h>
 
@@ -12,9 +13,10 @@
 #include "wxutil/preview/ModelPreview.h"
 #include "wxutil/WindowPosition.h"
 #include "wxutil/PanedPosition.h"
-#include "wxutil/TreeModelFilter.h"
+#include "wxutil/dataview/ResourceTreeView.h"
+#include "wxutil/dataview/TreeModelFilter.h"
 #include "wxutil/XmlResourceBasedWidget.h"
-#include "wxutil/KeyValueTable.h"
+#include "wxutil/dataview/KeyValueTable.h"
 
 #include <string>
 
@@ -49,42 +51,14 @@ class ModelSelector :
 	public wxutil::DialogBase,
     private wxutil::XmlResourceBasedWidget
 {
-public:
-	// Treemodel definition
-	struct TreeColumns :
-		public wxutil::TreeModel::ColumnRecord
-	{
-		TreeColumns() :
-			filename(add(wxutil::TreeModel::Column::IconText)),
-			vfspath(add(wxutil::TreeModel::Column::String)),
-			skin(add(wxutil::TreeModel::Column::String)),
-            isSkin(add(wxutil::TreeModel::Column::Boolean)),
-			isFolder(add(wxutil::TreeModel::Column::Boolean))
-		{}
-
-		wxutil::TreeModel::Column filename;	// e.g. "chair1.lwo"
-		wxutil::TreeModel::Column vfspath;	// e.g. "models/darkmod/props/chair1.lwo"
-		wxutil::TreeModel::Column skin;		// e.g. "chair1_brown_wood", or "" for no skin
-        wxutil::TreeModel::Column isSkin;	// TRUE if this is a skin entry, FALSE if actual model or folder
-		wxutil::TreeModel::Column isFolder;	// whether this is a folder
-	};
-
 private:
 	wxPanel* _dialogPanel;
-
-	TreeColumns _columns;
 
 	// Model preview widget
     wxutil::ModelPreviewPtr _modelPreview;
 
-	// Tree store containing model names (including skins)
-	wxutil::TreeModel::Ptr _treeStore;
-
-    // Tree model filter for dynamically excluding the skins
-    wxutil::TreeModelFilter::Ptr _treeModelFilter;
-
     // Main tree view with model hierarchy
-	wxutil::TreeView::Ptr _treeView;
+	ModelTreeView* _treeView;
 
     // Key/value table for model information
     wxutil::KeyValueTable* _infoTable;
@@ -101,19 +75,8 @@ private:
 	std::string _lastModel;
 	std::string _lastSkin;
 
-	// TRUE if the treeview has been populated
-	bool _populated;
-    std::unique_ptr<ModelPopulator> _populator;
-    bool _showSkins;
-
-    // The model to highlight on show
-    std::string _preselectedModel;
-
     // Whether to show advanced options panel
     bool _showOptions;
-
-    wxIcon _modelIcon;
-    wxDataViewItem _progressItem;
 
 	sigc::connection _modelsReloadedConn;
 	sigc::connection _skinsReloadedConn;
@@ -136,15 +99,11 @@ private:
 	// Helper functions to configure GUI components
     void setupAdvancedPanel(wxWindow* parent);
     void setupTreeView(wxWindow* parent);
-    void preSelectModel();
 
 	// Populate the tree view with models
 	void populateModels();
 
 	void showInfoForSelectedModel();
-
-	// Return the value from the selected column, or an empty string if nothing selected
-	std::string getSelectedValue(const wxutil::TreeModel::Column& col);
 
 	void cancelDialog();
 
@@ -153,9 +112,7 @@ private:
 	void onCancel(wxCommandEvent& ev);
 	void onReloadModels(wxCommandEvent& ev);
 	void onReloadSkins(wxCommandEvent& ev);
-	void onIdleReloadTree(wxIdleEvent& ev);
-    void onTreeStorePopulationProgress(wxutil::TreeModel::PopulationProgressEvent& ev);
-    void onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev);
+    void onTreeViewPopulationFinished(wxutil::ResourceTreeView::PopulationFinishedEvent& ev);
 
 	// Update the info table with information from the currently-selected model, and
 	// update the displayed model.

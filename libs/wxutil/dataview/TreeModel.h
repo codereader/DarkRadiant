@@ -213,22 +213,25 @@ public:
 		// Don't implement operator bool() directly, it can be converted to integer
 		bool getBool() const
 		{
-			return getVariant().GetBool();
+            bool value;
+            return getVariant().Convert(&value) ? value : false;
 		}
 
 		int getInteger() const
 		{
-			return static_cast<int>(getVariant().GetInteger());
+            long value;
+            return getVariant().Convert(&value) ? static_cast<int>(value) : 0;
 		}
 
 		double getDouble() const
 		{
-			return getVariant().GetDouble();
+            double value;
+            return getVariant().Convert(&value) ? value : 0.0;
 		}
 
 		void* getPointer() const
 		{
-			return getVariant().GetVoidPtr();
+			return getVariant().IsNull() ? nullptr : getVariant().GetVoidPtr();
 		}
 
 		operator std::string() const

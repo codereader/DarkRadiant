@@ -3,8 +3,8 @@
 #include "i18n.h"
 #include "wxutil/menu/IconTextMenuItem.h"
 #include "wxutil/GLWidget.h"
-#include "wxutil/KeyValueTable.h"
-#include "wxutil/TreeModel.h"
+#include "wxutil/dataview/KeyValueTable.h"
+#include "wxutil/dataview/TreeModel.h"
 
 #include "ishaders.h"
 #include "texturelib.h"
