@@ -81,6 +81,30 @@ TEST_F(SelectionTest, LightBoundsChangedAfterRadiusChange)
     EXPECT_TRUE(GlobalSelectionSystem().getWorkZone().bounds.getExtents().isEqual(changedBounds, 0.01));
 }
 
+// #5484: Projected lights don't rotate around their origin anymore
+TEST_F(SelectionTest, SelectionBoundsOfProjectedLights)
+{
+    auto eclass = GlobalEntityClassManager().findOrInsert("light", false);
+    auto entityNode = GlobalEntityModule().createEntity(eclass);
+
+    EXPECT_TRUE(Node_getLightNode(entityNode));
+    auto* entity = Node_getEntity(entityNode);
+
+    entity->setKeyValue("origin", "0 0 0");
+    entity->setKeyValue("light_target", "0 0 -256");
+    entity->setKeyValue("light_right", "128 0 0");
+    entity->setKeyValue("light_up", "0 128 0");
+    entity->setKeyValue("light_start", "");
+    entity->setKeyValue("light_end", "");
+
+    GlobalMapModule().getRoot()->addChildNode(entityNode);
+
+    Node_setSelected(entityNode, true);
+
+    // The center of the selection AABB needs to be at its origin
+    EXPECT_EQ(Node_getLightNode(entityNode)->getSelectAABB().getOrigin(), Vector3(0,0,0));
+}
+
 void constructCenteredXyView(render::View& view, const Vector3& origin)
 {
     double scale = 1.0;

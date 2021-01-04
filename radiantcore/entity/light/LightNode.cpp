@@ -71,11 +71,11 @@ void LightNode::snapto(float snap) {
 
 AABB LightNode::getSelectAABB() const 
 {
-	AABB returnValue = _light.lightAABB();
+    // Use the light origin as select AAB centerpoint
+    Vector3 extents;
+	default_extents(extents);
 
-	default_extents(returnValue.extents);
-
-	return returnValue;
+	return AABB(_light.getLightOrigin(), extents);
 }
 
 void LightNode::onLightRadiusChanged()
