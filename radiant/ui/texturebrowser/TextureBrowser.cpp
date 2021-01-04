@@ -344,6 +344,9 @@ TextureBrowser::TextureBrowser(wxWindow* parent) :
     }
 
     updateScroll();
+
+    GlobalFavouritesManager().getSignalForType(decl::Type::Material).connect(
+        sigc::mem_fun(this, &TextureBrowser::onFavouritesChanged));
 }
 
 TextureBrowser::~TextureBrowser()
@@ -421,6 +424,11 @@ void TextureBrowser::keyChanged()
 
     queueUpdate();
     _originInvalid = true;
+}
+
+void TextureBrowser::onFavouritesChanged()
+{
+    _updateNeeded = true;
 }
 
 // Return the display width of a texture in the texture browser

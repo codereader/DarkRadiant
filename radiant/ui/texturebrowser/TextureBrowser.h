@@ -1,5 +1,6 @@
 #pragma once
 
+#include <sigc++/connection.h>
 #include "iregistry.h"
 #include "icommandsystem.h"
 #include "wxutil/FreezePointer.h"
@@ -175,6 +176,8 @@ private:
 
     void observeKey(const std::string& key);
     void keyChanged();
+
+    void onFavouritesChanged();
 
     /** greebo: The actual drawing method invoking the GL calls.
      */
