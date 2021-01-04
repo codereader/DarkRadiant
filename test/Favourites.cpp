@@ -235,4 +235,20 @@ TEST_F(FavouritesTest, ChangedSignals)
     EXPECT_TRUE(signalFired);
 }
 
+TEST_F(FavouritesTest, RequestingSignalForNoneType)
+{
+    bool exceptionThrown = false;
+
+    try
+    {
+        GlobalFavouritesManager().getSignalForType(decl::Type::None);
+    }
+    catch (const std::logic_error&)
+    {
+        exceptionThrown = true;
+    }
+
+    EXPECT_TRUE(exceptionThrown);
+}
+
 }
