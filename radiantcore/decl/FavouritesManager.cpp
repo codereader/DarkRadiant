@@ -29,6 +29,7 @@ void FavouritesManager::addFavourite(decl::Type type, const std::string& path)
     }
 
     set->second.get().emplace(path);
+    set->second.signal_setChanged().emit();
 }
 
 void FavouritesManager::removeFavourite(decl::Type type, const std::string& path)
@@ -43,6 +44,7 @@ void FavouritesManager::removeFavourite(decl::Type type, const std::string& path
     }
 
     set->second.get().erase(path);
+    set->second.signal_setChanged().emit();
 }
 
 bool FavouritesManager::isFavourite(decl::Type type, const std::string& path)
@@ -64,6 +66,23 @@ std::set<std::string> FavouritesManager::getFavourites(decl::Type type)
     auto set = _favouritesByType.find(type);
 
     return set != _favouritesByType.end() ? set->second.get() : std::set<std::string>();
+}
+
+sigc::signal<void>& FavouritesManager::getSignalForType(decl::Type type)
+{
+    if (type == decl::Type::None)
+    {
+        throw std::logic_error("No signal for decl::Type::None");
+    }
+
+    auto set = _favouritesByType.find(type);
+
+    if (set == _favouritesByType.end())
+    {
+        set = _favouritesByType.emplace(type, FavouriteSet()).first;
+    }
+
+    return set->second.signal_setChanged();
 }
 
 const std::string& FavouritesManager::getName() const
@@ -112,6 +131,12 @@ void FavouritesManager::shutdownModule()
     _favouritesByType[Type::SoundShader].saveToRegistry(root + RKEY_SUBPATH_SOUNDSHADERS);
     _favouritesByType[Type::Model].saveToRegistry(root + RKEY_SUBPATH_MODELS);
     _favouritesByType[Type::Particle].saveToRegistry(root + RKEY_SUBPATH_PARTICLES);
+
+    // Clear observers
+    for (auto& pair : _favouritesByType)
+    {
+        pair.second.signal_setChanged().clear();
+    }
 }
 
 module::StaticModule<FavouritesManager> favouritesManagerModule;

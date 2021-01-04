@@ -3,6 +3,7 @@
 #include <string>
 #include <set>
 #include "iregistry.h"
+#include <sigc++/signal.h>
 
 namespace decl
 {
@@ -11,6 +12,8 @@ class FavouriteSet
 {
 private:
     std::set<std::string> _set;
+
+    sigc::signal<void> _sigSetChanged;
 
 public:
     std::set<std::string>& get()
@@ -44,6 +47,11 @@ public:
             xml::Node node = favourites.createChild("favourite");
             node.setAttributeValue("value", favourite);
         }
+    }
+
+    sigc::signal<void>& signal_setChanged()
+    {
+        return _sigSetChanged;
     }
 };
 

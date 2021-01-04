@@ -1,6 +1,7 @@
 #pragma once
 
 #include <set>
+#include <sigc++/signal.h>
 #include "imodule.h"
 #include "idecltypes.h"
 
@@ -25,6 +26,9 @@ public:
 
     // Returns the whole set of favourites for the given declaration type
     virtual std::set<std::string> getFavourites(decl::Type type) = 0;
+
+    // Returns the changed signal for the given type - will be fired when the set changes
+    virtual sigc::signal<void>& getSignalForType(decl::Type type) = 0;
 };
 
 }

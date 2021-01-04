@@ -18,6 +18,7 @@ public:
     void removeFavourite(decl::Type type, const std::string& path) override;
     bool isFavourite(decl::Type type, const std::string& path) override;
     std::set<std::string> getFavourites(decl::Type type) override;
+    sigc::signal<void>& getSignalForType(decl::Type type) override;
 
     // RegisterableModule implementation
     const std::string& getName() const override;
