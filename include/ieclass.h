@@ -442,6 +442,11 @@ public:
      * Iterate over each ModelDef using the given visitor class.
      */
     virtual void forEachModelDef(ModelDefVisitor& visitor) = 0;
+
+    /**
+     * Iterate over each ModelDef using the given function object.
+     */
+    virtual void forEachModelDef(const std::function<void(const IModelDefPtr&)>& functor) = 0;
 };
 
 /**

@@ -75,6 +75,7 @@ public:
     // Find the modeldef with the given name
     virtual IModelDefPtr findModel(const std::string& name) override;
     virtual void forEachModelDef(ModelDefVisitor& visitor) override;
+    virtual void forEachModelDef(const std::function<void(const IModelDefPtr&)>& functor) override;
 
 	// Reloads all entityDefs/modelDefs
     void reloadDefs() override;

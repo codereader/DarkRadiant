@@ -258,12 +258,20 @@ IModelDefPtr EClassManager::findModel(const std::string& name)
 
 void EClassManager::forEachModelDef(ModelDefVisitor& visitor)
 {
+    forEachModelDef([&](const IModelDefPtr& def)
+    {
+        visitor.visit(def);
+    });
+}
+
+void EClassManager::forEachModelDef(const std::function<void(const IModelDefPtr&)>& functor)
+{
     ensureDefsLoaded();
 
-	for (const Models::value_type& pair : _models)
-	{
-		visitor.visit(pair.second);
-	}
+    for (const auto& pair : _models)
+    {
+        functor(pair.second);
+    }
 }
 
 void EClassManager::reloadDefs()
