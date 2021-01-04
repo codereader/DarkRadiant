@@ -26,6 +26,7 @@ namespace ui
 namespace
 {
     const char* const RKEY_TEXTURES_HIDE_UNUSED = "user/ui/textures/browser/hideUnused";
+    const char* const RKEY_TEXTURES_SHOW_FAVOURITES_ONLY = "user/ui/textures/browser/showFavouritesOnly";
     const char* const RKEY_TEXTURES_SHOW_OTHER_MATERIALS = "user/ui/textures/browser/showOtherMaterials";
     const char* const RKEY_TEXTURE_UNIFORM_SIZE = "user/ui/textures/browser/uniformSize";
     const char* const RKEY_TEXTURE_SHOW_SCROLLBAR = "user/ui/textures/browser/showScrollBar";
@@ -104,6 +105,10 @@ class TextureBrowser :
     // if true, the texture window will only display in-use shaders
     // if false, all the shaders in memory are displayed
     bool _hideUnused;
+    bool _showFavouritesOnly;
+
+    // Cached set of material favourites
+    std::set<std::string> _favourites;
 
     // Whether materials not starting with "textures/" should be visible
     bool _showOtherMaterials;
