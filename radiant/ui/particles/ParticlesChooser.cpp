@@ -1,7 +1,6 @@
 #include "ParticlesChooser.h"
 
 #include "i18n.h"
-#include "imainframe.h"
 #include "iparticles.h"
 #include "iuimanager.h"
 #include "iradiant.h"
@@ -43,6 +42,10 @@ ParticlesChooser::ParticlesChooser() :
 	GetSizer()->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT | wxBOTTOM | wxLEFT | wxRIGHT, 12);
 
 	FitToScreen(0.5f, 0.6f);
+
+    GlobalParticlesManager().signal_particlesReloaded().connect(
+        sigc::mem_fun(this, &ParticlesChooser::reloadParticles)
+    );
 }
 
 // Create the tree view
@@ -129,46 +132,9 @@ void ParticlesChooser::populateParticleList()
     _treeView->Populate(std::make_shared<ThreadedParticlesLoader>(_columns));
 }
 
-void ParticlesChooser::onMainFrameShuttingDown()
-{
-	rMessage() << "ParticlesChooser shutting down." << std::endl;
-
-	_preview.reset();
-
-	 // Destroy the window
-	SendDestroyEvent();
-    getInstancePtr().reset();
-}
-
 void ParticlesChooser::reloadParticles()
 {
 	populateParticleList();
-}
-
-ParticlesChooser::Ptr& ParticlesChooser::getInstancePtr()
-{
-	static Ptr _instancePtr;
-	return _instancePtr;
-}
-
-// Static instance owner
-ParticlesChooser& ParticlesChooser::getInstance()
-{
-	auto& instancePtr = getInstancePtr();
-
-	if (!instancePtr)
-	{
-		instancePtr.reset(new ParticlesChooser);
-
-		GlobalMainFrame().signal_MainFrameShuttingDown().connect(
-            sigc::mem_fun(*instancePtr, &ParticlesChooser::onMainFrameShuttingDown)
-        );
-		GlobalParticlesManager().signal_particlesReloaded().connect(
-            sigc::mem_fun(*instancePtr, &ParticlesChooser::reloadParticles)
-        );
-	}
-
-	return *instancePtr;
 }
 
 void ParticlesChooser::setSelectedParticle(const std::string& particleName)
@@ -179,17 +145,15 @@ void ParticlesChooser::setSelectedParticle(const std::string& particleName)
 // Choose a particle system
 std::string ParticlesChooser::ChooseParticle(const std::string& current)
 {
-	ParticlesChooser& instance = getInstance();
+    auto* dialog = new ParticlesChooser();
 	
-	instance._selectedParticle.clear();
-	instance.setSelectedParticle(current);
+	dialog->setSelectedParticle(current);
 
-	int returnCode = instance.ShowModal();
+	auto returnValue = dialog->ShowModal() == wxID_OK ? dialog->_selectedParticle : "";
 
-	// Don't destroy the instance, just hide it
-	instance.Hide();
+    dialog->Destroy();
 
-	return returnCode == wxID_OK ? instance._selectedParticle : "";
+    return returnValue;
 }
 
 void ParticlesChooser::_onSelChanged(wxDataViewEvent& ev)

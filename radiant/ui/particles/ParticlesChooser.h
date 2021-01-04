@@ -9,6 +9,7 @@
 #include <string>
 #include <map>
 #include <memory>
+#include <sigc++/trackable.h>
 
 namespace ui
 {
@@ -18,7 +19,8 @@ namespace ui
  * Chooser dialog for selection and preview of particle systems.
  */
 class ParticlesChooser : 
-	public wxutil::DialogBase
+	public wxutil::DialogBase,
+    public sigc::trackable
 {
 private:
     wxutil::ResourceTreeView::Columns _columns;
@@ -42,18 +44,12 @@ private:
 	// WIDGET CONSTRUCTION 
 	wxutil::ResourceTreeView* createTreeView(wxWindow* parent);
 
-	// Static instance owner
-    using Ptr = std::shared_ptr<ParticlesChooser>;
-	static ParticlesChooser& getInstance();
-	static Ptr& getInstancePtr();
-
 	// Populate the list of particles
 	void populateParticleList();
 
 	void setSelectedParticle(const std::string& particleName);
 
 private:
-	void onMainFrameShuttingDown();
 	void reloadParticles();
 
 public:
