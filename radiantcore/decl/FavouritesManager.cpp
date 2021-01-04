@@ -28,8 +28,11 @@ void FavouritesManager::addFavourite(decl::Type type, const std::string& path)
         set = _favouritesByType.emplace(type, FavouriteSet()).first;
     }
 
-    set->second.get().emplace(path);
-    set->second.signal_setChanged().emit();
+    if (set->second.get().emplace(path).second)
+    {
+        // Fire signal only when something got added
+        set->second.signal_setChanged().emit();
+    }
 }
 
 void FavouritesManager::removeFavourite(decl::Type type, const std::string& path)
@@ -43,8 +46,11 @@ void FavouritesManager::removeFavourite(decl::Type type, const std::string& path
         return;
     }
 
-    set->second.get().erase(path);
-    set->second.signal_setChanged().emit();
+    if (set->second.get().erase(path) > 0)
+    {
+        // Fire signal only when something got removed
+        set->second.signal_setChanged().emit();
+    }
 }
 
 bool FavouritesManager::isFavourite(decl::Type type, const std::string& path)

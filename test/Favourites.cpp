@@ -202,4 +202,37 @@ TEST_F(FavouritesTestWithLegacyFavourites, LegacyFavouritesAreImported)
     EXPECT_TRUE(legacyNodes.empty());
 }
 
+TEST_F(FavouritesTest, ChangedSignals)
+{
+    EXPECT_TRUE(GlobalFavouritesManager().getFavourites(decl::Type::Material).empty());
+
+    bool signalFired = false;
+
+    GlobalFavouritesManager().getSignalForType(decl::Type::Material).connect([&]()
+    {
+        signalFired = true;
+    });
+
+    // Add caulk
+    GlobalFavouritesManager().addFavourite(decl::Type::Material, "textures/common/caulk");
+    EXPECT_TRUE(signalFired);
+
+    signalFired = false; // reset
+
+    // Add the same again => shouldn't fire
+    GlobalFavouritesManager().addFavourite(decl::Type::Material, "textures/common/caulk");
+    EXPECT_FALSE(signalFired);
+
+    // Remove non-existent => shouldn't fire
+    GlobalFavouritesManager().removeFavourite(decl::Type::Material, "textures/doesntexist");
+    EXPECT_FALSE(signalFired);
+
+    // Add a different type => shouldn't fire
+    GlobalFavouritesManager().addFavourite(decl::Type::EntityDef, "my_entity");
+    EXPECT_FALSE(signalFired);
+
+    GlobalFavouritesManager().removeFavourite(decl::Type::Material, "textures/common/caulk");
+    EXPECT_TRUE(signalFired);
+}
+
 }
