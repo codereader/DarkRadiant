@@ -237,11 +237,23 @@ void ModelSelector::onModelLoaded(const model::ModelNodePtr& modelNode)
 	// Update the text in the info table
 	const model::IModel& model = modelNode->getIModel();
 
-	_infoTable->Append(_("Model name"), _modelPreview->getModel());
+    auto modelName = _modelPreview->getModel();
+	_infoTable->Append(_("Model name"), modelName);
 	_infoTable->Append(_("Skin name"), _modelPreview->getSkin());
 	_infoTable->Append(_("Total vertices"), string::to_string(model.getVertexCount()));
 	_infoTable->Append(_("Total polys"), string::to_string(model.getPolyCount()));
 	_infoTable->Append(_("Material surfaces"), string::to_string(model.getSurfaceCount()));
+
+    if (modelName.find_last_of('/') == std::string::npos)
+    {
+        // Model name doesn't have a folder, this could be a modelDef
+        auto modelDef = GlobalEntityClassManager().findModel(modelName);
+
+        if (modelDef)
+        {
+            _infoTable->Append(_("Defined in"), modelDef->defFilename);
+        }
+    }
 
 	// Add the list of active materials
 	_materialsList->clear();

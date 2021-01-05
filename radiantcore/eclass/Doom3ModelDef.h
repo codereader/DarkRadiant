@@ -46,7 +46,7 @@ public:
 		parent.clear();
 		anims.clear();
 		modName = "base";
-        defFileName.clear();
+        defFilename.clear();
 	}
 
 	// Reads the data from the given tokens into the member variables
