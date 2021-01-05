@@ -18,7 +18,7 @@ class IScopedScreenUpdateBlocker
 public:
 	virtual ~IScopedScreenUpdateBlocker() {}
 
-	// For operations without calculatable duration, call pulse() regularly to 
+	// For operations without calculatable duration, call pulse() regularly to
 	// provide some visual feedback
 	virtual void pulse() = 0;
 
@@ -72,7 +72,10 @@ public:
         TOP,
 
         /// Left vertical toolbar, containing various edit options
-        LEFT
+        LEFT,
+
+        /// Toolbar above the 3D camera view
+        CAMERA
     };
 
     /// Obtain a pointer to an application toolbar
@@ -104,28 +107,30 @@ public:
 	 *
 	 * Pass the title and the message to display in the small modal window.
 	 */
-	virtual IScopedScreenUpdateBlockerPtr getScopedScreenUpdateBlocker(const std::string& title, 
+	virtual IScopedScreenUpdateBlockerPtr getScopedScreenUpdateBlocker(const std::string& title,
 		const std::string& message, bool forceDisplay = false) = 0;
 
-	/**
-	 * A signal emitted when the MainFrame window has been set up. Modules can
-	 * subscribe to this to register any UI parts that require a valid main window
-	 * or sub component like the group dialog to be constructed.
-	 * This is a one-time signal, after emission the subscribers will be 
-	 * automatically removed by this class.
-	 */
-	virtual sigc::signal<void>& signal_MainFrameConstructed() = 0;
+    /**
+     * \brief
+     * A signal emitted when the MainFrame window has been set up.
+     *
+     * Modules can subscribe to this to register any UI parts that require a
+     * valid main window or sub component like the group dialog to be
+     * constructed. This is a one-time signal, after emission the subscribers
+     * will be automatically removed by this class.
+     */
+    virtual sigc::signal<void>& signal_MainFrameConstructed() = 0;
 
 	/**
 	 * Signal fired after the MainFrame window is shown the first time
 	 * during application start up.
-	 * This is a one-time signal, after emission the subscribers will be 
+	 * This is a one-time signal, after emission the subscribers will be
 	 * automatically removed by this class.
 	 */
 	virtual sigc::signal<void>& signal_MainFrameReady() = 0;
 
 	/**
-	 * Signal fired when the UI is shutting down, right before the MainFrame 
+	 * Signal fired when the UI is shutting down, right before the MainFrame
 	 * window will be destroyed. Dependant UI modules can listen to this
 	 * event to get a chance to clean up and save their state.
 	 * This is a one-time signal, after emission the subscribers will be

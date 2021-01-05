@@ -2,6 +2,8 @@
 
 #include "icommandsystem.h"
 #include "iscenegraph.h"
+#include "ieventmanager.h"
+
 #include "MapObserver.h"
 
 #include <sigc++/connection.h>
@@ -86,6 +88,13 @@ public:
     void shutdownModule() override;
 
 private:
+
+    // Add any required items to the application toolbars
+    void addToolbarItems();
+
+    // IEventPtrs corresponding to activatable menu options
+    IEventPtr _camSyncToggle;
+
     //connection to TDM game (i.e. the socket with custom message framing)
     //it can be "dead" in two ways:
     //  _connection is NULL --- no connection, all modes/observers disabled

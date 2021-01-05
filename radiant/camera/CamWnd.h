@@ -113,7 +113,9 @@ public:
     // The unique ID of this camwindow
     int getId();
 
-    // ICameraView implementation
+    /// Return the camera toolbar
+    wxToolBar* getToolbar() { return _camToolbar; }
+
     SelectionTestPtr createSelectionTestForPoint(const Vector2& point) override;
     const VolumeTest& getVolumeTest() const override;
     int getDeviceWidth() const override;

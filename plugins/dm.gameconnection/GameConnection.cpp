@@ -12,11 +12,14 @@
 #include "iuimanager.h"
 #include "ieventmanager.h"
 #include "idialogmanager.h"
+#include "imainframe.h"
 
 #include "scene/Traverse.h"
 
 #include <sigc++/signal.h>
 #include <sigc++/connection.h>
+#include <wx/toolbar.h>
+#include <wx/artprov.h>
 
 namespace gameconn
 {
@@ -224,8 +227,9 @@ const std::string& GameConnection::getName() const
 const StringSet& GameConnection::getDependencies() const
 {
     static StringSet _dependencies {
-        MODULE_CAMERA_MANAGER, MODULE_COMMANDSYSTEM, MODULE_MAP, MODULE_SCENEGRAPH,
-        MODULE_SELECTIONSYSTEM, MODULE_EVENTMANAGER, MODULE_UIMANAGER
+        MODULE_CAMERA_MANAGER, MODULE_COMMANDSYSTEM, MODULE_MAP,
+        MODULE_SCENEGRAPH, MODULE_SELECTIONSYSTEM, MODULE_EVENTMANAGER,
+        MODULE_UIMANAGER, MODULE_MAINFRAME
     };
     return _dependencies;
 }
@@ -233,7 +237,7 @@ const StringSet& GameConnection::getDependencies() const
 void GameConnection::initialiseModule(const IApplicationContext& ctx)
 {
     // Construct toggles
-    GlobalEventManager().addAdvancedToggle(
+    _camSyncToggle = GlobalEventManager().addAdvancedToggle(
         "GameConnectionToggleCameraSync",
         [this](bool v) { return setCameraSyncEnabled(v); }
     );
@@ -284,6 +288,11 @@ void GameConnection::initialiseModule(const IApplicationContext& ctx)
            _("Pause game"), "", "GameConnectionPauseGame");
     mm.add("main/connection", "respawnSelected", ui::menuItem,
            _("Respawn selected entities"), "", "GameConnectionRespawnSelected");
+
+    // Toolbar button(s)
+    GlobalMainFrame().signal_MainFrameConstructed().connect(
+        sigc::mem_fun(this, &GameConnection::addToolbarItems)
+    );
 }
 
 void GameConnection::shutdownModule()
@@ -291,7 +300,24 @@ void GameConnection::shutdownModule()
     disconnect(true);
 }
 
-//-------------------------------------------------------------
+void GameConnection::addToolbarItems()
+{
+    wxToolBar* camTB = GlobalMainFrame().getToolbar(IMainFrame::Toolbar::CAMERA);
+    if (camTB)
+    {
+        // Separate GameConnection tools from regular camera tools
+        camTB->AddSeparator();
+
+        // Add a toggle for the camera sync function
+        auto tool = camTB->AddTool(
+            wxID_ANY, "L",
+            wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "sr_icon_communication.png"),
+            _("Enable game camera sync with DarkRadiant camera")
+        );
+        _camSyncToggle->connectToolItem(tool);
+        camTB->Realize();
+    }
+}
 
 std::string GameConnection::composeConExecRequest(std::string consoleLine) {
     //remove trailing spaces/EOLs

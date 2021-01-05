@@ -431,7 +431,16 @@ void MainFrame::restoreWindowPosition()
 
 wxToolBar* MainFrame::getToolbar(IMainFrame::Toolbar type)
 {
-	return _topLevelWindow->getToolbar(type);
+    // Pass any request for the camera view toolbar to the active CamWnd, if
+    // any
+    if (type == Toolbar::CAMERA)
+    {
+        CamWndPtr cw = GlobalCamera().getActiveCamWnd();
+        return cw ? cw->getToolbar() : nullptr;
+    }
+
+    // Main window toolbar
+    return _topLevelWindow->getToolbar(type);
 }
 
 void MainFrame::create()
