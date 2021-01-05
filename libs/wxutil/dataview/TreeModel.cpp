@@ -54,20 +54,20 @@ public:
 		item(reinterpret_cast<wxDataViewItem::Type>(this))
 	{
 		// Use CreateRoot() instead of passing NULL
-		assert(parent_ != NULL);
+		assert(parent_ != nullptr);
 	}
 
 private:
 	// Private constructor creates a root node, has a wxDataViewItem ID == NULL
 	Node() :
-		parent(NULL),
-		item(NULL)
+		parent(nullptr),
+		item(nullptr)
 	{}
 
 public:
 	static NodePtr createRoot()
 	{
-		return NodePtr(new Node);
+		return NodePtr(new Node());
 	}
 
 	bool remove(TreeModel::Node* child)
@@ -436,7 +436,14 @@ void TreeModel::SortModelRecursive(const TreeModel::NodePtr& node, const TreeMod
 
 wxDataViewItem TreeModel::FindString(const std::string& needle, const Column& column)
 {
-	return FindRecursive(_rootNode, [&] (const Node& node)->bool
+    return FindString(needle, column, wxDataViewItem());
+}
+
+wxDataViewItem TreeModel::FindString(const std::string& needle, const Column& column, const wxDataViewItem& startItem)
+{
+    auto* startNode = !startItem.IsOk() ? _rootNode.get() : static_cast<Node*>(startItem.GetID());
+
+	return FindRecursive(*startNode, [&] (const Node& node)->bool
 	{
 		int colIndex = column.getColumnIndex();
 
@@ -462,7 +469,14 @@ wxDataViewItem TreeModel::FindString(const std::string& needle, const Column& co
 
 wxDataViewItem TreeModel::FindInteger(long needle, const Column& column)
 {
-	return FindRecursive(_rootNode, [&] (const Node& node)->bool
+    return FindInteger(needle, column, wxDataViewItem());
+}
+
+wxDataViewItem TreeModel::FindInteger(long needle, const Column& column, const wxDataViewItem& startItem)
+{
+    auto* startNode = !startItem.IsOk() ? _rootNode.get() : static_cast<Node*>(startItem.GetID());
+
+	return FindRecursive(*startNode, [&] (const Node& node)->bool
 	{
 		int colIndex = column.getColumnIndex();
 		return static_cast<int>(node.values.size()) > colIndex && 
@@ -470,18 +484,18 @@ wxDataViewItem TreeModel::FindInteger(long needle, const Column& column)
 	});
 }
 
-wxDataViewItem TreeModel::FindRecursive(const TreeModel::NodePtr& node, const std::function<bool (const TreeModel::Node&)>& predicate)
+wxDataViewItem TreeModel::FindRecursive(const TreeModel::Node& node, const std::function<bool (const TreeModel::Node&)>& predicate)
 {
 	// Test the node itself
-	if (predicate(*node))
+	if (predicate(node))
 	{
-		return node->item;
+		return node.item;
 	}
 
 	// Then test all children, aborting on first success
-	for (Node::Children::const_iterator i = node->children.begin(); i != node->children.end(); ++i)
+	for (const auto& child : node.children)
 	{
-		wxDataViewItem item = FindRecursive(*i, predicate);
+		wxDataViewItem item = FindRecursive(*child, predicate);
 
 		if (item.IsOk())
 		{
@@ -493,23 +507,23 @@ wxDataViewItem TreeModel::FindRecursive(const TreeModel::NodePtr& node, const st
 	return wxDataViewItem();
 }
 
-wxDataViewItem TreeModel::FindRecursiveUsingRows(const TreeModel::NodePtr& node, const std::function<bool (TreeModel::Row&)>& predicate)
+wxDataViewItem TreeModel::FindRecursiveUsingRows(const TreeModel::Node& node, const std::function<bool (TreeModel::Row&)>& predicate)
 {
-	if (node->item.IsOk())
+	if (node.item.IsOk())
 	{
-		Row row(node->item, *this);
+		Row row(node.item, *this);
 
 		// Test the node itself
 		if (predicate(row))
 		{
-			return node->item;
+			return node.item;
 		}
 	}
 
 	// Then test all children, aborting on first success
-	for (Node::Children::const_iterator i = node->children.begin(); i != node->children.end(); ++i)
+	for (const auto& child : node.children)
 	{
-		wxDataViewItem item = FindRecursiveUsingRows(*i, predicate);
+		wxDataViewItem item = FindRecursiveUsingRows(*child, predicate);
 
 		if (item.IsOk())
 		{

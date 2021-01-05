@@ -136,7 +136,7 @@ void TreeModelFilter::ForeachNode(const VisitFunction& visitFunction)
 
 wxDataViewItem TreeModelFilter::FindString(const std::string& needle, int column)
 {
-	return FindRecursiveUsingRows(getRootNode(), [&] (Row& row)->bool
+	return FindRecursiveUsingRows(*getRootNode(), [&] (Row& row)->bool
 	{
         if (!ItemIsVisible(row))
 		{
@@ -149,7 +149,7 @@ wxDataViewItem TreeModelFilter::FindString(const std::string& needle, int column
 
 wxDataViewItem TreeModelFilter::FindInteger(long needle, int column)
 {
-	return FindRecursiveUsingRows(getRootNode(), [&] (Row& row)->bool
+	return FindRecursiveUsingRows(*getRootNode(), [&] (Row& row)->bool
 	{
         if (!ItemIsVisible(row))
 		{

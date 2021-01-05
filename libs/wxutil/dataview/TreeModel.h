@@ -431,8 +431,17 @@ public:
 	virtual void SortModelFoldersFirst(const Column& stringColumn, const Column& isFolderColumn, 
         const FolderCompareFunction& customFolderSortFunc);
 
+    // Find the given string needle in the given column (searches the entire tree)
 	virtual wxDataViewItem FindString(const std::string& needle, const Column& column);
+
+    // Find the given string needle in the given column (searches only the subtree given by the startNode item)
+	virtual wxDataViewItem FindString(const std::string& needle, const Column& column, const wxDataViewItem& startNode);
+
+    // Find the given number needle in the given column (searches the entire tree)
 	virtual wxDataViewItem FindInteger(long needle, const Column& column);
+    
+    // Find the given number needle in the given column (searches only the subtree given by the startNode item)
+	virtual wxDataViewItem FindInteger(long needle, const Column& column, const wxDataViewItem& startNode);
 
 	virtual void SetAttr(const wxDataViewItem& item, unsigned int col, const wxDataViewItemAttr& attr) const;
 	virtual void SetIsListModel(bool isListModel);
@@ -498,8 +507,8 @@ protected:
     static int CompareStringVariants(const wxVariant& a, const wxVariant& b);
     static int CompareIconTextVariants(const wxVariant& a, const wxVariant& b);
 
-	wxDataViewItem FindRecursive(const TreeModel::NodePtr& node, const std::function<bool (const TreeModel::Node&)>& predicate);
-	wxDataViewItem FindRecursiveUsingRows(const TreeModel::NodePtr& node, const std::function<bool (TreeModel::Row&)>& predicate);
+	wxDataViewItem FindRecursive(const TreeModel::Node& node, const std::function<bool (const TreeModel::Node&)>& predicate);
+	wxDataViewItem FindRecursiveUsingRows(const TreeModel::Node& node, const std::function<bool (TreeModel::Row&)>& predicate);
 	int RemoveItemsRecursively(const wxDataViewItem& parent, const std::function<bool (const Row&)>& predicate);
 };
 
