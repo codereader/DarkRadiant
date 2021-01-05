@@ -402,7 +402,21 @@ void TreeModel::SortModelFoldersFirst(const TreeModel::Column& stringColumn,
             std::placeholders::_2, 
             stringColumn, 
             stringColumn.type == Column::String ? CompareStringVariants : CompareIconTextVariants, 
-            isFolderColumn));
+            isFolderColumn,
+            FolderCompareFunction())); // custom folder comparer is empty
+}
+
+void TreeModel::SortModelFoldersFirst(const Column& stringColumn, const Column& isFolderColumn,
+    const FolderCompareFunction& customFolderSortFunc)
+{
+    SortModelRecursive(_rootNode, std::bind(&TreeModel::CompareFoldersFirst,
+        this,
+        std::placeholders::_1,
+        std::placeholders::_2,
+        stringColumn,
+        stringColumn.type == Column::String ? CompareStringVariants : CompareIconTextVariants,
+        isFolderColumn,
+        customFolderSortFunc));
 }
 
 void TreeModel::SortModelRecursive(const TreeModel::NodePtr& node, const TreeModel::SortFunction& sortFunction)
@@ -781,7 +795,8 @@ int TreeModel::CompareIconTextVariants(const wxVariant& a, const wxVariant& b)
 bool TreeModel::CompareFoldersFirst(const wxDataViewItem& a, const wxDataViewItem& b, 
                                     const TreeModel::Column& stringColumn,
                                     const std::function<int(const wxVariant&, const wxVariant&)>& stringCompareFunc, 
-                                    const TreeModel::Column& isFolderCol)
+                                    const TreeModel::Column& isFolderCol,
+                                    const std::function<int(const wxDataViewItem&, const wxDataViewItem&)>& folderCompareFunc)
 {
 	// Check if A or B are folders
 	wxVariant aIsFolder, bIsFolder;
@@ -794,6 +809,18 @@ bool TreeModel::CompareFoldersFirst(const wxDataViewItem& a, const wxDataViewIte
 		if (bIsFolder)
 		{
 			// A and B are both folders
+
+            // Ask the special compare function first
+            if (folderCompareFunc)
+            {
+                int customResult = folderCompareFunc(a, b);
+
+                // If the custom functor returns "equal", we continue with our algorithm
+                if (customResult != 0)
+                {
+                    return customResult < 0;
+                }
+            }
 			
 			// Compare folder names
 			// greebo: We're not checking for equality here, shader names are unique

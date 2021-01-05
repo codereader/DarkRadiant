@@ -203,69 +203,29 @@ protected:
     void SortModel(const wxutil::TreeModel::Ptr& model) override
     {
         // Sort the model while we're still in the worker thread
-        model->SortModel([&](const wxDataViewItem& a, const wxDataViewItem& b)
-        {
-            // Check if A or B are folders
-            wxVariant aIsFolder, bIsFolder;
-            model->GetValue(aIsFolder, a, _columns.isFolder.getColumnIndex());
-            model->GetValue(bIsFolder, b, _columns.isFolder.getColumnIndex());
-
-            if (aIsFolder)
+        model->SortModelFoldersFirst(_columns.iconAndName, _columns.isFolder,
+            [&](const wxDataViewItem& a, const wxDataViewItem& b)
             {
-                // A is a folder, check if B is as well
-                if (bIsFolder)
+                // Special folder comparison function
+                // A and B are both folders
+                wxVariant aIsOtherMaterialsFolder, bIsOtherMaterialsFolder;
+
+                model->GetValue(aIsOtherMaterialsFolder, a, _columns.isOtherMaterialsFolder.getColumnIndex());
+                model->GetValue(bIsOtherMaterialsFolder, b, _columns.isOtherMaterialsFolder.getColumnIndex());
+
+                // Special treatment for "Other Materials" folder, which always comes last
+                if (aIsOtherMaterialsFolder)
                 {
-                    // A and B are both folders
-                    wxVariant aIsOtherMaterialsFolder, bIsOtherMaterialsFolder;
-
-                    model->GetValue(aIsOtherMaterialsFolder, a, _columns.isOtherMaterialsFolder.getColumnIndex());
-                    model->GetValue(bIsOtherMaterialsFolder, b, _columns.isOtherMaterialsFolder.getColumnIndex());
-
-                    // Special treatment for "Other Materials" folder, which always comes last
-                    if (aIsOtherMaterialsFolder)
-                    {
-                        return false;
-                    }
-
-                    if (bIsOtherMaterialsFolder)
-                    {
-                        return true;
-                    }
-
-                    // Compare folder names
-                    // greebo: We're not checking for equality here, shader names are unique
-                    wxVariant aName, bName;
-                    model->GetValue(aName, a, _columns.leafName.getColumnIndex());
-                    model->GetValue(bName, b, _columns.leafName.getColumnIndex());
-
-                    return aName.GetString().CmpNoCase(bName.GetString()) < 0;
+                    return +1;
                 }
-                else
+
+                if (bIsOtherMaterialsFolder)
                 {
-                    // A is a folder, B is not, A sorts before
-                    return true;
+                    return -1;
                 }
-            }
-            else
-            {
-                // A is not a folder, check if B is one
-                if (bIsFolder)
-                {
-                    // A is not a folder, B is, so B sorts before A
-                    return false;
-                }
-                else
-                {
-                    // Neither A nor B are folders, compare names
-                    // greebo: We're not checking for equality here, shader names are unique
-                    wxVariant aName, bName;
-                    model->GetValue(aName, a, _columns.leafName.getColumnIndex());
-                    model->GetValue(bName, b, _columns.leafName.getColumnIndex());
 
-                    return aName.GetString().CmpNoCase(bName.GetString()) < 0;
-                }
-            }
-        });
+                return 0; // no special folders, return equal to continue the regular sort algorithm
+            });
     }
 };
 

@@ -422,6 +422,15 @@ public:
 	// Pass a boolean-valued "is-a-folder" column to indicate which items are actual folders.
 	virtual void SortModelFoldersFirst(const Column& stringColumn, const Column& isFolderColumn);
 
+    using FolderCompareFunction = std::function<int(const wxDataViewItem&, const wxDataViewItem&)>;
+
+    // Sort the model by a string-valued column, sorting folders on top.
+    // Pass a boolean-valued "is-a-folder" column to indicate which items are actual folders.
+    // The customFolderSortFunc can be used to compare folders in a user-defined way
+    // if the custom folder func returns equal (0), the regular name comparison is performed.
+	virtual void SortModelFoldersFirst(const Column& stringColumn, const Column& isFolderColumn, 
+        const FolderCompareFunction& customFolderSortFunc);
+
 	virtual wxDataViewItem FindString(const std::string& needle, const Column& column);
 	virtual wxDataViewItem FindInteger(long needle, const Column& column);
 
@@ -482,8 +491,9 @@ protected:
     // Pass CompareStringVariants or CompareIconTextVariants as stringCompare.
 	bool CompareFoldersFirst(const wxDataViewItem& a, const wxDataViewItem& b, 
                              const Column& stringColumn,
-                             const std::function<int(const wxVariant&, const wxVariant&)>& stringCompareFunc, 
-                             const Column& isFolderCol);
+                             const std::function<int(const wxVariant&, const wxVariant&)>& stringCompareFunc,
+                             const Column& isFolderCol,
+                             const std::function<int(const wxDataViewItem&, const wxDataViewItem&)>& folderCompareFunc);
 
     static int CompareStringVariants(const wxVariant& a, const wxVariant& b);
     static int CompareIconTextVariants(const wxVariant& a, const wxVariant& b);
