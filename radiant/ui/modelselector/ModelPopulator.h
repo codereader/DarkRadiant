@@ -7,6 +7,7 @@
 #include "EventRateLimiter.h"
 
 #include "ifilesystem.h"
+#include "ieclass.h"
 #include "i18n.h"
 #include "string/string.h"
 #include "os/path.h"
@@ -63,6 +64,7 @@ protected:
     void PopulateModel(const wxutil::TreeModel::Ptr& model) override
     {
         wxutil::VFSTreePopulator populator(model);
+        constexpr const char* MODELS_FOLDER = "models/";
 
         // Search for model files
         GlobalFileSystem().forEachFile(
@@ -72,7 +74,7 @@ protected:
                 // Only add visible models
                 if (fileInfo.visibility == vfs::Visibility::NORMAL)
                 {
-                    visitModelFile(fileInfo.name, populator);
+                    visitModelFile(MODELS_FOLDER + fileInfo.name, populator);
                 }
             },
             0
@@ -80,11 +82,39 @@ protected:
 
         ThrowIfCancellationRequested();
 
+        // Model Defs Folder
+        wxIcon folderIcon;
+        folderIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + FOLDER_ICON));
+
         reportProgress(_("Building tree..."));
 
         // Fill in the column data (TRUE = including skins)
         ModelDataInserter inserterSkins(_columns, true);
         populator.forEachNode(inserterSkins);
+
+        reportProgress(_("Adding Model Definitions..."));
+
+        // Model Defs
+        wxutil::TreeModel::Row modelDefs(model->AddItem());
+        modelDefs[_columns.iconAndName] = wxVariant(wxDataViewIconText(_("Model Definitions"), folderIcon));
+        modelDefs[_columns.fullName] = _("Model Definitions");
+        modelDefs[_columns.modelPath] = "";
+        modelDefs[_columns.leafName] = _("Model Definitions");
+        modelDefs[_columns.skin] = std::string();
+        modelDefs[_columns.isSkin] = false;
+        modelDefs[_columns.isFolder] = true;
+        modelDefs[_columns.isFavourite] = false;
+        modelDefs.SendItemAdded();
+
+        wxutil::VFSTreePopulator modelDefPopulator(model, modelDefs.getItem());
+
+        GlobalEntityClassManager().forEachModelDef([&](const IModelDefPtr& def)
+        {
+            ThrowIfCancellationRequested();
+            modelDefPopulator.addPath(def->name);
+        });
+
+        modelDefPopulator.forEachNode(inserterSkins);
     }
 
     void SortModel(const wxutil::TreeModel::Ptr& model) override

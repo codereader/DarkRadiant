@@ -18,8 +18,6 @@ namespace
 	const char* MODEL_ICON = "model16green.png";
 	const char* SKIN_ICON = "skin16.png";
 	const char* FOLDER_ICON = "folder16.png";
-
-	const char* MODELS_FOLDER = "models/";
 }
 
 /**
@@ -69,7 +67,7 @@ public:
 		std::string displayName = path.substr(path.rfind("/") + 1);
 
 		// Pathname is the model VFS name for a model, and blank for a folder
-		std::string fullPath = isExplicit ? (MODELS_FOLDER + path) : "";
+		std::string fullPath = isExplicit ? path : "";
 
         bool isFavourite = isExplicit && _favourites.count(fullPath) > 0;
 
