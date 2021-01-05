@@ -101,6 +101,12 @@ void UndoSystem::undo()
 		rMessage() << "Undo: no undo available" << std::endl;
 		return;
 	}
+
+    if (operationStarted())
+    {
+        rWarning() << "Undo not available while an operation is still in progress" << std::endl;
+        return;
+    }
 		
 	const OperationPtr& operation = _undoStack.back();
 	rMessage() << "Undo: " << operation->getName() << std::endl;
@@ -130,6 +136,12 @@ void UndoSystem::redo()
 		rMessage() << "Redo: no redo available" << std::endl;
 		return;
 	}
+
+    if (operationStarted())
+    {
+        rWarning() << "Redo not available while an operation is still in progress" << std::endl;
+        return;
+    }
 		
 	const OperationPtr& operation = _redoStack.back();
 	rMessage() << "Redo: " << operation->getName() << std::endl;
