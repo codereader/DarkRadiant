@@ -104,6 +104,7 @@ protected:
         modelDefs[_columns.isSkin] = false;
         modelDefs[_columns.isFolder] = true;
         modelDefs[_columns.isFavourite] = false;
+        modelDefs[_columns.isModelDefFolder] = true;
         modelDefs.SendItemAdded();
 
         wxutil::VFSTreePopulator modelDefPopulator(model, modelDefs.getItem());
@@ -120,7 +121,28 @@ protected:
     void SortModel(const wxutil::TreeModel::Ptr& model) override
     {
         // Sort the model before returning it
-        model->SortModelFoldersFirst(_columns.iconAndName, _columns.isFolder);
+        model->SortModelFoldersFirst(_columns.iconAndName, _columns.isFolder,
+            [&](const wxDataViewItem& a, const wxDataViewItem& b)
+        {
+            // Special folder comparison function
+            wxVariant aIsModelDef, bIsModelDef;
+
+            model->GetValue(aIsModelDef, a, _columns.isModelDefFolder.getColumnIndex());
+            model->GetValue(bIsModelDef, b, _columns.isModelDefFolder.getColumnIndex());
+
+            // Special treatment for "Other Materials" folder, which always comes last
+            if (aIsModelDef)
+            {
+                return +1;
+            }
+
+            if (bIsModelDef)
+            {
+                return -1;
+            }
+
+            return 0; // no special folders, return equal to continue the regular sort algorithm
+        });
     }
 
     void visitModelFile(const std::string& file, wxutil::VFSTreePopulator& populator)

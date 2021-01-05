@@ -81,6 +81,7 @@ public:
         row[_columns.isSkin] = false;
 		row[_columns.isFolder] = !isExplicit;
 		row[_columns.isFavourite] = isFavourite;
+        row[_columns.isModelDefFolder] = false;
 
 		if (!_includeSkins) return; // done
 
@@ -104,6 +105,7 @@ public:
             skinRow[_columns.isSkin] = true;
 			skinRow[_columns.isFolder] = false;
             skinRow[_columns.isFavourite] = isFavourite;
+            skinRow[_columns.isModelDefFolder] = false;
 		}
 	}
 };
