@@ -58,6 +58,9 @@ private:
 	// Model preview widget
     wxutil::ModelPreviewPtr _preview;
 
+    wxDataViewItem _allSkinsItem;
+    wxDataViewItem _matchingSkinsItem;
+
 private:
 	// Constructor creates widgets
 	SkinChooser();

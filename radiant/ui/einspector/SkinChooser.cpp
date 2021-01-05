@@ -137,6 +137,8 @@ void SkinChooser::populateSkins()
 
 	// Clear the treestore
     treeStore->Clear();
+    _allSkinsItem = wxDataViewItem();
+    _matchingSkinsItem = wxDataViewItem();
 
 	wxIcon folderIcon;
 	folderIcon.CopyFromBitmap(
@@ -152,6 +154,7 @@ void SkinChooser::populateSkins()
 	matchingSkins[_columns.displayName] = wxVariant(wxDataViewIconText(_("Matching skins"), folderIcon));
 	matchingSkins[_columns.fullName] = "";
 	matchingSkins[_columns.isFolder] = true;
+    _matchingSkinsItem = matchingSkins.getItem();
 
 	// Get the skins for the associated model, and add them as matching skins
 	const StringList& matchList = GlobalModelSkinCache().getSkinsForModel(_model);
@@ -171,6 +174,7 @@ void SkinChooser::populateSkins()
 	allSkins[_columns.displayName] = wxVariant(wxDataViewIconText(_("All skins"), folderIcon));
 	allSkins[_columns.fullName] = "";
     allSkins[_columns.isFolder] = true;
+    _allSkinsItem = allSkins.getItem();
 
 	// Get the list of skins for the model
 	const StringList& skins = GlobalModelSkinCache().getAllSkins();
@@ -221,7 +225,14 @@ std::string SkinChooser::getSelectedSkin()
 
 void SkinChooser::setSelectedSkin(const std::string& skin)
 {
-    wxDataViewItem item = _treeStore->FindString(skin, _columns.fullName);
+    // Search in the matching skins tree first
+    wxDataViewItem item = _treeStore->FindString(skin, _columns.fullName, _matchingSkinsItem);
+
+    if (!item.IsOk())
+    {
+        // Fall back to the All Skins tree
+        item = _treeStore->FindString(skin, _columns.fullName, _allSkinsItem);
+    }
 
     if (item.IsOk())
     {
