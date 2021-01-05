@@ -39,7 +39,7 @@ class EClassManager :
     typedef std::map<std::string, Doom3EntityClassPtr> EntityClasses;
     EntityClasses _entityClasses;
 
-    typedef std::map<std::string, Doom3ModelDefPtr> Models;
+    typedef std::map<std::string, Doom3ModelDef::Ptr> Models;
     Models _models;
 
     // The worker thread loading the eclasses will be managed by this
@@ -109,7 +109,7 @@ private:
 	void parse(TextInputStream& inStr, const vfs::FileInfo& fileInfo, const std::string& modDir);
 
 	// Recursively resolves the inheritance of the model defs
-	void resolveModelInheritance(const std::string& name, const Doom3ModelDefPtr& model);
+	void resolveModelInheritance(const std::string& name, const Doom3ModelDef::Ptr& model);
 
 	void parseDefFiles();
 	void resolveInheritance();

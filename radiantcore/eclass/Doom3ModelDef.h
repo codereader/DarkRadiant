@@ -1,17 +1,21 @@
-#ifndef DOOM3MODELDEF_H_
-#define DOOM3MODELDEF_H_
+#pragma once
 
 #include "ieclass.h"
+#include "ifilesystem.h"
 #include "parser/DefTokeniser.h"
 
-namespace eclass {
+namespace eclass
+{
 
 class Doom3ModelDef :
 	public IModelDef
 {
+private:
 	std::size_t _parseStamp;
 
 public:
+    using Ptr = std::shared_ptr<Doom3ModelDef>;
+
 	Doom3ModelDef(const std::string& modelDefName) :
 		_parseStamp(0)
 	{
@@ -36,13 +40,13 @@ public:
 	void clear()
 	{
 		// Don't clear the name
-
 		resolved = false;
 		mesh.clear();
 		skin.clear();
 		parent.clear();
 		anims.clear();
 		modName = "base";
+        defFileName.clear();
 	}
 
 	// Reads the data from the given tokens into the member variables
@@ -98,8 +102,5 @@ public:
 	    }
 	}
 };
-typedef std::shared_ptr<Doom3ModelDef> Doom3ModelDefPtr;
 
-} // namespace eclass
-
-#endif /*DOOM3MODELDEF_H_*/
+} // namespace

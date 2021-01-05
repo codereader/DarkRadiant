@@ -89,7 +89,7 @@ Doom3EntityClassPtr EClassManager::insertUnique(const Doom3EntityClassPtr& eclas
     return i.first->second;
 }
 
-void EClassManager::resolveModelInheritance(const std::string& name, const Doom3ModelDefPtr& model)
+void EClassManager::resolveModelInheritance(const std::string& name, const Doom3ModelDef::Ptr& model)
 {
 	if (model->resolved == true) {
 		return; // inheritance already resolved
@@ -253,7 +253,7 @@ IModelDefPtr EClassManager::findModel(const std::string& name)
     ensureDefsLoaded();
 
 	Models::const_iterator found = _models.find(name);
-	return (found != _models.end()) ? found->second : Doom3ModelDefPtr();
+	return (found != _models.end()) ? found->second : Doom3ModelDef::Ptr();
 }
 
 void EClassManager::forEachModelDef(ModelDefVisitor& visitor)
@@ -447,25 +447,21 @@ void EClassManager::parse(TextInputStream& inStr, const vfs::FileInfo& fileInfo,
 
 			// Ensure that an Entity class with this name already exists
 			// When reloading entityDef declarations, most names will already be registered
-			Models::iterator i = _models.find(modelDefName);
+			auto foundModel = _models.find(modelDefName);
 
-			if (i == _models.end())
+			if (foundModel == _models.end())
 			{
 				// Does not exist yet, allocate a new one
 
 				// Allocate an empty ModelDef
-        		Doom3ModelDefPtr model(new Doom3ModelDef(modelDefName));
+        		auto model = std::make_shared<Doom3ModelDef>(modelDefName);
 
-				std::pair<Models::iterator, bool> result = _models.insert(
-					Models::value_type(modelDefName, model)
-				);
-
-				i = result.first;
+                foundModel = _models.emplace(modelDefName, model).first;
 			}
 			else
 			{
 				// Model already exists, compare the parse stamp
-				if (i->second->getParseStamp() == _curParseStamp)
+				if (foundModel->second->getParseStamp() == _curParseStamp)
 				{
 					rWarning() << "[eclassmgr]: Model "
 						<< modelDefName << " redefined" << std::endl;
@@ -474,10 +470,11 @@ void EClassManager::parse(TextInputStream& inStr, const vfs::FileInfo& fileInfo,
 
 			// Model structure is allocated and in the map,
             // invoke the parser routine
-			i->second->setParseStamp(_curParseStamp);
+            foundModel->second->setParseStamp(_curParseStamp);
 
-        	i->second->parseFromTokens(tokeniser);
-			i->second->setModName(modDir);
+            foundModel->second->parseFromTokens(tokeniser);
+            foundModel->second->setModName(modDir);
+            foundModel->second->defFilename = fileInfo.fullPath();
         }
     }
 }

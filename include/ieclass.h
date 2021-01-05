@@ -341,6 +341,9 @@ public:
 
     std::string modName;
 
+    // The mod-relative path to the file this DEF was declared in
+    std::string defFilename;
+
     IModelDef() :
         resolved(false),
         modName("base")
