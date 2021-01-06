@@ -4,6 +4,7 @@
 #include "idecltypes.h"
 #include <wx/listctrl.h>
 #include <wx/imaglist.h>
+#include <wx/tbarbase.h>
 
 namespace ui
 {
@@ -18,8 +19,17 @@ private:
 
     std::unique_ptr<wxImageList> _iconList;
 
+    struct FavouriteCategory
+    {
+        decl::Type type;
+        std::string displayName;
+        std::string iconName;
+        int iconIndex;
+        wxToolBarToolBase* checkButton;
+    };
+
     // Maps decl type to icon index
-    std::map<decl::Type, int> _favouritesToList;
+    std::list<FavouriteCategory> _categories;
 
 public:
     FavouritesBrowser();
@@ -33,6 +43,8 @@ private:
     void construct();
     void onMainFrameConstructed();
     void reloadFavourites();
+
+    void onCategoryToggled(wxCommandEvent& ev);
 };
 
 }

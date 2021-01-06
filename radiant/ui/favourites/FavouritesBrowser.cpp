@@ -4,6 +4,7 @@
 #include "iuimanager.h"
 #include "module/StaticModule.h"
 #include <wx/artprov.h>
+#include <wx/toolbar.h>
 
 namespace ui
 {
@@ -28,28 +29,69 @@ void FavouritesBrowser::construct()
     _mainWidget->SetSizer(new wxBoxSizer(wxVERTICAL));
 
     _listView = new wxListCtrl(_mainWidget, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_LIST);
-    _mainWidget->GetSizer()->Add(_listView, 1, wxEXPAND);
 
     _iconList.reset(new wxImageList(16, 16));
     _listView->SetImageList(_iconList.get(), wxIMAGE_LIST_SMALL);
 
     auto prefix = GlobalUIManager().ArtIdPrefix();
 
-    _favouritesToList[decl::Type::Material] = _iconList->Add(wxArtProvider::GetBitmap(prefix + "icon_texture.png"));
-    _favouritesToList[decl::Type::Model] = _iconList->Add(wxArtProvider::GetBitmap(prefix + "icon_model.png"));
-    _favouritesToList[decl::Type::EntityDef] = _iconList->Add(wxArtProvider::GetBitmap(prefix + "cmenu_add_entity.png"));
-    _favouritesToList[decl::Type::SoundShader] = _iconList->Add(wxArtProvider::GetBitmap(prefix + "icon_sound.png"));
+    _categories.emplace_back(FavouriteCategory{
+        decl::Type::Material, _("Materials"), "icon_texture.png",
+        _iconList->Add(wxArtProvider::GetBitmap(prefix + "icon_texture.png")),
+        nullptr
+    });
+    _categories.emplace_back(FavouriteCategory{
+        decl::Type::Model, _("Models"), "icon_model.png",
+        _iconList->Add(wxArtProvider::GetBitmap(prefix + "icon_model.png")),
+        nullptr
+    });
+    _categories.emplace_back(FavouriteCategory{
+        decl::Type::EntityDef, _("EntityDefs"), "cmenu_add_entity.png",
+        _iconList->Add(wxArtProvider::GetBitmap(prefix + "cmenu_add_entity.png")),
+        nullptr
+    });
+    _categories.emplace_back(FavouriteCategory{
+        decl::Type::SoundShader, _("Sound Shaders"), "icon_sound.png",
+        _iconList->Add(wxArtProvider::GetBitmap(prefix + "icon_sound.png")),
+        nullptr
+    });
+
+    // Add the toolbar
+    auto* toolbar = new wxToolBar(_mainWidget, wxID_ANY);
+    toolbar->SetToolBitmapSize(wxSize(24, 24));
+
+    for (auto& category : _categories)
+    {
+        category.checkButton = toolbar->AddCheckTool(wxID_ANY, category.displayName,
+            wxArtProvider::GetBitmap(prefix + category.iconName, wxART_TOOLBAR));
+
+        category.checkButton->SetShortHelp(category.displayName);
+
+        toolbar->Bind(wxEVT_TOOL, &FavouritesBrowser::onCategoryToggled, this, category.checkButton->GetId());
+    }
+
+    toolbar->Realize();
+
+    _mainWidget->GetSizer()->Add(toolbar, 0, wxEXPAND);
+    _mainWidget->GetSizer()->Add(_listView, 1, wxEXPAND);
 }
 
 void FavouritesBrowser::reloadFavourites()
 {
-    for (const auto& pair : _favouritesToList)
+    _listView->ClearAll();
+
+    for (const auto& category : _categories)
     {
-        auto favourites = GlobalFavouritesManager().getFavourites(pair.first);
+        if (!category.checkButton->IsToggled())
+        {
+            continue;
+        }
+
+        auto favourites = GlobalFavouritesManager().getFavourites(category.type);
 
         for (const auto& fav : favourites)
         {
-            _listView->InsertItem(_listView->GetItemCount(), fav, pair.second);
+            _listView->InsertItem(_listView->GetItemCount(), fav, category.iconIndex);
         }
     }
 }
@@ -116,6 +158,11 @@ void FavouritesBrowser::onMainFrameConstructed()
         _tempParent->Destroy();
         _tempParent = nullptr;
     }
+}
+
+void FavouritesBrowser::onCategoryToggled(wxCommandEvent& ev)
+{
+    reloadFavourites();
 }
 
 module::StaticModule<FavouritesBrowser> favouritesBrowserModule;
