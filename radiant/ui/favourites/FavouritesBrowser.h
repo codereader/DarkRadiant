@@ -3,10 +3,13 @@
 #include "imodule.h"
 #include "icommandsystem.h"
 #include "idecltypes.h"
+
 #include <wx/listctrl.h>
 #include <wx/imaglist.h>
 #include <wx/toolbar.h>
 #include <sigc++/connection.h>
+
+#include "wxutil/menu/PopupMenu.h"
 
 namespace ui
 {
@@ -15,9 +18,16 @@ class FavouritesBrowser :
     public RegisterableModule
 {
 private:
+    // Holds the data used to construct the wxListItem
+    struct FavouriteItem
+    {
+        decl::Type type;
+        std::string fullPath;
+    };
+
     wxFrame* _tempParent;
     wxWindow* _mainWidget;
-    wxListCtrl* _listView;
+    wxListView* _listView;
 
     std::unique_ptr<wxImageList> _iconList;
 
@@ -33,9 +43,12 @@ private:
     // Maps decl type to icon index
     std::list<FavouriteCategory> _categories;
     std::list<sigc::connection> changedConnections;
+    std::list<FavouriteItem> _listItems;
 
     wxCheckBox* _showFullPath;
     bool _updateNeeded;
+
+    wxutil::PopupMenuPtr _popupMenu;
 
 public:
     FavouritesBrowser();
@@ -53,11 +66,15 @@ private:
     void onFavouritesChanged();
     void reloadFavourites();
     void setupCategories();
+    void constructPopupMenu();
+    void clearItems();
 
+    void onRemoveFromFavourite();
     void togglePage(const cmd::ArgumentList& args);
     void onCategoryToggled(wxCommandEvent& ev);
     void onShowFullPathToggled(wxCommandEvent& ev);
     void onListCtrlPaint(wxPaintEvent& ev);
+    void onContextMenu(wxContextMenuEvent& ev);
 };
 
 }

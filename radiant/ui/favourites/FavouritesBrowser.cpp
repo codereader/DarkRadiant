@@ -10,6 +10,7 @@
 #include <wx/checkbox.h>
 
 #include "module/StaticModule.h"
+#include "wxutil/menu/IconTextMenuItem.h"
 
 namespace ui
 {
@@ -17,6 +18,8 @@ namespace ui
 namespace
 {
     const char* const TAB_NAME = "favourites";
+    const char* const ADD_TO_FAVOURITES = N_("Add to Favourites");
+    const char* const REMOVE_FROM_FAVOURITES = N_("Remove from Favourites");
 }
 
 FavouritesBrowser::FavouritesBrowser() :
@@ -40,8 +43,9 @@ void FavouritesBrowser::construct()
     _mainWidget = new wxPanel(_tempParent, wxID_ANY);
     _mainWidget->SetSizer(new wxBoxSizer(wxVERTICAL));
 
-    _listView = new wxListCtrl(_mainWidget, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_LIST);
+    _listView = new wxListView(_mainWidget, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_LIST);
     _listView->Bind(wxEVT_PAINT, &FavouritesBrowser::onListCtrlPaint, this);
+    _listView->Bind(wxEVT_CONTEXT_MENU, &FavouritesBrowser::onContextMenu, this);
 
     _iconList.reset(new wxImageList(16, 16));
     _listView->SetImageList(_iconList.get(), wxIMAGE_LIST_SMALL);
@@ -54,6 +58,25 @@ void FavouritesBrowser::construct()
 
     _mainWidget->GetSizer()->Add(toolHBox, 0, wxEXPAND);
     _mainWidget->GetSizer()->Add(_listView, 1, wxEXPAND);
+
+    constructPopupMenu();
+}
+
+void FavouritesBrowser::clearItems()
+{
+    _listView->ClearAll();
+    _listItems.clear();
+}
+
+void FavouritesBrowser::constructPopupMenu()
+{
+    _popupMenu.reset(new wxutil::PopupMenu);
+
+    _popupMenu->addItem(
+        new wxutil::StockIconTextMenuItem(_(REMOVE_FROM_FAVOURITES), wxART_DEL_BOOKMARK),
+        std::bind(&FavouritesBrowser::onRemoveFromFavourite, this),
+        [this]() { return _listView->GetSelectedItemCount() > 0; }
+    );
 }
 
 void FavouritesBrowser::setupCategories()
@@ -129,7 +152,7 @@ wxToolBar* FavouritesBrowser::createLeftToolBar()
 void FavouritesBrowser::reloadFavourites()
 {
     _updateNeeded = false;
-    _listView->ClearAll();
+    clearItems();
 
     for (const auto& category : _categories)
     {
@@ -150,7 +173,11 @@ void FavouritesBrowser::reloadFavourites()
                 displayName = displayName.substr(slashPos == std::string::npos ? 0 : slashPos + 1);
             }
 
-            _listView->InsertItem(_listView->GetItemCount(), displayName, category.iconIndex);
+            auto index = _listView->InsertItem(_listView->GetItemCount(), displayName, category.iconIndex);
+
+            // Keep the item info locally, store a pointer to it in the list item user data
+            auto& listItem = _listItems.emplace_back(FavouriteItem{ category.type, fav });
+            _listView->SetItemPtrData(index, reinterpret_cast<wxUIntPtr>(&listItem));
         }
     }
 }
@@ -251,6 +278,24 @@ void FavouritesBrowser::onListCtrlPaint(wxPaintEvent& ev)
     }
 
     ev.Skip();
+}
+
+void FavouritesBrowser::onContextMenu(wxContextMenuEvent& ev)
+{
+    _popupMenu->show(_listView);
+}
+
+void FavouritesBrowser::onRemoveFromFavourite()
+{
+    long item = _listView->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+
+    while (item != -1)
+    {
+        auto* data = reinterpret_cast<FavouriteItem*>(_listView->GetItemData(item));
+        GlobalFavouritesManager().removeFavourite(data->type, data->fullPath);
+
+        item = _listView->GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+    }
 }
 
 module::StaticModule<FavouritesBrowser> favouritesBrowserModule;
