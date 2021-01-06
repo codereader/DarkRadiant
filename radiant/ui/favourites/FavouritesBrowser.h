@@ -35,6 +35,7 @@ private:
     std::list<sigc::connection> changedConnections;
 
     wxCheckBox* _showFullPath;
+    bool _updateNeeded;
 
 public:
     FavouritesBrowser();
@@ -56,6 +57,7 @@ private:
     void togglePage(const cmd::ArgumentList& args);
     void onCategoryToggled(wxCommandEvent& ev);
     void onShowFullPathToggled(wxCommandEvent& ev);
+    void onListCtrlPaint(wxPaintEvent& ev);
 };
 
 }

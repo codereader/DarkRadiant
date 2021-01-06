@@ -22,7 +22,9 @@ namespace
 FavouritesBrowser::FavouritesBrowser() :
     _tempParent(nullptr),
     _mainWidget(nullptr),
-    _listView(nullptr)
+    _listView(nullptr),
+    _showFullPath(nullptr),
+    _updateNeeded(true)
 {}
 
 void FavouritesBrowser::construct()
@@ -39,6 +41,7 @@ void FavouritesBrowser::construct()
     _mainWidget->SetSizer(new wxBoxSizer(wxVERTICAL));
 
     _listView = new wxListCtrl(_mainWidget, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_LIST);
+    _listView->Bind(wxEVT_PAINT, &FavouritesBrowser::onListCtrlPaint, this);
 
     _iconList.reset(new wxImageList(16, 16));
     _listView->SetImageList(_iconList.get(), wxIMAGE_LIST_SMALL);
@@ -125,6 +128,7 @@ wxToolBar* FavouritesBrowser::createLeftToolBar()
 
 void FavouritesBrowser::reloadFavourites()
 {
+    _updateNeeded = false;
     _listView->ClearAll();
 
     for (const auto& category : _categories)
@@ -178,9 +182,6 @@ void FavouritesBrowser::initialiseModule(const IApplicationContext& ctx)
     GlobalCommandSystem().addCommand("ToggleFavouritesBrowser", 
         sigc::mem_fun(this, &FavouritesBrowser::togglePage));
 
-    // We need to create the liststore and widgets before attaching ourselves
-    // to the material manager as observer, as the attach() call below
-    // will invoke a realise() callback, which triggers a population
     construct();
 
     // The startup event will add this page to the group dialog tab
@@ -188,7 +189,7 @@ void FavouritesBrowser::initialiseModule(const IApplicationContext& ctx)
         sigc::mem_fun(*this, &FavouritesBrowser::onMainFrameConstructed)
     );
 
-    reloadFavourites();
+    _updateNeeded = true;
 }
 
 void FavouritesBrowser::shutdownModule()
@@ -239,7 +240,17 @@ void FavouritesBrowser::onShowFullPathToggled(wxCommandEvent& ev)
 
 void FavouritesBrowser::onFavouritesChanged()
 {
-    reloadFavourites(); // TODO: lazy
+    _updateNeeded = true; // Update next time we get painted
+}
+
+void FavouritesBrowser::onListCtrlPaint(wxPaintEvent& ev)
+{
+    if (_updateNeeded)
+    {
+        reloadFavourites();
+    }
+
+    ev.Skip();
 }
 
 module::StaticModule<FavouritesBrowser> favouritesBrowserModule;
