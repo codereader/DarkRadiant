@@ -88,6 +88,8 @@ private:
 
     decl::Type _declType;
 
+    std::string _filterText;
+
 public:
     ResourceTreeView(wxWindow* parent, const Columns& columns, long style = wxDV_SINGLE);
     ResourceTreeView(wxWindow* parent, const TreeModel::Ptr& model, const Columns& columns, long style = wxDV_SINGLE);
@@ -100,6 +102,15 @@ public:
 
     virtual TreeMode GetTreeMode() const;
     virtual void SetTreeMode(TreeMode mode);
+
+    // Sets the string filter to apply to the currently visible tree
+    // this string will match against the default iconAndName column,
+    // all rows not containing the string will be hidden.
+    // Filtering happens case-insensitively.
+    virtual void SetFilterText(const std::string& filterText);
+
+    // Removes the string filter
+    virtual void ClearFilterText();
 
     // Returns the full name of the selection (or an empty string)
     virtual std::string GetSelectedFullname();
@@ -135,6 +146,10 @@ protected:
     virtual bool IsTreeModelRowVisible(TreeModel::Row& row);
 
 private:
+    // Returns true if the given row is visible according 
+    // to the current view mode (show favourites vs. show all)
+    bool IsTreeModelRowVisibleByViewMode(TreeModel::Row& row);
+
     void _onContextMenu(wxDataViewEvent& ev);
     void _onTreeStorePopulationProgress(TreeModel::PopulationProgressEvent& ev);
     void _onTreeStorePopulationFinished(TreeModel::PopulationFinishedEvent& ev);

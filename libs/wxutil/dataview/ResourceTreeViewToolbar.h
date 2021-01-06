@@ -4,6 +4,7 @@
 #include <wx/panel.h>
 #include <wx/sizer.h>
 #include <wx/radiobut.h>
+#include <wx/textctrl.h>
 #include "ResourceTreeView.h"
 
 namespace wxutil
@@ -39,6 +40,18 @@ public:
 
         GetSizer()->Add(_showAll, 0, wxRIGHT, 0);
         GetSizer()->Add(_showFavourites, 0, wxLEFT, 6);
+
+        // Filter text entry box
+        auto* filterBox = new wxTextCtrl(this, wxID_ANY);
+        filterBox->SetMinSize(wxSize(60, -1));
+        filterBox->Bind(wxEVT_TEXT, [this](wxCommandEvent& ev)
+        {
+            if (_treeView != nullptr)
+            {
+                _treeView->SetFilterText(ev.GetString().ToStdString());
+            }
+        });
+        GetSizer()->Add(filterBox, 1, wxLEFT, 6);
 
         AssociateToTreeView(treeView);
     }

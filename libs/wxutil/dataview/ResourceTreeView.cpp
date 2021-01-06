@@ -5,6 +5,7 @@
 #include "ifavourites.h"
 #include "../menu/IconTextMenuItem.h"
 #include "TreeViewItemStyle.h"
+#include "string/case_conv.h"
 #include <wx/artprov.h>
 
 namespace wxutil
@@ -197,6 +198,17 @@ void ResourceTreeView::PopulateContextMenu(wxutil::PopupMenu& popupMenu)
         std::bind(&ResourceTreeView::_testRemoveFromFavourites, this),
         [this]() { return _declType != decl::Type::None; }
     );
+}
+
+void ResourceTreeView::SetFilterText(const std::string& filterText)
+{
+    // We use the lower-case copy of the given filter text
+    _filterText = string::to_lower_copy(filterText);
+}
+
+void ResourceTreeView::ClearFilterText()
+{
+    _filterText.clear();
 }
 
 std::string ResourceTreeView::GetSelectedFullname()
@@ -430,6 +442,28 @@ bool ResourceTreeView::IsFavouriteSelected()
 
 bool ResourceTreeView::IsTreeModelRowVisible(wxutil::TreeModel::Row& row)
 {
+    if (!IsTreeModelRowVisibleByViewMode(row))
+    {
+        return false; // done here
+    }
+
+    // Check for a text filter we might need to apply
+    if (_filterText.empty())
+    {
+        return true; // done here
+    }
+
+    wxDataViewIconText iconAndName = row[_columns.iconAndName];
+
+    auto displayString = iconAndName.GetText().ToStdString();
+    string::to_lower(displayString);
+    rMessage() << "displayString: " << displayString << ": " << displayString.find(_filterText) << std::endl;
+
+    return displayString.find(_filterText) != std::string::npos;
+}
+
+bool ResourceTreeView::IsTreeModelRowVisibleByViewMode(wxutil::TreeModel::Row& row)
+{
     if (_mode == TreeMode::ShowAll) return true; // everything is visible
 
     // Favourites mode, check if this item or any descendant is visible
@@ -446,7 +480,7 @@ bool ResourceTreeView::IsTreeModelRowVisible(wxutil::TreeModel::Row& row)
     {
         wxutil::TreeModel::Row childRow(child, *_treeStore);
 
-        if (IsTreeModelRowVisible(childRow))
+        if (IsTreeModelRowVisibleByViewMode(childRow))
         {
             return true;
         }
