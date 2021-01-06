@@ -176,6 +176,9 @@
     <Filter Include="src\ui\mapselector">
       <UniqueIdentifier>{6ddb8b69-4e5a-4c82-b7d4-aa1306342340}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ui\favourites">
+      <UniqueIdentifier>{7622b801-2cd2-4a68-b36c-1ed469312464}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\main.cpp">
@@ -675,6 +678,9 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\modelselector\ModelTreeView.cpp">
       <Filter>src\ui\modelselector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\favourites\FavouritesBrowser.cpp">
+      <Filter>src\ui\favourites</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1301,6 +1307,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\modelselector\ModelTreeView.h">
       <Filter>src\ui\modelselector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\favourites\FavouritesBrowser.h">
+      <Filter>src\ui\favourites</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

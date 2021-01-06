@@ -47,8 +47,9 @@ public:
 			{
 				EntityInspector = 100,
 				MediaBrowser = 200,
-				Console = 300,
-				TextureBrowser = 400,
+				Favourites = 300,
+				Console = 400,
+				TextureBrowser = 500,
 				End = 5000
 			};
 		};
