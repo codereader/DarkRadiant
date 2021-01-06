@@ -1,13 +1,22 @@
 #include "FavouritesBrowser.h"
 
+#include "i18n.h"
 #include "ifavourites.h"
+#include "igroupdialog.h"
 #include "iuimanager.h"
-#include "module/StaticModule.h"
+
 #include <wx/artprov.h>
 #include <wx/toolbar.h>
 
+#include "module/StaticModule.h"
+
 namespace ui
 {
+
+namespace
+{
+    const char* const TAB_NAME = "favourites";
+}
 
 FavouritesBrowser::FavouritesBrowser() :
     _tempParent(nullptr),
@@ -56,14 +65,19 @@ void FavouritesBrowser::construct()
         nullptr
     });
 
-    // Add the toolbar
+    _mainWidget->GetSizer()->Add(createToolBar(), 0, wxEXPAND);
+    _mainWidget->GetSizer()->Add(_listView, 1, wxEXPAND);
+}
+
+wxToolBar* FavouritesBrowser::createToolBar()
+{
     auto* toolbar = new wxToolBar(_mainWidget, wxID_ANY);
     toolbar->SetToolBitmapSize(wxSize(24, 24));
 
     for (auto& category : _categories)
     {
         category.checkButton = toolbar->AddCheckTool(wxID_ANY, category.displayName,
-            wxArtProvider::GetBitmap(prefix + category.iconName, wxART_TOOLBAR));
+            wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + category.iconName, wxART_TOOLBAR));
 
         category.checkButton->SetShortHelp(category.displayName);
 
@@ -72,8 +86,7 @@ void FavouritesBrowser::construct()
 
     toolbar->Realize();
 
-    _mainWidget->GetSizer()->Add(toolbar, 0, wxEXPAND);
-    _mainWidget->GetSizer()->Add(_listView, 1, wxEXPAND);
+    return toolbar;
 }
 
 void FavouritesBrowser::reloadFavourites()
@@ -109,6 +122,7 @@ const StringSet& FavouritesBrowser::getDependencies() const
     if (_dependencies.empty())
     {
         _dependencies.insert(MODULE_MAINFRAME);
+        _dependencies.insert(MODULE_COMMANDSYSTEM);
         _dependencies.insert(MODULE_FAVOURITES_MANAGER);
     }
 
@@ -119,7 +133,8 @@ void FavouritesBrowser::initialiseModule(const IApplicationContext& ctx)
 {
     rMessage() << getName() << "::initialiseModule called." << std::endl;
 
-    //GlobalCommandSystem().addCommand("ToggleFavouritesBrowser", sigc::mem_fun(this, &FavouritesBrowser::togglePage));
+    GlobalCommandSystem().addCommand("ToggleFavouritesBrowser", 
+        sigc::mem_fun(this, &FavouritesBrowser::togglePage));
 
     // We need to create the liststore and widgets before attaching ourselves
     // to the material manager as observer, as the attach() call below
@@ -139,12 +154,17 @@ void FavouritesBrowser::shutdownModule()
     _iconList.reset();
 }
 
+void FavouritesBrowser::togglePage(const cmd::ArgumentList& args)
+{
+    GlobalGroupDialog().togglePage(TAB_NAME);
+}
+
 void FavouritesBrowser::onMainFrameConstructed()
 {
     // Add the Media Browser page
     auto page = std::make_shared<IGroupDialog::Page>();
 
-    page->name = "favourites";
+    page->name = TAB_NAME;
     page->windowLabel = _("Favourites");
     page->page = _mainWidget;
     page->tabIcon = "favourite.png";

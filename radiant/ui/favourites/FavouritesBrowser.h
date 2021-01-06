@@ -1,10 +1,11 @@
 #pragma once
 
 #include "imodule.h"
+#include "icommandsystem.h"
 #include "idecltypes.h"
 #include <wx/listctrl.h>
 #include <wx/imaglist.h>
-#include <wx/tbarbase.h>
+#include <wx/toolbar.h>
 
 namespace ui
 {
@@ -41,9 +42,11 @@ public:
 
 private:
     void construct();
+    wxToolBar* createToolBar();
     void onMainFrameConstructed();
     void reloadFavourites();
 
+    void togglePage(const cmd::ArgumentList& args);
     void onCategoryToggled(wxCommandEvent& ev);
 };
 
