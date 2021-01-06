@@ -32,6 +32,8 @@ private:
     // Maps decl type to icon index
     std::list<FavouriteCategory> _categories;
 
+    wxCheckBox* _showFullPath;
+
 public:
     FavouritesBrowser();
 
@@ -42,12 +44,14 @@ public:
 
 private:
     void construct();
-    wxToolBar* createToolBar();
+    wxToolBar* createLeftToolBar();
+    wxToolBar* createRightToolBar();
     void onMainFrameConstructed();
     void reloadFavourites();
 
     void togglePage(const cmd::ArgumentList& args);
     void onCategoryToggled(wxCommandEvent& ev);
+    void onShowFullPathToggled(wxCommandEvent& ev);
 };
 
 }

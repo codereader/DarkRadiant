@@ -7,6 +7,7 @@
 
 #include <wx/artprov.h>
 #include <wx/toolbar.h>
+#include <wx/checkbox.h>
 
 #include "module/StaticModule.h"
 
@@ -65,11 +66,31 @@ void FavouritesBrowser::construct()
         nullptr
     });
 
-    _mainWidget->GetSizer()->Add(createToolBar(), 0, wxEXPAND);
+    
+    auto* toolHBox = new wxBoxSizer(wxHORIZONTAL);
+    toolHBox->Add(createLeftToolBar(), 1, wxEXPAND);
+    toolHBox->Add(createRightToolBar(), 0, wxEXPAND);
+
+    _mainWidget->GetSizer()->Add(toolHBox, 0, wxEXPAND);
     _mainWidget->GetSizer()->Add(_listView, 1, wxEXPAND);
 }
 
-wxToolBar* FavouritesBrowser::createToolBar()
+wxToolBar* FavouritesBrowser::createRightToolBar()
+{
+    auto* toolbar = new wxToolBar(_mainWidget, wxID_ANY);
+    toolbar->SetToolBitmapSize(wxSize(24, 24));
+
+    _showFullPath = new wxCheckBox(toolbar, wxID_ANY, _("Show full Path"));
+    _showFullPath->Bind(wxEVT_CHECKBOX, &FavouritesBrowser::onShowFullPathToggled, this);
+
+    toolbar->AddControl(_showFullPath, _showFullPath->GetLabel());
+
+    toolbar->Realize();
+
+    return toolbar;
+}
+
+wxToolBar* FavouritesBrowser::createLeftToolBar()
 {
     auto* toolbar = new wxToolBar(_mainWidget, wxID_ANY);
     toolbar->SetToolBitmapSize(wxSize(24, 24));
@@ -80,6 +101,7 @@ wxToolBar* FavouritesBrowser::createToolBar()
             wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + category.iconName, wxART_TOOLBAR));
 
         category.checkButton->SetShortHelp(category.displayName);
+        category.checkButton->Toggle(true);
 
         toolbar->Bind(wxEVT_TOOL, &FavouritesBrowser::onCategoryToggled, this, category.checkButton->GetId());
     }
@@ -104,7 +126,15 @@ void FavouritesBrowser::reloadFavourites()
 
         for (const auto& fav : favourites)
         {
-            _listView->InsertItem(_listView->GetItemCount(), fav, category.iconIndex);
+            auto displayName = fav;
+
+            if (!_showFullPath->IsChecked())
+            {
+                auto slashPos = displayName.rfind('/');
+                displayName = displayName.substr(slashPos == std::string::npos ? 0 : slashPos + 1);
+            }
+
+            _listView->InsertItem(_listView->GetItemCount(), displayName, category.iconIndex);
         }
     }
 }
@@ -184,6 +214,12 @@ void FavouritesBrowser::onCategoryToggled(wxCommandEvent& ev)
 {
     reloadFavourites();
 }
+
+void FavouritesBrowser::onShowFullPathToggled(wxCommandEvent& ev)
+{
+    reloadFavourites();
+}
+
 
 module::StaticModule<FavouritesBrowser> favouritesBrowserModule;
 
