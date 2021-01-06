@@ -7,7 +7,7 @@
 #include "imainframe.h"
 #include "ientityinspector.h"
 
-#include "camera/GlobalCameraWndManager.h"
+#include "camera/CameraWndManager.h"
 #include "camera/CamWnd.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "xyview/GlobalXYWnd.h"

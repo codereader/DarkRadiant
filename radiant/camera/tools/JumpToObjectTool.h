@@ -4,7 +4,7 @@
 #include "iscenegraph.h"
 #include "iorthoview.h"
 #include "i18n.h"
-#include "../GlobalCameraWndManager.h"
+#include "../CameraWndManager.h"
 #include "ObjectFinder.h"
 
 #include "math/AABB.h"

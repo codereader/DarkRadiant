@@ -6,7 +6,7 @@
 
 #include "registry/registry.h"
 #include "util/ScopedBoolLock.h"
-#include "GlobalCameraWndManager.h"
+#include "CameraWndManager.h"
 
 namespace ui
 {

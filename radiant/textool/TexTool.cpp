@@ -13,7 +13,7 @@
 #include "registry/adaptors.h"
 #include "texturelib.h"
 #include "selectionlib.h"
-#include "camera/GlobalCameraWndManager.h"
+#include "camera/CameraWndManager.h"
 #include "wxutil/GLWidget.h"
 
 #include "textool/Selectable.h"

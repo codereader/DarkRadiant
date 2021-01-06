@@ -18,7 +18,7 @@
 #include "selectionlib.h"
 #include "gamelib.h"
 #include "CameraSettings.h"
-#include "GlobalCameraWndManager.h"
+#include "CameraWndManager.h"
 #include "render/RenderableCollectionWalker.h"
 #include "wxutil/MouseButton.h"
 #include "registry/adaptors.h"

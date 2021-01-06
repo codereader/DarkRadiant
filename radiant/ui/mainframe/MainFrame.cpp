@@ -13,7 +13,7 @@
 
 #include "log/Console.h"
 #include "xyview/GlobalXYWnd.h"
-#include "camera/GlobalCameraWndManager.h"
+#include "camera/CameraWndManager.h"
 
 #include "registry/registry.h"
 #include "wxutil/MultiMonitor.h"
