@@ -43,6 +43,18 @@ void FavouritesBrowser::construct()
     _iconList.reset(new wxImageList(16, 16));
     _listView->SetImageList(_iconList.get(), wxIMAGE_LIST_SMALL);
 
+    setupCategories();
+    
+    auto* toolHBox = new wxBoxSizer(wxHORIZONTAL);
+    toolHBox->Add(createLeftToolBar(), 1, wxEXPAND);
+    toolHBox->Add(createRightToolBar(), 0, wxEXPAND);
+
+    _mainWidget->GetSizer()->Add(toolHBox, 0, wxEXPAND);
+    _mainWidget->GetSizer()->Add(_listView, 1, wxEXPAND);
+}
+
+void FavouritesBrowser::setupCategories()
+{
     auto prefix = GlobalUIManager().ArtIdPrefix();
 
     _categories.emplace_back(FavouriteCategory{
@@ -66,13 +78,13 @@ void FavouritesBrowser::construct()
         nullptr
     });
 
-    
-    auto* toolHBox = new wxBoxSizer(wxHORIZONTAL);
-    toolHBox->Add(createLeftToolBar(), 1, wxEXPAND);
-    toolHBox->Add(createRightToolBar(), 0, wxEXPAND);
-
-    _mainWidget->GetSizer()->Add(toolHBox, 0, wxEXPAND);
-    _mainWidget->GetSizer()->Add(_listView, 1, wxEXPAND);
+    // Subscribe to any favourite changes
+    for (auto& category : _categories)
+    {
+        changedConnections.emplace_back(GlobalFavouritesManager().getSignalForType(category.type).connect(
+            sigc::mem_fun(this, &FavouritesBrowser::onFavouritesChanged)
+        ));
+    }
 }
 
 wxToolBar* FavouritesBrowser::createRightToolBar()
@@ -182,6 +194,11 @@ void FavouritesBrowser::initialiseModule(const IApplicationContext& ctx)
 void FavouritesBrowser::shutdownModule()
 {
     _iconList.reset();
+
+    for (auto& connection : changedConnections)
+    {
+        connection.disconnect();
+    }
 }
 
 void FavouritesBrowser::togglePage(const cmd::ArgumentList& args)
@@ -220,6 +237,10 @@ void FavouritesBrowser::onShowFullPathToggled(wxCommandEvent& ev)
     reloadFavourites();
 }
 
+void FavouritesBrowser::onFavouritesChanged()
+{
+    reloadFavourites(); // TODO: lazy
+}
 
 module::StaticModule<FavouritesBrowser> favouritesBrowserModule;
 

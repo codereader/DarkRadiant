@@ -6,6 +6,7 @@
 #include <wx/listctrl.h>
 #include <wx/imaglist.h>
 #include <wx/toolbar.h>
+#include <sigc++/connection.h>
 
 namespace ui
 {
@@ -31,6 +32,7 @@ private:
 
     // Maps decl type to icon index
     std::list<FavouriteCategory> _categories;
+    std::list<sigc::connection> changedConnections;
 
     wxCheckBox* _showFullPath;
 
@@ -47,7 +49,9 @@ private:
     wxToolBar* createLeftToolBar();
     wxToolBar* createRightToolBar();
     void onMainFrameConstructed();
+    void onFavouritesChanged();
     void reloadFavourites();
+    void setupCategories();
 
     void togglePage(const cmd::ArgumentList& args);
     void onCategoryToggled(wxCommandEvent& ev);
