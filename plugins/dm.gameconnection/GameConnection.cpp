@@ -311,7 +311,7 @@ void GameConnection::addToolbarItems()
 
         // Add a toggle for the camera sync function
         auto tool = camTB->AddTool(
-            wxID_ANY, "L", wxutil::getBitmap("sr_icon_communication.png"),
+            wxID_ANY, "L", wxutil::getBitmap("CameraSync.png"),
             _("Enable game camera sync with DarkRadiant camera"),
             wxITEM_CHECK
         );
