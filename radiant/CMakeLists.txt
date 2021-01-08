@@ -1,4 +1,5 @@
 add_executable(darkradiant
+               autoreload/AutoReloadManager.cpp
                camera/CameraSettings.cpp
                camera/CamWnd.cpp
                camera/FloatingCamWnd.cpp
