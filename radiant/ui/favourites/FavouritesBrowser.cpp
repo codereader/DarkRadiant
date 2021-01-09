@@ -49,6 +49,7 @@ void FavouritesBrowser::construct()
     _listView = new wxListView(_mainWidget, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_LIST);
     _listView->Bind(wxEVT_PAINT, &FavouritesBrowser::onListCtrlPaint, this);
     _listView->Bind(wxEVT_CONTEXT_MENU, &FavouritesBrowser::onContextMenu, this);
+    _listView->Bind(wxEVT_LIST_ITEM_ACTIVATED, &FavouritesBrowser::onItemActivated, this);
 
     _iconList.reset(new wxImageList(16, 16));
     _listView->SetImageList(_iconList.get(), wxIMAGE_LIST_SMALL);
@@ -292,6 +293,22 @@ void FavouritesBrowser::onListCtrlPaint(wxPaintEvent& ev)
 void FavouritesBrowser::onContextMenu(wxContextMenuEvent& ev)
 {
     _popupMenu->show(_listView);
+}
+
+void FavouritesBrowser::onItemActivated(wxListEvent& ev)
+{
+    auto selection = getSelectedItems();
+
+    if (selection.size() != 1) return;
+
+    auto* data = reinterpret_cast<FavouriteItem*>(_listView->GetItemData(selection.front()));
+    
+    switch (data->type)
+    {
+    case decl::Type::Material:
+        onApplyToSelection();
+        break;
+    }
 }
 
 std::vector<long> FavouritesBrowser::getSelectedItems()
