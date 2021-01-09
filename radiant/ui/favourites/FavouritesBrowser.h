@@ -75,6 +75,12 @@ private:
     void onShowFullPathToggled(wxCommandEvent& ev);
     void onListCtrlPaint(wxPaintEvent& ev);
     void onContextMenu(wxContextMenuEvent& ev);
+
+    // Returns the list of all selected item indices
+    std::vector<long> getSelectedItems();
+
+    void onApplyToSelection();
+    bool testSingleTextureSelected();
 };
 
 }

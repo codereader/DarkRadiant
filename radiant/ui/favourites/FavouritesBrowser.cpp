@@ -18,7 +18,10 @@ namespace ui
 namespace
 {
     const char* const TAB_NAME = "favourites";
-    const char* const ADD_TO_FAVOURITES = N_("Add to Favourites");
+
+    const char* const APPLY_TEXTURE_TEXT = N_("Apply to selection");
+    const char* const APPLY_TEXTURE_ICON = "textureApplyToSelection16.png";
+
     const char* const REMOVE_FROM_FAVOURITES = N_("Remove from Favourites");
 }
 
@@ -76,6 +79,12 @@ void FavouritesBrowser::constructPopupMenu()
         new wxutil::StockIconTextMenuItem(_(REMOVE_FROM_FAVOURITES), wxART_DEL_BOOKMARK),
         std::bind(&FavouritesBrowser::onRemoveFromFavourite, this),
         [this]() { return _listView->GetSelectedItemCount() > 0; }
+    );
+
+    _popupMenu->addItem(
+        new wxutil::IconTextMenuItem(_(APPLY_TEXTURE_TEXT), APPLY_TEXTURE_ICON),
+        std::bind(&FavouritesBrowser::onApplyToSelection, this),
+        std::bind(&FavouritesBrowser::testSingleTextureSelected, this)
     );
 }
 
@@ -285,17 +294,54 @@ void FavouritesBrowser::onContextMenu(wxContextMenuEvent& ev)
     _popupMenu->show(_listView);
 }
 
-void FavouritesBrowser::onRemoveFromFavourite()
+std::vector<long> FavouritesBrowser::getSelectedItems()
 {
+    std::vector<long> list;
+
     long item = _listView->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
 
     while (item != -1)
     {
-        auto* data = reinterpret_cast<FavouriteItem*>(_listView->GetItemData(item));
-        GlobalFavouritesManager().removeFavourite(data->type, data->fullPath);
+        list.push_back(item);
 
         item = _listView->GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
     }
+
+    return list;
+}
+
+void FavouritesBrowser::onRemoveFromFavourite()
+{
+    auto selection = getSelectedItems();
+
+    for (auto itemIndex : selection)
+    {
+        auto* data = reinterpret_cast<FavouriteItem*>(_listView->GetItemData(itemIndex));
+        GlobalFavouritesManager().removeFavourite(data->type, data->fullPath);
+    }
+
+    // A repopulation has already been rescheduled
+}
+
+void FavouritesBrowser::onApplyToSelection()
+{
+    auto selection = getSelectedItems();
+
+    if (selection.size() != 1) return;
+
+    auto* data = reinterpret_cast<FavouriteItem*>(_listView->GetItemData(selection.front()));
+    
+    GlobalCommandSystem().executeCommand("SetShaderOnSelection", data->fullPath);
+}
+
+bool FavouritesBrowser::testSingleTextureSelected()
+{
+    auto selection = getSelectedItems();
+
+    if (selection.size() != 1) return false;
+
+    auto* data = reinterpret_cast<FavouriteItem*>(_listView->GetItemData(selection.front()));
+    return data->type == decl::Type::Material;
 }
 
 module::StaticModule<FavouritesBrowser> favouritesBrowserModule;
