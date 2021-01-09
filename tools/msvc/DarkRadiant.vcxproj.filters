@@ -8,9 +8,6 @@
     <Filter Include="src\camera">
       <UniqueIdentifier>{ad6d0e12-fb85-4133-aecd-986e24357256}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\render">
-      <UniqueIdentifier>{53ac0d31-452b-4324-88e2-3790b4c41113}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\textool">
       <UniqueIdentifier>{d3a05c23-9351-4bd7-aaee-8f88331f691d}</UniqueIdentifier>
     </Filter>
@@ -175,6 +172,12 @@
     </Filter>
     <Filter Include="src\ui\mapselector">
       <UniqueIdentifier>{6ddb8b69-4e5a-4c82-b7d4-aa1306342340}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\autoreload">
+      <UniqueIdentifier>{4031ea1f-cad1-42c8-a5cf-b9a2089c3afa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\render">
+      <UniqueIdentifier>{53ac0d31-452b-4324-88e2-3790b4c41113}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -675,6 +678,9 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\modelselector\ModelTreeView.cpp">
       <Filter>src\ui\modelselector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\autoreload\AutoReloadManager.cpp">
+      <Filter>src\autoreload</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1301,6 +1307,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\modelselector\ModelTreeView.h">
       <Filter>src\ui\modelselector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\autoreload\AutoReloadManager.h">
+      <Filter>src\autoreload</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

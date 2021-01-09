@@ -60,6 +60,13 @@ void AutoReloadManager::onDirChanged(wxFileSystemWatcherEvent &ev)
 
 void AutoReloadManager::onTimerIntervalReached(wxTimerEvent &ev)
 {
+    //If a map is in the middle of loading, try again later
+    if (!GlobalSceneGraph().root())
+    {
+        _updateTimer.StartOnce(100);
+    }
+
+    //Call all requested update commands
     if (_modelsNeedUpdate)
     {
         rMessage() << "models directory changed, reloading..." << std::endl;
