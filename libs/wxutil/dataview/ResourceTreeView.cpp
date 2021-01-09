@@ -453,13 +453,39 @@ bool ResourceTreeView::IsTreeModelRowVisible(wxutil::TreeModel::Row& row)
         return true; // done here
     }
 
+    return !IsTreeModelRowFilteredRecursively(row);
+}
+
+bool ResourceTreeView::IsTreeModelRowFilteredRecursively(wxutil::TreeModel::Row& row)
+{
     wxDataViewIconText iconAndName = row[_columns.iconAndName];
 
     auto displayString = iconAndName.GetText().ToStdString();
     string::to_lower(displayString);
-    rMessage() << "displayString: " << displayString << ": " << displayString.find(_filterText) << std::endl;
+    //rMessage() << "displayString: " << displayString << ": " << displayString.find(_filterText) << std::endl;
 
-    return displayString.find(_filterText) != std::string::npos;
+    if (displayString.find(_filterText) != std::string::npos)
+    {
+        return false; // row itself is visible, no need to check child nodes
+    }
+
+    // This node might also be visible if a single child node is visible, dive into it
+    wxDataViewItemArray children;
+    _treeStore->GetChildren(row.getItem(), children);
+
+    for (const wxDataViewItem& child : children)
+    {
+        wxutil::TreeModel::Row childRow(child, *_treeStore);
+
+        if (!IsTreeModelRowFilteredRecursively(childRow))
+        {
+            return false; // unfiltered node, break the loop
+        }
+    }
+
+    // Either we don't have any children, or 
+    // all child nodes are filtered, so this node is filtered too
+    return true;
 }
 
 bool ResourceTreeView::IsTreeModelRowVisibleByViewMode(wxutil::TreeModel::Row& row)

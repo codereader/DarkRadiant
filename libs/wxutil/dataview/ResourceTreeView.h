@@ -149,6 +149,9 @@ private:
     // Returns true if the given row is visible according 
     // to the current view mode (show favourites vs. show all)
     bool IsTreeModelRowVisibleByViewMode(TreeModel::Row& row);
+    
+    // Returns true if the given row is filtered (i.e. node and all child nodes are invisible)
+    bool IsTreeModelRowFilteredRecursively(wxutil::TreeModel::Row& row);
 
     void _onContextMenu(wxDataViewEvent& ev);
     void _onTreeStorePopulationProgress(TreeModel::PopulationProgressEvent& ev);
