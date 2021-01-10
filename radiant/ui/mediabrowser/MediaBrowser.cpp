@@ -60,7 +60,7 @@ void MediaBrowser::construct()
 	_treeView = new MediaBrowserTreeView(_mainWidget);
     auto* toolbar = new wxutil::ResourceTreeViewToolbar(_mainWidget, _treeView);
 
-	_mainWidget->GetSizer()->Add(toolbar, 0, wxALIGN_LEFT | wxALL, 6);
+	_mainWidget->GetSizer()->Add(toolbar, 0, wxALIGN_LEFT | wxEXPAND | wxALL, 6);
 	_mainWidget->GetSizer()->Add(_treeView, 1, wxEXPAND);
 
 	// Connect up the selection changed callback

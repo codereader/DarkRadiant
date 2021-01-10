@@ -204,11 +204,50 @@ void ResourceTreeView::SetFilterText(const std::string& filterText)
 {
     // We use the lower-case copy of the given filter text
     _filterText = string::to_lower_copy(filterText);
+
+    wxDataViewItem item = GetSelection();
+
+    Rebuild();
+
+    // Keep the previous selection if not filtered out and is meaningful
+    if (item.IsOk() && _treeModelFilter->ItemIsVisible(item))
+    {
+        TreeModel::Row row(item, *GetModel());
+
+        if (!_filterText.empty() && !RowContainsSearchString(row))
+        {
+            // The selected row is not relevant anymore
+            JumpToFirstFilterMatch();
+            return;
+        }
+
+        // Try to keep whatever selection we had before
+        Select(item);
+        EnsureVisible(item);
+    }
+    else
+    {
+        JumpToFirstFilterMatch();
+    }
+}
+
+void ResourceTreeView::JumpToFirstFilterMatch()
+{
+    if (_filterText.empty()) return;
+
+    auto item = _treeModelFilter->FindNextString(_filterText, _colsToSearch);
+
+    if (item.IsOk())
+    {
+        JumpToSearchMatch(item);
+    }
 }
 
 void ResourceTreeView::ClearFilterText()
 {
     _filterText.clear();
+
+    Rebuild();
 }
 
 std::string ResourceTreeView::GetSelectedFullname()
@@ -456,17 +495,21 @@ bool ResourceTreeView::IsTreeModelRowVisible(wxutil::TreeModel::Row& row)
     return !IsTreeModelRowFilteredRecursively(row);
 }
 
-bool ResourceTreeView::IsTreeModelRowFilteredRecursively(wxutil::TreeModel::Row& row)
+bool ResourceTreeView::RowContainsSearchString(wxutil::TreeModel::Row& row)
 {
     wxDataViewIconText iconAndName = row[_columns.iconAndName];
 
     auto displayString = iconAndName.GetText().ToStdString();
     string::to_lower(displayString);
-    //rMessage() << "displayString: " << displayString << ": " << displayString.find(_filterText) << std::endl;
 
-    if (displayString.find(_filterText) != std::string::npos)
+    return displayString.find(_filterText) != std::string::npos;
+}
+
+bool ResourceTreeView::IsTreeModelRowFilteredRecursively(wxutil::TreeModel::Row& row)
+{
+    if (RowContainsSearchString(row))
     {
-        return false; // row itself is visible, no need to check child nodes
+        return false;
     }
 
     // This node might also be visible if a single child node is visible, dive into it

@@ -88,11 +88,12 @@ protected:
     // Synthesises a selection change event to notify any handlers
     void SendSelectionChangeEvent(const wxDataViewItem& item);
 
+	void JumpToSearchMatch(const wxDataViewItem& item);
+
 private:
 	void CollapseChildren(const wxDataViewItem& item);
 
 	void CloseSearch();
-	void JumpToSearchMatch(const wxDataViewItem& item);
 
 	void _onItemCollapsing(wxDataViewEvent& ev);
 	void _onItemExpanded(wxDataViewEvent& ev);

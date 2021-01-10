@@ -152,6 +152,8 @@ private:
     
     // Returns true if the given row is filtered (i.e. node and all child nodes are invisible)
     bool IsTreeModelRowFilteredRecursively(wxutil::TreeModel::Row& row);
+    bool RowContainsSearchString(wxutil::TreeModel::Row& row);
+    void JumpToFirstFilterMatch();
 
     void _onContextMenu(wxDataViewEvent& ev);
     void _onTreeStorePopulationProgress(TreeModel::PopulationProgressEvent& ev);
