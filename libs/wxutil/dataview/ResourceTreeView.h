@@ -88,7 +88,7 @@ private:
 
     decl::Type _declType;
 
-    std::string _filterText;
+    wxString _filterText;
 
 public:
     ResourceTreeView(wxWindow* parent, const Columns& columns, long style = wxDV_SINGLE);
@@ -107,7 +107,7 @@ public:
     // this string will match against the default iconAndName column,
     // all rows not containing the string will be hidden.
     // Filtering happens case-insensitively.
-    virtual void SetFilterText(const std::string& filterText);
+    virtual void SetFilterText(const wxString& filterText);
 
     // Removes the string filter
     virtual void ClearFilterText();

@@ -44,7 +44,7 @@ ResourceTreeViewToolbar::ResourceTreeViewToolbar(wxWindow* parent, ResourceTreeV
     {
         if (_treeView != nullptr)
         {
-            _treeView->SetFilterText(ev.GetString().ToStdString());
+            _treeView->SetFilterText(ev.GetString());
         }
     });
     filterEntry->Bind(wxEVT_CHAR, &ResourceTreeViewToolbar::_onEntryChar, this);

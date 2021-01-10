@@ -5,7 +5,6 @@
 #include "ifavourites.h"
 #include "../menu/IconTextMenuItem.h"
 #include "TreeViewItemStyle.h"
-#include "string/case_conv.h"
 #include <wx/artprov.h>
 
 namespace wxutil
@@ -200,10 +199,10 @@ void ResourceTreeView::PopulateContextMenu(wxutil::PopupMenu& popupMenu)
     );
 }
 
-void ResourceTreeView::SetFilterText(const std::string& filterText)
+void ResourceTreeView::SetFilterText(const wxString& filterText)
 {
     // We use the lower-case copy of the given filter text
-    _filterText = string::to_lower_copy(filterText);
+    _filterText = filterText.Lower();
 
     wxDataViewItem item = GetSelection();
 
@@ -525,10 +524,9 @@ bool ResourceTreeView::RowContainsSearchString(wxutil::TreeModel::Row& row)
 {
     wxDataViewIconText iconAndName = row[_columns.iconAndName];
 
-    auto displayString = iconAndName.GetText().ToStdString();
-    string::to_lower(displayString);
+    auto displayString = iconAndName.GetText().Lower();
 
-    return displayString.find(_filterText) != std::string::npos;
+    return displayString.Contains(_filterText);
 }
 
 bool ResourceTreeView::IsTreeModelRowFilteredRecursively(wxutil::TreeModel::Row& row)
