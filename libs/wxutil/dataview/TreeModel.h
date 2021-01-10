@@ -21,6 +21,8 @@ public:
     /// Reference-counted smart pointer type
     typedef wxObjectDataPtr<TreeModel> Ptr;
 
+    class ColumnRecord;
+
 	/**
 	 * Represents a column in the wxutil::TreeModel
 	 * Use the Type string to instantiate a Column and arrange
@@ -64,14 +66,17 @@ public:
 			return _col;
 		}
 
-		// Only for internal use by the TreeModel - didn't want to use a friend declaration
-		void _setColumnIndex(int index)
+		// Returns the wxWidgets type string of this column
+		wxString getWxType() const;
+
+    private:
+		// Only for internal use by the ColumnRecord friend
+		void setColumnIndex(int index)
 		{
 			_col = index;
 		}
 
-		// Returns the wxWidgets type string of this column
-		wxString getWxType() const;
+        friend class ColumnRecord;
 	};
 
 	/**
@@ -95,10 +100,10 @@ public:
 	public:
 		Column add(Column::Type type, const std::string& name = "")
 		{
-			_columns.push_back(Column(type, name));
-			_columns.back()._setColumnIndex(static_cast<int>(_columns.size()) - 1);
+            auto& column = _columns.emplace_back(type, name);
+            column.setColumnIndex(static_cast<int>(_columns.size()) - 1);
 
-			return _columns.back();
+			return column;
 		}
 
 		List::iterator begin()
