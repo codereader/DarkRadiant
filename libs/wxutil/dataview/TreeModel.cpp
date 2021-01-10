@@ -535,6 +535,26 @@ wxDataViewItem TreeModel::FindRecursiveUsingRows(const TreeModel::Node& node, co
 	return wxDataViewItem();
 }
 
+bool TreeModel::RowContainsString(const Row& row, const wxString& value, const std::vector<Column>& columnsToSearch, bool lowerStrings)
+{
+    for (const auto& column : columnsToSearch)
+    {
+        auto columnValue = row[column].getString();
+
+        if (lowerStrings)
+        {
+            columnValue.MakeLower();
+        }
+
+        if (columnValue.Contains(value))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 bool TreeModel::HasDefaultCompare() const
 {
 	return _hasDefaultCompare;
@@ -923,29 +943,11 @@ public:
 			}
 
 		case Searching:
-			std::for_each(_columns.begin(), _columns.end(), [&](const TreeModel::Column& col)
-			{
-				if (col.type == TreeModel::Column::String)
-				{
-					wxVariant variant = row[col].getVariant();
-
-					if (!variant.IsNull() && variant.GetString().Lower().Contains(_searchString))
-					{
-						_match = row.getItem();
-						_state = Found;
-					}
-				}
-				else if (col.type == TreeModel::Column::IconText)
-				{
-					wxDataViewIconText iconText = static_cast<wxDataViewIconText>(row[col]);
-
-					if (iconText.GetText().Lower().Contains(_searchString))
-					{
-						_match = row.getItem();
-						_state = Found;
-					}
-				}
-			});
+            if (TreeModel::RowContainsString(row, _searchString, _columns, true))
+            {
+                _match = row.getItem();
+                _state = Found;
+            }
 			break;
 
 		case Found:

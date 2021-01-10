@@ -213,7 +213,7 @@ void ResourceTreeView::SetFilterText(const wxString& filterText)
     {
         TreeModel::Row row(item, *GetModel());
 
-        if (!_filterText.empty() && !RowContainsSearchString(row))
+        if (!_filterText.empty() && !TreeModel::RowContainsString(row, _filterText, _colsToSearch, true))
         {
             // The selected row is not relevant anymore
             JumpToFirstFilterMatch();
@@ -520,18 +520,9 @@ bool ResourceTreeView::IsTreeModelRowVisible(wxutil::TreeModel::Row& row)
     return !IsTreeModelRowFilteredRecursively(row);
 }
 
-bool ResourceTreeView::RowContainsSearchString(wxutil::TreeModel::Row& row)
-{
-    wxDataViewIconText iconAndName = row[_columns.iconAndName];
-
-    auto displayString = iconAndName.GetText().Lower();
-
-    return displayString.Contains(_filterText);
-}
-
 bool ResourceTreeView::IsTreeModelRowFilteredRecursively(wxutil::TreeModel::Row& row)
 {
-    if (RowContainsSearchString(row))
+    if (TreeModel::RowContainsString(row, _filterText, _colsToSearch, true))
     {
         return false;
     }

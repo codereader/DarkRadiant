@@ -234,11 +234,28 @@ public:
 			return getVariant().IsNull() ? nullptr : getVariant().GetVoidPtr();
 		}
 
+        // Extract the string value (works for Column::String and Column::IconText)
+        wxString getString() const
+        {
+            if (_column.type == Column::String)
+            {
+                auto variant = getVariant();
+                return variant.IsNull() ? wxString() : variant.GetString();
+            }
+            else if (_column.type == Column::IconText)
+            {
+                wxDataViewIconText iconText;
+                iconText << getVariant();
+
+                return iconText.GetText();
+            }
+
+            return wxString();
+        }
+
 		operator std::string() const
 		{
-			wxVariant variant = getVariant();
-
-			return variant.IsNull() ? "" : variant.GetString().ToStdString();
+            return getString().ToStdString();
 		}
 
 		bool isEnabled()
@@ -442,6 +459,12 @@ public:
     
     // Find the given number needle in the given column (searches only the subtree given by the startNode item)
 	virtual wxDataViewItem FindInteger(long needle, const Column& column, const wxDataViewItem& startNode);
+
+    // Returns true if any of the given columns in the given row contains the string value
+    // Set lowerStrings to true to convert the column values to lowercase first (the value is not touched
+    // and needs to be made lowercase by the calling code).
+    static bool RowContainsString(const Row& row, const wxString& value, 
+        const std::vector<Column>& columnsToSearch, bool lowerStrings = true);
 
 	virtual void SetAttr(const wxDataViewItem& item, unsigned int col, const wxDataViewItemAttr& attr) const;
 	virtual void SetIsListModel(bool isListModel);
