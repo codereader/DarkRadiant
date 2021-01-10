@@ -1,6 +1,7 @@
 #pragma once
 
 #include "i18n.h"
+#include "iuimanager.h"
 #include <wx/panel.h>
 #include <wx/sizer.h>
 #include <wx/radiobut.h>
@@ -23,6 +24,9 @@ private:
 
     wxRadioButton* _showAll;
     wxRadioButton* _showFavourites;
+
+    wxBitmapButton* _findPrevButton;
+    wxBitmapButton* _findNextButton;
 
 public:
     ResourceTreeViewToolbar(wxWindow* parent, ResourceTreeView* treeView = nullptr) :
@@ -61,8 +65,33 @@ public:
                 _treeView->SetFilterText(ev.GetString().ToStdString());
             }
         });
+        filterEntry->Bind(wxEVT_CHAR, &ResourceTreeViewToolbar::_onEntryChar, this);
+
+        auto nextImg = wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "arrow_down.png");
+        _findNextButton = new wxBitmapButton(this, wxID_ANY, nextImg);
+
+        auto prevImg = wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "arrow_up.png");
+        _findPrevButton = new wxBitmapButton(this, wxID_ANY, prevImg);
+
+        _findNextButton->SetSize(wxSize(16, 16));
+        _findPrevButton->SetSize(wxSize(16, 16));
+
+        _findNextButton->SetToolTip(_("Go to next match"));
+        _findPrevButton->SetToolTip(_("Go to previous match"));
+
+        _findNextButton->Bind(wxEVT_BUTTON, [this](wxCommandEvent& ev) 
+        {
+            jumpToNextFilterMatch();
+        });
+        _findPrevButton->Bind(wxEVT_BUTTON, [this](wxCommandEvent& ev)
+        {
+            jumpToPrevFilterMatch();
+        });
+
         filterBox->Add(filterImage, 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 6);
-        filterBox->Add(filterEntry, 0, wxALIGN_CENTER_VERTICAL, 6);
+        filterBox->Add(filterEntry, 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 6);
+        filterBox->Add(_findPrevButton, 0, wxEXPAND | wxRIGHT, 3);
+        filterBox->Add(_findNextButton, 0, wxEXPAND, 6);
 
         grid->Add(favourites, 0, wxALIGN_CENTER_VERTICAL| wxALIGN_LEFT | wxRIGHT, 6);
         grid->Add(filterBox, 0, wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT, 6);
@@ -77,6 +106,38 @@ public:
     }
 
 private:
+    void jumpToNextFilterMatch()
+    {
+        if (_treeView != nullptr)
+        {
+            _treeView->JumpToNextFilterMatch();
+        }
+    }
+
+    void jumpToPrevFilterMatch()
+    {
+        if (_treeView != nullptr)
+        {
+            _treeView->JumpToPrevFilterMatch();
+        }
+    }
+
+    void _onEntryChar(wxKeyEvent& ev)
+    {
+        if (ev.GetKeyCode() == WXK_UP)
+        {
+            jumpToPrevFilterMatch();
+        }
+        else if (ev.GetKeyCode() == WXK_DOWN)
+        {
+            jumpToNextFilterMatch();
+        }
+        else
+        {
+            ev.Skip();
+        }
+    }
+
     void _onFilterButtonToggled(wxCommandEvent& ev)
     {
         if (_treeView == nullptr) return;

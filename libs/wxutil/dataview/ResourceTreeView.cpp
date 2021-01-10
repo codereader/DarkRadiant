@@ -243,6 +243,32 @@ void ResourceTreeView::JumpToFirstFilterMatch()
     }
 }
 
+void ResourceTreeView::JumpToNextFilterMatch()
+{
+    if (_filterText.empty()) return;
+
+    auto selectedItem = GetSelection();
+    auto item = _treeModelFilter->FindNextString(_filterText, _colsToSearch, selectedItem);
+
+    if (item.IsOk())
+    {
+        JumpToSearchMatch(item);
+    }
+}
+
+void ResourceTreeView::JumpToPrevFilterMatch()
+{
+    if (_filterText.empty()) return;
+
+    auto selectedItem = GetSelection();
+    auto item = _treeModelFilter->FindPrevString(_filterText, _colsToSearch, selectedItem);
+
+    if (item.IsOk())
+    {
+        JumpToSearchMatch(item);
+    }
+}
+
 void ResourceTreeView::ClearFilterText()
 {
     _filterText.clear();
