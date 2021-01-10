@@ -199,6 +199,7 @@
     <ClCompile Include="..\..\libs\wxutil\ConsoleView.cpp" />
     <ClCompile Include="..\..\libs\wxutil\dataview\KeyValueTable.cpp" />
     <ClCompile Include="..\..\libs\wxutil\dataview\ResourceTreeView.cpp" />
+    <ClCompile Include="..\..\libs\wxutil\dataview\ResourceTreeViewToolbar.cpp" />
     <ClCompile Include="..\..\libs\wxutil\dataview\ThreadedResourceTreePopulator.cpp" />
     <ClCompile Include="..\..\libs\wxutil\dataview\TreeModel.cpp" />
     <ClCompile Include="..\..\libs\wxutil\dataview\TreeModelFilter.cpp" />

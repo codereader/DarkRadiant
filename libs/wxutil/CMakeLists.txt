@@ -2,6 +2,7 @@ add_library(wxutil
             ConsoleView.cpp
             dataview/KeyValueTable.cpp
             dataview/ResourceTreeView.cpp
+            dataview/ResourceTreeViewToolbar.cpp
             dataview/ThreadedResourceTreePopulator.cpp
             dataview/TreeModel.cpp
             dataview/TreeModelFilter.cpp
