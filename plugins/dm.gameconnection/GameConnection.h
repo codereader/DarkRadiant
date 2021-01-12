@@ -94,6 +94,7 @@ private:
 
     // IEventPtrs corresponding to activatable menu options
     IEventPtr _camSyncToggle;
+    IEventPtr _camSyncBackButton;
 
     //connection to TDM game (i.e. the socket with custom message framing)
     //it can be "dead" in two ways:

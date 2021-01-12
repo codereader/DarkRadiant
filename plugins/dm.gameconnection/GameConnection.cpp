@@ -251,9 +251,12 @@ void GameConnection::initialiseModule(const IApplicationContext& ctx)
         [this](bool v) { return setMapHotReload(v); }
     );
 
-    // Add commands
+    // Add one-shot commands and associated toolbar buttons
     GlobalCommandSystem().addCommand("GameConnectionBackSyncCamera",
         [this](const cmd::ArgumentList&) { backSyncCamera(); });
+    _camSyncBackButton = GlobalEventManager().addCommand(
+        "GameConnectionBackSyncCamera", "GameConnectionBackSyncCamera", false
+    );
     GlobalCommandSystem().addCommand("GameConnectionReloadMap",
         [this](const cmd::ArgumentList&) { reloadMap(); });
     GlobalCommandSystem().addCommand("GameConnectionUpdateMap",
@@ -309,13 +312,19 @@ void GameConnection::addToolbarItems()
         // Separate GameConnection tools from regular camera tools
         camTB->AddSeparator();
 
-        // Add a toggle for the camera sync function
-        auto tool = camTB->AddTool(
+        // Add toggles for the camera sync functions
+        auto camSyncT = camTB->AddTool(
             wxID_ANY, "L", wxutil::getBitmap("CameraSync.png"),
             _("Enable game camera sync with DarkRadiant camera"),
             wxITEM_CHECK
         );
-        _camSyncToggle->connectToolItem(tool);
+        _camSyncToggle->connectToolItem(camSyncT);
+        auto camSyncBackT = camTB->AddTool(
+            wxID_ANY, "B", wxutil::getBitmap("CameraSyncBack.png"),
+            _("Move camera to current game position")
+        );
+        _camSyncBackButton->connectToolItem(camSyncBackT);
+
         camTB->Realize();
     }
 }
