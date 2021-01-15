@@ -6,6 +6,7 @@
 #include "preview/ModelPreview.h"
 #include "dialog/DialogBase.h"
 #include "dataview/ResourceTreeView.h"
+#include "dataview/ResourceTreeViewToolbar.h"
 #include "XmlResourceBasedWidget.h"
 #include "PanedPosition.h"
 
@@ -29,6 +30,7 @@ class EntityClassChooser :
 private:
     ResourceTreeView::Columns _columns;
     ResourceTreeView* _treeView;
+    ResourceTreeViewToolbar* _treeViewToolbar;
 
     // Last selected classname
     std::string _selectedName;

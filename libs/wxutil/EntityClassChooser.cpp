@@ -281,6 +281,8 @@ void EntityClassChooser::onDeleteEvent(wxCloseEvent& ev)
 
 int EntityClassChooser::ShowModal()
 {
+    _treeViewToolbar->ClearFilter();
+
     // Update the member variables
     updateSelection();
 
@@ -309,10 +311,10 @@ void EntityClassChooser::setupTreeView()
     _treeView->AppendIconTextColumn(_("Classname"), _columns.iconAndName.getColumnIndex(),
         wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
-    auto* toolbar = new wxutil::ResourceTreeViewToolbar(parent, _treeView);
+    _treeViewToolbar = new ResourceTreeViewToolbar(parent, _treeView);
 
     parent->GetSizer()->Prepend(_treeView, 1, wxEXPAND | wxBOTTOM | wxRIGHT, 6);
-    parent->GetSizer()->Prepend(toolbar, 0, wxALIGN_LEFT | wxBOTTOM | wxLEFT | wxRIGHT, 6);
+    parent->GetSizer()->Prepend(_treeViewToolbar, 0, wxEXPAND | wxALIGN_LEFT | wxBOTTOM | wxLEFT | wxRIGHT, 6);
 }
 
 // Update the usage information

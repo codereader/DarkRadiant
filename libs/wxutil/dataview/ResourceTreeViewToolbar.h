@@ -18,6 +18,8 @@ class ResourceTreeViewToolbar :
 private:
     ResourceTreeView* _treeView;
 
+    wxTextCtrl* _filterEntry;
+
     wxRadioButton* _showAll;
     wxRadioButton* _showFavourites;
 
@@ -28,6 +30,8 @@ public:
     ResourceTreeViewToolbar(wxWindow* parent, ResourceTreeView* treeView = nullptr);
 
     void AssociateToTreeView(ResourceTreeView* treeView);
+
+    void ClearFilter();
 
 private:
     void JumpToNextFilterMatch();

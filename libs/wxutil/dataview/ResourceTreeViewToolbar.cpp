@@ -14,6 +14,7 @@ namespace wxutil
 ResourceTreeViewToolbar::ResourceTreeViewToolbar(wxWindow* parent, ResourceTreeView* treeView) :
     wxPanel(parent, wxID_ANY),
     _treeView(nullptr),
+    _filterEntry(nullptr),
     _showAll(nullptr),
     _showFavourites(nullptr)
 {
@@ -38,17 +39,17 @@ ResourceTreeViewToolbar::ResourceTreeViewToolbar(wxWindow* parent, ResourceTreeV
 
     auto* filterImage = new wxStaticBitmap(this, wxID_ANY, wxArtProvider::GetBitmap(wxART_FIND, wxART_TOOLBAR, wxSize(16, 16)));
 
-    auto* filterEntry = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
-    filterEntry->SetMinSize(wxSize(100, -1));
-    filterEntry->Bind(wxEVT_TEXT, [this](wxCommandEvent& ev)
+    _filterEntry = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
+    _filterEntry->SetMinSize(wxSize(100, -1));
+    _filterEntry->Bind(wxEVT_TEXT, [this](wxCommandEvent& ev)
     {
         if (_treeView != nullptr)
         {
             _treeView->SetFilterText(ev.GetString());
         }
     });
-    filterEntry->Bind(wxEVT_CHAR, &ResourceTreeViewToolbar::_onEntryChar, this);
-    filterEntry->SetToolTip(_("Enter search text to filter the tree,\nuse arrow keys to navigate"));
+    _filterEntry->Bind(wxEVT_CHAR, &ResourceTreeViewToolbar::_onEntryChar, this);
+    _filterEntry->SetToolTip(_("Enter search text to filter the tree,\nuse arrow keys to navigate"));
 
     auto nextImg = wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "arrow_down.png");
     _findNextButton = new wxBitmapButton(this, wxID_ANY, nextImg);
@@ -72,7 +73,7 @@ ResourceTreeViewToolbar::ResourceTreeViewToolbar(wxWindow* parent, ResourceTreeV
     });
 
     filterBox->Add(filterImage, 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 6);
-    filterBox->Add(filterEntry, 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 6);
+    filterBox->Add(_filterEntry, 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 6);
     filterBox->Add(_findPrevButton, 0, wxEXPAND | wxRIGHT, 3);
     filterBox->Add(_findNextButton, 0, wxEXPAND, 6);
 
@@ -86,6 +87,16 @@ void ResourceTreeViewToolbar::AssociateToTreeView(ResourceTreeView* treeView)
 {
     _treeView = treeView;
     UpdateFromTreeView();
+}
+
+void ResourceTreeViewToolbar::ClearFilter()
+{
+    _filterEntry->SetValue("");
+
+    if (_treeView != nullptr)
+    {
+        _treeView->SetFilterText("");
+    }
 }
 
 void ResourceTreeViewToolbar::JumpToNextFilterMatch()
