@@ -4,10 +4,13 @@
 #include "ifavourites.h"
 #include "igroupdialog.h"
 #include "iuimanager.h"
+#include "imainframe.h"
 
 #include <wx/artprov.h>
 #include <wx/toolbar.h>
 #include <wx/checkbox.h>
+#include <wx/frame.h>
+#include <wx/sizer.h>
 
 #include "module/StaticModule.h"
 #include "wxutil/menu/IconTextMenuItem.h"

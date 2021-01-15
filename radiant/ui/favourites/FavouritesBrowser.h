@@ -7,6 +7,7 @@
 #include <wx/listctrl.h>
 #include <wx/imaglist.h>
 #include <wx/toolbar.h>
+#include <wx/checkbox.h>
 #include <sigc++/connection.h>
 
 #include "wxutil/menu/PopupMenu.h"
