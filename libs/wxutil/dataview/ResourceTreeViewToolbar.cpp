@@ -38,7 +38,7 @@ ResourceTreeViewToolbar::ResourceTreeViewToolbar(wxWindow* parent, ResourceTreeV
 
     auto* filterImage = new wxStaticBitmap(this, wxID_ANY, wxArtProvider::GetBitmap(wxART_FIND, wxART_TOOLBAR, wxSize(16, 16)));
 
-    auto* filterEntry = new wxTextCtrl(this, wxID_ANY);
+    auto* filterEntry = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
     filterEntry->SetMinSize(wxSize(100, -1));
     filterEntry->Bind(wxEVT_TEXT, [this](wxCommandEvent& ev)
     {
@@ -48,6 +48,7 @@ ResourceTreeViewToolbar::ResourceTreeViewToolbar(wxWindow* parent, ResourceTreeV
         }
     });
     filterEntry->Bind(wxEVT_CHAR, &ResourceTreeViewToolbar::_onEntryChar, this);
+    filterEntry->SetToolTip(_("Enter search text to filter the tree,\nuse arrow keys to navigate"));
 
     auto nextImg = wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "arrow_down.png");
     _findNextButton = new wxBitmapButton(this, wxID_ANY, nextImg);
@@ -105,7 +106,15 @@ void ResourceTreeViewToolbar::JumpToPrevFilterMatch()
 
 void ResourceTreeViewToolbar::_onEntryChar(wxKeyEvent& ev)
 {
-    if (ev.GetKeyCode() == WXK_UP)
+    if (ev.GetKeyCode() == WXK_RETURN)
+    {
+        _treeView->SetFocus();
+    }
+    else if (ev.GetKeyCode() == WXK_HOME)
+    {
+        _treeView->JumpToFirstFilterMatch();
+    }
+    else if (ev.GetKeyCode() == WXK_UP)
     {
         JumpToPrevFilterMatch();
     }
