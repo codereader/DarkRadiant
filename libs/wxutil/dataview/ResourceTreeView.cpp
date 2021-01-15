@@ -207,7 +207,8 @@ void ResourceTreeView::SetFilterText(const wxString& filterText)
 
     wxDataViewItem item = GetSelection();
 
-    Rebuild();
+    // Update the top level tree items which rebuilds the view
+    UpdateTreeVisibility();
 
     // Keep the previous selection if not filtered out and is meaningful
     if (item.IsOk() && _treeModelFilter->ItemIsVisible(item))
@@ -228,6 +229,15 @@ void ResourceTreeView::SetFilterText(const wxString& filterText)
     else
     {
         JumpToFirstFilterMatch();
+    }
+}
+
+void ResourceTreeView::UpdateTreeVisibility()
+{
+    if (_treeModelFilter)
+    {
+        // Notify the attached views that it should reload
+        _treeModelFilter->Cleared();
     }
 }
 

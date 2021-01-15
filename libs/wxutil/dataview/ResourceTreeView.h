@@ -153,6 +153,8 @@ protected:
 
     virtual bool IsTreeModelRowVisible(TreeModel::Row& row);
 
+    virtual void UpdateTreeVisibility();
+
 private:
     // Returns true if the given row is visible according 
     // to the current view mode (show favourites vs. show all)
