@@ -82,7 +82,8 @@ private:
     IResourceTreePopulator::Ptr _populator;
 
     bool _expandTopLevelItemsAfterPopulation;
-    std::string _fullNameToSelectAfterPopulation;
+    std::string _elementToSelectAfterPopulation;
+    const TreeModel::Column* _columnToSelectAfterPopulation;
 
     std::vector<ui::IMenuItemPtr> _customMenuItems;
 
@@ -115,6 +116,9 @@ public:
     // Returns the full name of the selection (or an empty string)
     virtual std::string GetSelectedFullname();
     virtual void SetSelectedFullname(const std::string& fullName);
+
+    virtual std::string GetSelectedElement(const TreeModel::Column& column);
+    virtual void SetSelectedElement(const std::string& value, const TreeModel::Column& column);
 
     virtual void Clear();
 

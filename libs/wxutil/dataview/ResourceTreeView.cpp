@@ -43,6 +43,7 @@ ResourceTreeView::ResourceTreeView(wxWindow* parent, const TreeModel::Ptr& model
     _columns(columns),
     _mode(TreeMode::ShowAll),
     _expandTopLevelItemsAfterPopulation(false),
+    _columnToSelectAfterPopulation(nullptr),
     _declType(decl::Type::None)
 {
     // Note that we need to avoid accessing the _columns reference in the constructor
@@ -277,6 +278,16 @@ void ResourceTreeView::ClearFilterText()
 
 std::string ResourceTreeView::GetSelectedFullname()
 {
+    return GetSelectedElement(_columns.fullName);
+}
+
+void ResourceTreeView::SetSelectedFullname(const std::string& fullName)
+{
+    SetSelectedElement(fullName, _columns.fullName);
+}
+
+std::string ResourceTreeView::GetSelectedElement(const TreeModel::Column& column)
+{
     // Get the selected value
     wxDataViewItem item = GetSelection();
 
@@ -288,28 +299,29 @@ std::string ResourceTreeView::GetSelectedFullname()
     // Cast to TreeModel::Row and get the full name
     TreeModel::Row row(item, *GetModel());
 
-    return row[_columns.fullName];
+    return row[column];
 }
 
-void ResourceTreeView::SetSelectedFullname(const std::string& fullName)
+void ResourceTreeView::SetSelectedElement(const std::string& value, const TreeModel::Column& column)
 {
     if (_populator)
     {
         // Postpone the selection, store the name
-        _fullNameToSelectAfterPopulation = fullName;
+        _elementToSelectAfterPopulation = value;
+        _columnToSelectAfterPopulation = &column;
         return;
     }
 
     // If the selection string is empty, collapse the treeview and return with
     // no selection
-    if (fullName.empty())
+    if (value.empty())
     {
         Collapse(GetTreeModel()->GetRoot());
         return;
     }
 
     // Find the requested element
-    auto item = GetTreeModel()->FindString(fullName, _columns.fullName);
+    auto item = GetTreeModel()->FindString(value, column);
 
     if (item.IsOk())
     {
@@ -320,7 +332,8 @@ void ResourceTreeView::SetSelectedFullname(const std::string& fullName)
         SendSelectionChangeEvent(item);
     }
 
-    _fullNameToSelectAfterPopulation.clear();
+    _elementToSelectAfterPopulation.clear();
+    _columnToSelectAfterPopulation = nullptr;
 }
 
 void ResourceTreeView::Clear()
@@ -345,7 +358,8 @@ void ResourceTreeView::DisableFavouriteManagement()
 void ResourceTreeView::Populate(const IResourceTreePopulator::Ptr& populator)
 {
     // Try to keep the current selection intact after population
-    _fullNameToSelectAfterPopulation = GetSelectedFullname();
+    _elementToSelectAfterPopulation = GetSelectedFullname();
+    _columnToSelectAfterPopulation = &_columns.fullName;
 
     // Remove any data or running populators first
     Clear();
@@ -403,9 +417,14 @@ void ResourceTreeView::_onTreeStorePopulationFinished(TreeModel::PopulationFinis
     }
 
     // Populator is empty now, check if we need to pre-select anything
-    if (!_fullNameToSelectAfterPopulation.empty())
+    if (!_elementToSelectAfterPopulation.empty())
     {
-        SetSelectedFullname(_fullNameToSelectAfterPopulation);
+        if (_columnToSelectAfterPopulation == nullptr)
+        {
+            _columnToSelectAfterPopulation = &_columns.fullName;
+        }
+
+        SetSelectedElement(_elementToSelectAfterPopulation, *_columnToSelectAfterPopulation);
     }
 
     // Emit the finished event
