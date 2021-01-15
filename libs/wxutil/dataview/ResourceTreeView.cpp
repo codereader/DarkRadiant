@@ -283,7 +283,7 @@ void ResourceTreeView::ClearFilterText()
 {
     _filterText.clear();
 
-    Rebuild();
+    UpdateTreeVisibility();
 }
 
 std::string ResourceTreeView::GetSelectedFullname()
