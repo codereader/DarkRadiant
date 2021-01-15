@@ -207,25 +207,13 @@ const std::string& SoundChooser::getSelectedShader() const
 // Set the selected sound shader, and focuses the treeview to the new selection
 void SoundChooser::setSelectedShader(const std::string& shader)
 {
-    _treeView->SetSelectedFullname(shader);
+    _treeView->SetSelectedElement(shader, _columns.leafName);
 }
 
 void SoundChooser::handleSelectionChange()
 {
-    wxDataViewItem item = _treeView->GetSelection();
-
-    if (item.IsOk())
-    {
-        wxutil::TreeModel::Row row(item, *_treeView->GetTreeModel());
-
-        bool isFolder = row[_columns.isFolder].getBool();
-
-        _selectedShader = isFolder ? "" : static_cast<std::string>(row[_columns.fullName]);
-    }
-    else
-    {
-        _selectedShader.clear();
-    }
+    _selectedShader = !_treeView->IsDirectorySelected() ? 
+        _treeView->GetSelectedElement(_columns.leafName) : std::string();
 
     // Notify the preview widget about the change
     _preview->setSoundShader(_selectedShader);
