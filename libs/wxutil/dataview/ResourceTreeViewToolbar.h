@@ -41,6 +41,7 @@ private:
     void _onEntryText(wxCommandEvent& ev);
     void _onFilterButtonToggled(wxCommandEvent& ev);
     
+    void HandleFilterEntryChanged();
     void UpdateFromTreeView();
 };
 

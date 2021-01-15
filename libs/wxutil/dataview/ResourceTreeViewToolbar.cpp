@@ -135,12 +135,17 @@ void ResourceTreeViewToolbar::_onEntryChar(wxKeyEvent& ev)
 
 void ResourceTreeViewToolbar::_onEntryText(wxCommandEvent& ev)
 {
+    HandleFilterEntryChanged();
+}
+
+void ResourceTreeViewToolbar::HandleFilterEntryChanged()
+{
     if (_treeView == nullptr)
     {
         return;
     }
 
-    auto filterText = ev.GetString();
+    auto filterText = _filterEntry->GetValue();
     bool filterResult = _treeView->SetFilterText(filterText);
 
     if (!filterText.empty() && !filterResult)
@@ -163,6 +168,9 @@ void ResourceTreeViewToolbar::_onFilterButtonToggled(wxCommandEvent& ev)
     _treeView->SetTreeMode(_showAll->GetValue() ?
         ResourceTreeView::TreeMode::ShowAll :
         ResourceTreeView::TreeMode::ShowFavourites);
+
+    _filterEntry->Clear();
+    HandleFilterEntryChanged();
 }
 
 void ResourceTreeViewToolbar::UpdateFromTreeView()
