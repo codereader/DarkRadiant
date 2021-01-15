@@ -108,7 +108,8 @@ public:
     // this string will match against the default iconAndName column,
     // all rows not containing the string will be hidden.
     // Filtering happens case-insensitively.
-    virtual void SetFilterText(const wxString& filterText);
+    // As feedback this method returns true if the filter has any matches.
+    virtual bool SetFilterText(const wxString& filterText);
 
     // Removes the string filter
     virtual void ClearFilterText();
@@ -140,7 +141,8 @@ public:
     // hook as an alternative to this method.
     void AddCustomMenuItem(const ui::IMenuItemPtr& item);
 
-    virtual void JumpToFirstFilterMatch();
+    // Returns true if there is a first filter match
+    virtual bool JumpToFirstFilterMatch();
     virtual void JumpToNextFilterMatch();
     virtual void JumpToPrevFilterMatch();
 

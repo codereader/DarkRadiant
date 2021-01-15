@@ -200,7 +200,7 @@ void ResourceTreeView::PopulateContextMenu(wxutil::PopupMenu& popupMenu)
     );
 }
 
-void ResourceTreeView::SetFilterText(const wxString& filterText)
+bool ResourceTreeView::SetFilterText(const wxString& filterText)
 {
     // We use the lower-case copy of the given filter text
     _filterText = filterText.Lower();
@@ -218,18 +218,16 @@ void ResourceTreeView::SetFilterText(const wxString& filterText)
         if (!_filterText.empty() && !TreeModel::RowContainsString(row, _filterText, _colsToSearch, true))
         {
             // The selected row is not relevant anymore
-            JumpToFirstFilterMatch();
-            return;
+            return JumpToFirstFilterMatch();
         }
 
         // Try to keep whatever selection we had before
         Select(item);
         EnsureVisible(item);
+        return true;
     }
-    else
-    {
-        JumpToFirstFilterMatch();
-    }
+     
+    return JumpToFirstFilterMatch();
 }
 
 void ResourceTreeView::UpdateTreeVisibility()
@@ -241,16 +239,19 @@ void ResourceTreeView::UpdateTreeVisibility()
     }
 }
 
-void ResourceTreeView::JumpToFirstFilterMatch()
+bool ResourceTreeView::JumpToFirstFilterMatch()
 {
-    if (_filterText.empty()) return;
+    if (_filterText.empty()) return false;
 
     auto item = _treeModelFilter->FindNextString(_filterText, _colsToSearch);
 
     if (item.IsOk())
     {
         JumpToSearchMatch(item);
+        return true;
     }
+    
+    return false;
 }
 
 void ResourceTreeView::JumpToNextFilterMatch()

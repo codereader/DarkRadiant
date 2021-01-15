@@ -41,13 +41,7 @@ ResourceTreeViewToolbar::ResourceTreeViewToolbar(wxWindow* parent, ResourceTreeV
 
     _filterEntry = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
     _filterEntry->SetMinSize(wxSize(100, -1));
-    _filterEntry->Bind(wxEVT_TEXT, [this](wxCommandEvent& ev)
-    {
-        if (_treeView != nullptr)
-        {
-            _treeView->SetFilterText(ev.GetString());
-        }
-    });
+    _filterEntry->Bind(wxEVT_TEXT, &ResourceTreeViewToolbar::_onEntryText, this);
     _filterEntry->Bind(wxEVT_CHAR, &ResourceTreeViewToolbar::_onEntryChar, this);
     _filterEntry->SetToolTip(_("Enter search text to filter the tree,\nuse arrow keys to navigate"));
 
@@ -137,6 +131,29 @@ void ResourceTreeViewToolbar::_onEntryChar(wxKeyEvent& ev)
     {
         ev.Skip();
     }
+}
+
+void ResourceTreeViewToolbar::_onEntryText(wxCommandEvent& ev)
+{
+    if (_treeView == nullptr)
+    {
+        return;
+    }
+
+    auto filterText = ev.GetString();
+    bool filterResult = _treeView->SetFilterText(filterText);
+
+    if (!filterText.empty() && !filterResult)
+    {
+        // No match, set the text to red for user feedback
+        _filterEntry->SetForegroundColour(wxColor(220, 0, 0));
+    }
+    else
+    {
+        _filterEntry->SetForegroundColour(wxNullColour);
+    }
+
+    _filterEntry->Refresh();
 }
 
 void ResourceTreeViewToolbar::_onFilterButtonToggled(wxCommandEvent& ev)
