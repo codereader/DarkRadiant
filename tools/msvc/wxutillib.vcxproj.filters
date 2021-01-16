@@ -145,6 +145,7 @@
     <ClInclude Include="..\..\libs\wxutil\dataview\ResourceTreeViewToolbar.h">
       <Filter>dataview</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\bitmap.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\wxutil\dialog\MessageBox.cpp">

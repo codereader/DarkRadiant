@@ -14,7 +14,7 @@ namespace wxutil
  * \param name
  * Image file name with no prefix, e.g. "something.png"
  */
-wxBitmap getBitmap(const std::string& name)
+inline wxBitmap getBitmap(const std::string& name)
 {
     return wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + name);
 }

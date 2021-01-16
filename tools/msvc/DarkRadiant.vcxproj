@@ -194,7 +194,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\radiant\camera\GlobalCameraWndManager.cpp" />
+    <ClCompile Include="..\..\radiant\camera\CameraWndManager.cpp" />
     <ClCompile Include="..\..\radiant\clipboard\ClipboardModule.cpp" />
     <ClCompile Include="..\..\radiant\eventmanager\Accelerator.cpp" />
     <ClCompile Include="..\..\radiant\eventmanager\EventManager.cpp" />
@@ -373,8 +373,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\ApplicationContext.h" />
+    <ClInclude Include="..\..\radiant\camera\CameraWndManager.h" />
     <ClInclude Include="..\..\radiant\camera\FloorHeightWalker.h" />
-    <ClInclude Include="..\..\radiant\camera\GlobalCameraWndManager.h" />
     <ClInclude Include="..\..\radiant\camera\tools\CameraMouseToolEvent.h" />
     <ClInclude Include="..\..\radiant\camera\tools\FreeMoveTool.h" />
     <ClInclude Include="..\..\radiant\camera\tools\JumpToObjectTool.h" />
