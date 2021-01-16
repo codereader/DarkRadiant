@@ -811,8 +811,7 @@ int TreeModel::Compare(const wxDataViewItem& item1, const wxDataViewItem& item2,
 
 int TreeModel::CompareStringVariants(const wxVariant& a, const wxVariant& b)
 {
-    wxVariant aName, bName;
-    return aName.GetString().CmpNoCase(bName.GetString());
+    return a.GetString().CmpNoCase(b.GetString());
 }
 
 int TreeModel::CompareIconTextVariants(const wxVariant& a, const wxVariant& b)
