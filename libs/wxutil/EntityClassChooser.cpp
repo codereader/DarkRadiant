@@ -300,7 +300,7 @@ void EntityClassChooser::setupTreeView()
 {
     wxPanel* parent = findNamedObject<wxPanel>(this, "EntityClassChooserLeftPane");
 
-    _treeView = new ResourceTreeView(parent, _columns);
+    _treeView = new ResourceTreeView(parent, _columns, wxDV_NO_HEADER);
     _treeView->AddSearchColumn(_columns.iconAndName);
     _treeView->SetExpandTopLevelItemsAfterPopulation(true);
     _treeView->EnableFavouriteManagement(decl::Type::EntityDef);
