@@ -280,7 +280,7 @@ void ModelSelector::setupTreeView(wxWindow* parent)
     auto* toolbar = new wxutil::ResourceTreeViewToolbar(parent, _treeView);
 
 	parent->GetSizer()->Prepend(_treeView, 1, wxEXPAND);
-    parent->GetSizer()->Prepend(toolbar, 0, wxALIGN_LEFT | wxBOTTOM | wxLEFT | wxRIGHT, 6);
+    parent->GetSizer()->Prepend(toolbar, 0, wxEXPAND | wxALIGN_LEFT | wxBOTTOM | wxLEFT | wxRIGHT, 6);
     parent->GetSizer()->Layout();
 }
 
