@@ -3,6 +3,7 @@
 #include "i18n.h"
 #include "imainframe.h"
 #include "iuimanager.h"
+#include "imap.h"
 #include "igroupdialog.h"
 #include "ipreferencesystem.h"
 #include "ishaders.h"
@@ -109,6 +110,17 @@ void MediaBrowser::onMainFrameConstructed()
 	}
 }
 
+void MediaBrowser::onMapEvent(IMap::MapEvent ev)
+{
+    // Re-populate the tree after a map has been loaded, this way
+    // we can list all the missing textures that get auto-generated
+    // during map realisation (#5475)
+    if (ev == IMap::MapEvent::MapLoaded)
+    {
+        _treeView->Populate();
+    }
+}
+
 std::string MediaBrowser::getSelection()
 {
     return _treeView->GetSelectedFullname();
@@ -172,6 +184,7 @@ const StringSet& MediaBrowser::getDependencies() const
 		_dependencies.insert(MODULE_SHADERCLIPBOARD);
 		_dependencies.insert(MODULE_MAINFRAME);
 		_dependencies.insert(MODULE_FAVOURITES_MANAGER);
+		_dependencies.insert(MODULE_MAP);
 	}
 
 	return _dependencies;
@@ -203,16 +216,20 @@ void MediaBrowser::initialiseModule(const IApplicationContext& ctx)
 		sigc::mem_fun(*this, &MediaBrowser::onMaterialDefsUnloaded)
 	);
 
-	// Start loading materials
-	_treeView->Populate();
-
 	_shaderClipboardConn = GlobalShaderClipboard().signal_sourceChanged().connect(
 		sigc::mem_fun(this, &MediaBrowser::onShaderClipboardSourceChanged)
 	);
+
+    _mapLoadedConn = GlobalMapModule().signal_mapEvent().connect(
+        sigc::mem_fun(this, &MediaBrowser::onMapEvent)
+    );
+
+    // The tree view will be populated once the first map loaded signal is fired
 }
 
 void MediaBrowser::shutdownModule()
 {
+    _mapLoadedConn.disconnect();
 	_shaderClipboardConn.disconnect();
 	_materialDefsLoaded.disconnect();
 	_materialDefsUnloaded.disconnect();

@@ -5,6 +5,7 @@
 #include "imediabrowser.h"
 #include "iradiant.h"
 #include "imodule.h"
+#include "imap.h"
 #include "icommandsystem.h"
 
 #include "MediaBrowserTreeView.h"
@@ -46,6 +47,7 @@ private:
 	sigc::connection _materialDefsLoaded;
 	sigc::connection _materialDefsUnloaded;
 	sigc::connection _shaderClipboardConn;
+	sigc::connection _mapLoadedConn;
 
 	bool _blockShaderClipboardUpdates;
 
@@ -81,6 +83,7 @@ private:
 	void onMaterialDefsLoaded();
 
 	void onMainFrameConstructed();
+	void onMapEvent(IMap::MapEvent ev);
 
 	/**
 	* greebo: Command target for toggling the mediabrowser tab in the groupdialog.
