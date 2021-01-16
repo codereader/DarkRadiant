@@ -95,6 +95,10 @@
     <ClCompile>
       <PreprocessorDefinitions>_WINSOCK_DEPRECATED_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <PostBuildEvent>
+      <Command>@echo Copying bitmaps to Output Folder...
+copy $(SolutionDir)..\..\plugins\dm.gameconnection\*.png $(SolutionDir)..\..\install\bitmaps /Y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile />
@@ -106,6 +110,10 @@
     <ClCompile>
       <PreprocessorDefinitions>_WINSOCK_DEPRECATED_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <PostBuildEvent>
+      <Command>@echo Copying bitmaps to Output Folder...
+copy $(SolutionDir)..\..\plugins\dm.gameconnection\*.png $(SolutionDir)..\..\install\bitmaps /Y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile />
@@ -118,6 +126,10 @@
     <ClCompile>
       <PreprocessorDefinitions>_WINSOCK_DEPRECATED_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <PostBuildEvent>
+      <Command>@echo Copying bitmaps to Output Folder...
+copy $(SolutionDir)..\..\plugins\dm.gameconnection\*.png $(SolutionDir)..\..\install\bitmaps /Y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile />
@@ -130,6 +142,10 @@
     <ClCompile>
       <PreprocessorDefinitions>_WINSOCK_DEPRECATED_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <PostBuildEvent>
+      <Command>@echo Copying bitmaps to Output Folder...
+copy $(SolutionDir)..\..\plugins\dm.gameconnection\*.png $(SolutionDir)..\..\install\bitmaps /Y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\plugins\dm.gameconnection\clsocket\ActiveSocket.cpp" />
