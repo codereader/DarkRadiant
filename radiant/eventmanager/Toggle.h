@@ -27,9 +27,8 @@ class Toggle :
 	public wxEvtHandler,
 	public Event
 {
-private:
 	// The callback to be performed on toggle()
-	ToggleCallback _callback;
+	AdvancedToggleCallback _callback;
 
 protected:
 	typedef std::set<wxMenuItem*> MenuItems;
@@ -47,7 +46,7 @@ protected:
 	bool _toggled;
 
 public:
-	Toggle(const ToggleCallback& callback);
+	Toggle(const AdvancedToggleCallback& callback);
 
 	virtual ~Toggle();
 

@@ -265,6 +265,7 @@ various display settings.
 
 [cols="^1h,3h,10"]
 |===
+3+^h|Render modes
 |image:wireframeMode16.png[align="center",width=24]|Render in wireframe mode|
 Render objects as wire meshes.
 |image:solidMode16.png[align="center",width=24]|Render in flat-shaded mode|
@@ -274,15 +275,19 @@ Render objects as preview textures, with no lighting or material effects such as
 transparency.
 |image:lightingMode.png[align="center",width=24]|Render in lighting preview mode|
 Render all available lighting and texture effects.
+3+^h|Animation rendering
 |image:StartPlayback.png[align="center",width=24]|Start render time|
 Begin rendering animated effects.
 |image:StopPlayback.png[align="center",width=24]|Stop render time|
 Stop rendering animated effects.
-|image:farClipIn.png[align="center",width=24]|Clip plane in| Move the far
-clip plane closer to the camera.
+3+^h|Far clip options
+|image:toggleFarClip.png[align="center",width=24]|Toggle far clip|
+Enable or disable the far clip plane.
 
 The far clip plane is a performance optimisation which avoids rendering geometry
 more than a certain distance away from the camera.
+|image:farClipIn.png[align="center",width=24]|Clip plane in|
+Move the far clip plane closer to the camera.
 |image:farClipOut.png[align="center",width=24]|Clip plane out|
 Move the far clip plane further away from the camera.
 |===

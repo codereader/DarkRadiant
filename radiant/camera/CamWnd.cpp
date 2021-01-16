@@ -18,7 +18,7 @@
 #include "selectionlib.h"
 #include "gamelib.h"
 #include "CameraSettings.h"
-#include "GlobalCameraWndManager.h"
+#include "CameraWndManager.h"
 #include "render/RenderableCollectionWalker.h"
 #include "wxutil/MouseButton.h"
 #include "registry/adaptors.h"
@@ -43,10 +43,6 @@ namespace ui
 namespace
 {
     const std::size_t MSEC_PER_FRAME = 16;
-
-    const char* const FAR_CLIP_IN_TEXT = N_("Move far clip plane closer");
-    const char* const FAR_CLIP_OUT_TEXT = N_("Move far clip plane further away");
-    const char* const FAR_CLIP_DISABLED_TEXT = N_(" (currently disabled in preferences)");
 
     const unsigned int MOVE_NONE = 0;
     const unsigned int MOVE_FORWARD = 1 << 0;
@@ -135,17 +131,17 @@ wxWindow* CamWnd::getMainWidget() const
 void CamWnd::constructToolbar()
 {
     // If lighting is not available, grey out the lighting button
-    wxToolBar* camToolbar = findNamedObject<wxToolBar>(_mainWxWidget, "CamToolbar");
+    _camToolbar = findNamedObject<wxToolBar>(_mainWxWidget, "CamToolbar");
 
-    const wxToolBarToolBase* wireframeBtn = getToolBarToolByLabel(camToolbar, "wireframeBtn");
-    const wxToolBarToolBase* flatShadeBtn = getToolBarToolByLabel(camToolbar, "flatShadeBtn");
-    const wxToolBarToolBase* texturedBtn = getToolBarToolByLabel(camToolbar, "texturedBtn");
-    const wxToolBarToolBase* lightingBtn = getToolBarToolByLabel(camToolbar, "lightingBtn");
+    const wxToolBarToolBase* wireframeBtn = getToolBarToolByLabel(_camToolbar, "wireframeBtn");
+    const wxToolBarToolBase* flatShadeBtn = getToolBarToolByLabel(_camToolbar, "flatShadeBtn");
+    const wxToolBarToolBase* texturedBtn = getToolBarToolByLabel(_camToolbar, "texturedBtn");
+    const wxToolBarToolBase* lightingBtn = getToolBarToolByLabel(_camToolbar, "lightingBtn");
 
     if (!GlobalRenderSystem().shaderProgramsAvailable())
     {
         //lightingBtn->set_sensitive(false);
-        camToolbar->EnableTool(lightingBtn->GetId(), false);
+        _camToolbar->EnableTool(lightingBtn->GetId(), false);
     }
 
     // Listen for render-mode changes, and set the correct active button to
@@ -162,22 +158,25 @@ void CamWnd::constructToolbar()
     _mainWxWidget->GetParent()->Bind(wxEVT_COMMAND_TOOL_CLICKED, &CamWnd::onRenderModeButtonsChanged, this, lightingBtn->GetId());
 
     // Far clip buttons.
-    wxToolBar* miscToolbar = static_cast<wxToolBar*>(_mainWxWidget->FindWindow("MiscToolbar"));
-
-    const wxToolBarToolBase* clipPlaneInButton = getToolBarToolByLabel(miscToolbar, "clipPlaneInButton");
-    const wxToolBarToolBase* clipPlaneOutButton = getToolBarToolByLabel(miscToolbar, "clipPlaneOutButton");
-
-    _mainWxWidget->GetParent()->Bind(wxEVT_COMMAND_TOOL_CLICKED, &CamWnd::onFarClipPlaneInClick, this, clipPlaneInButton->GetId());
-    _mainWxWidget->GetParent()->Bind(wxEVT_COMMAND_TOOL_CLICKED, &CamWnd::onFarClipPlaneOutClick, this, clipPlaneOutButton->GetId());
-
+    _farClipInID = getToolID(_camToolbar, "clipPlaneInButton");
+    _farClipOutID = getToolID(_camToolbar, "clipPlaneOutButton");
+    _farClipToggleID = getToolID(_camToolbar, "clipPlaneToggleButton");
     setFarClipButtonSensitivity();
+
+    _camToolbar->Bind(wxEVT_TOOL, &CamWnd::onFarClipPlaneInClick, this, _farClipInID);
+    _camToolbar->Bind(wxEVT_TOOL, &CamWnd::onFarClipPlaneOutClick, this, _farClipOutID);
+    _camToolbar->Bind(
+        wxEVT_TOOL,
+        [](wxCommandEvent&) { getCameraSettings()->toggleFarClip(true); },
+        _farClipToggleID
+    );
 
     GlobalRegistry().signalForKey(RKEY_ENABLE_FARCLIP).connect(
         sigc::mem_fun(*this, &CamWnd::setFarClipButtonSensitivity)
     );
 
-    const wxToolBarToolBase* startTimeButton = getToolBarToolByLabel(miscToolbar, "startTimeButton");
-    const wxToolBarToolBase* stopTimeButton = getToolBarToolByLabel(miscToolbar, "stopTimeButton");
+    const wxToolBarToolBase* startTimeButton = getToolBarToolByLabel(_camToolbar, "startTimeButton");
+    const wxToolBarToolBase* stopTimeButton = getToolBarToolByLabel(_camToolbar, "stopTimeButton");
 
     _mainWxWidget->GetParent()->Bind(wxEVT_COMMAND_TOOL_CLICKED, &CamWnd::onStartTimeButtonClick, this, startTimeButton->GetId());
     _mainWxWidget->GetParent()->Bind(wxEVT_COMMAND_TOOL_CLICKED, &CamWnd::onStopTimeButtonClick, this, stopTimeButton->GetId());
@@ -196,8 +195,7 @@ void CamWnd::updateToolbarVisibility()
 {
     bool visible = getCameraSettings()->showCameraToolbar();
 
-    _mainWxWidget->FindWindow("CamToolbar")->Show(visible);
-    _mainWxWidget->FindWindow("MiscToolbar")->Show(visible);
+    _camToolbar->Show(visible);
 
     // WxWidgets/GTK doesn't seem to automatically refresh the layout when we
     // hide/show the toolbars
@@ -207,30 +205,20 @@ void CamWnd::updateToolbarVisibility()
 void CamWnd::onGLExtensionsInitialised()
 {
     // If lighting is not available, grey out the lighting button
-    wxToolBar* camToolbar = findNamedObject<wxToolBar>(_mainWxWidget, "CamToolbar");
-    const wxToolBarToolBase* lightingBtn = getToolBarToolByLabel(camToolbar, "lightingBtn");
+    const wxToolBarToolBase* lightingBtn = getToolBarToolByLabel(_camToolbar, "lightingBtn");
 
-    camToolbar->EnableTool(lightingBtn->GetId(), GlobalRenderSystem().shaderProgramsAvailable());
+    _camToolbar->EnableTool(lightingBtn->GetId(), GlobalRenderSystem().shaderProgramsAvailable());
 }
 
 void CamWnd::setFarClipButtonSensitivity()
 {
-    // Only enabled if cubic clipping is enabled.
+    // Get far clip toggle setting from registry
     bool enabled = registry::getValue<bool>(RKEY_ENABLE_FARCLIP, true);
 
-    wxToolBar* miscToolbar = static_cast<wxToolBar*>(_mainWxWidget->FindWindow("MiscToolbar"));
-
-    wxToolBarToolBase* clipPlaneInButton =
-        const_cast<wxToolBarToolBase*>(getToolBarToolByLabel(miscToolbar, "clipPlaneInButton"));
-    wxToolBarToolBase* clipPlaneOutButton =
-        const_cast<wxToolBarToolBase*>(getToolBarToolByLabel(miscToolbar, "clipPlaneOutButton"));
-
-    miscToolbar->EnableTool(clipPlaneInButton->GetId(), enabled);
-    miscToolbar->EnableTool(clipPlaneOutButton->GetId(), enabled);
-
-    // Update tooltips so users know why they are disabled
-    clipPlaneInButton->SetShortHelp(fmt::format("{0}{1}", _(FAR_CLIP_IN_TEXT), (enabled ? "" : _(FAR_CLIP_DISABLED_TEXT))));
-    clipPlaneOutButton->SetShortHelp(fmt::format("{0}{1}", _(FAR_CLIP_OUT_TEXT), (enabled ? "" : _(FAR_CLIP_DISABLED_TEXT))));
+    // Set toggle button state and sensitivity of in/out buttons
+    _camToolbar->ToggleTool(_farClipToggleID, enabled);
+    _camToolbar->EnableTool(_farClipInID, enabled);
+    _camToolbar->EnableTool(_farClipOutID, enabled);
 }
 
 void CamWnd::constructGUIComponents()
@@ -307,10 +295,8 @@ void CamWnd::startRenderTime()
         _timerLock = false; // reset the lock, just in case
     }
 
-    wxToolBar* miscToolbar = static_cast<wxToolBar*>(_mainWxWidget->FindWindow("MiscToolbar"));
-
-    const wxToolBarToolBase* stopTimeButton = getToolBarToolByLabel(miscToolbar, "stopTimeButton");
-    miscToolbar->EnableTool(stopTimeButton->GetId(), true);
+    const wxToolBarToolBase* stopTimeButton = getToolBarToolByLabel(_camToolbar, "stopTimeButton");
+    _camToolbar->EnableTool(stopTimeButton->GetId(), true);
 }
 
 void CamWnd::onStartTimeButtonClick(wxCommandEvent& ev)
@@ -345,13 +331,11 @@ void CamWnd::stopRenderTime()
 {
     _timer.Stop();
 
-    wxToolBar* miscToolbar = static_cast<wxToolBar*>(_mainWxWidget->FindWindow("MiscToolbar"));
+    const wxToolBarToolBase* startTimeButton = getToolBarToolByLabel(_camToolbar, "startTimeButton");
+    const wxToolBarToolBase* stopTimeButton = getToolBarToolByLabel(_camToolbar, "stopTimeButton");
 
-    const wxToolBarToolBase* startTimeButton = getToolBarToolByLabel(miscToolbar, "startTimeButton");
-    const wxToolBarToolBase* stopTimeButton = getToolBarToolByLabel(miscToolbar, "stopTimeButton");
-
-    miscToolbar->EnableTool(startTimeButton->GetId(), true);
-    miscToolbar->EnableTool(stopTimeButton->GetId(), false);
+    _camToolbar->EnableTool(startTimeButton->GetId(), true);
+    _camToolbar->EnableTool(stopTimeButton->GetId(), false);
 }
 
 void CamWnd::onRenderModeButtonsChanged(wxCommandEvent& ev)
@@ -361,23 +345,21 @@ void CamWnd::onRenderModeButtonsChanged(wxCommandEvent& ev)
         return; // Don't react on UnToggle events
     }
 
-    wxToolBar* camToolbar = static_cast<wxToolBar*>(_mainWxWidget->FindWindow("CamToolbar"));
-
     // This function will be called twice, once for the inactivating button and
     // once for the activating button
-    if (getToolBarToolByLabel(camToolbar, "texturedBtn")->GetId() == ev.GetId())
+    if (getToolBarToolByLabel(_camToolbar, "texturedBtn")->GetId() == ev.GetId())
     {
         getCameraSettings()->setRenderMode(RENDER_MODE_TEXTURED);
     }
-    else if (getToolBarToolByLabel(camToolbar, "wireframeBtn")->GetId() == ev.GetId())
+    else if (getToolBarToolByLabel(_camToolbar, "wireframeBtn")->GetId() == ev.GetId())
     {
         getCameraSettings()->setRenderMode(RENDER_MODE_WIREFRAME);
     }
-    else if (getToolBarToolByLabel(camToolbar, "flatShadeBtn")->GetId() == ev.GetId())
+    else if (getToolBarToolByLabel(_camToolbar, "flatShadeBtn")->GetId() == ev.GetId())
     {
         getCameraSettings()->setRenderMode(RENDER_MODE_SOLID);
     }
-    else if (getToolBarToolByLabel(camToolbar, "lightingBtn")->GetId() == ev.GetId())
+    else if (getToolBarToolByLabel(_camToolbar, "lightingBtn")->GetId() == ev.GetId())
     {
         getCameraSettings()->setRenderMode(RENDER_MODE_LIGHTING);
     }
@@ -385,21 +367,19 @@ void CamWnd::onRenderModeButtonsChanged(wxCommandEvent& ev)
 
 void CamWnd::updateActiveRenderModeButton()
 {
-    wxToolBar* camToolbar = static_cast<wxToolBar*>(_mainWxWidget->FindWindow("CamToolbar"));
-
     switch (getCameraSettings()->getRenderMode())
     {
     case RENDER_MODE_WIREFRAME:
-        camToolbar->ToggleTool(getToolBarToolByLabel(camToolbar, "wireframeBtn")->GetId(), true);
+        _camToolbar->ToggleTool(getToolBarToolByLabel(_camToolbar, "wireframeBtn")->GetId(), true);
         break;
     case RENDER_MODE_SOLID:
-        camToolbar->ToggleTool(getToolBarToolByLabel(camToolbar, "flatShadeBtn")->GetId(), true);
+        _camToolbar->ToggleTool(getToolBarToolByLabel(_camToolbar, "flatShadeBtn")->GetId(), true);
         break;
     case RENDER_MODE_TEXTURED:
-        camToolbar->ToggleTool(getToolBarToolByLabel(camToolbar, "texturedBtn")->GetId(), true);
+        _camToolbar->ToggleTool(getToolBarToolByLabel(_camToolbar, "texturedBtn")->GetId(), true);
         break;
     case RENDER_MODE_LIGHTING:
-        camToolbar->ToggleTool(getToolBarToolByLabel(camToolbar, "lightingBtn")->GetId(), true);
+        _camToolbar->ToggleTool(getToolBarToolByLabel(_camToolbar, "lightingBtn")->GetId(), true);
         break;
     default:
         assert(false);
@@ -951,21 +931,6 @@ void CamWnd::setCameraOrigin(const Vector3& origin)
     _camera->setCameraOrigin(origin);
 }
 
-const Vector3& CamWnd::getRightVector() const
-{
-    return _camera->getRightVector();
-}
-
-const Vector3& CamWnd::getUpVector() const
-{
-    return _camera->getUpVector();
-}
-
-const Vector3& CamWnd::getForwardVector() const
-{
-    return _camera->getForwardVector();
-}
-
 const Vector3& CamWnd::getCameraAngles() const
 {
     return _camera->getCameraAngles();
@@ -974,21 +939,6 @@ const Vector3& CamWnd::getCameraAngles() const
 void CamWnd::setCameraAngles(const Vector3& angles)
 {
     _camera->setCameraAngles(angles);
-}
-
-void CamWnd::setOriginAndAngles(const Vector3& newOrigin, const Vector3& newAngles)
-{
-    _camera->setOriginAndAngles(newOrigin, newAngles);
-}
-
-const Matrix4& CamWnd::getModelView() const
-{
-    return _camera->getModelView();
-}
-
-const Matrix4& CamWnd::getProjection() const
-{
-    return _camera->getProjection();
 }
 
 const Frustum& CamWnd::getViewFrustum() const
@@ -1066,7 +1016,7 @@ CameraMouseToolEvent CamWnd::createMouseEvent(const Vector2& point, const Vector
     Vector2 normalisedDeviceCoords = device_constrained(
         window_to_normalised_device(actualPoint, _camera->getDeviceWidth(), _camera->getDeviceHeight()));
 
-    return CameraMouseToolEvent(*this, normalisedDeviceCoords, delta);
+    return CameraMouseToolEvent(*_camera, *this, normalisedDeviceCoords, delta);
 }
 
 MouseTool::Result CamWnd::processMouseDownEvent(const MouseToolPtr& tool, const Vector2& point)

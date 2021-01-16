@@ -2,7 +2,7 @@
 
 #include "imousetool.h"
 #include "i18n.h"
-#include "../GlobalCameraWndManager.h"
+#include "../CameraWndManager.h"
 #include "../CameraSettings.h"
 
 namespace ui

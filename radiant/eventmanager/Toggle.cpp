@@ -11,7 +11,7 @@
 namespace ui
 {
 
-Toggle::Toggle(const ToggleCallback& callback) :
+Toggle::Toggle(const AdvancedToggleCallback& callback) :
 	_callback(callback),
 	_callbackActive(false),
 	_toggled(false)
@@ -226,10 +226,12 @@ void Toggle::toggle()
 	// Check if the toggle event is enabled
 	if (_enabled) {
 		// Invert the <toggled> state
-		_toggled = !_toggled;
+		bool newToggled  = !_toggled;
 
-		// Call the connected function with the new state
-		_callback(_toggled);
+        // Call the connected function with the new state, and switch the
+        // stored toggle state only if the callback succeeds.
+		if (_callback(newToggled))
+            _toggled = newToggled;
 	}
 
 	// Update any attached GtkObjects in any case

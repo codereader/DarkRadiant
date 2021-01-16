@@ -6,7 +6,7 @@
 
 #include "registry/registry.h"
 #include "util/ScopedBoolLock.h"
-#include "GlobalCameraWndManager.h"
+#include "CameraWndManager.h"
 
 namespace ui
 {
@@ -130,8 +130,6 @@ void CameraSettings::keyChanged()
 	_invertMouseVerticalAxis = registry::getValue<bool>(RKEY_INVERT_MOUSE_VERTICAL_AXIS);
 	_farClipEnabled = registry::getValue<bool>(RKEY_ENABLE_FARCLIP);
 	_solidSelectionBoxes = registry::getValue<bool>(RKEY_SOLID_SELECTION_BOXES);
-
-	GlobalEventManager().setToggled("ToggleCubicClip", _farClipEnabled);
 
 	// Determine the draw mode represented by the integer registry value
 	importDrawMode(registry::getValue<int>(RKEY_DRAWMODE));

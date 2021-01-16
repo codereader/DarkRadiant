@@ -31,7 +31,7 @@ public:
     virtual void updateWidgets();
 
 private:
-    void doNothing(bool) {}
+    bool doNothing(bool) { return true; }
 
     // Show/hide all the connected widgets
     void showWidgets();

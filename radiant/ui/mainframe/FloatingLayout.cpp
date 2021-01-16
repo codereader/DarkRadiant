@@ -9,7 +9,7 @@
 
 #include "registry/registry.h"
 
-#include "camera/GlobalCameraWndManager.h"
+#include "camera/CameraWndManager.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "xyview/GlobalXYWnd.h"
 

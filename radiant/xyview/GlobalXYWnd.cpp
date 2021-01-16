@@ -10,7 +10,7 @@
 #include "registry/registry.h"
 
 #include "module/StaticModule.h"
-#include "camera/GlobalCameraWndManager.h"
+#include "camera/CameraWndManager.h"
 #include "wxutil/MouseButton.h"
 
 #include "tools/BrushCreatorTool.h"

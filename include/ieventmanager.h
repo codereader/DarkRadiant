@@ -113,6 +113,16 @@ const char* const MODULE_EVENTMANAGER("EventManager");
 // The passed boolean indicates the new toggle state (true = active/toggled)
 typedef std::function<void(bool)> ToggleCallback;
 
+/**
+ * \brief
+ * A toggle function which may or may not succeed
+ *
+ * \return
+ * true if the state change was successful, false if there was an error and the
+ * toggle should remain in its previous state.
+ */
+using AdvancedToggleCallback = std::function<bool(bool)>;
+
 class IEventManager :
 	public RegisterableModule
 {
@@ -126,10 +136,24 @@ public:
 	// Creates a new keyevent that calls the given callback when invoked
 	virtual IEventPtr addKeyEvent(const std::string& name, const ui::KeyStateChangeCallback& keyStateChangeCallback) = 0;
 
-	// Creates a new toggle event that calls the given callback when toggled
-	virtual IEventPtr addToggle(const std::string& name, const ToggleCallback& onToggled) = 0;
-	virtual IEventPtr addWidgetToggle(const std::string& name) = 0;
-	virtual IEventPtr addRegistryToggle(const std::string& name, const std::string& registryKey) = 0;
+    // Creates a new toggle event that calls the given callback when toggled
+    virtual IEventPtr addAdvancedToggle(const std::string& name,
+                                        const AdvancedToggleCallback& onToggled) = 0;
+    virtual IEventPtr addWidgetToggle(const std::string& name) = 0;
+    virtual IEventPtr addRegistryToggle(const std::string& name, const std::string& registryKey) = 0;
+
+    /**
+     * \brief
+     * Add a simple toggle callback, which always succeeds.
+     *
+     * \see addAdvancedToggle
+     */
+    IEventPtr addToggle(const std::string& name, const ToggleCallback& onToggled)
+    {
+        return addAdvancedToggle(
+            name, [onToggled](bool v) { onToggled(v); return true; }
+        );
+    }
 
 	// Set the according Toggle command (identified by <name>) to the bool <toggled>
 	virtual void setToggled(const std::string& name, const bool toggled) = 0;

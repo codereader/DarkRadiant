@@ -224,7 +224,6 @@
       <toolbutton name="save" action="SaveMap" tooltip="Save the current map" icon="file_save.png"/>
       <separator/>
       <toolbutton name="changeviews" action="NextView" tooltip="Change views" icon="view_change.png"/>
-      <toggletoolbutton name="cubicclip" action="ToggleCubicClip" tooltip="Cubic clip the camera view" icon="view_cubicclipping.png"/>
       <separator/>
       <toolbutton name="selectcompletetall" action="SelectCompleteTall" tooltip="Select complete tall" icon="selection_selectcompletetall.png" />
       <toolbutton name="selecttouching" action="SelectTouching" tooltip="Select touching" icon="selection_selecttouching.png"/>

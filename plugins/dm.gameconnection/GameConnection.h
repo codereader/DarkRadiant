@@ -2,6 +2,8 @@
 
 #include "icommandsystem.h"
 #include "iscenegraph.h"
+#include "ieventmanager.h"
+
 #include "MapObserver.h"
 
 #include <sigc++/connection.h>
@@ -38,9 +40,16 @@ public:
     //flush all async commands (e.g. camera update) and wait until everything finishes
     void finish();
 
-    //make sure camera observer is present iff enable == true, and attach/detach it to global camera
-    void setCameraSyncEnabled(bool enable);
-    //copy camera position from the game to DR view
+    /**
+     * \brief
+     * Enable dynamic sync of camera to game position
+     *
+     * \return
+     * true on success, false if connection failed.
+     */
+    bool setCameraSyncEnabled(bool enable);
+
+    /// Trigger one-off sync of game position back to Radiant camera
     void backSyncCamera();
 
     //pause game if it is live, unpause if it is paused
@@ -50,10 +59,25 @@ public:
 
     //ask TDM to reload .map file from disk
     void reloadMap();
-    //when enabled, forces TDM to reload .map from disk automatically after every map save
-    void setAutoReloadMapEnabled(bool enable);
-    //implementation of "update map" level toggling
-    void setUpdateMapLevel(bool on, bool always);
+
+    /**
+     * \brief
+     * Instruct TDM to reload .map from disk automatically after every map save
+     *
+     * \return
+     * true on success, false if the game connection failed.
+     */
+    bool setAutoReloadMapEnabled(bool enable);
+
+    /**
+     * \brief
+     * Enable hot reload of map entity changes.
+     *
+     * \return
+     * true on success, false if the game connection failed.
+     */
+    bool setMapHotReload(bool on);
+
     //send map update to TDM right now
     void doUpdateMap();
 
@@ -64,6 +88,14 @@ public:
     void shutdownModule() override;
 
 private:
+
+    // Add any required items to the application toolbars
+    void addToolbarItems();
+
+    // IEventPtrs corresponding to activatable menu options
+    IEventPtr _camSyncToggle;
+    IEventPtr _camSyncBackButton;
+
     //connection to TDM game (i.e. the socket with custom message framing)
     //it can be "dead" in two ways:
     //  _connection is NULL --- no connection, all modes/observers disabled
@@ -98,7 +130,9 @@ private:
     //set to true when "update map" is set to "always"
     bool _updateMapAlways = false;
 
-    
+    // Enable or disable the map observer
+    void activateMapObserver(bool on);
+
     //every request should get unique seqno, otherwise we won't be able to distinguish their responses
     std::size_t generateNewSequenceNumber();
     //prepend seqno to specified request and send it to game

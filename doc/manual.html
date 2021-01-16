@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="generator" content="Asciidoctor 1.5.5">
+<meta name="generator" content="Asciidoctor 2.0.10">
 <title>DarkRadiant User Guide</title>
 <style>
 /* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
@@ -430,7 +430,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_introduction">Introduction</a>
 <ul class="sectlevel2">
 <li><a href="#_editing_workflow">Editing workflow</a></li>
-<li><a href="#_what_s_in_a_map">What&#8217;s in a MAP?</a></li>
+<li><a href="#_whats_in_a_map">What&#8217;s in a MAP?</a></li>
 </ul>
 </li>
 <li><a href="#_initial_configuration">Initial configuration</a>
@@ -606,7 +606,7 @@ posted by individual users.</p>
 </div>
 <div class="sect2">
 <h3 id="_editing_workflow">Editing workflow</h3>
-<div class="imageblock" style="text-align: center">
+<div class="imageblock text-center">
 <div class="content">
 <img src="img/DarkRadiantWorkflow.png" alt="DarkRadiantWorkflow">
 </div>
@@ -642,7 +642,7 @@ certain DarkRadiant-specific state may be lost.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_what_s_in_a_map">What&#8217;s in a MAP?</h3>
+<h3 id="_whats_in_a_map">What&#8217;s in a MAP?</h3>
 <div class="paragraph">
 <p>There are three main types of object contained within a <code>.map</code> file: entities,
 brushes and patches.</p>
@@ -693,7 +693,7 @@ which acts as the parent for new brushes and patches created in DarkRadiant.</p>
 shown. This is where you configure the path to the game installation from which
 DarkRadiant will load assets, such as textures, models and entity definitions.</p>
 </div>
-<div class="imageblock" style="text-align: center">
+<div class="imageblock text-center">
 <div class="content">
 <img src="img/GameSetupDialog.png" alt="GameSetupDialog">
 </div>
@@ -814,7 +814,7 @@ Colours&#8230;&#8203;</code>. If you prefer a dark theme, the <code>Black &amp; 
 suitable, whereas the <code>Maya/Max/Lightwave Emulation</code> and <code>Super Mal</code> themes
 provide a more neutral, low-contrast look.</p>
 </div>
-<table class="tableblock frame-all grid-none spread">
+<table class="tableblock frame-all grid-none stretch">
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -822,29 +822,29 @@ provide a more neutral, low-contrast look.</p>
 </colgroup>
 <tbody>
 <tr>
-<td class="tableblock halign-center valign-top"><div><div class="paragraph">
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
 <p><span class="image"><img src="img/DarkRadiantDefaultTheme.png" alt="DarkRadiantDefaultTheme"></span><br>
 <strong>DarkRadiant Default</strong></p>
 </div></div></td>
-<td class="tableblock halign-center valign-top"><div><div class="paragraph">
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
 <p><span class="image"><img src="img/BlackGreenTheme.png" alt="BlackGreenTheme"></span><br>
 <strong>Black and Green</strong></p>
 </div></div></td>
-<td class="tableblock halign-center valign-top"><div><div class="paragraph">
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
 <p><span class="image"><img src="img/Q3RadiantTheme.png" alt="Q3RadiantTheme"></span><br>
 <strong>QE3Radiant Original</strong></p>
 </div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-center valign-top"><div><div class="paragraph">
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
 <p><span class="image"><img src="img/SuperMalTheme.png" alt="SuperMalTheme"></span><br>
 <strong>Super Mal</strong></p>
 </div></div></td>
-<td class="tableblock halign-center valign-top"><div><div class="paragraph">
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
 <p><span class="image"><img src="img/MayaEmulationTheme.png" alt="MayaEmulationTheme"></span><br>
 <strong>Maya/Max/Lightwave Emulation</strong></p>
 </div></div></td>
-<td class="tableblock halign-center valign-top"><div></div></td>
+<td class="tableblock halign-center valign-top"><div class="content"></div></td>
 </tr>
 </tbody>
 </table>
@@ -887,7 +887,7 @@ game units high, making a game unit about 2 cm.</p>
 corner, as well as an identical icon at the <code>&lt;0,0,0&gt;</code> origin position, if
 visible within the view.</p>
 </div>
-<div class="imageblock" style="text-align: center">
+<div class="imageblock text-center">
 <div class="content">
 <img src="img/2DViewMarkedUp.png" alt="2DViewMarkedUp">
 </div>
@@ -900,7 +900,7 @@ the separate 3D camera view window), and its view direction.</p>
 <div class="paragraph">
 <p>The following commands are available within the 2D view:</p>
 </div>
-<table class="tableblock frame-all grid-all spread">
+<table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 75%;">
@@ -995,13 +995,16 @@ particular, there are no shadows or foglights.
 <p>The 3D camera view provides its own toolbar which can be used to configure
 various display settings.</p>
 </div>
-<table class="tableblock frame-all grid-all spread">
+<table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 7.1428%;">
 <col style="width: 21.4285%;">
 <col style="width: 71.4287%;">
 </colgroup>
 <tbody>
+<tr>
+<th class="tableblock halign-center valign-top" colspan="3"><p class="tableblock">Render modes</p></th>
+</tr>
 <tr>
 <th class="tableblock halign-center valign-top"><p class="tableblock"><span class="image"><img src="img/wireframeMode16.png" alt="wireframeMode16" width="24"></span></p></th>
 <th class="tableblock halign-left valign-top"><p class="tableblock">Render in wireframe mode</p></th>
@@ -1024,6 +1027,9 @@ transparency.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Render all available lighting and texture effects.</p></td>
 </tr>
 <tr>
+<th class="tableblock halign-center valign-top" colspan="3"><p class="tableblock">Animation rendering</p></th>
+</tr>
+<tr>
 <th class="tableblock halign-center valign-top"><p class="tableblock"><span class="image"><img src="img/StartPlayback.png" alt="StartPlayback" width="24"></span></p></th>
 <th class="tableblock halign-left valign-top"><p class="tableblock">Start render time</p></th>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Begin rendering animated effects.</p></td>
@@ -1034,12 +1040,19 @@ transparency.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Stop rendering animated effects.</p></td>
 </tr>
 <tr>
+<th class="tableblock halign-center valign-top" colspan="3"><p class="tableblock">Far clip options</p></th>
+</tr>
+<tr>
+<th class="tableblock halign-center valign-top"><p class="tableblock"><span class="image"><img src="img/toggleFarClip.png" alt="toggleFarClip" width="24"></span></p></th>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Toggle far clip</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enable or disable the far clip plane.</p>
+<p class="tableblock">The far clip plane is a performance optimisation which avoids rendering geometry
+more than a certain distance away from the camera.</p></td>
+</tr>
+<tr>
 <th class="tableblock halign-center valign-top"><p class="tableblock"><span class="image"><img src="img/farClipIn.png" alt="farClipIn" width="24"></span></p></th>
 <th class="tableblock halign-left valign-top"><p class="tableblock">Clip plane in</p></th>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Move the far
-clip plane closer to the camera.
-</p><p class="tableblock">The far clip plane is a performance optimisation which avoids rendering geometry
-more than a certain distance away from the camera.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Move the far clip plane closer to the camera.</p></td>
 </tr>
 <tr>
 <th class="tableblock halign-center valign-top"><p class="tableblock"><span class="image"><img src="img/farClipOut.png" alt="farClipOut" width="24"></span></p></th>
@@ -1055,7 +1068,7 @@ from the 2D view with <strong>Ctrl + Middle click</strong>, and the camera view 
 be set with <strong>Middle click</strong>. There are also various options within the 3D view
 itself to adjust the camera position.</p>
 </div>
-<table class="tableblock frame-all grid-all spread">
+<table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 75%;">
@@ -1105,7 +1118,7 @@ axis</p></td>
 <p>For more advanced ways to select objects, see
 <a href="#BrushBasedSelection">brush-based selection</a>.</p>
 </div>
-<table class="tableblock frame-all grid-all spread">
+<table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 75%;">
@@ -1174,7 +1187,7 @@ to move two edges at once.
 increments) around each of the three world axes. These are available on the
 left-hand vertical toolbar.</p>
 </div>
-<table class="tableblock frame-all grid-all spread">
+<table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 9.0909%;">
 <col style="width: 90.9091%;">
@@ -1213,7 +1226,7 @@ left-hand vertical toolbar.</p>
 <p>For more precise control over object motion, there are three manipulator modes
 which can be selected with buttons on the left-hand vertical toolbar.</p>
 </div>
-<table class="tableblock frame-all grid-all spread">
+<table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 7.1428%;">
 <col style="width: 21.4285%;">
@@ -1314,7 +1327,7 @@ more complex shapes. To create one of these shapes, first define a regular
 cuboid brush covering the volume you want the new shape to occupy, then choose
 the appropriate option from the <strong>Brush</strong> menu:</p>
 </div>
-<table class="tableblock frame-all grid-all">
+<table class="tableblock frame-all grid-all fit-content">
 <colgroup>
 <col>
 <col>
@@ -1322,20 +1335,20 @@ the appropriate option from the <strong>Brush</strong> menu:</p>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="img/6Prism.png" alt="6Prism"></span></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Prism</strong>
-</p><p class="tableblock">An n-sided approximation of a cylinder, with the axis of the cylinder
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Prism</strong></p>
+<p class="tableblock">An n-sided approximation of a cylinder, with the axis of the cylinder
  aligned with the current 2D view.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="img/6Cone.png" alt="6Cone"></span></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Cone</strong>
-</p><p class="tableblock">A tapered n-sided cone, which always points upwards regardless of the
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Cone</strong></p>
+<p class="tableblock">A tapered n-sided cone, which always points upwards regardless of the
 2D view axis.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="img/6Sphere.png" alt="6Sphere"></span></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Sphere</strong>
-</p><p class="tableblock">A rotationally symmetric n-sided approximation of a sphere, with the
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Sphere</strong></p>
+<p class="tableblock">A rotationally symmetric n-sided approximation of a sphere, with the
 axis of rotation pointing upwards.</p></td>
 </tr>
 </tbody>
@@ -1354,7 +1367,7 @@ ceiling and wall brushes manually, this is a common enough operation that
 DarkRadiant provides a couple of shortcuts. These options can be found on the
 vertical toolbar at the far left of the main window.</p>
 </div>
-<table class="tableblock frame-all grid-all spread">
+<table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 20%;">
 <col style="width: 80%;">
@@ -1362,18 +1375,18 @@ vertical toolbar at the far left of the main window.</p>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="img/CreateRoomBrush.png" alt="CreateRoomBrush" width="320"></span></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="img/CreateRoom.png" alt="CreateRoom" width="36"></span> <strong>Create Room</strong>
-</p><p class="tableblock">Create a room whose interior size matches the size of the currently-selected
+<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="img/CreateRoom.png" alt="CreateRoom" width="36"></span> <strong>Create Room</strong></p>
+<p class="tableblock">Create a room whose interior size matches the size of the currently-selected
 brush. The wall thickness will be equal to the current grid size.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="img/HollowBrush.png" alt="HollowBrush" width="320"></span></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="img/Hollow.png" alt="Hollow" width="36"></span> <strong>Hollow</strong>
-</p><p class="tableblock">Hollow out the selected brush, leaving the exterior dimensions the same. The
+<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="img/Hollow.png" alt="Hollow" width="36"></span> <strong>Hollow</strong></p>
+<p class="tableblock">Hollow out the selected brush, leaving the exterior dimensions the same. The
 wall thickness will be equal to the current grid size, but the wall brushes will
 overlap at the corners, rather than just touching each other as with <strong>Create
-Room</strong>.
-</p><p class="tableblock">This is legacy tool from GtkRadiant, and generally inferior to <strong>Create Room</strong>.
+Room</strong>.</p>
+<p class="tableblock">This is legacy tool from GtkRadiant, and generally inferior to <strong>Create Room</strong>.
 The overlapping wall brushes make it more difficult to precisely align interior
 textures, since part of the inner face is obscured (and therefore removed during
 map compilation). However, there may be occasional situations in which <strong>Hollow</strong>
@@ -1395,7 +1408,7 @@ to hollow out a 7-sided sphere is probably ill-advised.</p>
 create a doorway or other opening. The <strong>Clipper</strong> tool, accessed with the <strong>X</strong>
 key, is used for this purpose.</p>
 </div>
-<div class="imageblock" style="text-align: center">
+<div class="imageblock text-center">
 <div class="content">
 <img src="img/ClipTool3D.png" alt="ClipTool3D">
 </div>
@@ -1455,7 +1468,7 @@ split plane which is actually useful, however, may be challenging.
 quickly create shapes like triangles or trapeziums. This functionality is
 accessed via the <strong>Select Edges</strong> tool on the upper toolbar, or with the <strong>E</strong> key.</p>
 </div>
-<div class="imageblock" style="text-align: center">
+<div class="imageblock text-center">
 <div class="content">
 <img src="img/EdgeEditing.png" alt="EdgeEditing">
 </div>
@@ -1491,7 +1504,7 @@ be merged.</p>
 objects. There are three commands on the top toolbar which convert the selected
 brush(es) into a temporary selection volume:</p>
 </div>
-<table class="tableblock frame-all grid-all spread">
+<table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 7.1428%;">
 <col style="width: 21.4285%;">
@@ -1572,7 +1585,7 @@ with just three control points.</p>
 </li>
 </ol>
 </div>
-<div class="imageblock" style="text-align: center">
+<div class="imageblock text-center">
 <div class="content">
 <img src="img/SimplePatchesControlPoints.png" alt="SimplePatchesControlPoints">
 </div>
@@ -1602,7 +1615,7 @@ unselected and unselecting them if already selected.</p>
 </li>
 </ul>
 </div>
-<div class="imageblock" style="text-align: center">
+<div class="imageblock text-center">
 <div class="content">
 <img src="img/PatchVertexEditing.png" alt="PatchVertexEditing">
 </div>
@@ -1618,7 +1631,7 @@ in the <strong>Patch</strong> menu. There is no need to have a brush selected fi
 create these shapes, however if a brush <em>is</em> selected, it will be removed and
 used to define the size of the patch shape.</p>
 </div>
-<table class="tableblock frame-all grid-all spread">
+<table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 75%;">
@@ -1626,31 +1639,31 @@ used to define the size of the patch shape.</p>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="img/PatchSphere.png" alt="PatchSphere"></span></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Sphere</strong>
-</p><p class="tableblock">An approximation of a sphere (the quadratic Bezier patch implementation in Doom
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Sphere</strong></p>
+<p class="tableblock">An approximation of a sphere (the quadratic Bezier patch implementation in Doom
 3 and DarkRadiant does not permit the creation of a perfect sphere).</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="img/PatchCylinder.png" alt="PatchCylinder"></span></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Cylinder</strong>
-</p><p class="tableblock">A hollow cylinder aligned with the direction of the 2D view.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Cylinder</strong></p>
+<p class="tableblock">A hollow cylinder aligned with the direction of the 2D view.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="img/PatchCone.png" alt="PatchCone"></span></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Cone</strong>
-</p><p class="tableblock">A tapered cone pointing along the 2D view axis.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Cone</strong></p>
+<p class="tableblock">A tapered cone pointing along the 2D view axis.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="img/PatchEndCap.png" alt="PatchEndCap"></span></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>End cap</strong>
-</p><p class="tableblock">An arch or half-cylinder covering a 180 degree angle, aligned with the 2D view
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>End cap</strong></p>
+<p class="tableblock">An arch or half-cylinder covering a 180 degree angle, aligned with the 2D view
 axis. The peak of the arch will be at the top if created in front or side views,
 making this useful for curved ceilings and the like.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="img/PatchBevel.png" alt="PatchBevel"></span></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Bevel</strong>
-</p><p class="tableblock">Portion of an arch covering a 90 degree angle. This may be placed along room
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Bevel</strong></p>
+<p class="tableblock">Portion of an arch covering a 90 degree angle. This may be placed along room
 edges to give a curved appearance.</p></td>
 </tr>
 </tbody>
@@ -1666,7 +1679,7 @@ However, you can also use the <strong>Patch Inspector</strong> to explicitly set
 subdivision required, which can be useful when optimising a map by reducing
 on-screen polygon counts.</p>
 </div>
-<div class="imageblock" style="text-align: center">
+<div class="imageblock text-center">
 <div class="content">
 <img src="img/PatchSubdivision.png" alt="PatchSubdivision">
 </div>
@@ -1701,7 +1714,7 @@ patch completely flat regardless of control point positions, up to a maximum of
 apply a new texture, you must first select the brush, face or patch to be
 textured. There are two different selection commands:</p>
 </div>
-<table class="tableblock frame-all grid-all spread">
+<table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 75%;">
@@ -1729,7 +1742,7 @@ or the <strong>Textures</strong> tab to perform the texturing operation.</p>
 in the game installation. Selecting a texture in the tree will show a small
 preview swatch, along with some metadata about the texture definition.</p>
 </div>
-<div class="imageblock" style="text-align: center">
+<div class="imageblock text-center">
 <div class="content">
 <img src="img/MediaTab.png" alt="MediaTab">
 </div>
@@ -1738,7 +1751,7 @@ preview swatch, along with some metadata about the texture definition.</p>
 <p>To apply a texture to the selected brush, simply <strong>Double-click</strong> on a texture
 name in the tree. The tree view also offers a context menu with several options:</p>
 </div>
-<table class="tableblock frame-all grid-all spread">
+<table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 75%;">
@@ -1782,7 +1795,7 @@ choosing the <strong>Show Favourites</strong> radio button at the top of the pan
 <p>The <strong>Textures</strong> tab provides a scrollable canvas containing preview swatches of
 all the textures which are currently loaded in the current map.</p>
 </div>
-<div class="imageblock" style="text-align: center">
+<div class="imageblock text-center">
 <div class="content">
 <img src="img/TexturesTab.png" alt="TexturesTab">
 </div>
@@ -1809,7 +1822,7 @@ wish to adjust the alignment and scale of the texture on the brush or patch
 face. DarkRadiant provides the <strong>Surface Inspector</strong> for this purpose, which can
 be toggled with the <strong>S</strong> key or by choosing the option in the <strong>View</strong> menu.</p>
 </div>
-<div class="imageblock" style="text-align: center">
+<div class="imageblock text-center">
 <div class="content">
 <img src="img/SurfaceInspector.png" alt="SurfaceInspector">
 </div>
@@ -1821,7 +1834,7 @@ is selected and these faces have different values for text boxes in the dialog,
 the text box will be greyed out, however it is still possible to use the buttons
 to make changes which will be applied uniformly to all selected faces.</p>
 </div>
-<table class="tableblock frame-all grid-all spread">
+<table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 75%;">
@@ -1877,8 +1890,8 @@ the location and size of the face.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">If this is enabled, the alignment of the texture will be preserved
 relative to the face if the brush or patch is moved in 3D space. If disabled,
 the texture itself will remain fixed in 3D space as the brush or patch moves,
-resulting in the alignment changing.
-</p><p class="tableblock">Typically, if you have <strong>Fit</strong> a particular number of texture tiles across a face,
+resulting in the alignment changing.</p>
+<p class="tableblock">Typically, if you have <strong>Fit</strong> a particular number of texture tiles across a face,
 you will want to preserve alignment with <strong>Texture Lock</strong>. Conversely, if the
 texture is applied to a much larger group of brushes with a common texture (that
 needs to align across all of the brushes, regardless of how they are moved or
@@ -1947,7 +1960,7 @@ in a number of ways:</p>
 </li>
 <li>
 <p>Directly <strong>Middle click</strong> the destination face while holding down either <strong>Ctrl</strong>
-(to paste the shader in projected coordinates) or <strong>Shift</strong> (to paste the shader
+(to paste the shader with projected coordinates) or <strong>Shift</strong> (to paste the shader
 with natural coordinates).</p>
 </li>
 </ol>
@@ -2055,7 +2068,7 @@ brushes (i.e. the smallest box that would contain all of the brushes).</p>
 <p>Unselected lights are shown in the 2D view as small boxes, while selected lights
 also show the boundaries of the light volume.</p>
 </div>
-<div class="imageblock" style="text-align: center">
+<div class="imageblock text-center">
 <div class="content">
 <img src="img/LightSelectedAndUnselected.png" alt="LightSelectedAndUnselected">
 </div>
@@ -2087,7 +2100,7 @@ inspector.
 <p>There are a couple of options on the top toolbar which control the display and
 behaviour of light volumes:</p>
 </div>
-<table class="tableblock frame-all grid-all spread">
+<table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 7.1428%;">
 <col style="width: 21.4285%;">
@@ -2118,7 +2131,7 @@ fixed.</p></td>
 rectangular illumination pattern matching its shape. You can change these
 properties using the light inspector, which is accessed with the <strong>L</strong> key.</p>
 </div>
-<div class="imageblock" style="text-align: center">
+<div class="imageblock text-center">
 <div class="content">
 <img src="img/LightInspector.png" alt="LightInspector">
 </div>
@@ -2175,7 +2188,7 @@ and saved into the game asset tree in LWO or ASE format.</p>
 view and choose <strong>Create model…</strong>. DarkRadiant will show the model selector
 dialog:</p>
 </div>
-<div class="imageblock" style="text-align: center">
+<div class="imageblock text-center">
 <div class="content">
 <img src="img/ModelSelector.png" alt="ModelSelector">
 </div>
@@ -2223,7 +2236,7 @@ here</strong> to move the existing entity to the clicked position.</p>
 the generic <strong>Create entity…</strong> option, which displays a dialog very similar to the
 <a href="#CreatingModels">model selector</a>:</p>
 </div>
-<div class="imageblock" style="text-align: center">
+<div class="imageblock text-center">
 <div class="content">
 <img src="img/EntityClassSelector.png" alt="EntityClassSelector">
 </div>
@@ -2253,7 +2266,7 @@ warning will be shown at this point.</p>
 <p>Every entity has a list of key/value pairs known as <em>properties</em> or <em>spawnargs</em>.
 These properties are displayed on the <strong>Entity</strong> tab of the editing panel.</p>
 </div>
-<div class="imageblock" style="text-align: center">
+<div class="imageblock text-center">
 <div class="content">
 <img src="img/EntityInspector.png" alt="EntityInspector">
 </div>
@@ -2307,7 +2320,7 @@ property in the list and choose <strong>Delete property</strong>.</p>
 <div class="paragraph">
 <p>The entity panel provides two options controlling its behaviour:</p>
 </div>
-<table class="tableblock frame-all grid-all spread">
+<table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 75%;">
@@ -2319,8 +2332,8 @@ property in the list and choose <strong>Delete property</strong>.</p>
 selected entity will be shown, including those which are inherited from the
 entity type declaration in the game installation. If unchecked, only those
 properties explicitly set on this particular entity (and stored in the map file)
-will be shown.
-</p><p class="tableblock">You can change the value of an inherited property by selecting it and entering a
+will be shown.</p>
+<p class="tableblock">You can change the value of an inherited property by selecting it and entering a
 new value in the entity panel; this will create a new explicit property on the
 entity which overrides the inherited default.</p></td>
 </tr>
@@ -2567,7 +2580,7 @@ file associated with the current map, which contains a series of points
 identifying the path to the leak. This path will be rendered as a bright red
 line in both the 2D and 3D views:</p>
 </div>
-<div class="imageblock" style="text-align: center">
+<div class="imageblock text-center">
 <div class="content">
 <img src="img/Pointfile.png" alt="Pointfile">
 </div>
@@ -2681,7 +2694,7 @@ outside the game installation directory.
 <p>Either right-click in the 2D window and choose <strong>Insert prefab&#8230;&#8203;</strong>, or open the
 <strong>File</strong> menu and choose <strong>Import prefab&#8230;&#8203;</strong>. This will show the prefab browser.</p>
 </div>
-<div class="imageblock" style="text-align: center">
+<div class="imageblock text-center">
 <div class="content">
 <img src="img/PrefabChooser.png" alt="PrefabChooser">
 </div>
@@ -2698,7 +2711,7 @@ custom directory of your choice.</p>
 <strong>right click</strong> to enter or leave camera mode, which enables the following motion
 commands:</p>
 </div>
-<table class="tableblock frame-all grid-all spread">
+<table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 75%;">
@@ -2796,7 +2809,7 @@ another layer for brushwork, and so on.</p>
 window lists all of the layers which exist in the current project, and allows
 you to perform various operations on them.</p>
 </div>
-<div class="imageblock" style="text-align: center">
+<div class="imageblock text-center">
 <div class="content">
 <img src="img/LayersWindow.png" alt="LayersWindow">
 </div>
@@ -2848,7 +2861,7 @@ object is in, look at the narrow coloured rectangle next to the layer name in
 the <strong>Layers</strong> window. The rectangle will turn from grey to pink for each layer
 that contains the selected object.</p>
 </div>
-<div class="imageblock" style="text-align: center">
+<div class="imageblock text-center">
 <div class="content">
 <img src="img/LightInTwoLayers.png" alt="LightInTwoLayers">
 </div>
@@ -2917,7 +2930,7 @@ between DarkRadiant sessions.
 <div class="paragraph">
 <p>The built-in filters include:</p>
 </div>
-<table class="tableblock frame-all grid-all spread">
+<table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 75%;">
@@ -2958,7 +2971,7 @@ between DarkRadiant sessions.
 <div class="paragraph">
 <p>Aside from the list of filters, the <strong>Filter</strong> menu contains three other options:</p>
 </div>
-<table class="tableblock frame-all grid-all spread">
+<table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 75%;">
@@ -2998,7 +3011,7 @@ new dialog which allows you to edit the rules of the selected filter.</p>
 <p>Built-in filters cannot be removed or edited, but you can choose the <strong>View</strong>
 button to open the filter editor in a read-only mode.</p>
 </div>
-<div class="imageblock" style="text-align: center">
+<div class="imageblock text-center">
 <div class="content">
 <img src="img/FilterEditor.png" alt="FilterEditor">
 </div>
@@ -3066,7 +3079,7 @@ their child brushes and patches (if any).</p>
 <p>The entity list can be accessed by choosing the <strong>Entity List</strong> option from the
 <strong>View</strong> menu.</p>
 </div>
-<div class="imageblock" style="text-align: center">
+<div class="imageblock text-center">
 <div class="content">
 <img src="img/EntityList.png" alt="EntityList">
 </div>
@@ -3133,7 +3146,7 @@ classes throughout the map. This could be used, for example, to change the
 health of every instance of a particular enemy, or (as shown in the diagram)
 removing a particular enemy type&#8217;s ability to relight torches.</p>
 </div>
-<div class="imageblock" style="text-align: center">
+<div class="imageblock text-center">
 <div class="content">
 <img src="img/DifficultyEditor.png" alt="DifficultyEditor">
 </div>
@@ -3855,7 +3868,7 @@ these into one or more MTR files which are listed as hidden.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-06-02 20:50:59 BST
+Last updated 2021-01-01 14:29:27 UTC
 </div>
 </div>
 </body>

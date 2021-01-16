@@ -49,18 +49,6 @@
 								<bitmap stock_id="darkradiant:lightingMode.png" stock_client="wxART_TOOLBAR">undefined.png</bitmap>
 								<radio>1</radio>
 							</object>
-						</object>
-					</object>
-					<object class="sizeritem">
-						<option>0</option>
-						<flag>wxBOTTOM|wxEXPAND|wxRIGHT|wxTOP</flag>
-						<border>3</border>
-						<object class="wxToolBar" name="MiscToolbar">
-							<style>wxTB_HORIZONTAL|wxTB_NODIVIDER</style>
-							<bitmapsize></bitmapsize>
-							<margins></margins>
-							<packing>1</packing>
-							<separation>5</separation>
 							<object class="separator" />
 							<object class="tool" name="startTimeButton">
 								<label>startTimeButton</label>
@@ -75,6 +63,13 @@
 								<bitmap stock_id="darkradiant:media-playback-stop.png" stock_client="wxART_TOOLBAR">undefined.png</bitmap>
 							</object>
 							<object class="separator" />
+							<object class="tool" name="clipPlaneToggleButton">
+								<label>clipPlaneToggleButton</label>
+								<tooltip>Enable or disable far clip plane</tooltip>
+								<longhelp></longhelp>
+								<bitmap>../bitmaps/view_cubicclipping.png</bitmap>
+								<toggle>1</toggle>
+							</object>
 							<object class="tool" name="clipPlaneInButton">
 								<label>clipPlaneInButton</label>
 								<tooltip>Clip plane in</tooltip>

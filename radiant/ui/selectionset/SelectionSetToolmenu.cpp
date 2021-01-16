@@ -35,7 +35,7 @@ SelectionSetToolmenu::SelectionSetToolmenu() :
 	_dropdownToolId(wxID_NONE)
 {
 	// Get the horizontal toolbar and add a custom widget
-	wxToolBar* toolbar = GlobalMainFrame().getToolbar(IMainFrame::TOOLBAR_HORIZONTAL);
+	wxToolBar* toolbar = GlobalMainFrame().getToolbar(IMainFrame::Toolbar::TOP);
 
 	// Insert a separator at the end of the toolbar
 	toolbar->AddSeparator();

@@ -33,6 +33,7 @@ private:
 	sigc::signal<void> _sigMainFrameShuttingDown;
 
 private:
+	void construct();
 	void keyChanged();
 	void preDestructionCleanup();
 	void updateTitle();
@@ -40,8 +41,6 @@ private:
 
 public:
 	MainFrame();
-
-	void construct() override;
 
 	// IMainFrame implementation
 	bool screenUpdatesEnabled() override;

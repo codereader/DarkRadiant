@@ -232,7 +232,8 @@ IEventPtr EventManager::addRegistryToggle(const std::string& name, const std::st
 	return event;
 }
 
-IEventPtr EventManager::addToggle(const std::string& name, const ToggleCallback& onToggled)
+IEventPtr EventManager::addAdvancedToggle(const std::string& name,
+                                          const AdvancedToggleCallback& onToggled)
 {
 	if (alreadyRegistered(name))
 	{

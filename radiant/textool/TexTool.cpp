@@ -13,7 +13,7 @@
 #include "registry/adaptors.h"
 #include "texturelib.h"
 #include "selectionlib.h"
-#include "camera/GlobalCameraWndManager.h"
+#include "camera/CameraWndManager.h"
 #include "wxutil/GLWidget.h"
 
 #include "textool/Selectable.h"
@@ -106,7 +106,7 @@ void TexTool::populateWindow()
 
 	// Load the texture toolbar from the registry
     IToolbarManager& tbCreator = GlobalUIManager().getToolbarManager();
-	wxToolBar* textoolbar = tbCreator.getToolbar("textool", this);
+	wxToolBar* textoolbar = tbCreator.createToolbar("textool", this);
 
 	if (textoolbar != NULL)
 	{
