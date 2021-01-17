@@ -187,7 +187,7 @@ const char* LINK_NAME =
 /// brief Returns the filename of the executable belonging to the current process, or 0 if not found.
 std::string getExecutablePath(char* argv[])
 {
-    char buf[PATH_MAX];
+    char buf[PATH_MAX+1];
 
     // Now read the symbolic link
     int ret = readlink(LINK_NAME, buf, PATH_MAX);
@@ -203,6 +203,7 @@ std::string getExecutablePath(char* argv[])
             // In case of an error, leave the handling up to the caller
             return std::string();
         }
+        ret = strlen(path);
     }
 
     /* Ensure proper NUL termination */
