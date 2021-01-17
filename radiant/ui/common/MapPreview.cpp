@@ -5,6 +5,7 @@
 #include "iuimanager.h"
 #include "iscenegraphfactory.h"
 #include "math/AABB.h"
+#include "scene/PrefabBoundsAccumulator.h"
 
 namespace ui
 {
@@ -46,7 +47,10 @@ AABB MapPreview::getSceneBounds()
 {
 	if (!getScene()->root()) return RenderPreview::getSceneBounds();
 
-	return getScene()->root()->worldAABB();
+    scene::PrefabBoundsAggregator aggregator;
+    getScene()->root()->traverseChildren(aggregator);
+
+	return aggregator.getBounds();
 }
 
 bool MapPreview::onPreRender()

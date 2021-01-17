@@ -91,5 +91,11 @@
     <ClInclude Include="..\..\libs\scene\EntitySelector.h">
       <Filter>scene</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\scene\AABBAccumulateWalker.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\PrefabBoundsAccumulator.h">
+      <Filter>scene</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
