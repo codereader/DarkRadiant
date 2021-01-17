@@ -159,6 +159,7 @@ public:
     std::string getName() const override;
     const IEntityClass* getParent() const override;
     sigc::signal<void>& changedSignal() override;
+    void forEachAttachment(AttachmentFunc func) const override;
     bool isFixedSize() const override;
     AABB getBounds() const override;
     bool isLight() const override;

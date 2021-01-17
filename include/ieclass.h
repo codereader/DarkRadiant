@@ -226,11 +226,38 @@ public:
     /// Query whether this entity class represents a light.
     virtual bool isLight() const = 0;
 
-    /* ENTITY CLASS SIZE */
+    /* ENTITY ATTACHMENTS */
+
+    /// Details of an attached entity
+    struct Attachment
+    {
+        /// Entity class of the attached entity
+        std::string eclass;
+
+        /// Vector offset where the attached entity should appear
+        Vector3 offset;
+    };
+
+    /// A functor which can received Attachments
+    using AttachmentFunc = std::function<void(const Attachment&)>;
 
     /**
-     * Query whether this entity has a fixed size.
+     * \brief
+     * Iterate over attached entities, if any.
+     *
+     * Each entity class can define one or more attached entities, which should
+     * appear at specific offsets relative to the parent entity. Such attached
+     * entities are for visualisation only, and should not be saved into the
+     * map as genuine map entities.
+     *
+     * \param func
+     * Functor to receive attachment information.
      */
+    virtual void forEachAttachment(AttachmentFunc func) const = 0;
+
+    /* ENTITY CLASS SIZE */
+
+    /// Query whether this entity has a fixed size.
     virtual bool isFixedSize() const = 0;
 
     /**
@@ -251,16 +278,10 @@ public:
     // Overrides the colour defined in the .def files
     virtual void setColour(const Vector3& colour) = 0;
 
-    /**
-     * Get the named Shader used for rendering this entity class in
-     * wireframe mode.
-     */
+    /// Get the shader used for rendering this entity class in wireframe mode.
     virtual const std::string& getWireShader() const = 0;
 
-    /**
-     * Get the Shader used for rendering this entity class in
-     * filled mode.
-     */
+    /// Get the shader used for rendering this entity class in filled mode.
     virtual const std::string& getFillShader() const = 0;
 
 
@@ -303,8 +324,7 @@ public:
      */
     virtual const std::string& getModelPath() const = 0;
 
-    /** Get the model skin, or the empty string if there is no skin.
-     */
+    /// Get the model skin, or the empty string if there is no skin.
     virtual const std::string& getSkin() const = 0;
 
 	/**

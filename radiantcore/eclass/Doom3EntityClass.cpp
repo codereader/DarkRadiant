@@ -192,6 +192,16 @@ public:
 			}
         }
     }
+
+    // Iterate over attachments
+    void forEachAttachment(IEntityClass::AttachmentFunc func)
+    {
+        for (auto i = _objects.begin(); i != _objects.end(); ++i)
+        {
+            IEntityClass::Attachment a;
+            a.eclass = i->second.className;
+        }
+    }
 };
 
 const std::string Doom3EntityClass::DefaultWireShader("<0.3 0.3 1>");
@@ -237,8 +247,11 @@ sigc::signal<void>& Doom3EntityClass::changedSignal()
     return _changedSignal;
 }
 
-/** Query whether this entity has a fixed size.
- */
+void Doom3EntityClass::forEachAttachment(AttachmentFunc func) const
+{
+    _attachments->forEachAttachment(func);
+}
+
 bool Doom3EntityClass::isFixedSize() const
 {
     if (_fixedSize) {
