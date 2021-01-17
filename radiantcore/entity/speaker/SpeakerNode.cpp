@@ -174,6 +174,11 @@ const AABB& SpeakerNode::localAABB() const
 	return m_aabb_border;
 }
 
+AABB SpeakerNode::getSpeakerAABB() const
+{
+    return AABB(m_originKey.get(), m_aabb_local.getExtents());
+}
+
 void SpeakerNode::selectPlanes(Selector& selector, SelectionTest& test, const PlaneCallback& selectedPlaneCallback)
 {
 	test.BeginMesh(localToWorld());

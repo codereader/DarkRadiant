@@ -2,6 +2,7 @@
 
 #include "AABBAccumulateWalker.h"
 #include "ilightnode.h"
+#include "ispeakernode.h"
 
 namespace scene
 {
@@ -38,7 +39,14 @@ public:
             return false;
         }
 
-        // TODO: Speakers
+        // Speakers without radius
+        auto speakerNode = Node_getSpeakerNode(node);
+
+        if (speakerNode)
+        {
+            _bounds.includeAABB(speakerNode->getSpeakerAABB());
+            return false;
+        }
 
         return AABBAccumulateWalker::pre(node);
     }

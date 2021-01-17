@@ -4,6 +4,7 @@
 #include "SpeakerRenderables.h"
 
 #include "isound.h"
+#include "ispeakernode.h"
 #include "editable.h"
 #include "inamespace.h"
 
@@ -25,7 +26,8 @@ class SpeakerNode :
     public EntityNode,
     public Snappable,
     public PlaneSelectable,
-    public ComponentSelectionTestable
+    public ComponentSelectionTestable,
+    public ISpeakerNode
 {
     OriginKey m_originKey;
     Vector3 m_origin;
@@ -90,6 +92,8 @@ public:
 
     // Bounded implementation
     const AABB& localAABB() const override;
+
+    AABB getSpeakerAABB() const override;
 
     // PlaneSelectable implementation
     void selectPlanes(Selector& selector, SelectionTest& test, const PlaneCallback& selectedPlaneCallback) override;
