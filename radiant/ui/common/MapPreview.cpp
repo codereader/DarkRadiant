@@ -29,9 +29,10 @@ void MapPreview::setRootNode(const scene::IMapRootNodePtr& root)
         resetModelRotation();
 
 		// Calculate camera distance so map is appropriately zoomed
-        double distance = getScene()->root()->worldAABB().getRadius() * 2.0f;
+        auto sceneBounds = getSceneBounds();
+        auto distance = sceneBounds.getRadius() * 2.0f;
 
-        setViewOrigin(Vector3(1, 1, 1) * distance);
+        setViewOrigin(sceneBounds.getOrigin() + Vector3(1, 1, 1) * distance);
         setViewAngles(Vector3(34, 135, 0));
 	}
 }
