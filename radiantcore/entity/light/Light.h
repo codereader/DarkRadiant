@@ -12,7 +12,7 @@
 #include "../RotationKey.h"
 #include "../ColourKey.h"
 #include "../ModelKey.h"
-#include "../Doom3Entity.h"
+#include "../SpawnArgs.h"
 #include "../KeyObserverDelegate.h"
 
 #include "Renderables.h"
@@ -55,7 +55,7 @@ class Light: public RendererLight
 	LightNode& _owner;
 
     // The parent entity object that uses this light
-	Doom3Entity& _entity;
+	SpawnArgs& _entity;
 
 	OriginKey m_originKey;
 	// The "working" version of the origin
@@ -172,7 +172,7 @@ public:
      * \brief
      * Main constructor.
      */
-	Light(Doom3Entity& entity,
+	Light(SpawnArgs& entity,
 		  LightNode& owner,
           const Callback& transformChanged,
           const Callback& boundsChanged,
@@ -184,7 +184,7 @@ public:
      */
 	Light(const Light& other,
 		  LightNode& owner,
-          Doom3Entity& entity,
+          SpawnArgs& entity,
           const Callback& transformChanged,
           const Callback& boundsChanged,
 		  const Callback& lightRadiusChanged);

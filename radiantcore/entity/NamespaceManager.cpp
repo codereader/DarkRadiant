@@ -11,7 +11,7 @@ namespace entity
 // The registry key pointing towards the "name" spawnarg
 const char* const GKEY_NAME_KEY("/defaults/nameKey");
 
-NamespaceManager::NamespaceManager(Doom3Entity& entity) :
+NamespaceManager::NamespaceManager(SpawnArgs& entity) :
     _namespace(nullptr),
     _entity(entity),
     _updateMutex(false),

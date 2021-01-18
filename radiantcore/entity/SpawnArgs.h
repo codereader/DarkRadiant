@@ -4,24 +4,20 @@
 #include "KeyValue.h"
 #include <memory>
 
-/** greebo: This is the implementation of the class Entity.
- *
- * A Doom3Entity basically just keeps track of all the
- * spawnargs and delivers them on request, taking the
- * inheritance tree (EntityClasses) into account.
- *
- * It's possible to attach observers to this entity to get
- * notified upon key/value changes.
- */
 namespace entity {
 
-/// \brief An unsorted list of key/value pairs.
-///
-/// - Notifies observers when a pair is inserted or removed.
-/// - Provides undo support through the global undo system.
-/// - New keys are appended to the end of the list.
-class Doom3Entity :
-	public Entity
+/** 
+ * \brief
+ * Implementation of the class Entity.
+ *
+ * A SpawnArgs basically just keeps track of all the spawnargs and delivers
+ * them on request, taking the inheritance tree (EntityClasses) into account.
+ * The actual rendering and entity behaviour is handled by the EntityNode.
+ *
+ * It's possible to attach observers to this entity to get notified upon
+ * key/value changes.
+ */
+class SpawnArgs: public Entity
 {
 	IEntityClassPtr _eclass;
 
@@ -46,10 +42,10 @@ class Doom3Entity :
 
 public:
 	// Constructor, pass the according entity class
-	Doom3Entity(const IEntityClassPtr& eclass);
+	SpawnArgs(const IEntityClassPtr& eclass);
 
 	// Copy constructor
-	Doom3Entity(const Doom3Entity& other);
+	SpawnArgs(const SpawnArgs& other);
 
 	void importState(const KeyValues& keyValues);
 

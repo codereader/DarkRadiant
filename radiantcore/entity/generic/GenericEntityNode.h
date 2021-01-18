@@ -13,7 +13,7 @@
 #include "../OriginKey.h"
 #include "../AngleKey.h"
 #include "../RotationKey.h"
-#include "../Doom3Entity.h"
+#include "../SpawnArgs.h"
 #include "../KeyObserverDelegate.h"
 
 #include "RenderableArrow.h"

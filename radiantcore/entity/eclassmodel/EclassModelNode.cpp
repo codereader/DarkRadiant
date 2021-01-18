@@ -60,7 +60,7 @@ void EclassModelNode::construct()
 void EclassModelNode::snapto(float snap)
 {
     _originKey.snap(snap);
-	_originKey.write(_entity);
+	_originKey.write(_spawnArgs);
 }
 
 const AABB& EclassModelNode::localAABB() const
@@ -123,10 +123,10 @@ void EclassModelNode::_revertTransform()
 void EclassModelNode::_freezeTransform()
 {
 	_originKey.set(_origin);
-	_originKey.write(_entity);
+	_originKey.write(_spawnArgs);
 
 	_rotationKey.m_rotation = _rotation;
-	_rotationKey.write(&_entity, true);
+	_rotationKey.write(&_spawnArgs, true);
 }
 
 void EclassModelNode::_onTransformationChanged()

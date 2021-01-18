@@ -12,14 +12,14 @@ namespace entity
 {
 
 EntityNode::EntityNode(const IEntityClassPtr& eclass) :
-	TargetableNode(_entity, *this),
+	TargetableNode(_spawnArgs, *this),
 	_eclass(eclass),
-	_entity(_eclass),
-	_namespaceManager(_entity),
-	_nameKey(_entity),
+	_spawnArgs(_eclass),
+	_namespaceManager(_spawnArgs),
+	_nameKey(_spawnArgs),
 	_renderableName(_nameKey),
 	_modelKey(*this),
-	_keyObservers(_entity),
+	_keyObservers(_spawnArgs),
 	_shaderParms(_keyObservers, _colourKey),
 	_direction(1,0,0)
 {}
@@ -29,17 +29,17 @@ EntityNode::EntityNode(const EntityNode& other) :
 	SelectableNode(other),
 	SelectionTestable(other),
 	Namespaced(other),
-	TargetableNode(_entity, *this),
+	TargetableNode(_spawnArgs, *this),
 	Transformable(other),
 	MatrixTransform(other),
 	scene::Cloneable(other),
 	_eclass(other._eclass),
-	_entity(other._entity),
-	_namespaceManager(_entity),
-	_nameKey(_entity),
+	_spawnArgs(other._spawnArgs),
+	_namespaceManager(_spawnArgs),
+	_nameKey(_spawnArgs),
 	_renderableName(_nameKey),
 	_modelKey(*this),
-	_keyObservers(_entity),
+	_keyObservers(_spawnArgs),
 	_shaderParms(_keyObservers, _colourKey),
 	_direction(1,0,0)
 {}
@@ -134,7 +134,7 @@ void EntityNode::removeKeyObserver(const std::string& key, KeyObserver& observer
 
 Entity& EntityNode::getEntity()
 {
-	return _entity;
+	return _spawnArgs;
 }
 
 void EntityNode::refreshModel()
@@ -201,7 +201,7 @@ void EntityNode::onInsertIntoScene(scene::IMapRootNode& root)
 {
     GlobalCounters().getCounter(counterEntities).increment();
 
-	_entity.connectUndoSystem(root.getUndoChangeTracker());
+	_spawnArgs.connectUndoSystem(root.getUndoChangeTracker());
 	_modelKey.connectUndoSystem(root.getUndoChangeTracker());
 
 	SelectableNode::onInsertIntoScene(root);
@@ -214,7 +214,7 @@ void EntityNode::onRemoveFromScene(scene::IMapRootNode& root)
 	SelectableNode::onRemoveFromScene(root);
 
 	_modelKey.disconnectUndoSystem(root.getUndoChangeTracker());
-	_entity.disconnectUndoSystem(root.getUndoChangeTracker());
+	_spawnArgs.disconnectUndoSystem(root.getUndoChangeTracker());
 
     GlobalCounters().getCounter(counterEntities).decrement();
 }
@@ -281,8 +281,8 @@ void EntityNode::acquireShaders(const RenderSystemPtr& renderSystem)
 {
     if (renderSystem)
     {
-        _fillShader = renderSystem->capture(_entity.getEntityClass()->getFillShader());
-        _wireShader = renderSystem->capture(_entity.getEntityClass()->getWireShader());
+        _fillShader = renderSystem->capture(_spawnArgs.getEntityClass()->getFillShader());
+        _wireShader = renderSystem->capture(_spawnArgs.getEntityClass()->getWireShader());
     }
     else
     {

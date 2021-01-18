@@ -19,7 +19,7 @@ std::string LightShader::m_defaultShader = "";
 // ----- Light Class Implementation -------------------------------------------------
 
 // Constructor
-Light::Light(Doom3Entity& entity,
+Light::Light(SpawnArgs& entity,
              LightNode& owner,
              const Callback& transformChanged,
              const Callback& boundsChanged,
@@ -46,7 +46,7 @@ Light::Light(Doom3Entity& entity,
 // Copy Constructor
 Light::Light(const Light& other,
              LightNode& owner,
-             Doom3Entity& entity,
+             SpawnArgs& entity,
              const Callback& transformChanged,
              const Callback& boundsChanged,
              const Callback& lightRadiusChanged)

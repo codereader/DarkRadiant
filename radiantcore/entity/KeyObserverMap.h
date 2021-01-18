@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <map>
 #include <string>
 
-#include "Doom3Entity.h"
+#include "SpawnArgs.h"
 
 namespace entity
 {
@@ -52,10 +52,10 @@ class KeyObserverMap :
 	KeyObservers _keyObservers;
 
 	// The observed entity
-	Doom3Entity& _entity;
+	SpawnArgs& _entity;
 
 public:
-	KeyObserverMap(Doom3Entity& entity) :
+	KeyObserverMap(SpawnArgs& entity) :
 		_entity(entity)
 	{
 		// Start observing the entity

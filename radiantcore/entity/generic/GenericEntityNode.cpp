@@ -16,7 +16,7 @@ GenericEntityNode::GenericEntityNode(const IEntityClassPtr& eclass) :
 	m_arrow(m_ray),
 	m_aabb_solid(m_aabb_local),
 	m_aabb_wire(m_aabb_local),
-	_allow3Drotations(_entity.getKeyValue("editor_rotatable") == "1"),
+	_allow3Drotations(_spawnArgs.getKeyValue("editor_rotatable") == "1"),
     _solidAABBRenderMode(SolidBoxes)
 {}
 
@@ -31,7 +31,7 @@ GenericEntityNode::GenericEntityNode(const GenericEntityNode& other) :
 	m_arrow(m_ray),
 	m_aabb_solid(m_aabb_local),
 	m_aabb_wire(m_aabb_local),
-	_allow3Drotations(_entity.getKeyValue("editor_rotatable") == "1"),
+	_allow3Drotations(_spawnArgs.getKeyValue("editor_rotatable") == "1"),
     _solidAABBRenderMode(other._solidAABBRenderMode)
 {}
 
@@ -64,7 +64,7 @@ void GenericEntityNode::construct()
 {
 	EntityNode::construct();
 
-	m_aabb_local = _entity.getEntityClass()->getBounds();
+	m_aabb_local = _spawnArgs.getEntityClass()->getBounds();
 	m_ray.origin = m_aabb_local.getOrigin();
 	m_ray.direction = Vector3(1, 0, 0);
 	m_rotation.setIdentity();
@@ -92,7 +92,7 @@ void GenericEntityNode::construct()
 void GenericEntityNode::snapto(float snap)
 {
 	m_originKey.snap(snap);
-	m_originKey.write(_entity);
+	m_originKey.write(_spawnArgs);
 }
 
 const AABB& GenericEntityNode::localAABB() const
@@ -189,17 +189,17 @@ void GenericEntityNode::revertTransform()
 void GenericEntityNode::freezeTransform()
 {
 	m_originKey.set(m_origin);
-	m_originKey.write(_entity);
+	m_originKey.write(_spawnArgs);
 
 	if (_allow3Drotations)
 	{
 		m_rotationKey.m_rotation = m_rotation;
-		m_rotationKey.m_rotation.writeToEntity(&_entity);
+		m_rotationKey.m_rotation.writeToEntity(&_spawnArgs);
 	}
 	else
 	{
 		m_angleKey.setValue(m_angle);
-		m_angleKey.write(&_entity);
+		m_angleKey.write(&_spawnArgs);
 	}
 }
 

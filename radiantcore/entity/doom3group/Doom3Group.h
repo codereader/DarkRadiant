@@ -8,7 +8,7 @@
 #include "../ModelKey.h"
 #include "../OriginKey.h"
 #include "../RotationKey.h"
-#include "../Doom3Entity.h"
+#include "../SpawnArgs.h"
 #include "../curve/CurveCatmullRom.h"
 #include "../curve/CurveNURBS.h"
 #include "../KeyObserverDelegate.h"
@@ -28,7 +28,7 @@ class Doom3Group
   public Snappable
 {
 	Doom3GroupNode& _owner;
-	Doom3Entity& _entity;
+	SpawnArgs& _spawnArgs;
 
 	OriginKey m_originKey;
 	Vector3 m_origin;

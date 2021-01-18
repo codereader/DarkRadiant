@@ -13,7 +13,7 @@ namespace entity {
 
 LightNode::LightNode(const IEntityClassPtr& eclass) :
 	EntityNode(eclass),
-	_light(_entity,
+	_light(_spawnArgs,
 		   *this,
 		   Callback(std::bind(&scene::Node::transformChanged, this)),
 		   Callback(std::bind(&scene::Node::boundsChanged, this)),
@@ -34,7 +34,7 @@ LightNode::LightNode(const LightNode& other) :
 	ILightNode(other),
 	_light(other._light,
 		   *this,
-           _entity,
+           _spawnArgs,
            Callback(std::bind(&Node::transformChanged, this)),
 		   Callback(std::bind(&Node::boundsChanged, this)),
 		   Callback(std::bind(&LightNode::onLightRadiusChanged, this))),

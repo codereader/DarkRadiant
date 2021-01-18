@@ -41,8 +41,7 @@ protected:
 	IEntityClassPtr _eclass;
 
 	// The actual entity (which contains the key/value pairs)
-	// TODO: Rename this to "spawnargs"?
-	Doom3Entity _entity;
+	SpawnArgs _spawnArgs;
 
 	// The class taking care of all the namespace-relevant stuff
 	NamespaceManager _namespaceManager;
@@ -62,7 +61,7 @@ protected:
 	KeyObserverDelegate _modelKeyObserver;
 	KeyObserverDelegate _skinKeyObserver;
 
-	// A helper class managing the collection of KeyObservers attached to the Doom3Entity
+	// A helper class managing the collection of KeyObservers attached to the SpawnArgs
 	KeyObserverMap _keyObservers;
 
 	// Helper class observing the "shaderParmNN" spawnargs and caching their values
