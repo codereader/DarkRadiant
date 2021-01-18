@@ -99,6 +99,7 @@ add_subdirectory(plugins/sound)
 
 # Dark Mod plugins
 if (${ENABLE_DM_PLUGINS})
+    add_subdirectory(plugins/dm.conversation)
     add_subdirectory(plugins/dm.stimresponse)
     add_subdirectory(plugins/dm.objectives)
     add_subdirectory(plugins/dm.difficulty)
@@ -136,7 +137,7 @@ install(TARGETS radiantcore script sound
 # Install Dark Mod plugins
 if (${ENABLE_DM_PLUGINS})
     install(TARGETS dm_stimresponse dm_objectives dm_difficulty dm_editing
-                    dm_gui dm_gameconnection
+                    dm_gui dm_gameconnection dm_conversation
             LIBRARY DESTINATION ${PKGLIBDIR}/plugins)
 endif()
 
