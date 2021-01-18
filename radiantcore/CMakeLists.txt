@@ -39,7 +39,6 @@ add_library(radiantcore MODULE
             entity/EntityModule.cpp
             entity/EntityNode.cpp
             entity/EntitySettings.cpp
-            entity/generic/GenericEntity.cpp
             entity/generic/GenericEntityNode.cpp
             entity/KeyValue.cpp
             entity/KeyValueObserver.cpp
