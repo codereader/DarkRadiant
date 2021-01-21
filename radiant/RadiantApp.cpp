@@ -30,6 +30,16 @@
 #include "crtdbg.h"
 #endif
 
+#if defined(__linux__)
+// Function to intercept unwanted Gtk log messages on Linux
+#include <glib.h>
+GLogWriterOutput
+log_black_hole(GLogLevelFlags, const GLogField*, gsize, gpointer)
+{
+    return G_LOG_WRITER_HANDLED;
+}
+#endif
+
 // The startup event which will be queued in App::OnInit()
 wxDEFINE_EVENT(EV_RadiantStartup, wxCommandEvent);
 
@@ -40,6 +50,14 @@ bool RadiantApp::OnInit()
 	// Initialise the debug flags
 #if defined (_DEBUG) && defined (WIN32) && defined (_MSC_VER)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#endif
+
+#if defined(__linux__)
+    // Intercept and discard Gtk log messages emitted from wxGTK, which we
+    // cannot control or fix, and which obliterate any attempt to use console
+    // output for debugging (due to fresh Gtk-CRITICAL messages being emitted
+    // several times per second)
+    g_log_set_writer_func(log_black_hole, nullptr, nullptr);
 #endif
 
 	// Stop wx's unhelpful debug messages about missing keyboard accel
