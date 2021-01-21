@@ -33,8 +33,8 @@ void MapPreview::setRootNode(const scene::IMapRootNodePtr& root)
         auto sceneBounds = getSceneBounds();
         auto distance = sceneBounds.getRadius() * 2.0f;
 
-        setViewOrigin(sceneBounds.getOrigin() + Vector3(1, 1, 1) * distance);
-        setViewAngles(Vector3(34, 135, 0));
+        setViewOrigin(sceneBounds.getOrigin() + Vector3(-0.5, -0.8, 0.9) * distance);
+        setViewAngles(Vector3(45, 300, 0));
 	}
 }
 
