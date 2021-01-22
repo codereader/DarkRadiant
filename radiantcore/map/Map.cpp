@@ -32,6 +32,7 @@
 
 #include "brush/BrushModule.h"
 #include "scene/BasicRootNode.h"
+#include "scene/PrefabBoundsAccumulator.h"
 #include "map/MapFileManager.h"
 #include "map/MapPositionManager.h"
 #include "map/MapResource.h"
@@ -653,12 +654,18 @@ void Map::loadPrefabAt(const cmd::ArgumentList& args)
         // Now import the prefab (imported items get selected)
 		import(prefabPath);
 
+        // Get the selection bounds, snap its origin to the grid
+        scene::PrefabBoundsAccumulator accumulator;
+        GlobalSelectionSystem().foreachSelected(accumulator);
+
+        auto prefabCenter = accumulator.getBounds().getOrigin().getSnapped(GlobalGrid().getGridSize());
+
         // Switch texture lock on
         bool prevTexLockState = GlobalBrush().textureLockEnabled();
         GlobalBrush().setTextureLock(true);
 
         // Translate the selection to the given point
-        selection::algorithm::translateSelected(targetCoords);
+        selection::algorithm::translateSelected(targetCoords - prefabCenter);
 
         // Revert to previous state
         GlobalBrush().setTextureLock(prevTexLockState);

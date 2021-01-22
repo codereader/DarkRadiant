@@ -1,8 +1,8 @@
 #pragma once
 
-#include "AABBAccumulateWalker.h"
 #include "ilightnode.h"
 #include "ispeakernode.h"
+#include "iselection.h"
 
 namespace scene
 {
@@ -12,15 +12,15 @@ namespace scene
  * scene below a root node. It will ignore light and speaker volumes
  * since they are needlessly inflating the bounds.
  */
-class PrefabBoundsAggregator final :
-    public AABBAccumulateWalker
+class PrefabBoundsAccumulator final :
+    public scene::NodeVisitor,
+    public SelectionSystem::Visitor
 {
 private:
-    AABB _bounds;
+    mutable AABB _bounds;
 
 public:
-    PrefabBoundsAggregator() :
-        AABBAccumulateWalker(_bounds) // point the base to the local member
+    PrefabBoundsAccumulator()
     {}
 
     const AABB& getBounds() const
@@ -30,13 +30,23 @@ public:
 
     bool pre(const INodePtr& node) override
     {
+        _bounds.includeAABB(GetNodeBounds(node));
+        return false;
+    }
+
+    void visit(const scene::INodePtr& node) const override
+    {
+        _bounds.includeAABB(GetNodeBounds(node));
+    }
+
+    static AABB GetNodeBounds(const INodePtr& node)
+    {
         // For lights we'll only sum up the small diamond AABB
         auto lightNode = Node_getLightNode(node);
 
         if (lightNode)
         {
-            _bounds.includeAABB(lightNode->getSelectAABB());
-            return false;
+            return lightNode->getSelectAABB();
         }
 
         // Speakers without radius
@@ -44,11 +54,10 @@ public:
 
         if (speakerNode)
         {
-            _bounds.includeAABB(speakerNode->getSpeakerAABB());
-            return false;
+            return speakerNode->getSpeakerAABB();
         }
 
-        return AABBAccumulateWalker::pre(node);
+        return node->worldAABB();
     }
 };
 

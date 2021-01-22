@@ -47,10 +47,10 @@ AABB MapPreview::getSceneBounds()
 {
 	if (!getScene()->root()) return RenderPreview::getSceneBounds();
 
-    scene::PrefabBoundsAggregator aggregator;
-    getScene()->root()->traverseChildren(aggregator);
+    scene::PrefabBoundsAccumulator accumulator;
+    getScene()->root()->traverseChildren(accumulator);
 
-	return aggregator.getBounds();
+	return accumulator.getBounds();
 }
 
 bool MapPreview::onPreRender()
