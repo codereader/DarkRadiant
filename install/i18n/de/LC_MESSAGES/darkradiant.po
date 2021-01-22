@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DarkRadiant\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2020-12-25 06:21+0100\n"
-"PO-Revision-Date: 2020-12-25 06:26+0100\n"
+"POT-Creation-Date: 2021-01-22 20:02+0100\n"
+"PO-Revision-Date: 2021-01-22 20:04+0100\n"
 "Last-Translator: codereader <greebo@thedarkmod.com>\n"
 "Language-Team: The Dark Mod\n"
 "Language: de\n"
@@ -52,18 +52,6 @@ msgstr "Feste Auswahlrahmen"
 #: ..\..\radiant\camera\CameraSettings.cpp:75
 msgid "Show camera toolbar"
 msgstr "Zeige Toolbar im Kamera-Fenster"
-
-#: ..\..\radiant\camera\CamWnd.cpp:47
-msgid "Move far clip plane closer"
-msgstr ""
-
-#: ..\..\radiant\camera\CamWnd.cpp:48
-msgid "Move far clip plane further away"
-msgstr ""
-
-#: ..\..\radiant\camera\CamWnd.cpp:49
-msgid " (currently disabled in preferences)"
-msgstr ""
 
 #: ..\..\radiant\camera\FloatingCamWnd.cpp:18 xml_file_content.cpp:68
 msgid "Camera"
@@ -167,7 +155,7 @@ msgstr "Manipulieren"
 msgid "Select"
 msgstr "Auswählen"
 
-#: ..\..\radiant\selection\SelectionMouseTools.cpp:194 xml_file_content.cpp:4
+#: ..\..\radiant\selection\SelectionMouseTools.cpp:194 xml_file_content.cpp:3
 msgid "Select Faces"
 msgstr "Faces auswählen"
 
@@ -291,7 +279,7 @@ msgid "Command"
 msgstr "Befehl"
 
 #: ..\..\radiant\ui\commandlist\CommandList.cpp:62
-#: ..\..\libs\wxutil\KeyValueTable.cpp:41
+#: ..\..\libs\wxutil\dataview\KeyValueTable.cpp:41
 msgid "Key"
 msgstr "Schlüssel"
 
@@ -385,7 +373,7 @@ msgstr "Shader auswählen"
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:202
 #: ..\..\radiant\ui\eclasstree\EClassTree.cpp:148
 #: ..\..\radiant\ui\einspector\EntityInspector.cpp:463
-#: ..\..\libs\wxutil\KeyValueTable.cpp:44
+#: ..\..\libs\wxutil\dataview\KeyValueTable.cpp:44
 msgid "Value"
 msgstr "Wert"
 
@@ -396,7 +384,7 @@ msgstr "Attribut"
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:338
 #: ..\..\radiant\ui\common\TexturePreviewCombo.cpp:80
 #: ..\..\radiant\ui\mapinfo\ShaderInfoTab.cpp:60
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:452
+#: ..\..\radiant\ui\mediabrowser\MediaBrowserTreeView.cpp:235
 #: ..\..\radiant\ui\shaderclipboard\ShaderClipboardStatus.h:50
 #: xml_file_content.cpp:14
 msgid "Shader"
@@ -405,6 +393,7 @@ msgstr "Shader"
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:339
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:357
 #: ..\..\radiant\ui\common\TexturePreviewCombo.cpp:81
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:258
 msgid "Defined in"
 msgstr "Definiert in"
 
@@ -442,12 +431,11 @@ msgid "Entity Class Tree"
 msgstr "Entity-Klassenbaum"
 
 #: ..\..\radiant\ui\eclasstree\EClassTree.cpp:43
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:677
 msgid "Loading, please wait..."
 msgstr "Lade, bitte warten..."
 
 #: ..\..\radiant\ui\eclasstree\EClassTree.cpp:132
-#: ..\..\libs\wxutil\EntityClassChooser.cpp:360
+#: ..\..\libs\wxutil\EntityClassChooser.cpp:311
 msgid "Classname"
 msgstr "Klassenname"
 
@@ -558,11 +546,11 @@ msgstr "Skin auswählen"
 msgid "Skin"
 msgstr "Skin"
 
-#: ..\..\radiant\ui\einspector\SkinChooser.cpp:152
+#: ..\..\radiant\ui\einspector\SkinChooser.cpp:154
 msgid "Matching skins"
 msgstr "Passende Skins"
 
-#: ..\..\radiant\ui\einspector\SkinChooser.cpp:171
+#: ..\..\radiant\ui\einspector\SkinChooser.cpp:174
 msgid "All skins"
 msgstr "Alle Skins"
 
@@ -604,6 +592,43 @@ msgstr "Kamera auf ausgewählte Entity richten"
 #: ..\..\radiant\ui\entitylist\EntityList.cpp:87
 msgid "List visible nodes only"
 msgstr "Nur sichtbare Elemente anzeigen"
+
+#: ..\..\radiant\ui\favourites\FavouritesBrowser.cpp:25
+#: ..\..\radiant\ui\mediabrowser\MediaBrowserTreeView.cpp:29
+msgid "Apply to selection"
+msgstr "Auf Auswahl anwenden"
+
+#: ..\..\radiant\ui\favourites\FavouritesBrowser.cpp:28
+#: ..\..\radiant\ui\mediabrowser\MediaBrowserTreeView.cpp:39
+#: ..\..\libs\wxutil\dataview\ResourceTreeView.cpp:16
+msgid "Remove from Favourites"
+msgstr "Aus Favoriten entfernen"
+
+#: ..\..\radiant\ui\favourites\FavouritesBrowser.cpp:100
+msgid "Materials"
+msgstr "Materialien"
+
+#: ..\..\radiant\ui\favourites\FavouritesBrowser.cpp:105
+#: ..\..\radiant\ui\mapinfo\ModelInfoTab.cpp:15
+msgid "Models"
+msgstr "Modelle"
+
+#: ..\..\radiant\ui\favourites\FavouritesBrowser.cpp:110
+msgid "EntityDefs"
+msgstr "EntityDefs"
+
+#: ..\..\radiant\ui\favourites\FavouritesBrowser.cpp:115
+msgid "Sound Shaders"
+msgstr "Soundshader"
+
+#: ..\..\radiant\ui\favourites\FavouritesBrowser.cpp:134
+msgid "Show full Path"
+msgstr "Kompletten Pfad anzeigen"
+
+#: ..\..\radiant\ui\favourites\FavouritesBrowser.cpp:256
+#: ..\..\radiant\ui\favourites\FavouritesBrowser.cpp:259
+msgid "Favourites"
+msgstr "Favoriten"
 
 #: ..\..\radiant\ui\FileOverwriteConfirmationHandler.h:35
 msgid "Confirm overwrite"
@@ -871,8 +896,8 @@ msgstr "Einstellungen/Kompatibilität"
 msgid "Disable Windows Desktop Composition"
 msgstr "Desktopgestaltung deaktivieren"
 
-#: ..\..\radiant\ui\mainframe\MainFrame.cpp:446
-#: ..\..\radiant\ui\mainframe\MainFrame.cpp:449
+#: ..\..\radiant\ui\mainframe\MainFrame.cpp:456
+#: ..\..\radiant\ui\mainframe\MainFrame.cpp:459
 msgid "Console"
 msgstr "Konsole"
 
@@ -941,10 +966,6 @@ msgstr "Knotenanzahl"
 msgid "Map Info"
 msgstr "Map-Information"
 
-#: ..\..\radiant\ui\mapinfo\ModelInfoTab.cpp:15
-msgid "Models"
-msgstr "Modelle"
-
 #: ..\..\radiant\ui\mapinfo\ModelInfoTab.cpp:17
 msgid "Select entities using this model"
 msgstr "Alle Entities mit diesem Model auswählen"
@@ -978,12 +999,12 @@ msgid "Shaders"
 msgstr "Shader"
 
 #: ..\..\radiant\ui\mapinfo\ShaderInfoTab.cpp:20
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:65
+#: ..\..\radiant\ui\mediabrowser\MediaBrowserTreeView.cpp:35
 msgid "Select elements using this shader"
 msgstr "Alle Elemente mit diesem Shader auswählen"
 
 #: ..\..\radiant\ui\mapinfo\ShaderInfoTab.cpp:21
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:66
+#: ..\..\radiant\ui\mediabrowser\MediaBrowserTreeView.cpp:36
 msgid "Deselect elements using this shader"
 msgstr "Alle Elemente mit diesem Shader deselektieren"
 
@@ -1020,47 +1041,28 @@ msgstr "Mod-Ressourcen durchsuchen"
 msgid "Browse custom PAK:"
 msgstr "PAK-File durchsuchen:"
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:54
-msgid "Load in Textures view"
-msgstr "In Texturbrowser laden"
-
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:57
-msgid "Apply to selection"
-msgstr "Auf Auswahl anwenden"
-
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:60
-#: ..\..\radiant\uimanager\SoundChooser.cpp:29
-msgid "Show Shader Definition"
-msgstr "Zeige Shaderdefinition"
-
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:63
-msgid "Other Materials"
-msgstr "Andere Shader"
-
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:68
-msgid "Add to Favourites"
-msgstr "Zu Favoriten hinzufügen"
-
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:69
-msgid "Remove from Favourites"
-msgstr "Aus Favoriten entfernen"
-
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:426
-msgid "Show All"
-msgstr "Alle anzeigen"
-
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:427
-msgid "Show Favourites"
-msgstr "Favoriten anzeigen"
-
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:576
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:579
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:98
+#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:101
 msgid "Media"
 msgstr "Media"
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowser.cpp:753
-msgid "No favourites added so far"
-msgstr "Keine Favoriten vorhanden"
+#: ..\..\radiant\ui\mediabrowser\MediaBrowserTreeView.cpp:24
+msgid "Other Materials"
+msgstr "Andere Shader"
+
+#: ..\..\radiant\ui\mediabrowser\MediaBrowserTreeView.cpp:26
+msgid "Load in Textures view"
+msgstr "In Texturbrowser laden"
+
+#: ..\..\radiant\ui\mediabrowser\MediaBrowserTreeView.cpp:32
+#: ..\..\radiant\uimanager\SoundChooser.cpp:34
+msgid "Show Shader Definition"
+msgstr "Zeige Shaderdefinition"
+
+#: ..\..\radiant\ui\mediabrowser\MediaBrowserTreeView.cpp:38
+#: ..\..\libs\wxutil\dataview\ResourceTreeView.cpp:15
+msgid "Add to Favourites"
+msgstr "Zu Favoriten hinzufügen"
 
 #: ..\..\radiant\ui\mediabrowser\TextureDirectoryLoader.h:35
 msgid "Loading textures"
@@ -1116,51 +1118,50 @@ msgstr "Material"
 msgid "Visible"
 msgstr "Sichtbar"
 
-#: ..\..\radiant\ui\modelselector\ModelPopulator.h:104
+#: ..\..\radiant\ui\modelselector\ModelPopulator.h:89
 msgid "Building tree..."
 msgstr "Baue Hierarchie auf..."
 
-#: ..\..\radiant\ui\modelselector\ModelPopulator.h:149
-#: ..\..\radiant\ui\modelselector\ModelPopulator.h:157
+#: ..\..\radiant\ui\modelselector\ModelPopulator.h:95
+msgid "Adding Model Definitions..."
+msgstr "Füge Model-Definitionen hinzu..."
+
+#: ..\..\radiant\ui\modelselector\ModelPopulator.h:98
+msgid "modelDefs"
+msgstr "modelDefs"
+
+#: ..\..\radiant\ui\modelselector\ModelPopulator.h:166
+#: ..\..\radiant\ui\modelselector\ModelPopulator.h:173
 msgid "{0:d} models loaded"
 msgstr "{0:d} Modelle geladen"
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:37
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:38
 msgid "Choose Model"
 msgstr "Modell auswählen"
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:354
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:245
 msgid "Model name"
 msgstr "Modellname"
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:355
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:246
 msgid "Skin name"
 msgstr "Skinname"
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:356
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:247
 msgid "Total vertices"
 msgstr "Gesamte Vertices"
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:357
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:248
 msgid "Total polys"
 msgstr "Gesamte Polygone"
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:358
+#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:249
 msgid "Material surfaces"
 msgstr "Anzahl Oberflächen"
 
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:381
+#: ..\..\radiant\ui\modelselector\ModelTreeView.cpp:14
 msgid "Model Path"
 msgstr "Modell-Pfad"
-
-#: ..\..\radiant\ui\modelselector\ModelSelector.cpp:404
-#: ..\..\radiant\ui\particles\ParticlesChooser.cpp:158
-#: ..\..\radiant\uimanager\SoundChooser.cpp:213
-#: ..\..\radiant\uimanager\SoundChooser.cpp:381
-#: ..\..\libs\wxutil\EntityClassChooser.cpp:350
-#: ..\..\libs\wxutil\fsview\FileSystemView.cpp:120
-msgid "Loading..."
-msgstr "Lade..."
 
 #: ..\..\radiant\ui\mousetool\BindToolDialog.cpp:16
 msgid "Select new Binding: {0}"
@@ -1289,7 +1290,7 @@ msgid "Particle Editor"
 msgstr "Partikeleditor"
 
 #: ..\..\radiant\ui\particles\ParticleEditor.cpp:158
-#: ..\..\radiant\ui\particles\ParticlesChooser.cpp:66
+#: ..\..\radiant\ui\particles\ParticlesChooser.cpp:57
 msgid "Particle"
 msgstr "Partikel"
 
@@ -1335,8 +1336,8 @@ msgstr "Es ist nicht möglich einen Partikel ohne Namen zu erstellen."
 msgid "This name is already in use."
 msgstr "Dieser Name ist bereits in Verwendung."
 
-#: ..\..\radiant\ui\particles\ParticlesChooser.cpp:37
-msgid "Choose particles"
+#: ..\..\radiant\ui\particles\ParticlesChooser.cpp:22
+msgid "Choose Particle"
 msgstr "Partikel auswählen"
 
 #: ..\..\radiant\ui\patch\BulgePatchDialog.cpp:11
@@ -1421,7 +1422,7 @@ msgstr "Zuletzt geöffneten Pfad auswählen:"
 msgid "Browse custom path:"
 msgstr "Pfad durchsuchen:"
 
-#: ..\..\radiant\ui\prefabselector\PrefabSelector.cpp:468
+#: ..\..\radiant\ui\prefabselector\PrefabSelector.cpp:469
 msgid "<no description>"
 msgstr "<keine Beschreibung>"
 
@@ -1729,7 +1730,7 @@ msgid "Default Scale:"
 msgstr "Standardskalierung:"
 
 #: ..\..\radiant\ui\surfaceinspector\SurfaceInspector.cpp:75
-#: xml_file_content.cpp:9
+#: xml_file_content.cpp:8
 msgid "Texture Lock"
 msgstr "Textur-Lock"
 
@@ -1737,12 +1738,12 @@ msgstr "Textur-Lock"
 msgid "Both fit values must be > 0."
 msgstr "Beide Fit-Werte müssen größer als 0 sein."
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:43
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:44
 msgid "Seek in Media Browser"
 msgstr "In Media Browser zeigen"
 
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:240
-#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:795
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:243
+#: ..\..\radiant\ui\texturebrowser\TextureBrowser.cpp:814
 msgid "No shader"
 msgstr "Kein Shader"
 
@@ -1932,15 +1933,15 @@ msgstr "Namen für das neue Schema eingeben:"
 msgid "A Scheme with that name already exists."
 msgstr "Es existiert bereits ein Schema mit diesem Namen."
 
-#: ..\..\radiant\uimanager\SoundChooser.cpp:150
+#: ..\..\radiant\uimanager\SoundChooser.cpp:144
 msgid "Choose sound"
 msgstr "Sound auswählen"
 
-#: ..\..\radiant\uimanager\SoundChooser.cpp:159 xml_file_content.cpp:22
+#: ..\..\radiant\uimanager\SoundChooser.cpp:151 xml_file_content.cpp:22
 msgid "Reload Sounds"
 msgstr "Sounds neu laden"
 
-#: ..\..\radiant\uimanager\SoundChooser.cpp:193
+#: ..\..\radiant\uimanager\SoundChooser.cpp:182
 msgid "Soundshader"
 msgstr "Soundshader"
 
@@ -2081,7 +2082,7 @@ msgid "Drag Camera"
 msgstr "Kamera verschieben"
 
 #: ..\..\radiant\xyview\tools\ClipperTool.cpp:25 xml_file_content.cpp:159
-#: xml_file_content.cpp:13 xml_file_content.cpp:18
+#: xml_file_content.cpp:13 xml_file_content.cpp:17
 msgid "Clipper"
 msgstr "Clipper"
 
@@ -2592,57 +2593,55 @@ msgstr "Map-Fixup..."
 msgid "Edit Package Info (darkmod.txt)..."
 msgstr "Missions-Info editieren (darkmod.txt)..."
 
-#: ..\..\plugins\dm.gameconnection\GameConnection.cpp:244
+#: ..\..\plugins\dm.gameconnection\GameConnection.cpp:144
+msgid "Game connection error"
+msgstr ""
+
+#: ..\..\plugins\dm.gameconnection\GameConnection.cpp:168
+#: ..\..\plugins\dm.gameconnection\GameConnection.cpp:176
+msgid "Failed to connect to game process"
+msgstr ""
+
+#: ..\..\plugins\dm.gameconnection\GameConnection.cpp:271
 msgid "Connection"
 msgstr "Verbindung"
 
-#: ..\..\plugins\dm.gameconnection\GameConnection.cpp:246
-msgid "Enable camera synchronization"
+#: ..\..\plugins\dm.gameconnection\GameConnection.cpp:274
+msgid "Game position follows DarkRadiant camera"
 msgstr ""
 
-#: ..\..\plugins\dm.gameconnection\GameConnection.cpp:248
-msgid "Disable camera synchronization"
+#: ..\..\plugins\dm.gameconnection\GameConnection.cpp:276
+#: ..\..\plugins\dm.gameconnection\GameConnection.cpp:324
+msgid "Move camera to current game position"
 msgstr ""
 
-#: ..\..\plugins\dm.gameconnection\GameConnection.cpp:250
-msgid "Sync camera back now"
+#: ..\..\plugins\dm.gameconnection\GameConnection.cpp:280
+msgid "Game reloads .map file on save"
 msgstr ""
 
-#: ..\..\plugins\dm.gameconnection\GameConnection.cpp:252
-msgid "Reload map from .map file"
-msgstr "Von .map-Datei neu laden"
-
-#: ..\..\plugins\dm.gameconnection\GameConnection.cpp:254
-msgid "Enable automation .map reload on save"
+#: ..\..\plugins\dm.gameconnection\GameConnection.cpp:282
+msgid "Tell game to reload .map file now"
 msgstr ""
 
-#: ..\..\plugins\dm.gameconnection\GameConnection.cpp:256
-msgid "Disable automation .map reload on save"
+#: ..\..\plugins\dm.gameconnection\GameConnection.cpp:286
+msgid "Update entities on every change"
 msgstr ""
 
-#: ..\..\plugins\dm.gameconnection\GameConnection.cpp:258
-msgid "Disable map update mode"
+#: ..\..\plugins\dm.gameconnection\GameConnection.cpp:288
+msgid "Update entities now"
 msgstr ""
 
-#: ..\..\plugins\dm.gameconnection\GameConnection.cpp:260
-msgid "Enable map update mode"
-msgstr ""
-
-#: ..\..\plugins\dm.gameconnection\GameConnection.cpp:262
-msgid "Always update map immediately after change"
-msgstr ""
-
-#: ..\..\plugins\dm.gameconnection\GameConnection.cpp:264
-msgid "Update map right now"
-msgstr ""
-
-#: ..\..\plugins\dm.gameconnection\GameConnection.cpp:266
+#: ..\..\plugins\dm.gameconnection\GameConnection.cpp:292
 msgid "Pause game"
 msgstr "Spiel pausieren"
 
-#: ..\..\plugins\dm.gameconnection\GameConnection.cpp:268
+#: ..\..\plugins\dm.gameconnection\GameConnection.cpp:294
 msgid "Respawn selected entities"
 msgstr "Ausgewählte Entities neu spawnen"
+
+#: ..\..\plugins\dm.gameconnection\GameConnection.cpp:318
+msgid "Enable game camera sync with DarkRadiant camera"
+msgstr ""
 
 #: ..\..\plugins\dm.gui\GuiSelector.cpp:22
 msgid "Choose a Gui Definition..."
@@ -3303,17 +3302,17 @@ msgstr "Start"
 msgid "Diff."
 msgstr "Schw."
 
-#: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:260
+#: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:270
 msgid "Exception occurred: "
 msgstr "Ausnahmefehler:"
 
-#: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:437
+#: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:460
 msgid "Unable to create Objective Entity: classes not defined in registry."
 msgstr ""
 "Kann Ziel-Entity nicht erzeugen: die Entityklassen sind nicht in der "
 "Registierung definiert."
 
-#: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:466
+#: ..\..\plugins\dm.objectives\ObjectivesEditor.cpp:489
 msgid "Unable to create Objective Entity: class '{0}' not found."
 msgstr "Kann Ziel-Entity nicht erzeugen: EntityKlasse '{0}' nicht gefunden."
 
@@ -3576,6 +3575,42 @@ msgstr "Konnte die bestehende Datei nicht auf .bak umbenennen: {0}"
 msgid "Could not rename the temporary file: {0}"
 msgstr "Konnte die temporäre Datei nicht umbenennen: {0}"
 
+#: ..\..\libs\wxutil\dataview\ResourceTreeView.cpp:131
+msgid "No favourites added so far"
+msgstr "Keine Favoriten vorhanden"
+
+#: ..\..\libs\wxutil\dataview\ResourceTreeView.cpp:378
+msgid "Loading resources..."
+msgstr "Lade Ressourcen..."
+
+#: ..\..\libs\wxutil\dataview\ResourceTreeViewToolbar.cpp:28
+msgid "Show All"
+msgstr "Alle anzeigen"
+
+#: ..\..\libs\wxutil\dataview\ResourceTreeViewToolbar.cpp:29
+msgid "Show Favourites"
+msgstr "Favoriten anzeigen"
+
+#: ..\..\libs\wxutil\dataview\ResourceTreeViewToolbar.cpp:46
+msgid ""
+"Enter search text to filter the tree,\n"
+"use arrow keys to navigate"
+msgstr ""
+
+#: ..\..\libs\wxutil\dataview\ResourceTreeViewToolbar.cpp:57
+#: ..\..\libs\wxutil\dataview\TreeView.cpp:299
+msgid "Go to next match"
+msgstr "Zur nächsten Übereinstimmung"
+
+#: ..\..\libs\wxutil\dataview\ResourceTreeViewToolbar.cpp:58
+#: ..\..\libs\wxutil\dataview\TreeView.cpp:300
+msgid "Go to previous match"
+msgstr "Zur vorherigen Übereinstimmung"
+
+#: ..\..\libs\wxutil\dataview\TreeView.cpp:286
+msgid "Find: "
+msgstr "Finde:"
+
 #: ..\..\libs\wxutil\dialog\MessageBox.cpp:20 xml_file_content.cpp:8
 #: xml_file_content.cpp:10 xml_file_content.cpp:13 xml_file_content.cpp:4
 #: xml_file_content.cpp:3 xml_file_content.cpp:21
@@ -3586,7 +3621,7 @@ msgstr "Speichern"
 msgid "Close without saving"
 msgstr "Schließen ohne zu speichern"
 
-#: ..\..\libs\wxutil\EntityClassChooser.cpp:26
+#: ..\..\libs\wxutil\EntityClassChooser.cpp:29
 msgid "Create entity"
 msgstr "Neue Entity"
 
@@ -3609,6 +3644,10 @@ msgstr "Ort"
 #: ..\..\libs\wxutil\fsview\FileSystemView.cpp:54
 msgid "Size"
 msgstr "Größe"
+
+#: ..\..\libs\wxutil\fsview\FileSystemView.cpp:120
+msgid "Loading..."
+msgstr "Lade..."
 
 #: ..\..\libs\wxutil\fsview\Populator.cpp:94
 msgid "[in {0}]"
@@ -3670,18 +3709,6 @@ msgstr "Partikel-Definitionen neu laden"
 #: ..\..\libs\wxutil\preview\RenderPreview.cpp:106 xml_file_content.cpp:1
 msgid "Filters"
 msgstr "Filter"
-
-#: ..\..\libs\wxutil\TreeView.cpp:257
-msgid "Find: "
-msgstr "Finde:"
-
-#: ..\..\libs\wxutil\TreeView.cpp:270
-msgid "Go to next match"
-msgstr "Zur nächsten Übereinstimmung"
-
-#: ..\..\libs\wxutil\TreeView.cpp:271
-msgid "Go to previous match"
-msgstr "Zur vorherigen Übereinstimmung"
 
 #: xml_file_content.cpp:1
 msgid "&File"
@@ -4091,7 +4118,7 @@ msgstr "Verschiebe nach oben"
 msgid "Nudge Down"
 msgstr "Verschiebe nach unten"
 
-#: xml_file_content.cpp:115 xml_file_content.cpp:16
+#: xml_file_content.cpp:115 xml_file_content.cpp:15
 msgid "Rotate"
 msgstr "Drehen"
 
@@ -4123,7 +4150,7 @@ msgstr "Spiegeln um Y-Achse"
 msgid "Mirror &Z"
 msgstr "Spiegeln um Z-Achse"
 
-#: xml_file_content.cpp:123 xml_file_content.cpp:10
+#: xml_file_content.cpp:123 xml_file_content.cpp:9
 msgid "Rotate Objects independently"
 msgstr "Objekte unabhängig voneinander drehen"
 
@@ -4736,67 +4763,67 @@ msgid "Select Related Items"
 msgstr "Verbundene Objekte auswählen"
 
 #: xml_file_content.cpp:1
-msgid "Cubic clip the camera view"
-msgstr "Far-Clip-Ebene verwenden"
-
-#: xml_file_content.cpp:2
 msgid "Select Vertices"
 msgstr "Vertices auswählen"
 
-#: xml_file_content.cpp:3
+#: xml_file_content.cpp:2
 msgid "Select Edges"
 msgstr "Kanten auswählen"
 
-#: xml_file_content.cpp:5
+#: xml_file_content.cpp:4
 msgid "Select Entities"
 msgstr "Entities auswählen"
 
-#: xml_file_content.cpp:6
+#: xml_file_content.cpp:5
 msgid "Select Group Parts"
 msgstr "Teile einer Gruppe auswähen"
 
-#: xml_file_content.cpp:7
+#: xml_file_content.cpp:6
 msgid "Show/hide all light volumes"
 msgstr "Zeige/verberge alle Lichtvolumina"
 
-#: xml_file_content.cpp:8
+#: xml_file_content.cpp:7
 msgid "Show/hide all speaker volumes"
 msgstr "Zeige/verberge alle Speaker-Volumina"
 
-#: xml_file_content.cpp:11
+#: xml_file_content.cpp:10
 msgid "Rotate func_* Entities around origin"
 msgstr "Drehe func_*-Entities um deren Ursprung"
 
-#: xml_file_content.cpp:12
+#: xml_file_content.cpp:11
 msgid "Snap Rotation Pivot to Grid"
 msgstr "Rotationspivot am Raster ausrichten"
 
-#: xml_file_content.cpp:13
+#: xml_file_content.cpp:12
 msgid "Drag-resize entities symmetrically (leave origin unchanged)"
 msgstr ""
 "Symmetrisches Verändern von Entities beim Ziehen (Ursprung bleibt "
 "unverändert)"
 
-#: xml_file_content.cpp:14
+#: xml_file_content.cpp:13
 msgid "Offset cloned objects by one grid unit to the right and downwards."
 msgstr ""
 "Duplizierte Objekte um eine Rastereinheit nach rechts unten verschieben"
 
-#: xml_file_content.cpp:15
+#: xml_file_content.cpp:14
 msgid "Translate"
 msgstr "Translahieren"
 
-#: xml_file_content.cpp:17
+#: xml_file_content.cpp:16
 msgid "Resize"
 msgstr "Größe ändern"
 
-#: xml_file_content.cpp:19
+#: xml_file_content.cpp:18
 msgid "Model Scaler"
 msgstr "Modell-Skalierung"
 
-#: xml_file_content.cpp:20
+#: xml_file_content.cpp:19
 msgid "Hide Unused"
 msgstr "Nicht Benutztes verbergen"
+
+#: xml_file_content.cpp:20
+msgid "Show Favourites only"
+msgstr "Favoriten anzeigen"
 
 #: xml_file_content.cpp:21
 msgid "Toggle Grid"
@@ -4886,10 +4913,14 @@ msgid "stopTimeButton"
 msgstr "stopTimeButton"
 
 #: xml_file_content.cpp:7
+msgid "clipPlaneToggleButton"
+msgstr "clipPlaneToggleButton"
+
+#: xml_file_content.cpp:8
 msgid "clipPlaneInButton"
 msgstr "clipPlaneInButton"
 
-#: xml_file_content.cpp:8
+#: xml_file_content.cpp:9
 msgid "clipPlaneOutButton"
 msgstr "clipPlaneOutButton"
 
@@ -5910,6 +5941,12 @@ msgstr "Response-Effekte"
 msgid "Custom Stims"
 msgstr "Benutzerdefinierte Stims"
 
+#~ msgid "Reload map from .map file"
+#~ msgstr "Von .map-Datei neu laden"
+
+#~ msgid "Cubic clip the camera view"
+#~ msgstr "Far-Clip-Ebene verwenden"
+
 #~ msgid "Settings/Primitives"
 #~ msgstr "Einstellungen/Primitive"
 
@@ -6031,9 +6068,6 @@ msgstr "Benutzerdefinierte Stims"
 
 #~ msgid "unnamed.map"
 #~ msgstr "unbenannt.map"
-
-#~ msgid "Loading textures..."
-#~ msgstr "Lade Texturen..."
 
 #~ msgid "Preprocessing"
 #~ msgstr "Vorverarbeitung"
