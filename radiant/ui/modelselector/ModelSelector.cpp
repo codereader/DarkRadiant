@@ -171,6 +171,9 @@ void ModelSelector::onTreeViewPopulationFinished(wxutil::ResourceTreeView::Popul
 {
 	findNamedObject<wxButton>(this, "ModelSelectorReloadModelsButton")->Enable(true);
 	findNamedObject<wxButton>(this, "ModelSelectorReloadSkinsButton")->Enable(true);
+
+    // The modelDefs folder should start in collapsed state
+    _treeView->CollapseModelDefsFolder();
 }
 
 // Show the dialog and enter recursive main loop

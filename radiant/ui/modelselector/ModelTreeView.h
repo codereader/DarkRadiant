@@ -45,6 +45,8 @@ public:
     std::string GetSelectedModelPath();
     std::string GetSelectedSkin();
 
+    void CollapseModelDefsFolder();
+
 protected:
     bool IsTreeModelRowVisible(wxutil::TreeModel::Row& row) override;
 

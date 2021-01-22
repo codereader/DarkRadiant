@@ -95,11 +95,12 @@ protected:
         reportProgress(_("Adding Model Definitions..."));
 
         // Model Defs
+        auto modelDefName = _("modelDefs");
         wxutil::TreeModel::Row modelDefs(model->AddItem());
-        modelDefs[_columns.iconAndName] = wxVariant(wxDataViewIconText(_("Model Definitions"), folderIcon));
-        modelDefs[_columns.fullName] = _("Model Definitions");
+        modelDefs[_columns.iconAndName] = wxVariant(wxDataViewIconText(modelDefName, folderIcon));
+        modelDefs[_columns.fullName] = modelDefName;
         modelDefs[_columns.modelPath] = "";
-        modelDefs[_columns.leafName] = _("Model Definitions");
+        modelDefs[_columns.leafName] = modelDefName;
         modelDefs[_columns.skin] = std::string();
         modelDefs[_columns.isSkin] = false;
         modelDefs[_columns.isFolder] = true;

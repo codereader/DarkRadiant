@@ -62,6 +62,24 @@ std::string ModelTreeView::GetSelectedSkin()
     return GetColumnValue(Columns().skin);
 }
 
+void ModelTreeView::CollapseModelDefsFolder()
+{
+    // Find the modelDefs item in the top-level children and collapse it
+    wxDataViewItemArray children;
+    GetTreeModel()->GetChildren(GetTreeModel()->GetRoot(), children);
+
+    for (auto& item : children)
+    {
+        wxutil::TreeModel::Row row(item, *GetModel());
+
+        if (row[Columns().isModelDefFolder].getBool())
+        {
+            Collapse(item);
+            break;
+        }
+    }
+}
+
 bool ModelTreeView::IsTreeModelRowVisible(wxutil::TreeModel::Row& row)
 {
     if (!_showSkins && row[Columns().isSkin].getBool())
