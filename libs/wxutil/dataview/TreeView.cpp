@@ -84,6 +84,19 @@ bool TreeView::AssociateModel(wxDataViewModel* model)
     // even if it's the same model again, the tree might have changed.
     UnselectAll();
 
+#ifdef __WXGTK__ 
+	// In case EnsureVisible has been called in the past with no idle event
+	// in between, the wxDataViewCtrl::m_ensureVisibleDefered member will 
+	// still be pointing to the old tree model.
+	// The member is set in EnsureVisible and cleared only after processing,
+	// so the idle event would be running into a stale pointer crash.
+	// Call EnsureVisible() with an not-OK item to clear it before switching models.  
+	if (GetModel() != nullptr)
+	{ 
+		EnsureVisible(wxDataViewItem(nullptr));
+	}
+#endif
+
     // Pass the call to the regular routine
     return wxDataViewCtrl::AssociateModel(model);
 }
