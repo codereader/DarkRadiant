@@ -1,0 +1,9 @@
+entityDef speaker 
+{
+	"editor_color"					"0 1 0"
+	"editor_mins"					"-8 -8 -8"
+	"editor_maxs"					"8 8 8"
+
+	"editor_displayFolder"			"Sound"
+	"spawnclass"					"idSound"
+}

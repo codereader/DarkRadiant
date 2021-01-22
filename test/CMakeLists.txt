@@ -22,6 +22,7 @@ add_executable(drtest
                Models.cpp
                PatchIterators.cpp
                PatchWelding.cpp
+               Prefabs.cpp
                SelectionAlgorithm.cpp
                Selection.cpp
                VFS.cpp

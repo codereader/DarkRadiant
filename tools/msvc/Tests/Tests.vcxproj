@@ -91,6 +91,7 @@
     <ClCompile Include="..\..\..\test\ModelScale.cpp" />
     <ClCompile Include="..\..\..\test\PatchIterators.cpp" />
     <ClCompile Include="..\..\..\test\PatchWelding.cpp" />
+    <ClCompile Include="..\..\..\test\Prefabs.cpp" />
     <ClCompile Include="..\..\..\test\Selection.cpp" />
     <ClCompile Include="..\..\..\test\SelectionAlgorithm.cpp" />
     <ClCompile Include="..\..\..\test\VFS.cpp" />
