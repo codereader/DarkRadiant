@@ -22,14 +22,10 @@ public:
         wxutil::TreeModel::Column isOtherMaterialsFolder;
     };
 
-private:
-    MediaBrowserTreeView::TreeColumns _columns;
-
 public:
     MediaBrowserTreeView(wxWindow* parent);
 
-    const TreeColumns& GetColumns() const;
-
+    const TreeColumns& Columns() const;
     void SetTreeMode(TreeMode mode) override;
 
     // Loads all the materials

@@ -30,7 +30,6 @@ public:
 
 private:
     bool _showSkins;
-    TreeColumns _columns;
 
     wxDataViewItem _progressItem;
     wxIcon _modelIcon;
@@ -48,6 +47,8 @@ public:
 
 protected:
     bool IsTreeModelRowVisible(wxutil::TreeModel::Row& row) override;
+
+    const TreeColumns& Columns() const;
 
 private:
     std::string GetColumnValue(const wxutil::TreeModel::Column& column);

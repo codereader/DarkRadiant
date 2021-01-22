@@ -6,24 +6,30 @@ namespace ui
 {
 
 ModelTreeView::ModelTreeView(wxWindow* parent) :
-    ResourceTreeView(parent, _columns, wxBORDER_STATIC | wxDV_NO_HEADER),
+    ResourceTreeView(parent, Columns(), wxBORDER_STATIC | wxDV_NO_HEADER),
     _showSkins(true)
 {
     // Single visible column, containing the directory/shader name and the icon
     AppendIconTextColumn(
-        _("Model Path"), _columns.iconAndName.getColumnIndex(),
+        _("Model Path"), Columns().iconAndName.getColumnIndex(),
         wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE,
         wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE
     );
 
     // Use the TreeModel's full string search function
-    AddSearchColumn(_columns.iconAndName);
+    AddSearchColumn(Columns().iconAndName);
     EnableFavouriteManagement(decl::Type::Model);
+}
+
+const ModelTreeView::TreeColumns& ModelTreeView::Columns() const
+{
+    static TreeColumns _treeColumns;
+    return _treeColumns;
 }
 
 void ModelTreeView::Populate()
 {
-    ResourceTreeView::Populate(std::make_shared<ModelPopulator>(_columns));
+    ResourceTreeView::Populate(std::make_shared<ModelPopulator>(Columns()));
 }
 
 void ModelTreeView::SetShowSkins(bool showSkins)
@@ -48,17 +54,17 @@ void ModelTreeView::SetShowSkins(bool showSkins)
 
 std::string ModelTreeView::GetSelectedModelPath()
 {
-    return GetColumnValue(_columns.modelPath);
+    return GetColumnValue(Columns().modelPath);
 }
 
 std::string ModelTreeView::GetSelectedSkin()
 {
-    return GetColumnValue(_columns.skin);
+    return GetColumnValue(Columns().skin);
 }
 
 bool ModelTreeView::IsTreeModelRowVisible(wxutil::TreeModel::Row& row)
 {
-    if (!_showSkins && row[_columns.isSkin].getBool())
+    if (!_showSkins && row[Columns().isSkin].getBool())
     {
         return false; // it's a skin, and we shouldn't show it
     }

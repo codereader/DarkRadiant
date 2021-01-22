@@ -230,15 +230,15 @@ protected:
 };
 
 MediaBrowserTreeView::MediaBrowserTreeView(wxWindow* parent) :
-    ResourceTreeView(parent, _columns, wxDV_NO_HEADER)
+    ResourceTreeView(parent, Columns(), wxDV_NO_HEADER)
 {
-    auto* textCol = AppendIconTextColumn(_("Shader"), _columns.iconAndName.getColumnIndex(),
+    auto* textCol = AppendIconTextColumn(_("Shader"), Columns().iconAndName.getColumnIndex(),
         wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE);
 
     SetExpanderColumn(textCol);
     textCol->SetWidth(300);
 
-    AddSearchColumn(_columns.iconAndName);
+    AddSearchColumn(Columns().iconAndName);
     EnableFavouriteManagement(decl::Type::Material);
 
     // The wxWidgets algorithm sucks at sorting large flat lists of strings,
@@ -248,8 +248,9 @@ MediaBrowserTreeView::MediaBrowserTreeView(wxWindow* parent) :
     Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &MediaBrowserTreeView::_onTreeViewItemActivated, this);
 }
 
-const MediaBrowserTreeView::TreeColumns& MediaBrowserTreeView::GetColumns() const
+const MediaBrowserTreeView::TreeColumns& MediaBrowserTreeView::Columns() const
 {
+    static TreeColumns _columns;
     return _columns;
 }
 
@@ -265,7 +266,7 @@ void MediaBrowserTreeView::SetTreeMode(MediaBrowserTreeView::TreeMode mode)
 
 void MediaBrowserTreeView::Populate()
 {
-    ResourceTreeView::Populate(std::make_shared<MediaPopulator>(_columns));
+    ResourceTreeView::Populate(std::make_shared<MediaPopulator>(Columns()));
 }
 
 void MediaBrowserTreeView::PopulateContextMenu(wxutil::PopupMenu& popupMenu)

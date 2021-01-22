@@ -46,9 +46,6 @@ ResourceTreeView::ResourceTreeView(wxWindow* parent, const TreeModel::Ptr& model
     _columnToSelectAfterPopulation(nullptr),
     _declType(decl::Type::None)
 {
-    // Note that we need to avoid accessing the _columns reference in the constructor
-    // since it is likely owned by subclasses and might not be ready yet
-
     _treeStore = model;
 
     if (!_treeStore)
