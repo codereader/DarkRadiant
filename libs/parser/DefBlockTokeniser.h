@@ -143,27 +143,30 @@ public:
 				// Fall through
 
 			case TOKEN_STARTED:
-				// Here a delimiter indicates a successful token match
-                if (isDelim(ch)) {
+                if (isDelim(ch))
+                {
+                    // A delimiter indicates the name is complete
                     _state = SEARCHING_BLOCK;
-					continue;
+                    continue;
                 }
-
-                // The character is pointing at a non-delimiter. Switch on it.
-                switch (ch) {
+                else if (ch == _blockStartChar)
+                {
+                    // Some defs don't have whitespaces between name and block
+                    _state = SEARCHING_BLOCK;
+                    continue;
+                }
+                else if (ch == '/')
+                {
                     // Found a slash, possibly start of comment
-                    case '/':
-                        _state = FORWARDSLASH;
-                        ++next;
-                        continue; // skip slash, will need to add it back if this is not a comment
-
-                    // General case. Token lasts until next delimiter.
-                    default:
-                        tok.name += ch;
-                        ++next;
-                        continue;
+                    _state = FORWARDSLASH;
+                    ++next;
+                    continue; // skip slash, will need to add it back if this is not a comment
                 }
-				break;
+
+                // Token lasts until we find some of the above, append and continue
+                tok.name += ch;
+                ++next;
+                continue;
 
 			case SEARCHING_BLOCK:
 				if (isDelim(ch)) {
