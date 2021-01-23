@@ -100,7 +100,8 @@ public:
 	public:
 		Column add(Column::Type type, const std::string& name = "")
 		{
-            auto& column = _columns.emplace_back(type, name);
+            _columns.emplace_back(type, name);
+            auto& column = _columns.back();
             column.setColumnIndex(static_cast<int>(_columns.size()) - 1);
 
 			return column;

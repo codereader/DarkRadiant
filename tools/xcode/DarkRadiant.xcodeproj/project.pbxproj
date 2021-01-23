@@ -32,8 +32,6 @@
 		3A01203D1E50278400A62BC1 /* GLWidget.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A011FEC1E50278400A62BC1 /* GLWidget.cpp */; };
 		3A01203E1E50278400A62BC1 /* GLWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FED1E50278400A62BC1 /* GLWidget.h */; };
 		3A01203F1E50278400A62BC1 /* IConv.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FEE1E50278400A62BC1 /* IConv.h */; };
-		3A0120401E50278400A62BC1 /* KeyValueTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A011FEF1E50278400A62BC1 /* KeyValueTable.cpp */; };
-		3A0120411E50278400A62BC1 /* KeyValueTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FF01E50278400A62BC1 /* KeyValueTable.h */; };
 		3A0120421E50278400A62BC1 /* CommandMenuItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FF41E50278400A62BC1 /* CommandMenuItem.h */; };
 		3A0120431E50278400A62BC1 /* IconTextMenuItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FF51E50278400A62BC1 /* IconTextMenuItem.h */; };
 		3A0120441E50278400A62BC1 /* MenuItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FF61E50278400A62BC1 /* MenuItem.h */; };
@@ -62,14 +60,6 @@
 		3A01205D1E50278400A62BC1 /* SerialisableWidgets.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0120101E50278400A62BC1 /* SerialisableWidgets.h */; };
 		3A01205E1E50278400A62BC1 /* SourceView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A0120111E50278400A62BC1 /* SourceView.cpp */; };
 		3A01205F1E50278400A62BC1 /* SourceView.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0120121E50278400A62BC1 /* SourceView.h */; };
-		3A0120601E50278400A62BC1 /* TreeModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A0120131E50278400A62BC1 /* TreeModel.cpp */; };
-		3A0120611E50278400A62BC1 /* TreeModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0120141E50278400A62BC1 /* TreeModel.h */; };
-		3A0120621E50278400A62BC1 /* TreeModelFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A0120151E50278400A62BC1 /* TreeModelFilter.cpp */; };
-		3A0120631E50278400A62BC1 /* TreeModelFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0120161E50278400A62BC1 /* TreeModelFilter.h */; };
-		3A0120641E50278400A62BC1 /* TreeView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A0120171E50278400A62BC1 /* TreeView.cpp */; };
-		3A0120651E50278400A62BC1 /* TreeView.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0120181E50278400A62BC1 /* TreeView.h */; };
-		3A0120661E50278400A62BC1 /* VFSTreePopulator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A0120191E50278400A62BC1 /* VFSTreePopulator.cpp */; };
-		3A0120671E50278400A62BC1 /* VFSTreePopulator.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A01201A1E50278400A62BC1 /* VFSTreePopulator.h */; };
 		3A0120681E50278400A62BC1 /* TransientWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A01201C1E50278400A62BC1 /* TransientWindow.cpp */; };
 		3A0120691E50278400A62BC1 /* TransientWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A01201D1E50278400A62BC1 /* TransientWindow.h */; };
 		3A01206A1E50278400A62BC1 /* WindowPosition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A01201E1E50278400A62BC1 /* WindowPosition.cpp */; };
@@ -341,13 +331,11 @@
 		3AC88730253C1D5100E6CCCE /* Modifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FFD1E50278400A62BC1 /* Modifier.h */; };
 		3AC88731253C1D5100E6CCCE /* precompiled.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AFF06E9253C130E002B1472 /* precompiled.h */; };
 		3AC88732253C1D5100E6CCCE /* KeyEventFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FE41E50278400A62BC1 /* KeyEventFilter.h */; };
-		3AC88734253C1D5100E6CCCE /* VFSTreePopulator.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A01201A1E50278400A62BC1 /* VFSTreePopulator.h */; };
 		3AC88735253C1D5100E6CCCE /* NonModalEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0120021E50278400A62BC1 /* NonModalEntry.h */; };
 		3AC88737253C1D5100E6CCCE /* WindowPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A01201F1E50278400A62BC1 /* WindowPosition.h */; };
 		3AC88738253C1D5100E6CCCE /* MessageboxDialogAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FDE1E50278400A62BC1 /* MessageboxDialogAdapter.h */; };
 		3AC88739253C1D5100E6CCCE /* ChoiceHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FCE1E50278400A62BC1 /* ChoiceHelper.h */; };
 		3AC8873A253C1D5100E6CCCE /* FreezePointer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FE91E50278400A62BC1 /* FreezePointer.h */; };
-		3AC8873C253C1D5100E6CCCE /* TreeModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0120141E50278400A62BC1 /* TreeModel.h */; };
 		3AC8873D253C1D5100E6CCCE /* IConv.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FEE1E50278400A62BC1 /* IConv.h */; };
 		3AC8873E253C1D5100E6CCCE /* SourceView.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0120121E50278400A62BC1 /* SourceView.h */; };
 		3AC8873F253C1D5100E6CCCE /* RenderPreview.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A01200D1E50278400A62BC1 /* RenderPreview.h */; };
@@ -357,14 +345,11 @@
 		3AC88743253C1D5100E6CCCE /* MessageBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FDD1E50278400A62BC1 /* MessageBox.h */; };
 		3AC88744253C1D5100E6CCCE /* Dialog.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FD91E50278400A62BC1 /* Dialog.h */; };
 		3AC88745253C1D5100E6CCCE /* Button.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AFF0633253AE829002B1472 /* Button.h */; };
-		3AC88746253C1D5100E6CCCE /* TreeView.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0120181E50278400A62BC1 /* TreeView.h */; };
 		3AC88747253C1D5100E6CCCE /* SingleIdleCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FE51E50278400A62BC1 /* SingleIdleCallback.h */; };
 		3AC88748253C1D5100E6CCCE /* CommandMenuItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FF41E50278400A62BC1 /* CommandMenuItem.h */; };
 		3AC88749253C1D5100E6CCCE /* TransientWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A01201D1E50278400A62BC1 /* TransientWindow.h */; };
 		3AC8874A253C1D5100E6CCCE /* ModalProgressDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FFC1E50278400A62BC1 /* ModalProgressDialog.h */; };
-		3AC8874B253C1D5100E6CCCE /* KeyValueTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FF01E50278400A62BC1 /* KeyValueTable.h */; };
 		3AC8874C253C1D5100E6CCCE /* MenuItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FF61E50278400A62BC1 /* MenuItem.h */; };
-		3AC8874D253C1D5100E6CCCE /* TreeModelFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0120161E50278400A62BC1 /* TreeModelFilter.h */; };
 		3AC8874E253C1D5100E6CCCE /* ConsoleView.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FD21E50278400A62BC1 /* ConsoleView.h */; };
 		3AC8874F253C1D5100E6CCCE /* GLWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FED1E50278400A62BC1 /* GLWidget.h */; };
 		3AC88750253C1D5100E6CCCE /* ControlButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FD31E50278400A62BC1 /* ControlButton.h */; };
@@ -459,6 +444,38 @@
 		3AC88A832596F79800E6CCCE /* package.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AC88A7A2596F70400E6CCCE /* package.png */; };
 		3AC88A842596F79800E6CCCE /* treeView16.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AC88A7B2596F70400E6CCCE /* treeView16.png */; };
 		3AC88A852596F79800E6CCCE /* stopwatch.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AE6F26B1FF7823B008A1B2D /* stopwatch.png */; };
+		3AC88A8C25BC0F9300E6CCCE /* FavouritesBrowser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AC88A8A25BC0F9300E6CCCE /* FavouritesBrowser.cpp */; };
+		3AC88A8F25BC0FA800E6CCCE /* MediaBrowserTreeView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AC88A8D25BC0FA800E6CCCE /* MediaBrowserTreeView.cpp */; };
+		3AC88A9225BC0FB600E6CCCE /* ModelTreeView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AC88A9025BC0FB600E6CCCE /* ModelTreeView.cpp */; };
+		3AC88A9725BC0FE600E6CCCE /* FavouriteSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AC88A9425BC0FE600E6CCCE /* FavouriteSet.h */; };
+		3AC88A9825BC0FE600E6CCCE /* FavouritesManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AC88A9525BC0FE600E6CCCE /* FavouritesManager.cpp */; };
+		3AC88A9925BC0FE600E6CCCE /* FavouritesManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AC88A9625BC0FE600E6CCCE /* FavouritesManager.h */; };
+		3AC88AAD25BC102500E6CCCE /* IResourceTreePopulator.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AC88A9B25BC102500E6CCCE /* IResourceTreePopulator.h */; };
+		3AC88AAE25BC102500E6CCCE /* KeyValueTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AC88A9C25BC102500E6CCCE /* KeyValueTable.cpp */; };
+		3AC88AAF25BC102500E6CCCE /* KeyValueTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AC88A9D25BC102500E6CCCE /* KeyValueTable.h */; };
+		3AC88AB025BC102500E6CCCE /* ResourceTreeView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AC88A9E25BC102500E6CCCE /* ResourceTreeView.cpp */; };
+		3AC88AB125BC102500E6CCCE /* ResourceTreeView.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AC88A9F25BC102500E6CCCE /* ResourceTreeView.h */; };
+		3AC88AB225BC102500E6CCCE /* ResourceTreeViewToolbar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AC88AA025BC102500E6CCCE /* ResourceTreeViewToolbar.cpp */; };
+		3AC88AB325BC102500E6CCCE /* ResourceTreeViewToolbar.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AC88AA125BC102500E6CCCE /* ResourceTreeViewToolbar.h */; };
+		3AC88AB425BC102500E6CCCE /* ThreadedResourceTreePopulator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AC88AA225BC102500E6CCCE /* ThreadedResourceTreePopulator.cpp */; };
+		3AC88AB525BC102500E6CCCE /* ThreadedResourceTreePopulator.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AC88AA325BC102500E6CCCE /* ThreadedResourceTreePopulator.h */; };
+		3AC88AB625BC102500E6CCCE /* TreeModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AC88AA425BC102500E6CCCE /* TreeModel.cpp */; };
+		3AC88AB725BC102500E6CCCE /* TreeModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AC88AA525BC102500E6CCCE /* TreeModel.h */; };
+		3AC88AB825BC102500E6CCCE /* TreeModelFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AC88AA625BC102500E6CCCE /* TreeModelFilter.cpp */; };
+		3AC88AB925BC102500E6CCCE /* TreeModelFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AC88AA725BC102500E6CCCE /* TreeModelFilter.h */; };
+		3AC88ABA25BC102500E6CCCE /* TreeView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AC88AA825BC102500E6CCCE /* TreeView.cpp */; };
+		3AC88ABB25BC102500E6CCCE /* TreeView.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AC88AA925BC102500E6CCCE /* TreeView.h */; };
+		3AC88ABC25BC102500E6CCCE /* TreeViewItemStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AC88AAA25BC102500E6CCCE /* TreeViewItemStyle.h */; };
+		3AC88ABD25BC102500E6CCCE /* VFSTreePopulator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AC88AAB25BC102500E6CCCE /* VFSTreePopulator.cpp */; };
+		3AC88ABE25BC102500E6CCCE /* VFSTreePopulator.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AC88AAC25BC102500E6CCCE /* VFSTreePopulator.h */; };
+		3AC88AC025BC104300E6CCCE /* SeparatorItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AC88ABF25BC104300E6CCCE /* SeparatorItem.h */; };
+		3AC88AC225BC106A00E6CCCE /* bitmap.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AC88AC125BC106A00E6CCCE /* bitmap.h */; };
+		3AC88AC625BC10A100E6CCCE /* AABBAccumulateWalker.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AC88AC325BC10A100E6CCCE /* AABBAccumulateWalker.h */; };
+		3AC88AC725BC10A100E6CCCE /* PrefabBoundsAccumulator.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AC88AC525BC10A100E6CCCE /* PrefabBoundsAccumulator.h */; };
+		3AC88AC925BC10EE00E6CCCE /* favourite.png in Resources */ = {isa = PBXBuildFile; fileRef = 3AC88AC825BC10D900E6CCCE /* favourite.png */; };
+		3AC88ACA25BC112100E6CCCE /* favourite.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AC88AC825BC10D900E6CCCE /* favourite.png */; };
+		3AC88ACB25BC114E00E6CCCE /* favourite.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AC88AC825BC10D900E6CCCE /* favourite.png */; };
+		3AC88ACE25BC13F600E6CCCE /* CameraWndManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AC88ACC25BC13F600E6CCCE /* CameraWndManager.cpp */; };
 		3AE2104E1E5980AF00F5A0A6 /* script.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE0B21E50D8D50062D9AF /* script.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3AE210511E5980B000F5A0A6 /* sound.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE19E1E50DD620062D9AF /* sound.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		3AE210561E59811500F5A0A6 /* dm.conversation.so in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AEBE2701E50E1520062D9AF /* dm.conversation.so */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
@@ -1536,7 +1553,6 @@
 		3AFF05B3253AE445002B1472 /* TextureMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7432F1E4F861A003465B5 /* TextureMatrix.cpp */; };
 		3AFF05B4253AE445002B1472 /* TextureProjection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF743311E4F861A003465B5 /* TextureProjection.cpp */; };
 		3AFF05B5253AE445002B1472 /* Winding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF743351E4F861A003465B5 /* Winding.cpp */; };
-		3AFF05B9253AE477002B1472 /* GlobalCameraWndManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF05B7253AE477002B1472 /* GlobalCameraWndManager.cpp */; };
 		3AFF05BC253AE4C3002B1472 /* FindBrush.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF05BA253AE4C3002B1472 /* FindBrush.cpp */; };
 		3AFF05C3253AE4FD002B1472 /* DefinitionView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF05BD253AE4FD002B1472 /* DefinitionView.cpp */; };
 		3AFF05C4253AE4FE002B1472 /* MaterialDefinitionView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AFF05BF253AE4FD002B1472 /* MaterialDefinitionView.cpp */; };
@@ -1595,13 +1611,11 @@
 		3AFF067B253BF4D3002B1472 /* EntityClassChooser.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AFF0635253AE829002B1472 /* EntityClassChooser.h */; };
 		3AFF067C253BF4D3002B1472 /* Modifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FFD1E50278400A62BC1 /* Modifier.h */; };
 		3AFF067D253BF4D3002B1472 /* KeyEventFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FE41E50278400A62BC1 /* KeyEventFilter.h */; };
-		3AFF067E253BF4D3002B1472 /* VFSTreePopulator.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A01201A1E50278400A62BC1 /* VFSTreePopulator.h */; };
 		3AFF067F253BF4D3002B1472 /* NonModalEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0120021E50278400A62BC1 /* NonModalEntry.h */; };
 		3AFF0680253BF4D3002B1472 /* WindowPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A01201F1E50278400A62BC1 /* WindowPosition.h */; };
 		3AFF0681253BF4D3002B1472 /* MessageboxDialogAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FDE1E50278400A62BC1 /* MessageboxDialogAdapter.h */; };
 		3AFF0682253BF4D3002B1472 /* ChoiceHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FCE1E50278400A62BC1 /* ChoiceHelper.h */; };
 		3AFF0683253BF4D3002B1472 /* FreezePointer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FE91E50278400A62BC1 /* FreezePointer.h */; };
-		3AFF0684253BF4D3002B1472 /* TreeModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0120141E50278400A62BC1 /* TreeModel.h */; };
 		3AFF0685253BF4D3002B1472 /* IConv.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FEE1E50278400A62BC1 /* IConv.h */; };
 		3AFF0686253BF4D3002B1472 /* SourceView.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0120121E50278400A62BC1 /* SourceView.h */; };
 		3AFF0687253BF4D3002B1472 /* RenderPreview.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A01200D1E50278400A62BC1 /* RenderPreview.h */; };
@@ -1611,14 +1625,11 @@
 		3AFF068B253BF4D3002B1472 /* MessageBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FDD1E50278400A62BC1 /* MessageBox.h */; };
 		3AFF068C253BF4D3002B1472 /* Dialog.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FD91E50278400A62BC1 /* Dialog.h */; };
 		3AFF068D253BF4D3002B1472 /* Button.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AFF0633253AE829002B1472 /* Button.h */; };
-		3AFF068E253BF4D3002B1472 /* TreeView.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0120181E50278400A62BC1 /* TreeView.h */; };
 		3AFF068F253BF4D3002B1472 /* SingleIdleCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FE51E50278400A62BC1 /* SingleIdleCallback.h */; };
 		3AFF0690253BF4D3002B1472 /* CommandMenuItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FF41E50278400A62BC1 /* CommandMenuItem.h */; };
 		3AFF0691253BF4D3002B1472 /* TransientWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A01201D1E50278400A62BC1 /* TransientWindow.h */; };
 		3AFF0692253BF4D3002B1472 /* ModalProgressDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FFC1E50278400A62BC1 /* ModalProgressDialog.h */; };
-		3AFF0693253BF4D3002B1472 /* KeyValueTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FF01E50278400A62BC1 /* KeyValueTable.h */; };
 		3AFF0694253BF4D3002B1472 /* MenuItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FF61E50278400A62BC1 /* MenuItem.h */; };
-		3AFF0695253BF4D3002B1472 /* TreeModelFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0120161E50278400A62BC1 /* TreeModelFilter.h */; };
 		3AFF0696253BF4D3002B1472 /* ConsoleView.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FD21E50278400A62BC1 /* ConsoleView.h */; };
 		3AFF0697253BF4D3002B1472 /* GLWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FED1E50278400A62BC1 /* GLWidget.h */; };
 		3AFF0698253BF4D3002B1472 /* ControlButton.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FD31E50278400A62BC1 /* ControlButton.h */; };
@@ -1885,6 +1896,7 @@
 			dstPath = Contents/Resources/bitmaps;
 			dstSubfolderSpec = 1;
 			files = (
+				3AC88ACB25BC114E00E6CCCE /* favourite.png in CopyFiles */,
 				3AC88A7F2596F76600E6CCCE /* file.png in CopyFiles */,
 				3AC88A802596F76600E6CCCE /* package.png in CopyFiles */,
 				3AC88A812596F76600E6CCCE /* treeView16.png in CopyFiles */,
@@ -2260,6 +2272,7 @@
 			dstPath = Resources/bitmaps;
 			dstSubfolderSpec = 16;
 			files = (
+				3AC88ACA25BC112100E6CCCE /* favourite.png in CopyFiles */,
 				3AC88A822596F79800E6CCCE /* file.png in CopyFiles */,
 				3AC88A832596F79800E6CCCE /* package.png in CopyFiles */,
 				3AC88A842596F79800E6CCCE /* treeView16.png in CopyFiles */,
@@ -2596,8 +2609,6 @@
 		3A011FEC1E50278400A62BC1 /* GLWidget.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GLWidget.cpp; path = ../../libs/wxutil/GLWidget.cpp; sourceTree = SOURCE_ROOT; };
 		3A011FED1E50278400A62BC1 /* GLWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLWidget.h; path = ../../libs/wxutil/GLWidget.h; sourceTree = SOURCE_ROOT; };
 		3A011FEE1E50278400A62BC1 /* IConv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IConv.h; path = ../../libs/wxutil/IConv.h; sourceTree = SOURCE_ROOT; };
-		3A011FEF1E50278400A62BC1 /* KeyValueTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = KeyValueTable.cpp; path = ../../libs/wxutil/KeyValueTable.cpp; sourceTree = SOURCE_ROOT; };
-		3A011FF01E50278400A62BC1 /* KeyValueTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyValueTable.h; path = ../../libs/wxutil/KeyValueTable.h; sourceTree = SOURCE_ROOT; };
 		3A011FF41E50278400A62BC1 /* CommandMenuItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CommandMenuItem.h; path = ../../libs/wxutil/menu/CommandMenuItem.h; sourceTree = SOURCE_ROOT; };
 		3A011FF51E50278400A62BC1 /* IconTextMenuItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IconTextMenuItem.h; path = ../../libs/wxutil/menu/IconTextMenuItem.h; sourceTree = SOURCE_ROOT; };
 		3A011FF61E50278400A62BC1 /* MenuItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MenuItem.h; path = ../../libs/wxutil/menu/MenuItem.h; sourceTree = SOURCE_ROOT; };
@@ -2626,14 +2637,6 @@
 		3A0120101E50278400A62BC1 /* SerialisableWidgets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SerialisableWidgets.h; path = ../../libs/wxutil/SerialisableWidgets.h; sourceTree = SOURCE_ROOT; };
 		3A0120111E50278400A62BC1 /* SourceView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SourceView.cpp; path = ../../libs/wxutil/SourceView.cpp; sourceTree = SOURCE_ROOT; };
 		3A0120121E50278400A62BC1 /* SourceView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SourceView.h; path = ../../libs/wxutil/SourceView.h; sourceTree = SOURCE_ROOT; };
-		3A0120131E50278400A62BC1 /* TreeModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TreeModel.cpp; path = ../../libs/wxutil/TreeModel.cpp; sourceTree = SOURCE_ROOT; };
-		3A0120141E50278400A62BC1 /* TreeModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TreeModel.h; path = ../../libs/wxutil/TreeModel.h; sourceTree = SOURCE_ROOT; };
-		3A0120151E50278400A62BC1 /* TreeModelFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TreeModelFilter.cpp; path = ../../libs/wxutil/TreeModelFilter.cpp; sourceTree = SOURCE_ROOT; };
-		3A0120161E50278400A62BC1 /* TreeModelFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TreeModelFilter.h; path = ../../libs/wxutil/TreeModelFilter.h; sourceTree = SOURCE_ROOT; };
-		3A0120171E50278400A62BC1 /* TreeView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TreeView.cpp; path = ../../libs/wxutil/TreeView.cpp; sourceTree = SOURCE_ROOT; };
-		3A0120181E50278400A62BC1 /* TreeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TreeView.h; path = ../../libs/wxutil/TreeView.h; sourceTree = SOURCE_ROOT; };
-		3A0120191E50278400A62BC1 /* VFSTreePopulator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSTreePopulator.cpp; path = ../../libs/wxutil/VFSTreePopulator.cpp; sourceTree = SOURCE_ROOT; };
-		3A01201A1E50278400A62BC1 /* VFSTreePopulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSTreePopulator.h; path = ../../libs/wxutil/VFSTreePopulator.h; sourceTree = SOURCE_ROOT; };
 		3A01201C1E50278400A62BC1 /* TransientWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TransientWindow.cpp; path = ../../libs/wxutil/window/TransientWindow.cpp; sourceTree = SOURCE_ROOT; };
 		3A01201D1E50278400A62BC1 /* TransientWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TransientWindow.h; path = ../../libs/wxutil/window/TransientWindow.h; sourceTree = SOURCE_ROOT; };
 		3A01201E1E50278400A62BC1 /* WindowPosition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WindowPosition.cpp; path = ../../libs/wxutil/WindowPosition.cpp; sourceTree = SOURCE_ROOT; };
@@ -2886,8 +2889,8 @@
 		3AC88793253C24D500E6CCCE /* ClipboardModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ClipboardModule.h; path = ../../radiant/clipboard/ClipboardModule.h; sourceTree = SOURCE_ROOT; };
 		3AC88A382556707000E6CCCE /* PatchSurface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PatchSurface.cpp; path = ../../radiantcore/model/export/PatchSurface.cpp; sourceTree = SOURCE_ROOT; };
 		3AC88A392556707000E6CCCE /* PatchSurface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PatchSurface.h; path = ../../radiantcore/model/export/PatchSurface.h; sourceTree = SOURCE_ROOT; };
-		3AC88A3C2596F4BE00E6CCCE /* ieclasscolours.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ieclasscolours.h; path = ../../include/ieclasscolours.h; sourceTree = "<group>"; };
-		3AC88A3D2596F4BE00E6CCCE /* iscriptinterface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = iscriptinterface.h; path = ../../include/iscriptinterface.h; sourceTree = "<group>"; };
+		3AC88A3C2596F4BE00E6CCCE /* ieclasscolours.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ieclasscolours.h; path = ../../include/ieclasscolours.h; sourceTree = SOURCE_ROOT; };
+		3AC88A3D2596F4BE00E6CCCE /* iscriptinterface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = iscriptinterface.h; path = ../../include/iscriptinterface.h; sourceTree = SOURCE_ROOT; };
 		3AC88A3E2596F4EC00E6CCCE /* AssetsList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AssetsList.h; path = ../../radiantcore/vfs/AssetsList.h; sourceTree = SOURCE_ROOT; };
 		3AC88A3F2596F4EC00E6CCCE /* FileVisitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileVisitor.h; path = ../../radiantcore/vfs/FileVisitor.h; sourceTree = SOURCE_ROOT; };
 		3AC88A422596F52000E6CCCE /* GLFont.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GLFont.cpp; path = ../../radiantcore/rendersystem/GLFont.cpp; sourceTree = SOURCE_ROOT; };
@@ -2921,6 +2924,43 @@
 		3AC88A792596F70400E6CCCE /* file.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = file.png; path = ../../install/bitmaps/file.png; sourceTree = SOURCE_ROOT; };
 		3AC88A7A2596F70400E6CCCE /* package.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = package.png; path = ../../install/bitmaps/package.png; sourceTree = SOURCE_ROOT; };
 		3AC88A7B2596F70400E6CCCE /* treeView16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = treeView16.png; path = ../../install/bitmaps/treeView16.png; sourceTree = SOURCE_ROOT; };
+		3AC88A8625BC0F6000E6CCCE /* idecltypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = idecltypes.h; path = ../../include/idecltypes.h; sourceTree = SOURCE_ROOT; };
+		3AC88A8725BC0F6000E6CCCE /* ifavourites.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ifavourites.h; path = ../../include/ifavourites.h; sourceTree = SOURCE_ROOT; };
+		3AC88A8825BC0F6000E6CCCE /* ispeakernode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ispeakernode.h; path = ../../include/ispeakernode.h; sourceTree = SOURCE_ROOT; };
+		3AC88A8A25BC0F9300E6CCCE /* FavouritesBrowser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FavouritesBrowser.cpp; path = ../../radiant/ui/favourites/FavouritesBrowser.cpp; sourceTree = SOURCE_ROOT; };
+		3AC88A8B25BC0F9300E6CCCE /* FavouritesBrowser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FavouritesBrowser.h; path = ../../radiant/ui/favourites/FavouritesBrowser.h; sourceTree = SOURCE_ROOT; };
+		3AC88A8D25BC0FA800E6CCCE /* MediaBrowserTreeView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MediaBrowserTreeView.cpp; path = ../../radiant/ui/mediabrowser/MediaBrowserTreeView.cpp; sourceTree = SOURCE_ROOT; };
+		3AC88A8E25BC0FA800E6CCCE /* MediaBrowserTreeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MediaBrowserTreeView.h; path = ../../radiant/ui/mediabrowser/MediaBrowserTreeView.h; sourceTree = SOURCE_ROOT; };
+		3AC88A9025BC0FB600E6CCCE /* ModelTreeView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ModelTreeView.cpp; path = ../../radiant/ui/modelselector/ModelTreeView.cpp; sourceTree = SOURCE_ROOT; };
+		3AC88A9125BC0FB600E6CCCE /* ModelTreeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ModelTreeView.h; path = ../../radiant/ui/modelselector/ModelTreeView.h; sourceTree = SOURCE_ROOT; };
+		3AC88A9425BC0FE600E6CCCE /* FavouriteSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FavouriteSet.h; path = ../../radiantcore/decl/FavouriteSet.h; sourceTree = SOURCE_ROOT; };
+		3AC88A9525BC0FE600E6CCCE /* FavouritesManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FavouritesManager.cpp; path = ../../radiantcore/decl/FavouritesManager.cpp; sourceTree = SOURCE_ROOT; };
+		3AC88A9625BC0FE600E6CCCE /* FavouritesManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FavouritesManager.h; path = ../../radiantcore/decl/FavouritesManager.h; sourceTree = SOURCE_ROOT; };
+		3AC88A9B25BC102500E6CCCE /* IResourceTreePopulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IResourceTreePopulator.h; path = ../../libs/wxutil/dataview/IResourceTreePopulator.h; sourceTree = SOURCE_ROOT; };
+		3AC88A9C25BC102500E6CCCE /* KeyValueTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = KeyValueTable.cpp; path = ../../libs/wxutil/dataview/KeyValueTable.cpp; sourceTree = SOURCE_ROOT; };
+		3AC88A9D25BC102500E6CCCE /* KeyValueTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyValueTable.h; path = ../../libs/wxutil/dataview/KeyValueTable.h; sourceTree = SOURCE_ROOT; };
+		3AC88A9E25BC102500E6CCCE /* ResourceTreeView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ResourceTreeView.cpp; path = ../../libs/wxutil/dataview/ResourceTreeView.cpp; sourceTree = SOURCE_ROOT; };
+		3AC88A9F25BC102500E6CCCE /* ResourceTreeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ResourceTreeView.h; path = ../../libs/wxutil/dataview/ResourceTreeView.h; sourceTree = SOURCE_ROOT; };
+		3AC88AA025BC102500E6CCCE /* ResourceTreeViewToolbar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ResourceTreeViewToolbar.cpp; path = ../../libs/wxutil/dataview/ResourceTreeViewToolbar.cpp; sourceTree = SOURCE_ROOT; };
+		3AC88AA125BC102500E6CCCE /* ResourceTreeViewToolbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ResourceTreeViewToolbar.h; path = ../../libs/wxutil/dataview/ResourceTreeViewToolbar.h; sourceTree = SOURCE_ROOT; };
+		3AC88AA225BC102500E6CCCE /* ThreadedResourceTreePopulator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ThreadedResourceTreePopulator.cpp; path = ../../libs/wxutil/dataview/ThreadedResourceTreePopulator.cpp; sourceTree = SOURCE_ROOT; };
+		3AC88AA325BC102500E6CCCE /* ThreadedResourceTreePopulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ThreadedResourceTreePopulator.h; path = ../../libs/wxutil/dataview/ThreadedResourceTreePopulator.h; sourceTree = SOURCE_ROOT; };
+		3AC88AA425BC102500E6CCCE /* TreeModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TreeModel.cpp; path = ../../libs/wxutil/dataview/TreeModel.cpp; sourceTree = SOURCE_ROOT; };
+		3AC88AA525BC102500E6CCCE /* TreeModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TreeModel.h; path = ../../libs/wxutil/dataview/TreeModel.h; sourceTree = SOURCE_ROOT; };
+		3AC88AA625BC102500E6CCCE /* TreeModelFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TreeModelFilter.cpp; path = ../../libs/wxutil/dataview/TreeModelFilter.cpp; sourceTree = SOURCE_ROOT; };
+		3AC88AA725BC102500E6CCCE /* TreeModelFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TreeModelFilter.h; path = ../../libs/wxutil/dataview/TreeModelFilter.h; sourceTree = SOURCE_ROOT; };
+		3AC88AA825BC102500E6CCCE /* TreeView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TreeView.cpp; path = ../../libs/wxutil/dataview/TreeView.cpp; sourceTree = SOURCE_ROOT; };
+		3AC88AA925BC102500E6CCCE /* TreeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TreeView.h; path = ../../libs/wxutil/dataview/TreeView.h; sourceTree = SOURCE_ROOT; };
+		3AC88AAA25BC102500E6CCCE /* TreeViewItemStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TreeViewItemStyle.h; path = ../../libs/wxutil/dataview/TreeViewItemStyle.h; sourceTree = SOURCE_ROOT; };
+		3AC88AAB25BC102500E6CCCE /* VFSTreePopulator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSTreePopulator.cpp; path = ../../libs/wxutil/dataview/VFSTreePopulator.cpp; sourceTree = SOURCE_ROOT; };
+		3AC88AAC25BC102500E6CCCE /* VFSTreePopulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSTreePopulator.h; path = ../../libs/wxutil/dataview/VFSTreePopulator.h; sourceTree = SOURCE_ROOT; };
+		3AC88ABF25BC104300E6CCCE /* SeparatorItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SeparatorItem.h; path = ../../libs/wxutil/menu/SeparatorItem.h; sourceTree = SOURCE_ROOT; };
+		3AC88AC125BC106A00E6CCCE /* bitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bitmap.h; path = ../../libs/wxutil/bitmap.h; sourceTree = SOURCE_ROOT; };
+		3AC88AC325BC10A100E6CCCE /* AABBAccumulateWalker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AABBAccumulateWalker.h; path = ../../libs/scene/AABBAccumulateWalker.h; sourceTree = SOURCE_ROOT; };
+		3AC88AC525BC10A100E6CCCE /* PrefabBoundsAccumulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrefabBoundsAccumulator.h; path = ../../libs/scene/PrefabBoundsAccumulator.h; sourceTree = SOURCE_ROOT; };
+		3AC88AC825BC10D900E6CCCE /* favourite.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = favourite.png; path = ../../install/bitmaps/favourite.png; sourceTree = SOURCE_ROOT; };
+		3AC88ACC25BC13F600E6CCCE /* CameraWndManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CameraWndManager.cpp; path = ../../radiant/camera/CameraWndManager.cpp; sourceTree = SOURCE_ROOT; };
+		3AC88ACD25BC13F600E6CCCE /* CameraWndManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CameraWndManager.h; path = ../../radiant/camera/CameraWndManager.h; sourceTree = SOURCE_ROOT; };
 		3ADBCC9F1E4E4EDC00CA94F6 /* wxWidgets.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = wxWidgets.framework; path = ../../../../../opt/local/Library/Frameworks/wxWidgets.framework; sourceTree = "<group>"; };
 		3AE20CD31E59687300F5A0A6 /* DarkRadiant.app */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DarkRadiant.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AE20CD51E59687300F5A0A6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -4342,8 +4382,6 @@
 		3AFF05A3253AE3D1002B1472 /* CameraManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CameraManager.cpp; path = ../../radiantcore/camera/CameraManager.cpp; sourceTree = SOURCE_ROOT; };
 		3AFF05A4253AE3D1002B1472 /* CameraManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CameraManager.h; path = ../../radiantcore/camera/CameraManager.h; sourceTree = SOURCE_ROOT; };
 		3AFF05B6253AE477002B1472 /* FloorHeightWalker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FloorHeightWalker.h; path = ../../radiant/camera/FloorHeightWalker.h; sourceTree = SOURCE_ROOT; };
-		3AFF05B7253AE477002B1472 /* GlobalCameraWndManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GlobalCameraWndManager.cpp; path = ../../radiant/camera/GlobalCameraWndManager.cpp; sourceTree = SOURCE_ROOT; };
-		3AFF05B8253AE477002B1472 /* GlobalCameraWndManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GlobalCameraWndManager.h; path = ../../radiant/camera/GlobalCameraWndManager.h; sourceTree = SOURCE_ROOT; };
 		3AFF05BA253AE4C3002B1472 /* FindBrush.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FindBrush.cpp; path = ../../radiant/ui/brush/FindBrush.cpp; sourceTree = SOURCE_ROOT; };
 		3AFF05BB253AE4C3002B1472 /* FindBrush.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FindBrush.h; path = ../../radiant/ui/brush/FindBrush.h; sourceTree = SOURCE_ROOT; };
 		3AFF05BD253AE4FD002B1472 /* DefinitionView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DefinitionView.cpp; path = ../../radiant/ui/common/DefinitionView.cpp; sourceTree = SOURCE_ROOT; };
@@ -4411,7 +4449,6 @@
 		3AFF0616253AE7EC002B1472 /* GroupNodeChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GroupNodeChecker.h; path = ../../libs/scene/GroupNodeChecker.h; sourceTree = SOURCE_ROOT; };
 		3AFF0617253AE7EC002B1472 /* LayerUsageBreakdown.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LayerUsageBreakdown.cpp; path = ../../libs/scene/LayerUsageBreakdown.cpp; sourceTree = SOURCE_ROOT; };
 		3AFF0618253AE7EC002B1472 /* LayerUsageBreakdown.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LayerUsageBreakdown.h; path = ../../libs/scene/LayerUsageBreakdown.h; sourceTree = SOURCE_ROOT; };
-		3AFF0619253AE7EC002B1472 /* Makefile.am */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Makefile.am; path = ../../libs/scene/Makefile.am; sourceTree = SOURCE_ROOT; };
 		3AFF061A253AE7EC002B1472 /* ModelBreakdown.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ModelBreakdown.h; path = ../../libs/scene/ModelBreakdown.h; sourceTree = SOURCE_ROOT; };
 		3AFF061B253AE7EC002B1472 /* ModelFinder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ModelFinder.cpp; path = ../../libs/scene/ModelFinder.cpp; sourceTree = SOURCE_ROOT; };
 		3AFF061C253AE7EC002B1472 /* ModelFinder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ModelFinder.h; path = ../../libs/scene/ModelFinder.h; sourceTree = SOURCE_ROOT; };
@@ -4612,6 +4649,8 @@
 		3A011FC41E50275700A62BC1 /* wxutil */ = {
 			isa = PBXGroup;
 			children = (
+				3AC88AC125BC106A00E6CCCE /* bitmap.h */,
+				3AC88A9A25BC100900E6CCCE /* dataview */,
 				3AC88A702596F68D00E6CCCE /* fsview */,
 				3AFF0633253AE829002B1472 /* Button.h */,
 				3A011FCE1E50278400A62BC1 /* ChoiceHelper.h */,
@@ -4634,8 +4673,6 @@
 				3A011FEC1E50278400A62BC1 /* GLWidget.cpp */,
 				3AA6E08623BB4E9F00BF9AD7 /* GLWidget.h */,
 				3A011FEE1E50278400A62BC1 /* IConv.h */,
-				3A011FEF1E50278400A62BC1 /* KeyValueTable.cpp */,
-				3A011FF01E50278400A62BC1 /* KeyValueTable.h */,
 				3A011FF31E50278400A62BC1 /* menu */,
 				3A011FFB1E50278400A62BC1 /* ModalProgressDialog.cpp */,
 				3A011FFC1E50278400A62BC1 /* ModalProgressDialog.h */,
@@ -4658,14 +4695,6 @@
 				3A0120121E50278400A62BC1 /* SourceView.h */,
 				3AFF0637253AE829002B1472 /* Splitter.cpp */,
 				3AFF0638253AE829002B1472 /* Splitter.h */,
-				3A0120131E50278400A62BC1 /* TreeModel.cpp */,
-				3A0120141E50278400A62BC1 /* TreeModel.h */,
-				3A0120151E50278400A62BC1 /* TreeModelFilter.cpp */,
-				3A0120161E50278400A62BC1 /* TreeModelFilter.h */,
-				3A0120171E50278400A62BC1 /* TreeView.cpp */,
-				3A0120181E50278400A62BC1 /* TreeView.h */,
-				3A0120191E50278400A62BC1 /* VFSTreePopulator.cpp */,
-				3A01201A1E50278400A62BC1 /* VFSTreePopulator.h */,
 				3A01201B1E50278400A62BC1 /* window */,
 				3A01201E1E50278400A62BC1 /* WindowPosition.cpp */,
 				3A01201F1E50278400A62BC1 /* WindowPosition.h */,
@@ -4705,6 +4734,7 @@
 		3A011FF31E50278400A62BC1 /* menu */ = {
 			isa = PBXGroup;
 			children = (
+				3AC88ABF25BC104300E6CCCE /* SeparatorItem.h */,
 				3A011FF41E50278400A62BC1 /* CommandMenuItem.h */,
 				3A011FF51E50278400A62BC1 /* IconTextMenuItem.h */,
 				3A011FF61E50278400A62BC1 /* MenuItem.h */,
@@ -4746,6 +4776,8 @@
 		3A0120741E502F7800A62BC1 /* scene */ = {
 			isa = PBXGroup;
 			children = (
+				3AC88AC325BC10A100E6CCCE /* AABBAccumulateWalker.h */,
+				3AC88AC525BC10A100E6CCCE /* PrefabBoundsAccumulator.h */,
 				3A01207E1E50300A00A62BC1 /* BasicRootNode.h */,
 				3AFF0610253AE7EC002B1472 /* ChildPrimitives.cpp */,
 				3AFF0611253AE7EC002B1472 /* ChildPrimitives.h */,
@@ -4759,7 +4791,6 @@
 				3AFF0617253AE7EC002B1472 /* LayerUsageBreakdown.cpp */,
 				3AFF0618253AE7EC002B1472 /* LayerUsageBreakdown.h */,
 				3A0120811E50300A00A62BC1 /* LayerValidityCheckWalker.h */,
-				3AFF0619253AE7EC002B1472 /* Makefile.am */,
 				3AFF061A253AE7EC002B1472 /* ModelBreakdown.h */,
 				3AFF061B253AE7EC002B1472 /* ModelFinder.cpp */,
 				3AFF061C253AE7EC002B1472 /* ModelFinder.h */,
@@ -4781,6 +4812,7 @@
 		3A0122531E503C4D00A62BC1 /* bitmaps */ = {
 			isa = PBXGroup;
 			children = (
+				3AC88AC825BC10D900E6CCCE /* favourite.png */,
 				3AC88A792596F70400E6CCCE /* file.png */,
 				3AC88A7A2596F70400E6CCCE /* package.png */,
 				3AC88A7B2596F70400E6CCCE /* treeView16.png */,
@@ -5109,6 +5141,50 @@
 				3AC88A742596F6A500E6CCCE /* Populator.h */,
 			);
 			name = fsview;
+			sourceTree = "<group>";
+		};
+		3AC88A8925BC0F7B00E6CCCE /* favourites */ = {
+			isa = PBXGroup;
+			children = (
+				3AC88A8A25BC0F9300E6CCCE /* FavouritesBrowser.cpp */,
+				3AC88A8B25BC0F9300E6CCCE /* FavouritesBrowser.h */,
+			);
+			name = favourites;
+			sourceTree = "<group>";
+		};
+		3AC88A9325BC0FD300E6CCCE /* decl */ = {
+			isa = PBXGroup;
+			children = (
+				3AC88A9425BC0FE600E6CCCE /* FavouriteSet.h */,
+				3AC88A9525BC0FE600E6CCCE /* FavouritesManager.cpp */,
+				3AC88A9625BC0FE600E6CCCE /* FavouritesManager.h */,
+			);
+			name = decl;
+			sourceTree = "<group>";
+		};
+		3AC88A9A25BC100900E6CCCE /* dataview */ = {
+			isa = PBXGroup;
+			children = (
+				3AC88A9B25BC102500E6CCCE /* IResourceTreePopulator.h */,
+				3AC88A9C25BC102500E6CCCE /* KeyValueTable.cpp */,
+				3AC88A9D25BC102500E6CCCE /* KeyValueTable.h */,
+				3AC88A9E25BC102500E6CCCE /* ResourceTreeView.cpp */,
+				3AC88A9F25BC102500E6CCCE /* ResourceTreeView.h */,
+				3AC88AA025BC102500E6CCCE /* ResourceTreeViewToolbar.cpp */,
+				3AC88AA125BC102500E6CCCE /* ResourceTreeViewToolbar.h */,
+				3AC88AA225BC102500E6CCCE /* ThreadedResourceTreePopulator.cpp */,
+				3AC88AA325BC102500E6CCCE /* ThreadedResourceTreePopulator.h */,
+				3AC88AA425BC102500E6CCCE /* TreeModel.cpp */,
+				3AC88AA525BC102500E6CCCE /* TreeModel.h */,
+				3AC88AA625BC102500E6CCCE /* TreeModelFilter.cpp */,
+				3AC88AA725BC102500E6CCCE /* TreeModelFilter.h */,
+				3AC88AA825BC102500E6CCCE /* TreeView.cpp */,
+				3AC88AA925BC102500E6CCCE /* TreeView.h */,
+				3AC88AAA25BC102500E6CCCE /* TreeViewItemStyle.h */,
+				3AC88AAB25BC102500E6CCCE /* VFSTreePopulator.cpp */,
+				3AC88AAC25BC102500E6CCCE /* VFSTreePopulator.h */,
+			);
+			name = dataview;
 			sourceTree = "<group>";
 		};
 		3ADBCC681E4E4B7C00CA94F6 = {
@@ -6307,6 +6383,9 @@
 		3AF475D21E6BEE74006B26C2 /* Include */ = {
 			isa = PBXGroup;
 			children = (
+				3AC88A8625BC0F6000E6CCCE /* idecltypes.h */,
+				3AC88A8725BC0F6000E6CCCE /* ifavourites.h */,
+				3AC88A8825BC0F6000E6CCCE /* ispeakernode.h */,
 				3AC88A3C2596F4BE00E6CCCE /* ieclasscolours.h */,
 				3AC88A3D2596F4BE00E6CCCE /* iscriptinterface.h */,
 				3AFF0605253AE79E002B1472 /* iclipboard.h */,
@@ -6494,9 +6573,9 @@
 		3AF743371E4F861A003465B5 /* camera */ = {
 			isa = PBXGroup;
 			children = (
+				3AC88ACC25BC13F600E6CCCE /* CameraWndManager.cpp */,
+				3AC88ACD25BC13F600E6CCCE /* CameraWndManager.h */,
 				3AFF05B6253AE477002B1472 /* FloorHeightWalker.h */,
-				3AFF05B7253AE477002B1472 /* GlobalCameraWndManager.cpp */,
-				3AFF05B8253AE477002B1472 /* GlobalCameraWndManager.h */,
 				3AF7433B1E4F861A003465B5 /* CameraSettings.cpp */,
 				3AF7433C1E4F861A003465B5 /* CameraSettings.h */,
 				3AF7433F1E4F861A003465B5 /* CamWnd.cpp */,
@@ -6932,6 +7011,7 @@
 		3AF744971E4F861B003465B5 /* ui */ = {
 			isa = PBXGroup;
 			children = (
+				3AC88A8925BC0F7B00E6CCCE /* favourites */,
 				3AC88A682596F62B00E6CCCE /* FileOverwriteConfirmationHandler.h */,
 				3AC88A642596F60300E6CCCE /* mapselector */,
 				3AF744981E4F861B003465B5 /* aas */,
@@ -7192,6 +7272,8 @@
 		3AF745141E4F861B003465B5 /* mediabrowser */ = {
 			isa = PBXGroup;
 			children = (
+				3AC88A8D25BC0FA800E6CCCE /* MediaBrowserTreeView.cpp */,
+				3AC88A8E25BC0FA800E6CCCE /* MediaBrowserTreeView.h */,
 				3AF745151E4F861B003465B5 /* MediaBrowser.cpp */,
 				3AF745161E4F861B003465B5 /* MediaBrowser.h */,
 				3AF745171E4F861B003465B5 /* TextureDirectoryLoader.h */,
@@ -7203,6 +7285,8 @@
 		3AF7451B1E4F861B003465B5 /* modelselector */ = {
 			isa = PBXGroup;
 			children = (
+				3AC88A9025BC0FB600E6CCCE /* ModelTreeView.cpp */,
+				3AC88A9125BC0FB600E6CCCE /* ModelTreeView.h */,
 				3AF7451C1E4F861B003465B5 /* MaterialsList.cpp */,
 				3AF7451D1E4F861B003465B5 /* MaterialsList.h */,
 				3AF7451E1E4F861B003465B5 /* ModelDataInserter.h */,
@@ -7533,6 +7617,7 @@
 		3AFF0468253AB7D5002B1472 /* DarkRadiantCore */ = {
 			isa = PBXGroup;
 			children = (
+				3AC88A9325BC0FD300E6CCCE /* decl */,
 				3AF7430F1E4F861A003465B5 /* brush */,
 				3AFF05A0253AE3BD002B1472 /* camera */,
 				3AF7434C1E4F861A003465B5 /* clipper */,
@@ -7846,55 +7931,62 @@
 			files = (
 				3A0120331E50278400A62BC1 /* DirChooser.h in Headers */,
 				3AE6F1E81FD1A529008A1B2D /* GuiView.h in Headers */,
+				3AC88AAD25BC102500E6CCCE /* IResourceTreePopulator.h in Headers */,
 				3A0120381E50278400A62BC1 /* FileChooser.h in Headers */,
 				3A0120521E50278400A62BC1 /* PanedPosition.h in Headers */,
+				3AC88AB925BC102500E6CCCE /* TreeModelFilter.h in Headers */,
 				3A0120431E50278400A62BC1 /* IconTextMenuItem.h in Headers */,
 				3AFF063B253AE829002B1472 /* EntityClassChooser.h in Headers */,
 				3A01204B1E50278400A62BC1 /* Modifier.h in Headers */,
 				3A0120351E50278400A62BC1 /* KeyEventFilter.h in Headers */,
-				3A0120671E50278400A62BC1 /* VFSTreePopulator.h in Headers */,
 				3A0120501E50278400A62BC1 /* NonModalEntry.h in Headers */,
 				3A01206B1E50278400A62BC1 /* WindowPosition.h in Headers */,
 				3A0120301E50278400A62BC1 /* MessageboxDialogAdapter.h in Headers */,
 				3A0120211E50278400A62BC1 /* ChoiceHelper.h in Headers */,
 				3A01203A1E50278400A62BC1 /* FreezePointer.h in Headers */,
-				3A0120611E50278400A62BC1 /* TreeModel.h in Headers */,
 				3A01203F1E50278400A62BC1 /* IConv.h in Headers */,
 				3A01205F1E50278400A62BC1 /* SourceView.h in Headers */,
 				3A01205A1E50278400A62BC1 /* RenderPreview.h in Headers */,
 				3A0120561E50278400A62BC1 /* ModelPreview.h in Headers */,
 				3A01202D1E50278400A62BC1 /* DialogElements.h in Headers */,
 				3A0120541E50278400A62BC1 /* PathEntry.h in Headers */,
+				3AC88AB725BC102500E6CCCE /* TreeModel.h in Headers */,
 				3A01202F1E50278400A62BC1 /* MessageBox.h in Headers */,
 				3A01202B1E50278400A62BC1 /* Dialog.h in Headers */,
 				3AFF0639253AE829002B1472 /* Button.h in Headers */,
-				3A0120651E50278400A62BC1 /* TreeView.h in Headers */,
 				3A0120361E50278400A62BC1 /* SingleIdleCallback.h in Headers */,
 				3A0120421E50278400A62BC1 /* CommandMenuItem.h in Headers */,
 				3AC88A782596F6A500E6CCCE /* Populator.h in Headers */,
 				3A0120691E50278400A62BC1 /* TransientWindow.h in Headers */,
 				3A01204A1E50278400A62BC1 /* ModalProgressDialog.h in Headers */,
-				3A0120411E50278400A62BC1 /* KeyValueTable.h in Headers */,
 				3A0120441E50278400A62BC1 /* MenuItem.h in Headers */,
-				3A0120631E50278400A62BC1 /* TreeModelFilter.h in Headers */,
 				3A0120251E50278400A62BC1 /* ConsoleView.h in Headers */,
 				3A01203E1E50278400A62BC1 /* GLWidget.h in Headers */,
+				3AC88AC025BC104300E6CCCE /* SeparatorItem.h in Headers */,
 				3A0120261E50278400A62BC1 /* ControlButton.h in Headers */,
 				3A01205D1E50278400A62BC1 /* SerialisableWidgets.h in Headers */,
 				3A01204C1E50278400A62BC1 /* MouseButton.h in Headers */,
 				3AFF063C253AE829002B1472 /* GLContext.h in Headers */,
 				3A01204F1E50278400A62BC1 /* MultiMonitor.h in Headers */,
 				3A01204E1E50278400A62BC1 /* MouseToolHandler.h in Headers */,
+				3AC88AB125BC102500E6CCCE /* ResourceTreeView.h in Headers */,
+				3AC88ABE25BC102500E6CCCE /* VFSTreePopulator.h in Headers */,
+				3AC88AB325BC102500E6CCCE /* ResourceTreeViewToolbar.h in Headers */,
 				3A01202C1E50278400A62BC1 /* DialogBase.h in Headers */,
 				3A0120461E50278400A62BC1 /* PopupMenu.h in Headers */,
 				3AC88A762596F6A500E6CCCE /* FileSystemView.h in Headers */,
+				3AC88AB525BC102500E6CCCE /* ThreadedResourceTreePopulator.h in Headers */,
 				3AA6E08723BB4E9F00BF9AD7 /* GLWidget.h in Headers */,
 				3AA6E08923BB4EF200BF9AD7 /* ScrollWindow.h in Headers */,
 				3A0120291E50278400A62BC1 /* DeferredMotionDelta.h in Headers */,
+				3AC88ABB25BC102500E6CCCE /* TreeView.h in Headers */,
 				3AFF063E253AE829002B1472 /* Splitter.h in Headers */,
 				3A01206C1E50278400A62BC1 /* XmlResourceBasedWidget.h in Headers */,
+				3AC88ABC25BC102500E6CCCE /* TreeViewItemStyle.h in Headers */,
 				3A01205B1E50278400A62BC1 /* ScopeTimer.h in Headers */,
+				3AC88AAF25BC102500E6CCCE /* KeyValueTable.h in Headers */,
 				3A0120311E50278400A62BC1 /* ScrollEventPropagationFilter.h in Headers */,
+				3AC88AC225BC106A00E6CCCE /* bitmap.h in Headers */,
 				3A0120581E50278400A62BC1 /* ParticlePreview.h in Headers */,
 				3A0120341E50278400A62BC1 /* EntryAbortedException.h in Headers */,
 				3AE6F1E41FD1A529008A1B2D /* GuiRenderer.h in Headers */,
@@ -7907,10 +7999,12 @@
 			files = (
 				3AFF0623253AE7EC002B1472 /* ChildPrimitives.h in Headers */,
 				3A01208D1E50300A00A62BC1 /* LayerValidityCheckWalker.h in Headers */,
+				3AC88AC725BC10A100E6CCCE /* PrefabBoundsAccumulator.h in Headers */,
 				3A0120931E50300A00A62BC1 /* TraversableNodeSet.h in Headers */,
 				3A0120911E50300A00A62BC1 /* SelectableNode.h in Headers */,
 				3AFF062F253AE7EC002B1472 /* SelectionIndex.h in Headers */,
 				3AFF062B253AE7EC002B1472 /* ModelBreakdown.h in Headers */,
+				3AC88AC625BC10A100E6CCCE /* AABBAccumulateWalker.h in Headers */,
 				3AFF0632253AE7EC002B1472 /* Traverse.h in Headers */,
 				3AFF062A253AE7EC002B1472 /* LayerUsageBreakdown.h in Headers */,
 				3AFF0627253AE7EC002B1472 /* Group.h in Headers */,
@@ -7941,13 +8035,11 @@
 				3AC88731253C1D5100E6CCCE /* precompiled.h in Headers */,
 				3AC88732253C1D5100E6CCCE /* KeyEventFilter.h in Headers */,
 				3AC8877A253C1D7200E6CCCE /* pm_fm.h in Headers */,
-				3AC88734253C1D5100E6CCCE /* VFSTreePopulator.h in Headers */,
 				3AC88735253C1D5100E6CCCE /* NonModalEntry.h in Headers */,
 				3AC88737253C1D5100E6CCCE /* WindowPosition.h in Headers */,
 				3AC88738253C1D5100E6CCCE /* MessageboxDialogAdapter.h in Headers */,
 				3AC88739253C1D5100E6CCCE /* ChoiceHelper.h in Headers */,
 				3AC8873A253C1D5100E6CCCE /* FreezePointer.h in Headers */,
-				3AC8873C253C1D5100E6CCCE /* TreeModel.h in Headers */,
 				3AC8873D253C1D5100E6CCCE /* IConv.h in Headers */,
 				3AC8873E253C1D5100E6CCCE /* SourceView.h in Headers */,
 				3AC8873F253C1D5100E6CCCE /* RenderPreview.h in Headers */,
@@ -7957,15 +8049,12 @@
 				3AC88743253C1D5100E6CCCE /* MessageBox.h in Headers */,
 				3AC88744253C1D5100E6CCCE /* Dialog.h in Headers */,
 				3AC88745253C1D5100E6CCCE /* Button.h in Headers */,
-				3AC88746253C1D5100E6CCCE /* TreeView.h in Headers */,
 				3AC88747253C1D5100E6CCCE /* SingleIdleCallback.h in Headers */,
 				3AC88774253C1D7200E6CCCE /* picointernal.h in Headers */,
 				3AC88748253C1D5100E6CCCE /* CommandMenuItem.h in Headers */,
 				3AC88749253C1D5100E6CCCE /* TransientWindow.h in Headers */,
 				3AC8874A253C1D5100E6CCCE /* ModalProgressDialog.h in Headers */,
-				3AC8874B253C1D5100E6CCCE /* KeyValueTable.h in Headers */,
 				3AC8874C253C1D5100E6CCCE /* MenuItem.h in Headers */,
-				3AC8874D253C1D5100E6CCCE /* TreeModelFilter.h in Headers */,
 				3AC8874E253C1D5100E6CCCE /* ConsoleView.h in Headers */,
 				3AC8874F253C1D5100E6CCCE /* GLWidget.h in Headers */,
 				3AC88750253C1D5100E6CCCE /* ControlButton.h in Headers */,
@@ -8250,11 +8339,13 @@
 				3AC88A3B2556707000E6CCCE /* PatchSurface.h in Headers */,
 				3AFF0564253AE1F1002B1472 /* JPEGLoader.h in Headers */,
 				3AC88A402596F4EC00E6CCCE /* AssetsList.h in Headers */,
+				3AC88A9725BC0FE600E6CCCE /* FavouriteSet.h in Headers */,
 				3AFF0495253ABBBA002B1472 /* LocalisationModule.h in Headers */,
 				3AC88A532596F55400E6CCCE /* StaticModelNode.h in Headers */,
 				3AFF048D253ABB78002B1472 /* ColourScheme.h in Headers */,
 				3AFF0560253AE1F1002B1472 /* BMPLoader.h in Headers */,
 				3AFF05A8253AE3D1002B1472 /* CameraManager.h in Headers */,
+				3AC88A9925BC0FE600E6CCCE /* FavouritesManager.h in Headers */,
 				3AC88A5D2596F58C00E6CCCE /* MapResourceLoader.h in Headers */,
 				3AC88A512596F55400E6CCCE /* StaticModel.h in Headers */,
 				3AFF054C253AE111002B1472 /* RenderableAasFile.h in Headers */,
@@ -8294,7 +8385,6 @@
 				3AFF06EB253C130F002B1472 /* precompiled.h in Headers */,
 				3AFF067D253BF4D3002B1472 /* KeyEventFilter.h in Headers */,
 				3AFF06BF253BF564002B1472 /* DynamicLibrary.h in Headers */,
-				3AFF067E253BF4D3002B1472 /* VFSTreePopulator.h in Headers */,
 				3AFF067F253BF4D3002B1472 /* NonModalEntry.h in Headers */,
 				3AFF06C1253BF564002B1472 /* StaticModule.h in Headers */,
 				3AFF0680253BF4D3002B1472 /* WindowPosition.h in Headers */,
@@ -8302,7 +8392,6 @@
 				3AFF0682253BF4D3002B1472 /* ChoiceHelper.h in Headers */,
 				3AFF0683253BF4D3002B1472 /* FreezePointer.h in Headers */,
 				3AFF06BB253BF564002B1472 /* ApplicationContextBase.h in Headers */,
-				3AFF0684253BF4D3002B1472 /* TreeModel.h in Headers */,
 				3AFF0685253BF4D3002B1472 /* IConv.h in Headers */,
 				3AFF0686253BF4D3002B1472 /* SourceView.h in Headers */,
 				3AFF0687253BF4D3002B1472 /* RenderPreview.h in Headers */,
@@ -8312,14 +8401,11 @@
 				3AFF068B253BF4D3002B1472 /* MessageBox.h in Headers */,
 				3AFF068C253BF4D3002B1472 /* Dialog.h in Headers */,
 				3AFF068D253BF4D3002B1472 /* Button.h in Headers */,
-				3AFF068E253BF4D3002B1472 /* TreeView.h in Headers */,
 				3AFF068F253BF4D3002B1472 /* SingleIdleCallback.h in Headers */,
 				3AFF0690253BF4D3002B1472 /* CommandMenuItem.h in Headers */,
 				3AFF0691253BF4D3002B1472 /* TransientWindow.h in Headers */,
 				3AFF0692253BF4D3002B1472 /* ModalProgressDialog.h in Headers */,
-				3AFF0693253BF4D3002B1472 /* KeyValueTable.h in Headers */,
 				3AFF0694253BF4D3002B1472 /* MenuItem.h in Headers */,
-				3AFF0695253BF4D3002B1472 /* TreeModelFilter.h in Headers */,
 				3AFF0696253BF4D3002B1472 /* ConsoleView.h in Headers */,
 				3AFF0697253BF4D3002B1472 /* GLWidget.h in Headers */,
 				3AFF0698253BF4D3002B1472 /* ControlButton.h in Headers */,
@@ -8777,6 +8863,7 @@
 				3AC88A7E2596F71200E6CCCE /* treeView16.png in Resources */,
 				3AC88A7D2596F71200E6CCCE /* package.png in Resources */,
 				3AF475D11E6B247B006B26C2 /* darkradiant.icns in Resources */,
+				3AC88AC925BC10EE00E6CCCE /* favourite.png in Resources */,
 				3AE6F1DB1F6E953F008A1B2D /* prey.game in Resources */,
 				3AE6F2011FD1AB24008A1B2D /* missioninfoeditdialog.xrc in Resources */,
 			);
@@ -8805,25 +8892,28 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3AC88AB025BC102500E6CCCE /* ResourceTreeView.cpp in Sources */,
+				3AC88ABD25BC102500E6CCCE /* VFSTreePopulator.cpp in Sources */,
 				3AC88A752596F6A500E6CCCE /* FileSystemView.cpp in Sources */,
 				3A0120241E50278400A62BC1 /* ConsoleView.cpp in Sources */,
-				3A0120621E50278400A62BC1 /* TreeModelFilter.cpp in Sources */,
 				3AC88A772596F6A500E6CCCE /* Populator.cpp in Sources */,
-				3A0120601E50278400A62BC1 /* TreeModel.cpp in Sources */,
 				3A0120531E50278400A62BC1 /* PathEntry.cpp in Sources */,
-				3A0120401E50278400A62BC1 /* KeyValueTable.cpp in Sources */,
+				3AC88AB425BC102500E6CCCE /* ThreadedResourceTreePopulator.cpp in Sources */,
 				3A01203D1E50278400A62BC1 /* GLWidget.cpp in Sources */,
 				3AFF063A253AE829002B1472 /* EntityClassChooser.cpp in Sources */,
+				3AC88AB225BC102500E6CCCE /* ResourceTreeViewToolbar.cpp in Sources */,
 				3A0120491E50278400A62BC1 /* ModalProgressDialog.cpp in Sources */,
 				3A01205C1E50278400A62BC1 /* SerialisableWidgets.cpp in Sources */,
+				3AC88AB825BC102500E6CCCE /* TreeModelFilter.cpp in Sources */,
 				3A0120321E50278400A62BC1 /* DirChooser.cpp in Sources */,
 				3A01204D1E50278400A62BC1 /* MouseToolHandler.cpp in Sources */,
 				3A0120391E50278400A62BC1 /* FreezePointer.cpp in Sources */,
-				3A0120661E50278400A62BC1 /* VFSTreePopulator.cpp in Sources */,
 				3A01206A1E50278400A62BC1 /* WindowPosition.cpp in Sources */,
+				3AC88ABA25BC102500E6CCCE /* TreeView.cpp in Sources */,
+				3AC88AAE25BC102500E6CCCE /* KeyValueTable.cpp in Sources */,
 				3AFF03E924548655002B1472 /* DialogBase.cpp in Sources */,
 				3AE6F1E21FD1A529008A1B2D /* GuiRenderer.cpp in Sources */,
-				3A0120641E50278400A62BC1 /* TreeView.cpp in Sources */,
+				3AC88AB625BC102500E6CCCE /* TreeModel.cpp in Sources */,
 				3A0120591E50278400A62BC1 /* RenderPreview.cpp in Sources */,
 				3A01202E1E50278400A62BC1 /* MessageBox.cpp in Sources */,
 				3A0120371E50278400A62BC1 /* FileChooser.cpp in Sources */,
@@ -9115,6 +9205,7 @@
 				3AFF05C3253AE4FD002B1472 /* DefinitionView.cpp in Sources */,
 				3AF7463F1E4F861C003465B5 /* MaterialsList.cpp in Sources */,
 				3AA6E06323B233F000BF9AD7 /* AnimationPreview.cpp in Sources */,
+				3AC88A9225BC0FB600E6CCCE /* ModelTreeView.cpp in Sources */,
 				3AFF05E7253AE660002B1472 /* ScriptUserInterfaceModule.cpp in Sources */,
 				3AF746061E4F861B003465B5 /* TexToolItem.cpp in Sources */,
 				3AFF0498253ABBC6002B1472 /* LocalisationModule.cpp in Sources */,
@@ -9156,9 +9247,11 @@
 				3AF7465B1E4F861C003465B5 /* BrushCreatorTool.cpp in Sources */,
 				3AF746571E4F861C003465B5 /* TransformDialog.cpp in Sources */,
 				3AA6E05823B233C800BF9AD7 /* MenuFolder.cpp in Sources */,
+				3AC88A8F25BC0FA800E6CCCE /* MediaBrowserTreeView.cpp in Sources */,
 				3AF746231E4F861B003465B5 /* SoundPropertyEditor.cpp in Sources */,
 				3AFF044524548BFF002B1472 /* FilterOrthoContextMenuItem.cpp in Sources */,
 				3AF7463A1E4F861C003465B5 /* MapInfoDialog.cpp in Sources */,
+				3AC88ACE25BC13F600E6CCCE /* CameraWndManager.cpp in Sources */,
 				3AF746041E4F861B003465B5 /* PatchVertexItem.cpp in Sources */,
 				3AF746131E4F861B003465B5 /* ShaderSelector.cpp in Sources */,
 				3AE6F33F239F4FE1008A1B2D /* EventManager.cpp in Sources */,
@@ -9209,7 +9302,6 @@
 				3AF746111E4F861B003465B5 /* ShaderChooser.cpp in Sources */,
 				3AF7462C1E4F861B003465B5 /* LayerControl.cpp in Sources */,
 				3AC88A6B2596F64700E6CCCE /* AutoSaver.cpp in Sources */,
-				3AFF05B9253AE477002B1472 /* GlobalCameraWndManager.cpp in Sources */,
 				3AFF05D8253AE588002B1472 /* WxGLWidgetManager.cpp in Sources */,
 				3AF746101E4F861B003465B5 /* RenderableAABB.cpp in Sources */,
 				3AFF0600253AE706002B1472 /* DispatchEvent.cpp in Sources */,
@@ -9219,6 +9311,7 @@
 				3AF746081E4F861B003465B5 /* AasControlDialog.cpp in Sources */,
 				3AA6E05423B233BC00BF9AD7 /* SoundChooser.cpp in Sources */,
 				3AF746191E4F861B003465B5 /* ColourPropertyEditor.cpp in Sources */,
+				3AC88A8C25BC0F9300E6CCCE /* FavouritesBrowser.cpp in Sources */,
 				3AFF0652253BF411002B1472 /* RenderableAasFile.cpp in Sources */,
 				3AFF05DB253AE5A4002B1472 /* CreateLayerDialog.cpp in Sources */,
 				3AF746311E4F861B003465B5 /* FloatingLayout.cpp in Sources */,
@@ -9326,6 +9419,7 @@
 				3AFF0534253AE06B002B1472 /* MapImporter.cpp in Sources */,
 				3AFF04CD253ADC3E002B1472 /* RenderSystemFactory.cpp in Sources */,
 				3AFF0531253AE06B002B1472 /* Export.cpp in Sources */,
+				3AC88A9825BC0FE600E6CCCE /* FavouritesManager.cpp in Sources */,
 				3AFF04A6253ABD19002B1472 /* ManipulationPivot.cpp in Sources */,
 				3AFF0518253ADF6C002B1472 /* MD5Surface.cpp in Sources */,
 				3AFF05AD253AE445002B1472 /* BrushNode.cpp in Sources */,

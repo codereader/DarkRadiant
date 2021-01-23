@@ -189,8 +189,8 @@ void FavouritesBrowser::reloadFavourites()
             auto index = _listView->InsertItem(_listView->GetItemCount(), displayName, category.iconIndex);
 
             // Keep the item info locally, store a pointer to it in the list item user data
-            auto& listItem = _listItems.emplace_back(FavouriteItem{ category.type, fav });
-            _listView->SetItemPtrData(index, reinterpret_cast<wxUIntPtr>(&listItem));
+            _listItems.emplace_back(FavouriteItem{ category.type, fav });
+            _listView->SetItemPtrData(index, reinterpret_cast<wxUIntPtr>(&(_listItems.back())));
         }
     }
 }
