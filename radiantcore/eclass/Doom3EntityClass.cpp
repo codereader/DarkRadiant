@@ -491,11 +491,7 @@ std::string Doom3EntityClass::getDefFileName()
 // Find a single attribute
 EntityClassAttribute& Doom3EntityClass::getAttribute(const std::string& name)
 {
-    StringPtr ref(new std::string(name));
-
-    EntityAttributeMap::iterator f = _attributes.find(ref);
-
-    return (f != _attributes.end()) ? f->second : _emptyAttribute;
+    return const_cast<EntityClassAttribute&>(std::as_const(*this).getAttribute(name));
 }
 
 // Find a single attribute
@@ -503,8 +499,7 @@ const EntityClassAttribute& Doom3EntityClass::getAttribute(const std::string& na
 {
     StringPtr ref(new std::string(name));
 
-    EntityAttributeMap::const_iterator f = _attributes.find(ref);
-
+    auto f = _attributes.find(ref);
     return (f != _attributes.end()) ? f->second : _emptyAttribute;
 }
 

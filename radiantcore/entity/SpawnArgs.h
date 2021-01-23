@@ -7,8 +7,7 @@
 namespace entity {
 
 /** 
- * \brief
- * Implementation of the class Entity.
+ * \brief Implementation of the class Entity.
  *
  * A SpawnArgs basically just keeps track of all the spawnargs and delivers
  * them on request, taking the inheritance tree (EntityClasses) into account.

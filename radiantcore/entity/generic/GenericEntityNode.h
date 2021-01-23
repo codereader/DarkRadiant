@@ -75,8 +75,8 @@ private:
 	void translate(const Vector3& translation);
 	void rotate(const Quaternion& rotation);
 
-	void revertTransform();
-	void freezeTransform();
+	void revertTransform() override;
+	void freezeTransform() override;
 	void updateTransform();
 
 	void originChanged();

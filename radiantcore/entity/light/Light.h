@@ -192,7 +192,7 @@ public:
 	~Light();
 
 	const AABB& localAABB() const;
-	AABB lightAABB() const;
+	AABB lightAABB() const override;
 
 	// Note: move this upwards
 	mutable Matrix4 m_projectionOrientation;

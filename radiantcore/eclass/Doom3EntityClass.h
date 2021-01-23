@@ -204,7 +204,7 @@ public:
     /**
      * Return the mod name.
      */
-    std::string getModName() const {
+    std::string getModName() const override {
         return _modName;
     }
 
