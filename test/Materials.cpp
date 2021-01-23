@@ -37,4 +37,15 @@ TEST_F(MaterialsTest, MaterialFileInfo)
     EXPECT_EQ(hiddenTex2->getShaderFileInfo().visibility, vfs::Visibility::HIDDEN);
 }
 
+TEST_F(MaterialsTest, MaterialParser)
+{
+    auto& materialManager = GlobalMaterialManager();
+
+    // All of these materials need to be present
+    // variant3 lacks whitespace between its name and {, which caused trouble in #4900
+    EXPECT_TRUE(materialManager.materialExists("textures/parsing_test/variant1"));
+    EXPECT_TRUE(materialManager.materialExists("textures/parsing_test/variant2"));
+    EXPECT_TRUE(materialManager.materialExists("textures/parsing_test/variant3"));
+}
+
 }

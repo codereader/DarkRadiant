@@ -1,0 +1,13 @@
+textures/parsing_test/variant1
+{
+    diffusemap _white
+}
+
+textures/parsing_test/variant2 {
+    diffusemap _white
+}
+
+// No space between name and curly brace
+textures/parsing_test/variant3{
+    diffusemap _white
+}
