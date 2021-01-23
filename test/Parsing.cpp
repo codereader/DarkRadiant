@@ -1,5 +1,6 @@
-#include "gtest/gtest.h"
+#include "RadiantTest.h"
 
+#include "isound.h"
 #include "parser/DefBlockTokeniser.h"
 
 namespace test
@@ -110,6 +111,19 @@ TEST(DefBlockTokeniser, BlockSeparation)
         std::make_pair("textures/parsing_test/block4", "_white"),
         std::make_pair("textures/parsing_test/block5", "_white"),
     });
+}
+
+using SoundShaderParsingTests = RadiantTest;
+
+TEST_F(SoundShaderParsingTests, ShaderParsing)
+{
+    // All of these shaders need to be parsed and present
+    EXPECT_TRUE(GlobalSoundManager().getSoundShader("parsing_test_case1"));
+    EXPECT_TRUE(GlobalSoundManager().getSoundShader("parsing_test_case2"));
+    EXPECT_TRUE(GlobalSoundManager().getSoundShader("parsing_test_case3"));
+    EXPECT_TRUE(GlobalSoundManager().getSoundShader("parsing_test_case4"));
+    EXPECT_TRUE(GlobalSoundManager().getSoundShader("parsing_test_case5"));
+    EXPECT_TRUE(GlobalSoundManager().getSoundShader("parsing_test_case6"));
 }
 
 }

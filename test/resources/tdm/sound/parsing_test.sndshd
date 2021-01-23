@@ -1,0 +1,42 @@
+// Parsing tests
+
+parsing_test_case1
+{
+	editor_displayFolder	ambient/environmental/city
+
+    volume -7
+    minDistance 9
+    maxDistance 30
+    looping
+
+    sound/nonexistent.ogg
+}
+
+// Opening brace in the same line
+parsing_test_case2 {
+	sound/nonexistent.ogg
+}
+
+// Opening brace in the same line, no whitespace
+parsing_test_case3{
+	sound/nonexistent.ogg
+}
+
+// Comments between name and block
+parsing_test_case4 // comment
+{
+	sound/nonexistent.ogg
+}
+
+// Comments between name and block
+parsing_test_case5// comment
+{
+	sound/nonexistent.ogg
+}
+
+// Comments between name and block
+parsing_test_case6
+// comment
+{
+	sound/nonexistent.ogg
+}
