@@ -89,6 +89,7 @@
     <ClCompile Include="..\..\..\test\ModelExport.cpp" />
     <ClCompile Include="..\..\..\test\Models.cpp" />
     <ClCompile Include="..\..\..\test\ModelScale.cpp" />
+    <ClCompile Include="..\..\..\test\Parsing.cpp" />
     <ClCompile Include="..\..\..\test\PatchIterators.cpp" />
     <ClCompile Include="..\..\..\test\PatchWelding.cpp" />
     <ClCompile Include="..\..\..\test\Prefabs.cpp" />

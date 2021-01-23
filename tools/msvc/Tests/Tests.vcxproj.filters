@@ -37,6 +37,7 @@
     <ClCompile Include="..\..\..\test\LayerManipulation.cpp" />
     <ClCompile Include="..\..\..\test\Favourites.cpp" />
     <ClCompile Include="..\..\..\test\Prefabs.cpp" />
+    <ClCompile Include="..\..\..\test\Parsing.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\HeadlessOpenGLContext.h" />
