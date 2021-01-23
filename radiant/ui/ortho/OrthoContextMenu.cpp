@@ -41,7 +41,8 @@ namespace {
     /* CONSTANTS */
 
     const char* LIGHT_CLASSNAME = "light";
-    const char* MODEL_CLASSNAME = "func_static";
+    const char* MODEL_CLASSNAME_ANIMATED = "func_animate";
+    const char* MODEL_CLASSNAME_STATIC = "func_static";
     const char* SPEAKER_CLASSNAME = "speaker";
     const char* PLAYERSTART_CLASSNAME = "info_player_start";
 
@@ -416,8 +417,12 @@ void OrthoContextMenu::callbackAddModel()
 
         try
         {
+            auto modelDef = GlobalEntityClassManager().findModel(ms.model);
+
+            auto className = modelDef ? MODEL_CLASSNAME_ANIMATED : MODEL_CLASSNAME_STATIC;
+
             auto modelNode = GlobalEntityModule().createEntityFromSelection(
-                MODEL_CLASSNAME, _lastPoint
+                className, _lastPoint
             );
 
             //Node_getTraversable(GlobalSceneGraph().root())->insert(modelNode);
