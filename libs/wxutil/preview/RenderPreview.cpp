@@ -742,6 +742,11 @@ void RenderPreview::drawGrid()
 	glLineWidth(1);
 	glColor3f(0.7f, 0.7f, 0.7f);
 
+    glPushMatrix();
+
+    auto sceneCenter = getSceneBounds().getOrigin();
+    glTranslated(sceneCenter.x(), sceneCenter.y(), sceneCenter.z());
+
 	glBegin(GL_LINES);
 
 	for (float x = -GRID_MAX_DIM; x < GRID_MAX_DIM; x += GRID_STEP)
@@ -760,6 +765,8 @@ void RenderPreview::drawGrid()
 	}
 
 	glEnd();
+
+    glPopMatrix();
 }
 
 void RenderPreview::drawTime()
