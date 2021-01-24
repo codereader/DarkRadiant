@@ -5,6 +5,7 @@
 #include "igroupdialog.h"
 #include "iuimanager.h"
 #include "imainframe.h"
+#include "icommandsystem.h"
 
 #include <wx/artprov.h>
 #include <wx/toolbar.h>
@@ -31,6 +32,9 @@ namespace
 
     const char* const ADD_ENTITY_TEXT = N_("Create entity");
     const char* const ADD_ENTITY_ICON = "cmenu_add_entity.png";
+
+    const char* const ADD_SPEAKER_TEXT = N_("Create speaker");
+    const char* const ADD_SPEAKER_ICON = "icon_sound.png";
 
     const char* const REMOVE_FROM_FAVOURITES = N_("Remove from Favourites");
 }
@@ -96,6 +100,12 @@ void FavouritesBrowser::constructPopupMenu()
         new wxutil::IconTextMenuItem(_(ADD_ENTITY_TEXT), ADD_ENTITY_ICON),
         std::bind(&FavouritesBrowser::onCreateEntity, this),
         std::bind(&FavouritesBrowser::testCreateEntity, this)
+    );
+
+    _popupMenu->addItem(
+        new wxutil::IconTextMenuItem(_(ADD_SPEAKER_TEXT), ADD_SPEAKER_ICON),
+        std::bind(&FavouritesBrowser::onCreateSpeaker, this),
+        std::bind(&FavouritesBrowser::testCreateSpeaker, this)
     );
 
     _popupMenu->addItem(
@@ -327,6 +337,9 @@ void FavouritesBrowser::onItemActivated(wxListEvent& ev)
     case decl::Type::EntityDef:
         onCreateEntity();
         break;
+    case decl::Type::SoundShader:
+        onCreateSpeaker();
+        break;
     }
 }
 
@@ -416,6 +429,11 @@ bool FavouritesBrowser::testCreateEntity()
         return false;
     }
 
+    return selectionAllowsEntityCreation();
+}
+
+bool FavouritesBrowser::selectionAllowsEntityCreation()
+{
     const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 
     bool anythingSelected = info.totalCount > 0;
@@ -424,6 +442,31 @@ bool FavouritesBrowser::testCreateEntity()
     bool onlyPrimitivesSelected = anythingSelected && noEntities && noComponents;
 
     return !anythingSelected || onlyPrimitivesSelected;
+}
+
+void FavouritesBrowser::onCreateSpeaker()
+{
+    if (!testCreateSpeaker()) return;
+
+    auto selection = getSelectedItems();
+
+    if (selection.size() != 1) return;
+
+    auto* data = reinterpret_cast<FavouriteItem*>(_listView->GetItemData(selection.front()));
+
+    GlobalCommandSystem().executeCommand("CreateSpeaker", {
+        cmd::Argument(data->fullPath), cmd::Argument(GlobalXYWndManager().getActiveViewOrigin())
+    });
+}
+
+bool FavouritesBrowser::testCreateSpeaker()
+{
+    if (getSelectedDeclType() != decl::Type::SoundShader)
+    {
+        return false;
+    }
+
+    return selectionAllowsEntityCreation();
 }
 
 module::StaticModule<FavouritesBrowser> favouritesBrowserModule;

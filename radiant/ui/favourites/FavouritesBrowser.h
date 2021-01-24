@@ -86,6 +86,10 @@ private:
     bool testSingleTextureSelected();
     void onCreateEntity();
     bool testCreateEntity();
+    void onCreateSpeaker();
+    bool testCreateSpeaker();
+
+    bool selectionAllowsEntityCreation();
 };
 
 }
