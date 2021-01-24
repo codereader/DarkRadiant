@@ -10,6 +10,7 @@
 #include "idialogmanager.h"
 #include "ieventmanager.h"
 #include "imodel.h"
+#include "igrid.h"
 #include "ifilesystem.h"
 #include "ifiletypes.h"
 #include "iselectiongroup.h"
