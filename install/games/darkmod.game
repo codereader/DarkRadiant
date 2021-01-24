@@ -233,6 +233,8 @@
 			<prefix>fogs</prefix>
 		</texture>
 
+    <!-- Whether the ai_see key is supported on light entities -->
+    <supportsAiSeeSpawnarg value="1" />
 	</light>
 
 	<!-- Information about the map format, for loading and saving -->

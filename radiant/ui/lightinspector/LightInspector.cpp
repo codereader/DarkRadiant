@@ -19,6 +19,8 @@
 #include <wx/radiobut.h>
 
 #include "ui/common/ShaderChooser.h" // for static displayLightInfo() function
+#include "util/ScopedBoolLock.h"
+#include "gamelib.h"
 
 namespace ui
 {
@@ -56,11 +58,12 @@ namespace
 }
 
 // Private constructor sets up dialog
-LightInspector::LightInspector()
-: wxutil::TransientWindow(_(LIGHTINSPECTOR_TITLE), GlobalMainFrame().getWxTopLevelWindow(), true),
-  _isProjected(false),
-  _texSelector(NULL),
-  _updateActive(false)
+LightInspector::LightInspector() : 
+    wxutil::TransientWindow(_(LIGHTINSPECTOR_TITLE), GlobalMainFrame().getWxTopLevelWindow(), true),
+    _isProjected(false),
+    _texSelector(nullptr),
+    _updateActive(false),
+    _supportsAiSee(game::current::getValue<bool>("/light/supportsAiSeeSpawnarg", false))
 {
     loadNamedPanel(this, "LightInspectorMainPanel");
 
@@ -142,17 +145,23 @@ void LightInspector::setupLightShapeOptions()
 // Connect the options checkboxes
 void LightInspector::setupOptionsPanel()
 {
-    findNamedObject<wxColourPickerCtrl>(this, "LightInspectorColour")->Connect(
-        wxEVT_COLOURPICKER_CHANGED, wxColourPickerEventHandler(LightInspector::_onColourChange), NULL, this);
+    findNamedObject<wxColourPickerCtrl>(this, "LightInspectorColour")->Bind(
+        wxEVT_COLOURPICKER_CHANGED, &LightInspector::_onColourChange, this);
 
-    findNamedObject<wxCheckBox>(this, "LightInspectorParallel")->Connect(
-        wxEVT_CHECKBOX, wxCommandEventHandler(LightInspector::_onOptionsToggle), NULL, this);
-    findNamedObject<wxCheckBox>(this, "LightInspectorNoShadows")->Connect(
-        wxEVT_CHECKBOX, wxCommandEventHandler(LightInspector::_onOptionsToggle), NULL, this);
-    findNamedObject<wxCheckBox>(this, "LightInspectorSkipSpecular")->Connect(
-        wxEVT_CHECKBOX, wxCommandEventHandler(LightInspector::_onOptionsToggle), NULL, this);
-    findNamedObject<wxCheckBox>(this, "LightInspectorSkipDiffuse")->Connect(
-        wxEVT_CHECKBOX, wxCommandEventHandler(LightInspector::_onOptionsToggle), NULL, this);
+    findNamedObject<wxCheckBox>(this, "LightInspectorParallel")->Bind(wxEVT_CHECKBOX, &LightInspector::_onOptionsToggle, this);
+    findNamedObject<wxCheckBox>(this, "LightInspectorNoShadows")->Bind(wxEVT_CHECKBOX, &LightInspector::_onOptionsToggle, this);
+    findNamedObject<wxCheckBox>(this, "LightInspectorSkipSpecular")->Bind(wxEVT_CHECKBOX, &LightInspector::_onOptionsToggle, this);
+    findNamedObject<wxCheckBox>(this, "LightInspectorSkipDiffuse")->Bind(wxEVT_CHECKBOX, &LightInspector::_onOptionsToggle, this);
+
+    if (_supportsAiSee)
+    {
+        findNamedObject<wxCheckBox>(this, "LightInspectorAiSee")->Show();
+        findNamedObject<wxCheckBox>(this, "LightInspectorAiSee")->Bind(wxEVT_CHECKBOX, &LightInspector::_onOptionsToggle, this);
+    }
+    else
+    {
+        findNamedObject<wxCheckBox>(this, "LightInspectorAiSee")->Hide();
+    }
 }
 
 // Create the texture widgets
@@ -313,7 +322,7 @@ void LightInspector::_onProjToggle(wxCommandEvent& ev)
 void LightInspector::getValuesFromEntity()
 {
     // Disable unwanted callbacks
-    _updateActive = true;
+    util::ScopedBoolLock updateLock(_updateActive);
 
     // Read values from the first entity in the list of lights (we have to pick
     // one, so might as well use the first).
@@ -386,7 +395,10 @@ void LightInspector::getValuesFromEntity()
     findNamedObject<wxCheckBox>(this, "LightInspectorSkipDiffuse")->SetValue(entity->getKeyValue("nodiffuse") == "1");
     findNamedObject<wxCheckBox>(this, "LightInspectorNoShadows")->SetValue(entity->getKeyValue("noshadows") == "1");
 
-    _updateActive = false;
+    if (_supportsAiSee)
+    {
+        findNamedObject<wxCheckBox>(this, "LightInspectorAiSee")->SetValue(entity->getKeyValue("ai_see") == "1");
+    }
 }
 
 // Write to all entities
@@ -472,6 +484,11 @@ void LightInspector::setValuesOnEntity(Entity* entity)
 	setEntityValueIfDifferent(entity, "nospecular", findNamedObject<wxCheckBox>(this, "LightInspectorSkipSpecular")->GetValue() ? "1" : "0");
 	setEntityValueIfDifferent(entity, "nodiffuse", findNamedObject<wxCheckBox>(this, "LightInspectorSkipDiffuse")->GetValue() ? "1" : "0");
 	setEntityValueIfDifferent(entity, "noshadows", findNamedObject<wxCheckBox>(this, "LightInspectorNoShadows")->GetValue() ? "1" : "0");
+
+    if (_supportsAiSee)
+    {
+        setEntityValueIfDifferent(entity, "ai_see", findNamedObject<wxCheckBox>(this, "LightInspectorAiSee")->GetValue() ? "1" : "0");
+    }
 }
 
 void LightInspector::_onOptionsToggle(wxCommandEvent& ev)

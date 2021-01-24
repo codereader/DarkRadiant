@@ -48,6 +48,8 @@ private:
     // Disables callbacks if set to TRUE (during widget updates)
     bool _updateActive;
 
+    bool _supportsAiSee;
+
     sigc::connection _selectionChanged;
     sigc::connection _undoHandler;
     sigc::connection _redoHandler;

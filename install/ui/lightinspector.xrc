@@ -125,6 +125,16 @@
 									<checked>0</checked>
 								</object>
 							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxALL</flag>
+								<border>5</border>
+								<object class="wxCheckBox" name="LightInspectorAiSee">
+									<tooltip>Whether the light affects the player&apos;s light gem and AI ability to see other things</tooltip>
+									<label>Affects Lightgem and AI</label>
+									<checked>0</checked>
+								</object>
+							</object>
 						</object>
 					</object>
 				</object>
