@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DarkRadiant\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2021-01-22 20:02+0100\n"
-"PO-Revision-Date: 2021-01-22 20:04+0100\n"
+"POT-Creation-Date: 2021-01-24 05:36+0100\n"
+"PO-Revision-Date: 2021-01-24 05:47+0100\n"
 "Last-Translator: codereader <greebo@thedarkmod.com>\n"
 "Language-Team: The Dark Mod\n"
 "Language: de\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Poedit-KeywordsList: _;gettext;gettext_noop\n"
 "X-Poedit-Basepath: .\n"
-"X-Generator: Poedit 2.2.4\n"
+"X-Generator: Poedit 2.4.2\n"
 "X-Poedit-SearchPath-0: ../../../../radiant\n"
 "X-Poedit-SearchPath-1: ../../../../libs\n"
 "X-Poedit-SearchPath-2: ../../../../plugins\n"
@@ -266,7 +266,7 @@ msgstr "Für diese Operation muss mindestens ein Brush ausgewählt sein."
 #: ..\..\radiant\ui\brush\QuerySidesDialog.cpp:105
 #: ..\..\radiant\ui\brush\QuerySidesDialog.cpp:122
 msgid "Unknown brush type ID: {0}"
-msgstr ""
+msgstr "Unbekannte Brush Typ-ID: {0}"
 
 #: ..\..\radiant\ui\commandlist\CommandList.cpp:20
 msgid "Shortcut List"
@@ -384,7 +384,7 @@ msgstr "Attribut"
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:338
 #: ..\..\radiant\ui\common\TexturePreviewCombo.cpp:80
 #: ..\..\radiant\ui\mapinfo\ShaderInfoTab.cpp:60
-#: ..\..\radiant\ui\mediabrowser\MediaBrowserTreeView.cpp:235
+#: ..\..\radiant\ui\mediabrowser\MediaBrowserTreeView.cpp:232
 #: ..\..\radiant\ui\shaderclipboard\ShaderClipboardStatus.h:50
 #: xml_file_content.cpp:14
 msgid "Shader"
@@ -599,7 +599,6 @@ msgid "Apply to selection"
 msgstr "Auf Auswahl anwenden"
 
 #: ..\..\radiant\ui\favourites\FavouritesBrowser.cpp:28
-#: ..\..\radiant\ui\mediabrowser\MediaBrowserTreeView.cpp:39
 #: ..\..\libs\wxutil\dataview\ResourceTreeView.cpp:16
 msgid "Remove from Favourites"
 msgstr "Aus Favoriten entfernen"
@@ -632,7 +631,7 @@ msgstr "Favoriten"
 
 #: ..\..\radiant\ui\FileOverwriteConfirmationHandler.h:35
 msgid "Confirm overwrite"
-msgstr ""
+msgstr "Überschreiben bestätigen"
 
 #: ..\..\radiant\ui\filters\editor\FilterDialog.cpp:21
 msgid "Filter Settings"
@@ -842,13 +841,13 @@ msgstr "Alle ausblenden"
 msgid "New"
 msgstr "Neu"
 
-#: ..\..\radiant\ui\lightinspector\LightInspector.cpp:30
+#: ..\..\radiant\ui\lightinspector\LightInspector.cpp:32
 msgid "Light properties"
 msgstr "Lichteigenschaften"
 
 #: ..\..\radiant\ui\LongRunningOperationHandler.cpp:33
 msgid "...crunching..."
-msgstr ""
+msgstr "...berechne..."
 
 #: ..\..\radiant\ui\LongRunningOperationHandler.cpp:45
 #: ..\..\radiant\ui\MapFileProgressHandler.cpp:89
@@ -1059,11 +1058,6 @@ msgstr "In Texturbrowser laden"
 msgid "Show Shader Definition"
 msgstr "Zeige Shaderdefinition"
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowserTreeView.cpp:38
-#: ..\..\libs\wxutil\dataview\ResourceTreeView.cpp:15
-msgid "Add to Favourites"
-msgstr "Zu Favoriten hinzufügen"
-
 #: ..\..\radiant\ui\mediabrowser\TextureDirectoryLoader.h:35
 msgid "Loading textures"
 msgstr "Lade Texturen"
@@ -1109,6 +1103,8 @@ msgid ""
 "Can't export, create and select a func_* entity\t\t\t\tcontaining the "
 "collision hull primitives."
 msgstr ""
+"Export nicht möglich, es muss eine func_* Entity ausgewählt sein\t\t\t"
+"\twelche die Hüllen-Primitive enthält"
 
 #: ..\..\radiant\ui\modelselector\MaterialsList.cpp:45
 msgid "Material"
@@ -1209,75 +1205,75 @@ msgstr "Schaltfläche"
 msgid "Recently used Maps"
 msgstr "Zuletzt geöffnete Maps"
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:52
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:53
 msgid "Create entity..."
 msgstr "Neue Entity..."
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:54
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:55
 msgid "Create player start here"
 msgstr "Erzeuge Spielerstartpunkt hier"
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:56
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:57
 msgid "Move player start here"
 msgstr "Verschiebe Spielerstartpunkt hier"
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:58
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:59
 msgid "Create model..."
 msgstr "Neues Modell..."
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:60
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:61
 msgid "Surround with monsterclip"
 msgstr "Mit Monsterclip einhüllen"
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:62
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:63
 msgid "Create light..."
 msgstr "Neues Licht..."
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:64
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:65
 msgid "Insert prefab..."
 msgstr "Prefab einfügen..."
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:66
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:67
 msgid "Create speaker..."
 msgstr "Neuer Speaker..."
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:68
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:69
 msgid "Convert to func_static"
 msgstr "In func_static umwandeln"
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:70
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:71
 msgid "Reparent primitives"
 msgstr "Primitive neu zuordnen"
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:71
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:72
 msgid "Revert to worldspawn"
 msgstr "Zu Worldspawn umwandeln"
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:72
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:73
 msgid "Revert part to worldspawn"
 msgstr "Teil zu Worldspawn umwandeln"
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:75
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:76
 msgid "Merge Entities"
 msgstr "Entities zusammenführen"
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:76 xml_file_content.cpp:165
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:77 xml_file_content.cpp:165
 msgid "Make Visportal"
 msgstr "Erzeuge Visportal"
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:327
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:328
 msgid "Unable to create light: {0}"
 msgstr "Konnte Licht nicht erstellen: {0}"
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:395
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:396
 msgid "Unable to create speaker: {0}"
 msgstr "Konnte Speaker nicht erstellen: {0}"
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:435
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:440
 msgid "Unable to create model: {0}"
 msgstr "Konnte Model nicht erstellen: {0}"
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:441
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:446
 msgid "Nothing must be selected for model creation"
 msgstr "Für diese Operation darf nichts ausgewählt sein."
 
@@ -1909,13 +1905,15 @@ msgstr "Kopieren"
 
 #: ..\..\radiant\uimanager\colourscheme\ColourSchemeEditor.cpp:84
 msgid "Override light volume colour"
-msgstr ""
+msgstr "Erzwinge einheitliche Lichterfarben"
 
 #: ..\..\radiant\uimanager\colourscheme\ColourSchemeEditor.cpp:87
 msgid ""
 "Render all light volumes in a single colour set by the colour scheme, rather "
 "than a per-entity colour controlled by the _color spawnarg"
 msgstr ""
+"Alle Lichter werden mit der Farbe aus dem aktiven Farbschema gerendert, "
+"nicht mit der Farbe die durch das _color Spawnarg festgelegt wird."
 
 #: ..\..\radiant\uimanager\colourscheme\ColourSchemeEditor.cpp:115
 msgid "Colour scheme"
@@ -2059,7 +2057,7 @@ msgstr "Höhere Auswahlpriorität für Entities"
 
 #: ..\..\radiant\xyview\GlobalXYWnd.cpp:203
 msgid "Font Style"
-msgstr ""
+msgstr "Schriftstil"
 
 #: ..\..\radiant\xyview\GlobalXYWnd.cpp:204
 msgid "Font Size"
@@ -2246,11 +2244,11 @@ msgstr ""
 
 #: ..\..\plugins\dm.difficulty\DifficultyEditor.cpp:216
 msgid "Classname cannot be left empty"
-msgstr ""
+msgstr "Klassenname darf nicht leer sein"
 
 #: ..\..\plugins\dm.difficulty\DifficultyEditor.cpp:225
 msgid "Spawnarg name and value cannot be left empty"
-msgstr ""
+msgstr "Weder Spawnarg-Name noch -Wert dürfen leer bleiben"
 
 #: ..\..\plugins\dm.difficulty\DifficultySettings.cpp:168
 msgid " (overridden)"
@@ -2595,12 +2593,12 @@ msgstr "Missions-Info editieren (darkmod.txt)..."
 
 #: ..\..\plugins\dm.gameconnection\GameConnection.cpp:144
 msgid "Game connection error"
-msgstr ""
+msgstr "Verbindungsfehler"
 
 #: ..\..\plugins\dm.gameconnection\GameConnection.cpp:168
 #: ..\..\plugins\dm.gameconnection\GameConnection.cpp:176
 msgid "Failed to connect to game process"
-msgstr ""
+msgstr "Konnte keine Verbindung zum Spiel aufbauen"
 
 #: ..\..\plugins\dm.gameconnection\GameConnection.cpp:271
 msgid "Connection"
@@ -2608,28 +2606,28 @@ msgstr "Verbindung"
 
 #: ..\..\plugins\dm.gameconnection\GameConnection.cpp:274
 msgid "Game position follows DarkRadiant camera"
-msgstr ""
+msgstr "Spiel-Kamera folgt der DarkRadiant-Kamera"
 
 #: ..\..\plugins\dm.gameconnection\GameConnection.cpp:276
 #: ..\..\plugins\dm.gameconnection\GameConnection.cpp:324
 msgid "Move camera to current game position"
-msgstr ""
+msgstr "Setze Kamera auf die Position im Spiel"
 
 #: ..\..\plugins\dm.gameconnection\GameConnection.cpp:280
 msgid "Game reloads .map file on save"
-msgstr ""
+msgstr "Spiel lädt beim Speichern die Map-Datei neu"
 
 #: ..\..\plugins\dm.gameconnection\GameConnection.cpp:282
 msgid "Tell game to reload .map file now"
-msgstr ""
+msgstr "Map-Datei im Spiel neu laden"
 
 #: ..\..\plugins\dm.gameconnection\GameConnection.cpp:286
 msgid "Update entities on every change"
-msgstr ""
+msgstr "Entities nach jeder Änderung aktualisieren"
 
 #: ..\..\plugins\dm.gameconnection\GameConnection.cpp:288
 msgid "Update entities now"
-msgstr ""
+msgstr "Entities jetzt aktualisieren "
 
 #: ..\..\plugins\dm.gameconnection\GameConnection.cpp:292
 msgid "Pause game"
@@ -2641,7 +2639,7 @@ msgstr "Ausgewählte Entities neu spawnen"
 
 #: ..\..\plugins\dm.gameconnection\GameConnection.cpp:318
 msgid "Enable game camera sync with DarkRadiant camera"
-msgstr ""
+msgstr "Aktiviere Kamerasynchronisation von TDM und DarkRadiant"
 
 #: ..\..\plugins\dm.gui\GuiSelector.cpp:22
 msgid "Choose a Gui Definition..."
@@ -3561,7 +3559,7 @@ msgstr "Keines der selektierten Elemente ist Teil einer Gruppe"
 
 #: ..\..\libs\stream\ExportStream.h:49
 msgid "Path is not absolute: {0}"
-msgstr ""
+msgstr "Pfad ist nicht absolut: {0}"
 
 #: ..\..\libs\stream\ExportStream.h:62
 msgid "Cannot open file for writing: {0}"
@@ -3574,6 +3572,10 @@ msgstr "Konnte die bestehende Datei nicht auf .bak umbenennen: {0}"
 #: ..\..\libs\stream\ExportStream.h:107
 msgid "Could not rename the temporary file: {0}"
 msgstr "Konnte die temporäre Datei nicht umbenennen: {0}"
+
+#: ..\..\libs\wxutil\dataview\ResourceTreeView.cpp:15
+msgid "Add to Favourites"
+msgstr "Zu Favoriten hinzufügen"
 
 #: ..\..\libs\wxutil\dataview\ResourceTreeView.cpp:131
 msgid "No favourites added so far"
@@ -3596,6 +3598,8 @@ msgid ""
 "Enter search text to filter the tree,\n"
 "use arrow keys to navigate"
 msgstr ""
+"Text eingeben um zu filtern,\n"
+"Navigation mittels Pfeiltasten."
 
 #: ..\..\libs\wxutil\dataview\ResourceTreeViewToolbar.cpp:57
 #: ..\..\libs\wxutil\dataview\TreeView.cpp:299
@@ -3724,7 +3728,7 @@ msgstr "&Öffnen"
 
 #: xml_file_content.cpp:4
 msgid "&Open Map from Project..."
-msgstr ""
+msgstr "Öffne Map aus Projekt..."
 
 #: xml_file_content.cpp:5
 msgid "&Import map..."
@@ -5132,6 +5136,10 @@ msgid "Skip diffuse lighting"
 msgstr "Kein Diffusemap-Rendering"
 
 #: xml_file_content.cpp:11
+msgid "Affects Lightgem and AI"
+msgstr "Beeinflusst Lightgem und KI"
+
+#: xml_file_content.cpp:12
 msgid "Light Texture"
 msgstr "Lichttextur"
 

@@ -35,9 +35,6 @@ namespace
     const char* const SELECT_ITEMS = N_("Select elements using this shader");
     const char* const DESELECT_ITEMS = N_("Deselect elements using this shader");
 
-    const char* const ADD_TO_FAVOURITES = N_("Add to Favourites");
-    const char* const REMOVE_FROM_FAVOURITES = N_("Remove from Favourites");
-
     const char* FOLDER_ICON = "folder16.png";
     const char* TEXTURE_ICON = "icon_texture.png";
 }

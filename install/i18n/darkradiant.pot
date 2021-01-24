@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: greebo@angua.at\n"
-"POT-Creation-Date: 2021-01-22 20:02+0100\n"
+"POT-Creation-Date: 2021-01-24 05:36+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -373,7 +373,7 @@ msgstr ""
 #: ..\..\radiant\ui\common\ShaderSelector.cpp:338
 #: ..\..\radiant\ui\common\TexturePreviewCombo.cpp:80
 #: ..\..\radiant\ui\mapinfo\ShaderInfoTab.cpp:60
-#: ..\..\radiant\ui\mediabrowser\MediaBrowserTreeView.cpp:235
+#: ..\..\radiant\ui\mediabrowser\MediaBrowserTreeView.cpp:232
 #: ..\..\radiant\ui\shaderclipboard\ShaderClipboardStatus.h:50
 #: xml_file_content.cpp:14
 msgid "Shader"
@@ -586,7 +586,6 @@ msgid "Apply to selection"
 msgstr ""
 
 #: ..\..\radiant\ui\favourites\FavouritesBrowser.cpp:28
-#: ..\..\radiant\ui\mediabrowser\MediaBrowserTreeView.cpp:39
 #: ..\..\libs\wxutil\dataview\ResourceTreeView.cpp:16
 msgid "Remove from Favourites"
 msgstr ""
@@ -817,7 +816,7 @@ msgstr ""
 msgid "New"
 msgstr ""
 
-#: ..\..\radiant\ui\lightinspector\LightInspector.cpp:30
+#: ..\..\radiant\ui\lightinspector\LightInspector.cpp:32
 msgid "Light properties"
 msgstr ""
 
@@ -1034,11 +1033,6 @@ msgstr ""
 msgid "Show Shader Definition"
 msgstr ""
 
-#: ..\..\radiant\ui\mediabrowser\MediaBrowserTreeView.cpp:38
-#: ..\..\libs\wxutil\dataview\ResourceTreeView.cpp:15
-msgid "Add to Favourites"
-msgstr ""
-
 #: ..\..\radiant\ui\mediabrowser\TextureDirectoryLoader.h:35
 msgid "Loading textures"
 msgstr ""
@@ -1178,75 +1172,75 @@ msgstr ""
 msgid "Recently used Maps"
 msgstr ""
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:52
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:53
 msgid "Create entity..."
 msgstr ""
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:54
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:55
 msgid "Create player start here"
 msgstr ""
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:56
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:57
 msgid "Move player start here"
 msgstr ""
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:58
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:59
 msgid "Create model..."
 msgstr ""
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:60
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:61
 msgid "Surround with monsterclip"
 msgstr ""
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:62
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:63
 msgid "Create light..."
 msgstr ""
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:64
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:65
 msgid "Insert prefab..."
 msgstr ""
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:66
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:67
 msgid "Create speaker..."
 msgstr ""
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:68
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:69
 msgid "Convert to func_static"
 msgstr ""
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:70
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:71
 msgid "Reparent primitives"
 msgstr ""
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:71
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:72
 msgid "Revert to worldspawn"
 msgstr ""
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:72
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:73
 msgid "Revert part to worldspawn"
 msgstr ""
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:75
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:76
 msgid "Merge Entities"
 msgstr ""
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:76 xml_file_content.cpp:165
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:77 xml_file_content.cpp:165
 msgid "Make Visportal"
 msgstr ""
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:327
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:328
 msgid "Unable to create light: {0}"
 msgstr ""
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:395
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:396
 msgid "Unable to create speaker: {0}"
 msgstr ""
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:435
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:440
 msgid "Unable to create model: {0}"
 msgstr ""
 
-#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:441
+#: ..\..\radiant\ui\ortho\OrthoContextMenu.cpp:446
 msgid "Nothing must be selected for model creation"
 msgstr ""
 
@@ -3470,6 +3464,10 @@ msgstr ""
 msgid "Could not rename the temporary file: {0}"
 msgstr ""
 
+#: ..\..\libs\wxutil\dataview\ResourceTreeView.cpp:15
+msgid "Add to Favourites"
+msgstr ""
+
 #: ..\..\libs\wxutil\dataview\ResourceTreeView.cpp:131
 msgid "No favourites added so far"
 msgstr ""
@@ -5008,6 +5006,10 @@ msgid "Skip diffuse lighting"
 msgstr ""
 
 #: xml_file_content.cpp:11
+msgid "Affects Lightgem and AI"
+msgstr ""
+
+#: xml_file_content.cpp:12
 msgid "Light Texture"
 msgstr ""
 
