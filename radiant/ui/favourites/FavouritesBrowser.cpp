@@ -13,7 +13,11 @@
 #include <wx/sizer.h>
 
 #include "module/StaticModule.h"
+#include "command/ExecutionFailure.h"
 #include "wxutil/menu/IconTextMenuItem.h"
+#include "wxutil/dialog/MessageBox.h"
+#include "iorthoview.h"
+#include "selectionlib.h"
 
 namespace ui
 {
@@ -24,6 +28,9 @@ namespace
 
     const char* const APPLY_TEXTURE_TEXT = N_("Apply to selection");
     const char* const APPLY_TEXTURE_ICON = "textureApplyToSelection16.png";
+
+    const char* const ADD_ENTITY_TEXT = N_("Create entity");
+    const char* const ADD_ENTITY_ICON = "cmenu_add_entity.png";
 
     const char* const REMOVE_FROM_FAVOURITES = N_("Remove from Favourites");
 }
@@ -80,15 +87,21 @@ void FavouritesBrowser::constructPopupMenu()
     _popupMenu.reset(new wxutil::PopupMenu);
 
     _popupMenu->addItem(
-        new wxutil::StockIconTextMenuItem(_(REMOVE_FROM_FAVOURITES), wxART_DEL_BOOKMARK),
-        std::bind(&FavouritesBrowser::onRemoveFromFavourite, this),
-        [this]() { return _listView->GetSelectedItemCount() > 0; }
-    );
-
-    _popupMenu->addItem(
         new wxutil::IconTextMenuItem(_(APPLY_TEXTURE_TEXT), APPLY_TEXTURE_ICON),
         std::bind(&FavouritesBrowser::onApplyToSelection, this),
         std::bind(&FavouritesBrowser::testSingleTextureSelected, this)
+    );
+
+    _popupMenu->addItem(
+        new wxutil::IconTextMenuItem(_(ADD_ENTITY_TEXT), ADD_ENTITY_ICON),
+        std::bind(&FavouritesBrowser::onCreateEntity, this),
+        std::bind(&FavouritesBrowser::testCreateEntity, this)
+    );
+
+    _popupMenu->addItem(
+        new wxutil::StockIconTextMenuItem(_(REMOVE_FROM_FAVOURITES), wxART_DEL_BOOKMARK),
+        std::bind(&FavouritesBrowser::onRemoveFromFavourite, this),
+        [this]() { return _listView->GetSelectedItemCount() > 0; }
     );
 }
 
@@ -311,6 +324,9 @@ void FavouritesBrowser::onItemActivated(wxListEvent& ev)
     case decl::Type::Material:
         onApplyToSelection();
         break;
+    case decl::Type::EntityDef:
+        onCreateEntity();
+        break;
     }
 }
 
@@ -328,6 +344,16 @@ std::vector<long> FavouritesBrowser::getSelectedItems()
     }
 
     return list;
+}
+
+decl::Type FavouritesBrowser::getSelectedDeclType()
+{
+    auto selection = getSelectedItems();
+
+    if (selection.size() != 1) return decl::Type::None;
+
+    auto* data = reinterpret_cast<FavouriteItem*>(_listView->GetItemData(selection.front()));
+    return data->type;
 }
 
 void FavouritesBrowser::onRemoveFromFavourite()
@@ -356,12 +382,48 @@ void FavouritesBrowser::onApplyToSelection()
 
 bool FavouritesBrowser::testSingleTextureSelected()
 {
+    return getSelectedDeclType() == decl::Type::Material;
+}
+
+void FavouritesBrowser::onCreateEntity()
+{
+    if (!testCreateEntity()) return;
+
     auto selection = getSelectedItems();
 
-    if (selection.size() != 1) return false;
+    if (selection.size() != 1) return;
 
     auto* data = reinterpret_cast<FavouriteItem*>(_listView->GetItemData(selection.front()));
-    return data->type == decl::Type::Material;
+
+    UndoableCommand command("createEntity");
+
+    // Create the entity. We might get an EntityCreationException if the
+    // wrong number of brushes is selected.
+    try
+    {
+        GlobalEntityModule().createEntityFromSelection(data->fullPath, GlobalXYWndManager().getActiveViewOrigin());
+    }
+    catch (cmd::ExecutionFailure& e)
+    {
+        wxutil::Messagebox::ShowError(e.what());
+    }
+}
+
+bool FavouritesBrowser::testCreateEntity()
+{
+    if (getSelectedDeclType() != decl::Type::EntityDef)
+    {
+        return false;
+    }
+
+    const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
+
+    bool anythingSelected = info.totalCount > 0;
+    bool noEntities = info.entityCount == 0;
+    bool noComponents = info.componentCount == 0;
+    bool onlyPrimitivesSelected = anythingSelected && noEntities && noComponents;
+
+    return !anythingSelected || onlyPrimitivesSelected;
 }
 
 module::StaticModule<FavouritesBrowser> favouritesBrowserModule;

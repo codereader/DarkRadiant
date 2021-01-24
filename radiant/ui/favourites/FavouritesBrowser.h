@@ -80,9 +80,12 @@ private:
 
     // Returns the list of all selected item indices
     std::vector<long> getSelectedItems();
+    decl::Type getSelectedDeclType();
 
     void onApplyToSelection();
     bool testSingleTextureSelected();
+    void onCreateEntity();
+    bool testCreateEntity();
 };
 
 }
