@@ -5,6 +5,7 @@
 #include "ientity.h"
 #include "ieclass.h"
 #include "irender.h"
+#include "iselection.h"
 #include "igl.h"
 #include "iselectiontest.h"
 
@@ -476,3 +477,19 @@ public:
         return _value;
     }
 };
+
+namespace scene
+{
+
+inline void foreachSelectedEntity(const std::function<void(Entity&)>& functor)
+{
+    GlobalSelectionSystem().foreachSelected([&](const INodePtr& node)
+    {
+        if (Node_isEntity(node))
+        {
+            functor(*Node_getEntity(node));
+        }
+    });
+}
+
+}

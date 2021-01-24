@@ -19,6 +19,7 @@
 #include "wxutil/dialog/MessageBox.h"
 #include "iorthoview.h"
 #include "selectionlib.h"
+#include "entitylib.h"
 
 namespace ui
 {
@@ -210,18 +211,14 @@ void FavouritesBrowser::reloadFavourites()
 
         for (const auto& fav : favourites)
         {
-            auto displayName = fav;
-
-            if (!_showFullPath->IsChecked())
-            {
-                auto slashPos = displayName.rfind('/');
-                displayName = displayName.substr(slashPos == std::string::npos ? 0 : slashPos + 1);
-            }
+            auto slashPos = fav.rfind('/');
+            auto leafName = fav.substr(slashPos == std::string::npos ? 0 : slashPos + 1);;
+            auto displayName = !_showFullPath->IsChecked() ? leafName : fav;
 
             auto index = _listView->InsertItem(_listView->GetItemCount(), displayName, category.iconIndex);
 
             // Keep the item info locally, store a pointer to it in the list item user data
-            _listItems.emplace_back(FavouriteItem{ category.type, fav });
+            _listItems.emplace_back(FavouriteItem{ category.type, fav, leafName });
             _listView->SetItemPtrData(index, reinterpret_cast<wxUIntPtr>(&(_listItems.back())));
         }
     }
@@ -353,7 +350,7 @@ void FavouritesBrowser::onItemActivated(wxListEvent& ev)
         }
         else if (testApplySoundToSelection())
         {
-            onApplyTextureToSelection();
+            onApplySoundToSelection();
         }
         break;
     }
@@ -422,7 +419,12 @@ void FavouritesBrowser::onApplySoundToSelection()
 
     auto* data = reinterpret_cast<FavouriteItem*>(_listView->GetItemData(selection.front()));
 
-    // TODO: Apply sound shader to entities
+    UndoableCommand cmd("ApplySoundShaderToSelection");
+
+    scene::foreachSelectedEntity([&](Entity& entity)
+    {
+        entity.setKeyValue("s_shader", data->leafName);
+    });
 }
 
 bool FavouritesBrowser::testApplySoundToSelection()
@@ -489,7 +491,7 @@ void FavouritesBrowser::onCreateSpeaker()
     auto* data = reinterpret_cast<FavouriteItem*>(_listView->GetItemData(selection.front()));
 
     GlobalCommandSystem().executeCommand("CreateSpeaker", {
-        cmd::Argument(data->fullPath), cmd::Argument(GlobalXYWndManager().getActiveViewOrigin())
+        cmd::Argument(data->leafName), cmd::Argument(GlobalXYWndManager().getActiveViewOrigin())
     });
 }
 

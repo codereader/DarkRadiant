@@ -24,6 +24,7 @@ private:
     {
         decl::Type type;
         std::string fullPath;
+        std::string leafName;
     };
 
     wxFrame* _tempParent;
