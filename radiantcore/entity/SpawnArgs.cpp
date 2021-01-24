@@ -13,7 +13,8 @@ SpawnArgs::SpawnArgs(const IEntityClassPtr& eclass) :
 	_undo(_keyValues, std::bind(&SpawnArgs::importState, this, std::placeholders::_1), "EntityKeyValues"),
 	_instanced(false),
 	_observerMutex(false),
-	_isContainer(!eclass->isFixedSize())
+	_isContainer(!eclass->isFixedSize()),
+	_attachments(eclass->getName())
 {}
 
 SpawnArgs::SpawnArgs(const SpawnArgs& other) :
@@ -22,7 +23,8 @@ SpawnArgs::SpawnArgs(const SpawnArgs& other) :
 	_undo(_keyValues, std::bind(&SpawnArgs::importState, this, std::placeholders::_1), "EntityKeyValues"),
 	_instanced(false),
 	_observerMutex(false),
-	_isContainer(other._isContainer)
+	_isContainer(other._isContainer),
+	_attachments(other._attachments)
 {
 	for (KeyValues::const_iterator i = other._keyValues.begin();
 		 i != other._keyValues.end();
@@ -191,6 +193,11 @@ bool SpawnArgs::isInherited(const std::string& key) const
 
 	// The value is inherited, if it doesn't exist locally and the inherited one is not empty
 	return (!definedLocally && !_eclass->getAttribute(key).getValue().empty());
+}
+
+void SpawnArgs::forEachAttachment(AttachmentFunc func) const
+{
+    _attachments.forEachAttachment(func);
 }
 
 Entity::KeyValuePairs SpawnArgs::getKeyValuePairs(const std::string& prefix) const

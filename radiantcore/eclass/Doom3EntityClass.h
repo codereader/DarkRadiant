@@ -101,10 +101,6 @@ class Doom3EntityClass
     // The empty attribute
     EntityClassAttribute _emptyAttribute;
 
-    // Helper object to manage attached entities
-    class Attachments;
-    std::unique_ptr<Attachments> _attachments;
-
     // The time this def has been parsed
     std::size_t _parseStamp;
 
@@ -159,7 +155,6 @@ public:
     std::string getName() const override;
     const IEntityClass* getParent() const override;
     sigc::signal<void>& changedSignal() override;
-    void forEachAttachment(AttachmentFunc func) const override;
     bool isFixedSize() const override;
     AABB getBounds() const override;
     bool isLight() const override;

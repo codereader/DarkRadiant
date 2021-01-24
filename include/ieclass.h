@@ -200,9 +200,10 @@ typedef std::shared_ptr<IEntityClass> IEntityClassPtr;
 typedef std::shared_ptr<const IEntityClass> IEntityClassConstPtr;
 
 /**
- * Entity class interface. An entity class represents a single type
- * of entity that can be created by the EntityCreator. Entity classes are parsed
- * from .DEF files during startup.
+ * \brief Entity class interface.
+ * 
+ * An entity class represents a single type of entity that can be created by
+ * the EntityCreator. Entity classes are parsed from .DEF files during startup.
  *
  * Entity class attribute names are compared case-insensitively, as in the
  * Entity class.
@@ -225,35 +226,6 @@ public:
 
     /// Query whether this entity class represents a light.
     virtual bool isLight() const = 0;
-
-    /* ENTITY ATTACHMENTS */
-
-    /// Details of an attached entity
-    struct Attachment
-    {
-        /// Entity class of the attached entity
-        std::string eclass;
-
-        /// Vector offset where the attached entity should appear
-        Vector3 offset;
-    };
-
-    /// A functor which can received Attachments
-    using AttachmentFunc = std::function<void(const Attachment&)>;
-
-    /**
-     * \brief
-     * Iterate over attached entities, if any.
-     *
-     * Each entity class can define one or more attached entities, which should
-     * appear at specific offsets relative to the parent entity. Such attached
-     * entities are for visualisation only, and should not be saved into the
-     * map as genuine map entities.
-     *
-     * \param func
-     * Functor to receive attachment information.
-     */
-    virtual void forEachAttachment(AttachmentFunc func) const = 0;
 
     /* ENTITY CLASS SIZE */
 

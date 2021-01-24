@@ -209,6 +209,34 @@ public:
 	 * given entity class name. className is treated case-sensitively.
 	 */
 	virtual bool isOfType(const std::string& className) = 0;
+
+    /* ENTITY ATTACHMENTS */
+
+    /// Details of an attached entity
+    struct Attachment
+    {
+        /// Entity class of the attached entity
+        std::string eclass;
+
+        /// Vector offset where the attached entity should appear
+        Vector3 offset;
+    };
+
+    /// A functor which can receive Attachment objects
+    using AttachmentFunc = std::function<void(const Attachment&)>;
+
+    /**
+     * \brief Iterate over attached entities, if any.
+     *
+     * Each entity can define one or more attached entities, which should
+     * appear at specific offsets relative to the parent entity. Such attached
+     * entities are for visualisation only, and should not be saved into the
+     * map as genuine map entities.
+     *
+     * \param func
+     * Functor to receive attachment information.
+     */
+    virtual void forEachAttachment(AttachmentFunc func) const = 0;
 };
 
 /// Interface for a INode subclass that contains an Entity

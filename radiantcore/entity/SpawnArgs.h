@@ -1,5 +1,7 @@
 #pragma once
 
+#include "AttachmentData.h"
+
 #include <vector>
 #include "KeyValue.h"
 #include <memory>
@@ -39,6 +41,9 @@ class SpawnArgs: public Entity
 
 	bool _isContainer;
 
+    // Store attachment information
+    AttachmentData _attachments;
+
 public:
 	// Constructor, pass the according entity class
 	SpawnArgs(const IEntityClassPtr& eclass);
@@ -51,27 +56,15 @@ public:
     /* Entity implementation */
 	void attachObserver(Observer* observer) override;
 	void detachObserver(Observer* observer) override;
-
 	void connectUndoSystem(IMapFileChangeTracker& changeTracker);
     void disconnectUndoSystem(IMapFileChangeTracker& changeTracker);
-
-	/** Return the EntityClass associated with this entity.
-	 */
 	IEntityClassPtr getEntityClass() const override;
-
 	void forEachKeyValue(const KeyValueVisitFunctor& func) const override;
     void forEachEntityKeyValue(const EntityKeyValueVisitFunctor& visitor) override;
-
-	/** Set a keyvalue on the entity.
-	 */
 	void setKeyValue(const std::string& key, const std::string& value) override;
-
-	/** Retrieve a keyvalue from the entity.
-	 */
 	std::string getKeyValue(const std::string& key) const override;
-
-	// Returns true if the given key is inherited
 	bool isInherited(const std::string& key) const override;
+    void forEachAttachment(AttachmentFunc func) const override;
 
 	// Get all KeyValues matching the given prefix.
 	KeyValuePairs getKeyValuePairs(const std::string& prefix) const override;
