@@ -30,6 +30,9 @@ namespace
     const char* const APPLY_TEXTURE_TEXT = N_("Apply to selection");
     const char* const APPLY_TEXTURE_ICON = "textureApplyToSelection16.png";
 
+    const char* const APPLY_SOUNDSHADER_TEXT = N_("Apply to selection");
+    const char* const APPLY_SOUNDSHADER_ICON = "icon_sound.png";
+
     const char* const ADD_ENTITY_TEXT = N_("Create entity");
     const char* const ADD_ENTITY_ICON = "cmenu_add_entity.png";
 
@@ -92,7 +95,7 @@ void FavouritesBrowser::constructPopupMenu()
 
     _popupMenu->addItem(
         new wxutil::IconTextMenuItem(_(APPLY_TEXTURE_TEXT), APPLY_TEXTURE_ICON),
-        std::bind(&FavouritesBrowser::onApplyToSelection, this),
+        std::bind(&FavouritesBrowser::onApplyTextureToSelection, this),
         std::bind(&FavouritesBrowser::testSingleTextureSelected, this)
     );
 
@@ -106,6 +109,12 @@ void FavouritesBrowser::constructPopupMenu()
         new wxutil::IconTextMenuItem(_(ADD_SPEAKER_TEXT), ADD_SPEAKER_ICON),
         std::bind(&FavouritesBrowser::onCreateSpeaker, this),
         std::bind(&FavouritesBrowser::testCreateSpeaker, this)
+    );
+
+    _popupMenu->addItem(
+        new wxutil::IconTextMenuItem(_(APPLY_SOUNDSHADER_TEXT), APPLY_SOUNDSHADER_ICON),
+        std::bind(&FavouritesBrowser::onApplySoundToSelection, this),
+        std::bind(&FavouritesBrowser::testApplySoundToSelection, this)
     );
 
     _popupMenu->addItem(
@@ -332,13 +341,20 @@ void FavouritesBrowser::onItemActivated(wxListEvent& ev)
     switch (data->type)
     {
     case decl::Type::Material:
-        onApplyToSelection();
+        onApplyTextureToSelection();
         break;
     case decl::Type::EntityDef:
         onCreateEntity();
         break;
     case decl::Type::SoundShader:
-        onCreateSpeaker();
+        if (testCreateSpeaker())
+        {
+            onCreateSpeaker();
+        }
+        else if (testApplySoundToSelection())
+        {
+            onApplyTextureToSelection();
+        }
         break;
     }
 }
@@ -382,7 +398,7 @@ void FavouritesBrowser::onRemoveFromFavourite()
     // A repopulation has already been rescheduled
 }
 
-void FavouritesBrowser::onApplyToSelection()
+void FavouritesBrowser::onApplyTextureToSelection()
 {
     auto selection = getSelectedItems();
 
@@ -396,6 +412,24 @@ void FavouritesBrowser::onApplyToSelection()
 bool FavouritesBrowser::testSingleTextureSelected()
 {
     return getSelectedDeclType() == decl::Type::Material;
+}
+
+void FavouritesBrowser::onApplySoundToSelection()
+{
+    auto selection = getSelectedItems();
+
+    if (selection.size() != 1) return;
+
+    auto* data = reinterpret_cast<FavouriteItem*>(_listView->GetItemData(selection.front()));
+
+    // TODO: Apply sound shader to entities
+}
+
+bool FavouritesBrowser::testApplySoundToSelection()
+{
+    const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
+
+    return info.entityCount > 0 && getSelectedDeclType() == decl::Type::SoundShader;
 }
 
 void FavouritesBrowser::onCreateEntity()

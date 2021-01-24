@@ -82,8 +82,10 @@ private:
     std::vector<long> getSelectedItems();
     decl::Type getSelectedDeclType();
 
-    void onApplyToSelection();
+    void onApplyTextureToSelection();
     bool testSingleTextureSelected();
+    void onApplySoundToSelection();
+    bool testApplySoundToSelection();
     void onCreateEntity();
     bool testCreateEntity();
     void onCreateSpeaker();
