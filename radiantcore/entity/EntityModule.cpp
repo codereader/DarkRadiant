@@ -1,6 +1,7 @@
 #include "EntityModule.h"
 
 #include "itextstream.h"
+#include "icommandsystem.h"
 #include "imap.h"
 #include "iselection.h"
 #include "i18n.h"
@@ -27,6 +28,7 @@
 #include "selection/algorithm/Shader.h"
 #include "command/ExecutionFailure.h"
 #include "eclass.h"
+#include "algorithm/Speaker.h"
 
 namespace entity
 {
@@ -279,6 +281,7 @@ const StringSet& Doom3EntityModule::getDependencies() const
 		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_MAP);
 		_dependencies.insert(MODULE_GAMEMANAGER);
+		_dependencies.insert(MODULE_COMMANDSYSTEM);
 	}
 
 	return _dependencies;
@@ -286,9 +289,12 @@ const StringSet& Doom3EntityModule::getDependencies() const
 
 void Doom3EntityModule::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called." << std::endl;
+    rMessage() << getName() << "::initialiseModule called." << std::endl;
 
-	LightShader::m_defaultShader = game::current::getValue<std::string>("/defaults/lightShader");
+    LightShader::m_defaultShader = game::current::getValue<std::string>("/defaults/lightShader");
+
+    GlobalCommandSystem().addCommand("CreateSpeaker", std::bind(&algorithm::CreateSpeaker, std::placeholders::_1),
+        { cmd::ARGTYPE_STRING, cmd::ARGTYPE_VECTOR3 });
 }
 
 void Doom3EntityModule::shutdownModule()

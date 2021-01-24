@@ -194,6 +194,9 @@
     <Filter Include="src\decl">
       <UniqueIdentifier>{90b48fa3-7e87-4565-8475-083668a5ad90}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\entity\algorithm">
+      <UniqueIdentifier>{b7afddd6-8c82-4975-a947-00999bd70fec}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiantcore\modulesystem\ModuleLoader.cpp">
@@ -2072,6 +2075,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\decl\FavouriteSet.h">
       <Filter>src\decl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\entity\algorithm\Speaker.h">
+      <Filter>src\entity\algorithm</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

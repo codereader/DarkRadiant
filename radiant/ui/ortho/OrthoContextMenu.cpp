@@ -43,7 +43,6 @@ namespace {
     const char* LIGHT_CLASSNAME = "light";
     const char* MODEL_CLASSNAME_ANIMATED = "func_animate";
     const char* MODEL_CLASSNAME_STATIC = "func_static";
-    const char* SPEAKER_CLASSNAME = "speaker";
     const char* PLAYERSTART_CLASSNAME = "info_player_start";
 
     // Angle key for the player start
@@ -343,58 +342,27 @@ void OrthoContextMenu::callbackAddPrefab()
 
 void OrthoContextMenu::callbackAddSpeaker()
 {
-    ISoundShaderPtr soundShader;
-
     // If we have an active sound module, query the desired shader from the user
-    if (module::GlobalModuleRegistry().moduleExists(MODULE_SOUNDMANAGER))
+    if (!module::GlobalModuleRegistry().moduleExists(MODULE_SOUNDMANAGER))
     {
-        IResourceChooser* chooser = GlobalDialogManager().createSoundShaderChooser();
-
-        // Use a SoundChooser dialog to get a selection from the user
-        std::string shaderPath = chooser->chooseResource();
-
-        chooser->destroyDialog();
-
-        if (shaderPath.empty())
-        {
-            return; // user cancelled the dialog, don't do anything
-        }
-
-        soundShader = GlobalSoundManager().getSoundShader(shaderPath);
+        return;
     }
 
-    UndoableCommand command("addSpeaker");
+    IResourceChooser* chooser = GlobalDialogManager().createSoundShaderChooser();
 
-    // Cancel all selection
-    GlobalSelectionSystem().setSelectedAll(false);
+    // Use a SoundChooser dialog to get a selection from the user
+    std::string shaderPath = chooser->chooseResource();
 
-    try
+    chooser->destroyDialog();
+
+    if (shaderPath.empty())
     {
-        // Create the speaker entity
-        auto spkNode = GlobalEntityModule().createEntityFromSelection(
-            SPEAKER_CLASSNAME, _lastPoint
-        );
-
-        if (soundShader)
-        {
-            // Set the shader keyvalue
-            Entity& entity = spkNode->getEntity();
-
-            entity.setKeyValue("s_shader", soundShader->getName());
-
-            // Initialise the speaker with suitable distance values
-            SoundRadii radii = soundShader->getRadii();
-
-            entity.setKeyValue("s_mindistance", string::to_string(radii.getMin(true)));
-            entity.setKeyValue("s_maxdistance",
-                (radii.getMax(true) > 0 ? string::to_string(radii.getMax(true)) : "10")
-            );
-        }
+        return; // user cancelled the dialog, don't do anything
     }
-    catch (cmd::ExecutionFailure& e) 
-    {
-        wxutil::Messagebox::ShowError(fmt::format(_("Unable to create speaker: {0}"), e.what()));
-    }
+
+    GlobalCommandSystem().executeCommand("CreateSpeaker", {
+        cmd::Argument(shaderPath), cmd::Argument(_lastPoint)
+    });
 }
 
 void OrthoContextMenu::callbackAddModel()

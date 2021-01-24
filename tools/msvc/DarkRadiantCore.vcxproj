@@ -725,6 +725,7 @@
     <ClInclude Include="..\..\radiantcore\eclass\Doom3ModelDef.h" />
     <ClInclude Include="..\..\radiantcore\eclass\EClassColourManager.h" />
     <ClInclude Include="..\..\radiantcore\eclass\EClassManager.h" />
+    <ClInclude Include="..\..\radiantcore\entity\algorithm\Speaker.h" />
     <ClInclude Include="..\..\radiantcore\entity\AngleKey.h" />
     <ClInclude Include="..\..\radiantcore\entity\ColourKey.h" />
     <ClInclude Include="..\..\radiantcore\entity\curve\Curve.h" />
