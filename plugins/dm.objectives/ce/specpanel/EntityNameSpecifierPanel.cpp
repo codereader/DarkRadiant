@@ -25,21 +25,19 @@ EntityNameSpecifierPanel::EntityNameSpecifierPanel(wxWindow* parent) :
     _editCombo->Bind(wxEVT_COMBOBOX, &EntityNameSpecifierPanel::onComboBoxChanged, this);
 
     // Collect all entity names in the scene
-    std::set<std::string> sortedStrings;
+    wxArrayString names;
     GlobalMapModule().getRoot()->foreachNode([&](const scene::INodePtr& node)
     {
         if (Node_isEntity(node))
         {
-            sortedStrings.emplace(Node_getEntity(node)->getKeyValue("name"));
+            names.push_back(Node_getEntity(node)->getKeyValue("name"));
         }
 
         return true;
     });
 
-    for (const auto& str : sortedStrings)
-    {
-        _editCombo->AppendString(str);
-    }
+    names.Sort();
+    _editCombo->Append(names);
 }
 
 EntityNameSpecifierPanel::~EntityNameSpecifierPanel()
