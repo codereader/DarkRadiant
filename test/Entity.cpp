@@ -8,6 +8,24 @@ namespace test
 
 using EntityTest = RadiantTest;
 
+namespace
+{
+
+// Obtain entity attachments as a simple std::list
+std::list<Entity::Attachment> getAttachments(const IEntityNodePtr node)
+{
+    std::list<Entity::Attachment> attachments;
+    if (node)
+    {
+        node->getEntity().forEachAttachment(
+            [&](const Entity::Attachment& a) { attachments.push_back(a); }
+        );
+    }
+    return attachments;
+}
+
+}
+
 TEST_F(EntityTest, LookupEntityClass)
 {
     // Nonexistent class should return null (but not throw or crash)
@@ -69,11 +87,26 @@ TEST_F(EntityTest, CreateBasicLightEntity)
     EXPECT_EQ(light->getEntity().getEntityClass().get(), lightCls.get());
 
     // This basic light entity should have no attachments
-    std::list<Entity::Attachment> attachments;
-    light->getEntity().forEachAttachment(
-        [&](const Entity::Attachment& a) { attachments.push_back(a); }
-    );
+    auto attachments = getAttachments(light);
     EXPECT_EQ(attachments.size(), 0);
+}
+
+TEST_F(EntityTest, CreateAttachedLightEntity)
+{
+    // Create the torch entity which has an attached light
+    auto torchCls = GlobalEntityClassManager().findClass("atdm:torch_brazier");
+    auto torch = GlobalEntityModule().createEntity(torchCls);
+    EXPECT_TRUE(torch);
+
+    // Check that the attachment spawnargs are present
+    const Entity& spawnArgs = torch->getEntity();
+    EXPECT_EQ(spawnArgs.getKeyValue("def_attach"), "light_cageflame_small");
+    EXPECT_EQ(spawnArgs.getKeyValue("pos_attach"), "flame");
+    EXPECT_EQ(spawnArgs.getKeyValue("name_attach"), "flame");
+
+    // Spawnargs should be parsed into a single attachment
+    auto attachments = getAttachments(torch);
+    EXPECT_EQ(attachments.size(), 1);
 }
 
 }
