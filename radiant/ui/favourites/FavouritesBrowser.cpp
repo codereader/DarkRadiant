@@ -2,10 +2,10 @@
 
 #include "i18n.h"
 #include "ifavourites.h"
-#include "igroupdialog.h"
 #include "iuimanager.h"
 #include "imainframe.h"
 #include "icommandsystem.h"
+#include "iorthoview.h"
 
 #include <wx/artprov.h>
 #include <wx/toolbar.h>
@@ -13,11 +13,9 @@
 #include <wx/frame.h>
 #include <wx/sizer.h>
 
-#include "module/StaticModule.h"
 #include "command/ExecutionFailure.h"
 #include "wxutil/menu/IconTextMenuItem.h"
 #include "wxutil/dialog/MessageBox.h"
-#include "iorthoview.h"
 #include "selectionlib.h"
 #include "entitylib.h"
 
@@ -26,8 +24,6 @@ namespace ui
 
 namespace
 {
-    const char* const TAB_NAME = "favourites";
-
     const char* const APPLY_TEXTURE_TEXT = N_("Apply to selection");
     const char* const APPLY_TEXTURE_ICON = "textureApplyToSelection16.png";
 
@@ -43,28 +39,15 @@ namespace
     const char* const REMOVE_FROM_FAVOURITES = N_("Remove from Favourites");
 }
 
-FavouritesBrowser::FavouritesBrowser() :
-    _tempParent(nullptr),
-    _mainWidget(nullptr),
+FavouritesBrowser::FavouritesBrowser(wxWindow* parent) :
+    wxPanel(parent, wxID_ANY),
     _listView(nullptr),
     _showFullPath(nullptr),
     _updateNeeded(true)
-{}
-
-void FavouritesBrowser::construct()
 {
-    if (_mainWidget != nullptr)
-    {
-        return;
-    }
+    SetSizer(new wxBoxSizer(wxVERTICAL));
 
-    _tempParent = new wxFrame(nullptr, wxID_ANY, "");
-    _tempParent->Hide();
-
-    _mainWidget = new wxPanel(_tempParent, wxID_ANY);
-    _mainWidget->SetSizer(new wxBoxSizer(wxVERTICAL));
-
-    _listView = new wxListView(_mainWidget, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_LIST);
+    _listView = new wxListView(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_LIST);
     _listView->Bind(wxEVT_PAINT, &FavouritesBrowser::onListCtrlPaint, this);
     _listView->Bind(wxEVT_CONTEXT_MENU, &FavouritesBrowser::onContextMenu, this);
     _listView->Bind(wxEVT_LIST_ITEM_ACTIVATED, &FavouritesBrowser::onItemActivated, this);
@@ -78,10 +61,18 @@ void FavouritesBrowser::construct()
     toolHBox->Add(createLeftToolBar(), 1, wxEXPAND);
     toolHBox->Add(createRightToolBar(), 0, wxEXPAND);
 
-    _mainWidget->GetSizer()->Add(toolHBox, 0, wxEXPAND);
-    _mainWidget->GetSizer()->Add(_listView, 1, wxEXPAND);
+    GetSizer()->Add(toolHBox, 0, wxEXPAND);
+    GetSizer()->Add(_listView, 1, wxEXPAND);
 
     constructPopupMenu();
+}
+
+FavouritesBrowser::~FavouritesBrowser()
+{
+    for (auto& connection : changedConnections)
+    {
+        connection.disconnect();
+    }
 }
 
 void FavouritesBrowser::clearItems()
@@ -161,7 +152,7 @@ void FavouritesBrowser::setupCategories()
 
 wxToolBar* FavouritesBrowser::createRightToolBar()
 {
-    auto* toolbar = new wxToolBar(_mainWidget, wxID_ANY);
+    auto* toolbar = new wxToolBar(this, wxID_ANY);
     toolbar->SetToolBitmapSize(wxSize(24, 24));
 
     _showFullPath = new wxCheckBox(toolbar, wxID_ANY, _("Show full Path"));
@@ -176,7 +167,7 @@ wxToolBar* FavouritesBrowser::createRightToolBar()
 
 wxToolBar* FavouritesBrowser::createLeftToolBar()
 {
-    auto* toolbar = new wxToolBar(_mainWidget, wxID_ANY);
+    auto* toolbar = new wxToolBar(this, wxID_ANY);
     toolbar->SetToolBitmapSize(wxSize(24, 24));
 
     for (auto& category : _categories)
@@ -221,79 +212,6 @@ void FavouritesBrowser::reloadFavourites()
             _listItems.emplace_back(FavouriteItem{ category.type, fav, leafName });
             _listView->SetItemPtrData(index, reinterpret_cast<wxUIntPtr>(&(_listItems.back())));
         }
-    }
-}
-
-const std::string& FavouritesBrowser::getName() const
-{
-    static std::string _name("FavouritesBrowser");
-    return _name;
-}
-
-const StringSet& FavouritesBrowser::getDependencies() const
-{
-    static StringSet _dependencies;
-
-    if (_dependencies.empty())
-    {
-        _dependencies.insert(MODULE_MAINFRAME);
-        _dependencies.insert(MODULE_COMMANDSYSTEM);
-        _dependencies.insert(MODULE_FAVOURITES_MANAGER);
-    }
-
-    return _dependencies;
-}
-
-void FavouritesBrowser::initialiseModule(const IApplicationContext& ctx)
-{
-    rMessage() << getName() << "::initialiseModule called." << std::endl;
-
-    GlobalCommandSystem().addCommand("ToggleFavouritesBrowser", 
-        sigc::mem_fun(this, &FavouritesBrowser::togglePage));
-
-    construct();
-
-    // The startup event will add this page to the group dialog tab
-    GlobalMainFrame().signal_MainFrameConstructed().connect(
-        sigc::mem_fun(*this, &FavouritesBrowser::onMainFrameConstructed)
-    );
-
-    _updateNeeded = true;
-}
-
-void FavouritesBrowser::shutdownModule()
-{
-    _iconList.reset();
-
-    for (auto& connection : changedConnections)
-    {
-        connection.disconnect();
-    }
-}
-
-void FavouritesBrowser::togglePage(const cmd::ArgumentList& args)
-{
-    GlobalGroupDialog().togglePage(TAB_NAME);
-}
-
-void FavouritesBrowser::onMainFrameConstructed()
-{
-    // Add the Media Browser page
-    auto page = std::make_shared<IGroupDialog::Page>();
-
-    page->name = TAB_NAME;
-    page->windowLabel = _("Favourites");
-    page->page = _mainWidget;
-    page->tabIcon = "favourite.png";
-    page->tabLabel = _("Favourites");
-    page->position = IGroupDialog::Page::Position::Favourites;
-
-    GlobalGroupDialog().addPage(page);
-
-    if (_tempParent != nullptr)
-    {
-        _tempParent->Destroy();
-        _tempParent = nullptr;
     }
 }
 
@@ -504,7 +422,5 @@ bool FavouritesBrowser::testCreateSpeaker()
 
     return selectionAllowsEntityCreation();
 }
-
-module::StaticModule<FavouritesBrowser> favouritesBrowserModule;
 
 }

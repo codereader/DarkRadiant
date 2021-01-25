@@ -72,6 +72,7 @@ add_executable(darkradiant
                ui/entitylist/EntityList.cpp
                ui/entitylist/GraphTreeModel.cpp
                ui/favourites/FavouritesBrowser.cpp
+               ui/favourites/FavouritesUserInterfaceModule.cpp
                ui/filters/editor/FilterDialog.cpp
                ui/filters/editor/FilterEditor.cpp
                ui/filters/FilterContextMenu.cpp

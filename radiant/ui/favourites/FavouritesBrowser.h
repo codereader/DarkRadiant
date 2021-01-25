@@ -4,6 +4,7 @@
 #include "icommandsystem.h"
 #include "idecltypes.h"
 
+#include <wx/panel.h>
 #include <wx/listctrl.h>
 #include <wx/imaglist.h>
 #include <wx/toolbar.h>
@@ -16,7 +17,7 @@ namespace ui
 {
 
 class FavouritesBrowser :
-    public RegisterableModule
+    public wxPanel
 {
 private:
     // Holds the data used to construct the wxListItem
@@ -27,8 +28,6 @@ private:
         std::string leafName;
     };
 
-    wxFrame* _tempParent;
-    wxWindow* _mainWidget;
     wxListView* _listView;
 
     std::unique_ptr<wxImageList> _iconList;
@@ -53,15 +52,10 @@ private:
     wxutil::PopupMenuPtr _popupMenu;
 
 public:
-    FavouritesBrowser();
-
-    const std::string& getName() const override;
-    const StringSet& getDependencies() const override;
-    void initialiseModule(const IApplicationContext& ctx) override;
-    void shutdownModule() override;
+    FavouritesBrowser(wxWindow* parent);
+    ~FavouritesBrowser();
 
 private:
-    void construct();
     wxToolBar* createLeftToolBar();
     wxToolBar* createRightToolBar();
     void onMainFrameConstructed();
@@ -72,7 +66,6 @@ private:
     void clearItems();
 
     void onRemoveFromFavourite();
-    void togglePage(const cmd::ArgumentList& args);
     void onCategoryToggled(wxCommandEvent& ev);
     void onShowFullPathToggled(wxCommandEvent& ev);
     void onListCtrlPaint(wxPaintEvent& ev);

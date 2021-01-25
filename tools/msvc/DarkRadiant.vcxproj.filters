@@ -682,6 +682,9 @@
     <ClCompile Include="..\..\radiant\camera\CameraWndManager.cpp">
       <Filter>src\camera</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\favourites\FavouritesUserInterfaceModule.cpp">
+      <Filter>src\ui\favourites</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h">

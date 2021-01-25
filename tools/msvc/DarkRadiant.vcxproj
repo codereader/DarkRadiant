@@ -254,6 +254,7 @@
     <ClCompile Include="..\..\radiant\ui\entitylist\EntityList.cpp" />
     <ClCompile Include="..\..\radiant\ui\entitylist\GraphTreeModel.cpp" />
     <ClCompile Include="..\..\radiant\ui\favourites\FavouritesBrowser.cpp" />
+    <ClCompile Include="..\..\radiant\ui\favourites\FavouritesUserInterfaceModule.cpp" />
     <ClCompile Include="..\..\radiant\ui\filters\editor\FilterDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\filters\editor\FilterEditor.cpp" />
     <ClCompile Include="..\..\radiant\ui\filters\FilterContextMenu.cpp" />
