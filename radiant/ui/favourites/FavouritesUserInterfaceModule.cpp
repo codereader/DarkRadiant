@@ -2,7 +2,11 @@
 #include "imainframe.h"
 #include "icommandsystem.h"
 #include "igroupdialog.h"
+#include "i18n.h"
+#include "iuimanager.h"
 #include "itextstream.h"
+
+#include <wx/frame.h>
 
 #include "module/StaticModule.h"
 #include "FavouritesBrowser.h"
