@@ -11,6 +11,13 @@ using EntityTest = RadiantTest;
 namespace
 {
 
+// Create an entity from a simple classname string
+IEntityNodePtr createByClassName(const std::string& className)
+{
+    auto cls = GlobalEntityClassManager().findClass("light");
+    return GlobalEntityModule().createEntity(cls);
+}
+
 // Obtain entity attachments as a simple std::list
 std::list<Entity::Attachment> getAttachments(const IEntityNodePtr node)
 {
@@ -89,6 +96,47 @@ TEST_F(EntityTest, CreateBasicLightEntity)
     // This basic light entity should have no attachments
     auto attachments = getAttachments(light);
     EXPECT_EQ(attachments.size(), 0);
+}
+
+TEST_F(EntityTest, EnumerateEntitySpawnargs)
+{
+    auto light = createByClassName("light");
+    auto& spawnArgs = light->getEntity();
+
+    // Visit spawnargs by key and value string
+    using StringMap = std::map<std::string, std::string>;
+    StringMap keyValuesInit;
+    spawnArgs.forEachKeyValue([&](const std::string& k, const std::string& v) {
+        keyValuesInit.insert({k, v});
+    });
+
+    // Initial entity should have a name and a classname value and no other
+    // properties
+    EXPECT_EQ(keyValuesInit.size(), 2);
+    EXPECT_EQ(keyValuesInit["name"], light->name());
+    EXPECT_EQ(keyValuesInit["classname"], "light");
+
+    // Add some new properties of our own
+    spawnArgs.setKeyValue("origin", "128 256 -1024");
+    spawnArgs.setKeyValue("_color", "0.5 0.5 0.5");
+
+    // Ensure that our new properties are also enumerated
+    StringMap keyValuesAll;
+    spawnArgs.forEachKeyValue([&](const std::string& k, const std::string& v) {
+        keyValuesAll.insert({k, v});
+    });
+    EXPECT_EQ(keyValuesAll.size(), 4);
+    EXPECT_EQ(keyValuesAll["origin"], "128 256 -1024");
+    EXPECT_EQ(keyValuesAll["_color"], "0.5 0.5 0.5");
+
+    // Enumerate as full EntityKeyValue objects as well as strings
+    StringMap keyValuesByObj;
+    spawnArgs.forEachEntityKeyValue(
+        [&](const std::string& k, const EntityKeyValue& v) {
+            keyValuesByObj.insert({k, v.get()});
+        }
+    );
+    EXPECT_EQ(keyValuesAll, keyValuesByObj);
 }
 
 TEST_F(EntityTest, CreateAttachedLightEntity)
