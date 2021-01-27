@@ -104,9 +104,6 @@ public:
         { }
     };
 
-    // Function typedef to visit keyvalues
-    typedef std::function<void(const std::string& key, const std::string& value)> KeyValueVisitFunctor;
-
     // Function typedef to visit actual EntityKeyValue objects, not just the string values
     typedef std::function<void(const std::string& key, EntityKeyValue& value)> EntityKeyValueVisitFunctor;
 
@@ -117,11 +114,25 @@ public:
      */
     virtual IEntityClassPtr getEntityClass() const = 0;
 
+    /// Functor to receive keys and values as strings
+    using KeyValueVisitFunc = std::function<
+        void(const std::string&, const std::string&)
+    >;
+
     /**
-     * Enumerate key values on this entity using a function object taking
-     * key and value as string arguments.
+     * \brief Enumerate all keys and values on this entity, optionally including
+     * inherited spawnargs.
+     *
+     * \param func
+     * Functor to receive each key and its associated value.
+     *
+     * \param includeInherited
+     * true if the functor should be invoked for each inherited spawnarg (from
+     * the entity class), false if only explicit spawnargs on this particular
+     * entity should be visited.
      */
-    virtual void forEachKeyValue(const KeyValueVisitFunctor& visitor) const = 0;
+    virtual void forEachKeyValue(KeyValueVisitFunc func,
+                                 bool includeInherited = false) const = 0;
 
     // Similar to above, visiting the EntityKeyValue objects itself, not just the string value.
     virtual void forEachEntityKeyValue(const EntityKeyValueVisitFunctor& visitor) = 0;
@@ -205,7 +216,7 @@ public:
     virtual void detachObserver(Observer* observer) = 0;
 
 	/**
-	 * Returns true if this entity is of type or inherits from the 
+	 * Returns true if this entity is of type or inherits from the
 	 * given entity class name. className is treated case-sensitively.
 	 */
 	virtual bool isOfType(const std::string& className) = 0;
@@ -303,13 +314,13 @@ public:
 typedef std::shared_ptr<ITargetableObject> ITargetableObjectPtr;
 
 /**
-* greebo: The TargetManager keeps track of all ITargetableObjects 
-* in the current scene/map. A TargetManager instance is owned 
+* greebo: The TargetManager keeps track of all ITargetableObjects
+* in the current scene/map. A TargetManager instance is owned
 * by the RootNode. TargetManager instances can be acquired through
 * the EntityCreator interface.
 *
 * Clients acquire a named ITargetableObjectPtr by calling getTarget(). This
-* always succeeds - if the named ITargetableObject is not found, 
+* always succeeds - if the named ITargetableObject is not found,
 * a new, empty one is created.
 *
 *       ITargetableObject object (can be empty)
@@ -391,7 +402,7 @@ public:
 
     virtual bool getFreeObjectRotation() const = 0;
     virtual void setFreeObjectRotation(bool value) = 0;
-    
+
     virtual bool getShowEntityAngles() const = 0;
     virtual void setShowEntityAngles(bool value) = 0;
 

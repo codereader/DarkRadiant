@@ -128,19 +128,27 @@ void SpawnArgs::disconnectUndoSystem(IMapFileChangeTracker& changeTracker)
 	_instanced = false;
 }
 
-/** Return the EntityClass associated with this entity.
- */
 IEntityClassPtr SpawnArgs::getEntityClass() const
 {
 	return _eclass;
 }
 
-void SpawnArgs::forEachKeyValue(const KeyValueVisitFunctor& func) const
+void SpawnArgs::forEachKeyValue(KeyValueVisitFunc func,
+                                bool includeInherited) const
 {
+    // Visit explicit spawnargs
     for (const KeyValuePair& pair : _keyValues)
 	{
 		func(pair.first, pair.second->get());
 	}
+
+    // If requested, visit inherited spawnargs from the entitydef
+    if (includeInherited)
+    {
+        _eclass->forEachClassAttribute([&](const EntityClassAttribute& att) {
+            func(att.getName(), att.getValue());
+        });
+    }
 }
 
 void SpawnArgs::forEachEntityKeyValue(const EntityKeyValueVisitFunctor& func)
@@ -151,8 +159,6 @@ void SpawnArgs::forEachEntityKeyValue(const EntityKeyValueVisitFunctor& func)
     }
 }
 
-/** Set a keyvalue on the entity.
- */
 void SpawnArgs::setKeyValue(const std::string& key, const std::string& value)
 {
 	if (value.empty())
@@ -167,8 +173,6 @@ void SpawnArgs::setKeyValue(const std::string& key, const std::string& value)
 	}
 }
 
-/** Retrieve a keyvalue from the entity.
- */
 std::string SpawnArgs::getKeyValue(const std::string& key) const
 {
 	// Lookup the key in the map

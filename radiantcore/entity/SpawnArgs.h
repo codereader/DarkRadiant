@@ -8,7 +8,7 @@
 
 namespace entity {
 
-/** 
+/**
  * \brief Implementation of the class Entity.
  *
  * A SpawnArgs basically just keeps track of all the spawnargs and delivers
@@ -59,7 +59,8 @@ public:
 	void connectUndoSystem(IMapFileChangeTracker& changeTracker);
     void disconnectUndoSystem(IMapFileChangeTracker& changeTracker);
 	IEntityClassPtr getEntityClass() const override;
-	void forEachKeyValue(const KeyValueVisitFunctor& func) const override;
+    void forEachKeyValue(KeyValueVisitFunc func,
+                         bool includeInherited) const override;
     void forEachEntityKeyValue(const EntityKeyValueVisitFunctor& visitor) override;
 	void setKeyValue(const std::string& key, const std::string& value) override;
 	std::string getKeyValue(const std::string& key) const override;

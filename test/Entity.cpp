@@ -14,7 +14,7 @@ namespace
 // Create an entity from a simple classname string
 IEntityNodePtr createByClassName(const std::string& className)
 {
-    auto cls = GlobalEntityClassManager().findClass("light");
+    auto cls = GlobalEntityClassManager().findClass(className);
     return GlobalEntityModule().createEntity(cls);
 }
 
@@ -32,6 +32,8 @@ std::list<Entity::Attachment> getAttachments(const IEntityNodePtr node)
 }
 
 }
+
+using StringMap = std::map<std::string, std::string>;
 
 TEST_F(EntityTest, LookupEntityClass)
 {
@@ -104,7 +106,6 @@ TEST_F(EntityTest, EnumerateEntitySpawnargs)
     auto& spawnArgs = light->getEntity();
 
     // Visit spawnargs by key and value string
-    using StringMap = std::map<std::string, std::string>;
     StringMap keyValuesInit;
     spawnArgs.forEachKeyValue([&](const std::string& k, const std::string& v) {
         keyValuesInit.insert({k, v});
@@ -137,6 +138,28 @@ TEST_F(EntityTest, EnumerateEntitySpawnargs)
         }
     );
     EXPECT_EQ(keyValuesAll, keyValuesByObj);
+}
+
+TEST_F(EntityTest, EnumerateInheritedSpawnargs)
+{
+    auto light = createByClassName("atdm:light_base");
+    auto& spawnArgs = light->getEntity();
+
+    // Enumerate all keyvalues including the inherited ones
+    StringMap keyValues;
+    spawnArgs.forEachKeyValue(
+        [&](const std::string& k, const std::string& v) {
+            keyValues.insert({k, v});
+        },
+        true /* includeInherited */
+    );
+
+    // Check we have some inherited properties from the entitydef (including
+    // spawnclass from the entitydef's own parent def)
+    EXPECT_EQ(keyValues["spawnclass"], "idLight");
+    EXPECT_EQ(keyValues["shouldBeOn"], "0");
+    EXPECT_EQ(keyValues["AIUse"], "AIUSE_LIGHTSOURCE");
+    EXPECT_EQ(keyValues["noshadows"], "0");
 }
 
 TEST_F(EntityTest, CreateAttachedLightEntity)

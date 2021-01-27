@@ -189,14 +189,12 @@ void Doom3EntityClass::forEachClassAttribute(
     std::function<void(const EntityClassAttribute&)> visitor,
     bool editorKeys) const
 {
-    for (EntityAttributeMap::const_iterator i = _attributes.begin();
-         i != _attributes.end();
-         ++i)
+    for (const auto& pair: _attributes)
     {
         // Visit if it is a non-editor key or we are visiting all keys
-        if (editorKeys || !string::istarts_with(*i->first, "editor_"))
+        if (editorKeys || !string::istarts_with(*pair.first, "editor_"))
         {
-            visitor(i->second);
+            visitor(pair.second);
         }
     }
 }
