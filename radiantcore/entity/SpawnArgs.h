@@ -67,9 +67,6 @@ public:
 	bool isInherited(const std::string& key) const override;
     void forEachAttachment(AttachmentFunc func) const override;
 
-	// Get all KeyValues matching the given prefix.
-	KeyValuePairs getKeyValuePairs(const std::string& prefix) const override;
-
 	bool isWorldspawn() const override;
 	bool isContainer() const override;
 	void setIsContainer(bool isContainer);

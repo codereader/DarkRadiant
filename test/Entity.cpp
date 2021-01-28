@@ -162,12 +162,44 @@ TEST_F(EntityTest, EnumerateInheritedSpawnargs)
     EXPECT_EQ(keyValues["noshadows"], "0");
 }
 
+TEST_F(EntityTest, GetKeyValuePairs)
+{
+    auto torch = createByClassName("atdm:torch_brazier");
+    auto& spawnArgs = torch->getEntity();
+
+    using Pair = Entity::KeyValuePairs::value_type;
+
+    // Retrieve single spawnargs as single-element lists of pairs
+    auto classNamePairs = spawnArgs.getKeyValuePairs("classname");
+    EXPECT_EQ(classNamePairs.size(), 1);
+    EXPECT_EQ(classNamePairs[0], Pair("classname", "atdm:torch_brazier"));
+
+    auto namePairs = spawnArgs.getKeyValuePairs("name");
+    EXPECT_EQ(namePairs.size(), 1);
+    EXPECT_EQ(namePairs[0], Pair("name", "atdm_torch_brazier_1"));
+
+    // Add some spawnargs with a common prefix
+    const StringMap SR_KEYS{
+        {"sr_type_1", "blah"},
+        {"sr_type_2", "bleh"},
+        {"sR_tYpE_a", "123"},
+        {"SR_type_1a", "0 123 -120"},
+    };
+    for (const auto& pair: SR_KEYS)
+        spawnArgs.setKeyValue(pair.first, pair.second);
+
+    // Confirm all added prefix keys are found regardless of case
+    auto srPairs = spawnArgs.getKeyValuePairs("sr_type");
+    EXPECT_EQ(srPairs.size(), SR_KEYS.size());
+    for (const auto& pair: srPairs)
+        EXPECT_EQ(SR_KEYS.at(pair.first), pair.second);
+}
+
 TEST_F(EntityTest, CreateAttachedLightEntity)
 {
     // Create the torch entity which has an attached light
-    auto torchCls = GlobalEntityClassManager().findClass("atdm:torch_brazier");
-    auto torch = GlobalEntityModule().createEntity(torchCls);
-    EXPECT_TRUE(torch);
+    auto torch = createByClassName("atdm:torch_brazier");
+    ASSERT_TRUE(torch);
 
     // Check that the attachment spawnargs are present
     const Entity& spawnArgs = torch->getEntity();

@@ -204,24 +204,6 @@ void SpawnArgs::forEachAttachment(AttachmentFunc func) const
     _attachments.forEachAttachment(func);
 }
 
-Entity::KeyValuePairs SpawnArgs::getKeyValuePairs(const std::string& prefix) const
-{
-	KeyValuePairs list;
-
-	for (KeyValues::const_iterator i = _keyValues.begin(); i != _keyValues.end(); ++i)
-	{
-		// If the prefix matches, add to list
-		if (string::istarts_with(i->first, prefix))
-		{
-			list.push_back(
-				std::pair<std::string, std::string>(i->first, i->second->get())
-			);
-		}
-	}
-
-	return list;
-}
-
 EntityKeyValuePtr SpawnArgs::getEntityKeyValue(const std::string& key)
 {
 	KeyValues::const_iterator found = find(key);

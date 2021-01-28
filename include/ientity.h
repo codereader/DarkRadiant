@@ -7,6 +7,8 @@
 #include "inameobserver.h"
 #include <functional>
 
+#include "string/predicate.h"
+
 class IEntityClass;
 typedef std::shared_ptr<IEntityClass> IEntityClassPtr;
 typedef std::shared_ptr<const IEntityClass> IEntityClassConstPtr;
@@ -169,12 +171,12 @@ public:
     virtual bool isInherited(const std::string& key) const = 0;
 
     /**
-     * Return the list of Key/Value pairs matching the given prefix, case ignored.
+     * \brief Return the list of keyvalues matching the given prefix.
      *
-     * This method performs a search for all spawnargs whose key
-     * matches the given prefix, with a suffix consisting of zero or more
-     * arbitrary characters. For example, if "target" were specified as the
-     * prefix, the list would include "target", "target0", "target127" etc.
+     * This method performs a search for all spawnargs whose key matches the
+     * given prefix, with a suffix consisting of zero or more arbitrary
+     * characters. For example, if "target" were specified as the prefix, the
+     * list would include "target", "target0", "target127" etc.
      *
      * This operation may not have high performance, due to the need to scan
      * for matching names, therefore should not be used in performance-critical
@@ -184,10 +186,20 @@ public:
      * The prefix to search for, interpreted case-insensitively.
      *
      * @return
-     * A list of KeyValue pairs matching the provided prefix. This
-     * list will be empty if there were no matches.
+     * A list of KeyValue pairs matching the provided prefix. This list will be
+     * empty if there were no matches.
      */
-    virtual KeyValuePairs getKeyValuePairs(const std::string& prefix) const = 0;
+    KeyValuePairs getKeyValuePairs(const std::string& prefix) const
+    {
+        KeyValuePairs list;
+
+        forEachKeyValue([&](const std::string& k, const std::string& v) {
+            if (string::istarts_with(k, prefix))
+                list.push_back(std::make_pair(k, v));
+        });
+
+        return list;
+    }
 
     /** greebo: Returns true if the entity is a model. For Doom3, this is
      *          usually true when the classname == "func_static" and
