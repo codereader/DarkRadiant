@@ -19,10 +19,10 @@
 
 namespace entity
 {
-	
+
 class EntityNode;
 typedef std::shared_ptr<EntityNode> EntityNodePtr;
- 
+
 /**
  * greebo: This is the common base class of all map entities.
  */
@@ -33,8 +33,7 @@ class EntityNode :
 	public Namespaced,
 	public TargetableNode,
 	public Transformable,
-	public MatrixTransform,	// influences local2world of child nodes
-	public scene::Cloneable // all entities are cloneable, to be implemented in subclasses
+	public MatrixTransform	// influences local2world of child nodes
 {
 protected:
 	// The entity class

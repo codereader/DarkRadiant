@@ -5,6 +5,7 @@
 #include "imodule.h"
 #include "irender.h"
 #include "inameobserver.h"
+#include "iscenegraph.h"
 #include <functional>
 
 #include "string/predicate.h"
@@ -265,7 +266,8 @@ public:
 /// Interface for a INode subclass that contains an Entity
 class IEntityNode :
     public IRenderEntity,
-    public virtual scene::INode
+    public virtual scene::INode,
+    public scene::Cloneable
 {
 public:
     virtual ~IEntityNode() {}

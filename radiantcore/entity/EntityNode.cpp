@@ -32,7 +32,6 @@ EntityNode::EntityNode(const EntityNode& other) :
 	TargetableNode(_spawnArgs, *this),
 	Transformable(other),
 	MatrixTransform(other),
-	scene::Cloneable(other),
 	_eclass(other._eclass),
 	_spawnArgs(other._spawnArgs),
 	_namespaceManager(_spawnArgs),

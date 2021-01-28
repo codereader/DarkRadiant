@@ -195,6 +195,34 @@ TEST_F(EntityTest, GetKeyValuePairs)
         EXPECT_EQ(SR_KEYS.at(pair.first), pair.second);
 }
 
+TEST_F(EntityTest, CopySpawnargs)
+{
+    auto light = createByClassName("atdm:light_base");
+    auto& spawnArgs = light->getEntity();
+
+    // Add some custom spawnargs to copy
+    const StringMap EXTRA_SPAWNARGS{{"first", "1"},
+                                    {"second", "two"},
+                                    {"THIRD", "3333"},
+                                    {"_color", "1 0 1"}};
+
+    for (const auto& pair: EXTRA_SPAWNARGS)
+        spawnArgs.setKeyValue(pair.first, pair.second);
+
+    // Clone the entity node
+    auto lightCopy = light->clone();
+    const Entity* clonedEnt = Node_getEntity(lightCopy);
+    ASSERT_TRUE(clonedEnt);
+
+    // Clone should have all the same spawnargs
+    std::size_t count = 0;
+    clonedEnt->forEachKeyValue([&](const std::string& k, const std::string& v) {
+        EXPECT_EQ(spawnArgs.getKeyValue(k), v);
+        ++count;
+    });
+    EXPECT_EQ(count, EXTRA_SPAWNARGS.size() + 2 /* name and classname */);
+}
+
 TEST_F(EntityTest, CreateAttachedLightEntity)
 {
     // Create the torch entity which has an attached light
