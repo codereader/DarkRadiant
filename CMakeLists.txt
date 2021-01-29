@@ -64,6 +64,7 @@ pkg_check_modules(OGG ogg REQUIRED)
 pkg_check_modules(VORBIS vorbisfile REQUIRED)
 pkg_check_modules(X11 x11 REQUIRED)
 pkg_check_modules(ZLIB zlib REQUIRED)
+pkg_check_modules(GLIB glib-2.0 REQUIRED)
 
 # Locate wxWidgets
 find_package(wxWidgets REQUIRED
@@ -99,6 +100,7 @@ add_subdirectory(plugins/sound)
 
 # Dark Mod plugins
 if (${ENABLE_DM_PLUGINS})
+    add_subdirectory(plugins/dm.conversation)
     add_subdirectory(plugins/dm.stimresponse)
     add_subdirectory(plugins/dm.objectives)
     add_subdirectory(plugins/dm.difficulty)
@@ -136,7 +138,7 @@ install(TARGETS radiantcore script sound
 # Install Dark Mod plugins
 if (${ENABLE_DM_PLUGINS})
     install(TARGETS dm_stimresponse dm_objectives dm_difficulty dm_editing
-                    dm_gui dm_gameconnection
+                    dm_gui dm_gameconnection dm_conversation
             LIBRARY DESTINATION ${PKGLIBDIR}/plugins)
 endif()
 
