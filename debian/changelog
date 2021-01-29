@@ -1,3 +1,13 @@
+darkradiant (2.11.0~focal1) focal; urgency=medium
+
+  * New favourites system for assets like entities, textures and sound shaders.
+  * Improved text search in resource browsers.
+  * Ability to list model definitions in model chooser.
+  * Initial GUI improvements to game connection plugin.
+  * Various bug fixes.
+
+ -- Matthew Mott <orbweaver3d@gmail.com>  Fri, 29 Jan 2021 20:36:34 +0000
+
 darkradiant (2.10.0~focal1) focal; urgency=medium
 
   * New major release on all platforms.
