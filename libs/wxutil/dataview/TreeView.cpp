@@ -35,6 +35,7 @@ public:
 
 	~Search();
 
+    SearchPopupWindow* GetPopupWindow();
 
 	void HandleKeyEvent(wxKeyEvent& ev);
 
@@ -475,6 +476,11 @@ void TreeView::Search::HighlightMatch(const wxDataViewItem& item)
 	_treeView.JumpToSearchMatch(_curSearchMatch);
 }
 
+TreeView::SearchPopupWindow* TreeView::Search::GetPopupWindow()
+{
+    return _popup;
+}
+
 void TreeView::Search::HandleKeyEvent(wxKeyEvent& ev)
 {
 	TreeModel* model = dynamic_cast<TreeModel*>(_treeView.GetModel());
@@ -606,6 +612,20 @@ void TreeView::JumpToSearchMatch(const wxDataViewItem& item)
         UnselectAll();
 		Select(item);
 		EnsureVisible(item);
+
+#ifdef __WXMSW__
+        // #5511: Avoid the search box blocking the found item
+        auto itemRect = GetItemRect(item);
+
+        ClientToScreen(&itemRect.x, &itemRect.y);
+        if (_search && _search->GetPopupWindow() != nullptr && 
+            _search->GetPopupWindow()->GetRect().Intersects(itemRect))
+        {
+            // Scroll down by two rows
+            int itemRow = GetRowByItem(item);
+            EnsureVisibleRowCol(itemRow + 2, 0);
+        }
+#endif
 
 		// Synthesise a selection changed signal
         SendSelectionChangeEvent(item);
