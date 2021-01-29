@@ -346,6 +346,11 @@ void ResourceTreeView::SetSelectedElement(const std::string& value, const TreeMo
 
 void ResourceTreeView::Clear()
 {
+#ifdef __WXGTK__
+    // Clear the m_ensureVisibleDefered owned by the wxDataViewCtrl
+    EnsureVisible(wxDataViewItem(nullptr));
+#endif
+
     // Clear any data and/or active population objects
     _populator.reset();
     _treeStore->Clear();
