@@ -211,16 +211,37 @@ TEST_F(EntityTest, CopySpawnargs)
 
     // Clone the entity node
     auto lightCopy = light->clone();
-    const Entity* clonedEnt = Node_getEntity(lightCopy);
+    Entity* clonedEnt = Node_getEntity(lightCopy);
     ASSERT_TRUE(clonedEnt);
 
-    // Clone should have all the same spawnargs
+    // Clone should have all the same spawnarg strings
     std::size_t count = 0;
     clonedEnt->forEachKeyValue([&](const std::string& k, const std::string& v) {
         EXPECT_EQ(spawnArgs.getKeyValue(k), v);
         ++count;
     });
     EXPECT_EQ(count, EXTRA_SPAWNARGS.size() + 2 /* name and classname */);
+
+    // Clone should NOT have the same actual KeyValue object pointers, although
+    // the count should be the same
+    std::set<EntityKeyValue*> origPointers;
+    std::set<EntityKeyValue*> copiedPointers;
+    spawnArgs.forEachEntityKeyValue(
+        [&](const std::string& k, EntityKeyValue& v) {
+            origPointers.insert(&v);
+        });
+    clonedEnt->forEachEntityKeyValue(
+        [&](const std::string& k, EntityKeyValue& v) {
+            copiedPointers.insert(&v);
+        });
+    EXPECT_EQ(origPointers.size(), count);
+    EXPECT_EQ(copiedPointers.size(), count);
+
+    std::vector<EntityKeyValue*> overlap;
+    std::set_intersection(origPointers.begin(), origPointers.end(),
+                          copiedPointers.begin(), copiedPointers.end(),
+                          std::back_inserter(overlap));
+    EXPECT_EQ(overlap.size(), 0);
 }
 
 TEST_F(EntityTest, CreateAttachedLightEntity)
