@@ -27,6 +27,11 @@ const ModelTreeView::TreeColumns& ModelTreeView::Columns() const
     return _treeColumns;
 }
 
+std::string ModelTreeView::GetResourcePath(const wxutil::TreeModel::Row& row)
+{
+    return row[Columns().isSkin].getBool() ? row[Columns().skin] : row[Columns().modelPath];
+}
+
 void ModelTreeView::Populate()
 {
     ResourceTreeView::Populate(std::make_shared<ModelPopulator>(Columns()));

@@ -5,7 +5,7 @@
 namespace ui
 {
 
-class ModelTreeView :
+class ModelTreeView final :
     public wxutil::ResourceTreeView
 {
 public:
@@ -51,6 +51,10 @@ protected:
     bool IsTreeModelRowVisible(wxutil::TreeModel::Row& row) override;
 
     const TreeColumns& Columns() const;
+
+    // Override the resource path locator of the base class since we store
+    // skin paths and model paths in different columns
+    std::string GetResourcePath(const wxutil::TreeModel::Row& row) override;
 
 private:
     std::string GetColumnValue(const wxutil::TreeModel::Column& column);
