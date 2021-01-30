@@ -82,6 +82,10 @@ public:
 
 private:
 
+    // Parse attachment information from def_attach and related keys (which are
+    // most likely on the entity class, not the entity itself)
+    void parseAttachments();
+
     // Notification functions
 	void notifyInsert(const std::string& key, KeyValue& value);
     void notifyChange(const std::string& k, const std::string& v);

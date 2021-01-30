@@ -22,14 +22,15 @@ const std::string ATTACH_POS_ANGLES = "attach_pos_angles";
 // Extract and return the string suffix for a key (which might be the empty
 // string if there is no suffix). Returns false if the key did not match
 // the prefix.
-bool tryGetSuffixedKey(const std::string& key, const std::string& prefix, std::string& suffixedOutput)
+bool tryGetSuffixedKey(const std::string& key, const std::string& prefix,
+                       std::string& suffixedOutput)
 {
     if (string::istarts_with(key, prefix))
     {
 		suffixedOutput = key.substr(prefix.length());
 		return true;
     }
-    
+
 	suffixedOutput.clear();
 	return false;
 }
@@ -88,7 +89,7 @@ void AttachmentData::validateAttachments()
         if (_positions.find(i->second.posName) == _positions.end())
         {
             rWarning()
-                << "[eclassmgr] Entity class '" << _parentClassname 
+                << "[AttachmentData] Entity '" << _entityName
                 << "' tries to attach '" << i->first << "' at non-existent "
                 << "position '" << i->second.posName << "'\n";
 

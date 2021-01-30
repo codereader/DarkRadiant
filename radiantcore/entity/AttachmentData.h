@@ -13,7 +13,7 @@ namespace entity
 class AttachmentData
 {
     // Name of the entity class being parsed (for debug/error purposes)
-    std::string _parentClassname;
+    std::string _entityName;
 
     // Any def_attached entities. Each attachment has an entity class, a
     // position and optionally a name.
@@ -85,7 +85,7 @@ public:
 
     /// Initialise and set classname
     AttachmentData(const std::string& name)
-    : _parentClassname(name)
+    : _entityName(name)
     { }
 
     /// Clear all data

@@ -15,7 +15,10 @@ SpawnArgs::SpawnArgs(const IEntityClassPtr& eclass) :
 	_observerMutex(false),
 	_isContainer(!eclass->isFixedSize()),
 	_attachments(eclass->getName())
-{}
+{
+    // Parse attachment keys
+    parseAttachments();
+}
 
 SpawnArgs::SpawnArgs(const SpawnArgs& other) :
 	Entity(other),
@@ -26,12 +29,20 @@ SpawnArgs::SpawnArgs(const SpawnArgs& other) :
 	_isContainer(other._isContainer),
 	_attachments(other._attachments)
 {
-	for (KeyValues::const_iterator i = other._keyValues.begin();
-		 i != other._keyValues.end();
-		 ++i)
-	{
-		insert(i->first, i->second->get());
-	}
+    // Copy keyvalue strings, not actual KeyValue pointers
+    for (const KeyValuePair& p : other._keyValues)
+    {
+        insert(p.first, p.second->get());
+    }
+}
+
+void SpawnArgs::parseAttachments()
+{
+    forEachKeyValue(
+        [this](const std::string& k, const std::string& v) {
+            _attachments.parseDefAttachKeys(k, v);
+        },
+        true /* includeInherited */);
 }
 
 bool SpawnArgs::isModel() const
