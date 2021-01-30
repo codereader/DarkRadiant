@@ -5,7 +5,7 @@
 namespace test
 {
 
-TEST(Vector3, Constructor)
+TEST(MathTest, ConstructVector3)
 {
     Vector3 vec(1.0, 2.0, 3.5);
 
