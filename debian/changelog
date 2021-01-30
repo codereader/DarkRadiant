@@ -1,4 +1,4 @@
-darkradiant (2.11.0~focal1) focal; urgency=medium
+darkradiant (2.11.0~focal2) focal; urgency=medium
 
   * New favourites system for assets like entities, textures and sound shaders.
   * Improved text search in resource browsers.
