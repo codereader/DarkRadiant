@@ -1,6 +1,7 @@
 #include "ResourceTreeView.h"
 
 #include "i18n.h"
+#include "iclipboard.h"
 #include "iuimanager.h"
 #include "ifavourites.h"
 #include "../menu/IconTextMenuItem.h"
@@ -194,6 +195,15 @@ void ResourceTreeView::PopulateContextMenu(wxutil::PopupMenu& popupMenu)
         std::bind(&ResourceTreeView::_onSetFavourite, this, false),
         std::bind(&ResourceTreeView::_testRemoveFromFavourites, this),
         [this]() { return _declType != decl::Type::None; }
+    );
+
+    popupMenu.addSeparator();
+
+    popupMenu.addItem(
+        new wxutil::StockIconTextMenuItem(_("Copy Resource Path"), wxART_COPY),
+        std::bind(&ResourceTreeView::_onCopyResourcePath, this),
+        std::bind(&ResourceTreeView::_copyResourcePathEnabled, this),
+        std::bind(&ResourceTreeView::_copyResourcePathVisible, this)
     );
 }
 
@@ -512,6 +522,44 @@ void ResourceTreeView::_onSetFavourite(bool isFavourite)
     TreeModel::Row row(item, *GetModel());
 
     SetFavouriteRecursively(row, isFavourite);
+}
+
+std::string ResourceTreeView::GetResourcePath(const TreeModel::Row& row)
+{
+    return row[_columns.fullName];
+}
+
+std::string ResourceTreeView::GetResourcePathOfSelection()
+{
+    wxDataViewItem item = GetSelection();
+
+    if (!item.IsOk() || IsDirectorySelected())
+    {
+        return std::string();
+    }
+
+    TreeModel::Row row(item, *GetModel());
+    return GetResourcePath(row);
+}
+
+void ResourceTreeView::_onCopyResourcePath()
+{
+    auto resourcePath = GetResourcePathOfSelection();
+
+    if (!resourcePath.empty())
+    {
+        GlobalClipboard().setString(resourcePath);
+    }
+}
+
+bool ResourceTreeView::_copyResourcePathEnabled()
+{
+    return !GetResourcePathOfSelection().empty();
+}
+
+bool ResourceTreeView::_copyResourcePathVisible()
+{
+    return !IsDirectorySelected() && module::GlobalModuleRegistry().moduleExists(MODULE_CLIPBOARD);
 }
 
 bool ResourceTreeView::IsDirectorySelected()

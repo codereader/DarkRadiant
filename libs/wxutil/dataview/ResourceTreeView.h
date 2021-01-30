@@ -157,6 +157,14 @@ protected:
 
     virtual void UpdateTreeVisibility();
 
+    // Get the resource path for the given item. Determines the availabilty
+    // and functionality of the "Copy resource path" context menu item
+    // The default implementation returns the value of the "fullPath" column.
+    virtual std::string GetResourcePath(const TreeModel::Row& row);
+
+    // Retrieve the resource path of the currently selected item
+    virtual std::string GetResourcePathOfSelection();
+
 private:
     // Returns true if the given row is visible according 
     // to the current view mode (show favourites vs. show all)
@@ -172,6 +180,9 @@ private:
     bool _testAddToFavourites();
     bool _testRemoveFromFavourites();
     void _onSetFavourite(bool isFavourite);
+    void _onCopyResourcePath();
+    bool _copyResourcePathEnabled();
+    bool _copyResourcePathVisible();
 };
 
 // Emitted when the tree view is done populating
