@@ -45,7 +45,8 @@ ResourceTreeView::ResourceTreeView(wxWindow* parent, const TreeModel::Ptr& model
     _mode(TreeMode::ShowAll),
     _expandTopLevelItemsAfterPopulation(false),
     _columnToSelectAfterPopulation(nullptr),
-    _declType(decl::Type::None)
+    _declType(decl::Type::None),
+    _declPathColumn(_columns.fullName)
 {
     _treeStore = model;
 
@@ -526,7 +527,12 @@ void ResourceTreeView::_onSetFavourite(bool isFavourite)
 
 std::string ResourceTreeView::GetResourcePath(const TreeModel::Row& row)
 {
-    return row[_columns.fullName];
+    return row[_declPathColumn];
+}
+
+void ResourceTreeView::SetDeclPathColumn(const TreeModel::Column& declPathColumn)
+{
+    _declPathColumn = declPathColumn;
 }
 
 std::string ResourceTreeView::GetResourcePathOfSelection()

@@ -91,6 +91,9 @@ private:
 
     wxString _filterText;
 
+    // The column that is hosting the declaration path (used by e.g. "copy to clipboard")
+    TreeModel::Column _declPathColumn;
+
 public:
     ResourceTreeView(wxWindow* parent, const Columns& columns, long style = wxDV_SINGLE);
     ResourceTreeView(wxWindow* parent, const TreeModel::Ptr& model, const Columns& columns, long style = wxDV_SINGLE);
@@ -120,6 +123,10 @@ public:
 
     virtual std::string GetSelectedElement(const TreeModel::Column& column);
     virtual void SetSelectedElement(const std::string& value, const TreeModel::Column& column);
+
+    // Set the column containing the resource path used to define the game-compatible
+    // declaration path, also used by the "Copy resource path" context menu item
+    virtual void SetDeclPathColumn(const TreeModel::Column& declPathColumn);
 
     virtual void Clear();
 
@@ -159,7 +166,7 @@ protected:
 
     // Get the resource path for the given item. Determines the availabilty
     // and functionality of the "Copy resource path" context menu item
-    // The default implementation returns the value of the "fullPath" column.
+    // The default implementation returns the value of the "fullName" column.
     virtual std::string GetResourcePath(const TreeModel::Row& row);
 
     // Retrieve the resource path of the currently selected item
