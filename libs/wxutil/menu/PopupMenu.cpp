@@ -112,6 +112,17 @@ void PopupMenu::show(wxWindow* parent)
 		item->getMenuItem()->Enable(item->isSensitive());
 	}
 
+    // Detach any separator that might end up at the bottom of the menu
+    if (GetMenuItemCount() > 0)
+    {
+        auto lastItem = FindItemByPosition(GetMenuItemCount() - 1);
+
+        if (lastItem && lastItem->IsSeparator())
+        {
+            Remove(lastItem);
+        }
+    }
+
 	parent->PopupMenu(this);
 }
 
