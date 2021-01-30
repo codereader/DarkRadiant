@@ -259,6 +259,11 @@ TEST_F(EntityTest, CreateAttachedLightEntity)
     // Spawnargs should be parsed into a single attachment
     auto attachments = getAttachments(torch);
     EXPECT_EQ(attachments.size(), 1);
+
+    // Examine the properties of the single attachment
+    Entity::Attachment attachment = attachments.front();
+    EXPECT_EQ(attachment.eclass, "light_cageflame_small");
+    EXPECT_EQ(attachment.offset, Vector3(0, 0, 10));
 }
 
 }
