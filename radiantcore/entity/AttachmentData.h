@@ -109,6 +109,7 @@ public:
         {
             Entity::Attachment a;
             a.eclass = i->second.className;
+            a.offset = _positions.at(i->second.posName).origin;
             func(a);
         }
     }

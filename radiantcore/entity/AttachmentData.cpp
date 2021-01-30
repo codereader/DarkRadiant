@@ -88,10 +88,10 @@ void AttachmentData::validateAttachments()
     {
         if (_positions.find(i->second.posName) == _positions.end())
         {
-            rWarning()
-                << "[AttachmentData] Entity '" << _entityName
-                << "' tries to attach '" << i->first << "' at non-existent "
-                << "position '" << i->second.posName << "'\n";
+            rWarning() << "[AttachmentData] Entity '" << _entityName
+                       << "' tries to attach '" << i->first
+                       << "' at non-existent position '" << i->second.posName
+                       << "'\n";
 
             _objects.erase(i++);
         }

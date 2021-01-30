@@ -38,11 +38,15 @@ SpawnArgs::SpawnArgs(const SpawnArgs& other) :
 
 void SpawnArgs::parseAttachments()
 {
+    // Parse the keys
     forEachKeyValue(
         [this](const std::string& k, const std::string& v) {
             _attachments.parseDefAttachKeys(k, v);
         },
         true /* includeInherited */);
+
+    // Post validation step
+    _attachments.validateAttachments();
 }
 
 bool SpawnArgs::isModel() const
