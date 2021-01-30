@@ -1,0 +1,13 @@
+// Twosided material used for selection tests
+textures/darkmod/decals/vegetation/ivy_mixed_pieces
+{
+	surftype15
+    description "foliage"
+
+ 	noshadows
+	nonsolid
+	noimpact
+	twosided
+
+	diffusemap _white
+}

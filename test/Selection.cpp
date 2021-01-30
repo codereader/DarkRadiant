@@ -195,6 +195,14 @@ void performPatchSelectionTest(const std::string& materialName)
     performSelectionTest(patch);
 }
 
+void performModelSelectionTest(const std::string& entityName)
+{
+    auto entity = algorithm::getEntityByName(GlobalMapModule().getRoot(), entityName);
+    EXPECT_TRUE(entity);
+
+    performSelectionTest(entity);
+}
+
 TEST_F(SelectionTest, BrushesFacingTowardsXYAreSelectable)
 {
     loadMap("selection_test.map");
@@ -222,6 +230,20 @@ TEST_F(SelectionTest, PatchesFacingAwayFromXYAreSelectable)
     loadMap("selection_test.map");
 
     performPatchSelectionTest("textures/numbers/2");
+}
+
+TEST_F(SelectionTest, TwosidedModelFacingDown)
+{
+    loadMap("twosided_ivy.mapx");
+
+    performModelSelectionTest("ivy_facing_down");
+}
+
+TEST_F(SelectionTest, TwosidedModelFacingUp)
+{
+    loadMap("twosided_ivy.mapx");
+
+    performModelSelectionTest("ivy_facing_up");
 }
 
 }

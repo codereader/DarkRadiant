@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<map version="1" format="portable">
+  <layers>
+    <layer id="0" name="Default"/>
+  </layers>
+  <selectionGroups/>
+  <selectionSets/>
+  <properties>
+    <property key="EditTimeInSeconds" value="566"/>
+    <property key="LastCameraAngle" value="-45.6 65.2002 0"/>
+    <property key="LastCameraPosition" value="114.053 -192.486 107.046"/>
+  </properties>
+  <entity number="0">
+    <primitives/>
+    <keyValues>
+      <keyValue key="classname" value="func_static"/>
+      <keyValue key="name" value="ivy_facing_down"/>
+      <keyValue key="model" value="models/twosided_ivy.lwo"/>
+      <keyValue key="origin" value="165.58 19.205 -120.379"/>
+      <keyValue key="rotation" value="-0.463685 -0.874697 -0.141069 -0.844409 0.484491 -0.228564 0.268269 0.0131378 -0.963254"/>
+      <keyValue key="solid" value="0"/>
+    </keyValues>
+    <layers>
+      <layer id="0"/>
+    </layers>
+    <selectionGroups/>
+    <selectionSets/>
+  </entity>
+  <entity number="1">
+    <primitives/>
+    <keyValues>
+      <keyValue key="classname" value="func_static"/>
+      <keyValue key="name" value="ivy_facing_up"/>
+      <keyValue key="model" value="models/twosided_ivy.lwo"/>
+      <keyValue key="origin" value="325.58 -28.795 -120.379"/>
+      <keyValue key="rotation" value="-0.410301 0.885955 -0.216183 -0.892411 -0.438873 -0.104842 -0.187764 0.149907 0.970706"/>
+      <keyValue key="solid" value="0"/>
+    </keyValues>
+    <layers>
+      <layer id="0"/>
+    </layers>
+    <selectionGroups/>
+    <selectionSets/>
+  </entity>
+</map>
