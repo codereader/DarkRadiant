@@ -7,6 +7,7 @@
 #include "iselection.h"
 
 #include "render/NopVolumeTest.h"
+#include "string/convert.h"
 
 namespace test
 {
@@ -277,12 +278,15 @@ TEST_F(EntityTest, DestroySelectedEntity)
 
 namespace
 {
-    // A simple RenderableCollector which just logs the number of renderables
-    // and lights submitted
+    // A simple RenderableCollector which just logs/stores whatever is submitted
     struct TestRenderableCollector: public RenderableCollector
     {
+        // Count of submitted renderables and lights
         int renderables = 0;
         int lights = 0;
+
+        // List of actual RendererLight objects
+        std::list<const RendererLight*> lightPtrs;
 
         void addRenderable(Shader& shader, const OpenGLRenderable& renderable,
                            const Matrix4& localToWorld,
@@ -295,6 +299,7 @@ namespace
         void addLight(const RendererLight& light)
         {
             ++lights;
+            lightPtrs.push_back(&light);
         }
 
         bool supportsFullMaterials() const override { return true; }
@@ -346,15 +351,26 @@ TEST_F(EntityTest, RenderSelectedLightEntity)
 TEST_F(EntityTest, RenderLightAsLightSource)
 {
     auto light = createByClassName("light");
-    RenderFixture renderF;
+    auto& spawnArgs = light->getEntity();
+
+    // Set a non-default origin for the light
+    static const Vector3 ORIGIN(-64, 128, 963);
+    spawnArgs.setKeyValue("origin", string::to_string(ORIGIN));
 
     // Render the light in full materials mode
+    RenderFixture renderF;
     light->setRenderSystem(renderF.backend);
     light->renderSolid(renderF.collector, renderF.volumeTest);
 
     // We should get one renderable for the origin diamond, and one light source
     EXPECT_EQ(renderF.collector.renderables, 1);
     EXPECT_EQ(renderF.collector.lights, 1);
+
+    // Confirm properties of the submitted RendererLight
+    ASSERT_EQ(renderF.collector.lightPtrs.size(), 1);
+    const RendererLight* rLight = renderF.collector.lightPtrs.front();
+    ASSERT_TRUE(rLight);
+    EXPECT_EQ(rLight->worldOrigin(), ORIGIN);
 }
 
 TEST_F(EntityTest, CreateAttachedLightEntity)

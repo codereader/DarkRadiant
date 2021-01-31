@@ -149,8 +149,7 @@ typedef std::shared_ptr<IRenderEntity> IRenderEntityPtr;
 typedef std::weak_ptr<IRenderEntity> IRenderEntityWeakPtr;
 
 /**
- * \brief
- * Interface for a light source in the renderer.
+ * \brief Interface for a light source in the renderer.
  */
 class RendererLight
 {
@@ -171,8 +170,7 @@ public:
     virtual const ShaderPtr& getShader() const = 0;
 
     /**
-     * \brief
-     * Return the origin of the light volume in world space.
+     * \brief Return the origin of the light volume in world space.
      *
      * This corresponds to the "origin" key of the light object, i.e. the center
      * of the bounding box for an omni light and the tip of the pyramid for a
@@ -573,7 +571,7 @@ public:
     // Returns true if openGL supports ARB or GLSL lighting
     virtual bool shaderProgramsAvailable() const = 0;
 
-    // Sets the flag whether shader programs are available. 
+    // Sets the flag whether shader programs are available.
     virtual void setShaderProgramsAvailable(bool available) = 0;
 
 	// Subscription to get notified as soon as the openGL extensions have been initialised
