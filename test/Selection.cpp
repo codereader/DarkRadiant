@@ -259,14 +259,16 @@ protected:
     }
 };
 
-TEST_F(OrthoViewSelectionTest, BrushFacingTowardsViewIsSelectable)
+// --------- Brush with one-sided material -----
+
+TEST_F(OrthoViewSelectionTest, OnesidedBrushFacingTowardsViewIsSelectable)
 {
     loadMap("selection_test.map");
 
     performBrushSelectionTest("textures/numbers/1", true);
 }
 
-TEST_F(CameraViewSelectionTest, BrushFacingTowardsViewIsSelectable)
+TEST_F(CameraViewSelectionTest, OnesidedBrushFacingTowardsViewIsSelectable)
 {
     loadMap("selection_test.map");
 
@@ -274,74 +276,168 @@ TEST_F(CameraViewSelectionTest, BrushFacingTowardsViewIsSelectable)
 }
 
 // #5444: Brushes faces facing away were unselectable in orthoview
-TEST_F(OrthoViewSelectionTest, BrushFacingAwayFromViewIsSelectable)
+TEST_F(OrthoViewSelectionTest, OnesidedBrushFacingAwayFromViewIsSelectable)
 {
     loadMap("selection_test.map");
 
-    performBrushSelectionTest("textures/numbers/2", true); // should be selectable
+    performBrushSelectionTest("textures/numbers/2", true); // selectable in ortho
 }
 
-TEST_F(CameraViewSelectionTest, BrushFacingAwayFromViewIsNotSelectable)
+TEST_F(CameraViewSelectionTest, OnesidedBrushFacingAwayFromViewIsNotSelectable)
 {
     loadMap("selection_test.map");
 
-    performBrushSelectionTest("textures/numbers/2", false); // not selectable
+    performBrushSelectionTest("textures/numbers/2", false); // not selectable in camera
 }
 
-TEST_F(OrthoViewSelectionTest, PatchFacingTowardsViewIsSelectable)
+// --------- Brush face with two-sided material -----
+
+TEST_F(OrthoViewSelectionTest, TwosidedBrushFacingTowardsViewIsSelectable)
+{
+    loadMap("selection_test.map");
+
+    performBrushSelectionTest("textures/darkmod/decals/vegetation/ivy_mixed_pieces", true);
+}
+
+TEST_F(CameraViewSelectionTest, TwosidedBrushFacingTowardsViewIsSelectable)
+{
+    loadMap("selection_test.map");
+
+    performBrushSelectionTest("textures/darkmod/decals/vegetation/ivy_mixed_pieces", true);
+}
+
+TEST_F(OrthoViewSelectionTest, TwosidedBrushFacingAwayFromViewIsSelectable)
+{
+    loadMap("selection_test.map");
+
+    performBrushSelectionTest("textures/darkmod/decals/vegetation/ivy_mixed_pieces2", true); // selectable in ortho
+}
+
+TEST_F(CameraViewSelectionTest, TwosidedBrushFacingAwayFromViewIsNotSelectable)
+{
+    loadMap("selection_test.map");
+
+    performBrushSelectionTest("textures/darkmod/decals/vegetation/ivy_mixed_pieces2", false); // not selectable in camera, face is not visible
+}
+
+// --------- Patch with one-sided material -----
+
+TEST_F(OrthoViewSelectionTest, OnesidedPatchFacingTowardsViewIsSelectable)
 {
     loadMap("selection_test.map");
 
     performPatchSelectionTest("textures/numbers/1", true);
 }
 
-TEST_F(CameraViewSelectionTest, PatchFacingTowardsViewIsSelectable)
+TEST_F(CameraViewSelectionTest, OnesidedPatchFacingTowardsViewIsSelectable)
 {
     loadMap("selection_test.map");
 
     performPatchSelectionTest("textures/numbers/1", true);
 }
 
-TEST_F(OrthoViewSelectionTest, PatchFacingAwayFromViewIsSelectable)
+TEST_F(OrthoViewSelectionTest, OnesidedPatchFacingAwayFromViewIsSelectable)
 {
     loadMap("selection_test.map");
 
     performPatchSelectionTest("textures/numbers/2", true);
 }
 
-TEST_F(CameraViewSelectionTest, PatchFacingAwayFromViewIsNotSelectable)
+TEST_F(CameraViewSelectionTest, OnesidedPatchFacingAwayFromViewIsNotSelectable)
 {
     loadMap("selection_test.map");
 
     performPatchSelectionTest("textures/numbers/2", false);
 }
 
+// --------- Patch with two-sided material -----
+
+TEST_F(OrthoViewSelectionTest, TwosidedPatchFacingTowardsViewIsSelectable)
+{
+    loadMap("selection_test.map");
+
+    performPatchSelectionTest("textures/darkmod/decals/vegetation/ivy_mixed_pieces2", true);
+}
+
+TEST_F(CameraViewSelectionTest, TwosidedPatchFacingTowardsViewIsSelectable)
+{
+    loadMap("selection_test.map");
+
+    performPatchSelectionTest("textures/darkmod/decals/vegetation/ivy_mixed_pieces2", true);
+}
+
+TEST_F(OrthoViewSelectionTest, TwosidedPatchFacingAwayFromViewIsSelectable)
+{
+    loadMap("selection_test.map");
+
+    performPatchSelectionTest("textures/darkmod/decals/vegetation/ivy_mixed_pieces2", true); // selectable in ortho
+}
+
+TEST_F(CameraViewSelectionTest, TwosidedPatchFacingAwayFromViewIsSelectable)
+{
+    loadMap("selection_test.map");
+
+    performPatchSelectionTest("textures/darkmod/decals/vegetation/ivy_mixed_pieces2", true); // selectable in camera
+}
+
+// --------- Model with one-sided material -----
+
+TEST_F(OrthoViewSelectionTest, OnesidedModelFacingAwayIsSelectable)
+{
+    loadMap("twosided_ivy.mapx");
+
+    performModelSelectionTest("onesided_ivy_facing_down", true);
+}
+
+TEST_F(CameraViewSelectionTest, OnesidedModelFacingAwayIsNotSelectable)
+{
+    loadMap("twosided_ivy.mapx");
+
+    performModelSelectionTest("onesided_ivy_facing_down", false);
+}
+
+TEST_F(OrthoViewSelectionTest, OnesidedModelFacingUpIsSelectable)
+{
+    loadMap("twosided_ivy.mapx");
+
+    performModelSelectionTest("onesided_ivy_facing_up", true);
+}
+
+TEST_F(CameraViewSelectionTest, OnesidedModelFacingUpIsSelectable)
+{
+    loadMap("twosided_ivy.mapx");
+
+    performModelSelectionTest("onesided_ivy_facing_up", true);
+}
+
+// --------- Model with two-sided material -----
+
 TEST_F(OrthoViewSelectionTest, TwosidedModelFacingAwayIsSelectable)
 {
     loadMap("twosided_ivy.mapx");
 
-    performModelSelectionTest("ivy_facing_down", true);
+    performModelSelectionTest("twosided_ivy_facing_down", true);
 }
 
 TEST_F(CameraViewSelectionTest, TwosidedModelFacingAwayIsSelectable)
 {
     loadMap("twosided_ivy.mapx");
 
-    performModelSelectionTest("ivy_facing_down", true);
+    performModelSelectionTest("twosided_ivy_facing_down", true);
 }
 
 TEST_F(OrthoViewSelectionTest, TwosidedModelFacingUpIsSelectable)
 {
     loadMap("twosided_ivy.mapx");
 
-    performModelSelectionTest("ivy_facing_up", true);
+    performModelSelectionTest("twosided_ivy_facing_up", true);
 }
 
 TEST_F(CameraViewSelectionTest, TwosidedModelFacingUpIsSelectable)
 {
     loadMap("twosided_ivy.mapx");
 
-    performModelSelectionTest("ivy_facing_up", true);
+    performModelSelectionTest("twosided_ivy_facing_up", true);
 }
 
 }

@@ -52,4 +52,54 @@ patchDef2
 )
 }
 }
+// primitive 4
+{
+patchDef2
+{
+"textures/darkmod/decals/vegetation/ivy_mixed_pieces"
+( 3 3 0 0 0 )
+(
+( ( 344 320 0 4 10.75 ) ( 344 388 0 6.125 10.75 ) ( 344 456 0 8.25 10.75 ) )
+( ( 440 320 0 4 13.75 ) ( 440 388 0 6.125 13.75 ) ( 440 456 0 8.25 13.75 ) )
+( ( 536 320 0 4 16.75 ) ( 536 388 0 6.125 16.75 ) ( 536 456 0 8.25 16.75 ) )
+)
+}
+}
+// primitive 5
+{
+patchDef2
+{
+"textures/darkmod/decals/vegetation/ivy_mixed_pieces2"
+( 3 3 0 0 0 )
+(
+( ( 80 456 0 19.75 -2.5 ) ( 80 388 0 17.625 -2.5 ) ( 80 320 0 15.5 -2.5 ) )
+( ( 176 456 0 19.75 -5.5 ) ( 176 388 0 17.625 -5.5 ) ( 176 320 0 15.5 -5.5 ) )
+( ( 272 456 0 19.75 -8.5 ) ( 272 388 0 17.625 -8.5 ) ( 272 320 0 15.5 -8.5 ) )
+)
+}
+}
+// primitive 6
+{
+brushDef3
+{
+( 0 0 1 -64 ) ( ( 0.03125 0 5.5 ) ( 0 0.03125 55.75 ) ) "textures/common/caulk" 0 0 0
+( 0 1 0 96 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+( 1 0 0 -272 ) ( ( 0.03125 0 5.5 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+( 0 0 -1 -64 ) ( ( 0.03125 0 5.5 ) ( 0 0.03125 0 ) ) "textures/darkmod/decals/vegetation/ivy_mixed_pieces2" 0 0 0
+( 0 -1 0 -232 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+( -1 0 0 80 ) ( ( 0.03125 0 58.5 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+}
+}
+// primitive 7
+{
+brushDef3
+{
+( 0 0 1 -64 ) ( ( 0.03125 0 5.5 ) ( 0 0.03125 0 ) ) "textures/darkmod/decals/vegetation/ivy_mixed_pieces" 0 0 0
+( 0 1 0 96 ) ( ( 0.03125 0 8.25 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+( 1 0 0 -536 ) ( ( 0.03125 0 5.5 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+( 0 0 -1 -64 ) ( ( 0.03125 0 5.5 ) ( 0 0.03125 8.25 ) ) "textures/common/caulk" 0 0 0
+( 0 -1 0 -232 ) ( ( 0.03125 0 55.75 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+( -1 0 0 344 ) ( ( 0.03125 0 58.5 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+}
+}
 }

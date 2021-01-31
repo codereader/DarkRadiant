@@ -11,3 +11,30 @@ textures/darkmod/decals/vegetation/ivy_mixed_pieces
 
 	diffusemap _white
 }
+
+// Alias of the above
+textures/darkmod/decals/vegetation/ivy_mixed_pieces2
+{
+	surftype15
+    description "foliage"
+
+ 	noshadows
+	nonsolid
+	noimpact
+	twosided
+
+	diffusemap _white
+}
+
+// Onesided variant of the above for testing purposes
+textures/darkmod/decals/vegetation/ivy_mixed_pieces_onesided
+{
+	surftype15
+    description "foliage"
+
+ 	noshadows
+	nonsolid
+	noimpact
+
+	diffusemap _white
+}

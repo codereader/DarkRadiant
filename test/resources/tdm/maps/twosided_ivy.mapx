@@ -6,15 +6,16 @@
   <selectionGroups/>
   <selectionSets/>
   <properties>
-    <property key="EditTimeInSeconds" value="566"/>
-    <property key="LastCameraAngle" value="-45.6 65.2002 0"/>
-    <property key="LastCameraPosition" value="114.053 -192.486 107.046"/>
+    <property key="EditTimeInSeconds" value="683"/>
+    <property key="LastCameraAngle" value="-55.8 96.7002 0"/>
+    <property key="LastCameraPosition" value="244.197 -274.695 414.483"/>
+    <property key="LastShaderClipboardMaterial" value="textures/darkmod/decals/vegetation/ivy_mixed_pieces"/>
   </properties>
   <entity number="0">
     <primitives/>
     <keyValues>
       <keyValue key="classname" value="func_static"/>
-      <keyValue key="name" value="ivy_facing_down"/>
+      <keyValue key="name" value="twosided_ivy_facing_down"/>
       <keyValue key="model" value="models/twosided_ivy.lwo"/>
       <keyValue key="origin" value="165.58 19.205 -120.379"/>
       <keyValue key="rotation" value="-0.463685 -0.874697 -0.141069 -0.844409 0.484491 -0.228564 0.268269 0.0131378 -0.963254"/>
@@ -30,11 +31,45 @@
     <primitives/>
     <keyValues>
       <keyValue key="classname" value="func_static"/>
-      <keyValue key="name" value="ivy_facing_up"/>
+      <keyValue key="name" value="twosided_ivy_facing_up"/>
       <keyValue key="model" value="models/twosided_ivy.lwo"/>
       <keyValue key="origin" value="325.58 -28.795 -120.379"/>
       <keyValue key="rotation" value="-0.410301 0.885955 -0.216183 -0.892411 -0.438873 -0.104842 -0.187764 0.149907 0.970706"/>
       <keyValue key="solid" value="0"/>
+    </keyValues>
+    <layers>
+      <layer id="0"/>
+    </layers>
+    <selectionGroups/>
+    <selectionSets/>
+  </entity>
+  <entity number="2">
+    <primitives/>
+    <keyValues>
+      <keyValue key="classname" value="func_static"/>
+      <keyValue key="name" value="onesided_ivy_facing_down"/>
+      <keyValue key="model" value="models/twosided_ivy.lwo"/>
+      <keyValue key="origin" value="165.58 243.205 -120.379"/>
+      <keyValue key="rotation" value="-0.463685 -0.874697 -0.141069 -0.844409 0.484491 -0.228564 0.268269 0.0131378 -0.963254"/>
+      <keyValue key="solid" value="0"/>
+      <keyValue key="skin" value="ivy_onesided"/>
+    </keyValues>
+    <layers>
+      <layer id="0"/>
+    </layers>
+    <selectionGroups/>
+    <selectionSets/>
+  </entity>
+  <entity number="3">
+    <primitives/>
+    <keyValues>
+      <keyValue key="classname" value="func_static"/>
+      <keyValue key="name" value="onesided_ivy_facing_up"/>
+      <keyValue key="model" value="models/twosided_ivy.lwo"/>
+      <keyValue key="origin" value="325.58 195.205 -120.379"/>
+      <keyValue key="rotation" value="-0.410301 0.885955 -0.216183 -0.892411 -0.438873 -0.104842 -0.187764 0.149907 0.970706"/>
+      <keyValue key="solid" value="0"/>
+      <keyValue key="skin" value="ivy_onesided"/>
     </keyValues>
     <layers>
       <layer id="0"/>
