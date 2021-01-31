@@ -177,7 +177,7 @@ bool RadiantSelectionSystem::nothingSelected() const
            (Mode() == eGroupPart && _countPrimitive == 0);
 }
 
-void RadiantSelectionSystem::pivotChanged()  
+void RadiantSelectionSystem::pivotChanged()
 {
 	_pivot.setNeedsRecalculation(true);
     SceneChangeNotify();
@@ -345,7 +345,7 @@ void RadiantSelectionSystem::onSelectedChanged(const scene::INodePtr& node, cons
     int delta = isSelected ? +1 : -1;
 
     _countPrimitive += delta;
-    
+
     _selectionInfo.totalCount += delta;
 
     if (Node_isPatch(node))
@@ -356,7 +356,7 @@ void RadiantSelectionSystem::onSelectedChanged(const scene::INodePtr& node, cons
 	{
         _selectionInfo.brushCount += delta;
     }
-    else 
+    else
 	{
         _selectionInfo.entityCount += delta;
     }
@@ -381,7 +381,7 @@ void RadiantSelectionSystem::onSelectedChanged(const scene::INodePtr& node, cons
     ASSERT_MESSAGE(_selection.size() == _countPrimitive, "selection-tracking error");
 
     _requestWorkZoneRecalculation = true;
-   
+
 	// When everything is deselected, release the pivot user lock
 	if (_selection.empty())
 	{
@@ -396,7 +396,7 @@ void RadiantSelectionSystem::onComponentSelection(const scene::INodePtr& node, c
     int delta = selectable.isSelected() ? +1 : -1;
 
     _countComponent += delta;
-    
+
     _selectionInfo.totalCount += delta;
     _selectionInfo.componentCount += delta;
 
@@ -648,11 +648,11 @@ void RadiantSelectionSystem::performPointSelection(const SelectablesList& candid
 	if (candidates.empty()) return;
 
 	// Yes, now determine how we should interpret the click
-	switch (modifier) 
+	switch (modifier)
 	{
 		// If we are in toggle mode (Shift-Left-Click by default), just toggle the
 		// selection of the "topmost" item
-		case eToggle: 
+		case eToggle:
 		{
 			ISelectable* best = candidates.front();
 			// toggle selection of the object with least depth (=first in the list)
@@ -691,7 +691,7 @@ void RadiantSelectionSystem::performPointSelection(const SelectablesList& candid
 					// check if there is a "next" item in the list, if not: select the first item
 					++i;
 
-					if (i != candidates.end()) 
+					if (i != candidates.end())
 					{
 						algorithm::setSelectionStatus(*i, true);
 						//(*i)->setSelected(true);
@@ -709,7 +709,7 @@ void RadiantSelectionSystem::performPointSelection(const SelectablesList& candid
 		}
 		break;
 
-		default: 
+		default:
 			break;
 	};
 }
@@ -717,7 +717,7 @@ void RadiantSelectionSystem::performPointSelection(const SelectablesList& candid
 void RadiantSelectionSystem::selectArea(SelectionTest& test, SelectionSystem::EModifier modifier, bool face)
 {
     // If we are in replace mode, deselect all the components or previous selections
-    if (modifier == SelectionSystem::eReplace) 
+    if (modifier == SelectionSystem::eReplace)
     {
         if (face)
         {
@@ -746,13 +746,13 @@ void RadiantSelectionSystem::selectArea(SelectionTest& test, SelectionSystem::EM
                 candidates.push_back(i->second);
             }
         }
-        else 
+        else
         {
             testSelectScene(candidates, test, test.getVolume(), Mode(), ComponentMode());
         }
 
         // Since toggling a selectable might trigger a group-selection
-        // we need to keep track of the desired state of each selectable 
+        // we need to keep track of the desired state of each selectable
         typedef std::map<ISelectable*, bool> SelectablesMap;
         SelectablesMap selectableStates;
 
@@ -856,7 +856,7 @@ void RadiantSelectionSystem::onManipulationCancelled()
     pivotChanged();
 }
 
-void RadiantSelectionSystem::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const 
+void RadiantSelectionSystem::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
 {
     renderSolid(collector, volume);
 }
@@ -977,7 +977,7 @@ const StringSet& RadiantSelectionSystem::getDependencies() const
     return _dependencies;
 }
 
-void RadiantSelectionSystem::initialiseModule(const IApplicationContext& ctx) 
+void RadiantSelectionSystem::initialiseModule(const IApplicationContext& ctx)
 {
     rMessage() << getName() << "::initialiseModule called." << std::endl;
 
@@ -1011,10 +1011,10 @@ void RadiantSelectionSystem::initialiseModule(const IApplicationContext& ctx)
 
     GlobalCommandSystem().addCommand("ToggleManipulatorMode",
         std::bind(&RadiantSelectionSystem::toggleManipulatorModeCmd, this, std::placeholders::_1), { cmd::ARGTYPE_STRING });
-    
+
     GlobalCommandSystem().addCommand("ToggleEntitySelectionMode", std::bind(&RadiantSelectionSystem::toggleEntityMode, this, std::placeholders::_1));
     GlobalCommandSystem().addCommand("ToggleGroupPartSelectionMode", std::bind(&RadiantSelectionSystem::toggleGroupPartMode, this, std::placeholders::_1));
-    
+
     GlobalCommandSystem().addCommand("ToggleComponentSelectionMode",
         std::bind(&RadiantSelectionSystem::toggleComponentModeCmd, this, std::placeholders::_1), { cmd::ARGTYPE_STRING });
 
@@ -1028,7 +1028,7 @@ void RadiantSelectionSystem::initialiseModule(const IApplicationContext& ctx)
 
 	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Selection"));
 
-	page.appendCheckBox(_("Ignore light volume bounds when calculating default rotation pivot location"), 
+	page.appendCheckBox(_("Ignore light volume bounds when calculating default rotation pivot location"),
 		ManipulationPivot::RKEY_DEFAULT_PIVOT_LOCATION_IGNORES_LIGHT_VOLUMES);
 
     // Connect the bounds changed caller
@@ -1042,14 +1042,31 @@ void RadiantSelectionSystem::initialiseModule(const IApplicationContext& ctx)
 		sigc::mem_fun(*this, &RadiantSelectionSystem::onMapEvent));
 }
 
-void RadiantSelectionSystem::shutdownModule() 
+void RadiantSelectionSystem::shutdownModule()
 {
     // greebo: Unselect everything so that no references to scene::Nodes
     // are kept after shutdown, causing destruction issues.
     setSelectedAll(false);
     setSelectedAllComponents(false);
 
-	// In pathological cases this list might contain remnants, clear it
+	// In pathological cases this list might contain remnants. First, give each
+	// selectable node a chance to remove itself from the container by setting
+	// its own selected state to false (rather than waiting for this to happen
+	// in its destructor).
+    for (auto i = _selection.begin(); i != _selection.end(); )
+    {
+        // Take a reference to the node and increment the iterator while the
+        // iterator is still valid.
+        scene::INodePtr node = (i++)->first;
+
+        // If this is a selectable node, unselect it (which might remove it from
+        // the map and invalidate the original iterator)
+        auto selectable = Node_getSelectable(node);
+        if (selectable)
+            selectable->setSelected(false);
+    }
+
+    // Clear the list of anything which remains.
 	_selection.clear();
 
 	_activeManipulator.reset();
@@ -1250,7 +1267,7 @@ void RadiantSelectionSystem::toggleEntityMode(const cmd::ArgumentList& args)
 	{
 		activateDefaultMode();
 	}
-	else 
+	else
 	{
 		SetMode(eEntity);
 		SetComponentMode(eDefault);
@@ -1286,7 +1303,7 @@ void RadiantSelectionSystem::toggleGroupPartMode(const cmd::ArgumentList& args)
 
         // Now deselect everything and select all child primitives instead
         setSelectedAll(false);
-        
+
         std::for_each(groupEntityNodes.begin(), groupEntityNodes.end(), [&](const scene::INodePtr& node)
         {
             node->foreachNode([&] (const scene::INodePtr& child)->bool

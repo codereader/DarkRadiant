@@ -330,12 +330,6 @@ TEST_F(EntityTest, RenderLightEntity)
         light->renderWireframe(wireframeRenderer, volumeTest);
         EXPECT_EQ(wireframeRenderer.renderables, 3);
         EXPECT_EQ(wireframeRenderer.lights, 0);
-
-        // Destroying a selected entity causes a crash (destructor tries to
-        // unselect the entity in the RadiantSelectionSystem which requires a
-        // call to Node::self() which crashes due to trying to create a new
-        // shared_ptr in the destructor).
-        Node_getSelectable(light)->setSelected(false);
     }
 }
 
