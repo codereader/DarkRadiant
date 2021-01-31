@@ -5,6 +5,7 @@
 #include "registry/registry.h"
 #include "CameraManager.h"
 #include "render/View.h"
+#include "render/CameraView.h"
 #include "selection/SelectionVolume.h"
 #include "Rectangle.h"
 
@@ -14,35 +15,6 @@ namespace camera
 namespace
 {
 	const std::string RKEY_SELECT_EPSILON = "user/ui/selectionEpsilon";
-
-	const Matrix4 g_radiant2opengl = Matrix4::byColumns(
-		0, -1, 0, 0,
-		0, 0, 1, 0,
-		-1, 0, 0, 0,
-		0, 0, 0, 1
-	);
-
-	const Matrix4 g_opengl2radiant = Matrix4::byColumns(
-		0, 0, -1, 0,
-		-1, 0, 0, 0,
-		0, 1, 0, 0,
-		0, 0, 0, 1
-	);
-
-	inline Matrix4 projection_for_camera(float near_z, float far_z, float fieldOfView, int width, int height)
-	{
-		const auto half_width = near_z * tan(degrees_to_radians(fieldOfView * 0.5));
-		const auto half_height = half_width * (static_cast<double>(height) / static_cast<double>(width));
-
-		return Matrix4::getProjectionForFrustum(
-			-half_width,
-			half_width,
-			-half_height,
-			half_height,
-			near_z,
-			far_z
-		);
-	}
 }
 
 Vector3 Camera::_prevOrigin(0,0,0);
@@ -67,15 +39,7 @@ void Camera::updateModelview()
 	_prevAngles = _angles;
 	_prevOrigin = _origin;
 
-	_modelview = Matrix4::getIdentity();
-
-	// roll, pitch, yaw
-	Vector3 radiant_eulerXYZ(0, -_angles[camera::CAMERA_PITCH], _angles[camera::CAMERA_YAW]);
-
-	_modelview.translateBy(_origin);
-	_modelview.rotateByEulerXYZDegrees(radiant_eulerXYZ);
-	_modelview.multiplyBy(g_radiant2opengl);
-	_modelview.invert();
+    _modelview = calculateModelViewMatrix(_origin, _angles);
 
 	updateVectors();
 
@@ -270,7 +234,7 @@ void Camera::setFarClipPlaneEnabled(bool enabled)
 void Camera::updateProjection()
 {
     auto farClip = _farClipPlaneEnabled ? getFarClipPlaneDistance() : 32768.0f;
-	_projection = projection_for_camera(farClip / 4096.0f, farClip, _fieldOfView, _width, _height);
+	_projection = calculateProjectionMatrix(farClip / 4096.0f, farClip, _fieldOfView, _width, _height);
 
 	_view.construct(_projection, _modelview, _width, _height);
 }

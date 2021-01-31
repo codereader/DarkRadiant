@@ -277,6 +277,9 @@
     <ClInclude Include="..\..\libs\messages\FileOverwriteConfirmation.h">
       <Filter>messages</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\render\CameraView.h">
+      <Filter>render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

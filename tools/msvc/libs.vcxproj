@@ -195,6 +195,7 @@
     <ClInclude Include="..\..\libs\registry\Widgets.h" />
     <ClInclude Include="..\..\libs\render.h" />
     <ClInclude Include="..\..\libs\render\ArbitraryMeshVertex.h" />
+    <ClInclude Include="..\..\libs\render\CameraView.h" />
     <ClInclude Include="..\..\libs\render\CamRenderer.h" />
     <ClInclude Include="..\..\libs\render\Colour4.h" />
     <ClInclude Include="..\..\libs\render\Colour4b.h" />
