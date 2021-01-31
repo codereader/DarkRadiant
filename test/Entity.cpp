@@ -4,6 +4,7 @@
 #include "ientity.h"
 #include "irendersystemfactory.h"
 #include "iselectable.h"
+#include "iselection.h"
 
 #include "render/NopVolumeTest.h"
 
@@ -276,10 +277,35 @@ namespace
     };
 }
 
+TEST_F(EntityTest, SelectEntity)
+{
+    auto light = createByClassName("light");
+
+    // Confirm that setting entity node's selection status propagates to the
+    // selection system
+    EXPECT_EQ(GlobalSelectionSystem().countSelected(), 0);
+    Node_getSelectable(light)->setSelected(true);
+    EXPECT_EQ(GlobalSelectionSystem().countSelected(), 1);
+    Node_getSelectable(light)->setSelected(false);
+    EXPECT_EQ(GlobalSelectionSystem().countSelected(), 0);
+}
+
+TEST_F(EntityTest, DestroySelectedEntity)
+{
+    auto light = createByClassName("light");
+
+    // Confirm that setting entity node's selection status propagates to the
+    // selection system
+    EXPECT_EQ(GlobalSelectionSystem().countSelected(), 0);
+    Node_getSelectable(light)->setSelected(true);
+    EXPECT_EQ(GlobalSelectionSystem().countSelected(), 1);
+
+    // Destructor called here and should not crash
+}
+
 TEST_F(EntityTest, RenderLightEntity)
 {
     auto light = createByClassName("light");
-    auto& spawnArgs = light->getEntity();
 
     // Rendering requires a backend and a volume test
     auto backend = GlobalRenderSystemFactory().createRenderSystem();
@@ -292,6 +318,7 @@ TEST_F(EntityTest, RenderLightEntity)
         light->setRenderSystem(backend);
         light->renderWireframe(wireframeRenderer, volumeTest);
         EXPECT_EQ(wireframeRenderer.renderables, 1);
+        EXPECT_EQ(wireframeRenderer.lights, 0);
     }
 
     // With the light selected, we should get the origin diamond, the radius and
@@ -302,6 +329,12 @@ TEST_F(EntityTest, RenderLightEntity)
         light->setRenderSystem(backend);
         light->renderWireframe(wireframeRenderer, volumeTest);
         EXPECT_EQ(wireframeRenderer.renderables, 3);
+        EXPECT_EQ(wireframeRenderer.lights, 0);
+
+        // Destroying a selected entity causes a crash (destructor tries to
+        // unselect the entity in the RadiantSelectionSystem which requires a
+        // call to Node::self() which crashes due to trying to create a new
+        // shared_ptr in the destructor).
         Node_getSelectable(light)->setSelected(false);
     }
 }
