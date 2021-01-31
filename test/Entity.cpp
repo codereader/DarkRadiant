@@ -249,34 +249,6 @@ TEST_F(EntityTest, CopySpawnargs)
     EXPECT_EQ(overlap.size(), 0);
 }
 
-namespace
-{
-    // A simple RenderableCollector which just logs the number of renderables
-    // and lights submitted
-    struct TestRenderableCollector: public RenderableCollector
-    {
-        int renderables = 0;
-        int lights = 0;
-
-        void addRenderable(Shader& shader, const OpenGLRenderable& renderable,
-                           const Matrix4& localToWorld,
-                           const LitObject* litObject = nullptr,
-                           const IRenderEntity* entity = nullptr) override
-        {
-            ++renderables;
-        }
-
-        void addLight(const RendererLight& light)
-        {
-            ++lights;
-        }
-
-        bool supportsFullMaterials() const override { return true; }
-        void setHighlightFlag(Highlight::Flags flags, bool enabled) override
-        {}
-    };
-}
-
 TEST_F(EntityTest, SelectEntity)
 {
     auto light = createByClassName("light");
@@ -303,34 +275,68 @@ TEST_F(EntityTest, DestroySelectedEntity)
     // Destructor called here and should not crash
 }
 
-TEST_F(EntityTest, RenderLightEntity)
+namespace
+{
+    // A simple RenderableCollector which just logs the number of renderables
+    // and lights submitted
+    struct TestRenderableCollector: public RenderableCollector
+    {
+        int renderables = 0;
+        int lights = 0;
+
+        void addRenderable(Shader& shader, const OpenGLRenderable& renderable,
+                           const Matrix4& localToWorld,
+                           const LitObject* litObject = nullptr,
+                           const IRenderEntity* entity = nullptr) override
+        {
+            ++renderables;
+        }
+
+        void addLight(const RendererLight& light)
+        {
+            ++lights;
+        }
+
+        bool supportsFullMaterials() const override { return true; }
+        void setHighlightFlag(Highlight::Flags flags, bool enabled) override
+        {}
+    };
+
+    // Collection of objects needed for rendering
+    struct RenderFixture
+    {
+        RenderSystemPtr backend = GlobalRenderSystemFactory().createRenderSystem();
+        render::NopVolumeTest volumeTest;
+        TestRenderableCollector collector;
+    };
+}
+
+TEST_F(EntityTest, RenderUnselectedLightEntity)
 {
     auto light = createByClassName("light");
-
-    // Rendering requires a backend and a volume test
-    auto backend = GlobalRenderSystemFactory().createRenderSystem();
-    render::NopVolumeTest volumeTest;
+    RenderFixture renderF;
 
     // Render the light in wireframe mode. This should render just the origin
     // diamond.
-    {
-        TestRenderableCollector wireframeRenderer;
-        light->setRenderSystem(backend);
-        light->renderWireframe(wireframeRenderer, volumeTest);
-        EXPECT_EQ(wireframeRenderer.renderables, 1);
-        EXPECT_EQ(wireframeRenderer.lights, 0);
-    }
+    light->setRenderSystem(renderF.backend);
+    light->renderWireframe(renderF.collector, renderF.volumeTest);
+    EXPECT_EQ(renderF.collector.renderables, 1);
+    EXPECT_EQ(renderF.collector.lights, 0);
+}
+
+TEST_F(EntityTest, RenderSelectedLightEntity)
+{
+    auto light = createByClassName("light");
+    RenderFixture renderF;
 
     // With the light selected, we should get the origin diamond, the radius and
     // the center vertex.
-    {
-        TestRenderableCollector wireframeRenderer;
-        Node_getSelectable(light)->setSelected(true);
-        light->setRenderSystem(backend);
-        light->renderWireframe(wireframeRenderer, volumeTest);
-        EXPECT_EQ(wireframeRenderer.renderables, 3);
-        EXPECT_EQ(wireframeRenderer.lights, 0);
-    }
+    Node_getSelectable(light)->setSelected(true);
+
+    light->setRenderSystem(renderF.backend);
+    light->renderWireframe(renderF.collector, renderF.volumeTest);
+    EXPECT_EQ(renderF.collector.renderables, 3);
+    EXPECT_EQ(renderF.collector.lights, 0);
 }
 
 TEST_F(EntityTest, CreateAttachedLightEntity)
