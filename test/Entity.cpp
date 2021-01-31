@@ -302,7 +302,9 @@ namespace
         {}
     };
 
-    // Collection of objects needed for rendering
+    // Collection of objects needed for rendering. Since not all tests require
+    // rendering, these objects are in an auxiliary fixture created when needed
+    // rather than part of the EntityTest fixture used by every test.
     struct RenderFixture
     {
         RenderSystemPtr backend = GlobalRenderSystemFactory().createRenderSystem();
@@ -316,10 +318,11 @@ TEST_F(EntityTest, RenderUnselectedLightEntity)
     auto light = createByClassName("light");
     RenderFixture renderF;
 
-    // Render the light in wireframe mode. This should render just the origin
-    // diamond.
+    // Render the light in wireframe mode.
     light->setRenderSystem(renderF.backend);
     light->renderWireframe(renderF.collector, renderF.volumeTest);
+
+    // Only the light origin diamond should be rendered
     EXPECT_EQ(renderF.collector.renderables, 1);
     EXPECT_EQ(renderF.collector.lights, 0);
 }
@@ -329,14 +332,29 @@ TEST_F(EntityTest, RenderSelectedLightEntity)
     auto light = createByClassName("light");
     RenderFixture renderF;
 
-    // With the light selected, we should get the origin diamond, the radius and
-    // the center vertex.
+    // Select the light then render it in wireframe mode
     Node_getSelectable(light)->setSelected(true);
-
     light->setRenderSystem(renderF.backend);
     light->renderWireframe(renderF.collector, renderF.volumeTest);
+
+    // With the light selected, we should get the origin diamond, the radius and
+    // the center vertex.
     EXPECT_EQ(renderF.collector.renderables, 3);
     EXPECT_EQ(renderF.collector.lights, 0);
+}
+
+TEST_F(EntityTest, RenderLightAsLightSource)
+{
+    auto light = createByClassName("light");
+    RenderFixture renderF;
+
+    // Render the light in full materials mode
+    light->setRenderSystem(renderF.backend);
+    light->renderSolid(renderF.collector, renderF.volumeTest);
+
+    // We should get one renderable for the origin diamond, and one light source
+    EXPECT_EQ(renderF.collector.renderables, 1);
+    EXPECT_EQ(renderF.collector.lights, 1);
 }
 
 TEST_F(EntityTest, CreateAttachedLightEntity)
