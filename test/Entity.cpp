@@ -2,6 +2,10 @@
 
 #include "ieclass.h"
 #include "ientity.h"
+#include "irendersystemfactory.h"
+#include "iselectable.h"
+
+#include "render/NopVolumeTest.h"
 
 namespace test
 {
@@ -242,6 +246,64 @@ TEST_F(EntityTest, CopySpawnargs)
                           copiedPointers.begin(), copiedPointers.end(),
                           std::back_inserter(overlap));
     EXPECT_EQ(overlap.size(), 0);
+}
+
+namespace
+{
+    // A simple RenderableCollector which just logs the number of renderables
+    // and lights submitted
+    struct TestRenderableCollector: public RenderableCollector
+    {
+        int renderables = 0;
+        int lights = 0;
+
+        void addRenderable(Shader& shader, const OpenGLRenderable& renderable,
+                           const Matrix4& localToWorld,
+                           const LitObject* litObject = nullptr,
+                           const IRenderEntity* entity = nullptr) override
+        {
+            ++renderables;
+        }
+
+        void addLight(const RendererLight& light)
+        {
+            ++lights;
+        }
+
+        bool supportsFullMaterials() const override { return true; }
+        void setHighlightFlag(Highlight::Flags flags, bool enabled) override
+        {}
+    };
+}
+
+TEST_F(EntityTest, RenderLightEntity)
+{
+    auto light = createByClassName("light");
+    auto& spawnArgs = light->getEntity();
+
+    // Rendering requires a backend and a volume test
+    auto backend = GlobalRenderSystemFactory().createRenderSystem();
+    render::NopVolumeTest volumeTest;
+
+    // Render the light in wireframe mode. This should render just the origin
+    // diamond.
+    {
+        TestRenderableCollector wireframeRenderer;
+        light->setRenderSystem(backend);
+        light->renderWireframe(wireframeRenderer, volumeTest);
+        EXPECT_EQ(wireframeRenderer.renderables, 1);
+    }
+
+    // With the light selected, we should get the origin diamond, the radius and
+    // the center vertex.
+    {
+        TestRenderableCollector wireframeRenderer;
+        Node_getSelectable(light)->setSelected(true);
+        light->setRenderSystem(backend);
+        light->renderWireframe(wireframeRenderer, volumeTest);
+        EXPECT_EQ(wireframeRenderer.renderables, 3);
+        Node_getSelectable(light)->setSelected(false);
+    }
 }
 
 TEST_F(EntityTest, CreateAttachedLightEntity)
