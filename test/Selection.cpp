@@ -1,5 +1,6 @@
 #include "RadiantTest.h"
 
+#include <algorithm>
 #include "ishaders.h"
 #include "imap.h"
 #include "ifilter.h"
@@ -14,6 +15,7 @@
 #include "selectionlib.h"
 #include "string/convert.h"
 #include "render/View.h"
+#include "render/CameraView.h"
 #include "selection/SelectionVolume.h"
 #include "Rectangle.h"
 
@@ -105,145 +107,241 @@ TEST_F(SelectionTest, SelectionBoundsOfProjectedLights)
     EXPECT_EQ(Node_getLightNode(entityNode)->getSelectAABB().getOrigin(), Vector3(0,0,0));
 }
 
-void constructCenteredXyView(render::View& view, const Vector3& origin)
+constexpr std::size_t DeviceWidth = 640;
+constexpr std::size_t DeviceHeight = 640;
+
+class ViewSelectionTest :
+    public SelectionTest
 {
-    double scale = 1.0;
+protected:
+    virtual render::View createView() = 0;
 
-    Matrix4 projection;
+    virtual void constructView(render::View& view, const AABB& objectAABB) = 0;
 
-    projection[0] = 1.0 / static_cast<double>(640 / 2);
-    projection[5] = 1.0 / static_cast<double>(640 / 2);
-    projection[10] = 1.0 / (32768 * scale);
+    void performViewSelectionTest(render::View& view, const scene::INodePtr& node, bool expectNodeIsSelectable)
+    {
+        // Selection Point
+        auto rectangle = selection::Rectangle::ConstructFromPoint(Vector2(0, 0), Vector2(8.0 / DeviceWidth, 8.0 / DeviceHeight));
+        ConstructSelectionTest(view, rectangle);
 
-    projection[12] = 0.0;
-    projection[13] = 0.0;
-    projection[14] = -1.0;
+        EXPECT_FALSE(Node_isSelected(node));
 
-    projection[1] = projection[2] = projection[3] =
-        projection[4] = projection[6] = projection[7] =
-        projection[8] = projection[9] = projection[11] = 0.0;
+        SelectionVolume test(view);
+        GlobalSelectionSystem().selectPoint(test, SelectionSystem::eToggle, false);
 
-    projection[15] = 1.0f;
+        EXPECT_EQ(Node_isSelected(node), expectNodeIsSelectable);
 
-    // Modelview
-    Matrix4 modelView;
+        // De-select to be sure
+        Node_setSelected(node, false);
+    }
 
-    // Translate the view to the center of the brush
-    modelView[12] = -origin.x() * scale;
-    modelView[13] = -origin.y() * scale;
-    modelView[14] = 32768 * scale;
+    void performSelectionTest(const scene::INodePtr& node, bool expectNodeIsSelectable)
+    {
+        // Move the orthoview exactly to the center of this object
+        render::View view = createView();
+        constructView(view, node->worldAABB());
 
-    // axis base
-    modelView[0] = scale;
-    modelView[1] = 0;
-    modelView[2] = 0;
+        performViewSelectionTest(view, node, expectNodeIsSelectable);
+    }
 
-    modelView[4] = 0;
-    modelView[5] = scale;
-    modelView[6] = 0;
+    void performBrushSelectionTest(const std::string& materialName, bool expectNodeIsSelectable)
+    {
+        // Filter caulk faces
+        auto material = GlobalMaterialManager().getMaterialForName("textures/common/caulk");
+        material->setVisible(false);
 
-    modelView[8] = 0;
-    modelView[9] = 0;
-    modelView[10] = -scale;
+        auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+        auto brush = algorithm::findFirstBrushWithMaterial(worldspawn, materialName);
+        EXPECT_TRUE(brush);
 
-    modelView[3] = modelView[7] = modelView[11] = 0;
-    modelView[15] = 1;
+        Node_getIBrush(brush)->updateFaceVisibility();
 
-    view.construct(projection, modelView, 640, 640);
-}
+        performSelectionTest(brush, expectNodeIsSelectable);
+    }
 
-void performSelectionTest(const scene::INodePtr& node)
+    void performPatchSelectionTest(const std::string& materialName, bool expectNodeIsSelectable)
+    {
+        auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+        auto patch = algorithm::findFirstPatchWithMaterial(worldspawn, materialName);
+        EXPECT_TRUE(patch);
+
+        performSelectionTest(patch, expectNodeIsSelectable);
+    }
+
+    void performModelSelectionTest(const std::string& entityName, bool expectNodeIsSelectable)
+    {
+        auto entity = algorithm::getEntityByName(GlobalMapModule().getRoot(), entityName);
+        EXPECT_TRUE(entity);
+
+        performSelectionTest(entity, expectNodeIsSelectable);
+    }
+};
+
+class OrthoViewSelectionTest :
+    public ViewSelectionTest
 {
-    render::View xyView;
+protected:
+    virtual render::View createView() override
+    {
+        return render::View();
+    }
 
-    // Move the orthoview exactly to the center of this object
-    constructCenteredXyView(xyView, node->worldAABB().origin);
+    virtual void constructView(render::View& view, const AABB& objectAABB) override
+    {
+        // Move the orthoview exactly to the center of this object
+        double scale = 1.0;
 
-    // Selection Point
-    auto rectangle = selection::Rectangle::ConstructFromPoint(Vector2(0, 0), Vector2(8.0 / 640, 8.0 / 640));
-    ConstructSelectionTest(xyView, rectangle);
+        Matrix4 projection;
 
-    EXPECT_FALSE(Node_isSelected(node));
+        projection[0] = 1.0 / static_cast<double>(DeviceWidth / 2);
+        projection[5] = 1.0 / static_cast<double>(DeviceHeight / 2);
+        projection[10] = 1.0 / (32768 * scale);
 
-    SelectionVolume test(xyView);
-    GlobalSelectionSystem().selectPoint(test, SelectionSystem::eToggle, false);
+        projection[12] = 0.0;
+        projection[13] = 0.0;
+        projection[14] = -1.0;
 
-    EXPECT_TRUE(Node_isSelected(node));
-}
+        projection[1] = projection[2] = projection[3] =
+            projection[4] = projection[6] = projection[7] =
+            projection[8] = projection[9] = projection[11] = 0.0;
 
-void performBrushSelectionTest(const std::string& materialName)
+        projection[15] = 1.0f;
+
+        // Modelview
+        Matrix4 modelView;
+
+        // Translate the view to the center of the brush
+        modelView[12] = -objectAABB.getOrigin().x() * scale;
+        modelView[13] = -objectAABB.getOrigin().y() * scale;
+        modelView[14] = 32768 * scale;
+
+        // axis base
+        modelView[0] = scale;
+        modelView[1] = 0;
+        modelView[2] = 0;
+
+        modelView[4] = 0;
+        modelView[5] = scale;
+        modelView[6] = 0;
+
+        modelView[8] = 0;
+        modelView[9] = 0;
+        modelView[10] = -scale;
+
+        modelView[3] = modelView[7] = modelView[11] = 0;
+        modelView[15] = 1;
+
+        view.construct(projection, modelView, DeviceWidth, DeviceHeight);
+    }
+};
+
+class CameraViewSelectionTest :
+    public ViewSelectionTest
 {
-    // Filter caulk faces
-    auto material = GlobalMaterialManager().getMaterialForName("textures/common/caulk");
-    material->setVisible(false);
+protected:
+    virtual render::View createView() override
+    {
+        return render::View(true);
+    }
 
-    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
-    auto brush = algorithm::findFirstBrushWithMaterial(worldspawn, materialName);
-    EXPECT_TRUE(brush);
+    virtual void constructView(render::View& view, const AABB& objectAABB) override
+    {
+        // Position the camera top-down, similar to what an XY view is seeing
+        auto objectHeight = std::max(objectAABB.getExtents().z(), 20.0); // use a minimum height
+        Vector3 origin = objectAABB.getOrigin() + Vector3(0, 0, objectHeight * 3);
+        Vector3 angles(-90, 0, 0);
 
-    Node_getIBrush(brush)->updateFaceVisibility();
+        auto farClip = 32768.0f;
+        Matrix4 projection = camera::calculateProjectionMatrix(farClip / 4096.0f, farClip, 75.0f, DeviceWidth, DeviceHeight);
+        Matrix4 modelview = camera::calculateModelViewMatrix(origin, angles);
 
-    performSelectionTest(brush);
-}
+        view.construct(projection, modelview, DeviceWidth, DeviceHeight);
+    }
+};
 
-void performPatchSelectionTest(const std::string& materialName)
-{
-    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
-    auto patch = algorithm::findFirstPatchWithMaterial(worldspawn, materialName);
-    EXPECT_TRUE(patch);
-
-    performSelectionTest(patch);
-}
-
-void performModelSelectionTest(const std::string& entityName)
-{
-    auto entity = algorithm::getEntityByName(GlobalMapModule().getRoot(), entityName);
-    EXPECT_TRUE(entity);
-
-    performSelectionTest(entity);
-}
-
-TEST_F(SelectionTest, BrushesFacingTowardsXYAreSelectable)
+TEST_F(OrthoViewSelectionTest, BrushFacingTowardsViewIsSelectable)
 {
     loadMap("selection_test.map");
 
-    performBrushSelectionTest("textures/numbers/1");
+    performBrushSelectionTest("textures/numbers/1", true);
+}
+
+TEST_F(CameraViewSelectionTest, BrushFacingTowardsViewIsSelectable)
+{
+    loadMap("selection_test.map");
+
+    performBrushSelectionTest("textures/numbers/1", true);
 }
 
 // #5444: Brushes faces facing away were unselectable in orthoview
-TEST_F(SelectionTest, BrushesFacingAwayFromXYAreSelectable)
+TEST_F(OrthoViewSelectionTest, BrushFacingAwayFromViewIsSelectable)
 {
     loadMap("selection_test.map");
 
-    performBrushSelectionTest("textures/numbers/2");
+    performBrushSelectionTest("textures/numbers/2", true); // should be selectable
 }
 
-TEST_F(SelectionTest, PatchesFacingTowardsXYAreSelectable)
+TEST_F(CameraViewSelectionTest, BrushFacingAwayFromViewIsNotSelectable)
 {
     loadMap("selection_test.map");
 
-    performPatchSelectionTest("textures/numbers/1");
+    performBrushSelectionTest("textures/numbers/2", false); // not selectable
 }
 
-TEST_F(SelectionTest, PatchesFacingAwayFromXYAreSelectable)
+TEST_F(OrthoViewSelectionTest, PatchFacingTowardsViewIsSelectable)
 {
     loadMap("selection_test.map");
 
-    performPatchSelectionTest("textures/numbers/2");
+    performPatchSelectionTest("textures/numbers/1", true);
 }
 
-TEST_F(SelectionTest, TwosidedModelFacingDown)
+TEST_F(CameraViewSelectionTest, PatchFacingTowardsViewIsSelectable)
+{
+    loadMap("selection_test.map");
+
+    performPatchSelectionTest("textures/numbers/1", true);
+}
+
+TEST_F(OrthoViewSelectionTest, PatchFacingAwayFromViewIsSelectable)
+{
+    loadMap("selection_test.map");
+
+    performPatchSelectionTest("textures/numbers/2", true);
+}
+
+TEST_F(CameraViewSelectionTest, PatchFacingAwayFromViewIsNotSelectable)
+{
+    loadMap("selection_test.map");
+
+    performPatchSelectionTest("textures/numbers/2", false);
+}
+
+TEST_F(OrthoViewSelectionTest, TwosidedModelFacingAwayIsSelectable)
 {
     loadMap("twosided_ivy.mapx");
 
-    performModelSelectionTest("ivy_facing_down");
+    performModelSelectionTest("ivy_facing_down", true);
 }
 
-TEST_F(SelectionTest, TwosidedModelFacingUp)
+TEST_F(CameraViewSelectionTest, TwosidedModelFacingAwayIsSelectable)
 {
     loadMap("twosided_ivy.mapx");
 
-    performModelSelectionTest("ivy_facing_up");
+    performModelSelectionTest("ivy_facing_down", true);
+}
+
+TEST_F(OrthoViewSelectionTest, TwosidedModelFacingUpIsSelectable)
+{
+    loadMap("twosided_ivy.mapx");
+
+    performModelSelectionTest("ivy_facing_up", true);
+}
+
+TEST_F(CameraViewSelectionTest, TwosidedModelFacingUpIsSelectable)
+{
+    loadMap("twosided_ivy.mapx");
+
+    performModelSelectionTest("ivy_facing_up", true);
 }
 
 }
