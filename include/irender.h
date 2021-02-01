@@ -465,7 +465,6 @@ public:
 	 * \return
 	 * An Material subclass with information about the shader definition
 	 */
-
 	virtual const MaterialPtr& getMaterial() const = 0;
 
     virtual unsigned int getFlags() const = 0;

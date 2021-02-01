@@ -5,6 +5,7 @@
 #include "irendersystemfactory.h"
 #include "iselectable.h"
 #include "iselection.h"
+#include "ishaders.h"
 
 #include "render/NopVolumeTest.h"
 #include "string/convert.h"
@@ -350,7 +351,7 @@ TEST_F(EntityTest, RenderSelectedLightEntity)
 
 TEST_F(EntityTest, RenderLightAsLightSource)
 {
-    auto light = createByClassName("light");
+    auto light = createByClassName("light_torchflame_small");
     auto& spawnArgs = light->getEntity();
 
     // Set a non-default origin for the light
@@ -371,6 +372,13 @@ TEST_F(EntityTest, RenderLightAsLightSource)
     const RendererLight* rLight = renderF.collector.lightPtrs.front();
     ASSERT_TRUE(rLight);
     EXPECT_EQ(rLight->worldOrigin(), ORIGIN);
+    EXPECT_EQ(rLight->lightAABB().origin, ORIGIN);
+
+    // Default light properties from the entitydef
+    EXPECT_EQ(rLight->lightAABB().extents, Vector3(240, 240, 240));
+    ASSERT_TRUE(rLight->getShader() && rLight->getShader()->getMaterial());
+    EXPECT_EQ(rLight->getShader()->getMaterial()->getName(),
+              "lights/biground_torchflicker");
 }
 
 TEST_F(EntityTest, CreateAttachedLightEntity)
