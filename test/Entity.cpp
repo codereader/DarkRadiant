@@ -319,6 +319,31 @@ namespace
     };
 }
 
+TEST_F(EntityTest, ModifyEntityClass)
+{
+    auto cls = GlobalEntityClassManager().findClass("light");
+    auto light = GlobalEntityModule().createEntity(cls);
+    auto& spawnArgs = light->getEntity();
+
+    // Light doesn't initially have a colour set
+    RenderFixture rf;
+    light->setRenderSystem(rf.backend);
+    const ShaderPtr origWireShader = light->getWireShader();
+    ASSERT_TRUE(origWireShader);
+
+    // The shader shouldn't just change by itself (this would invalidate the
+    // test)
+    EXPECT_EQ(light->getWireShader(), origWireShader);
+
+    // Set a new colour value on the entity *class* (not the entity)
+    cls->setColour(Vector3(0.5, 0.24, 0.87));
+
+    // Shader should have changed due to the entity class update (although there
+    // aren't currently any public Shader properties that we can examine to
+    // confirm its contents)
+    EXPECT_NE(light->getWireShader(), origWireShader);
+}
+
 TEST_F(EntityTest, RenderUnselectedLightEntity)
 {
     auto light = createByClassName("light");
