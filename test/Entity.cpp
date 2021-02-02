@@ -371,7 +371,7 @@ TEST_F(EntityTest, RenderLightAsLightSource)
     ASSERT_EQ(renderF.collector.lightPtrs.size(), 1);
     const RendererLight* rLight = renderF.collector.lightPtrs.front();
     ASSERT_TRUE(rLight);
-    EXPECT_EQ(rLight->worldOrigin(), ORIGIN);
+    EXPECT_EQ(rLight->getLightOrigin(), ORIGIN);
     EXPECT_EQ(rLight->lightAABB().origin, ORIGIN);
 
     // Default light properties from the entitydef

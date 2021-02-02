@@ -161,7 +161,7 @@ void Light::updateOrigin() {
 
     // Update the transformation matrix
     _owner.localToParent() = Matrix4::getIdentity();
-    _owner.localToParent().translateBy(worldOrigin());
+    _owner.localToParent().translateBy(_originTransformed);
     _owner.localToParent().multiplyBy(m_rotation.getMatrix4());
 
     // Notify all child nodes
@@ -292,7 +292,7 @@ void Light::rotationChanged()
 
     // Update the transformation matrix
     _owner.localToParent() = Matrix4::getIdentity();
-    _owner.localToParent().translateBy(worldOrigin());
+    _owner.localToParent().translateBy(_originTransformed);
     _owner.localToParent().multiplyBy(m_rotation.getMatrix4());
 
     // Notify owner about this
@@ -449,7 +449,7 @@ Doom3LightRadius& Light::getDoom3Radius() {
 
 void Light::renderProjectionPoints(RenderableCollector& collector,
                                    const VolumeTest& volume,
-                                   const Matrix4& localToWorld) const 
+                                   const Matrix4& localToWorld) const
 {
     // Add the renderable light target
     collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
@@ -473,7 +473,7 @@ void Light::renderProjectionPoints(RenderableCollector& collector,
 // Adds the light centre renderable to the given collector
 void Light::renderLightCentre(RenderableCollector& collector,
                               const VolumeTest& volume,
-                              const Matrix4& localToWorld) const 
+                              const Matrix4& localToWorld) const
 {
 	collector.addRenderable(*_rCentre.getShader(), _rCentre, localToWorld);
 }
@@ -557,7 +557,7 @@ Matrix4 Light::getLightTextureTransformation() const
     // into texture coordinates that span the range [0..1] within the light volume.
 
     // Example:
-    // For non-rotated point lights the world point [origin - light_radius] will be 
+    // For non-rotated point lights the world point [origin - light_radius] will be
     // transformed to [0,0,0], whereas [origin + light_radius] will be [1,1,1]
 
     if (isProjected())
@@ -589,9 +589,9 @@ Matrix4 Light::getLightTextureTransformation() const
                     1.0f / lightBounds.extents.y(),
                     1.0f / lightBounds.extents.z())
         ));
-        // To get texture coordinates in the range of [0..1], we need to scale down 
+        // To get texture coordinates in the range of [0..1], we need to scale down
         // one more time. [-1..1] is 2 units wide, so scale down by factor 2.
-        // By this time, points within the light volume have been mapped 
+        // By this time, points within the light volume have been mapped
         // into a [-0.5..0.5] cube around the origin.
         worldTolight.premultiplyBy(Matrix4::getScale(Vector3(0.5f, 0.5f, 0.5f)));
 
@@ -629,15 +629,16 @@ const Matrix4& Light::rotation() const {
  * the centerTransformed variable as the lighting should be updated as soon as the light center
  * is dragged.
  */
-Vector3 Light::getLightOrigin() const {
+Vector3 Light::getLightOrigin() const
+{
     if (isProjected())
     {
-        return worldOrigin();
+        return _originTransformed;
     }
     else
     {
         // AABB origin + light_center, i.e. center in world space
-        return worldOrigin() + m_doom3Radius.m_centerTransformed;
+        return _originTransformed + m_doom3Radius.m_centerTransformed;
     }
 }
 
@@ -769,8 +770,8 @@ void Light::updateProjection() const
 	//{
 	//	rMessage() << "  Plane " << i << ": " << lightProject[i].normal() << ", dist: " << lightProject[i].dist() << std::endl;
 	//}
-	
-	// greebo: Comparing this to the engine sources, all frustum planes in TDM 
+
+	// greebo: Comparing this to the engine sources, all frustum planes in TDM
 	// appear to be negated, their normals are pointing outwards.
 
     // we want the planes of s=0, s=q, t=0, and t=q
@@ -796,7 +797,7 @@ void Light::updateProjection() const
     // Normalise all frustum planes
     _frustum.normalisePlanes();
 
-	// TDM uses an array of 6 idPlanes, these relate to DarkRadiant like this: 
+	// TDM uses an array of 6 idPlanes, these relate to DarkRadiant like this:
 	// 0 = left, 1 = top, 2 = right, 3 = bottom, 4 = front, 5 = back
 	//rMessage() << "  Frustum Plane " << 0 << ": " << _frustum.left.normal() << ", dist: " << _frustum.left.dist() << std::endl;
 	//rMessage() << "  Frustum Plane " << 1 << ": " << _frustum.top.normal() << ", dist: " << _frustum.top.dist() << std::endl;
@@ -871,12 +872,6 @@ const ShaderPtr& Light::getShader() const
 const IRenderEntity& Light::getLightEntity() const
 {
 	return _owner;
-}
-
-const Vector3& Light::worldOrigin() const
-{
-    // return the absolute world origin
-    return _originTransformed;
 }
 
 } // namespace entity

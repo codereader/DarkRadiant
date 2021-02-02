@@ -157,8 +157,7 @@ public:
     virtual ~RendererLight() {}
 
     /**
-     * \brief
-     * Return the render entity associated with this light
+     * \brief Return the render entity associated with this light
      *
      * The IRenderEntity is used to evaluate possible shader expressions in the
      * shader returned by getShader(). The light object itself may be its own
@@ -170,17 +169,7 @@ public:
     virtual const ShaderPtr& getShader() const = 0;
 
     /**
-     * \brief Return the origin of the light volume in world space.
-     *
-     * This corresponds to the "origin" key of the light object, i.e. the center
-     * of the bounding box for an omni light and the tip of the pyramid for a
-     * projected light.
-     */
-    virtual const Vector3& worldOrigin() const = 0;
-
-    /**
-     * \brief
-     * Return the world-space to light-texture-space transformation matrix.
+     * \brief Return the world-space to light-texture-space transformation matrix.
      *
      * The light texture space is a box, with coordinates [0..1] on each
      * dimension, representing the texture (UV) coordinates of the light falloff
@@ -193,8 +182,7 @@ public:
     virtual Matrix4 getLightTextureTransformation() const = 0;
 
     /**
-     * \brief
-     * Return the AABB of the illuminated volume.
+     * \brief Return the AABB of the illuminated volume.
      *
      * This AABB represents the boundaries of the volume which are illuminated
      * by this light. Anything outside of this volume does not need to be
@@ -208,8 +196,7 @@ public:
     virtual AABB lightAABB() const = 0;
 
     /**
-     * \brief
-     * Return the light origin in world space.
+     * \brief Return the light origin in world space.
      *
      * The light origin is the point from which the light rays are considered to
      * be projected, i.e. the direction from which bump maps will be illuminated
@@ -227,7 +214,7 @@ typedef std::shared_ptr<RendererLight> RendererLightPtr;
 /// Debug stream insertion for RendererLight
 inline std::ostream& operator<< (std::ostream& os, const RendererLight& l)
 {
-    return os << "RendererLight(origin=" << l.worldOrigin().pp()
+    return os << "RendererLight(origin=" << l.getLightOrigin().pp()
               << ", lightAABB=" << l.lightAABB() << ")";
 }
 

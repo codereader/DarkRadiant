@@ -140,10 +140,10 @@ class Light: public RendererLight
 	KeyObserverDelegate _lightEndObserver;
 	KeyObserverDelegate _lightTextureObserver;
 
+private:
+
 	void construct();
 	void destroy();
-
-private:
 
     // Ensure the start and end points are set to sensible values
 	void checkStartEnd();
@@ -246,7 +246,6 @@ public:
 
     // RendererLight implementation
     const IRenderEntity& getLightEntity() const override;
-    const Vector3& worldOrigin() const override;
     Matrix4 getLightTextureTransformation() const override;
     Vector3 getLightOrigin() const override;
     const ShaderPtr& getShader() const override;
