@@ -286,14 +286,13 @@ void StaticModelSurface::createDisplayLists()
 }
 
 // Perform selection test for this surface
-void StaticModelSurface::testSelect(Selector& selector,
-									   SelectionTest& test,
-									   const Matrix4& localToWorld) const
+void StaticModelSurface::testSelect(Selector& selector, SelectionTest& test,
+    const Matrix4& localToWorld, bool twoSided) const
 {
 	if (!_vertices.empty() && !_indices.empty())
 	{
 		// Test for triangle selection
-		test.BeginMesh(localToWorld);
+		test.BeginMesh(localToWorld, twoSided);
 		SelectionIntersection result;
 
 		test.TestTriangles(

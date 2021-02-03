@@ -293,23 +293,20 @@ const StringList& StaticModel::getActiveMaterials() const
     return _materialList;
 }
 
-// Perform selection test
-void StaticModel::testSelect(Selector& selector,
-                                     SelectionTest& test,
-                                     const Matrix4& localToWorld)
+void StaticModel::testSelect(Selector& selector, SelectionTest& test, const Matrix4& localToWorld)
 {
     // Perform a volume intersection (AABB) check on each surface. For those
     // that intersect, call the surface's own testSelection method to perform
     // a proper selection test.
-    for (SurfaceList::iterator i = _surfVec.begin();
-         i != _surfVec.end();
-         ++i)
+    for (const auto& surface : _surfVec)
     {
         // Check volume intersection
-        if (test.getVolume().TestAABB(i->surface->getAABB(), localToWorld) != VOLUME_OUTSIDE)
+        if (test.getVolume().TestAABB(surface.surface->getAABB(), localToWorld) != VOLUME_OUTSIDE)
         {
+            bool twoSided = surface.shader && surface.shader->getMaterial()->getCullType() == Material::CULL_NONE;
+
             // Volume intersection passed, delegate the selection test
-            i->surface->testSelect(selector, test, localToWorld);
+            surface.surface->testSelect(selector, test, localToWorld, twoSided);
         }
     }
 }

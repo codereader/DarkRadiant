@@ -104,9 +104,8 @@ public:
 	/**
 	 * Perform a selection test on this surface.
 	 */
-	void testSelect(Selector& selector,
-					SelectionTest& test,
-					const Matrix4& localToWorld) const;
+	void testSelect(Selector& selector, SelectionTest& test, 
+        const Matrix4& localToWorld, bool twoSided) const;
 
 	// IModelSurface implementation
 	int getNumVertices() const override;

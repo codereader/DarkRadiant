@@ -110,12 +110,16 @@ void PatchNode::snapComponents(float snap) {
 }
 
 // Test the Patch instance for selection
-void PatchNode::testSelect(Selector& selector, SelectionTest& test) {
+void PatchNode::testSelect(Selector& selector, SelectionTest& test)
+{
 	// Do not select patch if it is filtered
-	if (!isVisible())
-		return;
+	if (!isVisible()) return;
 
-    test.BeginMesh(localToWorld(), true);
+    // Check if this patch has a twosided material
+    bool isTwosided = m_patch.getSurfaceShader().getGLShader()->getMaterial()->getCullType() == Material::CULL_NONE;
+
+    test.BeginMesh(localToWorld(), isTwosided);
+
     // Pass the selection test call to the patch
     m_patch.testSelect(selector, test);
 }

@@ -48,8 +48,9 @@ public:
         _local2view = _view.GetViewProjection().getMultipliedBy(localToWorld);
 
         // Cull back-facing polygons based on winding being clockwise or counter-clockwise.
-        // Don't cull if the view is wireframe and the polygons are two-sided.
-        _cull = twoSided && !_view.fill() ? eClipCullNone : (localToWorld.getHandedness() == Matrix4::RIGHTHANDED) ? eClipCullCW : eClipCullCCW;
+        // Don't cull if the material is twosided or the view is wireframe
+        _cull = twoSided || !_view.fill() ? eClipCullNone : 
+            (localToWorld.getHandedness() == Matrix4::RIGHTHANDED) ? eClipCullCW : eClipCullCCW;
 
         Matrix4 screen2world(_local2view.getFullInverse());
 
