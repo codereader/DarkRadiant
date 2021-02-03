@@ -38,19 +38,10 @@ entityDef atdm:torch_brazier
 	"inherit"				"atdm:torch_wall_base"
 	"editor_usage"			"floor mounted, lit brazier"
 	"editor_displayFolder"	"Lights/Model Lights, Static/Fires"
-
-	"model"					"models/darkmod/lights/extinguishable/brazier.lwo"
-
-	// attach the light, so the torch can be re-lit by fire stims
+	"model"					"models/torch.lwo"
 	"noshadows_lit"			"1"				// turn off shadow when lit
 	"noshadows"				"0"				// unlit, so has shadows
-
 	"attach_pos_origin_1"	"0 0 10"	// Offset the flame
-
-        "def_attach"			"light_cageflame_small"
-
-//	"skin"					"torch_lit"
-//	"skin_lit"				"torch_lit"
-//	"skin_unlit"			"torch_unlit"
+    "def_attach"			"light_cageflame_small"
 }
 

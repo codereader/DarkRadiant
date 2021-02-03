@@ -310,12 +310,25 @@ namespace
 
     // Collection of objects needed for rendering. Since not all tests require
     // rendering, these objects are in an auxiliary fixture created when needed
-    // rather than part of the EntityTest fixture used by every test.
-    struct RenderFixture
+    // rather than part of the EntityTest fixture used by every test. This class
+    // also implements scene::NodeVisitor enabling it to visit trees of nodes
+    // for rendering.
+    struct RenderFixture: public scene::NodeVisitor
     {
         RenderSystemPtr backend = GlobalRenderSystemFactory().createRenderSystem();
         render::NopVolumeTest volumeTest;
         TestRenderableCollector collector;
+
+        // Keep track of nodes visited
+        int nodesVisited = 0;
+
+        // NodeVisitor implementation
+        bool pre(const scene::INodePtr& node) override
+        {
+            ++nodesVisited;
+            node->renderWireframe(collector, volumeTest);
+            return true;
+        }
     };
 }
 
@@ -426,6 +439,31 @@ TEST_F(EntityTest, CreateAttachedLightEntity)
     Entity::Attachment attachment = attachments.front();
     EXPECT_EQ(attachment.eclass, "light_cageflame_small");
     EXPECT_EQ(attachment.offset, Vector3(0, 0, 10));
+}
+
+TEST_F(EntityTest, RenderAttachedLightEntity)
+{
+    auto torch = createByClassName("atdm:torch_brazier");
+    ASSERT_TRUE(torch);
+
+    // Confirm that def has the right model
+    auto& spawnArgs = torch->getEntity();
+    EXPECT_EQ(spawnArgs.getKeyValue("model"), "models/torch.lwo");
+
+    RenderFixture rf;
+    torch->setRenderSystem(rf.backend);
+
+    // The entity node itself does not render the model; it is a parent node
+    // with the model as a child (e.g. as a StaticModelNode). Therefore we must
+    // traverse our "mini-scenegraph" to render the model.
+    torch->traverseChildren(rf);
+
+    // The node visitor should have visited one child node (a static model) and
+    // collected 3 renderables in total (because the torch model has several
+    // surfaces).
+    EXPECT_EQ(rf.nodesVisited, 1);
+    EXPECT_EQ(rf.collector.renderables, 3);
+    EXPECT_EQ(rf.collector.lights, 0);
 }
 
 }

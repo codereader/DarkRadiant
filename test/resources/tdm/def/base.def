@@ -1,0 +1,206 @@
+entityDef atdm:entity_base
+{
+	"editor_usage"						"Do not use, base class for all TDM entities, mainly there to set common spawnargs and document them."
+	"editor_var inherit"				"Entitity inherits all properties from this parent entity"
+	"editor_color editor_color" 		"The entity or model will be drawn in this color inside the editor."
+	"editor_string editor_displayfolder" 	"When selecting entities in the editor to add, they will be shown as a tree and this sets the path inside that tree where to display the entity. Can be used to logically sort them into groups and subgroups."
+	"editor_vector editor_maxs" 		"Together with 'editor_mins', this defines a box that will represent the entity inside the editor."
+	"editor_vector editor_mins" 		"Together with 'editor_maxs', this defines a box that will represent the entity inside the editor."
+
+	"editor_int team"					"Lets AI determine to which team this actor, item or path node (f.i. flee point) belongs to, to distinguish between friendly / neutral / hostile entities."
+
+	"editor_var def_absence_marker"			"You can specify a custom absence marker entitydef here. By default, atdm:absence_marker is used."
+	"editor_float absence_noticeability"	"This is the chance for AI to notice when this entity has gone missing."
+	"editor_float absence_noticeability_recheck_interval"	"After a failed probability check, the AI will ignore the missing item for this amount of time (in seconds) before another probability check can be performed. Set to 0 if the check should only be performed once."
+	"editor_var absence_location"			"Uses the bounds of the entity named here (generate brush textured with clip, convert to func_static) instead of the entity's own bounds for checking whether the entity is absent. Multiple locations (eg absence_location_1 etc) are possible."
+	"editor_float absence_bounds_tolerance"	"Expands the bounds used for checking whether the entity is absent."
+	"editor_float absence_alert"			"If set, the alert increase of the AI when this entity is missing. Otherwise, the resulting alert level is just below agitated searching."
+
+	"editor_string set"						"Spawnargs of the format 'set XYZ on ABC' are used to pass along and set spawnargs on entities that are spawned during runtime and then attached via 'def_attach' to the base entity. XYZ stands for the name of the spawnarg, and ABC the name of the attachement or the attachement position. For instance, 'set _color on candle' '0.5 0.5 1' would try to find an entity attached at the point candle and set the spawnarg '_color' on it. This is mainly useful for the pre-made combo entities like moveable and static light sources, so the mapper can influence their appearance."
+
+	"editor_material editor_material" 	"The material that is used on this entity in Dark Radiant"
+	"editor_bool editor_showangle" 		"If set to 1 this entity will show an arrow in Dark Radiant to show its current angle"
+	"editor_bool nodraw"			 	"If set to 1 this entity is not drawn in game, meaning it is invisible."
+	"editor_vector origin"			 	"Origin of the entity"
+	"editor_snd snd_respawn"			"Sound when this entity is respawned"
+	"editor_bool editor_rotatable"		"applies only to DoomEdit, not supported by DR"
+
+	"editor_bool inv_map_start"			"If set to 1, this item will be in the players inventory on map start."
+	"editor_string scriptobject"		"Points to the used script that defines the behaviour of this object."
+	"editor_bool networksync"			"Applies to multiplayer, if nonzero, this entity is synchronised over the network."
+
+	"editor_var spawnclass"				"This spawnarg defines which C++ class this entity is using. The value refers to the actual type name, like idStaticEntity. The spawnclass is the most fundamental spawnarg of an entity, as it defines the behaviour, the code and how possible spawnargs are interpreted. Use this spawnarg to override an inherited spawnclass."
+
+	"editor_model model"				"This defines the visual representation model of this entity. Usually refers to LWO or ASE files. If the visual mesh contains a collision mesh, it will be used as clipmodel, but only if its complexity is not too high and 'noclipmodel' is not set to '1'."
+
+	"editor_var clipmodel"				"The 'clipmodel' spawnarg can be used to define which model file should be used as collision mesh for this entity. A collision mesh must be very simple in terms of geometry and must not exceed certain poly/edge/vertex limits. If the 'clipmodel' spawnarg is missing or invalid, the code will either attempt to generate a simple one with 'mins'/'maxs'/'size' or to retrieve a clipmodel from the visual mesh as defined in 'model' (in this order), but only if 'noclipmodel' is '0'."
+	"editor_bool noclipmodel"			"When this is set to '1' (default is '0'), the code will not attempt to generate a clipmodel for this entity or to create one from its visual model (see 'model' spawnarg). This is only effective if 'clipmodel' is empty/invalid, as this spawnarg cannot be used to override a valid 'clipmodel' spawnarg (the latter will still create a valid clipmodel even if 'noclipmodel' is set to '1')."
+	"editor_var mins"					"Together with 'maxs' this can be used to use a primitive code-generated clipmodel for this entity. Mins/Maxs are only applied if the 'clipmodel' is empty/invalid and 'noclipmodel' is not set to 1. Mins defines the 'lower right' corner of the rectangular clipmodel bounds, measured from the entity's origin. Note that this will prevent the code from load a clipmodel from the visual mesh."
+	"editor_var maxs"					"Together with 'mins' this can be used to use a primitive code-generated clipmodel for this entity. Mins/Maxs are only applied if the 'clipmodel' is empty/invalid and 'noclipmodel' is not set to 1. Maxs defines the 'upper left' corner of the rectangular clipmodel bounds, measured from the entity's origin. Note that this will prevent the code from load a clipmodel from the visual mesh."
+
+	"editor_var size"					"Similar to 'mins' and 'maxs' this can be used to use a primitive code-generated clipmodel for this entity, one of cubic shape and with the entity origin in its center. The same prerequisites as 'mins' and 'maxs' apply here, but 'size' is only considered when 'mins' and 'maxs' are empty. Note that this will prevent the code from load a clipmodel from the visual mesh."
+
+	"editor_int cylinder"				"This only applies if 'mins'/'maxs' or 'size' is used. When this is set to a value greater than 0, the code-generated clipmodel is not rectangular/cubic, but a cylinder where the spawnarg value defines the number of sides. The number is forced to be in the range [3..10] by the code."
+	"editor_int cone"					"This only applies if 'mins'/'maxs' or 'size' is used and 'cylinder' is set to '0'. When this is set to a value greater than 0, the code-generated clipmodel is not rectangular/cubic, but a cone where the spawnarg value defines the number of sides. The number is forced to be in the range [3..16] by the code."
+
+	"editor_var AIUse"					"This spawnarg is a hint for AI about what type of item this is. The value is evaluated whenever the AI is receiving a visual stim from this entity. Possible values are enumerated in the C++ code. AIUSE_WEAPON, AIUSE_LIGHTSOURCE, AIUSE_BLOOD_EVIDENCE, AIUSE_DOOR, AIUSE_MISSING_ITEM_MARKER, etc. Consult a coder about this."
+
+	"editor_float move_to_position_tolerance"	"The distance at which the AI will consider the position as reached. If < 0, the default bounding box check is used (which equals a distance of 16 at AAS32)."
+
+	"editor_bool is_mantleable"			"If set to 1, this entity is not mantleable by the player. Defaults to 0."
+    "editor_bool nomoss"	            "If set to true, moss blobs will not spawn on this entity. Defaults to false, but is usually set to true for movers and AI."
+
+	"editor_bool notPushable"			"When set to 1, this entity cannot be pushed by the player. If this entity is a moveable, this spawnarg will prevent it from being affected by external impulses as dealt by arrows, for instance."
+	"editor_var inv_target"				"Specifies which entity the inventory item is added to when 'inv_map_start' is set to 1."
+
+	"editor_bool frobable"				"If set to 1 the entity is frobable. It will use the default distance unless 'frob_distance' is set with a different value. frobable doesn't have to be set if 'frob_distance' is also set."
+	"editor_int frob_distance"			"Specifes the distance when the frob highlight should become active. This setting will override the default frob distance."
+	"editor_var frob_peer"				"Name of other entity that should also highlight when this entity is frobbed. Multiple names can be given with 'frob_peer1' and so on."
+	"editor_var frob_action_script"		"Script to call when this entity is frobbed."
+	"editor_bool frob_simple"			"Set this to 1 to let the player interact with this entity even when frobbing of more complex items is forbidden (e.g., when carrying a body over their shoulder)."
+
+	"editor_bool immune_to_target_setfrobable" "Set this to 1 to prevent a 'target_set_frobable' entity from changing this entity's frobable status"
+
+	"editor_var used_by"				"Contains an entity name of an inventory item that can be used on this object.  Multiple used_by keys are possible by numbering them (like 'used_by_3').  A used_by object calls a corresponding used_action_script_<name>, or, if a specific script is not available, it calls the default that is set in the used_action_script key.  Doors and locks use this for keys that open them as well."
+	"editor_var used_by_inv_name"			"Same as used_by, but contains the inventory names of the item(s) that be used on this object."
+	"editor_var used_by_category"			"Same as used_by, but contains the inventory categories of the item(s) that be used on this object."
+	"editor_var used_by_classname"			"Same as used_by, but contains the entityDef class names of the item(s) that be used on this object.  For example atdm:moveable_dagger."
+	"editor_var used_action_script"		"Contains the script name to call when this object is used by an object on the used_by lists.  Different scripts may be called for different items by adding another used_action_script spawnarg followed by the item specifier as shown: item specifier as follows: used_action_script_<specifier> .  The specifier may be the item's entity name, inventory name, inventory category or entityDef classname."
+
+    "editor_string equip_action_script"	"If defined, this script will be run when the user holds the item in his hands and presses the 'Use/Equip' key."
+	"editor_bool equippable"			"When set to true, this entity can be equipped by the player."
+	"editor_bool grabable"				"When set to 1, and this entity is one of the grabable classes (idMoveable, idAFEntity_Base and children), then this entity can be picked up and carried around in the player's hands.  Default is 1."
+	"editor_float frobbox_size"			"Determines how much the basic 10 unit frobbox should be increased"
+	"editor_vector frobbox_mins"		"'frobbox_mins' and 'frobbox_maxs' define opposite corners of the frobbox, in coordinates relative to the origin and in whatever orientation the model was modeled in."
+	"editor_vector frobbox_maxs"		"'frobbox_mins' and 'frobbox_maxs' define opposite corners of the frobbox, in coordinates relative to the origin and in whatever orientation the model was modeled in."
+	"editor_bool no_frob_box"			"If true, a frob box sep. from the collision model will NOT be generated, to allow easier frobbing. Default is false, e.g. a frob box is constructed."
+
+	"editor_var editor_replacement"		"Points to an entity class that should be used instead of this one. Makes automatically replacing deprecated entity classes possible."
+	"editor_string editor_usage"		"The description of that entity, displayed in the editor to help the mapper to decide whether to use this entity. Can also contain other helpful information."
+
+	"editor_var ragdoll"				"Defines the ragdoll (articulated figure) that is to be used when this entity dies."
+
+	"editor_bool drop_set_frobable"		"If true, the item becomes frobable after being dropped by the AI that carried it. Occurs f.i. when a guard dies and drops his hammer."
+	"editor_bool drop_when_ragdoll"		"If true, the item will be dropped when the AI it is bound to enters ragdoll state (e.g. either dies or becomes unconscious)."
+	"editor_bool drop_add_contents_solid"		"If true, the item will become solid when being dropped."
+	"editor_var add_link"				"Adds a link from the source entity to the target entity. The format is 'SOURCE to TARGET', where both source and target can either be a plain entity name, or a special string of the form 'ENTITY_NAME:attached:ATTACHMENT_NAME'. The attachment name is usually something like 'flame' or 'candle'. Example adding a link from an attached flame to a light object: 'atdm_candle_holder:attached:flame to my_light'. Note that the attached entity (here: flame) can also attached indirectly, e.g. in this example the candle holder has an attached candle (named 'candle') and this candle has an attached flame (named 'flame'). If you do want the link to go either from or to the entity the spawnarg is set on, you can replace the entity name with 'self', this is f.i. necessary for defining links in entityDefs where the names of entities are not yet known. The 'add_link' spawnarg is useful for adding links to or from entities that are attached via 'def_attach', as these do not exist prior to the map loading and can thus not be targets in the 'link' spawnarg. Multiple add_link spawnargs can be given by adding a suffix like _X where X stands for any number."
+
+	"editor_var def_attach"		"Defines an entity that is attached to this entity at spawntime. The offset, name of the attachment position an name of the attachment entity can be set with 'attach_pos_origin', 'pos_attach' and 'name_attach', respectively."
+	"editor_var def_flinder"	"For objects that have a 'health' set, multiple flinder objects (e.g. def_flinder, def_flinder_1 etc.) can be defined with this spawnarg. When the object is destroyed, these flinders are then spawned. The offset for each flinder objects can be set with 'flinder_offset'."
+	"editor_vector flinder_offset"	"Sets the offset for the corrosponding flinder object defined with 'def_flinder'."
+
+	"editor_material mtr_wound" 	"The decal to splat when this entity is wounded. Suffixes with a surface type name like 'flesh' can be used to limit this decal to the appropriate surface type. Example: 'mtr_wound_flesh'"
+	"editor_material mtr_killed_splat" 	"The decal to splat when this entity is killed. Multiple spawnargs with suffices can be given, one of them will then be randomly choosen."
+
+	"editor_vector teleport_offset" 	"When this entity is teleported via teleportTo(), this offset is added to the location of the teleport target origin. See also 'teleport_random_offset'."
+	"editor_vector teleport_random_offset" 	"When this entity is teleported via teleportTo(), a random offset with that magnitude is added to the location of the teleport target origin. See also 'teleport_offset'."
+
+	"editor_float hide_distance"	"If set greater than zero, this entity will hide itself when it is greater than this distance from the player, but only if 'dist_check_period' > 0."
+	"editor_float lod_normal_distance"	"If set greater than zero, this entity ignore any LOD BIAS under 1.0f when closer than this distane. E.g. the menu setting Object Detail will be ignored if it is lower than Normal. This stops the entity from vanishing just because the player has set a too low quality. Default is 500 units, but can be lower for very small items like grass and bigger for big items like statues, trees, or portals."
+	"editor_float lod_hide_probability"	"Between 0 and 1.0, default is 1.0. If 'hide_distance' is set, this is the probability that this entity is hidden. F.i. a value of 0.2 means 20% of all entities of this class will hide after the hide_distance."
+	"editor_float dist_check_period" "If hide_distance is used, this sets the interval between distance checks, in seconds.  Default is 0. Set to > 0 to turn on the LOD system, see 'hide_distance', 'lod_model_1' etc."
+	"editor_bool dist_check_xy"	"If true, the LOD distance check is only done orthogonal to gravity, i.e., vertical distances aren't counted in it.  Useful for things like rain clouds turning off/on."
+
+	"editor_float lod_fadeout_range" "Does not work yet. When > 0, the entity being further away than 'hide_distance' but less than 'hide_distance' + 'lod_fadeout_range' fades away inside that distance."
+	"editor_float lod_fadein_range"	"Does not work yet. When > 0, the entity being nearer than lod_1_distance fades slowly in from 'lod_1_distance' - 'lod_fadein_range' to 'lod_1_distance'."
+
+	"editor_float lod_1_distance"		"LOD System: Distance where to switch from the normal stage to stage 1."
+	"editor_float lod_2_distance"		"LOD System: Distance where to switch from the normal stage to stage 2."
+	"editor_float lod_3_distance"		"LOD System: Distance where to switch from the normal stage to stage 3."
+	"editor_float lod_4_distance"		"LOD System: Distance where to switch from the normal stage to stage 4."
+	"editor_float lod_5_distance"		"LOD System: Distance where to switch from the normal stage to stage 5."
+	"editor_float lod_6_distance"		"LOD System: Distance where to switch from the normal stage to stage 6."
+
+	"editor_model model_lod_1"		"LOD System: Use the specified model for LOD stage 1."
+	"editor_model model_lod_2"		"LOD System: Use the specified model for LOD stage 2."
+	"editor_model model_lod_3"		"LOD System: Use the specified model for LOD stage 3."
+	"editor_model model_lod_4"		"LOD System: Use the specified model for LOD stage 4."
+	"editor_model model_lod_5"		"LOD System: Use the specified model for LOD stage 5."
+	"editor_model model_lod_6"		"LOD System: Use the specified model for LOD stage 6."
+	"editor_bool noshadows_lod_1"		"LOD System: If set to 1, disable shadows in LOD stage 1."
+	"editor_bool noshadows_lod_2"		"LOD System: If set to 1, disable shadows in LOD stage 2."
+	"editor_bool noshadows_lod_3"		"LOD System: If set to 1, disable shadows in LOD stage 3."
+	"editor_bool noshadows_lod_4"		"LOD System: If set to 1, disable shadows in LOD stage 4."
+	"editor_bool noshadows_lod_5"		"LOD System: If set to 1, disable shadows in LOD stage 5."
+	"editor_bool noshadows_lod_6"		"LOD System: If set to 1, disable shadows in LOD stage 6."
+	"editor_skin skin_lod_1"		"LOD System: Use the specified skin for LOD stage 1."
+	"editor_skin skin_lod_2"		"LOD System: Use the specified skin for LOD stage 2"
+	"editor_skin skin_lod_3"		"LOD System: Use the specified skin for LOD stage 3."
+	"editor_skin skin_lod_4"		"LOD System: Use the specified skin for LOD stage 4."
+	"editor_skin skin_lod_5"		"LOD System: Use the specified skin for LOD stage 5."
+	"editor_skin skin_lod_6"		"LOD System: Use the specified skin for LOD stage 6."
+
+	"editor_vector offset_lod_1"		"At each LOD stage, the visual model for this entity can have an offset applied, so it matches exactly the position at LOD stage 0 to correct for models where different stages have different origins."
+	"editor_vector offset_lod_2"		"At each LOD stage, the visual model for this entity can have an offset applied, so it matches exactly the position at LOD stage 0 to correct for models where different stages have different origins."
+	"editor_vector offset_lod_3"		"At each LOD stage, the visual model for this entity can have an offset applied, so it matches exactly the position at LOD stage 0 to correct for models where different stages have different origins."
+	"editor_vector offset_lod_4"		"At each LOD stage, the visual model for this entity can have an offset applied, so it matches exactly the position at LOD stage 0 to correct for models where different stages have different origins."
+	"editor_vector offset_lod_5"		"At each LOD stage, the visual model for this entity can have an offset applied, so it matches exactly the position at LOD stage 0 to correct for models where different stages have different origins."
+	"editor_vector offset_lod_6"		"At each LOD stage, the visual model for this entity can have an offset applied, so it matches exactly the position at LOD stage 0 to correct for models where different stages have different origins."
+	"editor_vector offset_lod_7"		"At each LOD stage, the visual model for this entity can have an offset applied, so it matches exactly the position at LOD stage 0 to correct for models where different stages have different origins."
+
+	"editor_bool seed_watch_brethren"	"When this entity is a target of a SEED and this is true, the SEED will watch all entities of the same class inside itself and remove this entity. Can be used to add SEED to already placed entities in the map."
+	"editor_bool seed_floor"	"When set to true, entities created via SEED will be floored, that is, put down along the gravity axis until they collide with something."
+	"editor_bool seed_floating"	"When set to true, entities created and floored via SEED will be float in air if they hit the bottom of the SEED entity. Default is false, which means these entities will be removed."
+	"editor_float seed_base_density"	"Is multiplied by the density set by the mapper, used to set a base line density for various entities, and a seperate setting so the mapper can always assume the default 'density'/'seed_density' are 1.0"
+
+	"editor_float seed_sink_min"		"The minimum number of units entities of this class sink into the floor."
+	"editor_float seed_sink_max"		"The maximum number of units entities of this class sink into the floor. Must be greater than 'sink_min'."
+
+	"editor_vector seed_scale_min"	"Minimum scaling factor for each rendermodel. Default is '1.0 1.0 1.0'. Works ONLY on non-solids. Three floats, one for each axis in the order of X Y Z. Alternatively, only a single float, this will be the minimum scale for all three axes equally."
+	"editor_vector seed_scale_max"	"Maximum scaling factor for each rendermodel. Default is '1.0 1.0 1.0'. Works ONLY on non-solids. Three floats, one for each axis in the order of X Y Z. Alternatively, only a single float, this will be the minimum scale for all three axes equally."
+
+	"editor_int seed_score"				"Score for this class. All scores together will form the distribution for the SEED entity."
+
+	"editor_bool seed_noinhibit"		"SEED System: If set to 1, inhibitors will not inhibit (aka ignore) this entity class."
+
+	"editor_float seed_probability"		"SEED System: Default probability (0..1.0) that an entity will spawn on a given material (define these with 'seed_material_N' where xyz is grass, stone etc.). If no 'seed_material_N' spawnargs are set, seed_probability is ignored."
+
+	"editor_float seed_material_N"		"SEED System: For the given surface type N (grass, stone, metal etc.), gives the probability that the entity will spawn there. 0.0 to disable, and 1.0 to always spawn, values in between act accordingly."
+
+	"editor_float seed_color_min"		"Used to randomly color entities generated by the SEED system. Sets the minimum color. Example: 0.5 0 0.5"
+	"editor_float seed_color_max"		"The maximum color value used to randomly color entities generated by the SEED system. Example: 1 1 1"
+
+	"editor_float seed_density"		"A multiplier for the density for this class. Default: 1.0. See 'densitiy' on the SEED entity."
+
+	"editor_float seed_rotate_min"		"Used to randomly rotate entities generated by the SEED system. Sets the minimum angles as pitch, yaw, roll (x z y)."
+	"editor_float seed_rotate_max"		"Used to randomly rotate entities generated by the SEED system. Sets the maximum angles as pitch, yaw, roll (x z y)."
+
+	"editor_string seed_map"	"Path to image file (f.i. textures/seed/grassland.tga) that specifies the distribution as greyscale image, white = 100%, black = 0% spawn probability. The probabiliy is combined with the one from falloff, so you can load an image and let the values falloff towards the edge. The image map is stretched to fit the SEED size. The string 'textures/seed' as well as the extension are optional. If the extension is missing, tries first .png and then .tga."
+	"editor_bool seed_map_invert"	"If true, inverts the image loaded via 'map'."
+
+	"editor_skin random_skin"		"Specify a list of skins seperated by ',' (use '' for the default skin). At spawn time, one of them will be choosen randomly"
+	"editor_bool is_torch"			"If true, this object can be used to relight doused flames."
+
+	"editor_float min_lod_bias"		"The entity is NOT visible (unless 'lod_hidden_skin' is set) if the LOD Bias (Object details setting in the menu) is lower than this value or higher than 'max_lod_bias'. The menu settings are Low (0.5), Lower (0.75), Normal (1.0), High (1.5), Higher (2.0) and Very High (3.0)."
+	"editor_float max_lod_bias"		"The entity is NOT visible (unless 'lod_hidden_skin' is set) if the LOD Bias (Object details setting in the menu) is higher than this value or lower than 'min_lod_bias'. The menu settings are Low (0.5), Lower (0.75), Normal (1.0), High (1.5), Higher (2.0) and Very High (3.0)."
+	"editor_skin lod_hidden_skin"		"If set, the entity will switch to this skin if 'min_lod_bias' and 'max_lod_bias' are set and the menu setting Object Detail is not between these two values. Can be used to make entities switch skins on lower or higher detail settings."
+
+	"editor_float random_remove"		"Defaults to 1.0. Must be between 0 and 1.0. Give the chance that this entity will appear at map start. So setting it to 0.3 will make it appear with a chance of 30% (e.g. be removed with a 70% chance), setting it to 0.8 means the entity has a 80% chance to appear in the map. Used every time the map is loaded, but ignored upon loading a map from a save game."
+}
+
+entityDef func_static
+{
+	"inherit" "atdm:entity_base"
+	"editor_color"				"0 .5 .8"
+	"editor_mins"				"?"
+	"editor_maxs"				"?"
+	"inline"					"0"
+
+	"editor_displayFolder"			"Func"
+	"editor_usage"				"A brush model that just sits there, doing nothing.  Can be used for conditional walls and models."
+	"editor_usage1"				"When triggered, toggles between visible and hidden (must add 'hide' value to entity manually).  Entity is non-solid when hidden."
+
+	"editor_bool solid"					"Whether the object should be solid or not."
+	"editor_bool hide"					"Whether the object should be visible when spawned. you need to set a value for triggering on/off to work"
+	"editor_gui gui"					"GUI attached to this static, gui2 and gui3 also work"
+	"editor_gui gui_demonic"			"Demonic gui attached to this statit, gui_demonic2 and gui_demonic3 also work"
+	"editor_bool gui_noninteractive"	"Any gui attached will not be interactive."
+	"editor_bool noclipmodel"			"0 by default. Sets whether or not to generate a collision model for an ASE/LWO func_static at level load. (Set to 1 for stuff the player can't interact with. This will save memory.)"
+	"editor_bool inline"				"If true, turns an FS model into map geometry at dmap time, saving entity count. The entity will be non-solid and inlining won't preserve texture blending on a single mesh so check your model looks ok in game before doing 100 of them."
+	"editor_bool is_mantleable"			"Whether this entity can be mantled."
+
+	"spawnclass"						"idStaticEntity"
+
+	"solid"								"1"
+	"noclipmodel"						"0"
+}
