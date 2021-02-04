@@ -22,7 +22,9 @@ EntityNode::EntityNode(const IEntityClassPtr& eclass) :
 	_keyObservers(_spawnArgs),
 	_shaderParms(_keyObservers, _colourKey),
 	_direction(1,0,0)
-{}
+{
+    createAttachedEntities();
+}
 
 EntityNode::EntityNode(const EntityNode& other) :
 	IEntityNode(other),
@@ -41,7 +43,9 @@ EntityNode::EntityNode(const EntityNode& other) :
 	_keyObservers(_spawnArgs),
 	_shaderParms(_keyObservers, _colourKey),
 	_direction(1,0,0)
-{}
+{
+    createAttachedEntities();
+}
 
 EntityNode::~EntityNode()
 {
@@ -110,6 +114,25 @@ void EntityNode::destruct()
 	_eclassChangedConn.disconnect();
 
 	TargetableNode::destruct();
+}
+
+void EntityNode::createAttachedEntities()
+{
+    _spawnArgs.forEachAttachment(
+        [this](const Entity::Attachment& a)
+        {
+            auto cls = GlobalEntityClassManager().findClass(a.eclass);
+            if (!cls)
+            {
+                rWarning() << "EntityNode [" << _eclass->getName()
+                           << "]: cannot attach non-existent entity class '"
+                           << a.eclass << "'\n";
+                return;
+            }
+
+            _attachedEnts.push_back(GlobalEntityModule().createEntity(cls));
+        }
+    );
 }
 
 void EntityNode::onEntityClassChanged()
@@ -256,9 +279,13 @@ scene::INode::Type EntityNode::getNodeType() const
 	return Type::Entity;
 }
 
-void EntityNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+void EntityNode::renderSolid(RenderableCollector& collector,
+                             const VolumeTest& volume) const
 {
-    // Nothing here
+    // Render any attached entities
+    renderAttachments(
+        [&](const scene::INodePtr& n) { n->renderSolid(collector, volume); }
+    );
 }
 
 void EntityNode::renderWireframe(RenderableCollector& collector,
@@ -267,8 +294,14 @@ void EntityNode::renderWireframe(RenderableCollector& collector,
 	// Submit renderable text name if required
 	if (EntitySettings::InstancePtr()->getRenderEntityNames())
     {
-		collector.addRenderable(*getWireShader(), _renderableName, localToWorld());
-	}
+        collector.addRenderable(*getWireShader(), _renderableName,
+                                localToWorld());
+    }
+
+    // Render any attached entities
+    renderAttachments(
+        [&](const scene::INodePtr& n) { n->renderWireframe(collector, volume); }
+    );
 }
 
 void EntityNode::acquireShaders()
@@ -298,6 +331,10 @@ void EntityNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 
 	// The colour key is maintaining a shader object as well
 	_colourKey.setRenderSystem(renderSystem);
+
+    // Make sure any attached entities have a render system too
+    for (IEntityNodePtr node: _attachedEnts)
+        node->setRenderSystem(renderSystem);
 }
 
 std::size_t EntityNode::getHighlightFlags()

@@ -75,7 +75,20 @@ protected:
 
 	sigc::connection _eclassChangedConn;
 
-protected:
+    // List of attached sub-entities that we will submit for rendering (but are
+    // otherwise non-interactable).
+    //
+    // Although scene::Node already has the ability to store children, this is a
+    // separate list of entity nodes for two reasons: (1) there is a lot of
+    // other code which walks the scene graph for various reasons (e.g. map
+    // saving), and I don't want to have to audit the entire codebase to make
+    // sure that everything will play nicely with entities as children of other
+    // entities, and (2) storing entity node pointers instead of generic node
+    // pointers avoids some extra dynamic_casting.
+    using AttachedEntities = std::list<IEntityNodePtr>;
+    AttachedEntities _attachedEnts;
+
+  protected:
 	// The Constructor needs the eclass
 	EntityNode(const IEntityClassPtr& eclass);
 
@@ -166,6 +179,36 @@ private:
 
     void acquireShaders();
     void acquireShaders(const RenderSystemPtr& renderSystem);
-};
+
+    // Create entity nodes for all attached entities
+    void createAttachedEntities();
+
+    // Render all attached entities
+    template <typename RenderFunc> void renderAttachments(RenderFunc func) const
+    {
+        for (const IEntityNodePtr& ent: _attachedEnts)
+        {
+            // Attached entities might themselves have child nodes (e.g. func_static
+            // which has its model as a child node), so we must traverse() the
+            // attached entities, not just render them alone
+            struct ChildRenderer : public scene::NodeVisitor
+            {
+                RenderFunc _func;
+                ChildRenderer(RenderFunc f): _func(f)
+                {}
+
+                bool pre(const scene::INodePtr& node)
+                {
+                    _func(node);
+                    return true;
+                }
+            };
+
+            ChildRenderer cr(func);
+            ent->traverse(cr);
+        }
+    }
+
+    };
 
 } // namespace entity

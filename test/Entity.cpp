@@ -319,14 +319,29 @@ namespace
         render::NopVolumeTest volumeTest;
         TestRenderableCollector collector;
 
+        // Whether to render solid or wireframe
+        const bool renderSolid;
+
         // Keep track of nodes visited
         int nodesVisited = 0;
+
+        // Construct
+        RenderFixture(bool solid = false): renderSolid(solid)
+        {}
 
         // NodeVisitor implementation
         bool pre(const scene::INodePtr& node) override
         {
+            // Count the node itself
             ++nodesVisited;
-            node->renderWireframe(collector, volumeTest);
+
+            // Render the node in appropriate mode
+            if (renderSolid)
+                node->renderSolid(collector, volumeTest);
+            else
+                node->renderWireframe(collector, volumeTest);
+
+            // Continue traversing
             return true;
         }
     };
@@ -450,20 +465,32 @@ TEST_F(EntityTest, RenderAttachedLightEntity)
     auto& spawnArgs = torch->getEntity();
     EXPECT_EQ(spawnArgs.getKeyValue("model"), "models/torch.lwo");
 
-    RenderFixture rf;
+    // We must render in solid mode to get the light source
+    RenderFixture rf(true);
     torch->setRenderSystem(rf.backend);
 
     // The entity node itself does not render the model; it is a parent node
     // with the model as a child (e.g. as a StaticModelNode). Therefore we must
-    // traverse our "mini-scenegraph" to render the model.
-    torch->traverseChildren(rf);
+    // traverse our "mini-scenegraph" to render the model as well as the
+    // attached entities.
+    torch->traverse(rf);
 
-    // The node visitor should have visited one child node (a static model) and
-    // collected 3 renderables in total (because the torch model has several
-    // surfaces).
-    EXPECT_EQ(rf.nodesVisited, 1);
-    EXPECT_EQ(rf.collector.renderables, 3);
-    EXPECT_EQ(rf.collector.lights, 0);
+    // The node visitor should have visited the entity itself and one child node (a
+    // static model)
+    EXPECT_EQ(rf.nodesVisited, 2);
+
+    // There should be 3 renderables from the torch (because the entity has a
+    // shadowmesh and a collision mesh as well as the main model) and one from
+    // the light (the origin diamond).
+    EXPECT_EQ(rf.collector.renderables, 4);
+
+    // The attached light should have been submitted as a light source
+    EXPECT_EQ(rf.collector.lights, 1);
+
+    // The submitted light should be fully realised with a light shader
+    const RendererLight* rLight = rf.collector.lightPtrs.front();
+    ASSERT_TRUE(rLight);
+    EXPECT_TRUE(rLight->getShader());
 }
 
 }

@@ -472,7 +472,7 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
     } // end of changingBitsMask-dependent changes
 
     // Set depth function
-    if (requiredState & RENDER_DEPTHTEST 
+    if (requiredState & RENDER_DEPTHTEST
         && _glState.getDepthFunc() != current.getDepthFunc())
     {
         glDepthFunc(_glState.getDepthFunc());
@@ -649,11 +649,13 @@ void OpenGLShaderPass::setUpLightingCalculation(OpenGLState& current,
                                                 const Matrix4& objTransform,
                                                 std::size_t time)
 {
-    assert(light);
-
     // Get the light shader and examine its first (and only valid) layer
-    const MaterialPtr& lightShader = light->getShader()->getMaterial();
-    ShaderLayer* layer = lightShader ? lightShader->firstLayer() : nullptr;
+    assert(light);
+    ShaderPtr shader = light->getShader();
+    assert(shader);
+
+    const MaterialPtr& lightMat = shader->getMaterial();
+    ShaderLayer* layer = lightMat ? lightMat->firstLayer() : nullptr;
     if (!layer) return;
 
     // Calculate viewer location in object space
@@ -665,7 +667,7 @@ void OpenGLShaderPass::setUpLightingCalculation(OpenGLState& current,
 
     // Get the XY and Z falloff texture numbers.
     GLuint attenuation_xy = layer->getTexture()->getGLTexNum();
-    GLuint attenuation_z = lightShader->lightFalloffImage()->getGLTexNum();
+    GLuint attenuation_z = lightMat->lightFalloffImage()->getGLTexNum();
 
     // Bind the falloff textures
     assert(current.testRenderFlag(RENDER_TEXTURE_2D));
@@ -689,7 +691,7 @@ void OpenGLShaderPass::setUpLightingCalculation(OpenGLState& current,
     GLProgram::Params parms(
         light->getLightOrigin(), layer->getColour(), world2light
     );
-    parms.ambientFactor = lightShader->isAmbientLight() ? 1.0f : 0.0f;
+    parms.ambientFactor = lightMat->isAmbientLight() ? 1.0f : 0.0f;
     parms.invertVertexColour = _glState.isColourInverted();
 
     assert(current.glProgram);

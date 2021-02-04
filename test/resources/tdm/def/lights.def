@@ -111,3 +111,25 @@ entitydef light_torchflame_small
 	"light_radius"			"240 240 240"        //larger than other similar flames to be consistent with older maps
 }
 
+entitydef light_cageflame_small     // casts shadows with bars
+{
+	"inherit"	            "light_extinguishable"
+
+	"mins"		            "-6 -6 -6"
+	"maxs"		            "6 6 24"
+
+    "editor_displayFolder"		"Lights/Light Sources/Torch Flames"
+	"editor_usage"	        "Torch-sized flame for cage-lights, casts faint bar shadows.  Light pulses but is static.  For moving light, add 'inherit' 'light_extinguishable_moving' to entity.  "
+
+	"model_lit"				"torchflame_new01_small.prt"
+	"model_extinguished"	"tdm_smoke_torchout.prt"
+
+	"snd_lit"				"fire_torch_small"
+	"snd_extinguished"		"machine_steam01"
+
+	"falloff"               "0"
+	"texture" 				"lights/8pt_cageflicker"
+
+	"_color"                "0.9 0.6 0.40"
+	"light_radius"			"230 230 250"
+}
