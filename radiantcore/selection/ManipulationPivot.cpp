@@ -96,6 +96,12 @@ void ManipulationPivot::endOperation()
 	_operationActive = false;
 }
 
+void ManipulationPivot::cancelOperation()
+{
+    revertToStart();
+    _operationActive = false;
+}
+
 void ManipulationPivot::applyTranslation(const Vector3& translation)
 {
 	// We apply translations on top of the starting point

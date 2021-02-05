@@ -853,6 +853,8 @@ void RadiantSelectionSystem::onManipulationCancelled()
         GlobalSceneGraph().root()->traverse(faceSelector);
     }
 
+    _pivot.cancelOperation();
+
     pivotChanged();
 }
 
@@ -861,7 +863,6 @@ void RadiantSelectionSystem::renderWireframe(RenderableCollector& collector, con
     renderSolid(collector, volume);
 }
 
-// Lets the recalculatePivot2World() method do the work and returns the result that is stored in the member variable
 const Matrix4& RadiantSelectionSystem::getPivot2World()
 {
     return _pivot.getMatrix4();

@@ -76,6 +76,9 @@ public:
 
 	void endOperation();
 
+    // Operation cancelled, this reverts the pivot to where we started
+    void cancelOperation();
+
 	void applyTranslation(const Vector3& translation);
 
 	// Rescans the selection and calculates the pivot afresh,
