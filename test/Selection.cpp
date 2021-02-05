@@ -11,6 +11,7 @@
 #include "ishaders.h"
 #include "ieclass.h"
 #include "algorithm/Scene.h"
+#include "algorithm/Primitives.h"
 #include "scenelib.h"
 #include "selectionlib.h"
 #include "string/convert.h"
@@ -75,6 +76,17 @@ void constructCenteredOrthoview(render::View& view, const Vector3& origin)
     modelView[15] = 1;
 
     view.construct(projection, modelView, DeviceWidth, DeviceHeight);
+}
+
+SelectionVolume constructOrthoviewSelectionTest(const render::View& orthoView)
+{
+    render::View scissored(orthoView);
+
+    auto epsilon = registry::getValue<float>(RKEY_SELECT_EPSILON);
+    Vector2 deviceEpsilon(epsilon / DeviceWidth, epsilon / DeviceHeight);
+    ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromPoint(Vector2(0, 0), deviceEpsilon));
+
+    return SelectionVolume(scissored);
 }
 
 TEST_F(SelectionTest, ApplyShadersToForcedVisibleObjects)
@@ -184,12 +196,7 @@ TEST_F(SelectionTest, PivotIsResetAfterCancelingOperation)
     render::View view(false);
     constructCenteredOrthoview(view, originalBrushPosition);
 
-    render::View scissored(view);
-    auto epsilon = registry::getValue<float>(RKEY_SELECT_EPSILON);
-    Vector2 deviceEpsilon(epsilon / DeviceWidth, epsilon / DeviceHeight);
-    ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromPoint(Vector2(0,0), deviceEpsilon));
-
-    SelectionVolume test(scissored);
+    SelectionVolume test = constructOrthoviewSelectionTest(view);
     activeManipulator->testSelect(test, originalPivot);
 
     EXPECT_TRUE(activeManipulator->isSelected());
@@ -213,6 +220,58 @@ TEST_F(SelectionTest, PivotIsResetAfterCancelingOperation)
     EXPECT_EQ(brush->worldAABB().getOrigin(), originalBrushPosition);
     // And as of #4846 the pivot should be back as well
     EXPECT_EQ(GlobalSelectionSystem().getPivot2World().t().getVector3(), originalBrushPosition);
+}
+
+// #5460: Workzone not recalculated after selection change if XY view "Show Size Info" setting is off
+TEST_F(SelectionTest, WorkzoneIsRecalculatedAfterSelectionChange)
+{
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    
+    AABB tallBounds(Vector3(0, 0, 0), Vector3(64, 256, 128));
+    AABB smallBounds(Vector3(300, 300, 300), Vector3(64, 32, 64));
+
+    auto tallBrush = algorithm::createCuboidBrush(worldspawn, tallBounds);
+    auto smallBrush = algorithm::createCuboidBrush(worldspawn, smallBounds);
+
+    EXPECT_EQ(tallBrush->worldAABB().getOrigin(), tallBounds.getOrigin());
+    EXPECT_EQ(tallBrush->worldAABB().getExtents(), tallBounds.getExtents());
+    EXPECT_EQ(smallBrush->worldAABB().getOrigin(), smallBounds.getOrigin());
+    EXPECT_EQ(smallBrush->worldAABB().getExtents(), smallBounds.getExtents());
+
+    GlobalSelectionSystem().setSelectedAll(false);
+    
+    render::View orthoView(false);
+
+    // Construct an orthoview to test-select the tall brush
+    constructCenteredOrthoview(orthoView, tallBrush->worldAABB().getOrigin());
+    auto tallBrushTest = constructOrthoviewSelectionTest(orthoView);
+
+    // Select and de-select first brush
+    GlobalSelectionSystem().selectPoint(tallBrushTest, SelectionSystem::eToggle, false);
+    EXPECT_TRUE(Node_isSelected(tallBrush));
+
+    // Workzone should match the size of the tall brush
+    EXPECT_EQ(GlobalSelectionSystem().getWorkZone().bounds, tallBounds);
+
+    // De-select the tall brush
+    GlobalSelectionSystem().selectPoint(tallBrushTest, SelectionSystem::eToggle, false);
+    EXPECT_FALSE(Node_isSelected(tallBrush));
+
+    // Workzone should still match the size of the tall brush
+    EXPECT_EQ(GlobalSelectionSystem().getWorkZone().bounds, tallBounds);
+
+    // Construct an orthoview to test-select the smaller brush
+    constructCenteredOrthoview(orthoView, smallBrush->worldAABB().getOrigin());
+    auto smallBrushTest = constructOrthoviewSelectionTest(orthoView);
+
+    // Select and de-select second brush (no getWorkZone() call in between)
+    GlobalSelectionSystem().selectPoint(smallBrushTest, SelectionSystem::eToggle, false);
+    EXPECT_TRUE(Node_isSelected(smallBrush));
+    GlobalSelectionSystem().selectPoint(smallBrushTest, SelectionSystem::eToggle, false);
+    EXPECT_FALSE(Node_isSelected(smallBrush));
+
+    // Workzone should match the size of the small brush now
+    EXPECT_EQ(GlobalSelectionSystem().getWorkZone().bounds, smallBounds);
 }
 
 class ViewSelectionTest :
