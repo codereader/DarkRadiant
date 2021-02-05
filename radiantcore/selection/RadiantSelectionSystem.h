@@ -207,6 +207,7 @@ private:
 	void checkComponentModeSelectionMode(const ISelectable& selectable); // connects to the selection change signal
 
 	void performPointSelection(const SelectablesList& candidates, EModifier modifier);
+	void onSelectionPerformed();
 
 	void deselectCmd(const cmd::ArgumentList& args);
 

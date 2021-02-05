@@ -597,30 +597,30 @@ void RadiantSelectionSystem::selectPoint(SelectionTest& test, EModifier modifier
         }
     }
 
+    // The possible candidates are stored in the SelectablesSet
+    SelectablesList candidates;
+
+    if (face)
     {
-        // The possible candidates are stored in the SelectablesSet
-        SelectablesList candidates;
+        SelectionPool selector;
 
-        if (face)
+        ComponentSelector selectionTester(selector, test, eFace);
+        GlobalSceneGraph().foreachVisibleNodeInVolume(test.getVolume(), selectionTester);
+
+        // Load them all into the vector
+        for (SelectionPool::const_iterator i = selector.begin(); i != selector.end(); ++i)
         {
-            SelectionPool selector;
-
-            ComponentSelector selectionTester(selector, test, eFace);
-            GlobalSceneGraph().foreachVisibleNodeInVolume(test.getVolume(), selectionTester);
-
-            // Load them all into the vector
-            for (SelectionPool::const_iterator i = selector.begin(); i != selector.end(); ++i)
-            {
-                candidates.push_back(i->second);
-            }
+            candidates.push_back(i->second);
         }
-        else {
-            testSelectScene(candidates, test, test.getVolume(), Mode(), ComponentMode());
-        }
-
-        // Was the selection test successful (have we found anything to select)?
-        performPointSelection(candidates, modifier);
     }
+    else {
+        testSelectScene(candidates, test, test.getVolume(), Mode(), ComponentMode());
+    }
+
+    // Was the selection test successful (have we found anything to select)?
+    performPointSelection(candidates, modifier);
+
+    onSelectionPerformed();
 }
 
 namespace algorithm
@@ -729,44 +729,52 @@ void RadiantSelectionSystem::selectArea(SelectionTest& test, SelectionSystem::EM
         }
     }
 
+    // The posssible candidates go here
+    SelectionPool pool;
+
+    SelectablesList candidates;
+
+    if (face)
     {
-        // The posssible candidates go here
-        SelectionPool pool;
+        ComponentSelector selectionTester(pool, test, eFace);
+        GlobalSceneGraph().foreachVisibleNodeInVolume(test.getVolume(), selectionTester);
 
-        SelectablesList candidates;
-
-        if (face)
+        // Load them all into the vector
+        for (SelectionPool::const_iterator i = pool.begin(); i != pool.end(); ++i)
         {
-            ComponentSelector selectionTester(pool, test, eFace);
-            GlobalSceneGraph().foreachVisibleNodeInVolume(test.getVolume(), selectionTester);
-
-            // Load them all into the vector
-            for (SelectionPool::const_iterator i = pool.begin(); i != pool.end(); ++i)
-            {
-                candidates.push_back(i->second);
-            }
-        }
-        else 
-        {
-            testSelectScene(candidates, test, test.getVolume(), Mode(), ComponentMode());
-        }
-
-        // Since toggling a selectable might trigger a group-selection
-        // we need to keep track of the desired state of each selectable 
-        typedef std::map<ISelectable*, bool> SelectablesMap;
-        SelectablesMap selectableStates;
-
-        for (ISelectable* selectable : candidates)
-        {
-            bool desiredState = !(modifier == SelectionSystem::eToggle && selectable->isSelected());
-            selectableStates.insert(SelectablesMap::value_type(selectable, desiredState));
-        }
-
-        for (const auto& state : selectableStates)
-        {
-            algorithm::setSelectionStatus(state.first, state.second);
+            candidates.push_back(i->second);
         }
     }
+    else 
+    {
+        testSelectScene(candidates, test, test.getVolume(), Mode(), ComponentMode());
+    }
+
+    // Since toggling a selectable might trigger a group-selection
+    // we need to keep track of the desired state of each selectable 
+    typedef std::map<ISelectable*, bool> SelectablesMap;
+    SelectablesMap selectableStates;
+
+    for (ISelectable* selectable : candidates)
+    {
+        bool desiredState = !(modifier == SelectionSystem::eToggle && selectable->isSelected());
+        selectableStates.insert(SelectablesMap::value_type(selectable, desiredState));
+    }
+
+    for (const auto& state : selectableStates)
+    {
+        algorithm::setSelectionStatus(state.first, state.second);
+    }
+
+    onSelectionPerformed();
+}
+
+void RadiantSelectionSystem::onSelectionPerformed()
+{
+    // #5460: To fix the workzone not being recalculated when the selection changes,
+    // invoke getWorkZone() here. Since the core binary doesn't have any idle processing 
+    // anymore, we need to recalculate the workzone after the user is done selecting
+    getWorkZone();
 }
 
 void RadiantSelectionSystem::onManipulationStart()
