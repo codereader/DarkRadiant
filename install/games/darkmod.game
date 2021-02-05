@@ -122,6 +122,9 @@
 		<filter name="Paths">
 			<filterCriterion type="entityclass" match="path_.*" action="hide" />
 		</filter>
+		<filter name="Sky Portals">
+			<filterCriterion type="texture" match="textures/.+/portal_sky" action="hide"/>
+		</filter>
 	</filtersystem>
 	<filesystem>
 		<shaders>
