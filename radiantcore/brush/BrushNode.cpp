@@ -398,7 +398,8 @@ void BrushNode::evaluateViewDependent(const VolumeTest& volume, const Matrix4& l
 	{
 		// Check if face is filtered before adding to visibility matrix
 		// greebo: Removed localToWorld transformation here, brushes don't have a non-identity l2w
-		if (forceVisible || (i->faceIsVisible() && i->intersectVolume(volume)))
+        // Don't cull backfacing planes to make those faces visible in orthoview (#5465)
+		if (forceVisible || i->faceIsVisible())
 		{
 			*j = true;
 
