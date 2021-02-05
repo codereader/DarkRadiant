@@ -218,6 +218,8 @@
       <window xPosition="37" yPosition="100" width="450" height="430" />
       <fontSize value="14" />
       <fontStyle value="Sans" />
+      <gridEnabled value="1" />
+      <gridSpacing value="32" />
     </camera>
     <toolbar name="view" align="horizontal">
       <toolbutton name="open" action="OpenMap" tooltip="Open a map file" icon="file_open.png"/>

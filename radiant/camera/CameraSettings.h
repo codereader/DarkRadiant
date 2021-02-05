@@ -33,6 +33,8 @@ namespace
     const std::string RKEY_SHOW_CAMERA_TOOLBAR = RKEY_CAMERA_ROOT + "/showToolbar";
     const std::string RKEY_CAMERA_FONT_SIZE = RKEY_CAMERA_ROOT + "/fontSize";
     const std::string RKEY_CAMERA_FONT_STYLE = RKEY_CAMERA_ROOT + "/fontStyle";
+    const std::string RKEY_CAMERA_GRID_ENABLED = RKEY_CAMERA_ROOT + "/gridEnabled";
+    const std::string RKEY_CAMERA_GRID_SPACING = RKEY_CAMERA_ROOT + "/gridSpacing";
 }
 
 inline float calculateFarPlaneDistance(int cubicScale)
@@ -67,6 +69,9 @@ class CameraSettings: public sigc::trackable
 	// instead of enabling it by clicking and clicking again to disable
 	bool _toggleFreelook;
 
+	bool _gridEnabled;
+	int _gridSpacing;
+
     // Signals
     sigc::signal<void> _sigRenderModeChanged;
 
@@ -89,6 +94,9 @@ public:
 
     /// Whether to show the camera toolbar
     bool showCameraToolbar() const;
+
+    bool gridEnabled() const;
+    int gridSpacing() const;
 
 	// Sets/returns the draw mode (wireframe, solid, textured, lighting)
 	CameraDrawMode getRenderMode() const;

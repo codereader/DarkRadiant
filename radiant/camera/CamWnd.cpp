@@ -591,7 +591,7 @@ void CamWnd::ensureFont()
 void CamWnd::drawGrid()
 {
     static double GRID_MAX_DIM = 2048;
-    static double GRID_STEP = 32.0;
+    auto GRID_STEP = getCameraSettings()->gridSpacing();
 
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_TEXTURE_1D);
@@ -700,7 +700,7 @@ void CamWnd::Cam_Draw()
         glEnable(GL_LIGHT0);
     }
 
-    if (true)
+    if (getCameraSettings()->gridEnabled())
     {
         drawGrid();
     }
