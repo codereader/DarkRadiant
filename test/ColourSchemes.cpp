@@ -41,11 +41,9 @@ class ColourSchemeTestWithIncompleteScheme :
     public ColourSchemeTest
 {
 public:
-    void SetUp() override
+    void preStartup() override
     {
         copySchemeFileToSettingsPath("colours_incomplete.xml");
-
-        RadiantTest::SetUp();
     }
 };
 
@@ -56,15 +54,13 @@ protected:
     fs::path _userDefinedSchemePath;
 
 public:
-    void SetUp() override
+    void preStartup() override
     {
         // Store the value locally, the test case wants to have it
         _userDefinedSchemePath = _context.getTestResourcePath();
         _userDefinedSchemePath /= "settings/colours_userdefined.xml";
 
         copySchemeFileToSettingsPath("colours_userdefined.xml");
-
-        RadiantTest::SetUp();
     }
 };
 
@@ -72,15 +68,13 @@ class ColourSchemeTestWithEmptySettings :
     public ColourSchemeTest
 {
 public:
-    void SetUp() override
+    void preStartup() override
     {
         // Kill any colours.xml file present in the settings folder before regular SetUp
         fs::path coloursFile = _context.getSettingsPath();
         coloursFile /= "colours.xml";
-        
-        fs::remove(coloursFile);
 
-        RadiantTest::SetUp();
+        fs::remove(coloursFile);
     }
 };
 
@@ -457,7 +451,7 @@ TEST_F(ColourSchemeTestWithUserColours, ForeachScheme)
     };
 
     EXPECT_EQ(expectedSchemeNames.size(), visitedSchemes.size());
-    
+
     for (auto expectedScheme : expectedSchemeNames)
     {
         EXPECT_EQ(std::count(visitedSchemes.begin(), visitedSchemes.end(), expectedScheme), 1);

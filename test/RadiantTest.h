@@ -67,8 +67,14 @@ protected:
 		}
 	}
 
+    /// Override this to perform custom actions before the core module starts
+    virtual void preStartup() {}
+
 	void SetUp() override
 	{
+        // Invoke any custom actions needed by subclasses
+        preStartup();
+
 		// Set up the test game environment
 		setupGameFolder();
 		setupOpenGLContext();
@@ -101,14 +107,26 @@ protected:
         GlobalMapModule().createNewMap();
 	}
 
+    /// Override this to perform custom actions before the main module shuts down
+    virtual void preShutdown() {}
+
 	void TearDown() override
 	{
+        // Invoke any pre-shutdown custom code
+        preShutdown();
+
 		_coreModule->get()->getMessageBus().removeListener(_notificationListener);
 		_coreModule->get()->getMessageBus().removeListener(_gameSetupListener);
 
 		// Issue a shutdown() call to all the modules
 		module::GlobalModuleRegistry().shutdownModules();
+
+        // Invoke any post-shutdown custom code
+        postShutdown();
 	}
+
+    /// Override this to perform custom actions after the main module shuts down
+    virtual void postShutdown() {}
 
 	~RadiantTest()
 	{

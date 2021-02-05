@@ -96,21 +96,19 @@ public:
 
 }
 
-class MapFileTestBase : 
+class MapFileTestBase :
     public RadiantTest
 {
 private:
     std::list<fs::path> _pathsToCleanupAfterTest;
 
 protected:
-    virtual void TearDown() override
+    void preShutdown() override
     {
         for (const auto& path : _pathsToCleanupAfterTest)
         {
             fs::remove(path);
         }
-
-        RadiantTest::TearDown();
     }
 
     // Creates a copy of the given map (including the .darkradiant file) in the temp data path
@@ -186,7 +184,7 @@ void checkAltarSceneGeometry()
 {
     auto root = GlobalMapModule().getRoot();
     auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
-    
+
     // Check a specific spawnarg on worldspawn
     EXPECT_EQ(Node_getEntity(worldspawn)->getKeyValue("_color"), "0.286 0.408 0.259");
 
@@ -194,7 +192,7 @@ void checkAltarSceneGeometry()
     auto knownEntities = { "func_static_153", "func_static_154", "func_static_156",
         "func_static_155", "func_static_63", "func_static_66", "func_static_70",
         "func_static_164", "func_static_165", "light_torchflame_13", "religious_symbol_1" };
-    
+
     for (auto entity : knownEntities)
     {
         EXPECT_TRUE(algorithm::getEntityByName(root, entity));
@@ -209,7 +207,7 @@ void checkAltarSceneGeometry()
 
     // Check number of brushes
     auto isBrush = [](const scene::INodePtr& node) { return Node_isBrush(node); };
-    
+
     EXPECT_EQ(algorithm::getChildCount(root, isBrush), 37); // 37 brushes in total
     EXPECT_EQ(algorithm::getChildCount(worldspawn, isBrush), 21); // 21 worldspawn brushes
     EXPECT_EQ(algorithm::getChildCount(algorithm::getEntityByName(root, "func_static_66"), isBrush), 4); // 4 child brushes
@@ -262,7 +260,7 @@ TEST_F(MapLoadingTest, openMapFromAbsolutePath)
 {
     // Generate an absolute path to a map in a temporary folder
     auto temporaryMap = createMapCopyInTempDataPath("altar.map", "temp_altar.map");
-    
+
     GlobalCommandSystem().executeCommand("OpenMap", temporaryMap.string());
 
     // Check if the scene contains what we expect
@@ -279,7 +277,7 @@ TEST_F(MapLoadingTest, openMapFromModRelativePath)
     fs::path mapPath = _context.getTestProjectPath();
     mapPath /= modRelativePath;
     EXPECT_TRUE(os::fileOrDirExists(mapPath));
-    
+
     GlobalCommandSystem().executeCommand("OpenMap", modRelativePath);
 
     // Check if the scene contains what we expect
@@ -343,7 +341,7 @@ TEST_F(MapLoadingTest, openMapFromArchiveWithoutInfoFile)
 
     GlobalCommandSystem().executeCommand("OpenMapFromArchive", pakPath.string(), archiveRelativePath);
 
-    // Check if the scene contains what we expect, just the geometry since the map 
+    // Check if the scene contains what we expect, just the geometry since the map
     // is lacking its .darkradiant file
     checkAltarSceneGeometry();
 }
@@ -384,13 +382,13 @@ TEST_F(MapLoadingTest, openWithInvalidPathInsideMod)
 TEST_F(MapLoadingTest, openMapWithoutInfoFile)
 {
     auto tempPath = createMapCopyInTempDataPath("altar.map", "altar_openMapWithoutInfoFile.map");
-    
+
     fs::remove(fs::path(tempPath).replace_extension("darkradiant"));
 
     EXPECT_FALSE(os::fileOrDirExists(fs::path(tempPath).replace_extension("darkradiant")));
 
     GlobalCommandSystem().executeCommand("OpenMap", tempPath.string());
-    
+
     checkAltarSceneGeometry();
 
     EXPECT_EQ(GlobalMapModule().getMapName(), tempPath.string());
@@ -440,7 +438,7 @@ TEST_F(MapLoadingTest, loadingCanBeCancelled)
 TEST_F(MapSavingTest, saveMapWithoutModification)
 {
     auto tempPath = createMapCopyInTempDataPath("altar.map", "altar_saveMapWithoutModification.map");
-    
+
     GlobalCommandSystem().executeCommand("OpenMap", tempPath.string());
     checkAltarScene();
 
@@ -528,7 +526,7 @@ TEST_F(MapSavingTest, saveMapCreatesInfoFile)
     fs::path tempPath = _context.getTemporaryDataPath();
     tempPath /= "just_a_worldspawn.map";
     auto infoFilePath = fs::path(tempPath).replace_extension("darkradiant");
-    
+
     auto format = GlobalMapFormatManager().getMapFormatForFilename(tempPath.string());
 
     FileSelectionHelper responder(tempPath.string(), format);
@@ -643,7 +641,7 @@ TEST_F(MapSavingTest, saveAs)
     tempPath /= "altar_copy.map";
 
     EXPECT_FALSE(os::fileOrDirExists(tempPath));
-    
+
     // Respond to the event asking for the target path
     FileSelectionHelper responder(tempPath.string(), format);
 
@@ -825,7 +823,7 @@ TEST_F(MapSavingTest, saveMapxCreatesBackup)
 
     // Mapx backup should be there now
     EXPECT_TRUE(os::fileOrDirExists(fs::path(mapxPath).replace_extension("bak")));
-    
+
     fs::remove(mapxPath);
     fs::remove(fs::path(mapxPath).replace_extension("bak"));
 }
@@ -924,7 +922,7 @@ TEST_F(MapSavingTest, saveArchivedMapWillAskForFilename)
     // the map saving algorithm should detect this and ask for a new file location
     auto pakPath = fs::path(_context.getTestResourcePath()) / "map_loading_test.pk4";
     std::string archiveRelativePath = "maps/altar_packed.map";
-    
+
     GlobalCommandSystem().executeCommand("OpenMapFromArchive", pakPath.string(), archiveRelativePath);
     checkAltarScene();
 
@@ -957,7 +955,7 @@ TEST_F(MapSavingTest, saveArchivedMapWillAskForFilename)
 
     // Save again, this should no longer ask for a location
     GlobalCommandSystem().executeCommand("SaveMap");
-    
+
     EXPECT_FALSE(eventFired);
 
     GlobalRadiantCore().getMessageBus().removeListener(msgSubscription);
