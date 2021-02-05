@@ -219,6 +219,7 @@ private:
     void Cam_Draw();
     bool onRender();
     void drawTime();
+    void drawGrid();
     void requestRedraw(bool force);
 
     // Motion and ICameraView related

@@ -588,6 +588,47 @@ void CamWnd::ensureFont()
     }
 }
 
+void CamWnd::drawGrid()
+{
+    static double GRID_MAX_DIM = 2048;
+    static double GRID_STEP = 32.0;
+
+    glDisable(GL_TEXTURE_2D);
+    glDisable(GL_TEXTURE_1D);
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_BLEND);
+
+    glLineWidth(1);
+    glColor3f(0.5f, 0.5f, 0.5f);
+
+    glPushMatrix();
+
+    // The grid is following the camera, but will always be in the z = 0 plane
+    auto origin = _camera->getCameraOrigin().getSnapped(GRID_STEP);
+    glTranslated(origin.x(), origin.y(), 0);
+
+    glBegin(GL_LINES);
+
+    for (double x = -GRID_MAX_DIM; x <= GRID_MAX_DIM; x += GRID_STEP)
+    {
+        Vector3 start(x, -GRID_MAX_DIM, 0);
+        Vector3 end(x, GRID_MAX_DIM, 0);
+
+        Vector3 start2(GRID_MAX_DIM, x, 0);
+        Vector3 end2(-GRID_MAX_DIM, x, 0);
+
+        glVertex2dv(start);
+        glVertex2dv(end);
+
+        glVertex2dv(start2);
+        glVertex2dv(end2);
+    }
+
+    glEnd();
+
+    glPopMatrix();
+}
+
 void CamWnd::Cam_Draw()
 {
     wxSize glSize = _wxGLWidget->GetSize();
@@ -659,6 +700,10 @@ void CamWnd::Cam_Draw()
         glEnable(GL_LIGHT0);
     }
 
+    if (true)
+    {
+        drawGrid();
+    }
 
     // Set the allowed render flags for this view
     unsigned int allowedRenderFlags = RENDER_DEPTHTEST
