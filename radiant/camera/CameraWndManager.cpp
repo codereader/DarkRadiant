@@ -69,6 +69,8 @@ void CameraWndManager::registerCommands()
 	GlobalEventManager().addWidgetToggle("ToggleCamera");
 	GlobalEventManager().setToggled("ToggleCamera", true);
 
+	GlobalEventManager().addRegistryToggle("ToggleCameraGrid", RKEY_CAMERA_GRID_ENABLED);
+
 	GlobalEventManager().addKeyEvent("CameraMoveForward", std::bind(&CameraWndManager::onMoveForwardKey, this, std::placeholders::_1));
 	GlobalEventManager().addKeyEvent("CameraMoveBack", std::bind(&CameraWndManager::onMoveBackKey, this, std::placeholders::_1));
 	GlobalEventManager().addKeyEvent("CameraMoveLeft", std::bind(&CameraWndManager::onMoveLeftKey, this, std::placeholders::_1));

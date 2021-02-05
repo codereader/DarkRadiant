@@ -137,6 +137,7 @@ void CamWnd::constructToolbar()
     const wxToolBarToolBase* flatShadeBtn = getToolBarToolByLabel(_camToolbar, "flatShadeBtn");
     const wxToolBarToolBase* texturedBtn = getToolBarToolByLabel(_camToolbar, "texturedBtn");
     const wxToolBarToolBase* lightingBtn = getToolBarToolByLabel(_camToolbar, "lightingBtn");
+    const wxToolBarToolBase* gridButton = getToolBarToolByLabel(_camToolbar, "drawGridButton");
 
     if (!GlobalRenderSystem().shaderProgramsAvailable())
     {
@@ -156,6 +157,9 @@ void CamWnd::constructToolbar()
     _mainWxWidget->GetParent()->Bind(wxEVT_COMMAND_TOOL_CLICKED,&CamWnd::onRenderModeButtonsChanged, this, flatShadeBtn->GetId());
     _mainWxWidget->GetParent()->Bind(wxEVT_COMMAND_TOOL_CLICKED, &CamWnd::onRenderModeButtonsChanged, this, texturedBtn->GetId());
     _mainWxWidget->GetParent()->Bind(wxEVT_COMMAND_TOOL_CLICKED, &CamWnd::onRenderModeButtonsChanged, this, lightingBtn->GetId());
+    
+    auto toggleCameraGridEvent = GlobalEventManager().findEvent("ToggleCameraGrid");
+    toggleCameraGridEvent->connectToolItem(gridButton);
 
     // Far clip buttons.
     _farClipInID = getToolID(_camToolbar, "clipPlaneInButton");
@@ -236,6 +240,10 @@ void CamWnd::constructGUIComponents()
 
 CamWnd::~CamWnd()
 {
+    const wxToolBarToolBase* gridButton = getToolBarToolByLabel(_camToolbar, "drawGridButton");
+    auto toggleCameraGridEvent = GlobalEventManager().findEvent("ToggleCameraGrid");
+    toggleCameraGridEvent->disconnectToolItem(gridButton);
+
     // Stop the timer, it might still fire even during shutdown
     _timer.Stop();
 

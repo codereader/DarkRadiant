@@ -82,6 +82,14 @@
 								<longhelp></longhelp>
 								<bitmap stock_id="darkradiant:farClipOut.png" stock_client="wxART_TOOLBAR">undefined.png</bitmap>
 							</object>
+							<object class="separator" />
+							<object class="tool" name="drawGridButton">
+								<label>drawGridButton</label>
+								<tooltip>Draw 3D Grid</tooltip>
+								<longhelp></longhelp>
+								<bitmap stock_id="darkradiant:grid_toggle.png" stock_client="wxART_TOOLBAR">undefined.png</bitmap>
+								<toggle>1</toggle>
+							</object>
 						</object>
 					</object>
 				</object>

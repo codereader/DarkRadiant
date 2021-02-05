@@ -228,6 +228,20 @@
                                     <property name="statusbar"></property>
                                     <property name="tooltip">Clip plane out</property>
                                 </object>
+                                <object class="toolSeparator" expanded="1">
+                                    <property name="permission">protected</property>
+                                </object>
+                                <object class="tool" expanded="1">
+                                    <property name="bitmap">Load From Art Provider; darkradiant:grid_toggle.png; wxART_TOOLBAR</property>
+                                    <property name="context_menu">0</property>
+                                    <property name="id">wxID_ANY</property>
+                                    <property name="kind">wxITEM_CHECK</property>
+                                    <property name="label">drawGridButton</property>
+                                    <property name="name">drawGridButton</property>
+                                    <property name="permission">protected</property>
+                                    <property name="statusbar"></property>
+                                    <property name="tooltip">Draw 3D Grid</property>
+                                </object>
                             </object>
                         </object>
                     </object>
