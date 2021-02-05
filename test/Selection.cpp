@@ -18,11 +18,64 @@
 #include "render/CameraView.h"
 #include "selection/SelectionVolume.h"
 #include "Rectangle.h"
+#include "registry/registry.h"
 
 namespace test
 {
 
 using SelectionTest = RadiantTest;
+
+constexpr std::size_t DeviceWidth = 640;
+constexpr std::size_t DeviceHeight = 640;
+constexpr const char* const RKEY_SELECT_EPSILON = "user/ui/selectionEpsilon";
+
+void constructCenteredOrthoview(render::View& view, const Vector3& origin)
+{
+    // Move the orthoview exactly to the center of this object
+    double scale = 1.0;
+
+    Matrix4 projection;
+
+    projection[0] = 1.0 / static_cast<double>(DeviceWidth / 2);
+    projection[5] = 1.0 / static_cast<double>(DeviceHeight / 2);
+    projection[10] = 1.0 / (32768 * scale);
+
+    projection[12] = 0.0;
+    projection[13] = 0.0;
+    projection[14] = -1.0;
+
+    projection[1] = projection[2] = projection[3] =
+        projection[4] = projection[6] = projection[7] =
+        projection[8] = projection[9] = projection[11] = 0.0;
+
+    projection[15] = 1.0f;
+
+    // Modelview
+    Matrix4 modelView;
+
+    // Translate the view to the center of the brush
+    modelView[12] = -origin.x() * scale;
+    modelView[13] = -origin.y() * scale;
+    modelView[14] = 32768 * scale;
+
+    // axis base
+    modelView[0] = scale;
+    modelView[1] = 0;
+    modelView[2] = 0;
+
+    modelView[4] = 0;
+    modelView[5] = scale;
+    modelView[6] = 0;
+
+    modelView[8] = 0;
+    modelView[9] = 0;
+    modelView[10] = -scale;
+
+    modelView[3] = modelView[7] = modelView[11] = 0;
+    modelView[15] = 1;
+
+    view.construct(projection, modelView, DeviceWidth, DeviceHeight);
+}
 
 TEST_F(SelectionTest, ApplyShadersToForcedVisibleObjects)
 {
@@ -107,8 +160,60 @@ TEST_F(SelectionTest, SelectionBoundsOfProjectedLights)
     EXPECT_EQ(Node_getLightNode(entityNode)->getSelectAABB().getOrigin(), Vector3(0,0,0));
 }
 
-constexpr std::size_t DeviceWidth = 640;
-constexpr std::size_t DeviceHeight = 640;
+// #4846: Rotation widget does not re-center on selected object
+TEST_F(SelectionTest, PivotIsResetAfterCancelingOperation)
+{
+    loadMap("selection_test.map");
+
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto brush = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/1");
+
+    GlobalSelectionSystem().setActiveManipulator(selection::Manipulator::Translate);
+
+    // Select the node, the pivot should now be at the node center
+    Node_setSelected(brush, true);
+
+    Vector3 originalBrushPosition = brush->worldAABB().getOrigin();
+
+    Matrix4 originalPivot = GlobalSelectionSystem().getPivot2World();
+    EXPECT_EQ(originalPivot.t().getVector3(), originalBrushPosition);
+
+    const auto& activeManipulator = GlobalSelectionSystem().getActiveManipulator();
+    
+    // Construct an orthoview to test-select the manipulator
+    render::View view(false);
+    constructCenteredOrthoview(view, originalBrushPosition);
+
+    render::View scissored(view);
+    auto epsilon = registry::getValue<float>(RKEY_SELECT_EPSILON);
+    Vector2 deviceEpsilon(epsilon / DeviceWidth, epsilon / DeviceHeight);
+    ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromPoint(Vector2(0,0), deviceEpsilon));
+
+    SelectionVolume test(scissored);
+    activeManipulator->testSelect(test, originalPivot);
+
+    EXPECT_TRUE(activeManipulator->isSelected());
+
+    GlobalSelectionSystem().onManipulationStart();
+    activeManipulator->getActiveComponent()->beginTransformation(originalPivot, view, Vector2(0, 0));
+
+    // Transform by dragging stuff around
+    activeManipulator->getActiveComponent()->transform(originalPivot, view, Vector2(0.5, 0.5), false);
+    GlobalSelectionSystem().onManipulationChanged();
+
+    // The brush should have been moved
+    EXPECT_NE(brush->worldAABB().getOrigin(), originalBrushPosition);
+    // Pivot should have been moved
+    EXPECT_NE(GlobalSelectionSystem().getPivot2World().t().getVector3(), originalBrushPosition);
+
+    // Now cancel the operation
+    GlobalSelectionSystem().onManipulationCancelled();
+
+    // Brush should be back at its original position
+    EXPECT_EQ(brush->worldAABB().getOrigin(), originalBrushPosition);
+    // And as of #4846 the pivot should be back as well
+    EXPECT_EQ(GlobalSelectionSystem().getPivot2World().t().getVector3(), originalBrushPosition);
+}
 
 class ViewSelectionTest :
     public SelectionTest
@@ -188,50 +293,7 @@ protected:
 
     virtual void constructView(render::View& view, const AABB& objectAABB) override
     {
-        // Move the orthoview exactly to the center of this object
-        double scale = 1.0;
-
-        Matrix4 projection;
-
-        projection[0] = 1.0 / static_cast<double>(DeviceWidth / 2);
-        projection[5] = 1.0 / static_cast<double>(DeviceHeight / 2);
-        projection[10] = 1.0 / (32768 * scale);
-
-        projection[12] = 0.0;
-        projection[13] = 0.0;
-        projection[14] = -1.0;
-
-        projection[1] = projection[2] = projection[3] =
-            projection[4] = projection[6] = projection[7] =
-            projection[8] = projection[9] = projection[11] = 0.0;
-
-        projection[15] = 1.0f;
-
-        // Modelview
-        Matrix4 modelView;
-
-        // Translate the view to the center of the brush
-        modelView[12] = -objectAABB.getOrigin().x() * scale;
-        modelView[13] = -objectAABB.getOrigin().y() * scale;
-        modelView[14] = 32768 * scale;
-
-        // axis base
-        modelView[0] = scale;
-        modelView[1] = 0;
-        modelView[2] = 0;
-
-        modelView[4] = 0;
-        modelView[5] = scale;
-        modelView[6] = 0;
-
-        modelView[8] = 0;
-        modelView[9] = 0;
-        modelView[10] = -scale;
-
-        modelView[3] = modelView[7] = modelView[11] = 0;
-        modelView[15] = 1;
-
-        view.construct(projection, modelView, DeviceWidth, DeviceHeight);
+        constructCenteredOrthoview(view, objectAABB.getOrigin());
     }
 };
 
