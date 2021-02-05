@@ -237,6 +237,13 @@
     <supportsAiSeeSpawnarg value="1" />
 	</light>
 
+  <modelFormat>
+    <ase>
+      <!-- Use just the value in *BITMAP -->
+      <useMaterialNameIfNoBitmapFound value="0" />
+    </ase>
+  </modelFormat>
+
 	<!-- Information about the map format, for loading and saving -->
 	<mapFormat>
 		<floatPrecision value="16" />

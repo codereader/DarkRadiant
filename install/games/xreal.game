@@ -234,6 +234,13 @@
 
 	</light>
 
+  <modelFormat>
+    <ase>
+      <!-- Use the ASE *MATERIAL_NAME if the value in *BITMAP is not valid or empty -->
+      <useMaterialNameIfNoBitmapFound value="1" />
+    </ase>
+  </modelFormat>
+
 	<!-- Information about the map format, for loading and saving -->
 	<mapFormat>
 		<version value="2" />

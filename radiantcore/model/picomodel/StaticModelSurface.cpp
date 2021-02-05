@@ -6,6 +6,7 @@
 #include "math/Ray.h"
 #include "iselectiontest.h"
 #include "irenderable.h"
+#include "gamelib.h"
 
 #include "string/replace.h"
 
@@ -43,14 +44,19 @@ StaticModelSurface::StaticModelSurface(picoSurface_t* surf,
         }
 	}
 
-	// If shader not found, fallback to alternative if available
-	// _defaultMaterial is empty if the ase material has no BITMAP
-	// materialIsValid is false if _defaultMaterial is not an existing shader
-	if ((_defaultMaterial.empty() || !GlobalMaterialManager().materialExists(_defaultMaterial)) &&
-		!rawName.empty())
-	{
-		_defaultMaterial = cleanupShaderName(rawName);
-	}
+    // #4644: Doom3 / TDM don't use the *MATERIAL_NAME in ASE models, only *BITMAP is used
+    // Use the fallback (introduced in #2499) only when the game allows it
+    if (game::current::getValue<bool>("/modelFormat/ase/useMaterialNameIfNoBitmapFound"))
+    {
+        // If shader not found, fallback to alternative if available
+        // _defaultMaterial is empty if the ase material has no BITMAP
+        // materialIsValid is false if _defaultMaterial is not an existing shader
+        if ((_defaultMaterial.empty() || !GlobalMaterialManager().materialExists(_defaultMaterial)) &&
+            !rawName.empty())
+        {
+            _defaultMaterial = cleanupShaderName(rawName);
+        }
+    }
 
 	// Capturing the shader happens later on when we have a RenderSystem reference
 

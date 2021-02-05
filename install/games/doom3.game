@@ -151,6 +151,12 @@
 		<guiSmallFontLimit value="0.15" />
 		<guiMediumFontLimit value="0.30" />
 	</defaults>
+  <modelFormat>
+    <ase>
+      <!-- Use just the value in *BITMAP -->
+      <useMaterialNameIfNoBitmapFound value="0" />
+    </ase>
+  </modelFormat>
 	<entityChooser>
 		<displayFolderKey value="editor_displayFolder" />
 	</entityChooser>
