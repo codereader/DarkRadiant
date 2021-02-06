@@ -448,7 +448,8 @@ TEST_F(EntityTest, RenderEmptyFuncStatic)
 
     // Func static without a model key is empty
     RenderFixture rf;
-    funcStatic->traverse(rf);
+    rf.renderSubGraph(funcStatic);
+    EXPECT_EQ(rf.nodesVisited, 1);
     EXPECT_EQ(rf.collector.lights, 0);
     EXPECT_EQ(rf.collector.renderables, 0);
 }
@@ -459,9 +460,15 @@ TEST_F(EntityTest, RenderFuncStaticWithModel)
     auto funcStatic = createByClassName("func_static");
     funcStatic->getEntity().setKeyValue("model", "models/moss_patch.ase");
 
-    // We should get one renderable
     RenderFixture rf;
     rf.renderSubGraph(funcStatic);
+
+    // The entity node itself does not render the model; it is a parent node
+    // with the model as a child (e.g. as a StaticModelNode). Therefore we
+    // should have visited two nodes in total: the entity and its model child.
+    EXPECT_EQ(rf.nodesVisited, 2);
+
+    // Only one of the nodes should have submitted renderables
     EXPECT_EQ(rf.collector.lights, 0);
     EXPECT_EQ(rf.collector.renderables, 1);
 }
@@ -511,14 +518,8 @@ TEST_F(EntityTest, RenderAttachedLightEntity)
     EXPECT_EQ(spawnArgs.getKeyValue("model"), "models/torch.lwo");
 
     // We must render in solid mode to get the light source
-    RenderFixture rf(true);
-    torch->setRenderSystem(rf.backend);
-
-    // The entity node itself does not render the model; it is a parent node
-    // with the model as a child (e.g. as a StaticModelNode). Therefore we must
-    // traverse our "mini-scenegraph" to render the model as well as the
-    // attached entities.
-    torch->traverse(rf);
+    RenderFixture rf(true /* solid mode */);
+    rf.renderSubGraph(torch);
 
     // The node visitor should have visited the entity itself and one child node (a
     // static model)
@@ -536,6 +537,29 @@ TEST_F(EntityTest, RenderAttachedLightEntity)
     const RendererLight* rLight = rf.collector.lightPtrs.front();
     ASSERT_TRUE(rLight);
     EXPECT_TRUE(rLight->getShader());
+}
+
+TEST_F(EntityTest, AttachedLightAtCorrectPosition)
+{
+    const Vector3 ORIGIN(256, -128, 635);
+    const Vector3 EXPECTED_OFFSET(0, 0, 10); // attach offset in def
+
+    // Create a torch node and set a non-zero origin
+    auto torch = createByClassName("atdm:torch_brazier");
+    torch->getEntity().setKeyValue("origin", string::to_string(ORIGIN));
+
+    // Render the torch
+    RenderFixture rf(true /* solid mode */);
+    rf.renderSubGraph(torch);
+
+    // Access the submitted light source
+    ASSERT_FALSE(rf.collector.lightPtrs.empty());
+    const RendererLight* rLight = rf.collector.lightPtrs.front();
+    ASSERT_TRUE(rLight);
+
+    // Check the light source's position
+    EXPECT_EQ(rLight->getLightOrigin(), ORIGIN + EXPECTED_OFFSET);
+    EXPECT_EQ(rLight->lightAABB().origin, ORIGIN + EXPECTED_OFFSET);
 }
 
 }
