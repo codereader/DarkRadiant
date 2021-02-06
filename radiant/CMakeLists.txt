@@ -112,7 +112,6 @@ add_executable(darkradiant
                uimanager/menu/MenuSeparator.cpp
                uimanager/SoundChooser.cpp
                uimanager/SoundShaderPreview.cpp
-               uimanager/StatusBarManager.cpp
                uimanager/ToolbarManager.cpp
                uimanager/UIManager.cpp
                ui/MapCommands.cpp
@@ -155,6 +154,8 @@ add_executable(darkradiant
                ui/selectionset/SelectionSetToolmenu.cpp
                ui/splash/Splash.cpp
                ui/statusbar/EditingStopwatchStatus.cpp
+               ui/statusbar/MapStatistics.cpp
+               ui/statusbar/StatusBarManager.cpp
                ui/surfaceinspector/SurfaceInspector.cpp
                ui/texturebrowser/TextureBrowser.cpp
                ui/texturebrowser/TextureBrowserManager.cpp

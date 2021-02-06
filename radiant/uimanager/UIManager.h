@@ -8,8 +8,6 @@
 #include "menu/MenuManager.h"
 #include "ToolbarManager.h"
 #include "DialogManager.h"
-#include "wxutil/event/SingleIdleCallback.h"
-#include <sigc++/connection.h>
 
 #include <memory>
 
@@ -20,8 +18,7 @@ class LocalBitmapArtProvider;
 
 class UIManager :
 	public IUIManager,
-	public std::enable_shared_from_this<UIManager>,
-	protected wxutil::SingleIdleCallback
+	public std::enable_shared_from_this<UIManager>
 {
     // Sub-manager classes, constructed in initialiseModule to avoid being
     // called before the main window is ready.
@@ -30,9 +27,6 @@ class UIManager :
 	DialogManagerPtr _dialogManager;
 
 	LocalBitmapArtProvider* _bitmapArtProvider;
-
-	sigc::connection _selectionChangedConn;
-	sigc::connection _countersChangedConn;
 
 public:
 	UIManager() :
@@ -59,12 +53,6 @@ public:
 	const StringSet& getDependencies() const;
 	void initialiseModule(const IApplicationContext& ctx);
 	void shutdownModule();
-
-protected:
-	void onIdle() override;
-
-private:
-	void updateCounterStatusBar();
 };
 
 } // namespace ui

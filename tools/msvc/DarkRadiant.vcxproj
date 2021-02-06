@@ -237,7 +237,6 @@
     <ClCompile Include="..\..\radiant\uimanager\menu\MenuSeparator.cpp" />
     <ClCompile Include="..\..\radiant\uimanager\SoundChooser.cpp" />
     <ClCompile Include="..\..\radiant\uimanager\SoundShaderPreview.cpp" />
-    <ClCompile Include="..\..\radiant\uimanager\StatusBarManager.cpp" />
     <ClCompile Include="..\..\radiant\uimanager\ToolbarManager.cpp" />
     <ClCompile Include="..\..\radiant\uimanager\UIManager.cpp" />
     <ClCompile Include="..\..\radiant\ui\aas\AasControl.cpp" />
@@ -345,6 +344,8 @@
     <ClCompile Include="..\..\radiant\ui\script\ScriptWindow.cpp" />
     <ClCompile Include="..\..\radiant\ui\selectionset\SelectionSetToolmenu.cpp" />
     <ClCompile Include="..\..\radiant\ui\statusbar\EditingStopwatchStatus.cpp" />
+    <ClCompile Include="..\..\radiant\ui\statusbar\MapStatistics.cpp" />
+    <ClCompile Include="..\..\radiant\ui\statusbar\StatusBarManager.cpp" />
     <ClCompile Include="..\..\radiant\ui\texturebrowser\TextureBrowserManager.cpp" />
     <ClCompile Include="..\..\radiant\ui\transform\TransformDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\texturebrowser\TextureBrowser.cpp" />
@@ -420,7 +421,6 @@
     <ClInclude Include="..\..\radiant\uimanager\menu\MenuSeparator.h" />
     <ClInclude Include="..\..\radiant\uimanager\SoundChooser.h" />
     <ClInclude Include="..\..\radiant\uimanager\SoundShaderPreview.h" />
-    <ClInclude Include="..\..\radiant\uimanager\StatusBarManager.h" />
     <ClInclude Include="..\..\radiant\uimanager\ToolbarManager.h" />
     <ClInclude Include="..\..\radiant\uimanager\UIManager.h" />
     <ClInclude Include="..\..\radiant\ui\aas\AasControl.h" />
@@ -546,6 +546,8 @@
     <ClInclude Include="..\..\radiant\ui\selectionset\SelectionSetToolmenu.h" />
     <ClInclude Include="..\..\radiant\ui\shaderclipboard\ShaderClipboardStatus.h" />
     <ClInclude Include="..\..\radiant\ui\statusbar\EditingStopwatchStatus.h" />
+    <ClInclude Include="..\..\radiant\ui\statusbar\MapStatistics.h" />
+    <ClInclude Include="..\..\radiant\ui\statusbar\StatusBarManager.h" />
     <ClInclude Include="..\..\radiant\ui\texturebrowser\TextureBrowserManager.h" />
     <ClInclude Include="..\..\radiant\ui\transform\TransformDialog.h" />
     <ClInclude Include="..\..\radiant\ui\texturebrowser\TextureBrowser.h" />

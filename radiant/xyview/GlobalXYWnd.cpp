@@ -659,6 +659,7 @@ const StringSet& XYWndManager::getDependencies() const
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
 		_dependencies.insert(MODULE_UIMANAGER);
         _dependencies.insert(MODULE_MOUSETOOLMANAGER);
+        _dependencies.insert(MODULE_STATUSBARMANAGER);
 	}
 
 	return _dependencies;

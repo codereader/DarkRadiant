@@ -211,6 +211,7 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
 	_mruMenu.reset(new MRUMenu);
 	_shaderClipboardStatus.reset(new ShaderClipboardStatus);
 	_editStopwatchStatus.reset(new EditingStopwatchStatus);
+    _mapStatisticsStatus.reset(new statusbar::MapStatistics);
 	_manipulatorToggle.reset(new ManipulatorToggle);
 	_selectionModeToggle.reset(new SelectionModeToggle);
 
@@ -236,6 +237,7 @@ void UserInterfaceModule::shutdownModule()
 	_fileSelectionRequestHandler.reset();
 	_autoSaveRequestHandler.reset();
 	_shaderClipboardStatus.reset();
+    _mapStatisticsStatus.reset();
 	_editStopwatchStatus.reset();
 	_manipulatorToggle.reset();
 	_selectionModeToggle.reset();

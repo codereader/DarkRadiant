@@ -8,8 +8,9 @@
 #include <wx/frame.h>
 #include <wx/statbmp.h>
 
-#include "LocalBitmapArtProvider.h"
+#include "uimanager/LocalBitmapArtProvider.h"
 #include "module/StaticModule.h"
+#include "wxutil/bitmap.h"
 
 namespace ui
 {
@@ -55,14 +56,6 @@ void StatusBarManager::initialiseModule(const IApplicationContext& ctx)
         "",  // no icon
         IStatusBarManager::POS_COMMAND,
         _("Describes available Mouse Commands")
-    );
-
-    // Add the counter element
-    addTextElement(
-        "MapCounters",
-        "",  // no icon
-        IStatusBarManager::POS_BRUSHCOUNT,
-        _("Number of brushes/patches/entities in this map\n(Number of selected items shown in parentheses)")
     );
 
     GlobalMainFrame().signal_MainFrameShuttingDown().connect(
@@ -119,8 +112,7 @@ void StatusBarManager::addTextElement(const std::string& name, const std::string
 
 	if (!icon.empty())
 	{
-		wxStaticBitmap* img = new wxStaticBitmap(textPanel, wxID_ANY, 
-			wxArtProvider::GetBitmap(LocalBitmapArtProvider::ArtIdPrefix() + icon));
+		wxStaticBitmap* img = new wxStaticBitmap(textPanel, wxID_ANY, wxutil::getBitmap(icon));
 		textPanel->GetSizer()->Add(img, 0, wxEXPAND | wxALL, 1);
 	}
 

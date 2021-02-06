@@ -5,8 +5,6 @@
 #include "itextstream.h"
 #include "iregistry.h"
 #include "iradiant.h"
-#include "istatusbarmanager.h"
-#include "icounter.h"
 #include "imainframe.h"
 #include "icommandsystem.h"
 #include "ieventmanager.h"
@@ -14,7 +12,6 @@
 #include "GroupDialog.h"
 #include "debugging/debugging.h"
 #include "wxutil/dialog/MessageBox.h"
-#include "selectionlib.h"
 
 #include "animationpreview/MD5AnimationViewer.h"
 #include "LocalBitmapArtProvider.h"
@@ -72,10 +69,7 @@ const StringSet& UIManager::getDependencies() const
 	{
 		_dependencies.insert(MODULE_EVENTMANAGER);
 		_dependencies.insert(MODULE_XMLREGISTRY);
-		_dependencies.insert(MODULE_SELECTIONSYSTEM);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
-		_dependencies.insert(MODULE_COUNTER);
-		_dependencies.insert(MODULE_STATUSBARMANAGER);
 	}
 
 	return _dependencies;
@@ -108,45 +102,11 @@ void UIManager::initialiseModule(const IApplicationContext& ctx)
 
 	std::string fullPath = ctx.getRuntimeDataPath() + "ui/";
 	wxXmlResource::Get()->Load(fullPath + "*.xrc");
-
-	_selectionChangedConn = GlobalSelectionSystem().signal_selectionChanged().connect(
-		[this](const ISelectable&) { requestIdleCallback(); }
-	);
-
-	_countersChangedConn = GlobalCounters().signal_countersChanged().connect(
-		[this]() { requestIdleCallback(); }
-	);
-
-	updateCounterStatusBar();
 }
 
 void UIManager::shutdownModule()
 {
-	_countersChangedConn.disconnect();
-	_selectionChangedConn.disconnect();
 	_menuManager->clear();
-}
-
-void UIManager::onIdle()
-{
-	updateCounterStatusBar();
-}
-
-void UIManager::updateCounterStatusBar()
-{
-	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
-	auto& counterMgr = GlobalCounters();
-
-	std::string text =
-		fmt::format(_("Brushes: {0:d} ({1:d}) Patches: {2:d} ({3:d}) Entities: {4:d} ({5:d})"),
-			counterMgr.getCounter(counterBrushes).get(),
-			info.brushCount,
-			counterMgr.getCounter(counterPatches).get(),
-			info.patchCount,
-				counterMgr.getCounter(counterEntities).get(),
-			info.entityCount);
-
-	GlobalStatusBarManager().setText("MapCounters", text);
 }
 
 module::StaticModule<UIManager> uiManagerModule;
