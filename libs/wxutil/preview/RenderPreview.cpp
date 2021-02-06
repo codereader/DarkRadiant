@@ -99,15 +99,12 @@ void RenderPreview::setupToolbars(bool enableAnimation)
     // Connect filters menu to toolbar
     wxToolBar* filterToolbar = findNamedObject<wxToolBar>(_mainPanel, "RenderPreviewFilterToolbar");
 
-    auto filterPopupMenu = new wxutil::FilterPopupMenu();
-    wxMenu* filterSubmenu = filterPopupMenu->getMenuWidget();
-
     wxToolBarToolBase* filterTool = filterToolbar->AddTool(wxID_ANY, _("Filters"),
                                                            wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "iconFilter16.png"),
                                                            _("Filters"), wxITEM_DROPDOWN);
 
-	// By setting it as dropdown menu the toolitem will take ownership and delete the menu on destruction
-    filterToolbar->SetDropdownMenu(filterTool->GetId(), filterSubmenu);
+	// By setting a drodown menu the toolitem will take ownership and delete the menu on destruction
+    filterToolbar->SetDropdownMenu(filterTool->GetId(), new wxutil::FilterPopupMenu());
 
     filterToolbar->Realize();
 

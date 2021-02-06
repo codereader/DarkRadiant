@@ -7,28 +7,21 @@
 namespace wxutil
 {
 
-/** Utility class for generating the Filters top-level menu. This class
- * registers the relevant menuitems on demand.
- *
- * Construct a FiltersMenu instance to generate a new Filter Menu which
- * can be packed into a parent container widget using the getMenuWidget().
+/** 
+ * Utility class for generating a Filters fly-out menu. 
+ * Provides a menu with a check button for each of the registered filters.
  */
-class FilterPopupMenu
+class FilterPopupMenu :
+    public wxutil::PopupMenu
 {
 private:
 	std::map<std::string, wxMenuItem*> _filterItems;
-
-	wxutil::PopupMenu* _menu;
 
 public:
 	// Constructs the filter items
     FilterPopupMenu();
 
-	~FilterPopupMenu();
-
-	// Returns a wxMenu* with a fabricated filters submenu,
-	// ready for packing into a menu bar.
-	wxMenu* getMenuWidget();
+	virtual ~FilterPopupMenu();
 
 private:
 	void visitFilter(const std::string& filterName);
