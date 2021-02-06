@@ -82,9 +82,6 @@ public:
     virtual wxWindow* getElement(const std::string& name) = 0;
 };
 
-// The name of the command status bar item
-#define STATUSBAR_COMMAND "Command"
-
 }
 
 }

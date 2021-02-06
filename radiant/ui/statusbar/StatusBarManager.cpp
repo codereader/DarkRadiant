@@ -53,14 +53,6 @@ void StatusBarManager::initialiseModule(const IApplicationContext& ctx)
 {
     rMessage() << getName() << "::initialiseModule called." << std::endl;
 
-    // Add the statusbar command text item
-    addTextElement(
-        STATUSBAR_COMMAND,
-        "",  // no icon
-        StandardPosition::Command,
-        _("Describes available Mouse Commands")
-    );
-
     GlobalMainFrame().signal_MainFrameShuttingDown().connect(
         sigc::mem_fun(this, &StatusBarManager::onMainFrameShuttingDown));
 }

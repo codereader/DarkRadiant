@@ -15,6 +15,11 @@
 namespace ui
 {
 
+namespace
+{
+    constexpr const char* const STATUS_BAR_ELEMENT = "Command";
+}
+
 MouseToolManager::MouseToolManager() :
     _activeModifierState(0)
 {}
@@ -33,7 +38,7 @@ const StringSet& MouseToolManager::getDependencies() const
     if (_dependencies.empty())
     {
         _dependencies.insert(MODULE_MAINFRAME);
-        _dependencies.insert(MODULE_UIMANAGER);
+        _dependencies.insert(MODULE_STATUSBARMANAGER);
     }
 
     return _dependencies;
@@ -43,6 +48,14 @@ void MouseToolManager::initialiseModule(const IApplicationContext& ctx)
 {
     GlobalMainFrame().signal_MainFrameConstructed().connect(
         sigc::mem_fun(this, &MouseToolManager::onMainFrameConstructed));
+
+    // Add the statusbar command text item
+    GlobalStatusBarManager().addTextElement(
+        STATUS_BAR_ELEMENT,
+        "",  // no icon
+        statusbar::StandardPosition::Command,
+        _("Describes available Mouse Commands")
+    );
 }
 
 void MouseToolManager::loadGroupMapping(MouseToolGroup::Type type, const xml::NodeList& userMappings, const xml::NodeList& defaultMappings)
@@ -189,9 +202,9 @@ void MouseToolManager::updateStatusbar(unsigned int newState)
 
             std::set<std::string> toolNames;
 
-            GlobalMouseToolManager().foreachGroup([&](ui::IMouseToolGroup& group)
+            GlobalMouseToolManager().foreachGroup([&](IMouseToolGroup& group)
             {
-                ui::MouseToolStack tools = group.getMappedTools(testFlags);
+                MouseToolStack tools = group.getMappedTools(testFlags);
 
                 for (auto i : tools)
                 {
@@ -210,7 +223,7 @@ void MouseToolManager::updateStatusbar(unsigned int newState)
     }
 
     // Pass the call
-    GlobalStatusBarManager().setText(STATUSBAR_COMMAND, statusText);
+    GlobalStatusBarManager().setText(STATUS_BAR_ELEMENT, statusText);
 }
 
 module::StaticModule<MouseToolManager> mouseToolManagerModule;
