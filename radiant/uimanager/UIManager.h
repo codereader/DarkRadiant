@@ -6,7 +6,6 @@
 #include "idialogmanager.h"
 
 #include "menu/MenuManager.h"
-#include "ToolbarManager.h"
 #include "DialogManager.h"
 
 #include <memory>
@@ -23,7 +22,6 @@ class UIManager :
     // Sub-manager classes, constructed in initialiseModule to avoid being
     // called before the main window is ready.
     std::shared_ptr<MenuManager> _menuManager;
-    std::shared_ptr<ToolbarManager> _toolbarManager;
 	DialogManagerPtr _dialogManager;
 
 	LocalBitmapArtProvider* _bitmapArtProvider;
@@ -36,8 +34,6 @@ public:
 	/** greebo: Retrieves the helper class to manipulate the menu.
 	 */
 	IMenuManager& getMenuManager() override;
-
-	IToolbarManager& getToolbarManager() override;
 
 	IGroupDialog& getGroupDialog() override;
 

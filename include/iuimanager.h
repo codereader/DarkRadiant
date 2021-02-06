@@ -4,7 +4,6 @@
 
 // Forward declarations
 class wxWindow;
-class wxToolBar;
 class wxMenuBar;
 
 namespace ui
@@ -107,46 +106,6 @@ public:
 	virtual void remove(const std::string& path) = 0;
 };
 
-/**
- * \brief
- * Manager object which constructs toolbars from XML files.
- *
- * The IToolbarManager is responsible for parsing toolbar declarations from
- * user.xml and constructing wxToolBar objects containing the specified tool
- * buttons.
- *
- * Note however that the IToolbarManager does not own or keep track of the
- * constructed wxToolBars; these are packed into and owned by the IMainFrame
- * and made available with IMainFrame::getToolbar().
- */
-class IToolbarManager
-{
-public:
-    virtual ~IToolbarManager() {}
-
-    /**
-     * \brief
-     * Create a wxToolBar corresponding to the given named toolbar declaration
-     * in the user.xml file.
-     *
-     * The toolbar's tool buttons will be registered with the event manager on
-     * construction, and deregistered when the wxToolbar widget is destroyed.
-     *
-     * Calling this method more than once with the same toolbarName will create
-     * a new wxToolBar each time, which will possibly result in duplicate event
-     * manager registrations unless the first toolbar widget has already been
-     * destroyed.
-     *
-     * \param name
-     * Name of the toolbar to create. This must correspond to a <toolbar>
-     * section in the user.xml file.
-     *
-     * \param parent
-     * Parent window for the constructed wxToolBar widget.
-     */
-    virtual wxToolBar* createToolbar(const std::string& name, wxWindow* parent) = 0;
-};
-
 // Forward declarations
 class IGroupDialog;		// see igroupdialog.h for definition
 
@@ -161,15 +120,14 @@ const char* const MODULE_UIMANAGER("UIManager");
 
 /** greebo: The UI Manager abstract base class.
  *
- * The UIManager provides an interface to add UI items like menu commands
- * toolbar icons, update status bar texts and such.
+ * The UIManager provides an interface to add UI items 
+ * like menu commands.
  */
 class IUIManager :
 	public RegisterableModule
 {
 public:
 	virtual IMenuManager& getMenuManager() = 0;
-	virtual IToolbarManager& getToolbarManager() = 0;
 	virtual IGroupDialog& getGroupDialog() = 0;
 	virtual ui::IDialogManager& getDialogManager() = 0;
 

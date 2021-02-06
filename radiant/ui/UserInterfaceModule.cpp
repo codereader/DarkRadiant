@@ -52,6 +52,7 @@
 #include "modelexport/ExportCollisionModelDialog.h"
 #include "ui/filters/FilterOrthoContextMenuItem.h"
 #include "uimanager/colourscheme/ColourSchemeEditor.h"
+#include "uimanager/animationpreview/MD5AnimationViewer.h"
 #include "ui/layers/CreateLayerDialog.h"
 #include "ui/patch/PatchCreateDialog.h"
 #include "ui/patch/BulgePatchDialog.h"
@@ -369,6 +370,8 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addCommand("TransformDialog", TransformDialog::toggle);
 
 	GlobalCommandSystem().addCommand("FindBrush", FindBrushDialog::Show);
+    GlobalCommandSystem().addCommand("AnimationPreview", MD5AnimationViewer::Show);
+    GlobalCommandSystem().addCommand("EditColourScheme", ColourSchemeEditor::DisplayDialog);
 
 	GlobalCommandSystem().addCommand("MapInfo", MapInfoDialog::ShowDialog);
 	GlobalCommandSystem().addCommand("MouseToolMappingDialog", ToolMappingDialog::ShowDialog);

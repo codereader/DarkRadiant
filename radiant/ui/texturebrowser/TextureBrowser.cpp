@@ -5,6 +5,7 @@
 #include "itextstream.h"
 #include "imainframe.h"
 #include "iuimanager.h"
+#include "itoolbarmanager.h"
 #include "icolourscheme.h"
 #include "igroupdialog.h"
 #include "iradiant.h"
@@ -271,11 +272,9 @@ TextureBrowser::TextureBrowser(wxWindow* parent) :
 
     // Load the texture toolbar from the registry
     {
-        IToolbarManager& tbCreator = GlobalUIManager().getToolbarManager();
+        _textureToolbar = GlobalToolBarManager().createToolbar("texture", texbox);
 
-        _textureToolbar = tbCreator.createToolbar("texture", texbox);
-
-        if (_textureToolbar != NULL)
+        if (_textureToolbar != nullptr)
         {
             // Pack it into the main window
             texbox->GetSizer()->Add(_textureToolbar, 0, wxEXPAND);

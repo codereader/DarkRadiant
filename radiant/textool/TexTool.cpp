@@ -8,6 +8,7 @@
 #include "ibrush.h"
 #include "ipatch.h"
 #include "iuimanager.h"
+#include "itoolbarmanager.h"
 #include "itextstream.h"
 
 #include "registry/adaptors.h"
@@ -105,10 +106,9 @@ void TexTool::populateWindow()
 	SetSizer(new wxBoxSizer(wxVERTICAL));
 
 	// Load the texture toolbar from the registry
-    IToolbarManager& tbCreator = GlobalUIManager().getToolbarManager();
-	wxToolBar* textoolbar = tbCreator.createToolbar("textool", this);
+	auto* textoolbar = GlobalToolBarManager().createToolbar("textool", this);
 
-	if (textoolbar != NULL)
+	if (textoolbar != nullptr)
 	{
 		textoolbar->SetCanFocus(false);
 		GetSizer()->Add(textoolbar, 0, wxEXPAND);

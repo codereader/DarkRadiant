@@ -7,7 +7,8 @@
 #include "i18n.h"
 
 #include <wx/toolbar.h>
-#include "LocalBitmapArtProvider.h"
+#include "module/StaticModule.h"
+#include "uimanager/LocalBitmapArtProvider.h"
 
 namespace ui
 {
@@ -17,47 +18,62 @@ namespace
 	const char* const CMD_VARIANT_NAME = "command";
 }
 
-int ToolbarManager::_nextToolItemId = 100;
-
-void ToolbarManager::initialise()
+const std::string& ToolbarManager::getName() const
 {
-	try
-	{
-		// Query the registry
-		loadToolbars();
-	}
-	catch (std::runtime_error& e)
-	{
+    static std::string _name(MODULE_TOOLBARMANAGER);
+    return _name;
+}
+
+const StringSet& ToolbarManager::getDependencies() const
+{
+    static StringSet _dependencies;
+
+    if (_dependencies.empty())
+    {
+        _dependencies.insert(MODULE_XMLREGISTRY);
+    }
+
+    return _dependencies;
+}
+
+void ToolbarManager::initialiseModule(const IApplicationContext& ctx)
+{
+    _nextToolItemId = 100;
+
+    try
+    {
+        // Query the registry
+        loadToolbars();
+    }
+    catch (const std::runtime_error& e)
+    {
         rError() << "ToolbarManager: Warning: " << e.what() << std::endl;
-	}
+    }
 }
 
 wxToolBar* ToolbarManager::createToolbar(const std::string& toolbarName, wxWindow* parent)
 {
 	// Check if the toolbarName exists
-	if (toolbarExists(toolbarName))
-	{
-		// Instantiate the toolbar with buttons
-		rMessage() << "ToolbarManager: Instantiating toolbar: " << toolbarName << std::endl;
+    if (!toolbarExists(toolbarName))
+    {
+        rError() << "ToolbarManager: Critical: Named toolbar doesn't exist: " << toolbarName << std::endl;
+	    return nullptr;
+    }
 
-		// Build the path into the registry, where the toolbar should be found
-		std::string toolbarPath = std::string("//ui//toolbar") + "[@name='"+ toolbarName +"']";
-		xml::NodeList toolbarList = GlobalRegistry().findXPath(toolbarPath);
+	// Instantiate the toolbar with buttons
+	rMessage() << "ToolbarManager: Instantiating toolbar: " << toolbarName << std::endl;
 
-		if (!toolbarList.empty())
-		{
-			return createToolbarFromNode(toolbarList[0], parent);
-		}
-		else {
-			rError() << "ToolbarManager: Critical: Could not instantiate " << toolbarName << std::endl;
-			return NULL;
-		}
-	}
-	else
+	// Build the path into the registry, where the toolbar should be found
+	auto toolbarPath = std::string("//ui//toolbar") + "[@name='"+ toolbarName +"']";
+	auto toolbarList = GlobalRegistry().findXPath(toolbarPath);
+
+	if (toolbarList.empty())
 	{
-		rError() << "ToolbarManager: Critical: Named toolbar doesn't exist: " << toolbarName << std::endl;
-		return NULL;
+        rError() << "ToolbarManager: Critical: Could not instantiate " << toolbarName << std::endl;
+	    return nullptr;
 	}
+		
+	return createToolbarFromNode(toolbarList[0], parent);
 }
 
 wxToolBarToolBase* ToolbarManager::createToolItem(wxToolBar* toolbar, const xml::Node& node)
@@ -111,36 +127,33 @@ wxToolBarToolBase* ToolbarManager::createToolItem(wxToolBar* toolbar, const xml:
 wxToolBar* ToolbarManager::createToolbarFromNode(xml::Node& node, wxWindow* parent)
 {
 	// Get all action children elements
-	xml::NodeList toolItemList = node.getChildren();
-	wxToolBar* toolbar = NULL;
+	auto toolItemList = node.getChildren();
+	wxToolBar* toolbar = nullptr;
 
-	if (!toolItemList.empty())
+    if (toolItemList.empty())
+    {
+        throw std::runtime_error("No elements in toolbar.");
+    }
+
+	// Try to set the alignment, if the attribute is properly set
+	auto align = node.getAttributeValue("align");
+
+	// Create a new toolbar
+	toolbar = new wxToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, 
+		align == "vertical" ? wxTB_VERTICAL : wxTB_HORIZONTAL,
+		node.getAttributeValue("name"));
+
+    // Adjust the toolbar bitmap size to add some padding - despite its name 
+    // this will not resize the actual icons, just the buttons
+    toolbar->SetToolBitmapSize(wxSize(20, 20));
+
+	for (const auto& toolNode : toolItemList)
 	{
-		// Try to set the alignment, if the attribute is properly set
-		std::string align = node.getAttributeValue("align");
-
-		// Create a new toolbar
-		toolbar = new wxToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, 
-			align == "vertical" ? wxTB_VERTICAL : wxTB_HORIZONTAL,
-			node.getAttributeValue("name"));
-
-        // Adjust the toolbar bitmap size to add some padding - despite its name 
-        // this will not resize the actual icons, just the buttons
-        toolbar->SetToolBitmapSize(wxSize(20, 20));
-
-		for (const auto& toolNode : toolItemList)
-		{
-			// Create and get the toolItem with the parsing
-			createToolItem(toolbar, toolNode);
-		}
-
-		toolbar->Realize();
-	}
-	else
-	{
-		throw std::runtime_error("No elements in toolbar.");
+		// Create and get the toolItem with the parsing
+		createToolItem(toolbar, toolNode);
 	}
 
+	toolbar->Realize();
 	toolbar->Bind(wxEVT_DESTROY, &ToolbarManager::onToolbarDestroy, this);
 
 	return toolbar;
@@ -174,34 +187,34 @@ void ToolbarManager::onToolbarDestroy(wxWindowDestroyEvent& ev)
 
 bool ToolbarManager::toolbarExists(const std::string& toolbarName)
 {
-	return (_toolbars.find(toolbarName) != _toolbars.end());
+	return _toolbars.count(toolbarName) > 0;
 }
 
 void ToolbarManager::loadToolbars()
 {
-	xml::NodeList toolbarList = GlobalRegistry().findXPath("//ui//toolbar");
+	auto toolbarList = GlobalRegistry().findXPath("//ui//toolbar");
 
-	if (!toolbarList.empty())
-	{
-		for (std::size_t i = 0; i < toolbarList.size(); ++i)
-		{
-			std::string toolbarName = toolbarList[i].getAttributeValue("name");
-
-			if (toolbarExists(toolbarName))
-			{
-				//rMessage() << "This toolbar already exists: ";
-				continue;
-			}
-
-			rMessage() << "Found toolbar: " << toolbarName << std::endl;
-
-			_toolbars.insert(toolbarName);
-		}
-	}
-	else
-	{
+    if (toolbarList.empty())
+    {
 		throw std::runtime_error("No toolbars found.");
+    }
+
+	for (std::size_t i = 0; i < toolbarList.size(); ++i)
+	{
+		auto toolbarName = toolbarList[i].getAttributeValue("name");
+
+		if (toolbarExists(toolbarName))
+		{
+			//rMessage() << "This toolbar already exists: ";
+			continue;
+		}
+
+		rMessage() << "Found toolbar: " << toolbarName << std::endl;
+
+		_toolbars.insert(toolbarName);
 	}
 }
+
+module::StaticModule<ToolbarManager> toolbarManagerModule;
 
 } // namespace ui

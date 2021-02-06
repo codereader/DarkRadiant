@@ -8,12 +8,10 @@
 #include "imainframe.h"
 #include "icommandsystem.h"
 #include "ieventmanager.h"
-#include "colourscheme/ColourSchemeEditor.h"
 #include "GroupDialog.h"
 #include "debugging/debugging.h"
 #include "wxutil/dialog/MessageBox.h"
 
-#include "animationpreview/MD5AnimationViewer.h"
 #include "LocalBitmapArtProvider.h"
 
 #include <wx/artprov.h>
@@ -30,10 +28,6 @@ IDialogManager& UIManager::getDialogManager()
 
 IMenuManager& UIManager::getMenuManager() {
 	return *_menuManager;
-}
-
-IToolbarManager& UIManager::getToolbarManager() {
-	return *_toolbarManager;
 }
 
 IGroupDialog& UIManager::getGroupDialog() {
@@ -86,12 +80,6 @@ void UIManager::initialiseModule(const IApplicationContext& ctx)
 
     _menuManager = std::make_shared<MenuManager>();
 	_menuManager->loadFromRegistry();
-
-    _toolbarManager = std::make_shared<ToolbarManager>();
-	_toolbarManager->initialise();
-
-	GlobalCommandSystem().addCommand("AnimationPreview", MD5AnimationViewer::Show);
-	GlobalCommandSystem().addCommand("EditColourScheme", ColourSchemeEditor::DisplayDialog);
 
 	GlobalMainFrame().signal_MainFrameShuttingDown().connect(
         sigc::mem_fun(this, &UIManager::clear)

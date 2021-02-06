@@ -4,6 +4,7 @@
 #include "i18n.h"
 #include "iuimanager.h"
 #include "istatusbarmanager.h"
+#include "itoolbarmanager.h"
 #include <wx/artprov.h>
 #include <wx/toolbar.h>
 #include <wx/menu.h>
@@ -13,9 +14,9 @@ namespace ui
 {
 
 TopLevelFrame::TopLevelFrame() :
-	wxFrame(NULL, wxID_ANY, wxT("DarkRadiant")),
-	_topLevelContainer(NULL),
-	_mainContainer(NULL)
+	wxFrame(nullptr, wxID_ANY, wxT("DarkRadiant")),
+	_topLevelContainer(nullptr),
+	_mainContainer(nullptr)
 {
 	_topLevelContainer = new wxBoxSizer(wxVERTICAL);
 	SetSizer(_topLevelContainer);
@@ -28,8 +29,8 @@ TopLevelFrame::TopLevelFrame() :
 	}
 
 	// Instantiate the ToolbarManager and retrieve the view toolbar widget
-	IToolbarManager& tbCreator = GlobalUIManager().getToolbarManager();
-	wxToolBar* viewToolbar = tbCreator.createToolbar("view", this);
+	auto* viewToolbar = GlobalToolBarManager().createToolbar("view", this);
+
 	if (viewToolbar)
 	{
 		_toolbars[IMainFrame::Toolbar::TOP] = viewToolbar;
@@ -46,7 +47,8 @@ TopLevelFrame::TopLevelFrame() :
 	_topLevelContainer->Add(_mainContainer, 1, wxEXPAND);
 
 	// Get the edit toolbar widget
-	wxToolBar* editToolbar = tbCreator.createToolbar("edit", this);
+	auto* editToolbar = GlobalToolBarManager().createToolbar("edit", this);
+
 	if (editToolbar)
 	{
 		_toolbars[IMainFrame::Toolbar::LEFT] = editToolbar;
@@ -83,9 +85,9 @@ TopLevelFrame::TopLevelFrame() :
 
 wxToolBar* TopLevelFrame::getToolbar(IMainFrame::Toolbar type)
 {
-	ToolbarMap::const_iterator found = _toolbars.find(type);
+	auto found = _toolbars.find(type);
 
-	return (found != _toolbars.end()) ? found->second.get() : nullptr;
+	return found != _toolbars.end() ? found->second.get() : nullptr;
 }
 
 bool TopLevelFrame::Destroy()

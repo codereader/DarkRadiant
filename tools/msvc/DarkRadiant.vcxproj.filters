@@ -176,6 +176,9 @@
     <Filter Include="src\ui\favourites">
       <UniqueIdentifier>{7622b801-2cd2-4a68-b36c-1ed469312464}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ui\toolbar">
+      <UniqueIdentifier>{bceb5724-df70-4343-aeee-c6310eb63097}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\main.cpp">
@@ -496,9 +499,6 @@
     <ClCompile Include="..\..\radiant\uimanager\SoundShaderPreview.cpp">
       <Filter>src\uimanager</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\uimanager\ToolbarManager.cpp">
-      <Filter>src\uimanager</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\uimanager\UIManager.cpp">
       <Filter>src\uimanager</Filter>
     </ClCompile>
@@ -681,6 +681,9 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\statusbar\MapStatistics.cpp">
       <Filter>src\ui\statusbar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\toolbar\ToolbarManager.cpp">
+      <Filter>src\ui\toolbar</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1077,9 +1080,6 @@
     <ClInclude Include="..\..\radiant\uimanager\SoundShaderPreview.h">
       <Filter>src\uimanager</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\uimanager\ToolbarManager.h">
-      <Filter>src\uimanager</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\uimanager\UIManager.h">
       <Filter>src\uimanager</Filter>
     </ClInclude>
@@ -1310,6 +1310,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\statusbar\ShaderClipboardStatus.h">
       <Filter>src\ui\statusbar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\toolbar\ToolbarManager.h">
+      <Filter>src\ui\toolbar</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

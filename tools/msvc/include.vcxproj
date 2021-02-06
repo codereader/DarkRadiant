@@ -193,6 +193,7 @@
     <ClInclude Include="..\..\include\ispeakernode.h" />
     <ClInclude Include="..\..\include\istatusbarmanager.h" />
     <ClInclude Include="..\..\include\itextstream.h" />
+    <ClInclude Include="..\..\include\itoolbarmanager.h" />
     <ClInclude Include="..\..\include\itraceable.h" />
     <ClInclude Include="..\..\include\itransformable.h" />
     <ClInclude Include="..\..\include\itransformnode.h" />

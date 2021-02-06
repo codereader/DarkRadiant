@@ -1,8 +1,9 @@
 #pragma once
 
+#include "itoolbarmanager.h"
+
 #include <set>
 #include <string>
-#include "iuimanager.h"
 #include "xmlutil/Node.h"
 #include <memory>
 
@@ -16,23 +17,26 @@
 class wxToolBarToolBase;
 class wxWindowDestroyEvent;
 
-namespace ui {
+namespace ui
+{
 
-class ToolbarManager :
+class ToolbarManager final :
 	public IToolbarManager
 {
+private:
 	// This is where the available Toolbar names are stored after parsing the XML file
-	typedef std::set<std::string> ToolbarList;
-	ToolbarList _toolbars;
+    std::set<std::string> _toolbars;
 
-	static int _nextToolItemId;
+	int _nextToolItemId;
 
 public:
 	// Returns the toolbar that is named toolbarName
 	wxToolBar* createToolbar(const std::string& name, wxWindow* parent) override;
 
-	// Load toolbars from registry
-	void initialise();
+    // RegisterableModule
+    const std::string& getName() const override;
+    const StringSet& getDependencies() const override;
+    void initialiseModule(const IApplicationContext& ctx) override;
 
 private:
 	/**

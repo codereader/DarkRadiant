@@ -159,6 +159,7 @@ add_executable(darkradiant
                ui/surfaceinspector/SurfaceInspector.cpp
                ui/texturebrowser/TextureBrowser.cpp
                ui/texturebrowser/TextureBrowserManager.cpp
+               ui/toolbar/ToolbarManager.cpp
                ui/transform/TransformDialog.cpp
                ui/UserInterfaceModule.cpp
                xyview/FloatingOrthoView.cpp

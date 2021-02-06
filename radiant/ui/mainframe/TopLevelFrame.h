@@ -25,8 +25,7 @@ private:
 
     wxutil::ScrollEventPropagationFilterPtr _scrollEventFilter;
 
-	typedef std::map<IMainFrame::Toolbar, wxWindowPtr<wxToolBar> > ToolbarMap;
-	ToolbarMap _toolbars;
+    std::map<IMainFrame::Toolbar, wxWindowPtr<wxToolBar>> _toolbars;
 
 public:
 	TopLevelFrame();
