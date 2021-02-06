@@ -247,8 +247,8 @@ MediaBrowserTreeView::MediaBrowserTreeView(wxWindow* parent) :
 
 const MediaBrowserTreeView::TreeColumns& MediaBrowserTreeView::Columns() const
 {
-    static TreeColumns _columns;
-    return _columns;
+    static TreeColumns _treeColumns;
+    return _treeColumns;
 }
 
 void MediaBrowserTreeView::SetTreeMode(MediaBrowserTreeView::TreeMode mode)
