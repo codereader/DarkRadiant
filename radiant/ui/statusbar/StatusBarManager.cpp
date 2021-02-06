@@ -15,6 +15,9 @@
 namespace ui
 {
 
+namespace statusbar
+{
+
 StatusBarManager::StatusBarManager() :
 	_tempParent(new wxFrame(nullptr, wxID_ANY, "")),
     _statusBar(new wxPanel(_tempParent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS | wxNO_BORDER))
@@ -54,17 +57,12 @@ void StatusBarManager::initialiseModule(const IApplicationContext& ctx)
     addTextElement(
         STATUSBAR_COMMAND,
         "",  // no icon
-        IStatusBarManager::POS_COMMAND,
+        StandardPosition::Command,
         _("Describes available Mouse Commands")
     );
 
     GlobalMainFrame().signal_MainFrameShuttingDown().connect(
         sigc::mem_fun(this, &StatusBarManager::onMainFrameShuttingDown));
-}
-
-void StatusBarManager::shutdownModule()
-{
-
 }
 
 wxWindow* StatusBarManager::getStatusBar()
@@ -77,11 +75,11 @@ void StatusBarManager::addElement(const std::string& name, wxWindow* widget, int
 	// Get a free position
 	int freePos = getFreePosition(pos);
 
-	StatusBarElementPtr element(new StatusBarElement(widget));
+	auto element = std::make_shared<StatusBarElement>(widget);
 
 	// Store this element
-	_elements.insert(ElementMap::value_type(name, element));
-	_positions.insert(PositionMap::value_type(freePos, element));
+	_elements.emplace(name, element);
+	_positions.emplace(freePos, element);
 
 	rebuildStatusBar();
 }
@@ -124,11 +122,11 @@ void StatusBarManager::addTextElement(const std::string& name, const std::string
 		label->SetToolTip(description);
 	}
 
-	StatusBarElementPtr element(new StatusBarElement(textPanel, label));
+	auto element = std::make_shared<StatusBarElement>(textPanel, label);
 
 	// Store this element
-	_elements.insert(ElementMap::value_type(name, element));
-	_positions.insert(PositionMap::value_type(freePos, element));
+	_elements.emplace(name, element);
+    _positions.emplace(freePos, element);
 
 	rebuildStatusBar();
 }
@@ -262,4 +260,6 @@ void StatusBarManager::onMainFrameShuttingDown()
 
 module::StaticModule<StatusBarManager> statusBarManagerModule;
 
-} // namespace ui
+} // namespace
+
+} // namespace

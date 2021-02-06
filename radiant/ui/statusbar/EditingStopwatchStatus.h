@@ -6,6 +6,9 @@
 namespace ui
 {
 
+namespace statusbar
+{
+
 // Class handling the editing stop watch UI part (status bar and app-is-active checks)
 class EditingStopwatchStatus
 {
@@ -23,5 +26,7 @@ private:
 
 	void onTimerChanged();
 };
+
+}
 
 }

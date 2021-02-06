@@ -14,7 +14,7 @@
 #include "MapFileProgressHandler.h"
 #include "ManipulatorToggle.h"
 #include "SelectionModeToggle.h"
-#include "shaderclipboard/ShaderClipboardStatus.h"
+#include "statusbar/ShaderClipboardStatus.h"
 #include "statusbar/EditingStopwatchStatus.h"
 #include "statusbar/MapStatistics.h"
 #include "messages/CommandExecutionFailed.h"
@@ -43,8 +43,8 @@ private:
 	std::unique_ptr<AutoSaveRequestHandler> _autoSaveRequestHandler;
 	std::unique_ptr<FileSelectionRequestHandler> _fileSelectionRequestHandler;
 	std::unique_ptr<FileOverwriteConfirmationHandler> _fileOverwriteConfirmationHandler;
-	std::unique_ptr<ShaderClipboardStatus> _shaderClipboardStatus;
-	std::unique_ptr<EditingStopwatchStatus> _editStopwatchStatus;
+	std::unique_ptr<statusbar::ShaderClipboardStatus> _shaderClipboardStatus;
+	std::unique_ptr<statusbar::EditingStopwatchStatus> _editStopwatchStatus;
 	std::unique_ptr<statusbar::MapStatistics> _mapStatisticsStatus;
 	std::unique_ptr<ManipulatorToggle> _manipulatorToggle;
 	std::unique_ptr<SelectionModeToggle> _selectionModeToggle;

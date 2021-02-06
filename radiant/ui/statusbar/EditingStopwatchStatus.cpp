@@ -11,6 +11,9 @@
 namespace ui
 {
 
+namespace statusbar
+{
+
 namespace
 {
 	const char* const STATUS_BAR_ELEMENT = "EditTime";
@@ -29,7 +32,7 @@ EditingStopwatchStatus::EditingStopwatchStatus()
 
 	// Add the status bar element
 	GlobalStatusBarManager().addTextElement(STATUS_BAR_ELEMENT, "stopwatch.png",
-		IStatusBarManager::POS_MAP_EDIT_TIME, _("Time spent on this map"));
+		StandardPosition::MapEditStopwatch, _("Time spent on this map"));
 
 	GlobalStatusBarManager().setText(STATUS_BAR_ELEMENT, "00:00:00");
 }
@@ -62,6 +65,8 @@ void EditingStopwatchStatus::onTimerChanged()
 		GlobalStatusBarManager().setText(STATUS_BAR_ELEMENT,
 			fmt::format("{0:02d}:{1:02d}:{2:02d}", hours, minutes, seconds));
 	});
+}
+
 }
 
 }

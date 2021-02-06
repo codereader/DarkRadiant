@@ -706,7 +706,7 @@ void XYWndManager::initialiseModule(const IApplicationContext& ctx)
 	GlobalStatusBarManager().addTextElement(
 		"XYZPos",
 		"",  // no icon
-		IStatusBarManager::POS_POSITION,
+		statusbar::StandardPosition::OrthoViewPosition,
 		_("Shows the mouse position in the orthoview")
 	);
 

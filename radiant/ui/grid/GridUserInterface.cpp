@@ -46,7 +46,7 @@ void GridUserInterface::initialiseModule(const IApplicationContext& ctx)
 
 	// Add the grid status bar element
 	GlobalStatusBarManager().addTextElement("GridStatus", "grid_up.png", 
-		IStatusBarManager::POS_GRID, _("Current Grid Size"));
+		statusbar::StandardPosition::GridSize, _("Current Grid Size"));
 	GlobalStatusBarManager().setText("GridStatus", getGridStatusText());
 
 	_gridChangedConn = GlobalGrid().signal_gridChanged().connect(

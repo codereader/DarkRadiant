@@ -544,9 +544,9 @@
     <ClInclude Include="..\..\radiant\ui\script\ScriptWindow.h" />
     <ClInclude Include="..\..\radiant\ui\SelectionModeToggle.h" />
     <ClInclude Include="..\..\radiant\ui\selectionset\SelectionSetToolmenu.h" />
-    <ClInclude Include="..\..\radiant\ui\shaderclipboard\ShaderClipboardStatus.h" />
     <ClInclude Include="..\..\radiant\ui\statusbar\EditingStopwatchStatus.h" />
     <ClInclude Include="..\..\radiant\ui\statusbar\MapStatistics.h" />
+    <ClInclude Include="..\..\radiant\ui\statusbar\ShaderClipboardStatus.h" />
     <ClInclude Include="..\..\radiant\ui\statusbar\StatusBarManager.h" />
     <ClInclude Include="..\..\radiant\ui\texturebrowser\TextureBrowserManager.h" />
     <ClInclude Include="..\..\radiant\ui\transform\TransformDialog.h" />

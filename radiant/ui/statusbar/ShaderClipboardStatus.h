@@ -10,6 +10,9 @@
 namespace ui
 {
 
+namespace statusbar
+{
+
 class ShaderClipboardStatus
 {
 private:
@@ -23,7 +26,7 @@ public:
 		GlobalStatusBarManager().addTextElement(
 			STATUS_BAR_ELEMENT,
 			"icon_texture.png",
-			IStatusBarManager::POS_SHADERCLIPBOARD,
+            StandardPosition::ShaderClipboard,
 			_("The name of the shader in the clipboard")
 		);
 
@@ -71,5 +74,7 @@ private:
 		GlobalStatusBarManager().setText(STATUS_BAR_ELEMENT, statusText);
 	}
 };
+
+}
 
 }

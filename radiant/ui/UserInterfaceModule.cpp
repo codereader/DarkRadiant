@@ -209,8 +209,8 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
 	SelectionSetToolmenu::Init();
 
 	_mruMenu.reset(new MRUMenu);
-	_shaderClipboardStatus.reset(new ShaderClipboardStatus);
-	_editStopwatchStatus.reset(new EditingStopwatchStatus);
+	_shaderClipboardStatus.reset(new statusbar::ShaderClipboardStatus);
+	_editStopwatchStatus.reset(new statusbar::EditingStopwatchStatus);
     _mapStatisticsStatus.reset(new statusbar::MapStatistics);
 	_manipulatorToggle.reset(new ManipulatorToggle);
 	_selectionModeToggle.reset(new SelectionModeToggle);

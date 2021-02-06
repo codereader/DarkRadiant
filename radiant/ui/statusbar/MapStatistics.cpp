@@ -12,6 +12,8 @@ namespace ui
 namespace statusbar
 {
 
+constexpr const char* const STATUS_BAR_ELEMENT = "MapStatistics";
+
 MapStatistics::MapStatistics()
 {
     _selectionChangedConn = GlobalSelectionSystem().signal_selectionChanged().connect(
@@ -24,9 +26,9 @@ MapStatistics::MapStatistics()
 
     // Add the counter element
     GlobalStatusBarManager().addTextElement(
-        "MapCounters",
+        STATUS_BAR_ELEMENT,
         "",  // no icon
-        IStatusBarManager::POS_BRUSHCOUNT,
+        StandardPosition::MapStatistics,
         _("Number of brushes/patches/entities in this map\n(Number of selected items shown in parentheses)")
     );
 
@@ -58,7 +60,7 @@ void MapStatistics::updateStatusBar()
             counterMgr.getCounter(counterEntities).get(),
             info.entityCount);
 
-    GlobalStatusBarManager().setText("MapCounters", text);
+    GlobalStatusBarManager().setText(STATUS_BAR_ELEMENT, text);
 }
 
 }

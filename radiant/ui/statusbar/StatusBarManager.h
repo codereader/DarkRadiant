@@ -10,6 +10,9 @@
 namespace ui
 {
 
+namespace statusbar 
+{
+
 class StatusBarManager :
 	public IStatusBarManager,
 	protected wxutil::SingleIdleCallback
@@ -65,8 +68,8 @@ public:
 	 *
 	 * @name: the name of the element (can be used for later lookup).
 	 * @widget: the widget to pack.
-	 * @pos: the position to insert. Use POS_FRONT or POS_BACK to put the element
-	 *       at the front or back of the status bar container.
+	 * @pos: the position to insert. Use StandardPosition::Front or StandardPosition::Back
+     * to put the element at the front or back of the status bar container.
 	 */
 	void addElement(const std::string& name, wxWindow* widget, int pos) override;
 
@@ -100,7 +103,6 @@ public:
     const std::string& getName() const override;
     const StringSet& getDependencies() const override;
     void initialiseModule(const IApplicationContext& ctx) override;
-    void shutdownModule() override;
 
 protected:
 	// Gets called when the app is idle - this fills in the status text
@@ -116,4 +118,6 @@ private:
 	void rebuildStatusBar();
 };
 
-} // namespace ui
+} // namespace
+
+} // namespace
