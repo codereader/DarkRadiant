@@ -219,8 +219,8 @@ inline std::ostream& operator<< (std::ostream& os, const RendererLight& l)
 }
 
 /**
- * \brief
- * Interface for an object which can test its intersection with a RendererLight.
+ * \brief Interface for an object which can test its intersection with a
+ * RendererLight.
  *
  * Objects which implement this interface define a intersectsLight() function
  * which determines whether the given light intersects the object.

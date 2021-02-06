@@ -329,6 +329,14 @@ namespace
         RenderFixture(bool solid = false): renderSolid(solid)
         {}
 
+        // Convenience method to set render backend and traverse a node and its
+        // children for rendering
+        void renderSubGraph(const scene::INodePtr& node)
+        {
+            node->setRenderSystem(backend);
+            node->traverse(*this);
+        }
+
         // NodeVisitor implementation
         bool pre(const scene::INodePtr& node) override
         {
@@ -432,6 +440,43 @@ TEST_F(EntityTest, RenderLightAsLightSource)
     ASSERT_TRUE(rLight->getShader() && rLight->getShader()->getMaterial());
     EXPECT_EQ(rLight->getShader()->getMaterial()->getName(),
               "lights/biground_torchflicker");
+}
+
+TEST_F(EntityTest, RenderEmptyFuncStatic)
+{
+    auto funcStatic = createByClassName("func_static");
+
+    // Func static without a model key is empty
+    RenderFixture rf;
+    funcStatic->traverse(rf);
+    EXPECT_EQ(rf.collector.lights, 0);
+    EXPECT_EQ(rf.collector.renderables, 0);
+}
+
+TEST_F(EntityTest, RenderFuncStaticWithModel)
+{
+    // Create a func_static with a model key
+    auto funcStatic = createByClassName("func_static");
+    funcStatic->getEntity().setKeyValue("model", "models/moss_patch.ase");
+
+    // We should get one renderable
+    RenderFixture rf;
+    rf.renderSubGraph(funcStatic);
+    EXPECT_EQ(rf.collector.lights, 0);
+    EXPECT_EQ(rf.collector.renderables, 1);
+}
+
+TEST_F(EntityTest, RenderFuncStaticWithMultiSurfaceModel)
+{
+    // Create a func_static with a model key
+    auto funcStatic = createByClassName("func_static");
+    funcStatic->getEntity().setKeyValue("model", "models/torch.lwo");
+
+    // This torch model has 3 renderable surfaces
+    RenderFixture rf;
+    rf.renderSubGraph(funcStatic);
+    EXPECT_EQ(rf.collector.lights, 0);
+    EXPECT_EQ(rf.collector.renderables, 3);
 }
 
 TEST_F(EntityTest, CreateAttachedLightEntity)
