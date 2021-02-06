@@ -1,11 +1,10 @@
 #pragma once
 
 #include <map>
-#include "ifiltermenu.h"
 #include "ifilter.h"
 #include "wxutil/menu/PopupMenu.h"
 
-namespace ui
+namespace wxutil
 {
 
 /** Utility class for generating the Filters top-level menu. This class
@@ -14,8 +13,7 @@ namespace ui
  * Construct a FiltersMenu instance to generate a new Filter Menu which
  * can be packed into a parent container widget using the getMenuWidget().
  */
-class FilterMenu :
-	public IFilterMenu
+class FilterPopupMenu
 {
 private:
 	std::map<std::string, wxMenuItem*> _filterItems;
@@ -24,9 +22,9 @@ private:
 
 public:
 	// Constructs the filter items
-	FilterMenu();
+    FilterPopupMenu();
 
-	~FilterMenu();
+	~FilterPopupMenu();
 
 	// Returns a wxMenu* with a fabricated filters submenu,
 	// ready for packing into a menu bar.

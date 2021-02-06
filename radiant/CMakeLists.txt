@@ -76,7 +76,6 @@ add_executable(darkradiant
                ui/filters/editor/FilterDialog.cpp
                ui/filters/editor/FilterEditor.cpp
                ui/filters/FilterContextMenu.cpp
-               ui/filters/FilterMenu.cpp
                ui/filters/FilterOrthoContextMenuItem.cpp
                ui/filters/FiltersMainMenu.cpp
                ui/filters/FilterUserInterface.cpp

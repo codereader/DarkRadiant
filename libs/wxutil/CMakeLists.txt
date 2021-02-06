@@ -19,6 +19,7 @@ add_library(wxutil
             FreezePointer.cpp
             GLWidget.cpp
             menu/PopupMenu.cpp
+            menu/FilterPopupMenu.cpp
             ModalProgressDialog.cpp
             MouseToolHandler.cpp
             PanedPosition.cpp

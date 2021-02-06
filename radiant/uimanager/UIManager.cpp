@@ -12,7 +12,6 @@
 #include "colourscheme/ColourSchemeEditor.h"
 #include "GroupDialog.h"
 #include "debugging/debugging.h"
-#include "ui/filters/FilterMenu.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "selectionlib.h"
 
@@ -45,11 +44,6 @@ IGroupDialog& UIManager::getGroupDialog() {
 
 IStatusBarManager& UIManager::getStatusBarManager() {
 	return *_statusBarManager;
-}
-
-IFilterMenuPtr UIManager::createFilterMenu()
-{
-	return IFilterMenuPtr(new FilterMenu);
 }
 
 void UIManager::clear()

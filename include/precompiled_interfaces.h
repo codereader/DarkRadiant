@@ -27,7 +27,6 @@
 #include "ifilesystem.h"
 #include "ifiletypes.h"
 #include "ifilter.h"
-#include "ifiltermenu.h"
 #include "ifonts.h"
 #include "igame.h"
 #include "igl.h"

@@ -146,6 +146,9 @@
       <Filter>dataview</Filter>
     </ClInclude>
     <ClInclude Include="..\..\libs\wxutil\bitmap.h" />
+    <ClInclude Include="..\..\libs\wxutil\menu\FilterPopupMenu.h">
+      <Filter>menu</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\wxutil\dialog\MessageBox.cpp">
@@ -221,6 +224,9 @@
     </ClCompile>
     <ClCompile Include="..\..\libs\wxutil\dataview\ResourceTreeViewToolbar.cpp">
       <Filter>dataview</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\wxutil\menu\FilterPopupMenu.cpp">
+      <Filter>menu</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -170,6 +170,7 @@
     <ClInclude Include="..\..\libs\wxutil\GLWidget.h" />
     <ClInclude Include="..\..\libs\wxutil\IConv.h" />
     <ClInclude Include="..\..\libs\wxutil\menu\CommandMenuItem.h" />
+    <ClInclude Include="..\..\libs\wxutil\menu\FilterPopupMenu.h" />
     <ClInclude Include="..\..\libs\wxutil\menu\IconTextMenuItem.h" />
     <ClInclude Include="..\..\libs\wxutil\menu\MenuItem.h" />
     <ClInclude Include="..\..\libs\wxutil\menu\PopupMenu.h" />
@@ -216,6 +217,7 @@
     <ClCompile Include="..\..\libs\wxutil\fsview\FileSystemView.cpp" />
     <ClCompile Include="..\..\libs\wxutil\fsview\Populator.cpp" />
     <ClCompile Include="..\..\libs\wxutil\GLWidget.cpp" />
+    <ClCompile Include="..\..\libs\wxutil\menu\FilterPopupMenu.cpp" />
     <ClCompile Include="..\..\libs\wxutil\menu\PopupMenu.cpp" />
     <ClCompile Include="..\..\libs\wxutil\ModalProgressDialog.cpp" />
     <ClCompile Include="..\..\libs\wxutil\MouseToolHandler.cpp" />

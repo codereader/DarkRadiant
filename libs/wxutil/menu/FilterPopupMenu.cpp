@@ -1,4 +1,4 @@
-#include "FilterMenu.h"
+#include "FilterPopupMenu.h"
 
 #include "iuimanager.h"
 #include "ieventmanager.h"
@@ -6,7 +6,7 @@
 
 #include "wxutil/menu/IconTextMenuItem.h"
 
-namespace ui
+namespace wxutil
 {
 
 namespace
@@ -14,14 +14,14 @@ namespace
 	const char* const MENU_ICON = "iconFilter16.png";
 }
 
-FilterMenu::FilterMenu() :
+FilterPopupMenu::FilterPopupMenu() :
 	_menu(new wxutil::PopupMenu)
 {
 	// Visit the filters in the FilterSystem to populate the menu
-	GlobalFilterSystem().forEachFilter(std::bind(&FilterMenu::visitFilter, this, std::placeholders::_1));
+	GlobalFilterSystem().forEachFilter(std::bind(&FilterPopupMenu::visitFilter, this, std::placeholders::_1));
 }
 
-FilterMenu::~FilterMenu()
+FilterPopupMenu::~FilterPopupMenu()
 {
 	for (const auto& i : _filterItems)
 	{
@@ -31,7 +31,7 @@ FilterMenu::~FilterMenu()
 	_menu = nullptr;
 }
 
-void FilterMenu::visitFilter(const std::string& filterName)
+void FilterPopupMenu::visitFilter(const std::string& filterName)
 {
 	wxMenuItem* item = _menu->Append(new wxutil::IconTextMenuItem(filterName, MENU_ICON));
 	item->SetCheckable(true);
@@ -43,7 +43,7 @@ void FilterMenu::visitFilter(const std::string& filterName)
 	_filterItems.emplace(eventName, item);
 }
 
-wxMenu* FilterMenu::getMenuWidget()
+wxMenu* FilterPopupMenu::getMenuWidget()
 {
 	return _menu;
 }

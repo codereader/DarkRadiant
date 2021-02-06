@@ -8,7 +8,6 @@
 #include "../XmlResourceBasedWidget.h"
 
 #include "igl.h"
-#include "ifiltermenu.h"
 #include "iscenegraph.h"
 #include "irender.h"
 
@@ -117,7 +116,6 @@ protected:
 	wxSizer* _toolbarSizer;
 
     // The filters menu
-    ui::IFilterMenuPtr _filtersMenu;
 	wxToolBarToolBase* _filterTool;
 
     IGLFont::Ptr _glFont;

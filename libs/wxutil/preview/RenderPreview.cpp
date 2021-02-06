@@ -12,6 +12,7 @@
 #include "registry/registry.h"
 #include "render/CamRenderer.h"
 #include "render/SceneRenderWalker.h"
+#include "wxutil/menu/FilterPopupMenu.h"
 
 #include "../GLWidget.h"
 #include <wx/sizer.h>
@@ -55,7 +56,6 @@ RenderPreview::RenderPreview(wxWindow* parent, bool enableAnimation) :
     _timer(this),
     _previewWidth(0),
     _previewHeight(0),
-    _filtersMenu(GlobalUIManager().createFilterMenu()),
 	_filterTool(nullptr)
 {
 	Bind(wxEVT_TIMER, &RenderPreview::_onFrame, this);
@@ -99,7 +99,8 @@ void RenderPreview::setupToolbars(bool enableAnimation)
     // Connect filters menu to toolbar
     wxToolBar* filterToolbar = findNamedObject<wxToolBar>(_mainPanel, "RenderPreviewFilterToolbar");
 
-    wxMenu* filterSubmenu = _filtersMenu->getMenuWidget();
+    auto filterPopupMenu = new wxutil::FilterPopupMenu();
+    wxMenu* filterSubmenu = filterPopupMenu->getMenuWidget();
 
     wxToolBarToolBase* filterTool = filterToolbar->AddTool(wxID_ANY, _("Filters"),
                                                            wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "iconFilter16.png"),

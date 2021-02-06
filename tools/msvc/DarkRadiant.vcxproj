@@ -258,7 +258,6 @@
     <ClCompile Include="..\..\radiant\ui\filters\editor\FilterDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\filters\editor\FilterEditor.cpp" />
     <ClCompile Include="..\..\radiant\ui\filters\FilterContextMenu.cpp" />
-    <ClCompile Include="..\..\radiant\ui\filters\FilterMenu.cpp" />
     <ClCompile Include="..\..\radiant\ui\filters\FilterOrthoContextMenuItem.cpp" />
     <ClCompile Include="..\..\radiant\ui\filters\FiltersMainMenu.cpp" />
     <ClCompile Include="..\..\radiant\ui\filters\FilterUserInterface.cpp" />
@@ -447,7 +446,6 @@
     <ClInclude Include="..\..\radiant\ui\filters\editor\FilterDialog.h" />
     <ClInclude Include="..\..\radiant\ui\filters\editor\FilterEditor.h" />
     <ClInclude Include="..\..\radiant\ui\filters\FilterContextMenu.h" />
-    <ClInclude Include="..\..\radiant\ui\filters\FilterMenu.h" />
     <ClInclude Include="..\..\radiant\ui\filters\FilterOrthoContextMenuItem.h" />
     <ClInclude Include="..\..\radiant\ui\filters\FiltersMainMenu.h" />
     <ClInclude Include="..\..\radiant\ui\filters\FilterUserInterface.h" />

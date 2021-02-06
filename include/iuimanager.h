@@ -228,8 +228,6 @@ namespace ui
 {
 
 class IDialogManager;	// see idialogmanager.h for definition
-class IFilterMenu;		// see ifiltermenu.h for definition
-typedef std::shared_ptr<IFilterMenu> IFilterMenuPtr;
 
 } // namespace ui
 
@@ -253,9 +251,6 @@ public:
 	// Returns the art provider prefix to acquire local bitmaps from the wxWidgets art provider
 	// Example: wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "darkradiant_icon_64x64.png")
 	virtual const std::string& ArtIdPrefix() const = 0;
-
-	// Creates and returns a new top-level filter menu bar, see ifiltermenu.h
-	virtual ui::IFilterMenuPtr createFilterMenu() = 0;
 };
 
 // This is the accessor for the UI manager

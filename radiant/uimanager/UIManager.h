@@ -43,19 +43,17 @@ public:
 
 	/** greebo: Retrieves the helper class to manipulate the menu.
 	 */
-	IMenuManager& getMenuManager();
+	IMenuManager& getMenuManager() override;
 
-	IToolbarManager& getToolbarManager();
+	IToolbarManager& getToolbarManager() override;
 
-	IGroupDialog& getGroupDialog();
+	IGroupDialog& getGroupDialog() override;
 
-	IStatusBarManager& getStatusBarManager();
+	IStatusBarManager& getStatusBarManager() override;
 
-	IDialogManager& getDialogManager();
+	IDialogManager& getDialogManager() override;
 
-	IFilterMenuPtr createFilterMenu();
-
-	const std::string& ArtIdPrefix() const;
+	const std::string& ArtIdPrefix() const override;
 
 	// Called on radiant shutdown
 	void clear();
