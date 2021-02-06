@@ -1,7 +1,7 @@
 #include "MouseToolManager.h"
 
 #include "iradiant.h"
-#include "iuimanager.h"
+#include "istatusbarmanager.h"
 #include "iregistry.h"
 #include "itextstream.h"
 #include "imainframe.h"
@@ -210,7 +210,7 @@ void MouseToolManager::updateStatusbar(unsigned int newState)
     }
 
     // Pass the call
-    GlobalUIManager().getStatusBarManager().setText(STATUSBAR_COMMAND, statusText);
+    GlobalStatusBarManager().setText(STATUSBAR_COMMAND, statusText);
 }
 
 module::StaticModule<MouseToolManager> mouseToolManagerModule;

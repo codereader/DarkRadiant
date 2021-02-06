@@ -7,7 +7,6 @@
 
 #include "menu/MenuManager.h"
 #include "ToolbarManager.h"
-#include "StatusBarManager.h"
 #include "DialogManager.h"
 #include "wxutil/event/SingleIdleCallback.h"
 #include <sigc++/connection.h>
@@ -28,7 +27,6 @@ class UIManager :
     // called before the main window is ready.
     std::shared_ptr<MenuManager> _menuManager;
     std::shared_ptr<ToolbarManager> _toolbarManager;
-    std::shared_ptr<StatusBarManager> _statusBarManager;
 	DialogManagerPtr _dialogManager;
 
 	LocalBitmapArtProvider* _bitmapArtProvider;
@@ -48,8 +46,6 @@ public:
 	IToolbarManager& getToolbarManager() override;
 
 	IGroupDialog& getGroupDialog() override;
-
-	IStatusBarManager& getStatusBarManager() override;
 
 	IDialogManager& getDialogManager() override;
 

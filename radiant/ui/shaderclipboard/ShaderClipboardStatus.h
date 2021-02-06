@@ -2,7 +2,7 @@
 
 #include "i18n.h"
 #include "ishaderclipboard.h"
-#include "iuimanager.h"
+#include "istatusbarmanager.h"
 #include <sigc++/connection.h>
 #include <sigc++/functors/mem_fun.h>
 #include <fmt/format.h>
@@ -20,7 +20,7 @@ private:
 public:
 	ShaderClipboardStatus()
 	{
-		GlobalUIManager().getStatusBarManager().addTextElement(
+		GlobalStatusBarManager().addTextElement(
 			STATUS_BAR_ELEMENT,
 			"icon_texture.png",
 			IStatusBarManager::POS_SHADERCLIPBOARD,
@@ -68,7 +68,7 @@ private:
 			statusText = _("ShaderClipboard is empty.");
 		}
 
-		GlobalUIManager().getStatusBarManager().setText(STATUS_BAR_ELEMENT, statusText);
+		GlobalStatusBarManager().setText(STATUS_BAR_ELEMENT, statusText);
 	}
 };
 

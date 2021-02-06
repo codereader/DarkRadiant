@@ -10,6 +10,7 @@
 #include "igrid.h"
 #include "iregion.h"
 #include "iuimanager.h"
+#include "istatusbarmanager.h"
 
 #include "wxutil/MouseButton.h"
 #include "wxutil/GLWidget.h"
@@ -521,7 +522,7 @@ void XYWnd::handleGLMouseMotion(int x, int y, unsigned int state, bool isDelta)
     _mousePosition = convertXYToWorld(x, y);
     snapToGrid(_mousePosition);
 
-    GlobalUIManager().getStatusBarManager().setText(
+    GlobalStatusBarManager().setText(
         "XYZPos",
         fmt::format(_("x: {0:6.1f} y: {1:6.1f} z: {2:6.1f}"),
             _mousePosition[0],

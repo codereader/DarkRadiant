@@ -1,6 +1,7 @@
 #include "StatusBarManager.h"
 
 #include "itextstream.h"
+#include "imainframe.h"
 
 #include <wx/sizer.h>
 #include <wx/artprov.h>
@@ -8,12 +9,13 @@
 #include <wx/statbmp.h>
 
 #include "LocalBitmapArtProvider.h"
+#include "module/StaticModule.h"
 
 namespace ui
 {
 
 StatusBarManager::StatusBarManager() :
-	_tempParent(new wxFrame(NULL, wxID_ANY, "")),
+	_tempParent(new wxFrame(nullptr, wxID_ANY, "")),
     _statusBar(new wxPanel(_tempParent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS | wxNO_BORDER))
 {
     _tempParent->SetName("StatusBarTemporaryParent");
@@ -25,8 +27,51 @@ StatusBarManager::StatusBarManager() :
 	_statusBar->SetSizer(sizer);
 }
 
-StatusBarManager::~StatusBarManager()
+const std::string& StatusBarManager::getName() const
 {
+    static std::string _name(MODULE_STATUSBARMANAGER);
+    return _name;
+}
+
+const StringSet& StatusBarManager::getDependencies() const
+{
+    static StringSet _dependencies;
+
+    if (_dependencies.empty())
+    {
+        _dependencies.insert(MODULE_MAINFRAME);
+    }
+
+    return _dependencies;
+}
+
+void StatusBarManager::initialiseModule(const IApplicationContext& ctx)
+{
+    rMessage() << getName() << "::initialiseModule called." << std::endl;
+
+    // Add the statusbar command text item
+    addTextElement(
+        STATUSBAR_COMMAND,
+        "",  // no icon
+        IStatusBarManager::POS_COMMAND,
+        _("Describes available Mouse Commands")
+    );
+
+    // Add the counter element
+    addTextElement(
+        "MapCounters",
+        "",  // no icon
+        IStatusBarManager::POS_BRUSHCOUNT,
+        _("Number of brushes/patches/entities in this map\n(Number of selected items shown in parentheses)")
+    );
+
+    GlobalMainFrame().signal_MainFrameShuttingDown().connect(
+        sigc::mem_fun(this, &StatusBarManager::onMainFrameShuttingDown));
+}
+
+void StatusBarManager::shutdownModule()
+{
+
 }
 
 wxWindow* StatusBarManager::getStatusBar()
@@ -51,10 +96,10 @@ void StatusBarManager::addElement(const std::string& name, wxWindow* widget, int
 wxWindow* StatusBarManager::getElement(const std::string& name)
 {
 	// Look up the key
-	ElementMap::const_iterator found = _elements.find(name);
+	auto found = _elements.find(name);
 
 	// return NULL if not found
-	return (found != _elements.end()) ? found->second->toplevel : NULL;
+	return found != _elements.end() ? found->second->toplevel : nullptr;
 }
 
 void StatusBarManager::addTextElement(const std::string& name, const std::string& icon, 
@@ -222,5 +267,7 @@ void StatusBarManager::onMainFrameShuttingDown()
     _tempParent->Destroy();
     _tempParent = nullptr;
 }
+
+module::StaticModule<StatusBarManager> statusBarManagerModule;
 
 } // namespace ui

@@ -5,6 +5,7 @@
 #include "itextstream.h"
 #include "iregistry.h"
 #include "iradiant.h"
+#include "istatusbarmanager.h"
 #include "icounter.h"
 #include "imainframe.h"
 #include "icommandsystem.h"
@@ -42,14 +43,8 @@ IGroupDialog& UIManager::getGroupDialog() {
 	return GroupDialog::Instance();
 }
 
-IStatusBarManager& UIManager::getStatusBarManager() {
-	return *_statusBarManager;
-}
-
 void UIManager::clear()
 {
-	_statusBarManager->onMainFrameShuttingDown();
-
 	_menuManager->clear();
 	_dialogManager.reset();
 
@@ -80,6 +75,7 @@ const StringSet& UIManager::getDependencies() const
 		_dependencies.insert(MODULE_SELECTIONSYSTEM);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
 		_dependencies.insert(MODULE_COUNTER);
+		_dependencies.insert(MODULE_STATUSBARMANAGER);
 	}
 
 	return _dependencies;
@@ -106,23 +102,6 @@ void UIManager::initialiseModule(const IApplicationContext& ctx)
 	GlobalMainFrame().signal_MainFrameShuttingDown().connect(
         sigc::mem_fun(this, &UIManager::clear)
     );
-
-	// Add the statusbar command text item
-    _statusBarManager = std::make_shared<StatusBarManager>();
-	_statusBarManager->addTextElement(
-		STATUSBAR_COMMAND,
-		"",  // no icon
-		IStatusBarManager::POS_COMMAND,
-		_("Describes available Mouse Commands")
-	);
-
-	// Add the counter element
-	GlobalUIManager().getStatusBarManager().addTextElement(
-		"MapCounters",
-		"",  // no icon
-		IStatusBarManager::POS_BRUSHCOUNT,
-		_("Number of brushes/patches/entities in this map\n(Number of selected items shown in parentheses)")
-	);
 
 	wxFileSystem::AddHandler(new wxLocalFSHandler);
 	wxXmlResource::Get()->InitAllHandlers();
@@ -167,7 +146,7 @@ void UIManager::updateCounterStatusBar()
 				counterMgr.getCounter(counterEntities).get(),
 			info.entityCount);
 
-	GlobalUIManager().getStatusBarManager().setText("MapCounters", text);
+	GlobalStatusBarManager().setText("MapCounters", text);
 }
 
 module::StaticModule<UIManager> uiManagerModule;

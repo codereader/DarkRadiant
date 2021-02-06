@@ -4,6 +4,7 @@
 #include "i18n.h"
 #include "ieventmanager.h"
 #include "iuimanager.h"
+#include "istatusbarmanager.h"
 #include "ipreferencesystem.h"
 #include "itextstream.h"
 
@@ -701,7 +702,7 @@ void XYWndManager::initialiseModule(const IApplicationContext& ctx)
 	// Add the commands to the EventManager
 	registerCommands();
 
-	GlobalUIManager().getStatusBarManager().addTextElement(
+	GlobalStatusBarManager().addTextElement(
 		"XYZPos",
 		"",  // no icon
 		IStatusBarManager::POS_POSITION,

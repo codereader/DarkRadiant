@@ -2,7 +2,7 @@
 
 #include "ieditstopwatch.h"
 #include "i18n.h"
-#include "iuimanager.h"
+#include "istatusbarmanager.h"
 #include "imainframe.h"
 #include <sigc++/functors/mem_fun.h>
 #include <fmt/format.h>
@@ -28,10 +28,10 @@ EditingStopwatchStatus::EditingStopwatchStatus()
 			sigc::mem_fun(this, &EditingStopwatchStatus::handleRequest)));
 
 	// Add the status bar element
-	GlobalUIManager().getStatusBarManager().addTextElement(STATUS_BAR_ELEMENT, "stopwatch.png",
+	GlobalStatusBarManager().addTextElement(STATUS_BAR_ELEMENT, "stopwatch.png",
 		IStatusBarManager::POS_MAP_EDIT_TIME, _("Time spent on this map"));
 
-	GlobalUIManager().getStatusBarManager().setText(STATUS_BAR_ELEMENT, "00:00:00");
+	GlobalStatusBarManager().setText(STATUS_BAR_ELEMENT, "00:00:00");
 }
 
 EditingStopwatchStatus::~EditingStopwatchStatus()
@@ -59,7 +59,7 @@ void EditingStopwatchStatus::onTimerChanged()
 		unsigned long minutes = (secondsEdited % 3600) / 60;
 		unsigned long seconds = secondsEdited % 60;
 
-		GlobalUIManager().getStatusBarManager().setText(STATUS_BAR_ELEMENT,
+		GlobalStatusBarManager().setText(STATUS_BAR_ELEMENT,
 			fmt::format("{0:02d}:{1:02d}:{2:02d}", hours, minutes, seconds));
 	});
 }

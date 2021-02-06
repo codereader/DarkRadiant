@@ -4,7 +4,7 @@
 #include <fmt/format.h>
 
 #include "i18n.h"
-#include "iuimanager.h"
+#include "istatusbarmanager.h"
 #include "imainframe.h"
 
 #include "module/StaticModule.h"
@@ -34,7 +34,7 @@ const StringSet& GridUserInterface::getDependencies() const
 	{
 		_dependencies.insert(MODULE_GRID);
 		_dependencies.insert(MODULE_EVENTMANAGER);
-		_dependencies.insert(MODULE_UIMANAGER);
+		_dependencies.insert(MODULE_STATUSBARMANAGER);
 	}
 
 	return _dependencies;
@@ -45,9 +45,9 @@ void GridUserInterface::initialiseModule(const IApplicationContext& ctx)
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 
 	// Add the grid status bar element
-	GlobalUIManager().getStatusBarManager().addTextElement("GridStatus", "grid_up.png", 
+	GlobalStatusBarManager().addTextElement("GridStatus", "grid_up.png", 
 		IStatusBarManager::POS_GRID, _("Current Grid Size"));
-	GlobalUIManager().getStatusBarManager().setText("GridStatus", getGridStatusText());
+	GlobalStatusBarManager().setText("GridStatus", getGridStatusText());
 
 	_gridChangedConn = GlobalGrid().signal_gridChanged().connect(
 		std::bind(&GridUserInterface::onGridChanged, this)
@@ -80,7 +80,7 @@ void GridUserInterface::onGridChanged()
 		GlobalEventManager().setToggled(item.second, GlobalGrid().getGridPower() == item.first);
 	}
 
-	GlobalUIManager().getStatusBarManager().setText("GridStatus", getGridStatusText());
+	GlobalStatusBarManager().setText("GridStatus", getGridStatusText());
 
 	GlobalMainFrame().updateAllWindows();
 }

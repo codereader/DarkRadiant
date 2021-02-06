@@ -3,6 +3,7 @@
 #include "itextstream.h"
 #include "i18n.h"
 #include "iuimanager.h"
+#include "istatusbarmanager.h"
 #include <wx/artprov.h>
 #include <wx/toolbar.h>
 #include <wx/menu.h>
@@ -58,7 +59,7 @@ TopLevelFrame::TopLevelFrame() :
 		rWarning() << "MainFrame: Cannot instantiate edit toolbar!" << std::endl;
 	}
 
-	wxWindow* statusBar = GlobalUIManager().getStatusBarManager().getStatusBar();
+	wxWindow* statusBar = GlobalStatusBarManager().getStatusBar();
 
 	statusBar->Reparent(this);
 	statusBar->SetCanFocus(false);

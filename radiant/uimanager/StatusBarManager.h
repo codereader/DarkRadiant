@@ -1,6 +1,6 @@
 #pragma once
 
-#include "iuimanager.h"
+#include "istatusbarmanager.h"
 #include <map>
 #include "wxutil/event/SingleIdleCallback.h"
 
@@ -54,8 +54,6 @@ class StatusBarManager :
 public:
 	StatusBarManager();
 
-	~StatusBarManager();
-
 	/**
 	 * Get the status bar widget, for packing into the main window.
 	 */
@@ -98,13 +96,19 @@ public:
 	 */
     void setText(const std::string& name, const std::string& text, bool immediateUpdate) override;
 
-	void onMainFrameShuttingDown();
+    // RegisterableModule
+    const std::string& getName() const override;
+    const StringSet& getDependencies() const override;
+    void initialiseModule(const IApplicationContext& ctx) override;
+    void shutdownModule() override;
 
 protected:
 	// Gets called when the app is idle - this fills in the status text
 	void onIdle() override;
 
 private:
+	void onMainFrameShuttingDown();
+
 	// Returns an integer position which is not used yet.
 	int getFreePosition(int desiredPosition);
 
