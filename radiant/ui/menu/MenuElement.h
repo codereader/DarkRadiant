@@ -7,7 +7,7 @@
 
 /** greebo: This is a representation of a general menu item/element.
  *
- * The possible menuitem types are defined in iuimanager.h.
+ * The possible menuitem types are defined in imenumanager.h.
  * Each menu item can have a list of sub-MenuElements (this applies to the
  * types eMenuBar and eFolder).
  *

@@ -1,7 +1,6 @@
 #include "Populator.h"
 
 #include "i18n.h"
-#include "iuimanager.h"
 #include "ifiletypes.h"
 #include "iarchive.h"
 #include "os/path.h"

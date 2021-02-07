@@ -4,7 +4,6 @@
 #include "i18n.h"
 #include "imenumanager.h"
 #include "istatusbarmanager.h"
-#include "iuimanager.h"
 #include "itoolbarmanager.h"
 #include "wxutil/Bitmap.h"
 #include <wx/toolbar.h>

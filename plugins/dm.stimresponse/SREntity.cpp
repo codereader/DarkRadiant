@@ -1,6 +1,5 @@
 #include "SREntity.h"
 
-#include "iuimanager.h"
 #include "iregistry.h"
 #include "itextstream.h"
 #include "ieclass.h"

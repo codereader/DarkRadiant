@@ -2,7 +2,6 @@
 
 #include "i18n.h"
 #include "ieclass.h"
-#include "iuimanager.h"
 #include "ientity.h"
 
 #include <wx/panel.h>

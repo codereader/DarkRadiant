@@ -7,7 +7,6 @@
 #include "iundo.h"
 #include "ibrush.h"
 #include "ipatch.h"
-#include "iuimanager.h"
 #include "itoolbarmanager.h"
 #include "itextstream.h"
 

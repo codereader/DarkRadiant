@@ -1,7 +1,6 @@
 #include "TreeView.h"
 
 #include "i18n.h"
-#include "iuimanager.h"
 
 #include <wx/eventfilter.h>
 #include <wx/bmpbuttn.h>

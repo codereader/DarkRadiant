@@ -1,6 +1,5 @@
 #include "StimTypes.h"
 
-#include "iuimanager.h"
 #include "itextstream.h"
 #include "string/string.h"
 #include "wxutil/dataview/TreeModel.h"

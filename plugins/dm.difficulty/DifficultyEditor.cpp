@@ -1,7 +1,6 @@
 #include "DifficultyEditor.h"
 
 #include "i18n.h"
-#include "iuimanager.h"
 
 #include "wxutil/dataview/TreeView.h"
 #include "wxutil/ChoiceHelper.h"

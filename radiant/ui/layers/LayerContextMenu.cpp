@@ -1,6 +1,5 @@
 #include "LayerContextMenu.h"
 
-#include "iuimanager.h"
 #include "imap.h"
 #include "wxutil/menu/IconTextMenuItem.h"
 

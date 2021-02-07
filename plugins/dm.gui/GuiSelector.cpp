@@ -4,7 +4,6 @@
 
 #include "i18n.h"
 #include "imainframe.h"
-#include "iuimanager.h"
 #include "gui/GuiManager.h"
 #include "wxutil/dialog/MessageBox.h"
 

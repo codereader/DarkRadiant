@@ -1,7 +1,6 @@
 #include "SkinChooser.h"
 
 #include "i18n.h"
-#include "iuimanager.h"
 #include "imainframe.h"
 #include "itextstream.h"
 #include "modelskin.h"

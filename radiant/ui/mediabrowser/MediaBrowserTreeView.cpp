@@ -3,7 +3,6 @@
 #include <map>
 #include "i18n.h"
 #include "ifavourites.h"
-#include "iuimanager.h"
 #include "icommandsystem.h"
 #include "ui/common/MaterialDefinitionView.h"
 #include "TextureDirectoryLoader.h"

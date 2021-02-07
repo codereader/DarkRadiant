@@ -1,7 +1,6 @@
 #include "ObjectiveConditionsDialog.h"
 
 #include "imainframe.h"
-#include "iuimanager.h"
 #include "i18n.h"
 #include "itextstream.h"
 

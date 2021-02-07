@@ -7,7 +7,6 @@
 
 #include "EClassTreeBuilder.h"
 #include "i18n.h"
-#include "iuimanager.h"
 
 #include <functional>
 

@@ -2,7 +2,6 @@
 
 #include "iscript.h"
 #include "igroupdialog.h"
-#include "iuimanager.h"
 #include "iundo.h"
 #include "i18n.h"
 

@@ -8,7 +8,6 @@
 #include "itextstream.h"
 #include "iradiant.h"
 #include "ieventmanager.h"
-#include "iuimanager.h"
 #include "imainframe.h"
 #include "igroupdialog.h"
 

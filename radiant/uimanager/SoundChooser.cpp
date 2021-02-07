@@ -1,7 +1,6 @@
 #include "SoundChooser.h"
 
 #include "i18n.h"
-#include "iuimanager.h"
 #include "isound.h"
 #include "imainframe.h"
 #include "ifavourites.h"

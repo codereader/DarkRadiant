@@ -2,7 +2,6 @@
 
 #include "i18n.h"
 #include "ifavourites.h"
-#include "iuimanager.h"
 #include "imainframe.h"
 #include "icommandsystem.h"
 #include "iorthoview.h"

@@ -3,7 +3,6 @@
 #include "ianimationchooser.h"
 #include "idialogmanager.h"
 #include "iresourcechooser.h"
-#include "iuimanager.h"
 #include "i18n.h"
 #include "string/convert.h"
 #include <wx/checkbox.h>

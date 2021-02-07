@@ -5,7 +5,6 @@
 #include "iscenegraph.h"
 #include "itextstream.h"
 #include "imainframe.h"
-#include "iuimanager.h"
 #include "selectionlib.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "string/string.h"

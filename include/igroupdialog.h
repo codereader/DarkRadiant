@@ -1,10 +1,13 @@
 #pragma once
 
-#include <string>
+#include "imodule.h"
 #include <memory>
 
 class wxWindow;
 class wxFrame;
+
+namespace ui
+{
 
 /**
  * greebo: This defines the interface for accessing the GroupDialog
@@ -127,3 +130,28 @@ public:
 	 */
 	virtual void reparentNotebookToSelf() = 0;
 };
+
+// GroupDialog host module
+class IGroupDialogManager :
+    public RegisterableModule
+{
+public:
+    virtual ~IGroupDialogManager() {}
+
+    virtual IGroupDialog& get() = 0;
+};
+
+} // namespace
+
+constexpr const char* const MODULE_GROUPDIALOG("GroupDialogModule");
+
+inline ui::IGroupDialogManager& GlobalGroupDialogManager()
+{
+    static module::InstanceReference<ui::IGroupDialogManager> _reference(MODULE_GROUPDIALOG);
+    return _reference;
+}
+
+inline ui::IGroupDialog& GlobalGroupDialog()
+{
+    return GlobalGroupDialogManager().get();
+}

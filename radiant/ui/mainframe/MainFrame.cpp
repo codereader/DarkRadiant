@@ -4,7 +4,6 @@
 #include "igroupdialog.h"
 #include "imap.h"
 #include "ieventmanager.h"
-#include "iuimanager.h"
 #include "ipreferencesystem.h"
 #include "ientityinspector.h"
 #include "iorthoview.h"

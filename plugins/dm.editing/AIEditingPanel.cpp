@@ -8,7 +8,6 @@
 #include "imainframe.h"
 #include "iundo.h"
 #include "igroupdialog.h"
-#include "iuimanager.h"
 #include "selectionlib.h"
 
 #include "SpawnargLinkedCheckbox.h"

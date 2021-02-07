@@ -2,7 +2,6 @@
 
 #include "i18n.h"
 #include "imainframe.h"
-#include "iuimanager.h"
 #include "imousetoolmanager.h"
 #include "ishaderclipboard.h"
 

@@ -2,7 +2,6 @@
 
 #include "i18n.h"
 #include "iclipboard.h"
-#include "iuimanager.h"
 #include "ifavourites.h"
 #include "../menu/IconTextMenuItem.h"
 #include "TreeViewItemStyle.h"

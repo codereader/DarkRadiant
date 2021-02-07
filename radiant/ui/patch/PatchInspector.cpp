@@ -2,7 +2,6 @@
 
 #include "i18n.h"
 #include "itextstream.h"
-#include "iuimanager.h"
 #include "imainframe.h"
 #include "iundo.h"
 

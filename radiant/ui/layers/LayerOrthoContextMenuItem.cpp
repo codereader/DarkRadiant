@@ -3,7 +3,6 @@
 #include "icommandsystem.h"
 #include "ilayer.h"
 #include "imap.h"
-#include "iuimanager.h"
 #include "selectionlib.h"
 
 namespace ui

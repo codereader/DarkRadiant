@@ -3,7 +3,6 @@
 #include "i18n.h"
 #include "iundo.h"
 #include "imainframe.h"
-#include "iuimanager.h"
 #include "iscenegraph.h"
 
 #include "gamelib.h"

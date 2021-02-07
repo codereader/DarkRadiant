@@ -9,7 +9,6 @@
 #include "icommandsystem.h"
 #include "igroupdialog.h"
 #include "ipreferencesystem.h"
-#include "iuimanager.h"
 #include "itextstream.h"
 #include "module/StaticModule.h"
 

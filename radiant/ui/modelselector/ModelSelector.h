@@ -7,7 +7,6 @@
 
 #include "modelskin.h"
 #include "iradiant.h"
-#include "iuimanager.h"
 
 #include "wxutil/dialog/DialogBase.h"
 #include "wxutil/preview/ModelPreview.h"

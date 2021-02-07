@@ -11,7 +11,6 @@
 #include "selectionlib.h"
 #include "ientity.h" // Node_getEntity()
 #include "iregistry.h"
-#include "iuimanager.h"
 #include "imainframe.h"
 
 #include "wxutil/dialog/MessageBox.h"

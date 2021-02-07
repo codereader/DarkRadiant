@@ -2,7 +2,6 @@
 
 #include "i18n.h"
 #include "iparticles.h"
-#include "iuimanager.h"
 #include "iradiant.h"
 #include "ifavourites.h"
 

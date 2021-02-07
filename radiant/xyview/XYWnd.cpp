@@ -9,7 +9,6 @@
 #include "ientity.h"
 #include "igrid.h"
 #include "iregion.h"
-#include "iuimanager.h"
 #include "istatusbarmanager.h"
 
 #include "wxutil/MouseButton.h"

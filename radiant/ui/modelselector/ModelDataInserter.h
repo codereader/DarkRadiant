@@ -1,6 +1,5 @@
 #pragma once
 
-#include "iuimanager.h"
 #include "wxutil/dataview/VFSTreePopulator.h"
 #include "wxutil/dataview/TreeViewItemStyle.h"
 #include "ifavourites.h"

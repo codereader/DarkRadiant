@@ -1,6 +1,5 @@
 #include "AnglePropertyEditor.h"
 
-#include "iuimanager.h"
 #include "ientity.h"
 #include "string/convert.h"
 

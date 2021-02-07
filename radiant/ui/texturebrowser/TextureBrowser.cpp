@@ -4,7 +4,6 @@
 #include "ieventmanager.h"
 #include "itextstream.h"
 #include "imainframe.h"
-#include "iuimanager.h"
 #include "itoolbarmanager.h"
 #include "icolourscheme.h"
 #include "igroupdialog.h"

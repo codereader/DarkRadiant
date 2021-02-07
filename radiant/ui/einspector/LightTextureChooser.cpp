@@ -2,7 +2,6 @@
 
 #include "i18n.h"
 #include "ishaders.h"
-#include "iuimanager.h"
 #include "imainframe.h"
 #include "igame.h"
 #include "igroupdialog.h"

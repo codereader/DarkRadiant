@@ -3,7 +3,6 @@
 #include "i18n.h"
 #include "ieventmanager.h"
 #include "imainframe.h"
-#include "iuimanager.h"
 
 #include "EntityInfoTab.h"
 #include "ShaderInfoTab.h"

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "iuimanager.h"
 #include "wxutil/Bitmap.h"
 #include <wx/menuitem.h>
 

@@ -1,6 +1,5 @@
 #include "ParticlePreview.h"
 
-#include "iuimanager.h"
 #include "ieventmanager.h"
 #include "ientity.h"
 #include "ieclass.h"

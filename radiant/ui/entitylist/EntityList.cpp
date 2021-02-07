@@ -2,7 +2,6 @@
 
 #include "ieventmanager.h"
 #include "imainframe.h"
-#include "iuimanager.h"
 
 #include "registry/Widgets.h"
 #include "entitylib.h"

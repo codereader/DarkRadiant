@@ -1,7 +1,6 @@
 #include "ResourceTreeViewToolbar.h"
 
 #include "i18n.h"
-#include "iuimanager.h"
 
 #include "wxutil/Bitmap.h"
 #include <wx/sizer.h>

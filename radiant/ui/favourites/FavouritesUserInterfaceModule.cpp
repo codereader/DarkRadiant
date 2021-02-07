@@ -3,7 +3,6 @@
 #include "icommandsystem.h"
 #include "igroupdialog.h"
 #include "i18n.h"
-#include "iuimanager.h"
 #include "itextstream.h"
 
 #include <wx/frame.h>

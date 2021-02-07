@@ -1,6 +1,5 @@
 #include "Console.h"
 
-#include "iuimanager.h"
 #include "igroupdialog.h"
 #include "iradiant.h"
 

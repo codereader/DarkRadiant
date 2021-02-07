@@ -2,7 +2,6 @@
 
 #include "i18n.h"
 #include "isound.h"
-#include "iuimanager.h"
 #include "eclass.h"
 
 #include <stdio.h>

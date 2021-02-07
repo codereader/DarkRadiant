@@ -1,7 +1,6 @@
 #include "EClassTreeBuilder.h"
 
 #include "itextstream.h"
-#include "iuimanager.h"
 #include "EClassTree.h"
 #include "debugging/ScopedDebugTimer.h"
 #include "wxutil/dataview/TreeModel.h"

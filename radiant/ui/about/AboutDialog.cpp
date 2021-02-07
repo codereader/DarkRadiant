@@ -3,7 +3,6 @@
 #include "i18n.h"
 #include "igl.h"
 #include "imainframe.h"
-#include "iuimanager.h"
 #include "version.h"
 #include "registry/registry.h"
 #include "string/string.h"

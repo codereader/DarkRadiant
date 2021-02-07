@@ -15,7 +15,6 @@
 #include "ieclass.h"
 #include "igame.h"
 #include "ientity.h"
-#include "iuimanager.h"
 
 #include "wxutil/dialog/MessageBox.h"
 

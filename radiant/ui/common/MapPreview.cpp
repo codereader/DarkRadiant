@@ -2,7 +2,6 @@
 
 #include "ifilter.h"
 #include "iscenegraph.h"
-#include "iuimanager.h"
 #include "iscenegraphfactory.h"
 #include "math/AABB.h"
 #include "scene/PrefabBoundsAccumulator.h"

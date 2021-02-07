@@ -1,7 +1,6 @@
 #include "PropertyEditorFactory.h"
 
 #include "isound.h"
-#include "iuimanager.h"
 #include "itextstream.h"
 #include "Vector3PropertyEditor.h"
 #include "BooleanPropertyEditor.h"

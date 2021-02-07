@@ -7,7 +7,6 @@
 #include "i18n.h"
 #include "ientity.h"
 #include "iselection.h"
-#include "iuimanager.h"
 #include "scenelib.h"
 #include "wxutil/dialog/MessageBox.h"
 

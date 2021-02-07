@@ -2,7 +2,6 @@
 
 #include "i18n.h"
 #include "icommandsystem.h"
-#include "iuimanager.h"
 #include "imainframe.h"
 #include "itextstream.h"
 #include "selectionlib.h"

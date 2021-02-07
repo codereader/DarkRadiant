@@ -198,7 +198,6 @@
     <ClInclude Include="..\..\include\itraceable.h" />
     <ClInclude Include="..\..\include\itransformable.h" />
     <ClInclude Include="..\..\include\itransformnode.h" />
-    <ClInclude Include="..\..\include\iuimanager.h" />
     <ClInclude Include="..\..\include\iundo.h" />
     <ClInclude Include="..\..\include\ivolumetest.h" />
     <ClInclude Include="..\..\include\iwxgl.h" />

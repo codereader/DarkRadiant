@@ -5,7 +5,6 @@
 #include "ieclass.h"
 #include "igame.h"
 #include "ishaders.h"
-#include "iuimanager.h"
 #include "iradiant.h"
 #include "imainframe.h"
 #include "iselection.h"

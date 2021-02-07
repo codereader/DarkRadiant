@@ -2,7 +2,6 @@
 #include "../GLWidget.h"
 
 #include "ifilter.h"
-#include "iuimanager.h"
 #include "imodelcache.h"
 #include "i18n.h"
 #include "ieclass.h"
@@ -15,8 +14,6 @@
 #include "wxutil/dialog/MessageBox.h"
 #include "string/convert.h"
 #include <sstream>
-
-#include "iuimanager.h"
 
 namespace wxutil
 {

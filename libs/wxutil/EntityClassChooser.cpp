@@ -9,7 +9,6 @@
 #include "i18n.h"
 #include "ifavourites.h"
 #include "imainframe.h"
-#include "iuimanager.h"
 #include "gamelib.h"
 
 #include <wx/button.h>

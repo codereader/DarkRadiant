@@ -5,7 +5,6 @@
 #include "icameraview.h"
 #include "iscenegraphfactory.h"
 #include "irendersystemfactory.h"
-#include "iuimanager.h"
 
 #include "math/AABB.h"
 #include "util/ScopedBoolLock.h"

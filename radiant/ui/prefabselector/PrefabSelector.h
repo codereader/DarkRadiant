@@ -1,6 +1,5 @@
 #pragma once
 
-#include "iuimanager.h"
 #include "imapresource.h"
 
 #include "wxutil/dialog/DialogBase.h"

@@ -91,7 +91,6 @@
 #include "itraceable.h"
 #include "itransformable.h"
 #include "itransformnode.h"
-#include "iuimanager.h"
 #include "iundo.h"
 #include "ivolumetest.h"
 #include "mapfile.h"

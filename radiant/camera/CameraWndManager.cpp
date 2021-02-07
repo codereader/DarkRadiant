@@ -3,7 +3,6 @@
 #include "imousetoolmanager.h"
 #include "ieventmanager.h"
 #include "iselection.h"
-#include "iuimanager.h"
 #include "itextstream.h"
 #include "xmlutil/Node.h"
 

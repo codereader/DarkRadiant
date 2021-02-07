@@ -1,7 +1,6 @@
 #include "ShaderSelector.h"
 
 #include "i18n.h"
-#include "iuimanager.h"
 
 #include "wxutil/dataview/TreeModel.h"
 #include "wxutil/dataview/TreeView.h"
