@@ -6,6 +6,7 @@
 #include "irender.h"
 #include "inameobserver.h"
 #include "iscenegraph.h"
+#include "itransformnode.h"
 #include <functional>
 
 #include "string/predicate.h"
@@ -263,11 +264,17 @@ public:
     virtual void forEachAttachment(AttachmentFunc func) const = 0;
 };
 
-/// Interface for a INode subclass that contains an Entity
-class IEntityNode :
-    public IRenderEntity,
-    public virtual scene::INode,
-    public scene::Cloneable
+/**
+ * \brief Interface for a node which represents an entity.
+ *
+ * As well as providing access to the entity data with getEntity(), every
+ * IEntityNode can clone itself and apply a transformation matrix to its
+ * children (which might be brushes, patches or other entities).
+ */
+class IEntityNode : public IRenderEntity,
+                    public virtual scene::INode,
+                    public scene::Cloneable,
+                    public IMatrixTransform
 {
 public:
     virtual ~IEntityNode() {}

@@ -32,9 +32,9 @@ EntityNode::EntityNode(const EntityNode& other) :
 	Namespaced(other),
 	TargetableNode(_spawnArgs, *this),
 	Transformable(other),
-	MatrixTransform(other),
 	_eclass(other._eclass),
 	_spawnArgs(other._spawnArgs),
+    _localToParent(other._localToParent),
 	_namespaceManager(_spawnArgs),
 	_nameKey(_spawnArgs),
 	_renderableName(_nameKey),
@@ -143,8 +143,7 @@ void EntityNode::createAttachedEntities()
 
             // Set the attached entity's transform matrix according to the
             // required offset
-            MatrixTransform& mt = dynamic_cast<MatrixTransform&>(*attachedEnt);
-            mt.localToParent() = Matrix4::getTranslation(a.offset);
+            attachedEnt->localToParent() = Matrix4::getTranslation(a.offset);
         }
     );
 }

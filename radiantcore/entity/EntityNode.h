@@ -32,8 +32,7 @@ class EntityNode :
 	public SelectionTestable,
 	public Namespaced,
 	public TargetableNode,
-	public Transformable,
-	public MatrixTransform	// influences local2world of child nodes
+	public Transformable
 {
 protected:
 	// The entity class
@@ -41,6 +40,9 @@ protected:
 
 	// The actual entity (which contains the key/value pairs)
 	SpawnArgs _spawnArgs;
+
+    // Transformation applied to this node and its children
+    Matrix4 _localToParent = Matrix4::getIdentity();
 
 	// The class taking care of all the namespace-relevant stuff
 	NamespaceManager _namespaceManager;
@@ -105,6 +107,10 @@ public:
 	// RenderEntity implementation
 	virtual float getShaderParm(int parmNum) const override;
 	virtual const Vector3& getDirection() const override;
+
+    // IMatrixTransform implementation
+    const Matrix4& localToParent() const override { return _localToParent; }
+    Matrix4& localToParent() override { return _localToParent; }
 
 	// SelectionTestable implementation
 	virtual void testSelect(Selector& selector, SelectionTest& test) override;

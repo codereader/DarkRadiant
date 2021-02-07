@@ -17,28 +17,6 @@ public:
 	}
 };
 
-/// \brief A transform node which stores a generic transformation matrix.
-class MatrixTransform :
-	public ITransformNode
-{
-	Matrix4 _localToParent;
-public:
-	MatrixTransform() :
-		_localToParent(Matrix4::getIdentity())
-	{}
-
-	Matrix4& localToParent()
-	{
-		return _localToParent;
-	}
-
-	/// \brief Returns the stored local->parent transform.
-	const Matrix4& localToParent() const
-	{
-		return _localToParent;
-	}
-};
-
 namespace scene
 {
 
