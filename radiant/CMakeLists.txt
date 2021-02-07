@@ -48,6 +48,8 @@ add_executable(darkradiant
                ui/common/ShaderSelector.cpp
                ui/common/SoundShaderDefinitionView.cpp
                ui/common/TexturePreviewCombo.cpp
+               ui/common/SoundChooser.cpp
+               ui/common/SoundShaderPreview.cpp
                ui/DispatchEvent.cpp
                ui/Documentation.cpp
                ui/eclasstree/EClassTreeBuilder.cpp
@@ -111,8 +113,6 @@ add_executable(darkradiant
                ui/menu/MenuItem.cpp
                ui/menu/MenuManager.cpp
                ui/menu/MenuSeparator.cpp
-               uimanager/SoundChooser.cpp
-               uimanager/SoundShaderPreview.cpp
                ui/toolbar/ToolbarManager.cpp
                ui/MapCommands.cpp
                ui/MapFileProgressHandler.cpp

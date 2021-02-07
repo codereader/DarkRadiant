@@ -125,9 +125,6 @@
     <Filter Include="src\ui\entitylist">
       <UniqueIdentifier>{cf31bdd4-5049-41b1-bfe6-fafd3b1e8692}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\uimanager">
-      <UniqueIdentifier>{9447d2a6-4742-4c6b-b53c-cd25985c034e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\eventmanager">
       <UniqueIdentifier>{9215c909-e37e-4fef-b0ce-04455bf61cf2}</UniqueIdentifier>
     </Filter>
@@ -490,12 +487,6 @@
     <ClCompile Include="..\..\radiant\ui\entitylist\GraphTreeModel.cpp">
       <Filter>src\ui\entitylist</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\uimanager\SoundChooser.cpp">
-      <Filter>src\uimanager</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\uimanager\SoundShaderPreview.cpp">
-      <Filter>src\uimanager</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\eventmanager\Accelerator.cpp">
       <Filter>src\eventmanager</Filter>
     </ClCompile>
@@ -686,6 +677,12 @@
       <Filter>src\ui\groupdialog</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\common\DialogManager.cpp">
+      <Filter>src\ui\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\common\SoundChooser.cpp">
+      <Filter>src\ui\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\common\SoundShaderPreview.cpp">
       <Filter>src\ui\common</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1068,12 +1065,6 @@
     <ClInclude Include="..\..\radiant\ui\entitylist\GraphTreeNode.h">
       <Filter>src\ui\entitylist</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\uimanager\SoundChooser.h">
-      <Filter>src\uimanager</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\uimanager\SoundShaderPreview.h">
-      <Filter>src\uimanager</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\eventmanager\Accelerator.h">
       <Filter>src\eventmanager</Filter>
     </ClInclude>
@@ -1312,6 +1303,12 @@
       <Filter>src\ui\groupdialog</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\common\DialogManager.h">
+      <Filter>src\ui\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\common\SoundChooser.h">
+      <Filter>src\ui\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\common\SoundShaderPreview.h">
       <Filter>src\ui\common</Filter>
     </ClInclude>
   </ItemGroup>

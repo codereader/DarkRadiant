@@ -223,8 +223,6 @@
     <ClCompile Include="..\..\radiant\settings\LocalisationModule.cpp" />
     <ClCompile Include="..\..\radiant\settings\LocalisationProvider.cpp" />
     <ClCompile Include="..\..\radiant\settings\Win32Registry.cpp" />
-    <ClCompile Include="..\..\radiant\uimanager\SoundChooser.cpp" />
-    <ClCompile Include="..\..\radiant\uimanager\SoundShaderPreview.cpp" />
     <ClCompile Include="..\..\radiant\ui\aas\AasControl.cpp" />
     <ClCompile Include="..\..\radiant\ui\aas\AasControlDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\aas\RenderableAasFile.cpp" />
@@ -236,7 +234,9 @@
     <ClCompile Include="..\..\radiant\ui\common\DefinitionView.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\DialogManager.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\MaterialDefinitionView.cpp" />
+    <ClCompile Include="..\..\radiant\ui\common\SoundChooser.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\SoundShaderDefinitionView.cpp" />
+    <ClCompile Include="..\..\radiant\ui\common\SoundShaderPreview.cpp" />
     <ClCompile Include="..\..\radiant\ui\DispatchEvent.cpp" />
     <ClCompile Include="..\..\radiant\ui\Documentation.cpp" />
     <ClCompile Include="..\..\radiant\ui\eclasstree\EClassTree.cpp" />
@@ -405,8 +405,6 @@
     <ClInclude Include="..\..\radiant\settings\LocalisationModule.h" />
     <ClInclude Include="..\..\radiant\settings\LocalisationProvider.h" />
     <ClInclude Include="..\..\radiant\settings\Win32Registry.h" />
-    <ClInclude Include="..\..\radiant\uimanager\SoundChooser.h" />
-    <ClInclude Include="..\..\radiant\uimanager\SoundShaderPreview.h" />
     <ClInclude Include="..\..\radiant\ui\aas\AasControl.h" />
     <ClInclude Include="..\..\radiant\ui\aas\AasControlDialog.h" />
     <ClInclude Include="..\..\radiant\ui\aas\RenderableAasFile.h" />
@@ -419,7 +417,9 @@
     <ClInclude Include="..\..\radiant\ui\common\DefinitionView.h" />
     <ClInclude Include="..\..\radiant\ui\common\DialogManager.h" />
     <ClInclude Include="..\..\radiant\ui\common\MaterialDefinitionView.h" />
+    <ClInclude Include="..\..\radiant\ui\common\SoundChooser.h" />
     <ClInclude Include="..\..\radiant\ui\common\SoundShaderDefinitionView.h" />
+    <ClInclude Include="..\..\radiant\ui\common\SoundShaderPreview.h" />
     <ClInclude Include="..\..\radiant\ui\DispatchEvent.h" />
     <ClInclude Include="..\..\radiant\ui\Documentation.h" />
     <ClInclude Include="..\..\radiant\ui\eclasstree\EClassTree.h" />
