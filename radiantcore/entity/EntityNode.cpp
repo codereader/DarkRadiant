@@ -23,7 +23,6 @@ EntityNode::EntityNode(const IEntityClassPtr& eclass) :
 	_shaderParms(_keyObservers, _colourKey),
 	_direction(1,0,0)
 {
-    createAttachedEntities();
 }
 
 EntityNode::EntityNode(const EntityNode& other) :
@@ -44,7 +43,6 @@ EntityNode::EntityNode(const EntityNode& other) :
 	_shaderParms(_keyObservers, _colourKey),
 	_direction(1,0,0)
 {
-    createAttachedEntities();
 }
 
 EntityNode::~EntityNode()
@@ -72,6 +70,9 @@ void EntityNode::construct()
 	addKeyObserver("skin", _skinKeyObserver);
 
 	_shaderParms.addKeyObservers();
+
+    // Construct all attached entities
+    createAttachedEntities();
 }
 
 void EntityNode::constructClone(const EntityNode& original)
@@ -121,6 +122,7 @@ void EntityNode::createAttachedEntities()
     _spawnArgs.forEachAttachment(
         [this](const Entity::Attachment& a)
         {
+            // Check this is a valid entity class
             auto cls = GlobalEntityClassManager().findClass(a.eclass);
             if (!cls)
             {
@@ -130,7 +132,19 @@ void EntityNode::createAttachedEntities()
                 return;
             }
 
-            _attachedEnts.push_back(GlobalEntityModule().createEntity(cls));
+            // Construct and store the attached entity
+            auto attachedEnt = GlobalEntityModule().createEntity(cls);
+            assert(attachedEnt);
+            _attachedEnts.push_back(attachedEnt);
+
+            // Set ourselves as the parent of the attached entity (for
+            // localToParent transforms)
+            attachedEnt->setParent(shared_from_this());
+
+            // Set the attached entity's transform matrix according to the
+            // required offset
+            MatrixTransform& mt = dynamic_cast<MatrixTransform&>(*attachedEnt);
+            mt.localToParent() = Matrix4::getTranslation(a.offset);
         }
     );
 }

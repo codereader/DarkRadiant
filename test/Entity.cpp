@@ -9,6 +9,7 @@
 
 #include "render/NopVolumeTest.h"
 #include "string/convert.h"
+#include "transformlib.h"
 
 namespace test
 {
@@ -378,6 +379,65 @@ TEST_F(EntityTest, ModifyEntityClass)
     // aren't currently any public Shader properties that we can examine to
     // confirm its contents)
     EXPECT_NE(light->getWireShader(), origWireShader);
+}
+
+TEST_F(EntityTest, LightLocalToWorldFromOrigin)
+{
+    auto light = createByClassName("light");
+
+    // Initial localToWorld should be identity
+    EXPECT_EQ(light->localToWorld(), Matrix4::getIdentity());
+
+    // Set an origin
+    const Vector3 ORIGIN(123, 456, -10);
+    light->getEntity().setKeyValue("origin", string::to_string(ORIGIN));
+
+    // localToParent should reflect the new origin
+    auto transformNode = std::dynamic_pointer_cast<ITransformNode>(light);
+    ASSERT_TRUE(transformNode);
+    EXPECT_EQ(transformNode->localToParent(), Matrix4::getTranslation(ORIGIN));
+
+    // Since there is no parent, the final localToWorld should be the same as
+    // localToParent
+    EXPECT_EQ(light->localToWorld(), Matrix4::getTranslation(ORIGIN));
+}
+
+TEST_F(EntityTest, LightTransformedByParent)
+{
+    // Parent a light to another entity (this isn't currently how the attachment
+    // system is implemented, but it should validate that a light node can
+    // inherit the transformation of its parent).
+    auto light = createByClassName("light");
+    auto parentModel = createByClassName("func_static");
+    parentModel->addChildNode(light);
+
+    // Parenting should automatically set the parent pointer of the child
+    EXPECT_EQ(light->getParent(), parentModel);
+
+    // Set an offset for the parent model
+    const Vector3 ORIGIN(1024, 512, -320);
+    parentModel->getEntity().setKeyValue("origin", string::to_string(ORIGIN));
+
+    // Parent entity should have a transform matrix corresponding to its
+    // translation
+    EXPECT_EQ(parentModel->localToWorld(), Matrix4::getTranslation(ORIGIN));
+
+    // The light itself should have the same transformation as the parent (since
+    // the method is localToWorld not localToParent).
+    EXPECT_EQ(light->localToWorld(), Matrix4::getTranslation(ORIGIN));
+
+    // Render the light to obtain the RendererLight pointer
+    RenderFixture renderF(true /* solid */);
+    renderF.renderSubGraph(parentModel);
+    EXPECT_EQ(renderF.nodesVisited, 2);
+    EXPECT_EQ(renderF.collector.lights, 1);
+    ASSERT_FALSE(renderF.collector.lightPtrs.empty());
+
+    // Check the rendered light's geometry
+    const RendererLight* rLight = renderF.collector.lightPtrs.front();
+    EXPECT_EQ(rLight->getLightOrigin(), ORIGIN);
+    EXPECT_EQ(rLight->lightAABB().origin, ORIGIN);
+    EXPECT_EQ(rLight->lightAABB().extents, Vector3(320, 320, 320));
 }
 
 TEST_F(EntityTest, RenderUnselectedLightEntity)

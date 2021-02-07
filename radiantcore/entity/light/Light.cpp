@@ -616,7 +616,11 @@ AABB Light::lightAABB() const
     }
     else
     {
-        return AABB(_originTransformed, m_doom3Radius.m_radiusTransformed);
+        // AABB ignores light_center so we can't call getLightOrigin() here.
+        // Just transform (0, 0, 0) by localToWorld to get the world origin for
+        // the AABB.
+        return AABB(_owner.localToWorld().transformPoint(Vector3(0, 0, 0)),
+                    m_doom3Radius.m_radiusTransformed);
     }
 }
 
@@ -637,8 +641,13 @@ Vector3 Light::getLightOrigin() const
     }
     else
     {
-        // AABB origin + light_center, i.e. center in world space
-        return _originTransformed + m_doom3Radius.m_centerTransformed;
+        // Since localToWorld() takes into account our own origin as well as the
+        // transformation of any parent entity, just transform a null origin +
+        // light_center by the localToWorld matrix to get the light origin in
+        // world space.
+        return _owner.localToWorld().transformPoint(
+            /* (0, 0, 0) + */ m_doom3Radius.m_centerTransformed
+        );
     }
 }
 
