@@ -9,10 +9,10 @@
 
 #include <memory>
 
+namespace wxutil { class LocalBitmapArtProvider; }
+
 namespace ui
 {
-
-class LocalBitmapArtProvider;
 
 class UIManager :
 	public IUIManager,
@@ -22,7 +22,7 @@ class UIManager :
     // called before the main window is ready.
 	DialogManagerPtr _dialogManager;
 
-	std::unique_ptr<LocalBitmapArtProvider> _bitmapArtProvider;
+	std::unique_ptr<wxutil::LocalBitmapArtProvider> _bitmapArtProvider;
 
 public:
 	IGroupDialog& getGroupDialog() override;

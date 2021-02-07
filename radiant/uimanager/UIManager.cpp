@@ -12,7 +12,7 @@
 #include "debugging/debugging.h"
 #include "wxutil/dialog/MessageBox.h"
 
-#include "LocalBitmapArtProvider.h"
+#include "wxutil/LocalBitmapArtProvider.h"
 
 #include <wx/artprov.h>
 #include <wx/xrc/xmlres.h>
@@ -40,7 +40,7 @@ void UIManager::clear()
 
 const std::string& UIManager::ArtIdPrefix() const
 {
-	return LocalBitmapArtProvider::ArtIdPrefix();
+	return wxutil::LocalBitmapArtProvider::ArtIdPrefix();
 }
 
 const std::string& UIManager::getName() const
@@ -67,7 +67,7 @@ void UIManager::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called" << std::endl;
 
-	_bitmapArtProvider.reset(new LocalBitmapArtProvider());
+	_bitmapArtProvider.reset(new wxutil::LocalBitmapArtProvider());
 
 	_dialogManager = std::make_shared<DialogManager>();
 

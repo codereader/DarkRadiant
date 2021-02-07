@@ -1071,9 +1071,6 @@
     <ClInclude Include="..\..\radiant\uimanager\GroupDialog.h">
       <Filter>src\uimanager</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\uimanager\LocalBitmapArtProvider.h">
-      <Filter>src\uimanager</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\uimanager\SoundChooser.h">
       <Filter>src\uimanager</Filter>
     </ClInclude>

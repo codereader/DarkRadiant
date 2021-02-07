@@ -1,12 +1,12 @@
 #pragma once
 
-#include "iregistry.h"
+#include "imodule.h"
 #include <wx/artprov.h>
 #include <wx/image.h>
 #include "string/predicate.h"
 #include "os/file.h"
 
-namespace ui
+namespace wxutil
 {
 
 /**

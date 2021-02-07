@@ -407,7 +407,6 @@
     <ClInclude Include="..\..\radiant\settings\Win32Registry.h" />
     <ClInclude Include="..\..\radiant\uimanager\DialogManager.h" />
     <ClInclude Include="..\..\radiant\uimanager\GroupDialog.h" />
-    <ClInclude Include="..\..\radiant\uimanager\LocalBitmapArtProvider.h" />
     <ClInclude Include="..\..\radiant\uimanager\SoundChooser.h" />
     <ClInclude Include="..\..\radiant\uimanager\SoundShaderPreview.h" />
     <ClInclude Include="..\..\radiant\uimanager\UIManager.h" />

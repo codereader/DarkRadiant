@@ -145,10 +145,11 @@
     <ClInclude Include="..\..\libs\wxutil\dataview\ResourceTreeViewToolbar.h">
       <Filter>dataview</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\libs\wxutil\bitmap.h" />
     <ClInclude Include="..\..\libs\wxutil\menu\FilterPopupMenu.h">
       <Filter>menu</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\Bitmap.h" />
+    <ClInclude Include="..\..\libs\wxutil\LocalBitmapArtProvider.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\wxutil\dialog\MessageBox.cpp">

@@ -4,7 +4,7 @@
 #include "ieventmanager.h"
 
 #include "MenuFolder.h"
-#include "wxutil/bitmap.h"
+#include "wxutil/Bitmap.h"
 
 namespace ui
 {
@@ -58,7 +58,7 @@ void MenuItem::construct()
 	
 	if (!_icon.empty())
 	{
-		_menuItem->SetBitmap(wxutil::getBitmap(_icon));
+		_menuItem->SetBitmap(wxutil::GetBitmap(_icon));
 	}
 
 	bool isToggle = GlobalEventManager().findEvent(_event)->isToggle();

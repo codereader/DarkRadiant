@@ -8,7 +8,7 @@
 
 #include <wx/toolbar.h>
 #include "module/StaticModule.h"
-#include "uimanager/LocalBitmapArtProvider.h"
+#include "wxutil/Bitmap.h"
 
 namespace ui
 {
@@ -105,14 +105,14 @@ wxToolBarToolBase* ToolbarManager::createToolItem(wxToolBar* toolbar, const xml:
 		{
 			// Create a new ToolButton and assign the right callback
 			toolItem = toolbar->AddTool(_nextToolItemId++, name,
-				wxArtProvider::GetBitmap(LocalBitmapArtProvider::ArtIdPrefix() + icon), 
+				wxutil::GetBitmap(icon), 
 				tooltip);
 		}
 		else
 		{
 			// Create a new ToggleToolButton and assign the right callback
 			toolItem = toolbar->AddTool(_nextToolItemId++, name,
-				wxArtProvider::GetBitmap(LocalBitmapArtProvider::ArtIdPrefix() + icon), 
+				wxutil::GetBitmap(icon), 
 				tooltip, wxITEM_CHECK);
 		}
 

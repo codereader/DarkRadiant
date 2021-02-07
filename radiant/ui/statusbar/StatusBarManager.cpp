@@ -8,9 +8,8 @@
 #include <wx/frame.h>
 #include <wx/statbmp.h>
 
-#include "uimanager/LocalBitmapArtProvider.h"
 #include "module/StaticModule.h"
-#include "wxutil/bitmap.h"
+#include "wxutil/Bitmap.h"
 
 namespace ui
 {
@@ -100,7 +99,7 @@ void StatusBarManager::addTextElement(const std::string& name, const std::string
 
 	if (!icon.empty())
 	{
-		wxStaticBitmap* img = new wxStaticBitmap(textPanel, wxID_ANY, wxutil::getBitmap(icon));
+		wxStaticBitmap* img = new wxStaticBitmap(textPanel, wxID_ANY, wxutil::GetBitmap(icon));
 		textPanel->GetSizer()->Add(img, 0, wxEXPAND | wxALL, 1);
 	}
 

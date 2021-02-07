@@ -15,7 +15,7 @@
 #include "imainframe.h"
 
 #include "scene/Traverse.h"
-#include "wxutil/bitmap.h"
+#include "wxutil/Bitmap.h"
 
 #include <sigc++/signal.h>
 #include <sigc++/connection.h>
@@ -314,13 +314,13 @@ void GameConnection::addToolbarItems()
 
         // Add toggles for the camera sync functions
         auto camSyncT = camTB->AddTool(
-            wxID_ANY, "L", wxutil::getBitmap("CameraSync.png"),
+            wxID_ANY, "L", wxutil::GetBitmap("CameraSync.png"),
             _("Enable game camera sync with DarkRadiant camera"),
             wxITEM_CHECK
         );
         _camSyncToggle->connectToolItem(camSyncT);
         auto camSyncBackT = camTB->AddTool(
-            wxID_ANY, "B", wxutil::getBitmap("CameraSyncBack.png"),
+            wxID_ANY, "B", wxutil::GetBitmap("CameraSyncBack.png"),
             _("Move camera to current game position")
         );
         _camSyncBackButton->connectToolItem(camSyncBackT);

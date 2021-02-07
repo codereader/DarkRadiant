@@ -16,7 +16,7 @@
 #include <wx/panel.h>
 
 #include "registry/registry.h"
-#include "LocalBitmapArtProvider.h"
+#include "wxutil/Bitmap.h"
 
 namespace ui
 {
@@ -272,7 +272,7 @@ wxWindow* GroupDialog::addPage(const PagePtr& page)
 
 	// Load the icon
 	int imageId = page->tabIcon.empty() ? -1 : 
-		_imageList->Add(wxArtProvider::GetBitmap(LocalBitmapArtProvider::ArtIdPrefix() + page->tabIcon));
+		_imageList->Add(wxutil::GetBitmap(page->tabIcon));
 	
 	// Handle position conflicts first
 	Pages::const_iterator conflictingPage = _pages.find(page->position);
