@@ -7,7 +7,7 @@
 
 #include <wx/panel.h>
 #include <wx/button.h>
-#include <wx/artprov.h>
+#include "wxutil/Bitmap.h"
 #include <wx/sizer.h>
 
 #include "AIHeadChooserDialog.h"
@@ -29,7 +29,7 @@ AIHeadPropertyEditor::AIHeadPropertyEditor(wxWindow* parent, Entity* entity, con
 
 	// Create the browse button
 	wxButton* browseButton = new wxButton(_widget, wxID_ANY, _("Choose AI head..."));
-	browseButton->SetBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "icon_model.png"));
+	browseButton->SetBitmap(wxutil::GetLocalBitmap("icon_model.png"));
 	browseButton->Bind(wxEVT_BUTTON, &AIHeadPropertyEditor::onChooseButton, this);
 
 	_widget->GetSizer()->Add(browseButton, 0, wxALIGN_CENTER_VERTICAL);

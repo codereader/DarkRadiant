@@ -15,6 +15,7 @@
 #include <wx/button.h>
 #include <wx/panel.h>
 #include <wx/splitter.h>
+#include "wxutil/Bitmap.h"
 
 #include "string/string.h"
 #include "eclass.h"
@@ -68,8 +69,8 @@ public:
       _columns(columns),
       _folderKey(game::current::getValue<std::string>(FOLDER_KEY_PATH))
     {
-        _folderIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + FOLDER_ICON));
-        _entityIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + ENTITY_ICON));
+        _folderIcon.CopyFromBitmap(wxutil::GetLocalBitmap(FOLDER_ICON));
+        _entityIcon.CopyFromBitmap(wxutil::GetLocalBitmap(ENTITY_ICON));
 
         // Get the list of favourite eclasses
         _favourites = GlobalFavouritesManager().getFavourites(decl::Type::EntityDef);

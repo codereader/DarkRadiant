@@ -17,7 +17,7 @@
 
 #include <regex>
 
-#include <wx/artprov.h>
+#include "wxutil/Bitmap.h"
 
 namespace ui
 {
@@ -155,11 +155,11 @@ wxBitmap PropertyEditorFactory::getBitmapFor(const std::string& type)
 
 	std::string iconName = "icon_" + type + ".png";
 
-	wxBitmap candidate = wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + iconName);
+	wxBitmap candidate = wxutil::GetLocalBitmap(iconName);
 
 	if (!candidate.IsOk())
 	{
-		candidate = wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "empty.png");
+		candidate = wxutil::GetLocalBitmap("empty.png");
 	}
 
 	return candidate;

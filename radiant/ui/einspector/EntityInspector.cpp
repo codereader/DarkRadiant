@@ -34,7 +34,7 @@
 #include <wx/splitter.h>
 #include <wx/textctrl.h>
 #include <wx/bmpbuttn.h>
-#include <wx/artprov.h>
+#include "wxutil/Bitmap.h"
 
 #include <functional>
 #include "string/replace.h"
@@ -68,7 +68,7 @@ EntityInspector::EntityInspector() :
 
 void EntityInspector::construct()
 {
-    _emptyIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "empty.png"));
+    _emptyIcon.CopyFromBitmap(wxutil::GetLocalBitmap("empty.png"));
     wxASSERT(_emptyIcon.IsOk());
 
     wxFrame* temporaryParent = new wxFrame(NULL, wxID_ANY, "");

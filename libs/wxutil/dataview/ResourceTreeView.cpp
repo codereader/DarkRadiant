@@ -6,7 +6,7 @@
 #include "ifavourites.h"
 #include "../menu/IconTextMenuItem.h"
 #include "TreeViewItemStyle.h"
-#include <wx/artprov.h>
+#include "wxutil/Bitmap.h"
 
 namespace wxutil
 {
@@ -62,7 +62,7 @@ ResourceTreeView::ResourceTreeView(wxWindow* parent, const TreeModel::Ptr& model
     Bind(EV_TREEMODEL_POPULATION_FINISHED, &ResourceTreeView::_onTreeStorePopulationFinished, this);
     Bind(EV_TREEMODEL_POPULATION_PROGRESS, &ResourceTreeView::_onTreeStorePopulationProgress, this);
 
-    _progressIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + ICON_LOADING));
+    _progressIcon.CopyFromBitmap(wxutil::GetLocalBitmap(ICON_LOADING));
 }
 
 ResourceTreeView::~ResourceTreeView()
@@ -129,7 +129,7 @@ void ResourceTreeView::SetupTreeModelFilter()
                 _emptyFavouritesLabel = row.getItem();
 
                 wxIcon icon;
-                icon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + ICON_LOADING));
+                icon.CopyFromBitmap(wxutil::GetLocalBitmap(ICON_LOADING));
                 row[_columns.iconAndName] = wxVariant(wxDataViewIconText(_("No favourites added so far"), icon));
                 row[_columns.isFavourite] = true;
                 row[_columns.isFolder] = false;

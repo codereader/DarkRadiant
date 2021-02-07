@@ -17,7 +17,7 @@
 #include <wx/stattext.h>
 #include <wx/sizer.h>
 #include <wx/button.h>
-#include <wx/artprov.h>
+#include "wxutil/Bitmap.h"
 #include <wx/frame.h>
 #include <wx/panel.h>
 #include <wx/scrolwin.h>
@@ -229,7 +229,7 @@ void AIEditingPanel::createChooserRow(wxSizer* table, const std::string& rowLabe
 
 	// Create the skin browse button
 	wxButton* browseButton = new wxButton(_mainPanel, wxID_ANY, buttonLabel);
-	browseButton->SetBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + buttonIcon));
+	browseButton->SetBitmap(wxutil::GetLocalBitmap(buttonIcon));
 	browseButton->Bind(wxEVT_BUTTON, std::bind(&AIEditingPanel::onBrowseButton, this, std::placeholders::_1, key));
 
 	table->Add(browseButton, 0, wxALIGN_RIGHT);

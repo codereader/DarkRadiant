@@ -2,7 +2,7 @@
 
 #include "i18n.h"
 #include "iuimanager.h"
-#include <wx/artprov.h>
+#include "wxutil/Bitmap.h"
 
 namespace wxutil
 {
@@ -115,7 +115,7 @@ void FileSystemView::Populate(const std::string& preselectPath)
 
     wxIcon loadingIcon;
     loadingIcon.CopyFromBitmap(
-        wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + _fileIcon));
+        wxutil::GetLocalBitmap(_fileIcon));
 
     row[Columns().filename] = wxVariant(wxDataViewIconText(_("Loading..."), loadingIcon));
     row[Columns().isFolder] = false;

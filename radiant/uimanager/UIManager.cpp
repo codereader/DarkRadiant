@@ -38,11 +38,6 @@ void UIManager::clear()
 	_bitmapArtProvider.reset();
 }
 
-const std::string& UIManager::ArtIdPrefix() const
-{
-	return wxutil::LocalBitmapArtProvider::ArtIdPrefix();
-}
-
 const std::string& UIManager::getName() const
 {
 	static std::string _name(MODULE_UIMANAGER);

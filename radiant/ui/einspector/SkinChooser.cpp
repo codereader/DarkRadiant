@@ -6,7 +6,7 @@
 #include "itextstream.h"
 #include "modelskin.h"
 
-#include <wx/artprov.h>
+#include "wxutil/Bitmap.h"
 #include <wx/sizer.h>
 #include <wx/splitter.h>
 
@@ -142,11 +142,11 @@ void SkinChooser::populateSkins()
 
 	wxIcon folderIcon;
 	folderIcon.CopyFromBitmap(
-		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + FOLDER_ICON));
+		wxutil::GetLocalBitmap(FOLDER_ICON));
 
 	wxIcon skinIcon;
 	skinIcon.CopyFromBitmap(
-		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + SKIN_ICON));
+		wxutil::GetLocalBitmap(SKIN_ICON));
 
 	// Add the "Matching skins" toplevel node
 	wxutil::TreeModel::Row matchingSkins = treeStore->AddItem();

@@ -3,7 +3,7 @@
 #include "i18n.h"
 #include "iuimanager.h"
 
-#include <wx/artprov.h>
+#include "wxutil/Bitmap.h"
 #include <wx/sizer.h>
 #include <wx/statbmp.h>
 #include <wx/textctrl.h>
@@ -45,10 +45,10 @@ ResourceTreeViewToolbar::ResourceTreeViewToolbar(wxWindow* parent, ResourceTreeV
     _filterEntry->Bind(wxEVT_CHAR, &ResourceTreeViewToolbar::_onEntryChar, this);
     _filterEntry->SetToolTip(_("Enter search text to filter the tree,\nuse arrow keys to navigate"));
 
-    auto nextImg = wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "arrow_down.png");
+    auto nextImg = wxutil::GetLocalBitmap("arrow_down.png");
     _findNextButton = new wxBitmapButton(this, wxID_ANY, nextImg);
 
-    auto prevImg = wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "arrow_up.png");
+    auto prevImg = wxutil::GetLocalBitmap("arrow_up.png");
     _findPrevButton = new wxBitmapButton(this, wxID_ANY, prevImg);
 
     _findNextButton->SetSize(wxSize(16, 16));

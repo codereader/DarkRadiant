@@ -10,7 +10,7 @@
 #include "ModelInfoTab.h"
 #include "LayerInfoTab.h"
 
-#include <wx/artprov.h>
+#include "wxutil/Bitmap.h"
 #include <wx/sizer.h>
 
 namespace ui
@@ -64,7 +64,7 @@ void MapInfoDialog::addTab(wxWindow* panel, const std::string& label, const std:
 {
 	// Load the icon
 	int imageId = icon.empty() ? -1 : 
-		_imageList->Add(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + icon));
+		_imageList->Add(wxutil::GetLocalBitmap(icon));
 	
 	panel->Reparent(_notebook);
 	_notebook->AddPage(panel, label, false, imageId);

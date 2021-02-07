@@ -12,7 +12,7 @@
 #include <wx/textctrl.h>
 #include <wx/panel.h>
 #include <wx/sizer.h>
-#include <wx/artprov.h>
+#include "wxutil/Bitmap.h"
 #include <wx/bmpbuttn.h>
 
 #include "wxutil/ChoiceHelper.h"
@@ -153,7 +153,7 @@ SoundShaderArgument::SoundShaderArgument(CommandEditor& owner,
 
 	// Create the icon button to open the ShaderChooser
 	wxButton* selectShaderButton = new wxBitmapButton(_soundShaderPanel, wxID_ANY,
-		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + FOLDER_ICON));
+		wxutil::GetLocalBitmap(FOLDER_ICON));
 
 	selectShaderButton->SetToolTip(_("Browse Sound Shaders"));
 
@@ -210,7 +210,7 @@ AnimationArgument::AnimationArgument(CommandEditor& owner,
 
 	// Create the icon button to open the
 	wxButton* selectButton = new wxBitmapButton(_animPanel, wxID_ANY,
-		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + FOLDER_ICON));
+		wxutil::GetLocalBitmap(FOLDER_ICON));
 
 	selectButton->SetToolTip(_("Browse Animations"));
 

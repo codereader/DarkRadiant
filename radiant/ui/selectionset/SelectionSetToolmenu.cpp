@@ -14,7 +14,7 @@
 #include <wx/toolbar.h>
 #include <wx/sizer.h>
 #include <wx/stattext.h>
-#include <wx/artprov.h>
+#include "wxutil/Bitmap.h"
 
 namespace ui
 {
@@ -56,7 +56,7 @@ SelectionSetToolmenu::SelectionSetToolmenu() :
 	_dropdownToolId = dropdownTool->GetId();
 
 	_clearAllButton = toolbar->AddTool(CLEAR_TOOL_ID, "",
-		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "delete.png"), _("Clear Selection Sets"));
+		wxutil::GetLocalBitmap("delete.png"), _("Clear Selection Sets"));
 
 	toolbar->Bind(wxEVT_TOOL, &SelectionSetToolmenu::onDeleteAllSetsClicked, this, _clearAllButton->GetId());
 

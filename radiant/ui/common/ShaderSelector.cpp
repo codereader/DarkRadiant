@@ -14,7 +14,7 @@
 
 #include <wx/dataview.h>
 #include <wx/sizer.h>
-#include <wx/artprov.h>
+#include "wxutil/Bitmap.h"
 
 #include <GL/glew.h>
 
@@ -110,9 +110,9 @@ namespace
 			_columns(columns)
 		{
 			_folderIcon.CopyFromBitmap(
-				wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + FOLDER_ICON));
+				wxutil::GetLocalBitmap(FOLDER_ICON));
 			_textureIcon.CopyFromBitmap(
-				wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + TEXTURE_ICON));
+				wxutil::GetLocalBitmap(TEXTURE_ICON));
 		}
 
 		virtual ~DataInserter() {}

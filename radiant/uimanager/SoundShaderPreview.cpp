@@ -8,7 +8,7 @@
 #include <cstdlib>
 #include <fmt/format.h>
 
-#include <wx/artprov.h>
+#include "wxutil/Bitmap.h"
 #include <wx/stattext.h>
 #include <wx/button.h>
 #include <wx/sizer.h>
@@ -89,13 +89,13 @@ wxSizer* SoundShaderPreview::createControlPanel(wxWindow* parent)
 
 	// Create the playback button
 	_playButton = new wxButton(parent, wxID_ANY, _("Play"));
-	_playButton->SetBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "media-playback-start-ltr.png"));
+	_playButton->SetBitmap(wxutil::GetLocalBitmap("media-playback-start-ltr.png"));
 
 	_playLoopedButton = new wxButton(parent, wxID_ANY, _("Play and loop"));
-	_playLoopedButton->SetBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "loop.png"));
+	_playLoopedButton->SetBitmap(wxutil::GetLocalBitmap("loop.png"));
 
 	_stopButton = new wxButton(parent, wxID_ANY, _("Stop"));
-	_stopButton->SetBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "media-playback-stop.png"));
+	_stopButton->SetBitmap(wxutil::GetLocalBitmap("media-playback-stop.png"));
 
 	_playButton->Bind(wxEVT_BUTTON, &SoundShaderPreview::onPlay, this);
 	_playLoopedButton->Bind(wxEVT_BUTTON, &SoundShaderPreview::onPlayLooped, this);

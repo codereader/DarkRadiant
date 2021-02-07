@@ -12,7 +12,7 @@
 #include "SRPropertySaver.h"
 
 #include <iostream>
-#include <wx/artprov.h>
+#include "wxutil/Bitmap.h"
 
 namespace
 {
@@ -231,7 +231,7 @@ void SREntity::writeToListRow(wxutil::TreeModel::Row& row, StimResponse& sr)
 	classIcon += (sr.get("state") != "1") ? SUFFIX_INACTIVE : "";
 	classIcon += SUFFIX_EXTENSION;
 
-	wxBitmap iconBmp = wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + stimType.icon);
+	wxBitmap iconBmp = wxutil::GetLocalBitmap(stimType.icon);
 	wxIcon icon;
 	icon.CopyFromBitmap(iconBmp);
 
@@ -242,7 +242,7 @@ void SREntity::writeToListRow(wxutil::TreeModel::Row& row, StimResponse& sr)
 
 	row[cols.index] = sr.getIndex();
 	row[cols.index] = colour;
-	row[cols.srClass] = wxVariant(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + classIcon));
+	row[cols.srClass] = wxVariant(wxutil::GetLocalBitmap(classIcon));
 	row[cols.caption] = wxVariant(wxDataViewIconText(stimTypeStr, icon));
 	row[cols.caption] = colour;
 	row[cols.inherited] = sr.inherited();

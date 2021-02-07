@@ -6,7 +6,7 @@
 #include "debugging/ScopedDebugTimer.h"
 #include "wxutil/dataview/TreeModel.h"
 
-#include <wx/artprov.h>
+#include "wxutil/Bitmap.h"
 
 namespace ui 
 {
@@ -25,7 +25,7 @@ EClassTreeBuilder::EClassTreeBuilder(const EClassTreeColumns& columns,
 	_finishedHandler(finishedHandler),
 	_treePopulator(_treeStore)
 {
-	wxBitmap icon = wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + ENTITY_ICON);
+	wxBitmap icon = wxutil::GetLocalBitmap(ENTITY_ICON);
 	_entityIcon.CopyFromBitmap(icon);
 }
 

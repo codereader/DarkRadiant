@@ -13,7 +13,7 @@
 #include <wx/sizer.h>
 #include <wx/button.h>
 #include <wx/panel.h>
-#include <wx/artprov.h>
+#include "wxutil/Bitmap.h"
 #include <wx/textctrl.h>
 
 #include <map>
@@ -148,7 +148,7 @@ public:
 void AddPropertyDialog::populateTreeView()
 {
 	wxIcon folderIcon;
-	folderIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + FOLDER_ICON));
+	folderIcon.CopyFromBitmap(wxutil::GetLocalBitmap(FOLDER_ICON));
 
 	// DEF-DEFINED PROPERTIES
 	{

@@ -13,7 +13,7 @@
 #include <wx/button.h>
 #include <wx/bmpbuttn.h>
 #include <wx/tglbtn.h>
-#include <wx/artprov.h>
+#include "wxutil/Bitmap.h"
 #include <wx/sizer.h>
 #include <wx/panel.h>
 
@@ -37,7 +37,7 @@ LayerControl::LayerControl(wxWindow* parent, int layerID) :
 {
 	// Create the toggle button
 	_toggle = new wxBitmapToggleButton(parent, wxID_ANY, 
-		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + ICON_LAYER_VISIBLE));
+		wxutil::GetLocalBitmap(ICON_LAYER_VISIBLE));
 	_toggle->SetMaxSize(wxSize(30, -1));
 	_toggle->Bind(wxEVT_TOGGLEBUTTON, &LayerControl::onToggle, this);
 
@@ -61,11 +61,11 @@ LayerControl::LayerControl(wxWindow* parent, int layerID) :
 	_labelButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(LayerControl::onLayerSelect), NULL, this);
 
 	_deleteButton = new wxBitmapButton(parent, wxID_ANY, 
-		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "delete.png"));
+		wxutil::GetLocalBitmap("delete.png"));
 	_deleteButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(LayerControl::onDelete), NULL, this);
 
 	_renameButton = new wxBitmapButton(parent, wxID_ANY,
-		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "edit.png"));
+		wxutil::GetLocalBitmap("edit.png"));
 	_renameButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(LayerControl::onRename), NULL, this);
 
 	_buttonHBox = new wxBoxSizer(wxHORIZONTAL);
@@ -124,9 +124,9 @@ void LayerControl::update()
 	std::string untoggledImage = isActive ? ICON_LAYER_ACTIVE_HIDDEN : ICON_LAYER_HIDDEN;
 
     // Bitmap for disabled state
-	_toggle->SetBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + untoggledImage));
+	_toggle->SetBitmap(wxutil::GetLocalBitmap(untoggledImage));
     // Bitmap for depressed state (active toggle state)
-	_toggle->SetBitmapPressed(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + toggledImage));
+	_toggle->SetBitmapPressed(wxutil::GetLocalBitmap(toggledImage));
 
 	// Don't allow deleting or renaming layer 0
 	_deleteButton->Enable(_layerID != 0);

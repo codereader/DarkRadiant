@@ -1,7 +1,7 @@
 #pragma once
 
 #include "iuimanager.h"
-#include <wx/artprov.h>
+#include "wxutil/Bitmap.h"
 #include <wx/menuitem.h>
 
 namespace wxutil
@@ -15,7 +15,7 @@ public:
 	IconTextMenuItem(const std::string& text, const std::string& localBitmapFilename) :
 		wxMenuItem(NULL, wxID_ANY, text, "")
 	{
-		SetBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + localBitmapFilename));
+		SetBitmap(wxutil::GetLocalBitmap(localBitmapFilename));
 	}
 };
 

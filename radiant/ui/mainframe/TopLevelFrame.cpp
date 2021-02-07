@@ -6,7 +6,7 @@
 #include "istatusbarmanager.h"
 #include "iuimanager.h"
 #include "itoolbarmanager.h"
-#include <wx/artprov.h>
+#include "wxutil/Bitmap.h"
 #include <wx/toolbar.h>
 #include <wx/menu.h>
 #include <wx/app.h>
@@ -70,8 +70,7 @@ TopLevelFrame::TopLevelFrame() :
 
 	// Set the window icon
 	wxIcon appIcon;
-	appIcon.CopyFromBitmap(wxArtProvider::GetBitmap(
-		GlobalUIManager().ArtIdPrefix() + "darkradiant_icon_64x64.png"));
+	appIcon.CopyFromBitmap(wxutil::GetLocalBitmap("darkradiant_icon_64x64.png"));
 	SetIcon(appIcon);
 
     // Redirect scroll events to the window below the cursor

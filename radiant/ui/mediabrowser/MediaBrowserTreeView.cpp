@@ -14,7 +14,7 @@
 #include "shaderlib.h"
 
 #include <wx/thread.h>
-#include <wx/artprov.h>
+#include "wxutil/Bitmap.h"
 
 namespace ui
 {
@@ -74,8 +74,8 @@ struct ShaderNameFunctor
         _root(_store.GetRoot()),
         _otherMaterialsPath(_(OTHER_MATERIALS_FOLDER))
     {
-        _folderIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + FOLDER_ICON));
-        _textureIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + TEXTURE_ICON));
+        _folderIcon.CopyFromBitmap(wxutil::GetLocalBitmap(FOLDER_ICON));
+        _textureIcon.CopyFromBitmap(wxutil::GetLocalBitmap(TEXTURE_ICON));
     }
 
     // Recursive add function

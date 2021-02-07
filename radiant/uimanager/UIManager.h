@@ -29,8 +29,6 @@ public:
 
 	IDialogManager& getDialogManager() override;
 
-	const std::string& ArtIdPrefix() const override;
-
 	// Called on radiant shutdown
 	void clear();
 

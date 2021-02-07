@@ -7,7 +7,7 @@
 
 #include <wx/panel.h>
 #include <wx/button.h>
-#include <wx/artprov.h>
+#include "wxutil/Bitmap.h"
 #include <wx/sizer.h>
 
 #include "AIVocalSetChooserDialog.h"
@@ -29,7 +29,7 @@ AIVocalSetPropertyEditor::AIVocalSetPropertyEditor(wxWindow* parent, Entity* ent
 
 	// Create the browse button
 	wxButton* browseButton = new wxButton(_widget, wxID_ANY, _("Select Vocal Set..."));
-	browseButton->SetBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "icon_sound.png"));
+	browseButton->SetBitmap(wxutil::GetLocalBitmap("icon_sound.png"));
 	browseButton->Bind(wxEVT_BUTTON, &AIVocalSetPropertyEditor::onChooseButton, this);
 
 	_widget->GetSizer()->Add(browseButton, 0, wxALIGN_CENTER_VERTICAL);

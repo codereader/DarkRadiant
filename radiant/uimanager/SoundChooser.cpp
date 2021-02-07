@@ -17,7 +17,7 @@
 #include "ui/UserInterfaceModule.h"
 
 #include <wx/sizer.h>
-#include <wx/artprov.h>
+#include "wxutil/Bitmap.h"
 #include <wx/button.h>
 #include <sigc++/functors/mem_fun.h>
 
@@ -55,8 +55,8 @@ public:
                          VFSTreePopulator(treeStore),
                          _columns(columns)
     {
-        _shaderIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + SHADER_ICON));
-        _folderIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + FOLDER_ICON));
+        _shaderIcon.CopyFromBitmap(wxutil::GetLocalBitmap(SHADER_ICON));
+        _folderIcon.CopyFromBitmap(wxutil::GetLocalBitmap(FOLDER_ICON));
 
         // Get the list of favourites
         _favourites = GlobalFavouritesManager().getFavourites(decl::Type::SoundShader);

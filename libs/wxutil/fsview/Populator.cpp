@@ -9,7 +9,7 @@
 #include "os/filesize.h"
 #include "gamelib.h"
 
-#include <wx/artprov.h>
+#include "wxutil/Bitmap.h"
 #include <fmt/format.h>
 
 namespace wxutil
@@ -36,9 +36,9 @@ Populator::Populator(const TreeColumns& columns,
     _fileExtensions(fileExtensions)
 {
     _fileIcon.CopyFromBitmap(
-        wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + FILE_ICON));
+        wxutil::GetLocalBitmap(FILE_ICON));
     _folderIcon.CopyFromBitmap(
-        wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + FOLDER_ICON));
+        wxutil::GetLocalBitmap(FOLDER_ICON));
 
     _basePathItem = insertBasePathItem();
     _treePopulator.setTopLevelItem(_basePathItem);
@@ -55,7 +55,7 @@ Populator::~Populator()
 
 void Populator::SetDefaultFileIcon(const std::string& fileIcon)
 {
-    _fileIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + fileIcon));
+    _fileIcon.CopyFromBitmap(wxutil::GetLocalBitmap(fileIcon));
 }
 
 void Populator::visitFile(const vfs::FileInfo& fileInfo)
@@ -177,7 +177,7 @@ const wxIcon& Populator::GetIconForFile(const std::string& path)
     if (!iconName.empty())
     {
         wxIcon customIcon;
-        customIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + iconName));
+        customIcon.CopyFromBitmap(wxutil::GetLocalBitmap(iconName));
 
         foundIcon = _iconsPerExtension.emplace(extension, customIcon).first;
     }

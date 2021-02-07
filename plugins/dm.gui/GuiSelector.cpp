@@ -11,7 +11,7 @@
 #include "ReadablePopulator.h"
 #include "ReadableEditorDialog.h"
 
-#include <wx/artprov.h>
+#include "wxutil/Bitmap.h"
 #include <wx/notebook.h>
 
 namespace ui
@@ -37,8 +37,8 @@ GuiSelector::GuiSelector(bool twoSided, ReadableEditorDialog* editorDialog) :
 	_oneSidedView(NULL),
 	_twoSidedView(NULL)
 {
-	_guiIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + GUI_ICON));
-	_folderIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + FOLDER_ICON));
+	_guiIcon.CopyFromBitmap(wxutil::GetLocalBitmap(GUI_ICON));
+	_folderIcon.CopyFromBitmap(wxutil::GetLocalBitmap(FOLDER_ICON));
 
 	// Set the windowsize and default border width in accordance to the HIG
 	SetSize(WINDOW_WIDTH, WINDOW_HEIGHT);

@@ -7,7 +7,7 @@
 #include "icommandsystem.h"
 #include "iorthoview.h"
 
-#include <wx/artprov.h>
+#include "wxutil/Bitmap.h"
 #include <wx/toolbar.h>
 #include <wx/checkbox.h>
 #include <wx/frame.h>
@@ -118,26 +118,24 @@ void FavouritesBrowser::constructPopupMenu()
 
 void FavouritesBrowser::setupCategories()
 {
-    auto prefix = GlobalUIManager().ArtIdPrefix();
-
     _categories.emplace_back(FavouriteCategory{
         decl::Type::Material, _("Materials"), "icon_texture.png",
-        _iconList->Add(wxArtProvider::GetBitmap(prefix + "icon_texture.png")),
+        _iconList->Add(wxutil::GetLocalBitmap("icon_texture.png")),
         nullptr
     });
     _categories.emplace_back(FavouriteCategory{
         decl::Type::Model, _("Models"), "icon_model.png",
-        _iconList->Add(wxArtProvider::GetBitmap(prefix + "icon_model.png")),
+        _iconList->Add(wxutil::GetLocalBitmap("icon_model.png")),
         nullptr
     });
     _categories.emplace_back(FavouriteCategory{
         decl::Type::EntityDef, _("EntityDefs"), "cmenu_add_entity.png",
-        _iconList->Add(wxArtProvider::GetBitmap(prefix + "cmenu_add_entity.png")),
+        _iconList->Add(wxutil::GetLocalBitmap("cmenu_add_entity.png")),
         nullptr
     });
     _categories.emplace_back(FavouriteCategory{
         decl::Type::SoundShader, _("Sound Shaders"), "icon_sound.png",
-        _iconList->Add(wxArtProvider::GetBitmap(prefix + "icon_sound.png")),
+        _iconList->Add(wxutil::GetLocalBitmap("icon_sound.png")),
         nullptr
     });
 
@@ -173,7 +171,7 @@ wxToolBar* FavouritesBrowser::createLeftToolBar()
     for (auto& category : _categories)
     {
         category.checkButton = toolbar->AddCheckTool(wxID_ANY, category.displayName,
-            wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + category.iconName, wxART_TOOLBAR));
+            wxutil::GetLocalBitmap(category.iconName, wxART_TOOLBAR));
 
         category.checkButton->SetShortHelp(category.displayName);
         category.checkButton->Toggle(true);

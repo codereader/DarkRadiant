@@ -13,7 +13,7 @@
 
 #include <wx/sizer.h>
 #include <wx/splitter.h>
-#include <wx/artprov.h>
+#include "wxutil/Bitmap.h"
 
 namespace ui 
 {
@@ -39,7 +39,7 @@ EClassTree::EClassTree() :
 	wxutil::TreeModel::Row row = _eclassStore->AddItem();
 
 	wxIcon icon;
-	icon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "cmenu_add_entity.png"));
+	icon.CopyFromBitmap(wxutil::GetLocalBitmap("cmenu_add_entity.png"));
 	row[_eclassColumns.name] = wxVariant(wxDataViewIconText(_("Loading, please wait..."), icon));
 
 	row.SendItemAdded();

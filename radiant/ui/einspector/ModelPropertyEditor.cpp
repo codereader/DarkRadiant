@@ -13,7 +13,7 @@
 
 #include <wx/panel.h>
 #include <wx/button.h>
-#include <wx/artprov.h>
+#include "wxutil/Bitmap.h"
 #include <wx/sizer.h>
 
 #include "SkinChooser.h"
@@ -49,7 +49,7 @@ ModelPropertyEditor::ModelPropertyEditor(wxWindow* parent, Entity* entity,
 
 	// Browse button for particles
 	wxButton* particleButton = new wxButton(mainVBox, wxID_ANY, _("Choose particle..."));
-	particleButton->SetBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "particle16.png"));
+	particleButton->SetBitmap(wxutil::GetLocalBitmap("particle16.png"));
 	particleButton->Bind(wxEVT_BUTTON, &ModelPropertyEditor::_onParticleButton, this);
 
 	// The panel will use the entire height of the editor frame in the entity inspector

@@ -16,7 +16,7 @@
 #include "wxutil/GLWidget.h"
 #include "wxutil/dialog/MessageBox.h"
 
-#include <wx/artprov.h>
+#include "../Bitmap.h"
 
 #include <fmt/format.h>
 #include "string/predicate.h"
@@ -47,23 +47,23 @@ ParticlePreview::ParticlePreview(wxWindow* parent) :
 	toolbar->SetToolBitmapSize(wxSize(24, 24));
 
 	_showAxesButton = toolbar->AddCheckTool(TOOL_SHOW_AXES, "", 
-		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "axes.png", wxART_TOOLBAR));
+		wxutil::GetLocalBitmap("axes.png", wxART_TOOLBAR));
 	_showAxesButton->SetShortHelp(_("Show coordinate axes"));
 	toolbar->Connect(_showAxesButton->GetId(), wxEVT_TOOL, 
 		wxCommandEventHandler(ParticlePreview::onToolItemClickRefresh), NULL, this);
 
 	_showWireFrameButton = toolbar->AddCheckTool(TOOL_SHOW_WIREFRAME, "", 
-		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "wireframe.png", wxART_TOOLBAR));
+		wxutil::GetLocalBitmap("wireframe.png", wxART_TOOLBAR));
 	_showWireFrameButton->SetShortHelp(_("Show wireframe"));
 	toolbar->Connect(_showWireFrameButton->GetId(), wxEVT_TOOL, 
 		wxCommandEventHandler(ParticlePreview::onToolItemClickRefresh), NULL, this);
 
 	_automaticLoopButton = toolbar->AddCheckTool(TOOL_AUTO_LOOP, _("Auto Loop"), 
-		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "loop.png", wxART_TOOLBAR));
+		wxutil::GetLocalBitmap("loop.png", wxART_TOOLBAR));
 	_automaticLoopButton->SetShortHelp(_("Auto Loop"));
 
 	_reloadButton = toolbar->AddTool(TOOL_REFRESH, "", 
-		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "refresh.png", wxART_TOOLBAR));
+		wxutil::GetLocalBitmap("refresh.png", wxART_TOOLBAR));
     _reloadButton->SetShortHelp(_("Reload Particle Defs"));
     IEventPtr ev = GlobalEventManager().findEvent("ReloadParticles");
 	ev->connectToolItem(_reloadButton);

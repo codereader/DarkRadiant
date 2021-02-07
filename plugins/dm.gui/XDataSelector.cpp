@@ -6,7 +6,7 @@
 
 #include "ReadableEditorDialog.h"
 
-#include <wx/artprov.h>
+#include "wxutil/Bitmap.h"
 #include <wx/sizer.h>
 
 namespace ui
@@ -28,8 +28,8 @@ XDataSelector::XDataSelector(const XData::StringVectorMap& files, ReadableEditor
 	_files(files),
 	_editorDialog(editorDialog)
 {
-	_xdataIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + XDATA_ICON));
-	_folderIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + FOLDER_ICON));
+	_xdataIcon.CopyFromBitmap(wxutil::GetLocalBitmap(XDATA_ICON));
+	_folderIcon.CopyFromBitmap(wxutil::GetLocalBitmap(FOLDER_ICON));
 
 	fillTree();
 

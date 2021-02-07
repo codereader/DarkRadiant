@@ -15,7 +15,7 @@
 #include <wx/panel.h>
 #include <wx/sizer.h>
 #include <wx/stattext.h>
-#include <wx/artprov.h>
+#include "wxutil/Bitmap.h"
 #include <functional>
 
 namespace ui
@@ -192,12 +192,12 @@ TransformDialog::EntryRow TransformDialog::createEntryRow(
 		controlButtonBox->SetMinSize(30, 30);
 
 		entryRow.smaller = new wxutil::ControlButton(parent, 
-			wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "arrow_left.png"));
+			wxutil::GetLocalBitmap("arrow_left.png"));
 		entryRow.smaller->SetMinSize(wxSize(15, 24));
 		controlButtonBox->Add(entryRow.smaller, 0);
 
 		entryRow.larger = new wxutil::ControlButton(parent, 
-			wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "arrow_right.png"));
+			wxutil::GetLocalBitmap("arrow_right.png"));
 		entryRow.larger->SetMinSize(wxSize(15, 24));
 		controlButtonBox->Add(entryRow.larger, 0);
 		

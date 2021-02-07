@@ -11,7 +11,7 @@
 #include "i18n.h"
 #include "igame.h"
 
-#include <wx/artprov.h>
+#include "wxutil/Bitmap.h"
 #include <wx/bmpcbox.h>
 #include <wx/combobox.h>
 
@@ -197,7 +197,7 @@ void StimTypes::setStimTypeCaption(int id, const std::string& caption)
 		// Update the list store
 		wxutil::TreeModel::Row row(getIterForId(id), *_listStore);
 
-		wxBitmap bmp = wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + _stimTypes[id].icon);
+		wxBitmap bmp = wxutil::GetLocalBitmap(_stimTypes[id].icon);
 		wxIcon stimIcon;
 		stimIcon.CopyFromBitmap(bmp);
 
@@ -232,7 +232,7 @@ void StimTypes::add(int id,
 
 	wxutil::TreeModel::Row row = _listStore->AddItem();
 
-	wxBitmap bmp = wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + newStimType.icon);
+	wxBitmap bmp = wxutil::GetLocalBitmap(newStimType.icon);
 	wxIcon stimIcon;
 	stimIcon.CopyFromBitmap(bmp);
 
@@ -262,7 +262,7 @@ void StimTypes::populateComboBox(wxBitmapComboBox* combo) const
 
 	for (const auto& pair : _stimTypes)
 	{
-		wxBitmap icon = wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + pair.second.icon);
+		wxBitmap icon = wxutil::GetLocalBitmap(pair.second.icon);
 
 		// Add the name (e.g. "STIM_FIRE") as client data to this option, for later retrieval
 		combo->Append(pair.second.caption, icon, new wxStringClientData(pair.second.name));

@@ -5,7 +5,7 @@
 #include "wxutil/dataview/TreeViewItemStyle.h"
 #include "ifavourites.h"
 #include "ModelSelector.h"
-#include <wx/artprov.h>
+#include "wxutil/Bitmap.h"
 
 #include "ModelTreeView.h"
 
@@ -46,9 +46,9 @@ public:
 		_columns(columns),
 		_includeSkins(includeSkins)
 	{
-		_modelIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + MODEL_ICON));
-		_folderIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + FOLDER_ICON));
-		_skinIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + SKIN_ICON));
+		_modelIcon.CopyFromBitmap(wxutil::GetLocalBitmap(MODEL_ICON));
+		_folderIcon.CopyFromBitmap(wxutil::GetLocalBitmap(FOLDER_ICON));
+		_skinIcon.CopyFromBitmap(wxutil::GetLocalBitmap(SKIN_ICON));
 
         // Get the list of favourites
         _favourites = GlobalFavouritesManager().getFavourites(decl::Type::Model);

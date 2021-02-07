@@ -12,6 +12,7 @@
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
 #include <wx/spinctrl.h>
+#include "wxutil/Bitmap.h"
 
 #include "registry/Widgets.h"
 #include "selectionlib.h"
@@ -166,12 +167,12 @@ PatchInspector::CoordRow PatchInspector::createCoordRow(
 	controlButtonBox->SetMinSize(30, 30);
 
 	coordRow.smaller = new wxutil::ControlButton(parent, 
-		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "arrow_left.png"));
+		wxutil::GetLocalBitmap("arrow_left.png"));
 	coordRow.smaller->SetMinSize(wxSize(15, 24));
 	controlButtonBox->Add(coordRow.smaller, 0);
 
 	coordRow.larger = new wxutil::ControlButton(parent, 
-		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "arrow_right.png"));
+		wxutil::GetLocalBitmap("arrow_right.png"));
 	coordRow.larger->SetMinSize(wxSize(15, 24));
 	controlButtonBox->Add(coordRow.larger, 0);
 

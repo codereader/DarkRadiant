@@ -3,7 +3,7 @@
 #include "iuimanager.h"
 #include "imainframe.h"
 #include "iregistry.h"
-#include <wx/artprov.h>
+#include "wxutil/Bitmap.h"
 
 namespace wxutil
 {
@@ -21,8 +21,7 @@ TransientWindow::TransientWindow(const std::string& title, wxWindow* parent, boo
 
 	// Set the window icon
 	wxIcon appIcon;
-	appIcon.CopyFromBitmap(wxArtProvider::GetBitmap(
-		GlobalUIManager().ArtIdPrefix() + "darkradiant_icon_64x64.png"));
+	appIcon.CopyFromBitmap(wxutil::GetLocalBitmap("darkradiant_icon_64x64.png"));
 	SetIcon(appIcon);
 }
 

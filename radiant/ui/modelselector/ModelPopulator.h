@@ -84,7 +84,7 @@ protected:
 
         // Model Defs Folder
         wxIcon folderIcon;
-        folderIcon.CopyFromBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + FOLDER_ICON));
+        folderIcon.CopyFromBitmap(wxutil::GetLocalBitmap(FOLDER_ICON));
 
         reportProgress(_("Building tree..."));
 

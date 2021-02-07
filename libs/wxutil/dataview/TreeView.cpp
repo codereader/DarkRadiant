@@ -10,7 +10,7 @@
 #include <wx/app.h>
 #include <wx/sizer.h>
 #include <wx/timer.h>
-#include <wx/artprov.h>
+#include "wxutil/Bitmap.h"
 #include <wx/textctrl.h>
 
 namespace wxutil
@@ -288,10 +288,10 @@ public:
 
 		_entry = new wxTextCtrl(this, wxID_ANY);
 
-		auto nextImg = wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "arrow_down.png");
+		auto nextImg = wxutil::GetLocalBitmap("arrow_down.png");
 		auto nextButton = new wxBitmapButton(this, wxID_ANY, nextImg);
 
-		auto prevImg = wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "arrow_up.png");
+		auto prevImg = wxutil::GetLocalBitmap("arrow_up.png");
 		auto prevButton = new wxBitmapButton(this, wxID_ANY, prevImg);
 		
 		nextButton->SetSize(wxSize(16, 16));

@@ -10,7 +10,7 @@
 #include <time.h>
 
 #include <wx/sizer.h>
-#include <wx/artprov.h>
+#include "wxutil/Bitmap.h"
 #include <wx/button.h>
 #include <wx/stattext.h>
 
@@ -35,10 +35,10 @@ void AIVocalSetPreview::createControlPanel()
 
 	// Create the playback button
 	_playButton = new wxButton(this, wxID_ANY);
-	_playButton->SetBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "media-playback-start-ltr.png"));
+	_playButton->SetBitmap(wxutil::GetLocalBitmap("media-playback-start-ltr.png"));
 
 	_stopButton = new wxButton(this, wxID_ANY);
-	_stopButton->SetBitmap(wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "media-playback-stop.png"));
+	_stopButton->SetBitmap(wxutil::GetLocalBitmap("media-playback-stop.png"));
 
 	_playButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(AIVocalSetPreview::onPlay), NULL, this);
 	_stopButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(AIVocalSetPreview::onStop), NULL, this);

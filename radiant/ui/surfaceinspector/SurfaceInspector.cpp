@@ -5,7 +5,7 @@
 #include <wx/panel.h>
 #include <wx/sizer.h>
 #include <wx/button.h>
-#include <wx/artprov.h>
+#include "wxutil/Bitmap.h"
 #include <wx/stattext.h>
 #include <wx/bmpbuttn.h>
 #include <wx/spinctrl.h>
@@ -233,7 +233,7 @@ void SurfaceInspector::populateWindow()
 
 	// Create the icon button to open the ShaderChooser
 	_selectShaderButton = new wxBitmapButton(dialogPanel, wxID_ANY, 
-		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + FOLDER_ICON));
+		wxutil::GetLocalBitmap(FOLDER_ICON));
 	_selectShaderButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onShaderSelect), NULL, this);
 	shaderHBox->Add(_selectShaderButton, 0, wxLEFT, 6);
 
@@ -398,12 +398,12 @@ SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
         controlButtonBox->SetMinSize(30, 24);
 
 		manipRow.larger = new wxutil::ControlButton(parent, 
-			wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "arrow_up.png"));
+			wxutil::GetLocalBitmap("arrow_up.png"));
 		manipRow.larger->SetMinSize(wxSize(30, 12));
 		controlButtonBox->Add(manipRow.larger, 0);
 
 		manipRow.smaller = new wxutil::ControlButton(parent, 
-			wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "arrow_down.png"));
+			wxutil::GetLocalBitmap("arrow_down.png"));
 		manipRow.smaller->SetMinSize(wxSize(30, 12));
 		controlButtonBox->Add(manipRow.smaller, 0);
 	}
@@ -413,12 +413,12 @@ SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
         controlButtonBox->SetMinSize(24, 24);
 
 		manipRow.smaller = new wxutil::ControlButton(parent, 
-			wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "arrow_left.png"));
+			wxutil::GetLocalBitmap("arrow_left.png"));
 		manipRow.smaller->SetMinSize(wxSize(15, 24));
 		controlButtonBox->Add(manipRow.smaller, 0);
 
 		manipRow.larger = new wxutil::ControlButton(parent, 
-			wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "arrow_right.png"));
+			wxutil::GetLocalBitmap("arrow_right.png"));
 		manipRow.larger->SetMinSize(wxSize(15, 24));
 		controlButtonBox->Add(manipRow.larger, 0);
 	}

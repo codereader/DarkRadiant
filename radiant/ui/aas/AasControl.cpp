@@ -11,7 +11,7 @@
 #include <wx/bmpbuttn.h>
 #include <wx/tglbtn.h>
 #include <wx/sizer.h>
-#include <wx/artprov.h>
+#include "wxutil/Bitmap.h"
 #include <memory>
 
 namespace ui
@@ -29,7 +29,7 @@ AasControl::AasControl(wxWindow* parent, const map::AasFileInfo& info) :
 	_toggle->Connect(wxEVT_TOGGLEBUTTON, wxCommandEventHandler(AasControl::onToggle), NULL, this);
 
     _refreshButton = new wxBitmapButton(parent, wxID_ANY, 
-		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + "refresh.png"));
+		wxutil::GetLocalBitmap("refresh.png"));
 	_refreshButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(AasControl::onRefresh), NULL, this);
 	_refreshButton->SetToolTip(_("Reload AAS File"));
 

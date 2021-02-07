@@ -6,7 +6,7 @@
 
 #include <wx/bmpbuttn.h>
 #include <wx/panel.h>
-#include <wx/artprov.h>
+#include "wxutil/Bitmap.h"
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 
@@ -36,7 +36,7 @@ AnglePropertyEditor::AnglePropertyEditor(wxWindow* parent, Entity* entity, const
 wxBitmapButton* AnglePropertyEditor::constructAngleButton(wxPanel* parent, const std::string& icon, int angleValue)
 {
 	wxBitmapButton* button = new wxBitmapButton(parent, wxID_ANY, 
-		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + icon));
+		wxutil::GetLocalBitmap(icon));
 
 	button->Connect(wxEVT_BUTTON, wxCommandEventHandler(AnglePropertyEditor::_onButtonClick), NULL, this);
 

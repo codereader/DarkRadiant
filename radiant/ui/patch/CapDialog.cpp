@@ -6,7 +6,7 @@
 #include <wx/sizer.h>
 #include <wx/radiobut.h>
 #include <wx/statbmp.h>
-#include <wx/artprov.h>
+#include "wxutil/Bitmap.h"
 
 #include "selectionlib.h"
 #include "command/ExecutionNotPossible.h"
@@ -55,7 +55,7 @@ PatchCapDialog::PatchCapDialog() :
 void PatchCapDialog::addItemToTable(wxFlexGridSizer* sizer, const std::string& image, patch::CapType type)
 {
 	wxStaticBitmap* img = new wxStaticBitmap(_dialog, wxID_ANY, 
-		wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + image));
+		wxutil::GetLocalBitmap(image));
 
 	wxRadioButton* radioButton = new wxRadioButton(_dialog, wxID_ANY, getCapTypeName(type),
 		wxDefaultPosition, wxDefaultSize, type == patch::CapType::Bevel ? wxRB_GROUP : 0);
