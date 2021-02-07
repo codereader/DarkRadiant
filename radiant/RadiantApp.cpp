@@ -122,7 +122,13 @@ void RadiantApp::initWxWidgets()
     // Our XRC resource files are stored in the ui/ folder.
     wxXmlResource::Get()->Load(_context.getRuntimeDataPath() + "ui/*.xrc");
 
-    wxInitAllImageHandlers();
+    // We only need PNG and JPEG for our local images. BMP is enabled by default.
+#if wxUSE_LIBPNG
+    wxImage::AddHandler(new wxPNGHandler);
+#endif
+#if wxUSE_LIBJPEG
+    wxImage::AddHandler(new wxJPEGHandler);
+#endif
 
     // Register the local art provider
     _bitmapArtProvider = std::make_unique<wxutil::LocalBitmapArtProvider>(_context.getBitmapsPath());
