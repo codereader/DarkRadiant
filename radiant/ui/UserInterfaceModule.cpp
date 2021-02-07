@@ -88,21 +88,19 @@ const std::string& UserInterfaceModule::getName() const
 
 const StringSet& UserInterfaceModule::getDependencies() const
 {
-	static StringSet _dependencies;
-
-	if (_dependencies.empty())
-	{
-		_dependencies.insert(MODULE_LAYERS);
-		_dependencies.insert(MODULE_ORTHOCONTEXTMENU);
-		_dependencies.insert(MODULE_UIMANAGER);
-		_dependencies.insert(MODULE_FILTERSYSTEM);
-		_dependencies.insert(MODULE_ENTITY);
-		_dependencies.insert(MODULE_EVENTMANAGER);
-		_dependencies.insert(MODULE_RADIANT_CORE);
-		_dependencies.insert(MODULE_MRU_MANAGER);
-		_dependencies.insert(MODULE_MAINFRAME);
-		_dependencies.insert(MODULE_MOUSETOOLMANAGER);
-	}
+    static StringSet _dependencies
+    {
+        MODULE_LAYERS,
+        MODULE_ORTHOCONTEXTMENU,
+        MODULE_UIMANAGER,
+        MODULE_FILTERSYSTEM,
+        MODULE_ENTITY,
+        MODULE_EVENTMANAGER,
+        MODULE_RADIANT_CORE,
+        MODULE_MRU_MANAGER,
+        MODULE_MAINFRAME,
+        MODULE_MOUSETOOLMANAGER
+    };
 
 	return _dependencies;
 }

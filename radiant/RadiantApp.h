@@ -4,6 +4,7 @@
 #include <sigc++/connection.h>
 #include "ApplicationContext.h"
 #include "module/CoreModule.h"
+#include "wxutil/LocalBitmapArtProvider.h"
 
 /**
 * Main application class required by wxWidgets
@@ -26,6 +27,7 @@ class RadiantApp :
 	std::unique_ptr<module::CoreModule> _coreModule;
 
 	sigc::connection _modulesUnloadingHandler;
+	std::unique_ptr<wxutil::LocalBitmapArtProvider> _bitmapArtProvider;
 
 public:
 	bool OnInit() override;

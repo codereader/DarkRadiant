@@ -1,22 +1,11 @@
 #include "UIManager.h"
 #include "module/StaticModule.h"
 
-#include "i18n.h"
 #include "itextstream.h"
-#include "iregistry.h"
-#include "iradiant.h"
 #include "imainframe.h"
-#include "icommandsystem.h"
-#include "ieventmanager.h"
 #include "GroupDialog.h"
-#include "debugging/debugging.h"
-#include "wxutil/dialog/MessageBox.h"
 
-#include "wxutil/LocalBitmapArtProvider.h"
-
-#include <wx/artprov.h>
 #include <wx/xrc/xmlres.h>
-#include <memory>
 
 namespace ui
 {
@@ -35,7 +24,6 @@ void UIManager::clear()
 	_dialogManager.reset();
 
 	wxFileSystem::CleanUpHandlers();
-	_bitmapArtProvider.reset();
 }
 
 const std::string& UIManager::getName() const
@@ -50,9 +38,7 @@ const StringSet& UIManager::getDependencies() const
 
 	if (_dependencies.empty())
 	{
-		_dependencies.insert(MODULE_EVENTMANAGER);
-		_dependencies.insert(MODULE_XMLREGISTRY);
-		_dependencies.insert(MODULE_COMMANDSYSTEM);
+		_dependencies.insert(MODULE_MAINFRAME);
 	}
 
 	return _dependencies;
@@ -61,8 +47,6 @@ const StringSet& UIManager::getDependencies() const
 void UIManager::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called" << std::endl;
-
-	_bitmapArtProvider.reset(new wxutil::LocalBitmapArtProvider(ctx.getBitmapsPath()));
 
 	_dialogManager = std::make_shared<DialogManager>();
 

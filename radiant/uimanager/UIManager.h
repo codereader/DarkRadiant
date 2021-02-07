@@ -1,15 +1,11 @@
 #pragma once
 
-#include "imodule.h"
-#include "iradiant.h"
 #include "iuimanager.h"
 #include "idialogmanager.h"
 
 #include "DialogManager.h"
 
 #include <memory>
-
-namespace wxutil { class LocalBitmapArtProvider; }
 
 namespace ui
 {
@@ -21,8 +17,6 @@ class UIManager :
     // Sub-manager classes, constructed in initialiseModule to avoid being
     // called before the main window is ready.
 	DialogManagerPtr _dialogManager;
-
-	std::unique_ptr<wxutil::LocalBitmapArtProvider> _bitmapArtProvider;
 
 public:
 	IGroupDialog& getGroupDialog() override;

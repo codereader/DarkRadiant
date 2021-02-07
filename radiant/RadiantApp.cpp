@@ -104,6 +104,9 @@ bool RadiantApp::OnInit()
 
 	wxInitAllImageHandlers();
 
+    // Register the local art provider
+    _bitmapArtProvider = std::make_unique<wxutil::LocalBitmapArtProvider>(_context.getBitmapsPath());
+
 	// Register to the start up signal
 	Bind(EV_RadiantStartup, &RadiantApp::onStartupEvent, this);
 
@@ -124,6 +127,8 @@ int RadiantApp::OnExit()
 	settings::LocalisationProvider::Cleanup();
 
 	_coreModule.reset();
+
+    _bitmapArtProvider.reset();
 
 	return wxApp::OnExit();
 }
