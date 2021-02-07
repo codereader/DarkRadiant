@@ -223,10 +223,6 @@
     <ClCompile Include="..\..\radiant\settings\LocalisationModule.cpp" />
     <ClCompile Include="..\..\radiant\settings\LocalisationProvider.cpp" />
     <ClCompile Include="..\..\radiant\settings\Win32Registry.cpp" />
-    <ClCompile Include="..\..\radiant\uimanager\animationpreview\AnimationPreview.cpp" />
-    <ClCompile Include="..\..\radiant\uimanager\animationpreview\MD5AnimationChooser.cpp" />
-    <ClCompile Include="..\..\radiant\uimanager\animationpreview\MD5AnimationViewer.cpp" />
-    <ClCompile Include="..\..\radiant\uimanager\colourscheme\ColourSchemeEditor.cpp" />
     <ClCompile Include="..\..\radiant\uimanager\DialogManager.cpp" />
     <ClCompile Include="..\..\radiant\uimanager\GroupDialog.cpp" />
     <ClCompile Include="..\..\radiant\uimanager\SoundChooser.cpp" />
@@ -235,7 +231,11 @@
     <ClCompile Include="..\..\radiant\ui\aas\AasControl.cpp" />
     <ClCompile Include="..\..\radiant\ui\aas\AasControlDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\aas\RenderableAasFile.cpp" />
+    <ClCompile Include="..\..\radiant\ui\animationpreview\AnimationPreview.cpp" />
+    <ClCompile Include="..\..\radiant\ui\animationpreview\MD5AnimationChooser.cpp" />
+    <ClCompile Include="..\..\radiant\ui\animationpreview\MD5AnimationViewer.cpp" />
     <ClCompile Include="..\..\radiant\ui\brush\FindBrush.cpp" />
+    <ClCompile Include="..\..\radiant\ui\colourscheme\ColourSchemeEditor.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\DefinitionView.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\MaterialDefinitionView.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\SoundShaderDefinitionView.cpp" />
@@ -405,10 +405,6 @@
     <ClInclude Include="..\..\radiant\settings\LocalisationModule.h" />
     <ClInclude Include="..\..\radiant\settings\LocalisationProvider.h" />
     <ClInclude Include="..\..\radiant\settings\Win32Registry.h" />
-    <ClInclude Include="..\..\radiant\uimanager\animationpreview\AnimationPreview.h" />
-    <ClInclude Include="..\..\radiant\uimanager\animationpreview\MD5AnimationChooser.h" />
-    <ClInclude Include="..\..\radiant\uimanager\animationpreview\MD5AnimationViewer.h" />
-    <ClInclude Include="..\..\radiant\uimanager\colourscheme\ColourSchemeEditor.h" />
     <ClInclude Include="..\..\radiant\uimanager\DialogManager.h" />
     <ClInclude Include="..\..\radiant\uimanager\GroupDialog.h" />
     <ClInclude Include="..\..\radiant\uimanager\LocalBitmapArtProvider.h" />
@@ -418,8 +414,12 @@
     <ClInclude Include="..\..\radiant\ui\aas\AasControl.h" />
     <ClInclude Include="..\..\radiant\ui\aas\AasControlDialog.h" />
     <ClInclude Include="..\..\radiant\ui\aas\RenderableAasFile.h" />
+    <ClInclude Include="..\..\radiant\ui\animationpreview\AnimationPreview.h" />
+    <ClInclude Include="..\..\radiant\ui\animationpreview\MD5AnimationChooser.h" />
+    <ClInclude Include="..\..\radiant\ui\animationpreview\MD5AnimationViewer.h" />
     <ClInclude Include="..\..\radiant\ui\AutoSaveRequestHandler.h" />
     <ClInclude Include="..\..\radiant\ui\brush\FindBrush.h" />
+    <ClInclude Include="..\..\radiant\ui\colourscheme\ColourSchemeEditor.h" />
     <ClInclude Include="..\..\radiant\ui\common\DefinitionView.h" />
     <ClInclude Include="..\..\radiant\ui\common\MaterialDefinitionView.h" />
     <ClInclude Include="..\..\radiant\ui\common\SoundShaderDefinitionView.h" />

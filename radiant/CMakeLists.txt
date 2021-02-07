@@ -98,10 +98,10 @@ add_executable(darkradiant
                ui/mainframe/SplitPaneLayout.cpp
                ui/mainframe/TopLevelFrame.cpp
                ui/mapselector/MapSelector.cpp
-               uimanager/animationpreview/AnimationPreview.cpp
-               uimanager/animationpreview/MD5AnimationChooser.cpp
-               uimanager/animationpreview/MD5AnimationViewer.cpp
-               uimanager/colourscheme/ColourSchemeEditor.cpp
+               ui/animationpreview/AnimationPreview.cpp
+               ui/animationpreview/MD5AnimationChooser.cpp
+               ui/animationpreview/MD5AnimationViewer.cpp
+               ui/colourscheme/ColourSchemeEditor.cpp
                uimanager/DialogManager.cpp
                uimanager/GroupDialog.cpp
                ui/menu/MenuBar.cpp

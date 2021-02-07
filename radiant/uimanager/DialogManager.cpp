@@ -7,7 +7,7 @@
 #include "wxutil/FileChooser.h"
 #include "wxutil/DirChooser.h"
 #include "SoundChooser.h"
-#include "animationpreview/MD5AnimationChooser.h"
+#include "ui/animationpreview/MD5AnimationChooser.h"
 
 namespace ui
 {

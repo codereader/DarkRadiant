@@ -128,12 +128,6 @@
     <Filter Include="src\uimanager">
       <UniqueIdentifier>{9447d2a6-4742-4c6b-b53c-cd25985c034e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\uimanager\colourscheme">
-      <UniqueIdentifier>{f198ee8a-abfc-41e7-b3a5-9087c21695d6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="src\uimanager\animationpreview">
-      <UniqueIdentifier>{562e8fd0-cd8f-448b-ba69-90e8f4a85b11}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\eventmanager">
       <UniqueIdentifier>{9215c909-e37e-4fef-b0ce-04455bf61cf2}</UniqueIdentifier>
     </Filter>
@@ -178,6 +172,12 @@
     </Filter>
     <Filter Include="src\ui\menu">
       <UniqueIdentifier>{9ee6e7e2-936f-4337-9c0a-bdf9db86349e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ui\animationpreview">
+      <UniqueIdentifier>{562e8fd0-cd8f-448b-ba69-90e8f4a85b11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ui\colourscheme">
+      <UniqueIdentifier>{f198ee8a-abfc-41e7-b3a5-9087c21695d6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -502,18 +502,6 @@
     <ClCompile Include="..\..\radiant\uimanager\UIManager.cpp">
       <Filter>src\uimanager</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\uimanager\colourscheme\ColourSchemeEditor.cpp">
-      <Filter>src\uimanager\colourscheme</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\uimanager\animationpreview\AnimationPreview.cpp">
-      <Filter>src\uimanager\animationpreview</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\uimanager\animationpreview\MD5AnimationChooser.cpp">
-      <Filter>src\uimanager\animationpreview</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\uimanager\animationpreview\MD5AnimationViewer.cpp">
-      <Filter>src\uimanager\animationpreview</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\eventmanager\Accelerator.cpp">
       <Filter>src\eventmanager</Filter>
     </ClCompile>
@@ -684,6 +672,18 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\menu\MenuSeparator.cpp">
       <Filter>src\ui\menu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\colourscheme\ColourSchemeEditor.cpp">
+      <Filter>src\ui\colourscheme</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\animationpreview\AnimationPreview.cpp">
+      <Filter>src\ui\animationpreview</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\animationpreview\MD5AnimationChooser.cpp">
+      <Filter>src\ui\animationpreview</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\animationpreview\MD5AnimationViewer.cpp">
+      <Filter>src\ui\animationpreview</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1083,18 +1083,6 @@
     <ClInclude Include="..\..\radiant\uimanager\UIManager.h">
       <Filter>src\uimanager</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\uimanager\colourscheme\ColourSchemeEditor.h">
-      <Filter>src\uimanager\colourscheme</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\uimanager\animationpreview\AnimationPreview.h">
-      <Filter>src\uimanager\animationpreview</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\uimanager\animationpreview\MD5AnimationChooser.h">
-      <Filter>src\uimanager\animationpreview</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\uimanager\animationpreview\MD5AnimationViewer.h">
-      <Filter>src\uimanager\animationpreview</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\eventmanager\Accelerator.h">
       <Filter>src\eventmanager</Filter>
     </ClInclude>
@@ -1313,6 +1301,18 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\menu\MenuSeparator.h">
       <Filter>src\ui\menu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\colourscheme\ColourSchemeEditor.h">
+      <Filter>src\ui\colourscheme</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\animationpreview\AnimationPreview.h">
+      <Filter>src\ui\animationpreview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\animationpreview\MD5AnimationChooser.h">
+      <Filter>src\ui\animationpreview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\animationpreview\MD5AnimationViewer.h">
+      <Filter>src\ui\animationpreview</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
