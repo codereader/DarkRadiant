@@ -10,12 +10,11 @@
 namespace ui
 {
 
-class UIManager :
-	public IUIManager,
-	public std::enable_shared_from_this<UIManager>
+class GroupDialogManager :
+	public IGroupDialogManager
 {
 public:
-	IGroupDialog& getGroupDialog() override;
+	IGroupDialog& get() override;
 
 	// RegisterableModule implementation
 	const std::string& getName() const override;

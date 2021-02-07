@@ -173,19 +173,17 @@ const std::string& MediaBrowser::getName() const
 
 const StringSet& MediaBrowser::getDependencies() const
 {
-	static StringSet _dependencies;
-
-	if (_dependencies.empty())
-	{
-		_dependencies.insert(MODULE_COMMANDSYSTEM);
-		_dependencies.insert(MODULE_EVENTMANAGER);
-		_dependencies.insert(MODULE_SHADERSYSTEM);
-		_dependencies.insert(MODULE_UIMANAGER);
-		_dependencies.insert(MODULE_SHADERCLIPBOARD);
-		_dependencies.insert(MODULE_MAINFRAME);
-		_dependencies.insert(MODULE_FAVOURITES_MANAGER);
-		_dependencies.insert(MODULE_MAP);
-	}
+    static StringSet _dependencies
+    {
+        MODULE_COMMANDSYSTEM,
+        MODULE_EVENTMANAGER,
+        MODULE_SHADERSYSTEM,
+        MODULE_GROUPDIALOG,
+        MODULE_SHADERCLIPBOARD,
+        MODULE_MAINFRAME,
+        MODULE_FAVOURITES_MANAGER,
+        MODULE_MAP
+    };
 
 	return _dependencies;
 }

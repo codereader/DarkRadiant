@@ -606,15 +606,12 @@ const std::string& OrthoContextMenu::getName() const
 
 const StringSet& OrthoContextMenu::getDependencies() const
 {
-    static StringSet _dependencies;
-
-    if (_dependencies.empty())
+    static StringSet _dependencies
     {
-        _dependencies.insert(MODULE_UIMANAGER);
-        _dependencies.insert(MODULE_COMMANDSYSTEM);
-        _dependencies.insert(MODULE_EVENTMANAGER);
-        _dependencies.insert(MODULE_MAINFRAME);
-    }
+        MODULE_COMMANDSYSTEM,
+        MODULE_EVENTMANAGER,
+        MODULE_MAINFRAME,
+    };
 
     return _dependencies;
 }

@@ -67,13 +67,12 @@ const std::string& MainFrameLayoutManager::getName() const
 
 const StringSet& MainFrameLayoutManager::getDependencies() const
 {
-	static StringSet _dependencies;
-
-	if (_dependencies.empty()) {
-		_dependencies.insert(MODULE_EVENTMANAGER);
-		_dependencies.insert(MODULE_UIMANAGER);
-		_dependencies.insert(MODULE_COMMANDSYSTEM);
-	}
+    static StringSet _dependencies
+    {
+        MODULE_EVENTMANAGER,
+        MODULE_GROUPDIALOG,
+        MODULE_COMMANDSYSTEM
+    };
 
 	return _dependencies;
 }

@@ -2,39 +2,33 @@
 #include "module/StaticModule.h"
 
 #include "itextstream.h"
-#include "imainframe.h"
 #include "GroupDialog.h"
 
 namespace ui
 {
 
-IGroupDialog& UIManager::getGroupDialog() {
+IGroupDialog& GroupDialogManager::get()
+{
 	return GroupDialog::Instance();
 }
 
-const std::string& UIManager::getName() const
+const std::string& GroupDialogManager::getName() const
 {
-	static std::string _name(MODULE_UIMANAGER);
+	static std::string _name(MODULE_GROUPDIALOG);
 	return _name;
 }
 
-const StringSet& UIManager::getDependencies() const
+const StringSet& GroupDialogManager::getDependencies() const
 {
 	static StringSet _dependencies;
-
-	if (_dependencies.empty())
-	{
-		_dependencies.insert(MODULE_MAINFRAME);
-	}
-
 	return _dependencies;
 }
 
-void UIManager::initialiseModule(const IApplicationContext& ctx)
+void GroupDialogManager::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called" << std::endl;
 }
 
-module::StaticModule<UIManager> uiManagerModule;
+module::StaticModule<GroupDialogManager> groupDialogManagerModule;
 
 } // namespace ui

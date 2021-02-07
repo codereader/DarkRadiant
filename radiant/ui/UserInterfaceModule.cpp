@@ -92,7 +92,6 @@ const StringSet& UserInterfaceModule::getDependencies() const
     {
         MODULE_LAYERS,
         MODULE_ORTHOCONTEXTMENU,
-        MODULE_UIMANAGER,
         MODULE_FILTERSYSTEM,
         MODULE_ENTITY,
         MODULE_EVENTMANAGER,

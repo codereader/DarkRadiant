@@ -372,19 +372,17 @@ const std::string& EntityInspector::getName() const
 
 const StringSet& EntityInspector::getDependencies() const
 {
-    static StringSet _dependencies;
-
-    if (_dependencies.empty())
+    static StringSet _dependencies
     {
-        _dependencies.insert(MODULE_XMLREGISTRY);
-        _dependencies.insert(MODULE_UIMANAGER);
-        _dependencies.insert(MODULE_SELECTIONSYSTEM);
-        _dependencies.insert(MODULE_UNDOSYSTEM);
-        _dependencies.insert(MODULE_GAMEMANAGER);
-        _dependencies.insert(MODULE_COMMANDSYSTEM);
-        _dependencies.insert(MODULE_EVENTMANAGER);
-        _dependencies.insert(MODULE_MAINFRAME);
-    }
+        MODULE_XMLREGISTRY,
+        MODULE_GROUPDIALOG,
+        MODULE_SELECTIONSYSTEM,
+        MODULE_UNDOSYSTEM,
+        MODULE_GAMEMANAGER,
+        MODULE_COMMANDSYSTEM,
+        MODULE_EVENTMANAGER,
+        MODULE_MAINFRAME
+    };
 
     return _dependencies;
 }

@@ -1,29 +1,34 @@
 #pragma once
 
 #include "imodule.h"
+#include "igroupdialog.h"
 
-// Forward declarations
-class IGroupDialog;		// see igroupdialog.h for definition
-
-const char* const MODULE_UIMANAGER("UIManager");
+namespace ui
+{
 
 /** 
  * greebo: The UI Manager gives access to the GroupDialog and the DialogManager.
  */
-class IUIManager :
+class IGroupDialogManager :
 	public RegisterableModule
 {
 public:
-	virtual IGroupDialog& getGroupDialog() = 0;
+    virtual ~IGroupDialogManager() {}
+
+	virtual IGroupDialog& get() = 0;
 };
 
-inline IUIManager& GlobalUIManager()
+}
+
+constexpr const char* const MODULE_GROUPDIALOG("GroupDialogModule");
+
+inline ui::IGroupDialogManager& GlobalGroupDialogManager()
 {
-	static module::InstanceReference<IUIManager> _reference(MODULE_UIMANAGER);
+	static module::InstanceReference<ui::IGroupDialogManager> _reference(MODULE_GROUPDIALOG);
 	return _reference;
 }
 
 inline IGroupDialog& GlobalGroupDialog()
 {
-	return GlobalUIManager().getGroupDialog();
+	return GlobalGroupDialogManager().get();
 }

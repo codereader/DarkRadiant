@@ -447,17 +447,14 @@ const std::string& CameraWndManager::getName() const
 
 const StringSet& CameraWndManager::getDependencies() const
 {
-	static StringSet _dependencies;
-
-	if (_dependencies.empty())
-	{
-		_dependencies.insert(MODULE_XMLREGISTRY);
-		_dependencies.insert(MODULE_EVENTMANAGER);
-		_dependencies.insert(MODULE_RENDERSYSTEM);
-		_dependencies.insert(MODULE_COMMANDSYSTEM);
-        _dependencies.insert(MODULE_MOUSETOOLMANAGER);
-		_dependencies.insert(MODULE_UIMANAGER);
-	}
+    static StringSet _dependencies
+    {
+        MODULE_XMLREGISTRY,
+        MODULE_EVENTMANAGER,
+        MODULE_RENDERSYSTEM,
+        MODULE_COMMANDSYSTEM,
+        MODULE_MOUSETOOLMANAGER,
+    };
 
 	return _dependencies;
 }

@@ -32,15 +32,12 @@ public:
 
     const StringSet& getDependencies() const override
     {
-        static StringSet _dependencies;
-
-        if (_dependencies.empty())
+        static StringSet _dependencies
         {
-            _dependencies.insert(MODULE_FAVOURITES_MANAGER);
-            _dependencies.insert(MODULE_UIMANAGER);
-            _dependencies.insert(MODULE_COMMANDSYSTEM);
-            _dependencies.insert(MODULE_MAINFRAME);
-        }
+            MODULE_FAVOURITES_MANAGER,
+            MODULE_COMMANDSYSTEM,
+            MODULE_MAINFRAME
+        };
 
         return _dependencies;
     }

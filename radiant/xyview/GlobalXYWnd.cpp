@@ -648,19 +648,16 @@ const std::string& XYWndManager::getName() const
 
 const StringSet& XYWndManager::getDependencies() const
 {
-	static StringSet _dependencies;
-
-	if (_dependencies.empty())
-	{
-		_dependencies.insert(MODULE_XMLREGISTRY);
-		_dependencies.insert(MODULE_EVENTMANAGER);
-		_dependencies.insert(MODULE_RENDERSYSTEM);
-		_dependencies.insert(MODULE_PREFERENCESYSTEM);
-		_dependencies.insert(MODULE_COMMANDSYSTEM);
-		_dependencies.insert(MODULE_UIMANAGER);
-        _dependencies.insert(MODULE_MOUSETOOLMANAGER);
-        _dependencies.insert(MODULE_STATUSBARMANAGER);
-	}
+    static StringSet _dependencies
+    {
+        MODULE_XMLREGISTRY,
+        MODULE_EVENTMANAGER,
+        MODULE_RENDERSYSTEM,
+        MODULE_PREFERENCESYSTEM,
+        MODULE_COMMANDSYSTEM,
+        MODULE_MOUSETOOLMANAGER,
+        MODULE_STATUSBARMANAGER
+    };
 
 	return _dependencies;
 }
