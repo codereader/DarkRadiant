@@ -4,6 +4,7 @@
 #include "ieventmanager.h"
 #include "imenumanager.h"
 #include "igroupdialog.h"
+#include "iuimanager.h"
 #include "imainframe.h"
 #include "ientityinspector.h"
 

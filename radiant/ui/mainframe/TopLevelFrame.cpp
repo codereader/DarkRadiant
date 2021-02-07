@@ -4,6 +4,7 @@
 #include "i18n.h"
 #include "imenumanager.h"
 #include "istatusbarmanager.h"
+#include "iuimanager.h"
 #include "itoolbarmanager.h"
 #include <wx/artprov.h>
 #include <wx/toolbar.h>

@@ -112,7 +112,7 @@ add_executable(darkradiant
                ui/menu/MenuSeparator.cpp
                uimanager/SoundChooser.cpp
                uimanager/SoundShaderPreview.cpp
-               uimanager/ToolbarManager.cpp
+               ui/toolbar/ToolbarManager.cpp
                uimanager/UIManager.cpp
                ui/MapCommands.cpp
                ui/MapFileProgressHandler.cpp

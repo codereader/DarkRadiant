@@ -4,6 +4,7 @@
 #include "iscript.h"
 #include "imenumanager.h"
 #include "imainframe.h"
+#include "iuimanager.h"
 #include "i18n.h"
 #include "igroupdialog.h"
 #include "module/StaticModule.h"
