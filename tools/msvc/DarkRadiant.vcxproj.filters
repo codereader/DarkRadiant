@@ -179,6 +179,9 @@
     <Filter Include="src\ui\colourscheme">
       <UniqueIdentifier>{f198ee8a-abfc-41e7-b3a5-9087c21695d6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ui\groupdialog">
+      <UniqueIdentifier>{07fc75c2-d1cf-498c-8eb4-806389afc62b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\main.cpp">
@@ -487,19 +490,10 @@
     <ClCompile Include="..\..\radiant\ui\entitylist\GraphTreeModel.cpp">
       <Filter>src\ui\entitylist</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\uimanager\DialogManager.cpp">
-      <Filter>src\uimanager</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\uimanager\GroupDialog.cpp">
-      <Filter>src\uimanager</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\uimanager\SoundChooser.cpp">
       <Filter>src\uimanager</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\uimanager\SoundShaderPreview.cpp">
-      <Filter>src\uimanager</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\uimanager\UIManager.cpp">
       <Filter>src\uimanager</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\eventmanager\Accelerator.cpp">
@@ -684,6 +678,15 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\animationpreview\MD5AnimationViewer.cpp">
       <Filter>src\ui\animationpreview</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\groupdialog\GroupDialog.cpp">
+      <Filter>src\ui\groupdialog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\groupdialog\GroupDialogManager.cpp">
+      <Filter>src\ui\groupdialog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\common\DialogManager.cpp">
+      <Filter>src\ui\common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1065,19 +1068,10 @@
     <ClInclude Include="..\..\radiant\ui\entitylist\GraphTreeNode.h">
       <Filter>src\ui\entitylist</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\uimanager\DialogManager.h">
-      <Filter>src\uimanager</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\uimanager\GroupDialog.h">
-      <Filter>src\uimanager</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\uimanager\SoundChooser.h">
       <Filter>src\uimanager</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\uimanager\SoundShaderPreview.h">
-      <Filter>src\uimanager</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\uimanager\UIManager.h">
       <Filter>src\uimanager</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\eventmanager\Accelerator.h">
@@ -1310,6 +1304,15 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\animationpreview\MD5AnimationViewer.h">
       <Filter>src\ui\animationpreview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\groupdialog\GroupDialog.h">
+      <Filter>src\ui\groupdialog</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\groupdialog\GroupDialogManager.h">
+      <Filter>src\ui\groupdialog</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\common\DialogManager.h">
+      <Filter>src\ui\common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

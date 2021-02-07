@@ -223,11 +223,8 @@
     <ClCompile Include="..\..\radiant\settings\LocalisationModule.cpp" />
     <ClCompile Include="..\..\radiant\settings\LocalisationProvider.cpp" />
     <ClCompile Include="..\..\radiant\settings\Win32Registry.cpp" />
-    <ClCompile Include="..\..\radiant\uimanager\DialogManager.cpp" />
-    <ClCompile Include="..\..\radiant\uimanager\GroupDialog.cpp" />
     <ClCompile Include="..\..\radiant\uimanager\SoundChooser.cpp" />
     <ClCompile Include="..\..\radiant\uimanager\SoundShaderPreview.cpp" />
-    <ClCompile Include="..\..\radiant\uimanager\UIManager.cpp" />
     <ClCompile Include="..\..\radiant\ui\aas\AasControl.cpp" />
     <ClCompile Include="..\..\radiant\ui\aas\AasControlDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\aas\RenderableAasFile.cpp" />
@@ -237,6 +234,7 @@
     <ClCompile Include="..\..\radiant\ui\brush\FindBrush.cpp" />
     <ClCompile Include="..\..\radiant\ui\colourscheme\ColourSchemeEditor.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\DefinitionView.cpp" />
+    <ClCompile Include="..\..\radiant\ui\common\DialogManager.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\MaterialDefinitionView.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\SoundShaderDefinitionView.cpp" />
     <ClCompile Include="..\..\radiant\ui\DispatchEvent.cpp" />
@@ -255,6 +253,8 @@
     <ClCompile Include="..\..\radiant\ui\filters\FilterUserInterface.cpp" />
     <ClCompile Include="..\..\radiant\ui\gl\WxGLWidgetManager.cpp" />
     <ClCompile Include="..\..\radiant\ui\grid\GridUserInterface.cpp" />
+    <ClCompile Include="..\..\radiant\ui\groupdialog\GroupDialog.cpp" />
+    <ClCompile Include="..\..\radiant\ui\groupdialog\GroupDialogManager.cpp" />
     <ClCompile Include="..\..\radiant\ui\layers\CreateLayerDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\LongRunningOperationHandler.cpp" />
     <ClCompile Include="..\..\radiant\ui\mainframe\TopLevelFrame.cpp" />
@@ -405,11 +405,8 @@
     <ClInclude Include="..\..\radiant\settings\LocalisationModule.h" />
     <ClInclude Include="..\..\radiant\settings\LocalisationProvider.h" />
     <ClInclude Include="..\..\radiant\settings\Win32Registry.h" />
-    <ClInclude Include="..\..\radiant\uimanager\DialogManager.h" />
-    <ClInclude Include="..\..\radiant\uimanager\GroupDialog.h" />
     <ClInclude Include="..\..\radiant\uimanager\SoundChooser.h" />
     <ClInclude Include="..\..\radiant\uimanager\SoundShaderPreview.h" />
-    <ClInclude Include="..\..\radiant\uimanager\UIManager.h" />
     <ClInclude Include="..\..\radiant\ui\aas\AasControl.h" />
     <ClInclude Include="..\..\radiant\ui\aas\AasControlDialog.h" />
     <ClInclude Include="..\..\radiant\ui\aas\RenderableAasFile.h" />
@@ -420,6 +417,7 @@
     <ClInclude Include="..\..\radiant\ui\brush\FindBrush.h" />
     <ClInclude Include="..\..\radiant\ui\colourscheme\ColourSchemeEditor.h" />
     <ClInclude Include="..\..\radiant\ui\common\DefinitionView.h" />
+    <ClInclude Include="..\..\radiant\ui\common\DialogManager.h" />
     <ClInclude Include="..\..\radiant\ui\common\MaterialDefinitionView.h" />
     <ClInclude Include="..\..\radiant\ui\common\SoundShaderDefinitionView.h" />
     <ClInclude Include="..\..\radiant\ui\DispatchEvent.h" />
@@ -442,6 +440,8 @@
     <ClInclude Include="..\..\radiant\ui\filters\FilterUserInterface.h" />
     <ClInclude Include="..\..\radiant\ui\gl\WxGLWidgetManager.h" />
     <ClInclude Include="..\..\radiant\ui\grid\GridUserInterface.h" />
+    <ClInclude Include="..\..\radiant\ui\groupdialog\GroupDialog.h" />
+    <ClInclude Include="..\..\radiant\ui\groupdialog\GroupDialogManager.h" />
     <ClInclude Include="..\..\radiant\ui\layers\CreateLayerDialog.h" />
     <ClInclude Include="..\..\radiant\ui\LongRunningOperationHandler.h" />
     <ClInclude Include="..\..\radiant\ui\mainframe\TopLevelFrame.h" />

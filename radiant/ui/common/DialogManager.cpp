@@ -6,7 +6,7 @@
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/FileChooser.h"
 #include "wxutil/DirChooser.h"
-#include "SoundChooser.h"
+#include "uimanager/SoundChooser.h"
 #include "ui/animationpreview/MD5AnimationChooser.h"
 #include "module/StaticModule.h"
 

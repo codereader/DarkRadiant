@@ -1,4 +1,4 @@
-#include "UIManager.h"
+#include "GroupDialogManager.h"
 #include "module/StaticModule.h"
 
 #include "itextstream.h"

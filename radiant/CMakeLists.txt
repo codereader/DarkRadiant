@@ -102,8 +102,9 @@ add_executable(darkradiant
                ui/animationpreview/MD5AnimationChooser.cpp
                ui/animationpreview/MD5AnimationViewer.cpp
                ui/colourscheme/ColourSchemeEditor.cpp
-               uimanager/DialogManager.cpp
-               uimanager/GroupDialog.cpp
+               ui/common/DialogManager.cpp
+               ui/groupdialog/GroupDialog.cpp
+               ui/groupdialog/GroupDialogManager.cpp
                ui/menu/MenuBar.cpp
                ui/menu/MenuElement.cpp
                ui/menu/MenuFolder.cpp
@@ -113,7 +114,6 @@ add_executable(darkradiant
                uimanager/SoundChooser.cpp
                uimanager/SoundShaderPreview.cpp
                ui/toolbar/ToolbarManager.cpp
-               uimanager/UIManager.cpp
                ui/MapCommands.cpp
                ui/MapFileProgressHandler.cpp
                ui/mapinfo/EntityInfoTab.cpp

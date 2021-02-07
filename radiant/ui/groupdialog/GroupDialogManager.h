@@ -1,9 +1,6 @@
 #pragma once
 
 #include "iuimanager.h"
-#include "idialogmanager.h"
-
-#include "DialogManager.h"
 
 #include <memory>
 
