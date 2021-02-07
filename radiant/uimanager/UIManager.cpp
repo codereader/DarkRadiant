@@ -5,8 +5,6 @@
 #include "imainframe.h"
 #include "GroupDialog.h"
 
-#include <wx/xrc/xmlres.h>
-
 namespace ui
 {
 
@@ -22,8 +20,6 @@ IGroupDialog& UIManager::getGroupDialog() {
 void UIManager::clear()
 {
 	_dialogManager.reset();
-
-	wxFileSystem::CleanUpHandlers();
 }
 
 const std::string& UIManager::getName() const
@@ -53,12 +49,6 @@ void UIManager::initialiseModule(const IApplicationContext& ctx)
 	GlobalMainFrame().signal_MainFrameShuttingDown().connect(
         sigc::mem_fun(this, &UIManager::clear)
     );
-
-	wxFileSystem::AddHandler(new wxLocalFSHandler);
-	wxXmlResource::Get()->InitAllHandlers();
-
-	std::string fullPath = ctx.getRuntimeDataPath() + "ui/";
-	wxXmlResource::Get()->Load(fullPath + "*.xrc");
 }
 
 module::StaticModule<UIManager> uiManagerModule;

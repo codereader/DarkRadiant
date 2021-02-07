@@ -41,4 +41,6 @@ public:
 private:
 	void onStartupEvent(wxCommandEvent& ev);
 	void onModulesUnloading();
+    void initWxWidgets();
+    void cleanupWxWidgets();
 };

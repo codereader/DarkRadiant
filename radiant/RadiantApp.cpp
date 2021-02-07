@@ -14,6 +14,7 @@
 #include <wx/wxprec.h>
 #include <wx/event.h>
 #include <wx/cmdline.h>
+#include <wx/xrc/xmlres.h>
 #include <sigc++/functors/mem_fun.h>
 
 #ifndef __linux__
@@ -60,10 +61,6 @@ bool RadiantApp::OnInit()
     g_log_set_writer_func(log_black_hole, nullptr, nullptr);
 #endif
 
-	// Stop wx's unhelpful debug messages about missing keyboard accel
-	// strings from cluttering up the console
-	wxLog::SetLogLevel(wxLOG_Warning);
-
 	// Initialise the context (application path / settings path, is
 	// OS-specific)
 	_context.initialise(wxApp::argc, wxApp::argv);
@@ -102,10 +99,8 @@ bool RadiantApp::OnInit()
 	setlocale(LC_NUMERIC, "C");
 	setlocale(LC_TIME, "C");
 
-	wxInitAllImageHandlers();
-
-    // Register the local art provider
-    _bitmapArtProvider = std::make_unique<wxutil::LocalBitmapArtProvider>(_context.getBitmapsPath());
+    // Set up art provider, logging, XRC file handlers
+    initWxWidgets();
 
 	// Register to the start up signal
 	Bind(EV_RadiantStartup, &RadiantApp::onStartupEvent, this);
@@ -113,6 +108,32 @@ bool RadiantApp::OnInit()
 	AddPendingEvent(wxCommandEvent(EV_RadiantStartup));
 
 	return true;
+}
+
+void RadiantApp::initWxWidgets()
+{
+    // Stop wx's unhelpful debug messages about missing keyboard accel
+    // strings from cluttering up the console
+    wxLog::SetLogLevel(wxLOG_Warning);
+
+    wxFileSystem::AddHandler(new wxLocalFSHandler);
+    wxXmlResource::Get()->InitAllHandlers();
+
+    // Our XRC resource files are stored in the ui/ folder.
+    wxXmlResource::Get()->Load(_context.getRuntimeDataPath() + "ui/*.xrc");
+
+    wxInitAllImageHandlers();
+
+    // Register the local art provider
+    _bitmapArtProvider = std::make_unique<wxutil::LocalBitmapArtProvider>(_context.getBitmapsPath());
+}
+
+void RadiantApp::cleanupWxWidgets()
+{
+    _bitmapArtProvider.reset();
+    wxImage::CleanUpHandlers();
+    wxXmlResource::Get()->ClearHandlers();
+    wxFileSystem::CleanUpHandlers();
 }
 
 int RadiantApp::OnExit()
@@ -128,7 +149,7 @@ int RadiantApp::OnExit()
 
 	_coreModule.reset();
 
-    _bitmapArtProvider.reset();
+    cleanupWxWidgets();
 
 	return wxApp::OnExit();
 }
