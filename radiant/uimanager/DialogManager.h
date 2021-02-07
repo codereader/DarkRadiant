@@ -35,8 +35,14 @@ public:
 	IResourceChooser* createSoundShaderChooser(wxWindow* parent) override;
 	IAnimationChooser* createAnimationChooser(wxWindow* parent) override;
 
+    // RegisterableModule
+    const std::string& getName() const override;
+    const StringSet& getDependencies() const override;
+    void initialiseModule(const IApplicationContext& ctx) override;
+
 private:
 	void cleanupOldDialogs();
+	void clear();
 };
 typedef std::shared_ptr<DialogManager> DialogManagerPtr;
 

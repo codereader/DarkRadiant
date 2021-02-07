@@ -8,18 +8,8 @@
 namespace ui
 {
 
-IDialogManager& UIManager::getDialogManager()
-{
-	return *_dialogManager;
-}
-
 IGroupDialog& UIManager::getGroupDialog() {
 	return GroupDialog::Instance();
-}
-
-void UIManager::clear()
-{
-	_dialogManager.reset();
 }
 
 const std::string& UIManager::getName() const
@@ -43,12 +33,6 @@ const StringSet& UIManager::getDependencies() const
 void UIManager::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called" << std::endl;
-
-	_dialogManager = std::make_shared<DialogManager>();
-
-	GlobalMainFrame().signal_MainFrameShuttingDown().connect(
-        sigc::mem_fun(this, &UIManager::clear)
-    );
 }
 
 module::StaticModule<UIManager> uiManagerModule;

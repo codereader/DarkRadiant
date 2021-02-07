@@ -1,6 +1,6 @@
 #pragma once
 
-#include "iuimanager.h"
+#include "imodule.h"
 #include <memory>
 
 class wxWindow;
@@ -92,7 +92,8 @@ typedef std::shared_ptr<IDirChooser> IDirChooserPtr;
 class IResourceChooser;  // defined in iresourcechooser.h
 class IAnimationChooser; // defined in ianimationchooser.h
 
-class IDialogManager
+class IDialogManager :
+    public RegisterableModule
 {
 public:
 	// Virtual destructor
@@ -111,7 +112,7 @@ public:
 	 *			GlobalMainFrame's toplevel window if left at NULL.
 	 */
 	virtual IDialogPtr createDialog(const std::string& title,
-									wxWindow* parent = NULL) = 0;
+									wxWindow* parent = nullptr) = 0;
 
 	/**
 	 * Create a simple message box, which can either notify the user about something,
@@ -127,7 +128,7 @@ public:
 	virtual IDialogPtr createMessageBox(const std::string& title,
                                         const std::string& text,
 										IDialog::MessageType type,
-										wxWindow* parent = NULL) = 0;
+										wxWindow* parent = nullptr) = 0;
 
 	/**
 	 * Acquire a new filechooser instance with the given parameters.
@@ -163,8 +164,11 @@ public:
 
 } // namespace ui
 
-// Shortcut method
+
+constexpr const char* const MODULE_DIALOGMANAGER = "DialogManager";
+
 inline ui::IDialogManager& GlobalDialogManager()
 {
-	return GlobalUIManager().getDialogManager();
+    static module::InstanceReference<ui::IDialogManager> _reference(MODULE_DIALOGMANAGER);
+    return _reference;
 }

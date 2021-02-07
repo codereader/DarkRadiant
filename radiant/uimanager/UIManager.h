@@ -14,17 +14,8 @@ class UIManager :
 	public IUIManager,
 	public std::enable_shared_from_this<UIManager>
 {
-    // Sub-manager classes, constructed in initialiseModule to avoid being
-    // called before the main window is ready.
-	DialogManagerPtr _dialogManager;
-
 public:
 	IGroupDialog& getGroupDialog() override;
-
-	IDialogManager& getDialogManager() override;
-
-	// Called on radiant shutdown
-	void clear();
 
 	// RegisterableModule implementation
 	const std::string& getName() const override;

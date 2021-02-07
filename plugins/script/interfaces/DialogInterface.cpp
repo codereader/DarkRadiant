@@ -1,21 +1,21 @@
 #include "DialogInterface.h"
 
 #include <pybind11/pybind11.h>
-#include "iuimanager.h"
+#include "idialogmanager.h"
 
 namespace script
 {
 
 ScriptDialog DialogManagerInterface::createDialog(const std::string& title)
 {
-	return ScriptDialog(GlobalUIManager().getDialogManager().createDialog(title));
+	return ScriptDialog(GlobalDialogManager().createDialog(title));
 }
 
 ScriptDialog DialogManagerInterface::createMessageBox(const std::string& title,
 													  const std::string& text,
 													  ui::IDialog::MessageType type)
 {
-	return ScriptDialog(GlobalUIManager().getDialogManager().createMessageBox(title, text, type));
+	return ScriptDialog(GlobalDialogManager().createMessageBox(title, text, type));
 }
 
 // IScriptInterface implementation

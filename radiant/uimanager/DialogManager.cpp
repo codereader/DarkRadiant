@@ -8,6 +8,7 @@
 #include "wxutil/DirChooser.h"
 #include "SoundChooser.h"
 #include "ui/animationpreview/MD5AnimationChooser.h"
+#include "module/StaticModule.h"
 
 namespace ui
 {
@@ -19,8 +20,37 @@ DialogManager::~DialogManager()
 		rMessage() << "DialogManager: " << _dialogs.size()
 			<< " dialogs still in memory at shutdown." << std::endl;
 
-		_dialogs.clear();
+		clear();
 	}
+}
+
+const std::string& DialogManager::getName() const
+{
+    static std::string _name(MODULE_DIALOGMANAGER);
+    return _name;
+}
+
+const StringSet& DialogManager::getDependencies() const
+{
+    static StringSet _dependencies
+    {
+        MODULE_MAINFRAME
+    };
+
+    return _dependencies;
+}
+
+void DialogManager::initialiseModule(const IApplicationContext& ctx)
+{
+    rMessage() << getName() << "::initialiseModule called." << std::endl;
+
+    GlobalMainFrame().signal_MainFrameShuttingDown().connect(
+        sigc::mem_fun(this, &DialogManager::clear));
+}
+
+void DialogManager::clear()
+{
+    _dialogs.clear();
 }
 
 IDialogPtr DialogManager::createDialog(const std::string& title, wxWindow* parent)
@@ -28,7 +58,7 @@ IDialogPtr DialogManager::createDialog(const std::string& title, wxWindow* paren
 	cleanupOldDialogs();
 
 	// Allocate a new dialog
-	wxutil::DialogPtr dialog(new wxutil::Dialog(title, parent));
+	auto dialog = std::make_shared<wxutil::Dialog>(title, parent);
 
 	_dialogs.push_back(dialog);
 
@@ -43,7 +73,7 @@ IDialogPtr DialogManager::createMessageBox(const std::string& title,
 	cleanupOldDialogs();
 
 	// Allocate a new dialog, use the main window if no parent specified
-	wxutil::MessageboxPtr box(new wxutil::Messagebox(title, text, type, parent));
+	auto box = std::make_shared<wxutil::Messagebox>(title, text, type, parent);
 
 	// Store it in the local map so that references are held
 	_dialogs.push_back(box);
@@ -66,7 +96,7 @@ IDirChooserPtr DialogManager::createDirChooser(const std::string& title)
 
 void DialogManager::cleanupOldDialogs()
 {
-	for (Dialogs::iterator i = _dialogs.begin(); i != _dialogs.end(); /* in-loop increment */)
+	for (auto i = _dialogs.begin(); i != _dialogs.end(); /* in-loop increment */)
 	{
 		if (i->use_count() <= 1)
 		{
@@ -88,5 +118,7 @@ IAnimationChooser* DialogManager::createAnimationChooser(wxWindow* parent)
 {
 	return new MD5AnimationChooser(parent);
 }
+
+module::StaticModule<DialogManager> dialogManagerModule;
 
 } // namespace ui
