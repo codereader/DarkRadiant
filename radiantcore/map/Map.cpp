@@ -400,7 +400,7 @@ void Map::createNewMap()
 
     setModified(false);
 
-    focusViews(Vector3(0,0,0), Vector3(0,0,0));
+    focusViews(Vector3(0,0,30), Vector3(0,0,0));
 }
 
 IMapExporter::Ptr Map::createMapExporter(IMapWriter& writer,
