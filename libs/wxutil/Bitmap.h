@@ -1,7 +1,6 @@
 #pragma once
 
-#include "iuimanager.h"
-
+#include "LocalBitmapArtProvider.h"
 #include <wx/artprov.h>
 
 namespace wxutil
@@ -9,14 +8,14 @@ namespace wxutil
 
 /**
  * \brief
- * Get a wxBitmap from the art provider
+ * Get a wxBitmap from the local "darkradiant" art provider
  *
  * \param name
  * Image file name with no prefix, e.g. "something.png"
  */
-inline wxBitmap GetBitmap(const std::string& name)
+inline wxBitmap GetLocalBitmap(const std::string& name)
 {
-    return wxArtProvider::GetBitmap(GlobalUIManager().ArtIdPrefix() + name);
+    return wxArtProvider::GetBitmap(LocalBitmapArtProvider::ArtIdPrefix() + name);
 }
 
 }

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "imodule.h"
 #include <wx/artprov.h>
 #include <wx/image.h>
+
 #include "string/predicate.h"
 #include "os/file.h"
 
@@ -13,12 +13,18 @@ namespace wxutil
  * Implements wxWidget's ArtProvider interface to allow custom stock item IDs for
  * bitmaps used in toolbars and other controls. The schema for these custom ArtIDs
  * is "darkradiant:filename.png" where filename.png is a file in DR's bitmap folder.
+ * This schema is also valid when specified in XRC files.
  */
 class LocalBitmapArtProvider final :
 	public wxArtProvider
 {
+private:
+    std::string _searchPath;
+
 public:
-    LocalBitmapArtProvider()
+    // Use an absolute file path to the list of search paths this provider is covering
+    LocalBitmapArtProvider(const std::string& searchPath) :
+        _searchPath(searchPath)
     {
         wxArtProvider::Push(this);
     }
@@ -33,20 +39,19 @@ public:
         auto filename = id.ToStdString();
 		const auto& prefix = ArtIdPrefix();
 
+        // We listen only to "darkradiant" art IDs
 		if (string::starts_with(filename, prefix))
 		{
-			const auto& ctx = module::GlobalModuleRegistry().getApplicationContext();
-			std::string filePath = ctx.getBitmapsPath() + filename.substr(prefix.length());
+			std::string filePath = _searchPath + filename.substr(prefix.length());
 
 			if (os::fileOrDirExists(filePath))
 			{
-				wxImage img(filePath);
-				return wxBitmap(img);
+				return wxBitmap(wxImage(filePath));
 			}
 		}
 
 		return wxNullBitmap;
-	 }
+	}
 
 	static const std::string& ArtIdPrefix()
 	{

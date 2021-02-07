@@ -67,7 +67,7 @@ void UIManager::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called" << std::endl;
 
-	_bitmapArtProvider.reset(new wxutil::LocalBitmapArtProvider());
+	_bitmapArtProvider.reset(new wxutil::LocalBitmapArtProvider(ctx.getBitmapsPath()));
 
 	_dialogManager = std::make_shared<DialogManager>();
 

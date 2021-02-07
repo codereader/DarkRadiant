@@ -58,7 +58,7 @@ void MenuItem::construct()
 	
 	if (!_icon.empty())
 	{
-		_menuItem->SetBitmap(wxutil::GetBitmap(_icon));
+		_menuItem->SetBitmap(wxutil::GetLocalBitmap(_icon));
 	}
 
 	bool isToggle = GlobalEventManager().findEvent(_event)->isToggle();

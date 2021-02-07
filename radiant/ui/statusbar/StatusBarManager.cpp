@@ -99,7 +99,7 @@ void StatusBarManager::addTextElement(const std::string& name, const std::string
 
 	if (!icon.empty())
 	{
-		wxStaticBitmap* img = new wxStaticBitmap(textPanel, wxID_ANY, wxutil::GetBitmap(icon));
+		wxStaticBitmap* img = new wxStaticBitmap(textPanel, wxID_ANY, wxutil::GetLocalBitmap(icon));
 		textPanel->GetSizer()->Add(img, 0, wxEXPAND | wxALL, 1);
 	}
 

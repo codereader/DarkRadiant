@@ -314,13 +314,13 @@ void GameConnection::addToolbarItems()
 
         // Add toggles for the camera sync functions
         auto camSyncT = camTB->AddTool(
-            wxID_ANY, "L", wxutil::GetBitmap("CameraSync.png"),
+            wxID_ANY, "L", wxutil::GetLocalBitmap("CameraSync.png"),
             _("Enable game camera sync with DarkRadiant camera"),
             wxITEM_CHECK
         );
         _camSyncToggle->connectToolItem(camSyncT);
         auto camSyncBackT = camTB->AddTool(
-            wxID_ANY, "B", wxutil::GetBitmap("CameraSyncBack.png"),
+            wxID_ANY, "B", wxutil::GetLocalBitmap("CameraSyncBack.png"),
             _("Move camera to current game position")
         );
         _camSyncBackButton->connectToolItem(camSyncBackT);

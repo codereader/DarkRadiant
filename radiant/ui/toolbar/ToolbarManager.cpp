@@ -105,14 +105,14 @@ wxToolBarToolBase* ToolbarManager::createToolItem(wxToolBar* toolbar, const xml:
 		{
 			// Create a new ToolButton and assign the right callback
 			toolItem = toolbar->AddTool(_nextToolItemId++, name,
-				wxutil::GetBitmap(icon), 
+				wxutil::GetLocalBitmap(icon), 
 				tooltip);
 		}
 		else
 		{
 			// Create a new ToggleToolButton and assign the right callback
 			toolItem = toolbar->AddTool(_nextToolItemId++, name,
-				wxutil::GetBitmap(icon), 
+				wxutil::GetLocalBitmap(icon), 
 				tooltip, wxITEM_CHECK);
 		}
 
