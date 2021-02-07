@@ -22,13 +22,9 @@ class UIManager :
     // called before the main window is ready.
 	DialogManagerPtr _dialogManager;
 
-	LocalBitmapArtProvider* _bitmapArtProvider;
+	std::unique_ptr<LocalBitmapArtProvider> _bitmapArtProvider;
 
 public:
-	UIManager() :
-		_bitmapArtProvider(nullptr)
-	{}
-
 	IGroupDialog& getGroupDialog() override;
 
 	IDialogManager& getDialogManager() override;

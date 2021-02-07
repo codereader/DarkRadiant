@@ -14,15 +14,24 @@ namespace ui
  * bitmaps used in toolbars and other controls. The schema for these custom ArtIDs
  * is "darkradiant:filename.png" where filename.png is a file in DR's bitmap folder.
  */
-class LocalBitmapArtProvider :
+class LocalBitmapArtProvider final :
 	public wxArtProvider
 {
 public:
+    LocalBitmapArtProvider()
+    {
+        wxArtProvider::Push(this);
+    }
+
+    ~LocalBitmapArtProvider()
+    {
+        wxArtProvider::Remove(this);
+    }
+
 	wxBitmap CreateBitmap(const wxArtID& id, const wxArtClient& client, const wxSize& size)
 	{
-		std::string filename(id.begin(), id.end()); // convert wxString to std::string
-
-		const std::string& prefix = ArtIdPrefix();
+        auto filename = id.ToStdString();
+		const auto& prefix = ArtIdPrefix();
 
 		if (string::starts_with(filename, prefix))
 		{

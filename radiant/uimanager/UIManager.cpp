@@ -35,8 +35,7 @@ void UIManager::clear()
 	_dialogManager.reset();
 
 	wxFileSystem::CleanUpHandlers();
-	wxArtProvider::Delete(_bitmapArtProvider);
-	_bitmapArtProvider = nullptr;
+	_bitmapArtProvider.reset();
 }
 
 const std::string& UIManager::ArtIdPrefix() const
@@ -68,8 +67,7 @@ void UIManager::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called" << std::endl;
 
-	_bitmapArtProvider = new LocalBitmapArtProvider();
-	wxArtProvider::Push(_bitmapArtProvider);
+	_bitmapArtProvider.reset(new LocalBitmapArtProvider());
 
 	_dialogManager = std::make_shared<DialogManager>();
 
