@@ -3,6 +3,7 @@
 #include "itextstream.h"
 #include "ieventmanager.h"
 #include "imainframe.h"
+#include "igroupdialog.h"
 #include "icommandsystem.h"
 
 #include "module/StaticModule.h"
