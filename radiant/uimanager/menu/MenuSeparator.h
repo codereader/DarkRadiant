@@ -6,6 +6,9 @@
 namespace ui
 {
 
+namespace menu
+{
+
 class MenuSeparator :
 	public MenuElement
 {
@@ -17,9 +20,9 @@ public:
 
 	virtual wxMenuItem* getMenuItem();
 
-	eMenuItemType getType() const override
+	ItemType getType() const override
 	{
-		return menuSeparator;
+		return ItemType::Separator;
 	}
 
 protected:
@@ -28,3 +31,6 @@ protected:
 };
 
 }
+
+}
+

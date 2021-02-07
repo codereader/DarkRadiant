@@ -5,7 +5,7 @@
 #include "ieclass.h"
 #include "iscenegraph.h"
 #include "icommandsystem.h"
-#include "iuimanager.h"
+#include "imenumanager.h"
 #include "iregistry.h"
 #include "iselection.h"
 #include "iradiant.h"
@@ -31,13 +31,11 @@ public:
 
 	const StringSet& getDependencies() const override
 	{
-		static StringSet _dependencies;
-
-		if (_dependencies.empty())
-		{
-			_dependencies.insert(MODULE_UIMANAGER);
-			_dependencies.insert(MODULE_COMMANDSYSTEM);
-		}
+        static StringSet _dependencies
+        {
+            MODULE_MENUMANAGER, 
+            MODULE_COMMANDSYSTEM
+        };
 
 		return _dependencies;
 	}
@@ -50,10 +48,9 @@ public:
 		GlobalCommandSystem().addCommand("StimResponseEditor", ui::StimResponseEditor::ShowDialog);
 
 		// Add the menu item
-		IMenuManager& mm = GlobalUIManager().getMenuManager();
-		mm.add("main/entity", 	// menu location path
+        GlobalMenuManager().add("main/entity", 	// menu location path
 				"StimResponse", // name
-				ui::menuItem,	// type
+				ui::menu::ItemType::Item,	// type
 				_("Stim/Response..."),	// caption
 				"stimresponse.png",	// icon
 				"StimResponseEditor"); // event name

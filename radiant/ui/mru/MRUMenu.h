@@ -1,7 +1,7 @@
 #pragma once
 
 #include "imru.h"
-#include "iuimanager.h"
+#include "imenumanager.h"
 
 #include <list>
 #include <sigc++/connection.h>
@@ -42,7 +42,7 @@ public:
 private:
 	void clearMenu()
 	{
-		IMenuManager& menuManager = GlobalUIManager().getMenuManager();
+		menu::IMenuManager& menuManager = GlobalMenuManager();
 
 		// Remove all items from the menu
 		for (std::size_t i = GlobalMRU().getMaxNumberOfItems(); i > 0; i--)
@@ -66,7 +66,7 @@ private:
 		});
 
 		// Get the menumanager
-		IMenuManager& menuManager = GlobalUIManager().getMenuManager();
+        menu::IMenuManager& menuManager = GlobalMenuManager();
 
 		if (filenames.empty())
 		{
@@ -74,7 +74,7 @@ private:
 			menuManager.insert(
 				"main/file/mruseparator",
 				"mruempty",
-				ui::menuItem,
+				ui::menu::ItemType::Item,
 				RECENT_FILES_CAPTION,
 				"", // empty icon
 				"" // empty event
@@ -97,7 +97,7 @@ private:
 			menuManager.insert(
 				"main/file/mruseparator",
 				"MRU" + string::to_string(index + 1),
-				ui::menuItem,
+                ui::menu::ItemType::Item,
 				label,
 				"", // empty icon
 				statement
@@ -108,10 +108,10 @@ private:
 	void constructMenu()
 	{
 		// Insert the last separator to split the MRU file list from the "Exit" command.
-		GlobalUIManager().getMenuManager().insert(
+		GlobalMenuManager().insert(
 			"main/file/exit",
 			"mruseparator",
-			ui::menuSeparator,
+			ui::menu::ItemType::Separator,
 			"", // empty caption
 			"", // empty icon
 			"" // empty command

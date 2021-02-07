@@ -21,7 +21,6 @@ class UIManager :
 {
     // Sub-manager classes, constructed in initialiseModule to avoid being
     // called before the main window is ready.
-    std::shared_ptr<MenuManager> _menuManager;
 	DialogManagerPtr _dialogManager;
 
 	LocalBitmapArtProvider* _bitmapArtProvider;
@@ -30,10 +29,6 @@ public:
 	UIManager() :
 		_bitmapArtProvider(nullptr)
 	{}
-
-	/** greebo: Retrieves the helper class to manipulate the menu.
-	 */
-	IMenuManager& getMenuManager() override;
 
 	IGroupDialog& getGroupDialog() override;
 
@@ -45,10 +40,9 @@ public:
 	void clear();
 
 	// RegisterableModule implementation
-	const std::string& getName() const;
-	const StringSet& getDependencies() const;
-	void initialiseModule(const IApplicationContext& ctx);
-	void shutdownModule();
+	const std::string& getName() const override;
+	const StringSet& getDependencies() const override;
+	void initialiseModule(const IApplicationContext& ctx) override;
 };
 
 } // namespace ui

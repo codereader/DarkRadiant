@@ -10,6 +10,9 @@
 namespace ui
 {
 
+namespace menu
+{
+
 MenuBar::MenuBar() :
 	_menuBar(nullptr)
 {}
@@ -140,6 +143,8 @@ void MenuBar::onIdle(wxIdleEvent& ev)
 	{
 		_menuBar->Refresh();
 	}
+}
+
 }
 
 }

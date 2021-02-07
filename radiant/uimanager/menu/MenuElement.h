@@ -1,7 +1,7 @@
 #pragma once
 
 #include "xmlutil/Node.h"
-#include "iuimanager.h"
+#include "imenumanager.h"
 #include <vector>
 #include <memory>
 
@@ -14,6 +14,9 @@
  * Use the MenuManager class to access these MenuElements.
  */
 namespace ui
+{
+
+namespace menu
 {
 
 class MenuElement;
@@ -132,7 +135,7 @@ public:
 	/**
 	 * Constructs a menu element for the given type
 	 */
-	static MenuElementPtr CreateForType(eMenuItemType type);
+	static MenuElementPtr CreateForType(ItemType type);
 
 protected:
 	void setNeedsRefreshRecursively(bool needsRefresh);
@@ -154,4 +157,6 @@ protected:
 	virtual void deconstructChildren();
 };
 
-} // namespace ui
+} // namespace
+
+} // namespace

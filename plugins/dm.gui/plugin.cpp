@@ -22,7 +22,7 @@
 #include "iregistry.h"
 #include "irender.h"
 #include "ishaders.h"
-#include "iuimanager.h"
+#include "imenumanager.h"
 #include "iarchive.h"
 
 class GuiModule :
@@ -39,23 +39,21 @@ public:
 
 	const StringSet& getDependencies() const override
 	{
-		static StringSet _dependencies;
-
-		if (_dependencies.empty())
-		{
-			_dependencies.insert(MODULE_COMMANDSYSTEM);
-			_dependencies.insert(MODULE_FONTMANAGER);
-			_dependencies.insert(MODULE_GAMEMANAGER);
-			_dependencies.insert(MODULE_MAINFRAME);
-			_dependencies.insert(MODULE_MAP);
-			_dependencies.insert(MODULE_OPENGL);
-			_dependencies.insert(MODULE_PREFERENCESYSTEM);
-			_dependencies.insert(MODULE_RENDERSYSTEM);
-			_dependencies.insert(MODULE_SHADERSYSTEM);
-			_dependencies.insert(MODULE_UIMANAGER);
-			_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
-			_dependencies.insert(MODULE_XMLREGISTRY);
-		}
+        static StringSet _dependencies
+        {
+            MODULE_COMMANDSYSTEM,
+            MODULE_FONTMANAGER,
+            MODULE_GAMEMANAGER,
+            MODULE_MAINFRAME,
+            MODULE_MAP,
+            MODULE_OPENGL,
+            MODULE_PREFERENCESYSTEM,
+            MODULE_RENDERSYSTEM,
+            MODULE_SHADERSYSTEM,
+            MODULE_MENUMANAGER,
+            MODULE_VIRTUALFILESYSTEM,
+            MODULE_XMLREGISTRY,
+        };
 
 		return _dependencies;
 	}
@@ -79,17 +77,17 @@ private:
 	void onMainFrameConstructed()
 	{
 		// Add menu items on radiant startup, to ensure that all menu items are existent at this point
-		IMenuManager& mm = GlobalUIManager().getMenuManager();
+		ui::menu::IMenuManager& mm = GlobalMenuManager();
 
 		mm.add("main/entity",
-			"ReadableEditorDialog", ui::menuItem,
+			"ReadableEditorDialog", ui::menu::ItemType::Item,
 			_("Readable Editor"), // caption
 			"book.png", // icon
 			"ReadableEditorDialog"
 		);
 
 		mm.insert("main/file/refreshShaders",
-			"ReloadReadables", ui::menuItem,
+			"ReloadReadables", ui::menu::ItemType::Item,
 			_("Reload Readable Guis"), // caption
 			"book.png", // icon
 			"ReloadReadables"

@@ -10,6 +10,9 @@
 namespace ui
 {
 
+namespace menu
+{
+
 MenuFolder::MenuFolder() :
 	_menu(nullptr),
 	_parentItem(nullptr)
@@ -119,6 +122,8 @@ void MenuFolder::deconstruct()
 	// as wxWidgets nullified the submenu member before deleting it)
 	delete _menu;
 	_menu = nullptr;
+}
+
 }
 
 }

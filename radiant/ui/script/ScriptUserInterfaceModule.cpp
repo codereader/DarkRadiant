@@ -2,7 +2,7 @@
 #include <wx/frame.h>
 
 #include "iscript.h"
-#include "iuimanager.h"
+#include "imenumanager.h"
 #include "imainframe.h"
 #include "i18n.h"
 #include "igroupdialog.h"
@@ -32,14 +32,12 @@ public:
 
 	const StringSet& getDependencies() const override
 	{
-		static StringSet _dependencies;
-
-		if (_dependencies.empty())
-		{
-			_dependencies.insert(MODULE_SCRIPTING_SYSTEM);
-			_dependencies.insert(MODULE_UIMANAGER);
-			_dependencies.insert(MODULE_MAINFRAME);
-		}
+        static StringSet _dependencies
+        {
+            MODULE_SCRIPTING_SYSTEM,
+            MODULE_MENUMANAGER,
+            MODULE_MAINFRAME,
+        };
 
 		return _dependencies;
 	}
@@ -47,10 +45,9 @@ public:
 	void initialiseModule(const IApplicationContext& ctx) override
 	{
 		// Bind the reloadscripts command to the menu
-		IMenuManager& mm = GlobalUIManager().getMenuManager();
-		mm.insert("main/file/refreshShaders", 	// menu location path
+        GlobalMenuManager().insert("main/file/refreshShaders", 	// menu location path
 			"ReloadScripts", // name
-			menuItem,	// type
+			menu::ItemType::Item,	// type
 			_("Reload Scripts"),	// caption
 			"",	// icon
 			"ReloadScripts"); // event name

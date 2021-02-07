@@ -5,7 +5,7 @@
 #include "itextstream.h"
 #include "ieclass.h"
 #include "iscenegraph.h"
-#include "iuimanager.h"
+#include "imenumanager.h"
 #include "iregistry.h"
 #include "iselection.h"
 #include "iradiant.h"
@@ -30,13 +30,11 @@ public:
 
 	const StringSet& getDependencies() const
 	{
-		static StringSet _dependencies;
-
-		if (_dependencies.empty())
-		{
-			_dependencies.insert(MODULE_UIMANAGER);
-			_dependencies.insert(MODULE_COMMANDSYSTEM);
-		}
+        static StringSet _dependencies
+        {
+            MODULE_MENUMANAGER,
+            MODULE_COMMANDSYSTEM
+        };
 
 		return _dependencies;
 	}
@@ -49,10 +47,9 @@ public:
 		GlobalCommandSystem().addCommand("DifficultyEditor",  ui::DifficultyDialog::ShowDialog);
 
 		// Add the menu item
-		IMenuManager& mm = GlobalUIManager().getMenuManager();
-		mm.add("main/map", 	// menu location path
+        GlobalMenuManager().add("main/map", 	// menu location path
 				"DifficultyEditor", // name
-				ui::menuItem,	// type
+				ui::menu::ItemType::Item,	// type
 				_("Difficulty..."),	// caption
 				"stimresponse.png",	// icon
 				"DifficultyEditor"); // event name

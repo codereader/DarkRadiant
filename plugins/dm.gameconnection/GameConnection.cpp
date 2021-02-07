@@ -9,7 +9,7 @@
 #include "inode.h"
 #include "ientity.h"
 #include "iselection.h"
-#include "iuimanager.h"
+#include "imenumanager.h"
 #include "ieventmanager.h"
 #include "idialogmanager.h"
 #include "imainframe.h"
@@ -230,7 +230,7 @@ const StringSet& GameConnection::getDependencies() const
     static StringSet _dependencies {
         MODULE_CAMERA_MANAGER, MODULE_COMMANDSYSTEM, MODULE_MAP,
         MODULE_SCENEGRAPH, MODULE_SELECTIONSYSTEM, MODULE_EVENTMANAGER,
-        MODULE_UIMANAGER, MODULE_MAINFRAME
+        MODULE_MENUMANAGER, MODULE_MAINFRAME
     };
     return _dependencies;
 }
@@ -267,30 +267,30 @@ void GameConnection::initialiseModule(const IApplicationContext& ctx)
         [this](const cmd::ArgumentList&) { respawnSelectedEntities(); });
 
     // Add menu items
-    IMenuManager& mm = GlobalUIManager().getMenuManager();
-    mm.insert("main/help", "connection", ui::menuFolder, _("Connection"), "", "");
+    ui::menu::IMenuManager& mm = GlobalMenuManager();
+    mm.insert("main/help", "connection", ui::menu::ItemType::Folder, _("Connection"), "", "");
 
-    mm.add("main/connection", "cameraSyncEnable", ui::menuItem,
+    mm.add("main/connection", "cameraSyncEnable", ui::menu::ItemType::Item,
            _("Game position follows DarkRadiant camera"), "", "GameConnectionToggleCameraSync");
-    mm.add("main/connection", "backSyncCamera", ui::menuItem,
+    mm.add("main/connection", "backSyncCamera", ui::menu::ItemType::Item,
            _("Move camera to current game position"), "", "GameConnectionBackSyncCamera");
-    mm.add("main/connection", "postCameraSep", ui::menuSeparator);
+    mm.add("main/connection", "postCameraSep", ui::menu::ItemType::Separator);
 
-    mm.add("main/connection", "reloadMapAutoEnable", ui::menuItem,
+    mm.add("main/connection", "reloadMapAutoEnable", ui::menu::ItemType::Item,
            _("Game reloads .map file on save"), "", "GameConnectionToggleAutoMapReload");
-    mm.add("main/connection", "reloadMap", ui::menuItem,
+    mm.add("main/connection", "reloadMap", ui::menu::ItemType::Item,
            _("Tell game to reload .map file now"), "", "GameConnectionReloadMap");
-    mm.add("main/connection", "postMapFileSep", ui::menuSeparator);
+    mm.add("main/connection", "postMapFileSep", ui::menu::ItemType::Separator);
 
-    mm.add("main/connection", "mapHotReload", ui::menuItem,
+    mm.add("main/connection", "mapHotReload", ui::menu::ItemType::Item,
            _("Update entities on every change"), "", "GameConnectionToggleHotReload");
-    mm.add("main/connection", "updateMap", ui::menuItem,
+    mm.add("main/connection", "updateMap", ui::menu::ItemType::Item,
            _("Update entities now"), "", "GameConnectionUpdateMap");
-    mm.add("main/connection", "postHotReloadSep", ui::menuSeparator);
+    mm.add("main/connection", "postHotReloadSep", ui::menu::ItemType::Separator);
 
-    mm.add("main/connection", "pauseGame", ui::menuItem,
+    mm.add("main/connection", "pauseGame", ui::menu::ItemType::Item,
            _("Pause game"), "", "GameConnectionPauseGame");
-    mm.add("main/connection", "respawnSelected", ui::menuItem,
+    mm.add("main/connection", "respawnSelected", ui::menu::ItemType::Item,
            _("Respawn selected entities"), "", "GameConnectionRespawnSelected");
 
     // Toolbar button(s)

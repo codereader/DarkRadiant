@@ -39,12 +39,10 @@ const std::string& StatusBarManager::getName() const
 
 const StringSet& StatusBarManager::getDependencies() const
 {
-    static StringSet _dependencies;
-
-    if (_dependencies.empty())
+    static StringSet _dependencies
     {
-        _dependencies.insert(MODULE_MAINFRAME);
-    }
+        MODULE_MAINFRAME
+    };
 
     return _dependencies;
 }

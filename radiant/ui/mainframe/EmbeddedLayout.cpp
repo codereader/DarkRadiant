@@ -3,7 +3,7 @@
 #include "i18n.h"
 #include "itextstream.h"
 #include "ieventmanager.h"
-#include "iuimanager.h"
+#include "imenumanager.h"
 #include "igroupdialog.h"
 #include "imainframe.h"
 #include "ientityinspector.h"
@@ -91,16 +91,16 @@ void EmbeddedLayout::activate()
     _groupCamPane->connectToRegistry();
 
     // Hide the camera toggle option for non-floating views
-    GlobalUIManager().getMenuManager().setVisibility("main/view/cameraview", false);
+    GlobalMenuManager().setVisibility("main/view/cameraview", false);
     // Hide the console/texture browser toggles for non-floating/non-split views
-    GlobalUIManager().getMenuManager().setVisibility("main/view/textureBrowser", false);
+    GlobalMenuManager().setVisibility("main/view/textureBrowser", false);
 }
 
 void EmbeddedLayout::deactivate()
 {
     // Show the camera toggle option again
-    GlobalUIManager().getMenuManager().setVisibility("main/view/cameraview", true);
-    GlobalUIManager().getMenuManager().setVisibility("main/view/textureBrowser", true);
+    GlobalMenuManager().setVisibility("main/view/cameraview", true);
+    GlobalMenuManager().setVisibility("main/view/textureBrowser", true);
 
     // Remove all previously stored pane information
     GlobalRegistry().deleteXPath(RKEY_EMBEDDED_ROOT + "//pane");

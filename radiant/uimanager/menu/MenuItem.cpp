@@ -5,8 +5,12 @@
 
 #include "../LocalBitmapArtProvider.h"
 #include "MenuFolder.h"
+#include "wxutil/bitmap.h"
 
 namespace ui
+{
+
+namespace menu
 {
 
 MenuItem::MenuItem() :
@@ -55,7 +59,7 @@ void MenuItem::construct()
 	
 	if (!_icon.empty())
 	{
-		_menuItem->SetBitmap(wxArtProvider::GetBitmap(LocalBitmapArtProvider::ArtIdPrefix() + _icon));
+		_menuItem->SetBitmap(wxutil::getBitmap(_icon));
 	}
 
 	bool isToggle = GlobalEventManager().findEvent(_event)->isToggle();
@@ -119,6 +123,8 @@ void MenuItem::setToggled(bool isToggled)
 	{
 		_menuItem->Check(isToggled);
 	}
+}
+
 }
 
 }

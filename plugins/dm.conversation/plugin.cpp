@@ -4,7 +4,7 @@
 #include "itextstream.h"
 #include "ieventmanager.h"
 #include "icommandsystem.h"
-#include "iuimanager.h"
+#include "imenumanager.h"
 #include "generic/callback.h"
 #include "debugging/debugging.h"
 
@@ -23,13 +23,13 @@ public:
 		return _name;
 	}
 
-	virtual const StringSet& getDependencies() const {
-		static StringSet _dependencies;
-
-		if (_dependencies.empty()) {
-			_dependencies.insert(MODULE_UIMANAGER);
-			_dependencies.insert(MODULE_COMMANDSYSTEM);
-		}
+	virtual const StringSet& getDependencies() const
+    {
+        static StringSet _dependencies
+        {
+            MODULE_MENUMANAGER,
+            MODULE_COMMANDSYSTEM
+        };
 
 		return _dependencies;
 	}
@@ -41,10 +41,9 @@ public:
 		GlobalCommandSystem().addCommand("ConversationEditor", ui::ConversationDialog::ShowDialog);
 
 		// Add the menu item
-		IMenuManager& mm = GlobalUIManager().getMenuManager();
-		mm.add("main/map", 	// menu location path
+        GlobalMenuManager().add("main/map", 	// menu location path
 				"ConversationEditor", // name
-				ui::menuItem,	// type
+				ui::menu::ItemType::Item,	// type
 				_("Conversations..."),	// caption
 				"stimresponse.png",	// icon
 				"ConversationEditor"); // event name

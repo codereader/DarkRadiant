@@ -5,6 +5,9 @@
 namespace ui
 {
 
+namespace menu
+{
+
 class MenuRootElement :
 	public MenuElement
 {
@@ -17,9 +20,9 @@ public:
 		deconstructChildren();
 	}
 
-	eMenuItemType getType() const override
+	ItemType getType() const override
 	{
-		return menuRoot;
+		return ItemType::Root;
 	}
 
 protected:
@@ -29,5 +32,7 @@ protected:
 	void deconstruct() override
 	{}
 };
+
+}
 
 }

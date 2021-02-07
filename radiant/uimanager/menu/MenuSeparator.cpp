@@ -8,6 +8,9 @@
 namespace ui
 {
 
+namespace menu
+{
+
 MenuSeparator::MenuSeparator() :
 	_separator(nullptr)
 {}
@@ -67,6 +70,8 @@ void MenuSeparator::deconstruct()
 		delete _separator;
 		_separator = nullptr;
 	}
+}
+
 }
 
 }

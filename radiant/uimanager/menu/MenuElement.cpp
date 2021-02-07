@@ -22,6 +22,9 @@
 namespace ui
 {
 
+namespace menu
+{
+
 int MenuElement::_nextMenuItemId = 100;
 
 MenuElement::MenuElement(const MenuElementPtr& parent) :
@@ -256,26 +259,26 @@ MenuElementPtr MenuElement::CreateFromNode(const xml::Node& node)
 	return item;
 }
 
-MenuElementPtr MenuElement::CreateForType(eMenuItemType type)
+MenuElementPtr MenuElement::CreateForType(ItemType type)
 {
 	MenuElementPtr item;
 
 	switch (type)
 	{
-	case menuItem:
+    case ItemType::Item:
 		item = std::make_shared<MenuItem>();
 		break;
-	case menuBar:
+	case ItemType::Bar:
 		item = std::make_shared<MenuBar>();
 		break;
-	case menuFolder:
+	case ItemType::Folder:
 		item = std::make_shared<MenuFolder>();
 		break;
-	case menuSeparator:
+	case ItemType::Separator:
 		item = std::make_shared<MenuSeparator>();
 		break;
 	default:
-		rError() << "MenuElement: Cannot create node for type " << type << std::endl;
+		rError() << "MenuElement: Cannot create node for type " << (int)type << std::endl;
 	};
 
 	return item;
@@ -307,4 +310,6 @@ void MenuElement::deconstructChildren()
 	}
 }
 
-} // namespace ui
+} // namespace
+
+} // namespace

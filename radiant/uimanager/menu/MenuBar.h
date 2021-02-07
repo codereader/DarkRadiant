@@ -7,6 +7,9 @@
 namespace ui
 {
 
+namespace menu
+{
+
 class MenuBar :
 	public wxEvtHandler,
 	public MenuElement
@@ -25,9 +28,9 @@ public:
 
 	virtual void setNeedsRefresh(bool needsRefresh) override;
 
-	eMenuItemType getType() const override
+	ItemType getType() const override
 	{
-		return menuBar;
+		return ItemType::Bar;
 	}
 
 protected:
@@ -42,3 +45,4 @@ private:
 
 }
 
+}

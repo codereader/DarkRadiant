@@ -3,7 +3,7 @@
 #include "i18n.h"
 #include "ieventmanager.h"
 #include "iradiant.h"
-#include "iuimanager.h"
+#include "imenumanager.h"
 #include "iselection.h"
 #include "ientityinspector.h"
 #include "icommandsystem.h"
@@ -27,17 +27,16 @@ public:
 		return _name;
 	}
 
-	virtual const StringSet& getDependencies() const {
-		static StringSet _dependencies;
-
-		if (_dependencies.empty())
-		{
-			_dependencies.insert(MODULE_ENTITYINSPECTOR);
-			_dependencies.insert(MODULE_UIMANAGER);
-			_dependencies.insert(MODULE_SELECTIONSYSTEM);
-			_dependencies.insert(MODULE_COMMANDSYSTEM);
-			_dependencies.insert(MODULE_MAINFRAME);
-		}
+	virtual const StringSet& getDependencies() const
+    {
+        static StringSet _dependencies
+        {
+            MODULE_ENTITYINSPECTOR,
+            MODULE_MENUMANAGER,
+            MODULE_SELECTIONSYSTEM,
+            MODULE_COMMANDSYSTEM,
+            MODULE_MAINFRAME,
+        };
 
 		return _dependencies;
 	}
@@ -57,8 +56,8 @@ public:
 
 		GlobalCommandSystem().addCommand("FixupMapDialog", ui::FixupMapDialog::RunDialog);
 
-		GlobalUIManager().getMenuManager().add("main/map",
-			"FixupMapDialog", ui::menuItem,
+		GlobalMenuManager().add("main/map",
+			"FixupMapDialog", ui::menu::ItemType::Item,
 			_("Fixup Map..."), // caption
 			"", // icon
 			"FixupMapDialog"
@@ -66,8 +65,8 @@ public:
 
 		GlobalCommandSystem().addCommand("MissionInfoEditDialog", ui::MissionInfoEditDialog::ShowDialog);
 
-		GlobalUIManager().getMenuManager().add("main/map",
-			"MissionInfoEditDialog", ui::menuItem,
+		GlobalMenuManager().add("main/map",
+			"MissionInfoEditDialog", ui::menu::ItemType::Item,
 			_("Edit Package Info (darkmod.txt)..."), // caption
 			"sr_icon_readable.png", // icon
 			"MissionInfoEditDialog"

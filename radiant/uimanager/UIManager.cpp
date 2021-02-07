@@ -26,17 +26,12 @@ IDialogManager& UIManager::getDialogManager()
 	return *_dialogManager;
 }
 
-IMenuManager& UIManager::getMenuManager() {
-	return *_menuManager;
-}
-
 IGroupDialog& UIManager::getGroupDialog() {
 	return GroupDialog::Instance();
 }
 
 void UIManager::clear()
 {
-	_menuManager->clear();
 	_dialogManager.reset();
 
 	wxFileSystem::CleanUpHandlers();
@@ -78,9 +73,6 @@ void UIManager::initialiseModule(const IApplicationContext& ctx)
 
 	_dialogManager = std::make_shared<DialogManager>();
 
-    _menuManager = std::make_shared<MenuManager>();
-	_menuManager->loadFromRegistry();
-
 	GlobalMainFrame().signal_MainFrameShuttingDown().connect(
         sigc::mem_fun(this, &UIManager::clear)
     );
@@ -90,11 +82,6 @@ void UIManager::initialiseModule(const IApplicationContext& ctx)
 
 	std::string fullPath = ctx.getRuntimeDataPath() + "ui/";
 	wxXmlResource::Get()->Load(fullPath + "*.xrc");
-}
-
-void UIManager::shutdownModule()
-{
-	_menuManager->clear();
 }
 
 module::StaticModule<UIManager> uiManagerModule;

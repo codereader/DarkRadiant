@@ -7,6 +7,9 @@
 namespace ui
 {
 
+namespace menu
+{
+
 class MenuFolder :
 	public MenuElement
 {
@@ -25,14 +28,16 @@ public:
 	// Clears the needsRefresh flag on this object and all children
 	void refresh();
 
-	eMenuItemType getType() const override
+	ItemType getType() const override
 	{
-		return menuFolder;
+		return ItemType::Folder;
 	}
 
 protected:
 	virtual void construct() override;
 	virtual void deconstruct() override;
 };
+
+}
 
 }

@@ -1,6 +1,6 @@
 #include "ScriptMenu.h"
 
-#include "iuimanager.h"
+#include "imenumanager.h"
 #include "iscript.h"
 #include "i18n.h"
 #include <map>
@@ -15,13 +15,13 @@ const std::string SCRIPT_MENU_PATH = "main/scripts";
 
 ScriptMenu::ScriptMenu()
 {
-	IMenuManager& menuManager = GlobalUIManager().getMenuManager();
+	menu::IMenuManager& menuManager = GlobalMenuManager();
 
 	// Create a new "folder"
 	menuManager.insert(
 		SCRIPT_MENU_INSERT_POINT,
 		SCRIPT_MENU_NAME,
-		menuFolder,
+		menu::ItemType::Folder,
 		_(SCRIPT_MENU_CAPTION),
 		"",
 		""
@@ -43,7 +43,7 @@ ScriptMenu::ScriptMenu()
 			menuManager.add(
 				SCRIPT_MENU_PATH,
 				"script" + pair.second,
-				menuItem,
+				menu::ItemType::Item,
 				pair.first,
 				"",
 				pair.second
@@ -55,7 +55,7 @@ ScriptMenu::ScriptMenu()
 		menuManager.add(
 			SCRIPT_MENU_PATH,
 			"noscriptsavailable",
-			menuItem,
+            menu::ItemType::Item,
 			_("No scripts available"),
 			"",
 			""
@@ -65,7 +65,7 @@ ScriptMenu::ScriptMenu()
 
 ScriptMenu::~ScriptMenu()
 {
-	GlobalUIManager().getMenuManager().remove(SCRIPT_MENU_PATH);
+	GlobalMenuManager().remove(SCRIPT_MENU_PATH);
 }
 
 } // namespace ui

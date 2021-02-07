@@ -7,6 +7,9 @@
 namespace ui
 {
 
+namespace menu
+{
+
 class MenuItem :
 	public MenuElement
 {
@@ -20,9 +23,9 @@ public:
 
 	void setAccelerator(const std::string& accelStr) override;
 
-	eMenuItemType getType() const override
+	ItemType getType() const override
 	{
-		return menuItem;
+		return ItemType::Item;
 	}
 
 	bool isToggle() const override;
@@ -32,5 +35,7 @@ protected:
 	virtual void construct() override;
 	virtual void deconstruct() override;
 };
+
+}
 
 }

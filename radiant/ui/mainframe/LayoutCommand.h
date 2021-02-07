@@ -2,7 +2,7 @@
 
 #include "i18n.h"
 #include "ieventmanager.h"
-#include "iuimanager.h"
+#include "imenumanager.h"
 #include "icommandsystem.h"
 #include "imainframe.h"
 
@@ -44,7 +44,7 @@ public:
 		);
 
 		// Add commands to menu
-		IMenuManager& menuManager = GlobalUIManager().getMenuManager();
+		menu::IMenuManager& menuManager = GlobalMenuManager();
 
 		// Add a new folder, if not existing yet
 		if (!menuManager.exists(MENU_LAYOUTS_PATH))
@@ -52,20 +52,19 @@ public:
 			menuManager.insert(
 				MENU_LAYOUTS_INSERT_BEFORE,
 				MENU_LAYOUTS,
-				menuFolder, _("Window Layout"),
+				menu::ItemType::Folder, _("Window Layout"),
 				"", "" // no icon, no event
 			);
 		}
 
 		// Add the item
-		menuManager.add(MENU_LAYOUTS_PATH, _layoutName, menuItem, _layoutName, "", _activateCommand);
+		menuManager.add(MENU_LAYOUTS_PATH, _layoutName, menu::ItemType::Item, _layoutName, "", _activateCommand);
 	}
 
 	~LayoutCommand()
 	{
 		// Remove command from menu
-		IMenuManager& menuManager = GlobalUIManager().getMenuManager();
-		menuManager.remove(MENU_LAYOUTS_PATH + "/" + _layoutName);
+        GlobalMenuManager().remove(MENU_LAYOUTS_PATH + "/" + _layoutName);
 
 		// Remove event and command
 		GlobalCommandSystem().removeCommand(_activateCommand);

@@ -3,7 +3,7 @@
 #include "i18n.h"
 #include "imodule.h"
 #include "ieventmanager.h"
-#include "iuimanager.h"
+#include "imenumanager.h"
 #include "iradiant.h"
 #include "iscenegraph.h"
 #include "ieclass.h"
@@ -42,7 +42,7 @@ public:
 
 		if (_dependencies.empty()) {
 			_dependencies.insert(MODULE_EVENTMANAGER);
-			_dependencies.insert(MODULE_UIMANAGER);
+			_dependencies.insert(MODULE_MENUMANAGER);
 			_dependencies.insert(MODULE_COMMANDSYSTEM);
 		}
 
@@ -59,10 +59,10 @@ public:
 		);
 
 		// Add the menu item
-		IMenuManager& mm = GlobalUIManager().getMenuManager();
+		ui::menu::IMenuManager& mm = GlobalMenuManager();
 		mm.add("main/map",
 				"ObjectivesEditor",
-				ui::menuItem,
+				ui::menu::ItemType::Item,
 				_("Objectives..."),
 				"objectives16.png",
 				"ObjectivesEditor");

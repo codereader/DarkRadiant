@@ -2,12 +2,17 @@
 
 #include "itextstream.h"
 #include "iregistry.h"
+#include "imainframe.h"
 
 #include "MenuBar.h"
 #include "MenuFolder.h"
 #include "MenuRootElement.h"
+#include "module/StaticModule.h"
 
 namespace ui 
+{
+
+namespace menu
 {
 
 namespace 
@@ -88,7 +93,7 @@ wxMenuBar* MenuManager::getMenuBar(const std::string& name)
 
 void MenuManager::add(const std::string& insertPath,
 							const std::string& name,
-							eMenuItemType type,
+							ItemType type,
 							const std::string& caption,
 							const std::string& icon,
 							const std::string& eventName)
@@ -117,7 +122,7 @@ void MenuManager::add(const std::string& insertPath,
 
 void MenuManager::insert(const std::string& insertPath,
 						 const std::string& name,
-						 eMenuItemType type,
+						 ItemType type,
 						 const std::string& caption,
 						 const std::string& icon,
 						 const std::string& eventName)
@@ -242,4 +247,40 @@ MenuElementPtr MenuManager::findTopLevelMenu(const MenuElementPtr& element)
 	return MenuElementPtr();
 }
 
+const std::string& MenuManager::getName() const
+{
+    static std::string _name(MODULE_MENUMANAGER);
+    return _name;
+}
+
+const StringSet& MenuManager::getDependencies() const
+{
+    static StringSet _dependencies
+    {
+        MODULE_MAINFRAME
+    };
+
+    return _dependencies;
+}
+
+void MenuManager::initialiseModule(const IApplicationContext& ctx)
+{
+    rMessage() << getName() << "::initialiseModule called." << std::endl;
+
+    loadFromRegistry();
+
+    GlobalMainFrame().signal_MainFrameShuttingDown().connect(
+        sigc::mem_fun(this, &MenuManager::clear)
+    );
+}
+
+void MenuManager::shutdownModule()
+{
+    clear();
+}
+
+module::StaticModule<MenuManager> menuManagerModule;
+
 } // namespace ui
+
+}

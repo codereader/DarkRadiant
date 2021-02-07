@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include "iuimanager.h"
+#include "imenumanager.h"
 
 /** 
  * greebo: The MenuManager takes care of adding and inserting the
@@ -19,11 +19,14 @@
 namespace ui
 {
 
+namespace menu
+{
+
 class MenuElement;
 typedef std::shared_ptr<MenuElement> MenuElementPtr;
 
 class MenuManager :
-	public IMenuManager
+    public IMenuManager
 {
 private:
 	// All menubars are child of this root item
@@ -48,7 +51,7 @@ public:
 	 */
 	void add(const std::string& insertPath,
 			 const std::string& name,
-			 eMenuItemType type,
+			 ItemType type,
 			 const std::string& caption,
 			 const std::string& icon,
 			 const std::string& eventName) override;
@@ -63,7 +66,7 @@ public:
 	 */
 	void insert(const std::string& insertPath,
 				const std::string& name,
-				eMenuItemType type,
+				ItemType type,
 				const std::string& caption,
 				const std::string& icon,
 				const std::string& eventName) override;
@@ -84,6 +87,12 @@ public:
 	 */
 	void clear();
 
+    // RegisterableModule
+    const std::string& getName() const override;
+    const StringSet& getDependencies() const override;
+    void initialiseModule(const IApplicationContext& ctx) override;
+    void shutdownModule() override;
+
 private:
 	void handleElementAdded(const MenuElementPtr& element);
 	void handleElementRemoved(const MenuElementPtr& element);
@@ -92,4 +101,6 @@ private:
 	MenuElementPtr findTopLevelMenu(const MenuElementPtr& element);
 };
 
-} // namespace ui
+} // namespace
+
+} // namespace

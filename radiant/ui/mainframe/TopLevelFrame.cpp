@@ -2,7 +2,7 @@
 
 #include "itextstream.h"
 #include "i18n.h"
-#include "iuimanager.h"
+#include "imenumanager.h"
 #include "istatusbarmanager.h"
 #include "itoolbarmanager.h"
 #include <wx/artprov.h>
@@ -101,7 +101,7 @@ bool TopLevelFrame::Destroy()
 wxMenuBar* TopLevelFrame::createMenuBar()
 {
     // Return the "main" menubar from the UIManager
-	return GlobalUIManager().getMenuManager().getMenuBar("main");
+	return GlobalMenuManager().getMenuBar("main");
 }
 
 wxBoxSizer* TopLevelFrame::getMainContainer()

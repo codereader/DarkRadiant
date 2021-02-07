@@ -3,7 +3,7 @@
 #include "i18n.h"
 #include "itextstream.h"
 #include "ieventmanager.h"
-#include "iuimanager.h"
+#include "imenumanager.h"
 #include "igroupdialog.h"
 #include "imainframe.h"
 #include "ientityinspector.h"
@@ -131,7 +131,7 @@ void SplitPaneLayout::constructLayout()
 void SplitPaneLayout::constructMenus()
 {
 	// Hide the camera toggle option for non-floating views
-	IMenuManager& menuManager = GlobalUIManager().getMenuManager();
+	menu::IMenuManager& menuManager = GlobalMenuManager();
 	menuManager.setVisibility("main/view/cameraview", false);
 
 	// Add the commands for changing the camera position
@@ -142,16 +142,16 @@ void SplitPaneLayout::constructMenus()
 
 	// Add the corresponding menu items
 	menuManager.insert("main/view/camera", "cameraposition",
-					ui::menuFolder, _("Camera Position"), "", "");
+					menu::ItemType::Folder, _("Camera Position"), "", "");
 
 	menuManager.add("main/view/cameraposition", "camtopleft",
-					ui::menuItem, _("Top Left"), "", "CameraPositionTopLeft");
+        menu::ItemType::Item, _("Top Left"), "", "CameraPositionTopLeft");
 	menuManager.add("main/view/cameraposition", "camtopright",
-					ui::menuItem, _("Top Right"), "", "CameraPositionTopRight");
+        menu::ItemType::Item, _("Top Right"), "", "CameraPositionTopRight");
 	menuManager.add("main/view/cameraposition", "cambottomleft",
-					ui::menuItem, _("Bottom Left"), "", "CameraPositionBottomLeft");
+        menu::ItemType::Item, _("Bottom Left"), "", "CameraPositionBottomLeft");
 	menuManager.add("main/view/cameraposition", "cambottomright",
-					ui::menuItem, _("Bottom Right"), "", "CameraPositionBottomRight");
+        menu::ItemType::Item, _("Bottom Right"), "", "CameraPositionBottomRight");
 
 	updateCameraPositionToggles();
 }
@@ -159,10 +159,10 @@ void SplitPaneLayout::constructMenus()
 void SplitPaneLayout::deconstructMenus()
 {
 	// Show the camera toggle option again
-    GlobalUIManager().getMenuManager().setVisibility("main/view/cameraview", true);
+    GlobalMenuManager().setVisibility("main/view/cameraview", true);
 
 	// Remove the camera position menu items
-	GlobalUIManager().getMenuManager().remove("main/view/cameraposition");
+	GlobalMenuManager().remove("main/view/cameraposition");
 
 	// Remove the camera position events
 	GlobalEventManager().removeEvent("CameraPositionTopLeft");
