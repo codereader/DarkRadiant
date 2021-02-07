@@ -104,12 +104,12 @@ add_executable(darkradiant
                uimanager/colourscheme/ColourSchemeEditor.cpp
                uimanager/DialogManager.cpp
                uimanager/GroupDialog.cpp
-               uimanager/menu/MenuBar.cpp
-               uimanager/menu/MenuElement.cpp
-               uimanager/menu/MenuFolder.cpp
-               uimanager/menu/MenuItem.cpp
-               uimanager/menu/MenuManager.cpp
-               uimanager/menu/MenuSeparator.cpp
+               ui/menu/MenuBar.cpp
+               ui/menu/MenuElement.cpp
+               ui/menu/MenuFolder.cpp
+               ui/menu/MenuItem.cpp
+               ui/menu/MenuManager.cpp
+               ui/menu/MenuSeparator.cpp
                uimanager/SoundChooser.cpp
                uimanager/SoundShaderPreview.cpp
                uimanager/ToolbarManager.cpp

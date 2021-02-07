@@ -134,9 +134,6 @@
     <Filter Include="src\uimanager\animationpreview">
       <UniqueIdentifier>{562e8fd0-cd8f-448b-ba69-90e8f4a85b11}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\uimanager\menu">
-      <UniqueIdentifier>{31b14db3-7897-48b1-8771-d4e0eac5cb07}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\eventmanager">
       <UniqueIdentifier>{9215c909-e37e-4fef-b0ce-04455bf61cf2}</UniqueIdentifier>
     </Filter>
@@ -178,6 +175,9 @@
     </Filter>
     <Filter Include="src\ui\toolbar">
       <UniqueIdentifier>{bceb5724-df70-4343-aeee-c6310eb63097}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\ui\menu">
+      <UniqueIdentifier>{9ee6e7e2-936f-4337-9c0a-bdf9db86349e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -514,24 +514,6 @@
     <ClCompile Include="..\..\radiant\uimanager\animationpreview\MD5AnimationViewer.cpp">
       <Filter>src\uimanager\animationpreview</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\uimanager\menu\MenuBar.cpp">
-      <Filter>src\uimanager\menu</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\uimanager\menu\MenuElement.cpp">
-      <Filter>src\uimanager\menu</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\uimanager\menu\MenuFolder.cpp">
-      <Filter>src\uimanager\menu</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\uimanager\menu\MenuItem.cpp">
-      <Filter>src\uimanager\menu</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\uimanager\menu\MenuManager.cpp">
-      <Filter>src\uimanager\menu</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\uimanager\menu\MenuSeparator.cpp">
-      <Filter>src\uimanager\menu</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\eventmanager\Accelerator.cpp">
       <Filter>src\eventmanager</Filter>
     </ClCompile>
@@ -684,6 +666,24 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\toolbar\ToolbarManager.cpp">
       <Filter>src\ui\toolbar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\menu\MenuBar.cpp">
+      <Filter>src\ui\menu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\menu\MenuElement.cpp">
+      <Filter>src\ui\menu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\menu\MenuFolder.cpp">
+      <Filter>src\ui\menu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\menu\MenuItem.cpp">
+      <Filter>src\ui\menu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\menu\MenuManager.cpp">
+      <Filter>src\ui\menu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\menu\MenuSeparator.cpp">
+      <Filter>src\ui\menu</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1095,27 +1095,6 @@
     <ClInclude Include="..\..\radiant\uimanager\animationpreview\MD5AnimationViewer.h">
       <Filter>src\uimanager\animationpreview</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\uimanager\menu\MenuBar.h">
-      <Filter>src\uimanager\menu</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\uimanager\menu\MenuElement.h">
-      <Filter>src\uimanager\menu</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\uimanager\menu\MenuFolder.h">
-      <Filter>src\uimanager\menu</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\uimanager\menu\MenuItem.h">
-      <Filter>src\uimanager\menu</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\uimanager\menu\MenuManager.h">
-      <Filter>src\uimanager\menu</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\uimanager\menu\MenuRootElement.h">
-      <Filter>src\uimanager\menu</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\uimanager\menu\MenuSeparator.h">
-      <Filter>src\uimanager\menu</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\eventmanager\Accelerator.h">
       <Filter>src\eventmanager</Filter>
     </ClInclude>
@@ -1313,6 +1292,27 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\toolbar\ToolbarManager.h">
       <Filter>src\ui\toolbar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\menu\MenuBar.h">
+      <Filter>src\ui\menu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\menu\MenuElement.h">
+      <Filter>src\ui\menu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\menu\MenuFolder.h">
+      <Filter>src\ui\menu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\menu\MenuItem.h">
+      <Filter>src\ui\menu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\menu\MenuManager.h">
+      <Filter>src\ui\menu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\menu\MenuRootElement.h">
+      <Filter>src\ui\menu</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\menu\MenuSeparator.h">
+      <Filter>src\ui\menu</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

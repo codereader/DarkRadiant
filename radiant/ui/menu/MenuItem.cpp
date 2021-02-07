@@ -3,7 +3,6 @@
 #include "itextstream.h"
 #include "ieventmanager.h"
 
-#include "../LocalBitmapArtProvider.h"
 #include "MenuFolder.h"
 #include "wxutil/bitmap.h"
 
