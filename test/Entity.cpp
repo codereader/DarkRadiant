@@ -622,4 +622,37 @@ TEST_F(EntityTest, AttachedLightAtCorrectPosition)
     EXPECT_EQ(rLight->lightAABB().origin, ORIGIN + EXPECTED_OFFSET);
 }
 
+TEST_F(EntityTest, AttachedLightMovesWithEntity)
+{
+    const Vector3 ORIGIN(12, -0.5, 512);
+    const Vector3 EXPECTED_OFFSET(0, 0, 10); // attach offset in def
+
+    // Create a torch node and set a non-zero origin
+    auto torch = createByClassName("atdm:torch_brazier");
+    torch->getEntity().setKeyValue("origin", string::to_string(ORIGIN));
+
+    // First render
+    {
+        RenderFixture rf(true /* solid mode */);
+        rf.renderSubGraph(torch);
+    }
+
+    // Move the torch
+    const Vector3 NEW_ORIGIN = ORIGIN + Vector3(128, 512, -54);
+    torch->getEntity().setKeyValue("origin", string::to_string(NEW_ORIGIN));
+
+    // Render again to get positions
+    RenderFixture rf(true /* solid mode */);
+    rf.renderSubGraph(torch);
+
+    // Access the submitted light source
+    ASSERT_FALSE(rf.collector.lightPtrs.empty());
+    const RendererLight* rLight = rf.collector.lightPtrs.front();
+    ASSERT_TRUE(rLight);
+
+    // Check the light source's position
+    EXPECT_EQ(rLight->getLightOrigin(), NEW_ORIGIN + EXPECTED_OFFSET);
+    EXPECT_EQ(rLight->lightAABB().origin, NEW_ORIGIN + EXPECTED_OFFSET);
+}
+
 }
