@@ -402,6 +402,27 @@ TEST_F(EntityTest, LightLocalToWorldFromOrigin)
     EXPECT_EQ(light->localToWorld(), Matrix4::getTranslation(ORIGIN));
 }
 
+TEST_F(EntityTest, FuncStaticLocalToWorld)
+{
+    auto funcStatic = createByClassName("func_static");
+    auto& spawnArgs = funcStatic->getEntity();
+    spawnArgs.setKeyValue("origin", "0 0 0");
+
+    // Initial localToWorld should be an identity matrix
+    EXPECT_EQ(funcStatic->localToWorld(), Matrix4::getIdentity());
+
+    // Set a new origin and make sure the localToWorld reflects the
+    // corresponding translation
+    const Vector3 MOVED(46, -128, 4096);
+    spawnArgs.setKeyValue("origin", string::to_string(MOVED));
+    EXPECT_EQ(funcStatic->localToWorld(),
+              Matrix4::getTranslation(MOVED));
+
+    // Clear transformation and get back to identity
+    spawnArgs.setKeyValue("origin", "0 0 0");
+    EXPECT_EQ(funcStatic->localToWorld(), Matrix4::getIdentity());
+}
+
 TEST_F(EntityTest, LightTransformedByParent)
 {
     // Parent a light to another entity (this isn't currently how the attachment
