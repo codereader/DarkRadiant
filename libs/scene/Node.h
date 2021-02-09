@@ -50,7 +50,6 @@ private:
 	mutable bool _childBoundsMutex;
 	mutable bool _transformChanged;
 	mutable bool _transformMutex;
-	Callback _transformChangedCallback;
 
 	mutable Matrix4 _local2world;
 
@@ -151,8 +150,6 @@ public:
 	void transformChangedLocal() override;
 
 	void transformChanged() override;
-
-	void setTransformChangedCallback(const Callback& callback);
 
 	// greebo: This gets called as soon as a scene::Node gets inserted into
 	// the TraversableNodeSet. This triggers an instantiation call on the child node.
