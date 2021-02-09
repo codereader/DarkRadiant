@@ -65,6 +65,7 @@ protected:
     void setupSceneGraph() override;
 
     AABB getSceneBounds() override;
+    Vector3 getGridOrigin() override;
 
     bool onPreRender() override;
     void onPostRender() override;
@@ -73,7 +74,6 @@ protected:
 
 private:
     void drawAxes();
-    void drawDebugInfo();
 
 	void onToolItemClickRefresh(wxCommandEvent& ev);
 };

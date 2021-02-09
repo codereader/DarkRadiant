@@ -146,6 +146,9 @@ protected:
     // Override this to deliver accurate scene bounds, used for mousewheel-zooming
     virtual AABB getSceneBounds();
 
+    // Defaults to getSceneBounds().getOrigin()
+    virtual Vector3 getGridOrigin();
+
     // Called right before rendering, returning false will cancel the render algorithm
     virtual bool onPreRender();
 

@@ -193,6 +193,11 @@ AABB ParticlePreview::getSceneBounds()
     return _particleNode->getParticle()->getBounds();
 }
 
+Vector3 ParticlePreview::getGridOrigin()
+{
+    return Vector3(0, 0, 0);
+}
+
 bool ParticlePreview::onPreRender()
 {
     return _particleNode != NULL;

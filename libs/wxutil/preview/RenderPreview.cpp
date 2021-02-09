@@ -603,6 +603,11 @@ AABB RenderPreview::getSceneBounds()
     return AABB(Vector3(0,0,0), Vector3(64,64,64));
 }
 
+Vector3 RenderPreview::getGridOrigin()
+{
+    return getSceneBounds().getOrigin();
+}
+
 void RenderPreview::resetModelRotation()
 {
     _modelRotation = Matrix4::getIdentity();
@@ -742,8 +747,8 @@ void RenderPreview::drawGrid()
 
     glPushMatrix();
 
-    auto sceneCenter = getSceneBounds().getOrigin();
-    glTranslated(sceneCenter.x(), sceneCenter.y(), sceneCenter.z());
+    auto gridOrigin = getGridOrigin();
+    glTranslated(gridOrigin.x(), gridOrigin.y(), gridOrigin.z());
 
 	glBegin(GL_LINES);
 
