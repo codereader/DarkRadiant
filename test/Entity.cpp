@@ -602,10 +602,6 @@ TEST_F(EntityTest, RenderAttachedLightEntity)
     RenderFixture rf(true /* solid mode */);
     rf.renderSubGraph(torch);
 
-    // The node visitor should have visited the entity itself and one child node (a
-    // static model)
-    EXPECT_EQ(rf.nodesVisited, 2);
-
     // There should be 3 renderables from the torch (because the entity has a
     // shadowmesh and a collision mesh as well as the main model) and one from
     // the light (the origin diamond).

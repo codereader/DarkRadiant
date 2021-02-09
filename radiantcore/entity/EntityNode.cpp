@@ -148,6 +148,16 @@ void EntityNode::createAttachedEntities()
     );
 }
 
+void EntityNode::transformChanged()
+{
+    Node::transformChanged();
+
+    // Broadcast transformChanged to all attached entities so they can update
+    // their position
+    for (auto attached: _attachedEnts)
+        attached->transformChanged();
+}
+
 void EntityNode::onEntityClassChanged()
 {
 	// By default, we notify the KeyObservers attached to this entity
