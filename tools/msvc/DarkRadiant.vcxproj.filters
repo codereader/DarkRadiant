@@ -179,6 +179,9 @@
     <Filter Include="src\ui\groupdialog">
       <UniqueIdentifier>{07fc75c2-d1cf-498c-8eb4-806389afc62b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ui\materials">
+      <UniqueIdentifier>{d855833c-6204-4825-ba61-c4e143ba50ce}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\main.cpp">
@@ -684,6 +687,9 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\common\SoundShaderPreview.cpp">
       <Filter>src\ui\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\materials\MaterialEditorModule.cpp">
+      <Filter>src\ui\materials</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1310,6 +1316,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\common\SoundShaderPreview.h">
       <Filter>src\ui\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\materials\MaterialEditor.h">
+      <Filter>src\ui\materials</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

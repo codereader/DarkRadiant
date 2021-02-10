@@ -100,6 +100,7 @@ add_executable(darkradiant
                ui/mainframe/SplitPaneLayout.cpp
                ui/mainframe/TopLevelFrame.cpp
                ui/mapselector/MapSelector.cpp
+               ui/materials/MaterialEditorModule.cpp
                ui/animationpreview/AnimationPreview.cpp
                ui/animationpreview/MD5AnimationChooser.cpp
                ui/animationpreview/MD5AnimationViewer.cpp
