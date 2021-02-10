@@ -691,6 +691,9 @@
     <ClCompile Include="..\..\radiant\ui\materials\MaterialEditorModule.cpp">
       <Filter>src\ui\materials</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\materials\MaterialEditor.cpp">
+      <Filter>src\ui\materials</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h">

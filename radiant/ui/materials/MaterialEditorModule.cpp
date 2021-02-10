@@ -45,10 +45,6 @@ public:
             "icon_texture.png",	// icon
             "MaterialEditor"); // event name
     }
-
-    void shutdownModule() override
-    {
-    }
 };
 
 module::StaticModule<MaterialEditorModule> materialEditorModule;
