@@ -1,0 +1,1295 @@
+entityDef atdm:ai_base
+{
+	"editor_displayFolder"					"AI/Internal/Base Class"
+	"scriptobject"							"ai_darkmod_base"
+
+	"editor_color"							"1 .5 0"
+	"editor_mins"							"-24 -24 0"
+	"editor_maxs"							"24 24 64"
+	"editor_showangle"						"1"
+	"editor_copy"							"anim"
+
+	"editor_usage"							"Don't use. Base class for all TDM AI entities."
+
+	"editor_float melee_damage_mod"			"When the AI hits with a melee weapon, this multiplies the default damage done by the weapon."
+	"editor_bool melee_predicts_proximity" "If true, AI takes the current velocity of itself and its enemy into account to predict whether it will hit the enemy in the future if it starts a melee attack now.  All but the stupidest AI should do this."
+	"editor_float melee_predicted_attack_time" "The amount of time in milliseconds that the AI uses to predict whether it will hit its enemy if it starts its attack now.  Should roughly correspond to the time it takes before the attack animation is threatening to an enemy in front of them.  This baseline can be set on an AI for empty-hand attacks, then may be overwritten by individual weapons if their attack animations are slower/faster than this baseline."
+
+	"editor_bool can_be_flatfooted"			"If set to true, the AI becomes flat-footed in certain combat situations.  This means they're unable to run at the player, but can still turn to face the player."
+	"editor_float flatfooted_time"			"The duration in milliseconds that this AI remains flat footed after a combat action triggers this state."
+	"editor_float flatfoot_parry_num"		"When an AI parries, only the first few parries will make them flat footed.  This spawnarg defines how many parries will work before a timer kicks in."
+	"editor_float flatfoot_parry_time"		"Determines how long it takes before the AI can be rendered flat-footed by a parry again.  This is measured from the last time they succesfully parry, so the player must 'surprise' them again by waiting until they haven't parried in a while, and can't just spam attack."
+
+	"editor_float fov"						"AIs full field of view in degrees.  Will be used for both horizontal and vertical fov unless vertical is explicitly specified."
+	"editor_float fov_vert"					"AIs full vertical field of view in degrees.  Leave blank or set to -1 to use the same value as the horizontal fov."
+	"editor_vector fov_rotation"			"A vector of 3 space-delimited angles applied to rotate the AI's field of view relative to their head joint.  For most heads, the angles are: yaw pitch roll."
+	"editor_float acuity_vis"				"AI visual acuity (in percent)"
+	"editor_float acuity_aud"				"AI aural acuity (in percent)"
+	"editor_float acuity_tact"				"AI tactile acuity (in percent)"
+	"editor_float acuity_env"				"AI environmental acuity.  How sensitive the AI is to things that have changed in its environment. (In percent)"
+	"editor_float acuity_other"				"AI generic acuity for scripted events.  You can call this alert type on an entity with entity.Alert( <char *type>, <float amount>).  This will alert the entity by amount * acuity_other in your script."
+
+	"editor_bool patrol"					"If set to 1, the AI will patrol along pathnodes from the start of the map."
+	"editor_bool animal_patrol"				"Set this to 1 to let the AI use the animal patrol task instead of the ordinary path_corner routine. It will wander aimlessly around instead of following a predefined path."
+
+	"editor_float startpos_tolerance"		"When returning to their idle position after an alert, the AI uses their bounding box by default to check whether they have reached their destination. Setting this spawnarg to values >= 0 will change the size of the bounding box check."
+
+	"editor_bool sitting"					"If true, AI will be sitting at map start."
+	"editor_var sitting_turn_pivot"			"The offset of the pivot for turning while seated."
+	"editor_float sit_down_slide_dist"		"Lets the AI slide back onto the seat."
+	"editor_float sit_down_angle"			"If this is set, AI will turn to face this direction after sitting down."
+
+	"editor_bool drunk"						"If set to 1, AI will be drunk"
+	"editor_float drunk_acuity_factor"		"If the AI is drunk, their acuities (visual, hearing, tactile) will be reduced by this factor."
+
+	"editor_float stepvol_walk"				"Modifies audible AI walking footstep volume"
+	"editor_float stepvol_run"				"Modifies audible AI running footstep volume"
+
+	"editor_float alert_thresh1"			"The alert level threshold for reaching ObservantState (bark, but otherwise no reaction)."
+	"editor_float alert_time1"				"The time it takes for the alert level to ramp down from the upper to the lower threshold in ObservantState (in seconds)."
+	"editor_float alert_time1_fuzzyness"	"Applies some randomness to the alert time (in seconds)."
+	"editor_float alert_gracetime1"			"After being alerted, the AI will ignore additional alerts during the grace period (in seconds), to avoid adding up the alert level too quickly."
+	"editor_float alert_gracefrac1"			"An alert that is higher than the last increase times the grace fraction will terminate the grace period."
+	"editor_float alert_gracecount1"		"If the number of additional alerts during the grace period exceeds the grace count, the grace period will be terminated."
+
+	"editor_float alert_thresh2"			"The alert level threshold for reaching SuspiciousState (bark, look, may stop and turn)."
+	"editor_float alert_time2"				"The time it takes for the alert level to ramp down from the upper to the lower threshold in SuspiciousState (in seconds)."
+	"editor_float alert_time2_fuzzyness"	"Applies some randomness to the alert time (in seconds)"
+	"editor_float alert_gracetime2"			"After being alerted, the AI will ignore additional alerts during the grace period (in seconds), to avoid adding up the alert level too quickly"
+	"editor_float alert_gracefrac2"			"An alert that is higher than the last increase times the grace fraction will terminate the grace period"
+	"editor_float alert_gracecount2"		"If the number of additional alerts during the grace period exceeds the grace count, the grace period will be terminated"
+
+	"editor_float alert_thresh3"			"The alert level threshold for reaching SearchingState (Investigation)"
+	"editor_float alert_time3"				"The time it takes for the alert level to ramp down from the upper to the lower threshold in SearchingState (in seconds)"
+	"editor_float alert_time3_fuzzyness"	"Applies some randomness to the alert time (in seconds)"
+	"editor_float alert_gracetime3"			"After being alerted, the AI will ignore additional alerts during the grace period (in seconds), to avoid adding up the alert level too quickly"
+	"editor_float alert_gracefrac3"			"An alert that is higher than the last increase times the grace fraction will terminate the grace period"
+	"editor_float alert_gracecount3"		"If the number of additional alerts during the grace period exceeds the grace count, the grace period will be terminated"
+
+	"editor_float alert_thresh4"			"The alert level threshold for reaching AgitatedSearchingState (Investigation, Weapon out, AI is quite sure that there is someone around)"
+	"editor_float alert_time4"				"The time it takes for the alert level to ramp down from the upper to the lower threshold in AgitatedSearchingState (in seconds)"
+	"editor_float alert_time4_fuzzyness"	"Applies some randomness to the alert time (in seconds)"
+	"editor_float alert_gracetime4"			"After being alerted, the AI will ignore additional alerts during the grace period (in seconds), to avoid adding up the alert level too quickly"
+	"editor_float alert_gracefrac4"			"An alert that is higher than the last increase times the grace fraction will terminate the grace period"
+	"editor_float alert_gracecount4"		"If the number of additional alerts during the grace period exceeds the grace count, the grace period will be terminated"
+
+	"editor_float alert_thresh5"			"The alert level threshold for reaching CombatState"
+
+    "editor_float alert_decrease_deadtime"		"The time in msecs to pass before the AI's alert level is allowed to decrease again (after any increase)."
+
+   	"editor_float alert_time_fleedone"					"Time the AI will stay after fleeing before getting back to normal (in seconds)"
+	"editor_float alert_time_fleedone_fuzzyness"	    "Applies some randomness to the fleedone time (in seconds)"
+
+	"editor_float alert_initial"				"Initial alert level at map start."
+
+	"editor_bool alert_idle"					"The AI will be in alert_idle instead of idle state at map start (no idle barks and animations, as if seen evidence of intruders before)."
+	"editor_bool disable_alert_idle"			"If set to 1, the AI will not switch to alert idle behavior (weapon out, no idle barks and animations) when it has seen evidence of intruders before."
+
+	"editor_float idle_bark_interval_min"		"Minimum time between idle barks"
+	"editor_float idle_bark_interval_max"		"Maximum time between idle barks"
+
+	"editor_float alert_idle_bark_interval_min"	"Minimum time between alert idle barks (played when the AI has seen evidence of intruders before)"
+	"editor_float alert_idle_bark_interval_max"	"Maximum time between alert idle barks (played when the AI has seen evidence of intruders before)"
+
+	"editor_float sleep_bark_interval_min"		"Minimum time between barks while sleeping"
+	"editor_float sleep_bark_interval_max"		"Maximum time between barks while sleeping"
+
+	"editor_var alert_aud_thresh" 				"Threshold of audibility for the AI.  This is in dB of sound pressure level (SPL).  The real life value for humans is around 20 (a barely heard whisper).  Changing this by even 0.1 has a large effect on sound propagation behavior, because propagated sounds below this volume are not heard at all.  NOTE if this is not set, it gets the value from soundprop global settings."
+
+	"editor_var health_critical"  				"When the health drops below this value, the AI will flee. Set this to 0 for AI that don't wet their pants."
+	"editor_bool unarmed_melee"					"Set this to 1 when this type of AI doesn't need melee weapons to fight. This is usually true for spiders, undead and such. Humans are wimps and need weapons."
+	"editor_bool unarmed_ranged"    			"Set this to 1 when this type of AI doesn't need weapons for ranged combat. This is usually true for belchers."
+    "editor_var idle_animations"				"A set of animation states to be played by the idle AI. See the AI's script object for possible Animation State functions."
+    "editor_var idle_animations_searching"		"A set of animation states to be played by an AI when it is participating in a search as a guard or observer. See the AI's script object for possible Animation State functions."
+	"editor_var replace_anim"					"Defines a set of animations that are to replace the default animations of the AI, depending on the state. Can be set on a bound entity, so that whenever this entity is bound to an AI, the animations change (and only then). Example: replace_anim_idle set to 'idle_torch' on a AI-carryable torch replaces the default set of idle animations with a specific torch one whenever the AI has the torch in his hand."
+
+	"editor_var idle_animations_interval"		"Defines the interval the idle animations should be played, in seconds. An uncertainty of +/- 20% is automatically applied by the code."
+	"editor_var idle_search_animations_interval"	"Defines the interval the idle search animations should be played, in seconds. An uncertainty of +/- 20% is automatically applied by the code." // grayman #3857
+
+	"editor_int max_interleave_think_frames"	"The AI will think only once in this number of frames if the distance to the player is larger than max_interleave_think_dist."
+	"editor_float min_interleave_think_dist"	"The distance where the AI switches from thinking every frame to interleaved thinking."
+	"editor_float max_interleave_think_dist"	"The distance where the AI thinks only once in max_interleave_think_frames. Thinking frequency decreases linearly in between."
+
+	"editor_var can_unlock"						"Names of doors this AI is able to unlock. Similar to 'used_by', multiple spawnargs of 'can_unlock' are allowed, suffixed with numbers, like 'can_unlock2'."
+
+	"editor_float chanceNoticeWeapon"			"Chance to notice the visual stim of suspicious weapons"
+	"editor_float chanceNoticeSuspiciousItem"	"Chance to notice the visual stim of suspicious items"
+	"editor_float chanceNoticePerson"			"Chance to notice the visual stim of other persons"
+	"editor_float chanceNoticeMonster"			"Chance to notice the visual stim of a monster"
+	"editor_float chanceNoticeUndead"			"Chance to notice the visual stim on an undead"
+	"editor_float chanceNoticeBlood"			"Chance to notice the visual stim of blood"
+	"editor_float chanceNoticeLight"			"Chance to notice the visual stim of a light that should be on"
+	"editor_float chanceNoticeMissingItem"		"Chance to notice the visual stim of a missing item"
+	"editor_float chanceNoticeBrokenItem"		"Chance to notice the visual stim of a broken item"
+	"editor_float chanceNoticeDoor"				"Chance to notice the visual stim of an open door that should be closed"
+
+	"editor_float chanceNoticePickedPocket"		"Chance to notice that an object bound to the AI has been stolen" // grayman #3559
+	"editor_float pickpocket_delay_min"			"Minimum delay before reacting to a picked pocket" // grayman #3559
+	"editor_float pickpocket_delay_max"			"Maximum delay before reacting to a picked pocket" // grayman #3559
+	"editor_float pickpocket_alert"				"Incremental alert value to be added to an AI's current alert level" // grayman #3559
+
+	"editor_bool canLightTorches"				"AI ability to switch on torches"
+	"editor_bool canOperateSwitchLights"		"AI ability to operate light switches"
+	"editor_bool canOperateDoors"				"AI ability to handle doors"
+	"editor_bool canOperateElevators"			"AI ability to handle elevators"
+	"editor_bool canGreet"						"AI ability to greet other actors"
+
+	"editor_bool push_off_player"				"If set to 1, a player that tries to stand on top of this AI will be pushed off (if the AI is alive)"
+
+	"editor_float searchbark_delay_min"			"Minimum time between barks during searching (in seconds)"
+	"editor_float searchbark_delay_max"			"Maximum time between barks during searching (in seconds)"
+
+	"editor_var max_area_reevaluation_interval"	"The minimum time that needs to pass by before the AI re-evaluates a forbidden area (msec)"
+	"editor_var door_retry_time"				"The time that needs to pass before locked doors are enabled for another try (seconds)"
+
+	"editor_float headturn_delay_min"			"Minimum time between random head turns (sec)"
+	"editor_float headturn_chance_idle"			"The chance for random head turning while idle (0.0-1.0)"
+	"editor_float headturn_factor_alerted"		"The headturning chance gets multiplied by this amount when the AI is alerted"
+	"editor_float headturn_yaw"					"The maximum yaw angle of random head turning (deg)"
+	"editor_float headturn_pitch"				"The maximum pitch angle of random head turning (deg)"
+	"editor_float headturn_duration_min"		"The minimum duration of random head turning (sec)"
+	"editor_float headturn_duration_max"		"The maximum duration of random head turning (sec)"
+
+	"editor_float step_up_increase"				"The amount in units the AI is translated upwards when stepping up to prevent gravity from dragging them down immediately."
+
+	"editor_float reachedpos_bbox_expansion"		"This expands the bounding box when the AI is checking for reached positions, default is 0. Don't change this unless you know what you're doing."
+	"editor_float aas_reachability_z_tolerance"		"Defines the maximum vertical tolerance within wich a point above an AAS area is still considered reachable. Defaults to 75 units."
+
+	"editor_bool shoulderable"					"Sets whether the AI can be shouldered by the player when dead or unconscious (true by default, AI that can't be shouldered must be set so)"
+	"editor_string shouldered_name"				"Name displayed under the shouldered body icon when this AI is shouldered and alive."
+	"editor_string shouldered_name_dead"		"Name displayed under the shouldered body icon when this AI is shouldered and dead."
+	"editor_float shouldered_maxspeed"			"Player speed is limited to this fraction of maximum sprint speed when the player is carrying this AI's body."
+
+	"editor_var movetype"		"The movetype (= move algorithm) used for this AI. See ai_base.script for possible values, default is ANIM."
+	"editor_bool bleed"			"If set to true, this entity will bleed, e.g. spawn blood particles and decals when hurt."
+
+	"editor_var use_aas"		"The name of the AAS type. This controls how big the AI is and thus which grid to use to calculate the information for path finding and navigation."
+
+	"editor_bool arrowsticking_forceenabled"	"If set to true, arrows will always stick into this AI, regardless whether it is live or dead."
+	"editor_bool arrowsticking_disabled"		"If set to true, arrows will never stick into this AI, regardless whether it is live or dead."
+
+	"editor_var def_head"		"For models with swappable heads (usually all humanoids), the name of the entity that is to be attached as head."
+	"editor_bool sleeping"			"If true, the AI is sleeping."
+	"editor_var lay_down_left"	"Determines the direction to which the character will lay down at map start when sleeping is true. 0 = right, 1 = left."
+	"editor_var lay_down_slide_dist"	"This will move the AI further onto the bed while lying down."
+
+	"editor_bool can_drown"		"If true, the AI will drown if it gets under water, either by walking in or by being dropped in unconsciously. Set to '0' to make them breathe under water."
+	"editor_bool is_civilian"	"If true, the AI is a civilian. Defaults to 0."
+
+	"editor_string personGender"	"For AI with 'AIUse' set to 'AIUSE_PERSON', defines the gender of the person. Can be either PERSONGENDER_MALE, PERSONGENDER_FEMALE or PERSONGERNDER_UNKNOWN."
+	"editor_string personType"		"For AI with 'AIUse' set to 'AIUSE_PERSON', defines the type of the person. Can be one of PERSONTYPE_GENERIC, PERSONTYPE_UNKNOWN, or any of PERSONTYPE_BUILDER, PERSONTYPE_CITYWATCH, PERSONTYPE_PAGAN, PERSONTYPE_NOBLE etc."
+
+	"editor_var ko_zone"		"Name of the damage zone that must be hit for a possible knockout. Set this blank (i.e. : 'ko_zone' '') to make the AI immune to KOs from the blackjack."
+	"editor_bool ko_immune"		"0 = not immune, 1 = immune to blackjack"
+	"editor_bool gas_immune"		"0 = not immune, 1 = immune to gas"
+	"editor_float ko_alert_state"	"Alert state number at which knockout behavior changes."
+    "editor_float ko_alert_immune_state"  "Alert state number at which immunity behavior changes."
+	"editor_bool ko_alert_immune"	"If true, the AI is immune to knockouts when alerted at or above the alert state defined in 'ko_alert_state'."
+	"editor_vector ko_spot_offset" "Defines the center of the head for knockout testing purposes.  Vector offset from the head attachment joint to the desired head center point.  The possible knockout cone extends back from this point."
+	"editor_float ko_angle_horiz" "Defines a horizontal cone angle extending backwards from the direction AI is looking.  Anywhere within this cone and the vertical cone is a valid KO."
+	"editor_float ko_angle_vert"	"Defines a vertical cone angle extending backwards from the direction AI is looking.  Anywhere within this cone and the horizontal cone is a valid KO."
+	"editor_float ko_angle_alert_horiz" "Horizontal knockout cone angle when the AI is alerted at or above 'ko_alert_state'."
+	"editor_float ko_angle_alert_vert" "Vertical knockout cone angle when the AI is alerted at or above 'ko_alert_state'."
+	"editor_vector ko_rotation"			"A vector of 3 space-delimited angles applied to rotate the AI's blackjack acceptance cone relative to their head joint.  For most heads, the angles are: yaw pitch roll."
+
+	"editor_float sneak_attack_alert_state" "Alert state number at which the AI can no longer be sneak attacked."
+	"editor_float sneak_attack_mult"	"Damage multiplier applied to ALL damage when AI is damaged at an alert level below that defined in 'sneak_attack_alert_state'."
+
+    "editor_int low_health_threshold" "When the AI's health drops below this value, the script 'low_health_script' will be invoked. Set this to -1 (which is the default) to disable this feature."
+    "editor_string low_health_script" "When the AI's health drops below 'low_health_threshold', this script will be called. The script must either take one entity argument (for global functions) or be a scriptobject member method without arguments."
+
+	"editor_vector offsetHeadModel"	"A vector with an offset to move the head into a better position relative to this model. (Seems currently not to work anymore.)"
+
+	"editor_float eye_height"		"Height of the eyes above the floor, in units. Used for vision and visibility checks."
+    "editor_var door_open_delay_on_use_anim"       "Offset in msecs to wait before an AI is opening/closing a door after starting to play the 'use' anim. Defaults to 1100."
+
+	"editor_float blind_time"			"The time span in seconds the AI is staying in 'blinded' state when hit by a flashbomb or -mine. See also blind_time_fuzziness."
+	"editor_float blind_time_fuzziness" "This is the random portion of 'blind_time'. A value in [blind_time-fuzziness ... blind_time+fuzziness] is chosen."
+
+	"editor_var def_vocal_set"		"Defines the entity with the vocal set for this AI, defaulting to 'atdm:ai_vocal_set_base'."
+        "editor_var snd_rustle"        "Defines the sound the AI makes in between footsteps.  Should match what the AI is wearing.  Defaults to 'default_rustle'."
+
+    "editor_var state_name_0"   "The name of the first (initial) AI state. Don't touch this unless you know what you're doing."
+    "editor_var state_name_1"   "The name of the second AI state. Don't touch this unless you know what you're doing."
+    "editor_var state_name_2"   "The name of the third AI state. Don't touch this unless you know what you're doing."
+    "editor_var state_name_3"   "The name of the fourth AI state. Don't touch this unless you know what you're doing."
+    "editor_var state_name_4"   "The name of the fifth AI state. Don't touch this unless you know what you're doing."
+    "editor_var state_name_5"   "The name of the combat (topmost) AI state. Don't touch this unless you know what you're doing."
+
+    "editor_bool set_frobable_on_death" "If true, the AI becomes frobable when dead, defaults to true."
+    "editor_bool set_frobable_on_knockout" "If true, the AI becomes frobable when KOd, defaults to true."
+    "editor_bool nonsolid_on_ragdoll" "If true (default), this AI becomes nonsolid when switching to ragdoll mode."
+
+    "editor_bool enable_death_anim" "If true, this AI plays the 'death' animation on torso and legs channel. Defaults to 0 (disabled)."
+
+	"editor_bool noDamage"						"if true, monster won't take damage."
+	"editor_var enemy"							"Set to name of character to attack when activated."
+
+	"editor_var attack_path"					"When activated, either by sight or by trigger, follow a path of path_corners to the end and then attack.  Monster will not play sight or 'on_activate' animation.  Will exit path if enemy gets too close, unless 'stay_on_attackpath' is set."
+	"editor_var stay_on_attackpath"				"don't exit attack_path when close to enemy."
+
+	"editor_var anim"							"Animation to cycle when spawned in."
+	"editor_var num_cinematics"					"When set, character is in cinematic mode.  Remains hidden until triggered, then plays each anim in sequence, then triggers targets becomes hidden once more.  Anims are specified by setting 'anim1', 'anim2', 'anim3', etc."
+	"editor_var cinematic_no_hide"				"When set, character won't hide after playing cinematics."
+	"editor_var on_activate"					"Animation to play when monster sees player or is triggered.  Set to blank to make monster immediately start attacking the player without playing an animation."
+	"editor_var on_activate_blend"				"# of frames to blend out of 'on_activate' animation when it's done playing.  Default is 4 frames."
+	"editor_var trigger_anim"					"Monster remains hidden until triggered, plays anim specified and immediately goes after the player."
+	"editor_var wake_on_attackcone"				"Monster will wake up and attack when player enters it's attack cone.  Monster will also wake up when triggered or shot."
+	"editor_var walk_on_trigger"				"Monster begins following his path when triggered but doesn't get angry right away.  Do not set 'attack_path' or 'trigger' with 'walk_on_trigger'."
+
+	"editor_var trigger"						"If set, monster will only become angry when triggered or damaged, and not on sight.  Monster will play 'anim' until triggered, or follow his path.  If 'attack_path' is set, monster waits until triggered to follow it.  Do not set 'walk_on_trigger' when using 'trigger'."
+	"editor_var hide"							"Causes monster to be hidden and nonsolid until triggered.  Set to 2 for single trigger (entity wakes up when unhidden)."
+	"editor_var target"							"set of path_* entities to visit."
+	"editor_var wander"							"if set to 1, visit path_* targets randomly, otherwise visit them in order."
+	"editor_var wait"							"How long to wait before following path.  Monster will be unresponsive until this time has passed."
+	"editor_var neverdormant"       			"If set to 1, monsters do not sleep outside your PVS"
+	"editor_var ignore_obstacles"				"If set, monster doesn't avoid obstacles.  Generally should only be used for cinematics when you need monster to exactly follow a path."
+
+	"editor_bool noshadows"						"turns off shadows on character."
+	"editor_var animate_z"						"disables gravity on character until he wakes up.  used for on_activate anims where the bounding box needs to move up and down."
+
+	"editor_float kick_force"					"how much force to apply to blocking obstacles to get them out of the way."
+
+	"editor_int team"							"Monsters do not actively attack players or monsters with the same team #."
+	"editor_int rank"							"Monsters only fight back when attacked by members of it's own team when its rank is greater than or equal to the attacker's rank.  A rank of 0 will never fight back."
+
+	"editor_float turn_rate"					"Maximum # of degrees monster can turn per second"
+
+	"editor_float mass"							"Character's mass in kg."
+	"editor_var ragdoll"            			"Specifies the .af file to use for a ragdoll when the creature dies"
+	"editor_var ragdoll_slomoStart"				"Start time of ragdoll slow motion relative to death time, defaults to -0.2"
+	"editor_var ragdoll_slomoEnd"				"End time of ragdoll slow motion relative to death time, defaults to 1.0"
+	"editor_var ragdoll_jointFrictionDent"		"Joint friction dent on ragdoll."
+	"editor_var ragdoll_jointFrictionStart" 	"Start time for joint friction dent"
+	"editor_var ragdoll_jointFrictionEnd"		"End time for joint friction dent"
+	"editor_var ragdoll_contactFrictionDent"	"Contact friction dent on ragdoll."
+	"editor_var ragdoll_contactFrictionStart"	"Start time for contact friction dent"
+	"editor_var ragdoll_contactFrictionEnd"		"End time for contact friction dent"
+	"editor_bool af_push_moveables"				"whether the monster's articulated figure pushes obstacles while they're alive."
+
+	"editor_float blink_min"					"Minimum time to wait between eye blinks."
+	"editor_float blink_max"					"Maximum time to wait between eye blinks."
+
+	"editor_float fly_offset"					"Preferred fly height relative to the player's view"
+	"editor_float fly_speed"					"Speed to fly at."
+	"editor_float fly_bob_strength"				"How far flying creatures should bob."
+	"editor_float fly_bob_vert"					"Rate at which flying creatures bob up and down."
+	"editor_float fly_bob_horz"					"Rate at which flying creatures bob left and right."
+
+	"editor_var def_projectile"					"name of entityDef to launch as projectile"
+	"editor_var num_projectiles"				"how many projectiles to launch at a time."
+	"editor_var projectile_spread"				"how much to spread out projectiles when they're fired.  Works in conjunction with attack_accuracy.  Good for things like shotgun blasts."
+	"editor_var attack_accuracy"				"Maximum angular offset to randomly offset the monster's aim when firing missiles"
+	"editor_var attack_cone"					"Monster can only throw projectile within this cone relative to his direction."
+	"editor_var attack_target"					"Entity to fire missile at when 'fireMissileAtTarget' is called from script or 'fire_missile_at_target' as a framecommand."
+
+	"editor_var melee_range"					"do melee attack when within 3x this range"
+	"editor_var projectile_height_to_distance_ratio"	"calculates the maximum height a projectile can be thrown.  for example, a projectile thrown 100 units with a projectile_height_to_distance_ratio of 0.5 will only ever be up to 50 units above the target."
+	"editor_bool talks"							"Whether character can be engaged in conversation."
+	"editor_var def_drops"						"entityDefs to drop when killed.  Multiple drop items are defined by adding suffixes: 'def_drops1', 'def_drops2', etc."
+
+	"editor_var smokeParticleSystem"			"particle system to attach to entity.  To attach to a specific joint, add - and the name of the joint.  For example 'fire-firejoint' attaches the 'fire' particle to the joint 'firejoint'."
+
+	"editor_var pain_delay"						"How long to wait between pain animations before triggering another pain animation."
+	"editor_var pain_threshold"					"How much damage monster has to receive in one blow for it to play a pain animation."
+
+	"editor_var damage_zone X"					"List of bones that comprise damage zone 'X'.  Pain anims are based on the name of the zone, for example: 'pain_chest', 'pain_rightleg_forward', etc.  Directions are categorized as 'forward', 'left', 'right', or 'back'."
+	"editor_var damage_scale X"					"How much to scale damage received to zone 'X'.  For example 'damage_scale head' '10' would make head shots cause 10 times the normal amount of damage."
+
+	"editor_var bone_leftEye"					"Which bone to modify to adjust the left eye"
+	"editor_var bone_rightEye"					"Which bone to modify to adjust the right eye"
+	"editor_var bone_focus"						"Where the character's eyes are in his head"
+
+	"editor_var look_min"						"minimum angles for head looks"
+	"editor_var look_max"						"maximum angles for head looks"
+	"editor_var look_joint jointname"			"specifies the scale in 'pitch yaw roll' to modify the joint based on head looking.  you can specify any number of joints to be affected by the head look.  the scale of the joints that lead up to the head should always add up to 1 on yaw and pitch to ensure that the character looks directly at the player."
+
+	"editor_var eye_turn_min"					"min angular offset for eye joint before head has to turn."
+	"editor_var eye_turn_max"					"max angular offset for eye joint before head has to turn."
+	"editor_var eye_verticle_offset"			"verticle offset from the player's view that the character's eyes should focus on."
+	"editor_var eye_horizontal_offset"			"horizontal offset from the player's view that the character's eyes should focus on.  negative values bring eyes closer together."
+	"editor_var eye_focus_rate"					"how quickly the eyes focus on a target"
+	"editor_var head_focus_rate"				"how quickly the head focuses on a target"
+	"editor_var focus_align_time"				"how long character should glance at the player before turning his head."
+
+	//I suspect these aren't needed; turned off in 2.0
+	//"editor_var mtr_flashShader"				"shader to use for muzzleflash"
+//	"editor_var flashColor"						"color of muzzleflash"
+//	"editor_var flashRadius"					"radius of muzzleflash"
+//	"editor_var flashTime"						"how long muzzleflash lasts"
+
+	"editor_var use_combat_bbox"				"Use a bounding box for damage and not per-poly hit detection."
+	"editor_var offsetModel"					"Vector to offset the visual model from the movement bounding box."
+	"editor_var def_attach"						"Name of entityDef to attach to model.  Set 'joint' in the attached entity def to the joint to attach to, and use 'origin' and 'angles' to offset it."
+	"editor_var head"							"Name of entityDef to attach as character's head.  Copies animation from certain bones into the head model."
+
+	"editor_var eye_height"						"The height off the ground of the character's eyes.  All sight checks are done from this point.  When set, overrides determining the height from the position of the eye joint."
+
+	"editor_var mtr_splat_flesh"				"Material to use for blood splats."
+	"editor_var mtr_wound_flesh"				"Material to use for wounds."
+	"editor_var smoke_wound_flesh"				"Smoke effect to emit from wounds."
+
+	"editor_var gravityDir"						"Direction of gravity.  Defines the character's concept of 'down'."
+
+	"editor_float blockedRadius"				"if monster did not move this distance within blockedMoveTime, then mark monster blocked."
+	"editor_float blockedMoveTime"				"# of milliseconds since last move before monster marked blocked"
+	"editor_float blockedAttackTime"			"# of milliseconds since last attack before monster marked blocked"
+
+	"editor_bool canSearch"						"Whether the AI can conduct a search or not"
+
+	"editor_float hitByMoveableLookAtTime"		"When hit by a moveable, stop and look at it for this long (seconds) (default 2.0)"
+	"editor_float hitByMoveableLookBackTime"	"When hit by a moveable, look at where it came from for this long (seconds) (default 2.0)"
+
+	// ===================== Default Values =======================
+
+	"spawnclass"								"idAI"
+
+	"blockedRadius"								"10"
+	"blockedMoveTime"							"750"
+	"blockedAttackTime"							"750"
+
+	"wait"										"0"
+	"team"										"1"
+	"rank"										"0"
+	"on_activate"								"sight"
+	"def_projectile"							""
+	"attack_cone"								"70"
+	"attack_accuracy"							"0"
+	"melee_range"								"0"
+	"projectile_height_to_distance_ratio"		"0.9"
+	"turn_rate"									"360"
+	"bleed"										"1"
+	"pain_threshold"							"1"
+	"blink_min"									"2.5"
+	"blink_max"									"8.0"
+	"talks"										"0"
+	"look_min"									"-80 -75 0"
+	"look_max"									"80 75 0"
+	"eye_verticle_offset"						"5"
+	"eye_horizontal_offset"						"-8"
+	"eye_focus_rate"							"0.5"
+	"head_focus_rate"							"0.1"
+	"kick_force"								"60"
+
+	// greebo: Set this to "1" when this type of AI doesn't need melee weapons to fight
+	// This is usually true for spiders, undead and such. Humans are wimps and need weapons.
+	"unarmed_melee"		"1"
+
+    // angua: Set this to "1" if this AI can perform ranged combat without needing weapons
+
+    "unarmed_ranged"    "0"
+
+	"blind_time"		"8"
+	"blind_time_fuzziness" "4"
+
+	"chanceNoticeWeapon"				"0"
+	"chanceNoticeSuspiciousItem"		"0"
+	"chanceNoticePerson"				"1"
+	"chanceNoticeMonster"				"1" // grayman #3331
+	"chanceNoticeUndead"				"1" // grayman #3343
+	"chanceNoticeBlood"					"0"
+	"chanceNoticeLight"					"0"
+	"chanceNoticeMissingItem"			"0"
+	"chanceNoticeBrokenItem"			"1"
+	"chanceNoticeDoor"					"0"
+	"chanceNoticePickedPocket"			"0" // grayman #3559
+
+	"canLightTorches"					"0"
+	"canOperateSwitchLights"			"0"
+	"canOperateDoors"					"0"
+	"canOperateElevators"				"0"
+
+	// by default the player can't stand on this AI's head forever
+	"push_off_player"					"1"
+
+	"searchbark_delay_min"				"10"
+	"searchbark_delay_max"				"15"
+
+	// greebo: The minimum time that needs to pass by before the AI re-evaluates a forbidden area (msec)
+	"max_area_reevaluation_interval"	"20000" // milliseconds
+
+	// greebo: This expands the bounding box when the AI is checking for reached positions,
+	"reachedpos_bbox_expansion"			"0"
+
+	// greebo: Defines the maximum vertical tolerance within wich a point above an AAS area is still considered reachable.
+	"aas_reachability_z_tolerance"		"75"
+
+	"step_up_increase"					"0"
+
+	// greebo: The time that needs to pass before locked doors are enabled for another try (seconds)
+	"door_retry_time"					"120" // seconds
+
+	// Default AI Alert Info:
+
+	// alert_time: is the time it takes for the alert level to ramp down from the upper to the lower threshold (in seconds)
+    // alert_time_fuzzyness: applies some randomness to the alert times (in seconds)
+	// alert_gracetime: after being alerted, the AI will ignore additional alerts during this time, to avoid adding up the alert level too quickly
+    // alert_gracefrac: an alert that is higher than the last increase * fraction will terminate the grace period
+    // alert_gracecount: If the number of additional alerts during grace period exceeds the grace count, the grace period will be terminated
+
+	"af_push_moveables"		"1"
+
+    // Observant state - bark but otherwise no reaction
+	"alert_thresh1"			"1.5"
+	"alert_time1"			"5"
+	"alert_time1_fuzzyness" "1.5"
+	"alert_gracetime1"		"2"
+	"alert_gracefrac1"		"1.2"
+	"alert_gracecount1"		"5"
+
+    // Suspicious state - barks and looks, may stop and turn
+	"alert_thresh2"			"6"
+	"alert_time2"			"8"
+	"alert_time2_fuzzyness" "2"
+	"alert_gracetime2"		"2"
+	"alert_gracefrac2"		"1.2"
+	"alert_gracecount2"		"5"
+
+    // Searching state - AI goes investigating
+	"alert_thresh3"			"10" // grayman #3492 - was 8
+	"alert_time3"			"25" // grayman #3492 - was 30
+	"alert_time3_fuzzyness"	"8"  // grayman #3492 - was 10
+	"alert_gracetime3"		"3"
+	"alert_gracefrac3"		"1"
+	"alert_gracecount3"		"4"
+
+    // Agitated searching - investigating, weapon out
+	"alert_thresh4"			"18"
+	"alert_time4"			"65"
+	"alert_time4_fuzzyness"	"20"
+	"alert_gracetime4"		"2"
+	"alert_gracefrac4"		"1.0"
+	"alert_gracecount4"		"4"
+
+    // Combat state
+	"alert_thresh5"		    "23"
+
+    // The time in msecs to pass before the AI's alert level is allowed to decrease again (after any increase).
+    "alert_decrease_deadtime"   "2000"
+
+    // time the AI will stay after fleeing before getting back to normal
+   	"alert_time_fleedone"	"80"
+	"alert_time_fleedone_fuzzyness"	    "40"
+
+	"idle_bark_interval_min"	"30"
+	"idle_bark_interval_max"	"90"
+
+	"alert_idle_bark_interval_min"	"40"
+	"alert_idle_bark_interval_max"	"120"
+
+	"sleep_bark_interval_min"	"10"
+	"sleep_bark_interval_max"	"30"
+
+	// acuities, in percent
+	"acuity_vis"			"100"
+	"acuity_aud"			"100"
+	"acuity_tact"			"100"
+	"acuity_other"			"100"
+
+	"alert_aud_thresh"		"18.8" //old value "20.2"
+
+	// not yet implemented
+	"acuity_env"			"100"
+
+	//set a default field of view to a realistic human value
+	"fov"					"150" // horizontal FOV (realistic human : 180-200)
+	"fov_vert"				"120" // vertical FOV (realistic human: 120-135, but asymmetric)
+	/**
+	* Rotation of the FOV cone relative to the head joint
+	* (yaw pitch roll)
+	* Human FOV extends farther down than up, so pitch down:
+	**/
+	"fov_rotation"			"0 -20 0"
+
+	"can_be_flatfooted"		"1"
+	// time AI remain stationary after becoming flat-footed
+	"flatfooted_time"		"1200"
+	// settings for becoming flat footed due to parrying an attack (see usage above)
+	"flatfoot_parry_num"	"1"
+	"flatfoot_parry_time"	"3500"
+
+
+	// bodies stick around forever by default
+	"editor_int burnaway"	"Time until the dead body will be removed with a special effect. Set to -1 to disable it. Disabled for TDM by default."
+	"burnaway" "-1"
+
+	"editor_skin skin_dead"		"Set this to a non-empty string to swap the AI's skin when it dies"
+	"editor_var fx_on_death"	"The FX which will be played when this entity dies. Set to empty to disable."
+	"editor_var fx_on_ko"		"The FX which will be played when this entity is knocked out. Set to empty to disable."
+	"editor_var death_script"	"The script function (local or global) to call when this AI dies. Global functions need to take an entity as single argument, local functions no arguments at all. As argument is the AI passed that was just killed."
+	"editor_var ko_script"		"The script function (local or global) to call when this AI is knocked out. Global functions need to take an entity as single argument, local functions no arguments at all. As argument is the AI passed that was just knocked out."
+
+	/**
+	* AIs cannot be mantled by default
+	**/
+	"is_mantleable"				"0"
+
+	/**
+	* Hack: For now, increase player drag force 10x when dragging AI
+	**/
+	"drag_force_mod"			"10.0"
+
+	// AIs are not moss-able
+	"nomoss"					"1"
+
+	"editor_var head_bodyname" "Name of the head body on the AF. Used to detect drowning when unconscious. Not needed if the AI has a separate head model."
+	"head_bodyname"				"head"
+
+	"editor_var head_jointname" "Name of the head joint in the md5 mesh. This joint should either be the look joint or get rotated to match the look joint in order for KO to work properly."
+	"head_jointname"			"Head"
+
+	// default is shoulderable
+	"shoulderable"				"1"
+
+	/**
+	* Ishtvan: test new system, equippable
+	**/
+	"equippable"	"1"
+
+	"editor_var shouldered_name" "Generic inventory name of the body for when it is shouldered unconscious. Individual AI can overload this to display a name when carried."
+	"editor_var shouldered_name_dead" "Generic inventory name of the body for when it is shouldered dead. Individual AI can overload this to display a name when carried."
+	"shouldered_name"		"#str_02410"	// Body
+	"shouldered_name_dead"	"#str_02409"		// Corpse
+
+	"shouldered_maxspeed"	"0.5"
+
+	"editor_vector drop_angles"	"The angle used to drop this body. Bodies always try to drop lying flat, head forward."
+	"drop_angles"		"90.0 0 0"
+
+	"editor_vector drop_point"	"Offset from the player origin to the point where this AI's body is dropped. Bodies always drop straight ahead of the player's head, they don't follow where player looks up/down."
+	"drop_point"	          "30.0 0 -16.0"   // changed from 35 to 30 to allow dropping in less space.
+
+	"editor_bool drop_to_hands" "If set to true, the item drops to the hands of the player instead to the ground. Default is true."
+
+	// Shoulderable bodies are not held on to when unshouldered
+	"drop_to_hands"		"0"
+
+	// sound body makes when dropped/KO'd
+	"snd_bounce"				 "body_collapse"
+
+	"snd_bounce_carpet"			"body_collapse_soft"
+	"snd_bounce_cloth"			"body_collapse_soft"
+	"snd_bounce_grass"			"body_collapse_soft"
+	"snd_bounce_snow"			"body_collapse_soft"
+	"snd_sliding"				"tdm_heavy_stone_scratching02_loop"
+	"snd_bounce_moss"       "body_collapse_soft"
+        "snd_water"                             "water_hit_by_large_object"
+
+
+        "spr_object_hardness" "hard"
+        "spr_object_size" 	"small"  //hard-small combination creates the best sound results (soft: 34, hard: 45)
+
+
+	"tdm_bounce_sound_max_vel"		"50"
+	"tdm_bounce_sound_min_vel"		"800"
+	// relevant to above: The collision velocities are shown when the cvar "tdm_show_moveable_collision" is on.
+
+	/**
+	* Test: preliminary setup for aesthetic showing of body held on shoulder
+	**/
+	/*
+	"equip_in_world"		"1"
+	"equip_draw_on_top"		"1"
+	"equip_nonsolid"		"1"
+	*/
+
+	// default starting animation is idle
+	"anim"					"idle"
+
+	// Name of the head animation to use for lipsync
+	// (Should just be a simple mouth-opening animation; fully closed at frame 1, fully open at the end. The
+	// lipsync code will pick out individual frames from it based on the amplitude of the lipsynced sound.)
+	"lipsync_anim_name"			"talk1"
+
+	// patrols path nodes by default
+	"patrol"					"1"
+	"animal_patrol"				"0"
+	"movetype"					"ANIM"	// greebo: see ai_base.script for possible movetypes
+
+	"sitting"					"0"
+	"sitting_turn_pivot"		"-20 0 0"
+	"sit_down_slide_dist"		"8"
+
+	"lay_down_slide_dist"		"16"
+
+	"drunk_acuity_factor"		"0.5"
+
+	"stepvol_walk"				"10"
+	"stepvol_run"				"15"
+
+	// never dormant by default
+	// Removed by Crispy; AI are still never dormant by default,
+	// but this is handled in code now.
+	// angua: Re-enabled to make it possible to set individual AI dormant
+	"neverDormant" "1"
+	"editor_bool neverDormant"		"Set to 1 to make the AI never dormant. If set to 0, the AI can go dormant at map start under specific circumstances."
+
+	// Knockout info
+
+	/**
+	* Name of the damage zone that must be hit for possible KO
+	* Set this blank (i.e. : "ko_zone" "") to make the AI immune to KOs
+	**/
+	"ko_zone"		"head"
+
+	/**
+	* ko_angle defines the KO cone extending backwards from the direction AI is
+	* looking. By default, you can hit AI anywhere on the head to KO them
+	* when they're not alert.
+	*
+	* Helmeted guards should use a lesser angle
+	**/
+	"ko_angle_horiz"	"360"
+	"ko_angle_vert"	"360"
+
+	/**
+	* KO cone changes when AI is alerted, this defines the new cone angle
+	* These settings work pretty well for not being able to hit them from the front.
+	**/
+	"ko_angle_alert_horiz"			"110"
+	"ko_angle_alert_vert"			"180"
+
+	/**
+	* Rotation of the KO cone relative to the head joint
+	**/
+	"ko_rotation"				"0 0 0"
+
+	/**
+	* KO Offset in head body coordinates, relative to head joint
+	* Should be approximately the center of the head
+	* KO cone extends backwards from this point
+	* NOTE: Tweaked for builder guard, has the most up-to-date head setup
+	**/
+	"ko_spot_offset"				"2 -2.5 0"
+
+	/**
+	* Name of the alert state when AI's KO behavior changes
+	**/
+	"ko_alert_state"	"4"      //once AI draw weapon
+
+	/**
+	* If set to true, AI becomes immune to KOs when alerted
+	**/
+	"ko_alert_immune"	"0"
+
+	/**
+	* Sets AI alert immunity state
+	**/
+	"ko_alert_immune_state" "5"  //Level 5 for non-helmeted AI who reach combat or level 4 for helmeted AI who are agitated searching
+// end Knockout info
+
+	/**
+	* Name of the alert state at which AI can no longer be sneak attacked.
+	**/
+	"sneak_attack_alert_state"	"2"
+
+	/**
+	* At alert states below the threshold defined above, ALL damage done to the AI
+	* gets this additional sneak attack multiplier:
+	**/
+	"sneak_attack_mult"		"2.0"
+
+	"melee_predicts_proximity"		"1" // very dumb AI like robots should override this
+	"melee_predicted_attack_time"		"750" // works for our sword anims, needs overloading for animals, zombies
+
+	// Slow down the player to this fraction * their max speed when holding this body
+	// Very small/light AI should override this value
+	"grab_encumbrance"			"0.5"
+
+	// Minimum and maximum periods to wait between throwing player-out-of-reach projectiles
+	"outofreach_projectile_delay_min"	"7.0"
+	"outofreach_projectile_delay_max"	"10.0"
+
+	// Min/max periods to wait in cover before emerging again
+	"emerge_from_cover_delay_min"		"20.0"
+	"emerge_from_cover_delay_max"		"30.0"
+
+	// The health threshold - health values below this cause the AI to flee
+	"health_critical"                   "15"
+
+	// If 0, don't throw projectiles when the enemy is out of reach (by default, non-humanoid AIs will not do so)
+	"outofreach_projectile_enabled"		"0"
+
+	// By default, non-humanoid AIs don't take cover at all
+	"taking_cover_enabled"				"0"
+	"taking_cover_max_cost"				"200" // grayman #3507 (was 100)
+	"editor_bool taking_cover_only_from_archers"	"If true, takes only cover from archers and other AI with projectile weapons."
+	"taking_cover_only_from_archers"	"0"
+
+
+	"max_interleave_think_frames"		"10"
+	"min_interleave_think_dist"			"1000"
+	"max_interleave_think_dist"			"3000"
+
+	"headturn_delay_min"				"3"
+	"headturn_chance_idle"				"0.3"
+	"headturn_factor_alerted"			"2"
+	"headturn_yaw"						"60"
+	"headturn_pitch"					"40"
+	"headturn_duration_min"				"1"
+	"headturn_duration_max"				"3"
+
+	// greebo: Comma-separated list of anims
+	// Springheel:  The specific animation lists were moved to tdm_ai_humanoid_newskel.def
+
+	// Animations affecting all channels (refer to anim names in the AI's modelDef)
+	"idle_animations"               ""
+
+    // Animations only playing on the torso channel. Applicable anytime.
+    "idle_animations_torso"         ""
+
+	// Animations only playing on the torso channel while the AI is sitting. Applicable anytime.
+    "idle_animations_sitting"         ""
+
+	// Animations affecting all channels (refer to anim names in the AI's modelDef)
+	"idle_animations_searching"       "" // grayman #3857
+
+	"idle_animations_interval"			"25" // in seconds +/- 20%
+	"idle_search_animations_interval"	"10" // in seconds +/- 20% - grayman #3857
+
+    // Offset in msecs to wait before opening a door after starting the "use" anim
+    "door_open_delay_on_use_anim"       "1100"
+
+	"canSearch"							"1" // grayman #3069 - can conduct searches
+
+	"hitByMoveableLookAtTime"			"0.0" // grayman #2816
+	"hitByMoveableLookBackTime"			"0.0" // grayman #2816
+
+	"editor_int sleep_location"			"0 = sleep on the floor, 1 = sleep on a bed, 2 = sleep on a chair"
+	"sleep_location"					"1" // grayman #3396 - 0 = sleep on the floor, 1 = sleep on a bed, (grayman #3820) 2 = sleep on a chair
+
+	"editor_bool absorb_projectile"		"whether the AI should absorb a projectile, instead of allowing it to stick ('active') or break ('dud')"
+	"absorb_projectile"					"0"
+
+	// Response to communication Stim
+	"sr_class_1" "R"
+	"sr_type_1" "STIM_COMMUNICATION"
+	"sr_state_1" "1"
+
+	// Response to visual contact
+	"sr_class_2" "R"
+	"sr_type_2" "STIM_VISUAL"
+	"sr_state_2" "1"
+	"sr_script_STIM_VISUAL" "response_visualStim"
+
+	// Give off visual contact stim to other AIs around me
+	"sr_class_3" "S"
+	"sr_state_3" "1"
+	"sr_type_3" "STIM_VISUAL"
+	"sr_radius_3" "600"
+	"sr_time_interval_3" "2000"  // Once per 2 seconds
+
+	// Response to DAMAGE_STIM
+	"sr_class_4" "R"
+	"sr_state_4" "1"
+	"sr_type_4" "STIM_DAMAGE"
+	"sr_effect_4_1" "effect_damage"
+	"sr_effect_4_1_arg1" "_SELF"
+	"sr_effect_4_1_arg2" "atdm:damage_low"
+}
+
+entityDef atdm:ai_humanoid
+{
+	"inherit"	"atdm:ai_base"
+	"editor_displayFolder"		"AI/Internal/Base Class"
+
+	"editor_usage"		"Don't use. Base class for all TDM humanoid AI entities."
+
+	// This defines how AIs will interact with this entity
+	"AIUse"				"AIUSE_PERSON"
+	"personType"		"PERSONTYPE_GENERIC"
+	"personGender"		"PERSONGENDER_UNKNOWN"
+
+    "anim"				"idle"  // animation to play on map start
+    "head_joint"		"Head"  // humanoids will have their head attached to this joint
+
+    "anim_rate_run"			"0.8" //slows down AI so they are slightly slower than player
+    "anim_rate_run_torch"	"0.8"
+
+	// These defines the chances the AI will notice various visual stimuli
+	"chanceNoticeWeapon"	"1.0"
+	"chanceNoticeSuspiciousItem"		"1.0" // grayman #1327
+	"chanceNoticeRope"		"1.0" // grayman #2872
+	"chanceNoticePerson"	"1.0"
+	"chanceNoticeMonster"	"1.0" // grayman #3331
+	"chanceNoticeUndead"	"1.0" // grayman #3343
+	"chanceNoticeBlood"		"1.0"
+	"chanceNoticeLight"		"0.9" // grayman #2603
+	"chanceNoticeMissingItem"	"1.0"
+	"chanceNoticeDoor"			"1.0"
+
+	"chanceNoticePickedPocket"	"0.5"	// grayman #3559
+	"pickpocket_alert"			"0"		// grayman #3559
+	"pickpocket_delay_min"		"5000"  // grayman #3559
+	"pickpocket_delay_max"		"25000" // grayman #3559
+
+	// These define if the AI can operate various kinds of lights
+	"canLightTorches"			"1"
+	"canOperateSwitchLights"	"1"
+	"chanceLightTorches"		"0.4" // grayman #2603
+	"chanceOperateSwitchLights"	"0.7" // grayman #2603
+
+	"canOperateDoors"			"1"
+	"canOperateElevators"		"1"
+
+	"canGreet"					"1"
+
+	// Humans need weapons to fight
+	"unarmed_melee"		"0"
+
+	"damage_zone head"	        "*Neck"
+	"damage_zone chest"			"*Spine_Dummy -*Neck"
+	"damage_zone torso_low"		"Hips"
+	"damage_zone left_arm"		"*LeftArm"
+	"damage_zone right_arm"		"*RightArm"
+	"damage_zone legs"			"*LeftHips_Dummy *RightHips_Dummy origin"
+
+	"damage_scale head"			"2"
+	"damage_scale chest"		"1.5"
+	"damage_scale torso_low"	"1.0"
+	"damage_scale left_arm"		"0.3"
+	"damage_scale right_arm"	"0.3"
+	"damage_scale legs"			"0.4"
+
+    //all humanoid AI will be using the same base skeleton
+    "ik_numLegs"					"2"
+	"ik_minWaistAnkleDist"          "16"
+	"ik_footSize"					"4"
+	"ik_waist"						"Hips"
+	"ik_hip1"						"LeftUpLeg"
+	"ik_hip2"						"RightUpLeg"
+	"ik_knee1"						"LeftLeg"
+	"ik_knee2"						"RightLeg"
+	"ik_ankle1"						"LeftFoot"
+	"ik_ankle2"						"RightFoot"
+	//normally a knee joint
+	//"ik_dir1"						"LeftFoot"
+	//"ik_dir2"						"RightFoot"
+	"ik_foot1"						"LeftToeBase"
+	"ik_foot2"						"RightToeBase"
+
+
+	// We now use AAS32 by default
+	"use_aas"       	        "aas32"
+    "size"    	        		"32 32 68"
+    "cylinder"					"10" // optional
+
+	"eye_height"				"77"
+
+	// Rates for AI turning their head randomly--these values cause AI to move their shoulders slightly as well
+
+    "look_min"					"-80 -80 0"     //	"-80 -90 0"       new values to address 0003754: AI seeing directly behind them
+    "look_max"				        "15 80 0"    // "25 90 0"
+	"look_joint Spine"				"0.3 0.3 0"
+	"look_joint Head"				"0.7 0.7 0"
+
+	// Allow vertical aiming at the player during combat
+	"combat_look_joint Spine"			"0.1333 0.1333 0"
+	"combat_look_joint Spine2"			"0.1333 0.1333 0"
+	"combat_look_joint Head"			"0.6 0.6 0"
+	//"combat_look_joint RightArm"		"0.6 0 0" // grayman #3473
+	//"combat_look_joint LeftArm"		"0.6 0 0" // grayman #3473
+
+    "head_focus_rate"			"0.05" // how fast head turns to focus on target
+
+    // the number of degrees an AI can turn in 1 second
+    "turn_rate"                 	"180"
+	// Attachment Positions (For OLD skeleton, NEW skeleton positions are in tdm_ai_humanoid_newskel)
+
+	// hand: orientation matches the weapon model convention
+	// (forward in the hand is to the right in the model)
+	"attach_pos_name_handr"				"hand_r"
+	"attach_pos_joint_handr"			"RightHand"
+	// joint orientation: down sideways forward
+	"attach_pos_origin_handr"			"-5 2 0"
+	// joint orientation: roll, pitch, yaw
+	"attach_pos_angles_handr"			"180 0 90"
+
+	"attach_pos_name_handl"				"hand_l"
+	"attach_pos_joint_handl"			"LeftHand"
+	"attach_pos_origin_handl"			"5 -3 0"
+	"attach_pos_angles_handl"			"180 0 -90"
+
+	// Position for sword sheathed at the left hip (still WIP, not quite right)
+    "attach_pos_name_hipsheathl"			"hip_sheath_l"
+	"attach_pos_joint_hipsheathl"			"Hips"
+	"attach_pos_origin_hipsheathl"		"7.5 4.4 6.6"
+	"attach_pos_angles_hipsheathl"		"-60 -90 -80"
+
+	// Positions on the belt (calibrated for builder guard w/ purse)
+
+	"attach_pos_name_beltb"				"belt_back"
+	"attach_pos_joint_beltb"			"Hips"
+	// left, up, in/out
+	"attach_pos_origin_beltb"			"0 7 -4"
+	"attach_pos_angles_beltb"			"-90 0 -90"
+
+	"attach_pos_name_beltbr"			"belt_back_r"
+	"attach_pos_joint_beltbr"			"Hips"
+	// left, up, in/out
+	"attach_pos_origin_beltbr"			"-5 7 -4"
+	"attach_pos_angles_beltbr"			"-90 0 -90"
+
+	"attach_pos_name_beltbl"			"belt_back_l"
+	"attach_pos_joint_beltbl"			"Hips"
+	"attach_pos_origin_beltbl"			"5 7 -4"
+	"attach_pos_angles_beltbl"			"-90 0 -90"
+
+	"attach_pos_name_beltfr"			"belt_front_r"
+	"attach_pos_joint_beltfr"			"Hips"
+	// left, up, in/out
+	"attach_pos_origin_beltfr"			"-5 7 5.5"
+	"attach_pos_angles_beltfr"			"90 0 -90"
+
+	"attach_pos_name_beltfl"			"belt_front_l"
+	"attach_pos_joint_beltfl"			"Hips"
+	"attach_pos_origin_beltfl"			"5 7 5.5"
+	"attach_pos_angles_beltfl"			"90 0 -90"
+
+
+	"editor_bool ground_when_dragged"	"If set to true, don't let the player pick the ragdoll all the way up off the ground."
+	"ground_when_dragged"			"1"
+
+	"editor_string ground_critical_bodies" "A list of AF bodies, separated by space. These bodies checked to see if they're on the ground when 'ground_when_dragged' is true."
+	// Currently based on /af/guard_base.af
+	"ground_critical_bodies" "waist chest rupleg Lupleg ruparm Luparm"
+
+	"editor_int ground_min_number"	"At least so many AF bodies defined in 'ground_critical_bodies' must remain on the ground, or dragging upwards is not allowed."
+	"ground_min_number"			"1"
+
+	"editor_bool drag_af_damping"	"If true, apply AF damping when dragging the ragdoll."
+	"drag_af_damping"			"1"
+
+	// This frob distance is intended for frobbing AI ragdolls
+	// Might have to revise this to have conversations via frobbing, etc.
+	"frob_distance"				"60"
+
+	"editor_int hold_distance_min"	"Distance ragdoll is from player when dragged, default is 35. In units."
+	"hold_distance_min"			"35"
+
+	// melee weapon swing sound
+	"snd_swing"		"sword_swing"
+
+    //  blade sounds
+    "snd_drawsword"		        "sword_ai_unsheath"
+    "snd_sheathesword"          "sword_ai_sheath"
+
+	// default footstep,
+	"snd_footstep"  	"human_stone"
+
+	// material specific footsteps (DarkMod SFX)
+
+    "snd_footstep_straw"            "human_straw"
+	"snd_footstep_wood"             "human_wood"
+	"snd_footstep_puddle"			"movement_water"
+	"snd_footstep_wading"			"movement_water"
+	"snd_footstep_tile"				"human_tile"
+
+	"snd_footstep_stone"			"human_stone"
+
+    "snd_footstep_snow"				"human_snow"
+	"snd_footstep_gravel"			"human_gravel"
+	"snd_footstep_metal"			"human_metal"
+	"snd_footstep_grass"			"human_grass"
+	"snd_footstep_carpet"			"human_carpet"
+	"snd_footstep_dirt"				"human_dirt"
+	"snd_footstep_foliage"			"human_foliage"
+    // SteveL #3634: Adding 8 footstep sounds to match player's set
+    "snd_footstep_sand"         "human_dirt"
+    "snd_footstep_glass"        "human_glass"
+    "snd_footstep_ice"          "human_ice"
+    "snd_footstep_cloth"        "human_carpet"
+    "snd_footstep_armor_leath"  "human_carpet"
+    "snd_footstep_flesh"        "human_mud"
+    "snd_footstep_moss"         "human_carpet"
+    "snd_footstep_liquid"       "movement_water"
+
+	// voice set (test set for now, remove before release!)
+
+	// greebo: The base humanoid AI is using the base vocal set
+	"def_vocal_set"					"atdm:ai_vocal_set_base"
+
+	"health"						"100"
+
+	// Projectile, for throwing when the enemy is out of reach (make me a rock please)
+	"def_projectile"				"atdm:projectile_rock"
+
+	// Accuracy of projectile-throwing. 0 means perfect accuracy, larger values are worse.
+	"attack_accuracy"				"2.3"
+
+	//This value may not even be needed, but is included here just in case:
+	"attack_cone"					"70"
+
+	// ============== Melee Settings ===========
+	// melee difficulty set to use (default is skilled)
+	"def_melee_set" "atdm:ai_melee_set_skilled"
+
+	// Range at which an AI thinks it can hit you
+	"melee_range"				        "40"
+
+	"melee_predicts_proximity"			"1" // most humanoids are smart enough to do this
+	"melee_predicted_attack_time"		"750" // works for our sword anims, needs overloading for animals, zombies
+	// ============ End Melee Settings ===========
+
+	// Set this to 0 to turn off throwing projectiles when enemies are out of reach.
+	// For example, you might use scripts to prevent guards from throwing things in
+	// the antiques room (don't want to break those vases!).
+	"outofreach_projectile_enabled"			"1"
+
+	// This is used to limit the distance which an AI will travel to take cover.
+	// 0 means no limit. As a rough guideline, this is approximately measured in Doom units
+	// divided by 3; however, this can vary.
+	"taking_cover_max_cost"				"200" // grayman #3507 (was 100)
+
+	// Set to 0 to disable taking cover.
+	"taking_cover_enabled"				"1"
+
+	// Set to 0 to take cover from all enemies, not just ones that can threaten us from a distance.
+	"taking_cover_only_from_archers"	"1"
+
+	// greebo: Humanoids should be translated upwards a bit when stepping up slopes
+	"step_up_increase"					"10"
+
+	/**
+	* ishtvan: This larger box CM for the head is swapped in
+	* doing collision tests with the blackjack, at all
+	* times the AI is alive, except when in combat state.
+	**/
+	"blackjack_headbox_mins"			"-10 -3 -9"
+	"blackjack_headbox_maxs"			"6 4 4.5"
+
+	"mouth_offset"						"0 0 15" // grayman #1488
+	"eye_offset"						"0 0 19" // grayman #3525
+
+	"hitByMoveableLookAtTime"			"2.0" // grayman #2816
+	"hitByMoveableLookBackTime"			"2.0" // grayman #2816
+
+	"canSearchCooperatively"			"1" // grayman #3857 - ability to participate in a coordinated search
+}
+
+entityDef atdm:ai_humanoid_newskel
+{
+	"inherit"	"atdm:ai_humanoid"
+	"editor_displayFolder"		"AI/Internal/Base Class"
+
+	"editor_usage"		"Don't use. Base class for all TDM humanoid AI entities using new skeleton."
+
+
+	"head_joint"			"Spine2"          // joint head gets attached to
+    "copy_joint Neck"		"neckcontrol"     // keeps neck attached to shoulders
+	"copy_joint Head"		"headcontrol"
+
+	"ko_spot_offset"				"2 2 0"
+
+    "bone_leftEye" "leye"      // allows TDM to detect eye height automatically
+    "bone_rightEye" "reye"
+
+	// tweak melee animation speeds here for gameplay
+	// isthvan: slowing down the overhead and left to right attacks compared to old skeleton
+	"anim_rate_melee_attack_lr"		    "1.15"
+	"anim_rate_melee_attack_over"		"1.1"
+
+	"anim_rate_run_charge"				"0.8"
+	"anim_rate_run_charge_torch"		"0.8"
+	"anim_rate_run_jog"					"0.8"
+
+	"anim_rate_use_righthand"			"1.5" // speed up door opening slightly // grayman #3755
+	"anim_rate_use_lefthand"			"1.5" // speed up door opening slightly // grayman #3755
+	"anim_rate_controller_high"			"1.5" // grayman #3755
+	"anim_rate_controller_med"			"1.5" // grayman #3755
+	"anim_rate_controller_low"			"1.5" // grayman #3755
+
+	"anim_rate_sit_up"					"1.3"
+
+	"anim_rate_idle_search_suspicious"                   "1.1"
+	"anim_rate_idle_search_suspicious01"                   "1.1"
+	"anim_rate_idle_search_suspicious02"                   "1.1"
+	"anim_rate_idle_search_suspicious02_armed"                   "1.1"
+	"anim_rate_idle_search_suspicious03"                   "1.1"
+	"anim_rate_idle_search_suspicious03_armed"                   "1.1"
+	"anim_rate_idle_search_suspicious03_torch"                   "1.1"
+
+	"anim_rate_throw02"                             "1.2"
+
+	"anim_rate_sit_warmhands"                             "1.5"
+
+    // greebo: Comma-separated list of anims
+
+	// Animations affecting all channels (refer to anim names in the AI's modelDef)
+	"idle_animations"               "idle_leg_scratch,idle_cough,idle_cough02,idle_armwipe,idle_arm_scratch,idle_sneeze,idle_adjusting_belt,idle_eat,idle_spit,idle_shifting1,idle_shifting2,idle_nose_wipe,idle_nosewipe_short,idle_stretch,idle_stretch02,idle_standontoes,idle_check_hand,idle_scuff"
+
+    // Animations only playing on the torso channel. Applicable anytime.
+    "idle_animations_torso"         "idle_cough,idle_nosewipe_short,idle_cough02,idle_armwipe,idle_arm_scratch,idle_sneeze,idle_adjusting_belt,idle_eat,idle_spit,idle_stretch,idle_check_hand"
+
+	// Animations only playing on the torso channel while the AI is sitting. Applicable anytime.
+    "idle_animations_sitting"         "idle_sit_shift1,idle_sit_cough01,idle_sit_armdrop01,idle_sit_tap01,idle_sit_neckscratch"
+
+	// Animations affecting all channels (refer to anim names in the AI's modelDef)
+	"idle_animations_searching"			"idle_search_suspicious,idle_search_suspicious01,idle_search_suspicious02,idle_search_suspicious03" // grayman #3857
+
+    // sound played while walking or moving between footsteps
+
+     "snd_rustle"                  "default_rustle"
+
+
+    "ik_numLegs"					"2"
+	"ik_minWaistAnkleDist"          "0"
+	"ik_footSize"					"0"
+	"ik_waist"						"Pelvis2"
+	"ik_hip1"						"LeftUpLeg"
+	"ik_hip2"						"RightUpLeg"
+	"ik_knee1"						"LeftLeg"
+	"ik_knee2"						"RightLeg"
+	"ik_ankle1"						"LeftFoot"
+	"ik_ankle2"						"RightFoot"
+	//normally a knee joint
+	//"ik_dir1"						"LeftFoot"
+	//"ik_dir2"						"RightFoot"
+	"ik_foot1"						"LeftToeBase"
+	"ik_foot2"						"RightToeBase"
+
+
+	// attachment positions for the new skeleton
+	"attach_pos_name_hipsheathl"	"hip_sheath_l"
+	"attach_pos_joint_hipsheathl"	"Hips"
+	"attach_pos_origin_hipsheathl"  "6.5 6.7 -6.2"   //f/b, u/d, s/s
+	"attach_pos_angles_hipsheathl"  "10 140 -10"
+
+	"attach_pos_name_handr"			"hand_r"
+	"attach_pos_joint_handr"		"RightHand"
+	"attach_pos_origin_handr"       "0 0 4.4"
+	"attach_pos_angles_handr"       "260 90 0"
+
+	"attach_pos_name_handl"			"hand_l"
+	"attach_pos_joint_handl"		"LeftHand"
+	"attach_pos_origin_handl"       "-2 -0.8 -4.5"
+	"attach_pos_angles_handl"       "80 -90 0"
+
+	// greebo: needed different hand attach position due to the longbow being rotated differently
+	"attach_pos_name_handrbow"		"hand_r_bow"
+	"attach_pos_joint_handrbow"		"RightHand"
+	"attach_pos_origin_handrbow"    "0 0 4.4"
+	"attach_pos_angles_handrbow"    "90 90 0"
+
+	// greebo: needed different hand attach position due to the longbow being rotated differently
+	"attach_pos_name_handlbow"		"hand_l_bow"
+	"attach_pos_joint_handlbow"		"LeftHand"
+	"attach_pos_origin_handlbow"    "-2 -0.8 -4.5"
+	"attach_pos_angles_handlbow"    "-80 90 0"
+
+
+
+    "attach_pos_name_hipbackr"		"belt_back_right"
+	"attach_pos_joint_hipbackr"		"Hips"
+	"attach_pos_origin_hipbackr"	"-4 8 4"   // x, height, width
+	"attach_pos_angles_hipbackr"	"90 90 0"
+
+	// greebo: needed different back attach position since the longbow is different to hammers
+	"attach_pos_name_bowholster"	"bow_holster_pos_rl"
+	"attach_pos_joint_bowholster"	"Spine2"
+	"attach_pos_origin_bowholster"	"-5 -5 0"     //middle value controls distance from back
+	"attach_pos_angles_bowholster"	"0 90 25"
+
+//these need double-checking
+	"attach_pos_name_slbackrl"		"slung_across_back_rl"
+	"attach_pos_joint_slbackrl"		"Spine2"
+	"attach_pos_origin_slbackrl"	"14 -6 -6"     //middle value controls distance from back
+	"attach_pos_angles_slbackrl"	"0 90 25"
+
+	"attach_pos_name_slbacklr"		"slung_across_back_lr"
+	"attach_pos_joint_slbacklr"		"Spine2"
+	"attach_pos_origin_slbacklr"	"14 -2 -6"
+	"attach_pos_angles_slbacklr"	"0 90 -5"
+
+	"mouth_offset"					"0 0 15" // grayman #1488
+	"eye_offset"					"0 0 19" // grayman #3525
+}
+
+model tdm_ai_builderguard {
+    inherit            tdm_ai_proguard
+    mesh               models/md5/chars/builders/guard/builderguardmesh.md5mesh
+
+    channel torso		( *Spine_Dummy)
+    channel legs		( origin Pelvis Pelvis2 *Hips)
+
+    //replacing animations that don't fit character
+    anim idle_nose_wipe        models/md5/chars/guards/proguard/idle_armwipe.md5anim
+    anim idle_nosewipe_short   models/md5/chars/guards/proguard/idle_shifting2.md5anim
+    anim idle_spit             models/md5/chars/guards/proguard/idle_check_hand.md5anim
+    anim idle_eat              models/md5/chars/guards/proguard/idle_shifting2.md5anim
+
+    //the default walk2 animation does weird things to the Builder pauldrons
+    anim walk1                 	models/md5/chars/guards/proguard/walk1.md5anim
+    {
+        frame 1     sound snd_rustle
+        frame 3     footstep
+        frame 17    sound snd_rustle
+        frame 20    footstep
+    }
+}
+
+entityDef atdm:ai_builder_guard
+{
+    "inherit"					"atdm:ai_humanoid_newskel"
+
+    "editor_displayFolder"		"AI/Builders/Armed"
+    "editor_usage"	            "Builder Guards defend Church territory and sometimes enforce Church law."
+    "AIUse"						"AIUSE_PERSON"
+    "personType"				"PERSONTYPE_BUILDER"
+    "personGender"				"PERSONGENDER_MALE"
+
+    "ragdoll"					"guard_base_newskel"
+    "model"						"tdm_ai_builderguard"
+
+    "def_head"					"atdm:ai_head_builderguard"
+    "offsetHeadModel"			"0 0 -3"		// defaultvalue if set
+    "atdm:ai_head06_builder"	"0 0 1"
+    "atdm:ai_head_builderguard"  "0 0 .7"   //modifier to default value
+
+    "headturn_yaw"				"40"    //needs special values to avoid clipping neckguard
+    "headturn_pitch"			"20"
+
+    // modified look angles due to metal collar
+    "look_min"					"-80 -40 0"
+    "look_max"					"15 40 0"
+
+    "team"						"1"
+    "health"					"100"
+    "mass"						"110"    // wears a heavy hammer and armor
+
+	// skilled in melee
+	"def_melee_set"				"atdm:ai_melee_set_skilled"
+
+    //  some idle animations don't look good on builderguard and were removed
+    "def_attach1"				"atdm:moveable_warhammer"
+    "name_attach1"				"melee_weapon"
+    "pos_attach1"				"slung_across_back_rl"
+    "draws_weapon"				"1"
+    "melee_range"		        "40"
+
+    "def_attach2"				"pauldron_builder_right"
+    "def_attach3"				"pauldron_builder_left"
+
+    "def_vocal_set"				"atdm:ai_vocal_set_builder_03_guard"
+	"ko_alert_immune"			"1"
+
+	"snd_bounce"				"body_armour_collapse"
+	"snd_bounce_carpet"         "body_armour_collapse_soft"
+	"snd_bounce_cloth"          "body_armour_collapse_soft"
+	"snd_bounce_grass"          "body_armour_collapse_soft"
+    "spr_object_hardness"       "hard"
+    "spr_object_size"    	    "medium"
+	"snd_rustle"                "armour_clank"
+    "snd_sliding"		        "tdm_heavy_stone_scratching02_loop"
+
+	"rank"						"2"
+
+    "lod_1_distance"		"150"
+    "model_lod_1"             "tdm_ai_builderguard_med"
+
+    "lod_2_distance"		"250"
+    "model_lod_2"             "tdm_ai_builderguard_low"
+
+    "hide_distance"			"-1"  //  never
+    "dist_check_period"		"0.7"
+}

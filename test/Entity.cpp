@@ -672,4 +672,14 @@ TEST_F(EntityTest, AttachedLightMovesWithEntity)
     EXPECT_EQ(rLight->lightAABB().origin, NEW_ORIGIN + EXPECTED_OFFSET);
 }
 
+TEST_F(EntityTest, CreateAIEntity)
+{
+    auto guard = createByClassName("atdm:ai_builder_guard");
+    ASSERT_TRUE(guard);
+
+    // Guard should have a hammer attachment
+    auto attachments = getAttachments(guard);
+    EXPECT_EQ(attachments.size(), 1);
+}
+
 }
