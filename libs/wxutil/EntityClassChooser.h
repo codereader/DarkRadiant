@@ -61,15 +61,6 @@ private:
     void onOK(wxCommandEvent& ev);
     void onSelectionChanged(wxDataViewEvent& ev);
     void onDeleteEvent(wxCloseEvent& ev);
-    
-    void onMainFrameShuttingDown();
-    
-    // This is where the static shared_ptr of the singleton instance is held.
-    static EntityClassChooserPtr& InstancePtr();
-
-public:
-    // Public accessor to the singleton instance
-    static EntityClassChooser& Instance();
 
     // Sets the tree selection to the given entity class
     void setSelectedEntityClass(const std::string& eclass);
@@ -77,15 +68,20 @@ public:
     // Sets the tree selection to the given entity class
     const std::string& getSelectedEntityClass() const;
 
+    // Overridden from wxDialog
     int ShowModal() override;
 
+public:
+
     /**
-     * Convenience function:
-     * Display the dialog and block awaiting the selection of an entity class,
-     * which is returned to the caller. If the dialog is cancelled or no
-     * selection is made, and empty string will be returned.
+     * \brief Construct and show the dialog to choose an entity class,
+     * returning the result.
+     *
+     * \param preselectEclass
+     * Optional initial class to locate and highlight in the tree after the
+     * dialog is shown.
      */
-    static std::string chooseEntityClass(const std::string& preselectEclass = std::string());
+    static std::string chooseEntityClass(const std::string& preselectEclass = {});
 };
 
 } // namespace
