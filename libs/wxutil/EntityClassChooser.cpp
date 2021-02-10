@@ -89,7 +89,7 @@ public:
         // of the DISPLAY_FOLDER_KEY.
         addPath(
             eclass->getModName() + folderPath + "/" + eclass->getName(),
-            [&](TreeModel::Row& row, const std::string& path, 
+            [&](TreeModel::Row& row, const std::string& path,
                 const std::string& leafName, bool isFolder)
             {
                 bool isFavourite = !isFolder && _favourites.count(leafName) > 0;
@@ -144,7 +144,7 @@ public:
 };
 
 // Main constructor
-EntityClassChooser::EntityClassChooser() : 
+EntityClassChooser::EntityClassChooser() :
     DialogBase(_(ECLASS_CHOOSER_TITLE)),
     _treeView(nullptr),
     _selectedName("")
@@ -203,55 +203,21 @@ EntityClassChooser::EntityClassChooser() :
 // Display the singleton instance
 std::string EntityClassChooser::chooseEntityClass(const std::string& preselectEclass)
 {
+    EntityClassChooser instance;
+
     if (!preselectEclass.empty())
     {
-        Instance().setSelectedEntityClass(preselectEclass);
+        instance.setSelectedEntityClass(preselectEclass);
     }
 
-    if (Instance().ShowModal() == wxID_OK)
+    if (instance.ShowModal() == wxID_OK)
     {
-        return Instance().getSelectedEntityClass();
+        return instance.getSelectedEntityClass();
     }
     else
     {
         return ""; // Empty selection on cancel
     }
-}
-
-EntityClassChooser& EntityClassChooser::Instance()
-{
-    EntityClassChooserPtr& instancePtr = InstancePtr();
-
-    if (!instancePtr)
-    {
-        // Not yet instantiated, do it now
-        instancePtr.reset(new EntityClassChooser);
-
-        // Pre-destruction cleanup
-        GlobalMainFrame().signal_MainFrameShuttingDown().connect(
-            sigc::mem_fun(*instancePtr, &EntityClassChooser::onMainFrameShuttingDown)
-        );
-    }
-
-    return *instancePtr;
-}
-
-EntityClassChooserPtr& EntityClassChooser::InstancePtr()
-{
-    static EntityClassChooserPtr _instancePtr;
-    return _instancePtr;
-}
-
-void EntityClassChooser::onMainFrameShuttingDown()
-{
-    rMessage() << "EntityClassChooser shutting down." << std::endl;
-
-    _modelPreview.reset();
-    _defsReloaded.disconnect();
-
-    // Final step at shutdown, release the shared ptr
-    Instance().SendDestroyEvent();
-    InstancePtr().reset();
 }
 
 void EntityClassChooser::loadEntityClasses()
