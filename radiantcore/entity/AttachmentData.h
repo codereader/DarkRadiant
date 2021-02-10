@@ -107,9 +107,16 @@ public:
     {
         for (auto i = _objects.begin(); i != _objects.end(); ++i)
         {
+            // Locate attachment position
+            const AttachPos& pos = _positions.at(i->second.posName);
+
+            // Construct the functor argument
             Entity::Attachment a;
             a.eclass = i->second.className;
-            a.offset = _positions.at(i->second.posName).origin;
+            a.offset = pos.origin;
+            a.joint = pos.joint;
+
+            // Invoke the functor
             func(a);
         }
     }

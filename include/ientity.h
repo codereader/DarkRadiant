@@ -245,6 +245,9 @@ public:
 
         /// Vector offset where the attached entity should appear
         Vector3 offset;
+
+        /// Optional model joint to use as origin
+        std::string joint;
     };
 
     /// A functor which can receive Attachment objects

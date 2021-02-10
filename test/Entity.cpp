@@ -680,6 +680,9 @@ TEST_F(EntityTest, CreateAIEntity)
     // Guard should have a hammer attachment
     auto attachments = getAttachments(guard);
     EXPECT_EQ(attachments.size(), 1);
+    EXPECT_EQ(attachments.front().eclass, "atdm:moveable_warhammer");
+    EXPECT_EQ(attachments.front().offset, Vector3(14, -6, -6));
+    EXPECT_EQ(attachments.front().joint, "Spine2");
 }
 
 }
