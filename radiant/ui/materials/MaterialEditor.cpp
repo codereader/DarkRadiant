@@ -21,10 +21,19 @@ MaterialEditor::MaterialEditor() :
 {
     loadNamedPanel(this, "MaterialEditorMainPanel");
 
+    // Wire up the close button
+    findNamedObject<wxButton>(this, "MaterialEditorCloseButton")->Bind(wxEVT_BUTTON, &MaterialEditor::_onClose, this);
+
     // Setup the splitter and preview
     auto* splitter = findNamedObject<wxSplitterWindow>(this, "MaterialEditorSplitter");
     splitter->SetSashPosition(GetSize().GetWidth() * 0.6f);
     splitter->SetMinimumPaneSize(10); // disallow unsplitting
+
+    // Set up the preview
+    wxPanel* previewPanel = findNamedObject<wxPanel>(this, "MaterialEditorPreviewPanel");
+    _preview.reset(new wxutil::ModelPreview(previewPanel));
+
+    previewPanel->GetSizer()->Add(_preview->getWidget(), 1, wxEXPAND);
 
     // Set the default size of the window
     FitToScreen(0.8f, 0.6f);
@@ -54,6 +63,11 @@ int MaterialEditor::ShowModal()
     _windowPosition.saveToPath(RKEY_WINDOW_STATE);
 
     return returnCode;
+}
+
+void MaterialEditor::_onClose(wxCommandEvent& ev)
+{
+    EndModal(wxID_CLOSE);
 }
 
 void MaterialEditor::ShowDialog(const cmd::ArgumentList& args)

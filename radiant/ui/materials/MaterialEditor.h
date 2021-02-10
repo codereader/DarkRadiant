@@ -6,6 +6,7 @@
 #include "wxutil/WindowPosition.h"
 #include "wxutil/PanedPosition.h"
 #include "wxutil/XmlResourceBasedWidget.h"
+#include "wxutil/preview/ModelPreview.h"
 
 namespace ui
 {
@@ -18,6 +19,8 @@ private:
     wxutil::WindowPosition _windowPosition;
     wxutil::PanedPosition _panedPosition;
 
+    std::shared_ptr<wxutil::ModelPreview> _preview;
+
 private:
     MaterialEditor();
 
@@ -25,6 +28,8 @@ private:
 
 public:
     static void ShowDialog(const cmd::ArgumentList& args);
+
+    void _onClose(wxCommandEvent& ev);
 };
 
 }
