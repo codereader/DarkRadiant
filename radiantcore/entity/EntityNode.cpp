@@ -122,6 +122,11 @@ void EntityNode::createAttachedEntities()
     _spawnArgs.forEachAttachment(
         [this](const Entity::Attachment& a)
         {
+            // Since we can't yet handle joint positions, ignore this attachment
+            // if it is attached to a joint
+            if (!a.joint.empty())
+                return;
+
             // Check this is a valid entity class
             auto cls = GlobalEntityClassManager().findClass(a.eclass);
             if (!cls)
