@@ -241,8 +241,15 @@ void ResourceTreeView::UpdateTreeVisibility()
 {
     if (_treeModelFilter)
     {
-        // Notify the attached views that it should reload
+#if defined(__WXGTK__) && !wxCHECK_VERSION(3, 0, 5)
+        // In wxGTK 3.0.4 Cleared() will just wipe out the treeview
+        // Re-associate the model to refresh the view
+        AssociateModel(nullptr);
+        AssociateModel(_treeModelFilter.get());
+#else
+        // Notify the attached view that it should reload
         _treeModelFilter->Cleared();
+#endif
     }
 }
 
