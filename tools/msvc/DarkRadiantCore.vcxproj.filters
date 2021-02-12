@@ -388,9 +388,6 @@
     <ClCompile Include="..\..\radiantcore\entity\AngleKey.cpp">
       <Filter>src\entity</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiantcore\entity\Doom3Entity.cpp">
-      <Filter>src\entity</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiantcore\entity\EntityModule.cpp">
       <Filter>src\entity</Filter>
     </ClCompile>
@@ -432,9 +429,6 @@
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\entity\light\Renderables.cpp">
       <Filter>src\entity\light</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiantcore\entity\generic\GenericEntity.cpp">
-      <Filter>src\entity\generic</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\entity\generic\GenericEntityNode.cpp">
       <Filter>src\entity\generic</Filter>
@@ -1018,6 +1012,12 @@
     <ClCompile Include="..\..\radiantcore\decl\FavouritesManager.cpp">
       <Filter>src\decl</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\entity\SpawnArgs.cpp">
+      <Filter>src\entity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\entity\AttachmentData.cpp">
+      <Filter>src\entity</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
@@ -1320,9 +1320,6 @@
     <ClInclude Include="..\..\radiantcore\entity\ColourKey.h">
       <Filter>src\entity</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\entity\Doom3Entity.h">
-      <Filter>src\entity</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\entity\EntityModule.h">
       <Filter>src\entity</Filter>
     </ClInclude>
@@ -1388,9 +1385,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\entity\light\RenderableVertices.h">
       <Filter>src\entity\light</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\entity\generic\GenericEntity.h">
-      <Filter>src\entity\generic</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\entity\generic\GenericEntityNode.h">
       <Filter>src\entity\generic</Filter>
@@ -2078,6 +2072,12 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\entity\algorithm\Speaker.h">
       <Filter>src\entity\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\entity\SpawnArgs.h">
+      <Filter>src\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\entity\AttachmentData.h">
+      <Filter>src\entity</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

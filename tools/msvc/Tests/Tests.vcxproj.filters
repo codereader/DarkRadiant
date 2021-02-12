@@ -38,6 +38,7 @@
     <ClCompile Include="..\..\..\test\Favourites.cpp" />
     <ClCompile Include="..\..\..\test\Prefabs.cpp" />
     <ClCompile Include="..\..\..\test\Parsing.cpp" />
+    <ClCompile Include="..\..\..\test\Entity.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\HeadlessOpenGLContext.h" />

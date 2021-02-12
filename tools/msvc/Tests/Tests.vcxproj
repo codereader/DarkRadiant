@@ -71,6 +71,7 @@
     <ClCompile Include="..\..\..\test\Camera.cpp" />
     <ClCompile Include="..\..\..\test\ColourSchemes.cpp" />
     <ClCompile Include="..\..\..\test\CSG.cpp" />
+    <ClCompile Include="..\..\..\test\Entity.cpp" />
     <ClCompile Include="..\..\..\test\Face.cpp" />
     <ClCompile Include="..\..\..\test\FacePlane.cpp" />
     <ClCompile Include="..\..\..\test\Favourites.cpp" />
