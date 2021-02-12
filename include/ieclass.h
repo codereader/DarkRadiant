@@ -200,9 +200,10 @@ typedef std::shared_ptr<IEntityClass> IEntityClassPtr;
 typedef std::shared_ptr<const IEntityClass> IEntityClassConstPtr;
 
 /**
- * Entity class interface. An entity class represents a single type
- * of entity that can be created by the EntityCreator. Entity classes are parsed
- * from .DEF files during startup.
+ * \brief Entity class interface.
+ * 
+ * An entity class represents a single type of entity that can be created by
+ * the EntityCreator. Entity classes are parsed from .DEF files during startup.
  *
  * Entity class attribute names are compared case-insensitively, as in the
  * Entity class.
@@ -228,9 +229,7 @@ public:
 
     /* ENTITY CLASS SIZE */
 
-    /**
-     * Query whether this entity has a fixed size.
-     */
+    /// Query whether this entity has a fixed size.
     virtual bool isFixedSize() const = 0;
 
     /**
@@ -251,16 +250,10 @@ public:
     // Overrides the colour defined in the .def files
     virtual void setColour(const Vector3& colour) = 0;
 
-    /**
-     * Get the named Shader used for rendering this entity class in
-     * wireframe mode.
-     */
+    /// Get the shader used for rendering this entity class in wireframe mode.
     virtual const std::string& getWireShader() const = 0;
 
-    /**
-     * Get the Shader used for rendering this entity class in
-     * filled mode.
-     */
+    /// Get the shader used for rendering this entity class in filled mode.
     virtual const std::string& getFillShader() const = 0;
 
 
@@ -303,8 +296,7 @@ public:
      */
     virtual const std::string& getModelPath() const = 0;
 
-    /** Get the model skin, or the empty string if there is no skin.
-     */
+    /// Get the model skin, or the empty string if there is no skin.
     virtual const std::string& getSkin() const = 0;
 
 	/**

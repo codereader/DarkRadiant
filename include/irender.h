@@ -149,8 +149,7 @@ typedef std::shared_ptr<IRenderEntity> IRenderEntityPtr;
 typedef std::weak_ptr<IRenderEntity> IRenderEntityWeakPtr;
 
 /**
- * \brief
- * Interface for a light source in the renderer.
+ * \brief Interface for a light source in the renderer.
  */
 class RendererLight
 {
@@ -158,8 +157,7 @@ public:
     virtual ~RendererLight() {}
 
     /**
-     * \brief
-     * Return the render entity associated with this light
+     * \brief Return the render entity associated with this light
      *
      * The IRenderEntity is used to evaluate possible shader expressions in the
      * shader returned by getShader(). The light object itself may be its own
@@ -171,18 +169,7 @@ public:
     virtual const ShaderPtr& getShader() const = 0;
 
     /**
-     * \brief
-     * Return the origin of the light volume in world space.
-     *
-     * This corresponds to the "origin" key of the light object, i.e. the center
-     * of the bounding box for an omni light and the tip of the pyramid for a
-     * projected light.
-     */
-    virtual const Vector3& worldOrigin() const = 0;
-
-    /**
-     * \brief
-     * Return the world-space to light-texture-space transformation matrix.
+     * \brief Return the world-space to light-texture-space transformation matrix.
      *
      * The light texture space is a box, with coordinates [0..1] on each
      * dimension, representing the texture (UV) coordinates of the light falloff
@@ -195,8 +182,7 @@ public:
     virtual Matrix4 getLightTextureTransformation() const = 0;
 
     /**
-     * \brief
-     * Return the AABB of the illuminated volume.
+     * \brief Return the AABB of the illuminated volume.
      *
      * This AABB represents the boundaries of the volume which are illuminated
      * by this light. Anything outside of this volume does not need to be
@@ -210,8 +196,7 @@ public:
     virtual AABB lightAABB() const = 0;
 
     /**
-     * \brief
-     * Return the light origin in world space.
+     * \brief Return the light origin in world space.
      *
      * The light origin is the point from which the light rays are considered to
      * be projected, i.e. the direction from which bump maps will be illuminated
@@ -229,13 +214,13 @@ typedef std::shared_ptr<RendererLight> RendererLightPtr;
 /// Debug stream insertion for RendererLight
 inline std::ostream& operator<< (std::ostream& os, const RendererLight& l)
 {
-    return os << "RendererLight(origin=" << l.worldOrigin().pp()
+    return os << "RendererLight(origin=" << l.getLightOrigin().pp()
               << ", lightAABB=" << l.lightAABB() << ")";
 }
 
 /**
- * \brief
- * Interface for an object which can test its intersection with a RendererLight.
+ * \brief Interface for an object which can test its intersection with a
+ * RendererLight.
  *
  * Objects which implement this interface define a intersectsLight() function
  * which determines whether the given light intersects the object.
@@ -467,7 +452,6 @@ public:
 	 * \return
 	 * An Material subclass with information about the shader definition
 	 */
-
 	virtual const MaterialPtr& getMaterial() const = 0;
 
     virtual unsigned int getFlags() const = 0;
@@ -573,7 +557,7 @@ public:
     // Returns true if openGL supports ARB or GLSL lighting
     virtual bool shaderProgramsAvailable() const = 0;
 
-    // Sets the flag whether shader programs are available. 
+    // Sets the flag whether shader programs are available.
     virtual void setShaderProgramsAvailable(bool available) = 0;
 
 	// Subscription to get notified as soon as the openGL extensions have been initialised

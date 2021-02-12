@@ -6,10 +6,17 @@
 #include "selectionlib.h"
 #include "transformlib.h"
 #include "irenderable.h"
+#include "math/Ray.h"
 
-#include "GenericEntity.h"
 #include "../target/TargetableNode.h"
 #include "../EntityNode.h"
+#include "../OriginKey.h"
+#include "../AngleKey.h"
+#include "../RotationKey.h"
+#include "../SpawnArgs.h"
+#include "../KeyObserverDelegate.h"
+
+#include "RenderableArrow.h"
 
 namespace entity
 {
@@ -17,13 +24,37 @@ namespace entity
 class GenericEntityNode;
 typedef std::shared_ptr<GenericEntityNode> GenericEntityNodePtr;
 
-class GenericEntityNode :
-	public EntityNode,
-	public Snappable
+/// EntityNode subclass for all entity types not handled by a specific class
+class GenericEntityNode: public EntityNode, public Snappable
 {
-	friend class GenericEntity;
+	OriginKey m_originKey;
+	Vector3 m_origin;
 
-	GenericEntity m_contained;
+	// The AngleKey wraps around the "angle" spawnarg
+	AngleKey m_angleKey;
+
+	// This is the "working copy" of the angle value
+	float m_angle;
+
+	// The RotationKey takes care of the "rotation" spawnarg
+	RotationKey m_rotationKey;
+
+	// This is the "working copy" of the rotation value
+	RotationMatrix m_rotation;
+
+	AABB m_aabb_local;
+	Ray m_ray;
+
+	RenderableArrow m_arrow;
+	RenderableSolidAABB m_aabb_solid;
+	RenderableWireframeAABB m_aabb_wire;
+
+	// TRUE if this entity's arrow can be rotated in all directions,
+	// FALSE if the arrow is caught in the xy plane
+	bool _allow3Drotations;
+
+	KeyObserverDelegate _rotationObserver;
+	KeyObserverDelegate _angleObserver;
 
     // Whether to draw a solid/shaded box in full material render mode or just the wireframe
     enum SolidAAABBRenderMode
@@ -36,18 +67,30 @@ class GenericEntityNode :
 
 public:
 	GenericEntityNode(const IEntityClassPtr& eclass);
+    ~GenericEntityNode();
 
 private:
 	GenericEntityNode(const GenericEntityNode& other);
+
+	void translate(const Vector3& translation);
+	void rotate(const Quaternion& rotation);
+
+	void revertTransform() override;
+	void freezeTransform() override;
+	void updateTransform();
+
+	void originChanged();
+	void angleChanged();
+	void rotationChanged();
 
 public:
 	static GenericEntityNodePtr Create(const IEntityClassPtr& eclass);
 
 	// Snappable implementation
-	virtual void snapto(float snap) override;
+	void snapto(float snap) override;
 
 	// Bounded implementation
-	virtual const AABB& localAABB() const override;
+	const AABB& localAABB() const override;
 
 	// SelectionTestable implementation
 	void testSelect(Selector& selector, SelectionTest& test) override;
@@ -55,6 +98,8 @@ public:
 	scene::INodePtr clone() const override;
 
 	// Renderable implementation
+	void renderArrow(const ShaderPtr& shader, RenderableCollector& collector,
+                     const VolumeTest& volume, const Matrix4& localToWorld) const;
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
 
@@ -66,8 +111,8 @@ public:
     // Returns the original "origin" value
     const Vector3& getUntransformedOrigin() override;
 
-    virtual void onChildAdded(const scene::INodePtr& child) override;
-	virtual void onChildRemoved(const scene::INodePtr& child) override;
+    void onChildAdded(const scene::INodePtr& child) override;
+	void onChildRemoved(const scene::INodePtr& child) override;
 
 protected:
 	// Gets called by the Transformable implementation whenever

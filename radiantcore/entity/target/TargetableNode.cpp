@@ -6,7 +6,7 @@
 
 namespace entity {
 
-TargetableNode::TargetableNode(Doom3Entity& entity, EntityNode& node) :
+TargetableNode::TargetableNode(SpawnArgs& entity, EntityNode& node) :
 	_d3entity(entity),
     _targetKeys(*this),
 	_node(node),

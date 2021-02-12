@@ -1,37 +1,55 @@
-#include "Doom3Entity.h"
+#include "SpawnArgs.h"
 
 #include "ieclass.h"
 #include "debugging/debugging.h"
 #include "string/predicate.h"
 #include <functional>
 
-namespace entity {
-
-Doom3Entity::Doom3Entity(const IEntityClassPtr& eclass) :
-	_eclass(eclass),
-	_undo(_keyValues, std::bind(&Doom3Entity::importState, this, std::placeholders::_1), "EntityKeyValues"),
-	_instanced(false),
-	_observerMutex(false),
-	_isContainer(!eclass->isFixedSize())
-{}
-
-Doom3Entity::Doom3Entity(const Doom3Entity& other) :
-	Entity(other),
-	_eclass(other.getEntityClass()),
-	_undo(_keyValues, std::bind(&Doom3Entity::importState, this, std::placeholders::_1), "EntityKeyValues"),
-	_instanced(false),
-	_observerMutex(false),
-	_isContainer(other._isContainer)
+namespace entity
 {
-	for (KeyValues::const_iterator i = other._keyValues.begin();
-		 i != other._keyValues.end();
-		 ++i)
-	{
-		insert(i->first, i->second->get());
-	}
+
+SpawnArgs::SpawnArgs(const IEntityClassPtr& eclass) :
+	_eclass(eclass),
+	_undo(_keyValues, std::bind(&SpawnArgs::importState, this, std::placeholders::_1), "EntityKeyValues"),
+	_instanced(false),
+	_observerMutex(false),
+	_isContainer(!eclass->isFixedSize()),
+	_attachments(eclass->getName())
+{
+    // Parse attachment keys
+    parseAttachments();
 }
 
-bool Doom3Entity::isModel() const
+SpawnArgs::SpawnArgs(const SpawnArgs& other) :
+	Entity(other),
+	_eclass(other.getEntityClass()),
+	_undo(_keyValues, std::bind(&SpawnArgs::importState, this, std::placeholders::_1), "EntityKeyValues"),
+	_instanced(false),
+	_observerMutex(false),
+	_isContainer(other._isContainer),
+	_attachments(other._attachments)
+{
+    // Copy keyvalue strings, not actual KeyValue pointers
+    for (const KeyValuePair& p : other._keyValues)
+    {
+        insert(p.first, p.second->get());
+    }
+}
+
+void SpawnArgs::parseAttachments()
+{
+    // Parse the keys
+    forEachKeyValue(
+        [this](const std::string& k, const std::string& v) {
+            _attachments.parseDefAttachKeys(k, v);
+        },
+        true /* includeInherited */);
+
+    // Post validation step
+    _attachments.validateAttachments();
+}
+
+bool SpawnArgs::isModel() const
 {
 	std::string name = getKeyValue("name");
 	std::string model = getKeyValue("model");
@@ -40,12 +58,12 @@ bool Doom3Entity::isModel() const
 	return (classname == "func_static" && !name.empty() && name != model);
 }
 
-bool Doom3Entity::isOfType(const std::string& className)
+bool SpawnArgs::isOfType(const std::string& className)
 {
 	return _eclass->isOfType(className);
 }
 
-void Doom3Entity::importState(const KeyValues& keyValues)
+void SpawnArgs::importState(const KeyValues& keyValues)
 {
 	// Remove the entity key values, one by one
 	while (_keyValues.size() > 0)
@@ -64,7 +82,7 @@ void Doom3Entity::importState(const KeyValues& keyValues)
 	}
 }
 
-void Doom3Entity::attachObserver(Observer* observer)
+void SpawnArgs::attachObserver(Observer* observer)
 {
 	ASSERT_MESSAGE(!_observerMutex, "observer cannot be attached during iteration");
 
@@ -78,7 +96,7 @@ void Doom3Entity::attachObserver(Observer* observer)
 	}
 }
 
-void Doom3Entity::detachObserver(Observer* observer)
+void SpawnArgs::detachObserver(Observer* observer)
 {
 	ASSERT_MESSAGE(!_observerMutex, "observer cannot be detached during iteration");
 
@@ -101,7 +119,7 @@ void Doom3Entity::detachObserver(Observer* observer)
 	}
 }
 
-void Doom3Entity::connectUndoSystem(IMapFileChangeTracker& changeTracker)
+void SpawnArgs::connectUndoSystem(IMapFileChangeTracker& changeTracker)
 {
 	_instanced = true;
 
@@ -113,7 +131,7 @@ void Doom3Entity::connectUndoSystem(IMapFileChangeTracker& changeTracker)
     _undo.connectUndoSystem(changeTracker);
 }
 
-void Doom3Entity::disconnectUndoSystem(IMapFileChangeTracker& changeTracker)
+void SpawnArgs::disconnectUndoSystem(IMapFileChangeTracker& changeTracker)
 {
 	_undo.disconnectUndoSystem(changeTracker);
 
@@ -125,22 +143,30 @@ void Doom3Entity::disconnectUndoSystem(IMapFileChangeTracker& changeTracker)
 	_instanced = false;
 }
 
-/** Return the EntityClass associated with this entity.
- */
-IEntityClassPtr Doom3Entity::getEntityClass() const
+IEntityClassPtr SpawnArgs::getEntityClass() const
 {
 	return _eclass;
 }
 
-void Doom3Entity::forEachKeyValue(const KeyValueVisitFunctor& func) const
+void SpawnArgs::forEachKeyValue(KeyValueVisitFunc func,
+                                bool includeInherited) const
 {
+    // Visit explicit spawnargs
     for (const KeyValuePair& pair : _keyValues)
 	{
 		func(pair.first, pair.second->get());
 	}
+
+    // If requested, visit inherited spawnargs from the entitydef
+    if (includeInherited)
+    {
+        _eclass->forEachClassAttribute([&](const EntityClassAttribute& att) {
+            func(att.getName(), att.getValue());
+        });
+    }
 }
 
-void Doom3Entity::forEachEntityKeyValue(const EntityKeyValueVisitFunctor& func)
+void SpawnArgs::forEachEntityKeyValue(const EntityKeyValueVisitFunctor& func)
 {
     for (const KeyValuePair& pair : _keyValues)
     {
@@ -148,9 +174,7 @@ void Doom3Entity::forEachEntityKeyValue(const EntityKeyValueVisitFunctor& func)
     }
 }
 
-/** Set a keyvalue on the entity.
- */
-void Doom3Entity::setKeyValue(const std::string& key, const std::string& value)
+void SpawnArgs::setKeyValue(const std::string& key, const std::string& value)
 {
 	if (value.empty())
 	{
@@ -164,9 +188,7 @@ void Doom3Entity::setKeyValue(const std::string& key, const std::string& value)
 	}
 }
 
-/** Retrieve a keyvalue from the entity.
- */
-std::string Doom3Entity::getKeyValue(const std::string& key) const
+std::string SpawnArgs::getKeyValue(const std::string& key) const
 {
 	// Lookup the key in the map
 	KeyValues::const_iterator i = find(key);
@@ -183,7 +205,7 @@ std::string Doom3Entity::getKeyValue(const std::string& key) const
 	}
 }
 
-bool Doom3Entity::isInherited(const std::string& key) const
+bool SpawnArgs::isInherited(const std::string& key) const
 {
 	// Check if we have the key in the local keyvalue map
 	bool definedLocally = (find(key) != _keyValues.end());
@@ -192,47 +214,34 @@ bool Doom3Entity::isInherited(const std::string& key) const
 	return (!definedLocally && !_eclass->getAttribute(key).getValue().empty());
 }
 
-Entity::KeyValuePairs Doom3Entity::getKeyValuePairs(const std::string& prefix) const
+void SpawnArgs::forEachAttachment(AttachmentFunc func) const
 {
-	KeyValuePairs list;
-
-	for (KeyValues::const_iterator i = _keyValues.begin(); i != _keyValues.end(); ++i)
-	{
-		// If the prefix matches, add to list
-		if (string::istarts_with(i->first, prefix))
-		{
-			list.push_back(
-				std::pair<std::string, std::string>(i->first, i->second->get())
-			);
-		}
-	}
-
-	return list;
+    _attachments.forEachAttachment(func);
 }
 
-EntityKeyValuePtr Doom3Entity::getEntityKeyValue(const std::string& key)
+EntityKeyValuePtr SpawnArgs::getEntityKeyValue(const std::string& key)
 {
 	KeyValues::const_iterator found = find(key);
 
 	return (found != _keyValues.end()) ? found->second : EntityKeyValuePtr();
 }
 
-bool Doom3Entity::isWorldspawn() const
+bool SpawnArgs::isWorldspawn() const
 {
 	return getKeyValue("classname") == "worldspawn";
 }
 
-bool Doom3Entity::isContainer() const
+bool SpawnArgs::isContainer() const
 {
 	return _isContainer;
 }
 
-void Doom3Entity::setIsContainer(bool isContainer)
+void SpawnArgs::setIsContainer(bool isContainer)
 {
 	_isContainer = isContainer;
 }
 
-void Doom3Entity::notifyInsert(const std::string& key, KeyValue& value)
+void SpawnArgs::notifyInsert(const std::string& key, KeyValue& value)
 {
 	// Block the addition/removal of new Observers during this process
 	_observerMutex = true;
@@ -246,7 +255,7 @@ void Doom3Entity::notifyInsert(const std::string& key, KeyValue& value)
 	_observerMutex = false;
 }
 
-void Doom3Entity::notifyChange(const std::string& k, const std::string& v)
+void SpawnArgs::notifyChange(const std::string& k, const std::string& v)
 {
     _observerMutex = true;
 
@@ -260,7 +269,7 @@ void Doom3Entity::notifyChange(const std::string& k, const std::string& v)
     _observerMutex = false;
 }
 
-void Doom3Entity::notifyErase(const std::string& key, KeyValue& value)
+void SpawnArgs::notifyErase(const std::string& key, KeyValue& value)
 {
 	// Block the addition/removal of new Observers during this process
 	_observerMutex = true;
@@ -273,7 +282,7 @@ void Doom3Entity::notifyErase(const std::string& key, KeyValue& value)
 	_observerMutex = false;
 }
 
-void Doom3Entity::insert(const std::string& key, const KeyValuePtr& keyValue)
+void SpawnArgs::insert(const std::string& key, const KeyValuePtr& keyValue)
 {
 	// Insert the new key at the end of the list
 	KeyValues::iterator i = _keyValues.insert(
@@ -290,7 +299,7 @@ void Doom3Entity::insert(const std::string& key, const KeyValuePtr& keyValue)
 	}
 }
 
-void Doom3Entity::insert(const std::string& key, const std::string& value)
+void SpawnArgs::insert(const std::string& key, const std::string& value)
 {
 	// Try to lookup the key in the map
 	KeyValues::iterator i = find(key);
@@ -317,7 +326,7 @@ void Doom3Entity::insert(const std::string& key, const std::string& value)
 	}
 }
 
-void Doom3Entity::erase(const KeyValues::iterator& i)
+void SpawnArgs::erase(const KeyValues::iterator& i)
 {
 	if (_instanced)
 	{
@@ -338,7 +347,7 @@ void Doom3Entity::erase(const KeyValues::iterator& i)
 	// as the std::shared_ptr useCount will reach zero.
 }
 
-void Doom3Entity::erase(const std::string& key)
+void SpawnArgs::erase(const std::string& key)
 {
 	// Try to lookup the key
 	KeyValues::iterator i = find(key);
@@ -350,7 +359,7 @@ void Doom3Entity::erase(const std::string& key)
 	}
 }
 
-Doom3Entity::KeyValues::const_iterator Doom3Entity::find(const std::string& key) const
+SpawnArgs::KeyValues::const_iterator SpawnArgs::find(const std::string& key) const
 {
 	for (KeyValues::const_iterator i = _keyValues.begin();
 		 i != _keyValues.end();
@@ -366,7 +375,7 @@ Doom3Entity::KeyValues::const_iterator Doom3Entity::find(const std::string& key)
 	return _keyValues.end();
 }
 
-Doom3Entity::KeyValues::iterator Doom3Entity::find(const std::string& key)
+SpawnArgs::KeyValues::iterator SpawnArgs::find(const std::string& key)
 {
 	for (KeyValues::iterator i = _keyValues.begin();
 		 i != _keyValues.end();

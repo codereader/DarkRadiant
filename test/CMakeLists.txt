@@ -2,6 +2,7 @@ add_executable(drtest
                Camera.cpp
                ColourSchemes.cpp
                CSG.cpp
+               Entity.cpp
                Face.cpp
                FacePlane.cpp
                Favourites.cpp
@@ -27,9 +28,9 @@ add_executable(drtest
                Selection.cpp
                VFS.cpp
                WorldspawnColour.cpp)
-               
+
 find_package(Threads REQUIRED)
- 
+
 target_compile_options(drtest PUBLIC ${SIGC_CFLAGS})
 
 get_filename_component(TESTRESOURCEDIR "./resources" ABSOLUTE)

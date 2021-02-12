@@ -5,7 +5,7 @@
 namespace test
 {
 
-TEST(Quaternion, Multiplication)
+TEST(MathTest, QuaternionMultiplication)
 {
     Quaternion q1(3, 5, 7, 11);
     Quaternion q2(13, 17, 19, 23);
@@ -18,7 +18,7 @@ TEST(Quaternion, Multiplication)
     EXPECT_EQ(product.w(), -4) << "Quaternion multiplication failed on w";
 }
 
-TEST(Quaternion, InPlaceMultiplication)
+TEST(MathTest, QuaternionInPlaceMultiplication)
 {
     Quaternion q1(3, 5, 7, 11);
     Quaternion q2(13, 17, 19, 23);
@@ -31,7 +31,7 @@ TEST(Quaternion, InPlaceMultiplication)
     EXPECT_EQ(q1multiplied.w(), -4) << "Quaternion in-place multiplication failed on w";
 }
 
-TEST(Quaternion, getInverse)
+TEST(MathTest, QuaternionInverse)
 {
     Quaternion q1(3, 5, 7, 11);
     Quaternion q1inverted = q1.getInverse();
@@ -42,7 +42,7 @@ TEST(Quaternion, getInverse)
     EXPECT_EQ(q1inverted.w(), 11) << "Quaternion inversion failed on w";
 }
 
-TEST(Quaternion, getNormalised)
+TEST(MathTest, QuaternionNormalised)
 {
     Quaternion q1(3, 5, 7, 11);
     Quaternion normalised = q1.getNormalised();
@@ -53,7 +53,7 @@ TEST(Quaternion, getNormalised)
     EXPECT_DOUBLE_EQ(normalised.w(), 0.7701540462154052) << "Quaternion normalisation failed on w";
 }
 
-TEST(Quaternion, transformPoint)
+TEST(MathTest, QuaternionTransformPoint)
 {
     Quaternion q1(3, 5, 7, 11);
     Vector3 point(13, 17, 19);

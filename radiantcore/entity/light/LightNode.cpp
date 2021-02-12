@@ -13,7 +13,7 @@ namespace entity {
 
 LightNode::LightNode(const IEntityClassPtr& eclass) :
 	EntityNode(eclass),
-	_light(_entity,
+	_light(_spawnArgs,
 		   *this,
 		   Callback(std::bind(&scene::Node::transformChanged, this)),
 		   Callback(std::bind(&scene::Node::boundsChanged, this)),
@@ -34,7 +34,7 @@ LightNode::LightNode(const LightNode& other) :
 	ILightNode(other),
 	_light(other._light,
 		   *this,
-           _entity,
+           _spawnArgs,
            Callback(std::bind(&Node::transformChanged, this)),
 		   Callback(std::bind(&Node::boundsChanged, this)),
 		   Callback(std::bind(&LightNode::onLightRadiusChanged, this))),
@@ -69,7 +69,7 @@ void LightNode::snapto(float snap) {
 	_light.snapto(snap);
 }
 
-AABB LightNode::getSelectAABB() const 
+AABB LightNode::getSelectAABB() const
 {
     // Use the light origin as select AAB centerpoint
     Vector3 extents;
@@ -168,7 +168,7 @@ void LightNode::testSelectComponents(Selector& selector, SelectionTest& test, Se
         // Use the full rotation matrix for the test
         test.BeginMesh(localToWorld());
 
-		if (_light.isProjected()) 
+		if (_light.isProjected())
         {
 			// Test the projection components for selection
 			_lightTargetInstance.testSelect(selector, test);
@@ -177,7 +177,7 @@ void LightNode::testSelectComponents(Selector& selector, SelectionTest& test, Se
 			_lightStartInstance.testSelect(selector, test);
 			_lightEndInstance.testSelect(selector, test);
 		}
-		else 
+		else
         {
 			// Test if the light center is hit by the click
 			_lightCenterInstance.testSelect(selector, test);
@@ -276,21 +276,16 @@ void LightNode::selectedChangedComponent(const ISelectable& selectable) {
 	GlobalSelectionSystem().onComponentSelection(Node::getSelf(), selectable);
 }
 
-/* greebo: This is the method that gets called by renderer.h. It passes the call
- * on to the Light class render methods.
- */
 void LightNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
 {
     // Submit self to the renderer as an actual light source
     collector.addLight(_light);
 
-    // Render the visible representation of the light entity (origin, bounds etc)
     EntityNode::renderSolid(collector, volume);
 
-    // Re-use the same method as in wireframe rendering for the moment
+    // Render the visible representation of the light entity (origin, bounds etc)
     const bool lightIsSelected = isSelected();
     renderLightVolume(collector, localToWorld(), lightIsSelected);
-
     renderInactiveComponents(collector, volume, lightIsSelected);
 }
 
@@ -300,7 +295,6 @@ void LightNode::renderWireframe(RenderableCollector& collector, const VolumeTest
 
     const bool lightIsSelected = isSelected();
     renderLightVolume(collector, localToWorld(), lightIsSelected);
-
     renderInactiveComponents(collector, volume, lightIsSelected);
 }
 
@@ -371,7 +365,7 @@ void LightNode::renderComponents(RenderableCollector& collector, const VolumeTes
 		if (_light.isProjected())
 		{
 			// A projected light
-			
+
 			EntitySettings& settings = *EntitySettings::InstancePtr();
 
 			const Vector3& colourStartEndSelected = settings.getLightVertexColour(LightEditVertexType::StartEndSelected);
@@ -497,8 +491,8 @@ void LightNode::evaluateTransform()
         {
 			// When the user is mouse-moving a vertex in the orthoviews he/she is operating
             // in world space. It's expected that the selected vertex follows the mouse.
-            // Since the editable light vertices are measured in local coordinates 
-            // we have to calculate the new position in world space first and then transform 
+            // Since the editable light vertices are measured in local coordinates
+            // we have to calculate the new position in world space first and then transform
             // the point back into local space.
 
             if (_lightCenterInstance.isSelected())
@@ -507,7 +501,7 @@ void LightNode::evaluateTransform()
                 Vector3 newWorldPos = localToWorld().transformPoint(_light.getDoom3Radius().m_center) + getTranslation();
                 _light.getDoom3Radius().m_centerTransformed = localToWorld().getFullInverse().transformPoint(newWorldPos);
             }
-            
+
 			if (_lightTargetInstance.isSelected())
             {
                 Vector3 newWorldPos = localToWorld().transformPoint(_light.target()) + getTranslation();

@@ -59,7 +59,7 @@ void SpeakerNode::construct()
 {
 	EntityNode::construct();
 
-	m_aabb_local = _entity.getEntityClass()->getBounds();
+	m_aabb_local = _spawnArgs.getEntityClass()->getBounds();
 	m_aabb_border = m_aabb_local;
 
 	addKeyObserver("origin", m_originKey);
@@ -165,7 +165,7 @@ void SpeakerNode::sMaxChanged(const std::string& value)
 void SpeakerNode::snapto(float snap)
 {
 	m_originKey.snap(snap);
-	m_originKey.write(_entity);
+	m_originKey.write(_spawnArgs);
 }
 
 // Bounded implementation
@@ -375,33 +375,33 @@ void SpeakerNode::revertTransform()
 void SpeakerNode::freezeTransform()
 {
 	m_originKey.set(m_origin);
-	m_originKey.write(_entity);
+	m_originKey.write(_spawnArgs);
 
 	_radii = _radiiTransformed;
 
 	// Write the s_mindistance/s_maxdistance keyvalues if we have a valid shader
-	if (!_entity.getKeyValue(KEY_S_SHADER).empty())
+	if (!_spawnArgs.getKeyValue(KEY_S_SHADER).empty())
 	{
 		// Note: Write the spawnargs in meters
 
 		if (_radii.getMax() != _defaultRadii.getMax())
 		{
-			_entity.setKeyValue(KEY_S_MAXDISTANCE, string::to_string(_radii.getMax(true)));
+			_spawnArgs.setKeyValue(KEY_S_MAXDISTANCE, string::to_string(_radii.getMax(true)));
 		}
 		else
 		{
 			// Radius is matching default, clear the spawnarg
-			_entity.setKeyValue(KEY_S_MAXDISTANCE, "");
+			_spawnArgs.setKeyValue(KEY_S_MAXDISTANCE, "");
 		}
 
 		if (_radii.getMin() != _defaultRadii.getMin())
 		{
-			_entity.setKeyValue(KEY_S_MINDISTANCE, string::to_string(_radii.getMin(true)));
+			_spawnArgs.setKeyValue(KEY_S_MINDISTANCE, string::to_string(_radii.getMin(true)));
 		}
 		else
 		{
 			// Radius is matching default, clear the spawnarg
-			_entity.setKeyValue(KEY_S_MINDISTANCE, "");
+			_spawnArgs.setKeyValue(KEY_S_MINDISTANCE, "");
 		}
 	}
 }

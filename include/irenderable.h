@@ -16,8 +16,7 @@ class RendererLight;
 class LitObject;
 
 /**
- * \brief
- * Class which accepts OpenGLRenderable objects during the first pass of
+ * \brief Class which accepts OpenGLRenderable objects during the first pass of
  * rendering.
  *
  * Each Renderable in the scenegraph is passed a reference to a
@@ -33,8 +32,7 @@ public:
     virtual ~RenderableCollector() {}
 
     /**
-     * \brief
-     * Submit a renderable object
+     * \brief Submit a renderable object.
      *
      * This method allows renderable geometry to be submitted under the control
      * of a LitObject which will determine whether and how the renderable is
@@ -74,8 +72,7 @@ public:
                                const IRenderEntity* entity = nullptr) = 0;
 
     /**
-     * \brief
-     * Submit a light source for the render operation.
+     * \brief Submit a light source for the render operation.
      *
      * This is the entry point for lights into the render front-end. Each light
      * in the scene graph must be submitted through this method in order to
@@ -85,9 +82,8 @@ public:
     virtual void addLight(const RendererLight& light) = 0;
 
     /**
-     * \brief
-     * Determine if this RenderableCollector can accept renderables for full
-     * materials rendering, or just wireframe rendering.
+     * \brief Determine if this RenderableCollector can accept renderables for
+     * full materials rendering, or just wireframe rendering.
      *
      * \return
      * true if full materials are supported, false if only wireframe rendering

@@ -5,7 +5,11 @@
 #include "imodule.h"
 #include "irender.h"
 #include "inameobserver.h"
+#include "iscenegraph.h"
+#include "itransformnode.h"
 #include <functional>
+
+#include "string/predicate.h"
 
 class IEntityClass;
 typedef std::shared_ptr<IEntityClass> IEntityClassPtr;
@@ -104,9 +108,6 @@ public:
         { }
     };
 
-    // Function typedef to visit keyvalues
-    typedef std::function<void(const std::string& key, const std::string& value)> KeyValueVisitFunctor;
-
     // Function typedef to visit actual EntityKeyValue objects, not just the string values
     typedef std::function<void(const std::string& key, EntityKeyValue& value)> EntityKeyValueVisitFunctor;
 
@@ -117,11 +118,25 @@ public:
      */
     virtual IEntityClassPtr getEntityClass() const = 0;
 
+    /// Functor to receive keys and values as strings
+    using KeyValueVisitFunc = std::function<
+        void(const std::string&, const std::string&)
+    >;
+
     /**
-     * Enumerate key values on this entity using a function object taking
-     * key and value as string arguments.
+     * \brief Enumerate all keys and values on this entity, optionally including
+     * inherited spawnargs.
+     *
+     * \param func
+     * Functor to receive each key and its associated value.
+     *
+     * \param includeInherited
+     * true if the functor should be invoked for each inherited spawnarg (from
+     * the entity class), false if only explicit spawnargs on this particular
+     * entity should be visited.
      */
-    virtual void forEachKeyValue(const KeyValueVisitFunctor& visitor) const = 0;
+    virtual void forEachKeyValue(KeyValueVisitFunc func,
+                                 bool includeInherited = false) const = 0;
 
     // Similar to above, visiting the EntityKeyValue objects itself, not just the string value.
     virtual void forEachEntityKeyValue(const EntityKeyValueVisitFunctor& visitor) = 0;
@@ -158,12 +173,12 @@ public:
     virtual bool isInherited(const std::string& key) const = 0;
 
     /**
-     * Return the list of Key/Value pairs matching the given prefix, case ignored.
+     * \brief Return the list of keyvalues matching the given prefix.
      *
-     * This method performs a search for all spawnargs whose key
-     * matches the given prefix, with a suffix consisting of zero or more
-     * arbitrary characters. For example, if "target" were specified as the
-     * prefix, the list would include "target", "target0", "target127" etc.
+     * This method performs a search for all spawnargs whose key matches the
+     * given prefix, with a suffix consisting of zero or more arbitrary
+     * characters. For example, if "target" were specified as the prefix, the
+     * list would include "target", "target0", "target127" etc.
      *
      * This operation may not have high performance, due to the need to scan
      * for matching names, therefore should not be used in performance-critical
@@ -173,10 +188,20 @@ public:
      * The prefix to search for, interpreted case-insensitively.
      *
      * @return
-     * A list of KeyValue pairs matching the provided prefix. This
-     * list will be empty if there were no matches.
+     * A list of KeyValue pairs matching the provided prefix. This list will be
+     * empty if there were no matches.
      */
-    virtual KeyValuePairs getKeyValuePairs(const std::string& prefix) const = 0;
+    KeyValuePairs getKeyValuePairs(const std::string& prefix) const
+    {
+        KeyValuePairs list;
+
+        forEachKeyValue([&](const std::string& k, const std::string& v) {
+            if (string::istarts_with(k, prefix))
+                list.push_back(std::make_pair(k, v));
+        });
+
+        return list;
+    }
 
     /** greebo: Returns true if the entity is a model. For Doom3, this is
      *          usually true when the classname == "func_static" and
@@ -205,16 +230,54 @@ public:
     virtual void detachObserver(Observer* observer) = 0;
 
 	/**
-	 * Returns true if this entity is of type or inherits from the 
+	 * Returns true if this entity is of type or inherits from the
 	 * given entity class name. className is treated case-sensitively.
 	 */
 	virtual bool isOfType(const std::string& className) = 0;
+
+    /* ENTITY ATTACHMENTS */
+
+    /// Details of an attached entity
+    struct Attachment
+    {
+        /// Entity class of the attached entity
+        std::string eclass;
+
+        /// Vector offset where the attached entity should appear
+        Vector3 offset;
+
+        /// Optional model joint to use as origin
+        std::string joint;
+    };
+
+    /// A functor which can receive Attachment objects
+    using AttachmentFunc = std::function<void(const Attachment&)>;
+
+    /**
+     * \brief Iterate over attached entities, if any.
+     *
+     * Each entity can define one or more attached entities, which should
+     * appear at specific offsets relative to the parent entity. Such attached
+     * entities are for visualisation only, and should not be saved into the
+     * map as genuine map entities.
+     *
+     * \param func
+     * Functor to receive attachment information.
+     */
+    virtual void forEachAttachment(AttachmentFunc func) const = 0;
 };
 
-/// Interface for a INode subclass that contains an Entity
-class IEntityNode :
-    public IRenderEntity,
-    public virtual scene::INode
+/**
+ * \brief Interface for a node which represents an entity.
+ *
+ * As well as providing access to the entity data with getEntity(), every
+ * IEntityNode can clone itself and apply a transformation matrix to its
+ * children (which might be brushes, patches or other entities).
+ */
+class IEntityNode : public IRenderEntity,
+                    public virtual scene::INode,
+                    public scene::Cloneable,
+                    public IMatrixTransform
 {
 public:
     virtual ~IEntityNode() {}
@@ -275,13 +338,13 @@ public:
 typedef std::shared_ptr<ITargetableObject> ITargetableObjectPtr;
 
 /**
-* greebo: The TargetManager keeps track of all ITargetableObjects 
-* in the current scene/map. A TargetManager instance is owned 
+* greebo: The TargetManager keeps track of all ITargetableObjects
+* in the current scene/map. A TargetManager instance is owned
 * by the RootNode. TargetManager instances can be acquired through
 * the EntityCreator interface.
 *
 * Clients acquire a named ITargetableObjectPtr by calling getTarget(). This
-* always succeeds - if the named ITargetableObject is not found, 
+* always succeeds - if the named ITargetableObject is not found,
 * a new, empty one is created.
 *
 *       ITargetableObject object (can be empty)
@@ -363,7 +426,7 @@ public:
 
     virtual bool getFreeObjectRotation() const = 0;
     virtual void setFreeObjectRotation(bool value) = 0;
-    
+
     virtual bool getShowEntityAngles() const = 0;
     virtual void setShowEntityAngles(bool value) = 0;
 

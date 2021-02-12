@@ -12,37 +12,38 @@ namespace entity
 {
 
 EntityNode::EntityNode(const IEntityClassPtr& eclass) :
-	TargetableNode(_entity, *this),
+	TargetableNode(_spawnArgs, *this),
 	_eclass(eclass),
-	_entity(_eclass),
-	_namespaceManager(_entity),
-	_nameKey(_entity),
+	_spawnArgs(_eclass),
+	_namespaceManager(_spawnArgs),
+	_nameKey(_spawnArgs),
 	_renderableName(_nameKey),
 	_modelKey(*this),
-	_keyObservers(_entity),
+	_keyObservers(_spawnArgs),
 	_shaderParms(_keyObservers, _colourKey),
 	_direction(1,0,0)
-{}
+{
+}
 
 EntityNode::EntityNode(const EntityNode& other) :
 	IEntityNode(other),
 	SelectableNode(other),
 	SelectionTestable(other),
 	Namespaced(other),
-	TargetableNode(_entity, *this),
+	TargetableNode(_spawnArgs, *this),
 	Transformable(other),
-	MatrixTransform(other),
-	scene::Cloneable(other),
 	_eclass(other._eclass),
-	_entity(other._entity),
-	_namespaceManager(_entity),
-	_nameKey(_entity),
+	_spawnArgs(other._spawnArgs),
+    _localToParent(other._localToParent),
+	_namespaceManager(_spawnArgs),
+	_nameKey(_spawnArgs),
 	_renderableName(_nameKey),
 	_modelKey(*this),
-	_keyObservers(_entity),
+	_keyObservers(_spawnArgs),
 	_shaderParms(_keyObservers, _colourKey),
 	_direction(1,0,0)
-{}
+{
+}
 
 EntityNode::~EntityNode()
 {
@@ -69,6 +70,9 @@ void EntityNode::construct()
 	addKeyObserver("skin", _skinKeyObserver);
 
 	_shaderParms.addKeyObservers();
+
+    // Construct all attached entities
+    createAttachedEntities();
 }
 
 void EntityNode::constructClone(const EntityNode& original)
@@ -113,6 +117,52 @@ void EntityNode::destruct()
 	TargetableNode::destruct();
 }
 
+void EntityNode::createAttachedEntities()
+{
+    _spawnArgs.forEachAttachment(
+        [this](const Entity::Attachment& a)
+        {
+            // Since we can't yet handle joint positions, ignore this attachment
+            // if it is attached to a joint
+            if (!a.joint.empty())
+                return;
+
+            // Check this is a valid entity class
+            auto cls = GlobalEntityClassManager().findClass(a.eclass);
+            if (!cls)
+            {
+                rWarning() << "EntityNode [" << _eclass->getName()
+                           << "]: cannot attach non-existent entity class '"
+                           << a.eclass << "'\n";
+                return;
+            }
+
+            // Construct and store the attached entity
+            auto attachedEnt = GlobalEntityModule().createEntity(cls);
+            assert(attachedEnt);
+            _attachedEnts.push_back(attachedEnt);
+
+            // Set ourselves as the parent of the attached entity (for
+            // localToParent transforms)
+            attachedEnt->setParent(shared_from_this());
+
+            // Set the attached entity's transform matrix according to the
+            // required offset
+            attachedEnt->localToParent() = Matrix4::getTranslation(a.offset);
+        }
+    );
+}
+
+void EntityNode::transformChanged()
+{
+    Node::transformChanged();
+
+    // Broadcast transformChanged to all attached entities so they can update
+    // their position
+    for (auto attached: _attachedEnts)
+        attached->transformChanged();
+}
+
 void EntityNode::onEntityClassChanged()
 {
 	// By default, we notify the KeyObservers attached to this entity
@@ -134,7 +184,7 @@ void EntityNode::removeKeyObserver(const std::string& key, KeyObserver& observer
 
 Entity& EntityNode::getEntity()
 {
-	return _entity;
+	return _spawnArgs;
 }
 
 void EntityNode::refreshModel()
@@ -201,7 +251,7 @@ void EntityNode::onInsertIntoScene(scene::IMapRootNode& root)
 {
     GlobalCounters().getCounter(counterEntities).increment();
 
-	_entity.connectUndoSystem(root.getUndoChangeTracker());
+	_spawnArgs.connectUndoSystem(root.getUndoChangeTracker());
 	_modelKey.connectUndoSystem(root.getUndoChangeTracker());
 
 	SelectableNode::onInsertIntoScene(root);
@@ -214,7 +264,7 @@ void EntityNode::onRemoveFromScene(scene::IMapRootNode& root)
 	SelectableNode::onRemoveFromScene(root);
 
 	_modelKey.disconnectUndoSystem(root.getUndoChangeTracker());
-	_entity.disconnectUndoSystem(root.getUndoChangeTracker());
+	_spawnArgs.disconnectUndoSystem(root.getUndoChangeTracker());
 
     GlobalCounters().getCounter(counterEntities).decrement();
 }
@@ -257,9 +307,13 @@ scene::INode::Type EntityNode::getNodeType() const
 	return Type::Entity;
 }
 
-void EntityNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+void EntityNode::renderSolid(RenderableCollector& collector,
+                             const VolumeTest& volume) const
 {
-    // Nothing here
+    // Render any attached entities
+    renderAttachments(
+        [&](const scene::INodePtr& n) { n->renderSolid(collector, volume); }
+    );
 }
 
 void EntityNode::renderWireframe(RenderableCollector& collector,
@@ -268,8 +322,14 @@ void EntityNode::renderWireframe(RenderableCollector& collector,
 	// Submit renderable text name if required
 	if (EntitySettings::InstancePtr()->getRenderEntityNames())
     {
-		collector.addRenderable(*getWireShader(), _renderableName, localToWorld());
-	}
+        collector.addRenderable(*getWireShader(), _renderableName,
+                                localToWorld());
+    }
+
+    // Render any attached entities
+    renderAttachments(
+        [&](const scene::INodePtr& n) { n->renderWireframe(collector, volume); }
+    );
 }
 
 void EntityNode::acquireShaders()
@@ -281,8 +341,8 @@ void EntityNode::acquireShaders(const RenderSystemPtr& renderSystem)
 {
     if (renderSystem)
     {
-        _fillShader = renderSystem->capture(_entity.getEntityClass()->getFillShader());
-        _wireShader = renderSystem->capture(_entity.getEntityClass()->getWireShader());
+        _fillShader = renderSystem->capture(_spawnArgs.getEntityClass()->getFillShader());
+        _wireShader = renderSystem->capture(_spawnArgs.getEntityClass()->getWireShader());
     }
     else
     {
@@ -299,6 +359,10 @@ void EntityNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 
 	// The colour key is maintaining a shader object as well
 	_colourKey.setRenderSystem(renderSystem);
+
+    // Make sure any attached entities have a render system too
+    for (IEntityNodePtr node: _attachedEnts)
+        node->setRenderSystem(renderSystem);
 }
 
 std::size_t EntityNode::getHighlightFlags()

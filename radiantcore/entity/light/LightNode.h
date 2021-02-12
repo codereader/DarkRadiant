@@ -114,7 +114,7 @@ public:
 	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const override;
 
     // OpenGLRenderable implementation
-    void render(const RenderInfo& info) const;
+    void render(const RenderInfo& info) const override;
 
 	const Matrix4& rotation() const;
 

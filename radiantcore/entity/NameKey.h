@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "entitylib.h"
 
-#include "Doom3Entity.h"
+#include "SpawnArgs.h"
 
 namespace entity {
 
@@ -32,13 +32,13 @@ class NameKey :
 	public KeyObserver
 {
 	// The reference to the spawnarg structure
-	Doom3Entity& m_entity;
+	SpawnArgs& m_entity;
 
 	// Cached "name" keyvalue
 	std::string _name;
 
 public:
-	NameKey(Doom3Entity& entity) :
+	NameKey(SpawnArgs& entity) :
 		m_entity(entity)
 	{}
 

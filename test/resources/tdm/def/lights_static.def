@@ -1,0 +1,47 @@
+entityDef atdm:static_light_lit_base
+{
+	"inherit"			"func_static"
+	"editor_usage"		"Base class for static lit light fixtures. Don't use."
+	"editor_displayFolder"	"Lights/Base Entities, DoNotUse"
+	// use the tdm_light_holder script object to allow LightsOn(), LightsOff() and LightsToggle():
+	"scriptobject"		"tdm_light_holder"
+	"extinguished"		"0"
+	"AIUse"				"AIUSE_LIGHTSOURCE"
+	"lightType"			"AIUSE_LIGHTTYPE_TORCH"
+}
+
+entityDef atdm:torch_wall_base
+{
+	"inherit"				"atdm:static_light_lit_base"
+	"model"					"models/darkmod/lights/extinguishable/sq_torch.lwo"
+	"editor_usage"			"Base class for lit wall-mounted static torches. Do not use."
+	"editor_displayFolder"		"Lights/Base Entities, DoNotUse"
+
+	"extinguished"			"0"
+	"noshadows_lit"			"1"				// turn off shadow when lit
+	"noshadows"				"1"				// lit, so has no shadows
+
+	// attach the light, so the torch can be re-lit by fire stims
+	"def_attach"			"light_torchflame_small"
+	"pos_attach"			"flame"			// At the attach point called "flame"...
+	"attach_pos_name_1"		"flame"			// ... which is defined here.
+	"name_attach"			"flame"			// Give it a name to pass along spawnargs
+	"attach_pos_origin_1"	"11 0 15"		// Offset the flame
+
+	"skin"					"torch_lit"
+	"skin_lit"				"torch_lit"
+	"skin_unlit"			"torch_unlit"
+}
+
+entityDef atdm:torch_brazier
+{
+	"inherit"				"atdm:torch_wall_base"
+	"editor_usage"			"floor mounted, lit brazier"
+	"editor_displayFolder"	"Lights/Model Lights, Static/Fires"
+	"model"					"models/torch.lwo"
+	"noshadows_lit"			"1"				// turn off shadow when lit
+	"noshadows"				"0"				// unlit, so has shadows
+	"attach_pos_origin_1"	"0 0 10"	// Offset the flame
+    "def_attach"			"light_cageflame_small"
+}
+

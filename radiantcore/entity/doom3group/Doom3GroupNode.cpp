@@ -82,22 +82,22 @@ void Doom3GroupNode::removeSelectedControlPoints()
 {
 	if (_catmullRomEditInstance.isSelected()) {
 		_catmullRomEditInstance.removeSelectedControlPoints();
-		_catmullRomEditInstance.write(curve_CatmullRomSpline, _entity);
+		_catmullRomEditInstance.write(curve_CatmullRomSpline, _spawnArgs);
 	}
 	if (_nurbsEditInstance.isSelected()) {
 		_nurbsEditInstance.removeSelectedControlPoints();
-		_nurbsEditInstance.write(curve_Nurbs, _entity);
+		_nurbsEditInstance.write(curve_Nurbs, _spawnArgs);
 	}
 }
 
 void Doom3GroupNode::insertControlPointsAtSelected() {
 	if (_catmullRomEditInstance.isSelected()) {
 		_catmullRomEditInstance.insertControlPointsAtSelected();
-		_catmullRomEditInstance.write(curve_CatmullRomSpline, _entity);
+		_catmullRomEditInstance.write(curve_CatmullRomSpline, _spawnArgs);
 	}
 	if (_nurbsEditInstance.isSelected()) {
 		_nurbsEditInstance.insertControlPointsAtSelected();
-		_nurbsEditInstance.write(curve_Nurbs, _entity);
+		_nurbsEditInstance.write(curve_Nurbs, _spawnArgs);
 	}
 }
 
@@ -207,11 +207,11 @@ const AABB& Doom3GroupNode::getSelectedComponentsBounds() const {
 void Doom3GroupNode::snapComponents(float snap) {
 	if (_nurbsEditInstance.isSelected()) {
 		_nurbsEditInstance.snapto(snap);
-		_nurbsEditInstance.write(curve_Nurbs, _entity);
+		_nurbsEditInstance.write(curve_Nurbs, _spawnArgs);
 	}
 	if (_catmullRomEditInstance.isSelected()) {
 		_catmullRomEditInstance.snapto(snap);
-		_catmullRomEditInstance.write(curve_CatmullRomSpline, _entity);
+		_catmullRomEditInstance.write(curve_CatmullRomSpline, _spawnArgs);
 	}
 	if (_originInstance.isSelected()) {
 		_d3Group.snapOrigin(snap);

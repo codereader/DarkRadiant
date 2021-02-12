@@ -28,18 +28,18 @@ add_library(radiantcore MODULE
             eclass/EClassColourManager.cpp
             eclass/EClassManager.cpp
             entity/AngleKey.cpp
+            entity/AttachmentData.cpp
             entity/curve/CurveCatmullRom.cpp
             entity/curve/Curve.cpp
             entity/curve/CurveEditInstance.cpp
             entity/curve/CurveNURBS.cpp
-            entity/Doom3Entity.cpp
+            entity/SpawnArgs.cpp
             entity/doom3group/Doom3Group.cpp
             entity/doom3group/Doom3GroupNode.cpp
             entity/eclassmodel/EclassModelNode.cpp
             entity/EntityModule.cpp
             entity/EntityNode.cpp
             entity/EntitySettings.cpp
-            entity/generic/GenericEntity.cpp
             entity/generic/GenericEntityNode.cpp
             entity/KeyValue.cpp
             entity/KeyValueObserver.cpp

@@ -9,3 +9,127 @@ entityDef light
 	"editor_displayFolder"		"Lights/Sources"
 	"spawnclass"				"idLight"
 }
+
+entityDef atdm:light_base
+{
+	"inherit"					"light"
+	"editor_light"				"1"
+	"editor_usage"				"Base class for all TDM lights, extinguishable or not."
+    "editor_displayFolder"		"Lights/Light Sources"
+
+	// For AI context driven decision making
+	"AIUse"						"AIUSE_LIGHTSOURCE"
+	"shouldBeOn"				"0"
+
+	"noshadows"					"0"
+	"nospecular"				"0"
+	"nodiffuse"					"0"
+}
+
+entitydef light_extinguishable
+{
+	"inherit"	"atdm:light_base"
+    "editor_displayFolder"		"Lights/Base Entities, DoNotUse"
+	"clipmodel_contents" "131072" // CONTENTS_RESPONSE
+
+	"mins"		"-6 -6 -6"
+	"maxs"		"6 6 6"
+
+	"scriptobject"	"light_ext"
+
+	"editor_usage"			"Extinguishable light flame that is not randomly moving.  Note this is to be attached to the top of a separate torch entity, because its bounds are used to determine the bounds of the torch flame, not the whole torch."
+	"editor_model model_lit"		"Set to the model name the light should display when lit (usually a flame particle)."
+	"editor_model model_extinguished"	"Set to the model name the light should display when just extinguished (usually a steam particle)."
+	"editor_bool extinguished"	"Set to 1 or 0 based on whether the light starts out extinguished or lit.  Default is lit (0)."
+	"editor_snd snd_lit"		"Sound the light plays while lit (e.g., roaring torch sound)."
+	"editor_snd snd_extinguished"	"Sound the light plays when just extinguished."
+	"editor_var ext_hide_delay"	"Seconds to wait before hiding the model after light is extinguished.  This should be long enough to insure that the extinguish particle and sound play to completion.  Default is 10 seconds."
+
+	"extinguished"		"0"
+	"ext_hide_delay"	"6"
+	"lightType"			"AIUSE_LIGHTTYPE_TORCH"  // grayman #2603
+
+    // stim/response:
+
+	"sr_class_1" "R"
+	"sr_type_1" "STIM_WATER"
+	"sr_state_1" "1"
+	"sr_script_STIM_WATER" "response_extinguish"
+
+	"sr_class_2" "R"
+	"sr_type_2" "STIM_GAS"
+	"sr_state_2" "1"
+	"sr_script_STIM_GAS" "response_extinguish"
+
+	"sr_class_3" "R"
+	"sr_type_3" "STIM_FIRE"
+	"sr_state_3" "1"
+	"sr_script_STIM_FIRE" "response_ignite"
+
+	"sr_class_4"		"S"
+	"sr_type_4"			"STIM_FIRE"
+	"sr_state_4"		"1"
+	"sr_radius_4"		"10"
+	"sr_magnitude_4"	"1"
+	"sr_falloffexponent_4" "0"
+    // fire stim only every half second
+	"sr_time_interval_4" "518"
+
+	// This stim can be turned on to have AI notice the light is off
+	"sr_class_5"		"S"
+	"sr_type_5"			"STIM_VISUAL"
+	"sr_state_5"		"1"
+	"sr_radius_5"		"500"
+	"sr_time_interval_5" "977" // every second or so
+
+    // SteveL #4201 Tweaking blast-extinguish effects
+    "canBeBlownOut"     "0"
+    "editor_bool canBeBlownOut"	"Whether the light gets blown out by blasts, e.g. a fire arrow explosion."
+    "editor_setKeyValue canBeBlownOut" "0"
+}
+
+entitydef light_torchflame_small
+{
+	"inherit"	            "light_extinguishable"
+
+	"mins"		            "-6 -6 -6"
+	"maxs"		            "6 6 24"
+
+    "editor_displayFolder"		"Lights/Light Sources/Torch Flames"
+	"editor_usage"	        "A small, dimmer torch flame.  Light pulses but is static.  For moving light, add 'inherit' 'light_extinguishable_moving' to entity.  "
+
+    "model_lit"				"torchflame_new01_small.prt"
+	"model_extinguished"	"tdm_smoke_torchout.prt"
+
+	"snd_lit"				"fire_torch_small"
+	"snd_extinguished"		"machine_steam01"
+
+	"falloff"               "0"
+	"texture" 				"lights/biground_torchflicker"
+
+	"_color"                "0.9 0.6 0.40"
+	"light_radius"			"240 240 240"        //larger than other similar flames to be consistent with older maps
+}
+
+entitydef light_cageflame_small     // casts shadows with bars
+{
+	"inherit"	            "light_extinguishable"
+
+	"mins"		            "-6 -6 -6"
+	"maxs"		            "6 6 24"
+
+    "editor_displayFolder"		"Lights/Light Sources/Torch Flames"
+	"editor_usage"	        "Torch-sized flame for cage-lights, casts faint bar shadows.  Light pulses but is static.  For moving light, add 'inherit' 'light_extinguishable_moving' to entity.  "
+
+	"model_lit"				"torchflame_new01_small.prt"
+	"model_extinguished"	"tdm_smoke_torchout.prt"
+
+	"snd_lit"				"fire_torch_small"
+	"snd_extinguished"		"machine_steam01"
+
+	"falloff"               "0"
+	"texture" 				"lights/8pt_cageflicker"
+
+	"_color"                "0.9 0.6 0.40"
+	"light_radius"			"230 230 250"
+}

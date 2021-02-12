@@ -26,10 +26,8 @@ protected:
         fs::copy(sourcePath, targetPath);
     }
 
-    void TearDown() override
+    void postShutdown() override
     {
-        RadiantTest::TearDown();
-
         if (checkAfterShutdown)
         {
             checkAfterShutdown();
@@ -41,11 +39,9 @@ class FavouritesTestWithLegacyFavourites :
     public FavouritesTest
 {
 public:
-    void SetUp() override
+    void preStartup() override
     {
         copyUserXmlFileToSettingsPath("old_mediabrowser_favourites.xml");
-
-        RadiantTest::SetUp();
     }
 };
 
@@ -55,7 +51,7 @@ TEST_F(FavouritesTest, AddingAndRemovingFavourites)
 
     // Add caulk
     GlobalFavouritesManager().addFavourite(decl::Type::Material, "textures/common/caulk");
-    
+
     EXPECT_EQ(GlobalFavouritesManager().getFavourites(decl::Type::Material).size(), 1);
     EXPECT_EQ(GlobalFavouritesManager().getFavourites(decl::Type::Material).count("textures/common/caulk"), 1);
     EXPECT_TRUE(GlobalFavouritesManager().isFavourite(decl::Type::Material, "textures/common/caulk"));

@@ -78,10 +78,12 @@ public:
 	virtual void post(const INodePtr& node) {}
 };
 
-/** 
- * greebo: Abstract definition of a Node, a basic element
- * of the scenegraph. All nodes share a certain set of 
- * functionality, like Layer functionality or being a Renderable.
+/**
+ * \brief Main interface for a Node, a basic element of the scenegraph.
+ *
+ * All nodes share a certain set of functionality, such as being placed in
+ * layers, being able to render themselves, and being able to hold and
+ * transform a list of child nodes.
  */
 class INode :
 	public Layered,
@@ -116,7 +118,7 @@ public:
 	 * Set the scenegraph this node is belonging to. This is usually
 	 * set by the scenegraph itself during insertion.
 	 */
-	virtual void setSceneGraph(const GraphPtr& sceneGraph) = 0; 
+	virtual void setSceneGraph(const GraphPtr& sceneGraph) = 0;
 
 	/** greebo: Returns true, if the node is the root element
 	 * 			of the scenegraph.
@@ -166,7 +168,7 @@ public:
 	virtual bool hasChildNodes() const = 0;
 
 	/**
-	 * greebo: Traverses this node and all child nodes (recursively) 
+	 * greebo: Traverses this node and all child nodes (recursively)
 	 * using the given visitor.
 	 *
 	 * Note: replaces the legacy Node_traverseSubgraph() method.
@@ -187,11 +189,11 @@ public:
 
 	/**
 	 * Call the given functor for each child node, depth first
-	 * This is a simpler alternative to the usual traverse() method 
+	 * This is a simpler alternative to the usual traverse() method
 	 * which provides pre() and post() methods and more control about
-	 * which nodes to traverse and. This forEachNode() routine simply 
+	 * which nodes to traverse and. This forEachNode() routine simply
 	 * hits every child node including their children.
-	 * 
+	 *
 	 * @returns: true if the functor returned false on any of the
 	 * visited nodes. The return type is used to pass the stop signal
 	 * up the stack during traversal.
@@ -236,7 +238,13 @@ public:
 	// Returns the bounds in world coordinates
 	virtual const AABB& worldAABB() const = 0;
 
-	// Returns the transformation from local to world coordinates
+	/**
+     * \brief Return the transformation from local to world coordinates
+     *
+     * This represents the final transformation from this node's own coordinate
+     * space into world space, including any transformations inherited from
+     * parent nodes.
+     */
 	virtual const Matrix4& localToWorld() const = 0;
 
 	// Undo/Redo events - some nodes need to do extra legwork after undo or redo
@@ -244,7 +252,7 @@ public:
 	// not by the UndoSystem itself, at least not yet.
 	virtual void onPostUndo() {}
 	virtual void onPostRedo() {}
-    
+
     // Called during recursive transform changed, but only by INodes themselves
     virtual void transformChangedLocal() = 0;
 };

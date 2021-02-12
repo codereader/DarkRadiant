@@ -101,10 +101,6 @@ class Doom3EntityClass
     // The empty attribute
     EntityClassAttribute _emptyAttribute;
 
-    // Helper object to manage attached entities
-    class Attachments;
-    std::unique_ptr<Attachments> _attachments;
-
     // The time this def has been parsed
     std::size_t _parseStamp;
 
@@ -203,7 +199,7 @@ public:
     /**
      * Return the mod name.
      */
-    std::string getModName() const {
+    std::string getModName() const override {
         return _modName;
     }
 

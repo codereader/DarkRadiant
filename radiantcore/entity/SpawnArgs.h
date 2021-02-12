@@ -1,27 +1,24 @@
 #pragma once
 
+#include "AttachmentData.h"
+
 #include <vector>
 #include "KeyValue.h"
 #include <memory>
 
-/** greebo: This is the implementation of the class Entity.
- *
- * A Doom3Entity basically just keeps track of all the
- * spawnargs and delivers them on request, taking the
- * inheritance tree (EntityClasses) into account.
- *
- * It's possible to attach observers to this entity to get
- * notified upon key/value changes.
- */
 namespace entity {
 
-/// \brief An unsorted list of key/value pairs.
-///
-/// - Notifies observers when a pair is inserted or removed.
-/// - Provides undo support through the global undo system.
-/// - New keys are appended to the end of the list.
-class Doom3Entity :
-	public Entity
+/**
+ * \brief Implementation of the class Entity.
+ *
+ * A SpawnArgs basically just keeps track of all the spawnargs and delivers
+ * them on request, taking the inheritance tree (EntityClasses) into account.
+ * The actual rendering and entity behaviour is handled by the EntityNode.
+ *
+ * It's possible to attach observers to this entity to get notified upon
+ * key/value changes.
+ */
+class SpawnArgs: public Entity
 {
 	IEntityClassPtr _eclass;
 
@@ -44,42 +41,31 @@ class Doom3Entity :
 
 	bool _isContainer;
 
+    // Store attachment information
+    AttachmentData _attachments;
+
 public:
 	// Constructor, pass the according entity class
-	Doom3Entity(const IEntityClassPtr& eclass);
+	SpawnArgs(const IEntityClassPtr& eclass);
 
 	// Copy constructor
-	Doom3Entity(const Doom3Entity& other);
+	SpawnArgs(const SpawnArgs& other);
 
 	void importState(const KeyValues& keyValues);
 
     /* Entity implementation */
 	void attachObserver(Observer* observer) override;
 	void detachObserver(Observer* observer) override;
-
 	void connectUndoSystem(IMapFileChangeTracker& changeTracker);
     void disconnectUndoSystem(IMapFileChangeTracker& changeTracker);
-
-	/** Return the EntityClass associated with this entity.
-	 */
 	IEntityClassPtr getEntityClass() const override;
-
-	void forEachKeyValue(const KeyValueVisitFunctor& func) const override;
+    void forEachKeyValue(KeyValueVisitFunc func,
+                         bool includeInherited) const override;
     void forEachEntityKeyValue(const EntityKeyValueVisitFunctor& visitor) override;
-
-	/** Set a keyvalue on the entity.
-	 */
 	void setKeyValue(const std::string& key, const std::string& value) override;
-
-	/** Retrieve a keyvalue from the entity.
-	 */
 	std::string getKeyValue(const std::string& key) const override;
-
-	// Returns true if the given key is inherited
 	bool isInherited(const std::string& key) const override;
-
-	// Get all KeyValues matching the given prefix.
-	KeyValuePairs getKeyValuePairs(const std::string& prefix) const override;
+    void forEachAttachment(AttachmentFunc func) const override;
 
 	bool isWorldspawn() const override;
 	bool isContainer() const override;
@@ -95,6 +81,10 @@ public:
 	bool isOfType(const std::string& className) override;
 
 private:
+
+    // Parse attachment information from def_attach and related keys (which are
+    // most likely on the entity class, not the entity itself)
+    void parseAttachments();
 
     // Notification functions
 	void notifyInsert(const std::string& key, KeyValue& value);

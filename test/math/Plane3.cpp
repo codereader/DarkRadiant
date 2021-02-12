@@ -12,7 +12,7 @@ namespace
     const double ONE_OVER_ROOT_TWO = 1.0 / sqrt(2.0);
 }
 
-TEST(Plane3, ConstructPlane)
+TEST(MathTest, ConstructPlane)
 {
     Plane3 plane(1, 0, 0, 4);
     EXPECT_EQ(plane.normal(), Vector3(1, 0, 0));
@@ -27,7 +27,7 @@ TEST(Plane3, ConstructPlane)
     EXPECT_EQ(copy.dist(), 19.23);
 }
 
-TEST(Plane3, TranslatePlaneDirectly)
+TEST(MathTest, TranslatePlaneDirectly)
 {
     // Basic plane
     Plane3 plane(1, 0, 0, 2.5);
@@ -63,7 +63,7 @@ TEST(Plane3, TranslatePlaneDirectly)
     EXPECT_NEAR(p3_matrix.normal().z(), p3_trans.normal().z(), EPSILON);
 }
 
-TEST(Plane3, TranslatePlaneWithMatrix)
+TEST(MathTest, TranslatePlaneWithMatrix)
 {
     // Plane for y = 5
     Plane3 plane(0, 1, 0, 5);
@@ -97,7 +97,7 @@ TEST(Plane3, TranslatePlaneWithMatrix)
     EXPECT_EQ(movedZ.dist(), 0);
 }
 
-TEST(Plane3, RotatePlane)
+TEST(MathTest, RotatePlane)
 {
     // A plane at 5 in the Y direction
     Plane3 plane(0, 1, 0, 5);
@@ -113,7 +113,7 @@ TEST(Plane3, RotatePlane)
     EXPECT_EQ(rotated.normal().z(), 0);
 }
 
-TEST(Plane3, ScalePlane)
+TEST(MathTest, ScalePlane)
 {
     Plane3 plane(1, -1, 0, 3.5);
 
@@ -128,7 +128,7 @@ TEST(Plane3, ScalePlane)
     EXPECT_EQ(scaled.dist(), 28);
 }
 
-TEST(Plane3, TransformPlane)
+TEST(MathTest, TransformPlane)
 {
     // Check transform with some randomly-generated values with no particular
     // geometric meaning

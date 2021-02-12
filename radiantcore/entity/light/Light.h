@@ -12,7 +12,7 @@
 #include "../RotationKey.h"
 #include "../ColourKey.h"
 #include "../ModelKey.h"
-#include "../Doom3Entity.h"
+#include "../SpawnArgs.h"
 #include "../KeyObserverDelegate.h"
 
 #include "Renderables.h"
@@ -55,7 +55,7 @@ class Light: public RendererLight
 	LightNode& _owner;
 
     // The parent entity object that uses this light
-	Doom3Entity& _entity;
+	SpawnArgs& _entity;
 
 	OriginKey m_originKey;
 	// The "working" version of the origin
@@ -140,10 +140,10 @@ class Light: public RendererLight
 	KeyObserverDelegate _lightEndObserver;
 	KeyObserverDelegate _lightTextureObserver;
 
+private:
+
 	void construct();
 	void destroy();
-
-private:
 
     // Ensure the start and end points are set to sensible values
 	void checkStartEnd();
@@ -172,7 +172,7 @@ public:
      * \brief
      * Main constructor.
      */
-	Light(Doom3Entity& entity,
+	Light(SpawnArgs& entity,
 		  LightNode& owner,
           const Callback& transformChanged,
           const Callback& boundsChanged,
@@ -184,7 +184,7 @@ public:
      */
 	Light(const Light& other,
 		  LightNode& owner,
-          Doom3Entity& entity,
+          SpawnArgs& entity,
           const Callback& transformChanged,
           const Callback& boundsChanged,
 		  const Callback& lightRadiusChanged);
@@ -192,7 +192,7 @@ public:
 	~Light();
 
 	const AABB& localAABB() const;
-	AABB lightAABB() const;
+	AABB lightAABB() const override;
 
 	// Note: move this upwards
 	mutable Matrix4 m_projectionOrientation;
@@ -246,7 +246,6 @@ public:
 
     // RendererLight implementation
     const IRenderEntity& getLightEntity() const override;
-    const Vector3& worldOrigin() const override;
     Matrix4 getLightTextureTransformation() const override;
     Vector3 getLightOrigin() const override;
     const ShaderPtr& getShader() const override;

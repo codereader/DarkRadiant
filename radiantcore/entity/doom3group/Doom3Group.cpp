@@ -25,7 +25,7 @@ Doom3Group::Doom3Group(
 		Doom3GroupNode& owner,
 		const Callback& boundsChanged) :
 	_owner(owner),
-	_entity(_owner._entity),
+	_spawnArgs(_owner._spawnArgs),
 	m_originKey(std::bind(&Doom3Group::originChanged, this)),
 	m_origin(ORIGINKEY_IDENTITY),
 	m_nameOrigin(0,0,0),
@@ -42,7 +42,7 @@ Doom3Group::Doom3Group(const Doom3Group& other,
 		Doom3GroupNode& owner,
 		const Callback& boundsChanged) :
 	_owner(owner),
-	_entity(_owner._entity),
+	_spawnArgs(_owner._spawnArgs),
 	m_originKey(std::bind(&Doom3Group::originChanged, this)),
 	m_origin(other.m_origin),
 	m_nameOrigin(other.m_nameOrigin),
@@ -126,7 +126,7 @@ void Doom3Group::testSelect(Selector& selector, SelectionTest& test, SelectionIn
 void Doom3Group::snapOrigin(float snap)
 {
 	m_originKey.snap(snap);
-	m_originKey.write(_entity);
+	m_originKey.write(_spawnArgs);
 	m_renderOrigin.updatePivot();
 }
 
@@ -198,7 +198,7 @@ void Doom3Group::scale(const Vector3& scale)
 void Doom3Group::snapto(float snap)
 {
 	m_originKey.snap(snap);
-	m_originKey.write(_entity);
+	m_originKey.write(_spawnArgs);
 }
 
 void Doom3Group::revertTransform()
@@ -221,7 +221,7 @@ void Doom3Group::revertTransform()
 void Doom3Group::freezeTransform()
 {
 	m_originKey.set(m_origin);
-	m_originKey.write(_entity);
+	m_originKey.write(_spawnArgs);
 
 	if (!isModel())
 	{
@@ -233,37 +233,37 @@ void Doom3Group::freezeTransform()
 	else
 	{
 		m_rotationKey.m_rotation = m_rotation;
-		m_rotationKey.write(&_entity, isModel());
+		m_rotationKey.write(&_spawnArgs, isModel());
 	}
 
 	m_curveNURBS.freezeTransform();
-	m_curveNURBS.saveToEntity(_entity);
+	m_curveNURBS.saveToEntity(_spawnArgs);
 
 	m_curveCatmullRom.freezeTransform();
-	m_curveCatmullRom.saveToEntity(_entity);
+	m_curveCatmullRom.saveToEntity(_spawnArgs);
 }
 
 void Doom3Group::appendControlPoints(unsigned int numPoints) {
 	if (!m_curveNURBS.isEmpty()) {
 		m_curveNURBS.appendControlPoints(numPoints);
-		m_curveNURBS.saveToEntity(_entity);
+		m_curveNURBS.saveToEntity(_spawnArgs);
 	}
 	if (!m_curveCatmullRom.isEmpty()) {
 		m_curveCatmullRom.appendControlPoints(numPoints);
-		m_curveCatmullRom.saveToEntity(_entity);
+		m_curveCatmullRom.saveToEntity(_spawnArgs);
 	}
 }
 
 void Doom3Group::convertCurveType() {
 	if (!m_curveNURBS.isEmpty() && m_curveCatmullRom.isEmpty()) {
-		std::string keyValue = _entity.getKeyValue(curve_Nurbs);
-		_entity.setKeyValue(curve_Nurbs, "");
-		_entity.setKeyValue(curve_CatmullRomSpline, keyValue);
+		std::string keyValue = _spawnArgs.getKeyValue(curve_Nurbs);
+		_spawnArgs.setKeyValue(curve_Nurbs, "");
+		_spawnArgs.setKeyValue(curve_CatmullRomSpline, keyValue);
 	}
 	else if (!m_curveCatmullRom.isEmpty() && m_curveNURBS.isEmpty()) {
-		std::string keyValue = _entity.getKeyValue(curve_CatmullRomSpline);
-		_entity.setKeyValue(curve_CatmullRomSpline, "");
-		_entity.setKeyValue(curve_Nurbs, keyValue);
+		std::string keyValue = _spawnArgs.getKeyValue(curve_CatmullRomSpline);
+		_spawnArgs.setKeyValue(curve_CatmullRomSpline, "");
+		_spawnArgs.setKeyValue(curve_Nurbs, keyValue);
 	}
 }
 
@@ -323,7 +323,7 @@ void Doom3Group::setIsModel(bool newValue) {
  */
 void Doom3Group::updateIsModel()
 {
-	if (m_modelKey != m_name && !_entity.isWorldspawn())
+	if (m_modelKey != m_name && !_spawnArgs.isWorldspawn())
 	{
 		setIsModel(true);
 

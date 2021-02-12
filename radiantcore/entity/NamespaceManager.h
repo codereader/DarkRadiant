@@ -4,7 +4,7 @@
 #include "inamespace.h"
 
 #include <map>
-#include "Doom3Entity.h"
+#include "SpawnArgs.h"
 #include "KeyValueObserver.h"
 #include "NameKeyObserver.h"
 #include "util/Noncopyable.h"
@@ -20,7 +20,7 @@ private:
 	INamespace* _namespace;
 
 	// The attached entity
-	Doom3Entity& _entity;
+	SpawnArgs& _entity;
 
 	// All the observed key values of the entity get remembered
 	// This prevents having to traverse all the keyvalues again when changing namespaces
@@ -40,7 +40,7 @@ private:
 	std::string _nameKey;
 
 public:
-	NamespaceManager(Doom3Entity& entity);
+	NamespaceManager(SpawnArgs& entity);
 
 	~NamespaceManager();
 

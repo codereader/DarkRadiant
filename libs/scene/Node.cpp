@@ -440,11 +440,6 @@ void Node::transformChangedLocal()
 	_transformMutex = false;
 	_boundsChanged = true;
 	_childBoundsChanged = true;
-
-	if (_transformChangedCallback)
-	{
-		_transformChangedCallback();
-	}
 }
 
 void Node::transformChanged()
@@ -460,10 +455,6 @@ void Node::transformChanged()
 	});
 
 	boundsChanged();
-}
-
-void Node::setTransformChangedCallback(const Callback& callback) {
-	_transformChangedCallback = callback;
 }
 
 RenderSystemPtr Node::getRenderSystem() const
