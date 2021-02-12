@@ -708,7 +708,7 @@ void CamWnd::Cam_Draw()
         glEnable(GL_LIGHT0);
     }
 
-    if (getCameraSettings()->gridEnabled())
+    if (getCameraSettings()->gridEnabled() && getCameraSettings()->getRenderMode() != RENDER_MODE_LIGHTING)
     {
         drawGrid();
     }
