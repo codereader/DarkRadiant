@@ -234,6 +234,8 @@
     <ClCompile Include="..\..\radiant\ui\common\DefinitionView.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\DialogManager.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\MaterialDefinitionView.cpp" />
+    <ClCompile Include="..\..\radiant\ui\common\MaterialPopulator.cpp" />
+    <ClCompile Include="..\..\radiant\ui\common\MaterialTreeView.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\SoundChooser.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\SoundShaderDefinitionView.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\SoundShaderPreview.cpp" />
@@ -419,6 +421,8 @@
     <ClInclude Include="..\..\radiant\ui\common\DefinitionView.h" />
     <ClInclude Include="..\..\radiant\ui\common\DialogManager.h" />
     <ClInclude Include="..\..\radiant\ui\common\MaterialDefinitionView.h" />
+    <ClInclude Include="..\..\radiant\ui\common\MaterialPopulator.h" />
+    <ClInclude Include="..\..\radiant\ui\common\MaterialTreeView.h" />
     <ClInclude Include="..\..\radiant\ui\common\SoundChooser.h" />
     <ClInclude Include="..\..\radiant\ui\common\SoundShaderDefinitionView.h" />
     <ClInclude Include="..\..\radiant\ui\common\SoundShaderPreview.h" />

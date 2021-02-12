@@ -1,6 +1,6 @@
 #pragma once
 
-#include "wxutil/dataview/ResourceTreeView.h"
+#include "ui/common/MaterialTreeView.h"
 #include "wxutil/menu/IconTextMenuItem.h"
 #include "wxutil/dataview/TreeModelFilter.h"
 
@@ -8,28 +8,10 @@ namespace ui
 {
 
 class MediaBrowserTreeView :
-    public wxutil::ResourceTreeView
+    public MaterialTreeView
 {
 public:
-    struct TreeColumns :
-        public wxutil::ResourceTreeView::Columns
-    {
-        // We just need one additional column to store the "is other materials folder" flag
-        TreeColumns() :
-            isOtherMaterialsFolder(add(wxutil::TreeModel::Column::Boolean))
-        {}
-
-        wxutil::TreeModel::Column isOtherMaterialsFolder;
-    };
-
-public:
     MediaBrowserTreeView(wxWindow* parent);
-
-    const TreeColumns& Columns() const;
-    void SetTreeMode(TreeMode mode) override;
-
-    // Loads all the materials
-    void Populate();
 
 protected:
     void PopulateContextMenu(wxutil::PopupMenu& popupMenu) override;

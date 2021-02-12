@@ -694,6 +694,12 @@
     <ClCompile Include="..\..\radiant\ui\materials\MaterialEditor.cpp">
       <Filter>src\ui\materials</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\common\MaterialTreeView.cpp">
+      <Filter>src\ui\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\common\MaterialPopulator.cpp">
+      <Filter>src\ui\common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h">
@@ -1322,6 +1328,12 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\materials\MaterialEditor.h">
       <Filter>src\ui\materials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\common\MaterialTreeView.h">
+      <Filter>src\ui\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\common\MaterialPopulator.h">
+      <Filter>src\ui\common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
