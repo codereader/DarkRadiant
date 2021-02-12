@@ -11,7 +11,7 @@ namespace eclass
 
 /**
  * Manages the entity class colour overrides that are applied
- * to certain eclasses as defined in the currently active 
+ * to certain eclasses as defined in the currently active
  * colour scheme.
  */
 class IColourManager :
@@ -28,7 +28,7 @@ public:
     virtual void addOverrideColour(const std::string& eclass, const Vector3& colour) = 0;
 
     // Applies a possible colour override to the given entity class
-    virtual void applyColours(const IEntityClassPtr& eclass) = 0;
+    virtual void applyColours(IEntityClass& eclass) = 0;
 
     // Visit each override definition with the given functor
     virtual void foreachOverrideColour(const std::function<void(const std::string&, const Vector3&)>& functor) = 0;

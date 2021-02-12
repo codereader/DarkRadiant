@@ -402,6 +402,31 @@ TEST_F(EntityTest, LightLocalToWorldFromOrigin)
     EXPECT_EQ(light->localToWorld(), Matrix4::getTranslation(ORIGIN));
 }
 
+TEST_F(EntityTest, LightWireframeShader)
+{
+    auto light = createByClassName("light");
+
+    // Initially there is no shader because there is no rendersystem
+    auto wireSh = light->getWireShader();
+    EXPECT_FALSE(wireSh);
+
+    // Set a render system
+    RenderSystemPtr backend = GlobalRenderSystemFactory().createRenderSystem();
+    light->setRenderSystem(backend);
+
+    // There should be a shader now
+    auto newWireSh = light->getWireShader();
+    ASSERT_TRUE(newWireSh);
+
+    // Get the material for the shader. Since this is a simple built-in
+    // wireframe shader, this should be an internally-constructed material based
+    // on the entity colour
+    auto material = newWireSh->getMaterial();
+    ASSERT_TRUE(material);
+    EXPECT_TRUE(material->IsDefault());
+    EXPECT_EQ(material->getName(), "<0.000000 1.000000 0.000000>");
+}
+
 TEST_F(EntityTest, FuncStaticLocalToWorld)
 {
     auto funcStatic = createByClassName("func_static");

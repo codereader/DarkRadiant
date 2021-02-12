@@ -58,7 +58,7 @@ void WavefrontExporter::writeObjFile(std::ostream& stream, const std::string& mt
 	// Count exported vertices. Exported indices are 1-based though.
 	std::size_t vertexCount = 0;
 
-	// Each surface is exported as group. 
+	// Each surface is exported as group.
 	for (const auto& pair : _surfaces)
 	{
 		const Surface& surface = pair.second;
@@ -92,7 +92,7 @@ void WavefrontExporter::writeObjFile(std::ostream& stream, const std::string& mt
 
 		// Every three indices form a triangle. Indices are 1-based so add +1 to each index
 		for (std::size_t i = 0; i + 2 < surface.indices.size(); i += 3)
-		{ 
+		{
 			std::size_t index1 = vertBaseIndex + static_cast<std::size_t>(surface.indices[i+0]) + 1;
 			std::size_t index2 = vertBaseIndex + static_cast<std::size_t>(surface.indices[i+1]) + 1;
 			std::size_t index3 = vertBaseIndex + static_cast<std::size_t>(surface.indices[i+2]) + 1;
@@ -122,10 +122,10 @@ void WavefrontExporter::writeMaterialLib(std::ostream& stream)
 
         auto material = GlobalMaterialManager().getMaterialForName(surface.materialName);
 
-        const auto& layers = material->getAllLayers();
+        const auto layers = material->getAllLayers();
 
         stream << "newmtl " << surface.materialName << std::endl;
-        stream << "Ns 0.0" << std::endl; // shininess 
+        stream << "Ns 0.0" << std::endl; // shininess
         stream << "Ka 1.000000 1.000000 1.000000" << std::endl; // ambient colour
         stream << "Kd 1.000000 1.000000 1.000000" << std::endl; // diffuse colour
         stream << "Ks 1.000000 1.000000 1.000000" << std::endl; // specular colour

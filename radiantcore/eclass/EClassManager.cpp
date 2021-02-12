@@ -66,7 +66,7 @@ IEntityClassPtr EClassManager::findOrInsert(const std::string& name, bool has_br
     eclass = Doom3EntityClass::create(lName, true);
 
     // Any overrides should also apply to entityDefs that are crated on the fly
-    GlobalEclassColourManager().applyColours(eclass);
+    GlobalEclassColourManager().applyColours(*eclass);
 
     // Try to insert the class
     return insertUnique(eclass);
@@ -204,7 +204,7 @@ void EClassManager::applyColours()
 
 void EClassManager::realise()
 {
-	if (_realised) 
+	if (_realised)
     {
 		return; // nothing to do anymore
 	}
@@ -338,7 +338,7 @@ void EClassManager::shutdownModule()
 
 	// Unrealise ourselves and wait for threads to finish
 	unrealise();
-	
+
 	// Don't notify anyone anymore
 	_defsReloadedSignal.clear();
 
@@ -366,7 +366,7 @@ void EClassManager::onEclassOverrideColourChanged(const std::string& eclass, boo
     }
     else
     {
-        GlobalEclassColourManager().applyColours(foundEclass->second);
+        GlobalEclassColourManager().applyColours(*foundEclass->second);
     }
 }
 
@@ -374,7 +374,7 @@ void EClassManager::onEclassOverrideColourChanged(const std::string& eclass, boo
 void EClassManager::reloadDefsCmd(const cmd::ArgumentList& args)
 {
 	radiant::ScopedLongRunningOperation operation(_("Reloading Defs"));
-	
+
     reloadDefs();
 }
 

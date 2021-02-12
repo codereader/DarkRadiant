@@ -40,18 +40,41 @@ public:
 	 * Constructor. Sets the name and the ShaderDefinition to use.
 	 */
 	CShader(const std::string& name, const ShaderDefinition& definition);
-
 	~CShader();
 
     /* Material implementation */
-
-    int getSortRequest() const;
-    float getPolygonOffset() const;
-	TexturePtr getEditorImage();
-	bool isEditorImageNoTex();
-
-	// Return the light falloff texture (Z dimension).
-	TexturePtr lightFalloffImage();
+    int getSortRequest() const override;
+    float getPolygonOffset() const override;
+	TexturePtr getEditorImage() override;
+	bool isEditorImageNoTex() override;
+	TexturePtr lightFalloffImage() override;
+	std::string getName() const override;
+	bool IsInUse() const override;
+	void SetInUse(bool bInUse) override;
+	int getMaterialFlags() const override;
+	bool IsDefault() const override;
+	const char* getShaderFileName() const override;
+    const vfs::FileInfo* getShaderFileInfo() const override;
+	CullType getCullType() const override;
+	ClampType getClampType() const override;
+	int getSurfaceFlags() const override;
+	SurfaceType getSurfaceType() const override;
+	DeformType getDeformType() const override;
+	int getSpectrum() const override;
+	DecalInfo getDecalInfo() const override;
+	Coverage getCoverage() const override;
+	std::string getDescription() const override;
+	std::string getDefinition() override;
+	bool isAmbientLight() const override;
+	bool isBlendLight() const override;
+	bool isFogLight() const override;
+	bool lightCastsShadows() const override;
+	bool surfaceCastsShadow() const override;
+	bool isDrawn() const override;
+	bool isDiscrete() const override;
+	bool isVisible() const override;
+	void setVisible(bool visible) override;
+    ShaderLayerVector getAllLayers() const;
 
 	/**
 	 * Return the name of the light falloff texture for use with this shader.
@@ -59,52 +82,6 @@ public:
 	 * the defaultPointLight shader.
 	 */
 	std::string getFalloffName() const;
-
-	/*
-	 * Return name of shader.
-	 */
-	std::string getName() const;
-
-	bool IsInUse() const;
-
-	void SetInUse(bool bInUse);
-
-	// get the shader flags
-	int getMaterialFlags() const;
-
-	// test if it's a true shader, or a default shader created to wrap around a texture
-	bool IsDefault() const;
-
-	// get the cull type
-	CullType getCullType() const;
-
-	// Clamp type
-	ClampType getClampType() const;
-
-	int getSurfaceFlags() const;
-
-	SurfaceType getSurfaceType() const;
-
-	// Deform types
-	DeformType getDeformType() const;
-
-	// Get the spectrum, -1 is "not defined"
-	int getSpectrum() const;
-
-	const DecalInfo& getDecalInfo() const;
-
-	Coverage getCoverage() const;
-
-	// get shader file name (ie the file where this one is defined)
-	const char* getShaderFileName() const;
-
-    const vfs::FileInfo& getShaderFileInfo() const override;
-
-	// Returns the description string of this material
-	std::string getDescription() const;
-
-	// returns the raw definition block
-	std::string getDefinition();
 
 	// -----------------------------------------
 
@@ -121,22 +98,6 @@ public:
 	void setName(const std::string& name);
 
 	ShaderLayer* firstLayer() const;
-
-    /* Material implementation */
-
-    const ShaderLayerVector& getAllLayers() const;
-
-	bool isAmbientLight() const;
-	bool isBlendLight() const;
-	bool isFogLight() const;
-	bool lightCastsShadows() const;
-	bool surfaceCastsShadow() const;
-	bool isDrawn() const;
-	bool isDiscrete() const;
-
-	bool isVisible() const;
-	void setVisible(bool visible);
-
 }; // class CShader
 
 typedef std::shared_ptr<CShader> CShaderPtr;

@@ -112,7 +112,7 @@ void GuiRenderer::render(const gui::IGuiWindowDefPtr& window, bool ignoreFilter)
 	if (window->backgroundShader != NULL && (matcolor[3] > 0 || _ignoreVisibility))
 	{
 		// Get the diffuse layer
-		const ShaderLayerVector& layers = window->backgroundShader->getAllLayers();
+		const ShaderLayerVector layers = window->backgroundShader->getAllLayers();
 
 		TexturePtr tex;
 
