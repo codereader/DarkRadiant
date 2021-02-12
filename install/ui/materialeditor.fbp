@@ -233,20 +233,20 @@
                                             <property name="wrap">-1</property>
                                         </object>
                                     </object>
-                                    <object class="sizeritem" expanded="0">
+                                    <object class="sizeritem" expanded="1">
                                         <property name="border">12</property>
                                         <property name="flag">wxEXPAND|wxLEFT</property>
                                         <property name="proportion">3</property>
-                                        <object class="wxBoxSizer" expanded="0">
+                                        <object class="wxBoxSizer" expanded="1">
                                             <property name="minimum_size"></property>
                                             <property name="name">bSizer5</property>
                                             <property name="orient">wxHORIZONTAL</property>
                                             <property name="permission">none</property>
-                                            <object class="sizeritem" expanded="0">
+                                            <object class="sizeritem" expanded="1">
                                                 <property name="border">5</property>
                                                 <property name="flag">wxEXPAND | wxALL</property>
                                                 <property name="proportion">1</property>
-                                                <object class="wxPanel" expanded="0">
+                                                <object class="wxPanel" expanded="1">
                                                     <property name="BottomDockable">1</property>
                                                     <property name="LeftDockable">1</property>
                                                     <property name="RightDockable">1</property>
@@ -281,7 +281,7 @@
                                                     <property name="minimize_button">0</property>
                                                     <property name="minimum_size">-1,120</property>
                                                     <property name="moveable">1</property>
-                                                    <property name="name">MaterialEditorDefinitionView</property>
+                                                    <property name="name">MaterialEditorTreeView</property>
                                                     <property name="pane_border">1</property>
                                                     <property name="pane_position"></property>
                                                     <property name="pane_size"></property>
@@ -307,7 +307,7 @@
                                             </object>
                                             <object class="sizeritem" expanded="0">
                                                 <property name="border">6</property>
-                                                <property name="flag">wxEXPAND|wxLEFT</property>
+                                                <property name="flag">wxEXPAND|wxLEFT|wxRIGHT|wxTOP</property>
                                                 <property name="proportion">0</property>
                                                 <object class="wxBoxSizer" expanded="0">
                                                     <property name="minimum_size"></property>

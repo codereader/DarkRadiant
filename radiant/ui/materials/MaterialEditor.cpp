@@ -24,6 +24,11 @@ MaterialEditor::MaterialEditor() :
     // Wire up the close button
     findNamedObject<wxButton>(this, "MaterialEditorCloseButton")->Bind(wxEVT_BUTTON, &MaterialEditor::_onClose, this);
 
+    // Add the treeview
+    auto* panel = findNamedObject<wxPanel>(this, "MaterialEditorTreeView");
+    _treeView = new MaterialTreeView(panel);
+    panel->GetSizer()->Add(_treeView, 1, wxEXPAND);
+
     // Setup the splitter and preview
     auto* splitter = findNamedObject<wxSplitterWindow>(this, "MaterialEditorSplitter");
     splitter->SetSashPosition(GetSize().GetWidth() * 0.6f);
@@ -50,6 +55,8 @@ MaterialEditor::MaterialEditor() :
     _panedPosition.loadFromPath(RKEY_SPLIT_POS);
 
     CenterOnParent();
+
+    _treeView->Populate();
 }
 
 int MaterialEditor::ShowModal()

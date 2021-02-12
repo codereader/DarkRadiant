@@ -8,6 +8,8 @@
 #include "wxutil/XmlResourceBasedWidget.h"
 #include "wxutil/preview/ModelPreview.h"
 
+#include "ui/common/MaterialTreeView.h"
+
 namespace ui
 {
 
@@ -16,6 +18,8 @@ class MaterialEditor :
     private wxutil::XmlResourceBasedWidget
 {
 private:
+    MaterialTreeView* _treeView;
+
     wxutil::WindowPosition _windowPosition;
     wxutil::PanedPosition _panedPosition;
 
