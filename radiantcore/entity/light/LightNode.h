@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ilightnode.h"
+#include "registry/CachedKey.h"
 
 #include "Light.h"
 #include "dragplanes.h"
@@ -44,6 +45,9 @@ class LightNode :
 
 	// a temporary variable for calculating the AABB of all (selected) components
 	mutable AABB m_aabb_component;
+
+    // Cached rkey to override light volume colour
+    registry::CachedKey<bool> _overrideColKey;
 
 public:
 	LightNode(const IEntityClassPtr& eclass);

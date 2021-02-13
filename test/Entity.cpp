@@ -6,10 +6,12 @@
 #include "iselectable.h"
 #include "iselection.h"
 #include "ishaders.h"
+#include "icolourscheme.h"
 
 #include "render/NopVolumeTest.h"
 #include "string/convert.h"
 #include "transformlib.h"
+#include "registry/registry.h"
 
 namespace test
 {
@@ -463,6 +465,46 @@ TEST_F(EntityTest, LightVolumeColorFromColorKey)
         const Shader* shader = rf.collector.renderablePtrs.at(0).first;
         EXPECT_EQ(shader->getMaterial()->getName(), "<0.750000 0.250000 0.100000>");
     }
+}
+
+TEST_F(EntityTest, OverrideLightVolumeColour)
+{
+    // Create a light with an arbitrary colour
+    auto light = createByClassName("light");
+    light->getEntity().setKeyValue("_color", "0.25 0.55 0.9");
+
+    // Set the "override light volume colour" key
+    registry::setValue(colours::RKEY_OVERRIDE_LIGHTCOL, true);
+
+    {
+        RenderFixture rf;
+        rf.renderSubGraph(light);
+
+        // The shader should ignore the _color key and render based on the entity
+        // class colour
+        EXPECT_EQ(rf.collector.renderables, 1);
+        const Shader* shader = rf.collector.renderablePtrs.at(0).first;
+        EXPECT_EQ(shader->getMaterial()->getName(), "<0.000000 1.000000 0.000000>");
+    }
+
+    // Unset the override key
+    registry::setValue(colours::RKEY_OVERRIDE_LIGHTCOL, false);
+
+    {
+        RenderFixture rf;
+        rf.renderSubGraph(light);
+
+        // Light should be rendered with its original _color key again
+        EXPECT_EQ(rf.collector.renderables, 1);
+        const Shader* shader = rf.collector.renderablePtrs.at(0).first;
+        EXPECT_EQ(shader->getMaterial()->getName(), "<0.250000 0.550000 0.900000>");
+    }
+
+    // Changing the override key after deleting the light must not crash
+    // (because the LightNode's CachedKey is sigc::trackable)
+    light.reset();
+    registry::setValue(colours::RKEY_OVERRIDE_LIGHTCOL, true);
+    registry::setValue(colours::RKEY_OVERRIDE_LIGHTCOL, false);
 }
 
 TEST_F(EntityTest, FuncStaticLocalToWorld)
