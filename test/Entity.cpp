@@ -290,12 +290,16 @@ namespace
         // List of actual RendererLight objects
         std::list<const RendererLight*> lightPtrs;
 
+        // List of renderables and their shaders
+        std::vector< std::pair<const Shader*, const OpenGLRenderable*> > renderablePtrs;
+
         void addRenderable(Shader& shader, const OpenGLRenderable& renderable,
                            const Matrix4& localToWorld,
                            const LitObject* litObject = nullptr,
                            const IRenderEntity* entity = nullptr) override
         {
             ++renderables;
+            renderablePtrs.push_back(std::make_pair(&shader, &renderable));
         }
 
         void addLight(const RendererLight& light)
@@ -420,11 +424,45 @@ TEST_F(EntityTest, LightWireframeShader)
 
     // Get the material for the shader. Since this is a simple built-in
     // wireframe shader, this should be an internally-constructed material based
-    // on the entity colour
+    // on the entity colour. Note that this colour is derived from the entity
+    // *class*, which for "light" is a default green. Actual lights will be
+    // rendered with a colour based on their _color key.
     auto material = newWireSh->getMaterial();
     ASSERT_TRUE(material);
     EXPECT_TRUE(material->IsDefault());
     EXPECT_EQ(material->getName(), "<0.000000 1.000000 0.000000>");
+}
+
+TEST_F(EntityTest, LightVolumeColorFromColorKey)
+{
+    // Create a default light
+    auto light = createByClassName("light");
+
+    {
+        // Render the default light
+        RenderFixture rf;
+        rf.renderSubGraph(light);
+
+        // Shader should have been submitted. Since a light's default _color is
+        // white, this is the shader we should get for rendering.
+        EXPECT_EQ(rf.collector.renderables, 1);
+        const Shader* shader = rf.collector.renderablePtrs.at(0).first;
+        EXPECT_EQ(shader->getMaterial()->getName(), "<1.000000 1.000000 1.000000>");
+    }
+
+    // Set a different colour on the light
+    light->getEntity().setKeyValue("_color", "0.75 0.25 0.1");
+
+    {
+        // Re-render the light
+        RenderFixture rf;
+        rf.renderSubGraph(light);
+
+        // The shader should have changed to match the new _color
+        EXPECT_EQ(rf.collector.renderables, 1);
+        const Shader* shader = rf.collector.renderablePtrs.at(0).first;
+        EXPECT_EQ(shader->getMaterial()->getName(), "<0.750000 0.250000 0.100000>");
+    }
 }
 
 TEST_F(EntityTest, FuncStaticLocalToWorld)
