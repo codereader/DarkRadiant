@@ -48,4 +48,37 @@ TEST_F(MaterialsTest, MaterialParser)
     EXPECT_TRUE(materialManager.materialExists("textures/parsing_test/variant3"));
 }
 
+TEST_F(MaterialsTest, EnumerateMaterialLayers)
+{
+    auto material = GlobalMaterialManager().getMaterialForName("tdm_spider_black");
+    EXPECT_TRUE(material);
+
+    // Get a list of all layers in the material
+    auto layers = material->getAllLayers();
+    EXPECT_EQ(layers.size(), 4);
+
+    // First layer is the bump map in this particular material
+    EXPECT_EQ(layers.at(0)->getType(), ShaderLayer::BUMP);
+    EXPECT_EQ(layers.at(0)->getMapImageFilename(),
+              "models/md5/chars/monsters/spider/spider_local");
+
+    // Second layer is the diffuse map
+    EXPECT_EQ(layers.at(1)->getType(), ShaderLayer::DIFFUSE);
+    EXPECT_EQ(layers.at(1)->getMapImageFilename(),
+              "models/md5/chars/monsters/spider_black");
+
+    // Third layer is the specular map
+    EXPECT_EQ(layers.at(2)->getType(), ShaderLayer::SPECULAR);
+    EXPECT_EQ(layers.at(2)->getMapImageFilename(),
+              "models/md5/chars/monsters/spider_s");
+
+    // Final layer is the additive "ambient method" stage
+    EXPECT_EQ(layers.at(3)->getType(), ShaderLayer::BLEND);
+    EXPECT_EQ(layers.at(3)->getMapImageFilename(),
+              "models/md5/chars/monsters/spider_black");
+    BlendFunc bf = layers.at(3)->getBlendFunc();
+    EXPECT_EQ(bf.src, GL_ONE);
+    EXPECT_EQ(bf.dest, GL_ONE);
+}
+
 }
