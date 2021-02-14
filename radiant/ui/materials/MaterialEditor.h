@@ -20,6 +20,9 @@ class MaterialEditor :
 private:
     MaterialTreeView* _treeView;
 
+    wxutil::TreeModel::Ptr _stageList;
+    wxutil::TreeView* _stageView;
+
     wxutil::WindowPosition _windowPosition;
     wxutil::PanedPosition _panedPosition;
 
@@ -34,6 +37,9 @@ public:
     static void ShowDialog(const cmd::ArgumentList& args);
 
     void _onClose(wxCommandEvent& ev);
+
+private:
+    void setupMaterialStageView();
 };
 
 }
