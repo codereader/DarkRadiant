@@ -47,6 +47,8 @@ MaterialEditor::MaterialEditor() :
 
     makeLabelBold(this, "MaterialEditorDefinitionLabel");
     makeLabelBold(this, "MaterialEditorMaterialPropertiesLabel");
+    makeLabelBold(this, "MaterialEditorMaterialStagesLabel");
+    makeLabelBold(this, "MaterialEditorStageSettingsLabel");
 
     // Wire up the close button
     findNamedObject<wxButton>(this, "MaterialEditorCloseButton")->Bind(wxEVT_BUTTON, &MaterialEditor::_onClose, this);
@@ -66,6 +68,8 @@ MaterialEditor::MaterialEditor() :
     _preview.reset(new wxutil::ModelPreview(previewPanel));
 
     previewPanel->GetSizer()->Add(_preview->getWidget(), 1, wxEXPAND);
+
+    setupMaterialStageView();
 
     // Set the default size of the window
     FitToScreen(0.8f, 0.6f);
