@@ -22,6 +22,13 @@ namespace ui
 namespace
 {
     const std::string RKEY_ROOT = "user/ui/mainFrame/aui";
+
+    // Return a pane info with default options
+    wxAuiPaneInfo DEFAULT_PANE_INFO(const std::string& caption)
+    {
+        return wxAuiPaneInfo().Caption(caption).Floatable().Dockable().Dock()
+                              .CloseButton(false);
+    }
 }
 
 AuiLayout::AuiLayout()
@@ -79,9 +86,12 @@ void AuiLayout::activate()
 
     // Add the camera and notebook to the left, as with the Embedded layout, and
     // the 2D view on the right
-    _auiMgr.AddPane(_camWnd->getMainWidget(), wxAuiPaneInfo().Left().Dockable().Dock());
-    _auiMgr.AddPane(notebookPanel, wxAuiPaneInfo().Left().Dockable().Dock());
-    _auiMgr.AddPane(xywnd->getGLWidget(), wxAuiPaneInfo().Right().Dockable().Dock());
+    _auiMgr.AddPane(_camWnd->getMainWidget(),
+                    DEFAULT_PANE_INFO(_("Camera")).Left());
+    _auiMgr.AddPane(notebookPanel,
+                    DEFAULT_PANE_INFO(_("Properties")).Left());
+    _auiMgr.AddPane(xywnd->getGLWidget(),
+                    DEFAULT_PANE_INFO(_("2D View")).Right());
     _auiMgr.Update();
 
     topLevelParent->Layout();
