@@ -1,0 +1,44 @@
+#pragma once
+
+#include <memory>
+#include "wxutil/PanedPosition.h"
+#include "imainframelayout.h"
+
+#include "camera/CamWnd.h"
+#include "wxutil/Splitter.h"
+
+#include <wx/aui/aui.h>
+
+namespace ui
+{
+
+#define AUI_LAYOUT_NAME "Dockable"
+
+class AuiLayout;
+typedef std::shared_ptr<AuiLayout> AuiLayoutPtr;
+
+/// Layout based on wxWidgets AUI (dock widget interface)
+class AuiLayout: public IMainFrameLayout
+{
+	// The camera view
+	CamWndPtr _camWnd;
+
+    // Main AUI manager
+    wxAuiManager _auiMgr;
+
+    // Main constructor
+    AuiLayout();
+
+public:
+	// IMainFrameLayout implementation
+	std::string getName() override;
+	void activate() override;
+	void deactivate() override;
+	void toggleFullscreenCameraView() override;
+	void restoreStateFromRegistry() override;
+
+	// The creation function, needed by the mainframe layout manager
+	static AuiLayoutPtr CreateInstance();
+};
+
+} // namespace ui

@@ -68,7 +68,7 @@ pkg_check_modules(GLIB glib-2.0 REQUIRED)
 
 # Locate wxWidgets
 find_package(wxWidgets REQUIRED
-             COMPONENTS base core stc adv gl xrc)
+             COMPONENTS base core stc adv gl xrc aui)
 include(${wxWidgets_USE_FILE})
 
 # Locate Python
@@ -163,7 +163,7 @@ if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.14")
 install(DIRECTORY install/i18n/de TYPE LOCALE
         FILES_MATCHING PATTERN "*.mo")
 else()
-install(DIRECTORY install/i18n/de DESTINATION ${CMAKE_INSTALL_LOCALEDIR} 
+install(DIRECTORY install/i18n/de DESTINATION ${CMAKE_INSTALL_LOCALEDIR}
         FILES_MATCHING PATTERN "*.mo")
 endif()
 

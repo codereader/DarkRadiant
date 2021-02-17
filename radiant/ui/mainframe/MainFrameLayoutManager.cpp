@@ -8,6 +8,7 @@
 
 #include "module/StaticModule.h"
 
+#include "AuiLayout.h"
 #include "FloatingLayout.h"
 #include "SplitPaneLayout.h"
 #include "RegularLayout.h"
@@ -45,7 +46,7 @@ void MainFrameLayoutManager::registerLayout(
 	}
 }
 
-void MainFrameLayoutManager::registerCommands() 
+void MainFrameLayoutManager::registerCommands()
 {
 	// remove all commands beforehand
 	_commands.clear();
@@ -83,7 +84,7 @@ void MainFrameLayoutManager::initialiseModule(const IApplicationContext& ctx)
 
 	// Register the default layouts
 	registerLayout(EMBEDDED_LAYOUT_NAME, EmbeddedLayout::CreateInstance);
-
+	registerLayout(AUI_LAYOUT_NAME, AuiLayout::CreateInstance);
 	registerLayout(FLOATING_LAYOUT_NAME, FloatingLayout::CreateInstance);
 	registerLayout(SPLITPANE_LAYOUT_NAME, SplitPaneLayout::CreateInstance);
 	registerLayout(REGULAR_LAYOUT_NAME, RegularLayout::CreateRegularInstance);
