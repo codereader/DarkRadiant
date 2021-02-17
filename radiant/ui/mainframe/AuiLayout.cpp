@@ -87,9 +87,9 @@ void AuiLayout::activate()
     // Add the camera and notebook to the left, as with the Embedded layout, and
     // the 2D view on the right
     _auiMgr.AddPane(_camWnd->getMainWidget(),
-                    DEFAULT_PANE_INFO(_("Camera")).Left());
+                    DEFAULT_PANE_INFO(_("Camera")).Left().Position(0));
     _auiMgr.AddPane(notebookPanel,
-                    DEFAULT_PANE_INFO(_("Properties")).Left());
+                    DEFAULT_PANE_INFO(_("Properties")).Left().Position(1));
     _auiMgr.AddPane(xywnd->getGLWidget(),
                     DEFAULT_PANE_INFO(_("2D View")).Right());
     _auiMgr.Update();
