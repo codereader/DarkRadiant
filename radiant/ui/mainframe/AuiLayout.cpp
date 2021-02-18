@@ -26,8 +26,8 @@ namespace
     // Return a pane info with default options
     wxAuiPaneInfo DEFAULT_PANE_INFO(const std::string& caption)
     {
-        return wxAuiPaneInfo().Caption(caption).Floatable().Dockable().Dock()
-                              .CloseButton(false);
+        return wxAuiPaneInfo().Caption(caption).Layer(1).CloseButton(false)
+                              .MinSize(wxSize(128, 128));
     }
 }
 
@@ -50,7 +50,6 @@ void AuiLayout::activate()
     // container
     wxWindow* managedArea = new wxWindow(topLevelParent, wxID_ANY);
     _auiMgr.SetManagedWindow(managedArea);
-
     GlobalMainFrame().getWxMainContainer()->Add(managedArea, 1, wxEXPAND);
 
     // Allocate a new OrthoView and set its ViewType to XY
@@ -93,8 +92,6 @@ void AuiLayout::activate()
     _auiMgr.AddPane(xywnd->getGLWidget(),
                     DEFAULT_PANE_INFO(_("2D View")).Right());
     _auiMgr.Update();
-
-    topLevelParent->Layout();
 
     // Hide the camera toggle option for non-floating views
     GlobalMenuManager().setVisibility("main/view/cameraview", false);
