@@ -49,6 +49,7 @@ private:
 	bool fogLight;
 	bool ambientLight;
 	bool blendLight;
+	bool _cubicLight;
 
 	// The description tag of the material
 	std::string description;
@@ -101,6 +102,7 @@ public:
       fogLight(false),
       ambientLight(false),
       blendLight(false),
+      _cubicLight(false),
 	  _materialFlags(0),
 	  _cullType(Material::CULL_BACK),
 	  _clampType(CLAMP_REPEAT),
@@ -218,6 +220,12 @@ public:
 	{
 		if (!_parsed) parseDefinition();
 		return blendLight;
+	}
+    
+    bool isCubicLight()
+	{
+		if (!_parsed) parseDefinition();
+		return _cubicLight;
 	}
 
     int getSortRequest()

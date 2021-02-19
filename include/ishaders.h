@@ -277,6 +277,11 @@ public:
 	 */
 	virtual bool isFogLight() const = 0;
 
+    /** Determine whether this is a cubic light shader, i.e. the
+     * material def contains the global "cubicLight" keyword.
+     */
+    virtual bool isCubicLight() const = 0;
+
 	/**
 	 * For light shaders: implicitly no-shadows lights (ambients, fogs, etc) 
 	 * will never cast shadows but individual light entities can also override this value.

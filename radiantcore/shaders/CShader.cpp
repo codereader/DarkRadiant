@@ -257,6 +257,11 @@ bool CShader::isFogLight() const {
 	return _template->isFogLight();
 }
 
+bool CShader::isCubicLight() const
+{
+    return _template->isCubicLight();
+}
+
 bool CShader::lightCastsShadows() const
 {
 	int flags = getMaterialFlags();

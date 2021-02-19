@@ -51,6 +51,7 @@ private:
     void setupMaterialProperties();
     void setupMaterialSurfaceFlags();
     void setupMaterialShaderFlags();
+    void setupMaterialLightFlags();
     void setupSurfaceFlag(const std::string& controlName, Material::SurfaceFlags flag);
     void setupMaterialFlag(const std::string& controlName, Material::Flags flag);
     void updateControlsFromMaterial();

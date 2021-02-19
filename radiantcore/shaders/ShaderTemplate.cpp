@@ -354,6 +354,15 @@ bool ShaderTemplate::parseLightKeywords(parser::DefTokeniser& tokeniser, const s
 	{
         fogLight = true;
     }
+    else if (token == "cubliclight")
+    {
+        _cubicLight = true;
+    }
+    else if (token == "ambientcubiclight")
+    {
+        ambientLight = true;
+        _cubicLight = true;
+    }
     else if (!fogLight && token == "lightfalloffimage")
 	{
         _lightFalloff = MapExpression::createForToken(tokeniser);

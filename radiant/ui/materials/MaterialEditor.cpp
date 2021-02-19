@@ -82,6 +82,7 @@ MaterialEditor::MaterialEditor() :
     setupMaterialStageView();
     setupMaterialSurfaceFlags();
     setupMaterialShaderFlags();
+    setupMaterialLightFlags();
 
     // Set the default size of the window
     FitToScreen(0.8f, 0.6f);
@@ -160,6 +161,24 @@ void MaterialEditor::setupMaterialFlag(const std::string& controlName, Material:
     }));
 }
 
+void MaterialEditor::setupMaterialLightFlags()
+{
+    _bindings.emplace(std::make_shared<CheckBoxBinding>(getControl<wxCheckBox>("MaterialIsAmbientLight"),
+        [](const MaterialPtr& material) { return material->isAmbientLight(); }));
+
+    _bindings.emplace(std::make_shared<CheckBoxBinding>(getControl<wxCheckBox>("MaterialIsAmbientCubicLight"),
+        [](const MaterialPtr& material) { return material->isAmbientLight() && material->isCubicLight(); }));
+
+    _bindings.emplace(std::make_shared<CheckBoxBinding>(getControl<wxCheckBox>("MaterialIsFogLight"),
+        [](const MaterialPtr& material) { return material->isFogLight(); }));
+
+    _bindings.emplace(std::make_shared<CheckBoxBinding>(getControl<wxCheckBox>("MaterialIsCubicLight"),
+        [](const MaterialPtr& material) { return material->isCubicLight(); })); 
+    
+    _bindings.emplace(std::make_shared<CheckBoxBinding>(getControl<wxCheckBox>("MaterialIsBlendLight"),
+        [](const MaterialPtr& material) { return material->isBlendLight(); }));
+}
+
 void MaterialEditor::setupMaterialShaderFlags()
 {
     setupMaterialFlag("MaterialNoShadows", Material::FLAG_NOSHADOWS);
@@ -173,6 +192,19 @@ void MaterialEditor::setupMaterialShaderFlags()
     setupMaterialFlag("MaterialFlagNoPortalFog", Material::FLAG_NOPORTALFOG);
     setupMaterialFlag("MaterialFlagUnsmoothedTangents", Material::FLAG_UNSMOOTHEDTANGENTS);
     setupMaterialFlag("MaterialFlagMirror", Material::FLAG_MIRROR);
+
+    // Cull types
+    _bindings.emplace(std::make_shared<CheckBoxBinding>(getControl<wxCheckBox>("MaterialTwoSided"),
+        [](const MaterialPtr& material)
+    {
+        return material->getCullType() == Material::CULL_NONE;
+    }));
+
+    _bindings.emplace(std::make_shared<CheckBoxBinding>(getControl<wxCheckBox>("MaterialBackSided"),
+        [](const MaterialPtr& material)
+    {
+        return material->getCullType() == Material::CULL_FRONT;
+    }));
 }
 
 void MaterialEditor::setupMaterialSurfaceFlags()

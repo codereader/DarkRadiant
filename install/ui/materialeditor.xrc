@@ -545,7 +545,7 @@
 														</object>
 														<object class="notebookpage">
 															<label>Light</label>
-															<selected>0</selected>
+															<selected>1</selected>
 															<object class="wxPanel" name="LightPage">
 																<style>wxTAB_TRAVERSAL</style>
 																<object class="wxBoxSizer">
@@ -565,7 +565,7 @@
 																				<option>0</option>
 																				<flag></flag>
 																				<border>0</border>
-																				<object class="wxCheckBox" name="m_checkBox411">
+																				<object class="wxCheckBox" name="MaterialIsAmbientLight">
 																					<label>ambientLight</label>
 																					<checked>0</checked>
 																				</object>
@@ -574,7 +574,7 @@
 																				<option>0</option>
 																				<flag></flag>
 																				<border>0</border>
-																				<object class="wxCheckBox" name="m_checkBox8211">
+																				<object class="wxCheckBox" name="MaterialIsCubicLight">
 																					<label>cubicLight</label>
 																					<checked>0</checked>
 																				</object>
@@ -583,7 +583,7 @@
 																				<option>0</option>
 																				<flag></flag>
 																				<border>0</border>
-																				<object class="wxCheckBox" name="m_checkBox871">
+																				<object class="wxCheckBox" name="MaterialIsAmbientCubicLight">
 																					<label>ambientCubicLight</label>
 																					<checked>0</checked>
 																				</object>
@@ -592,7 +592,7 @@
 																				<option>0</option>
 																				<flag></flag>
 																				<border>0</border>
-																				<object class="wxCheckBox" name="m_checkBox8412">
+																				<object class="wxCheckBox" name="MaterialIsBlendLight">
 																					<label>blendLight</label>
 																					<checked>0</checked>
 																				</object>
@@ -601,7 +601,7 @@
 																				<option>0</option>
 																				<flag></flag>
 																				<border>0</border>
-																				<object class="wxCheckBox" name="m_checkBox611">
+																				<object class="wxCheckBox" name="MaterialIsFogLight">
 																					<label>fogLight</label>
 																					<checked>0</checked>
 																				</object>
@@ -673,7 +673,7 @@
 														</object>
 														<object class="notebookpage">
 															<label>Depth / Clamping</label>
-															<selected>1</selected>
+															<selected>0</selected>
 															<object class="wxPanel" name="DepthPage">
 																<style>wxTAB_TRAVERSAL</style>
 																<object class="wxBoxSizer">
