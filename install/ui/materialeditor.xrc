@@ -167,7 +167,7 @@
 													<object class="wxNotebook" name="m_notebook2">
 														<object class="notebookpage">
 															<label>Interaction</label>
-															<selected>0</selected>
+															<selected>1</selected>
 															<object class="wxPanel" name="InteractionPage">
 																<style>wxTAB_TRAVERSAL</style>
 																<object class="wxBoxSizer">
@@ -264,7 +264,7 @@
 																						<option>0</option>
 																						<flag>wxALIGN_CENTER_VERTICAL</flag>
 																						<border>0</border>
-																						<object class="wxCheckBox" name="MaterialPolygonOffset">
+																						<object class="wxCheckBox" name="MaterialFlagHasPolygonOffset">
 																							<label>polygonOffset</label>
 																							<checked>0</checked>
 																						</object>
@@ -273,12 +273,13 @@
 																						<option>0</option>
 																						<flag>wxALIGN_CENTER_VERTICAL</flag>
 																						<border>0</border>
-																						<object class="wxSpinCtrl" name="MaterialPolygonOffsetValue">
+																						<object class="wxSpinCtrlDouble" name="MaterialPolygonOffsetValue">
 																							<style>wxSP_ARROW_KEYS</style>
-																							<size>80,-1</size>
 																							<value>0</value>
 																							<min>-100</min>
 																							<max>100</max>
+																							<inc>0.1</inc>
+																							<digits>1</digits>
 																						</object>
 																					</object>
 																				</object>
@@ -545,7 +546,7 @@
 														</object>
 														<object class="notebookpage">
 															<label>Light</label>
-															<selected>1</selected>
+															<selected>0</selected>
 															<object class="wxPanel" name="LightPage">
 																<style>wxTAB_TRAVERSAL</style>
 																<object class="wxBoxSizer">
@@ -711,7 +712,7 @@
 																				<option>0</option>
 																				<flag></flag>
 																				<border>0</border>
-																				<object class="wxCheckBox" name="m_checkBox8212">
+																				<object class="wxCheckBox" name="MaterialFlagClamp">
 																					<label>clamp</label>
 																					<checked>0</checked>
 																				</object>
@@ -720,7 +721,7 @@
 																				<option>0</option>
 																				<flag></flag>
 																				<border>0</border>
-																				<object class="wxCheckBox" name="m_checkBox612">
+																				<object class="wxCheckBox" name="MaterialFlagZeroClamp">
 																					<label>zeroClamp</label>
 																					<checked>0</checked>
 																				</object>
@@ -729,7 +730,7 @@
 																				<option>0</option>
 																				<flag></flag>
 																				<border>0</border>
-																				<object class="wxCheckBox" name="m_checkBox8413">
+																				<object class="wxCheckBox" name="MaterialFlagAlphaZeroClamp">
 																					<label>alphaZeroClamp</label>
 																					<checked>0</checked>
 																				</object>
@@ -2084,7 +2085,7 @@
 											</object>
 											<object class="notebookpage">
 												<label>Texture</label>
-												<selected>0</selected>
+												<selected>1</selected>
 												<object class="wxPanel" name="m_panel7">
 													<style>wxTAB_TRAVERSAL</style>
 													<object class="wxBoxSizer">
@@ -2555,7 +2556,7 @@
 											</object>
 											<object class="notebookpage">
 												<label>Vertex Colour</label>
-												<selected>1</selected>
+												<selected>0</selected>
 												<object class="wxPanel" name="m_panel611">
 													<style>wxTAB_TRAVERSAL</style>
 													<object class="wxBoxSizer">

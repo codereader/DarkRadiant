@@ -6,6 +6,8 @@
 #include <wx/splitter.h>
 #include <wx/textctrl.h>
 #include <wx/collpane.h>
+#include <wx/spinctrl.h>
+
 #include "wxutil/SourceView.h"
 #include "fmt/format.h"
 #include "materials/ParseLib.h"
@@ -192,6 +194,7 @@ void MaterialEditor::setupMaterialShaderFlags()
     setupMaterialFlag("MaterialFlagNoPortalFog", Material::FLAG_NOPORTALFOG);
     setupMaterialFlag("MaterialFlagUnsmoothedTangents", Material::FLAG_UNSMOOTHEDTANGENTS);
     setupMaterialFlag("MaterialFlagMirror", Material::FLAG_MIRROR);
+    setupMaterialFlag("MaterialFlagHasPolygonOffset", Material::FLAG_POLYGONOFFSET);
 
     // Cull types
     _bindings.emplace(std::make_shared<CheckBoxBinding>(getControl<wxCheckBox>("MaterialTwoSided"),
@@ -204,6 +207,25 @@ void MaterialEditor::setupMaterialShaderFlags()
         [](const MaterialPtr& material)
     {
         return material->getCullType() == Material::CULL_FRONT;
+    }));
+
+    // Global Clamping
+    _bindings.emplace(std::make_shared<CheckBoxBinding>(getControl<wxCheckBox>("MaterialFlagClamp"),
+        [](const MaterialPtr& material)
+    {
+        return material->getClampType() == CLAMP_NOREPEAT;
+    }));
+
+    _bindings.emplace(std::make_shared<CheckBoxBinding>(getControl<wxCheckBox>("MaterialFlagZeroClamp"),
+        [](const MaterialPtr& material)
+    {
+        return material->getClampType() == CLAMP_ZEROCLAMP;
+    }));
+
+    _bindings.emplace(std::make_shared<CheckBoxBinding>(getControl<wxCheckBox>("MaterialFlagAlphaZeroClamp"),
+        [](const MaterialPtr& material)
+    {
+        return material->getClampType() == CLAMP_ALPHAZEROCLAMP;
     }));
 }
 
@@ -291,6 +313,15 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
         {
             auto surfType = shaders::getStringForSurfaceType(_material->getSurfaceType());
             materialTypeDropdown->Select(materialTypeDropdown->FindString(surfType));
+        }
+
+        if (_material->getMaterialFlags() & Material::FLAG_POLYGONOFFSET)
+        {
+            getControl<wxSpinCtrlDouble>("MaterialPolygonOffsetValue")->SetValue(_material->getPolygonOffset());
+        }
+        else
+        {
+            getControl<wxSpinCtrlDouble>("MaterialPolygonOffsetValue")->SetValue(0.0);
         }
 
         // Surround the definition with curly braces, these are not included
