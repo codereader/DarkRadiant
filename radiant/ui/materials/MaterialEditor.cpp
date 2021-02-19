@@ -4,6 +4,10 @@
 
 #include <wx/panel.h>
 #include <wx/splitter.h>
+#include <wx/textctrl.h>
+#include <wx/collpane.h>
+#include "wxutil/SourceView.h"
+#include "fmt/format.h"
 
 namespace ui
 {
@@ -51,23 +55,27 @@ MaterialEditor::MaterialEditor() :
     makeLabelBold(this, "MaterialEditorStageSettingsLabel");
 
     // Wire up the close button
-    findNamedObject<wxButton>(this, "MaterialEditorCloseButton")->Bind(wxEVT_BUTTON, &MaterialEditor::_onClose, this);
+    getControl<wxButton>("MaterialEditorCloseButton")->Bind(wxEVT_BUTTON, &MaterialEditor::_onClose, this);
 
     // Add the treeview
-    auto* panel = findNamedObject<wxPanel>(this, "MaterialEditorTreeView");
+    auto* panel = getControl<wxPanel>("MaterialEditorTreeView");
     _treeView = new MaterialTreeView(panel);
+    _treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &MaterialEditor::_onTreeViewSelectionChanged, this);
     panel->GetSizer()->Add(_treeView, 1, wxEXPAND);
 
     // Setup the splitter and preview
-    auto* splitter = findNamedObject<wxSplitterWindow>(this, "MaterialEditorSplitter");
+    auto* splitter = getControl<wxSplitterWindow>("MaterialEditorSplitter");
     splitter->SetSashPosition(GetSize().GetWidth() * 0.6f);
     splitter->SetMinimumPaneSize(10); // disallow unsplitting
 
     // Set up the preview
-    auto* previewPanel = findNamedObject<wxPanel>(this, "MaterialEditorPreviewPanel");
+    auto* previewPanel = getControl<wxPanel>("MaterialEditorPreviewPanel");
     _preview.reset(new wxutil::ModelPreview(previewPanel));
 
+    _sourceView = new wxutil::D3MaterialSourceViewCtrl(previewPanel);
+
     previewPanel->GetSizer()->Add(_preview->getWidget(), 1, wxEXPAND);
+    previewPanel->GetSizer()->Add(_sourceView, 1, wxEXPAND);
 
     setupMaterialStageView();
 
@@ -119,7 +127,7 @@ void MaterialEditor::ShowDialog(const cmd::ArgumentList& args)
 void MaterialEditor::setupMaterialStageView()
 {
     // Stage view
-    auto* panel = findNamedObject<wxPanel>(this, "MaterialEditorStageView");
+    auto* panel = getControl<wxPanel>("MaterialEditorStageView");
 
     _stageView = wxutil::TreeView::CreateWithModel(panel, _stageList.get(), wxDV_NO_HEADER);
     panel->GetSizer()->Add(_stageView, 1, wxEXPAND);
@@ -127,6 +135,45 @@ void MaterialEditor::setupMaterialStageView()
     // Single text column
     _stageView->AppendTextColumn(_("Stage"), STAGE_COLS().name.getColumnIndex(),
         wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+}
+
+void MaterialEditor::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
+{
+    // Update the preview if a texture is selected
+    if (!_treeView->IsDirectorySelected())
+    {
+        _material = GlobalMaterialManager().getMaterialForName(_treeView->GetSelectedFullname());
+    }
+    else
+    {
+        _material.reset();
+    }
+
+    updateControlsFromMaterial();
+}
+
+void MaterialEditor::updateControlsFromMaterial()
+{
+    updateMaterialPropertiesFromMaterial();
+}
+
+void MaterialEditor::updateMaterialPropertiesFromMaterial()
+{
+    getControl<wxPanel>("MaterialEditorMaterialPropertiesPanel")->Enable(_material != nullptr);
+    
+    if (_material)
+    {
+        getControl<wxTextCtrl>("MaterialDescription")->SetValue(_material->getDescription());
+
+        // Surround the definition with curly braces, these are not included
+        auto definition = fmt::format("{0}\n{{{1}}}", _material->getName(), _material->getDefinition());
+        _sourceView->SetValue(definition);
+    }
+    else
+    {
+        getControl<wxTextCtrl>("MaterialDescription")->SetValue("");
+        _sourceView->SetValue("");
+    }
 }
 
 }

@@ -1,12 +1,14 @@
 #pragma once
 
 #include "icommandsystem.h"
+#include "ishaders.h"
 
 #include "wxutil/dialog/DialogBase.h"
 #include "wxutil/WindowPosition.h"
 #include "wxutil/PanedPosition.h"
 #include "wxutil/XmlResourceBasedWidget.h"
 #include "wxutil/preview/ModelPreview.h"
+#include "wxutil/SourceView.h"
 
 #include "ui/common/MaterialTreeView.h"
 
@@ -27,6 +29,9 @@ private:
     wxutil::PanedPosition _panedPosition;
 
     std::shared_ptr<wxutil::ModelPreview> _preview;
+    wxutil::D3MaterialSourceViewCtrl* _sourceView;
+
+    MaterialPtr _material;
 
 private:
     MaterialEditor();
@@ -40,6 +45,17 @@ public:
 
 private:
     void setupMaterialStageView();
+    void updateControlsFromMaterial();
+    void updateMaterialPropertiesFromMaterial();
+
+    void _onTreeViewSelectionChanged(wxDataViewEvent& ev);
+
+    // Shortcut
+    template<typename ObjectClass>
+    ObjectClass* getControl(const std::string& name)
+    {
+        return findNamedObject<ObjectClass>(this, name);
+    }
 };
 
 }

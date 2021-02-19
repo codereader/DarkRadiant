@@ -17977,7 +17977,7 @@
                                 <property name="resize">Resizable</property>
                                 <property name="show">1</property>
                                 <property name="size"></property>
-                                <property name="subclass"></property>
+                                <property name="subclass">; ; forward_declare</property>
                                 <property name="toolbar_pane">0</property>
                                 <property name="tooltip"></property>
                                 <property name="window_extra_style"></property>
@@ -17985,7 +17985,7 @@
                                 <property name="window_style">wxTAB_TRAVERSAL</property>
                                 <object class="wxBoxSizer" expanded="1">
                                     <property name="minimum_size"></property>
-                                    <property name="name">bSizer137</property>
+                                    <property name="name">bSizer77</property>
                                     <property name="orient">wxVERTICAL</property>
                                     <property name="permission">none</property>
                                 </object>
