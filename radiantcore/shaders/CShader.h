@@ -58,7 +58,7 @@ public:
 	 * Shaders which do not define their own falloff will take the default from
 	 * the defaultPointLight shader.
 	 */
-	std::string getFalloffName() const;
+    IMapExpression::Ptr getLightFalloffExpression() override;
 
 	/*
 	 * Return name of shader.

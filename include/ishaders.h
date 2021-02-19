@@ -17,14 +17,6 @@
 
 class Image;
 
-// Forward declaration
-namespace shaders {
-
-class MapExpression;
-typedef std::shared_ptr<MapExpression> MapExpressionPtr;
-
-} // namespace shaders
-
 /**
  * \brief
  * Interface for a material shader.
@@ -327,7 +319,10 @@ public:
      */
     virtual const ShaderLayerVector& getAllLayers() const = 0;
 
-  virtual TexturePtr lightFalloffImage() = 0;
+    virtual TexturePtr lightFalloffImage() = 0;
+
+    // The expression of the lightFalloffMap
+    virtual shaders::IMapExpression::Ptr getLightFalloffExpression() = 0;
 
 	// greebo: Returns the description as defined in the material
 	virtual std::string getDescription() const = 0;

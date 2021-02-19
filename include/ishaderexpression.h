@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include "iimage.h"
 
 class IRenderEntity;
 
@@ -68,5 +69,32 @@ public:
 	virtual std::size_t linkToRegister(Registers& registers) = 0;
 };
 typedef std::shared_ptr<IShaderExpression> IShaderExpressionPtr;
+
+// Interface of a material expression used to specify a map image
+// It can either represent a texture path to a file on disk or
+// a generated texture like "makeIntensity(lights/intensitymap)"
+class IMapExpression
+{
+public:
+    using Ptr = std::shared_ptr<IMapExpression>;
+
+    virtual ~IMapExpression() {}
+
+    /**
+     * \brief
+     * Construct and return the image created from this map expression.
+     */
+    virtual ImagePtr getImage() const = 0;
+
+    /**
+     * \brief
+     * Return whether this map expression creates a cube map.
+     *
+     * \return
+     * true if this map expression creates a cube map, false if it is a single
+     * image.
+     */
+    virtual bool isCubeMap() const = 0;
+};
 
 } // namespace

@@ -1,6 +1,7 @@
 #include "MaterialEditor.h"
 
 #include "i18n.h"
+#include "ishaderexpression.h"
 
 #include <wx/panel.h>
 #include <wx/splitter.h>
@@ -358,12 +359,16 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
             materialSortDropdown->Select(0);
         }
 
+        auto lightFalloffMap = _material->getLightFalloffExpression();
+        getControl<wxTextCtrl>("MaterialLightFalloffMap")->SetValue("test");
+
         // Surround the definition with curly braces, these are not included
         auto definition = fmt::format("{0}\n{{{1}}}", _material->getName(), _material->getDefinition());
         _sourceView->SetValue(definition);
     }
     else
     {
+        getControl<wxTextCtrl>("MaterialLightFalloffMap")->SetValue("");
         getControl<wxTextCtrl>("MaterialDescription")->SetValue("");
         _sourceView->SetValue("");
     }

@@ -167,7 +167,7 @@
 													<object class="wxNotebook" name="m_notebook2">
 														<object class="notebookpage">
 															<label>Interaction</label>
-															<selected>1</selected>
+															<selected>0</selected>
 															<object class="wxPanel" name="InteractionPage">
 																<style>wxTAB_TRAVERSAL</style>
 																<object class="wxBoxSizer">
@@ -588,7 +588,7 @@
 														</object>
 														<object class="notebookpage">
 															<label>Light</label>
-															<selected>0</selected>
+															<selected>1</selected>
 															<object class="wxPanel" name="LightPage">
 																<style>wxTAB_TRAVERSAL</style>
 																<object class="wxBoxSizer">
@@ -671,7 +671,7 @@
 																				<option>0</option>
 																				<flag>wxALIGN_CENTER_VERTICAL|wxEXPAND</flag>
 																				<border>0</border>
-																				<object class="wxTextCtrl" name="m_textCtrl51">
+																				<object class="wxTextCtrl" name="MaterialLightFalloffMap">
 																					<value></value>
 																				</object>
 																			</object>

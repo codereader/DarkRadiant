@@ -261,7 +261,7 @@ public:
      */
 	NamedBindablePtr getEditorTexture();
 
-	const shaders::MapExpressionPtr& getLightFalloff()
+	const MapExpressionPtr& getLightFalloff()
 	{
 		if (!_parsed) parseDefinition();
 		return _lightFalloff;

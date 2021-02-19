@@ -65,8 +65,9 @@ bool CShader::isEditorImageNoTex()
 }
 
 // Return the falloff texture name
-std::string CShader::getFalloffName() const {
-	return _template->getLightFalloff()->getIdentifier();
+IMapExpression::Ptr CShader::getLightFalloffExpression()
+{
+	return _template->getLightFalloff();
 }
 
 /*

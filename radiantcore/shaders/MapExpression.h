@@ -1,5 +1,4 @@
-#ifndef MAPEXPRESSION_H_
-#define MAPEXPRESSION_H_
+#pragma once
 
 #include <string>
 
@@ -23,26 +22,13 @@ typedef std::shared_ptr<MapExpression> MapExpressionPtr;
  * Map expression are recursive expressions that generate an image, such as
  * "heightmap(addnormals(blah, bleh), 1).
  */
-class MapExpression
-: public NamedBindable
+class MapExpression : 
+    public IMapExpression,
+    public NamedBindable
 {
 public: /* INTERFACE METHODS */
 
-	/**
-     * \brief
-     * Construct and return the image created from this map expression.
-     */
-	virtual ImagePtr getImage() const = 0;
-
-    /**
-     * \brief
-     * Return whether this map expression creates a cube map.
-     *
-     * \return
-     * true if this map expression creates a cube map, false if it is a single
-     * image.
-     */
-    virtual bool isCubeMap() const
+    virtual bool isCubeMap() const override
     {
         return false;
     }
@@ -182,5 +168,3 @@ public:
 };
 
 } // namespace shaders
-
-#endif /*MAPEXPRESSION_H_*/
