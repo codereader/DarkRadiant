@@ -94,7 +94,26 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
     }
 	else if (token == "polygonoffset")
 	{
-		_polygonOffset = string::convert<float>(tokeniser.nextToken(), 0);
+        _materialFlags |= Material::FLAG_POLYGONOFFSET;
+
+        // The value argument is optional, try to parse the next token
+        if (tokeniser.hasMoreTokens())
+        {
+            try
+            {
+                _polygonOffset = std::stof(tokeniser.peek());
+                // success, exhaust the token
+                tokeniser.skipTokens(1);
+            }
+            catch (const std::logic_error&) // logic_error is base of invalid_argument out_of_range exceptions
+            {
+                _polygonOffset = 1.0f;
+            }
+        }
+        else
+        {
+            _polygonOffset = 1.0f;
+        }
 	}
 	else if (token == "clamp")
 	{

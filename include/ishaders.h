@@ -58,6 +58,7 @@ public:
 		FLAG_NOPORTALFOG			= 1 << 8,		// noPortalFog
 		FLAG_UNSMOOTHEDTANGENTS		= 1 << 9,		// unsmoothedTangents
 		FLAG_MIRROR					= 1 << 10,		// mirror
+		FLAG_POLYGONOFFSET			= 1 << 11,		// has polygonOffset
 	};
 
 	// Surface Flags
