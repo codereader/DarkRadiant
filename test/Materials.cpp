@@ -48,4 +48,24 @@ TEST_F(MaterialsTest, MaterialParser)
     EXPECT_TRUE(materialManager.materialExists("textures/parsing_test/variant3"));
 }
 
+TEST_F(MaterialsTest, MaterialParserPolygonOffset)
+{
+    auto& materialManager = GlobalMaterialManager();
+
+    auto polygonOffset1 = materialManager.getMaterialForName("textures/polygonOffset1");
+
+    EXPECT_TRUE(polygonOffset1->getMaterialFlags() & Material::FLAG_POLYGONOFFSET);
+    EXPECT_EQ(polygonOffset1->getPolygonOffset(), 1.0f) << "Default value of polygonOffset should be 1.0";
+
+    auto polygonOffset2 = materialManager.getMaterialForName("textures/polygonOffset2");
+
+    EXPECT_TRUE(polygonOffset2->getMaterialFlags() & Material::FLAG_POLYGONOFFSET);
+    EXPECT_EQ(polygonOffset2->getPolygonOffset(), 13.0f);
+
+    auto polygonOffset3 = materialManager.getMaterialForName("textures/polygonOffset3");
+
+    EXPECT_TRUE(polygonOffset3->getMaterialFlags() & Material::FLAG_POLYGONOFFSET);
+    EXPECT_EQ(polygonOffset3->getPolygonOffset(), -3.0f);
+}
+
 }

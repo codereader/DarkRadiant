@@ -1,0 +1,15 @@
+textures/polygonOffset1
+{	
+	polygonOffset
+}
+
+textures/polygonOffset2
+{	
+	polygonOffset 13.0
+	clamp
+}
+
+textures/polygonOffset3
+{	
+	polygonOffset -3.0
+}
