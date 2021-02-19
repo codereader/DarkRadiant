@@ -45,6 +45,7 @@ public:
 
 private:
     void setupMaterialStageView();
+    void setupMaterialProperties();
     void updateControlsFromMaterial();
     void updateMaterialPropertiesFromMaterial();
 

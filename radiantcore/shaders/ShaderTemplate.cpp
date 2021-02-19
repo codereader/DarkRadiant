@@ -13,6 +13,7 @@
 #include <iostream>
 
 #include "ShaderExpression.h"
+#include "materials/ParseLib.h"
 
 namespace shaders
 {
@@ -938,6 +939,20 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 	return true;
 }
 
+bool ShaderTemplate::parseMaterialType(parser::DefTokeniser& tokeniser, const std::string& token)
+{
+    for (const auto& pair : SurfaceTypeMapping)
+    {
+        if (token == pair.first)
+        {
+            _surfaceType = pair.second;
+            return true;
+        }
+    }
+
+    return false;
+}
+
 bool ShaderTemplate::parseSurfaceFlags(parser::DefTokeniser& tokeniser,
                                        const std::string& token)
 {
@@ -1033,66 +1048,6 @@ bool ShaderTemplate::parseSurfaceFlags(parser::DefTokeniser& tokeniser,
     {
         _surfaceFlags |= Material::SURF_NOSTEPS;
     }
-	else if (token == "metal")
-    {
-		_surfaceType = Material::SURFTYPE_METAL;
-    }
-	else if (token == "stone")
-    {
-        _surfaceType = Material::SURFTYPE_STONE;
-    }
-	else if (token == "flesh")
-    {
-        _surfaceType = Material::SURFTYPE_FLESH;
-    }
-	else if (token == "wood")
-    {
-        _surfaceType = Material::SURFTYPE_WOOD;
-    }
-	else if (token == "cardboard")
-    {
-        _surfaceType = Material::SURFTYPE_CARDBOARD;
-    }
-	else if (token == "liquid")
-    {
-        _surfaceType = Material::SURFTYPE_LIQUID;
-    }
-	else if (token == "glass")
-    {
-        _surfaceType = Material::SURFTYPE_GLASS;
-    }
-	else if (token == "plastic")
-    {
-        _surfaceType = Material::SURFTYPE_PLASTIC;
-    }
-	else if (token == "ricochet")
-    {
-        _surfaceType = Material::SURFTYPE_RICOCHET;
-    }
-	else if (token == "surftype10")
-    {
-        _surfaceType = Material::SURFTYPE_10;
-    }
-	else if (token == "surftype11")
-    {
-        _surfaceType = Material::SURFTYPE_11;
-    }
-	else if (token == "surftype12")
-    {
-        _surfaceType = Material::SURFTYPE_12;
-    }
-	else if (token == "surftype13")
-    {
-        _surfaceType = Material::SURFTYPE_13;
-    }
-	else if (token == "surftype14")
-    {
-        _surfaceType = Material::SURFTYPE_14;
-    }
-	else if (token == "surftype15")
-    {
-        _surfaceType = Material::SURFTYPE_15;
-    }
 	else if (token == "guisurf")
 	{
 		_surfaceFlags |= Material::SURF_ENTITYGUI;
@@ -1184,6 +1139,7 @@ void ShaderTemplate::parseDefinition()
                         if (parseLightKeywords(tokeniser, token)) continue;
                         if (parseBlendShortcuts(tokeniser, token)) continue;
 						if (parseSurfaceFlags(tokeniser, token)) continue;
+						if (parseMaterialType(tokeniser, token)) continue;
 
 						rWarning() << "Material keyword not recognised: " << token << std::endl;
 

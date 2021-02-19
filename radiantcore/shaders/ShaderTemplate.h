@@ -284,6 +284,7 @@ private:
 	bool parseBlendMaps(parser::DefTokeniser&, const std::string&);
     bool parseStageModifiers(parser::DefTokeniser&, const std::string&);
 	bool parseSurfaceFlags(parser::DefTokeniser&, const std::string&);
+	bool parseMaterialType(parser::DefTokeniser&, const std::string&);
 	bool parseCondition(parser::DefTokeniser&, const std::string&);
 	IShaderExpressionPtr parseSingleExpressionTerm(parser::DefTokeniser& tokeniser);
 

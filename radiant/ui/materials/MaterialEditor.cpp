@@ -8,6 +8,7 @@
 #include <wx/collpane.h>
 #include "wxutil/SourceView.h"
 #include "fmt/format.h"
+#include "materials/ParseLib.h"
 
 namespace ui
 {
@@ -77,6 +78,7 @@ MaterialEditor::MaterialEditor() :
     previewPanel->GetSizer()->Add(_preview->getWidget(), 1, wxEXPAND);
     previewPanel->GetSizer()->Add(_sourceView, 1, wxEXPAND);
 
+    setupMaterialProperties();
     setupMaterialStageView();
 
     // Set the default size of the window
@@ -118,10 +120,22 @@ void MaterialEditor::_onClose(wxCommandEvent& ev)
 
 void MaterialEditor::ShowDialog(const cmd::ArgumentList& args)
 {
-    MaterialEditor* editor = new MaterialEditor;
+    auto* editor = new MaterialEditor;
 
     editor->ShowModal();
     editor->Destroy();
+}
+
+void MaterialEditor::setupMaterialProperties()
+{
+    auto* typeDropdown = getControl<wxChoice>("MaterialType");
+
+    typeDropdown->AppendString(""); // empty string for undefined
+
+    for (const auto& pair : shaders::SurfaceTypeMapping)
+    {
+        typeDropdown->AppendString(pair.first);
+    }
 }
 
 void MaterialEditor::setupMaterialStageView()
@@ -164,6 +178,18 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
     if (_material)
     {
         getControl<wxTextCtrl>("MaterialDescription")->SetValue(_material->getDescription());
+
+        // Type dropdown
+        auto* materialTypeDropdown = getControl<wxChoice>("MaterialType");
+        if (_material->getSurfaceType() == Material::SURFTYPE_DEFAULT)
+        {
+            materialTypeDropdown->Select(0);
+        }
+        else
+        {
+            auto surfType = shaders::getStringForSurfaceType(_material->getSurfaceType());
+            materialTypeDropdown->Select(materialTypeDropdown->FindString(surfType));
+        }
 
         // Surround the definition with curly braces, these are not included
         auto definition = fmt::format("{0}\n{{{1}}}", _material->getName(), _material->getDefinition());

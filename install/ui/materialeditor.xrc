@@ -127,23 +127,6 @@
 															<option>0</option>
 															<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
 															<border>0</border>
-															<object class="wxStaticText" name="m_staticText57">
-																<label>Description:</label>
-																<wrap>-1</wrap>
-															</object>
-														</object>
-														<object class="sizeritem">
-															<option>1</option>
-															<flag>wxEXPAND|wxLEFT</flag>
-															<border>0</border>
-															<object class="wxTextCtrl" name="MaterialDescription">
-																<value></value>
-															</object>
-														</object>
-														<object class="sizeritem">
-															<option>0</option>
-															<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-															<border>0</border>
 															<object class="wxStaticText" name="m_staticText571">
 																<label>Material:</label>
 																<wrap>-1</wrap>
@@ -156,6 +139,23 @@
 															<object class="wxChoice" name="MaterialType">
 																<selection>0</selection>
 																<content />
+															</object>
+														</object>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+															<border>0</border>
+															<object class="wxStaticText" name="m_staticText57">
+																<label>Description:</label>
+																<wrap>-1</wrap>
+															</object>
+														</object>
+														<object class="sizeritem">
+															<option>1</option>
+															<flag>wxEXPAND|wxLEFT</flag>
+															<border>0</border>
+															<object class="wxTextCtrl" name="MaterialDescription">
+																<value></value>
 															</object>
 														</object>
 													</object>
