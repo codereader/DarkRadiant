@@ -360,7 +360,7 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
         }
 
         auto lightFalloffMap = _material->getLightFalloffExpression();
-        getControl<wxTextCtrl>("MaterialLightFalloffMap")->SetValue("test");
+        getControl<wxTextCtrl>("MaterialLightFalloffMap")->SetValue(lightFalloffMap ? lightFalloffMap->getExpressionString() : "");
 
         // Surround the definition with curly braces, these are not included
         auto definition = fmt::format("{0}\n{{{1}}}", _material->getName(), _material->getDefinition());

@@ -10,6 +10,7 @@
 #include "string/convert.h"
 #include "math/FloatTools.h" // contains float_to_integer() helper
 #include "math/Vector3.h"
+#include "fmt/format.h"
 
 #include "RGBAImage.h"
 #include "textures/HeightmapCreator.h"
@@ -41,48 +42,58 @@ namespace
 	}
 }
 
-namespace shaders {
+namespace shaders
+{
 
-MapExpressionPtr MapExpression::createForToken(DefTokeniser& token) {
-	// Switch on the first keyword, to determine what kind of expression this
-	// is.
+MapExpressionPtr MapExpression::createForToken(DefTokeniser& token)
+{
+	// Switch on the first keyword, to determine what kind of expression this is.
 	// Tr3B: don't convert image names to lower because Unix filesystems are case sensitive
 	std::string type = token.nextToken();
 
-	if (string::iequals(type, "heightmap")) {
-		return MapExpressionPtr(new HeightMapExpression (token));
+	if (string::iequals(type, "heightmap"))
+    {
+		return std::make_shared<HeightMapExpression>(token);
 	}
-	else if (string::iequals(type, "addnormals")) {
-		return MapExpressionPtr(new AddNormalsExpression (token));
+	else if (string::iequals(type, "addnormals"))
+    {
+		return std::make_shared<AddNormalsExpression>(token);
 	}
-	else if (string::iequals(type, "smoothnormals")) {
-		return MapExpressionPtr(new SmoothNormalsExpression (token));
+	else if (string::iequals(type, "smoothnormals"))
+    {
+		return std::make_shared<SmoothNormalsExpression>(token);
 	}
-	else if (string::iequals(type, "add")) {
-		return MapExpressionPtr(new AddExpression (token));
+	else if (string::iequals(type, "add"))
+    {
+		return std::make_shared<AddExpression>(token);
 	}
-	else if (string::iequals(type, "scale")) {
-		return MapExpressionPtr(new ScaleExpression (token));
+	else if (string::iequals(type, "scale"))
+    {
+		return std::make_shared<ScaleExpression>(token);
 	}
-	else if (string::iequals(type, "invertalpha")) {
-		return MapExpressionPtr(new InvertAlphaExpression (token));
+	else if (string::iequals(type, "invertalpha"))
+    {
+		return std::make_shared<InvertAlphaExpression>(token);
 	}
-	else if (string::iequals(type, "invertcolor")) {
-		return MapExpressionPtr(new InvertColorExpression (token));
+	else if (string::iequals(type, "invertcolor"))
+    {
+		return std::make_shared<InvertColorExpression>(token);
 	}
-	else if (string::iequals(type, "makeintensity")) {
-		return MapExpressionPtr(new MakeIntensityExpression (token));
+	else if (string::iequals(type, "makeintensity"))
+    {
+		return std::make_shared<MakeIntensityExpression>(token);
 	}
-	else if (string::iequals(type, "makealpha")) {
-		return MapExpressionPtr(new MakeAlphaExpression (token));
+	else if (string::iequals(type, "makealpha"))
+    {
+		return std::make_shared<MakeAlphaExpression>(token);
 	}
-	else {
-		// since we already took away the expression into the variable type, we need to pass type instead of token
-		return MapExpressionPtr(new ImageExpression(type));
-	}
+	
+    // since we already took away the expression into the variable type, we need to pass type instead of token
+	return std::make_shared<ImageExpression>(type);
 }
 
-MapExpressionPtr MapExpression::createForString(std::string str) {
+MapExpressionPtr MapExpression::createForString(const std::string& str)
+{
 	parser::BasicDefTokeniser<std::string> token(str);
 	return createForToken(token);
 }
@@ -144,6 +155,11 @@ std::string HeightMapExpression::getIdentifier() const {
 	std::string identifier = "_heightmap_";
 	identifier.append(heightMapExp->getIdentifier() + string::to_string(scale));
 	return identifier;
+}
+
+std::string HeightMapExpression::getExpressionString()
+{
+    return fmt::format("heightmap({0}, {1})", heightMapExp->getExpressionString(), scale);
 }
 
 AddNormalsExpression::AddNormalsExpression (DefTokeniser& token) {
@@ -218,6 +234,11 @@ std::string AddNormalsExpression::getIdentifier() const {
 	std::string identifier = "_addnormals_";
 	identifier.append(mapExpOne->getIdentifier() + mapExpTwo->getIdentifier());
 	return identifier;
+}
+
+std::string AddNormalsExpression::getExpressionString()
+{
+    return fmt::format("addnormals({0}, {1})", mapExpOne->getExpressionString(), mapExpTwo->getExpressionString());
 }
 
 SmoothNormalsExpression::SmoothNormalsExpression (DefTokeniser& token) {
@@ -302,6 +323,11 @@ std::string SmoothNormalsExpression::getIdentifier() const {
 	return identifier;
 }
 
+std::string SmoothNormalsExpression::getExpressionString()
+{
+    return fmt::format("smoothnormals({0})", mapExp->getExpressionString());
+}
+
 AddExpression::AddExpression (DefTokeniser& token) {
 	token.assertNextToken("(");
 	mapExpOne = createForToken(token);
@@ -357,13 +383,23 @@ ImagePtr AddExpression::getImage() const {
 	return result;
 }
 
-std::string AddExpression::getIdentifier() const {
+std::string AddExpression::getIdentifier() const
+{
 	std::string identifier = "_add_";
 	identifier.append(mapExpOne->getIdentifier() + mapExpTwo->getIdentifier());
 	return identifier;
 }
 
-ScaleExpression::ScaleExpression (DefTokeniser& token) : scaleGreen(0),scaleBlue(0),scaleAlpha(0) {
+std::string AddExpression::getExpressionString()
+{
+    return fmt::format("add({0}, {1})", mapExpOne->getExpressionString(), mapExpTwo->getExpressionString());
+}
+
+ScaleExpression::ScaleExpression(DefTokeniser& token) : 
+    scaleGreen(0),
+    scaleBlue(0),
+    scaleAlpha(0)
+{
 	token.assertNextToken("(");
 	mapExp = createForToken(token);
 	token.assertNextToken(",");
@@ -383,7 +419,8 @@ ScaleExpression::ScaleExpression (DefTokeniser& token) : scaleGreen(0),scaleBlue
 	token.assertNextToken(")");
 }
 
-ImagePtr ScaleExpression::getImage() const {
+ImagePtr ScaleExpression::getImage() const
+{
     ImagePtr img = mapExp->getImage();
 
     if (img == NULL) return ImagePtr();
@@ -439,6 +476,15 @@ std::string ScaleExpression::getIdentifier() const {
 	return identifier;
 }
 
+std::string ScaleExpression::getExpressionString()
+{
+    auto scaleAlphaStr = scaleAlpha == 0 ? std::string() : fmt::format(", {0}", scaleAlpha);
+    auto scaleBlueStr = scaleBlue == 0 && scaleAlphaStr.empty() ? std::string() : fmt::format(", {0}", scaleBlue);
+    auto scaleGreenStr = scaleGreen == 0 && scaleBlueStr.empty() ? std::string() : fmt::format(", {0}", scaleGreen);
+
+    return fmt::format("scale({0}, {1}{2}{3}{4})", mapExp->getExpressionString(), scaleRed, scaleGreenStr, scaleBlueStr, scaleAlphaStr);
+}
+
 InvertAlphaExpression::InvertAlphaExpression (DefTokeniser& token) {
 	token.assertNextToken("(");
 	mapExp = createForToken(token);
@@ -489,6 +535,11 @@ std::string InvertAlphaExpression::getIdentifier() const {
 	return identifier;
 }
 
+std::string InvertAlphaExpression::getExpressionString()
+{
+    return fmt::format("invertAlpha({0})", mapExp->getExpressionString());
+}
+
 InvertColorExpression::InvertColorExpression (DefTokeniser& token) {
 	token.assertNextToken("(");
 	mapExp = createForToken(token);
@@ -537,6 +588,11 @@ std::string InvertColorExpression::getIdentifier() const {
 	return identifier;
 }
 
+std::string InvertColorExpression::getExpressionString()
+{
+    return fmt::format("invertColor({0})", mapExp->getExpressionString());
+}
+
 MakeIntensityExpression::MakeIntensityExpression (DefTokeniser& token) {
 	token.assertNextToken("(");
 	mapExp = createForToken(token);
@@ -581,19 +637,27 @@ ImagePtr MakeIntensityExpression::getImage() const {
 	return result;
 }
 
-std::string MakeIntensityExpression::getIdentifier() const {
+std::string MakeIntensityExpression::getIdentifier() const
+{
 	std::string identifier = "_makeintensity_";
 	identifier.append(mapExp->getIdentifier());
 	return identifier;
 }
 
-MakeAlphaExpression::MakeAlphaExpression (DefTokeniser& token) {
+std::string MakeIntensityExpression::getExpressionString()
+{
+    return fmt::format("makeIntensity({0})", mapExp->getExpressionString());
+}
+
+MakeAlphaExpression::MakeAlphaExpression(DefTokeniser& token)
+{
 	token.assertNextToken("(");
 	mapExp = createForToken(token);
 	token.assertNextToken(")");
 }
 
-ImagePtr MakeAlphaExpression::getImage() const {
+ImagePtr MakeAlphaExpression::getImage() const
+{
 	ImagePtr img = mapExp->getImage();
 
 	if (img == NULL) return ImagePtr();
@@ -631,20 +695,25 @@ ImagePtr MakeAlphaExpression::getImage() const {
 	return result;
 }
 
-std::string MakeAlphaExpression::getIdentifier() const {
+std::string MakeAlphaExpression::getIdentifier() const
+{
 	std::string identifier = "_makealpha_";
 	identifier.append(mapExp->getIdentifier());
 	return identifier;
 }
 
+std::string MakeAlphaExpression::getExpressionString()
+{
+    return fmt::format("makeAlpha({0})", mapExp->getExpressionString());
+}
+
 /* ImageExpression */
 
-ImageExpression::ImageExpression(const std::string& imgName)
+ImageExpression::ImageExpression(const std::string& imgName) :
+    _imgName(imgName)
 {
-	// Replace backslashes with forward slashes and strip of
-	// the file extension of the provided token, and store
-	// the result in the provided string.
-	_imgName = os::standardPath(imgName).substr(0, imgName.rfind("."));
+    // _imgName holds the raw incoming name of the expression
+    // it is normalised and stripped of its extension by the GlobalImageLoader()
 }
 
 ImagePtr ImageExpression::getImage() const
@@ -730,6 +799,11 @@ ImagePtr ImageExpression::getImage() const
 std::string ImageExpression::getIdentifier() const
 {
 	return _imgName;
+}
+
+std::string ImageExpression::getExpressionString()
+{
+    return _imgName;
 }
 
 } // namespace shaders

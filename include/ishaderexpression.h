@@ -95,6 +95,11 @@ public:
      * image.
      */
     virtual bool isCubeMap() const = 0;
+
+    /**
+     * Returns the string as parsed from the material source
+     */
+    virtual std::string getExpressionString() = 0;
 };
 
 } // namespace
