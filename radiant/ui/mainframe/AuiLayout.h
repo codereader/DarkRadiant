@@ -26,8 +26,15 @@ class AuiLayout: public IMainFrameLayout
     // Main AUI manager
     wxAuiManager _auiMgr;
 
+    // List of panes managed by the AUI manager
+    using Panes = std::list<wxWindow*>;
+    Panes _panes;
+
     // Main constructor
     AuiLayout();
+
+    // Add a pane to the wxAuiManager and store it in the list
+    void addPane(wxWindow* window, const wxAuiPaneInfo& info);
 
 public:
 	// IMainFrameLayout implementation

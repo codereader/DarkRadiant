@@ -23,11 +23,15 @@ namespace
 {
     const std::string RKEY_ROOT = "user/ui/mainFrame/aui";
 
+    // Minimum size of docked panels
+    const wxSize MIN_SIZE(128, 128);
+
     // Return a pane info with default options
-    wxAuiPaneInfo DEFAULT_PANE_INFO(const std::string& caption)
+    wxAuiPaneInfo DEFAULT_PANE_INFO(const std::string& caption,
+                                    const wxSize& minSize)
     {
         return wxAuiPaneInfo().Caption(caption).Layer(1).CloseButton(false)
-                              .MinSize(wxSize(128, 128));
+                              .MinSize(minSize);
     }
 }
 
@@ -35,6 +39,12 @@ AuiLayout::AuiLayout()
 : _auiMgr(nullptr, wxAUI_MGR_ALLOW_FLOATING | wxAUI_MGR_VENETIAN_BLINDS_HINT |
                    wxAUI_MGR_LIVE_RESIZE)
 {
+}
+
+void AuiLayout::addPane(wxWindow* window, const wxAuiPaneInfo& info)
+{
+    _auiMgr.AddPane(window, info);
+    _panes.push_back(window);
 }
 
 std::string AuiLayout::getName()
@@ -85,12 +95,23 @@ void AuiLayout::activate()
 
     // Add the camera and notebook to the left, as with the Embedded layout, and
     // the 2D view on the right
-    _auiMgr.AddPane(_camWnd->getMainWidget(),
-                    DEFAULT_PANE_INFO(_("Camera")).Left().Position(0));
-    _auiMgr.AddPane(notebookPanel,
-                    DEFAULT_PANE_INFO(_("Properties")).Left().Position(1));
-    _auiMgr.AddPane(xywnd->getGLWidget(),
-                    DEFAULT_PANE_INFO(_("2D View")).Right());
+    wxSize size = topLevelParent->GetSize();
+    size.Scale(0.5, 1.0);
+    addPane(xywnd->getGLWidget(),
+            DEFAULT_PANE_INFO(_("2D View"), size).Right());
+    addPane(_camWnd->getMainWidget(),
+            DEFAULT_PANE_INFO(_("Camera"), size).Left().Position(0));
+    addPane(notebookPanel,
+            DEFAULT_PANE_INFO(_("Properties"), size).Left().Position(1));
+    _auiMgr.Update();
+
+    // Nasty hack to get the panes sized properly. Since BestSize() is
+    // completely ignored (at least on Linux), we have to add the panes with a
+    // large *minimum* size and then reset this size after the initial addition.
+    for (wxWindow* w: _panes)
+    {
+        _auiMgr.GetPane(w).MinSize(MIN_SIZE);
+    }
     _auiMgr.Update();
 
     // Hide the camera toggle option for non-floating views
