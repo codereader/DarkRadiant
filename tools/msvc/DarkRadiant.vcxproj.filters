@@ -1335,6 +1335,9 @@
     <ClInclude Include="..\..\radiant\ui\common\MaterialPopulator.h">
       <Filter>src\ui\common</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\materials\MaterialBinding.h">
+      <Filter>src\ui\materials</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />

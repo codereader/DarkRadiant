@@ -80,6 +80,7 @@ MaterialEditor::MaterialEditor() :
 
     setupMaterialProperties();
     setupMaterialStageView();
+    setupMaterialSurfaceFlags();
 
     // Set the default size of the window
     FitToScreen(0.8f, 0.6f);
@@ -98,6 +99,8 @@ MaterialEditor::MaterialEditor() :
     CenterOnParent();
 
     _treeView->Populate();
+
+    updateControlsFromMaterial();
 }
 
 int MaterialEditor::ShowModal()
@@ -138,6 +141,43 @@ void MaterialEditor::setupMaterialProperties()
     }
 }
 
+void MaterialEditor::setupSurfaceFlag(const std::string& controlName, Material::SurfaceFlags flag)
+{
+    _bindings.emplace(controlName,
+        std::make_shared<CheckBoxBinding>(getControl<wxCheckBox>(controlName), 
+            [=](const MaterialPtr& material)
+            {
+                return (material->getSurfaceFlags() & flag) != 0;
+            }));
+}
+
+void MaterialEditor::setupMaterialSurfaceFlags()
+{
+    setupSurfaceFlag("MaterialSurfaceFlagSolid", Material::SurfaceFlags::SURF_SOLID);
+    setupSurfaceFlag("MaterialSurfaceFlagWater", Material::SurfaceFlags::SURF_WATER);
+    setupSurfaceFlag("MaterialSurfaceFlagPlayerclip", Material::SurfaceFlags::SURF_PLAYERCLIP);
+    setupSurfaceFlag("MaterialSurfaceFlagMonsterclip", Material::SurfaceFlags::SURF_MONSTERCLIP);
+    setupSurfaceFlag("MaterialSurfaceFlagMoveableClip", Material::SurfaceFlags::SURF_MOVEABLECLIP);
+    setupSurfaceFlag("MaterialSurfaceFlagIkclip", Material::SurfaceFlags::SURF_IKCLIP);
+    setupSurfaceFlag("MaterialSurfaceFlagBlood", Material::SurfaceFlags::SURF_BLOOD);
+    setupSurfaceFlag("MaterialSurfaceFlagTrigger", Material::SurfaceFlags::SURF_TRIGGER);
+    setupSurfaceFlag("MaterialSurfaceFlagAassolid", Material::SurfaceFlags::SURF_AASSOLID);
+    setupSurfaceFlag("MaterialSurfaceFlagAasobstacle", Material::SurfaceFlags::SURF_AASOBSTACLE);
+    setupSurfaceFlag("MaterialSurfaceFlagFlashlighttrigger", Material::SurfaceFlags::SURF_FLASHLIGHT_TRIGGER);
+    setupSurfaceFlag("MaterialSurfaceFlagNonsolid", Material::SurfaceFlags::SURF_NONSOLID);
+    setupSurfaceFlag("MaterialSurfaceFlagNullnormal", Material::SurfaceFlags::SURF_NULLNORMAL);
+    setupSurfaceFlag("MaterialSurfaceFlagAreaportal", Material::SurfaceFlags::SURF_AREAPORTAL);
+    setupSurfaceFlag("MaterialSurfaceFlagQernocarve", Material::SurfaceFlags::SURF_NOCARVE);
+    setupSurfaceFlag("MaterialSurfaceFlagDiscrete", Material::SurfaceFlags::SURF_DISCRETE);
+    setupSurfaceFlag("MaterialSurfaceFlagNofragment", Material::SurfaceFlags::SURF_NOFRAGMENT);
+    setupSurfaceFlag("MaterialSurfaceFlagSlick", Material::SurfaceFlags::SURF_SLICK);
+    setupSurfaceFlag("MaterialSurfaceFlagCollision", Material::SurfaceFlags::SURF_COLLISION);
+    setupSurfaceFlag("MaterialSurfaceFlagNoimpact", Material::SurfaceFlags::SURF_NOIMPACT);
+    setupSurfaceFlag("MaterialSurfaceFlagNodamage", Material::SurfaceFlags::SURF_NODAMAGE);
+    setupSurfaceFlag("MaterialSurfaceFlagLadder", Material::SurfaceFlags::SURF_LADDER);
+    setupSurfaceFlag("MaterialSurfaceFlagNosteps", Material::SurfaceFlags::SURF_NOSTEPS);
+}
+
 void MaterialEditor::setupMaterialStageView()
 {
     // Stage view
@@ -175,6 +215,12 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
 {
     getControl<wxPanel>("MaterialEditorMaterialPropertiesPanel")->Enable(_material != nullptr);
     
+    // Update all registered bindings
+    for (const auto& pair : _bindings)
+    {
+        pair.second->setSource(_material);
+    }
+
     if (_material)
     {
         getControl<wxTextCtrl>("MaterialDescription")->SetValue(_material->getDescription());

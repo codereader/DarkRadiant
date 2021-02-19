@@ -167,7 +167,7 @@
 													<object class="wxNotebook" name="m_notebook2">
 														<object class="notebookpage">
 															<label>Interaction</label>
-															<selected>1</selected>
+															<selected>0</selected>
 															<object class="wxPanel" name="InteractionPage">
 																<style>wxTAB_TRAVERSAL</style>
 																<object class="wxBoxSizer">
@@ -315,7 +315,7 @@
 														</object>
 														<object class="notebookpage">
 															<label>Surface Flags</label>
-															<selected>0</selected>
+															<selected>1</selected>
 															<object class="wxPanel" name="SurfaceFlagsPage">
 																<style>wxTAB_TRAVERSAL</style>
 																<object class="wxBoxSizer">
@@ -335,16 +335,16 @@
 																				<option>0</option>
 																				<flag>wxALL</flag>
 																				<border>5</border>
-																				<object class="wxCheckBox" name="m_checkBox873">
+																				<object class="wxCheckBox" name="MaterialSurfaceFlagSolid">
 																					<label>solid</label>
-																					<checked>0</checked>
+																					<checked>1</checked>
 																				</object>
 																			</object>
 																			<object class="sizeritem">
 																				<option>0</option>
 																				<flag>wxALL</flag>
 																				<border>5</border>
-																				<object class="wxCheckBox" name="m_checkBox88">
+																				<object class="wxCheckBox" name="MaterialSurfaceFlagIkclip">
 																					<label>ikclip</label>
 																					<checked>0</checked>
 																				</object>
@@ -353,7 +353,7 @@
 																				<option>0</option>
 																				<flag>wxALL</flag>
 																				<border>5</border>
-																				<object class="wxCheckBox" name="m_checkBox89">
+																				<object class="wxCheckBox" name="MaterialSurfaceFlagFlashlighttrigger">
 																					<label>flashlight__trigger</label>
 																					<checked>0</checked>
 																				</object>
@@ -362,7 +362,7 @@
 																				<option>0</option>
 																				<flag>wxALL</flag>
 																				<border>5</border>
-																				<object class="wxCheckBox" name="m_checkBox90">
+																				<object class="wxCheckBox" name="MaterialSurfaceFlagDiscrete">
 																					<label>discrete</label>
 																					<checked>0</checked>
 																				</object>
@@ -371,7 +371,7 @@
 																				<option>0</option>
 																				<flag>wxALL</flag>
 																				<border>5</border>
-																				<object class="wxCheckBox" name="m_checkBox91">
+																				<object class="wxCheckBox" name="MaterialSurfaceFlagNoimpact">
 																					<label>noimpact</label>
 																					<checked>0</checked>
 																				</object>
@@ -380,7 +380,7 @@
 																				<option>0</option>
 																				<flag>wxALL</flag>
 																				<border>5</border>
-																				<object class="wxCheckBox" name="m_checkBox92">
+																				<object class="wxCheckBox" name="MaterialSurfaceFlagWater">
 																					<label>water</label>
 																					<checked>0</checked>
 																				</object>
@@ -389,7 +389,7 @@
 																				<option>0</option>
 																				<flag>wxALL</flag>
 																				<border>5</border>
-																				<object class="wxCheckBox" name="m_checkBox93">
+																				<object class="wxCheckBox" name="MaterialSurfaceFlagBlood">
 																					<label>blood</label>
 																					<checked>0</checked>
 																				</object>
@@ -398,7 +398,7 @@
 																				<option>0</option>
 																				<flag>wxALL</flag>
 																				<border>5</border>
-																				<object class="wxCheckBox" name="m_checkBox94">
+																				<object class="wxCheckBox" name="MaterialSurfaceFlagNonsolid">
 																					<label>nonsolid</label>
 																					<checked>0</checked>
 																				</object>
@@ -407,7 +407,7 @@
 																				<option>0</option>
 																				<flag>wxALL</flag>
 																				<border>5</border>
-																				<object class="wxCheckBox" name="m_checkBox95">
+																				<object class="wxCheckBox" name="MaterialSurfaceFlagNofragment">
 																					<label>noFragment</label>
 																					<checked>0</checked>
 																				</object>
@@ -416,7 +416,7 @@
 																				<option>0</option>
 																				<flag>wxALL</flag>
 																				<border>5</border>
-																				<object class="wxCheckBox" name="m_checkBox96">
+																				<object class="wxCheckBox" name="MaterialSurfaceFlagNodamage">
 																					<label>nodamage</label>
 																					<checked>0</checked>
 																				</object>
@@ -425,7 +425,7 @@
 																				<option>0</option>
 																				<flag>wxALL</flag>
 																				<border>5</border>
-																				<object class="wxCheckBox" name="m_checkBox97">
+																				<object class="wxCheckBox" name="MaterialSurfaceFlagPlayerclip">
 																					<label>playerclip</label>
 																					<checked>0</checked>
 																				</object>
@@ -434,7 +434,7 @@
 																				<option>0</option>
 																				<flag>wxALL</flag>
 																				<border>5</border>
-																				<object class="wxCheckBox" name="m_checkBox98">
+																				<object class="wxCheckBox" name="MaterialSurfaceFlagTrigger">
 																					<label>trigger</label>
 																					<checked>0</checked>
 																				</object>
@@ -443,7 +443,7 @@
 																				<option>0</option>
 																				<flag>wxALL</flag>
 																				<border>5</border>
-																				<object class="wxCheckBox" name="m_checkBox99">
+																				<object class="wxCheckBox" name="MaterialSurfaceFlagNullnormal">
 																					<label>nullNormal</label>
 																					<checked>0</checked>
 																				</object>
@@ -452,7 +452,7 @@
 																				<option>0</option>
 																				<flag>wxALL</flag>
 																				<border>5</border>
-																				<object class="wxCheckBox" name="m_checkBox100">
+																				<object class="wxCheckBox" name="MaterialSurfaceFlagSlick">
 																					<label>slick</label>
 																					<checked>0</checked>
 																				</object>
@@ -461,7 +461,7 @@
 																				<option>0</option>
 																				<flag>wxALL</flag>
 																				<border>5</border>
-																				<object class="wxCheckBox" name="m_checkBox101">
+																				<object class="wxCheckBox" name="MaterialSurfaceFlagLadder">
 																					<label>ladder</label>
 																					<checked>0</checked>
 																				</object>
@@ -470,7 +470,7 @@
 																				<option>0</option>
 																				<flag>wxALL</flag>
 																				<border>5</border>
-																				<object class="wxCheckBox" name="m_checkBox102">
+																				<object class="wxCheckBox" name="MaterialSurfaceFlagMonsterclip">
 																					<label>monsterclip</label>
 																					<checked>0</checked>
 																				</object>
@@ -479,7 +479,7 @@
 																				<option>0</option>
 																				<flag>wxALL</flag>
 																				<border>5</border>
-																				<object class="wxCheckBox" name="m_checkBox103">
+																				<object class="wxCheckBox" name="MaterialSurfaceFlagAassolid">
 																					<label>aassolid</label>
 																					<checked>0</checked>
 																				</object>
@@ -488,7 +488,7 @@
 																				<option>0</option>
 																				<flag>wxALL</flag>
 																				<border>5</border>
-																				<object class="wxCheckBox" name="m_checkBox104">
+																				<object class="wxCheckBox" name="MaterialSurfaceFlagAreaportal">
 																					<label>areaPortal</label>
 																					<checked>0</checked>
 																				</object>
@@ -497,7 +497,7 @@
 																				<option>0</option>
 																				<flag>wxALL</flag>
 																				<border>5</border>
-																				<object class="wxCheckBox" name="m_checkBox105">
+																				<object class="wxCheckBox" name="MaterialSurfaceFlagCollision">
 																					<label>collision</label>
 																					<checked>0</checked>
 																				</object>
@@ -506,7 +506,7 @@
 																				<option>0</option>
 																				<flag>wxALL</flag>
 																				<border>5</border>
-																				<object class="wxCheckBox" name="m_checkBox106">
+																				<object class="wxCheckBox" name="MaterialSurfaceFlagNosteps">
 																					<label>nosteps</label>
 																					<checked>0</checked>
 																				</object>
@@ -515,7 +515,7 @@
 																				<option>0</option>
 																				<flag>wxALL</flag>
 																				<border>5</border>
-																				<object class="wxCheckBox" name="m_checkBox107">
+																				<object class="wxCheckBox" name="MaterialSurfaceFlagMoveableClip">
 																					<label>moveableclip</label>
 																					<checked>0</checked>
 																				</object>
@@ -524,7 +524,7 @@
 																				<option>0</option>
 																				<flag>wxALL</flag>
 																				<border>5</border>
-																				<object class="wxCheckBox" name="m_checkBox108">
+																				<object class="wxCheckBox" name="MaterialSurfaceFlagAasobstacle">
 																					<label>aasobstacle</label>
 																					<checked>0</checked>
 																				</object>
@@ -533,7 +533,7 @@
 																				<option>0</option>
 																				<flag>wxALL</flag>
 																				<border>5</border>
-																				<object class="wxCheckBox" name="m_checkBox109">
+																				<object class="wxCheckBox" name="MaterialSurfaceFlagQernocarve">
 																					<label>qer__nocarve</label>
 																					<checked>0</checked>
 																				</object>

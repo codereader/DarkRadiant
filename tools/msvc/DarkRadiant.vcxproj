@@ -456,6 +456,7 @@
     <ClInclude Include="..\..\radiant\ui\MapFileProgressHandler.h" />
     <ClInclude Include="..\..\radiant\ui\mapinfo\LayerInfoTab.h" />
     <ClInclude Include="..\..\radiant\ui\mapselector\MapSelector.h" />
+    <ClInclude Include="..\..\radiant\ui\materials\MaterialBinding.h" />
     <ClInclude Include="..\..\radiant\ui\materials\MaterialEditor.h" />
     <ClInclude Include="..\..\radiant\ui\mediabrowser\MediaBrowserTreeView.h" />
     <ClInclude Include="..\..\radiant\ui\menu\MenuBar.h" />

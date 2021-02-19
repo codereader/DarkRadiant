@@ -11,6 +11,7 @@
 #include "wxutil/SourceView.h"
 
 #include "ui/common/MaterialTreeView.h"
+#include "MaterialBinding.h"
 
 namespace ui
 {
@@ -33,6 +34,8 @@ private:
 
     MaterialPtr _material;
 
+    std::map<std::string, std::shared_ptr<MaterialBinding>> _bindings;
+
 private:
     MaterialEditor();
 
@@ -46,6 +49,8 @@ public:
 private:
     void setupMaterialStageView();
     void setupMaterialProperties();
+    void setupMaterialSurfaceFlags();
+    void setupSurfaceFlag(const std::string& controlName, Material::SurfaceFlags flag);
     void updateControlsFromMaterial();
     void updateMaterialPropertiesFromMaterial();
 
