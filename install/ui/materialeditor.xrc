@@ -2,7 +2,7 @@
 <resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
 	<object class="wxPanel" name="MaterialEditorMainPanel">
 		<style>wxTAB_TRAVERSAL</style>
-		<size>900,884</size>
+		<size>957,884</size>
 		<object class="wxBoxSizer">
 			<orient>wxVERTICAL</orient>
 			<object class="sizeritem">
@@ -15,7 +15,7 @@
 					<gravity>0</gravity>
 					<minsize>0</minsize>
 					<orientation>vertical</orientation>
-					<object class="wxPanel" name="m_panel1">
+					<object class="wxPanel" name="MaterialEditorLeftArea">
 						<style>wxTAB_TRAVERSAL</style>
 						<size>250,-1</size>
 						<object class="wxBoxSizer">
@@ -136,7 +136,7 @@
 															<option>1</option>
 															<flag>wxEXPAND|wxLEFT</flag>
 															<border>0</border>
-															<object class="wxTextCtrl" name="m_textCtrl5">
+															<object class="wxTextCtrl" name="MaterialDescription">
 																<value></value>
 															</object>
 														</object>
@@ -153,7 +153,7 @@
 															<option>0</option>
 															<flag>wxALIGN_CENTER_VERTICAL</flag>
 															<border>0</border>
-															<object class="wxChoice" name="m_choice1">
+															<object class="wxChoice" name="MaterialType">
 																<selection>0</selection>
 																<content />
 															</object>
@@ -187,7 +187,7 @@
 																				<option>0</option>
 																				<flag></flag>
 																				<border>0</border>
-																				<object class="wxCheckBox" name="m_checkBox87">
+																				<object class="wxCheckBox" name="MaterialNoShadows">
 																					<label>noShadows</label>
 																					<checked>0</checked>
 																				</object>
@@ -196,7 +196,7 @@
 																				<option>0</option>
 																				<flag></flag>
 																				<border>0</border>
-																				<object class="wxCheckBox" name="m_checkBox41">
+																				<object class="wxCheckBox" name="MaterialTranslucent">
 																					<label>translucent</label>
 																					<checked>0</checked>
 																				</object>
@@ -205,7 +205,7 @@
 																				<option>0</option>
 																				<flag></flag>
 																				<border>0</border>
-																				<object class="wxCheckBox" name="m_checkBox821">
+																				<object class="wxCheckBox" name="MaterialNoSelfShadows">
 																					<label>noSelfShadows</label>
 																					<checked>0</checked>
 																				</object>
@@ -214,7 +214,7 @@
 																				<option>0</option>
 																				<flag></flag>
 																				<border>0</border>
-																				<object class="wxCheckBox" name="m_checkBox61">
+																				<object class="wxCheckBox" name="MaterialNoFog">
 																					<label>noFog</label>
 																					<checked>0</checked>
 																				</object>
@@ -223,7 +223,7 @@
 																				<option>0</option>
 																				<flag></flag>
 																				<border>0</border>
-																				<object class="wxCheckBox" name="m_checkBox841">
+																				<object class="wxCheckBox" name="MaterialForceShadows">
 																					<label>forceShadows</label>
 																					<checked>0</checked>
 																				</object>
@@ -240,7 +240,7 @@
 																				<option>0</option>
 																				<flag>wxALIGN_CENTER_VERTICAL</flag>
 																				<border>0</border>
-																				<object class="wxCheckBox" name="m_checkBox20">
+																				<object class="wxCheckBox" name="MaterialTwoSided">
 																					<label>twoSided</label>
 																					<checked>0</checked>
 																				</object>
@@ -249,7 +249,7 @@
 																				<option>0</option>
 																				<flag>wxALIGN_CENTER_VERTICAL</flag>
 																				<border>0</border>
-																				<object class="wxCheckBox" name="m_checkBox21">
+																				<object class="wxCheckBox" name="MaterialBackSided">
 																					<label>backSided</label>
 																					<checked>0</checked>
 																				</object>
@@ -264,7 +264,7 @@
 																						<option>0</option>
 																						<flag>wxALIGN_CENTER_VERTICAL</flag>
 																						<border>0</border>
-																						<object class="wxCheckBox" name="m_checkBox8411">
+																						<object class="wxCheckBox" name="MaterialPolygonOffset">
 																							<label>polygonOffset</label>
 																							<checked>0</checked>
 																						</object>
@@ -273,7 +273,7 @@
 																						<option>0</option>
 																						<flag>wxALIGN_CENTER_VERTICAL</flag>
 																						<border>0</border>
-																						<object class="wxSpinCtrl" name="MaterialEditorPolygonOffset">
+																						<object class="wxSpinCtrl" name="MaterialPolygonOffsetValue">
 																							<style>wxSP_ARROW_KEYS</style>
 																							<size>80,-1</size>
 																							<value>0</value>
@@ -293,7 +293,7 @@
 																						<option>0</option>
 																						<flag>wxALIGN_CENTER_VERTICAL</flag>
 																						<border>0</border>
-																						<object class="wxCheckBox" name="m_checkBox84111">
+																						<object class="wxCheckBox" name="MaterialAmbientRimColor">
 																							<label>ambientRimColor</label>
 																							<checked>0</checked>
 																						</object>
@@ -302,7 +302,7 @@
 																						<option>1</option>
 																						<flag>wxALIGN_CENTER_VERTICAL</flag>
 																						<border>0</border>
-																						<object class="wxTextCtrl" name="m_textCtrl9">
+																						<object class="wxTextCtrl" name="MaterialAmbientRimColorExpression">
 																							<value></value>
 																						</object>
 																					</object>
@@ -646,6 +646,23 @@
 																				<flag>wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</flag>
 																				<border>0</border>
 																				<object class="wxTextCtrl" name="m_textCtrl511">
+																					<value></value>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxBOTTOM|wxTOP</flag>
+																				<border>6</border>
+																				<object class="wxStaticText" name="m_staticText4211">
+																					<label>spectrum</label>
+																					<wrap>-1</wrap>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL</flag>
+																				<border>6</border>
+																				<object class="wxTextCtrl" name="m_textCtrl5112">
 																					<value></value>
 																				</object>
 																			</object>
@@ -1320,8 +1337,8 @@
 																			</object>
 																			<object class="sizeritem">
 																				<option>0</option>
-																				<flag>wxALL</flag>
-																				<border>0</border>
+																				<flag>wxBOTTOM|wxTOP</flag>
+																				<border>3</border>
 																				<object class="wxCheckBox" name="m_checkBox611111">
 																					<label>unsmoothedTangents</label>
 																					<checked>0</checked>
@@ -1338,8 +1355,8 @@
 																			</object>
 																			<object class="sizeritem">
 																				<option>0</option>
-																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																				<border>0</border>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxTOP</flag>
+																				<border>3</border>
 																				<object class="wxCheckBox" name="m_checkBox61111111">
 																					<label>PARTICLE__MACRO</label>
 																					<checked>0</checked>
@@ -1352,6 +1369,58 @@
 																				<object class="wxCheckBox" name="m_checkBox611111111">
 																					<label>GLASS__MACRO</label>
 																					<checked>0</checked>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxTOP</flag>
+																				<border>3</border>
+																				<object class="wxCheckBox" name="m_checkBox61112">
+																					<label>guisurf</label>
+																					<checked>0</checked>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>1</option>
+																				<flag>wxEXPAND</flag>
+																				<border>5</border>
+																				<object class="wxBoxSizer">
+																					<orient>wxHORIZONTAL</orient>
+																					<object class="sizeritem">
+																						<option>1</option>
+																						<flag>wxALIGN_CENTER_VERTICAL</flag>
+																						<border>0</border>
+																						<object class="wxTextCtrl" name="m_textCtrl51111">
+																							<value></value>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+																						<border>6</border>
+																						<object class="wxCheckBox" name="m_checkBox611121">
+																							<label>entity</label>
+																							<checked>0</checked>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
+																						<border>6</border>
+																						<object class="wxCheckBox" name="m_checkBox6111211">
+																							<label>entity2</label>
+																							<checked>0</checked>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																						<border>0</border>
+																						<object class="wxCheckBox" name="m_checkBox6111212">
+																							<label>entity3</label>
+																							<checked>0</checked>
+																						</object>
+																					</object>
 																				</object>
 																			</object>
 																		</object>
