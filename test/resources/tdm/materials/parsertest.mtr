@@ -33,3 +33,8 @@ textures/sortPredefined_afterfog        { sORt aFteRfog }
 textures/sortPredefined_postprocess     { sORt pOstProcess }
 textures/sortPredefined_portalsky       { sORt pOrtAlsky }
 textures/sortPredefined_decal_macro     { DECAL_MACRO }
+
+textures/withAmbientRimColor
+{
+    ambientRimColor parm1 * 3, 0, time * 6
+}

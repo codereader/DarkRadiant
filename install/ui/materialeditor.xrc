@@ -167,13 +167,13 @@
 													<object class="wxNotebook" name="m_notebook2">
 														<object class="notebookpage">
 															<label>Interaction</label>
-															<selected>0</selected>
+															<selected>1</selected>
 															<object class="wxPanel" name="InteractionPage">
 																<style>wxTAB_TRAVERSAL</style>
 																<object class="wxBoxSizer">
 																	<orient>wxVERTICAL</orient>
 																	<object class="sizeritem">
-																		<option>1</option>
+																		<option>0</option>
 																		<flag>wxALL|wxEXPAND</flag>
 																		<border>6</border>
 																		<object class="wxFlexGridSizer">
@@ -290,23 +290,65 @@
 																				<border>5</border>
 																				<object class="wxBoxSizer">
 																					<orient>wxHORIZONTAL</orient>
-																					<object class="sizeritem">
-																						<option>0</option>
-																						<flag>wxALIGN_CENTER_VERTICAL</flag>
-																						<border>0</border>
-																						<object class="wxCheckBox" name="MaterialAmbientRimColor">
-																							<label>ambientRimColor</label>
-																							<checked>0</checked>
-																						</object>
-																					</object>
-																					<object class="sizeritem">
-																						<option>1</option>
-																						<flag>wxALIGN_CENTER_VERTICAL</flag>
-																						<border>0</border>
-																						<object class="wxTextCtrl" name="MaterialAmbientRimColorExpression">
-																							<value></value>
-																						</object>
-																					</object>
+																				</object>
+																			</object>
+																		</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxEXPAND</flag>
+																		<border>0</border>
+																		<object class="wxBoxSizer">
+																			<orient>wxHORIZONTAL</orient>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+																				<border>6</border>
+																				<object class="wxCheckBox" name="MaterialRimColor">
+																					<label>ambientRimColor</label>
+																					<checked>0</checked>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>1</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
+																				<border>3</border>
+																				<object class="wxTextCtrl" name="MaterialAmbientRimColorExpression1">
+																					<value></value>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																				<border>0</border>
+																				<object class="wxStaticText" name="m_staticText166141">
+																					<label>,</label>
+																					<wrap>-1</wrap>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>1</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
+																				<border>3</border>
+																				<object class="wxTextCtrl" name="MaterialAmbientRimColorExpression2">
+																					<value></value>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
+																				<border>3</border>
+																				<object class="wxStaticText" name="m_staticText1661111">
+																					<label>,</label>
+																					<wrap>-1</wrap>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>1</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
+																				<border>6</border>
+																				<object class="wxTextCtrl" name="MaterialAmbientRimColorExpression3">
+																					<value></value>
 																				</object>
 																			</object>
 																		</object>
@@ -674,7 +716,7 @@
 														</object>
 														<object class="notebookpage">
 															<label>Depth / Clamping</label>
-															<selected>1</selected>
+															<selected>0</selected>
 															<object class="wxPanel" name="DepthPage">
 																<style>wxTAB_TRAVERSAL</style>
 																<object class="wxBoxSizer">
@@ -1365,7 +1407,7 @@
 																			</object>
 																			<object class="sizeritem">
 																				<option>0</option>
-																				<flag>wxALL</flag>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
 																				<border>0</border>
 																				<object class="wxCheckBox" name="m_checkBox611111111">
 																					<label>GLASS__MACRO</label>
@@ -1587,7 +1629,7 @@
 										<object class="wxNotebook" name="MaterialEditorSettingsNotebook">
 											<object class="notebookpage">
 												<label>Blending</label>
-												<selected>1</selected>
+												<selected>0</selected>
 												<object class="wxPanel" name="BlendPanel">
 													<style>wxTAB_TRAVERSAL</style>
 													<object class="wxBoxSizer">
@@ -2556,7 +2598,7 @@
 											</object>
 											<object class="notebookpage">
 												<label>Vertex Colour</label>
-												<selected>0</selected>
+												<selected>1</selected>
 												<object class="wxPanel" name="m_panel611">
 													<style>wxTAB_TRAVERSAL</style>
 													<object class="wxBoxSizer">

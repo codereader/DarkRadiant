@@ -124,4 +124,12 @@ TEST_F(MaterialsTest, MaterialParserSortRequest)
     EXPECT_EQ(material->getSortRequest(), Material::SORT_DECAL);
 }
 
+TEST_F(MaterialsTest, MaterialParserAmbientRimColour)
+{
+    auto material = GlobalMaterialManager().getMaterialForName("textures/withAmbientRimColor");
+
+    EXPECT_TRUE(material->getParseFlags() & Material::PF_HasAmbientRimColour);
+    // no further support for ambientRimColor first
+}
+
 }

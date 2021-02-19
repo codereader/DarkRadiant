@@ -319,6 +319,26 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
 			tokeniser.skipTokens(3); // skip width, height and model
 		}
 	}
+    else if (token == "ambientrimcolor")
+    {
+        _parseFlags |= Material::PF_HasAmbientRimColour;
+
+        // ambientRimColor <exp0>, <exp1>, <exp2>
+        auto red = ShaderExpression::createFromTokens(tokeniser);
+        tokeniser.assertNextToken(",");
+        auto green = ShaderExpression::createFromTokens(tokeniser);
+        tokeniser.assertNextToken(",");
+        auto blue = ShaderExpression::createFromTokens(tokeniser);
+
+        if (red && green && blue)
+        {
+            // ambientrimcolor support not yet added, we need material registers first
+        }
+        else
+        {
+            rWarning() << "Could not parse ambientRimColor expressions in shader: " << getName() << std::endl;
+        }
+    }
 	else
 	{
 		return false; // unrecognised token, return false

@@ -66,6 +66,7 @@ public:
     enum ParseFlags
     {
         PF_HasSortDefined           = 1 << 0, // has a "sort" keyword in its definition
+        PF_HasAmbientRimColour      = 1 << 1, // has an "ambientRimColor" keyword in its definition
     };
 
 	// Surface Flags
