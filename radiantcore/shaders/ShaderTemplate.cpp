@@ -376,6 +376,10 @@ bool ShaderTemplate::parseLightKeywords(parser::DefTokeniser& tokeniser, const s
 	{
         _lightFalloff = MapExpression::createForToken(tokeniser);
     }
+    else if (token == "lightfalloffcubemap")
+    {
+        _lightFalloffCubeMap = MapExpression::createForToken(tokeniser);
+    }
 	else if (token == "spectrum")
 	{
 		std::string value = tokeniser.nextToken();

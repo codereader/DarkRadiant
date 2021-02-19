@@ -64,10 +64,14 @@ bool CShader::isEditorImageNoTex()
 	return (getEditorImage() == GetTextureManager().getShaderNotFound());
 }
 
-// Return the falloff texture name
 IMapExpression::Ptr CShader::getLightFalloffExpression()
 {
 	return _template->getLightFalloff();
+}
+
+IMapExpression::Ptr CShader::getLightFalloffCubeMapExpression()
+{
+	return _template->getLightFalloffCubeMap();
 }
 
 /*

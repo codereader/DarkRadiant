@@ -688,7 +688,7 @@
 																				<option>0</option>
 																				<flag>wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</flag>
 																				<border>0</border>
-																				<object class="wxTextCtrl" name="m_textCtrl511">
+																				<object class="wxTextCtrl" name="MaterialLightFalloffCubeMap">
 																					<value></value>
 																				</object>
 																			</object>

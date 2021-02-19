@@ -321,8 +321,11 @@ public:
 
     virtual TexturePtr lightFalloffImage() = 0;
 
-    // The expression of the lightFalloffMap
+    // Return the expression of the light falloff texture for use with this shader.
     virtual shaders::IMapExpression::Ptr getLightFalloffExpression() = 0;
+
+    // Return the expression of the light falloff cubemap for use with this shader.
+    virtual shaders::IMapExpression::Ptr getLightFalloffCubeMapExpression() = 0;
 
 	// greebo: Returns the description as defined in the material
 	virtual std::string getDescription() const = 0;

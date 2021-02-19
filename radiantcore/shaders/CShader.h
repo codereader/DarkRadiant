@@ -53,12 +53,9 @@ public:
 	// Return the light falloff texture (Z dimension).
 	TexturePtr lightFalloffImage();
 
-	/**
-	 * Return the name of the light falloff texture for use with this shader.
-	 * Shaders which do not define their own falloff will take the default from
-	 * the defaultPointLight shader.
-	 */
     IMapExpression::Ptr getLightFalloffExpression() override;
+
+    IMapExpression::Ptr getLightFalloffCubeMapExpression() override;
 
 	/*
 	 * Return name of shader.

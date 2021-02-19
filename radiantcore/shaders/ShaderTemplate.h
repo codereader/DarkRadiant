@@ -44,6 +44,7 @@ private:
 
 	// Map expressions
 	shaders::MapExpressionPtr _lightFalloff;
+	shaders::MapExpressionPtr _lightFalloffCubeMap;
 
 	/* Light type booleans */
 	bool fogLight;
@@ -265,6 +266,12 @@ public:
 	{
 		if (!_parsed) parseDefinition();
 		return _lightFalloff;
+	}
+    
+    const MapExpressionPtr& getLightFalloffCubeMap()
+	{
+		if (!_parsed) parseDefinition();
+		return _lightFalloffCubeMap;
 	}
 
 	// Add a specific layer to this template
