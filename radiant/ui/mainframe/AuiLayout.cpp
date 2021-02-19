@@ -15,6 +15,7 @@
 #include "camera/CameraWndManager.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "xyview/GlobalXYWnd.h"
+#include "registry/registry.h"
 
 namespace ui
 {
@@ -43,7 +44,12 @@ AuiLayout::AuiLayout()
 
 void AuiLayout::addPane(wxWindow* window, const wxAuiPaneInfo& info)
 {
-    _auiMgr.AddPane(window, info);
+    // Give the pane a deterministic name so we can restore perspective
+    wxAuiPaneInfo nameInfo = info;
+    nameInfo.Name(std::to_string(_panes.size()));
+
+    // Add and store the pane
+    _auiMgr.AddPane(window, nameInfo);
     _panes.push_back(window);
 }
 
@@ -114,6 +120,13 @@ void AuiLayout::activate()
     }
     _auiMgr.Update();
 
+    // If we have a stored perspective, load it
+    std::string storedPersp = GlobalRegistry().get(RKEY_ROOT);
+    if (!storedPersp.empty())
+    {
+        _auiMgr.LoadPerspective(storedPersp);
+    }
+
     // Hide the camera toggle option for non-floating views
     GlobalMenuManager().setVisibility("main/view/cameraview", false);
     // Hide the console/texture browser toggles for non-floating/non-split views
@@ -122,6 +135,9 @@ void AuiLayout::activate()
 
 void AuiLayout::deactivate()
 {
+    // Store perspective
+    GlobalRegistry().set(RKEY_ROOT, _auiMgr.SavePerspective().ToStdString());
+
     // Show the camera toggle option again
     GlobalMenuManager().setVisibility("main/view/cameraview", true);
     GlobalMenuManager().setVisibility("main/view/textureBrowser", true);
