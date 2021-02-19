@@ -34,7 +34,7 @@ private:
 
     MaterialPtr _material;
 
-    std::map<std::string, std::shared_ptr<MaterialBinding>> _bindings;
+    std::set<std::shared_ptr<MaterialBinding>> _bindings;
 
 private:
     MaterialEditor();
@@ -50,7 +50,9 @@ private:
     void setupMaterialStageView();
     void setupMaterialProperties();
     void setupMaterialSurfaceFlags();
+    void setupMaterialShaderFlags();
     void setupSurfaceFlag(const std::string& controlName, Material::SurfaceFlags flag);
+    void setupMaterialFlag(const std::string& controlName, Material::Flags flag);
     void updateControlsFromMaterial();
     void updateMaterialPropertiesFromMaterial();
 

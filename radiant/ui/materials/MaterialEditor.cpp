@@ -81,6 +81,7 @@ MaterialEditor::MaterialEditor() :
     setupMaterialProperties();
     setupMaterialStageView();
     setupMaterialSurfaceFlags();
+    setupMaterialShaderFlags();
 
     // Set the default size of the window
     FitToScreen(0.8f, 0.6f);
@@ -143,12 +144,35 @@ void MaterialEditor::setupMaterialProperties()
 
 void MaterialEditor::setupSurfaceFlag(const std::string& controlName, Material::SurfaceFlags flag)
 {
-    _bindings.emplace(controlName,
-        std::make_shared<CheckBoxBinding>(getControl<wxCheckBox>(controlName), 
-            [=](const MaterialPtr& material)
-            {
-                return (material->getSurfaceFlags() & flag) != 0;
-            }));
+    _bindings.emplace(std::make_shared<CheckBoxBinding>(getControl<wxCheckBox>(controlName),
+        [=](const MaterialPtr& material)
+    {
+        return (material->getSurfaceFlags() & flag) != 0;
+    }));
+}
+
+void MaterialEditor::setupMaterialFlag(const std::string& controlName, Material::Flags flag)
+{
+    _bindings.emplace(std::make_shared<CheckBoxBinding>(getControl<wxCheckBox>(controlName),
+        [=](const MaterialPtr& material)
+    {
+        return (material->getMaterialFlags() & flag) != 0;
+    }));
+}
+
+void MaterialEditor::setupMaterialShaderFlags()
+{
+    setupMaterialFlag("MaterialNoShadows", Material::FLAG_NOSHADOWS);
+    setupMaterialFlag("MaterialNoSelfShadows", Material::FLAG_NOSELFSHADOW);
+    setupMaterialFlag("MaterialForceShadows", Material::FLAG_FORCESHADOWS);
+    setupMaterialFlag("MaterialTranslucent", Material::FLAG_TRANSLUCENT);
+    setupMaterialFlag("MaterialNoFog", Material::FLAG_NOFOG);
+    setupMaterialFlag("MaterialFlagNoOverlays", Material::FLAG_NOOVERLAYS);
+    setupMaterialFlag("MaterialFlagForceOverlays", Material::FLAG_FORCEOVERLAYS);
+    setupMaterialFlag("MaterialFlagForceOpaque", Material::FLAG_FORCEOPAQUE);
+    setupMaterialFlag("MaterialFlagNoPortalFog", Material::FLAG_NOPORTALFOG);
+    setupMaterialFlag("MaterialFlagUnsmoothedTangents", Material::FLAG_UNSMOOTHEDTANGENTS);
+    setupMaterialFlag("MaterialFlagMirror", Material::FLAG_MIRROR);
 }
 
 void MaterialEditor::setupMaterialSurfaceFlags()
@@ -216,9 +240,9 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
     getControl<wxPanel>("MaterialEditorMaterialPropertiesPanel")->Enable(_material != nullptr);
     
     // Update all registered bindings
-    for (const auto& pair : _bindings)
+    for (const auto& binding : _bindings)
     {
-        pair.second->setSource(_material);
+        binding->setSource(_material);
     }
 
     if (_material)

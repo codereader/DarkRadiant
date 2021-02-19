@@ -1808,7 +1808,7 @@
                                                                 <object class="notebookpage" expanded="0">
                                                                     <property name="bitmap"></property>
                                                                     <property name="label">Surface Flags</property>
-                                                                    <property name="select">1</property>
+                                                                    <property name="select">0</property>
                                                                     <object class="wxPanel" expanded="0">
                                                                         <property name="BottomDockable">1</property>
                                                                         <property name="LeftDockable">1</property>
@@ -3051,7 +3051,7 @@
                                                                                             <property name="caption"></property>
                                                                                             <property name="caption_visible">1</property>
                                                                                             <property name="center_pane">0</property>
-                                                                                            <property name="checked">0</property>
+                                                                                            <property name="checked">1</property>
                                                                                             <property name="close_button">1</property>
                                                                                             <property name="context_help"></property>
                                                                                             <property name="context_menu">1</property>
@@ -3795,7 +3795,7 @@
                                                                                             <property name="minimize_button">0</property>
                                                                                             <property name="minimum_size"></property>
                                                                                             <property name="moveable">1</property>
-                                                                                            <property name="name">m_checkBox8711</property>
+                                                                                            <property name="name">MaterialFlagNoPortalFog</property>
                                                                                             <property name="pane_border">1</property>
                                                                                             <property name="pane_position"></property>
                                                                                             <property name="pane_size"></property>
@@ -4201,7 +4201,7 @@
                                                                 <object class="notebookpage" expanded="0">
                                                                     <property name="bitmap"></property>
                                                                     <property name="label">Depth / Clamping</property>
-                                                                    <property name="select">0</property>
+                                                                    <property name="select">1</property>
                                                                     <object class="wxPanel" expanded="0">
                                                                         <property name="BottomDockable">1</property>
                                                                         <property name="LeftDockable">1</property>
@@ -4315,7 +4315,7 @@
                                                                                             <property name="minimize_button">0</property>
                                                                                             <property name="minimum_size"></property>
                                                                                             <property name="moveable">1</property>
-                                                                                            <property name="name">m_checkBox872</property>
+                                                                                            <property name="name">MaterialFlagForceOpaque</property>
                                                                                             <property name="pane_border">1</property>
                                                                                             <property name="pane_position"></property>
                                                                                             <property name="pane_size"></property>
@@ -4379,7 +4379,7 @@
                                                                                             <property name="minimize_button">0</property>
                                                                                             <property name="minimum_size"></property>
                                                                                             <property name="moveable">1</property>
-                                                                                            <property name="name">m_checkBox412</property>
+                                                                                            <property name="name">MaterialFlagMirror</property>
                                                                                             <property name="pane_border">1</property>
                                                                                             <property name="pane_position"></property>
                                                                                             <property name="pane_size"></property>
@@ -5013,7 +5013,7 @@
                                                                                                     <property name="minimize_button">0</property>
                                                                                                     <property name="minimum_size"></property>
                                                                                                     <property name="moveable">1</property>
-                                                                                                    <property name="name">m_checkBox2011</property>
+                                                                                                    <property name="name">MaterialFlagNoOverlays</property>
                                                                                                     <property name="pane_border">1</property>
                                                                                                     <property name="pane_position"></property>
                                                                                                     <property name="pane_size"></property>
@@ -5141,7 +5141,7 @@
                                                                                                     <property name="minimize_button">0</property>
                                                                                                     <property name="minimum_size"></property>
                                                                                                     <property name="moveable">1</property>
-                                                                                                    <property name="name">m_checkBox2111</property>
+                                                                                                    <property name="name">MaterialFlagForceOverlays</property>
                                                                                                     <property name="pane_border">1</property>
                                                                                                     <property name="pane_position"></property>
                                                                                                     <property name="pane_size"></property>
@@ -8015,7 +8015,7 @@
                                                                                             <property name="minimize_button">0</property>
                                                                                             <property name="minimum_size"></property>
                                                                                             <property name="moveable">1</property>
-                                                                                            <property name="name">m_checkBox611111</property>
+                                                                                            <property name="name">MaterialFlagUnsmoothedTangents</property>
                                                                                             <property name="pane_border">1</property>
                                                                                             <property name="pane_position"></property>
                                                                                             <property name="pane_size"></property>
