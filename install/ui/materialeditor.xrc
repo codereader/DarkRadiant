@@ -167,7 +167,7 @@
 													<object class="wxNotebook" name="m_notebook2">
 														<object class="notebookpage">
 															<label>Interaction</label>
-															<selected>1</selected>
+															<selected>0</selected>
 															<object class="wxPanel" name="InteractionPage">
 																<style>wxTAB_TRAVERSAL</style>
 																<object class="wxBoxSizer">
@@ -674,7 +674,7 @@
 														</object>
 														<object class="notebookpage">
 															<label>Depth / Clamping</label>
-															<selected>0</selected>
+															<selected>1</selected>
 															<object class="wxPanel" name="DepthPage">
 																<style>wxTAB_TRAVERSAL</style>
 																<object class="wxBoxSizer">
@@ -753,7 +753,7 @@
 																						<option>0</option>
 																						<flag>wxALIGN_CENTER_VERTICAL</flag>
 																						<border>0</border>
-																						<object class="wxCheckBox" name="m_checkBox84112">
+																						<object class="wxCheckBox" name="MaterialHasSortValue">
 																							<label>sort</label>
 																							<checked>0</checked>
 																						</object>
@@ -762,7 +762,7 @@
 																						<option>0</option>
 																						<flag>wxALIGN_CENTER_VERTICAL</flag>
 																						<border>0</border>
-																						<object class="wxComboBox" name="m_comboBox1">
+																						<object class="wxComboBox" name="MaterialSortValue">
 																							<value></value>
 																							<content />
 																						</object>
@@ -1587,7 +1587,7 @@
 										<object class="wxNotebook" name="MaterialEditorSettingsNotebook">
 											<object class="notebookpage">
 												<label>Blending</label>
-												<selected>0</selected>
+												<selected>1</selected>
 												<object class="wxPanel" name="BlendPanel">
 													<style>wxTAB_TRAVERSAL</style>
 													<object class="wxBoxSizer">
@@ -1969,8 +1969,8 @@
 																</object>
 																<object class="sizeritem">
 																	<option>0</option>
-																	<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																	<border>0</border>
+																	<flag>wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxTOP</flag>
+																	<border>3</border>
 																	<object class="wxCheckBox" name="m_checkBox38">
 																		<label>Waveform</label>
 																		<checked>0</checked>
@@ -1993,7 +1993,7 @@
 																		<orient>wxHORIZONTAL</orient>
 																		<object class="sizeritem">
 																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxALL|wxRIGHT</flag>
+																			<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
 																			<border>6</border>
 																			<object class="wxStaticText" name="m_staticText87">
 																				<label>Width:</label>
@@ -2044,7 +2044,7 @@
 																		<orient>wxHORIZONTAL</orient>
 																		<object class="sizeritem">
 																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxALL|wxRIGHT</flag>
+																			<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
 																			<border>6</border>
 																			<object class="wxStaticText" name="m_staticText871">
 																				<label>Width:</label>
@@ -2085,7 +2085,7 @@
 											</object>
 											<object class="notebookpage">
 												<label>Texture</label>
-												<selected>1</selected>
+												<selected>0</selected>
 												<object class="wxPanel" name="m_panel7">
 													<style>wxTAB_TRAVERSAL</style>
 													<object class="wxBoxSizer">

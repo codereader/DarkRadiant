@@ -992,7 +992,7 @@
                                                                 <object class="notebookpage" expanded="0">
                                                                     <property name="bitmap"></property>
                                                                     <property name="label">Interaction</property>
-                                                                    <property name="select">1</property>
+                                                                    <property name="select">0</property>
                                                                     <object class="wxPanel" expanded="0">
                                                                         <property name="BottomDockable">1</property>
                                                                         <property name="LeftDockable">1</property>
@@ -4203,7 +4203,7 @@
                                                                 <object class="notebookpage" expanded="0">
                                                                     <property name="bitmap"></property>
                                                                     <property name="label">Depth / Clamping</property>
-                                                                    <property name="select">0</property>
+                                                                    <property name="select">1</property>
                                                                     <object class="wxPanel" expanded="0">
                                                                         <property name="BottomDockable">1</property>
                                                                         <property name="LeftDockable">1</property>
@@ -4657,7 +4657,7 @@
                                                                                                     <property name="minimize_button">0</property>
                                                                                                     <property name="minimum_size"></property>
                                                                                                     <property name="moveable">1</property>
-                                                                                                    <property name="name">m_checkBox84112</property>
+                                                                                                    <property name="name">MaterialHasSortValue</property>
                                                                                                     <property name="pane_border">1</property>
                                                                                                     <property name="pane_position"></property>
                                                                                                     <property name="pane_size"></property>
@@ -4720,7 +4720,7 @@
                                                                                                     <property name="minimize_button">0</property>
                                                                                                     <property name="minimum_size"></property>
                                                                                                     <property name="moveable">1</property>
-                                                                                                    <property name="name">m_comboBox1</property>
+                                                                                                    <property name="name">MaterialSortValue</property>
                                                                                                     <property name="pane_border">1</property>
                                                                                                     <property name="pane_position"></property>
                                                                                                     <property name="pane_size"></property>
@@ -9368,7 +9368,7 @@
                                                     <object class="notebookpage" expanded="0">
                                                         <property name="bitmap"></property>
                                                         <property name="label">Blending</property>
-                                                        <property name="select">0</property>
+                                                        <property name="select">1</property>
                                                         <object class="wxPanel" expanded="0">
                                                             <property name="BottomDockable">1</property>
                                                             <property name="LeftDockable">1</property>
@@ -11563,8 +11563,8 @@
                                                                             </object>
                                                                         </object>
                                                                         <object class="sizeritem" expanded="0">
-                                                                            <property name="border">0</property>
-                                                                            <property name="flag">wxALIGN_CENTER_VERTICAL|wxALL</property>
+                                                                            <property name="border">3</property>
+                                                                            <property name="flag">wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxTOP</property>
                                                                             <property name="proportion">0</property>
                                                                             <object class="wxCheckBox" expanded="0">
                                                                                 <property name="BottomDockable">1</property>
@@ -11701,7 +11701,7 @@
                                                                                 <property name="permission">none</property>
                                                                                 <object class="sizeritem" expanded="0">
                                                                                     <property name="border">6</property>
-                                                                                    <property name="flag">wxALIGN_CENTER_VERTICAL|wxALL|wxRIGHT</property>
+                                                                                    <property name="flag">wxALIGN_CENTER_VERTICAL|wxRIGHT</property>
                                                                                     <property name="proportion">0</property>
                                                                                     <object class="wxStaticText" expanded="0">
                                                                                         <property name="BottomDockable">1</property>
@@ -12026,7 +12026,7 @@
                                                                                 <property name="permission">none</property>
                                                                                 <object class="sizeritem" expanded="0">
                                                                                     <property name="border">6</property>
-                                                                                    <property name="flag">wxALIGN_CENTER_VERTICAL|wxALL|wxRIGHT</property>
+                                                                                    <property name="flag">wxALIGN_CENTER_VERTICAL|wxRIGHT</property>
                                                                                     <property name="proportion">0</property>
                                                                                     <object class="wxStaticText" expanded="0">
                                                                                         <property name="BottomDockable">1</property>
@@ -12284,7 +12284,7 @@
                                                     <object class="notebookpage" expanded="0">
                                                         <property name="bitmap"></property>
                                                         <property name="label">Texture</property>
-                                                        <property name="select">1</property>
+                                                        <property name="select">0</property>
                                                         <object class="wxPanel" expanded="0">
                                                             <property name="BottomDockable">1</property>
                                                             <property name="LeftDockable">1</property>

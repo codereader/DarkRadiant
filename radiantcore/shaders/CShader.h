@@ -138,6 +138,8 @@ public:
 	bool isVisible() const;
 	void setVisible(bool visible);
 
+    int getParseFlags() const override;
+
 }; // class CShader
 
 typedef std::shared_ptr<CShader> CShaderPtr;

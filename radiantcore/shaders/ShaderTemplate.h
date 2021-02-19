@@ -90,6 +90,8 @@ private:
 	// Whether the block has been parsed
 	bool _parsed;
 
+    int _parseFlags;
+
 public:
 
     /**
@@ -114,7 +116,8 @@ public:
       _polygonOffset(0.0f),
 	  _coverage(Material::MC_UNDETERMINED),
 	  _blockContents(blockContents),
-	  _parsed(false)
+	  _parsed(false),
+      _parseFlags(0)
 	{
 		_decalInfo.stayMilliSeconds = 0;
 		_decalInfo.fadeMilliSeconds = 0;
@@ -269,6 +272,9 @@ public:
 
 	// Returns true if this shader template includes a diffusemap stage
 	bool hasDiffusemap();
+
+    // Parser hints
+    int getParseFlags();
 
 private:
 

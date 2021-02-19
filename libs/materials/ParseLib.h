@@ -38,4 +38,32 @@ inline std::string getStringForSurfaceType(Material::SurfaceType type)
     return std::string();
 }
 
+constexpr std::pair<const char*, Material::SortRequest> PredefinedSortValues[]
+{
+    { "subview", Material::SORT_SUBVIEW },
+    { "opaque", Material::SORT_OPAQUE },
+    { "decal", Material::SORT_DECAL },
+    { "far", Material::SORT_FAR },
+    { "medium", Material::SORT_MEDIUM },
+    { "close", Material::SORT_CLOSE },
+    { "almostnearest", Material::SORT_ALMOST_NEAREST },
+    { "nearest", Material::SORT_NEAREST },
+    { "afterfog", Material::SORT_AFTER_FOG },
+    { "postprocess", Material::SORT_POST_PROCESS },
+    { "portalsky", Material::SORT_PORTAL_SKY },
+};
+
+inline std::string getStringForSortRequestValue(float value)
+{
+    for (const auto& pair : PredefinedSortValues)
+    {
+        if (value == pair.second)
+        {
+            return pair.first;
+        }
+    }
+
+    return std::string();
+}
+
 }

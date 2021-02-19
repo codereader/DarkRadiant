@@ -7,6 +7,7 @@
 #include <wx/textctrl.h>
 #include <wx/collpane.h>
 #include <wx/spinctrl.h>
+#include <wx/combo.h>
 
 #include "wxutil/SourceView.h"
 #include "fmt/format.h"
@@ -143,6 +144,18 @@ void MaterialEditor::setupMaterialProperties()
     {
         typeDropdown->AppendString(pair.first);
     }
+
+    auto* sortDropdown = getControl<wxComboBox>("MaterialSortValue");
+
+    sortDropdown->AppendString(""); // empty string for undefined
+
+    for (const auto& pair : shaders::PredefinedSortValues)
+    {
+        sortDropdown->AppendString(pair.first);
+    }
+    
+    _bindings.emplace(std::make_shared<CheckBoxBinding>(getControl<wxCheckBox>("MaterialHasSortValue"),
+        [](const MaterialPtr& material) { return (material->getParseFlags() & Material::PF_HasSortDefined) != 0; }));
 }
 
 void MaterialEditor::setupSurfaceFlag(const std::string& controlName, Material::SurfaceFlags flag)
@@ -315,6 +328,7 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
             materialTypeDropdown->Select(materialTypeDropdown->FindString(surfType));
         }
 
+        // Polygon offset
         if (_material->getMaterialFlags() & Material::FLAG_POLYGONOFFSET)
         {
             getControl<wxSpinCtrlDouble>("MaterialPolygonOffsetValue")->SetValue(_material->getPolygonOffset());
@@ -322,6 +336,26 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
         else
         {
             getControl<wxSpinCtrlDouble>("MaterialPolygonOffsetValue")->SetValue(0.0);
+        }
+
+        // Sort dropdown
+        auto* materialSortDropdown = getControl<wxComboBox>("MaterialSortValue");
+        if (_material->getParseFlags() & Material::PF_HasSortDefined)
+        {
+            auto predefinedName = shaders::getStringForSortRequestValue(_material->getSortRequest());
+
+            if (!predefinedName.empty())
+            {
+                materialSortDropdown->Select(materialSortDropdown->FindString(predefinedName));
+            }
+            else
+            {
+                materialSortDropdown->SetValue(string::to_string(_material->getSortRequest()));
+            }
+        }
+        else
+        {
+            materialSortDropdown->Select(0);
         }
 
         // Surround the definition with curly braces, these are not included

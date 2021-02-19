@@ -193,6 +193,11 @@ std::string CShader::getDefinition()
 	return _template->getBlockContents();
 }
 
+int CShader::getParseFlags() const
+{
+    return _template->getParseFlags();
+}
+
 // -----------------------------------------
 
 void CShader::realise() {

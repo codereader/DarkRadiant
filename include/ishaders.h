@@ -61,6 +61,13 @@ public:
 		FLAG_POLYGONOFFSET			= 1 << 11,		// has polygonOffset
 	};
 
+    // Parser flags, used to give some hints to the material editor GUI
+    // about what the material sources looked like
+    enum ParseFlags
+    {
+        PF_HasSortDefined           = 1 << 0, // has a "sort" keyword in its definition
+    };
+
 	// Surface Flags
 	enum SurfaceFlags
 	{
@@ -133,6 +140,7 @@ public:
 		SORT_CLOSE,
 		SORT_ALMOST_NEAREST,	// gun smoke puffs
 		SORT_NEAREST,			// screen blood blobs
+        SORT_AFTER_FOG    = 90, // TDM-specific
 		SORT_POST_PROCESS = 100	// after a screen copy to texture
     };
 
@@ -333,6 +341,9 @@ public:
 	 * greebo: Sets the visibility of this shader.
 	 */
 	virtual void setVisible(bool visible) = 0;
+
+    // Returns the flags set by the material parser
+    virtual int getParseFlags() const = 0;
 };
 
 typedef std::shared_ptr<Material> MaterialPtr;

@@ -129,55 +129,25 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
 	}
 	else if (token == "sort")
 	{
-		std::string sortVal = tokeniser.nextToken();
+        _parseFlags |= Material::PF_HasSortDefined;
 
-		if (sortVal == "opaque")
-		{
-			_sortReq = Material::SORT_OPAQUE;
-		}
-		else if (sortVal == "decal")
-		{
-			_sortReq = Material::SORT_DECAL;
-		}
-		else if (sortVal == "portalSky")
-		{
-			_sortReq = Material::SORT_PORTAL_SKY;
-		}
-		else if (sortVal == "subview")
-		{
-			_sortReq = Material::SORT_SUBVIEW;
-		}
-		else if (sortVal == "far")
-		{
-			_sortReq = Material::SORT_FAR;
-		}
-		else if (sortVal == "medium")
-		{
-			_sortReq = Material::SORT_MEDIUM;
-		}
-		else if (sortVal == "close")
-		{
-			_sortReq = Material::SORT_CLOSE;
-		}
-		else if (sortVal == "almostNearest")
-		{
-			_sortReq = Material::SORT_ALMOST_NEAREST;
-		}
-		else if (sortVal == "nearest")
-		{
-			_sortReq = Material::SORT_NEAREST;
-		}
-		else if (sortVal == "postProcess")
-		{
-			_sortReq = Material::SORT_POST_PROCESS;
-		}
-		else // no special sort keyword, try to parse the numeric value
-		{
-			//  Strip any quotes
-			string::trim(sortVal, "\"");
+		auto sortVal = tokeniser.nextToken();
+        string::to_lower(sortVal);
 
-			_sortReq = string::convert<int>(sortVal, SORT_UNDEFINED); // fall back to UNDEFINED in case of parsing failures
-		}
+        for (const auto& predefinedSortValue : shaders::PredefinedSortValues)
+        {
+            if (sortVal == predefinedSortValue.first)
+            {
+                _sortReq = predefinedSortValue.second;
+                return true;
+            }
+        }
+
+		// no special sort keyword, try to parse the numeric value
+		//  Strip any quotes
+		string::trim(sortVal, "\"");
+
+		_sortReq = string::convert<int>(sortVal, SORT_UNDEFINED); // fall back to UNDEFINED in case of parsing failures
 	}
 	else if (token == "noshadows")
 	{
@@ -1298,6 +1268,13 @@ bool ShaderTemplate::hasDiffusemap()
     }
 
 	return false; // no diffuse found
+}
+
+int ShaderTemplate::getParseFlags()
+{
+    if (!_parsed) parseDefinition();
+
+    return _parseFlags;
 }
 
 } // namespace
