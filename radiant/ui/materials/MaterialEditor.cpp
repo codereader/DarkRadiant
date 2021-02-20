@@ -359,17 +359,20 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
             materialSortDropdown->Select(0);
         }
 
+        // Light Falloff
         auto lightFalloffMap = _material->getLightFalloffExpression();
         getControl<wxTextCtrl>("MaterialLightFalloffMap")->SetValue(lightFalloffMap ? lightFalloffMap->getExpressionString() : "");
 
         auto lightFalloffCubeMap = _material->getLightFalloffCubeMapExpression();
         getControl<wxTextCtrl>("MaterialLightFalloffCubeMap")->SetValue(lightFalloffCubeMap ? lightFalloffCubeMap->getExpressionString() : "");
         
+        // Spectrum
         bool hasSpectrum = _material->getParseFlags() & Material::PF_HasSpectrum;
         getControl<wxCheckBox>("MaterialHasSpectrum")->SetValue(hasSpectrum);
         getControl<wxSpinCtrl>("MaterialSpectrumValue")->Enable(hasSpectrum);
         getControl<wxSpinCtrl>("MaterialSpectrumValue")->SetValue(_material->getSpectrum());
 
+        // DecalInfo
         bool hasDecalInfo = _material->getParseFlags() & Material::PF_HasDecalInfo;
         getControl<wxCheckBox>("MaterialHasDecalInfo")->SetValue(hasDecalInfo);
         getControl<wxPanel>("MaterialDecalInfoPanel")->Enable(hasDecalInfo);

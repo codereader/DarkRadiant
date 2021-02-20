@@ -61,6 +61,10 @@ public:
         PF_HasAmbientRimColour      = 1 << 1, // has an "ambientRimColor" keyword in its definition
         PF_HasSpectrum              = 1 << 2, // has a "spectrum" keyword in its definition
         PF_HasDecalInfo             = 1 << 3, // has a "decalinfo" keyword in its definition
+        PF_HasDecalMacro            = 1 << 4, // has a "DECAL_MACRO" keyword in its definition
+        PF_HasTwoSidedDecalMacro    = 1 << 5, // has a "TWOSIDED_DECAL_MACRO" keyword in its definition
+        PF_HasParticleMacro         = 1 << 6, // has a "PARTICLE_MACRO" keyword in its definition
+        PF_HasGlassMacro            = 1 << 7, // has a "GLASS_MACRO" keyword in its definition
     };
 
 	// Surface Flags

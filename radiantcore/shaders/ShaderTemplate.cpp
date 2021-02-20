@@ -74,10 +74,40 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
     }
     else if (token == "decal_macro")
 	{
-        _materialFlags |= Material::FLAG_TRANSLUCENT;
+        _parseFlags |= Material::PF_HasDecalMacro;
+
+        _materialFlags |= Material::FLAG_TRANSLUCENT|Material::FLAG_NOSHADOWS;
         _sortReq = Material::SORT_DECAL;
         _polygonOffset = 1.0f;
-		_surfaceFlags |= Material::SURF_DISCRETE;
+		_surfaceFlags |= Material::SURF_DISCRETE | Material::SURF_NONSOLID;
+    }
+    else if (token == "twosided_decal_macro")
+    {
+        _parseFlags |= Material::PF_HasTwoSidedDecalMacro;
+
+        _materialFlags |= Material::FLAG_TRANSLUCENT | Material::FLAG_NOSHADOWS | Material::FLAG_NOSELFSHADOW;
+        _sortReq = Material::SORT_DECAL;
+        _polygonOffset = 1.0f;
+        _surfaceFlags |= Material::SURF_DISCRETE | Material::SURF_NOIMPACT | Material::SURF_NONSOLID;
+        _cullType = Material::CULL_NONE;
+
+        _coverage = Material::MC_TRANSLUCENT;
+    }
+    else if (token == "particle_macro")
+    {
+        _parseFlags |= Material::PF_HasParticleMacro;
+
+        _materialFlags |= Material::FLAG_NOSHADOWS | Material::FLAG_NOSELFSHADOW;
+        _surfaceFlags |= Material::SURF_DISCRETE | Material::SURF_NOIMPACT | Material::SURF_NONSOLID;
+        _coverage = Material::MC_TRANSLUCENT;
+    }
+    else if (token == "glass_macro")
+    {
+        _parseFlags |= Material::PF_HasGlassMacro;
+
+        _cullType = Material::CULL_NONE;
+        _materialFlags |= Material::FLAG_NOSHADOWS | Material::FLAG_NOSELFSHADOW;
+        _coverage = Material::MC_TRANSLUCENT;
     }
     else if (token == "twosided")
 	{
