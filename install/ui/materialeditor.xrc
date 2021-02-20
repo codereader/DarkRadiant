@@ -821,7 +821,7 @@
 														</object>
 														<object class="notebookpage">
 															<label>Decals</label>
-															<selected>1</selected>
+															<selected>0</selected>
 															<object class="wxPanel" name="DecalPage">
 																<style>wxTAB_TRAVERSAL</style>
 																<object class="wxBoxSizer">
@@ -856,7 +856,7 @@
 																						<option>0</option>
 																						<flag>wxALIGN_CENTER_VERTICAL</flag>
 																						<border>0</border>
-																						<object class="wxCheckBox" name="m_checkBox20111">
+																						<object class="wxCheckBox" name="MaterialHasDecalMacro">
 																							<label>DECAL__MACRO</label>
 																							<checked>0</checked>
 																						</object>
@@ -874,7 +874,7 @@
 																						<option>0</option>
 																						<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
 																						<border>0</border>
-																						<object class="wxCheckBox" name="m_checkBox201111">
+																						<object class="wxCheckBox" name="MaterialHasTwoSidedDecalMacro">
 																							<label>TWOSIDED__DECAL__MACRO</label>
 																							<checked>0</checked>
 																						</object>
@@ -1307,7 +1307,7 @@
 														</object>
 														<object class="notebookpage">
 															<label>Misc</label>
-															<selected>0</selected>
+															<selected>1</selected>
 															<object class="wxPanel" name="MiscPage">
 																<style>wxTAB_TRAVERSAL</style>
 																<object class="wxBoxSizer">
@@ -1379,7 +1379,7 @@
 																				<option>0</option>
 																				<flag>wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxTOP</flag>
 																				<border>3</border>
-																				<object class="wxCheckBox" name="m_checkBox61111111">
+																				<object class="wxCheckBox" name="MaterialHasParticleMacro">
 																					<label>PARTICLE__MACRO</label>
 																					<checked>0</checked>
 																				</object>
@@ -1388,7 +1388,7 @@
 																				<option>0</option>
 																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
 																				<border>0</border>
-																				<object class="wxCheckBox" name="m_checkBox611111111">
+																				<object class="wxCheckBox" name="MaterialHasGlassMacro">
 																					<label>GLASS__MACRO</label>
 																					<checked>0</checked>
 																				</object>

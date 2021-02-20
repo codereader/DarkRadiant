@@ -241,6 +241,22 @@ void MaterialEditor::setupMaterialShaderFlags()
     {
         return material->getClampType() == CLAMP_ALPHAZEROCLAMP;
     }));
+
+    // DECAL_MACRO
+    _bindings.emplace(std::make_shared<CheckBoxBinding>(getControl<wxCheckBox>("MaterialHasDecalMacro"),
+        [](const MaterialPtr& material) { return material->getParseFlags() & Material::PF_HasDecalMacro; }));
+
+    // TWOSIDED_DECAL_MACRO
+    _bindings.emplace(std::make_shared<CheckBoxBinding>(getControl<wxCheckBox>("MaterialHasTwoSidedDecalMacro"),
+        [](const MaterialPtr& material) { return material->getParseFlags() & Material::PF_HasTwoSidedDecalMacro; }));
+
+    // GLASS_MACRO
+    _bindings.emplace(std::make_shared<CheckBoxBinding>(getControl<wxCheckBox>("MaterialHasGlassMacro"),
+        [](const MaterialPtr& material) { return material->getParseFlags() & Material::PF_HasGlassMacro; }));
+
+    // PARTICLE_MACRO
+    _bindings.emplace(std::make_shared<CheckBoxBinding>(getControl<wxCheckBox>("MaterialHasParticleMacro"),
+        [](const MaterialPtr& material) { return material->getParseFlags() & Material::PF_HasParticleMacro; }));
 }
 
 void MaterialEditor::setupMaterialSurfaceFlags()
