@@ -975,6 +975,10 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 	{
 		_currentLayer->setStageFlag(ShaderLayer::FLAG_MASK_DEPTH);
 	}
+    else if (token == "ignoredepth")
+    {
+        _currentLayer->setStageFlag(ShaderLayer::FLAG_IGNORE_DEPTH);
+    }
 	else if (token == "privatepolygonoffset")
 	{
 		_currentLayer->setPrivatePolygonOffset(string::convert<float>(tokeniser.nextToken()));
