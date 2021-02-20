@@ -694,19 +694,22 @@
 																			</object>
 																			<object class="sizeritem">
 																				<option>0</option>
-																				<flag>wxBOTTOM|wxTOP</flag>
-																				<border>6</border>
-																				<object class="wxStaticText" name="m_staticText4211">
+																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																				<border>0</border>
+																				<object class="wxCheckBox" name="MaterialHasSpectrum">
 																					<label>spectrum</label>
-																					<wrap>-1</wrap>
+																					<checked>0</checked>
 																				</object>
 																			</object>
 																			<object class="sizeritem">
 																				<option>0</option>
-																				<flag>wxALIGN_CENTER_VERTICAL</flag>
-																				<border>6</border>
-																				<object class="wxTextCtrl" name="m_textCtrl5112">
-																					<value></value>
+																				<flag>wxALL</flag>
+																				<border>0</border>
+																				<object class="wxSpinCtrl" name="MaterialSpectrumValue">
+																					<style>wxSP_ARROW_KEYS</style>
+																					<value>1</value>
+																					<min>-99999</min>
+																					<max>99999</max>
 																				</object>
 																			</object>
 																		</object>

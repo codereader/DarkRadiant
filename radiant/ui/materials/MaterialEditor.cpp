@@ -364,6 +364,11 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
 
         auto lightFalloffCubeMap = _material->getLightFalloffCubeMapExpression();
         getControl<wxTextCtrl>("MaterialLightFalloffCubeMap")->SetValue(lightFalloffCubeMap ? lightFalloffCubeMap->getExpressionString() : "");
+        
+        bool hasSpectrum = _material->getParseFlags() & Material::PF_HasSpectrum;
+        getControl<wxCheckBox>("MaterialHasSpectrum")->SetValue(hasSpectrum);
+        getControl<wxSpinCtrl>("MaterialSpectrumValue")->Enable(hasSpectrum);
+        getControl<wxSpinCtrl>("MaterialSpectrumValue")->SetValue(_material->getSpectrum());
 
         // Surround the definition with curly braces, these are not included
         auto definition = fmt::format("{0}\n{{{1}}}", _material->getName(), _material->getDefinition());
@@ -371,6 +376,8 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
     }
     else
     {
+        getControl<wxCheckBox>("MaterialHasSpectrum")->SetValue(false);
+        getControl<wxSpinCtrl>("MaterialSpectrumValue")->SetValue(0);
         getControl<wxTextCtrl>("MaterialLightFalloffMap")->SetValue("");
         getControl<wxTextCtrl>("MaterialDescription")->SetValue("");
         _sourceView->SetValue("");
