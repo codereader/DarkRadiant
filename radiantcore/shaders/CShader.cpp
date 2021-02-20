@@ -203,6 +203,11 @@ int CShader::getParseFlags() const
     return _template->getParseFlags();
 }
 
+std::string CShader::getRenderBumpArguments()
+{
+    return _template->getRenderBumpArguments();
+}
+
 // -----------------------------------------
 
 void CShader::realise() {

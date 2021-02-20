@@ -349,6 +349,9 @@ public:
 
     // Returns the flags set by the material parser
     virtual int getParseFlags() const = 0;
+
+    // Returns the argument string after the renderbump keyword, or an empty string if no renderbump statement is present
+    virtual std::string getRenderBumpArguments() = 0;
 };
 
 typedef std::shared_ptr<Material> MaterialPtr;

@@ -1,6 +1,10 @@
 #include "RadiantTest.h"
 
 #include "ishaders.h"
+#include <algorithm>
+#include "string/split.h"
+#include "string/case_conv.h"
+#include "string/trim.h"
 
 namespace test
 {
@@ -148,6 +152,38 @@ TEST_F(MaterialsTest, MaterialParserSpectrum)
 
     EXPECT_TRUE(material->getParseFlags() & Material::PF_HasSpectrum);
     EXPECT_EQ(material->getSpectrum(), 100);
+}
+
+
+inline void checkRenderBumpArguments(const std::string& materialName)
+{
+    auto material = GlobalMaterialManager().getMaterialForName(materialName);
+
+    auto fullDefinition = material->getDefinition();
+    std::vector<std::string> lines;
+    string::split(lines, fullDefinition, "\n", true);
+
+    auto renderBumpLine = std::find_if(lines.begin(), lines.end(),
+        [](const std::string& line) { return line.find("renderBump") != std::string::npos; });
+
+    EXPECT_NE(renderBumpLine, lines.end());
+    string::to_lower(*renderBumpLine);
+
+    std::string renderBumpKeyword = "renderbump";
+    auto args = renderBumpLine->substr(renderBumpLine->find(renderBumpKeyword) + renderBumpKeyword.size());
+
+    string::trim(args);
+
+    EXPECT_EQ(material->getRenderBumpArguments(), args);
+}
+TEST_F(MaterialsTest, MaterialParserRenderbump)
+{
+    checkRenderBumpArguments("textures/parsertest/renderBump1");
+    checkRenderBumpArguments("textures/parsertest/renderBump2");
+    checkRenderBumpArguments("textures/parsertest/renderBump3");
+    checkRenderBumpArguments("textures/parsertest/renderBump4");
+    checkRenderBumpArguments("textures/parsertest/renderBump5");
+    checkRenderBumpArguments("textures/parsertest/renderBump6");
 }
 
 }

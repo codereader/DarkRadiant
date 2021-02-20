@@ -85,6 +85,8 @@ private:
 	// Whether this material renders opaque, perforated, etc.
 	Material::Coverage _coverage;
 
+    std::string _renderBumpArguments;
+
 	// Raw material declaration
 	std::string _blockContents;
 
@@ -282,6 +284,9 @@ public:
 
     // Parser hints
     int getParseFlags();
+
+    // renderbump argument string
+    std::string getRenderBumpArguments();
 
 private:
 

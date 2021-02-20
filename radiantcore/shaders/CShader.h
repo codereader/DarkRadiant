@@ -103,6 +103,8 @@ public:
 	// returns the raw definition block
 	std::string getDefinition();
 
+    std::string getRenderBumpArguments() override;
+
 	// -----------------------------------------
 
 	void realise();

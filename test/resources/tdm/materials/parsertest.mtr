@@ -53,3 +53,33 @@ textures/parsertest/spectrumPositive100
 {
     spectrum 100
 }
+
+textures/parsertest/renderBump1
+{
+    renderBump textures/output.tga models/hipoly 
+}
+
+textures/parsertest/renderBump2
+{
+    renderBump -size 100 200 textures/output.tga models/hipoly 
+}
+
+textures/parsertest/renderBump3
+{
+    renderBump -aa 2 textures/output.tga models/hipoly 
+}
+
+textures/parsertest/renderBump4
+{
+    renderBump -aa 2 -size 10 10 textures/output.tga models/hipoly 
+}
+
+textures/parsertest/renderBump5
+{
+    renderBump -aa 2 -size 10 10 -trace 0.5 textures/output.tga models/hipoly 
+}
+
+textures/parsertest/renderBump6
+{
+    renderBump -aa 2 -trace 0.5 -size 10 10 textures/output.tga models/hipoly 
+}

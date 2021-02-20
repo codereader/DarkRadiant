@@ -320,15 +320,23 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
 		{
 			if (next == "-size")
 			{
-				tokeniser.skipTokens(2); // skip width, height
+                // Store -size argument in the command arguments
+                _renderBumpArguments += !_renderBumpArguments.empty() ? " " : "";
+                auto width = tokeniser.nextToken();
+                auto height = tokeniser.nextToken();
+                _renderBumpArguments += fmt::format("{0} {1} {2}", next, width, height);
 			}
 			else if (next == "-aa")
 			{
-				tokeniser.skipTokens(1);
+                // Store -aa argument in the command arguments
+                _renderBumpArguments += !_renderBumpArguments.empty() ? " " : "";
+                _renderBumpArguments += fmt::format("{0} {1}", next, tokeniser.nextToken());
 			}
 			else if (next == "-trace")
 			{
-				tokeniser.skipTokens(1);
+                // Store -trace argument in the command arguments
+                _renderBumpArguments += !_renderBumpArguments.empty() ? " " : "";
+                _renderBumpArguments += fmt::format("{0} {1}", next, tokeniser.nextToken());
 			}
 
 			next = tokeniser.nextToken();
@@ -336,7 +344,8 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
 		}
 
 		// The map token is already loaded in "next", skip the highpoly model name
-		tokeniser.skipTokens(1);
+        _renderBumpArguments += !_renderBumpArguments.empty() ? " " : "";
+        _renderBumpArguments += fmt::format("{0} {1}", next, tokeniser.nextToken());
 	}
 	else if (token == "renderbumpflat")
 	{
@@ -1337,6 +1346,13 @@ int ShaderTemplate::getParseFlags()
     if (!_parsed) parseDefinition();
 
     return _parseFlags;
+}
+
+std::string ShaderTemplate::getRenderBumpArguments()
+{
+    if (!_parsed) parseDefinition();
+
+    return _renderBumpArguments;
 }
 
 } // namespace
