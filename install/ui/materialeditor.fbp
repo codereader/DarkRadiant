@@ -7942,7 +7942,7 @@
                                                                                             <property name="minimize_button">0</property>
                                                                                             <property name="minimum_size"></property>
                                                                                             <property name="moveable">1</property>
-                                                                                            <property name="name">MaterialHasRenderbump</property>
+                                                                                            <property name="name">MaterialHasRenderBump</property>
                                                                                             <property name="pane_border">1</property>
                                                                                             <property name="pane_position"></property>
                                                                                             <property name="pane_size"></property>
@@ -8070,7 +8070,7 @@
                                                                                             <property name="minimize_button">0</property>
                                                                                             <property name="minimum_size"></property>
                                                                                             <property name="moveable">1</property>
-                                                                                            <property name="name">m_checkBox61111</property>
+                                                                                            <property name="name">MaterialHasRenderBumpFlat</property>
                                                                                             <property name="pane_border">1</property>
                                                                                             <property name="pane_position"></property>
                                                                                             <property name="pane_size"></property>
@@ -8133,7 +8133,7 @@
                                                                                             <property name="minimize_button">0</property>
                                                                                             <property name="minimum_size"></property>
                                                                                             <property name="moveable">1</property>
-                                                                                            <property name="name">m_textCtrl5111</property>
+                                                                                            <property name="name">MaterialRenderBumpFlatArguments</property>
                                                                                             <property name="pane_border">1</property>
                                                                                             <property name="pane_position"></property>
                                                                                             <property name="pane_size"></property>
