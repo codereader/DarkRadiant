@@ -122,7 +122,7 @@ D3DeclarationViewCtrl::D3DeclarationViewCtrl(wxWindow* parent) :
 	SetStyleMapping(18, Error);
 };
 
-// D3 materials
+// D3 & TDM materials
 
 D3MaterialSourceViewCtrl::D3MaterialSourceViewCtrl(wxWindow* parent) :
 	D3DeclarationViewCtrl(parent)
@@ -140,7 +140,9 @@ D3MaterialSourceViewCtrl::D3MaterialSourceViewCtrl(wxWindow* parent) :
 		"nearest linear noclamp uncompressed highQuality forceHighQuality nopicmip vertexColor "
 		"inverseVertexColor privatePolygonOffset texGen scroll translate scale centerScale shear "
 		"rotate maskRed maskGreen maskBlue maskAlpha maskColor maskDepth alphatest red green blue "
-		"alpha rgb rgba color colored fragmentProgram vertexProgram program vertexParm fragmentMap megatexture");
+		"alpha rgb rgba color colored fragmentProgram vertexProgram program vertexParm fragmentMap megatexture "
+        "PARTICLE_MACRO GLASS_MACRO TWOSIDED_DECAL_MACRO ambientRimColor ambientCubicLight cubicLight "
+        "afterFog lightFalloffCubeMap ignoreDepth");
 
 	SetKeyWords(1, "_white _flat _black gl_src_alpha gl_one_minus_src_alpha gl_one gl_dst_color "
 		"gl_zero gl_one_minus_dst_color gl_dst_alpha gl_one_minus_dst_alpha gl_src_alpha_saturate "
