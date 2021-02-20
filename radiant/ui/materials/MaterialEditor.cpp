@@ -401,12 +401,19 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
         getControl<wxTextCtrl>("MaterialDecalInfoEndRgb")->SetValue(fmt::format("({0} {1} {2} {3})",
             decalInfo.endColour.x(), decalInfo.endColour.y(), decalInfo.endColour.z(), decalInfo.endColour.w()));
 
+        getControl<wxCheckBox>("MaterialHasRenderbump")->SetValue(!_material->getRenderBumpArguments().empty());
+        getControl<wxTextCtrl>("MaterialRenderBumpArguments")->Enable(!_material->getRenderBumpArguments().empty());
+        getControl<wxTextCtrl>("MaterialRenderBumpArguments")->SetValue(_material->getRenderBumpArguments());
+
         // Surround the definition with curly braces, these are not included
         auto definition = fmt::format("{0}\n{{{1}}}", _material->getName(), _material->getDefinition());
         _sourceView->SetValue(definition);
     }
     else
     {
+        getControl<wxCheckBox>("MaterialHasRenderbump")->SetValue(false);
+        getControl<wxTextCtrl>("MaterialRenderBumpArguments")->SetValue("");
+
         getControl<wxCheckBox>("MaterialHasDecalInfo")->SetValue(false);
         getControl<wxSpinCtrlDouble>("MaterialEditorDecalInfoStaySeconds")->SetValue(0);
         getControl<wxSpinCtrlDouble>("MaterialEditorDecalInfoFadeSeconds")->SetValue(0);

@@ -1327,7 +1327,7 @@
 																				<option>0</option>
 																				<flag>wxALIGN_CENTER_VERTICAL</flag>
 																				<border>0</border>
-																				<object class="wxCheckBox" name="m_checkBox6111">
+																				<object class="wxCheckBox" name="MaterialHasRenderbump">
 																					<label>renderBump</label>
 																					<checked>0</checked>
 																				</object>
@@ -1336,7 +1336,7 @@
 																				<option>0</option>
 																				<flag>wxALIGN_CENTER_VERTICAL|wxEXPAND</flag>
 																				<border>0</border>
-																				<object class="wxTextCtrl" name="m_textCtrl512">
+																				<object class="wxTextCtrl" name="MaterialRenderBumpArguments">
 																					<value></value>
 																				</object>
 																			</object>
