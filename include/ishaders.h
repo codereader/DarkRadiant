@@ -59,6 +59,7 @@ public:
     {
         PF_HasSortDefined           = 1 << 0, // has a "sort" keyword in its definition
         PF_HasAmbientRimColour      = 1 << 1, // has an "ambientRimColor" keyword in its definition
+        PF_HasSpectrum              = 1 << 2, // has a "spectrum" keyword in its definition
     };
 
 	// Surface Flags
@@ -243,7 +244,7 @@ public:
 	virtual DeformType getDeformType() const = 0;
 
 	/**
-	 * Returns the spectrum of this shader, -1 means "no defined spectrum"
+	 * Returns the spectrum of this shader, 0 is the default value (even witout keyword in the material)
 	 */
 	virtual int getSpectrum() const = 0;
 

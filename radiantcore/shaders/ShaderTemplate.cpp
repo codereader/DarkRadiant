@@ -382,6 +382,8 @@ bool ShaderTemplate::parseLightKeywords(parser::DefTokeniser& tokeniser, const s
     }
 	else if (token == "spectrum")
 	{
+        _parseFlags |= Material::PF_HasSpectrum;
+
 		std::string value = tokeniser.nextToken();
 
 		try

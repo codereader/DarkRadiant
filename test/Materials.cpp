@@ -52,17 +52,17 @@ TEST_F(MaterialsTest, MaterialParserPolygonOffset)
 {
     auto& materialManager = GlobalMaterialManager();
 
-    auto polygonOffset1 = materialManager.getMaterialForName("textures/polygonOffset1");
+    auto polygonOffset1 = materialManager.getMaterialForName("textures/parsertest/polygonOffset1");
 
     EXPECT_TRUE(polygonOffset1->getMaterialFlags() & Material::FLAG_POLYGONOFFSET);
     EXPECT_EQ(polygonOffset1->getPolygonOffset(), 1.0f) << "Default value of polygonOffset should be 1.0";
 
-    auto polygonOffset2 = materialManager.getMaterialForName("textures/polygonOffset2");
+    auto polygonOffset2 = materialManager.getMaterialForName("textures/parsertest/polygonOffset2");
 
     EXPECT_TRUE(polygonOffset2->getMaterialFlags() & Material::FLAG_POLYGONOFFSET);
     EXPECT_EQ(polygonOffset2->getPolygonOffset(), 13.0f);
 
-    auto polygonOffset3 = materialManager.getMaterialForName("textures/polygonOffset3");
+    auto polygonOffset3 = materialManager.getMaterialForName("textures/parsertest/polygonOffset3");
 
     EXPECT_TRUE(polygonOffset3->getMaterialFlags() & Material::FLAG_POLYGONOFFSET);
     EXPECT_EQ(polygonOffset3->getPolygonOffset(), -3.0f);
@@ -72,64 +72,82 @@ TEST_F(MaterialsTest, MaterialParserSortRequest)
 {
     auto& materialManager = GlobalMaterialManager();
 
-    auto material = materialManager.getMaterialForName("textures/sortPredefined_none");
+    auto material = materialManager.getMaterialForName("textures/parsertest/sortPredefined_none");
     EXPECT_FALSE(material->getParseFlags() & Material::PF_HasSortDefined);
 
-    material = materialManager.getMaterialForName("textures/sortPredefined_subview");
+    material = materialManager.getMaterialForName("textures/parsertest/sortPredefined_subview");
     EXPECT_TRUE(material->getParseFlags() & Material::PF_HasSortDefined);
     EXPECT_EQ(material->getSortRequest(), Material::SORT_SUBVIEW);
 
-    material = materialManager.getMaterialForName("textures/sortPredefined_opaque");
+    material = materialManager.getMaterialForName("textures/parsertest/sortPredefined_opaque");
     EXPECT_TRUE(material->getParseFlags() & Material::PF_HasSortDefined);
     EXPECT_EQ(material->getSortRequest(), Material::SORT_OPAQUE);
 
-    material = materialManager.getMaterialForName("textures/sortPredefined_decal");
+    material = materialManager.getMaterialForName("textures/parsertest/sortPredefined_decal");
     EXPECT_TRUE(material->getParseFlags() & Material::PF_HasSortDefined);
     EXPECT_EQ(material->getSortRequest(), Material::SORT_DECAL);
 
-    material = materialManager.getMaterialForName("textures/sortPredefined_far");
+    material = materialManager.getMaterialForName("textures/parsertest/sortPredefined_far");
     EXPECT_TRUE(material->getParseFlags() & Material::PF_HasSortDefined);
     EXPECT_EQ(material->getSortRequest(), Material::SORT_FAR);
 
-    material = materialManager.getMaterialForName("textures/sortPredefined_medium");
+    material = materialManager.getMaterialForName("textures/parsertest/sortPredefined_medium");
     EXPECT_TRUE(material->getParseFlags() & Material::PF_HasSortDefined);
     EXPECT_EQ(material->getSortRequest(), Material::SORT_MEDIUM);
 
-    material = materialManager.getMaterialForName("textures/sortPredefined_close");
+    material = materialManager.getMaterialForName("textures/parsertest/sortPredefined_close");
     EXPECT_TRUE(material->getParseFlags() & Material::PF_HasSortDefined);
     EXPECT_EQ(material->getSortRequest(), Material::SORT_CLOSE);
 
-    material = materialManager.getMaterialForName("textures/sortPredefined_almostnearest");
+    material = materialManager.getMaterialForName("textures/parsertest/sortPredefined_almostnearest");
     EXPECT_TRUE(material->getParseFlags() & Material::PF_HasSortDefined);
     EXPECT_EQ(material->getSortRequest(), Material::SORT_ALMOST_NEAREST);
 
-    material = materialManager.getMaterialForName("textures/sortPredefined_nearest");
+    material = materialManager.getMaterialForName("textures/parsertest/sortPredefined_nearest");
     EXPECT_TRUE(material->getParseFlags() & Material::PF_HasSortDefined);
     EXPECT_EQ(material->getSortRequest(), Material::SORT_NEAREST);
 
-    material = materialManager.getMaterialForName("textures/sortPredefined_afterfog");
+    material = materialManager.getMaterialForName("textures/parsertest/sortPredefined_afterfog");
     EXPECT_TRUE(material->getParseFlags() & Material::PF_HasSortDefined);
     EXPECT_EQ(material->getSortRequest(), Material::SORT_AFTER_FOG);
 
-    material = materialManager.getMaterialForName("textures/sortPredefined_postprocess");
+    material = materialManager.getMaterialForName("textures/parsertest/sortPredefined_postprocess");
     EXPECT_TRUE(material->getParseFlags() & Material::PF_HasSortDefined);
     EXPECT_EQ(material->getSortRequest(), Material::SORT_POST_PROCESS);
 
-    material = materialManager.getMaterialForName("textures/sortPredefined_portalsky");
+    material = materialManager.getMaterialForName("textures/parsertest/sortPredefined_portalsky");
     EXPECT_TRUE(material->getParseFlags() & Material::PF_HasSortDefined);
     EXPECT_EQ(material->getSortRequest(), Material::SORT_PORTAL_SKY);
     
-    material = materialManager.getMaterialForName("textures/sortPredefined_decal_macro");
+    material = materialManager.getMaterialForName("textures/parsertest/sortPredefined_decal_macro");
     EXPECT_FALSE(material->getParseFlags() & Material::PF_HasSortDefined); // sort is not explicitly set
     EXPECT_EQ(material->getSortRequest(), Material::SORT_DECAL);
 }
 
 TEST_F(MaterialsTest, MaterialParserAmbientRimColour)
 {
-    auto material = GlobalMaterialManager().getMaterialForName("textures/withAmbientRimColor");
+    auto material = GlobalMaterialManager().getMaterialForName("textures/parsertest/withAmbientRimColor");
 
     EXPECT_TRUE(material->getParseFlags() & Material::PF_HasAmbientRimColour);
-    // no further support for ambientRimColor first
+    // no further support for ambientRimColor at this point
+}
+
+TEST_F(MaterialsTest, MaterialParserSpectrum)
+{
+    auto material = GlobalMaterialManager().getMaterialForName("textures/parsertest/nospectrum");
+
+    EXPECT_FALSE(material->getParseFlags() & Material::PF_HasSpectrum);
+    EXPECT_EQ(material->getSpectrum(), 0);
+
+    material = GlobalMaterialManager().getMaterialForName("textures/parsertest/spectrumMinus45");
+
+    EXPECT_TRUE(material->getParseFlags() & Material::PF_HasSpectrum);
+    EXPECT_EQ(material->getSpectrum(), -45);
+
+    material = GlobalMaterialManager().getMaterialForName("textures/parsertest/spectrumPositive100");
+
+    EXPECT_TRUE(material->getParseFlags() & Material::PF_HasSpectrum);
+    EXPECT_EQ(material->getSpectrum(), 100);
 }
 
 }

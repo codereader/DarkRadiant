@@ -85,7 +85,7 @@ public:
 	// Deform types
 	DeformType getDeformType() const;
 
-	// Get the spectrum, -1 is "not defined"
+	// Get the spectrum, 0 is the default
 	int getSpectrum() const;
 
 	const DecalInfo& getDecalInfo() const;

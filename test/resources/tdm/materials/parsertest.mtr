@@ -1,40 +1,55 @@
-textures/polygonOffset1
+textures/parsertest/polygonOffset1
 {	
 	polygonOffset
 }
 
-textures/polygonOffset2
+textures/parsertest/polygonOffset2
 {	
 	polygonOffset 13.0
 	clamp
 }
 
-textures/polygonOffset3
+textures/parsertest/polygonOffset3
 {	
 	polygonOffset -3.0
 }
 
-textures/sortWithValue
+textures/parsertest/sortWithValue
 {	
 	sort 1.2
 }
 
 // We use weird mixed casing on the predefined keywords to prove that the parser is case-insensitive
-textures/sortPredefined_none            { qer_editorimage test/blah }
-textures/sortPredefined_subview         { sORt SUbVieW }
-textures/sortPredefined_opaque          { sORt oPaque }
-textures/sortPredefined_decal           { sORt dEcal }
-textures/sortPredefined_far             { sORt fAr }
-textures/sortPredefined_medium          { sORt mEdiUm }
-textures/sortPredefined_close           { sORt cLosE }
-textures/sortPredefined_almostnearest   { sORt aLmoStnearest }
-textures/sortPredefined_nearest         { sORt nEarEst }
-textures/sortPredefined_afterfog        { sORt aFteRfog }
-textures/sortPredefined_postprocess     { sORt pOstProcess }
-textures/sortPredefined_portalsky       { sORt pOrtAlsky }
-textures/sortPredefined_decal_macro     { DECAL_MACRO }
+textures/parsertest/sortPredefined_none            { qer_editorimage test/blah }
+textures/parsertest/sortPredefined_subview         { sORt SUbVieW }
+textures/parsertest/sortPredefined_opaque          { sORt oPaque }
+textures/parsertest/sortPredefined_decal           { sORt dEcal }
+textures/parsertest/sortPredefined_far             { sORt fAr }
+textures/parsertest/sortPredefined_medium          { sORt mEdiUm }
+textures/parsertest/sortPredefined_close           { sORt cLosE }
+textures/parsertest/sortPredefined_almostnearest   { sORt aLmoStnearest }
+textures/parsertest/sortPredefined_nearest         { sORt nEarEst }
+textures/parsertest/sortPredefined_afterfog        { sORt aFteRfog }
+textures/parsertest/sortPredefined_postprocess     { sORt pOstProcess }
+textures/parsertest/sortPredefined_portalsky       { sORt pOrtAlsky }
+textures/parsertest/sortPredefined_decal_macro     { DECAL_MACRO }
 
-textures/withAmbientRimColor
+textures/parsertest/withAmbientRimColor
 {
     ambientRimColor parm1 * 3, 0, time * 6
+}
+
+textures/parsertest/noSpectrum
+{
+    ambientRimColor parm1 * 3, 0, time * 6
+}
+
+textures/parsertest/spectrumMinus45
+{
+    spectrum -45
+}
+
+textures/parsertest/spectrumPositive100
+{
+    spectrum 100
 }

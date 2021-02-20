@@ -112,7 +112,7 @@ public:
 	  _surfaceFlags(0),
 	  _surfaceType(Material::SURFTYPE_DEFAULT),
 	  _deformType(Material::DEFORM_NONE),
-	  _spectrum(-1),
+	  _spectrum(0),
       _sortReq(SORT_UNDEFINED),	// will be set to default values after the shader has been parsed
       _polygonOffset(0.0f),
 	  _coverage(Material::MC_UNDETERMINED),
