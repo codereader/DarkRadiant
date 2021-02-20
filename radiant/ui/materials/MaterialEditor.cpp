@@ -370,12 +370,30 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
         getControl<wxSpinCtrl>("MaterialSpectrumValue")->Enable(hasSpectrum);
         getControl<wxSpinCtrl>("MaterialSpectrumValue")->SetValue(_material->getSpectrum());
 
+        bool hasDecalInfo = _material->getParseFlags() & Material::PF_HasDecalInfo;
+        getControl<wxCheckBox>("MaterialHasDecalInfo")->SetValue(hasDecalInfo);
+        getControl<wxPanel>("MaterialDecalInfoPanel")->Enable(hasDecalInfo);
+
+        const auto& decalInfo = _material->getDecalInfo();
+        getControl<wxSpinCtrlDouble>("MaterialEditorDecalInfoStaySeconds")->SetValue(decalInfo.stayMilliSeconds / 1000.0f);
+        getControl<wxSpinCtrlDouble>("MaterialEditorDecalInfoFadeSeconds")->SetValue(decalInfo.fadeMilliSeconds / 1000.0f);
+        getControl<wxTextCtrl>("MaterialDecalInfoStartRgb")->SetValue(fmt::format("({0} {1} {2} {3})", 
+            decalInfo.startColour.x(), decalInfo.startColour.y(), decalInfo.startColour.z(), decalInfo.startColour.w()));
+        getControl<wxTextCtrl>("MaterialDecalInfoEndRgb")->SetValue(fmt::format("({0} {1} {2} {3})",
+            decalInfo.endColour.x(), decalInfo.endColour.y(), decalInfo.endColour.z(), decalInfo.endColour.w()));
+
         // Surround the definition with curly braces, these are not included
         auto definition = fmt::format("{0}\n{{{1}}}", _material->getName(), _material->getDefinition());
         _sourceView->SetValue(definition);
     }
     else
     {
+        getControl<wxCheckBox>("MaterialHasDecalInfo")->SetValue(false);
+        getControl<wxSpinCtrlDouble>("MaterialEditorDecalInfoStaySeconds")->SetValue(0);
+        getControl<wxSpinCtrlDouble>("MaterialEditorDecalInfoFadeSeconds")->SetValue(0);
+        getControl<wxTextCtrl>("MaterialDecalInfoStartRgb")->SetValue("");
+        getControl<wxTextCtrl>("MaterialDecalInfoEndRgb")->SetValue("");
+
         getControl<wxCheckBox>("MaterialHasSpectrum")->SetValue(false);
         getControl<wxSpinCtrl>("MaterialSpectrumValue")->SetValue(0);
         getControl<wxTextCtrl>("MaterialLightFalloffMap")->SetValue("");

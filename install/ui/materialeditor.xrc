@@ -588,7 +588,7 @@
 														</object>
 														<object class="notebookpage">
 															<label>Light</label>
-															<selected>1</selected>
+															<selected>0</selected>
 															<object class="wxPanel" name="LightPage">
 																<style>wxTAB_TRAVERSAL</style>
 																<object class="wxBoxSizer">
@@ -698,7 +698,7 @@
 																				<border>0</border>
 																				<object class="wxCheckBox" name="MaterialHasSpectrum">
 																					<label>spectrum</label>
-																					<checked>0</checked>
+																					<checked>1</checked>
 																				</object>
 																			</object>
 																			<object class="sizeritem">
@@ -814,35 +814,6 @@
 																					</object>
 																				</object>
 																			</object>
-																			<object class="sizeritem">
-																				<option>1</option>
-																				<flag>wxEXPAND</flag>
-																				<border>0</border>
-																				<object class="wxBoxSizer">
-																					<orient>wxHORIZONTAL</orient>
-																					<object class="sizeritem">
-																						<option>0</option>
-																						<flag>wxALIGN_CENTER_VERTICAL</flag>
-																						<border>0</border>
-																						<object class="wxCheckBox" name="m_checkBox84113">
-																							<label>shadowMapOffset</label>
-																							<checked>0</checked>
-																						</object>
-																					</object>
-																					<object class="sizeritem">
-																						<option>0</option>
-																						<flag>wxALIGN_CENTER_VERTICAL</flag>
-																						<border>0</border>
-																						<object class="wxSpinCtrl" name="MaterialEditorPolygonOffset1">
-																							<style>wxSP_ARROW_KEYS</style>
-																							<size>80,-1</size>
-																							<value>0</value>
-																							<min>-100</min>
-																							<max>100</max>
-																						</object>
-																					</object>
-																				</object>
-																			</object>
 																		</object>
 																	</object>
 																</object>
@@ -850,7 +821,7 @@
 														</object>
 														<object class="notebookpage">
 															<label>Decals</label>
-															<selected>0</selected>
+															<selected>1</selected>
 															<object class="wxPanel" name="DecalPage">
 																<style>wxTAB_TRAVERSAL</style>
 																<object class="wxBoxSizer">
@@ -912,7 +883,7 @@
 																			</object>
 																			<object class="sizeritem">
 																				<option>0</option>
-																				<flag>wxEXPAND|wxRIGHT|wxTOP</flag>
+																				<flag>wxEXPAND|wxRIGHT</flag>
 																				<border>6</border>
 																				<object class="wxBoxSizer">
 																					<orient>wxHORIZONTAL</orient>
@@ -920,144 +891,149 @@
 																						<option>0</option>
 																						<flag>wxALL</flag>
 																						<border>6</border>
-																						<object class="wxCheckBox" name="m_checkBox2011111">
+																						<object class="wxCheckBox" name="MaterialHasDecalInfo">
 																							<label>decalInfo</label>
 																							<checked>0</checked>
 																						</object>
 																					</object>
 																					<object class="sizeritem">
 																						<option>1</option>
-																						<flag>wxALL|wxEXPAND</flag>
+																						<flag>wxEXPAND | wxALL</flag>
 																						<border>0</border>
-																						<object class="wxFlexGridSizer">
-																							<rows>0</rows>
-																							<cols>2</cols>
-																							<vgap>8</vgap>
-																							<hgap>24</hgap>
-																							<growablecols>0,1</growablecols>
-																							<growablerows></growablerows>
-																							<object class="sizeritem">
-																								<option>1</option>
-																								<flag>wxEXPAND</flag>
-																								<border>0</border>
-																								<object class="wxBoxSizer">
-																									<orient>wxHORIZONTAL</orient>
-																									<object class="sizeritem">
-																										<option>0</option>
-																										<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
-																										<border>6</border>
-																										<object class="wxStaticText" name="m_staticText4613">
-																											<label>Stay: </label>
-																											<wrap>-1</wrap>
+																						<object class="wxPanel" name="MaterialDecalInfoPanel">
+																							<style>wxTAB_TRAVERSAL</style>
+																							<object class="wxFlexGridSizer">
+																								<rows>0</rows>
+																								<cols>2</cols>
+																								<vgap>8</vgap>
+																								<hgap>24</hgap>
+																								<growablecols>0,1</growablecols>
+																								<growablerows></growablerows>
+																								<object class="sizeritem">
+																									<option>1</option>
+																									<flag>wxEXPAND</flag>
+																									<border>0</border>
+																									<object class="wxBoxSizer">
+																										<orient>wxHORIZONTAL</orient>
+																										<object class="sizeritem">
+																											<option>0</option>
+																											<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
+																											<border>6</border>
+																											<object class="wxStaticText" name="m_staticText4613">
+																												<label>Stay: </label>
+																												<wrap>-1</wrap>
+																											</object>
 																										</object>
-																									</object>
-																									<object class="sizeritem">
-																										<option>1</option>
-																										<flag>wxALIGN_CENTER_VERTICAL</flag>
-																										<border>0</border>
-																										<object class="wxSpinCtrl" name="MaterialEditorDecalInfoStaySeconds2">
-																											<style>wxSP_ARROW_KEYS</style>
-																											<size>70,-1</size>
-																											<value>0</value>
-																											<min>0</min>
-																											<max>9999</max>
+																										<object class="sizeritem">
+																											<option>0</option>
+																											<flag>wxALIGN_CENTER_VERTICAL</flag>
+																											<border>6</border>
+																											<object class="wxSpinCtrlDouble" name="MaterialEditorDecalInfoStaySeconds">
+																												<style>wxSP_ARROW_KEYS</style>
+																												<value>0</value>
+																												<min>0</min>
+																												<max>999999</max>
+																												<inc>0.1</inc>
+																												<digits>2</digits>
+																											</object>
 																										</object>
-																									</object>
-																									<object class="sizeritem">
-																										<option>0</option>
-																										<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
-																										<border>6</border>
-																										<object class="wxStaticText" name="m_staticText46112">
-																											<label>secs</label>
-																											<wrap>-1</wrap>
-																										</object>
-																									</object>
-																								</object>
-																							</object>
-																							<object class="sizeritem">
-																								<option>1</option>
-																								<flag>wxEXPAND</flag>
-																								<border>0</border>
-																								<object class="wxBoxSizer">
-																									<orient>wxHORIZONTAL</orient>
-																									<object class="sizeritem">
-																										<option>0</option>
-																										<flag>wxALIGN_CENTER_VERTICAL</flag>
-																										<border>24</border>
-																										<object class="wxStaticText" name="m_staticText46122">
-																											<label>Fade: </label>
-																											<wrap>-1</wrap>
-																										</object>
-																									</object>
-																									<object class="sizeritem">
-																										<option>1</option>
-																										<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																										<border>0</border>
-																										<object class="wxSpinCtrl" name="MaterialEditorDecalInfoStaySeconds12">
-																											<style>wxSP_ARROW_KEYS</style>
-																											<size>70,-1</size>
-																											<value>0</value>
-																											<min>0</min>
-																											<max>9999</max>
-																										</object>
-																									</object>
-																									<object class="sizeritem">
-																										<option>0</option>
-																										<flag>wxALIGN_CENTER_VERTICAL|wxALL|wxLEFT</flag>
-																										<border>6</border>
-																										<object class="wxStaticText" name="m_staticText461112">
-																											<label>secs</label>
-																											<wrap>-1</wrap>
+																										<object class="sizeritem">
+																											<option>0</option>
+																											<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+																											<border>6</border>
+																											<object class="wxStaticText" name="m_staticText46112">
+																												<label>secs</label>
+																												<wrap>-1</wrap>
+																											</object>
 																										</object>
 																									</object>
 																								</object>
-																							</object>
-																							<object class="sizeritem">
-																								<option>1</option>
-																								<flag>wxEXPAND</flag>
-																								<border>0</border>
-																								<object class="wxBoxSizer">
-																									<orient>wxHORIZONTAL</orient>
-																									<object class="sizeritem">
-																										<option>0</option>
-																										<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
-																										<border>6</border>
-																										<object class="wxStaticText" name="m_staticText46131">
-																											<label>Start RGB:</label>
-																											<wrap>-1</wrap>
+																								<object class="sizeritem">
+																									<option>1</option>
+																									<flag>wxEXPAND</flag>
+																									<border>0</border>
+																									<object class="wxBoxSizer">
+																										<orient>wxHORIZONTAL</orient>
+																										<object class="sizeritem">
+																											<option>0</option>
+																											<flag>wxALIGN_CENTER_VERTICAL</flag>
+																											<border>24</border>
+																											<object class="wxStaticText" name="m_staticText46122">
+																												<label>Fade: </label>
+																												<wrap>-1</wrap>
+																											</object>
 																										</object>
-																									</object>
-																									<object class="sizeritem">
-																										<option>1</option>
-																										<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																										<border>0</border>
-																										<object class="wxTextCtrl" name="m_textCtrl14">
-																											<value></value>
+																										<object class="sizeritem">
+																											<option>0</option>
+																											<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+																											<border>6</border>
+																											<object class="wxSpinCtrlDouble" name="MaterialEditorDecalInfoFadeSeconds">
+																												<style>wxSP_ARROW_KEYS</style>
+																												<value>0.200000</value>
+																												<min>0</min>
+																												<max>999999</max>
+																												<inc>0.1</inc>
+																												<digits>2</digits>
+																											</object>
+																										</object>
+																										<object class="sizeritem">
+																											<option>0</option>
+																											<flag>wxALIGN_CENTER_VERTICAL|wxALL|wxLEFT</flag>
+																											<border>6</border>
+																											<object class="wxStaticText" name="m_staticText461112">
+																												<label>secs</label>
+																												<wrap>-1</wrap>
+																											</object>
 																										</object>
 																									</object>
 																								</object>
-																							</object>
-																							<object class="sizeritem">
-																								<option>1</option>
-																								<flag>wxEXPAND</flag>
-																								<border>0</border>
-																								<object class="wxBoxSizer">
-																									<orient>wxHORIZONTAL</orient>
-																									<object class="sizeritem">
-																										<option>0</option>
-																										<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
-																										<border>6</border>
-																										<object class="wxStaticText" name="m_staticText461311">
-																											<label>End RGB:</label>
-																											<wrap>-1</wrap>
+																								<object class="sizeritem">
+																									<option>1</option>
+																									<flag>wxEXPAND</flag>
+																									<border>0</border>
+																									<object class="wxBoxSizer">
+																										<orient>wxHORIZONTAL</orient>
+																										<object class="sizeritem">
+																											<option>0</option>
+																											<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
+																											<border>6</border>
+																											<object class="wxStaticText" name="m_staticText46131">
+																												<label>Start RGB:</label>
+																												<wrap>-1</wrap>
+																											</object>
+																										</object>
+																										<object class="sizeritem">
+																											<option>1</option>
+																											<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																											<border>0</border>
+																											<object class="wxTextCtrl" name="MaterialDecalInfoStartRgb">
+																												<value></value>
+																											</object>
 																										</object>
 																									</object>
-																									<object class="sizeritem">
-																										<option>1</option>
-																										<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																										<border>0</border>
-																										<object class="wxTextCtrl" name="m_textCtrl141">
-																											<value></value>
+																								</object>
+																								<object class="sizeritem">
+																									<option>1</option>
+																									<flag>wxEXPAND</flag>
+																									<border>0</border>
+																									<object class="wxBoxSizer">
+																										<orient>wxHORIZONTAL</orient>
+																										<object class="sizeritem">
+																											<option>0</option>
+																											<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
+																											<border>6</border>
+																											<object class="wxStaticText" name="m_staticText461311">
+																												<label>End RGB:</label>
+																												<wrap>-1</wrap>
+																											</object>
+																										</object>
+																										<object class="sizeritem">
+																											<option>1</option>
+																											<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																											<border>0</border>
+																											<object class="wxTextCtrl" name="MaterialDecalInfoEndRgb">
+																												<value></value>
+																											</object>
 																										</object>
 																									</object>
 																								</object>

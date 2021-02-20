@@ -193,6 +193,8 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
 	}
 	else if (token == "decalinfo")
 	{
+        _parseFlags |= Material::PF_HasDecalInfo;
+
 		// Syntax: decalInfo <staySeconds> <fadeSeconds> [start rgb] [end rgb]
 		// Example: decalInfo 10 5 ( 1 1 1 1 ) ( 0 0 0 0 )
 		_decalInfo.stayMilliSeconds = static_cast<int>(string::convert<float>(tokeniser.nextToken()) * 1000);

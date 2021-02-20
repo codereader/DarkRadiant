@@ -60,6 +60,7 @@ public:
         PF_HasSortDefined           = 1 << 0, // has a "sort" keyword in its definition
         PF_HasAmbientRimColour      = 1 << 1, // has an "ambientRimColor" keyword in its definition
         PF_HasSpectrum              = 1 << 2, // has a "spectrum" keyword in its definition
+        PF_HasDecalInfo             = 1 << 3, // has a "decalinfo" keyword in its definition
     };
 
 	// Surface Flags
