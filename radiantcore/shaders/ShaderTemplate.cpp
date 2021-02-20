@@ -390,6 +390,10 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
             rWarning() << "Could not parse ambientRimColor expressions in shader: " << getName() << std::endl;
         }
     }
+    else if (token == "islightgemsurf")
+    {
+        _materialFlags |= Material::FLAG_ISLIGHTGEMSURF;
+    }
 	else
 	{
 		return false; // unrecognised token, return false

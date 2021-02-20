@@ -209,6 +209,7 @@ void MaterialEditor::setupMaterialShaderFlags()
     setupMaterialFlag("MaterialFlagUnsmoothedTangents", Material::FLAG_UNSMOOTHEDTANGENTS);
     setupMaterialFlag("MaterialFlagMirror", Material::FLAG_MIRROR);
     setupMaterialFlag("MaterialFlagHasPolygonOffset", Material::FLAG_POLYGONOFFSET);
+    setupMaterialFlag("MaterialFlagIsLightGemSurf", Material::FLAG_ISLIGHTGEMSURF);
 
     // Cull types
     _bindings.emplace(std::make_shared<CheckBoxBinding>(getControl<wxCheckBox>("MaterialTwoSided"),

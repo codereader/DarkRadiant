@@ -51,6 +51,7 @@ public:
 		FLAG_UNSMOOTHEDTANGENTS		= 1 << 9,		// unsmoothedTangents
 		FLAG_MIRROR					= 1 << 10,		// mirror
 		FLAG_POLYGONOFFSET			= 1 << 11,		// has polygonOffset
+		FLAG_ISLIGHTGEMSURF			= 1 << 12,		// is used by the TDM lightgem
 	};
 
     // Parser flags, used to give some hints to the material editor GUI
