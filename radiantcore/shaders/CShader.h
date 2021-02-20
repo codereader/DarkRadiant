@@ -104,6 +104,7 @@ public:
 	std::string getDefinition();
 
     std::string getRenderBumpArguments() override;
+    std::string getRenderBumpFlatArguments() override;
 
 	// -----------------------------------------
 

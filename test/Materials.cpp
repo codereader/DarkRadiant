@@ -154,8 +154,7 @@ TEST_F(MaterialsTest, MaterialParserSpectrum)
     EXPECT_EQ(material->getSpectrum(), 100);
 }
 
-
-inline void checkRenderBumpArguments(const std::string& materialName)
+inline void checkRenderBumpArguments(const std::string& materialName, const std::string& keyword)
 {
     auto material = GlobalMaterialManager().getMaterialForName(materialName);
 
@@ -163,27 +162,41 @@ inline void checkRenderBumpArguments(const std::string& materialName)
     std::vector<std::string> lines;
     string::split(lines, fullDefinition, "\n", true);
 
+    std::string keywordLower = string::to_lower_copy(keyword);
     auto renderBumpLine = std::find_if(lines.begin(), lines.end(),
-        [](const std::string& line) { return line.find("renderBump") != std::string::npos; });
+        [&](const std::string& line) { return string::to_lower_copy(line).find(keywordLower) != std::string::npos; });
 
     EXPECT_NE(renderBumpLine, lines.end());
-    string::to_lower(*renderBumpLine);
 
-    std::string renderBumpKeyword = "renderbump";
-    auto args = renderBumpLine->substr(renderBumpLine->find(renderBumpKeyword) + renderBumpKeyword.size());
+    std::string line = *renderBumpLine;
+    auto args = line.substr(string::to_lower_copy(line).find(keywordLower) + keywordLower.size());
 
     string::trim(args);
 
-    EXPECT_EQ(material->getRenderBumpArguments(), args);
+    if (keyword == "renderbump")
+    {
+        EXPECT_EQ(material->getRenderBumpArguments(), args);
+    }
+    else
+    {
+        EXPECT_EQ(material->getRenderBumpFlatArguments(), args);
+    }
 }
+
 TEST_F(MaterialsTest, MaterialParserRenderbump)
 {
-    checkRenderBumpArguments("textures/parsertest/renderBump1");
-    checkRenderBumpArguments("textures/parsertest/renderBump2");
-    checkRenderBumpArguments("textures/parsertest/renderBump3");
-    checkRenderBumpArguments("textures/parsertest/renderBump4");
-    checkRenderBumpArguments("textures/parsertest/renderBump5");
-    checkRenderBumpArguments("textures/parsertest/renderBump6");
+    checkRenderBumpArguments("textures/parsertest/renderBump1", "renderbump");
+    checkRenderBumpArguments("textures/parsertest/renderBump2", "renderbump");
+    checkRenderBumpArguments("textures/parsertest/renderBump3", "renderbump");
+    checkRenderBumpArguments("textures/parsertest/renderBump4", "renderbump");
+    checkRenderBumpArguments("textures/parsertest/renderBump5", "renderbump");
+    checkRenderBumpArguments("textures/parsertest/renderBump6", "renderbump");
+}
+
+TEST_F(MaterialsTest, MaterialParserRenderbumpFlat)
+{
+    checkRenderBumpArguments("textures/parsertest/renderBumpFlat1", "renderbumpflat");
+    checkRenderBumpArguments("textures/parsertest/renderBumpFlat2", "renderbumpflat");
 }
 
 }

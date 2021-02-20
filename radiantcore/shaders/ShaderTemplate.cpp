@@ -343,9 +343,10 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
 			string::to_lower(next);
 		}
 
-		// The map token is already loaded in "next", skip the highpoly model name
+		// The map token is already loaded in "next", add the highpoly model name
         _renderBumpArguments += !_renderBumpArguments.empty() ? " " : "";
         _renderBumpArguments += fmt::format("{0} {1}", next, tokeniser.nextToken());
+        string::trim(_renderBumpArguments);
 	}
 	else if (token == "renderbumpflat")
 	{
@@ -357,8 +358,17 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
 		// Skip over the optional args
 		if (next == "-size")
 		{
-			tokeniser.skipTokens(3); // skip width, height and model
+            auto width = tokeniser.nextToken();
+            auto height = tokeniser.nextToken();
+            _renderBumpFlatArguments += fmt::format("{0} {1} {2}", next, width, height);
+
+            next = tokeniser.nextToken();
 		}
+
+        // The highpoly model token is already loaded in "next"
+        _renderBumpFlatArguments += !_renderBumpFlatArguments.empty() ? " " : "";
+        _renderBumpFlatArguments += next;
+        string::trim(_renderBumpFlatArguments);
 	}
     else if (token == "ambientrimcolor")
     {
@@ -1353,6 +1363,13 @@ std::string ShaderTemplate::getRenderBumpArguments()
     if (!_parsed) parseDefinition();
 
     return _renderBumpArguments;
+}
+
+std::string ShaderTemplate::getRenderBumpFlagArguments()
+{
+    if (!_parsed) parseDefinition();
+
+    return _renderBumpFlatArguments;
 }
 
 } // namespace

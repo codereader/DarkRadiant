@@ -86,6 +86,7 @@ private:
 	Material::Coverage _coverage;
 
     std::string _renderBumpArguments;
+    std::string _renderBumpFlatArguments;
 
 	// Raw material declaration
 	std::string _blockContents;
@@ -287,6 +288,9 @@ public:
 
     // renderbump argument string
     std::string getRenderBumpArguments();
+    
+    // renderbumpflat argument string
+    std::string getRenderBumpFlagArguments();
 
 private:
 

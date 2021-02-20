@@ -83,3 +83,14 @@ textures/parsertest/renderBump6
 {
     renderBump -aa 2 -trace 0.5 -size 10 10 textures/output.tga models/hipoly 
 }
+
+textures/parsertest/renderBumpFlat1
+{
+    renderBumpflat -size 200 100 models/hipoly 
+}
+
+textures/parsertest/renderBumpFlat2
+{
+    renderBumpflat models/hipoly 
+}
+

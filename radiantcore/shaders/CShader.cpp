@@ -208,6 +208,11 @@ std::string CShader::getRenderBumpArguments()
     return _template->getRenderBumpArguments();
 }
 
+std::string CShader::getRenderBumpFlatArguments()
+{
+    return _template->getRenderBumpFlagArguments();
+}
+
 // -----------------------------------------
 
 void CShader::realise() {
