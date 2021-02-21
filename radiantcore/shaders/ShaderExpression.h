@@ -3,6 +3,8 @@
 #include "ishaders.h"
 #include "irender.h"
 #include "parser/DefTokeniser.h"
+#include "fmt/format.h"
+#include "string/convert.h"
 #include "TableDefinition.h"
 
 namespace shaders
@@ -18,10 +20,13 @@ class ShaderExpression :
 	// The register we're writing to
 	Registers* _registers;
 
+    bool _surroundedByParentheses;
+
 public:
 	ShaderExpression() :
 		_index(-1),
-		_registers(NULL)
+		_registers(nullptr),
+        _surroundedByParentheses(false)
 	{}
 
 	// Base implementations
@@ -67,6 +72,19 @@ public:
 	static IShaderExpressionPtr createFromString(const std::string& exprStr);
 
 	static IShaderExpressionPtr createFromTokens(parser::DefTokeniser& tokeniser);
+
+    virtual std::string getExpressionString() override
+    {
+        return _surroundedByParentheses ? fmt::format("({0})", convertToString()) : convertToString();
+    }
+
+    void setIsSurroundedByParentheses(bool isSurrounded)
+    {
+        _surroundedByParentheses = isSurrounded;
+    }
+
+    // To be implemented by the subclasses
+    virtual std::string convertToString() = 0;
 };
 
 // Detail namespace
@@ -97,6 +115,11 @@ public:
 	{
 		return entity.getShaderParm(_parmNum);
 	}
+
+    virtual std::string convertToString() override
+    {
+        return fmt::format("parm{0}", _parmNum);
+    }
 };
 
 class GlobalShaderParmExpression :
@@ -121,6 +144,11 @@ public:
 	{
 		return getValue(time);
 	}
+
+    virtual std::string convertToString() override
+    {
+        return fmt::format("global{0}", _parmNum);
+    }
 };
 
 // An expression returning the current (game) time as result
@@ -141,6 +169,11 @@ public:
 	{
 		return getValue(time);
 	}
+
+    virtual std::string convertToString() override
+    {
+        return "time";
+    }
 };
 
 // An expression representing a constant floating point number
@@ -165,6 +198,11 @@ public:
 	{
 		return getValue(time);
 	}
+
+    virtual std::string convertToString() override
+    {
+        return fmt::format("{0}", _value);
+    }
 };
 
 // An expression looking up a value in a table def
@@ -198,6 +236,11 @@ public:
 		float lookupVal = _lookupExpr->getValue(time, entity);
 		return _tableDef->getValue(lookupVal);
 	}
+
+    virtual std::string convertToString() override
+    {
+        return fmt::format("{0}[{1}]", _tableDef->getName(), _lookupExpr->getExpressionString());
+    }
 };
 
 // Abstract base class for an expression taking two sub-expression as arguments
@@ -271,6 +314,11 @@ public:
 	{
 		return _a->getValue(time, entity) + _b->getValue(time, entity);
 	}
+
+    virtual std::string convertToString() override
+    {
+        return fmt::format("{0} + {1}", _a->getExpressionString(), _b->getExpressionString());
+    }
 };
 
 // An expression subtracting the value of two expressions
@@ -292,6 +340,11 @@ public:
 	{
 		return _a->getValue(time, entity) - _b->getValue(time, entity);
 	}
+
+    virtual std::string convertToString() override
+    {
+        return fmt::format("{0} - {1}", _a->getExpressionString(), _b->getExpressionString());
+    }
 };
 
 // An expression multiplying the value of two expressions
@@ -313,6 +366,11 @@ public:
 	{
 		return _a->getValue(time, entity) * _b->getValue(time, entity);
 	}
+
+    virtual std::string convertToString() override
+    {
+        return fmt::format("{0} * {1}", _a->getExpressionString(), _b->getExpressionString());
+    }
 };
 
 // An expression dividing the value of two expressions
@@ -334,6 +392,11 @@ public:
 	{
 		return _a->getValue(time, entity) / _b->getValue(time, entity);
 	}
+
+    virtual std::string convertToString() override
+    {
+        return fmt::format("{0} / {1}", _a->getExpressionString(), _b->getExpressionString());
+    }
 };
 
 // An expression returning modulo of A % B
@@ -355,6 +418,11 @@ public:
 	{
 		return fmod(_a->getValue(time, entity), _b->getValue(time, entity));
 	}
+
+    virtual std::string convertToString() override
+    {
+        return fmt::format("{0} % {1}", _a->getExpressionString(), _b->getExpressionString());
+    }
 };
 
 // An expression returning 1 if A < B, otherwise 0
@@ -376,6 +444,11 @@ public:
 	{
 		return _a->getValue(time, entity) < _b->getValue(time, entity) ? 1.0f : 0;
 	}
+
+    virtual std::string convertToString() override
+    {
+        return fmt::format("{0} < {1}", _a->getExpressionString(), _b->getExpressionString());
+    }
 };
 
 // An expression returning 1 if A <= B, otherwise 0
@@ -397,6 +470,11 @@ public:
 	{
 		return _a->getValue(time, entity) <= _b->getValue(time, entity) ? 1.0f : 0;
 	}
+
+    virtual std::string convertToString() override
+    {
+        return fmt::format("{0} <= {1}", _a->getExpressionString(), _b->getExpressionString());
+    }
 };
 
 // An expression returning 1 if A > B, otherwise 0
@@ -418,6 +496,11 @@ public:
 	{
 		return _a->getValue(time, entity) > _b->getValue(time, entity) ? 1.0f : 0;
 	}
+
+    virtual std::string convertToString() override
+    {
+        return fmt::format("{0} > {1}", _a->getExpressionString(), _b->getExpressionString());
+    }
 };
 
 // An expression returning 1 if A >= B, otherwise 0
@@ -439,6 +522,11 @@ public:
 	{
 		return _a->getValue(time, entity) >= _b->getValue(time, entity) ? 1.0f : 0;
 	}
+
+    virtual std::string convertToString() override
+    {
+        return fmt::format("{0} >= {1}", _a->getExpressionString(), _b->getExpressionString());
+    }
 };
 
 // An expression returning 1 if A == B, otherwise 0
@@ -460,6 +548,11 @@ public:
 	{
 		return _a->getValue(time, entity) == _b->getValue(time, entity) ? 1.0f : 0;
 	}
+
+    virtual std::string convertToString() override
+    {
+        return fmt::format("{0} == {1}", _a->getExpressionString(), _b->getExpressionString());
+    }
 };
 
 // An expression returning 1 if A != B, otherwise 0
@@ -481,6 +574,11 @@ public:
 	{
 		return _a->getValue(time, entity) != _b->getValue(time, entity) ? 1.0f : 0;
 	}
+
+    virtual std::string convertToString() override
+    {
+        return fmt::format("{0} != {1}", _a->getExpressionString(), _b->getExpressionString());
+    }
 };
 
 // An expression returning 1 if both A and B are true (non-zero), otherwise 0
@@ -502,6 +600,11 @@ public:
 	{
 		return (_a->getValue(time, entity) != 0 && _b->getValue(time, entity) != 0) ? 1.0f : 0;
 	}
+
+    virtual std::string convertToString() override
+    {
+        return fmt::format("{0} && {1}", _a->getExpressionString(), _b->getExpressionString());
+    }
 };
 
 // An expression returning 1 if either A or B are true (non-zero), otherwise 0
@@ -523,6 +626,11 @@ public:
 	{
 		return (_a->getValue(time, entity) != 0 || _b->getValue(time, entity) != 0) ? 1.0f : 0;
 	}
+
+    virtual std::string convertToString() override
+    {
+        return fmt::format("{0} || {1}", _a->getExpressionString(), _b->getExpressionString());
+    }
 };
 
 } // namespace

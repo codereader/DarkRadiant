@@ -249,6 +249,12 @@ public:
 	 */
 	virtual DeformType getDeformType() const = 0;
 
+    // Returns the shader expression used to define the deform parameters (valid indices in [0..2])
+    virtual shaders::IShaderExpressionPtr getDeformExpression(std::size_t index) = 0;
+
+    // Used for Deform_Particle/Particle2 defines the name of the particle def
+    virtual std::string getDeformDeclName() = 0;
+
 	/**
 	 * Returns the spectrum of this shader, 0 is the default value (even witout keyword in the material)
 	 */

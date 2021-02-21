@@ -83,7 +83,9 @@ public:
 	SurfaceType getSurfaceType() const;
 
 	// Deform types
-	DeformType getDeformType() const;
+	DeformType getDeformType() const override;
+    IShaderExpressionPtr getDeformExpression(std::size_t index) override;
+    std::string getDeformDeclName() override;
 
 	// Get the spectrum, 0 is the default
 	int getSpectrum() const;

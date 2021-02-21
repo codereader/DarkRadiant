@@ -43,8 +43,8 @@ private:
 	NamedBindablePtr _editorTex;
 
 	// Map expressions
-	shaders::MapExpressionPtr _lightFalloff;
-	shaders::MapExpressionPtr _lightFalloffCubeMap;
+	MapExpressionPtr _lightFalloff;
+	MapExpressionPtr _lightFalloffCubeMap;
 
 	/* Light type booleans */
 	bool fogLight;
@@ -70,6 +70,8 @@ private:
 	Material::SurfaceType _surfaceType;
 
 	Material::DeformType _deformType;
+    std::vector<IShaderExpressionPtr> _deformExpressions;
+    std::string _deformDeclName;
 
 	// The spectrum this shader is responding to (or emitting in the case of light materials)
 	int _spectrum;
@@ -186,6 +188,20 @@ public:
 		if (!_parsed) parseDefinition();
 		return _deformType;
 	}
+
+    IShaderExpressionPtr getDeformExpression(std::size_t index)
+    {
+        if (!_parsed) parseDefinition();
+
+        assert(index >= 0 && index < 3);
+        return index < _deformExpressions.size() ? _deformExpressions[index] : IShaderExpressionPtr();
+    }
+
+    std::string getDeformDeclName()
+    {
+        if (!_parsed) parseDefinition();
+        return _deformDeclName;
+    }
 
 	int getSpectrum()
 	{

@@ -67,6 +67,9 @@ public:
 	 * @returns: the register position the result will be written to.
 	 */
 	virtual std::size_t linkToRegister(Registers& registers) = 0;
+
+    // Returns the string this expression has been parsed from
+    virtual std::string getExpressionString() = 0;
 };
 typedef std::shared_ptr<IShaderExpression> IShaderExpressionPtr;
 

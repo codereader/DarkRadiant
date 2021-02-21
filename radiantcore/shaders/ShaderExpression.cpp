@@ -94,15 +94,15 @@ class ShaderExpressionParser
 private:
 	ShaderExpressionTokeniser& _tokeniser;
 
-	typedef std::stack<IShaderExpressionPtr> OperandStack;
-	typedef std::stack<BinaryExpressionPtr> OperatorStack;
+	using OperandStack = std::stack<std::shared_ptr<ShaderExpression>>;
+	using OperatorStack = std::stack<BinaryExpressionPtr>;
 
 public:
 	ShaderExpressionParser(ShaderExpressionTokeniser& tokeniser) :
 		_tokeniser(tokeniser)
 	{}
 
-	IShaderExpressionPtr getExpression()
+	std::shared_ptr<ShaderExpression> getExpression()
 	{
 		// The local variable and operator stack
 		OperandStack operands;
@@ -118,7 +118,7 @@ public:
 			std::string token = _tokeniser.peek();
 
 			// Get a new term, push it on the stack
-			IShaderExpressionPtr term;
+			std::shared_ptr<ShaderExpression> term;
 
 			if (token == "(")
 			{
@@ -126,6 +126,9 @@ public:
 
 				// New scope, treat this as new expression
 				term = getExpression();
+
+                // Remember that this term had parentheses around it
+                term->setIsSurroundedByParentheses(true);
 			}
 			else if (token == ")" || token == "]")
 			{
@@ -171,8 +174,8 @@ public:
 					else if (token == "-")
 					{
 						// A leading -, interpret it as -1 *
-						operands.push(IShaderExpressionPtr(new ConstantExpression(-1)));
-						operators.push(BinaryExpressionPtr(new MultiplyExpression));
+						operands.push(std::make_shared<ConstantExpression>(-1.0f));
+						operators.push(std::make_shared<MultiplyExpression>());
 
 						// Discard the - operator
 						continue;
@@ -219,7 +222,7 @@ public:
 			throw parser::ParseException("Missing expression");
 		}
 		
-		IShaderExpressionPtr rv = operands.top();
+		auto rv = operands.top();
 		operands.pop();
 
 		assert(operands.empty()); // there should be nothing left on the stack
@@ -254,7 +257,7 @@ private:
 
 	// Try to get a valid expression from the token. If the token was found to be valid
 	// The token is actually pulled from the tokeniser using nextToken()
-	IShaderExpressionPtr getTerm(const std::string& token)
+	std::shared_ptr<ShaderExpression> getTerm(const std::string& token)
 	{
 		if (string::istarts_with(token, "parm"))
 		{
@@ -265,7 +268,7 @@ private:
 		
 			if (shaderParmNum >= 0 && shaderParmNum <= MAX_SHADERPARM_INDEX)
 			{
-				return IShaderExpressionPtr(new ShaderParmExpression(shaderParmNum));
+				return std::make_shared<ShaderParmExpression>(shaderParmNum);
 			}
 			else
 			{
@@ -281,7 +284,7 @@ private:
 		
 			if (shaderParmNum >= 0 && shaderParmNum <= MAX_GLOBAL_SHADERPARM_INDEX)
 			{
-				return IShaderExpressionPtr(new GlobalShaderParmExpression(shaderParmNum));
+				return std::make_shared<GlobalShaderParmExpression>(shaderParmNum);
 			}
 			else
 			{
@@ -292,21 +295,21 @@ private:
 		{
 			_tokeniser.nextToken(); // valid token, exhaust
 
-			return IShaderExpressionPtr(new TimeExpression);
+			return std::make_shared<TimeExpression>();
 		}
 		else if (token == "sound")
 		{
 			_tokeniser.nextToken(); // valid token, exhaust
 
 			// No sound support so far
-			return IShaderExpressionPtr(new ConstantExpression(0));
+			return std::make_shared<ConstantExpression>(0.0f);
 		}
 		else if (string::iequals("fragmentprograms", token))
 		{
 			_tokeniser.nextToken(); // valid token, exhaust
 
 			// There's no fragmentPrograms option in DR, let's assume true
-			return IShaderExpressionPtr(new ConstantExpression(1));
+			return std::make_shared<ConstantExpression>(1.0f);
 		}
 		else 
 		{
@@ -322,7 +325,7 @@ private:
 				_tokeniser.assertNextToken("[");
 
 				// The lookup expression itself has to be parsed afresh, enter recursion
-				IShaderExpressionPtr lookupValue = getExpression();
+				auto lookupValue = getExpression();
 
 				if (lookupValue == NULL)
 				{
@@ -330,7 +333,7 @@ private:
 				}
 
 				// Construct a new table lookup expression and link them together
-				return IShaderExpressionPtr(new TableLookupExpression(table, lookupValue));
+				return std::make_shared<TableLookupExpression>(table, lookupValue);
 			}
 			else
 			{
@@ -341,14 +344,14 @@ private:
 
 					_tokeniser.nextToken(); // valid token, exhaust
 
-					return IShaderExpressionPtr(new ConstantExpression(value));
+					return std::make_shared<ConstantExpression>(value);
 				}
 				catch (std::invalid_argument&)
 				{}
 			}
 		}
 
-		return IShaderExpressionPtr();
+		return std::shared_ptr<ShaderExpression>();
 	}
 
 	// Helper routines
@@ -356,55 +359,55 @@ private:
 	{
 		if (token == "+")
 		{
-			return BinaryExpressionPtr(new AddExpression);
+			return std::make_shared<AddExpression>();
 		}
 		else if (token == "-")
 		{
-			return BinaryExpressionPtr(new SubtractExpression);
+			return std::make_shared<SubtractExpression>();
 		}
 		else if (token == "*")
 		{
-			return BinaryExpressionPtr(new MultiplyExpression);
+			return std::make_shared<MultiplyExpression>();
 		}
 		else if (token == "/")
 		{
-			return BinaryExpressionPtr(new DivideExpression);
+			return std::make_shared<DivideExpression>();
 		}
 		else if (token == "%")
 		{
-			return BinaryExpressionPtr(new ModuloExpression);
+			return std::make_shared<ModuloExpression>();
 		}
 		else if (token == "<")
 		{
-			return BinaryExpressionPtr(new LesserThanExpression);
+			return std::make_shared<LesserThanExpression>();
 		}
 		else if (token == "<=")
 		{
-			return BinaryExpressionPtr(new LesserThanOrEqualExpression);
+			return std::make_shared<LesserThanOrEqualExpression>();
 		}
 		else if (token == ">")
 		{
-			return BinaryExpressionPtr(new GreaterThanExpression);
+			return std::make_shared<GreaterThanExpression>();
 		}
 		else if (token == ">=")
 		{
-			return BinaryExpressionPtr(new GreaterThanOrEqualExpression);
+			return std::make_shared<GreaterThanOrEqualExpression>();
 		}
 		else if (token == "==")
 		{
-			return BinaryExpressionPtr(new EqualityExpression);
+			return std::make_shared<EqualityExpression>();
 		}
 		else if (token == "!=")
 		{
-			return BinaryExpressionPtr(new InequalityExpression);
+			return std::make_shared<InequalityExpression>();
 		}
 		else if (token == "&&")
 		{
-			return BinaryExpressionPtr(new LogicalAndExpression);
+			return std::make_shared<LogicalAndExpression>();
 		}
 		else if (token == "||")
 		{
-			return BinaryExpressionPtr(new LogicalOrExpression);
+			return std::make_shared<LogicalOrExpression>();
 		}
 
 		return BinaryExpressionPtr();

@@ -267,29 +267,29 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
 		{
 			_deformType = Material::DEFORM_FLARE;
 
-			parseSingleExpressionTerm(tokeniser); // skip size info
+            _deformExpressions.emplace_back(parseSingleExpressionTerm(tokeniser)); // skip size info
 		}
 		else if (type == "expand")
 		{
 			_deformType = Material::DEFORM_EXPAND;
 
-			parseSingleExpressionTerm(tokeniser); // skip amount
+            _deformExpressions.emplace_back(parseSingleExpressionTerm(tokeniser)); // skip amount
 		}
 		else if (type == "move")
 		{
 			_deformType = Material::DEFORM_MOVE;
 
-			parseSingleExpressionTerm(tokeniser); // skip amount
+            _deformExpressions.emplace_back(parseSingleExpressionTerm(tokeniser)); // skip amount
 		}
 		else if (type == "turbulent")
 		{
 			_deformType = Material::DEFORM_TURBULENT;
 
-			tokeniser.skipTokens(1); // skip table name
+            _deformDeclName = tokeniser.nextToken(); // table name
 
-			parseSingleExpressionTerm(tokeniser); // range
-			parseSingleExpressionTerm(tokeniser); // timeoffset
-			parseSingleExpressionTerm(tokeniser); // domain
+			_deformExpressions.emplace_back(parseSingleExpressionTerm(tokeniser)); // range
+			_deformExpressions.emplace_back(parseSingleExpressionTerm(tokeniser)); // timeoffset
+            _deformExpressions.emplace_back(parseSingleExpressionTerm(tokeniser)); // domain
 		}
 		else if (type == "eyeball")
 		{
@@ -298,14 +298,12 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
 		else if (type == "particle")
 		{
 			_deformType = Material::DEFORM_PARTICLE;
-
-			tokeniser.skipTokens(1); // skip particle name
+            _deformDeclName = tokeniser.nextToken();
 		}
 		else if (type == "particle2")
 		{
 			_deformType = Material::DEFORM_PARTICLE2;
-
-			tokeniser.skipTokens(1); // skip particle name
+            _deformDeclName = tokeniser.nextToken();
 		}
 	}
 	else if (token == "renderbump")
