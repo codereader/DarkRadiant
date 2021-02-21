@@ -298,6 +298,13 @@ void MaterialEditor::setupMaterialDeformPage()
     {
         dropdown->AppendString(pair.first);
     }
+
+    _deformPanels[Material::DEFORM_FLARE] = getControl<wxPanel>("DeformFlarePanel");
+    _deformPanels[Material::DEFORM_EXPAND] = getControl<wxPanel>("DeformExpandPanel");
+    _deformPanels[Material::DEFORM_MOVE] = getControl<wxPanel>("DeformMovePanel");
+    _deformPanels[Material::DEFORM_TURBULENT] = getControl<wxPanel>("DeformTurbulentPanel");
+    _deformPanels[Material::DEFORM_PARTICLE] = getControl<wxPanel>("DeformParticlePanel");
+    _deformPanels[Material::DEFORM_PARTICLE2] = getControl<wxPanel>("DeformParticle2Panel");
 }
 
 void MaterialEditor::setupMaterialStageView()
@@ -436,6 +443,14 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
             deformDropdown->Select(0);
         }
 
+        // Hide the unrelated deform controls
+        for (const auto& pair : _deformPanels)
+        {
+            pair.second->Show(_material->getDeformType() == pair.first);
+        }
+
+        getControl<wxPanel>("DeformPage")->Layout();
+
         // Surround the definition with curly braces, these are not included
         auto definition = fmt::format("{0}\n{{{1}}}", _material->getName(), _material->getDefinition());
         _sourceView->SetValue(definition);
@@ -443,6 +458,13 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
     else
     {
         getControl<wxChoice>("MaterialEditorDeformChoice")->Select(0);
+
+        for (const auto& pair : _deformPanels)
+        {
+            pair.second->Hide();
+        }
+
+        getControl<wxPanel>("DeformPage")->Layout();
 
         getControl<wxCheckBox>("MaterialHasRenderBump")->SetValue(false);
         getControl<wxTextCtrl>("MaterialRenderBumpArguments")->SetValue("");

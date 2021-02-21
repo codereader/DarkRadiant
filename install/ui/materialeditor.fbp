@@ -5501,7 +5501,7 @@
                                                                                                             <property name="border">0</property>
                                                                                                             <property name="flag">wxEXPAND</property>
                                                                                                             <property name="proportion">1</property>
-                                                                                                            <object class="wxBoxSizer" expanded="1">
+                                                                                                            <object class="wxBoxSizer" expanded="0">
                                                                                                                 <property name="minimum_size"></property>
                                                                                                                 <property name="name">bSizer7811</property>
                                                                                                                 <property name="orient">wxHORIZONTAL</property>
@@ -5567,11 +5567,11 @@
                                                                                                                         <property name="wrap">-1</property>
                                                                                                                     </object>
                                                                                                                 </object>
-                                                                                                                <object class="sizeritem" expanded="1">
+                                                                                                                <object class="sizeritem" expanded="0">
                                                                                                                     <property name="border">6</property>
                                                                                                                     <property name="flag">wxALIGN_CENTER_VERTICAL</property>
                                                                                                                     <property name="proportion">0</property>
-                                                                                                                    <object class="wxSpinCtrlDouble" expanded="1">
+                                                                                                                    <object class="wxSpinCtrlDouble" expanded="0">
                                                                                                                         <property name="BottomDockable">1</property>
                                                                                                                         <property name="LeftDockable">1</property>
                                                                                                                         <property name="RightDockable">1</property>
@@ -6176,7 +6176,7 @@
                                                                 <object class="notebookpage" expanded="0">
                                                                     <property name="bitmap"></property>
                                                                     <property name="label">Deform</property>
-                                                                    <property name="select">0</property>
+                                                                    <property name="select">1</property>
                                                                     <object class="wxPanel" expanded="0">
                                                                         <property name="BottomDockable">1</property>
                                                                         <property name="LeftDockable">1</property>
@@ -6308,7 +6308,7 @@
                                                                                     </object>
                                                                                     <object class="sizeritem" expanded="0">
                                                                                         <property name="border">6</property>
-                                                                                        <property name="flag">wxALL|wxEXPAND</property>
+                                                                                        <property name="flag">wxALL</property>
                                                                                         <property name="proportion">1</property>
                                                                                         <object class="wxBoxSizer" expanded="0">
                                                                                             <property name="minimum_size"></property>
@@ -7828,7 +7828,7 @@
                                                                 <object class="notebookpage" expanded="0">
                                                                     <property name="bitmap"></property>
                                                                     <property name="label">Misc</property>
-                                                                    <property name="select">1</property>
+                                                                    <property name="select">0</property>
                                                                     <object class="wxPanel" expanded="0">
                                                                         <property name="BottomDockable">1</property>
                                                                         <property name="LeftDockable">1</property>

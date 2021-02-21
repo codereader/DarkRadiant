@@ -35,6 +35,7 @@ private:
     MaterialPtr _material;
 
     std::set<std::shared_ptr<MaterialBinding>> _bindings;
+    std::map<Material::DeformType, wxPanel*> _deformPanels;
 
 private:
     MaterialEditor();

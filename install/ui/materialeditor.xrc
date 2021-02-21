@@ -1049,7 +1049,7 @@
 														</object>
 														<object class="notebookpage">
 															<label>Deform</label>
-															<selected>0</selected>
+															<selected>1</selected>
 															<object class="wxPanel" name="DeformPage">
 																<style>wxTAB_TRAVERSAL</style>
 																<object class="wxBoxSizer">
@@ -1071,7 +1071,7 @@
 																			</object>
 																			<object class="sizeritem">
 																				<option>1</option>
-																				<flag>wxALL|wxEXPAND</flag>
+																				<flag>wxALL</flag>
 																				<border>6</border>
 																				<object class="wxBoxSizer">
 																					<orient>wxVERTICAL</orient>
@@ -1307,7 +1307,7 @@
 														</object>
 														<object class="notebookpage">
 															<label>Misc</label>
-															<selected>1</selected>
+															<selected>0</selected>
 															<object class="wxPanel" name="MiscPage">
 																<style>wxTAB_TRAVERSAL</style>
 																<object class="wxBoxSizer">
