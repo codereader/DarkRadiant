@@ -84,6 +84,7 @@ MaterialEditor::MaterialEditor() :
 
     setupMaterialProperties();
     setupMaterialStageView();
+    setupMaterialStageProperties();
     setupMaterialSurfaceFlags();
     setupMaterialShaderFlags();
     setupMaterialLightFlags();
@@ -156,13 +157,13 @@ void MaterialEditor::setupMaterialProperties()
         sortDropdown->AppendString(pair.first);
     }
     
-    _materialBindings.emplace(std::make_shared<CheckBoxBinding>(getControl<wxCheckBox>("MaterialHasSortValue"),
+    _materialBindings.emplace(std::make_shared<CheckBoxBinding<MaterialPtr>>(getControl<wxCheckBox>("MaterialHasSortValue"),
         [](const MaterialPtr& material) { return (material->getParseFlags() & Material::PF_HasSortDefined) != 0; }));
 }
 
 void MaterialEditor::setupSurfaceFlag(const std::string& controlName, Material::SurfaceFlags flag)
 {
-    _materialBindings.emplace(std::make_shared<CheckBoxBinding>(getControl<wxCheckBox>(controlName),
+    _materialBindings.emplace(std::make_shared<CheckBoxBinding<MaterialPtr>>(getControl<wxCheckBox>(controlName),
         [=](const MaterialPtr& material)
     {
         return (material->getSurfaceFlags() & flag) != 0;
@@ -171,7 +172,7 @@ void MaterialEditor::setupSurfaceFlag(const std::string& controlName, Material::
 
 void MaterialEditor::setupMaterialFlag(const std::string& controlName, Material::Flags flag)
 {
-    _materialBindings.emplace(std::make_shared<CheckBoxBinding>(getControl<wxCheckBox>(controlName),
+    _materialBindings.emplace(std::make_shared<CheckBoxBinding<MaterialPtr>>(getControl<wxCheckBox>(controlName),
         [=](const MaterialPtr& material)
     {
         return (material->getMaterialFlags() & flag) != 0;
@@ -180,19 +181,19 @@ void MaterialEditor::setupMaterialFlag(const std::string& controlName, Material:
 
 void MaterialEditor::setupMaterialLightFlags()
 {
-    _materialBindings.emplace(std::make_shared<CheckBoxBinding>(getControl<wxCheckBox>("MaterialIsAmbientLight"),
+    _materialBindings.emplace(std::make_shared<CheckBoxBinding<MaterialPtr>>(getControl<wxCheckBox>("MaterialIsAmbientLight"),
         [](const MaterialPtr& material) { return material->isAmbientLight(); }));
 
-    _materialBindings.emplace(std::make_shared<CheckBoxBinding>(getControl<wxCheckBox>("MaterialIsAmbientCubicLight"),
+    _materialBindings.emplace(std::make_shared<CheckBoxBinding<MaterialPtr>>(getControl<wxCheckBox>("MaterialIsAmbientCubicLight"),
         [](const MaterialPtr& material) { return material->isAmbientLight() && material->isCubicLight(); }));
 
-    _materialBindings.emplace(std::make_shared<CheckBoxBinding>(getControl<wxCheckBox>("MaterialIsFogLight"),
+    _materialBindings.emplace(std::make_shared<CheckBoxBinding<MaterialPtr>>(getControl<wxCheckBox>("MaterialIsFogLight"),
         [](const MaterialPtr& material) { return material->isFogLight(); }));
 
-    _materialBindings.emplace(std::make_shared<CheckBoxBinding>(getControl<wxCheckBox>("MaterialIsCubicLight"),
+    _materialBindings.emplace(std::make_shared<CheckBoxBinding<MaterialPtr>>(getControl<wxCheckBox>("MaterialIsCubicLight"),
         [](const MaterialPtr& material) { return material->isCubicLight(); })); 
     
-    _materialBindings.emplace(std::make_shared<CheckBoxBinding>(getControl<wxCheckBox>("MaterialIsBlendLight"),
+    _materialBindings.emplace(std::make_shared<CheckBoxBinding<MaterialPtr>>(getControl<wxCheckBox>("MaterialIsBlendLight"),
         [](const MaterialPtr& material) { return material->isBlendLight(); }));
 }
 
@@ -213,51 +214,51 @@ void MaterialEditor::setupMaterialShaderFlags()
     setupMaterialFlag("MaterialFlagIsLightGemSurf", Material::FLAG_ISLIGHTGEMSURF);
 
     // Cull types
-    _materialBindings.emplace(std::make_shared<CheckBoxBinding>(getControl<wxCheckBox>("MaterialTwoSided"),
+    _materialBindings.emplace(std::make_shared<CheckBoxBinding<MaterialPtr>>(getControl<wxCheckBox>("MaterialTwoSided"),
         [](const MaterialPtr& material)
     {
         return material->getCullType() == Material::CULL_NONE;
     }));
 
-    _materialBindings.emplace(std::make_shared<CheckBoxBinding>(getControl<wxCheckBox>("MaterialBackSided"),
+    _materialBindings.emplace(std::make_shared<CheckBoxBinding<MaterialPtr>>(getControl<wxCheckBox>("MaterialBackSided"),
         [](const MaterialPtr& material)
     {
         return material->getCullType() == Material::CULL_FRONT;
     }));
 
     // Global Clamping
-    _materialBindings.emplace(std::make_shared<CheckBoxBinding>(getControl<wxCheckBox>("MaterialFlagClamp"),
+    _materialBindings.emplace(std::make_shared<CheckBoxBinding<MaterialPtr>>(getControl<wxCheckBox>("MaterialFlagClamp"),
         [](const MaterialPtr& material)
     {
         return material->getClampType() == CLAMP_NOREPEAT;
     }));
 
-    _materialBindings.emplace(std::make_shared<CheckBoxBinding>(getControl<wxCheckBox>("MaterialFlagZeroClamp"),
+    _materialBindings.emplace(std::make_shared<CheckBoxBinding<MaterialPtr>>(getControl<wxCheckBox>("MaterialFlagZeroClamp"),
         [](const MaterialPtr& material)
     {
         return material->getClampType() == CLAMP_ZEROCLAMP;
     }));
 
-    _materialBindings.emplace(std::make_shared<CheckBoxBinding>(getControl<wxCheckBox>("MaterialFlagAlphaZeroClamp"),
+    _materialBindings.emplace(std::make_shared<CheckBoxBinding<MaterialPtr>>(getControl<wxCheckBox>("MaterialFlagAlphaZeroClamp"),
         [](const MaterialPtr& material)
     {
         return material->getClampType() == CLAMP_ALPHAZEROCLAMP;
     }));
 
     // DECAL_MACRO
-    _materialBindings.emplace(std::make_shared<CheckBoxBinding>(getControl<wxCheckBox>("MaterialHasDecalMacro"),
+    _materialBindings.emplace(std::make_shared<CheckBoxBinding<MaterialPtr>>(getControl<wxCheckBox>("MaterialHasDecalMacro"),
         [](const MaterialPtr& material) { return material->getParseFlags() & Material::PF_HasDecalMacro; }));
 
     // TWOSIDED_DECAL_MACRO
-    _materialBindings.emplace(std::make_shared<CheckBoxBinding>(getControl<wxCheckBox>("MaterialHasTwoSidedDecalMacro"),
+    _materialBindings.emplace(std::make_shared<CheckBoxBinding<MaterialPtr>>(getControl<wxCheckBox>("MaterialHasTwoSidedDecalMacro"),
         [](const MaterialPtr& material) { return material->getParseFlags() & Material::PF_HasTwoSidedDecalMacro; }));
 
     // GLASS_MACRO
-    _materialBindings.emplace(std::make_shared<CheckBoxBinding>(getControl<wxCheckBox>("MaterialHasGlassMacro"),
+    _materialBindings.emplace(std::make_shared<CheckBoxBinding<MaterialPtr>>(getControl<wxCheckBox>("MaterialHasGlassMacro"),
         [](const MaterialPtr& material) { return material->getParseFlags() & Material::PF_HasGlassMacro; }));
 
     // PARTICLE_MACRO
-    _materialBindings.emplace(std::make_shared<CheckBoxBinding>(getControl<wxCheckBox>("MaterialHasParticleMacro"),
+    _materialBindings.emplace(std::make_shared<CheckBoxBinding<MaterialPtr>>(getControl<wxCheckBox>("MaterialHasParticleMacro"),
         [](const MaterialPtr& material) { return material->getParseFlags() & Material::PF_HasParticleMacro; }));
 }
 
@@ -322,6 +323,25 @@ void MaterialEditor::setupMaterialStageView()
     _stageView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &MaterialEditor::_onStageListSelectionChanged, this);
 }
 
+void MaterialEditor::setupStageFlag(const std::string& controlName, int flags)
+{
+    _stageBindings.emplace(std::make_shared<CheckBoxBinding<ShaderLayerPtr>>(getControl<wxCheckBox>(controlName),
+        [=](const ShaderLayerPtr& layer)
+    {
+        return (layer->getStageFlags() & flags) == flags;
+    }));
+}
+
+void MaterialEditor::setupMaterialStageProperties()
+{
+    setupStageFlag("MaterialStageFlagMaskRed", ShaderLayer::FLAG_MASK_RED);
+    setupStageFlag("MaterialStageFlagMaskGreen", ShaderLayer::FLAG_MASK_GREEN);
+    setupStageFlag("MaterialStageFlagMaskBlue", ShaderLayer::FLAG_MASK_BLUE);
+    setupStageFlag("MaterialStageFlagMaskAlpha", ShaderLayer::FLAG_MASK_ALPHA);
+    setupStageFlag("MaterialStageFlagMaskColour", ShaderLayer::FLAG_MASK_RED|ShaderLayer::FLAG_MASK_GREEN|ShaderLayer::FLAG_MASK_BLUE);
+    setupStageFlag("MaterialStageFlagMaskDepth", ShaderLayer::FLAG_MASK_DEPTH);
+}
+
 void MaterialEditor::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
 {
     // Update the preview if a texture is selected
@@ -339,7 +359,7 @@ void MaterialEditor::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
 
 void MaterialEditor::_onStageListSelectionChanged(wxDataViewEvent& ev)
 {
-    updateStageControlsFromMaterial();
+    updateStageControlsFromSelectedStage();
 }
 
 void MaterialEditor::updateControlsFromMaterial()
@@ -596,7 +616,7 @@ void MaterialEditor::selectStageByIndex(std::size_t index)
     if (item.IsOk())
     {
         _stageView->Select(item);
-        updateStageControlsFromMaterial();
+        updateStageControlsFromSelectedStage();
     }
     else
     {
@@ -604,24 +624,11 @@ void MaterialEditor::selectStageByIndex(std::size_t index)
     }
 }
 
-void MaterialEditor::updateStageControlsFromLayer(const ShaderLayer& layer)
+ShaderLayerPtr MaterialEditor::getSelectedStage()
 {
-    // TODO
-}
-
-void MaterialEditor::updateStageControlsFromMaterial()
-{
-    // Update all registered bindings
-    for (const auto& binding : _stageBindings)
-    {
-        binding->setSource(_material);
-    }
-
     auto selectedStageItem = _stageView->GetSelection();
 
-    getControl<wxPanel>("MaterialEditorStageSettingsPanel")->Enable(selectedStageItem.IsOk());
-
-    if (!selectedStageItem.IsOk() || !_material) return;
+    if (!selectedStageItem.IsOk() || !_material) return ShaderLayerPtr();
 
     const auto& layers = _material->getAllLayers();
     wxutil::TreeModel::Row stageRow(selectedStageItem, *_stageList);
@@ -629,9 +636,25 @@ void MaterialEditor::updateStageControlsFromMaterial()
 
     if (stageIndex >= 0 && stageIndex < layers.size())
     {
-        const auto& layer = layers[stageIndex];
-        updateStageControlsFromLayer(*layer);
+        return layers[stageIndex];
     }
+
+    return ShaderLayerPtr();
+}
+
+void MaterialEditor::updateStageControlsFromSelectedStage()
+{
+    auto selectedStage = getSelectedStage();
+
+    // Update all registered bindings
+    for (const auto& binding : _stageBindings)
+    {
+        binding->setSource(selectedStage);
+    }
+
+    getControl<wxPanel>("MaterialEditorStageSettingsPanel")->Enable(selectedStage != nullptr);
+
+
 }
 
 }

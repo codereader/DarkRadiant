@@ -9629,7 +9629,7 @@
                                                         <object class="notebookpage" expanded="0">
                                                             <property name="bitmap"></property>
                                                             <property name="label">Blending</property>
-                                                            <property name="select">0</property>
+                                                            <property name="select">1</property>
                                                             <object class="wxPanel" expanded="0">
                                                                 <property name="BottomDockable">1</property>
                                                                 <property name="LeftDockable">1</property>
@@ -10324,7 +10324,7 @@
                                                                                             <property name="minimize_button">0</property>
                                                                                             <property name="minimum_size"></property>
                                                                                             <property name="moveable">1</property>
-                                                                                            <property name="name">maskRed</property>
+                                                                                            <property name="name">MaterialStageFlagMaskRed</property>
                                                                                             <property name="pane_border">1</property>
                                                                                             <property name="pane_position"></property>
                                                                                             <property name="pane_size"></property>
@@ -10388,7 +10388,7 @@
                                                                                             <property name="minimize_button">0</property>
                                                                                             <property name="minimum_size"></property>
                                                                                             <property name="moveable">1</property>
-                                                                                            <property name="name">maskRed1</property>
+                                                                                            <property name="name">MaterialStageFlagMaskGreen</property>
                                                                                             <property name="pane_border">1</property>
                                                                                             <property name="pane_position"></property>
                                                                                             <property name="pane_size"></property>
@@ -10452,7 +10452,7 @@
                                                                                             <property name="minimize_button">0</property>
                                                                                             <property name="minimum_size"></property>
                                                                                             <property name="moveable">1</property>
-                                                                                            <property name="name">maskRed2</property>
+                                                                                            <property name="name">MaterialStageFlagMaskBlue</property>
                                                                                             <property name="pane_border">1</property>
                                                                                             <property name="pane_position"></property>
                                                                                             <property name="pane_size"></property>
@@ -10516,7 +10516,7 @@
                                                                                             <property name="minimize_button">0</property>
                                                                                             <property name="minimum_size"></property>
                                                                                             <property name="moveable">1</property>
-                                                                                            <property name="name">maskRed3</property>
+                                                                                            <property name="name">MaterialStageFlagMaskAlpha</property>
                                                                                             <property name="pane_border">1</property>
                                                                                             <property name="pane_position"></property>
                                                                                             <property name="pane_size"></property>
@@ -10580,7 +10580,7 @@
                                                                                             <property name="minimize_button">0</property>
                                                                                             <property name="minimum_size"></property>
                                                                                             <property name="moveable">1</property>
-                                                                                            <property name="name">maskRed4</property>
+                                                                                            <property name="name">MaterialStageFlagMaskColour</property>
                                                                                             <property name="pane_border">1</property>
                                                                                             <property name="pane_position"></property>
                                                                                             <property name="pane_size"></property>
@@ -10644,7 +10644,7 @@
                                                                                             <property name="minimize_button">0</property>
                                                                                             <property name="minimum_size"></property>
                                                                                             <property name="moveable">1</property>
-                                                                                            <property name="name">maskRed5</property>
+                                                                                            <property name="name">MaterialStageFlagMaskDepth</property>
                                                                                             <property name="pane_border">1</property>
                                                                                             <property name="pane_position"></property>
                                                                                             <property name="pane_size"></property>
@@ -15366,7 +15366,7 @@
                                                         <object class="notebookpage" expanded="0">
                                                             <property name="bitmap"></property>
                                                             <property name="label">Vertex Colour</property>
-                                                            <property name="select">1</property>
+                                                            <property name="select">0</property>
                                                             <object class="wxPanel" expanded="0">
                                                                 <property name="BottomDockable">1</property>
                                                                 <property name="LeftDockable">1</property>

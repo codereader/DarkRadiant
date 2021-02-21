@@ -36,30 +36,29 @@ protected:
     }
 };
 
-using MaterialBinding = Binding<MaterialPtr>;
-
+template<typename Source>
 class CheckBoxBinding :
-    public MaterialBinding
+    public Binding<Source>
 {
 private:
     wxCheckBox* _checkbox;
-    std::function<bool(const MaterialPtr&)> _loadFunc;
+    std::function<bool(const Source&)> _loadFunc;
 
 public:
-    CheckBoxBinding(wxCheckBox* checkbox, const std::function<bool(const MaterialPtr&)> loadFunc) :
+    CheckBoxBinding(wxCheckBox* checkbox, const std::function<bool(const Source&)> loadFunc) :
         _checkbox(checkbox),
         _loadFunc(loadFunc)
     {}
 
-    virtual void updateFromSource(const MaterialPtr& material) override
+    virtual void updateFromSource(const Source& source) override
     {
-        if (!getSource())
+        if (!source)
         {
             _checkbox->SetValue(false);
             return;
         }
 
-        _checkbox->SetValue(_loadFunc(getSource()));
+        _checkbox->SetValue(_loadFunc(source));
     }
 };
 

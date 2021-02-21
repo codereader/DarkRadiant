@@ -1637,7 +1637,7 @@
 											<object class="wxNotebook" name="MaterialEditorSettingsNotebook">
 												<object class="notebookpage">
 													<label>Blending</label>
-													<selected>0</selected>
+													<selected>1</selected>
 													<object class="wxPanel" name="BlendPanel">
 														<style>wxTAB_TRAVERSAL</style>
 														<object class="wxBoxSizer">
@@ -1751,7 +1751,7 @@
 																				<option>0</option>
 																				<flag>wxALIGN_CENTER_VERTICAL</flag>
 																				<border>0</border>
-																				<object class="wxCheckBox" name="maskRed">
+																				<object class="wxCheckBox" name="MaterialStageFlagMaskRed">
 																					<label>Red</label>
 																					<checked>1</checked>
 																				</object>
@@ -1760,7 +1760,7 @@
 																				<option>0</option>
 																				<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
 																				<border>6</border>
-																				<object class="wxCheckBox" name="maskRed1">
+																				<object class="wxCheckBox" name="MaterialStageFlagMaskGreen">
 																					<label>Green</label>
 																					<checked>1</checked>
 																				</object>
@@ -1769,7 +1769,7 @@
 																				<option>0</option>
 																				<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
 																				<border>6</border>
-																				<object class="wxCheckBox" name="maskRed2">
+																				<object class="wxCheckBox" name="MaterialStageFlagMaskBlue">
 																					<label>Blue</label>
 																					<checked>1</checked>
 																				</object>
@@ -1778,7 +1778,7 @@
 																				<option>0</option>
 																				<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
 																				<border>6</border>
-																				<object class="wxCheckBox" name="maskRed3">
+																				<object class="wxCheckBox" name="MaterialStageFlagMaskAlpha">
 																					<label>Alpha</label>
 																					<checked>1</checked>
 																				</object>
@@ -1787,7 +1787,7 @@
 																				<option>0</option>
 																				<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
 																				<border>6</border>
-																				<object class="wxCheckBox" name="maskRed4">
+																				<object class="wxCheckBox" name="MaterialStageFlagMaskColour">
 																					<label>Colour</label>
 																					<checked>1</checked>
 																				</object>
@@ -1796,7 +1796,7 @@
 																				<option>0</option>
 																				<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
 																				<border>6</border>
-																				<object class="wxCheckBox" name="maskRed5">
+																				<object class="wxCheckBox" name="MaterialStageFlagMaskDepth">
 																					<label>Depth</label>
 																					<checked>1</checked>
 																				</object>
@@ -2606,7 +2606,7 @@
 												</object>
 												<object class="notebookpage">
 													<label>Vertex Colour</label>
-													<selected>1</selected>
+													<selected>0</selected>
 													<object class="wxPanel" name="m_panel611">
 														<style>wxTAB_TRAVERSAL</style>
 														<object class="wxBoxSizer">

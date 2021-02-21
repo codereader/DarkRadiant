@@ -34,8 +34,8 @@ private:
 
     MaterialPtr _material;
 
-    std::set<std::shared_ptr<MaterialBinding>> _materialBindings;
-    std::set<std::shared_ptr<MaterialBinding>> _stageBindings;
+    std::set<std::shared_ptr<Binding<MaterialPtr>>> _materialBindings;
+    std::set<std::shared_ptr<Binding<ShaderLayerPtr>>> _stageBindings;
     std::map<Material::DeformType, wxPanel*> _deformPanels;
 
 private:
@@ -50,6 +50,7 @@ public:
 
 private:
     void setupMaterialStageView();
+    void setupMaterialStageProperties();
     void setupMaterialProperties();
     void setupMaterialSurfaceFlags();
     void setupMaterialShaderFlags();
@@ -57,6 +58,7 @@ private:
     void setupMaterialDeformPage();
     void setupSurfaceFlag(const std::string& controlName, Material::SurfaceFlags flag);
     void setupMaterialFlag(const std::string& controlName, Material::Flags flag);
+    void setupStageFlag(const std::string& controlName, int flags);
 
     void updateControlsFromMaterial();
     void updateDeformControlsFromMaterial();
@@ -64,9 +66,9 @@ private:
     void updateMaterialPropertiesFromMaterial();
 
     void selectStageByIndex(std::size_t index);
+    ShaderLayerPtr getSelectedStage();
 
-    void updateStageControlsFromMaterial();
-    void updateStageControlsFromLayer(const ShaderLayer& layer);
+    void updateStageControlsFromSelectedStage();
 
     void _onTreeViewSelectionChanged(wxDataViewEvent& ev);
     void _onStageListSelectionChanged(wxDataViewEvent& ev);
