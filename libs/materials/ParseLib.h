@@ -66,4 +66,30 @@ inline std::string getStringForSortRequestValue(float value)
     return std::string();
 }
 
+constexpr std::pair<const char*, Material::DeformType> DeformTypeNames[]
+{
+    { "sprite", Material::DEFORM_SPRITE },
+    { "tube", Material::DEFORM_TUBE },
+    { "flare", Material::DEFORM_FLARE },
+    { "expand", Material::DEFORM_EXPAND },
+    { "move", Material::DEFORM_MOVE },
+    { "turbulent", Material::DEFORM_TURBULENT },
+    { "eyeball", Material::DEFORM_EYEBALL },
+    { "particle", Material::DEFORM_PARTICLE },
+    { "particle2", Material::DEFORM_PARTICLE2 },
+};
+
+inline std::string getStringForDeformType(Material::DeformType type)
+{
+    for (const auto& pair : DeformTypeNames)
+    {
+        if (type == pair.second)
+        {
+            return pair.first;
+        }
+    }
+
+    return std::string();
+}
+
 }

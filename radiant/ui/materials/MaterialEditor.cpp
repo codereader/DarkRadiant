@@ -87,6 +87,7 @@ MaterialEditor::MaterialEditor() :
     setupMaterialSurfaceFlags();
     setupMaterialShaderFlags();
     setupMaterialLightFlags();
+    setupMaterialDeformPage();
 
     // Set the default size of the window
     FitToScreen(0.8f, 0.6f);
@@ -287,6 +288,18 @@ void MaterialEditor::setupMaterialSurfaceFlags()
     setupSurfaceFlag("MaterialSurfaceFlagNosteps", Material::SurfaceFlags::SURF_NOSTEPS);
 }
 
+void MaterialEditor::setupMaterialDeformPage()
+{
+    auto* dropdown = getControl<wxChoice>("MaterialEditorDeformChoice");
+
+    dropdown->AppendString(_("None"));
+
+    for (const auto& pair : shaders::DeformTypeNames)
+    {
+        dropdown->AppendString(pair.first);
+    }
+}
+
 void MaterialEditor::setupMaterialStageView()
 {
     // Stage view
@@ -410,12 +423,27 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
         getControl<wxTextCtrl>("MaterialRenderBumpFlatArguments")->Enable(!_material->getRenderBumpFlatArguments().empty());
         getControl<wxTextCtrl>("MaterialRenderBumpFlatArguments")->SetValue(_material->getRenderBumpFlatArguments());
 
+        // Deform
+        auto deformTypeName = shaders::getStringForDeformType(_material->getDeformType());
+        auto deformDropdown = getControl<wxChoice>("MaterialEditorDeformChoice");
+
+        if (!deformTypeName.empty())
+        {
+            deformDropdown->Select(deformDropdown->FindString(deformTypeName));
+        }
+        else
+        {
+            deformDropdown->Select(0);
+        }
+
         // Surround the definition with curly braces, these are not included
         auto definition = fmt::format("{0}\n{{{1}}}", _material->getName(), _material->getDefinition());
         _sourceView->SetValue(definition);
     }
     else
     {
+        getControl<wxChoice>("MaterialEditorDeformChoice")->Select(0);
+
         getControl<wxCheckBox>("MaterialHasRenderBump")->SetValue(false);
         getControl<wxTextCtrl>("MaterialRenderBumpArguments")->SetValue("");
 
