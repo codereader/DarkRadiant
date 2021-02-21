@@ -1478,122 +1478,130 @@
 							</object>
 							<object class="sizeritem">
 								<option>0</option>
-								<flag>wxBOTTOM|wxTOP</flag>
-								<border>6</border>
-								<object class="wxStaticText" name="MaterialEditorMaterialStagesLabel">
-									<label>Material Stages</label>
-									<wrap>-1</wrap>
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
 								<flag>wxEXPAND|wxLEFT</flag>
-								<border>12</border>
-								<object class="wxPanel" name="MaterialEditorMaterialStagesPanel">
+								<border>0</border>
+								<object class="wxPanel" name="MaterialEditorStageListPanel">
 									<style>wxTAB_TRAVERSAL</style>
 									<object class="wxBoxSizer">
-										<orient>wxHORIZONTAL</orient>
+										<orient>wxVERTICAL</orient>
 										<object class="sizeritem">
-											<option>1</option>
-											<flag>wxEXPAND | wxALL</flag>
-											<border>0</border>
-											<object class="wxPanel" name="MaterialEditorStageView">
-												<style>wxTAB_TRAVERSAL</style>
-												<object class="wxBoxSizer">
-													<orient>wxVERTICAL</orient>
-												</object>
+											<option>0</option>
+											<flag>wxBOTTOM|wxTOP</flag>
+											<border>6</border>
+											<object class="wxStaticText" name="MaterialEditorMaterialStagesLabel">
+												<label>Material Stages</label>
+												<wrap>-1</wrap>
 											</object>
 										</object>
 										<object class="sizeritem">
-											<option>0</option>
-											<flag>wxEXPAND|wxLEFT|wxRIGHT</flag>
-											<border>6</border>
+											<option>1</option>
+											<flag>wxEXPAND|wxLEFT</flag>
+											<border>12</border>
 											<object class="wxBoxSizer">
-												<orient>wxVERTICAL</orient>
+												<orient>wxHORIZONTAL</orient>
 												<object class="sizeritem">
 													<option>1</option>
-													<flag>wxBOTTOM|wxEXPAND</flag>
+													<flag>wxEXPAND | wxALL</flag>
+													<border>0</border>
+													<object class="wxPanel" name="MaterialEditorStageView">
+														<style>wxTAB_TRAVERSAL</style>
+														<object class="wxBoxSizer">
+															<orient>wxVERTICAL</orient>
+														</object>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxEXPAND|wxLEFT|wxRIGHT</flag>
 													<border>6</border>
 													<object class="wxBoxSizer">
-														<orient>wxHORIZONTAL</orient>
+														<orient>wxVERTICAL</orient>
 														<object class="sizeritem">
 															<option>1</option>
-															<flag>wxRIGHT</flag>
+															<flag>wxBOTTOM|wxEXPAND</flag>
 															<border>6</border>
 															<object class="wxBoxSizer">
-																<orient>wxVERTICAL</orient>
+																<orient>wxHORIZONTAL</orient>
 																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALL|wxEXPAND</flag>
+																	<option>1</option>
+																	<flag>wxRIGHT</flag>
+																	<border>6</border>
+																	<object class="wxBoxSizer">
+																		<orient>wxVERTICAL</orient>
+																		<object class="sizeritem">
+																			<option>0</option>
+																			<flag>wxALL|wxEXPAND</flag>
+																			<border>0</border>
+																			<object class="wxButton" name="MaterialEditorAddStageButton">
+																				<label>Add</label>
+																				<default>0</default>
+																				<markup>0</markup>
+																				<bitmap />
+																			</object>
+																		</object>
+																		<object class="sizeritem">
+																			<option>0</option>
+																			<flag>wxTOP|wxEXPAND</flag>
+																			<border>6</border>
+																			<object class="wxButton" name="MaterialEditorRemoveStageButton">
+																				<label>Remove</label>
+																				<default>0</default>
+																				<markup>0</markup>
+																				<bitmap />
+																			</object>
+																		</object>
+																		<object class="sizeritem">
+																			<option>0</option>
+																			<flag>wxTOP|wxEXPAND</flag>
+																			<border>6</border>
+																			<object class="wxButton" name="MaterialEditorToggleStageButton">
+																				<label>Toggle Visibility</label>
+																				<default>0</default>
+																				<markup>0</markup>
+																				<bitmap />
+																			</object>
+																		</object>
+																	</object>
+																</object>
+																<object class="sizeritem">
+																	<option>1</option>
+																	<flag></flag>
 																	<border>0</border>
-																	<object class="wxButton" name="MaterialEditorAddStageButton">
-																		<label>Add</label>
-																		<default>0</default>
-																		<markup>0</markup>
-																		<bitmap />
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxTOP|wxEXPAND</flag>
-																	<border>6</border>
-																	<object class="wxButton" name="MaterialEditorRemoveStageButton">
-																		<label>Remove</label>
-																		<default>0</default>
-																		<markup>0</markup>
-																		<bitmap />
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxTOP|wxEXPAND</flag>
-																	<border>6</border>
-																	<object class="wxButton" name="MaterialEditorToggleStageButton">
-																		<label>Toggle Visibility</label>
-																		<default>0</default>
-																		<markup>0</markup>
-																		<bitmap />
-																	</object>
-																</object>
-															</object>
-														</object>
-														<object class="sizeritem">
-															<option>1</option>
-															<flag></flag>
-															<border>0</border>
-															<object class="wxBoxSizer">
-																<orient>wxVERTICAL</orient>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALL|wxEXPAND</flag>
-																	<border>0</border>
-																	<object class="wxButton" name="MaterialEditorMoveUpStageButton">
-																		<label>Up</label>
-																		<default>0</default>
-																		<markup>0</markup>
-																		<bitmap />
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxTOP|wxEXPAND</flag>
-																	<border>6</border>
-																	<object class="wxButton" name="MaterialEditorMoveDownStageButton">
-																		<label>Down</label>
-																		<default>0</default>
-																		<markup>0</markup>
-																		<bitmap />
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxTOP|wxEXPAND</flag>
-																	<border>6</border>
-																	<object class="wxButton" name="MaterialEditorDuplicateStageButton">
-																		<label>Duplicate</label>
-																		<default>0</default>
-																		<markup>0</markup>
-																		<bitmap />
+																	<object class="wxBoxSizer">
+																		<orient>wxVERTICAL</orient>
+																		<object class="sizeritem">
+																			<option>0</option>
+																			<flag>wxALL|wxEXPAND</flag>
+																			<border>0</border>
+																			<object class="wxButton" name="MaterialEditorMoveUpStageButton">
+																				<label>Up</label>
+																				<default>0</default>
+																				<markup>0</markup>
+																				<bitmap />
+																			</object>
+																		</object>
+																		<object class="sizeritem">
+																			<option>0</option>
+																			<flag>wxTOP|wxEXPAND</flag>
+																			<border>6</border>
+																			<object class="wxButton" name="MaterialEditorMoveDownStageButton">
+																				<label>Down</label>
+																				<default>0</default>
+																				<markup>0</markup>
+																				<bitmap />
+																			</object>
+																		</object>
+																		<object class="sizeritem">
+																			<option>0</option>
+																			<flag>wxTOP|wxEXPAND</flag>
+																			<border>6</border>
+																			<object class="wxButton" name="MaterialEditorDuplicateStageButton">
+																				<label>Duplicate</label>
+																				<default>0</default>
+																				<markup>0</markup>
+																				<bitmap />
+																			</object>
+																		</object>
 																	</object>
 																</object>
 															</object>
@@ -1606,514 +1614,289 @@
 								</object>
 							</object>
 							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxBOTTOM|wxTOP</flag>
-								<border>6</border>
-								<object class="wxStaticText" name="MaterialEditorStageSettingsLabel">
-									<label>Stage Settings</label>
-									<wrap>-1</wrap>
-								</object>
-							</object>
-							<object class="sizeritem">
 								<option>1</option>
-								<flag>wxEXPAND|wxRIGHT</flag>
-								<border>6</border>
-								<object class="wxBoxSizer">
-									<orient>wxVERTICAL</orient>
-									<object class="sizeritem">
-										<option>0</option>
-										<flag>wxEXPAND|wxLEFT</flag>
-										<border>12</border>
-										<object class="wxNotebook" name="MaterialEditorSettingsNotebook">
-											<object class="notebookpage">
-												<label>Blending</label>
-												<selected>0</selected>
-												<object class="wxPanel" name="BlendPanel">
-													<style>wxTAB_TRAVERSAL</style>
-													<object class="wxBoxSizer">
-														<orient>wxVERTICAL</orient>
-														<object class="sizeritem">
-															<option>1</option>
-															<flag>wxALL|wxEXPAND</flag>
-															<border>6</border>
-															<object class="wxFlexGridSizer">
-																<rows>7</rows>
-																<cols>2</cols>
-																<vgap>6</vgap>
-																<hgap>12</hgap>
-																<growablecols>1</growablecols>
-																<growablerows></growablerows>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALIGN_CENTER_VERTICAL</flag>
-																	<border>5</border>
-																	<object class="wxStaticText" name="m_staticText8">
-																		<label>Blend:</label>
-																		<wrap>-1</wrap>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>1</option>
-																	<flag>wxEXPAND</flag>
-																	<border>0</border>
-																	<object class="wxBoxSizer">
-																		<orient>wxHORIZONTAL</orient>
-																		<object class="sizeritem">
-																			<option>1</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
-																			<border>6</border>
-																			<object class="wxChoice" name="m_choice3">
-																				<selection>0</selection>
-																				<content />
-																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																			<border>0</border>
-																			<object class="wxStaticText" name="m_staticText60">
-																				<label>Source:</label>
-																				<wrap>-1</wrap>
-																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxALL|wxLEFT</flag>
-																			<border>6</border>
-																			<object class="wxChoice" name="m_choice4">
-																				<selection>0</selection>
-																				<content />
-																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																			<border>0</border>
-																			<object class="wxStaticText" name="m_staticText601">
-																				<label>Dest:</label>
-																				<wrap>-1</wrap>
-																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
-																			<border>6</border>
-																			<object class="wxChoice" name="m_choice41">
-																				<selection>0</selection>
-																				<content />
-																			</object>
+								<flag>wxEXPAND</flag>
+								<border>0</border>
+								<object class="wxPanel" name="MaterialEditorStageSettingsPanel">
+									<style>wxTAB_TRAVERSAL</style>
+									<object class="wxBoxSizer">
+										<orient>wxVERTICAL</orient>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxBOTTOM|wxTOP</flag>
+											<border>6</border>
+											<object class="wxStaticText" name="MaterialEditorStageSettingsLabel">
+												<label>Stage Settings</label>
+												<wrap>-1</wrap>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxEXPAND|wxLEFT</flag>
+											<border>12</border>
+											<object class="wxNotebook" name="MaterialEditorSettingsNotebook">
+												<object class="notebookpage">
+													<label>Blending</label>
+													<selected>0</selected>
+													<object class="wxPanel" name="BlendPanel">
+														<style>wxTAB_TRAVERSAL</style>
+														<object class="wxBoxSizer">
+															<orient>wxVERTICAL</orient>
+															<object class="sizeritem">
+																<option>1</option>
+																<flag>wxALL|wxEXPAND</flag>
+																<border>6</border>
+																<object class="wxFlexGridSizer">
+																	<rows>7</rows>
+																	<cols>2</cols>
+																	<vgap>6</vgap>
+																	<hgap>12</hgap>
+																	<growablecols>1</growablecols>
+																	<growablerows></growablerows>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALIGN_CENTER_VERTICAL</flag>
+																		<border>5</border>
+																		<object class="wxStaticText" name="m_staticText8">
+																			<label>Blend:</label>
+																			<wrap>-1</wrap>
 																		</object>
 																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALIGN_CENTER_VERTICAL</flag>
-																	<border>0</border>
-																	<object class="wxStaticText" name="m_staticText9">
-																		<label>Image Map:</label>
-																		<wrap>-1</wrap>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxEXPAND</flag>
-																	<border>5</border>
-																	<object class="wxTextCtrl" name="MaterialEditorStageMap">
-																		<value></value>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxTOP</flag>
-																	<border>6</border>
-																	<object class="wxStaticText" name="m_staticText10">
-																		<label>Mask:</label>
-																		<wrap>-1</wrap>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>1</option>
-																	<flag>wxEXPAND</flag>
-																	<border>0</border>
-																	<object class="wxBoxSizer">
-																		<orient>wxHORIZONTAL</orient>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL</flag>
-																			<border>0</border>
-																			<object class="wxCheckBox" name="maskRed">
-																				<label>Red</label>
-																				<checked>1</checked>
-																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
-																			<border>6</border>
-																			<object class="wxCheckBox" name="maskRed1">
-																				<label>Green</label>
-																				<checked>1</checked>
-																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
-																			<border>6</border>
-																			<object class="wxCheckBox" name="maskRed2">
-																				<label>Blue</label>
-																				<checked>1</checked>
-																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
-																			<border>6</border>
-																			<object class="wxCheckBox" name="maskRed3">
-																				<label>Alpha</label>
-																				<checked>1</checked>
-																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
-																			<border>6</border>
-																			<object class="wxCheckBox" name="maskRed4">
-																				<label>Colour</label>
-																				<checked>1</checked>
-																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
-																			<border>6</border>
-																			<object class="wxCheckBox" name="maskRed5">
-																				<label>Depth</label>
-																				<checked>1</checked>
-																			</object>
-																		</object>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALIGN_CENTER_VERTICAL</flag>
-																	<border>0</border>
-																	<object class="wxStaticText" name="m_staticText11">
-																		<label>Alphatest:</label>
-																		<wrap>-1</wrap>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>1</option>
-																	<flag>wxEXPAND</flag>
-																	<border>5</border>
-																	<object class="wxFlexGridSizer">
-																		<rows>0</rows>
-																		<cols>2</cols>
-																		<vgap>0</vgap>
-																		<hgap>0</hgap>
-																		<growablecols>1</growablecols>
-																		<growablerows></growablerows>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxRIGHT|wxALIGN_CENTER_VERTICAL</flag>
-																			<border>0</border>
-																			<object class="wxSpinCtrl" name="MaterialEditorStageFadeInFrac">
-																				<style>wxSP_ARROW_KEYS</style>
-																				<size>70,-1</size>
-																				<value>1</value>
-																				<min>0</min>
-																				<max>1</max>
-																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT</flag>
-																			<border>0</border>
-																			<object class="wxBoxSizer">
-																				<orient>wxHORIZONTAL</orient>
-																				<object class="sizeritem">
-																					<option>0</option>
-																					<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
-																					<border>24</border>
-																					<object class="wxStaticText" name="m_staticText111">
-																						<label>Private Polygon Offset:</label>
-																						<wrap>-1</wrap>
-																					</object>
+																	<object class="sizeritem">
+																		<option>1</option>
+																		<flag>wxEXPAND</flag>
+																		<border>0</border>
+																		<object class="wxBoxSizer">
+																			<orient>wxHORIZONTAL</orient>
+																			<object class="sizeritem">
+																				<option>1</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
+																				<border>6</border>
+																				<object class="wxChoice" name="m_choice3">
+																					<selection>0</selection>
+																					<content />
 																				</object>
-																				<object class="sizeritem">
-																					<option>0</option>
-																					<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
-																					<border>6</border>
-																					<object class="wxSpinCtrl" name="MaterialEditorPolygonOffset2">
-																						<style>wxSP_ARROW_KEYS</style>
-																						<size>80,-1</size>
-																						<value>0</value>
-																						<min>-100</min>
-																						<max>100</max>
-																					</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																				<border>0</border>
+																				<object class="wxStaticText" name="m_staticText60">
+																					<label>Source:</label>
+																					<wrap>-1</wrap>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxALL|wxLEFT</flag>
+																				<border>6</border>
+																				<object class="wxChoice" name="m_choice4">
+																					<selection>0</selection>
+																					<content />
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																				<border>0</border>
+																				<object class="wxStaticText" name="m_staticText601">
+																					<label>Dest:</label>
+																					<wrap>-1</wrap>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+																				<border>6</border>
+																				<object class="wxChoice" name="m_choice41">
+																					<selection>0</selection>
+																					<content />
 																				</object>
 																			</object>
 																		</object>
 																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>1</option>
-																	<flag>wxEXPAND</flag>
-																	<border>5</border>
-																	<object class="wxBoxSizer">
-																		<orient>wxVERTICAL</orient>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxBOTTOM|wxTOP</flag>
-																			<border>6</border>
-																			<object class="wxStaticText" name="m_staticText96">
-																				<label>Depth Function:</label>
-																				<wrap>-1</wrap>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALIGN_CENTER_VERTICAL</flag>
+																		<border>0</border>
+																		<object class="wxStaticText" name="m_staticText9">
+																			<label>Image Map:</label>
+																			<wrap>-1</wrap>
+																		</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxEXPAND</flag>
+																		<border>5</border>
+																		<object class="wxTextCtrl" name="MaterialEditorStageMap">
+																			<value></value>
+																		</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxTOP</flag>
+																		<border>6</border>
+																		<object class="wxStaticText" name="m_staticText10">
+																			<label>Mask:</label>
+																			<wrap>-1</wrap>
+																		</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>1</option>
+																		<flag>wxEXPAND</flag>
+																		<border>0</border>
+																		<object class="wxBoxSizer">
+																			<orient>wxHORIZONTAL</orient>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL</flag>
+																				<border>0</border>
+																				<object class="wxCheckBox" name="maskRed">
+																					<label>Red</label>
+																					<checked>1</checked>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+																				<border>6</border>
+																				<object class="wxCheckBox" name="maskRed1">
+																					<label>Green</label>
+																					<checked>1</checked>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+																				<border>6</border>
+																				<object class="wxCheckBox" name="maskRed2">
+																					<label>Blue</label>
+																					<checked>1</checked>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+																				<border>6</border>
+																				<object class="wxCheckBox" name="maskRed3">
+																					<label>Alpha</label>
+																					<checked>1</checked>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+																				<border>6</border>
+																				<object class="wxCheckBox" name="maskRed4">
+																					<label>Colour</label>
+																					<checked>1</checked>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+																				<border>6</border>
+																				<object class="wxCheckBox" name="maskRed5">
+																					<label>Depth</label>
+																					<checked>1</checked>
+																				</object>
 																			</object>
 																		</object>
 																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>1</option>
-																	<flag>wxEXPAND</flag>
-																	<border>5</border>
-																	<object class="wxBoxSizer">
-																		<orient>wxHORIZONTAL</orient>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxTOP</flag>
-																			<border>6</border>
-																			<object class="wxCheckBox" name="m_checkBox53">
-																				<label>ignoreAlphaTest</label>
-																				<checked>0</checked>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALIGN_CENTER_VERTICAL</flag>
+																		<border>0</border>
+																		<object class="wxStaticText" name="m_staticText11">
+																			<label>Alphatest:</label>
+																			<wrap>-1</wrap>
+																		</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>1</option>
+																		<flag>wxEXPAND</flag>
+																		<border>5</border>
+																		<object class="wxFlexGridSizer">
+																			<rows>0</rows>
+																			<cols>2</cols>
+																			<vgap>0</vgap>
+																			<hgap>0</hgap>
+																			<growablecols>1</growablecols>
+																			<growablerows></growablerows>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxRIGHT|wxALIGN_CENTER_VERTICAL</flag>
+																				<border>0</border>
+																				<object class="wxSpinCtrl" name="MaterialEditorStageFadeInFrac">
+																					<style>wxSP_ARROW_KEYS</style>
+																					<size>70,-1</size>
+																					<value>1</value>
+																					<min>0</min>
+																					<max>1</max>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT</flag>
+																				<border>0</border>
+																				<object class="wxBoxSizer">
+																					<orient>wxHORIZONTAL</orient>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+																						<border>24</border>
+																						<object class="wxStaticText" name="m_staticText111">
+																							<label>Private Polygon Offset:</label>
+																							<wrap>-1</wrap>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+																						<border>6</border>
+																						<object class="wxSpinCtrl" name="MaterialEditorPolygonOffset2">
+																							<style>wxSP_ARROW_KEYS</style>
+																							<size>80,-1</size>
+																							<value>0</value>
+																							<min>-100</min>
+																							<max>100</max>
+																						</object>
+																					</object>
+																				</object>
 																			</object>
 																		</object>
 																	</object>
-																</object>
-															</object>
-														</object>
-													</object>
-												</object>
-											</object>
-											<object class="notebookpage">
-												<label>Map</label>
-												<selected>0</selected>
-												<object class="wxPanel" name="m_panel6">
-													<style>wxTAB_TRAVERSAL</style>
-													<object class="wxBoxSizer">
-														<orient>wxVERTICAL</orient>
-														<object class="sizeritem">
-															<option>1</option>
-															<flag>wxALL|wxEXPAND</flag>
-															<border>6</border>
-															<object class="wxFlexGridSizer">
-																<rows>7</rows>
-																<cols>2</cols>
-																<vgap>6</vgap>
-																<hgap>12</hgap>
-																<growablecols>1</growablecols>
-																<growablerows></growablerows>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																	<border>0</border>
-																	<object class="wxRadioButton" name="m_radioBtn14">
-																		<label>map</label>
-																		<value>0</value>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxEXPAND</flag>
-																	<border>5</border>
-																	<object class="wxTextCtrl" name="MaterialEditorStageMap1">
-																		<value></value>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																	<border>0</border>
-																	<object class="wxRadioButton" name="m_radioBtn16">
-																		<label>cubeMap</label>
-																		<value>0</value>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</flag>
-																	<border>0</border>
-																	<object class="wxTextCtrl" name="MaterialEditorStageMap11">
-																		<value></value>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																	<border>0</border>
-																	<object class="wxRadioButton" name="m_radioBtn17">
-																		<label>cameraCubeMap</label>
-																		<value>0</value>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALL|wxEXPAND</flag>
-																	<border>0</border>
-																	<object class="wxTextCtrl" name="MaterialEditorStageMap111">
-																		<value></value>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																	<border>0</border>
-																	<object class="wxRadioButton" name="m_radioBtn18">
-																		<label>videoMap</label>
-																		<value>0</value>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>1</option>
-																	<flag>wxEXPAND</flag>
-																	<border>5</border>
-																	<object class="wxBoxSizer">
-																		<orient>wxHORIZONTAL</orient>
-																		<object class="sizeritem">
-																			<option>1</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																			<border>0</border>
-																			<object class="wxTextCtrl" name="m_textCtrl31">
-																				<value></value>
-																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
-																			<border>6</border>
-																			<object class="wxCheckBox" name="m_checkBox37">
-																				<label>Loop</label>
-																				<checked>0</checked>
+																	<object class="sizeritem">
+																		<option>1</option>
+																		<flag>wxEXPAND</flag>
+																		<border>5</border>
+																		<object class="wxBoxSizer">
+																			<orient>wxVERTICAL</orient>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxBOTTOM|wxTOP</flag>
+																				<border>6</border>
+																				<object class="wxStaticText" name="m_staticText96">
+																					<label>Depth Function:</label>
+																					<wrap>-1</wrap>
+																				</object>
 																			</object>
 																		</object>
 																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																	<border>0</border>
-																	<object class="wxRadioButton" name="m_radioBtn141">
-																		<label>soundMap</label>
-																		<value>0</value>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxTOP</flag>
-																	<border>3</border>
-																	<object class="wxCheckBox" name="m_checkBox38">
-																		<label>Waveform</label>
-																		<checked>0</checked>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																	<border>0</border>
-																	<object class="wxRadioButton" name="m_radioBtn142">
-																		<label>remoteRenderMap</label>
-																		<value>0</value>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>1</option>
-																	<flag>wxEXPAND</flag>
-																	<border>0</border>
-																	<object class="wxBoxSizer">
-																		<orient>wxHORIZONTAL</orient>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
-																			<border>6</border>
-																			<object class="wxStaticText" name="m_staticText87">
-																				<label>Width:</label>
-																				<wrap>-1</wrap>
-																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																			<border>0</border>
-																			<object class="wxTextCtrl" name="m_textCtrl311">
-																				<value></value>
-																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
-																			<border>6</border>
-																			<object class="wxStaticText" name="m_staticText88">
-																				<label>Height:</label>
-																				<wrap>-1</wrap>
-																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																			<border>0</border>
-																			<object class="wxTextCtrl" name="m_textCtrl3111">
-																				<value></value>
-																			</object>
-																		</object>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																	<border>0</border>
-																	<object class="wxRadioButton" name="m_radioBtn1421">
-																		<label>mirrorRenderMap</label>
-																		<value>0</value>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>1</option>
-																	<flag>wxEXPAND</flag>
-																	<border>0</border>
-																	<object class="wxBoxSizer">
-																		<orient>wxHORIZONTAL</orient>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
-																			<border>6</border>
-																			<object class="wxStaticText" name="m_staticText871">
-																				<label>Width:</label>
-																				<wrap>-1</wrap>
-																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																			<border>0</border>
-																			<object class="wxTextCtrl" name="m_textCtrl3112">
-																				<value></value>
-																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
-																			<border>6</border>
-																			<object class="wxStaticText" name="m_staticText881">
-																				<label>Height:</label>
-																				<wrap>-1</wrap>
-																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																			<border>0</border>
-																			<object class="wxTextCtrl" name="m_textCtrl31111">
-																				<value></value>
+																	<object class="sizeritem">
+																		<option>1</option>
+																		<flag>wxEXPAND</flag>
+																		<border>5</border>
+																		<object class="wxBoxSizer">
+																			<orient>wxHORIZONTAL</orient>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxTOP</flag>
+																				<border>6</border>
+																				<object class="wxCheckBox" name="m_checkBox53">
+																					<label>ignoreAlphaTest</label>
+																					<checked>0</checked>
+																				</object>
 																			</object>
 																		</object>
 																	</object>
@@ -2122,469 +1905,226 @@
 														</object>
 													</object>
 												</object>
-											</object>
-											<object class="notebookpage">
-												<label>Texture</label>
-												<selected>0</selected>
-												<object class="wxPanel" name="m_panel7">
-													<style>wxTAB_TRAVERSAL</style>
-													<object class="wxBoxSizer">
-														<orient>wxVERTICAL</orient>
-														<object class="sizeritem">
-															<option>0</option>
-															<flag>wxBOTTOM|wxEXPAND|wxTOP</flag>
-															<border>6</border>
-															<object class="wxBoxSizer">
-																<orient>wxHORIZONTAL</orient>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
-																	<border>6</border>
-																	<object class="wxStaticText" name="m_staticText102">
-																		<label>texGen:</label>
-																		<wrap>-1</wrap>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
-																	<border>6</border>
-																	<object class="wxChoice" name="m_choice14">
-																		<selection>0</selection>
-																		<content />
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
-																	<border>6</border>
-																	<object class="wxCheckBox" name="m_checkBox54">
-																		<label>clamp</label>
-																		<checked>0</checked>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
-																	<border>6</border>
-																	<object class="wxCheckBox" name="m_checkBox57">
-																		<label>noclamp</label>
-																		<checked>0</checked>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
-																	<border>6</border>
-																	<object class="wxCheckBox" name="m_checkBox55">
-																		<label>zeroclamp</label>
-																		<checked>0</checked>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALIGN_CENTER_VERTICAL</flag>
-																	<border>6</border>
-																	<object class="wxCheckBox" name="m_checkBox56">
-																		<label>alphazeroclamp</label>
-																		<checked>0</checked>
-																	</object>
-																</object>
-															</object>
-														</object>
-														<object class="sizeritem">
-															<option>0</option>
-															<flag>wxALL|wxEXPAND</flag>
-															<border>6</border>
-															<object class="wxBoxSizer">
-																<orient>wxHORIZONTAL</orient>
-															</object>
-														</object>
-														<object class="sizeritem">
-															<option>0</option>
-															<flag>wxBOTTOM|wxEXPAND|wxTOP</flag>
-															<border>6</border>
-															<object class="wxBoxSizer">
-																<orient>wxHORIZONTAL</orient>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
-																	<border>6</border>
-																	<object class="wxStaticText" name="m_staticText1021">
-																		<label>Quality:</label>
-																		<wrap>-1</wrap>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
-																	<border>12</border>
-																	<object class="wxCheckBox" name="m_checkBox58">
-																		<label>nearest</label>
-																		<checked>0</checked>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
-																	<border>12</border>
-																	<object class="wxCheckBox" name="m_checkBox59">
-																		<label>linear</label>
-																		<checked>0</checked>
-																	</object>
-																</object>
-															</object>
-														</object>
-														<object class="sizeritem">
-															<option>0</option>
-															<flag>wxEXPAND</flag>
-															<border>5</border>
-															<object class="wxBoxSizer">
-																<orient>wxHORIZONTAL</orient>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxLEFT|wxRIGHT|wxTOP</flag>
-																	<border>6</border>
-																	<object class="wxCheckBox" name="m_checkBox541">
-																		<label>uncompressed</label>
-																		<checked>0</checked>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
-																	<border>6</border>
-																	<object class="wxCheckBox" name="m_checkBox571">
-																		<label>highquality</label>
-																		<checked>0</checked>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
-																	<border>6</border>
-																	<object class="wxCheckBox" name="m_checkBox551">
-																		<label>forceHighQuality</label>
-																		<checked>0</checked>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALIGN_CENTER_VERTICAL</flag>
-																	<border>6</border>
-																	<object class="wxCheckBox" name="m_checkBox561">
-																		<label>nopicmip</label>
-																		<checked>0</checked>
-																	</object>
-																</object>
-															</object>
-														</object>
-													</object>
-												</object>
-											</object>
-											<object class="notebookpage">
-												<label>Transform</label>
-												<selected>0</selected>
-												<object class="wxPanel" name="m_panel61">
-													<style>wxTAB_TRAVERSAL</style>
-													<object class="wxBoxSizer">
-														<orient>wxVERTICAL</orient>
-														<object class="sizeritem">
-															<option>1</option>
-															<flag>wxALL|wxEXPAND</flag>
-															<border>6</border>
-															<object class="wxFlexGridSizer">
-																<rows>7</rows>
-																<cols>2</cols>
-																<vgap>6</vgap>
-																<hgap>12</hgap>
-																<growablecols>1</growablecols>
-																<growablerows></growablerows>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																	<border>6</border>
-																	<object class="wxStaticText" name="m_staticText117">
-																		<label>Scroll:</label>
-																		<wrap>-1</wrap>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>1</option>
-																	<flag>wxEXPAND</flag>
-																	<border>6</border>
-																	<object class="wxBoxSizer">
-																		<orient>wxHORIZONTAL</orient>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
-																			<border>6</border>
-																			<object class="wxStaticText" name="m_staticText118">
-																				<label>U:</label>
-																				<wrap>-1</wrap>
-																			</object>
+												<object class="notebookpage">
+													<label>Map</label>
+													<selected>0</selected>
+													<object class="wxPanel" name="m_panel6">
+														<style>wxTAB_TRAVERSAL</style>
+														<object class="wxBoxSizer">
+															<orient>wxVERTICAL</orient>
+															<object class="sizeritem">
+																<option>1</option>
+																<flag>wxALL|wxEXPAND</flag>
+																<border>6</border>
+																<object class="wxFlexGridSizer">
+																	<rows>7</rows>
+																	<cols>2</cols>
+																	<vgap>6</vgap>
+																	<hgap>12</hgap>
+																	<growablecols>1</growablecols>
+																	<growablerows></growablerows>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																		<border>0</border>
+																		<object class="wxRadioButton" name="m_radioBtn14">
+																			<label>map</label>
+																			<value>0</value>
 																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																			<border>0</border>
-																			<object class="wxTextCtrl" name="m_textCtrl43">
-																				<value></value>
-																			</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxEXPAND</flag>
+																		<border>5</border>
+																		<object class="wxTextCtrl" name="MaterialEditorStageMap1">
+																			<value></value>
 																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
-																			<border>6</border>
-																			<object class="wxStaticText" name="m_staticText119">
-																				<label>V:</label>
-																				<wrap>-1</wrap>
-																			</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																		<border>0</border>
+																		<object class="wxRadioButton" name="m_radioBtn16">
+																			<label>cubeMap</label>
+																			<value>0</value>
 																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																			<border>0</border>
-																			<object class="wxTextCtrl" name="m_textCtrl44">
-																				<value></value>
+																	</object>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</flag>
+																		<border>0</border>
+																		<object class="wxTextCtrl" name="MaterialEditorStageMap11">
+																			<value></value>
+																		</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																		<border>0</border>
+																		<object class="wxRadioButton" name="m_radioBtn17">
+																			<label>cameraCubeMap</label>
+																			<value>0</value>
+																		</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALL|wxEXPAND</flag>
+																		<border>0</border>
+																		<object class="wxTextCtrl" name="MaterialEditorStageMap111">
+																			<value></value>
+																		</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																		<border>0</border>
+																		<object class="wxRadioButton" name="m_radioBtn18">
+																			<label>videoMap</label>
+																			<value>0</value>
+																		</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>1</option>
+																		<flag>wxEXPAND</flag>
+																		<border>5</border>
+																		<object class="wxBoxSizer">
+																			<orient>wxHORIZONTAL</orient>
+																			<object class="sizeritem">
+																				<option>1</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																				<border>0</border>
+																				<object class="wxTextCtrl" name="m_textCtrl31">
+																					<value></value>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+																				<border>6</border>
+																				<object class="wxCheckBox" name="m_checkBox37">
+																					<label>Loop</label>
+																					<checked>0</checked>
+																				</object>
 																			</object>
 																		</object>
 																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALL</flag>
-																	<border>5</border>
-																	<object class="wxStaticText" name="m_staticText1171">
-																		<label>Translate:</label>
-																		<wrap>-1</wrap>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>1</option>
-																	<flag>wxEXPAND</flag>
-																	<border>5</border>
-																	<object class="wxBoxSizer">
-																		<orient>wxHORIZONTAL</orient>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
-																			<border>6</border>
-																			<object class="wxStaticText" name="m_staticText1181">
-																				<label>U:</label>
-																				<wrap>-1</wrap>
-																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																			<border>0</border>
-																			<object class="wxTextCtrl" name="m_textCtrl431">
-																				<value></value>
-																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
-																			<border>6</border>
-																			<object class="wxStaticText" name="m_staticText1191">
-																				<label>V:</label>
-																				<wrap>-1</wrap>
-																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																			<border>0</border>
-																			<object class="wxTextCtrl" name="m_textCtrl441">
-																				<value></value>
-																			</object>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																		<border>0</border>
+																		<object class="wxRadioButton" name="m_radioBtn141">
+																			<label>soundMap</label>
+																			<value>0</value>
 																		</object>
 																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALL</flag>
-																	<border>5</border>
-																	<object class="wxStaticText" name="m_staticText11711">
-																		<label>Scale:</label>
-																		<wrap>-1</wrap>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxTOP</flag>
+																		<border>3</border>
+																		<object class="wxCheckBox" name="m_checkBox38">
+																			<label>Waveform</label>
+																			<checked>0</checked>
+																		</object>
 																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>1</option>
-																	<flag>wxEXPAND</flag>
-																	<border>5</border>
-																	<object class="wxBoxSizer">
-																		<orient>wxHORIZONTAL</orient>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
-																			<border>6</border>
-																			<object class="wxStaticText" name="m_staticText11811">
-																				<label>U:</label>
-																				<wrap>-1</wrap>
-																			</object>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																		<border>0</border>
+																		<object class="wxRadioButton" name="m_radioBtn142">
+																			<label>remoteRenderMap</label>
+																			<value>0</value>
 																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																			<border>0</border>
-																			<object class="wxTextCtrl" name="m_textCtrl4311">
-																				<value></value>
+																	</object>
+																	<object class="sizeritem">
+																		<option>1</option>
+																		<flag>wxEXPAND</flag>
+																		<border>0</border>
+																		<object class="wxBoxSizer">
+																			<orient>wxHORIZONTAL</orient>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
+																				<border>6</border>
+																				<object class="wxStaticText" name="m_staticText87">
+																					<label>Width:</label>
+																					<wrap>-1</wrap>
+																				</object>
 																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
-																			<border>6</border>
-																			<object class="wxStaticText" name="m_staticText11911">
-																				<label>V:</label>
-																				<wrap>-1</wrap>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																				<border>0</border>
+																				<object class="wxTextCtrl" name="m_textCtrl311">
+																					<value></value>
+																				</object>
 																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																			<border>0</border>
-																			<object class="wxTextCtrl" name="m_textCtrl4411">
-																				<value></value>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
+																				<border>6</border>
+																				<object class="wxStaticText" name="m_staticText88">
+																					<label>Height:</label>
+																					<wrap>-1</wrap>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																				<border>0</border>
+																				<object class="wxTextCtrl" name="m_textCtrl3111">
+																					<value></value>
+																				</object>
 																			</object>
 																		</object>
 																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALL</flag>
-																	<border>5</border>
-																	<object class="wxStaticText" name="m_staticText117111">
-																		<label>CenterScale:</label>
-																		<wrap>-1</wrap>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>1</option>
-																	<flag>wxEXPAND</flag>
-																	<border>5</border>
-																	<object class="wxBoxSizer">
-																		<orient>wxHORIZONTAL</orient>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
-																			<border>6</border>
-																			<object class="wxStaticText" name="m_staticText118111">
-																				<label>U:</label>
-																				<wrap>-1</wrap>
-																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																			<border>0</border>
-																			<object class="wxTextCtrl" name="m_textCtrl43111">
-																				<value></value>
-																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
-																			<border>6</border>
-																			<object class="wxStaticText" name="m_staticText119111">
-																				<label>V:</label>
-																				<wrap>-1</wrap>
-																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																			<border>0</border>
-																			<object class="wxTextCtrl" name="m_textCtrl44111">
-																				<value></value>
-																			</object>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																		<border>0</border>
+																		<object class="wxRadioButton" name="m_radioBtn1421">
+																			<label>mirrorRenderMap</label>
+																			<value>0</value>
 																		</object>
 																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALL</flag>
-																	<border>5</border>
-																	<object class="wxStaticText" name="m_staticText1171111">
-																		<label>Shear:</label>
-																		<wrap>-1</wrap>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>1</option>
-																	<flag>wxEXPAND</flag>
-																	<border>5</border>
-																	<object class="wxBoxSizer">
-																		<orient>wxHORIZONTAL</orient>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
-																			<border>6</border>
-																			<object class="wxStaticText" name="m_staticText1181111">
-																				<label>U:</label>
-																				<wrap>-1</wrap>
+																	<object class="sizeritem">
+																		<option>1</option>
+																		<flag>wxEXPAND</flag>
+																		<border>0</border>
+																		<object class="wxBoxSizer">
+																			<orient>wxHORIZONTAL</orient>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
+																				<border>6</border>
+																				<object class="wxStaticText" name="m_staticText871">
+																					<label>Width:</label>
+																					<wrap>-1</wrap>
+																				</object>
 																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																			<border>0</border>
-																			<object class="wxTextCtrl" name="m_textCtrl431111">
-																				<value></value>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																				<border>0</border>
+																				<object class="wxTextCtrl" name="m_textCtrl3112">
+																					<value></value>
+																				</object>
 																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
-																			<border>6</border>
-																			<object class="wxStaticText" name="m_staticText1191111">
-																				<label>V:</label>
-																				<wrap>-1</wrap>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
+																				<border>6</border>
+																				<object class="wxStaticText" name="m_staticText881">
+																					<label>Height:</label>
+																					<wrap>-1</wrap>
+																				</object>
 																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																			<border>0</border>
-																			<object class="wxTextCtrl" name="m_textCtrl441111">
-																				<value></value>
-																			</object>
-																		</object>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALL</flag>
-																	<border>5</border>
-																	<object class="wxStaticText" name="m_staticText11711111">
-																		<label>Rotate:</label>
-																		<wrap>-1</wrap>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>1</option>
-																	<flag>wxEXPAND</flag>
-																	<border>5</border>
-																	<object class="wxBoxSizer">
-																		<orient>wxHORIZONTAL</orient>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
-																			<border>6</border>
-																			<object class="wxStaticText" name="m_staticText11811111">
-																				<label>Angle:</label>
-																				<wrap>-1</wrap>
-																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																			<border>0</border>
-																			<object class="wxTextCtrl" name="m_textCtrl4311111">
-																				<value></value>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																				<border>0</border>
+																				<object class="wxTextCtrl" name="m_textCtrl31111">
+																					<value></value>
+																				</object>
 																			</object>
 																		</object>
 																	</object>
@@ -2593,246 +2133,469 @@
 														</object>
 													</object>
 												</object>
-											</object>
-											<object class="notebookpage">
-												<label>Vertex Colour</label>
-												<selected>1</selected>
-												<object class="wxPanel" name="m_panel611">
-													<style>wxTAB_TRAVERSAL</style>
-													<object class="wxBoxSizer">
-														<orient>wxVERTICAL</orient>
-														<object class="sizeritem">
-															<option>1</option>
-															<flag>wxEXPAND</flag>
-															<border>5</border>
-															<object class="wxBoxSizer">
-																<orient>wxVERTICAL</orient>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALL|wxEXPAND</flag>
-																	<border>6</border>
-																	<object class="wxBoxSizer">
-																		<orient>wxHORIZONTAL</orient>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
-																			<border>6</border>
-																			<object class="wxCheckBox" name="m_checkBox75">
-																				<label>vertexColour</label>
-																				<checked>0</checked>
-																			</object>
+												<object class="notebookpage">
+													<label>Texture</label>
+													<selected>0</selected>
+													<object class="wxPanel" name="m_panel7">
+														<style>wxTAB_TRAVERSAL</style>
+														<object class="wxBoxSizer">
+															<orient>wxVERTICAL</orient>
+															<object class="sizeritem">
+																<option>0</option>
+																<flag>wxBOTTOM|wxEXPAND|wxTOP</flag>
+																<border>6</border>
+																<object class="wxBoxSizer">
+																	<orient>wxHORIZONTAL</orient>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+																		<border>6</border>
+																		<object class="wxStaticText" name="m_staticText102">
+																			<label>texGen:</label>
+																			<wrap>-1</wrap>
 																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																			<border>6</border>
-																			<object class="wxCheckBox" name="m_checkBox76">
-																				<label>inverseVertexColour</label>
-																				<checked>0</checked>
-																			</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
+																		<border>6</border>
+																		<object class="wxChoice" name="m_choice14">
+																			<selection>0</selection>
+																			<content />
 																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
-																			<border>24</border>
-																			<object class="wxCheckBox" name="m_checkBox761">
-																				<tooltip>Shortcut for &quot;color parm0, parm1, parm2, parm3&quot;</tooltip>
-																				<label>colored</label>
-																				<checked>0</checked>
-																			</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
+																		<border>6</border>
+																		<object class="wxCheckBox" name="m_checkBox54">
+																			<label>clamp</label>
+																			<checked>0</checked>
+																		</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
+																		<border>6</border>
+																		<object class="wxCheckBox" name="m_checkBox57">
+																			<label>noclamp</label>
+																			<checked>0</checked>
+																		</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
+																		<border>6</border>
+																		<object class="wxCheckBox" name="m_checkBox55">
+																			<label>zeroclamp</label>
+																			<checked>0</checked>
+																		</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALIGN_CENTER_VERTICAL</flag>
+																		<border>6</border>
+																		<object class="wxCheckBox" name="m_checkBox56">
+																			<label>alphazeroclamp</label>
+																			<checked>0</checked>
 																		</object>
 																	</object>
 																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALL|wxEXPAND</flag>
-																	<border>6</border>
-																	<object class="wxBoxSizer">
-																		<orient>wxHORIZONTAL</orient>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																			<border>0</border>
-																			<object class="wxStaticText" name="m_staticText166">
-																				<label>Red:</label>
-																				<wrap>-1</wrap>
-																			</object>
+															</object>
+															<object class="sizeritem">
+																<option>0</option>
+																<flag>wxALL|wxEXPAND</flag>
+																<border>6</border>
+																<object class="wxBoxSizer">
+																	<orient>wxHORIZONTAL</orient>
+																</object>
+															</object>
+															<object class="sizeritem">
+																<option>0</option>
+																<flag>wxBOTTOM|wxEXPAND|wxTOP</flag>
+																<border>6</border>
+																<object class="wxBoxSizer">
+																	<orient>wxHORIZONTAL</orient>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+																		<border>6</border>
+																		<object class="wxStaticText" name="m_staticText1021">
+																			<label>Quality:</label>
+																			<wrap>-1</wrap>
 																		</object>
-																		<object class="sizeritem">
-																			<option>1</option>
-																			<flag>wxLEFT|wxRIGHT</flag>
-																			<border>6</border>
-																			<object class="wxTextCtrl" name="m_textCtrl66">
-																				<value></value>
-																			</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+																		<border>12</border>
+																		<object class="wxCheckBox" name="m_checkBox58">
+																			<label>nearest</label>
+																			<checked>0</checked>
 																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																			<border>0</border>
-																			<object class="wxStaticText" name="m_staticText1661">
-																				<label>Green:</label>
-																				<wrap>-1</wrap>
-																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>1</option>
-																			<flag>wxLEFT|wxRIGHT</flag>
-																			<border>6</border>
-																			<object class="wxTextCtrl" name="m_textCtrl661">
-																				<value></value>
-																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																			<border>0</border>
-																			<object class="wxStaticText" name="m_staticText16611">
-																				<label>Blue:</label>
-																				<wrap>-1</wrap>
-																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>1</option>
-																			<flag>wxLEFT|wxRIGHT</flag>
-																			<border>6</border>
-																			<object class="wxTextCtrl" name="m_textCtrl6611">
-																				<value></value>
-																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																			<border>0</border>
-																			<object class="wxStaticText" name="m_staticText16612">
-																				<label>Alpha:</label>
-																				<wrap>-1</wrap>
-																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>1</option>
-																			<flag>wxLEFT</flag>
-																			<border>6</border>
-																			<object class="wxTextCtrl" name="m_textCtrl66111">
-																				<value></value>
-																			</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+																		<border>12</border>
+																		<object class="wxCheckBox" name="m_checkBox59">
+																			<label>linear</label>
+																			<checked>0</checked>
 																		</object>
 																	</object>
 																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALL|wxEXPAND</flag>
-																	<border>6</border>
-																	<object class="wxBoxSizer">
-																		<orient>wxHORIZONTAL</orient>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																			<border>0</border>
-																			<object class="wxStaticText" name="m_staticText1662">
-																				<label>RGB:</label>
-																				<wrap>-1</wrap>
-																			</object>
+															</object>
+															<object class="sizeritem">
+																<option>0</option>
+																<flag>wxEXPAND</flag>
+																<border>5</border>
+																<object class="wxBoxSizer">
+																	<orient>wxHORIZONTAL</orient>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxLEFT|wxRIGHT|wxTOP</flag>
+																		<border>6</border>
+																		<object class="wxCheckBox" name="m_checkBox541">
+																			<label>uncompressed</label>
+																			<checked>0</checked>
 																		</object>
-																		<object class="sizeritem">
-																			<option>1</option>
-																			<flag>wxLEFT|wxRIGHT</flag>
-																			<border>6</border>
-																			<object class="wxTextCtrl" name="m_textCtrl662">
-																				<value></value>
-																			</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
+																		<border>6</border>
+																		<object class="wxCheckBox" name="m_checkBox571">
+																			<label>highquality</label>
+																			<checked>0</checked>
 																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																			<border>0</border>
-																			<object class="wxStaticText" name="m_staticText16613">
-																				<label>RGBA:</label>
-																				<wrap>-1</wrap>
-																			</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
+																		<border>6</border>
+																		<object class="wxCheckBox" name="m_checkBox551">
+																			<label>forceHighQuality</label>
+																			<checked>0</checked>
 																		</object>
-																		<object class="sizeritem">
-																			<option>1</option>
-																			<flag>wxLEFT</flag>
-																			<border>6</border>
-																			<object class="wxTextCtrl" name="m_textCtrl6612">
-																				<value></value>
-																			</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALIGN_CENTER_VERTICAL</flag>
+																		<border>6</border>
+																		<object class="wxCheckBox" name="m_checkBox561">
+																			<label>nopicmip</label>
+																			<checked>0</checked>
 																		</object>
 																	</object>
 																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALL|wxEXPAND</flag>
-																	<border>6</border>
-																	<object class="wxBoxSizer">
-																		<orient>wxHORIZONTAL</orient>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																			<border>0</border>
-																			<object class="wxStaticText" name="m_staticText1663">
-																				<label>Color:</label>
-																				<wrap>-1</wrap>
+															</object>
+														</object>
+													</object>
+												</object>
+												<object class="notebookpage">
+													<label>Transform</label>
+													<selected>0</selected>
+													<object class="wxPanel" name="m_panel61">
+														<style>wxTAB_TRAVERSAL</style>
+														<object class="wxBoxSizer">
+															<orient>wxVERTICAL</orient>
+															<object class="sizeritem">
+																<option>1</option>
+																<flag>wxALL|wxEXPAND</flag>
+																<border>6</border>
+																<object class="wxFlexGridSizer">
+																	<rows>7</rows>
+																	<cols>2</cols>
+																	<vgap>6</vgap>
+																	<hgap>12</hgap>
+																	<growablecols>1</growablecols>
+																	<growablerows></growablerows>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																		<border>6</border>
+																		<object class="wxStaticText" name="m_staticText117">
+																			<label>Scroll:</label>
+																			<wrap>-1</wrap>
+																		</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>1</option>
+																		<flag>wxEXPAND</flag>
+																		<border>6</border>
+																		<object class="wxBoxSizer">
+																			<orient>wxHORIZONTAL</orient>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
+																				<border>6</border>
+																				<object class="wxStaticText" name="m_staticText118">
+																					<label>U:</label>
+																					<wrap>-1</wrap>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																				<border>0</border>
+																				<object class="wxTextCtrl" name="m_textCtrl43">
+																					<value></value>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
+																				<border>6</border>
+																				<object class="wxStaticText" name="m_staticText119">
+																					<label>V:</label>
+																					<wrap>-1</wrap>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																				<border>0</border>
+																				<object class="wxTextCtrl" name="m_textCtrl44">
+																					<value></value>
+																				</object>
 																			</object>
 																		</object>
-																		<object class="sizeritem">
-																			<option>1</option>
-																			<flag>wxLEFT|wxRIGHT</flag>
-																			<border>3</border>
-																			<object class="wxTextCtrl" name="m_textCtrl663">
-																				<value></value>
+																	</object>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALL</flag>
+																		<border>5</border>
+																		<object class="wxStaticText" name="m_staticText1171">
+																			<label>Translate:</label>
+																			<wrap>-1</wrap>
+																		</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>1</option>
+																		<flag>wxEXPAND</flag>
+																		<border>5</border>
+																		<object class="wxBoxSizer">
+																			<orient>wxHORIZONTAL</orient>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
+																				<border>6</border>
+																				<object class="wxStaticText" name="m_staticText1181">
+																					<label>U:</label>
+																					<wrap>-1</wrap>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																				<border>0</border>
+																				<object class="wxTextCtrl" name="m_textCtrl431">
+																					<value></value>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
+																				<border>6</border>
+																				<object class="wxStaticText" name="m_staticText1191">
+																					<label>V:</label>
+																					<wrap>-1</wrap>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																				<border>0</border>
+																				<object class="wxTextCtrl" name="m_textCtrl441">
+																					<value></value>
+																				</object>
 																			</object>
 																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																			<border>0</border>
-																			<object class="wxStaticText" name="m_staticText16614">
-																				<label>,</label>
-																				<wrap>-1</wrap>
+																	</object>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALL</flag>
+																		<border>5</border>
+																		<object class="wxStaticText" name="m_staticText11711">
+																			<label>Scale:</label>
+																			<wrap>-1</wrap>
+																		</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>1</option>
+																		<flag>wxEXPAND</flag>
+																		<border>5</border>
+																		<object class="wxBoxSizer">
+																			<orient>wxHORIZONTAL</orient>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
+																				<border>6</border>
+																				<object class="wxStaticText" name="m_staticText11811">
+																					<label>U:</label>
+																					<wrap>-1</wrap>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																				<border>0</border>
+																				<object class="wxTextCtrl" name="m_textCtrl4311">
+																					<value></value>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
+																				<border>6</border>
+																				<object class="wxStaticText" name="m_staticText11911">
+																					<label>V:</label>
+																					<wrap>-1</wrap>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																				<border>0</border>
+																				<object class="wxTextCtrl" name="m_textCtrl4411">
+																					<value></value>
+																				</object>
 																			</object>
 																		</object>
-																		<object class="sizeritem">
-																			<option>1</option>
-																			<flag>wxLEFT|wxRIGHT</flag>
-																			<border>3</border>
-																			<object class="wxTextCtrl" name="m_textCtrl6613">
-																				<value></value>
+																	</object>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALL</flag>
+																		<border>5</border>
+																		<object class="wxStaticText" name="m_staticText117111">
+																			<label>CenterScale:</label>
+																			<wrap>-1</wrap>
+																		</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>1</option>
+																		<flag>wxEXPAND</flag>
+																		<border>5</border>
+																		<object class="wxBoxSizer">
+																			<orient>wxHORIZONTAL</orient>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
+																				<border>6</border>
+																				<object class="wxStaticText" name="m_staticText118111">
+																					<label>U:</label>
+																					<wrap>-1</wrap>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																				<border>0</border>
+																				<object class="wxTextCtrl" name="m_textCtrl43111">
+																					<value></value>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
+																				<border>6</border>
+																				<object class="wxStaticText" name="m_staticText119111">
+																					<label>V:</label>
+																					<wrap>-1</wrap>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																				<border>0</border>
+																				<object class="wxTextCtrl" name="m_textCtrl44111">
+																					<value></value>
+																				</object>
 																			</object>
 																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																			<border>0</border>
-																			<object class="wxStaticText" name="m_staticText166111">
-																				<label>,</label>
-																				<wrap>-1</wrap>
+																	</object>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALL</flag>
+																		<border>5</border>
+																		<object class="wxStaticText" name="m_staticText1171111">
+																			<label>Shear:</label>
+																			<wrap>-1</wrap>
+																		</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>1</option>
+																		<flag>wxEXPAND</flag>
+																		<border>5</border>
+																		<object class="wxBoxSizer">
+																			<orient>wxHORIZONTAL</orient>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
+																				<border>6</border>
+																				<object class="wxStaticText" name="m_staticText1181111">
+																					<label>U:</label>
+																					<wrap>-1</wrap>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																				<border>0</border>
+																				<object class="wxTextCtrl" name="m_textCtrl431111">
+																					<value></value>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
+																				<border>6</border>
+																				<object class="wxStaticText" name="m_staticText1191111">
+																					<label>V:</label>
+																					<wrap>-1</wrap>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																				<border>0</border>
+																				<object class="wxTextCtrl" name="m_textCtrl441111">
+																					<value></value>
+																				</object>
 																			</object>
 																		</object>
-																		<object class="sizeritem">
-																			<option>1</option>
-																			<flag>wxLEFT|wxRIGHT</flag>
-																			<border>3</border>
-																			<object class="wxTextCtrl" name="m_textCtrl66112">
-																				<value></value>
-																			</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALL</flag>
+																		<border>5</border>
+																		<object class="wxStaticText" name="m_staticText11711111">
+																			<label>Rotate:</label>
+																			<wrap>-1</wrap>
 																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																			<border>0</border>
-																			<object class="wxStaticText" name="m_staticText166121">
-																				<label>,</label>
-																				<wrap>-1</wrap>
+																	</object>
+																	<object class="sizeritem">
+																		<option>1</option>
+																		<flag>wxEXPAND</flag>
+																		<border>5</border>
+																		<object class="wxBoxSizer">
+																			<orient>wxHORIZONTAL</orient>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
+																				<border>6</border>
+																				<object class="wxStaticText" name="m_staticText11811111">
+																					<label>Angle:</label>
+																					<wrap>-1</wrap>
+																				</object>
 																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>1</option>
-																			<flag>wxLEFT</flag>
-																			<border>3</border>
-																			<object class="wxTextCtrl" name="m_textCtrl661111">
-																				<value></value>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																				<border>0</border>
+																				<object class="wxTextCtrl" name="m_textCtrl4311111">
+																					<value></value>
+																				</object>
 																			</object>
 																		</object>
 																	</object>
@@ -2841,211 +2604,459 @@
 														</object>
 													</object>
 												</object>
-											</object>
-											<object class="notebookpage">
-												<label>Condition</label>
-												<selected>0</selected>
-												<object class="wxPanel" name="m_panel6111">
-													<style>wxTAB_TRAVERSAL</style>
-													<object class="wxBoxSizer">
-														<orient>wxVERTICAL</orient>
-														<object class="sizeritem">
-															<option>1</option>
-															<flag>wxALL|wxEXPAND</flag>
-															<border>6</border>
-															<object class="wxFlexGridSizer">
-																<rows>7</rows>
-																<cols>2</cols>
-																<vgap>6</vgap>
-																<hgap>12</hgap>
-																<growablecols>1</growablecols>
-																<growablerows></growablerows>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALIGN_CENTER_VERTICAL</flag>
-																	<border>6</border>
-																	<object class="wxStaticText" name="MaterialEditorStageRadialSpeedLabel">
-																		<label>Enable this stage if:</label>
-																		<wrap>-1</wrap>
+												<object class="notebookpage">
+													<label>Vertex Colour</label>
+													<selected>1</selected>
+													<object class="wxPanel" name="m_panel611">
+														<style>wxTAB_TRAVERSAL</style>
+														<object class="wxBoxSizer">
+															<orient>wxVERTICAL</orient>
+															<object class="sizeritem">
+																<option>1</option>
+																<flag>wxEXPAND</flag>
+																<border>5</border>
+																<object class="wxBoxSizer">
+																	<orient>wxVERTICAL</orient>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALL|wxEXPAND</flag>
+																		<border>6</border>
+																		<object class="wxBoxSizer">
+																			<orient>wxHORIZONTAL</orient>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
+																				<border>6</border>
+																				<object class="wxCheckBox" name="m_checkBox75">
+																					<label>vertexColour</label>
+																					<checked>0</checked>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																				<border>6</border>
+																				<object class="wxCheckBox" name="m_checkBox76">
+																					<label>inverseVertexColour</label>
+																					<checked>0</checked>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+																				<border>24</border>
+																				<object class="wxCheckBox" name="m_checkBox761">
+																					<tooltip>Shortcut for &quot;color parm0, parm1, parm2, parm3&quot;</tooltip>
+																					<label>colored</label>
+																					<checked>0</checked>
+																				</object>
+																			</object>
+																		</object>
 																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>1</option>
-																	<flag>wxALL|wxEXPAND</flag>
-																	<border>0</border>
-																	<object class="wxTextCtrl" name="m_textCtrl65">
-																		<value></value>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALL|wxEXPAND</flag>
+																		<border>6</border>
+																		<object class="wxBoxSizer">
+																			<orient>wxHORIZONTAL</orient>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																				<border>0</border>
+																				<object class="wxStaticText" name="m_staticText166">
+																					<label>Red:</label>
+																					<wrap>-1</wrap>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>1</option>
+																				<flag>wxLEFT|wxRIGHT</flag>
+																				<border>6</border>
+																				<object class="wxTextCtrl" name="m_textCtrl66">
+																					<value></value>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																				<border>0</border>
+																				<object class="wxStaticText" name="m_staticText1661">
+																					<label>Green:</label>
+																					<wrap>-1</wrap>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>1</option>
+																				<flag>wxLEFT|wxRIGHT</flag>
+																				<border>6</border>
+																				<object class="wxTextCtrl" name="m_textCtrl661">
+																					<value></value>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																				<border>0</border>
+																				<object class="wxStaticText" name="m_staticText16611">
+																					<label>Blue:</label>
+																					<wrap>-1</wrap>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>1</option>
+																				<flag>wxLEFT|wxRIGHT</flag>
+																				<border>6</border>
+																				<object class="wxTextCtrl" name="m_textCtrl6611">
+																					<value></value>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																				<border>0</border>
+																				<object class="wxStaticText" name="m_staticText16612">
+																					<label>Alpha:</label>
+																					<wrap>-1</wrap>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>1</option>
+																				<flag>wxLEFT</flag>
+																				<border>6</border>
+																				<object class="wxTextCtrl" name="m_textCtrl66111">
+																					<value></value>
+																				</object>
+																			</object>
+																		</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALL|wxEXPAND</flag>
+																		<border>6</border>
+																		<object class="wxBoxSizer">
+																			<orient>wxHORIZONTAL</orient>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																				<border>0</border>
+																				<object class="wxStaticText" name="m_staticText1662">
+																					<label>RGB:</label>
+																					<wrap>-1</wrap>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>1</option>
+																				<flag>wxLEFT|wxRIGHT</flag>
+																				<border>6</border>
+																				<object class="wxTextCtrl" name="m_textCtrl662">
+																					<value></value>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																				<border>0</border>
+																				<object class="wxStaticText" name="m_staticText16613">
+																					<label>RGBA:</label>
+																					<wrap>-1</wrap>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>1</option>
+																				<flag>wxLEFT</flag>
+																				<border>6</border>
+																				<object class="wxTextCtrl" name="m_textCtrl6612">
+																					<value></value>
+																				</object>
+																			</object>
+																		</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALL|wxEXPAND</flag>
+																		<border>6</border>
+																		<object class="wxBoxSizer">
+																			<orient>wxHORIZONTAL</orient>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																				<border>0</border>
+																				<object class="wxStaticText" name="m_staticText1663">
+																					<label>Color:</label>
+																					<wrap>-1</wrap>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>1</option>
+																				<flag>wxLEFT|wxRIGHT</flag>
+																				<border>3</border>
+																				<object class="wxTextCtrl" name="m_textCtrl663">
+																					<value></value>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																				<border>0</border>
+																				<object class="wxStaticText" name="m_staticText16614">
+																					<label>,</label>
+																					<wrap>-1</wrap>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>1</option>
+																				<flag>wxLEFT|wxRIGHT</flag>
+																				<border>3</border>
+																				<object class="wxTextCtrl" name="m_textCtrl6613">
+																					<value></value>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																				<border>0</border>
+																				<object class="wxStaticText" name="m_staticText166111">
+																					<label>,</label>
+																					<wrap>-1</wrap>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>1</option>
+																				<flag>wxLEFT|wxRIGHT</flag>
+																				<border>3</border>
+																				<object class="wxTextCtrl" name="m_textCtrl66112">
+																					<value></value>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																				<border>0</border>
+																				<object class="wxStaticText" name="m_staticText166121">
+																					<label>,</label>
+																					<wrap>-1</wrap>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>1</option>
+																				<flag>wxLEFT</flag>
+																				<border>3</border>
+																				<object class="wxTextCtrl" name="m_textCtrl661111">
+																					<value></value>
+																				</object>
+																			</object>
+																		</object>
 																	</object>
 																</object>
 															</object>
 														</object>
 													</object>
 												</object>
-											</object>
-											<object class="notebookpage">
-												<label>Program</label>
-												<selected>0</selected>
-												<object class="wxPanel" name="m_panel61111">
-													<style>wxTAB_TRAVERSAL</style>
-													<object class="wxBoxSizer">
-														<orient>wxVERTICAL</orient>
-														<object class="sizeritem">
-															<option>1</option>
-															<flag>wxALL|wxEXPAND</flag>
-															<border>6</border>
-															<object class="wxFlexGridSizer">
-																<rows>7</rows>
-																<cols>2</cols>
-																<vgap>6</vgap>
-																<hgap>12</hgap>
-																<growablecols>1</growablecols>
-																<growablerows></growablerows>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																	<border>0</border>
-																	<object class="wxStaticText" name="m_staticText202">
-																		<label>fragmentProgram</label>
-																		<wrap>-1</wrap>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxEXPAND</flag>
-																	<border>5</border>
-																	<object class="wxTextCtrl" name="MaterialEditorStageMap12">
-																		<value></value>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																	<border>0</border>
-																	<object class="wxStaticText" name="m_staticText204">
-																		<label>vertexProgram</label>
-																		<wrap>-1</wrap>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</flag>
-																	<border>0</border>
-																	<object class="wxTextCtrl" name="MaterialEditorStageMap112">
-																		<value></value>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																	<border>0</border>
-																	<object class="wxStaticText" name="m_staticText2021">
-																		<label>program</label>
-																		<wrap>-1</wrap>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALL|wxEXPAND</flag>
-																	<border>0</border>
-																	<object class="wxTextCtrl" name="MaterialEditorStageMap1111">
-																		<value></value>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																	<border>0</border>
-																	<object class="wxStaticText" name="m_staticText2022">
-																		<label>vertexParm</label>
-																		<wrap>-1</wrap>
-																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>1</option>
-																	<flag>wxEXPAND</flag>
-																	<border>5</border>
-																	<object class="wxBoxSizer">
-																		<orient>wxHORIZONTAL</orient>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																			<border>0</border>
-																			<object class="wxStaticText" name="m_staticText210">
-																				<label>1</label>
-																				<wrap>-1</wrap>
-																			</object>
+												<object class="notebookpage">
+													<label>Condition</label>
+													<selected>0</selected>
+													<object class="wxPanel" name="m_panel6111">
+														<style>wxTAB_TRAVERSAL</style>
+														<object class="wxBoxSizer">
+															<orient>wxVERTICAL</orient>
+															<object class="sizeritem">
+																<option>1</option>
+																<flag>wxALL|wxEXPAND</flag>
+																<border>6</border>
+																<object class="wxFlexGridSizer">
+																	<rows>7</rows>
+																	<cols>2</cols>
+																	<vgap>6</vgap>
+																	<hgap>12</hgap>
+																	<growablecols>1</growablecols>
+																	<growablerows></growablerows>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALIGN_CENTER_VERTICAL</flag>
+																		<border>6</border>
+																		<object class="wxStaticText" name="MaterialEditorStageRadialSpeedLabel">
+																			<label>Enable this stage if:</label>
+																			<wrap>-1</wrap>
 																		</object>
-																		<object class="sizeritem">
-																			<option>1</option>
-																			<flag>wxLEFT|wxRIGHT</flag>
-																			<border>6</border>
-																			<object class="wxTextCtrl" name="MaterialEditorStageMap11111">
-																				<value></value>
-																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL</flag>
-																			<border>0</border>
-																			<object class="wxButton" name="m_button11">
-																				<label>Add</label>
-																				<default>0</default>
-																				<markup>0</markup>
-																				<bitmap />
-																			</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>1</option>
+																		<flag>wxALL|wxEXPAND</flag>
+																		<border>0</border>
+																		<object class="wxTextCtrl" name="m_textCtrl65">
+																			<value></value>
 																		</object>
 																	</object>
 																</object>
-																<object class="sizeritem">
-																	<option>0</option>
-																	<flag>wxALIGN_CENTER_VERTICAL</flag>
-																	<border>0</border>
-																	<object class="wxStaticText" name="m_staticText20221">
-																		<label>fragmentMap</label>
-																		<wrap>-1</wrap>
+															</object>
+														</object>
+													</object>
+												</object>
+												<object class="notebookpage">
+													<label>Program</label>
+													<selected>0</selected>
+													<object class="wxPanel" name="m_panel61111">
+														<style>wxTAB_TRAVERSAL</style>
+														<object class="wxBoxSizer">
+															<orient>wxVERTICAL</orient>
+															<object class="sizeritem">
+																<option>1</option>
+																<flag>wxALL|wxEXPAND</flag>
+																<border>6</border>
+																<object class="wxFlexGridSizer">
+																	<rows>7</rows>
+																	<cols>2</cols>
+																	<vgap>6</vgap>
+																	<hgap>12</hgap>
+																	<growablecols>1</growablecols>
+																	<growablerows></growablerows>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																		<border>0</border>
+																		<object class="wxStaticText" name="m_staticText202">
+																			<label>fragmentProgram</label>
+																			<wrap>-1</wrap>
+																		</object>
 																	</object>
-																</object>
-																<object class="sizeritem">
-																	<option>1</option>
-																	<flag>wxEXPAND</flag>
-																	<border>0</border>
-																	<object class="wxBoxSizer">
-																		<orient>wxHORIZONTAL</orient>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																			<border>0</border>
-																			<object class="wxStaticText" name="m_staticText2101">
-																				<label>1</label>
-																				<wrap>-1</wrap>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxEXPAND</flag>
+																		<border>5</border>
+																		<object class="wxTextCtrl" name="MaterialEditorStageMap12">
+																			<value></value>
+																		</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																		<border>0</border>
+																		<object class="wxStaticText" name="m_staticText204">
+																			<label>vertexProgram</label>
+																			<wrap>-1</wrap>
+																		</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</flag>
+																		<border>0</border>
+																		<object class="wxTextCtrl" name="MaterialEditorStageMap112">
+																			<value></value>
+																		</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																		<border>0</border>
+																		<object class="wxStaticText" name="m_staticText2021">
+																			<label>program</label>
+																			<wrap>-1</wrap>
+																		</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALL|wxEXPAND</flag>
+																		<border>0</border>
+																		<object class="wxTextCtrl" name="MaterialEditorStageMap1111">
+																			<value></value>
+																		</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																		<border>0</border>
+																		<object class="wxStaticText" name="m_staticText2022">
+																			<label>vertexParm</label>
+																			<wrap>-1</wrap>
+																		</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>1</option>
+																		<flag>wxEXPAND</flag>
+																		<border>5</border>
+																		<object class="wxBoxSizer">
+																			<orient>wxHORIZONTAL</orient>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																				<border>0</border>
+																				<object class="wxStaticText" name="m_staticText210">
+																					<label>1</label>
+																					<wrap>-1</wrap>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>1</option>
+																				<flag>wxLEFT|wxRIGHT</flag>
+																				<border>6</border>
+																				<object class="wxTextCtrl" name="MaterialEditorStageMap11111">
+																					<value></value>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL</flag>
+																				<border>0</border>
+																				<object class="wxButton" name="m_button11">
+																					<label>Add</label>
+																					<default>0</default>
+																					<markup>0</markup>
+																					<bitmap />
+																				</object>
 																			</object>
 																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxLEFT</flag>
-																			<border>6</border>
-																			<object class="wxChoice" name="m_choice24">
-																				<selection>0</selection>
-																				<content />
-																			</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALIGN_CENTER_VERTICAL</flag>
+																		<border>0</border>
+																		<object class="wxStaticText" name="m_staticText20221">
+																			<label>fragmentMap</label>
+																			<wrap>-1</wrap>
 																		</object>
-																		<object class="sizeritem">
-																			<option>1</option>
-																			<flag>wxLEFT|wxRIGHT</flag>
-																			<border>6</border>
-																			<object class="wxTextCtrl" name="MaterialEditorStageMap111111">
-																				<value></value>
+																	</object>
+																	<object class="sizeritem">
+																		<option>1</option>
+																		<flag>wxEXPAND</flag>
+																		<border>0</border>
+																		<object class="wxBoxSizer">
+																			<orient>wxHORIZONTAL</orient>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																				<border>0</border>
+																				<object class="wxStaticText" name="m_staticText2101">
+																					<label>1</label>
+																					<wrap>-1</wrap>
+																				</object>
 																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL</flag>
-																			<border>0</border>
-																			<object class="wxButton" name="m_button111">
-																				<label>Add</label>
-																				<default>0</default>
-																				<markup>0</markup>
-																				<bitmap />
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxLEFT</flag>
+																				<border>6</border>
+																				<object class="wxChoice" name="m_choice24">
+																					<selection>0</selection>
+																					<content />
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>1</option>
+																				<flag>wxLEFT|wxRIGHT</flag>
+																				<border>6</border>
+																				<object class="wxTextCtrl" name="MaterialEditorStageMap111111">
+																					<value></value>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL</flag>
+																				<border>0</border>
+																				<object class="wxButton" name="m_button111">
+																					<label>Add</label>
+																					<default>0</default>
+																					<markup>0</markup>
+																					<bitmap />
+																				</object>
 																			</object>
 																		</object>
 																	</object>

@@ -254,6 +254,11 @@ public:
         _blendFuncStrings = func;
     }
 
+    const StringPair& getBlendFuncStrings() const override
+    {
+        return _blendFuncStrings;
+    }
+
     /**
      * \brief
      * Set vertex colour mode.

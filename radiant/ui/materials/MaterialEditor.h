@@ -56,7 +56,10 @@ private:
     void setupMaterialDeformPage();
     void setupSurfaceFlag(const std::string& controlName, Material::SurfaceFlags flag);
     void setupMaterialFlag(const std::string& controlName, Material::Flags flag);
+
     void updateControlsFromMaterial();
+    void updateDeformControlsFromMaterial();
+    void updateStageControlsFromMaterial();
     void updateMaterialPropertiesFromMaterial();
 
     void _onTreeViewSelectionChanged(wxDataViewEvent& ev);

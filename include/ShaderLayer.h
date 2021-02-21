@@ -4,6 +4,7 @@
 
 #include <memory>
 #include <vector>
+#include <string>
 
 #include "math/Vector2.h"
 #include "math/Vector4.h"
@@ -152,6 +153,9 @@ public:
      * and SPECULAR do not use blend functions.
      */
     virtual BlendFunc getBlendFunc() const = 0;
+
+    // Get the blend string as defined in the material def, e.g. "add" or "gl_one, gl_zero"
+    virtual const std::pair<std::string, std::string>& getBlendFuncStrings() const = 0;
 
     /**
      * \brief

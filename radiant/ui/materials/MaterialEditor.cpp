@@ -338,12 +338,124 @@ void MaterialEditor::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
 void MaterialEditor::updateControlsFromMaterial()
 {
     updateMaterialPropertiesFromMaterial();
+    updateStageControlsFromMaterial();
 }
 
 inline std::string getDeformExpressionSafe(const MaterialPtr& material, std::size_t index)
 {
     auto expr = material->getDeformExpression(index);
     return expr ? expr->getExpressionString() : std::string();
+}
+
+void MaterialEditor::updateDeformControlsFromMaterial()
+{
+    if (_material)
+    {
+        // Deform
+        auto deformTypeName = shaders::getStringForDeformType(_material->getDeformType());
+        auto deformDropdown = getControl<wxChoice>("MaterialEditorDeformChoice");
+
+        if (!deformTypeName.empty())
+        {
+            deformDropdown->Select(deformDropdown->FindString(deformTypeName));
+
+            switch (_material->getDeformType())
+            {
+            case Material::DEFORM_FLARE:
+                getControl<wxTextCtrl>("MaterialDeformFlareSize")->SetValue(getDeformExpressionSafe(_material, 0));
+                break;
+            case Material::DEFORM_EXPAND:
+                getControl<wxTextCtrl>("MaterialDeformExpandAmount")->SetValue(getDeformExpressionSafe(_material, 0));
+                break;
+            case Material::DEFORM_MOVE:
+                getControl<wxTextCtrl>("MaterialDeformMoveAmount")->SetValue(getDeformExpressionSafe(_material, 0));
+                break;
+            case Material::DEFORM_TURBULENT:
+                getControl<wxTextCtrl>("MaterialDeformTurbulentTableName")->SetValue(_material->getDeformDeclName());
+                getControl<wxTextCtrl>("MaterialDeformTurbulentRange")->SetValue(getDeformExpressionSafe(_material, 0));
+                getControl<wxTextCtrl>("MaterialDeformTurbulentTimeOffset")->SetValue(getDeformExpressionSafe(_material, 1));
+                getControl<wxTextCtrl>("MaterialDeformTurbulentDomain")->SetValue(getDeformExpressionSafe(_material, 2));
+                break;
+            case Material::DEFORM_PARTICLE:
+                getControl<wxTextCtrl>("MaterialDeformParticleDeclName")->SetValue(_material->getDeformDeclName());
+                break;
+            case Material::DEFORM_PARTICLE2:
+                getControl<wxTextCtrl>("MaterialDeformParticle2DeclName")->SetValue(_material->getDeformDeclName());
+                break;
+            }
+        }
+        else
+        {
+            deformDropdown->Select(0);
+        }
+
+        // Hide the unrelated deform controls
+        for (const auto& pair : _deformPanels)
+        {
+            pair.second->Show(_material->getDeformType() == pair.first);
+        }
+
+        getControl<wxPanel>("DeformPage")->Layout();
+    }
+    else // no material
+    {
+        getControl<wxChoice>("MaterialEditorDeformChoice")->Select(0);
+
+        for (const auto& pair : _deformPanels)
+        {
+            pair.second->Hide();
+        }
+
+        getControl<wxPanel>("DeformPage")->Layout();
+    }
+}
+
+inline std::string getBlendFuncString(const std::pair<std::string, std::string>& pair)
+{
+    return !pair.second.empty() ? fmt::format("{0}, {1}", pair.first, pair.second) : pair.first;
+}
+
+inline std::string getNameForLayer(const ShaderLayer& layer)
+{
+    switch (layer.getType())
+    {
+    case ShaderLayer::DIFFUSE:
+        return "diffuse";
+    case ShaderLayer::BUMP:
+        return "bump";
+    case ShaderLayer::SPECULAR:
+        return "specular";
+    case ShaderLayer::BLEND:
+        return fmt::format("blend {0}", getBlendFuncString(layer.getBlendFuncStrings()));
+    }
+
+    return std::string("-");
+}
+
+void MaterialEditor::updateStageControlsFromMaterial()
+{
+    _stageList->Clear();
+
+    getControl<wxPanel>("MaterialEditorStageListPanel")->Enable(_material != nullptr);
+    getControl<wxPanel>("MaterialEditorStageSettingsPanel")->Enable(_material != nullptr);
+
+    if (!_material) return;
+
+    const auto& layers = _material->getAllLayers();
+
+    int index = 0;
+    for (const auto& layer : layers)
+    {
+        auto row = _stageList->AddItem();
+
+        row[STAGE_COLS().index] = index;
+        row[STAGE_COLS().name] = getNameForLayer(*layer);
+        row[STAGE_COLS().visible] = true;
+
+        row.SendItemAdded();
+
+        ++index;
+    }
 }
 
 void MaterialEditor::updateMaterialPropertiesFromMaterial()
@@ -355,6 +467,8 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
     {
         binding->setSource(_material);
     }
+
+    updateDeformControlsFromMaterial();
 
     if (_material)
     {
@@ -436,67 +550,12 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
         getControl<wxTextCtrl>("MaterialRenderBumpFlatArguments")->Enable(!_material->getRenderBumpFlatArguments().empty());
         getControl<wxTextCtrl>("MaterialRenderBumpFlatArguments")->SetValue(_material->getRenderBumpFlatArguments());
 
-        // Deform
-        auto deformTypeName = shaders::getStringForDeformType(_material->getDeformType());
-        auto deformDropdown = getControl<wxChoice>("MaterialEditorDeformChoice");
-
-        if (!deformTypeName.empty())
-        {
-            deformDropdown->Select(deformDropdown->FindString(deformTypeName));
-
-            switch (_material->getDeformType())
-            {
-            case Material::DEFORM_FLARE:
-                getControl<wxTextCtrl>("MaterialDeformFlareSize")->SetValue(getDeformExpressionSafe(_material, 0));
-                break;
-            case Material::DEFORM_EXPAND:
-                getControl<wxTextCtrl>("MaterialDeformExpandAmount")->SetValue(getDeformExpressionSafe(_material, 0));
-                break;
-            case Material::DEFORM_MOVE:
-                getControl<wxTextCtrl>("MaterialDeformMoveAmount")->SetValue(getDeformExpressionSafe(_material, 0));
-                break;
-            case Material::DEFORM_TURBULENT:
-                getControl<wxTextCtrl>("MaterialDeformTurbulentTableName")->SetValue(_material->getDeformDeclName());
-                getControl<wxTextCtrl>("MaterialDeformTurbulentRange")->SetValue(getDeformExpressionSafe(_material, 0));
-                getControl<wxTextCtrl>("MaterialDeformTurbulentTimeOffset")->SetValue(getDeformExpressionSafe(_material, 1));
-                getControl<wxTextCtrl>("MaterialDeformTurbulentDomain")->SetValue(getDeformExpressionSafe(_material, 2));
-                break;
-            case Material::DEFORM_PARTICLE:
-                getControl<wxTextCtrl>("MaterialDeformParticleDeclName")->SetValue(_material->getDeformDeclName());
-                break;
-            case Material::DEFORM_PARTICLE2:
-                getControl<wxTextCtrl>("MaterialDeformParticle2DeclName")->SetValue(_material->getDeformDeclName());
-                break;
-            }
-        }
-        else
-        {
-            deformDropdown->Select(0);
-        }
-
-        // Hide the unrelated deform controls
-        for (const auto& pair : _deformPanels)
-        {
-            pair.second->Show(_material->getDeformType() == pair.first);
-        }
-
-        getControl<wxPanel>("DeformPage")->Layout();
-
         // Surround the definition with curly braces, these are not included
         auto definition = fmt::format("{0}\n{{{1}}}", _material->getName(), _material->getDefinition());
         _sourceView->SetValue(definition);
     }
     else
     {
-        getControl<wxChoice>("MaterialEditorDeformChoice")->Select(0);
-
-        for (const auto& pair : _deformPanels)
-        {
-            pair.second->Hide();
-        }
-
-        getControl<wxPanel>("DeformPage")->Layout();
-
         getControl<wxCheckBox>("MaterialHasRenderBump")->SetValue(false);
         getControl<wxTextCtrl>("MaterialRenderBumpArguments")->SetValue("");
 
