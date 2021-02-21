@@ -340,6 +340,12 @@ void MaterialEditor::setupMaterialStageProperties()
     setupStageFlag("MaterialStageFlagMaskAlpha", ShaderLayer::FLAG_MASK_ALPHA);
     setupStageFlag("MaterialStageFlagMaskColour", ShaderLayer::FLAG_MASK_RED|ShaderLayer::FLAG_MASK_GREEN|ShaderLayer::FLAG_MASK_BLUE);
     setupStageFlag("MaterialStageFlagMaskDepth", ShaderLayer::FLAG_MASK_DEPTH);
+
+    _stageBindings.emplace(std::make_shared<CheckBoxBinding<ShaderLayerPtr>>(getControl<wxCheckBox>("MaterialStageHasAlphaTest"),
+        [=](const ShaderLayerPtr& layer)
+    {
+        return layer->hasAlphaTest();
+    }));
 }
 
 void MaterialEditor::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
@@ -654,7 +660,12 @@ void MaterialEditor::updateStageControlsFromSelectedStage()
 
     getControl<wxPanel>("MaterialEditorStageSettingsPanel")->Enable(selectedStage != nullptr);
 
+    if (selectedStage)
+    {
+        selectedStage->evaluateExpressions(0); // initialise the values of this stage
 
+        getControl<wxSpinCtrlDouble>("MaterialStageAlphaTestValue")->SetValue(selectedStage->getAlphaTest());
+    }
 }
 
 }

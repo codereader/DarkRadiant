@@ -123,7 +123,9 @@ public:
     Colour4 getColour() const;
     VertexColourMode getVertexColourMode() const;
     CubeMapMode getCubeMapMode() const;
-    float getAlphaTest() const;
+
+    bool hasAlphaTest() const override;
+    float getAlphaTest() const override;
 
     // True if the condition for this stage is fulfilled 
     // (expressions must have been evaluated before this call)

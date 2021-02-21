@@ -215,6 +215,11 @@ ShaderLayer::CubeMapMode Doom3ShaderLayer::getCubeMapMode() const
     return _cubeMapMode;
 }
 
+bool Doom3ShaderLayer::hasAlphaTest() const
+{
+    return _alphaTest != REG_ZERO;
+}
+
 float Doom3ShaderLayer::getAlphaTest() const
 {
     return _registers[_alphaTest];

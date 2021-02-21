@@ -217,6 +217,9 @@ public:
 	 */
 	virtual Vector2 getShear() = 0;
 
+    // Returns true if this layer has an alphatest expression defined
+    virtual bool hasAlphaTest() const = 0;
+
     /**
      * \brief
      * Get the alpha test value for this layer.
