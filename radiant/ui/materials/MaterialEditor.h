@@ -34,7 +34,8 @@ private:
 
     MaterialPtr _material;
 
-    std::set<std::shared_ptr<MaterialBinding>> _bindings;
+    std::set<std::shared_ptr<MaterialBinding>> _materialBindings;
+    std::set<std::shared_ptr<MaterialBinding>> _stageBindings;
     std::map<Material::DeformType, wxPanel*> _deformPanels;
 
 private:
@@ -59,10 +60,16 @@ private:
 
     void updateControlsFromMaterial();
     void updateDeformControlsFromMaterial();
-    void updateStageControlsFromMaterial();
+    void updateStageListFromMaterial();
     void updateMaterialPropertiesFromMaterial();
 
+    void selectStageByIndex(std::size_t index);
+
+    void updateStageControlsFromMaterial();
+    void updateStageControlsFromLayer(const ShaderLayer& layer);
+
     void _onTreeViewSelectionChanged(wxDataViewEvent& ev);
+    void _onStageListSelectionChanged(wxDataViewEvent& ev);
 
     // Shortcut
     template<typename ObjectClass>

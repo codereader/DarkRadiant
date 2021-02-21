@@ -9569,11 +9569,11 @@
                                                         <property name="wrap">-1</property>
                                                     </object>
                                                 </object>
-                                                <object class="sizeritem" expanded="0">
+                                                <object class="sizeritem" expanded="1">
                                                     <property name="border">12</property>
                                                     <property name="flag">wxEXPAND|wxLEFT</property>
                                                     <property name="proportion">0</property>
-                                                    <object class="wxNotebook" expanded="0">
+                                                    <object class="wxNotebook" expanded="1">
                                                         <property name="BottomDockable">1</property>
                                                         <property name="LeftDockable">1</property>
                                                         <property name="RightDockable">1</property>
