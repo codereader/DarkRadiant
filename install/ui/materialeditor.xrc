@@ -1055,7 +1055,7 @@
 																<object class="wxBoxSizer">
 																	<orient>wxVERTICAL</orient>
 																	<object class="sizeritem">
-																		<option>1</option>
+																		<option>0</option>
 																		<flag>wxEXPAND</flag>
 																		<border>6</border>
 																		<object class="wxBoxSizer">
@@ -1076,11 +1076,12 @@
 																				<object class="wxBoxSizer">
 																					<orient>wxVERTICAL</orient>
 																					<object class="sizeritem">
-																						<option>1</option>
+																						<option>0</option>
 																						<flag>wxEXPAND</flag>
 																						<border>0</border>
 																						<object class="wxPanel" name="DeformFlarePanel">
 																							<style>wxTAB_TRAVERSAL</style>
+																							<hidden>1</hidden>
 																							<object class="wxBoxSizer">
 																								<orient>wxHORIZONTAL</orient>
 																								<object class="sizeritem">
@@ -1096,7 +1097,7 @@
 																									<option>1</option>
 																									<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
 																									<border>0</border>
-																									<object class="wxTextCtrl" name="m_textCtrl21">
+																									<object class="wxTextCtrl" name="MaterialDeformFlareSize">
 																										<value></value>
 																									</object>
 																								</object>
@@ -1104,11 +1105,12 @@
 																						</object>
 																					</object>
 																					<object class="sizeritem">
-																						<option>1</option>
+																						<option>0</option>
 																						<flag>wxEXPAND | wxALL</flag>
 																						<border>0</border>
 																						<object class="wxPanel" name="DeformExpandPanel">
 																							<style>wxTAB_TRAVERSAL</style>
+																							<hidden>1</hidden>
 																							<object class="wxBoxSizer">
 																								<orient>wxHORIZONTAL</orient>
 																								<object class="sizeritem">
@@ -1124,7 +1126,7 @@
 																									<option>1</option>
 																									<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
 																									<border>0</border>
-																									<object class="wxTextCtrl" name="m_textCtrl211">
+																									<object class="wxTextCtrl" name="MaterialDeformExpandAmount">
 																										<value></value>
 																									</object>
 																								</object>
@@ -1132,11 +1134,12 @@
 																						</object>
 																					</object>
 																					<object class="sizeritem">
-																						<option>1</option>
+																						<option>0</option>
 																						<flag>wxEXPAND | wxALL</flag>
 																						<border>0</border>
 																						<object class="wxPanel" name="DeformMovePanel">
 																							<style>wxTAB_TRAVERSAL</style>
+																							<hidden>1</hidden>
 																							<object class="wxBoxSizer">
 																								<orient>wxHORIZONTAL</orient>
 																								<object class="sizeritem">
@@ -1152,7 +1155,7 @@
 																									<option>1</option>
 																									<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
 																									<border>0</border>
-																									<object class="wxTextCtrl" name="m_textCtrl2111">
+																									<object class="wxTextCtrl" name="MaterialDeformMoveAmount">
 																										<value></value>
 																									</object>
 																								</object>
@@ -1160,94 +1163,109 @@
 																						</object>
 																					</object>
 																					<object class="sizeritem">
-																						<option>1</option>
+																						<option>0</option>
 																						<flag>wxEXPAND | wxALL</flag>
 																						<border>0</border>
 																						<object class="wxPanel" name="DeformTurbulentPanel">
 																							<style>wxTAB_TRAVERSAL</style>
+																							<hidden>1</hidden>
 																							<object class="wxBoxSizer">
-																								<orient>wxHORIZONTAL</orient>
+																								<orient>wxVERTICAL</orient>
 																								<object class="sizeritem">
 																									<option>0</option>
-																									<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
-																									<border>6</border>
-																									<object class="wxStaticText" name="m_staticText46132111111">
-																										<label>Table:</label>
-																										<wrap>-1</wrap>
-																									</object>
-																								</object>
-																								<object class="sizeritem">
-																									<option>1</option>
-																									<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
+																									<flag>wxEXPAND</flag>
 																									<border>0</border>
-																									<object class="wxTextCtrl" name="m_textCtrl2111111">
-																										<size>60,-1</size>
-																										<value></value>
-																									</object>
-																								</object>
-																								<object class="sizeritem">
-																									<option>0</option>
-																									<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																									<border>5</border>
-																									<object class="wxStaticText" name="m_staticText461321111111">
-																										<label>Range:</label>
-																										<wrap>-1</wrap>
-																									</object>
-																								</object>
-																								<object class="sizeritem">
-																									<option>0</option>
-																									<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																									<border>0</border>
-																									<object class="wxTextCtrl" name="m_textCtrl21111111">
-																										<size>40,-1</size>
-																										<value></value>
-																									</object>
-																								</object>
-																								<object class="sizeritem">
-																									<option>0</option>
-																									<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
-																									<border>6</border>
-																									<object class="wxStaticText" name="m_staticText4613211111111">
-																										<label>Time Offset:</label>
-																										<wrap>-1</wrap>
-																									</object>
-																								</object>
-																								<object class="sizeritem">
-																									<option>0</option>
-																									<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																									<border>0</border>
-																									<object class="wxTextCtrl" name="m_textCtrl211111111">
-																										<size>40,-1</size>
-																										<value></value>
-																									</object>
-																								</object>
-																								<object class="sizeritem">
-																									<option>0</option>
-																									<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
-																									<border>6</border>
-																									<object class="wxStaticText" name="m_staticText46132111111111">
-																										<label>Domain:</label>
-																										<wrap>-1</wrap>
-																									</object>
-																								</object>
-																								<object class="sizeritem">
-																									<option>0</option>
-																									<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																									<border>0</border>
-																									<object class="wxTextCtrl" name="m_textCtrl2111111111">
-																										<size>40,-1</size>
-																										<value></value>
+																									<object class="wxFlexGridSizer">
+																										<rows>0</rows>
+																										<cols>2</cols>
+																										<vgap>6</vgap>
+																										<hgap>6</hgap>
+																										<growablecols>1</growablecols>
+																										<growablerows></growablerows>
+																										<object class="sizeritem">
+																											<option>0</option>
+																											<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
+																											<border>6</border>
+																											<object class="wxStaticText" name="m_staticText46132111111">
+																												<label>Table:</label>
+																												<wrap>-1</wrap>
+																											</object>
+																										</object>
+																										<object class="sizeritem">
+																											<option>1</option>
+																											<flag>wxALIGN_CENTER_VERTICAL|wxEXPAND|wxRIGHT</flag>
+																											<border>0</border>
+																											<object class="wxTextCtrl" name="MaterialDeformTurbulentTableName">
+																												<size>60,-1</size>
+																												<value></value>
+																											</object>
+																										</object>
+																										<object class="sizeritem">
+																											<option>0</option>
+																											<flag>wxALIGN_CENTER_VERTICAL</flag>
+																											<border>5</border>
+																											<object class="wxStaticText" name="m_staticText4613211111112">
+																												<label>Range:</label>
+																												<wrap>-1</wrap>
+																											</object>
+																										</object>
+																										<object class="sizeritem">
+																											<option>1</option>
+																											<flag>wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</flag>
+																											<border>0</border>
+																											<object class="wxTextCtrl" name="MaterialDeformTurbulentRange">
+																												<size>40,-1</size>
+																												<value></value>
+																											</object>
+																										</object>
+																										<object class="sizeritem">
+																											<option>0</option>
+																											<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
+																											<border>6</border>
+																											<object class="wxStaticText" name="m_staticText4613211111111">
+																												<label>Time Offset:</label>
+																												<wrap>-1</wrap>
+																											</object>
+																										</object>
+																										<object class="sizeritem">
+																											<option>1</option>
+																											<flag>wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</flag>
+																											<border>0</border>
+																											<object class="wxTextCtrl" name="MaterialDeformTurbulentTimeOffset">
+																												<size>40,-1</size>
+																												<value></value>
+																											</object>
+																										</object>
+																										<object class="sizeritem">
+																											<option>0</option>
+																											<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
+																											<border>6</border>
+																											<object class="wxStaticText" name="m_staticText461321111111111">
+																												<label>Domain:</label>
+																												<wrap>-1</wrap>
+																											</object>
+																										</object>
+																										<object class="sizeritem">
+																											<option>1</option>
+																											<flag>wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</flag>
+																											<border>0</border>
+																											<object class="wxTextCtrl" name="MaterialDeformTurbulentDomain">
+																												<size>40,-1</size>
+																												<value></value>
+																											</object>
+																										</object>
 																									</object>
 																								</object>
 																							</object>
 																						</object>
 																					</object>
 																					<object class="sizeritem">
-																						<option>1</option>
+																						<option>0</option>
 																						<flag>wxEXPAND | wxALL</flag>
 																						<border>0</border>
 																						<object class="wxPanel" name="DeformParticlePanel">
 																							<style>wxTAB_TRAVERSAL</style>
+																							<hidden>1</hidden>
 																							<object class="wxBoxSizer">
 																								<orient>wxHORIZONTAL</orient>
 																								<object class="sizeritem">
@@ -1263,7 +1281,7 @@
 																									<option>1</option>
 																									<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
 																									<border>0</border>
-																									<object class="wxTextCtrl" name="m_textCtrl211111">
+																									<object class="wxTextCtrl" name="MaterialDeformParticleDeclName">
 																										<value></value>
 																									</object>
 																								</object>
@@ -1271,11 +1289,12 @@
 																						</object>
 																					</object>
 																					<object class="sizeritem">
-																						<option>1</option>
+																						<option>0</option>
 																						<flag>wxEXPAND | wxALL</flag>
 																						<border>0</border>
 																						<object class="wxPanel" name="DeformParticle2Panel">
 																							<style>wxTAB_TRAVERSAL</style>
+																							<hidden>1</hidden>
 																							<object class="wxBoxSizer">
 																								<orient>wxHORIZONTAL</orient>
 																								<object class="sizeritem">
@@ -1291,7 +1310,7 @@
 																									<option>1</option>
 																									<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
 																									<border>0</border>
-																									<object class="wxTextCtrl" name="m_textCtrl2111112">
+																									<object class="wxTextCtrl" name="MaterialDeformParticle2DeclName">
 																										<value></value>
 																									</object>
 																								</object>

@@ -340,6 +340,12 @@ void MaterialEditor::updateControlsFromMaterial()
     updateMaterialPropertiesFromMaterial();
 }
 
+inline std::string getDeformExpressionSafe(const MaterialPtr& material, std::size_t index)
+{
+    auto expr = material->getDeformExpression(index);
+    return expr ? expr->getExpressionString() : std::string();
+}
+
 void MaterialEditor::updateMaterialPropertiesFromMaterial()
 {
     getControl<wxPanel>("MaterialEditorMaterialPropertiesPanel")->Enable(_material != nullptr);
@@ -437,6 +443,31 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
         if (!deformTypeName.empty())
         {
             deformDropdown->Select(deformDropdown->FindString(deformTypeName));
+
+            switch (_material->getDeformType())
+            {
+            case Material::DEFORM_FLARE:
+                getControl<wxTextCtrl>("MaterialDeformFlareSize")->SetValue(getDeformExpressionSafe(_material, 0));
+                break;
+            case Material::DEFORM_EXPAND:
+                getControl<wxTextCtrl>("MaterialDeformExpandAmount")->SetValue(getDeformExpressionSafe(_material, 0));
+                break;
+            case Material::DEFORM_MOVE:
+                getControl<wxTextCtrl>("MaterialDeformMoveAmount")->SetValue(getDeformExpressionSafe(_material, 0));
+                break;
+            case Material::DEFORM_TURBULENT:
+                getControl<wxTextCtrl>("MaterialDeformTurbulentTableName")->SetValue(_material->getDeformDeclName());
+                getControl<wxTextCtrl>("MaterialDeformTurbulentRange")->SetValue(getDeformExpressionSafe(_material, 0));
+                getControl<wxTextCtrl>("MaterialDeformTurbulentTimeOffset")->SetValue(getDeformExpressionSafe(_material, 1));
+                getControl<wxTextCtrl>("MaterialDeformTurbulentDomain")->SetValue(getDeformExpressionSafe(_material, 2));
+                break;
+            case Material::DEFORM_PARTICLE:
+                getControl<wxTextCtrl>("MaterialDeformParticleDeclName")->SetValue(_material->getDeformDeclName());
+                break;
+            case Material::DEFORM_PARTICLE2:
+                getControl<wxTextCtrl>("MaterialDeformParticle2DeclName")->SetValue(_material->getDeformDeclName());
+                break;
+            }
         }
         else
         {
