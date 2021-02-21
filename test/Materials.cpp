@@ -199,4 +199,49 @@ TEST_F(MaterialsTest, MaterialParserRenderbumpFlat)
     checkRenderBumpArguments("textures/parsertest/renderBumpFlat2", "renderbumpflat");
 }
 
+TEST_F(MaterialsTest, MaterialParserDeform)
+{
+    auto material = GlobalMaterialManager().getMaterialForName("textures/parsertest/deform1");
+    EXPECT_EQ(material->getDeformType(), Material::DEFORM_FLARE);
+    EXPECT_EQ(material->getDeformDeclName(), "");
+    EXPECT_EQ(material->getDeformExpression(0)->getExpressionString(), "1.5");
+    EXPECT_FALSE(material->getDeformExpression(1));
+    EXPECT_FALSE(material->getDeformExpression(2));
+
+    material = GlobalMaterialManager().getMaterialForName("textures/parsertest/deform2");
+    EXPECT_EQ(material->getDeformType(), Material::DEFORM_EXPAND);
+    EXPECT_EQ(material->getDeformDeclName(), "");
+    EXPECT_EQ(material->getDeformExpression(0)->getExpressionString(), "(0.1 * deformtesttable[time * (0.3 + time)] - global3)");
+    EXPECT_FALSE(material->getDeformExpression(1));
+    EXPECT_FALSE(material->getDeformExpression(2));
+
+    material = GlobalMaterialManager().getMaterialForName("textures/parsertest/deform3");
+    EXPECT_EQ(material->getDeformType(), Material::DEFORM_MOVE);
+    EXPECT_EQ(material->getDeformDeclName(), "");
+    EXPECT_EQ(material->getDeformExpression(0)->getExpressionString(), "(1.7 + time + 4.0 - global3)");
+    EXPECT_FALSE(material->getDeformExpression(1));
+    EXPECT_FALSE(material->getDeformExpression(2));
+
+    material = GlobalMaterialManager().getMaterialForName("textures/parsertest/deform4");
+    EXPECT_EQ(material->getDeformType(), Material::DEFORM_TURBULENT);
+    EXPECT_EQ(material->getDeformDeclName(), "deformtesttable");
+    EXPECT_EQ(material->getDeformExpression(0)->getExpressionString(), "time * 2.0");
+    EXPECT_EQ(material->getDeformExpression(1)->getExpressionString(), "(parm11 - 4.0)");
+    EXPECT_EQ(material->getDeformExpression(2)->getExpressionString(), "-1.0 * global5");
+
+    material = GlobalMaterialManager().getMaterialForName("textures/parsertest/deform5");
+    EXPECT_EQ(material->getDeformType(), Material::DEFORM_PARTICLE);
+    EXPECT_EQ(material->getDeformDeclName(), "testparticle");
+    EXPECT_FALSE(material->getDeformExpression(0));
+    EXPECT_FALSE(material->getDeformExpression(1));
+    EXPECT_FALSE(material->getDeformExpression(2));
+
+    material = GlobalMaterialManager().getMaterialForName("textures/parsertest/deform6");
+    EXPECT_EQ(material->getDeformType(), Material::DEFORM_PARTICLE2);
+    EXPECT_EQ(material->getDeformDeclName(), "testparticle");
+    EXPECT_FALSE(material->getDeformExpression(0));
+    EXPECT_FALSE(material->getDeformExpression(1));
+    EXPECT_FALSE(material->getDeformExpression(2));
+}
+
 }
