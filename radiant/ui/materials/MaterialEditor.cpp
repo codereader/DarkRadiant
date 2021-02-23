@@ -361,6 +361,10 @@ void MaterialEditor::setupMaterialStageProperties()
         "", "gl_one", "gl_zero", "gl_src_color", "gl_one_minus_src_color", "gl_src_alpha", 
         "gl_one_minus_src_alpha", "gl_dst_alpha", "gl_one_minus_dst_alpha"
     }));
+
+    getControl<wxChoice>("MaterialStageMapType")->Append(std::vector<wxString>({ 
+        "map", "cubeMap", "cameraCubeMap"
+    }));
 }
 
 void MaterialEditor::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
@@ -748,11 +752,27 @@ void MaterialEditor::updateStageControls()
         getControl<wxSpinCtrlDouble>("MaterialStagePrivatePolygonOffset")->SetValue(selectedStage->getPrivatePolygonOffset());
 
         auto mapExpr = selectedStage->getMapExpression();
-        getControl<wxTextCtrl>("MaterialEditorStageMap")->SetValue(mapExpr ? mapExpr->getExpressionString() : "");
+        getControl<wxTextCtrl>("MaterialStageImageMap")->SetValue(mapExpr ? mapExpr->getExpressionString() : "");
+        getControl<wxTextCtrl>("MaterialStageMap")->SetValue(mapExpr ? mapExpr->getExpressionString() : "");
+
+        auto mapType = getControl<wxChoice>("MaterialStageMapType");
+        switch (selectedStage->getCubeMapMode())
+        {
+        case ShaderLayer::CUBE_MAP_NONE:
+            mapType->SetStringSelection("map");
+            break;
+        case ShaderLayer::CUBE_MAP_CAMERA:
+            mapType->SetStringSelection("cameraCubeMap");
+            break;
+        case ShaderLayer::CUBE_MAP_OBJECT:
+            mapType->SetStringSelection("cubeMap");
+            break;
+        }
     }
     else
     {
-        getControl<wxTextCtrl>("MaterialEditorStageMap")->SetValue("");
+        getControl<wxTextCtrl>("MaterialStageImageMap")->SetValue("");
+        getControl<wxTextCtrl>("MaterialStageMap")->SetValue("");
     }
 }
 

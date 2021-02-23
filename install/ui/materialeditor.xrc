@@ -1637,7 +1637,7 @@
 											<object class="wxNotebook" name="MaterialEditorSettingsNotebook">
 												<object class="notebookpage">
 													<label>Blending</label>
-													<selected>1</selected>
+													<selected>0</selected>
 													<object class="wxPanel" name="BlendPanel">
 														<style>wxTAB_TRAVERSAL</style>
 														<object class="wxBoxSizer">
@@ -1725,11 +1725,28 @@
 																		</object>
 																	</object>
 																	<object class="sizeritem">
-																		<option>0</option>
+																		<option>1</option>
 																		<flag>wxEXPAND</flag>
-																		<border>5</border>
-																		<object class="wxTextCtrl" name="MaterialEditorStageMap">
-																			<value></value>
+																		<border>0</border>
+																		<object class="wxBoxSizer">
+																			<orient>wxHORIZONTAL</orient>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxRIGHT</flag>
+																				<border>6</border>
+																				<object class="wxChoice" name="MaterialStageMapType">
+																					<selection>0</selection>
+																					<content />
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>1</option>
+																				<flag></flag>
+																				<border>0</border>
+																				<object class="wxTextCtrl" name="MaterialStageImageMap">
+																					<value></value>
+																				</object>
+																			</object>
 																		</object>
 																	</object>
 																	<object class="sizeritem">
@@ -1909,7 +1926,7 @@
 												</object>
 												<object class="notebookpage">
 													<label>Map</label>
-													<selected>0</selected>
+													<selected>1</selected>
 													<object class="wxPanel" name="m_panel6">
 														<style>wxTAB_TRAVERSAL</style>
 														<object class="wxBoxSizer">
@@ -1938,7 +1955,7 @@
 																		<option>0</option>
 																		<flag>wxEXPAND</flag>
 																		<border>5</border>
-																		<object class="wxTextCtrl" name="MaterialEditorStageMap1">
+																		<object class="wxTextCtrl" name="MaterialStageMap">
 																			<value></value>
 																		</object>
 																	</object>
@@ -1955,7 +1972,7 @@
 																		<option>0</option>
 																		<flag>wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</flag>
 																		<border>0</border>
-																		<object class="wxTextCtrl" name="MaterialEditorStageMap11">
+																		<object class="wxTextCtrl" name="MaterialStageCubeMap">
 																			<value></value>
 																		</object>
 																	</object>
@@ -1972,7 +1989,7 @@
 																		<option>0</option>
 																		<flag>wxALL|wxEXPAND</flag>
 																		<border>0</border>
-																		<object class="wxTextCtrl" name="MaterialEditorStageMap111">
+																		<object class="wxTextCtrl" name="MaterialStageCameraCubeMap">
 																			<value></value>
 																		</object>
 																	</object>
@@ -1980,7 +1997,7 @@
 																		<option>0</option>
 																		<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
 																		<border>0</border>
-																		<object class="wxRadioButton" name="m_radioBtn18">
+																		<object class="wxRadioButton" name="MaterialStageVideoMap">
 																			<label>videoMap</label>
 																			<value>0</value>
 																		</object>
@@ -2014,7 +2031,7 @@
 																		<option>0</option>
 																		<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
 																		<border>0</border>
-																		<object class="wxRadioButton" name="m_radioBtn141">
+																		<object class="wxRadioButton" name="MaterialStageSoundMap">
 																			<label>soundMap</label>
 																			<value>0</value>
 																		</object>
@@ -2032,7 +2049,7 @@
 																		<option>0</option>
 																		<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
 																		<border>0</border>
-																		<object class="wxRadioButton" name="m_radioBtn142">
+																		<object class="wxRadioButton" name="MaterialStageRemoteRenderMap">
 																			<label>remoteRenderMap</label>
 																			<value>0</value>
 																		</object>
@@ -2083,7 +2100,7 @@
 																		<option>0</option>
 																		<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
 																		<border>0</border>
-																		<object class="wxRadioButton" name="m_radioBtn1421">
+																		<object class="wxRadioButton" name="MaterialStageMirrorRenderMap">
 																			<label>mirrorRenderMap</label>
 																			<value>0</value>
 																		</object>
