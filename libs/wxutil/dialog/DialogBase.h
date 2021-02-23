@@ -20,8 +20,6 @@ namespace wxutil
 class DialogBase :
     public wxDialog
 {
-    void _onDelete(wxCloseEvent& ev);
-
 public:
     /// Construct and initialise
     DialogBase(const std::string& title, wxWindow* parent = NULL);
