@@ -247,5 +247,10 @@ std::string Doom3ShaderLayer::getMapImageFilename()
     return std::string();
 }
 
+IMapExpression::Ptr Doom3ShaderLayer::getMapExpression()
+{
+    return std::dynamic_pointer_cast<IMapExpression>(_bindableTex);
+}
+
 }
 

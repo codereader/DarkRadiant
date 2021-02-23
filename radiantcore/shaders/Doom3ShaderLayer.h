@@ -514,6 +514,8 @@ public:
     }
 
     std::string getMapImageFilename() override;
+
+    shaders::IMapExpression::Ptr getMapExpression() override;
 };
 
 /**

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Texture.h"
+#include "ishaderexpression.h"
 
 #include <memory>
 #include <vector>
@@ -270,6 +271,9 @@ public:
     // the VFS path to it with the file extension removed.
     // If this layer doesn't refer to a single image file, an empty string is returned
     virtual std::string getMapImageFilename() = 0;
+
+    // The map expression used to generate/define the texture of this stage
+    virtual shaders::IMapExpression::Ptr getMapExpression() = 0;
 };
 
 /**

@@ -665,9 +665,13 @@ void MaterialEditor::updateStageBlendControls()
 {
     auto selectedStage = getSelectedStage();
 
+    auto blendType = getControl<wxChoice>("MaterialStageBlendType");
+    auto blendTypeSrc = getControl<wxChoice>("MaterialStageBlendTypeSrc");
+    auto blendTypeDest = getControl<wxChoice>("MaterialStageBlendTypeDest");
+
     if (selectedStage)
     {
-        getControl<wxChoice>("MaterialStageBlendType")->Enable();
+        blendType->Enable();
         auto blendTypeStrings = selectedStage->getBlendFuncStrings();
 
         switch (selectedStage->getType())
@@ -686,39 +690,39 @@ void MaterialEditor::updateStageBlendControls()
             break;
         };
 
-        getControl<wxChoice>("MaterialStageBlendTypeSrc")->Enable(!blendTypeStrings.second.empty());
-        getControl<wxChoice>("MaterialStageBlendTypeDest")->Enable(!blendTypeStrings.second.empty());
+        blendTypeSrc->Enable(!blendTypeStrings.second.empty());
+        blendTypeDest->Enable(!blendTypeStrings.second.empty());
 
         if (blendTypeStrings.second.empty())
         {
-            getControl<wxChoice>("MaterialStageBlendType")->SetStringSelection(blendTypeStrings.first);
+            blendType->SetStringSelection(blendTypeStrings.first);
 
-            getControl<wxChoice>("MaterialStageBlendTypeSrc")->SetStringSelection("");
-            getControl<wxChoice>("MaterialStageBlendTypeDest")->SetStringSelection("");
+            blendTypeSrc->SetStringSelection("");
+            blendTypeDest->SetStringSelection("");
 
             // Get the actual src and dest blend types this shortcut is working with
             for (const auto& pair : shaders::BlendTypeShortcuts)
             {
                 if (blendTypeStrings.first == pair.first)
                 {
-                    getControl<wxChoice>("MaterialStageBlendTypeSrc")->SetStringSelection(pair.second.first);
-                    getControl<wxChoice>("MaterialStageBlendTypeDest")->SetStringSelection(pair.second.second);
+                    blendTypeSrc->SetStringSelection(pair.second.first);
+                    blendTypeDest->SetStringSelection(pair.second.second);
                     break;
                 }
             }
         }
         else
         {
-            getControl<wxChoice>("MaterialStageBlendType")->SetStringSelection("Custom");
-            getControl<wxChoice>("MaterialStageBlendTypeSrc")->SetStringSelection(blendTypeStrings.first);
-            getControl<wxChoice>("MaterialStageBlendTypeDest")->SetStringSelection(blendTypeStrings.second);
+            blendType->SetStringSelection("Custom");
+            blendTypeSrc->SetStringSelection(blendTypeStrings.first);
+            blendTypeDest->SetStringSelection(blendTypeStrings.second);
         }
     }
     else
     {
-        getControl<wxChoice>("MaterialStageBlendType")->Disable();
-        getControl<wxChoice>("MaterialStageBlendTypeSrc")->Disable();
-        getControl<wxChoice>("MaterialStageBlendTypeDest")->Disable();
+        blendType->Disable();
+        blendTypeSrc->Disable();
+        blendTypeDest->Disable();
     }
 }
 
@@ -742,6 +746,13 @@ void MaterialEditor::updateStageControls()
 
         getControl<wxSpinCtrlDouble>("MaterialStageAlphaTestValue")->SetValue(selectedStage->getAlphaTest());
         getControl<wxSpinCtrlDouble>("MaterialStagePrivatePolygonOffset")->SetValue(selectedStage->getPrivatePolygonOffset());
+
+        auto mapExpr = selectedStage->getMapExpression();
+        getControl<wxTextCtrl>("MaterialEditorStageMap")->SetValue(mapExpr ? mapExpr->getExpressionString() : "");
+    }
+    else
+    {
+        getControl<wxTextCtrl>("MaterialEditorStageMap")->SetValue("");
     }
 }
 
