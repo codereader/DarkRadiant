@@ -56,7 +56,10 @@ private:
     mutable TexturePtr _texture;
 
     // Layer type (diffuse, bump, specular or nothing)
-    ShaderLayer::Type _type;
+    Type _type;
+
+    // Map type (map, cubemap, mirrorRenderMap, etc.)
+    MapType _mapType;
 
     // Blend function as strings (e.g. "gl_one", "gl_zero")
     StringPair _blendFuncStrings;
@@ -123,6 +126,9 @@ public:
     Colour4 getColour() const;
     VertexColourMode getVertexColourMode() const;
     CubeMapMode getCubeMapMode() const;
+
+    MapType getMapType() const override;
+    void setMapType(MapType type);
 
     bool hasAlphaTest() const override;
     float getAlphaTest() const override;

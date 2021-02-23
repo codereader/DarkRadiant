@@ -181,6 +181,20 @@ public:
      */
     virtual VertexColourMode getVertexColourMode() const = 0;
 
+    enum class MapType
+    {
+        Map,            // regular map
+        CubeMap,        // corresponds to CUBE_MAP_OBJECT
+        CameraCubeMap,  // corresponds to CUBE_MAP_CAMERA
+        VideoMap,
+        SoundMap,
+        MirrorRenderMap,
+        RemoteRenderMap,
+    };
+
+    // Get the map type used by this stage
+    virtual MapType getMapType() const = 0;
+
     /**
      * \brief
      * Enumeration of cube map modes for this layer.

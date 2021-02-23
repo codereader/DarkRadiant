@@ -84,6 +84,7 @@ Doom3ShaderLayer::Doom3ShaderLayer(ShaderTemplate& material, ShaderLayer::Type t
 	_condition(REG_ONE),
 	_bindableTex(btex),
 	_type(type),
+    _mapType(MapType::Map),
 	_blendFuncStrings("gl_one", "gl_zero"), // needs to be lowercase
 	_vertexColourMode(VERTEX_COLOUR_NONE),
 	_cubeMapMode(CUBE_MAP_NONE),
@@ -213,6 +214,16 @@ ShaderLayer::VertexColourMode Doom3ShaderLayer::getVertexColourMode() const
 ShaderLayer::CubeMapMode Doom3ShaderLayer::getCubeMapMode() const
 {
     return _cubeMapMode;
+}
+
+ShaderLayer::MapType Doom3ShaderLayer::getMapType() const
+{
+    return _mapType;
+}
+
+void Doom3ShaderLayer::setMapType(MapType type)
+{
+    _mapType = type;
 }
 
 bool Doom3ShaderLayer::hasAlphaTest() const

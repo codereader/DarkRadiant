@@ -545,6 +545,7 @@ bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
         _currentLayer->setBindableTexture(
             MapExpression::createForToken(tokeniser)
         );
+        _currentLayer->setMapType(ShaderLayer::MapType::Map);
     }
     else if (token == "cameracubemap")
     {
@@ -552,6 +553,7 @@ bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
         _currentLayer->setBindableTexture(
             CameraCubeMapDecl::createForPrefix(cubeMapPrefix)
         );
+        _currentLayer->setMapType(ShaderLayer::MapType::CameraCubeMap);
         _currentLayer->setCubeMapMode(ShaderLayer::CUBE_MAP_CAMERA);
     }
 	else if (token == "texgen")
@@ -587,10 +589,13 @@ bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
     {
 		// Parse the cubemap expression, but don't do anything with it for now
         _currentLayer->setBindableTexture(MapExpression::createForToken(tokeniser));
+        _currentLayer->setMapType(ShaderLayer::MapType::CubeMap);
         _currentLayer->setCubeMapMode(ShaderLayer::CUBE_MAP_OBJECT);
     }
 	else if (token == "videomap")
     {
+        _currentLayer->setMapType(ShaderLayer::MapType::VideoMap);
+
 		std::string nextToken = tokeniser.nextToken();
 		string::to_lower(nextToken);
 
@@ -602,6 +607,8 @@ bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
     }
 	else if (token == "soundmap")
 	{
+        _currentLayer->setMapType(ShaderLayer::MapType::SoundMap);
+
 		// This stage should render as sound meter/map - skip this information for now
 		if (tokeniser.peek() == "waveform")
 		{
@@ -610,6 +617,8 @@ bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
 	}
 	else if (token == "remoterendermap")
 	{
+        _currentLayer->setMapType(ShaderLayer::MapType::RemoteRenderMap);
+
 		try
 		{
 			std::stoi(tokeniser.nextToken());
@@ -623,6 +632,8 @@ bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
 	}
 	else if (token == "mirrorrendermap")
 	{
+        _currentLayer->setMapType(ShaderLayer::MapType::MirrorRenderMap);
+
 		try
 		{
 			std::stoi(tokeniser.nextToken());
