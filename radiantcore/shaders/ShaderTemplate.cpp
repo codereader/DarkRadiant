@@ -586,7 +586,8 @@ bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
 	else if (token == "cubemap")
     {
 		// Parse the cubemap expression, but don't do anything with it for now
-		MapExpression::createForToken(tokeniser);
+        _currentLayer->setBindableTexture(MapExpression::createForToken(tokeniser));
+        _currentLayer->setCubeMapMode(ShaderLayer::CUBE_MAP_OBJECT);
     }
 	else if (token == "videomap")
     {
