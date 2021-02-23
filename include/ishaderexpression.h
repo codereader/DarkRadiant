@@ -85,12 +85,6 @@ public:
 
     /**
      * \brief
-     * Construct and return the image created from this map expression.
-     */
-    virtual ImagePtr getImage() const = 0;
-
-    /**
-     * \brief
      * Return whether this map expression creates a cube map.
      *
      * \return

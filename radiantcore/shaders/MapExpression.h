@@ -45,6 +45,9 @@ public:
             return TexturePtr();
     }
 
+    // Abstract method to be implemented
+    virtual ImagePtr getImage() const = 0;
+
 public: /* STATIC CONSTRUCTION METHODS */
 
 	/** Creates the a MapExpression out of the given token. Nested mapexpressions
