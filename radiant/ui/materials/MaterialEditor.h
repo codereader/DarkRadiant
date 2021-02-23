@@ -68,7 +68,8 @@ private:
     void selectStageByIndex(std::size_t index);
     ShaderLayerPtr getSelectedStage();
 
-    void updateStageControlsFromSelectedStage();
+    void updateStageControls();
+    void updateStageBlendControls();
 
     void _onTreeViewSelectionChanged(wxDataViewEvent& ev);
     void _onStageListSelectionChanged(wxDataViewEvent& ev);

@@ -338,13 +338,28 @@ void MaterialEditor::setupMaterialStageProperties()
     setupStageFlag("MaterialStageFlagMaskGreen", ShaderLayer::FLAG_MASK_GREEN);
     setupStageFlag("MaterialStageFlagMaskBlue", ShaderLayer::FLAG_MASK_BLUE);
     setupStageFlag("MaterialStageFlagMaskAlpha", ShaderLayer::FLAG_MASK_ALPHA);
-    setupStageFlag("MaterialStageFlagMaskColour", ShaderLayer::FLAG_MASK_RED|ShaderLayer::FLAG_MASK_GREEN|ShaderLayer::FLAG_MASK_BLUE);
+    setupStageFlag("MaterialStageFlagMaskColour", ShaderLayer::FLAG_MASK_RED | ShaderLayer::FLAG_MASK_GREEN | ShaderLayer::FLAG_MASK_BLUE);
     setupStageFlag("MaterialStageFlagMaskDepth", ShaderLayer::FLAG_MASK_DEPTH);
+    setupStageFlag("MaterialStageIgnoreAlphaTest", ShaderLayer::FLAG_IGNORE_ALPHATEST);
 
     _stageBindings.emplace(std::make_shared<CheckBoxBinding<ShaderLayerPtr>>(getControl<wxCheckBox>("MaterialStageHasAlphaTest"),
         [=](const ShaderLayerPtr& layer)
     {
         return layer->hasAlphaTest();
+    }));
+
+    getControl<wxChoice>("MaterialStageBlendType")->Append(std::vector<wxString>({
+        "diffusemap", "bumpmap", "specularmap", "blend", "add", "filter", "modulate", "none", "Custom"
+    }));
+   
+    getControl<wxChoice>("MaterialStageBlendTypeSrc")->Append(std::vector<wxString>({
+        "", "gl_one", "gl_zero", "gl_dst_color", "gl_one_minus_dst_color", "gl_src_alpha", 
+        "gl_one_minus_src_alpha", "gl_dst_alpha", "gl_one_minus_dst_alpha", "gl_src_alpha_saturate"
+    }));
+
+    getControl<wxChoice>("MaterialStageBlendTypeDest")->Append(std::vector<wxString>({
+        "", "gl_one", "gl_zero", "gl_src_color", "gl_one_minus_src_color", "gl_src_alpha", 
+        "gl_one_minus_src_alpha", "gl_dst_alpha", "gl_one_minus_dst_alpha"
     }));
 }
 
@@ -365,7 +380,7 @@ void MaterialEditor::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
 
 void MaterialEditor::_onStageListSelectionChanged(wxDataViewEvent& ev)
 {
-    updateStageControlsFromSelectedStage();
+    updateStageControls();
 }
 
 void MaterialEditor::updateControlsFromMaterial()
@@ -490,11 +505,8 @@ void MaterialEditor::updateStageListFromMaterial()
         ++index;
     }
 
-    // Pre-select the first stage
-    if (!layers.empty())
-    {
-        selectStageByIndex(0);
-    }
+    // Pre-select the first stage (it's ok if there are no stages)
+    selectStageByIndex(0);
 }
 
 void MaterialEditor::updateMaterialPropertiesFromMaterial()
@@ -622,12 +634,13 @@ void MaterialEditor::selectStageByIndex(std::size_t index)
     if (item.IsOk())
     {
         _stageView->Select(item);
-        updateStageControlsFromSelectedStage();
     }
     else
     {
         _stageView->UnselectAll();
     }
+
+    updateStageControls();
 }
 
 ShaderLayerPtr MaterialEditor::getSelectedStage()
@@ -648,7 +661,68 @@ ShaderLayerPtr MaterialEditor::getSelectedStage()
     return ShaderLayerPtr();
 }
 
-void MaterialEditor::updateStageControlsFromSelectedStage()
+void MaterialEditor::updateStageBlendControls()
+{
+    auto selectedStage = getSelectedStage();
+
+    if (selectedStage)
+    {
+        getControl<wxChoice>("MaterialStageBlendType")->Enable();
+        auto blendTypeStrings = selectedStage->getBlendFuncStrings();
+
+        switch (selectedStage->getType())
+        {
+        case ShaderLayer::DIFFUSE:
+            blendTypeStrings.first = "diffusemap";
+            blendTypeStrings.second.clear();
+            break;
+        case ShaderLayer::BUMP:
+            blendTypeStrings.first = "bumpmap";
+            blendTypeStrings.second.clear();
+            break;
+        case ShaderLayer::SPECULAR:
+            blendTypeStrings.first = "specularmap";
+            blendTypeStrings.second.clear();
+            break;
+        };
+
+        getControl<wxChoice>("MaterialStageBlendTypeSrc")->Enable(!blendTypeStrings.second.empty());
+        getControl<wxChoice>("MaterialStageBlendTypeDest")->Enable(!blendTypeStrings.second.empty());
+
+        if (blendTypeStrings.second.empty())
+        {
+            getControl<wxChoice>("MaterialStageBlendType")->SetStringSelection(blendTypeStrings.first);
+
+            getControl<wxChoice>("MaterialStageBlendTypeSrc")->SetStringSelection("");
+            getControl<wxChoice>("MaterialStageBlendTypeDest")->SetStringSelection("");
+
+            // Get the actual src and dest blend types this shortcut is working with
+            for (const auto& pair : shaders::BlendTypeShortcuts)
+            {
+                if (blendTypeStrings.first == pair.first)
+                {
+                    getControl<wxChoice>("MaterialStageBlendTypeSrc")->SetStringSelection(pair.second.first);
+                    getControl<wxChoice>("MaterialStageBlendTypeDest")->SetStringSelection(pair.second.second);
+                    break;
+                }
+            }
+        }
+        else
+        {
+            getControl<wxChoice>("MaterialStageBlendType")->SetStringSelection("Custom");
+            getControl<wxChoice>("MaterialStageBlendTypeSrc")->SetStringSelection(blendTypeStrings.first);
+            getControl<wxChoice>("MaterialStageBlendTypeDest")->SetStringSelection(blendTypeStrings.second);
+        }
+    }
+    else
+    {
+        getControl<wxChoice>("MaterialStageBlendType")->Disable();
+        getControl<wxChoice>("MaterialStageBlendTypeSrc")->Disable();
+        getControl<wxChoice>("MaterialStageBlendTypeDest")->Disable();
+    }
+}
+
+void MaterialEditor::updateStageControls()
 {
     auto selectedStage = getSelectedStage();
 
@@ -660,11 +734,14 @@ void MaterialEditor::updateStageControlsFromSelectedStage()
 
     getControl<wxPanel>("MaterialEditorStageSettingsPanel")->Enable(selectedStage != nullptr);
 
+    updateStageBlendControls();
+
     if (selectedStage)
     {
         selectedStage->evaluateExpressions(0); // initialise the values of this stage
 
         getControl<wxSpinCtrlDouble>("MaterialStageAlphaTestValue")->SetValue(selectedStage->getAlphaTest());
+        getControl<wxSpinCtrlDouble>("MaterialStagePrivatePolygonOffset")->SetValue(selectedStage->getPrivatePolygonOffset());
     }
 }
 

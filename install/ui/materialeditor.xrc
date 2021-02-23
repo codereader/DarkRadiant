@@ -1672,7 +1672,7 @@
 																				<option>1</option>
 																				<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
 																				<border>6</border>
-																				<object class="wxChoice" name="m_choice3">
+																				<object class="wxChoice" name="MaterialStageBlendType">
 																					<selection>0</selection>
 																					<content />
 																				</object>
@@ -1690,7 +1690,7 @@
 																				<option>0</option>
 																				<flag>wxALIGN_CENTER_VERTICAL|wxALL|wxLEFT</flag>
 																				<border>6</border>
-																				<object class="wxChoice" name="m_choice4">
+																				<object class="wxChoice" name="MaterialStageBlendTypeSrc">
 																					<selection>0</selection>
 																					<content />
 																				</object>
@@ -1708,7 +1708,7 @@
 																				<option>0</option>
 																				<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
 																				<border>6</border>
-																				<object class="wxChoice" name="m_choice41">
+																				<object class="wxChoice" name="MaterialStageBlendTypeDest">
 																					<selection>0</selection>
 																					<content />
 																				</object>
@@ -1853,14 +1853,15 @@
 																					</object>
 																					<object class="sizeritem">
 																						<option>0</option>
-																						<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+																						<flag>wxLEFT</flag>
 																						<border>6</border>
-																						<object class="wxSpinCtrl" name="MaterialEditorPolygonOffset2">
+																						<object class="wxSpinCtrlDouble" name="MaterialStagePrivatePolygonOffset">
 																							<style>wxSP_ARROW_KEYS</style>
-																							<size>80,-1</size>
 																							<value>0</value>
-																							<min>-100</min>
-																							<max>100</max>
+																							<min>-9999</min>
+																							<max>9999</max>
+																							<inc>0.1</inc>
+																							<digits>1</digits>
 																						</object>
 																					</object>
 																				</object>
@@ -1894,7 +1895,7 @@
 																				<option>0</option>
 																				<flag>wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxTOP</flag>
 																				<border>6</border>
-																				<object class="wxCheckBox" name="m_checkBox53">
+																				<object class="wxCheckBox" name="MaterialStageIgnoreAlphaTest">
 																					<label>ignoreAlphaTest</label>
 																					<checked>0</checked>
 																				</object>

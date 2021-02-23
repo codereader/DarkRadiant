@@ -92,4 +92,13 @@ inline std::string getStringForDeformType(Material::DeformType type)
     return std::string();
 }
 
+constexpr std::pair<const char*, std::pair<const char*, const char*>> BlendTypeShortcuts[]
+{
+    { "blend", { "gl_src_alpha", "gl_one_minus_src_alpha" } },
+    { "add", { "gl_one", "gl_one" } },
+    { "filter", { "gl_dst_color", "gl_zero" } },
+    { "modulate", { "gl_dst_color", "gl_zero" } },
+    { "none", { "gl_zero", "gl_one" } },
+};
+
 }
