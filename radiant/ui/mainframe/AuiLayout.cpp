@@ -31,8 +31,8 @@ namespace
     wxAuiPaneInfo DEFAULT_PANE_INFO(const std::string& caption,
                                     const wxSize& minSize)
     {
-        return wxAuiPaneInfo().Caption(caption).Layer(1).CloseButton(false)
-                              .MinSize(minSize);
+        return wxAuiPaneInfo().Caption(caption).CloseButton(false)
+                              .BestSize(minSize).MinSize(minSize);
     }
 }
 
@@ -103,12 +103,12 @@ void AuiLayout::activate()
     // the 2D view on the right
     wxSize size = topLevelParent->GetSize();
     size.Scale(0.5, 1.0);
-    addPane(xywnd->getGLWidget(),
-            DEFAULT_PANE_INFO(_("2D View"), size).Right());
     addPane(_camWnd->getMainWidget(),
             DEFAULT_PANE_INFO(_("Camera"), size).Left().Position(0));
     addPane(notebookPanel,
             DEFAULT_PANE_INFO(_("Properties"), size).Left().Position(1));
+    addPane(xywnd->getGLWidget(),
+            DEFAULT_PANE_INFO(_("2D View"), size).CenterPane());
     _auiMgr.Update();
 
     // Nasty hack to get the panes sized properly. Since BestSize() is
