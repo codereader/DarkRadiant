@@ -363,7 +363,7 @@ void MaterialEditor::setupMaterialStageProperties()
     }));
 
     getControl<wxChoice>("MaterialStageMapType")->Append(std::vector<wxString>({ 
-        "map", "cubeMap", "cameraCubeMap"
+        "map", "cubeMap", "cameraCubeMap", "Special"
     }));
 }
 
@@ -752,27 +752,52 @@ void MaterialEditor::updateStageControls()
         getControl<wxSpinCtrlDouble>("MaterialStagePrivatePolygonOffset")->SetValue(selectedStage->getPrivatePolygonOffset());
 
         auto mapExpr = selectedStage->getMapExpression();
-        getControl<wxTextCtrl>("MaterialStageImageMap")->SetValue(mapExpr ? mapExpr->getExpressionString() : "");
-        getControl<wxTextCtrl>("MaterialStageMap")->SetValue(mapExpr ? mapExpr->getExpressionString() : "");
+        auto imageMap = getControl<wxTextCtrl>("MaterialStageImageMap");
+        imageMap->SetValue(mapExpr ? mapExpr->getExpressionString() : "");
+
+        auto mapTypeNotSpecial = getControl<wxRadioButton>("MaterialStageMapTypeNotSpecial");
+        auto specialMapPanel = getControl<wxPanel>("MaterialStageSpecialMapPanel");
 
         auto mapType = getControl<wxChoice>("MaterialStageMapType");
-        switch (selectedStage->getCubeMapMode())
+        switch (selectedStage->getMapType())
         {
-        case ShaderLayer::CUBE_MAP_NONE:
+        case ShaderLayer::MapType::Map:
             mapType->SetStringSelection("map");
+            mapTypeNotSpecial->SetValue(true);
+            specialMapPanel->Disable();
+            imageMap->Enable();
             break;
-        case ShaderLayer::CUBE_MAP_CAMERA:
+        case ShaderLayer::MapType::CameraCubeMap:
             mapType->SetStringSelection("cameraCubeMap");
+            mapTypeNotSpecial->SetValue(true);
+            specialMapPanel->Disable();
+            imageMap->Enable();
             break;
-        case ShaderLayer::CUBE_MAP_OBJECT:
+        case ShaderLayer::MapType::CubeMap:
             mapType->SetStringSelection("cubeMap");
+            mapTypeNotSpecial->SetValue(true);
+            specialMapPanel->Disable();
+            imageMap->Enable();
+            break;
+        case ShaderLayer::MapType::VideoMap:
+        case ShaderLayer::MapType::SoundMap:
+        case ShaderLayer::MapType::RemoteRenderMap:
+        case ShaderLayer::MapType::MirrorRenderMap:
+            mapType->SetStringSelection("Special");
+            mapTypeNotSpecial->SetValue(false);
+            specialMapPanel->Enable();
+            imageMap->Disable();
             break;
         }
+
+        getControl<wxRadioButton>("MaterialStageVideoMap")->SetValue(selectedStage->getMapType() == ShaderLayer::MapType::VideoMap);
+        getControl<wxRadioButton>("MaterialStageSoundMap")->SetValue(selectedStage->getMapType() == ShaderLayer::MapType::SoundMap);
+        getControl<wxRadioButton>("MaterialStageRemoteRenderMap")->SetValue(selectedStage->getMapType() == ShaderLayer::MapType::RemoteRenderMap);
+        getControl<wxRadioButton>("MaterialStageMirrorRenderMap")->SetValue(selectedStage->getMapType() == ShaderLayer::MapType::MirrorRenderMap);
     }
     else
     {
         getControl<wxTextCtrl>("MaterialStageImageMap")->SetValue("");
-        getControl<wxTextCtrl>("MaterialStageMap")->SetValue("");
     }
 }
 
