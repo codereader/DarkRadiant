@@ -82,6 +82,24 @@ TEST_F(EntityTest, LightEntitiesRecognisedAsLights)
     EXPECT_FALSE(brazier->isLight());
 }
 
+TEST_F(EntityTest, EntityClassInheritsAttributes)
+{
+    auto cls = GlobalEntityClassManager().findClass("light_extinguishable");
+    ASSERT_TRUE(cls);
+
+    // Inherited from 'light'
+    EXPECT_EQ(cls->getAttribute("editor_color").getValue(), "0 1 0");
+    EXPECT_EQ(cls->getAttribute("spawnclass").getValue(), "idLight");
+
+    // Inherited from 'atdm:light_base'
+    EXPECT_EQ(cls->getAttribute("AIUse").getValue(), "AIUSE_LIGHTSOURCE");
+    EXPECT_EQ(cls->getAttribute("shouldBeOn").getValue(), "0");
+
+    // Inherited but overridden on 'light_extinguishable' itself
+    EXPECT_EQ(cls->getAttribute("editor_displayFolder").getValue(),
+              "Lights/Base Entities, DoNotUse");
+}
+
 TEST_F(EntityTest, CannotCreateEntityWithoutClass)
 {
     // Creating with a null entity class should throw an exception
