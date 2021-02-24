@@ -7,6 +7,7 @@
 #include "iselection.h"
 #include "ishaders.h"
 #include "icolourscheme.h"
+#include "ieclasscolours.h"
 
 #include "render/NopVolumeTest.h"
 #include "string/convert.h"
@@ -505,6 +506,31 @@ TEST_F(EntityTest, OverrideLightVolumeColour)
     light.reset();
     registry::setValue(colours::RKEY_OVERRIDE_LIGHTCOL, true);
     registry::setValue(colours::RKEY_OVERRIDE_LIGHTCOL, false);
+}
+
+TEST_F(EntityTest, OverrideEClassColour)
+{
+    auto light = createByClassName("light");
+    auto torch = createByClassName("light_torchflame_small");
+    auto lightCls = light->getEntity().getEntityClass();
+    auto torchCls = torch->getEntity().getEntityClass();
+
+    static const Vector3 GREEN(0, 1, 0);
+    static const Vector3 YELLOW(1, 0, 1);
+
+    // Light has an explicit green editor_color
+    EXPECT_EQ(lightCls->getColour(), GREEN);
+
+    // This class does not have an explicit editor_color value, but should
+    // inherit the one from 'light'.
+    EXPECT_EQ(torchCls->getColour(), GREEN);
+
+    // Set an override for the 'light' class
+    GlobalEclassColourManager().addOverrideColour("light", YELLOW);
+
+    // Both 'light' and its subclasses should have the new colour
+    EXPECT_EQ(lightCls->getColour(), YELLOW);
+    EXPECT_EQ(torchCls->getColour(), YELLOW);
 }
 
 TEST_F(EntityTest, FuncStaticLocalToWorld)
