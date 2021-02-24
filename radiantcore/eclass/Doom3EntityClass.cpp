@@ -189,6 +189,11 @@ void Doom3EntityClass::forEachClassAttribute(
     std::function<void(const EntityClassAttribute&)> visitor,
     bool editorKeys) const
 {
+    // Visit parent attributes
+    if (_parent)
+        _parent->forEachClassAttribute(visitor, editorKeys);
+
+    // Visit our own attributes
     for (const auto& pair: _attributes)
     {
         // Visit if it is a non-editor key or we are visiting all keys
@@ -196,15 +201,6 @@ void Doom3EntityClass::forEachClassAttribute(
         {
             visitor(pair.second);
         }
-    }
-}
-
-namespace
-{
-    void copyInheritedAttribute(Doom3EntityClass* target,
-                                const EntityClassAttribute& attr)
-    {
-        target->addAttribute(EntityClassAttribute(attr, true));
     }
 }
 
@@ -228,11 +224,6 @@ void Doom3EntityClass::resolveInheritance(EntityClasses& classmap)
     {
         // Recursively resolve inheritance of parent
         pIter->second->resolveInheritance(classmap);
-
-        // Copy attributes from the parent to the child, including editor keys
-        pIter->second->forEachClassAttribute(
-            std::bind(&copyInheritedAttribute, this, std::placeholders::_1), true
-        );
 
         // Set our parent pointer
         _parent = pIter->second.get();
@@ -298,8 +289,18 @@ const EntityClassAttribute& Doom3EntityClass::getAttribute(const std::string& na
 {
     StringPtr ref(new std::string(name));
 
+    // First look up the attribute on this class; if found, we can simply return it
     auto f = _attributes.find(ref);
-    return (f != _attributes.end()) ? f->second : _emptyAttribute;
+    if (f != _attributes.end())
+        return f->second;
+
+    // If there is no parent, this is the end of the line: return an empty attribute
+    if (!_parent)
+        return _emptyAttribute;
+
+    // Otherwise delegate to the parent (which will recurse until an attribute
+    // is found or a null parent ends the process)
+    return _parent->getAttribute(name);
 }
 
 void Doom3EntityClass::clear()
