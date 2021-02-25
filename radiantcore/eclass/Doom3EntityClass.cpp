@@ -115,18 +115,21 @@ void Doom3EntityClass::setColour(const Vector3& colour)
 
 void Doom3EntityClass::resetColour()
 {
-    // (Re)set the colour
-    const EntityClassAttribute& colourAttr = getAttribute("editor_color");
+    // Look for an editor_color on this class only
+    const EntityClassAttribute& attr = getAttribute("editor_color", false);
+    if (!attr.getValue().empty())
+    {
+        return setColour(string::convert<Vector3>(attr.getValue()));
+    }
 
-    if (!colourAttr.getValue().empty())
-    {
-        setColour(string::convert<Vector3>(colourAttr.getValue()));
-    }
-    else
-    {
-        // If no colour is set, assign the default entity colour to this class
-        setColour(DefaultEntityColour);
-    }
+    // If there is a parent, use its getColour() directly, rather than its
+    // editor_color attribute, to take into account overrides through the
+    // EClassColourManager
+    if (_parent)
+        return setColour(_parent->getColour());
+
+    // No parent and no attribute, all we can use is the default colour
+    setColour(DefaultEntityColour);
 }
 
 const Vector3& Doom3EntityClass::getColour() const {
@@ -255,7 +258,15 @@ void Doom3EntityClass::resolveInheritance(EntityClasses& classmap)
         _colourTransparent = true;
     }
 
+    // Set up inheritance of entity colours: colours inherit from parent unless
+    // there is an explicit editor_color defined at this level
     resetColour();
+    if (_parent)
+    {
+        _parent->changedSignal().connect(
+            sigc::mem_fun(this, &Doom3EntityClass::resetColour)
+        );
+    }
 }
 
 bool Doom3EntityClass::isOfType(const std::string& className)
@@ -279,13 +290,18 @@ std::string Doom3EntityClass::getDefFileName()
 }
 
 // Find a single attribute
-EntityClassAttribute& Doom3EntityClass::getAttribute(const std::string& name)
+EntityClassAttribute& Doom3EntityClass::getAttribute(const std::string& name,
+                                                     bool includeInherited)
 {
-    return const_cast<EntityClassAttribute&>(std::as_const(*this).getAttribute(name));
+    return const_cast<EntityClassAttribute&>(
+        std::as_const(*this).getAttribute(name, includeInherited)
+    );
 }
 
 // Find a single attribute
-const EntityClassAttribute& Doom3EntityClass::getAttribute(const std::string& name) const
+const EntityClassAttribute&
+Doom3EntityClass::getAttribute(const std::string& name,
+                               bool includeInherited) const
 {
     StringPtr ref(new std::string(name));
 
@@ -294,8 +310,9 @@ const EntityClassAttribute& Doom3EntityClass::getAttribute(const std::string& na
     if (f != _attributes.end())
         return f->second;
 
-    // If there is no parent, this is the end of the line: return an empty attribute
-    if (!_parent)
+    // If there is no parent or we have been instructed to ignore inheritance,
+    // this is the end of the line: return an empty attribute
+    if (!_parent || !includeInherited)
         return _emptyAttribute;
 
     // Otherwise delegate to the parent (which will recurse until an attribute

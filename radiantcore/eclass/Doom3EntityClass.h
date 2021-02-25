@@ -77,9 +77,9 @@ class Doom3EntityClass
     // greebo: I've changed the EntityAttributeMap key type to StringPtr, to save
     // more than 130 MB of string data used for just the keys. A default TDM installation
     // has about 780k entity class attributes after resolving inheritance.
-    // However, the memory saving comes with a performance cost since we need 
+    // However, the memory saving comes with a performance cost since we need
     // to convert the incoming std::string queries to StringRefs before passing
-    // them to std::map::find(). During a regular DarkRadiant startup 
+    // them to std::map::find(). During a regular DarkRadiant startup
     // there are about 64k find() operations, a single idLight
     // creation costs about 30-40 find() operations, which is ok I guess.
 
@@ -165,8 +165,11 @@ public:
     void resetColour();
     const std::string& getWireShader() const override;
     const std::string& getFillShader() const override;
-    EntityClassAttribute& getAttribute(const std::string& name) override;
-    const EntityClassAttribute& getAttribute(const std::string& name) const override;
+    EntityClassAttribute& getAttribute(const std::string&,
+                                       bool includeInherited = true) override;
+    const EntityClassAttribute&
+    getAttribute(const std::string&,
+                 bool includeInherited = true) const override;
     void forEachClassAttribute(std::function<void(const EntityClassAttribute&)>,
                                bool) const override;
 

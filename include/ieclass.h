@@ -168,7 +168,7 @@ public:
      */
     EntityClassAttribute(const std::string& type_,
                          const std::string& name_,
-                         const std::string& value_, 
+                         const std::string& value_,
                          const std::string& description_ = "")
     : _typeRef(new std::string(type_)),
       _nameRef(new std::string(name_)),
@@ -180,13 +180,13 @@ public:
     /**
      * Construct a inherited EntityClassAttribute with a true inherited flag.
      * The strings are taken from the inherited attribute.
-     * Note: this is not a copy-constructor on purpose, to allow STL assignments to 
+     * Note: this is not a copy-constructor on purpose, to allow STL assignments to
      * copy the actual instance values.
      */
     EntityClassAttribute(const EntityClassAttribute& parentAttr, bool inherited_)
     : _typeRef(parentAttr._typeRef),    // take type string,
       _nameRef(parentAttr._nameRef),    // name string,
-      _valueRef(parentAttr._valueRef),  // value string 
+      _valueRef(parentAttr._valueRef),  // value string
       _descRef(parentAttr._descRef),    // and description from the parent attribute
       inherited(inherited_)
     {}
@@ -201,7 +201,7 @@ typedef std::shared_ptr<const IEntityClass> IEntityClassConstPtr;
 
 /**
  * \brief Entity class interface.
- * 
+ *
  * An entity class represents a single type of entity that can be created by
  * the EntityCreator. Entity classes are parsed from .DEF files during startup.
  *
@@ -262,15 +262,24 @@ public:
     /**
      * Return a single named EntityClassAttribute from this EntityClass.
      *
-     * @param name
+     * \param name
      * The name of the EntityClassAttribute to find, interpreted case-insensitively.
      *
-     * @return
+     * \param includeInherited
+     * true if attributes inherited from parent entity classes should be
+     * considered, false otherwise.
+     *
+     * \return
      * A reference to the named EntityClassAttribute. If the named attribute is
      * not found, an empty EntityClassAttribute is returned.
      */
-    virtual EntityClassAttribute& getAttribute(const std::string& name) = 0;
-    virtual const EntityClassAttribute& getAttribute(const std::string& name) const = 0;
+    virtual EntityClassAttribute&
+    getAttribute(const std::string& name, bool includeInherited = true) = 0;
+
+    /// Get a const EntityClassAttribute reference by name
+    virtual const EntityClassAttribute&
+    getAttribute(const std::string& name,
+                 bool includeInherited = true) const = 0;
 
     /**
      * Enumerate the EntityClassAttibutes in turn.
@@ -300,7 +309,7 @@ public:
     virtual const std::string& getSkin() const = 0;
 
 	/**
-	 * Returns true if this entity is of type or inherits from the 
+	 * Returns true if this entity is of type or inherits from the
 	 * given entity class name. className is treated case-sensitively.
 	 */
 	virtual bool isOfType(const std::string& className) = 0;
@@ -428,7 +437,7 @@ public:
      */
     virtual void reloadDefs() = 0;
 
-    /** 
+    /**
      * greebo: Finds the model def with the given name. Might return NULL if not found.
      */
     virtual IModelDefPtr findModel(const std::string& name) = 0;

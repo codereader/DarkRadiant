@@ -98,6 +98,10 @@ TEST_F(EntityTest, EntityClassInheritsAttributes)
     // Inherited but overridden on 'light_extinguishable' itself
     EXPECT_EQ(cls->getAttribute("editor_displayFolder").getValue(),
               "Lights/Base Entities, DoNotUse");
+
+    // Lookup without considering inheritance
+    EXPECT_EQ(cls->getAttribute("editor_color", false).getValue(), "");
+    EXPECT_EQ(cls->getAttribute("spawnclass", false).getValue(), "");
 }
 
 TEST_F(EntityTest, CannotCreateEntityWithoutClass)
