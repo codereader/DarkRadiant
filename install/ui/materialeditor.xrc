@@ -2054,14 +2054,17 @@
 																					<option>0</option>
 																					<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
 																					<border>0</border>
-																					<object class="wxTextCtrl" name="m_textCtrl311">
-																						<value></value>
+																					<object class="wxSpinCtrl" name="MaterialStageRemoteRenderMapWidth">
+																						<style>wxSP_ARROW_KEYS</style>
+																						<value>0</value>
+																						<min>0</min>
+																						<max>9999</max>
 																					</object>
 																				</object>
 																				<object class="sizeritem">
 																					<option>0</option>
 																					<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
-																					<border>6</border>
+																					<border>12</border>
 																					<object class="wxStaticText" name="m_staticText88">
 																						<label>Height:</label>
 																						<wrap>-1</wrap>
@@ -2069,10 +2072,13 @@
 																				</object>
 																				<object class="sizeritem">
 																					<option>0</option>
-																					<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																					<flag>wxALIGN_CENTER_VERTICAL</flag>
 																					<border>0</border>
-																					<object class="wxTextCtrl" name="m_textCtrl3111">
-																						<value></value>
+																					<object class="wxSpinCtrl" name="MaterialStageRemoteRenderMapHeight">
+																						<style>wxSP_ARROW_KEYS</style>
+																						<value>0</value>
+																						<min>0</min>
+																						<max>9999</max>
 																					</object>
 																				</object>
 																			</object>
@@ -2088,8 +2094,8 @@
 																		</object>
 																		<object class="sizeritem">
 																			<option>1</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxEXPAND</flag>
-																			<border>0</border>
+																			<flag>wxEXPAND</flag>
+																			<border>5</border>
 																			<object class="wxBoxSizer">
 																				<orient>wxHORIZONTAL</orient>
 																				<object class="sizeritem">
@@ -2105,14 +2111,17 @@
 																					<option>0</option>
 																					<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
 																					<border>0</border>
-																					<object class="wxTextCtrl" name="m_textCtrl3112">
-																						<value></value>
+																					<object class="wxSpinCtrl" name="MaterialStageMirrorRenderMapWidth">
+																						<style>wxSP_ARROW_KEYS</style>
+																						<value>0</value>
+																						<min>0</min>
+																						<max>9999</max>
 																					</object>
 																				</object>
 																				<object class="sizeritem">
 																					<option>0</option>
 																					<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
-																					<border>6</border>
+																					<border>12</border>
 																					<object class="wxStaticText" name="m_staticText881">
 																						<label>Height:</label>
 																						<wrap>-1</wrap>
@@ -2120,10 +2129,13 @@
 																				</object>
 																				<object class="sizeritem">
 																					<option>0</option>
-																					<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																					<flag>wxALIGN_CENTER_VERTICAL</flag>
 																					<border>0</border>
-																					<object class="wxTextCtrl" name="m_textCtrl31111">
-																						<value></value>
+																					<object class="wxSpinCtrl" name="MaterialStageMirrorRenderMapHeight">
+																						<style>wxSP_ARROW_KEYS</style>
+																						<value>0</value>
+																						<min>0</min>
+																						<max>9999</max>
 																					</object>
 																				</object>
 																			</object>

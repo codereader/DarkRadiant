@@ -762,6 +762,12 @@ void MaterialEditor::updateStageControls()
         auto videoMapLoop = getControl<wxCheckBox>("MaterialStageVideoMapLoop");
         auto soundMapWave = getControl<wxCheckBox>("MaterialStageSoundMapWaveform");
 
+        auto remoteRenderMapWidth = getControl<wxSpinCtrl>("MaterialStageRemoteRenderMapWidth");
+        auto remoteRenderMapHeight = getControl<wxSpinCtrl>("MaterialStageRemoteRenderMapHeight");
+
+        auto mirrorRenderMapWidth = getControl<wxSpinCtrl>("MaterialStageMirrorRenderMapWidth");
+        auto mirrorRenderMapHeight = getControl<wxSpinCtrl>("MaterialStageMirrorRenderMapHeight");
+
         auto mapType = getControl<wxChoice>("MaterialStageMapType");
 
         if (selectedStage->getMapType() == ShaderLayer::MapType::VideoMap ||
@@ -782,6 +788,10 @@ void MaterialEditor::updateStageControls()
             videoMapFile->SetValue("");
             videoMapLoop->SetValue(false);
             soundMapWave->SetValue(false);
+            remoteRenderMapWidth->SetValue(0);
+            remoteRenderMapHeight->SetValue(0);
+            mirrorRenderMapWidth->SetValue(0);
+            mirrorRenderMapHeight->SetValue(0);
         }
 
         switch (selectedStage->getMapType())
@@ -809,7 +819,12 @@ void MaterialEditor::updateStageControls()
             }
             break;
         case ShaderLayer::MapType::RemoteRenderMap:
+            remoteRenderMapWidth->SetValue(static_cast<int>(selectedStage->getRenderMapSize().x()));
+            remoteRenderMapHeight->SetValue(static_cast<int>(selectedStage->getRenderMapSize().y()));
+            break;
         case ShaderLayer::MapType::MirrorRenderMap:
+            mirrorRenderMapWidth->SetValue(static_cast<int>(selectedStage->getRenderMapSize().x()));
+            mirrorRenderMapHeight->SetValue(static_cast<int>(selectedStage->getRenderMapSize().y()));
             break;
         }
 

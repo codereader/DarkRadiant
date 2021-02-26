@@ -1174,7 +1174,9 @@ bool ShaderTemplate::parseCondition(parser::DefTokeniser& tokeniser, const std::
 bool ShaderTemplate::saveLayer()
 {
     // Append layer to list of all layers
-    if (_currentLayer->getBindableTexture())
+    if (_currentLayer->getBindableTexture() || 
+        _currentLayer->getMapType() == ShaderLayer::MapType::RemoteRenderMap ||
+        _currentLayer->getMapType() == ShaderLayer::MapType::MirrorRenderMap)
     {
 		addLayer(_currentLayer);
     }
