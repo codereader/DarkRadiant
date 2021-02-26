@@ -758,35 +758,51 @@ void MaterialEditor::updateStageControls()
         auto mapTypeNotSpecial = getControl<wxRadioButton>("MaterialStageMapTypeNotSpecial");
         auto specialMapPanel = getControl<wxPanel>("MaterialStageSpecialMapPanel");
 
+        auto videoMapFile = getControl<wxTextCtrl>("MaterialStageVideoMapFile");
+        auto videoMapLoop = getControl<wxCheckBox>("MaterialStageVideoMapLoop");
+
         auto mapType = getControl<wxChoice>("MaterialStageMapType");
-        switch (selectedStage->getMapType())
+
+        if (selectedStage->getMapType() == ShaderLayer::MapType::VideoMap ||
+            selectedStage->getMapType() == ShaderLayer::MapType::SoundMap ||
+            selectedStage->getMapType() == ShaderLayer::MapType::RemoteRenderMap ||
+            selectedStage->getMapType() == ShaderLayer::MapType::MirrorRenderMap)
         {
-        case ShaderLayer::MapType::Map:
-            mapType->SetStringSelection("map");
-            mapTypeNotSpecial->SetValue(true);
-            specialMapPanel->Disable();
-            imageMap->Enable();
-            break;
-        case ShaderLayer::MapType::CameraCubeMap:
-            mapType->SetStringSelection("cameraCubeMap");
-            mapTypeNotSpecial->SetValue(true);
-            specialMapPanel->Disable();
-            imageMap->Enable();
-            break;
-        case ShaderLayer::MapType::CubeMap:
-            mapType->SetStringSelection("cubeMap");
-            mapTypeNotSpecial->SetValue(true);
-            specialMapPanel->Disable();
-            imageMap->Enable();
-            break;
-        case ShaderLayer::MapType::VideoMap:
-        case ShaderLayer::MapType::SoundMap:
-        case ShaderLayer::MapType::RemoteRenderMap:
-        case ShaderLayer::MapType::MirrorRenderMap:
             mapType->SetStringSelection("Special");
             mapTypeNotSpecial->SetValue(false);
             specialMapPanel->Enable();
             imageMap->Disable();
+        }
+        else
+        {
+            mapTypeNotSpecial->SetValue(true);
+            specialMapPanel->Disable();
+            imageMap->Enable();
+            videoMapFile->SetValue("");
+            videoMapLoop->SetValue(false);
+        }
+
+        switch (selectedStage->getMapType())
+        {
+        case ShaderLayer::MapType::Map:
+            mapType->SetStringSelection("map");
+            break;
+        case ShaderLayer::MapType::CameraCubeMap:
+            mapType->SetStringSelection("cameraCubeMap");
+            break;
+        case ShaderLayer::MapType::CubeMap:
+            mapType->SetStringSelection("cubeMap");
+            break;
+        case ShaderLayer::MapType::VideoMap:
+            {
+                auto videoMapExpression = std::dynamic_pointer_cast<shaders::IVideoMapExpression>(selectedStage->getMapExpression());
+                videoMapFile->SetValue(videoMapExpression ? videoMapExpression->getExpressionString() : "");
+                videoMapLoop->SetValue(videoMapExpression ? videoMapExpression->isLooping() : false);
+            }
+            break;
+        case ShaderLayer::MapType::SoundMap:
+        case ShaderLayer::MapType::RemoteRenderMap:
+        case ShaderLayer::MapType::MirrorRenderMap:
             break;
         }
 
@@ -798,6 +814,7 @@ void MaterialEditor::updateStageControls()
     else
     {
         getControl<wxTextCtrl>("MaterialStageImageMap")->SetValue("");
+        getControl<wxTextCtrl>("MaterialStageVideoMapFile")->SetValue("");
     }
 }
 

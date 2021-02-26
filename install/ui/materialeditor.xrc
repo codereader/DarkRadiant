@@ -1993,7 +1993,7 @@
 																					<option>1</option>
 																					<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
 																					<border>0</border>
-																					<object class="wxTextCtrl" name="m_textCtrl31">
+																					<object class="wxTextCtrl" name="MaterialStageVideoMapFile">
 																						<value></value>
 																					</object>
 																				</object>
@@ -2001,7 +2001,7 @@
 																					<option>0</option>
 																					<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
 																					<border>6</border>
-																					<object class="wxCheckBox" name="m_checkBox37">
+																					<object class="wxCheckBox" name="MaterialStageVideoMapLoop">
 																						<label>Loop</label>
 																						<checked>0</checked>
 																					</object>
