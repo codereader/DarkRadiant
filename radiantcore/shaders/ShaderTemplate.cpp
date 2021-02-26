@@ -615,8 +615,9 @@ bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
 
 		try
 		{
-			std::stoi(tokeniser.nextToken());
-			std::stoi(tokeniser.nextToken());
+			auto width = std::stoi(tokeniser.nextToken());
+            auto height = std::stoi(tokeniser.nextToken());
+            _currentLayer->setRenderMapSize(Vector2(width, height));
 		}
 		catch (std::logic_error& e)
 		{
@@ -627,11 +628,13 @@ bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
 	else if (token == "mirrorrendermap")
 	{
         _currentLayer->setMapType(ShaderLayer::MapType::MirrorRenderMap);
+        _currentLayer->setTexGenType(ShaderLayer::TexGenType::TEXGEN_SCREEN);
 
 		try
 		{
-			std::stoi(tokeniser.nextToken());
-			std::stoi(tokeniser.nextToken());
+            auto width = std::stoi(tokeniser.nextToken());
+            auto height = std::stoi(tokeniser.nextToken());
+            _currentLayer->setRenderMapSize(Vector2(width, height));
 		}
 		catch (std::invalid_argument& e)
 		{

@@ -113,6 +113,8 @@ private:
     // Stage-specific polygon offset, is 0 if not used
     float _privatePolygonOffset;
 
+    Vector2 _renderMapSize;
+
 public:
 
     // Constructor
@@ -129,6 +131,9 @@ public:
 
     MapType getMapType() const override;
     void setMapType(MapType type);
+
+    const Vector2& getRenderMapSize() override;
+    void setRenderMapSize(const Vector2& size);
 
     bool hasAlphaTest() const override;
     float getAlphaTest() const override;

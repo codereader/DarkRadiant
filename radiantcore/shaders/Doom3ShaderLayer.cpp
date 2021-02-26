@@ -226,6 +226,16 @@ void Doom3ShaderLayer::setMapType(MapType type)
     _mapType = type;
 }
 
+const Vector2& Doom3ShaderLayer::getRenderMapSize()
+{
+    return _renderMapSize;
+}
+
+void Doom3ShaderLayer::setRenderMapSize(const Vector2& size)
+{
+    _renderMapSize = size;
+}
+
 bool Doom3ShaderLayer::hasAlphaTest() const
 {
     return _alphaTest != REG_ZERO;

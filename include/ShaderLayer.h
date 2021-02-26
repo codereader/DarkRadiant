@@ -93,6 +93,7 @@ public:
 		TEXGEN_REFLECT		= 1 << 1,
 		TEXGEN_SKYBOX		= 1 << 2,
 		TEXGEN_WOBBLESKY	= 1 << 3,
+		TEXGEN_SCREEN	    = 1 << 4, // screen aligned, for mirrorRenders and screen space temporaries
 	};
 
     /**
@@ -211,6 +212,12 @@ public:
      * Get the cube map mode for this layer.
      */
     virtual CubeMapMode getCubeMapMode() const = 0;
+
+    /**
+     * Returns the dimensions specifying the map size for 
+     * stages using the "mirrorRenderMap", "remoteRenderMap" keywords.
+     */
+    virtual const Vector2& getRenderMapSize() = 0;
 
 	/**
 	 * Returns the value of the scale expressions of this stage.
