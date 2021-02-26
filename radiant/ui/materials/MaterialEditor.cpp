@@ -760,6 +760,7 @@ void MaterialEditor::updateStageControls()
 
         auto videoMapFile = getControl<wxTextCtrl>("MaterialStageVideoMapFile");
         auto videoMapLoop = getControl<wxCheckBox>("MaterialStageVideoMapLoop");
+        auto soundMapWave = getControl<wxCheckBox>("MaterialStageSoundMapWaveform");
 
         auto mapType = getControl<wxChoice>("MaterialStageMapType");
 
@@ -780,6 +781,7 @@ void MaterialEditor::updateStageControls()
             imageMap->Enable();
             videoMapFile->SetValue("");
             videoMapLoop->SetValue(false);
+            soundMapWave->SetValue(false);
         }
 
         switch (selectedStage->getMapType())
@@ -801,6 +803,11 @@ void MaterialEditor::updateStageControls()
             }
             break;
         case ShaderLayer::MapType::SoundMap:
+            {
+                auto soundMapExpression = std::dynamic_pointer_cast<shaders::ISoundMapExpression>(selectedStage->getMapExpression());
+                soundMapWave->SetValue(soundMapExpression ? soundMapExpression->isWaveform() : false);
+            }
+            break;
         case ShaderLayer::MapType::RemoteRenderMap:
         case ShaderLayer::MapType::MirrorRenderMap:
             break;

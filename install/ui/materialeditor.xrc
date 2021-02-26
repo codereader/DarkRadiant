@@ -2021,7 +2021,7 @@
 																			<option>0</option>
 																			<flag>wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxTOP</flag>
 																			<border>3</border>
-																			<object class="wxCheckBox" name="m_checkBox38">
+																			<object class="wxCheckBox" name="MaterialStageSoundMapWaveform">
 																				<label>Waveform</label>
 																				<checked>0</checked>
 																			</object>
