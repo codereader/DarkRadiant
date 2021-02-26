@@ -1,7 +1,9 @@
 #include "ShaderTemplate.h"
 #include "MapExpression.h"
 #include "CameraCubeMapDecl.h"
+
 #include "VideoMapExpression.h"
+#include "SoundMapExpression.h"
 
 #include "itextstream.h"
 
@@ -603,12 +605,9 @@ bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
 	else if (token == "soundmap")
 	{
         _currentLayer->setMapType(ShaderLayer::MapType::SoundMap);
-
-		// This stage should render as sound meter/map - skip this information for now
-		if (tokeniser.peek() == "waveform")
-		{
-			tokeniser.skipTokens(1);
-		}
+        _currentLayer->setBindableTexture(
+            SoundMapExpression::CreateForTokens(tokeniser)
+        );
 	}
 	else if (token == "remoterendermap")
 	{

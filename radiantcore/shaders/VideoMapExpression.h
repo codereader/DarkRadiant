@@ -47,8 +47,8 @@ public:
 
     virtual TexturePtr bindTexture(const std::string& name) const override
     {
-        auto bimapsPath = module::GlobalModuleRegistry().getApplicationContext().getBitmapsPath();
-        auto img = GlobalImageLoader().imageFromFile(bimapsPath + VIDEO_MAP_PLACEHOLDER);
+        auto bitmapsPath = module::GlobalModuleRegistry().getApplicationContext().getBitmapsPath();
+        auto img = GlobalImageLoader().imageFromFile(bitmapsPath + VIDEO_MAP_PLACEHOLDER);
         
         return img ? img->bindTexture(name) : TexturePtr();
     }

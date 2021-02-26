@@ -109,4 +109,14 @@ public:
     virtual bool isLooping() const = 0;
 };
 
+class ISoundMapExpression :
+    public IMapExpression
+{
+public:
+    virtual ~ISoundMapExpression() {}
+
+    // Whether the sound map should use the waveform display mode
+    virtual bool isWaveform() const = 0;
+};
+
 } // namespace
