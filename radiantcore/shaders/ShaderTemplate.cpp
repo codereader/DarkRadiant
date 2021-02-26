@@ -1,6 +1,7 @@
 #include "ShaderTemplate.h"
 #include "MapExpression.h"
 #include "CameraCubeMapDecl.h"
+#include "VideoMapExpression.h"
 
 #include "itextstream.h"
 
@@ -595,15 +596,9 @@ bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
 	else if (token == "videomap")
     {
         _currentLayer->setMapType(ShaderLayer::MapType::VideoMap);
-
-		std::string nextToken = tokeniser.nextToken();
-		string::to_lower(nextToken);
-
-		if (nextToken == "loop")
-		{
-			// Skip looping keyword and ignore the videomap expression
-			tokeniser.skipTokens(1);
-		}
+        _currentLayer->setBindableTexture(
+            VideoMapExpression::CreateForTokens(tokeniser)
+        );
     }
 	else if (token == "soundmap")
 	{

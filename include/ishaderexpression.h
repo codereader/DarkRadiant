@@ -99,4 +99,14 @@ public:
     virtual std::string getExpressionString() = 0;
 };
 
+class IVideoMapExpression :
+    public IMapExpression
+{
+public:
+    virtual ~IVideoMapExpression() {}
+
+    // Whether the cinematic is looping
+    virtual bool isLooping() const = 0;
+};
+
 } // namespace

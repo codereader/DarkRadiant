@@ -1020,6 +1020,7 @@
     <ClInclude Include="..\..\radiantcore\shaders\textures\GLTextureManager.h" />
     <ClInclude Include="..\..\radiantcore\shaders\textures\HeightmapCreator.h" />
     <ClInclude Include="..\..\radiantcore\shaders\textures\TextureManipulator.h" />
+    <ClInclude Include="..\..\radiantcore\shaders\VideoMapExpression.h" />
     <ClInclude Include="..\..\radiantcore\skins\Doom3ModelSkin.h" />
     <ClInclude Include="..\..\radiantcore\skins\Doom3SkinCache.h" />
     <ClInclude Include="..\..\radiantcore\undo\Operation.h" />

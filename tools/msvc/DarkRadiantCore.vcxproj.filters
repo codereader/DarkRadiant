@@ -2079,5 +2079,8 @@
     <ClInclude Include="..\..\radiantcore\entity\AttachmentData.h">
       <Filter>src\entity</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiantcore\shaders\VideoMapExpression.h">
+      <Filter>src\shaders</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
