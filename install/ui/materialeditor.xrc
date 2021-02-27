@@ -2174,12 +2174,82 @@
 																		</object>
 																	</object>
 																	<object class="sizeritem">
-																		<option>0</option>
-																		<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
+																		<option>1</option>
+																		<flag>wxALIGN_CENTER_VERTICAL|wxEXPAND</flag>
 																		<border>0</border>
-																		<object class="wxChoice" name="MaterialStageTexGenType">
-																			<selection>0</selection>
-																			<content />
+																		<object class="wxBoxSizer">
+																			<orient>wxHORIZONTAL</orient>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
+																				<border>0</border>
+																				<object class="wxChoice" name="MaterialStageTexGenType">
+																					<selection>0</selection>
+																					<content />
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>1</option>
+																				<flag>wxEXPAND | wxALL</flag>
+																				<border>0</border>
+																				<object class="wxPanel" name="MaterialStageWobblySkyPanel">
+																					<style>wxTAB_TRAVERSAL</style>
+																					<object class="wxBoxSizer">
+																						<orient>wxHORIZONTAL</orient>
+																						<object class="sizeritem">
+																							<option>0</option>
+																							<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
+																							<border>6</border>
+																							<object class="wxStaticText" name="m_staticText91">
+																								<label>x:</label>
+																								<wrap>-1</wrap>
+																							</object>
+																						</object>
+																						<object class="sizeritem">
+																							<option>1</option>
+																							<flag>wxALIGN_CENTER_VERTICAL</flag>
+																							<border>6</border>
+																							<object class="wxTextCtrl" name="MaterialStageWobbleSkyX">
+																								<value></value>
+																							</object>
+																						</object>
+																						<object class="sizeritem">
+																							<option>0</option>
+																							<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
+																							<border>6</border>
+																							<object class="wxStaticText" name="m_staticText92">
+																								<label>y:</label>
+																								<wrap>-1</wrap>
+																							</object>
+																						</object>
+																						<object class="sizeritem">
+																							<option>1</option>
+																							<flag>wxALIGN_CENTER_VERTICAL</flag>
+																							<border>0</border>
+																							<object class="wxTextCtrl" name="MaterialStageWobbleSkyY">
+																								<value></value>
+																							</object>
+																						</object>
+																						<object class="sizeritem">
+																							<option>0</option>
+																							<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
+																							<border>6</border>
+																							<object class="wxStaticText" name="m_staticText93">
+																								<label>z:</label>
+																								<wrap>-1</wrap>
+																							</object>
+																						</object>
+																						<object class="sizeritem">
+																							<option>1</option>
+																							<flag>wxALIGN_CENTER_VERTICAL</flag>
+																							<border>0</border>
+																							<object class="wxTextCtrl" name="MaterialStageWobbleSkyZ">
+																								<value></value>
+																							</object>
+																						</object>
+																					</object>
+																				</object>
+																			</object>
 																		</object>
 																	</object>
 																	<object class="sizeritem">

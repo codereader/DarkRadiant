@@ -866,10 +866,21 @@ void MaterialEditor::updateStageControls()
         {
             auto texgenName = shaders::getStringForTexGenType(selectedStage->getTexGenType());
             texgenDropdown->Select(texgenDropdown->FindString(texgenName));
+
+            if (selectedStage->getTexGenType() == ShaderLayer::TEXGEN_WOBBLESKY)
+            {
+                getControl<wxPanel>("MaterialStageWobblySkyPanel")->Show();
+
+            }
+            else
+            {
+                getControl<wxPanel>("MaterialStageWobblySkyPanel")->Hide();
+            }
         }
         else
         {
             texgenDropdown->Select(0);
+            getControl<wxPanel>("MaterialStageWobblySkyPanel")->Hide();
         }
     }
     else
