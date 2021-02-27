@@ -91,6 +91,7 @@ private:
 
     // The register indices of this stage's scale expressions
     std::size_t _scale[2];
+    std::size_t _scaleExpression[2];
 
     // The register indices of this stage's translate expressions
     std::size_t _translation[2];
@@ -98,9 +99,11 @@ private:
 
     // The rotation register index
     std::size_t _rotation;
+    std::size_t _rotationExpression;
 
     // The register indices of this stage's shear expressions
     std::size_t _shear[2];
+    std::size_t _shearExpression[2];
 
     // The shader programs used in this stage
     std::string _vertexProgram;
@@ -325,13 +328,22 @@ public:
         return Vector2(_registers[_scale[0]], _registers[_scale[1]]);
     }
 
+    const shaders::IShaderExpressionPtr& getScaleExpression(std::size_t index) override
+    {
+        assert(index < 2);
+        auto expressionIndex = _scaleExpression[index];
+        return expressionIndex != NOT_DEFINED ? _expressions[expressionIndex] : NULL_EXPRESSION;
+    }
+
     /**
      * Set the scale expressions of this stage, overwriting any previous scales.
      */
     void setScale(const IShaderExpressionPtr& xExpr, const IShaderExpressionPtr& yExpr)
     {
-        _expressions.push_back(xExpr);
-        _expressions.push_back(yExpr);
+        _scaleExpression[0] = _expressions.size();
+        _expressions.emplace_back(xExpr);
+        _scaleExpression[1] = _expressions.size();
+        _expressions.emplace_back(yExpr);
 
         _scale[0] = xExpr->linkToRegister(_registers);
         _scale[1] = yExpr->linkToRegister(_registers);
@@ -368,12 +380,18 @@ public:
         return _registers[_rotation];
     }
 
+    const shaders::IShaderExpressionPtr& getRotationExpression() override
+    {
+        return _rotationExpression != NOT_DEFINED ? _expressions[_rotationExpression] : NULL_EXPRESSION;
+    }
+
     /**
      * Set the "rotate" expression of this stage, overwriting any previous one.
      */
     void setRotation(const IShaderExpressionPtr& expr)
     {
-        _expressions.push_back(expr);
+        _rotationExpression = _expressions.size();
+        _expressions.emplace_back(expr);
 
         _rotation = expr->linkToRegister(_registers);
     }
@@ -383,13 +401,22 @@ public:
         return Vector2(_registers[_shear[0]], _registers[_shear[1]]);
     }
 
+    const shaders::IShaderExpressionPtr& getShearExpression(std::size_t index) override
+    {
+        assert(index < 2);
+        auto expressionIndex = _shearExpression[index];
+        return expressionIndex != NOT_DEFINED ? _expressions[expressionIndex] : NULL_EXPRESSION;
+    }
+
     /**
      * Set the shear expressions of this stage, overwriting any previous ones.
      */
     void setShear(const IShaderExpressionPtr& xExpr, const IShaderExpressionPtr& yExpr)
     {
-        _expressions.push_back(xExpr);
-        _expressions.push_back(yExpr);
+        _shearExpression[0] = _expressions.size();
+        _expressions.emplace_back(xExpr);
+        _shearExpression[1] = _expressions.size();
+        _expressions.emplace_back(yExpr);
 
         _shear[0] = xExpr->linkToRegister(_registers);
         _shear[1] = yExpr->linkToRegister(_registers);

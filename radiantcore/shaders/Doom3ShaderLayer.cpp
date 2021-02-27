@@ -105,8 +105,8 @@ Doom3ShaderLayer::Doom3ShaderLayer(ShaderTemplate& material, ShaderLayer::Type t
 	_colIdx[3] = REG_ONE;
 
 	// Scale is set to 1,1 by default
-	_scale[0] = REG_ONE;
-	_scale[1] = REG_ONE;
+	_scale[0] = _scale[1] = REG_ONE;
+    _scaleExpression[0] = _scaleExpression[1] = NOT_DEFINED;
 
 	// Translation is set to 0,0 by default
 	_translation[0] = _translation[1] = REG_ZERO;
@@ -114,10 +114,12 @@ Doom3ShaderLayer::Doom3ShaderLayer(ShaderTemplate& material, ShaderLayer::Type t
 
 	// Rotation is set to 0 by default
 	_rotation = REG_ZERO;
+    _rotationExpression = NOT_DEFINED;
 
 	// No shearing so far
 	_shear[0] = REG_ZERO;
 	_shear[1] = REG_ZERO;
+    _shearExpression[0] = _shearExpression[1] = NOT_DEFINED;
 
 	_texGenParams[0] = _texGenParams[1] = _texGenParams[2] = REG_ZERO;
 }

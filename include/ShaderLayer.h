@@ -233,6 +233,9 @@ public:
 	 */
 	virtual Vector2 getScale() = 0;
 
+    // Returns the expression of the given scale component (0 == x, 1 == y)
+    virtual const shaders::IShaderExpressionPtr& getScaleExpression(std::size_t index) = 0;
+
 	/**
 	 * Returns the value of the translate expressions of this stage.
 	 */
@@ -246,10 +249,16 @@ public:
 	 */
 	virtual float getRotation() = 0;
 
+    // Returns the expression used to calculate the rotation value
+    virtual const shaders::IShaderExpressionPtr& getRotationExpression() = 0;
+
 	/**
 	 * Returns the value of the 'shear' expressions of this stage.
 	 */
 	virtual Vector2 getShear() = 0;
+
+    // Returns the expression of the given shear component (0 == x, 1 == y)
+    virtual const shaders::IShaderExpressionPtr& getShearExpression(std::size_t index) = 0;
 
     // Returns true if this layer has an alphatest expression defined
     virtual bool hasAlphaTest() const = 0;
