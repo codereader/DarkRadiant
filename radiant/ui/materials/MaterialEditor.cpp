@@ -923,9 +923,15 @@ void MaterialEditor::updateStageControls()
         getControl<wxRadioButton>("MaterialStageSoundMap")->SetValue(selectedStage->getMapType() == ShaderLayer::MapType::SoundMap);
         getControl<wxRadioButton>("MaterialStageRemoteRenderMap")->SetValue(selectedStage->getMapType() == ShaderLayer::MapType::RemoteRenderMap);
         getControl<wxRadioButton>("MaterialStageMirrorRenderMap")->SetValue(selectedStage->getMapType() == ShaderLayer::MapType::MirrorRenderMap);
+
+        // Vertex Colours
+        getControl<wxRadioButton>("MaterialStageNoVertexColourFlag")->SetValue(selectedStage->getVertexColourMode() == ShaderLayer::VERTEX_COLOUR_NONE);
+        getControl<wxRadioButton>("MaterialStageVertexColourFlag")->SetValue(selectedStage->getVertexColourMode() == ShaderLayer::VERTEX_COLOUR_MULTIPLY);
+        getControl<wxRadioButton>("MaterialStageInverseVertexColourFlag")->SetValue(selectedStage->getVertexColourMode() == ShaderLayer::VERTEX_COLOUR_INVERSE_MULTIPLY);
     }
     else
     {
+        getControl<wxRadioButton>("MaterialStageNoVertexColourFlag")->SetValue(true);
         getControl<wxTextCtrl>("MaterialStageImageMap")->SetValue("");
         getControl<wxTextCtrl>("MaterialStageVideoMapFile")->SetValue("");
     }

@@ -2652,7 +2652,7 @@
 												</object>
 												<object class="notebookpage">
 													<label>Vertex Colour</label>
-													<selected>0</selected>
+													<selected>1</selected>
 													<object class="wxPanel" name="m_panel611">
 														<style>wxTAB_TRAVERSAL</style>
 														<object class="wxBoxSizer">
@@ -2671,27 +2671,36 @@
 																			<orient>wxHORIZONTAL</orient>
 																			<object class="sizeritem">
 																				<option>0</option>
-																				<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxTOP</flag>
 																				<border>6</border>
-																				<object class="wxCheckBox" name="m_checkBox75">
-																					<label>vertexColour</label>
-																					<checked>0</checked>
+																				<object class="wxRadioButton" name="MaterialStageNoVertexColourFlag">
+																					<label>No Vertex Color</label>
+																					<value>0</value>
 																				</object>
 																			</object>
 																			<object class="sizeritem">
 																				<option>0</option>
-																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxTOP</flag>
 																				<border>6</border>
-																				<object class="wxCheckBox" name="m_checkBox76">
-																					<label>inverseVertexColour</label>
-																					<checked>0</checked>
+																				<object class="wxRadioButton" name="MaterialStageVertexColourFlag">
+																					<label>vertexColor</label>
+																					<value>0</value>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxTOP</flag>
+																				<border>6</border>
+																				<object class="wxRadioButton" name="MaterialStageInverseVertexColourFlag">
+																					<label>inverseVertexColor</label>
+																					<value>0</value>
 																				</object>
 																			</object>
 																			<object class="sizeritem">
 																				<option>0</option>
 																				<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
 																				<border>24</border>
-																				<object class="wxCheckBox" name="m_checkBox761">
+																				<object class="wxCheckBox" name="MaterialStageColored">
 																					<tooltip>Shortcut for &quot;color parm0, parm1, parm2, parm3&quot;</tooltip>
 																					<label>colored</label>
 																					<checked>0</checked>
@@ -2900,7 +2909,7 @@
 												</object>
 												<object class="notebookpage">
 													<label>Condition</label>
-													<selected>1</selected>
+													<selected>0</selected>
 													<object class="wxPanel" name="m_panel6111">
 														<style>wxTAB_TRAVERSAL</style>
 														<object class="wxBoxSizer">
