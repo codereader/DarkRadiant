@@ -45,6 +45,7 @@ private:
     Expressions _expressions;
 
     static const IShaderExpressionPtr NULL_EXPRESSION;
+    static const std::size_t NOT_DEFINED = std::numeric_limits<std::size_t>::max();
 
     // The condition register for this stage. Points to a register to be interpreted as bool.
     std::size_t _condition;
@@ -93,6 +94,7 @@ private:
 
     // The register indices of this stage's translate expressions
     std::size_t _translation[2];
+    std::size_t _translationExpression[2];
 
     // The rotation register index
     std::size_t _rotation;
@@ -340,13 +342,22 @@ public:
         return Vector2(_registers[_translation[0]], _registers[_translation[1]]);
     }
 
+    const shaders::IShaderExpressionPtr& getTranslationExpression(std::size_t index)
+    {
+        assert(index < 2);
+        auto expressionIndex = _translationExpression[index];
+        return expressionIndex != NOT_DEFINED ? _expressions[expressionIndex] : NULL_EXPRESSION;
+    }
+
     /**
      * Set the "translate" expressions of this stage, overwriting any previous expressions.
      */
     void setTranslation(const IShaderExpressionPtr& xExpr, const IShaderExpressionPtr& yExpr)
     {
-        _expressions.push_back(xExpr);
-        _expressions.push_back(yExpr);
+        _translationExpression[0] = _expressions.size();
+        _expressions.emplace_back(xExpr);
+        _translationExpression[1] = _expressions.size();
+        _expressions.emplace_back(yExpr);
 
         _translation[0] = xExpr->linkToRegister(_registers);
         _translation[1] = yExpr->linkToRegister(_registers);

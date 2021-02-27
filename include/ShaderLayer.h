@@ -238,6 +238,9 @@ public:
 	 */
 	virtual Vector2 getTranslation() = 0;
 
+    // Returns the expression of the given translation component (0 == x, 1 == y)
+    virtual const shaders::IShaderExpressionPtr& getTranslationExpression(std::size_t index) = 0;
+
 	/**
 	 * Returns the value of the rotate expression of this stage.
 	 */

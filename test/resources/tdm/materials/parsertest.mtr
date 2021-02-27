@@ -125,3 +125,19 @@ textures/parsertest/deform6
 {
 	deform particle2 testparticle
 }
+
+textures/parsertest/transform/translation1
+{
+	{
+        map _white
+        translate 3, parm3*3
+    }
+}
+
+textures/parsertest/transform/translation2
+{
+	{
+        map _white
+        scroll time, .5
+    }
+}

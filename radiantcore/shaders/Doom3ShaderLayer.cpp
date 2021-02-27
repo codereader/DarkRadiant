@@ -109,8 +109,8 @@ Doom3ShaderLayer::Doom3ShaderLayer(ShaderTemplate& material, ShaderLayer::Type t
 	_scale[1] = REG_ONE;
 
 	// Translation is set to 0,0 by default
-	_translation[0] = REG_ZERO;
-	_translation[1] = REG_ZERO;
+	_translation[0] = _translation[1] = REG_ZERO;
+    _translationExpression[0] = _translationExpression[1] = NOT_DEFINED;
 
 	// Rotation is set to 0 by default
 	_rotation = REG_ZERO;

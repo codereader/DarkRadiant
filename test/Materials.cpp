@@ -244,4 +244,15 @@ TEST_F(MaterialsTest, MaterialParserDeform)
     EXPECT_FALSE(material->getDeformExpression(2));
 }
 
+TEST_F(MaterialsTest, MaterialParserStageTranslate)
+{
+    auto material = GlobalMaterialManager().getMaterialForName("textures/parsertest/transform/translation1");
+    EXPECT_EQ(material->getAllLayers().front()->getTranslationExpression(0)->getExpressionString(), "3.0");
+    EXPECT_EQ(material->getAllLayers().front()->getTranslationExpression(1)->getExpressionString(), "parm3 * 3.0");
+
+    material = GlobalMaterialManager().getMaterialForName("textures/parsertest/transform/translation2");
+    EXPECT_EQ(material->getAllLayers().front()->getTranslationExpression(0)->getExpressionString(), "time");
+    EXPECT_EQ(material->getAllLayers().front()->getTranslationExpression(1)->getExpressionString(), "0.5");
+}
+
 }
