@@ -2435,7 +2435,7 @@
 																				<option>1</option>
 																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
 																				<border>0</border>
-																				<object class="wxTextCtrl" name="MaterialStageTransformX">
+																				<object class="wxTextCtrl" name="MaterialStageTranslateX">
 																					<value></value>
 																				</object>
 																			</object>
@@ -2452,7 +2452,7 @@
 																				<option>1</option>
 																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
 																				<border>0</border>
-																				<object class="wxTextCtrl" name="MaterialStageTransformY">
+																				<object class="wxTextCtrl" name="MaterialStageTranslateY">
 																					<value></value>
 																				</object>
 																			</object>
@@ -2486,7 +2486,7 @@
 																				<option>1</option>
 																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
 																				<border>0</border>
-																				<object class="wxTextCtrl" name="m_textCtrl4311">
+																				<object class="wxTextCtrl" name="MaterialStageScaleX">
 																					<value></value>
 																				</object>
 																			</object>
@@ -2503,7 +2503,7 @@
 																				<option>1</option>
 																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
 																				<border>0</border>
-																				<object class="wxTextCtrl" name="m_textCtrl4411">
+																				<object class="wxTextCtrl" name="MaterialStageScaleY">
 																					<value></value>
 																				</object>
 																			</object>
@@ -2537,7 +2537,7 @@
 																				<option>1</option>
 																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
 																				<border>0</border>
-																				<object class="wxTextCtrl" name="m_textCtrl43111">
+																				<object class="wxTextCtrl" name="MaterialStageCenterScaleX">
 																					<value></value>
 																				</object>
 																			</object>
@@ -2554,7 +2554,7 @@
 																				<option>1</option>
 																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
 																				<border>0</border>
-																				<object class="wxTextCtrl" name="m_textCtrl44111">
+																				<object class="wxTextCtrl" name="MaterialStageCenterScaleY">
 																					<value></value>
 																				</object>
 																			</object>
@@ -2588,7 +2588,7 @@
 																				<option>1</option>
 																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
 																				<border>0</border>
-																				<object class="wxTextCtrl" name="m_textCtrl431111">
+																				<object class="wxTextCtrl" name="MaterialStageShearX">
 																					<value></value>
 																				</object>
 																			</object>
@@ -2605,7 +2605,7 @@
 																				<option>1</option>
 																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
 																				<border>0</border>
-																				<object class="wxTextCtrl" name="m_textCtrl441111">
+																				<object class="wxTextCtrl" name="MaterialStageShearY">
 																					<value></value>
 																				</object>
 																			</object>
@@ -2639,7 +2639,7 @@
 																				<option>1</option>
 																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
 																				<border>0</border>
-																				<object class="wxTextCtrl" name="m_textCtrl4311111">
+																				<object class="wxTextCtrl" name="MaterialStageRotate">
 																					<value></value>
 																				</object>
 																			</object>

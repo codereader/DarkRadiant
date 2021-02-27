@@ -394,10 +394,28 @@ void MaterialEditor::setupMaterialStageProperties()
         texgenDropdown->AppendString(pair.first);
     }
 
-    _stageBindings.emplace(std::make_shared<ExpressionBinding<ShaderLayerPtr>>(getControl<wxTextCtrl>("MaterialStageTransformX"),
+    _stageBindings.emplace(std::make_shared<ExpressionBinding<ShaderLayerPtr>>(getControl<wxTextCtrl>("MaterialStageTranslateX"),
         [=](const ShaderLayerPtr& layer) { return layer->getTranslationExpression(0); }));
-    _stageBindings.emplace(std::make_shared<ExpressionBinding<ShaderLayerPtr>>(getControl<wxTextCtrl>("MaterialStageTransformY"),
+    _stageBindings.emplace(std::make_shared<ExpressionBinding<ShaderLayerPtr>>(getControl<wxTextCtrl>("MaterialStageTranslateY"),
         [=](const ShaderLayerPtr& layer) { return layer->getTranslationExpression(1); }));
+
+    _stageBindings.emplace(std::make_shared<ExpressionBinding<ShaderLayerPtr>>(getControl<wxTextCtrl>("MaterialStageScaleX"),
+        [=](const ShaderLayerPtr& layer) { return layer->getScaleExpression(0); }));
+    _stageBindings.emplace(std::make_shared<ExpressionBinding<ShaderLayerPtr>>(getControl<wxTextCtrl>("MaterialStageScaleY"),
+        [=](const ShaderLayerPtr& layer) { return layer->getScaleExpression(1); }));
+
+    _stageBindings.emplace(std::make_shared<ExpressionBinding<ShaderLayerPtr>>(getControl<wxTextCtrl>("MaterialStageCenterScaleX"),
+        [=](const ShaderLayerPtr& layer) { return layer->getCenterScaleExpression(0); }));
+    _stageBindings.emplace(std::make_shared<ExpressionBinding<ShaderLayerPtr>>(getControl<wxTextCtrl>("MaterialStageCenterScaleY"),
+        [=](const ShaderLayerPtr& layer) { return layer->getCenterScaleExpression(1); }));
+
+    _stageBindings.emplace(std::make_shared<ExpressionBinding<ShaderLayerPtr>>(getControl<wxTextCtrl>("MaterialStageShearX"),
+        [=](const ShaderLayerPtr& layer) { return layer->getShearExpression(0); }));
+    _stageBindings.emplace(std::make_shared<ExpressionBinding<ShaderLayerPtr>>(getControl<wxTextCtrl>("MaterialStageShearY"),
+        [=](const ShaderLayerPtr& layer) { return layer->getShearExpression(1); }));
+
+    _stageBindings.emplace(std::make_shared<ExpressionBinding<ShaderLayerPtr>>(getControl<wxTextCtrl>("MaterialStageRotate"),
+        [=](const ShaderLayerPtr& layer) { return layer->getRotationExpression(); }));
 }
 
 void MaterialEditor::_onTreeViewSelectionChanged(wxDataViewEvent& ev)

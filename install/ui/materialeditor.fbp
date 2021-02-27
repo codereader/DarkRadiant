@@ -14071,7 +14071,7 @@
                                                                                             <property name="minimize_button">0</property>
                                                                                             <property name="minimum_size"></property>
                                                                                             <property name="moveable">1</property>
-                                                                                            <property name="name">MaterialStageTransformX</property>
+                                                                                            <property name="name">MaterialStageTranslateX</property>
                                                                                             <property name="pane_border">1</property>
                                                                                             <property name="pane_position"></property>
                                                                                             <property name="pane_size"></property>
@@ -14196,7 +14196,7 @@
                                                                                             <property name="minimize_button">0</property>
                                                                                             <property name="minimum_size"></property>
                                                                                             <property name="moveable">1</property>
-                                                                                            <property name="name">MaterialStageTransformY</property>
+                                                                                            <property name="name">MaterialStageTranslateY</property>
                                                                                             <property name="pane_border">1</property>
                                                                                             <property name="pane_position"></property>
                                                                                             <property name="pane_size"></property>
@@ -14393,7 +14393,7 @@
                                                                                             <property name="minimize_button">0</property>
                                                                                             <property name="minimum_size"></property>
                                                                                             <property name="moveable">1</property>
-                                                                                            <property name="name">m_textCtrl4311</property>
+                                                                                            <property name="name">MaterialStageScaleX</property>
                                                                                             <property name="pane_border">1</property>
                                                                                             <property name="pane_position"></property>
                                                                                             <property name="pane_size"></property>
@@ -14518,7 +14518,7 @@
                                                                                             <property name="minimize_button">0</property>
                                                                                             <property name="minimum_size"></property>
                                                                                             <property name="moveable">1</property>
-                                                                                            <property name="name">m_textCtrl4411</property>
+                                                                                            <property name="name">MaterialStageScaleY</property>
                                                                                             <property name="pane_border">1</property>
                                                                                             <property name="pane_position"></property>
                                                                                             <property name="pane_size"></property>
@@ -14715,7 +14715,7 @@
                                                                                             <property name="minimize_button">0</property>
                                                                                             <property name="minimum_size"></property>
                                                                                             <property name="moveable">1</property>
-                                                                                            <property name="name">m_textCtrl43111</property>
+                                                                                            <property name="name">MaterialStageCenterScaleX</property>
                                                                                             <property name="pane_border">1</property>
                                                                                             <property name="pane_position"></property>
                                                                                             <property name="pane_size"></property>
@@ -14840,7 +14840,7 @@
                                                                                             <property name="minimize_button">0</property>
                                                                                             <property name="minimum_size"></property>
                                                                                             <property name="moveable">1</property>
-                                                                                            <property name="name">m_textCtrl44111</property>
+                                                                                            <property name="name">MaterialStageCenterScaleY</property>
                                                                                             <property name="pane_border">1</property>
                                                                                             <property name="pane_position"></property>
                                                                                             <property name="pane_size"></property>
@@ -15037,7 +15037,7 @@
                                                                                             <property name="minimize_button">0</property>
                                                                                             <property name="minimum_size"></property>
                                                                                             <property name="moveable">1</property>
-                                                                                            <property name="name">m_textCtrl431111</property>
+                                                                                            <property name="name">MaterialStageShearX</property>
                                                                                             <property name="pane_border">1</property>
                                                                                             <property name="pane_position"></property>
                                                                                             <property name="pane_size"></property>
@@ -15162,7 +15162,7 @@
                                                                                             <property name="minimize_button">0</property>
                                                                                             <property name="minimum_size"></property>
                                                                                             <property name="moveable">1</property>
-                                                                                            <property name="name">m_textCtrl441111</property>
+                                                                                            <property name="name">MaterialStageShearY</property>
                                                                                             <property name="pane_border">1</property>
                                                                                             <property name="pane_position"></property>
                                                                                             <property name="pane_size"></property>
@@ -15359,7 +15359,7 @@
                                                                                             <property name="minimize_button">0</property>
                                                                                             <property name="minimum_size"></property>
                                                                                             <property name="moveable">1</property>
-                                                                                            <property name="name">m_textCtrl4311111</property>
+                                                                                            <property name="name">MaterialStageRotate</property>
                                                                                             <property name="pane_border">1</property>
                                                                                             <property name="pane_position"></property>
                                                                                             <property name="pane_size"></property>
