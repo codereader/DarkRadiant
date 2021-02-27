@@ -286,6 +286,9 @@ public:
 	 */
 	virtual bool isVisible() const = 0;
 
+    // Returns the if-expression used to evaluate this stage's visibility, or null if none defined
+    virtual const shaders::IShaderExpressionPtr& getConditionExpression() = 0;
+
 	/**
 	 * Returns the name of this stage's fragment program.
 	 */

@@ -49,6 +49,7 @@ private:
 
     // The condition register for this stage. Points to a register to be interpreted as bool.
     std::size_t _condition;
+    std::size_t _conditionExpression;
 
     // The bindable texture for this stage
     NamedBindablePtr _bindableTex;
@@ -153,10 +154,16 @@ public:
         return _registers[_condition] != 0;
     }
 
+    const shaders::IShaderExpressionPtr& getConditionExpression() override
+    {
+        return _conditionExpression != NOT_DEFINED ? _expressions[_conditionExpression] : NULL_EXPRESSION;
+    }
+
     void setCondition(const IShaderExpressionPtr& conditionExpr)
     {
         // Store the expression in our list
-        _expressions.push_back(conditionExpr);
+        _conditionExpression = _expressions.size();
+        _expressions.emplace_back(conditionExpr);
 
         // Link the result to our local registers
         _condition = conditionExpr->linkToRegister(_registers);

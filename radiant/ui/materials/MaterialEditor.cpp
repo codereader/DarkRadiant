@@ -416,6 +416,9 @@ void MaterialEditor::setupMaterialStageProperties()
 
     _stageBindings.emplace(std::make_shared<ExpressionBinding<ShaderLayerPtr>>(getControl<wxTextCtrl>("MaterialStageRotate"),
         [=](const ShaderLayerPtr& layer) { return layer->getRotationExpression(); }));
+
+    _stageBindings.emplace(std::make_shared<ExpressionBinding<ShaderLayerPtr>>(getControl<wxTextCtrl>("MaterialStageCondition"),
+        [=](const ShaderLayerPtr& layer) { return layer->getConditionExpression(); }));
 }
 
 void MaterialEditor::_onTreeViewSelectionChanged(wxDataViewEvent& ev)

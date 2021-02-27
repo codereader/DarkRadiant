@@ -82,6 +82,7 @@ Doom3ShaderLayer::Doom3ShaderLayer(ShaderTemplate& material, ShaderLayer::Type t
 :	_material(material),
 	_registers(NUM_RESERVED_REGISTERS),
 	_condition(REG_ONE),
+    _conditionExpression(NOT_DEFINED),
 	_bindableTex(btex),
 	_type(type),
     _mapType(MapType::Map),
