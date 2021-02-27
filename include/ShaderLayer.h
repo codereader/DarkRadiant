@@ -153,6 +153,9 @@ public:
 	 */
 	virtual float getTexGenParam(std::size_t index) const = 0;
 
+    // The expressions used to calcualte the tex gen params. Index in [0..2]
+    virtual shaders::IShaderExpressionPtr getTexGenExpression(std::size_t index) const = 0;
+
     /**
      * \brief
      * Return the GL blend function for this layer.

@@ -871,6 +871,14 @@ void MaterialEditor::updateStageControls()
             {
                 getControl<wxPanel>("MaterialStageWobblySkyPanel")->Show();
 
+                auto wobbleSkyX = selectedStage->getTexGenExpression(0);
+                getControl<wxTextCtrl>("MaterialStageWobbleSkyX")->SetValue(wobbleSkyX ? wobbleSkyX->getExpressionString() : "");
+
+                auto wobbleSkyY = selectedStage->getTexGenExpression(1);
+                getControl<wxTextCtrl>("MaterialStageWobbleSkyY")->SetValue(wobbleSkyY ? wobbleSkyY->getExpressionString() : "");
+
+                auto wobbleSkyZ = selectedStage->getTexGenExpression(2);
+                getControl<wxTextCtrl>("MaterialStageWobbleSkyZ")->SetValue(wobbleSkyZ ? wobbleSkyZ->getExpressionString() : "");
             }
             else
             {

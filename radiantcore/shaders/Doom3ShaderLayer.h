@@ -85,7 +85,8 @@ private:
 
     // texgen normal, reflect, skybox, wobblesky
     TexGenType _texGenType;
-    float _texGenParams[3]; // 3 parameters for wobblesky texgen
+    std::size_t _texGenParams[3]; // 3 registers for wobblesky texgen
+    IShaderExpressionPtr _texGenExpressions[3]; // the 3 expressions
 
     // The register indices of this stage's scale expressions
     std::size_t _scale[2];
@@ -158,17 +159,17 @@ public:
 
     void evaluateExpressions(std::size_t time) 
     {
-        for (Expressions::iterator i = _expressions.begin(); i != _expressions.end(); ++i)
+        for (const auto& i : _expressions)
         {
-            (*i)->evaluate(time);
+            i->evaluate(time);
         }
     }
 
     void evaluateExpressions(std::size_t time, const IRenderEntity& entity)
     {
-        for (Expressions::iterator i = _expressions.begin(); i != _expressions.end(); ++i)
+        for (const auto& i : _expressions)
         {
-            (*i)->evaluate(time, entity);
+            i->evaluate(time, entity);
         }
     }
 
@@ -248,16 +249,26 @@ public:
         _texGenType = type;
     }
 
-    float getTexGenParam(std::size_t index) const 
+    float getTexGenParam(std::size_t index) const override
     {
         assert(index < 3);
-        return _texGenParams[index];
+        return _registers[_texGenParams[index]];
     }
 
-    void setTexGenParam(std::size_t index, float value)
+    IShaderExpressionPtr getTexGenExpression(std::size_t index) const override
     {
         assert(index < 3);
-        _texGenParams[index] = value;
+        return _texGenExpressions[index];
+    }
+
+    void setTexGenExpression(std::size_t index, const IShaderExpressionPtr& expression)
+    {
+        assert(index < 3);
+
+        // Store the expression in our list
+        _expressions.push_back(expression);
+        _texGenExpressions[index] = expression;
+        _texGenParams[index] = expression->linkToRegister(_registers);
     }
 
     /**
