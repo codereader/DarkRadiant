@@ -331,6 +331,25 @@ public:
     const shaders::IShaderExpressionPtr& getScaleExpression(std::size_t index) override
     {
         assert(index < 2);
+
+        if (getStageFlags() & FLAG_CENTERSCALE)
+        {
+            return NULL_EXPRESSION;
+        }
+
+        auto expressionIndex = _scaleExpression[index];
+        return expressionIndex != NOT_DEFINED ? _expressions[expressionIndex] : NULL_EXPRESSION;
+    }
+
+    const shaders::IShaderExpressionPtr& getCenterScaleExpression(std::size_t index) override
+    {
+        assert(index < 2);
+        
+        if ((getStageFlags() & FLAG_CENTERSCALE) == 0)
+        {
+            return NULL_EXPRESSION;
+        }
+
         auto expressionIndex = _scaleExpression[index];
         return expressionIndex != NOT_DEFINED ? _expressions[expressionIndex] : NULL_EXPRESSION;
     }

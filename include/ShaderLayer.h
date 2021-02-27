@@ -236,6 +236,13 @@ public:
     // Returns the expression of the given scale component (0 == x, 1 == y)
     virtual const shaders::IShaderExpressionPtr& getScaleExpression(std::size_t index) = 0;
 
+    // Workaround: the shader layer is storing the centerscale expression in the same location as scale expressions,
+    // making them mutually exclusive - which is not the way the idTech4 materials work.
+    // These stage transforms need to be redesigned to support an arbitrary number of transforms respecting their order.
+    // Texture Matrix calculation needs to be performed by the stage itself, not in OpenGLShaderPass
+    // I need to go ahead with the material editor, so I'm not changing it immediately
+    virtual const shaders::IShaderExpressionPtr& getCenterScaleExpression(std::size_t index) = 0;
+
 	/**
 	 * Returns the value of the translate expressions of this stage.
 	 */

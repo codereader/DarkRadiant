@@ -279,6 +279,17 @@ TEST_F(MaterialsTest, MaterialParserStageScale)
     EXPECT_EQ(material->getAllLayers().front()->getScaleExpression(1)->getExpressionString(), "time * 3.0");
 }
 
+TEST_F(MaterialsTest, MaterialParserStageCenterScale)
+{
+    auto material = GlobalMaterialManager().getMaterialForName("textures/parsertest/transform/notransform");
+    EXPECT_FALSE(material->getAllLayers().front()->getCenterScaleExpression(0));
+    EXPECT_FALSE(material->getAllLayers().front()->getCenterScaleExpression(1));
+
+    material = GlobalMaterialManager().getMaterialForName("textures/parsertest/transform/centerscale1");
+    EXPECT_EQ(material->getAllLayers().front()->getCenterScaleExpression(0)->getExpressionString(), "4.0");
+    EXPECT_EQ(material->getAllLayers().front()->getCenterScaleExpression(1)->getExpressionString(), "time * 3.0");
+}
+
 TEST_F(MaterialsTest, MaterialParserStageShear)
 {
     auto material = GlobalMaterialManager().getMaterialForName("textures/parsertest/transform/notransform");

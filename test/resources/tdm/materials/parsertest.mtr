@@ -158,6 +158,14 @@ textures/parsertest/transform/scale1
     }
 }
 
+textures/parsertest/transform/centerscale1
+{
+	{
+        map _white
+        centerscale 4, time*3
+    }
+}
+
 textures/parsertest/transform/shear1
 {
 	{
