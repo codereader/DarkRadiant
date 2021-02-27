@@ -126,6 +126,14 @@ textures/parsertest/deform6
 	deform particle2 testparticle
 }
 
+textures/parsertest/transform/notransform
+{
+	{
+        map _white
+        // no transforms
+    }
+}
+
 textures/parsertest/transform/translation1
 {
 	{
@@ -141,3 +149,28 @@ textures/parsertest/transform/translation2
         scroll time, .5
     }
 }
+
+textures/parsertest/transform/scale1
+{
+	{
+        map _white
+        scale 4, time*3
+    }
+}
+
+textures/parsertest/transform/shear1
+{
+	{
+        map _white
+        shear global3, 4
+    }
+}
+
+textures/parsertest/transform/rotate1
+{
+	{
+        map _white
+        rotate .03
+    }
+}
+

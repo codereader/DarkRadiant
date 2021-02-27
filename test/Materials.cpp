@@ -246,13 +246,48 @@ TEST_F(MaterialsTest, MaterialParserDeform)
 
 TEST_F(MaterialsTest, MaterialParserStageTranslate)
 {
-    auto material = GlobalMaterialManager().getMaterialForName("textures/parsertest/transform/translation1");
+    auto material = GlobalMaterialManager().getMaterialForName("textures/parsertest/transform/notransform");
+    EXPECT_FALSE(material->getAllLayers().front()->getTranslationExpression(0));
+    EXPECT_FALSE(material->getAllLayers().front()->getTranslationExpression(1));
+
+    material = GlobalMaterialManager().getMaterialForName("textures/parsertest/transform/translation1");
     EXPECT_EQ(material->getAllLayers().front()->getTranslationExpression(0)->getExpressionString(), "3.0");
     EXPECT_EQ(material->getAllLayers().front()->getTranslationExpression(1)->getExpressionString(), "parm3 * 3.0");
 
     material = GlobalMaterialManager().getMaterialForName("textures/parsertest/transform/translation2");
     EXPECT_EQ(material->getAllLayers().front()->getTranslationExpression(0)->getExpressionString(), "time");
     EXPECT_EQ(material->getAllLayers().front()->getTranslationExpression(1)->getExpressionString(), "0.5");
+}
+
+TEST_F(MaterialsTest, MaterialParserStageRotate)
+{
+    auto material = GlobalMaterialManager().getMaterialForName("textures/parsertest/transform/notransform");
+    EXPECT_FALSE(material->getAllLayers().front()->getRotationExpression());
+
+    material = GlobalMaterialManager().getMaterialForName("textures/parsertest/transform/rotate1");
+    EXPECT_EQ(material->getAllLayers().front()->getRotationExpression()->getExpressionString(), "0.03");
+}
+
+TEST_F(MaterialsTest, MaterialParserStageScale)
+{
+    auto material = GlobalMaterialManager().getMaterialForName("textures/parsertest/transform/notransform");
+    EXPECT_FALSE(material->getAllLayers().front()->getScaleExpression(0));
+    EXPECT_FALSE(material->getAllLayers().front()->getScaleExpression(1));
+
+    material = GlobalMaterialManager().getMaterialForName("textures/parsertest/transform/scale1");
+    EXPECT_EQ(material->getAllLayers().front()->getScaleExpression(0)->getExpressionString(), "4.0");
+    EXPECT_EQ(material->getAllLayers().front()->getScaleExpression(1)->getExpressionString(), "time * 3.0");
+}
+
+TEST_F(MaterialsTest, MaterialParserStageShear)
+{
+    auto material = GlobalMaterialManager().getMaterialForName("textures/parsertest/transform/notransform");
+    EXPECT_FALSE(material->getAllLayers().front()->getShearExpression(0));
+    EXPECT_FALSE(material->getAllLayers().front()->getShearExpression(1));
+
+    material = GlobalMaterialManager().getMaterialForName("textures/parsertest/transform/shear1");
+    EXPECT_EQ(material->getAllLayers().front()->getShearExpression(0)->getExpressionString(), "global3");
+    EXPECT_EQ(material->getAllLayers().front()->getShearExpression(1)->getExpressionString(), "4.0");
 }
 
 }
