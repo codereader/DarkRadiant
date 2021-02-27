@@ -115,6 +115,8 @@ private:
 
     Vector2 _renderMapSize;
 
+    int _parseFlags;
+
 public:
 
     // Constructor
@@ -527,6 +529,9 @@ public:
     std::string getMapImageFilename() override;
 
     shaders::IMapExpression::Ptr getMapExpression() override;
+
+    int getParseFlags() override;
+    void setParseFlag(ParseFlags flag);
 };
 
 /**

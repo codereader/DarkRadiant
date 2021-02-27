@@ -562,6 +562,7 @@ bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
 	else if (token == "texgen")
 	{
 		std::string type = tokeniser.nextToken();
+        _currentLayer->setParseFlag(ShaderLayer::PF_HasTexGenKeyword);
 
 		if (type == "skybox")
 		{
@@ -966,6 +967,7 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 	else if (token == "noclamp")
 	{
 		_currentLayer->setClampType(CLAMP_REPEAT);
+        _currentLayer->setParseFlag(ShaderLayer::PF_HasNoclampKeyword);
 	}
 	else if (token == "uncompressed" || token == "highquality")
 	{

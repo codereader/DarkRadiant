@@ -2,6 +2,7 @@
 
 #include <map>
 #include "ishaders.h"
+#include "ShaderLayer.h"
 
 namespace shaders
 {
@@ -100,5 +101,26 @@ constexpr std::pair<const char*, std::pair<const char*, const char*>> BlendTypeS
     { "modulate", { "gl_dst_color", "gl_zero" } },
     { "none", { "gl_zero", "gl_one" } },
 };
+
+constexpr std::pair<const char*, ShaderLayer::TexGenType> TexGenTypeNames[]
+{
+    { "normal", ShaderLayer::TEXGEN_NORMAL },
+    { "reflect", ShaderLayer::TEXGEN_REFLECT },
+    { "skybox", ShaderLayer::TEXGEN_SKYBOX },
+    { "wobbleSky", ShaderLayer::TEXGEN_WOBBLESKY },
+};
+
+inline std::string getStringForTexGenType(ShaderLayer::TexGenType type)
+{
+    for (const auto& pair : TexGenTypeNames)
+    {
+        if (type == pair.second)
+        {
+            return pair.first;
+        }
+    }
+
+    return std::string();
+}
 
 }

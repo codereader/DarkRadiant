@@ -365,6 +365,33 @@ void MaterialEditor::setupMaterialStageProperties()
     getControl<wxChoice>("MaterialStageMapType")->Append(std::vector<wxString>({ 
         "map", "cubeMap", "cameraCubeMap", "Special"
     }));
+
+    // Texture
+    _stageBindings.emplace(std::make_shared<CheckBoxBinding<ShaderLayerPtr>>(getControl<wxCheckBox>("MaterialStageClamp"),
+        [=](const ShaderLayerPtr& layer) { return layer->getClampType() == CLAMP_NOREPEAT; }));
+    _stageBindings.emplace(std::make_shared<CheckBoxBinding<ShaderLayerPtr>>(getControl<wxCheckBox>("MaterialStageNoclamp"),
+        [=](const ShaderLayerPtr& layer)
+    { 
+        return layer->getClampType() == CLAMP_REPEAT && (layer->getParseFlags() & ShaderLayer::PF_HasNoclampKeyword) != 0; 
+    }));
+    _stageBindings.emplace(std::make_shared<CheckBoxBinding<ShaderLayerPtr>>(getControl<wxCheckBox>("MaterialStageZeroClamp"),
+        [=](const ShaderLayerPtr& layer) { return layer->getClampType() == CLAMP_ZEROCLAMP; }));
+    _stageBindings.emplace(std::make_shared<CheckBoxBinding<ShaderLayerPtr>>(getControl<wxCheckBox>("MaterialStageAlphaZeroClamp"),
+        [=](const ShaderLayerPtr& layer) { return layer->getClampType() == CLAMP_ALPHAZEROCLAMP; }));
+
+    setupStageFlag("MaterialStageFilterNearest", ShaderLayer::FLAG_FILTER_NEAREST);
+    setupStageFlag("MaterialStageFilterLinear", ShaderLayer::FLAG_FILTER_LINEAR);
+    setupStageFlag("MaterialStageHighQuality", ShaderLayer::FLAG_HIGHQUALITY);
+    setupStageFlag("MaterialStageForceHighQuality", ShaderLayer::FLAG_FORCE_HIGHQUALITY);
+    setupStageFlag("MaterialStageNoPicMip", ShaderLayer::FLAG_NO_PICMIP);
+
+    auto texgenDropdown = getControl<wxChoice>("MaterialStageTexGenType");
+    texgenDropdown->AppendString("");
+
+    for (const auto& pair : shaders::TexGenTypeNames)
+    {
+        texgenDropdown->AppendString(pair.first);
+    }
 }
 
 void MaterialEditor::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
@@ -832,6 +859,18 @@ void MaterialEditor::updateStageControls()
         getControl<wxRadioButton>("MaterialStageSoundMap")->SetValue(selectedStage->getMapType() == ShaderLayer::MapType::SoundMap);
         getControl<wxRadioButton>("MaterialStageRemoteRenderMap")->SetValue(selectedStage->getMapType() == ShaderLayer::MapType::RemoteRenderMap);
         getControl<wxRadioButton>("MaterialStageMirrorRenderMap")->SetValue(selectedStage->getMapType() == ShaderLayer::MapType::MirrorRenderMap);
+
+        auto texgenDropdown = getControl<wxChoice>("MaterialStageTexGenType");
+
+        if (selectedStage->getParseFlags() & ShaderLayer::PF_HasTexGenKeyword)
+        {
+            auto texgenName = shaders::getStringForTexGenType(selectedStage->getTexGenType());
+            texgenDropdown->Select(texgenDropdown->FindString(texgenName));
+        }
+        else
+        {
+            texgenDropdown->Select(0);
+        }
     }
     else
     {

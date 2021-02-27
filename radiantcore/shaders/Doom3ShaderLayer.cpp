@@ -92,7 +92,8 @@ Doom3ShaderLayer::Doom3ShaderLayer(ShaderTemplate& material, ShaderLayer::Type t
 	_clampType(CLAMP_REPEAT),
 	_alphaTest(REG_ZERO),
 	_texGenType(TEXGEN_NORMAL),
-	_privatePolygonOffset(0)
+	_privatePolygonOffset(0),
+    _parseFlags(0)
 {
 	_registers[REG_ZERO] = 0;
 	_registers[REG_ONE] = 1;
@@ -271,6 +272,16 @@ std::string Doom3ShaderLayer::getMapImageFilename()
 IMapExpression::Ptr Doom3ShaderLayer::getMapExpression()
 {
     return std::dynamic_pointer_cast<IMapExpression>(_bindableTex);
+}
+
+int Doom3ShaderLayer::getParseFlags()
+{
+    return _parseFlags;
+}
+
+void Doom3ShaderLayer::setParseFlag(ParseFlags flag)
+{
+    _parseFlags |= flag;
 }
 
 }

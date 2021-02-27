@@ -96,6 +96,12 @@ public:
 		TEXGEN_SCREEN	    = 1 << 4, // screen aligned, for mirrorRenders and screen space temporaries
 	};
 
+    enum ParseFlags
+    {
+        PF_HasTexGenKeyword =   1 << 1, // texgen has been specified
+        PF_HasNoclampKeyword =     1 << 2, // noclamp has been specified
+    };
+
     /**
      * \brief
 	 * Destructor
@@ -295,6 +301,9 @@ public:
 
     // The map expression used to generate/define the texture of this stage
     virtual shaders::IMapExpression::Ptr getMapExpression() = 0;
+
+    // Parser information, to reconstruct the use of certain keywords
+    virtual int getParseFlags() = 0;
 };
 
 /**

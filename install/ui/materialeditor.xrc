@@ -1926,7 +1926,7 @@
 												</object>
 												<object class="notebookpage">
 													<label>Special Map</label>
-													<selected>1</selected>
+													<selected>0</selected>
 													<object class="wxPanel" name="SpecialMapPanel">
 														<style>wxTAB_TRAVERSAL</style>
 														<object class="wxBoxSizer">
@@ -2148,21 +2148,26 @@
 												</object>
 												<object class="notebookpage">
 													<label>Texture</label>
-													<selected>0</selected>
-													<object class="wxPanel" name="m_panel7">
+													<selected>1</selected>
+													<object class="wxPanel" name="TexturePanel">
 														<style>wxTAB_TRAVERSAL</style>
 														<object class="wxBoxSizer">
 															<orient>wxVERTICAL</orient>
 															<object class="sizeritem">
-																<option>0</option>
-																<flag>wxBOTTOM|wxEXPAND|wxTOP</flag>
+																<option>1</option>
+																<flag>wxALL|wxEXPAND</flag>
 																<border>6</border>
-																<object class="wxBoxSizer">
-																	<orient>wxHORIZONTAL</orient>
+																<object class="wxFlexGridSizer">
+																	<rows>7</rows>
+																	<cols>2</cols>
+																	<vgap>6</vgap>
+																	<hgap>12</hgap>
+																	<growablecols>1</growablecols>
+																	<growablerows></growablerows>
 																	<object class="sizeritem">
 																		<option>0</option>
 																		<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
-																		<border>6</border>
+																		<border>0</border>
 																		<object class="wxStaticText" name="m_staticText102">
 																			<label>texGen:</label>
 																			<wrap>-1</wrap>
@@ -2171,133 +2176,142 @@
 																	<object class="sizeritem">
 																		<option>0</option>
 																		<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
-																		<border>6</border>
-																		<object class="wxChoice" name="m_choice14">
+																		<border>0</border>
+																		<object class="wxChoice" name="MaterialStageTexGenType">
 																			<selection>0</selection>
 																			<content />
 																		</object>
 																	</object>
 																	<object class="sizeritem">
 																		<option>0</option>
-																		<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
-																		<border>6</border>
-																		<object class="wxCheckBox" name="m_checkBox54">
-																			<label>clamp</label>
-																			<checked>0</checked>
-																		</object>
-																	</object>
-																	<object class="sizeritem">
-																		<option>0</option>
-																		<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
-																		<border>6</border>
-																		<object class="wxCheckBox" name="m_checkBox57">
-																			<label>noclamp</label>
-																			<checked>0</checked>
-																		</object>
-																	</object>
-																	<object class="sizeritem">
-																		<option>0</option>
-																		<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
-																		<border>6</border>
-																		<object class="wxCheckBox" name="m_checkBox55">
-																			<label>zeroclamp</label>
-																			<checked>0</checked>
-																		</object>
-																	</object>
-																	<object class="sizeritem">
-																		<option>0</option>
-																		<flag>wxALIGN_CENTER_VERTICAL</flag>
-																		<border>6</border>
-																		<object class="wxCheckBox" name="m_checkBox56">
-																			<label>alphazeroclamp</label>
-																			<checked>0</checked>
-																		</object>
-																	</object>
-																</object>
-															</object>
-															<object class="sizeritem">
-																<option>0</option>
-																<flag>wxALL|wxEXPAND</flag>
-																<border>6</border>
-																<object class="wxBoxSizer">
-																	<orient>wxHORIZONTAL</orient>
-																</object>
-															</object>
-															<object class="sizeritem">
-																<option>0</option>
-																<flag>wxBOTTOM|wxEXPAND|wxTOP</flag>
-																<border>6</border>
-																<object class="wxBoxSizer">
-																	<orient>wxHORIZONTAL</orient>
-																	<object class="sizeritem">
-																		<option>0</option>
-																		<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
-																		<border>6</border>
-																		<object class="wxStaticText" name="m_staticText1021">
-																			<label>Quality:</label>
+																		<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																		<border>0</border>
+																		<object class="wxStaticText" name="m_staticText90">
+																			<label>Clamping:</label>
 																			<wrap>-1</wrap>
 																		</object>
 																	</object>
 																	<object class="sizeritem">
 																		<option>0</option>
+																		<flag>wxBOTTOM|wxEXPAND|wxTOP</flag>
+																		<border>6</border>
+																		<object class="wxBoxSizer">
+																			<orient>wxHORIZONTAL</orient>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
+																				<border>0</border>
+																				<object class="wxCheckBox" name="MaterialStageClamp">
+																					<label>clamp</label>
+																					<checked>0</checked>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
+																				<border>6</border>
+																				<object class="wxCheckBox" name="MaterialStageNoclamp">
+																					<label>noclamp</label>
+																					<checked>0</checked>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
+																				<border>6</border>
+																				<object class="wxCheckBox" name="MaterialStageZeroClamp">
+																					<label>zeroclamp</label>
+																					<checked>0</checked>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL</flag>
+																				<border>6</border>
+																				<object class="wxCheckBox" name="MaterialStageAlphaZeroClamp">
+																					<label>alphazeroclamp</label>
+																					<checked>0</checked>
+																				</object>
+																			</object>
+																		</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>0</option>
 																		<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
-																		<border>12</border>
-																		<object class="wxCheckBox" name="m_checkBox58">
-																			<label>nearest</label>
-																			<checked>0</checked>
+																		<border>0</border>
+																		<object class="wxStaticText" name="m_staticText1021">
+																			<label>Filtering:</label>
+																			<wrap>-1</wrap>
 																		</object>
 																	</object>
 																	<object class="sizeritem">
 																		<option>0</option>
-																		<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
-																		<border>12</border>
-																		<object class="wxCheckBox" name="m_checkBox59">
-																			<label>linear</label>
-																			<checked>0</checked>
-																		</object>
-																	</object>
-																</object>
-															</object>
-															<object class="sizeritem">
-																<option>0</option>
-																<flag>wxEXPAND</flag>
-																<border>5</border>
-																<object class="wxBoxSizer">
-																	<orient>wxHORIZONTAL</orient>
-																	<object class="sizeritem">
-																		<option>0</option>
-																		<flag>wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxLEFT|wxRIGHT|wxTOP</flag>
+																		<flag>wxBOTTOM|wxEXPAND|wxTOP</flag>
 																		<border>6</border>
-																		<object class="wxCheckBox" name="m_checkBox541">
-																			<label>uncompressed</label>
-																			<checked>0</checked>
+																		<object class="wxBoxSizer">
+																			<orient>wxHORIZONTAL</orient>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL</flag>
+																				<border>12</border>
+																				<object class="wxCheckBox" name="MaterialStageFilterNearest">
+																					<label>nearest</label>
+																					<checked>0</checked>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+																				<border>12</border>
+																				<object class="wxCheckBox" name="MaterialStageFilterLinear">
+																					<label>linear</label>
+																					<checked>0</checked>
+																				</object>
+																			</object>
 																		</object>
 																	</object>
 																	<object class="sizeritem">
 																		<option>0</option>
-																		<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
-																		<border>6</border>
-																		<object class="wxCheckBox" name="m_checkBox571">
-																			<label>highquality</label>
-																			<checked>0</checked>
+																		<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																		<border>0</border>
+																		<object class="wxStaticText" name="m_staticText10211">
+																			<label>Compression:</label>
+																			<wrap>-1</wrap>
 																		</object>
 																	</object>
 																	<object class="sizeritem">
 																		<option>0</option>
-																		<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
+																		<flag>wxBOTTOM|wxEXPAND|wxRIGHT|wxTOP</flag>
 																		<border>6</border>
-																		<object class="wxCheckBox" name="m_checkBox551">
-																			<label>forceHighQuality</label>
-																			<checked>0</checked>
-																		</object>
-																	</object>
-																	<object class="sizeritem">
-																		<option>0</option>
-																		<flag>wxALIGN_CENTER_VERTICAL</flag>
-																		<border>6</border>
-																		<object class="wxCheckBox" name="m_checkBox561">
-																			<label>nopicmip</label>
-																			<checked>0</checked>
+																		<object class="wxBoxSizer">
+																			<orient>wxHORIZONTAL</orient>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
+																				<border>6</border>
+																				<object class="wxCheckBox" name="MaterialStageHighQuality">
+																					<label>highquality</label>
+																					<checked>0</checked>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
+																				<border>6</border>
+																				<object class="wxCheckBox" name="MaterialStageForceHighQuality">
+																					<label>forceHighQuality</label>
+																					<checked>0</checked>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL</flag>
+																				<border>6</border>
+																				<object class="wxCheckBox" name="MaterialStageNoPicMip">
+																					<label>nopicmip</label>
+																					<checked>0</checked>
+																				</object>
+																			</object>
 																		</object>
 																	</object>
 																</object>
