@@ -11,7 +11,7 @@
 #include "wxutil/SourceView.h"
 
 #include "ui/common/MaterialTreeView.h"
-#include "MaterialBinding.h"
+#include "Binding.h"
 
 namespace ui
 {
@@ -71,7 +71,6 @@ private:
     void updateStageControls();
     void updateStageBlendControls();
     void updateStageTexgenControls();
-    void updateStageTransformControls();
 
     void _onTreeViewSelectionChanged(wxDataViewEvent& ev);
     void _onStageListSelectionChanged(wxDataViewEvent& ev);

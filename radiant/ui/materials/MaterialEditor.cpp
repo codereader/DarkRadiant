@@ -13,6 +13,7 @@
 #include "wxutil/SourceView.h"
 #include "fmt/format.h"
 #include "materials/ParseLib.h"
+#include "ExpressionBinding.h"
 
 namespace ui
 {
@@ -392,6 +393,11 @@ void MaterialEditor::setupMaterialStageProperties()
     {
         texgenDropdown->AppendString(pair.first);
     }
+
+    _stageBindings.emplace(std::make_shared<ExpressionBinding<ShaderLayerPtr>>(getControl<wxTextCtrl>("MaterialStageTransformX"),
+        [=](const ShaderLayerPtr& layer) { return layer->getTranslationExpression(0); }));
+    _stageBindings.emplace(std::make_shared<ExpressionBinding<ShaderLayerPtr>>(getControl<wxTextCtrl>("MaterialStageTransformY"),
+        [=](const ShaderLayerPtr& layer) { return layer->getTranslationExpression(1); }));
 }
 
 void MaterialEditor::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
@@ -793,25 +799,6 @@ void MaterialEditor::updateStageTexgenControls()
     }
 }
 
-void MaterialEditor::updateStageTransformControls()
-{
-    auto selectedStage = getSelectedStage();
-
-    if (selectedStage)
-    {
-        auto xExpr = selectedStage->getTranslationExpression(0);
-        getControl<wxTextCtrl>("MaterialStageTransformX")->SetValue(xExpr ? xExpr->getExpressionString() : "");
-
-        auto yExpr = selectedStage->getTranslationExpression(1);
-        getControl<wxTextCtrl>("MaterialStageTransformY")->SetValue(yExpr ? yExpr->getExpressionString() : "");
-    }
-    else
-    {
-        getControl<wxTextCtrl>("MaterialStageTransformX")->SetValue("");
-        getControl<wxTextCtrl>("MaterialStageTransformY")->SetValue("");
-    }
-}
-
 void MaterialEditor::updateStageControls()
 {
     auto selectedStage = getSelectedStage();
@@ -826,7 +813,6 @@ void MaterialEditor::updateStageControls()
 
     updateStageBlendControls();
     updateStageTexgenControls();
-    updateStageTransformControls();
 
     if (selectedStage)
     {
