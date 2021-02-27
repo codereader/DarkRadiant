@@ -757,6 +757,61 @@ void MaterialEditor::updateStageBlendControls()
     }
 }
 
+void MaterialEditor::updateStageTexgenControls()
+{
+    auto selectedStage = getSelectedStage();
+
+    auto texgenDropdown = getControl<wxChoice>("MaterialStageTexGenType");
+
+    if (selectedStage && (selectedStage->getParseFlags() & ShaderLayer::PF_HasTexGenKeyword) != 0)
+    {
+        auto texgenName = shaders::getStringForTexGenType(selectedStage->getTexGenType());
+        texgenDropdown->Select(texgenDropdown->FindString(texgenName));
+
+        if (selectedStage->getTexGenType() == ShaderLayer::TEXGEN_WOBBLESKY)
+        {
+            getControl<wxPanel>("MaterialStageWobblySkyPanel")->Show();
+
+            auto wobbleSkyX = selectedStage->getTexGenExpression(0);
+            getControl<wxTextCtrl>("MaterialStageWobbleSkyX")->SetValue(wobbleSkyX ? wobbleSkyX->getExpressionString() : "");
+
+            auto wobbleSkyY = selectedStage->getTexGenExpression(1);
+            getControl<wxTextCtrl>("MaterialStageWobbleSkyY")->SetValue(wobbleSkyY ? wobbleSkyY->getExpressionString() : "");
+
+            auto wobbleSkyZ = selectedStage->getTexGenExpression(2);
+            getControl<wxTextCtrl>("MaterialStageWobbleSkyZ")->SetValue(wobbleSkyZ ? wobbleSkyZ->getExpressionString() : "");
+        }
+        else
+        {
+            getControl<wxPanel>("MaterialStageWobblySkyPanel")->Hide();
+        }
+    }
+    else
+    {
+        texgenDropdown->Select(0);
+        getControl<wxPanel>("MaterialStageWobblySkyPanel")->Hide();
+    }
+}
+
+void MaterialEditor::updateStageTransformControls()
+{
+    auto selectedStage = getSelectedStage();
+
+    if (selectedStage)
+    {
+        auto xExpr = selectedStage->getTranslationExpression(0);
+        getControl<wxTextCtrl>("MaterialStageTransformX")->SetValue(xExpr ? xExpr->getExpressionString() : "");
+
+        auto yExpr = selectedStage->getTranslationExpression(1);
+        getControl<wxTextCtrl>("MaterialStageTransformY")->SetValue(yExpr ? yExpr->getExpressionString() : "");
+    }
+    else
+    {
+        getControl<wxTextCtrl>("MaterialStageTransformX")->SetValue("");
+        getControl<wxTextCtrl>("MaterialStageTransformY")->SetValue("");
+    }
+}
+
 void MaterialEditor::updateStageControls()
 {
     auto selectedStage = getSelectedStage();
@@ -770,6 +825,8 @@ void MaterialEditor::updateStageControls()
     getControl<wxPanel>("MaterialEditorStageSettingsPanel")->Enable(selectedStage != nullptr);
 
     updateStageBlendControls();
+    updateStageTexgenControls();
+    updateStageTransformControls();
 
     if (selectedStage)
     {
@@ -859,37 +916,6 @@ void MaterialEditor::updateStageControls()
         getControl<wxRadioButton>("MaterialStageSoundMap")->SetValue(selectedStage->getMapType() == ShaderLayer::MapType::SoundMap);
         getControl<wxRadioButton>("MaterialStageRemoteRenderMap")->SetValue(selectedStage->getMapType() == ShaderLayer::MapType::RemoteRenderMap);
         getControl<wxRadioButton>("MaterialStageMirrorRenderMap")->SetValue(selectedStage->getMapType() == ShaderLayer::MapType::MirrorRenderMap);
-
-        auto texgenDropdown = getControl<wxChoice>("MaterialStageTexGenType");
-
-        if (selectedStage->getParseFlags() & ShaderLayer::PF_HasTexGenKeyword)
-        {
-            auto texgenName = shaders::getStringForTexGenType(selectedStage->getTexGenType());
-            texgenDropdown->Select(texgenDropdown->FindString(texgenName));
-
-            if (selectedStage->getTexGenType() == ShaderLayer::TEXGEN_WOBBLESKY)
-            {
-                getControl<wxPanel>("MaterialStageWobblySkyPanel")->Show();
-
-                auto wobbleSkyX = selectedStage->getTexGenExpression(0);
-                getControl<wxTextCtrl>("MaterialStageWobbleSkyX")->SetValue(wobbleSkyX ? wobbleSkyX->getExpressionString() : "");
-
-                auto wobbleSkyY = selectedStage->getTexGenExpression(1);
-                getControl<wxTextCtrl>("MaterialStageWobbleSkyY")->SetValue(wobbleSkyY ? wobbleSkyY->getExpressionString() : "");
-
-                auto wobbleSkyZ = selectedStage->getTexGenExpression(2);
-                getControl<wxTextCtrl>("MaterialStageWobbleSkyZ")->SetValue(wobbleSkyZ ? wobbleSkyZ->getExpressionString() : "");
-            }
-            else
-            {
-                getControl<wxPanel>("MaterialStageWobblySkyPanel")->Hide();
-            }
-        }
-        else
-        {
-            texgenDropdown->Select(0);
-            getControl<wxPanel>("MaterialStageWobblySkyPanel")->Hide();
-        }
     }
     else
     {

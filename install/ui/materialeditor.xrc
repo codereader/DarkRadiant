@@ -2148,7 +2148,7 @@
 												</object>
 												<object class="notebookpage">
 													<label>Texture</label>
-													<selected>1</selected>
+													<selected>0</selected>
 													<object class="wxPanel" name="TexturePanel">
 														<style>wxTAB_TRAVERSAL</style>
 														<object class="wxBoxSizer">
@@ -2391,7 +2391,7 @@
 												</object>
 												<object class="notebookpage">
 													<label>Transform</label>
-													<selected>0</selected>
+													<selected>1</selected>
 													<object class="wxPanel" name="m_panel61">
 														<style>wxTAB_TRAVERSAL</style>
 														<object class="wxBoxSizer">
@@ -2409,10 +2409,10 @@
 																	<growablerows></growablerows>
 																	<object class="sizeritem">
 																		<option>0</option>
-																		<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																		<flag>wxALIGN_CENTER_VERTICAL</flag>
 																		<border>6</border>
 																		<object class="wxStaticText" name="m_staticText117">
-																			<label>Scroll:</label>
+																			<label>Scroll/Translate:</label>
 																			<wrap>-1</wrap>
 																		</object>
 																	</object>
@@ -2432,10 +2432,10 @@
 																				</object>
 																			</object>
 																			<object class="sizeritem">
-																				<option>0</option>
+																				<option>1</option>
 																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
 																				<border>0</border>
-																				<object class="wxTextCtrl" name="m_textCtrl43">
+																				<object class="wxTextCtrl" name="MaterialStageTransformX">
 																					<value></value>
 																				</object>
 																			</object>
@@ -2449,10 +2449,10 @@
 																				</object>
 																			</object>
 																			<object class="sizeritem">
-																				<option>0</option>
+																				<option>1</option>
 																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
 																				<border>0</border>
-																				<object class="wxTextCtrl" name="m_textCtrl44">
+																				<object class="wxTextCtrl" name="MaterialStageTransformY">
 																					<value></value>
 																				</object>
 																			</object>
@@ -2460,59 +2460,8 @@
 																	</object>
 																	<object class="sizeritem">
 																		<option>0</option>
-																		<flag>wxALL</flag>
-																		<border>5</border>
-																		<object class="wxStaticText" name="m_staticText1171">
-																			<label>Translate:</label>
-																			<wrap>-1</wrap>
-																		</object>
-																	</object>
-																	<object class="sizeritem">
-																		<option>1</option>
-																		<flag>wxEXPAND</flag>
-																		<border>5</border>
-																		<object class="wxBoxSizer">
-																			<orient>wxHORIZONTAL</orient>
-																			<object class="sizeritem">
-																				<option>0</option>
-																				<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
-																				<border>6</border>
-																				<object class="wxStaticText" name="m_staticText1181">
-																					<label>U:</label>
-																					<wrap>-1</wrap>
-																				</object>
-																			</object>
-																			<object class="sizeritem">
-																				<option>0</option>
-																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																				<border>0</border>
-																				<object class="wxTextCtrl" name="m_textCtrl431">
-																					<value></value>
-																				</object>
-																			</object>
-																			<object class="sizeritem">
-																				<option>0</option>
-																				<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
-																				<border>6</border>
-																				<object class="wxStaticText" name="m_staticText1191">
-																					<label>V:</label>
-																					<wrap>-1</wrap>
-																				</object>
-																			</object>
-																			<object class="sizeritem">
-																				<option>0</option>
-																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																				<border>0</border>
-																				<object class="wxTextCtrl" name="m_textCtrl441">
-																					<value></value>
-																				</object>
-																			</object>
-																		</object>
-																	</object>
-																	<object class="sizeritem">
-																		<option>0</option>
-																		<flag>wxALL</flag>
-																		<border>5</border>
+																		<flag>wxALIGN_CENTER_VERTICAL</flag>
+																		<border>0</border>
 																		<object class="wxStaticText" name="m_staticText11711">
 																			<label>Scale:</label>
 																			<wrap>-1</wrap>
@@ -2534,7 +2483,7 @@
 																				</object>
 																			</object>
 																			<object class="sizeritem">
-																				<option>0</option>
+																				<option>1</option>
 																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
 																				<border>0</border>
 																				<object class="wxTextCtrl" name="m_textCtrl4311">
@@ -2551,7 +2500,7 @@
 																				</object>
 																			</object>
 																			<object class="sizeritem">
-																				<option>0</option>
+																				<option>1</option>
 																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
 																				<border>0</border>
 																				<object class="wxTextCtrl" name="m_textCtrl4411">
@@ -2562,8 +2511,8 @@
 																	</object>
 																	<object class="sizeritem">
 																		<option>0</option>
-																		<flag>wxALL</flag>
-																		<border>5</border>
+																		<flag>wxALIGN_CENTER_VERTICAL</flag>
+																		<border>0</border>
 																		<object class="wxStaticText" name="m_staticText117111">
 																			<label>CenterScale:</label>
 																			<wrap>-1</wrap>
@@ -2585,7 +2534,7 @@
 																				</object>
 																			</object>
 																			<object class="sizeritem">
-																				<option>0</option>
+																				<option>1</option>
 																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
 																				<border>0</border>
 																				<object class="wxTextCtrl" name="m_textCtrl43111">
@@ -2602,7 +2551,7 @@
 																				</object>
 																			</object>
 																			<object class="sizeritem">
-																				<option>0</option>
+																				<option>1</option>
 																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
 																				<border>0</border>
 																				<object class="wxTextCtrl" name="m_textCtrl44111">
@@ -2613,8 +2562,8 @@
 																	</object>
 																	<object class="sizeritem">
 																		<option>0</option>
-																		<flag>wxALL</flag>
-																		<border>5</border>
+																		<flag>wxALIGN_CENTER_VERTICAL</flag>
+																		<border>0</border>
 																		<object class="wxStaticText" name="m_staticText1171111">
 																			<label>Shear:</label>
 																			<wrap>-1</wrap>
@@ -2636,7 +2585,7 @@
 																				</object>
 																			</object>
 																			<object class="sizeritem">
-																				<option>0</option>
+																				<option>1</option>
 																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
 																				<border>0</border>
 																				<object class="wxTextCtrl" name="m_textCtrl431111">
@@ -2653,7 +2602,7 @@
 																				</object>
 																			</object>
 																			<object class="sizeritem">
-																				<option>0</option>
+																				<option>1</option>
 																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
 																				<border>0</border>
 																				<object class="wxTextCtrl" name="m_textCtrl441111">
@@ -2664,8 +2613,8 @@
 																	</object>
 																	<object class="sizeritem">
 																		<option>0</option>
-																		<flag>wxALL</flag>
-																		<border>5</border>
+																		<flag>wxALIGN_CENTER_VERTICAL</flag>
+																		<border>0</border>
 																		<object class="wxStaticText" name="m_staticText11711111">
 																			<label>Rotate:</label>
 																			<wrap>-1</wrap>
@@ -2687,7 +2636,7 @@
 																				</object>
 																			</object>
 																			<object class="sizeritem">
-																				<option>0</option>
+																				<option>1</option>
 																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
 																				<border>0</border>
 																				<object class="wxTextCtrl" name="m_textCtrl4311111">
