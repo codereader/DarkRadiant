@@ -98,8 +98,9 @@ public:
 
     enum ParseFlags
     {
-        PF_HasTexGenKeyword =   1 << 1, // texgen has been specified
+        PF_HasTexGenKeyword =      1 << 1, // texgen has been specified
         PF_HasNoclampKeyword =     1 << 2, // noclamp has been specified
+        PF_HasColoredKeyword =     1 << 3, // colored has been specified
     };
 
     /**
@@ -173,6 +174,20 @@ public:
      * Multiplicative layer colour (set with "red 0.6", "green 0.2" etc)
      */
     virtual Colour4 getColour() const = 0;
+
+    // An enum used to select which colour components are affected by an operation
+    enum ColourComponentSelector
+    {
+        COMP_RED,   // red only
+        COMP_GREEN, // green only
+        COMP_BLUE,  // blue only
+        COMP_ALPHA, // alpha only
+        COMP_RGB,   // red, green and blue
+        COMP_RGBA,  // all: red, greeb, blue, alpha
+    };
+
+    // Returns the expression to calculate the RGBA vertex colour values
+    virtual const shaders::IShaderExpressionPtr& getColourExpression(ColourComponentSelector component) = 0;
 
     /**
      * \brief

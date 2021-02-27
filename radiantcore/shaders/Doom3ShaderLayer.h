@@ -21,18 +21,6 @@ class ShaderTemplate;
 class Doom3ShaderLayer
 : public ShaderLayer
 {
-public:
-    // An enum used to select which colour components are affected by an operation
-    enum ColourComponentSelector
-    {
-        COMP_RED,   // red only
-        COMP_GREEN, // green only
-        COMP_BLUE,  // blue only
-        COMP_ALPHA, // alpha only
-        COMP_RGB,   // red, green and blue
-        COMP_RGBA,  // all: red, greeb, blue, alpha
-    };
-
 private:
     // The owning material template
     ShaderTemplate& _material;
@@ -69,6 +57,7 @@ private:
     // Multiplicative layer colour (set with "red 0.6", "green 0.2" etc)
     // The 4 numbers are indices into the registers array in the parent material
     std::size_t _colIdx[4];
+    std::size_t _colExpression[4];
 
     // Vertex colour blend mode
     VertexColourMode _vertexColourMode;
@@ -313,6 +302,8 @@ public:
      * this shader layer at an earlier point.
      */
     void setColour(const Vector4& col);
+
+    const IShaderExpressionPtr& getColourExpression(ColourComponentSelector component) override;
 
     /**
      * Set the given colour component to use the given expression. This can be a single

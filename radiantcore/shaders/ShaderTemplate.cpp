@@ -944,6 +944,7 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 	}
 	else if (token == "colored")
 	{
+        _currentLayer->setParseFlag(ShaderLayer::PF_HasColoredKeyword);
 		_currentLayer->setColourExpression(Doom3ShaderLayer::COMP_RED, ShaderExpression::createFromString("parm0"));
 		_currentLayer->setColourExpression(Doom3ShaderLayer::COMP_GREEN, ShaderExpression::createFromString("parm1"));
 		_currentLayer->setColourExpression(Doom3ShaderLayer::COMP_BLUE, ShaderExpression::createFromString("parm2"));

@@ -2672,7 +2672,7 @@
 																			<object class="sizeritem">
 																				<option>0</option>
 																				<flag>wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxTOP</flag>
-																				<border>6</border>
+																				<border>3</border>
 																				<object class="wxRadioButton" name="MaterialStageNoVertexColourFlag">
 																					<label>No Vertex Color</label>
 																					<value>0</value>
@@ -2681,7 +2681,7 @@
 																			<object class="sizeritem">
 																				<option>0</option>
 																				<flag>wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxTOP</flag>
-																				<border>6</border>
+																				<border>3</border>
 																				<object class="wxRadioButton" name="MaterialStageVertexColourFlag">
 																					<label>vertexColor</label>
 																					<value>0</value>
@@ -2690,7 +2690,7 @@
 																			<object class="sizeritem">
 																				<option>0</option>
 																				<flag>wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxTOP</flag>
-																				<border>6</border>
+																				<border>3</border>
 																				<object class="wxRadioButton" name="MaterialStageInverseVertexColourFlag">
 																					<label>inverseVertexColor</label>
 																					<value>0</value>
@@ -2712,8 +2712,13 @@
 																		<option>0</option>
 																		<flag>wxALL|wxEXPAND</flag>
 																		<border>6</border>
-																		<object class="wxBoxSizer">
-																			<orient>wxHORIZONTAL</orient>
+																		<object class="wxFlexGridSizer">
+																			<rows>0</rows>
+																			<cols>2</cols>
+																			<vgap>6</vgap>
+																			<hgap>6</hgap>
+																			<growablecols>1</growablecols>
+																			<growablerows></growablerows>
 																			<object class="sizeritem">
 																				<option>0</option>
 																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
@@ -2725,9 +2730,9 @@
 																			</object>
 																			<object class="sizeritem">
 																				<option>1</option>
-																				<flag>wxLEFT|wxRIGHT</flag>
+																				<flag>wxEXPAND|wxLEFT</flag>
 																				<border>6</border>
-																				<object class="wxTextCtrl" name="m_textCtrl66">
+																				<object class="wxTextCtrl" name="MaterialStageRed">
 																					<value></value>
 																				</object>
 																			</object>
@@ -2742,9 +2747,9 @@
 																			</object>
 																			<object class="sizeritem">
 																				<option>1</option>
-																				<flag>wxLEFT|wxRIGHT</flag>
+																				<flag>wxEXPAND|wxLEFT</flag>
 																				<border>6</border>
-																				<object class="wxTextCtrl" name="m_textCtrl661">
+																				<object class="wxTextCtrl" name="MaterialStageGreen">
 																					<value></value>
 																				</object>
 																			</object>
@@ -2759,9 +2764,9 @@
 																			</object>
 																			<object class="sizeritem">
 																				<option>1</option>
-																				<flag>wxLEFT|wxRIGHT</flag>
+																				<flag>wxEXPAND|wxLEFT</flag>
 																				<border>6</border>
-																				<object class="wxTextCtrl" name="m_textCtrl6611">
+																				<object class="wxTextCtrl" name="MaterialStageBlue">
 																					<value></value>
 																				</object>
 																			</object>
@@ -2776,127 +2781,9 @@
 																			</object>
 																			<object class="sizeritem">
 																				<option>1</option>
-																				<flag>wxLEFT</flag>
+																				<flag>wxEXPAND|wxLEFT</flag>
 																				<border>6</border>
-																				<object class="wxTextCtrl" name="m_textCtrl66111">
-																					<value></value>
-																				</object>
-																			</object>
-																		</object>
-																	</object>
-																	<object class="sizeritem">
-																		<option>0</option>
-																		<flag>wxALL|wxEXPAND</flag>
-																		<border>6</border>
-																		<object class="wxBoxSizer">
-																			<orient>wxHORIZONTAL</orient>
-																			<object class="sizeritem">
-																				<option>0</option>
-																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																				<border>0</border>
-																				<object class="wxStaticText" name="m_staticText1662">
-																					<label>RGB:</label>
-																					<wrap>-1</wrap>
-																				</object>
-																			</object>
-																			<object class="sizeritem">
-																				<option>1</option>
-																				<flag>wxLEFT|wxRIGHT</flag>
-																				<border>6</border>
-																				<object class="wxTextCtrl" name="m_textCtrl662">
-																					<value></value>
-																				</object>
-																			</object>
-																			<object class="sizeritem">
-																				<option>0</option>
-																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																				<border>0</border>
-																				<object class="wxStaticText" name="m_staticText16613">
-																					<label>RGBA:</label>
-																					<wrap>-1</wrap>
-																				</object>
-																			</object>
-																			<object class="sizeritem">
-																				<option>1</option>
-																				<flag>wxLEFT</flag>
-																				<border>6</border>
-																				<object class="wxTextCtrl" name="m_textCtrl6612">
-																					<value></value>
-																				</object>
-																			</object>
-																		</object>
-																	</object>
-																	<object class="sizeritem">
-																		<option>0</option>
-																		<flag>wxALL|wxEXPAND</flag>
-																		<border>6</border>
-																		<object class="wxBoxSizer">
-																			<orient>wxHORIZONTAL</orient>
-																			<object class="sizeritem">
-																				<option>0</option>
-																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																				<border>0</border>
-																				<object class="wxStaticText" name="m_staticText1663">
-																					<label>Color:</label>
-																					<wrap>-1</wrap>
-																				</object>
-																			</object>
-																			<object class="sizeritem">
-																				<option>1</option>
-																				<flag>wxLEFT|wxRIGHT</flag>
-																				<border>3</border>
-																				<object class="wxTextCtrl" name="m_textCtrl663">
-																					<value></value>
-																				</object>
-																			</object>
-																			<object class="sizeritem">
-																				<option>0</option>
-																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																				<border>0</border>
-																				<object class="wxStaticText" name="m_staticText16614">
-																					<label>,</label>
-																					<wrap>-1</wrap>
-																				</object>
-																			</object>
-																			<object class="sizeritem">
-																				<option>1</option>
-																				<flag>wxLEFT|wxRIGHT</flag>
-																				<border>3</border>
-																				<object class="wxTextCtrl" name="m_textCtrl6613">
-																					<value></value>
-																				</object>
-																			</object>
-																			<object class="sizeritem">
-																				<option>0</option>
-																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																				<border>0</border>
-																				<object class="wxStaticText" name="m_staticText166111">
-																					<label>,</label>
-																					<wrap>-1</wrap>
-																				</object>
-																			</object>
-																			<object class="sizeritem">
-																				<option>1</option>
-																				<flag>wxLEFT|wxRIGHT</flag>
-																				<border>3</border>
-																				<object class="wxTextCtrl" name="m_textCtrl66112">
-																					<value></value>
-																				</object>
-																			</object>
-																			<object class="sizeritem">
-																				<option>0</option>
-																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																				<border>0</border>
-																				<object class="wxStaticText" name="m_staticText166121">
-																					<label>,</label>
-																					<wrap>-1</wrap>
-																				</object>
-																			</object>
-																			<object class="sizeritem">
-																				<option>1</option>
-																				<flag>wxLEFT</flag>
-																				<border>3</border>
-																				<object class="wxTextCtrl" name="m_textCtrl661111">
+																				<object class="wxTextCtrl" name="MaterialStageAlpha">
 																					<value></value>
 																				</object>
 																			</object>

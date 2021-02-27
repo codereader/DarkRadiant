@@ -419,6 +419,18 @@ void MaterialEditor::setupMaterialStageProperties()
 
     _stageBindings.emplace(std::make_shared<ExpressionBinding<ShaderLayerPtr>>(getControl<wxTextCtrl>("MaterialStageCondition"),
         [=](const ShaderLayerPtr& layer) { return layer->getConditionExpression(); }));
+
+    _stageBindings.emplace(std::make_shared<CheckBoxBinding<ShaderLayerPtr>>(getControl<wxCheckBox>("MaterialStageColored"),
+        [=](const ShaderLayerPtr& layer) { return (layer->getParseFlags() & ShaderLayer::PF_HasColoredKeyword) != 0; }));
+
+    _stageBindings.emplace(std::make_shared<ExpressionBinding<ShaderLayerPtr>>(getControl<wxTextCtrl>("MaterialStageRed"),
+        [=](const ShaderLayerPtr& layer) { return layer->getColourExpression(ShaderLayer::COMP_RED); }));
+    _stageBindings.emplace(std::make_shared<ExpressionBinding<ShaderLayerPtr>>(getControl<wxTextCtrl>("MaterialStageGreen"),
+        [=](const ShaderLayerPtr& layer) { return layer->getColourExpression(ShaderLayer::COMP_GREEN); }));
+    _stageBindings.emplace(std::make_shared<ExpressionBinding<ShaderLayerPtr>>(getControl<wxTextCtrl>("MaterialStageBlue"),
+        [=](const ShaderLayerPtr& layer) { return layer->getColourExpression(ShaderLayer::COMP_BLUE); }));
+    _stageBindings.emplace(std::make_shared<ExpressionBinding<ShaderLayerPtr>>(getControl<wxTextCtrl>("MaterialStageAlpha"),
+        [=](const ShaderLayerPtr& layer) { return layer->getColourExpression(ShaderLayer::COMP_ALPHA); }));
 }
 
 void MaterialEditor::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
