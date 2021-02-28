@@ -1049,7 +1049,7 @@
 														</object>
 														<object class="notebookpage">
 															<label>Deform</label>
-															<selected>1</selected>
+															<selected>0</selected>
 															<object class="wxPanel" name="DeformPage">
 																<style>wxTAB_TRAVERSAL</style>
 																<object class="wxBoxSizer">
@@ -1326,7 +1326,7 @@
 														</object>
 														<object class="notebookpage">
 															<label>Misc</label>
-															<selected>0</selected>
+															<selected>1</selected>
 															<object class="wxPanel" name="MiscPage">
 																<style>wxTAB_TRAVERSAL</style>
 																<object class="wxBoxSizer">
@@ -1378,15 +1378,6 @@
 																			</object>
 																			<object class="sizeritem">
 																				<option>0</option>
-																				<flag>wxBOTTOM|wxTOP</flag>
-																				<border>3</border>
-																				<object class="wxCheckBox" name="MaterialFlagUnsmoothedTangents">
-																					<label>unsmoothedTangents</label>
-																					<checked>0</checked>
-																				</object>
-																			</object>
-																			<object class="sizeritem">
-																				<option>0</option>
 																				<flag>wxALIGN_CENTER_VERTICAL</flag>
 																				<border>0</border>
 																				<object class="wxCheckBox" name="MaterialFlagIsLightGemSurf">
@@ -1396,10 +1387,10 @@
 																			</object>
 																			<object class="sizeritem">
 																				<option>0</option>
-																				<flag>wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxTOP</flag>
+																				<flag>wxBOTTOM|wxTOP</flag>
 																				<border>3</border>
-																				<object class="wxCheckBox" name="MaterialHasParticleMacro">
-																					<label>PARTICLE__MACRO</label>
+																				<object class="wxCheckBox" name="MaterialFlagUnsmoothedTangents">
+																					<label>unsmoothedTangents</label>
 																					<checked>0</checked>
 																				</object>
 																			</object>
@@ -1416,7 +1407,16 @@
 																				<option>0</option>
 																				<flag>wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxTOP</flag>
 																				<border>3</border>
-																				<object class="wxCheckBox" name="m_checkBox61112">
+																				<object class="wxCheckBox" name="MaterialHasParticleMacro">
+																					<label>PARTICLE__MACRO</label>
+																					<checked>0</checked>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL</flag>
+																				<border>3</border>
+																				<object class="wxCheckBox" name="MaterialHasGuiSurf">
 																					<label>guisurf</label>
 																					<checked>0</checked>
 																				</object>
@@ -1424,42 +1424,54 @@
 																			<object class="sizeritem">
 																				<option>1</option>
 																				<flag>wxEXPAND</flag>
-																				<border>5</border>
-																				<object class="wxBoxSizer">
-																					<orient>wxHORIZONTAL</orient>
-																					<object class="sizeritem">
-																						<option>1</option>
-																						<flag>wxALIGN_CENTER_VERTICAL</flag>
-																						<border>0</border>
-																						<object class="wxTextCtrl" name="m_textCtrl51111">
-																							<value></value>
+																				<border>0</border>
+																				<object class="wxPanel" name="MaterialGuiSurfPanel">
+																					<style>wxTAB_TRAVERSAL</style>
+																					<object class="wxBoxSizer">
+																						<orient>wxHORIZONTAL</orient>
+																						<object class="sizeritem">
+																							<option>0</option>
+																							<flag>wxALIGN_CENTER_VERTICAL</flag>
+																							<border>6</border>
+																							<object class="wxRadioButton" name="MaterialGuiSurfRegular">
+																								<label>GUI Path:</label>
+																								<value>0</value>
+																							</object>
 																						</object>
-																					</object>
-																					<object class="sizeritem">
-																						<option>0</option>
-																						<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
-																						<border>6</border>
-																						<object class="wxCheckBox" name="m_checkBox611121">
-																							<label>entity</label>
-																							<checked>0</checked>
+																						<object class="sizeritem">
+																							<option>1</option>
+																							<flag>wxALIGN_CENTER_VERTICAL</flag>
+																							<border>0</border>
+																							<object class="wxTextCtrl" name="MaterialGuiSurfPath">
+																								<value></value>
+																							</object>
 																						</object>
-																					</object>
-																					<object class="sizeritem">
-																						<option>0</option>
-																						<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
-																						<border>6</border>
-																						<object class="wxCheckBox" name="m_checkBox6111211">
-																							<label>entity2</label>
-																							<checked>0</checked>
+																						<object class="sizeritem">
+																							<option>0</option>
+																							<flag>wxALIGN_CENTER_VERTICAL|wxALL|wxLEFT</flag>
+																							<border>6</border>
+																							<object class="wxRadioButton" name="MaterialGuiSurfEntity">
+																								<label>entity</label>
+																								<value>0</value>
+																							</object>
 																						</object>
-																					</object>
-																					<object class="sizeritem">
-																						<option>0</option>
-																						<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																						<border>0</border>
-																						<object class="wxCheckBox" name="m_checkBox6111212">
-																							<label>entity3</label>
-																							<checked>0</checked>
+																						<object class="sizeritem">
+																							<option>0</option>
+																							<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+																							<border>6</border>
+																							<object class="wxRadioButton" name="MaterialGuiSurfEntity2">
+																								<label>entity2</label>
+																								<value>0</value>
+																							</object>
+																						</object>
+																						<object class="sizeritem">
+																							<option>0</option>
+																							<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+																							<border>6</border>
+																							<object class="wxRadioButton" name="MaterialGuiSurfEntity3">
+																								<label>entity3</label>
+																								<value>0</value>
+																							</object>
 																						</object>
 																					</object>
 																				</object>

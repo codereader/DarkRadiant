@@ -290,6 +290,7 @@ void MaterialEditor::setupMaterialSurfaceFlags()
     setupSurfaceFlag("MaterialSurfaceFlagNodamage", Material::SurfaceFlags::SURF_NODAMAGE);
     setupSurfaceFlag("MaterialSurfaceFlagLadder", Material::SurfaceFlags::SURF_LADDER);
     setupSurfaceFlag("MaterialSurfaceFlagNosteps", Material::SurfaceFlags::SURF_NOSTEPS);
+    setupSurfaceFlag("MaterialHasGuiSurf", Material::SurfaceFlags::SURF_GUISURF);
 }
 
 void MaterialEditor::setupMaterialDeformPage()
@@ -686,12 +687,28 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
         getControl<wxTextCtrl>("MaterialRenderBumpFlatArguments")->Enable(!_material->getRenderBumpFlatArguments().empty());
         getControl<wxTextCtrl>("MaterialRenderBumpFlatArguments")->SetValue(_material->getRenderBumpFlatArguments());
 
+        // guisurf
+        auto guisurfArgument = _material->getGuiSurfArgument();
+        getControl<wxTextCtrl>("MaterialGuiSurfPath")->SetValue(guisurfArgument);
+
+        bool isEntityGui = (_material->getSurfaceFlags() & (Material::SURF_ENTITYGUI | Material::SURF_ENTITYGUI2 | Material::SURF_ENTITYGUI3)) != 0;
+
+        getControl<wxTextCtrl>("MaterialGuiSurfPath")->Enable(!isEntityGui);
+        getControl<wxPanel>("MaterialGuiSurfPanel")->Enable(_material->getSurfaceFlags() & Material::SURF_GUISURF);
+
+        getControl<wxRadioButton>("MaterialGuiSurfRegular")->SetValue(!isEntityGui);
+        getControl<wxRadioButton>("MaterialGuiSurfEntity")->SetValue(_material->getSurfaceFlags() & Material::SURF_ENTITYGUI);
+        getControl<wxRadioButton>("MaterialGuiSurfEntity2")->SetValue(_material->getSurfaceFlags() & Material::SURF_ENTITYGUI2);
+        getControl<wxRadioButton>("MaterialGuiSurfEntity3")->SetValue(_material->getSurfaceFlags() & Material::SURF_ENTITYGUI3);
+
         // Surround the definition with curly braces, these are not included
         auto definition = fmt::format("{0}\n{{{1}}}", _material->getName(), _material->getDefinition());
         _sourceView->SetValue(definition);
     }
     else
     {
+        getControl<wxTextCtrl>("MaterialGuiSurfPath")->SetValue("");
+
         getControl<wxCheckBox>("MaterialHasRenderBump")->SetValue(false);
         getControl<wxTextCtrl>("MaterialRenderBumpArguments")->SetValue("");
 
