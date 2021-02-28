@@ -289,3 +289,35 @@ textures/parsertest/program/fragmentProgram3
 		fragmentMap		8		temp/texture
     }
 }
+
+textures/parsertest/guisurf1
+{
+	qer_editorimage	textures/editor/entityGui.tga
+	discrete
+	guiSurf	guis/lvlmaps/genericmap.gui
+
+}
+
+textures/parsertest/guisurf2
+ {
+	qer_editorimage	textures/editor/entityGui.tga
+	discrete
+	playerclip
+	guiSurf	entity
+}
+
+textures/parsertest/guisurf3
+{
+	qer_editorimage	textures/editor/entityGui2.tga
+	discrete
+	playerclip
+	guiSurf	entity2
+}
+
+textures/parsertest/guisurf4
+{
+	qer_editorimage	textures/editor/entityGui3.tga
+	discrete
+	guiSurf	entity3
+	playerclip
+}

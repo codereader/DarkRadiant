@@ -442,4 +442,30 @@ TEST_F(MaterialsTest, MaterialParserStageFragmentProgram)
     EXPECT_TRUE(material->getAllLayers().empty()); // failure to parse should end up with an empty material
 }
 
+TEST_F(MaterialsTest, MaterialParserGuiSurf)
+{
+    auto material = GlobalMaterialManager().getMaterialForName("textures/parsertest/guisurf1");
+    EXPECT_TRUE(material->getSurfaceFlags() & Material::SURF_GUISURF);
+    EXPECT_FALSE(material->getSurfaceFlags() & (Material::SURF_ENTITYGUI| Material::SURF_ENTITYGUI2| Material::SURF_ENTITYGUI3));
+    EXPECT_EQ(material->getGuiSurfArgument(), "guis/lvlmaps/genericmap.gui");
+
+    material = GlobalMaterialManager().getMaterialForName("textures/parsertest/guisurf2");
+    EXPECT_TRUE(material->getSurfaceFlags() & Material::SURF_GUISURF);
+    EXPECT_TRUE(material->getSurfaceFlags() & Material::SURF_ENTITYGUI);
+    EXPECT_FALSE(material->getSurfaceFlags() & (Material::SURF_ENTITYGUI2 | Material::SURF_ENTITYGUI3));
+    EXPECT_EQ(material->getGuiSurfArgument(), "");
+
+    material = GlobalMaterialManager().getMaterialForName("textures/parsertest/guisurf3");
+    EXPECT_TRUE(material->getSurfaceFlags() & Material::SURF_GUISURF);
+    EXPECT_TRUE(material->getSurfaceFlags() & Material::SURF_ENTITYGUI2);
+    EXPECT_FALSE(material->getSurfaceFlags() & (Material::SURF_ENTITYGUI | Material::SURF_ENTITYGUI3));
+    EXPECT_EQ(material->getGuiSurfArgument(), "");
+
+    material = GlobalMaterialManager().getMaterialForName("textures/parsertest/guisurf4");
+    EXPECT_TRUE(material->getSurfaceFlags() & Material::SURF_GUISURF);
+    EXPECT_TRUE(material->getSurfaceFlags() & Material::SURF_ENTITYGUI3);
+    EXPECT_FALSE(material->getSurfaceFlags() & (Material::SURF_ENTITYGUI | Material::SURF_ENTITYGUI2));
+    EXPECT_EQ(material->getGuiSurfArgument(), "");
+}
+
 }

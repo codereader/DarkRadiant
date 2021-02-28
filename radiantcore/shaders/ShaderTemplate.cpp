@@ -1126,9 +1126,27 @@ bool ShaderTemplate::parseSurfaceFlags(parser::DefTokeniser& tokeniser,
     }
 	else if (token == "guisurf")
 	{
-		_surfaceFlags |= Material::SURF_ENTITYGUI;
-		// Something like "guisurf blah.gui" or "guisurf entity2", skip the argument and proceed
-		tokeniser.skipTokens(1);
+		// "guisurf blah.gui" or "guisurf entity[2|3]"
+		_surfaceFlags |= Material::SURF_GUISURF;
+
+        auto argument = tokeniser.nextToken();
+
+        if (string::to_lower_copy(argument) == "entity")
+        {
+            _surfaceFlags |= Material::SURF_ENTITYGUI;
+        }
+        else if (string::to_lower_copy(argument) == "entity2")
+        {
+            _surfaceFlags |= Material::SURF_ENTITYGUI2;
+        }
+        else if (string::to_lower_copy(argument) == "entity3")
+        {
+            _surfaceFlags |= Material::SURF_ENTITYGUI3;
+        }
+        else
+        {
+            _guiDeclName = argument;
+        }
 	}
 	else
 	{

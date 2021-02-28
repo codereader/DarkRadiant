@@ -95,7 +95,10 @@ public:
 		SURF_NODAMAGE				= 1 << 21,
 		SURF_LADDER					= 1 << 22,
 		SURF_NOSTEPS				= 1 << 23,
-		SURF_ENTITYGUI				= 1 << 24,
+		SURF_GUISURF				= 1 << 24,  // has guisurf in its material def
+		SURF_ENTITYGUI				= 1 << 25,  // guisurf entity
+		SURF_ENTITYGUI2				= 1 << 26,  // guisurf entity2
+		SURF_ENTITYGUI3				= 1 << 27,  // guisurf entity3
 	};
 
 	// Surface Type (plastic, stone, etc.)
@@ -362,6 +365,10 @@ public:
 
     // Returns the argument string after the renderbumpflat keyword, or an empty string if no statement is present
     virtual std::string getRenderBumpFlatArguments() = 0;
+
+    // The argument to the "guisurf" keyword, if not entity[2]3]. 
+    // In case entity[2]3] is set, the corresponding surface flags are enabled
+    virtual const std::string& getGuiSurfArgument() = 0;
 };
 
 typedef std::shared_ptr<Material> MaterialPtr;

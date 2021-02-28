@@ -98,6 +98,9 @@ private:
 
     int _parseFlags;
 
+    // The string value specified by the guisurf keyword, if other than entity[2]3]
+    std::string _guiDeclName;
+
 public:
 
     /**
@@ -307,6 +310,12 @@ public:
     
     // renderbumpflat argument string
     std::string getRenderBumpFlagArguments();
+
+    const std::string& getGuiSurfArgument()
+    {
+        if (!_parsed) parseDefinition();
+        return _guiDeclName;
+    }
 
 private:
 

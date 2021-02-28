@@ -108,6 +108,8 @@ public:
     std::string getRenderBumpArguments() override;
     std::string getRenderBumpFlatArguments() override;
 
+    const std::string& getGuiSurfArgument() override;
+
 	// -----------------------------------------
 
 	void realise();

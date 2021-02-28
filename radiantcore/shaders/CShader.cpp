@@ -223,6 +223,11 @@ std::string CShader::getRenderBumpFlatArguments()
     return _template->getRenderBumpFlagArguments();
 }
 
+const std::string& CShader::getGuiSurfArgument()
+{
+    return _template->getGuiSurfArgument();
+}
+
 // -----------------------------------------
 
 void CShader::realise() {
