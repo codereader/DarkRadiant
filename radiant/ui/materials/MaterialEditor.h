@@ -38,6 +38,23 @@ private:
     std::set<std::shared_ptr<Binding<ShaderLayerPtr>>> _stageBindings;
     std::map<Material::DeformType, wxPanel*> _deformPanels;
 
+    struct StageProgramParmsColumns :
+        public wxutil::TreeModel::ColumnRecord
+    {
+        StageProgramParmsColumns() :
+            type(add(wxutil::TreeModel::Column::String)),
+            index(add(wxutil::TreeModel::Column::String)),
+            expression(add(wxutil::TreeModel::Column::String))
+        {}
+
+        wxutil::TreeModel::Column type;
+        wxutil::TreeModel::Column index;
+        wxutil::TreeModel::Column expression;
+    };
+
+    StageProgramParmsColumns _stageProgramColumns;
+    wxutil::TreeModel::Ptr _stageProgramParameters;
+
 private:
     MaterialEditor();
 

@@ -2847,10 +2847,10 @@
 																<border>6</border>
 																<object class="wxFlexGridSizer">
 																	<rows>7</rows>
-																	<cols>2</cols>
+																	<cols>4</cols>
 																	<vgap>6</vgap>
 																	<hgap>12</hgap>
-																	<growablecols>1</growablecols>
+																	<growablecols>1,3</growablecols>
 																	<growablerows></growablerows>
 																	<object class="sizeritem">
 																		<option>0</option>
@@ -2890,9 +2890,14 @@
 															</object>
 															<object class="sizeritem">
 																<option>1</option>
-																<flag>wxALL|wxEXPAND</flag>
+																<flag>wxEXPAND | wxALL</flag>
 																<border>6</border>
-																<object class="unknown" name="m_dataViewListCtrl1" />
+																<object class="wxPanel" name="MaterialStageProgramParameters">
+																	<style>wxTAB_TRAVERSAL</style>
+																	<object class="wxBoxSizer">
+																		<orient>wxVERTICAL</orient>
+																	</object>
+																</object>
 															</object>
 															<object class="sizeritem">
 																<option>0</option>

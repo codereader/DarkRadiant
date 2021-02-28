@@ -9,6 +9,7 @@
 #include <wx/collpane.h>
 #include <wx/spinctrl.h>
 #include <wx/combo.h>
+#include <wx/dataview.h>
 
 #include "wxutil/SourceView.h"
 #include "fmt/format.h"
@@ -431,6 +432,19 @@ void MaterialEditor::setupMaterialStageProperties()
         [=](const ShaderLayerPtr& layer) { return layer->getColourExpression(ShaderLayer::COMP_BLUE); }));
     _stageBindings.emplace(std::make_shared<ExpressionBinding<ShaderLayerPtr>>(getControl<wxTextCtrl>("MaterialStageAlpha"),
         [=](const ShaderLayerPtr& layer) { return layer->getColourExpression(ShaderLayer::COMP_ALPHA); }));
+
+    auto parameterPanel = getControl<wxPanel>("MaterialStageProgramParameters");
+    _stageProgramParameters = wxutil::TreeModel::Ptr(new wxutil::TreeModel(_stageProgramColumns, true));
+
+    auto paramsView = wxutil::TreeView::CreateWithModel(parameterPanel, _stageProgramParameters.get(), wxDV_NO_HEADER);
+    paramsView->AppendTextColumn("Type", _stageProgramColumns.type.getColumnIndex(),
+        wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+    paramsView->AppendTextColumn("Index", _stageProgramColumns.index.getColumnIndex(),
+        wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+    paramsView->AppendTextColumn("Expression", _stageProgramColumns.expression.getColumnIndex(),
+        wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+
+    parameterPanel->GetSizer()->Add(paramsView, 1, wxEXPAND);
 }
 
 void MaterialEditor::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
@@ -943,6 +957,32 @@ void MaterialEditor::updateStageControls()
 
         getControl<wxTextCtrl>("MaterialStageVertexProgram")->SetValue(selectedStage->getVertexProgram());
         getControl<wxTextCtrl>("MaterialStageFragmentProgram")->SetValue(selectedStage->getFragmentProgram());
+
+        _stageProgramParameters->Clear();
+
+        for (int i = 0; i < selectedStage->getNumVertexParms(); ++i)
+        {
+            const auto& parm = selectedStage->getVertexParm(i);
+
+            if (parm.index == -1) continue; // undefined param
+
+            auto row = _stageProgramParameters->AddItem();
+
+            row[_stageProgramColumns.type] = "vertexParm";
+            row[_stageProgramColumns.index] = string::to_string(parm.index);
+
+            std::string expression;
+
+            for (int expr = 0; parm.expressions[expr] && expr < 4; ++expr)
+            {
+                expression += expression.empty() ? "" : " ";
+                expression += parm.expressions[expr]->getExpressionString();
+            }
+
+            row[_stageProgramColumns.expression] = expression;
+
+            row.SendItemAdded();
+        }
     }
     else
     {
@@ -952,6 +992,7 @@ void MaterialEditor::updateStageControls()
 
         getControl<wxTextCtrl>("MaterialStageVertexProgram")->SetValue("");
         getControl<wxTextCtrl>("MaterialStageFragmentProgram")->SetValue("");
+        _stageProgramParameters->Clear();
     }
 }
 
