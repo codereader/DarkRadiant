@@ -388,6 +388,7 @@ void MaterialEditor::setupMaterialStageProperties()
     setupStageFlag("MaterialStageHighQuality", ShaderLayer::FLAG_HIGHQUALITY);
     setupStageFlag("MaterialStageForceHighQuality", ShaderLayer::FLAG_FORCE_HIGHQUALITY);
     setupStageFlag("MaterialStageNoPicMip", ShaderLayer::FLAG_NO_PICMIP);
+    setupStageFlag("MaterialStageIgnoreDepth", ShaderLayer::FLAG_IGNORE_DEPTH);
 
     auto texgenDropdown = getControl<wxChoice>("MaterialStageTexGenType");
     texgenDropdown->AppendString("");

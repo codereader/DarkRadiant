@@ -1649,7 +1649,7 @@
 											<object class="wxNotebook" name="MaterialEditorSettingsNotebook">
 												<object class="notebookpage">
 													<label>Blending</label>
-													<selected>0</selected>
+													<selected>1</selected>
 													<object class="wxPanel" name="BlendPanel">
 														<style>wxTAB_TRAVERSAL</style>
 														<object class="wxBoxSizer">
@@ -1926,6 +1926,15 @@
 																				<border>6</border>
 																				<object class="wxCheckBox" name="MaterialStageIgnoreAlphaTest">
 																					<label>ignoreAlphaTest</label>
+																					<checked>0</checked>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+																				<border>6</border>
+																				<object class="wxCheckBox" name="MaterialStageIgnoreDepth">
+																					<label>ignoreDepth</label>
 																					<checked>0</checked>
 																				</object>
 																			</object>
@@ -2848,7 +2857,7 @@
 												</object>
 												<object class="notebookpage">
 													<label>Program</label>
-													<selected>1</selected>
+													<selected>0</selected>
 													<object class="wxPanel" name="m_panel61111">
 														<style>wxTAB_TRAVERSAL</style>
 														<object class="wxBoxSizer">
