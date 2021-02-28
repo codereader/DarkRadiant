@@ -88,6 +88,7 @@ private:
     void updateStageControls();
     void updateStageBlendControls();
     void updateStageTexgenControls();
+    void updateStageProgramControls();
 
     void _onTreeViewSelectionChanged(wxDataViewEvent& ev);
     void _onStageListSelectionChanged(wxDataViewEvent& ev);

@@ -13,6 +13,7 @@
 
 #include "wxutil/SourceView.h"
 #include "fmt/format.h"
+#include "string/join.h"
 #include "materials/ParseLib.h"
 #include "ExpressionBinding.h"
 
@@ -846,6 +847,71 @@ void MaterialEditor::updateStageTexgenControls()
     }
 }
 
+void MaterialEditor::updateStageProgramControls()
+{
+    _stageProgramParameters->Clear();
+
+    auto selectedStage = getSelectedStage();
+
+    if (selectedStage)
+    {
+        getControl<wxTextCtrl>("MaterialStageVertexProgram")->SetValue(selectedStage->getVertexProgram());
+        getControl<wxTextCtrl>("MaterialStageFragmentProgram")->SetValue(selectedStage->getFragmentProgram());
+
+        _stageProgramParameters->Clear();
+
+        for (int i = 0; i < selectedStage->getNumVertexParms(); ++i)
+        {
+            const auto& parm = selectedStage->getVertexParm(i);
+
+            if (parm.index == -1) continue; // undefined param
+
+            auto row = _stageProgramParameters->AddItem();
+
+            row[_stageProgramColumns.type] = "vertexParm";
+            row[_stageProgramColumns.index] = string::to_string(parm.index);
+
+            std::string expression;
+
+            for (int expr = 0; parm.expressions[expr] && expr < 4; ++expr)
+            {
+                expression += expression.empty() ? "" : " ";
+                expression += parm.expressions[expr]->getExpressionString();
+            }
+
+            row[_stageProgramColumns.expression] = expression;
+
+            row.SendItemAdded();
+        }
+
+        for (int i = 0; i < selectedStage->getNumFragmentMaps(); ++i)
+        {
+            const auto& parm = selectedStage->getFragmentMap(i);
+
+            if (parm.index == -1) continue; // undefined param
+
+            auto row = _stageProgramParameters->AddItem();
+
+            row[_stageProgramColumns.type] = "fragmentMap";
+            row[_stageProgramColumns.index] = string::to_string(parm.index);
+
+            std::string expression = string::join(parm.options, " ");
+
+            expression += expression.empty() ? "" : " ";
+            expression += parm.map ? parm.map->getExpressionString() : "";
+
+            row[_stageProgramColumns.expression] = expression;
+
+            row.SendItemAdded();
+        }
+    }
+    else
+    {
+        getControl<wxTextCtrl>("MaterialStageVertexProgram")->SetValue("");
+        getControl<wxTextCtrl>("MaterialStageFragmentProgram")->SetValue("");
+    }
+}
+
 void MaterialEditor::updateStageControls()
 {
     auto selectedStage = getSelectedStage();
@@ -860,6 +926,7 @@ void MaterialEditor::updateStageControls()
 
     updateStageBlendControls();
     updateStageTexgenControls();
+    updateStageProgramControls();
 
     if (selectedStage)
     {
@@ -954,45 +1021,12 @@ void MaterialEditor::updateStageControls()
         getControl<wxRadioButton>("MaterialStageNoVertexColourFlag")->SetValue(selectedStage->getVertexColourMode() == ShaderLayer::VERTEX_COLOUR_NONE);
         getControl<wxRadioButton>("MaterialStageVertexColourFlag")->SetValue(selectedStage->getVertexColourMode() == ShaderLayer::VERTEX_COLOUR_MULTIPLY);
         getControl<wxRadioButton>("MaterialStageInverseVertexColourFlag")->SetValue(selectedStage->getVertexColourMode() == ShaderLayer::VERTEX_COLOUR_INVERSE_MULTIPLY);
-
-        getControl<wxTextCtrl>("MaterialStageVertexProgram")->SetValue(selectedStage->getVertexProgram());
-        getControl<wxTextCtrl>("MaterialStageFragmentProgram")->SetValue(selectedStage->getFragmentProgram());
-
-        _stageProgramParameters->Clear();
-
-        for (int i = 0; i < selectedStage->getNumVertexParms(); ++i)
-        {
-            const auto& parm = selectedStage->getVertexParm(i);
-
-            if (parm.index == -1) continue; // undefined param
-
-            auto row = _stageProgramParameters->AddItem();
-
-            row[_stageProgramColumns.type] = "vertexParm";
-            row[_stageProgramColumns.index] = string::to_string(parm.index);
-
-            std::string expression;
-
-            for (int expr = 0; parm.expressions[expr] && expr < 4; ++expr)
-            {
-                expression += expression.empty() ? "" : " ";
-                expression += parm.expressions[expr]->getExpressionString();
-            }
-
-            row[_stageProgramColumns.expression] = expression;
-
-            row.SendItemAdded();
-        }
     }
     else
     {
         getControl<wxRadioButton>("MaterialStageNoVertexColourFlag")->SetValue(true);
         getControl<wxTextCtrl>("MaterialStageImageMap")->SetValue("");
         getControl<wxTextCtrl>("MaterialStageVideoMapFile")->SetValue("");
-
-        getControl<wxTextCtrl>("MaterialStageVertexProgram")->SetValue("");
-        getControl<wxTextCtrl>("MaterialStageFragmentProgram")->SetValue("");
-        _stageProgramParameters->Clear();
     }
 }
 
