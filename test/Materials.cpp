@@ -5,6 +5,7 @@
 #include "string/split.h"
 #include "string/case_conv.h"
 #include "string/trim.h"
+#include "string/join.h"
 
 namespace test
 {
@@ -400,6 +401,44 @@ TEST_F(MaterialsTest, MaterialParserStageVertexProgram)
     EXPECT_EQ(material->getAllLayers().front()->getVertexParm(2).expressions[3]->getExpressionString(), "8.0");
 
     material = GlobalMaterialManager().getMaterialForName("textures/parsertest/program/vertexProgram7");
+    EXPECT_TRUE(material->getAllLayers().empty()); // failure to parse should end up with an empty material
+}
+
+TEST_F(MaterialsTest, MaterialParserStageFragmentProgram)
+{
+    auto material = GlobalMaterialManager().getMaterialForName("textures/parsertest/program/fragmentProgram1");
+
+    EXPECT_EQ(material->getAllLayers().front()->getFragmentProgram(), "glprogs/test.vfp");
+    EXPECT_EQ(material->getAllLayers().front()->getNumFragmentMaps(), 3);
+    EXPECT_EQ(material->getAllLayers().front()->getFragmentMap(0).index, 0);
+    EXPECT_EQ(string::join(material->getAllLayers().front()->getFragmentMap(0).options, " "), "cubeMap forceHighQuality alphaZeroClamp");
+    EXPECT_EQ(material->getAllLayers().front()->getFragmentMap(0).map->getExpressionString(), "env/gen1");
+
+    EXPECT_EQ(material->getAllLayers().front()->getFragmentMap(1).index, 1);
+    EXPECT_EQ(string::join(material->getAllLayers().front()->getFragmentMap(1).options, " "), "");
+    EXPECT_EQ(material->getAllLayers().front()->getFragmentMap(1).map->getExpressionString(), "temp/texture");
+
+    EXPECT_EQ(material->getAllLayers().front()->getFragmentMap(2).index, 2);
+    EXPECT_EQ(string::join(material->getAllLayers().front()->getFragmentMap(2).options, " "), "cubemap cameracubemap nearest linear clamp noclamp zeroclamp alphazeroclamp forcehighquality uncompressed highquality nopicmip");
+    EXPECT_EQ(material->getAllLayers().front()->getFragmentMap(2).map->getExpressionString(), "temp/optionsftw");
+
+    material = GlobalMaterialManager().getMaterialForName("textures/parsertest/program/fragmentProgram2");
+
+    EXPECT_EQ(material->getAllLayers().front()->getFragmentProgram(), "glprogs/test.vfp");
+    EXPECT_EQ(material->getAllLayers().front()->getNumFragmentMaps(), 3);
+    EXPECT_EQ(material->getAllLayers().front()->getFragmentMap(0).index, 0);
+    EXPECT_EQ(string::join(material->getAllLayers().front()->getFragmentMap(0).options, " "), "");
+    EXPECT_EQ(material->getAllLayers().front()->getFragmentMap(0).map->getExpressionString(), "env/gen1");
+
+    EXPECT_EQ(material->getAllLayers().front()->getFragmentMap(1).index, -1); // is missing
+    EXPECT_EQ(string::join(material->getAllLayers().front()->getFragmentMap(1).options, " "), "");
+    EXPECT_FALSE(material->getAllLayers().front()->getFragmentMap(1).map);
+
+    EXPECT_EQ(material->getAllLayers().front()->getFragmentMap(2).index, 2);
+    EXPECT_EQ(string::join(material->getAllLayers().front()->getFragmentMap(2).options, " "), "");
+    EXPECT_EQ(material->getAllLayers().front()->getFragmentMap(2).map->getExpressionString(), "temp/texture");
+
+    material = GlobalMaterialManager().getMaterialForName("textures/parsertest/program/fragmentProgram3");
     EXPECT_TRUE(material->getAllLayers().empty()); // failure to parse should end up with an empty material
 }
 

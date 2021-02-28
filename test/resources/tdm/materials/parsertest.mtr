@@ -256,3 +256,36 @@ textures/parsertest/program/vertexProgram7
         vertexParm 5 5,6,7,8
     }
 }
+
+textures/parsertest/program/fragmentProgram1
+{
+	{
+        fragmentProgram glprogs/test.vfp
+
+        fragmentMap		0		cubeMap forceHighQuality alphaZeroClamp env/gen1 // some options
+		fragmentMap		1		temp/texture
+        // all possible options
+		fragmentMap		2		cubemap cameracubemap nearest linear clamp noclamp zeroclamp alphazeroclamp forcehighquality uncompressed highquality nopicmip temp/optionsftw
+    }
+}
+
+textures/parsertest/program/fragmentProgram2
+{
+	{
+        fragmentProgram glprogs/test.vfp
+
+        fragmentMap		0		env/gen1 // no options
+        // fragment map 1 is missing
+		fragmentMap		2		temp/texture
+    }
+}
+
+textures/parsertest/program/fragmentProgram3
+{
+	{
+        fragmentProgram glprogs/test.vfp
+
+        // defining a fragment map with num >= 8 is invalid
+		fragmentMap		8		temp/texture
+    }
+}
