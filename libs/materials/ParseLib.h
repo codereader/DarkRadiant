@@ -123,4 +123,6 @@ inline std::string getStringForTexGenType(ShaderLayer::TexGenType type)
     return std::string();
 }
 
+constexpr int NUM_MAX_VERTEX_PARMS = 4;
+
 }

@@ -398,6 +398,9 @@ TEST_F(MaterialsTest, MaterialParserStageVertexProgram)
     EXPECT_EQ(material->getAllLayers().front()->getVertexParm(2).expressions[1]->getExpressionString(), "6.0");
     EXPECT_EQ(material->getAllLayers().front()->getVertexParm(2).expressions[2]->getExpressionString(), "7.0");
     EXPECT_EQ(material->getAllLayers().front()->getVertexParm(2).expressions[3]->getExpressionString(), "8.0");
+
+    material = GlobalMaterialManager().getMaterialForName("textures/parsertest/program/vertexProgram7");
+    EXPECT_TRUE(material->getAllLayers().empty()); // failure to parse should end up with an empty material
 }
 
 }

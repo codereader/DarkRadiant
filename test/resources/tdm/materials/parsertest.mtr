@@ -245,3 +245,14 @@ textures/parsertest/program/vertexProgram6
         vertexParm 2 5,6,7,8
     }
 }
+
+textures/parsertest/program/vertexProgram7
+{
+	{
+        map _white
+        vertexProgram glprogs/test.vfp
+
+        // Maximum number of vertexParms is 4, index 5 is invalid
+        vertexParm 5 5,6,7,8
+    }
+}

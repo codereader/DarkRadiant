@@ -786,6 +786,11 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 		// vertexParm		<parmNum>		<parm1> [,<parm2>] [,<parm3>] [,<parm4>]
 		parm.index = string::convert<int>(tokeniser.nextToken());
 
+        if (parm.index < 0 || parm.index >= NUM_MAX_VERTEX_PARMS)
+        {
+            throw parser::ParseException(fmt::format("A material stage can have {0} vertex parameters at most", NUM_MAX_VERTEX_PARMS));
+        }
+
         parm.expressions[0] = ShaderExpression::createFromTokens(tokeniser);
 
         for (int i = 1; i < 4 && tokeniser.peek() == ","; ++i)
