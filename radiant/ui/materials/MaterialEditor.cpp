@@ -940,12 +940,18 @@ void MaterialEditor::updateStageControls()
         getControl<wxRadioButton>("MaterialStageNoVertexColourFlag")->SetValue(selectedStage->getVertexColourMode() == ShaderLayer::VERTEX_COLOUR_NONE);
         getControl<wxRadioButton>("MaterialStageVertexColourFlag")->SetValue(selectedStage->getVertexColourMode() == ShaderLayer::VERTEX_COLOUR_MULTIPLY);
         getControl<wxRadioButton>("MaterialStageInverseVertexColourFlag")->SetValue(selectedStage->getVertexColourMode() == ShaderLayer::VERTEX_COLOUR_INVERSE_MULTIPLY);
+
+        getControl<wxTextCtrl>("MaterialStageVertexProgram")->SetValue(selectedStage->getVertexProgram());
+        getControl<wxTextCtrl>("MaterialStageFragmentProgram")->SetValue(selectedStage->getFragmentProgram());
     }
     else
     {
         getControl<wxRadioButton>("MaterialStageNoVertexColourFlag")->SetValue(true);
         getControl<wxTextCtrl>("MaterialStageImageMap")->SetValue("");
         getControl<wxTextCtrl>("MaterialStageVideoMapFile")->SetValue("");
+
+        getControl<wxTextCtrl>("MaterialStageVertexProgram")->SetValue("");
+        getControl<wxTextCtrl>("MaterialStageFragmentProgram")->SetValue("");
     }
 }
 

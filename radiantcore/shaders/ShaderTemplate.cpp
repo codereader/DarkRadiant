@@ -1153,7 +1153,8 @@ bool ShaderTemplate::saveLayer()
     // Append layer to list of all layers
     if (_currentLayer->getBindableTexture() || 
         _currentLayer->getMapType() == ShaderLayer::MapType::RemoteRenderMap ||
-        _currentLayer->getMapType() == ShaderLayer::MapType::MirrorRenderMap)
+        _currentLayer->getMapType() == ShaderLayer::MapType::MirrorRenderMap ||
+        !_currentLayer->getVertexProgram().empty() || !_currentLayer->getFragmentProgram().empty())
     {
 		addLayer(_currentLayer);
     }

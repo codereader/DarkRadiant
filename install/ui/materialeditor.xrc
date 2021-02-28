@@ -2652,7 +2652,7 @@
 												</object>
 												<object class="notebookpage">
 													<label>Vertex Colour</label>
-													<selected>1</selected>
+													<selected>0</selected>
 													<object class="wxPanel" name="m_panel611">
 														<style>wxTAB_TRAVERSAL</style>
 														<object class="wxBoxSizer">
@@ -2836,13 +2836,13 @@
 												</object>
 												<object class="notebookpage">
 													<label>Program</label>
-													<selected>0</selected>
+													<selected>1</selected>
 													<object class="wxPanel" name="m_panel61111">
 														<style>wxTAB_TRAVERSAL</style>
 														<object class="wxBoxSizer">
 															<orient>wxVERTICAL</orient>
 															<object class="sizeritem">
-																<option>1</option>
+																<option>0</option>
 																<flag>wxALL|wxEXPAND</flag>
 																<border>6</border>
 																<object class="wxFlexGridSizer">
@@ -2865,7 +2865,7 @@
 																		<option>0</option>
 																		<flag>wxEXPAND</flag>
 																		<border>5</border>
-																		<object class="wxTextCtrl" name="MaterialEditorStageMap12">
+																		<object class="wxTextCtrl" name="MaterialStageFragmentProgram">
 																			<value></value>
 																		</object>
 																	</object>
@@ -2882,124 +2882,44 @@
 																		<option>0</option>
 																		<flag>wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</flag>
 																		<border>0</border>
-																		<object class="wxTextCtrl" name="MaterialEditorStageMap112">
+																		<object class="wxTextCtrl" name="MaterialStageVertexProgram">
 																			<value></value>
+																		</object>
+																	</object>
+																</object>
+															</object>
+															<object class="sizeritem">
+																<option>1</option>
+																<flag>wxALL|wxEXPAND</flag>
+																<border>6</border>
+																<object class="unknown" name="m_dataViewListCtrl1" />
+															</object>
+															<object class="sizeritem">
+																<option>0</option>
+																<flag>wxALIGN_RIGHT</flag>
+																<border>0</border>
+																<object class="wxBoxSizer">
+																	<orient>wxHORIZONTAL</orient>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALIGN_CENTER_VERTICAL|wxALL|wxLEFT</flag>
+																		<border>6</border>
+																		<object class="wxButton" name="m_button11">
+																			<label>Add Vertex Parameter</label>
+																			<default>0</default>
+																			<markup>0</markup>
+																			<bitmap />
 																		</object>
 																	</object>
 																	<object class="sizeritem">
 																		<option>0</option>
 																		<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																		<border>0</border>
-																		<object class="wxStaticText" name="m_staticText2021">
-																			<label>program</label>
-																			<wrap>-1</wrap>
-																		</object>
-																	</object>
-																	<object class="sizeritem">
-																		<option>0</option>
-																		<flag>wxALL|wxEXPAND</flag>
-																		<border>0</border>
-																		<object class="wxTextCtrl" name="MaterialEditorStageMap1111">
-																			<value></value>
-																		</object>
-																	</object>
-																	<object class="sizeritem">
-																		<option>0</option>
-																		<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																		<border>0</border>
-																		<object class="wxStaticText" name="m_staticText2022">
-																			<label>vertexParm</label>
-																			<wrap>-1</wrap>
-																		</object>
-																	</object>
-																	<object class="sizeritem">
-																		<option>1</option>
-																		<flag>wxEXPAND</flag>
-																		<border>5</border>
-																		<object class="wxBoxSizer">
-																			<orient>wxHORIZONTAL</orient>
-																			<object class="sizeritem">
-																				<option>0</option>
-																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																				<border>0</border>
-																				<object class="wxStaticText" name="m_staticText210">
-																					<label>1</label>
-																					<wrap>-1</wrap>
-																				</object>
-																			</object>
-																			<object class="sizeritem">
-																				<option>1</option>
-																				<flag>wxLEFT|wxRIGHT</flag>
-																				<border>6</border>
-																				<object class="wxTextCtrl" name="MaterialEditorStageMap11111">
-																					<value></value>
-																				</object>
-																			</object>
-																			<object class="sizeritem">
-																				<option>0</option>
-																				<flag>wxALIGN_CENTER_VERTICAL</flag>
-																				<border>0</border>
-																				<object class="wxButton" name="m_button11">
-																					<label>Add</label>
-																					<default>0</default>
-																					<markup>0</markup>
-																					<bitmap />
-																				</object>
-																			</object>
-																		</object>
-																	</object>
-																	<object class="sizeritem">
-																		<option>0</option>
-																		<flag>wxALIGN_CENTER_VERTICAL</flag>
-																		<border>0</border>
-																		<object class="wxStaticText" name="m_staticText20221">
-																			<label>fragmentMap</label>
-																			<wrap>-1</wrap>
-																		</object>
-																	</object>
-																	<object class="sizeritem">
-																		<option>1</option>
-																		<flag>wxEXPAND</flag>
-																		<border>0</border>
-																		<object class="wxBoxSizer">
-																			<orient>wxHORIZONTAL</orient>
-																			<object class="sizeritem">
-																				<option>0</option>
-																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																				<border>0</border>
-																				<object class="wxStaticText" name="m_staticText2101">
-																					<label>1</label>
-																					<wrap>-1</wrap>
-																				</object>
-																			</object>
-																			<object class="sizeritem">
-																				<option>0</option>
-																				<flag>wxLEFT</flag>
-																				<border>6</border>
-																				<object class="wxChoice" name="m_choice24">
-																					<selection>0</selection>
-																					<content />
-																				</object>
-																			</object>
-																			<object class="sizeritem">
-																				<option>1</option>
-																				<flag>wxLEFT|wxRIGHT</flag>
-																				<border>6</border>
-																				<object class="wxTextCtrl" name="MaterialEditorStageMap111111">
-																					<value></value>
-																				</object>
-																			</object>
-																			<object class="sizeritem">
-																				<option>0</option>
-																				<flag>wxALIGN_CENTER_VERTICAL</flag>
-																				<border>0</border>
-																				<object class="wxButton" name="m_button111">
-																					<label>Add</label>
-																					<default>0</default>
-																					<markup>0</markup>
-																					<bitmap />
-																				</object>
-																			</object>
+																		<border>6</border>
+																		<object class="wxButton" name="m_button112">
+																			<label>Add Fragment Map</label>
+																			<default>0</default>
+																			<markup>0</markup>
+																			<bitmap />
 																		</object>
 																	</object>
 																</object>
