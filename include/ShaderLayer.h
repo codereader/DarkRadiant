@@ -341,10 +341,23 @@ public:
 	 */
 	virtual std::size_t getNumFragmentMaps() = 0;
 
+    struct FragmentMap
+    {
+        FragmentMap() :
+            index(-1)
+        {}
+
+        int index;
+        std::vector<std::string> options;
+        shaders::IMapExpression::Ptr map;
+    };
+
+    virtual const FragmentMap& getFragmentMap(int index) = 0;
+
 	/**
-	 * Returns the fragment map with the given index. 
+	 * Returns the fragment map image with the given index. 
 	 */
-	virtual TexturePtr getFragmentMap(int index) = 0;
+	virtual TexturePtr getFragmentMapTexture(int index) = 0;
 
 	/**
 	 * Stage-specific polygon offset, overriding the "global" one defined on the material.

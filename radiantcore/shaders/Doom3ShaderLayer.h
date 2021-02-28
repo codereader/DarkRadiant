@@ -105,7 +105,7 @@ private:
     std::vector<VertexParm> _vertexParmDefinitions;
 
     // The array of fragment maps
-    std::vector<MapExpressionPtr> _fragmentMaps;
+    std::vector<FragmentMap> _fragmentMaps;
 
     // Stage-specific polygon offset, is 0 if not used
     float _privatePolygonOffset;
@@ -513,19 +513,11 @@ public:
         return _fragmentMaps.size();
     }
 
-    TexturePtr getFragmentMap(int index);
+    const FragmentMap& getFragmentMap(int index) override;
 
-    void setFragmentMap(std::size_t index, const MapExpressionPtr& map)
-    {
-        assert(index >= 0);
+    TexturePtr getFragmentMapTexture(int index) override;
 
-        if (index >= _fragmentMaps.size())
-        {
-            _fragmentMaps.resize(index + 1);
-        }
-
-        _fragmentMaps[index] = map;
-    }
+    void addFragmentMap(const FragmentMap& fragmentMap);
 
     float getPrivatePolygonOffset()
     {

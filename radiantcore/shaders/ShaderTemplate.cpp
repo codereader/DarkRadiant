@@ -804,8 +804,15 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 	}
 	else if (token == "fragmentmap")
 	{
+        ShaderLayer::FragmentMap map;
+
 		// fragmentMap <index> [options] <map>
-		int mapNum = string::convert<int>(tokeniser.nextToken());
+        map.index = string::convert<int>(tokeniser.nextToken());
+
+        if (map.index < 0 || map.index >= NUM_MAX_FRAGMENT_MAPS)
+        {
+            throw parser::ParseException(fmt::format("A material stage can have {0} fragment maps at most", NUM_MAX_FRAGMENT_MAPS));
+        }
 
 		std::string next = tokeniser.peek();
 		string::to_lower(next);
@@ -816,14 +823,16 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 			next == "zeroclamp" || next == "alphazeroclamp" || next == "forcehighquality" ||
 			next == "uncompressed" || next == "highquality" || next == "nopicmip")
 		{
-			tokeniser.nextToken();
+            map.options.emplace_back(tokeniser.nextToken());
 
 			next = tokeniser.peek();
 			string::to_lower(next);
 		}
 
-		// Get the map expression (but don't really use it)
-		_currentLayer->setFragmentMap(mapNum, MapExpression::createForToken(tokeniser));
+		// Get the map expression and add the fragment map to the stage
+        map.map = MapExpression::createForToken(tokeniser);
+
+		_currentLayer->addFragmentMap(map);
 	}
     else if (token == "alphatest")
     {

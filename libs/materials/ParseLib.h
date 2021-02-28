@@ -124,5 +124,6 @@ inline std::string getStringForTexGenType(ShaderLayer::TexGenType type)
 }
 
 constexpr int NUM_MAX_VERTEX_PARMS = 4;
+constexpr int NUM_MAX_FRAGMENT_MAPS = 8;
 
 }

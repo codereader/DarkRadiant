@@ -299,14 +299,33 @@ float Doom3ShaderLayer::getAlphaTest() const
     return _registers[_alphaTest];
 }
 
-TexturePtr Doom3ShaderLayer::getFragmentMap(int index)
+TexturePtr Doom3ShaderLayer::getFragmentMapTexture(int index)
 {
 	if (index < 0 || index >= static_cast<int>(_fragmentMaps.size()))
 	{
 		return TexturePtr();
 	}
 
-	return GetTextureManager().getBinding(_fragmentMaps[index]);
+	return GetTextureManager().getBinding(std::dynamic_pointer_cast<NamedBindable>(_fragmentMaps[index].map));
+}
+
+const Doom3ShaderLayer::FragmentMap& Doom3ShaderLayer::getFragmentMap(int index)
+{
+    assert(index >= 0 && index < static_cast<int>(_fragmentMaps.size()));
+
+    return _fragmentMaps[index];
+}
+
+void Doom3ShaderLayer::addFragmentMap(const ShaderLayer::FragmentMap& fragmentMap)
+{
+    assert(fragmentMap.index >= 0);
+
+    if (fragmentMap.index >= _fragmentMaps.size())
+    {
+        _fragmentMaps.resize(fragmentMap.index + 1);
+    }
+
+    _fragmentMaps[fragmentMap.index] = fragmentMap;
 }
 
 std::string Doom3ShaderLayer::getMapImageFilename()
