@@ -336,5 +336,91 @@ void Doom3ShaderLayer::setParseFlag(ParseFlags flag)
     _parseFlags |= flag;
 }
 
+Vector4 Doom3ShaderLayer::getVertexParmValue(int parm)
+{
+    if (static_cast<std::size_t>(parm) >= _vertexParms.size() / 4)
+    {
+        return Vector4(0, 0, 0, 1);
+    }
+
+    std::size_t offset = parm * 4;
+
+    return Vector4(_registers[_vertexParms[offset + 0]], _registers[_vertexParms[offset + 1]],
+        _registers[_vertexParms[offset + 2]], _registers[_vertexParms[offset + 3]]);
+}
+
+const ShaderLayer::VertexParm& Doom3ShaderLayer::getVertexParm(int parm)
+{
+    return _vertexParmDefinitions[parm];
+}
+
+int Doom3ShaderLayer::getNumVertexParms()
+{
+    return static_cast<int>(_vertexParmDefinitions.size());
+}
+
+void Doom3ShaderLayer::addVertexParm(const VertexParm& parm)
+{
+    if (_vertexParmDefinitions.size() <= parm.index)
+    {
+        _vertexParmDefinitions.resize(parm.index + 1);
+    }
+
+    // Store the expressions in a separate location
+    _vertexParmDefinitions[parm.index] = parm;
+
+    assert(parm.expressions[0]);
+
+    _expressions.emplace_back(parm.expressions[0]);
+    std::size_t parm0Reg = parm.expressions[0]->linkToRegister(_registers);
+
+    if (_vertexParms.size() <= (parm.index + 1) * 4)
+    {
+        _vertexParms.resize((parm.index + 1) * 4, REG_ZERO);
+    }
+
+    auto offset = parm.index * 4;
+    _vertexParms[offset + 0] = parm0Reg;
+
+    if (parm.expressions[1])
+    {
+        _expressions.emplace_back(parm.expressions[1]);
+        _vertexParms[offset + 1] = parm.expressions[1]->linkToRegister(_registers);
+
+        if (parm.expressions[2])
+        {
+            _expressions.emplace_back(parm.expressions[2]);
+            _vertexParms[offset + 2] = parm.expressions[2]->linkToRegister(_registers);
+
+            if (parm.expressions[3])
+            {
+                _expressions.emplace_back(parm.expressions[3]);
+                _vertexParms[offset + 3] = parm.expressions[3]->linkToRegister(_registers);
+            }
+            else
+            {
+                // No fourth parameter set, set w to 1
+                _vertexParms[offset + 3] = REG_ONE;
+            }
+        }
+        else
+        {
+            // Only 2 expressions given, set z and w to 0 and 1, respectively.
+            _vertexParms[offset + 2] = REG_ZERO;
+            _vertexParms[offset + 3] = REG_ONE;
+        }
+    }
+    else
+    {
+        // no parm1 given, repeat the one we have 4 times => insert 3 more times
+        _vertexParms[offset + 1] = parm0Reg;
+        _vertexParms[offset + 2] = parm0Reg;
+        _vertexParms[offset + 3] = parm0Reg;
+    }
+
+    // At this point the array needs to be empty or its size a multiple of 4
+    assert(_vertexParms.size() % 4 == 0);
+}
+
 }
 

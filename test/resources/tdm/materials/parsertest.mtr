@@ -182,3 +182,66 @@ textures/parsertest/transform/rotate1
     }
 }
 
+textures/parsertest/program/vertexProgram1
+{
+	{
+        map _white
+        vertexProgram glprogs/test.vfp
+
+        vertexParm 0 time // only 1 argument defined
+    }
+}
+
+textures/parsertest/program/vertexProgram2
+{
+	{
+        map _white
+        vertexProgram glprogs/test.vfp
+
+        vertexParm 0 time, 3.0 // only 2 arguments defined
+    }
+}
+
+textures/parsertest/program/vertexProgram3
+{
+	{
+        map _white
+        vertexProgram glprogs/test.vfp
+
+        vertexParm 0 time, 3.0, global3 // only 3 arguments defined
+    }
+}
+
+textures/parsertest/program/vertexProgram4
+{
+	{
+        map _white
+        vertexProgram glprogs/test.vfp
+
+        vertexParm 0 time, 3.0, global3, time*2 // 4 arguments defined
+    }
+}
+
+textures/parsertest/program/vertexProgram5
+{
+	{
+        map _white
+        vertexProgram glprogs/test.vfp
+
+        vertexParm 0 time, 3.0, global3, time*2 // 4 arguments defined
+        vertexParm 1 1, 2, 3, 4
+        vertexParm 2 5,6,7,8
+    }
+}
+
+textures/parsertest/program/vertexProgram6
+{
+	{
+        map _white
+        vertexProgram glprogs/test.vfp
+
+        vertexParm 0 time, 3.0, global3, time*2 // 4 arguments defined
+        // index 1 is missing
+        vertexParm 2 5,6,7,8
+    }
+}

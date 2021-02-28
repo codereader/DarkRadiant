@@ -314,10 +314,27 @@ public:
 	 */
 	virtual const std::string& getFragmentProgram() = 0;
 
+    // The number of defined vertex parameters
+    virtual int getNumVertexParms() = 0;
+
 	/**
 	 * Returns the 4 parameter values for the vertexParm index <parm>.
 	 */
-	virtual Vector4 getVertexParm(int parm) = 0;
+	virtual Vector4 getVertexParmValue(int parm) = 0;
+
+    // A vertex parm has an index and 4 expressions at most
+    struct VertexParm
+    {
+        VertexParm() :
+            index(-1) // a negative index indicates this parm has not been defined in the stage
+        {}
+
+        int index;
+        shaders::IShaderExpressionPtr expressions[4];
+    };
+
+    // Returns the 
+    virtual const VertexParm& getVertexParm(int index) = 0;
 
 	/**
 	 * Returns the number of fragment maps in this stage.

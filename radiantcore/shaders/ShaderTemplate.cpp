@@ -781,49 +781,21 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 	}
 	else if (token == "vertexparm")
 	{
+        ShaderLayer::VertexParm parm;
+
 		// vertexParm		<parmNum>		<parm1> [,<parm2>] [,<parm3>] [,<parm4>]
-		int parmNum = string::convert<int>(tokeniser.nextToken());
+		parm.index = string::convert<int>(tokeniser.nextToken());
 
-		IShaderExpressionPtr parm0 = ShaderExpression::createFromTokens(tokeniser);
+        parm.expressions[0] = ShaderExpression::createFromTokens(tokeniser);
 
-		if (tokeniser.peek() == ",")
-		{
-			tokeniser.nextToken();
+        for (int i = 1; i < 4 && tokeniser.peek() == ","; ++i)
+        {
+            tokeniser.nextToken();
 
-			IShaderExpressionPtr parm1 = ShaderExpression::createFromTokens(tokeniser);
+            parm.expressions[i] = ShaderExpression::createFromTokens(tokeniser);
+        }
 
-			if (tokeniser.peek() == ",")
-			{
-				tokeniser.nextToken();
-
-				IShaderExpressionPtr parm2 = ShaderExpression::createFromTokens(tokeniser);
-
-				if (tokeniser.peek() == ",")
-				{
-					tokeniser.nextToken();
-
-					IShaderExpressionPtr parm3 = ShaderExpression::createFromTokens(tokeniser);
-
-					// All 4 layers specified
-					_currentLayer->setVertexParm(parmNum, parm0, parm1, parm2, parm3);
-				}
-				else
-				{
-					// Pass NULL as fourth component, it will be set to 1 by the shaderlayer
-					_currentLayer->setVertexParm(parmNum, parm0, parm1, parm2);
-				}
-			}
-			else
-			{
-				// Pass NULL as components z and w, the shaderlayer will set z and w to 0, 1
-				_currentLayer->setVertexParm(parmNum, parm0, parm1);
-			}
-		}
-		else
-		{
-			// Pass only one component, the shaderlayer will repeat the first parm 4 times
-			_currentLayer->setVertexParm(parmNum, parm0);
-		}
+        _currentLayer->addVertexParm(parm);
 	}
 	else if (token == "fragmentmap")
 	{

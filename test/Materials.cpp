@@ -301,4 +301,103 @@ TEST_F(MaterialsTest, MaterialParserStageShear)
     EXPECT_EQ(material->getAllLayers().front()->getShearExpression(1)->getExpressionString(), "4.0");
 }
 
+TEST_F(MaterialsTest, MaterialParserStageVertexProgram)
+{
+    auto material = GlobalMaterialManager().getMaterialForName("textures/parsertest/program/vertexProgram1");
+    material->getAllLayers().front()->evaluateExpressions(0);
+
+    EXPECT_EQ(material->getAllLayers().front()->getNumVertexParms(), 1);
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParmValue(0), Vector4(0, 0, 0, 0)); // all 4 equal
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).index, 0);
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[0]->getExpressionString(), "time");
+    EXPECT_FALSE(material->getAllLayers().front()->getVertexParm(0).expressions[1]);
+    EXPECT_FALSE(material->getAllLayers().front()->getVertexParm(0).expressions[2]);
+    EXPECT_FALSE(material->getAllLayers().front()->getVertexParm(0).expressions[3]);
+
+    material = GlobalMaterialManager().getMaterialForName("textures/parsertest/program/vertexProgram2");
+    material->getAllLayers().front()->evaluateExpressions(0);
+
+    EXPECT_EQ(material->getAllLayers().front()->getNumVertexParms(), 1);
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParmValue(0), Vector4(0, 3, 0, 1)); // z=0,w=1 implicitly
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).index, 0);
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[0]->getExpressionString(), "time");
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[1]->getExpressionString(), "3.0");
+    EXPECT_FALSE(material->getAllLayers().front()->getVertexParm(0).expressions[2]);
+    EXPECT_FALSE(material->getAllLayers().front()->getVertexParm(0).expressions[3]);
+
+    material = GlobalMaterialManager().getMaterialForName("textures/parsertest/program/vertexProgram3");
+    material->getAllLayers().front()->evaluateExpressions(0);
+
+    EXPECT_EQ(material->getAllLayers().front()->getNumVertexParms(), 1);
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParmValue(0), Vector4(0, 3, 0, 1)); // w=1 implicitly
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).index, 0);
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[0]->getExpressionString(), "time");
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[1]->getExpressionString(), "3.0");
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[2]->getExpressionString(), "global3");
+    EXPECT_FALSE(material->getAllLayers().front()->getVertexParm(0).expressions[3]);
+
+    material = GlobalMaterialManager().getMaterialForName("textures/parsertest/program/vertexProgram4");
+    material->getAllLayers().front()->evaluateExpressions(1000); // time = 1 sec
+
+    EXPECT_EQ(material->getAllLayers().front()->getNumVertexParms(), 1);
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParmValue(0), Vector4(1, 3, 0, 2));
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).index, 0);
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[0]->getExpressionString(), "time");
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[1]->getExpressionString(), "3.0");
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[2]->getExpressionString(), "global3");
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[3]->getExpressionString(), "time * 2.0");
+
+    material = GlobalMaterialManager().getMaterialForName("textures/parsertest/program/vertexProgram5");
+    material->getAllLayers().front()->evaluateExpressions(2000); // time = 2 secs
+
+    EXPECT_EQ(material->getAllLayers().front()->getNumVertexParms(), 3);
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParmValue(0), Vector4(2, 3, 0, 4));
+
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).index, 0);
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[0]->getExpressionString(), "time");
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[1]->getExpressionString(), "3.0");
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[2]->getExpressionString(), "global3");
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[3]->getExpressionString(), "time * 2.0");
+
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParmValue(1), Vector4(1, 2, 3, 4));
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(1).index, 1);
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(1).expressions[0]->getExpressionString(), "1.0");
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(1).expressions[1]->getExpressionString(), "2.0");
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(1).expressions[2]->getExpressionString(), "3.0");
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(1).expressions[3]->getExpressionString(), "4.0");
+
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParmValue(2), Vector4(5, 6, 7, 8));
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(2).index, 2);
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(2).expressions[0]->getExpressionString(), "5.0");
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(2).expressions[1]->getExpressionString(), "6.0");
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(2).expressions[2]->getExpressionString(), "7.0");
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(2).expressions[3]->getExpressionString(), "8.0");
+
+    material = GlobalMaterialManager().getMaterialForName("textures/parsertest/program/vertexProgram6");
+    material->getAllLayers().front()->evaluateExpressions(2000); // time = 2 secs
+
+    EXPECT_EQ(material->getAllLayers().front()->getNumVertexParms(), 3);
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParmValue(0), Vector4(2, 3, 0, 4));
+
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).index, 0);
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[0]->getExpressionString(), "time");
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[1]->getExpressionString(), "3.0");
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[2]->getExpressionString(), "global3");
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[3]->getExpressionString(), "time * 2.0");
+
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParmValue(1), Vector4(0, 0, 0, 0));
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(1).index, -1); // missing
+    EXPECT_FALSE(material->getAllLayers().front()->getVertexParm(1).expressions[0]);
+    EXPECT_FALSE(material->getAllLayers().front()->getVertexParm(1).expressions[1]);
+    EXPECT_FALSE(material->getAllLayers().front()->getVertexParm(1).expressions[2]);
+    EXPECT_FALSE(material->getAllLayers().front()->getVertexParm(1).expressions[3]);
+
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParmValue(2), Vector4(5, 6, 7, 8));
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(2).index, 2);
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(2).expressions[0]->getExpressionString(), "5.0");
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(2).expressions[1]->getExpressionString(), "6.0");
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(2).expressions[2]->getExpressionString(), "7.0");
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(2).expressions[3]->getExpressionString(), "8.0");
+}
+
 }

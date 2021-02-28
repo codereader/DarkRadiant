@@ -102,6 +102,7 @@ private:
     // A variable sized array of vertexParms (or rather their indices into the registers array)
     // since a single vertex parm consists of 4 values, the _vertexParms array is usually of size 0, 4, 8, etc.
     std::vector<std::size_t> _vertexParms;
+    std::vector<VertexParm> _vertexParmDefinitions;
 
     // The array of fragment maps
     std::vector<MapExpressionPtr> _fragmentMaps;
@@ -489,68 +490,12 @@ public:
         _vertexProgram = name;
     }
 
-    Vector4 getVertexParm(int parm) 
-    {
-        if (static_cast<std::size_t>(parm) >= _vertexParms.size() / 4)
-        {
-            return Vector4(0,0,0,1);
-        }
-
-        std::size_t offset = parm * 4;
-
-        return Vector4(_registers[_vertexParms[offset+0]], _registers[_vertexParms[offset+1]],
-                       _registers[_vertexParms[offset+2]], _registers[_vertexParms[offset+3]]);
-    }
-
-    void setVertexParm(int parm, const IShaderExpressionPtr& parm0, 
-                                 const IShaderExpressionPtr& parm1 = IShaderExpressionPtr(),
-                                 const IShaderExpressionPtr& parm2 = IShaderExpressionPtr(), 
-                                 const IShaderExpressionPtr& parm3 = IShaderExpressionPtr())
-    {
-        assert(parm0);
-
-        _expressions.push_back(parm0);
-        std::size_t parm0Reg = parm0->linkToRegister(_registers);
-
-        _vertexParms.push_back(parm0Reg);
-
-        if (parm1)
-        {
-            _expressions.push_back(parm1);
-            _vertexParms.push_back(parm1->linkToRegister(_registers));
-
-            if (parm2)
-            {
-                _expressions.push_back(parm2);
-                _vertexParms.push_back(parm2->linkToRegister(_registers));
-
-                if (parm3)
-                {
-                    _expressions.push_back(parm3);
-                    _vertexParms.push_back(parm3->linkToRegister(_registers));
-                }
-                else
-                {
-                    // No fourth parameter set, set w to 1
-                    _vertexParms.push_back(REG_ONE);
-                }
-            }
-            else
-            {
-                // Only 2 expressions given, set z and w to 0 and 1, respectively.
-                _vertexParms.push_back(REG_ZERO);
-                _vertexParms.push_back(REG_ONE);
-            }
-        }
-        else
-        {
-            // no parm1 given, repeat the one we have 4 times => insert 3 more times
-            _vertexParms.insert(_vertexParms.end(), 3, parm0Reg);
-        }
-
-        // At this point the array needs to be empty or its size a multiple of 4
-        assert(_vertexParms.size() % 4 == 0);
-    }
+    Vector4 getVertexParmValue(int parm) override;
+    const VertexParm& getVertexParm(int parm) override;
+    
+    int getNumVertexParms() override;
+    
+    void addVertexParm(const VertexParm& parm);
 
     // Fragment program name
     const std::string& getFragmentProgram()
