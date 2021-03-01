@@ -114,7 +114,7 @@ public:
 	{ }
 
 	// Required visit function
-	void operator() (const EntityClassAttribute& attr)
+	void operator() (const EntityClassAttribute& attr, bool)
 	{
 		// greebo: Only add the property if it hasn't been set directly on the entity itself.
 		if (!_entity->getKeyValue(attr.getName()).empty() && !_entity->isInherited(attr.getName()))

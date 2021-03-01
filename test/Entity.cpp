@@ -104,6 +104,30 @@ TEST_F(EntityTest, EntityClassInheritsAttributes)
     EXPECT_EQ(cls->getAttribute("spawnclass", false).getValue(), "");
 }
 
+TEST_F(EntityTest, VisitInheritedClassAttributes)
+{
+    auto cls = GlobalEntityClassManager().findClass("light_extinguishable");
+    ASSERT_TRUE(cls);
+
+    // Map of attribute names to inherited flag
+    std::map<std::string, bool> attributes;
+
+    // Visit all attributes and store in the map
+    cls->forEachAttribute(
+        [&attributes](const EntityClassAttribute& a, bool inherited) {
+            attributes.insert({a.getName(), inherited});
+        },
+        true /* editorKeys */
+    );
+
+    // Confirm inherited flags set correctly
+    EXPECT_EQ(attributes.at("spawnclass"), true);
+    EXPECT_EQ(attributes.at("AIUse"), true);
+    EXPECT_EQ(attributes.at("maxs"), false);
+    EXPECT_EQ(attributes.at("clipmodel_contents"), false);
+    EXPECT_EQ(attributes.at("editor_displayFolder"), false);
+}
+
 TEST_F(EntityTest, CannotCreateEntityWithoutClass)
 {
     // Creating with a null entity class should throw an exception

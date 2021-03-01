@@ -1138,7 +1138,7 @@ void EntityInspector::addClassProperties()
 
     // Visit the entity class
     eclass->forEachAttribute(
-        std::bind(&EntityInspector::addClassAttribute, this, std::placeholders::_1)
+        [&](const EntityClassAttribute& a, bool) { addClassAttribute(a); }
     );
 }
 

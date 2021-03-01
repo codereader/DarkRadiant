@@ -32,7 +32,7 @@ public:
 	void visitKeyValue(const std::string& key, const std::string& value);
 
 	// operator() for IEntityClass::forEachEntityClass
-	void operator() (const EntityClassAttribute& attribute);
+	void operator() (const EntityClassAttribute& attribute, bool);
 
 private:
 	StimResponse& findOrCreate(int index, bool inherited);

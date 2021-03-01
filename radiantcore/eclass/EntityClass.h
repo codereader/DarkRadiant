@@ -50,7 +50,7 @@ private:
     vfs::FileInfo _fileInfo;
 
     // Parent class pointer (or NULL)
-    IEntityClass* _parent;
+    EntityClass* _parent = nullptr;
 
     // Should this entity type be treated as a light?
     bool _isLight;
@@ -113,7 +113,12 @@ private:
     void parseEditorSpawnarg(const std::string& key, const std::string& value);
     void setIsLight(bool val);
 
-public:
+    // Visit attributes recursively, parent first then child
+    using InternalAttrVisitor = std::function<void(const EntityClassAttribute&)>;
+    void forEachAttributeInternal(InternalAttrVisitor visitor,
+                                  bool editorKeys) const;
+
+  public:
     /**
      * Static function to create a default entity class.
      *
@@ -170,8 +175,7 @@ public:
     const EntityClassAttribute&
     getAttribute(const std::string&,
                  bool includeInherited = true) const override;
-    void forEachAttribute(std::function<void(const EntityClassAttribute&)>,
-                               bool) const override;
+    void forEachAttribute(AttributeVisitor, bool) const override;
 
     const std::string& getModelPath() const override { return _model; }
     const std::string& getSkin() const override { return _skin; }

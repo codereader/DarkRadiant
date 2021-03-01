@@ -19,7 +19,7 @@ void SRPropertyLoader::visitKeyValue(const std::string& key, const std::string& 
 	parseAttribute(key, value, false);
 }
 
-void SRPropertyLoader::operator() (const EntityClassAttribute& attribute)
+void SRPropertyLoader::operator() (const EntityClassAttribute& attribute, bool)
 {
 	parseAttribute(attribute.getName(), attribute.getValue(), true);
 }
@@ -44,7 +44,7 @@ StimResponse& SRPropertyLoader::findOrCreate(int index, bool inherited)
 void SRPropertyLoader::parseAttribute(const std::string& key, const std::string& value, bool inherited)
 {
 	// Cycle through the possible key names and see if we have a match
-	for (const auto& srKey : _keys) 
+	for (const auto& srKey : _keys)
 	{
 		// Construct a regex with the number as match variable
 		std::string exprStr = "^" + _prefix + srKey.key + "_([0-9]+)$";
@@ -81,7 +81,7 @@ void SRPropertyLoader::parseAttribute(const std::string& key, const std::string&
 		std::regex expr(exprStr);
 		std::smatch matches;
 
-		if (std::regex_match(key, matches, expr)) 
+		if (std::regex_match(key, matches, expr))
 		{
 			// The response index
 			int index = string::convert<int>(matches[1].str());
@@ -96,17 +96,17 @@ void SRPropertyLoader::parseAttribute(const std::string& key, const std::string&
 
 			std::string postfix = matches[3];
 
-			if (postfix.empty()) 
+			if (postfix.empty())
 			{
 				// No "_arg1" found, the value is the effect name definition
 				effect.setName(value, inherited);
 			}
-			else if (postfix == "_state") 
+			else if (postfix == "_state")
 			{
 				// This is a state variable
 				effect.setActive(value != "0", inherited);
 			}
-			else 
+			else
 			{
 				// Get the argument index from the tail
 				int argIndex = string::convert<int>(postfix.substr(4));

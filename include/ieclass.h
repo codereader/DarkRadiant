@@ -158,11 +158,6 @@ public:
     }
 
     /**
-     * Is TRUE for inherited keyvalues.
-     */
-    bool inherited;
-
-    /**
      * Construct a non-inherited EntityClassAttribute, passing the actual strings
      * which will be owned by this class instance.
      */
@@ -173,22 +168,7 @@ public:
     : _typeRef(new std::string(type_)),
       _nameRef(new std::string(name_)),
       _valueRef(new std::string(value_)),
-      _descRef(new std::string(description_)),
-      inherited(false)
-    {}
-
-    /**
-     * Construct a inherited EntityClassAttribute with a true inherited flag.
-     * The strings are taken from the inherited attribute.
-     * Note: this is not a copy-constructor on purpose, to allow STL assignments to
-     * copy the actual instance values.
-     */
-    EntityClassAttribute(const EntityClassAttribute& parentAttr, bool inherited_)
-    : _typeRef(parentAttr._typeRef),    // take type string,
-      _nameRef(parentAttr._nameRef),    // name string,
-      _valueRef(parentAttr._valueRef),  // value string
-      _descRef(parentAttr._descRef),    // and description from the parent attribute
-      inherited(inherited_)
+      _descRef(new std::string(description_))
     {}
 };
 
@@ -282,6 +262,15 @@ public:
                  bool includeInherited = true) const = 0;
 
     /**
+     * Function that will be invoked by forEachAttribute.
+     *
+     * The function will be passed each EntityClassAttribute in turn, along
+     * with a bool indicating if this attribute is inherited from a parent
+     * entity class.
+     */
+    using AttributeVisitor = std::function<void(const EntityClassAttribute&, bool)>;
+
+    /**
      * Enumerate the EntityClassAttibutes in turn, including all inherited
      * attributes.
      *
@@ -292,10 +281,8 @@ public:
      * true if editor keys (those which start with "editor_") should be passed
      * to the visitor, false if they should be skipped.
      */
-    virtual void forEachAttribute(
-        std::function<void(const EntityClassAttribute&)> visitor,
-        bool editorKeys = false
-    ) const = 0;
+    virtual void forEachAttribute(AttributeVisitor visitor,
+                                  bool editorKeys = false) const = 0;
 
     /* MODEL AND SKIN */
 

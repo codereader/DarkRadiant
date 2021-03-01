@@ -148,13 +148,13 @@ void EClassTree::createPropertyTreeView(wxWindow* parent)
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 }
 
-void EClassTree::addToListStore(const EntityClassAttribute& attr)
+void EClassTree::addToListStore(const EntityClassAttribute& attr, bool inherited)
 {
     // Append the details to the treestore
     wxutil::TreeModel::Row row = _propertyStore->AddItem();
 
 	wxDataViewItemAttr colour;
-	colour.SetColour(attr.inherited ? wxColor(127, 127, 127) : wxColor(0, 0, 0));
+	colour.SetColour(inherited ? wxColor(127, 127, 127) : wxColor(0, 0, 0));
 
     row[_propertyColumns.name] = attr.getName();
 	row[_propertyColumns.name] = colour;
@@ -162,7 +162,7 @@ void EClassTree::addToListStore(const EntityClassAttribute& attr)
     row[_propertyColumns.value] = attr.getValue();
 	row[_propertyColumns.value] = colour;
 
-    row[_propertyColumns.inherited] = attr.inherited ? "1" : "0";
+    row[_propertyColumns.inherited] = inherited ? "1" : "0";
 
 	row.SendItemAdded();
 }
@@ -173,15 +173,14 @@ void EClassTree::updatePropertyView(const std::string& eclassName)
 	_propertyStore->Clear();
 
 	IEntityClassPtr eclass = GlobalEntityClassManager().findClass(eclassName);
-
-	if (eclass == NULL)
-    {
+	if (!eclass)
 		return;
-	}
 
-	eclass->forEachAttribute(
-        std::bind(&EClassTree::addToListStore, this, std::placeholders::_1), true
-    );
+    eclass->forEachAttribute(
+        [&](const EntityClassAttribute& a, bool inherited) {
+            addToListStore(a, inherited);
+        },
+        true);
 }
 
 // Static command target

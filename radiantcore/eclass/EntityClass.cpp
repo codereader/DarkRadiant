@@ -22,7 +22,6 @@ EntityClass::EntityClass(const std::string& name, const vfs::FileInfo& fileInfo)
 EntityClass::EntityClass(const std::string& name, const vfs::FileInfo& fileInfo, bool fixedSize)
 : _name(name),
   _fileInfo(fileInfo),
-  _parent(nullptr),
   _isLight(false),
   _colour(-1, -1, -1),
   _colourTransparent(false),
@@ -187,14 +186,12 @@ EntityClass::Ptr EntityClass::create(const std::string& name, bool brushes)
     return std::make_shared<EntityClass>(name, emptyFileInfo, !brushes);
 }
 
-// Enumerate entity class attributes
-void EntityClass::forEachAttribute(
-    std::function<void(const EntityClassAttribute&)> visitor,
-    bool editorKeys) const
+void EntityClass::forEachAttributeInternal(InternalAttrVisitor visitor,
+                                           bool editorKeys) const
 {
-    // Visit parent attributes
+    // Visit parent attributes, making sure we set the inherited flag
     if (_parent)
-        _parent->forEachAttribute(visitor, editorKeys);
+        _parent->forEachAttributeInternal(visitor, editorKeys);
 
     // Visit our own attributes
     for (const auto& pair: _attributes)
@@ -204,6 +201,33 @@ void EntityClass::forEachAttribute(
         {
             visitor(pair.second);
         }
+    }
+}
+
+void EntityClass::forEachAttribute(AttributeVisitor visitor,
+                                   bool editorKeys) const
+{
+    // First compile a map of all attributes we need to pass to the visitor,
+    // ensuring that there is only one attribute per name (i.e. we don't want to
+    // visit the same-named attribute on both a child and one of its ancestors)
+    using AttrsByName = std::map<std::string, const EntityClassAttribute*>;
+    AttrsByName attrsByName;
+
+    // Internal visit function visits parent first, then child, ensuring that
+    // more derived attributes will replace parents in the map
+    forEachAttributeInternal(
+        [&attrsByName](const EntityClassAttribute& a) {
+            attrsByName[a.getName()] = &a;
+        },
+        editorKeys
+    );
+
+    // Pass attributes to the visitor function, setting the inherited flag on
+    // any which are not present on this EntityClass
+    for (const auto& pair: attrsByName)
+    {
+        StringPtr nameRef(new std::string(pair.first));
+        visitor(*pair.second, (_attributes.count(nameRef) == 0));
     }
 }
 
@@ -291,7 +315,7 @@ std::string EntityClass::getDefFileName()
 
 // Find a single attribute
 EntityClassAttribute& EntityClass::getAttribute(const std::string& name,
-                                                     bool includeInherited)
+                                                bool includeInherited)
 {
     return const_cast<EntityClassAttribute&>(
         std::as_const(*this).getAttribute(name, includeInherited)
