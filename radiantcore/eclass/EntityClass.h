@@ -167,7 +167,7 @@ public:
     const EntityClassAttribute&
     getAttribute(const std::string&,
                  bool includeInherited = true) const override;
-    void forEachClassAttribute(std::function<void(const EntityClassAttribute&)>,
+    void forEachAttribute(std::function<void(const EntityClassAttribute&)>,
                                bool) const override;
 
     const std::string& getModelPath() const override { return _model; }

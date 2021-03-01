@@ -188,13 +188,13 @@ Doom3EntityClassPtr EntityClass::create(const std::string& name, bool brushes)
 }
 
 // Enumerate entity class attributes
-void EntityClass::forEachClassAttribute(
+void EntityClass::forEachAttribute(
     std::function<void(const EntityClassAttribute&)> visitor,
     bool editorKeys) const
 {
     // Visit parent attributes
     if (_parent)
-        _parent->forEachClassAttribute(visitor, editorKeys);
+        _parent->forEachAttribute(visitor, editorKeys);
 
     // Visit our own attributes
     for (const auto& pair: _attributes)

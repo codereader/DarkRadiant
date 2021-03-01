@@ -83,7 +83,7 @@ void EntityInspector::construct()
     _showInheritedCheckbox->Bind(wxEVT_CHECKBOX, [this](wxCommandEvent& ev) {
         handleShowInheritedChanged();
     });
-    
+
     _showHelpColumnCheckbox = new wxCheckBox(_mainWidget, wxID_ANY, _("Show help"));
     _showHelpColumnCheckbox->Bind(wxEVT_CHECKBOX, [this](wxCommandEvent& ev) {
         handleShowHelpTextChanged();
@@ -104,10 +104,10 @@ void EntityInspector::construct()
     _paned->SplitHorizontally(createTreeViewPane(_paned), createPropertyEditorPane(_paned));
     _panedPosition.connect(_paned);
 
-    _helpText = new wxTextCtrl(_mainWidget, wxID_ANY, "", 
+    _helpText = new wxTextCtrl(_mainWidget, wxID_ANY, "",
         wxDefaultPosition, wxDefaultSize, wxTE_LEFT | wxTE_MULTILINE | wxTE_READONLY | wxTE_WORDWRAP);
     _helpText->SetMinClientSize(wxSize(-1, 60));
-    
+
     _mainWidget->GetSizer()->Add(optionsHBox, 0, wxEXPAND | wxALL, 3);
     _mainWidget->GetSizer()->Add(_paned, 1, wxEXPAND);
     _mainWidget->GetSizer()->Add(_helpText, 0, wxEXPAND);
@@ -120,7 +120,7 @@ void EntityInspector::construct()
 
     handleShowInheritedChanged();
     handleShowHelpTextChanged();
-    
+
     // Reload the information from the registry
     restoreSettings();
 
@@ -452,19 +452,19 @@ wxWindow* EntityInspector::createTreeViewPane(wxWindow* parent)
         wxDATAVIEW_CELL_ACTIVATABLE, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
 
     // Create the Property column (has an icon)
-    _keyValueTreeView->AppendIconTextColumn(_("Property"), 
-        _columns.name.getColumnIndex(), wxDATAVIEW_CELL_INERT, 
+    _keyValueTreeView->AppendIconTextColumn(_("Property"),
+        _columns.name.getColumnIndex(), wxDATAVIEW_CELL_INERT,
         wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_SORTABLE);
 
     // Create the value column
-    _keyValueTreeView->AppendTextColumn(_("Value"), 
-        _columns.value.getColumnIndex(), wxDATAVIEW_CELL_INERT, 
+    _keyValueTreeView->AppendTextColumn(_("Value"),
+        _columns.value.getColumnIndex(), wxDATAVIEW_CELL_INERT,
         wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_SORTABLE);
 
     // Used to update the help text
-    _keyValueTreeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
+    _keyValueTreeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED,
         wxDataViewEventHandler(EntityInspector::_onTreeViewSelectionChanged), NULL, this);
-    _keyValueTreeView->Connect(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, 
+    _keyValueTreeView->Connect(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU,
         wxDataViewEventHandler(EntityInspector::_onContextMenu), NULL, this);
 
     // When the toggle column is clicked to check/uncheck the box, the model's column value
@@ -803,7 +803,7 @@ bool EntityInspector::isItemDeletable(const wxutil::TreeModel::Row& row)
 bool EntityInspector::_testNonEmptyAndDeletableSelection()
 {
     if (_selectedEntity.expired()) return false;
-    
+
     wxDataViewItemArray selectedItems;
     _keyValueTreeView->GetSelections(selectedItems);
 
@@ -862,7 +862,7 @@ void EntityInspector::_onContextMenu(wxDataViewEvent& ev)
 
 void EntityInspector::_onDataViewItemChanged(wxDataViewEvent& ev)
 {
-    if (ev.GetDataViewColumn() != nullptr && 
+    if (ev.GetDataViewColumn() != nullptr &&
         static_cast<int>(ev.GetDataViewColumn()->GetModelColumn()) == _columns.booleanValue.getColumnIndex())
     {
         // Model value in the boolean column has changed, this means
@@ -876,7 +876,7 @@ void EntityInspector::_onDataViewItemChanged(wxDataViewEvent& ev)
 
         UndoableCommand cmd("entitySetProperty");
         applyKeyValueToSelection(key, updatedValue ? "1" : "0");
-        
+
         // Check if the property was an inherited one.
         // The applyKeyValue function produced a non-inherited entry
         // which should be visible once we're done
@@ -1088,7 +1088,7 @@ void EntityInspector::addClassAttribute(const EntityClassAttribute& a)
         wxDataViewItemAttr grey;
         grey.SetColour(wxColor(112, 112, 112));
 
-        row[_columns.name] = wxVariant(wxDataViewIconText(a.getName(), _emptyIcon)); 
+        row[_columns.name] = wxVariant(wxDataViewIconText(a.getName(), _emptyIcon));
         row[_columns.value] = a.getValue();
 
         // Inherited values have an inactive checkbox, so assign a false value and disable
@@ -1137,7 +1137,7 @@ void EntityInspector::addClassProperties()
     }
 
     // Visit the entity class
-    eclass->forEachClassAttribute(
+    eclass->forEachAttribute(
         std::bind(&EntityInspector::addClassAttribute, this, std::placeholders::_1)
     );
 }
@@ -1193,7 +1193,7 @@ void EntityInspector::getEntityFromSelectionSystem()
         // Node was not an entity, try parent instead
         scene::INodePtr selectedNodeParent = selectedNode->getParent();
         changeSelectedEntity(selectedNodeParent);
-        
+
         try
         {
             auto indices = scene::getNodeIndices(selectedNode);
@@ -1234,14 +1234,14 @@ void EntityInspector::changeSelectedEntity(const scene::INodePtr& newEntity)
     // it has already been deleted (no disconnection necessary)
     _selectedEntity.reset();
 
-    // Clear the view. If the old entity has been destroyed before we had 
+    // Clear the view. If the old entity has been destroyed before we had
     // a chance to disconnect the list store might contain remnants
     _keyValueIterMap.clear();
     _kvStore->Clear();
 
     // Reset the sorting when changing entities
     _keyValueTreeView->ResetSortingOnAllColumns();
-    
+
     // Attach to new entity if it is non-NULL
     if (newEntity)
     {

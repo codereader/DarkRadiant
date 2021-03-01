@@ -282,7 +282,8 @@ public:
                  bool includeInherited = true) const = 0;
 
     /**
-     * Enumerate the EntityClassAttibutes in turn.
+     * Enumerate the EntityClassAttibutes in turn, including all inherited
+     * attributes.
      *
      * \param visitor
      * Function that will be invoked for each EntityClassAttibute.
@@ -291,7 +292,7 @@ public:
      * true if editor keys (those which start with "editor_") should be passed
      * to the visitor, false if they should be skipped.
      */
-    virtual void forEachClassAttribute(
+    virtual void forEachAttribute(
         std::function<void(const EntityClassAttribute&)> visitor,
         bool editorKeys = false
     ) const = 0;

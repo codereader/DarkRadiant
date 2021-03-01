@@ -96,7 +96,7 @@ inline AttributeList getSpawnargsWithPrefix(const IEntityClass& eclass,
 {
     // Populate the list with with matching attributes
     AttributeList matches;
-    eclass.forEachClassAttribute(
+    eclass.forEachAttribute(
         std::bind(&detail::addIfMatches,
                   std::ref(matches), std::placeholders::_1, prefix, includeInherited),
         true // include editor_keys

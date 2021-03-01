@@ -14,7 +14,7 @@
 #include <wx/splitter.h>
 #include "wxutil/Bitmap.h"
 
-namespace ui 
+namespace ui
 {
 
 namespace
@@ -46,7 +46,7 @@ EClassTree::EClassTree() :
 	// Construct an eclass visitor and traverse the entity classes
 	_treeBuilder.reset(new EClassTreeBuilder(_eclassColumns, this));
 
-	Connect(wxutil::EV_TREEMODEL_POPULATION_FINISHED, 
+	Connect(wxutil::EV_TREEMODEL_POPULATION_FINISHED,
 		TreeModelPopulationFinishedHandler(EClassTree::onTreeStorePopulationFinished), NULL, this);
 
 	_treeBuilder->populate();
@@ -94,8 +94,8 @@ void EClassTree::populateWindow()
 {
 	// Create the overall vbox
 	SetSizer(new wxBoxSizer(wxVERTICAL));
-	
-	wxSplitterWindow* splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, 
+
+	wxSplitterWindow* splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition,
 		wxDefaultSize, wxSP_3D | wxSP_LIVE_UPDATE);
     splitter->SetMinimumPaneSize(10); // disallow unsplitting
 
@@ -124,7 +124,7 @@ void EClassTree::createEClassTreeView(wxWindow* parent)
 	_eclassView->AddSearchColumn(_eclassColumns.name);
 
 	// Tree selection
-	_eclassView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
+	_eclassView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED,
 		wxDataViewEventHandler(EClassTree::onSelectionChanged), NULL, this);
 
 	// Single column with icon and name
@@ -179,7 +179,7 @@ void EClassTree::updatePropertyView(const std::string& eclassName)
 		return;
 	}
 
-	eclass->forEachClassAttribute(
+	eclass->forEachAttribute(
         std::bind(&EClassTree::addToListStore, this, std::placeholders::_1), true
     );
 }

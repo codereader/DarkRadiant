@@ -77,7 +77,7 @@ void SREntity::load(Entity* source)
 	// and the target list where all the S/Rs are stored
 	// Warning messages are stored in the <_warnings> string
 	SRPropertyLoader visitor(_keys, *this, _warnings);
-	eclass->forEachClassAttribute(std::ref(visitor));
+	eclass->forEachAttribute(std::ref(visitor));
 
 	// Scan the entity itself after the class has been searched
     source->forEachKeyValue([&](const std::string& key, const std::string& value)
@@ -119,7 +119,7 @@ void SREntity::remove(int index)
 	updateListStores();
 }
 
-int SREntity::duplicate(int fromIndex) 
+int SREntity::duplicate(int fromIndex)
 {
 	auto found = findByIndex(fromIndex);
 
