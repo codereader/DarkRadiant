@@ -36,7 +36,7 @@ class EClassManager :
     bool _realised;
 
     // Map of named entity classes
-    typedef std::map<std::string, Doom3EntityClassPtr> EntityClasses;
+    typedef std::map<std::string, EntityClass::Ptr> EntityClasses;
     EntityClasses _entityClasses;
 
     typedef std::map<std::string, Doom3ModelDef::Ptr> Models;
@@ -102,8 +102,8 @@ private:
 
 	// Tries to insert the given eclass, not overwriting existing ones
 	// In either case, the eclass in the map is returned
-	Doom3EntityClassPtr insertUnique(const Doom3EntityClassPtr& eclass);
-    Doom3EntityClassPtr findInternal(const std::string& name);
+	EntityClass::Ptr insertUnique(const EntityClass::Ptr& eclass);
+    EntityClass::Ptr findInternal(const std::string& name);
 
 	// Parses the given inputstream for DEFs.
 	void parse(TextInputStream& inStr, const vfs::FileInfo& fileInfo, const std::string& modDir);

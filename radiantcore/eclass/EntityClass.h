@@ -21,13 +21,16 @@ class Shader;
 namespace eclass
 {
 
-class EntityClass;
-typedef std::shared_ptr<EntityClass> Doom3EntityClassPtr;
-
 /// Implementation of the IEntityClass interface.
 class EntityClass
 : public IEntityClass
 {
+public:
+
+    /// EntityClass pointer type
+    using Ptr = std::shared_ptr<EntityClass>;
+
+private:
     typedef std::shared_ptr<std::string> StringPtr;
 
     class StringCompareFunctor
@@ -120,7 +123,7 @@ public:
      * @param brushes
      * Whether the entity contains brushes or not.
      */
-    static Doom3EntityClassPtr create(const std::string& name, bool brushes);
+    static EntityClass::Ptr create(const std::string& name, bool brushes);
 
     /**
      * Constructor.
@@ -193,7 +196,7 @@ public:
      * A reference to the global map of entity classes, which should be searched
      * for the parent entity.
      */
-    typedef std::map<std::string, Doom3EntityClassPtr> EntityClasses;
+    typedef std::map<std::string, EntityClass::Ptr> EntityClasses;
     void resolveInheritance(EntityClasses& classmap);
 
     /**
@@ -223,10 +226,5 @@ public:
         return _parseStamp;
     }
 };
-
-/**
- * Pointer typedef.
- */
-typedef std::shared_ptr<EntityClass> Doom3EntityClassPtr;
 
 }

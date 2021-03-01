@@ -53,7 +53,7 @@ IEntityClassPtr EClassManager::findOrInsert(const std::string& name, bool has_br
 	std::string lName = string::to_lower_copy(name);
 
     // Find and return if exists
-    Doom3EntityClassPtr eclass = findInternal(lName);
+    EntityClass::Ptr eclass = findInternal(lName);
     if (eclass)
     {
         return eclass;
@@ -72,15 +72,15 @@ IEntityClassPtr EClassManager::findOrInsert(const std::string& name, bool has_br
     return insertUnique(eclass);
 }
 
-Doom3EntityClassPtr EClassManager::findInternal(const std::string& name)
+EntityClass::Ptr EClassManager::findInternal(const std::string& name)
 {
     // Find the EntityClass in the map.
     auto i = _entityClasses.find(name);
 
-    return i != _entityClasses.end() ? i->second : Doom3EntityClassPtr();
+    return i != _entityClasses.end() ? i->second : EntityClass::Ptr();
 }
 
-Doom3EntityClassPtr EClassManager::insertUnique(const Doom3EntityClassPtr& eclass)
+EntityClass::Ptr EClassManager::insertUnique(const EntityClass::Ptr& eclass)
 {
 	// Try to insert the eclass
     auto i = _entityClasses.emplace(eclass->getName(), eclass);
