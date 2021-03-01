@@ -7,7 +7,7 @@
 #include "itextstream.h"
 #include "ThreadedDefLoader.h"
 
-#include "Doom3EntityClass.h"
+#include "EntityClass.h"
 #include "Doom3ModelDef.h"
 
 namespace eclass

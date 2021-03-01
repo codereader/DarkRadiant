@@ -10,7 +10,7 @@
 #include "parser/DefTokeniser.h"
 #include "messages/ScopedLongRunningOperation.h"
 
-#include "Doom3EntityClass.h"
+#include "EntityClass.h"
 #include "Doom3ModelDef.h"
 
 #include "string/case_conv.h"
@@ -60,10 +60,10 @@ IEntityClassPtr EClassManager::findOrInsert(const std::string& name, bool has_br
     }
 
     // Otherwise insert the new EntityClass
-    //IEntityClassPtr eclass = eclass::Doom3EntityClass::create(lName, has_brushes);
+    //IEntityClassPtr eclass = eclass::EntityClass::create(lName, has_brushes);
     // greebo: Changed fallback behaviour when unknown entites are encountered to TRUE
     // so that brushes of unknown entites don't get lost (issue #240)
-    eclass = Doom3EntityClass::create(lName, true);
+    eclass = EntityClass::create(lName, true);
 
     // Any overrides should also apply to entityDefs that are crated on the fly
     GlobalEclassColourManager().applyColours(*eclass);
@@ -416,7 +416,7 @@ void EClassManager::parse(TextInputStream& inStr, const vfs::FileInfo& fileInfo,
 			if (i == _entityClasses.end())
 			{
 				// Not existing yet, allocate a new class
-				auto result = _entityClasses.emplace(sName, std::make_shared<Doom3EntityClass>(sName, fileInfo));
+				auto result = _entityClasses.emplace(sName, std::make_shared<EntityClass>(sName, fileInfo));
 
 				i = result.first;
 			}

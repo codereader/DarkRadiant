@@ -24,7 +24,7 @@ add_library(radiantcore MODULE
             clipper/SplitAlgorithm.cpp
             commandsystem/CommandSystem.cpp
             decl/FavouritesManager.cpp
-            eclass/Doom3EntityClass.cpp
+            eclass/EntityClass.cpp
             eclass/EClassColourManager.cpp
             eclass/EClassManager.cpp
             entity/AngleKey.cpp

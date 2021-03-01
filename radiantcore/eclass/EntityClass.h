@@ -21,14 +21,11 @@ class Shader;
 namespace eclass
 {
 
-class Doom3EntityClass;
-typedef std::shared_ptr<Doom3EntityClass> Doom3EntityClassPtr;
+class EntityClass;
+typedef std::shared_ptr<EntityClass> Doom3EntityClassPtr;
 
-/**
- * Implementation of the IEntityClass interface. This represents a single
- * Doom 3 entity class, such as "light_moveable" or "monster_mancubus".
- */
-class Doom3EntityClass
+/// Implementation of the IEntityClass interface.
+class EntityClass
 : public IEntityClass
 {
     typedef std::shared_ptr<std::string> StringPtr;
@@ -133,7 +130,7 @@ public:
      *
      * This eclass will have isFixedSize set to false.
      */
-    Doom3EntityClass(const std::string& name, const vfs::FileInfo& fileInfo);
+    EntityClass(const std::string& name, const vfs::FileInfo& fileInfo);
 
     /**
      * Constructor.
@@ -144,9 +141,9 @@ public:
      * @param fixedSize
      * whether this entity has a fixed size.
      */
-    Doom3EntityClass(const std::string& name, const vfs::FileInfo& fileInfo, bool fixedSize);
+    EntityClass(const std::string& name, const vfs::FileInfo& fileInfo, bool fixedSize);
 
-    virtual ~Doom3EntityClass();
+    virtual ~EntityClass();
 
     /// Add a new attribute
     void addAttribute(const EntityClassAttribute& attribute);
@@ -230,6 +227,6 @@ public:
 /**
  * Pointer typedef.
  */
-typedef std::shared_ptr<Doom3EntityClass> Doom3EntityClassPtr;
+typedef std::shared_ptr<EntityClass> Doom3EntityClassPtr;
 
 }
