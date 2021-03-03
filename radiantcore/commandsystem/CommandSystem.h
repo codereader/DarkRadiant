@@ -2,8 +2,9 @@
 
 #include "icommandsystem.h"
 #include <map>
-#include "CaseInsensitiveCompare.h"
 #include "Executable.h"
+
+#include "string/string.h"
 
 namespace cmd
 {
@@ -12,7 +13,7 @@ class CommandSystem :
 	public ICommandSystem
 {
 	// The named executables (case-insensitive lookup)
-	typedef std::map<std::string, ExecutablePtr, CaseInsensitiveCompare> CommandMap;
+	typedef std::map<std::string, ExecutablePtr, string::ILess> CommandMap;
 	CommandMap _commands;
 
 public:

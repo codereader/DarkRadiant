@@ -33,15 +33,6 @@ public:
 private:
     typedef std::shared_ptr<std::string> StringPtr;
 
-    class StringCompareFunctor
-    {
-    public:
-        bool operator()(const std::string& lhs, const std::string& rhs) const
-        {
-            return string_compare_nocase(lhs.c_str(), rhs.c_str()) < 0;
-        }
-    };
-
     // The name of this entity class
     std::string _name;
 
@@ -72,7 +63,7 @@ private:
 
     // Map of named EntityAttribute structures. EntityAttributes are picked
     // up from the DEF file during parsing. Ignores key case.
-    typedef std::map<std::string, EntityClassAttribute, StringCompareFunctor> EntityAttributeMap;
+    typedef std::map<std::string, EntityClassAttribute, string::ILess> EntityAttributeMap;
     EntityAttributeMap _attributes;
 
     // The model and skin for this entity class (if it has one)

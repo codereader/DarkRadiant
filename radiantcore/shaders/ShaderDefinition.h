@@ -5,7 +5,8 @@
 #include <map>
 #include <string>
 #include "ShaderTemplate.h"
-#include "ShaderNameCompareFunctor.h"
+
+#include "string/string.h"
 
 namespace shaders
 {
@@ -31,6 +32,6 @@ struct ShaderDefinition
 
 };
 
-typedef std::map<std::string, ShaderDefinition, ShaderNameCompareFunctor> ShaderDefinitionMap;
+typedef std::map<std::string, ShaderDefinition, string::ILess> ShaderDefinitionMap;
 
 }

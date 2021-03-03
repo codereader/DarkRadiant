@@ -5,7 +5,7 @@
 #include "CShader.h"
 #include "TableDefinition.h"
 
-namespace shaders 
+namespace shaders
 {
 
 class ShaderLibrary
@@ -14,11 +14,11 @@ class ShaderLibrary
 	// These are referenced by name.
 	ShaderDefinitionMap _definitions;
 
-	typedef std::map<std::string, CShaderPtr, ShaderNameCompareFunctor> ShaderMap;
+	typedef std::map<std::string, CShaderPtr, string::ILess> ShaderMap;
     ShaderMap _shaders;
 
     // The lookup tables used in shader expressions
-    typedef std::map<std::string, TableDefinitionPtr, ShaderNameCompareFunctor> TableDefinitions;
+    typedef std::map<std::string, TableDefinitionPtr, string::ILess> TableDefinitions;
     TableDefinitions _tables;
 
 public:
@@ -33,7 +33,7 @@ public:
 	 */
 	ShaderDefinition& getDefinition(const std::string& name);
 
-	/** 
+	/**
 	 * Returns true if the given shader definition exists.
 	 */
 	bool definitionExists(const std::string& name) const;

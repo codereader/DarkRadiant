@@ -39,15 +39,6 @@ namespace
 }
 
 /* Callback functor for processing shader names */
-struct ShaderNameCompareFunctor
-{
-    bool operator()(const std::string& s1, const std::string& s2) const
-    {
-        // return boost::algorithm::ilexicographical_compare(s1, s2); // slow!
-        return string_compare_nocase(s1.c_str(), s2.c_str()) < 0;
-    }
-};
-
 struct ShaderNameFunctor
 {
     // TreeStore to populate
@@ -60,7 +51,7 @@ struct ShaderNameFunctor
 
     // Maps of names to corresponding treemodel items, for both intermediate
     // paths and explicitly presented paths
-    using NamedIterMap = std::map<std::string, wxDataViewItem, ShaderNameCompareFunctor>;
+    using NamedIterMap = std::map<std::string, wxDataViewItem, string::ILess>;
     NamedIterMap _iters;
 
     wxIcon _folderIcon;
@@ -253,7 +244,7 @@ const MediaBrowserTreeView::TreeColumns& MediaBrowserTreeView::Columns() const
 void MediaBrowserTreeView::SetTreeMode(MediaBrowserTreeView::TreeMode mode)
 {
     std::string previouslySelectedItem = GetSelectedFullname();
-    
+
     ResourceTreeView::SetTreeMode(mode);
 
     // Try to select the same item we had as before

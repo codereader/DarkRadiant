@@ -1,4 +1,5 @@
 add_executable(drtest
+               Basic.cpp
                Camera.cpp
                ColourSchemes.cpp
                CSG.cpp

@@ -82,3 +82,17 @@ inline bool string_less_nocase(const char* string, const char* other)
 {
   return string_compare_nocase(string, other) < 0;
 }
+
+namespace string
+{
+
+/// Case-insensitive comparison functor for use with data structures
+struct ILess
+{
+    bool operator() (const std::string& lhs, const std::string& rhs) const
+    {
+        return string_compare_nocase(lhs.c_str(), rhs.c_str()) < 0;
+    }
+};
+
+}
