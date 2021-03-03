@@ -156,7 +156,7 @@ void EntityClass::addAttribute(const EntityClassAttribute& attribute)
 {
     // Try to insert the class attribute
     std::pair<EntityAttributeMap::iterator, bool> result = _attributes.insert(
-        EntityAttributeMap::value_type(attribute.getNameRef(), attribute)
+        EntityAttributeMap::value_type(attribute.getName(), attribute)
     );
 
     if (!result.second)
@@ -168,14 +168,14 @@ void EntityClass::addAttribute(const EntityClassAttribute& attribute)
         if (!attribute.getDescription().empty() && existing.getDescription().empty())
         {
             // Use the shared string reference to save memory
-            existing.setDescription(attribute.getDescriptionRef());
+            existing.setDescription(attribute.getDescription());
         }
 
         // Check if we have a more descriptive type than "text"
         if (attribute.getType() != "text" && existing.getType() == "text")
         {
             // Use the shared string reference to save memory
-            existing.setType(attribute.getTypeRef());
+            existing.setType(attribute.getType());
         }
     }
 }
@@ -197,7 +197,7 @@ void EntityClass::forEachAttributeInternal(InternalAttrVisitor visitor,
     for (const auto& pair: _attributes)
     {
         // Visit if it is a non-editor key or we are visiting all keys
-        if (editorKeys || !string::istarts_with(*pair.first, "editor_"))
+        if (editorKeys || !string::istarts_with(pair.first, "editor_"))
         {
             visitor(pair.second);
         }
@@ -226,8 +226,7 @@ void EntityClass::forEachAttribute(AttributeVisitor visitor,
     // any which are not present on this EntityClass
     for (const auto& pair: attrsByName)
     {
-        StringPtr nameRef(new std::string(pair.first));
-        visitor(*pair.second, (_attributes.count(nameRef) == 0));
+        visitor(*pair.second, (_attributes.count(pair.first) == 0));
     }
 }
 
@@ -327,10 +326,8 @@ const EntityClassAttribute&
 EntityClass::getAttribute(const std::string& name,
                                bool includeInherited) const
 {
-    StringPtr ref(new std::string(name));
-
     // First look up the attribute on this class; if found, we can simply return it
-    auto f = _attributes.find(ref);
+    auto f = _attributes.find(name);
     if (f != _attributes.end())
         return f->second;
 

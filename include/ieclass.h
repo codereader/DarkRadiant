@@ -52,23 +52,18 @@ class AABB;
 class EntityClassAttribute
 {
 private:
-    /**
-     * String references are shared_ptrs to save memory.
-     * The actual string might be owned by another entity class we're inheriting from.
-     */
-    typedef std::shared_ptr<std::string> StringPtr;
 
-    // Reference to the name string
-    StringPtr _typeRef;
+    // Attribute type
+    std::string _type;
 
-    // Reference to the name string
-    StringPtr _nameRef;
+    // Attribute name
+    std::string _name;
 
-    // Reference to the attribute value string
-    StringPtr _valueRef;
+    // Value
+    std::string _value;
 
-    // Reference to the description string
-    StringPtr _descRef;
+    //  User-friendly description
+    std::string _desc;
 
 public:
     /**
@@ -76,99 +71,52 @@ public:
      */
     const std::string& getType() const
     {
-        return *_typeRef;
-    }
-
-    const StringPtr& getTypeRef() const
-    {
-        return _typeRef;
+        return _type;
     }
 
     void setType(const std::string& type)
     {
-        _typeRef.reset(new std::string(type));
-    }
-
-    void setType(const StringPtr& typeRef)
-    {
-        _typeRef = typeRef;
+        _type = type;
     }
 
     /// The attribute key name, e.g. "model", "editor_displayFolder" etc
     const std::string& getName() const
     {
-        return *_nameRef;
+        return _name;
     }
 
-    const StringPtr& getNameRef() const
-    {
-        return _nameRef;
-    }
-
-    /**
-     * Direct reference to the value for easy access to the value. This reference
-     * is pointing directly at the string owned by the ValueRef shared_ptr,
-     * which in turn might be owned by a class we're inheriting from.
-     */
+    /// Get attribute value
     const std::string& getValue() const
     {
-        return *_valueRef;
+        return _value;
     }
 
-    const StringPtr& getValueRef() const
-    {
-        return _valueRef;
-    }
-
-    /**
-     * Sets the value of this entity class attribute. This will break up any
-     * inheritance and make this instance owner of its value string.
-     */
+    /// Set attribute value
     void setValue(const std::string& value)
     {
-        _valueRef.reset(new std::string(value));
+        _value = value;
     }
 
-    void setValue(const StringPtr& valueRef)
-    {
-        _valueRef = valueRef;
-    }
-
-    /**
-     * The help text associated with the key (in the DEF file).
-     */
+    /// The help text associated with the key (in the DEF file).
     const std::string& getDescription() const
     {
-        return *_descRef;
-    }
-
-    const StringPtr& getDescriptionRef() const
-    {
-        return _descRef;
+        return _desc;
     }
 
     void setDescription(const std::string& desc)
     {
-        _descRef.reset(new std::string(desc));
+        _desc = desc;
     }
 
-    void setDescription(const StringPtr& descRef)
-    {
-        _descRef = descRef;
-    }
-
-    /**
-     * Construct a non-inherited EntityClassAttribute, passing the actual strings
-     * which will be owned by this class instance.
-     */
+    /// Construct an EntityClassAttribute
     EntityClassAttribute(const std::string& type_,
                          const std::string& name_,
                          const std::string& value_,
                          const std::string& description_ = "")
-    : _typeRef(new std::string(type_)),
-      _nameRef(new std::string(name_)),
-      _valueRef(new std::string(value_)),
-      _descRef(new std::string(description_))
+    : _type(type_),
+      _name(name_),
+      _value(value_),
+      _desc(description_)
     {}
 };
 
