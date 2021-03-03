@@ -23,7 +23,8 @@ const std::string& BrushDefParser::getKeyword() const
 }
 
 /*
-// Example Primitive
+// Example Primitive:
+
 {
 brushDef
 {
@@ -216,7 +217,7 @@ scene::INodePtr LegacyBrushDefParser::parse(parser::DefTokeniser& tok) const
             float scaleS = string::to_float(tok.nextToken());
             float scaleT = string::to_float(tok.nextToken());
 
-            Matrix4 texdef = getTexDef(shiftS, shiftT, rotation, scaleS, scaleT);
+            Matrix4 texdef = getTexDef(shader, shiftS, shiftT, rotation, scaleS, scaleT);
 
 			// Parse Flags (usually each brush has all faces detail or all faces structural)
 			IBrush::DetailFlag flag = static_cast<IBrush::DetailFlag>(
@@ -239,20 +240,36 @@ scene::INodePtr LegacyBrushDefParser::parse(parser::DefTokeniser& tok) const
 	return node;
 }
 
-Matrix4 LegacyBrushDefParser::getTexDef(float shiftS, float shiftT, float rotation, float scaleS, float scaleT)
+Matrix4 LegacyBrushDefParser::getTexDef(std::string shader, float shiftS, float shiftT, float rotation, float scaleS, float scaleT)
 {
 	Matrix4 transform;
 	double inverse_scale[2];
+	float image_width = 0;
+	float image_height = 0;
 
-    // I don't care about the correct texture scale, let's just load the matrix
-    static float DUMMY_WIDTH = 128;
-    static float DUMMY_HEIGHT = 128;
+	TexturePtr texture = GlobalMaterialManager().getMaterialForName( shader )->getEditorImage();
+
+	if (texture) {
+		image_width = texture->getWidth();
+		image_height = texture->getHeight();
+	}
+
+	if (image_width == 0 || image_height == 0) {
+		rError() << "LegacyBrushDefParser: Failed to load image: " << shader << std::endl;
+		image_width = 128;
+		image_height = 128;
+	}
+#if 0
+	else {
+		rMessage() << "LegacyBrushDefParser: Loaded image: " << shader << ", width: " << image_width << ", height: " << image_height << std::endl;
+	}
+#endif
 
 	// transform to texdef shift/scale/rotate
-	inverse_scale[0] = 1 / (scaleS * DUMMY_WIDTH);
-	inverse_scale[1] = 1 / (scaleT * -DUMMY_HEIGHT);
-	transform[12] = shiftS / DUMMY_WIDTH;
-	transform[13] = -shiftT / -DUMMY_HEIGHT;
+	inverse_scale[0] = 1 / (scaleS * image_width);
+	inverse_scale[1] = 1 / (scaleT * -image_height);
+	transform[12] = shiftS / image_width;
+	transform[13] = -shiftT / -image_height;
 
 	double c = cos(degrees_to_radians(-rotation));
 	double s = sin(degrees_to_radians(-rotation));
