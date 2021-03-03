@@ -12,13 +12,13 @@ namespace test
 
 TEST(BasicTest, StringCompareNoCase)
 {
-    EXPECT_EQ(string_compare_nocase("blah", "blah"), 0);
-    EXPECT_EQ(string_compare_nocase("blah", "BLAH"), 0);
-    EXPECT_EQ(string_compare_nocase("MiXeD", "mIxED"), 0);
+    EXPECT_EQ(string::icmp("blah", "blah"), 0);
+    EXPECT_EQ(string::icmp("blah", "BLAH"), 0);
+    EXPECT_EQ(string::icmp("MiXeD", "mIxED"), 0);
 
-    EXPECT_EQ(string_compare_nocase("a", "b"), -1);
-    EXPECT_EQ(string_compare_nocase("b", "a"), 1);
-    EXPECT_EQ(string_compare_nocase("baaaaa", "aaaaa"), 1);
+    EXPECT_EQ(string::icmp("a", "b"), -1);
+    EXPECT_EQ(string::icmp("b", "a"), 1);
+    EXPECT_EQ(string::icmp("baaaaa", "aaaaa"), 1);
 }
 
 TEST(BasicTest, StringILessFunctor)
