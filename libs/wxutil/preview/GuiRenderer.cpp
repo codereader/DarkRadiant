@@ -103,7 +103,7 @@ void GuiRenderer::render(const gui::IGuiWindowDefPtr& window, bool ignoreFilter)
 	// Realise background shader if necessary
 	if (!window->background.getValue().empty() && window->backgroundShader == NULL)
 	{
-		window->backgroundShader = GlobalMaterialManager().getMaterialForName(window->background);
+		window->backgroundShader = GlobalMaterialManager().getMaterial(window->background);
 	}
 
 	// Acquire the texture number of the active texture

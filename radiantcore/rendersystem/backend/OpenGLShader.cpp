@@ -601,7 +601,7 @@ void OpenGLShader::appendBlendLayer(const ShaderLayerPtr& layer)
 void OpenGLShader::constructNormalShader(const std::string& name)
 {
     // Obtain the Material
-    _material = GlobalMaterialManager().getMaterialForName(name);
+    _material = GlobalMaterialManager().getMaterial(name);
     assert(_material);
 
     // Determine whether we can render this shader in lighting/bump-map mode,

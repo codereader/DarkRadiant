@@ -210,7 +210,7 @@ TexTool& TexTool::Instance()
 void TexTool::update()
 {
 	std::string selectedShader = selection::getShaderFromSelection();
-	_shader = GlobalMaterialManager().getMaterialForName(selectedShader);
+	_shader = GlobalMaterialManager().getMaterial(selectedShader);
 
 	// Clear the list to remove all the previously allocated items
 	_items.clear();
@@ -223,7 +223,7 @@ void TexTool::update()
 			// Check each selected face
 			GlobalSelectionSystem().foreachFace([&](IFace& face)
 			{
-				// Allocate a new FaceItem 
+				// Allocate a new FaceItem
 				_items.emplace_back(new textool::FaceItem(face));
 			});
 		}
@@ -480,7 +480,7 @@ void TexTool::doMouseUp(const Vector2& coords, wxMouseEvent& event)
 	}
 
 	// If we are in manipulation mode, end the move
-    if (event.LeftUp() && !event.HasAnyModifiers() && _manipulatorMode) 
+    if (event.LeftUp() && !event.HasAnyModifiers() && _manipulatorMode)
     {
 		_manipulatorMode = false;
 
@@ -623,7 +623,7 @@ void TexTool::foreachItem(textool::ItemVisitor& visitor) {
 	}
 }
 
-void TexTool::drawGrid() 
+void TexTool::drawGrid()
 {
 	const float MAX_NUMBER_OF_GRID_LINES = 1024;
 
@@ -632,12 +632,12 @@ void TexTool::drawGrid()
 	Vector3 topLeft = texSpaceAABB.origin - texSpaceAABB.extents * _zoomFactor;
 	Vector3 bottomRight = texSpaceAABB.origin + texSpaceAABB.extents * _zoomFactor;
 
-	if (topLeft[0] > bottomRight[0]) 
+	if (topLeft[0] > bottomRight[0])
 	{
 		std::swap(topLeft[0], bottomRight[0]);
 	}
 
-	if (topLeft[1] > bottomRight[1]) 
+	if (topLeft[1] > bottomRight[1])
 	{
 		std::swap(topLeft[1], bottomRight[1]);
 	}
@@ -691,19 +691,19 @@ void TexTool::drawGrid()
 		float grid = _grid;
 
 		// scale up the grid interval such that only a maximum number of lines are drawn
-		while (abs(endX - startX) / grid > MAX_NUMBER_OF_GRID_LINES || 
+		while (abs(endX - startX) / grid > MAX_NUMBER_OF_GRID_LINES ||
 			   abs(endY - startY) / grid > MAX_NUMBER_OF_GRID_LINES)
 		{
 			grid *= 2;
 		}
 
-		for (float y = startY; y <= endY; y += grid) 
+		for (float y = startY; y <= endY; y += grid)
 		{
 			glVertex2f(startX, y);
 			glVertex2f(endX, y);
 		}
 
-		for (float x = startX; x <= endX; x += grid) 
+		for (float x = startX; x <= endX; x += grid)
 		{
 			glVertex2f(x, startY);
 			glVertex2f(x, endY);
@@ -728,7 +728,7 @@ void TexTool::drawGrid()
 		GlobalOpenGL().drawString(ycoordStr);
 	}
 
-	for (float x = startX; x <= endX; x += xIntStep) 
+	for (float x = startX; x <= endX; x += xIntStep)
 	{
 		glRasterPos2f(x + 0.05f, topLeft[1] + 0.03f * _zoomFactor);
 		std::string xcoordStr = string::to_string(trunc(x)) + ".0";

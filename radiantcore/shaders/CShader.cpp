@@ -87,7 +87,7 @@ TexturePtr CShader::lightFalloffImage() {
 			// Find the default light shader in the ShaderSystem and query its
 			// falloff texture name.
 			std::string defLight = game::current::getValue<std::string>(DEFAULT_LIGHT_PATH);
-			MaterialPtr defLightShader = GetShaderSystem()->getMaterialForName(defLight);
+			MaterialPtr defLightShader = GetShaderSystem()->getMaterial(defLight);
 
 			// Cast to a CShader so we can call getFalloffName().
 			CShaderPtr cshaderPtr = std::static_pointer_cast<CShader>(defLightShader);

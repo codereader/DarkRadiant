@@ -364,16 +364,17 @@ public:
 	// to a filesystem or other configuration change
 	virtual sigc::signal<void>& signal_DefsUnloaded() = 0;
 
-	/** Activate the shader for a given name and return it. The default shader
-	 * will be returned if name is not found.
+	/**
+     * \brief Return the shader with the given name. The default shader will be
+     * returned if name is not found.
 	 *
-	 * @param name
+	 * \param name
 	 * The text name of the shader to load.
 	 *
-	 * @returns
-	 * MaterialPtr shared ptr corresponding to the named shader object.
+	 * \returns
+	 * MaterialPtr corresponding to the named shader object.
 	 */
-	virtual MaterialPtr getMaterialForName(const std::string& name) = 0;
+	virtual MaterialPtr getMaterial(const std::string& name) = 0;
 
 	/**
 	 * greebo: Returns true if the named material is existing, false otherwise.

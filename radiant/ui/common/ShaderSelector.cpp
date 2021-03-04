@@ -209,7 +209,7 @@ void ShaderSelector::createPreview()
 
 // Get the selected shader
 MaterialPtr ShaderSelector::getSelectedShader() {
-	return GlobalMaterialManager().getMaterialForName(getSelection());
+	return GlobalMaterialManager().getMaterial(getSelection());
 }
 
 // Update the attributes table

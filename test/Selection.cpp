@@ -191,7 +191,7 @@ TEST_F(SelectionTest, PivotIsResetAfterCancelingOperation)
     EXPECT_EQ(originalPivot.t().getVector3(), originalBrushPosition);
 
     const auto& activeManipulator = GlobalSelectionSystem().getActiveManipulator();
-    
+
     // Construct an orthoview to test-select the manipulator
     render::View view(false);
     constructCenteredOrthoview(view, originalBrushPosition);
@@ -226,7 +226,7 @@ TEST_F(SelectionTest, PivotIsResetAfterCancelingOperation)
 TEST_F(SelectionTest, WorkzoneIsRecalculatedAfterSelectionChange)
 {
     auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
-    
+
     AABB tallBounds(Vector3(0, 0, 0), Vector3(64, 256, 128));
     AABB smallBounds(Vector3(300, 300, 300), Vector3(64, 32, 64));
 
@@ -239,7 +239,7 @@ TEST_F(SelectionTest, WorkzoneIsRecalculatedAfterSelectionChange)
     EXPECT_EQ(smallBrush->worldAABB().getExtents(), smallBounds.getExtents());
 
     GlobalSelectionSystem().setSelectedAll(false);
-    
+
     render::View orthoView(false);
 
     // Construct an orthoview to test-select the tall brush
@@ -311,7 +311,7 @@ protected:
     void performBrushSelectionTest(const std::string& materialName, bool expectNodeIsSelectable)
     {
         // Filter caulk faces
-        auto material = GlobalMaterialManager().getMaterialForName("textures/common/caulk");
+        auto material = GlobalMaterialManager().getMaterial("textures/common/caulk");
         material->setVisible(false);
 
         auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();

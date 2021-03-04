@@ -13,14 +13,14 @@
 #include "textures/GLTextureManager.h"
 #include "ThreadedDefLoader.h"
 
-namespace shaders 
+namespace shaders
 {
 
 /**
  * \brief
  * Implementation of the MaterialManager for Doom 3 .
  */
-class Doom3ShaderSystem : 
+class Doom3ShaderSystem :
 	public MaterialManager,
 	public vfs::VirtualFileSystem::Observer
 {
@@ -74,7 +74,7 @@ public:
 	sigc::signal<void>& signal_DefsUnloaded() override;
 
 	// Return a shader by name
-    MaterialPtr getMaterialForName(const std::string& name) override;
+    MaterialPtr getMaterial(const std::string& name) override;
 
     bool materialExists(const std::string& name) override;
 

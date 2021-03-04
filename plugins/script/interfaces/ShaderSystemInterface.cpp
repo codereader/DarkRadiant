@@ -7,7 +7,7 @@ namespace script
 
 namespace
 {
-	class ShaderNameToShaderWrapper 
+	class ShaderNameToShaderWrapper
 	{
 	private:
 		ShaderVisitor& _visitor;
@@ -20,7 +20,7 @@ namespace
 		void visit(const std::string& name)
 		{
 			// Resolve the material name and pass it on
-			MaterialPtr material = GlobalMaterialManager().getMaterialForName(name);
+			MaterialPtr material = GlobalMaterialManager().getMaterial(name);
 			_visitor.visit(material);
 		}
 	};
@@ -37,11 +37,11 @@ void ShaderSystemInterface::foreachShader(ShaderVisitor& visitor)
 
 ScriptShader ShaderSystemInterface::getMaterialForName(const std::string& name)
 {
-	return ScriptShader(GlobalMaterialManager().getMaterialForName(name));
+	return ScriptShader(GlobalMaterialManager().getMaterial(name));
 }
 
 // IScriptInterface implementation
-void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globals) 
+void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globals)
 {
 	// Add the declaration for a Shader object
 	py::class_<ScriptShader> shader(scope, "Shader");

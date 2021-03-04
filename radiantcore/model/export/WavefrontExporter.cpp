@@ -120,7 +120,7 @@ void WavefrontExporter::writeMaterialLib(std::ostream& stream)
     {
         const Surface& surface = pair.second;
 
-        auto material = GlobalMaterialManager().getMaterialForName(surface.materialName);
+        auto material = GlobalMaterialManager().getMaterial(surface.materialName);
 
         const auto layers = material->getAllLayers();
 

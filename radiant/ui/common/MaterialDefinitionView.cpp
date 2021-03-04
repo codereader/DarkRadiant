@@ -10,12 +10,12 @@ MaterialDefinitionView::MaterialDefinitionView(const std::string& shaderName, wx
 	DefinitionView(_("View Shader Definition"), parent)
 {
 	addSourceView(new wxutil::D3MaterialSourceViewCtrl(getMainPanel()));
-	_material = GlobalMaterialManager().getMaterialForName(shaderName);
+	_material = GlobalMaterialManager().getMaterial(shaderName);
 }
 
 void MaterialDefinitionView::setShader(const std::string& shader)
 {
-	_material = GlobalMaterialManager().getMaterialForName(shader);
+	_material = GlobalMaterialManager().getMaterial(shader);
 	update();
 }
 

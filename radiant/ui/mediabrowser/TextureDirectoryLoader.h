@@ -50,7 +50,7 @@ public:
 			}
 
 			// Load the shader
-			MaterialPtr ref = GlobalMaterialManager().getMaterialForName(shaderName);
+			MaterialPtr ref = GlobalMaterialManager().getMaterial(shaderName);
 
             // Signal the texture browser that is has to update it next time it renders
             GlobalTextureBrowser().updateAllWindows();

@@ -26,7 +26,7 @@
 #include "parser/DefBlockTokeniser.h"
 #include <functional>
 
-namespace 
+namespace
 {
     const char* TEXTURE_PREFIX = "textures/";
     const char* MISSING_BASEPATH_NODE =
@@ -73,7 +73,7 @@ void Doom3ShaderSystem::destroy()
     GlobalFileSystem().removeObserver(*this);
 
     // Free the shaders if we're in realised state
-    if (_realised) 
+    if (_realised)
     {
         freeShaders();
     }
@@ -119,7 +119,7 @@ ShaderLibraryPtr Doom3ShaderSystem::loadMaterialFiles()
 
 void Doom3ShaderSystem::realise()
 {
-    if (!_realised) 
+    if (!_realised)
     {
         // Start loading defs
         _defLoader.start();
@@ -188,7 +188,7 @@ sigc::signal<void>& Doom3ShaderSystem::signal_DefsUnloaded()
 }
 
 // Return a shader by name
-MaterialPtr Doom3ShaderSystem::getMaterialForName(const std::string& name)
+MaterialPtr Doom3ShaderSystem::getMaterial(const std::string& name)
 {
     ensureDefsLoaded();
 
