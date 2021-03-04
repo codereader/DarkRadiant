@@ -81,4 +81,19 @@ TEST_F(MaterialsTest, EnumerateMaterialLayers)
     EXPECT_EQ(bf.dest, GL_ONE);
 }
 
+TEST_F(MaterialsTest, IdentifyAmbientLight)
+{
+    auto ambLight = GlobalMaterialManager().getMaterialForName("lights/ambientLight");
+    ASSERT_TRUE(ambLight);
+    EXPECT_TRUE(ambLight->isAmbientLight());
+
+    auto pointLight = GlobalMaterialManager().getMaterialForName("lights/defaultPointLight");
+    ASSERT_TRUE(pointLight);
+    EXPECT_FALSE(pointLight->isAmbientLight());
+
+    auto nonLight = GlobalMaterialManager().getMaterialForName("tdm_spider_black");
+    ASSERT_TRUE(nonLight);
+    EXPECT_FALSE(nonLight->isAmbientLight());
+}
+
 }
