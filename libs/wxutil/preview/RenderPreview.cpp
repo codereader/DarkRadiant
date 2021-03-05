@@ -426,6 +426,14 @@ bool RenderPreview::drawPreview()
     if (!_initialised)
     {
         initialisePreview();
+
+        // Since we shouldn't call the virtual canDrawGrid() in the constructor
+        // adjust the tool bar here.
+        if (!canDrawGrid())
+        {
+            auto* utilToolbar = findNamedObject<wxToolBar>(_mainPanel, "RenderPreviewUtilToolbar");
+            utilToolbar->DeleteTool(getToolBarToolByLabel(utilToolbar, "gridButton")->GetId());
+        }
     }
 
     util::ScopedBoolLock lock(_renderingInProgress);
@@ -476,7 +484,7 @@ bool RenderPreview::drawPreview()
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixd(_volumeTest.GetModelview());
 
-	if (_renderGrid)
+	if (_renderGrid && canDrawGrid())
 	{
 		drawGrid();
 	}
@@ -730,6 +738,11 @@ void RenderPreview::onSizeAllocate(wxSizeEvent& ev)
 {
 	_previewWidth = ev.GetSize().GetWidth();
     _previewHeight = ev.GetSize().GetHeight();
+}
+
+bool RenderPreview::canDrawGrid()
+{
+    return true;
 }
 
 void RenderPreview::drawGrid()

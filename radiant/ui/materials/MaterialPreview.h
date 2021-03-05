@@ -17,6 +17,9 @@ public:
 
     const MaterialPtr& getMaterial();
     void setMaterial(const MaterialPtr& material);
+
+protected:
+    bool canDrawGrid() override;
 };
 
 }

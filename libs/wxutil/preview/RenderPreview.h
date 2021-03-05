@@ -164,6 +164,9 @@ protected:
 
     void associateRenderSystem();
 
+    // Base method will return true, which will also make the corresponding button appear on the toolbar
+    virtual bool canDrawGrid();
+
     // Can be overridden by subclasses to update their scene/models
     virtual void onRenderModeChanged() {}
 

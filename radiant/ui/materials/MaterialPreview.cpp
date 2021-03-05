@@ -17,4 +17,9 @@ void MaterialPreview::setMaterial(const MaterialPtr& material)
     _material = material;
 }
 
+bool MaterialPreview::canDrawGrid()
+{
+    return false;
+}
+
 }
