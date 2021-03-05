@@ -18,7 +18,7 @@
 #include "wxutil/MultiMonitor.h"
 
 #include "ui/mainframe/ScreenUpdateBlocker.h"
-#include "ui/mainframe/EmbeddedLayout.h"
+#include "ui/mainframe/AuiLayout.h"
 #include "ui/mainframe/TopLevelFrame.h"
 
 #include "module/StaticModule.h"
@@ -33,7 +33,7 @@
 #include <windows.h>
 #endif
 
-namespace 
+namespace
 {
 	const std::string RKEY_WINDOW_LAYOUT = "user/ui/mainFrame/windowLayout";
 	const std::string RKEY_WINDOW_STATE = "user/ui/mainFrame/window";
@@ -43,7 +43,7 @@ namespace
 	const std::string RKEY_ACTIVE_LAYOUT = "user/ui/mainFrame/activeLayout";
 }
 
-namespace ui 
+namespace ui
 {
 
 MainFrame::MainFrame() :
@@ -239,7 +239,7 @@ void MainFrame::construct()
 
 	if (activeLayout.empty())
 	{
-		activeLayout = EMBEDDED_LAYOUT_NAME; // fall back to hardcoded layout
+		activeLayout = AUI_LAYOUT_NAME; // fall back to hardcoded layout
 	}
 
 	// Apply the layout
@@ -250,10 +250,10 @@ void MainFrame::construct()
 		// Layout is still empty, this is not good
 		rError() << "Could not restore layout " << activeLayout << std::endl;
 
-		if (activeLayout != EMBEDDED_LAYOUT_NAME)
+		if (activeLayout != AUI_LAYOUT_NAME)
 		{
 			// Try to fallback to floating layout
-			applyLayout(EMBEDDED_LAYOUT_NAME);
+			applyLayout(AUI_LAYOUT_NAME);
 		}
 	}
 
@@ -338,7 +338,7 @@ void MainFrame::onTopLevelFrameClose(wxCloseEvent& ev)
 			return;
 		}
     }
-    
+
     wxASSERT(wxTheApp->GetTopWindow() == _topLevelWindow);
 
     _topLevelWindow->Hide();
@@ -350,7 +350,7 @@ void MainFrame::onTopLevelFrameClose(wxCloseEvent& ev)
 	// Broadcast shutdown event
 	signal_MainFrameShuttingDown().emit();
 	signal_MainFrameShuttingDown().clear();
-	
+
     // Destroy the actual window
     _topLevelWindow->Destroy();
     _topLevelWindow = nullptr;
@@ -557,7 +557,7 @@ std::string MainFrame::getCurrentLayout()
 	return (_currentLayout != NULL) ? _currentLayout->getName() : "";
 }
 
-IScopedScreenUpdateBlockerPtr MainFrame::getScopedScreenUpdateBlocker(const std::string& title, 
+IScopedScreenUpdateBlockerPtr MainFrame::getScopedScreenUpdateBlocker(const std::string& title,
 		const std::string& message, bool forceDisplay)
 {
 	return IScopedScreenUpdateBlockerPtr(new ScreenUpdateBlocker(title, message, forceDisplay));

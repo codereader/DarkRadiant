@@ -26,12 +26,15 @@ typedef std::shared_ptr<MapExpression> MapExpressionPtr;
 } // namespace shaders
 
 /**
- * \brief
- * Interface for a material shader.
+ * \brief Interface for a material shader.
  *
- * A material shader consists of global parameters, an editor image, and zero or
- * more shader layers (including diffusemap, bumpmap and specularmap textures
- * which are handled specially).
+ * A material shader consists of global parameters, an editor image, and zero
+ * or more shader layers (including diffusemap, bumpmap and specularmap
+ * textures which are handled specially).
+ *
+ * Most material shaders are defined in .mtr files within the mod asset tree,
+ * but there are also internal materials generated for Radiant-specific
+ * internal OpenGL shaders, such as those used to render wireframes.
  */
 class Material
 {
@@ -135,7 +138,7 @@ public:
 		SORT_POST_PROCESS = 100	// after a screen copy to texture
     };
 
-	// Deform Type 
+	// Deform Type
 	enum DeformType
 	{
 		DEFORM_NONE,
@@ -168,131 +171,102 @@ public:
 
 	virtual ~Material() {}
 
-    /**
-     * \brief
-     * Return the editor image texture for this shader.
-     */
-    virtual TexturePtr getEditorImage() = 0;
+    /// Return the editor image texture for this shader.
+    virtual TexturePtr getEditorImage() { return {}; }
 
-    /**
-     * \brief
-     * Return true if the editor image is no tex for this shader.
-     */
-    virtual bool isEditorImageNoTex() = 0;
+    /// Return true if the editor image is no tex for this shader.
+    virtual bool isEditorImageNoTex() { return false; }
 
-    /**
-     * \brief
-     * Get the string name of this shader.
-     */
+    /// Get the string name of this material
     virtual std::string getName() const = 0;
 
-  virtual bool IsInUse() const = 0;
-  virtual void SetInUse(bool bInUse) = 0;
-  
-  // test if it's a true shader, or a default shader created to wrap around a texture
-  virtual bool IsDefault() const = 0;
-  
-  // get shader file name (ie the file where this one is defined)
-  virtual const char* getShaderFileName() const = 0;
+    virtual bool IsInUse() const { return true; }
+    virtual void SetInUse(bool bInUse) {}
+
+    /// Return true if this is an internal material not corresponding to a .mtr
+    virtual bool IsDefault() const { return false; }
+
+    /// get shader file name (ie the file where this one is defined)
+    virtual const char* getShaderFileName() const { return ""; }
 
     // Returns the VFS info structure of the file this shader is defined in
-    virtual const vfs::FileInfo& getShaderFileInfo() const = 0;
+    virtual const vfs::FileInfo* getShaderFileInfo() const { return nullptr; }
 
     /**
-     * \brief
-     * Return the requested sort position of this material.
+     * \brief Return the requested sort position of this material.
+     *
 	 * greebo: D3 is using floating points for the sort value but
 	 * as far as I can see only rounded numbers have been used.
      */
-    virtual int getSortRequest() const = 0;
+    virtual int getSortRequest() const { return 0; }
 
-    /**
-     * \brief
-     * Return a polygon offset if one is defined. The default is 0.
-     */
-    virtual float getPolygonOffset() const = 0;
+    /// Return a polygon offset if one is defined. The default is 0.
+    virtual float getPolygonOffset() const { return 0; }
 
-	/**
-	 * Get the desired texture repeat behaviour.
-	 */
-	virtual ClampType getClampType() const = 0;
+	/// Get the desired texture repeat behaviour.
+	virtual ClampType getClampType() const { return CLAMP_REPEAT; }
 
-	// Get the cull type (none, back, front)
-	virtual CullType getCullType() const = 0;
+	/// Get the cull type (none, back, front)
+	virtual CullType getCullType() const { return CULL_BACK; }
 
-	/**
-	 * Get the global material flags (translucent, noshadows, etc.)
-	 */
-	virtual int getMaterialFlags() const = 0;
+	/// Get the global material flags (translucent, noshadows, etc.)
+	virtual int getMaterialFlags() const { return 0; }
 
-	/**
-	 * Surface flags (areaportal, nonsolid, etc.)
-	 */
-	virtual int getSurfaceFlags() const = 0;
+	/// Surface flags (areaportal, nonsolid, etc.)
+	virtual int getSurfaceFlags() const { return 0; }
 
-	/**
-	 * Surface Type (wood, stone, surfType15, ...)
-	 */
-	virtual SurfaceType getSurfaceType() const = 0;
+	/// Surface Type (wood, stone, surfType15, ...)
+	virtual SurfaceType getSurfaceType() const { return SURFTYPE_DEFAULT; }
 
-	/**
-	 * Get the deform type of this material
-	 */
-	virtual DeformType getDeformType() const = 0;
+	/// Get the deform type of this material
+	virtual DeformType getDeformType() const { return DEFORM_NONE; }
 
-	/**
-	 * Returns the spectrum of this shader, -1 means "no defined spectrum"
-	 */
-	virtual int getSpectrum() const = 0;
+	/// Returns the spectrum of this shader, -1 means "no defined spectrum"
+	virtual int getSpectrum() const { return -1; }
 
-	/**
-	 * Retrieves the decal info structure of this material.
-	 */
-	virtual const DecalInfo& getDecalInfo() const = 0;
+	/// Retrieves the decal info structure of this material.
+	virtual DecalInfo getDecalInfo() const { return {}; }
 
-	/**
-	 * Returns the coverage type of this material, also needed
-	 * by the map compiler.
-	 */
-	virtual Coverage getCoverage() const = 0;
+	/// Returns the coverage type of this material, also needed by the map compiler.
+	virtual Coverage getCoverage() const { return MC_OPAQUE; }
 
 	/**
 	 * Returns the raw shader definition block, as parsed by the material manager.
 	 * The definition is lacking the outermost curly braces.
 	 */
-	virtual std::string getDefinition() = 0;
+	virtual std::string getDefinition() { return {}; }
 
 	/** Determine whether this is an ambient light shader, i.e. the
 	 * material def contains the global "ambientLight" keyword.
 	 */
-	virtual bool isAmbientLight() const = 0;
+	virtual bool isAmbientLight() const { return false; }
 
 	/** Determine whether this is an blend light shader, i.e. the
 	 * material def contains the global "blendLight" keyword.
 	 */
-	virtual bool isBlendLight() const = 0;
+	virtual bool isBlendLight() const { return false; }
 
 	/** Determine whether this is an fog light shader, i.e. the
 	 * material def contains the global "fogLight" keyword.
 	 */
-	virtual bool isFogLight() const = 0;
+	virtual bool isFogLight() const { return false; }
 
 	/**
-	 * For light shaders: implicitly no-shadows lights (ambients, fogs, etc) 
+	 * For light shaders: implicitly no-shadows lights (ambients, fogs, etc)
 	 * will never cast shadows but individual light entities can also override this value.
 	 */
-	virtual bool lightCastsShadows() const = 0;
+	virtual bool lightCastsShadows() const { return true; }
 
 	// returns true if the material will generate shadows, not making a
 	// distinction between global and no-self shadows
-	virtual bool surfaceCastsShadow() const = 0;
+	virtual bool surfaceCastsShadow() const { return true; }
 
 	/**
 	 * returns true if the material will draw anything at all.  Triggers, portals,
 	 * etc, will not have anything to draw.  A not drawn surface can still castShadow,
 	 * which can be used to make a simplified shadow hull for a complex object set as noShadow.
 	 */
-	virtual bool isDrawn() const = 0;
+	virtual bool isDrawn() const { return true; }
 
 	/**
 	 * a discrete surface will never be merged with other surfaces by dmap, which is
@@ -300,33 +274,31 @@ public:
 	 * special effects from being combined into a single surface
 	 * guis, merging sprites or other effects, mirrors and remote views are always discrete
 	 */
-	virtual bool isDiscrete() const = 0;
+	virtual bool isDiscrete() const { return false; }
 
-	virtual ShaderLayer* firstLayer() const = 0;
+    /// Return the first material layer, if any
+	virtual ShaderLayer* firstLayer() const { return nullptr; }
 
     /**
-     * \brief
-     * Return a std::vector containing all layers in this material shader.
+     * \brief Return a std::vector containing all layers in this material
+     * shader.
      *
      * This includes all diffuse, bump, specular or blend layers.
      */
-    virtual const ShaderLayerVector& getAllLayers() const = 0;
+    virtual ShaderLayerVector getAllLayers() const { return {}; }
 
-  virtual TexturePtr lightFalloffImage() = 0;
+    /// Return the 2D light falloff texture, if this is a light shader
+    virtual TexturePtr lightFalloffImage() { return {}; }
 
 	// greebo: Returns the description as defined in the material
-	virtual std::string getDescription() const = 0;
+	virtual std::string getDescription() const { return {}; }
 
-	/**
-	 * greebo: Returns TRUE if the shader is visible, FALSE if it
-	 *         is filtered or disabled in any other way.
-	 */
-	virtual bool isVisible() const = 0;
+	 /// Return TRUE if the shader is visible, FALSE if it is filtered or
+	 /// disabled in any other way.
+	virtual bool isVisible() const { return true; }
 
-	/**
-	 * greebo: Sets the visibility of this shader.
-	 */
-	virtual void setVisible(bool visible) = 0;
+	/// Sets the visibility of this shader.
+	virtual void setVisible(bool visible) {}
 };
 
 typedef std::shared_ptr<Material> MaterialPtr;
@@ -383,25 +355,26 @@ public:
 	virtual bool isRealised() = 0;
 
 	// Signal which is invoked when the materials defs have been parsed
-	// Note that the DEF files might be parsed in a separate thread so 
-	// any call acquiring material info might need to block and wait for 
+	// Note that the DEF files might be parsed in a separate thread so
+	// any call acquiring material info might need to block and wait for
 	// that background call to finish before it can yield results.
 	virtual sigc::signal<void>& signal_DefsLoaded() = 0;
 
-	// Signal invoked when the material defs have been unloaded due 
+	// Signal invoked when the material defs have been unloaded due
 	// to a filesystem or other configuration change
 	virtual sigc::signal<void>& signal_DefsUnloaded() = 0;
 
-	/** Activate the shader for a given name and return it. The default shader
-	 * will be returned if name is not found.
+	/**
+     * \brief Return the shader with the given name. The default shader will be
+     * returned if name is not found.
 	 *
-	 * @param name
+	 * \param name
 	 * The text name of the shader to load.
 	 *
-	 * @returns
-	 * MaterialPtr shared ptr corresponding to the named shader object.
+	 * \returns
+	 * MaterialPtr corresponding to the named shader object.
 	 */
-	virtual MaterialPtr getMaterialForName(const std::string& name) = 0;
+	virtual MaterialPtr getMaterial(const std::string& name) = 0;
 
 	/**
 	 * greebo: Returns true if the named material is existing, false otherwise.
@@ -454,7 +427,7 @@ public:
 	/**
 	 * Creates a new shader expression for the given string. This can be used to create standalone
 	 * expression objects for unit testing purposes.
-	 */ 
+	 */
 	virtual shaders::IShaderExpressionPtr createShaderExpressionFromString(const std::string& exprStr) = 0;
 };
 

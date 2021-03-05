@@ -15,11 +15,6 @@ inline bool shader_equal(const std::string& shader, const std::string& other)
   return string_equal_nocase(shader.c_str(), other.c_str());
 }
 
-inline bool shader_equal_n(const char* shader, const char* other, std::size_t n)
-{
-  return string_equal_nocase_n(shader, other, n);
-}
-
 inline bool shader_valid(const char* shader)
 {
   return string_is_ascii(shader)
@@ -50,7 +45,7 @@ inline const std::string& texdef_name_default()
 namespace scene
 {
 
-/** 
+/**
  * greebo: This replaces the shader of the visited face/patch with <replace>
  * if the face is textured with <find> and increases the given <counter>.
  */

@@ -31,24 +31,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 namespace entity
 {
 
-/**
- * Comaparator to allow for case-insensitive search in std::multimap
- */
-struct CaseInsensitiveKeyCompare
-{
-	bool operator()(const std::string &s1, const std::string &s2) const
-	{
-		// return boost::algorithm::ilexicographical_compare(s1, s2); // slow!
-		return string_compare_nocase(s1.c_str(), s2.c_str()) < 0;
-	}
-};
-
 class KeyObserverMap :
 	public Entity::Observer,
     public sigc::trackable
 {
 	// A map using case-insensitive comparison
-	typedef std::multimap<std::string, KeyObserver*, CaseInsensitiveKeyCompare> KeyObservers;
+	typedef std::multimap<std::string, KeyObserver*, string::ILess> KeyObservers;
 	KeyObservers _keyObservers;
 
 	// The observed entity

@@ -7,7 +7,7 @@
 
 #include "wxutil/Bitmap.h"
 
-namespace ui 
+namespace ui
 {
 
 namespace
@@ -106,12 +106,14 @@ std::string EClassTreeBuilder::getInheritancePathRecursive(const IEntityClassPtr
 {
 	std::string returnValue;
 
-	try 
+	try
 	{
-		EntityClassAttribute attribute = eclass->getAttribute(INHERIT_KEY);
+        EntityClassAttribute attribute = eclass->getAttribute(
+            INHERIT_KEY, false /* includeInherited*/
+        );
 
-		// Don't use empty or derived "inherit" keys
-		if (!attribute.getValue().empty() && !attribute.inherited)
+        // Don't use empty "inherit" keys
+		if (!attribute.getValue().empty())
 		{
 			// Get the inherited eclass first and resolve the path
 			IEntityClassPtr parent = GlobalEntityClassManager().findClass(

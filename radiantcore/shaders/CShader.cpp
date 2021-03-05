@@ -87,7 +87,7 @@ TexturePtr CShader::lightFalloffImage() {
 			// Find the default light shader in the ShaderSystem and query its
 			// falloff texture name.
 			std::string defLight = game::current::getValue<std::string>(DEFAULT_LIGHT_PATH);
-			MaterialPtr defLightShader = GetShaderSystem()->getMaterialForName(defLight);
+			MaterialPtr defLightShader = GetShaderSystem()->getMaterial(defLight);
 
 			// Cast to a CShader so we can call getFalloffName().
 			CShaderPtr cshaderPtr = std::static_pointer_cast<CShader>(defLightShader);
@@ -167,7 +167,7 @@ int CShader::getSpectrum() const
 	return _template->getSpectrum();
 }
 
-const Material::DecalInfo& CShader::getDecalInfo() const
+Material::DecalInfo CShader::getDecalInfo() const
 {
 	return _template->getDecalInfo();
 }
@@ -183,9 +183,9 @@ const char* CShader::getShaderFileName() const
 	return _fileInfo.name.c_str();
 }
 
-const vfs::FileInfo& CShader::getShaderFileInfo() const
+const vfs::FileInfo* CShader::getShaderFileInfo() const
 {
-    return _fileInfo;
+    return &_fileInfo;
 }
 
 std::string CShader::getDefinition()
@@ -238,7 +238,7 @@ ShaderLayer* CShader::firstLayer() const
 }
 
 // Get all layers
-const ShaderLayerVector& CShader::getAllLayers() const
+ShaderLayerVector CShader::getAllLayers() const
 {
     return _layers;
 }
@@ -278,7 +278,7 @@ bool CShader::isDrawn() const
 bool CShader::isDiscrete() const
 {
 	int flags = getSurfaceFlags();
-	return (flags & SURF_ENTITYGUI) /*|| gui*/ || getDeformType() != DEFORM_NONE || 
+	return (flags & SURF_ENTITYGUI) /*|| gui*/ || getDeformType() != DEFORM_NONE ||
 			getSortRequest() == SORT_SUBVIEW || (flags & SURF_DISCRETE);
 }
 

@@ -10,7 +10,7 @@
 #include "parser/DefTokeniser.h"
 #include "messages/ScopedLongRunningOperation.h"
 
-#include "Doom3EntityClass.h"
+#include "EntityClass.h"
 #include "Doom3ModelDef.h"
 
 #include "string/case_conv.h"
@@ -53,34 +53,34 @@ IEntityClassPtr EClassManager::findOrInsert(const std::string& name, bool has_br
 	std::string lName = string::to_lower_copy(name);
 
     // Find and return if exists
-    Doom3EntityClassPtr eclass = findInternal(lName);
+    EntityClass::Ptr eclass = findInternal(lName);
     if (eclass)
     {
         return eclass;
     }
 
     // Otherwise insert the new EntityClass
-    //IEntityClassPtr eclass = eclass::Doom3EntityClass::create(lName, has_brushes);
+    //IEntityClassPtr eclass = eclass::EntityClass::create(lName, has_brushes);
     // greebo: Changed fallback behaviour when unknown entites are encountered to TRUE
     // so that brushes of unknown entites don't get lost (issue #240)
-    eclass = Doom3EntityClass::create(lName, true);
+    eclass = EntityClass::create(lName, true);
 
     // Any overrides should also apply to entityDefs that are crated on the fly
-    GlobalEclassColourManager().applyColours(eclass);
+    GlobalEclassColourManager().applyColours(*eclass);
 
     // Try to insert the class
     return insertUnique(eclass);
 }
 
-Doom3EntityClassPtr EClassManager::findInternal(const std::string& name)
+EntityClass::Ptr EClassManager::findInternal(const std::string& name)
 {
     // Find the EntityClass in the map.
     auto i = _entityClasses.find(name);
 
-    return i != _entityClasses.end() ? i->second : Doom3EntityClassPtr();
+    return i != _entityClasses.end() ? i->second : EntityClass::Ptr();
 }
 
-Doom3EntityClassPtr EClassManager::insertUnique(const Doom3EntityClassPtr& eclass)
+EntityClass::Ptr EClassManager::insertUnique(const EntityClass::Ptr& eclass)
 {
 	// Try to insert the eclass
     auto i = _entityClasses.emplace(eclass->getName(), eclass);
@@ -204,7 +204,7 @@ void EClassManager::applyColours()
 
 void EClassManager::realise()
 {
-	if (_realised) 
+	if (_realised)
     {
 		return; // nothing to do anymore
 	}
@@ -338,7 +338,7 @@ void EClassManager::shutdownModule()
 
 	// Unrealise ourselves and wait for threads to finish
 	unrealise();
-	
+
 	// Don't notify anyone anymore
 	_defsReloadedSignal.clear();
 
@@ -366,7 +366,7 @@ void EClassManager::onEclassOverrideColourChanged(const std::string& eclass, boo
     }
     else
     {
-        GlobalEclassColourManager().applyColours(foundEclass->second);
+        GlobalEclassColourManager().applyColours(*foundEclass->second);
     }
 }
 
@@ -374,7 +374,7 @@ void EClassManager::onEclassOverrideColourChanged(const std::string& eclass, boo
 void EClassManager::reloadDefsCmd(const cmd::ArgumentList& args)
 {
 	radiant::ScopedLongRunningOperation operation(_("Reloading Defs"));
-	
+
     reloadDefs();
 }
 
@@ -416,7 +416,7 @@ void EClassManager::parse(TextInputStream& inStr, const vfs::FileInfo& fileInfo,
 			if (i == _entityClasses.end())
 			{
 				// Not existing yet, allocate a new class
-				auto result = _entityClasses.emplace(sName, std::make_shared<Doom3EntityClass>(sName, fileInfo));
+				auto result = _entityClasses.emplace(sName, std::make_shared<EntityClass>(sName, fileInfo));
 
 				i = result.first;
 			}

@@ -21,8 +21,7 @@ enum ClampType
 };
 
 /**
- * \brief
- * Representation of a GL blend function.
+ * \brief Representation of a GL blend function.
  *
  * A GL blend function consists of two GLenums representing the operations that
  * should be performed on the source and destination pixel colours respectively,
@@ -45,8 +44,7 @@ public:
 };
 
 /**
- * \brief
- * A single layer of a material shader.
+ * \brief A single layer of a material shader.
  *
  * Each shader layer contains an image texture, a blend mode (e.g. add,
  * modulate) and various other data.
@@ -55,10 +53,7 @@ class ShaderLayer
 {
 public:
 
-    /**
-     * \brief
-     * Enumeration of layer types.
-     */
+    /// Enumeration of layer types.
     enum Type
     {
         DIFFUSE,
@@ -98,10 +93,7 @@ public:
 	 */
 	virtual ~ShaderLayer() {}
 
-    /**
-     * \brief
-     * Return the layer type.
-     */
+    /// Return the layer type.
     virtual Type getType() const = 0;
 
     /**
@@ -111,7 +103,7 @@ public:
     virtual TexturePtr getTexture() const = 0;
 
 	/**
-	 * Evaluate all shader expressions used in this stage. Call this once (each frame) 
+	 * Evaluate all shader expressions used in this stage. Call this once (each frame)
 	 * before requesting things like getAlphaTest(), getColour() or isVisible()
 	 */
 	virtual void evaluateExpressions(std::size_t time) = 0;
@@ -249,7 +241,7 @@ public:
 	virtual std::size_t getNumFragmentMaps() = 0;
 
 	/**
-	 * Returns the fragment map with the given index. 
+	 * Returns the fragment map with the given index.
 	 */
 	virtual TexturePtr getFragmentMap(int index) = 0;
 
@@ -258,7 +250,7 @@ public:
 	 */
 	virtual float getPrivatePolygonOffset() = 0;
 
-    // If this stage is referring to a single image file, this will return 
+    // If this stage is referring to a single image file, this will return
     // the VFS path to it with the file extension removed.
     // If this layer doesn't refer to a single image file, an empty string is returned
     virtual std::string getMapImageFilename() = 0;

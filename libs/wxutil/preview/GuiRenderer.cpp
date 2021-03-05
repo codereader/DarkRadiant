@@ -103,7 +103,7 @@ void GuiRenderer::render(const gui::IGuiWindowDefPtr& window, bool ignoreFilter)
 	// Realise background shader if necessary
 	if (!window->background.getValue().empty() && window->backgroundShader == NULL)
 	{
-		window->backgroundShader = GlobalMaterialManager().getMaterialForName(window->background);
+		window->backgroundShader = GlobalMaterialManager().getMaterial(window->background);
 	}
 
 	// Acquire the texture number of the active texture
@@ -112,7 +112,7 @@ void GuiRenderer::render(const gui::IGuiWindowDefPtr& window, bool ignoreFilter)
 	if (window->backgroundShader != NULL && (matcolor[3] > 0 || _ignoreVisibility))
 	{
 		// Get the diffuse layer
-		const ShaderLayerVector& layers = window->backgroundShader->getAllLayers();
+		const ShaderLayerVector layers = window->backgroundShader->getAllLayers();
 
 		TexturePtr tex;
 

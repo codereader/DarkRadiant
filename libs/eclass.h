@@ -58,18 +58,6 @@ namespace detail
             }
         }
     };
-
-    inline void addIfMatches(AttributeList& list,
-                             const EntityClassAttribute& attr,
-                             const std::string& prefix,
-                             bool includeInherited)
-    {
-        if (string::istarts_with(attr.getName(), prefix)
-            && (includeInherited || !attr.inherited))
-        {
-            list.push_back(attr);
-        }
-    }
 }
 
 /**
@@ -96,9 +84,14 @@ inline AttributeList getSpawnargsWithPrefix(const IEntityClass& eclass,
 {
     // Populate the list with with matching attributes
     AttributeList matches;
-    eclass.forEachClassAttribute(
-        std::bind(&detail::addIfMatches,
-                  std::ref(matches), std::placeholders::_1, prefix, includeInherited),
+    eclass.forEachAttribute(
+        [&](const EntityClassAttribute& a, bool inherited) {
+            if (string::istarts_with(a.getName(), prefix) &&
+                (includeInherited || !inherited))
+            {
+                matches.push_back(a);
+            }
+        },
         true // include editor_keys
     );
 

@@ -160,7 +160,7 @@ void SpawnArgs::forEachKeyValue(KeyValueVisitFunc func,
     // If requested, visit inherited spawnargs from the entitydef
     if (includeInherited)
     {
-        _eclass->forEachClassAttribute([&](const EntityClassAttribute& att) {
+        _eclass->forEachAttribute([&](const EntityClassAttribute& att, bool) {
             func(att.getName(), att.getValue());
         });
     }

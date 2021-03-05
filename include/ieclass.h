@@ -52,23 +52,18 @@ class AABB;
 class EntityClassAttribute
 {
 private:
-    /**
-     * String references are shared_ptrs to save memory.
-     * The actual string might be owned by another entity class we're inheriting from.
-     */
-    typedef std::shared_ptr<std::string> StringPtr;
 
-    // Reference to the name string
-    StringPtr _typeRef;
+    // Attribute type
+    std::string _type;
 
-    // Reference to the name string
-    StringPtr _nameRef;
+    // Attribute name
+    std::string _name;
 
-    // Reference to the attribute value string
-    StringPtr _valueRef;
+    // Value
+    std::string _value;
 
-    // Reference to the description string
-    StringPtr _descRef;
+    //  User-friendly description
+    std::string _desc;
 
 public:
     /**
@@ -76,119 +71,52 @@ public:
      */
     const std::string& getType() const
     {
-        return *_typeRef;
-    }
-
-    const StringPtr& getTypeRef() const
-    {
-        return _typeRef;
+        return _type;
     }
 
     void setType(const std::string& type)
     {
-        _typeRef.reset(new std::string(type));
-    }
-
-    void setType(const StringPtr& typeRef)
-    {
-        _typeRef = typeRef;
+        _type = type;
     }
 
     /// The attribute key name, e.g. "model", "editor_displayFolder" etc
     const std::string& getName() const
     {
-        return *_nameRef;
+        return _name;
     }
 
-    const StringPtr& getNameRef() const
-    {
-        return _nameRef;
-    }
-
-    /**
-     * Direct reference to the value for easy access to the value. This reference
-     * is pointing directly at the string owned by the ValueRef shared_ptr,
-     * which in turn might be owned by a class we're inheriting from.
-     */
+    /// Get attribute value
     const std::string& getValue() const
     {
-        return *_valueRef;
+        return _value;
     }
 
-    const StringPtr& getValueRef() const
-    {
-        return _valueRef;
-    }
-
-    /**
-     * Sets the value of this entity class attribute. This will break up any
-     * inheritance and make this instance owner of its value string.
-     */
+    /// Set attribute value
     void setValue(const std::string& value)
     {
-        _valueRef.reset(new std::string(value));
+        _value = value;
     }
 
-    void setValue(const StringPtr& valueRef)
-    {
-        _valueRef = valueRef;
-    }
-
-    /**
-     * The help text associated with the key (in the DEF file).
-     */
+    /// The help text associated with the key (in the DEF file).
     const std::string& getDescription() const
     {
-        return *_descRef;
-    }
-
-    const StringPtr& getDescriptionRef() const
-    {
-        return _descRef;
+        return _desc;
     }
 
     void setDescription(const std::string& desc)
     {
-        _descRef.reset(new std::string(desc));
+        _desc = desc;
     }
 
-    void setDescription(const StringPtr& descRef)
-    {
-        _descRef = descRef;
-    }
-
-    /**
-     * Is TRUE for inherited keyvalues.
-     */
-    bool inherited;
-
-    /**
-     * Construct a non-inherited EntityClassAttribute, passing the actual strings
-     * which will be owned by this class instance.
-     */
+    /// Construct an EntityClassAttribute
     EntityClassAttribute(const std::string& type_,
                          const std::string& name_,
-                         const std::string& value_, 
+                         const std::string& value_,
                          const std::string& description_ = "")
-    : _typeRef(new std::string(type_)),
-      _nameRef(new std::string(name_)),
-      _valueRef(new std::string(value_)),
-      _descRef(new std::string(description_)),
-      inherited(false)
-    {}
-
-    /**
-     * Construct a inherited EntityClassAttribute with a true inherited flag.
-     * The strings are taken from the inherited attribute.
-     * Note: this is not a copy-constructor on purpose, to allow STL assignments to 
-     * copy the actual instance values.
-     */
-    EntityClassAttribute(const EntityClassAttribute& parentAttr, bool inherited_)
-    : _typeRef(parentAttr._typeRef),    // take type string,
-      _nameRef(parentAttr._nameRef),    // name string,
-      _valueRef(parentAttr._valueRef),  // value string 
-      _descRef(parentAttr._descRef),    // and description from the parent attribute
-      inherited(inherited_)
+    : _type(type_),
+      _name(name_),
+      _value(value_),
+      _desc(description_)
     {}
 };
 
@@ -201,7 +129,7 @@ typedef std::shared_ptr<const IEntityClass> IEntityClassConstPtr;
 
 /**
  * \brief Entity class interface.
- * 
+ *
  * An entity class represents a single type of entity that can be created by
  * the EntityCreator. Entity classes are parsed from .DEF files during startup.
  *
@@ -262,18 +190,37 @@ public:
     /**
      * Return a single named EntityClassAttribute from this EntityClass.
      *
-     * @param name
+     * \param name
      * The name of the EntityClassAttribute to find, interpreted case-insensitively.
      *
-     * @return
+     * \param includeInherited
+     * true if attributes inherited from parent entity classes should be
+     * considered, false otherwise.
+     *
+     * \return
      * A reference to the named EntityClassAttribute. If the named attribute is
      * not found, an empty EntityClassAttribute is returned.
      */
-    virtual EntityClassAttribute& getAttribute(const std::string& name) = 0;
-    virtual const EntityClassAttribute& getAttribute(const std::string& name) const = 0;
+    virtual EntityClassAttribute&
+    getAttribute(const std::string& name, bool includeInherited = true) = 0;
+
+    /// Get a const EntityClassAttribute reference by name
+    virtual const EntityClassAttribute&
+    getAttribute(const std::string& name,
+                 bool includeInherited = true) const = 0;
 
     /**
-     * Enumerate the EntityClassAttibutes in turn.
+     * Function that will be invoked by forEachAttribute.
+     *
+     * The function will be passed each EntityClassAttribute in turn, along
+     * with a bool indicating if this attribute is inherited from a parent
+     * entity class.
+     */
+    using AttributeVisitor = std::function<void(const EntityClassAttribute&, bool)>;
+
+    /**
+     * Enumerate the EntityClassAttibutes in turn, including all inherited
+     * attributes.
      *
      * \param visitor
      * Function that will be invoked for each EntityClassAttibute.
@@ -282,10 +229,8 @@ public:
      * true if editor keys (those which start with "editor_") should be passed
      * to the visitor, false if they should be skipped.
      */
-    virtual void forEachClassAttribute(
-        std::function<void(const EntityClassAttribute&)> visitor,
-        bool editorKeys = false
-    ) const = 0;
+    virtual void forEachAttribute(AttributeVisitor visitor,
+                                  bool editorKeys = false) const = 0;
 
     /* MODEL AND SKIN */
 
@@ -300,7 +245,7 @@ public:
     virtual const std::string& getSkin() const = 0;
 
 	/**
-	 * Returns true if this entity is of type or inherits from the 
+	 * Returns true if this entity is of type or inherits from the
 	 * given entity class name. className is treated case-sensitively.
 	 */
 	virtual bool isOfType(const std::string& className) = 0;
@@ -428,7 +373,7 @@ public:
      */
     virtual void reloadDefs() = 0;
 
-    /** 
+    /**
      * greebo: Finds the model def with the given name. Might return NULL if not found.
      */
     virtual IModelDefPtr findModel(const std::string& name) = 0;

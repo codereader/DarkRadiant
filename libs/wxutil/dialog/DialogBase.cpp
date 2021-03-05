@@ -2,7 +2,7 @@
 
 namespace wxutil
 {
-    
+
     namespace
     {
         inline wxWindow* FindTopLevelWindow()
@@ -11,30 +11,31 @@ namespace wxutil
             {
                 return GlobalMainFrame().getWxTopLevelWindow();
             }
-            
+
             return nullptr;
         }
     }
-
-void DialogBase::_onDelete(wxCloseEvent& ev)
-{
-    if (_onDeleteEvent())
-    {
-        ev.Veto();
-    }
-    else
-    {
-        EndModal(wxID_CANCEL);
-    }
-}
 
 DialogBase::DialogBase(const std::string& title, wxWindow* parent)
 : wxDialog(parent ? parent : FindTopLevelWindow(),
            wxID_ANY, title, wxDefaultPosition, wxDefaultSize,
            wxCAPTION | wxSYSTEM_MENU | wxRESIZE_BORDER)
 {
-    Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(DialogBase::_onDelete),
-            nullptr, this);
+    // Allow subclasses to override close event
+    Bind(wxEVT_CLOSE_WINDOW, [this](wxCloseEvent& e) {
+        if (_onDeleteEvent())
+            e.Veto();
+        else
+            EndModal(wxID_CANCEL);
+    });
+
+    // Allow ESC to close all dialogs
+    Bind(wxEVT_CHAR_HOOK, [this](wxKeyEvent& e) {
+        if (e.GetKeyCode() == WXK_ESCAPE)
+            Close();
+        else
+            e.Skip();
+    });
 }
 
 void DialogBase::FitToScreen(float xProp, float yProp)

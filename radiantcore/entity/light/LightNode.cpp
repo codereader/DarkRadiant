@@ -26,7 +26,8 @@ LightNode::LightNode(const IEntityClassPtr& eclass) :
 	_lightEndInstance(_light.endTransformed(), std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
 	_dragPlanes(std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
     _renderableRadius(_light._lightBox.origin),
-    _renderableFrustum(_light._lightBox.origin, _light._lightStartTransformed, _light._frustum)
+    _renderableFrustum(_light._lightBox.origin, _light._lightStartTransformed, _light._frustum),
+    _overrideColKey(colours::RKEY_OVERRIDE_LIGHTCOL)
 {}
 
 LightNode::LightNode(const LightNode& other) :
@@ -46,7 +47,8 @@ LightNode::LightNode(const LightNode& other) :
 	_lightEndInstance(_light.endTransformed(), std::bind(&LightNode::selectedChangedComponent, this,std::placeholders:: _1)),
 	_dragPlanes(std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
     _renderableRadius(_light._lightBox.origin),
-    _renderableFrustum(_light._lightBox.origin, _light._lightStartTransformed, _light._frustum)
+    _renderableFrustum(_light._lightBox.origin, _light._lightStartTransformed, _light._frustum),
+    _overrideColKey(colours::RKEY_OVERRIDE_LIGHTCOL)
 {}
 
 LightNodePtr LightNode::Create(const IEntityClassPtr& eclass)
@@ -303,9 +305,6 @@ void LightNode::renderLightVolume(RenderableCollector& collector,
                                   bool selected) const
 {
     // Obtain the appropriate Shader for the light volume colour
-    static registry::CachedKey<bool> _overrideColKey(
-        colours::RKEY_OVERRIDE_LIGHTCOL
-    );
     Shader* colourShader = _overrideColKey.get() ? EntityNode::_wireShader.get()
                                                  : _colourKey.getWireShader();
     if (!colourShader)

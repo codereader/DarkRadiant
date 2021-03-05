@@ -6,10 +6,13 @@
 #include "iselectable.h"
 #include "iselection.h"
 #include "ishaders.h"
+#include "icolourscheme.h"
+#include "ieclasscolours.h"
 
 #include "render/NopVolumeTest.h"
 #include "string/convert.h"
 #include "transformlib.h"
+#include "registry/registry.h"
 
 namespace test
 {
@@ -77,6 +80,52 @@ TEST_F(EntityTest, LightEntitiesRecognisedAsLights)
     // should not have isLight() == true
     auto brazier = GlobalEntityClassManager().findClass("atdm:torch_brazier");
     EXPECT_FALSE(brazier->isLight());
+}
+
+TEST_F(EntityTest, EntityClassInheritsAttributes)
+{
+    auto cls = GlobalEntityClassManager().findClass("light_extinguishable");
+    ASSERT_TRUE(cls);
+
+    // Inherited from 'light'
+    EXPECT_EQ(cls->getAttribute("editor_color").getValue(), "0 1 0");
+    EXPECT_EQ(cls->getAttribute("spawnclass").getValue(), "idLight");
+
+    // Inherited from 'atdm:light_base'
+    EXPECT_EQ(cls->getAttribute("AIUse").getValue(), "AIUSE_LIGHTSOURCE");
+    EXPECT_EQ(cls->getAttribute("shouldBeOn").getValue(), "0");
+
+    // Inherited but overridden on 'light_extinguishable' itself
+    EXPECT_EQ(cls->getAttribute("editor_displayFolder").getValue(),
+              "Lights/Base Entities, DoNotUse");
+
+    // Lookup without considering inheritance
+    EXPECT_EQ(cls->getAttribute("editor_color", false).getValue(), "");
+    EXPECT_EQ(cls->getAttribute("spawnclass", false).getValue(), "");
+}
+
+TEST_F(EntityTest, VisitInheritedClassAttributes)
+{
+    auto cls = GlobalEntityClassManager().findClass("light_extinguishable");
+    ASSERT_TRUE(cls);
+
+    // Map of attribute names to inherited flag
+    std::map<std::string, bool> attributes;
+
+    // Visit all attributes and store in the map
+    cls->forEachAttribute(
+        [&attributes](const EntityClassAttribute& a, bool inherited) {
+            attributes.insert({a.getName(), inherited});
+        },
+        true /* editorKeys */
+    );
+
+    // Confirm inherited flags set correctly
+    EXPECT_EQ(attributes.at("spawnclass"), true);
+    EXPECT_EQ(attributes.at("AIUse"), true);
+    EXPECT_EQ(attributes.at("maxs"), false);
+    EXPECT_EQ(attributes.at("clipmodel_contents"), false);
+    EXPECT_EQ(attributes.at("editor_displayFolder"), false);
 }
 
 TEST_F(EntityTest, CannotCreateEntityWithoutClass)
@@ -290,12 +339,16 @@ namespace
         // List of actual RendererLight objects
         std::list<const RendererLight*> lightPtrs;
 
+        // List of renderables and their shaders
+        std::vector< std::pair<const Shader*, const OpenGLRenderable*> > renderablePtrs;
+
         void addRenderable(Shader& shader, const OpenGLRenderable& renderable,
                            const Matrix4& localToWorld,
                            const LitObject* litObject = nullptr,
                            const IRenderEntity* entity = nullptr) override
         {
             ++renderables;
+            renderablePtrs.push_back(std::make_pair(&shader, &renderable));
         }
 
         void addLight(const RendererLight& light)
@@ -400,6 +453,130 @@ TEST_F(EntityTest, LightLocalToWorldFromOrigin)
     // Since there is no parent, the final localToWorld should be the same as
     // localToParent
     EXPECT_EQ(light->localToWorld(), Matrix4::getTranslation(ORIGIN));
+}
+
+TEST_F(EntityTest, LightWireframeShader)
+{
+    auto light = createByClassName("light");
+
+    // Initially there is no shader because there is no rendersystem
+    auto wireSh = light->getWireShader();
+    EXPECT_FALSE(wireSh);
+
+    // Set a render system
+    RenderSystemPtr backend = GlobalRenderSystemFactory().createRenderSystem();
+    light->setRenderSystem(backend);
+
+    // There should be a shader now
+    auto newWireSh = light->getWireShader();
+    ASSERT_TRUE(newWireSh);
+
+    // Get the material for the shader. Since this is a simple built-in
+    // wireframe shader, this should be an internally-constructed material based
+    // on the entity colour. Note that this colour is derived from the entity
+    // *class*, which for "light" is a default green. Actual lights will be
+    // rendered with a colour based on their _color key.
+    auto material = newWireSh->getMaterial();
+    ASSERT_TRUE(material);
+    EXPECT_TRUE(material->IsDefault());
+    EXPECT_EQ(material->getName(), "<0.000000 1.000000 0.000000>");
+}
+
+TEST_F(EntityTest, LightVolumeColorFromColorKey)
+{
+    // Create a default light
+    auto light = createByClassName("light");
+
+    {
+        // Render the default light
+        RenderFixture rf;
+        rf.renderSubGraph(light);
+
+        // Shader should have been submitted. Since a light's default _color is
+        // white, this is the shader we should get for rendering.
+        EXPECT_EQ(rf.collector.renderables, 1);
+        const Shader* shader = rf.collector.renderablePtrs.at(0).first;
+        EXPECT_EQ(shader->getMaterial()->getName(), "<1.000000 1.000000 1.000000>");
+    }
+
+    // Set a different colour on the light
+    light->getEntity().setKeyValue("_color", "0.75 0.25 0.1");
+
+    {
+        // Re-render the light
+        RenderFixture rf;
+        rf.renderSubGraph(light);
+
+        // The shader should have changed to match the new _color
+        EXPECT_EQ(rf.collector.renderables, 1);
+        const Shader* shader = rf.collector.renderablePtrs.at(0).first;
+        EXPECT_EQ(shader->getMaterial()->getName(), "<0.750000 0.250000 0.100000>");
+    }
+}
+
+TEST_F(EntityTest, OverrideLightVolumeColour)
+{
+    // Create a light with an arbitrary colour
+    auto light = createByClassName("light");
+    light->getEntity().setKeyValue("_color", "0.25 0.55 0.9");
+
+    // Set the "override light volume colour" key
+    registry::setValue(colours::RKEY_OVERRIDE_LIGHTCOL, true);
+
+    {
+        RenderFixture rf;
+        rf.renderSubGraph(light);
+
+        // The shader should ignore the _color key and render based on the entity
+        // class colour
+        EXPECT_EQ(rf.collector.renderables, 1);
+        const Shader* shader = rf.collector.renderablePtrs.at(0).first;
+        EXPECT_EQ(shader->getMaterial()->getName(), "<0.000000 1.000000 0.000000>");
+    }
+
+    // Unset the override key
+    registry::setValue(colours::RKEY_OVERRIDE_LIGHTCOL, false);
+
+    {
+        RenderFixture rf;
+        rf.renderSubGraph(light);
+
+        // Light should be rendered with its original _color key again
+        EXPECT_EQ(rf.collector.renderables, 1);
+        const Shader* shader = rf.collector.renderablePtrs.at(0).first;
+        EXPECT_EQ(shader->getMaterial()->getName(), "<0.250000 0.550000 0.900000>");
+    }
+
+    // Changing the override key after deleting the light must not crash
+    // (because the LightNode's CachedKey is sigc::trackable)
+    light.reset();
+    registry::setValue(colours::RKEY_OVERRIDE_LIGHTCOL, true);
+    registry::setValue(colours::RKEY_OVERRIDE_LIGHTCOL, false);
+}
+
+TEST_F(EntityTest, OverrideEClassColour)
+{
+    auto light = createByClassName("light");
+    auto torch = createByClassName("light_torchflame_small");
+    auto lightCls = light->getEntity().getEntityClass();
+    auto torchCls = torch->getEntity().getEntityClass();
+
+    static const Vector3 GREEN(0, 1, 0);
+    static const Vector3 YELLOW(1, 0, 1);
+
+    // Light has an explicit green editor_color
+    EXPECT_EQ(lightCls->getColour(), GREEN);
+
+    // This class does not have an explicit editor_color value, but should
+    // inherit the one from 'light'.
+    EXPECT_EQ(torchCls->getColour(), GREEN);
+
+    // Set an override for the 'light' class
+    GlobalEclassColourManager().addOverrideColour("light", YELLOW);
+
+    // Both 'light' and its subclasses should have the new colour
+    EXPECT_EQ(lightCls->getColour(), YELLOW);
+    EXPECT_EQ(torchCls->getColour(), YELLOW);
 }
 
 TEST_F(EntityTest, FuncStaticLocalToWorld)

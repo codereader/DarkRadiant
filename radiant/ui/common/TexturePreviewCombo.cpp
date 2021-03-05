@@ -31,7 +31,7 @@ TexturePreviewCombo::TexturePreviewCombo(wxWindow* parent) :
 
     // Add info table
 	_infoTable = new wxutil::KeyValueTable(this);
-	_infoTable->Connect(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, 
+	_infoTable->Connect(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU,
 		wxDataViewEventHandler(TexturePreviewCombo::_onContextMenu), NULL, this);
 
 	SetSizer(new wxBoxSizer(wxHORIZONTAL));
@@ -54,7 +54,7 @@ void TexturePreviewCombo::SetTexture(const std::string& tex)
     refreshInfoTable();
 
     _glWidget->Refresh(false);
-	
+
 #if defined(__WXGTK__) && !wxCHECK_VERSION(3, 1, 3)
 	// Just calling Refresh doesn't cut it before wxGTK 3.1.3
 	// the GLWidget::OnPaint event is never invoked unless we call Update()
@@ -75,12 +75,12 @@ void TexturePreviewCombo::refreshInfoTable()
     }
 
     // Get shader info
-    MaterialPtr shader = GlobalMaterialManager().getMaterialForName(_texName);
+    MaterialPtr shader = GlobalMaterialManager().getMaterial(_texName);
 
     _infoTable->Append(_("Shader"), shader->getName());
     _infoTable->Append(_("Defined in"), shader->getShaderFileName());
     _infoTable->Append(_("Description"), shader->getDescription());
-    
+
     _infoTable->TriggerColumnSizeEvent();
 }
 
@@ -132,7 +132,7 @@ bool TexturePreviewCombo::_onRender()
 	if (!_texName.empty())
 	{
 		// Get a reference to the selected shader
-		MaterialPtr shader = GlobalMaterialManager().getMaterialForName(_texName);
+		MaterialPtr shader = GlobalMaterialManager().getMaterial(_texName);
 
 		// This is an "ordinary" texture, take the editor image
 		TexturePtr tex = shader->getEditorImage();
@@ -150,7 +150,7 @@ bool TexturePreviewCombo::_onRender()
 				hfWidth = 0.5 * req.GetWidth();
 				hfHeight = 0.5 * req.GetHeight() / aspect;
 			}
-			else 
+			else
 			{
 				hfHeight = 0.5 * req.GetWidth();
 				hfWidth = 0.5 * req.GetHeight() * aspect;

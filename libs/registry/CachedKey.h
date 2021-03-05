@@ -6,8 +6,7 @@ namespace registry
 {
 
 /**
- * \brief
- * Simple value caching class for a registry key.
+ * \brief Simple value caching class for a registry key.
  *
  * This can be used when a registry key needs to be read frequently but only
  * written rarely. It stores a copy of the value converted to its given type,

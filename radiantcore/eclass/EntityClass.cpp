@@ -1,4 +1,4 @@
-#include "Doom3EntityClass.h"
+#include "EntityClass.h"
 
 #include "itextstream.h"
 #include "os/path.h"
@@ -11,18 +11,17 @@
 namespace eclass
 {
 
-const std::string Doom3EntityClass::DefaultWireShader("<0.3 0.3 1>");
-const std::string Doom3EntityClass::DefaultFillShader("(0.3 0.3 1)");
-const Vector3 Doom3EntityClass::DefaultEntityColour(0.3, 0.3, 1);
+const std::string EntityClass::DefaultWireShader("<0.3 0.3 1>");
+const std::string EntityClass::DefaultFillShader("(0.3 0.3 1)");
+const Vector3 EntityClass::DefaultEntityColour(0.3, 0.3, 1);
 
-Doom3EntityClass::Doom3EntityClass(const std::string& name, const vfs::FileInfo& fileInfo) :
-    Doom3EntityClass(name, fileInfo, false)
+EntityClass::EntityClass(const std::string& name, const vfs::FileInfo& fileInfo) :
+    EntityClass(name, fileInfo, false)
 {}
 
-Doom3EntityClass::Doom3EntityClass(const std::string& name, const vfs::FileInfo& fileInfo, bool fixedSize)
+EntityClass::EntityClass(const std::string& name, const vfs::FileInfo& fileInfo, bool fixedSize)
 : _name(name),
   _fileInfo(fileInfo),
-  _parent(nullptr),
   _isLight(false),
   _colour(-1, -1, -1),
   _colourTransparent(false),
@@ -35,25 +34,25 @@ Doom3EntityClass::Doom3EntityClass(const std::string& name, const vfs::FileInfo&
   _parseStamp(0)
 {}
 
-Doom3EntityClass::~Doom3EntityClass()
+EntityClass::~EntityClass()
 {}
 
-std::string Doom3EntityClass::getName() const
+std::string EntityClass::getName() const
 {
     return _name;
 }
 
-const IEntityClass* Doom3EntityClass::getParent() const
+const IEntityClass* EntityClass::getParent() const
 {
     return _parent;
 }
 
-sigc::signal<void>& Doom3EntityClass::changedSignal()
+sigc::signal<void>& EntityClass::changedSignal()
 {
     return _changedSignal;
 }
 
-bool Doom3EntityClass::isFixedSize() const
+bool EntityClass::isFixedSize() const
 {
     if (_fixedSize) {
         return true;
@@ -66,7 +65,7 @@ bool Doom3EntityClass::isFixedSize() const
     }
 }
 
-AABB Doom3EntityClass::getBounds() const
+AABB EntityClass::getBounds() const
 {
     if (isFixedSize())
     {
@@ -81,19 +80,19 @@ AABB Doom3EntityClass::getBounds() const
     }
 }
 
-bool Doom3EntityClass::isLight() const
+bool EntityClass::isLight() const
 {
     return _isLight;
 }
 
-void Doom3EntityClass::setIsLight(bool val)
+void EntityClass::setIsLight(bool val)
 {
     _isLight = val;
     if (_isLight)
         _fixedSize = true;
 }
 
-void Doom3EntityClass::setColour(const Vector3& colour)
+void EntityClass::setColour(const Vector3& colour)
 {
     _colour = colour;
 
@@ -113,33 +112,36 @@ void Doom3EntityClass::setColour(const Vector3& colour)
     _changedSignal.emit();
 }
 
-void Doom3EntityClass::resetColour()
+void EntityClass::resetColour()
 {
-    // (Re)set the colour
-    const EntityClassAttribute& colourAttr = getAttribute("editor_color");
+    // Look for an editor_color on this class only
+    const EntityClassAttribute& attr = getAttribute("editor_color", false);
+    if (!attr.getValue().empty())
+    {
+        return setColour(string::convert<Vector3>(attr.getValue()));
+    }
 
-    if (!colourAttr.getValue().empty())
-    {
-        setColour(string::convert<Vector3>(colourAttr.getValue()));
-    }
-    else
-    {
-        // If no colour is set, assign the default entity colour to this class
-        setColour(DefaultEntityColour);
-    }
+    // If there is a parent, use its getColour() directly, rather than its
+    // editor_color attribute, to take into account overrides through the
+    // EClassColourManager
+    if (_parent)
+        return setColour(_parent->getColour());
+
+    // No parent and no attribute, all we can use is the default colour
+    setColour(DefaultEntityColour);
 }
 
-const Vector3& Doom3EntityClass::getColour() const {
+const Vector3& EntityClass::getColour() const {
     return _colour;
 }
 
-const std::string& Doom3EntityClass::getWireShader() const
+const std::string& EntityClass::getWireShader() const
 {
     // Use a fallback shader colour in case we don't have anything
     return !_wireShader.empty() ? _wireShader : DefaultWireShader;
 }
 
-const std::string& Doom3EntityClass::getFillShader() const
+const std::string& EntityClass::getFillShader() const
 {
     // Use a fallback shader colour in case we don't have anything
     return !_fillShader.empty() ? _fillShader : DefaultFillShader;
@@ -150,11 +152,11 @@ const std::string& Doom3EntityClass::getFillShader() const
 /**
  * Insert an EntityClassAttribute, without overwriting previous values.
  */
-void Doom3EntityClass::addAttribute(const EntityClassAttribute& attribute)
+void EntityClass::addAttribute(const EntityClassAttribute& attribute)
 {
     // Try to insert the class attribute
     std::pair<EntityAttributeMap::iterator, bool> result = _attributes.insert(
-        EntityAttributeMap::value_type(attribute.getNameRef(), attribute)
+        EntityAttributeMap::value_type(attribute.getName(), attribute)
     );
 
     if (!result.second)
@@ -166,50 +168,70 @@ void Doom3EntityClass::addAttribute(const EntityClassAttribute& attribute)
         if (!attribute.getDescription().empty() && existing.getDescription().empty())
         {
             // Use the shared string reference to save memory
-            existing.setDescription(attribute.getDescriptionRef());
+            existing.setDescription(attribute.getDescription());
         }
 
         // Check if we have a more descriptive type than "text"
         if (attribute.getType() != "text" && existing.getType() == "text")
         {
             // Use the shared string reference to save memory
-            existing.setType(attribute.getTypeRef());
+            existing.setType(attribute.getType());
         }
     }
 }
 
-Doom3EntityClassPtr Doom3EntityClass::create(const std::string& name, bool brushes)
+EntityClass::Ptr EntityClass::create(const std::string& name, bool brushes)
 {
     vfs::FileInfo emptyFileInfo("def/", "_autogenerated_by_darkradiant_.def", vfs::Visibility::HIDDEN);
-    return std::make_shared<Doom3EntityClass>(name, emptyFileInfo, !brushes);
+    return std::make_shared<EntityClass>(name, emptyFileInfo, !brushes);
 }
 
-// Enumerate entity class attributes
-void Doom3EntityClass::forEachClassAttribute(
-    std::function<void(const EntityClassAttribute&)> visitor,
-    bool editorKeys) const
+void EntityClass::forEachAttributeInternal(InternalAttrVisitor visitor,
+                                           bool editorKeys) const
 {
+    // Visit parent attributes, making sure we set the inherited flag
+    if (_parent)
+        _parent->forEachAttributeInternal(visitor, editorKeys);
+
+    // Visit our own attributes
     for (const auto& pair: _attributes)
     {
         // Visit if it is a non-editor key or we are visiting all keys
-        if (editorKeys || !string::istarts_with(*pair.first, "editor_"))
+        if (editorKeys || !string::istarts_with(pair.first, "editor_"))
         {
             visitor(pair.second);
         }
     }
 }
 
-namespace
+void EntityClass::forEachAttribute(AttributeVisitor visitor,
+                                   bool editorKeys) const
 {
-    void copyInheritedAttribute(Doom3EntityClass* target,
-                                const EntityClassAttribute& attr)
+    // First compile a map of all attributes we need to pass to the visitor,
+    // ensuring that there is only one attribute per name (i.e. we don't want to
+    // visit the same-named attribute on both a child and one of its ancestors)
+    using AttrsByName = std::map<std::string, const EntityClassAttribute*>;
+    AttrsByName attrsByName;
+
+    // Internal visit function visits parent first, then child, ensuring that
+    // more derived attributes will replace parents in the map
+    forEachAttributeInternal(
+        [&attrsByName](const EntityClassAttribute& a) {
+            attrsByName[a.getName()] = &a;
+        },
+        editorKeys
+    );
+
+    // Pass attributes to the visitor function, setting the inherited flag on
+    // any which are not present on this EntityClass
+    for (const auto& pair: attrsByName)
     {
-        target->addAttribute(EntityClassAttribute(attr, true));
+        visitor(*pair.second, (_attributes.count(pair.first) == 0));
     }
 }
 
 // Resolve inheritance for this class
-void Doom3EntityClass::resolveInheritance(EntityClasses& classmap)
+void EntityClass::resolveInheritance(EntityClasses& classmap)
 {
     // If we have already resolved inheritance, do nothing
     if (_inheritanceResolved)
@@ -228,11 +250,6 @@ void Doom3EntityClass::resolveInheritance(EntityClasses& classmap)
     {
         // Recursively resolve inheritance of parent
         pIter->second->resolveInheritance(classmap);
-
-        // Copy attributes from the parent to the child, including editor keys
-        pIter->second->forEachClassAttribute(
-            std::bind(&copyInheritedAttribute, this, std::placeholders::_1), true
-        );
 
         // Set our parent pointer
         _parent = pIter->second.get();
@@ -264,10 +281,18 @@ void Doom3EntityClass::resolveInheritance(EntityClasses& classmap)
         _colourTransparent = true;
     }
 
+    // Set up inheritance of entity colours: colours inherit from parent unless
+    // there is an explicit editor_color defined at this level
     resetColour();
+    if (_parent)
+    {
+        _parent->changedSignal().connect(
+            sigc::mem_fun(this, &EntityClass::resetColour)
+        );
+    }
 }
 
-bool Doom3EntityClass::isOfType(const std::string& className)
+bool EntityClass::isOfType(const std::string& className)
 {
 	for (const IEntityClass* currentClass = this;
          currentClass != NULL;
@@ -282,27 +307,41 @@ bool Doom3EntityClass::isOfType(const std::string& className)
 	return false;
 }
 
-std::string Doom3EntityClass::getDefFileName()
+std::string EntityClass::getDefFileName()
 {
     return _fileInfo.fullPath();
 }
 
 // Find a single attribute
-EntityClassAttribute& Doom3EntityClass::getAttribute(const std::string& name)
+EntityClassAttribute& EntityClass::getAttribute(const std::string& name,
+                                                bool includeInherited)
 {
-    return const_cast<EntityClassAttribute&>(std::as_const(*this).getAttribute(name));
+    return const_cast<EntityClassAttribute&>(
+        std::as_const(*this).getAttribute(name, includeInherited)
+    );
 }
 
 // Find a single attribute
-const EntityClassAttribute& Doom3EntityClass::getAttribute(const std::string& name) const
+const EntityClassAttribute&
+EntityClass::getAttribute(const std::string& name,
+                               bool includeInherited) const
 {
-    StringPtr ref(new std::string(name));
+    // First look up the attribute on this class; if found, we can simply return it
+    auto f = _attributes.find(name);
+    if (f != _attributes.end())
+        return f->second;
 
-    auto f = _attributes.find(ref);
-    return (f != _attributes.end()) ? f->second : _emptyAttribute;
+    // If there is no parent or we have been instructed to ignore inheritance,
+    // this is the end of the line: return an empty attribute
+    if (!_parent || !includeInherited)
+        return _emptyAttribute;
+
+    // Otherwise delegate to the parent (which will recurse until an attribute
+    // is found or a null parent ends the process)
+    return _parent->getAttribute(name);
 }
 
-void Doom3EntityClass::clear()
+void EntityClass::clear()
 {
     // Don't clear the name
     _isLight = false;
@@ -320,7 +359,7 @@ void Doom3EntityClass::clear()
     _modName = "base";
 }
 
-void Doom3EntityClass::parseEditorSpawnarg(const std::string& key,
+void EntityClass::parseEditorSpawnarg(const std::string& key,
                                            const std::string& value)
 {
     // "editor_yyy" represents an attribute that may be set on this
@@ -355,7 +394,7 @@ void Doom3EntityClass::parseEditorSpawnarg(const std::string& key,
     }
 }
 
-void Doom3EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
+void EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
 {
     // Clear this structure first, we might be "refreshing" ourselves from tokens
     clear();

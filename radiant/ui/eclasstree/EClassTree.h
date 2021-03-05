@@ -73,7 +73,7 @@ private:
 	void createPropertyTreeView(wxWindow* parent); // Property Tree
 
 	// Loads the spawnargs into the right treeview
-    void addToListStore(const EntityClassAttribute& attr);
+    void addToListStore(const EntityClassAttribute& attr, bool inherited);
 	void updatePropertyView(const std::string& eclassName);
 
 	void handleSelectionChange();

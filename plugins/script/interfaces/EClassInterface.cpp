@@ -5,7 +5,7 @@
 namespace script
 {
 
-ScriptEntityClass EClassManagerInterface::findClass(const std::string& name) 
+ScriptEntityClass EClassManagerInterface::findClass(const std::string& name)
 {
 	// Find the eclass and convert implicitly to ScriptEntityClass
 	return ScriptEntityClass(GlobalEntityClassManager().findClass(name));
@@ -32,13 +32,12 @@ void EClassManagerInterface::registerInterface(py::module& scope, py::dict& glob
 {
 	// Add the declaration for the EClassAttribute
 	py::class_<EntityClassAttribute> eclassAttr(scope, "EntityClassAttribute");
-	
+
 	eclassAttr.def(py::init<const EntityClassAttribute&>());
 	eclassAttr.def("getType", &EntityClassAttribute::getType, py::return_value_policy::reference);
 	eclassAttr.def("getName", &EntityClassAttribute::getName, py::return_value_policy::reference);
 	eclassAttr.def("getValue", &EntityClassAttribute::getValue, py::return_value_policy::reference);
 	eclassAttr.def("getDescription", &EntityClassAttribute::getDescription, py::return_value_policy::reference);
-	eclassAttr.def_readonly("inherited", &EntityClassAttribute::inherited);
 
 	// Declare the Anims std::map to Python
 	py::bind_map<IModelDef::Anims>(scope, "Anims");
@@ -51,7 +50,7 @@ void EClassManagerInterface::registerInterface(py::module& scope, py::dict& glob
 	modelDef.def_readonly("skin", &IModelDef::skin);
 	modelDef.def_readonly("parent", &IModelDef::parent);
 	modelDef.def_readonly("anims", &IModelDef::anims);
-	
+
 	// Add the declaration for an EntityClass
 	py::class_<ScriptEntityClass> eclass(scope, "EntityClass");
 
@@ -70,7 +69,7 @@ void EClassManagerInterface::registerInterface(py::module& scope, py::dict& glob
 	py::class_<ModelDefVisitor, ModelDefVisitorWrapper> modeldefVisitor(scope, "ModelDefVisitor");
 	modeldefVisitor.def(py::init<>());
 	modeldefVisitor.def("visit", &ModelDefVisitor::visit);
-	
+
 	// Add the module declaration to the given python namespace
 	py::class_<EClassManagerInterface> eclassManager(scope, "EntityClassManager");
 

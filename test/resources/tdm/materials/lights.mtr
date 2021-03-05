@@ -1,0 +1,25 @@
+// an ambient light will do non-directional bump mapping, and won't have specular lighting
+// or shadows
+lights/ambientLight
+{
+	ambientLight
+	lightFalloffImage	makeintensity( lights/squarelight1a.tga )
+	{
+		forceHighQuality
+		map lights/squarelight1_amb.tga
+		colored
+		zeroClamp
+	}
+}
+
+lights/defaultPointLight
+{
+	lightFalloffImage	makeintensity( lights/squarelight1a.tga )	// this will also be the falloff for any
+										// point light shaders that don't specify one
+	{
+		forceHighQuality
+		map lights/squarelight1_amb.tga
+		colored
+		zeroClamp
+	}
+}

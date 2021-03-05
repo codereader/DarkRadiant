@@ -66,14 +66,6 @@ public:
 	};
 
 private:
-	struct StringCompareFunctorNoCase
-	{
-		bool operator()(const std::string& s1, const std::string& s2) const
-		{
-			// return boost::algorithm::ilexicographical_compare(s1, s2); // slow!
-			return string_compare_nocase(s1.c_str(), s2.c_str()) < 0;
-		}
-	};
 
 	// Currently selected entity, this pointer is only non-NULL if the
 	// current entity selection includes exactly 1 entity.
@@ -101,7 +93,7 @@ private:
 
     // Cache of wxDataViewItems pointing to keyvalue rows,
 	// so we can quickly find existing keys to change their values
-	typedef std::map<std::string, wxDataViewItem, StringCompareFunctorNoCase> TreeIterMap;
+	typedef std::map<std::string, wxDataViewItem, string::ILess> TreeIterMap;
     TreeIterMap _keyValueIterMap;
 
 	// Key and value edit boxes. These remain available even for multiple entity

@@ -68,12 +68,12 @@ void AddPropertyDialog::setupTreeView()
 
 	_treeView->AssociateModel(_treeStore.get());
 
-	_treeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
+	_treeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED,
 		wxDataViewEventHandler(AddPropertyDialog::_onSelectionChanged), NULL, this);
 
 	// Display name column with icon
-	_treeView->AppendIconTextColumn(_("Property"), 
-		_columns.displayName.getColumnIndex(), wxDATAVIEW_CELL_INERT, 
+	_treeView->AppendIconTextColumn(_("Property"),
+		_columns.displayName.getColumnIndex(), wxDATAVIEW_CELL_INERT,
 		wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
 	// Use the TreeModel's full string search function
@@ -114,7 +114,7 @@ public:
 	{ }
 
 	// Required visit function
-	void operator() (const EntityClassAttribute& attr)
+	void operator() (const EntityClassAttribute& attr, bool)
 	{
 		// greebo: Only add the property if it hasn't been set directly on the entity itself.
 		if (!_entity->getKeyValue(attr.getName()).empty() && !_entity->isInherited(attr.getName()))
@@ -171,10 +171,10 @@ void AddPropertyDialog::populateTreeView()
 		// Use a CustomPropertyAdder class to visit the entityclass and add all
 		// custom properties from it
 		CustomPropertyAdder adder(_entity, _treeStore, _columns, defRoot.getItem());
-		_entity->getEntityClass()->forEachClassAttribute(std::ref(adder));
+		_entity->getEntityClass()->forEachAttribute(std::ref(adder));
 	}
 
-	// REGISTRY (GAME FILE) DEFINED PROPERTIES 
+	// REGISTRY (GAME FILE) DEFINED PROPERTIES
 
 	// Ask the XML registry for the list of properties
     game::IGamePtr currentGame = GlobalGameManager().currentGame();

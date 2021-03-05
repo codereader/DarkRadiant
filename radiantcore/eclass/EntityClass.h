@@ -21,27 +21,17 @@ class Shader;
 namespace eclass
 {
 
-class Doom3EntityClass;
-typedef std::shared_ptr<Doom3EntityClass> Doom3EntityClassPtr;
-
-/**
- * Implementation of the IEntityClass interface. This represents a single
- * Doom 3 entity class, such as "light_moveable" or "monster_mancubus".
- */
-class Doom3EntityClass
+/// Implementation of the IEntityClass interface.
+class EntityClass
 : public IEntityClass
 {
-    typedef std::shared_ptr<std::string> StringPtr;
+public:
 
-    class StringCompareFunctor
-    {
-    public:
-        bool operator()(const StringPtr& lhs, const StringPtr& rhs) const
-        {
-            //return boost::algorithm::ilexicographical_compare(lhs, rhs); // this is slow!
-            return string_compare_nocase(lhs->c_str(), rhs->c_str()) < 0;
-        }
-    };
+    /// EntityClass pointer type
+    using Ptr = std::shared_ptr<EntityClass>;
+
+private:
+    typedef std::shared_ptr<std::string> StringPtr;
 
     // The name of this entity class
     std::string _name;
@@ -50,7 +40,7 @@ class Doom3EntityClass
     vfs::FileInfo _fileInfo;
 
     // Parent class pointer (or NULL)
-    IEntityClass* _parent;
+    EntityClass* _parent = nullptr;
 
     // Should this entity type be treated as a light?
     bool _isLight;
@@ -73,17 +63,7 @@ class Doom3EntityClass
 
     // Map of named EntityAttribute structures. EntityAttributes are picked
     // up from the DEF file during parsing. Ignores key case.
-
-    // greebo: I've changed the EntityAttributeMap key type to StringPtr, to save
-    // more than 130 MB of string data used for just the keys. A default TDM installation
-    // has about 780k entity class attributes after resolving inheritance.
-    // However, the memory saving comes with a performance cost since we need 
-    // to convert the incoming std::string queries to StringRefs before passing
-    // them to std::map::find(). During a regular DarkRadiant startup 
-    // there are about 64k find() operations, a single idLight
-    // creation costs about 30-40 find() operations, which is ok I guess.
-
-    typedef std::map<StringPtr, EntityClassAttribute, StringCompareFunctor> EntityAttributeMap;
+    typedef std::map<std::string, EntityClassAttribute, string::ILess> EntityAttributeMap;
     EntityAttributeMap _attributes;
 
     // The model and skin for this entity class (if it has one)
@@ -113,7 +93,12 @@ private:
     void parseEditorSpawnarg(const std::string& key, const std::string& value);
     void setIsLight(bool val);
 
-public:
+    // Visit attributes recursively, parent first then child
+    using InternalAttrVisitor = std::function<void(const EntityClassAttribute&)>;
+    void forEachAttributeInternal(InternalAttrVisitor visitor,
+                                  bool editorKeys) const;
+
+  public:
     /**
      * Static function to create a default entity class.
      *
@@ -123,7 +108,7 @@ public:
      * @param brushes
      * Whether the entity contains brushes or not.
      */
-    static Doom3EntityClassPtr create(const std::string& name, bool brushes);
+    static EntityClass::Ptr create(const std::string& name, bool brushes);
 
     /**
      * Constructor.
@@ -133,7 +118,7 @@ public:
      *
      * This eclass will have isFixedSize set to false.
      */
-    Doom3EntityClass(const std::string& name, const vfs::FileInfo& fileInfo);
+    EntityClass(const std::string& name, const vfs::FileInfo& fileInfo);
 
     /**
      * Constructor.
@@ -144,9 +129,9 @@ public:
      * @param fixedSize
      * whether this entity has a fixed size.
      */
-    Doom3EntityClass(const std::string& name, const vfs::FileInfo& fileInfo, bool fixedSize);
+    EntityClass(const std::string& name, const vfs::FileInfo& fileInfo, bool fixedSize);
 
-    virtual ~Doom3EntityClass();
+    virtual ~EntityClass();
 
     /// Add a new attribute
     void addAttribute(const EntityClassAttribute& attribute);
@@ -165,10 +150,12 @@ public:
     void resetColour();
     const std::string& getWireShader() const override;
     const std::string& getFillShader() const override;
-    EntityClassAttribute& getAttribute(const std::string& name) override;
-    const EntityClassAttribute& getAttribute(const std::string& name) const override;
-    void forEachClassAttribute(std::function<void(const EntityClassAttribute&)>,
-                               bool) const override;
+    EntityClassAttribute& getAttribute(const std::string&,
+                                       bool includeInherited = true) override;
+    const EntityClassAttribute&
+    getAttribute(const std::string&,
+                 bool includeInherited = true) const override;
+    void forEachAttribute(AttributeVisitor, bool) const override;
 
     const std::string& getModelPath() const override { return _model; }
     const std::string& getSkin() const override { return _skin; }
@@ -193,7 +180,7 @@ public:
      * A reference to the global map of entity classes, which should be searched
      * for the parent entity.
      */
-    typedef std::map<std::string, Doom3EntityClassPtr> EntityClasses;
+    typedef std::map<std::string, EntityClass::Ptr> EntityClasses;
     void resolveInheritance(EntityClasses& classmap);
 
     /**
@@ -223,10 +210,5 @@ public:
         return _parseStamp;
     }
 };
-
-/**
- * Pointer typedef.
- */
-typedef std::shared_ptr<Doom3EntityClass> Doom3EntityClassPtr;
 
 }
