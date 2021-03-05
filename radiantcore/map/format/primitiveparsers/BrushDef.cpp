@@ -247,7 +247,7 @@ Matrix4 LegacyBrushDefParser::getTexDef(std::string shader, float shiftS, float 
 	float image_width = 0;
 	float image_height = 0;
 
-	TexturePtr texture = GlobalMaterialManager().getMaterialForName( shader )->getEditorImage();
+	TexturePtr texture = GlobalMaterialManager().getMaterial( shader )->getEditorImage();
 
 	if (texture) {
 		image_width = texture->getWidth();
