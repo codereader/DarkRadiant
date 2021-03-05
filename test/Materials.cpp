@@ -60,7 +60,7 @@ TEST_F(MaterialsTest, EnumerateMaterialLayers)
 
     // Get a list of all layers in the material
     auto layers = material->getAllLayers();
-    EXPECT_EQ(layers.size(), 4);
+    EXPECT_EQ(layers.size(), 5);
 
     // First layer is the bump map in this particular material
     EXPECT_EQ(layers.at(0)->getType(), ShaderLayer::BUMP);
@@ -77,13 +77,20 @@ TEST_F(MaterialsTest, EnumerateMaterialLayers)
     EXPECT_EQ(layers.at(2)->getMapImageFilename(),
               "models/md5/chars/monsters/spider_s");
 
-    // Final layer is the additive "ambient method" stage
+    // Fourth layer is the additive "ambient method" stage
     EXPECT_EQ(layers.at(3)->getType(), ShaderLayer::BLEND);
     EXPECT_EQ(layers.at(3)->getMapImageFilename(),
               "models/md5/chars/monsters/spider_black");
-    BlendFunc bf = layers.at(3)->getBlendFunc();
-    EXPECT_EQ(bf.src, GL_ONE);
-    EXPECT_EQ(bf.dest, GL_ONE);
+    BlendFunc bf4 = layers.at(3)->getBlendFunc();
+    EXPECT_EQ(bf4.src, GL_ONE);
+    EXPECT_EQ(bf4.dest, GL_ONE);
+
+    // Fifth layer is another additive stage with a VFP
+    EXPECT_EQ(layers.at(4)->getType(), ShaderLayer::BLEND);
+    EXPECT_EQ(layers.at(4)->getNumFragmentMaps(), 4);
+    BlendFunc bf5 = layers.at(4)->getBlendFunc();
+    EXPECT_EQ(bf5.src, GL_ONE);
+    EXPECT_EQ(bf5.dest, GL_ONE);
 }
 
 TEST_F(MaterialsTest, IdentifyAmbientLight)
