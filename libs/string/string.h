@@ -1,23 +1,3 @@
-/*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
-
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
 #pragma once
 
 /// \file
@@ -71,6 +51,14 @@ inline int string_compare_nocase_n(const char* string, const char* other, std::s
 #else
   return strncasecmp(string, other, n);
 #endif
+}
+
+/// \brief Returns true if [\p string, \p string + \p n) is lexicographically equal to [\p other, \p other + \p n).
+/// Treats all ascii characters as lower-case during comparisons.
+/// O(n)
+inline bool string_equal_nocase_n(const char* string, const char* other, std::size_t n)
+{
+    return string_compare_nocase_n(string, other, n) == 0;
 }
 
 /// \brief Returns true if \p string is lexicographically equal to \p other.
