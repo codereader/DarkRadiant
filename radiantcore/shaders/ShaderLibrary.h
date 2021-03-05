@@ -2,6 +2,7 @@
 
 #include <string>
 #include <map>
+#include <memory>
 #include "CShader.h"
 #include "TableDefinition.h"
 
@@ -21,6 +22,8 @@ class ShaderLibrary
     typedef std::map<std::string, TableDefinitionPtr, string::ILess> TableDefinitions;
     TableDefinitions _tables;
 
+    std::unique_ptr<ShaderDefinition> _emptyDefinition;
+
 public:
 
 	/* greebo: Add a shader definition to the internal list
@@ -37,6 +40,9 @@ public:
 	 * Returns true if the given shader definition exists.
 	 */
 	bool definitionExists(const std::string& name) const;
+
+    // Returns an empty definition, just enough to construct a shader from it
+    ShaderDefinition& getEmptyDefinition();
 
 	/* greebo: Clears out all internal containers (definitions, tables, shaders)
 	 */

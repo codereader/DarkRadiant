@@ -21,14 +21,19 @@ namespace shaders
 /* Constructor. Sets the name and the ShaderDefinition to use.
  */
 CShader::CShader(const std::string& name, const ShaderDefinition& definition) :
+    CShader(name, definition, false)
+{}
+
+CShader::CShader(const std::string& name, const ShaderDefinition& definition, bool isInternal) :
+    _isInternal(isInternal),
     _template(definition.shaderTemplate),
     _fileInfo(definition.file),
     _name(name),
     m_bInUse(false),
     _visible(true)
 {
-	// Realise the shader
-	realise();
+    // Realise the shader
+    realise();
 }
 
 CShader::~CShader() {
@@ -124,16 +129,14 @@ void CShader::SetInUse(bool bInUse) {
 	GetShaderSystem()->activeShadersChangedNotify();
 }
 
-// get the shader flags
 int CShader::getMaterialFlags() const
 {
 	return _template->getMaterialFlags();
 }
 
-// test if it's a true shader, or a default shader created to wrap around a texture
 bool CShader::IsDefault() const
 {
-	return _fileInfo.name.empty();
+	return _isInternal || _fileInfo.name.empty();
 }
 
 // get the cull type
@@ -183,9 +186,9 @@ const char* CShader::getShaderFileName() const
 	return _fileInfo.name.c_str();
 }
 
-const vfs::FileInfo* CShader::getShaderFileInfo() const
+const vfs::FileInfo& CShader::getShaderFileInfo() const
 {
-    return &_fileInfo;
+    return _fileInfo;
 }
 
 std::string CShader::getDefinition()
@@ -238,7 +241,7 @@ ShaderLayer* CShader::firstLayer() const
 }
 
 // Get all layers
-ShaderLayerVector CShader::getAllLayers() const
+const ShaderLayerVector& CShader::getAllLayers() const
 {
     return _layers;
 }

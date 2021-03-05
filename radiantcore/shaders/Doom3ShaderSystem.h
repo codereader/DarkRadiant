@@ -108,6 +108,8 @@ public:
 
     IShaderExpressionPtr createShaderExpressionFromString(const std::string& exprStr) override;
 
+    MaterialPtr createDefaultMaterial(const std::string& name) override;
+
 	// Look up a table def, return NULL if not found
 	TableDefinitionPtr getTableForName(const std::string& name);
 

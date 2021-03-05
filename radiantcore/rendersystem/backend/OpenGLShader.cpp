@@ -618,20 +618,6 @@ void OpenGLShader::constructNormalShader(const std::string& name)
     }
 }
 
-namespace
-{
-    // Internal material used for shaders constructed without an actual material
-    // definition (e.g. single-colour wireframe shaders)
-    struct InternalMaterial: public Material
-    {
-        std::string name;
-
-        /* Material implementation */
-        std::string getName() const override { return name; }
-        bool IsDefault() const override { return true; }
-    };
-}
-
 // Main shader construction entry point
 void OpenGLShader::construct(const std::string& name)
 {
@@ -917,9 +903,7 @@ void OpenGLShader::construct(const std::string& name)
     // If there is no Material, create an internal one for debug/testing etc
     if (!_material)
     {
-        auto internalMat = std::make_shared<InternalMaterial>();
-        internalMat->name = name;
-        _material = internalMat;
+        _material = GlobalMaterialManager().createDefaultMaterial(name);
     }
 }
 

@@ -9,10 +9,12 @@ namespace shaders {
  * \brief
  * Implementation class for Material.
  */
-class CShader
-: public Material
+class CShader final : 
+    public Material
 {
 private:
+    bool _isInternal;
+
 	ShaderTemplatePtr _template;
 
 	// The shader file name (i.e. the file where this one is defined)
@@ -40,6 +42,10 @@ public:
 	 * Constructor. Sets the name and the ShaderDefinition to use.
 	 */
 	CShader(const std::string& name, const ShaderDefinition& definition);
+
+    // Creates a named material from the given definition, with an option to flag this material as "internal"
+	CShader(const std::string& name, const ShaderDefinition& definition, bool isInternal);
+
 	~CShader();
 
     /* Material implementation */
@@ -54,7 +60,7 @@ public:
 	int getMaterialFlags() const override;
 	bool IsDefault() const override;
 	const char* getShaderFileName() const override;
-    const vfs::FileInfo* getShaderFileInfo() const override;
+    const vfs::FileInfo& getShaderFileInfo() const override;
 	CullType getCullType() const override;
 	ClampType getClampType() const override;
 	int getSurfaceFlags() const override;
@@ -74,7 +80,7 @@ public:
 	bool isDiscrete() const override;
 	bool isVisible() const override;
 	void setVisible(bool visible) override;
-    ShaderLayerVector getAllLayers() const;
+    const ShaderLayerVector& getAllLayers() const;
 
 	/**
 	 * Return the name of the light falloff texture for use with this shader.
