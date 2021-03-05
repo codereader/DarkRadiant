@@ -352,9 +352,6 @@
     <ClCompile Include="..\..\radiantcore\precompiled.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiantcore\eclass\Doom3EntityClass.cpp">
-      <Filter>src\eclass</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiantcore\eclass\EClassManager.cpp">
       <Filter>src\eclass</Filter>
     </ClCompile>
@@ -1018,6 +1015,9 @@
     <ClCompile Include="..\..\radiantcore\entity\AttachmentData.cpp">
       <Filter>src\entity</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\eclass\EntityClass.cpp">
+      <Filter>src\eclass</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
@@ -1103,9 +1103,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\vfs\ZipStreamUtils.h">
       <Filter>src\vfs</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\commandsystem\CaseInsensitiveCompare.h">
-      <Filter>src\commandsystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\commandsystem\Command.h">
       <Filter>src\commandsystem</Filter>
@@ -1260,9 +1257,6 @@
     <ClInclude Include="..\..\radiantcore\shaders\ShaderLibrary.h">
       <Filter>src\shaders</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\shaders\ShaderNameCompareFunctor.h">
-      <Filter>src\shaders</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\shaders\ShaderTemplate.h">
       <Filter>src\shaders</Filter>
     </ClInclude>
@@ -1271,9 +1265,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\precompiled.h">
       <Filter>src</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\eclass\Doom3EntityClass.h">
-      <Filter>src\eclass</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\eclass\Doom3ModelDef.h">
       <Filter>src\eclass</Filter>
@@ -2078,6 +2069,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\entity\AttachmentData.h">
       <Filter>src\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\eclass\EntityClass.h">
+      <Filter>src\eclass</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

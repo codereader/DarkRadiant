@@ -39,9 +39,9 @@
     <ClCompile Include="..\..\radiantcore\clipper\ClipPoint.cpp" />
     <ClCompile Include="..\..\radiantcore\clipper\SplitAlgorithm.cpp" />
     <ClCompile Include="..\..\radiantcore\decl\FavouritesManager.cpp" />
-    <ClCompile Include="..\..\radiantcore\eclass\Doom3EntityClass.cpp" />
     <ClCompile Include="..\..\radiantcore\eclass\EClassColourManager.cpp" />
     <ClCompile Include="..\..\radiantcore\eclass\EClassManager.cpp" />
+    <ClCompile Include="..\..\radiantcore\eclass\EntityClass.cpp" />
     <ClCompile Include="..\..\radiantcore\entity\AngleKey.cpp" />
     <ClCompile Include="..\..\radiantcore\entity\AttachmentData.cpp" />
     <ClCompile Include="..\..\radiantcore\entity\curve\Curve.cpp" />
@@ -721,10 +721,10 @@
     <ClInclude Include="..\..\radiantcore\clipper\SplitAlgorithm.h" />
     <ClInclude Include="..\..\radiantcore\decl\FavouriteSet.h" />
     <ClInclude Include="..\..\radiantcore\decl\FavouritesManager.h" />
-    <ClInclude Include="..\..\radiantcore\eclass\Doom3EntityClass.h" />
     <ClInclude Include="..\..\radiantcore\eclass\Doom3ModelDef.h" />
     <ClInclude Include="..\..\radiantcore\eclass\EClassColourManager.h" />
     <ClInclude Include="..\..\radiantcore\eclass\EClassManager.h" />
+    <ClInclude Include="..\..\radiantcore\eclass\EntityClass.h" />
     <ClInclude Include="..\..\radiantcore\entity\algorithm\Speaker.h" />
     <ClInclude Include="..\..\radiantcore\entity\AngleKey.h" />
     <ClInclude Include="..\..\radiantcore\entity\AttachmentData.h" />
@@ -917,7 +917,6 @@
     <ClInclude Include="..\..\radiantcore\patch\PatchTesselation.h" />
     <ClInclude Include="..\..\radiantcore\precompiled.h" />
     <ClInclude Include="..\..\radiantcore\Radiant.h" />
-    <ClInclude Include="..\..\radiantcore\commandsystem\CaseInsensitiveCompare.h" />
     <ClInclude Include="..\..\radiantcore\commandsystem\Command.h" />
     <ClInclude Include="..\..\radiantcore\commandsystem\CommandSystem.h" />
     <ClInclude Include="..\..\radiantcore\commandsystem\CommandTokeniser.h" />
@@ -1013,7 +1012,6 @@
     <ClInclude Include="..\..\radiantcore\shaders\ShaderExpression.h" />
     <ClInclude Include="..\..\radiantcore\shaders\ShaderFileLoader.h" />
     <ClInclude Include="..\..\radiantcore\shaders\ShaderLibrary.h" />
-    <ClInclude Include="..\..\radiantcore\shaders\ShaderNameCompareFunctor.h" />
     <ClInclude Include="..\..\radiantcore\shaders\ShaderTemplate.h" />
     <ClInclude Include="..\..\radiantcore\shaders\TableDefinition.h" />
     <ClInclude Include="..\..\radiantcore\shaders\textures\CubeMapTexture.h" />

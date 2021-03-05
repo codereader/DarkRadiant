@@ -257,6 +257,7 @@
     <ClCompile Include="..\..\radiant\ui\groupdialog\GroupDialogManager.cpp" />
     <ClCompile Include="..\..\radiant\ui\layers\CreateLayerDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\LongRunningOperationHandler.cpp" />
+    <ClCompile Include="..\..\radiant\ui\mainframe\AuiLayout.cpp" />
     <ClCompile Include="..\..\radiant\ui\mainframe\TopLevelFrame.cpp" />
     <ClCompile Include="..\..\radiant\ui\MapCommands.cpp" />
     <ClCompile Include="..\..\radiant\ui\MapFileProgressHandler.cpp" />
@@ -444,6 +445,7 @@
     <ClInclude Include="..\..\radiant\ui\groupdialog\GroupDialogManager.h" />
     <ClInclude Include="..\..\radiant\ui\layers\CreateLayerDialog.h" />
     <ClInclude Include="..\..\radiant\ui\LongRunningOperationHandler.h" />
+    <ClInclude Include="..\..\radiant\ui\mainframe\AuiLayout.h" />
     <ClInclude Include="..\..\radiant\ui\mainframe\TopLevelFrame.h" />
     <ClInclude Include="..\..\radiant\ui\ManipulatorToggle.h" />
     <ClInclude Include="..\..\radiant\ui\MapCommands.h" />

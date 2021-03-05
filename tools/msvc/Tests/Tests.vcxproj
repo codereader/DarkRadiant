@@ -68,6 +68,7 @@
     <ClInclude Include="..\..\..\test\TestLogFile.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\test\Basic.cpp" />
     <ClCompile Include="..\..\..\test\Camera.cpp" />
     <ClCompile Include="..\..\..\test\ColourSchemes.cpp" />
     <ClCompile Include="..\..\..\test\CSG.cpp" />

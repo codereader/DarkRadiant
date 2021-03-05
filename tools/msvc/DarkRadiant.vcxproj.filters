@@ -685,6 +685,9 @@
     <ClCompile Include="..\..\radiant\ui\common\SoundShaderPreview.cpp">
       <Filter>src\ui\common</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\mainframe\AuiLayout.cpp">
+      <Filter>src\ui\mainframe</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h">
@@ -1310,6 +1313,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\common\SoundShaderPreview.h">
       <Filter>src\ui\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\mainframe\AuiLayout.h">
+      <Filter>src\ui\mainframe</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
