@@ -1,5 +1,4 @@
-#ifndef MAPEXPRESSION_H_
-#define MAPEXPRESSION_H_
+#pragma once
 
 #include <string>
 
@@ -23,26 +22,13 @@ typedef std::shared_ptr<MapExpression> MapExpressionPtr;
  * Map expression are recursive expressions that generate an image, such as
  * "heightmap(addnormals(blah, bleh), 1).
  */
-class MapExpression
-: public NamedBindable
+class MapExpression : 
+    public IMapExpression,
+    public NamedBindable
 {
 public: /* INTERFACE METHODS */
 
-	/**
-     * \brief
-     * Construct and return the image created from this map expression.
-     */
-	virtual ImagePtr getImage() const = 0;
-
-    /**
-     * \brief
-     * Return whether this map expression creates a cube map.
-     *
-     * \return
-     * true if this map expression creates a cube map, false if it is a single
-     * image.
-     */
-    virtual bool isCubeMap() const
+    virtual bool isCubeMap() const override
     {
         return false;
     }
@@ -50,7 +36,7 @@ public: /* INTERFACE METHODS */
 public:
 
     /* BindableTexture interface */
-    TexturePtr bindTexture(const std::string& name) const
+    TexturePtr bindTexture(const std::string& name) const override
     {
         ImagePtr img = getImage();
         if (img)
@@ -59,13 +45,16 @@ public:
             return TexturePtr();
     }
 
+    // Abstract method to be implemented
+    virtual ImagePtr getImage() const = 0;
+
 public: /* STATIC CONSTRUCTION METHODS */
 
 	/** Creates the a MapExpression out of the given token. Nested mapexpressions
 	 * 	are recursively passed to child classes.
 	 */
 	static MapExpressionPtr createForToken(DefTokeniser& token);
-	static MapExpressionPtr createForString(std::string str);
+	static MapExpressionPtr createForString(const std::string& str);
 
 protected:
 
@@ -83,104 +72,128 @@ protected:
 };
 
 // the specific MapExpressions
-class HeightMapExpression : public MapExpression {
+class HeightMapExpression : 
+    public MapExpression
+{
 	MapExpressionPtr heightMapExp;
 	float scale;
 public:
-	HeightMapExpression (DefTokeniser& token);
-	ImagePtr getImage() const;
-	std::string getIdentifier() const;
+	HeightMapExpression(DefTokeniser& token);
+	ImagePtr getImage() const override;
+	std::string getIdentifier() const override;
+    std::string getExpressionString() override;
 };
 
-class AddNormalsExpression : public MapExpression {
+class AddNormalsExpression : 
+    public MapExpression 
+{
 	MapExpressionPtr mapExpOne;
 	MapExpressionPtr mapExpTwo;
 public:
-	AddNormalsExpression (DefTokeniser& token);
-	ImagePtr getImage() const;
-	std::string getIdentifier() const;
+	AddNormalsExpression(DefTokeniser& token);
+	ImagePtr getImage() const override;
+	std::string getIdentifier() const override;
+    std::string getExpressionString() override;
 };
 
-class SmoothNormalsExpression : public MapExpression {
+class SmoothNormalsExpression : 
+    public MapExpression
+{
 	MapExpressionPtr mapExp;
 public:
-	SmoothNormalsExpression (DefTokeniser& token);
-	ImagePtr getImage() const;
-	std::string getIdentifier() const;
+	SmoothNormalsExpression(DefTokeniser& token);
+	ImagePtr getImage() const override;
+	std::string getIdentifier() const override;
+    std::string getExpressionString() override;
 };
 
 class AddExpression : public MapExpression {
 	MapExpressionPtr mapExpOne;
 	MapExpressionPtr mapExpTwo;
 public:
-	AddExpression (DefTokeniser& token);
-	ImagePtr getImage() const;
-	std::string getIdentifier() const;
+	AddExpression(DefTokeniser& token);
+	ImagePtr getImage() const override;
+	std::string getIdentifier() const override;
+    std::string getExpressionString() override;
 };
 
-class ScaleExpression : public MapExpression {
+class ScaleExpression : 
+    public MapExpression 
+{
 	MapExpressionPtr mapExp;
 	float scaleRed;
 	float scaleGreen;
 	float scaleBlue;
 	float scaleAlpha;
 public:
-	ScaleExpression (DefTokeniser& token);
-	ImagePtr getImage() const;
-	std::string getIdentifier() const;
+	ScaleExpression(DefTokeniser& token);
+	ImagePtr getImage() const override;
+	std::string getIdentifier() const override;
+    std::string getExpressionString() override;
 };
 
-class InvertAlphaExpression : public MapExpression {
+class InvertAlphaExpression : 
+    public MapExpression 
+{
 	MapExpressionPtr mapExp;
 public:
-	InvertAlphaExpression (DefTokeniser& token);
-	ImagePtr getImage() const;
-	std::string getIdentifier() const;
+	InvertAlphaExpression(DefTokeniser& token);
+	ImagePtr getImage() const override;
+	std::string getIdentifier() const override;
+    std::string getExpressionString() override;
 };
 
-class InvertColorExpression : public MapExpression {
+class InvertColorExpression : 
+    public MapExpression
+{
 	MapExpressionPtr mapExp;
 public:
-	InvertColorExpression (DefTokeniser& token);
+	InvertColorExpression(DefTokeniser& token);
 	ImagePtr getImage() const;
 	std::string getIdentifier() const;
+    std::string getExpressionString() override;
 };
 
-class MakeIntensityExpression : public MapExpression {
+class MakeIntensityExpression : 
+    public MapExpression 
+{
 	MapExpressionPtr mapExp;
 public:
-	MakeIntensityExpression (DefTokeniser& token);
-	ImagePtr getImage() const;
-	std::string getIdentifier() const;
+	MakeIntensityExpression(DefTokeniser& token);
+	ImagePtr getImage() const override;
+	std::string getIdentifier() const override;
+    std::string getExpressionString() override;
 };
 
-class MakeAlphaExpression : public MapExpression {
+class MakeAlphaExpression : 
+    public MapExpression
+{
 	MapExpressionPtr mapExp;
 public:
-	MakeAlphaExpression (DefTokeniser& token);
-	ImagePtr getImage() const;
-	std::string getIdentifier() const;
+	MakeAlphaExpression(DefTokeniser& token);
+	ImagePtr getImage() const override;
+	std::string getIdentifier() const override;
+    std::string getExpressionString() override;
 };
 
 /**
  * \brief
  * MapExpression consisting of a single image name.
  *
- * This is the base for all map expressions.
+ * This is found at the core of all map expressions.
  */
 class ImageExpression
 : public MapExpression
 {
+private:
 	std::string _imgName;
 
 public:
-
-    /* MapExpression interface */
 	ImageExpression(const std::string& imgName);
-	ImagePtr getImage() const;
-	std::string getIdentifier() const;
+
+	ImagePtr getImage() const override;
+	std::string getIdentifier() const override;
+    std::string getExpressionString() override;
 };
 
 } // namespace shaders
-
-#endif /*MAPEXPRESSION_H_*/

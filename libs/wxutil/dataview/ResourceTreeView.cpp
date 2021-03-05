@@ -255,7 +255,7 @@ void ResourceTreeView::UpdateTreeVisibility()
 
 bool ResourceTreeView::JumpToFirstFilterMatch()
 {
-    if (_filterText.empty()) return false;
+    if (_filterText.empty() || !_treeModelFilter) return false;
 
     auto item = _treeModelFilter->FindNextString(_filterText, _colsToSearch);
 

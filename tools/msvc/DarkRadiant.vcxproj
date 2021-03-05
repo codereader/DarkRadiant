@@ -234,6 +234,8 @@
     <ClCompile Include="..\..\radiant\ui\common\DefinitionView.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\DialogManager.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\MaterialDefinitionView.cpp" />
+    <ClCompile Include="..\..\radiant\ui\common\MaterialPopulator.cpp" />
+    <ClCompile Include="..\..\radiant\ui\common\MaterialTreeView.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\SoundChooser.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\SoundShaderDefinitionView.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\SoundShaderPreview.cpp" />
@@ -263,6 +265,8 @@
     <ClCompile Include="..\..\radiant\ui\MapFileProgressHandler.cpp" />
     <ClCompile Include="..\..\radiant\ui\mapinfo\LayerInfoTab.cpp" />
     <ClCompile Include="..\..\radiant\ui\mapselector\MapSelector.cpp" />
+    <ClCompile Include="..\..\radiant\ui\materials\MaterialEditor.cpp" />
+    <ClCompile Include="..\..\radiant\ui\materials\MaterialEditorModule.cpp" />
     <ClCompile Include="..\..\radiant\ui\mediabrowser\MediaBrowserTreeView.cpp" />
     <ClCompile Include="..\..\radiant\ui\menu\MenuBar.cpp" />
     <ClCompile Include="..\..\radiant\ui\menu\MenuElement.cpp" />
@@ -418,6 +422,8 @@
     <ClInclude Include="..\..\radiant\ui\common\DefinitionView.h" />
     <ClInclude Include="..\..\radiant\ui\common\DialogManager.h" />
     <ClInclude Include="..\..\radiant\ui\common\MaterialDefinitionView.h" />
+    <ClInclude Include="..\..\radiant\ui\common\MaterialPopulator.h" />
+    <ClInclude Include="..\..\radiant\ui\common\MaterialTreeView.h" />
     <ClInclude Include="..\..\radiant\ui\common\SoundChooser.h" />
     <ClInclude Include="..\..\radiant\ui\common\SoundShaderDefinitionView.h" />
     <ClInclude Include="..\..\radiant\ui\common\SoundShaderPreview.h" />
@@ -452,6 +458,9 @@
     <ClInclude Include="..\..\radiant\ui\MapFileProgressHandler.h" />
     <ClInclude Include="..\..\radiant\ui\mapinfo\LayerInfoTab.h" />
     <ClInclude Include="..\..\radiant\ui\mapselector\MapSelector.h" />
+    <ClInclude Include="..\..\radiant\ui\materials\Binding.h" />
+    <ClInclude Include="..\..\radiant\ui\materials\ExpressionBinding.h" />
+    <ClInclude Include="..\..\radiant\ui\materials\MaterialEditor.h" />
     <ClInclude Include="..\..\radiant\ui\mediabrowser\MediaBrowserTreeView.h" />
     <ClInclude Include="..\..\radiant\ui\menu\MenuBar.h" />
     <ClInclude Include="..\..\radiant\ui\menu\MenuElement.h" />

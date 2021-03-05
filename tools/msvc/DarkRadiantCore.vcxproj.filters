@@ -2073,5 +2073,11 @@
     <ClInclude Include="..\..\radiantcore\eclass\EntityClass.h">
       <Filter>src\eclass</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiantcore\shaders\VideoMapExpression.h">
+      <Filter>src\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\shaders\SoundMapExpression.h">
+      <Filter>src\shaders</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

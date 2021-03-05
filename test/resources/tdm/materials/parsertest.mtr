@@ -1,0 +1,323 @@
+textures/parsertest/polygonOffset1
+{	
+	polygonOffset
+}
+
+textures/parsertest/polygonOffset2
+{	
+	polygonOffset 13.0
+	clamp
+}
+
+textures/parsertest/polygonOffset3
+{	
+	polygonOffset -3.0
+}
+
+textures/parsertest/sortWithValue
+{	
+	sort 1.2
+}
+
+// We use weird mixed casing on the predefined keywords to prove that the parser is case-insensitive
+textures/parsertest/sortPredefined_none            { qer_editorimage test/blah }
+textures/parsertest/sortPredefined_subview         { sORt SUbVieW }
+textures/parsertest/sortPredefined_opaque          { sORt oPaque }
+textures/parsertest/sortPredefined_decal           { sORt dEcal }
+textures/parsertest/sortPredefined_far             { sORt fAr }
+textures/parsertest/sortPredefined_medium          { sORt mEdiUm }
+textures/parsertest/sortPredefined_close           { sORt cLosE }
+textures/parsertest/sortPredefined_almostnearest   { sORt aLmoStnearest }
+textures/parsertest/sortPredefined_nearest         { sORt nEarEst }
+textures/parsertest/sortPredefined_afterfog        { sORt aFteRfog }
+textures/parsertest/sortPredefined_postprocess     { sORt pOstProcess }
+textures/parsertest/sortPredefined_portalsky       { sORt pOrtAlsky }
+textures/parsertest/sortPredefined_decal_macro     { DECAL_MACRO }
+
+textures/parsertest/withAmbientRimColor
+{
+    ambientRimColor parm1 * 3, 0, time * 6
+}
+
+textures/parsertest/noSpectrum
+{
+    ambientRimColor parm1 * 3, 0, time * 6
+}
+
+textures/parsertest/spectrumMinus45
+{
+    spectrum -45
+}
+
+textures/parsertest/spectrumPositive100
+{
+    spectrum 100
+}
+
+textures/parsertest/renderBump1
+{
+    renderBump textures/output.tga models/hipoly 
+}
+
+textures/parsertest/renderBump2
+{
+    renderBump -size 100 200 textures/output.tga models/hipoly 
+}
+
+textures/parsertest/renderBump3
+{
+    renderBump -aa 2 textures/output.tga models/hipoly 
+}
+
+textures/parsertest/renderBump4
+{
+    renderBump -aa 2 -size 10 10 textures/output.tga models/hipoly 
+}
+
+textures/parsertest/renderBump5
+{
+    renderBump -aa 2 -size 10 10 -trace 0.5 textures/output.tga models/hipoly 
+}
+
+textures/parsertest/renderBump6
+{
+    renderBump -aa 2 -trace 0.5 -size 10 10 textures/output.tga models/hipoly 
+}
+
+textures/parsertest/renderBumpFlat1
+{
+    renderBumpflat -size 200 100 models/hipoly 
+}
+
+textures/parsertest/renderBumpFlat2
+{
+    renderBumpflat models/hipoly 
+}
+
+table deformtesttable { { 0, 0, 0, 0, 1, 1 } }
+
+textures/parsertest/deform1
+{
+	deform flare 1.5
+}
+
+textures/parsertest/deform2
+{
+	deform expand (0.1 * deformtesttable[time * (0.3+time)] - global3)
+}
+
+textures/parsertest/deform3
+{
+	deform move (1.7 + time + 4 - global3)
+}
+
+textures/parsertest/deform4
+{
+	deform turbulent deformtesttable time*2 (parm11-4) -global5
+}
+
+textures/parsertest/deform5
+{
+	deform particle testparticle
+}
+
+textures/parsertest/deform6
+{
+	deform particle2 testparticle
+}
+
+textures/parsertest/transform/notransform
+{
+	{
+        map _white
+        // no transforms
+    }
+}
+
+textures/parsertest/transform/translation1
+{
+	{
+        map _white
+        translate 3, parm3*3
+    }
+}
+
+textures/parsertest/transform/translation2
+{
+	{
+        map _white
+        scroll time, .5
+    }
+}
+
+textures/parsertest/transform/scale1
+{
+	{
+        map _white
+        scale 4, time*3
+    }
+}
+
+textures/parsertest/transform/centerscale1
+{
+	{
+        map _white
+        centerscale 4, time*3
+    }
+}
+
+textures/parsertest/transform/shear1
+{
+	{
+        map _white
+        shear global3, 4
+    }
+}
+
+textures/parsertest/transform/rotate1
+{
+	{
+        map _white
+        rotate .03
+    }
+}
+
+textures/parsertest/program/vertexProgram1
+{
+	{
+        map _white
+        vertexProgram glprogs/test.vfp
+
+        vertexParm 0 time // only 1 argument defined
+    }
+}
+
+textures/parsertest/program/vertexProgram2
+{
+	{
+        map _white
+        vertexProgram glprogs/test.vfp
+
+        vertexParm 0 time, 3.0 // only 2 arguments defined
+    }
+}
+
+textures/parsertest/program/vertexProgram3
+{
+	{
+        map _white
+        vertexProgram glprogs/test.vfp
+
+        vertexParm 0 time, 3.0, global3 // only 3 arguments defined
+    }
+}
+
+textures/parsertest/program/vertexProgram4
+{
+	{
+        map _white
+        vertexProgram glprogs/test.vfp
+
+        vertexParm 0 time, 3.0, global3, time*2 // 4 arguments defined
+    }
+}
+
+textures/parsertest/program/vertexProgram5
+{
+	{
+        map _white
+        vertexProgram glprogs/test.vfp
+
+        vertexParm 0 time, 3.0, global3, time*2 // 4 arguments defined
+        vertexParm 1 1, 2, 3, 4
+        vertexParm 2 5,6,7,8
+    }
+}
+
+textures/parsertest/program/vertexProgram6
+{
+	{
+        map _white
+        vertexProgram glprogs/test.vfp
+
+        vertexParm 0 time, 3.0, global3, time*2 // 4 arguments defined
+        // index 1 is missing
+        vertexParm 2 5,6,7,8
+    }
+}
+
+textures/parsertest/program/vertexProgram7
+{
+	{
+        map _white
+        vertexProgram glprogs/test.vfp
+
+        // Maximum number of vertexParms is 4, index 5 is invalid
+        vertexParm 5 5,6,7,8
+    }
+}
+
+textures/parsertest/program/fragmentProgram1
+{
+	{
+        fragmentProgram glprogs/test.vfp
+
+        fragmentMap		0		cubeMap forceHighQuality alphaZeroClamp env/gen1 // some options
+		fragmentMap		1		temp/texture
+        // all possible options
+		fragmentMap		2		cubemap cameracubemap nearest linear clamp noclamp zeroclamp alphazeroclamp forcehighquality uncompressed highquality nopicmip temp/optionsftw
+    }
+}
+
+textures/parsertest/program/fragmentProgram2
+{
+	{
+        fragmentProgram glprogs/test.vfp
+
+        fragmentMap		0		env/gen1 // no options
+        // fragment map 1 is missing
+		fragmentMap		2		temp/texture
+    }
+}
+
+textures/parsertest/program/fragmentProgram3
+{
+	{
+        fragmentProgram glprogs/test.vfp
+
+        // defining a fragment map with num >= 8 is invalid
+		fragmentMap		8		temp/texture
+    }
+}
+
+textures/parsertest/guisurf1
+{
+	qer_editorimage	textures/editor/entityGui.tga
+	discrete
+	guiSurf	guis/lvlmaps/genericmap.gui
+
+}
+
+textures/parsertest/guisurf2
+ {
+	qer_editorimage	textures/editor/entityGui.tga
+	discrete
+	playerclip
+	guiSurf	entity
+}
+
+textures/parsertest/guisurf3
+{
+	qer_editorimage	textures/editor/entityGui2.tga
+	discrete
+	playerclip
+	guiSurf	entity2
+}
+
+textures/parsertest/guisurf4
+{
+	qer_editorimage	textures/editor/entityGui3.tga
+	discrete
+	guiSurf	entity3
+	playerclip
+}

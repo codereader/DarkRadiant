@@ -1,9 +1,10 @@
 #pragma once
 
-#include <ishaders.h>
 #include <vector>
+#include "ishaders.h"
 
 #include "math/Vector4.h"
+#include "MapExpression.h"
 #include "NamedBindable.h"
 
 namespace shaders
@@ -20,18 +21,6 @@ class ShaderTemplate;
 class Doom3ShaderLayer
 : public ShaderLayer
 {
-public:
-    // An enum used to select which colour components are affected by an operation
-    enum ColourComponentSelector
-    {
-        COMP_RED,   // red only
-        COMP_GREEN, // green only
-        COMP_BLUE,  // blue only
-        COMP_ALPHA, // alpha only
-        COMP_RGB,   // red, green and blue
-        COMP_RGBA,  // all: red, greeb, blue, alpha
-    };
-
 private:
     // The owning material template
     ShaderTemplate& _material;
@@ -44,9 +33,11 @@ private:
     Expressions _expressions;
 
     static const IShaderExpressionPtr NULL_EXPRESSION;
+    static const std::size_t NOT_DEFINED = std::numeric_limits<std::size_t>::max();
 
     // The condition register for this stage. Points to a register to be interpreted as bool.
     std::size_t _condition;
+    std::size_t _conditionExpression;
 
     // The bindable texture for this stage
     NamedBindablePtr _bindableTex;
@@ -55,7 +46,10 @@ private:
     mutable TexturePtr _texture;
 
     // Layer type (diffuse, bump, specular or nothing)
-    ShaderLayer::Type _type;
+    Type _type;
+
+    // Map type (map, cubemap, mirrorRenderMap, etc.)
+    MapType _mapType;
 
     // Blend function as strings (e.g. "gl_one", "gl_zero")
     StringPair _blendFuncStrings;
@@ -63,6 +57,7 @@ private:
     // Multiplicative layer colour (set with "red 0.6", "green 0.2" etc)
     // The 4 numbers are indices into the registers array in the parent material
     std::size_t _colIdx[4];
+    std::size_t _colExpression[4];
 
     // Vertex colour blend mode
     VertexColourMode _vertexColourMode;
@@ -81,19 +76,24 @@ private:
 
     // texgen normal, reflect, skybox, wobblesky
     TexGenType _texGenType;
-    float _texGenParams[3]; // 3 parameters for wobblesky texgen
+    std::size_t _texGenParams[3]; // 3 registers for wobblesky texgen
+    IShaderExpressionPtr _texGenExpressions[3]; // the 3 expressions
 
     // The register indices of this stage's scale expressions
     std::size_t _scale[2];
+    std::size_t _scaleExpression[2];
 
     // The register indices of this stage's translate expressions
     std::size_t _translation[2];
+    std::size_t _translationExpression[2];
 
     // The rotation register index
     std::size_t _rotation;
+    std::size_t _rotationExpression;
 
     // The register indices of this stage's shear expressions
     std::size_t _shear[2];
+    std::size_t _shearExpression[2];
 
     // The shader programs used in this stage
     std::string _vertexProgram;
@@ -102,12 +102,17 @@ private:
     // A variable sized array of vertexParms (or rather their indices into the registers array)
     // since a single vertex parm consists of 4 values, the _vertexParms array is usually of size 0, 4, 8, etc.
     std::vector<std::size_t> _vertexParms;
+    std::vector<VertexParm> _vertexParmDefinitions;
 
     // The array of fragment maps
-    std::vector<MapExpressionPtr> _fragmentMaps;
+    std::vector<FragmentMap> _fragmentMaps;
 
     // Stage-specific polygon offset, is 0 if not used
     float _privatePolygonOffset;
+
+    Vector2 _renderMapSize;
+
+    int _parseFlags;
 
 public:
 
@@ -122,7 +127,15 @@ public:
     Colour4 getColour() const;
     VertexColourMode getVertexColourMode() const;
     CubeMapMode getCubeMapMode() const;
-    float getAlphaTest() const;
+
+    MapType getMapType() const override;
+    void setMapType(MapType type);
+
+    const Vector2& getRenderMapSize() override;
+    void setRenderMapSize(const Vector2& size);
+
+    bool hasAlphaTest() const override;
+    float getAlphaTest() const override;
 
     // True if the condition for this stage is fulfilled 
     // (expressions must have been evaluated before this call)
@@ -131,10 +144,16 @@ public:
         return _registers[_condition] != 0;
     }
 
+    const shaders::IShaderExpressionPtr& getConditionExpression() override
+    {
+        return _conditionExpression != NOT_DEFINED ? _expressions[_conditionExpression] : NULL_EXPRESSION;
+    }
+
     void setCondition(const IShaderExpressionPtr& conditionExpr)
     {
         // Store the expression in our list
-        _expressions.push_back(conditionExpr);
+        _conditionExpression = _expressions.size();
+        _expressions.emplace_back(conditionExpr);
 
         // Link the result to our local registers
         _condition = conditionExpr->linkToRegister(_registers);
@@ -142,17 +161,17 @@ public:
 
     void evaluateExpressions(std::size_t time) 
     {
-        for (Expressions::iterator i = _expressions.begin(); i != _expressions.end(); ++i)
+        for (const auto& i : _expressions)
         {
-            (*i)->evaluate(time);
+            i->evaluate(time);
         }
     }
 
     void evaluateExpressions(std::size_t time, const IRenderEntity& entity)
     {
-        for (Expressions::iterator i = _expressions.begin(); i != _expressions.end(); ++i)
+        for (const auto& i : _expressions)
         {
-            (*i)->evaluate(time, entity);
+            i->evaluate(time, entity);
         }
     }
 
@@ -232,16 +251,26 @@ public:
         _texGenType = type;
     }
 
-    float getTexGenParam(std::size_t index) const 
+    float getTexGenParam(std::size_t index) const override
     {
         assert(index < 3);
-        return _texGenParams[index];
+        return _registers[_texGenParams[index]];
     }
 
-    void setTexGenParam(std::size_t index, float value)
+    IShaderExpressionPtr getTexGenExpression(std::size_t index) const override
     {
         assert(index < 3);
-        _texGenParams[index] = value;
+        return _texGenExpressions[index];
+    }
+
+    void setTexGenExpression(std::size_t index, const IShaderExpressionPtr& expression)
+    {
+        assert(index < 3);
+
+        // Store the expression in our list
+        _expressions.push_back(expression);
+        _texGenExpressions[index] = expression;
+        _texGenParams[index] = expression->linkToRegister(_registers);
     }
 
     /**
@@ -251,6 +280,11 @@ public:
     void setBlendFuncStrings(const StringPair& func)
     {
         _blendFuncStrings = func;
+    }
+
+    const StringPair& getBlendFuncStrings() const override
+    {
+        return _blendFuncStrings;
     }
 
     /**
@@ -269,6 +303,8 @@ public:
      * this shader layer at an earlier point.
      */
     void setColour(const Vector4& col);
+
+    const IShaderExpressionPtr& getColourExpression(ColourComponentSelector component) override;
 
     /**
      * Set the given colour component to use the given expression. This can be a single
@@ -291,13 +327,41 @@ public:
         return Vector2(_registers[_scale[0]], _registers[_scale[1]]);
     }
 
+    const shaders::IShaderExpressionPtr& getScaleExpression(std::size_t index) override
+    {
+        assert(index < 2);
+
+        if (getStageFlags() & FLAG_CENTERSCALE)
+        {
+            return NULL_EXPRESSION;
+        }
+
+        auto expressionIndex = _scaleExpression[index];
+        return expressionIndex != NOT_DEFINED ? _expressions[expressionIndex] : NULL_EXPRESSION;
+    }
+
+    const shaders::IShaderExpressionPtr& getCenterScaleExpression(std::size_t index) override
+    {
+        assert(index < 2);
+        
+        if ((getStageFlags() & FLAG_CENTERSCALE) == 0)
+        {
+            return NULL_EXPRESSION;
+        }
+
+        auto expressionIndex = _scaleExpression[index];
+        return expressionIndex != NOT_DEFINED ? _expressions[expressionIndex] : NULL_EXPRESSION;
+    }
+
     /**
      * Set the scale expressions of this stage, overwriting any previous scales.
      */
     void setScale(const IShaderExpressionPtr& xExpr, const IShaderExpressionPtr& yExpr)
     {
-        _expressions.push_back(xExpr);
-        _expressions.push_back(yExpr);
+        _scaleExpression[0] = _expressions.size();
+        _expressions.emplace_back(xExpr);
+        _scaleExpression[1] = _expressions.size();
+        _expressions.emplace_back(yExpr);
 
         _scale[0] = xExpr->linkToRegister(_registers);
         _scale[1] = yExpr->linkToRegister(_registers);
@@ -308,13 +372,22 @@ public:
         return Vector2(_registers[_translation[0]], _registers[_translation[1]]);
     }
 
+    const shaders::IShaderExpressionPtr& getTranslationExpression(std::size_t index)
+    {
+        assert(index < 2);
+        auto expressionIndex = _translationExpression[index];
+        return expressionIndex != NOT_DEFINED ? _expressions[expressionIndex] : NULL_EXPRESSION;
+    }
+
     /**
      * Set the "translate" expressions of this stage, overwriting any previous expressions.
      */
     void setTranslation(const IShaderExpressionPtr& xExpr, const IShaderExpressionPtr& yExpr)
     {
-        _expressions.push_back(xExpr);
-        _expressions.push_back(yExpr);
+        _translationExpression[0] = _expressions.size();
+        _expressions.emplace_back(xExpr);
+        _translationExpression[1] = _expressions.size();
+        _expressions.emplace_back(yExpr);
 
         _translation[0] = xExpr->linkToRegister(_registers);
         _translation[1] = yExpr->linkToRegister(_registers);
@@ -325,12 +398,18 @@ public:
         return _registers[_rotation];
     }
 
+    const shaders::IShaderExpressionPtr& getRotationExpression() override
+    {
+        return _rotationExpression != NOT_DEFINED ? _expressions[_rotationExpression] : NULL_EXPRESSION;
+    }
+
     /**
      * Set the "rotate" expression of this stage, overwriting any previous one.
      */
     void setRotation(const IShaderExpressionPtr& expr)
     {
-        _expressions.push_back(expr);
+        _rotationExpression = _expressions.size();
+        _expressions.emplace_back(expr);
 
         _rotation = expr->linkToRegister(_registers);
     }
@@ -340,13 +419,22 @@ public:
         return Vector2(_registers[_shear[0]], _registers[_shear[1]]);
     }
 
+    const shaders::IShaderExpressionPtr& getShearExpression(std::size_t index) override
+    {
+        assert(index < 2);
+        auto expressionIndex = _shearExpression[index];
+        return expressionIndex != NOT_DEFINED ? _expressions[expressionIndex] : NULL_EXPRESSION;
+    }
+
     /**
      * Set the shear expressions of this stage, overwriting any previous ones.
      */
     void setShear(const IShaderExpressionPtr& xExpr, const IShaderExpressionPtr& yExpr)
     {
-        _expressions.push_back(xExpr);
-        _expressions.push_back(yExpr);
+        _shearExpression[0] = _expressions.size();
+        _expressions.emplace_back(xExpr);
+        _shearExpression[1] = _expressions.size();
+        _expressions.emplace_back(yExpr);
 
         _shear[0] = xExpr->linkToRegister(_registers);
         _shear[1] = yExpr->linkToRegister(_registers);
@@ -402,68 +490,12 @@ public:
         _vertexProgram = name;
     }
 
-    Vector4 getVertexParm(int parm) 
-    {
-        if (static_cast<std::size_t>(parm) >= _vertexParms.size() / 4)
-        {
-            return Vector4(0,0,0,1);
-        }
-
-        std::size_t offset = parm * 4;
-
-        return Vector4(_registers[_vertexParms[offset+0]], _registers[_vertexParms[offset+1]],
-                       _registers[_vertexParms[offset+2]], _registers[_vertexParms[offset+3]]);
-    }
-
-    void setVertexParm(int parm, const IShaderExpressionPtr& parm0, 
-                                 const IShaderExpressionPtr& parm1 = IShaderExpressionPtr(),
-                                 const IShaderExpressionPtr& parm2 = IShaderExpressionPtr(), 
-                                 const IShaderExpressionPtr& parm3 = IShaderExpressionPtr())
-    {
-        assert(parm0);
-
-        _expressions.push_back(parm0);
-        std::size_t parm0Reg = parm0->linkToRegister(_registers);
-
-        _vertexParms.push_back(parm0Reg);
-
-        if (parm1)
-        {
-            _expressions.push_back(parm1);
-            _vertexParms.push_back(parm1->linkToRegister(_registers));
-
-            if (parm2)
-            {
-                _expressions.push_back(parm2);
-                _vertexParms.push_back(parm2->linkToRegister(_registers));
-
-                if (parm3)
-                {
-                    _expressions.push_back(parm3);
-                    _vertexParms.push_back(parm3->linkToRegister(_registers));
-                }
-                else
-                {
-                    // No fourth parameter set, set w to 1
-                    _vertexParms.push_back(REG_ONE);
-                }
-            }
-            else
-            {
-                // Only 2 expressions given, set z and w to 0 and 1, respectively.
-                _vertexParms.push_back(REG_ZERO);
-                _vertexParms.push_back(REG_ONE);
-            }
-        }
-        else
-        {
-            // no parm1 given, repeat the one we have 4 times => insert 3 more times
-            _vertexParms.insert(_vertexParms.end(), 3, parm0Reg);
-        }
-
-        // At this point the array needs to be empty or its size a multiple of 4
-        assert(_vertexParms.size() % 4 == 0);
-    }
+    Vector4 getVertexParmValue(int parm) override;
+    const VertexParm& getVertexParm(int parm) override;
+    
+    int getNumVertexParms() override;
+    
+    void addVertexParm(const VertexParm& parm);
 
     // Fragment program name
     const std::string& getFragmentProgram()
@@ -481,19 +513,11 @@ public:
         return _fragmentMaps.size();
     }
 
-    TexturePtr getFragmentMap(int index);
+    const FragmentMap& getFragmentMap(int index) override;
 
-    void setFragmentMap(std::size_t index, const MapExpressionPtr& map)
-    {
-        assert(index >= 0);
+    TexturePtr getFragmentMapTexture(int index) override;
 
-        if (index >= _fragmentMaps.size())
-        {
-            _fragmentMaps.resize(index + 1);
-        }
-
-        _fragmentMaps[index] = map;
-    }
+    void addFragmentMap(const FragmentMap& fragmentMap);
 
     float getPrivatePolygonOffset()
     {
@@ -506,6 +530,11 @@ public:
     }
 
     std::string getMapImageFilename() override;
+
+    shaders::IMapExpression::Ptr getMapExpression() override;
+
+    int getParseFlags() override;
+    void setParseFlag(ParseFlags flag);
 };
 
 /**

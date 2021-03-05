@@ -54,6 +54,11 @@ std::string CameraCubeMapDecl::getIdentifier() const
     return "_cameraCubeMap_" + _prefix;
 }
 
+std::string CameraCubeMapDecl::getExpressionString()
+{
+    return _prefix;
+}
+
 TexturePtr CameraCubeMapDecl::bindTexture(const std::string& name) const
 {
     // Load the six images from the prefix

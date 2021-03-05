@@ -1,5 +1,6 @@
 #pragma once
 
+#include "MapExpression.h"
 #include "NamedBindable.h"
 
 namespace shaders
@@ -17,16 +18,21 @@ namespace shaders
  * NamedBindable interface so that it can bind the cube map texture in GL and
  * return it to the texture manager.
  */
-class CameraCubeMapDecl
-: public NamedBindable
+class CameraCubeMapDecl : 
+    public IMapExpression,
+    public NamedBindable
 {
     // The texture prefix
     std::string _prefix;
 
 private:
-
     // Construct with a prefix
     CameraCubeMapDecl(const std::string& prefix);
+
+    virtual bool isCubeMap() const override
+    {
+        return true;
+    }
 
     // Load and bind the given image with the given cube-map direction
     void bindDirection(const std::string& dir, GLuint glDir) const;
@@ -34,8 +40,10 @@ private:
 public:
 
     /* NamedBindable implementation */
-    std::string getIdentifier() const;
-    TexturePtr bindTexture(const std::string& name) const;
+    std::string getIdentifier() const override;
+    TexturePtr bindTexture(const std::string& name) const override;
+
+    std::string getExpressionString() override;
 
     /**
      * \brief

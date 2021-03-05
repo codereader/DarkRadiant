@@ -66,6 +66,8 @@ public:
 	int getSurfaceFlags() const override;
 	SurfaceType getSurfaceType() const override;
 	DeformType getDeformType() const override;
+	IShaderExpressionPtr getDeformExpression(std::size_t index) override;
+    std::string getDeformDeclName() override;
 	int getSpectrum() const override;
 	DecalInfo getDecalInfo() const override;
 	Coverage getCoverage() const override;
@@ -73,6 +75,7 @@ public:
 	std::string getDefinition() override;
 	bool isAmbientLight() const override;
 	bool isBlendLight() const override;
+	bool isCubicLight() const;
 	bool isFogLight() const override;
 	bool lightCastsShadows() const override;
 	bool surfaceCastsShadow() const override;
@@ -82,12 +85,12 @@ public:
 	void setVisible(bool visible) override;
     const ShaderLayerVector& getAllLayers() const;
 
-	/**
-	 * Return the name of the light falloff texture for use with this shader.
-	 * Shaders which do not define their own falloff will take the default from
-	 * the defaultPointLight shader.
-	 */
-	std::string getFalloffName() const;
+    IMapExpression::Ptr getLightFalloffExpression() override;
+	IMapExpression::Ptr getLightFalloffCubeMapExpression() override;
+    std::string getRenderBumpArguments() override;
+    std::string getRenderBumpFlatArguments() override;
+
+    const std::string& getGuiSurfArgument() override;
 
 	// -----------------------------------------
 
@@ -104,6 +107,8 @@ public:
 	void setName(const std::string& name);
 
 	ShaderLayer* firstLayer() const;
+    int getParseFlags() const override;
+
 }; // class CShader
 
 typedef std::shared_ptr<CShader> CShaderPtr;

@@ -159,6 +159,7 @@
     <ClInclude Include="..\..\libs\generic\callback.h" />
     <ClInclude Include="..\..\libs\KeyValueStore.h" />
     <ClInclude Include="..\..\libs\maplib.h" />
+    <ClInclude Include="..\..\libs\materials\ParseLib.h" />
     <ClInclude Include="..\..\libs\messages\ApplicationIsActiveRequest.h" />
     <ClInclude Include="..\..\libs\messages\ApplicationShutdownRequest.h" />
     <ClInclude Include="..\..\libs\messages\AutomaticMapSaveRequest.h" />

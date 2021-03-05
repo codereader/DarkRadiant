@@ -83,7 +83,6 @@
 #include "iselectiontest.h"
 #include "ishaderclipboard.h"
 #include "ishaderexpression.h"
-#include "ishaders.h"
 #include "isound.h"
 #include "ispacepartition.h"
 #include "itexdef.h"

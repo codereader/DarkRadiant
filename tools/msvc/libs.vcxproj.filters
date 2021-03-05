@@ -280,6 +280,9 @@
     <ClInclude Include="..\..\libs\render\CameraView.h">
       <Filter>render</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\materials\ParseLib.h">
+      <Filter>materials</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">
@@ -323,6 +326,9 @@
     </Filter>
     <Filter Include="patch">
       <UniqueIdentifier>{b88685b4-a515-4b1d-b6aa-2c1499b227df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="materials">
+      <UniqueIdentifier>{60865a71-2a02-47bd-b5e2-8e7ec339d27b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

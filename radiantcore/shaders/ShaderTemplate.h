@@ -43,12 +43,14 @@ private:
 	NamedBindablePtr _editorTex;
 
 	// Map expressions
-	shaders::MapExpressionPtr _lightFalloff;
+	MapExpressionPtr _lightFalloff;
+	MapExpressionPtr _lightFalloffCubeMap;
 
 	/* Light type booleans */
 	bool fogLight;
 	bool ambientLight;
 	bool blendLight;
+	bool _cubicLight;
 
 	// The description tag of the material
 	std::string description;
@@ -68,6 +70,8 @@ private:
 	Material::SurfaceType _surfaceType;
 
 	Material::DeformType _deformType;
+    std::vector<IShaderExpressionPtr> _deformExpressions;
+    std::string _deformDeclName;
 
 	// The spectrum this shader is responding to (or emitting in the case of light materials)
 	int _spectrum;
@@ -83,11 +87,19 @@ private:
 	// Whether this material renders opaque, perforated, etc.
 	Material::Coverage _coverage;
 
+    std::string _renderBumpArguments;
+    std::string _renderBumpFlatArguments;
+
 	// Raw material declaration
 	std::string _blockContents;
 
 	// Whether the block has been parsed
 	bool _parsed;
+
+    int _parseFlags;
+
+    // The string value specified by the guisurf keyword, if other than entity[2]3]
+    std::string _guiDeclName;
 
 public:
 
@@ -101,18 +113,20 @@ public:
       fogLight(false),
       ambientLight(false),
       blendLight(false),
+      _cubicLight(false),
 	  _materialFlags(0),
 	  _cullType(Material::CULL_BACK),
 	  _clampType(CLAMP_REPEAT),
 	  _surfaceFlags(0),
 	  _surfaceType(Material::SURFTYPE_DEFAULT),
 	  _deformType(Material::DEFORM_NONE),
-	  _spectrum(-1),
+	  _spectrum(0),
       _sortReq(SORT_UNDEFINED),	// will be set to default values after the shader has been parsed
       _polygonOffset(0.0f),
 	  _coverage(Material::MC_UNDETERMINED),
 	  _blockContents(blockContents),
-	  _parsed(false)
+	  _parsed(false),
+      _parseFlags(0)
 	{
 		_decalInfo.stayMilliSeconds = 0;
 		_decalInfo.fadeMilliSeconds = 0;
@@ -178,6 +192,20 @@ public:
 		return _deformType;
 	}
 
+    IShaderExpressionPtr getDeformExpression(std::size_t index)
+    {
+        if (!_parsed) parseDefinition();
+
+        assert(index >= 0 && index < 3);
+        return index < _deformExpressions.size() ? _deformExpressions[index] : IShaderExpressionPtr();
+    }
+
+    std::string getDeformDeclName()
+    {
+        if (!_parsed) parseDefinition();
+        return _deformDeclName;
+    }
+
 	int getSpectrum()
 	{
 		if (!_parsed) parseDefinition();
@@ -219,6 +247,12 @@ public:
 		if (!_parsed) parseDefinition();
 		return blendLight;
 	}
+    
+    bool isCubicLight()
+	{
+		if (!_parsed) parseDefinition();
+		return _cubicLight;
+	}
 
     int getSortRequest()
     {
@@ -250,10 +284,16 @@ public:
      */
 	NamedBindablePtr getEditorTexture();
 
-	const shaders::MapExpressionPtr& getLightFalloff()
+	const MapExpressionPtr& getLightFalloff()
 	{
 		if (!_parsed) parseDefinition();
 		return _lightFalloff;
+	}
+    
+    const MapExpressionPtr& getLightFalloffCubeMap()
+	{
+		if (!_parsed) parseDefinition();
+		return _lightFalloffCubeMap;
 	}
 
 	// Add a specific layer to this template
@@ -261,6 +301,21 @@ public:
 
 	// Returns true if this shader template includes a diffusemap stage
 	bool hasDiffusemap();
+
+    // Parser hints
+    int getParseFlags();
+
+    // renderbump argument string
+    std::string getRenderBumpArguments();
+    
+    // renderbumpflat argument string
+    std::string getRenderBumpFlagArguments();
+
+    const std::string& getGuiSurfArgument()
+    {
+        if (!_parsed) parseDefinition();
+        return _guiDeclName;
+    }
 
 private:
 
@@ -284,6 +339,7 @@ private:
 	bool parseBlendMaps(parser::DefTokeniser&, const std::string&);
     bool parseStageModifiers(parser::DefTokeniser&, const std::string&);
 	bool parseSurfaceFlags(parser::DefTokeniser&, const std::string&);
+	bool parseMaterialType(parser::DefTokeniser&, const std::string&);
 	bool parseCondition(parser::DefTokeniser&, const std::string&);
 	IShaderExpressionPtr parseSingleExpressionTerm(parser::DefTokeniser& tokeniser);
 

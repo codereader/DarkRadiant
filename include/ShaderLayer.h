@@ -1,9 +1,11 @@
 #pragma once
 
 #include "Texture.h"
+#include "ishaderexpression.h"
 
 #include <memory>
 #include <vector>
+#include <string>
 
 #include "math/Vector2.h"
 #include "math/Vector4.h"
@@ -77,6 +79,7 @@ public:
 		FLAG_MASK_ALPHA				= 1 << 9,
 		FLAG_MASK_DEPTH				= 1 << 10,
 		FLAG_CENTERSCALE			= 1 << 11,  // whether to translate -0.5, scale and translate +0.5
+		FLAG_IGNORE_DEPTH			= 1 << 12,  // use depthfunc always
 	};
 
 	enum TexGenType
@@ -85,7 +88,15 @@ public:
 		TEXGEN_REFLECT		= 1 << 1,
 		TEXGEN_SKYBOX		= 1 << 2,
 		TEXGEN_WOBBLESKY	= 1 << 3,
+		TEXGEN_SCREEN	    = 1 << 4, // screen aligned, for mirrorRenders and screen space temporaries
 	};
+
+    enum ParseFlags
+    {
+        PF_HasTexGenKeyword =      1 << 1, // texgen has been specified
+        PF_HasNoclampKeyword =     1 << 2, // noclamp has been specified
+        PF_HasColoredKeyword =     1 << 3, // colored has been specified
+    };
 
     /**
      * \brief
@@ -135,6 +146,9 @@ public:
 	 */
 	virtual float getTexGenParam(std::size_t index) const = 0;
 
+    // The expressions used to calcualte the tex gen params. Index in [0..2]
+    virtual shaders::IShaderExpressionPtr getTexGenExpression(std::size_t index) const = 0;
+
     /**
      * \brief
      * Return the GL blend function for this layer.
@@ -144,11 +158,28 @@ public:
      */
     virtual BlendFunc getBlendFunc() const = 0;
 
+    // Get the blend string as defined in the material def, e.g. "add" or "gl_one, gl_zero"
+    virtual const std::pair<std::string, std::string>& getBlendFuncStrings() const = 0;
+
     /**
      * \brief
      * Multiplicative layer colour (set with "red 0.6", "green 0.2" etc)
      */
     virtual Colour4 getColour() const = 0;
+
+    // An enum used to select which colour components are affected by an operation
+    enum ColourComponentSelector
+    {
+        COMP_RED,   // red only
+        COMP_GREEN, // green only
+        COMP_BLUE,  // blue only
+        COMP_ALPHA, // alpha only
+        COMP_RGB,   // red, green and blue
+        COMP_RGBA,  // all: red, greeb, blue, alpha
+    };
+
+    // Returns the expression to calculate the RGBA vertex colour values
+    virtual const shaders::IShaderExpressionPtr& getColourExpression(ColourComponentSelector component) = 0;
 
     /**
      * \brief
@@ -167,6 +198,20 @@ public:
      */
     virtual VertexColourMode getVertexColourMode() const = 0;
 
+    enum class MapType
+    {
+        Map,            // regular map
+        CubeMap,        // corresponds to CUBE_MAP_OBJECT
+        CameraCubeMap,  // corresponds to CUBE_MAP_CAMERA
+        VideoMap,
+        SoundMap,
+        MirrorRenderMap,
+        RemoteRenderMap,
+    };
+
+    // Get the map type used by this stage
+    virtual MapType getMapType() const = 0;
+
     /**
      * \brief
      * Enumeration of cube map modes for this layer.
@@ -184,25 +229,53 @@ public:
      */
     virtual CubeMapMode getCubeMapMode() const = 0;
 
+    /**
+     * Returns the dimensions specifying the map size for 
+     * stages using the "mirrorRenderMap", "remoteRenderMap" keywords.
+     */
+    virtual const Vector2& getRenderMapSize() = 0;
+
 	/**
 	 * Returns the value of the scale expressions of this stage.
 	 */
 	virtual Vector2 getScale() = 0;
+
+    // Returns the expression of the given scale component (0 == x, 1 == y)
+    virtual const shaders::IShaderExpressionPtr& getScaleExpression(std::size_t index) = 0;
+
+    // Workaround: the shader layer is storing the centerscale expression in the same location as scale expressions,
+    // making them mutually exclusive - which is not the way the idTech4 materials work.
+    // These stage transforms need to be redesigned to support an arbitrary number of transforms respecting their order.
+    // Texture Matrix calculation needs to be performed by the stage itself, not in OpenGLShaderPass
+    // I need to go ahead with the material editor, so I'm not changing it immediately
+    virtual const shaders::IShaderExpressionPtr& getCenterScaleExpression(std::size_t index) = 0;
 
 	/**
 	 * Returns the value of the translate expressions of this stage.
 	 */
 	virtual Vector2 getTranslation() = 0;
 
+    // Returns the expression of the given translation component (0 == x, 1 == y)
+    virtual const shaders::IShaderExpressionPtr& getTranslationExpression(std::size_t index) = 0;
+
 	/**
 	 * Returns the value of the rotate expression of this stage.
 	 */
 	virtual float getRotation() = 0;
 
+    // Returns the expression used to calculate the rotation value
+    virtual const shaders::IShaderExpressionPtr& getRotationExpression() = 0;
+
 	/**
 	 * Returns the value of the 'shear' expressions of this stage.
 	 */
 	virtual Vector2 getShear() = 0;
+
+    // Returns the expression of the given shear component (0 == x, 1 == y)
+    virtual const shaders::IShaderExpressionPtr& getShearExpression(std::size_t index) = 0;
+
+    // Returns true if this layer has an alphatest expression defined
+    virtual bool hasAlphaTest() const = 0;
 
     /**
      * \brief
@@ -220,6 +293,9 @@ public:
 	 */
 	virtual bool isVisible() const = 0;
 
+    // Returns the if-expression used to evaluate this stage's visibility, or null if none defined
+    virtual const shaders::IShaderExpressionPtr& getConditionExpression() = 0;
+
 	/**
 	 * Returns the name of this stage's fragment program.
 	 */
@@ -230,20 +306,50 @@ public:
 	 */
 	virtual const std::string& getFragmentProgram() = 0;
 
+    // The number of defined vertex parameters
+    virtual int getNumVertexParms() = 0;
+
 	/**
 	 * Returns the 4 parameter values for the vertexParm index <parm>.
 	 */
-	virtual Vector4 getVertexParm(int parm) = 0;
+	virtual Vector4 getVertexParmValue(int parm) = 0;
+
+    // A vertex parm has an index and 4 expressions at most
+    struct VertexParm
+    {
+        VertexParm() :
+            index(-1) // a negative index indicates this parm has not been defined in the stage
+        {}
+
+        int index;
+        shaders::IShaderExpressionPtr expressions[4];
+    };
+
+    // Returns the 
+    virtual const VertexParm& getVertexParm(int index) = 0;
 
 	/**
 	 * Returns the number of fragment maps in this stage.
 	 */
 	virtual std::size_t getNumFragmentMaps() = 0;
 
+    struct FragmentMap
+    {
+        FragmentMap() :
+            index(-1)
+        {}
+
+        int index;
+        std::vector<std::string> options;
+        shaders::IMapExpression::Ptr map;
+    };
+
+    virtual const FragmentMap& getFragmentMap(int index) = 0;
+
 	/**
-	 * Returns the fragment map with the given index.
+	 * Returns the fragment map image with the given index.
 	 */
-	virtual TexturePtr getFragmentMap(int index) = 0;
+	virtual TexturePtr getFragmentMapTexture(int index) = 0;
 
 	/**
 	 * Stage-specific polygon offset, overriding the "global" one defined on the material.
@@ -254,6 +360,12 @@ public:
     // the VFS path to it with the file extension removed.
     // If this layer doesn't refer to a single image file, an empty string is returned
     virtual std::string getMapImageFilename() = 0;
+
+    // The map expression used to generate/define the texture of this stage
+    virtual shaders::IMapExpression::Ptr getMapExpression() = 0;
+
+    // Parser information, to reconstruct the use of certain keywords
+    virtual int getParseFlags() = 0;
 };
 
 /**

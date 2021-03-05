@@ -69,9 +69,14 @@ bool CShader::isEditorImageNoTex()
 	return (getEditorImage() == GetTextureManager().getShaderNotFound());
 }
 
-// Return the falloff texture name
-std::string CShader::getFalloffName() const {
-	return _template->getLightFalloff()->getIdentifier();
+IMapExpression::Ptr CShader::getLightFalloffExpression()
+{
+	return _template->getLightFalloff();
+}
+
+IMapExpression::Ptr CShader::getLightFalloffCubeMapExpression()
+{
+	return _template->getLightFalloffCubeMap();
 }
 
 /*
@@ -165,6 +170,16 @@ Material::DeformType CShader::getDeformType() const
 	return _template->getDeformType();
 }
 
+IShaderExpressionPtr CShader::getDeformExpression(std::size_t index)
+{
+    return _template->getDeformExpression(index);
+}
+
+std::string CShader::getDeformDeclName()
+{
+    return _template->getDeformDeclName();
+}
+
 int CShader::getSpectrum() const
 {
 	return _template->getSpectrum();
@@ -194,6 +209,26 @@ const vfs::FileInfo& CShader::getShaderFileInfo() const
 std::string CShader::getDefinition()
 {
 	return _template->getBlockContents();
+}
+
+int CShader::getParseFlags() const
+{
+    return _template->getParseFlags();
+}
+
+std::string CShader::getRenderBumpArguments()
+{
+    return _template->getRenderBumpArguments();
+}
+
+std::string CShader::getRenderBumpFlatArguments()
+{
+    return _template->getRenderBumpFlagArguments();
+}
+
+const std::string& CShader::getGuiSurfArgument()
+{
+    return _template->getGuiSurfArgument();
 }
 
 // -----------------------------------------
@@ -258,6 +293,11 @@ bool CShader::isBlendLight() const {
 
 bool CShader::isFogLight() const {
 	return _template->isFogLight();
+}
+
+bool CShader::isCubicLight() const
+{
+    return _template->isCubicLight();
 }
 
 bool CShader::lightCastsShadows() const

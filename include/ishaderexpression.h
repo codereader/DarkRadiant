@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include "iimage.h"
 
 class IRenderEntity;
 
@@ -66,7 +67,56 @@ public:
 	 * @returns: the register position the result will be written to.
 	 */
 	virtual std::size_t linkToRegister(Registers& registers) = 0;
+
+    // Returns the string this expression has been parsed from
+    virtual std::string getExpressionString() = 0;
 };
 typedef std::shared_ptr<IShaderExpression> IShaderExpressionPtr;
+
+// Interface of a material expression used to specify a map image
+// It can either represent a texture path to a file on disk or
+// a generated texture like "makeIntensity(lights/intensitymap)"
+class IMapExpression
+{
+public:
+    using Ptr = std::shared_ptr<IMapExpression>;
+
+    virtual ~IMapExpression() {}
+
+    /**
+     * \brief
+     * Return whether this map expression creates a cube map.
+     *
+     * \return
+     * true if this map expression creates a cube map, false if it is a single
+     * image.
+     */
+    virtual bool isCubeMap() const = 0;
+
+    /**
+     * Returns the string as parsed from the material source
+     */
+    virtual std::string getExpressionString() = 0;
+};
+
+class IVideoMapExpression :
+    public IMapExpression
+{
+public:
+    virtual ~IVideoMapExpression() {}
+
+    // Whether the cinematic is looping
+    virtual bool isLooping() const = 0;
+};
+
+class ISoundMapExpression :
+    public IMapExpression
+{
+public:
+    virtual ~ISoundMapExpression() {}
+
+    // Whether the sound map should use the waveform display mode
+    virtual bool isWaveform() const = 0;
+};
 
 } // namespace

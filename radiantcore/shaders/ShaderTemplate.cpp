@@ -2,6 +2,9 @@
 #include "MapExpression.h"
 #include "CameraCubeMapDecl.h"
 
+#include "VideoMapExpression.h"
+#include "SoundMapExpression.h"
+
 #include "itextstream.h"
 
 #include "os/path.h"
@@ -13,6 +16,7 @@
 #include <iostream>
 
 #include "ShaderExpression.h"
+#include "materials/ParseLib.h"
 
 namespace shaders
 {
@@ -73,10 +77,40 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
     }
     else if (token == "decal_macro")
 	{
-        _materialFlags |= Material::FLAG_TRANSLUCENT;
+        _parseFlags |= Material::PF_HasDecalMacro;
+
+        _materialFlags |= Material::FLAG_TRANSLUCENT|Material::FLAG_NOSHADOWS;
         _sortReq = Material::SORT_DECAL;
         _polygonOffset = 1.0f;
-		_surfaceFlags |= Material::SURF_DISCRETE;
+		_surfaceFlags |= Material::SURF_DISCRETE | Material::SURF_NONSOLID;
+    }
+    else if (token == "twosided_decal_macro")
+    {
+        _parseFlags |= Material::PF_HasTwoSidedDecalMacro;
+
+        _materialFlags |= Material::FLAG_TRANSLUCENT | Material::FLAG_NOSHADOWS | Material::FLAG_NOSELFSHADOW;
+        _sortReq = Material::SORT_DECAL;
+        _polygonOffset = 1.0f;
+        _surfaceFlags |= Material::SURF_DISCRETE | Material::SURF_NOIMPACT | Material::SURF_NONSOLID;
+        _cullType = Material::CULL_NONE;
+
+        _coverage = Material::MC_TRANSLUCENT;
+    }
+    else if (token == "particle_macro")
+    {
+        _parseFlags |= Material::PF_HasParticleMacro;
+
+        _materialFlags |= Material::FLAG_NOSHADOWS | Material::FLAG_NOSELFSHADOW;
+        _surfaceFlags |= Material::SURF_DISCRETE | Material::SURF_NOIMPACT | Material::SURF_NONSOLID;
+        _coverage = Material::MC_TRANSLUCENT;
+    }
+    else if (token == "glass_macro")
+    {
+        _parseFlags |= Material::PF_HasGlassMacro;
+
+        _cullType = Material::CULL_NONE;
+        _materialFlags |= Material::FLAG_NOSHADOWS | Material::FLAG_NOSELFSHADOW;
+        _coverage = Material::MC_TRANSLUCENT;
     }
     else if (token == "twosided")
 	{
@@ -93,7 +127,26 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
     }
 	else if (token == "polygonoffset")
 	{
-		_polygonOffset = string::convert<float>(tokeniser.nextToken(), 0);
+        _materialFlags |= Material::FLAG_POLYGONOFFSET;
+
+        // The value argument is optional, try to parse the next token
+        if (tokeniser.hasMoreTokens())
+        {
+            try
+            {
+                _polygonOffset = std::stof(tokeniser.peek());
+                // success, exhaust the token
+                tokeniser.skipTokens(1);
+            }
+            catch (const std::logic_error&) // logic_error is base of invalid_argument out_of_range exceptions
+            {
+                _polygonOffset = 1.0f;
+            }
+        }
+        else
+        {
+            _polygonOffset = 1.0f;
+        }
 	}
 	else if (token == "clamp")
 	{
@@ -109,55 +162,25 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
 	}
 	else if (token == "sort")
 	{
-		std::string sortVal = tokeniser.nextToken();
+        _parseFlags |= Material::PF_HasSortDefined;
 
-		if (sortVal == "opaque")
-		{
-			_sortReq = Material::SORT_OPAQUE;
-		}
-		else if (sortVal == "decal")
-		{
-			_sortReq = Material::SORT_DECAL;
-		}
-		else if (sortVal == "portalSky")
-		{
-			_sortReq = Material::SORT_PORTAL_SKY;
-		}
-		else if (sortVal == "subview")
-		{
-			_sortReq = Material::SORT_SUBVIEW;
-		}
-		else if (sortVal == "far")
-		{
-			_sortReq = Material::SORT_FAR;
-		}
-		else if (sortVal == "medium")
-		{
-			_sortReq = Material::SORT_MEDIUM;
-		}
-		else if (sortVal == "close")
-		{
-			_sortReq = Material::SORT_CLOSE;
-		}
-		else if (sortVal == "almostNearest")
-		{
-			_sortReq = Material::SORT_ALMOST_NEAREST;
-		}
-		else if (sortVal == "nearest")
-		{
-			_sortReq = Material::SORT_NEAREST;
-		}
-		else if (sortVal == "postProcess")
-		{
-			_sortReq = Material::SORT_POST_PROCESS;
-		}
-		else // no special sort keyword, try to parse the numeric value
-		{
-			//  Strip any quotes
-			string::trim(sortVal, "\"");
+		auto sortVal = tokeniser.nextToken();
+        string::to_lower(sortVal);
 
-			_sortReq = string::convert<int>(sortVal, SORT_UNDEFINED); // fall back to UNDEFINED in case of parsing failures
-		}
+        for (const auto& predefinedSortValue : shaders::PredefinedSortValues)
+        {
+            if (sortVal == predefinedSortValue.first)
+            {
+                _sortReq = predefinedSortValue.second;
+                return true;
+            }
+        }
+
+		// no special sort keyword, try to parse the numeric value
+		//  Strip any quotes
+		string::trim(sortVal, "\"");
+
+		_sortReq = string::convert<int>(sortVal, SORT_UNDEFINED); // fall back to UNDEFINED in case of parsing failures
 	}
 	else if (token == "noshadows")
 	{
@@ -203,6 +226,8 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
 	}
 	else if (token == "decalinfo")
 	{
+        _parseFlags |= Material::PF_HasDecalInfo;
+
 		// Syntax: decalInfo <staySeconds> <fadeSeconds> [start rgb] [end rgb]
 		// Example: decalInfo 10 5 ( 1 1 1 1 ) ( 0 0 0 0 )
 		_decalInfo.stayMilliSeconds = static_cast<int>(string::convert<float>(tokeniser.nextToken()) * 1000);
@@ -245,29 +270,29 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
 		{
 			_deformType = Material::DEFORM_FLARE;
 
-			parseSingleExpressionTerm(tokeniser); // skip size info
+            _deformExpressions.emplace_back(parseSingleExpressionTerm(tokeniser)); // skip size info
 		}
 		else if (type == "expand")
 		{
 			_deformType = Material::DEFORM_EXPAND;
 
-			parseSingleExpressionTerm(tokeniser); // skip amount
+            _deformExpressions.emplace_back(parseSingleExpressionTerm(tokeniser)); // skip amount
 		}
 		else if (type == "move")
 		{
 			_deformType = Material::DEFORM_MOVE;
 
-			parseSingleExpressionTerm(tokeniser); // skip amount
+            _deformExpressions.emplace_back(parseSingleExpressionTerm(tokeniser)); // skip amount
 		}
 		else if (type == "turbulent")
 		{
 			_deformType = Material::DEFORM_TURBULENT;
 
-			tokeniser.skipTokens(1); // skip table name
+            _deformDeclName = tokeniser.nextToken(); // table name
 
-			parseSingleExpressionTerm(tokeniser); // range
-			parseSingleExpressionTerm(tokeniser); // timeoffset
-			parseSingleExpressionTerm(tokeniser); // domain
+			_deformExpressions.emplace_back(parseSingleExpressionTerm(tokeniser)); // range
+			_deformExpressions.emplace_back(parseSingleExpressionTerm(tokeniser)); // timeoffset
+            _deformExpressions.emplace_back(parseSingleExpressionTerm(tokeniser)); // domain
 		}
 		else if (type == "eyeball")
 		{
@@ -276,14 +301,12 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
 		else if (type == "particle")
 		{
 			_deformType = Material::DEFORM_PARTICLE;
-
-			tokeniser.skipTokens(1); // skip particle name
+            _deformDeclName = tokeniser.nextToken();
 		}
 		else if (type == "particle2")
 		{
 			_deformType = Material::DEFORM_PARTICLE2;
-
-			tokeniser.skipTokens(1); // skip particle name
+            _deformDeclName = tokeniser.nextToken();
 		}
 	}
 	else if (token == "renderbump")
@@ -298,23 +321,33 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
 		{
 			if (next == "-size")
 			{
-				tokeniser.skipTokens(2); // skip width, height
+                // Store -size argument in the command arguments
+                _renderBumpArguments += !_renderBumpArguments.empty() ? " " : "";
+                auto width = tokeniser.nextToken();
+                auto height = tokeniser.nextToken();
+                _renderBumpArguments += fmt::format("{0} {1} {2}", next, width, height);
 			}
 			else if (next == "-aa")
 			{
-				tokeniser.skipTokens(1);
+                // Store -aa argument in the command arguments
+                _renderBumpArguments += !_renderBumpArguments.empty() ? " " : "";
+                _renderBumpArguments += fmt::format("{0} {1}", next, tokeniser.nextToken());
 			}
 			else if (next == "-trace")
 			{
-				tokeniser.skipTokens(1);
+                // Store -trace argument in the command arguments
+                _renderBumpArguments += !_renderBumpArguments.empty() ? " " : "";
+                _renderBumpArguments += fmt::format("{0} {1}", next, tokeniser.nextToken());
 			}
 
 			next = tokeniser.nextToken();
 			string::to_lower(next);
 		}
 
-		// The map token is already loaded in "next", skip the highpoly model name
-		tokeniser.skipTokens(1);
+		// The map token is already loaded in "next", add the highpoly model name
+        _renderBumpArguments += !_renderBumpArguments.empty() ? " " : "";
+        _renderBumpArguments += fmt::format("{0} {1}", next, tokeniser.nextToken());
+        string::trim(_renderBumpArguments);
 	}
 	else if (token == "renderbumpflat")
 	{
@@ -326,9 +359,42 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
 		// Skip over the optional args
 		if (next == "-size")
 		{
-			tokeniser.skipTokens(3); // skip width, height and model
+            auto width = tokeniser.nextToken();
+            auto height = tokeniser.nextToken();
+            _renderBumpFlatArguments += fmt::format("{0} {1} {2}", next, width, height);
+
+            next = tokeniser.nextToken();
 		}
+
+        // The highpoly model token is already loaded in "next"
+        _renderBumpFlatArguments += !_renderBumpFlatArguments.empty() ? " " : "";
+        _renderBumpFlatArguments += next;
+        string::trim(_renderBumpFlatArguments);
 	}
+    else if (token == "ambientrimcolor")
+    {
+        _parseFlags |= Material::PF_HasAmbientRimColour;
+
+        // ambientRimColor <exp0>, <exp1>, <exp2>
+        auto red = ShaderExpression::createFromTokens(tokeniser);
+        tokeniser.assertNextToken(",");
+        auto green = ShaderExpression::createFromTokens(tokeniser);
+        tokeniser.assertNextToken(",");
+        auto blue = ShaderExpression::createFromTokens(tokeniser);
+
+        if (red && green && blue)
+        {
+            // ambientrimcolor support not yet added, we need material registers first
+        }
+        else
+        {
+            rWarning() << "Could not parse ambientRimColor expressions in shader: " << getName() << std::endl;
+        }
+    }
+    else if (token == "islightgemsurf")
+    {
+        _materialFlags |= Material::FLAG_ISLIGHTGEMSURF;
+    }
 	else
 	{
 		return false; // unrecognised token, return false
@@ -353,12 +419,27 @@ bool ShaderTemplate::parseLightKeywords(parser::DefTokeniser& tokeniser, const s
 	{
         fogLight = true;
     }
+    else if (token == "cubliclight")
+    {
+        _cubicLight = true;
+    }
+    else if (token == "ambientcubiclight")
+    {
+        ambientLight = true;
+        _cubicLight = true;
+    }
     else if (!fogLight && token == "lightfalloffimage")
 	{
         _lightFalloff = MapExpression::createForToken(tokeniser);
     }
+    else if (token == "lightfalloffcubemap")
+    {
+        _lightFalloffCubeMap = MapExpression::createForToken(tokeniser);
+    }
 	else if (token == "spectrum")
 	{
+        _parseFlags |= Material::PF_HasSpectrum;
+
 		std::string value = tokeniser.nextToken();
 
 		try
@@ -467,6 +548,7 @@ bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
         _currentLayer->setBindableTexture(
             MapExpression::createForToken(tokeniser)
         );
+        _currentLayer->setMapType(ShaderLayer::MapType::Map);
     }
     else if (token == "cameracubemap")
     {
@@ -474,11 +556,13 @@ bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
         _currentLayer->setBindableTexture(
             CameraCubeMapDecl::createForPrefix(cubeMapPrefix)
         );
+        _currentLayer->setMapType(ShaderLayer::MapType::CameraCubeMap);
         _currentLayer->setCubeMapMode(ShaderLayer::CUBE_MAP_CAMERA);
     }
 	else if (token == "texgen")
 	{
 		std::string type = tokeniser.nextToken();
+        _currentLayer->setParseFlag(ShaderLayer::PF_HasTexGenKeyword);
 
 		if (type == "skybox")
 		{
@@ -496,45 +580,42 @@ bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
 		{
 			_currentLayer->setTexGenType(ShaderLayer::TEXGEN_WOBBLESKY);
 
-			// Parse the 3 wobblesky parameters
-			// greebo: The D3 SDK says that registers could be used here (to support expressions), 
-			// but no D3 material uses an expression for the texgen parameters
-			for (std::size_t i = 0; i < 3; ++i)
-			{
-				_currentLayer->setTexGenParam(i, string::convert<float>(tokeniser.nextToken()));
-			}
+			// Parse the 3 wobblesky expressions
+            _currentLayer->setTexGenExpression(0, parseSingleExpressionTerm(tokeniser));
+            _currentLayer->setTexGenExpression(1, parseSingleExpressionTerm(tokeniser));
+            _currentLayer->setTexGenExpression(2, parseSingleExpressionTerm(tokeniser));
 		}
 	}
 	else if (token == "cubemap")
     {
 		// Parse the cubemap expression, but don't do anything with it for now
-		MapExpression::createForToken(tokeniser);
+        _currentLayer->setBindableTexture(MapExpression::createForToken(tokeniser));
+        _currentLayer->setMapType(ShaderLayer::MapType::CubeMap);
+        _currentLayer->setCubeMapMode(ShaderLayer::CUBE_MAP_OBJECT);
     }
 	else if (token == "videomap")
     {
-		std::string nextToken = tokeniser.nextToken();
-		string::to_lower(nextToken);
-
-		if (nextToken == "loop")
-		{
-			// Skip looping keyword and ignore the videomap expression
-			tokeniser.skipTokens(1);
-		}
+        _currentLayer->setMapType(ShaderLayer::MapType::VideoMap);
+        _currentLayer->setBindableTexture(
+            VideoMapExpression::CreateForTokens(tokeniser)
+        );
     }
 	else if (token == "soundmap")
 	{
-		// This stage should render as sound meter/map - skip this information for now
-		if (tokeniser.peek() == "waveform")
-		{
-			tokeniser.skipTokens(1);
-		}
+        _currentLayer->setMapType(ShaderLayer::MapType::SoundMap);
+        _currentLayer->setBindableTexture(
+            SoundMapExpression::CreateForTokens(tokeniser)
+        );
 	}
 	else if (token == "remoterendermap")
 	{
+        _currentLayer->setMapType(ShaderLayer::MapType::RemoteRenderMap);
+
 		try
 		{
-			std::stoi(tokeniser.nextToken());
-			std::stoi(tokeniser.nextToken());
+			auto width = std::stoi(tokeniser.nextToken());
+            auto height = std::stoi(tokeniser.nextToken());
+            _currentLayer->setRenderMapSize(Vector2(width, height));
 		}
 		catch (std::logic_error& e)
 		{
@@ -544,10 +625,14 @@ bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
 	}
 	else if (token == "mirrorrendermap")
 	{
+        _currentLayer->setMapType(ShaderLayer::MapType::MirrorRenderMap);
+        _currentLayer->setTexGenType(ShaderLayer::TexGenType::TEXGEN_SCREEN);
+
 		try
 		{
-			std::stoi(tokeniser.nextToken());
-			std::stoi(tokeniser.nextToken());
+            auto width = std::stoi(tokeniser.nextToken());
+            auto height = std::stoi(tokeniser.nextToken());
+            _currentLayer->setRenderMapSize(Vector2(width, height));
 		}
 		catch (std::invalid_argument& e)
 		{
@@ -696,54 +781,38 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 	}
 	else if (token == "vertexparm")
 	{
+        ShaderLayer::VertexParm parm;
+
 		// vertexParm		<parmNum>		<parm1> [,<parm2>] [,<parm3>] [,<parm4>]
-		int parmNum = string::convert<int>(tokeniser.nextToken());
+		parm.index = string::convert<int>(tokeniser.nextToken());
 
-		IShaderExpressionPtr parm0 = ShaderExpression::createFromTokens(tokeniser);
+        if (parm.index < 0 || parm.index >= NUM_MAX_VERTEX_PARMS)
+        {
+            throw parser::ParseException(fmt::format("A material stage can have {0} vertex parameters at most", NUM_MAX_VERTEX_PARMS));
+        }
 
-		if (tokeniser.peek() == ",")
-		{
-			tokeniser.nextToken();
+        parm.expressions[0] = ShaderExpression::createFromTokens(tokeniser);
 
-			IShaderExpressionPtr parm1 = ShaderExpression::createFromTokens(tokeniser);
+        for (int i = 1; i < 4 && tokeniser.peek() == ","; ++i)
+        {
+            tokeniser.nextToken();
 
-			if (tokeniser.peek() == ",")
-			{
-				tokeniser.nextToken();
+            parm.expressions[i] = ShaderExpression::createFromTokens(tokeniser);
+        }
 
-				IShaderExpressionPtr parm2 = ShaderExpression::createFromTokens(tokeniser);
-
-				if (tokeniser.peek() == ",")
-				{
-					tokeniser.nextToken();
-
-					IShaderExpressionPtr parm3 = ShaderExpression::createFromTokens(tokeniser);
-
-					// All 4 layers specified
-					_currentLayer->setVertexParm(parmNum, parm0, parm1, parm2, parm3);
-				}
-				else
-				{
-					// Pass NULL as fourth component, it will be set to 1 by the shaderlayer
-					_currentLayer->setVertexParm(parmNum, parm0, parm1, parm2);
-				}
-			}
-			else
-			{
-				// Pass NULL as components z and w, the shaderlayer will set z and w to 0, 1
-				_currentLayer->setVertexParm(parmNum, parm0, parm1);
-			}
-		}
-		else
-		{
-			// Pass only one component, the shaderlayer will repeat the first parm 4 times
-			_currentLayer->setVertexParm(parmNum, parm0);
-		}
+        _currentLayer->addVertexParm(parm);
 	}
 	else if (token == "fragmentmap")
 	{
+        ShaderLayer::FragmentMap map;
+
 		// fragmentMap <index> [options] <map>
-		int mapNum = string::convert<int>(tokeniser.nextToken());
+        map.index = string::convert<int>(tokeniser.nextToken());
+
+        if (map.index < 0 || map.index >= NUM_MAX_FRAGMENT_MAPS)
+        {
+            throw parser::ParseException(fmt::format("A material stage can have {0} fragment maps at most", NUM_MAX_FRAGMENT_MAPS));
+        }
 
 		std::string next = tokeniser.peek();
 		string::to_lower(next);
@@ -754,14 +823,16 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 			next == "zeroclamp" || next == "alphazeroclamp" || next == "forcehighquality" ||
 			next == "uncompressed" || next == "highquality" || next == "nopicmip")
 		{
-			tokeniser.nextToken();
+            map.options.emplace_back(tokeniser.nextToken());
 
 			next = tokeniser.peek();
 			string::to_lower(next);
 		}
 
-		// Get the map expression (but don't really use it)
-		_currentLayer->setFragmentMap(mapNum, MapExpression::createForToken(tokeniser));
+		// Get the map expression and add the fragment map to the stage
+        map.map = MapExpression::createForToken(tokeniser);
+
+		_currentLayer->addFragmentMap(map);
 	}
     else if (token == "alphatest")
     {
@@ -859,6 +930,7 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 	}
 	else if (token == "colored")
 	{
+        _currentLayer->setParseFlag(ShaderLayer::PF_HasColoredKeyword);
 		_currentLayer->setColourExpression(Doom3ShaderLayer::COMP_RED, ShaderExpression::createFromString("parm0"));
 		_currentLayer->setColourExpression(Doom3ShaderLayer::COMP_GREEN, ShaderExpression::createFromString("parm1"));
 		_currentLayer->setColourExpression(Doom3ShaderLayer::COMP_BLUE, ShaderExpression::createFromString("parm2"));
@@ -879,6 +951,7 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 	else if (token == "noclamp")
 	{
 		_currentLayer->setClampType(CLAMP_REPEAT);
+        _currentLayer->setParseFlag(ShaderLayer::PF_HasNoclampKeyword);
 	}
 	else if (token == "uncompressed" || token == "highquality")
 	{
@@ -918,6 +991,10 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 	{
 		_currentLayer->setStageFlag(ShaderLayer::FLAG_MASK_DEPTH);
 	}
+    else if (token == "ignoredepth")
+    {
+        _currentLayer->setStageFlag(ShaderLayer::FLAG_IGNORE_DEPTH);
+    }
 	else if (token == "privatepolygonoffset")
 	{
 		_currentLayer->setPrivatePolygonOffset(string::convert<float>(tokeniser.nextToken()));
@@ -936,6 +1013,20 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 	}
 
 	return true;
+}
+
+bool ShaderTemplate::parseMaterialType(parser::DefTokeniser& tokeniser, const std::string& token)
+{
+    for (const auto& pair : SurfaceTypeMapping)
+    {
+        if (token == pair.first)
+        {
+            _surfaceType = pair.second;
+            return true;
+        }
+    }
+
+    return false;
 }
 
 bool ShaderTemplate::parseSurfaceFlags(parser::DefTokeniser& tokeniser,
@@ -1033,71 +1124,29 @@ bool ShaderTemplate::parseSurfaceFlags(parser::DefTokeniser& tokeniser,
     {
         _surfaceFlags |= Material::SURF_NOSTEPS;
     }
-	else if (token == "metal")
-    {
-		_surfaceType = Material::SURFTYPE_METAL;
-    }
-	else if (token == "stone")
-    {
-        _surfaceType = Material::SURFTYPE_STONE;
-    }
-	else if (token == "flesh")
-    {
-        _surfaceType = Material::SURFTYPE_FLESH;
-    }
-	else if (token == "wood")
-    {
-        _surfaceType = Material::SURFTYPE_WOOD;
-    }
-	else if (token == "cardboard")
-    {
-        _surfaceType = Material::SURFTYPE_CARDBOARD;
-    }
-	else if (token == "liquid")
-    {
-        _surfaceType = Material::SURFTYPE_LIQUID;
-    }
-	else if (token == "glass")
-    {
-        _surfaceType = Material::SURFTYPE_GLASS;
-    }
-	else if (token == "plastic")
-    {
-        _surfaceType = Material::SURFTYPE_PLASTIC;
-    }
-	else if (token == "ricochet")
-    {
-        _surfaceType = Material::SURFTYPE_RICOCHET;
-    }
-	else if (token == "surftype10")
-    {
-        _surfaceType = Material::SURFTYPE_10;
-    }
-	else if (token == "surftype11")
-    {
-        _surfaceType = Material::SURFTYPE_11;
-    }
-	else if (token == "surftype12")
-    {
-        _surfaceType = Material::SURFTYPE_12;
-    }
-	else if (token == "surftype13")
-    {
-        _surfaceType = Material::SURFTYPE_13;
-    }
-	else if (token == "surftype14")
-    {
-        _surfaceType = Material::SURFTYPE_14;
-    }
-	else if (token == "surftype15")
-    {
-        _surfaceType = Material::SURFTYPE_15;
-    }
 	else if (token == "guisurf")
 	{
-		_surfaceFlags |= Material::SURF_ENTITYGUI;
-		// Something like "guisurf blah.gui" or "guisurf entity2", skip the argument and proceed
-		tokeniser.skipTokens(1);
+		// "guisurf blah.gui" or "guisurf entity[2|3]"
+		_surfaceFlags |= Material::SURF_GUISURF;
+
+        auto argument = tokeniser.nextToken();
+
+        if (string::to_lower_copy(argument) == "entity")
+        {
+            _surfaceFlags |= Material::SURF_ENTITYGUI;
+        }
+        else if (string::to_lower_copy(argument) == "entity2")
+        {
+            _surfaceFlags |= Material::SURF_ENTITYGUI2;
+        }
+        else if (string::to_lower_copy(argument) == "entity3")
+        {
+            _surfaceFlags |= Material::SURF_ENTITYGUI3;
+        }
+        else
+        {
+            _guiDeclName = argument;
+        }
 	}
 	else
 	{
@@ -1129,7 +1178,10 @@ bool ShaderTemplate::parseCondition(parser::DefTokeniser& tokeniser, const std::
 bool ShaderTemplate::saveLayer()
 {
     // Append layer to list of all layers
-    if (_currentLayer->getBindableTexture())
+    if (_currentLayer->getBindableTexture() || 
+        _currentLayer->getMapType() == ShaderLayer::MapType::RemoteRenderMap ||
+        _currentLayer->getMapType() == ShaderLayer::MapType::MirrorRenderMap ||
+        !_currentLayer->getVertexProgram().empty() || !_currentLayer->getFragmentProgram().empty())
     {
 		addLayer(_currentLayer);
     }
@@ -1184,6 +1236,7 @@ void ShaderTemplate::parseDefinition()
                         if (parseLightKeywords(tokeniser, token)) continue;
                         if (parseBlendShortcuts(tokeniser, token)) continue;
 						if (parseSurfaceFlags(tokeniser, token)) continue;
+						if (parseMaterialType(tokeniser, token)) continue;
 
 						rWarning() << "Material keyword not recognised: " << token << std::endl;
 
@@ -1314,6 +1367,27 @@ bool ShaderTemplate::hasDiffusemap()
     }
 
 	return false; // no diffuse found
+}
+
+int ShaderTemplate::getParseFlags()
+{
+    if (!_parsed) parseDefinition();
+
+    return _parseFlags;
+}
+
+std::string ShaderTemplate::getRenderBumpArguments()
+{
+    if (!_parsed) parseDefinition();
+
+    return _renderBumpArguments;
+}
+
+std::string ShaderTemplate::getRenderBumpFlagArguments()
+{
+    if (!_parsed) parseDefinition();
+
+    return _renderBumpFlatArguments;
 }
 
 } // namespace

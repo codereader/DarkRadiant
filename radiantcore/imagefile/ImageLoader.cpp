@@ -54,8 +54,13 @@ ImageLoader::ImageLoader()
 }
 
 // Load image from VFS
-ImagePtr ImageLoader::imageFromVFS(const std::string& name) const
+ImagePtr ImageLoader::imageFromVFS(const std::string& rawName) const
 {
+    // Replace backslashes with forward slashes and strip of
+    // the file extension of the provided token, and store
+    // the result in the provided string.
+    auto name  = os::standardPath(rawName).substr(0, rawName.rfind("."));
+
 	for (const auto& extension : _extensions)
 	{
         // Find the loader for this extension
