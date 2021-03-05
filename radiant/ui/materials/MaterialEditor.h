@@ -7,7 +7,7 @@
 #include "wxutil/WindowPosition.h"
 #include "wxutil/PanedPosition.h"
 #include "wxutil/XmlResourceBasedWidget.h"
-#include "wxutil/preview/ModelPreview.h"
+#include "MaterialPreview.h"
 #include "wxutil/SourceView.h"
 
 #include "ui/common/MaterialTreeView.h"
@@ -29,7 +29,7 @@ private:
     wxutil::WindowPosition _windowPosition;
     wxutil::PanedPosition _panedPosition;
 
-    std::shared_ptr<wxutil::ModelPreview> _preview;
+    std::unique_ptr<MaterialPreview> _preview;
     wxutil::D3MaterialSourceViewCtrl* _sourceView;
 
     MaterialPtr _material;

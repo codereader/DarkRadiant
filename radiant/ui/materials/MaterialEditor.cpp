@@ -82,7 +82,7 @@ MaterialEditor::MaterialEditor() :
 
     // Set up the preview
     auto* previewPanel = getControl<wxPanel>("MaterialEditorPreviewPanel");
-    _preview.reset(new wxutil::ModelPreview(previewPanel));
+    _preview.reset(new MaterialPreview(previewPanel));
 
     _sourceView = new wxutil::D3MaterialSourceViewCtrl(previewPanel);
 
@@ -486,6 +486,8 @@ void MaterialEditor::_onStageListSelectionChanged(wxDataViewEvent& ev)
 
 void MaterialEditor::updateControlsFromMaterial()
 {
+    _preview->setMaterial(_material);
+
     updateMaterialPropertiesFromMaterial();
     updateStageListFromMaterial();
 }

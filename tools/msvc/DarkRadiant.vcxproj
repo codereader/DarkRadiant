@@ -267,6 +267,7 @@
     <ClCompile Include="..\..\radiant\ui\mapselector\MapSelector.cpp" />
     <ClCompile Include="..\..\radiant\ui\materials\MaterialEditor.cpp" />
     <ClCompile Include="..\..\radiant\ui\materials\MaterialEditorModule.cpp" />
+    <ClCompile Include="..\..\radiant\ui\materials\MaterialPreview.cpp" />
     <ClCompile Include="..\..\radiant\ui\mediabrowser\MediaBrowserTreeView.cpp" />
     <ClCompile Include="..\..\radiant\ui\menu\MenuBar.cpp" />
     <ClCompile Include="..\..\radiant\ui\menu\MenuElement.cpp" />
@@ -461,6 +462,7 @@
     <ClInclude Include="..\..\radiant\ui\materials\Binding.h" />
     <ClInclude Include="..\..\radiant\ui\materials\ExpressionBinding.h" />
     <ClInclude Include="..\..\radiant\ui\materials\MaterialEditor.h" />
+    <ClInclude Include="..\..\radiant\ui\materials\MaterialPreview.h" />
     <ClInclude Include="..\..\radiant\ui\mediabrowser\MediaBrowserTreeView.h" />
     <ClInclude Include="..\..\radiant\ui\menu\MenuBar.h" />
     <ClInclude Include="..\..\radiant\ui\menu\MenuElement.h" />

@@ -105,6 +105,7 @@ add_executable(darkradiant
                ui/mapselector/MapSelector.cpp
                ui/materials/MaterialEditor.cpp
                ui/materials/MaterialEditorModule.cpp
+               ui/materials/MaterialPreview.cpp
                ui/animationpreview/AnimationPreview.cpp
                ui/animationpreview/MD5AnimationChooser.cpp
                ui/animationpreview/MD5AnimationViewer.cpp
