@@ -1,5 +1,6 @@
 #include "MaterialEditor.h"
 
+#include "i18n.h"
 #include "imodule.h"
 #include "icommandsystem.h"
 #include "itextstream.h"

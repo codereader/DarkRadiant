@@ -1,5 +1,6 @@
 #include "MaterialPopulator.h"
 
+#include <map>
 #include "ifavourites.h"
 #include "i18n.h"
 #include "ishaders.h"

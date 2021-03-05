@@ -10,6 +10,10 @@
 #include <wx/spinctrl.h>
 #include <wx/combo.h>
 #include <wx/dataview.h>
+#include <wx/button.h>
+#include <wx/choice.h>
+#include <wx/combobox.h>
+#include <wx/radiobut.h>
 
 #include "wxutil/SourceView.h"
 #include "fmt/format.h"
@@ -352,23 +356,33 @@ void MaterialEditor::setupMaterialStageProperties()
         return layer->hasAlphaTest();
     }));
 
-    getControl<wxChoice>("MaterialStageBlendType")->Append(std::vector<wxString>({
+    for (const auto& value : {
         "diffusemap", "bumpmap", "specularmap", "blend", "add", "filter", "modulate", "none", "Custom"
-    }));
+    })
+    {
+        getControl<wxChoice>("MaterialStageBlendType")->Append(value);
+    }
    
-    getControl<wxChoice>("MaterialStageBlendTypeSrc")->Append(std::vector<wxString>({
+   for (const auto& value : {
         "", "gl_one", "gl_zero", "gl_dst_color", "gl_one_minus_dst_color", "gl_src_alpha", 
         "gl_one_minus_src_alpha", "gl_dst_alpha", "gl_one_minus_dst_alpha", "gl_src_alpha_saturate"
-    }));
+    })
+    {
+        getControl<wxChoice>("MaterialStageBlendTypeSrc")->Append(value);
+    }
 
-    getControl<wxChoice>("MaterialStageBlendTypeDest")->Append(std::vector<wxString>({
+    for (const auto& value : {
         "", "gl_one", "gl_zero", "gl_src_color", "gl_one_minus_src_color", "gl_src_alpha", 
         "gl_one_minus_src_alpha", "gl_dst_alpha", "gl_one_minus_dst_alpha"
-    }));
+    })
+    {
+        getControl<wxChoice>("MaterialStageBlendTypeDest")->Append(value);
+    } 
 
-    getControl<wxChoice>("MaterialStageMapType")->Append(std::vector<wxString>({ 
-        "map", "cubeMap", "cameraCubeMap", "Special"
-    }));
+    for (const auto& value : { "map", "cubeMap", "cameraCubeMap", "Special" })
+    {
+        getControl<wxChoice>("MaterialStageMapType")->Append(value);
+    }
 
     // Texture
     _stageBindings.emplace(std::make_shared<CheckBoxBinding<ShaderLayerPtr>>(getControl<wxCheckBox>("MaterialStageClamp"),

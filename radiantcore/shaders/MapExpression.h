@@ -4,6 +4,7 @@
 
 #include <memory>
 
+#include "ishaderexpression.h"
 #include "NamedBindable.h"
 #include "parser/DefTokeniser.h"
 
