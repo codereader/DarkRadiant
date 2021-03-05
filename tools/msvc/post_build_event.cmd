@@ -22,6 +22,7 @@ copy ..\..\w32deps\wxWidgets\bin\wxbase313%WXLIB_SUFFIX%_vc*.dll	   ..\..\instal
 copy ..\..\w32deps\wxWidgets\bin\wxbase313%WXLIB_SUFFIX%_xml_vc*.dll  ..\..\install /Y
 copy ..\..\w32deps\wxWidgets\bin\wxmsw313%WXLIB_SUFFIX%_adv_vc*.dll   ..\..\install /Y
 copy ..\..\w32deps\wxWidgets\bin\wxmsw313%WXLIB_SUFFIX%_core_vc*.dll  ..\..\install /Y
+copy ..\..\w32deps\wxWidgets\bin\wxmsw313%WXLIB_SUFFIX%_aui_vc*.dll  ..\..\install /Y
 
 IF "%1" == "Debug" (SET DEBUG_SUFFIX=-d) ELSE (SET DEBUG_SUFFIX=)
 
