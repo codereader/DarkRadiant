@@ -455,7 +455,7 @@ void MaterialEditor::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
     // Update the preview if a texture is selected
     if (!_treeView->IsDirectorySelected())
     {
-        _material = GlobalMaterialManager().getMaterialForName(_treeView->GetSelectedFullname());
+        _material = GlobalMaterialManager().getMaterial(_treeView->GetSelectedFullname());
     }
     else
     {
