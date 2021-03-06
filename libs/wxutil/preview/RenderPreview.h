@@ -86,6 +86,8 @@ private:
 	bool _renderGrid;
 
 protected:
+    const unsigned int MSEC_PER_FRAME = 16;
+
     // The backend rendersystem instance
     RenderSystemPtr _renderSystem;
 

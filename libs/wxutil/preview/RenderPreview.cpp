@@ -28,7 +28,6 @@ namespace wxutil
 namespace
 {
     const GLfloat PREVIEW_FOV = 60;
-    const unsigned int MSEC_PER_FRAME = 16;
 
     // Widget names
     const std::string BOTTOM_BOX("bottomBox");

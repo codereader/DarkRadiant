@@ -40,7 +40,7 @@ namespace
 MaterialPreview::MaterialPreview(wxWindow* parent) :
     RenderPreview(parent, true),
     _sceneIsReady(false),
-    _defaultCamDistanceFactor(2.8f)
+    _defaultCamDistanceFactor(1.5f)
 {}
 
 const MaterialPtr& MaterialPreview::getMaterial()
@@ -73,20 +73,25 @@ bool MaterialPreview::onPreRender()
         prepareScene();
     }
 
+    // Update the rotation of the func_static
+    if (_brush)
+    {
+        // angle change is constant over time, one full rotation per 10 seconds
+        auto newAngle = 2 * c_pi * MSEC_PER_FRAME / 10000;
+        auto rotation = Quaternion::createForAxisAngle(Vector3(0, 0, 1), newAngle);
+
+        auto transformable = Node_getTransformable(_brush);
+
+        transformable->setRotation(rotation);
+        transformable->freezeTransform();
+    }
+
     return RenderPreview::onPreRender();
 }
 
 void MaterialPreview::prepareScene()
 {
     _sceneIsReady = true;
-
-    if (!_brush) return;
-
-    // Reset the default view, facing down to the model from diagonally above the bounding box
-    double distance = _brush->localAABB().getRadius() * _defaultCamDistanceFactor;
-
-    setViewOrigin(Vector3(1, 1, 1) * distance);
-    setViewAngles(Vector3(34, 135, 0));
 }
 
 bool MaterialPreview::canDrawGrid()
@@ -117,9 +122,15 @@ void MaterialPreview::setupSceneGraph()
             GlobalEntityClassManager().findClass("light"));
 
         Node_getEntity(_light)->setKeyValue("light_radius", "600 600 600");
-        Node_getEntity(_light)->setKeyValue("origin", "0 0 300");
+        Node_getEntity(_light)->setKeyValue("origin", "250 250 250");
 
         _rootNode->addChildNode(_light);
+
+        // Reset the default view, facing down to the model from diagonally above the bounding box
+        double distance = _brush->localAABB().getRadius() * _defaultCamDistanceFactor;
+
+        setViewOrigin(Vector3(1, 1, 1) * distance);
+        setViewAngles(Vector3(34, 135, 0));
     }
     catch (std::runtime_error&)
     {
