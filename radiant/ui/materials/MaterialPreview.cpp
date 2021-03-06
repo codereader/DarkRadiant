@@ -31,8 +31,6 @@ namespace
 
         brush.setShader(material);
 
-        brush.evaluateBRep();
-
         return brushNode;
     }
 }
@@ -76,9 +74,37 @@ bool MaterialPreview::onPreRender()
     // Update the rotation of the func_static
     if (_brush)
     {
-        // angle change is constant over time, one full rotation per 10 seconds
-        auto newAngle = 2 * c_pi * MSEC_PER_FRAME / 10000;
+        auto time = _renderSystem->getTime();
+
+        // one full rotation per 10 seconds
+        auto newAngle = 2 * c_pi * time / 10000;
         auto rotation = Quaternion::createForAxisAngle(Vector3(0, 0, 1), newAngle);
+
+        const auto& planes =
+        {
+            Plane3(+1, 0, 0, 64),
+            Plane3(-1, 0, 0, 64),
+            Plane3(0, +1, 0, 64),
+            Plane3(0, -1, 0, 64),
+            Plane3(0, 0, +1, 64),
+            Plane3(0, 0, -1, 64),
+        };
+
+        auto& brush = *Node_getIBrush(_brush);
+        brush.clear();
+
+        for (const auto& plane : planes)
+        {
+            brush.addFace(plane);
+        }
+
+        brush.evaluateBRep();
+
+        for (auto i = 0; i < brush.getNumFaces(); ++i)
+        {
+            brush.getFace(i).setShader(_material ? _material->getName() : "");
+            brush.getFace(i).fitTexture(1, 1);
+        }
 
         auto transformable = Node_getTransformable(_brush);
 
