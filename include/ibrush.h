@@ -231,6 +231,9 @@ public:
 	// Add a new face to this brush, using the given plane, texdef matrix and shader name
 	virtual IFace& addFace(const Plane3& plane, const Matrix4& texDef, const std::string& shader) = 0;
 
+    // Removes all faces from this brush
+    virtual void clear() = 0;
+
 	// Returns true when this brush has no faces
 	virtual bool empty() const = 0;
 
