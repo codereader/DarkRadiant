@@ -83,3 +83,4 @@ Makefile.in
 /tools/msvc/x64
 /tools/msvc/packages
 /install/*.testdurations
+*.ilk
