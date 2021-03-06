@@ -8,7 +8,9 @@
     <LibSuffix>-d</LibSuffix>
     <WxWidgetsLibDir>vc14x_x64_dll</WxWidgetsLibDir>
   </PropertyGroup>
-  <PropertyGroup />
+  <PropertyGroup>
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
   <ItemDefinitionGroup>
     <Link />
     <Link />
@@ -18,6 +20,7 @@
     <ClCompile>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <Optimization>Disabled</Optimization>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
