@@ -526,6 +526,8 @@ void OpenGLShader::appendBlendLayer(const ShaderLayerPtr& layer)
 {
     TexturePtr layerTex = layer->getTexture();
 
+    if (!layerTex) return;
+
     OpenGLState& state = appendDefaultPass();
     state.setRenderFlag(RENDER_FILL);
     state.setRenderFlag(RENDER_BLEND);
