@@ -471,15 +471,12 @@ TEST_F(EntityTest, LightWireframeShader)
     auto newWireSh = light->getWireShader();
     ASSERT_TRUE(newWireSh);
 
-    // Get the material for the shader. Since this is a simple built-in
-    // wireframe shader, this should be an internally-constructed material based
-    // on the entity colour. Note that this colour is derived from the entity
-    // *class*, which for "light" is a default green. Actual lights will be
-    // rendered with a colour based on their _color key.
-    auto material = newWireSh->getMaterial();
-    ASSERT_TRUE(material);
-    EXPECT_TRUE(material->IsDefault());
-    EXPECT_EQ(material->getName(), "<0.000000 1.000000 0.000000>");
+    // Get the name for the shader. Since this is a simple built-in wireframe
+    // shader, this should be an internally-constructed name based on the entity
+    // colour. Note that this colour is derived from the entity *class*, which
+    // for "light" is a default green. Actual lights will be rendered with a
+    // colour based on their _color key.
+    EXPECT_EQ(newWireSh->getName(), "<0.000000 1.000000 0.000000>");
 }
 
 TEST_F(EntityTest, LightVolumeColorFromColorKey)
@@ -496,7 +493,8 @@ TEST_F(EntityTest, LightVolumeColorFromColorKey)
         // white, this is the shader we should get for rendering.
         EXPECT_EQ(rf.collector.renderables, 1);
         const Shader* shader = rf.collector.renderablePtrs.at(0).first;
-        EXPECT_EQ(shader->getMaterial()->getName(), "<1.000000 1.000000 1.000000>");
+        ASSERT_TRUE(shader);
+        EXPECT_EQ(shader->getName(), "<1.000000 1.000000 1.000000>");
     }
 
     // Set a different colour on the light
@@ -510,7 +508,8 @@ TEST_F(EntityTest, LightVolumeColorFromColorKey)
         // The shader should have changed to match the new _color
         EXPECT_EQ(rf.collector.renderables, 1);
         const Shader* shader = rf.collector.renderablePtrs.at(0).first;
-        EXPECT_EQ(shader->getMaterial()->getName(), "<0.750000 0.250000 0.100000>");
+        ASSERT_TRUE(shader);
+        EXPECT_EQ(shader->getName(), "<0.750000 0.250000 0.100000>");
     }
 }
 
@@ -531,7 +530,8 @@ TEST_F(EntityTest, OverrideLightVolumeColour)
         // class colour
         EXPECT_EQ(rf.collector.renderables, 1);
         const Shader* shader = rf.collector.renderablePtrs.at(0).first;
-        EXPECT_EQ(shader->getMaterial()->getName(), "<0.000000 1.000000 0.000000>");
+        ASSERT_TRUE(shader);
+        EXPECT_EQ(shader->getName(), "<0.000000 1.000000 0.000000>");
     }
 
     // Unset the override key
@@ -544,7 +544,8 @@ TEST_F(EntityTest, OverrideLightVolumeColour)
         // Light should be rendered with its original _color key again
         EXPECT_EQ(rf.collector.renderables, 1);
         const Shader* shader = rf.collector.renderablePtrs.at(0).first;
-        EXPECT_EQ(shader->getMaterial()->getName(), "<0.250000 0.550000 0.900000>");
+        ASSERT_TRUE(shader);
+        EXPECT_EQ(shader->getName(), "<0.250000 0.550000 0.900000>");
     }
 
     // Changing the override key after deleting the light must not crash

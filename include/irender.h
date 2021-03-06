@@ -397,6 +397,9 @@ public:
 
     virtual ~Shader() {}
 
+    /// Return the name used to construct this shader
+    virtual std::string getName() const = 0;
+
 	/**
      * \brief
 	 * Attach a renderable object to this Shader, which will be rendered using

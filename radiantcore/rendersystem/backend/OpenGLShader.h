@@ -16,7 +16,7 @@ class OpenGLRenderSystem;
 /**
  * Implementation of the Shader class.
  */
-class OpenGLShader : 
+class OpenGLShader :
 	public Shader
 {
     // The state manager we will be inserting/removing OpenGL states from
@@ -25,6 +25,10 @@ class OpenGLShader :
     // List of shader passes for this shader
 	typedef std::list<OpenGLShaderPassPtr> Passes;
 	Passes _shaderPasses;
+
+    // Name used to construct the shader. Currently only used for
+    // tests/debugging.
+    std::string _name;
 
     // The Material corresponding to this OpenGLShader
 	MaterialPtr _material;
@@ -70,7 +74,7 @@ private:
 
     void insertPasses();
     void removePasses();
-    
+
 public:
     /// Construct and initialise
     OpenGLShader(OpenGLRenderSystem& renderSystem);
@@ -79,6 +83,7 @@ public:
     OpenGLRenderSystem& getRenderSystem();
 
     // Shader implementation
+    std::string getName() const override { return _name; }
 	void addRenderable(const OpenGLRenderable& renderable,
 					   const Matrix4& modelview,
 					   const LightSources* lights,
