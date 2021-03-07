@@ -251,6 +251,20 @@ void RenderPreview::setLightingModeEnabled(bool enabled)
         _renderSystem->setShaderProgram(RenderSystem::SHADER_PROGRAM_NONE);
         queueDraw();
     }
+
+    // Synchronise the button state, if necessary
+    auto* toolbar = static_cast<wxToolBar*>(_mainPanel->FindWindow("RenderPreviewRenderModeToolbar"));
+    auto* textureButton = getToolBarToolByLabel(toolbar, "texturedModeButton");
+    auto* lightingButton = getToolBarToolByLabel(toolbar, "lightingModeButton");
+
+    if (!enabled && !textureButton->IsToggled())
+    {
+        toolbar->ToggleTool(textureButton->GetId(), true);
+    }
+    else if (enabled && !lightingButton->IsToggled())
+    {
+        toolbar->ToggleTool(lightingButton->GetId(), true);
+    }
 }
 
 const scene::GraphPtr& RenderPreview::getScene()

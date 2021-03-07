@@ -48,6 +48,8 @@ const MaterialPtr& MaterialPreview::getMaterial()
 
 void MaterialPreview::setMaterial(const MaterialPtr& material)
 {
+    bool hadMaterial = _material != nullptr;
+
     _material = material;
     _sceneIsReady = false;
 
@@ -59,6 +61,16 @@ void MaterialPreview::setMaterial(const MaterialPtr& material)
             brush.getFace(i).setShader(_material ? _material->getName() : "");
             brush.getFace(i).fitTexture(1, 1);
         }
+    }
+
+    if (!hadMaterial && _material)
+    {
+        setLightingModeEnabled(true);
+        startPlayback();
+    }
+    else if (hadMaterial && !_material)
+    {
+        stopPlayback();
     }
 
     queueDraw();
