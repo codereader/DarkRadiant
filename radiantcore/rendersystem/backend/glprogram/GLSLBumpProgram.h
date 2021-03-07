@@ -19,8 +19,7 @@ class GLSLBumpProgram
     int _locViewOrigin;
     int _locLightScale;
     int _locAmbientFactor;
-    int _locVColScale;
-    int _locVColOffset;
+    int _locInvertVCol;
 
     // Program object identifier
     GLuint _programObj;
