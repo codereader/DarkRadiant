@@ -691,7 +691,7 @@ void OpenGLShaderPass::setUpLightingCalculation(OpenGLState& current,
     GLProgram::Params parms(
         light->getLightOrigin(), layer->getColour(), world2light
     );
-    parms.ambientFactor = lightMat->isAmbientLight() ? 1.0f : 0.0f;
+    parms.isAmbientLight = lightMat->isAmbientLight();
     parms.invertVertexColour = _glState.isColourInverted();
 
     assert(current.glProgram);

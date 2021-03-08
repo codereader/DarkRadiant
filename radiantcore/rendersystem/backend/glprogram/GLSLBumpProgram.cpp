@@ -53,9 +53,10 @@ void GLSLBumpProgram::create()
     // Set the uniform locations to the correct bound values
     _locLightOrigin = glGetUniformLocation(_programObj, "u_light_origin");
     _locLightColour = glGetUniformLocation(_programObj, "u_light_color");
-    _locViewOrigin  = glGetUniformLocation(_programObj, "u_view_origin");
-    _locLightScale  = glGetUniformLocation(_programObj, "u_light_scale");
-    _locInvertVCol  = glGetUniformLocation(_programObj, "uInvertVCol");
+    _locViewOrigin = glGetUniformLocation(_programObj, "u_view_origin");
+    _locLightScale = glGetUniformLocation(_programObj, "u_light_scale");
+    _locInvertVCol = glGetUniformLocation(_programObj, "uInvertVCol");
+    _locAmbientLight = glGetUniformLocation(_programObj, "uAmbientLight");
 
     // Set up the texture uniforms. The renderer uses fixed texture units for
     // particular textures, so make sure they are correct here.
@@ -155,6 +156,7 @@ void GLSLBumpProgram::applyRenderParams(const Vector3& viewer,
         static_cast<float>(parms.lightColour.z())
     );
     glUniform1f(_locLightScale, _lightScale);
+    glUniform1i(_locAmbientLight, parms.isAmbientLight);
 
     // Set vertex colour parameters
     glUniform1i(_locInvertVCol, parms.invertVertexColour);

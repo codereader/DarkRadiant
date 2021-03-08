@@ -33,6 +33,9 @@ uniform float		u_light_scale;
 // Invert vertex colour
 uniform bool uInvertVCol;
 
+// Activate ambbient light mode (brightness unaffected by direction)
+uniform bool uAmbientLight;
+
 varying vec3		var_vertex;
 varying vec4		var_tex_diffuse_bump;
 varying vec2		var_tex_specular;
@@ -56,7 +59,8 @@ void	main()
 
 	// compute the diffuse term
 	vec4 diffuse = texture2D(u_diffusemap, var_tex_diffuse_bump.st);
-	diffuse.rgb *= u_light_color * u_light_scale * clamp(dot(N, L), 0.0, 1.0);
+    float lightBrightness = uAmbientLight ? 1.0 : clamp(dot(N, L), 0.0, 1.0);
+	diffuse.rgb *= u_light_color * u_light_scale * lightBrightness;
 
 	// compute the specular term
     float specIntensity = clamp(dot(N, H), 0.0, 1.0);
