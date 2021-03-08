@@ -79,7 +79,6 @@ void	main()
 
 	// compute final color
     gl_FragColor = diffuse * (uInvertVCol ? vec4(1.0, 1.0, 1.0, 1.0) - gl_Color : gl_Color);
-    gl_FragColor.rgb *= 2.0; // replacement for RENDER_SCREEN light scaling
     gl_FragColor.rgb += specular;
 	gl_FragColor.rgb *= attenuation_xy;
 	gl_FragColor.rgb *= attenuation_z;
