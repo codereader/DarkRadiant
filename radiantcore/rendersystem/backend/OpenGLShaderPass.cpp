@@ -347,7 +347,7 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
         if (current.glProgram != 0)
         {
             current.glProgram->disable();
-            glColor4dv(current.getColour());
+            glColor4fv(current.getColour());
         }
 
         current.glProgram = program;
@@ -530,7 +530,7 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
     {
         _glState.setColour(_glState.stage0->getColour());
     }
-    glColor4dv(_glState.getColour());
+    glColor4fv(_glState.getColour());
     current.setColour(_glState.getColour());
     debug::assertNoGlErrors();
 

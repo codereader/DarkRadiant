@@ -11,7 +11,7 @@
  * vector as an RGBA colour, for example, ensuring that the colour values lie
  * within the [0.0, 1.0] range.
  */
-class Colour4: public Vector4
+class Colour4: public Vector4f
 {
     bool channelValid(double c) const { return c >= 0.0 && c <= 1.0; }
 
@@ -19,20 +19,21 @@ public:
 
     /// Default-construct an invalid colour
     Colour4()
-    : Vector4(-1, -1, -1, -1)
+    : Vector4f(-1, -1, -1, -1)
     {
         assert(!isValid());
     }
 
     /// Initialise a colour with individual components
     Colour4(float r, float g, float b, float a)
-    : Vector4(r, g, b, a)
-    { }
+    : Vector4f(r, g, b, a)
+    {}
 
     /// Construct a Colour4 from a Vector3 and optional alpha
-    Colour4(const Vector3& vec, float alpha = 1.0f)
-    : Vector4(vec, alpha)
-    { }
+    template<typename U>
+    Colour4(const BasicVector3<U>& vec, float alpha = 1.0f)
+    : Vector4f(vec.x(), vec.y(), vec.z(), alpha)
+    {}
 
     /// Return true if this colour contains valid component values
     bool isValid() const
@@ -52,7 +53,7 @@ public:
 
     static const Colour4& WHITE()
     {
-        static Colour4 white(1.0f, 1.0f, 1.0f, 1.0f);    
+        static Colour4 white(1.0f, 1.0f, 1.0f, 1.0f);
         return white;
     }
 };

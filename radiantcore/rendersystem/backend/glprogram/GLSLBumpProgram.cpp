@@ -149,12 +149,7 @@ void GLSLBumpProgram::applyRenderParams(const Vector3& viewer,
         static_cast<float>(localLight.y()),
         static_cast<float>(localLight.z())
     );
-    glUniform3f(
-        _locLightColour,
-        static_cast<float>(parms.lightColour.x()),
-        static_cast<float>(parms.lightColour.y()),
-        static_cast<float>(parms.lightColour.z())
-    );
+    glUniform3fv(_locLightColour, 1, parms.lightColour);
     glUniform1f(_locLightScale, _lightScale);
     glUniform1i(_locAmbientLight, parms.isAmbientLight);
 
