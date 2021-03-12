@@ -159,6 +159,12 @@ public:
 		return description;
 	}
 
+    void setDescription(const std::string& newDescription)
+	{
+		if (!_parsed) parseDefinition();
+		description = newDescription;
+	}
+
 	int getMaterialFlags()
 	{
 		if (!_parsed) parseDefinition();

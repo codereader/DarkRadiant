@@ -163,6 +163,15 @@ void MaterialEditor::setupMaterialProperties()
     {
         sortDropdown->AppendString(pair.first);
     }
+
+    auto description = getControl<wxTextCtrl>("MaterialDescription");
+    description->Bind(wxEVT_TEXT, [description, this](wxCommandEvent& ev)
+    {
+        if (_material)
+        {
+            _material->setDescription(description->GetValue().ToStdString());
+        }
+    });
     
     _materialBindings.emplace(std::make_shared<CheckBoxBinding<MaterialPtr>>(getControl<wxCheckBox>("MaterialHasSortValue"),
         [](const MaterialPtr& material) { return (material->getParseFlags() & Material::PF_HasSortDefined) != 0; }));

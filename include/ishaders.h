@@ -328,6 +328,9 @@ public:
 	// greebo: Returns the description as defined in the material
 	virtual std::string getDescription() const = 0;
 
+    // Set the description text of this material
+	virtual void setDescription(const std::string& description) = 0;
+
 	 /// Return TRUE if the shader is visible, FALSE if it is filtered or
 	 /// disabled in any other way.
 	virtual bool isVisible() const = 0;

@@ -122,8 +122,15 @@ std::string CShader::getName() const
 	return _name;
 }
 
-std::string CShader::getDescription() const {
+std::string CShader::getDescription() const
+{
 	return _template->getDescription();
+}
+
+void CShader::setDescription(const std::string& description)
+{
+    ensureTemplateCopy();
+    _template->setDescription(description);
 }
 
 bool CShader::IsInUse() const {

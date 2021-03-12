@@ -79,6 +79,7 @@ public:
 	DecalInfo getDecalInfo() const override;
 	Coverage getCoverage() const override;
 	std::string getDescription() const override;
+    void setDescription(const std::string& description) override;
 	std::string getDefinition() override;
 	bool isAmbientLight() const override;
 	bool isBlendLight() const override;
