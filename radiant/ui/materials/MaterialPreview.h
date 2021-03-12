@@ -1,7 +1,9 @@
 #pragma once
 
 #include "ishaders.h"
+#include "modelskin.h"
 #include "scene/BasicRootNode.h"
+#include "TestModelSkin.h"
 #include "wxutil/preview/RenderPreview.h"
 
 namespace ui
@@ -18,13 +20,17 @@ private:
     scene::IMapRootNodePtr _rootNode;
 
     scene::INodePtr _entity; // The func_static entity
-    scene::INodePtr _brush; // The textured brush
+    scene::INodePtr _model; // The textured model
     scene::INodePtr _light; // The light
+
+    std::shared_ptr<TestModelSkin> _testModelSkin;
 
     float _defaultCamDistanceFactor;
 
 public:
     MaterialPreview(wxWindow* parent);
+
+    virtual ~MaterialPreview();
 
     const MaterialPtr& getMaterial();
     void setMaterial(const MaterialPtr& material);

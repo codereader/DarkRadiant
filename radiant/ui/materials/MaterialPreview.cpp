@@ -11,35 +11,25 @@ namespace ui
 namespace
 {
     const char* const FUNC_STATIC_CLASS = "func_static";
-
-    inline scene::INodePtr createCubicBrush(const scene::INodePtr& parent,
-        const Vector3& origin = Vector3(0, 0, 0),
-        const std::string& material = "_default")
-    {
-        auto brushNode = GlobalBrushCreator().createBrush();
-        parent->addChildNode(brushNode);
-
-        auto& brush = *Node_getIBrush(brushNode);
-
-        auto translation = Matrix4::getTranslation(origin);
-        brush.addFace(Plane3(+1, 0, 0, 64).transform(translation));
-        brush.addFace(Plane3(-1, 0, 0, 64).transform(translation));
-        brush.addFace(Plane3(0, +1, 0, 64).transform(translation));
-        brush.addFace(Plane3(0, -1, 0, 64).transform(translation));
-        brush.addFace(Plane3(0, 0, +1, 64).transform(translation));
-        brush.addFace(Plane3(0, 0, -1, 64).transform(translation));
-
-        brush.setShader(material);
-
-        return brushNode;
-    }
 }
 
 MaterialPreview::MaterialPreview(wxWindow* parent) :
     RenderPreview(parent, true),
     _sceneIsReady(false),
     _defaultCamDistanceFactor(1.5f)
-{}
+{
+    _testModelSkin.reset(new TestModelSkin);
+    GlobalModelSkinCache().addNamedSkin(_testModelSkin);
+}
+
+MaterialPreview::~MaterialPreview()
+{
+    if (_testModelSkin)
+    {
+        GlobalModelSkinCache().removeSkin(_testModelSkin->getName());
+        _testModelSkin.reset();
+    }
+}
 
 const MaterialPtr& MaterialPreview::getMaterial()
 {
@@ -53,13 +43,17 @@ void MaterialPreview::setMaterial(const MaterialPtr& material)
     _material = material;
     _sceneIsReady = false;
 
-    if (_brush)
+    if (_model)
     {
-        auto& brush = *Node_getIBrush(_brush);
-        for (auto i = 0; i < brush.getNumFaces(); ++i)
+        // Assign the material to the temporary skin
+        _testModelSkin->setRemapMaterial(_material);
+        
+        // Let the model update its remaps
+        auto skinnedModel = std::dynamic_pointer_cast<SkinnedModel>(_model);
+
+        if (skinnedModel)
         {
-            brush.getFace(i).setShader(_material ? _material->getName() : "");
-            brush.getFace(i).fitTexture(1, 1);
+            skinnedModel->skinChanged(_testModelSkin->getName());
         }
     }
 
@@ -84,8 +78,9 @@ bool MaterialPreview::onPreRender()
     }
 
     // Update the rotation of the func_static
-    if (_brush)
+    if (_model)
     {
+#if 0
         auto time = _renderSystem->getTime();
 
         // one full rotation per 10 seconds
@@ -122,6 +117,7 @@ bool MaterialPreview::onPreRender()
 
         transformable->setRotation(rotation);
         transformable->freezeTransform();
+#endif
     }
 
     return RenderPreview::onPreRender();
@@ -150,8 +146,11 @@ void MaterialPreview::setupSceneGraph()
 
         _rootNode->addChildNode(_entity);
 
-        // Set up a brush
-        _brush = createCubicBrush(_entity);
+        // Load the pre-defined model from the resources path
+        _model = GlobalModelCache().getModelNodeForStaticResource("preview/sphere.ase");
+        
+        // The test model is a child of this entity
+        _entity->addChildNode(_model);
 
         getScene()->setRoot(_rootNode);
 
@@ -165,7 +164,7 @@ void MaterialPreview::setupSceneGraph()
         _rootNode->addChildNode(_light);
 
         // Reset the default view, facing down to the model from diagonally above the bounding box
-        double distance = _brush->localAABB().getRadius() * _defaultCamDistanceFactor;
+        double distance = _model->localAABB().getRadius() * _defaultCamDistanceFactor;
 
         setViewOrigin(Vector3(1, 1, 1) * distance);
         setViewAngles(Vector3(34, 135, 0));

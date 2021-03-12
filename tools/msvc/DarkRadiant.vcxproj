@@ -463,6 +463,7 @@
     <ClInclude Include="..\..\radiant\ui\materials\ExpressionBinding.h" />
     <ClInclude Include="..\..\radiant\ui\materials\MaterialEditor.h" />
     <ClInclude Include="..\..\radiant\ui\materials\MaterialPreview.h" />
+    <ClInclude Include="..\..\radiant\ui\materials\TestModelSkin.h" />
     <ClInclude Include="..\..\radiant\ui\mediabrowser\MediaBrowserTreeView.h" />
     <ClInclude Include="..\..\radiant\ui\menu\MenuBar.h" />
     <ClInclude Include="..\..\radiant\ui\menu\MenuElement.h" />
