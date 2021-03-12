@@ -43,12 +43,34 @@ class CheckBoxBinding :
 private:
     wxCheckBox* _checkbox;
     std::function<bool(const Source&)> _loadFunc;
+    std::function<void(const Source&, bool)> _saveFunc;
 
 public:
-    CheckBoxBinding(wxCheckBox* checkbox, const std::function<bool(const Source&)> loadFunc) :
-        _checkbox(checkbox),
-        _loadFunc(loadFunc)
+    CheckBoxBinding(wxCheckBox* checkbox, 
+        const std::function<bool(const Source&)> loadFunc) :
+        CheckBoxBinding(checkbox, loadFunc, std::function<void(const Source&, bool)>())
     {}
+
+    CheckBoxBinding(wxCheckBox* checkbox,
+        const std::function<bool(const Source&)> loadFunc,
+        const std::function<void(const Source&, bool)> saveFunc) :
+        _checkbox(checkbox),
+        _loadFunc(loadFunc),
+        _saveFunc(saveFunc)
+    {
+        if (_saveFunc)
+        {
+            _checkbox->Bind(wxEVT_CHECKBOX, &CheckBoxBinding::onCheckedChanged, this);
+        }
+    }
+
+    virtual ~CheckBoxBinding()
+    {
+        if (_saveFunc)
+        {
+            _checkbox->Unbind(wxEVT_CHECKBOX, &CheckBoxBinding::onCheckedChanged, this);
+        }
+    }
 
     virtual void updateFromSource(const Source& source) override
     {
@@ -59,6 +81,12 @@ public:
         }
 
         _checkbox->SetValue(_loadFunc(source));
+    }
+
+private:
+    void onCheckedChanged(wxCommandEvent& ev)
+    {
+        _saveFunc(Binding<Source>::getSource(), _checkbox->IsChecked());
     }
 };
 
