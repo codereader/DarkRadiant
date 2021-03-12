@@ -185,6 +185,12 @@ Material::SurfaceType CShader::getSurfaceType() const
 	return _template->getSurfaceType();
 }
 
+void CShader::setSurfaceType(SurfaceType type)
+{
+    ensureTemplateCopy();
+    _template->setSurfaceType(type);
+}
+
 Material::DeformType CShader::getDeformType() const
 {
 	return _template->getDeformType();

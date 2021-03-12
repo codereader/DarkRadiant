@@ -236,6 +236,9 @@ public:
 	/// Surface Type (wood, stone, surfType15, ...)
 	virtual SurfaceType getSurfaceType() const = 0;
 
+    // Set the surface type of this material
+    virtual void setSurfaceType(SurfaceType type) = 0;
+
 	/// Get the deform type of this material
 	virtual DeformType getDeformType() const = 0;
 

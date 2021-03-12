@@ -155,6 +155,8 @@ void MaterialEditor::setupMaterialProperties()
         typeDropdown->AppendString(pair.first);
     }
 
+    typeDropdown->Bind(wxEVT_CHOICE, &MaterialEditor::_onMaterialTypeChoice, this);
+
     auto* sortDropdown = getControl<wxComboBox>("MaterialSortValue");
 
     sortDropdown->AppendString(""); // empty string for undefined
@@ -1082,6 +1084,14 @@ void MaterialEditor::updateStageControls()
         getControl<wxTextCtrl>("MaterialStageImageMap")->SetValue("");
         getControl<wxTextCtrl>("MaterialStageVideoMapFile")->SetValue("");
     }
+}
+
+void MaterialEditor::_onMaterialTypeChoice(wxCommandEvent& ev)
+{
+    if (!_material) return;
+    
+    auto selectedString = getControl<wxChoice>("MaterialType")->GetStringSelection();
+    _material->setSurfaceType(shaders::getSurfaceTypeForString(selectedString.ToStdString()));
 }
 
 }

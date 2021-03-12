@@ -207,6 +207,12 @@ public:
 		return _surfaceType;
 	}
 
+    void setSurfaceType(Material::SurfaceType type)
+    {
+        if (!_parsed) parseDefinition();
+        _surfaceType = type;
+    }
+
 	Material::DeformType getDeformType()
 	{
 		if (!_parsed) parseDefinition();

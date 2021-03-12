@@ -92,6 +92,7 @@ private:
 
     void _onTreeViewSelectionChanged(wxDataViewEvent& ev);
     void _onStageListSelectionChanged(wxDataViewEvent& ev);
+    void _onMaterialTypeChoice(wxCommandEvent& ev);
 
     // Shortcut
     template<typename ObjectClass>

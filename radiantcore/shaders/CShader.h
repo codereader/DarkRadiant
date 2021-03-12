@@ -72,6 +72,7 @@ public:
 	ClampType getClampType() const override;
 	int getSurfaceFlags() const override;
 	SurfaceType getSurfaceType() const override;
+    void setSurfaceType(SurfaceType type) override;
 	DeformType getDeformType() const override;
 	IShaderExpressionPtr getDeformExpression(std::size_t index) override;
     std::string getDeformDeclName() override;

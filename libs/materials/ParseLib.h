@@ -39,6 +39,19 @@ inline std::string getStringForSurfaceType(Material::SurfaceType type)
     return std::string();
 }
 
+inline Material::SurfaceType getSurfaceTypeForString(const std::string& surfaceTypeString)
+{
+    for (const auto& pair : SurfaceTypeMapping)
+    {
+        if (surfaceTypeString == pair.first)
+        {
+            return pair.second;
+        }
+    }
+
+    return Material::SURFTYPE_DEFAULT;
+}
+
 constexpr std::pair<const char*, Material::SortRequest> PredefinedSortValues[]
 {
     { "subview", Material::SORT_SUBVIEW },
