@@ -183,6 +183,17 @@ void MaterialEditor::setupMaterialFlag(const std::string& controlName, Material:
         [=](const MaterialPtr& material)
     {
         return (material->getMaterialFlags() & flag) != 0;
+    },
+        [=](const MaterialPtr& material, bool newValue)
+    {
+        if (newValue)
+        {
+            material->setMaterialFlag(flag);
+        }
+        else
+        {
+            material->clearMaterialFlag(flag);
+        }
     }));
 }
 
