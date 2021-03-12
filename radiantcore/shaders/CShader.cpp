@@ -140,6 +140,18 @@ int CShader::getMaterialFlags() const
 	return _template->getMaterialFlags();
 }
 
+void CShader::setMaterialFlag(Flags flag)
+{
+    ensureTemplateCopy();
+    _template->setMaterialFlag(flag);
+}
+
+void CShader::clearMaterialFlag(Flags flag)
+{
+    ensureTemplateCopy();
+    _template->clearMaterialFlag(flag);
+}
+
 bool CShader::IsDefault() const
 {
 	return _isInternal || _fileInfo.name.empty();
@@ -334,6 +346,16 @@ bool CShader::isVisible() const {
 
 void CShader::setVisible(bool visible) {
 	_visible = visible;
+}
+
+void CShader::ensureTemplateCopy()
+{
+    if (_template != _originalTemplate)
+    {
+        return; // copy is already in place
+    }
+
+    _template = _originalTemplate->clone();
 }
 
 bool CShader::m_lightingEnabled = false;

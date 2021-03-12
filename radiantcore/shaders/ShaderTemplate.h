@@ -165,6 +165,18 @@ public:
 		return _materialFlags;
 	}
 
+    void setMaterialFlag(Material::Flags flag)
+    {
+        if (!_parsed) parseDefinition();
+        _materialFlags |= flag;
+    }
+
+    void clearMaterialFlag(Material::Flags flag)
+    {
+        if (!_parsed) parseDefinition();
+        _materialFlags &= ~flag;
+    }
+
 	Material::CullType getCullType()
 	{
 		if (!_parsed) parseDefinition();

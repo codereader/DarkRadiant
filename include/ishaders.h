@@ -224,6 +224,12 @@ public:
 	/// Get the global material flags (translucent, noshadows, etc.)
 	virtual int getMaterialFlags() const = 0;
 
+    // Set the given material flag
+	virtual void setMaterialFlag(Flags flag) = 0;
+
+    // Clear the given material flags
+	virtual void clearMaterialFlag(Flags flag) = 0;
+
 	/// Surface flags (areaportal, nonsolid, etc.)
 	virtual int getSurfaceFlags() const = 0;
 

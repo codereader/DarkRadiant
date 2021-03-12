@@ -63,6 +63,8 @@ public:
 	bool IsInUse() const override;
 	void SetInUse(bool bInUse) override;
 	int getMaterialFlags() const override;
+    void setMaterialFlag(Flags flag) override;
+    void clearMaterialFlag(Flags flag) override;
 	bool IsDefault() const override;
 	const char* getShaderFileName() const override;
     const vfs::FileInfo& getShaderFileInfo() const override;
@@ -115,6 +117,9 @@ public:
     int getParseFlags() const override;
 
     bool isModified() override;
+
+private:
+    void ensureTemplateCopy();
 };
 typedef std::shared_ptr<CShader> CShaderPtr;
 
