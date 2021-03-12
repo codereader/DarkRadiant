@@ -26,6 +26,7 @@ CShader::CShader(const std::string& name, const ShaderDefinition& definition) :
 
 CShader::CShader(const std::string& name, const ShaderDefinition& definition, bool isInternal) :
     _isInternal(isInternal),
+    _originalTemplate(definition.shaderTemplate),
     _template(definition.shaderTemplate),
     _fileInfo(definition.file),
     _name(name),
@@ -216,6 +217,11 @@ int CShader::getParseFlags() const
     return _template->getParseFlags();
 }
 
+bool CShader::isModified()
+{
+    return _template != _originalTemplate;
+}
+
 std::string CShader::getRenderBumpArguments()
 {
     return _template->getRenderBumpArguments();
@@ -244,12 +250,9 @@ void CShader::unrealise() {
 // Parse and load image maps for this shader
 void CShader::realiseLighting()
 {
-    // Only realises extra layers (no diffuse/bump/specular)
-	for (ShaderTemplate::Layers::const_iterator i = _template->getLayers().begin();
-	        i != _template->getLayers().end();
-	        ++i)
+	for (const auto& layer : _template->getLayers())
 	{
-		_layers.push_back(*i);
+		_layers.push_back(layer);
 	}
 }
 

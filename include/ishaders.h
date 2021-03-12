@@ -341,6 +341,9 @@ public:
     // The argument to the "guisurf" keyword, if not entity[2]3]. 
     // In case entity[2]3] is set, the corresponding surface flags are enabled
     virtual const std::string& getGuiSurfArgument() = 0;
+
+    // True if this mateiral has been altered from its original definition
+    virtual bool isModified() = 0;
 };
 
 typedef std::shared_ptr<Material> MaterialPtr;

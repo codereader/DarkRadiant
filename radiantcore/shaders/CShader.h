@@ -15,6 +15,11 @@ class CShader final :
 private:
     bool _isInternal;
 
+    // The unmodified template
+    ShaderTemplatePtr _originalTemplate;
+
+    // The template this mateiral is working with - if this instance 
+    // has not been altered, this is the same as _originalTemplate
 	ShaderTemplatePtr _template;
 
 	// The shader file name (i.e. the file where this one is defined)
@@ -109,8 +114,8 @@ public:
 	ShaderLayer* firstLayer() const;
     int getParseFlags() const override;
 
-}; // class CShader
-
+    bool isModified() override;
+};
 typedef std::shared_ptr<CShader> CShaderPtr;
 
 } // namespace shaders

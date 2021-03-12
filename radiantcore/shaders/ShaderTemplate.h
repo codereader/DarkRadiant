@@ -20,7 +20,7 @@ namespace shaders
  * class parses the decl using a tokeniser and stores the relevant information
  * internally, for later use by a CShader.
  */
-class ShaderTemplate
+class ShaderTemplate final
 {
 private:
 	static const int SORT_UNDEFINED = -99999;	// undefined sort number, will be replaced after parsing
@@ -34,10 +34,7 @@ private:
 public:
 
   	// Vector of LayerTemplates representing each stage in the material
-  	typedef std::vector<Doom3ShaderLayerPtr> Layers;
-
-private:
-	Layers _layers;
+    std::vector<Doom3ShaderLayerPtr> _layers;
 
     // Editorimage texture
 	NamedBindablePtr _editorTex;
@@ -101,6 +98,9 @@ private:
     // The string value specified by the guisurf keyword, if other than entity[2]3]
     std::string _guiDeclName;
 
+    // Private copy ctor, used for cloning
+    ShaderTemplate(const ShaderTemplate& other);
+
 public:
 
     /**
@@ -134,10 +134,13 @@ public:
 		_decalInfo.endColour = Vector4(0,0,0,0);
 	}
 
+    // Clone a new instance from this template
+    std::shared_ptr<ShaderTemplate> clone() const;
+
 	/**
 	 * Get the name of this shader template.
 	 */
-	std::string getName() const
+	const std::string& getName() const
 	{
     	return _name;
 	}
@@ -224,7 +227,7 @@ public:
 		return _coverage;
 	}
 
-	const Layers& getLayers()
+	const std::vector<Doom3ShaderLayerPtr>& getLayers()
 	{
 		if (!_parsed) parseDefinition();
 		return _layers;

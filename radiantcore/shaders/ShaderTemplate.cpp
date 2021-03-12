@@ -21,6 +21,16 @@
 namespace shaders
 {
 
+ShaderTemplate::ShaderTemplate(const ShaderTemplate& other)
+{
+    // TODO
+}
+
+std::shared_ptr<ShaderTemplate> ShaderTemplate::clone() const
+{
+    return std::make_shared<ShaderTemplate>(*this);
+}
+
 NamedBindablePtr ShaderTemplate::getEditorTexture()
 {
     if (!_parsed)
@@ -1187,14 +1197,11 @@ bool ShaderTemplate::saveLayer()
     }
 
     // Clear the currentLayer structure for possible future layers
-    _currentLayer = Doom3ShaderLayerPtr(new Doom3ShaderLayer(*this));
+    _currentLayer = std::make_shared<Doom3ShaderLayer>(*this);
 
     return true;
 }
 
-/* Parses a material definition for shader keywords and takes the according
- * actions.
- */
 void ShaderTemplate::parseDefinition()
 {
     // Construct a local deftokeniser to parse the unparsed block
@@ -1278,9 +1285,9 @@ void ShaderTemplate::parseDefinition()
 
 	std::size_t numAmbientStages = 0;
 
-	for (Layers::const_iterator i = _layers.begin(); i != _layers.end(); ++i)
+	for (const auto& layer : _layers)
 	{
-		if ((*i)->getType() == ShaderLayer::BLEND)
+		if (layer->getType() == ShaderLayer::BLEND)
 		{
 			numAmbientStages++;
 		}
@@ -1338,10 +1345,10 @@ void ShaderTemplate::parseDefinition()
 void ShaderTemplate::addLayer(const Doom3ShaderLayerPtr& layer)
 {
 	// Add the layer
-	_layers.push_back(layer);
+	_layers.emplace_back(layer);
 
 	// If there is no editor texture yet, use the bindable texture, but no Bump or speculars
-	if (!_editorTex && layer->getBindableTexture() != NULL &&
+	if (!_editorTex && layer->getBindableTexture() &&
 		layer->getType() != ShaderLayer::BUMP && layer->getType() != ShaderLayer::SPECULAR)
 	{
 		_editorTex = layer->getBindableTexture();
@@ -1351,16 +1358,16 @@ void ShaderTemplate::addLayer(const Doom3ShaderLayerPtr& layer)
 void ShaderTemplate::addLayer(ShaderLayer::Type type, const MapExpressionPtr& mapExpr)
 {
 	// Construct a layer out of this mapexpression and pass the call
-	addLayer(Doom3ShaderLayerPtr(new Doom3ShaderLayer(*this, type, mapExpr)));
+	addLayer(std::make_shared<Doom3ShaderLayer>(*this, type, mapExpr));
 }
 
 bool ShaderTemplate::hasDiffusemap()
 {
 	if (!_parsed) parseDefinition();
 
-	for (Layers::const_iterator i = _layers.begin(); i != _layers.end(); ++i)
+	for (const auto& layer : _layers)
     {
-        if ((*i)->getType() == ShaderLayer::DIFFUSE)
+        if (layer->getType() == ShaderLayer::DIFFUSE)
         {
             return true;
         }
