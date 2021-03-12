@@ -42,6 +42,18 @@ const StringList& Doom3SkinCache::getAllSkins()
     return _allSkins;
 }
 
+void Doom3SkinCache::addNamedSkin(const ModelSkinPtr& modelSkin)
+{
+    _namedSkins[modelSkin->getName()] = modelSkin;
+    _allSkins.emplace_back(modelSkin->getName());
+}
+
+void Doom3SkinCache::removeSkin(const std::string& name)
+{
+    _namedSkins.erase(name);
+    _allSkins.erase(std::find(_allSkins.begin(), _allSkins.end(), name));
+}
+
 sigc::signal<void> Doom3SkinCache::signal_skinsReloaded()
 {
 	return _sigSkinsReloaded;

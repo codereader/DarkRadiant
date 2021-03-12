@@ -23,6 +23,9 @@ public:
 	 * empty string.
 	 */
 	virtual std::string getRemap(const std::string& name) const = 0;
+
+    // Returns the file name this skin has been defined in
+    virtual std::string getSkinFileName() const = 0;
 };
 typedef std::shared_ptr<ModelSkin> ModelSkinPtr;
 
@@ -76,6 +79,13 @@ public:
 	 * Return the complete list of available skins.
 	 */
 	virtual const StringList& getAllSkins() = 0;
+
+    // Adds a runtime-generated skin to the collection, it will be resolvable by capture(). 
+    // Note that this skin is not going to survive a refresh() call 
+    virtual void addNamedSkin(const ModelSkinPtr& modelSkin) = 0;
+
+    // Removes a named skin from the cache
+    virtual void removeSkin(const std::string& name) = 0;
 
 	/**
 	 * greebo: Reloads all skins from the definition files.

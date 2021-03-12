@@ -138,9 +138,9 @@ scene::INodePtr ModelCache::getModelNodeForStaticResource(const std::string& res
     auto modelLoader = GlobalModelFormatManager().getImporter(extension);
 
     auto fullPath = module::GlobalModuleRegistry().getApplicationContext().getRuntimeDataPath();
-    fullPath + "resources/" + resourcePath;
+    fullPath += "resources/" + resourcePath;
 
-    auto node = modelLoader->loadModel(resourcePath);
+    auto node = modelLoader->loadModel(fullPath);
 
     return node ? node : loadNullModel(resourcePath);
 }

@@ -21,7 +21,7 @@ class Doom3SkinCache :
 	public ModelSkinCache
 {
 	// Table of named skin objects
-	typedef std::map<std::string, Doom3ModelSkinPtr> NamedSkinMap;
+	typedef std::map<std::string, ModelSkinPtr> NamedSkinMap;
 	NamedSkinMap _namedSkins;
 
 	// List of all skins
@@ -57,6 +57,9 @@ public:
 	/* Return a complete list of skins.
 	 */
     const StringList& getAllSkins() override;
+
+    void addNamedSkin(const ModelSkinPtr& modelSkin) override;
+    void removeSkin(const std::string& name) override;
 
 	/**
 	 * greebo: Clears and reloads all skins.
