@@ -3,6 +3,8 @@
 #include "ibrush.h"
 #include "ientity.h"
 #include "ieclass.h"
+#include "string/convert.h"
+#include "math/pi.h"
 #include "wxutil/dialog/MessageBox.h"
 
 namespace ui
@@ -80,44 +82,12 @@ bool MaterialPreview::onPreRender()
     // Update the rotation of the func_static
     if (_model)
     {
-#if 0
         auto time = _renderSystem->getTime();
 
         // one full rotation per 10 seconds
         auto newAngle = 2 * c_pi * time / 10000;
-        auto rotation = Quaternion::createForAxisAngle(Vector3(0, 0, 1), newAngle);
 
-        const auto& planes =
-        {
-            Plane3(+1, 0, 0, 64),
-            Plane3(-1, 0, 0, 64),
-            Plane3(0, +1, 0, 64),
-            Plane3(0, -1, 0, 64),
-            Plane3(0, 0, +1, 64),
-            Plane3(0, 0, -1, 64),
-        };
-
-        auto& brush = *Node_getIBrush(_brush);
-        brush.clear();
-
-        for (const auto& plane : planes)
-        {
-            brush.addFace(plane);
-        }
-
-        brush.evaluateBRep();
-
-        for (auto i = 0; i < brush.getNumFaces(); ++i)
-        {
-            brush.getFace(i).setShader(_material ? _material->getName() : "");
-            brush.getFace(i).fitTexture(1, 1);
-        }
-
-        auto transformable = Node_getTransformable(_brush);
-
-        transformable->setRotation(rotation);
-        transformable->freezeTransform();
-#endif
+        Node_getEntity(_entity)->setKeyValue("angle", string::to_string(radians_to_degrees(newAngle)));
     }
 
     return RenderPreview::onPreRender();
