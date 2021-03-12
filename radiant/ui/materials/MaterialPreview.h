@@ -27,6 +27,9 @@ private:
 
     float _defaultCamDistanceFactor;
 
+    wxToolBarToolBase* _testModelCubeButton;
+    wxToolBarToolBase* _testModelSphereButton;
+
 public:
     MaterialPreview(wxWindow* parent);
 
@@ -42,6 +45,10 @@ protected:
 private:
     bool onPreRender() override;
     void prepareScene();
+    void setupToolbar();
+    void setupTestModel();
+    void updateModelSkin();
+    void onTestModelSelectionChanged(wxCommandEvent& ev);
 };
 
 }

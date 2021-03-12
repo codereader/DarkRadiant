@@ -207,7 +207,7 @@ void MaterialEditor::setupMaterialLightFlags()
 void MaterialEditor::setupMaterialShaderFlags()
 {
     setupMaterialFlag("MaterialNoShadows", Material::FLAG_NOSHADOWS);
-    setupMaterialFlag("MaterialNoSelfShadows", Material::FLAG_NOSELFSHADOW);
+    setupMaterialFlag("MaterialNoSelfShadow", Material::FLAG_NOSELFSHADOW);
     setupMaterialFlag("MaterialForceShadows", Material::FLAG_FORCESHADOWS);
     setupMaterialFlag("MaterialTranslucent", Material::FLAG_TRANSLUCENT);
     setupMaterialFlag("MaterialNoFog", Material::FLAG_NOFOG);

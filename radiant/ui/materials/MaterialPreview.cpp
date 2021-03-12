@@ -6,6 +6,8 @@
 #include "string/convert.h"
 #include "math/pi.h"
 #include "wxutil/dialog/MessageBox.h"
+#include "wxutil/Bitmap.h"
+#include <wx/toolbar.h>
 
 namespace ui
 {
@@ -18,10 +20,12 @@ namespace
 MaterialPreview::MaterialPreview(wxWindow* parent) :
     RenderPreview(parent, true),
     _sceneIsReady(false),
-    _defaultCamDistanceFactor(1.5f)
+    _defaultCamDistanceFactor(2.0f)
 {
     _testModelSkin.reset(new TestModelSkin);
     GlobalModelSkinCache().addNamedSkin(_testModelSkin);
+
+    setupToolbar();
 }
 
 MaterialPreview::~MaterialPreview()
@@ -33,9 +37,41 @@ MaterialPreview::~MaterialPreview()
     }
 }
 
+void MaterialPreview::setupToolbar()
+{
+    // Add one additional toolbar for particle-related stuff
+    wxToolBar* toolbar = new wxToolBar(_mainPanel, wxID_ANY);
+    toolbar->SetToolBitmapSize(wxSize(16, 16));
+
+    _testModelCubeButton = toolbar->AddRadioTool(wxID_ANY, "", wxutil::GetLocalBitmap("cube.png", wxART_TOOLBAR));
+    _testModelCubeButton->SetShortHelp(_("Show Cube"));
+    toolbar->ToggleTool(_testModelCubeButton->GetId(), true);
+    
+    _testModelSphereButton = toolbar->AddRadioTool(wxID_ANY, "", wxutil::GetLocalBitmap("sphere.png", wxART_TOOLBAR));
+    _testModelSphereButton->SetShortHelp(_("Show Sphere"));
+
+    toolbar->Bind(wxEVT_TOOL, &MaterialPreview::onTestModelSelectionChanged, this, _testModelCubeButton->GetId());
+    toolbar->Bind(wxEVT_TOOL, &MaterialPreview::onTestModelSelectionChanged, this, _testModelSphereButton->GetId());
+
+    toolbar->Realize();
+
+    addToolbar(toolbar);
+}
+
 const MaterialPtr& MaterialPreview::getMaterial()
 {
     return _material;
+}
+
+void MaterialPreview::updateModelSkin()
+{
+    // Let the model update its remaps
+    auto skinnedModel = std::dynamic_pointer_cast<SkinnedModel>(_model);
+
+    if (skinnedModel)
+    {
+        skinnedModel->skinChanged(_testModelSkin->getName());
+    }
 }
 
 void MaterialPreview::setMaterial(const MaterialPtr& material)
@@ -49,14 +85,8 @@ void MaterialPreview::setMaterial(const MaterialPtr& material)
     {
         // Assign the material to the temporary skin
         _testModelSkin->setRemapMaterial(_material);
-        
-        // Let the model update its remaps
-        auto skinnedModel = std::dynamic_pointer_cast<SkinnedModel>(_model);
 
-        if (skinnedModel)
-        {
-            skinnedModel->skinChanged(_testModelSkin->getName());
-        }
+        updateModelSkin();
     }
 
     if (!hadMaterial && _material)
@@ -116,11 +146,7 @@ void MaterialPreview::setupSceneGraph()
 
         _rootNode->addChildNode(_entity);
 
-        // Load the pre-defined model from the resources path
-        _model = GlobalModelCache().getModelNodeForStaticResource("preview/sphere.ase");
-        
-        // The test model is a child of this entity
-        _entity->addChildNode(_model);
+        setupTestModel();
 
         getScene()->setRoot(_rootNode);
 
@@ -144,6 +170,35 @@ void MaterialPreview::setupSceneGraph()
         wxutil::Messagebox::ShowError(fmt::format(_("Unable to setup the preview,\n"
             "could not find the entity class {0}"), FUNC_STATIC_CLASS));
     }
+}
+
+void MaterialPreview::setupTestModel()
+{
+    if (_entity && _model)
+    {
+        _entity->removeChildNode(_model);
+        _model.reset();
+    }
+
+    // Load the pre-defined model from the resources path
+    if (_testModelCubeButton->IsToggled())
+    {
+        _model = GlobalModelCache().getModelNodeForStaticResource("preview/cube.ase");
+    }
+    else // sphere
+    {
+        _model = GlobalModelCache().getModelNodeForStaticResource("preview/sphere.ase");
+    }
+
+    // The test model is a child of this entity
+    _entity->addChildNode(_model);
+
+    updateModelSkin();
+}
+
+void MaterialPreview::onTestModelSelectionChanged(wxCommandEvent& ev)
+{
+    setupTestModel();
 }
 
 }

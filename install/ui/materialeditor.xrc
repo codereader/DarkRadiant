@@ -167,7 +167,7 @@
 													<object class="wxNotebook" name="m_notebook2">
 														<object class="notebookpage">
 															<label>Interaction</label>
-															<selected>0</selected>
+															<selected>1</selected>
 															<object class="wxPanel" name="InteractionPage">
 																<style>wxTAB_TRAVERSAL</style>
 																<object class="wxBoxSizer">
@@ -205,8 +205,8 @@
 																				<option>0</option>
 																				<flag></flag>
 																				<border>0</border>
-																				<object class="wxCheckBox" name="MaterialNoSelfShadows">
-																					<label>noSelfShadows</label>
+																				<object class="wxCheckBox" name="MaterialNoSelfShadow">
+																					<label>noSelfShadow</label>
 																					<checked>0</checked>
 																				</object>
 																			</object>
@@ -1326,7 +1326,7 @@
 														</object>
 														<object class="notebookpage">
 															<label>Misc</label>
-															<selected>1</selected>
+															<selected>0</selected>
 															<object class="wxPanel" name="MiscPage">
 																<style>wxTAB_TRAVERSAL</style>
 																<object class="wxBoxSizer">
