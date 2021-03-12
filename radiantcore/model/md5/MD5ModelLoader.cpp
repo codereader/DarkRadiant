@@ -34,79 +34,74 @@ const std::string& MD5ModelLoader::getExtension() const
 scene::INodePtr MD5ModelLoader::loadModel(const std::string& modelName)
 {
 	// Initialise the paths, this is all needed for realisation
-	std::string path = rootPath(modelName);
-	std::string name = os::getRelativePath(modelName, path);
+	auto path = rootPath(modelName);
+	auto name = os::getRelativePath(modelName, path);
 
 	// greebo: Path is empty for models in PK4 files, don't check for that
 
 	// Try to load the model from the given VFS path
 	model::IModelPtr model = GlobalModelCache().getModel(name);
 
-	if (model == NULL)
+	if (!model)
 	{
 		rError() << "MD5ModelLoader: Could not load model << " << modelName << std::endl;
 		return scene::INodePtr();
 	}
 
 	// The cached model should be an MD5Model, otherwise we're in the wrong movie
-	MD5ModelPtr md5Model = std::dynamic_pointer_cast<MD5Model>(model);
+	auto md5Model = std::dynamic_pointer_cast<MD5Model>(model);
 
-	if (md5Model != NULL)
+	if (md5Model)
 	{
 		// Load was successful, construct a modelnode using this resource
-		return MD5ModelNodePtr(new MD5ModelNode(md5Model));
+		return std::make_shared<MD5ModelNode>(md5Model);
 	}
-	else
-	{
-		rError() << "MD5ModelLoader: Cached model is not an MD5Model?" << std::endl;
-	}
-
+	
+    rError() << "MD5ModelLoader: Cached model is not an MD5Model?" << std::endl;
 	return scene::INodePtr();
 }
 
-model::IModelPtr MD5ModelLoader::loadModelFromPath(const std::string& name)
+model::IModelPtr MD5ModelLoader::loadModelFromPath(const std::string& path)
 {
 	// Open an ArchiveFile to load
-	ArchiveFilePtr file = GlobalFileSystem().openFile(name);
+    auto file = path_is_absolute(path.c_str()) ? 
+        GlobalFileSystem().openFileInAbsolutePath(path) :
+	    GlobalFileSystem().openFile(path);
 
-	if (file != NULL)
-	{
-		// Construct a new MD5Model container
-		MD5ModelPtr model(new MD5Model);
+    if (!file)
+    {
+        rError() << "Failed to load model " << path << std::endl;
+        return model::IModelPtr(); // delete the model
+    }
 
-		// Store the VFS path in this model
-		model->setModelPath(name);
-		// Set the filename this model was loaded from
-		model->setFilename(os::getFilename(file->getName()));
+    // Construct a new MD5Model container
+    auto model = std::make_shared<MD5Model>();
 
-		// greebo: Get the Inputstream from the given file
-		stream::BinaryToTextInputStream<InputStream> inputStream(file->getInputStream());
+    // Store the path in this model
+    model->setModelPath(path);
+    // Set the filename this model was loaded from
+    model->setFilename(os::getFilename(file->getName()));
 
-		// Construct a Tokeniser object and start reading the file
-		try
-		{
-			std::istream is(&inputStream);
-			parser::BasicDefTokeniser<std::istream> tokeniser(is);
+    // greebo: Get the Inputstream from the given file
+    stream::BinaryToTextInputStream<InputStream> inputStream(file->getInputStream());
 
-			// Invoke the parser routine (might throw)
-			model->parseFromTokens(tokeniser);
-		}
-		catch (parser::ParseException& e)
-		{
-			rError() << "[md5model] Parse failure. Exception was:" << std::endl
-								<< e.what() << std::endl;
-			// Return an empty model on error
-			return model::IModelPtr();
-		}
+    // Construct a Tokeniser object and start reading the file
+    try
+    {
+        std::istream is(&inputStream);
+        parser::BasicDefTokeniser<std::istream> tokeniser(is);
 
-		// Load was successful, return the model
-		return model;
-	}
-	else
-	{
-		rError() << "Failed to load model " << name << std::endl;
-		return model::IModelPtr(); // delete the model
-	}
+        // Invoke the parser routine (might throw)
+        model->parseFromTokens(tokeniser);
+
+        // Load was successful, return the model
+        return model;
+    }
+    catch (parser::ParseException& e)
+    {
+        rError() << "[md5model] Parse failure. Exception was: " << e.what() << std::endl;
+        return model::IModelPtr();
+    }
 }
 
 } // namespace md5

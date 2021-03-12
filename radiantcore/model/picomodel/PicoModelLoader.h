@@ -24,7 +24,7 @@ public:
 	// Returns a new ModelNode for the given model name
 	scene::INodePtr loadModel(const std::string& modelName) override;
 
-  	// Load the given model from the VFS path
+  	// Load the given model from the path, VFS or absolute
 	IModelPtr loadModelFromPath(const std::string& name) override;
 };
 typedef std::shared_ptr<PicoModelLoader> PicoModelLoaderPtr;

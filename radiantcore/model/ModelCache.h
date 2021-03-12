@@ -30,6 +30,8 @@ public:
 	// greebo: For documentation, see the abstract base class.
 	IModelPtr getModel(const std::string& modelPath) override;
 
+    scene::INodePtr getModelNodeForStaticResource(const std::string& resourcePath) override;
+
 	// Clear methods
 	void removeModel(const std::string& modelPath) override;
 	void clear() override;
@@ -47,6 +49,8 @@ public:
 	void shutdownModule() override;
 
 private:
+    scene::INodePtr loadNullModel(const std::string& modelPath);
+
 	// Command targets
 	void refreshModelsCmd(const cmd::ArgumentList& args);
 	void refreshSelectedModelsCmd(const cmd::ArgumentList& args);
