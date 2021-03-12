@@ -123,6 +123,66 @@ Doom3ShaderLayer::Doom3ShaderLayer(ShaderTemplate& material, ShaderLayer::Type t
 	_texGenParams[0] = _texGenParams[1] = _texGenParams[2] = REG_ZERO;
 }
 
+Doom3ShaderLayer::Doom3ShaderLayer(const Doom3ShaderLayer& other, ShaderTemplate& material) :
+    _material(material),
+    _registers(other._registers),
+    _expressions(other._expressions),
+    _condition(other._condition),
+    _conditionExpression(other._conditionExpression),
+    _bindableTex(other._bindableTex),
+    _texture(other._texture),
+    _type(other._type),
+    _mapType(other._mapType),
+    _blendFuncStrings(other._blendFuncStrings),
+    _vertexColourMode(other._vertexColourMode),
+    _cubeMapMode(other._cubeMapMode),
+    _stageFlags(other._stageFlags),
+    _clampType(other._clampType),
+    _alphaTest(other._alphaTest),
+    _texGenType(other._texGenType),
+    _rotation(other._rotation),
+    _rotationExpression(other._rotationExpression),
+    _vertexProgram(other._vertexProgram),
+    _fragmentProgram(other._fragmentProgram),
+    _vertexParms(other._vertexParms),
+    _vertexParmDefinitions(other._vertexParmDefinitions),
+    _fragmentMaps(other._fragmentMaps),
+    _privatePolygonOffset(other._privatePolygonOffset),
+    _renderMapSize(other._renderMapSize),
+    _parseFlags(other._parseFlags)
+{
+    _colIdx[0] = other._colIdx[0];
+    _colIdx[1] = other._colIdx[1];
+    _colIdx[2] = other._colIdx[2];
+    _colIdx[3] = other._colIdx[3];
+    _colExpression[0] = other._colExpression[0];
+    _colExpression[1] = other._colExpression[1];
+    _colExpression[2] = other._colExpression[2];
+    _colExpression[3] = other._colExpression[3];
+
+    _texGenParams[0] = other._texGenParams[0];
+    _texGenParams[1] = other._texGenParams[1];
+    _texGenParams[2] = other._texGenParams[2];
+    _texGenExpressions[0] = other._texGenExpressions[0];
+    _texGenExpressions[1] = other._texGenExpressions[1];
+    _texGenExpressions[2] = other._texGenExpressions[2];
+
+    _scale[0] = other._scale[0];
+    _scale[1] = other._scale[1];
+    _scaleExpression[0] = other._scaleExpression[0];
+    _scaleExpression[1] = other._scaleExpression[1];
+
+    _translation[0] = other._translation[0];
+    _translation[1] = other._translation[1];
+    _translationExpression[0] = other._translationExpression[0];
+    _translationExpression[1] = other._translationExpression[1];
+
+    _shear[0] = other._shear[0];
+    _shear[1] = other._shear[1];
+    _shearExpression[0] = other._shearExpression[0];
+    _shearExpression[1] = other._shearExpression[1];
+}
+
 TexturePtr Doom3ShaderLayer::getTexture() const
 {
     // Bind texture to GL if needed

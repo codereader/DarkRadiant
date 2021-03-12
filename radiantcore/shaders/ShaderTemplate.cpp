@@ -21,9 +21,41 @@
 namespace shaders
 {
 
-ShaderTemplate::ShaderTemplate(const ShaderTemplate& other)
+ShaderTemplate::ShaderTemplate(const ShaderTemplate& other) :
+    _name(other._name),
+    _currentLayer(new Doom3ShaderLayer(*this)),
+    _lightFalloff(other._lightFalloff),
+    _lightFalloffCubeMap(other._lightFalloffCubeMap),
+    fogLight(other.fogLight),
+    ambientLight(other.ambientLight),
+    blendLight(other.blendLight),
+    _cubicLight(other._cubicLight),
+    description(other.description),
+    _materialFlags(other._materialFlags),
+    _cullType(other._cullType),
+    _clampType(other._clampType),
+    _surfaceFlags(other._surfaceFlags),
+    _surfaceType(other._surfaceType),
+    _deformType(other._deformType),
+    _deformExpressions(other._deformExpressions),
+    _deformDeclName(other._deformDeclName),
+    _spectrum(other._spectrum),
+    _sortReq(other._sortReq),
+    _polygonOffset(other._polygonOffset),
+    _decalInfo(other._decalInfo),
+    _coverage(other._coverage),
+    _renderBumpArguments(other._renderBumpArguments),
+    _renderBumpFlatArguments(other._renderBumpFlatArguments),
+    _blockContents(other._blockContents),
+    _parsed(other._parsed),
+    _parseFlags(other._parseFlags),
+    _guiDeclName(other._guiDeclName)
 {
-    // TODO
+    // Clone the layers
+    for (const auto& otherLayer : other._layers)
+    {
+        _layers.emplace_back(std::make_shared<Doom3ShaderLayer>(*otherLayer, *this));
+    }
 }
 
 std::shared_ptr<ShaderTemplate> ShaderTemplate::clone() const

@@ -18,8 +18,8 @@ class ShaderTemplate;
  * \brief
  * Implementation of ShaderLayer for Doom 3 shaders.
  */
-class Doom3ShaderLayer
-: public ShaderLayer
+class Doom3ShaderLayer : 
+    public ShaderLayer
 {
 private:
     // The owning material template
@@ -115,11 +115,12 @@ private:
     int _parseFlags;
 
 public:
-
-    // Constructor
     Doom3ShaderLayer(ShaderTemplate& material, 
                      ShaderLayer::Type type = ShaderLayer::BLEND,
                      const NamedBindablePtr& btex = NamedBindablePtr());
+
+    // Copy-constructor, needs the new owner template as argument
+    Doom3ShaderLayer(const Doom3ShaderLayer& other, ShaderTemplate& material);
 
     /* ShaderLayer implementation */
     TexturePtr getTexture() const;
