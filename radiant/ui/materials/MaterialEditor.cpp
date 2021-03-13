@@ -370,7 +370,8 @@ void MaterialEditor::createExpressionBinding(const std::string& textCtrlName,
         getControl<wxTextCtrl>(textCtrlName),
         loadFunc,
         std::bind(&MaterialEditor::getEditableStageForSelection, this),
-        saveFunc));
+        saveFunc,
+        std::bind(&MaterialEditor::onMaterialChanged, this)));
 }
 
 void MaterialEditor::setupMaterialStageProperties()
@@ -447,7 +448,7 @@ void MaterialEditor::setupMaterialStageProperties()
 
     createExpressionBinding("MaterialStageTranslateX",
         [](const IShaderLayer::Ptr& layer) { return layer->getTranslationExpression(0); },
-        [this](const IEditableShaderLayer::Ptr& layer, const std::string& value) { layer->setTranslationExpressionFromString(0, value); onMaterialChanged(); });
+        [](const IEditableShaderLayer::Ptr& layer, const std::string& value) { layer->setTranslationExpressionFromString(0, value); });
     createExpressionBinding("MaterialStageTranslateY",
         [](const IShaderLayer::Ptr& layer) { return layer->getTranslationExpression(1); },
         [](const IEditableShaderLayer::Ptr& layer, const std::string& value) { layer->setTranslationExpressionFromString(1, value); });
@@ -1021,6 +1022,13 @@ void MaterialEditor::updateStageControls()
         auto mapExpr = selectedStage->getMapExpression();
         auto imageMap = getControl<wxTextCtrl>("MaterialStageImageMap");
         imageMap->SetValue(mapExpr ? mapExpr->getExpressionString() : "");
+
+        imageMap->Bind(wxEVT_TEXT, [imageMap, this](wxCommandEvent&)
+        {
+            auto stage = getEditableStageForSelection();
+            stage->setMapExpressionFromString(imageMap->GetValue().ToStdString());
+            onMaterialChanged();
+        });
 
         auto mapTypeNotSpecial = getControl<wxRadioButton>("MaterialStageMapTypeNotSpecial");
         auto specialMapPanel = getControl<wxPanel>("MaterialStageSpecialMapPanel");

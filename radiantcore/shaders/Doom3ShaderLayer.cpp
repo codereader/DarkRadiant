@@ -407,6 +407,7 @@ IMapExpression::Ptr Doom3ShaderLayer::getMapExpression() const
 
 void Doom3ShaderLayer::setMapExpressionFromString(const std::string& expression)
 {
+    _texture.reset();
     setBindableTexture(MapExpression::createForString(expression));
 }
 

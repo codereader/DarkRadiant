@@ -52,7 +52,7 @@ protected:
         _blockUpdates(false)
     {}
 
-    const Target& getTarget()
+    Target getTarget()
     {
         if (_blockUpdates)
         {

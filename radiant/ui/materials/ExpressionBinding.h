@@ -14,16 +14,19 @@ private:
     wxTextCtrl* _textCtrl;
     std::function<shaders::IShaderExpressionPtr(const IShaderLayer::Ptr&)> _getExpression;
     std::function<void(const IEditableShaderLayer::Ptr&, const std::string&)> _updateExpression;
+    std::function<void()> _postChangeNotify;
 
 public:
     ExpressionBinding(wxTextCtrl* textCtrl,
                       const std::function<shaders::IShaderExpressionPtr(const IShaderLayer::Ptr&)>& loadFunc,
                       const std::function<IEditableShaderLayer::Ptr()>& acquireSaveTarget,
-                      const std::function<void(const IEditableShaderLayer::Ptr&, const std::string&)>& saveFunc) :
+                      const std::function<void(const IEditableShaderLayer::Ptr&, const std::string&)>& saveFunc,
+                      const std::function<void()>& postChangeNotify = std::function<void()>()) :
         TwoWayBinding(acquireSaveTarget),
         _textCtrl(textCtrl),
         _getExpression(loadFunc),
-        _updateExpression(saveFunc)
+        _updateExpression(saveFunc),
+        _postChangeNotify(postChangeNotify)
     {
         if (_updateExpression)
         {
@@ -53,6 +56,11 @@ private:
         if (target)
         {
             _updateExpression(target, _textCtrl->GetValue().ToStdString());
+        }
+
+        if (_postChangeNotify)
+        {
+            _postChangeNotify();
         }
     }
 };
