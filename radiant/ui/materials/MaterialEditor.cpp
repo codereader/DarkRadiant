@@ -447,7 +447,7 @@ void MaterialEditor::setupMaterialStageProperties()
 
     createExpressionBinding("MaterialStageTranslateX",
         [](const IShaderLayer::Ptr& layer) { return layer->getTranslationExpression(0); },
-        [](const IEditableShaderLayer::Ptr& layer, const std::string& value) { layer->setTranslationExpressionFromString(0, value); });
+        [this](const IEditableShaderLayer::Ptr& layer, const std::string& value) { layer->setTranslationExpressionFromString(0, value); onMaterialChanged(); });
     createExpressionBinding("MaterialStageTranslateY",
         [](const IShaderLayer::Ptr& layer) { return layer->getTranslationExpression(1); },
         [](const IEditableShaderLayer::Ptr& layer, const std::string& value) { layer->setTranslationExpressionFromString(1, value); });
@@ -1119,6 +1119,11 @@ void MaterialEditor::_onMaterialTypeChoice(wxCommandEvent& ev)
     
     auto selectedString = getControl<wxChoice>("MaterialType")->GetStringSelection();
     _material->setSurfaceType(shaders::getSurfaceTypeForString(selectedString.ToStdString()));
+}
+
+void MaterialEditor::onMaterialChanged()
+{
+    _preview->onMaterialChanged();
 }
 
 }

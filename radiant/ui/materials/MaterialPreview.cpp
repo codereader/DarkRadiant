@@ -102,6 +102,14 @@ void MaterialPreview::setMaterial(const MaterialPtr& material)
     queueDraw();
 }
 
+void MaterialPreview::onMaterialChanged()
+{
+    if (!_material) return;
+
+    _renderSystem->onMaterialChanged(_material->getName());
+    queueDraw();
+}
+
 bool MaterialPreview::onPreRender()
 {
     if (!_sceneIsReady)

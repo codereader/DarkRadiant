@@ -261,6 +261,20 @@ void OpenGLRenderSystem::unrealise()
     }
 }
 
+void OpenGLRenderSystem::onMaterialChanged(const std::string& materialName)
+{
+    auto existingShader = _shaders.find(materialName);
+
+    if (existingShader == _shaders.end() || !_realised)
+    {
+        return;
+    }
+
+    // Re-realise this shader
+    existingShader->second->unrealise();
+    existingShader->second->realise(materialName);
+}
+
 GLProgramFactory& OpenGLRenderSystem::getGLProgramFactory()
 {
     return *_glProgramFactory;

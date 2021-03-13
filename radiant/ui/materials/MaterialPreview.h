@@ -38,6 +38,8 @@ public:
     const MaterialPtr& getMaterial();
     void setMaterial(const MaterialPtr& material);
 
+    void onMaterialChanged();
+
 protected:
     bool canDrawGrid() override;
     void setupSceneGraph() override;

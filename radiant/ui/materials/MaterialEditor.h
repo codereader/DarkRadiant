@@ -99,6 +99,8 @@ private:
     void _onStageListSelectionChanged(wxDataViewEvent& ev);
     void _onMaterialTypeChoice(wxCommandEvent& ev);
 
+    void onMaterialChanged();
+
     // Shortcut
     template<typename ObjectClass>
     ObjectClass* getControl(const std::string& name)
