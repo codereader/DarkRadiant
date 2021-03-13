@@ -36,6 +36,33 @@ protected:
     {}
 };
 
+template<typename Source, typename Target>
+class TwoWayBinding :
+    public Binding<Source>
+{
+private:
+    std::function<Target()> _acquireTarget;
+
+protected:
+    bool _blockUpdates;
+
+protected:
+    TwoWayBinding(const std::function<Target()>& acquireTarget) :
+        _acquireTarget(acquireTarget),
+        _blockUpdates(false)
+    {}
+
+    const Target& getTarget()
+    {
+        if (_blockUpdates)
+        {
+            return Target();
+        }
+
+        return _acquireTarget();
+    }
+};
+
 template<typename Source>
 class CheckBoxBinding :
     public Binding<Source>

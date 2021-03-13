@@ -18,7 +18,7 @@ private:
     // The unmodified template
     ShaderTemplatePtr _originalTemplate;
 
-    // The template this mateiral is working with - if this instance 
+    // The template this material is working with - if this instance 
     // has not been altered, this is the same as _originalTemplate
 	ShaderTemplatePtr _template;
 
@@ -93,7 +93,7 @@ public:
 	bool isVisible() const override;
 	void setVisible(bool visible) override;
     const IShaderLayerVector& getAllLayers() const;
-    const IEditableShaderLayer::Ptr& getEditableLayer(std::size_t index) override;
+    IEditableShaderLayer::Ptr getEditableLayer(std::size_t index) override;
 
     IMapExpression::Ptr getLightFalloffExpression() override;
 	IMapExpression::Ptr getLightFalloffCubeMapExpression() override;

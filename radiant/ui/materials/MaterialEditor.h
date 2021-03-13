@@ -79,7 +79,7 @@ private:
 
     void createExpressionBinding(const std::string& textCtrlName,
         const std::function<shaders::IShaderExpressionPtr(const IShaderLayer::Ptr&)>& loadFunc,
-        const std::function<void(const IShaderLayer::Ptr&, const std::string&)>& saveFunc = std::function<void(const IShaderLayer::Ptr&, const std::string&)>());
+        const std::function<void(const IEditableShaderLayer::Ptr&, const std::string&)>& saveFunc = std::function<void(const IEditableShaderLayer::Ptr&, const std::string&)>());
 
     void updateControlsFromMaterial();
     void updateDeformControlsFromMaterial();
@@ -88,8 +88,7 @@ private:
 
     void selectStageByIndex(std::size_t index);
     IShaderLayer::Ptr getSelectedStage();
-
-    void prepareMaterialForSave();
+    IEditableShaderLayer::Ptr getEditableStageForSelection();
 
     void updateStageControls();
     void updateStageBlendControls();

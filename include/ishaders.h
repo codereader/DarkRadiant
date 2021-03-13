@@ -321,7 +321,7 @@ public:
 
     // Returns the edit interface for the given shader layer. Calling this method
     // will immediately mark this Material as modified.
-    virtual const IEditableShaderLayer::Ptr& getEditableLayer(std::size_t index) = 0;
+    virtual IEditableShaderLayer::Ptr getEditableLayer(std::size_t index) = 0;
 
     /// Return the 2D light falloff texture, if this is a light shader
     virtual TexturePtr lightFalloffImage() = 0;

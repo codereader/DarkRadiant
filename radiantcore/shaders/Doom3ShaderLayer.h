@@ -6,6 +6,7 @@
 #include "math/Vector4.h"
 #include "MapExpression.h"
 #include "NamedBindable.h"
+#include "ShaderExpression.h"
 
 namespace shaders
 {
@@ -380,6 +381,28 @@ public:
         assert(index < 2);
         auto expressionIndex = _translationExpression[index];
         return expressionIndex != NOT_DEFINED ? _expressions[expressionIndex] : NULL_EXPRESSION;
+    }
+
+    void setTranslationExpressionFromString(std::size_t index, const std::string& expressionString) override
+    {
+        assert(index < 2);
+
+        auto expression = ShaderExpression::createFromString(expressionString);
+
+        if (!expression)
+        {
+            return;
+        }
+
+        if (_translationExpression[index] == NOT_DEFINED)
+        {
+            _translationExpression[index] = _expressions.size();
+            _expressions.emplace_back(expression);
+        }
+        else
+        {
+            _expressions[index] = expression;
+        }
     }
 
     /**

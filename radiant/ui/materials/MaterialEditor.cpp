@@ -362,19 +362,14 @@ void MaterialEditor::setupStageFlag(const std::string& controlName, int flags)
     }));
 }
 
-void MaterialEditor::prepareMaterialForSave()
-{
-    // TODO
-}
-
 void MaterialEditor::createExpressionBinding(const std::string& textCtrlName,
     const std::function<shaders::IShaderExpressionPtr(const IShaderLayer::Ptr&)>& loadFunc,
-    const std::function<void(const IShaderLayer::Ptr&, const std::string&)>& saveFunc)
+    const std::function<void(const IEditableShaderLayer::Ptr&, const std::string&)>& saveFunc)
 {
-    _stageBindings.emplace(std::make_shared<ExpressionBinding<IShaderLayer::Ptr>>(
+    _stageBindings.emplace(std::make_shared<ExpressionBinding>(
         getControl<wxTextCtrl>(textCtrlName),
         loadFunc,
-        std::bind(&MaterialEditor::prepareMaterialForSave, this),
+        std::bind(&MaterialEditor::getEditableStageForSelection, this),
         saveFunc));
 }
 
@@ -451,9 +446,11 @@ void MaterialEditor::setupMaterialStageProperties()
     }
 
     createExpressionBinding("MaterialStageTranslateX",
-        [](const IShaderLayer::Ptr& layer) { return layer->getTranslationExpression(0); });
+        [](const IShaderLayer::Ptr& layer) { return layer->getTranslationExpression(0); },
+        [](const IEditableShaderLayer::Ptr& layer, const std::string& value) { layer->setTranslationExpressionFromString(0, value); });
     createExpressionBinding("MaterialStageTranslateY",
-        [](const IShaderLayer::Ptr& layer) { return layer->getTranslationExpression(1); });
+        [](const IShaderLayer::Ptr& layer) { return layer->getTranslationExpression(1); },
+        [](const IEditableShaderLayer::Ptr& layer, const std::string& value) { layer->setTranslationExpressionFromString(1, value); });
 
     createExpressionBinding("MaterialStageScaleX",
         [](const IShaderLayer::Ptr& layer) { return layer->getScaleExpression(0); });
@@ -817,6 +814,18 @@ IShaderLayer::Ptr MaterialEditor::getSelectedStage()
     }
 
     return IShaderLayer::Ptr();
+}
+
+IEditableShaderLayer::Ptr MaterialEditor::getEditableStageForSelection()
+{
+    auto selectedStageItem = _stageView->GetSelection();
+
+    if (!selectedStageItem.IsOk() || !_material) return IEditableShaderLayer::Ptr();
+
+    wxutil::TreeModel::Row stageRow(selectedStageItem, *_stageList);
+    int stageIndex = stageRow[STAGE_COLS().index].getInteger();
+
+    return _material->getEditableLayer(stageIndex);
 }
 
 void MaterialEditor::updateStageBlendControls()

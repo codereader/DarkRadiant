@@ -308,7 +308,7 @@ const IShaderLayerVector& CShader::getAllLayers() const
     return _layers;
 }
 
-const IEditableShaderLayer::Ptr& CShader::getEditableLayer(std::size_t index)
+IEditableShaderLayer::Ptr CShader::getEditableLayer(std::size_t index)
 {
     ensureTemplateCopy();
 

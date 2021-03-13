@@ -384,6 +384,9 @@ public:
 
     virtual ~IEditableShaderLayer() {}
 
+    // Set the translation expression [0..1] to the given string
+    virtual void setTranslationExpressionFromString(std::size_t index, const std::string& expression) = 0;
+
     // Update the "map" expression of this stage
     virtual void setMapExpressionFromString(const std::string& expression) = 0;
 };
