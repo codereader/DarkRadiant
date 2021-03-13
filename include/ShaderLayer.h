@@ -179,7 +179,7 @@ public:
     };
 
     // Returns the expression to calculate the RGBA vertex colour values
-    virtual const shaders::IShaderExpressionPtr& getColourExpression(ColourComponentSelector component) = 0;
+    virtual const shaders::IShaderExpressionPtr& getColourExpression(ColourComponentSelector component) const = 0;
 
     /**
      * \brief
@@ -233,46 +233,46 @@ public:
      * Returns the dimensions specifying the map size for 
      * stages using the "mirrorRenderMap", "remoteRenderMap" keywords.
      */
-    virtual const Vector2& getRenderMapSize() = 0;
+    virtual const Vector2& getRenderMapSize() const = 0;
 
 	/**
 	 * Returns the value of the scale expressions of this stage.
 	 */
-	virtual Vector2 getScale() = 0;
+	virtual Vector2 getScale() const = 0;
 
     // Returns the expression of the given scale component (0 == x, 1 == y)
-    virtual const shaders::IShaderExpressionPtr& getScaleExpression(std::size_t index) = 0;
+    virtual const shaders::IShaderExpressionPtr& getScaleExpression(std::size_t index) const = 0;
 
     // Workaround: the shader layer is storing the centerscale expression in the same location as scale expressions,
     // making them mutually exclusive - which is not the way the idTech4 materials work.
     // These stage transforms need to be redesigned to support an arbitrary number of transforms respecting their order.
     // Texture Matrix calculation needs to be performed by the stage itself, not in OpenGLShaderPass
     // I need to go ahead with the material editor, so I'm not changing it immediately
-    virtual const shaders::IShaderExpressionPtr& getCenterScaleExpression(std::size_t index) = 0;
+    virtual const shaders::IShaderExpressionPtr& getCenterScaleExpression(std::size_t index) const = 0;
 
 	/**
 	 * Returns the value of the translate expressions of this stage.
 	 */
-	virtual Vector2 getTranslation() = 0;
+	virtual Vector2 getTranslation() const = 0;
 
     // Returns the expression of the given translation component (0 == x, 1 == y)
-    virtual const shaders::IShaderExpressionPtr& getTranslationExpression(std::size_t index) = 0;
+    virtual const shaders::IShaderExpressionPtr& getTranslationExpression(std::size_t index) const = 0;
 
 	/**
 	 * Returns the value of the rotate expression of this stage.
 	 */
-	virtual float getRotation() = 0;
+	virtual float getRotation() const = 0;
 
     // Returns the expression used to calculate the rotation value
-    virtual const shaders::IShaderExpressionPtr& getRotationExpression() = 0;
+    virtual const shaders::IShaderExpressionPtr& getRotationExpression() const = 0;
 
 	/**
 	 * Returns the value of the 'shear' expressions of this stage.
 	 */
-	virtual Vector2 getShear() = 0;
+	virtual Vector2 getShear() const = 0;
 
     // Returns the expression of the given shear component (0 == x, 1 == y)
-    virtual const shaders::IShaderExpressionPtr& getShearExpression(std::size_t index) = 0;
+    virtual const shaders::IShaderExpressionPtr& getShearExpression(std::size_t index) const = 0;
 
     // Returns true if this layer has an alphatest expression defined
     virtual bool hasAlphaTest() const = 0;
@@ -294,25 +294,25 @@ public:
 	virtual bool isVisible() const = 0;
 
     // Returns the if-expression used to evaluate this stage's visibility, or null if none defined
-    virtual const shaders::IShaderExpressionPtr& getConditionExpression() = 0;
+    virtual const shaders::IShaderExpressionPtr& getConditionExpression() const = 0;
 
 	/**
 	 * Returns the name of this stage's fragment program.
 	 */
-	virtual const std::string& getVertexProgram() = 0;
+	virtual const std::string& getVertexProgram()const = 0;
 
 	/**
 	 * Returns the name of this stage's fragment program.
 	 */
-	virtual const std::string& getFragmentProgram() = 0;
+	virtual const std::string& getFragmentProgram() const = 0;
 
     // The number of defined vertex parameters
-    virtual int getNumVertexParms() = 0;
+    virtual int getNumVertexParms() const = 0;
 
 	/**
 	 * Returns the 4 parameter values for the vertexParm index <parm>.
 	 */
-	virtual Vector4 getVertexParmValue(int parm) = 0;
+	virtual Vector4 getVertexParmValue(int parm) const = 0;
 
     // A vertex parm has an index and 4 expressions at most
     struct VertexParm
@@ -325,13 +325,13 @@ public:
         shaders::IShaderExpressionPtr expressions[4];
     };
 
-    // Returns the 
-    virtual const VertexParm& getVertexParm(int index) = 0;
+    // Returns the vertex parameter with the given index [0..3]
+    virtual const VertexParm& getVertexParm(int index) const = 0;
 
 	/**
 	 * Returns the number of fragment maps in this stage.
 	 */
-	virtual std::size_t getNumFragmentMaps() = 0;
+	virtual std::size_t getNumFragmentMaps() const = 0;
 
     struct FragmentMap
     {
@@ -344,31 +344,31 @@ public:
         shaders::IMapExpression::Ptr map;
     };
 
-    virtual const FragmentMap& getFragmentMap(int index) = 0;
+    virtual const FragmentMap& getFragmentMap(int index) const = 0;
 
 	/**
 	 * Returns the fragment map image with the given index.
 	 */
-	virtual TexturePtr getFragmentMapTexture(int index) = 0;
+	virtual TexturePtr getFragmentMapTexture(int index) const = 0;
 
 	/**
 	 * Stage-specific polygon offset, overriding the "global" one defined on the material.
 	 */
-	virtual float getPrivatePolygonOffset() = 0;
+	virtual float getPrivatePolygonOffset() const = 0;
 
     // If this stage is referring to a single image file, this will return
     // the VFS path to it with the file extension removed.
     // If this layer doesn't refer to a single image file, an empty string is returned
-    virtual std::string getMapImageFilename() = 0;
+    virtual std::string getMapImageFilename() const = 0;
 
     // The map expression used to generate/define the texture of this stage
-    virtual shaders::IMapExpression::Ptr getMapExpression() = 0;
+    virtual shaders::IMapExpression::Ptr getMapExpression() const = 0;
 
     // Update the "map" expression of this stage
     virtual void setMapExpressionFromString(const std::string& expression) = 0;
 
     // Parser information, to reconstruct the use of certain keywords
-    virtual int getParseFlags() = 0;
+    virtual int getParseFlags() const = 0;
 };
 
 /**

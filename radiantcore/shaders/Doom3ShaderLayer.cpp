@@ -213,7 +213,7 @@ Colour4 Doom3ShaderLayer::getColour() const
     return colour;
 }
 
-const IShaderExpressionPtr& Doom3ShaderLayer::getColourExpression(ColourComponentSelector component)
+const IShaderExpressionPtr& Doom3ShaderLayer::getColourExpression(ColourComponentSelector component) const
 {
     std::size_t expressionIndex = NOT_DEFINED;
 
@@ -339,7 +339,7 @@ void Doom3ShaderLayer::setMapType(MapType type)
     _mapType = type;
 }
 
-const Vector2& Doom3ShaderLayer::getRenderMapSize()
+const Vector2& Doom3ShaderLayer::getRenderMapSize() const
 {
     return _renderMapSize;
 }
@@ -359,7 +359,7 @@ float Doom3ShaderLayer::getAlphaTest() const
     return _registers[_alphaTest];
 }
 
-TexturePtr Doom3ShaderLayer::getFragmentMapTexture(int index)
+TexturePtr Doom3ShaderLayer::getFragmentMapTexture(int index) const
 {
 	if (index < 0 || index >= static_cast<int>(_fragmentMaps.size()))
 	{
@@ -369,7 +369,7 @@ TexturePtr Doom3ShaderLayer::getFragmentMapTexture(int index)
 	return GetTextureManager().getBinding(std::dynamic_pointer_cast<NamedBindable>(_fragmentMaps[index].map));
 }
 
-const Doom3ShaderLayer::FragmentMap& Doom3ShaderLayer::getFragmentMap(int index)
+const Doom3ShaderLayer::FragmentMap& Doom3ShaderLayer::getFragmentMap(int index) const
 {
     assert(index >= 0 && index < static_cast<int>(_fragmentMaps.size()));
 
@@ -388,7 +388,7 @@ void Doom3ShaderLayer::addFragmentMap(const ShaderLayer::FragmentMap& fragmentMa
     _fragmentMaps[fragmentMap.index] = fragmentMap;
 }
 
-std::string Doom3ShaderLayer::getMapImageFilename()
+std::string Doom3ShaderLayer::getMapImageFilename() const
 {
     auto image = std::dynamic_pointer_cast<ImageExpression>(_bindableTex);
 
@@ -400,7 +400,7 @@ std::string Doom3ShaderLayer::getMapImageFilename()
     return std::string();
 }
 
-IMapExpression::Ptr Doom3ShaderLayer::getMapExpression()
+IMapExpression::Ptr Doom3ShaderLayer::getMapExpression() const
 {
     return std::dynamic_pointer_cast<IMapExpression>(_bindableTex);
 }
@@ -410,7 +410,7 @@ void Doom3ShaderLayer::setMapExpressionFromString(const std::string& expression)
     setBindableTexture(MapExpression::createForString(expression));
 }
 
-int Doom3ShaderLayer::getParseFlags()
+int Doom3ShaderLayer::getParseFlags() const
 {
     return _parseFlags;
 }
@@ -420,7 +420,7 @@ void Doom3ShaderLayer::setParseFlag(ParseFlags flag)
     _parseFlags |= flag;
 }
 
-Vector4 Doom3ShaderLayer::getVertexParmValue(int parm)
+Vector4 Doom3ShaderLayer::getVertexParmValue(int parm) const
 {
     if (static_cast<std::size_t>(parm) >= _vertexParms.size() / 4)
     {
@@ -433,12 +433,12 @@ Vector4 Doom3ShaderLayer::getVertexParmValue(int parm)
         _registers[_vertexParms[offset + 2]], _registers[_vertexParms[offset + 3]]);
 }
 
-const ShaderLayer::VertexParm& Doom3ShaderLayer::getVertexParm(int parm)
+const ShaderLayer::VertexParm& Doom3ShaderLayer::getVertexParm(int parm) const
 {
     return _vertexParmDefinitions[parm];
 }
 
-int Doom3ShaderLayer::getNumVertexParms()
+int Doom3ShaderLayer::getNumVertexParms() const
 {
     return static_cast<int>(_vertexParmDefinitions.size());
 }

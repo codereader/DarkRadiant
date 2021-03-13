@@ -132,7 +132,7 @@ public:
     MapType getMapType() const override;
     void setMapType(MapType type);
 
-    const Vector2& getRenderMapSize() override;
+    const Vector2& getRenderMapSize() const override;
     void setRenderMapSize(const Vector2& size);
 
     bool hasAlphaTest() const override;
@@ -145,7 +145,7 @@ public:
         return _registers[_condition] != 0;
     }
 
-    const shaders::IShaderExpressionPtr& getConditionExpression() override
+    const shaders::IShaderExpressionPtr& getConditionExpression() const override
     {
         return _conditionExpression != NOT_DEFINED ? _expressions[_conditionExpression] : NULL_EXPRESSION;
     }
@@ -305,7 +305,7 @@ public:
      */
     void setColour(const Vector4& col);
 
-    const IShaderExpressionPtr& getColourExpression(ColourComponentSelector component) override;
+    const IShaderExpressionPtr& getColourExpression(ColourComponentSelector component) const override;
 
     /**
      * Set the given colour component to use the given expression. This can be a single
@@ -323,12 +323,12 @@ public:
         _texture = tex;
     }
 
-    Vector2 getScale() 
+    Vector2 getScale() const override
     {
         return Vector2(_registers[_scale[0]], _registers[_scale[1]]);
     }
 
-    const shaders::IShaderExpressionPtr& getScaleExpression(std::size_t index) override
+    const shaders::IShaderExpressionPtr& getScaleExpression(std::size_t index) const override
     {
         assert(index < 2);
 
@@ -341,7 +341,7 @@ public:
         return expressionIndex != NOT_DEFINED ? _expressions[expressionIndex] : NULL_EXPRESSION;
     }
 
-    const shaders::IShaderExpressionPtr& getCenterScaleExpression(std::size_t index) override
+    const shaders::IShaderExpressionPtr& getCenterScaleExpression(std::size_t index) const override
     {
         assert(index < 2);
         
@@ -368,12 +368,12 @@ public:
         _scale[1] = yExpr->linkToRegister(_registers);
     }
 
-    Vector2 getTranslation() 
+    Vector2 getTranslation() const override
     {
         return Vector2(_registers[_translation[0]], _registers[_translation[1]]);
     }
 
-    const shaders::IShaderExpressionPtr& getTranslationExpression(std::size_t index)
+    const shaders::IShaderExpressionPtr& getTranslationExpression(std::size_t index) const override
     {
         assert(index < 2);
         auto expressionIndex = _translationExpression[index];
@@ -394,12 +394,12 @@ public:
         _translation[1] = yExpr->linkToRegister(_registers);
     }
 
-    float getRotation() 
+    float getRotation() const override
     {
         return _registers[_rotation];
     }
 
-    const shaders::IShaderExpressionPtr& getRotationExpression() override
+    const shaders::IShaderExpressionPtr& getRotationExpression() const override
     {
         return _rotationExpression != NOT_DEFINED ? _expressions[_rotationExpression] : NULL_EXPRESSION;
     }
@@ -415,12 +415,12 @@ public:
         _rotation = expr->linkToRegister(_registers);
     }
 
-    Vector2 getShear() 
+    Vector2 getShear() const override
     {
         return Vector2(_registers[_shear[0]], _registers[_shear[1]]);
     }
 
-    const shaders::IShaderExpressionPtr& getShearExpression(std::size_t index) override
+    const shaders::IShaderExpressionPtr& getShearExpression(std::size_t index) const override
     {
         assert(index < 2);
         auto expressionIndex = _shearExpression[index];
@@ -481,7 +481,7 @@ public:
     }
 
     // Vertex program name
-    const std::string& getVertexProgram()
+    const std::string& getVertexProgram() const override
     {
         return _vertexProgram;
     }
@@ -491,15 +491,15 @@ public:
         _vertexProgram = name;
     }
 
-    Vector4 getVertexParmValue(int parm) override;
-    const VertexParm& getVertexParm(int parm) override;
+    Vector4 getVertexParmValue(int parm) const override;
+    const VertexParm& getVertexParm(int parm) const override;
     
-    int getNumVertexParms() override;
+    int getNumVertexParms() const override;
     
     void addVertexParm(const VertexParm& parm);
 
     // Fragment program name
-    const std::string& getFragmentProgram()
+    const std::string& getFragmentProgram() const override
     {
         return _fragmentProgram;
     }
@@ -509,18 +509,18 @@ public:
         _fragmentProgram = name;
     }
 
-    std::size_t getNumFragmentMaps()
+    std::size_t getNumFragmentMaps() const override
     {
         return _fragmentMaps.size();
     }
 
-    const FragmentMap& getFragmentMap(int index) override;
+    const FragmentMap& getFragmentMap(int index) const override;
 
-    TexturePtr getFragmentMapTexture(int index) override;
+    TexturePtr getFragmentMapTexture(int index) const override;
 
     void addFragmentMap(const FragmentMap& fragmentMap);
 
-    float getPrivatePolygonOffset()
+    float getPrivatePolygonOffset() const override
     {
         return _privatePolygonOffset;
     }
@@ -530,12 +530,12 @@ public:
         _privatePolygonOffset = value;
     }
 
-    std::string getMapImageFilename() override;
+    std::string getMapImageFilename() const override;
 
-    shaders::IMapExpression::Ptr getMapExpression() override;
+    shaders::IMapExpression::Ptr getMapExpression() const override;
     void setMapExpressionFromString(const std::string& expression) override;
 
-    int getParseFlags() override;
+    int getParseFlags() const override;
     void setParseFlag(ParseFlags flag);
 };
 
