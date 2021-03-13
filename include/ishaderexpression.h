@@ -68,6 +68,16 @@ public:
 	 */
 	virtual std::size_t linkToRegister(Registers& registers) = 0;
 
+    // Link this expression to the given Registers vector, using the specified index 
+    // instead of allocating a new register
+    virtual void linkToSpecificRegister(Registers& registers, std::size_t index) = 0;
+
+    // True if this expression is linked to a register
+    virtual bool isLinked() const = 0;
+
+    // Returns any previously used register position (for possible re-use)
+    virtual std::size_t unlinkFromRegisters() = 0;
+
     // Returns the string this expression has been parsed from
     virtual std::string getExpressionString() = 0;
 };

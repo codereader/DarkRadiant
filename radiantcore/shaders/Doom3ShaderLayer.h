@@ -165,17 +165,23 @@ public:
 
     void evaluateExpressions(std::size_t time) 
     {
-        for (const auto& i : _expressions)
+        for (const auto& expression : _expressions)
         {
-            i->evaluate(time);
+            if (expression)
+            {
+                expression->evaluate(time);
+            }
         }
     }
 
     void evaluateExpressions(std::size_t time, const IRenderEntity& entity)
     {
-        for (const auto& i : _expressions)
+        for (const auto& expression : _expressions)
         {
-            i->evaluate(time, entity);
+            if (expression)
+            {
+                expression->evaluate(time, entity);
+            }
         }
     }
 
@@ -387,22 +393,7 @@ public:
     {
         assert(index < 2);
 
-        auto expression = ShaderExpression::createFromString(expressionString);
-
-        if (!expression)
-        {
-            return;
-        }
-
-        if (_translationExpression[index] == NOT_DEFINED)
-        {
-            _translationExpression[index] = _expressions.size();
-            _expressions.emplace_back(expression);
-        }
-        else
-        {
-            _expressions[index] = expression;
-        }
+        assignExpressionFromString(expressionString, _translationExpression[index], _translation[index], REG_ZERO);
     }
 
     /**
@@ -562,6 +553,10 @@ public:
 
     int getParseFlags() const override;
     void setParseFlag(ParseFlags flag);
+
+private:
+    void assignExpressionFromString(const std::string& expressionString, 
+        std::size_t& expressionIndex, std::size_t& registerIndex, std::size_t defaultRegisterIndex);
 };
 
 }

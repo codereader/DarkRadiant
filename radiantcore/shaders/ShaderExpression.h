@@ -30,12 +30,12 @@ public:
 	{}
 
 	// Base implementations
-	virtual float evaluate(std::size_t time)
+	virtual float evaluate(std::size_t time) override
 	{
 		// Evaluate this register and write it into the respective register index
 		float val = getValue(time);
 
-		if (_registers != NULL)
+		if (_registers != nullptr)
 		{
 			(*_registers)[_index] = val;
 		}
@@ -43,12 +43,12 @@ public:
 		return val;
 	}
 
-	virtual float evaluate(std::size_t time, const IRenderEntity& entity)
+	virtual float evaluate(std::size_t time, const IRenderEntity& entity) override
 	{
 		// Evaluate this register and write it into the respective register index
 		float val = getValue(time, entity);
 
-		if (_registers != NULL)
+		if (_registers != nullptr)
 		{
 			(*_registers)[_index] = val;
 		}
@@ -56,7 +56,7 @@ public:
 		return val;
 	}
 
-	std::size_t linkToRegister(Registers& registers) 
+	std::size_t linkToRegister(Registers& registers) override
 	{
 		_registers = &registers;
 
@@ -68,6 +68,27 @@ public:
 
 		return _index;
 	}
+
+    void linkToSpecificRegister(Registers& registers, std::size_t index) override
+    {
+        _registers = &registers;
+        _index = static_cast<int>(index);
+    }
+
+    bool isLinked() const override
+    {
+        return _index != -1;
+    }
+
+    std::size_t unlinkFromRegisters() override
+    {
+        _registers = nullptr;
+        
+        auto oldIndex = _index;
+        _index = -1;
+
+        return static_cast<std::size_t>(oldIndex);
+    }
 
 	static IShaderExpressionPtr createFromString(const std::string& exprStr);
 

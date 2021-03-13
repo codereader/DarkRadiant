@@ -378,6 +378,11 @@ void CShader::ensureTemplateCopy()
     }
 
     _template = _originalTemplate->clone();
+
+    // We need to update that layer reference vector
+    // as long as it's there
+    unrealise();
+    realise();
 }
 
 bool CShader::m_lightingEnabled = false;

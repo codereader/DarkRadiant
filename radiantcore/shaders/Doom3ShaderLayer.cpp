@@ -506,5 +506,56 @@ void Doom3ShaderLayer::addVertexParm(const VertexParm& parm)
     assert(_vertexParms.size() % 4 == 0);
 }
 
+void Doom3ShaderLayer::assignExpressionFromString(const std::string& expressionString, 
+    std::size_t& expressionIndex, std::size_t& registerIndex, std::size_t defaultRegisterIndex)
+{
+    // An empty string will clear the expression
+    if (expressionString.empty())
+    {
+        if (expressionIndex != NOT_DEFINED)
+        {
+            assert(_expressions[expressionIndex]);
+
+            _expressions[expressionIndex]->unlinkFromRegisters();
+            _expressions[expressionIndex].reset();
+        }
+
+        registerIndex = defaultRegisterIndex;
+        expressionIndex = NOT_DEFINED;
+        return;
+    }
+
+    // Attempt to parse the string
+    auto expression = ShaderExpression::createFromString(expressionString);
+
+    if (!expression)
+    {
+        return; // parsing failures will not overwrite the expression slot
+    }
+
+    if (expressionIndex != NOT_DEFINED)
+    {
+        // Try to re-use the previous register position
+        auto previousExpression = _expressions[expressionIndex];
+        _expressions[expressionIndex] = expression;
+
+        if (previousExpression->isLinked())
+        {
+            registerIndex = previousExpression->unlinkFromRegisters();
+            expression->linkToSpecificRegister(_registers, registerIndex);
+        }
+        else
+        {
+            registerIndex = expression->linkToRegister(_registers);
+        }
+    }
+    else
+    {
+        expressionIndex = _expressions.size();
+        _expressions.emplace_back(expression);
+
+        registerIndex = expression->linkToRegister(_registers);
+    }
 }
 
+}
