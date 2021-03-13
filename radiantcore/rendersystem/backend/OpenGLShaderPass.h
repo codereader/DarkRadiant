@@ -82,7 +82,7 @@ private:
 	// Returns true if the stage associated to this pass is active and should be rendered
 	bool stateIsActive();
 
-	void setupTextureMatrix(GLenum textureUnit, const ShaderLayerPtr& stage);
+	void setupTextureMatrix(GLenum textureUnit, const ShaderLayer::Ptr& stage);
 
 	// Render all of the given TransformedRenderables
 	void renderAllContained(const Renderables& renderables,

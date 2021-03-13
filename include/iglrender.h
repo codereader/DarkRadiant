@@ -3,8 +3,7 @@
 #include "igl.h"
 #include "imodule.h"
 #include "ishaders.h"
-
-#include "ShaderLayer.h"
+#include "ishaderlayer.h"
 
 #include "math/Vector4.h"
 
@@ -173,11 +172,11 @@ public:
      * which hold the actual values of many parameters, some of them
      * time-dependent or depending on entity parameters.
      */
-    ShaderLayerPtr stage0;
-    ShaderLayerPtr stage1;
-    ShaderLayerPtr stage2;
-    ShaderLayerPtr stage3;
-    ShaderLayerPtr stage4;
+    ShaderLayer::Ptr stage0;
+    ShaderLayer::Ptr stage1;
+    ShaderLayer::Ptr stage2;
+    ShaderLayer::Ptr stage3;
+    ShaderLayer::Ptr stage4;
 
     /**
      * \brief

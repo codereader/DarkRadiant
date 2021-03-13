@@ -29,12 +29,12 @@ private:
 	std::string _name;
 
 	// Temporary current layer (used by the parsing functions)
-	Doom3ShaderLayerPtr _currentLayer;
+	Doom3ShaderLayer::Ptr _currentLayer;
 
 public:
 
   	// Vector of LayerTemplates representing each stage in the material
-    std::vector<Doom3ShaderLayerPtr> _layers;
+    std::vector<Doom3ShaderLayer::Ptr> _layers;
 
     // Editorimage texture
 	NamedBindablePtr _editorTex;
@@ -251,7 +251,7 @@ public:
 		return _coverage;
 	}
 
-	const std::vector<Doom3ShaderLayerPtr>& getLayers()
+	const std::vector<Doom3ShaderLayer::Ptr>& getLayers()
 	{
 		if (!_parsed) parseDefinition();
 		return _layers;
@@ -347,7 +347,7 @@ public:
 private:
 
 	// Add the given layer and assigns editor preview layer if applicable
-	void addLayer(const Doom3ShaderLayerPtr& layer);
+	void addLayer(const Doom3ShaderLayer::Ptr& layer);
 
 	/**
 	 * Parse a Doom 3 material decl. This is the master parse function, it

@@ -115,6 +115,8 @@ private:
     int _parseFlags;
 
 public:
+    using Ptr = std::shared_ptr<Doom3ShaderLayer>;
+
     Doom3ShaderLayer(ShaderTemplate& material, 
                      ShaderLayer::Type type = ShaderLayer::BLEND,
                      const NamedBindablePtr& btex = NamedBindablePtr());
@@ -538,12 +540,6 @@ public:
     int getParseFlags() const override;
     void setParseFlag(ParseFlags flag);
 };
-
-/**
- * \brief
- * Pointer typedef for Doom3ShaderLayer.
- */
-typedef std::shared_ptr<Doom3ShaderLayer> Doom3ShaderLayerPtr;
 
 }
 

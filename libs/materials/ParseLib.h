@@ -2,7 +2,7 @@
 
 #include <map>
 #include "ishaders.h"
-#include "ShaderLayer.h"
+#include "ishaderlayer.h"
 
 namespace shaders
 {

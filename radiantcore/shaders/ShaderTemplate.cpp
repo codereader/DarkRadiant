@@ -1374,7 +1374,7 @@ void ShaderTemplate::parseDefinition()
 	}
 }
 
-void ShaderTemplate::addLayer(const Doom3ShaderLayerPtr& layer)
+void ShaderTemplate::addLayer(const Doom3ShaderLayer::Ptr& layer)
 {
 	// Add the layer
 	_layers.emplace_back(layer);

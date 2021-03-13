@@ -6,7 +6,7 @@
 #include "math/Vector3.h"
 #include "math/AABB.h"
 
-#include "ShaderLayer.h"
+#include "ishaderlayer.h"
 #include <sigc++/signal.h>
 
 /**

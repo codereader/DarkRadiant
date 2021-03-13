@@ -12,7 +12,7 @@
 #include <vector>
 
 #include "Texture.h"
-#include "ShaderLayer.h"
+#include "ishaderlayer.h"
 #include "ishaderexpression.h"
 
 class Image;

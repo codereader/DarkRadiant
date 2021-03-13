@@ -65,7 +65,7 @@ inline void setState(unsigned int state,
     }
 }
 
-inline void evaluateStage(const ShaderLayerPtr& stage, std::size_t time, const IRenderEntity* entity)
+inline void evaluateStage(const ShaderLayer::Ptr& stage, std::size_t time, const IRenderEntity* entity)
 {
     if (stage)
     {
@@ -147,7 +147,7 @@ void OpenGLShaderPass::disableRenderBlend()
     debug::assertNoGlErrors();
 }
 
-void OpenGLShaderPass::setupTextureMatrix(GLenum textureUnit, const ShaderLayerPtr& stage)
+void OpenGLShaderPass::setupTextureMatrix(GLenum textureUnit, const ShaderLayer::Ptr& stage)
 {
     // Set the texture matrix for the given unit
     glActiveTexture(textureUnit);

@@ -18,9 +18,9 @@ namespace render
 struct OpenGLShader::DBSTriplet
 {
     // DBS layers
-    ShaderLayerPtr diffuse;
-    ShaderLayerPtr bump;
-    ShaderLayerPtr specular;
+    ShaderLayer::Ptr diffuse;
+    ShaderLayer::Ptr bump;
+    ShaderLayer::Ptr specular;
 
     // Need-depth-fill flag
     bool needDepthFill;
@@ -446,7 +446,7 @@ void OpenGLShader::determineBlendModeForEditorPass(OpenGLState& pass)
          i != allLayers.end();
          ++i)
     {
-        const ShaderLayerPtr& layer = *i;
+        const ShaderLayer::Ptr& layer = *i;
 
         if (layer->getType() == ShaderLayer::DIFFUSE)
         {
@@ -522,7 +522,7 @@ void OpenGLShader::constructEditorPreviewPassFromMaterial()
 }
 
 // Append a blend (non-interaction) layer
-void OpenGLShader::appendBlendLayer(const ShaderLayerPtr& layer)
+void OpenGLShader::appendBlendLayer(const ShaderLayer::Ptr& layer)
 {
     TexturePtr layerTex = layer->getTexture();
 

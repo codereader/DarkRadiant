@@ -54,6 +54,7 @@ public:
 class ShaderLayer
 {
 public:
+    using Ptr = std::shared_ptr<ShaderLayer>;
 
     /// Enumeration of layer types.
     enum Type
@@ -373,13 +374,7 @@ public:
 
 /**
  * \brief
- * Shader pointer for ShaderLayer,
- */
-typedef std::shared_ptr<ShaderLayer> ShaderLayerPtr;
-
-/**
- * \brief
  * Vector of ShaderLayer pointers.
  */
-typedef std::vector<ShaderLayerPtr> ShaderLayerVector;
+typedef std::vector<ShaderLayer::Ptr> ShaderLayerVector;
 
