@@ -259,7 +259,7 @@ bool ShaderSelector::onPreviewRender()
 	// Check what part of the shader we should display in the preview
 	if (_isLightTexture) {
 		// This is a light, take the first layer texture
-		const ShaderLayer* first = shader->firstLayer();
+		const IShaderLayer* first = shader->firstLayer();
 		if (first != NULL) {
 			tex = shader->firstLayer()->getTexture();
 			glBindTexture (GL_TEXTURE_2D, tex->getGLTexNum());
@@ -343,7 +343,7 @@ void ShaderSelector::displayLightShaderInfo(const MaterialPtr& shader,
 											wxutil::TreeModel& listStore,
 											int attrCol, int valueCol)
 {
-	const ShaderLayer* first = shader->firstLayer();
+	const IShaderLayer* first = shader->firstLayer();
 	std::string texName = _("None");
 
 	if (first != NULL)

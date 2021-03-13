@@ -74,11 +74,11 @@ BlendFunc blendFuncFromStrings(const StringPair& blendFunc)
     }
 }
 
-// ShaderLayer implementation
+// IShaderLayer implementation
 
 const IShaderExpressionPtr Doom3ShaderLayer::NULL_EXPRESSION;
 
-Doom3ShaderLayer::Doom3ShaderLayer(ShaderTemplate& material, ShaderLayer::Type type, const NamedBindablePtr& btex)
+Doom3ShaderLayer::Doom3ShaderLayer(ShaderTemplate& material, IShaderLayer::Type type, const NamedBindablePtr& btex)
 :	_material(material),
 	_registers(NUM_RESERVED_REGISTERS),
 	_condition(REG_ONE),
@@ -319,17 +319,17 @@ void Doom3ShaderLayer::setColour(const Vector4& col)
 	}
 }
 
-ShaderLayer::VertexColourMode Doom3ShaderLayer::getVertexColourMode() const
+IShaderLayer::VertexColourMode Doom3ShaderLayer::getVertexColourMode() const
 {
     return _vertexColourMode;
 }
 
-ShaderLayer::CubeMapMode Doom3ShaderLayer::getCubeMapMode() const
+IShaderLayer::CubeMapMode Doom3ShaderLayer::getCubeMapMode() const
 {
     return _cubeMapMode;
 }
 
-ShaderLayer::MapType Doom3ShaderLayer::getMapType() const
+IShaderLayer::MapType Doom3ShaderLayer::getMapType() const
 {
     return _mapType;
 }
@@ -376,7 +376,7 @@ const Doom3ShaderLayer::FragmentMap& Doom3ShaderLayer::getFragmentMap(int index)
     return _fragmentMaps[index];
 }
 
-void Doom3ShaderLayer::addFragmentMap(const ShaderLayer::FragmentMap& fragmentMap)
+void Doom3ShaderLayer::addFragmentMap(const IShaderLayer::FragmentMap& fragmentMap)
 {
     assert(fragmentMap.index >= 0);
 
@@ -433,7 +433,7 @@ Vector4 Doom3ShaderLayer::getVertexParmValue(int parm) const
         _registers[_vertexParms[offset + 2]], _registers[_vertexParms[offset + 3]]);
 }
 
-const ShaderLayer::VertexParm& Doom3ShaderLayer::getVertexParm(int parm) const
+const IShaderLayer::VertexParm& Doom3ShaderLayer::getVertexParm(int parm) const
 {
     return _vertexParmDefinitions[parm];
 }

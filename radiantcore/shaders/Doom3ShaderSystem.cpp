@@ -245,19 +245,19 @@ GLTextureManager& Doom3ShaderSystem::getTextureManager()
 }
 
 // Get default textures
-TexturePtr Doom3ShaderSystem::getDefaultInteractionTexture(ShaderLayer::Type type)
+TexturePtr Doom3ShaderSystem::getDefaultInteractionTexture(IShaderLayer::Type type)
 {
     TexturePtr defaultTex;
 
     // Look up based on layer type
     switch (type)
     {
-    case ShaderLayer::DIFFUSE:
-    case ShaderLayer::SPECULAR:
+    case IShaderLayer::DIFFUSE:
+    case IShaderLayer::SPECULAR:
         defaultTex = _textureManager->getBinding(getBitmapsPath() + IMAGE_BLACK);
         break;
 
-    case ShaderLayer::BUMP:
+    case IShaderLayer::BUMP:
         defaultTex = _textureManager->getBinding(getBitmapsPath() + IMAGE_FLAT);
         break;
     default:

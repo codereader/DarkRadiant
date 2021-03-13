@@ -104,7 +104,7 @@ public:
 	GLTextureManager& getTextureManager();
 
     // Get default textures for D,B,S layers
-    TexturePtr getDefaultInteractionTexture(ShaderLayer::Type t) override;
+    TexturePtr getDefaultInteractionTexture(IShaderLayer::Type t) override;
 
     IShaderExpressionPtr createShaderExpressionFromString(const std::string& exprStr) override;
 

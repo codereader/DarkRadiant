@@ -42,7 +42,7 @@ ShaderDefinition& ShaderLibrary::getDefinition(const std::string& name)
 
 		// Add a diffuse layer to that template, using the given texture path
 		MapExpressionPtr imgExpr(new ImageExpression(name));
-		shaderTemplate->addLayer(ShaderLayer::DIFFUSE, imgExpr);
+		shaderTemplate->addLayer(IShaderLayer::DIFFUSE, imgExpr);
 
 		// Take this empty shadertemplate and create a ShaderDefinition
 		ShaderDefinition def(shaderTemplate,

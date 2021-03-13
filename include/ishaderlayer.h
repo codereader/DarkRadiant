@@ -51,10 +51,10 @@ public:
  * Each shader layer contains an image texture, a blend mode (e.g. add,
  * modulate) and various other data.
  */
-class ShaderLayer
+class IShaderLayer
 {
 public:
-    using Ptr = std::shared_ptr<ShaderLayer>;
+    using Ptr = std::shared_ptr<IShaderLayer>;
 
     /// Enumeration of layer types.
     enum Type
@@ -103,7 +103,7 @@ public:
      * \brief
 	 * Destructor
 	 */
-	virtual ~ShaderLayer() {}
+	virtual ~IShaderLayer() {}
 
     /// Return the layer type.
     virtual Type getType() const = 0;
@@ -374,7 +374,7 @@ public:
 
 /**
  * \brief
- * Vector of ShaderLayer pointers.
+ * Vector of IShaderLayer pointers.
  */
-typedef std::vector<ShaderLayer::Ptr> ShaderLayerVector;
+typedef std::vector<IShaderLayer::Ptr> IShaderLayerVector;
 

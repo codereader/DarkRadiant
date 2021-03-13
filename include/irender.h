@@ -305,14 +305,14 @@ class RenderInfo
     Vector3 _viewerLocation;
 
     // Cube map mode
-    ShaderLayer::CubeMapMode _cubeMapMode;
+    IShaderLayer::CubeMapMode _cubeMapMode;
 
 public:
 
     /// Default constructor
     RenderInfo(RenderStateFlags flags = RENDER_DEFAULT,
                const Vector3& viewer = Vector3(0, 0, 0),
-               ShaderLayer::CubeMapMode cubeMode = ShaderLayer::CUBE_MAP_NONE)
+               IShaderLayer::CubeMapMode cubeMode = IShaderLayer::CUBE_MAP_NONE)
     : _flags(flags),
       _viewerLocation(viewer),
       _cubeMapMode(cubeMode)
@@ -337,7 +337,7 @@ public:
     }
 
     /// Get the cube map mode.
-    ShaderLayer::CubeMapMode getCubeMapMode() const
+    IShaderLayer::CubeMapMode getCubeMapMode() const
     {
         return _cubeMapMode;
     }

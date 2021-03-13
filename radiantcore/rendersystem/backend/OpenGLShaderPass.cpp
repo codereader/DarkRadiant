@@ -65,7 +65,7 @@ inline void setState(unsigned int state,
     }
 }
 
-inline void evaluateStage(const ShaderLayer::Ptr& stage, std::size_t time, const IRenderEntity* entity)
+inline void evaluateStage(const IShaderLayer::Ptr& stage, std::size_t time, const IRenderEntity* entity)
 {
     if (stage)
     {
@@ -147,7 +147,7 @@ void OpenGLShaderPass::disableRenderBlend()
     debug::assertNoGlErrors();
 }
 
-void OpenGLShaderPass::setupTextureMatrix(GLenum textureUnit, const ShaderLayer::Ptr& stage)
+void OpenGLShaderPass::setupTextureMatrix(GLenum textureUnit, const IShaderLayer::Ptr& stage)
 {
     // Set the texture matrix for the given unit
     glActiveTexture(textureUnit);
@@ -162,7 +162,7 @@ void OpenGLShaderPass::setupTextureMatrix(GLenum textureUnit, const ShaderLayer:
 
         Vector2 scale = stage->getScale();
 
-        if (stage->getStageFlags() & ShaderLayer::FLAG_CENTERSCALE)
+        if (stage->getStageFlags() & IShaderLayer::FLAG_CENTERSCALE)
         {
             // Center scale, apply translation by -0.5 first, then scale, then translate back
             tex.multiplyBy(transMinusHalf);
@@ -655,7 +655,7 @@ void OpenGLShaderPass::setUpLightingCalculation(OpenGLState& current,
     assert(shader);
 
     const MaterialPtr& lightMat = shader->getMaterial();
-    ShaderLayer* layer = lightMat ? lightMat->firstLayer() : nullptr;
+    IShaderLayer* layer = lightMat ? lightMat->firstLayer() : nullptr;
     if (!layer) return;
 
     // Calculate viewer location in object space

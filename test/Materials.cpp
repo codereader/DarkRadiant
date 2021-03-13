@@ -63,22 +63,22 @@ TEST_F(MaterialsTest, EnumerateMaterialLayers)
     EXPECT_EQ(layers.size(), 5);
 
     // First layer is the bump map in this particular material
-    EXPECT_EQ(layers.at(0)->getType(), ShaderLayer::BUMP);
+    EXPECT_EQ(layers.at(0)->getType(), IShaderLayer::BUMP);
     EXPECT_EQ(layers.at(0)->getMapImageFilename(),
               "models/md5/chars/monsters/spider/spider_local");
 
     // Second layer is the diffuse map
-    EXPECT_EQ(layers.at(1)->getType(), ShaderLayer::DIFFUSE);
+    EXPECT_EQ(layers.at(1)->getType(), IShaderLayer::DIFFUSE);
     EXPECT_EQ(layers.at(1)->getMapImageFilename(),
               "models/md5/chars/monsters/spider_black");
 
     // Third layer is the specular map
-    EXPECT_EQ(layers.at(2)->getType(), ShaderLayer::SPECULAR);
+    EXPECT_EQ(layers.at(2)->getType(), IShaderLayer::SPECULAR);
     EXPECT_EQ(layers.at(2)->getMapImageFilename(),
               "models/md5/chars/monsters/spider_s");
 
     // Fourth layer is the additive "ambient method" stage
-    EXPECT_EQ(layers.at(3)->getType(), ShaderLayer::BLEND);
+    EXPECT_EQ(layers.at(3)->getType(), IShaderLayer::BLEND);
     EXPECT_EQ(layers.at(3)->getMapImageFilename(),
               "models/md5/chars/monsters/spider_black");
     BlendFunc bf4 = layers.at(3)->getBlendFunc();
@@ -86,7 +86,7 @@ TEST_F(MaterialsTest, EnumerateMaterialLayers)
     EXPECT_EQ(bf4.dest, GL_ONE);
 
     // Fifth layer is another additive stage with a VFP
-    EXPECT_EQ(layers.at(4)->getType(), ShaderLayer::BLEND);
+    EXPECT_EQ(layers.at(4)->getType(), IShaderLayer::BLEND);
     EXPECT_EQ(layers.at(4)->getNumFragmentMaps(), 4);
     BlendFunc bf5 = layers.at(4)->getBlendFunc();
     EXPECT_EQ(bf5.src, GL_ONE);

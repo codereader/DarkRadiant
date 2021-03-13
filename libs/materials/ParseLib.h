@@ -115,15 +115,15 @@ constexpr std::pair<const char*, std::pair<const char*, const char*>> BlendTypeS
     { "none", { "gl_zero", "gl_one" } },
 };
 
-constexpr std::pair<const char*, ShaderLayer::TexGenType> TexGenTypeNames[]
+constexpr std::pair<const char*, IShaderLayer::TexGenType> TexGenTypeNames[]
 {
-    { "normal", ShaderLayer::TEXGEN_NORMAL },
-    { "reflect", ShaderLayer::TEXGEN_REFLECT },
-    { "skybox", ShaderLayer::TEXGEN_SKYBOX },
-    { "wobbleSky", ShaderLayer::TEXGEN_WOBBLESKY },
+    { "normal", IShaderLayer::TEXGEN_NORMAL },
+    { "reflect", IShaderLayer::TEXGEN_REFLECT },
+    { "skybox", IShaderLayer::TEXGEN_SKYBOX },
+    { "wobbleSky", IShaderLayer::TEXGEN_WOBBLESKY },
 };
 
-inline std::string getStringForTexGenType(ShaderLayer::TexGenType type)
+inline std::string getStringForTexGenType(IShaderLayer::TexGenType type)
 {
     for (const auto& pair : TexGenTypeNames)
     {

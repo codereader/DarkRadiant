@@ -309,7 +309,7 @@ public:
 	virtual bool isDiscrete() const = 0;
 
     /// Return the first material layer, if any
-	virtual ShaderLayer* firstLayer() const = 0;
+	virtual IShaderLayer* firstLayer() const = 0;
 
     /**
      * \brief Return a std::vector containing all layers in this material
@@ -317,7 +317,7 @@ public:
      *
      * This includes all diffuse, bump, specular or blend layers.
      */
-    virtual const ShaderLayerVector& getAllLayers() const = 0;
+    virtual const IShaderLayerVector& getAllLayers() const = 0;
 
     /// Return the 2D light falloff texture, if this is a light shader
     virtual TexturePtr lightFalloffImage() = 0;
@@ -466,7 +466,7 @@ public:
      * \param type
      * The type of interaction layer whose default texture is required.
      */
-    virtual TexturePtr getDefaultInteractionTexture(ShaderLayer::Type type) = 0;
+    virtual TexturePtr getDefaultInteractionTexture(IShaderLayer::Type type) = 0;
 
 	/**
 	 * greebo: This is a substitution for the "old" TexturesCache method

@@ -38,7 +38,7 @@ private:
 	bool _visible;
 
     // Vector of shader layers
-	ShaderLayerVector _layers;
+	IShaderLayerVector _layers;
 
 public:
 	static bool m_lightingEnabled;
@@ -92,7 +92,7 @@ public:
 	bool isDiscrete() const override;
 	bool isVisible() const override;
 	void setVisible(bool visible) override;
-    const ShaderLayerVector& getAllLayers() const;
+    const IShaderLayerVector& getAllLayers() const;
 
     IMapExpression::Ptr getLightFalloffExpression() override;
 	IMapExpression::Ptr getLightFalloffCubeMapExpression() override;
@@ -115,7 +115,7 @@ public:
 	 */
 	void setName(const std::string& name);
 
-	ShaderLayer* firstLayer() const;
+	IShaderLayer* firstLayer() const;
     int getParseFlags() const override;
 
     bool isModified() override;

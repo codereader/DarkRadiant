@@ -293,7 +293,7 @@ void CShader::setName(const std::string& name) {
 	_name = name;
 }
 
-ShaderLayer* CShader::firstLayer() const
+IShaderLayer* CShader::firstLayer() const
 {
 	if (_layers.empty())
 	{
@@ -304,7 +304,7 @@ ShaderLayer* CShader::firstLayer() const
 }
 
 // Get all layers
-const ShaderLayerVector& CShader::getAllLayers() const
+const IShaderLayerVector& CShader::getAllLayers() const
 {
     return _layers;
 }

@@ -18,9 +18,9 @@ namespace render
 struct OpenGLShader::DBSTriplet
 {
     // DBS layers
-    ShaderLayer::Ptr diffuse;
-    ShaderLayer::Ptr bump;
-    ShaderLayer::Ptr specular;
+    IShaderLayer::Ptr diffuse;
+    IShaderLayer::Ptr bump;
+    IShaderLayer::Ptr specular;
 
     // Need-depth-fill flag
     bool needDepthFill;
@@ -255,7 +255,7 @@ void OpenGLShader::setGLTexturesFromTriplet(OpenGLState& pass,
     else
     {
         pass.texture0 = GlobalMaterialManager().getDefaultInteractionTexture(
-            ShaderLayer::DIFFUSE
+            IShaderLayer::DIFFUSE
         )->getGLTexNum();
     }
 
@@ -267,7 +267,7 @@ void OpenGLShader::setGLTexturesFromTriplet(OpenGLState& pass,
     else
     {
         pass.texture1 = GlobalMaterialManager().getDefaultInteractionTexture(
-            ShaderLayer::BUMP
+            IShaderLayer::BUMP
         )->getGLTexNum();
     }
 
@@ -279,7 +279,7 @@ void OpenGLShader::setGLTexturesFromTriplet(OpenGLState& pass,
     else
     {
         pass.texture2 = GlobalMaterialManager().getDefaultInteractionTexture(
-            ShaderLayer::SPECULAR
+            IShaderLayer::SPECULAR
         )->getGLTexNum();
     }
 }
@@ -288,7 +288,7 @@ void OpenGLShader::setGLTexturesFromTriplet(OpenGLState& pass,
 void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
 {
 	// Set layer vertex colour mode and alphatest parameters
-    ShaderLayer::VertexColourMode vcolMode = ShaderLayer::VERTEX_COLOUR_NONE;
+    IShaderLayer::VertexColourMode vcolMode = IShaderLayer::VERTEX_COLOUR_NONE;
     double alphaTest = -1;
 
     if (triplet.diffuse)
@@ -333,12 +333,12 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
 
     dbsPass.glProgram = _renderSystem.getGLProgramFactory().getBuiltInProgram("bumpMap");
 
-    if (vcolMode != ShaderLayer::VERTEX_COLOUR_NONE)
+    if (vcolMode != IShaderLayer::VERTEX_COLOUR_NONE)
     {
         // Vertex colours allowed
         dbsPass.setRenderFlag(RENDER_VERTEX_COLOUR);
 
-        if (vcolMode == ShaderLayer::VERTEX_COLOUR_INVERSE_MULTIPLY)
+        if (vcolMode == IShaderLayer::VERTEX_COLOUR_INVERSE_MULTIPLY)
         {
             // Vertex colours are inverted
             dbsPass.setColourInverted(true);
@@ -379,9 +379,9 @@ void OpenGLShader::constructLightingPassesFromMaterial()
     // least one DBS layer then reach the end of the layers.
 
     DBSTriplet triplet;
-    const ShaderLayerVector allLayers = _material->getAllLayers();
+    const IShaderLayerVector allLayers = _material->getAllLayers();
 
-    for (ShaderLayerVector::const_iterator i = allLayers.begin();
+    for (IShaderLayerVector::const_iterator i = allLayers.begin();
          i != allLayers.end();
          ++i)
     {
@@ -390,7 +390,7 @@ void OpenGLShader::constructLightingPassesFromMaterial()
 
         switch ((*i)->getType())
         {
-        case ShaderLayer::DIFFUSE:
+        case IShaderLayer::DIFFUSE:
             if (triplet.diffuse)
             {
                 appendInteractionLayer(triplet);
@@ -399,7 +399,7 @@ void OpenGLShader::constructLightingPassesFromMaterial()
             triplet.diffuse = *i;
             break;
 
-        case ShaderLayer::BUMP:
+        case IShaderLayer::BUMP:
             if (triplet.bump)
             {
                 appendInteractionLayer(triplet);
@@ -408,7 +408,7 @@ void OpenGLShader::constructLightingPassesFromMaterial()
             triplet.bump = *i;
             break;
 
-        case ShaderLayer::SPECULAR:
+        case IShaderLayer::SPECULAR:
             if (triplet.specular)
             {
                 appendInteractionLayer(triplet);
@@ -417,7 +417,7 @@ void OpenGLShader::constructLightingPassesFromMaterial()
             triplet.specular = *i;
             break;
 
-        case ShaderLayer::BLEND:
+        case IShaderLayer::BLEND:
             if (triplet.specular || triplet.bump || triplet.diffuse)
             {
                 appendInteractionLayer(triplet);
@@ -440,15 +440,15 @@ void OpenGLShader::determineBlendModeForEditorPass(OpenGLState& pass)
     bool hasDiffuseLayer = false;
 
     // Determine alphatest from first diffuse layer
-    const ShaderLayerVector allLayers = _material->getAllLayers();
+    const IShaderLayerVector allLayers = _material->getAllLayers();
 
-    for (ShaderLayerVector::const_iterator i = allLayers.begin();
+    for (IShaderLayerVector::const_iterator i = allLayers.begin();
          i != allLayers.end();
          ++i)
     {
-        const ShaderLayer::Ptr& layer = *i;
+        const IShaderLayer::Ptr& layer = *i;
 
-        if (layer->getType() == ShaderLayer::DIFFUSE)
+        if (layer->getType() == IShaderLayer::DIFFUSE)
         {
             hasDiffuseLayer = true;
 
@@ -522,7 +522,7 @@ void OpenGLShader::constructEditorPreviewPassFromMaterial()
 }
 
 // Append a blend (non-interaction) layer
-void OpenGLShader::appendBlendLayer(const ShaderLayer::Ptr& layer)
+void OpenGLShader::appendBlendLayer(const IShaderLayer::Ptr& layer)
 {
     TexturePtr layerTex = layer->getTexture();
 
@@ -553,7 +553,7 @@ void OpenGLShader::appendBlendLayer(const ShaderLayer::Ptr& layer)
 
     // Set texture dimensionality (cube map or 2D)
     state.cubeMapMode = layer->getCubeMapMode();
-    if (state.cubeMapMode == ShaderLayer::CUBE_MAP_CAMERA)
+    if (state.cubeMapMode == IShaderLayer::CUBE_MAP_CAMERA)
     {
         state.setRenderFlag(RENDER_TEXTURE_CUBEMAP);
     }

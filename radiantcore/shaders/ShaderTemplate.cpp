@@ -512,15 +512,15 @@ bool ShaderTemplate::parseBlendShortcuts(parser::DefTokeniser& tokeniser,
     }
     else if (token == "diffusemap")
     {
-        addLayer(ShaderLayer::DIFFUSE, MapExpression::createForToken(tokeniser));
+        addLayer(IShaderLayer::DIFFUSE, MapExpression::createForToken(tokeniser));
     }
     else if (token == "specularmap")
     {
-		addLayer(ShaderLayer::SPECULAR, MapExpression::createForToken(tokeniser));
+		addLayer(IShaderLayer::SPECULAR, MapExpression::createForToken(tokeniser));
     }
     else if (token == "bumpmap")
     {
-		addLayer(ShaderLayer::BUMP, MapExpression::createForToken(tokeniser));
+		addLayer(IShaderLayer::BUMP, MapExpression::createForToken(tokeniser));
     }
 	else
 	{
@@ -542,15 +542,15 @@ bool ShaderTemplate::parseBlendType(parser::DefTokeniser& tokeniser, const std::
 
         if (blendType == "diffusemap")
 		{
-            _currentLayer->setLayerType(ShaderLayer::DIFFUSE);
+            _currentLayer->setLayerType(IShaderLayer::DIFFUSE);
         }
         else if (blendType == "bumpmap")
 		{
-            _currentLayer->setLayerType(ShaderLayer::BUMP);
+            _currentLayer->setLayerType(IShaderLayer::BUMP);
         }
         else if (blendType == "specularmap")
 		{
-            _currentLayer->setLayerType(ShaderLayer::SPECULAR);
+            _currentLayer->setLayerType(IShaderLayer::SPECULAR);
         }
         else
         {
@@ -590,7 +590,7 @@ bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
         _currentLayer->setBindableTexture(
             MapExpression::createForToken(tokeniser)
         );
-        _currentLayer->setMapType(ShaderLayer::MapType::Map);
+        _currentLayer->setMapType(IShaderLayer::MapType::Map);
     }
     else if (token == "cameracubemap")
     {
@@ -598,29 +598,29 @@ bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
         _currentLayer->setBindableTexture(
             CameraCubeMapDecl::createForPrefix(cubeMapPrefix)
         );
-        _currentLayer->setMapType(ShaderLayer::MapType::CameraCubeMap);
-        _currentLayer->setCubeMapMode(ShaderLayer::CUBE_MAP_CAMERA);
+        _currentLayer->setMapType(IShaderLayer::MapType::CameraCubeMap);
+        _currentLayer->setCubeMapMode(IShaderLayer::CUBE_MAP_CAMERA);
     }
 	else if (token == "texgen")
 	{
 		std::string type = tokeniser.nextToken();
-        _currentLayer->setParseFlag(ShaderLayer::PF_HasTexGenKeyword);
+        _currentLayer->setParseFlag(IShaderLayer::PF_HasTexGenKeyword);
 
 		if (type == "skybox")
 		{
-			_currentLayer->setTexGenType(ShaderLayer::TEXGEN_SKYBOX);
+			_currentLayer->setTexGenType(IShaderLayer::TEXGEN_SKYBOX);
 		}
 		else if (type == "reflect")
 		{
-			_currentLayer->setTexGenType(ShaderLayer::TEXGEN_REFLECT);
+			_currentLayer->setTexGenType(IShaderLayer::TEXGEN_REFLECT);
 		}
 		else if (type == "normal")
 		{
-			_currentLayer->setTexGenType(ShaderLayer::TEXGEN_NORMAL);
+			_currentLayer->setTexGenType(IShaderLayer::TEXGEN_NORMAL);
 		}
 		else if (type == "wobblesky")
 		{
-			_currentLayer->setTexGenType(ShaderLayer::TEXGEN_WOBBLESKY);
+			_currentLayer->setTexGenType(IShaderLayer::TEXGEN_WOBBLESKY);
 
 			// Parse the 3 wobblesky expressions
             _currentLayer->setTexGenExpression(0, parseSingleExpressionTerm(tokeniser));
@@ -632,26 +632,26 @@ bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
     {
 		// Parse the cubemap expression, but don't do anything with it for now
         _currentLayer->setBindableTexture(MapExpression::createForToken(tokeniser));
-        _currentLayer->setMapType(ShaderLayer::MapType::CubeMap);
-        _currentLayer->setCubeMapMode(ShaderLayer::CUBE_MAP_OBJECT);
+        _currentLayer->setMapType(IShaderLayer::MapType::CubeMap);
+        _currentLayer->setCubeMapMode(IShaderLayer::CUBE_MAP_OBJECT);
     }
 	else if (token == "videomap")
     {
-        _currentLayer->setMapType(ShaderLayer::MapType::VideoMap);
+        _currentLayer->setMapType(IShaderLayer::MapType::VideoMap);
         _currentLayer->setBindableTexture(
             VideoMapExpression::CreateForTokens(tokeniser)
         );
     }
 	else if (token == "soundmap")
 	{
-        _currentLayer->setMapType(ShaderLayer::MapType::SoundMap);
+        _currentLayer->setMapType(IShaderLayer::MapType::SoundMap);
         _currentLayer->setBindableTexture(
             SoundMapExpression::CreateForTokens(tokeniser)
         );
 	}
 	else if (token == "remoterendermap")
 	{
-        _currentLayer->setMapType(ShaderLayer::MapType::RemoteRenderMap);
+        _currentLayer->setMapType(IShaderLayer::MapType::RemoteRenderMap);
 
 		try
 		{
@@ -667,8 +667,8 @@ bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
 	}
 	else if (token == "mirrorrendermap")
 	{
-        _currentLayer->setMapType(ShaderLayer::MapType::MirrorRenderMap);
-        _currentLayer->setTexGenType(ShaderLayer::TexGenType::TEXGEN_SCREEN);
+        _currentLayer->setMapType(IShaderLayer::MapType::MirrorRenderMap);
+        _currentLayer->setTexGenType(IShaderLayer::TexGenType::TEXGEN_SCREEN);
 
 		try
 		{
@@ -696,13 +696,13 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
     if (token == "vertexcolor")
     {
         _currentLayer->setVertexColourMode(
-            ShaderLayer::VERTEX_COLOUR_MULTIPLY
+            IShaderLayer::VERTEX_COLOUR_MULTIPLY
         );
     }
     else if (token == "inversevertexcolor")
     {
         _currentLayer->setVertexColourMode(
-            ShaderLayer::VERTEX_COLOUR_INVERSE_MULTIPLY
+            IShaderLayer::VERTEX_COLOUR_INVERSE_MULTIPLY
         );
     }
 	else if (token == "red")
@@ -823,7 +823,7 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 	}
 	else if (token == "vertexparm")
 	{
-        ShaderLayer::VertexParm parm;
+        IShaderLayer::VertexParm parm;
 
 		// vertexParm		<parmNum>		<parm1> [,<parm2>] [,<parm3>] [,<parm4>]
 		parm.index = string::convert<int>(tokeniser.nextToken());
@@ -846,7 +846,7 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 	}
 	else if (token == "fragmentmap")
 	{
-        ShaderLayer::FragmentMap map;
+        IShaderLayer::FragmentMap map;
 
 		// fragmentMap <index> [options] <map>
         map.index = string::convert<int>(tokeniser.nextToken());
@@ -916,7 +916,7 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 		if (xScaleExpr && yScaleExpr)
 		{
 			_currentLayer->setScale(xScaleExpr, yScaleExpr);
-			_currentLayer->setStageFlag(ShaderLayer::FLAG_CENTERSCALE);	// enable centerScale
+			_currentLayer->setStageFlag(IShaderLayer::FLAG_CENTERSCALE);	// enable centerScale
 		}
 		else
 		{
@@ -968,11 +968,11 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 	}
 	else if (token == "ignorealphatest")
 	{
-		_currentLayer->setStageFlag(ShaderLayer::FLAG_IGNORE_ALPHATEST);
+		_currentLayer->setStageFlag(IShaderLayer::FLAG_IGNORE_ALPHATEST);
 	}
 	else if (token == "colored")
 	{
-        _currentLayer->setParseFlag(ShaderLayer::PF_HasColoredKeyword);
+        _currentLayer->setParseFlag(IShaderLayer::PF_HasColoredKeyword);
 		_currentLayer->setColourExpression(Doom3ShaderLayer::COMP_RED, ShaderExpression::createFromString("parm0"));
 		_currentLayer->setColourExpression(Doom3ShaderLayer::COMP_GREEN, ShaderExpression::createFromString("parm1"));
 		_currentLayer->setColourExpression(Doom3ShaderLayer::COMP_BLUE, ShaderExpression::createFromString("parm2"));
@@ -993,49 +993,49 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 	else if (token == "noclamp")
 	{
 		_currentLayer->setClampType(CLAMP_REPEAT);
-        _currentLayer->setParseFlag(ShaderLayer::PF_HasNoclampKeyword);
+        _currentLayer->setParseFlag(IShaderLayer::PF_HasNoclampKeyword);
 	}
 	else if (token == "uncompressed" || token == "highquality")
 	{
-		_currentLayer->setStageFlag(ShaderLayer::FLAG_HIGHQUALITY);
+		_currentLayer->setStageFlag(IShaderLayer::FLAG_HIGHQUALITY);
 	}
 	else if (token == "forcehighquality")
 	{
-		_currentLayer->setStageFlag(ShaderLayer::FLAG_FORCE_HIGHQUALITY);
+		_currentLayer->setStageFlag(IShaderLayer::FLAG_FORCE_HIGHQUALITY);
 	}
 	else if (token == "nopicmip")
 	{
-		_currentLayer->setStageFlag(ShaderLayer::FLAG_NO_PICMIP);
+		_currentLayer->setStageFlag(IShaderLayer::FLAG_NO_PICMIP);
 	}
 	else if (token == "maskred")
 	{
-		_currentLayer->setStageFlag(ShaderLayer::FLAG_MASK_RED);
+		_currentLayer->setStageFlag(IShaderLayer::FLAG_MASK_RED);
 	}
 	else if (token == "maskgreen")
 	{
-		_currentLayer->setStageFlag(ShaderLayer::FLAG_MASK_GREEN);
+		_currentLayer->setStageFlag(IShaderLayer::FLAG_MASK_GREEN);
 	}
 	else if (token == "maskblue")
 	{
-		_currentLayer->setStageFlag(ShaderLayer::FLAG_MASK_BLUE);
+		_currentLayer->setStageFlag(IShaderLayer::FLAG_MASK_BLUE);
 	}
 	else if (token == "maskalpha")
 	{
-		_currentLayer->setStageFlag(ShaderLayer::FLAG_MASK_ALPHA);
+		_currentLayer->setStageFlag(IShaderLayer::FLAG_MASK_ALPHA);
 	}
 	else if (token == "maskcolor")
 	{
-		_currentLayer->setStageFlag(ShaderLayer::FLAG_MASK_RED);
-		_currentLayer->setStageFlag(ShaderLayer::FLAG_MASK_GREEN);
-		_currentLayer->setStageFlag(ShaderLayer::FLAG_MASK_BLUE);
+		_currentLayer->setStageFlag(IShaderLayer::FLAG_MASK_RED);
+		_currentLayer->setStageFlag(IShaderLayer::FLAG_MASK_GREEN);
+		_currentLayer->setStageFlag(IShaderLayer::FLAG_MASK_BLUE);
 	}
 	else if (token == "maskdepth")
 	{
-		_currentLayer->setStageFlag(ShaderLayer::FLAG_MASK_DEPTH);
+		_currentLayer->setStageFlag(IShaderLayer::FLAG_MASK_DEPTH);
 	}
     else if (token == "ignoredepth")
     {
-        _currentLayer->setStageFlag(ShaderLayer::FLAG_IGNORE_DEPTH);
+        _currentLayer->setStageFlag(IShaderLayer::FLAG_IGNORE_DEPTH);
     }
 	else if (token == "privatepolygonoffset")
 	{
@@ -1043,11 +1043,11 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 	}
 	else if (token == "nearest")
 	{
-		_currentLayer->setStageFlag(ShaderLayer::FLAG_FILTER_NEAREST);
+		_currentLayer->setStageFlag(IShaderLayer::FLAG_FILTER_NEAREST);
 	}
 	else if (token == "linear")
 	{
-		_currentLayer->setStageFlag(ShaderLayer::FLAG_FILTER_LINEAR);
+		_currentLayer->setStageFlag(IShaderLayer::FLAG_FILTER_LINEAR);
 	}
 	else
 	{
@@ -1221,8 +1221,8 @@ bool ShaderTemplate::saveLayer()
 {
     // Append layer to list of all layers
     if (_currentLayer->getBindableTexture() || 
-        _currentLayer->getMapType() == ShaderLayer::MapType::RemoteRenderMap ||
-        _currentLayer->getMapType() == ShaderLayer::MapType::MirrorRenderMap ||
+        _currentLayer->getMapType() == IShaderLayer::MapType::RemoteRenderMap ||
+        _currentLayer->getMapType() == IShaderLayer::MapType::MirrorRenderMap ||
         !_currentLayer->getVertexProgram().empty() || !_currentLayer->getFragmentProgram().empty())
     {
 		addLayer(_currentLayer);
@@ -1319,7 +1319,7 @@ void ShaderTemplate::parseDefinition()
 
 	for (const auto& layer : _layers)
 	{
-		if (layer->getType() == ShaderLayer::BLEND)
+		if (layer->getType() == IShaderLayer::BLEND)
 		{
 			numAmbientStages++;
 		}
@@ -1381,13 +1381,13 @@ void ShaderTemplate::addLayer(const Doom3ShaderLayer::Ptr& layer)
 
 	// If there is no editor texture yet, use the bindable texture, but no Bump or speculars
 	if (!_editorTex && layer->getBindableTexture() &&
-		layer->getType() != ShaderLayer::BUMP && layer->getType() != ShaderLayer::SPECULAR)
+		layer->getType() != IShaderLayer::BUMP && layer->getType() != IShaderLayer::SPECULAR)
 	{
 		_editorTex = layer->getBindableTexture();
 	}
 }
 
-void ShaderTemplate::addLayer(ShaderLayer::Type type, const MapExpressionPtr& mapExpr)
+void ShaderTemplate::addLayer(IShaderLayer::Type type, const MapExpressionPtr& mapExpr)
 {
 	// Construct a layer out of this mapexpression and pass the call
 	addLayer(std::make_shared<Doom3ShaderLayer>(*this, type, mapExpr));
@@ -1399,7 +1399,7 @@ bool ShaderTemplate::hasDiffusemap()
 
 	for (const auto& layer : _layers)
     {
-        if (layer->getType() == ShaderLayer::DIFFUSE)
+        if (layer->getType() == IShaderLayer::DIFFUSE)
         {
             return true;
         }

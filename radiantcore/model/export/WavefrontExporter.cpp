@@ -137,15 +137,15 @@ void WavefrontExporter::writeMaterialLib(std::ostream& stream)
 
         for (const auto& layer : layers)
         {
-            if (layer->getType() == ShaderLayer::DIFFUSE)
+            if (layer->getType() == IShaderLayer::DIFFUSE)
             {
                 diffuseFilename = layer->getMapImageFilename();
             }
-            else if (layer->getType() == ShaderLayer::BUMP)
+            else if (layer->getType() == IShaderLayer::BUMP)
             {
                 bumpFilename = layer->getMapImageFilename();
             }
-            else if (layer->getType() == ShaderLayer::SPECULAR)
+            else if (layer->getType() == IShaderLayer::SPECULAR)
             {
                 specularFilename = layer->getMapImageFilename();
             }

@@ -324,7 +324,7 @@ public:
 	}
 
 	// Add a specific layer to this template
-	void addLayer(ShaderLayer::Type type, const MapExpressionPtr& mapExpr);
+	void addLayer(IShaderLayer::Type type, const MapExpressionPtr& mapExpr);
 
 	// Returns true if this shader template includes a diffusemap stage
 	bool hasDiffusemap();

@@ -35,7 +35,7 @@ private:
     MaterialPtr _material;
 
     std::set<std::shared_ptr<Binding<MaterialPtr>>> _materialBindings;
-    std::set<std::shared_ptr<Binding<ShaderLayer::Ptr>>> _stageBindings;
+    std::set<std::shared_ptr<Binding<IShaderLayer::Ptr>>> _stageBindings;
     std::map<Material::DeformType, wxPanel*> _deformPanels;
 
     struct StageProgramParmsColumns :
@@ -78,8 +78,8 @@ private:
     void setupStageFlag(const std::string& controlName, int flags);
 
     void createExpressionBinding(const std::string& textCtrlName,
-        const std::function<shaders::IShaderExpressionPtr(const ShaderLayer::Ptr&)>& loadFunc,
-        const std::function<void(const ShaderLayer::Ptr&, const std::string&)>& saveFunc = std::function<void(const ShaderLayer::Ptr&, const std::string&)>());
+        const std::function<shaders::IShaderExpressionPtr(const IShaderLayer::Ptr&)>& loadFunc,
+        const std::function<void(const IShaderLayer::Ptr&, const std::string&)>& saveFunc = std::function<void(const IShaderLayer::Ptr&, const std::string&)>());
 
     void updateControlsFromMaterial();
     void updateDeformControlsFromMaterial();
@@ -87,7 +87,7 @@ private:
     void updateMaterialPropertiesFromMaterial();
 
     void selectStageByIndex(std::size_t index);
-    ShaderLayer::Ptr getSelectedStage();
+    IShaderLayer::Ptr getSelectedStage();
 
     void prepareMaterialForSave();
 

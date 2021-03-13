@@ -16,10 +16,10 @@ class ShaderTemplate;
 
 /**
  * \brief
- * Implementation of ShaderLayer for Doom 3 shaders.
+ * Implementation of IShaderLayer for Doom 3 shaders.
  */
 class Doom3ShaderLayer : 
-    public ShaderLayer
+    public IShaderLayer
 {
 private:
     // The owning material template
@@ -118,13 +118,13 @@ public:
     using Ptr = std::shared_ptr<Doom3ShaderLayer>;
 
     Doom3ShaderLayer(ShaderTemplate& material, 
-                     ShaderLayer::Type type = ShaderLayer::BLEND,
+                     IShaderLayer::Type type = IShaderLayer::BLEND,
                      const NamedBindablePtr& btex = NamedBindablePtr());
 
     // Copy-constructor, needs the new owner template as argument
     Doom3ShaderLayer(const Doom3ShaderLayer& other, ShaderTemplate& material);
 
-    /* ShaderLayer implementation */
+    /* IShaderLayer implementation */
     TexturePtr getTexture() const;
     BlendFunc getBlendFunc() const;
     Colour4 getColour() const;
@@ -200,7 +200,7 @@ public:
      * \brief
      * Set the layer type.
      */
-    void setLayerType(ShaderLayer::Type type)
+    void setLayerType(IShaderLayer::Type type)
     {
         _type = type;
     }
@@ -209,7 +209,7 @@ public:
      * \brief
      * Get the layer type.
      */
-    ShaderLayer::Type getType() const
+    IShaderLayer::Type getType() const
     {
         return _type;
     }
@@ -224,12 +224,12 @@ public:
         _stageFlags = flags;
     }
 
-    void setStageFlag(ShaderLayer::Flags flag)
+    void setStageFlag(IShaderLayer::Flags flag)
     {
         _stageFlags |= flag;
     }
 
-    void clearStageFlag(ShaderLayer::Flags flag)
+    void clearStageFlag(IShaderLayer::Flags flag)
     {
         _stageFlags &= ~flag;
     }

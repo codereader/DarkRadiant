@@ -172,11 +172,11 @@ public:
      * which hold the actual values of many parameters, some of them
      * time-dependent or depending on entity parameters.
      */
-    ShaderLayer::Ptr stage0;
-    ShaderLayer::Ptr stage1;
-    ShaderLayer::Ptr stage2;
-    ShaderLayer::Ptr stage3;
-    ShaderLayer::Ptr stage4;
+    IShaderLayer::Ptr stage0;
+    IShaderLayer::Ptr stage1;
+    IShaderLayer::Ptr stage2;
+    IShaderLayer::Ptr stage3;
+    IShaderLayer::Ptr stage4;
 
     /**
      * \brief
@@ -211,7 +211,7 @@ public:
      * \brief
      * The cube-map texgen mode for rendering.
      */
-    ShaderLayer::CubeMapMode cubeMapMode;
+    IShaderLayer::CubeMapMode cubeMapMode;
 
     /// Default constructor
     OpenGLState()
@@ -235,6 +235,6 @@ public:
       m_linestipple_factor(1),
       m_linestipple_pattern(0xAAAA),
       glProgram(NULL),
-      cubeMapMode(ShaderLayer::CUBE_MAP_NONE)
+      cubeMapMode(IShaderLayer::CUBE_MAP_NONE)
     { }
 };
