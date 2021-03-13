@@ -199,6 +199,7 @@ void MaterialPreview::setupTestModel()
 void MaterialPreview::onTestModelSelectionChanged(wxCommandEvent& ev)
 {
     setupTestModel();
+    queueDraw();
 }
 
 }

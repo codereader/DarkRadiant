@@ -146,7 +146,7 @@ public:
 	 */
 	virtual float getTexGenParam(std::size_t index) const = 0;
 
-    // The expressions used to calcualte the tex gen params. Index in [0..2]
+    // The expressions used to calculate the tex gen params. Index in [0..2]
     virtual shaders::IShaderExpressionPtr getTexGenExpression(std::size_t index) const = 0;
 
     /**
@@ -363,6 +363,9 @@ public:
 
     // The map expression used to generate/define the texture of this stage
     virtual shaders::IMapExpression::Ptr getMapExpression() = 0;
+
+    // Update the "map" expression of this stage
+    virtual void setMapExpressionFromString(const std::string& expression) = 0;
 
     // Parser information, to reconstruct the use of certain keywords
     virtual int getParseFlags() = 0;

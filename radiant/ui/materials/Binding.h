@@ -13,6 +13,8 @@ private:
     Source _source;
 
 public:
+    using Ptr = std::shared_ptr<Binding>;
+
     virtual ~Binding()
     {}
 
@@ -27,13 +29,11 @@ public:
         onSourceChanged();
     }
 
-    virtual void updateFromSource(const Source& source) = 0;
+    virtual void updateFromSource() = 0;
 
 protected:
     virtual void onSourceChanged()
-    {
-        updateFromSource(getSource());
-    }
+    {}
 };
 
 template<typename Source>
@@ -47,13 +47,13 @@ private:
 
 public:
     CheckBoxBinding(wxCheckBox* checkbox, 
-        const std::function<bool(const Source&)> loadFunc) :
+        const std::function<bool(const Source&)>& loadFunc) :
         CheckBoxBinding(checkbox, loadFunc, std::function<void(const Source&, bool)>())
     {}
 
     CheckBoxBinding(wxCheckBox* checkbox,
-        const std::function<bool(const Source&)> loadFunc,
-        const std::function<void(const Source&, bool)> saveFunc) :
+        const std::function<bool(const Source&)>& loadFunc,
+        const std::function<void(const Source&, bool)>& saveFunc) :
         _checkbox(checkbox),
         _loadFunc(loadFunc),
         _saveFunc(saveFunc)
@@ -72,15 +72,15 @@ public:
         }
     }
 
-    virtual void updateFromSource(const Source& source) override
+    virtual void updateFromSource() override
     {
-        if (!source)
+        if (!Binding<Source>::getSource())
         {
             _checkbox->SetValue(false);
             return;
         }
 
-        _checkbox->SetValue(_loadFunc(source));
+        _checkbox->SetValue(_loadFunc(Binding<Source>::getSource()));
     }
 
 private:

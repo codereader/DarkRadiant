@@ -362,6 +362,22 @@ void MaterialEditor::setupStageFlag(const std::string& controlName, int flags)
     }));
 }
 
+void MaterialEditor::prepareMaterialForSave()
+{
+    // TODO
+}
+
+void MaterialEditor::createExpressionBinding(const std::string& textCtrlName,
+    const std::function<shaders::IShaderExpressionPtr(const ShaderLayerPtr&)>& loadFunc,
+    const std::function<void(const ShaderLayerPtr&, const std::string&)>& saveFunc)
+{
+    _stageBindings.emplace(std::make_shared<ExpressionBinding<ShaderLayerPtr>>(
+        getControl<wxTextCtrl>(textCtrlName),
+        loadFunc,
+        std::bind(&MaterialEditor::prepareMaterialForSave, this),
+        saveFunc));
+}
+
 void MaterialEditor::setupMaterialStageProperties()
 {
     setupStageFlag("MaterialStageFlagMaskRed", ShaderLayer::FLAG_MASK_RED);
@@ -434,43 +450,43 @@ void MaterialEditor::setupMaterialStageProperties()
         texgenDropdown->AppendString(pair.first);
     }
 
-    _stageBindings.emplace(std::make_shared<ExpressionBinding<ShaderLayerPtr>>(getControl<wxTextCtrl>("MaterialStageTranslateX"),
-        [](const ShaderLayerPtr& layer) { return layer->getTranslationExpression(0); }));
-    _stageBindings.emplace(std::make_shared<ExpressionBinding<ShaderLayerPtr>>(getControl<wxTextCtrl>("MaterialStageTranslateY"),
-        [](const ShaderLayerPtr& layer) { return layer->getTranslationExpression(1); }));
+    createExpressionBinding("MaterialStageTranslateX",
+        [](const ShaderLayerPtr& layer) { return layer->getTranslationExpression(0); });
+    createExpressionBinding("MaterialStageTranslateY",
+        [](const ShaderLayerPtr& layer) { return layer->getTranslationExpression(1); });
 
-    _stageBindings.emplace(std::make_shared<ExpressionBinding<ShaderLayerPtr>>(getControl<wxTextCtrl>("MaterialStageScaleX"),
-        [](const ShaderLayerPtr& layer) { return layer->getScaleExpression(0); }));
-    _stageBindings.emplace(std::make_shared<ExpressionBinding<ShaderLayerPtr>>(getControl<wxTextCtrl>("MaterialStageScaleY"),
-        [](const ShaderLayerPtr& layer) { return layer->getScaleExpression(1); }));
+    createExpressionBinding("MaterialStageScaleX",
+        [](const ShaderLayerPtr& layer) { return layer->getScaleExpression(0); });
+    createExpressionBinding("MaterialStageScaleY",
+        [](const ShaderLayerPtr& layer) { return layer->getScaleExpression(1); });
 
-    _stageBindings.emplace(std::make_shared<ExpressionBinding<ShaderLayerPtr>>(getControl<wxTextCtrl>("MaterialStageCenterScaleX"),
-        [](const ShaderLayerPtr& layer) { return layer->getCenterScaleExpression(0); }));
-    _stageBindings.emplace(std::make_shared<ExpressionBinding<ShaderLayerPtr>>(getControl<wxTextCtrl>("MaterialStageCenterScaleY"),
-        [](const ShaderLayerPtr& layer) { return layer->getCenterScaleExpression(1); }));
+    createExpressionBinding("MaterialStageCenterScaleX",
+        [](const ShaderLayerPtr& layer) { return layer->getCenterScaleExpression(0); });
+    createExpressionBinding("MaterialStageCenterScaleY",
+        [](const ShaderLayerPtr& layer) { return layer->getCenterScaleExpression(1); });
 
-    _stageBindings.emplace(std::make_shared<ExpressionBinding<ShaderLayerPtr>>(getControl<wxTextCtrl>("MaterialStageShearX"),
-        [](const ShaderLayerPtr& layer) { return layer->getShearExpression(0); }));
-    _stageBindings.emplace(std::make_shared<ExpressionBinding<ShaderLayerPtr>>(getControl<wxTextCtrl>("MaterialStageShearY"),
-        [](const ShaderLayerPtr& layer) { return layer->getShearExpression(1); }));
+    createExpressionBinding("MaterialStageShearX",
+        [](const ShaderLayerPtr& layer) { return layer->getShearExpression(0); });
+    createExpressionBinding("MaterialStageShearY",
+        [](const ShaderLayerPtr& layer) { return layer->getShearExpression(1); });
 
-    _stageBindings.emplace(std::make_shared<ExpressionBinding<ShaderLayerPtr>>(getControl<wxTextCtrl>("MaterialStageRotate"),
-        [](const ShaderLayerPtr& layer) { return layer->getRotationExpression(); }));
+    createExpressionBinding("MaterialStageRotate",
+        [](const ShaderLayerPtr& layer) { return layer->getRotationExpression(); });
 
-    _stageBindings.emplace(std::make_shared<ExpressionBinding<ShaderLayerPtr>>(getControl<wxTextCtrl>("MaterialStageCondition"),
-        [](const ShaderLayerPtr& layer) { return layer->getConditionExpression(); }));
+    createExpressionBinding("MaterialStageCondition",
+        [](const ShaderLayerPtr& layer) { return layer->getConditionExpression(); });
 
     _stageBindings.emplace(std::make_shared<CheckBoxBinding<ShaderLayerPtr>>(getControl<wxCheckBox>("MaterialStageColored"),
         [](const ShaderLayerPtr& layer) { return (layer->getParseFlags() & ShaderLayer::PF_HasColoredKeyword) != 0; }));
 
-    _stageBindings.emplace(std::make_shared<ExpressionBinding<ShaderLayerPtr>>(getControl<wxTextCtrl>("MaterialStageRed"),
-        [](const ShaderLayerPtr& layer) { return layer->getColourExpression(ShaderLayer::COMP_RED); }));
-    _stageBindings.emplace(std::make_shared<ExpressionBinding<ShaderLayerPtr>>(getControl<wxTextCtrl>("MaterialStageGreen"),
-        [](const ShaderLayerPtr& layer) { return layer->getColourExpression(ShaderLayer::COMP_GREEN); }));
-    _stageBindings.emplace(std::make_shared<ExpressionBinding<ShaderLayerPtr>>(getControl<wxTextCtrl>("MaterialStageBlue"),
-        [](const ShaderLayerPtr& layer) { return layer->getColourExpression(ShaderLayer::COMP_BLUE); }));
-    _stageBindings.emplace(std::make_shared<ExpressionBinding<ShaderLayerPtr>>(getControl<wxTextCtrl>("MaterialStageAlpha"),
-        [](const ShaderLayerPtr& layer) { return layer->getColourExpression(ShaderLayer::COMP_ALPHA); }));
+    createExpressionBinding("MaterialStageRed",
+        [](const ShaderLayerPtr& layer) { return layer->getColourExpression(ShaderLayer::COMP_RED); });
+    createExpressionBinding("MaterialStageGreen",
+        [](const ShaderLayerPtr& layer) { return layer->getColourExpression(ShaderLayer::COMP_GREEN); });
+    createExpressionBinding("MaterialStageBlue",
+        [](const ShaderLayerPtr& layer) { return layer->getColourExpression(ShaderLayer::COMP_BLUE); });
+    createExpressionBinding("MaterialStageAlpha",
+        [](const ShaderLayerPtr& layer) { return layer->getColourExpression(ShaderLayer::COMP_ALPHA); });
 
     auto parameterPanel = getControl<wxPanel>("MaterialStageProgramParameters");
     _stageProgramParameters = wxutil::TreeModel::Ptr(new wxutil::TreeModel(_stageProgramColumns, true));
@@ -642,6 +658,7 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
     for (const auto& binding : _materialBindings)
     {
         binding->setSource(_material);
+        binding->updateFromSource();
     }
 
     updateDeformControlsFromMaterial();
@@ -976,6 +993,7 @@ void MaterialEditor::updateStageControls()
     for (const auto& binding : _stageBindings)
     {
         binding->setSource(selectedStage);
+        binding->updateFromSource();
     }
 
     getControl<wxPanel>("MaterialEditorStageSettingsPanel")->Enable(selectedStage != nullptr);

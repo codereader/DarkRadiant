@@ -405,6 +405,11 @@ IMapExpression::Ptr Doom3ShaderLayer::getMapExpression()
     return std::dynamic_pointer_cast<IMapExpression>(_bindableTex);
 }
 
+void Doom3ShaderLayer::setMapExpressionFromString(const std::string& expression)
+{
+    setBindableTexture(MapExpression::createForString(expression));
+}
+
 int Doom3ShaderLayer::getParseFlags()
 {
     return _parseFlags;

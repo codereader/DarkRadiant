@@ -77,6 +77,10 @@ private:
     void setupMaterialFlag(const std::string& controlName, Material::Flags flag);
     void setupStageFlag(const std::string& controlName, int flags);
 
+    void createExpressionBinding(const std::string& textCtrlName,
+        const std::function<shaders::IShaderExpressionPtr(const ShaderLayerPtr&)>& loadFunc,
+        const std::function<void(const ShaderLayerPtr&, const std::string&)>& saveFunc = std::function<void(const ShaderLayerPtr&, const std::string&)>());
+
     void updateControlsFromMaterial();
     void updateDeformControlsFromMaterial();
     void updateStageListFromMaterial();
@@ -84,6 +88,8 @@ private:
 
     void selectStageByIndex(std::size_t index);
     ShaderLayerPtr getSelectedStage();
+
+    void prepareMaterialForSave();
 
     void updateStageControls();
     void updateStageBlendControls();

@@ -533,6 +533,7 @@ public:
     std::string getMapImageFilename() override;
 
     shaders::IMapExpression::Ptr getMapExpression() override;
+    void setMapExpressionFromString(const std::string& expression) override;
 
     int getParseFlags() override;
     void setParseFlag(ParseFlags flag);
