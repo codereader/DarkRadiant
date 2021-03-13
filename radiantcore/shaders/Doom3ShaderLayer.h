@@ -19,7 +19,7 @@ class ShaderTemplate;
  * Implementation of IShaderLayer for Doom 3 shaders.
  */
 class Doom3ShaderLayer : 
-    public IShaderLayer
+    public IEditableShaderLayer
 {
 private:
     // The owning material template

@@ -297,16 +297,25 @@ IShaderLayer* CShader::firstLayer() const
 {
 	if (_layers.empty())
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	return _layers.front().get();
 }
 
-// Get all layers
 const IShaderLayerVector& CShader::getAllLayers() const
 {
     return _layers;
+}
+
+const IEditableShaderLayer::Ptr& CShader::getEditableLayer(std::size_t index)
+{
+    ensureTemplateCopy();
+
+    const auto& layers = _template->getLayers();
+    assert(index >= 0 && index < layers.size());
+
+    return layers[index];
 }
 
 /* Required Material light type predicates */

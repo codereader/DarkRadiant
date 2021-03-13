@@ -365,9 +365,6 @@ public:
     // The map expression used to generate/define the texture of this stage
     virtual shaders::IMapExpression::Ptr getMapExpression() const = 0;
 
-    // Update the "map" expression of this stage
-    virtual void setMapExpressionFromString(const std::string& expression) = 0;
-
     // Parser information, to reconstruct the use of certain keywords
     virtual int getParseFlags() const = 0;
 };
@@ -378,3 +375,15 @@ public:
  */
 typedef std::vector<IShaderLayer::Ptr> IShaderLayerVector;
 
+// Interface extension to IShaderLayer, offering editing functions
+class IEditableShaderLayer :
+    public IShaderLayer
+{
+public:
+    using Ptr = std::shared_ptr<IEditableShaderLayer>;
+
+    virtual ~IEditableShaderLayer() {}
+
+    // Update the "map" expression of this stage
+    virtual void setMapExpressionFromString(const std::string& expression) = 0;
+};
