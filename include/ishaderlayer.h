@@ -288,6 +288,9 @@ public:
      */
     virtual float getAlphaTest() const = 0;
 
+    // Returns the expression used to calculate the alpha test value
+    virtual const shaders::IShaderExpressionPtr& getAlphaTestExpression() const = 0;
+
 	/**
 	 * Whether this stage is active. Unconditional stages always return true,
 	 * conditional ones return the result of the most recent condition expression evaluation.
@@ -386,6 +389,9 @@ public:
 
     // Set the translation expression [0..1] to the given string
     virtual void setTranslationExpressionFromString(std::size_t index, const std::string& expression) = 0;
+
+    // Set the alpha test expression from the given string
+    virtual void setAlphaTestExpressionFromString(const std::string& expression) = 0;
 
     // Update the "map" expression of this stage
     virtual void setMapExpressionFromString(const std::string& expression) = 0;

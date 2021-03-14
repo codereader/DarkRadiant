@@ -74,6 +74,7 @@ private:
 
     // Alpha test value, pointing into the register array. 0 means no test, otherwise must be within (0 - 1]
     std::size_t _alphaTest;
+    std::size_t _alphaTestExpression;
 
     // texgen normal, reflect, skybox, wobblesky
     TexGenType _texGenType;
@@ -140,6 +141,12 @@ public:
 
     bool hasAlphaTest() const override;
     float getAlphaTest() const override;
+    const shaders::IShaderExpressionPtr& getAlphaTestExpression() const override;
+
+    void setAlphaTestExpressionFromString(const std::string& expression) override
+    {
+        assignExpressionFromString(expression, _alphaTestExpression, _alphaTest, REG_ZERO);
+    }
 
     // True if the condition for this stage is fulfilled 
     // (expressions must have been evaluated before this call)
@@ -470,10 +477,9 @@ public:
      * \brief
      * Set alphatest expression
      */
-    void setAlphaTest(const IShaderExpressionPtr& expr)
+    void setAlphaTest(const IShaderExpressionPtr& expression)
     {
-        _expressions.push_back(expr);
-        _alphaTest = expr->linkToRegister(_registers);
+        assignExpression(expression, _alphaTestExpression, _alphaTest, REG_ZERO);
     }
 
     // Returns the value of the given register
@@ -555,6 +561,9 @@ public:
     void setParseFlag(ParseFlags flag);
 
 private:
+    void assignExpression(const IShaderExpressionPtr& expression,
+        std::size_t& expressionIndex, std::size_t& registerIndex, std::size_t defaultRegisterIndex);
+
     void assignExpressionFromString(const std::string& expressionString, 
         std::size_t& expressionIndex, std::size_t& registerIndex, std::size_t defaultRegisterIndex);
 };

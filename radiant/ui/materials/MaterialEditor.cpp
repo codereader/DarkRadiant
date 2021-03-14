@@ -57,7 +57,8 @@ MaterialEditor::MaterialEditor() :
     DialogBase(DIALOG_TITLE),
     _treeView(nullptr),
     _stageList(new wxutil::TreeModel(STAGE_COLS(), true)),
-    _stageView(nullptr)
+    _stageView(nullptr),
+    _stageUpdateInProgress(false)
 {
     loadNamedPanel(this, "MaterialEditorMainPanel");
 
@@ -389,6 +390,10 @@ void MaterialEditor::setupMaterialStageProperties()
     {
         return layer->hasAlphaTest();
     }));
+
+    createExpressionBinding("MaterialStageAlphaTestExpression",
+        [](const IShaderLayer::Ptr& layer) { return layer->getAlphaTestExpression(); },
+        [](const IEditableShaderLayer::Ptr& layer, const std::string& value) { layer->setAlphaTestExpressionFromString(value); });
 
     for (const auto& value : {
         "diffusemap", "bumpmap", "specularmap", "blend", "add", "filter", "modulate", "none", "Custom"
@@ -997,6 +1002,8 @@ void MaterialEditor::updateStageProgramControls()
 
 void MaterialEditor::updateStageControls()
 {
+    util::ScopedBoolLock lock(_stageUpdateInProgress);
+
     auto selectedStage = getSelectedStage();
 
     // Update all registered bindings
@@ -1016,7 +1023,6 @@ void MaterialEditor::updateStageControls()
     {
         selectedStage->evaluateExpressions(0); // initialise the values of this stage
 
-        getControl<wxSpinCtrlDouble>("MaterialStageAlphaTestValue")->SetValue(selectedStage->getAlphaTest());
         getControl<wxSpinCtrlDouble>("MaterialStagePrivatePolygonOffset")->SetValue(selectedStage->getPrivatePolygonOffset());
 
         auto mapExpr = selectedStage->getMapExpression();
@@ -1025,6 +1031,8 @@ void MaterialEditor::updateStageControls()
 
         imageMap->Bind(wxEVT_TEXT, [imageMap, this](wxCommandEvent&)
         {
+            if (_stageUpdateInProgress) return;
+
             auto stage = getEditableStageForSelection();
             stage->setMapExpressionFromString(imageMap->GetValue().ToStdString());
             onMaterialChanged();

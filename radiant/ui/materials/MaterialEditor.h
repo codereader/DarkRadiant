@@ -55,6 +55,8 @@ private:
     StageProgramParmsColumns _stageProgramColumns;
     wxutil::TreeModel::Ptr _stageProgramParameters;
 
+    bool _stageUpdateInProgress;
+
 private:
     MaterialEditor();
 

@@ -92,6 +92,7 @@ Doom3ShaderLayer::Doom3ShaderLayer(ShaderTemplate& material, IShaderLayer::Type 
 	_stageFlags(0),
 	_clampType(CLAMP_REPEAT),
 	_alphaTest(REG_ZERO),
+    _alphaTestExpression(NOT_DEFINED),
 	_texGenType(TEXGEN_NORMAL),
 	_privatePolygonOffset(0),
     _parseFlags(0)
@@ -139,6 +140,7 @@ Doom3ShaderLayer::Doom3ShaderLayer(const Doom3ShaderLayer& other, ShaderTemplate
     _stageFlags(other._stageFlags),
     _clampType(other._clampType),
     _alphaTest(other._alphaTest),
+    _alphaTestExpression(other._alphaTestExpression),
     _texGenType(other._texGenType),
     _rotation(other._rotation),
     _rotationExpression(other._rotationExpression),
@@ -351,12 +353,17 @@ void Doom3ShaderLayer::setRenderMapSize(const Vector2& size)
 
 bool Doom3ShaderLayer::hasAlphaTest() const
 {
-    return _alphaTest != REG_ZERO;
+    return _alphaTestExpression != NOT_DEFINED;
 }
 
 float Doom3ShaderLayer::getAlphaTest() const
 {
     return _registers[_alphaTest];
+}
+
+const shaders::IShaderExpressionPtr& Doom3ShaderLayer::getAlphaTestExpression() const
+{
+    return _alphaTestExpression != NOT_DEFINED ? _expressions[_alphaTestExpression] : NULL_EXPRESSION;
 }
 
 TexturePtr Doom3ShaderLayer::getFragmentMapTexture(int index) const
@@ -507,33 +514,27 @@ void Doom3ShaderLayer::addVertexParm(const VertexParm& parm)
     assert(_vertexParms.size() % 4 == 0);
 }
 
-void Doom3ShaderLayer::assignExpressionFromString(const std::string& expressionString, 
+void Doom3ShaderLayer::assignExpression(const IShaderExpressionPtr& expression,
     std::size_t& expressionIndex, std::size_t& registerIndex, std::size_t defaultRegisterIndex)
 {
-    // An empty string will clear the expression
-    if (expressionString.empty())
+    if (!expression)
     {
+        // Assigning an empty expression will reset the slot to NOT_DEFINED
         if (expressionIndex != NOT_DEFINED)
         {
+            // Release the previous expression
             assert(_expressions[expressionIndex]);
 
             _expressions[expressionIndex]->unlinkFromRegisters();
             _expressions[expressionIndex].reset();
         }
 
-        registerIndex = defaultRegisterIndex;
         expressionIndex = NOT_DEFINED;
+        registerIndex = defaultRegisterIndex;
         return;
     }
 
-    // Attempt to parse the string
-    auto expression = ShaderExpression::createFromString(expressionString);
-
-    if (!expression)
-    {
-        return; // parsing failures will not overwrite the expression slot
-    }
-
+    // Non-empty expression, overwrite if we have an existing expression in the slot
     if (expressionIndex != NOT_DEFINED)
     {
         // Try to re-use the previous register position
@@ -557,6 +558,64 @@ void Doom3ShaderLayer::assignExpressionFromString(const std::string& expressionS
 
         registerIndex = expression->linkToRegister(_registers);
     }
+}
+
+void Doom3ShaderLayer::assignExpressionFromString(const std::string& expressionString, 
+    std::size_t& expressionIndex, std::size_t& registerIndex, std::size_t defaultRegisterIndex)
+{
+    // An empty string will clear the expression
+    if (expressionString.empty())
+    {
+        assignExpression(IShaderExpressionPtr(), expressionIndex, registerIndex, defaultRegisterIndex);
+#if 0
+        if (expressionIndex != NOT_DEFINED)
+        {
+            assert(_expressions[expressionIndex]);
+
+            _expressions[expressionIndex]->unlinkFromRegisters();
+            _expressions[expressionIndex].reset();
+        }
+
+        registerIndex = defaultRegisterIndex;
+        expressionIndex = NOT_DEFINED;
+#endif
+        return;
+    }
+
+    // Attempt to parse the string
+    auto expression = ShaderExpression::createFromString(expressionString);
+
+    if (!expression)
+    {
+        return; // parsing failures will not overwrite the expression slot
+    }
+
+    assignExpression(expression, expressionIndex, registerIndex, defaultRegisterIndex);
+#if 0
+    if (expressionIndex != NOT_DEFINED)
+    {
+        // Try to re-use the previous register position
+        auto previousExpression = _expressions[expressionIndex];
+        _expressions[expressionIndex] = expression;
+
+        if (previousExpression->isLinked())
+        {
+            registerIndex = previousExpression->unlinkFromRegisters();
+            expression->linkToSpecificRegister(_registers, registerIndex);
+        }
+        else
+        {
+            registerIndex = expression->linkToRegister(_registers);
+        }
+    }
+    else
+    {
+        expressionIndex = _expressions.size();
+        _expressions.emplace_back(expression);
+
+        registerIndex = expression->linkToRegister(_registers);
+    }
+#endif
 }
 
 }
