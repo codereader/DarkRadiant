@@ -52,6 +52,10 @@ public:
     void assign(IShaderLayer::Expression::Slot slot, const IShaderExpression::Ptr& expression, std::size_t defaultRegisterIndex);
 
     void assignFromString(IShaderLayer::Expression::Slot slot, const std::string& expression, std::size_t defaultRegisterIndex);
+
+private:
+    // Returns true if the given register index is in use by more than one expression
+    bool registerIsShared(std::size_t index) const;
 };
 
 /**

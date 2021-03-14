@@ -90,7 +90,8 @@ void ExpressionSlots::assign(IShaderLayer::Expression::Slot slot, const IShaderE
     }
 
     // Non-empty expression, overwrite if we have an existing expression in the slot
-    if (expressionSlot.expression)
+    // Beware of the fact that some expressions could be shared across slots, before re-using the same register
+    if (expressionSlot.expression && !registerIsShared(expressionSlot.registerIndex))
     {
         // We assume that if there was an expression in the slot, it shouldn't point to the default registers
         assert(expressionSlot.registerIndex != defaultRegisterIndex);
@@ -124,6 +125,21 @@ void ExpressionSlots::assignFromString(IShaderLayer::Expression::Slot slot, cons
     }
 
     assign(slot, expression, defaultRegisterIndex);
+}
+
+bool ExpressionSlots::registerIsShared(std::size_t index) const
+{
+    std::size_t useCount = 0;
+
+    for (const auto& slot : *this)
+    {
+        if (slot.registerIndex == index && ++useCount > 1)
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 Doom3ShaderLayer::Doom3ShaderLayer(ShaderTemplate& material, IShaderLayer::Type type, const NamedBindablePtr& btex)
@@ -280,7 +296,7 @@ const IShaderExpression::Ptr& Doom3ShaderLayer::getColourExpression(ColourCompon
         break;
     };
 
-    return IShaderExpression::Ptr();
+    return NULL_EXPRESSION;
 }
 
 void Doom3ShaderLayer::setColourExpression(ColourComponentSelector comp, const IShaderExpression::Ptr& expr)
@@ -302,14 +318,19 @@ void Doom3ShaderLayer::setColourExpression(ColourComponentSelector comp, const I
 		break;
 	case COMP_RGB:
         _expressionSlots.assign(Expression::ColourRed, expr, REG_ONE);
-        _expressionSlots.assign(Expression::ColourGreen, expr, REG_ONE);
-        _expressionSlots.assign(Expression::ColourBlue, expr, REG_ONE);
+        _expressionSlots[Expression::ColourGreen].registerIndex = _expressionSlots[Expression::ColourRed].registerIndex;
+        _expressionSlots[Expression::ColourGreen].expression = _expressionSlots[Expression::ColourRed].expression;
+        _expressionSlots[Expression::ColourBlue].registerIndex = _expressionSlots[Expression::ColourRed].registerIndex;
+        _expressionSlots[Expression::ColourBlue].expression = _expressionSlots[Expression::ColourRed].expression;
 		break;
 	case COMP_RGBA:
         _expressionSlots.assign(Expression::ColourRed, expr, REG_ONE);
-        _expressionSlots.assign(Expression::ColourGreen, expr, REG_ONE);
-        _expressionSlots.assign(Expression::ColourBlue, expr, REG_ONE);
-        _expressionSlots.assign(Expression::ColourAlpha, expr, REG_ONE);
+        _expressionSlots[Expression::ColourGreen].registerIndex = _expressionSlots[Expression::ColourRed].registerIndex;
+        _expressionSlots[Expression::ColourGreen].expression = _expressionSlots[Expression::ColourRed].expression;
+        _expressionSlots[Expression::ColourBlue].registerIndex = _expressionSlots[Expression::ColourRed].registerIndex;
+        _expressionSlots[Expression::ColourBlue].expression = _expressionSlots[Expression::ColourRed].expression;
+        _expressionSlots[Expression::ColourAlpha].registerIndex = _expressionSlots[Expression::ColourAlpha].registerIndex;
+        _expressionSlots[Expression::ColourAlpha].expression = _expressionSlots[Expression::ColourAlpha].expression;
 		break;
 	};
 }
