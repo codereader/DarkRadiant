@@ -356,6 +356,98 @@ TEST_F(MaterialsTest, MaterialParserStageShear)
     EXPECT_EQ(material->getAllLayers().front()->getShearExpression(1)->getExpressionString(), "4.0");
 }
 
+TEST_F(MaterialsTest, MaterialParserStageTransforms)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/combined1");
+
+    auto stage = material->getAllLayers().front();
+    EXPECT_EQ(stage->getTransformations().size(), 2);
+    EXPECT_EQ(stage->getTransformations().at(0).type, IShaderLayer::TransformType::Translate);
+    EXPECT_EQ(stage->getTransformations().at(0).expression1->getExpressionString(), "time");
+    EXPECT_EQ(stage->getTransformations().at(0).expression2->getExpressionString(), "0.5");
+    EXPECT_EQ(stage->getTransformations().at(1).type, IShaderLayer::TransformType::Translate);
+    EXPECT_EQ(stage->getTransformations().at(1).expression1->getExpressionString(), "0.7");
+    EXPECT_EQ(stage->getTransformations().at(1).expression2->getExpressionString(), "0.5");
+
+    stage->evaluateExpressions(1000);
+    EXPECT_TRUE(stage->getTextureTransform() == Matrix4::getTranslation(Vector3(1, 0.5, 0) + Vector3(0.7, 0.5, 0)));
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/combined2");
+
+    stage = material->getAllLayers().front();
+    EXPECT_EQ(stage->getTransformations().size(), 3);
+    EXPECT_EQ(stage->getTransformations().at(0).type, IShaderLayer::TransformType::Translate);
+    EXPECT_EQ(stage->getTransformations().at(0).expression1->getExpressionString(), "time");
+    EXPECT_EQ(stage->getTransformations().at(0).expression2->getExpressionString(), "0.5");
+    EXPECT_EQ(stage->getTransformations().at(1).type, IShaderLayer::TransformType::Scale);
+    EXPECT_EQ(stage->getTransformations().at(1).expression1->getExpressionString(), "0.6");
+    EXPECT_EQ(stage->getTransformations().at(1).expression2->getExpressionString(), "0.2");
+    EXPECT_EQ(stage->getTransformations().at(2).type, IShaderLayer::TransformType::Translate);
+    EXPECT_EQ(stage->getTransformations().at(2).expression1->getExpressionString(), "0.7");
+    EXPECT_EQ(stage->getTransformations().at(2).expression2->getExpressionString(), "0.5");
+
+    stage->evaluateExpressions(1000);
+    auto combinedMatrix = Matrix4::getTranslation(Vector3(1, 0.5, 0));
+    combinedMatrix.premultiplyBy(Matrix4::getScale(Vector3(0.6, 0.2, 1)));
+    combinedMatrix.premultiplyBy(Matrix4::getTranslation(Vector3(0.7, 0.5, 0)));
+    EXPECT_TRUE(stage->getTextureTransform() == combinedMatrix);
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/combined3");
+
+    stage = material->getAllLayers().front();
+    EXPECT_EQ(stage->getTransformations().size(), 6);
+    EXPECT_EQ(stage->getTransformations().at(0).type, IShaderLayer::TransformType::Translate);
+    EXPECT_EQ(stage->getTransformations().at(0).expression1->getExpressionString(), "time");
+    EXPECT_EQ(stage->getTransformations().at(0).expression2->getExpressionString(), "0.5");
+    EXPECT_EQ(stage->getTransformations().at(1).type, IShaderLayer::TransformType::Shear);
+    EXPECT_EQ(stage->getTransformations().at(1).expression1->getExpressionString(), "0.9");
+    EXPECT_EQ(stage->getTransformations().at(1).expression2->getExpressionString(), "0.8");
+    EXPECT_EQ(stage->getTransformations().at(2).type, IShaderLayer::TransformType::Rotate);
+    EXPECT_EQ(stage->getTransformations().at(2).expression1->getExpressionString(), "0.22");
+    EXPECT_FALSE(stage->getTransformations().at(2).expression2);
+    EXPECT_EQ(stage->getTransformations().at(3).type, IShaderLayer::TransformType::CenterScale);
+    EXPECT_EQ(stage->getTransformations().at(3).expression1->getExpressionString(), "0.2");
+    EXPECT_EQ(stage->getTransformations().at(3).expression2->getExpressionString(), "0.1");
+    EXPECT_EQ(stage->getTransformations().at(4).type, IShaderLayer::TransformType::Scale);
+    EXPECT_EQ(stage->getTransformations().at(4).expression1->getExpressionString(), "0.5");
+    EXPECT_EQ(stage->getTransformations().at(4).expression2->getExpressionString(), "0.4");
+    EXPECT_EQ(stage->getTransformations().at(5).type, IShaderLayer::TransformType::Translate);
+    EXPECT_EQ(stage->getTransformations().at(5).expression1->getExpressionString(), "1.0");
+    EXPECT_EQ(stage->getTransformations().at(5).expression2->getExpressionString(), "1.0");
+
+    auto time = 750;
+    stage->evaluateExpressions(time);
+    auto timeSecs = time / 1000.0;
+
+    combinedMatrix = Matrix4::getTranslation(Vector3(timeSecs, 0.5, 0));
+
+    auto shear = Matrix4::byColumns(1, 0.8, 0, 0, 
+                                    0.9, 1.0, 0, 0, 
+                                    0, 0, 1, 0, 
+                                   -0.5*0.9, -0.5*0.8, 0, 1);
+    combinedMatrix.premultiplyBy(shear);
+
+    // sintable and costable lookups are [0..1], translate them to [0..2pi]
+    auto cosValue = cos(0.22 * 2 * c_pi);
+    auto sinValue = sin(0.22 * 2 * c_pi);
+
+    auto rotate = Matrix4::byColumns(cosValue, -sinValue, 0, (-0.5*cosValue+0.5*sinValue) + 0.5,
+        sinValue, cosValue, 0, (-0.5*sinValue-0.5*cosValue) + 0.5,
+        0, 0, 1, 0,
+        0, 0, 0, 1);
+    combinedMatrix.premultiplyBy(rotate);
+
+    auto centerScale = Matrix4::byColumns(0.2, 0, 0, 0,
+        0, 0.1, 0, 0,
+        0, 0, 1, 0,
+        0.5 - 0.5*0.2, 0.5 - 0.5*0.1, 0, 1);
+    combinedMatrix.premultiplyBy(centerScale);
+    combinedMatrix.premultiplyBy(Matrix4::getScale(Vector3(0.5, 0.4, 1)));
+    combinedMatrix.premultiplyBy(Matrix4::getTranslation(Vector3(1, 1, 0)));
+
+    EXPECT_TRUE(stage->getTextureTransform() == combinedMatrix);
+}
+
 TEST_F(MaterialsTest, MaterialParserStageVertexProgram)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/program/vertexProgram1");
