@@ -16,27 +16,42 @@ IEntityNodePtr createByClassName(const std::string& className)
     return GlobalEntityModule().createEntity(cls);
 }
 
+// Wrapper for a light entity and its respective node interfaces
+struct Light
+{
+    IEntityNodePtr node;
+    ILightNodePtr iLightNode;
+    Entity* entity = nullptr;
+
+    Light()
+    : node(createByClassName("light"))
+    {
+        if (node)
+        {
+            entity = Node_getEntity(node);
+            iLightNode = Node_getLightNode(node);
+        }
+    }
+};
+
 TEST_F(RendererTest, CreateLightNode)
 {
-    auto light = createByClassName("light");
-    ILightNodePtr node = Node_getLightNode(light);
-    ASSERT_TRUE(node);
+    Light light;
+    ASSERT_TRUE(light.node);
+    ASSERT_TRUE(light.entity);
+    ASSERT_TRUE(light.iLightNode);
 }
 
 TEST_F(RendererTest, GetLightTextureTransform)
 {
-    auto light = createByClassName("light");
-    Entity* lightEnt = Node_getEntity(light);
-    ASSERT_TRUE(lightEnt);
+    Light light;
 
     // Set a radius
     Vector3 SIZE(10, 128, 1002);
-    lightEnt->setKeyValue("light_radius", string::to_string(SIZE));
+    light.entity->setKeyValue("light_radius", string::to_string(SIZE));
 
     // Get the RendererLight
-    ILightNodePtr node = Node_getLightNode(light);
-    ASSERT_TRUE(node);
-    const RendererLight& rLight = node->getRendererLight();
+    const RendererLight& rLight = light.iLightNode->getRendererLight();
 
     // Get the texture matrix transform
     Matrix4 texMat = rLight.getLightTextureTransformation();
@@ -52,18 +67,16 @@ TEST_F(RendererTest, GetLightTextureTransform)
 
 TEST_F(RendererTest, LightMatrixInWorldSpace)
 {
-    auto light = createByClassName("light");
-    Entity* lightEnt = Node_getEntity(light);
-    ASSERT_TRUE(lightEnt);
+    Light light;
 
     // Set both an origin and a radius
     const Vector3 ORIGIN(128, 64, -192);
     const Vector3 RADIUS(32, 32, 32);
-    lightEnt->setKeyValue("origin", string::to_string(ORIGIN));
-    lightEnt->setKeyValue("light_radius", string::to_string(RADIUS));
+    light.entity->setKeyValue("origin", string::to_string(ORIGIN));
+    light.entity->setKeyValue("light_radius", string::to_string(RADIUS));
 
     // Get the texture matrix transform
-    const RendererLight& rLight = Node_getLightNode(light)->getRendererLight();
+    const RendererLight& rLight = light.iLightNode->getRendererLight();
     Matrix4 texMat = rLight.getLightTextureTransformation();
 
     // Light matrix should subtract the origin scaled to the light bounds (twice
