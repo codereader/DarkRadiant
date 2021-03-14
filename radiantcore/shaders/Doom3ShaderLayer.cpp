@@ -329,8 +329,8 @@ void Doom3ShaderLayer::setColourExpression(ColourComponentSelector comp, const I
         _expressionSlots[Expression::ColourGreen].expression = _expressionSlots[Expression::ColourRed].expression;
         _expressionSlots[Expression::ColourBlue].registerIndex = _expressionSlots[Expression::ColourRed].registerIndex;
         _expressionSlots[Expression::ColourBlue].expression = _expressionSlots[Expression::ColourRed].expression;
-        _expressionSlots[Expression::ColourAlpha].registerIndex = _expressionSlots[Expression::ColourAlpha].registerIndex;
-        _expressionSlots[Expression::ColourAlpha].expression = _expressionSlots[Expression::ColourAlpha].expression;
+        _expressionSlots[Expression::ColourAlpha].registerIndex = _expressionSlots[Expression::ColourRed].registerIndex;
+        _expressionSlots[Expression::ColourAlpha].expression = _expressionSlots[Expression::ColourRed].expression;
 		break;
 	};
 }

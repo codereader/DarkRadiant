@@ -321,3 +321,100 @@ textures/parsertest/guisurf4
 	guiSurf	entity3
 	playerclip
 }
+
+textures/parsertest/colourexpr1
+{
+	{
+        blend diffusemap
+        map _white
+        red time*3
+	}
+}
+
+textures/parsertest/colourexpr2
+{
+	{
+        blend diffusemap
+        map _white
+        green time*3
+	}
+}
+
+textures/parsertest/colourexpr3
+{
+	{
+        blend diffusemap
+        map _white
+        blue time*3
+	}
+}
+
+textures/parsertest/colourexpr4
+{
+	{
+        blend diffusemap
+        map _white
+        alpha time*3
+	}
+}
+
+textures/parsertest/colourexpr5
+{
+	{
+        blend diffusemap
+        map _white
+        rgb time*3
+	}
+}
+
+textures/parsertest/colourexpr6
+{
+	{
+        blend diffusemap
+        map _white
+        rgba time*3
+	}
+}
+
+textures/parsertest/colourexpr7
+{
+	{
+        blend diffusemap
+        map _white
+        red time*3
+        red time*4
+	}
+}
+
+textures/parsertest/colourexpr8
+{
+	{
+        blend diffusemap
+        map _white
+        rgb time*3
+        red time*4
+	}
+}
+
+textures/parsertest/colourexpr9
+{
+	{
+        blend diffusemap
+        map _white
+        rgba time*3
+        green time*4
+	}
+}
+
+textures/parsertest/colourexpr10
+{
+	{
+        blend diffusemap
+        map _white
+        rgba time*3
+        red time*4
+        blue time*5
+        green time*6
+        alpha time*7
+	}
+}

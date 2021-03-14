@@ -522,4 +522,119 @@ TEST_F(MaterialsTest, MaterialParserGuiSurf)
     EXPECT_EQ(material->getGuiSurfArgument(), "");
 }
 
+TEST_F(MaterialsTest, MaterialParserRgbaExpressions)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/colourexpr1");
+
+    auto diffuse = material->getAllLayers().front();
+    auto time = 10;
+    auto timeSecs = time / 1000.0f; // 0.01
+    diffuse->evaluateExpressions(time);
+
+    EXPECT_TRUE(diffuse->getColour() == Colour4(timeSecs*3, 1, 1, 1));
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "time * 3.0");
+    EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_GREEN));
+    EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_BLUE));
+    EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_ALPHA));
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/colourexpr2");
+
+    diffuse = material->getAllLayers().front();
+    diffuse->evaluateExpressions(time);
+
+    EXPECT_TRUE(diffuse->getColour() == Colour4(1, timeSecs*3, 1, 1));
+    EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_RED));
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "time * 3.0");
+    EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_BLUE));
+    EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_ALPHA));
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/colourexpr3");
+
+    diffuse = material->getAllLayers().front();
+    diffuse->evaluateExpressions(time);
+
+    EXPECT_TRUE(diffuse->getColour() == Colour4(1, 1, timeSecs * 3, 1));
+    EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_RED));
+    EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_GREEN));
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "time * 3.0");
+    EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_ALPHA));
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/colourexpr4");
+
+    diffuse = material->getAllLayers().front();
+    diffuse->evaluateExpressions(time);
+
+    EXPECT_TRUE(diffuse->getColour() == Colour4(1, 1, 1, timeSecs * 3));
+    EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_RED));
+    EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_GREEN));
+    EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_BLUE));
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_ALPHA)->getExpressionString(), "time * 3.0");
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/colourexpr5");
+
+    diffuse = material->getAllLayers().front();
+    diffuse->evaluateExpressions(time);
+
+    EXPECT_TRUE(diffuse->getColour() == Colour4(timeSecs * 3, timeSecs * 3, timeSecs * 3, 1));
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "time * 3.0");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "time * 3.0");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "time * 3.0");
+    EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_ALPHA));
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/colourexpr6");
+
+    diffuse = material->getAllLayers().front();
+    diffuse->evaluateExpressions(time);
+
+    EXPECT_TRUE(diffuse->getColour() == Colour4(timeSecs * 3, timeSecs * 3, timeSecs * 3, timeSecs * 3));
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "time * 3.0");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "time * 3.0");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "time * 3.0");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_ALPHA)->getExpressionString(), "time * 3.0");
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/colourexpr7");
+
+    diffuse = material->getAllLayers().front();
+    diffuse->evaluateExpressions(time);
+
+    EXPECT_TRUE(diffuse->getColour() == Colour4(timeSecs * 4, 1, 1, 1)); // second red expression overrules first
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "time * 4.0");
+    EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_GREEN));
+    EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_BLUE));
+    EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_ALPHA));
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/colourexpr8");
+
+    diffuse = material->getAllLayers().front();
+    diffuse->evaluateExpressions(time);
+
+    EXPECT_TRUE(diffuse->getColour() == Colour4(timeSecs * 4, timeSecs * 3, timeSecs * 3, 1)); // red overrules rgb
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "time * 4.0");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "time * 3.0");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "time * 3.0");
+    EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_ALPHA));
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/colourexpr9");
+
+    diffuse = material->getAllLayers().front();
+    diffuse->evaluateExpressions(time);
+
+    EXPECT_TRUE(diffuse->getColour() == Colour4(timeSecs * 3, timeSecs * 4, timeSecs * 3, timeSecs * 3)); // green overrules rgba
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "time * 3.0");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "time * 4.0");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "time * 3.0");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_ALPHA)->getExpressionString(), "time * 3.0");
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/colourexpr10");
+
+    diffuse = material->getAllLayers().front();
+    diffuse->evaluateExpressions(time);
+
+    EXPECT_TRUE(diffuse->getColour() == Colour4(timeSecs * 4, timeSecs * 6, timeSecs * 5, timeSecs * 7)); // rgba is overridden
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "time * 4.0");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "time * 6.0");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "time * 5.0");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_ALPHA)->getExpressionString(), "time * 7.0");
+}
+
 }
