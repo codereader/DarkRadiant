@@ -109,6 +109,10 @@ public:
             TexGenParam1,
             TexGenParam2,
             TexGenParam3,
+            ColourRed,
+            ColourGreen,
+            ColourBlue,
+            ColourAlpha,
             NumExpressionSlots
         };
     };

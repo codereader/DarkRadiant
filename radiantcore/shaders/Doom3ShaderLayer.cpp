@@ -149,8 +149,10 @@ Doom3ShaderLayer::Doom3ShaderLayer(ShaderTemplate& material, IShaderLayer::Type 
     _expressionSlots[Expression::Condition].registerIndex = REG_ONE;
 
 	// Init the colour to 1,1,1,1
-	_colIdx[0] = _colIdx[1] = _colIdx[2] = _colIdx[3] = REG_ONE;
-    _colExpression[0] = _colExpression[1] = _colExpression[2] = _colExpression[3] = NOT_DEFINED;
+    _expressionSlots[Expression::ColourRed].registerIndex = REG_ONE;
+    _expressionSlots[Expression::ColourGreen].registerIndex = REG_ONE;
+    _expressionSlots[Expression::ColourBlue].registerIndex = REG_ONE;
+    _expressionSlots[Expression::ColourAlpha].registerIndex = REG_ONE;
 
 	// Scale is set to 1,1 by default
 	_scale[0] = _scale[1] = REG_ONE;
@@ -200,15 +202,6 @@ Doom3ShaderLayer::Doom3ShaderLayer(const Doom3ShaderLayer& other, ShaderTemplate
     _renderMapSize(other._renderMapSize),
     _parseFlags(other._parseFlags)
 {
-    _colIdx[0] = other._colIdx[0];
-    _colIdx[1] = other._colIdx[1];
-    _colIdx[2] = other._colIdx[2];
-    _colIdx[3] = other._colIdx[3];
-    _colExpression[0] = other._colExpression[0];
-    _colExpression[1] = other._colExpression[1];
-    _colExpression[2] = other._colExpression[2];
-    _colExpression[3] = other._colExpression[3];
-
     _scale[0] = other._scale[0];
     _scale[1] = other._scale[1];
     _scaleExpression[0] = other._scaleExpression[0];
@@ -244,8 +237,10 @@ BlendFunc Doom3ShaderLayer::getBlendFunc() const
 Colour4 Doom3ShaderLayer::getColour() const
 {
 	// Resolve the register values
-    Colour4 colour(getRegisterValue(_colIdx[0]), getRegisterValue(_colIdx[1]),
-				   getRegisterValue(_colIdx[2]), getRegisterValue(_colIdx[3]));
+    Colour4 colour(getRegisterValue(_expressionSlots[Expression::ColourRed].registerIndex), 
+                   getRegisterValue(_expressionSlots[Expression::ColourGreen].registerIndex),
+                   getRegisterValue(_expressionSlots[Expression::ColourBlue].registerIndex), 
+                   getRegisterValue(_expressionSlots[Expression::ColourAlpha].registerIndex));
 
     if (!colour.isValid())
     {
@@ -257,87 +252,64 @@ Colour4 Doom3ShaderLayer::getColour() const
 
 const IShaderExpression::Ptr& Doom3ShaderLayer::getColourExpression(ColourComponentSelector component) const
 {
-    std::size_t expressionIndex = NOT_DEFINED;
-
     switch (component)
     {
     case COMP_RED:
-        expressionIndex = _colExpression[0];
-        break;
+        return _expressionSlots[Expression::ColourRed].expression;
     case COMP_GREEN:
-        expressionIndex = _colExpression[1];
-        break;
+        return _expressionSlots[Expression::ColourGreen].expression;
     case COMP_BLUE:
-        expressionIndex = _colExpression[2];
-        break;
+        return _expressionSlots[Expression::ColourBlue].expression;
     case COMP_ALPHA:
-        expressionIndex = _colExpression[3];
-        break;
+        return _expressionSlots[Expression::ColourAlpha].expression;
     case COMP_RGB:
         // Select if all RGB are using the same expression
-        if (_colExpression[0] == _colExpression[1] && _colExpression[1] == _colExpression[2])
+        if (_expressionSlots[Expression::ColourRed].expression == _expressionSlots[Expression::ColourGreen].expression && 
+            _expressionSlots[Expression::ColourGreen].expression == _expressionSlots[Expression::ColourBlue].expression)
         {
-            expressionIndex = _colExpression[0];
+            return _expressionSlots[Expression::ColourRed].expression;
         }
         break;
     case COMP_RGBA:
-        // Select if all RGBA are using the same expression
-        if (_colExpression[0] == _colExpression[1] && 
-            _colExpression[1] == _colExpression[2] && 
-            _colExpression[2] == _colExpression[3])
+        if (_expressionSlots[Expression::ColourRed].expression == _expressionSlots[Expression::ColourGreen].expression &&
+            _expressionSlots[Expression::ColourGreen].expression == _expressionSlots[Expression::ColourBlue].expression &&
+            _expressionSlots[Expression::ColourBlue].expression == _expressionSlots[Expression::ColourAlpha].expression)
         {
-            expressionIndex = _colExpression[0];
+            return _expressionSlots[Expression::ColourRed].expression;
         }
         break;
     };
 
-    return expressionIndex != NOT_DEFINED ? _expressions[expressionIndex] : NULL_EXPRESSION;
+    return IShaderExpression::Ptr();
 }
 
 void Doom3ShaderLayer::setColourExpression(ColourComponentSelector comp, const IShaderExpression::Ptr& expr)
 {
-	// Store the expression and link it to our registers
-    auto expressionIndex = _expressions.size();
-	_expressions.emplace_back(expr);
-
-	std::size_t index = expr->linkToRegister(_registers);
-
 	// Now assign the index to our colour components
 	switch (comp)
 	{
 	case COMP_RED:
-		_colIdx[0] = index;
-		_colExpression[0] = expressionIndex;
+        _expressionSlots.assign(Expression::ColourRed, expr, REG_ONE);
 		break;
 	case COMP_GREEN:
-		_colIdx[1] = index;
-        _colExpression[1] = expressionIndex;
+        _expressionSlots.assign(Expression::ColourGreen, expr, REG_ONE);
 		break;
 	case COMP_BLUE:
-		_colIdx[2] = index;
-        _colExpression[2] = expressionIndex;
+        _expressionSlots.assign(Expression::ColourBlue, expr, REG_ONE);
 		break;
 	case COMP_ALPHA:
-		_colIdx[3] = index;
-        _colExpression[3] = expressionIndex;
+        _expressionSlots.assign(Expression::ColourAlpha, expr, REG_ONE);
 		break;
 	case COMP_RGB:
-		_colIdx[0] = index;
-		_colIdx[1] = index;
-		_colIdx[2] = index;
-        _colExpression[0] = expressionIndex;
-        _colExpression[1] = expressionIndex;
-        _colExpression[2] = expressionIndex;
+        _expressionSlots.assign(Expression::ColourRed, expr, REG_ONE);
+        _expressionSlots.assign(Expression::ColourGreen, expr, REG_ONE);
+        _expressionSlots.assign(Expression::ColourBlue, expr, REG_ONE);
 		break;
 	case COMP_RGBA:
-		_colIdx[0] = index;
-		_colIdx[1] = index;
-		_colIdx[2] = index;
-		_colIdx[3] = index;
-        _colExpression[0] = expressionIndex;
-        _colExpression[1] = expressionIndex;
-        _colExpression[2] = expressionIndex;
-        _colExpression[3] = expressionIndex;
+        _expressionSlots.assign(Expression::ColourRed, expr, REG_ONE);
+        _expressionSlots.assign(Expression::ColourGreen, expr, REG_ONE);
+        _expressionSlots.assign(Expression::ColourBlue, expr, REG_ONE);
+        _expressionSlots.assign(Expression::ColourAlpha, expr, REG_ONE);
 		break;
 	};
 }
@@ -347,16 +319,18 @@ void Doom3ShaderLayer::setColour(const Vector4& col)
 	// Assign all 3 components of the colour, allocating new registers on the fly where needed
 	for (std::size_t i = 0; i < 4; ++i)
 	{
+        auto slot = static_cast<Expression::Slot>(Expression::ColourRed + i);
+
 		// Does this colour component refer to a reserved constant index?
-		if (_colIdx[i] < NUM_RESERVED_REGISTERS)
+		if (_expressionSlots[slot].registerIndex < NUM_RESERVED_REGISTERS)
 		{
 			// Yes, break this up by allocating a new register for this value
-			_colIdx[i] = getNewRegister(static_cast<float>(col[i]));
+            _expressionSlots[slot].registerIndex = getNewRegister(static_cast<float>(col[i]));
 		}
 		else
 		{
 			// Already using a custom register
-            setRegister(_colIdx[i], static_cast<float>(col[i]));
+            setRegister(_expressionSlots[slot].registerIndex, static_cast<float>(col[i]));
 		}
 	}
 }

@@ -93,11 +93,6 @@ private:
     // Blend function as strings (e.g. "gl_one", "gl_zero")
     StringPair _blendFuncStrings;
 
-    // Multiplicative layer colour (set with "red 0.6", "green 0.2" etc)
-    // The 4 numbers are indices into the registers array in the parent material
-    std::size_t _colIdx[4];
-    std::size_t _colExpression[4];
-
     // Vertex colour blend mode
     VertexColourMode _vertexColourMode;
 
