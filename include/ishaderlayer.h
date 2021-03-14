@@ -105,6 +105,9 @@ public:
         enum Slot
         {
             AlphaTest = 0,
+            TexGenParam1,
+            TexGenParam2,
+            TexGenParam3,
             NumExpressionSlots
         };
     };
@@ -135,6 +138,9 @@ public:
 	 * to give this stage the ability to resolve parm0..parm11 values.
 	 */
 	virtual void evaluateExpressions(std::size_t time, const IRenderEntity& entity) = 0;
+
+    // Returns the requested expression
+    virtual shaders::IShaderExpression::Ptr getExpression(Expression::Slot slot) = 0;
 
 	/**
 	 * The flags set on this stage.

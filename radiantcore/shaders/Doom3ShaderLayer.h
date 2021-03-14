@@ -21,17 +21,11 @@ struct ExpressionSlot
     // The register holding the evaluated float
     std::size_t registerIndex;
 
-    // The index of this expression in the slots array
-    std::size_t expressionIndex;
-
-    // The expression itself
+    // The expression itself (empty if unused)
     IShaderExpression::Ptr expression;
 
-    static const std::size_t Unused = std::numeric_limits<std::size_t>::max();
-
     ExpressionSlot() :
-        registerIndex(REG_ZERO),
-        expressionIndex(Unused)
+        registerIndex(REG_ZERO)
     {}
 };
 
@@ -250,6 +244,11 @@ public:
                 slot.expression->evaluate(time, entity);
             }
         }
+    }
+
+    shaders::IShaderExpression::Ptr getExpression(Expression::Slot slot) override
+    {
+        return _expressionSlots[slot].expression;
     }
 
     /**

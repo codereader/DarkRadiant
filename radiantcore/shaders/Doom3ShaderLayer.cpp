@@ -85,7 +85,6 @@ void ExpressionSlots::assign(IShaderLayer::Expression::Slot slot, const IShaderE
     if (!newExpression)
     {
         expressionSlot.expression.reset();
-        expressionSlot.expressionIndex = ExpressionSlot::Unused;
         expressionSlot.registerIndex = defaultRegisterIndex;
         return;
     }
