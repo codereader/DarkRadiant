@@ -292,6 +292,21 @@ void Doom3ShaderLayer::setColour(const Vector4& col)
 	}
 }
 
+void Doom3ShaderLayer::appendTransformation(const Transformation& transform)
+{
+    _transformations.emplace_back(transform);
+}
+
+const std::vector<IShaderLayer::Transformation>& Doom3ShaderLayer::getTransformations()
+{
+    return _transformations;
+}
+
+Matrix4 Doom3ShaderLayer::getTextureTransform()
+{
+    return Matrix4::getIdentity();
+}
+
 IShaderLayer::VertexColourMode Doom3ShaderLayer::getVertexColourMode() const
 {
     return _vertexColourMode;

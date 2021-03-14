@@ -9,6 +9,7 @@
 
 #include "math/Vector2.h"
 #include "math/Vector4.h"
+#include "math/Matrix4.h"
 #include "render/Colour4.h"
 
 class IRenderEntity;
@@ -115,6 +116,24 @@ public:
             ColourAlpha,
             NumExpressionSlots
         };
+    };
+
+    // The various texture transformations
+    enum class TransformType
+    {
+        Translate,
+        Scale,
+        CenterScale,
+        Shear,
+        Rotate,
+    };
+
+    // A texture transformation consists of a type and two arguments at most
+    struct Transformation
+    {
+        TransformType type;
+        shaders::IShaderExpression::Ptr expression1;
+        shaders::IShaderExpression::Ptr expression2;
     };
 
     /**
@@ -256,6 +275,15 @@ public:
      * stages using the "mirrorRenderMap", "remoteRenderMap" keywords.
      */
     virtual const Vector2& getRenderMapSize() const = 0;
+
+    // Adds a transformation at the end of the list of existing transforms in this stage
+    virtual void appendTransformation(const Transformation& transform) = 0;
+
+    // The list of transformations defined in this stage, in the order they appear in the declaration
+    virtual const std::vector<Transformation>& getTransformations() = 0;
+
+    // Returns the current texture matrix
+    virtual Matrix4 getTextureTransform() = 0;
 
 	/**
 	 * Returns the value of the scale expressions of this stage.

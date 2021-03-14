@@ -70,6 +70,9 @@ private:
     // texgen normal, reflect, skybox, wobblesky
     TexGenType _texGenType;
 
+    // The list of declared transformations
+    std::vector<IShaderLayer::Transformation> _transformations;
+
     // The register indices of this stage's scale expressions
     std::size_t _scale[2];
     std::size_t _scaleExpression[2];
@@ -360,6 +363,10 @@ public:
     {
         _texture = tex;
     }
+
+    void appendTransformation(const Transformation& transform) override;
+    const std::vector<Transformation>& getTransformations() override;
+    Matrix4 getTextureTransform() override;
 
     Vector2 getScale() const override
     {
