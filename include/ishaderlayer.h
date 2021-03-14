@@ -105,6 +105,7 @@ public:
         enum Slot
         {
             AlphaTest = 0,
+            Condition,
             TexGenParam1,
             TexGenParam2,
             TexGenParam3,

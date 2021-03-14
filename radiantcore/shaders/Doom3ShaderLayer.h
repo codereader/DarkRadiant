@@ -78,10 +78,6 @@ private:
     static const IShaderExpression::Ptr NULL_EXPRESSION;
     static const std::size_t NOT_DEFINED = std::numeric_limits<std::size_t>::max();
 
-    // The condition register for this stage. Points to a register to be interpreted as bool.
-    std::size_t _condition;
-    std::size_t _conditionExpression;
-
     // The bindable texture for this stage
     NamedBindablePtr _bindableTex;
 
@@ -188,22 +184,17 @@ public:
     // (expressions must have been evaluated before this call)
     bool isVisible() const
     {
-        return _registers[_condition] != 0;
+        return _registers[_expressionSlots[Expression::Condition].registerIndex] != 0;
     }
 
     const shaders::IShaderExpression::Ptr& getConditionExpression() const override
     {
-        return _conditionExpression != NOT_DEFINED ? _expressions[_conditionExpression] : NULL_EXPRESSION;
+        return _expressionSlots[Expression::Condition].expression;
     }
 
     void setCondition(const IShaderExpression::Ptr& conditionExpr)
     {
-        // Store the expression in our list
-        _conditionExpression = _expressions.size();
-        _expressions.emplace_back(conditionExpr);
-
-        // Link the result to our local registers
-        _condition = conditionExpr->linkToRegister(_registers);
+        _expressionSlots.assign(Expression::Condition, conditionExpr, REG_ONE);
     }
 
     void evaluateExpressions(std::size_t time) 

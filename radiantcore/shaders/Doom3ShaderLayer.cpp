@@ -130,8 +130,6 @@ Doom3ShaderLayer::Doom3ShaderLayer(ShaderTemplate& material, IShaderLayer::Type 
 :	_material(material),
 	_registers(NUM_RESERVED_REGISTERS),
     _expressionSlots(_registers),
-	_condition(REG_ONE),
-    _conditionExpression(NOT_DEFINED),
 	_bindableTex(btex),
 	_type(type),
     _mapType(MapType::Map),
@@ -148,6 +146,7 @@ Doom3ShaderLayer::Doom3ShaderLayer(ShaderTemplate& material, IShaderLayer::Type 
 	_registers[REG_ONE] = 1;
 
     _expressionSlots[Expression::AlphaTest].registerIndex = REG_ZERO;
+    _expressionSlots[Expression::Condition].registerIndex = REG_ONE;
 
 	// Init the colour to 1,1,1,1
 	_colIdx[0] = _colIdx[1] = _colIdx[2] = _colIdx[3] = REG_ONE;
@@ -180,8 +179,6 @@ Doom3ShaderLayer::Doom3ShaderLayer(const Doom3ShaderLayer& other, ShaderTemplate
     _registers(other._registers),
     _expressions(other._expressions),
     _expressionSlots(other._expressionSlots, _registers),
-    _condition(other._condition),
-    _conditionExpression(other._conditionExpression),
     _bindableTex(other._bindableTex),
     _texture(other._texture),
     _type(other._type),
