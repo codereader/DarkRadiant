@@ -99,6 +99,16 @@ public:
         PF_HasColoredKeyword =     1 << 3, // colored has been specified
     };
 
+    // Expression slot selector
+    struct Expression
+    {
+        enum Slot
+        {
+            AlphaTest = 0,
+            NumExpressionSlots
+        };
+    };
+
     /**
      * \brief
 	 * Destructor
@@ -148,7 +158,7 @@ public:
 	virtual float getTexGenParam(std::size_t index) const = 0;
 
     // The expressions used to calculate the tex gen params. Index in [0..2]
-    virtual shaders::IShaderExpressionPtr getTexGenExpression(std::size_t index) const = 0;
+    virtual shaders::IShaderExpression::Ptr getTexGenExpression(std::size_t index) const = 0;
 
     /**
      * \brief
@@ -180,7 +190,7 @@ public:
     };
 
     // Returns the expression to calculate the RGBA vertex colour values
-    virtual const shaders::IShaderExpressionPtr& getColourExpression(ColourComponentSelector component) const = 0;
+    virtual const shaders::IShaderExpression::Ptr& getColourExpression(ColourComponentSelector component) const = 0;
 
     /**
      * \brief
@@ -242,14 +252,14 @@ public:
 	virtual Vector2 getScale() const = 0;
 
     // Returns the expression of the given scale component (0 == x, 1 == y)
-    virtual const shaders::IShaderExpressionPtr& getScaleExpression(std::size_t index) const = 0;
+    virtual const shaders::IShaderExpression::Ptr& getScaleExpression(std::size_t index) const = 0;
 
     // Workaround: the shader layer is storing the centerscale expression in the same location as scale expressions,
     // making them mutually exclusive - which is not the way the idTech4 materials work.
     // These stage transforms need to be redesigned to support an arbitrary number of transforms respecting their order.
     // Texture Matrix calculation needs to be performed by the stage itself, not in OpenGLShaderPass
     // I need to go ahead with the material editor, so I'm not changing it immediately
-    virtual const shaders::IShaderExpressionPtr& getCenterScaleExpression(std::size_t index) const = 0;
+    virtual const shaders::IShaderExpression::Ptr& getCenterScaleExpression(std::size_t index) const = 0;
 
 	/**
 	 * Returns the value of the translate expressions of this stage.
@@ -257,7 +267,7 @@ public:
 	virtual Vector2 getTranslation() const = 0;
 
     // Returns the expression of the given translation component (0 == x, 1 == y)
-    virtual const shaders::IShaderExpressionPtr& getTranslationExpression(std::size_t index) const = 0;
+    virtual const shaders::IShaderExpression::Ptr& getTranslationExpression(std::size_t index) const = 0;
 
 	/**
 	 * Returns the value of the rotate expression of this stage.
@@ -265,7 +275,7 @@ public:
 	virtual float getRotation() const = 0;
 
     // Returns the expression used to calculate the rotation value
-    virtual const shaders::IShaderExpressionPtr& getRotationExpression() const = 0;
+    virtual const shaders::IShaderExpression::Ptr& getRotationExpression() const = 0;
 
 	/**
 	 * Returns the value of the 'shear' expressions of this stage.
@@ -273,7 +283,7 @@ public:
 	virtual Vector2 getShear() const = 0;
 
     // Returns the expression of the given shear component (0 == x, 1 == y)
-    virtual const shaders::IShaderExpressionPtr& getShearExpression(std::size_t index) const = 0;
+    virtual const shaders::IShaderExpression::Ptr& getShearExpression(std::size_t index) const = 0;
 
     // Returns true if this layer has an alphatest expression defined
     virtual bool hasAlphaTest() const = 0;
@@ -289,7 +299,7 @@ public:
     virtual float getAlphaTest() const = 0;
 
     // Returns the expression used to calculate the alpha test value
-    virtual const shaders::IShaderExpressionPtr& getAlphaTestExpression() const = 0;
+    virtual const shaders::IShaderExpression::Ptr& getAlphaTestExpression() const = 0;
 
 	/**
 	 * Whether this stage is active. Unconditional stages always return true,
@@ -298,7 +308,7 @@ public:
 	virtual bool isVisible() const = 0;
 
     // Returns the if-expression used to evaluate this stage's visibility, or null if none defined
-    virtual const shaders::IShaderExpressionPtr& getConditionExpression() const = 0;
+    virtual const shaders::IShaderExpression::Ptr& getConditionExpression() const = 0;
 
 	/**
 	 * Returns the name of this stage's fragment program.
@@ -326,7 +336,7 @@ public:
         {}
 
         int index;
-        shaders::IShaderExpressionPtr expressions[4];
+        shaders::IShaderExpression::Ptr expressions[4];
     };
 
     // Returns the vertex parameter with the given index [0..3]

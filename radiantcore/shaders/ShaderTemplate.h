@@ -67,7 +67,7 @@ public:
 	Material::SurfaceType _surfaceType;
 
 	Material::DeformType _deformType;
-    std::vector<IShaderExpressionPtr> _deformExpressions;
+    std::vector<IShaderExpression::Ptr> _deformExpressions;
     std::string _deformDeclName;
 
 	// The spectrum this shader is responding to (or emitting in the case of light materials)
@@ -219,12 +219,12 @@ public:
 		return _deformType;
 	}
 
-    IShaderExpressionPtr getDeformExpression(std::size_t index)
+    IShaderExpression::Ptr getDeformExpression(std::size_t index)
     {
         if (!_parsed) parseDefinition();
 
         assert(index >= 0 && index < 3);
-        return index < _deformExpressions.size() ? _deformExpressions[index] : IShaderExpressionPtr();
+        return index < _deformExpressions.size() ? _deformExpressions[index] : IShaderExpression::Ptr();
     }
 
     std::string getDeformDeclName()
@@ -368,7 +368,7 @@ private:
 	bool parseSurfaceFlags(parser::DefTokeniser&, const std::string&);
 	bool parseMaterialType(parser::DefTokeniser&, const std::string&);
 	bool parseCondition(parser::DefTokeniser&, const std::string&);
-	IShaderExpressionPtr parseSingleExpressionTerm(parser::DefTokeniser& tokeniser);
+	IShaderExpression::Ptr parseSingleExpressionTerm(parser::DefTokeniser& tokeniser);
 
 	bool saveLayer();
 

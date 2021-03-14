@@ -15,6 +15,51 @@ typedef std::pair<std::string, std::string> StringPair;
 
 class ShaderTemplate;
 
+
+struct ExpressionSlot
+{
+    // The register holding the evaluated float
+    std::size_t registerIndex;
+
+    // The index of this expression in the slots array
+    std::size_t expressionIndex;
+
+    // The expression itself
+    IShaderExpression::Ptr expression;
+
+    static const std::size_t Unused = std::numeric_limits<std::size_t>::max();
+
+    ExpressionSlot() :
+        registerIndex(REG_ZERO),
+        expressionIndex(Unused)
+    {}
+};
+
+class ExpressionSlots :
+    public std::vector<ExpressionSlot>
+{
+private:
+    Registers& _registers;
+
+    static const IShaderExpression::Ptr NullExpression;
+
+public:
+    ExpressionSlots(Registers& registers) :
+        _registers(registers)
+    {
+        resize(IShaderLayer::Expression::NumExpressionSlots);
+    }
+
+    ExpressionSlots(const ExpressionSlots& other, Registers& registers) :
+        std::vector<ExpressionSlot>(other), // copy all expression slots
+        _registers(registers)
+    {}
+
+    void assign(IShaderLayer::Expression::Slot slot, const IShaderExpression::Ptr& expression, std::size_t defaultRegisterIndex);
+
+    void assignFromString(IShaderLayer::Expression::Slot slot, const std::string& expression, std::size_t defaultRegisterIndex);
+};
+
 /**
  * \brief
  * Implementation of IShaderLayer for Doom 3 shaders.
@@ -30,10 +75,13 @@ private:
     Registers _registers;
 
     // The expressions used in this stage
-    typedef std::vector<IShaderExpressionPtr> Expressions;
+    typedef std::vector<IShaderExpression::Ptr> Expressions;
+    // deprecated
     Expressions _expressions;
 
-    static const IShaderExpressionPtr NULL_EXPRESSION;
+    ExpressionSlots _expressionSlots;
+
+    static const IShaderExpression::Ptr NULL_EXPRESSION;
     static const std::size_t NOT_DEFINED = std::numeric_limits<std::size_t>::max();
 
     // The condition register for this stage. Points to a register to be interpreted as bool.
@@ -72,14 +120,10 @@ private:
     // Per-stage clamping
     ClampType _clampType;
 
-    // Alpha test value, pointing into the register array. 0 means no test, otherwise must be within (0 - 1]
-    std::size_t _alphaTest;
-    std::size_t _alphaTestExpression;
-
     // texgen normal, reflect, skybox, wobblesky
     TexGenType _texGenType;
     std::size_t _texGenParams[3]; // 3 registers for wobblesky texgen
-    IShaderExpressionPtr _texGenExpressions[3]; // the 3 expressions
+    IShaderExpression::Ptr _texGenExpressions[3]; // the 3 expressions
 
     // The register indices of this stage's scale expressions
     std::size_t _scale[2];
@@ -141,11 +185,11 @@ public:
 
     bool hasAlphaTest() const override;
     float getAlphaTest() const override;
-    const shaders::IShaderExpressionPtr& getAlphaTestExpression() const override;
+    const shaders::IShaderExpression::Ptr& getAlphaTestExpression() const override;
 
     void setAlphaTestExpressionFromString(const std::string& expression) override
     {
-        assignExpressionFromString(expression, _alphaTestExpression, _alphaTest, REG_ZERO);
+        _expressionSlots.assignFromString(Expression::AlphaTest, expression, REG_ZERO);
     }
 
     // True if the condition for this stage is fulfilled 
@@ -155,12 +199,12 @@ public:
         return _registers[_condition] != 0;
     }
 
-    const shaders::IShaderExpressionPtr& getConditionExpression() const override
+    const shaders::IShaderExpression::Ptr& getConditionExpression() const override
     {
         return _conditionExpression != NOT_DEFINED ? _expressions[_conditionExpression] : NULL_EXPRESSION;
     }
 
-    void setCondition(const IShaderExpressionPtr& conditionExpr)
+    void setCondition(const IShaderExpression::Ptr& conditionExpr)
     {
         // Store the expression in our list
         _conditionExpression = _expressions.size();
@@ -179,6 +223,14 @@ public:
                 expression->evaluate(time);
             }
         }
+
+        for (const auto& slot : _expressionSlots)
+        {
+            if (slot.expression)
+            {
+                slot.expression->evaluate(time);
+            }
+        }
     }
 
     void evaluateExpressions(std::size_t time, const IRenderEntity& entity)
@@ -188,6 +240,14 @@ public:
             if (expression)
             {
                 expression->evaluate(time, entity);
+            }
+        }
+
+        for (const auto& slot : _expressionSlots)
+        {
+            if (slot.expression)
+            {
+                slot.expression->evaluate(time, entity);
             }
         }
     }
@@ -274,13 +334,13 @@ public:
         return _registers[_texGenParams[index]];
     }
 
-    IShaderExpressionPtr getTexGenExpression(std::size_t index) const override
+    IShaderExpression::Ptr getTexGenExpression(std::size_t index) const override
     {
         assert(index < 3);
         return _texGenExpressions[index];
     }
 
-    void setTexGenExpression(std::size_t index, const IShaderExpressionPtr& expression)
+    void setTexGenExpression(std::size_t index, const IShaderExpression::Ptr& expression)
     {
         assert(index < 3);
 
@@ -321,13 +381,13 @@ public:
      */
     void setColour(const Vector4& col);
 
-    const IShaderExpressionPtr& getColourExpression(ColourComponentSelector component) const override;
+    const IShaderExpression::Ptr& getColourExpression(ColourComponentSelector component) const override;
 
     /**
      * Set the given colour component to use the given expression. This can be a single
      * component out of the 4 available ones (R, G, B, A) or one of the two combos RGB and RGBA.
      */
-    void setColourExpression(ColourComponentSelector comp, const IShaderExpressionPtr& expr);
+    void setColourExpression(ColourComponentSelector comp, const IShaderExpression::Ptr& expr);
     
     /**
      * \brief
@@ -344,7 +404,7 @@ public:
         return Vector2(_registers[_scale[0]], _registers[_scale[1]]);
     }
 
-    const shaders::IShaderExpressionPtr& getScaleExpression(std::size_t index) const override
+    const shaders::IShaderExpression::Ptr& getScaleExpression(std::size_t index) const override
     {
         assert(index < 2);
 
@@ -357,7 +417,7 @@ public:
         return expressionIndex != NOT_DEFINED ? _expressions[expressionIndex] : NULL_EXPRESSION;
     }
 
-    const shaders::IShaderExpressionPtr& getCenterScaleExpression(std::size_t index) const override
+    const shaders::IShaderExpression::Ptr& getCenterScaleExpression(std::size_t index) const override
     {
         assert(index < 2);
         
@@ -373,7 +433,7 @@ public:
     /**
      * Set the scale expressions of this stage, overwriting any previous scales.
      */
-    void setScale(const IShaderExpressionPtr& xExpr, const IShaderExpressionPtr& yExpr)
+    void setScale(const IShaderExpression::Ptr& xExpr, const IShaderExpression::Ptr& yExpr)
     {
         _scaleExpression[0] = _expressions.size();
         _expressions.emplace_back(xExpr);
@@ -389,7 +449,7 @@ public:
         return Vector2(_registers[_translation[0]], _registers[_translation[1]]);
     }
 
-    const shaders::IShaderExpressionPtr& getTranslationExpression(std::size_t index) const override
+    const shaders::IShaderExpression::Ptr& getTranslationExpression(std::size_t index) const override
     {
         assert(index < 2);
         auto expressionIndex = _translationExpression[index];
@@ -406,7 +466,7 @@ public:
     /**
      * Set the "translate" expressions of this stage, overwriting any previous expressions.
      */
-    void setTranslation(const IShaderExpressionPtr& xExpr, const IShaderExpressionPtr& yExpr)
+    void setTranslation(const IShaderExpression::Ptr& xExpr, const IShaderExpression::Ptr& yExpr)
     {
         _translationExpression[0] = _expressions.size();
         _expressions.emplace_back(xExpr);
@@ -422,7 +482,7 @@ public:
         return _registers[_rotation];
     }
 
-    const shaders::IShaderExpressionPtr& getRotationExpression() const override
+    const shaders::IShaderExpression::Ptr& getRotationExpression() const override
     {
         return _rotationExpression != NOT_DEFINED ? _expressions[_rotationExpression] : NULL_EXPRESSION;
     }
@@ -430,7 +490,7 @@ public:
     /**
      * Set the "rotate" expression of this stage, overwriting any previous one.
      */
-    void setRotation(const IShaderExpressionPtr& expr)
+    void setRotation(const IShaderExpression::Ptr& expr)
     {
         _rotationExpression = _expressions.size();
         _expressions.emplace_back(expr);
@@ -443,7 +503,7 @@ public:
         return Vector2(_registers[_shear[0]], _registers[_shear[1]]);
     }
 
-    const shaders::IShaderExpressionPtr& getShearExpression(std::size_t index) const override
+    const shaders::IShaderExpression::Ptr& getShearExpression(std::size_t index) const override
     {
         assert(index < 2);
         auto expressionIndex = _shearExpression[index];
@@ -453,7 +513,7 @@ public:
     /**
      * Set the shear expressions of this stage, overwriting any previous ones.
      */
-    void setShear(const IShaderExpressionPtr& xExpr, const IShaderExpressionPtr& yExpr)
+    void setShear(const IShaderExpression::Ptr& xExpr, const IShaderExpression::Ptr& yExpr)
     {
         _shearExpression[0] = _expressions.size();
         _expressions.emplace_back(xExpr);
@@ -477,9 +537,9 @@ public:
      * \brief
      * Set alphatest expression
      */
-    void setAlphaTest(const IShaderExpressionPtr& expression)
+    void setAlphaTest(const IShaderExpression::Ptr& expression)
     {
-        assignExpression(expression, _alphaTestExpression, _alphaTest, REG_ZERO);
+        _expressionSlots.assign(Expression::AlphaTest, expression, REG_ZERO);
     }
 
     // Returns the value of the given register
@@ -561,7 +621,7 @@ public:
     void setParseFlag(ParseFlags flag);
 
 private:
-    void assignExpression(const IShaderExpressionPtr& expression,
+    void assignExpression(const IShaderExpression::Ptr& expression,
         std::size_t& expressionIndex, std::size_t& registerIndex, std::size_t defaultRegisterIndex);
 
     void assignExpressionFromString(const std::string& expressionString, 

@@ -80,7 +80,7 @@ private:
     void setupStageFlag(const std::string& controlName, int flags);
 
     void createExpressionBinding(const std::string& textCtrlName,
-        const std::function<shaders::IShaderExpressionPtr(const IShaderLayer::Ptr&)>& loadFunc,
+        const std::function<shaders::IShaderExpression::Ptr(const IShaderLayer::Ptr&)>& loadFunc,
         const std::function<void(const IEditableShaderLayer::Ptr&, const std::string&)>& saveFunc = std::function<void(const IEditableShaderLayer::Ptr&, const std::string&)>());
 
     void updateControlsFromMaterial();

@@ -416,7 +416,7 @@ private:
 
 } // namespace expressions
 
-IShaderExpressionPtr ShaderExpression::createFromTokens(parser::DefTokeniser& tokeniser)
+IShaderExpression::Ptr ShaderExpression::createFromTokens(parser::DefTokeniser& tokeniser)
 {
 	// Create an adapter which takes care of splitting the tokens into finer grains
 	// The incoming DefTokeniser is not splitting up expressions like "3*4" without any whitespace in them
@@ -430,11 +430,11 @@ IShaderExpressionPtr ShaderExpression::createFromTokens(parser::DefTokeniser& to
 	catch (parser::ParseException& ex)
 	{
 		rWarning() << "[shaders] " << ex.what() << std::endl;
-		return IShaderExpressionPtr();
+		return IShaderExpression::Ptr();
 	}
 }
 
-IShaderExpressionPtr ShaderExpression::createFromString(const std::string& exprStr)
+IShaderExpression::Ptr ShaderExpression::createFromString(const std::string& exprStr)
 {
 	parser::BasicDefTokeniser<std::string> tokeniser(exprStr, parser::WHITESPACE, "{}(),");
 	return createFromTokens(tokeniser);

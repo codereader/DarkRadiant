@@ -71,7 +71,7 @@ NamedBindablePtr ShaderTemplate::getEditorTexture()
     return _editorTex;
 }
 
-IShaderExpressionPtr ShaderTemplate::parseSingleExpressionTerm(parser::DefTokeniser& tokeniser)
+IShaderExpression::Ptr ShaderTemplate::parseSingleExpressionTerm(parser::DefTokeniser& tokeniser)
 {
 	std::string token = tokeniser.nextToken();
 
@@ -707,7 +707,7 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
     }
 	else if (token == "red")
 	{
-		IShaderExpressionPtr expr = ShaderExpression::createFromTokens(tokeniser);
+		IShaderExpression::Ptr expr = ShaderExpression::createFromTokens(tokeniser);
 		
 		if (expr)
 		{
@@ -720,7 +720,7 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 	}
 	else if (token == "green")
 	{
-		IShaderExpressionPtr expr = ShaderExpression::createFromTokens(tokeniser);
+		IShaderExpression::Ptr expr = ShaderExpression::createFromTokens(tokeniser);
 
 		if (expr)
 		{
@@ -733,7 +733,7 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 	}
 	else if (token == "blue")
 	{
-		IShaderExpressionPtr expr = ShaderExpression::createFromTokens(tokeniser);
+		IShaderExpression::Ptr expr = ShaderExpression::createFromTokens(tokeniser);
 		
 		if (expr)
 		{
@@ -746,7 +746,7 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 	}
 	else if (token == "alpha")
 	{
-		IShaderExpressionPtr expr = ShaderExpression::createFromTokens(tokeniser);
+		IShaderExpression::Ptr expr = ShaderExpression::createFromTokens(tokeniser);
 		
 		if (expr)
 		{
@@ -760,13 +760,13 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 	else if (token == "color")
 	{
 		// color <exp0>, <exp1>, <exp2>, <exp3>
-		IShaderExpressionPtr red = ShaderExpression::createFromTokens(tokeniser);
+		IShaderExpression::Ptr red = ShaderExpression::createFromTokens(tokeniser);
 		tokeniser.assertNextToken(",");
-		IShaderExpressionPtr green = ShaderExpression::createFromTokens(tokeniser);
+		IShaderExpression::Ptr green = ShaderExpression::createFromTokens(tokeniser);
 		tokeniser.assertNextToken(",");
-		IShaderExpressionPtr blue = ShaderExpression::createFromTokens(tokeniser);
+		IShaderExpression::Ptr blue = ShaderExpression::createFromTokens(tokeniser);
 		tokeniser.assertNextToken(",");
-		IShaderExpressionPtr alpha = ShaderExpression::createFromTokens(tokeniser);
+		IShaderExpression::Ptr alpha = ShaderExpression::createFromTokens(tokeniser);
 
 		if (red && green && blue && alpha)
 		{
@@ -783,7 +783,7 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 	else if (token == "rgb")
 	{
 		// Get the colour value
-		IShaderExpressionPtr expr = ShaderExpression::createFromTokens(tokeniser);
+		IShaderExpression::Ptr expr = ShaderExpression::createFromTokens(tokeniser);
 
 		if (expr)
 		{
@@ -796,7 +796,7 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 	}
 	else if (token == "rgba")
 	{
-		IShaderExpressionPtr expr = ShaderExpression::createFromTokens(tokeniser);
+		IShaderExpression::Ptr expr = ShaderExpression::createFromTokens(tokeniser);
 
 		if (expr)
 		{
@@ -879,7 +879,7 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
     else if (token == "alphatest")
     {
 		// Get the alphatest expression
-		IShaderExpressionPtr expr = ShaderExpression::createFromTokens(tokeniser);
+		IShaderExpression::Ptr expr = ShaderExpression::createFromTokens(tokeniser);
 		   
 		if (expr)
 		{
@@ -894,9 +894,9 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
     }
 	else if (token == "scale")
 	{
-		IShaderExpressionPtr xScaleExpr = ShaderExpression::createFromTokens(tokeniser);
+		IShaderExpression::Ptr xScaleExpr = ShaderExpression::createFromTokens(tokeniser);
 		tokeniser.assertNextToken(",");
-		IShaderExpressionPtr yScaleExpr = ShaderExpression::createFromTokens(tokeniser);
+		IShaderExpression::Ptr yScaleExpr = ShaderExpression::createFromTokens(tokeniser);
 
 		if (xScaleExpr && yScaleExpr)
 		{
@@ -909,9 +909,9 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 	}
 	else if (token == "centerscale")
 	{
-		IShaderExpressionPtr xScaleExpr = ShaderExpression::createFromTokens(tokeniser);
+		IShaderExpression::Ptr xScaleExpr = ShaderExpression::createFromTokens(tokeniser);
 		tokeniser.assertNextToken(",");
-		IShaderExpressionPtr yScaleExpr = ShaderExpression::createFromTokens(tokeniser);
+		IShaderExpression::Ptr yScaleExpr = ShaderExpression::createFromTokens(tokeniser);
 
 		if (xScaleExpr && yScaleExpr)
 		{
@@ -925,9 +925,9 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 	}
 	else if (token == "translate" || token == "scroll")
 	{
-		IShaderExpressionPtr xTranslateExpr = ShaderExpression::createFromTokens(tokeniser);
+		IShaderExpression::Ptr xTranslateExpr = ShaderExpression::createFromTokens(tokeniser);
 		tokeniser.assertNextToken(",");
-		IShaderExpressionPtr yTranslateExpr = ShaderExpression::createFromTokens(tokeniser);
+		IShaderExpression::Ptr yTranslateExpr = ShaderExpression::createFromTokens(tokeniser);
 
 		if (xTranslateExpr && yTranslateExpr)
 		{
@@ -940,9 +940,9 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 	}
 	else if (token == "shear")
 	{
-		IShaderExpressionPtr xShearExpr = ShaderExpression::createFromTokens(tokeniser);
+		IShaderExpression::Ptr xShearExpr = ShaderExpression::createFromTokens(tokeniser);
 		tokeniser.assertNextToken(",");
-		IShaderExpressionPtr yShearExpr = ShaderExpression::createFromTokens(tokeniser);
+		IShaderExpression::Ptr yShearExpr = ShaderExpression::createFromTokens(tokeniser);
 
 		if (xShearExpr && yShearExpr)
 		{
@@ -955,7 +955,7 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 	}
 	else if (token == "rotate")
 	{
-		IShaderExpressionPtr rotExpr = ShaderExpression::createFromTokens(tokeniser);
+		IShaderExpression::Ptr rotExpr = ShaderExpression::createFromTokens(tokeniser);
 
 		if (rotExpr)
 		{
@@ -1203,7 +1203,7 @@ bool ShaderTemplate::parseCondition(parser::DefTokeniser& tokeniser, const std::
 	if (token == "if")
 	{
 		// Parse condition
-		IShaderExpressionPtr expr = ShaderExpression::createFromTokens(tokeniser);
+		IShaderExpression::Ptr expr = ShaderExpression::createFromTokens(tokeniser);
 		
 		_currentLayer->setCondition(expr);
 

@@ -76,11 +76,61 @@ BlendFunc blendFuncFromStrings(const StringPair& blendFunc)
 
 // IShaderLayer implementation
 
-const IShaderExpressionPtr Doom3ShaderLayer::NULL_EXPRESSION;
+const IShaderExpression::Ptr Doom3ShaderLayer::NULL_EXPRESSION;
+
+void ExpressionSlots::assign(IShaderLayer::Expression::Slot slot, const IShaderExpression::Ptr& newExpression, std::size_t defaultRegisterIndex)
+{
+    auto& expressionSlot = at(slot);
+
+    if (!newExpression)
+    {
+        expressionSlot.expression.reset();
+        expressionSlot.expressionIndex = ExpressionSlot::Unused;
+        expressionSlot.registerIndex = defaultRegisterIndex;
+        return;
+    }
+
+    // Non-empty expression, overwrite if we have an existing expression in the slot
+    if (expressionSlot.expression)
+    {
+        // We assume that if there was an expression in the slot, it shouldn't point to the default registers
+        assert(expressionSlot.registerIndex != defaultRegisterIndex);
+        
+        // Re-use the register index
+        expressionSlot.expression = newExpression;
+        expressionSlot.expression->linkToSpecificRegister(_registers, expressionSlot.registerIndex);
+    }
+    else
+    {
+        expressionSlot.expression = newExpression;
+        expressionSlot.registerIndex = expressionSlot.expression->linkToRegister(_registers);
+    }
+}
+
+void ExpressionSlots::assignFromString(IShaderLayer::Expression::Slot slot, const std::string& expressionString, std::size_t defaultRegisterIndex)
+{
+    // An empty string will clear the expression
+    if (expressionString.empty())
+    {
+        assign(slot, IShaderExpression::Ptr(), defaultRegisterIndex);
+        return;
+    }
+
+    // Attempt to parse the string
+    auto expression = ShaderExpression::createFromString(expressionString);
+
+    if (!expression)
+    {
+        return; // parsing failures will not overwrite the expression slot
+    }
+
+    assign(slot, expression, defaultRegisterIndex);
+}
 
 Doom3ShaderLayer::Doom3ShaderLayer(ShaderTemplate& material, IShaderLayer::Type type, const NamedBindablePtr& btex)
 :	_material(material),
 	_registers(NUM_RESERVED_REGISTERS),
+    _expressionSlots(_registers),
 	_condition(REG_ONE),
     _conditionExpression(NOT_DEFINED),
 	_bindableTex(btex),
@@ -91,14 +141,14 @@ Doom3ShaderLayer::Doom3ShaderLayer(ShaderTemplate& material, IShaderLayer::Type 
 	_cubeMapMode(CUBE_MAP_NONE),
 	_stageFlags(0),
 	_clampType(CLAMP_REPEAT),
-	_alphaTest(REG_ZERO),
-    _alphaTestExpression(NOT_DEFINED),
 	_texGenType(TEXGEN_NORMAL),
 	_privatePolygonOffset(0),
     _parseFlags(0)
 {
 	_registers[REG_ZERO] = 0;
 	_registers[REG_ONE] = 1;
+
+    _expressionSlots[Expression::AlphaTest].registerIndex = REG_ZERO;
 
 	// Init the colour to 1,1,1,1
 	_colIdx[0] = _colIdx[1] = _colIdx[2] = _colIdx[3] = REG_ONE;
@@ -128,6 +178,7 @@ Doom3ShaderLayer::Doom3ShaderLayer(const Doom3ShaderLayer& other, ShaderTemplate
     _material(material),
     _registers(other._registers),
     _expressions(other._expressions),
+    _expressionSlots(other._expressionSlots, _registers),
     _condition(other._condition),
     _conditionExpression(other._conditionExpression),
     _bindableTex(other._bindableTex),
@@ -139,8 +190,6 @@ Doom3ShaderLayer::Doom3ShaderLayer(const Doom3ShaderLayer& other, ShaderTemplate
     _cubeMapMode(other._cubeMapMode),
     _stageFlags(other._stageFlags),
     _clampType(other._clampType),
-    _alphaTest(other._alphaTest),
-    _alphaTestExpression(other._alphaTestExpression),
     _texGenType(other._texGenType),
     _rotation(other._rotation),
     _rotationExpression(other._rotationExpression),
@@ -215,7 +264,7 @@ Colour4 Doom3ShaderLayer::getColour() const
     return colour;
 }
 
-const IShaderExpressionPtr& Doom3ShaderLayer::getColourExpression(ColourComponentSelector component) const
+const IShaderExpression::Ptr& Doom3ShaderLayer::getColourExpression(ColourComponentSelector component) const
 {
     std::size_t expressionIndex = NOT_DEFINED;
 
@@ -254,7 +303,7 @@ const IShaderExpressionPtr& Doom3ShaderLayer::getColourExpression(ColourComponen
     return expressionIndex != NOT_DEFINED ? _expressions[expressionIndex] : NULL_EXPRESSION;
 }
 
-void Doom3ShaderLayer::setColourExpression(ColourComponentSelector comp, const IShaderExpressionPtr& expr)
+void Doom3ShaderLayer::setColourExpression(ColourComponentSelector comp, const IShaderExpression::Ptr& expr)
 {
 	// Store the expression and link it to our registers
     auto expressionIndex = _expressions.size();
@@ -353,17 +402,17 @@ void Doom3ShaderLayer::setRenderMapSize(const Vector2& size)
 
 bool Doom3ShaderLayer::hasAlphaTest() const
 {
-    return _alphaTestExpression != NOT_DEFINED;
+    return _expressionSlots[Expression::AlphaTest].expression != nullptr;
 }
 
 float Doom3ShaderLayer::getAlphaTest() const
 {
-    return _registers[_alphaTest];
+    return _registers[_expressionSlots[Expression::AlphaTest].registerIndex];
 }
 
-const shaders::IShaderExpressionPtr& Doom3ShaderLayer::getAlphaTestExpression() const
+const IShaderExpression::Ptr& Doom3ShaderLayer::getAlphaTestExpression() const
 {
-    return _alphaTestExpression != NOT_DEFINED ? _expressions[_alphaTestExpression] : NULL_EXPRESSION;
+    return _expressionSlots[Expression::AlphaTest].expression;
 }
 
 TexturePtr Doom3ShaderLayer::getFragmentMapTexture(int index) const
@@ -514,7 +563,7 @@ void Doom3ShaderLayer::addVertexParm(const VertexParm& parm)
     assert(_vertexParms.size() % 4 == 0);
 }
 
-void Doom3ShaderLayer::assignExpression(const IShaderExpressionPtr& expression,
+void Doom3ShaderLayer::assignExpression(const IShaderExpression::Ptr& expression,
     std::size_t& expressionIndex, std::size_t& registerIndex, std::size_t defaultRegisterIndex)
 {
     if (!expression)
@@ -566,19 +615,7 @@ void Doom3ShaderLayer::assignExpressionFromString(const std::string& expressionS
     // An empty string will clear the expression
     if (expressionString.empty())
     {
-        assignExpression(IShaderExpressionPtr(), expressionIndex, registerIndex, defaultRegisterIndex);
-#if 0
-        if (expressionIndex != NOT_DEFINED)
-        {
-            assert(_expressions[expressionIndex]);
-
-            _expressions[expressionIndex]->unlinkFromRegisters();
-            _expressions[expressionIndex].reset();
-        }
-
-        registerIndex = defaultRegisterIndex;
-        expressionIndex = NOT_DEFINED;
-#endif
+        assignExpression(IShaderExpression::Ptr(), expressionIndex, registerIndex, defaultRegisterIndex);
         return;
     }
 
@@ -591,31 +628,6 @@ void Doom3ShaderLayer::assignExpressionFromString(const std::string& expressionS
     }
 
     assignExpression(expression, expressionIndex, registerIndex, defaultRegisterIndex);
-#if 0
-    if (expressionIndex != NOT_DEFINED)
-    {
-        // Try to re-use the previous register position
-        auto previousExpression = _expressions[expressionIndex];
-        _expressions[expressionIndex] = expression;
-
-        if (previousExpression->isLinked())
-        {
-            registerIndex = previousExpression->unlinkFromRegisters();
-            expression->linkToSpecificRegister(_registers, registerIndex);
-        }
-        else
-        {
-            registerIndex = expression->linkToRegister(_registers);
-        }
-    }
-    else
-    {
-        expressionIndex = _expressions.size();
-        _expressions.emplace_back(expression);
-
-        registerIndex = expression->linkToRegister(_registers);
-    }
-#endif
 }
 
 }

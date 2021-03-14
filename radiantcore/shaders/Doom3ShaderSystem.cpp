@@ -296,7 +296,7 @@ TexturePtr Doom3ShaderSystem::loadTextureFromFile(const std::string& filename)
     return _textureManager->getBinding(filename);
 }
 
-IShaderExpressionPtr Doom3ShaderSystem::createShaderExpressionFromString(const std::string& exprStr)
+IShaderExpression::Ptr Doom3ShaderSystem::createShaderExpressionFromString(const std::string& exprStr)
 {
     return ShaderExpression::createFromString(exprStr);
 }
@@ -353,7 +353,7 @@ void Doom3ShaderSystem::testShaderExpressionParsing()
 {
     // Test a few things
     std::string exprStr = "3";
-    IShaderExpressionPtr expr;
+    IShaderExpression::Ptr expr;
     GET_EXPR_OR_RETURN;
     rMessage() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 

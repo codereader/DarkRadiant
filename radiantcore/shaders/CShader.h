@@ -74,7 +74,7 @@ public:
 	SurfaceType getSurfaceType() const override;
     void setSurfaceType(SurfaceType type) override;
 	DeformType getDeformType() const override;
-	IShaderExpressionPtr getDeformExpression(std::size_t index) override;
+	IShaderExpression::Ptr getDeformExpression(std::size_t index) override;
     std::string getDeformDeclName() override;
 	int getSpectrum() const override;
 	DecalInfo getDecalInfo() const override;

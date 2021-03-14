@@ -12,13 +12,13 @@ class ExpressionBinding :
 {
 private:
     wxTextCtrl* _textCtrl;
-    std::function<shaders::IShaderExpressionPtr(const IShaderLayer::Ptr&)> _getExpression;
+    std::function<shaders::IShaderExpression::Ptr(const IShaderLayer::Ptr&)> _getExpression;
     std::function<void(const IEditableShaderLayer::Ptr&, const std::string&)> _updateExpression;
     std::function<void()> _postChangeNotify;
 
 public:
     ExpressionBinding(wxTextCtrl* textCtrl,
-                      const std::function<shaders::IShaderExpressionPtr(const IShaderLayer::Ptr&)>& loadFunc,
+                      const std::function<shaders::IShaderExpression::Ptr(const IShaderLayer::Ptr&)>& loadFunc,
                       const std::function<IEditableShaderLayer::Ptr()>& acquireSaveTarget,
                       const std::function<void(const IEditableShaderLayer::Ptr&, const std::string&)>& saveFunc,
                       const std::function<void()>& postChangeNotify = std::function<void()>()) :

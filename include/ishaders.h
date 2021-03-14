@@ -243,7 +243,7 @@ public:
 	virtual DeformType getDeformType() const = 0;
 
     // Returns the shader expression used to define the deform parameters (valid indices in [0..2])
-    virtual shaders::IShaderExpressionPtr getDeformExpression(std::size_t index) = 0;
+    virtual shaders::IShaderExpression::Ptr getDeformExpression(std::size_t index) = 0;
 
     // Used for Deform_Particle/Particle2 defines the name of the particle def
     virtual std::string getDeformDeclName() = 0;
@@ -489,7 +489,7 @@ public:
 	 * Creates a new shader expression for the given string. This can be used to create standalone
 	 * expression objects for unit testing purposes.
 	 */
-	virtual shaders::IShaderExpressionPtr createShaderExpressionFromString(const std::string& exprStr) = 0;
+	virtual shaders::IShaderExpression::Ptr createShaderExpressionFromString(const std::string& exprStr) = 0;
 
     // Creates a named, internal material for debug/testing etc.
     // Used by shaders without corresponding material declaration, like entity wireframe shaders

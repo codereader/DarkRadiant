@@ -90,9 +90,9 @@ public:
         return static_cast<std::size_t>(oldIndex);
     }
 
-	static IShaderExpressionPtr createFromString(const std::string& exprStr);
+	static IShaderExpression::Ptr createFromString(const std::string& exprStr);
 
-	static IShaderExpressionPtr createFromTokens(parser::DefTokeniser& tokeniser);
+	static IShaderExpression::Ptr createFromTokens(parser::DefTokeniser& tokeniser);
 
     virtual std::string getExpressionString() override
     {
@@ -232,12 +232,12 @@ class TableLookupExpression :
 {
 private:
 	TableDefinitionPtr _tableDef;
-	IShaderExpressionPtr _lookupExpr;
+	IShaderExpression::Ptr _lookupExpr;
 
 public:
 	// Pass the table and the expression used to perform the lookup 
 	TableLookupExpression(const TableDefinitionPtr& tableDef, 
-						  const IShaderExpressionPtr& lookupExpr) :
+						  const IShaderExpression::Ptr& lookupExpr) :
 		ShaderExpression(),
 		_tableDef(tableDef),
 		_lookupExpr(lookupExpr)
@@ -285,14 +285,14 @@ public:
 	};
 
 protected:
-	IShaderExpressionPtr _a;
-	IShaderExpressionPtr _b;
+	IShaderExpression::Ptr _a;
+	IShaderExpression::Ptr _b;
 	Precedence _precedence;
 
 public:
 	BinaryExpression(Precedence precedence,
-					 const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
-				     const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
+					 const IShaderExpression::Ptr& a = IShaderExpression::Ptr(), 
+				     const IShaderExpression::Ptr& b = IShaderExpression::Ptr()) :
 		ShaderExpression(),
 		_a(a),
 		_b(b),
@@ -304,12 +304,12 @@ public:
 		return _precedence;
 	}
 
-	void setA(const IShaderExpressionPtr& a)
+	void setA(const IShaderExpression::Ptr& a)
 	{
 		_a = a;
 	}
 
-	void setB(const IShaderExpressionPtr& b)
+	void setB(const IShaderExpression::Ptr& b)
 	{
 		_b = b;
 	}
@@ -321,8 +321,8 @@ class AddExpression :
 	public BinaryExpression
 {
 public:
-	AddExpression(const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
-				  const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
+	AddExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(), 
+				  const IShaderExpression::Ptr& b = IShaderExpression::Ptr()) :
 		BinaryExpression(ADDITION, a, b)
 	{}
 
@@ -347,8 +347,8 @@ class SubtractExpression :
 	public BinaryExpression
 {
 public:
-	SubtractExpression(const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
-					   const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
+	SubtractExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(), 
+					   const IShaderExpression::Ptr& b = IShaderExpression::Ptr()) :
 		BinaryExpression(SUBTRACTION, a, b)
 	{}
 
@@ -373,8 +373,8 @@ class MultiplyExpression :
 	public BinaryExpression
 {
 public:
-	MultiplyExpression(const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
-					   const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
+	MultiplyExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(), 
+					   const IShaderExpression::Ptr& b = IShaderExpression::Ptr()) :
 		BinaryExpression(MULTIPLICATION, a, b)
 	{}
 
@@ -399,8 +399,8 @@ class DivideExpression :
 	public BinaryExpression
 {
 public:
-	DivideExpression(const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
-					 const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
+	DivideExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(), 
+					 const IShaderExpression::Ptr& b = IShaderExpression::Ptr()) :
 		BinaryExpression(DIVISION, a, b)
 	{}
 
@@ -425,8 +425,8 @@ class ModuloExpression :
 	public BinaryExpression
 {
 public:
-	ModuloExpression(const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
-					 const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
+	ModuloExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(), 
+					 const IShaderExpression::Ptr& b = IShaderExpression::Ptr()) :
 		BinaryExpression(MODULO, a, b)
 	{}
 
@@ -451,8 +451,8 @@ class LesserThanExpression :
 	public BinaryExpression
 {
 public:
-	LesserThanExpression(const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
-						 const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
+	LesserThanExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(), 
+						 const IShaderExpression::Ptr& b = IShaderExpression::Ptr()) :
 		BinaryExpression(RELATIONAL_COMPARISON, a, b)
 	{}
 
@@ -477,8 +477,8 @@ class LesserThanOrEqualExpression :
 	public BinaryExpression
 {
 public:
-	LesserThanOrEqualExpression(const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
-								const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
+	LesserThanOrEqualExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(), 
+								const IShaderExpression::Ptr& b = IShaderExpression::Ptr()) :
 		BinaryExpression(RELATIONAL_COMPARISON, a, b)
 	{}
 
@@ -503,8 +503,8 @@ class GreaterThanExpression :
 	public BinaryExpression
 {
 public:
-	GreaterThanExpression(const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
-						  const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
+	GreaterThanExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(), 
+						  const IShaderExpression::Ptr& b = IShaderExpression::Ptr()) :
 		BinaryExpression(RELATIONAL_COMPARISON, a, b)
 	{}
 
@@ -529,8 +529,8 @@ class GreaterThanOrEqualExpression :
 	public BinaryExpression
 {
 public:
-	GreaterThanOrEqualExpression(const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
-								 const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
+	GreaterThanOrEqualExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(), 
+								 const IShaderExpression::Ptr& b = IShaderExpression::Ptr()) :
 		BinaryExpression(RELATIONAL_COMPARISON, a, b)
 	{}
 
@@ -555,8 +555,8 @@ class EqualityExpression :
 	public BinaryExpression
 {
 public:
-	EqualityExpression(const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
-					   const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
+	EqualityExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(), 
+					   const IShaderExpression::Ptr& b = IShaderExpression::Ptr()) :
 		BinaryExpression(EQUALITY_COMPARISON, a, b)
 	{}
 
@@ -581,8 +581,8 @@ class InequalityExpression :
 	public BinaryExpression
 {
 public:
-	InequalityExpression(const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
-					     const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
+	InequalityExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(), 
+					     const IShaderExpression::Ptr& b = IShaderExpression::Ptr()) :
 		BinaryExpression(EQUALITY_COMPARISON, a, b)
 	{}
 
@@ -607,8 +607,8 @@ class LogicalAndExpression :
 	public BinaryExpression
 {
 public:
-	LogicalAndExpression(const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
-					     const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
+	LogicalAndExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(), 
+					     const IShaderExpression::Ptr& b = IShaderExpression::Ptr()) :
 		BinaryExpression(LOGICAL_AND, a, b)
 	{}
 
@@ -633,8 +633,8 @@ class LogicalOrExpression :
 	public BinaryExpression
 {
 public:
-	LogicalOrExpression(const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
-					    const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
+	LogicalOrExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(), 
+					    const IShaderExpression::Ptr& b = IShaderExpression::Ptr()) :
 		BinaryExpression(LOGICAL_OR, a, b)
 	{}
 

@@ -38,6 +38,8 @@ enum ReservedRegisters
 class IShaderExpression
 {
 public:
+    using Ptr = std::shared_ptr<IShaderExpression>;
+
 	/** 
 	 * Retrieve the floating point value of this expression. DEPRECATED
 	 */
@@ -81,7 +83,6 @@ public:
     // Returns the string this expression has been parsed from
     virtual std::string getExpressionString() = 0;
 };
-typedef std::shared_ptr<IShaderExpression> IShaderExpressionPtr;
 
 // Interface of a material expression used to specify a map image
 // It can either represent a texture path to a file on disk or

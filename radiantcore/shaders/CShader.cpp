@@ -196,7 +196,7 @@ Material::DeformType CShader::getDeformType() const
 	return _template->getDeformType();
 }
 
-IShaderExpressionPtr CShader::getDeformExpression(std::size_t index)
+IShaderExpression::Ptr CShader::getDeformExpression(std::size_t index)
 {
     return _template->getDeformExpression(index);
 }
