@@ -170,7 +170,9 @@ Doom3ShaderLayer::Doom3ShaderLayer(ShaderTemplate& material, IShaderLayer::Type 
 	_shear[1] = REG_ZERO;
     _shearExpression[0] = _shearExpression[1] = NOT_DEFINED;
 
-	_texGenParams[0] = _texGenParams[1] = _texGenParams[2] = REG_ZERO;
+    _expressionSlots[Expression::TexGenParam1].registerIndex = REG_ZERO;
+    _expressionSlots[Expression::TexGenParam2].registerIndex = REG_ZERO;
+    _expressionSlots[Expression::TexGenParam3].registerIndex = REG_ZERO;
 }
 
 Doom3ShaderLayer::Doom3ShaderLayer(const Doom3ShaderLayer& other, ShaderTemplate& material) :
@@ -209,13 +211,6 @@ Doom3ShaderLayer::Doom3ShaderLayer(const Doom3ShaderLayer& other, ShaderTemplate
     _colExpression[1] = other._colExpression[1];
     _colExpression[2] = other._colExpression[2];
     _colExpression[3] = other._colExpression[3];
-
-    _texGenParams[0] = other._texGenParams[0];
-    _texGenParams[1] = other._texGenParams[1];
-    _texGenParams[2] = other._texGenParams[2];
-    _texGenExpressions[0] = other._texGenExpressions[0];
-    _texGenExpressions[1] = other._texGenExpressions[1];
-    _texGenExpressions[2] = other._texGenExpressions[2];
 
     _scale[0] = other._scale[0];
     _scale[1] = other._scale[1];
