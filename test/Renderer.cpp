@@ -29,8 +29,9 @@ TEST_F(RendererTest, GetLightTextureTransform)
     Entity* lightEnt = Node_getEntity(light);
     ASSERT_TRUE(lightEnt);
 
-    // Set a radius of 10 units in each dimension
-    lightEnt->setKeyValue("light_radius", "10 10 10");
+    // Set a radius
+    Vector3 SIZE(10, 128, 1002);
+    lightEnt->setKeyValue("light_radius", string::to_string(SIZE));
 
     // Get the RendererLight
     ILightNodePtr node = Node_getLightNode(light);
@@ -41,11 +42,11 @@ TEST_F(RendererTest, GetLightTextureTransform)
     Matrix4 texMat = rLight.getLightTextureTransformation();
 
     // Radius is symmetric around the origin, so the scale factor should be
-    // 1/20, with an offset to map the resulting light-space coordinates from
+    // 0.5/SIZE, with an offset to map the resulting light-space coordinates from
     // [-0.5, 0.5] onto ST coordinates spanning [0, 1]
-    EXPECT_EQ(texMat, Matrix4::byRows(0.05, 0, 0, 0.5,
-                                      0, 0.05, 0, 0.5,
-                                      0, 0, 0.05, 0.5,
+    EXPECT_EQ(texMat, Matrix4::byRows(0.5/SIZE.x(), 0, 0, 0.5,
+                                      0, 0.5/SIZE.y(), 0, 0.5,
+                                      0, 0, 0.5/SIZE.z(), 0.5,
                                       0, 0, 0, 1));
 }
 
