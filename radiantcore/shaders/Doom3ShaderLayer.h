@@ -7,6 +7,7 @@
 #include "MapExpression.h"
 #include "NamedBindable.h"
 #include "ShaderExpression.h"
+#include "ExpressionSlots.h"
 
 namespace shaders
 {
@@ -14,49 +15,6 @@ namespace shaders
 typedef std::pair<std::string, std::string> StringPair;
 
 class ShaderTemplate;
-
-
-struct ExpressionSlot
-{
-    // The register holding the evaluated float
-    std::size_t registerIndex;
-
-    // The expression itself (empty if unused)
-    IShaderExpression::Ptr expression;
-
-    ExpressionSlot() :
-        registerIndex(REG_ZERO)
-    {}
-};
-
-class ExpressionSlots :
-    public std::vector<ExpressionSlot>
-{
-private:
-    Registers& _registers;
-
-    static const IShaderExpression::Ptr NullExpression;
-
-public:
-    ExpressionSlots(Registers& registers) :
-        _registers(registers)
-    {
-        resize(IShaderLayer::Expression::NumExpressionSlots);
-    }
-
-    ExpressionSlots(const ExpressionSlots& other, Registers& registers) :
-        std::vector<ExpressionSlot>(other), // copy all expression slots
-        _registers(registers)
-    {}
-
-    void assign(IShaderLayer::Expression::Slot slot, const IShaderExpression::Ptr& expression, std::size_t defaultRegisterIndex);
-
-    void assignFromString(IShaderLayer::Expression::Slot slot, const std::string& expression, std::size_t defaultRegisterIndex);
-
-private:
-    // Returns true if the given register index is in use by more than one expression
-    bool registerIsShared(std::size_t index) const;
-};
 
 /**
  * \brief
@@ -134,7 +92,7 @@ private:
 
     // A variable sized array of vertexParms (or rather their indices into the registers array)
     // since a single vertex parm consists of 4 values, the _vertexParms array is usually of size 0, 4, 8, etc.
-    std::vector<std::size_t> _vertexParms;
+    std::vector<ExpressionSlot> _vertexParms;
     std::vector<VertexParm> _vertexParmDefinitions;
 
     // The array of fragment maps
@@ -213,6 +171,14 @@ public:
                 slot.expression->evaluate(time);
             }
         }
+
+        for (const auto& parm : _vertexParms)
+        {
+            if (parm.expression)
+            {
+                parm.expression->evaluate(time);
+            }
+        }
     }
 
     void evaluateExpressions(std::size_t time, const IRenderEntity& entity)
@@ -230,6 +196,14 @@ public:
             if (slot.expression)
             {
                 slot.expression->evaluate(time, entity);
+            }
+        }
+
+        for (const auto& parm : _vertexParms)
+        {
+            if (parm.expression)
+            {
+                parm.expression->evaluate(time, entity);
             }
         }
     }

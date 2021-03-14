@@ -78,70 +78,6 @@ BlendFunc blendFuncFromStrings(const StringPair& blendFunc)
 
 const IShaderExpression::Ptr Doom3ShaderLayer::NULL_EXPRESSION;
 
-void ExpressionSlots::assign(IShaderLayer::Expression::Slot slot, const IShaderExpression::Ptr& newExpression, std::size_t defaultRegisterIndex)
-{
-    auto& expressionSlot = at(slot);
-
-    if (!newExpression)
-    {
-        expressionSlot.expression.reset();
-        expressionSlot.registerIndex = defaultRegisterIndex;
-        return;
-    }
-
-    // Non-empty expression, overwrite if we have an existing expression in the slot
-    // Beware of the fact that some expressions could be shared across slots, before re-using the same register
-    if (expressionSlot.expression && !registerIsShared(expressionSlot.registerIndex))
-    {
-        // We assume that if there was an expression in the slot, it shouldn't point to the default registers
-        assert(expressionSlot.registerIndex != defaultRegisterIndex);
-        
-        // Re-use the register index
-        expressionSlot.expression = newExpression;
-        expressionSlot.expression->linkToSpecificRegister(_registers, expressionSlot.registerIndex);
-    }
-    else
-    {
-        expressionSlot.expression = newExpression;
-        expressionSlot.registerIndex = expressionSlot.expression->linkToRegister(_registers);
-    }
-}
-
-void ExpressionSlots::assignFromString(IShaderLayer::Expression::Slot slot, const std::string& expressionString, std::size_t defaultRegisterIndex)
-{
-    // An empty string will clear the expression
-    if (expressionString.empty())
-    {
-        assign(slot, IShaderExpression::Ptr(), defaultRegisterIndex);
-        return;
-    }
-
-    // Attempt to parse the string
-    auto expression = ShaderExpression::createFromString(expressionString);
-
-    if (!expression)
-    {
-        return; // parsing failures will not overwrite the expression slot
-    }
-
-    assign(slot, expression, defaultRegisterIndex);
-}
-
-bool ExpressionSlots::registerIsShared(std::size_t index) const
-{
-    std::size_t useCount = 0;
-
-    for (const auto& slot : *this)
-    {
-        if (slot.registerIndex == index && ++useCount > 1)
-        {
-            return true;
-        }
-    }
-
-    return false;
-}
-
 Doom3ShaderLayer::Doom3ShaderLayer(ShaderTemplate& material, IShaderLayer::Type type, const NamedBindablePtr& btex)
 :	_material(material),
 	_registers(NUM_RESERVED_REGISTERS),
@@ -472,8 +408,10 @@ Vector4 Doom3ShaderLayer::getVertexParmValue(int parm) const
 
     std::size_t offset = parm * 4;
 
-    return Vector4(_registers[_vertexParms[offset + 0]], _registers[_vertexParms[offset + 1]],
-        _registers[_vertexParms[offset + 2]], _registers[_vertexParms[offset + 3]]);
+    return Vector4(_registers[_vertexParms[offset + 0].registerIndex],
+                   _registers[_vertexParms[offset + 1].registerIndex],
+                   _registers[_vertexParms[offset + 2].registerIndex],
+                   _registers[_vertexParms[offset + 3].registerIndex]);
 }
 
 const IShaderLayer::VertexParm& Doom3ShaderLayer::getVertexParm(int parm) const
@@ -488,6 +426,8 @@ int Doom3ShaderLayer::getNumVertexParms() const
 
 void Doom3ShaderLayer::addVertexParm(const VertexParm& parm)
 {
+    assert(parm.expressions[0]);
+
     if (_vertexParmDefinitions.size() <= parm.index)
     {
         _vertexParmDefinitions.resize(parm.index + 1);
@@ -496,53 +436,54 @@ void Doom3ShaderLayer::addVertexParm(const VertexParm& parm)
     // Store the expressions in a separate location
     _vertexParmDefinitions[parm.index] = parm;
 
-    assert(parm.expressions[0]);
-
-    _expressions.emplace_back(parm.expressions[0]);
-    std::size_t parm0Reg = parm.expressions[0]->linkToRegister(_registers);
-
+    // Resize the parms array, it will take multiples of 4
     if (_vertexParms.size() <= (parm.index + 1) * 4)
     {
-        _vertexParms.resize((parm.index + 1) * 4, REG_ZERO);
+        _vertexParms.resize((parm.index + 1) * 4);
     }
 
     auto offset = parm.index * 4;
-    _vertexParms[offset + 0] = parm0Reg;
+
+    // Store the first expression
+    _vertexParms[offset + 0].expression = parm.expressions[0];
+
+    std::size_t parm0Reg = parm.expressions[0]->linkToRegister(_registers);
+    _vertexParms[offset + 0].registerIndex = parm0Reg;
 
     if (parm.expressions[1])
     {
-        _expressions.emplace_back(parm.expressions[1]);
-        _vertexParms[offset + 1] = parm.expressions[1]->linkToRegister(_registers);
+        _vertexParms[offset + 1].expression = parm.expressions[1];
+        _vertexParms[offset + 1].registerIndex = parm.expressions[1]->linkToRegister(_registers);
 
         if (parm.expressions[2])
         {
-            _expressions.emplace_back(parm.expressions[2]);
-            _vertexParms[offset + 2] = parm.expressions[2]->linkToRegister(_registers);
+            _vertexParms[offset + 2].expression = parm.expressions[2];
+            _vertexParms[offset + 2].registerIndex = parm.expressions[2]->linkToRegister(_registers);
 
             if (parm.expressions[3])
             {
-                _expressions.emplace_back(parm.expressions[3]);
-                _vertexParms[offset + 3] = parm.expressions[3]->linkToRegister(_registers);
+                _vertexParms[offset + 3].expression = parm.expressions[3];
+                _vertexParms[offset + 3].registerIndex = parm.expressions[3]->linkToRegister(_registers);
             }
             else
             {
                 // No fourth parameter set, set w to 1
-                _vertexParms[offset + 3] = REG_ONE;
+                _vertexParms[offset + 3].registerIndex = REG_ONE;
             }
         }
         else
         {
             // Only 2 expressions given, set z and w to 0 and 1, respectively.
-            _vertexParms[offset + 2] = REG_ZERO;
-            _vertexParms[offset + 3] = REG_ONE;
+            _vertexParms[offset + 2].registerIndex = REG_ZERO;
+            _vertexParms[offset + 3].registerIndex = REG_ONE;
         }
     }
     else
     {
         // no parm1 given, repeat the one we have 4 times => insert 3 more times
-        _vertexParms[offset + 1] = parm0Reg;
-        _vertexParms[offset + 2] = parm0Reg;
-        _vertexParms[offset + 3] = parm0Reg;
+        _vertexParms[offset + 1].registerIndex = parm0Reg;
+        _vertexParms[offset + 2].registerIndex = parm0Reg;
+        _vertexParms[offset + 3].registerIndex = parm0Reg;
     }
 
     // At this point the array needs to be empty or its size a multiple of 4
