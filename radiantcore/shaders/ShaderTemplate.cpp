@@ -894,13 +894,18 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
     }
 	else if (token == "scale")
 	{
-		IShaderExpression::Ptr xScaleExpr = ShaderExpression::createFromTokens(tokeniser);
+		auto xScaleExpr = ShaderExpression::createFromTokens(tokeniser);
 		tokeniser.assertNextToken(",");
-		IShaderExpression::Ptr yScaleExpr = ShaderExpression::createFromTokens(tokeniser);
+		auto yScaleExpr = ShaderExpression::createFromTokens(tokeniser);
 
 		if (xScaleExpr && yScaleExpr)
 		{
-			_currentLayer->setScale(xScaleExpr, yScaleExpr);
+            _currentLayer->appendTransformation(IShaderLayer::Transformation
+            {
+                IShaderLayer::TransformType::Scale, 
+                xScaleExpr, 
+                yScaleExpr
+            });
 		}
 		else
 		{
@@ -909,14 +914,18 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 	}
 	else if (token == "centerscale")
 	{
-		IShaderExpression::Ptr xScaleExpr = ShaderExpression::createFromTokens(tokeniser);
+		auto xScaleExpr = ShaderExpression::createFromTokens(tokeniser);
 		tokeniser.assertNextToken(",");
-		IShaderExpression::Ptr yScaleExpr = ShaderExpression::createFromTokens(tokeniser);
+		auto yScaleExpr = ShaderExpression::createFromTokens(tokeniser);
 
 		if (xScaleExpr && yScaleExpr)
 		{
-			_currentLayer->setScale(xScaleExpr, yScaleExpr);
-			_currentLayer->setStageFlag(IShaderLayer::FLAG_CENTERSCALE);	// enable centerScale
+            _currentLayer->appendTransformation(IShaderLayer::Transformation
+            {
+                IShaderLayer::TransformType::CenterScale,
+                xScaleExpr,
+                yScaleExpr
+            });
 		}
 		else
 		{
@@ -925,13 +934,18 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 	}
 	else if (token == "translate" || token == "scroll")
 	{
-		IShaderExpression::Ptr xTranslateExpr = ShaderExpression::createFromTokens(tokeniser);
+		auto xTranslateExpr = ShaderExpression::createFromTokens(tokeniser);
 		tokeniser.assertNextToken(",");
-		IShaderExpression::Ptr yTranslateExpr = ShaderExpression::createFromTokens(tokeniser);
+		auto yTranslateExpr = ShaderExpression::createFromTokens(tokeniser);
 
 		if (xTranslateExpr && yTranslateExpr)
 		{
-			_currentLayer->setTranslation(xTranslateExpr, yTranslateExpr);
+            _currentLayer->appendTransformation(IShaderLayer::Transformation
+                {
+                    IShaderLayer::TransformType::Translate,
+                    xTranslateExpr,
+                    yTranslateExpr
+                });
 		}
 		else
 		{
@@ -940,13 +954,18 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 	}
 	else if (token == "shear")
 	{
-		IShaderExpression::Ptr xShearExpr = ShaderExpression::createFromTokens(tokeniser);
+		auto xShearExpr = ShaderExpression::createFromTokens(tokeniser);
 		tokeniser.assertNextToken(",");
-		IShaderExpression::Ptr yShearExpr = ShaderExpression::createFromTokens(tokeniser);
+		auto yShearExpr = ShaderExpression::createFromTokens(tokeniser);
 
 		if (xShearExpr && yShearExpr)
 		{
-			_currentLayer->setShear(xShearExpr, yShearExpr);
+            _currentLayer->appendTransformation(IShaderLayer::Transformation
+            {
+                IShaderLayer::TransformType::Shear,
+                xShearExpr,
+                yShearExpr
+            });
 		}
 		else
 		{
@@ -955,11 +974,15 @@ bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
 	}
 	else if (token == "rotate")
 	{
-		IShaderExpression::Ptr rotExpr = ShaderExpression::createFromTokens(tokeniser);
+		auto rotationExpr = ShaderExpression::createFromTokens(tokeniser);
 
-		if (rotExpr)
+		if (rotationExpr)
 		{
-			_currentLayer->setRotation(rotExpr);
+            _currentLayer->appendTransformation(IShaderLayer::Transformation
+            {
+                IShaderLayer::TransformType::Rotate,
+                rotationExpr
+            });
 		}
 		else
 		{
