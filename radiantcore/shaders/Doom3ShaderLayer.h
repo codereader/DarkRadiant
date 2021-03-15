@@ -8,6 +8,7 @@
 #include "NamedBindable.h"
 #include "ShaderExpression.h"
 #include "ExpressionSlots.h"
+#include "TextureMatrix.h"
 
 namespace shaders
 {
@@ -72,6 +73,9 @@ private:
 
     // The list of declared transformations
     std::vector<IShaderLayer::Transformation> _transformations;
+
+    // Handles the expressions used to calculcate the final texture matrix
+    TextureMatrix _textureMatrix;
 
     // The register indices of this stage's scale expressions
     std::size_t _scale[2];

@@ -1017,6 +1017,7 @@
     <ClInclude Include="..\..\radiantcore\shaders\ShaderTemplate.h" />
     <ClInclude Include="..\..\radiantcore\shaders\SoundMapExpression.h" />
     <ClInclude Include="..\..\radiantcore\shaders\TableDefinition.h" />
+    <ClInclude Include="..\..\radiantcore\shaders\TextureMatrix.h" />
     <ClInclude Include="..\..\radiantcore\shaders\textures\CubeMapTexture.h" />
     <ClInclude Include="..\..\radiantcore\shaders\textures\GLTextureManager.h" />
     <ClInclude Include="..\..\radiantcore\shaders\textures\HeightmapCreator.h" />

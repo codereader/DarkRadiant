@@ -91,6 +91,7 @@ Doom3ShaderLayer::Doom3ShaderLayer(ShaderTemplate& material, IShaderLayer::Type 
 	_stageFlags(0),
 	_clampType(CLAMP_REPEAT),
 	_texGenType(TEXGEN_NORMAL),
+    _textureMatrix(_expressionSlots),
 	_privatePolygonOffset(0),
     _parseFlags(0)
 {
@@ -105,6 +106,9 @@ Doom3ShaderLayer::Doom3ShaderLayer(ShaderTemplate& material, IShaderLayer::Type 
     _expressionSlots[Expression::ColourGreen].registerIndex = REG_ONE;
     _expressionSlots[Expression::ColourBlue].registerIndex = REG_ONE;
     _expressionSlots[Expression::ColourAlpha].registerIndex = REG_ONE;
+
+    // Initialise the texture matrix to an identity transform
+    _textureMatrix.setIdentity();
 
 	// Scale is set to 1,1 by default
 	_scale[0] = _scale[1] = REG_ONE;
@@ -143,6 +147,7 @@ Doom3ShaderLayer::Doom3ShaderLayer(const Doom3ShaderLayer& other, ShaderTemplate
     _stageFlags(other._stageFlags),
     _clampType(other._clampType),
     _texGenType(other._texGenType),
+    _textureMatrix(_expressionSlots), // no copying necessary
     _rotation(other._rotation),
     _rotationExpression(other._rotationExpression),
     _vertexProgram(other._vertexProgram),
@@ -294,7 +299,11 @@ void Doom3ShaderLayer::setColour(const Vector4& col)
 
 void Doom3ShaderLayer::appendTransformation(const Transformation& transform)
 {
+    // Store this original transformation, we need it later
     _transformations.emplace_back(transform);
+
+    // Construct a transformation matrix and multiply it on top of the existing one
+    _textureMatrix.applyTransformation(transform);
 }
 
 const std::vector<IShaderLayer::Transformation>& Doom3ShaderLayer::getTransformations()
@@ -304,7 +313,7 @@ const std::vector<IShaderLayer::Transformation>& Doom3ShaderLayer::getTransforma
 
 Matrix4 Doom3ShaderLayer::getTextureTransform()
 {
-    return Matrix4::getIdentity();
+    return _textureMatrix.getMatrix4(_registers);
 }
 
 IShaderLayer::VertexColourMode Doom3ShaderLayer::getVertexColourMode() const

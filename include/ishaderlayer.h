@@ -114,6 +114,12 @@ public:
             ColourGreen,
             ColourBlue,
             ColourAlpha,
+            TextureMatrixRow0Col0,
+            TextureMatrixRow0Col1,
+            TextureMatrixRow0Col2,
+            TextureMatrixRow1Col0,
+            TextureMatrixRow1Col1,
+            TextureMatrixRow1Col2,
             NumExpressionSlots
         };
     };

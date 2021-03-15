@@ -2085,5 +2085,8 @@
     <ClInclude Include="..\..\radiantcore\shaders\ExpressionSlots.h">
       <Filter>src\shaders</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiantcore\shaders\TextureMatrix.h">
+      <Filter>src\shaders</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
