@@ -75,9 +75,9 @@ public:
 
     /**
      * greebo: Attempts to parse the rotation from the given string, which is
-     * a whitespace-separated chain of nine floating point values, as used 
+     * a whitespace-separated chain of nine floating point values, as used
      * in entity spawnargs.
-     * 
+     *
      * Example: "0 1 0 -1 0 0 0 0 1"
      *
      * Returns: the parsed (translation-free) matrix. In case of parser errors
@@ -391,7 +391,7 @@ public:
      */
     void invertFull();
 
-    /** 
+    /**
      * \brief
      * Returns the given 3-component point transformed by this matrix.
      *
@@ -400,7 +400,7 @@ public:
     template<typename Element>
     BasicVector3<Element> transformPoint(const BasicVector3<Element>& point) const;
 
-    /** 
+    /**
      * Returns the given 3-component direction transformed by this matrix.
      * The given vector is treated as direction so it won't receive a translation, just like
      * a 4-component vector with its w-component set to 0 would be transformed.
@@ -409,9 +409,8 @@ public:
     BasicVector3<Element> transformDirection(const BasicVector3<Element>& direction) const;
 
     /**
-     * \brief
-     * Use this matrix to transform the provided vector and return a new vector
-     * containing the result.
+     * \brief Use this matrix to transform the provided vector and return a new
+     * vector containing the result.
      *
      * \param vector4
      * The 4-element vector to transform.
@@ -462,7 +461,7 @@ public:
     /**
      * Returns this matrix concatenated with the rotation transform produced by the given quat.
      * The concatenated rotation occurs before the transformation of this matrix.
-     * 
+     *
      * Equivalent to getMultipliedBy(getRotation(rotation));
      */
     Matrix4 getRotatedBy(const Quaternion& rotation) const;
@@ -498,7 +497,7 @@ public:
      */
     bool operator==(const Matrix4& other) const;
 
-    /** 
+    /**
      * Inequality operator.
      */
     bool operator!=(const Matrix4& other) const;
@@ -557,14 +556,14 @@ public:
     const Vector3& translation() const;
 
     /**
-     * Concatenates this with the rotation transform produced 
+     * Concatenates this with the rotation transform produced
      * by euler angles (degrees) in the order (x, y, z).
      * The concatenated rotation occurs before self.
      */
     void rotateByEulerXYZDegrees(const Vector3& euler);
 
     /**
-     * Concatenates this with the pivoted rotation transform produced 
+     * Concatenates this with the pivoted rotation transform produced
      * by euler angles (degrees) in the order (x, y, z).
      * The concatenated rotation occurs before self.
      */
@@ -577,7 +576,7 @@ public:
     Matrix4 getRotatedByEulerYXZDegrees(const Vector3& euler) const;
 
     /**
-     * Concatenates this with the rotation transform produced 
+     * Concatenates this with the rotation transform produced
      * by euler angles (degrees) in the order (y, x, z).
      * The concatenated rotation occurs before self.
      */
@@ -590,64 +589,64 @@ public:
     Matrix4 getRotatedByEulerZXYDegrees(const Vector3& euler) const;
 
     /**
-     * Concatenates this with the rotation transform produced 
+     * Concatenates this with the rotation transform produced
      * by euler angles (degrees) in the order (z, x, y).
      * The concatenated rotation occurs before self.
      */
     void rotateByEulerZXYDegrees(const Vector3& euler);
 
     /**
-     * Calculates and returns a set of euler angles in radians that produce 
-     * the rotation component of this matrix when applied in the order (x, y, z). 
+     * Calculates and returns a set of euler angles in radians that produce
+     * the rotation component of this matrix when applied in the order (x, y, z).
      * This matrix must be affine and orthonormal (unscaled) to produce a meaningful result.
      */
     Vector3 getEulerAnglesXYZ() const;
 
     /**
      * Calculates and returns a set of euler angles in degrees that produce
-     * the rotation component of this matrix when applied in the order (x, y, z). 
+     * the rotation component of this matrix when applied in the order (x, y, z).
      * This matrix must be affine and orthonormal (unscaled) to produce a meaningful result.
      */
     Vector3 getEulerAnglesXYZDegrees() const;
 
     /**
-     * Calculates and returns a set of euler angles in radians that produce 
-     * the rotation component of this matrix when applied in the order (y, x, z). 
+     * Calculates and returns a set of euler angles in radians that produce
+     * the rotation component of this matrix when applied in the order (y, x, z).
      * This matrix must be affine and orthonormal (unscaled) to produce a meaningful result.
      */
     Vector3 getEulerAnglesYXZ() const;
 
     /**
      * Calculates and returns a set of euler angles in degrees that produce
-     * the rotation component of this matrix when applied in the order (y, x, z). 
+     * the rotation component of this matrix when applied in the order (y, x, z).
      * This matrix must be affine and orthonormal (unscaled) to produce a meaningful result.
      */
     Vector3 getEulerAnglesYXZDegrees() const;
 
     /**
-     * Calculates and returns a set of euler angles in radians that produce 
-     * the rotation component of this matrix when applied in the order (z, x, y). 
+     * Calculates and returns a set of euler angles in radians that produce
+     * the rotation component of this matrix when applied in the order (z, x, y).
      * This matrix must be affine and orthonormal (unscaled) to produce a meaningful result.
      */
     Vector3 getEulerAnglesZXY() const;
 
     /**
      * Calculates and returns a set of euler angles in degrees that produce
-     * the rotation component of this matrix when applied in the order (z, x, y). 
+     * the rotation component of this matrix when applied in the order (z, x, y).
      * This matrix must be affine and orthonormal (unscaled) to produce a meaningful result.
      */
     Vector3 getEulerAnglesZXYDegrees() const;
 
     /**
-     * Calculates and returns a set of euler angles in radians that produce 
-     * the rotation component of this matrix when applied in the order (z, y, x). 
+     * Calculates and returns a set of euler angles in radians that produce
+     * the rotation component of this matrix when applied in the order (z, y, x).
      * This matrix must be affine and orthonormal (unscaled) to produce a meaningful result.
      */
     Vector3 getEulerAnglesZYX() const;
 
     /**
      * Calculates and returns a set of euler angles in degrees that produce
-     * the rotation component of this matrix when applied in the order (z, y, x). 
+     * the rotation component of this matrix when applied in the order (z, y, x).
      * This matrix must be affine and orthonormal (unscaled) to produce a meaningful result.
      */
     Vector3 getEulerAnglesZYXDegrees() const;
@@ -660,19 +659,19 @@ public:
 
     /**
      * Transforms and clips the line formed by p0, p1 by this canonical matrix.
-     * Stores the resulting line in clipped. 
-     * 
+     * Stores the resulting line in clipped.
+     *
      * @returns: the number of points in the resulting line.
      */
     std::size_t clipLine(const Vector3& p0, const Vector3& p1, Vector4 clipped[2]) const;
 
-    /** 
+    /**
      * Clips point by this canonical matrix and stores the result in clipped.
      * Returns a bitmask indicating which clip-planes the point was outside.
      */
     ClipResult clipPoint(const Vector3& point, Vector4& clipped) const;
 
-    /** 
+    /**
      * Transforms and clips the triangle formed by p0, p1, p2 by this canonical matrix.
      * Stores the resulting polygon in clipped.
      * Returns the number of points in the resulting polygon.
@@ -710,7 +709,7 @@ BasicVector3<T> operator* (const Matrix4& m, const BasicVector3<T>& v)
 }
 
 // =========================================================================================
-// Inlined member definitions 
+// Inlined member definitions
 // =========================================================================================
 
 // Construct a matrix with given column elements
@@ -852,17 +851,17 @@ inline bool Matrix4::isEqual(const Matrix4& other, double epsilon) const
 
 inline bool Matrix4::isAffineEqual(const Matrix4& other) const
 {
-    return xx() == other.xx() && 
-            xy() == other.xy() && 
-            xz() == other.xz() && 
-            yx() == other.yx() && 
-            yy() == other.yy() && 
-            yz() == other.yz() && 
-            zx() == other.zx() && 
-            zy() == other.zy() && 
-            zz() == other.zz() && 
-            tx() == other.tx() && 
-            ty() == other.ty() && 
+    return xx() == other.xx() &&
+            xy() == other.xy() &&
+            xz() == other.xz() &&
+            yx() == other.yx() &&
+            yy() == other.yy() &&
+            yz() == other.yz() &&
+            zx() == other.zx() &&
+            zy() == other.zy() &&
+            zz() == other.zz() &&
+            tx() == other.tx() &&
+            ty() == other.ty() &&
             tz() == other.tz();
 }
 
@@ -963,7 +962,7 @@ inline double Matrix4::getDeterminant() const
 {
     // greebo: This is following Laplace's formula by expanding it along the first column
     // It needs a couple of 2x2 minors (which are re-used two times each) and four 3x3 minors
-    
+
     // The expanded formula is like this: det A = a11*M11 - a21*M21 + a31*M31 + a41*M41
     // where aij is a matrix element, and Mij is the minor leaving out the i-th row and j-th column
 
@@ -980,7 +979,7 @@ inline double Matrix4::getDeterminant() const
     double minor21 = yx() * minor1 - yz() * minor3 + yw() * minor5;
     double minor31 = yx() * minor2 - yy() * minor3 + yw() * minor6;
     double minor41 = yx() * minor4 - yy() * minor5 + yz() * minor6;
-    
+
     // Assemble and return final determinant
     return xx() * minor11 - xy() * minor21 + xz() * minor31 - xw() * minor41;
 }

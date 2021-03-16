@@ -137,4 +137,32 @@ TEST_F(RendererTest, LightMatrixInWorldSpace)
     );
 }
 
+TEST_F(RendererTest, SimpleProjectedLight)
+{
+    // Create a light at the origin, pointing directly downwards
+    Light light;
+    const Vector3 TARGET(0, 0, -8);
+    const Vector3 UP(0, 4, 0);
+    const Vector3 RIGHT(4, 0, 0);
+    light.entity->setKeyValue("light_target", string::to_string(TARGET));
+    light.entity->setKeyValue("light_right", string::to_string(RIGHT));
+    light.entity->setKeyValue("light_up", string::to_string(UP));
+
+    // Get the texture matrix transform
+    const RendererLight& rLight = light.iLightNode->getRendererLight();
+    Matrix4 texMat = rLight.getLightTextureTransformation();
+
+    // Inspect the matrix by transforming some key points into texture space.
+    // Note that we are dealing with projective geometry so we need 4 element
+    // vectors to handle the W coordinate.
+
+    // At the origin (which is also the light's origin) we have a singularity:
+    // the light texture image is infinitely small, which means any X or Y
+    // coordinate must go to -INF or +INF in texture space. This is achieved in
+    // projective space by setting the W coordinate to 0, while the X/Y/Z
+    // coordinates are unchanged (and irrelevant).
+    const Vector4 origin = texMat.transform(Vector4(0, 0, 0, 1));
+    EXPECT_EQ(origin, Vector4(0, 0, 0, 0));
+}
+
 }

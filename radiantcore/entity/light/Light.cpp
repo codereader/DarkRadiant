@@ -562,6 +562,9 @@ Matrix4 Light::getLightTextureTransformation() const
 
     if (isProjected())
     {
+        // Ensure _localToTexture matrix is up to date
+        updateProjection();
+
         // First step: subtract the light origin from the world point
         Matrix4 worldTolight = Matrix4::getTranslation(-getLightOrigin());
 
