@@ -65,6 +65,52 @@ TEST_F(RendererTest, GetLightTextureTransform)
                                       0, 0, 0, 1));
 }
 
+TEST_F(RendererTest, UpdateLightRadius)
+{
+    // Set initial radius
+    Light light;
+    light.entity->setKeyValue("light_radius", "256 64 512");
+
+    // Save initial matrix
+    const RendererLight& rLight = light.iLightNode->getRendererLight();
+    const Matrix4 initMat = rLight.getLightTextureTransformation();
+
+    // Change the light radius
+    Vector3 SIZE(92, 100, 64);
+    light.entity->setKeyValue("light_radius", string::to_string(SIZE));
+
+    // Matrix should have changed from its initial value
+    Matrix4 newMat = rLight.getLightTextureTransformation();
+    EXPECT_NE(newMat, initMat);
+
+    // New value should be correct
+    EXPECT_EQ(newMat, Matrix4::byRows(0.5/SIZE.x(), 0, 0, 0.5,
+                                      0, 0.5/SIZE.y(), 0, 0.5,
+                                      0, 0, 0.5/SIZE.z(), 0.5,
+                                      0, 0, 0, 1));
+}
+
+TEST_F(RendererTest, LightCenterDoesNotAffectMatrix)
+{
+    Light light;
+    Vector3 SIZE(100, 128, 2046);
+    light.entity->setKeyValue("light_radius", string::to_string(SIZE));
+
+    // Store initial matrix
+    const RendererLight& rLight = light.iLightNode->getRendererLight();
+    const Matrix4 initMat = rLight.getLightTextureTransformation();
+
+    // Set a light center
+    light.entity->setKeyValue("light_center", "50 64 512");
+
+    // Matrix should not have changed
+    EXPECT_EQ(rLight.getLightTextureTransformation(), initMat);
+
+    // Make another change just to be sure
+    light.entity->setKeyValue("light_center", "0 -1000 2");
+    EXPECT_EQ(rLight.getLightTextureTransformation(), initMat);
+}
+
 TEST_F(RendererTest, LightMatrixInWorldSpace)
 {
     Light light;
