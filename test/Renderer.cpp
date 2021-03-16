@@ -23,6 +23,7 @@ struct Light
     ILightNodePtr iLightNode;
     Entity* entity = nullptr;
 
+    // Construct with no properties
     Light()
     : node(createByClassName("light"))
     {
@@ -31,6 +32,25 @@ struct Light
             entity = Node_getEntity(node);
             iLightNode = Node_getLightNode(node);
         }
+    }
+
+    // Construct a light with a specified radius and default origin
+    static Light withRadius(const Vector3& radius)
+    {
+        Light light;
+        light.entity->setKeyValue("light_radius", string::to_string(radius));
+        return light;
+    }
+
+    // Construct a projected light with specified vectors
+    static Light projected(const Vector3& target, const Vector3& right,
+                           const Vector3& up)
+    {
+        Light light;
+        light.entity->setKeyValue("light_target", string::to_string(target));
+        light.entity->setKeyValue("light_right", string::to_string(right));
+        light.entity->setKeyValue("light_up", string::to_string(up));
+        return light;
     }
 };
 
@@ -44,11 +64,8 @@ TEST_F(RendererTest, CreateLightNode)
 
 TEST_F(RendererTest, GetLightTextureTransform)
 {
-    Light light;
-
-    // Set a radius
     Vector3 SIZE(10, 128, 1002);
-    light.entity->setKeyValue("light_radius", string::to_string(SIZE));
+    Light light = Light::withRadius(SIZE);
 
     // Get the RendererLight
     const RendererLight& rLight = light.iLightNode->getRendererLight();
@@ -68,8 +85,7 @@ TEST_F(RendererTest, GetLightTextureTransform)
 TEST_F(RendererTest, UpdateLightRadius)
 {
     // Set initial radius
-    Light light;
-    light.entity->setKeyValue("light_radius", "256 64 512");
+    Light light = Light::withRadius(Vector3(256, 64, 512));
 
     // Save initial matrix
     const RendererLight& rLight = light.iLightNode->getRendererLight();
@@ -92,9 +108,8 @@ TEST_F(RendererTest, UpdateLightRadius)
 
 TEST_F(RendererTest, LightCenterDoesNotAffectMatrix)
 {
-    Light light;
     Vector3 SIZE(100, 128, 2046);
-    light.entity->setKeyValue("light_radius", string::to_string(SIZE));
+    Light light = Light::withRadius(SIZE);
 
     // Store initial matrix
     const RendererLight& rLight = light.iLightNode->getRendererLight();
@@ -113,13 +128,12 @@ TEST_F(RendererTest, LightCenterDoesNotAffectMatrix)
 
 TEST_F(RendererTest, LightMatrixInWorldSpace)
 {
-    Light light;
-
-    // Set both an origin and a radius
-    const Vector3 ORIGIN(128, 64, -192);
     const Vector3 RADIUS(32, 32, 32);
+    Light light = Light::withRadius(RADIUS);
+
+    // Set an origin
+    const Vector3 ORIGIN(128, 64, -192);
     light.entity->setKeyValue("origin", string::to_string(ORIGIN));
-    light.entity->setKeyValue("light_radius", string::to_string(RADIUS));
 
     // Get the texture matrix transform
     const RendererLight& rLight = light.iLightNode->getRendererLight();
@@ -140,13 +154,10 @@ TEST_F(RendererTest, LightMatrixInWorldSpace)
 TEST_F(RendererTest, SimpleProjectedLight)
 {
     // Create a light at the origin, pointing directly downwards
-    Light light;
     const Vector3 TARGET(0, 0, -8);
     const Vector3 UP(0, 4, 0);
     const Vector3 RIGHT(4, 0, 0);
-    light.entity->setKeyValue("light_target", string::to_string(TARGET));
-    light.entity->setKeyValue("light_right", string::to_string(RIGHT));
-    light.entity->setKeyValue("light_up", string::to_string(UP));
+    Light light = Light::projected(TARGET, RIGHT, UP);
 
     // Get the texture matrix transform
     const RendererLight& rLight = light.iLightNode->getRendererLight();
