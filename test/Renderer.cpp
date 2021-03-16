@@ -34,6 +34,12 @@ struct Light
         }
     }
 
+    // Return the light texture matrix
+    Matrix4 getMatrix() const
+    {
+        return iLightNode->getRendererLight().getLightTextureTransformation();
+    }
+
     // Construct a light with a specified radius and default origin
     static Light withRadius(const Vector3& radius)
     {
@@ -67,11 +73,8 @@ TEST_F(RendererTest, GetLightTextureTransform)
     Vector3 SIZE(10, 128, 1002);
     Light light = Light::withRadius(SIZE);
 
-    // Get the RendererLight
-    const RendererLight& rLight = light.iLightNode->getRendererLight();
-
     // Get the texture matrix transform
-    Matrix4 texMat = rLight.getLightTextureTransformation();
+    Matrix4 texMat = light.getMatrix();
 
     // Radius is symmetric around the origin, so the scale factor should be
     // 0.5/SIZE, with an offset to map the resulting light-space coordinates from
@@ -88,15 +91,14 @@ TEST_F(RendererTest, UpdateLightRadius)
     Light light = Light::withRadius(Vector3(256, 64, 512));
 
     // Save initial matrix
-    const RendererLight& rLight = light.iLightNode->getRendererLight();
-    const Matrix4 initMat = rLight.getLightTextureTransformation();
+    const Matrix4 initMat = light.getMatrix();
 
     // Change the light radius
     Vector3 SIZE(92, 100, 64);
     light.entity->setKeyValue("light_radius", string::to_string(SIZE));
 
     // Matrix should have changed from its initial value
-    Matrix4 newMat = rLight.getLightTextureTransformation();
+    Matrix4 newMat = light.getMatrix();
     EXPECT_NE(newMat, initMat);
 
     // New value should be correct
@@ -112,18 +114,17 @@ TEST_F(RendererTest, LightCenterDoesNotAffectMatrix)
     Light light = Light::withRadius(SIZE);
 
     // Store initial matrix
-    const RendererLight& rLight = light.iLightNode->getRendererLight();
-    const Matrix4 initMat = rLight.getLightTextureTransformation();
+    const Matrix4 initMat = light.getMatrix();
 
     // Set a light center
     light.entity->setKeyValue("light_center", "50 64 512");
 
     // Matrix should not have changed
-    EXPECT_EQ(rLight.getLightTextureTransformation(), initMat);
+    EXPECT_EQ(light.getMatrix(), initMat);
 
     // Make another change just to be sure
     light.entity->setKeyValue("light_center", "0 -1000 2");
-    EXPECT_EQ(rLight.getLightTextureTransformation(), initMat);
+    EXPECT_EQ(light.getMatrix(), initMat);
 }
 
 TEST_F(RendererTest, LightMatrixInWorldSpace)
@@ -135,12 +136,9 @@ TEST_F(RendererTest, LightMatrixInWorldSpace)
     const Vector3 ORIGIN(128, 64, -192);
     light.entity->setKeyValue("origin", string::to_string(ORIGIN));
 
-    // Get the texture matrix transform
-    const RendererLight& rLight = light.iLightNode->getRendererLight();
-    Matrix4 texMat = rLight.getLightTextureTransformation();
-
     // Light matrix should subtract the origin scaled to the light bounds (twice
     // the radius), then add the 0.5 offset to get to [0, 1].
+    Matrix4 texMat = light.getMatrix();
     const Vector3 BOUNDS = RADIUS * 2;
     EXPECT_EQ(
         texMat,
@@ -159,13 +157,10 @@ TEST_F(RendererTest, SimpleProjectedLight)
     const Vector3 RIGHT(4, 0, 0);
     Light light = Light::projected(TARGET, RIGHT, UP);
 
-    // Get the texture matrix transform
-    const RendererLight& rLight = light.iLightNode->getRendererLight();
-    Matrix4 texMat = rLight.getLightTextureTransformation();
-
     // Inspect the matrix by transforming some key points into texture space.
     // Note that we are dealing with projective geometry so we need 4 element
     // vectors to handle the W coordinate.
+    Matrix4 texMat = light.getMatrix();
 
     // At the origin (which is also the light's origin) we have a singularity:
     // the light texture image is infinitely small, which means any X or Y
