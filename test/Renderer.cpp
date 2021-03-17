@@ -161,27 +161,37 @@ TEST_F(RendererTest, SimpleProjectedLight)
     // Inspect the matrix by transforming some key points into texture space.
     // Note that we are dealing with projective geometry so we need 4 element
     // vectors to handle the W coordinate.
-    Matrix4 texMat = light.getMatrix();
+    Matrix4 mat = light.getMatrix();
 
     // At the origin (which is also the light's origin) we have a singularity:
     // the light texture image is infinitely small, which means any X or Y
     // coordinate must go to -INF or +INF in texture space. This is achieved in
     // projective space by setting the W coordinate to 0, while the X/Y/Z
     // coordinates are unchanged (and irrelevant).
-    const V4 origin = texMat.transform(V4(0, 0, 0, 1));
+    const V4 origin = mat * V4(0, 0, 0, 1);
     EXPECT_EQ(origin, V4(0, 0, 0, 0));
 
     // Any point on the Z=0 plane should also have the same W coordinate of 0
-    EXPECT_EQ(texMat.transform(V4(128, 456, 0, 1)).w(), 0);
-    EXPECT_EQ(texMat.transform(V4(9999, -500, 0, 1)).w(), 0);
-    EXPECT_EQ(texMat.transform(V4(0.004, 23.3445, 0, 1)).w(), 0);
+    EXPECT_EQ((mat * V4(128, 456, 0, 1)).w(), 0);
+    EXPECT_EQ((mat * V4(9999, -500, 0, 1)).w(), 0);
+    EXPECT_EQ((mat * V4(0.004, 23.3445, 0, 1)).w(), 0);
 
     // The W coordinate should increase linearly from 0 at the origin to 1 at
     // the target plane.
-    EXPECT_EQ(texMat.transform(V4(0.25 * TARGET)).w(), 0.25);
-    EXPECT_EQ(texMat.transform(V4(0.5 * TARGET)).w(), 0.5);
-    EXPECT_EQ(texMat.transform(V4(0.75 * TARGET)).w(), 0.75);
-    EXPECT_EQ(texMat.transform(V4(TARGET)).w(), 1);
+    V4 projT = mat * V4(TARGET);
+    EXPECT_EQ(projT.w(), 1);
+    EXPECT_EQ((mat * V4(0.25 * TARGET)).w(), 0.25);
+    EXPECT_EQ((mat * V4(0.5 * TARGET)).w(), 0.5);
+    EXPECT_EQ((mat * V4(0.75 * TARGET)).w(), 0.75);
+
+    // Target vector points to the center of the projected image, so should have
+    // S and T coordinates [0.5, 0.5]
+    EXPECT_EQ(projT.x(), 0.5);
+    EXPECT_EQ(projT.y(), 0.5);
+
+    // Z coordinate controls the falloff; this should increase to 1 at the
+    // target plane.
+    EXPECT_EQ(projT.z(), 1);
 }
 
 }
