@@ -16,6 +16,9 @@ IEntityNodePtr createByClassName(const std::string& className)
     return GlobalEntityModule().createEntity(cls);
 }
 
+using V4 = Vector4;
+using V3 = Vector3;
+
 // Wrapper for a light entity and its respective node interfaces
 struct Light
 {
@@ -41,7 +44,7 @@ struct Light
     }
 
     // Construct a light with a specified radius and default origin
-    static Light withRadius(const Vector3& radius)
+    static Light withRadius(const V3& radius)
     {
         Light light;
         light.entity->setKeyValue("light_radius", string::to_string(radius));
@@ -49,8 +52,8 @@ struct Light
     }
 
     // Construct a projected light with specified vectors
-    static Light projected(const Vector3& target, const Vector3& right,
-                           const Vector3& up)
+    static Light projected(const V3& target, const V3& right,
+                           const V3& up)
     {
         Light light;
         light.entity->setKeyValue("light_target", string::to_string(target));
@@ -70,7 +73,7 @@ TEST_F(RendererTest, CreateLightNode)
 
 TEST_F(RendererTest, GetLightTextureTransform)
 {
-    Vector3 SIZE(10, 128, 1002);
+    V3 SIZE(10, 128, 1002);
     Light light = Light::withRadius(SIZE);
 
     // Get the texture matrix transform
@@ -88,13 +91,13 @@ TEST_F(RendererTest, GetLightTextureTransform)
 TEST_F(RendererTest, UpdateLightRadius)
 {
     // Set initial radius
-    Light light = Light::withRadius(Vector3(256, 64, 512));
+    Light light = Light::withRadius(V3(256, 64, 512));
 
     // Save initial matrix
     const Matrix4 initMat = light.getMatrix();
 
     // Change the light radius
-    Vector3 SIZE(92, 100, 64);
+    V3 SIZE(92, 100, 64);
     light.entity->setKeyValue("light_radius", string::to_string(SIZE));
 
     // Matrix should have changed from its initial value
@@ -110,7 +113,7 @@ TEST_F(RendererTest, UpdateLightRadius)
 
 TEST_F(RendererTest, LightCenterDoesNotAffectMatrix)
 {
-    Vector3 SIZE(100, 128, 2046);
+    V3 SIZE(100, 128, 2046);
     Light light = Light::withRadius(SIZE);
 
     // Store initial matrix
@@ -129,17 +132,17 @@ TEST_F(RendererTest, LightCenterDoesNotAffectMatrix)
 
 TEST_F(RendererTest, LightMatrixInWorldSpace)
 {
-    const Vector3 RADIUS(32, 32, 32);
+    const V3 RADIUS(32, 32, 32);
     Light light = Light::withRadius(RADIUS);
 
     // Set an origin
-    const Vector3 ORIGIN(128, 64, -192);
+    const V3 ORIGIN(128, 64, -192);
     light.entity->setKeyValue("origin", string::to_string(ORIGIN));
 
     // Light matrix should subtract the origin scaled to the light bounds (twice
     // the radius), then add the 0.5 offset to get to [0, 1].
     Matrix4 texMat = light.getMatrix();
-    const Vector3 BOUNDS = RADIUS * 2;
+    const V3 BOUNDS = RADIUS * 2;
     EXPECT_EQ(
         texMat,
         Matrix4::byRows(0.5 / RADIUS.x(), 0, 0, 0.5 - ORIGIN.x() / BOUNDS.x(),
@@ -152,9 +155,7 @@ TEST_F(RendererTest, LightMatrixInWorldSpace)
 TEST_F(RendererTest, SimpleProjectedLight)
 {
     // Create a light at the origin, pointing directly downwards
-    const Vector3 TARGET(0, 0, -8);
-    const Vector3 UP(0, 4, 0);
-    const Vector3 RIGHT(4, 0, 0);
+    const V3 TARGET(0, 0, -8), UP(0, 4, 0), RIGHT(4, 0, 0);
     Light light = Light::projected(TARGET, RIGHT, UP);
 
     // Inspect the matrix by transforming some key points into texture space.
@@ -167,8 +168,20 @@ TEST_F(RendererTest, SimpleProjectedLight)
     // coordinate must go to -INF or +INF in texture space. This is achieved in
     // projective space by setting the W coordinate to 0, while the X/Y/Z
     // coordinates are unchanged (and irrelevant).
-    const Vector4 origin = texMat.transform(Vector4(0, 0, 0, 1));
-    EXPECT_EQ(origin, Vector4(0, 0, 0, 0));
+    const V4 origin = texMat.transform(V4(0, 0, 0, 1));
+    EXPECT_EQ(origin, V4(0, 0, 0, 0));
+
+    // Any point on the Z=0 plane should also have the same W coordinate of 0
+    EXPECT_EQ(texMat.transform(V4(128, 456, 0, 1)).w(), 0);
+    EXPECT_EQ(texMat.transform(V4(9999, -500, 0, 1)).w(), 0);
+    EXPECT_EQ(texMat.transform(V4(0.004, 23.3445, 0, 1)).w(), 0);
+
+    // The W coordinate should increase linearly from 0 at the origin to 1 at
+    // the target plane.
+    EXPECT_EQ(texMat.transform(V4(0.25 * TARGET)).w(), 0.25);
+    EXPECT_EQ(texMat.transform(V4(0.5 * TARGET)).w(), 0.5);
+    EXPECT_EQ(texMat.transform(V4(0.75 * TARGET)).w(), 0.75);
+    EXPECT_EQ(texMat.transform(V4(TARGET)).w(), 1);
 }
 
 }
