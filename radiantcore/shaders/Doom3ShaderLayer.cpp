@@ -561,12 +561,20 @@ void Doom3ShaderLayer::setColourExpressionFromString(ColourComponentSelector com
 {
     auto expr = ShaderExpression::createFromString(expression);
 
-    if (!expr)
+    if (expr)
     {
-        return;
+        setColourExpression(component, expr);
     }
+}
 
-    setColourExpression(component, expr);
+void Doom3ShaderLayer::setConditionExpressionFromString(const std::string& expression)
+{
+    auto expr = ShaderExpression::createFromString(expression);
+
+    if (expr)
+    {
+        setCondition(expr);
+    }
 }
 
 }

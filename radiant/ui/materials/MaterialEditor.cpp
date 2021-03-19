@@ -484,7 +484,8 @@ void MaterialEditor::setupMaterialStageProperties()
     transformationPanel->GetSizer()->Add(_stageTransformView, 1, wxEXPAND);
 
     createExpressionBinding("MaterialStageCondition",
-        [](const IShaderLayer::Ptr& layer) { return layer->getConditionExpression(); });
+        [](const IShaderLayer::Ptr& layer) { return layer->getConditionExpression(); },
+        [](const IEditableShaderLayer::Ptr& layer, const std::string& value) { layer->setConditionExpressionFromString(value); });
 
     _stageBindings.emplace(std::make_shared<CheckBoxBinding<IShaderLayer::Ptr>>(getControl<wxCheckBox>("MaterialStageColored"),
         [](const IShaderLayer::Ptr& layer) { return (layer->getParseFlags() & IShaderLayer::PF_HasColoredKeyword) != 0; }));

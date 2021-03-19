@@ -421,4 +421,7 @@ public:
 
     // Set the colour expression from the given string
     virtual void setColourExpressionFromString(ColourComponentSelector component, const std::string& expression) = 0;
+
+    // Set the stage condition expression
+    virtual void setConditionExpressionFromString(const std::string& expression) = 0;
 };
