@@ -429,8 +429,15 @@ public:
     shaders::IMapExpression::Ptr getMapExpression() const override;
     void setMapExpressionFromString(const std::string& expression) override;
 
+    std::size_t addTransformation(TransformType type, const std::string& expression1, const std::string& expression2) override;
+    void removeTransformation(std::size_t index) override;
+    void updateTransformation(std::size_t index, TransformType type, const std::string& expression1, const std::string& expression2) override;
+
     int getParseFlags() const override;
     void setParseFlag(ParseFlags flag);
+
+private:
+    void recalculateTransformationMatrix();
 };
 
 }

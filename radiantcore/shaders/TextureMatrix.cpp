@@ -6,6 +6,18 @@
 namespace shaders
 {
 
+namespace
+{
+    inline void unlinkAndDeleteExpression(IShaderExpression::Ptr& expression)
+    {
+        if (expression)
+        {
+            expression->unlinkFromRegisters();
+            expression.reset();
+        }
+    }
+}
+
 struct TextureMatrix::TemporaryMatrix
 {
     IShaderExpression::Ptr xx;
@@ -30,6 +42,13 @@ void TextureMatrix::setIdentity()
     xy().registerIndex = REG_ZERO;
     yy().registerIndex = REG_ONE;
     ty().registerIndex = REG_ZERO;
+
+    unlinkAndDeleteExpression(xx().expression);
+    unlinkAndDeleteExpression(yx().expression);
+    unlinkAndDeleteExpression(tx().expression);
+    unlinkAndDeleteExpression(xy().expression);
+    unlinkAndDeleteExpression(yy().expression);
+    unlinkAndDeleteExpression(ty().expression);
 }
 
 Matrix4 TextureMatrix::getMatrix4()
@@ -154,6 +173,8 @@ void TextureMatrix::multiplyMatrix(const TemporaryMatrix& matrix)
 
 IShaderExpression::Ptr TextureMatrix::add(const IShaderExpression::Ptr& a, const IShaderExpression::Ptr& b)
 {
+    assert(a);
+    assert(b);
     return ShaderExpression::createAddition(a, b);
 }
 

@@ -468,8 +468,12 @@ void MaterialEditor::setupMaterialStageProperties()
         wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
     transformView->AppendTextColumn("Index", _stageTransformationColumns.index.getColumnIndex(),
         wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
-    transformView->AppendTextColumn("Expression", _stageTransformationColumns.expression.getColumnIndex(),
-        wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+    transformView->AppendTextColumn("Expr1", _stageTransformationColumns.expression1.getColumnIndex(),
+        wxDATAVIEW_CELL_EDITABLE, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+    transformView->AppendTextColumn("Expr2", _stageTransformationColumns.expression2.getColumnIndex(),
+        wxDATAVIEW_CELL_EDITABLE, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+
+    transformView->Bind(wxEVT_DATAVIEW_ITEM_EDITING_DONE, &MaterialEditor::_onStageTransformEdited, this);
 
     transformationPanel->GetSizer()->Add(transformView, 1, wxEXPAND);
 
@@ -492,9 +496,9 @@ void MaterialEditor::setupMaterialStageProperties()
     _stageProgramParameters = wxutil::TreeModel::Ptr(new wxutil::TreeModel(_stageProgramColumns, true));
 
     auto paramsView = wxutil::TreeView::CreateWithModel(parameterPanel, _stageProgramParameters.get(), wxDV_NO_HEADER);
-    paramsView->AppendTextColumn("Type", _stageProgramColumns.type.getColumnIndex(),
-        wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
     paramsView->AppendTextColumn("Index", _stageProgramColumns.index.getColumnIndex(),
+        wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+    paramsView->AppendTextColumn("Type", _stageProgramColumns.type.getColumnIndex(),
         wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
     paramsView->AppendTextColumn("Expression", _stageProgramColumns.expression.getColumnIndex(),
         wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
@@ -1019,17 +1023,10 @@ void MaterialEditor::updateStageTransformControls()
         row[_stageTransformationColumns.type] = shaders::getStringForTransformType(transformation.type);
         row[_stageTransformationColumns.index] = string::to_string(i);
 
-        if (transformation.expression1)
-        {
-            auto expression = transformation.expression1->getExpressionString();
-            row[_stageTransformationColumns.expression] = expression;
-        }
-        else
-        {
-            row[_stageTransformationColumns.expression] = std::string();
-        }
-
-        row[_stageTransformationColumns.expression] = expression;
+        row[_stageTransformationColumns.expression1] = transformation.expression1 ?
+            transformation.expression1->getExpressionString() : std::string();
+        row[_stageTransformationColumns.expression2] = transformation.expression2 ?
+            transformation.expression2->getExpressionString() : std::string();
 
         row.SendItemAdded();
     }
@@ -1186,6 +1183,49 @@ void MaterialEditor::_onAddStageTransform(wxCommandEvent& ev)
 
         updateStageControls();
     }
+}
+
+void MaterialEditor::_onStageTransformEdited(wxDataViewEvent& ev)
+{
+    if (ev.IsEditCancelled()) return;
+
+    auto stage = getEditableStageForSelection();
+
+    if (!stage) return;
+
+    wxutil::TreeModel::Row row(ev.GetItem(), *_stageTransformations);
+
+    // The iter points to the edited cell now, get the actor number
+    int transformIndex = row[_stageTransformationColumns.index].getInteger();
+    std::string transformTypeString = row[_stageTransformationColumns.type];
+
+    if (transformIndex < 0 || transformIndex > stage->getTransformations().size())
+    {
+        return;
+    }
+
+    std::string expression1, expression2;
+    auto type = shaders::getTransformTypeForString(transformTypeString);
+
+#if wxCHECK_VERSION(3, 1, 0)
+    // wx 3.1+ delivers the new value through the event
+    if (ev.GetColumn() == _stageTransformationColumns.expression1.getColumnIndex())
+    {
+        expression1 = ev.GetValue().GetString().ToStdString();
+        expression2 = row[_stageTransformationColumns.expression2];
+    }
+    else if (ev.GetColumn() == _stageTransformationColumns.expression2.getColumnIndex())
+    {
+        expression1 = row[_stageTransformationColumns.expression1];
+        expression2 = ev.GetValue().GetString().ToStdString();
+    }
+#else
+    // wx 3.0.x has the values set in the model
+    expression1 = row[_stageTransformationColumns.expression1];
+    expression2 = row[_stageTransformationColumns.expression2];
+#endif
+
+    stage->updateTransformation(transformIndex, type, expression1, expression2);
 }
 
 void MaterialEditor::onMaterialChanged()

@@ -74,6 +74,17 @@ BlendFunc blendFuncFromStrings(const StringPair& blendFunc)
     }
 }
 
+inline IShaderExpression::Ptr getDefaultExpressionForTransformType(IShaderLayer::TransformType type)
+{
+    if (type == IShaderLayer::TransformType::CenterScale ||
+        type == IShaderLayer::TransformType::Scale)
+    {
+        return ShaderExpression::createConstant(1);
+    }
+
+    return ShaderExpression::createConstant(0);
+}
+
 // IShaderLayer implementation
 
 const IShaderExpression::Ptr Doom3ShaderLayer::NULL_EXPRESSION;
@@ -265,11 +276,23 @@ void Doom3ShaderLayer::setColour(const Vector4& col)
 
 void Doom3ShaderLayer::appendTransformation(const Transformation& transform)
 {
+    Transformation copy(transform);
+
+    if (!copy.expression1)
+    {
+        copy.expression1 = getDefaultExpressionForTransformType(transform.type);
+    }
+
+    if (!copy.expression2 && transform.type != TransformType::Rotate)
+    {
+        copy.expression2 = getDefaultExpressionForTransformType(transform.type);
+    }
+
     // Store this original transformation, we need it later
-    _transformations.emplace_back(transform);
+    _transformations.emplace_back(copy);
 
     // Construct a transformation matrix and multiply it on top of the existing one
-    _textureMatrix.applyTransformation(transform);
+    _textureMatrix.applyTransformation(copy);
 }
 
 const std::vector<IShaderLayer::Transformation>& Doom3ShaderLayer::getTransformations()
@@ -478,6 +501,60 @@ void Doom3ShaderLayer::addVertexParm(const VertexParm& parm)
 
     // At this point the array needs to be empty or its size a multiple of 4
     assert(_vertexParms.size() % 4 == 0);
+}
+
+void Doom3ShaderLayer::recalculateTransformationMatrix()
+{
+    _textureMatrix.setIdentity();
+
+    for (const auto& transform : _transformations)
+    {
+        _textureMatrix.applyTransformation(transform);
+    }
+}
+
+std::size_t Doom3ShaderLayer::addTransformation(TransformType type, const std::string& expression1, const std::string& expression2)
+{
+    _transformations.emplace_back(Transformation
+    {
+        type,
+        ShaderExpression::createFromString(expression1),
+        type != TransformType::Rotate ? ShaderExpression::createFromString(expression2) : IShaderExpression::Ptr()
+    });
+
+    recalculateTransformationMatrix();
+
+    return _transformations.size() - 1;
+}
+
+void Doom3ShaderLayer::removeTransformation(std::size_t index)
+{
+    assert(index >= 0 && index < _transformations.size());
+
+    _transformations.erase(_transformations.begin() + index);
+
+    recalculateTransformationMatrix();
+}
+
+void Doom3ShaderLayer::updateTransformation(std::size_t index, TransformType type, const std::string& expression1, const std::string& expression2)
+{
+    assert(index >= 0 && index < _transformations.size());
+
+    _transformations[index].type = type;
+    auto expr1 = ShaderExpression::createFromString(expression1);
+    _transformations[index].expression1 = expr1 ? expr1 : getDefaultExpressionForTransformType(type);;
+
+    if (type != TransformType::Rotate)
+    {
+        auto expr2 = ShaderExpression::createFromString(expression2);
+        _transformations[index].expression2 = expr2 ? expr2 : getDefaultExpressionForTransformType(type);
+    }
+    else
+    {
+        _transformations[index].expression2.reset();
+    }
+
+    recalculateTransformationMatrix();
 }
 
 }

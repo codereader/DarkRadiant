@@ -407,4 +407,15 @@ public:
 
     // Update the "map" expression of this stage
     virtual void setMapExpressionFromString(const std::string& expression) = 0;
+
+    // Adds a empty transformation to this layer, returning its new index
+    virtual std::size_t addTransformation(TransformType type, const std::string& expression1, const std::string& expression2) = 0;
+
+    // Removes the indexed transformation
+    virtual void removeTransformation(std::size_t index) = 0;
+
+    // Set the type and expressions of the indexed transformation. The transformation index must not be
+    // out of bounds, use appendTransformation() to add new ones
+    virtual void updateTransformation(std::size_t index, TransformType type,
+        const std::string& expression1, const std::string& expression2) = 0;
 };

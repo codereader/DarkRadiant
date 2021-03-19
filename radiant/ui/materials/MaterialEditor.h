@@ -38,10 +38,10 @@ private:
     std::set<std::shared_ptr<Binding<IShaderLayer::Ptr>>> _stageBindings;
     std::map<Material::DeformType, wxPanel*> _deformPanels;
 
-    struct IndexedExpressionColumns :
+    struct StageProgramColumns :
         public wxutil::TreeModel::ColumnRecord
     {
-        IndexedExpressionColumns() :
+        StageProgramColumns() :
             type(add(wxutil::TreeModel::Column::String)),
             index(add(wxutil::TreeModel::Column::String)),
             expression(add(wxutil::TreeModel::Column::String))
@@ -52,10 +52,26 @@ private:
         wxutil::TreeModel::Column expression;
     };
 
-    IndexedExpressionColumns _stageProgramColumns;
+    struct StageTransformColumns :
+        public wxutil::TreeModel::ColumnRecord
+    {
+        StageTransformColumns() :
+            type(add(wxutil::TreeModel::Column::String)),
+            index(add(wxutil::TreeModel::Column::String)),
+            expression1(add(wxutil::TreeModel::Column::String)),
+            expression2(add(wxutil::TreeModel::Column::String))
+        {}
+
+        wxutil::TreeModel::Column type;
+        wxutil::TreeModel::Column index;
+        wxutil::TreeModel::Column expression1;
+        wxutil::TreeModel::Column expression2;
+    };
+
+    StageProgramColumns _stageProgramColumns;
     wxutil::TreeModel::Ptr _stageProgramParameters;
 
-    IndexedExpressionColumns _stageTransformationColumns;
+    StageTransformColumns _stageTransformationColumns;
     wxutil::TreeModel::Ptr _stageTransformations;
 
     bool _stageUpdateInProgress;
@@ -105,6 +121,7 @@ private:
     void _onStageListSelectionChanged(wxDataViewEvent& ev);
     void _onMaterialTypeChoice(wxCommandEvent& ev);
     void _onAddStageTransform(wxCommandEvent& ev);
+    void _onStageTransformEdited(wxDataViewEvent& ev);
 
     void onMaterialChanged();
 
