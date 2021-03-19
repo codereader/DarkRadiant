@@ -32,10 +32,6 @@ private:
     Registers _registers;
 
     // The expressions used in this stage
-    typedef std::vector<IShaderExpression::Ptr> Expressions;
-    // deprecated
-    Expressions _expressions;
-
     ExpressionSlots _expressionSlots;
 
     static const IShaderExpression::Ptr NULL_EXPRESSION;
@@ -76,22 +72,6 @@ private:
 
     // Handles the expressions used to calculcate the final texture matrix
     TextureMatrix _textureMatrix;
-
-    // The register indices of this stage's scale expressions
-    std::size_t _scale[2];
-    std::size_t _scaleExpression[2];
-
-    // The register indices of this stage's translate expressions
-    std::size_t _translation[2];
-    std::size_t _translationExpression[2];
-
-    // The rotation register index
-    std::size_t _rotation;
-    std::size_t _rotationExpression;
-
-    // The register indices of this stage's shear expressions
-    std::size_t _shear[2];
-    std::size_t _shearExpression[2];
 
     // The shader programs used in this stage
     std::string _vertexProgram;
@@ -163,14 +143,6 @@ public:
 
     void evaluateExpressions(std::size_t time) 
     {
-        for (const auto& expression : _expressions)
-        {
-            if (expression)
-            {
-                expression->evaluate(time);
-            }
-        }
-
         for (const auto& slot : _expressionSlots)
         {
             if (slot.expression)
@@ -190,14 +162,6 @@ public:
 
     void evaluateExpressions(std::size_t time, const IRenderEntity& entity)
     {
-        for (const auto& expression : _expressions)
-        {
-            if (expression)
-            {
-                expression->evaluate(time, entity);
-            }
-        }
-
         for (const auto& slot : _expressionSlots)
         {
             if (slot.expression)
@@ -372,131 +336,6 @@ public:
     const std::vector<Transformation>& getTransformations() override;
     Matrix4 getTextureTransform() override;
 
-    Vector2 getScale() const override
-    {
-        return Vector2(_registers[_scale[0]], _registers[_scale[1]]);
-    }
-
-    const shaders::IShaderExpression::Ptr& getScaleExpression(std::size_t index) const override
-    {
-        assert(index < 2);
-
-        if (getStageFlags() & FLAG_CENTERSCALE)
-        {
-            return NULL_EXPRESSION;
-        }
-
-        auto expressionIndex = _scaleExpression[index];
-        return expressionIndex != NOT_DEFINED ? _expressions[expressionIndex] : NULL_EXPRESSION;
-    }
-
-    const shaders::IShaderExpression::Ptr& getCenterScaleExpression(std::size_t index) const override
-    {
-        assert(index < 2);
-        
-        if ((getStageFlags() & FLAG_CENTERSCALE) == 0)
-        {
-            return NULL_EXPRESSION;
-        }
-
-        auto expressionIndex = _scaleExpression[index];
-        return expressionIndex != NOT_DEFINED ? _expressions[expressionIndex] : NULL_EXPRESSION;
-    }
-
-    /**
-     * Set the scale expressions of this stage, overwriting any previous scales.
-     */
-    void setScale(const IShaderExpression::Ptr& xExpr, const IShaderExpression::Ptr& yExpr)
-    {
-        _scaleExpression[0] = _expressions.size();
-        _expressions.emplace_back(xExpr);
-        _scaleExpression[1] = _expressions.size();
-        _expressions.emplace_back(yExpr);
-
-        _scale[0] = xExpr->linkToRegister(_registers);
-        _scale[1] = yExpr->linkToRegister(_registers);
-    }
-
-    Vector2 getTranslation() const override
-    {
-        return Vector2(_registers[_translation[0]], _registers[_translation[1]]);
-    }
-
-    const shaders::IShaderExpression::Ptr& getTranslationExpression(std::size_t index) const override
-    {
-        assert(index < 2);
-        auto expressionIndex = _translationExpression[index];
-        return expressionIndex != NOT_DEFINED ? _expressions[expressionIndex] : NULL_EXPRESSION;
-    }
-
-    void setTranslationExpressionFromString(std::size_t index, const std::string& expressionString) override
-    {
-        assert(index < 2);
-
-        assignExpressionFromString(expressionString, _translationExpression[index], _translation[index], REG_ZERO);
-    }
-
-    /**
-     * Set the "translate" expressions of this stage, overwriting any previous expressions.
-     */
-    void setTranslation(const IShaderExpression::Ptr& xExpr, const IShaderExpression::Ptr& yExpr)
-    {
-        _translationExpression[0] = _expressions.size();
-        _expressions.emplace_back(xExpr);
-        _translationExpression[1] = _expressions.size();
-        _expressions.emplace_back(yExpr);
-
-        _translation[0] = xExpr->linkToRegister(_registers);
-        _translation[1] = yExpr->linkToRegister(_registers);
-    }
-
-    float getRotation() const override
-    {
-        return _registers[_rotation];
-    }
-
-    const shaders::IShaderExpression::Ptr& getRotationExpression() const override
-    {
-        return _rotationExpression != NOT_DEFINED ? _expressions[_rotationExpression] : NULL_EXPRESSION;
-    }
-
-    /**
-     * Set the "rotate" expression of this stage, overwriting any previous one.
-     */
-    void setRotation(const IShaderExpression::Ptr& expr)
-    {
-        _rotationExpression = _expressions.size();
-        _expressions.emplace_back(expr);
-
-        _rotation = expr->linkToRegister(_registers);
-    }
-
-    Vector2 getShear() const override
-    {
-        return Vector2(_registers[_shear[0]], _registers[_shear[1]]);
-    }
-
-    const shaders::IShaderExpression::Ptr& getShearExpression(std::size_t index) const override
-    {
-        assert(index < 2);
-        auto expressionIndex = _shearExpression[index];
-        return expressionIndex != NOT_DEFINED ? _expressions[expressionIndex] : NULL_EXPRESSION;
-    }
-
-    /**
-     * Set the shear expressions of this stage, overwriting any previous ones.
-     */
-    void setShear(const IShaderExpression::Ptr& xExpr, const IShaderExpression::Ptr& yExpr)
-    {
-        _shearExpression[0] = _expressions.size();
-        _expressions.emplace_back(xExpr);
-        _shearExpression[1] = _expressions.size();
-        _expressions.emplace_back(yExpr);
-
-        _shear[0] = xExpr->linkToRegister(_registers);
-        _shear[1] = yExpr->linkToRegister(_registers);
-    }
-
     /**
      * \brief
      * Set cube map mode.
@@ -592,13 +431,6 @@ public:
 
     int getParseFlags() const override;
     void setParseFlag(ParseFlags flag);
-
-private:
-    void assignExpression(const IShaderExpression::Ptr& expression,
-        std::size_t& expressionIndex, std::size_t& registerIndex, std::size_t defaultRegisterIndex);
-
-    void assignExpressionFromString(const std::string& expressionString, 
-        std::size_t& expressionIndex, std::size_t& registerIndex, std::size_t defaultRegisterIndex);
 };
 
 }

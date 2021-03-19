@@ -80,8 +80,7 @@ public:
 		FLAG_MASK_BLUE				= 1 << 8,
 		FLAG_MASK_ALPHA				= 1 << 9,
 		FLAG_MASK_DEPTH				= 1 << 10,
-		FLAG_CENTERSCALE			= 1 << 11,  // whether to translate -0.5, scale and translate +0.5
-		FLAG_IGNORE_DEPTH			= 1 << 12,  // use depthfunc always
+		FLAG_IGNORE_DEPTH			= 1 << 11,  // use depthfunc always
 	};
 
 	enum TexGenType
@@ -291,46 +290,7 @@ public:
     // Returns the current texture matrix
     virtual Matrix4 getTextureTransform() = 0;
 
-	/**
-	 * Returns the value of the scale expressions of this stage.
-	 */
-	virtual Vector2 getScale() const = 0;
-
-    // Returns the expression of the given scale component (0 == x, 1 == y)
-    virtual const shaders::IShaderExpression::Ptr& getScaleExpression(std::size_t index) const = 0;
-
-    // Workaround: the shader layer is storing the centerscale expression in the same location as scale expressions,
-    // making them mutually exclusive - which is not the way the idTech4 materials work.
-    // These stage transforms need to be redesigned to support an arbitrary number of transforms respecting their order.
-    // Texture Matrix calculation needs to be performed by the stage itself, not in OpenGLShaderPass
-    // I need to go ahead with the material editor, so I'm not changing it immediately
-    virtual const shaders::IShaderExpression::Ptr& getCenterScaleExpression(std::size_t index) const = 0;
-
-	/**
-	 * Returns the value of the translate expressions of this stage.
-	 */
-	virtual Vector2 getTranslation() const = 0;
-
-    // Returns the expression of the given translation component (0 == x, 1 == y)
-    virtual const shaders::IShaderExpression::Ptr& getTranslationExpression(std::size_t index) const = 0;
-
-	/**
-	 * Returns the value of the rotate expression of this stage.
-	 */
-	virtual float getRotation() const = 0;
-
-    // Returns the expression used to calculate the rotation value
-    virtual const shaders::IShaderExpression::Ptr& getRotationExpression() const = 0;
-
-	/**
-	 * Returns the value of the 'shear' expressions of this stage.
-	 */
-	virtual Vector2 getShear() const = 0;
-
-    // Returns the expression of the given shear component (0 == x, 1 == y)
-    virtual const shaders::IShaderExpression::Ptr& getShearExpression(std::size_t index) const = 0;
-
-    // Returns true if this layer has an alphatest expression defined
+	// Returns true if this layer has an alphatest expression defined
     virtual bool hasAlphaTest() const = 0;
 
     /**
@@ -441,9 +401,6 @@ public:
     using Ptr = std::shared_ptr<IEditableShaderLayer>;
 
     virtual ~IEditableShaderLayer() {}
-
-    // Set the translation expression [0..1] to the given string
-    virtual void setTranslationExpressionFromString(std::size_t index, const std::string& expression) = 0;
 
     // Set the alpha test expression from the given string
     virtual void setAlphaTestExpressionFromString(const std::string& expression) = 0;

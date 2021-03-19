@@ -110,23 +110,6 @@ Doom3ShaderLayer::Doom3ShaderLayer(ShaderTemplate& material, IShaderLayer::Type 
     // Initialise the texture matrix to an identity transform
     _textureMatrix.setIdentity();
 
-	// Scale is set to 1,1 by default
-	_scale[0] = _scale[1] = REG_ONE;
-    _scaleExpression[0] = _scaleExpression[1] = NOT_DEFINED;
-
-	// Translation is set to 0,0 by default
-	_translation[0] = _translation[1] = REG_ZERO;
-    _translationExpression[0] = _translationExpression[1] = NOT_DEFINED;
-
-	// Rotation is set to 0 by default
-	_rotation = REG_ZERO;
-    _rotationExpression = NOT_DEFINED;
-
-	// No shearing so far
-	_shear[0] = REG_ZERO;
-	_shear[1] = REG_ZERO;
-    _shearExpression[0] = _shearExpression[1] = NOT_DEFINED;
-
     _expressionSlots[Expression::TexGenParam1].registerIndex = REG_ZERO;
     _expressionSlots[Expression::TexGenParam2].registerIndex = REG_ZERO;
     _expressionSlots[Expression::TexGenParam3].registerIndex = REG_ZERO;
@@ -135,7 +118,6 @@ Doom3ShaderLayer::Doom3ShaderLayer(ShaderTemplate& material, IShaderLayer::Type 
 Doom3ShaderLayer::Doom3ShaderLayer(const Doom3ShaderLayer& other, ShaderTemplate& material) :
     _material(material),
     _registers(other._registers),
-    _expressions(other._expressions),
     _expressionSlots(other._expressionSlots, _registers),
     _bindableTex(other._bindableTex),
     _texture(other._texture),
@@ -148,8 +130,6 @@ Doom3ShaderLayer::Doom3ShaderLayer(const Doom3ShaderLayer& other, ShaderTemplate
     _clampType(other._clampType),
     _texGenType(other._texGenType),
     _textureMatrix(_expressionSlots, _registers), // no copying necessary
-    _rotation(other._rotation),
-    _rotationExpression(other._rotationExpression),
     _vertexProgram(other._vertexProgram),
     _fragmentProgram(other._fragmentProgram),
     _vertexParms(other._vertexParms),
@@ -158,22 +138,7 @@ Doom3ShaderLayer::Doom3ShaderLayer(const Doom3ShaderLayer& other, ShaderTemplate
     _privatePolygonOffset(other._privatePolygonOffset),
     _renderMapSize(other._renderMapSize),
     _parseFlags(other._parseFlags)
-{
-    _scale[0] = other._scale[0];
-    _scale[1] = other._scale[1];
-    _scaleExpression[0] = other._scaleExpression[0];
-    _scaleExpression[1] = other._scaleExpression[1];
-
-    _translation[0] = other._translation[0];
-    _translation[1] = other._translation[1];
-    _translationExpression[0] = other._translationExpression[0];
-    _translationExpression[1] = other._translationExpression[1];
-
-    _shear[0] = other._shear[0];
-    _shear[1] = other._shear[1];
-    _shearExpression[0] = other._shearExpression[0];
-    _shearExpression[1] = other._shearExpression[1];
-}
+{}
 
 TexturePtr Doom3ShaderLayer::getTexture() const
 {
@@ -512,73 +477,6 @@ void Doom3ShaderLayer::addVertexParm(const VertexParm& parm)
 
     // At this point the array needs to be empty or its size a multiple of 4
     assert(_vertexParms.size() % 4 == 0);
-}
-
-void Doom3ShaderLayer::assignExpression(const IShaderExpression::Ptr& expression,
-    std::size_t& expressionIndex, std::size_t& registerIndex, std::size_t defaultRegisterIndex)
-{
-    if (!expression)
-    {
-        // Assigning an empty expression will reset the slot to NOT_DEFINED
-        if (expressionIndex != NOT_DEFINED)
-        {
-            // Release the previous expression
-            assert(_expressions[expressionIndex]);
-
-            _expressions[expressionIndex]->unlinkFromRegisters();
-            _expressions[expressionIndex].reset();
-        }
-
-        expressionIndex = NOT_DEFINED;
-        registerIndex = defaultRegisterIndex;
-        return;
-    }
-
-    // Non-empty expression, overwrite if we have an existing expression in the slot
-    if (expressionIndex != NOT_DEFINED)
-    {
-        // Try to re-use the previous register position
-        auto previousExpression = _expressions[expressionIndex];
-        _expressions[expressionIndex] = expression;
-
-        if (previousExpression->isLinked())
-        {
-            registerIndex = previousExpression->unlinkFromRegisters();
-            expression->linkToSpecificRegister(_registers, registerIndex);
-        }
-        else
-        {
-            registerIndex = expression->linkToRegister(_registers);
-        }
-    }
-    else
-    {
-        expressionIndex = _expressions.size();
-        _expressions.emplace_back(expression);
-
-        registerIndex = expression->linkToRegister(_registers);
-    }
-}
-
-void Doom3ShaderLayer::assignExpressionFromString(const std::string& expressionString, 
-    std::size_t& expressionIndex, std::size_t& registerIndex, std::size_t defaultRegisterIndex)
-{
-    // An empty string will clear the expression
-    if (expressionString.empty())
-    {
-        assignExpression(IShaderExpression::Ptr(), expressionIndex, registerIndex, defaultRegisterIndex);
-        return;
-    }
-
-    // Attempt to parse the string
-    auto expression = ShaderExpression::createFromString(expressionString);
-
-    if (!expression)
-    {
-        return; // parsing failures will not overwrite the expression slot
-    }
-
-    assignExpression(expression, expressionIndex, registerIndex, defaultRegisterIndex);
 }
 
 }

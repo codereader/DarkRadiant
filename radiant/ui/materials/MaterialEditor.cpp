@@ -451,31 +451,6 @@ void MaterialEditor::setupMaterialStageProperties()
         texgenDropdown->AppendString(pair.first);
     }
 
-    createExpressionBinding("MaterialStageTranslateX",
-        [](const IShaderLayer::Ptr& layer) { return layer->getTranslationExpression(0); },
-        [](const IEditableShaderLayer::Ptr& layer, const std::string& value) { layer->setTranslationExpressionFromString(0, value); });
-    createExpressionBinding("MaterialStageTranslateY",
-        [](const IShaderLayer::Ptr& layer) { return layer->getTranslationExpression(1); },
-        [](const IEditableShaderLayer::Ptr& layer, const std::string& value) { layer->setTranslationExpressionFromString(1, value); });
-
-    createExpressionBinding("MaterialStageScaleX",
-        [](const IShaderLayer::Ptr& layer) { return layer->getScaleExpression(0); });
-    createExpressionBinding("MaterialStageScaleY",
-        [](const IShaderLayer::Ptr& layer) { return layer->getScaleExpression(1); });
-
-    createExpressionBinding("MaterialStageCenterScaleX",
-        [](const IShaderLayer::Ptr& layer) { return layer->getCenterScaleExpression(0); });
-    createExpressionBinding("MaterialStageCenterScaleY",
-        [](const IShaderLayer::Ptr& layer) { return layer->getCenterScaleExpression(1); });
-
-    createExpressionBinding("MaterialStageShearX",
-        [](const IShaderLayer::Ptr& layer) { return layer->getShearExpression(0); });
-    createExpressionBinding("MaterialStageShearY",
-        [](const IShaderLayer::Ptr& layer) { return layer->getShearExpression(1); });
-
-    createExpressionBinding("MaterialStageRotate",
-        [](const IShaderLayer::Ptr& layer) { return layer->getRotationExpression(); });
-
     createExpressionBinding("MaterialStageCondition",
         [](const IShaderLayer::Ptr& layer) { return layer->getConditionExpression(); });
 
