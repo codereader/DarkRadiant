@@ -82,6 +82,10 @@ public:
 
     // Returns the string this expression has been parsed from
     virtual std::string getExpressionString() = 0;
+
+    // Clone this expression and all possible sub-expressions
+    // The cloned expression will not be linked to any register
+    virtual IShaderExpression::Ptr clone() const = 0;
 };
 
 // Interface of a material expression used to specify a map image

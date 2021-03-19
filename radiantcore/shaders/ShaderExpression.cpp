@@ -379,11 +379,11 @@ private:
 		}
 		else if (token == "<")
 		{
-			return std::make_shared<LesserThanExpression>();
+			return std::make_shared<LessThanExpression>();
 		}
 		else if (token == "<=")
 		{
-			return std::make_shared<LesserThanOrEqualExpression>();
+			return std::make_shared<LessThanOrEqualExpression>();
 		}
 		else if (token == ">")
 		{
