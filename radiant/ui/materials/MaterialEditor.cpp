@@ -490,13 +490,17 @@ void MaterialEditor::setupMaterialStageProperties()
         [](const IShaderLayer::Ptr& layer) { return (layer->getParseFlags() & IShaderLayer::PF_HasColoredKeyword) != 0; }));
 
     createExpressionBinding("MaterialStageRed",
-        [](const IShaderLayer::Ptr& layer) { return layer->getColourExpression(IShaderLayer::COMP_RED); });
+        [](const IShaderLayer::Ptr& layer) { return layer->getColourExpression(IShaderLayer::COMP_RED); },
+        [](const IEditableShaderLayer::Ptr& layer, const std::string& value) { layer->setColourExpressionFromString(IShaderLayer::COMP_RED, value); });
     createExpressionBinding("MaterialStageGreen",
-        [](const IShaderLayer::Ptr& layer) { return layer->getColourExpression(IShaderLayer::COMP_GREEN); });
+        [](const IShaderLayer::Ptr& layer) { return layer->getColourExpression(IShaderLayer::COMP_GREEN); },
+        [](const IEditableShaderLayer::Ptr& layer, const std::string& value) { layer->setColourExpressionFromString(IShaderLayer::COMP_GREEN, value); });
     createExpressionBinding("MaterialStageBlue",
-        [](const IShaderLayer::Ptr& layer) { return layer->getColourExpression(IShaderLayer::COMP_BLUE); });
+        [](const IShaderLayer::Ptr& layer) { return layer->getColourExpression(IShaderLayer::COMP_BLUE); },
+        [](const IEditableShaderLayer::Ptr& layer, const std::string& value) { layer->setColourExpressionFromString(IShaderLayer::COMP_BLUE, value); });
     createExpressionBinding("MaterialStageAlpha",
-        [](const IShaderLayer::Ptr& layer) { return layer->getColourExpression(IShaderLayer::COMP_ALPHA); });
+        [](const IShaderLayer::Ptr& layer) { return layer->getColourExpression(IShaderLayer::COMP_ALPHA); },
+        [](const IEditableShaderLayer::Ptr& layer, const std::string& value) { layer->setColourExpressionFromString(IShaderLayer::COMP_ALPHA, value); });
 
     auto parameterPanel = getControl<wxPanel>("MaterialStageProgramParameters");
     _stageProgramParameters = wxutil::TreeModel::Ptr(new wxutil::TreeModel(_stageProgramColumns, true));

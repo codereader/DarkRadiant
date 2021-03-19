@@ -418,4 +418,7 @@ public:
     // out of bounds, use appendTransformation() to add new ones
     virtual void updateTransformation(std::size_t index, TransformType type,
         const std::string& expression1, const std::string& expression2) = 0;
+
+    // Set the colour expression from the given string
+    virtual void setColourExpressionFromString(ColourComponentSelector component, const std::string& expression) = 0;
 };
