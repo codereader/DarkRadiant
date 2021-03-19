@@ -73,6 +73,7 @@ private:
 
     StageTransformColumns _stageTransformationColumns;
     wxutil::TreeModel::Ptr _stageTransformations;
+    wxutil::TreeView* _stageTransformView;
 
     bool _stageUpdateInProgress;
 
@@ -121,6 +122,7 @@ private:
     void _onStageListSelectionChanged(wxDataViewEvent& ev);
     void _onMaterialTypeChoice(wxCommandEvent& ev);
     void _onAddStageTransform(wxCommandEvent& ev);
+    void _onRemoveStageTransform(wxCommandEvent& ev);
     void _onStageTransformEdited(wxDataViewEvent& ev);
 
     void onMaterialChanged();

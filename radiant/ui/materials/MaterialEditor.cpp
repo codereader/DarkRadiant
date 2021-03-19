@@ -458,24 +458,29 @@ void MaterialEditor::setupMaterialStageProperties()
     }
 
     getControl<wxButton>("MaterialStageAddTransformButton")->Bind(wxEVT_BUTTON, &MaterialEditor::_onAddStageTransform, this);
+    getControl<wxButton>("MaterialStageRemoveTransformButton")->Bind(wxEVT_BUTTON, &MaterialEditor::_onRemoveStageTransform, this);
 
     // Add the transformation listview
     auto transformationPanel = getControl<wxPanel>("MaterialStageTransformations");
     _stageTransformations = wxutil::TreeModel::Ptr(new wxutil::TreeModel(_stageTransformationColumns, true));
 
-    auto transformView = wxutil::TreeView::CreateWithModel(transformationPanel, _stageTransformations.get(), wxDV_NO_HEADER);
-    transformView->AppendTextColumn("Type", _stageTransformationColumns.type.getColumnIndex(),
+    _stageTransformView = wxutil::TreeView::CreateWithModel(transformationPanel, _stageTransformations.get(), wxDV_NO_HEADER);
+    _stageTransformView->AppendTextColumn("Type", _stageTransformationColumns.type.getColumnIndex(),
         wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
-    transformView->AppendTextColumn("Index", _stageTransformationColumns.index.getColumnIndex(),
+    _stageTransformView->AppendTextColumn("Index", _stageTransformationColumns.index.getColumnIndex(),
         wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
-    transformView->AppendTextColumn("Expr1", _stageTransformationColumns.expression1.getColumnIndex(),
+    _stageTransformView->AppendTextColumn("Expr1", _stageTransformationColumns.expression1.getColumnIndex(),
         wxDATAVIEW_CELL_EDITABLE, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
-    transformView->AppendTextColumn("Expr2", _stageTransformationColumns.expression2.getColumnIndex(),
+    _stageTransformView->AppendTextColumn("Expr2", _stageTransformationColumns.expression2.getColumnIndex(),
         wxDATAVIEW_CELL_EDITABLE, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
-    transformView->Bind(wxEVT_DATAVIEW_ITEM_EDITING_DONE, &MaterialEditor::_onStageTransformEdited, this);
+    _stageTransformView->Bind(wxEVT_DATAVIEW_ITEM_EDITING_DONE, &MaterialEditor::_onStageTransformEdited, this);
+    _stageTransformView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, [this] (wxDataViewEvent&)
+    {
+        getControl<wxButton>("MaterialStageRemoveTransformButton")->Enable(_stageTransformView->GetSelection().IsOk());
+    });
 
-    transformationPanel->GetSizer()->Add(transformView, 1, wxEXPAND);
+    transformationPanel->GetSizer()->Add(_stageTransformView, 1, wxEXPAND);
 
     createExpressionBinding("MaterialStageCondition",
         [](const IShaderLayer::Ptr& layer) { return layer->getConditionExpression(); });
@@ -1012,6 +1017,8 @@ void MaterialEditor::updateStageTransformControls()
         return;
     }
 
+    getControl<wxButton>("MaterialStageRemoveTransformButton")->Enable(_stageTransformView->GetSelection().IsOk());
+
     const auto& transformations = selectedStage->getTransformations();
 
     for (int i = 0; i < transformations.size(); ++i)
@@ -1180,6 +1187,21 @@ void MaterialEditor::_onAddStageTransform(wxCommandEvent& ev)
         auto type = shaders::getTransformTypeForString(typeString.ToStdString());
 
         selectedStage->appendTransformation(IShaderLayer::Transformation{ type });
+
+        updateStageControls();
+    }
+}
+
+void MaterialEditor::_onRemoveStageTransform(wxCommandEvent& ev)
+{
+    auto stage = getEditableStageForSelection();
+
+    if (stage && _stageTransformView->GetSelection().IsOk())
+    {
+        wxutil::TreeModel::Row row(_stageTransformView->GetSelection(), *_stageTransformations);
+
+        auto index = row[_stageTransformationColumns.index].getInteger();
+        stage->removeTransformation(index);
 
         updateStageControls();
     }
