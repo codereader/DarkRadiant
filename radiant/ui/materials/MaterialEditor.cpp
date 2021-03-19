@@ -371,7 +371,11 @@ void MaterialEditor::createExpressionBinding(const std::string& textCtrlName,
 {
     _stageBindings.emplace(std::make_shared<ExpressionBinding>(
         getControl<wxTextCtrl>(textCtrlName),
-        loadFunc,
+        [loadFunc] (const IShaderLayer::Ptr& layer) 
+        {
+            auto expr = loadFunc(layer);
+            return expr ? expr->getExpressionString() : std::string();
+        },
         std::bind(&MaterialEditor::getEditableStageForSelection, this),
         saveFunc,
         std::bind(&MaterialEditor::onMaterialChanged, this)));

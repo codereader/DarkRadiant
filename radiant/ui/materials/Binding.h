@@ -63,6 +63,59 @@ protected:
     }
 };
 
+template<typename ValueType>
+class TwoWayStageBinding :
+    public TwoWayBinding<IShaderLayer::Ptr, IEditableShaderLayer::Ptr>
+{
+protected:
+    std::function<ValueType(const IShaderLayer::Ptr&)> _getValue;
+    std::function<void(const IEditableShaderLayer::Ptr&, ValueType)> _updateValue;
+    std::function<void()> _postChangeNotify;
+
+public:
+    TwoWayStageBinding(const std::function<ValueType(const IShaderLayer::Ptr&)>& loadFunc,
+        const std::function<IEditableShaderLayer::Ptr()>& acquireSaveTarget,
+        const std::function<void(const IEditableShaderLayer::Ptr&, ValueType)>& saveFunc,
+        const std::function<void()>& postChangeNotify = std::function<void()>()) :
+        TwoWayBinding(acquireSaveTarget),
+        _getValue(loadFunc),
+        _updateValue(saveFunc),
+        _postChangeNotify(postChangeNotify)
+    {}
+
+protected:
+    // Just load the given value into the control
+    virtual void setValueOnControl(const ValueType& value) = 0;
+
+    virtual void updateFromSource() override
+    {
+        util::ScopedBoolLock lock(_blockUpdates);
+
+        if (!getSource())
+        {
+            setValueOnControl(ValueType());
+            return;
+        }
+
+        setValueOnControl(_getValue(getSource()));
+    }
+
+    virtual void updateValueOnTarget(const ValueType& newValue)
+    {
+        auto target = getTarget();
+
+        if (target)
+        {
+            _updateValue(target, newValue);
+        }
+
+        if (_postChangeNotify)
+        {
+            _postChangeNotify();
+        }
+    }
+};
+
 template<typename Source>
 class CheckBoxBinding :
     public Binding<Source>
