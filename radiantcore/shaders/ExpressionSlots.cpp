@@ -12,9 +12,23 @@ ExpressionSlots::ExpressionSlots(Registers& registers) :
 }
 
 ExpressionSlots::ExpressionSlots(const ExpressionSlots& other, Registers& registers) :
-    std::vector<ExpressionSlot>(other), // copy all expression slots
+    std::vector<ExpressionSlot>(other.size()),
     _registers(registers)
-{}
+{
+    for (auto i = 0; i < other.size(); ++i)
+    {
+        auto& thisSlot = at(i);
+        auto& otherSlot = other.at(i);
+
+        thisSlot.registerIndex = otherSlot.registerIndex;
+
+        if (otherSlot.expression)
+        {
+            thisSlot.expression = otherSlot.expression->clone();
+            thisSlot.expression->linkToSpecificRegister(_registers, thisSlot.registerIndex);
+        }
+    }
+}
 
 void ExpressionSlots::assign(IShaderLayer::Expression::Slot slot, const IShaderExpression::Ptr& newExpression, std::size_t defaultRegisterIndex)
 {

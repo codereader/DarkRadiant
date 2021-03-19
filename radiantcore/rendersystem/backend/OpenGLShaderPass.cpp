@@ -155,60 +155,7 @@ void OpenGLShaderPass::setupTextureMatrix(GLenum textureUnit, const IShaderLayer
 
     if (stage)
     {
-        static const Matrix4 transMinusHalf = Matrix4::getTranslation(Vector3(-0.5f, -0.5f, 0));
-        static const Matrix4 transPlusHalf = Matrix4::getTranslation(Vector3(+0.5f, +0.5f, 0));
-
-        Matrix4 tex = Matrix4::getIdentity();
-
-        Vector2 scale = stage->getScale();
-
-        if (stage->getStageFlags() & IShaderLayer::FLAG_CENTERSCALE)
-        {
-            // Center scale, apply translation by -0.5 first, then scale, then translate back
-            tex.multiplyBy(transMinusHalf);
-            tex.multiplyBy(Matrix4::getScale(Vector3(scale.x(), scale.y(), 1)));
-            tex.multiplyBy(transPlusHalf);
-        }
-        else
-        {
-            // Regular scale, apply translation and scale
-            tex.multiplyBy(Matrix4::getScale(Vector3(scale.x(), scale.y(), 1)));
-        }
-
-        Vector2 shear = stage->getShear();
-
-        if (shear.x() != 0 || shear.y() != 0)
-        {
-            Matrix4 shearMatrix = Matrix4::byColumns(
-                1, shear.y(), 0, 0,
-                shear.x(), 1, 0, 0,
-                0, 0, 1, 0,
-                0, 0, 0, 1
-            );
-
-            tex.multiplyBy(transMinusHalf);
-            tex.multiplyBy(shearMatrix);
-            tex.multiplyBy(transPlusHalf);
-        }
-
-        // Rotation
-        float rotate = stage->getRotation();
-
-        if (rotate != 0)
-        {
-            float angle = rotate * 2 * static_cast<float>(c_pi);
-
-            Matrix4 rot = Matrix4::getRotationAboutZ(angle);
-
-            tex.multiplyBy(transMinusHalf);
-            tex.multiplyBy(rot);
-            tex.multiplyBy(transPlusHalf);
-        }
-
-        // Apply translation as last step
-        Vector2 translation = stage->getTranslation();
-        tex.multiplyBy(Matrix4::getTranslation(Vector3(translation.x(), translation.y(), 0)));
-
+        auto tex = stage->getTextureTransform();
         glLoadMatrixd(tex);
     }
     else
