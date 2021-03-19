@@ -575,34 +575,15 @@ void Doom3ShaderLayer::setColourExpressionFromString(ColourComponentSelector com
 
 void Doom3ShaderLayer::setConditionExpressionFromString(const std::string& expression)
 {
-    if (expression.empty())
-    {
-        setCondition(IShaderExpression::Ptr());
-        return;
-    }
-
-    auto expr = ShaderExpression::createFromString(expression);
-
-    if (expr)
-    {
-        setCondition(expr);
-    }
+    _expressionSlots.assignFromString(Expression::Condition, expression, REG_ONE);
 }
 
 void Doom3ShaderLayer::setTexGenExpressionFromString(std::size_t index, const std::string& expression)
 {
-    if (expression.empty())
-    {
-        setTexGenExpression(index, IShaderExpression::Ptr());
-        return;
-    }
+    assert(index < 3);
 
-    auto expr = ShaderExpression::createFromString(expression);
-
-    if (expr)
-    {
-        setTexGenExpression(index, expr);
-    }
+    auto slot = static_cast<Expression::Slot>(Expression::TexGenParam1 + index);
+    _expressionSlots.assignFromString(slot, expression, REG_ZERO);
 }
 
 }
