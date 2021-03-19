@@ -58,7 +58,8 @@ MaterialEditor::MaterialEditor() :
     _treeView(nullptr),
     _stageList(new wxutil::TreeModel(STAGE_COLS(), true)),
     _stageView(nullptr),
-    _stageUpdateInProgress(false)
+    _stageUpdateInProgress(false),
+    _materialUpdateInProgress(false)
 {
     loadNamedPanel(this, "MaterialEditorMainPanel");
 
@@ -170,7 +171,7 @@ void MaterialEditor::setupMaterialProperties()
     auto description = getControl<wxTextCtrl>("MaterialDescription");
     description->Bind(wxEVT_TEXT, [description, this](wxCommandEvent& ev)
     {
-        if (_material)
+        if (_material && !_materialUpdateInProgress)
         {
             _material->setDescription(description->GetValue().ToStdString());
         }
@@ -533,6 +534,8 @@ void MaterialEditor::_onStageListSelectionChanged(wxDataViewEvent& ev)
 
 void MaterialEditor::updateControlsFromMaterial()
 {
+    util::ScopedBoolLock lock(_materialUpdateInProgress);
+
     _preview->setMaterial(_material);
 
     updateMaterialPropertiesFromMaterial();

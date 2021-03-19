@@ -76,6 +76,7 @@ private:
     wxutil::TreeView* _stageTransformView;
 
     bool _stageUpdateInProgress;
+    bool _materialUpdateInProgress;
 
 private:
     MaterialEditor();
