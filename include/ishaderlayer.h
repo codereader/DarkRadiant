@@ -424,6 +424,12 @@ public:
 
     // Set the stage condition expression
     virtual void setConditionExpressionFromString(const std::string& expression) = 0;
+    
+    // Sets the texgen type of this stage
+    virtual void setTexGenType(TexGenType type) = 0;
+
+    // Set the texgen expression (used for wobblesky)
+    virtual void setTexGenExpressionFromString(std::size_t index, const std::string& expression) = 0;
 
     // Set the vertex colour mode of this stage
     virtual void setVertexColourMode(VertexColourMode mode) = 0;

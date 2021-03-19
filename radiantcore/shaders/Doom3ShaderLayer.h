@@ -255,7 +255,7 @@ public:
         return _texGenType;
     }
 
-    void setTexGenType(TexGenType type)
+    void setTexGenType(TexGenType type) override
     {
         _texGenType = type;
     }
@@ -434,6 +434,7 @@ public:
     void updateTransformation(std::size_t index, TransformType type, const std::string& expression1, const std::string& expression2) override;
     void setColourExpressionFromString(ColourComponentSelector component, const std::string& expression) override;
     void setConditionExpressionFromString(const std::string& expression) override;
+    void setTexGenExpressionFromString(std::size_t index, const std::string& expression) override;
 
     int getParseFlags() const override;
     void setParseFlag(ParseFlags flag);

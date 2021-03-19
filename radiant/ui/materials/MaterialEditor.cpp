@@ -470,6 +470,36 @@ void MaterialEditor::setupMaterialStageProperties()
         texgenDropdown->AppendString(pair.first);
     }
 
+    texgenDropdown->Bind(wxEVT_CHOICE, [this, texgenDropdown](wxCommandEvent& ev)
+    {
+        auto stage = getEditableStageForSelection();
+
+        if (stage)
+        {
+            stage->setTexGenType(shaders::getTexGenTypeForString(texgenDropdown->GetStringSelection().ToStdString()));
+            updateStageTextureControls();
+        }
+    });
+
+    createExpressionBinding("MaterialStageWobbleSkyX",
+        [](const IShaderLayer::Ptr& layer) { return layer->getExpression(IShaderLayer::Expression::TexGenParam1); },
+        [this](const IEditableShaderLayer::Ptr& layer, const std::string& value)
+    {
+        layer->setTexGenExpressionFromString(0, value);
+    });
+    createExpressionBinding("MaterialStageWobbleSkyY",
+        [](const IShaderLayer::Ptr& layer) { return layer->getExpression(IShaderLayer::Expression::TexGenParam2); },
+        [this](const IEditableShaderLayer::Ptr& layer, const std::string& value)
+    {
+        layer->setTexGenExpressionFromString(1, value);
+    });
+    createExpressionBinding("MaterialStageWobbleSkyZ",
+        [](const IShaderLayer::Ptr& layer) { return layer->getExpression(IShaderLayer::Expression::TexGenParam3); },
+        [this](const IEditableShaderLayer::Ptr& layer, const std::string& value)
+    {
+        layer->setTexGenExpressionFromString(2, value);
+    });
+
     // Clamp Type
     auto clampDropdown = getControl<wxChoice>("MaterialStageClampType");
     for (const auto& pair : shaders::ClampTypeNames)
@@ -1005,30 +1035,11 @@ void MaterialEditor::updateStageTextureControls()
         auto clampDropdown = getControl<wxChoice>("MaterialStageClampType");
         auto clampTypeString = shaders::getStringForClampType(selectedStage->getClampType());
         clampDropdown->SetStringSelection(clampTypeString);
-    }
 
-    if (selectedStage && (selectedStage->getParseFlags() & IShaderLayer::PF_HasTexGenKeyword) != 0)
-    {
         auto texgenName = shaders::getStringForTexGenType(selectedStage->getTexGenType());
         texgenDropdown->Select(texgenDropdown->FindString(texgenName));
 
-        if (selectedStage->getTexGenType() == IShaderLayer::TEXGEN_WOBBLESKY)
-        {
-            getControl<wxPanel>("MaterialStageWobblySkyPanel")->Show();
-
-            auto wobbleSkyX = selectedStage->getTexGenExpression(0);
-            getControl<wxTextCtrl>("MaterialStageWobbleSkyX")->SetValue(wobbleSkyX ? wobbleSkyX->getExpressionString() : "");
-
-            auto wobbleSkyY = selectedStage->getTexGenExpression(1);
-            getControl<wxTextCtrl>("MaterialStageWobbleSkyY")->SetValue(wobbleSkyY ? wobbleSkyY->getExpressionString() : "");
-
-            auto wobbleSkyZ = selectedStage->getTexGenExpression(2);
-            getControl<wxTextCtrl>("MaterialStageWobbleSkyZ")->SetValue(wobbleSkyZ ? wobbleSkyZ->getExpressionString() : "");
-        }
-        else
-        {
-            getControl<wxPanel>("MaterialStageWobblySkyPanel")->Hide();
-        }
+        getControl<wxPanel>("MaterialStageWobblySkyPanel")->Show(selectedStage->getTexGenType() == IShaderLayer::TEXGEN_WOBBLESKY);
     }
     else
     {

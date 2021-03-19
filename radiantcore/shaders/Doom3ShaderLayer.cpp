@@ -589,4 +589,20 @@ void Doom3ShaderLayer::setConditionExpressionFromString(const std::string& expre
     }
 }
 
+void Doom3ShaderLayer::setTexGenExpressionFromString(std::size_t index, const std::string& expression)
+{
+    if (expression.empty())
+    {
+        setTexGenExpression(index, IShaderExpression::Ptr());
+        return;
+    }
+
+    auto expr = ShaderExpression::createFromString(expression);
+
+    if (expr)
+    {
+        setTexGenExpression(index, expr);
+    }
+}
+
 }

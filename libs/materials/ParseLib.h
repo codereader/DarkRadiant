@@ -136,6 +136,19 @@ inline std::string getStringForTexGenType(IShaderLayer::TexGenType type)
     return std::string();
 }
 
+inline IShaderLayer::TexGenType getTexGenTypeForString(const std::string& typeString)
+{
+    for (const auto& pair : TexGenTypeNames)
+    {
+        if (typeString == pair.first)
+        {
+            return pair.second;
+        }
+    }
+
+    return IShaderLayer::TexGenType::TEXGEN_NORMAL;
+}
+
 constexpr std::pair<const char*, IShaderLayer::TransformType> TransformTypeNames[]
 {
     { "Translate", IShaderLayer::TransformType::Translate },
