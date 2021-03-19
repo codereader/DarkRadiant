@@ -88,6 +88,20 @@ public:
             matrix.yy = transformation.expression2;
             matrix.ty = ShaderExpression::createConstant(0);
             break;
+        case IShaderLayer::TransformType::CenterScale:
+            matrix.xx = transformation.expression1;
+            matrix.yx = ShaderExpression::createConstant(0);
+            matrix.tx = ShaderExpression::createAddition(
+                ShaderExpression::createConstant(0.5),
+                ShaderExpression::createMultiplication(ShaderExpression::createConstant(-0.5), transformation.expression1)
+            );
+            matrix.xy = ShaderExpression::createConstant(0);
+            matrix.yy = transformation.expression2;
+            matrix.ty = ShaderExpression::createAddition(
+                ShaderExpression::createConstant(0.5),
+                ShaderExpression::createMultiplication(ShaderExpression::createConstant(-0.5), transformation.expression2)
+            );
+            break;
         default:
             return;
         };
