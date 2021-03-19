@@ -245,7 +245,7 @@ public:
         return _clampType;
     }
 
-    void setClampType(ClampType type) 
+    void setClampType(ClampType type) override
     {
         _clampType = type;
     }

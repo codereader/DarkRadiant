@@ -171,6 +171,40 @@ inline IShaderLayer::TransformType getTransformTypeForString(const std::string& 
     return IShaderLayer::TransformType::Translate;
 }
 
+constexpr std::pair<const char*, ClampType> ClampTypeNames[]
+{
+    { "noclamp", CLAMP_REPEAT },
+    { "clamp", CLAMP_NOREPEAT },
+    { "zeroclamp", CLAMP_ZEROCLAMP },
+    { "alphazeroclamp", CLAMP_ALPHAZEROCLAMP },
+};
+
+inline ClampType getClampTypeForString(const std::string& typeString)
+{
+    for (const auto& pair : ClampTypeNames)
+    {
+        if (typeString == pair.first)
+        {
+            return pair.second;
+        }
+    }
+
+    return CLAMP_REPEAT;
+}
+
+inline std::string getStringForClampType(ClampType type)
+{
+    for (const auto& pair : ClampTypeNames)
+    {
+        if (type == pair.second)
+        {
+            return pair.first;
+        }
+    }
+
+    return std::string();
+}
+
 constexpr int NUM_MAX_VERTEX_PARMS = 4;
 constexpr int NUM_MAX_FRAGMENT_MAPS = 8;
 

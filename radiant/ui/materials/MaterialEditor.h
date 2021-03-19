@@ -118,7 +118,7 @@ private:
 
     void updateStageControls();
     void updateStageBlendControls();
-    void updateStageTexgenControls();
+    void updateStageTextureControls();
     void updateStageProgramControls();
     void updateStageTransformControls();
     void updateStageColoredStatus();

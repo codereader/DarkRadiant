@@ -2159,7 +2159,7 @@
 												</object>
 												<object class="notebookpage">
 													<label>Texture</label>
-													<selected>0</selected>
+													<selected>1</selected>
 													<object class="wxPanel" name="TexturePanel">
 														<style>wxTAB_TRAVERSAL</style>
 														<object class="wxBoxSizer">
@@ -2280,38 +2280,11 @@
 																			<orient>wxHORIZONTAL</orient>
 																			<object class="sizeritem">
 																				<option>0</option>
-																				<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
 																				<border>0</border>
-																				<object class="wxCheckBox" name="MaterialStageClamp">
-																					<label>clamp</label>
-																					<checked>0</checked>
-																				</object>
-																			</object>
-																			<object class="sizeritem">
-																				<option>0</option>
-																				<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
-																				<border>6</border>
-																				<object class="wxCheckBox" name="MaterialStageNoclamp">
-																					<label>noclamp</label>
-																					<checked>0</checked>
-																				</object>
-																			</object>
-																			<object class="sizeritem">
-																				<option>0</option>
-																				<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
-																				<border>6</border>
-																				<object class="wxCheckBox" name="MaterialStageZeroClamp">
-																					<label>zeroclamp</label>
-																					<checked>0</checked>
-																				</object>
-																			</object>
-																			<object class="sizeritem">
-																				<option>0</option>
-																				<flag>wxALIGN_CENTER_VERTICAL</flag>
-																				<border>6</border>
-																				<object class="wxCheckBox" name="MaterialStageAlphaZeroClamp">
-																					<label>alphazeroclamp</label>
-																					<checked>0</checked>
+																				<object class="wxChoice" name="MaterialStageClampType">
+																					<selection>0</selection>
+																					<content />
 																				</object>
 																			</object>
 																		</object>
@@ -2402,7 +2375,7 @@
 												</object>
 												<object class="notebookpage">
 													<label>Transform</label>
-													<selected>1</selected>
+													<selected>0</selected>
 													<object class="wxPanel" name="m_panel61">
 														<style>wxTAB_TRAVERSAL</style>
 														<object class="wxBoxSizer">

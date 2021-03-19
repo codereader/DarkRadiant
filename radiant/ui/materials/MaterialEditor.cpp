@@ -455,18 +455,6 @@ void MaterialEditor::setupMaterialStageProperties()
     }
 
     // Texture
-    _stageBindings.emplace(std::make_shared<CheckBoxBinding<IShaderLayer::Ptr>>(getControl<wxCheckBox>("MaterialStageClamp"),
-        [](const IShaderLayer::Ptr& layer) { return layer->getClampType() == CLAMP_NOREPEAT; }));
-    _stageBindings.emplace(std::make_shared<CheckBoxBinding<IShaderLayer::Ptr>>(getControl<wxCheckBox>("MaterialStageNoclamp"),
-        [](const IShaderLayer::Ptr& layer)
-    { 
-        return layer->getClampType() == CLAMP_REPEAT && (layer->getParseFlags() & IShaderLayer::PF_HasNoclampKeyword) != 0; 
-    }));
-    _stageBindings.emplace(std::make_shared<CheckBoxBinding<IShaderLayer::Ptr>>(getControl<wxCheckBox>("MaterialStageZeroClamp"),
-        [](const IShaderLayer::Ptr& layer) { return layer->getClampType() == CLAMP_ZEROCLAMP; }));
-    _stageBindings.emplace(std::make_shared<CheckBoxBinding<IShaderLayer::Ptr>>(getControl<wxCheckBox>("MaterialStageAlphaZeroClamp"),
-        [](const IShaderLayer::Ptr& layer) { return layer->getClampType() == CLAMP_ALPHAZEROCLAMP; }));
-
     setupStageFlag("MaterialStageFilterNearest", IShaderLayer::FLAG_FILTER_NEAREST);
     setupStageFlag("MaterialStageFilterLinear", IShaderLayer::FLAG_FILTER_LINEAR);
     setupStageFlag("MaterialStageHighQuality", IShaderLayer::FLAG_HIGHQUALITY);
@@ -481,6 +469,24 @@ void MaterialEditor::setupMaterialStageProperties()
     {
         texgenDropdown->AppendString(pair.first);
     }
+
+    // Clamp Type
+    auto clampDropdown = getControl<wxChoice>("MaterialStageClampType");
+    for (const auto& pair : shaders::ClampTypeNames)
+    {
+        clampDropdown->AppendString(pair.first);
+    }
+
+    clampDropdown->Bind(wxEVT_CHOICE, [this, clampDropdown](wxCommandEvent& ev)
+    {
+        auto stage = getEditableStageForSelection();
+
+        if (stage)
+        {
+            stage->setClampType(shaders::getClampTypeForString(clampDropdown->GetStringSelection().ToStdString()));
+            onMaterialChanged();
+        }
+    });
 
     auto transformDropdown = getControl<wxChoice>("MaterialStageAddTransformChoice");
     for (const auto& pair : shaders::TransformTypeNames)
@@ -987,11 +993,19 @@ void MaterialEditor::updateStageBlendControls()
     }
 }
 
-void MaterialEditor::updateStageTexgenControls()
+void MaterialEditor::updateStageTextureControls()
 {
     auto selectedStage = getSelectedStage();
 
     auto texgenDropdown = getControl<wxChoice>("MaterialStageTexGenType");
+
+    if (selectedStage)
+    {
+        // Clamp Type
+        auto clampDropdown = getControl<wxChoice>("MaterialStageClampType");
+        auto clampTypeString = shaders::getStringForClampType(selectedStage->getClampType());
+        clampDropdown->SetStringSelection(clampTypeString);
+    }
 
     if (selectedStage && (selectedStage->getParseFlags() & IShaderLayer::PF_HasTexGenKeyword) != 0)
     {
@@ -1137,7 +1151,7 @@ void MaterialEditor::updateStageControls()
     getControl<wxPanel>("MaterialEditorStageSettingsPanel")->Enable(selectedStage != nullptr);
 
     updateStageBlendControls();
-    updateStageTexgenControls();
+    updateStageTextureControls();
     updateStageProgramControls(); 
     updateStageTransformControls();
     updateStageColoredStatus();

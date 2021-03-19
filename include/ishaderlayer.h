@@ -427,4 +427,7 @@ public:
 
     // Set the vertex colour mode of this stage
     virtual void setVertexColourMode(VertexColourMode mode) = 0;
+
+    // Set the clamp type of this stage
+    virtual void setClampType(ClampType clampType) = 0;
 };
