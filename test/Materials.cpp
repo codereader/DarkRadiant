@@ -358,6 +358,7 @@ TEST_F(MaterialsTest, MaterialParserStageShear)
 
 TEST_F(MaterialsTest, MaterialParserStageTransforms)
 {
+    constexpr double TestEpsilon = 0.0001;
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/combined1");
 
     auto stage = material->getAllLayers().front();
@@ -370,7 +371,7 @@ TEST_F(MaterialsTest, MaterialParserStageTransforms)
     EXPECT_EQ(stage->getTransformations().at(1).expression2->getExpressionString(), "0.5");
 
     stage->evaluateExpressions(1000);
-    EXPECT_TRUE(stage->getTextureTransform() == Matrix4::getTranslation(Vector3(1, 0.5, 0) + Vector3(0.7, 0.5, 0)));
+    EXPECT_TRUE(stage->getTextureTransform().isEqual(Matrix4::getTranslation(Vector3(1, 0.5, 0) + Vector3(0.7, 0.5, 0)), TestEpsilon));
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/combined2");
 
@@ -390,7 +391,7 @@ TEST_F(MaterialsTest, MaterialParserStageTransforms)
     auto combinedMatrix = Matrix4::getTranslation(Vector3(1, 0.5, 0));
     combinedMatrix.premultiplyBy(Matrix4::getScale(Vector3(0.6, 0.2, 1)));
     combinedMatrix.premultiplyBy(Matrix4::getTranslation(Vector3(0.7, 0.5, 0)));
-    EXPECT_TRUE(stage->getTextureTransform() == combinedMatrix);
+    EXPECT_TRUE(stage->getTextureTransform().isEqual(combinedMatrix, TestEpsilon));
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/combined3");
 
@@ -445,7 +446,7 @@ TEST_F(MaterialsTest, MaterialParserStageTransforms)
     combinedMatrix.premultiplyBy(Matrix4::getScale(Vector3(0.5, 0.4, 1)));
     combinedMatrix.premultiplyBy(Matrix4::getTranslation(Vector3(1, 1, 0)));
 
-    EXPECT_TRUE(stage->getTextureTransform() == combinedMatrix);
+    EXPECT_TRUE(stage->getTextureTransform().isEqual(combinedMatrix, TestEpsilon));
 }
 
 TEST_F(MaterialsTest, MaterialParserStageVertexProgram)

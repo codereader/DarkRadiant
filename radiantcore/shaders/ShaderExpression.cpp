@@ -440,4 +440,19 @@ IShaderExpression::Ptr ShaderExpression::createFromString(const std::string& exp
 	return createFromTokens(tokeniser);
 }
 
+IShaderExpression::Ptr ShaderExpression::createConstant(float constantValue)
+{
+    return std::make_shared<expressions::ConstantExpression>(constantValue);
+}
+
+IShaderExpression::Ptr ShaderExpression::createAddition(const IShaderExpression::Ptr& a, const IShaderExpression::Ptr& b)
+{
+    return std::make_shared<expressions::AddExpression>(a, b);
+}
+
+IShaderExpression::Ptr ShaderExpression::createMultiplication(const IShaderExpression::Ptr& a, const IShaderExpression::Ptr& b)
+{
+    return std::make_shared<expressions::MultiplyExpression>(a, b);
+}
+
 } // namespace

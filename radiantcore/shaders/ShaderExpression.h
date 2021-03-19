@@ -94,6 +94,10 @@ public:
 
 	static IShaderExpression::Ptr createFromTokens(parser::DefTokeniser& tokeniser);
 
+    static IShaderExpression::Ptr createConstant(float constantValue);
+    static IShaderExpression::Ptr createAddition(const IShaderExpression::Ptr& a, const IShaderExpression::Ptr& b);
+    static IShaderExpression::Ptr createMultiplication(const IShaderExpression::Ptr& a, const IShaderExpression::Ptr& b);
+
     virtual std::string getExpressionString() override
     {
         return _surroundedByParentheses ? fmt::format("({0})", convertToString()) : convertToString();

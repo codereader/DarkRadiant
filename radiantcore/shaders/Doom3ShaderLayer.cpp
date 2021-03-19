@@ -91,7 +91,7 @@ Doom3ShaderLayer::Doom3ShaderLayer(ShaderTemplate& material, IShaderLayer::Type 
 	_stageFlags(0),
 	_clampType(CLAMP_REPEAT),
 	_texGenType(TEXGEN_NORMAL),
-    _textureMatrix(_expressionSlots),
+    _textureMatrix(_expressionSlots, _registers),
 	_privatePolygonOffset(0),
     _parseFlags(0)
 {
@@ -147,7 +147,7 @@ Doom3ShaderLayer::Doom3ShaderLayer(const Doom3ShaderLayer& other, ShaderTemplate
     _stageFlags(other._stageFlags),
     _clampType(other._clampType),
     _texGenType(other._texGenType),
-    _textureMatrix(_expressionSlots), // no copying necessary
+    _textureMatrix(_expressionSlots, _registers), // no copying necessary
     _rotation(other._rotation),
     _rotationExpression(other._rotationExpression),
     _vertexProgram(other._vertexProgram),
@@ -313,7 +313,7 @@ const std::vector<IShaderLayer::Transformation>& Doom3ShaderLayer::getTransforma
 
 Matrix4 Doom3ShaderLayer::getTextureTransform()
 {
-    return _textureMatrix.getMatrix4(_registers);
+    return _textureMatrix.getMatrix4();
 }
 
 IShaderLayer::VertexColourMode Doom3ShaderLayer::getVertexColourMode() const
