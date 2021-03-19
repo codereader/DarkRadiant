@@ -138,7 +138,7 @@ textures/parsertest/transform/translation1
 {
 	{
         map _white
-        translate 3, parm3*3
+        translate 3, parm3+5
     }
 }
 
@@ -170,7 +170,7 @@ textures/parsertest/transform/shear1
 {
 	{
         map _white
-        shear global3, 4
+        shear global3 + 5, 4
     }
 }
 

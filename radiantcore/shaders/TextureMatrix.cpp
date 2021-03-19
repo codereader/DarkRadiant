@@ -97,8 +97,8 @@ void TextureMatrix::applyTransformation(const IShaderLayer::Transformation& tran
 
         if (!sinTable || !cosTable)
         {
-            rWarning() << "Cannot create rotate stage transform without sinTable and cosTable declarations" << std::endl;
-            break;
+            rError() << "Cannot create rotate stage transform without sinTable and cosTable declarations" << std::endl;
+            return;
         }
 
         // sin(expr) and cos(expr) shortcuts

@@ -12,6 +12,8 @@ namespace test
 
 using MaterialsTest = RadiantTest;
 
+constexpr double TestEpsilon = 0.0001;
+
 TEST_F(MaterialsTest, MaterialFileInfo)
 {
     auto& materialManager = GlobalMaterialManager();
@@ -299,66 +301,121 @@ TEST_F(MaterialsTest, MaterialParserDeform)
     EXPECT_FALSE(material->getDeformExpression(2));
 }
 
-TEST_F(MaterialsTest, MaterialParserStageTranslate)
+TEST_F(MaterialsTest, MaterialParserStageNotransform)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/notransform");
-    EXPECT_FALSE(material->getAllLayers().front()->getTranslationExpression(0));
-    EXPECT_FALSE(material->getAllLayers().front()->getTranslationExpression(1));
+    auto stage = material->getAllLayers().front();
 
-    material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/translation1");
-    EXPECT_EQ(material->getAllLayers().front()->getTranslationExpression(0)->getExpressionString(), "3.0");
-    EXPECT_EQ(material->getAllLayers().front()->getTranslationExpression(1)->getExpressionString(), "parm3 * 3.0");
+    EXPECT_EQ(stage->getTransformations().size(), 0);
+    EXPECT_TRUE(stage->getTextureTransform() == Matrix4::getIdentity());
+}
+
+TEST_F(MaterialsTest, MaterialParserStageTranslate)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/translation1");
+    auto stage = material->getAllLayers().front();
+
+    EXPECT_EQ(stage->getTransformations().size(), 1);
+    EXPECT_EQ(stage->getTransformations().at(0).type, IShaderLayer::TransformType::Translate);
+    EXPECT_EQ(stage->getTransformations().at(0).expression1->getExpressionString(), "3.0");
+    EXPECT_EQ(stage->getTransformations().at(0).expression2->getExpressionString(), "parm3 + 5.0");
+
+    stage->evaluateExpressions(1000);
+    EXPECT_TRUE(stage->getTextureTransform().isEqual(Matrix4::getTranslation(Vector3(3.0, 5.0, 0)), TestEpsilon));
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/translation2");
-    EXPECT_EQ(material->getAllLayers().front()->getTranslationExpression(0)->getExpressionString(), "time");
-    EXPECT_EQ(material->getAllLayers().front()->getTranslationExpression(1)->getExpressionString(), "0.5");
+    stage = material->getAllLayers().front();
+
+    EXPECT_EQ(stage->getTransformations().size(), 1);
+    EXPECT_EQ(stage->getTransformations().at(0).type, IShaderLayer::TransformType::Translate);
+    EXPECT_EQ(stage->getTransformations().at(0).expression1->getExpressionString(), "time");
+    EXPECT_EQ(stage->getTransformations().at(0).expression2->getExpressionString(), "0.5");
+
+    stage->evaluateExpressions(1000);
+    EXPECT_TRUE(stage->getTextureTransform().isEqual(Matrix4::getTranslation(Vector3(1.0, 0.5, 0)), TestEpsilon));
 }
 
 TEST_F(MaterialsTest, MaterialParserStageRotate)
 {
-    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/notransform");
-    EXPECT_FALSE(material->getAllLayers().front()->getRotationExpression());
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/rotate1");
+    auto stage = material->getAllLayers().front();
 
-    material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/rotate1");
-    EXPECT_EQ(material->getAllLayers().front()->getRotationExpression()->getExpressionString(), "0.03");
+    EXPECT_EQ(stage->getTransformations().size(), 1);
+    EXPECT_EQ(stage->getTransformations().at(0).type, IShaderLayer::TransformType::Rotate);
+    EXPECT_EQ(stage->getTransformations().at(0).expression1->getExpressionString(), "0.03");
+    EXPECT_FALSE(stage->getTransformations().at(0).expression2);
+
+    // sintable and costable lookups are [0..1], translate them to [0..2pi]
+    auto cosValue = cos(0.03 * 2 * c_pi);
+    auto sinValue = sin(0.03 * 2 * c_pi);
+
+    stage->evaluateExpressions(1000);
+    EXPECT_TRUE(stage->getTextureTransform().isEqual(Matrix4::byRows(
+        cosValue, -sinValue, 0, (-0.5*cosValue + 0.5*sinValue) + 0.5,
+        sinValue,  cosValue, 0, (-0.5*sinValue - 0.5*cosValue) + 0.5,
+        0, 0, 1, 0,
+        0, 0, 0, 1
+    ), TestEpsilon));
 }
 
 TEST_F(MaterialsTest, MaterialParserStageScale)
 {
-    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/notransform");
-    EXPECT_FALSE(material->getAllLayers().front()->getScaleExpression(0));
-    EXPECT_FALSE(material->getAllLayers().front()->getScaleExpression(1));
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/scale1");
+    auto stage = material->getAllLayers().front();
 
-    material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/scale1");
-    EXPECT_EQ(material->getAllLayers().front()->getScaleExpression(0)->getExpressionString(), "4.0");
-    EXPECT_EQ(material->getAllLayers().front()->getScaleExpression(1)->getExpressionString(), "time * 3.0");
+    EXPECT_EQ(stage->getTransformations().size(), 1);
+    EXPECT_EQ(stage->getTransformations().at(0).type, IShaderLayer::TransformType::Scale);
+    EXPECT_EQ(stage->getTransformations().at(0).expression1->getExpressionString(), "4.0");
+    EXPECT_EQ(stage->getTransformations().at(0).expression2->getExpressionString(), "time * 3.0");
+
+    stage->evaluateExpressions(1000);
+    EXPECT_TRUE(stage->getTextureTransform().isEqual(Matrix4::byRows(
+        4, 0, 0, 0,
+        0, 3, 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1
+    ), TestEpsilon));
 }
 
 TEST_F(MaterialsTest, MaterialParserStageCenterScale)
 {
-    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/notransform");
-    EXPECT_FALSE(material->getAllLayers().front()->getCenterScaleExpression(0));
-    EXPECT_FALSE(material->getAllLayers().front()->getCenterScaleExpression(1));
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/centerscale1");
+    auto stage = material->getAllLayers().front();
 
-    material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/centerscale1");
-    EXPECT_EQ(material->getAllLayers().front()->getCenterScaleExpression(0)->getExpressionString(), "4.0");
-    EXPECT_EQ(material->getAllLayers().front()->getCenterScaleExpression(1)->getExpressionString(), "time * 3.0");
+    EXPECT_EQ(stage->getTransformations().size(), 1);
+    EXPECT_EQ(stage->getTransformations().at(0).type, IShaderLayer::TransformType::CenterScale);
+    EXPECT_EQ(stage->getTransformations().at(0).expression1->getExpressionString(), "4.0");
+    EXPECT_EQ(stage->getTransformations().at(0).expression2->getExpressionString(), "time * 3.0");
+
+    stage->evaluateExpressions(1000);
+    EXPECT_TRUE(stage->getTextureTransform().isEqual(Matrix4::byRows(
+        4, 0, 0, 0.5 - 0.5 * 4,
+        0, 3, 0, 0.5 - 0.5 * 3,
+        0, 0, 1, 0,
+        0, 0, 0, 1
+    ), TestEpsilon));
 }
 
 TEST_F(MaterialsTest, MaterialParserStageShear)
 {
-    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/notransform");
-    EXPECT_FALSE(material->getAllLayers().front()->getShearExpression(0));
-    EXPECT_FALSE(material->getAllLayers().front()->getShearExpression(1));
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/shear1");
+    auto stage = material->getAllLayers().front();
+    EXPECT_EQ(stage->getTransformations().size(), 1);
+    EXPECT_EQ(stage->getTransformations().at(0).type, IShaderLayer::TransformType::Shear);
+    EXPECT_EQ(stage->getTransformations().at(0).expression1->getExpressionString(), "global3 + 5.0");
+    EXPECT_EQ(stage->getTransformations().at(0).expression2->getExpressionString(), "4.0");
 
-    material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/shear1");
-    EXPECT_EQ(material->getAllLayers().front()->getShearExpression(0)->getExpressionString(), "global3");
-    EXPECT_EQ(material->getAllLayers().front()->getShearExpression(1)->getExpressionString(), "4.0");
+    stage->evaluateExpressions(1000);
+    EXPECT_TRUE(stage->getTextureTransform().isEqual(Matrix4::byRows(
+        1,  5,  0,  -0.5 * 5,
+        4,  1,  0,  -0.5 * 4,
+        0,  0,  1,   0,
+        0,  0,  0,   1
+    ), TestEpsilon));
 }
 
 TEST_F(MaterialsTest, MaterialParserStageTransforms)
 {
-    constexpr double TestEpsilon = 0.0001;
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/combined1");
 
     auto stage = material->getAllLayers().front();
@@ -432,7 +489,7 @@ TEST_F(MaterialsTest, MaterialParserStageTransforms)
     auto cosValue = cos(0.22 * 2 * c_pi);
     auto sinValue = sin(0.22 * 2 * c_pi);
 
-    auto rotate = Matrix4::byColumns(cosValue, -sinValue, 0, (-0.5*cosValue+0.5*sinValue) + 0.5,
+    auto rotate = Matrix4::byRows(cosValue, -sinValue, 0, (-0.5*cosValue+0.5*sinValue) + 0.5,
         sinValue, cosValue, 0, (-0.5*sinValue-0.5*cosValue) + 0.5,
         0, 0, 1, 0,
         0, 0, 0, 1);
