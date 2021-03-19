@@ -80,6 +80,43 @@ inline std::string getStringForSortRequestValue(float value)
     return std::string();
 }
 
+constexpr std::pair<const char*, IShaderLayer::MapType> MapTypeNames[]
+{
+    { "map", IShaderLayer::MapType::Map },
+    { "cubeMap", IShaderLayer::MapType::CubeMap },
+    { "cameraCubeMap", IShaderLayer::MapType::CameraCubeMap },
+    { "mirrorRenderMap", IShaderLayer::MapType::MirrorRenderMap },
+    { "remoteRenderMap", IShaderLayer::MapType::RemoteRenderMap },
+    { "videoMap", IShaderLayer::MapType::VideoMap },
+    { "soundMap", IShaderLayer::MapType::SoundMap },
+};
+
+inline std::string getStringForMapType(IShaderLayer::MapType type)
+{
+    for (const auto& pair : MapTypeNames)
+    {
+        if (type == pair.second)
+        {
+            return pair.first;
+        }
+    }
+
+    return std::string();
+}
+
+inline IShaderLayer::MapType getMapTypeForString(const std::string& typeString)
+{
+    for (const auto& pair : MapTypeNames)
+    {
+        if (typeString == pair.first)
+        {
+            return pair.second;
+        }
+    }
+
+    return IShaderLayer::MapType::Map;
+}
+
 constexpr std::pair<const char*, Material::DeformType> DeformTypeNames[]
 {
     { "sprite", Material::DEFORM_SPRITE },

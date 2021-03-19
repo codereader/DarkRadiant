@@ -13,6 +13,7 @@
 #include <wx/button.h>
 #include <wx/choice.h>
 #include <wx/combobox.h>
+#include <wx/notebook.h>
 #include <wx/radiobut.h>
 
 #include "wxutil/SourceView.h"
@@ -31,6 +32,8 @@ namespace
     const std::string RKEY_ROOT = "user/ui/materialEditor/";
     const std::string RKEY_SPLIT_POS = RKEY_ROOT + "splitPos";
     const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
+
+    const char* const SPECIAL_MAP_TYPE = N_("Special");
 
     // Columns for the stages list
     struct StageColumns :
@@ -449,10 +452,15 @@ void MaterialEditor::setupMaterialStageProperties()
         getControl<wxChoice>("MaterialStageBlendTypeDest")->Append(value);
     } 
 
-    for (const auto& value : { "map", "cubeMap", "cameraCubeMap", "Special" })
+    auto mapTypeDropdown = getControl<wxChoice>("MaterialStageMapType");
+
+    for (const auto& value : { "map", "cubeMap", "cameraCubeMap" })
     {
-        getControl<wxChoice>("MaterialStageMapType")->Append(value);
+        mapTypeDropdown->Append(value);
     }
+
+    mapTypeDropdown->Append(_(SPECIAL_MAP_TYPE));
+    mapTypeDropdown->Bind(wxEVT_CHOICE, &MaterialEditor::_onStageMapTypeChanged, this);
 
     // Texture
     setupStageFlag("MaterialStageFilterNearest", IShaderLayer::FLAG_FILTER_NEAREST);
@@ -1206,7 +1214,7 @@ void MaterialEditor::updateStageControls()
             selectedStage->getMapType() == IShaderLayer::MapType::RemoteRenderMap ||
             selectedStage->getMapType() == IShaderLayer::MapType::MirrorRenderMap)
         {
-            mapType->SetStringSelection("Special");
+            mapType->SetStringSelection(_(SPECIAL_MAP_TYPE));
             mapTypeNotSpecial->SetValue(false);
             specialMapPanel->Enable();
             imageMap->Disable();
@@ -1378,6 +1386,29 @@ void MaterialEditor::_onStageColoredChecked(wxCommandEvent& ev)
         selectedStage->setColourExpressionFromString(IShaderLayer::COMP_GREEN, "");
         selectedStage->setColourExpressionFromString(IShaderLayer::COMP_BLUE, "");
         selectedStage->setColourExpressionFromString(IShaderLayer::COMP_ALPHA, "");
+    }
+
+    updateStageControls();
+}
+
+void MaterialEditor::_onStageMapTypeChanged(wxCommandEvent& ev)
+{
+    auto stage = getEditableStageForSelection();
+    if (!stage) return;
+
+    auto mapTypeString = getControl<wxChoice>("MaterialStageMapType")->GetStringSelection();
+
+    if (mapTypeString == _(SPECIAL_MAP_TYPE))
+    {
+        stage->setMapType(IShaderLayer::MapType::MirrorRenderMap);
+
+        // Switch pages
+        auto notebook = getControl<wxNotebook>("MaterialStageSettingsNotebook");
+        notebook->SetSelection(notebook->FindPage(getControl<wxPanel>("SpecialMapPanel")));
+    }
+    else
+    {
+        stage->setMapType(shaders::getMapTypeForString(mapTypeString.ToStdString()));
     }
 
     updateStageControls();

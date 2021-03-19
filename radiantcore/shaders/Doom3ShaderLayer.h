@@ -110,7 +110,7 @@ public:
     CubeMapMode getCubeMapMode() const;
 
     MapType getMapType() const override;
-    void setMapType(MapType type);
+    void setMapType(MapType type) override;
 
     const Vector2& getRenderMapSize() const override;
     void setRenderMapSize(const Vector2& size);

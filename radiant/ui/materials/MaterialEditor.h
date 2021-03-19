@@ -130,6 +130,7 @@ private:
     void _onRemoveStageTransform(wxCommandEvent& ev);
     void _onStageTransformEdited(wxDataViewEvent& ev);
     void _onStageColoredChecked(wxCommandEvent& ev);
+    void _onStageMapTypeChanged(wxCommandEvent& ev);
 
     void onMaterialChanged();
 

@@ -1646,7 +1646,7 @@
 											<option>0</option>
 											<flag>wxEXPAND|wxLEFT</flag>
 											<border>12</border>
-											<object class="wxNotebook" name="MaterialEditorSettingsNotebook">
+											<object class="wxNotebook" name="MaterialStageSettingsNotebook">
 												<object class="notebookpage">
 													<label>Blending</label>
 													<selected>0</selected>
@@ -1937,7 +1937,7 @@
 												</object>
 												<object class="notebookpage">
 													<label>Special Map</label>
-													<selected>0</selected>
+													<selected>1</selected>
 													<object class="wxPanel" name="SpecialMapPanel">
 														<style>wxTAB_TRAVERSAL</style>
 														<object class="wxBoxSizer">
@@ -2159,7 +2159,7 @@
 												</object>
 												<object class="notebookpage">
 													<label>Texture</label>
-													<selected>1</selected>
+													<selected>0</selected>
 													<object class="wxPanel" name="TexturePanel">
 														<style>wxTAB_TRAVERSAL</style>
 														<object class="wxBoxSizer">
