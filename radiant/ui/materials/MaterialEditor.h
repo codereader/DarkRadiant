@@ -121,6 +121,7 @@ private:
     void updateStageTexgenControls();
     void updateStageProgramControls();
     void updateStageTransformControls();
+    void updateStageColoredStatus();
 
     void _onTreeViewSelectionChanged(wxDataViewEvent& ev);
     void _onStageListSelectionChanged(wxDataViewEvent& ev);
@@ -128,6 +129,7 @@ private:
     void _onAddStageTransform(wxCommandEvent& ev);
     void _onRemoveStageTransform(wxCommandEvent& ev);
     void _onStageTransformEdited(wxDataViewEvent& ev);
+    void _onStageColoredChecked(wxCommandEvent& ev);
 
     void onMaterialChanged();
 

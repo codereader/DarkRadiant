@@ -559,6 +559,12 @@ void Doom3ShaderLayer::updateTransformation(std::size_t index, TransformType typ
 
 void Doom3ShaderLayer::setColourExpressionFromString(ColourComponentSelector component, const std::string& expression)
 {
+    if (expression.empty())
+    {
+        setColourExpression(component, IShaderExpression::Ptr());
+        return;
+    }
+
     auto expr = ShaderExpression::createFromString(expression);
 
     if (expr)
@@ -569,6 +575,12 @@ void Doom3ShaderLayer::setColourExpressionFromString(ColourComponentSelector com
 
 void Doom3ShaderLayer::setConditionExpressionFromString(const std::string& expression)
 {
+    if (expression.empty())
+    {
+        setCondition(IShaderExpression::Ptr());
+        return;
+    }
+
     auto expr = ShaderExpression::createFromString(expression);
 
     if (expr)

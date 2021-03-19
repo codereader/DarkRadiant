@@ -520,6 +520,8 @@ void MaterialEditor::setupMaterialStageProperties()
     _stageBindings.emplace(std::make_shared<CheckBoxBinding<IShaderLayer::Ptr>>(getControl<wxCheckBox>("MaterialStageColored"),
         [](const IShaderLayer::Ptr& layer) { return stageQualifiesAsColoured(layer); }));
 
+    getControl<wxCheckBox>("MaterialStageColored")->Bind(wxEVT_CHECKBOX, &MaterialEditor::_onStageColoredChecked, this);
+
     createRadioButtonBinding("MaterialStageNoVertexColourFlag",
         [](const IShaderLayer::Ptr& layer) { return layer->getVertexColourMode() == IShaderLayer::VERTEX_COLOUR_NONE; },
         [](const IEditableShaderLayer::Ptr& layer, bool value) { if (value) layer->setVertexColourMode(IShaderLayer::VERTEX_COLOUR_NONE); });
@@ -535,28 +537,28 @@ void MaterialEditor::setupMaterialStageProperties()
         [this](const IEditableShaderLayer::Ptr& layer, const std::string& value)
         { 
             layer->setColourExpressionFromString(IShaderLayer::COMP_RED, value);
-            getControl<wxCheckBox>("MaterialStageColored")->SetValue(stageQualifiesAsColoured(layer));
+            updateStageColoredStatus();
         });
     createExpressionBinding("MaterialStageGreen",
         [](const IShaderLayer::Ptr& layer) { return layer->getColourExpression(IShaderLayer::COMP_GREEN); },
         [this](const IEditableShaderLayer::Ptr& layer, const std::string& value) 
         { 
             layer->setColourExpressionFromString(IShaderLayer::COMP_GREEN, value);
-            getControl<wxCheckBox>("MaterialStageColored")->SetValue(stageQualifiesAsColoured(layer));
+            updateStageColoredStatus();
         });
     createExpressionBinding("MaterialStageBlue",
         [](const IShaderLayer::Ptr& layer) { return layer->getColourExpression(IShaderLayer::COMP_BLUE); },
         [this](const IEditableShaderLayer::Ptr& layer, const std::string& value)
         {
             layer->setColourExpressionFromString(IShaderLayer::COMP_BLUE, value);
-            getControl<wxCheckBox>("MaterialStageColored")->SetValue(stageQualifiesAsColoured(layer));
+            updateStageColoredStatus();
         });
     createExpressionBinding("MaterialStageAlpha",
         [](const IShaderLayer::Ptr& layer) { return layer->getColourExpression(IShaderLayer::COMP_ALPHA); },
         [this](const IEditableShaderLayer::Ptr& layer, const std::string& value)
         {
-                layer->setColourExpressionFromString(IShaderLayer::COMP_ALPHA, value);
-                getControl<wxCheckBox>("MaterialStageColored")->SetValue(stageQualifiesAsColoured(layer));
+            layer->setColourExpressionFromString(IShaderLayer::COMP_ALPHA, value);
+            updateStageColoredStatus();
         });
 
     auto parameterPanel = getControl<wxPanel>("MaterialStageProgramParameters");
@@ -571,6 +573,22 @@ void MaterialEditor::setupMaterialStageProperties()
         wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
     parameterPanel->GetSizer()->Add(paramsView, 1, wxEXPAND);
+}
+
+void MaterialEditor::updateStageColoredStatus()
+{
+    auto selectedStage = getSelectedStage();
+
+    if (!selectedStage) return;
+
+    bool stageIsColoured = stageQualifiesAsColoured(selectedStage);
+
+    getControl<wxCheckBox>("MaterialStageColored")->SetValue(stageIsColoured);
+
+    getControl<wxTextCtrl>("MaterialStageRed")->Enable(!stageIsColoured);
+    getControl<wxTextCtrl>("MaterialStageGreen")->Enable(!stageIsColoured);
+    getControl<wxTextCtrl>("MaterialStageBlue")->Enable(!stageIsColoured);
+    getControl<wxTextCtrl>("MaterialStageAlpha")->Enable(!stageIsColoured);
 }
 
 void MaterialEditor::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
@@ -1122,6 +1140,7 @@ void MaterialEditor::updateStageControls()
     updateStageTexgenControls();
     updateStageProgramControls(); 
     updateStageTransformControls();
+    updateStageColoredStatus();
 
     if (selectedStage)
     {
@@ -1312,6 +1331,31 @@ void MaterialEditor::_onStageTransformEdited(wxDataViewEvent& ev)
 #endif
 
     stage->updateTransformation(transformIndex, type, expression1, expression2);
+}
+
+void MaterialEditor::_onStageColoredChecked(wxCommandEvent& ev)
+{
+    auto selectedStage = getEditableStageForSelection();
+    if (!selectedStage) return;
+
+    bool stageIsCurrentlyColoured = stageQualifiesAsColoured(selectedStage);
+
+    if (ev.IsChecked() && !stageIsCurrentlyColoured)
+    {
+        selectedStage->setColourExpressionFromString(IShaderLayer::COMP_RED, "parm0");
+        selectedStage->setColourExpressionFromString(IShaderLayer::COMP_GREEN, "parm1");
+        selectedStage->setColourExpressionFromString(IShaderLayer::COMP_BLUE, "parm2");
+        selectedStage->setColourExpressionFromString(IShaderLayer::COMP_ALPHA, "parm3");
+    }
+    else if (!ev.IsChecked() && stageIsCurrentlyColoured)
+    {
+        selectedStage->setColourExpressionFromString(IShaderLayer::COMP_RED, "");
+        selectedStage->setColourExpressionFromString(IShaderLayer::COMP_GREEN, "");
+        selectedStage->setColourExpressionFromString(IShaderLayer::COMP_BLUE, "");
+        selectedStage->setColourExpressionFromString(IShaderLayer::COMP_ALPHA, "");
+    }
+
+    updateStageControls();
 }
 
 void MaterialEditor::onMaterialChanged()
