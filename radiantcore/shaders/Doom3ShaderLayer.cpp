@@ -129,6 +129,7 @@ Doom3ShaderLayer::Doom3ShaderLayer(const Doom3ShaderLayer& other, ShaderTemplate
     _stageFlags(other._stageFlags),
     _clampType(other._clampType),
     _texGenType(other._texGenType),
+    _transformations(other._transformations),
     _textureMatrix(_expressionSlots, _registers), // no copying necessary
     _vertexProgram(other._vertexProgram),
     _fragmentProgram(other._fragmentProgram),

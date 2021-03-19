@@ -451,6 +451,28 @@ void MaterialEditor::setupMaterialStageProperties()
         texgenDropdown->AppendString(pair.first);
     }
 
+    auto transformDropdown = getControl<wxChoice>("MaterialStageAddTransformChoice");
+    for (const auto& pair : shaders::TransformTypeNames)
+    {
+        transformDropdown->AppendString(pair.first);
+    }
+
+    getControl<wxButton>("MaterialStageAddTransformButton")->Bind(wxEVT_BUTTON, &MaterialEditor::_onAddStageTransform, this);
+
+    // Add the transformation listview
+    auto transformationPanel = getControl<wxPanel>("MaterialStageTransformations");
+    _stageTransformations = wxutil::TreeModel::Ptr(new wxutil::TreeModel(_stageTransformationColumns, true));
+
+    auto transformView = wxutil::TreeView::CreateWithModel(transformationPanel, _stageTransformations.get(), wxDV_NO_HEADER);
+    transformView->AppendTextColumn("Type", _stageTransformationColumns.type.getColumnIndex(),
+        wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+    transformView->AppendTextColumn("Index", _stageTransformationColumns.index.getColumnIndex(),
+        wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+    transformView->AppendTextColumn("Expression", _stageTransformationColumns.expression.getColumnIndex(),
+        wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+
+    transformationPanel->GetSizer()->Add(transformView, 1, wxEXPAND);
+
     createExpressionBinding("MaterialStageCondition",
         [](const IShaderLayer::Ptr& layer) { return layer->getConditionExpression(); });
 
@@ -975,6 +997,44 @@ void MaterialEditor::updateStageProgramControls()
     }
 }
 
+void MaterialEditor::updateStageTransformControls()
+{
+    _stageTransformations->Clear();
+
+    auto selectedStage = getSelectedStage();
+
+    if (!selectedStage)
+    {
+        return;
+    }
+
+    const auto& transformations = selectedStage->getTransformations();
+
+    for (int i = 0; i < transformations.size(); ++i)
+    {
+        const auto& transformation = transformations[i];
+
+        auto row = _stageTransformations->AddItem();
+
+        row[_stageTransformationColumns.type] = shaders::getStringForTransformType(transformation.type);
+        row[_stageTransformationColumns.index] = string::to_string(i);
+
+        if (transformation.expression1)
+        {
+            auto expression = transformation.expression1->getExpressionString();
+            row[_stageTransformationColumns.expression] = expression;
+        }
+        else
+        {
+            row[_stageTransformationColumns.expression] = std::string();
+        }
+
+        row[_stageTransformationColumns.expression] = expression;
+
+        row.SendItemAdded();
+    }
+}
+
 void MaterialEditor::updateStageControls()
 {
     util::ScopedBoolLock lock(_stageUpdateInProgress);
@@ -992,7 +1052,8 @@ void MaterialEditor::updateStageControls()
 
     updateStageBlendControls();
     updateStageTexgenControls();
-    updateStageProgramControls();
+    updateStageProgramControls(); 
+    updateStageTransformControls();
 
     if (selectedStage)
     {
@@ -1110,6 +1171,21 @@ void MaterialEditor::_onMaterialTypeChoice(wxCommandEvent& ev)
     
     auto selectedString = getControl<wxChoice>("MaterialType")->GetStringSelection();
     _material->setSurfaceType(shaders::getSurfaceTypeForString(selectedString.ToStdString()));
+}
+
+void MaterialEditor::_onAddStageTransform(wxCommandEvent& ev)
+{
+    auto selectedStage = getSelectedStage();
+
+    if (selectedStage)
+    {
+        auto typeString = getControl<wxChoice>("MaterialStageAddTransformChoice")->GetStringSelection();
+        auto type = shaders::getTransformTypeForString(typeString.ToStdString());
+
+        selectedStage->appendTransformation(IShaderLayer::Transformation{ type });
+
+        updateStageControls();
+    }
 }
 
 void MaterialEditor::onMaterialChanged()

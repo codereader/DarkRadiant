@@ -136,6 +136,41 @@ inline std::string getStringForTexGenType(IShaderLayer::TexGenType type)
     return std::string();
 }
 
+constexpr std::pair<const char*, IShaderLayer::TransformType> TransformTypeNames[]
+{
+    { "Translate", IShaderLayer::TransformType::Translate },
+    { "Scale", IShaderLayer::TransformType::Scale },
+    { "CenterScale", IShaderLayer::TransformType::CenterScale },
+    { "Shear", IShaderLayer::TransformType::Shear },
+    { "Rotate", IShaderLayer::TransformType::Rotate },
+};
+
+inline std::string getStringForTransformType(IShaderLayer::TransformType type)
+{
+    for (const auto& pair : TransformTypeNames)
+    {
+        if (type == pair.second)
+        {
+            return pair.first;
+        }
+    }
+
+    return std::string();
+}
+
+inline IShaderLayer::TransformType getTransformTypeForString(const std::string& typeString)
+{
+    for (const auto& pair : TransformTypeNames)
+    {
+        if (typeString == pair.first)
+        {
+            return pair.second;
+        }
+    }
+
+    return IShaderLayer::TransformType::Translate;
+}
+
 constexpr int NUM_MAX_VERTEX_PARMS = 4;
 constexpr int NUM_MAX_FRAGMENT_MAPS = 8;
 
