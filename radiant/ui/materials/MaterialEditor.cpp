@@ -52,6 +52,19 @@ namespace
         static StageColumns _i; 
         return _i; 
     }
+
+    bool stageQualifiesAsColoured(const IShaderLayer::Ptr& layer)
+    {
+        auto red = layer->getColourExpression(IShaderLayer::COMP_RED);
+        auto green = layer->getColourExpression(IShaderLayer::COMP_GREEN);
+        auto blue = layer->getColourExpression(IShaderLayer::COMP_BLUE);
+        auto alpha = layer->getColourExpression(IShaderLayer::COMP_ALPHA);
+
+        return red && red->getExpressionString() == "parm0" &&
+               green && green->getExpressionString() == "parm1" &&
+               blue && blue->getExpressionString() == "parm2" &&
+               alpha && alpha->getExpressionString() == "parm3";
+    }
 }
 
 MaterialEditor::MaterialEditor() :
@@ -505,7 +518,7 @@ void MaterialEditor::setupMaterialStageProperties()
         [](const IEditableShaderLayer::Ptr& layer, const std::string& value) { layer->setConditionExpressionFromString(value); });
 
     _stageBindings.emplace(std::make_shared<CheckBoxBinding<IShaderLayer::Ptr>>(getControl<wxCheckBox>("MaterialStageColored"),
-        [](const IShaderLayer::Ptr& layer) { return (layer->getParseFlags() & IShaderLayer::PF_HasColoredKeyword) != 0; }));
+        [](const IShaderLayer::Ptr& layer) { return stageQualifiesAsColoured(layer); }));
 
     createRadioButtonBinding("MaterialStageNoVertexColourFlag",
         [](const IShaderLayer::Ptr& layer) { return layer->getVertexColourMode() == IShaderLayer::VERTEX_COLOUR_NONE; },
@@ -519,16 +532,32 @@ void MaterialEditor::setupMaterialStageProperties()
 
     createExpressionBinding("MaterialStageRed",
         [](const IShaderLayer::Ptr& layer) { return layer->getColourExpression(IShaderLayer::COMP_RED); },
-        [](const IEditableShaderLayer::Ptr& layer, const std::string& value) { layer->setColourExpressionFromString(IShaderLayer::COMP_RED, value); });
+        [this](const IEditableShaderLayer::Ptr& layer, const std::string& value)
+        { 
+            layer->setColourExpressionFromString(IShaderLayer::COMP_RED, value);
+            getControl<wxCheckBox>("MaterialStageColored")->SetValue(stageQualifiesAsColoured(layer));
+        });
     createExpressionBinding("MaterialStageGreen",
         [](const IShaderLayer::Ptr& layer) { return layer->getColourExpression(IShaderLayer::COMP_GREEN); },
-        [](const IEditableShaderLayer::Ptr& layer, const std::string& value) { layer->setColourExpressionFromString(IShaderLayer::COMP_GREEN, value); });
+        [this](const IEditableShaderLayer::Ptr& layer, const std::string& value) 
+        { 
+            layer->setColourExpressionFromString(IShaderLayer::COMP_GREEN, value);
+            getControl<wxCheckBox>("MaterialStageColored")->SetValue(stageQualifiesAsColoured(layer));
+        });
     createExpressionBinding("MaterialStageBlue",
         [](const IShaderLayer::Ptr& layer) { return layer->getColourExpression(IShaderLayer::COMP_BLUE); },
-        [](const IEditableShaderLayer::Ptr& layer, const std::string& value) { layer->setColourExpressionFromString(IShaderLayer::COMP_BLUE, value); });
+        [this](const IEditableShaderLayer::Ptr& layer, const std::string& value)
+        {
+            layer->setColourExpressionFromString(IShaderLayer::COMP_BLUE, value);
+            getControl<wxCheckBox>("MaterialStageColored")->SetValue(stageQualifiesAsColoured(layer));
+        });
     createExpressionBinding("MaterialStageAlpha",
         [](const IShaderLayer::Ptr& layer) { return layer->getColourExpression(IShaderLayer::COMP_ALPHA); },
-        [](const IEditableShaderLayer::Ptr& layer, const std::string& value) { layer->setColourExpressionFromString(IShaderLayer::COMP_ALPHA, value); });
+        [this](const IEditableShaderLayer::Ptr& layer, const std::string& value)
+        {
+                layer->setColourExpressionFromString(IShaderLayer::COMP_ALPHA, value);
+                getControl<wxCheckBox>("MaterialStageColored")->SetValue(stageQualifiesAsColoured(layer));
+        });
 
     auto parameterPanel = getControl<wxPanel>("MaterialStageProgramParameters");
     _stageProgramParameters = wxutil::TreeModel::Ptr(new wxutil::TreeModel(_stageProgramColumns, true));
