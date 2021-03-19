@@ -102,6 +102,14 @@ public:
                 ShaderExpression::createMultiplication(ShaderExpression::createConstant(-0.5), transformation.expression2)
             );
             break;
+        case IShaderLayer::TransformType::Shear:
+            matrix.xx = ShaderExpression::createConstant(1);
+            matrix.yx = transformation.expression1;
+            matrix.tx = ShaderExpression::createMultiplication(ShaderExpression::createConstant(-0.5), transformation.expression1);
+            matrix.xy = transformation.expression2;
+            matrix.yy = ShaderExpression::createConstant(1);
+            matrix.ty = ShaderExpression::createMultiplication(ShaderExpression::createConstant(-0.5), transformation.expression2);
+            break;
         default:
             return;
         };
