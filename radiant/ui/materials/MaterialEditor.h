@@ -102,7 +102,10 @@ private:
 
     void createExpressionBinding(const std::string& textCtrlName,
         const std::function<shaders::IShaderExpression::Ptr(const IShaderLayer::Ptr&)>& loadFunc,
-        const std::function<void(const IEditableShaderLayer::Ptr&, const std::string&)>& saveFunc = std::function<void(const IEditableShaderLayer::Ptr&, const std::string&)>());
+        const std::function<void(const IEditableShaderLayer::Ptr&, const std::string&)>& saveFunc);
+    void createRadioButtonBinding(const std::string& ctrlName,
+        const std::function<bool(const IShaderLayer::Ptr&)>& loadFunc,
+        const std::function<void(const IEditableShaderLayer::Ptr&, bool)>& saveFunc);
 
     void updateControlsFromMaterial();
     void updateDeformControlsFromMaterial();

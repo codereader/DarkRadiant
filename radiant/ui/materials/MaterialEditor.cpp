@@ -20,6 +20,7 @@
 #include "string/join.h"
 #include "materials/ParseLib.h"
 #include "ExpressionBinding.h"
+#include "RadioButtonBinding.h"
 
 namespace ui
 {
@@ -376,6 +377,18 @@ void MaterialEditor::createExpressionBinding(const std::string& textCtrlName,
         std::bind(&MaterialEditor::onMaterialChanged, this)));
 }
 
+void MaterialEditor::createRadioButtonBinding(const std::string& ctrlName,
+    const std::function<bool(const IShaderLayer::Ptr&)>& loadFunc,
+    const std::function<void(const IEditableShaderLayer::Ptr&, bool)>& saveFunc)
+{
+    _stageBindings.emplace(std::make_shared<RadioButtonBinding>(
+        getControl<wxRadioButton>(ctrlName),
+        loadFunc,
+        std::bind(&MaterialEditor::getEditableStageForSelection, this),
+        saveFunc,
+        std::bind(&MaterialEditor::onMaterialChanged, this)));
+}
+
 void MaterialEditor::setupMaterialStageProperties()
 {
     setupStageFlag("MaterialStageFlagMaskRed", IShaderLayer::FLAG_MASK_RED);
@@ -489,6 +502,16 @@ void MaterialEditor::setupMaterialStageProperties()
 
     _stageBindings.emplace(std::make_shared<CheckBoxBinding<IShaderLayer::Ptr>>(getControl<wxCheckBox>("MaterialStageColored"),
         [](const IShaderLayer::Ptr& layer) { return (layer->getParseFlags() & IShaderLayer::PF_HasColoredKeyword) != 0; }));
+
+    createRadioButtonBinding("MaterialStageNoVertexColourFlag",
+        [](const IShaderLayer::Ptr& layer) { return layer->getVertexColourMode() == IShaderLayer::VERTEX_COLOUR_NONE; },
+        [](const IEditableShaderLayer::Ptr& layer, bool value) { if (value) layer->setVertexColourMode(IShaderLayer::VERTEX_COLOUR_NONE); });
+    createRadioButtonBinding("MaterialStageVertexColourFlag",
+        [](const IShaderLayer::Ptr& layer) { return layer->getVertexColourMode() == IShaderLayer::VERTEX_COLOUR_MULTIPLY; },
+        [](const IEditableShaderLayer::Ptr& layer, bool value) { if (value) layer->setVertexColourMode(IShaderLayer::VERTEX_COLOUR_MULTIPLY); });
+    createRadioButtonBinding("MaterialStageInverseVertexColourFlag",
+        [](const IShaderLayer::Ptr& layer) { return layer->getVertexColourMode() == IShaderLayer::VERTEX_COLOUR_INVERSE_MULTIPLY; },
+        [](const IEditableShaderLayer::Ptr& layer, bool value) { if (value) layer->setVertexColourMode(IShaderLayer::VERTEX_COLOUR_INVERSE_MULTIPLY); });
 
     createExpressionBinding("MaterialStageRed",
         [](const IShaderLayer::Ptr& layer) { return layer->getColourExpression(IShaderLayer::COMP_RED); },

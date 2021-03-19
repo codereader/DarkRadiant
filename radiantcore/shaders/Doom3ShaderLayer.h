@@ -301,7 +301,7 @@ public:
      * \brief
      * Set vertex colour mode.
      */
-    void setVertexColourMode(VertexColourMode mode)
+    void setVertexColourMode(VertexColourMode mode) override
     {
         _vertexColourMode = mode;
     }

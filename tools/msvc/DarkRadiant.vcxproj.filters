@@ -1356,6 +1356,9 @@
     <ClInclude Include="..\..\radiant\ui\materials\TestModelSkin.h">
       <Filter>src\ui\materials</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\materials\RadioButtonBinding.h">
+      <Filter>src\ui\materials</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />

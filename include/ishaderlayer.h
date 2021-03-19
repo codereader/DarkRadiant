@@ -424,4 +424,7 @@ public:
 
     // Set the stage condition expression
     virtual void setConditionExpressionFromString(const std::string& expression) = 0;
+
+    // Set the vertex colour mode of this stage
+    virtual void setVertexColourMode(VertexColourMode mode) = 0;
 };
