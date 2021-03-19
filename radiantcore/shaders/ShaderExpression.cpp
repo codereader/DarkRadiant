@@ -455,4 +455,9 @@ IShaderExpression::Ptr ShaderExpression::createMultiplication(const IShaderExpre
     return std::make_shared<expressions::MultiplyExpression>(a, b);
 }
 
+IShaderExpression::Ptr ShaderExpression::createTableLookup(const TableDefinitionPtr& table, const IShaderExpression::Ptr& lookup)
+{
+    return std::make_shared<expressions::TableLookupExpression>(table, lookup);
+}
+
 } // namespace

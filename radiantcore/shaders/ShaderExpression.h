@@ -97,6 +97,7 @@ public:
     static IShaderExpression::Ptr createConstant(float constantValue);
     static IShaderExpression::Ptr createAddition(const IShaderExpression::Ptr& a, const IShaderExpression::Ptr& b);
     static IShaderExpression::Ptr createMultiplication(const IShaderExpression::Ptr& a, const IShaderExpression::Ptr& b);
+    static IShaderExpression::Ptr createTableLookup(const TableDefinitionPtr& table, const IShaderExpression::Ptr& lookup);
 
     virtual std::string getExpressionString() override
     {

@@ -678,6 +678,7 @@
     <ClCompile Include="..\..\radiantcore\shaders\ShaderLibrary.cpp" />
     <ClCompile Include="..\..\radiantcore\shaders\ShaderTemplate.cpp" />
     <ClCompile Include="..\..\radiantcore\shaders\TableDefinition.cpp" />
+    <ClCompile Include="..\..\radiantcore\shaders\TextureMatrix.cpp" />
     <ClCompile Include="..\..\radiantcore\shaders\textures\GLTextureManager.cpp" />
     <ClCompile Include="..\..\radiantcore\shaders\textures\TextureManipulator.cpp" />
     <ClCompile Include="..\..\radiantcore\skins\Doom3SkinCache.cpp" />

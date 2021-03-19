@@ -1021,6 +1021,9 @@
     <ClCompile Include="..\..\radiantcore\shaders\ExpressionSlots.cpp">
       <Filter>src\shaders</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\shaders\TextureMatrix.cpp">
+      <Filter>src\shaders</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
