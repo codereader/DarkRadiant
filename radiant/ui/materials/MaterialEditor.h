@@ -145,6 +145,7 @@ private:
     void _onAddStage(wxCommandEvent& ev);
     void _onRemoveStage(wxCommandEvent& ev);
     void _onToggleStage(wxCommandEvent& ev);
+    void _onDuplicateStage(wxCommandEvent& ev);
 
     void onMaterialChanged();
 

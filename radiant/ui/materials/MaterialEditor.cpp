@@ -401,6 +401,7 @@ void MaterialEditor::setupMaterialStageView()
     getControl<wxButton>("MaterialEditorToggleStageButton")->Bind(wxEVT_BUTTON, &MaterialEditor::_onToggleStage, this);
     getControl<wxButton>("MaterialEditorMoveUpStageButton")->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { moveStagePosition(-1); });
     getControl<wxButton>("MaterialEditorMoveDownStageButton")->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { moveStagePosition(+1); });
+    getControl<wxButton>("MaterialEditorDuplicateStageButton")->Bind(wxEVT_BUTTON, &MaterialEditor::_onDuplicateStage, this);
 }
 
 void MaterialEditor::setupStageFlag(const std::string& controlName, int flags)
@@ -1625,6 +1626,19 @@ void MaterialEditor::_onRemoveStage(wxCommandEvent& ev)
 
     _material->removeLayer(index);
     updateStageListFromMaterial();
+
+    auto layersCount = _material->getAllLayers().size();
+
+    while (index > 0)
+    {
+        if (index < layersCount)
+        {
+            selectStageByIndex(index);
+            return;
+        }
+
+        --index;
+    }
 }
 
 void MaterialEditor::_onToggleStage(wxCommandEvent& ev)
@@ -1642,6 +1656,19 @@ void MaterialEditor::_onToggleStage(wxCommandEvent& ev)
 
     stage->setEnabled(row[STAGE_COLS().enabled].getBool());
     onMaterialChanged();
+}
+
+void MaterialEditor::_onDuplicateStage(wxCommandEvent& ev)
+{
+    auto item = _stageView->GetSelection();
+    if (!_material || !item.IsOk()) return;
+
+    auto row = wxutil::TreeModel::Row(item, *_stageList);
+    auto index = row[STAGE_COLS().index].getInteger();
+
+    auto newIndex = _material->duplicateLayer(index);
+    updateStageListFromMaterial();
+    selectStageByIndex(newIndex);
 }
 
 void MaterialEditor::updateNameOfSelectedStage()

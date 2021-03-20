@@ -96,6 +96,7 @@ public:
     std::size_t addLayer(IShaderLayer::Type type) override;
     void removeLayer(std::size_t index) override;
     void swapLayerPosition(std::size_t first, std::size_t second) override;
+    std::size_t duplicateLayer(std::size_t index) override;
     IEditableShaderLayer::Ptr getEditableLayer(std::size_t index) override;
 
     IMapExpression::Ptr getLightFalloffExpression() override;

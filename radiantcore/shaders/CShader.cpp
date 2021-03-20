@@ -340,6 +340,18 @@ void CShader::swapLayerPosition(std::size_t first, std::size_t second)
     realiseLighting();
 }
 
+std::size_t CShader::duplicateLayer(std::size_t index)
+{
+    ensureTemplateCopy();
+
+    auto newIndex = _template->duplicateLayer(index);
+
+    unrealiseLighting();
+    realiseLighting();
+
+    return newIndex;
+}
+
 IEditableShaderLayer::Ptr CShader::getEditableLayer(std::size_t index)
 {
     ensureTemplateCopy();

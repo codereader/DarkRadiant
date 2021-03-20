@@ -325,6 +325,9 @@ public:
     // Removes the indexed layer from this material
     virtual void removeLayer(std::size_t index) = 0;
 
+    // Duplicates the given layer and returns the index to the copied one
+    virtual std::size_t duplicateLayer(std::size_t index) = 0;
+
     // Swaps the position of the two layers
     virtual void swapLayerPosition(std::size_t first, std::size_t second) = 0;
 

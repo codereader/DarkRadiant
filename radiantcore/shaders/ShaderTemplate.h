@@ -326,6 +326,7 @@ public:
     std::size_t addLayer(IShaderLayer::Type type);
     void removeLayer(std::size_t index);
     void swapLayerPosition(std::size_t first, std::size_t second);
+    std::size_t duplicateLayer(std::size_t index);
 
 	// Add a specific layer to this template
 	void addLayer(IShaderLayer::Type type, const MapExpressionPtr& mapExpr);

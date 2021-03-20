@@ -1436,6 +1436,17 @@ void ShaderTemplate::swapLayerPosition(std::size_t first, std::size_t second)
     _layers[first].swap(_layers[second]);
 }
 
+std::size_t ShaderTemplate::duplicateLayer(std::size_t index)
+{
+    if (index >= _layers.size())
+    {
+        throw std::runtime_error("Cannot duplicate this stage, index invalid");
+    }
+
+    _layers.emplace_back(std::make_shared<Doom3ShaderLayer>(*_layers[index], *this));
+    return _layers.size() - 1;
+}
+
 bool ShaderTemplate::hasDiffusemap()
 {
 	if (!_parsed) parseDefinition();
