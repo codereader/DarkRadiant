@@ -515,13 +515,6 @@ TEST(MathTest, MatrixTransformation)
     EXPECT_EQ(a.t().z(), 53) << "Matrix4::t failed";
 }
 
-TEST(MathTest, MatrixDeterminant)
-{
-    Matrix4 a = Matrix4::byColumns(3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59);
-
-    EXPECT_EQ(a.getDeterminant(), -448) << "Matrix determinant calculation failed";
-}
-
 TEST(MathTest, MatrixFullInverse)
 {
     auto a = Matrix4::byColumns(3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59);
