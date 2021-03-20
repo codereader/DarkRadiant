@@ -397,26 +397,6 @@ public:
     Matrix4 getTranslatedBy(const Vector3& translation) const;
 
     /**
-     * Returns this matrix concatenated with the rotation transform produced by the given quat.
-     * The concatenated rotation occurs before the transformation of this matrix.
-     *
-     * Equivalent to getMultipliedBy(getRotation(rotation));
-     */
-    Matrix4 getRotatedBy(const Quaternion& rotation) const;
-
-    /**
-     * Concatenates this matrix with the rotation transform produced by the given quat.
-     * The concatenated rotation occurs before the transformation of this matrix.
-     */
-    void rotateBy(const Quaternion& rotation);
-
-    /**
-     * Concatenates this matrix with the pivoted rotation transform produced by the given quat.
-     * The concatenated rotation occurs before the transformation of this matrix.
-     */
-    void rotateBy(const Quaternion& rotation, const Vector3& pivot);
-
-    /**
      * \brief
      * Add a scale component to the transformation represented by this matrix.
      *
@@ -824,23 +804,6 @@ inline const Vector3& Matrix4::translation() const
 inline Matrix4 Matrix4::getTranslatedBy(const Vector3& translation) const
 {
     return getMultipliedBy(Matrix4::getTranslation(translation));
-}
-
-inline Matrix4 Matrix4::getRotatedBy(const Quaternion& rotation) const
-{
-    return getMultipliedBy(getRotation(rotation));
-}
-
-inline void Matrix4::rotateBy(const Quaternion& rotation)
-{
-    *this = getRotatedBy(rotation);
-}
-
-inline void Matrix4::rotateBy(const Quaternion& rotation, const Vector3& pivot)
-{
-    translateBy(pivot);
-    rotateBy(rotation);
-    translateBy(-pivot);
 }
 
 inline void Matrix4::rotateByEulerXYZDegrees(const Vector3& euler)
