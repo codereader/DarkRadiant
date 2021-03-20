@@ -133,6 +133,7 @@ private:
 
     void _onTreeViewSelectionChanged(wxDataViewEvent& ev);
     void _onStageListSelectionChanged(wxDataViewEvent& ev);
+    void _onStageListValueChanged(wxDataViewEvent& ev);
     void _onMaterialTypeChoice(wxCommandEvent& ev);
     void _onAddStageTransform(wxCommandEvent& ev);
     void _onRemoveStageTransform(wxCommandEvent& ev);

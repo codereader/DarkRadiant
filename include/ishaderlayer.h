@@ -312,6 +312,10 @@ public:
 	 */
 	virtual bool isVisible() const = 0;
 
+    // Stages can be enabled/disabled programmatically (used when editing materials)
+    // This returns true if the stage is enabled
+    virtual bool isEnabled() const = 0;
+
     // Returns the if-expression used to evaluate this stage's visibility, or null if none defined
     virtual const shaders::IShaderExpression::Ptr& getConditionExpression() const = 0;
 
@@ -401,6 +405,9 @@ public:
     using Ptr = std::shared_ptr<IEditableShaderLayer>;
 
     virtual ~IEditableShaderLayer() {}
+
+    // Enable/disable this stage - a disabled stage will return false to isVisible()
+    virtual void setEnabled(bool enabled) = 0;
 
     // Set the map type to use by this stage (map, cameraCubeMap, etc.)
     virtual void setMapType(MapType mapType) = 0;

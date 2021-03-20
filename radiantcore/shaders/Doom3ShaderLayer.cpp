@@ -118,7 +118,8 @@ Doom3ShaderLayer::Doom3ShaderLayer(ShaderTemplate& material, IShaderLayer::Type 
 	_texGenType(TEXGEN_NORMAL),
     _textureMatrix(_expressionSlots, _registers),
 	_privatePolygonOffset(0),
-    _parseFlags(0)
+    _parseFlags(0),
+    _enabled(true)
 {
 	_registers[REG_ZERO] = 0;
 	_registers[REG_ONE] = 1;
@@ -163,7 +164,8 @@ Doom3ShaderLayer::Doom3ShaderLayer(const Doom3ShaderLayer& other, ShaderTemplate
     _fragmentMaps(other._fragmentMaps),
     _privatePolygonOffset(other._privatePolygonOffset),
     _renderMapSize(other._renderMapSize),
-    _parseFlags(other._parseFlags)
+    _parseFlags(other._parseFlags),
+    _enabled(other._enabled)
 {}
 
 TexturePtr Doom3ShaderLayer::getTexture() const
@@ -525,6 +527,11 @@ void Doom3ShaderLayer::recalculateTransformationMatrix()
     {
         _textureMatrix.applyTransformation(transform);
     }
+}
+
+void Doom3ShaderLayer::setEnabled(bool enabled)
+{
+    _enabled = enabled;
 }
 
 std::size_t Doom3ShaderLayer::addTransformation(TransformType type, const std::string& expression1, const std::string& expression2)

@@ -92,6 +92,8 @@ private:
 
     int _parseFlags;
 
+    bool _enabled;
+
 public:
     using Ptr = std::shared_ptr<Doom3ShaderLayer>;
 
@@ -126,9 +128,14 @@ public:
 
     // True if the condition for this stage is fulfilled 
     // (expressions must have been evaluated before this call)
-    bool isVisible() const
+    bool isVisible() const override
     {
-        return _registers[_expressionSlots[Expression::Condition].registerIndex] != 0;
+        return _enabled && _registers[_expressionSlots[Expression::Condition].registerIndex] != 0;
+    }
+
+    bool isEnabled() const override
+    {
+        return _enabled;
     }
 
     const shaders::IShaderExpression::Ptr& getConditionExpression() const override
@@ -446,6 +453,7 @@ public:
     shaders::IMapExpression::Ptr getMapExpression() const override;
     void setMapExpressionFromString(const std::string& expression) override;
 
+    void setEnabled(bool enabled) override;
     std::size_t addTransformation(TransformType type, const std::string& expression1, const std::string& expression2) override;
     void removeTransformation(std::size_t index) override;
     void updateTransformation(std::size_t index, TransformType type, const std::string& expression1, const std::string& expression2) override;

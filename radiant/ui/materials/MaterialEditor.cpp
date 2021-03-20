@@ -42,11 +42,13 @@ namespace
         public wxutil::TreeModel::ColumnRecord
     {
         StageColumns() :
+            enabled(add(wxutil::TreeModel::Column::Boolean)),
             name(add(wxutil::TreeModel::Column::String)),
             index(add(wxutil::TreeModel::Column::Integer)),
             visible(add(wxutil::TreeModel::Column::Boolean))
         {}
 
+        wxutil::TreeModel::Column enabled;
         wxutil::TreeModel::Column name;
         wxutil::TreeModel::Column index;
         wxutil::TreeModel::Column visible;
@@ -367,11 +369,13 @@ void MaterialEditor::setupMaterialStageView()
     _stageView = wxutil::TreeView::CreateWithModel(panel, _stageList.get(), wxDV_NO_HEADER);
     panel->GetSizer()->Add(_stageView, 1, wxEXPAND);
 
-    // Single text column
+    _stageView->AppendToggleColumn(_("Enabled"), STAGE_COLS().enabled.getColumnIndex(),
+        wxDATAVIEW_CELL_ACTIVATABLE, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
     _stageView->AppendTextColumn(_("Stage"), STAGE_COLS().name.getColumnIndex(),
         wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
     _stageView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &MaterialEditor::_onStageListSelectionChanged, this);
+    _stageView->Bind(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED, &MaterialEditor::_onStageListValueChanged, this);
 }
 
 void MaterialEditor::setupStageFlag(const std::string& controlName, int flags)
@@ -800,6 +804,19 @@ void MaterialEditor::_onStageListSelectionChanged(wxDataViewEvent& ev)
     updateStageControls();
 }
 
+void MaterialEditor::_onStageListValueChanged(wxDataViewEvent& ev)
+{
+    if (!_material || ev.GetColumn() != STAGE_COLS().enabled.getColumnIndex()) return;
+
+    auto stage = getEditableStageForSelection();
+
+    if (!stage) return;
+
+    wxutil::TreeModel::Row row(ev.GetItem(), *_stageList);
+    stage->setEnabled(row[STAGE_COLS().enabled].getBool());
+    int index = row[STAGE_COLS().index].getInteger();
+}
+
 void MaterialEditor::updateControlsFromMaterial()
 {
     util::ScopedBoolLock lock(_materialUpdateInProgress);
@@ -917,6 +934,7 @@ void MaterialEditor::updateStageListFromMaterial()
     {
         auto row = _stageList->AddItem();
 
+        row[STAGE_COLS().enabled] = layer->isEnabled();
         row[STAGE_COLS().index] = index;
         row[STAGE_COLS().name] = getNameForLayer(*layer);
         row[STAGE_COLS().visible] = true;
