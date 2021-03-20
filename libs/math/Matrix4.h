@@ -155,46 +155,6 @@ public:
     static Matrix4 getRotationForEulerXYZDegrees(const Vector3& euler);
 
     /**
-     * Constructs a pure-rotation matrix from a set of euler angles (radians) in the order (y, z, x).
-     */
-    static Matrix4 getRotationForEulerYZX(const Vector3& euler);
-
-    /**
-     * Constructs a pure-rotation matrix from a set of euler angles (radians) in the order (x, z, y).
-     */
-    static Matrix4 getRotationForEulerXZY(const Vector3& euler);
-
-    /**
-     * Constructs a pure-rotation matrix from a set of euler angles (radians) in the order (y, x, z).
-     */
-    static Matrix4 getRotationForEulerYXZ(const Vector3& euler);
-
-    /**
-     * Constructs a pure-rotation matrix from a set of euler angles (degrees) in the order (y, x, z).
-     */
-    static Matrix4 getRotationForEulerYXZDegrees(const Vector3& euler);
-
-    /**
-     * Constructs a pure-rotation matrix from a set of euler angles (radians) in the order (z, x, y).
-     */
-    static Matrix4 getRotationForEulerZXY(const Vector3& euler);
-
-    /**
-     * Constructs a pure-rotation matrix from a set of euler angles (degrees) in the order (z, x, y).
-     */
-    static Matrix4 getRotationForEulerZXYDegrees(const Vector3& euler);
-
-    /**
-     * Constructs a pure-rotation matrix from a set of euler angles (radians) in the order (z, y, x).
-     */
-    static Matrix4 getRotationForEulerZYX(const Vector3& euler);
-
-    /**
-     * Constructs a pure-rotation matrix from a set of euler angles (degrees) in the order (z, y, x).
-     */
-    static Matrix4 getRotationForEulerZYXDegrees(const Vector3& euler);
-
-    /**
      * \brief
      * Get a matrix representing the given scale in 3D space.
      *
@@ -536,25 +496,6 @@ public:
     void rotateByEulerXYZDegrees(const Vector3& euler);
 
     /**
-     * Concatenates this with the pivoted rotation transform produced
-     * by euler angles (degrees) in the order (x, y, z).
-     * The concatenated rotation occurs before self.
-     */
-    void rotateByEulerXYZDegrees(const Vector3& euler, const Vector3& pivot);
-
-    /**
-     * Returns this matrix concatenated with the rotation transform produced by the given
-     * euler angles (degrees) in the order (y, x, z). The concatenated rotation occurs before this matrix.
-     */
-    Matrix4 getRotatedByEulerYXZDegrees(const Vector3& euler) const;
-
-    /**
-     * Returns this matrix concatenated with the rotation transform produced by the given
-     * euler angles (degrees) in the order (z, x, y). The concatenated rotation occurs before this matrix.
-     */
-    Matrix4 getRotatedByEulerZXYDegrees(const Vector3& euler) const;
-
-    /**
      * Calculates and returns a set of euler angles in radians that produce
      * the rotation component of this matrix when applied in the order (x, y, z).
      * This matrix must be affine and orthonormal (unscaled) to produce a meaningful result.
@@ -567,48 +508,6 @@ public:
      * This matrix must be affine and orthonormal (unscaled) to produce a meaningful result.
      */
     Vector3 getEulerAnglesXYZDegrees() const;
-
-    /**
-     * Calculates and returns a set of euler angles in radians that produce
-     * the rotation component of this matrix when applied in the order (y, x, z).
-     * This matrix must be affine and orthonormal (unscaled) to produce a meaningful result.
-     */
-    Vector3 getEulerAnglesYXZ() const;
-
-    /**
-     * Calculates and returns a set of euler angles in degrees that produce
-     * the rotation component of this matrix when applied in the order (y, x, z).
-     * This matrix must be affine and orthonormal (unscaled) to produce a meaningful result.
-     */
-    Vector3 getEulerAnglesYXZDegrees() const;
-
-    /**
-     * Calculates and returns a set of euler angles in radians that produce
-     * the rotation component of this matrix when applied in the order (z, x, y).
-     * This matrix must be affine and orthonormal (unscaled) to produce a meaningful result.
-     */
-    Vector3 getEulerAnglesZXY() const;
-
-    /**
-     * Calculates and returns a set of euler angles in degrees that produce
-     * the rotation component of this matrix when applied in the order (z, x, y).
-     * This matrix must be affine and orthonormal (unscaled) to produce a meaningful result.
-     */
-    Vector3 getEulerAnglesZXYDegrees() const;
-
-    /**
-     * Calculates and returns a set of euler angles in radians that produce
-     * the rotation component of this matrix when applied in the order (z, y, x).
-     * This matrix must be affine and orthonormal (unscaled) to produce a meaningful result.
-     */
-    Vector3 getEulerAnglesZYX() const;
-
-    /**
-     * Calculates and returns a set of euler angles in degrees that produce
-     * the rotation component of this matrix when applied in the order (z, y, x).
-     * This matrix must be affine and orthonormal (unscaled) to produce a meaningful result.
-     */
-    Vector3 getEulerAnglesZYXDegrees() const;
 
     /**
      * Calculates and returns the (x, y, z) scale values that produce the scale component of this matrix.
@@ -949,23 +848,6 @@ inline void Matrix4::rotateByEulerXYZDegrees(const Vector3& euler)
     multiplyBy(getRotationForEulerXYZDegrees(euler));
 }
 
-inline void Matrix4::rotateByEulerXYZDegrees(const Vector3& euler, const Vector3& pivot)
-{
-    translateBy(pivot);
-    rotateByEulerXYZDegrees(euler);
-    translateBy(-pivot);
-}
-
-inline Matrix4 Matrix4::getRotatedByEulerYXZDegrees(const Vector3& euler) const
-{
-    return getMultipliedBy(getRotationForEulerYXZDegrees(euler));
-}
-
-inline Matrix4 Matrix4::getRotatedByEulerZXYDegrees(const Vector3& euler) const
-{
-    return getMultipliedBy(getRotationForEulerZXYDegrees(euler));
-}
-
 inline Vector3 Matrix4::getEulerAnglesXYZ() const
 {
     double a = asin(-xz());
@@ -992,93 +874,6 @@ inline Vector3 Matrix4::getEulerAnglesXYZ() const
 inline Vector3 Matrix4::getEulerAnglesXYZDegrees() const
 {
     Vector3 eulerRad = getEulerAnglesXYZ();
-    return Vector3(radians_to_degrees(eulerRad.x()), radians_to_degrees(eulerRad.y()), radians_to_degrees(eulerRad.z()));
-}
-
-inline Vector3 Matrix4::getEulerAnglesYXZ() const
-{
-    double a = asin(yz());
-    double ca = cos(a);
-
-    if (fabs(ca) > 0.005f) // Gimbal lock?
-    {
-        return Vector3(
-            a,
-            atan2(-xz() / ca, zz() / ca),
-            atan2(-yx() / ca, yy() / ca)
-        );
-    }
-    else // Gimbal lock has occurred
-    {
-        return Vector3(
-            a,
-            atan2(zx(), xx()),
-            0
-        );
-    }
-}
-
-inline Vector3 Matrix4::getEulerAnglesYXZDegrees() const
-{
-    Vector3 eulerRad = getEulerAnglesYXZ();
-    return Vector3(radians_to_degrees(eulerRad.x()), radians_to_degrees(eulerRad.y()), radians_to_degrees(eulerRad.z()));
-}
-
-inline Vector3 Matrix4::getEulerAnglesZXY() const
-{
-    double a = asin(-zy());
-    double ca = cos(a);
-
-    if (fabs(ca) > 0.005f) // Gimbal lock?
-    {
-        return Vector3(
-            a,
-            atan2(zx() / ca, zz() / ca),
-            atan2(xy() / ca, yy()/ ca)
-        );
-    }
-    else // Gimbal lock has occurred
-    {
-        return Vector3(
-            a,
-            0,
-            atan2(-yx(), xx())
-        );
-    }
-}
-
-inline Vector3 Matrix4::getEulerAnglesZXYDegrees() const
-{
-    Vector3 eulerRad = getEulerAnglesZXY();
-    return Vector3(radians_to_degrees(eulerRad.x()), radians_to_degrees(eulerRad.y()), radians_to_degrees(eulerRad.z()));
-}
-
-inline Vector3 Matrix4::getEulerAnglesZYX() const
-{
-    double a = asin(zx());
-    double ca = cos(a);
-
-    if (fabs(ca) > 0.005f) // Gimbal lock?
-    {
-        return Vector3(
-            atan2(-zy() / ca, zz()/ ca),
-            a,
-            atan2(-yx() / ca, xx() / ca)
-        );
-    }
-    else // Gimbal lock has occurred
-    {
-        return Vector3(
-            0,
-            a,
-            atan2(xy(), yy())
-        );
-    }
-}
-
-inline Vector3 Matrix4::getEulerAnglesZYXDegrees() const
-{
-    Vector3 eulerRad = getEulerAnglesZYX();
     return Vector3(radians_to_degrees(eulerRad.x()), radians_to_degrees(eulerRad.y()), radians_to_degrees(eulerRad.z()));
 }
 
