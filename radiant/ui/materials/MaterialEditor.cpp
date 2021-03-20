@@ -534,6 +534,35 @@ void MaterialEditor::setupMaterialStageProperties()
         if (!value) return;
         layer->setMapType(IShaderLayer::MapType::MirrorRenderMap);
         updateStageControls();
+    }); 
+
+    createSpinCtrlBinding("MaterialStageRemoteRenderMapWidth",
+        [](const IShaderLayer::Ptr& layer) { return static_cast<int>(layer->getRenderMapSize().x()); },
+        [this](const IEditableShaderLayer::Ptr& layer, const int& value)
+    {
+        auto currentSize = layer->getRenderMapSize();
+        layer->setRenderMapSize(Vector2(value, currentSize.y()));
+    });
+    createSpinCtrlBinding("MaterialStageRemoteRenderMapHeight",
+        [](const IShaderLayer::Ptr& layer) { return static_cast<int>(layer->getRenderMapSize().y()); },
+        [this](const IEditableShaderLayer::Ptr& layer, const int& value)
+    {
+        auto currentSize = layer->getRenderMapSize();
+        layer->setRenderMapSize(Vector2(currentSize.x(), value));
+    });
+    createSpinCtrlBinding("MaterialStageMirrorRenderMapWidth",
+        [](const IShaderLayer::Ptr& layer) { return static_cast<int>(layer->getRenderMapSize().x()); },
+        [this](const IEditableShaderLayer::Ptr& layer, const int& value)
+    {
+        auto currentSize = layer->getRenderMapSize();
+        layer->setRenderMapSize(Vector2(value, currentSize.y()));
+    });
+    createSpinCtrlBinding("MaterialStageMirrorRenderMapHeight",
+        [](const IShaderLayer::Ptr& layer) { return static_cast<int>(layer->getRenderMapSize().y()); },
+        [this](const IEditableShaderLayer::Ptr& layer, const int& value)
+    {
+        auto currentSize = layer->getRenderMapSize();
+        layer->setRenderMapSize(Vector2(currentSize.x(), value));
     });
 
     createSpinCtrlDoubleBinding("MaterialStagePrivatePolygonOffset",

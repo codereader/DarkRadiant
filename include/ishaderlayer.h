@@ -442,4 +442,7 @@ public:
 
     // Sets the privatePolygonOffset value of this stage
     virtual void setPrivatePolygonOffset(double offset) = 0;
+
+    // Sets width and height of the mirrorRenderMap/remoteRenderMap images
+    virtual void setRenderMapSize(const Vector2& size) = 0;
 };
