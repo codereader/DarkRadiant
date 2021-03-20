@@ -436,35 +436,6 @@ public:
      */
     Handedness getHandedness() const;
 
-    /**
-     * Returns true if this matrix is affine.
-     */
-    bool isAffine() const;
-
-    /**
-     * Returns this matrix post-multiplied by the other.
-     * This and the other matrix must be affine.
-     */
-    Matrix4 getAffineMultipliedBy(const Matrix4& other) const;
-
-    /**
-     * Post-multiplies this matrix by the other in-place.
-     * This and the other matrix must be affine.
-     */
-    void affineMultiplyBy(const Matrix4& other);
-
-    /**
-     * Returns this matrix pre-multiplied by the other.
-     * This matrix and the other must be affine.
-     */
-    Matrix4 getAffinePremultipliedBy(const Matrix4& other) const;
-
-    /**
-     * Pre-multiplies this matrix by the other in-place.
-     * This and the other matrix must be affine.
-     */
-    void affinePremultiplyBy(const Matrix4& other);
-
     /// Return the 3-element translation component of this matrix
     const Vector3& translation() const;
 
@@ -711,48 +682,6 @@ inline Matrix4::Handedness Matrix4::getHandedness() const
 inline void Matrix4::premultiplyBy(const Matrix4& other)
 {
     *this = getPremultipliedBy(other);
-}
-
-inline bool Matrix4::isAffine() const
-{
-    return xw() == 0 && yw() == 0 && zw() == 0 && tw() == 1;
-}
-
-inline Matrix4 Matrix4::getAffineMultipliedBy(const Matrix4& other) const
-{
-    return Matrix4::byColumns(
-        other.xx() * xx() + other.xy() * yx() + other.xz() * zx(),
-        other.xx() * xy() + other.xy() * yy() + other.xz() * zy(),
-        other.xx() * xz() + other.xy() * yz() + other.xz() * zz(),
-        0,
-        other.yx() * xx() + other.yy() * yx() + other.yz() * zx(),
-        other.yx() * xy() + other.yy() * yy() + other.yz() * zy(),
-        other.yx() * xz() + other.yy() * yz() + other.yz() * zz(),
-        0,
-        other.zx() * xx() + other.zy() * yx() + other.zz()* zx(),
-        other.zx() * xy() + other.zy() * yy() + other.zz()* zy(),
-        other.zx() * xz() + other.zy() * yz() + other.zz()* zz(),
-        0,
-        other.tx()* xx() + other.ty()* yx() + other.tz()* zx() + tx(),
-        other.tx()* xy() + other.ty()* yy() + other.tz()* zy() + ty(),
-        other.tx()* xz() + other.ty()* yz() + other.tz()* zz()+ tz(),
-        1
-    );
-}
-
-inline void Matrix4::affineMultiplyBy(const Matrix4& other)
-{
-    *this = getAffineMultipliedBy(other);
-}
-
-inline Matrix4 Matrix4::getAffinePremultipliedBy(const Matrix4& other) const
-{
-    return other.getAffineMultipliedBy(*this);
-}
-
-inline void Matrix4::affinePremultiplyBy(const Matrix4& other)
-{
-    *this = getAffinePremultipliedBy(other);
 }
 
 template<typename Element>

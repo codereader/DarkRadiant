@@ -262,16 +262,6 @@ TEST(MathTest, MatrixMultiplication)
 
     // Test Pre-Multiplication
     EXPECT_EQ(b.getMultipliedBy(a), a.getPremultipliedBy(b)) << "Matrix pre-multiplication mismatch";
-
-    // Create an affine matrix
-    Matrix4 affineA = a;
-
-    affineA.xw() = 0;
-    affineA.yw() = 0;
-    affineA.zw() = 0;
-    affineA.tw() = 1;
-
-    EXPECT_TRUE(affineA.isAffine()) << "Affine check failed";
 }
 
 TEST(MathTest, MatrixTransformation)
