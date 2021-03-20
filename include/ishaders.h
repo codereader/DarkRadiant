@@ -215,6 +215,9 @@ public:
     /// Return a polygon offset if one is defined. The default is 0.
     virtual float getPolygonOffset() const = 0;
 
+    // Set the polygon offset of this material. Clear the FLAG_POLYGONOFFSET to disable the offset altogether.
+    virtual void setPolygonOffset(float offset) = 0;
+
 	/// Get the desired texture repeat behaviour.
 	virtual ClampType getClampType() const = 0;
 

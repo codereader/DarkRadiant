@@ -219,6 +219,15 @@ void MaterialEditor::setupMaterialProperties()
     
     _materialBindings.emplace(std::make_shared<CheckBoxBinding<MaterialPtr>>(getControl<wxCheckBox>("MaterialHasSortValue"),
         [](const MaterialPtr& material) { return (material->getParseFlags() & Material::PF_HasSortDefined) != 0; }));
+
+    _materialBindings.emplace(std::make_shared<SpinCtrlMaterialBinding<wxSpinCtrlDouble>>(getControl<wxSpinCtrlDouble>("MaterialPolygonOffsetValue"),
+        [](const MaterialPtr& material) { return material->getPolygonOffset(); },
+        [this](const MaterialPtr& material, const double& value)
+        {
+            material->setPolygonOffset(value);
+            getControl<wxCheckBox>("MaterialFlagHasPolygonOffset")->SetValue(true);
+        },
+        [this]() { onMaterialChanged(); }));
 }
 
 void MaterialEditor::setupSurfaceFlag(const std::string& controlName, Material::SurfaceFlags flag)
@@ -445,7 +454,7 @@ void MaterialEditor::createSpinCtrlBinding(const std::string& ctrlName,
     const std::function<int(const IShaderLayer::Ptr&)>& loadFunc,
     const std::function<void(const IEditableShaderLayer::Ptr&, int)>& saveFunc)
 {
-    _stageBindings.emplace(std::make_shared<SpinCtrlBinding<wxSpinCtrl>>(
+    _stageBindings.emplace(std::make_shared<SpinCtrlStageBinding<wxSpinCtrl>>(
         getControl<wxSpinCtrl>(ctrlName),
         loadFunc,
         std::bind(&MaterialEditor::getEditableStageForSelection, this),
@@ -457,7 +466,7 @@ void MaterialEditor::createSpinCtrlDoubleBinding(const std::string& ctrlName,
     const std::function<double(const IShaderLayer::Ptr&)>& loadFunc,
     const std::function<void(const IEditableShaderLayer::Ptr&, double)>& saveFunc)
 {
-    _stageBindings.emplace(std::make_shared<SpinCtrlBinding<wxSpinCtrlDouble>>(
+    _stageBindings.emplace(std::make_shared<SpinCtrlStageBinding<wxSpinCtrlDouble>>(
         getControl<wxSpinCtrlDouble>(ctrlName),
         loadFunc,
         std::bind(&MaterialEditor::getEditableStageForSelection, this),

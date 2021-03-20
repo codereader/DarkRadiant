@@ -293,6 +293,13 @@ public:
         return _polygonOffset;
     }
 
+    void setPolygonOffset(float offset)
+    {
+        if (!_parsed) parseDefinition();
+        setMaterialFlag(Material::FLAG_POLYGONOFFSET);
+        _polygonOffset = offset;
+    }
+
 	// Sets the raw block definition contents, will be parsed on demand
 	void setBlockContents(const std::string& blockContents)
 	{

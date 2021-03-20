@@ -56,6 +56,7 @@ public:
     /* Material implementation */
     int getSortRequest() const override;
     float getPolygonOffset() const override;
+    void setPolygonOffset(float offset) override;
 	TexturePtr getEditorImage() override;
 	bool isEditorImageNoTex() override;
 	TexturePtr lightFalloffImage() override;

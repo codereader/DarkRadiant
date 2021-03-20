@@ -64,6 +64,58 @@ protected:
 };
 
 template<typename ValueType>
+class TwoWayMaterialBinding :
+    public TwoWayBinding<MaterialPtr, MaterialPtr>
+{
+protected:
+    std::function<ValueType(const MaterialPtr&)> _getValue;
+    std::function<void(const MaterialPtr&, ValueType)> _updateValue;
+    std::function<void()> _postChangeNotify;
+
+public:
+    TwoWayMaterialBinding(const std::function<ValueType(const MaterialPtr&)>& loadFunc,
+        const std::function<void(const MaterialPtr&, ValueType)>& saveFunc,
+        const std::function<void()>& postChangeNotify = std::function<void()>()) :
+        TwoWayBinding([this] { return getSource(); }),
+        _getValue(loadFunc),
+        _updateValue(saveFunc),
+        _postChangeNotify(postChangeNotify)
+    {}
+
+protected:
+    // Just load the given value into the control
+    virtual void setValueOnControl(const ValueType& value) = 0;
+
+    virtual void updateFromSource() override
+    {
+        util::ScopedBoolLock lock(_blockUpdates);
+
+        if (!getSource())
+        {
+            setValueOnControl(ValueType());
+            return;
+        }
+
+        setValueOnControl(_getValue(getSource()));
+    }
+
+    virtual void updateValueOnTarget(const ValueType& newValue)
+    {
+        auto target = getTarget();
+
+        if (target)
+        {
+            _updateValue(target, newValue);
+        }
+
+        if (_postChangeNotify)
+        {
+            _postChangeNotify();
+        }
+    }
+};
+
+template<typename ValueType>
 class TwoWayStageBinding :
     public TwoWayBinding<IShaderLayer::Ptr, IEditableShaderLayer::Ptr>
 {

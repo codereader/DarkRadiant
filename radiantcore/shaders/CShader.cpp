@@ -52,6 +52,12 @@ float CShader::getPolygonOffset() const
     return _template->getPolygonOffset();
 }
 
+void CShader::setPolygonOffset(float offset)
+{
+    ensureTemplateCopy();
+    _template->setPolygonOffset(offset);
+}
+
 TexturePtr CShader::getEditorImage()
 {
     if (!_editorTexture)
