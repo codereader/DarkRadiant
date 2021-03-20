@@ -330,6 +330,16 @@ void CShader::removeLayer(std::size_t index)
     realiseLighting();
 }
 
+void CShader::swapLayerPosition(std::size_t first, std::size_t second)
+{
+    ensureTemplateCopy();
+
+    _template->swapLayerPosition(first, second);
+
+    unrealiseLighting();
+    realiseLighting();
+}
+
 IEditableShaderLayer::Ptr CShader::getEditableLayer(std::size_t index)
 {
     ensureTemplateCopy();

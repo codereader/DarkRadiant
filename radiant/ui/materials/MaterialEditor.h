@@ -130,6 +130,7 @@ private:
     void updateStageTransformControls();
     void updateStageColoredStatus();
     void updateNameOfSelectedStage();
+    void moveStagePosition(int direction);
 
     void _onTreeViewSelectionChanged(wxDataViewEvent& ev);
     void _onStageListSelectionChanged(wxDataViewEvent& ev);

@@ -1426,6 +1426,16 @@ void ShaderTemplate::removeLayer(std::size_t index)
     _layers.erase(_layers.begin() + index);
 }
 
+void ShaderTemplate::swapLayerPosition(std::size_t first, std::size_t second)
+{
+    if (first >= _layers.size() || second >= _layers.size())
+    {
+        return;
+    }
+
+    _layers[first].swap(_layers[second]);
+}
+
 bool ShaderTemplate::hasDiffusemap()
 {
 	if (!_parsed) parseDefinition();

@@ -325,6 +325,9 @@ public:
     // Removes the indexed layer from this material
     virtual void removeLayer(std::size_t index) = 0;
 
+    // Swaps the position of the two layers
+    virtual void swapLayerPosition(std::size_t first, std::size_t second) = 0;
+
     // Returns the edit interface for the given shader layer. Calling this method
     // will immediately mark this Material as modified.
     virtual IEditableShaderLayer::Ptr getEditableLayer(std::size_t index) = 0;

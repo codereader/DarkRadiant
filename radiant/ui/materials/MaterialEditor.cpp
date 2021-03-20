@@ -399,6 +399,8 @@ void MaterialEditor::setupMaterialStageView()
     getControl<wxButton>("MaterialEditorAddStageButton")->Bind(wxEVT_BUTTON, &MaterialEditor::_onAddStage, this);
     getControl<wxButton>("MaterialEditorRemoveStageButton")->Bind(wxEVT_BUTTON, &MaterialEditor::_onRemoveStage, this);
     getControl<wxButton>("MaterialEditorToggleStageButton")->Bind(wxEVT_BUTTON, &MaterialEditor::_onToggleStage, this);
+    getControl<wxButton>("MaterialEditorMoveUpStageButton")->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { moveStagePosition(-1); });
+    getControl<wxButton>("MaterialEditorMoveDownStageButton")->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { moveStagePosition(+1); });
 }
 
 void MaterialEditor::setupStageFlag(const std::string& controlName, int flags)
@@ -1651,6 +1653,25 @@ void MaterialEditor::updateNameOfSelectedStage()
 
     row[STAGE_COLS().name] = getNameForLayer(*getSelectedStage());
     row.SendItemChanged();
+}
+
+void MaterialEditor::moveStagePosition(int direction)
+{
+    auto item = _stageView->GetSelection();
+    if (!_material || !item.IsOk()) return;
+
+    auto row = wxutil::TreeModel::Row(item, *_stageList);
+    auto index = row[STAGE_COLS().index].getInteger();
+
+    int newPosition = index + direction;
+
+    if (newPosition >= 0 && newPosition < _material->getAllLayers().size())
+    {
+        _material->swapLayerPosition(static_cast<std::size_t>(index), static_cast<std::size_t>(newPosition));
+        onMaterialChanged();
+        updateStageListFromMaterial();
+        selectStageByIndex(static_cast<std::size_t>(newPosition));
+    }
 }
 
 void MaterialEditor::onMaterialChanged()
