@@ -141,6 +141,8 @@ private:
     void _onStageColoredChecked(wxCommandEvent& ev);
     void _onStageMapTypeChanged(wxCommandEvent& ev);
     void _onStageBlendTypeChanged(wxCommandEvent& ev);
+    void _onAddStage(wxCommandEvent& ev);
+    void _onRemoveStage(wxCommandEvent& ev);
 
     void onMaterialChanged();
 

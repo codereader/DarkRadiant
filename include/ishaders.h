@@ -319,6 +319,12 @@ public:
      */
     virtual const IShaderLayerVector& getAllLayers() const = 0;
 
+    // Add a new (typed) layer to this material, returning the index of the new layer
+    virtual std::size_t addLayer(IShaderLayer::Type type) = 0;
+
+    // Removes the indexed layer from this material
+    virtual void removeLayer(std::size_t index) = 0;
+
     // Returns the edit interface for the given shader layer. Calling this method
     // will immediately mark this Material as modified.
     virtual IEditableShaderLayer::Ptr getEditableLayer(std::size_t index) = 0;

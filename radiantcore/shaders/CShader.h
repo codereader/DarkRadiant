@@ -93,6 +93,8 @@ public:
 	bool isVisible() const override;
 	void setVisible(bool visible) override;
     const IShaderLayerVector& getAllLayers() const;
+    std::size_t addLayer(IShaderLayer::Type type) override;
+    void removeLayer(std::size_t index) override;
     IEditableShaderLayer::Ptr getEditableLayer(std::size_t index) override;
 
     IMapExpression::Ptr getLightFalloffExpression() override;

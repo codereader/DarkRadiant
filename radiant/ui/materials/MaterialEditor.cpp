@@ -72,6 +72,25 @@ namespace
                blue && blue->getExpressionString() == "parm2" &&
                alpha && alpha->getExpressionString() == "parm3";
     }
+
+    IShaderLayer::Type determineStageTypeToCreate(const MaterialPtr& material)
+    {
+        bool hasDiffuse = false;
+        bool hasBump = false;
+        bool hasSpecular = false;
+
+        for (const auto& layer : material->getAllLayers())
+        {
+            hasDiffuse |= layer->getType() == IShaderLayer::DIFFUSE;
+            hasBump |= layer->getType() == IShaderLayer::BUMP;
+            hasSpecular |= layer->getType() == IShaderLayer::SPECULAR;
+        }
+
+        return !hasDiffuse ? IShaderLayer::DIFFUSE :
+               !hasBump ? IShaderLayer::BUMP :
+               !hasSpecular ? IShaderLayer::SPECULAR : 
+               IShaderLayer::BLEND;
+    }
 }
 
 MaterialEditor::MaterialEditor() :
@@ -376,6 +395,9 @@ void MaterialEditor::setupMaterialStageView()
 
     _stageView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &MaterialEditor::_onStageListSelectionChanged, this);
     _stageView->Bind(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED, &MaterialEditor::_onStageListValueChanged, this);
+
+    getControl<wxButton>("MaterialEditorAddStageButton")->Bind(wxEVT_BUTTON, &MaterialEditor::_onAddStage, this);
+    getControl<wxButton>("MaterialEditorRemoveStageButton")->Bind(wxEVT_BUTTON, &MaterialEditor::_onRemoveStage, this);
 }
 
 void MaterialEditor::setupStageFlag(const std::string& controlName, int flags)
@@ -1581,6 +1603,26 @@ void MaterialEditor::_onStageBlendTypeChanged(wxCommandEvent& ev)
     
     updateNameOfSelectedStage();
     updateStageControls();
+}
+
+void MaterialEditor::_onAddStage(wxCommandEvent& ev)
+{
+    std::size_t index = _material->addLayer(determineStageTypeToCreate(_material));
+
+    updateStageListFromMaterial();
+    selectStageByIndex(index);
+}
+
+void MaterialEditor::_onRemoveStage(wxCommandEvent& ev)
+{
+    auto item = _stageView->GetSelection();
+    if (!_material || !item.IsOk()) return;
+
+    auto row = wxutil::TreeModel::Row(item, *_stageList);
+    auto index = row[STAGE_COLS().index].getInteger();
+
+    _material->removeLayer(index);
+    updateStageListFromMaterial();
 }
 
 void MaterialEditor::updateNameOfSelectedStage()

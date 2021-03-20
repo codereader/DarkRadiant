@@ -2,6 +2,7 @@
 #include "MapExpression.h"
 #include "CameraCubeMapDecl.h"
 
+#include "MapExpression.h"
 #include "VideoMapExpression.h"
 #include "SoundMapExpression.h"
 
@@ -1394,6 +1395,35 @@ void ShaderTemplate::addLayer(IShaderLayer::Type type, const MapExpressionPtr& m
 {
 	// Construct a layer out of this mapexpression and pass the call
 	addLayer(std::make_shared<Doom3ShaderLayer>(*this, type, mapExpr));
+}
+
+std::size_t ShaderTemplate::addLayer(IShaderLayer::Type type)
+{
+    // Determine the default map expression to use for this type
+    std::shared_ptr<MapExpression> map;
+
+    switch (type)
+    {
+    case IShaderLayer::BUMP:
+        map = MapExpression::createForString("_flat");
+        break;
+    case IShaderLayer::SPECULAR:
+        map = MapExpression::createForString("_black");
+        break;
+    case IShaderLayer::DIFFUSE: 
+    case IShaderLayer::BLEND:
+    default:
+        map = MapExpression::createForString("_white");
+        break;
+    }
+
+    addLayer(std::make_shared<Doom3ShaderLayer>(*this, type, map));
+    return _layers.size() - 1;
+}
+
+void ShaderTemplate::removeLayer(std::size_t index)
+{
+    _layers.erase(_layers.begin() + index);
 }
 
 bool ShaderTemplate::hasDiffusemap()

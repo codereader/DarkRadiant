@@ -308,6 +308,28 @@ const IShaderLayerVector& CShader::getAllLayers() const
     return _layers;
 }
 
+std::size_t CShader::addLayer(IShaderLayer::Type type)
+{
+    ensureTemplateCopy();
+
+    auto newIndex = _template->addLayer(type);
+
+    unrealiseLighting();
+    realiseLighting();
+
+    return newIndex;
+}
+
+void CShader::removeLayer(std::size_t index)
+{
+    ensureTemplateCopy();
+
+    _template->removeLayer(index);
+
+    unrealiseLighting();
+    realiseLighting();
+}
+
 IEditableShaderLayer::Ptr CShader::getEditableLayer(std::size_t index)
 {
     ensureTemplateCopy();

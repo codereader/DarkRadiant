@@ -323,6 +323,9 @@ public:
 		return _lightFalloffCubeMap;
 	}
 
+    std::size_t addLayer(IShaderLayer::Type type);
+    void removeLayer(std::size_t index);
+
 	// Add a specific layer to this template
 	void addLayer(IShaderLayer::Type type, const MapExpressionPtr& mapExpr);
 
