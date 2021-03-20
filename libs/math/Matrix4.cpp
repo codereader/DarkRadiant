@@ -60,44 +60,6 @@ const Matrix4& Matrix4::getIdentity()
     return _identity;
 }
 
-Matrix4 Matrix4::getRotation(const std::string& rotationString)
-{
-	double rotation[9];
-
-	std::stringstream strm(rotationString);
-    strm << std::skipws;
-
-	for (int i = 0; i < 9; ++i)
-	{
-		strm >> rotation[i];
-	}
-
-	if (!strm)
-	{
-		// Parsing failed, fall back to the identity matrix
-		return Matrix4::getIdentity();
-	}
-
-	return Matrix4::byColumns(
-		rotation[0],
-		rotation[1],
-		rotation[2],
-		0,
-		rotation[3],
-		rotation[4],
-		rotation[5],
-		0,
-		rotation[6],
-		rotation[7],
-		rotation[8],
-		0,
-		0,
-		0,
-		0,
-		1
-	);
-}
-
 // Get a translation matrix for the given vector
 Matrix4 Matrix4::getTranslation(const Vector3& translation)
 {
@@ -554,13 +516,13 @@ Matrix4 Matrix4::getFullInverse() const
 	double minor3x3_21 = yx() * minor01 - yz() * minor03 + yw() * minor05;
 	double minor3x3_31 = yx() * minor02 - yy() * minor03 + yw() * minor06;
 	double minor3x3_41 = yx() * minor04 - yy() * minor05 + yz() * minor06;
-	
+
 	// 3x3 minors (not usable for the determinant)
 	double minor3x3_12 = xy() * minor01 - xz() * minor02 + xw() * minor04;
 	double minor3x3_22 = xx() * minor01 - xz() * minor03 + xw() * minor05;
 	double minor3x3_32 = xx() * minor02 - xy() * minor03 + xw() * minor06;
 	double minor3x3_42 = xx() * minor04 - xy() * minor05 + xz() * minor06;
-	
+
 	double minor3x3_13 = xy() * minor07 - xz() * minor08 + xw() * minor09;
 	double minor3x3_23 = xx() * minor07 - xz() * minor10 + xw() * minor11;
 	double minor3x3_33 = xx() * minor08 - xy() * minor10 + xw() * minor12;
