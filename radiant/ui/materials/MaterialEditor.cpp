@@ -22,6 +22,7 @@
 #include "materials/ParseLib.h"
 #include "ExpressionBinding.h"
 #include "RadioButtonBinding.h"
+#include "SpinCtrlBinding.h"
 
 namespace ui
 {
@@ -409,6 +410,30 @@ void MaterialEditor::createRadioButtonBinding(const std::string& ctrlName,
         std::bind(&MaterialEditor::onMaterialChanged, this)));
 }
 
+void MaterialEditor::createSpinCtrlBinding(const std::string& ctrlName,
+    const std::function<int(const IShaderLayer::Ptr&)>& loadFunc,
+    const std::function<void(const IEditableShaderLayer::Ptr&, int)>& saveFunc)
+{
+    _stageBindings.emplace(std::make_shared<SpinCtrlBinding<wxSpinCtrl>>(
+        getControl<wxSpinCtrl>(ctrlName),
+        loadFunc,
+        std::bind(&MaterialEditor::getEditableStageForSelection, this),
+        saveFunc,
+        std::bind(&MaterialEditor::onMaterialChanged, this)));
+}
+
+void MaterialEditor::createSpinCtrlDoubleBinding(const std::string& ctrlName,
+    const std::function<double(const IShaderLayer::Ptr&)>& loadFunc,
+    const std::function<void(const IEditableShaderLayer::Ptr&, double)>& saveFunc)
+{
+    _stageBindings.emplace(std::make_shared<SpinCtrlBinding<wxSpinCtrlDouble>>(
+        getControl<wxSpinCtrlDouble>(ctrlName),
+        loadFunc,
+        std::bind(&MaterialEditor::getEditableStageForSelection, this),
+        saveFunc,
+        std::bind(&MaterialEditor::onMaterialChanged, this)));
+}
+
 void MaterialEditor::setupMaterialStageProperties()
 {
     setupStageFlag("MaterialStageFlagMaskRed", IShaderLayer::FLAG_MASK_RED);
@@ -427,7 +452,11 @@ void MaterialEditor::setupMaterialStageProperties()
 
     createExpressionBinding("MaterialStageAlphaTestExpression",
         [](const IShaderLayer::Ptr& layer) { return layer->getAlphaTestExpression(); },
-        [](const IEditableShaderLayer::Ptr& layer, const std::string& value) { layer->setAlphaTestExpressionFromString(value); });
+        [this](const IEditableShaderLayer::Ptr& layer, const std::string& value) 
+        { 
+            layer->setAlphaTestExpressionFromString(value);
+            getControl<wxCheckBox>("MaterialStageHasAlphaTest")->SetValue(layer->hasAlphaTest());
+        });
 
     for (const auto& value : {
         "diffusemap", "bumpmap", "specularmap", "blend", "add", "filter", "modulate", "none", "Custom"
@@ -473,6 +502,46 @@ void MaterialEditor::setupMaterialStageProperties()
             updateStageControls();
         }
     });
+
+    createRadioButtonBinding("MaterialStageVideoMap",
+        [](const IShaderLayer::Ptr& layer) { return layer->getMapType() == IShaderLayer::MapType::VideoMap; },
+        [this](const IEditableShaderLayer::Ptr& layer, bool value)
+        { 
+            if (!value) return;
+            layer->setMapType(IShaderLayer::MapType::VideoMap);
+            updateStageControls();
+        });
+    createRadioButtonBinding("MaterialStageSoundMap",
+        [](const IShaderLayer::Ptr& layer) { return layer->getMapType() == IShaderLayer::MapType::SoundMap; },
+        [this](const IEditableShaderLayer::Ptr& layer, bool value)
+    {
+        if (!value) return;
+        layer->setMapType(IShaderLayer::MapType::SoundMap);
+        updateStageControls();
+    });
+    createRadioButtonBinding("MaterialStageRemoteRenderMap",
+        [](const IShaderLayer::Ptr& layer) { return layer->getMapType() == IShaderLayer::MapType::RemoteRenderMap; },
+        [this](const IEditableShaderLayer::Ptr& layer, bool value)
+    {
+        if (!value) return;
+        layer->setMapType(IShaderLayer::MapType::RemoteRenderMap);
+        updateStageControls();
+    });
+    createRadioButtonBinding("MaterialStageMirrorRenderMap",
+        [](const IShaderLayer::Ptr& layer) { return layer->getMapType() == IShaderLayer::MapType::MirrorRenderMap; },
+        [this](const IEditableShaderLayer::Ptr& layer, bool value)
+    {
+        if (!value) return;
+        layer->setMapType(IShaderLayer::MapType::MirrorRenderMap);
+        updateStageControls();
+    });
+
+    createSpinCtrlDoubleBinding("MaterialStagePrivatePolygonOffset",
+        [](const IShaderLayer::Ptr& layer) { return layer->getPrivatePolygonOffset(); },
+        [this](const IEditableShaderLayer::Ptr& layer, const double& value)
+        {
+            layer->setPrivatePolygonOffset(value);
+        });
 
     // Texture
     setupStageFlag("MaterialStageFilterNearest", IShaderLayer::FLAG_FILTER_NEAREST);
@@ -1191,8 +1260,6 @@ void MaterialEditor::updateStageControls()
     {
         selectedStage->evaluateExpressions(0); // initialise the values of this stage
 
-        getControl<wxSpinCtrlDouble>("MaterialStagePrivatePolygonOffset")->SetValue(selectedStage->getPrivatePolygonOffset());
-
         auto mapExpr = selectedStage->getMapExpression();
         auto imageMap = getControl<wxTextCtrl>("MaterialStageImageMap");
         imageMap->SetValue(mapExpr ? mapExpr->getExpressionString() : "");
@@ -1207,7 +1274,6 @@ void MaterialEditor::updateStageControls()
         });
 
         auto mapTypeNotSpecial = getControl<wxRadioButton>("MaterialStageMapTypeNotSpecial");
-        auto specialMapPanel = getControl<wxPanel>("MaterialStageSpecialMapPanel");
 
         auto videoMapFile = getControl<wxTextCtrl>("MaterialStageVideoMapFile");
         auto videoMapLoop = getControl<wxCheckBox>("MaterialStageVideoMapLoop");
@@ -1228,13 +1294,11 @@ void MaterialEditor::updateStageControls()
         {
             mapType->SetStringSelection(_(SPECIAL_MAP_TYPE));
             mapTypeNotSpecial->SetValue(false);
-            specialMapPanel->Enable();
             imageMap->Disable();
         }
         else
         {
             mapTypeNotSpecial->SetValue(true);
-            specialMapPanel->Disable();
             imageMap->Enable();
             videoMapFile->SetValue("");
             videoMapLoop->SetValue(false);
@@ -1279,10 +1343,11 @@ void MaterialEditor::updateStageControls()
             break;
         }
 
-        getControl<wxRadioButton>("MaterialStageVideoMap")->SetValue(selectedStage->getMapType() == IShaderLayer::MapType::VideoMap);
-        getControl<wxRadioButton>("MaterialStageSoundMap")->SetValue(selectedStage->getMapType() == IShaderLayer::MapType::SoundMap);
-        getControl<wxRadioButton>("MaterialStageRemoteRenderMap")->SetValue(selectedStage->getMapType() == IShaderLayer::MapType::RemoteRenderMap);
-        getControl<wxRadioButton>("MaterialStageMirrorRenderMap")->SetValue(selectedStage->getMapType() == IShaderLayer::MapType::MirrorRenderMap);
+        // Activate the controls next to the radio button
+        getControl<wxPanel>("MaterialStageVideoMapPanel")->Enable(getControl<wxRadioButton>("MaterialStageVideoMap")->GetValue());
+        getControl<wxCheckBox>("MaterialStageSoundMapWaveform")->Enable(getControl<wxRadioButton>("MaterialStageSoundMap")->GetValue());
+        getControl<wxPanel>("MaterialStageRemoteRenderMapPanel")->Enable(getControl<wxRadioButton>("MaterialStageRemoteRenderMap")->GetValue());
+        getControl<wxPanel>("MaterialStageMirrorRenderMapPanel")->Enable(getControl<wxRadioButton>("MaterialStageMirrorRenderMap")->GetValue());
 
         // Vertex Colours
         getControl<wxRadioButton>("MaterialStageNoVertexColourFlag")->SetValue(selectedStage->getVertexColourMode() == IShaderLayer::VERTEX_COLOUR_NONE);

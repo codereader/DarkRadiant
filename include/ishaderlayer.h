@@ -439,4 +439,7 @@ public:
 
     // Set the clamp type of this stage
     virtual void setClampType(ClampType clampType) = 0;
+
+    // Sets the privatePolygonOffset value of this stage
+    virtual void setPrivatePolygonOffset(double offset) = 0;
 };

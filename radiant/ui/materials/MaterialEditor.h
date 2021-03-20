@@ -107,6 +107,13 @@ private:
         const std::function<bool(const IShaderLayer::Ptr&)>& loadFunc,
         const std::function<void(const IEditableShaderLayer::Ptr&, bool)>& saveFunc);
 
+    void createSpinCtrlBinding(const std::string& ctrlName,
+        const std::function<int(const IShaderLayer::Ptr&)>& loadFunc,
+        const std::function<void(const IEditableShaderLayer::Ptr&, int)>& saveFunc);
+    void createSpinCtrlDoubleBinding(const std::string& ctrlName,
+        const std::function<double(const IShaderLayer::Ptr&)>& loadFunc,
+        const std::function<void(const IEditableShaderLayer::Ptr&, double)>& saveFunc);
+
     void updateControlsFromMaterial();
     void updateDeformControlsFromMaterial();
     void updateStageListFromMaterial();

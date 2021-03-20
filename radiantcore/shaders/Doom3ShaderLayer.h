@@ -419,9 +419,9 @@ public:
         return _privatePolygonOffset;
     }
 
-    void setPrivatePolygonOffset(float value)
+    void setPrivatePolygonOffset(double value) override
     {
-        _privatePolygonOffset = value;
+        _privatePolygonOffset = static_cast<float>(value);
     }
 
     std::string getMapImageFilename() const override;
