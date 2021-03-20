@@ -828,6 +828,33 @@ void MaterialEditor::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
 void MaterialEditor::_onStageListSelectionChanged(wxDataViewEvent& ev)
 {
     updateStageControls();
+    updateStageButtonSensitivity();
+}
+
+void MaterialEditor::updateStageButtonSensitivity()
+{
+    auto item = _stageView->GetSelection();
+
+    if (_material && item.IsOk())
+    {
+        auto row = wxutil::TreeModel::Row(item, *_stageList);
+        auto index = row[STAGE_COLS().index].getInteger();
+        auto layersCount = _material->getAllLayers().size();
+
+        getControl<wxButton>("MaterialEditorRemoveStageButton")->Enable();
+        getControl<wxButton>("MaterialEditorToggleStageButton")->Enable();
+        getControl<wxButton>("MaterialEditorMoveUpStageButton")->Enable(index > 0);
+        getControl<wxButton>("MaterialEditorMoveDownStageButton")->Enable(index + 1 < layersCount);
+        getControl<wxButton>("MaterialEditorDuplicateStageButton")->Enable();
+    }
+    else
+    {
+        getControl<wxButton>("MaterialEditorRemoveStageButton")->Disable();
+        getControl<wxButton>("MaterialEditorToggleStageButton")->Disable();
+        getControl<wxButton>("MaterialEditorMoveUpStageButton")->Disable();
+        getControl<wxButton>("MaterialEditorMoveDownStageButton")->Disable();
+        getControl<wxButton>("MaterialEditorDuplicateStageButton")->Disable();
+    }
 }
 
 void MaterialEditor::_onStageListValueChanged(wxDataViewEvent& ev)
@@ -1122,6 +1149,7 @@ void MaterialEditor::selectStageByIndex(std::size_t index)
     }
 
     updateStageControls();
+    updateStageButtonSensitivity();
 }
 
 IShaderLayer::Ptr MaterialEditor::getSelectedStage()

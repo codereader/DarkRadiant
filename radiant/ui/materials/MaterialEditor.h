@@ -131,6 +131,7 @@ private:
     void updateStageColoredStatus();
     void updateNameOfSelectedStage();
     void moveStagePosition(int direction);
+    void updateStageButtonSensitivity();
 
     void _onTreeViewSelectionChanged(wxDataViewEvent& ev);
     void _onStageListSelectionChanged(wxDataViewEvent& ev);
