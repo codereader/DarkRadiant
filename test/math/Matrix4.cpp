@@ -515,6 +515,38 @@ TEST(MathTest, MatrixTransformation)
     EXPECT_EQ(a.t().z(), 53) << "Matrix4::t failed";
 }
 
+TEST(MathTest, MatrixScaleAffineInverse)
+{
+    // Construct a scale matrix
+    Vector3 SCALE(2, 4, 8);
+    Matrix4 scaleMat = Matrix4::getScale(SCALE);
+    EXPECT_EQ(scaleMat.getScale(), SCALE);
+
+    // Get the affine inverse
+    Matrix4 inverse = scaleMat.getInverse();
+
+    // Inverse must have inverted scale factors
+    EXPECT_EQ(inverse.getScale(),
+              Vector3(1.0 / SCALE.x(), 1.0 / SCALE.y(), 1.0 / SCALE.z()));
+}
+
+TEST(MathTest, MatrixTranslationAffineInverse)
+{
+    // Construct a translation matrix
+    Vector3 TRANS(4, 32, -8);
+    Matrix4 transMat = Matrix4::getTranslation(TRANS);
+    EXPECT_EQ(transMat.getScale(), Vector3(1, 1, 1));
+
+    // Get the affine inverse
+    Matrix4 inverse = transMat.getInverse();
+
+    // Check resulting matrix
+    EXPECT_EQ(inverse, Matrix4::byRows(1, 0, 0, -TRANS.x(),
+                                       0, 1, 0, -TRANS.y(),
+                                       0, 0, 1, -TRANS.z(),
+                                       0, 0, 0, 1));
+}
+
 TEST(MathTest, MatrixFullInverse)
 {
     auto a = Matrix4::byColumns(3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59);
