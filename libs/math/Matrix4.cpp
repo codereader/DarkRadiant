@@ -296,11 +296,6 @@ Matrix4 Matrix4::getRotationForEulerXZY(const Vector3& euler)
 	);
 }
 
-Matrix4 Matrix4::getRotationForEulerXZYDegrees(const Vector3& euler)
-{
-	return getRotationForEulerXZY(euler_degrees_to_radians(euler));
-}
-
 Matrix4 Matrix4::getRotationForEulerYXZ(const Vector3& euler)
 {
 	double cx = cos(euler[0]);

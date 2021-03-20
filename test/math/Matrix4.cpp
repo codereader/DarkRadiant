@@ -233,43 +233,6 @@ TEST(MathTest, MatrixRotationForEulerXYZDegrees)
     EXPECT_DOUBLE_EQ(testEuler.z(), euler.z()) << "getEulerAnglesXYZDegrees fault at z()";
 }
 
-TEST(MathTest, MatrixRotationForEulerXZYDegrees)
-{
-    // Test euler angle constructors
-    Vector3 euler(30, -55, 75);
-
-    // Convert degrees to radians
-    double pi = 3.141592653589793238462643383f;
-    double cx = cos(euler[0] * c_pi / 180.0f);
-    double sx = sin(euler[0] * c_pi / 180.0f);
-    double cy = cos(euler[1] * c_pi / 180.0f);
-    double sy = sin(euler[1] * c_pi / 180.0f);
-    double cz = cos(euler[2] * c_pi / 180.0f);
-    double sz = sin(euler[2] * c_pi / 180.0f);
-
-    Matrix4 eulerXZY = Matrix4::getRotationForEulerXZYDegrees(euler);
-
-    EXPECT_DOUBLE_EQ(eulerXZY.xx(), cy * cz) << "Matrix getRotationForEulerXZYDegrees failed";
-    EXPECT_DOUBLE_EQ(eulerXZY.xy(), sz) << "Matrix getRotationForEulerXZYDegrees failed";
-    EXPECT_DOUBLE_EQ(eulerXZY.xz(), -sy * cz) << "Matrix getRotationForEulerXZYDegrees failed";
-    EXPECT_DOUBLE_EQ(eulerXZY.xw(), 0) << "Matrix getRotationForEulerXZYDegrees failed";
-
-    EXPECT_DOUBLE_EQ(eulerXZY.yx(), sx * sy - cx * cy * sz) << "Matrix getRotationForEulerXZYDegrees failed";
-    EXPECT_DOUBLE_EQ(eulerXZY.yy(), cx * cz) << "Matrix getRotationForEulerXZYDegrees failed";
-    EXPECT_DOUBLE_EQ(eulerXZY.yz(), cx * sy * sz + sx * cy) << "Matrix getRotationForEulerXZYDegrees failed";
-    EXPECT_DOUBLE_EQ(eulerXZY.yw(), 0) << "Matrix getRotationForEulerXZYDegrees failed";
-
-    EXPECT_DOUBLE_EQ(eulerXZY.zx(), sx * cy * sz + cx * sy) << "Matrix getRotationForEulerXZYDegrees failed";
-    EXPECT_DOUBLE_EQ(eulerXZY.zy(), -sx * cz) << "Matrix getRotationForEulerXZYDegrees failed";
-    EXPECT_DOUBLE_EQ(eulerXZY.zz(), cx * cy - sx * sy * sz) << "Matrix getRotationForEulerXZYDegrees failed";
-    EXPECT_DOUBLE_EQ(eulerXZY.zw(), 0) << "Matrix getRotationForEulerXZYDegrees failed";
-
-    EXPECT_DOUBLE_EQ(eulerXZY.tx(), 0) << "Matrix getRotationForEulerXZYDegrees failed";
-    EXPECT_DOUBLE_EQ(eulerXZY.ty(), 0) << "Matrix getRotationForEulerXZYDegrees failed";
-    EXPECT_DOUBLE_EQ(eulerXZY.tz(), 0) << "Matrix getRotationForEulerXZYDegrees failed";
-    EXPECT_DOUBLE_EQ(eulerXZY.tw(), 1) << "Matrix getRotationForEulerXZYDegrees failed";
-}
-
 TEST(MathTest, MatrixRotationForEulerYXZDegrees)
 {
     // Test euler angle constructors
