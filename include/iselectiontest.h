@@ -14,13 +14,13 @@ private:
 	float _depth;
 	float _distance;
 public:
-	SelectionIntersection() : 
-		_depth(1), 
+	SelectionIntersection() :
+		_depth(1),
 		_distance(2)
 	{}
 
-	SelectionIntersection(float depth, float distance) : 
-		_depth(depth), 
+	SelectionIntersection(float depth, float distance) :
+		_depth(depth),
 		_distance(distance)
 	{}
 
@@ -41,7 +41,7 @@ public:
 
 	bool equalEpsilon(const SelectionIntersection& other, float distanceEpsilon, float depthEpsilon) const
 	{
-		return float_equal_epsilon(_distance, other._distance, distanceEpsilon) && 
+		return float_equal_epsilon(_distance, other._distance, distanceEpsilon) &&
 			   float_equal_epsilon(_depth, other._depth, depthEpsilon);
 	}
 
@@ -49,7 +49,7 @@ public:
 	{
 		return _depth;
 	}
-	
+
 	bool isValid() const
 	{
 		return depth() < 1;
@@ -230,7 +230,6 @@ public:
   virtual const Vector3& getFar() const = 0;
   virtual void TestPoint(const Vector3& point, SelectionIntersection& best) = 0;
   virtual void TestPolygon(const VertexPointer& vertices, std::size_t count, SelectionIntersection& best) = 0;
-  virtual void TestLineLoop(const VertexPointer& vertices, std::size_t count, SelectionIntersection& best) = 0;
   virtual void TestLineStrip(const VertexPointer& vertices, std::size_t count, SelectionIntersection& best) = 0;
   virtual void TestLines(const VertexPointer& vertices, std::size_t count, SelectionIntersection& best) = 0;
   virtual void TestTriangles(const VertexPointer& vertices, const IndexPointer& indices, SelectionIntersection& best) = 0;

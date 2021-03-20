@@ -11,11 +11,11 @@
 
 inline SelectionIntersection select_point_from_clipped(Vector4& clipped)
 {
-    return SelectionIntersection(static_cast<float>(clipped[2] / clipped[3]), 
+    return SelectionIntersection(static_cast<float>(clipped[2] / clipped[3]),
         static_cast<float>(Vector3(clipped[0] / clipped[3], clipped[1] / clipped[3], 0).getLengthSquared()));
 }
 
-class SelectionVolume : 
+class SelectionVolume :
     public SelectionTest
 {
     Matrix4 _local2view;
@@ -24,7 +24,7 @@ class SelectionVolume :
     Vector3 _near;
     Vector3 _far;
 public:
-    SelectionVolume(const render::View& view) : 
+    SelectionVolume(const render::View& view) :
         _view(view)
     {}
 
@@ -49,7 +49,7 @@ public:
 
         // Cull back-facing polygons based on winding being clockwise or counter-clockwise.
         // Don't cull if the material is twosided or the view is wireframe
-        _cull = twoSided || !_view.fill() ? eClipCullNone : 
+        _cull = twoSided || !_view.fill() ? eClipCullNone :
             (localToWorld.getHandedness() == Matrix4::RIGHTHANDED) ? eClipCullCW : eClipCullCCW;
 
         Matrix4 screen2world(_local2view.getFullInverse());
@@ -77,26 +77,6 @@ public:
                     vertices[0],
                     vertices[i + 1],
                     vertices[i + 2],
-                    clipped
-                ),
-                clipped,
-                best,
-                _cull
-            );
-        }
-    }
-
-    void TestLineLoop(const VertexPointer& vertices, std::size_t count, SelectionIntersection& best) override
-    {
-        if (count == 0)
-            return;
-        Vector4 clipped[9];
-        for (VertexPointer::iterator i = vertices.begin(), end = i + count, prev = i + (count - 1); i != end; prev = i, ++i)
-        {
-            BestPoint(
-                _local2view.clipLine(
-                    *prev,
-                    *i,
                     clipped
                 ),
                 clipped,
