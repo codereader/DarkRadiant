@@ -160,11 +160,6 @@ public:
     static Matrix4 getRotationForEulerYZX(const Vector3& euler);
 
     /**
-     * Constructs a pure-rotation matrix from a set of euler angles (degrees) in the order (y, z, x).
-     */
-    static Matrix4 getRotationForEulerYZXDegrees(const Vector3& euler);
-
-    /**
      * Constructs a pure-rotation matrix from a set of euler angles (radians) in the order (x, z, y).
      */
     static Matrix4 getRotationForEulerXZY(const Vector3& euler);
