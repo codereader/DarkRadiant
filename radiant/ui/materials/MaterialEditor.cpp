@@ -462,6 +462,18 @@ void MaterialEditor::setupMaterialStageProperties()
     mapTypeDropdown->Append(_(SPECIAL_MAP_TYPE));
     mapTypeDropdown->Bind(wxEVT_CHOICE, &MaterialEditor::_onStageMapTypeChanged, this);
 
+    auto mapTypeNotSpecial = getControl<wxRadioButton>("MaterialStageMapTypeNotSpecial");
+    mapTypeNotSpecial->Bind(wxEVT_RADIOBUTTON, [this, mapTypeDropdown](wxCommandEvent& ev)
+    {
+        auto stage = getEditableStageForSelection();
+        
+        if (stage && ev.IsChecked())
+        {
+            stage->setMapType(IShaderLayer::MapType::Map);
+            updateStageControls();
+        }
+    });
+
     // Texture
     setupStageFlag("MaterialStageFilterNearest", IShaderLayer::FLAG_FILTER_NEAREST);
     setupStageFlag("MaterialStageFilterLinear", IShaderLayer::FLAG_FILTER_LINEAR);
