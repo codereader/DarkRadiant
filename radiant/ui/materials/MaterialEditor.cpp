@@ -398,6 +398,7 @@ void MaterialEditor::setupMaterialStageView()
 
     getControl<wxButton>("MaterialEditorAddStageButton")->Bind(wxEVT_BUTTON, &MaterialEditor::_onAddStage, this);
     getControl<wxButton>("MaterialEditorRemoveStageButton")->Bind(wxEVT_BUTTON, &MaterialEditor::_onRemoveStage, this);
+    getControl<wxButton>("MaterialEditorToggleStageButton")->Bind(wxEVT_BUTTON, &MaterialEditor::_onToggleStage, this);
 }
 
 void MaterialEditor::setupStageFlag(const std::string& controlName, int flags)
@@ -836,7 +837,6 @@ void MaterialEditor::_onStageListValueChanged(wxDataViewEvent& ev)
 
     wxutil::TreeModel::Row row(ev.GetItem(), *_stageList);
     stage->setEnabled(row[STAGE_COLS().enabled].getBool());
-    int index = row[STAGE_COLS().index].getInteger();
 }
 
 void MaterialEditor::updateControlsFromMaterial()
@@ -1625,6 +1625,23 @@ void MaterialEditor::_onRemoveStage(wxCommandEvent& ev)
     updateStageListFromMaterial();
 }
 
+void MaterialEditor::_onToggleStage(wxCommandEvent& ev)
+{
+    auto item = _stageView->GetSelection();
+    if (!_material || !item.IsOk()) return;
+
+    auto row = wxutil::TreeModel::Row(item, *_stageList);
+    row[STAGE_COLS().enabled] = !row[STAGE_COLS().enabled].getBool();
+
+    row.SendItemChanged();
+
+    auto stage = getEditableStageForSelection();
+    if (!stage) return;
+
+    stage->setEnabled(row[STAGE_COLS().enabled].getBool());
+    onMaterialChanged();
+}
+
 void MaterialEditor::updateNameOfSelectedStage()
 {
     auto item = _stageView->GetSelection();
@@ -1633,7 +1650,6 @@ void MaterialEditor::updateNameOfSelectedStage()
     auto row = wxutil::TreeModel::Row(item, *_stageList);
 
     row[STAGE_COLS().name] = getNameForLayer(*getSelectedStage());
-
     row.SendItemChanged();
 }
 

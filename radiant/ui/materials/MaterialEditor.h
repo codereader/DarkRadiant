@@ -143,6 +143,7 @@ private:
     void _onStageBlendTypeChanged(wxCommandEvent& ev);
     void _onAddStage(wxCommandEvent& ev);
     void _onRemoveStage(wxCommandEvent& ev);
+    void _onToggleStage(wxCommandEvent& ev);
 
     void onMaterialChanged();
 
