@@ -99,6 +99,18 @@ TEST(MathTest, ConstructMatrixByRows)
     EXPECT_EQ(m.translation(), Vector3(0.34, 9, 20));
 }
 
+TEST(MathTest, MatrixEquality)
+{
+    Matrix4 m1 = Matrix4::byRows(1, 2, 3.5, 4,
+                                 5, -6, 17, 800,
+                                 9.01, 10, 11, 12.4,
+                                 200, -10, 300, 400);
+    Matrix4 m2 = m1;
+    EXPECT_TRUE(m1 == m2);
+    EXPECT_TRUE(m1 != Matrix4::getIdentity());
+    EXPECT_TRUE(m2 != Matrix4::getIdentity());
+}
+
 TEST(MathTest, MatrixRotationAboutXDegrees)
 {
     double angle = 30.0;

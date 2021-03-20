@@ -421,11 +421,6 @@ public:
     bool operator!=(const Matrix4& other) const;
 
     /**
-     * Returns true if self and other are element-wise equal within epsilon.
-     */
-    bool isEqual(const Matrix4& other, double epsilon) const;
-
-    /**
      * Returns true if this and the given matrix are exactly element-wise equal.
      * This and the other matrix must be affine.
      */
@@ -636,26 +631,6 @@ inline bool Matrix4::operator==(const Matrix4& other) const
 inline bool Matrix4::operator!=(const Matrix4& other) const
 {
     return !operator==(other);
-}
-
-inline bool Matrix4::isEqual(const Matrix4& other, double epsilon) const
-{
-    return float_equal_epsilon(xx(), other.xx(), epsilon)
-        && float_equal_epsilon(xy(), other.xy(), epsilon)
-        && float_equal_epsilon(xz(), other.xz(), epsilon)
-        && float_equal_epsilon(xw(), other.xw(), epsilon)
-        && float_equal_epsilon(yx(), other.yx(), epsilon)
-        && float_equal_epsilon(yy(), other.yy(), epsilon)
-        && float_equal_epsilon(yz(), other.yz(), epsilon)
-        && float_equal_epsilon(yw(), other.yw(), epsilon)
-        && float_equal_epsilon(zx(), other.zx(), epsilon)
-        && float_equal_epsilon(zy(), other.zy(), epsilon)
-        && float_equal_epsilon(zz(), other.zz(), epsilon)
-        && float_equal_epsilon(zw(), other.zw(), epsilon)
-        && float_equal_epsilon(tx(), other.tx(), epsilon)
-        && float_equal_epsilon(ty(), other.ty(), epsilon)
-        && float_equal_epsilon(tz(), other.tz(), epsilon)
-        && float_equal_epsilon(tw(), other.tw(), epsilon);
 }
 
 inline bool Matrix4::isAffineEqual(const Matrix4& other) const
