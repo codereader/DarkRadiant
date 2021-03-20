@@ -78,6 +78,7 @@ public:
 	IShaderExpression::Ptr getDeformExpression(std::size_t index) override;
     std::string getDeformDeclName() override;
 	int getSpectrum() const override;
+    void setSpectrum(int spectrum) override;
 	DecalInfo getDecalInfo() const override;
 	Coverage getCoverage() const override;
 	std::string getDescription() const override;

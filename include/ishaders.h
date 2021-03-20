@@ -251,8 +251,11 @@ public:
     // Used for Deform_Particle/Particle2 defines the name of the particle def
     virtual std::string getDeformDeclName() = 0;
 
-	/// Returns the spectrum of this shader, 0 is the default value (even witout keyword in the material)
+	/// Returns the spectrum of this shader, 0 is the default value (even without keyword in the material)
 	virtual int getSpectrum() const = 0;
+
+    // Sets the spectrum of this material.
+    virtual void setSpectrum(int spectrum) = 0;
 
 	/// Retrieves the decal info structure of this material.
 	virtual DecalInfo getDecalInfo() const = 0;

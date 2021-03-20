@@ -167,7 +167,7 @@
 													<object class="wxNotebook" name="m_notebook2">
 														<object class="notebookpage">
 															<label>Interaction</label>
-															<selected>1</selected>
+															<selected>0</selected>
 															<object class="wxPanel" name="InteractionPage">
 																<style>wxTAB_TRAVERSAL</style>
 																<object class="wxBoxSizer">
@@ -275,7 +275,7 @@
 																						<border>0</border>
 																						<object class="wxSpinCtrlDouble" name="MaterialPolygonOffsetValue">
 																							<style>wxSP_ARROW_KEYS</style>
-																							<value>0</value>
+																							<value>0.100000</value>
 																							<min>-100</min>
 																							<max>100</max>
 																							<inc>0.1</inc>
@@ -588,7 +588,7 @@
 														</object>
 														<object class="notebookpage">
 															<label>Light</label>
-															<selected>0</selected>
+															<selected>1</selected>
 															<object class="wxPanel" name="LightPage">
 																<style>wxTAB_TRAVERSAL</style>
 																<object class="wxBoxSizer">
@@ -1649,7 +1649,7 @@
 											<object class="wxNotebook" name="MaterialStageSettingsNotebook">
 												<object class="notebookpage">
 													<label>Blending</label>
-													<selected>0</selected>
+													<selected>1</selected>
 													<object class="wxPanel" name="BlendPanel">
 														<style>wxTAB_TRAVERSAL</style>
 														<object class="wxBoxSizer">
@@ -1937,7 +1937,7 @@
 												</object>
 												<object class="notebookpage">
 													<label>Special Map</label>
-													<selected>1</selected>
+													<selected>0</selected>
 													<object class="wxPanel" name="SpecialMapPanel">
 														<style>wxTAB_TRAVERSAL</style>
 														<object class="wxBoxSizer">

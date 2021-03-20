@@ -176,19 +176,22 @@ private:
     wxCheckBox* _checkbox;
     std::function<bool(const Source&)> _loadFunc;
     std::function<void(const Source&, bool)> _saveFunc;
+    std::function<void()> _postUpdateFunc;
 
 public:
     CheckBoxBinding(wxCheckBox* checkbox, 
         const std::function<bool(const Source&)>& loadFunc) :
-        CheckBoxBinding(checkbox, loadFunc, std::function<void(const Source&, bool)>())
+        CheckBoxBinding(checkbox, loadFunc, std::function<void(const Source&, bool)>(), std::function<void()>())
     {}
 
     CheckBoxBinding(wxCheckBox* checkbox,
         const std::function<bool(const Source&)>& loadFunc,
-        const std::function<void(const Source&, bool)>& saveFunc) :
+        const std::function<void(const Source&, bool)>& saveFunc,
+        const std::function<void()>& postUpdateFunc) :
         _checkbox(checkbox),
         _loadFunc(loadFunc),
-        _saveFunc(saveFunc)
+        _saveFunc(saveFunc),
+        _postUpdateFunc(postUpdateFunc)
     {
         if (_saveFunc)
         {
@@ -219,6 +222,11 @@ private:
     void onCheckedChanged(wxCommandEvent& ev)
     {
         _saveFunc(Binding<Source>::getSource(), _checkbox->IsChecked());
+
+        if (_postUpdateFunc)
+        {
+            _postUpdateFunc();
+        }
     }
 };
 

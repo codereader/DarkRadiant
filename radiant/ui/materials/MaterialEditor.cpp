@@ -225,7 +225,20 @@ void MaterialEditor::setupMaterialProperties()
         [this](const MaterialPtr& material, const double& value)
         {
             material->setPolygonOffset(value);
-            getControl<wxCheckBox>("MaterialFlagHasPolygonOffset")->SetValue(true);
+            getControl<wxCheckBox>("MaterialFlagHasPolygonOffset")->SetValue((material->getMaterialFlags() & Material::FLAG_POLYGONOFFSET) != 0);
+        },
+        [this]() { onMaterialChanged(); }));
+
+    getControl<wxCheckBox>("MaterialHasSpectrum")->Bind(wxEVT_CHECKBOX, [this](wxCommandEvent& ev)
+    {
+        getControl<wxSpinCtrl>("MaterialSpectrumValue")->Enable(ev.IsChecked());
+    });
+
+    _materialBindings.emplace(std::make_shared<SpinCtrlMaterialBinding<wxSpinCtrl>>(getControl<wxSpinCtrl>("MaterialSpectrumValue"),
+        [](const MaterialPtr& material) { return material->getSpectrum(); },
+        [this](const MaterialPtr& material, const int& value)
+        {
+            material->setSpectrum(value);
         },
         [this]() { onMaterialChanged(); }));
 }
@@ -242,11 +255,11 @@ void MaterialEditor::setupSurfaceFlag(const std::string& controlName, Material::
 void MaterialEditor::setupMaterialFlag(const std::string& controlName, Material::Flags flag)
 {
     _materialBindings.emplace(std::make_shared<CheckBoxBinding<MaterialPtr>>(getControl<wxCheckBox>(controlName),
-        [=](const MaterialPtr& material)
+    [=](const MaterialPtr& material)
     {
         return (material->getMaterialFlags() & flag) != 0;
     },
-        [=](const MaterialPtr& material, bool newValue)
+    [=](const MaterialPtr& material, bool newValue)
     {
         if (newValue)
         {
@@ -256,6 +269,11 @@ void MaterialEditor::setupMaterialFlag(const std::string& controlName, Material:
         {
             material->clearMaterialFlag(flag);
         }
+    },
+    [this]() // post-update
+    { 
+        onMaterialChanged();
+        updateMaterialPropertiesFromMaterial();
     }));
 }
 
@@ -1076,7 +1094,7 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
         getControl<wxTextCtrl>("MaterialLightFalloffCubeMap")->SetValue(lightFalloffCubeMap ? lightFalloffCubeMap->getExpressionString() : "");
         
         // Spectrum
-        bool hasSpectrum = _material->getParseFlags() & Material::PF_HasSpectrum;
+        bool hasSpectrum = (_material->getParseFlags() & Material::PF_HasSpectrum) != 0 || _material->getSpectrum() != 0;
         getControl<wxCheckBox>("MaterialHasSpectrum")->SetValue(hasSpectrum);
         getControl<wxSpinCtrl>("MaterialSpectrumValue")->Enable(hasSpectrum);
         getControl<wxSpinCtrl>("MaterialSpectrumValue")->SetValue(_material->getSpectrum());

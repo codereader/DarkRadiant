@@ -217,6 +217,12 @@ int CShader::getSpectrum() const
 	return _template->getSpectrum();
 }
 
+void CShader::setSpectrum(int spectrum)
+{
+    ensureTemplateCopy();
+    _template->setSpectrum(spectrum);
+}
+
 Material::DecalInfo CShader::getDecalInfo() const
 {
 	return _template->getDecalInfo();

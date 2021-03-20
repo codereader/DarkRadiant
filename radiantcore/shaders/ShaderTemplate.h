@@ -239,6 +239,12 @@ public:
 		return _spectrum;
 	}
 
+    void setSpectrum(int spectrum)
+    {
+        if (!_parsed) parseDefinition();
+        _spectrum = spectrum;
+    }
+
 	const Material::DecalInfo& getDecalInfo()
 	{
 		if (!_parsed) parseDefinition();
