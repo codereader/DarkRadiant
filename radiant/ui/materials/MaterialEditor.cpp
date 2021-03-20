@@ -565,6 +565,36 @@ void MaterialEditor::setupMaterialStageProperties()
         layer->setRenderMapSize(Vector2(currentSize.x(), value));
     });
 
+    getControl<wxCheckBox>("MaterialStageSoundMapWaveform")->Bind(wxEVT_CHECKBOX, [this] (wxCommandEvent& ev)
+    {
+        if (this->_stageUpdateInProgress) return;
+        auto stage = getEditableStageForSelection();
+        if (!stage) return;
+
+        stage->setSoundMapWaveForm(ev.IsChecked());
+    });
+
+    getControl<wxCheckBox>("MaterialStageVideoMapLoop")->Bind(wxEVT_CHECKBOX, [this](wxCommandEvent& ev)
+    {
+        if (this->_stageUpdateInProgress) return;
+        auto stage = getEditableStageForSelection();
+        if (!stage) return;
+
+        auto filePath = getControl<wxTextCtrl>("MaterialStageVideoMapFile")->GetValue().ToStdString();
+        stage->setVideoMapProperties(filePath, ev.IsChecked());
+    });
+
+    getControl<wxTextCtrl>("MaterialStageVideoMapFile")->Bind(wxEVT_TEXT, [this](wxCommandEvent& ev)
+    {
+        if (this->_stageUpdateInProgress) return;
+        auto stage = getEditableStageForSelection();
+        if (!stage) return;
+
+        auto filePath = getControl<wxTextCtrl>("MaterialStageVideoMapFile")->GetValue().ToStdString();
+        bool loop = getControl<wxCheckBox>("MaterialStageVideoMapLoop")->GetValue();
+        stage->setVideoMapProperties(filePath, loop);
+    });
+
     createSpinCtrlDoubleBinding("MaterialStagePrivatePolygonOffset",
         [](const IShaderLayer::Ptr& layer) { return layer->getPrivatePolygonOffset(); },
         [this](const IEditableShaderLayer::Ptr& layer, const double& value)

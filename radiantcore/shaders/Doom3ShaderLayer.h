@@ -435,6 +435,8 @@ public:
     void setColourExpressionFromString(ColourComponentSelector component, const std::string& expression) override;
     void setConditionExpressionFromString(const std::string& expression) override;
     void setTexGenExpressionFromString(std::size_t index, const std::string& expression) override;
+    void setSoundMapWaveForm(bool waveForm) override;
+    void setVideoMapProperties(const std::string& filePath, bool looping) override;
 
     int getParseFlags() const override;
     void setParseFlag(ParseFlags flag);

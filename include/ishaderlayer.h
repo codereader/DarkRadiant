@@ -445,4 +445,10 @@ public:
 
     // Sets width and height of the mirrorRenderMap/remoteRenderMap images
     virtual void setRenderMapSize(const Vector2& size) = 0;
+
+    // For stages with map type SoundMap, this is used to set the waveform flag
+    virtual void setSoundMapWaveForm(bool waveForm) = 0;
+
+    // For stages with map type VideoMap, this is used to update the properties
+    virtual void setVideoMapProperties(const std::string& filePath, bool looping) = 0;
 };

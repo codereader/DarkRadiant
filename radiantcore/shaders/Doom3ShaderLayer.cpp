@@ -1,5 +1,7 @@
 #include "Doom3ShaderLayer.h"
 #include "Doom3ShaderSystem.h"
+#include "SoundMapExpression.h"
+#include "VideoMapExpression.h"
 
 namespace shaders
 {
@@ -584,6 +586,16 @@ void Doom3ShaderLayer::setTexGenExpressionFromString(std::size_t index, const st
 
     auto slot = static_cast<Expression::Slot>(Expression::TexGenParam1 + index);
     _expressionSlots.assignFromString(slot, expression, REG_ZERO);
+}
+
+void Doom3ShaderLayer::setSoundMapWaveForm(bool waveForm)
+{
+    setBindableTexture(std::make_shared<SoundMapExpression>(waveForm));
+}
+
+void Doom3ShaderLayer::setVideoMapProperties(const std::string& filePath, bool looping)
+{
+    setBindableTexture(std::make_shared<VideoMapExpression>(filePath, looping));
 }
 
 }
