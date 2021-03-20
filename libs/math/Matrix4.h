@@ -7,6 +7,7 @@
 #include "math/Vector4.h"
 #include "math/pi.h"
 
+#undef Success // get rid of fuckwit X.h macro
 #include <Eigen/Dense>
 
 class Quaternion;
