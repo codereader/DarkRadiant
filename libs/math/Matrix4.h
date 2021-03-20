@@ -1146,13 +1146,12 @@ inline void Matrix4::scaleBy(const Vector3& scale, const Vector3& pivot)
     translateBy(-pivot);
 }
 
-/** Stream insertion operator for Matrix4.
- */
+/// Debug stream insertion operator for Matrix4
 inline std::ostream& operator<<(std::ostream& st, const Matrix4& m)
 {
-    st << "|" << m[0] << ", " << m[4] << ", " << m[8] << ", " << m[12] << "|\n";
-    st << "|" << m[1] << ", " << m[5] << ", " << m[9] << ", " << m[13] << "|\n";
-    st << "|" << m[2] << ", " << m[6] << ", " << m[10] << ", " << m[14] << "|\n";
-    st << "|" << m[3] << ", " << m[7] << ", " << m[11] << ", " << m[15] << "|\n";
+    st << "[" << m[0] << " " << m[4] << " " << m[8] << " " << m[12] << "; ";
+    st << m[1] << " " << m[5] << " " << m[9] << " " << m[13] << "; ";
+    st << m[2] << " " << m[6] << " " << m[10] << " " << m[14] << "; ";
+    st << m[3] << " " << m[7] << " " << m[11] << " " << m[15] << "]";
     return st;
 }
