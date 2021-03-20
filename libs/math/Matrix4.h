@@ -549,13 +549,6 @@ public:
     Matrix4 getRotatedByEulerYXZDegrees(const Vector3& euler) const;
 
     /**
-     * Concatenates this with the rotation transform produced
-     * by euler angles (degrees) in the order (y, x, z).
-     * The concatenated rotation occurs before self.
-     */
-    void rotateByEulerYXZDegrees(const Vector3& euler);
-
-    /**
      * Returns this matrix concatenated with the rotation transform produced by the given
      * euler angles (degrees) in the order (z, x, y). The concatenated rotation occurs before this matrix.
      */
@@ -973,13 +966,6 @@ inline void Matrix4::rotateByEulerXYZDegrees(const Vector3& euler, const Vector3
 inline Matrix4 Matrix4::getRotatedByEulerYXZDegrees(const Vector3& euler) const
 {
     return getMultipliedBy(getRotationForEulerYXZDegrees(euler));
-}
-
-/// \brief Concatenates \p self with the rotation transform produced by \p euler angles (degrees) in the order (y, x, z).
-/// The concatenated rotation occurs before \p self.
-inline void Matrix4::rotateByEulerYXZDegrees(const Vector3& euler)
-{
-    *this = getRotatedByEulerYXZDegrees(euler);
 }
 
 inline Matrix4 Matrix4::getRotatedByEulerZXYDegrees(const Vector3& euler) const
