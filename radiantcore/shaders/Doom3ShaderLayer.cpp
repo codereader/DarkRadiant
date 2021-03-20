@@ -76,6 +76,18 @@ BlendFunc blendFuncFromStrings(const StringPair& blendFunc)
     }
 }
 
+StringPair getDefaultBlendFuncStringsForType(IShaderLayer::Type type)
+{
+    switch (type)
+    {
+    case IShaderLayer::DIFFUSE: return { "diffusemap" , "" };
+    case IShaderLayer::BUMP: return { "bumpmap" , "" };
+    case IShaderLayer::SPECULAR: return { "specularmap" , "" };
+    }
+
+    return { "gl_one", "gl_zero" }; // needs to be lowercase
+}
+
 inline IShaderExpression::Ptr getDefaultExpressionForTransformType(IShaderLayer::TransformType type)
 {
     if (type == IShaderLayer::TransformType::CenterScale ||
@@ -98,7 +110,7 @@ Doom3ShaderLayer::Doom3ShaderLayer(ShaderTemplate& material, IShaderLayer::Type 
 	_bindableTex(btex),
 	_type(type),
     _mapType(MapType::Map),
-	_blendFuncStrings("gl_one", "gl_zero"), // needs to be lowercase
+	_blendFuncStrings(getDefaultBlendFuncStringsForType(type)),
 	_vertexColourMode(VERTEX_COLOUR_NONE),
 	_cubeMapMode(CUBE_MAP_NONE),
 	_stageFlags(0),

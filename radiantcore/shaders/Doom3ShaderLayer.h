@@ -287,9 +287,26 @@ public:
      * \brief
      * Set the blend function string.
      */
-    void setBlendFuncStrings(const StringPair& func)
+    void setBlendFuncStrings(const StringPair& func) override
     {
         _blendFuncStrings = func;
+
+        if (_blendFuncStrings.first == "diffusemap")
+        {
+            setLayerType(IShaderLayer::DIFFUSE);
+        }
+        else if (_blendFuncStrings.first == "bumpmap")
+        {
+            setLayerType(IShaderLayer::BUMP);
+        }
+        else if (_blendFuncStrings.first == "specularmap")
+        {
+            setLayerType(IShaderLayer::SPECULAR);
+        }
+        else
+        {
+            setLayerType(IShaderLayer::BLEND);
+        }
     }
 
     const StringPair& getBlendFuncStrings() const override

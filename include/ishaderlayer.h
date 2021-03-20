@@ -405,6 +405,9 @@ public:
     // Set the map type to use by this stage (map, cameraCubeMap, etc.)
     virtual void setMapType(MapType mapType) = 0;
 
+    // Set the blend func from the given pair of strings
+    virtual void setBlendFuncStrings(const std::pair<std::string, std::string>& pair) = 0;
+
     // Set the alpha test expression from the given string
     virtual void setAlphaTestExpressionFromString(const std::string& expression) = 0;
 

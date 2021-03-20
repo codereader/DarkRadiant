@@ -35,6 +35,7 @@ namespace
     const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
 
     const char* const SPECIAL_MAP_TYPE = N_("Special");
+    const char* const CUSTOM_BLEND_TYPE = N_("Custom");
 
     // Columns for the stages list
     struct StageColumns :
@@ -458,15 +459,15 @@ void MaterialEditor::setupMaterialStageProperties()
             getControl<wxCheckBox>("MaterialStageHasAlphaTest")->SetValue(layer->hasAlphaTest());
         });
 
-    for (const auto& value : {
-        "diffusemap", "bumpmap", "specularmap", "blend", "add", "filter", "modulate", "none", "Custom"
-    })
+    for (const auto& value : { "diffusemap", "bumpmap", "specularmap", "blend", "add", "filter", "modulate", "none" })
     {
         getControl<wxChoice>("MaterialStageBlendType")->Append(value);
     }
+
+    getControl<wxChoice>("MaterialStageBlendType")->Append(_(CUSTOM_BLEND_TYPE));
    
    for (const auto& value : {
-        "", "gl_one", "gl_zero", "gl_dst_color", "gl_one_minus_dst_color", "gl_src_alpha", 
+        "gl_one", "gl_zero", "gl_dst_color", "gl_one_minus_dst_color", "gl_src_alpha", 
         "gl_one_minus_src_alpha", "gl_dst_alpha", "gl_one_minus_dst_alpha", "gl_src_alpha_saturate"
     })
     {
@@ -474,12 +475,16 @@ void MaterialEditor::setupMaterialStageProperties()
     }
 
     for (const auto& value : {
-        "", "gl_one", "gl_zero", "gl_src_color", "gl_one_minus_src_color", "gl_src_alpha", 
+        "gl_one", "gl_zero", "gl_src_color", "gl_one_minus_src_color", "gl_src_alpha", 
         "gl_one_minus_src_alpha", "gl_dst_alpha", "gl_one_minus_dst_alpha"
     })
     {
         getControl<wxChoice>("MaterialStageBlendTypeDest")->Append(value);
     } 
+
+    getControl<wxChoice>("MaterialStageBlendType")->Bind(wxEVT_CHOICE, &MaterialEditor::_onStageBlendTypeChanged, this);;
+    getControl<wxChoice>("MaterialStageBlendTypeSrc")->Bind(wxEVT_CHOICE, &MaterialEditor::_onStageBlendTypeChanged, this);;
+    getControl<wxChoice>("MaterialStageBlendTypeDest")->Bind(wxEVT_CHOICE, &MaterialEditor::_onStageBlendTypeChanged, this);;
 
     auto mapTypeDropdown = getControl<wxChoice>("MaterialStageMapType");
 
@@ -1119,22 +1124,6 @@ void MaterialEditor::updateStageBlendControls()
         blendType->Enable();
         auto blendTypeStrings = selectedStage->getBlendFuncStrings();
 
-        switch (selectedStage->getType())
-        {
-        case IShaderLayer::DIFFUSE:
-            blendTypeStrings.first = "diffusemap";
-            blendTypeStrings.second.clear();
-            break;
-        case IShaderLayer::BUMP:
-            blendTypeStrings.first = "bumpmap";
-            blendTypeStrings.second.clear();
-            break;
-        case IShaderLayer::SPECULAR:
-            blendTypeStrings.first = "specularmap";
-            blendTypeStrings.second.clear();
-            break;
-        };
-
         blendTypeSrc->Enable(!blendTypeStrings.second.empty());
         blendTypeDest->Enable(!blendTypeStrings.second.empty());
 
@@ -1142,8 +1131,8 @@ void MaterialEditor::updateStageBlendControls()
         {
             blendType->SetStringSelection(blendTypeStrings.first);
 
-            blendTypeSrc->SetStringSelection("");
-            blendTypeDest->SetStringSelection("");
+            blendTypeSrc->SetStringSelection("gl_one");
+            blendTypeDest->SetStringSelection("gl_zero");
 
             // Get the actual src and dest blend types this shortcut is working with
             for (const auto& pair : shaders::BlendTypeShortcuts)
@@ -1158,7 +1147,7 @@ void MaterialEditor::updateStageBlendControls()
         }
         else
         {
-            blendType->SetStringSelection("Custom");
+            blendType->SetStringSelection(_(CUSTOM_BLEND_TYPE));
             blendTypeSrc->SetStringSelection(blendTypeStrings.first);
             blendTypeDest->SetStringSelection(blendTypeStrings.second);
         }
@@ -1548,6 +1537,44 @@ void MaterialEditor::_onStageMapTypeChanged(wxCommandEvent& ev)
     }
 
     updateStageControls();
+}
+
+void MaterialEditor::_onStageBlendTypeChanged(wxCommandEvent& ev)
+{
+    auto stage = getEditableStageForSelection();
+    if (!stage) return;
+
+    std::pair<std::string, std::string> blendFuncStrings;
+
+    auto blendTypeString = getControl<wxChoice>("MaterialStageBlendType")->GetStringSelection();
+
+    if (blendTypeString == _(CUSTOM_BLEND_TYPE))
+    {
+        blendFuncStrings.first = getControl<wxChoice>("MaterialStageBlendTypeSrc")->GetStringSelection();
+        blendFuncStrings.second = getControl<wxChoice>("MaterialStageBlendTypeDest")->GetStringSelection();
+    }
+    else
+    {
+        // It's one of diffuse/bump/specular or a blend shortcut like add/modulate
+        blendFuncStrings.first = blendTypeString;
+    }
+
+    stage->setBlendFuncStrings(blendFuncStrings);
+    
+    updateNameOfSelectedStage();
+    updateStageControls();
+}
+
+void MaterialEditor::updateNameOfSelectedStage()
+{
+    auto item = _stageView->GetSelection();
+    if (!item.IsOk()) return;
+
+    auto row = wxutil::TreeModel::Row(item, *_stageList);
+
+    row[STAGE_COLS().name] = getNameForLayer(*getSelectedStage());
+
+    row.SendItemChanged();
 }
 
 void MaterialEditor::onMaterialChanged()

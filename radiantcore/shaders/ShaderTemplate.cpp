@@ -538,47 +538,27 @@ bool ShaderTemplate::parseBlendType(parser::DefTokeniser& tokeniser, const std::
 {
     if (token == "blend")
     {
-        std::string blendType = string::to_lower_copy(tokeniser.nextToken());
+        // Special blend type, either predefined like "add" or "modulate",
+        // or an explicit combination of GL blend modes
+        StringPair blendFuncStrings;
+        blendFuncStrings.first = string::to_lower_copy(tokeniser.nextToken());
 
-        if (blendType == "diffusemap")
-		{
-            _currentLayer->setLayerType(IShaderLayer::DIFFUSE);
-        }
-        else if (blendType == "bumpmap")
-		{
-            _currentLayer->setLayerType(IShaderLayer::BUMP);
-        }
-        else if (blendType == "specularmap")
-		{
-            _currentLayer->setLayerType(IShaderLayer::SPECULAR);
+        if (blendFuncStrings.first.substr(0, 3) == "gl_")
+        {
+            // This is an explicit GL blend mode
+            tokeniser.assertNextToken(",");
+            blendFuncStrings.second = string::to_lower_copy(tokeniser.nextToken());
         }
         else
         {
-            // Special blend type, either predefined like "add" or "modulate",
-            // or an explicit combination of GL blend modes
-            StringPair blendFuncStrings;
-            blendFuncStrings.first = blendType;
-
-            if (blendType.substr(0,3) == "gl_")
-            {
-                // This is an explicit GL blend mode
-                tokeniser.assertNextToken(",");
-                blendFuncStrings.second = tokeniser.nextToken();
-            }
-			else
-			{
-                blendFuncStrings.second = "";
-            }
-
-            _currentLayer->setBlendFuncStrings(blendFuncStrings);
+            blendFuncStrings.second = "";
         }
-    }
-	else
-	{
-		return false; // unrecognised token, return false
-	}
 
-	return true;
+        _currentLayer->setBlendFuncStrings(blendFuncStrings);
+	    return true;
+    }
+	
+    return false; // unrecognised token, return false
 }
 
 /* Searches for the map keyword in stage 2, expects token to be lowercase
