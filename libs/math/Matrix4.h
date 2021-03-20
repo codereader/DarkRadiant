@@ -7,6 +7,8 @@
 #include "math/Vector4.h"
 #include "math/pi.h"
 
+#include <Eigen/Dense>
+
 class Quaternion;
 
 /**

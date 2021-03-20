@@ -75,7 +75,7 @@ include(${wxWidgets_USE_FILE})
 find_package(Python REQUIRED COMPONENTS Development)
 
 # Global includes and flags
-include_directories(libs libs/libfmt include)
+include_directories(libs libs/libfmt libs/eigen include)
 add_compile_definitions(POSIX
                         WXINTL_NO_GETTEXT_MACRO
                         FMT_HEADER_ONLY
