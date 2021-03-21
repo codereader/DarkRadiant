@@ -220,7 +220,8 @@ void MaterialEditor::setupMaterialProperties()
     _materialBindings.emplace(std::make_shared<CheckBoxBinding<MaterialPtr>>(getControl<wxCheckBox>("MaterialHasSortValue"),
         [](const MaterialPtr& material) { return (material->getParseFlags() & Material::PF_HasSortDefined) != 0; }));
 
-    _materialBindings.emplace(std::make_shared<SpinCtrlMaterialBinding<wxSpinCtrlDouble>>(getControl<wxSpinCtrlDouble>("MaterialPolygonOffsetValue"),
+    _materialBindings.emplace(std::make_shared<SpinCtrlBinding<wxSpinCtrlDouble, MaterialPtr>>(
+        getControl<wxSpinCtrlDouble>("MaterialPolygonOffsetValue"),
         [](const MaterialPtr& material) { return material->getPolygonOffset(); },
         [this](const MaterialPtr& material, const double& value)
         {
@@ -245,7 +246,9 @@ void MaterialEditor::setupMaterialProperties()
         _material->setLightFalloffCubeMapType(shaders::getMapTypeForString(lightFallOffCubeMapType->GetStringSelection().ToStdString()));
     });
 
-    _materialBindings.emplace(std::make_shared<SpinCtrlMaterialBinding<wxSpinCtrl>>(getControl<wxSpinCtrl>("MaterialSpectrumValue"),
+    // TODO: Lightfalloffimage binding
+
+    _materialBindings.emplace(std::make_shared<SpinCtrlBinding<wxSpinCtrl, MaterialPtr>>(getControl<wxSpinCtrl>("MaterialSpectrumValue"),
         [](const MaterialPtr& material) { return material->getSpectrum(); },
         [this](const MaterialPtr& material, const int& value)
         {
@@ -456,7 +459,7 @@ void MaterialEditor::createExpressionBinding(const std::string& textCtrlName,
     const std::function<shaders::IShaderExpression::Ptr(const IShaderLayer::Ptr&)>& loadFunc,
     const std::function<void(const IEditableShaderLayer::Ptr&, const std::string&)>& saveFunc)
 {
-    _stageBindings.emplace(std::make_shared<ExpressionBinding>(
+    _stageBindings.emplace(std::make_shared<ExpressionBinding<IShaderLayer::Ptr>>(
         getControl<wxTextCtrl>(textCtrlName),
         [loadFunc] (const IShaderLayer::Ptr& layer) 
         {
@@ -472,36 +475,36 @@ void MaterialEditor::createRadioButtonBinding(const std::string& ctrlName,
     const std::function<bool(const IShaderLayer::Ptr&)>& loadFunc,
     const std::function<void(const IEditableShaderLayer::Ptr&, bool)>& saveFunc)
 {
-    _stageBindings.emplace(std::make_shared<RadioButtonBinding>(
+    _stageBindings.emplace(std::make_shared<RadioButtonBinding<IShaderLayer::Ptr>>(
         getControl<wxRadioButton>(ctrlName),
         loadFunc,
-        std::bind(&MaterialEditor::getEditableStageForSelection, this),
         saveFunc,
-        std::bind(&MaterialEditor::onMaterialChanged, this)));
+        std::bind(&MaterialEditor::onMaterialChanged, this),
+        std::bind(&MaterialEditor::getEditableStageForSelection, this)));
 }
 
 void MaterialEditor::createSpinCtrlBinding(const std::string& ctrlName,
     const std::function<int(const IShaderLayer::Ptr&)>& loadFunc,
     const std::function<void(const IEditableShaderLayer::Ptr&, int)>& saveFunc)
 {
-    _stageBindings.emplace(std::make_shared<SpinCtrlStageBinding<wxSpinCtrl>>(
+    _stageBindings.emplace(std::make_shared<SpinCtrlBinding<wxSpinCtrl, IShaderLayer::Ptr>>(
         getControl<wxSpinCtrl>(ctrlName),
         loadFunc,
-        std::bind(&MaterialEditor::getEditableStageForSelection, this),
         saveFunc,
-        std::bind(&MaterialEditor::onMaterialChanged, this)));
+        std::bind(&MaterialEditor::onMaterialChanged, this),
+        std::bind(&MaterialEditor::getEditableStageForSelection, this)));
 }
 
 void MaterialEditor::createSpinCtrlDoubleBinding(const std::string& ctrlName,
     const std::function<double(const IShaderLayer::Ptr&)>& loadFunc,
     const std::function<void(const IEditableShaderLayer::Ptr&, double)>& saveFunc)
 {
-    _stageBindings.emplace(std::make_shared<SpinCtrlStageBinding<wxSpinCtrlDouble>>(
+    _stageBindings.emplace(std::make_shared<SpinCtrlBinding<wxSpinCtrlDouble, IShaderLayer::Ptr>>(
         getControl<wxSpinCtrlDouble>(ctrlName),
         loadFunc,
-        std::bind(&MaterialEditor::getEditableStageForSelection, this),
         saveFunc,
-        std::bind(&MaterialEditor::onMaterialChanged, this)));
+        std::bind(&MaterialEditor::onMaterialChanged, this),
+        std::bind(&MaterialEditor::getEditableStageForSelection, this)));
 }
 
 void MaterialEditor::setupMaterialStageProperties()

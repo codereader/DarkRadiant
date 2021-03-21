@@ -7,22 +7,23 @@
 namespace ui
 {
 
+template<typename Source>
 class ExpressionBinding :
-    public TwoWayStageBinding<std::string>
+    public TwoWayBinding<Source, std::string>
 {
+public:
+    using BaseBinding = TwoWayBinding<Source, std::string>;
+
 private:
     wxTextCtrl* _textCtrl;
-    std::function<std::string(const IShaderLayer::Ptr&)> _getExpression;
-    std::function<void(const IEditableShaderLayer::Ptr&, const std::string&)> _updateExpression;
-    std::function<void()> _postChangeNotify;
 
 public:
     ExpressionBinding(wxTextCtrl* textCtrl,
-                      const std::function<std::string(const IShaderLayer::Ptr&)>& loadFunc,
-                      const std::function<IEditableShaderLayer::Ptr()>& acquireSaveTarget,
-                      const std::function<void(const IEditableShaderLayer::Ptr&, const std::string&)>& saveFunc,
-                      const std::function<void()>& postChangeNotify = std::function<void()>()) :
-        TwoWayStageBinding(loadFunc, acquireSaveTarget, saveFunc, postChangeNotify),
+                      const typename BaseBinding::LoadFunc& loadFunc,
+                      const typename BaseBinding::AcquireTargetFunc& acquireSaveTarget,
+                      const typename BaseBinding::UpdateFunc& saveFunc,
+                      const typename BaseBinding::PostUpdateFunc& postChangeNotify = BaseBinding::PostUpdateFunc()) :
+        BaseBinding(loadFunc, saveFunc, postChangeNotify, acquireSaveTarget),
         _textCtrl(textCtrl)
     {
         if (saveFunc)
@@ -39,7 +40,7 @@ protected:
 
     void onTextChanged(wxCommandEvent& ev)
     {
-        updateValueOnTarget(_textCtrl->GetValue().ToStdString());
+        BaseBinding::updateValueOnTarget(_textCtrl->GetValue().ToStdString());
     }
 };
 

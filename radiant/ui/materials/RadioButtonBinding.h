@@ -7,19 +7,23 @@
 namespace ui
 {
 
+template<typename Source>
 class RadioButtonBinding :
-    public TwoWayStageBinding<bool>
+    public TwoWayBinding<Source, bool>
 {
+public:
+    using BaseBinding = TwoWayBinding<Source, bool>;
+
 private:
     wxRadioButton* _radioButton;
 
 public:
     RadioButtonBinding(wxRadioButton* radioButton,
-        const std::function<bool(const IShaderLayer::Ptr&)>& loadFunc,
-        const std::function<IEditableShaderLayer::Ptr()>& acquireSaveTarget,
-        const std::function<void(const IEditableShaderLayer::Ptr&, bool)>& saveFunc,
-        const std::function<void()>& postChangeNotify = std::function<void()>()) :
-        TwoWayStageBinding(loadFunc, acquireSaveTarget, saveFunc, postChangeNotify),
+        const typename BaseBinding::LoadFunc& loadFunc,
+        const typename BaseBinding::UpdateFunc& saveFunc,
+        const typename BaseBinding::PostUpdateFunc& postChangeNotify = BaseBinding::PostUpdateFunc(),
+        const typename BaseBinding::AcquireTargetFunc& acquireSaveTarget = BaseBinding::UseSourceAsTarget) :
+        BaseBinding(loadFunc, saveFunc, postChangeNotify, acquireSaveTarget),
         _radioButton(radioButton)
     {
         if (saveFunc)
@@ -36,7 +40,7 @@ protected:
 
     void onValueChanged(wxCommandEvent& ev)
     {
-        updateValueOnTarget(_radioButton->GetValue());
+        BaseBinding::updateValueOnTarget(_radioButton->GetValue());
     }
 };
 

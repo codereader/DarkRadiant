@@ -6,31 +6,48 @@
 namespace ui
 {
 
-template<typename SpinCtrlType>
-class SpinCtrlMaterialBinding :
-    public TwoWayMaterialBinding<decltype(std::declval<SpinCtrlType>().GetValue())>
+template<typename SpinCtrlType, typename Source>
+class SpinCtrlBinding :
+    public TwoWayBinding<Source, decltype(std::declval<SpinCtrlType>().GetValue())>
 {
+public:
+    using ValueType = decltype(std::declval<SpinCtrlType>().GetValue());
+    using BaseBinding = TwoWayBinding<Source, ValueType>;
+
 private:
     SpinCtrlType* _spinCtrl;
-    using ValueType = decltype(std::declval<SpinCtrlType>().GetValue());
 
 public:
-    SpinCtrlMaterialBinding(SpinCtrlType* spinCtrl,
-        const std::function<ValueType(const MaterialPtr&)>& loadFunc,
-        const std::function<void(const MaterialPtr&, ValueType)>& saveFunc,
-        const std::function<void()>& postChangeNotify = std::function<void()>()) :
-        TwoWayMaterialBinding<ValueType>(loadFunc, saveFunc, postChangeNotify),
+    SpinCtrlBinding(SpinCtrlType* spinCtrl,
+        const typename BaseBinding::LoadFunc& loadFunc,
+        const typename BaseBinding::UpdateFunc& saveFunc) :
+        SpinCtrlBinding(spinCtrl, loadFunc, saveFunc, BaseBinding::PostUpdateFunc())
+    {}
+
+    SpinCtrlBinding(SpinCtrlType* spinCtrl,
+        const typename BaseBinding::LoadFunc& loadFunc,
+        const typename BaseBinding::UpdateFunc& saveFunc,
+        const typename BaseBinding::PostUpdateFunc& postChangeNotify) :
+        SpinCtrlBinding(spinCtrl, loadFunc, saveFunc, postChangeNotify, std::bind(&BaseBinding::UseSourceAsTarget, this))
+    {}
+
+    SpinCtrlBinding(SpinCtrlType* spinCtrl,
+                    const typename BaseBinding::LoadFunc& loadFunc,
+                    const typename BaseBinding::UpdateFunc& saveFunc,
+                    const typename BaseBinding::PostUpdateFunc& postChangeNotify,
+                    const typename BaseBinding::AcquireTargetFunc& acquireSaveTarget) :
+        BaseBinding(loadFunc, saveFunc, postChangeNotify, acquireSaveTarget),
         _spinCtrl(spinCtrl)
     {
         if (saveFunc)
         {
             if (std::is_integral<ValueType>::value)
             {
-                _spinCtrl->Bind(wxEVT_SPINCTRL, &SpinCtrlMaterialBinding::onValueChanged, this);
+                _spinCtrl->Bind(wxEVT_SPINCTRL, &SpinCtrlBinding::onValueChanged, this);
             }
             else
             {
-                _spinCtrl->Bind(wxEVT_SPINCTRLDOUBLE, &SpinCtrlMaterialBinding::onValueChanged, this);
+                _spinCtrl->Bind(wxEVT_SPINCTRLDOUBLE, &SpinCtrlBinding::onValueChanged, this);
             }
         }
     }
@@ -43,49 +60,7 @@ protected:
 
     void onValueChanged(wxCommandEvent& ev)
     {
-        TwoWayMaterialBinding<ValueType>::updateValueOnTarget(_spinCtrl->GetValue());
-    }
-};
-
-template<typename SpinCtrlType>
-class SpinCtrlStageBinding :
-    public TwoWayStageBinding<decltype(std::declval<SpinCtrlType>().GetValue())>
-{
-private:
-    SpinCtrlType* _spinCtrl;
-    using ValueType = decltype(std::declval<SpinCtrlType>().GetValue());
-
-public:
-    SpinCtrlStageBinding(SpinCtrlType* spinCtrl,
-        const std::function<ValueType(const IShaderLayer::Ptr&)>& loadFunc,
-        const std::function<IEditableShaderLayer::Ptr()>& acquireSaveTarget,
-        const std::function<void(const IEditableShaderLayer::Ptr&, ValueType)>& saveFunc,
-        const std::function<void()>& postChangeNotify = std::function<void()>()) :
-        TwoWayStageBinding<ValueType>(loadFunc, acquireSaveTarget, saveFunc, postChangeNotify),
-        _spinCtrl(spinCtrl)
-    {
-        if (saveFunc)
-        {
-            if (std::is_integral<ValueType>::value)
-            {
-                _spinCtrl->Bind(wxEVT_SPINCTRL, &SpinCtrlStageBinding::onValueChanged, this);
-            }
-            else
-            {
-                _spinCtrl->Bind(wxEVT_SPINCTRLDOUBLE, &SpinCtrlStageBinding::onValueChanged, this);
-            }
-        }
-    }
-
-protected:
-    void setValueOnControl(const ValueType& value) override
-    {
-        _spinCtrl->SetValue(value);
-    }
-
-    void onValueChanged(wxCommandEvent& ev)
-    {
-        TwoWayStageBinding<ValueType>::updateValueOnTarget(_spinCtrl->GetValue());
+        BaseBinding::updateValueOnTarget(_spinCtrl->GetValue());
     }
 };
 
