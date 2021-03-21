@@ -305,6 +305,7 @@
 																				<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
 																				<border>6</border>
 																				<object class="wxCheckBox" name="MaterialRimColor">
+																					<enabled>0</enabled>
 																					<label>ambientRimColor</label>
 																					<checked>0</checked>
 																				</object>
@@ -314,6 +315,7 @@
 																				<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
 																				<border>3</border>
 																				<object class="wxTextCtrl" name="MaterialAmbientRimColorExpression1">
+																					<enabled>0</enabled>
 																					<value></value>
 																				</object>
 																			</object>
@@ -331,6 +333,7 @@
 																				<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
 																				<border>3</border>
 																				<object class="wxTextCtrl" name="MaterialAmbientRimColorExpression2">
+																					<enabled>0</enabled>
 																					<value></value>
 																				</object>
 																			</object>
@@ -348,6 +351,7 @@
 																				<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
 																				<border>6</border>
 																				<object class="wxTextCtrl" name="MaterialAmbientRimColorExpression3">
+																					<enabled>0</enabled>
 																					<value></value>
 																				</object>
 																			</object>
@@ -588,7 +592,7 @@
 														</object>
 														<object class="notebookpage">
 															<label>Light</label>
-															<selected>1</selected>
+															<selected>0</selected>
 															<object class="wxPanel" name="LightPage">
 																<style>wxTAB_TRAVERSAL</style>
 																<object class="wxBoxSizer">
@@ -939,7 +943,8 @@
 																											<border>6</border>
 																											<object class="wxSpinCtrlDouble" name="MaterialEditorDecalInfoStaySeconds">
 																												<style>wxSP_ARROW_KEYS</style>
-																												<value>0</value>
+																												<enabled>0</enabled>
+																												<value>0.100000</value>
 																												<min>0</min>
 																												<max>999999</max>
 																												<inc>0.1</inc>
@@ -978,6 +983,7 @@
 																											<border>6</border>
 																											<object class="wxSpinCtrlDouble" name="MaterialEditorDecalInfoFadeSeconds">
 																												<style>wxSP_ARROW_KEYS</style>
+																												<enabled>0</enabled>
 																												<value>0.200000</value>
 																												<min>0</min>
 																												<max>999999</max>
@@ -1016,6 +1022,7 @@
 																											<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
 																											<border>0</border>
 																											<object class="wxTextCtrl" name="MaterialDecalInfoStartRgb">
+																												<enabled>0</enabled>
 																												<value></value>
 																											</object>
 																										</object>
@@ -1041,6 +1048,7 @@
 																											<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
 																											<border>0</border>
 																											<object class="wxTextCtrl" name="MaterialDecalInfoEndRgb">
+																												<enabled>0</enabled>
 																												<value></value>
 																											</object>
 																										</object>
@@ -1058,7 +1066,7 @@
 														</object>
 														<object class="notebookpage">
 															<label>Deform</label>
-															<selected>0</selected>
+															<selected>1</selected>
 															<object class="wxPanel" name="DeformPage">
 																<style>wxTAB_TRAVERSAL</style>
 																<object class="wxBoxSizer">
@@ -1074,6 +1082,7 @@
 																				<flag>wxALL</flag>
 																				<border>6</border>
 																				<object class="wxChoice" name="MaterialEditorDeformChoice">
+																					<enabled>0</enabled>
 																					<selection>0</selection>
 																					<content />
 																				</object>
@@ -1090,6 +1099,7 @@
 																						<border>0</border>
 																						<object class="wxPanel" name="DeformFlarePanel">
 																							<style>wxTAB_TRAVERSAL</style>
+																							<enabled>0</enabled>
 																							<hidden>1</hidden>
 																							<object class="wxBoxSizer">
 																								<orient>wxHORIZONTAL</orient>
@@ -1119,6 +1129,7 @@
 																						<border>0</border>
 																						<object class="wxPanel" name="DeformExpandPanel">
 																							<style>wxTAB_TRAVERSAL</style>
+																							<enabled>0</enabled>
 																							<hidden>1</hidden>
 																							<object class="wxBoxSizer">
 																								<orient>wxHORIZONTAL</orient>
@@ -1148,6 +1159,7 @@
 																						<border>0</border>
 																						<object class="wxPanel" name="DeformMovePanel">
 																							<style>wxTAB_TRAVERSAL</style>
+																							<enabled>0</enabled>
 																							<hidden>1</hidden>
 																							<object class="wxBoxSizer">
 																								<orient>wxHORIZONTAL</orient>
@@ -1177,6 +1189,7 @@
 																						<border>0</border>
 																						<object class="wxPanel" name="DeformTurbulentPanel">
 																							<style>wxTAB_TRAVERSAL</style>
+																							<enabled>0</enabled>
 																							<hidden>1</hidden>
 																							<object class="wxBoxSizer">
 																								<orient>wxVERTICAL</orient>
@@ -1274,6 +1287,7 @@
 																						<border>0</border>
 																						<object class="wxPanel" name="DeformParticlePanel">
 																							<style>wxTAB_TRAVERSAL</style>
+																							<enabled>0</enabled>
 																							<hidden>1</hidden>
 																							<object class="wxBoxSizer">
 																								<orient>wxHORIZONTAL</orient>
@@ -1303,6 +1317,7 @@
 																						<border>0</border>
 																						<object class="wxPanel" name="DeformParticle2Panel">
 																							<style>wxTAB_TRAVERSAL</style>
+																							<enabled>0</enabled>
 																							<hidden>1</hidden>
 																							<object class="wxBoxSizer">
 																								<orient>wxHORIZONTAL</orient>
@@ -1356,6 +1371,7 @@
 																				<flag>wxALIGN_CENTER_VERTICAL</flag>
 																				<border>0</border>
 																				<object class="wxCheckBox" name="MaterialHasRenderBump">
+																					<enabled>0</enabled>
 																					<label>renderBump</label>
 																					<checked>0</checked>
 																				</object>
@@ -1365,6 +1381,7 @@
 																				<flag>wxALIGN_CENTER_VERTICAL|wxEXPAND</flag>
 																				<border>0</border>
 																				<object class="wxTextCtrl" name="MaterialRenderBumpArguments">
+																					<enabled>0</enabled>
 																					<value></value>
 																				</object>
 																			</object>
@@ -1373,6 +1390,7 @@
 																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
 																				<border>0</border>
 																				<object class="wxCheckBox" name="MaterialHasRenderBumpFlat">
+																					<enabled>0</enabled>
 																					<label>renderBumpFlat</label>
 																					<checked>0</checked>
 																				</object>
@@ -1382,6 +1400,7 @@
 																				<flag>wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</flag>
 																				<border>0</border>
 																				<object class="wxTextCtrl" name="MaterialRenderBumpFlatArguments">
+																					<enabled>0</enabled>
 																					<value></value>
 																				</object>
 																			</object>
@@ -1426,6 +1445,7 @@
 																				<flag>wxALIGN_CENTER_VERTICAL</flag>
 																				<border>3</border>
 																				<object class="wxCheckBox" name="MaterialHasGuiSurf">
+																					<enabled>0</enabled>
 																					<label>guisurf</label>
 																					<checked>0</checked>
 																				</object>
@@ -1443,6 +1463,7 @@
 																							<flag>wxALIGN_CENTER_VERTICAL</flag>
 																							<border>6</border>
 																							<object class="wxRadioButton" name="MaterialGuiSurfRegular">
+																								<enabled>0</enabled>
 																								<label>GUI Path:</label>
 																								<value>0</value>
 																							</object>
@@ -1460,6 +1481,7 @@
 																							<flag>wxALIGN_CENTER_VERTICAL|wxALL|wxLEFT</flag>
 																							<border>6</border>
 																							<object class="wxRadioButton" name="MaterialGuiSurfEntity">
+																								<enabled>0</enabled>
 																								<label>entity</label>
 																								<value>0</value>
 																							</object>
@@ -1469,6 +1491,7 @@
 																							<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
 																							<border>6</border>
 																							<object class="wxRadioButton" name="MaterialGuiSurfEntity2">
+																								<enabled>0</enabled>
 																								<label>entity2</label>
 																								<value>0</value>
 																							</object>
@@ -1478,6 +1501,7 @@
 																							<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
 																							<border>6</border>
 																							<object class="wxRadioButton" name="MaterialGuiSurfEntity3">
+																								<enabled>0</enabled>
 																								<label>entity3</label>
 																								<value>0</value>
 																							</object>
@@ -1658,7 +1682,7 @@
 											<object class="wxNotebook" name="MaterialStageSettingsNotebook">
 												<object class="notebookpage">
 													<label>Blending</label>
-													<selected>1</selected>
+													<selected>0</selected>
 													<object class="wxPanel" name="BlendPanel">
 														<style>wxTAB_TRAVERSAL</style>
 														<object class="wxBoxSizer">
@@ -1885,7 +1909,8 @@
 																						<border>6</border>
 																						<object class="wxSpinCtrlDouble" name="MaterialStagePrivatePolygonOffset">
 																							<style>wxSP_ARROW_KEYS</style>
-																							<value>0</value>
+																							<enabled>0</enabled>
+																							<value>0.100000</value>
 																							<min>-9999</min>
 																							<max>9999</max>
 																							<inc>0.1</inc>
@@ -2659,7 +2684,7 @@
 												</object>
 												<object class="notebookpage">
 													<label>Program</label>
-													<selected>0</selected>
+													<selected>1</selected>
 													<object class="wxPanel" name="m_panel61111">
 														<style>wxTAB_TRAVERSAL</style>
 														<object class="wxBoxSizer">
@@ -2689,6 +2714,7 @@
 																		<flag>wxEXPAND</flag>
 																		<border>5</border>
 																		<object class="wxTextCtrl" name="MaterialStageFragmentProgram">
+																			<enabled>0</enabled>
 																			<value></value>
 																		</object>
 																	</object>
@@ -2706,6 +2732,7 @@
 																		<flag>wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</flag>
 																		<border>0</border>
 																		<object class="wxTextCtrl" name="MaterialStageVertexProgram">
+																			<enabled>0</enabled>
 																			<value></value>
 																		</object>
 																	</object>
@@ -2717,6 +2744,7 @@
 																<border>6</border>
 																<object class="wxPanel" name="MaterialStageProgramParameters">
 																	<style>wxTAB_TRAVERSAL</style>
+																	<enabled>0</enabled>
 																	<object class="wxBoxSizer">
 																		<orient>wxVERTICAL</orient>
 																	</object>
@@ -2730,9 +2758,10 @@
 																	<orient>wxHORIZONTAL</orient>
 																	<object class="sizeritem">
 																		<option>0</option>
-																		<flag>wxALIGN_CENTER_VERTICAL|wxALL|wxLEFT</flag>
+																		<flag>wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxLEFT</flag>
 																		<border>6</border>
 																		<object class="wxButton" name="m_button11">
+																			<enabled>0</enabled>
 																			<label>Add Vertex Parameter</label>
 																			<default>0</default>
 																			<markup>0</markup>
@@ -2741,9 +2770,10 @@
 																	</object>
 																	<object class="sizeritem">
 																		<option>0</option>
-																		<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																		<flag>wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxLEFT|wxRIGHT</flag>
 																		<border>6</border>
 																		<object class="wxButton" name="m_button112">
+																			<enabled>0</enabled>
 																			<label>Add Fragment Map</label>
 																			<default>0</default>
 																			<markup>0</markup>

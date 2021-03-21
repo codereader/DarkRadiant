@@ -1711,7 +1711,7 @@
                                                                                             <property name="dock">Dock</property>
                                                                                             <property name="dock_fixed">0</property>
                                                                                             <property name="docking">Left</property>
-                                                                                            <property name="enabled">1</property>
+                                                                                            <property name="enabled">0</property>
                                                                                             <property name="fg"></property>
                                                                                             <property name="floatable">1</property>
                                                                                             <property name="font"></property>
@@ -1774,7 +1774,7 @@
                                                                                             <property name="dock">Dock</property>
                                                                                             <property name="dock_fixed">0</property>
                                                                                             <property name="docking">Left</property>
-                                                                                            <property name="enabled">1</property>
+                                                                                            <property name="enabled">0</property>
                                                                                             <property name="fg"></property>
                                                                                             <property name="floatable">1</property>
                                                                                             <property name="font"></property>
@@ -1899,7 +1899,7 @@
                                                                                             <property name="dock">Dock</property>
                                                                                             <property name="dock_fixed">0</property>
                                                                                             <property name="docking">Left</property>
-                                                                                            <property name="enabled">1</property>
+                                                                                            <property name="enabled">0</property>
                                                                                             <property name="fg"></property>
                                                                                             <property name="floatable">1</property>
                                                                                             <property name="font"></property>
@@ -2024,7 +2024,7 @@
                                                                                             <property name="dock">Dock</property>
                                                                                             <property name="dock_fixed">0</property>
                                                                                             <property name="docking">Left</property>
-                                                                                            <property name="enabled">1</property>
+                                                                                            <property name="enabled">0</property>
                                                                                             <property name="fg"></property>
                                                                                             <property name="floatable">1</property>
                                                                                             <property name="font"></property>
@@ -3624,7 +3624,7 @@
                                                                 <object class="notebookpage" expanded="0">
                                                                     <property name="bitmap"></property>
                                                                     <property name="label">Light</property>
-                                                                    <property name="select">1</property>
+                                                                    <property name="select">0</property>
                                                                     <object class="wxPanel" expanded="0">
                                                                         <property name="BottomDockable">1</property>
                                                                         <property name="LeftDockable">1</property>
@@ -5512,7 +5512,7 @@
                                                                                                             <property name="border">0</property>
                                                                                                             <property name="flag">wxEXPAND</property>
                                                                                                             <property name="proportion">1</property>
-                                                                                                            <object class="wxBoxSizer" expanded="0">
+                                                                                                            <object class="wxBoxSizer" expanded="1">
                                                                                                                 <property name="minimum_size"></property>
                                                                                                                 <property name="name">bSizer7811</property>
                                                                                                                 <property name="orient">wxHORIZONTAL</property>
@@ -5604,7 +5604,7 @@
                                                                                                                         <property name="dock">Dock</property>
                                                                                                                         <property name="dock_fixed">0</property>
                                                                                                                         <property name="docking">Left</property>
-                                                                                                                        <property name="enabled">1</property>
+                                                                                                                        <property name="enabled">0</property>
                                                                                                                         <property name="fg"></property>
                                                                                                                         <property name="floatable">1</property>
                                                                                                                         <property name="font"></property>
@@ -5612,7 +5612,7 @@
                                                                                                                         <property name="hidden">0</property>
                                                                                                                         <property name="id">wxID_ANY</property>
                                                                                                                         <property name="inc">0.1</property>
-                                                                                                                        <property name="initial">0</property>
+                                                                                                                        <property name="initial">0.100000</property>
                                                                                                                         <property name="max">999999</property>
                                                                                                                         <property name="max_size"></property>
                                                                                                                         <property name="maximize_button">0</property>
@@ -5705,11 +5705,11 @@
                                                                                                                 </object>
                                                                                                             </object>
                                                                                                         </object>
-                                                                                                        <object class="sizeritem" expanded="0">
+                                                                                                        <object class="sizeritem" expanded="1">
                                                                                                             <property name="border">0</property>
                                                                                                             <property name="flag">wxEXPAND</property>
                                                                                                             <property name="proportion">1</property>
-                                                                                                            <object class="wxBoxSizer" expanded="0">
+                                                                                                            <object class="wxBoxSizer" expanded="1">
                                                                                                                 <property name="minimum_size"></property>
                                                                                                                 <property name="name">bSizer7812</property>
                                                                                                                 <property name="orient">wxHORIZONTAL</property>
@@ -5801,7 +5801,7 @@
                                                                                                                         <property name="dock">Dock</property>
                                                                                                                         <property name="dock_fixed">0</property>
                                                                                                                         <property name="docking">Left</property>
-                                                                                                                        <property name="enabled">1</property>
+                                                                                                                        <property name="enabled">0</property>
                                                                                                                         <property name="fg"></property>
                                                                                                                         <property name="floatable">1</property>
                                                                                                                         <property name="font"></property>
@@ -5902,11 +5902,11 @@
                                                                                                                 </object>
                                                                                                             </object>
                                                                                                         </object>
-                                                                                                        <object class="sizeritem" expanded="0">
+                                                                                                        <object class="sizeritem" expanded="1">
                                                                                                             <property name="border">0</property>
                                                                                                             <property name="flag">wxEXPAND</property>
                                                                                                             <property name="proportion">1</property>
-                                                                                                            <object class="wxBoxSizer" expanded="0">
+                                                                                                            <object class="wxBoxSizer" expanded="1">
                                                                                                                 <property name="minimum_size"></property>
                                                                                                                 <property name="name">bSizer78111</property>
                                                                                                                 <property name="orient">wxHORIZONTAL</property>
@@ -5997,7 +5997,7 @@
                                                                                                                         <property name="dock">Dock</property>
                                                                                                                         <property name="dock_fixed">0</property>
                                                                                                                         <property name="docking">Left</property>
-                                                                                                                        <property name="enabled">1</property>
+                                                                                                                        <property name="enabled">0</property>
                                                                                                                         <property name="fg"></property>
                                                                                                                         <property name="floatable">1</property>
                                                                                                                         <property name="font"></property>
@@ -6038,11 +6038,11 @@
                                                                                                                 </object>
                                                                                                             </object>
                                                                                                         </object>
-                                                                                                        <object class="sizeritem" expanded="0">
+                                                                                                        <object class="sizeritem" expanded="1">
                                                                                                             <property name="border">0</property>
                                                                                                             <property name="flag">wxEXPAND</property>
                                                                                                             <property name="proportion">1</property>
-                                                                                                            <object class="wxBoxSizer" expanded="0">
+                                                                                                            <object class="wxBoxSizer" expanded="1">
                                                                                                                 <property name="minimum_size"></property>
                                                                                                                 <property name="name">bSizer781111</property>
                                                                                                                 <property name="orient">wxHORIZONTAL</property>
@@ -6133,7 +6133,7 @@
                                                                                                                         <property name="dock">Dock</property>
                                                                                                                         <property name="dock_fixed">0</property>
                                                                                                                         <property name="docking">Left</property>
-                                                                                                                        <property name="enabled">1</property>
+                                                                                                                        <property name="enabled">0</property>
                                                                                                                         <property name="fg"></property>
                                                                                                                         <property name="floatable">1</property>
                                                                                                                         <property name="font"></property>
@@ -6187,7 +6187,7 @@
                                                                 <object class="notebookpage" expanded="1">
                                                                     <property name="bitmap"></property>
                                                                     <property name="label">Deform</property>
-                                                                    <property name="select">0</property>
+                                                                    <property name="select">1</property>
                                                                     <object class="wxPanel" expanded="1">
                                                                         <property name="BottomDockable">1</property>
                                                                         <property name="LeftDockable">1</property>
@@ -6279,7 +6279,7 @@
                                                                                             <property name="dock">Dock</property>
                                                                                             <property name="dock_fixed">0</property>
                                                                                             <property name="docking">Left</property>
-                                                                                            <property name="enabled">1</property>
+                                                                                            <property name="enabled">0</property>
                                                                                             <property name="fg"></property>
                                                                                             <property name="floatable">1</property>
                                                                                             <property name="font"></property>
@@ -6351,7 +6351,7 @@
                                                                                                     <property name="dock">Dock</property>
                                                                                                     <property name="dock_fixed">0</property>
                                                                                                     <property name="docking">Left</property>
-                                                                                                    <property name="enabled">1</property>
+                                                                                                    <property name="enabled">0</property>
                                                                                                     <property name="fg"></property>
                                                                                                     <property name="floatable">1</property>
                                                                                                     <property name="font"></property>
@@ -6539,7 +6539,7 @@
                                                                                                     <property name="dock">Dock</property>
                                                                                                     <property name="dock_fixed">0</property>
                                                                                                     <property name="docking">Left</property>
-                                                                                                    <property name="enabled">1</property>
+                                                                                                    <property name="enabled">0</property>
                                                                                                     <property name="fg"></property>
                                                                                                     <property name="floatable">1</property>
                                                                                                     <property name="font"></property>
@@ -6727,7 +6727,7 @@
                                                                                                     <property name="dock">Dock</property>
                                                                                                     <property name="dock_fixed">0</property>
                                                                                                     <property name="docking">Left</property>
-                                                                                                    <property name="enabled">1</property>
+                                                                                                    <property name="enabled">0</property>
                                                                                                     <property name="fg"></property>
                                                                                                     <property name="floatable">1</property>
                                                                                                     <property name="font"></property>
@@ -6915,7 +6915,7 @@
                                                                                                     <property name="dock">Dock</property>
                                                                                                     <property name="dock_fixed">0</property>
                                                                                                     <property name="docking">Left</property>
-                                                                                                    <property name="enabled">1</property>
+                                                                                                    <property name="enabled">0</property>
                                                                                                     <property name="fg"></property>
                                                                                                     <property name="floatable">1</property>
                                                                                                     <property name="font"></property>
@@ -7496,7 +7496,7 @@
                                                                                                     <property name="dock">Dock</property>
                                                                                                     <property name="dock_fixed">0</property>
                                                                                                     <property name="docking">Left</property>
-                                                                                                    <property name="enabled">1</property>
+                                                                                                    <property name="enabled">0</property>
                                                                                                     <property name="fg"></property>
                                                                                                     <property name="floatable">1</property>
                                                                                                     <property name="font"></property>
@@ -7684,7 +7684,7 @@
                                                                                                     <property name="dock">Dock</property>
                                                                                                     <property name="dock_fixed">0</property>
                                                                                                     <property name="docking">Left</property>
-                                                                                                    <property name="enabled">1</property>
+                                                                                                    <property name="enabled">0</property>
                                                                                                     <property name="fg"></property>
                                                                                                     <property name="floatable">1</property>
                                                                                                     <property name="font"></property>
@@ -7956,7 +7956,7 @@
                                                                                             <property name="dock">Dock</property>
                                                                                             <property name="dock_fixed">0</property>
                                                                                             <property name="docking">Left</property>
-                                                                                            <property name="enabled">1</property>
+                                                                                            <property name="enabled">0</property>
                                                                                             <property name="fg"></property>
                                                                                             <property name="floatable">1</property>
                                                                                             <property name="font"></property>
@@ -8019,7 +8019,7 @@
                                                                                             <property name="dock">Dock</property>
                                                                                             <property name="dock_fixed">0</property>
                                                                                             <property name="docking">Left</property>
-                                                                                            <property name="enabled">1</property>
+                                                                                            <property name="enabled">0</property>
                                                                                             <property name="fg"></property>
                                                                                             <property name="floatable">1</property>
                                                                                             <property name="font"></property>
@@ -8084,7 +8084,7 @@
                                                                                             <property name="dock">Dock</property>
                                                                                             <property name="dock_fixed">0</property>
                                                                                             <property name="docking">Left</property>
-                                                                                            <property name="enabled">1</property>
+                                                                                            <property name="enabled">0</property>
                                                                                             <property name="fg"></property>
                                                                                             <property name="floatable">1</property>
                                                                                             <property name="font"></property>
@@ -8147,7 +8147,7 @@
                                                                                             <property name="dock">Dock</property>
                                                                                             <property name="dock_fixed">0</property>
                                                                                             <property name="docking">Left</property>
-                                                                                            <property name="enabled">1</property>
+                                                                                            <property name="enabled">0</property>
                                                                                             <property name="fg"></property>
                                                                                             <property name="floatable">1</property>
                                                                                             <property name="font"></property>
@@ -8468,7 +8468,7 @@
                                                                                             <property name="dock">Dock</property>
                                                                                             <property name="dock_fixed">0</property>
                                                                                             <property name="docking">Left</property>
-                                                                                            <property name="enabled">1</property>
+                                                                                            <property name="enabled">0</property>
                                                                                             <property name="fg"></property>
                                                                                             <property name="floatable">1</property>
                                                                                             <property name="font"></property>
@@ -8591,7 +8591,7 @@
                                                                                                         <property name="dock">Dock</property>
                                                                                                         <property name="dock_fixed">0</property>
                                                                                                         <property name="docking">Left</property>
-                                                                                                        <property name="enabled">1</property>
+                                                                                                        <property name="enabled">0</property>
                                                                                                         <property name="fg"></property>
                                                                                                         <property name="floatable">1</property>
                                                                                                         <property name="font"></property>
@@ -8719,7 +8719,7 @@
                                                                                                         <property name="dock">Dock</property>
                                                                                                         <property name="dock_fixed">0</property>
                                                                                                         <property name="docking">Left</property>
-                                                                                                        <property name="enabled">1</property>
+                                                                                                        <property name="enabled">0</property>
                                                                                                         <property name="fg"></property>
                                                                                                         <property name="floatable">1</property>
                                                                                                         <property name="font"></property>
@@ -8783,7 +8783,7 @@
                                                                                                         <property name="dock">Dock</property>
                                                                                                         <property name="dock_fixed">0</property>
                                                                                                         <property name="docking">Left</property>
-                                                                                                        <property name="enabled">1</property>
+                                                                                                        <property name="enabled">0</property>
                                                                                                         <property name="fg"></property>
                                                                                                         <property name="floatable">1</property>
                                                                                                         <property name="font"></property>
@@ -8847,7 +8847,7 @@
                                                                                                         <property name="dock">Dock</property>
                                                                                                         <property name="dock_fixed">0</property>
                                                                                                         <property name="docking">Left</property>
-                                                                                                        <property name="enabled">1</property>
+                                                                                                        <property name="enabled">0</property>
                                                                                                         <property name="fg"></property>
                                                                                                         <property name="floatable">1</property>
                                                                                                         <property name="font"></property>
@@ -9756,7 +9756,7 @@
                                                         <object class="notebookpage" expanded="1">
                                                             <property name="bitmap"></property>
                                                             <property name="label">Blending</property>
-                                                            <property name="select">1</property>
+                                                            <property name="select">0</property>
                                                             <object class="wxPanel" expanded="1">
                                                                 <property name="BottomDockable">1</property>
                                                                 <property name="LeftDockable">1</property>
@@ -11104,7 +11104,7 @@
                                                                                                     <property name="dock">Dock</property>
                                                                                                     <property name="dock_fixed">0</property>
                                                                                                     <property name="docking">Left</property>
-                                                                                                    <property name="enabled">1</property>
+                                                                                                    <property name="enabled">0</property>
                                                                                                     <property name="fg"></property>
                                                                                                     <property name="floatable">1</property>
                                                                                                     <property name="font"></property>
@@ -11112,7 +11112,7 @@
                                                                                                     <property name="hidden">0</property>
                                                                                                     <property name="id">wxID_ANY</property>
                                                                                                     <property name="inc">0.1</property>
-                                                                                                    <property name="initial">0</property>
+                                                                                                    <property name="initial">0.100000</property>
                                                                                                     <property name="max">9999</property>
                                                                                                     <property name="max_size"></property>
                                                                                                     <property name="maximize_button">0</property>
@@ -15464,7 +15464,7 @@
                                                         <object class="notebookpage" expanded="1">
                                                             <property name="bitmap"></property>
                                                             <property name="label">Program</property>
-                                                            <property name="select">0</property>
+                                                            <property name="select">1</property>
                                                             <object class="wxPanel" expanded="1">
                                                                 <property name="BottomDockable">1</property>
                                                                 <property name="LeftDockable">1</property>
@@ -15623,7 +15623,7 @@
                                                                                     <property name="dock">Dock</property>
                                                                                     <property name="dock_fixed">0</property>
                                                                                     <property name="docking">Left</property>
-                                                                                    <property name="enabled">1</property>
+                                                                                    <property name="enabled">0</property>
                                                                                     <property name="fg"></property>
                                                                                     <property name="floatable">1</property>
                                                                                     <property name="font"></property>
@@ -15748,7 +15748,7 @@
                                                                                     <property name="dock">Dock</property>
                                                                                     <property name="dock_fixed">0</property>
                                                                                     <property name="docking">Left</property>
-                                                                                    <property name="enabled">1</property>
+                                                                                    <property name="enabled">0</property>
                                                                                     <property name="fg"></property>
                                                                                     <property name="floatable">1</property>
                                                                                     <property name="font"></property>
@@ -15814,7 +15814,7 @@
                                                                             <property name="dock">Dock</property>
                                                                             <property name="dock_fixed">0</property>
                                                                             <property name="docking">Left</property>
-                                                                            <property name="enabled">1</property>
+                                                                            <property name="enabled">0</property>
                                                                             <property name="fg"></property>
                                                                             <property name="floatable">1</property>
                                                                             <property name="font"></property>
@@ -15863,7 +15863,7 @@
                                                                             <property name="permission">none</property>
                                                                             <object class="sizeritem" expanded="0">
                                                                                 <property name="border">6</property>
-                                                                                <property name="flag">wxALIGN_CENTER_VERTICAL|wxALL|wxLEFT</property>
+                                                                                <property name="flag">wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxLEFT</property>
                                                                                 <property name="proportion">0</property>
                                                                                 <object class="wxButton" expanded="0">
                                                                                     <property name="BottomDockable">1</property>
@@ -15890,7 +15890,7 @@
                                                                                     <property name="dock">Dock</property>
                                                                                     <property name="dock_fixed">0</property>
                                                                                     <property name="docking">Left</property>
-                                                                                    <property name="enabled">1</property>
+                                                                                    <property name="enabled">0</property>
                                                                                     <property name="fg"></property>
                                                                                     <property name="floatable">1</property>
                                                                                     <property name="focus"></property>
@@ -15935,7 +15935,7 @@
                                                                             </object>
                                                                             <object class="sizeritem" expanded="1">
                                                                                 <property name="border">6</property>
-                                                                                <property name="flag">wxALIGN_CENTER_VERTICAL|wxALL</property>
+                                                                                <property name="flag">wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxLEFT|wxRIGHT</property>
                                                                                 <property name="proportion">0</property>
                                                                                 <object class="wxButton" expanded="1">
                                                                                     <property name="BottomDockable">1</property>
@@ -15962,7 +15962,7 @@
                                                                                     <property name="dock">Dock</property>
                                                                                     <property name="dock_fixed">0</property>
                                                                                     <property name="docking">Left</property>
-                                                                                    <property name="enabled">1</property>
+                                                                                    <property name="enabled">0</property>
                                                                                     <property name="fg"></property>
                                                                                     <property name="floatable">1</property>
                                                                                     <property name="focus"></property>
