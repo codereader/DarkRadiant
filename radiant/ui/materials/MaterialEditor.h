@@ -137,7 +137,7 @@ private:
     void updateNameOfSelectedStage();
     void moveStagePosition(int direction);
     void updateStageButtonSensitivity();
-    void updateNotebookPageVisibility();
+    void updateSettingsNotebook();
 
     void _onTreeViewSelectionChanged(wxDataViewEvent& ev);
     void _onStageListSelectionChanged(wxDataViewEvent& ev);

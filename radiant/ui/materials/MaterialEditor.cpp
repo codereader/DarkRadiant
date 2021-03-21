@@ -1103,21 +1103,12 @@ void MaterialEditor::_onStageListSelectionChanged(wxDataViewEvent& ev)
     if (!_material || !item.IsOk()) return;
     auto row = wxutil::TreeModel::Row(item, *_stageList);
 
-    if (row[STAGE_COLS().global].getBool())
-    {
-        getControl<wxStaticText>("MaterialEditorStagePropertiesLabel")->SetLabel(_("Global Material Settings"));
-    }
-    else
-    {
-        getControl<wxStaticText>("MaterialEditorStagePropertiesLabel")->SetLabel(_("Stage Settings"));
-    }
-
-    updateNotebookPageVisibility();
+    updateSettingsNotebook();
     updateStageControls();
     updateStageButtonSensitivity();
 }
 
-void MaterialEditor::updateNotebookPageVisibility()
+void MaterialEditor::updateSettingsNotebook()
 {
     auto item = _stageView->GetSelection();
 
@@ -1146,6 +1137,16 @@ void MaterialEditor::updateNotebookPageVisibility()
         {
             notebook->AddPage(page, pair.second.second);
         }
+    }
+
+    // Update title
+    if (row[STAGE_COLS().global].getBool())
+    {
+        getControl<wxStaticText>("MaterialEditorStagePropertiesLabel")->SetLabel(_("Global Material Settings"));
+    }
+    else
+    {
+        getControl<wxStaticText>("MaterialEditorStagePropertiesLabel")->SetLabel(_("Stage Settings"));
     }
 }
 
@@ -1455,7 +1456,7 @@ void MaterialEditor::selectStageByIndex(std::size_t index)
         _stageView->UnselectAll();
     }
 
-    updateNotebookPageVisibility();
+    updateSettingsNotebook();
     updateStageControls();
     updateStageButtonSensitivity();
 }
