@@ -106,7 +106,7 @@ MaterialEditor::MaterialEditor() :
     loadNamedPanel(this, "MaterialEditorMainPanel");
 
     makeLabelBold(this, "MaterialEditorDefinitionLabel");
-    makeLabelBold(this, "MaterialEditorMaterialPropertiesLabel");
+    //makeLabelBold(this, "MaterialEditorMaterialPropertiesLabel");
     makeLabelBold(this, "MaterialEditorMaterialStagesLabel");
     makeLabelBold(this, "MaterialEditorStageSettingsLabel");
 
