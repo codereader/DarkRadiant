@@ -529,41 +529,6 @@ inline Quaternion quaternion_for_axis90(axis_t axis, sign_t sign)
 	}
 }
 
-void rotateSelectionAboutAxis(axis_t axis, float deg)
-{
-	if (fabs(deg) == 90.0f)
-	{
-		rotateSelected(quaternion_for_axis90(axis, (deg > 0) ? eSignPositive : eSignNegative));
-	}
-	else
-	{
-		switch(axis)
-		{
-		case 0:
-            rotateSelected(
-                Quaternion::createForMatrix(
-                    Matrix4::getRotationAboutX(math::Degrees(deg))
-                )
-            );
-            break;
-		case 1:
-            rotateSelected(
-                Quaternion::createForMatrix(
-                    Matrix4::getRotationAboutY(math::Degrees(deg))
-                )
-            );
-            break;
-		case 2:
-            rotateSelected(
-                Quaternion::createForMatrix(
-                    Matrix4::getRotationAboutZ(math::Degrees(deg))
-                )
-            );
-            break;
-		}
-	}
-}
-
 void rotateSelectionX(const cmd::ArgumentList& args)
 {
 	if (GlobalSelectionSystem().countSelected() == 0)
@@ -573,7 +538,7 @@ void rotateSelectionX(const cmd::ArgumentList& args)
 	}
 
 	UndoableCommand undo("rotateSelected -axis x -angle -90");
-	rotateSelectionAboutAxis(eAxisX, -90);
+    rotateSelected(quaternion_for_axis90(eAxisX, eSignNegative));
 }
 
 void rotateSelectionY(const cmd::ArgumentList& args)
@@ -585,7 +550,7 @@ void rotateSelectionY(const cmd::ArgumentList& args)
 	}
 
 	UndoableCommand undo("rotateSelected -axis y -angle 90");
-	rotateSelectionAboutAxis(eAxisY, 90);
+    rotateSelected(quaternion_for_axis90(eAxisY, eSignPositive));
 }
 
 void rotateSelectionZ(const cmd::ArgumentList& args)
@@ -597,7 +562,7 @@ void rotateSelectionZ(const cmd::ArgumentList& args)
 	}
 
 	UndoableCommand undo("rotateSelected -axis z -angle -90");
-	rotateSelectionAboutAxis(eAxisZ, -90);
+    rotateSelected(quaternion_for_axis90(eAxisZ, eSignNegative));
 }
 
 void mirrorSelection(int axis)
