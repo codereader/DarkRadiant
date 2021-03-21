@@ -137,12 +137,12 @@ TEST(MathTest, ConvertDegreesAndRadians)
 
 TEST(MathTest, MatrixRotationAboutXDegrees)
 {
-    double angle = 30.0;
-    double cosAngle = cos(degrees_to_radians(angle));
-    double sinAngle = sin(degrees_to_radians(angle));
+    math::Degrees angle(30.0);
+    double cosAngle = cos(angle.asRadians());
+    double sinAngle = sin(angle.asRadians());
 
     // Test X rotation
-    auto xRot = Matrix4::getRotationAboutXDegrees(angle);
+    auto xRot = Matrix4::getRotationAboutX(angle);
     expectNear(xRot, Matrix4::byRows(1, 0, 0, 0,
                                      0, cosAngle, -sinAngle, 0,
                                      0, sinAngle, cosAngle, 0,
@@ -151,12 +151,12 @@ TEST(MathTest, MatrixRotationAboutXDegrees)
 
 TEST(MathTest, MatrixRotationAboutYDegrees)
 {
-    double angle = 30.0;
-    double cosAngle = cos(degrees_to_radians(angle));
-    double sinAngle = sin(degrees_to_radians(angle));
+    math::Degrees angle(45.0);
+    double cosAngle = cos(angle.asRadians());
+    double sinAngle = sin(angle.asRadians());
 
     // Test Y rotation
-    auto yRot = Matrix4::getRotationAboutYDegrees(angle);
+    auto yRot = Matrix4::getRotationAboutY(angle);
     expectNear(yRot, Matrix4::byRows(cosAngle, 0, sinAngle, 0,
                                      0, 1, 0, 0,
                                      -sinAngle, 0, cosAngle, 0,
@@ -165,12 +165,12 @@ TEST(MathTest, MatrixRotationAboutYDegrees)
 
 TEST(MathTest, MatrixRotationAboutZDegrees)
 {
-    double angle = 30.0;
-    double cosAngle = cos(degrees_to_radians(angle));
-    double sinAngle = sin(degrees_to_radians(angle));
+    math::Degrees angle(60.0);
+    double cosAngle = cos(angle.asRadians());
+    double sinAngle = sin(angle.asRadians());
 
     // Test Z rotation
-    auto zRot = Matrix4::getRotationAboutZ(math::Degrees(angle));
+    auto zRot = Matrix4::getRotationAboutZ(angle);
     expectNear(zRot, Matrix4::byRows(cosAngle, -sinAngle, 0, 0,
                                      sinAngle, cosAngle, 0, 0,
                                      0, 0, 1, 0,

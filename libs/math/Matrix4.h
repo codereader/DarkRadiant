@@ -101,13 +101,19 @@ public:
      */
     static Matrix4 getRotationQuantised(const Quaternion& quaternion);
 
-    /// Construct a rotation matrix about the X axis for an angle in degrees
-    static Matrix4 getRotationAboutXDegrees(double angle);
+    /// Construct a rotation matrix about the X axis for the given angle
+    template<typename Unit_T> static Matrix4 getRotationAboutX(Unit_T angle)
+    {
+        double radians = angle.asRadians();
+        return getRotationAboutXForSinCos(sin(radians), cos(radians));
+    }
 
-    /**
-     * Constructs a pure-rotation matrix about the y axis from an angle in degrees.
-     */
-    static Matrix4 getRotationAboutYDegrees(double angle);
+    /// Construct a rotation matrix about the Y axis for the given angle
+    template<typename Unit_T> static Matrix4 getRotationAboutY(Unit_T angle)
+    {
+        double radians = angle.asRadians();
+        return getRotationAboutYForSinCos(sin(radians), cos(radians));
+    }
 
     /// Construct a rotation matrix about the Z axis for a given angle
     template<typename Unit_T> static Matrix4 getRotationAboutZ(Unit_T angle)
@@ -538,18 +544,6 @@ inline Matrix4 Matrix4::getMultipliedBy(const Matrix4& other) const
 inline Matrix4 Matrix4::getPremultipliedBy(const Matrix4& other) const
 {
     return other.getMultipliedBy(*this);
-}
-
-inline Matrix4 Matrix4::getRotationAboutXDegrees(double angle)
-{
-    double radians = degrees_to_radians(angle);
-    return getRotationAboutXForSinCos(sin(radians), cos(radians));
-}
-
-inline Matrix4 Matrix4::getRotationAboutYDegrees(double angle)
-{
-    double radians = degrees_to_radians(angle);
-    return getRotationAboutYForSinCos(sin(radians), cos(radians));
 }
 
 inline Matrix4 Matrix4::getProjectionForFrustum(double left, double right, double bottom, double top, double nearval, double farval)

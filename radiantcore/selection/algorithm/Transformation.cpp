@@ -540,11 +540,19 @@ void rotateSelectionAboutAxis(axis_t axis, float deg)
 		switch(axis)
 		{
 		case 0:
-			rotateSelected(Quaternion::createForMatrix(Matrix4::getRotationAboutXDegrees(deg)));
-			break;
+            rotateSelected(
+                Quaternion::createForMatrix(
+                    Matrix4::getRotationAboutX(math::Degrees(deg))
+                )
+            );
+            break;
 		case 1:
-			rotateSelected(Quaternion::createForMatrix(Matrix4::getRotationAboutYDegrees(deg)));
-			break;
+            rotateSelected(
+                Quaternion::createForMatrix(
+                    Matrix4::getRotationAboutY(math::Degrees(deg))
+                )
+            );
+            break;
 		case 2:
             rotateSelected(
                 Quaternion::createForMatrix(
