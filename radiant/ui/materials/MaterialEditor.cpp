@@ -18,6 +18,7 @@
 #include <wx/collpane.h>
 
 #include "wxutil/SourceView.h"
+#include "wxutil/Bitmap.h"
 #include "fmt/format.h"
 #include "string/join.h"
 #include "materials/ParseLib.h"
@@ -32,6 +33,11 @@ namespace ui
 namespace
 {
     const char* const DIALOG_TITLE = N_("Material Editor");
+
+    const char* const ICON_STAGE_VISIBLE = "visible.png";
+    const char* const ICON_STAGE_INVISIBLE = "invisible.png";
+    const char* const ICON_GLOBAL_SETTINGS = "icon_texture.png";
+
     const std::string RKEY_ROOT = "user/ui/materialEditor/";
     const std::string RKEY_SPLIT_POS = RKEY_ROOT + "splitPos";
     const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
@@ -45,6 +51,7 @@ namespace
     {
         StageColumns() :
             enabled(add(wxutil::TreeModel::Column::Boolean)),
+            icon(add(wxutil::TreeModel::Column::Icon)),
             name(add(wxutil::TreeModel::Column::String)),
             index(add(wxutil::TreeModel::Column::Integer)),
             visible(add(wxutil::TreeModel::Column::Boolean)),
@@ -52,6 +59,7 @@ namespace
         {}
 
         wxutil::TreeModel::Column enabled;
+        wxutil::TreeModel::Column icon;
         wxutil::TreeModel::Column name;
         wxutil::TreeModel::Column index;
         wxutil::TreeModel::Column visible;
@@ -569,19 +577,22 @@ void MaterialEditor::setupMaterialDeformPage()
 
 void MaterialEditor::setupMaterialStageView()
 {
+    _iconVisible = wxutil::GetLocalBitmap(ICON_STAGE_VISIBLE);
+    _iconInvisible = wxutil::GetLocalBitmap(ICON_STAGE_INVISIBLE);
+
     // Stage view
     auto* panel = getControl<wxPanel>("MaterialEditorStageView");
 
     _stageView = wxutil::TreeView::CreateWithModel(panel, _stageList.get(), wxDV_NO_HEADER);
     panel->GetSizer()->Add(_stageView, 1, wxEXPAND);
 
-    _stageView->AppendToggleColumn(_("Enabled"), STAGE_COLS().enabled.getColumnIndex(),
+    _stageView->AppendBitmapColumn(_("Enabled"), STAGE_COLS().icon.getColumnIndex(),
         wxDATAVIEW_CELL_ACTIVATABLE, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
     _stageView->AppendTextColumn(_("Stage"), STAGE_COLS().name.getColumnIndex(),
         wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
     _stageView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &MaterialEditor::_onStageListSelectionChanged, this);
-    _stageView->Bind(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED, &MaterialEditor::_onStageListValueChanged, this);
+    _stageView->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &MaterialEditor::_onStageListItemActivated, this);
 
     getControl<wxButton>("MaterialEditorAddStageButton")->Bind(wxEVT_BUTTON, &MaterialEditor::_onAddStage, this);
     getControl<wxButton>("MaterialEditorRemoveStageButton")->Bind(wxEVT_BUTTON, &MaterialEditor::_onRemoveStage, this);
@@ -594,8 +605,14 @@ void MaterialEditor::setupMaterialStageView()
 
     row[STAGE_COLS().global] = true;
     row[STAGE_COLS().index] = -1;
-    row[STAGE_COLS().name] = "Global";
+    row[STAGE_COLS().icon] = wxVariant(wxutil::GetLocalBitmap(ICON_GLOBAL_SETTINGS));
+    row[STAGE_COLS().name] = _("Global Settings");
     row[STAGE_COLS().enabled] = true;
+
+    wxDataViewItemAttr globalStyle;
+    globalStyle.SetColour(wxColor(15, 15, 15));
+    globalStyle.SetBold(true);
+    row[STAGE_COLS().name] = globalStyle;
 
     row.SendItemAdded();
 
@@ -1159,19 +1176,9 @@ void MaterialEditor::updateStageButtonSensitivity()
     }
 }
 
-void MaterialEditor::_onStageListValueChanged(wxDataViewEvent& ev)
+void MaterialEditor::_onStageListItemActivated(wxDataViewEvent& ev)
 {
-    wxutil::TreeModel::Row row(ev.GetItem(), *_stageList);
-
-    if (!_material || ev.GetColumn() != STAGE_COLS().enabled.getColumnIndex() ||
-        row[STAGE_COLS().global].getBool()) return;
-
-    auto stage = getEditableStageForSelection();
-
-    if (!stage) return;
-
-    stage->setEnabled(row[STAGE_COLS().enabled].getBool());
-    onMaterialChanged();
+    toggleSelectedStage();
 }
 
 void MaterialEditor::updateControlsFromMaterial()
@@ -1293,6 +1300,7 @@ void MaterialEditor::updateStageListFromMaterial()
         auto row = _stageList->AddItem();
 
         row[STAGE_COLS().enabled] = layer->isEnabled();
+        row[STAGE_COLS().icon] = wxVariant(layer->isEnabled() ? _iconVisible : _iconInvisible);
         row[STAGE_COLS().index] = index;
         row[STAGE_COLS().name] = getNameForLayer(*layer);
         row[STAGE_COLS().visible] = true;
@@ -1964,21 +1972,31 @@ void MaterialEditor::_onRemoveStage(wxCommandEvent& ev)
     }
 }
 
-void MaterialEditor::_onToggleStage(wxCommandEvent& ev)
+void MaterialEditor::toggleSelectedStage()
 {
-    auto item = _stageView->GetSelection();
-    if (!_material || !item.IsOk()) return;
+    if (!_stageView->GetSelection().IsOk()) return;
 
-    auto row = wxutil::TreeModel::Row(item, *_stageList);
-    row[STAGE_COLS().enabled] = !row[STAGE_COLS().enabled].getBool();
+    wxutil::TreeModel::Row row(_stageView->GetSelection(), *_stageList);
 
-    row.SendItemChanged();
+    if (!_material || row[STAGE_COLS().global].getBool()) return;
 
     auto stage = getEditableStageForSelection();
+
     if (!stage) return;
 
-    stage->setEnabled(row[STAGE_COLS().enabled].getBool());
+    bool newState = !row[STAGE_COLS().enabled].getBool();
+    stage->setEnabled(newState);
+
+    row[STAGE_COLS().enabled] = newState;
+    row[STAGE_COLS().icon] = wxVariant(newState ? _iconVisible : _iconInvisible);
+    row.SendItemChanged();
+
     onMaterialChanged();
+}
+
+void MaterialEditor::_onToggleStage(wxCommandEvent& ev)
+{
+    toggleSelectedStage();
 }
 
 void MaterialEditor::_onDuplicateStage(wxCommandEvent& ev)

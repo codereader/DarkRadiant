@@ -25,6 +25,8 @@ private:
 
     wxutil::TreeModel::Ptr _stageList;
     wxutil::TreeView* _stageView;
+    wxBitmap _iconVisible;
+    wxBitmap _iconInvisible;
 
     std::multimap<int, std::pair<wxWindow*, wxString>> _notebookPages;
 
@@ -139,7 +141,7 @@ private:
 
     void _onTreeViewSelectionChanged(wxDataViewEvent& ev);
     void _onStageListSelectionChanged(wxDataViewEvent& ev);
-    void _onStageListValueChanged(wxDataViewEvent& ev);
+    void _onStageListItemActivated(wxDataViewEvent& ev);
     void _onMaterialTypeChoice(wxCommandEvent& ev);
     void _onAddStageTransform(wxCommandEvent& ev);
     void _onRemoveStageTransform(wxCommandEvent& ev);
@@ -153,6 +155,7 @@ private:
     void _onDuplicateStage(wxCommandEvent& ev);
     void _onSortRequestChanged(wxCommandEvent& ev);
 
+    void toggleSelectedStage();
     void onMaterialChanged();
 
     // Shortcut
