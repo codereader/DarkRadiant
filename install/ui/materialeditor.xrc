@@ -1468,6 +1468,7 @@
 																							<flag>wxALIGN_CENTER_VERTICAL</flag>
 																							<border>0</border>
 																							<object class="wxTextCtrl" name="MaterialGuiSurfPath">
+																								<enabled>0</enabled>
 																								<value></value>
 																							</object>
 																						</object>
@@ -2313,7 +2314,7 @@
 																	<object class="sizeritem">
 																		<option>0</option>
 																		<flag>wxBOTTOM|wxEXPAND|wxTOP</flag>
-																		<border>6</border>
+																		<border>0</border>
 																		<object class="wxBoxSizer">
 																			<orient>wxHORIZONTAL</orient>
 																			<object class="sizeritem">

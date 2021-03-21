@@ -94,8 +94,15 @@ MapExpressionPtr MapExpression::createForToken(DefTokeniser& token)
 
 MapExpressionPtr MapExpression::createForString(const std::string& str)
 {
-	parser::BasicDefTokeniser<std::string> token(str);
-	return createForToken(token);
+    try
+    {
+        parser::BasicDefTokeniser<std::string> token(str);
+        return createForToken(token);
+    }
+    catch (const parser::ParseException&)
+    {
+        return MapExpressionPtr();
+    }
 }
 
 ImagePtr MapExpression::getResampled(const ImagePtr& input, std::size_t width, std::size_t height)

@@ -1206,6 +1206,8 @@ void MaterialEditor::updateStageListFromMaterial()
 
 void MaterialEditor::updateMaterialPropertiesFromMaterial()
 {
+    util::ScopedBoolLock lock(_materialUpdateInProgress);
+
     getControl<wxPanel>("MaterialEditorMaterialPropertiesPanel")->Enable(_material != nullptr);
     
     // Update all registered bindings
@@ -1268,10 +1270,7 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
         auto clampTypeString = shaders::getStringForClampType(_material->getClampType());
         clampDropdown->SetStringSelection(clampTypeString);
 
-        // Light Falloff
-        auto lightFalloffMap = _material->getLightFalloffExpression();
-        getControl<wxTextCtrl>("MaterialLightFalloffMap")->SetValue(lightFalloffMap ? lightFalloffMap->getExpressionString() : "");
-
+        // Light Falloff type
         auto lightFalloffCubeMapType = _material->getLightFalloffCubeMapType();
         getControl<wxChoice>("MaterialLightFalloffCubeMapType")->SetStringSelection(shaders::getStringForMapType(lightFalloffCubeMapType));
         
@@ -1295,11 +1294,11 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
             decalInfo.endColour.x(), decalInfo.endColour.y(), decalInfo.endColour.z(), decalInfo.endColour.w()));
 
         getControl<wxCheckBox>("MaterialHasRenderBump")->SetValue(!_material->getRenderBumpArguments().empty());
-        getControl<wxTextCtrl>("MaterialRenderBumpArguments")->Enable(!_material->getRenderBumpArguments().empty());
+        //getControl<wxTextCtrl>("MaterialRenderBumpArguments")->Enable(!_material->getRenderBumpArguments().empty());
         getControl<wxTextCtrl>("MaterialRenderBumpArguments")->SetValue(_material->getRenderBumpArguments());
 
         getControl<wxCheckBox>("MaterialHasRenderBumpFlat")->SetValue(!_material->getRenderBumpFlatArguments().empty());
-        getControl<wxTextCtrl>("MaterialRenderBumpFlatArguments")->Enable(!_material->getRenderBumpFlatArguments().empty());
+        //getControl<wxTextCtrl>("MaterialRenderBumpFlatArguments")->Enable(!_material->getRenderBumpFlatArguments().empty());
         getControl<wxTextCtrl>("MaterialRenderBumpFlatArguments")->SetValue(_material->getRenderBumpFlatArguments());
 
         // guisurf
@@ -1308,8 +1307,8 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
 
         bool isEntityGui = (_material->getSurfaceFlags() & (Material::SURF_ENTITYGUI | Material::SURF_ENTITYGUI2 | Material::SURF_ENTITYGUI3)) != 0;
 
-        getControl<wxTextCtrl>("MaterialGuiSurfPath")->Enable(!isEntityGui);
-        getControl<wxPanel>("MaterialGuiSurfPanel")->Enable(_material->getSurfaceFlags() & Material::SURF_GUISURF);
+        //getControl<wxTextCtrl>("MaterialGuiSurfPath")->Enable(!isEntityGui);
+        //getControl<wxPanel>("MaterialGuiSurfPanel")->Enable(_material->getSurfaceFlags() & Material::SURF_GUISURF);
 
         getControl<wxRadioButton>("MaterialGuiSurfRegular")->SetValue(!isEntityGui);
         getControl<wxRadioButton>("MaterialGuiSurfEntity")->SetValue(_material->getSurfaceFlags() & Material::SURF_ENTITYGUI);
@@ -1338,7 +1337,6 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
 
         getControl<wxCheckBox>("MaterialHasSpectrum")->SetValue(false);
         getControl<wxSpinCtrl>("MaterialSpectrumValue")->SetValue(0);
-        getControl<wxTextCtrl>("MaterialLightFalloffMap")->SetValue("");
         getControl<wxTextCtrl>("MaterialDescription")->SetValue("");
         _sourceView->SetValue("");
     }
