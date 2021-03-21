@@ -110,10 +110,13 @@ void RenderableParticleStage::calculateStageViewRotation(const Matrix4& viewRota
 
 	case IStageDef::ORIENTATION_X:
 		// Rotate the z vector such that it faces the x axis, and use that as transform
-		// To keep the up/down orientation of the material, rotate it 90 degrees around z 
+		// To keep the up/down orientation of the material, rotate it 90 degrees around z
 		// before applying the z-to-x tilt (issue #4792)
-		_viewRotation = Matrix4::getRotation(Vector3(0,0,1), Vector3(1,0,0)).getMultipliedBy(Matrix4::getRotationAboutZDegrees(-90));
-		break;
+        _viewRotation = Matrix4::getRotation(Vector3(0, 0, 1), Vector3(1, 0, 0))
+                                .getMultipliedBy(
+                                    Matrix4::getRotationAboutZ(math::Degrees(-90))
+                                );
+        break;
 
 	case IStageDef::ORIENTATION_Y:
 		// Rotate the z vector such that it faces the y axis, and use that as transform

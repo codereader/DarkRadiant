@@ -159,7 +159,7 @@ TEST(MathTest, MatrixRotationAboutZDegrees)
     double sinAngle = sin(degrees_to_radians(angle));
 
     // Test Z rotation
-    auto zRot = Matrix4::getRotationAboutZDegrees(angle);
+    auto zRot = Matrix4::getRotationAboutZ(math::Degrees(angle));
     expectNear(zRot, Matrix4::byRows(cosAngle, -sinAngle, 0, 0,
                                      sinAngle, cosAngle, 0, 0,
                                      0, 0, 1, 0,

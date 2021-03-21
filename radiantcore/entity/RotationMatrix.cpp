@@ -135,7 +135,7 @@ void RotationMatrix::setFromAngleString(const std::string& value)
         float angle = std::stof(value);
 
         // Cast succeeded
-        setFromMatrix4(Matrix4::getRotationAboutZDegrees(angle));
+        setFromMatrix4(Matrix4::getRotationAboutZ(math::Degrees(angle)));
     }
     catch (std::invalid_argument&)
     {

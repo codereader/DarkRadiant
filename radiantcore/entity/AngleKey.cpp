@@ -26,9 +26,12 @@ void AngleKey::writeToEntity(double angle, Entity* entity)
 
 float AngleKey::getRotatedValue(float angle, const Quaternion& rotation)
 {
-	return static_cast<float>(Matrix4::getRotationAboutZDegrees(angle).getMultipliedBy(
-		Matrix4::getRotationQuantised(rotation)
-	).getEulerAnglesXYZDegrees().z());
+    return static_cast<float>(
+        Matrix4::getRotationAboutZ(math::Degrees(angle))
+            .getMultipliedBy(Matrix4::getRotationQuantised(rotation))
+            .getEulerAnglesXYZDegrees()
+            .z()
+    );
 }
 
 } // namespace

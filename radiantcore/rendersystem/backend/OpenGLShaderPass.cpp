@@ -196,8 +196,7 @@ void OpenGLShaderPass::setupTextureMatrix(GLenum textureUnit, const ShaderLayerP
 
         if (rotate != 0)
         {
-            float angle = rotate * 2 * static_cast<float>(c_pi);
-
+            math::Radians angle(rotate * 2 * static_cast<float>(c_pi));
             Matrix4 rot = Matrix4::getRotationAboutZ(angle);
 
             tex.multiplyBy(transMinusHalf);

@@ -109,15 +109,12 @@ public:
      */
     static Matrix4 getRotationAboutYDegrees(double angle);
 
-    /**
-     * Constructs a pure-rotation matrix about the z axis from an angle in radians
-     */
-    static Matrix4 getRotationAboutZ(double angle);
-
-    /**
-     * Constructs a pure-rotation matrix about the z axis from an angle in degrees.
-     */
-    static Matrix4 getRotationAboutZDegrees(double angle);
+    /// Construct a rotation matrix about the Z axis for a given angle
+    template<typename Unit_T> static Matrix4 getRotationAboutZ(Unit_T angle)
+    {
+        double radians = angle.asRadians();
+        return getRotationAboutZForSinCos(sin(radians), cos(radians));
+    }
 
     /**
      * Constructs a pure-rotation matrix from a set of euler angles (radians) in the order (x, y, z).
@@ -553,16 +550,6 @@ inline Matrix4 Matrix4::getRotationAboutYDegrees(double angle)
 {
     double radians = degrees_to_radians(angle);
     return getRotationAboutYForSinCos(sin(radians), cos(radians));
-}
-
-inline Matrix4 Matrix4::getRotationAboutZ(double angle)
-{
-    return getRotationAboutZForSinCos(sin(angle), cos(angle));
-}
-
-inline Matrix4 Matrix4::getRotationAboutZDegrees(double angle)
-{
-    return getRotationAboutZ(degrees_to_radians(angle));
 }
 
 inline Matrix4 Matrix4::getProjectionForFrustum(double left, double right, double bottom, double top, double nearval, double farval)

@@ -94,12 +94,12 @@ void scaleSelected(const Vector3& scaleXYZ)
 		// Pass the scale to the according traversor
 		if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
 		{
-			GlobalSelectionSystem().foreachSelectedComponent(ScaleComponentSelected(scaleXYZ, 
+			GlobalSelectionSystem().foreachSelectedComponent(ScaleComponentSelected(scaleXYZ,
 				GlobalSelectionSystem().getPivot2World().t().getVector3()));
 		}
 		else
 		{
-			GlobalSelectionSystem().foreachSelected(ScaleSelected(scaleXYZ, 
+			GlobalSelectionSystem().foreachSelected(ScaleSelected(scaleXYZ,
 				GlobalSelectionSystem().getPivot2World().t().getVector3()));
 		}
 
@@ -108,7 +108,7 @@ void scaleSelected(const Vector3& scaleXYZ)
 
 		GlobalSceneGraph().foreachNode(scene::freezeTransformableNode);
 	}
-	else 
+	else
 	{
 		throw cmd::ExecutionFailure(_("Cannot scale by zero value."));
 	}
@@ -466,7 +466,7 @@ void moveSelectedCmd(const cmd::ArgumentList& args)
 
 	std::string arg = string::to_lower_copy(args[0].getString());
 
-	if (arg == "up") 
+	if (arg == "up")
 	{
 		moveSelectedAlongZ(GlobalGrid().getGridSize());
 	}
@@ -546,8 +546,12 @@ void rotateSelectionAboutAxis(axis_t axis, float deg)
 			rotateSelected(Quaternion::createForMatrix(Matrix4::getRotationAboutYDegrees(deg)));
 			break;
 		case 2:
-			rotateSelected(Quaternion::createForMatrix(Matrix4::getRotationAboutZDegrees(deg)));
-			break;
+            rotateSelected(
+                Quaternion::createForMatrix(
+                    Matrix4::getRotationAboutZ(math::Degrees(deg))
+                )
+            );
+            break;
 		}
 	}
 }
