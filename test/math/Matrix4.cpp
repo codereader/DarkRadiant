@@ -12,55 +12,67 @@ namespace
     double cosAngle = cos(degrees_to_radians(angle));
     double sinAngle = sin(degrees_to_radians(angle));
     double EPSILON = 0.00001f;
+
+    // EXPECT that two matrices are close to each other (using GTest's own
+    // EXPECT_DOUBLE_EQ)
+    void expectNear(const Matrix4& m1, const Matrix4& m2)
+    {
+        EXPECT_DOUBLE_EQ(m1.xx(), m2.xx());
+        EXPECT_DOUBLE_EQ(m1.xy(), m2.xy());
+        EXPECT_DOUBLE_EQ(m1.xz(), m2.xz());
+        EXPECT_DOUBLE_EQ(m1.xw(), m2.xw());
+
+        EXPECT_DOUBLE_EQ(m1.yx(), m2.yx());
+        EXPECT_DOUBLE_EQ(m1.yy(), m2.yy());
+        EXPECT_DOUBLE_EQ(m1.yz(), m2.yz());
+        EXPECT_DOUBLE_EQ(m1.yw(), m2.yw());
+
+        EXPECT_DOUBLE_EQ(m1.zx(), m2.zx());
+        EXPECT_DOUBLE_EQ(m1.zy(), m2.zy());
+        EXPECT_DOUBLE_EQ(m1.zz(), m2.zz());
+        EXPECT_DOUBLE_EQ(m1.zw(), m2.zw());
+
+        EXPECT_DOUBLE_EQ(m1.tx(), m2.tx());
+        EXPECT_DOUBLE_EQ(m1.ty(), m2.ty());
+        EXPECT_DOUBLE_EQ(m1.tz(), m2.tz());
+        EXPECT_DOUBLE_EQ(m1.tw(), m2.tw());
+    }
 }
 
-TEST(MathTest, IdentityMatrix)
+TEST(MathTest, CreateIdentityMatrix)
 {
     const Matrix4 identity = Matrix4::getIdentity();
+    EXPECT_EQ(identity, Matrix4::byRows(1, 0, 0, 0,
+                                        0, 1, 0, 0,
+                                        0, 0, 1, 0,
+                                        0, 0, 0, 1));
+}
 
-    EXPECT_EQ(identity.xx(), 1) << "Wrong values in identity matrix";
-    EXPECT_EQ(identity.xy(), 0) << "Wrong values in identity matrix";
-    EXPECT_EQ(identity.xz(), 0) << "Wrong values in identity matrix";
-    EXPECT_EQ(identity.xw(), 0) << "Wrong values in identity matrix";
+TEST(MathTest, AssignMatrixComponents)
+{
+    Matrix4 identity;
 
-    EXPECT_EQ(identity.yx(), 0) << "Wrong values in identity matrix";
-    EXPECT_EQ(identity.yy(), 1) << "Wrong values in identity matrix";
-    EXPECT_EQ(identity.yz(), 0) << "Wrong values in identity matrix";
-    EXPECT_EQ(identity.yw(), 0) << "Wrong values in identity matrix";
+    identity.xx() = 1;
+    identity.xy() = 0;
+    identity.xz() = 0;
+    identity.xw() = 0;
 
-    EXPECT_EQ(identity.zx(), 0) << "Wrong values in identity matrix";
-    EXPECT_EQ(identity.zy(), 0) << "Wrong values in identity matrix";
-    EXPECT_EQ(identity.zz(), 1) << "Wrong values in identity matrix";
-    EXPECT_EQ(identity.zw(), 0) << "Wrong values in identity matrix";
+    identity.yx() = 0;
+    identity.yy() = 1;
+    identity.yz() = 0;
+    identity.yw() = 0;
 
-    EXPECT_EQ(identity.tx(), 0) << "Wrong values in identity matrix";
-    EXPECT_EQ(identity.ty(), 0) << "Wrong values in identity matrix";
-    EXPECT_EQ(identity.tz(), 0) << "Wrong values in identity matrix";
-    EXPECT_EQ(identity.tw(), 1) << "Wrong values in identity matrix";
+    identity.zx() = 0;
+    identity.zy() = 0;
+    identity.zz() = 1;
+    identity.zw() = 0;
 
-    Matrix4 identity2;
+    identity.tx() = 0;
+    identity.ty() = 0;
+    identity.tz() = 0;
+    identity.tw() = 1;
 
-    identity2.xx() = 1;
-    identity2.xy() = 0;
-    identity2.xz() = 0;
-    identity2.xw() = 0;
-
-    identity2.yx() = 0;
-    identity2.yy() = 1;
-    identity2.yz() = 0;
-    identity2.yw() = 0;
-
-    identity2.zx() = 0;
-    identity2.zy() = 0;
-    identity2.zz() = 1;
-    identity2.zw() = 0;
-
-    identity2.tx() = 0;
-    identity2.ty() = 0;
-    identity2.tz() = 0;
-    identity2.tw() = 1;
-
-    EXPECT_TRUE(identity == identity2) << "Explicitly constructed identity not equal to Matrix4::getIdentity()";
+    EXPECT_EQ(identity, Matrix4::getIdentity());
 }
 
 TEST(MathTest, ConstructMatrixByRows)
@@ -107,6 +119,7 @@ TEST(MathTest, MatrixEquality)
                                  200, -10, 300, 400);
     Matrix4 m2 = m1;
     EXPECT_TRUE(m1 == m2);
+    EXPECT_EQ(m1, m2);
     EXPECT_TRUE(m1 != Matrix4::getIdentity());
     EXPECT_TRUE(m2 != Matrix4::getIdentity());
 }
@@ -119,26 +132,10 @@ TEST(MathTest, MatrixRotationAboutXDegrees)
 
     // Test X rotation
     auto xRot = Matrix4::getRotationAboutXDegrees(angle);
-
-    EXPECT_DOUBLE_EQ(xRot.xx(), 1) << "Matrix rotation constructor failed";
-    EXPECT_DOUBLE_EQ(xRot.xy(), 0) << "Matrix rotation constructor failed";
-    EXPECT_DOUBLE_EQ(xRot.xz(), 0) << "Matrix rotation constructor failed";
-    EXPECT_DOUBLE_EQ(xRot.xw(), 0) << "Matrix rotation constructor failed";
-
-    EXPECT_DOUBLE_EQ(xRot.yx(), 0) << "Matrix rotation constructor failed";
-    EXPECT_DOUBLE_EQ(xRot.yy(), cosAngle) << "Matrix rotation constructor failed";
-    EXPECT_DOUBLE_EQ(xRot.yz(), sinAngle) << "Matrix rotation constructor failed";
-    EXPECT_DOUBLE_EQ(xRot.yw(), 0) << "Matrix rotation constructor failed";
-
-    EXPECT_DOUBLE_EQ(xRot.zx(), 0) << "Matrix rotation constructor failed";
-    EXPECT_DOUBLE_EQ(xRot.zy(), -sinAngle) << "Matrix rotation constructor failed";
-    EXPECT_DOUBLE_EQ(xRot.zz(), cosAngle) << "Matrix rotation constructor failed";
-    EXPECT_DOUBLE_EQ(xRot.zw(), 0) << "Matrix rotation constructor failed";
-
-    EXPECT_DOUBLE_EQ(xRot.tx(), 0) << "Matrix rotation constructor failed";
-    EXPECT_DOUBLE_EQ(xRot.ty(), 0) << "Matrix rotation constructor failed";
-    EXPECT_DOUBLE_EQ(xRot.tz(), 0) << "Matrix rotation constructor failed";
-    EXPECT_DOUBLE_EQ(xRot.tw(), 1) << "Matrix rotation constructor failed";
+    expectNear(xRot, Matrix4::byRows(1, 0, 0, 0,
+                                     0, cosAngle, -sinAngle, 0,
+                                     0, sinAngle, cosAngle, 0,
+                                     0, 0, 0, 1));
 }
 
 TEST(MathTest, MatrixRotationAboutYDegrees)
@@ -149,26 +146,10 @@ TEST(MathTest, MatrixRotationAboutYDegrees)
 
     // Test Y rotation
     auto yRot = Matrix4::getRotationAboutYDegrees(angle);
-
-    EXPECT_DOUBLE_EQ(yRot.xx(), cosAngle) << "Matrix rotation constructor failed";
-    EXPECT_DOUBLE_EQ(yRot.xy(), 0) << "Matrix rotation constructor failed";
-    EXPECT_DOUBLE_EQ(yRot.xz(), -sinAngle) << "Matrix rotation constructor failed";
-    EXPECT_DOUBLE_EQ(yRot.xw(), 0) << "Matrix rotation constructor failed";
-
-    EXPECT_DOUBLE_EQ(yRot.yx(), 0) << "Matrix rotation constructor failed";
-    EXPECT_DOUBLE_EQ(yRot.yy(), 1) << "Matrix rotation constructor failed";
-    EXPECT_DOUBLE_EQ(yRot.yz(), 0) << "Matrix rotation constructor failed";
-    EXPECT_DOUBLE_EQ(yRot.yw(), 0) << "Matrix rotation constructor failed";
-
-    EXPECT_DOUBLE_EQ(yRot.zx(), sinAngle) << "Matrix rotation constructor failed";
-    EXPECT_DOUBLE_EQ(yRot.zy(), 0) << "Matrix rotation constructor failed";
-    EXPECT_DOUBLE_EQ(yRot.zz(), cosAngle) << "Matrix rotation constructor failed";
-    EXPECT_DOUBLE_EQ(yRot.zw(), 0) << "Matrix rotation constructor failed";
-
-    EXPECT_DOUBLE_EQ(yRot.tx(), 0) << "Matrix rotation constructor failed";
-    EXPECT_DOUBLE_EQ(yRot.ty(), 0) << "Matrix rotation constructor failed";
-    EXPECT_DOUBLE_EQ(yRot.tz(), 0) << "Matrix rotation constructor failed";
-    EXPECT_DOUBLE_EQ(yRot.tw(), 1) << "Matrix rotation constructor failed";
+    expectNear(yRot, Matrix4::byRows(cosAngle, 0, sinAngle, 0,
+                                     0, 1, 0, 0,
+                                     -sinAngle, 0, cosAngle, 0,
+                                     0, 0, 0, 1));
 }
 
 TEST(MathTest, MatrixRotationAboutZDegrees)
@@ -179,26 +160,10 @@ TEST(MathTest, MatrixRotationAboutZDegrees)
 
     // Test Z rotation
     auto zRot = Matrix4::getRotationAboutZDegrees(angle);
-
-    EXPECT_DOUBLE_EQ(zRot.xx(), cosAngle) <<"Matrix rotation constructor failed";
-    EXPECT_DOUBLE_EQ(zRot.xy(), sinAngle) <<"Matrix rotation constructor failed";
-    EXPECT_DOUBLE_EQ(zRot.xz(), 0) <<"Matrix rotation constructor failed";
-    EXPECT_DOUBLE_EQ(zRot.xw(), 0) <<"Matrix rotation constructor failed";
-
-    EXPECT_DOUBLE_EQ(zRot.yx(), -sinAngle) <<"Matrix rotation constructor failed";
-    EXPECT_DOUBLE_EQ(zRot.yy(), cosAngle) <<"Matrix rotation constructor failed";
-    EXPECT_DOUBLE_EQ(zRot.yz(), 0) <<"Matrix rotation constructor failed";
-    EXPECT_DOUBLE_EQ(zRot.yw(), 0) <<"Matrix rotation constructor failed";
-
-    EXPECT_DOUBLE_EQ(zRot.zx(), 0) <<"Matrix rotation constructor failed";
-    EXPECT_DOUBLE_EQ(zRot.zy(), 0) <<"Matrix rotation constructor failed";
-    EXPECT_DOUBLE_EQ(zRot.zz(), 1) <<"Matrix rotation constructor failed";
-    EXPECT_DOUBLE_EQ(zRot.zw(), 0) <<"Matrix rotation constructor failed";
-
-    EXPECT_DOUBLE_EQ(zRot.tx(), 0) <<"Matrix rotation constructor failed";
-    EXPECT_DOUBLE_EQ(zRot.ty(), 0) <<"Matrix rotation constructor failed";
-    EXPECT_DOUBLE_EQ(zRot.tz(), 0) <<"Matrix rotation constructor failed";
-    EXPECT_DOUBLE_EQ(zRot.tw(), 1) <<"Matrix rotation constructor failed";
+    expectNear(zRot, Matrix4::byRows(cosAngle, -sinAngle, 0, 0,
+                                     sinAngle, cosAngle, 0, 0,
+                                     0, 0, 1, 0,
+                                     0, 0, 0, 1));
 }
 
 TEST(MathTest, MatrixRotationForEulerXYZDegrees)
