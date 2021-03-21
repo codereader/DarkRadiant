@@ -166,6 +166,19 @@ TEST(MathTest, MatrixRotationAboutZDegrees)
                                      0, 0, 0, 1));
 }
 
+TEST(MathTest, MatrixRotationAboutZRadians)
+{
+    double angle = c_pi / 3.0; // 60 degrees in radians
+    double cosAngle = cos(angle);
+    double sinAngle = sin(angle);
+
+    // Test Z rotation
+    auto zRot = Matrix4::getRotationAboutZ(math::Radians(angle));
+    expectNear(zRot, Matrix4::byRows(cosAngle, -sinAngle, 0, 0,
+                                     sinAngle, cosAngle, 0, 0,
+                                     0, 0, 1, 0,
+                                     0, 0, 0, 1));
+}
 TEST(MathTest, MatrixRotationForEulerXYZDegrees)
 {
     // Test euler angle constructors
