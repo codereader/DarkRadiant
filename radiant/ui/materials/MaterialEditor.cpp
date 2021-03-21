@@ -47,13 +47,15 @@ namespace
             enabled(add(wxutil::TreeModel::Column::Boolean)),
             name(add(wxutil::TreeModel::Column::String)),
             index(add(wxutil::TreeModel::Column::Integer)),
-            visible(add(wxutil::TreeModel::Column::Boolean))
+            visible(add(wxutil::TreeModel::Column::Boolean)),
+            global(add(wxutil::TreeModel::Column::Boolean))
         {}
 
         wxutil::TreeModel::Column enabled;
         wxutil::TreeModel::Column name;
         wxutil::TreeModel::Column index;
         wxutil::TreeModel::Column visible;
+        wxutil::TreeModel::Column global;
     };
 
     StageColumns& STAGE_COLS()
@@ -106,9 +108,7 @@ MaterialEditor::MaterialEditor() :
     loadNamedPanel(this, "MaterialEditorMainPanel");
 
     makeLabelBold(this, "MaterialEditorDefinitionLabel");
-    //makeLabelBold(this, "MaterialEditorMaterialPropertiesLabel");
-    makeLabelBold(this, "MaterialEditorMaterialStagesLabel");
-    makeLabelBold(this, "MaterialEditorStageSettingsLabel");
+    makeLabelBold(this, "MaterialEditorStagePropertiesLabel");
 
     // Wire up the close button
     getControl<wxButton>("MaterialEditorCloseButton")->Bind(wxEVT_BUTTON, &MaterialEditor::_onClose, this);
@@ -569,6 +569,22 @@ void MaterialEditor::setupMaterialStageView()
     getControl<wxButton>("MaterialEditorMoveUpStageButton")->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { moveStagePosition(-1); });
     getControl<wxButton>("MaterialEditorMoveDownStageButton")->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { moveStagePosition(+1); });
     getControl<wxButton>("MaterialEditorDuplicateStageButton")->Bind(wxEVT_BUTTON, &MaterialEditor::_onDuplicateStage, this);
+
+    auto row = _stageList->AddItem();
+
+    row[STAGE_COLS().global] = true;
+    row[STAGE_COLS().index] = -1;
+    row[STAGE_COLS().name] = "Global";
+    row[STAGE_COLS().enabled] = true;
+
+    row.SendItemAdded();
+
+    auto notebook = getControl<wxNotebook>("MaterialStageSettingsNotebook");
+    for (int i = 0; i < notebook->GetPageCount(); ++i)
+    {
+        auto page = notebook->GetPage(i);
+        _notebookPages.emplace(page, notebook->GetPageText(i));
+    }
 }
 
 void MaterialEditor::setupStageFlag(const std::string& controlName, IShaderLayer::Flags flag)
@@ -1045,8 +1061,40 @@ void MaterialEditor::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
 
 void MaterialEditor::_onStageListSelectionChanged(wxDataViewEvent& ev)
 {
+    updateNotebookPageVisibility();
     updateStageControls();
     updateStageButtonSensitivity();
+}
+
+void MaterialEditor::updateNotebookPageVisibility()
+{
+    auto item = _stageView->GetSelection();
+
+    if (!_material || !item.IsOk()) return;
+    auto row = wxutil::TreeModel::Row(item, *_stageList);
+
+    bool isGlobal = row[STAGE_COLS().global].getBool();
+
+    auto notebook = getControl<wxNotebook>("MaterialStageSettingsNotebook");
+    auto desiredPrefix = isGlobal ? "Material" : "Stage";
+
+    // Remove unwanted pages
+    for (int i = notebook->GetPageCount() - 1; i >= 0; --i)
+    {
+        if (!notebook->GetPage(i)->GetName().StartsWith(desiredPrefix))
+        {
+            notebook->RemovePage(i);
+        }
+    }
+
+    // Add missing pages
+    for (const auto& pair : _notebookPages)
+    {
+        if (pair.first->GetName().StartsWith(desiredPrefix) && notebook->FindPage(pair.first) == -1)
+        {
+            notebook->AddPage(pair.first, pair.second);
+        }
+    }
 }
 
 void MaterialEditor::updateStageButtonSensitivity()
@@ -1057,13 +1105,14 @@ void MaterialEditor::updateStageButtonSensitivity()
     {
         auto row = wxutil::TreeModel::Row(item, *_stageList);
         auto index = row[STAGE_COLS().index].getInteger();
+        auto isGlobalStage = row[STAGE_COLS().global].getBool();
         auto layersCount = _material->getAllLayers().size();
 
-        getControl<wxButton>("MaterialEditorRemoveStageButton")->Enable();
-        getControl<wxButton>("MaterialEditorToggleStageButton")->Enable();
-        getControl<wxButton>("MaterialEditorMoveUpStageButton")->Enable(index > 0);
-        getControl<wxButton>("MaterialEditorMoveDownStageButton")->Enable(index + 1 < layersCount);
-        getControl<wxButton>("MaterialEditorDuplicateStageButton")->Enable();
+        getControl<wxButton>("MaterialEditorRemoveStageButton")->Enable(!isGlobalStage);
+        getControl<wxButton>("MaterialEditorToggleStageButton")->Enable(!isGlobalStage);
+        getControl<wxButton>("MaterialEditorMoveUpStageButton")->Enable(!isGlobalStage && index > 0);
+        getControl<wxButton>("MaterialEditorMoveDownStageButton")->Enable(!isGlobalStage && index + 1 < layersCount);
+        getControl<wxButton>("MaterialEditorDuplicateStageButton")->Enable(!isGlobalStage);
     }
     else
     {
@@ -1077,13 +1126,15 @@ void MaterialEditor::updateStageButtonSensitivity()
 
 void MaterialEditor::_onStageListValueChanged(wxDataViewEvent& ev)
 {
-    if (!_material || ev.GetColumn() != STAGE_COLS().enabled.getColumnIndex()) return;
+    wxutil::TreeModel::Row row(ev.GetItem(), *_stageList);
+
+    if (!_material || ev.GetColumn() != STAGE_COLS().enabled.getColumnIndex() ||
+        row[STAGE_COLS().global].getBool()) return;
 
     auto stage = getEditableStageForSelection();
 
     if (!stage) return;
 
-    wxutil::TreeModel::Row row(ev.GetItem(), *_stageList);
     stage->setEnabled(row[STAGE_COLS().enabled].getBool());
 }
 
@@ -1150,8 +1201,6 @@ void MaterialEditor::updateDeformControlsFromMaterial()
         {
             pair.second->Show(_material->getDeformType() == pair.first);
         }
-
-        getControl<wxPanel>("DeformPage")->Layout();
     }
     else // no material
     {
@@ -1161,9 +1210,9 @@ void MaterialEditor::updateDeformControlsFromMaterial()
         {
             pair.second->Hide();
         }
-
-        getControl<wxPanel>("DeformPage")->Layout();
     }
+
+    getControl<wxPanel>("MaterialPageDeform")->Layout();
 }
 
 inline std::string getBlendFuncString(const std::pair<std::string, std::string>& pair)
@@ -1190,10 +1239,13 @@ inline std::string getNameForLayer(const IShaderLayer& layer)
 
 void MaterialEditor::updateStageListFromMaterial()
 {
-    _stageList->Clear();
+    // Remove all non-global items
+    _stageList->RemoveItems([&](const wxutil::TreeModel::Row& row)
+    {
+        return !row[STAGE_COLS().global].getBool();
+    });
 
     getControl<wxPanel>("MaterialEditorStageListPanel")->Enable(_material != nullptr);
-    getControl<wxPanel>("MaterialEditorStageSettingsPanel")->Enable(_material != nullptr);
 
     if (!_material) return;
 
@@ -1222,7 +1274,7 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
 {
     util::ScopedBoolLock lock(_materialUpdateInProgress);
 
-    getControl<wxPanel>("MaterialEditorMaterialPropertiesPanel")->Enable(_material != nullptr);
+    getControl<wxPanel>("MaterialEditorStageSettingsPanel")->Enable(_material != nullptr);
     
     // Update all registered bindings
     for (const auto& binding : _materialBindings)
@@ -1808,7 +1860,7 @@ void MaterialEditor::_onStageMapTypeChanged(wxCommandEvent& ev)
 
         // Switch pages
         auto notebook = getControl<wxNotebook>("MaterialStageSettingsNotebook");
-        notebook->SetSelection(notebook->FindPage(getControl<wxPanel>("SpecialMapPanel")));
+        notebook->SetSelection(notebook->FindPage(getControl<wxPanel>("StagePageSpecialMap")));
     }
     else
     {

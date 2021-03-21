@@ -26,6 +26,8 @@ private:
     wxutil::TreeModel::Ptr _stageList;
     wxutil::TreeView* _stageView;
 
+    std::map<wxWindow*, wxString> _notebookPages;
+
     wxutil::WindowPosition _windowPosition;
     wxutil::PanedPosition _panedPosition;
 
@@ -132,6 +134,7 @@ private:
     void updateNameOfSelectedStage();
     void moveStagePosition(int direction);
     void updateStageButtonSensitivity();
+    void updateNotebookPageVisibility();
 
     void _onTreeViewSelectionChanged(wxDataViewEvent& ev);
     void _onStageListSelectionChanged(wxDataViewEvent& ev);
