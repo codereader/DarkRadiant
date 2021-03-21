@@ -109,6 +109,7 @@ MaterialEditor::MaterialEditor() :
 
     makeLabelBold(this, "MaterialEditorDefinitionLabel");
     makeLabelBold(this, "MaterialEditorStagePropertiesLabel");
+    makeLabelBold(this, "MaterialEditorMaterialStagesLabel");
 
     // Wire up the close button
     getControl<wxButton>("MaterialEditorCloseButton")->Bind(wxEVT_BUTTON, &MaterialEditor::_onClose, this);
@@ -177,14 +178,17 @@ MaterialEditor::MaterialEditor() :
 
 MaterialEditor::~MaterialEditor()
 {
+    _materialBindings.clear();
+    _stageBindings.clear();
+
     auto notebook = getControl<wxNotebook>("MaterialStageSettingsNotebook");
 
     // Remove all umapped pages to avoid memory leaks
     for (const auto& pair : _notebookPages)
     {
-        if (notebook->FindPage(pair.first) == -1)
+        if (notebook->FindPage(pair.second.first) == -1)
         {
-            pair.first->Destroy();
+            pair.second.first->Destroy();
         }
     }
 
@@ -599,7 +603,7 @@ void MaterialEditor::setupMaterialStageView()
     for (int i = 0; i < notebook->GetPageCount(); ++i)
     {
         auto page = notebook->GetPage(i);
-        _notebookPages.emplace(page, notebook->GetPageText(i));
+        _notebookPages.emplace(i, std::make_pair(page, notebook->GetPageText(i)));
     }
 }
 
@@ -1077,6 +1081,20 @@ void MaterialEditor::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
 
 void MaterialEditor::_onStageListSelectionChanged(wxDataViewEvent& ev)
 {
+    auto item = _stageView->GetSelection();
+
+    if (!_material || !item.IsOk()) return;
+    auto row = wxutil::TreeModel::Row(item, *_stageList);
+
+    if (row[STAGE_COLS().global].getBool())
+    {
+        getControl<wxStaticText>("MaterialEditorStagePropertiesLabel")->SetLabel(_("Global Material Settings"));
+    }
+    else
+    {
+        getControl<wxStaticText>("MaterialEditorStagePropertiesLabel")->SetLabel(_("Stage Settings"));
+    }
+
     updateNotebookPageVisibility();
     updateStageControls();
     updateStageButtonSensitivity();
@@ -1106,9 +1124,10 @@ void MaterialEditor::updateNotebookPageVisibility()
     // Add missing pages
     for (const auto& pair : _notebookPages)
     {
-        if (pair.first->GetName().StartsWith(desiredPrefix) && notebook->FindPage(pair.first) == -1)
+        auto page = pair.second.first;
+        if (page->GetName().StartsWith(desiredPrefix) && notebook->FindPage(page) == -1)
         {
-            notebook->AddPage(pair.first, pair.second);
+            notebook->AddPage(page, pair.second.second);
         }
     }
 }
@@ -1152,6 +1171,7 @@ void MaterialEditor::_onStageListValueChanged(wxDataViewEvent& ev)
     if (!stage) return;
 
     stage->setEnabled(row[STAGE_COLS().enabled].getBool());
+    onMaterialChanged();
 }
 
 void MaterialEditor::updateControlsFromMaterial()
@@ -1427,6 +1447,7 @@ void MaterialEditor::selectStageByIndex(std::size_t index)
         _stageView->UnselectAll();
     }
 
+    updateNotebookPageVisibility();
     updateStageControls();
     updateStageButtonSensitivity();
 }
@@ -1645,8 +1666,6 @@ void MaterialEditor::updateStageControls()
         binding->setSource(selectedStage);
         binding->updateFromSource();
     }
-
-    getControl<wxPanel>("MaterialEditorStageSettingsPanel")->Enable(selectedStage != nullptr);
 
     updateStageBlendControls();
     updateStageTextureControls();

@@ -26,7 +26,7 @@ private:
     wxutil::TreeModel::Ptr _stageList;
     wxutil::TreeView* _stageView;
 
-    std::map<wxWindow*, wxString> _notebookPages;
+    std::multimap<int, std::pair<wxWindow*, wxString>> _notebookPages;
 
     wxutil::WindowPosition _windowPosition;
     wxutil::PanedPosition _panedPosition;

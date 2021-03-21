@@ -30,7 +30,7 @@
 								</object>
 							</object>
 							<object class="sizeritem">
-								<option>0</option>
+								<option>1</option>
 								<flag>wxEXPAND|wxLEFT</flag>
 								<border>12</border>
 								<object class="wxBoxSizer">
@@ -91,7 +91,7 @@
 								</object>
 							</object>
 							<object class="sizeritem">
-								<option>2</option>
+								<option>3</option>
 								<flag>wxEXPAND|wxLEFT</flag>
 								<border>6</border>
 								<object class="wxBoxSizer">
@@ -123,14 +123,14 @@
 																<orient>wxVERTICAL</orient>
 																<object class="sizeritem">
 																	<option>0</option>
-																	<flag>wxBOTTOM|wxEXPAND|wxRIGHT</flag>
+																	<flag>wxBOTTOM|wxEXPAND</flag>
 																	<border>6</border>
 																	<object class="wxFlexGridSizer">
 																		<rows>0</rows>
-																		<cols>2</cols>
+																		<cols>4</cols>
 																		<vgap>6</vgap>
 																		<hgap>6</hgap>
-																		<growablecols>1</growablecols>
+																		<growablecols>3</growablecols>
 																		<growablerows></growablerows>
 																		<object class="sizeritem">
 																			<option>0</option>
@@ -217,7 +217,7 @@
 																									<orient>wxVERTICAL</orient>
 																									<object class="sizeritem">
 																										<option>1</option>
-																										<flag>wxBOTTOM|wxEXPAND</flag>
+																										<flag></flag>
 																										<border>6</border>
 																										<object class="wxBoxSizer">
 																											<orient>wxHORIZONTAL</orient>
@@ -254,7 +254,7 @@
 																														<flag>wxTOP|wxEXPAND</flag>
 																														<border>6</border>
 																														<object class="wxButton" name="MaterialEditorToggleStageButton">
-																															<label>Toggle Visibility</label>
+																															<label>Toggle</label>
 																															<default>0</default>
 																															<markup>0</markup>
 																															<bitmap />
@@ -319,15 +319,6 @@
 																			<object class="wxBoxSizer">
 																				<orient>wxVERTICAL</orient>
 																				<object class="sizeritem">
-																					<option>0</option>
-																					<flag>wxBOTTOM|wxTOP</flag>
-																					<border>6</border>
-																					<object class="wxStaticText" name="MaterialEditorStagePropertiesLabel">
-																						<label>Stage Properties</label>
-																						<wrap>-1</wrap>
-																					</object>
-																				</object>
-																				<object class="sizeritem">
 																					<option>1</option>
 																					<flag>wxEXPAND | wxALL</flag>
 																					<border>0</border>
@@ -335,6 +326,15 @@
 																						<style>wxTAB_TRAVERSAL</style>
 																						<object class="wxBoxSizer">
 																							<orient>wxVERTICAL</orient>
+																							<object class="sizeritem">
+																								<option>0</option>
+																								<flag>wxBOTTOM|wxTOP</flag>
+																								<border>6</border>
+																								<object class="wxStaticText" name="MaterialEditorStagePropertiesLabel">
+																									<label>Global Material Settings</label>
+																									<wrap>-1</wrap>
+																								</object>
+																							</object>
 																							<object class="sizeritem">
 																								<option>1</option>
 																								<flag>wxEXPAND</flag>
@@ -1202,7 +1202,7 @@
 																											</object>
 																											<object class="notebookpage">
 																												<label>Deform</label>
-																												<selected>1</selected>
+																												<selected>0</selected>
 																												<object class="wxPanel" name="MaterialPageDeform">
 																													<style>wxTAB_TRAVERSAL</style>
 																													<object class="wxBoxSizer">
@@ -1655,7 +1655,7 @@
 																											</object>
 																											<object class="notebookpage">
 																												<label>Blending</label>
-																												<selected>0</selected>
+																												<selected>1</selected>
 																												<object class="wxPanel" name="StagePageBlending">
 																													<style>wxTAB_TRAVERSAL</style>
 																													<object class="wxBoxSizer">
