@@ -168,7 +168,7 @@ TEST(MathTest, MatrixRotationAboutZDegrees)
 
 TEST(MathTest, MatrixRotationAboutZRadians)
 {
-    double angle = c_pi / 3.0; // 60 degrees in radians
+    double angle = math::PI / 3.0; // 60 degrees in radians
     double cosAngle = cos(angle);
     double sinAngle = sin(angle);
 
@@ -179,6 +179,7 @@ TEST(MathTest, MatrixRotationAboutZRadians)
                                      0, 0, 1, 0,
                                      0, 0, 0, 1));
 }
+
 TEST(MathTest, MatrixRotationForEulerXYZDegrees)
 {
     // Test euler angle constructors
@@ -186,12 +187,12 @@ TEST(MathTest, MatrixRotationForEulerXYZDegrees)
 
     // Convert degrees to radians
     double pi = 3.141592653589793238462643383f;
-    double cx = cos(euler[0] * c_pi / 180.0f);
-    double sx = sin(euler[0] * c_pi / 180.0f);
-    double cy = cos(euler[1] * c_pi / 180.0f);
-    double sy = sin(euler[1] * c_pi / 180.0f);
-    double cz = cos(euler[2] * c_pi / 180.0f);
-    double sz = sin(euler[2] * c_pi / 180.0f);
+    double cx = cos(euler[0] * math::PI / 180.0f);
+    double sx = sin(euler[0] * math::PI / 180.0f);
+    double cy = cos(euler[1] * math::PI / 180.0f);
+    double sy = sin(euler[1] * math::PI / 180.0f);
+    double cz = cos(euler[2] * math::PI / 180.0f);
+    double sz = sin(euler[2] * math::PI / 180.0f);
 
     Matrix4 eulerXYZ = Matrix4::getRotationForEulerXYZDegrees(euler);
 

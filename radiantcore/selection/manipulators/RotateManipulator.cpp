@@ -11,7 +11,7 @@ namespace selection
 
 template<typename remap_policy>
 inline void draw_semicircle(const std::size_t segments, const float radius, VertexCb* vertices, remap_policy remap) {
-  const double increment = c_pi / double(segments << 2);
+  const double increment = math::PI / double(segments << 2);
 
   std::size_t count = 0;
   float x = radius;
@@ -158,7 +158,7 @@ void RotateManipulator::render(RenderableCollector& collector, const VolumeTest&
 
 void RotateManipulator::render(const RenderInfo& info) const
 {
-	if (_selectableX.isSelected() || _selectableY.isSelected() || 
+	if (_selectableX.isSelected() || _selectableY.isSelected() ||
 		_selectableZ.isSelected() || _selectableScreen.isSelected())
 	{
 		glColor3d(0.75, 0, 0);
@@ -172,7 +172,7 @@ void RotateManipulator::render(const RenderInfo& info) const
 
 void RotateManipulator::testSelect(SelectionTest& test, const Matrix4& pivot2world)
 {
-    _pivot2World.update(_pivot.getMatrix4(), test.getVolume().GetModelview(), 
+    _pivot2World.update(_pivot.getMatrix4(), test.getVolume().GetModelview(),
         test.getVolume().GetProjection(), test.getVolume().GetViewport());
     updateCircleTransforms();
 
@@ -278,10 +278,10 @@ void RotateManipulator::setSelected(bool select)
 
 bool RotateManipulator::isSelected() const
 {
-    return _selectableX.isSelected() || 
+    return _selectableX.isSelected() ||
 		_selectableY.isSelected() ||
-		_selectableZ.isSelected() || 
-		_selectableScreen.isSelected() || 
+		_selectableZ.isSelected() ||
+		_selectableScreen.isSelected() ||
 		_selectableSphere.isSelected() ||
 		_selectablePivotPoint.isSelected();
 }

@@ -8,7 +8,7 @@ void sphereDrawFill(const Vector3& origin, float radius, int sides)
     return;
 
   const double dt = c_2pi / static_cast<float>(sides);
-  const double dp = c_pi / static_cast<float>(sides);
+  const double dp = math::PI / static_cast<float>(sides);
 
   glBegin(GL_TRIANGLES);
   for (int i = 0; i <= sides - 1; ++i)
@@ -16,7 +16,7 @@ void sphereDrawFill(const Vector3& origin, float radius, int sides)
     for (int j = 0; j <= sides - 2; ++j)
     {
       const double t = i * dt;
-      const double p = (j * dp) - (c_pi / 2.0);
+      const double p = (j * dp) - (math::PI / 2.0);
 
       {
         Vector3 v(origin + Vector3::createForSpherical(t, p) * radius);
@@ -51,7 +51,7 @@ void sphereDrawFill(const Vector3& origin, float radius, int sides)
   }
 
   {
-    const double p = (sides - 1) * dp - (static_cast<float>(c_pi) / 2.0f);
+    const double p = (sides - 1) * dp - (static_cast<float>(math::PI) / 2.0f);
     for (int i = 0; i <= sides - 1; ++i)
     {
       const double t = i * dt;
@@ -82,8 +82,8 @@ void sphereDrawWire(const Vector3& origin, float radius, int sides)
 
     for (int i = 0; i <= sides; i++)
     {
-      float ds = sin((i * 2 * static_cast<float>(c_pi)) / sides);
-      float dc = cos((i * 2 * static_cast<float>(c_pi)) / sides);
+      float ds = sin((i * 2 * static_cast<float>(math::PI)) / sides);
+      float dc = cos((i * 2 * static_cast<float>(math::PI)) / sides);
 
       glVertex3d(
         origin[0] + radius * dc,
@@ -100,8 +100,8 @@ void sphereDrawWire(const Vector3& origin, float radius, int sides)
 
     for (int i = 0; i <= sides; i++)
     {
-      float ds = sin((i * 2 * static_cast<float>(c_pi)) / sides);
-      float dc = cos((i * 2 * static_cast<float>(c_pi)) / sides);
+      float ds = sin((i * 2 * static_cast<float>(math::PI)) / sides);
+      float dc = cos((i * 2 * static_cast<float>(math::PI)) / sides);
 
       glVertex3d(
         origin[0] + radius * dc,
@@ -118,8 +118,8 @@ void sphereDrawWire(const Vector3& origin, float radius, int sides)
 
     for (int i = 0; i <= sides; i++)
     {
-      float ds = sin((i * 2 * static_cast<float>(c_pi)) / sides);
-      float dc = cos((i * 2 * static_cast<float>(c_pi)) / sides);
+      float ds = sin((i * 2 * static_cast<float>(math::PI)) / sides);
+      float dc = cos((i * 2 * static_cast<float>(math::PI)) / sides);
 
       glVertex3d(
         origin[0],

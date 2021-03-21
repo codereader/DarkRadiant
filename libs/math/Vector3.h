@@ -382,7 +382,7 @@ public:
     bool isParallel(const BasicVector3<OtherT>& other) const
 	{
         return float_equal_epsilon(angle(other), 0.0, 0.001) ||
-			   float_equal_epsilon(angle(other), c_pi, 0.001);
+			   float_equal_epsilon(angle(other), math::PI, 0.001);
     }
 
     // Swaps all components with the other vector

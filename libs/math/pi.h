@@ -21,12 +21,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #pragma once
 
-const double c_pi = 3.1415926535897932384626433832795;
-const double c_half_pi = c_pi / 2;
-const double c_2pi = 2 * c_pi;
+namespace math
+{
+    const double PI = 3.1415926535897932384626433832795;
+}
 
-const double c_DEG2RADMULT = c_pi / 180.0;
-const double c_RAD2DEGMULT = 180.0 / c_pi;
+const double c_half_pi = math::PI / 2;
+const double c_2pi = 2 * math::PI;
+
+const double c_DEG2RADMULT = math::PI / 180.0;
+const double c_RAD2DEGMULT = 180.0 / math::PI;
 
 inline double radians_to_degrees(double radians)
 {

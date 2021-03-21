@@ -246,7 +246,7 @@ void RenderableParticleBunch::calculateAnim(ParticleRenderInfo& particle)
 
 void RenderableParticleBunch::calculateColour(ParticleRenderInfo& particle)
 {
-    Vector4 mainColour = !_stage.getUseEntityColour() ? 
+    Vector4 mainColour = !_stage.getUseEntityColour() ?
         _stage.getColour() : Vector4(_entityColour.x(), _entityColour.y(), _entityColour.z(), 1);
 
     // We start with the stage's standard colour
@@ -346,8 +346,8 @@ void RenderableParticleBunch::calculateOrigin(ParticleRenderInfo& particle)
             float axialSpeedFactor = 1.0f + 0.5f * rand * rand;
             float axialSpeed = _stage.getCustomPathParm(1) * axialSpeedFactor * 0.4f;
 
-            float phi0 = 2 * static_cast<float>(c_pi) * particle.rand[2];
-            float theta0 = static_cast<float>(c_pi) * particle.rand[3];
+            float phi0 = 2 * static_cast<float>(math::PI) * particle.rand[2];
+            float theta0 = static_cast<float>(math::PI) * particle.rand[3];
 
             // Calculate angles at the given particleTime
             float phi = phi0 + axialSpeed * particle.timeSecs;
@@ -378,7 +378,7 @@ void RenderableParticleBunch::calculateOrigin(ParticleRenderInfo& particle)
             float radialSpeed = _stage.getCustomPathParm(3) * (2 * particle.rand[0] - 1.0f);
             float axialSpeed = _stage.getCustomPathParm(4) * (2 * particle.rand[1] - 1.0f);
 
-            float phi0 = 2 * static_cast<float>(c_pi) * particle.rand[2];
+            float phi0 = 2 * static_cast<float>(math::PI) * particle.rand[2];
             float z0 = sizeZ * (2 * particle.rand[3] - 1.0f);
 
             float sinPhi = sin(phi0 + radialSpeed * particle.timeSecs);
@@ -420,13 +420,13 @@ Vector3 RenderableParticleBunch::getDirection(ParticleRenderInfo& particle, cons
             float u = particle.rand[3];
 
             // Scale the variable v such that it takes uniform values in the interval [(1+cos(angle))/2 .. 1]
-            float angleRad = _stage.getDirectionParm(0) * static_cast<float>(c_pi) / 180.0f;
+            float angleRad = _stage.getDirectionParm(0) * static_cast<float>(math::PI) / 180.0f;
             float v0 = (1 + cos(angleRad)) * 0.5f;
             float v1 = 1;
 
             float v = v0 + particle.rand[4] * (v1 - v0);
 
-            float theta = 2 * static_cast<float>(c_pi) * u;
+            float theta = 2 * static_cast<float>(math::PI) * u;
             float phi = acos(2*v - 1);
 
             Vector3 endPoint(cos(theta) * sin(phi), sin(theta) * sin(phi), cos(phi));
@@ -500,7 +500,7 @@ Vector3 RenderableParticleBunch::getDistributionOffset(ParticleRenderInfo& parti
             if (distributeParticlesRandomly)
             {
                 // Get a random angle in [0..2pi]
-                float angle = static_cast<float>(2*c_pi) * particle.rand[0];
+                float angle = static_cast<float>(2*math::PI) * particle.rand[0];
 
                 float xPos = cos(angle) * sizeX;
                 float yPos = sin(angle) * sizeY;
@@ -533,7 +533,7 @@ Vector3 RenderableParticleBunch::getDistributionOffset(ParticleRenderInfo& parti
                 float u = particle.rand[0];
                 float v = particle.rand[1];
 
-                float theta = 2 * static_cast<float>(c_pi) * u;
+                float theta = 2 * static_cast<float>(math::PI) * u;
                 float phi = acos(2*v - 1);
 
                 // Take the sqrt(radius) to correct bunching at the center of the sphere

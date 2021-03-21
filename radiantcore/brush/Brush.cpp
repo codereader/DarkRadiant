@@ -145,7 +145,7 @@ void Brush::forEachVisibleFace(const std::function<void(Face&)>& functor) const
 void Brush::connectUndoSystem(IMapFileChangeTracker& changeTracker)
 {
     assert(_undoStateSaver == nullptr);
-    
+
     // Keep a reference around, we need it when faces are changing
     _mapFileChangeTracker = &changeTracker;
 
@@ -158,7 +158,7 @@ void Brush::connectUndoSystem(IMapFileChangeTracker& changeTracker)
 void Brush::disconnectUndoSystem(IMapFileChangeTracker& changeTracker)
 {
     assert(_undoStateSaver != nullptr);
-    
+
     // Notify each face
     forEachFace([&](Face& face) { face.disconnectUndoSystem(changeTracker); });
 
@@ -268,10 +268,10 @@ const AABB& Brush::localAABB() const {
     return m_aabb_local;
 }
 
-void Brush::renderComponents(SelectionSystem::EComponentMode mode, RenderableCollector& collector, 
-	const VolumeTest& volume, const Matrix4& localToWorld) const 
+void Brush::renderComponents(SelectionSystem::EComponentMode mode, RenderableCollector& collector,
+	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
-    switch (mode) 
+    switch (mode)
 	{
         case SelectionSystem::eVertex:
             collector.addRenderable(*m_state_point, _uniqueVertexPoints, localToWorld);
@@ -398,7 +398,7 @@ void Brush::setRenderSystem(const RenderSystemPtr& renderSystem)
         m_state_point.reset();
     }
 
-    for (Faces::iterator i = m_faces.begin(); i != m_faces.end(); ++i) 
+    for (Faces::iterator i = m_faces.begin(); i != m_faces.end(); ++i)
     {
         (*i)->setRenderSystem(renderSystem);
     }
@@ -499,7 +499,7 @@ void Brush::onFaceEvaluateTransform()
     evaluateTransform();
 }
 
-void Brush::clear() 
+void Brush::clear()
 {
     undoSave();
     if (_undoStateSaver)
@@ -730,8 +730,8 @@ void Brush::constructPrism(const AABB& bounds, std::size_t sides, int axis, cons
 
     for (std::size_t i = 0 ; i < sides ; ++i)
     {
-        float sv = sin(i*static_cast<float>(c_pi)*2/sides);
-        float cv = cos(i*static_cast<float>(c_pi)*2/sides);
+        float sv = sin(i*static_cast<float>(math::PI)*2/sides);
+        float cv = cos(i*static_cast<float>(math::PI)*2/sides);
 
         planepts[0][(axis+1)%3] = floor(mid[(axis+1) % 3] + radius*cv  + 0.5f);
         planepts[0][(axis+2)%3] = floor(mid[(axis+2) % 3] + radius*sv  + 0.5f);
@@ -789,8 +789,8 @@ void Brush::constructCone(const AABB& bounds, std::size_t sides, const std::stri
 
     for (std::size_t i = 0 ; i < sides ; ++i)
     {
-        float sv = sin (i*static_cast<float>(c_pi)*2/sides);
-        float cv = cos (i*static_cast<float>(c_pi)*2/sides);
+        float sv = sin (i*static_cast<float>(math::PI)*2/sides);
+        float cv = cos (i*static_cast<float>(math::PI)*2/sides);
 
         planepts[0][0] = floor(mid[0] + radius*cv + 0.5f);
         planepts[0][1] = floor(mid[1] + radius*sv + 0.5f);
@@ -836,15 +836,15 @@ void Brush::constructSphere(const AABB& bounds, std::size_t sides, const std::st
     const Vector3& mid = bounds.origin;
     Vector3 planepts[3];
 
-    float dt = 2 * static_cast<float>(c_pi) / sides;
-    float dp = static_cast<float>(c_pi) / sides;
+    float dt = 2 * static_cast<float>(math::PI) / sides;
+    float dp = static_cast<float>(math::PI) / sides;
 
     for (std::size_t i = 0; i < sides; i++)
     {
         for (std::size_t j = 0; j < sides - 1; j++)
         {
             float t = i * dt;
-            float p = static_cast<float>(j * dp - c_pi / 2);
+            float p = static_cast<float>(j * dp - math::PI / 2);
 
             planepts[0] = mid + Vector3::createForSpherical(t, p)*radius;
             planepts[1] = mid + Vector3::createForSpherical(t, p + dp)*radius;
@@ -855,7 +855,7 @@ void Brush::constructSphere(const AABB& bounds, std::size_t sides, const std::st
     }
 
     {
-        float p = (sides - 1) * dp - static_cast<float>(c_pi) / 2;
+        float p = (sides - 1) * dp - static_cast<float>(math::PI) / 2;
 
         for (std::size_t i = 0; i < sides; i++)
         {
@@ -892,14 +892,14 @@ bool Brush::getIntersection(const Ray& ray, Vector3& intersection)
 
 		auto n = -(ray.origin - face.getWinding().front().vertex).dot(face.getPlane3().normal());
         auto d = direction.dot(face.getPlane3().normal());
-		
+
 		if (d == 0) // is the ray parallel to the face?
 		{
 			if (n < 0)
 			{
 				return false; // since the ray cannot intersect the brush;
 			}
-			else 
+			else
 			{
 				// the ray cannot enter or leave the brush across this face
 				continue;
@@ -907,7 +907,7 @@ bool Brush::getIntersection(const Ray& ray, Vector3& intersection)
 		}
 
 		auto t = n / d;
-		
+
 		if (d < 0)
 		{
 			// ray is entering the brush across this face
@@ -929,10 +929,10 @@ bool Brush::getIntersection(const Ray& ray, Vector3& intersection)
 			}
 		}
 	}
-	
+
 	assert(tEnter <= tLeave);
 	intersection = ray.origin + direction * tEnter;
-	
+
 	return true;
 }
 
