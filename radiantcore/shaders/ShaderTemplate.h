@@ -41,7 +41,7 @@ public:
 
 	// Map expressions
 	MapExpressionPtr _lightFalloff;
-	MapExpressionPtr _lightFalloffCubeMap;
+    IShaderLayer::MapType _lightFalloffCubeMapType;
 
 	/* Light type booleans */
 	bool fogLight;
@@ -107,26 +107,27 @@ public:
      * \brief
      * Construct a ShaderTemplate.
      */
-	ShaderTemplate(const std::string& name, const std::string& blockContents)
-	: _name(name),
-      _currentLayer(new Doom3ShaderLayer(*this)),
-      fogLight(false),
-      ambientLight(false),
-      blendLight(false),
-      _cubicLight(false),
-	  _materialFlags(0),
-	  _cullType(Material::CULL_BACK),
-	  _clampType(CLAMP_REPEAT),
-	  _surfaceFlags(0),
-	  _surfaceType(Material::SURFTYPE_DEFAULT),
-	  _deformType(Material::DEFORM_NONE),
-	  _spectrum(0),
-      _sortReq(SORT_UNDEFINED),	// will be set to default values after the shader has been parsed
-      _polygonOffset(0.0f),
-	  _coverage(Material::MC_UNDETERMINED),
-	  _blockContents(blockContents),
-	  _parsed(false),
-      _parseFlags(0)
+	ShaderTemplate(const std::string& name, const std::string& blockContents) : 
+        _name(name),
+        _currentLayer(new Doom3ShaderLayer(*this)),
+        _lightFalloffCubeMapType(IShaderLayer::MapType::Map),
+        fogLight(false),
+        ambientLight(false),
+        blendLight(false),
+        _cubicLight(false),
+        _materialFlags(0),
+        _cullType(Material::CULL_BACK),
+        _clampType(CLAMP_REPEAT),
+        _surfaceFlags(0),
+        _surfaceType(Material::SURFTYPE_DEFAULT),
+        _deformType(Material::DEFORM_NONE),
+        _spectrum(0),
+        _sortReq(SORT_UNDEFINED),	// will be set to default values after the shader has been parsed
+        _polygonOffset(0.0f),
+        _coverage(Material::MC_UNDETERMINED),
+        _blockContents(blockContents),
+        _parsed(false),
+        _parseFlags(0)
 	{
 		_decalInfo.stayMilliSeconds = 0;
 		_decalInfo.fadeMilliSeconds = 0;
@@ -330,11 +331,17 @@ public:
 		return _lightFalloff;
 	}
     
-    const MapExpressionPtr& getLightFalloffCubeMap()
-	{
-		if (!_parsed) parseDefinition();
-		return _lightFalloffCubeMap;
-	}
+    IShaderLayer::MapType getLightFalloffCubeMapType()
+    {
+        if (!_parsed) parseDefinition();
+        return _lightFalloffCubeMapType;
+    }
+
+    void setLightFalloffCubeMapType(IShaderLayer::MapType type)
+    {
+        if (!_parsed) parseDefinition();
+        _lightFalloffCubeMapType = type;
+    }
 
     std::size_t addLayer(IShaderLayer::Type type);
     void removeLayer(std::size_t index);

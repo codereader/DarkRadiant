@@ -234,10 +234,22 @@ void MaterialEditor::setupMaterialProperties()
         getControl<wxSpinCtrl>("MaterialSpectrumValue")->Enable(ev.IsChecked());
     });
 
+    // For light fall off images, only cameracubemap and map are allowed
+    auto lightFallOffCubeMapType = getControl<wxChoice>("MaterialLightFalloffCubeMapType");
+    lightFallOffCubeMapType->AppendString(shaders::getStringForMapType(IShaderLayer::MapType::Map));
+    lightFallOffCubeMapType->AppendString(shaders::getStringForMapType(IShaderLayer::MapType::CameraCubeMap));
+
+    lightFallOffCubeMapType->Bind(wxEVT_CHOICE, [this, lightFallOffCubeMapType] (wxCommandEvent& ev)
+    {
+        if (_materialUpdateInProgress || !_material) return;
+        _material->setLightFalloffCubeMapType(shaders::getMapTypeForString(lightFallOffCubeMapType->GetStringSelection().ToStdString()));
+    });
+
     _materialBindings.emplace(std::make_shared<SpinCtrlMaterialBinding<wxSpinCtrl>>(getControl<wxSpinCtrl>("MaterialSpectrumValue"),
         [](const MaterialPtr& material) { return material->getSpectrum(); },
         [this](const MaterialPtr& material, const int& value)
         {
+            if (_materialUpdateInProgress || !_material) return;
             material->setSpectrum(value);
         },
         [this]() { onMaterialChanged(); }));
@@ -1090,8 +1102,8 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
         auto lightFalloffMap = _material->getLightFalloffExpression();
         getControl<wxTextCtrl>("MaterialLightFalloffMap")->SetValue(lightFalloffMap ? lightFalloffMap->getExpressionString() : "");
 
-        auto lightFalloffCubeMap = _material->getLightFalloffCubeMapExpression();
-        getControl<wxTextCtrl>("MaterialLightFalloffCubeMap")->SetValue(lightFalloffCubeMap ? lightFalloffCubeMap->getExpressionString() : "");
+        auto lightFalloffCubeMapType = _material->getLightFalloffCubeMapType();
+        getControl<wxChoice>("MaterialLightFalloffCubeMapType")->SetStringSelection(shaders::getStringForMapType(lightFalloffCubeMapType));
         
         // Spectrum
         bool hasSpectrum = (_material->getParseFlags() & Material::PF_HasSpectrum) != 0 || _material->getSpectrum() != 0;

@@ -787,4 +787,23 @@ TEST_F(MaterialsTest, MaterialParserRgbaExpressions)
     EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_ALPHA)->getExpressionString(), "time * 7.0");
 }
 
+TEST_F(MaterialsTest, MaterialParserLightfallOff)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/lights/lightfalloff1");
+
+    EXPECT_EQ(material->getLightFalloffCubeMapType(), IShaderLayer::MapType::Map);
+    EXPECT_EQ(material->getLightFalloffExpression()->getExpressionString(), "makeIntensity(lights/squarelight1a.tga)");
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/lights/lightfalloff2");
+
+    EXPECT_EQ(material->getLightFalloffCubeMapType(), IShaderLayer::MapType::CameraCubeMap);
+    EXPECT_EQ(material->getLightFalloffExpression()->getExpressionString(), "lights/squarelight1a");
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/lights/lightfalloff3");
+
+    // Second lightFallOff declaration overrides the first one in the material
+    EXPECT_EQ(material->getLightFalloffCubeMapType(), IShaderLayer::MapType::CameraCubeMap);
+    EXPECT_EQ(material->getLightFalloffExpression()->getExpressionString(), "lights/squarelight1a");
+}
+
 }

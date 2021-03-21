@@ -668,28 +668,37 @@
 																				</object>
 																			</object>
 																			<object class="sizeritem">
-																				<option>0</option>
-																				<flag>wxALIGN_CENTER_VERTICAL|wxEXPAND</flag>
+																				<option>1</option>
+																				<flag>wxEXPAND</flag>
 																				<border>0</border>
-																				<object class="wxTextCtrl" name="MaterialLightFalloffMap">
-																					<value></value>
-																				</object>
-																			</object>
-																			<object class="sizeritem">
-																				<option>0</option>
-																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																				<border>0</border>
-																				<object class="wxStaticText" name="m_staticText421">
-																					<label>lightFalloffCubeMap</label>
-																					<wrap>-1</wrap>
-																				</object>
-																			</object>
-																			<object class="sizeritem">
-																				<option>0</option>
-																				<flag>wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</flag>
-																				<border>0</border>
-																				<object class="wxTextCtrl" name="MaterialLightFalloffCubeMap">
-																					<value></value>
+																				<object class="wxBoxSizer">
+																					<orient>wxHORIZONTAL</orient>
+																					<object class="sizeritem">
+																						<option>1</option>
+																						<flag>wxALIGN_CENTER_VERTICAL</flag>
+																						<border>0</border>
+																						<object class="wxTextCtrl" name="MaterialLightFalloffMap">
+																							<value></value>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+																						<border>6</border>
+																						<object class="wxStaticText" name="m_staticText53">
+																							<label>Type:</label>
+																							<wrap>-1</wrap>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+																						<border>6</border>
+																						<object class="wxChoice" name="MaterialLightFalloffCubeMapType">
+																							<selection>0</selection>
+																							<content />
+																						</object>
+																					</object>
 																				</object>
 																			</object>
 																			<object class="sizeritem">

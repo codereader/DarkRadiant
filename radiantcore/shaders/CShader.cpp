@@ -81,9 +81,15 @@ IMapExpression::Ptr CShader::getLightFalloffExpression()
 	return _template->getLightFalloff();
 }
 
-IMapExpression::Ptr CShader::getLightFalloffCubeMapExpression()
+IShaderLayer::MapType CShader::getLightFalloffCubeMapType()
 {
-	return _template->getLightFalloffCubeMap();
+    return _template->getLightFalloffCubeMapType();
+}
+
+void CShader::setLightFalloffCubeMapType(IShaderLayer::MapType type)
+{
+    ensureTemplateCopy();
+    _template->setLightFalloffCubeMapType(type);
 }
 
 /*

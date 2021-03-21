@@ -450,3 +450,41 @@ textures/parsertest/colourexpr10
         alpha time*7
 	}
 }
+
+textures/parsertest/lights/lightfalloff1
+{
+	lightFalloffImage	makeintensity( lights/squarelight1a.tga )
+	spectrum 2	
+	{
+		forceHighQuality
+		map lights/fullambient.tga
+		colored
+		zeroClamp
+	}
+}
+
+textures/parsertest/lights/lightfalloff2
+{
+	lightFalloffCubeMap lights/squarelight1a
+	spectrum 2	
+	{
+		forceHighQuality
+		map lights/fullambient.tga
+		colored
+		zeroClamp
+	}
+}
+
+
+textures/parsertest/lights/lightfalloff3
+{
+    lightFalloffImage	makeintensity( lights/squarelight1a.tga )
+	lightFalloffCubeMap lights/squarelight1a
+	spectrum 2	
+	{
+		forceHighQuality
+		map lights/fullambient.tga
+		colored
+		zeroClamp
+	}
+}

@@ -26,7 +26,7 @@ ShaderTemplate::ShaderTemplate(const ShaderTemplate& other) :
     _name(other._name),
     _currentLayer(new Doom3ShaderLayer(*this)),
     _lightFalloff(other._lightFalloff),
-    _lightFalloffCubeMap(other._lightFalloffCubeMap),
+    _lightFalloffCubeMapType(other._lightFalloffCubeMapType),
     fogLight(other.fogLight),
     ambientLight(other.ambientLight),
     blendLight(other.blendLight),
@@ -473,11 +473,13 @@ bool ShaderTemplate::parseLightKeywords(parser::DefTokeniser& tokeniser, const s
     }
     else if (!fogLight && token == "lightfalloffimage")
 	{
+        _lightFalloffCubeMapType = IShaderLayer::MapType::Map;
         _lightFalloff = MapExpression::createForToken(tokeniser);
     }
     else if (token == "lightfalloffcubemap")
     {
-        _lightFalloffCubeMap = MapExpression::createForToken(tokeniser);
+        _lightFalloffCubeMapType = IShaderLayer::MapType::CameraCubeMap;
+        _lightFalloff = MapExpression::createForToken(tokeniser);
     }
 	else if (token == "spectrum")
 	{

@@ -102,7 +102,8 @@ public:
     IEditableShaderLayer::Ptr getEditableLayer(std::size_t index) override;
 
     IMapExpression::Ptr getLightFalloffExpression() override;
-	IMapExpression::Ptr getLightFalloffCubeMapExpression() override;
+    IShaderLayer::MapType getLightFalloffCubeMapType() override;
+    void setLightFalloffCubeMapType(IShaderLayer::MapType type) override;
     std::string getRenderBumpArguments() override;
     std::string getRenderBumpFlatArguments() override;
 

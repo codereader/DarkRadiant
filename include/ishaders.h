@@ -341,14 +341,19 @@ public:
     // will immediately mark this Material as modified.
     virtual IEditableShaderLayer::Ptr getEditableLayer(std::size_t index) = 0;
 
-    /// Return the 2D light falloff texture, if this is a light shader
+    /// Return the light falloff texture, if this is a light shader
     virtual TexturePtr lightFalloffImage() = 0;
 
-    // Return the expression of the light falloff texture for use with this shader.
+    // Return the expression of the light falloff map for use with this shader.
     virtual shaders::IMapExpression::Ptr getLightFalloffExpression() = 0;
 
-    // Return the expression of the light falloff cubemap for use with this shader.
-    virtual shaders::IMapExpression::Ptr getLightFalloffCubeMapExpression() = 0;
+    // Return the type of the light fall off image 
+    // (can be MapType::Map (lightFalloffImage or MapType::CameraCubeMap for lightFalloffCubeMap)
+    virtual IShaderLayer::MapType getLightFalloffCubeMapType() = 0;
+
+    // Set the type of the light fall off image 
+    // (can be MapType::Map (lightFalloffImage or MapType::CameraCubeMap for lightFalloffCubeMap)
+    virtual void setLightFalloffCubeMapType(IShaderLayer::MapType type) = 0;
 
 	// greebo: Returns the description as defined in the material
 	virtual std::string getDescription() const = 0;
