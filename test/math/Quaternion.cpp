@@ -22,8 +22,6 @@ TEST(MathTest, QuaternionForXRotation)
 
     expectNear(xRot, Quaternion(sin(angle.asRadians() / 2), 0, 0,
                                 cos(angle.asRadians() / 2)));
-    expectNear(xRot,
-               Quaternion::createForMatrix(Matrix4::getRotationAboutX(angle)));
 }
 
 TEST(MathTest, QuaternionForYRotation)
@@ -33,8 +31,6 @@ TEST(MathTest, QuaternionForYRotation)
 
     expectNear(yRot, Quaternion(0, sin(angle.asRadians() / 2), 0,
                                 cos(angle.asRadians() / 2)));
-    expectNear(yRot,
-               Quaternion::createForMatrix(Matrix4::getRotationAboutY(angle)));
 }
 
 TEST(MathTest, QuaternionForZRotation)

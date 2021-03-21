@@ -101,20 +101,6 @@ public:
      */
     static Matrix4 getRotationQuantised(const Quaternion& quaternion);
 
-    /// Construct a rotation matrix about the X axis for the given angle
-    template<typename Unit_T> static Matrix4 getRotationAboutX(Unit_T angle)
-    {
-        double radians = angle.asRadians();
-        return getRotationAboutXForSinCos(sin(radians), cos(radians));
-    }
-
-    /// Construct a rotation matrix about the Y axis for the given angle
-    template<typename Unit_T> static Matrix4 getRotationAboutY(Unit_T angle)
-    {
-        double radians = angle.asRadians();
-        return getRotationAboutYForSinCos(sin(radians), cos(radians));
-    }
-
     /// Construct a rotation matrix about the Z axis for a given angle
     template<typename Unit_T> static Matrix4 getRotationAboutZ(Unit_T angle)
     {

@@ -135,34 +135,6 @@ TEST(MathTest, ConvertDegreesAndRadians)
     EXPECT_DOUBLE_EQ(twoPiBy3R.asRadians(), 2 * math::PI / 3.0);
 }
 
-TEST(MathTest, MatrixRotationAboutXDegrees)
-{
-    math::Degrees angle(30.0);
-    double cosAngle = cos(angle.asRadians());
-    double sinAngle = sin(angle.asRadians());
-
-    // Test X rotation
-    auto xRot = Matrix4::getRotationAboutX(angle);
-    expectNear(xRot, Matrix4::byRows(1, 0, 0, 0,
-                                     0, cosAngle, -sinAngle, 0,
-                                     0, sinAngle, cosAngle, 0,
-                                     0, 0, 0, 1));
-}
-
-TEST(MathTest, MatrixRotationAboutYDegrees)
-{
-    math::Degrees angle(45.0);
-    double cosAngle = cos(angle.asRadians());
-    double sinAngle = sin(angle.asRadians());
-
-    // Test Y rotation
-    auto yRot = Matrix4::getRotationAboutY(angle);
-    expectNear(yRot, Matrix4::byRows(cosAngle, 0, sinAngle, 0,
-                                     0, 1, 0, 0,
-                                     -sinAngle, 0, cosAngle, 0,
-                                     0, 0, 0, 1));
-}
-
 TEST(MathTest, MatrixRotationAboutZDegrees)
 {
     math::Degrees angle(60.0);
