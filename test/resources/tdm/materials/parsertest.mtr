@@ -33,8 +33,8 @@ textures/parsertest/sortPredefined_afterfog        { sORt aFteRfog }
 textures/parsertest/sortPredefined_postprocess     { sORt pOstProcess }
 textures/parsertest/sortPredefined_portalsky       { sORt pOrtAlsky }
 textures/parsertest/sortPredefined_decal_macro     { DECAL_MACRO }
-textures/parsertest/sortPredefined_custom          { sort 34.56 }
-textures/parsertest/sortPredefined_custom2         { sort portalsky sort 34.56 }
+textures/parsertest/sort_custom                    { sort 34.56 }
+textures/parsertest/sort_custom2                   { sort portalsky sort 34.56 }
 
 textures/parsertest/withAmbientRimColor
 {
