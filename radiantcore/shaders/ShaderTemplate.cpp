@@ -123,6 +123,7 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
         _parseFlags |= Material::PF_HasDecalMacro;
 
         _materialFlags |= Material::FLAG_TRANSLUCENT|Material::FLAG_NOSHADOWS;
+        _materialFlags |= Material::FLAG_HAS_SORT_DEFINED;
         _sortReq = Material::SORT_DECAL;
         _polygonOffset = 1.0f;
 		_surfaceFlags |= Material::SURF_DISCRETE | Material::SURF_NONSOLID;
@@ -132,6 +133,7 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
         _parseFlags |= Material::PF_HasTwoSidedDecalMacro;
 
         _materialFlags |= Material::FLAG_TRANSLUCENT | Material::FLAG_NOSHADOWS | Material::FLAG_NOSELFSHADOW;
+        _materialFlags |= Material::FLAG_HAS_SORT_DEFINED;
         _sortReq = Material::SORT_DECAL;
         _polygonOffset = 1.0f;
         _surfaceFlags |= Material::SURF_DISCRETE | Material::SURF_NOIMPACT | Material::SURF_NONSOLID;
@@ -206,6 +208,7 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
 	else if (token == "sort")
 	{
         _parseFlags |= Material::PF_HasSortDefined;
+        _materialFlags |= Material::FLAG_HAS_SORT_DEFINED;
 
 		auto sortVal = tokeniser.nextToken();
         string::to_lower(sortVal);
@@ -1310,15 +1313,7 @@ void ShaderTemplate::parseDefinition()
 	// Some blend materials get SORT_MEDIUM applied by default, diffuses get OPAQUE assigned, but lights do not, etc.
 	if (_sortReq == SORT_UNDEFINED)
 	{
-		// Translucent materials need to be drawn after opaque ones, if not explicitly specified otherwise
-		if (_materialFlags & Material::FLAG_TRANSLUCENT)
-		{
-			_sortReq = Material::SORT_MEDIUM;
-		}
-		else
-		{
-			_sortReq = Material::SORT_OPAQUE;
-		}
+        resetSortReqest();
 	}
 
 	std::size_t numAmbientStages = 0;

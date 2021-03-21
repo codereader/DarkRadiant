@@ -409,6 +409,12 @@ public:
     // Enable/disable this stage - a disabled stage will return false to isVisible()
     virtual void setEnabled(bool enabled) = 0;
 
+    // Set the given stage flag(s)
+    virtual void setStageFlag(IShaderLayer::Flags flag) = 0;
+
+    // Clears the given stage flag(s)
+    virtual void clearStageFlag(IShaderLayer::Flags flag) = 0;
+
     // Set the map type to use by this stage (map, cameraCubeMap, etc.)
     virtual void setMapType(MapType mapType) = 0;
 

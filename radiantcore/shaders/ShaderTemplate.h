@@ -202,6 +202,18 @@ public:
 		return _surfaceFlags;
 	}
 
+    void setSurfaceFlag(Material::SurfaceFlags flag)
+    {
+        if (!_parsed) parseDefinition();
+        _surfaceFlags |= flag;
+    }
+
+    void clearSurfaceFlag(Material::SurfaceFlags flag)
+    {
+        if (!_parsed) parseDefinition();
+        _surfaceFlags &= ~flag;
+    }
+
 	Material::SurfaceType getSurfaceType()
 	{
 		if (!_parsed) parseDefinition();
@@ -288,6 +300,30 @@ public:
 		return _cubicLight;
 	}
 
+    void setIsAmbientLight(bool newValue)
+    {
+        if (!_parsed) parseDefinition();
+        ambientLight = newValue;
+    }
+
+    void setIsBlendLight(bool newValue)
+    {
+        if (!_parsed) parseDefinition();
+        blendLight = newValue;
+    }
+
+    void setIsFogLight(bool newValue)
+    {
+        if (!_parsed) parseDefinition();
+        fogLight = newValue;
+    }
+
+    void setIsCubicLight(bool newValue)
+    {
+        if (!_parsed) parseDefinition();
+        _cubicLight = newValue;
+    }
+
     float getSortRequest()
     {
 		if (!_parsed) parseDefinition();
@@ -297,7 +333,26 @@ public:
     void setSortRequest(float sortRequest)
     {
         if (!_parsed) parseDefinition();
+
+        _materialFlags |= Material::FLAG_HAS_SORT_DEFINED;
         _sortReq = sortRequest;
+    }
+
+    void resetSortReqest()
+    {
+        if (!_parsed) parseDefinition();
+
+        _materialFlags &= ~Material::FLAG_HAS_SORT_DEFINED;
+
+        // Translucent materials need to be drawn after opaque ones, if not explicitly specified otherwise
+        if (_materialFlags & Material::FLAG_TRANSLUCENT)
+        {
+            _sortReq = Material::SORT_MEDIUM;
+        }
+        else
+        {
+            _sortReq = Material::SORT_OPAQUE;
+        }
     }
 
     float getPolygonOffset()

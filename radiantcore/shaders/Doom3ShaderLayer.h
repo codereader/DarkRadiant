@@ -237,12 +237,12 @@ public:
         _stageFlags = flags;
     }
 
-    void setStageFlag(IShaderLayer::Flags flag)
+    void setStageFlag(IShaderLayer::Flags flag) override
     {
         _stageFlags |= flag;
     }
 
-    void clearStageFlag(IShaderLayer::Flags flag)
+    void clearStageFlag(IShaderLayer::Flags flag) override
     {
         _stageFlags &= ~flag;
     }

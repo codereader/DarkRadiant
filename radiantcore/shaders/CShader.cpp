@@ -53,6 +53,12 @@ void CShader::setSortRequest(float sortRequest)
     _template->setSortRequest(sortRequest);
 }
 
+void CShader::resetSortReqest()
+{
+    ensureTemplateCopy();
+    _template->resetSortReqest();
+}
+
 float CShader::getPolygonOffset() const
 {
     return _template->getPolygonOffset();
@@ -202,6 +208,18 @@ ClampType CShader::getClampType() const
 int CShader::getSurfaceFlags() const
 {
 	return _template->getSurfaceFlags();
+}
+
+void CShader::setSurfaceFlag(Material::SurfaceFlags flag)
+{
+    ensureTemplateCopy();
+    _template->setSurfaceFlag(flag);
+}
+
+void CShader::clearSurfaceFlag(Material::SurfaceFlags flag)
+{
+    ensureTemplateCopy();
+    _template->clearSurfaceFlag(flag);
 }
 
 Material::SurfaceType CShader::getSurfaceType() const
@@ -410,6 +428,31 @@ bool CShader::isCubicLight() const
 {
     return _template->isCubicLight();
 }
+
+void CShader::setIsAmbientLight(bool newValue)
+{
+    ensureTemplateCopy();
+    _template->setIsAmbientLight(newValue);
+}
+
+void CShader::setIsBlendLight(bool newValue)
+{
+    ensureTemplateCopy();
+    _template->setIsBlendLight(newValue);
+}
+
+void CShader::setIsFogLight(bool newValue)
+{
+    ensureTemplateCopy();
+    _template->setIsFogLight(newValue);
+}
+
+void CShader::setIsCubicLight(bool newValue)
+{
+    ensureTemplateCopy();
+    _template->setIsCubicLight(newValue);
+}
+
 
 bool CShader::lightCastsShadows() const
 {

@@ -55,6 +55,7 @@ public:
 		FLAG_MIRROR					= 1 << 10,		// mirror
 		FLAG_POLYGONOFFSET			= 1 << 11,		// has polygonOffset
 		FLAG_ISLIGHTGEMSURF			= 1 << 12,		// is used by the TDM lightgem
+		FLAG_HAS_SORT_DEFINED		= 1 << 13,		// whether a sort value has been defined
 	};
 
     // Parser flags, used to give some hints to the material editor GUI
@@ -212,6 +213,9 @@ public:
     // Set the sort value for this material, see the SortRequest enum for predefined values
     virtual void setSortRequest(float sortRequest) = 0;
 
+    // Resets the sort request to the default value
+    virtual void resetSortReqest() = 0;
+
     /// Return a polygon offset if one is defined. The default is 0.
     virtual float getPolygonOffset() const = 0;
 
@@ -235,6 +239,12 @@ public:
 
 	/// Surface flags (areaportal, nonsolid, etc.)
 	virtual int getSurfaceFlags() const = 0;
+
+    // Set the given surface flag
+    virtual void setSurfaceFlag(Material::SurfaceFlags flag) = 0;
+
+    // Clear the given surface flag
+    virtual void clearSurfaceFlag(Material::SurfaceFlags flag) = 0;
 
 	/// Surface Type (wood, stone, surfType15, ...)
 	virtual SurfaceType getSurfaceType() const = 0;
@@ -288,6 +298,11 @@ public:
      * material def contains the global "cubicLight" keyword.
      */
     virtual bool isCubicLight() const = 0;
+
+    virtual void setIsAmbientLight(bool newValue) = 0;
+    virtual void setIsBlendLight(bool newValue) = 0;
+    virtual void setIsFogLight(bool newValue) = 0;
+    virtual void setIsCubicLight(bool newValue) = 0;
 
 	/**
 	 * For light shaders: implicitly no-shadows lights (ambients, fogs, etc)

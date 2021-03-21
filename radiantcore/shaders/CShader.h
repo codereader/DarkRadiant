@@ -56,6 +56,7 @@ public:
     /* Material implementation */
     float getSortRequest() const override;
     void setSortRequest(float sortRequest) override;
+    void resetSortReqest() override;
     float getPolygonOffset() const override;
     void setPolygonOffset(float offset) override;
 	TexturePtr getEditorImage() override;
@@ -73,6 +74,8 @@ public:
 	CullType getCullType() const override;
 	ClampType getClampType() const override;
 	int getSurfaceFlags() const override;
+    void setSurfaceFlag(Material::SurfaceFlags flag) override;
+    void clearSurfaceFlag(Material::SurfaceFlags flag) override;
 	SurfaceType getSurfaceType() const override;
     void setSurfaceType(SurfaceType type) override;
 	DeformType getDeformType() const override;
@@ -89,6 +92,10 @@ public:
 	bool isBlendLight() const override;
 	bool isCubicLight() const;
 	bool isFogLight() const override;
+    void setIsAmbientLight(bool newValue) override;
+    void setIsBlendLight(bool newValue) override;
+    void setIsFogLight(bool newValue) override;
+    void setIsCubicLight(bool newValue) override;
 	bool lightCastsShadows() const override;
 	bool surfaceCastsShadow() const override;
 	bool isDrawn() const override;
