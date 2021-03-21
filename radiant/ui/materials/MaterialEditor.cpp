@@ -175,6 +175,22 @@ MaterialEditor::MaterialEditor() :
     updateControlsFromMaterial();
 }
 
+MaterialEditor::~MaterialEditor()
+{
+    auto notebook = getControl<wxNotebook>("MaterialStageSettingsNotebook");
+
+    // Remove all umapped pages to avoid memory leaks
+    for (const auto& pair : _notebookPages)
+    {
+        if (notebook->FindPage(pair.first) == -1)
+        {
+            pair.first->Destroy();
+        }
+    }
+
+    _notebookPages.clear();
+}
+
 int MaterialEditor::ShowModal()
 {
     // Restore the position

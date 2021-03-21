@@ -82,6 +82,7 @@ private:
 
 private:
     MaterialEditor();
+    ~MaterialEditor();
 
     int ShowModal() override;
 
