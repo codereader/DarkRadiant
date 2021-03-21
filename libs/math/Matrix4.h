@@ -56,6 +56,14 @@ private:
     // an angle in radians
     static Matrix4 getRotationAboutXForSinCos(double s, double c);
 
+    // Construct a pure-rotation matrix about the Y axis from sin and cosine of
+    // an angle in radians
+    static Matrix4 getRotationAboutYForSinCos(double s, double c);
+
+    // Construct a pure-rotation matrix about the Z axis from sin and cosine of
+    // an angle in radians
+    static Matrix4 getRotationAboutZForSinCos(double s, double c);
+
 public:
 
     /// Construct a matrix with uninitialised values.
@@ -93,30 +101,13 @@ public:
      */
     static Matrix4 getRotationQuantised(const Quaternion& quaternion);
 
-    /**
-     * Constructs a pure-rotation matrix about the x axis from an angle in degrees.
-     */
+    /// Construct a rotation matrix about the X axis for an angle in degrees
     static Matrix4 getRotationAboutXDegrees(double angle);
-
-    /**
-     * Constructs a pure-rotation matrix about the y axis from sin and cosine of an angle.
-     */
-    static Matrix4 getRotationAboutYForSinCos(double s, double c);
-
-    /**
-     * Constructs a pure-rotation matrix about the y axis from an angle in radians
-     */
-    static Matrix4 getRotationAboutY(double angle);
 
     /**
      * Constructs a pure-rotation matrix about the y axis from an angle in degrees.
      */
     static Matrix4 getRotationAboutYDegrees(double angle);
-
-    /**
-     * Constructs a pure-rotation matrix about the z axis from sin and cosine of an angle.
-     */
-    static Matrix4 getRotationAboutZForSinCos(double s, double c);
 
     /**
      * Constructs a pure-rotation matrix about the z axis from an angle in radians
@@ -558,14 +549,10 @@ inline Matrix4 Matrix4::getRotationAboutXDegrees(double angle)
     return getRotationAboutXForSinCos(sin(radians), cos(radians));
 }
 
-inline Matrix4 Matrix4::getRotationAboutY(double angle)
-{
-    return getRotationAboutYForSinCos(sin(angle), cos(angle));
-}
-
 inline Matrix4 Matrix4::getRotationAboutYDegrees(double angle)
 {
-    return getRotationAboutY(degrees_to_radians(angle));
+    double radians = degrees_to_radians(angle);
+    return getRotationAboutYForSinCos(sin(radians), cos(radians));
 }
 
 inline Matrix4 Matrix4::getRotationAboutZ(double angle)
