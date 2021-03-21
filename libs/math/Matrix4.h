@@ -51,31 +51,25 @@ private:
             double yx_, double yy_, double yz_, double yw_,
             double zx_, double zy_, double zz_, double zw_,
             double tx_, double ty_, double tz_, double tw_);
+
+    // Construct a pure-rotation matrix about the X axis from sin and cosine of
+    // an angle in radians
+    static Matrix4 getRotationAboutXForSinCos(double s, double c);
+
 public:
 
     /// Construct a matrix with uninitialised values.
     Matrix4() { }
 
-    /* NAMED CONSTRUCTORS FOR SPECIFIC MATRICES */
-
-    /**
-     * \brief
-     * Obtain the identity matrix.
-     */
+    /// Obtain the identity matrix.
     static const Matrix4& getIdentity();
 
-    /**
-     * \brief
-     * Get a matrix representing the given 3D translation.
-     *
-     * @param translation
-     * Vector3 representing the translation in 3D space.
-     */
+    /// Get a matrix representing the given 3D translation.
     static Matrix4 getTranslation(const Vector3& translation);
 
     /**
-     * greebo: Returns the rotation matrix defined by two three-component
-     * vectors.
+     * \brief Construct a rotation from one vector onto another vector.
+     *
      * The rotational axis is defined by the normalised cross product of those
      * two vectors, the angle can be retrieved from the dot product.
      */
@@ -98,16 +92,6 @@ public:
      * Constructs a pure-rotation matrix from the given quaternion, quantised.
      */
     static Matrix4 getRotationQuantised(const Quaternion& quaternion);
-
-    /**
-     * Constructs a pure-rotation matrix about the x axis from sin and cosine of an angle.
-     */
-    static Matrix4 getRotationAboutXForSinCos(double s, double c);
-
-    /**
-     * Constructs a pure-rotation matrix about the x axis from an angle in radians
-     */
-    static Matrix4 getRotationAboutX(double angle);
 
     /**
      * Constructs a pure-rotation matrix about the x axis from an angle in degrees.
@@ -568,14 +552,10 @@ inline Matrix4 Matrix4::getPremultipliedBy(const Matrix4& other) const
     return other.getMultipliedBy(*this);
 }
 
-inline Matrix4 Matrix4::getRotationAboutX(double angle)
-{
-    return getRotationAboutXForSinCos(sin(angle), cos(angle));
-}
-
 inline Matrix4 Matrix4::getRotationAboutXDegrees(double angle)
 {
-    return getRotationAboutX(degrees_to_radians(angle));
+    double radians = degrees_to_radians(angle);
+    return getRotationAboutXForSinCos(sin(radians), cos(radians));
 }
 
 inline Matrix4 Matrix4::getRotationAboutY(double angle)
