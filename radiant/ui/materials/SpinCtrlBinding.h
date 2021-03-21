@@ -39,7 +39,7 @@ public:
         BaseBinding(loadFunc, saveFunc, postChangeNotify, acquireSaveTarget),
         _spinCtrl(spinCtrl)
     {
-        if (saveFunc)
+        if (BaseBinding::_updateValue)
         {
             if (std::is_integral<ValueType>::value)
             {
@@ -48,6 +48,21 @@ public:
             else
             {
                 _spinCtrl->Bind(wxEVT_SPINCTRLDOUBLE, &SpinCtrlBinding::onValueChanged, this);
+            }
+        }
+    }
+
+    virtual ~SpinCtrlBinding()
+    {
+        if (BaseBinding::_updateValue)
+        {
+            if (std::is_integral<ValueType>::value)
+            {
+                _spinCtrl->Unbind(wxEVT_SPINCTRL, &SpinCtrlBinding::onValueChanged, this);
+            }
+            else
+            {
+                _spinCtrl->Unbind(wxEVT_SPINCTRLDOUBLE, &SpinCtrlBinding::onValueChanged, this);
             }
         }
     }

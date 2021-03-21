@@ -39,9 +39,17 @@ public:
         BaseBinding(loadFunc, saveFunc, postChangeNotify, acquireSaveTarget),
         _textCtrl(textCtrl)
     {
-        if (saveFunc)
+        if (BaseBinding::_updateValue)
         {
             _textCtrl->Bind(wxEVT_TEXT, &ExpressionBinding::onTextChanged, this);
+        }
+    }
+
+    virtual ~ExpressionBinding()
+    {
+        if (BaseBinding::_updateValue)
+        {
+            _textCtrl->Unbind(wxEVT_TEXT, &ExpressionBinding::onTextChanged, this);
         }
     }
 

@@ -26,9 +26,17 @@ public:
         BaseBinding(loadFunc, saveFunc, postChangeNotify, acquireSaveTarget),
         _radioButton(radioButton)
     {
-        if (saveFunc)
+        if (BaseBinding::_updateValue)
         {
             _radioButton->Bind(wxEVT_RADIOBUTTON, &RadioButtonBinding::onValueChanged, this);
+        }
+    }
+
+    virtual ~RadioButtonBinding()
+    {
+        if (BaseBinding::_updateValue)
+        {
+            _radioButton->Unbind(wxEVT_RADIOBUTTON, &RadioButtonBinding::onValueChanged, this);
         }
     }
 

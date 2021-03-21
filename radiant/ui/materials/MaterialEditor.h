@@ -98,7 +98,7 @@ private:
     void setupMaterialDeformPage();
     void setupSurfaceFlag(const std::string& controlName, Material::SurfaceFlags flag);
     void setupMaterialFlag(const std::string& controlName, Material::Flags flag);
-    void setupStageFlag(const std::string& controlName, int flags);
+    void setupStageFlag(const std::string& controlName, IShaderLayer::Flags flags);
 
     void createExpressionBinding(const std::string& textCtrlName,
         const std::function<shaders::IShaderExpression::Ptr(const IShaderLayer::Ptr&)>& loadFunc,
@@ -140,7 +140,7 @@ private:
     void _onAddStageTransform(wxCommandEvent& ev);
     void _onRemoveStageTransform(wxCommandEvent& ev);
     void _onStageTransformEdited(wxDataViewEvent& ev);
-    void _onStageColoredChecked(wxCommandEvent& ev);
+    void _onStageColoredChecked(const IEditableShaderLayer::Ptr& layer, bool newValue);
     void _onStageMapTypeChanged(wxCommandEvent& ev);
     void _onStageBlendTypeChanged(wxCommandEvent& ev);
     void _onAddStage(wxCommandEvent& ev);

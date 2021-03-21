@@ -770,41 +770,6 @@
 																				<option>0</option>
 																				<flag></flag>
 																				<border>0</border>
-																				<object class="wxCheckBox" name="MaterialFlagClamp">
-																					<label>clamp</label>
-																					<checked>0</checked>
-																				</object>
-																			</object>
-																			<object class="sizeritem">
-																				<option>0</option>
-																				<flag></flag>
-																				<border>0</border>
-																				<object class="wxCheckBox" name="MaterialFlagZeroClamp">
-																					<label>zeroClamp</label>
-																					<checked>0</checked>
-																				</object>
-																			</object>
-																			<object class="sizeritem">
-																				<option>0</option>
-																				<flag></flag>
-																				<border>0</border>
-																				<object class="wxCheckBox" name="MaterialFlagAlphaZeroClamp">
-																					<label>alphaZeroClamp</label>
-																					<checked>0</checked>
-																				</object>
-																			</object>
-																			<object class="sizeritem">
-																				<option>1</option>
-																				<flag>wxEXPAND</flag>
-																				<border>5</border>
-																				<object class="wxBoxSizer">
-																					<orient>wxVERTICAL</orient>
-																				</object>
-																			</object>
-																			<object class="sizeritem">
-																				<option>0</option>
-																				<flag></flag>
-																				<border>0</border>
 																				<object class="wxBoxSizer">
 																					<orient>wxHORIZONTAL</orient>
 																					<object class="sizeritem">
@@ -822,6 +787,32 @@
 																						<border>0</border>
 																						<object class="wxComboBox" name="MaterialSortValue">
 																							<value></value>
+																							<content />
+																						</object>
+																					</object>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>1</option>
+																				<flag>wxEXPAND</flag>
+																				<border>5</border>
+																				<object class="wxBoxSizer">
+																					<orient>wxHORIZONTAL</orient>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALIGN_CENTER_VERTICAL</flag>
+																						<border>0</border>
+																						<object class="wxStaticText" name="m_staticText901">
+																							<label>Clamping:</label>
+																							<wrap>-1</wrap>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+																						<border>6</border>
+																						<object class="wxChoice" name="MaterialClampType">
+																							<selection>0</selection>
 																							<content />
 																						</object>
 																					</object>
@@ -870,6 +861,7 @@
 																						<flag>wxALIGN_CENTER_VERTICAL</flag>
 																						<border>0</border>
 																						<object class="wxCheckBox" name="MaterialHasDecalMacro">
+																							<enabled>0</enabled>
 																							<label>DECAL__MACRO</label>
 																							<checked>0</checked>
 																						</object>
@@ -888,6 +880,7 @@
 																						<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
 																						<border>0</border>
 																						<object class="wxCheckBox" name="MaterialHasTwoSidedDecalMacro">
+																							<enabled>0</enabled>
 																							<label>TWOSIDED__DECAL__MACRO</label>
 																							<checked>0</checked>
 																						</object>
@@ -1066,7 +1059,7 @@
 														</object>
 														<object class="notebookpage">
 															<label>Deform</label>
-															<selected>1</selected>
+															<selected>0</selected>
 															<object class="wxPanel" name="DeformPage">
 																<style>wxTAB_TRAVERSAL</style>
 																<object class="wxBoxSizer">
@@ -1350,7 +1343,7 @@
 														</object>
 														<object class="notebookpage">
 															<label>Misc</label>
-															<selected>0</selected>
+															<selected>1</selected>
 															<object class="wxPanel" name="MiscPage">
 																<style>wxTAB_TRAVERSAL</style>
 																<object class="wxBoxSizer">
@@ -1427,6 +1420,7 @@
 																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
 																				<border>0</border>
 																				<object class="wxCheckBox" name="MaterialHasGlassMacro">
+																					<enabled>0</enabled>
 																					<label>GLASS__MACRO</label>
 																					<checked>0</checked>
 																				</object>
@@ -1436,6 +1430,7 @@
 																				<flag>wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxTOP</flag>
 																				<border>3</border>
 																				<object class="wxCheckBox" name="MaterialHasParticleMacro">
+																					<enabled>0</enabled>
 																					<label>PARTICLE__MACRO</label>
 																					<checked>0</checked>
 																				</object>
@@ -2202,7 +2197,7 @@
 												</object>
 												<object class="notebookpage">
 													<label>Texture</label>
-													<selected>0</selected>
+													<selected>1</selected>
 													<object class="wxPanel" name="TexturePanel">
 														<style>wxTAB_TRAVERSAL</style>
 														<object class="wxBoxSizer">
@@ -2684,7 +2679,7 @@
 												</object>
 												<object class="notebookpage">
 													<label>Program</label>
-													<selected>1</selected>
+													<selected>0</selected>
 													<object class="wxPanel" name="m_panel61111">
 														<style>wxTAB_TRAVERSAL</style>
 														<object class="wxBoxSizer">

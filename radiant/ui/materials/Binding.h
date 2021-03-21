@@ -85,6 +85,7 @@ protected:
         _loadValue(loadValue),
         _acquireTarget(acquireTarget),
         _updateValue(updateValue),
+        _postUpdate(postChangeNotify),
         _blockUpdates(false)
     {}
 
@@ -127,68 +128,6 @@ protected:
             {
                 _postUpdate();
             }
-        }
-    }
-};
-
-template<typename Source>
-class CheckBoxBinding :
-    public Binding<Source>
-{
-private:
-    wxCheckBox* _checkbox;
-    std::function<bool(const Source&)> _loadFunc;
-    std::function<void(const Source&, bool)> _saveFunc;
-    std::function<void()> _postUpdateFunc;
-
-public:
-    CheckBoxBinding(wxCheckBox* checkbox, 
-        const std::function<bool(const Source&)>& loadFunc) :
-        CheckBoxBinding(checkbox, loadFunc, std::function<void(const Source&, bool)>(), std::function<void()>())
-    {}
-
-    CheckBoxBinding(wxCheckBox* checkbox,
-        const std::function<bool(const Source&)>& loadFunc,
-        const std::function<void(const Source&, bool)>& saveFunc,
-        const std::function<void()>& postUpdateFunc) :
-        _checkbox(checkbox),
-        _loadFunc(loadFunc),
-        _saveFunc(saveFunc),
-        _postUpdateFunc(postUpdateFunc)
-    {
-        if (_saveFunc)
-        {
-            _checkbox->Bind(wxEVT_CHECKBOX, &CheckBoxBinding::onCheckedChanged, this);
-        }
-    }
-
-    virtual ~CheckBoxBinding()
-    {
-        if (_saveFunc)
-        {
-            _checkbox->Unbind(wxEVT_CHECKBOX, &CheckBoxBinding::onCheckedChanged, this);
-        }
-    }
-
-    virtual void updateFromSource() override
-    {
-        if (!Binding<Source>::getSource())
-        {
-            _checkbox->SetValue(false);
-            return;
-        }
-
-        _checkbox->SetValue(_loadFunc(Binding<Source>::getSource()));
-    }
-
-private:
-    void onCheckedChanged(wxCommandEvent& ev)
-    {
-        _saveFunc(Binding<Source>::getSource(), _checkbox->IsChecked());
-
-        if (_postUpdateFunc)
-        {
-            _postUpdateFunc();
         }
     }
 };

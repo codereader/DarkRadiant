@@ -460,6 +460,7 @@
     <ClInclude Include="..\..\radiant\ui\mapinfo\LayerInfoTab.h" />
     <ClInclude Include="..\..\radiant\ui\mapselector\MapSelector.h" />
     <ClInclude Include="..\..\radiant\ui\materials\Binding.h" />
+    <ClInclude Include="..\..\radiant\ui\materials\CheckBoxBinding.h" />
     <ClInclude Include="..\..\radiant\ui\materials\ExpressionBinding.h" />
     <ClInclude Include="..\..\radiant\ui\materials\MaterialEditor.h" />
     <ClInclude Include="..\..\radiant\ui\materials\MaterialPreview.h" />

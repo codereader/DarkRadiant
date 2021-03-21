@@ -1362,6 +1362,9 @@
     <ClInclude Include="..\..\radiant\ui\materials\SpinCtrlBinding.h">
       <Filter>src\ui\materials</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\materials\CheckBoxBinding.h">
+      <Filter>src\ui\materials</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />
