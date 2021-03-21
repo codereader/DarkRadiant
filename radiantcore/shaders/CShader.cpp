@@ -200,9 +200,21 @@ Material::CullType CShader::getCullType() const
 	return _template->getCullType();
 }
 
+void CShader::setCullType(CullType type)
+{
+    ensureTemplateCopy();
+    _template->setCullType(type);
+}
+
 ClampType CShader::getClampType() const
 {
 	return _template->getClampType();
+}
+
+void CShader::setClampType(ClampType type)
+{
+    ensureTemplateCopy();
+    _template->setClampType(type);
 }
 
 int CShader::getSurfaceFlags() const

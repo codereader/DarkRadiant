@@ -225,8 +225,14 @@ public:
 	/// Get the desired texture repeat behaviour.
 	virtual ClampType getClampType() const = 0;
 
+    // Set the clamp type for this material
+    virtual void setClampType(ClampType type) = 0;
+
 	/// Get the cull type (none, back, front)
 	virtual CullType getCullType() const = 0;
+
+    // Set the cull type
+    virtual void setCullType(CullType type) = 0;
 
 	/// Get the global material flags (translucent, noshadows, etc.)
 	virtual int getMaterialFlags() const = 0;

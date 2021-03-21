@@ -72,7 +72,9 @@ public:
 	const char* getShaderFileName() const override;
     const vfs::FileInfo& getShaderFileInfo() const override;
 	CullType getCullType() const override;
+    void setCullType(CullType type) override;
 	ClampType getClampType() const override;
+    void setClampType(ClampType type) override;
 	int getSurfaceFlags() const override;
     void setSurfaceFlag(Material::SurfaceFlags flag) override;
     void clearSurfaceFlag(Material::SurfaceFlags flag) override;

@@ -190,11 +190,23 @@ public:
 		return _cullType;
 	}
 
+    void setCullType(Material::CullType type)
+    {
+        if (!_parsed) parseDefinition();
+        _cullType = type;
+    }
+
 	ClampType getClampType()
 	{
 		if (!_parsed) parseDefinition();
 		return _clampType;
 	}
+
+    void setClampType(ClampType type)
+    {
+        if (!_parsed) parseDefinition();
+        _clampType = type;
+    }
 
 	int getSurfaceFlags()
 	{
