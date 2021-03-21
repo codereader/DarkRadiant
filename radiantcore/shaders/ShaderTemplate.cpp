@@ -124,6 +124,7 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
 
         _materialFlags |= Material::FLAG_TRANSLUCENT|Material::FLAG_NOSHADOWS;
         _materialFlags |= Material::FLAG_HAS_SORT_DEFINED;
+        _materialFlags |= Material::FLAG_POLYGONOFFSET;
         _sortReq = Material::SORT_DECAL;
         _polygonOffset = 1.0f;
 		_surfaceFlags |= Material::SURF_DISCRETE | Material::SURF_NONSOLID;
@@ -134,6 +135,7 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
 
         _materialFlags |= Material::FLAG_TRANSLUCENT | Material::FLAG_NOSHADOWS | Material::FLAG_NOSELFSHADOW;
         _materialFlags |= Material::FLAG_HAS_SORT_DEFINED;
+        _materialFlags |= Material::FLAG_POLYGONOFFSET;
         _sortReq = Material::SORT_DECAL;
         _polygonOffset = 1.0f;
         _surfaceFlags |= Material::SURF_DISCRETE | Material::SURF_NOIMPACT | Material::SURF_NONSOLID;
