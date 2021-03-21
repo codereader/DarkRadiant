@@ -124,6 +124,17 @@ TEST(MathTest, MatrixEquality)
     EXPECT_TRUE(m2 != Matrix4::getIdentity());
 }
 
+TEST(MathTest, ConvertDegreesAndRadians)
+{
+    math::Degrees thirtyD(30);
+    EXPECT_DOUBLE_EQ(thirtyD.asDegrees(), 30);
+    EXPECT_DOUBLE_EQ(thirtyD.asRadians(), math::PI / 6.0);
+
+    math::Radians twoPiBy3R(2 * math::PI / 3.0);
+    EXPECT_DOUBLE_EQ(twoPiBy3R.asDegrees(), 120);
+    EXPECT_DOUBLE_EQ(twoPiBy3R.asRadians(), 2 * math::PI / 3.0);
+}
+
 TEST(MathTest, MatrixRotationAboutXDegrees)
 {
     double angle = 30.0;
