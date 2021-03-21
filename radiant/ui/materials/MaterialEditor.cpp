@@ -15,6 +15,7 @@
 #include <wx/combobox.h>
 #include <wx/notebook.h>
 #include <wx/radiobut.h>
+#include <wx/collpane.h>
 
 #include "wxutil/SourceView.h"
 #include "fmt/format.h"
@@ -127,10 +128,23 @@ MaterialEditor::MaterialEditor() :
     auto* previewPanel = getControl<wxPanel>("MaterialEditorPreviewPanel");
     _preview.reset(new MaterialPreview(previewPanel));
 
-    _sourceView = new wxutil::D3MaterialSourceViewCtrl(previewPanel);
+    // Collapsible preview pane
+    auto sourceTextPanel = new wxCollapsiblePane(previewPanel, wxID_ANY, _("Material Source Text"));
+    _sourceView = new wxutil::D3MaterialSourceViewCtrl(sourceTextPanel->GetPane());
+    _sourceView->SetMinSize(wxSize(-1, 400));
+
+    sourceTextPanel->Bind(wxEVT_COLLAPSIBLEPANE_CHANGED, [=](wxCollapsiblePaneEvent& ev)
+    {
+        previewPanel->Layout();
+    });
+
+    auto paneSizer = new wxBoxSizer(wxVERTICAL);
+    paneSizer->Add(_sourceView, 1, wxGROW | wxEXPAND);
+    sourceTextPanel->GetPane()->SetSizer(paneSizer);
+    sourceTextPanel->Expand();
 
     previewPanel->GetSizer()->Add(_preview->getWidget(), 1, wxEXPAND);
-    previewPanel->GetSizer()->Add(_sourceView, 1, wxEXPAND);
+    previewPanel->GetSizer()->Add(sourceTextPanel, 0, wxEXPAND);
 
     setupMaterialProperties();
     setupMaterialStageView();
@@ -1233,16 +1247,6 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
         {
             auto surfType = shaders::getStringForSurfaceType(_material->getSurfaceType());
             materialTypeDropdown->Select(materialTypeDropdown->FindString(surfType));
-        }
-
-        // Polygon offset
-        if (_material->getMaterialFlags() & Material::FLAG_POLYGONOFFSET)
-        {
-            getControl<wxSpinCtrlDouble>("MaterialPolygonOffsetValue")->SetValue(_material->getPolygonOffset());
-        }
-        else
-        {
-            getControl<wxSpinCtrlDouble>("MaterialPolygonOffsetValue")->SetValue(0.0);
         }
 
         // Sort dropdown

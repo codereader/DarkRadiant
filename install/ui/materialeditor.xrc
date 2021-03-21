@@ -167,7 +167,7 @@
 													<object class="wxNotebook" name="m_notebook2">
 														<object class="notebookpage">
 															<label>Interaction</label>
-															<selected>0</selected>
+															<selected>1</selected>
 															<object class="wxPanel" name="InteractionPage">
 																<style>wxTAB_TRAVERSAL</style>
 																<object class="wxBoxSizer">
@@ -275,7 +275,7 @@
 																						<border>0</border>
 																						<object class="wxSpinCtrlDouble" name="MaterialPolygonOffsetValue">
 																							<style>wxSP_ARROW_KEYS</style>
-																							<value>0.100000</value>
+																							<value>0.200000</value>
 																							<min>-100</min>
 																							<max>100</max>
 																							<inc>0.1</inc>
@@ -1343,7 +1343,7 @@
 														</object>
 														<object class="notebookpage">
 															<label>Misc</label>
-															<selected>1</selected>
+															<selected>0</selected>
 															<object class="wxPanel" name="MiscPage">
 																<style>wxTAB_TRAVERSAL</style>
 																<object class="wxBoxSizer">
@@ -1678,7 +1678,7 @@
 											<object class="wxNotebook" name="MaterialStageSettingsNotebook">
 												<object class="notebookpage">
 													<label>Blending</label>
-													<selected>0</selected>
+													<selected>1</selected>
 													<object class="wxPanel" name="BlendPanel">
 														<style>wxTAB_TRAVERSAL</style>
 														<object class="wxBoxSizer">
@@ -2198,7 +2198,7 @@
 												</object>
 												<object class="notebookpage">
 													<label>Texture</label>
-													<selected>1</selected>
+													<selected>0</selected>
 													<object class="wxPanel" name="TexturePanel">
 														<style>wxTAB_TRAVERSAL</style>
 														<object class="wxBoxSizer">
@@ -2375,7 +2375,7 @@
 																	<object class="sizeritem">
 																		<option>0</option>
 																		<flag>wxBOTTOM|wxEXPAND|wxRIGHT|wxTOP</flag>
-																		<border>6</border>
+																		<border>0</border>
 																		<object class="wxBoxSizer">
 																			<orient>wxHORIZONTAL</orient>
 																			<object class="sizeritem">
