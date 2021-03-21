@@ -246,7 +246,18 @@ void MaterialEditor::setupMaterialProperties()
         _material->setLightFalloffCubeMapType(shaders::getMapTypeForString(lightFallOffCubeMapType->GetStringSelection().ToStdString()));
     });
 
-    // TODO: Lightfalloffimage binding
+    _materialBindings.emplace(std::make_shared<ExpressionBinding<MaterialPtr>>(getControl<wxTextCtrl>("MaterialLightFalloffMap"),
+        [](const MaterialPtr& material) 
+        { 
+            auto expr = material->getLightFalloffExpression();
+            return expr ? expr->getExpressionString() : std::string(); 
+        },
+        [this](const MaterialPtr& material, const std::string& value)
+        {
+            if (_materialUpdateInProgress || !_material) return;
+            material->setLightFalloffExpressionFromString(value);
+        },
+        [this]() { onMaterialChanged(); }));
 
     _materialBindings.emplace(std::make_shared<SpinCtrlBinding<wxSpinCtrl, MaterialPtr>>(getControl<wxSpinCtrl>("MaterialSpectrumValue"),
         [](const MaterialPtr& material) { return material->getSpectrum(); },
@@ -466,9 +477,9 @@ void MaterialEditor::createExpressionBinding(const std::string& textCtrlName,
             auto expr = loadFunc(layer);
             return expr ? expr->getExpressionString() : std::string();
         },
-        std::bind(&MaterialEditor::getEditableStageForSelection, this),
         saveFunc,
-        std::bind(&MaterialEditor::onMaterialChanged, this)));
+        std::bind(&MaterialEditor::onMaterialChanged, this),
+        std::bind(&MaterialEditor::getEditableStageForSelection, this)));
 }
 
 void MaterialEditor::createRadioButtonBinding(const std::string& ctrlName,

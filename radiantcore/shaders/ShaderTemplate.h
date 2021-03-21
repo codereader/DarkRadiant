@@ -330,6 +330,12 @@ public:
 		if (!_parsed) parseDefinition();
 		return _lightFalloff;
 	}
+
+    void setLightFalloffExpressionFromString(const std::string& expressionString)
+    {
+        if (!_parsed) parseDefinition();
+        _lightFalloff = MapExpression::createForString(expressionString);
+    }
     
     IShaderLayer::MapType getLightFalloffCubeMapType()
     {

@@ -347,6 +347,9 @@ public:
     // Return the expression of the light falloff map for use with this shader.
     virtual shaders::IMapExpression::Ptr getLightFalloffExpression() = 0;
 
+    // Set the lightFallOff expression to define the image/cubemap to use
+    virtual void setLightFalloffExpressionFromString(const std::string& expressionString) = 0;
+
     // Return the type of the light fall off image 
     // (can be MapType::Map (lightFalloffImage or MapType::CameraCubeMap for lightFalloffCubeMap)
     virtual IShaderLayer::MapType getLightFalloffCubeMapType() = 0;

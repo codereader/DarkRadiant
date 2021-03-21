@@ -81,6 +81,12 @@ IMapExpression::Ptr CShader::getLightFalloffExpression()
 	return _template->getLightFalloff();
 }
 
+void CShader::setLightFalloffExpressionFromString(const std::string& expressionString)
+{
+    ensureTemplateCopy();
+    _template->setLightFalloffExpressionFromString(expressionString);
+}
+
 IShaderLayer::MapType CShader::getLightFalloffCubeMapType()
 {
     return _template->getLightFalloffCubeMapType();
