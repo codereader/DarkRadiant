@@ -206,11 +206,11 @@ public:
 
     /**
      * \brief Return the requested sort position of this material.
-     *
-	 * greebo: D3 is using floating points for the sort value but
-	 * as far as I can see only rounded numbers have been used.
      */
-    virtual int getSortRequest() const = 0;
+    virtual float getSortRequest() const = 0;
+
+    // Set the sort value for this material, see the SortRequest enum for predefined values
+    virtual void setSortRequest(float sortRequest) = 0;
 
     /// Return a polygon offset if one is defined. The default is 0.
     virtual float getPolygonOffset() const = 0;

@@ -214,7 +214,7 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
         {
             if (sortVal == predefinedSortValue.first)
             {
-                _sortReq = predefinedSortValue.second;
+                _sortReq = static_cast<float>(predefinedSortValue.second);
                 return true;
             }
         }
@@ -223,7 +223,7 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
 		//  Strip any quotes
 		string::trim(sortVal, "\"");
 
-		_sortReq = string::convert<int>(sortVal, SORT_UNDEFINED); // fall back to UNDEFINED in case of parsing failures
+		_sortReq = string::convert<float>(sortVal, SORT_UNDEFINED); // fall back to UNDEFINED in case of parsing failures
 	}
 	else if (token == "noshadows")
 	{

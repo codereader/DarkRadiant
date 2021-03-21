@@ -42,9 +42,15 @@ CShader::~CShader() {
 	GetTextureManager().checkBindings();
 }
 
-int CShader::getSortRequest() const
+float CShader::getSortRequest() const
 {
     return _template->getSortRequest();
+}
+
+void CShader::setSortRequest(float sortRequest)
+{
+    ensureTemplateCopy();
+    _template->setSortRequest(sortRequest);
 }
 
 float CShader::getPolygonOffset() const

@@ -74,7 +74,7 @@ public:
 	int _spectrum;
 
     // Sort position (e.g. sort decal == 2)
-    int _sortReq;
+    float _sortReq;
 
     // Polygon offset
     float _polygonOffset;
@@ -288,10 +288,16 @@ public:
 		return _cubicLight;
 	}
 
-    int getSortRequest()
+    float getSortRequest()
     {
 		if (!_parsed) parseDefinition();
         return _sortReq;
+    }
+
+    void setSortRequest(float sortRequest)
+    {
+        if (!_parsed) parseDefinition();
+        _sortReq = sortRequest;
     }
 
     float getPolygonOffset()

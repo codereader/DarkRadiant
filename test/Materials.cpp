@@ -183,6 +183,14 @@ TEST_F(MaterialsTest, MaterialParserSortRequest)
     material = materialManager.getMaterial("textures/parsertest/sortPredefined_decal_macro");
     EXPECT_FALSE(material->getParseFlags() & Material::PF_HasSortDefined); // sort is not explicitly set
     EXPECT_EQ(material->getSortRequest(), Material::SORT_DECAL);
+
+    material = materialManager.getMaterial("textures/parsertest/sortPredefined_custom");
+    EXPECT_TRUE(material->getParseFlags() & Material::PF_HasSortDefined);
+    EXPECT_FLOAT_EQ(material->getSortRequest(), 34.56f);
+
+    material = materialManager.getMaterial("textures/parsertest/sortPredefined_custom2");
+    EXPECT_TRUE(material->getParseFlags() & Material::PF_HasSortDefined);
+    EXPECT_FLOAT_EQ(material->getSortRequest(), 34.56f);
 }
 
 TEST_F(MaterialsTest, MaterialParserAmbientRimColour)

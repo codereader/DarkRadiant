@@ -54,7 +54,8 @@ public:
 	~CShader();
 
     /* Material implementation */
-    int getSortRequest() const override;
+    float getSortRequest() const override;
+    void setSortRequest(float sortRequest) override;
     float getPolygonOffset() const override;
     void setPolygonOffset(float offset) override;
 	TexturePtr getEditorImage() override;

@@ -208,6 +208,9 @@ void MaterialEditor::setupMaterialProperties()
         sortDropdown->AppendString(pair.first);
     }
 
+    sortDropdown->Bind(wxEVT_COMBOBOX, &MaterialEditor::_onSortRequestChanged, this);
+    sortDropdown->Bind(wxEVT_TEXT, &MaterialEditor::_onSortRequestChanged, this);
+
     auto description = getControl<wxTextCtrl>("MaterialDescription");
     description->Bind(wxEVT_TEXT, [description, this](wxCommandEvent& ev)
     {
@@ -1780,6 +1783,15 @@ void MaterialEditor::moveStagePosition(int direction)
         updateStageListFromMaterial();
         selectStageByIndex(static_cast<std::size_t>(newPosition));
     }
+}
+
+void MaterialEditor::_onSortRequestChanged(wxCommandEvent& ev)
+{
+    if (!_material || _materialUpdateInProgress) return;
+
+    auto sortDropdown = getControl<wxComboBox>("MaterialSortValue");
+    _material->setSortRequest(string::convert<float>(sortDropdown->GetValue().ToStdString(), Material::SORT_OPAQUE));
+    onMaterialChanged();
 }
 
 void MaterialEditor::onMaterialChanged()
