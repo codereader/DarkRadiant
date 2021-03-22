@@ -1642,11 +1642,11 @@
 																													<object class="wxBoxSizer">
 																														<orient>wxVERTICAL</orient>
 																														<object class="sizeritem">
-																															<option>1</option>
+																															<option>0</option>
 																															<flag>wxALL|wxEXPAND</flag>
 																															<border>6</border>
 																															<object class="wxFlexGridSizer">
-																																<rows>7</rows>
+																																<rows>8</rows>
 																																<cols>2</cols>
 																																<vgap>6</vgap>
 																																<hgap>12</hgap>
@@ -1673,6 +1673,85 @@
 																																			<border>0</border>
 																																			<object class="wxTextCtrl" name="MaterialStageImageMap">
 																																				<value></value>
+																																			</object>
+																																		</object>
+																																	</object>
+																																</object>
+																																<object class="sizeritem">
+																																	<option>0</option>
+																																	<flag>wxTOP</flag>
+																																	<border>5</border>
+																																	<object class="wxStaticText" name="m_staticText8">
+																																		<label>Blend:</label>
+																																		<wrap>-1</wrap>
+																																	</object>
+																																</object>
+																																<object class="sizeritem">
+																																	<option>1</option>
+																																	<flag>wxEXPAND</flag>
+																																	<border>0</border>
+																																	<object class="wxBoxSizer">
+																																		<orient>wxVERTICAL</orient>
+																																		<object class="sizeritem">
+																																			<option>0</option>
+																																			<flag>wxRIGHT</flag>
+																																			<border>6</border>
+																																			<object class="wxChoice" name="MaterialStageBlendType">
+																																				<selection>0</selection>
+																																				<content />
+																																			</object>
+																																		</object>
+																																	</object>
+																																</object>
+																																<object class="sizeritem">
+																																	<option>0</option>
+																																	<flag>wxALIGN_CENTER_VERTICAL</flag>
+																																	<border>0</border>
+																																	<object class="wxStaticText" name="m_staticText81">
+																																		<label>Function:</label>
+																																		<wrap>-1</wrap>
+																																	</object>
+																																</object>
+																																<object class="sizeritem">
+																																	<option>0</option>
+																																	<flag>wxEXPAND</flag>
+																																	<border>0</border>
+																																	<object class="wxBoxSizer">
+																																		<orient>wxHORIZONTAL</orient>
+																																		<object class="sizeritem">
+																																			<option>0</option>
+																																			<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																																			<border>0</border>
+																																			<object class="wxStaticText" name="m_staticText60">
+																																				<label>Source:</label>
+																																				<wrap>-1</wrap>
+																																			</object>
+																																		</object>
+																																		<object class="sizeritem">
+																																			<option>1</option>
+																																			<flag>wxALIGN_CENTER_VERTICAL|wxALL|wxLEFT</flag>
+																																			<border>6</border>
+																																			<object class="wxChoice" name="MaterialStageBlendTypeSrc">
+																																				<selection>0</selection>
+																																				<content />
+																																			</object>
+																																		</object>
+																																		<object class="sizeritem">
+																																			<option>0</option>
+																																			<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																																			<border>0</border>
+																																			<object class="wxStaticText" name="m_staticText601">
+																																				<label>Dest:</label>
+																																				<wrap>-1</wrap>
+																																			</object>
+																																		</object>
+																																		<object class="sizeritem">
+																																			<option>1</option>
+																																			<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+																																			<border>6</border>
+																																			<object class="wxChoice" name="MaterialStageBlendTypeDest">
+																																				<selection>0</selection>
+																																				<content />
 																																			</object>
 																																		</object>
 																																	</object>
@@ -1712,6 +1791,7 @@
 																																					<flag></flag>
 																																					<border>3</border>
 																																					<object class="wxCheckBox" name="MaterialStageSoundMapWaveform">
+																																						<hidden>1</hidden>
 																																						<label>Waveform</label>
 																																						<checked>0</checked>
 																																					</object>
@@ -1722,6 +1802,7 @@
 																																					<border>0</border>
 																																					<object class="wxPanel" name="MaterialStageRenderMapPanel">
 																																						<style>wxTAB_TRAVERSAL</style>
+																																						<hidden>1</hidden>
 																																						<object class="wxBoxSizer">
 																																							<orient>wxHORIZONTAL</orient>
 																																							<object class="sizeritem">
@@ -1772,6 +1853,7 @@
 																																					<flag></flag>
 																																					<border>3</border>
 																																					<object class="wxCheckBox" name="MaterialStageVideoMapLoop">
+																																						<hidden>1</hidden>
 																																						<label>Loop</label>
 																																						<checked>0</checked>
 																																					</object>
@@ -1782,66 +1864,34 @@
 																																</object>
 																																<object class="sizeritem">
 																																	<option>0</option>
-																																	<flag>wxALIGN_CENTER_VERTICAL</flag>
-																																	<border>5</border>
-																																	<object class="wxStaticText" name="m_staticText8">
-																																		<label>Blend:</label>
+																																	<flag>wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxTOP</flag>
+																																	<border>6</border>
+																																	<object class="wxStaticText" name="m_staticText62">
+																																		<label>Alphatest:</label>
 																																		<wrap>-1</wrap>
 																																	</object>
 																																</object>
 																																<object class="sizeritem">
-																																	<option>1</option>
-																																	<flag>wxEXPAND</flag>
+																																	<option>0</option>
+																																	<flag>wxALIGN_CENTER_VERTICAL</flag>
 																																	<border>0</border>
-																																	<object class="wxBoxSizer">
-																																		<orient>wxHORIZONTAL</orient>
-																																		<object class="sizeritem">
-																																			<option>1</option>
-																																			<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
-																																			<border>6</border>
-																																			<object class="wxChoice" name="MaterialStageBlendType">
-																																				<selection>0</selection>
-																																				<content />
-																																			</object>
-																																		</object>
-																																		<object class="sizeritem">
-																																			<option>0</option>
-																																			<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																																			<border>0</border>
-																																			<object class="wxStaticText" name="m_staticText60">
-																																				<label>Source:</label>
-																																				<wrap>-1</wrap>
-																																			</object>
-																																		</object>
-																																		<object class="sizeritem">
-																																			<option>0</option>
-																																			<flag>wxALIGN_CENTER_VERTICAL|wxALL|wxLEFT</flag>
-																																			<border>6</border>
-																																			<object class="wxChoice" name="MaterialStageBlendTypeSrc">
-																																				<selection>0</selection>
-																																				<content />
-																																			</object>
-																																		</object>
-																																		<object class="sizeritem">
-																																			<option>0</option>
-																																			<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																																			<border>0</border>
-																																			<object class="wxStaticText" name="m_staticText601">
-																																				<label>Dest:</label>
-																																				<wrap>-1</wrap>
-																																			</object>
-																																		</object>
-																																		<object class="sizeritem">
-																																			<option>0</option>
-																																			<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
-																																			<border>6</border>
-																																			<object class="wxChoice" name="MaterialStageBlendTypeDest">
-																																				<selection>0</selection>
-																																				<content />
-																																			</object>
-																																		</object>
+																																	<object class="wxTextCtrl" name="MaterialStageAlphaTestExpression">
+																																		<value></value>
 																																	</object>
 																																</object>
+																															</object>
+																														</object>
+																														<object class="sizeritem">
+																															<option>0</option>
+																															<flag>wxEXPAND|wxLEFT|wxRIGHT</flag>
+																															<border>6</border>
+																															<object class="wxFlexGridSizer">
+																																<rows>0</rows>
+																																<cols>2</cols>
+																																<vgap>6</vgap>
+																																<hgap>12</hgap>
+																																<growablecols>1</growablecols>
+																																<growablerows></growablerows>
 																																<object class="sizeritem">
 																																	<option>0</option>
 																																	<flag>wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxTOP</flag>
@@ -1853,7 +1903,7 @@
 																																</object>
 																																<object class="sizeritem">
 																																	<option>1</option>
-																																	<flag>wxEXPAND</flag>
+																																	<flag>wxALIGN_CENTER_VERTICAL</flag>
 																																	<border>0</border>
 																																	<object class="wxBoxSizer">
 																																		<orient>wxHORIZONTAL</orient>
@@ -1915,75 +1965,34 @@
 																																</object>
 																																<object class="sizeritem">
 																																	<option>0</option>
-																																	<flag>wxALIGN_CENTER_VERTICAL</flag>
+																																	<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
 																																	<border>0</border>
-																																	<object class="wxCheckBox" name="MaterialStageHasAlphaTest">
-																																		<label>Alphatest:</label>
-																																		<checked>0</checked>
+																																	<object class="wxStaticText" name="m_staticText111">
+																																		<label>Private Polygon Offset:</label>
+																																		<wrap>-1</wrap>
 																																	</object>
 																																</object>
 																																<object class="sizeritem">
-																																	<option>1</option>
-																																	<flag>wxEXPAND</flag>
-																																	<border>0</border>
-																																	<object class="wxBoxSizer">
-																																		<orient>wxHORIZONTAL</orient>
-																																		<object class="sizeritem">
-																																			<option>1</option>
-																																			<flag>wxEXPAND|wxRIGHT</flag>
-																																			<border>12</border>
-																																			<object class="wxTextCtrl" name="MaterialStageAlphaTestExpression">
-																																				<value></value>
-																																			</object>
-																																		</object>
-																																		<object class="sizeritem">
-																																			<option>0</option>
-																																			<flag>wxALIGN_CENTER_VERTICAL</flag>
-																																			<border>0</border>
-																																			<object class="wxBoxSizer">
-																																				<orient>wxHORIZONTAL</orient>
-																																				<object class="sizeritem">
-																																					<option>0</option>
-																																					<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
-																																					<border>0</border>
-																																					<object class="wxStaticText" name="m_staticText111">
-																																						<label>Private Polygon Offset:</label>
-																																						<wrap>-1</wrap>
-																																					</object>
-																																				</object>
-																																				<object class="sizeritem">
-																																					<option>0</option>
-																																					<flag>wxLEFT</flag>
-																																					<border>6</border>
-																																					<object class="wxSpinCtrlDouble" name="MaterialStagePrivatePolygonOffset">
-																																						<style>wxSP_ARROW_KEYS</style>
-																																						<enabled>0</enabled>
-																																						<value>0.100000</value>
-																																						<min>-9999</min>
-																																						<max>9999</max>
-																																						<inc>0.1</inc>
-																																						<digits>1</digits>
-																																					</object>
-																																				</object>
-																																			</object>
-																																		</object>
+																																	<option>0</option>
+																																	<flag></flag>
+																																	<border>6</border>
+																																	<object class="wxSpinCtrlDouble" name="MaterialStagePrivatePolygonOffset">
+																																		<style>wxSP_ARROW_KEYS</style>
+																																		<enabled>0</enabled>
+																																		<value>0.100000</value>
+																																		<min>-9999</min>
+																																		<max>9999</max>
+																																		<inc>0.1</inc>
+																																		<digits>1</digits>
 																																	</object>
 																																</object>
 																																<object class="sizeritem">
-																																	<option>1</option>
-																																	<flag>wxEXPAND</flag>
-																																	<border>5</border>
-																																	<object class="wxBoxSizer">
-																																		<orient>wxVERTICAL</orient>
-																																		<object class="sizeritem">
-																																			<option>0</option>
-																																			<flag>wxBOTTOM|wxTOP</flag>
-																																			<border>6</border>
-																																			<object class="wxStaticText" name="m_staticText96">
-																																				<label>Depth Function:</label>
-																																				<wrap>-1</wrap>
-																																			</object>
-																																		</object>
+																																	<option>0</option>
+																																	<flag>wxBOTTOM|wxTOP</flag>
+																																	<border>6</border>
+																																	<object class="wxStaticText" name="m_staticText96">
+																																		<label>Depth Function:</label>
+																																		<wrap>-1</wrap>
 																																	</object>
 																																</object>
 																																<object class="sizeritem">
@@ -2009,58 +2018,6 @@
 																																				<label>ignoreDepth</label>
 																																				<checked>0</checked>
 																																			</object>
-																																		</object>
-																																	</object>
-																																</object>
-																															</object>
-																														</object>
-																														<object class="sizeritem">
-																															<option>0</option>
-																															<flag>wxEXPAND|wxLEFT|wxRIGHT</flag>
-																															<border>6</border>
-																															<object class="wxPanel" name="MaterialStageSpecialMapPanel">
-																																<style>wxTAB_TRAVERSAL</style>
-																																<object class="wxFlexGridSizer">
-																																	<rows>7</rows>
-																																	<cols>2</cols>
-																																	<vgap>6</vgap>
-																																	<hgap>12</hgap>
-																																	<growablecols>1</growablecols>
-																																	<growablerows></growablerows>
-																																	<object class="sizeritem">
-																																		<option>0</option>
-																																		<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																																		<border>0</border>
-																																		<object class="wxRadioButton" name="MaterialStageVideoMap">
-																																			<label>videoMap</label>
-																																			<value>0</value>
-																																		</object>
-																																	</object>
-																																	<object class="sizeritem">
-																																		<option>0</option>
-																																		<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																																		<border>0</border>
-																																		<object class="wxRadioButton" name="MaterialStageSoundMap">
-																																			<label>soundMap</label>
-																																			<value>0</value>
-																																		</object>
-																																	</object>
-																																	<object class="sizeritem">
-																																		<option>0</option>
-																																		<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																																		<border>0</border>
-																																		<object class="wxRadioButton" name="MaterialStageRemoteRenderMap">
-																																			<label>remoteRenderMap</label>
-																																			<value>0</value>
-																																		</object>
-																																	</object>
-																																	<object class="sizeritem">
-																																		<option>0</option>
-																																		<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																																		<border>0</border>
-																																		<object class="wxRadioButton" name="MaterialStageMirrorRenderMap">
-																																			<label>mirrorRenderMap</label>
-																																			<value>0</value>
 																																		</object>
 																																	</object>
 																																</object>

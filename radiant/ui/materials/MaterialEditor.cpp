@@ -731,25 +731,6 @@ void MaterialEditor::setupMaterialStageProperties()
     setupStageFlag("MaterialStageFlagMaskDepth", IShaderLayer::FLAG_MASK_DEPTH);
     setupStageFlag("MaterialStageIgnoreAlphaTest", IShaderLayer::FLAG_IGNORE_ALPHATEST);
 
-    _stageBindings.emplace(std::make_shared<CheckBoxBinding<IShaderLayer::Ptr>>(getControl<wxCheckBox>("MaterialStageHasAlphaTest"),
-        [](const IShaderLayer::Ptr& layer)
-        {
-            return layer->hasAlphaTest();
-        },
-        [=](const IEditableShaderLayer::Ptr& layer, const bool& value)
-        {
-            if (value)
-            {
-                layer->setAlphaTestExpressionFromString("0.5");
-            }
-            else
-            {
-                layer->setAlphaTestExpressionFromString("");
-            }
-        },
-        std::bind(&MaterialEditor::onMaterialChanged, this),
-        std::bind(&MaterialEditor::getEditableStageForSelection, this)));
-
     createExpressionBinding("MaterialStageAlphaTestExpression",
         [](const IShaderLayer::Ptr& layer) { return layer->getAlphaTestExpression(); },
         [this](const IEditableShaderLayer::Ptr& layer, const std::string& value) 
@@ -1835,6 +1816,7 @@ void MaterialEditor::_onStageBlendTypeChanged(wxCommandEvent& ev)
     
     updateNameOfSelectedStage();
     updateStageControls();
+    onMaterialChanged();
 }
 
 void MaterialEditor::_onAddStage(wxCommandEvent& ev)
