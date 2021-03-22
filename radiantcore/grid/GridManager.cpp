@@ -227,7 +227,7 @@ void GridManager::setGridSize(GridSize gridSize)
 
 float GridManager::getGridSize() const
 {
-	return pow(2.0f, static_cast<int>(_activeGridSize));
+	return pow(2.0f, static_cast<float>(_activeGridSize));
 }
 
 int GridManager::getGridPower() const 

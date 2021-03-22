@@ -135,7 +135,7 @@ void ColourSchemeEditor::selectActiveScheme()
 {
     // Find a row matching the active colour scheme name
     wxString name = GlobalColourSchemeManager().getActiveScheme().getName();
-    unsigned r = 0;
+    int r = 0;
     for ( ; r < _schemeList->GetItemCount(); ++r)
     {
         wxString rowName = _schemeList->GetTextValue(r, 0);

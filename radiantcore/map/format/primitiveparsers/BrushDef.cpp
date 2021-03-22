@@ -250,8 +250,8 @@ Matrix4 LegacyBrushDefParser::getTexDef(std::string shader, float shiftS, float 
 	TexturePtr texture = GlobalMaterialManager().getMaterial( shader )->getEditorImage();
 
 	if (texture) {
-		image_width = texture->getWidth();
-		image_height = texture->getHeight();
+		image_width = static_cast<float>(texture->getWidth());
+		image_height = static_cast<float>(texture->getHeight());
 	}
 
 	if (image_width == 0 || image_height == 0) {
