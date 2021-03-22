@@ -458,35 +458,19 @@ void MaterialEditor::setupMaterialShaderFlags()
     setupMaterialFlag("MaterialFlagIsLightGemSurf", Material::FLAG_ISLIGHTGEMSURF);
 
     // Cull types
-    _materialBindings.emplace(std::make_shared<CheckBoxBinding<MaterialPtr>>(getControl<wxCheckBox>("MaterialTwoSided"),
-        [](const MaterialPtr& material)
-        {
-            return material->getCullType() == Material::CULL_NONE;
-        },
-        [=](const MaterialPtr& material, const bool& newValue)
-        {
-            material->setCullType(newValue ? Material::CULL_NONE : Material::CULL_BACK);
-        },
-            [this]() // post-update
-        {
-            onMaterialChanged();
-            updateMaterialPropertiesFromMaterial();
-        }));
+    auto cullTypes = getControl<wxChoice>("MaterialCullType");
+    
+    for (const auto& pair : shaders::CullTypes)
+    {
+        cullTypes->AppendString(pair.first);
+    }
 
-    _materialBindings.emplace(std::make_shared<CheckBoxBinding<MaterialPtr>>(getControl<wxCheckBox>("MaterialBackSided"),
-        [](const MaterialPtr& material)
-        {
-            return material->getCullType() == Material::CULL_FRONT;
-        },
-        [=](const MaterialPtr& material, const bool& newValue)
-        {
-            material->setCullType(newValue ? Material::CULL_FRONT : Material::CULL_BACK);
-        },
-        [this]() // post-update
-        {
-            onMaterialChanged();
-            updateMaterialPropertiesFromMaterial();
-        }));
+    cullTypes->Bind(wxEVT_CHOICE, [=](wxCommandEvent& ev)
+    {
+        if (!_material || _materialUpdateInProgress) return;
+        _material->setCullType(shaders::getCullTypeForString(cullTypes->GetStringSelection().ToStdString()));
+        onMaterialChanged();
+    });
 
     // Global Clamping
     auto clampDropdown = getControl<wxChoice>("MaterialClampType");
@@ -1021,10 +1005,13 @@ void MaterialEditor::updateSettingsNotebook()
 {
     auto item = _stageView->GetSelection();
 
-    if (!_material || !item.IsOk()) return;
-    auto row = wxutil::TreeModel::Row(item, *_stageList);
+    bool isGlobal = true;
 
-    bool isGlobal = row[STAGE_COLS().global].getBool();
+    if (_material && item.IsOk())
+    {
+        auto row = wxutil::TreeModel::Row(item, *_stageList);
+        isGlobal = row[STAGE_COLS().global].getBool();
+    }
 
     auto notebook = getControl<wxNotebook>("MaterialStageSettingsNotebook");
     auto desiredPrefix = isGlobal ? "Material" : "Stage";
@@ -1048,15 +1035,9 @@ void MaterialEditor::updateSettingsNotebook()
         }
     }
 
-    // Update title
-    if (row[STAGE_COLS().global].getBool())
-    {
-        getControl<wxStaticText>("MaterialEditorStagePropertiesLabel")->SetLabel(_("Global Material Settings"));
-    }
-    else
-    {
-        getControl<wxStaticText>("MaterialEditorStagePropertiesLabel")->SetLabel(_("Stage Settings"));
-    }
+    // Update settings title
+    getControl<wxStaticText>("MaterialEditorStagePropertiesLabel")->SetLabel(isGlobal ?
+        _("Global Material Settings") : _("Stage Settings"));
 }
 
 void MaterialEditor::updateStageButtonSensitivity()
@@ -1279,6 +1260,11 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
         auto clampDropdown = getControl<wxChoice>("MaterialClampType");
         auto clampTypeString = shaders::getStringForClampType(_material->getClampType());
         clampDropdown->SetStringSelection(clampTypeString);
+
+        // Culling
+        auto cullTypes = getControl<wxChoice>("MaterialCullType");
+        auto cullTypeString = shaders::getStringForCullType(_material->getCullType());
+        cullTypes->SetStringSelection(cullTypeString);
 
         // Light Falloff type
         auto lightFalloffCubeMapType = _material->getLightFalloffCubeMapType();

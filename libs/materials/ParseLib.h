@@ -52,6 +52,39 @@ inline Material::SurfaceType getSurfaceTypeForString(const std::string& surfaceT
     return Material::SURFTYPE_DEFAULT;
 }
 
+constexpr std::pair<const char*, Material::CullType> CullTypes[]
+{
+    { "Frontsided", Material::CULL_BACK },
+    { "Backsided", Material::CULL_FRONT },
+    { "Twosided", Material::CULL_NONE },
+};
+
+inline std::string getStringForCullType(Material::CullType type)
+{
+    for (const auto& pair : CullTypes)
+    {
+        if (type == pair.second)
+        {
+            return pair.first;
+        }
+    }
+
+    return CullTypes[0].first;
+}
+
+inline Material::CullType getCullTypeForString(const std::string& typeString)
+{
+    for (const auto& pair : CullTypes)
+    {
+        if (typeString == pair.first)
+        {
+            return pair.second;
+        }
+    }
+
+    return Material::CULL_BACK;
+}
+
 constexpr std::pair<const char*, Material::SortRequest> PredefinedSortValues[]
 {
     { "subview", Material::SORT_SUBVIEW },
