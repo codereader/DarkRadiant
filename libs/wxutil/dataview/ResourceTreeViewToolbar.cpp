@@ -23,18 +23,18 @@ ResourceTreeViewToolbar::ResourceTreeViewToolbar(wxWindow* parent, ResourceTreeV
     SetSizer(grid);
 
     // Hbox for the favourites selection widgets
-    auto* favourites = new wxBoxSizer(wxHORIZONTAL);
+    _leftSizer = new wxBoxSizer(wxHORIZONTAL);
     _showAll = new wxRadioButton(this, wxID_ANY, _("Show All"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
     _showFavourites = new wxRadioButton(this, wxID_ANY, _("Show Favourites"));
 
     _showAll->Bind(wxEVT_RADIOBUTTON, &ResourceTreeViewToolbar::_onFilterButtonToggled, this);
     _showFavourites->Bind(wxEVT_RADIOBUTTON, &ResourceTreeViewToolbar::_onFilterButtonToggled, this);
 
-    favourites->Add(_showAll, 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 0);
-    favourites->Add(_showFavourites, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
+    _leftSizer->Add(_showAll, 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 0);
+    _leftSizer->Add(_showFavourites, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
 
     // Filter text entry box
-    auto* filterBox = new wxBoxSizer(wxHORIZONTAL);
+    _rightSizer = new wxBoxSizer(wxHORIZONTAL);
 
     auto* filterImage = new wxStaticBitmap(this, wxID_ANY, wxArtProvider::GetBitmap(wxART_FIND, wxART_TOOLBAR, wxSize(16, 16)));
 
@@ -65,15 +65,31 @@ ResourceTreeViewToolbar::ResourceTreeViewToolbar(wxWindow* parent, ResourceTreeV
         JumpToPrevFilterMatch();
     });
 
-    filterBox->Add(filterImage, 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 6);
-    filterBox->Add(_filterEntry, 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 6);
-    filterBox->Add(_findPrevButton, 0, wxEXPAND | wxRIGHT, 3);
-    filterBox->Add(_findNextButton, 0, wxEXPAND, 6);
+    _rightSizer->Add(filterImage, 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 6);
+    _rightSizer->Add(_filterEntry, 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 6);
+    _rightSizer->Add(_findPrevButton, 0, wxEXPAND | wxRIGHT, 3);
+    _rightSizer->Add(_findNextButton, 0, wxEXPAND, 6);
 
-    grid->Add(favourites, 0, wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT | wxRIGHT, 6);
-    grid->Add(filterBox, 0, wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT, 6);
+    grid->Add(_leftSizer, 0, wxALIGN_CENTER_VERTICAL | wxALIGN_LEFT | wxRIGHT, 6);
+    grid->Add(_rightSizer, 0, wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT, 6);
 
     AssociateToTreeView(treeView);
+}
+
+wxSizer* ResourceTreeViewToolbar::GetLeftSizer()
+{
+    return _leftSizer;
+}
+
+wxSizer* ResourceTreeViewToolbar::GetRightSizer()
+{
+    return _rightSizer;
+}
+
+void ResourceTreeViewToolbar::EnableFavouriteManagement(bool enable)
+{
+    _showAll->Show(enable);
+    _showFavourites->Show(enable);
 }
 
 void ResourceTreeViewToolbar::AssociateToTreeView(ResourceTreeView* treeView)

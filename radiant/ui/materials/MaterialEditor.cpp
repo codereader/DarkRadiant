@@ -128,6 +128,12 @@ MaterialEditor::MaterialEditor() :
     _treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &MaterialEditor::_onTreeViewSelectionChanged, this);
 
     auto* treeToolbar = new wxutil::ResourceTreeViewToolbar(panel, _treeView);
+    treeToolbar->EnableFavouriteManagement(false);
+
+    auto definitionLabel = getControl<wxStaticText>("MaterialEditorDefinitionLabel");
+    definitionLabel->GetContainingSizer()->Detach(definitionLabel);
+    definitionLabel->Reparent(treeToolbar);
+    treeToolbar->GetLeftSizer()->Add(definitionLabel, 0, wxALIGN_LEFT);
 
     panel->GetSizer()->Add(treeToolbar, 0, wxEXPAND | wxBOTTOM, 6);
     panel->GetSizer()->Add(_treeView, 1, wxEXPAND);

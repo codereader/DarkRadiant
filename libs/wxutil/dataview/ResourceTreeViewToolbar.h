@@ -26,8 +26,19 @@ private:
     wxBitmapButton* _findPrevButton;
     wxBitmapButton* _findNextButton;
 
+    wxSizer* _leftSizer;
+    wxSizer* _rightSizer;
+
 public:
     ResourceTreeViewToolbar(wxWindow* parent, ResourceTreeView* treeView = nullptr);
+
+    // Return the sizer for packing items in the left half of the toolbar
+    wxSizer* GetLeftSizer();
+
+    // Return the sizer for packing items in the right half of the toolbar
+    wxSizer* GetRightSizer();
+
+    void EnableFavouriteManagement(bool enable);
 
     void AssociateToTreeView(ResourceTreeView* treeView);
 
