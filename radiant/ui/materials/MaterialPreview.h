@@ -31,6 +31,7 @@ private:
 
     wxToolBarToolBase* _testModelCubeButton;
     wxToolBarToolBase* _testModelSphereButton;
+    wxToolBarToolBase* _testModelTilesButton;
 
 public:
     MaterialPreview(wxWindow* parent);

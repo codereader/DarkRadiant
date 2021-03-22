@@ -160,7 +160,7 @@ MaterialEditor::MaterialEditor() :
     auto paneSizer = new wxBoxSizer(wxVERTICAL);
     paneSizer->Add(_sourceView, 1, wxGROW | wxEXPAND);
     sourceTextPanel->GetPane()->SetSizer(paneSizer);
-    sourceTextPanel->Expand();
+    sourceTextPanel->Collapse();
 
     previewPanel->GetSizer()->Add(_preview->getWidget(), 1, wxEXPAND);
     previewPanel->GetSizer()->Add(sourceTextPanel, 0, wxEXPAND);

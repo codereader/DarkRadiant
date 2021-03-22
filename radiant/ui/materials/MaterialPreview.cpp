@@ -65,8 +65,12 @@ void MaterialPreview::setupToolbar()
     _testModelSphereButton = toolbar->AddRadioTool(wxID_ANY, "", wxutil::GetLocalBitmap("sphere.png", wxART_TOOLBAR));
     _testModelSphereButton->SetShortHelp(_("Show Sphere"));
 
+    _testModelTilesButton = toolbar->AddRadioTool(wxID_ANY, "", wxutil::GetLocalBitmap("tiles.png", wxART_TOOLBAR));
+    _testModelTilesButton->SetShortHelp(_("Show Tiles"));
+
     toolbar->Bind(wxEVT_TOOL, &MaterialPreview::onTestModelSelectionChanged, this, _testModelCubeButton->GetId());
     toolbar->Bind(wxEVT_TOOL, &MaterialPreview::onTestModelSelectionChanged, this, _testModelSphereButton->GetId());
+    toolbar->Bind(wxEVT_TOOL, &MaterialPreview::onTestModelSelectionChanged, this, _testModelTilesButton->GetId());
 
     toolbar->Realize();
 
@@ -251,9 +255,13 @@ void MaterialPreview::setupTestModel()
     {
         _model = GlobalModelCache().getModelNodeForStaticResource("preview/cube.ase");
     }
-    else // sphere
+    else if (_testModelSphereButton->IsToggled()) // sphere
     {
         _model = GlobalModelCache().getModelNodeForStaticResource("preview/sphere.ase");
+    }
+    else // Tiles
+    {
+        _model = GlobalModelCache().getModelNodeForStaticResource("preview/tiles.ase");
     }
 
     // The test model is a child of this entity
