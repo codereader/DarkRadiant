@@ -731,7 +731,6 @@ void MaterialEditor::setupMaterialStageProperties()
         [this](const IEditableShaderLayer::Ptr& layer, const std::string& value) 
         { 
             layer->setAlphaTestExpressionFromString(value);
-            getControl<wxCheckBox>("MaterialStageHasAlphaTest")->SetValue(layer->hasAlphaTest());
         });
 
     for (const auto& value : { "diffusemap", "bumpmap", "specularmap", "blend", "add", "filter", "modulate", "none" })

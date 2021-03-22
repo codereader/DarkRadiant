@@ -42,6 +42,11 @@ public:
         return "__defined_by_darkradiant.skin";
     }
 
+    bool isEmpty() const
+    {
+        return !_material;
+    }
+
     void clear()
     {
         _material.reset();

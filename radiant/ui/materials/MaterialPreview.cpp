@@ -3,11 +3,13 @@
 #include "ibrush.h"
 #include "ientity.h"
 #include "ieclass.h"
+#include "ishaders.h"
 #include "string/convert.h"
 #include "math/pi.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/Bitmap.h"
 #include <wx/toolbar.h>
+#include "gamelib.h"
 
 namespace ui
 {
@@ -15,6 +17,7 @@ namespace ui
 namespace
 {
     const char* const FUNC_STATIC_CLASS = "func_static";
+    const char* const GKEY_DEFAULT_ROOM_MATERIAL = "/materialPreview/defaultRoomMaterial";
 }
 
 MaterialPreview::MaterialPreview(wxWindow* parent) :
@@ -29,6 +32,9 @@ MaterialPreview::MaterialPreview(wxWindow* parent) :
     GlobalModelSkinCache().addNamedSkin(_testRoomSkin);
 
     setupToolbar();
+
+    setViewOrigin(Vector3(1, 1, 1) * 100);
+    setViewAngles(Vector3(37, 135, 0));
 }
 
 MaterialPreview::~MaterialPreview()
@@ -74,6 +80,9 @@ const MaterialPtr& MaterialPreview::getMaterial()
 
 void MaterialPreview::updateModelSkin()
 {
+    // Hide the model if there's no material to preview
+    _model->setFiltered(_testModelSkin->isEmpty());
+
     // Let the model update its remaps
     auto skinnedModel = std::dynamic_pointer_cast<SkinnedModel>(_model);
 
@@ -83,8 +92,16 @@ void MaterialPreview::updateModelSkin()
     }
 }
 
+std::string MaterialPreview::getRoomMaterial()
+{
+    return game::current::getValue<std::string>(GKEY_DEFAULT_ROOM_MATERIAL);
+}
+
 void MaterialPreview::updateRoomSkin()
 {
+    auto roomMaterial = getRoomMaterial();
+    _testRoomSkin->setRemapMaterial(GlobalMaterialManager().getMaterial(roomMaterial));
+
     // Let the model update its remaps
     auto skinnedRoom = std::dynamic_pointer_cast<SkinnedModel>(_room);
 
@@ -161,6 +178,11 @@ bool MaterialPreview::canDrawGrid()
     return false;
 }
 
+RenderStateFlags MaterialPreview::getRenderFlagsFill()
+{
+    return RenderPreview::getRenderFlagsFill() | RENDER_DEPTHWRITE | RENDER_DEPTHTEST;
+}
+
 void MaterialPreview::setupSceneGraph()
 {
     RenderPreview::setupSceneGraph();
@@ -193,7 +215,7 @@ void MaterialPreview::setupSceneGraph()
         double distance = _model->localAABB().getRadius() * _defaultCamDistanceFactor;
 
         setViewOrigin(Vector3(1, 1, 1) * distance);
-        setViewAngles(Vector3(34, 135, 0));
+        setViewAngles(Vector3(37, 135, 0));
     }
     catch (std::runtime_error&)
     {
@@ -212,6 +234,7 @@ void MaterialPreview::setupRoom()
     _rootNode->addChildNode(roomEntity);
 
     roomEntity->addChildNode(_room);
+    
     updateRoomSkin();
 }
 

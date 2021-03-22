@@ -45,6 +45,7 @@ public:
 protected:
     bool canDrawGrid() override;
     void setupSceneGraph() override;
+    RenderStateFlags getRenderFlagsFill() override;
 
 private:
     bool onPreRender() override;
@@ -54,6 +55,7 @@ private:
     void setupRoom();
     void updateModelSkin();
     void updateRoomSkin();
+    std::string getRoomMaterial();
     void onTestModelSelectionChanged(wxCommandEvent& ev);
 };
 
