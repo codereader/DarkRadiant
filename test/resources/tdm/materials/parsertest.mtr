@@ -490,3 +490,11 @@ textures/parsertest/lights/lightfalloff3
 	}
 }
 
+textures/parsertest/expressions/sinTableLookup
+{
+	{
+		blend diffusemap
+		map _white
+		alphaTest sinTable[0.5008]
+	}
+}

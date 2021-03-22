@@ -110,6 +110,18 @@ TEST_F(MaterialsTest, IdentifyAmbientLight)
     EXPECT_FALSE(nonLight->isAmbientLight());
 }
 
+TEST_F(MaterialsTest, MaterialSinTableLookup)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/expressions/sinTableLookup");
+
+    auto& stage = material->getAllLayers().front();
+
+    // Set time to 5008 seconds, this is the value I happened to run into when debugging this in the engine
+    stage->evaluateExpressions(5008);
+
+    EXPECT_FLOAT_EQ(stage->getAlphaTest(), -0.00502608204f);
+}
+
 TEST_F(MaterialsTest, MaterialParserPolygonOffset)
 {
     auto& materialManager = GlobalMaterialManager();
