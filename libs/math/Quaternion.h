@@ -62,11 +62,6 @@ public:
 	static Quaternion createForZ(double angle);
 
 	/**
-	 * Retrieves the quaternion from the given matrix.
-	 */
-	static Quaternion createForMatrix(const Matrix4& matrix4);
-
-	/**
 	 * Returns this quaternion multiplied by the other one.
 	 */
 	Quaternion getMultipliedBy(const Quaternion& other) const;

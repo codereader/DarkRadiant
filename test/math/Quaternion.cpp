@@ -40,8 +40,6 @@ TEST(MathTest, QuaternionForZRotation)
 
     expectNear(zRot, Quaternion(0, 0, sin(angle.asRadians() / 2),
                                 cos(angle.asRadians() / 2)));
-    expectNear(zRot,
-               Quaternion::createForMatrix(Matrix4::getRotationAboutZ(angle)));
 }
 
 TEST(MathTest, QuaternionMultiplication)

@@ -10,6 +10,15 @@
 namespace test
 {
 
+// Fuzzy equality assertion for Plane3
+void expectNear(const Plane3& p1, const Plane3& p2, double epsilon)
+{
+    EXPECT_NEAR(p1.normal().x(), p2.normal().x(), epsilon);
+    EXPECT_NEAR(p1.normal().y(), p2.normal().y(), epsilon);
+    EXPECT_NEAR(p1.normal().z(), p2.normal().z(), epsilon);
+    EXPECT_NEAR(p1.dist(), p2.dist(), epsilon);
+}
+
 class BrushTest: public RadiantTest
 {
 protected:
@@ -115,14 +124,18 @@ TEST_F(BrushTest, FacePlaneRotateWithMatrix)
                 Plane3 orig = face.getPlane3();
 
                 // Transform the plane with a rotation matrix
-                Matrix4 rot = Matrix4::getRotation(Vector3(0, 1, 0), 2);
+                const double ANGLE = 2.0;
+                Matrix4 rot = Matrix4::getRotation(Vector3(0, 1, 0), ANGLE);
 
-                Node_getTransformable(_brushNode)->setRotation(Quaternion::createForMatrix(rot));
+                Node_getTransformable(_brushNode)->setRotation(
+                    Quaternion::createForY(-ANGLE)
+                );
                 Node_getTransformable(_brushNode)->freezeTransform();
 
+                double EPSILON = 0.001;
                 EXPECT_NE(face.getPlane3(), orig);
-                EXPECT_EQ(face.getPlane3(), orig.transformed(rot));
-                EXPECT_NEAR(face.getPlane3().normal().getLength(), 1, 0.001);
+                expectNear(face.getPlane3(), orig.transformed(rot), EPSILON);
+                EXPECT_NEAR(face.getPlane3().normal().getLength(), 1, EPSILON);
 
                 return true;
             }
