@@ -21,9 +21,11 @@ private:
 
     scene::INodePtr _entity; // The func_static entity
     scene::INodePtr _model; // The textured model
+    scene::INodePtr _room; // The textured room
     scene::INodePtr _light; // The light
 
     std::shared_ptr<TestModelSkin> _testModelSkin;
+    std::shared_ptr<TestModelSkin> _testRoomSkin;
 
     float _defaultCamDistanceFactor;
 
@@ -49,7 +51,9 @@ private:
     void prepareScene();
     void setupToolbar();
     void setupTestModel();
+    void setupRoom();
     void updateModelSkin();
+    void updateRoomSkin();
     void onTestModelSelectionChanged(wxCommandEvent& ev);
 };
 

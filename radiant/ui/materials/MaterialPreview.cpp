@@ -22,8 +22,11 @@ MaterialPreview::MaterialPreview(wxWindow* parent) :
     _sceneIsReady(false),
     _defaultCamDistanceFactor(2.0f)
 {
-    _testModelSkin.reset(new TestModelSkin);
+    _testModelSkin.reset(new TestModelSkin("model"));
     GlobalModelSkinCache().addNamedSkin(_testModelSkin);
+
+    _testRoomSkin.reset(new TestModelSkin("room"));
+    GlobalModelSkinCache().addNamedSkin(_testRoomSkin);
 
     setupToolbar();
 }
@@ -34,6 +37,12 @@ MaterialPreview::~MaterialPreview()
     {
         GlobalModelSkinCache().removeSkin(_testModelSkin->getName());
         _testModelSkin.reset();
+    }
+
+    if (_testRoomSkin)
+    {
+        GlobalModelSkinCache().removeSkin(_testRoomSkin->getName());
+        _testRoomSkin.reset();
     }
 }
 
@@ -71,6 +80,17 @@ void MaterialPreview::updateModelSkin()
     if (skinnedModel)
     {
         skinnedModel->skinChanged(_testModelSkin->getName());
+    }
+}
+
+void MaterialPreview::updateRoomSkin()
+{
+    // Let the model update its remaps
+    auto skinnedRoom = std::dynamic_pointer_cast<SkinnedModel>(_room);
+
+    if (skinnedRoom)
+    {
+        skinnedRoom->skinChanged(_testRoomSkin->getName());
     }
 }
 
@@ -149,6 +169,8 @@ void MaterialPreview::setupSceneGraph()
     {
         _rootNode = std::make_shared<scene::BasicRootNode>();
 
+        setupRoom();
+
         _entity = GlobalEntityModule().createEntity(
             GlobalEntityClassManager().findClass(FUNC_STATIC_CLASS));
 
@@ -178,6 +200,19 @@ void MaterialPreview::setupSceneGraph()
         wxutil::Messagebox::ShowError(fmt::format(_("Unable to setup the preview,\n"
             "could not find the entity class {0}"), FUNC_STATIC_CLASS));
     }
+}
+
+void MaterialPreview::setupRoom()
+{
+    _room = GlobalModelCache().getModelNodeForStaticResource("preview/room_cuboid.ase");
+
+    auto roomEntity = GlobalEntityModule().createEntity(
+        GlobalEntityClassManager().findClass(FUNC_STATIC_CLASS));
+
+    _rootNode->addChildNode(roomEntity);
+
+    roomEntity->addChildNode(_room);
+    updateRoomSkin();
 }
 
 void MaterialPreview::setupTestModel()
