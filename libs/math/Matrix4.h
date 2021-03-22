@@ -259,38 +259,22 @@ public:
         return _m;
     }
 
-    /**
-     * \brief
-     * Transpose this matrix in-place.
-     */
+    /// Transpose this matrix in-place.
     void transpose();
 
-    /**
-     * \brief
-     * Return a transposed copy of this matrix.
-     */
+    /// Return a transposed copy of this matrix.
     Matrix4 getTransposed() const;
 
-    /**
-     * \brief
-     * Return the affine inverse of this transformation matrix.
-     */
+    /// Return the affine inverse of this transformation matrix.
     Matrix4 getInverse() const;
 
-    /**
-     * Affine invert this matrix in-place.
-     */
+    /// Affine invert this matrix in-place.
     void invert();
 
-    /**
-     * \brief
-     * Return the full inverse of this matrix.
-     */
+    /// Return the full inverse of this matrix.
     Matrix4 getFullInverse() const;
 
-    /**
-     * Invert this matrix in-place.
-     */
+    /// Invert this matrix in-place.
     void invertFull();
 
     /**

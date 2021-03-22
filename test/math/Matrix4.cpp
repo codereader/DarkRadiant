@@ -302,6 +302,9 @@ TEST(MathTest, MatrixScaleAffineInverse)
 
     // Get the affine inverse
     Matrix4 inverse = scaleMat.getInverse();
+    EXPECT_NE(inverse, scaleMat);
+    scaleMat.invert();
+    EXPECT_EQ(scaleMat, inverse);
 
     // Inverse must have inverted scale factors
     EXPECT_EQ(inverse.getScale(),
@@ -317,12 +320,30 @@ TEST(MathTest, MatrixTranslationAffineInverse)
 
     // Get the affine inverse
     Matrix4 inverse = transMat.getInverse();
+    EXPECT_NE(inverse, transMat);
+    transMat.invert();
+    EXPECT_EQ(transMat, inverse);
 
     // Check resulting matrix
     EXPECT_EQ(inverse, Matrix4::byRows(1, 0, 0, -TRANS.x(),
                                        0, 1, 0, -TRANS.y(),
                                        0, 0, 1, -TRANS.z(),
                                        0, 0, 0, 1));
+}
+
+TEST(MathTest, MatrixRotationAffineInverse)
+{
+    // Construct a translation matrix
+    const math::Degrees ANGLE(60);
+    Matrix4 rotMat = Matrix4::getRotationAboutZ(ANGLE);
+
+    // Get the affine inverse
+    Matrix4 inverse = rotMat.getInverse();
+
+    // Inverse should be a rotation in the other direction
+    const math::Degrees REV_ANGLE(-60);
+    Matrix4 backRotMat = Matrix4::getRotationAboutZ(REV_ANGLE);
+    expectNear(inverse, backRotMat);
 }
 
 TEST(MathTest, MatrixFullInverse)
