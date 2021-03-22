@@ -97,7 +97,6 @@ private:
     typedef void (ParticleEditor::*MemberMethod)(wxCommandEvent& ev);
 
 	// Replace the given wxSpinCtrl with a wxSpinCtrlDouble
-	wxSpinCtrlDouble* convertToSpinCtrlDouble(wxSpinCtrl* spinCtrlToReplace, double min, double max, double increment, int digits = 2);
 	wxSpinCtrlDouble* convertToSpinCtrlDouble(const std::string& name, double min, double max, double increment, int digits = 2);
 
     // Connect a spin button to call the given member method

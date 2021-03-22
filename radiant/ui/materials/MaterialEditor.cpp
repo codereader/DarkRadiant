@@ -241,6 +241,12 @@ void MaterialEditor::ShowDialog(const cmd::ArgumentList& args)
 
 void MaterialEditor::setupMaterialProperties()
 {
+    // Convert int-valued spinctrls to double-valued ones
+    convertToSpinCtrlDouble(this, "MaterialPolygonOffsetValue", -100, 100, 0.1, 1);
+    convertToSpinCtrlDouble(this, "MaterialEditorDecalInfoStaySeconds", 0, 999999, 0.1, 2);
+    convertToSpinCtrlDouble(this, "MaterialEditorDecalInfoFadeSeconds", 0, 999999, 0.1, 2);
+    convertToSpinCtrlDouble(this, "MaterialStagePrivatePolygonOffset", -100, 100, 0.1, 1);
+
     auto* typeDropdown = getControl<wxChoice>("MaterialType");
 
     typeDropdown->AppendString(""); // empty string for undefined

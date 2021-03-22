@@ -225,36 +225,17 @@ void ParticleEditor::setupParticleStageList()
 		wxEVT_BUTTON, wxCommandEventHandler(ParticleEditor::_onDuplicateStage), NULL, this);
 }
 
-wxSpinCtrlDouble* ParticleEditor::convertToSpinCtrlDouble(wxSpinCtrl* spinCtrlToReplace, double min, double max, double increment, int digits)
-{
-	wxSpinCtrlDouble* spinCtrlDouble = new wxSpinCtrlDouble(spinCtrlToReplace->GetParent(), wxID_ANY);
-	
-	spinCtrlDouble->SetRange(min, max);
-	spinCtrlDouble->SetDigits(digits);
-	spinCtrlDouble->SetIncrement(increment);
-	spinCtrlDouble->SetMaxSize(wxSize(70, -1));
-	
-	wxString name = spinCtrlToReplace->GetName();
-	spinCtrlToReplace->GetContainingSizer()->Replace(spinCtrlToReplace, spinCtrlDouble);
-	spinCtrlToReplace->Destroy();
-
-	spinCtrlDouble->SetName(name);
-	spinCtrlDouble->GetContainingSizer()->Layout();
-
-	return spinCtrlDouble;
-}
-
 wxSpinCtrlDouble* ParticleEditor::convertToSpinCtrlDouble(const std::string& name, double min, double max, double increment, int digits)
 {
-	return convertToSpinCtrlDouble(findNamedObject<wxSpinCtrl>(this, name), min, max, increment, digits);
+	auto spinCtrlDouble = XmlResourceBasedWidget::convertToSpinCtrlDouble(this, name, min, max, increment, digits);
+    spinCtrlDouble->SetMaxSize(wxSize(70, -1));
+    return spinCtrlDouble;
 }
 
 void ParticleEditor::setupSettingsPages()
 {
     // Depth Hack
-	wxSpinCtrlDouble* depthHack = convertToSpinCtrlDouble(
-		findNamedObject<wxSpinCtrl>(this, "ParticleEditorDepthHack"),
-		0, 999, 0.1, 2);
+	wxSpinCtrlDouble* depthHack = convertToSpinCtrlDouble("ParticleEditorDepthHack", 0, 999, 0.1, 2);
 	
 	depthHack->Connect(wxEVT_SPINCTRLDOUBLE, 
 		wxSpinDoubleEventHandler(ParticleEditor::_onDepthHackChanged), NULL, this);

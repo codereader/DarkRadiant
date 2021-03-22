@@ -392,16 +392,13 @@
 																																</object>
 																																<object class="sizeritem">
 																																	<option>0</option>
-																																	<flag>wxALIGN_CENTER_VERTICAL</flag>
+																																	<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
 																																	<border>0</border>
-																																	<object class="wxSpinCtrlDouble" name="MaterialPolygonOffsetValue">
+																																	<object class="wxSpinCtrl" name="MaterialPolygonOffsetValue">
 																																		<style>wxSP_ARROW_KEYS</style>
-																																		<size>70,-1</size>
-																																		<value>0.300000</value>
-																																		<min>-100</min>
-																																		<max>100</max>
-																																		<inc>0.1</inc>
-																																		<digits>1</digits>
+																																		<value>0</value>
+																																		<min>0</min>
+																																		<max>10</max>
 																																	</object>
 																																</object>
 																																<object class="sizeritem">
@@ -1030,16 +1027,14 @@
 																																							</object>
 																																							<object class="sizeritem">
 																																								<option>0</option>
-																																								<flag>wxALIGN_CENTER_VERTICAL</flag>
-																																								<border>6</border>
-																																								<object class="wxSpinCtrlDouble" name="MaterialEditorDecalInfoStaySeconds">
+																																								<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																																								<border>0</border>
+																																								<object class="wxSpinCtrl" name="MaterialEditorDecalInfoStaySeconds">
 																																									<style>wxSP_ARROW_KEYS</style>
 																																									<enabled>0</enabled>
-																																									<value>0.100000</value>
+																																									<value>0</value>
 																																									<min>0</min>
-																																									<max>999999</max>
-																																									<inc>0.1</inc>
-																																									<digits>2</digits>
+																																									<max>10</max>
 																																								</object>
 																																							</object>
 																																							<object class="sizeritem">
@@ -1070,16 +1065,14 @@
 																																							</object>
 																																							<object class="sizeritem">
 																																								<option>0</option>
-																																								<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
-																																								<border>6</border>
-																																								<object class="wxSpinCtrlDouble" name="MaterialEditorDecalInfoFadeSeconds">
+																																								<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																																								<border>0</border>
+																																								<object class="wxSpinCtrl" name="MaterialEditorDecalInfoFadeSeconds">
 																																									<style>wxSP_ARROW_KEYS</style>
 																																									<enabled>0</enabled>
-																																									<value>0.200000</value>
+																																									<value>0</value>
 																																									<min>0</min>
-																																									<max>999999</max>
-																																									<inc>0.1</inc>
-																																									<digits>2</digits>
+																																									<max>10</max>
 																																								</object>
 																																							</object>
 																																							<object class="sizeritem">
@@ -2011,16 +2004,13 @@
 																																</object>
 																																<object class="sizeritem">
 																																	<option>0</option>
-																																	<flag></flag>
-																																	<border>6</border>
-																																	<object class="wxSpinCtrlDouble" name="MaterialStagePrivatePolygonOffset">
+																																	<flag>wxALL</flag>
+																																	<border>0</border>
+																																	<object class="wxSpinCtrl" name="MaterialStagePrivatePolygonOffset">
 																																		<style>wxSP_ARROW_KEYS</style>
-																																		<enabled>0</enabled>
-																																		<value>0.100000</value>
-																																		<min>-9999</min>
-																																		<max>9999</max>
-																																		<inc>0.1</inc>
-																																		<digits>1</digits>
+																																		<value>0</value>
+																																		<min>0</min>
+																																		<max>10</max>
 																																	</object>
 																																</object>
 																																<object class="sizeritem">

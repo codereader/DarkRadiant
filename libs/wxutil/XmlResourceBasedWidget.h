@@ -4,6 +4,8 @@
 #include <wx/toolbar.h>
 #include <wx/panel.h>
 #include <wx/stattext.h>
+#include <wx/spinctrl.h>
+#include <wx/sizer.h>
 
 namespace wxutil
 {
@@ -87,6 +89,30 @@ protected:
 		wxStaticText* text = findNamedObject<wxStaticText>(parent, widgetName);
 		text->SetFont(text->GetFont().Bold());
 	}
+
+    // Swaps out the wxSpinCtrl with wxSpinCtrlDouble
+    // This is a workaround for http://trac.wxwidgets.org/ticket/15425 - wxGTK < 3.1.1 don't ship an XRC handler for wxSpinCtrlDouble
+    wxSpinCtrlDouble* convertToSpinCtrlDouble(wxWindow* parent, const std::string& nameOfControlToReplace, double min, double max, double increment, int digits)
+    {
+        auto oldCtrl = findNamedObject<wxSpinCtrl>(parent, nameOfControlToReplace);
+
+        auto spinCtrlDouble = new wxSpinCtrlDouble(oldCtrl->GetParent(), wxID_ANY);
+
+        spinCtrlDouble->SetRange(min, max);
+        spinCtrlDouble->SetDigits(digits);
+        spinCtrlDouble->SetIncrement(increment);
+
+        bool wasEnabled = oldCtrl->IsEnabled();
+        auto name = oldCtrl->GetName();
+        oldCtrl->GetContainingSizer()->Replace(oldCtrl, spinCtrlDouble);
+        oldCtrl->Destroy();
+
+        spinCtrlDouble->SetName(name);
+        spinCtrlDouble->Enable(wasEnabled);
+        spinCtrlDouble->GetContainingSizer()->Layout();
+
+        return spinCtrlDouble;
+    }
 };
 
 } // namespace
