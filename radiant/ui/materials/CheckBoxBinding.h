@@ -17,14 +17,14 @@ public:
     CheckBoxBinding(wxCheckBox* checkbox,
         const typename BaseBinding::LoadFunc& loadFunc,
         const typename BaseBinding::UpdateFunc& saveFunc) :
-        CheckBoxBinding(checkbox, loadFunc, saveFunc, BaseBinding::PostUpdateFunc())
+        CheckBoxBinding(checkbox, loadFunc, saveFunc, typename BaseBinding::PostUpdateFunc())
     {}
 
     CheckBoxBinding(wxCheckBox* checkbox,
         const typename BaseBinding::LoadFunc& loadFunc,
         const typename BaseBinding::UpdateFunc& saveFunc,
         const typename BaseBinding::PostUpdateFunc& postChangeNotify) :
-        CheckBoxBinding(checkbox, loadFunc, saveFunc, postChangeNotify, std::bind(&BaseBinding::UseSourceAsTarget, this))
+        CheckBoxBinding(checkbox, loadFunc, saveFunc, postChangeNotify, typename BaseBinding::AcquireTargetFunc())
     {}
 
     CheckBoxBinding(wxCheckBox* checkbox,

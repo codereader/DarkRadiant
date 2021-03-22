@@ -1,7 +1,9 @@
 #include "MaterialPreview.h"
 
+#include "i18n.h"
 #include "ibrush.h"
 #include "ientity.h"
+#include "imodelcache.h"
 #include "ieclass.h"
 #include "ishaders.h"
 #include "string/convert.h"

@@ -21,8 +21,8 @@ public:
     RadioButtonBinding(wxRadioButton* radioButton,
         const typename BaseBinding::LoadFunc& loadFunc,
         const typename BaseBinding::UpdateFunc& saveFunc,
-        const typename BaseBinding::PostUpdateFunc& postChangeNotify = BaseBinding::PostUpdateFunc(),
-        const typename BaseBinding::AcquireTargetFunc& acquireSaveTarget = BaseBinding::UseSourceAsTarget) :
+        const typename BaseBinding::PostUpdateFunc& postChangeNotify = typename BaseBinding::PostUpdateFunc(),
+        const typename BaseBinding::AcquireTargetFunc& acquireSaveTarget = typename BaseBinding::AcquireTargetFunc()) :
         BaseBinding(loadFunc, saveFunc, postChangeNotify, acquireSaveTarget),
         _radioButton(radioButton)
     {

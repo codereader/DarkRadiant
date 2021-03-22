@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ishaderlayer.h"
 #include "ishaderexpression.h"
 
 namespace shaders

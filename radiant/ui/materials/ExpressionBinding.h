@@ -21,14 +21,14 @@ public:
     ExpressionBinding(wxTextCtrl* textCtrl,
         const typename BaseBinding::LoadFunc& loadFunc,
         const typename BaseBinding::UpdateFunc& saveFunc) :
-        ExpressionBinding(textCtrl, loadFunc, saveFunc, BaseBinding::PostUpdateFunc())
+        ExpressionBinding(textCtrl, loadFunc, saveFunc, typename BaseBinding::PostUpdateFunc())
     {}
 
     ExpressionBinding(wxTextCtrl* textCtrl,
         const typename BaseBinding::LoadFunc& loadFunc,
         const typename BaseBinding::UpdateFunc& saveFunc,
         const typename BaseBinding::PostUpdateFunc& postChangeNotify) :
-        ExpressionBinding(textCtrl, loadFunc, saveFunc, postChangeNotify, std::bind(&BaseBinding::UseSourceAsTarget, this))
+        ExpressionBinding(textCtrl, loadFunc, saveFunc, postChangeNotify, typename BaseBinding::AcquireTargetFunc())
     {}
 
     ExpressionBinding(wxTextCtrl* textCtrl,

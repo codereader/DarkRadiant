@@ -21,14 +21,14 @@ public:
     SpinCtrlBinding(SpinCtrlType* spinCtrl,
         const typename BaseBinding::LoadFunc& loadFunc,
         const typename BaseBinding::UpdateFunc& saveFunc) :
-        SpinCtrlBinding(spinCtrl, loadFunc, saveFunc, BaseBinding::PostUpdateFunc())
+        SpinCtrlBinding(spinCtrl, loadFunc, saveFunc, typename BaseBinding::PostUpdateFunc())
     {}
 
     SpinCtrlBinding(SpinCtrlType* spinCtrl,
         const typename BaseBinding::LoadFunc& loadFunc,
         const typename BaseBinding::UpdateFunc& saveFunc,
         const typename BaseBinding::PostUpdateFunc& postChangeNotify) :
-        SpinCtrlBinding(spinCtrl, loadFunc, saveFunc, postChangeNotify, std::bind(&BaseBinding::UseSourceAsTarget, this))
+        SpinCtrlBinding(spinCtrl, loadFunc, saveFunc, postChangeNotify, typename BaseBinding::AcquireTargetFunc())
     {}
 
     SpinCtrlBinding(SpinCtrlType* spinCtrl,

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ishaders.h"
+#include "util/ScopedBoolLock.h"
 #include <wx/checkbox.h>
 
 namespace ui
@@ -41,6 +42,11 @@ template<typename Source>
 struct TargetSelector
 {
     using TargetType = Source;
+
+    static TargetType CastToTarget(const Source& source)
+    {
+        return source;
+    }
 };
 
 // Specialisation for shader layer editing, where the target type is an IEditableShaderLayer
@@ -48,6 +54,11 @@ template<>
 struct TargetSelector<IShaderLayer::Ptr>
 {
     using TargetType = IEditableShaderLayer::Ptr;
+
+    static TargetType CastToTarget(const IShaderLayer::Ptr& source)
+    {
+        return std::static_pointer_cast<IEditableShaderLayer>(source);
+    } 
 };
 
 template<typename Source, typename ValueType>
@@ -63,11 +74,6 @@ public:
     using AcquireTargetFunc = std::function<Target()>;
     using PostUpdateFunc = std::function<void()>;
 
-    Target UseSourceAsTarget()
-    {
-        return Binding<Source>::getSource();
-    }
-
 protected:
     LoadFunc _loadValue;
     AcquireTargetFunc _acquireTarget;
@@ -81,7 +87,7 @@ protected:
     TwoWayBinding(const LoadFunc& loadValue,
                   const UpdateFunc& updateValue,
                   const PostUpdateFunc& postChangeNotify = PostUpdateFunc(),
-                  const AcquireTargetFunc& acquireTarget = std::bind(&TwoWayBinding::UseSourceAsTarget, this)) :
+                  const AcquireTargetFunc& acquireTarget = AcquireTargetFunc()) :
         _loadValue(loadValue),
         _acquireTarget(acquireTarget),
         _updateValue(updateValue),
@@ -96,7 +102,12 @@ protected:
             return Target();
         }
 
-        return _acquireTarget();
+        if (std::is_same<Source, Target>::value)
+        {
+            return TargetSelector<Source>::CastToTarget(Binding<Source>::getSource());
+        }
+
+        return _acquireTarget ? _acquireTarget() : Target();
     }
 
 protected:
