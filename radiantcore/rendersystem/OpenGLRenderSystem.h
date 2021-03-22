@@ -69,6 +69,8 @@ public:
 	void realise() override;
 	void unrealise() override;
 
+    void onMaterialChanged(const std::string& materialName) override;
+
     GLProgramFactory& getGLProgramFactory();
 
 	std::size_t getTime() const override;

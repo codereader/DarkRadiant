@@ -26,6 +26,7 @@ CShader::CShader(const std::string& name, const ShaderDefinition& definition) :
 
 CShader::CShader(const std::string& name, const ShaderDefinition& definition, bool isInternal) :
     _isInternal(isInternal),
+    _originalTemplate(definition.shaderTemplate),
     _template(definition.shaderTemplate),
     _fileInfo(definition.file),
     _name(name),
@@ -41,14 +42,32 @@ CShader::~CShader() {
 	GetTextureManager().checkBindings();
 }
 
-int CShader::getSortRequest() const
+float CShader::getSortRequest() const
 {
     return _template->getSortRequest();
+}
+
+void CShader::setSortRequest(float sortRequest)
+{
+    ensureTemplateCopy();
+    _template->setSortRequest(sortRequest);
+}
+
+void CShader::resetSortReqest()
+{
+    ensureTemplateCopy();
+    _template->resetSortReqest();
 }
 
 float CShader::getPolygonOffset() const
 {
     return _template->getPolygonOffset();
+}
+
+void CShader::setPolygonOffset(float offset)
+{
+    ensureTemplateCopy();
+    _template->setPolygonOffset(offset);
 }
 
 TexturePtr CShader::getEditorImage()
@@ -74,9 +93,21 @@ IMapExpression::Ptr CShader::getLightFalloffExpression()
 	return _template->getLightFalloff();
 }
 
-IMapExpression::Ptr CShader::getLightFalloffCubeMapExpression()
+void CShader::setLightFalloffExpressionFromString(const std::string& expressionString)
 {
-	return _template->getLightFalloffCubeMap();
+    ensureTemplateCopy();
+    _template->setLightFalloffExpressionFromString(expressionString);
+}
+
+IShaderLayer::MapType CShader::getLightFalloffCubeMapType()
+{
+    return _template->getLightFalloffCubeMapType();
+}
+
+void CShader::setLightFalloffCubeMapType(IShaderLayer::MapType type)
+{
+    ensureTemplateCopy();
+    _template->setLightFalloffCubeMapType(type);
 }
 
 /*
@@ -121,8 +152,15 @@ std::string CShader::getName() const
 	return _name;
 }
 
-std::string CShader::getDescription() const {
+std::string CShader::getDescription() const
+{
 	return _template->getDescription();
+}
+
+void CShader::setDescription(const std::string& description)
+{
+    ensureTemplateCopy();
+    _template->setDescription(description);
 }
 
 bool CShader::IsInUse() const {
@@ -139,6 +177,18 @@ int CShader::getMaterialFlags() const
 	return _template->getMaterialFlags();
 }
 
+void CShader::setMaterialFlag(Flags flag)
+{
+    ensureTemplateCopy();
+    _template->setMaterialFlag(flag);
+}
+
+void CShader::clearMaterialFlag(Flags flag)
+{
+    ensureTemplateCopy();
+    _template->clearMaterialFlag(flag);
+}
+
 bool CShader::IsDefault() const
 {
 	return _isInternal || _fileInfo.name.empty();
@@ -150,9 +200,21 @@ Material::CullType CShader::getCullType() const
 	return _template->getCullType();
 }
 
+void CShader::setCullType(CullType type)
+{
+    ensureTemplateCopy();
+    _template->setCullType(type);
+}
+
 ClampType CShader::getClampType() const
 {
 	return _template->getClampType();
+}
+
+void CShader::setClampType(ClampType type)
+{
+    ensureTemplateCopy();
+    _template->setClampType(type);
 }
 
 int CShader::getSurfaceFlags() const
@@ -160,9 +222,27 @@ int CShader::getSurfaceFlags() const
 	return _template->getSurfaceFlags();
 }
 
+void CShader::setSurfaceFlag(Material::SurfaceFlags flag)
+{
+    ensureTemplateCopy();
+    _template->setSurfaceFlag(flag);
+}
+
+void CShader::clearSurfaceFlag(Material::SurfaceFlags flag)
+{
+    ensureTemplateCopy();
+    _template->clearSurfaceFlag(flag);
+}
+
 Material::SurfaceType CShader::getSurfaceType() const
 {
 	return _template->getSurfaceType();
+}
+
+void CShader::setSurfaceType(SurfaceType type)
+{
+    ensureTemplateCopy();
+    _template->setSurfaceType(type);
 }
 
 Material::DeformType CShader::getDeformType() const
@@ -170,7 +250,7 @@ Material::DeformType CShader::getDeformType() const
 	return _template->getDeformType();
 }
 
-IShaderExpressionPtr CShader::getDeformExpression(std::size_t index)
+IShaderExpression::Ptr CShader::getDeformExpression(std::size_t index)
 {
     return _template->getDeformExpression(index);
 }
@@ -183,6 +263,12 @@ std::string CShader::getDeformDeclName()
 int CShader::getSpectrum() const
 {
 	return _template->getSpectrum();
+}
+
+void CShader::setSpectrum(int spectrum)
+{
+    ensureTemplateCopy();
+    _template->setSpectrum(spectrum);
 }
 
 Material::DecalInfo CShader::getDecalInfo() const
@@ -216,6 +302,11 @@ int CShader::getParseFlags() const
     return _template->getParseFlags();
 }
 
+bool CShader::isModified()
+{
+    return _template != _originalTemplate;
+}
+
 std::string CShader::getRenderBumpArguments()
 {
     return _template->getRenderBumpArguments();
@@ -244,12 +335,9 @@ void CShader::unrealise() {
 // Parse and load image maps for this shader
 void CShader::realiseLighting()
 {
-    // Only realises extra layers (no diffuse/bump/specular)
-	for (ShaderTemplate::Layers::const_iterator i = _template->getLayers().begin();
-	        i != _template->getLayers().end();
-	        ++i)
+	for (const auto& layer : _template->getLayers())
 	{
-		_layers.push_back(*i);
+		_layers.push_back(layer);
 	}
 }
 
@@ -265,20 +353,73 @@ void CShader::setName(const std::string& name) {
 	_name = name;
 }
 
-ShaderLayer* CShader::firstLayer() const
+IShaderLayer* CShader::firstLayer() const
 {
 	if (_layers.empty())
 	{
-		return NULL;
+		return nullptr;
 	}
 
 	return _layers.front().get();
 }
 
-// Get all layers
-const ShaderLayerVector& CShader::getAllLayers() const
+const IShaderLayerVector& CShader::getAllLayers() const
 {
     return _layers;
+}
+
+std::size_t CShader::addLayer(IShaderLayer::Type type)
+{
+    ensureTemplateCopy();
+
+    auto newIndex = _template->addLayer(type);
+
+    unrealiseLighting();
+    realiseLighting();
+
+    return newIndex;
+}
+
+void CShader::removeLayer(std::size_t index)
+{
+    ensureTemplateCopy();
+
+    _template->removeLayer(index);
+
+    unrealiseLighting();
+    realiseLighting();
+}
+
+void CShader::swapLayerPosition(std::size_t first, std::size_t second)
+{
+    ensureTemplateCopy();
+
+    _template->swapLayerPosition(first, second);
+
+    unrealiseLighting();
+    realiseLighting();
+}
+
+std::size_t CShader::duplicateLayer(std::size_t index)
+{
+    ensureTemplateCopy();
+
+    auto newIndex = _template->duplicateLayer(index);
+
+    unrealiseLighting();
+    realiseLighting();
+
+    return newIndex;
+}
+
+IEditableShaderLayer::Ptr CShader::getEditableLayer(std::size_t index)
+{
+    ensureTemplateCopy();
+
+    const auto& layers = _template->getLayers();
+    assert(index >= 0 && index < layers.size());
+
+    return layers[index];
 }
 
 /* Required Material light type predicates */
@@ -299,6 +440,31 @@ bool CShader::isCubicLight() const
 {
     return _template->isCubicLight();
 }
+
+void CShader::setIsAmbientLight(bool newValue)
+{
+    ensureTemplateCopy();
+    _template->setIsAmbientLight(newValue);
+}
+
+void CShader::setIsBlendLight(bool newValue)
+{
+    ensureTemplateCopy();
+    _template->setIsBlendLight(newValue);
+}
+
+void CShader::setIsFogLight(bool newValue)
+{
+    ensureTemplateCopy();
+    _template->setIsFogLight(newValue);
+}
+
+void CShader::setIsCubicLight(bool newValue)
+{
+    ensureTemplateCopy();
+    _template->setIsCubicLight(newValue);
+}
+
 
 bool CShader::lightCastsShadows() const
 {
@@ -331,6 +497,21 @@ bool CShader::isVisible() const {
 
 void CShader::setVisible(bool visible) {
 	_visible = visible;
+}
+
+void CShader::ensureTemplateCopy()
+{
+    if (_template != _originalTemplate)
+    {
+        return; // copy is already in place
+    }
+
+    _template = _originalTemplate->clone();
+
+    // We need to update that layer reference vector
+    // as long as it's there
+    unrealise();
+    realise();
 }
 
 bool CShader::m_lightingEnabled = false;

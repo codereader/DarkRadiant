@@ -3,8 +3,7 @@
 #include "igl.h"
 #include "imodule.h"
 #include "ishaders.h"
-
-#include "ShaderLayer.h"
+#include "ishaderlayer.h"
 
 #include "math/Vector4.h"
 
@@ -173,11 +172,11 @@ public:
      * which hold the actual values of many parameters, some of them
      * time-dependent or depending on entity parameters.
      */
-    ShaderLayerPtr stage0;
-    ShaderLayerPtr stage1;
-    ShaderLayerPtr stage2;
-    ShaderLayerPtr stage3;
-    ShaderLayerPtr stage4;
+    IShaderLayer::Ptr stage0;
+    IShaderLayer::Ptr stage1;
+    IShaderLayer::Ptr stage2;
+    IShaderLayer::Ptr stage3;
+    IShaderLayer::Ptr stage4;
 
     /**
      * \brief
@@ -212,7 +211,7 @@ public:
      * \brief
      * The cube-map texgen mode for rendering.
      */
-    ShaderLayer::CubeMapMode cubeMapMode;
+    IShaderLayer::CubeMapMode cubeMapMode;
 
     /// Default constructor
     OpenGLState()
@@ -236,6 +235,6 @@ public:
       m_linestipple_factor(1),
       m_linestipple_pattern(0xAAAA),
       glProgram(NULL),
-      cubeMapMode(ShaderLayer::CUBE_MAP_NONE)
+      cubeMapMode(IShaderLayer::CUBE_MAP_NONE)
     { }
 };

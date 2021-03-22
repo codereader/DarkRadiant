@@ -38,6 +38,8 @@ enum ReservedRegisters
 class IShaderExpression
 {
 public:
+    using Ptr = std::shared_ptr<IShaderExpression>;
+
 	/** 
 	 * Retrieve the floating point value of this expression. DEPRECATED
 	 */
@@ -68,10 +70,23 @@ public:
 	 */
 	virtual std::size_t linkToRegister(Registers& registers) = 0;
 
+    // Link this expression to the given Registers vector, using the specified index 
+    // instead of allocating a new register
+    virtual void linkToSpecificRegister(Registers& registers, std::size_t index) = 0;
+
+    // True if this expression is linked to a register
+    virtual bool isLinked() const = 0;
+
+    // Returns any previously used register position (for possible re-use)
+    virtual std::size_t unlinkFromRegisters() = 0;
+
     // Returns the string this expression has been parsed from
     virtual std::string getExpressionString() = 0;
+
+    // Clone this expression and all possible sub-expressions
+    // The cloned expression will not be linked to any register
+    virtual IShaderExpression::Ptr clone() const = 0;
 };
-typedef std::shared_ptr<IShaderExpression> IShaderExpressionPtr;
 
 // Interface of a material expression used to specify a map image
 // It can either represent a texture path to a file on disk or

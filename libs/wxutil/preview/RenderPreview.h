@@ -86,6 +86,8 @@ private:
 	bool _renderGrid;
 
 protected:
+    const unsigned int MSEC_PER_FRAME = 16;
+
     // The backend rendersystem instance
     RenderSystemPtr _renderSystem;
 
@@ -163,6 +165,9 @@ protected:
     virtual RenderStateFlags getRenderFlagsWireframe();
 
     void associateRenderSystem();
+
+    // Base method will return true, which will also make the corresponding button appear on the toolbar
+    virtual bool canDrawGrid();
 
     // Can be overridden by subclasses to update their scene/models
     virtual void onRenderModeChanged() {}

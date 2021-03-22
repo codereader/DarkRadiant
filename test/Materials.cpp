@@ -12,6 +12,8 @@ namespace test
 
 using MaterialsTest = RadiantTest;
 
+constexpr double TestEpsilon = 0.0001;
+
 TEST_F(MaterialsTest, MaterialFileInfo)
 {
     auto& materialManager = GlobalMaterialManager();
@@ -63,22 +65,22 @@ TEST_F(MaterialsTest, EnumerateMaterialLayers)
     EXPECT_EQ(layers.size(), 5);
 
     // First layer is the bump map in this particular material
-    EXPECT_EQ(layers.at(0)->getType(), ShaderLayer::BUMP);
+    EXPECT_EQ(layers.at(0)->getType(), IShaderLayer::BUMP);
     EXPECT_EQ(layers.at(0)->getMapImageFilename(),
               "models/md5/chars/monsters/spider/spider_local");
 
     // Second layer is the diffuse map
-    EXPECT_EQ(layers.at(1)->getType(), ShaderLayer::DIFFUSE);
+    EXPECT_EQ(layers.at(1)->getType(), IShaderLayer::DIFFUSE);
     EXPECT_EQ(layers.at(1)->getMapImageFilename(),
               "models/md5/chars/monsters/spider_black");
 
     // Third layer is the specular map
-    EXPECT_EQ(layers.at(2)->getType(), ShaderLayer::SPECULAR);
+    EXPECT_EQ(layers.at(2)->getType(), IShaderLayer::SPECULAR);
     EXPECT_EQ(layers.at(2)->getMapImageFilename(),
               "models/md5/chars/monsters/spider_s");
 
     // Fourth layer is the additive "ambient method" stage
-    EXPECT_EQ(layers.at(3)->getType(), ShaderLayer::BLEND);
+    EXPECT_EQ(layers.at(3)->getType(), IShaderLayer::BLEND);
     EXPECT_EQ(layers.at(3)->getMapImageFilename(),
               "models/md5/chars/monsters/spider_black");
     BlendFunc bf4 = layers.at(3)->getBlendFunc();
@@ -86,7 +88,7 @@ TEST_F(MaterialsTest, EnumerateMaterialLayers)
     EXPECT_EQ(bf4.dest, GL_ONE);
 
     // Fifth layer is another additive stage with a VFP
-    EXPECT_EQ(layers.at(4)->getType(), ShaderLayer::BLEND);
+    EXPECT_EQ(layers.at(4)->getType(), IShaderLayer::BLEND);
     EXPECT_EQ(layers.at(4)->getNumFragmentMaps(), 4);
     BlendFunc bf5 = layers.at(4)->getBlendFunc();
     EXPECT_EQ(bf5.src, GL_ONE);
@@ -181,6 +183,18 @@ TEST_F(MaterialsTest, MaterialParserSortRequest)
     material = materialManager.getMaterial("textures/parsertest/sortPredefined_decal_macro");
     EXPECT_FALSE(material->getParseFlags() & Material::PF_HasSortDefined); // sort is not explicitly set
     EXPECT_EQ(material->getSortRequest(), Material::SORT_DECAL);
+
+    material = materialManager.getMaterial("textures/parsertest/sort_custom");
+    EXPECT_TRUE(material->getParseFlags() & Material::PF_HasSortDefined);
+    EXPECT_FLOAT_EQ(material->getSortRequest(), 34.56f);
+
+    material = materialManager.getMaterial("textures/parsertest/sort_custom2");
+    EXPECT_TRUE(material->getParseFlags() & Material::PF_HasSortDefined);
+    EXPECT_FLOAT_EQ(material->getSortRequest(), 34.56f);
+
+    // Update the sort request
+    material->setSortRequest(78.45f);
+    EXPECT_FLOAT_EQ(material->getSortRequest(), 78.45f);
 }
 
 TEST_F(MaterialsTest, MaterialParserAmbientRimColour)
@@ -299,61 +313,209 @@ TEST_F(MaterialsTest, MaterialParserDeform)
     EXPECT_FALSE(material->getDeformExpression(2));
 }
 
-TEST_F(MaterialsTest, MaterialParserStageTranslate)
+TEST_F(MaterialsTest, MaterialParserStageNotransform)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/notransform");
-    EXPECT_FALSE(material->getAllLayers().front()->getTranslationExpression(0));
-    EXPECT_FALSE(material->getAllLayers().front()->getTranslationExpression(1));
+    auto stage = material->getAllLayers().front();
 
-    material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/translation1");
-    EXPECT_EQ(material->getAllLayers().front()->getTranslationExpression(0)->getExpressionString(), "3.0");
-    EXPECT_EQ(material->getAllLayers().front()->getTranslationExpression(1)->getExpressionString(), "parm3 * 3.0");
+    EXPECT_EQ(stage->getTransformations().size(), 0);
+    EXPECT_TRUE(stage->getTextureTransform() == Matrix4::getIdentity());
+}
+
+TEST_F(MaterialsTest, MaterialParserStageTranslate)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/translation1");
+    auto stage = material->getAllLayers().front();
+
+    EXPECT_EQ(stage->getTransformations().size(), 1);
+    EXPECT_EQ(stage->getTransformations().at(0).type, IShaderLayer::TransformType::Translate);
+    EXPECT_EQ(stage->getTransformations().at(0).expression1->getExpressionString(), "3.0");
+    EXPECT_EQ(stage->getTransformations().at(0).expression2->getExpressionString(), "parm3 + 5.0");
+
+    stage->evaluateExpressions(1000);
+    EXPECT_TRUE(stage->getTextureTransform().isEqual(Matrix4::getTranslation(Vector3(3.0, 5.0, 0)), TestEpsilon));
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/translation2");
-    EXPECT_EQ(material->getAllLayers().front()->getTranslationExpression(0)->getExpressionString(), "time");
-    EXPECT_EQ(material->getAllLayers().front()->getTranslationExpression(1)->getExpressionString(), "0.5");
+    stage = material->getAllLayers().front();
+
+    EXPECT_EQ(stage->getTransformations().size(), 1);
+    EXPECT_EQ(stage->getTransformations().at(0).type, IShaderLayer::TransformType::Translate);
+    EXPECT_EQ(stage->getTransformations().at(0).expression1->getExpressionString(), "time");
+    EXPECT_EQ(stage->getTransformations().at(0).expression2->getExpressionString(), "0.5");
+
+    stage->evaluateExpressions(1000);
+    EXPECT_TRUE(stage->getTextureTransform().isEqual(Matrix4::getTranslation(Vector3(1.0, 0.5, 0)), TestEpsilon));
 }
 
 TEST_F(MaterialsTest, MaterialParserStageRotate)
 {
-    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/notransform");
-    EXPECT_FALSE(material->getAllLayers().front()->getRotationExpression());
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/rotate1");
+    auto stage = material->getAllLayers().front();
 
-    material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/rotate1");
-    EXPECT_EQ(material->getAllLayers().front()->getRotationExpression()->getExpressionString(), "0.03");
+    EXPECT_EQ(stage->getTransformations().size(), 1);
+    EXPECT_EQ(stage->getTransformations().at(0).type, IShaderLayer::TransformType::Rotate);
+    EXPECT_EQ(stage->getTransformations().at(0).expression1->getExpressionString(), "0.03");
+    EXPECT_FALSE(stage->getTransformations().at(0).expression2);
+
+    // sintable and costable lookups are [0..1], translate them to [0..2pi]
+    auto cosValue = cos(0.03 * 2 * c_pi);
+    auto sinValue = sin(0.03 * 2 * c_pi);
+
+    stage->evaluateExpressions(1000);
+    EXPECT_TRUE(stage->getTextureTransform().isEqual(Matrix4::byRows(
+        cosValue, -sinValue, 0, (-0.5*cosValue + 0.5*sinValue) + 0.5,
+        sinValue,  cosValue, 0, (-0.5*sinValue - 0.5*cosValue) + 0.5,
+        0, 0, 1, 0,
+        0, 0, 0, 1
+    ), TestEpsilon));
 }
 
 TEST_F(MaterialsTest, MaterialParserStageScale)
 {
-    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/notransform");
-    EXPECT_FALSE(material->getAllLayers().front()->getScaleExpression(0));
-    EXPECT_FALSE(material->getAllLayers().front()->getScaleExpression(1));
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/scale1");
+    auto stage = material->getAllLayers().front();
 
-    material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/scale1");
-    EXPECT_EQ(material->getAllLayers().front()->getScaleExpression(0)->getExpressionString(), "4.0");
-    EXPECT_EQ(material->getAllLayers().front()->getScaleExpression(1)->getExpressionString(), "time * 3.0");
+    EXPECT_EQ(stage->getTransformations().size(), 1);
+    EXPECT_EQ(stage->getTransformations().at(0).type, IShaderLayer::TransformType::Scale);
+    EXPECT_EQ(stage->getTransformations().at(0).expression1->getExpressionString(), "4.0");
+    EXPECT_EQ(stage->getTransformations().at(0).expression2->getExpressionString(), "time * 3.0");
+
+    stage->evaluateExpressions(1000);
+    EXPECT_TRUE(stage->getTextureTransform().isEqual(Matrix4::byRows(
+        4, 0, 0, 0,
+        0, 3, 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1
+    ), TestEpsilon));
 }
 
 TEST_F(MaterialsTest, MaterialParserStageCenterScale)
 {
-    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/notransform");
-    EXPECT_FALSE(material->getAllLayers().front()->getCenterScaleExpression(0));
-    EXPECT_FALSE(material->getAllLayers().front()->getCenterScaleExpression(1));
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/centerscale1");
+    auto stage = material->getAllLayers().front();
 
-    material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/centerscale1");
-    EXPECT_EQ(material->getAllLayers().front()->getCenterScaleExpression(0)->getExpressionString(), "4.0");
-    EXPECT_EQ(material->getAllLayers().front()->getCenterScaleExpression(1)->getExpressionString(), "time * 3.0");
+    EXPECT_EQ(stage->getTransformations().size(), 1);
+    EXPECT_EQ(stage->getTransformations().at(0).type, IShaderLayer::TransformType::CenterScale);
+    EXPECT_EQ(stage->getTransformations().at(0).expression1->getExpressionString(), "4.0");
+    EXPECT_EQ(stage->getTransformations().at(0).expression2->getExpressionString(), "time * 3.0");
+
+    stage->evaluateExpressions(1000);
+    EXPECT_TRUE(stage->getTextureTransform().isEqual(Matrix4::byRows(
+        4, 0, 0, 0.5 - 0.5 * 4,
+        0, 3, 0, 0.5 - 0.5 * 3,
+        0, 0, 1, 0,
+        0, 0, 0, 1
+    ), TestEpsilon));
 }
 
 TEST_F(MaterialsTest, MaterialParserStageShear)
 {
-    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/notransform");
-    EXPECT_FALSE(material->getAllLayers().front()->getShearExpression(0));
-    EXPECT_FALSE(material->getAllLayers().front()->getShearExpression(1));
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/shear1");
+    auto stage = material->getAllLayers().front();
+    EXPECT_EQ(stage->getTransformations().size(), 1);
+    EXPECT_EQ(stage->getTransformations().at(0).type, IShaderLayer::TransformType::Shear);
+    EXPECT_EQ(stage->getTransformations().at(0).expression1->getExpressionString(), "global3 + 5.0");
+    EXPECT_EQ(stage->getTransformations().at(0).expression2->getExpressionString(), "4.0");
 
-    material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/shear1");
-    EXPECT_EQ(material->getAllLayers().front()->getShearExpression(0)->getExpressionString(), "global3");
-    EXPECT_EQ(material->getAllLayers().front()->getShearExpression(1)->getExpressionString(), "4.0");
+    stage->evaluateExpressions(1000);
+    EXPECT_TRUE(stage->getTextureTransform().isEqual(Matrix4::byRows(
+        1,  5,  0,  -0.5 * 5,
+        4,  1,  0,  -0.5 * 4,
+        0,  0,  1,   0,
+        0,  0,  0,   1
+    ), TestEpsilon));
+}
+
+TEST_F(MaterialsTest, MaterialParserStageTransforms)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/combined1");
+
+    auto stage = material->getAllLayers().front();
+    EXPECT_EQ(stage->getTransformations().size(), 2);
+    EXPECT_EQ(stage->getTransformations().at(0).type, IShaderLayer::TransformType::Translate);
+    EXPECT_EQ(stage->getTransformations().at(0).expression1->getExpressionString(), "time");
+    EXPECT_EQ(stage->getTransformations().at(0).expression2->getExpressionString(), "0.5");
+    EXPECT_EQ(stage->getTransformations().at(1).type, IShaderLayer::TransformType::Translate);
+    EXPECT_EQ(stage->getTransformations().at(1).expression1->getExpressionString(), "0.7");
+    EXPECT_EQ(stage->getTransformations().at(1).expression2->getExpressionString(), "0.5");
+
+    stage->evaluateExpressions(1000);
+    EXPECT_TRUE(stage->getTextureTransform().isEqual(Matrix4::getTranslation(Vector3(1, 0.5, 0) + Vector3(0.7, 0.5, 0)), TestEpsilon));
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/combined2");
+
+    stage = material->getAllLayers().front();
+    EXPECT_EQ(stage->getTransformations().size(), 3);
+    EXPECT_EQ(stage->getTransformations().at(0).type, IShaderLayer::TransformType::Translate);
+    EXPECT_EQ(stage->getTransformations().at(0).expression1->getExpressionString(), "time");
+    EXPECT_EQ(stage->getTransformations().at(0).expression2->getExpressionString(), "0.5");
+    EXPECT_EQ(stage->getTransformations().at(1).type, IShaderLayer::TransformType::Scale);
+    EXPECT_EQ(stage->getTransformations().at(1).expression1->getExpressionString(), "0.6");
+    EXPECT_EQ(stage->getTransformations().at(1).expression2->getExpressionString(), "0.2");
+    EXPECT_EQ(stage->getTransformations().at(2).type, IShaderLayer::TransformType::Translate);
+    EXPECT_EQ(stage->getTransformations().at(2).expression1->getExpressionString(), "0.7");
+    EXPECT_EQ(stage->getTransformations().at(2).expression2->getExpressionString(), "0.5");
+
+    stage->evaluateExpressions(1000);
+    auto combinedMatrix = Matrix4::getTranslation(Vector3(1, 0.5, 0));
+    combinedMatrix.premultiplyBy(Matrix4::getScale(Vector3(0.6, 0.2, 1)));
+    combinedMatrix.premultiplyBy(Matrix4::getTranslation(Vector3(0.7, 0.5, 0)));
+    EXPECT_TRUE(stage->getTextureTransform().isEqual(combinedMatrix, TestEpsilon));
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/combined3");
+
+    stage = material->getAllLayers().front();
+    EXPECT_EQ(stage->getTransformations().size(), 6);
+    EXPECT_EQ(stage->getTransformations().at(0).type, IShaderLayer::TransformType::Translate);
+    EXPECT_EQ(stage->getTransformations().at(0).expression1->getExpressionString(), "time");
+    EXPECT_EQ(stage->getTransformations().at(0).expression2->getExpressionString(), "0.5");
+    EXPECT_EQ(stage->getTransformations().at(1).type, IShaderLayer::TransformType::Shear);
+    EXPECT_EQ(stage->getTransformations().at(1).expression1->getExpressionString(), "0.9");
+    EXPECT_EQ(stage->getTransformations().at(1).expression2->getExpressionString(), "0.8");
+    EXPECT_EQ(stage->getTransformations().at(2).type, IShaderLayer::TransformType::Rotate);
+    EXPECT_EQ(stage->getTransformations().at(2).expression1->getExpressionString(), "0.22");
+    EXPECT_FALSE(stage->getTransformations().at(2).expression2);
+    EXPECT_EQ(stage->getTransformations().at(3).type, IShaderLayer::TransformType::CenterScale);
+    EXPECT_EQ(stage->getTransformations().at(3).expression1->getExpressionString(), "0.2");
+    EXPECT_EQ(stage->getTransformations().at(3).expression2->getExpressionString(), "0.1");
+    EXPECT_EQ(stage->getTransformations().at(4).type, IShaderLayer::TransformType::Scale);
+    EXPECT_EQ(stage->getTransformations().at(4).expression1->getExpressionString(), "0.5");
+    EXPECT_EQ(stage->getTransformations().at(4).expression2->getExpressionString(), "0.4");
+    EXPECT_EQ(stage->getTransformations().at(5).type, IShaderLayer::TransformType::Translate);
+    EXPECT_EQ(stage->getTransformations().at(5).expression1->getExpressionString(), "1.0");
+    EXPECT_EQ(stage->getTransformations().at(5).expression2->getExpressionString(), "1.0");
+
+    auto time = 750;
+    stage->evaluateExpressions(time);
+    auto timeSecs = time / 1000.0;
+
+    combinedMatrix = Matrix4::getTranslation(Vector3(timeSecs, 0.5, 0));
+
+    auto shear = Matrix4::byColumns(1, 0.8, 0, 0, 
+                                    0.9, 1.0, 0, 0, 
+                                    0, 0, 1, 0, 
+                                   -0.5*0.9, -0.5*0.8, 0, 1);
+    combinedMatrix.premultiplyBy(shear);
+
+    // sintable and costable lookups are [0..1], translate them to [0..2pi]
+    auto cosValue = cos(0.22 * 2 * c_pi);
+    auto sinValue = sin(0.22 * 2 * c_pi);
+
+    auto rotate = Matrix4::byRows(cosValue, -sinValue, 0, (-0.5*cosValue+0.5*sinValue) + 0.5,
+        sinValue, cosValue, 0, (-0.5*sinValue-0.5*cosValue) + 0.5,
+        0, 0, 1, 0,
+        0, 0, 0, 1);
+    combinedMatrix.premultiplyBy(rotate);
+
+    auto centerScale = Matrix4::byColumns(0.2, 0, 0, 0,
+        0, 0.1, 0, 0,
+        0, 0, 1, 0,
+        0.5 - 0.5*0.2, 0.5 - 0.5*0.1, 0, 1);
+    combinedMatrix.premultiplyBy(centerScale);
+    combinedMatrix.premultiplyBy(Matrix4::getScale(Vector3(0.5, 0.4, 1)));
+    combinedMatrix.premultiplyBy(Matrix4::getTranslation(Vector3(1, 1, 0)));
+
+    EXPECT_TRUE(stage->getTextureTransform().isEqual(combinedMatrix, TestEpsilon));
 }
 
 TEST_F(MaterialsTest, MaterialParserStageVertexProgram)
@@ -520,6 +682,140 @@ TEST_F(MaterialsTest, MaterialParserGuiSurf)
     EXPECT_TRUE(material->getSurfaceFlags() & Material::SURF_ENTITYGUI3);
     EXPECT_FALSE(material->getSurfaceFlags() & (Material::SURF_ENTITYGUI | Material::SURF_ENTITYGUI2));
     EXPECT_EQ(material->getGuiSurfArgument(), "");
+}
+
+TEST_F(MaterialsTest, MaterialParserRgbaExpressions)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/colourexpr1");
+
+    auto diffuse = material->getAllLayers().front();
+    auto time = 10;
+    auto timeSecs = time / 1000.0f; // 0.01
+    diffuse->evaluateExpressions(time);
+
+    EXPECT_TRUE(diffuse->getColour() == Colour4(timeSecs*3, 1, 1, 1));
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "time * 3.0");
+    EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_GREEN));
+    EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_BLUE));
+    EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_ALPHA));
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/colourexpr2");
+
+    diffuse = material->getAllLayers().front();
+    diffuse->evaluateExpressions(time);
+
+    EXPECT_TRUE(diffuse->getColour() == Colour4(1, timeSecs*3, 1, 1));
+    EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_RED));
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "time * 3.0");
+    EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_BLUE));
+    EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_ALPHA));
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/colourexpr3");
+
+    diffuse = material->getAllLayers().front();
+    diffuse->evaluateExpressions(time);
+
+    EXPECT_TRUE(diffuse->getColour() == Colour4(1, 1, timeSecs * 3, 1));
+    EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_RED));
+    EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_GREEN));
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "time * 3.0");
+    EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_ALPHA));
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/colourexpr4");
+
+    diffuse = material->getAllLayers().front();
+    diffuse->evaluateExpressions(time);
+
+    EXPECT_TRUE(diffuse->getColour() == Colour4(1, 1, 1, timeSecs * 3));
+    EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_RED));
+    EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_GREEN));
+    EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_BLUE));
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_ALPHA)->getExpressionString(), "time * 3.0");
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/colourexpr5");
+
+    diffuse = material->getAllLayers().front();
+    diffuse->evaluateExpressions(time);
+
+    EXPECT_TRUE(diffuse->getColour() == Colour4(timeSecs * 3, timeSecs * 3, timeSecs * 3, 1));
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "time * 3.0");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "time * 3.0");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "time * 3.0");
+    EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_ALPHA));
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/colourexpr6");
+
+    diffuse = material->getAllLayers().front();
+    diffuse->evaluateExpressions(time);
+
+    EXPECT_TRUE(diffuse->getColour() == Colour4(timeSecs * 3, timeSecs * 3, timeSecs * 3, timeSecs * 3));
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "time * 3.0");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "time * 3.0");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "time * 3.0");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_ALPHA)->getExpressionString(), "time * 3.0");
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/colourexpr7");
+
+    diffuse = material->getAllLayers().front();
+    diffuse->evaluateExpressions(time);
+
+    EXPECT_TRUE(diffuse->getColour() == Colour4(timeSecs * 4, 1, 1, 1)); // second red expression overrules first
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "time * 4.0");
+    EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_GREEN));
+    EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_BLUE));
+    EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_ALPHA));
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/colourexpr8");
+
+    diffuse = material->getAllLayers().front();
+    diffuse->evaluateExpressions(time);
+
+    EXPECT_TRUE(diffuse->getColour() == Colour4(timeSecs * 4, timeSecs * 3, timeSecs * 3, 1)); // red overrules rgb
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "time * 4.0");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "time * 3.0");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "time * 3.0");
+    EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_ALPHA));
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/colourexpr9");
+
+    diffuse = material->getAllLayers().front();
+    diffuse->evaluateExpressions(time);
+
+    EXPECT_TRUE(diffuse->getColour() == Colour4(timeSecs * 3, timeSecs * 4, timeSecs * 3, timeSecs * 3)); // green overrules rgba
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "time * 3.0");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "time * 4.0");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "time * 3.0");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_ALPHA)->getExpressionString(), "time * 3.0");
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/colourexpr10");
+
+    diffuse = material->getAllLayers().front();
+    diffuse->evaluateExpressions(time);
+
+    EXPECT_TRUE(diffuse->getColour() == Colour4(timeSecs * 4, timeSecs * 6, timeSecs * 5, timeSecs * 7)); // rgba is overridden
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "time * 4.0");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "time * 6.0");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "time * 5.0");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_ALPHA)->getExpressionString(), "time * 7.0");
+}
+
+TEST_F(MaterialsTest, MaterialParserLightfallOff)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/lights/lightfalloff1");
+
+    EXPECT_EQ(material->getLightFalloffCubeMapType(), IShaderLayer::MapType::Map);
+    EXPECT_EQ(material->getLightFalloffExpression()->getExpressionString(), "makeIntensity(lights/squarelight1a.tga)");
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/lights/lightfalloff2");
+
+    EXPECT_EQ(material->getLightFalloffCubeMapType(), IShaderLayer::MapType::CameraCubeMap);
+    EXPECT_EQ(material->getLightFalloffExpression()->getExpressionString(), "lights/squarelight1a");
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/lights/lightfalloff3");
+
+    // Second lightFallOff declaration overrides the first one in the material
+    EXPECT_EQ(material->getLightFalloffCubeMapType(), IShaderLayer::MapType::CameraCubeMap);
+    EXPECT_EQ(material->getLightFalloffExpression()->getExpressionString(), "lights/squarelight1a");
 }
 
 }

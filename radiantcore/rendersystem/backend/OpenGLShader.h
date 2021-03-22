@@ -48,7 +48,7 @@ private:
     void constructNormalShader(const std::string& name);
 
     // Shader pass construction helpers
-    void appendBlendLayer(const ShaderLayerPtr& layer);
+    void appendBlendLayer(const IShaderLayer::Ptr& layer);
 
     struct DBSTriplet;
     void appendInteractionLayer(const DBSTriplet& triplet);

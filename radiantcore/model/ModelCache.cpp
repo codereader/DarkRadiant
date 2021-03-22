@@ -52,7 +52,7 @@ scene::INodePtr ModelCache::getModelNode(const std::string& modelPath)
 	IModelImporterPtr modelLoader = GlobalModelFormatManager().getImporter(type);
 
 	// Try to construct a model node using the suitable loader
-	scene::INodePtr node = modelLoader->loadModel(actualModelPath);
+	auto node =  modelLoader->loadModel(actualModelPath);
 
 	if (node)
 	{
@@ -97,15 +97,13 @@ scene::INodePtr ModelCache::getModelNode(const std::string& modelPath)
 	}
 
 	// The model load failed, let's return a NullModel
-	IModelImporterPtr nullModelLoader = GlobalModelFormatManager().getImporter("");
-
-	return nullModelLoader->loadModel(actualModelPath);
+	return loadNullModel(actualModelPath);
 }
 
 IModelPtr ModelCache::getModel(const std::string& modelPath)
 {
 	// Try to lookup the existing model
-	ModelMap::iterator found = _modelMap.find(modelPath);
+	auto found = _modelMap.find(modelPath);
 
 	if (_enabled && found != _modelMap.end())
 	{
@@ -115,7 +113,7 @@ IModelPtr ModelCache::getModel(const std::string& modelPath)
 	// The model is not cached or the cache is disabled, load afresh
 
 	// Get the extension of this model
-	std::string type = modelPath.substr(modelPath.rfind(".") + 1);
+	std::string type = os::getExtension(modelPath);
 
 	// Find a suitable model loader
 	IModelImporterPtr modelLoader = GlobalModelFormatManager().getImporter(type);
@@ -125,10 +123,33 @@ IModelPtr ModelCache::getModel(const std::string& modelPath)
 	if (model)
 	{
 		// Model successfully loaded, insert a reference into the map
-		_modelMap.insert(ModelMap::value_type(modelPath, model));
+		_modelMap.emplace(modelPath, model);
 	}
 
 	return model;
+}
+
+scene::INodePtr ModelCache::getModelNodeForStaticResource(const std::string& resourcePath)
+{
+    // Get the extension of this model
+    auto extension = os::getExtension(resourcePath);
+
+    // Find a suitable model loader
+    auto modelLoader = GlobalModelFormatManager().getImporter(extension);
+
+    auto fullPath = module::GlobalModuleRegistry().getApplicationContext().getRuntimeDataPath();
+    fullPath += "resources/" + resourcePath;
+
+    auto node = modelLoader->loadModel(fullPath);
+
+    return node ? node : loadNullModel(resourcePath);
+}
+
+scene::INodePtr ModelCache::loadNullModel(const std::string& modelPath)
+{
+    auto nullModelLoader = GlobalModelFormatManager().getImporter("");
+
+    return nullModelLoader->loadModel(modelPath);
 }
 
 void ModelCache::removeModel(const std::string& modelPath)

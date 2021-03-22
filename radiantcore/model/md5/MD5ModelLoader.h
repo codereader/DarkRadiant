@@ -1,6 +1,7 @@
 #pragma once
 
 #include "imodel.h"
+#include "iarchive.h"
 #include "MD5Model.h"
 
 class ArchiveFile;
@@ -21,6 +22,5 @@ public:
 	// Documentation: See imodel.h
 	model::IModelPtr loadModelFromPath(const std::string& name) override;
 };
-typedef std::shared_ptr<MD5ModelLoader> MD5ModelLoaderPtr;
 
-} // namespace md5
+} // namespace

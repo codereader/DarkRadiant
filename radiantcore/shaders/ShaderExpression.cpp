@@ -379,11 +379,11 @@ private:
 		}
 		else if (token == "<")
 		{
-			return std::make_shared<LesserThanExpression>();
+			return std::make_shared<LessThanExpression>();
 		}
 		else if (token == "<=")
 		{
-			return std::make_shared<LesserThanOrEqualExpression>();
+			return std::make_shared<LessThanOrEqualExpression>();
 		}
 		else if (token == ">")
 		{
@@ -416,7 +416,7 @@ private:
 
 } // namespace expressions
 
-IShaderExpressionPtr ShaderExpression::createFromTokens(parser::DefTokeniser& tokeniser)
+IShaderExpression::Ptr ShaderExpression::createFromTokens(parser::DefTokeniser& tokeniser)
 {
 	// Create an adapter which takes care of splitting the tokens into finer grains
 	// The incoming DefTokeniser is not splitting up expressions like "3*4" without any whitespace in them
@@ -430,14 +430,34 @@ IShaderExpressionPtr ShaderExpression::createFromTokens(parser::DefTokeniser& to
 	catch (parser::ParseException& ex)
 	{
 		rWarning() << "[shaders] " << ex.what() << std::endl;
-		return IShaderExpressionPtr();
+		return IShaderExpression::Ptr();
 	}
 }
 
-IShaderExpressionPtr ShaderExpression::createFromString(const std::string& exprStr)
+IShaderExpression::Ptr ShaderExpression::createFromString(const std::string& exprStr)
 {
 	parser::BasicDefTokeniser<std::string> tokeniser(exprStr, parser::WHITESPACE, "{}(),");
 	return createFromTokens(tokeniser);
+}
+
+IShaderExpression::Ptr ShaderExpression::createConstant(float constantValue)
+{
+    return std::make_shared<expressions::ConstantExpression>(constantValue);
+}
+
+IShaderExpression::Ptr ShaderExpression::createAddition(const IShaderExpression::Ptr& a, const IShaderExpression::Ptr& b)
+{
+    return std::make_shared<expressions::AddExpression>(a, b);
+}
+
+IShaderExpression::Ptr ShaderExpression::createMultiplication(const IShaderExpression::Ptr& a, const IShaderExpression::Ptr& b)
+{
+    return std::make_shared<expressions::MultiplyExpression>(a, b);
+}
+
+IShaderExpression::Ptr ShaderExpression::createTableLookup(const TableDefinitionPtr& table, const IShaderExpression::Ptr& lookup)
+{
+    return std::make_shared<expressions::TableLookupExpression>(table, lookup);
 }
 
 } // namespace

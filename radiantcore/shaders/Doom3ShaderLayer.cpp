@@ -1,5 +1,7 @@
 #include "Doom3ShaderLayer.h"
 #include "Doom3ShaderSystem.h"
+#include "SoundMapExpression.h"
+#include "VideoMapExpression.h"
 
 namespace shaders
 {
@@ -74,54 +76,97 @@ BlendFunc blendFuncFromStrings(const StringPair& blendFunc)
     }
 }
 
-// ShaderLayer implementation
+StringPair getDefaultBlendFuncStringsForType(IShaderLayer::Type type)
+{
+    switch (type)
+    {
+    case IShaderLayer::DIFFUSE: return { "diffusemap" , "" };
+    case IShaderLayer::BUMP: return { "bumpmap" , "" };
+    case IShaderLayer::SPECULAR: return { "specularmap" , "" };
+    }
 
-const IShaderExpressionPtr Doom3ShaderLayer::NULL_EXPRESSION;
+    return { "gl_one", "gl_zero" }; // needs to be lowercase
+}
 
-Doom3ShaderLayer::Doom3ShaderLayer(ShaderTemplate& material, ShaderLayer::Type type, const NamedBindablePtr& btex)
+inline IShaderExpression::Ptr getDefaultExpressionForTransformType(IShaderLayer::TransformType type)
+{
+    if (type == IShaderLayer::TransformType::CenterScale ||
+        type == IShaderLayer::TransformType::Scale)
+    {
+        return ShaderExpression::createConstant(1);
+    }
+
+    return ShaderExpression::createConstant(0);
+}
+
+// IShaderLayer implementation
+
+const IShaderExpression::Ptr Doom3ShaderLayer::NULL_EXPRESSION;
+
+Doom3ShaderLayer::Doom3ShaderLayer(ShaderTemplate& material, IShaderLayer::Type type, const NamedBindablePtr& btex)
 :	_material(material),
 	_registers(NUM_RESERVED_REGISTERS),
-	_condition(REG_ONE),
-    _conditionExpression(NOT_DEFINED),
+    _expressionSlots(_registers),
 	_bindableTex(btex),
 	_type(type),
     _mapType(MapType::Map),
-	_blendFuncStrings("gl_one", "gl_zero"), // needs to be lowercase
+	_blendFuncStrings(getDefaultBlendFuncStringsForType(type)),
 	_vertexColourMode(VERTEX_COLOUR_NONE),
 	_cubeMapMode(CUBE_MAP_NONE),
 	_stageFlags(0),
 	_clampType(CLAMP_REPEAT),
-	_alphaTest(REG_ZERO),
 	_texGenType(TEXGEN_NORMAL),
+    _textureMatrix(_expressionSlots, _registers),
 	_privatePolygonOffset(0),
-    _parseFlags(0)
+    _parseFlags(0),
+    _enabled(true)
 {
 	_registers[REG_ZERO] = 0;
 	_registers[REG_ONE] = 1;
 
+    _expressionSlots[Expression::AlphaTest].registerIndex = REG_ZERO;
+    _expressionSlots[Expression::Condition].registerIndex = REG_ONE;
+
 	// Init the colour to 1,1,1,1
-	_colIdx[0] = _colIdx[1] = _colIdx[2] = _colIdx[3] = REG_ONE;
-    _colExpression[0] = _colExpression[1] = _colExpression[2] = _colExpression[3] = NOT_DEFINED;
+    _expressionSlots[Expression::ColourRed].registerIndex = REG_ONE;
+    _expressionSlots[Expression::ColourGreen].registerIndex = REG_ONE;
+    _expressionSlots[Expression::ColourBlue].registerIndex = REG_ONE;
+    _expressionSlots[Expression::ColourAlpha].registerIndex = REG_ONE;
 
-	// Scale is set to 1,1 by default
-	_scale[0] = _scale[1] = REG_ONE;
-    _scaleExpression[0] = _scaleExpression[1] = NOT_DEFINED;
+    // Initialise the texture matrix to an identity transform
+    _textureMatrix.setIdentity();
 
-	// Translation is set to 0,0 by default
-	_translation[0] = _translation[1] = REG_ZERO;
-    _translationExpression[0] = _translationExpression[1] = NOT_DEFINED;
-
-	// Rotation is set to 0 by default
-	_rotation = REG_ZERO;
-    _rotationExpression = NOT_DEFINED;
-
-	// No shearing so far
-	_shear[0] = REG_ZERO;
-	_shear[1] = REG_ZERO;
-    _shearExpression[0] = _shearExpression[1] = NOT_DEFINED;
-
-	_texGenParams[0] = _texGenParams[1] = _texGenParams[2] = REG_ZERO;
+    _expressionSlots[Expression::TexGenParam1].registerIndex = REG_ZERO;
+    _expressionSlots[Expression::TexGenParam2].registerIndex = REG_ZERO;
+    _expressionSlots[Expression::TexGenParam3].registerIndex = REG_ZERO;
 }
+
+Doom3ShaderLayer::Doom3ShaderLayer(const Doom3ShaderLayer& other, ShaderTemplate& material) :
+    _material(material),
+    _registers(other._registers),
+    _expressionSlots(other._expressionSlots, _registers),
+    _bindableTex(other._bindableTex),
+    _texture(other._texture),
+    _type(other._type),
+    _mapType(other._mapType),
+    _blendFuncStrings(other._blendFuncStrings),
+    _vertexColourMode(other._vertexColourMode),
+    _cubeMapMode(other._cubeMapMode),
+    _stageFlags(other._stageFlags),
+    _clampType(other._clampType),
+    _texGenType(other._texGenType),
+    _transformations(other._transformations),
+    _textureMatrix(_expressionSlots, _registers), // no copying necessary
+    _vertexProgram(other._vertexProgram),
+    _fragmentProgram(other._fragmentProgram),
+    _vertexParms(other._vertexParms),
+    _vertexParmDefinitions(other._vertexParmDefinitions),
+    _fragmentMaps(other._fragmentMaps),
+    _privatePolygonOffset(other._privatePolygonOffset),
+    _renderMapSize(other._renderMapSize),
+    _parseFlags(other._parseFlags),
+    _enabled(other._enabled)
+{}
 
 TexturePtr Doom3ShaderLayer::getTexture() const
 {
@@ -142,8 +187,10 @@ BlendFunc Doom3ShaderLayer::getBlendFunc() const
 Colour4 Doom3ShaderLayer::getColour() const
 {
 	// Resolve the register values
-    Colour4 colour(getRegisterValue(_colIdx[0]), getRegisterValue(_colIdx[1]),
-				   getRegisterValue(_colIdx[2]), getRegisterValue(_colIdx[3]));
+    Colour4 colour(getRegisterValue(_expressionSlots[Expression::ColourRed].registerIndex), 
+                   getRegisterValue(_expressionSlots[Expression::ColourGreen].registerIndex),
+                   getRegisterValue(_expressionSlots[Expression::ColourBlue].registerIndex), 
+                   getRegisterValue(_expressionSlots[Expression::ColourAlpha].registerIndex));
 
     if (!colour.isValid())
     {
@@ -153,89 +200,71 @@ Colour4 Doom3ShaderLayer::getColour() const
     return colour;
 }
 
-const IShaderExpressionPtr& Doom3ShaderLayer::getColourExpression(ColourComponentSelector component)
+const IShaderExpression::Ptr& Doom3ShaderLayer::getColourExpression(ColourComponentSelector component) const
 {
-    std::size_t expressionIndex = NOT_DEFINED;
-
     switch (component)
     {
     case COMP_RED:
-        expressionIndex = _colExpression[0];
-        break;
+        return _expressionSlots[Expression::ColourRed].expression;
     case COMP_GREEN:
-        expressionIndex = _colExpression[1];
-        break;
+        return _expressionSlots[Expression::ColourGreen].expression;
     case COMP_BLUE:
-        expressionIndex = _colExpression[2];
-        break;
+        return _expressionSlots[Expression::ColourBlue].expression;
     case COMP_ALPHA:
-        expressionIndex = _colExpression[3];
-        break;
+        return _expressionSlots[Expression::ColourAlpha].expression;
     case COMP_RGB:
         // Select if all RGB are using the same expression
-        if (_colExpression[0] == _colExpression[1] && _colExpression[1] == _colExpression[2])
+        if (_expressionSlots[Expression::ColourRed].expression == _expressionSlots[Expression::ColourGreen].expression && 
+            _expressionSlots[Expression::ColourGreen].expression == _expressionSlots[Expression::ColourBlue].expression)
         {
-            expressionIndex = _colExpression[0];
+            return _expressionSlots[Expression::ColourRed].expression;
         }
         break;
     case COMP_RGBA:
-        // Select if all RGBA are using the same expression
-        if (_colExpression[0] == _colExpression[1] && 
-            _colExpression[1] == _colExpression[2] && 
-            _colExpression[2] == _colExpression[3])
+        if (_expressionSlots[Expression::ColourRed].expression == _expressionSlots[Expression::ColourGreen].expression &&
+            _expressionSlots[Expression::ColourGreen].expression == _expressionSlots[Expression::ColourBlue].expression &&
+            _expressionSlots[Expression::ColourBlue].expression == _expressionSlots[Expression::ColourAlpha].expression)
         {
-            expressionIndex = _colExpression[0];
+            return _expressionSlots[Expression::ColourRed].expression;
         }
         break;
     };
 
-    return expressionIndex != NOT_DEFINED ? _expressions[expressionIndex] : NULL_EXPRESSION;
+    return NULL_EXPRESSION;
 }
 
-void Doom3ShaderLayer::setColourExpression(ColourComponentSelector comp, const IShaderExpressionPtr& expr)
+void Doom3ShaderLayer::setColourExpression(ColourComponentSelector comp, const IShaderExpression::Ptr& expr)
 {
-	// Store the expression and link it to our registers
-    auto expressionIndex = _expressions.size();
-	_expressions.emplace_back(expr);
-
-	std::size_t index = expr->linkToRegister(_registers);
-
 	// Now assign the index to our colour components
 	switch (comp)
 	{
 	case COMP_RED:
-		_colIdx[0] = index;
-		_colExpression[0] = expressionIndex;
+        _expressionSlots.assign(Expression::ColourRed, expr, REG_ONE);
 		break;
 	case COMP_GREEN:
-		_colIdx[1] = index;
-        _colExpression[1] = expressionIndex;
+        _expressionSlots.assign(Expression::ColourGreen, expr, REG_ONE);
 		break;
 	case COMP_BLUE:
-		_colIdx[2] = index;
-        _colExpression[2] = expressionIndex;
+        _expressionSlots.assign(Expression::ColourBlue, expr, REG_ONE);
 		break;
 	case COMP_ALPHA:
-		_colIdx[3] = index;
-        _colExpression[3] = expressionIndex;
+        _expressionSlots.assign(Expression::ColourAlpha, expr, REG_ONE);
 		break;
 	case COMP_RGB:
-		_colIdx[0] = index;
-		_colIdx[1] = index;
-		_colIdx[2] = index;
-        _colExpression[0] = expressionIndex;
-        _colExpression[1] = expressionIndex;
-        _colExpression[2] = expressionIndex;
+        _expressionSlots.assign(Expression::ColourRed, expr, REG_ONE);
+        _expressionSlots[Expression::ColourGreen].registerIndex = _expressionSlots[Expression::ColourRed].registerIndex;
+        _expressionSlots[Expression::ColourGreen].expression = _expressionSlots[Expression::ColourRed].expression;
+        _expressionSlots[Expression::ColourBlue].registerIndex = _expressionSlots[Expression::ColourRed].registerIndex;
+        _expressionSlots[Expression::ColourBlue].expression = _expressionSlots[Expression::ColourRed].expression;
 		break;
 	case COMP_RGBA:
-		_colIdx[0] = index;
-		_colIdx[1] = index;
-		_colIdx[2] = index;
-		_colIdx[3] = index;
-        _colExpression[0] = expressionIndex;
-        _colExpression[1] = expressionIndex;
-        _colExpression[2] = expressionIndex;
-        _colExpression[3] = expressionIndex;
+        _expressionSlots.assign(Expression::ColourRed, expr, REG_ONE);
+        _expressionSlots[Expression::ColourGreen].registerIndex = _expressionSlots[Expression::ColourRed].registerIndex;
+        _expressionSlots[Expression::ColourGreen].expression = _expressionSlots[Expression::ColourRed].expression;
+        _expressionSlots[Expression::ColourBlue].registerIndex = _expressionSlots[Expression::ColourRed].registerIndex;
+        _expressionSlots[Expression::ColourBlue].expression = _expressionSlots[Expression::ColourRed].expression;
+        _expressionSlots[Expression::ColourAlpha].registerIndex = _expressionSlots[Expression::ColourRed].registerIndex;
+        _expressionSlots[Expression::ColourAlpha].expression = _expressionSlots[Expression::ColourRed].expression;
 		break;
 	};
 }
@@ -245,31 +274,64 @@ void Doom3ShaderLayer::setColour(const Vector4& col)
 	// Assign all 3 components of the colour, allocating new registers on the fly where needed
 	for (std::size_t i = 0; i < 4; ++i)
 	{
+        auto slot = static_cast<Expression::Slot>(Expression::ColourRed + i);
+
 		// Does this colour component refer to a reserved constant index?
-		if (_colIdx[i] < NUM_RESERVED_REGISTERS)
+		if (_expressionSlots[slot].registerIndex < NUM_RESERVED_REGISTERS)
 		{
 			// Yes, break this up by allocating a new register for this value
-			_colIdx[i] = getNewRegister(static_cast<float>(col[i]));
+            _expressionSlots[slot].registerIndex = getNewRegister(static_cast<float>(col[i]));
 		}
 		else
 		{
 			// Already using a custom register
-            setRegister(_colIdx[i], static_cast<float>(col[i]));
+            setRegister(_expressionSlots[slot].registerIndex, static_cast<float>(col[i]));
 		}
 	}
 }
 
-ShaderLayer::VertexColourMode Doom3ShaderLayer::getVertexColourMode() const
+void Doom3ShaderLayer::appendTransformation(const Transformation& transform)
+{
+    Transformation copy(transform);
+
+    if (!copy.expression1)
+    {
+        copy.expression1 = getDefaultExpressionForTransformType(transform.type);
+    }
+
+    if (!copy.expression2 && transform.type != TransformType::Rotate)
+    {
+        copy.expression2 = getDefaultExpressionForTransformType(transform.type);
+    }
+
+    // Store this original transformation, we need it later
+    _transformations.emplace_back(copy);
+
+    // Construct a transformation matrix and multiply it on top of the existing one
+    _textureMatrix.applyTransformation(copy);
+}
+
+const std::vector<IShaderLayer::Transformation>& Doom3ShaderLayer::getTransformations()
+{
+    return _transformations;
+}
+
+Matrix4 Doom3ShaderLayer::getTextureTransform()
+{
+    return _textureMatrix.getMatrix4();
+}
+
+IShaderLayer::VertexColourMode Doom3ShaderLayer::getVertexColourMode() const
 {
     return _vertexColourMode;
 }
 
-ShaderLayer::CubeMapMode Doom3ShaderLayer::getCubeMapMode() const
+IShaderLayer::CubeMapMode Doom3ShaderLayer::getCubeMapMode() const
 {
     return _cubeMapMode;
 }
 
-ShaderLayer::MapType Doom3ShaderLayer::getMapType() const
+IShaderLayer::MapType Doom3ShaderLayer::getMapType() const
 {
     return _mapType;
 }
@@ -279,7 +341,7 @@ void Doom3ShaderLayer::setMapType(MapType type)
     _mapType = type;
 }
 
-const Vector2& Doom3ShaderLayer::getRenderMapSize()
+const Vector2& Doom3ShaderLayer::getRenderMapSize() const
 {
     return _renderMapSize;
 }
@@ -291,15 +353,20 @@ void Doom3ShaderLayer::setRenderMapSize(const Vector2& size)
 
 bool Doom3ShaderLayer::hasAlphaTest() const
 {
-    return _alphaTest != REG_ZERO;
+    return _expressionSlots[Expression::AlphaTest].expression != nullptr;
 }
 
 float Doom3ShaderLayer::getAlphaTest() const
 {
-    return _registers[_alphaTest];
+    return _registers[_expressionSlots[Expression::AlphaTest].registerIndex];
 }
 
-TexturePtr Doom3ShaderLayer::getFragmentMapTexture(int index)
+const IShaderExpression::Ptr& Doom3ShaderLayer::getAlphaTestExpression() const
+{
+    return _expressionSlots[Expression::AlphaTest].expression;
+}
+
+TexturePtr Doom3ShaderLayer::getFragmentMapTexture(int index) const
 {
 	if (index < 0 || index >= static_cast<int>(_fragmentMaps.size()))
 	{
@@ -309,14 +376,14 @@ TexturePtr Doom3ShaderLayer::getFragmentMapTexture(int index)
 	return GetTextureManager().getBinding(std::dynamic_pointer_cast<NamedBindable>(_fragmentMaps[index].map));
 }
 
-const Doom3ShaderLayer::FragmentMap& Doom3ShaderLayer::getFragmentMap(int index)
+const Doom3ShaderLayer::FragmentMap& Doom3ShaderLayer::getFragmentMap(int index) const
 {
     assert(index >= 0 && index < static_cast<int>(_fragmentMaps.size()));
 
     return _fragmentMaps[index];
 }
 
-void Doom3ShaderLayer::addFragmentMap(const ShaderLayer::FragmentMap& fragmentMap)
+void Doom3ShaderLayer::addFragmentMap(const IShaderLayer::FragmentMap& fragmentMap)
 {
     assert(fragmentMap.index >= 0);
 
@@ -328,7 +395,7 @@ void Doom3ShaderLayer::addFragmentMap(const ShaderLayer::FragmentMap& fragmentMa
     _fragmentMaps[fragmentMap.index] = fragmentMap;
 }
 
-std::string Doom3ShaderLayer::getMapImageFilename()
+std::string Doom3ShaderLayer::getMapImageFilename() const
 {
     auto image = std::dynamic_pointer_cast<ImageExpression>(_bindableTex);
 
@@ -340,12 +407,18 @@ std::string Doom3ShaderLayer::getMapImageFilename()
     return std::string();
 }
 
-IMapExpression::Ptr Doom3ShaderLayer::getMapExpression()
+IMapExpression::Ptr Doom3ShaderLayer::getMapExpression() const
 {
     return std::dynamic_pointer_cast<IMapExpression>(_bindableTex);
 }
 
-int Doom3ShaderLayer::getParseFlags()
+void Doom3ShaderLayer::setMapExpressionFromString(const std::string& expression)
+{
+    _texture.reset();
+    setBindableTexture(MapExpression::createForString(expression));
+}
+
+int Doom3ShaderLayer::getParseFlags() const
 {
     return _parseFlags;
 }
@@ -355,7 +428,7 @@ void Doom3ShaderLayer::setParseFlag(ParseFlags flag)
     _parseFlags |= flag;
 }
 
-Vector4 Doom3ShaderLayer::getVertexParmValue(int parm)
+Vector4 Doom3ShaderLayer::getVertexParmValue(int parm) const
 {
     if (static_cast<std::size_t>(parm) >= _vertexParms.size() / 4)
     {
@@ -364,22 +437,26 @@ Vector4 Doom3ShaderLayer::getVertexParmValue(int parm)
 
     std::size_t offset = parm * 4;
 
-    return Vector4(_registers[_vertexParms[offset + 0]], _registers[_vertexParms[offset + 1]],
-        _registers[_vertexParms[offset + 2]], _registers[_vertexParms[offset + 3]]);
+    return Vector4(_registers[_vertexParms[offset + 0].registerIndex],
+                   _registers[_vertexParms[offset + 1].registerIndex],
+                   _registers[_vertexParms[offset + 2].registerIndex],
+                   _registers[_vertexParms[offset + 3].registerIndex]);
 }
 
-const ShaderLayer::VertexParm& Doom3ShaderLayer::getVertexParm(int parm)
+const IShaderLayer::VertexParm& Doom3ShaderLayer::getVertexParm(int parm) const
 {
     return _vertexParmDefinitions[parm];
 }
 
-int Doom3ShaderLayer::getNumVertexParms()
+int Doom3ShaderLayer::getNumVertexParms() const
 {
     return static_cast<int>(_vertexParmDefinitions.size());
 }
 
 void Doom3ShaderLayer::addVertexParm(const VertexParm& parm)
 {
+    assert(parm.expressions[0]);
+
     if (_vertexParmDefinitions.size() <= parm.index)
     {
         _vertexParmDefinitions.resize(parm.index + 1);
@@ -388,58 +465,156 @@ void Doom3ShaderLayer::addVertexParm(const VertexParm& parm)
     // Store the expressions in a separate location
     _vertexParmDefinitions[parm.index] = parm;
 
-    assert(parm.expressions[0]);
-
-    _expressions.emplace_back(parm.expressions[0]);
-    std::size_t parm0Reg = parm.expressions[0]->linkToRegister(_registers);
-
+    // Resize the parms array, it will take multiples of 4
     if (_vertexParms.size() <= (parm.index + 1) * 4)
     {
-        _vertexParms.resize((parm.index + 1) * 4, REG_ZERO);
+        _vertexParms.resize((parm.index + 1) * 4);
     }
 
     auto offset = parm.index * 4;
-    _vertexParms[offset + 0] = parm0Reg;
+
+    // Store the first expression
+    _vertexParms[offset + 0].expression = parm.expressions[0];
+
+    std::size_t parm0Reg = parm.expressions[0]->linkToRegister(_registers);
+    _vertexParms[offset + 0].registerIndex = parm0Reg;
 
     if (parm.expressions[1])
     {
-        _expressions.emplace_back(parm.expressions[1]);
-        _vertexParms[offset + 1] = parm.expressions[1]->linkToRegister(_registers);
+        _vertexParms[offset + 1].expression = parm.expressions[1];
+        _vertexParms[offset + 1].registerIndex = parm.expressions[1]->linkToRegister(_registers);
 
         if (parm.expressions[2])
         {
-            _expressions.emplace_back(parm.expressions[2]);
-            _vertexParms[offset + 2] = parm.expressions[2]->linkToRegister(_registers);
+            _vertexParms[offset + 2].expression = parm.expressions[2];
+            _vertexParms[offset + 2].registerIndex = parm.expressions[2]->linkToRegister(_registers);
 
             if (parm.expressions[3])
             {
-                _expressions.emplace_back(parm.expressions[3]);
-                _vertexParms[offset + 3] = parm.expressions[3]->linkToRegister(_registers);
+                _vertexParms[offset + 3].expression = parm.expressions[3];
+                _vertexParms[offset + 3].registerIndex = parm.expressions[3]->linkToRegister(_registers);
             }
             else
             {
                 // No fourth parameter set, set w to 1
-                _vertexParms[offset + 3] = REG_ONE;
+                _vertexParms[offset + 3].registerIndex = REG_ONE;
             }
         }
         else
         {
             // Only 2 expressions given, set z and w to 0 and 1, respectively.
-            _vertexParms[offset + 2] = REG_ZERO;
-            _vertexParms[offset + 3] = REG_ONE;
+            _vertexParms[offset + 2].registerIndex = REG_ZERO;
+            _vertexParms[offset + 3].registerIndex = REG_ONE;
         }
     }
     else
     {
         // no parm1 given, repeat the one we have 4 times => insert 3 more times
-        _vertexParms[offset + 1] = parm0Reg;
-        _vertexParms[offset + 2] = parm0Reg;
-        _vertexParms[offset + 3] = parm0Reg;
+        _vertexParms[offset + 1].registerIndex = parm0Reg;
+        _vertexParms[offset + 2].registerIndex = parm0Reg;
+        _vertexParms[offset + 3].registerIndex = parm0Reg;
     }
 
     // At this point the array needs to be empty or its size a multiple of 4
     assert(_vertexParms.size() % 4 == 0);
 }
 
+void Doom3ShaderLayer::recalculateTransformationMatrix()
+{
+    _textureMatrix.setIdentity();
+
+    for (const auto& transform : _transformations)
+    {
+        _textureMatrix.applyTransformation(transform);
+    }
 }
 
+void Doom3ShaderLayer::setEnabled(bool enabled)
+{
+    _enabled = enabled;
+}
+
+std::size_t Doom3ShaderLayer::addTransformation(TransformType type, const std::string& expression1, const std::string& expression2)
+{
+    _transformations.emplace_back(Transformation
+    {
+        type,
+        ShaderExpression::createFromString(expression1),
+        type != TransformType::Rotate ? ShaderExpression::createFromString(expression2) : IShaderExpression::Ptr()
+    });
+
+    recalculateTransformationMatrix();
+
+    return _transformations.size() - 1;
+}
+
+void Doom3ShaderLayer::removeTransformation(std::size_t index)
+{
+    assert(index >= 0 && index < _transformations.size());
+
+    _transformations.erase(_transformations.begin() + index);
+
+    recalculateTransformationMatrix();
+}
+
+void Doom3ShaderLayer::updateTransformation(std::size_t index, TransformType type, const std::string& expression1, const std::string& expression2)
+{
+    assert(index >= 0 && index < _transformations.size());
+
+    _transformations[index].type = type;
+    auto expr1 = ShaderExpression::createFromString(expression1);
+    _transformations[index].expression1 = expr1 ? expr1 : getDefaultExpressionForTransformType(type);;
+
+    if (type != TransformType::Rotate)
+    {
+        auto expr2 = ShaderExpression::createFromString(expression2);
+        _transformations[index].expression2 = expr2 ? expr2 : getDefaultExpressionForTransformType(type);
+    }
+    else
+    {
+        _transformations[index].expression2.reset();
+    }
+
+    recalculateTransformationMatrix();
+}
+
+void Doom3ShaderLayer::setColourExpressionFromString(ColourComponentSelector component, const std::string& expression)
+{
+    if (expression.empty())
+    {
+        setColourExpression(component, IShaderExpression::Ptr());
+        return;
+    }
+
+    auto expr = ShaderExpression::createFromString(expression);
+
+    if (expr)
+    {
+        setColourExpression(component, expr);
+    }
+}
+
+void Doom3ShaderLayer::setConditionExpressionFromString(const std::string& expression)
+{
+    _expressionSlots.assignFromString(Expression::Condition, expression, REG_ONE);
+}
+
+void Doom3ShaderLayer::setTexGenExpressionFromString(std::size_t index, const std::string& expression)
+{
+    assert(index < 3);
+
+    auto slot = static_cast<Expression::Slot>(Expression::TexGenParam1 + index);
+    _expressionSlots.assignFromString(slot, expression, REG_ZERO);
+}
+
+void Doom3ShaderLayer::setSoundMapWaveForm(bool waveForm)
+{
+    setBindableTexture(std::make_shared<SoundMapExpression>(waveForm));
+}
+
+void Doom3ShaderLayer::setVideoMapProperties(const std::string& filePath, bool looping)
+{
+    setBindableTexture(std::make_shared<VideoMapExpression>(filePath, looping));
+}
+
+}

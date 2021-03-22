@@ -15,6 +15,11 @@ class CShader final :
 private:
     bool _isInternal;
 
+    // The unmodified template
+    ShaderTemplatePtr _originalTemplate;
+
+    // The template this material is working with - if this instance 
+    // has not been altered, this is the same as _originalTemplate
 	ShaderTemplatePtr _template;
 
 	// The shader file name (i.e. the file where this one is defined)
@@ -33,7 +38,7 @@ private:
 	bool _visible;
 
     // Vector of shader layers
-	ShaderLayerVector _layers;
+	IShaderLayerVector _layers;
 
 public:
 	static bool m_lightingEnabled;
@@ -49,8 +54,11 @@ public:
 	~CShader();
 
     /* Material implementation */
-    int getSortRequest() const override;
+    float getSortRequest() const override;
+    void setSortRequest(float sortRequest) override;
+    void resetSortReqest() override;
     float getPolygonOffset() const override;
+    void setPolygonOffset(float offset) override;
 	TexturePtr getEditorImage() override;
 	bool isEditorImageNoTex() override;
 	TexturePtr lightFalloffImage() override;
@@ -58,35 +66,55 @@ public:
 	bool IsInUse() const override;
 	void SetInUse(bool bInUse) override;
 	int getMaterialFlags() const override;
+    void setMaterialFlag(Flags flag) override;
+    void clearMaterialFlag(Flags flag) override;
 	bool IsDefault() const override;
 	const char* getShaderFileName() const override;
     const vfs::FileInfo& getShaderFileInfo() const override;
 	CullType getCullType() const override;
+    void setCullType(CullType type) override;
 	ClampType getClampType() const override;
+    void setClampType(ClampType type) override;
 	int getSurfaceFlags() const override;
+    void setSurfaceFlag(Material::SurfaceFlags flag) override;
+    void clearSurfaceFlag(Material::SurfaceFlags flag) override;
 	SurfaceType getSurfaceType() const override;
+    void setSurfaceType(SurfaceType type) override;
 	DeformType getDeformType() const override;
-	IShaderExpressionPtr getDeformExpression(std::size_t index) override;
+	IShaderExpression::Ptr getDeformExpression(std::size_t index) override;
     std::string getDeformDeclName() override;
 	int getSpectrum() const override;
+    void setSpectrum(int spectrum) override;
 	DecalInfo getDecalInfo() const override;
 	Coverage getCoverage() const override;
 	std::string getDescription() const override;
+    void setDescription(const std::string& description) override;
 	std::string getDefinition() override;
 	bool isAmbientLight() const override;
 	bool isBlendLight() const override;
 	bool isCubicLight() const;
 	bool isFogLight() const override;
+    void setIsAmbientLight(bool newValue) override;
+    void setIsBlendLight(bool newValue) override;
+    void setIsFogLight(bool newValue) override;
+    void setIsCubicLight(bool newValue) override;
 	bool lightCastsShadows() const override;
 	bool surfaceCastsShadow() const override;
 	bool isDrawn() const override;
 	bool isDiscrete() const override;
 	bool isVisible() const override;
 	void setVisible(bool visible) override;
-    const ShaderLayerVector& getAllLayers() const;
+    const IShaderLayerVector& getAllLayers() const;
+    std::size_t addLayer(IShaderLayer::Type type) override;
+    void removeLayer(std::size_t index) override;
+    void swapLayerPosition(std::size_t first, std::size_t second) override;
+    std::size_t duplicateLayer(std::size_t index) override;
+    IEditableShaderLayer::Ptr getEditableLayer(std::size_t index) override;
 
     IMapExpression::Ptr getLightFalloffExpression() override;
-	IMapExpression::Ptr getLightFalloffCubeMapExpression() override;
+    void setLightFalloffExpressionFromString(const std::string& expressionString) override;
+    IShaderLayer::MapType getLightFalloffCubeMapType() override;
+    void setLightFalloffCubeMapType(IShaderLayer::MapType type) override;
     std::string getRenderBumpArguments() override;
     std::string getRenderBumpFlatArguments() override;
 
@@ -106,11 +134,14 @@ public:
 	 */
 	void setName(const std::string& name);
 
-	ShaderLayer* firstLayer() const;
+	IShaderLayer* firstLayer() const;
     int getParseFlags() const override;
 
-}; // class CShader
+    bool isModified() override;
 
+private:
+    void ensureTemplateCopy();
+};
 typedef std::shared_ptr<CShader> CShaderPtr;
 
 } // namespace shaders

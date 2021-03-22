@@ -74,14 +74,16 @@ scene::INodePtr PicoModelLoader::loadModel(const std::string& modelName)
 }
 
 // Load the given model from the VFS path
-IModelPtr PicoModelLoader::loadModelFromPath(const std::string& name)
+IModelPtr PicoModelLoader::loadModelFromPath(const std::string& path)
 {
 	// Open an ArchiveFile to load
-	ArchiveFilePtr file = GlobalFileSystem().openFile(name);
+	auto file = path_is_absolute(path.c_str()) ?
+        GlobalFileSystem().openFileInAbsolutePath(path) :
+        GlobalFileSystem().openFile(path);
 
 	if (!file)
 	{
-		rError() << "Failed to load model " << name << std::endl;
+		rError() << "Failed to load model " << path << std::endl;
 		return IModelPtr();
 	}
 
@@ -111,7 +113,7 @@ IModelPtr PicoModelLoader::loadModelFromPath(const std::string& name)
 
 	// Set the filename
 	modelObj->setFilename(os::getFilename(file->getName()));
-	modelObj->setModelPath(name);
+	modelObj->setModelPath(path);
 
 	PicoFreeModel(model);
 

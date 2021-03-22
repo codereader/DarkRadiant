@@ -2,7 +2,7 @@
 
 #include <map>
 #include "ishaders.h"
-#include "ShaderLayer.h"
+#include "ishaderlayer.h"
 
 namespace shaders
 {
@@ -39,6 +39,52 @@ inline std::string getStringForSurfaceType(Material::SurfaceType type)
     return std::string();
 }
 
+inline Material::SurfaceType getSurfaceTypeForString(const std::string& surfaceTypeString)
+{
+    for (const auto& pair : SurfaceTypeMapping)
+    {
+        if (surfaceTypeString == pair.first)
+        {
+            return pair.second;
+        }
+    }
+
+    return Material::SURFTYPE_DEFAULT;
+}
+
+constexpr std::pair<const char*, Material::CullType> CullTypes[]
+{
+    { "Frontsided", Material::CULL_BACK },
+    { "Backsided", Material::CULL_FRONT },
+    { "Twosided", Material::CULL_NONE },
+};
+
+inline std::string getStringForCullType(Material::CullType type)
+{
+    for (const auto& pair : CullTypes)
+    {
+        if (type == pair.second)
+        {
+            return pair.first;
+        }
+    }
+
+    return CullTypes[0].first;
+}
+
+inline Material::CullType getCullTypeForString(const std::string& typeString)
+{
+    for (const auto& pair : CullTypes)
+    {
+        if (typeString == pair.first)
+        {
+            return pair.second;
+        }
+    }
+
+    return Material::CULL_BACK;
+}
+
 constexpr std::pair<const char*, Material::SortRequest> PredefinedSortValues[]
 {
     { "subview", Material::SORT_SUBVIEW },
@@ -65,6 +111,43 @@ inline std::string getStringForSortRequestValue(float value)
     }
 
     return std::string();
+}
+
+constexpr std::pair<const char*, IShaderLayer::MapType> MapTypeNames[]
+{
+    { "map", IShaderLayer::MapType::Map },
+    { "cubeMap", IShaderLayer::MapType::CubeMap },
+    { "cameraCubeMap", IShaderLayer::MapType::CameraCubeMap },
+    { "mirrorRenderMap", IShaderLayer::MapType::MirrorRenderMap },
+    { "remoteRenderMap", IShaderLayer::MapType::RemoteRenderMap },
+    { "videoMap", IShaderLayer::MapType::VideoMap },
+    { "soundMap", IShaderLayer::MapType::SoundMap },
+};
+
+inline std::string getStringForMapType(IShaderLayer::MapType type)
+{
+    for (const auto& pair : MapTypeNames)
+    {
+        if (type == pair.second)
+        {
+            return pair.first;
+        }
+    }
+
+    return std::string();
+}
+
+inline IShaderLayer::MapType getMapTypeForString(const std::string& typeString)
+{
+    for (const auto& pair : MapTypeNames)
+    {
+        if (typeString == pair.first)
+        {
+            return pair.second;
+        }
+    }
+
+    return IShaderLayer::MapType::Map;
 }
 
 constexpr std::pair<const char*, Material::DeformType> DeformTypeNames[]
@@ -102,17 +185,99 @@ constexpr std::pair<const char*, std::pair<const char*, const char*>> BlendTypeS
     { "none", { "gl_zero", "gl_one" } },
 };
 
-constexpr std::pair<const char*, ShaderLayer::TexGenType> TexGenTypeNames[]
+constexpr std::pair<const char*, IShaderLayer::TexGenType> TexGenTypeNames[]
 {
-    { "normal", ShaderLayer::TEXGEN_NORMAL },
-    { "reflect", ShaderLayer::TEXGEN_REFLECT },
-    { "skybox", ShaderLayer::TEXGEN_SKYBOX },
-    { "wobbleSky", ShaderLayer::TEXGEN_WOBBLESKY },
+    { "normal", IShaderLayer::TEXGEN_NORMAL },
+    { "reflect", IShaderLayer::TEXGEN_REFLECT },
+    { "skybox", IShaderLayer::TEXGEN_SKYBOX },
+    { "wobbleSky", IShaderLayer::TEXGEN_WOBBLESKY },
 };
 
-inline std::string getStringForTexGenType(ShaderLayer::TexGenType type)
+inline std::string getStringForTexGenType(IShaderLayer::TexGenType type)
 {
     for (const auto& pair : TexGenTypeNames)
+    {
+        if (type == pair.second)
+        {
+            return pair.first;
+        }
+    }
+
+    return std::string();
+}
+
+inline IShaderLayer::TexGenType getTexGenTypeForString(const std::string& typeString)
+{
+    for (const auto& pair : TexGenTypeNames)
+    {
+        if (typeString == pair.first)
+        {
+            return pair.second;
+        }
+    }
+
+    return IShaderLayer::TexGenType::TEXGEN_NORMAL;
+}
+
+constexpr std::pair<const char*, IShaderLayer::TransformType> TransformTypeNames[]
+{
+    { "Translate", IShaderLayer::TransformType::Translate },
+    { "Scale", IShaderLayer::TransformType::Scale },
+    { "CenterScale", IShaderLayer::TransformType::CenterScale },
+    { "Shear", IShaderLayer::TransformType::Shear },
+    { "Rotate", IShaderLayer::TransformType::Rotate },
+};
+
+inline std::string getStringForTransformType(IShaderLayer::TransformType type)
+{
+    for (const auto& pair : TransformTypeNames)
+    {
+        if (type == pair.second)
+        {
+            return pair.first;
+        }
+    }
+
+    return std::string();
+}
+
+inline IShaderLayer::TransformType getTransformTypeForString(const std::string& typeString)
+{
+    for (const auto& pair : TransformTypeNames)
+    {
+        if (typeString == pair.first)
+        {
+            return pair.second;
+        }
+    }
+
+    return IShaderLayer::TransformType::Translate;
+}
+
+constexpr std::pair<const char*, ClampType> ClampTypeNames[]
+{
+    { "noclamp", CLAMP_REPEAT },
+    { "clamp", CLAMP_NOREPEAT },
+    { "zeroclamp", CLAMP_ZEROCLAMP },
+    { "alphazeroclamp", CLAMP_ALPHAZEROCLAMP },
+};
+
+inline ClampType getClampTypeForString(const std::string& typeString)
+{
+    for (const auto& pair : ClampTypeNames)
+    {
+        if (typeString == pair.first)
+        {
+            return pair.second;
+        }
+    }
+
+    return CLAMP_REPEAT;
+}
+
+inline std::string getStringForClampType(ClampType type)
+{
+    for (const auto& pair : ClampTypeNames)
     {
         if (type == pair.second)
         {

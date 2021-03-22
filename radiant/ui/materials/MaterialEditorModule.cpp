@@ -42,7 +42,7 @@ public:
         GlobalMenuManager().add("main/entity", 	// menu location path
             "MaterialEditor", // name
             ui::menu::ItemType::Item,	// type
-            _("Material Editor..."),	// caption
+            _("Material Editor (experimental)..."),	// caption
             "icon_texture.png",	// icon
             "MaterialEditor"); // event name
     }

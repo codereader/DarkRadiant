@@ -9,6 +9,7 @@
 
 #include "math/Vector2.h"
 #include "math/Vector4.h"
+#include "math/Matrix4.h"
 #include "render/Colour4.h"
 
 class IRenderEntity;
@@ -51,9 +52,10 @@ public:
  * Each shader layer contains an image texture, a blend mode (e.g. add,
  * modulate) and various other data.
  */
-class ShaderLayer
+class IShaderLayer
 {
 public:
+    using Ptr = std::shared_ptr<IShaderLayer>;
 
     /// Enumeration of layer types.
     enum Type
@@ -78,8 +80,7 @@ public:
 		FLAG_MASK_BLUE				= 1 << 8,
 		FLAG_MASK_ALPHA				= 1 << 9,
 		FLAG_MASK_DEPTH				= 1 << 10,
-		FLAG_CENTERSCALE			= 1 << 11,  // whether to translate -0.5, scale and translate +0.5
-		FLAG_IGNORE_DEPTH			= 1 << 12,  // use depthfunc always
+		FLAG_IGNORE_DEPTH			= 1 << 11,  // use depthfunc always
 	};
 
 	enum TexGenType
@@ -98,11 +99,53 @@ public:
         PF_HasColoredKeyword =     1 << 3, // colored has been specified
     };
 
+    // Expression slot selector
+    struct Expression
+    {
+        enum Slot
+        {
+            AlphaTest = 0,
+            Condition,
+            TexGenParam1,
+            TexGenParam2,
+            TexGenParam3,
+            ColourRed,
+            ColourGreen,
+            ColourBlue,
+            ColourAlpha,
+            TextureMatrixRow0Col0,
+            TextureMatrixRow0Col1,
+            TextureMatrixRow0Col2,
+            TextureMatrixRow1Col0,
+            TextureMatrixRow1Col1,
+            TextureMatrixRow1Col2,
+            NumExpressionSlots
+        };
+    };
+
+    // The various texture transformations
+    enum class TransformType
+    {
+        Translate,
+        Scale,
+        CenterScale,
+        Shear,
+        Rotate,
+    };
+
+    // A texture transformation consists of a type and two arguments at most
+    struct Transformation
+    {
+        TransformType type;
+        shaders::IShaderExpression::Ptr expression1;
+        shaders::IShaderExpression::Ptr expression2;
+    };
+
     /**
      * \brief
 	 * Destructor
 	 */
-	virtual ~ShaderLayer() {}
+	virtual ~IShaderLayer() {}
 
     /// Return the layer type.
     virtual Type getType() const = 0;
@@ -125,6 +168,9 @@ public:
 	 */
 	virtual void evaluateExpressions(std::size_t time, const IRenderEntity& entity) = 0;
 
+    // Returns the requested expression
+    virtual shaders::IShaderExpression::Ptr getExpression(Expression::Slot slot) = 0;
+
 	/**
 	 * The flags set on this stage.
 	 */
@@ -146,8 +192,8 @@ public:
 	 */
 	virtual float getTexGenParam(std::size_t index) const = 0;
 
-    // The expressions used to calcualte the tex gen params. Index in [0..2]
-    virtual shaders::IShaderExpressionPtr getTexGenExpression(std::size_t index) const = 0;
+    // The expressions used to calculate the tex gen params. Index in [0..2]
+    virtual shaders::IShaderExpression::Ptr getTexGenExpression(std::size_t index) const = 0;
 
     /**
      * \brief
@@ -179,7 +225,7 @@ public:
     };
 
     // Returns the expression to calculate the RGBA vertex colour values
-    virtual const shaders::IShaderExpressionPtr& getColourExpression(ColourComponentSelector component) = 0;
+    virtual const shaders::IShaderExpression::Ptr& getColourExpression(ColourComponentSelector component) const = 0;
 
     /**
      * \brief
@@ -233,48 +279,18 @@ public:
      * Returns the dimensions specifying the map size for 
      * stages using the "mirrorRenderMap", "remoteRenderMap" keywords.
      */
-    virtual const Vector2& getRenderMapSize() = 0;
+    virtual const Vector2& getRenderMapSize() const = 0;
 
-	/**
-	 * Returns the value of the scale expressions of this stage.
-	 */
-	virtual Vector2 getScale() = 0;
+    // Adds a transformation at the end of the list of existing transforms in this stage
+    virtual void appendTransformation(const Transformation& transform) = 0;
 
-    // Returns the expression of the given scale component (0 == x, 1 == y)
-    virtual const shaders::IShaderExpressionPtr& getScaleExpression(std::size_t index) = 0;
+    // The list of transformations defined in this stage, in the order they appear in the declaration
+    virtual const std::vector<Transformation>& getTransformations() = 0;
 
-    // Workaround: the shader layer is storing the centerscale expression in the same location as scale expressions,
-    // making them mutually exclusive - which is not the way the idTech4 materials work.
-    // These stage transforms need to be redesigned to support an arbitrary number of transforms respecting their order.
-    // Texture Matrix calculation needs to be performed by the stage itself, not in OpenGLShaderPass
-    // I need to go ahead with the material editor, so I'm not changing it immediately
-    virtual const shaders::IShaderExpressionPtr& getCenterScaleExpression(std::size_t index) = 0;
+    // Returns the current texture matrix
+    virtual Matrix4 getTextureTransform() = 0;
 
-	/**
-	 * Returns the value of the translate expressions of this stage.
-	 */
-	virtual Vector2 getTranslation() = 0;
-
-    // Returns the expression of the given translation component (0 == x, 1 == y)
-    virtual const shaders::IShaderExpressionPtr& getTranslationExpression(std::size_t index) = 0;
-
-	/**
-	 * Returns the value of the rotate expression of this stage.
-	 */
-	virtual float getRotation() = 0;
-
-    // Returns the expression used to calculate the rotation value
-    virtual const shaders::IShaderExpressionPtr& getRotationExpression() = 0;
-
-	/**
-	 * Returns the value of the 'shear' expressions of this stage.
-	 */
-	virtual Vector2 getShear() = 0;
-
-    // Returns the expression of the given shear component (0 == x, 1 == y)
-    virtual const shaders::IShaderExpressionPtr& getShearExpression(std::size_t index) = 0;
-
-    // Returns true if this layer has an alphatest expression defined
+	// Returns true if this layer has an alphatest expression defined
     virtual bool hasAlphaTest() const = 0;
 
     /**
@@ -287,32 +303,39 @@ public:
      */
     virtual float getAlphaTest() const = 0;
 
+    // Returns the expression used to calculate the alpha test value
+    virtual const shaders::IShaderExpression::Ptr& getAlphaTestExpression() const = 0;
+
 	/**
 	 * Whether this stage is active. Unconditional stages always return true,
 	 * conditional ones return the result of the most recent condition expression evaluation.
 	 */
 	virtual bool isVisible() const = 0;
 
+    // Stages can be enabled/disabled programmatically (used when editing materials)
+    // This returns true if the stage is enabled
+    virtual bool isEnabled() const = 0;
+
     // Returns the if-expression used to evaluate this stage's visibility, or null if none defined
-    virtual const shaders::IShaderExpressionPtr& getConditionExpression() = 0;
+    virtual const shaders::IShaderExpression::Ptr& getConditionExpression() const = 0;
 
 	/**
 	 * Returns the name of this stage's fragment program.
 	 */
-	virtual const std::string& getVertexProgram() = 0;
+	virtual const std::string& getVertexProgram()const = 0;
 
 	/**
 	 * Returns the name of this stage's fragment program.
 	 */
-	virtual const std::string& getFragmentProgram() = 0;
+	virtual const std::string& getFragmentProgram() const = 0;
 
     // The number of defined vertex parameters
-    virtual int getNumVertexParms() = 0;
+    virtual int getNumVertexParms() const = 0;
 
 	/**
 	 * Returns the 4 parameter values for the vertexParm index <parm>.
 	 */
-	virtual Vector4 getVertexParmValue(int parm) = 0;
+	virtual Vector4 getVertexParmValue(int parm) const = 0;
 
     // A vertex parm has an index and 4 expressions at most
     struct VertexParm
@@ -322,16 +345,16 @@ public:
         {}
 
         int index;
-        shaders::IShaderExpressionPtr expressions[4];
+        shaders::IShaderExpression::Ptr expressions[4];
     };
 
-    // Returns the 
-    virtual const VertexParm& getVertexParm(int index) = 0;
+    // Returns the vertex parameter with the given index [0..3]
+    virtual const VertexParm& getVertexParm(int index) const = 0;
 
 	/**
 	 * Returns the number of fragment maps in this stage.
 	 */
-	virtual std::size_t getNumFragmentMaps() = 0;
+	virtual std::size_t getNumFragmentMaps() const = 0;
 
     struct FragmentMap
     {
@@ -344,39 +367,104 @@ public:
         shaders::IMapExpression::Ptr map;
     };
 
-    virtual const FragmentMap& getFragmentMap(int index) = 0;
+    virtual const FragmentMap& getFragmentMap(int index) const = 0;
 
 	/**
 	 * Returns the fragment map image with the given index.
 	 */
-	virtual TexturePtr getFragmentMapTexture(int index) = 0;
+	virtual TexturePtr getFragmentMapTexture(int index) const = 0;
 
 	/**
 	 * Stage-specific polygon offset, overriding the "global" one defined on the material.
 	 */
-	virtual float getPrivatePolygonOffset() = 0;
+	virtual float getPrivatePolygonOffset() const = 0;
 
     // If this stage is referring to a single image file, this will return
     // the VFS path to it with the file extension removed.
     // If this layer doesn't refer to a single image file, an empty string is returned
-    virtual std::string getMapImageFilename() = 0;
+    virtual std::string getMapImageFilename() const = 0;
 
     // The map expression used to generate/define the texture of this stage
-    virtual shaders::IMapExpression::Ptr getMapExpression() = 0;
+    virtual shaders::IMapExpression::Ptr getMapExpression() const = 0;
 
     // Parser information, to reconstruct the use of certain keywords
-    virtual int getParseFlags() = 0;
+    virtual int getParseFlags() const = 0;
 };
 
 /**
  * \brief
- * Shader pointer for ShaderLayer,
+ * Vector of IShaderLayer pointers.
  */
-typedef std::shared_ptr<ShaderLayer> ShaderLayerPtr;
+typedef std::vector<IShaderLayer::Ptr> IShaderLayerVector;
 
-/**
- * \brief
- * Vector of ShaderLayer pointers.
- */
-typedef std::vector<ShaderLayerPtr> ShaderLayerVector;
+// Interface extension to IShaderLayer, offering editing functions
+class IEditableShaderLayer :
+    public IShaderLayer
+{
+public:
+    using Ptr = std::shared_ptr<IEditableShaderLayer>;
 
+    virtual ~IEditableShaderLayer() {}
+
+    // Enable/disable this stage - a disabled stage will return false to isVisible()
+    virtual void setEnabled(bool enabled) = 0;
+
+    // Set the given stage flag(s)
+    virtual void setStageFlag(IShaderLayer::Flags flag) = 0;
+
+    // Clears the given stage flag(s)
+    virtual void clearStageFlag(IShaderLayer::Flags flag) = 0;
+
+    // Set the map type to use by this stage (map, cameraCubeMap, etc.)
+    virtual void setMapType(MapType mapType) = 0;
+
+    // Set the blend func from the given pair of strings
+    virtual void setBlendFuncStrings(const std::pair<std::string, std::string>& pair) = 0;
+
+    // Set the alpha test expression from the given string
+    virtual void setAlphaTestExpressionFromString(const std::string& expression) = 0;
+
+    // Update the "map" expression of this stage
+    virtual void setMapExpressionFromString(const std::string& expression) = 0;
+
+    // Adds a empty transformation to this layer, returning its new index
+    virtual std::size_t addTransformation(TransformType type, const std::string& expression1, const std::string& expression2) = 0;
+
+    // Removes the indexed transformation
+    virtual void removeTransformation(std::size_t index) = 0;
+
+    // Set the type and expressions of the indexed transformation. The transformation index must not be
+    // out of bounds, use appendTransformation() to add new ones
+    virtual void updateTransformation(std::size_t index, TransformType type,
+        const std::string& expression1, const std::string& expression2) = 0;
+
+    // Set the colour expression from the given string
+    virtual void setColourExpressionFromString(ColourComponentSelector component, const std::string& expression) = 0;
+
+    // Set the stage condition expression
+    virtual void setConditionExpressionFromString(const std::string& expression) = 0;
+    
+    // Sets the texgen type of this stage
+    virtual void setTexGenType(TexGenType type) = 0;
+
+    // Set the texgen expression (used for wobblesky)
+    virtual void setTexGenExpressionFromString(std::size_t index, const std::string& expression) = 0;
+
+    // Set the vertex colour mode of this stage
+    virtual void setVertexColourMode(VertexColourMode mode) = 0;
+
+    // Set the clamp type of this stage
+    virtual void setClampType(ClampType clampType) = 0;
+
+    // Sets the privatePolygonOffset value of this stage
+    virtual void setPrivatePolygonOffset(double offset) = 0;
+
+    // Sets width and height of the mirrorRenderMap/remoteRenderMap images
+    virtual void setRenderMapSize(const Vector2& size) = 0;
+
+    // For stages with map type SoundMap, this is used to set the waveform flag
+    virtual void setSoundMapWaveForm(bool waveForm) = 0;
+
+    // For stages with map type VideoMap, this is used to update the properties
+    virtual void setVideoMapProperties(const std::string& filePath, bool looping) = 0;
+};

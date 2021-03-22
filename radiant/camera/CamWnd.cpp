@@ -603,7 +603,7 @@ void CamWnd::drawGrid()
 
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_TEXTURE_1D);
-    glDisable(GL_DEPTH_TEST);
+    glEnable(GL_DEPTH_TEST);
     glDisable(GL_BLEND);
 
     glLineWidth(1);
@@ -635,6 +635,8 @@ void CamWnd::drawGrid()
     glEnd();
 
     glPopMatrix();
+
+    glDisable(GL_DEPTH_TEST);
 }
 
 void CamWnd::Cam_Draw()

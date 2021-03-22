@@ -255,7 +255,7 @@ public:
 	void pop_back();
 	void erase(std::size_t index);
 
-	void clear();
+	void clear() override;
 
 	std::size_t getNumFaces() const;
 

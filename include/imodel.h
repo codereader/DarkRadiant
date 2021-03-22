@@ -165,7 +165,7 @@ public:
 
 /**
  * Importer interface for models. An importer must be able
- * to load a model (node) from the VFS.
+ * to load a model (node) from the VFS and from an absolute path.
  * The importer instance shouldn't maintain an internal state,
  * such that the same instance can be used to load several models,
  * from different client code.
@@ -186,10 +186,10 @@ public:
 	virtual scene::INodePtr loadModel(const std::string& modelName) = 0;
 
 	/**
-	* Load a model from the VFS, and return the IModel subclass for it.
+	* Load a model from the given (maybe be VFS or absolute), and return the IModel subclass for it.
 	*
 	* @returns: the IModelPtr containing the renderable model or
-	*           NULL if the model loader could not load the file.
+	* an empty IModelPtr if the model loader could not load the file.
 	*/
 	virtual model::IModelPtr loadModelFromPath(const std::string& path) = 0;
 };

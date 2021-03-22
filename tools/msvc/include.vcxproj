@@ -187,6 +187,7 @@
     <ClInclude Include="..\..\include\iselectionset.h" />
     <ClInclude Include="..\..\include\ishaderclipboard.h" />
     <ClInclude Include="..\..\include\ishaderexpression.h" />
+    <ClInclude Include="..\..\include\ishaderlayer.h" />
     <ClInclude Include="..\..\include\ishaders.h" />
     <ClInclude Include="..\..\include\isound.h" />
     <ClInclude Include="..\..\include\ispacepartition.h" />
@@ -206,7 +207,6 @@
     <ClInclude Include="..\..\include\precompiled_interfaces.h" />
     <ClInclude Include="..\..\include\precompiled_main.h" />
     <ClInclude Include="..\..\include\precompiled_math.h" />
-    <ClInclude Include="..\..\include\ShaderLayer.h" />
     <ClInclude Include="..\..\include\StringSerialisable.h" />
     <ClInclude Include="..\..\include\Texture.h" />
     <ClInclude Include="..\..\include\version.h" />

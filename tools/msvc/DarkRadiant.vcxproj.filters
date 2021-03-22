@@ -703,6 +703,9 @@
     <ClCompile Include="..\..\radiant\ui\common\MaterialPopulator.cpp">
       <Filter>src\ui\common</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\materials\MaterialPreview.cpp">
+      <Filter>src\ui\materials</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h">
@@ -1345,6 +1348,21 @@
       <Filter>src\ui\materials</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\materials\ExpressionBinding.h">
+      <Filter>src\ui\materials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\materials\MaterialPreview.h">
+      <Filter>src\ui\materials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\materials\TestModelSkin.h">
+      <Filter>src\ui\materials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\materials\RadioButtonBinding.h">
+      <Filter>src\ui\materials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\materials\SpinCtrlBinding.h">
+      <Filter>src\ui\materials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\materials\CheckBoxBinding.h">
       <Filter>src\ui\materials</Filter>
     </ClInclude>
   </ItemGroup>

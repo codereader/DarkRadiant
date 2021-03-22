@@ -28,7 +28,6 @@ namespace wxutil
 namespace
 {
     const GLfloat PREVIEW_FOV = 60;
-    const unsigned int MSEC_PER_FRAME = 16;
 
     // Widget names
     const std::string BOTTOM_BOX("bottomBox");
@@ -252,6 +251,20 @@ void RenderPreview::setLightingModeEnabled(bool enabled)
         _renderSystem->setShaderProgram(RenderSystem::SHADER_PROGRAM_NONE);
         queueDraw();
     }
+
+    // Synchronise the button state, if necessary
+    auto* toolbar = static_cast<wxToolBar*>(_mainPanel->FindWindow("RenderPreviewRenderModeToolbar"));
+    auto* textureButton = getToolBarToolByLabel(toolbar, "texturedModeButton");
+    auto* lightingButton = getToolBarToolByLabel(toolbar, "lightingModeButton");
+
+    if (!enabled && !textureButton->IsToggled())
+    {
+        toolbar->ToggleTool(textureButton->GetId(), true);
+    }
+    else if (enabled && !lightingButton->IsToggled())
+    {
+        toolbar->ToggleTool(lightingButton->GetId(), true);
+    }
 }
 
 const scene::GraphPtr& RenderPreview::getScene()
@@ -426,6 +439,14 @@ bool RenderPreview::drawPreview()
     if (!_initialised)
     {
         initialisePreview();
+
+        // Since we shouldn't call the virtual canDrawGrid() in the constructor
+        // adjust the tool bar here.
+        if (!canDrawGrid())
+        {
+            auto* utilToolbar = findNamedObject<wxToolBar>(_mainPanel, "RenderPreviewUtilToolbar");
+            utilToolbar->DeleteTool(getToolBarToolByLabel(utilToolbar, "gridButton")->GetId());
+        }
     }
 
     util::ScopedBoolLock lock(_renderingInProgress);
@@ -476,7 +497,7 @@ bool RenderPreview::drawPreview()
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixd(_volumeTest.GetModelview());
 
-	if (_renderGrid)
+	if (_renderGrid && canDrawGrid())
 	{
 		drawGrid();
 	}
@@ -730,6 +751,11 @@ void RenderPreview::onSizeAllocate(wxSizeEvent& ev)
 {
 	_previewWidth = ev.GetSize().GetWidth();
     _previewHeight = ev.GetSize().GetHeight();
+}
+
+bool RenderPreview::canDrawGrid()
+{
+    return true;
 }
 
 void RenderPreview::drawGrid()

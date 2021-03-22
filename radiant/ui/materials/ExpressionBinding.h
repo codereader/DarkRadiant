@@ -2,34 +2,66 @@
 
 #include "Binding.h"
 #include "ishaderexpression.h"
+#include "util/ScopedBoolLock.h"
 
 namespace ui
 {
 
 template<typename Source>
 class ExpressionBinding :
-    public Binding<Source>
+    public TwoWayBinding<Source, std::string>
 {
+public:
+    using BaseBinding = TwoWayBinding<Source, std::string>;
+
 private:
     wxTextCtrl* _textCtrl;
-    std::function<shaders::IShaderExpressionPtr(const Source&)> _getExpression;
 
 public:
-    ExpressionBinding(wxTextCtrl* textCtrl, const std::function<shaders::IShaderExpressionPtr(const Source&)> loadFunc) :
-        _textCtrl(textCtrl),
-        _getExpression(loadFunc)
+    ExpressionBinding(wxTextCtrl* textCtrl,
+        const typename BaseBinding::LoadFunc& loadFunc,
+        const typename BaseBinding::UpdateFunc& saveFunc) :
+        ExpressionBinding(textCtrl, loadFunc, saveFunc, BaseBinding::PostUpdateFunc())
     {}
 
-    virtual void updateFromSource(const Source& source) override
-    {
-        if (!source)
-        {
-            _textCtrl->SetValue("");
-            return;
-        }
+    ExpressionBinding(wxTextCtrl* textCtrl,
+        const typename BaseBinding::LoadFunc& loadFunc,
+        const typename BaseBinding::UpdateFunc& saveFunc,
+        const typename BaseBinding::PostUpdateFunc& postChangeNotify) :
+        ExpressionBinding(textCtrl, loadFunc, saveFunc, postChangeNotify, std::bind(&BaseBinding::UseSourceAsTarget, this))
+    {}
 
-        auto expression = _getExpression(source);
-        _textCtrl->SetValue(expression ? expression->getExpressionString() : "");
+    ExpressionBinding(wxTextCtrl* textCtrl,
+                      const typename BaseBinding::LoadFunc& loadFunc,
+                      const typename BaseBinding::UpdateFunc& saveFunc,
+                      const typename BaseBinding::PostUpdateFunc& postChangeNotify,
+                      const typename BaseBinding::AcquireTargetFunc& acquireSaveTarget) :
+        BaseBinding(loadFunc, saveFunc, postChangeNotify, acquireSaveTarget),
+        _textCtrl(textCtrl)
+    {
+        if (BaseBinding::_updateValue)
+        {
+            _textCtrl->Bind(wxEVT_TEXT, &ExpressionBinding::onTextChanged, this);
+        }
+    }
+
+    virtual ~ExpressionBinding()
+    {
+        if (BaseBinding::_updateValue)
+        {
+            _textCtrl->Unbind(wxEVT_TEXT, &ExpressionBinding::onTextChanged, this);
+        }
+    }
+
+protected:
+    void setValueOnControl(const std::string& value) override
+    {
+        _textCtrl->SetValue(value);
+    }
+
+    void onTextChanged(wxCommandEvent& ev)
+    {
+        BaseBinding::updateValueOnTarget(_textCtrl->GetValue().ToStdString());
     }
 };
 

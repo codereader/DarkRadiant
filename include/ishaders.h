@@ -12,7 +12,7 @@
 #include <vector>
 
 #include "Texture.h"
-#include "ShaderLayer.h"
+#include "ishaderlayer.h"
 #include "ishaderexpression.h"
 
 class Image;
@@ -55,6 +55,7 @@ public:
 		FLAG_MIRROR					= 1 << 10,		// mirror
 		FLAG_POLYGONOFFSET			= 1 << 11,		// has polygonOffset
 		FLAG_ISLIGHTGEMSURF			= 1 << 12,		// is used by the TDM lightgem
+		FLAG_HAS_SORT_DEFINED		= 1 << 13,		// whether a sort value has been defined
 	};
 
     // Parser flags, used to give some hints to the material editor GUI
@@ -206,41 +207,71 @@ public:
 
     /**
      * \brief Return the requested sort position of this material.
-     *
-	 * greebo: D3 is using floating points for the sort value but
-	 * as far as I can see only rounded numbers have been used.
      */
-    virtual int getSortRequest() const = 0;
+    virtual float getSortRequest() const = 0;
+
+    // Set the sort value for this material, see the SortRequest enum for predefined values
+    virtual void setSortRequest(float sortRequest) = 0;
+
+    // Resets the sort request to the default value
+    virtual void resetSortReqest() = 0;
 
     /// Return a polygon offset if one is defined. The default is 0.
     virtual float getPolygonOffset() const = 0;
 
+    // Set the polygon offset of this material. Clear the FLAG_POLYGONOFFSET to disable the offset altogether.
+    virtual void setPolygonOffset(float offset) = 0;
+
 	/// Get the desired texture repeat behaviour.
 	virtual ClampType getClampType() const = 0;
+
+    // Set the clamp type for this material
+    virtual void setClampType(ClampType type) = 0;
 
 	/// Get the cull type (none, back, front)
 	virtual CullType getCullType() const = 0;
 
+    // Set the cull type
+    virtual void setCullType(CullType type) = 0;
+
 	/// Get the global material flags (translucent, noshadows, etc.)
 	virtual int getMaterialFlags() const = 0;
+
+    // Set the given material flag
+	virtual void setMaterialFlag(Flags flag) = 0;
+
+    // Clear the given material flags
+	virtual void clearMaterialFlag(Flags flag) = 0;
 
 	/// Surface flags (areaportal, nonsolid, etc.)
 	virtual int getSurfaceFlags() const = 0;
 
+    // Set the given surface flag
+    virtual void setSurfaceFlag(Material::SurfaceFlags flag) = 0;
+
+    // Clear the given surface flag
+    virtual void clearSurfaceFlag(Material::SurfaceFlags flag) = 0;
+
 	/// Surface Type (wood, stone, surfType15, ...)
 	virtual SurfaceType getSurfaceType() const = 0;
+
+    // Set the surface type of this material
+    virtual void setSurfaceType(SurfaceType type) = 0;
 
 	/// Get the deform type of this material
 	virtual DeformType getDeformType() const = 0;
 
     // Returns the shader expression used to define the deform parameters (valid indices in [0..2])
-    virtual shaders::IShaderExpressionPtr getDeformExpression(std::size_t index) = 0;
+    virtual shaders::IShaderExpression::Ptr getDeformExpression(std::size_t index) = 0;
 
     // Used for Deform_Particle/Particle2 defines the name of the particle def
     virtual std::string getDeformDeclName() = 0;
 
-	/// Returns the spectrum of this shader, 0 is the default value (even witout keyword in the material)
+	/// Returns the spectrum of this shader, 0 is the default value (even without keyword in the material)
 	virtual int getSpectrum() const = 0;
+
+    // Sets the spectrum of this material.
+    virtual void setSpectrum(int spectrum) = 0;
 
 	/// Retrieves the decal info structure of this material.
 	virtual DecalInfo getDecalInfo() const = 0;
@@ -274,6 +305,11 @@ public:
      */
     virtual bool isCubicLight() const = 0;
 
+    virtual void setIsAmbientLight(bool newValue) = 0;
+    virtual void setIsBlendLight(bool newValue) = 0;
+    virtual void setIsFogLight(bool newValue) = 0;
+    virtual void setIsCubicLight(bool newValue) = 0;
+
 	/**
 	 * For light shaders: implicitly no-shadows lights (ambients, fogs, etc)
 	 * will never cast shadows but individual light entities can also override this value.
@@ -300,7 +336,7 @@ public:
 	virtual bool isDiscrete() const = 0;
 
     /// Return the first material layer, if any
-	virtual ShaderLayer* firstLayer() const = 0;
+	virtual IShaderLayer* firstLayer() const = 0;
 
     /**
      * \brief Return a std::vector containing all layers in this material
@@ -308,19 +344,46 @@ public:
      *
      * This includes all diffuse, bump, specular or blend layers.
      */
-    virtual const ShaderLayerVector& getAllLayers() const = 0;
+    virtual const IShaderLayerVector& getAllLayers() const = 0;
 
-    /// Return the 2D light falloff texture, if this is a light shader
+    // Add a new (typed) layer to this material, returning the index of the new layer
+    virtual std::size_t addLayer(IShaderLayer::Type type) = 0;
+
+    // Removes the indexed layer from this material
+    virtual void removeLayer(std::size_t index) = 0;
+
+    // Duplicates the given layer and returns the index to the copied one
+    virtual std::size_t duplicateLayer(std::size_t index) = 0;
+
+    // Swaps the position of the two layers
+    virtual void swapLayerPosition(std::size_t first, std::size_t second) = 0;
+
+    // Returns the edit interface for the given shader layer. Calling this method
+    // will immediately mark this Material as modified.
+    virtual IEditableShaderLayer::Ptr getEditableLayer(std::size_t index) = 0;
+
+    /// Return the light falloff texture, if this is a light shader
     virtual TexturePtr lightFalloffImage() = 0;
 
-    // Return the expression of the light falloff texture for use with this shader.
+    // Return the expression of the light falloff map for use with this shader.
     virtual shaders::IMapExpression::Ptr getLightFalloffExpression() = 0;
 
-    // Return the expression of the light falloff cubemap for use with this shader.
-    virtual shaders::IMapExpression::Ptr getLightFalloffCubeMapExpression() = 0;
+    // Set the lightFallOff expression to define the image/cubemap to use
+    virtual void setLightFalloffExpressionFromString(const std::string& expressionString) = 0;
+
+    // Return the type of the light fall off image 
+    // (can be MapType::Map (lightFalloffImage or MapType::CameraCubeMap for lightFalloffCubeMap)
+    virtual IShaderLayer::MapType getLightFalloffCubeMapType() = 0;
+
+    // Set the type of the light fall off image 
+    // (can be MapType::Map (lightFalloffImage or MapType::CameraCubeMap for lightFalloffCubeMap)
+    virtual void setLightFalloffCubeMapType(IShaderLayer::MapType type) = 0;
 
 	// greebo: Returns the description as defined in the material
 	virtual std::string getDescription() const = 0;
+
+    // Set the description text of this material
+	virtual void setDescription(const std::string& description) = 0;
 
 	 /// Return TRUE if the shader is visible, FALSE if it is filtered or
 	 /// disabled in any other way.
@@ -341,6 +404,9 @@ public:
     // The argument to the "guisurf" keyword, if not entity[2]3]. 
     // In case entity[2]3] is set, the corresponding surface flags are enabled
     virtual const std::string& getGuiSurfArgument() = 0;
+
+    // True if this mateiral has been altered from its original definition
+    virtual bool isModified() = 0;
 };
 
 typedef std::shared_ptr<Material> MaterialPtr;
@@ -451,7 +517,7 @@ public:
      * \param type
      * The type of interaction layer whose default texture is required.
      */
-    virtual TexturePtr getDefaultInteractionTexture(ShaderLayer::Type type) = 0;
+    virtual TexturePtr getDefaultInteractionTexture(IShaderLayer::Type type) = 0;
 
 	/**
 	 * greebo: This is a substitution for the "old" TexturesCache method
@@ -470,7 +536,7 @@ public:
 	 * Creates a new shader expression for the given string. This can be used to create standalone
 	 * expression objects for unit testing purposes.
 	 */
-	virtual shaders::IShaderExpressionPtr createShaderExpressionFromString(const std::string& exprStr) = 0;
+	virtual shaders::IShaderExpression::Ptr createShaderExpressionFromString(const std::string& exprStr) = 0;
 
     // Creates a named, internal material for debug/testing etc.
     // Used by shaders without corresponding material declaration, like entity wireframe shaders

@@ -95,7 +95,7 @@
 #include "mapfile.h"
 #include "modelskin.h"
 #include "ModResource.h"
-#include "ShaderLayer.h"
+#include "ishaderlayer.h"
 #include "StringSerialisable.h"
 #include "Texture.h"
 #include "VolumeIntersectionValue.h"

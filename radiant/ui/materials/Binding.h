@@ -13,6 +13,8 @@ private:
     Source _source;
 
 public:
+    using Ptr = std::shared_ptr<Binding>;
+
     virtual ~Binding()
     {}
 
@@ -27,38 +29,106 @@ public:
         onSourceChanged();
     }
 
-    virtual void updateFromSource(const Source& source) = 0;
+    virtual void updateFromSource() = 0;
 
 protected:
     virtual void onSourceChanged()
-    {
-        updateFromSource(getSource());
-    }
+    {}
 };
 
+// Target selection, usually the Source type is identical to the target type
 template<typename Source>
-class CheckBoxBinding :
+struct TargetSelector
+{
+    using TargetType = Source;
+};
+
+// Specialisation for shader layer editing, where the target type is an IEditableShaderLayer
+template<>
+struct TargetSelector<IShaderLayer::Ptr>
+{
+    using TargetType = IEditableShaderLayer::Ptr;
+};
+
+template<typename Source, typename ValueType>
+class TwoWayBinding :
     public Binding<Source>
 {
-private:
-    wxCheckBox* _checkbox;
-    std::function<bool(const Source&)> _loadFunc;
-
 public:
-    CheckBoxBinding(wxCheckBox* checkbox, const std::function<bool(const Source&)> loadFunc) :
-        _checkbox(checkbox),
-        _loadFunc(loadFunc)
+    // Select target: will map Material => Material, but IShaderLayer => IEditableShaderLayer
+    using Target = typename TargetSelector<Source>::TargetType;
+
+    using LoadFunc = std::function<ValueType(const Source&)>;
+    using UpdateFunc = std::function<void(const Target&, ValueType)>;
+    using AcquireTargetFunc = std::function<Target()>;
+    using PostUpdateFunc = std::function<void()>;
+
+    Target UseSourceAsTarget()
+    {
+        return Binding<Source>::getSource();
+    }
+
+protected:
+    LoadFunc _loadValue;
+    AcquireTargetFunc _acquireTarget;
+    UpdateFunc _updateValue;
+    PostUpdateFunc _postUpdate;
+
+protected:
+    bool _blockUpdates;
+
+protected:
+    TwoWayBinding(const LoadFunc& loadValue,
+                  const UpdateFunc& updateValue,
+                  const PostUpdateFunc& postChangeNotify = PostUpdateFunc(),
+                  const AcquireTargetFunc& acquireTarget = std::bind(&TwoWayBinding::UseSourceAsTarget, this)) :
+        _loadValue(loadValue),
+        _acquireTarget(acquireTarget),
+        _updateValue(updateValue),
+        _postUpdate(postChangeNotify),
+        _blockUpdates(false)
     {}
 
-    virtual void updateFromSource(const Source& source) override
+    Target getTarget()
     {
-        if (!source)
+        if (_blockUpdates)
         {
-            _checkbox->SetValue(false);
+            return Target();
+        }
+
+        return _acquireTarget();
+    }
+
+protected:
+    // Just load the given value into the control
+    virtual void setValueOnControl(const ValueType& value) = 0;
+
+    virtual void updateFromSource() override
+    {
+        util::ScopedBoolLock lock(_blockUpdates);
+
+        if (!Binding<Source>::getSource())
+        {
+            setValueOnControl(ValueType());
             return;
         }
 
-        _checkbox->SetValue(_loadFunc(source));
+        setValueOnControl(_loadValue(Binding<Source>::getSource()));
+    }
+
+    virtual void updateValueOnTarget(const ValueType& newValue)
+    {
+        auto target = getTarget();
+
+        if (target)
+        {
+            _updateValue(target, newValue);
+
+            if (_postUpdate)
+            {
+                _postUpdate();
+            }
+        }
     }
 };
 

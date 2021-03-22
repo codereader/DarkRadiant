@@ -347,4 +347,8 @@
             <string id="#str_03011">Difficult</string>
         </difficultyMenuEclass>
 	</difficulty>
+	
+	<materialPreview>
+		<defaultRoomMaterial value="textures/darkmod/stone/brick/blocks_brown" />
+	</materialPreview>
 </game>

@@ -245,19 +245,19 @@ GLTextureManager& Doom3ShaderSystem::getTextureManager()
 }
 
 // Get default textures
-TexturePtr Doom3ShaderSystem::getDefaultInteractionTexture(ShaderLayer::Type type)
+TexturePtr Doom3ShaderSystem::getDefaultInteractionTexture(IShaderLayer::Type type)
 {
     TexturePtr defaultTex;
 
     // Look up based on layer type
     switch (type)
     {
-    case ShaderLayer::DIFFUSE:
-    case ShaderLayer::SPECULAR:
+    case IShaderLayer::DIFFUSE:
+    case IShaderLayer::SPECULAR:
         defaultTex = _textureManager->getBinding(getBitmapsPath() + IMAGE_BLACK);
         break;
 
-    case ShaderLayer::BUMP:
+    case IShaderLayer::BUMP:
         defaultTex = _textureManager->getBinding(getBitmapsPath() + IMAGE_FLAT);
         break;
     default:
@@ -296,7 +296,7 @@ TexturePtr Doom3ShaderSystem::loadTextureFromFile(const std::string& filename)
     return _textureManager->getBinding(filename);
 }
 
-IShaderExpressionPtr Doom3ShaderSystem::createShaderExpressionFromString(const std::string& exprStr)
+IShaderExpression::Ptr Doom3ShaderSystem::createShaderExpressionFromString(const std::string& exprStr)
 {
     return ShaderExpression::createFromString(exprStr);
 }
@@ -353,7 +353,7 @@ void Doom3ShaderSystem::testShaderExpressionParsing()
 {
     // Test a few things
     std::string exprStr = "3";
-    IShaderExpressionPtr expr;
+    IShaderExpression::Ptr expr;
     GET_EXPR_OR_RETURN;
     rMessage() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 

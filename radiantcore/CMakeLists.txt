@@ -260,11 +260,13 @@ add_library(radiantcore MODULE
             shaders/CShader.cpp
             shaders/Doom3ShaderLayer.cpp
             shaders/Doom3ShaderSystem.cpp
+            shaders/ExpressionSlots.cpp
             shaders/MapExpression.cpp
             shaders/ShaderExpression.cpp
             shaders/ShaderLibrary.cpp
             shaders/ShaderTemplate.cpp
             shaders/TableDefinition.cpp
+            shaders/TextureMatrix.cpp
             shaders/textures/GLTextureManager.cpp
             shaders/textures/TextureManipulator.cpp
             skins/Doom3SkinCache.cpp

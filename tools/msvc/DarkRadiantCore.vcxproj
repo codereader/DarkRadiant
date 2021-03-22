@@ -672,11 +672,13 @@
     <ClCompile Include="..\..\radiantcore\shaders\CShader.cpp" />
     <ClCompile Include="..\..\radiantcore\shaders\Doom3ShaderLayer.cpp" />
     <ClCompile Include="..\..\radiantcore\shaders\Doom3ShaderSystem.cpp" />
+    <ClCompile Include="..\..\radiantcore\shaders\ExpressionSlots.cpp" />
     <ClCompile Include="..\..\radiantcore\shaders\MapExpression.cpp" />
     <ClCompile Include="..\..\radiantcore\shaders\ShaderExpression.cpp" />
     <ClCompile Include="..\..\radiantcore\shaders\ShaderLibrary.cpp" />
     <ClCompile Include="..\..\radiantcore\shaders\ShaderTemplate.cpp" />
     <ClCompile Include="..\..\radiantcore\shaders\TableDefinition.cpp" />
+    <ClCompile Include="..\..\radiantcore\shaders\TextureMatrix.cpp" />
     <ClCompile Include="..\..\radiantcore\shaders\textures\GLTextureManager.cpp" />
     <ClCompile Include="..\..\radiantcore\shaders\textures\TextureManipulator.cpp" />
     <ClCompile Include="..\..\radiantcore\skins\Doom3SkinCache.cpp" />
@@ -1006,6 +1008,7 @@
     <ClInclude Include="..\..\radiantcore\shaders\CShader.h" />
     <ClInclude Include="..\..\radiantcore\shaders\Doom3ShaderLayer.h" />
     <ClInclude Include="..\..\radiantcore\shaders\Doom3ShaderSystem.h" />
+    <ClInclude Include="..\..\radiantcore\shaders\ExpressionSlots.h" />
     <ClInclude Include="..\..\radiantcore\shaders\MapExpression.h" />
     <ClInclude Include="..\..\radiantcore\shaders\NamedBindable.h" />
     <ClInclude Include="..\..\radiantcore\shaders\ShaderDefinition.h" />
@@ -1015,6 +1018,7 @@
     <ClInclude Include="..\..\radiantcore\shaders\ShaderTemplate.h" />
     <ClInclude Include="..\..\radiantcore\shaders\SoundMapExpression.h" />
     <ClInclude Include="..\..\radiantcore\shaders\TableDefinition.h" />
+    <ClInclude Include="..\..\radiantcore\shaders\TextureMatrix.h" />
     <ClInclude Include="..\..\radiantcore\shaders\textures\CubeMapTexture.h" />
     <ClInclude Include="..\..\radiantcore\shaders\textures\GLTextureManager.h" />
     <ClInclude Include="..\..\radiantcore\shaders\textures\HeightmapCreator.h" />

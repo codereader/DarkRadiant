@@ -20,7 +20,7 @@ namespace shaders
  * class parses the decl using a tokeniser and stores the relevant information
  * internally, for later use by a CShader.
  */
-class ShaderTemplate
+class ShaderTemplate final
 {
 private:
 	static const int SORT_UNDEFINED = -99999;	// undefined sort number, will be replaced after parsing
@@ -29,22 +29,19 @@ private:
 	std::string _name;
 
 	// Temporary current layer (used by the parsing functions)
-	Doom3ShaderLayerPtr _currentLayer;
+	Doom3ShaderLayer::Ptr _currentLayer;
 
 public:
 
   	// Vector of LayerTemplates representing each stage in the material
-  	typedef std::vector<Doom3ShaderLayerPtr> Layers;
-
-private:
-	Layers _layers;
+    std::vector<Doom3ShaderLayer::Ptr> _layers;
 
     // Editorimage texture
 	NamedBindablePtr _editorTex;
 
 	// Map expressions
 	MapExpressionPtr _lightFalloff;
-	MapExpressionPtr _lightFalloffCubeMap;
+    IShaderLayer::MapType _lightFalloffCubeMapType;
 
 	/* Light type booleans */
 	bool fogLight;
@@ -70,14 +67,14 @@ private:
 	Material::SurfaceType _surfaceType;
 
 	Material::DeformType _deformType;
-    std::vector<IShaderExpressionPtr> _deformExpressions;
+    std::vector<IShaderExpression::Ptr> _deformExpressions;
     std::string _deformDeclName;
 
 	// The spectrum this shader is responding to (or emitting in the case of light materials)
 	int _spectrum;
 
     // Sort position (e.g. sort decal == 2)
-    int _sortReq;
+    float _sortReq;
 
     // Polygon offset
     float _polygonOffset;
@@ -101,32 +98,36 @@ private:
     // The string value specified by the guisurf keyword, if other than entity[2]3]
     std::string _guiDeclName;
 
+    // Private copy ctor, used for cloning
+    ShaderTemplate(const ShaderTemplate& other);
+
 public:
 
     /**
      * \brief
      * Construct a ShaderTemplate.
      */
-	ShaderTemplate(const std::string& name, const std::string& blockContents)
-	: _name(name),
-      _currentLayer(new Doom3ShaderLayer(*this)),
-      fogLight(false),
-      ambientLight(false),
-      blendLight(false),
-      _cubicLight(false),
-	  _materialFlags(0),
-	  _cullType(Material::CULL_BACK),
-	  _clampType(CLAMP_REPEAT),
-	  _surfaceFlags(0),
-	  _surfaceType(Material::SURFTYPE_DEFAULT),
-	  _deformType(Material::DEFORM_NONE),
-	  _spectrum(0),
-      _sortReq(SORT_UNDEFINED),	// will be set to default values after the shader has been parsed
-      _polygonOffset(0.0f),
-	  _coverage(Material::MC_UNDETERMINED),
-	  _blockContents(blockContents),
-	  _parsed(false),
-      _parseFlags(0)
+	ShaderTemplate(const std::string& name, const std::string& blockContents) : 
+        _name(name),
+        _currentLayer(new Doom3ShaderLayer(*this)),
+        _lightFalloffCubeMapType(IShaderLayer::MapType::Map),
+        fogLight(false),
+        ambientLight(false),
+        blendLight(false),
+        _cubicLight(false),
+        _materialFlags(0),
+        _cullType(Material::CULL_BACK),
+        _clampType(CLAMP_REPEAT),
+        _surfaceFlags(0),
+        _surfaceType(Material::SURFTYPE_DEFAULT),
+        _deformType(Material::DEFORM_NONE),
+        _spectrum(0),
+        _sortReq(SORT_UNDEFINED),	// will be set to default values after the shader has been parsed
+        _polygonOffset(0.0f),
+        _coverage(Material::MC_UNDETERMINED),
+        _blockContents(blockContents),
+        _parsed(false),
+        _parseFlags(0)
 	{
 		_decalInfo.stayMilliSeconds = 0;
 		_decalInfo.fadeMilliSeconds = 0;
@@ -134,10 +135,13 @@ public:
 		_decalInfo.endColour = Vector4(0,0,0,0);
 	}
 
+    // Clone a new instance from this template
+    std::shared_ptr<ShaderTemplate> clone() const;
+
 	/**
 	 * Get the name of this shader template.
 	 */
-	std::string getName() const
+	const std::string& getName() const
 	{
     	return _name;
 	}
@@ -156,11 +160,29 @@ public:
 		return description;
 	}
 
+    void setDescription(const std::string& newDescription)
+	{
+		if (!_parsed) parseDefinition();
+		description = newDescription;
+	}
+
 	int getMaterialFlags()
 	{
 		if (!_parsed) parseDefinition();
 		return _materialFlags;
 	}
+
+    void setMaterialFlag(Material::Flags flag)
+    {
+        if (!_parsed) parseDefinition();
+        _materialFlags |= flag;
+    }
+
+    void clearMaterialFlag(Material::Flags flag)
+    {
+        if (!_parsed) parseDefinition();
+        _materialFlags &= ~flag;
+    }
 
 	Material::CullType getCullType()
 	{
@@ -168,11 +190,23 @@ public:
 		return _cullType;
 	}
 
+    void setCullType(Material::CullType type)
+    {
+        if (!_parsed) parseDefinition();
+        _cullType = type;
+    }
+
 	ClampType getClampType()
 	{
 		if (!_parsed) parseDefinition();
 		return _clampType;
 	}
+
+    void setClampType(ClampType type)
+    {
+        if (!_parsed) parseDefinition();
+        _clampType = type;
+    }
 
 	int getSurfaceFlags()
 	{
@@ -180,11 +214,29 @@ public:
 		return _surfaceFlags;
 	}
 
+    void setSurfaceFlag(Material::SurfaceFlags flag)
+    {
+        if (!_parsed) parseDefinition();
+        _surfaceFlags |= flag;
+    }
+
+    void clearSurfaceFlag(Material::SurfaceFlags flag)
+    {
+        if (!_parsed) parseDefinition();
+        _surfaceFlags &= ~flag;
+    }
+
 	Material::SurfaceType getSurfaceType()
 	{
 		if (!_parsed) parseDefinition();
 		return _surfaceType;
 	}
+
+    void setSurfaceType(Material::SurfaceType type)
+    {
+        if (!_parsed) parseDefinition();
+        _surfaceType = type;
+    }
 
 	Material::DeformType getDeformType()
 	{
@@ -192,12 +244,12 @@ public:
 		return _deformType;
 	}
 
-    IShaderExpressionPtr getDeformExpression(std::size_t index)
+    IShaderExpression::Ptr getDeformExpression(std::size_t index)
     {
         if (!_parsed) parseDefinition();
 
         assert(index >= 0 && index < 3);
-        return index < _deformExpressions.size() ? _deformExpressions[index] : IShaderExpressionPtr();
+        return index < _deformExpressions.size() ? _deformExpressions[index] : IShaderExpression::Ptr();
     }
 
     std::string getDeformDeclName()
@@ -212,6 +264,12 @@ public:
 		return _spectrum;
 	}
 
+    void setSpectrum(int spectrum)
+    {
+        if (!_parsed) parseDefinition();
+        _spectrum = spectrum;
+    }
+
 	const Material::DecalInfo& getDecalInfo()
 	{
 		if (!_parsed) parseDefinition();
@@ -224,7 +282,7 @@ public:
 		return _coverage;
 	}
 
-	const Layers& getLayers()
+	const std::vector<Doom3ShaderLayer::Ptr>& getLayers()
 	{
 		if (!_parsed) parseDefinition();
 		return _layers;
@@ -254,16 +312,72 @@ public:
 		return _cubicLight;
 	}
 
-    int getSortRequest()
+    void setIsAmbientLight(bool newValue)
+    {
+        if (!_parsed) parseDefinition();
+        ambientLight = newValue;
+    }
+
+    void setIsBlendLight(bool newValue)
+    {
+        if (!_parsed) parseDefinition();
+        blendLight = newValue;
+    }
+
+    void setIsFogLight(bool newValue)
+    {
+        if (!_parsed) parseDefinition();
+        fogLight = newValue;
+    }
+
+    void setIsCubicLight(bool newValue)
+    {
+        if (!_parsed) parseDefinition();
+        _cubicLight = newValue;
+    }
+
+    float getSortRequest()
     {
 		if (!_parsed) parseDefinition();
         return _sortReq;
+    }
+
+    void setSortRequest(float sortRequest)
+    {
+        if (!_parsed) parseDefinition();
+
+        _materialFlags |= Material::FLAG_HAS_SORT_DEFINED;
+        _sortReq = sortRequest;
+    }
+
+    void resetSortReqest()
+    {
+        if (!_parsed) parseDefinition();
+
+        _materialFlags &= ~Material::FLAG_HAS_SORT_DEFINED;
+
+        // Translucent materials need to be drawn after opaque ones, if not explicitly specified otherwise
+        if (_materialFlags & Material::FLAG_TRANSLUCENT)
+        {
+            _sortReq = Material::SORT_MEDIUM;
+        }
+        else
+        {
+            _sortReq = Material::SORT_OPAQUE;
+        }
     }
 
     float getPolygonOffset()
     {
 		if (!_parsed) parseDefinition();
         return _polygonOffset;
+    }
+
+    void setPolygonOffset(float offset)
+    {
+        if (!_parsed) parseDefinition();
+        setMaterialFlag(Material::FLAG_POLYGONOFFSET);
+        _polygonOffset = offset;
     }
 
 	// Sets the raw block definition contents, will be parsed on demand
@@ -289,15 +403,32 @@ public:
 		if (!_parsed) parseDefinition();
 		return _lightFalloff;
 	}
+
+    void setLightFalloffExpressionFromString(const std::string& expressionString)
+    {
+        if (!_parsed) parseDefinition();
+        _lightFalloff = MapExpression::createForString(expressionString);
+    }
     
-    const MapExpressionPtr& getLightFalloffCubeMap()
-	{
-		if (!_parsed) parseDefinition();
-		return _lightFalloffCubeMap;
-	}
+    IShaderLayer::MapType getLightFalloffCubeMapType()
+    {
+        if (!_parsed) parseDefinition();
+        return _lightFalloffCubeMapType;
+    }
+
+    void setLightFalloffCubeMapType(IShaderLayer::MapType type)
+    {
+        if (!_parsed) parseDefinition();
+        _lightFalloffCubeMapType = type;
+    }
+
+    std::size_t addLayer(IShaderLayer::Type type);
+    void removeLayer(std::size_t index);
+    void swapLayerPosition(std::size_t first, std::size_t second);
+    std::size_t duplicateLayer(std::size_t index);
 
 	// Add a specific layer to this template
-	void addLayer(ShaderLayer::Type type, const MapExpressionPtr& mapExpr);
+	void addLayer(IShaderLayer::Type type, const MapExpressionPtr& mapExpr);
 
 	// Returns true if this shader template includes a diffusemap stage
 	bool hasDiffusemap();
@@ -320,7 +451,7 @@ public:
 private:
 
 	// Add the given layer and assigns editor preview layer if applicable
-	void addLayer(const Doom3ShaderLayerPtr& layer);
+	void addLayer(const Doom3ShaderLayer::Ptr& layer);
 
 	/**
 	 * Parse a Doom 3 material decl. This is the master parse function, it
@@ -341,7 +472,7 @@ private:
 	bool parseSurfaceFlags(parser::DefTokeniser&, const std::string&);
 	bool parseMaterialType(parser::DefTokeniser&, const std::string&);
 	bool parseCondition(parser::DefTokeniser&, const std::string&);
-	IShaderExpressionPtr parseSingleExpressionTerm(parser::DefTokeniser& tokeniser);
+	IShaderExpression::Ptr parseSingleExpressionTerm(parser::DefTokeniser& tokeniser);
 
 	bool saveLayer();
 

@@ -22,6 +22,14 @@ class ShaderExpression :
 
     bool _surroundedByParentheses;
 
+protected:
+    ShaderExpression(const ShaderExpression& other) :
+        ShaderExpression() // use default ctor to initialise the members
+    {
+        // Inherit the parentheses flag
+        _surroundedByParentheses = other._surroundedByParentheses;
+    }
+
 public:
 	ShaderExpression() :
 		_index(-1),
@@ -30,12 +38,12 @@ public:
 	{}
 
 	// Base implementations
-	virtual float evaluate(std::size_t time)
+	virtual float evaluate(std::size_t time) override
 	{
 		// Evaluate this register and write it into the respective register index
 		float val = getValue(time);
 
-		if (_registers != NULL)
+		if (_registers != nullptr)
 		{
 			(*_registers)[_index] = val;
 		}
@@ -43,12 +51,12 @@ public:
 		return val;
 	}
 
-	virtual float evaluate(std::size_t time, const IRenderEntity& entity)
+	virtual float evaluate(std::size_t time, const IRenderEntity& entity) override
 	{
 		// Evaluate this register and write it into the respective register index
 		float val = getValue(time, entity);
 
-		if (_registers != NULL)
+		if (_registers != nullptr)
 		{
 			(*_registers)[_index] = val;
 		}
@@ -56,7 +64,7 @@ public:
 		return val;
 	}
 
-	std::size_t linkToRegister(Registers& registers) 
+	std::size_t linkToRegister(Registers& registers) override
 	{
 		_registers = &registers;
 
@@ -69,9 +77,35 @@ public:
 		return _index;
 	}
 
-	static IShaderExpressionPtr createFromString(const std::string& exprStr);
+    void linkToSpecificRegister(Registers& registers, std::size_t index) override
+    {
+        _registers = &registers;
+        _index = static_cast<int>(index);
+    }
 
-	static IShaderExpressionPtr createFromTokens(parser::DefTokeniser& tokeniser);
+    bool isLinked() const override
+    {
+        return _index != -1;
+    }
+
+    std::size_t unlinkFromRegisters() override
+    {
+        _registers = nullptr;
+        
+        auto oldIndex = _index;
+        _index = -1;
+
+        return static_cast<std::size_t>(oldIndex);
+    }
+
+	static IShaderExpression::Ptr createFromString(const std::string& exprStr);
+
+	static IShaderExpression::Ptr createFromTokens(parser::DefTokeniser& tokeniser);
+
+    static IShaderExpression::Ptr createConstant(float constantValue);
+    static IShaderExpression::Ptr createAddition(const IShaderExpression::Ptr& a, const IShaderExpression::Ptr& b);
+    static IShaderExpression::Ptr createMultiplication(const IShaderExpression::Ptr& a, const IShaderExpression::Ptr& b);
+    static IShaderExpression::Ptr createTableLookup(const TableDefinitionPtr& table, const IShaderExpression::Ptr& lookup);
 
     virtual std::string getExpressionString() override
     {
@@ -99,11 +133,17 @@ class ShaderParmExpression :
 private:
 	// The attached entity's shaderparm number to retrieve
 	int _parmNum;
+
 public:
 	ShaderParmExpression(int parmNum) :
 		ShaderExpression(),
 		_parmNum(parmNum)
 	{}
+
+    ShaderParmExpression(const ShaderParmExpression& other) :
+        ShaderExpression(other),
+        _parmNum(other._parmNum)
+    {}
 
 	virtual float getValue(std::size_t time)
 	{
@@ -120,6 +160,11 @@ public:
     {
         return fmt::format("parm{0}", _parmNum);
     }
+
+    virtual Ptr clone() const override
+    {
+        return std::make_shared<ShaderParmExpression>(*this);
+    }
 };
 
 class GlobalShaderParmExpression :
@@ -128,11 +173,17 @@ class GlobalShaderParmExpression :
 private:
 	// The global shaderparm number to retrieve
 	int _parmNum;
+
 public:
 	GlobalShaderParmExpression(int parmNum) :
 		ShaderExpression(),
 		_parmNum(parmNum)
 	{}
+
+    GlobalShaderParmExpression(const GlobalShaderParmExpression& other) :
+        ShaderExpression(other),
+        _parmNum(other._parmNum)
+    {}
 
 	virtual float getValue(std::size_t time)
 	{
@@ -149,6 +200,11 @@ public:
     {
         return fmt::format("global{0}", _parmNum);
     }
+
+    virtual Ptr clone() const override
+    {
+        return std::make_shared<GlobalShaderParmExpression>(*this);
+    }
 };
 
 // An expression returning the current (game) time as result
@@ -159,6 +215,10 @@ public:
 	TimeExpression() :
 		ShaderExpression()
 	{}
+
+    TimeExpression(const TimeExpression& other) :
+        ShaderExpression(other)
+    {}
 
 	virtual float getValue(std::size_t time)
 	{
@@ -173,6 +233,11 @@ public:
     virtual std::string convertToString() override
     {
         return "time";
+    }
+
+    virtual Ptr clone() const override
+    {
+        return std::make_shared<TimeExpression>(*this);
     }
 };
 
@@ -189,6 +254,11 @@ public:
 		_value(value)
 	{}
 
+    ConstantExpression(const ConstantExpression& other) :
+        ShaderExpression(other),
+        _value(other._value)
+    {}
+
 	virtual float getValue(std::size_t time)
 	{
 		return _value;
@@ -203,6 +273,11 @@ public:
     {
         return fmt::format("{0}", _value);
     }
+
+    virtual Ptr clone() const override
+    {
+        return std::make_shared<ConstantExpression>(*this);
+    }
 };
 
 // An expression looking up a value in a table def
@@ -211,12 +286,12 @@ class TableLookupExpression :
 {
 private:
 	TableDefinitionPtr _tableDef;
-	IShaderExpressionPtr _lookupExpr;
+	IShaderExpression::Ptr _lookupExpr;
 
 public:
 	// Pass the table and the expression used to perform the lookup 
 	TableLookupExpression(const TableDefinitionPtr& tableDef, 
-						  const IShaderExpressionPtr& lookupExpr) :
+						  const IShaderExpression::Ptr& lookupExpr) :
 		ShaderExpression(),
 		_tableDef(tableDef),
 		_lookupExpr(lookupExpr)
@@ -224,6 +299,12 @@ public:
 		assert(_tableDef);
 		assert(_lookupExpr);
 	}
+
+    TableLookupExpression(const TableLookupExpression& other) :
+        ShaderExpression(other),
+        _tableDef(other._tableDef),
+        _lookupExpr(other._lookupExpr ? other._lookupExpr->clone() : Ptr())
+    {}
 
 	virtual float getValue(std::size_t time)
 	{
@@ -240,6 +321,11 @@ public:
     virtual std::string convertToString() override
     {
         return fmt::format("{0}[{1}]", _tableDef->getName(), _lookupExpr->getExpressionString());
+    }
+
+    virtual Ptr clone() const override
+    {
+        return std::make_shared<TableLookupExpression>(*this);
     }
 };
 
@@ -264,31 +350,40 @@ public:
 	};
 
 protected:
-	IShaderExpressionPtr _a;
-	IShaderExpressionPtr _b;
+	IShaderExpression::Ptr _a;
+	IShaderExpression::Ptr _b;
 	Precedence _precedence;
 
-public:
+protected:
 	BinaryExpression(Precedence precedence,
-					 const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
-				     const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
+					 const IShaderExpression::Ptr& a = IShaderExpression::Ptr(), 
+				     const IShaderExpression::Ptr& b = IShaderExpression::Ptr()) :
 		ShaderExpression(),
 		_a(a),
 		_b(b),
 		_precedence(precedence)
 	{}
 
+    BinaryExpression(const BinaryExpression& other) :
+        ShaderExpression(other),
+        _a(other._a),
+        _b(other._b),
+        _precedence(other._precedence)
+    {}
+
+public:
+
 	Precedence getPrecedence() const
 	{
 		return _precedence;
 	}
 
-	void setA(const IShaderExpressionPtr& a)
+	void setA(const IShaderExpression::Ptr& a)
 	{
 		_a = a;
 	}
 
-	void setB(const IShaderExpressionPtr& b)
+	void setB(const IShaderExpression::Ptr& b)
 	{
 		_b = b;
 	}
@@ -300,10 +395,14 @@ class AddExpression :
 	public BinaryExpression
 {
 public:
-	AddExpression(const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
-				  const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
+	AddExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(), 
+				  const IShaderExpression::Ptr& b = IShaderExpression::Ptr()) :
 		BinaryExpression(ADDITION, a, b)
 	{}
+
+    AddExpression(const AddExpression& other) :
+        BinaryExpression(other)
+    {}
 
 	virtual float getValue(std::size_t time)
 	{
@@ -319,6 +418,11 @@ public:
     {
         return fmt::format("{0} + {1}", _a->getExpressionString(), _b->getExpressionString());
     }
+
+    virtual Ptr clone() const override
+    {
+        return std::make_shared<AddExpression>(*this);
+    }
 };
 
 // An expression subtracting the value of two expressions
@@ -326,10 +430,14 @@ class SubtractExpression :
 	public BinaryExpression
 {
 public:
-	SubtractExpression(const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
-					   const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
+	SubtractExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(), 
+					   const IShaderExpression::Ptr& b = IShaderExpression::Ptr()) :
 		BinaryExpression(SUBTRACTION, a, b)
 	{}
+
+    SubtractExpression(const SubtractExpression& other) :
+        BinaryExpression(other)
+    {}
 
 	virtual float getValue(std::size_t time)
 	{
@@ -345,6 +453,11 @@ public:
     {
         return fmt::format("{0} - {1}", _a->getExpressionString(), _b->getExpressionString());
     }
+
+    virtual Ptr clone() const override
+    {
+        return std::make_shared<SubtractExpression>(*this);
+    }
 };
 
 // An expression multiplying the value of two expressions
@@ -352,10 +465,14 @@ class MultiplyExpression :
 	public BinaryExpression
 {
 public:
-	MultiplyExpression(const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
-					   const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
+	MultiplyExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(), 
+					   const IShaderExpression::Ptr& b = IShaderExpression::Ptr()) :
 		BinaryExpression(MULTIPLICATION, a, b)
 	{}
+
+    MultiplyExpression(const MultiplyExpression& other) :
+        BinaryExpression(other)
+    {}
 
 	virtual float getValue(std::size_t time)
 	{
@@ -371,6 +488,11 @@ public:
     {
         return fmt::format("{0} * {1}", _a->getExpressionString(), _b->getExpressionString());
     }
+
+    virtual Ptr clone() const override
+    {
+        return std::make_shared<MultiplyExpression>(*this);
+    }
 };
 
 // An expression dividing the value of two expressions
@@ -378,10 +500,14 @@ class DivideExpression :
 	public BinaryExpression
 {
 public:
-	DivideExpression(const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
-					 const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
+	DivideExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(), 
+					 const IShaderExpression::Ptr& b = IShaderExpression::Ptr()) :
 		BinaryExpression(DIVISION, a, b)
 	{}
+
+    DivideExpression(const DivideExpression& other) :
+        BinaryExpression(other)
+    {}
 
 	virtual float getValue(std::size_t time)
 	{
@@ -397,6 +523,11 @@ public:
     {
         return fmt::format("{0} / {1}", _a->getExpressionString(), _b->getExpressionString());
     }
+
+    virtual Ptr clone() const override
+    {
+        return std::make_shared<DivideExpression>(*this);
+    }
 };
 
 // An expression returning modulo of A % B
@@ -404,10 +535,14 @@ class ModuloExpression :
 	public BinaryExpression
 {
 public:
-	ModuloExpression(const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
-					 const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
+	ModuloExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(), 
+					 const IShaderExpression::Ptr& b = IShaderExpression::Ptr()) :
 		BinaryExpression(MODULO, a, b)
 	{}
+
+    ModuloExpression(const ModuloExpression& other) :
+        BinaryExpression(other)
+    {}
 
 	virtual float getValue(std::size_t time)
 	{
@@ -423,17 +558,26 @@ public:
     {
         return fmt::format("{0} % {1}", _a->getExpressionString(), _b->getExpressionString());
     }
+
+    virtual Ptr clone() const override
+    {
+        return std::make_shared<ModuloExpression>(*this);
+    }
 };
 
 // An expression returning 1 if A < B, otherwise 0
-class LesserThanExpression :
+class LessThanExpression :
 	public BinaryExpression
 {
 public:
-	LesserThanExpression(const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
-						 const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
+	LessThanExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(), 
+                       const IShaderExpression::Ptr& b = IShaderExpression::Ptr()) :
 		BinaryExpression(RELATIONAL_COMPARISON, a, b)
 	{}
+
+    LessThanExpression(const LessThanExpression& other) :
+        BinaryExpression(other)
+    {}
 
 	virtual float getValue(std::size_t time)
 	{
@@ -449,17 +593,26 @@ public:
     {
         return fmt::format("{0} < {1}", _a->getExpressionString(), _b->getExpressionString());
     }
+
+    virtual Ptr clone() const override
+    {
+        return std::make_shared<LessThanExpression>(*this);
+    }
 };
 
 // An expression returning 1 if A <= B, otherwise 0
-class LesserThanOrEqualExpression :
+class LessThanOrEqualExpression :
 	public BinaryExpression
 {
 public:
-	LesserThanOrEqualExpression(const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
-								const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
+	LessThanOrEqualExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(), 
+                              const IShaderExpression::Ptr& b = IShaderExpression::Ptr()) :
 		BinaryExpression(RELATIONAL_COMPARISON, a, b)
 	{}
+
+    LessThanOrEqualExpression(const LessThanOrEqualExpression& other) :
+        BinaryExpression(other)
+    {}
 
 	virtual float getValue(std::size_t time)
 	{
@@ -475,6 +628,11 @@ public:
     {
         return fmt::format("{0} <= {1}", _a->getExpressionString(), _b->getExpressionString());
     }
+
+    virtual Ptr clone() const override
+    {
+        return std::make_shared<LessThanOrEqualExpression>(*this);
+    }
 };
 
 // An expression returning 1 if A > B, otherwise 0
@@ -482,10 +640,14 @@ class GreaterThanExpression :
 	public BinaryExpression
 {
 public:
-	GreaterThanExpression(const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
-						  const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
+	GreaterThanExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(), 
+						  const IShaderExpression::Ptr& b = IShaderExpression::Ptr()) :
 		BinaryExpression(RELATIONAL_COMPARISON, a, b)
 	{}
+
+    GreaterThanExpression(const GreaterThanExpression& other) :
+        BinaryExpression(other)
+    {}
 
 	virtual float getValue(std::size_t time)
 	{
@@ -501,6 +663,11 @@ public:
     {
         return fmt::format("{0} > {1}", _a->getExpressionString(), _b->getExpressionString());
     }
+
+    virtual Ptr clone() const override
+    {
+        return std::make_shared<GreaterThanExpression>(*this);
+    }
 };
 
 // An expression returning 1 if A >= B, otherwise 0
@@ -508,10 +675,14 @@ class GreaterThanOrEqualExpression :
 	public BinaryExpression
 {
 public:
-	GreaterThanOrEqualExpression(const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
-								 const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
+	GreaterThanOrEqualExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(), 
+								 const IShaderExpression::Ptr& b = IShaderExpression::Ptr()) :
 		BinaryExpression(RELATIONAL_COMPARISON, a, b)
 	{}
+
+    GreaterThanOrEqualExpression(const GreaterThanOrEqualExpression& other) :
+        BinaryExpression(other)
+    {}
 
 	virtual float getValue(std::size_t time)
 	{
@@ -527,6 +698,11 @@ public:
     {
         return fmt::format("{0} >= {1}", _a->getExpressionString(), _b->getExpressionString());
     }
+
+    virtual Ptr clone() const override
+    {
+        return std::make_shared<GreaterThanOrEqualExpression>(*this);
+    }
 };
 
 // An expression returning 1 if A == B, otherwise 0
@@ -534,10 +710,14 @@ class EqualityExpression :
 	public BinaryExpression
 {
 public:
-	EqualityExpression(const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
-					   const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
+	EqualityExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(), 
+					   const IShaderExpression::Ptr& b = IShaderExpression::Ptr()) :
 		BinaryExpression(EQUALITY_COMPARISON, a, b)
 	{}
+
+    EqualityExpression(const EqualityExpression& other) :
+        BinaryExpression(other)
+    {}
 
 	virtual float getValue(std::size_t time)
 	{
@@ -553,6 +733,11 @@ public:
     {
         return fmt::format("{0} == {1}", _a->getExpressionString(), _b->getExpressionString());
     }
+
+    virtual Ptr clone() const override
+    {
+        return std::make_shared<EqualityExpression>(*this);
+    }
 };
 
 // An expression returning 1 if A != B, otherwise 0
@@ -560,10 +745,14 @@ class InequalityExpression :
 	public BinaryExpression
 {
 public:
-	InequalityExpression(const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
-					     const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
+	InequalityExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(), 
+					     const IShaderExpression::Ptr& b = IShaderExpression::Ptr()) :
 		BinaryExpression(EQUALITY_COMPARISON, a, b)
 	{}
+
+    InequalityExpression(const InequalityExpression& other) :
+        BinaryExpression(other)
+    {}
 
 	virtual float getValue(std::size_t time)
 	{
@@ -579,6 +768,11 @@ public:
     {
         return fmt::format("{0} != {1}", _a->getExpressionString(), _b->getExpressionString());
     }
+
+    virtual Ptr clone() const override
+    {
+        return std::make_shared<InequalityExpression>(*this);
+    }
 };
 
 // An expression returning 1 if both A and B are true (non-zero), otherwise 0
@@ -586,10 +780,14 @@ class LogicalAndExpression :
 	public BinaryExpression
 {
 public:
-	LogicalAndExpression(const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
-					     const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
+	LogicalAndExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(), 
+					     const IShaderExpression::Ptr& b = IShaderExpression::Ptr()) :
 		BinaryExpression(LOGICAL_AND, a, b)
 	{}
+
+    LogicalAndExpression(const LogicalAndExpression& other) :
+        BinaryExpression(other)
+    {}
 
 	virtual float getValue(std::size_t time)
 	{
@@ -605,6 +803,11 @@ public:
     {
         return fmt::format("{0} && {1}", _a->getExpressionString(), _b->getExpressionString());
     }
+
+    virtual Ptr clone() const override
+    {
+        return std::make_shared<LogicalAndExpression>(*this);
+    }
 };
 
 // An expression returning 1 if either A or B are true (non-zero), otherwise 0
@@ -612,10 +815,14 @@ class LogicalOrExpression :
 	public BinaryExpression
 {
 public:
-	LogicalOrExpression(const IShaderExpressionPtr& a = IShaderExpressionPtr(), 
-					    const IShaderExpressionPtr& b = IShaderExpressionPtr()) :
+	LogicalOrExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(), 
+					    const IShaderExpression::Ptr& b = IShaderExpression::Ptr()) :
 		BinaryExpression(LOGICAL_OR, a, b)
 	{}
+
+    LogicalOrExpression(const LogicalOrExpression& other) :
+        BinaryExpression(other)
+    {}
 
 	virtual float getValue(std::size_t time)
 	{
@@ -630,6 +837,11 @@ public:
     virtual std::string convertToString() override
     {
         return fmt::format("{0} || {1}", _a->getExpressionString(), _b->getExpressionString());
+    }
+
+    virtual Ptr clone() const override
+    {
+        return std::make_shared<LogicalOrExpression>(*this);
     }
 };
 

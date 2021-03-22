@@ -6,7 +6,7 @@
 #include "math/Vector3.h"
 #include "math/AABB.h"
 
-#include "ShaderLayer.h"
+#include "ishaderlayer.h"
 #include <sigc++/signal.h>
 
 /**
@@ -305,14 +305,14 @@ class RenderInfo
     Vector3 _viewerLocation;
 
     // Cube map mode
-    ShaderLayer::CubeMapMode _cubeMapMode;
+    IShaderLayer::CubeMapMode _cubeMapMode;
 
 public:
 
     /// Default constructor
     RenderInfo(RenderStateFlags flags = RENDER_DEFAULT,
                const Vector3& viewer = Vector3(0, 0, 0),
-               ShaderLayer::CubeMapMode cubeMode = ShaderLayer::CUBE_MAP_NONE)
+               IShaderLayer::CubeMapMode cubeMode = IShaderLayer::CUBE_MAP_NONE)
     : _flags(flags),
       _viewerLocation(viewer),
       _cubeMapMode(cubeMode)
@@ -337,7 +337,7 @@ public:
     }
 
     /// Get the cube map mode.
-    ShaderLayer::CubeMapMode getCubeMapMode() const
+    IShaderLayer::CubeMapMode getCubeMapMode() const
     {
         return _cubeMapMode;
     }
@@ -562,6 +562,9 @@ public:
 
 	// Subscription to get notified as soon as the openGL extensions have been initialised
 	virtual sigc::signal<void> signal_extensionsInitialised() = 0;
+
+    // Notification about a material change, tries to refresh any constructed shaders basing on it
+    virtual void onMaterialChanged(const std::string& materialName) = 0;
 };
 typedef std::shared_ptr<RenderSystem> RenderSystemPtr;
 typedef std::weak_ptr<RenderSystem> RenderSystemWeakPtr;
