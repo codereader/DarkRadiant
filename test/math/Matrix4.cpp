@@ -124,6 +124,26 @@ TEST(MathTest, MatrixEquality)
     EXPECT_TRUE(m2 != Matrix4::getIdentity());
 }
 
+TEST(MathTest, MatrixTranspose)
+{
+    Matrix4 m = Matrix4::byRows(1, 2, 3, 4,
+                                5, 6, 7, 8,
+                                9, 10, 11, 12,
+                                13, 14, 15, 16);
+    Matrix4 mT = Matrix4::byRows(1, 5, 9, 13,
+                                 2, 6, 10, 14,
+                                 3, 7, 11, 15,
+                                 4, 8, 12, 16);
+
+    // Return transposed copy
+    EXPECT_EQ(m.getTransposed(), mT);
+
+    // Transpose in place
+    EXPECT_NE(m, mT);
+    m.transpose();
+    EXPECT_EQ(m, mT);
+}
+
 TEST(MathTest, ConvertDegreesAndRadians)
 {
     math::Degrees thirtyD(30);
