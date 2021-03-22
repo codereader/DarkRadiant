@@ -18,6 +18,7 @@
 #include <wx/collpane.h>
 
 #include "wxutil/SourceView.h"
+#include "wxutil/dataview/ResourceTreeViewToolbar.h"
 #include "wxutil/Bitmap.h"
 #include "fmt/format.h"
 #include "string/join.h"
@@ -125,6 +126,10 @@ MaterialEditor::MaterialEditor() :
     auto* panel = getControl<wxPanel>("MaterialEditorTreeView");
     _treeView = new MaterialTreeView(panel);
     _treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &MaterialEditor::_onTreeViewSelectionChanged, this);
+
+    auto* treeToolbar = new wxutil::ResourceTreeViewToolbar(panel, _treeView);
+
+    panel->GetSizer()->Add(treeToolbar, 0, wxEXPAND | wxBOTTOM, 6);
     panel->GetSizer()->Add(_treeView, 1, wxEXPAND);
 
     // Setup the splitter and preview

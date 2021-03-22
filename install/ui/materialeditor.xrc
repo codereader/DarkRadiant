@@ -532,69 +532,6 @@
 																																		<checked>0</checked>
 																																	</object>
 																																</object>
-																																<object class="sizeritem">
-																																	<option>0</option>
-																																	<flag>wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxTOP</flag>
-																																	<border>6</border>
-																																	<object class="wxCheckBox" name="MaterialRimColor">
-																																		<enabled>0</enabled>
-																																		<label>ambientRimColor</label>
-																																		<checked>0</checked>
-																																	</object>
-																																</object>
-																																<object class="sizeritem">
-																																	<option>0</option>
-																																	<flag>wxEXPAND</flag>
-																																	<border>0</border>
-																																	<object class="wxBoxSizer">
-																																		<orient>wxHORIZONTAL</orient>
-																																		<object class="sizeritem">
-																																			<option>1</option>
-																																			<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
-																																			<border>3</border>
-																																			<object class="wxTextCtrl" name="MaterialAmbientRimColorExpression1">
-																																				<enabled>0</enabled>
-																																				<value></value>
-																																			</object>
-																																		</object>
-																																		<object class="sizeritem">
-																																			<option>0</option>
-																																			<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																																			<border>0</border>
-																																			<object class="wxStaticText" name="m_staticText166141">
-																																				<label>,</label>
-																																				<wrap>-1</wrap>
-																																			</object>
-																																		</object>
-																																		<object class="sizeritem">
-																																			<option>1</option>
-																																			<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
-																																			<border>3</border>
-																																			<object class="wxTextCtrl" name="MaterialAmbientRimColorExpression2">
-																																				<enabled>0</enabled>
-																																				<value></value>
-																																			</object>
-																																		</object>
-																																		<object class="sizeritem">
-																																			<option>0</option>
-																																			<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
-																																			<border>3</border>
-																																			<object class="wxStaticText" name="m_staticText1661111">
-																																				<label>,</label>
-																																				<wrap>-1</wrap>
-																																			</object>
-																																		</object>
-																																		<object class="sizeritem">
-																																			<option>1</option>
-																																			<flag>wxALIGN_CENTER_VERTICAL</flag>
-																																			<border>6</border>
-																																			<object class="wxTextCtrl" name="MaterialAmbientRimColorExpression3">
-																																				<enabled>0</enabled>
-																																				<value></value>
-																																			</object>
-																																		</object>
-																																	</object>
-																																</object>
 																															</object>
 																														</object>
 																													</object>
@@ -1662,6 +1599,69 @@
 																																					<label>entity3</label>
 																																					<value>0</value>
 																																				</object>
+																																			</object>
+																																		</object>
+																																	</object>
+																																</object>
+																																<object class="sizeritem">
+																																	<option>0</option>
+																																	<flag>wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxTOP</flag>
+																																	<border>6</border>
+																																	<object class="wxCheckBox" name="MaterialRimColor">
+																																		<enabled>0</enabled>
+																																		<label>ambientRimColor</label>
+																																		<checked>0</checked>
+																																	</object>
+																																</object>
+																																<object class="sizeritem">
+																																	<option>0</option>
+																																	<flag>wxEXPAND</flag>
+																																	<border>0</border>
+																																	<object class="wxBoxSizer">
+																																		<orient>wxHORIZONTAL</orient>
+																																		<object class="sizeritem">
+																																			<option>1</option>
+																																			<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
+																																			<border>3</border>
+																																			<object class="wxTextCtrl" name="MaterialAmbientRimColorExpression1">
+																																				<enabled>0</enabled>
+																																				<value></value>
+																																			</object>
+																																		</object>
+																																		<object class="sizeritem">
+																																			<option>0</option>
+																																			<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																																			<border>0</border>
+																																			<object class="wxStaticText" name="m_staticText166141">
+																																				<label>,</label>
+																																				<wrap>-1</wrap>
+																																			</object>
+																																		</object>
+																																		<object class="sizeritem">
+																																			<option>1</option>
+																																			<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
+																																			<border>3</border>
+																																			<object class="wxTextCtrl" name="MaterialAmbientRimColorExpression2">
+																																				<enabled>0</enabled>
+																																				<value></value>
+																																			</object>
+																																		</object>
+																																		<object class="sizeritem">
+																																			<option>0</option>
+																																			<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
+																																			<border>3</border>
+																																			<object class="wxStaticText" name="m_staticText1661111">
+																																				<label>,</label>
+																																				<wrap>-1</wrap>
+																																			</object>
+																																		</object>
+																																		<object class="sizeritem">
+																																			<option>1</option>
+																																			<flag>wxALIGN_CENTER_VERTICAL</flag>
+																																			<border>6</border>
+																																			<object class="wxTextCtrl" name="MaterialAmbientRimColorExpression3">
+																																				<enabled>0</enabled>
+																																				<value></value>
 																																			</object>
 																																		</object>
 																																	</object>
