@@ -38,11 +38,11 @@ float TableDefinition::getValue(float index)
 	{
 		if (index > 1.0f) 
 		{
-			index = 1.0f - 1.0f / numValues;
+			return _values[numValues - 1];
 		}
 		else if (index < 0.0f) 
 		{
-			index = 0.0f;
+			return _values[0];
 		}
 
 		// Map the index to the [0..N-1] interval

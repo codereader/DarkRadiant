@@ -110,11 +110,20 @@ TEST_F(MaterialsTest, IdentifyAmbientLight)
     EXPECT_FALSE(nonLight->isAmbientLight());
 }
 
-TEST_F(MaterialsTest, MaterialTableLookup)
+void performLookupTests(const ITableDefinition::Ptr& table, const std::vector<std::pair<float, float>>& testCases)
+{
+    for (auto testcase : testCases)
+    {
+        EXPECT_NEAR(table->getValue(testcase.first), testcase.second, TestEpsilon) << "Lookup failed: "
+            << table->getName() << "[" << testcase.first << "] = " << table->getValue(testcase.first) << ", but should be " << testcase.second;
+    }
+}
+
+TEST_F(MaterialsTest, MaterialTableLookupNonSnapped)
 {
     auto table = GlobalMaterialManager().getTable("sinTable");
 
-    constexpr std::pair<float, float> testCases[]
+    std::vector<std::pair<float, float>> testCases
     {
       {  -9.400000f, -0.587745f },
       {  -1.000000f,  0.000000f },
@@ -135,11 +144,36 @@ TEST_F(MaterialsTest, MaterialTableLookup)
       { 100.230003f,  0.992086f }
     };
 
-    for (auto testcase : testCases)
+    performLookupTests(table, testCases);
+}
+
+TEST_F(MaterialsTest, MaterialTableLookupClamped)
+{
+    auto table = GlobalMaterialManager().getTable("clampTest");
+
+    std::vector<std::pair<float, float>> testCases
     {
-        EXPECT_NEAR(table->getValue(testcase.first), testcase.second, TestEpsilon) << "Lookup failed: "
-            << table->getName() << "[" << testcase.first << "] = " << table->getValue(testcase.first) << ", but should be " << testcase.second;
-    }
+        {  -9.400000f, 1.000000f },
+        {  -1.000000f, 1.000000f },
+        {  -0.355500f, 1.000000f },
+        {  -0.000025f, 1.000000f },
+        {   0.000000f, 1.000000f },
+        {   0.000025f, 1.000000f },
+        {   0.050000f, 1.000000f },
+        {   0.250000f, 1.000000f },
+        {   0.332200f, 1.000000f },
+        {   0.700020f, 1.000000f },
+        {   0.910000f, 0.809999f },
+        {   0.999980f, 0.000180f },
+        {   1.000000f, 0.000000f },
+        {   1.002000f, 0.000000f },
+        {   1.800000f, 0.000000f },
+        {   2.300000f, 0.000000f },
+        {  60.500000f, 0.000000f },
+        { 100.230003f, 0.000000f },
+    };
+
+    performLookupTests(table, testCases);
 }
 
 TEST_F(MaterialsTest, MaterialRotationEvaluation)
