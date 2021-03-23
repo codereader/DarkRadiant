@@ -50,9 +50,17 @@ public:
     }
 
 private:
+    bool isLookingForCubeMap()
+    {
+        return GetValue().StartsWith("env/");
+    }
+
     void onBrowseButtonClick(wxCommandEvent& ev)
     {
         auto selector = new ImageFileSelector(this, _textEntry);
+
+        selector->SetVisibleTextureTypes(isLookingForCubeMap() ? 
+            ImageFileSelector::TextureType::CubeMap : ImageFileSelector::TextureType::Map);
 
         if (_windowToPlaceDialogsOn != nullptr)
         {

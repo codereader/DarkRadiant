@@ -8,15 +8,39 @@
 namespace ui
 {
 
+class ImageFileTreeView;
+
 /**
  * Modal dialog to select an image file (TGA, DDS, etc.) from the VFS
  */
 class ImageFileSelector :
     public wxutil::DialogBase
 {
+public:
+    // The texture type to look for
+    struct TextureType
+    {
+        enum
+        {
+            Map     = 1 << 0,
+            CubeMap = 1 << 1,
+        };
+    };
+
+    struct Columns :
+        public wxutil::ResourceTreeView::Columns
+    {
+        Columns() :
+            wxutil::ResourceTreeView::Columns(),
+            isCubeMapTexture(add(wxutil::TreeModel::Column::Boolean))
+        {}
+
+        wxutil::TreeModel::Column isCubeMapTexture;
+    };
+
 private:
-    wxutil::ResourceTreeView::Columns _columns;
-    wxutil::ResourceTreeView* _treeView;
+    Columns _columns;
+    ImageFileTreeView* _treeView;
 
     wxButton* _okButton;
     wxTextCtrl* _targetControl;
@@ -30,6 +54,8 @@ public:
 
     // Returns the path of the selected image file
     std::string GetSelectedImageFilePath();
+
+    void SetVisibleTextureTypes(int typeToShow);
 
 private:
     void onTreeSelectionChanged(wxDataViewEvent& ev);

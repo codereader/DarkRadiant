@@ -709,6 +709,9 @@
     <ClCompile Include="..\..\radiant\ui\common\ImageFileSelector.cpp">
       <Filter>src\ui\common</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\common\ImageFilePopulator.cpp">
+      <Filter>src\ui\common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h">

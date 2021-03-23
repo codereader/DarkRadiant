@@ -10,6 +10,41 @@ namespace
     const char* const WINDOW_TITLE = N_("Select Image File");
 }
 
+class ImageFileTreeView final :
+    public wxutil::ResourceTreeView
+{
+private:
+    const ImageFileSelector::Columns& _columns;
+
+    int _textureTypesToShow;
+
+public:
+    ImageFileTreeView(wxWindow* parent, const ImageFileSelector::Columns& columns) :
+        ResourceTreeView(parent, columns, wxDV_NO_HEADER),
+        _columns(columns)
+    {}
+
+    void SetVisibleTextureTypes(int typesToShow)
+    {
+        _textureTypesToShow = typesToShow;
+    }
+
+protected:
+    bool IsTreeModelRowVisible(wxutil::TreeModel::Row& row) override
+    {
+        bool isCubeMap = row[_columns.isCubeMapTexture].getBool();
+
+        if (!row[_columns.isFolder].getBool() &&
+            isCubeMap && (_textureTypesToShow & ImageFileSelector::TextureType::CubeMap) == 0 ||
+            !isCubeMap && (_textureTypesToShow & ImageFileSelector::TextureType::Map) == 0)
+        {
+            return false;
+        }
+
+        return ResourceTreeView::IsTreeModelRowVisible(row);
+    }
+};
+
 ImageFileSelector::ImageFileSelector(wxWindow* parent, wxTextCtrl* targetControl) :
     DialogBase(_(WINDOW_TITLE), parent),
     _okButton(nullptr),
@@ -17,7 +52,7 @@ ImageFileSelector::ImageFileSelector(wxWindow* parent, wxTextCtrl* targetControl
 {
     SetSizer(new wxBoxSizer(wxVERTICAL));
 
-    _treeView = new wxutil::ResourceTreeView(this, _columns, wxDV_NO_HEADER);
+    _treeView = new ImageFileTreeView(this, _columns);
 
     _treeView->AppendIconTextColumn(_("File"), _columns.iconAndName.getColumnIndex(),
         wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
@@ -73,6 +108,11 @@ std::string ImageFileSelector::GetSelectedImageFilePath()
     if (row[_columns.isFolder].getBool()) return std::string();
 
     return row[_columns.fullName];
+}
+
+void ImageFileSelector::SetVisibleTextureTypes(int typesToShow)
+{
+    _treeView->SetVisibleTextureTypes(typesToShow);
 }
 
 void ImageFileSelector::onTreeSelectionChanged(wxDataViewEvent& ev)

@@ -233,6 +233,7 @@
     <ClCompile Include="..\..\radiant\ui\colourscheme\ColourSchemeEditor.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\DefinitionView.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\DialogManager.cpp" />
+    <ClCompile Include="..\..\radiant\ui\common\ImageFilePopulator.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\ImageFileSelector.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\MaterialDefinitionView.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\MaterialPopulator.cpp" />
