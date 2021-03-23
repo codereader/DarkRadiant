@@ -269,13 +269,19 @@ public:
     Matrix4 getInverse() const;
 
     /// Affine invert this matrix in-place.
-    void invert();
+    void invert()
+    {
+        *this = getInverse();
+    }
 
     /// Return the full inverse of this matrix.
     Matrix4 getFullInverse() const;
 
     /// Invert this matrix in-place.
-    void invertFull();
+    void invertFull()
+    {
+        *this = getFullInverse();
+    }
 
     /**
      * \brief
@@ -316,15 +322,17 @@ public:
      */
     void multiplyBy(const Matrix4& other);
 
-    /**
-     * Returns this matrix pre-multiplied by the other
-     */
-    Matrix4 getPremultipliedBy(const Matrix4& other) const;
+    /// Returns this matrix pre-multiplied by the other
+    Matrix4 getPremultipliedBy(const Matrix4& other) const
+    {
+        return other.getMultipliedBy(*this);
+    }
 
-    /**
-     * Pre-multiplies this matrix by other in-place.
-     */
-    void premultiplyBy(const Matrix4& other);
+    /// Pre-multiplies this matrix by other in-place.
+    void premultiplyBy(const Matrix4& other)
+    {
+        *this = getPremultipliedBy(other);
+    }
 
     /**
      * \brief
@@ -336,13 +344,15 @@ public:
     void translateBy(const Vector3& translation);
 
     /**
-     * \brief
-     * Add a translation component to the transformation represented by this
-     * matrix.
+     * \brief Add a translation component to the transformation represented by
+     * this matrix.
      *
      * Equivalent to getMultipliedBy(Matrix4::getTranslation(translation));
      */
-    Matrix4 getTranslatedBy(const Vector3& translation) const;
+    Matrix4 getTranslatedBy(const Vector3& translation) const
+    {
+        return getMultipliedBy(Matrix4::getTranslation(translation));
+    }
 
     /**
      * \brief
@@ -380,14 +390,20 @@ public:
     Handedness getHandedness() const;
 
     /// Return the 3-element translation component of this matrix
-    const Vector3& translation() const;
+    const Vector3& translation() const
+    {
+        return tCol().getVector3();
+    }
 
     /**
      * Concatenates this with the rotation transform produced
      * by euler angles (degrees) in the order (x, y, z).
      * The concatenated rotation occurs before self.
      */
-    void rotateByEulerXYZDegrees(const Vector3& euler);
+    void rotateByEulerXYZDegrees(const Vector3& euler)
+    {
+        multiplyBy(getRotationForEulerXYZDegrees(euler));
+    }
 
     /**
      * Calculates and returns a set of euler angles in radians that produce
@@ -526,11 +542,6 @@ inline Matrix4 Matrix4::getMultipliedBy(const Matrix4& other) const
     );
 }
 
-inline Matrix4 Matrix4::getPremultipliedBy(const Matrix4& other) const
-{
-    return other.getMultipliedBy(*this);
-}
-
 inline Matrix4 Matrix4::getProjectionForFrustum(double left, double right, double bottom, double top, double nearval, double farval)
 {
     return Matrix4::byColumns(
@@ -587,11 +598,6 @@ inline Matrix4::Handedness Matrix4::getHandedness() const
     return (xCol().getVector3().crossProduct(yCol().getVector3()).dot(zCol().getVector3()) < 0.0f) ? LEFTHANDED : RIGHTHANDED;
 }
 
-inline void Matrix4::premultiplyBy(const Matrix4& other)
-{
-    *this = getPremultipliedBy(other);
-}
-
 template<typename Element>
 BasicVector3<Element> Matrix4::transformPoint(const BasicVector3<Element>& point) const
 {
@@ -621,31 +627,6 @@ BasicVector4<Element> Matrix4::transform(const BasicVector4<Element>& vector4) c
         static_cast<Element>(_m[2] * vector4[0] + _m[6] * vector4[1] + _m[10] * vector4[2] + _m[14] * vector4[3]),
         static_cast<Element>(_m[3] * vector4[0] + _m[7] * vector4[1] + _m[11] * vector4[2] + _m[15] * vector4[3])
     );
-}
-
-inline void Matrix4::invert()
-{
-    *this = getInverse();
-}
-
-inline void Matrix4::invertFull()
-{
-    *this = getFullInverse();
-}
-
-inline const Vector3& Matrix4::translation() const
-{
-    return tCol().getVector3();
-}
-
-inline Matrix4 Matrix4::getTranslatedBy(const Vector3& translation) const
-{
-    return getMultipliedBy(Matrix4::getTranslation(translation));
-}
-
-inline void Matrix4::rotateByEulerXYZDegrees(const Vector3& euler)
-{
-    multiplyBy(getRotationForEulerXYZDegrees(euler));
 }
 
 inline Vector3 Matrix4::getEulerAnglesXYZ() const
