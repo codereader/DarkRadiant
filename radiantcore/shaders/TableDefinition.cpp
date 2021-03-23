@@ -27,7 +27,9 @@ float TableDefinition::getValue(float index)
 		return 0.0f;
 	}
 
-	if (_values.size() == 1)
+    auto numValues = _values.size();
+
+	if (numValues == 1)
 	{
 		return _values[0];
 	}
@@ -36,7 +38,7 @@ float TableDefinition::getValue(float index)
 	{
 		if (index > 1.0f) 
 		{
-			index = 1.0f - 1.0f / _values.size();
+			index = 1.0f - 1.0f / numValues;
 		}
 		else if (index < 0.0f) 
 		{
@@ -44,15 +46,21 @@ float TableDefinition::getValue(float index)
 		}
 
 		// Map the index to the [0..N-1] interval
-		index *= _values.size() - 1;
+		index *= numValues - 1;
 	}
 	else
 	{
 		// Only take the fractional part of the index
 		index = std::fmod(index, 1.0f);
 
-		// Map the index to the [0..N] interval
-		index *= _values.size();
+        // Mirror negative indices to the positive range (catch negative -0.0f)
+        if (index < 0 && index != 0.0f)
+        {
+            index += 1.0f;
+        }
+
+		// Map the index to the [0..N) interval
+		index *= numValues;
 	}
 
 	// If snap is active, round the values to the nearest integer
@@ -60,18 +68,16 @@ float TableDefinition::getValue(float index)
 	{
 		index = std::floor(index + 0.5f);
 
-		return _values[static_cast<std::size_t>(index) % _values.size()];
+		return _values[static_cast<std::size_t>(index) % numValues];
 	}
-	else
-	{
-		// No snapping, pick the interpolation values
-		std::size_t leftIdx = static_cast<std::size_t>(std::floor(index)) % _values.size();
-		std::size_t rightIdx = (leftIdx + 1) % _values.size();
 
-		float fraction = index - leftIdx;
+	// No snapping, pick the interpolation values
+	auto leftIdx = static_cast<std::size_t>(std::floor(index)) % numValues;
+	auto rightIdx = (leftIdx + 1) % numValues;
 
-		return (1-fraction)*_values[leftIdx] + fraction*_values[rightIdx];
-	}
+	float fraction = index - leftIdx;
+
+	return (1-fraction)*_values[leftIdx] + fraction*_values[rightIdx];
 }
 
 void TableDefinition::parseDefinition()
