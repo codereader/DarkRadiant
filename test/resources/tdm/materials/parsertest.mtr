@@ -498,3 +498,21 @@ textures/parsertest/expressions/sinTableLookup
 		alphaTest sinTable[0.5008]
 	}
 }
+
+textures/parsertest/expressions/cosTableLookup
+{
+	{
+		blend diffusemap
+		map _white
+		alphaTest cosTable[-0.000025]
+	}
+}
+
+textures/parsertest/expressions/rotationCalculation
+{
+	{
+		blend diffusemap
+		map _white
+		rotate 		0.005 * sintable [ time * 0.1]
+	}
+}
