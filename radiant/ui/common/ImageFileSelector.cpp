@@ -53,7 +53,7 @@ int ImageFileSelector::ShowModal()
     return result;
 }
 
-std::string ImageFileSelector::GetSelection()
+std::string ImageFileSelector::GetSelectedImageFilePath()
 {
     auto item = _treeView->GetSelection();
     if (!item.IsOk()) return std::string();

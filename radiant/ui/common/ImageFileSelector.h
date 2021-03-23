@@ -27,7 +27,8 @@ public:
 
     int ShowModal() override;
 
-    std::string GetSelection();
+    // Returns the path of the selected image file
+    std::string GetSelectedImageFilePath();
 
 private:
     void onTreeSelectionChanged(wxDataViewEvent& ev);

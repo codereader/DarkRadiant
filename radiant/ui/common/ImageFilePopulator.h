@@ -3,6 +3,8 @@
 #include "ifilesystem.h"
 #include "gamelib.h"
 #include "string/case_conv.h"
+#include "string/predicate.h"
+#include "string/trim.h"
 #include "os/path.h"
 #include "wxutil/dataview/ThreadedResourceTreePopulator.h"
 #include "wxutil/dataview/ResourceTreeView.h"
@@ -40,15 +42,25 @@ public:
 
     void addFile(const vfs::FileInfo& fileInfo)
     {
+        const std::string ddsPrefix = "dds/";
         std::string fullPath = fileInfo.fullPath();
 
         // Sort the shader into the tree and set the values
         addPath(fullPath, [&](wxutil::TreeModel::Row& row, const std::string& path,
             const std::string& leafName, bool isFolder)
         {
+            // The map expressions don't need any file extensions
+            auto imageFilePath = os::removeExtension(path);
+
+            // Cut off the dds prefix, it won't be valid when set in a material
+            if (string::istarts_with(path, ddsPrefix))
+            {
+                imageFilePath = imageFilePath.substr(ddsPrefix.length());
+            }
+
             row[_columns.iconAndName] = wxVariant(wxDataViewIconText(leafName, isFolder ? _folderIcon : _fileIcon));
             row[_columns.leafName] = leafName;
-            row[_columns.fullName] = path;
+            row[_columns.fullName] = imageFilePath;
             row[_columns.isFolder] = isFolder;
             row[_columns.isFavourite] = false;
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "i18n.h"
 #include <wx/panel.h>
 #include <wx/textctrl.h>
 #include <wx/button.h>
@@ -18,7 +19,7 @@ private:
     wxButton* _browseButton;
 
 public:
-    MapExpressionEntry(wxWindow* parent = nullptr) :
+    MapExpressionEntry(wxWindow* parent) :
         wxPanel(parent, wxID_ANY)
     {
         SetSizer(new wxBoxSizer(wxHORIZONTAL));
@@ -28,6 +29,7 @@ public:
         _browseButton = new wxButton(this, wxID_ANY, "...");
         _browseButton->SetMaxSize(wxSize(40, -1));
         _browseButton->Bind(wxEVT_BUTTON, &MapExpressionEntry::onBrowseButtonClick, this);
+        _browseButton->SetToolTip(_("Select an Image File"));
 
         GetSizer()->Add(_textEntry, 1, wxRIGHT|wxALIGN_CENTER_VERTICAL, 6);
         GetSizer()->Add(_browseButton, 0, wxALIGN_CENTER_VERTICAL, 0);

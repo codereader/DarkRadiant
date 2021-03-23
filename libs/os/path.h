@@ -172,6 +172,22 @@ namespace os
     }
 
     /**
+     * Strip off the extension of the given path and return the new string. 
+     * If there is no extension, the original string is returned.
+     */
+    inline std::string removeExtension(const std::string& path)
+    {
+        std::size_t dotPos = path.rfind('.');
+
+        if (dotPos == std::string::npos)
+        {
+            return path;
+        }
+        
+        return path.substr(0, dotPos);
+    }
+
+    /**
      * Get the containing folder of the specified object. This is calculated
      * as the directory before the rightmost slash (which will be the object
      * itself, if the pathname ends in a slash).
