@@ -102,13 +102,31 @@ TEST(MathTest, ConstructMatrixByRows)
     EXPECT_EQ(m.ty(), 9);
     EXPECT_EQ(m.tz(), 20);
     EXPECT_EQ(m.tw(), 32);
+}
 
-    // Check vector components
-    EXPECT_EQ(m.xCol(), Vector4(1, 51, 9, 13.11));
-    EXPECT_EQ(m.yCol(), Vector4(2.5, -6, 100, 24));
-    EXPECT_EQ(m.zCol(), Vector4(3, 7, 11, 15));
-    EXPECT_EQ(m.tCol(), Vector4(0.34, 9, 20, 32));
-    EXPECT_EQ(m.translation(), Vector3(0.34, 9, 20));
+TEST(MathTest, AccessMatrixColumnVectors)
+{
+    Matrix4 m = Matrix4::byRows(1, 4, 8, -5,
+                                2, 9, 7, 13,
+                                11, -2, 10, 14,
+                                26, -100, 0.5, 3);
+
+    // Read column values
+    EXPECT_EQ(m.xCol(), Vector4(1, 2, 11, 26));
+    EXPECT_EQ(m.yCol(), Vector4(4, 9, -2, -100));
+    EXPECT_EQ(m.zCol(), Vector4(8, 7, 10, 0.5));
+    EXPECT_EQ(m.tCol(), Vector4(-5, 13, 14, 3));
+    EXPECT_EQ(m.translation(), Vector3(-5, 13, 14));
+
+    // Write column values
+    m.xCol() = Vector4(0.1, 0.2, 0.3, 0.4);
+    m.yCol() = Vector4(0.5, 0.6, 0.7, 0.8);
+    m.zCol() = Vector4(0.9, 1.0, 1.1, 1.2);
+    m.tCol() = Vector4(1.3, 1.4, 1.5, 1.6);
+    EXPECT_EQ(m, Matrix4::byColumns(0.1, 0.2, 0.3, 0.4,
+                                    0.5, 0.6, 0.7, 0.8,
+                                    0.9, 1.0, 1.1, 1.2,
+                                    1.3, 1.4, 1.5, 1.6));
 }
 
 TEST(MathTest, MatrixEquality)
