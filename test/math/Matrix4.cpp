@@ -346,6 +346,34 @@ TEST(MathTest, MatrixRotationAffineInverse)
     expectNear(inverse, backRotMat);
 }
 
+TEST(MathTest, MatrixAffineInverseMatchesFullInverse)
+{
+    // Create an affine transformation
+    Matrix4 affTrans = Matrix4::getRotationAboutZ(math::Degrees(78))
+                     * Matrix4::getScale(Vector3(2, 0.5, 1.2))
+                     * Matrix4::getTranslation(Vector3(50, -8, 0));
+
+    // Since this is an affine transformation, the inverse should be the same as
+    // the affine inverse
+    expectNear(affTrans.getInverse(), affTrans.getFullInverse());
+
+    // Make a non-affine transformation
+    Matrix4 nonAffTrans = affTrans;
+    nonAffTrans.xw() = 0.5;
+    nonAffTrans.tw() = 2;
+
+    // This time the affine inverse and full inverse should be different.
+    // Inspect a couple of values to make sure (there is no convenient assertion
+    // for "two matrices are NOT nearly equal", but we can subtract them and
+    // check that the differences exceed some threshold)
+    Matrix4 aInv = nonAffTrans.getInverse();
+    Matrix4 fInv = nonAffTrans.getFullInverse();
+    Matrix4 diffInv = aInv - fInv;
+    EXPECT_GT(diffInv.xx(), 0.1);
+    EXPECT_GT(diffInv.yx(), 0.5);
+    EXPECT_GT(diffInv.ty(), 8);
+}
+
 TEST(MathTest, MatrixFullInverse)
 {
     auto a = Matrix4::byColumns(3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59);
