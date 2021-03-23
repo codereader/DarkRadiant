@@ -1374,6 +1374,9 @@
     <ClInclude Include="..\..\radiant\ui\materials\MapExpressionEntry.h">
       <Filter>src\ui\materials</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\common\ImageFilePopulator.h">
+      <Filter>src\ui\common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />

@@ -17,7 +17,7 @@ private:
     wxutil::ResourceTreeView* _treeView;
 
 public:
-    ImageFileSelector();
+    ImageFileSelector(wxWindow* parent);
 
     int ShowModal() override;
 };

@@ -5,6 +5,8 @@
 #include <wx/button.h>
 #include <wx/sizer.h>
 
+#include "ui/common/ImageFileSelector.h"
+
 namespace ui
 {
 
@@ -16,13 +18,16 @@ private:
     wxButton* _browseButton;
 
 public:
-    MapExpressionEntry(wxWindow* parent) :
+    MapExpressionEntry(wxWindow* parent = nullptr) :
         wxPanel(parent, wxID_ANY)
     {
         SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
         _textEntry = new wxTextCtrl(this, wxID_ANY);
+
         _browseButton = new wxButton(this, wxID_ANY, "...");
+        _browseButton->SetMaxSize(wxSize(40, -1));
+        _browseButton->Bind(wxEVT_BUTTON, &MapExpressionEntry::onBrowseButtonClick, this);
 
         GetSizer()->Add(_textEntry, 1, wxRIGHT|wxALIGN_CENTER_VERTICAL, 6);
         GetSizer()->Add(_browseButton, 0, wxALIGN_CENTER_VERTICAL, 0);
@@ -36,6 +41,17 @@ public:
     void SetValue(const wxString& value)
     {
         _textEntry->SetValue(value);
+    }
+
+private:
+    void onBrowseButtonClick(wxCommandEvent& ev)
+    {
+        auto selector = new ImageFileSelector(this);
+
+        if (selector->ShowModal() == wxID_OK)
+        {
+            // TODO: assign expression
+        }
     }
 };
 

@@ -1666,7 +1666,7 @@
 																											</object>
 																											<object class="notebookpage">
 																												<label>Blending</label>
-																												<selected>0</selected>
+																												<selected>1</selected>
 																												<object class="wxPanel" name="StagePageBlending">
 																													<style>wxTAB_TRAVERSAL</style>
 																													<object class="wxBoxSizer">
@@ -2055,7 +2055,7 @@
 																											</object>
 																											<object class="notebookpage">
 																												<label>Texture</label>
-																												<selected>1</selected>
+																												<selected>0</selected>
 																												<object class="wxPanel" name="StagePageTexture">
 																													<style>wxTAB_TRAVERSAL</style>
 																													<object class="wxBoxSizer">
