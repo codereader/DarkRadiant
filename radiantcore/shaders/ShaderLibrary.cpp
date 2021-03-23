@@ -149,17 +149,16 @@ void ShaderLibrary::foreachShader(const std::function<void(const CShaderPtr&)>& 
 	}
 }
 
-TableDefinitionPtr ShaderLibrary::getTableForName(const std::string& name)
+ITableDefinition::Ptr ShaderLibrary::getTableForName(const std::string& name)
 {
-    TableDefinitions::const_iterator i = _tables.find(name);
+    auto i = _tables.find(name);
 
-    return i != _tables.end() ? i->second : TableDefinitionPtr();
+    return i != _tables.end() ? i->second : ITableDefinition::Ptr();
 }
 
 bool ShaderLibrary::addTableDefinition(const TableDefinitionPtr& def)
 {
-    std::pair<TableDefinitions::iterator, bool> result = _tables.insert(
-        TableDefinitions::value_type(def->getName(), def));
+    auto result = _tables.emplace(def->getName(), def);
 
     return result.second;
 }

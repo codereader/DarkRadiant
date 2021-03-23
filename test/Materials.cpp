@@ -112,21 +112,34 @@ TEST_F(MaterialsTest, IdentifyAmbientLight)
 
 TEST_F(MaterialsTest, MaterialTableLookup)
 {
-    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/expressions/sinTableLookup");
+    auto table = GlobalMaterialManager().getTable("sinTable");
 
-    auto stage = material->getAllLayers().front();
+    constexpr std::pair<float, float> testCases[]
+    {
+      {  -9.400000f, -0.587745f },
+      {  -1.000000f,  0.000000f },
+      {  -0.355500f, -0.788223f },
+      {  -0.000025f, -0.000157f },
+      {   0.000000f,  0.000000f },
+      {   0.000025f,  0.000157f },
+      {   0.050000f,  0.309003f },
+      {   0.250000f,  1.000000f },
+      {   0.332200f,  0.869553f },
+      {   0.700020f, -0.951048f },
+      {   0.999980f, -0.000126f },
+      {   1.000000f,  0.000000f },
+      {   1.002000f,  0.012565f },
+      {   1.800000f, -0.951010f },
+      {   2.300000f,  0.951010f },
+      {  60.500000f,  0.000000f },
+      { 100.230003f,  0.992086f }
+    };
 
-    // Set time to 5008 seconds, this is the value I happened to run into when debugging this in the engine
-    stage->evaluateExpressions(5008);
-
-    EXPECT_FLOAT_EQ(stage->getAlphaTest(), -0.00502608204f);
-
-    material = GlobalMaterialManager().getMaterial("textures/parsertest/expressions/cosTableLookup");
-
-    stage = material->getAllLayers().front();
-    stage->evaluateExpressions(1000);
-
-    EXPECT_FLOAT_EQ(stage->getAlphaTest(), 0.999998093f);
+    for (auto testcase : testCases)
+    {
+        EXPECT_NEAR(table->getValue(testcase.first), testcase.second, TestEpsilon) << "Lookup failed: "
+            << table->getName() << "[" << testcase.first << "] = " << table->getValue(testcase.first) << ", but should be " << testcase.second;
+    }
 }
 
 TEST_F(MaterialsTest, MaterialRotationEvaluation)

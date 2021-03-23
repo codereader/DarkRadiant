@@ -433,6 +433,21 @@ inline std::ostream& operator<< (std::ostream& os, const Material* m)
 
 typedef std::function<void(const std::string&)> ShaderNameCallback;
 
+// Represents a table declaration in the .mtr files
+class ITableDefinition
+{
+public:
+    using Ptr = std::shared_ptr<ITableDefinition>;
+
+    virtual ~ITableDefinition() {}
+
+    // The name of this table
+    virtual const std::string& getName() const = 0;
+
+    // Retrieve a value from this table, respecting the clamp and snap flags
+    virtual float getValue(float index) = 0;
+};
+
 const char* const MODULE_SHADERSYSTEM = "MaterialManager";
 
 /**
@@ -541,6 +556,9 @@ public:
     // Creates a named, internal material for debug/testing etc.
     // Used by shaders without corresponding material declaration, like entity wireframe shaders
     virtual MaterialPtr createDefaultMaterial(const std::string& name) = 0;
+
+    // Tries to find the named table, returns an empty reference if nothing found
+    virtual ITableDefinition::Ptr getTable(const std::string& name) = 0;
 };
 
 inline MaterialManager& GlobalMaterialManager()

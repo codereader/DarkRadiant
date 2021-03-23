@@ -314,9 +314,9 @@ private:
 		else 
 		{
 			// Check if this keyword is a material lookup table
-			TableDefinitionPtr table = GetShaderSystem()->getTableForName(token);
+			auto table = GetShaderSystem()->getTable(token);
 
-			if (table != NULL)
+			if (table)
 			{
 				// Got it, this is a table name
 				_tokeniser.nextToken(); // valid token, exhaust, this hasn't been done by the caller yet
@@ -327,7 +327,7 @@ private:
 				// The lookup expression itself has to be parsed afresh, enter recursion
 				auto lookupValue = getExpression();
 
-				if (lookupValue == NULL)
+				if (!lookupValue)
 				{
 					throw new parser::ParseException("Missing or invalid expression in table lookup operator[]");
 				}
@@ -455,7 +455,7 @@ IShaderExpression::Ptr ShaderExpression::createMultiplication(const IShaderExpre
     return std::make_shared<expressions::MultiplyExpression>(a, b);
 }
 
-IShaderExpression::Ptr ShaderExpression::createTableLookup(const TableDefinitionPtr& table, const IShaderExpression::Ptr& lookup)
+IShaderExpression::Ptr ShaderExpression::createTableLookup(const ITableDefinition::Ptr& table, const IShaderExpression::Ptr& lookup)
 {
     return std::make_shared<expressions::TableLookupExpression>(table, lookup);
 }

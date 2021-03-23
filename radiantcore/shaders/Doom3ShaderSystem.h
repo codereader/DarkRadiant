@@ -111,7 +111,7 @@ public:
     MaterialPtr createDefaultMaterial(const std::string& name) override;
 
 	// Look up a table def, return NULL if not found
-	TableDefinitionPtr getTableForName(const std::string& name);
+	ITableDefinition::Ptr getTable(const std::string& name);
 
 public:
     sigc::signal<void> signal_activeShadersChanged() const override;

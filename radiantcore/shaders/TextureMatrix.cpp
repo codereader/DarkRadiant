@@ -111,8 +111,8 @@ void TextureMatrix::applyTransformation(const IShaderLayer::Transformation& tran
         break;
     case IShaderLayer::TransformType::Rotate:
     {
-        auto sinTable = GetShaderSystem()->getTableForName("sinTable");
-        auto cosTable = GetShaderSystem()->getTableForName("cosTable");
+        auto sinTable = GetShaderSystem()->getTable("sinTable");
+        auto cosTable = GetShaderSystem()->getTable("cosTable");
 
         if (!sinTable || !cosTable)
         {

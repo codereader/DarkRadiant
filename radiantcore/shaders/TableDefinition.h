@@ -10,7 +10,8 @@ namespace shaders
 // Syntax:
 // table <tablename> { [snap] [clamp] { <data>, <data>, ... } }
 
-class TableDefinition
+class TableDefinition :
+    public ITableDefinition
 {
 private:
 	// The block name

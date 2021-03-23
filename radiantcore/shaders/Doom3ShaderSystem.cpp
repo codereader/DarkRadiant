@@ -306,7 +306,7 @@ MaterialPtr Doom3ShaderSystem::createDefaultMaterial(const std::string& name)
     return std::make_shared<CShader>(name, _library->getEmptyDefinition(), true);
 }
 
-TableDefinitionPtr Doom3ShaderSystem::getTableForName(const std::string& name)
+ITableDefinition::Ptr Doom3ShaderSystem::getTable(const std::string& name)
 {
     ensureDefsLoaded();
 

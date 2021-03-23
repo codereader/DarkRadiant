@@ -105,7 +105,7 @@ public:
     static IShaderExpression::Ptr createConstant(float constantValue);
     static IShaderExpression::Ptr createAddition(const IShaderExpression::Ptr& a, const IShaderExpression::Ptr& b);
     static IShaderExpression::Ptr createMultiplication(const IShaderExpression::Ptr& a, const IShaderExpression::Ptr& b);
-    static IShaderExpression::Ptr createTableLookup(const TableDefinitionPtr& table, const IShaderExpression::Ptr& lookup);
+    static IShaderExpression::Ptr createTableLookup(const ITableDefinition::Ptr& table, const IShaderExpression::Ptr& lookup);
 
     virtual std::string getExpressionString() override
     {
@@ -285,12 +285,12 @@ class TableLookupExpression :
 	public ShaderExpression
 {
 private:
-	TableDefinitionPtr _tableDef;
+    ITableDefinition::Ptr _tableDef;
 	IShaderExpression::Ptr _lookupExpr;
 
 public:
 	// Pass the table and the expression used to perform the lookup 
-	TableLookupExpression(const TableDefinitionPtr& tableDef, 
+	TableLookupExpression(const ITableDefinition::Ptr& tableDef,
 						  const IShaderExpression::Ptr& lookupExpr) :
 		ShaderExpression(),
 		_tableDef(tableDef),

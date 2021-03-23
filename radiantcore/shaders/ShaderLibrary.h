@@ -64,7 +64,7 @@ public:
 	void foreachShader(const std::function<void(const CShaderPtr&)>& func);
 
     // Look up a table def, return NULL if not found
-    TableDefinitionPtr getTableForName(const std::string& name);
+    ITableDefinition::Ptr getTableForName(const std::string& name);
 
     // Method for adding tables, returns FALSE if a def with the same name already exists
     bool addTableDefinition(const TableDefinitionPtr& def);
