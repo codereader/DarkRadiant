@@ -46,12 +46,9 @@ public:
 private:
     void onBrowseButtonClick(wxCommandEvent& ev)
     {
-        auto selector = new ImageFileSelector(this);
-
-        if (selector->ShowModal() == wxID_OK)
-        {
-            // TODO: assign expression
-        }
+        auto selector = new ImageFileSelector(this, _textEntry);
+        selector->ShowModal();
+        selector->Destroy();
     }
 };
 
