@@ -100,7 +100,7 @@
 										<option>2</option>
 										<flag>wxALL|wxBOTTOM|wxEXPAND|wxLEFT|wxTOP</flag>
 										<border>6</border>
-										<object class="wxNotebook" name="m_notebook3">
+										<object class="wxNotebook" name="MaterialEditorBasicAdvancedNotebook">
 											<object class="notebookpage">
 												<label>Basic</label>
 												<selected>0</selected>

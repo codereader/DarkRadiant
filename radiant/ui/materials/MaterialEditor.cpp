@@ -1944,8 +1944,10 @@ void MaterialEditor::onMaterialChanged()
 
 void MaterialEditor::convertTextCtrlToMapExpressionEntry(const std::string& ctrlName)
 {
+    auto windowToPlaceDialogsOn = getControl<wxWindow>("MaterialEditorLeftArea");
+
     auto oldCtrl = findNamedObject<wxTextCtrl>(this, ctrlName);
-    replaceControl(oldCtrl, new MapExpressionEntry(oldCtrl->GetParent()));
+    replaceControl(oldCtrl, new MapExpressionEntry(oldCtrl->GetParent(), windowToPlaceDialogsOn));
 }
 
 }

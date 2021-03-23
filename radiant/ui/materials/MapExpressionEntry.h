@@ -17,10 +17,14 @@ class MapExpressionEntry :
 private:
     wxTextCtrl* _textEntry;
     wxButton* _browseButton;
+    wxWindow* _windowToPlaceDialogsOn;
 
 public:
-    MapExpressionEntry(wxWindow* parent) :
-        wxPanel(parent, wxID_ANY)
+    // Create a map expression entry box featuring a browse/select button
+    // The windowToPlaceDialogsOn argument will be used to position the modal dialog (if set)
+    MapExpressionEntry(wxWindow* parent, wxWindow* windowToPlaceDialogsOn = nullptr) :
+        wxPanel(parent, wxID_ANY),
+        _windowToPlaceDialogsOn(windowToPlaceDialogsOn)
     {
         SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
@@ -49,6 +53,13 @@ private:
     void onBrowseButtonClick(wxCommandEvent& ev)
     {
         auto selector = new ImageFileSelector(this, _textEntry);
+
+        if (_windowToPlaceDialogsOn != nullptr)
+        {
+            selector->SetPosition(_windowToPlaceDialogsOn->GetScreenPosition());
+            selector->SetSize(_windowToPlaceDialogsOn->GetSize());
+        }
+
         selector->ShowModal();
         selector->Destroy();
     }
