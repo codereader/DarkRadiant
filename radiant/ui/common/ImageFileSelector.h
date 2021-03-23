@@ -26,6 +26,7 @@ public:
     ImageFileSelector(wxWindow* parent, wxTextCtrl* targetControl);
 
     int ShowModal() override;
+    int ShowModal(const std::string& preselectItem);
 
     // Returns the path of the selected image file
     std::string GetSelectedImageFilePath();

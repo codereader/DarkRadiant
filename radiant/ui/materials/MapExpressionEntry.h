@@ -60,7 +60,7 @@ private:
             selector->SetSize(_windowToPlaceDialogsOn->GetSize());
         }
 
-        selector->ShowModal();
+        selector->ShowModal(_textEntry->GetValue().ToStdString());
         selector->Destroy();
     }
 };

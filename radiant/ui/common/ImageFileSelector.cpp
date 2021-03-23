@@ -36,9 +36,14 @@ ImageFileSelector::ImageFileSelector(wxWindow* parent, wxTextCtrl* targetControl
     FitToScreen(0.5f, 0.7f);
 }
 
-int ImageFileSelector::ShowModal()
+int ImageFileSelector::ShowModal(const std::string& preselectItem)
 {
     _treeView->Populate(std::make_shared<ImageFilePopulator>(_columns));
+
+    if (!preselectItem.empty())
+    {
+        _treeView->SetSelectedFullname(preselectItem);
+    }
 
     _previousValue = _targetControl->GetValue().ToStdString();
 
@@ -51,6 +56,11 @@ int ImageFileSelector::ShowModal()
     }
 
     return result;
+}
+
+int ImageFileSelector::ShowModal()
+{
+    return ShowModal(std::string());
 }
 
 std::string ImageFileSelector::GetSelectedImageFilePath()
