@@ -102,10 +102,8 @@ void ResourceTreeView::SetupTreeModelFilter()
     // Set up the filter
     _treeModelFilter.reset(new TreeModelFilter(_treeStore));
 
-    _treeModelFilter->SetVisibleFunc([this](TreeModel::Row& row)
-    {
-        return IsTreeModelRowVisible(row);
-    });
+    _treeModelFilter->SetVisibleFunc(
+        std::bind(&ResourceTreeView::IsTreeModelRowOrAnyChildVisible, this, std::placeholders::_1));
 
     AssociateModel(_treeModelFilter.get());
 
@@ -596,73 +594,56 @@ bool ResourceTreeView::IsFavouriteSelected()
     return row[_columns.isFavourite].getBool();
 }
 
+bool ResourceTreeView::IsTreeModelRowOrAnyChildVisible(TreeModel::Row& row)
+{
+    // Test the node itself
+    if (IsTreeModelRowVisible(row))
+    {
+        return true; // node is visible
+    }
+
+    // The node itself is invisible, but it might still be visible
+    // if any of the child nodes is visible, dive into it
+    wxDataViewItemArray children;
+    _treeStore->GetChildren(row.getItem(), children);
+
+    for (const wxDataViewItem& child : children)
+    {
+        wxutil::TreeModel::Row childRow(child, *_treeStore);
+
+        // Check the child node (recursively)
+        if (IsTreeModelRowOrAnyChildVisible(childRow))
+        {
+            return true; // found a visible child, this is enough
+        }
+    }
+
+    // Either we don't have any children, or 
+    // all child nodes are invisible, so this node is invisible too
+    return false;
+}
+
 bool ResourceTreeView::IsTreeModelRowVisible(wxutil::TreeModel::Row& row)
 {
+    // Check view mode
     if (!IsTreeModelRowVisibleByViewMode(row))
     {
         return false; // done here
     }
 
-    // Check for a text filter we might need to apply
-    if (_filterText.empty())
-    {
-        return true; // done here
-    }
-
-    return !IsTreeModelRowFilteredRecursively(row);
+    // Check filter, otherwise the node is visible
+    return !IsTreeModelRowFiltered(row);
 }
 
-bool ResourceTreeView::IsTreeModelRowFilteredRecursively(wxutil::TreeModel::Row& row)
+bool ResourceTreeView::IsTreeModelRowFiltered(wxutil::TreeModel::Row& row)
 {
-    if (TreeModel::RowContainsString(row, _filterText, _colsToSearch, true))
-    {
-        return false;
-    }
-
-    // This node might also be visible if a single child node is visible, dive into it
-    wxDataViewItemArray children;
-    _treeStore->GetChildren(row.getItem(), children);
-
-    for (const wxDataViewItem& child : children)
-    {
-        wxutil::TreeModel::Row childRow(child, *_treeStore);
-
-        if (!IsTreeModelRowFilteredRecursively(childRow))
-        {
-            return false; // unfiltered node, break the loop
-        }
-    }
-
-    // Either we don't have any children, or 
-    // all child nodes are filtered, so this node is filtered too
-    return true;
+    return !_filterText.empty() && !TreeModel::RowContainsString(row, _filterText, _colsToSearch, true);
 }
 
 bool ResourceTreeView::IsTreeModelRowVisibleByViewMode(wxutil::TreeModel::Row& row)
 {
-    if (_mode == TreeMode::ShowAll) return true; // everything is visible
-
-    // Favourites mode, check if this item or any descendant is visible
-    if (row[_columns.isFavourite].getBool())
-    {
-        return true;
-    }
-
-    wxDataViewItemArray children;
-    _treeStore->GetChildren(row.getItem(), children);
-
-    // Enter the recursion for each of the children and bail out on the first visible one
-    for (const wxDataViewItem& child : children)
-    {
-        wxutil::TreeModel::Row childRow(child, *_treeStore);
-
-        if (IsTreeModelRowVisibleByViewMode(childRow))
-        {
-            return true;
-        }
-    }
-
-    return false;
+    // In favourites mode, check if this item is marked as favourite
+    return _mode == TreeMode::ShowAll || row[_columns.isFavourite].getBool();
 }
 
 }
