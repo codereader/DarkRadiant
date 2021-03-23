@@ -52,13 +52,13 @@ void TranslateManipulator::render(RenderableCollector& collector, const VolumeTe
     // temp hack
     UpdateColours();
 
-    Vector3 x = _pivot2World._worldSpace.x().getVector3().getNormalised();
+    Vector3 x = _pivot2World._worldSpace.xCol().getVector3().getNormalised();
     bool show_x = manipulator_show_axis(_pivot2World, x);
 
-    Vector3 y = _pivot2World._worldSpace.y().getVector3().getNormalised();
+    Vector3 y = _pivot2World._worldSpace.yCol().getVector3().getNormalised();
     bool show_y = manipulator_show_axis(_pivot2World, y);
 
-    Vector3 z = _pivot2World._worldSpace.z().getVector3().getNormalised();
+    Vector3 z = _pivot2World._worldSpace.zCol().getVector3().getNormalised();
     bool show_z = manipulator_show_axis(_pivot2World, z);
 
     if(show_x)
@@ -92,18 +92,18 @@ void TranslateManipulator::render(RenderableCollector& collector, const VolumeTe
 
 void TranslateManipulator::testSelect(SelectionTest& test, const Matrix4& pivot2world)
 {
-    _pivot2World.update(_pivot.getMatrix4(), test.getVolume().GetModelview(), 
+    _pivot2World.update(_pivot.getMatrix4(), test.getVolume().GetModelview(),
         test.getVolume().GetProjection(), test.getVolume().GetViewport());
 
     SelectionPool selector;
 
-    Vector3 x = _pivot2World._worldSpace.x().getVector3().getNormalised();
+    Vector3 x = _pivot2World._worldSpace.xCol().getVector3().getNormalised();
     bool show_x = manipulator_show_axis(_pivot2World, x);
 
-    Vector3 y = _pivot2World._worldSpace.y().getVector3().getNormalised();
+    Vector3 y = _pivot2World._worldSpace.yCol().getVector3().getNormalised();
     bool show_y = manipulator_show_axis(_pivot2World, y);
 
-    Vector3 z = _pivot2World._worldSpace.z().getVector3().getNormalised();
+    Vector3 z = _pivot2World._worldSpace.zCol().getVector3().getNormalised();
     bool show_z = manipulator_show_axis(_pivot2World, z);
 
     {
@@ -159,7 +159,7 @@ void TranslateManipulator::testSelect(SelectionTest& test, const Matrix4& pivot2
 	    	Matrix4 local2view(test.getVolume().GetViewProjection().getMultipliedBy(_pivot2World._worldSpace));
 
 	    	// Get the (relative?) distance from the mouse pointer to the manipulator
-	    	Vector3 delta = local2view.t().getProjected();
+	    	Vector3 delta = local2view.tCol().getProjected();
 
 	    	// Get the precedence (which axis has the absolute largest value in it)
 	    	bool xGreaterY = (fabs(delta.x()) > fabs(delta.y()));

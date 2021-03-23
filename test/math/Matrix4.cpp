@@ -104,10 +104,10 @@ TEST(MathTest, ConstructMatrixByRows)
     EXPECT_EQ(m.tw(), 32);
 
     // Check vector components
-    EXPECT_EQ(m.x(), Vector4(1, 51, 9, 13.11));
-    EXPECT_EQ(m.y(), Vector4(2.5, -6, 100, 24));
-    EXPECT_EQ(m.z(), Vector4(3, 7, 11, 15));
-    EXPECT_EQ(m.t(), Vector4(0.34, 9, 20, 32));
+    EXPECT_EQ(m.xCol(), Vector4(1, 51, 9, 13.11));
+    EXPECT_EQ(m.yCol(), Vector4(2.5, -6, 100, 24));
+    EXPECT_EQ(m.zCol(), Vector4(3, 7, 11, 15));
+    EXPECT_EQ(m.tCol(), Vector4(0.34, 9, 20, 32));
     EXPECT_EQ(m.translation(), Vector3(0.34, 9, 20));
 }
 
@@ -288,9 +288,9 @@ TEST(MathTest, MatrixTransformation)
         EXPECT_EQ(transformed.w(), 12896) << "Vector4 transformation failed";
     }
 
-    EXPECT_EQ(a.t().x(), 43) << "Matrix4::t failed";
-    EXPECT_EQ(a.t().y(), 47) << "Matrix4::t failed";
-    EXPECT_EQ(a.t().z(), 53) << "Matrix4::t failed";
+    EXPECT_EQ(a.tCol().x(), 43) << "Matrix4::t failed";
+    EXPECT_EQ(a.tCol().y(), 47) << "Matrix4::t failed";
+    EXPECT_EQ(a.tCol().z(), 53) << "Matrix4::t failed";
 }
 
 TEST(MathTest, MatrixScaleAffineInverse)

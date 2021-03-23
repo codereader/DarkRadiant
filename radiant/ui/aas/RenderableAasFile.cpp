@@ -42,7 +42,7 @@ void RenderableAasFile::renderSolid(RenderableCollector& collector, const Volume
 
 	// Get the camera position for distance clipping
 	Matrix4 invModelView = volume.GetModelview().getFullInverse();
-	Vector3 viewPos = invModelView.t().getProjected();
+	Vector3 viewPos = invModelView.tCol().getProjected();
 
 	for (const RenderableSolidAABB& aabb : _renderableAabbs)
 	{

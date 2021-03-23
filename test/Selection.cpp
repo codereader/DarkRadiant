@@ -188,7 +188,7 @@ TEST_F(SelectionTest, PivotIsResetAfterCancelingOperation)
     Vector3 originalBrushPosition = brush->worldAABB().getOrigin();
 
     Matrix4 originalPivot = GlobalSelectionSystem().getPivot2World();
-    EXPECT_EQ(originalPivot.t().getVector3(), originalBrushPosition);
+    EXPECT_EQ(originalPivot.tCol().getVector3(), originalBrushPosition);
 
     const auto& activeManipulator = GlobalSelectionSystem().getActiveManipulator();
 
@@ -211,7 +211,7 @@ TEST_F(SelectionTest, PivotIsResetAfterCancelingOperation)
     // The brush should have been moved
     EXPECT_NE(brush->worldAABB().getOrigin(), originalBrushPosition);
     // Pivot should have been moved
-    EXPECT_NE(GlobalSelectionSystem().getPivot2World().t().getVector3(), originalBrushPosition);
+    EXPECT_NE(GlobalSelectionSystem().getPivot2World().tCol().getVector3(), originalBrushPosition);
 
     // Now cancel the operation
     GlobalSelectionSystem().onManipulationCancelled();
@@ -219,7 +219,7 @@ TEST_F(SelectionTest, PivotIsResetAfterCancelingOperation)
     // Brush should be back at its original position
     EXPECT_EQ(brush->worldAABB().getOrigin(), originalBrushPosition);
     // And as of #4846 the pivot should be back as well
-    EXPECT_EQ(GlobalSelectionSystem().getPivot2World().t().getVector3(), originalBrushPosition);
+    EXPECT_EQ(GlobalSelectionSystem().getPivot2World().tCol().getVector3(), originalBrushPosition);
 }
 
 // #5460: Workzone not recalculated after selection change if XY view "Show Size Info" setting is off

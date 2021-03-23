@@ -90,8 +90,8 @@ Matrix4 TextureProjection::getBasisForNormal(const Vector3& normal) const {
     Matrix4 basis;
 
     basis = Matrix4::getIdentity();
-    ComputeAxisBase(normal, basis.x().getVector3(), basis.y().getVector3());
-    basis.z().getVector3() = normal;
+    ComputeAxisBase(normal, basis.xCol().getVector3(), basis.yCol().getVector3());
+    basis.zCol().getVector3() = normal;
 
     // At this point the basis matrix contains three lines that are
     // perpendicular to each other.
@@ -132,10 +132,10 @@ void TextureProjection::transformLocked(std::size_t width, std::size_t height, c
     );
 
     Vector3 originalProjectionAxis(
-        identity2stIdentity.getInverse().z().getVector3()
+        identity2stIdentity.getInverse().zCol().getVector3()
     );
 
-    Vector3 transformedProjectionAxis(stTransformed2identity.z().getVector3());
+    Vector3 transformedProjectionAxis(stTransformed2identity.zCol().getVector3());
 
     Matrix4 stIdentity2stOriginal = getTransform();
     Matrix4 identity2stOriginal = stIdentity2stOriginal.getMultipliedBy(identity2stIdentity);
@@ -371,8 +371,8 @@ void TextureProjection::emitTextureCoordinates(Winding& w, const Vector3& normal
     }
 
     // Calculate the tangent and bitangent vectors to allow the correct openGL transformations
-    Vector3 tangent(local2tex.getTransposed().x().getVector3().getNormalised());
-    Vector3 bitangent(local2tex.getTransposed().y().getVector3().getNormalised());
+    Vector3 tangent(local2tex.getTransposed().xCol().getVector3().getNormalised());
+    Vector3 bitangent(local2tex.getTransposed().yCol().getVector3().getNormalised());
 
     // Transform the texture basis vectors into the "BrushFace space"
     // usually the localToWorld matrix is identity, so this doesn't do anything.

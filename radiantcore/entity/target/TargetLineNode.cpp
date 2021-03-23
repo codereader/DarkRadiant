@@ -43,7 +43,7 @@ void TargetLineNode::renderWireframe(RenderableCollector& collector, const Volum
 
 std::size_t TargetLineNode::getHighlightFlags()
 {
-    // We don't need to return highlighting, since the render system will use 
+    // We don't need to return highlighting, since the render system will use
     // the result of the parent entity node
     return Highlight::NoHighlight;
 }
@@ -66,7 +66,7 @@ Vector3 TargetLineNode::getOwnerPosition() const
             return bounds.getOrigin();
         }
 
-        return _owner.localToWorld().t().getVector3();
+        return _owner.localToWorld().tCol().getVector3();
     }
 }
 

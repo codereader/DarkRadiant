@@ -121,9 +121,9 @@ unsigned int AABB::classifyOrientedPlane(const Matrix4& transform, const Plane3&
 {
 	double distance_origin = plane.normal().dot(origin) + plane.dist();
 
-	if (fabs(distance_origin) < (fabs(extents[0] * plane.normal().dot(transform.x().getVector3())) + 
-								 fabs(extents[1] * plane.normal().dot(transform.y().getVector3())) + 
-								 fabs(extents[2] * plane.normal().dot(transform.z().getVector3()))))
+	if (fabs(distance_origin) < (fabs(extents[0] * plane.normal().dot(transform.xCol().getVector3())) +
+								 fabs(extents[1] * plane.normal().dot(transform.yCol().getVector3())) +
+								 fabs(extents[2] * plane.normal().dot(transform.zCol().getVector3()))))
 	{
 		return 1; // partially inside
 	}
@@ -131,15 +131,15 @@ unsigned int AABB::classifyOrientedPlane(const Matrix4& transform, const Plane3&
 	{
 		return 2; // totally inside
 	}
-	
+
 	return 0; // totally outside
 }
 
 void AABB::getCorners(Vector3 corners[8], const Matrix4& rotation) const
 {
-	Vector3 x = rotation.x().getVector3() * extents.x();
-	Vector3 y = rotation.y().getVector3() * extents.y();
-	Vector3 z = rotation.z().getVector3() * extents.z();
+	Vector3 x = rotation.xCol().getVector3() * extents.x();
+	Vector3 y = rotation.yCol().getVector3() * extents.y();
+	Vector3 z = rotation.zCol().getVector3() * extents.z();
 
 	corners[0] = origin - x + y + z;
 	corners[1] = origin + x + y + z;
@@ -153,16 +153,16 @@ void AABB::getCorners(Vector3 corners[8], const Matrix4& rotation) const
 
 void AABB::getPlanes(Plane3 planes[6], const Matrix4& rotation) const
 {
-	double x = rotation.x().getVector3().dot(origin);
-	double y = rotation.y().getVector3().dot(origin);
-	double z = rotation.z().getVector3().dot(origin);
+	double x = rotation.xCol().getVector3().dot(origin);
+	double y = rotation.yCol().getVector3().dot(origin);
+	double z = rotation.zCol().getVector3().dot(origin);
 
-	planes[0] = Plane3( rotation.x().getVector3(), x + extents[0]);
-	planes[1] = Plane3(-rotation.x().getVector3(), -(x - extents[0]));
-	planes[2] = Plane3( rotation.y().getVector3(), y + extents[1]);
-	planes[3] = Plane3(-rotation.y().getVector3(), -(y - extents[1]));
-	planes[4] = Plane3( rotation.z().getVector3(), z + extents[2]);
-	planes[5] = Plane3(-rotation.z().getVector3(), -(z - extents[2]));
+	planes[0] = Plane3( rotation.xCol().getVector3(), x + extents[0]);
+	planes[1] = Plane3(-rotation.xCol().getVector3(), -(x - extents[0]));
+	planes[2] = Plane3( rotation.yCol().getVector3(), y + extents[1]);
+	planes[3] = Plane3(-rotation.yCol().getVector3(), -(y - extents[1]));
+	planes[4] = Plane3( rotation.zCol().getVector3(), z + extents[2]);
+	planes[5] = Plane3(-rotation.zCol().getVector3(), -(z - extents[2]));
 }
 
 AABB AABB::createFromOrientedAABB(const AABB& aabb, const Matrix4& transform)

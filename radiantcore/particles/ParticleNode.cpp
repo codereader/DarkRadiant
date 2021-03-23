@@ -49,9 +49,9 @@ const Matrix4& ParticleNode::localToParent() const
 		_local2Parent = parent->localToWorld();
 
 		// compensate the parent rotation only
-		_local2Parent.t().x() = 0;
-		_local2Parent.t().y() = 0;
-		_local2Parent.t().z() = 0;
+		_local2Parent.tCol().x() = 0;
+		_local2Parent.tCol().y() = 0;
+		_local2Parent.tCol().z() = 0;
 
 		_local2Parent.invert();
 	}
@@ -59,7 +59,7 @@ const Matrix4& ParticleNode::localToParent() const
 	return _local2Parent;
 }
 
-void ParticleNode::renderSolid(RenderableCollector& collector, 
+void ParticleNode::renderSolid(RenderableCollector& collector,
 							   const VolumeTest& volume) const
 {
 	if (!_renderableParticle) return;
@@ -70,7 +70,7 @@ void ParticleNode::renderSolid(RenderableCollector& collector,
 	_renderableParticle->renderSolid(collector, volume, localToWorld(), _renderEntity);
 }
 
-void ParticleNode::renderWireframe(RenderableCollector& collector, 
+void ParticleNode::renderWireframe(RenderableCollector& collector,
 								   const VolumeTest& volume) const
 {
 	// greebo: For now, don't draw particles in ortho views they are too distracting
@@ -95,7 +95,7 @@ void ParticleNode::update(const VolumeTest& viewVolume) const
 {
 	// Get the view rotation and cancel out the translation part
 	Matrix4 viewRotation = viewVolume.GetModelview();
-	viewRotation.t() = Vector4(0,0,0,1);
+	viewRotation.tCol() = Vector4(0,0,0,1);
 
 	// Get the main direction of our parent entity
 	_renderableParticle->setMainDirection(_renderEntity->getDirection());

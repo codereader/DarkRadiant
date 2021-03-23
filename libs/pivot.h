@@ -9,13 +9,13 @@ inline void billboard_viewplaneOriented(Matrix4& rotation, const Matrix4& world2
 {
 #if 1
   rotation = Matrix4::getIdentity();
-  Vector3 x(world2screen.x().getVector3().getNormalised());
-  Vector3 y(world2screen.y().getVector3().getNormalised());
-  Vector3 z(world2screen.z().getVector3().getNormalised());
-  rotation.y().getVector3() = Vector3(x.y(), y.y(), z.y());
-  rotation.z().getVector3() = -Vector3(x.z(), y.z(), z.z());
-  rotation.x().getVector3() = rotation.y().getVector3().crossProduct(rotation.z().getVector3()).getNormalised();
-  rotation.y().getVector3() = rotation.z().getVector3().crossProduct(rotation.x().getVector3());
+  Vector3 x(world2screen.xCol().getVector3().getNormalised());
+  Vector3 y(world2screen.yCol().getVector3().getNormalised());
+  Vector3 z(world2screen.zCol().getVector3().getNormalised());
+  rotation.yCol().getVector3() = Vector3(x.y(), y.y(), z.y());
+  rotation.zCol().getVector3() = -Vector3(x.z(), y.z(), z.z());
+  rotation.xCol().getVector3() = rotation.yCol().getVector3().crossProduct(rotation.zCol().getVector3()).getNormalised();
+  rotation.yCol().getVector3() = rotation.zCol().getVector3().crossProduct(rotation.xCol().getVector3());
 #else
   Matrix4 screen2world(matrix4_full_inverse(world2screen));
 
@@ -54,10 +54,10 @@ inline void billboard_viewpointOriented(Matrix4& rotation, const Matrix4& world2
 
 #if 1
   rotation = Matrix4::getIdentity();
-  rotation.y().getVector3() = screen2world.y().getVector3().getNormalised();
-  rotation.z().getVector3() = -screen2world.z().getVector3().getNormalised();
-  rotation.x().getVector3() = rotation.y().getVector3().crossProduct(rotation.z().getVector3()).getNormalised();
-  rotation.y().getVector3() = rotation.z().getVector3().crossProduct(rotation.x().getVector3());
+  rotation.yCol().getVector3() = screen2world.yCol().getVector3().getNormalised();
+  rotation.zCol().getVector3() = -screen2world.zCol().getVector3().getNormalised();
+  rotation.xCol().getVector3() = rotation.yCol().getVector3().crossProduct(rotation.zCol().getVector3()).getNormalised();
+  rotation.yCol().getVector3() = rotation.zCol().getVector3().crossProduct(rotation.xCol().getVector3());
 #else
   Vector3 near_(
       matrix4_transformed_vector4(
@@ -133,19 +133,19 @@ inline Matrix4 constructDevice2Object(const Matrix4& object2world, const Matrix4
  * S = Inverse(ScaleOf(Object2Screen))
  *
  * The scale of the object2screen matrix can be extracted easily, and the inverse of a pure scale
- * matrix is basically inverting its diagonals, so the above can be equally constructed without 
+ * matrix is basically inverting its diagonals, so the above can be equally constructed without
  * inverting the whole 4x4 matrix.
  **/
 inline Matrix4 getInverseScale(const Matrix4& transform)
 {
 #if 1
 	return Matrix4::getScale(transform.getScale().getInversed());
-#else 
+#else
 	// Old code like described above
-	// Extract the scale of the pivot2screen (transform) matrix and 
+	// Extract the scale of the pivot2screen (transform) matrix and
 	// store that in another matrix
 	Matrix4 pre_scale = Matrix4::getScale(transform.getScale());
-	
+
 	return transform.getMultipliedBy(pre_scale).getFullInverse().getMultipliedBy(transform);
 #endif
 }
@@ -160,7 +160,7 @@ inline Matrix4 getPerspectiveScale(const Matrix4& pivot2screen)
 /**
  * greebo: Replacement for the above constructDevice2Manip. This produces a matrix
  * that is converting pivot space coordinates into normalised device coords.
- * The tz value of this matrix and its inverse can be used to convert mouse click coords 
+ * The tz value of this matrix and its inverse can be used to convert mouse click coords
  * back into pivot space.
  */
 inline Matrix4 constructPivot2Device(const Matrix4& pivot2world, const VolumeTest& view)
@@ -173,7 +173,7 @@ inline Matrix4 constructPivot2Device(const Matrix4& pivot2world, const VolumeTes
 	Matrix4 pivot2clip = pivot2view.getPremultipliedBy(view.GetProjection());
 
 	// Once we're into clip space, we can normalise coords by dividing by w.
-	// This operation can be seen as some sort of perspective correction, 
+	// This operation can be seen as some sort of perspective correction,
 	// this does nothing in orthographic projections where w == 1
 	double inverseW = 1 / pivot2clip.tw();
 

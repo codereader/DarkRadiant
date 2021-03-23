@@ -206,35 +206,35 @@ public:
      * Return columns of the matrix as vectors.
      * \{
      */
-    Vector4& x()
+    Vector4& xCol()
     {
         return reinterpret_cast<Vector4&>(xx());
     }
-    const Vector4& x() const
+    const Vector4& xCol() const
     {
         return reinterpret_cast<const Vector4&>(xx());
     }
-    Vector4& y()
+    Vector4& yCol()
     {
         return reinterpret_cast<Vector4&>(yx());
     }
-    const Vector4& y() const
+    const Vector4& yCol() const
     {
         return reinterpret_cast<const Vector4&>(yx());
     }
-    Vector4& z()
+    Vector4& zCol()
     {
         return reinterpret_cast<Vector4&>(zx());
     }
-    const Vector4& z() const
+    const Vector4& zCol() const
     {
         return reinterpret_cast<const Vector4&>(zx());
     }
-    Vector4& t()
+    Vector4& tCol()
     {
         return reinterpret_cast<Vector4&>(tx());
     }
-    const Vector4& t() const
+    const Vector4& tCol() const
     {
         return reinterpret_cast<const Vector4&>(tx());
     }
@@ -584,7 +584,7 @@ inline bool Matrix4::isAffineEqual(const Matrix4& other) const
 
 inline Matrix4::Handedness Matrix4::getHandedness() const
 {
-    return (x().getVector3().crossProduct(y().getVector3()).dot(z().getVector3()) < 0.0f) ? LEFTHANDED : RIGHTHANDED;
+    return (xCol().getVector3().crossProduct(yCol().getVector3()).dot(zCol().getVector3()) < 0.0f) ? LEFTHANDED : RIGHTHANDED;
 }
 
 inline void Matrix4::premultiplyBy(const Matrix4& other)
@@ -635,7 +635,7 @@ inline void Matrix4::invertFull()
 
 inline const Vector3& Matrix4::translation() const
 {
-    return t().getVector3();
+    return tCol().getVector3();
 }
 
 inline Matrix4 Matrix4::getTranslatedBy(const Vector3& translation) const
@@ -680,9 +680,9 @@ inline Vector3 Matrix4::getEulerAnglesXYZDegrees() const
 inline Vector3 Matrix4::getScale() const
 {
     return Vector3(
-        x().getVector3().getLength(),
-        y().getVector3().getLength(),
-        z().getVector3().getLength()
+        xCol().getVector3().getLength(),
+        yCol().getVector3().getLength(),
+        zCol().getVector3().getLength()
     );
 }
 
