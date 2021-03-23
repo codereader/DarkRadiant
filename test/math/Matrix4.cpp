@@ -129,6 +129,34 @@ TEST(MathTest, AccessMatrixColumnVectors)
                                     1.3, 1.4, 1.5, 1.6));
 }
 
+TEST(MathTest, MatrixRawArrayData)
+{
+    Matrix4 m = Matrix4::byRows(1, 0.2, 35, 4,
+                                5, -6, 17, 300,
+                                3.02, 10, -11, 12.4,
+                                20, 17, 3001, -4.5);
+
+    // Confirm data can be accessed as a packed C array of doubles (e.g. for
+    // OpenGL methods)
+    double* data = static_cast<double*>(m);
+    EXPECT_EQ(data[0], 1);
+    EXPECT_EQ(data[1], 5);
+    EXPECT_EQ(data[2], 3.02);
+    EXPECT_EQ(data[3], 20);
+    EXPECT_EQ(data[4], 0.2);
+    EXPECT_EQ(data[5], -6);
+    EXPECT_EQ(data[6], 10);
+    EXPECT_EQ(data[7], 17);
+    EXPECT_EQ(data[8], 35);
+    EXPECT_EQ(data[9], 17);
+    EXPECT_EQ(data[10], -11);
+    EXPECT_EQ(data[11], 3001);
+    EXPECT_EQ(data[12], 4);
+    EXPECT_EQ(data[13], 300);
+    EXPECT_EQ(data[14], 12.4);
+    EXPECT_EQ(data[15], -4.5);
+}
+
 TEST(MathTest, MatrixEquality)
 {
     Matrix4 m1 = Matrix4::byRows(1, 2, 3.5, 4,
