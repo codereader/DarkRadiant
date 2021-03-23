@@ -63,16 +63,15 @@ float TableDefinition::getValue(float index)
 		index *= numValues;
 	}
 
-	// If snap is active, round the values to the nearest integer
+    auto leftIdx = static_cast<std::size_t>(std::floor(index)) % numValues;
+
 	if (_snap)
 	{
-		index = std::floor(index + 0.5f);
-
-		return _values[static_cast<std::size_t>(index) % numValues];
+	    // If snap is active, just use the left-bound index
+		return _values[leftIdx];
 	}
 
-	// No snapping, pick the interpolation values
-	auto leftIdx = static_cast<std::size_t>(std::floor(index)) % numValues;
+	// No snapping, pick the next value to the right to interpolate
 	auto rightIdx = (leftIdx + 1) % numValues;
 
 	float fraction = index - leftIdx;

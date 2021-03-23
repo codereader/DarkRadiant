@@ -119,7 +119,7 @@ void performLookupTests(const ITableDefinition::Ptr& table, const std::vector<st
     }
 }
 
-TEST_F(MaterialsTest, MaterialTableLookupNonSnapped)
+TEST_F(MaterialsTest, MaterialTableLookup)
 {
     auto table = GlobalMaterialManager().getTable("sinTable");
 
@@ -142,6 +142,40 @@ TEST_F(MaterialsTest, MaterialTableLookupNonSnapped)
       {   2.300000f,  0.951010f },
       {  60.500000f,  0.000000f },
       { 100.230003f,  0.992086f }
+    };
+
+    performLookupTests(table, testCases);
+}
+
+TEST_F(MaterialsTest, MaterialTableLookupSnapped)
+{
+    auto table = GlobalMaterialManager().getTable("snapTest");
+
+    std::vector<std::pair<float, float>> testCases
+    {
+      {  -9.400000f, 1.000000f },
+      {  -1.000000f, 1.000000f },
+      {  -0.355500f, 0.000000f },
+      {  -0.000025f, 0.000000f },
+      {   0.000000f, 1.000000f },
+      {   0.000025f, 1.000000f },
+      {   0.050000f, 0.000000f },
+      {   0.250000f, 0.000000f },
+      {   0.332200f, 1.000000f },
+      {   0.400000f, 1.000000f },
+      {   0.430000f, 1.000000f },
+      {   0.450000f, 1.000000f },
+      {   0.460000f, 1.000000f },
+      {   0.490000f, 0.000000f },
+      {   0.700020f, 0.000000f },
+      {   0.910000f, 0.000000f },
+      {   0.999980f, 0.000000f },
+      {   1.000000f, 1.000000f },
+      {   1.002000f, 1.000000f },
+      {   1.800000f, 0.000000f },
+      {   2.300000f, 1.000000f },
+      {  60.500000f, 0.000000f },
+      { 100.230003f, 0.000000f },
     };
 
     performLookupTests(table, testCases);
