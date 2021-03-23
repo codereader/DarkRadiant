@@ -29,12 +29,16 @@ private:
     wxIcon _fileIcon;
     wxIcon _folderIcon;
 
+    std::set<std::string> _cubemapSuffixes;
+
 public:
     // Constructor
     ImageFileFunctor(const wxutil::TreeModel::Ptr& treeStore,
         const wxutil::ResourceTreeView::Columns& columns) :
         VFSTreePopulator(treeStore),
-        _columns(columns)
+        _columns(columns),
+        _cubemapSuffixes({ "_nx", "_ny", "_nz", "_px", "_py", "_pz", 
+            "_forward", "_back", "_left", "_right", "_up", "_down" })
     {
         _fileIcon.CopyFromBitmap(wxutil::GetLocalBitmap(TEXTURE_ICON));
         _folderIcon.CopyFromBitmap(wxutil::GetLocalBitmap(FOLDER_ICON));
@@ -56,6 +60,23 @@ public:
             if (string::istarts_with(path, ddsPrefix))
             {
                 imageFilePath = imageFilePath.substr(ddsPrefix.length());
+            }
+
+            // For cubemaps, cut off the suffixes
+            if (string::istarts_with(imageFilePath, "env/"))
+            {
+                auto underscorePos = imageFilePath.find_last_of('_');
+
+                if (underscorePos != std::string::npos)
+                {
+                    auto suffix = imageFilePath.substr(underscorePos);
+                    string::to_lower(suffix);
+
+                    if (_cubemapSuffixes.count(suffix) != 0)
+                    {
+                        imageFilePath = imageFilePath.substr(0, imageFilePath.length() - suffix.length());
+                    }
+                }
             }
 
             row[_columns.iconAndName] = wxVariant(wxDataViewIconText(leafName, isFolder ? _folderIcon : _fileIcon));

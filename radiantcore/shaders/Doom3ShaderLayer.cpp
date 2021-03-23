@@ -2,6 +2,7 @@
 #include "Doom3ShaderSystem.h"
 #include "SoundMapExpression.h"
 #include "VideoMapExpression.h"
+#include "CameraCubeMapDecl.h"
 
 namespace shaders
 {
@@ -415,7 +416,15 @@ IMapExpression::Ptr Doom3ShaderLayer::getMapExpression() const
 void Doom3ShaderLayer::setMapExpressionFromString(const std::string& expression)
 {
     _texture.reset();
-    setBindableTexture(MapExpression::createForString(expression));
+
+    if (getMapType() == IShaderLayer::MapType::CubeMap || getMapType() == IShaderLayer::MapType::CameraCubeMap)
+    {
+        setBindableTexture(CameraCubeMapDecl::createForPrefix(expression));
+    }
+    else
+    {
+        setBindableTexture(MapExpression::createForString(expression));
+    }
 }
 
 int Doom3ShaderLayer::getParseFlags() const
