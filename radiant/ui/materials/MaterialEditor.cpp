@@ -27,6 +27,7 @@
 #include "RadioButtonBinding.h"
 #include "SpinCtrlBinding.h"
 #include "CheckBoxBinding.h"
+#include "MapExpressionEntry.h"
 
 namespace ui
 {
@@ -246,6 +247,9 @@ void MaterialEditor::setupMaterialProperties()
     convertToSpinCtrlDouble(this, "MaterialEditorDecalInfoStaySeconds", 0, 999999, 0.1, 2);
     convertToSpinCtrlDouble(this, "MaterialEditorDecalInfoFadeSeconds", 0, 999999, 0.1, 2);
     convertToSpinCtrlDouble(this, "MaterialStagePrivatePolygonOffset", -100, 100, 0.1, 1);
+
+    // Place map expression controls where needed
+    convertTextCtrlToMapExpressionEntry("MaterialStageImageMap");
 
     auto* typeDropdown = getControl<wxChoice>("MaterialType");
 
@@ -805,7 +809,7 @@ void MaterialEditor::setupMaterialStageProperties()
         auto stage = getEditableStageForSelection();
         if (!stage) return;
 
-        auto filePath = getControl<wxTextCtrl>("MaterialStageImageMap")->GetValue().ToStdString();
+        auto filePath = getControl<MapExpressionEntry>("MaterialStageImageMap")->GetValue().ToStdString();
         stage->setVideoMapProperties(filePath, ev.IsChecked());
     });
 
@@ -1598,7 +1602,7 @@ void MaterialEditor::updateStageControls()
         selectedStage->evaluateExpressions(0); // initialise the values of this stage
 
         auto mapExpr = selectedStage->getMapExpression();
-        auto imageMap = getControl<wxTextCtrl>("MaterialStageImageMap");
+        auto imageMap = getControl<MapExpressionEntry>("MaterialStageImageMap");
         imageMap->SetValue(mapExpr ? mapExpr->getExpressionString() : "");
 
         imageMap->Bind(wxEVT_TEXT, [imageMap, this](wxCommandEvent&)
@@ -1676,7 +1680,7 @@ void MaterialEditor::updateStageControls()
     else
     {
         getControl<wxRadioButton>("MaterialStageNoVertexColourFlag")->SetValue(true);
-        getControl<wxTextCtrl>("MaterialStageImageMap")->SetValue("");
+        getControl<MapExpressionEntry>("MaterialStageImageMap")->SetValue("");
     }
 }
 
@@ -1936,6 +1940,12 @@ void MaterialEditor::_onSortRequestChanged(wxCommandEvent& ev)
 void MaterialEditor::onMaterialChanged()
 {
     _preview->onMaterialChanged();
+}
+
+void MaterialEditor::convertTextCtrlToMapExpressionEntry(const std::string& ctrlName)
+{
+    auto oldCtrl = findNamedObject<wxTextCtrl>(this, ctrlName);
+    replaceControl(oldCtrl, new MapExpressionEntry(oldCtrl->GetParent()));
 }
 
 }

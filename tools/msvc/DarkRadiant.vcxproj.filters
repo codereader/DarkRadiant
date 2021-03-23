@@ -706,6 +706,9 @@
     <ClCompile Include="..\..\radiant\ui\materials\MaterialPreview.cpp">
       <Filter>src\ui\materials</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\common\ImageFileSelector.cpp">
+      <Filter>src\ui\common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h">
@@ -1363,6 +1366,12 @@
       <Filter>src\ui\materials</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\materials\CheckBoxBinding.h">
+      <Filter>src\ui\materials</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\common\ImageFileSelector.h">
+      <Filter>src\ui\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\materials\MapExpressionEntry.h">
       <Filter>src\ui\materials</Filter>
     </ClInclude>
   </ItemGroup>

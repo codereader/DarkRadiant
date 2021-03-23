@@ -41,6 +41,7 @@ add_executable(darkradiant
                ui/common/CommandEntry.cpp
                ui/common/DefinitionView.cpp
                ui/common/EntityChooser.cpp
+               ui/common/ImageFileSelector.cpp
                ui/common/MapPreview.cpp
                ui/common/MaterialPopulator.cpp
                ui/common/MaterialTreeView.cpp

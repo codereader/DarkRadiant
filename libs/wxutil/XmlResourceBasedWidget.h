@@ -90,6 +90,18 @@ protected:
 		text->SetFont(text->GetFont().Bold());
 	}
 
+    void replaceControl(wxWindow* oldCtrl, wxWindow* newCtrl)
+    {
+        bool wasEnabled = oldCtrl->IsEnabled();
+        auto name = oldCtrl->GetName();
+        oldCtrl->GetContainingSizer()->Replace(oldCtrl, newCtrl);
+        oldCtrl->Destroy();
+
+        newCtrl->SetName(name);
+        newCtrl->Enable(wasEnabled);
+        newCtrl->GetContainingSizer()->Layout();
+    }
+
     // Swaps out the wxSpinCtrl with wxSpinCtrlDouble
     // This is a workaround for http://trac.wxwidgets.org/ticket/15425 - wxGTK < 3.1.1 don't ship an XRC handler for wxSpinCtrlDouble
     wxSpinCtrlDouble* convertToSpinCtrlDouble(wxWindow* parent, const std::string& nameOfControlToReplace, double min, double max, double increment, int digits)
@@ -102,15 +114,8 @@ protected:
         spinCtrlDouble->SetDigits(digits);
         spinCtrlDouble->SetIncrement(increment);
 
-        bool wasEnabled = oldCtrl->IsEnabled();
-        auto name = oldCtrl->GetName();
-        oldCtrl->GetContainingSizer()->Replace(oldCtrl, spinCtrlDouble);
-        oldCtrl->Destroy();
-
-        spinCtrlDouble->SetName(name);
-        spinCtrlDouble->Enable(wasEnabled);
-        spinCtrlDouble->GetContainingSizer()->Layout();
-
+        replaceControl(oldCtrl, spinCtrlDouble);
+        
         return spinCtrlDouble;
     }
 };

@@ -233,6 +233,7 @@
     <ClCompile Include="..\..\radiant\ui\colourscheme\ColourSchemeEditor.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\DefinitionView.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\DialogManager.cpp" />
+    <ClCompile Include="..\..\radiant\ui\common\ImageFileSelector.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\MaterialDefinitionView.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\MaterialPopulator.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\MaterialTreeView.cpp" />
@@ -422,6 +423,7 @@
     <ClInclude Include="..\..\radiant\ui\colourscheme\ColourSchemeEditor.h" />
     <ClInclude Include="..\..\radiant\ui\common\DefinitionView.h" />
     <ClInclude Include="..\..\radiant\ui\common\DialogManager.h" />
+    <ClInclude Include="..\..\radiant\ui\common\ImageFileSelector.h" />
     <ClInclude Include="..\..\radiant\ui\common\MaterialDefinitionView.h" />
     <ClInclude Include="..\..\radiant\ui\common\MaterialPopulator.h" />
     <ClInclude Include="..\..\radiant\ui\common\MaterialTreeView.h" />
@@ -462,6 +464,7 @@
     <ClInclude Include="..\..\radiant\ui\materials\Binding.h" />
     <ClInclude Include="..\..\radiant\ui\materials\CheckBoxBinding.h" />
     <ClInclude Include="..\..\radiant\ui\materials\ExpressionBinding.h" />
+    <ClInclude Include="..\..\radiant\ui\materials\MapExpressionEntry.h" />
     <ClInclude Include="..\..\radiant\ui\materials\MaterialEditor.h" />
     <ClInclude Include="..\..\radiant\ui\materials\MaterialPreview.h" />
     <ClInclude Include="..\..\radiant\ui\materials\RadioButtonBinding.h" />

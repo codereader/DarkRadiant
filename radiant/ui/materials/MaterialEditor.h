@@ -157,6 +157,7 @@ private:
 
     void toggleSelectedStage();
     void onMaterialChanged();
+    void convertTextCtrlToMapExpressionEntry(const std::string& ctrlName);
 
     // Shortcut
     template<typename ObjectClass>
