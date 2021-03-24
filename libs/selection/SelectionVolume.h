@@ -61,7 +61,7 @@ public:
     void TestPoint(const Vector3& point, SelectionIntersection& best) override
     {
         Vector4 clipped;
-        if (_local2view.clipPoint(point, clipped) == c_CLIP_PASS)
+        if (clipPoint(_local2view, point, clipped) == c_CLIP_PASS)
         {
             best = select_point_from_clipped(clipped);
         }
@@ -72,17 +72,9 @@ public:
         Vector4 clipped[9];
         for (std::size_t i = 0; i + 2 < count; ++i)
         {
-            BestPoint(
-                _local2view.clipTriangle(
-                    vertices[0],
-                    vertices[i + 1],
-                    vertices[i + 2],
-                    clipped
-                ),
-                clipped,
-                best,
-                _cull
-            );
+            BestPoint(clipTriangle(_local2view, vertices[0], vertices[i + 1],
+                                   vertices[i + 2], clipped),
+                      clipped, best, _cull);
         }
     }
 
@@ -93,16 +85,8 @@ public:
         Vector4 clipped[9];
         for (VertexPointer::iterator i = vertices.begin(), end = i + count, next = i + 1; next != end; i = next, ++next)
         {
-            BestPoint(
-                _local2view.clipLine(
-                    *i,
-                    *next,
-                    clipped
-                ),
-                clipped,
-                best,
-                _cull
-            );
+            BestPoint(clipLine(_local2view, *i, *next, clipped), clipped, best,
+                      _cull);
         }
     }
 
@@ -113,16 +97,8 @@ public:
         Vector4 clipped[9];
         for (VertexPointer::iterator i = vertices.begin(), end = i + count; i != end; i += 2)
         {
-            BestPoint(
-                _local2view.clipLine(
-                    *i,
-                    *(i + 1),
-                    clipped
-                ),
-                clipped,
-                best,
-                _cull
-            );
+            BestPoint(clipLine(_local2view, *i, *(i + 1), clipped), clipped,
+                      best, _cull);
         }
     }
 
@@ -131,17 +107,10 @@ public:
         Vector4 clipped[9];
         for (IndexPointer::iterator i(indices.begin()); i != indices.end(); i += 3)
         {
-            BestPoint(
-                _local2view.clipTriangle(
-                    vertices[*i],
-                    vertices[*(i + 1)],
-                    vertices[*(i + 2)],
-                    clipped
-                ),
-                clipped,
-                best,
-                _cull
-            );
+            BestPoint(clipTriangle(_local2view, vertices[*i],
+                                   vertices[*(i + 1)], vertices[*(i + 2)],
+                                   clipped),
+                      clipped, best, _cull);
         }
     }
 
@@ -150,28 +119,14 @@ public:
         Vector4 clipped[9];
         for (IndexPointer::iterator i(indices.begin()); i != indices.end(); i += 4)
         {
-            BestPoint(
-                _local2view.clipTriangle(
-                    vertices[*i],
-                    vertices[*(i + 1)],
-                    vertices[*(i + 3)],
-                    clipped
-                ),
-                clipped,
-                best,
-                _cull
-            );
-            BestPoint(
-                _local2view.clipTriangle(
-                    vertices[*(i + 1)],
-                    vertices[*(i + 2)],
-                    vertices[*(i + 3)],
-                    clipped
-                ),
-                clipped,
-                best,
-                _cull
-            );
+            BestPoint(clipTriangle(_local2view, vertices[*i],
+                                   vertices[*(i + 1)], vertices[*(i + 3)],
+                                   clipped),
+                      clipped, best, _cull);
+            BestPoint(clipTriangle(_local2view, vertices[*(i + 1)],
+                                   vertices[*(i + 2)], vertices[*(i + 3)],
+                                   clipped),
+                      clipped, best, _cull);
         }
     }
 
@@ -180,28 +135,14 @@ public:
         Vector4 clipped[9];
         for (IndexPointer::iterator i(indices.begin()); i + 2 != indices.end(); i += 2)
         {
-            BestPoint(
-                _local2view.clipTriangle(
-                    vertices[*i],
-                    vertices[*(i + 1)],
-                    vertices[*(i + 2)],
-                    clipped
-                ),
-                clipped,
-                best,
-                _cull
-            );
-            BestPoint(
-                _local2view.clipTriangle(
-                    vertices[*(i + 2)],
-                    vertices[*(i + 1)],
-                    vertices[*(i + 3)],
-                    clipped
-                ),
-                clipped,
-                best,
-                _cull
-            );
+            BestPoint(clipTriangle(_local2view, vertices[*i],
+                                   vertices[*(i + 1)], vertices[*(i + 2)],
+                                   clipped),
+                      clipped, best, _cull);
+            BestPoint(clipTriangle(_local2view, vertices[*(i + 2)],
+                                   vertices[*(i + 1)], vertices[*(i + 3)],
+                                   clipped),
+                      clipped, best, _cull);
         }
     }
 };
