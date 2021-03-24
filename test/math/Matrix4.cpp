@@ -278,27 +278,18 @@ TEST(MathTest, MatrixMultiplication)
     auto a = Matrix4::byColumns(3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59);
     auto b = Matrix4::byColumns(61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137);
 
+    // Check multiplied result
     auto c = a.getMultipliedBy(b);
+    EXPECT_EQ(c, Matrix4::byColumns(6252, 7076, 8196, 9430,
+                                    8068, 9124, 10564, 12150,
+                                    9432, 10696, 12400, 14298,
+                                    11680, 13224, 15312, 17618));
 
-    EXPECT_EQ(c.xx(), 6252) << "Matrix multiplication failed";
-    EXPECT_EQ(c.xy(), 7076) << "Matrix multiplication failed";
-    EXPECT_EQ(c.xz(), 8196) << "Matrix multiplication failed";
-    EXPECT_EQ(c.xw(), 9430) << "Matrix multiplication failed";
+    // Multiplication has not changed original
+    EXPECT_NE(a, c);
 
-    EXPECT_EQ(c.yx(), 8068) << "Matrix multiplication failed";
-    EXPECT_EQ(c.yy(), 9124) << "Matrix multiplication failed";
-    EXPECT_EQ(c.yz(), 10564) << "Matrix multiplication failed";
-    EXPECT_EQ(c.yw(), 12150) << "Matrix multiplication failed";
-
-    EXPECT_EQ(c.zx(), 9432) << "Matrix multiplication failed";
-    EXPECT_EQ(c.zy(), 10696) << "Matrix multiplication failed";
-    EXPECT_EQ(c.zz(), 12400) << "Matrix multiplication failed";
-    EXPECT_EQ(c.zw(), 14298) << "Matrix multiplication failed";
-
-    EXPECT_EQ(c.tx(), 11680) << "Matrix multiplication failed";
-    EXPECT_EQ(c.ty(), 13224) << "Matrix multiplication failed";
-    EXPECT_EQ(c.tz(), 15312) << "Matrix multiplication failed";
-    EXPECT_EQ(c.tw(), 17618) << "Matrix multiplication failed";
+    // Check operator multiplication as well
+    EXPECT_EQ(a * b, c);
 
     // Test Pre-Multiplication
     EXPECT_EQ(b.getMultipliedBy(a), a.getPremultipliedBy(b)) << "Matrix pre-multiplication mismatch";
