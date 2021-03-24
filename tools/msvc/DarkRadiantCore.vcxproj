@@ -1011,6 +1011,7 @@
     <ClInclude Include="..\..\radiantcore\shaders\ExpressionSlots.h" />
     <ClInclude Include="..\..\radiantcore\shaders\MapExpression.h" />
     <ClInclude Include="..\..\radiantcore\shaders\NamedBindable.h" />
+    <ClInclude Include="..\..\radiantcore\shaders\parser\Grammar.h" />
     <ClInclude Include="..\..\radiantcore\shaders\ShaderDefinition.h" />
     <ClInclude Include="..\..\radiantcore\shaders\ShaderExpression.h" />
     <ClInclude Include="..\..\radiantcore\shaders\ShaderFileLoader.h" />
@@ -1090,6 +1091,7 @@
     <Import Project="properties\zlib.props" />
     <Import Project="properties\libjpeg.props" />
     <Import Project="properties\libpng.props" />
+    <Import Project="properties\pegtl.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -1101,6 +1103,7 @@
     <Import Project="properties\zlib.props" />
     <Import Project="properties\libjpeg.props" />
     <Import Project="properties\libpng.props" />
+    <Import Project="properties\pegtl.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -1112,6 +1115,7 @@
     <Import Project="properties\zlib.props" />
     <Import Project="properties\libjpeg.props" />
     <Import Project="properties\libpng.props" />
+    <Import Project="properties\pegtl.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -1123,6 +1127,7 @@
     <Import Project="properties\zlib.props" />
     <Import Project="properties\libjpeg.props" />
     <Import Project="properties\libpng.props" />
+    <Import Project="properties\pegtl.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

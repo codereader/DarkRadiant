@@ -197,6 +197,9 @@
     <Filter Include="src\entity\algorithm">
       <UniqueIdentifier>{b7afddd6-8c82-4975-a947-00999bd70fec}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\shaders\parser">
+      <UniqueIdentifier>{f8abb79b-fbbd-405b-86a5-2cd729c021bd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiantcore\modulesystem\ModuleLoader.cpp">
@@ -2090,6 +2093,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\shaders\TextureMatrix.h">
       <Filter>src\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\shaders\parser\Grammar.h">
+      <Filter>src\shaders\parser</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
