@@ -352,16 +352,6 @@ public:
     void scaleBy(const Vector3& scale, const Vector3& pivot);
 
     /**
-     * Equality operator, Returns true if this and the other are exactly element-wise equal.
-     */
-    bool operator==(const Matrix4& other) const;
-
-    /**
-     * Inequality operator.
-     */
-    bool operator!=(const Matrix4& other) const;
-
-    /**
      * Returns true if this and the given matrix are exactly element-wise equal.
      * This and the other matrix must be affine.
      */
@@ -504,17 +494,19 @@ inline Matrix4 Matrix4::getMultipliedBy(const Matrix4& other) const
     );
 }
 
-inline bool Matrix4::operator==(const Matrix4& other) const
+/// Compare two matrices elementwise for equality
+inline bool operator==(const Matrix4& l, const Matrix4& r)
 {
-    return xx() == other.xx() && xy() == other.xy() && xz() == other.xz() && xw() == other.xw()
-        && yx() == other.yx() && yy() == other.yy() && yz() == other.yz() && yw() == other.yw()
-        && zx() == other.zx() && zy() == other.zy() && zz() == other.zz() && zw() == other.zw()
-        && tx() == other.tx() && ty() == other.ty() && tz() == other.tz() && tw() == other.tw();
+    return l.xx() == r.xx() && l.xy() == r.xy() && l.xz() == r.xz() && l.xw() == r.xw()
+        && l.yx() == r.yx() && l.yy() == r.yy() && l.yz() == r.yz() && l.yw() == r.yw()
+        && l.zx() == r.zx() && l.zy() == r.zy() && l.zz() == r.zz() && l.zw() == r.zw()
+        && l.tx() == r.tx() && l.ty() == r.ty() && l.tz() == r.tz() && l.tw() == r.tw();
 }
 
-inline bool Matrix4::operator!=(const Matrix4& other) const
+/// Compare two matrices elementwise for inequality
+inline bool operator!=(const Matrix4& l, const Matrix4& r)
 {
-    return !operator==(other);
+    return !(l == r);
 }
 
 inline bool Matrix4::isAffineEqual(const Matrix4& other) const
