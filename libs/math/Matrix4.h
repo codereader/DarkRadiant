@@ -9,17 +9,6 @@
 
 class Quaternion;
 
-typedef unsigned char ClipResult;
-
-const ClipResult c_CLIP_PASS = 0x00; // 000000
-const ClipResult c_CLIP_LT_X = 0x01; // 000001
-const ClipResult c_CLIP_GT_X = 0x02; // 000010
-const ClipResult c_CLIP_LT_Y = 0x04; // 000100
-const ClipResult c_CLIP_GT_Y = 0x08; // 001000
-const ClipResult c_CLIP_LT_Z = 0x10; // 010000
-const ClipResult c_CLIP_GT_Z = 0x20; // 100000
-const ClipResult c_CLIP_FAIL = 0x3F; // 111111
-
 /**
  * A 4x4 matrix stored in double-precision floating-point.
  *
