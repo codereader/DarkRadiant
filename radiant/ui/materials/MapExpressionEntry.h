@@ -39,6 +39,11 @@ public:
         GetSizer()->Add(_browseButton, 0, wxALIGN_CENTER_VERTICAL, 0);
     }
 
+    wxTextCtrl* GetTextCtrl()
+    {
+        return _textEntry;
+    }
+
     wxString GetValue()
     {
         return _textEntry->GetValue();

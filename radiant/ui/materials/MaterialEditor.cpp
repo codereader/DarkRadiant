@@ -250,6 +250,7 @@ void MaterialEditor::setupMaterialProperties()
 
     // Place map expression controls where needed
     convertTextCtrlToMapExpressionEntry("MaterialStageImageMap");
+    convertTextCtrlToMapExpressionEntry("MaterialLightFalloffMap");
 
     auto* typeDropdown = getControl<wxChoice>("MaterialType");
 
@@ -327,7 +328,8 @@ void MaterialEditor::setupMaterialProperties()
         _material->setLightFalloffCubeMapType(shaders::getMapTypeForString(lightFallOffCubeMapType->GetStringSelection().ToStdString()));
     });
 
-    _materialBindings.emplace(std::make_shared<ExpressionBinding<MaterialPtr>>(getControl<wxTextCtrl>("MaterialLightFalloffMap"),
+    auto lightFalloffMap = getControl<MapExpressionEntry>("MaterialLightFalloffMap");
+    _materialBindings.emplace(std::make_shared<ExpressionBinding<MaterialPtr>>(lightFalloffMap->GetTextCtrl(),
         [](const MaterialPtr& material) 
         { 
             auto expr = material->getLightFalloffExpression();
@@ -704,6 +706,21 @@ void MaterialEditor::createSpinCtrlDoubleBinding(const std::string& ctrlName,
 
 void MaterialEditor::setupMaterialStageProperties()
 {
+    auto stageImageMap = getControl<MapExpressionEntry>("MaterialStageImageMap");
+    _stageBindings.emplace(std::make_shared<ExpressionBinding<IShaderLayer::Ptr>>(stageImageMap->GetTextCtrl(),
+        [](const IShaderLayer::Ptr& stage)
+        {
+            auto expr = stage->getMapExpression();
+            return expr ? expr->getExpressionString() : std::string();
+        },
+        [this](const IEditableShaderLayer::Ptr& stage, const std::string& value)
+        {
+            if (_stageUpdateInProgress) return;
+            stage->setMapExpressionFromString(value);
+        },
+        [this]() { onMaterialChanged(); },
+        std::bind(&MaterialEditor::getEditableStageForSelection, this)));
+
     setupStageFlag("MaterialStageFlagMaskRed", IShaderLayer::FLAG_MASK_RED);
     setupStageFlag("MaterialStageFlagMaskGreen", IShaderLayer::FLAG_MASK_GREEN);
     setupStageFlag("MaterialStageFlagMaskBlue", IShaderLayer::FLAG_MASK_BLUE);
@@ -1600,20 +1617,8 @@ void MaterialEditor::updateStageControls()
     if (selectedStage)
     {
         selectedStage->evaluateExpressions(0); // initialise the values of this stage
-
-        auto mapExpr = selectedStage->getMapExpression();
+        
         auto imageMap = getControl<MapExpressionEntry>("MaterialStageImageMap");
-        imageMap->SetValue(mapExpr ? mapExpr->getExpressionString() : "");
-
-        imageMap->Bind(wxEVT_TEXT, [imageMap, this](wxCommandEvent&)
-        {
-            if (_stageUpdateInProgress) return;
-
-            auto stage = getEditableStageForSelection();
-            stage->setMapExpressionFromString(imageMap->GetValue().ToStdString());
-            onMaterialChanged();
-        });
-
         auto videoMapLoop = getControl<wxCheckBox>("MaterialStageVideoMapLoop");
         auto soundMapWave = getControl<wxCheckBox>("MaterialStageSoundMapWaveform");
 
@@ -1680,7 +1685,6 @@ void MaterialEditor::updateStageControls()
     else
     {
         getControl<wxRadioButton>("MaterialStageNoVertexColourFlag")->SetValue(true);
-        getControl<MapExpressionEntry>("MaterialStageImageMap")->SetValue("");
     }
 }
 
