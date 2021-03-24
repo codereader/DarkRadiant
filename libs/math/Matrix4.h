@@ -117,12 +117,6 @@ public:
     static Matrix4 getScale(const Vector3& scale);
 
     /**
-     * Returns a perspective projection matrix for the six given frustum planes. The result is the projection
-     * matrix as constructed by openGL when  calling the glFrustum() function.
-     */
-    static Matrix4 getProjectionForFrustum(double left, double right, double bottom, double top, double nearval, double farval);
-
-    /**
      * \brief
      * Construct a matrix containing the given elements.
      *
@@ -507,28 +501,6 @@ inline Matrix4 Matrix4::getMultipliedBy(const Matrix4& other) const
         other[12]* _m[1] + other[13]* _m[5] + other[14]* _m[9] + other[15]* _m[13],
         other[12]* _m[2] + other[13]* _m[6] + other[14]* _m[10]+ other[15]* _m[14],
         other[12]* _m[3] + other[13]* _m[7] + other[14]* _m[11]+ other[15]* _m[15]
-    );
-}
-
-inline Matrix4 Matrix4::getProjectionForFrustum(double left, double right, double bottom, double top, double nearval, double farval)
-{
-    return Matrix4::byColumns(
-        (2*nearval) / (right-left),
-        0,
-        0,
-        0,
-        0,
-        (2*nearval) / (top-bottom),
-        0,
-        0,
-        (right+left) / (right-left),
-        (top+bottom) / (top-bottom),
-        -(farval+nearval) / (farval-nearval),
-        -1,
-        0,
-        0,
-        -(2*farval*nearval) / (farval-nearval),
-        0
     );
 }
 
