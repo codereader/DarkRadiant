@@ -10,6 +10,7 @@
 #include "util/ScopedBoolLock.h"
 #include "registry/registry.h"
 #include "render/CamRenderer.h"
+#include "render/CameraView.h"
 #include "render/SceneRenderWalker.h"
 #include "wxutil/menu/FilterPopupMenu.h"
 
@@ -115,7 +116,7 @@ void RenderPreview::setupToolbars(bool enableAnimation)
 
     wxToolBar* renderToolbar = findNamedObject<wxToolBar>(_mainPanel, "RenderPreviewRenderModeToolbar");
 
-    renderToolbar->Bind(wxEVT_TOOL, &RenderPreview::onRenderModeChanged, this, 
+    renderToolbar->Bind(wxEVT_TOOL, &RenderPreview::onRenderModeChanged, this,
         getToolBarToolByLabel(renderToolbar, "texturedModeButton")->GetId());
     renderToolbar->Bind(wxEVT_TOOL, &RenderPreview::onRenderModeChanged, this,
         getToolBarToolByLabel(renderToolbar, "lightingModeButton")->GetId());
@@ -134,16 +135,16 @@ void RenderPreview::connectToolbarSignals()
 {
 	wxToolBar* toolbar = findNamedObject<wxToolBar>(_mainPanel, "RenderPreviewAnimToolbar");
 
-	toolbar->Connect(getToolBarToolByLabel(toolbar, "startTimeButton")->GetId(), 
+	toolbar->Connect(getToolBarToolByLabel(toolbar, "startTimeButton")->GetId(),
 		wxEVT_TOOL, wxCommandEventHandler(RenderPreview::onStartPlaybackClick), NULL, this);
-	toolbar->Connect(getToolBarToolByLabel(toolbar, "pauseTimeButton")->GetId(), 
+	toolbar->Connect(getToolBarToolByLabel(toolbar, "pauseTimeButton")->GetId(),
 		wxEVT_TOOL, wxCommandEventHandler(RenderPreview::onPausePlaybackClick), NULL, this);
-	toolbar->Connect(getToolBarToolByLabel(toolbar, "stopTimeButton")->GetId(), 
+	toolbar->Connect(getToolBarToolByLabel(toolbar, "stopTimeButton")->GetId(),
 		wxEVT_TOOL, wxCommandEventHandler(RenderPreview::onStopPlaybackClick), NULL, this);
 
-	toolbar->Connect(getToolBarToolByLabel(toolbar, "prevButton")->GetId(), 
+	toolbar->Connect(getToolBarToolByLabel(toolbar, "prevButton")->GetId(),
 		wxEVT_TOOL, wxCommandEventHandler(RenderPreview::onStepBackClick), NULL, this);
-	toolbar->Connect(getToolBarToolByLabel(toolbar, "nextButton")->GetId(), 
+	toolbar->Connect(getToolBarToolByLabel(toolbar, "nextButton")->GetId(),
 		wxEVT_TOOL, wxCommandEventHandler(RenderPreview::onStepForwardClick), NULL, this);
 }
 
@@ -282,21 +283,6 @@ void RenderPreview::associateRenderSystem()
     }
 }
 
-Matrix4 RenderPreview::getProjectionMatrix(float near_z, float far_z, float fieldOfView, int width, int height)
-{
-    const float half_width = near_z * tan(degrees_to_radians(fieldOfView * 0.5f));
-    const float half_height = half_width * (static_cast<float>(height) / static_cast<float>(width));
-
-    return Matrix4::getProjectionForFrustum(
-        -half_width,
-        half_width,
-        -half_height,
-        half_height,
-        near_z,
-        far_z
-    );
-}
-
 const Matrix4& RenderPreview::getModelViewMatrix()
 {
     return _modelView;
@@ -320,11 +306,11 @@ Matrix4 RenderPreview::calculateModelViewMatrix()
     // 1. Move the view point away from the model (translate by -viewOrigin)
     // 2. Rotate the view using Euler angles (rotating about two specific axes)
     // 3. Apply the radiant2openGL matrix which basically rotates the model 90 degrees
-    //    around two axes. This is needed to resemble the view of a human (who - with 
+    //    around two axes. This is needed to resemble the view of a human (who - with
     //    pitch, yaw and roll angles equal to zero - looks parallel to the xy plane,
     //    and not down the negative z axis like openGL would.
 
-    // Translate the model by viewOrigin (with the later inverse() call this will 
+    // Translate the model by viewOrigin (with the later inverse() call this will
     // be the first applied translation by -viewOrigin)
     Matrix4 modelview = Matrix4::getTranslation(_viewOrigin);
 
@@ -433,7 +419,7 @@ bool RenderPreview::drawPreview()
     if (!_glFont)
     {
         auto fontSize = registry::getValue<int>(RKEY_RENDERPREVIEW_FONTSIZE);
-        auto fontStyle = registry::getValue<std::string>(RKEY_RENDERPREVIEW_FONTSTYLE) == "Sans" ? 
+        auto fontStyle = registry::getValue<std::string>(RKEY_RENDERPREVIEW_FONTSTYLE) == "Sans" ?
             IGLFont::Style::Sans : IGLFont::Style::Mono;
         _glFont = GlobalOpenGL().getFont(fontStyle, fontSize);
     }
@@ -442,7 +428,7 @@ bool RenderPreview::drawPreview()
 
     // Set up the render and clear the drawing area in any case
     glDepthMask(GL_TRUE);
-    
+
     if (getLightingModeEnabled())
     {
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -463,7 +449,7 @@ bool RenderPreview::drawPreview()
 	}
 
     // Set up the camera
-    Matrix4 projection = getProjectionMatrix(0.1f, 10000, PREVIEW_FOV, _previewWidth, _previewHeight);
+    Matrix4 projection = camera::calculateProjectionMatrix(0.1f, 10000, PREVIEW_FOV, _previewWidth, _previewHeight);
 
     // Keep the modelview matrix in the volumetest class up to date
     _volumeTest.setModelView(getModelViewMatrix());
@@ -506,7 +492,7 @@ void RenderPreview::renderWireFrame()
     RenderStateFlags flags = getRenderFlagsWireframe();
 
     // Set up the camera
-    Matrix4 projection = getProjectionMatrix(0.1f, 10000, PREVIEW_FOV, _previewWidth, _previewHeight);
+    Matrix4 projection = camera::calculateProjectionMatrix(0.1f, 10000, PREVIEW_FOV, _previewWidth, _previewHeight);
 
     // Front-end render phase, collect OpenGLRenderable objects from the scene
     render::CamRenderer renderer(_volumeTest);
@@ -681,7 +667,7 @@ void RenderPreview::onPausePlaybackClick(wxCommandEvent& ev)
 	// Disable the button
 	wxToolBar* toolbar = findNamedObject<wxToolBar>(_mainPanel, "RenderPreviewAnimToolbar");
 	toolbar->EnableTool(getToolBarToolByLabel(toolbar, "pauseTimeButton")->GetId(), false);
-	
+
 	if (_timer.IsRunning())
     {
         _timer.Stop();

@@ -22,12 +22,12 @@ namespace wxutil
 class GLWidget;
 
 /**
- * greebo: This class acts as base for widgets featuring 
+ * greebo: This class acts as base for widgets featuring
  * a real time openGL render preview. It offers
  * its own local SceneGraph, backend and frontend renderer
  * plus all the logic for camera handling and filtering.
  *
- * Override the protected methods to have the scene set up 
+ * Override the protected methods to have the scene set up
  * in special ways or add custom toolbar items.
  *
  * After construction the local scene graph will be empty.
@@ -130,7 +130,6 @@ protected:
     // the rendersystem can be associated. This is called after initialisePreview()
     virtual void setupSceneGraph();
 
-    virtual Matrix4 getProjectionMatrix(float near_z, float far_z, float fieldOfView, int width, int height);
     virtual const Matrix4& getModelViewMatrix();
 
     virtual Matrix4 calculateModelViewMatrix();
