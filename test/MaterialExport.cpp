@@ -135,4 +135,43 @@ TEST_F(MaterialExportTest, CullType)
     expectDefinitionDoesNotContain(material, "backsided");
 }
 
+TEST_F(MaterialExportTest, GuiSurf)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/exporttest/guisurf1");
+    expectDefinitionContains(material, "guiSurf\tguis/lvlmaps/genericmap.gui");
+
+    // Mark the definition as modified by setting the description
+    material->setDescription("-");
+    material->setDescription("");
+
+    expectDefinitionContains(material, "guisurf guis/lvlmaps/genericmap.gui");
+
+    material = GlobalMaterialManager().getMaterial("textures/exporttest/guisurf2");
+    expectDefinitionContains(material, "guiSurf\tentity");
+
+    // Mark the definition as modified by setting the description
+    material->setDescription("-");
+    material->setDescription("");
+
+    expectDefinitionContains(material, "guisurf entity");
+
+    material = GlobalMaterialManager().getMaterial("textures/exporttest/guisurf3");
+    expectDefinitionContains(material, "guiSurf\tentity2");
+
+    // Mark the definition as modified by setting the description
+    material->setDescription("-");
+    material->setDescription("");
+
+    expectDefinitionContains(material, "guisurf entity2");
+
+    material = GlobalMaterialManager().getMaterial("textures/exporttest/guisurf4");
+    expectDefinitionContains(material, "guiSurf\tentity3");
+
+    // Mark the definition as modified by setting the description
+    material->setDescription("-");
+    material->setDescription("");
+
+    expectDefinitionContains(material, "guisurf entity3");
+}
+
 }

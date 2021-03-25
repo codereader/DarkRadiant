@@ -1,3 +1,23 @@
 textures/exporttest/empty
 {
 }
+
+textures/exporttest/guisurf1
+{
+    guiSurf	guis/lvlmaps/genericmap.gui
+}
+
+textures/exporttest/guisurf2
+{
+    guiSurf	entity
+}
+
+textures/exporttest/guisurf3
+{
+    guiSurf	entity2
+}
+
+textures/exporttest/guisurf4
+{
+    guiSurf	entity3
+}

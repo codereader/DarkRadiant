@@ -49,6 +49,29 @@ std::ostream& operator<<(std::ostream& stream, ShaderTemplate& shaderTemplate)
         stream << "\t" << getStringForCullType(shaderTemplate.getCullType()) << "\n";
     }
 
+    // GuiSurf
+    if (shaderTemplate.getSurfaceFlags() & Material::SURF_GUISURF)
+    {
+        stream << "\tguisurf ";
+
+        if (shaderTemplate.getSurfaceFlags() & Material::SURF_ENTITYGUI)
+        {
+            stream << "entity\n";
+        }
+        else if (shaderTemplate.getSurfaceFlags() & Material::SURF_ENTITYGUI2)
+        {
+            stream << "entity2\n";
+        }
+        else if (shaderTemplate.getSurfaceFlags() & Material::SURF_ENTITYGUI3)
+        {
+            stream << "entity3\n";
+        }
+        else
+        {
+            stream << shaderTemplate.getGuiSurfArgument() << "\n";
+        }
+    }
+
     for (const auto& layer : shaderTemplate.getLayers())
     {
         stream << "\t{\n";
