@@ -7,6 +7,35 @@
 namespace shaders
 {
 
+constexpr std::pair<const char*, Material::Flags> MaterialFlagKeywords[]
+{
+    { "noShadows", Material::FLAG_NOSHADOWS },
+    { "noSelfShadow", Material::FLAG_NOSELFSHADOW },
+    { "forceShadows", Material::FLAG_FORCESHADOWS },
+    { "noOverlays", Material::FLAG_NOOVERLAYS },
+    { "forceOverlays", Material::FLAG_FORCEOVERLAYS },
+    { "translucent", Material::FLAG_TRANSLUCENT },
+    { "forceOpaque", Material::FLAG_FORCEOPAQUE },
+    { "noFog", Material::FLAG_NOFOG },
+    { "noPortalFog", Material::FLAG_NOPORTALFOG },
+    { "unsmoothedTangents", Material::FLAG_UNSMOOTHEDTANGENTS },
+    { "mirror", Material::FLAG_MIRROR },
+    { "isLightgemSurf", Material::FLAG_ISLIGHTGEMSURF },
+};
+
+inline std::string getStringForMaterialFlag(Material::Flags flag)
+{
+    for (const auto& pair : MaterialFlagKeywords)
+    {
+        if (flag == pair.second)
+        {
+            return pair.first;
+        }
+    }
+
+    return std::string();
+}
+
 constexpr std::pair<const char*, Material::SurfaceType> SurfaceTypeMapping[]
 {
     { "metal", Material::SURFTYPE_METAL },

@@ -81,4 +81,20 @@ TEST_F(MaterialExportTest, SurfaceType)
     expectDefinitionDoesNotContain(material, "lastSurfaceType");
 }
 
+TEST_F(MaterialExportTest, MaterialFlags)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/exporttest/empty");
+
+    EXPECT_EQ(string::trim_copy(material->getDefinition()), "");
+
+    for (const auto& pair : shaders::MaterialFlagKeywords)
+    {
+        material->setMaterialFlag(pair.second);
+        expectDefinitionContains(material, pair.first);
+
+        material->clearMaterialFlag(pair.second);
+        expectDefinitionDoesNotContain(material, pair.first);
+    }
+}
+
 }
