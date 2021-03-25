@@ -125,20 +125,7 @@ MaterialEditor::MaterialEditor() :
     getControl<wxButton>("MaterialEditorCloseButton")->Bind(wxEVT_BUTTON, &MaterialEditor::_onClose, this);
 
     // Add the treeview
-    auto* panel = getControl<wxPanel>("MaterialEditorTreeView");
-    _treeView = new MaterialTreeView(panel);
-    _treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &MaterialEditor::_onMaterialSelectionChanged, this);
-
-    auto* treeToolbar = new wxutil::ResourceTreeViewToolbar(panel, _treeView);
-    treeToolbar->EnableFavouriteManagement(false);
-
-    auto definitionLabel = getControl<wxStaticText>("MaterialEditorDefinitionLabel");
-    definitionLabel->GetContainingSizer()->Detach(definitionLabel);
-    definitionLabel->Reparent(treeToolbar);
-    treeToolbar->GetLeftSizer()->Add(definitionLabel, 0, wxALIGN_LEFT);
-
-    panel->GetSizer()->Add(treeToolbar, 0, wxEXPAND | wxBOTTOM, 6);
-    panel->GetSizer()->Add(_treeView, 1, wxEXPAND);
+    setupMaterialTreeView();
 
     // Setup the splitter and preview
     auto* splitter = getControl<wxSplitterWindow>("MaterialEditorSplitter");
@@ -239,6 +226,28 @@ void MaterialEditor::ShowDialog(const cmd::ArgumentList& args)
 
     editor->ShowModal();
     editor->Destroy();
+}
+
+void MaterialEditor::setupMaterialTreeView()
+{
+    auto* panel = getControl<wxPanel>("MaterialEditorTreeView");
+    _treeView = new MaterialTreeView(panel);
+    _treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &MaterialEditor::_onMaterialSelectionChanged, this);
+
+    auto* treeToolbar = new wxutil::ResourceTreeViewToolbar(panel, _treeView);
+    treeToolbar->EnableFavouriteManagement(false);
+
+    auto definitionLabel = getControl<wxStaticText>("MaterialEditorDefinitionLabel");
+    definitionLabel->GetContainingSizer()->Detach(definitionLabel);
+    definitionLabel->Reparent(treeToolbar);
+    treeToolbar->GetLeftSizer()->Add(definitionLabel, 0, wxALIGN_LEFT);
+
+    panel->GetSizer()->Add(treeToolbar, 0, wxEXPAND | wxBOTTOM, 6);
+    panel->GetSizer()->Add(_treeView, 1, wxEXPAND);
+
+    auto revertButton = getControl<wxButton>("MaterialEditorRevertButton");
+    revertButton->Disable();
+    revertButton->Bind(wxEVT_BUTTON, &MaterialEditor::_onRevertMaterial, this);
 }
 
 void MaterialEditor::setupMaterialProperties()
@@ -1023,7 +1032,8 @@ void MaterialEditor::revertCurrentMaterial()
 {
     if (!_material) return;
 
-    // TODO
+    _material->revertModifications();
+    onMaterialChanged();
 }
 
 bool MaterialEditor::askUserAboutModifiedMaterial()
@@ -1094,6 +1104,22 @@ void MaterialEditor::_onMaterialSelectionChanged(wxDataViewEvent& ev)
     }
 
     updateControlsFromMaterial();
+}
+
+void MaterialEditor::_onRevertMaterial(wxCommandEvent& ev)
+{
+    if (!_material) return;
+
+    // The material we're editing has been changed from the saved one
+    wxutil::Messagebox box(_("Discard Changes"),
+        fmt::format(_("Do you want to discard all the changes to the material\n{0}?"), _material->getName()),
+        IDialog::MESSAGE_ASK);
+
+    if (box.run() == IDialog::RESULT_YES)
+    {
+        revertCurrentMaterial();
+        updateControlsFromMaterial();
+    }
 }
 
 void MaterialEditor::_onStageListSelectionChanged(wxDataViewEvent& ev)
@@ -1179,12 +1205,18 @@ void MaterialEditor::_onStageListItemActivated(wxDataViewEvent& ev)
     toggleSelectedStage();
 }
 
+void MaterialEditor::updateMaterialButtonSensitivity()
+{
+    getControl<wxButton>("MaterialEditorRevertButton")->Enable(_material && _material->isModified());
+}
+
 void MaterialEditor::updateControlsFromMaterial()
 {
     util::ScopedBoolLock lock(_materialUpdateInProgress);
 
     _preview->setMaterial(_material);
 
+    updateMaterialButtonSensitivity();
     updateMaterialPropertiesFromMaterial();
     updateStageListFromMaterial();
 }
@@ -2014,6 +2046,8 @@ void MaterialEditor::_onSortRequestChanged(wxCommandEvent& ev)
 void MaterialEditor::onMaterialChanged()
 {
     _preview->onMaterialChanged();
+
+    updateMaterialButtonSensitivity();
 }
 
 void MaterialEditor::convertTextCtrlToMapExpressionEntry(const std::string& ctrlName)

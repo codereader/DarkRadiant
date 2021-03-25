@@ -407,6 +407,9 @@ public:
 
     // True if this mateiral has been altered from its original definition
     virtual bool isModified() = 0;
+
+    // Roll back the changes made to this material
+    virtual void revertModifications() = 0;
 };
 
 typedef std::shared_ptr<Material> MaterialPtr;

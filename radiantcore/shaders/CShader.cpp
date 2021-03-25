@@ -307,6 +307,15 @@ bool CShader::isModified()
     return _template != _originalTemplate;
 }
 
+void CShader::revertModifications()
+{
+    _template = _originalTemplate;
+
+    // We need to update that layer reference vector on change
+    unrealise();
+    realise();
+}
+
 std::string CShader::getRenderBumpArguments()
 {
     return _template->getRenderBumpArguments();

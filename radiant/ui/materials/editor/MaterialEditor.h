@@ -95,6 +95,7 @@ public:
     void _onClose(wxCommandEvent& ev);
 
 private:
+    void setupMaterialTreeView();
     void setupMaterialStageView();
     void setupMaterialStageProperties();
     void setupMaterialProperties();
@@ -139,6 +140,7 @@ private:
     void moveStagePosition(int direction);
     void updateStageButtonSensitivity();
     void updateSettingsNotebook();
+    void updateMaterialButtonSensitivity();
 
     bool isAllowedToChangeMaterial();
     bool askUserAboutModifiedMaterial();
@@ -146,6 +148,7 @@ private:
     void revertCurrentMaterial();
 
     void _onMaterialSelectionChanged(wxDataViewEvent& ev);
+    void _onRevertMaterial(wxCommandEvent& ev);
     void _onStageListSelectionChanged(wxDataViewEvent& ev);
     void _onStageListItemActivated(wxDataViewEvent& ev);
     void _onMaterialTypeChoice(wxCommandEvent& ev);

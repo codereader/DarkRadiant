@@ -138,6 +138,7 @@ public:
     int getParseFlags() const override;
 
     bool isModified() override;
+    void revertModifications() override;
 
 private:
     void ensureTemplateCopy();
