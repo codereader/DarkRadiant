@@ -174,4 +174,24 @@ TEST_F(MaterialExportTest, GuiSurf)
     expectDefinitionContains(material, "guisurf entity3");
 }
 
+TEST_F(MaterialExportTest, Sort)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/exporttest/empty");
+
+    EXPECT_EQ(string::trim_copy(material->getDefinition()), "");
+
+    material->setSortRequest(-1.2f);
+    expectDefinitionContains(material, "sort -1.2");
+
+    // Using pre-defined sort values should produce the corresponding string, like "subview"
+    for (const auto& pair : shaders::PredefinedSortValues)
+    {
+        material->setSortRequest(static_cast<float>(pair.second));
+        expectDefinitionContains(material, fmt::format("sort {0}", pair.first));
+    }
+
+    material->clearMaterialFlag(Material::FLAG_HAS_SORT_DEFINED);
+    expectDefinitionDoesNotContain(material, "sort");
+}
+
 }

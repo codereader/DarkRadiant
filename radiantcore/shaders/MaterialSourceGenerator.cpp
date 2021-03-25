@@ -72,6 +72,23 @@ std::ostream& operator<<(std::ostream& stream, ShaderTemplate& shaderTemplate)
         }
     }
 
+    // Sort
+    if (shaderTemplate.getMaterialFlags() & Material::FLAG_HAS_SORT_DEFINED)
+    {
+        stream << "\tsort ";
+
+        auto predefinedName = getStringForSortRequestValue(shaderTemplate.getSortRequest());
+
+        if (!predefinedName.empty())
+        {
+            stream << predefinedName << "\n";
+        }
+        else
+        {
+            stream << shaderTemplate.getSortRequest() << "\n";
+        }
+    }
+
     for (const auto& layer : shaderTemplate.getLayers())
     {
         stream << "\t{\n";
