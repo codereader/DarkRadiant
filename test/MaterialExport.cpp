@@ -266,4 +266,15 @@ TEST_F(MaterialExportTest, Deform)
     expectDefinitionContains(material, "deform particle2 testparticle");
 }
 
+TEST_F(MaterialExportTest, DecalInfo)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/exporttest/decalinfo");
+    expectDefinitionContains(material, "decalinfo");
+
+    // Mark the definition as modified by setting the description
+    material->setDescription("-");
+
+    expectDefinitionContains(material, "decalinfo 14.3 1.5 ( 0.9 0.8 0.7 0.6 ) ( 0.5 0.5 0.4 0.3 )");
+}
+
 }

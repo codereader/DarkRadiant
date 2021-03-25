@@ -134,6 +134,18 @@ std::ostream& operator<<(std::ostream& stream, ShaderTemplate& shaderTemplate)
         }
     }
 
+    // DecalInfo
+    if (shaderTemplate.getParseFlags() & Material::PF_HasDecalInfo)
+    {
+        const auto& decalInfo = shaderTemplate.getDecalInfo();
+        stream << "\tdecalinfo " << (decalInfo.stayMilliSeconds / 1000.0f) << " "
+            << (decalInfo.fadeMilliSeconds / 1000.0f) << " "
+            << "( " << decalInfo.startColour.x() << " " << decalInfo.startColour.y() << " " 
+            << decalInfo.startColour.z() << " " << decalInfo.startColour.w() << " ) "
+            << "( " << decalInfo.endColour.x() << " " << decalInfo.endColour.y() << " "
+            << decalInfo.endColour.z() << " " << decalInfo.endColour.w() << " )\n";
+    }
+
     for (const auto& layer : shaderTemplate.getLayers())
     {
         stream << "\t{\n";

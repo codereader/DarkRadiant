@@ -936,4 +936,21 @@ TEST_F(MaterialsTest, MaterialParserLightfallOff)
     EXPECT_EQ(material->getLightFalloffExpression()->getExpressionString(), "lights/squarelight1a");
 }
 
+TEST_F(MaterialsTest, MaterialParserDecalInfo)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/decalinfo");
+
+    EXPECT_EQ(material->getDecalInfo().stayMilliSeconds, 14300);
+    EXPECT_EQ(material->getDecalInfo().fadeMilliSeconds, 1500);
+    
+    EXPECT_NEAR(material->getDecalInfo().startColour.x(), 0.9, TestEpsilon);
+    EXPECT_NEAR(material->getDecalInfo().startColour.y(), 0.8, TestEpsilon);
+    EXPECT_NEAR(material->getDecalInfo().startColour.z(), 0.7, TestEpsilon);
+    EXPECT_NEAR(material->getDecalInfo().startColour.w(), 0.6, TestEpsilon);
+
+    EXPECT_NEAR(material->getDecalInfo().endColour.x(), 0.5, TestEpsilon);
+    EXPECT_NEAR(material->getDecalInfo().endColour.y(), 0.5, TestEpsilon);
+    EXPECT_NEAR(material->getDecalInfo().endColour.z(), 0.4, TestEpsilon);
+    EXPECT_NEAR(material->getDecalInfo().endColour.w(), 0.3, TestEpsilon);
+}
 }
