@@ -40,7 +40,8 @@ struct OpenGLShader::DBSTriplet
     }
 };
 
-OpenGLShader::OpenGLShader(OpenGLRenderSystem& renderSystem) :
+OpenGLShader::OpenGLShader(const std::string& name, OpenGLRenderSystem& renderSystem) :
+    _name(name),
     _renderSystem(renderSystem),
     _isVisible(true),
     _useCount(0)
@@ -163,15 +164,15 @@ bool OpenGLShader::isRealised()
     return _material != 0;
 }
 
-void OpenGLShader::realise(const std::string& name)
+void OpenGLShader::realise()
 {
     // Construct the shader passes based on the name
-    construct(name);
+    construct();
 
-    if (_material != NULL)
+    if (_material)
 	{
 		// greebo: Check the filtersystem whether we're filtered
-		_material->setVisible(GlobalFilterSystem().isVisible(FilterRule::TYPE_TEXTURE, name));
+		_material->setVisible(GlobalFilterSystem().isVisible(FilterRule::TYPE_TEXTURE, _name));
 
 		if (_useCount != 0)
 		{
@@ -606,10 +607,10 @@ void OpenGLShader::appendBlendLayer(const IShaderLayer::Ptr& layer)
 }
 
 // Construct a normal shader
-void OpenGLShader::constructNormalShader(const std::string& name)
+void OpenGLShader::constructNormalShader()
 {
     // Obtain the Material
-    _material = GlobalMaterialManager().getMaterial(name);
+    _material = GlobalMaterialManager().getMaterial(_name);
     assert(_material);
 
     _materialChanged = _material->sig_materialChanged().connect(
@@ -630,7 +631,7 @@ void OpenGLShader::constructNormalShader(const std::string& name)
 }
 
 // Main shader construction entry point
-void OpenGLShader::construct(const std::string& name)
+void OpenGLShader::construct()
 {
 	// Retrieve the highlight colour from the colourschemes (once)
 	const static Colour4 highLightColour(
@@ -639,15 +640,15 @@ void OpenGLShader::construct(const std::string& name)
 
     // Check the first character of the name to see if this is a special built-in
     // shader
-    switch (name[0])
+    switch (_name[0])
     {
         case '(': // fill shader
         {
             OpenGLState& state = appendDefaultPass();
-			state.setName(name);
+			state.setName(_name);
 
             Colour4 colour;
-            sscanf(name.c_str(), "(%lf %lf %lf)", &colour[0], &colour[1], &colour[2]);
+            sscanf(_name.c_str(), "(%lf %lf %lf)", &colour[0], &colour[1], &colour[2]);
             colour[3] = 1.0f;
             state.setColour(colour);
 
@@ -663,10 +664,10 @@ void OpenGLShader::construct(const std::string& name)
         case '[':
         {
             OpenGLState& state = appendDefaultPass();
-			state.setName(name);
+			state.setName(_name);
 
             Colour4 colour;
-            sscanf(name.c_str(), "[%lf %lf %lf]", &colour[0], &colour[1], &colour[2]);
+            sscanf(_name.c_str(), "[%lf %lf %lf]", &colour[0], &colour[1], &colour[2]);
             colour[3] = 0.5f;
             state.setColour(colour);
 
@@ -683,10 +684,10 @@ void OpenGLShader::construct(const std::string& name)
         case '<': // wireframe shader
         {
             OpenGLState& state = appendDefaultPass();
-			state.setName(name);
+			state.setName(_name);
 
             Colour4 colour;
-            sscanf(name.c_str(), "<%lf %lf %lf>", &colour[0], &colour[1], &colour[2]);
+            sscanf(_name.c_str(), "<%lf %lf %lf>", &colour[0], &colour[1], &colour[2]);
             colour[3] = 1;
             state.setColour(colour);
 
@@ -701,9 +702,9 @@ void OpenGLShader::construct(const std::string& name)
         case '$':
         {
             OpenGLState& state = appendDefaultPass();
-			state.setName(name);
+			state.setName(_name);
 
-            if (name == "$POINT")
+            if (_name == "$POINT")
             {
               state.setRenderFlag(RENDER_POINT_COLOUR);
               state.setRenderFlag(RENDER_DEPTHWRITE);
@@ -711,7 +712,7 @@ void OpenGLShader::construct(const std::string& name)
               state.setSortPosition(OpenGLState::SORT_POINT_FIRST);
               state.m_pointsize = 4;
             }
-            else if (name == "$SELPOINT")
+            else if (_name == "$SELPOINT")
             {
               state.setRenderFlag(RENDER_POINT_COLOUR);
               state.setRenderFlag(RENDER_DEPTHWRITE);
@@ -719,7 +720,7 @@ void OpenGLShader::construct(const std::string& name)
               state.setSortPosition(OpenGLState::SORT_POINT_LAST);
               state.m_pointsize = 4;
             }
-            else if (name == "$BIGPOINT")
+            else if (_name == "$BIGPOINT")
             {
               state.setRenderFlag(RENDER_POINT_COLOUR);
               state.setRenderFlag(RENDER_DEPTHWRITE);
@@ -727,7 +728,7 @@ void OpenGLShader::construct(const std::string& name)
               state.setSortPosition(OpenGLState::SORT_POINT_FIRST);
               state.m_pointsize = 6;
             }
-            else if (name == "$PIVOT")
+            else if (_name == "$PIVOT")
             {
               state.setRenderFlags(RENDER_DEPTHTEST | RENDER_DEPTHWRITE);
               state.setSortPosition(OpenGLState::SORT_GUI0);
@@ -735,24 +736,24 @@ void OpenGLShader::construct(const std::string& name)
               state.setDepthFunc(GL_LEQUAL);
 
               OpenGLState& hiddenLine = appendDefaultPass();
-			  hiddenLine.setName(name + "_Hidden");
+			  hiddenLine.setName(_name + "_Hidden");
               hiddenLine.setRenderFlags(RENDER_DEPTHTEST | RENDER_LINESTIPPLE);
               hiddenLine.setSortPosition(OpenGLState::SORT_GUI0);
               hiddenLine.m_linewidth = 2;
               hiddenLine.setDepthFunc(GL_GREATER);
             }
-            else if (name == "$LATTICE")
+            else if (_name == "$LATTICE")
             {
               state.setColour(1, 0.5, 0, 1);
               state.setRenderFlag(RENDER_DEPTHWRITE);
               state.setSortPosition(OpenGLState::SORT_POINT_FIRST);
             }
-            else if (name == "$WIREFRAME")
+            else if (_name == "$WIREFRAME")
             {
               state.setRenderFlags(RENDER_DEPTHTEST | RENDER_DEPTHWRITE);
               state.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
             }
-            else if (name == "$CAM_HIGHLIGHT")
+            else if (_name == "$CAM_HIGHLIGHT")
             {
 				// This is the shader drawing a coloured overlay
 				// over faces/polys. Its colour is configurable,
@@ -767,7 +768,7 @@ void OpenGLShader::construct(const std::string& name)
 				state.polygonOffset = 0.5f;
 				state.setDepthFunc(GL_LEQUAL);
             }
-            else if (name == "$CAM_OVERLAY")
+            else if (_name == "$CAM_OVERLAY")
             {
 				// This is the shader drawing a solid line to outline
 				// a selected item. The first pass has its depth test
@@ -788,7 +789,7 @@ void OpenGLShader::construct(const std::string& name)
 				hiddenLine.setDepthFunc(GL_GREATER);
 				hiddenLine.m_linestipple_factor = 2;
             }
-            else if (name == "$XY_OVERLAY")
+            else if (_name == "$XY_OVERLAY")
             {
               Vector3 colorSelBrushes = GlobalColourSchemeManager().getColour("selected_brush");
               state.setColour(static_cast<float>(colorSelBrushes[0]),
@@ -800,7 +801,7 @@ void OpenGLShader::construct(const std::string& name)
               state.m_linewidth = 2;
               state.m_linestipple_factor = 3;
             }
-			else if (name == "$XY_OVERLAY_GROUP")
+			else if (_name == "$XY_OVERLAY_GROUP")
 			{
 				Vector3 colorSelBrushes = GlobalColourSchemeManager().getColour("selected_group_items");
                 state.setColour(static_cast<float>(colorSelBrushes[0]),
@@ -812,19 +813,19 @@ void OpenGLShader::construct(const std::string& name)
 				state.m_linewidth = 2;
 				state.m_linestipple_factor = 3;
 			}
-            else if (name == "$DEBUG_CLIPPED")
+            else if (_name == "$DEBUG_CLIPPED")
             {
               state.setRenderFlag(RENDER_DEPTHWRITE);
               state.setSortPosition(OpenGLState::SORT_LAST);
             }
-            else if (name == "$POINTFILE")
+            else if (_name == "$POINTFILE")
             {
               state.setColour(1, 0, 0, 1);
               state.setRenderFlags(RENDER_DEPTHTEST | RENDER_DEPTHWRITE);
               state.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
               state.m_linewidth = 4;
             }
-            else if (name == "$WIRE_OVERLAY")
+            else if (_name == "$WIRE_OVERLAY")
             {
               state.setRenderFlags(RENDER_DEPTHWRITE
                                  | RENDER_DEPTHTEST
@@ -834,7 +835,7 @@ void OpenGLShader::construct(const std::string& name)
               state.setDepthFunc(GL_LEQUAL);
 
               OpenGLState& hiddenLine = appendDefaultPass();
-			  hiddenLine.setName(name + "_Hidden");
+			  hiddenLine.setName(_name + "_Hidden");
               hiddenLine.setRenderFlags(RENDER_DEPTHWRITE
                                       | RENDER_DEPTHTEST
                                       | RENDER_OVERRIDE
@@ -843,7 +844,7 @@ void OpenGLShader::construct(const std::string& name)
               hiddenLine.setSortPosition(OpenGLState::SORT_GUI0);
               hiddenLine.setDepthFunc(GL_GREATER);
             }
-            else if (name == "$FLATSHADE_OVERLAY")
+            else if (_name == "$FLATSHADE_OVERLAY")
             {
               state.setRenderFlags(RENDER_CULLFACE
                                  | RENDER_LIGHTING
@@ -857,7 +858,7 @@ void OpenGLShader::construct(const std::string& name)
               state.setDepthFunc(GL_LEQUAL);
 
               OpenGLState& hiddenLine = appendDefaultPass();
-			  hiddenLine.setName(name + "_Hidden");
+			  hiddenLine.setName(_name + "_Hidden");
               hiddenLine.setRenderFlags(RENDER_CULLFACE
                                       | RENDER_LIGHTING
                                       | RENDER_SMOOTH
@@ -870,7 +871,7 @@ void OpenGLShader::construct(const std::string& name)
               hiddenLine.setSortPosition(OpenGLState::SORT_GUI0);
               hiddenLine.setDepthFunc(GL_GREATER);
             }
-            else if (name == "$CLIPPER_OVERLAY")
+            else if (_name == "$CLIPPER_OVERLAY")
             {
               state.setColour(GlobalColourSchemeManager().getColour("clipper"));
               state.setRenderFlags(RENDER_CULLFACE
@@ -879,7 +880,7 @@ void OpenGLShader::construct(const std::string& name)
                                  | RENDER_POLYGONSTIPPLE);
               state.setSortPosition(OpenGLState::SORT_OVERLAY_FIRST);
             }
-            else if (name == "$AAS_AREA")
+            else if (_name == "$AAS_AREA")
             {
 				state.setColour(1, 1, 1, 1);
 				state.setRenderFlags(RENDER_DEPTHWRITE
@@ -907,21 +908,21 @@ void OpenGLShader::construct(const std::string& name)
         default:
         {
             // This is not a hard-coded shader, construct from the shader system
-            constructNormalShader(name);
+            constructNormalShader();
         }
     } // switch (name[0])
 
     // If there is no Material, create an internal one for debug/testing etc
     if (!_material)
     {
-        _material = GlobalMaterialManager().createDefaultMaterial(name);
+        _material = GlobalMaterialManager().createDefaultMaterial(_name);
     }
 }
 
 void OpenGLShader::onMaterialChanged()
 {
     unrealise();
-    realise(_material->getName());
+    realise();
 }
 
 }

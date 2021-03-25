@@ -562,9 +562,6 @@ public:
 
 	// Subscription to get notified as soon as the openGL extensions have been initialised
 	virtual sigc::signal<void> signal_extensionsInitialised() = 0;
-
-    // Notification about a material change, tries to refresh any constructed shaders basing on it
-    virtual void onMaterialChanged(const std::string& materialName) = 0;
 };
 typedef std::shared_ptr<RenderSystem> RenderSystemPtr;
 typedef std::weak_ptr<RenderSystem> RenderSystemWeakPtr;

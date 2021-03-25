@@ -21,6 +21,8 @@ class OpenGLShader final :
 	public Shader
 {
 private:
+    std::string _name;
+
     // The state manager we will be inserting/removing OpenGL states from
     OpenGLRenderSystem& _renderSystem;
 
@@ -44,11 +46,11 @@ private:
 private:
 
     // Start point for constructing shader passes from the shader name
-	void construct(const std::string& name);
+	void construct();
 
     // Construct shader passes from a regular shader (as opposed to a special
     // built-in shader)
-    void constructNormalShader(const std::string& name);
+    void constructNormalShader();
 
     // Shader pass construction helpers
     void appendBlendLayer(const IShaderLayer::Ptr& layer);
@@ -78,7 +80,7 @@ private:
     
 public:
     /// Construct and initialise
-    OpenGLShader(OpenGLRenderSystem& renderSystem);
+    OpenGLShader(const std::string& name, OpenGLRenderSystem& renderSystem);
 
     ~OpenGLShader();
 
@@ -101,9 +103,9 @@ public:
 	bool isRealised() override;
 
 	/**
-	 * Realise this shader, setting the name in the process.
+	 * Realise this shader
 	 */
-	void realise(const std::string& name);
+	void realise();
 
 	void unrealise();
 
