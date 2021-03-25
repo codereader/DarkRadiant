@@ -36,6 +36,11 @@ std::ostream& operator<<(std::ostream& stream, ShaderTemplate& shaderTemplate)
         stream << fmt::format("\tpolygonOffset {0}\n", shaderTemplate.getPolygonOffset());
     }
 
+    if (shaderTemplate.getClampType() != CLAMP_REPEAT)
+    {
+        stream << "\t" << getStringForClampType(shaderTemplate.getClampType()) << "\n";
+    }
+
     for (const auto& layer : shaderTemplate.getLayers())
     {
         stream << "\t{\n";

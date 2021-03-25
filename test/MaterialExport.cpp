@@ -97,4 +97,25 @@ TEST_F(MaterialExportTest, MaterialFlags)
     }
 }
 
+TEST_F(MaterialExportTest, ClampType)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/exporttest/empty");
+
+    EXPECT_EQ(string::trim_copy(material->getDefinition()), "");
+
+    material->setClampType(CLAMP_NOREPEAT);
+    expectDefinitionContains(material, "clamp");
+
+    material->setClampType(CLAMP_ZEROCLAMP);
+    expectDefinitionContains(material, "zeroclamp");
+
+    material->setClampType(CLAMP_ALPHAZEROCLAMP);
+    expectDefinitionContains(material, "alphazeroclamp");
+
+    material->setClampType(CLAMP_REPEAT); // this is the default => no keyword necessary
+    expectDefinitionDoesNotContain(material, "clamp");
+    expectDefinitionDoesNotContain(material, "zeroclamp");
+    expectDefinitionDoesNotContain(material, "alphazeroclamp");
+}
+
 }
