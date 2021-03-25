@@ -277,4 +277,58 @@ TEST_F(MaterialExportTest, DecalInfo)
     expectDefinitionContains(material, "decalinfo 14.3 1.5 ( 0.9 0.8 0.7 0.6 ) ( 0.5 0.5 0.4 0.3 )");
 }
 
+TEST_F(MaterialExportTest, RenderBump)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/exporttest/renderBump1");
+    expectDefinitionContains(material, "renderBump");
+
+    // Mark the definition as modified by setting the description
+    material->setDescription("-");
+
+    expectDefinitionContains(material, "renderbump textures/output.tga models/hipoly");
+
+    material = GlobalMaterialManager().getMaterial("textures/exporttest/renderBump2");
+    expectDefinitionContains(material, "renderBump");
+
+    // Mark the definition as modified by setting the description
+    material->setDescription("-");
+
+    expectDefinitionContains(material, "renderbump -size 100 200 textures/output.tga models/hipoly");
+
+    material = GlobalMaterialManager().getMaterial("textures/exporttest/renderBump3");
+    expectDefinitionContains(material, "renderBump");
+
+    // Mark the definition as modified by setting the description
+    material->setDescription("-");
+
+    expectDefinitionContains(material, "renderbump -aa 2 textures/output.tga models/hipoly");
+
+    material = GlobalMaterialManager().getMaterial("textures/exporttest/renderBump4");
+    expectDefinitionContains(material, "renderBump");
+
+    // Mark the definition as modified by setting the description
+    material->setDescription("-");
+
+    expectDefinitionContains(material, "renderbump -aa 2 -size 10 10 textures/output.tga models/hipoly");
+}
+
+TEST_F(MaterialExportTest, RenderBumpFlat)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/exporttest/renderBumpFlat1");
+    expectDefinitionContains(material, "renderBumpflat");
+
+    // Mark the definition as modified by setting the description
+    material->setDescription("-");
+
+    expectDefinitionContains(material, "renderbumpflat -size 200 100 models/hipoly");
+
+    material = GlobalMaterialManager().getMaterial("textures/exporttest/renderBumpFlat2");
+    expectDefinitionContains(material, "renderBumpflat");
+
+    // Mark the definition as modified by setting the description
+    material->setDescription("-");
+
+    expectDefinitionContains(material, "renderbumpflat models/hipoly");
+}
+
 }

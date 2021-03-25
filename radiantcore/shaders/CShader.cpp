@@ -331,7 +331,7 @@ std::string CShader::getRenderBumpArguments()
 
 std::string CShader::getRenderBumpFlatArguments()
 {
-    return _template->getRenderBumpFlagArguments();
+    return _template->getRenderBumpFlatArguments();
 }
 
 const std::string& CShader::getGuiSurfArgument()

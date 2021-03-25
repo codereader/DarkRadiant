@@ -146,6 +146,18 @@ std::ostream& operator<<(std::ostream& stream, ShaderTemplate& shaderTemplate)
             << decalInfo.endColour.z() << " " << decalInfo.endColour.w() << " )\n";
     }
 
+    // Renderbump
+    if (!shaderTemplate.getRenderBumpArguments().empty())
+    {
+        stream << "\trenderbump " << shaderTemplate.getRenderBumpArguments() << "\n";
+    }
+
+    // Renderbumpflat
+    if (!shaderTemplate.getRenderBumpFlatArguments().empty())
+    {
+        stream << "\trenderbumpflat " << shaderTemplate.getRenderBumpFlatArguments() << "\n";
+    }
+
     for (const auto& layer : shaderTemplate.getLayers())
     {
         stream << "\t{\n";

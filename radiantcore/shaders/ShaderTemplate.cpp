@@ -1493,7 +1493,7 @@ std::string ShaderTemplate::getRenderBumpArguments()
     return _renderBumpArguments;
 }
 
-std::string ShaderTemplate::getRenderBumpFlagArguments()
+std::string ShaderTemplate::getRenderBumpFlatArguments()
 {
     if (!_parsed) parseDefinition();
 

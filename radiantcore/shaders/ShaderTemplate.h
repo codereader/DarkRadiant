@@ -473,7 +473,7 @@ public:
     std::string getRenderBumpArguments();
     
     // renderbumpflat argument string
-    std::string getRenderBumpFlagArguments();
+    std::string getRenderBumpFlatArguments();
 
     const std::string& getGuiSurfArgument()
     {
