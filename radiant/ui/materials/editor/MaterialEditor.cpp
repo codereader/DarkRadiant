@@ -307,7 +307,10 @@ void MaterialEditor::setupMaterialProperties()
             }
             else
             {
-                material->setSortRequest(Material::SORT_OPAQUE);
+                auto sortValue = getControl<wxComboBox>("MaterialSortValue")->GetValue().ToStdString();
+                material->setSortRequest(!sortValue.empty() ? 
+                    shaders::getSortRequestValueForString(sortValue) : 
+                    static_cast<float>(Material::SORT_OPAQUE));
             }
         },
         [this]() { onMaterialChanged(); }));
@@ -2056,7 +2059,9 @@ void MaterialEditor::_onSortRequestChanged(wxCommandEvent& ev)
     if (!_material || _materialUpdateInProgress) return;
 
     auto sortDropdown = getControl<wxComboBox>("MaterialSortValue");
-    _material->setSortRequest(string::convert<float>(sortDropdown->GetValue().ToStdString(), Material::SORT_OPAQUE));
+    auto value = sortDropdown->GetValue().ToStdString();
+    _material->setSortRequest(shaders::getSortRequestValueForString(value));
+    
     onMaterialChanged();
 }
 

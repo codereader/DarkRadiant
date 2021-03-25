@@ -142,6 +142,19 @@ inline std::string getStringForSortRequestValue(float value)
     return std::string();
 }
 
+inline float getSortRequestValueForString(const std::string& value)
+{
+    for (const auto& pair : PredefinedSortValues)
+    {
+        if (value == pair.first)
+        {
+            return static_cast<float>(pair.second);
+        }
+    }
+
+    return string::convert<float>(value, Material::SORT_OPAQUE);
+}
+
 constexpr std::pair<const char*, IShaderLayer::MapType> MapTypeNames[]
 {
     { "map", IShaderLayer::MapType::Map },
