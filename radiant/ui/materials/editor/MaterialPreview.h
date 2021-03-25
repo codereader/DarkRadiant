@@ -1,5 +1,6 @@
 #pragma once
 
+#include <sigc++/connection.h>
 #include "ishaders.h"
 #include "modelskin.h"
 #include "scene/BasicRootNode.h"
@@ -16,6 +17,7 @@ private:
     bool _sceneIsReady;
 
     MaterialPtr _material;
+    sigc::connection _materialChanged;
 
     scene::IMapRootNodePtr _rootNode;
 
@@ -41,14 +43,13 @@ public:
     const MaterialPtr& getMaterial();
     void setMaterial(const MaterialPtr& material);
 
-    void onMaterialChanged();
-
 protected:
     bool canDrawGrid() override;
     void setupSceneGraph() override;
     RenderStateFlags getRenderFlagsFill() override;
 
 private:
+    void onMaterialChanged();
     bool onPreRender() override;
     void prepareScene();
     void setupToolbar();

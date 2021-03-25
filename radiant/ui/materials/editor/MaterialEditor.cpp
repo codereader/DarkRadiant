@@ -2045,8 +2045,6 @@ void MaterialEditor::_onSortRequestChanged(wxCommandEvent& ev)
 
 void MaterialEditor::onMaterialChanged()
 {
-    _preview->onMaterialChanged();
-
     updateMaterialButtonSensitivity();
 }
 

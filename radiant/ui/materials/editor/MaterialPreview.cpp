@@ -121,7 +121,16 @@ void MaterialPreview::setMaterial(const MaterialPtr& material)
 {
     bool hadMaterial = _material != nullptr;
 
+    _materialChanged.disconnect();
+
     _material = material;
+
+    if (_material)
+    {
+        _materialChanged = _material->sig_materialChanged().connect(
+            sigc::mem_fun(this, &MaterialPreview::onMaterialChanged));
+    }
+
     _sceneIsReady = false;
 
     if (_model)
@@ -147,9 +156,6 @@ void MaterialPreview::setMaterial(const MaterialPtr& material)
 
 void MaterialPreview::onMaterialChanged()
 {
-    if (!_material) return;
-
-    _renderSystem->onMaterialChanged(_material->getName());
     queueDraw();
 }
 
