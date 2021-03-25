@@ -3,6 +3,7 @@
 #include "CameraCubeMapDecl.h"
 
 #include "MapExpression.h"
+#include "MaterialSourceGenerator.h"
 #include "VideoMapExpression.h"
 #include "SoundMapExpression.h"
 
@@ -17,6 +18,7 @@
 #include <iostream>
 
 #include "ShaderExpression.h"
+#include "util/ScopedBoolLock.h"
 #include "materials/ParseLib.h"
 
 namespace shaders
@@ -25,6 +27,7 @@ namespace shaders
 ShaderTemplate::ShaderTemplate(const ShaderTemplate& other) :
     _name(other._name),
     _currentLayer(new Doom3ShaderLayer(*this)),
+    _suppressChangeSignal(false),
     _lightFalloff(other._lightFalloff),
     _lightFalloffCubeMapType(other._lightFalloffCubeMapType),
     fogLight(other.fogLight),
@@ -48,6 +51,7 @@ ShaderTemplate::ShaderTemplate(const ShaderTemplate& other) :
     _renderBumpArguments(other._renderBumpArguments),
     _renderBumpFlatArguments(other._renderBumpFlatArguments),
     _blockContents(other._blockContents),
+    _blockContentsNeedUpdate(other._blockContentsNeedUpdate),
     _parsed(other._parsed),
     _parseFlags(other._parseFlags),
     _guiDeclName(other._guiDeclName)
@@ -1247,6 +1251,8 @@ bool ShaderTemplate::saveLayer()
 
 void ShaderTemplate::parseDefinition()
 {
+    util::ScopedBoolLock parseLock(_suppressChangeSignal);
+
     // Construct a local deftokeniser to parse the unparsed block
     parser::BasicDefTokeniser<std::string> tokeniser(
         _blockContents,
@@ -1375,6 +1381,9 @@ void ShaderTemplate::parseDefinition()
 		// mark the contents as opaque
 		_surfaceFlags |= Material::SURF_OPAQUE;
 	}
+
+    // We might have invoked a few setters during this process, clear the flag now
+    _blockContentsNeedUpdate = false;
 }
 
 void ShaderTemplate::addLayer(const Doom3ShaderLayer::Ptr& layer)
@@ -1496,8 +1505,14 @@ void ShaderTemplate::setBlockContents(const std::string& blockContents)
     _blockContents = blockContents;
 }
 
-const std::string& ShaderTemplate::getBlockContents() const
+const std::string& ShaderTemplate::getBlockContents()
 {
+    if (_blockContentsNeedUpdate)
+    {
+        _blockContentsNeedUpdate = false;
+        _blockContents = MaterialSourceGenerator::GenerateDefinitionBlock(*this);
+    }
+
     return _blockContents;
 }
 

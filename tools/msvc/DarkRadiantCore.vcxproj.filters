@@ -1024,6 +1024,9 @@
     <ClCompile Include="..\..\radiantcore\shaders\TextureMatrix.cpp">
       <Filter>src\shaders</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\shaders\MaterialSourceGenerator.cpp">
+      <Filter>src\shaders</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
@@ -2089,6 +2092,9 @@
       <Filter>src\shaders</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\shaders\TextureMatrix.h">
+      <Filter>src\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\shaders\MaterialSourceGenerator.h">
       <Filter>src\shaders</Filter>
     </ClInclude>
   </ItemGroup>

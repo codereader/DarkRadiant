@@ -32,6 +32,7 @@ private:
 	Doom3ShaderLayer::Ptr _currentLayer;
 
     sigc::signal<void> _sigTemplateChanged;
+    bool _suppressChangeSignal;
 
 public:
 
@@ -91,6 +92,7 @@ public:
 
 	// Raw material declaration
 	std::string _blockContents;
+    bool _blockContentsNeedUpdate;
 
 	// Whether the block has been parsed
 	bool _parsed;
@@ -112,6 +114,7 @@ public:
 	ShaderTemplate(const std::string& name, const std::string& blockContents) : 
         _name(name),
         _currentLayer(new Doom3ShaderLayer(*this)),
+        _suppressChangeSignal(false),
         _lightFalloffCubeMapType(IShaderLayer::MapType::Map),
         fogLight(false),
         ambientLight(false),
@@ -128,6 +131,7 @@ public:
         _polygonOffset(0.0f),
         _coverage(Material::MC_UNDETERMINED),
         _blockContents(blockContents),
+        _blockContentsNeedUpdate(false),
         _parsed(false),
         _parseFlags(0)
 	{
@@ -414,7 +418,7 @@ public:
 	// Sets the raw block definition contents, will be parsed on demand
     void setBlockContents(const std::string& blockContents);
 
-    const std::string& getBlockContents() const;
+    const std::string& getBlockContents();
 
     /**
      * \brief
@@ -479,6 +483,9 @@ public:
 
     void onTemplateChanged()
     {
+        if (_suppressChangeSignal) return;
+
+        _blockContentsNeedUpdate = true;
         _sigTemplateChanged.emit();
     }
 

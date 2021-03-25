@@ -1,5 +1,6 @@
 #pragma once
 
+#include <sigc++/connection.h>
 #include "icommandsystem.h"
 #include "ishaders.h"
 
@@ -38,6 +39,7 @@ private:
     wxutil::D3MaterialSourceViewCtrl* _sourceView;
 
     MaterialPtr _material;
+    sigc::connection _materialChanged;
 
     std::set<std::shared_ptr<Binding<MaterialPtr>>> _materialBindings;
     std::set<std::shared_ptr<Binding<IShaderLayer::Ptr>>> _stageBindings;
@@ -141,6 +143,7 @@ private:
     void updateStageButtonSensitivity();
     void updateSettingsNotebook();
     void updateMaterialButtonSensitivity();
+    void updateSourceView();
 
     bool isAllowedToChangeMaterial();
     bool askUserAboutModifiedMaterial();

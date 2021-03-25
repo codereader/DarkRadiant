@@ -1093,10 +1093,17 @@ void MaterialEditor::_onMaterialSelectionChanged(wxDataViewEvent& ev)
 
     _selectedMaterialItem = _treeView->GetSelection();
 
+    _materialChanged.disconnect();
+
     // Update the preview if a texture is selected
     if (!_treeView->IsDirectorySelected())
     {
         _material = GlobalMaterialManager().getMaterial(_treeView->GetSelectedFullname());
+
+        _material->sig_materialChanged().connect([this]()
+        {
+            updateSourceView();
+        });
     }
     else
     {
@@ -1358,6 +1365,7 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
     }
 
     updateDeformControlsFromMaterial();
+    updateSourceView();
 
     if (_material)
     {
@@ -1449,10 +1457,6 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
         getControl<wxRadioButton>("MaterialGuiSurfEntity")->SetValue(_material->getSurfaceFlags() & Material::SURF_ENTITYGUI);
         getControl<wxRadioButton>("MaterialGuiSurfEntity2")->SetValue(_material->getSurfaceFlags() & Material::SURF_ENTITYGUI2);
         getControl<wxRadioButton>("MaterialGuiSurfEntity3")->SetValue(_material->getSurfaceFlags() & Material::SURF_ENTITYGUI3);
-
-        // Surround the definition with curly braces, these are not included
-        auto definition = fmt::format("{0}\n{{{1}}}", _material->getName(), _material->getDefinition());
-        _sourceView->SetValue(definition);
     }
     else
     {
@@ -1473,6 +1477,19 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
         getControl<wxCheckBox>("MaterialHasSpectrum")->SetValue(false);
         getControl<wxSpinCtrl>("MaterialSpectrumValue")->SetValue(0);
         getControl<wxTextCtrl>("MaterialDescription")->SetValue("");
+    }
+}
+
+void MaterialEditor::updateSourceView()
+{
+    if (_material)
+    {
+        // Surround the definition with curly braces, these are not included
+        auto definition = fmt::format("{0}\n{{{1}}}", _material->getName(), _material->getDefinition());
+        _sourceView->SetValue(definition);
+    }
+    else
+    {
         _sourceView->SetValue("");
     }
 }
@@ -2046,6 +2063,7 @@ void MaterialEditor::_onSortRequestChanged(wxCommandEvent& ev)
 void MaterialEditor::onMaterialChanged()
 {
     updateMaterialButtonSensitivity();
+    updateSourceView();
 }
 
 void MaterialEditor::convertTextCtrlToMapExpressionEntry(const std::string& ctrlName)
