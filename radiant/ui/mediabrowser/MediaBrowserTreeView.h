@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ui/common/MaterialTreeView.h"
+#include "ui/materials/MaterialTreeView.h"
 #include "wxutil/menu/IconTextMenuItem.h"
 #include "wxutil/dataview/TreeModelFilter.h"
 

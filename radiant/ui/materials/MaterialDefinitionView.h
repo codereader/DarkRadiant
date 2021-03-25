@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ishaders.h"
-#include "DefinitionView.h"
+#include "ui/common/DefinitionView.h"
 
 namespace ui
 {
