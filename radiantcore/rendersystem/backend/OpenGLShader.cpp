@@ -14,6 +14,20 @@
 namespace render
 {
 
+namespace
+{
+    TexturePtr getDefaultInteractionTexture(IShaderLayer::Type type)
+    {
+        return GlobalMaterialManager().getDefaultInteractionTexture(type);
+    }
+
+    TexturePtr getTextureOrInteractionDefault(const IShaderLayer::Ptr& layer)
+    {
+        auto texture = layer->getTexture();
+        return texture ? texture : getDefaultInteractionTexture(layer->getType());
+    }
+}
+
 // Triplet of diffuse, bump and specular shaders
 struct OpenGLShader::DBSTriplet
 {
@@ -256,38 +270,32 @@ void OpenGLShader::setGLTexturesFromTriplet(OpenGLState& pass,
     // default from the shader system.
     if (triplet.diffuse)
     {
-        pass.texture0 = triplet.diffuse->getTexture()->getGLTexNum();
+        pass.texture0 = getTextureOrInteractionDefault(triplet.diffuse)->getGLTexNum();
 		pass.stage0 = triplet.diffuse;
     }
     else
     {
-        pass.texture0 = GlobalMaterialManager().getDefaultInteractionTexture(
-            IShaderLayer::DIFFUSE
-        )->getGLTexNum();
+        pass.texture0 = getDefaultInteractionTexture(IShaderLayer::DIFFUSE)->getGLTexNum();
     }
 
     if (triplet.bump)
     {
-        pass.texture1 = triplet.bump->getTexture()->getGLTexNum();
+        pass.texture1 = getTextureOrInteractionDefault(triplet.bump)->getGLTexNum();
 		pass.stage1 = triplet.bump;
     }
     else
     {
-        pass.texture1 = GlobalMaterialManager().getDefaultInteractionTexture(
-            IShaderLayer::BUMP
-        )->getGLTexNum();
+        pass.texture1 = getDefaultInteractionTexture(IShaderLayer::BUMP)->getGLTexNum();
     }
 
     if (triplet.specular)
     {
-        pass.texture2 = triplet.specular->getTexture()->getGLTexNum();
+        pass.texture2 = getTextureOrInteractionDefault(triplet.specular)->getGLTexNum();
 		pass.stage2 = triplet.specular;
     }
     else
     {
-        pass.texture2 = GlobalMaterialManager().getDefaultInteractionTexture(
-            IShaderLayer::SPECULAR
-        )->getGLTexNum();
+        pass.texture2 = getDefaultInteractionTexture(IShaderLayer::SPECULAR)->getGLTexNum();
     }
 }
 
