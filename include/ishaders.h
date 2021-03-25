@@ -410,6 +410,9 @@ public:
 
     // Roll back the changes made to this material
     virtual void revertModifications() = 0;
+
+    // Signal emitted when this material is modified
+    virtual sigc::signal<void>& sig_materialChanged() = 0;
 };
 
 typedef std::shared_ptr<Material> MaterialPtr;

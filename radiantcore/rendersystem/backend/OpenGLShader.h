@@ -7,6 +7,7 @@
 #include "string/string.h"
 
 #include <list>
+#include <sigc++/connection.h>
 
 namespace render
 {
@@ -16,9 +17,10 @@ class OpenGLRenderSystem;
 /**
  * Implementation of the Shader class.
  */
-class OpenGLShader : 
+class OpenGLShader final : 
 	public Shader
 {
+private:
     // The state manager we will be inserting/removing OpenGL states from
     OpenGLRenderSystem& _renderSystem;
 
@@ -28,6 +30,7 @@ class OpenGLShader :
 
     // The Material corresponding to this OpenGLShader
 	MaterialPtr _material;
+    sigc::connection _materialChanged;
 
     // Visibility flag
     bool _isVisible;
@@ -70,10 +73,14 @@ private:
 
     void insertPasses();
     void removePasses();
+
+    void onMaterialChanged();
     
 public:
     /// Construct and initialise
     OpenGLShader(OpenGLRenderSystem& renderSystem);
+
+    ~OpenGLShader();
 
     // Returns the owning render system
     OpenGLRenderSystem& getRenderSystem();

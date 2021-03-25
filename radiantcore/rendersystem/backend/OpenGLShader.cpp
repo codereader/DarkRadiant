@@ -46,6 +46,11 @@ OpenGLShader::OpenGLShader(OpenGLRenderSystem& renderSystem) :
     _useCount(0)
 {}
 
+OpenGLShader::~OpenGLShader()
+{
+    destroy();
+}
+
 OpenGLRenderSystem& OpenGLShader::getRenderSystem()
 {
     return _renderSystem;
@@ -53,6 +58,7 @@ OpenGLRenderSystem& OpenGLShader::getRenderSystem()
 
 void OpenGLShader::destroy()
 {
+    _materialChanged.disconnect();
     _material.reset();
     _shaderPasses.clear();
 }
@@ -606,6 +612,9 @@ void OpenGLShader::constructNormalShader(const std::string& name)
     _material = GlobalMaterialManager().getMaterial(name);
     assert(_material);
 
+    _materialChanged = _material->sig_materialChanged().connect(
+        sigc::mem_fun(this, &OpenGLShader::onMaterialChanged));
+
     // Determine whether we can render this shader in lighting/bump-map mode,
     // and construct the appropriate shader passes
     if (canUseLightingMode())
@@ -907,6 +916,12 @@ void OpenGLShader::construct(const std::string& name)
     {
         _material = GlobalMaterialManager().createDefaultMaterial(name);
     }
+}
+
+void OpenGLShader::onMaterialChanged()
+{
+    unrealise();
+    realise(_material->getName());
 }
 
 }

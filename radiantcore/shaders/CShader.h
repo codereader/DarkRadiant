@@ -40,6 +40,8 @@ private:
     // Vector of shader layers
 	IShaderLayerVector _layers;
 
+    sigc::signal<void> _sigMaterialModified;
+
 public:
 	static bool m_lightingEnabled;
 
@@ -139,6 +141,7 @@ public:
 
     bool isModified() override;
     void revertModifications() override;
+    sigc::signal<void>& sig_materialChanged() override;
 
 private:
     void ensureTemplateCopy();

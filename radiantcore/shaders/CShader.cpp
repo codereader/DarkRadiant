@@ -316,6 +316,11 @@ void CShader::revertModifications()
     realise();
 }
 
+sigc::signal<void>& CShader::sig_materialChanged()
+{
+    return _sigMaterialModified;
+}
+
 std::string CShader::getRenderBumpArguments()
 {
     return _template->getRenderBumpArguments();
