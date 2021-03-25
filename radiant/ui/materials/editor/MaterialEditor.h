@@ -22,6 +22,7 @@ class MaterialEditor :
 {
 private:
     MaterialTreeView* _treeView;
+    wxDataViewItem _selectedMaterialItem;
 
     wxutil::TreeModel::Ptr _stageList;
     wxutil::TreeView* _stageView;
@@ -139,7 +140,12 @@ private:
     void updateStageButtonSensitivity();
     void updateSettingsNotebook();
 
-    void _onTreeViewSelectionChanged(wxDataViewEvent& ev);
+    bool isAllowedToChangeMaterial();
+    bool askUserAboutModifiedMaterial();
+    bool saveCurrentMaterial();
+    void revertCurrentMaterial();
+
+    void _onMaterialSelectionChanged(wxDataViewEvent& ev);
     void _onStageListSelectionChanged(wxDataViewEvent& ev);
     void _onStageListItemActivated(wxDataViewEvent& ev);
     void _onMaterialTypeChoice(wxCommandEvent& ev);

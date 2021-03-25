@@ -18,6 +18,7 @@
 #include <wx/collpane.h>
 
 #include "wxutil/SourceView.h"
+#include "wxutil/dialog/MessageBox.h"
 #include "wxutil/dataview/ResourceTreeViewToolbar.h"
 #include "wxutil/Bitmap.h"
 #include "fmt/format.h"
@@ -126,7 +127,7 @@ MaterialEditor::MaterialEditor() :
     // Add the treeview
     auto* panel = getControl<wxPanel>("MaterialEditorTreeView");
     _treeView = new MaterialTreeView(panel);
-    _treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &MaterialEditor::_onTreeViewSelectionChanged, this);
+    _treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &MaterialEditor::_onMaterialSelectionChanged, this);
 
     auto* treeToolbar = new wxutil::ResourceTreeViewToolbar(panel, _treeView);
     treeToolbar->EnableFavouriteManagement(false);
@@ -1011,8 +1012,77 @@ void MaterialEditor::updateStageColoredStatus()
     getControl<wxTextCtrl>("MaterialStageAlpha")->Enable(!stageIsColoured);
 }
 
-void MaterialEditor::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
+bool MaterialEditor::saveCurrentMaterial()
 {
+    // TODO
+
+    return true;
+}
+
+void MaterialEditor::revertCurrentMaterial()
+{
+    if (!_material) return;
+
+    // TODO
+}
+
+bool MaterialEditor::askUserAboutModifiedMaterial()
+{
+    // Get the original name
+    std::string origName = _material->getName();
+
+    // Does not make sense to save a null material
+    assert(!origName.empty());
+
+    // The material we're editing has been changed from the saved one
+    wxutil::Messagebox box(_("Save Changes"),
+        fmt::format(_("Do you want to save the changes to the material\n{0}?"), origName),
+        IDialog::MESSAGE_SAVECONFIRMATION);
+
+    auto result = box.run();
+
+    if (result == IDialog::RESULT_YES)
+    {
+        // User wants to save, return true if save was successful
+        return saveCurrentMaterial();
+    }
+    else if (result == IDialog::RESULT_NO)
+    {
+        // Discard changes
+        revertCurrentMaterial();
+        return true;
+    }
+    else if (result == IDialog::RESULT_CANCELLED)
+    {
+        return false; // user cancelled
+    }
+
+    // User doesn't want to save
+    return true;
+}
+
+bool MaterialEditor::isAllowedToChangeMaterial()
+{
+    if (_material && _material->isModified())
+    {
+        return askUserAboutModifiedMaterial();
+    }
+
+    return true;
+}
+
+void MaterialEditor::_onMaterialSelectionChanged(wxDataViewEvent& ev)
+{
+    // Check if the material has been modified and ask for save
+    if (!isAllowedToChangeMaterial())
+    {
+        // Revert the selection and cancel the operation
+        _treeView->Select(_selectedMaterialItem);
+        return;
+    }
+
+    _selectedMaterialItem = _treeView->GetSelection();
+
     // Update the preview if a texture is selected
     if (!_treeView->IsDirectorySelected())
     {
