@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include "ishaders.h"
 
 namespace shaders
 {

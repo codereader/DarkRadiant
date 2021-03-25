@@ -1,5 +1,6 @@
 #include "ImageFileSelector.h"
 
+#include "i18n.h"
 #include "ImageFilePopulator.h"
 
 namespace ui
