@@ -82,6 +82,7 @@
     <ClCompile Include="..\..\..\test\LayerManipulation.cpp" />
     <ClCompile Include="..\..\..\test\MapExport.cpp" />
     <ClCompile Include="..\..\..\test\MapSavingLoading.cpp" />
+    <ClCompile Include="..\..\..\test\MaterialExport.cpp" />
     <ClCompile Include="..\..\..\test\Materials.cpp" />
     <ClCompile Include="..\..\..\test\math\Matrix4.cpp" />
     <ClCompile Include="..\..\..\test\math\Plane3.cpp" />
