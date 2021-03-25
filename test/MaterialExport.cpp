@@ -2,6 +2,7 @@
 
 #include "ishaders.h"
 #include "string/trim.h"
+#include "materials/ParseLib.h"
 #include <fmt/format.h>
 
 namespace test
@@ -58,6 +59,26 @@ TEST_F(MaterialExportTest, PolygonOffset)
 
     material->clearMaterialFlag(Material::FLAG_POLYGONOFFSET);
     expectDefinitionDoesNotContain(material, "polygonOffset");
+}
+
+TEST_F(MaterialExportTest, SurfaceType)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/exporttest/empty");
+
+    EXPECT_EQ(string::trim_copy(material->getDefinition()), "");
+
+    for (const auto& pair : shaders::SurfaceTypeMapping)
+    {
+        material->setSurfaceType(pair.second);
+        expectDefinitionContains(material, pair.first);
+    }
+
+    // Test resetting the surface type to default which should clear the type
+    auto lastSurfaceType = shaders::getStringForSurfaceType(material->getSurfaceType());
+    EXPECT_NE(lastSurfaceType, std::string());
+
+    material->setSurfaceType(Material::SURFTYPE_DEFAULT);
+    expectDefinitionDoesNotContain(material, "lastSurfaceType");
 }
 
 }

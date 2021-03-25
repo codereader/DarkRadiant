@@ -2,6 +2,7 @@
 
 #include "ShaderTemplate.h"
 #include "string/replace.h"
+#include "materials/ParseLib.h"
 #include <fmt/format.h>
 
 namespace shaders
@@ -10,6 +11,11 @@ namespace shaders
 std::ostream& operator<<(std::ostream& stream, ShaderTemplate& shaderTemplate)
 {
     stream << "\n";
+
+    if (shaderTemplate.getSurfaceType() != Material::SURFTYPE_DEFAULT)
+    {
+        stream << "\t" << getStringForSurfaceType(shaderTemplate.getSurfaceType()) << "\n";
+    }
 
     if (!shaderTemplate.getDescription().empty())
     {
