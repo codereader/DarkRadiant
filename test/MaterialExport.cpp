@@ -215,4 +215,55 @@ TEST_F(MaterialExportTest, Spectrum)
     }
 }
 
+TEST_F(MaterialExportTest, Deform)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/exporttest/deform1");
+    expectDefinitionContains(material, "deform");
+
+    // Mark the definition as modified by setting the description
+    material->setDescription("-");
+
+    expectDefinitionContains(material, "deform flare 1.5");
+
+    material = GlobalMaterialManager().getMaterial("textures/exporttest/deform2");
+    expectDefinitionContains(material, "deform");
+
+    // Mark the definition as modified by setting the description
+    material->setDescription("-");
+
+    expectDefinitionContains(material, "deform expand (0.1 * deformexporttesttable[time * (0.3 + time)] - global3)");
+
+    material = GlobalMaterialManager().getMaterial("textures/exporttest/deform3");
+    expectDefinitionContains(material, "deform");
+
+    // Mark the definition as modified by setting the description
+    material->setDescription("-");
+
+    expectDefinitionContains(material, "deform move (1.7 + time + 4.0 - global3)");
+
+    material = GlobalMaterialManager().getMaterial("textures/exporttest/deform4");
+    expectDefinitionContains(material, "deform");
+
+    // Mark the definition as modified by setting the description
+    material->setDescription("-");
+
+    expectDefinitionContains(material, "deform turbulent deformexporttesttable time * 2.0 (parm11 - 4.0) -1.0 * global5");
+
+    material = GlobalMaterialManager().getMaterial("textures/exporttest/deform5");
+    expectDefinitionContains(material, "deform");
+
+    // Mark the definition as modified by setting the description
+    material->setDescription("-");
+
+    expectDefinitionContains(material, "deform particle testparticle");
+
+    material = GlobalMaterialManager().getMaterial("textures/exporttest/deform6");
+    expectDefinitionContains(material, "deform");
+
+    // Mark the definition as modified by setting the description
+    material->setDescription("-");
+
+    expectDefinitionContains(material, "deform particle2 testparticle");
+}
+
 }

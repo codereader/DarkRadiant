@@ -21,3 +21,35 @@ textures/exporttest/guisurf4
 {
     guiSurf	entity3
 }
+
+table deformexporttesttable { { 0, 0, 0, 0, 1, 1 } }
+
+textures/exporttest/deform1
+{
+	deform flare 1.5
+}
+
+textures/exporttest/deform2
+{
+	deform expand (0.1 * deformexporttesttable[time * (0.3+time)] - global3)
+}
+
+textures/exporttest/deform3
+{
+	deform move (1.7 + time + 4 - global3)
+}
+
+textures/exporttest/deform4
+{
+	deform turbulent deformexporttesttable time*2 (parm11-4) -global5
+}
+
+textures/exporttest/deform5
+{
+	deform particle testparticle
+}
+
+textures/exporttest/deform6
+{
+	deform particle2 testparticle
+}

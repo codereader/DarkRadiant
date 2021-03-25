@@ -20,6 +20,7 @@ std::ostream& operator<<(std::ostream& stream, ShaderTemplate& shaderTemplate)
     if (!shaderTemplate.getDescription().empty())
     {
         stream << "\tdescription \"" << string::replace_all_copy(shaderTemplate.getDescription(), "\"", "'") << "\"\n";
+        stream << "\n";
     }
 
     // Go through the material flags which reflect a single keyword
@@ -93,6 +94,44 @@ std::ostream& operator<<(std::ostream& stream, ShaderTemplate& shaderTemplate)
     if (shaderTemplate.getSpectrum() != 0)
     {
         stream << "\tspectrum " << shaderTemplate.getSpectrum() << "\n";
+    }
+
+    if (shaderTemplate.getDeformType() != Material::DEFORM_NONE)
+    {
+        stream << "\tdeform " << getStringForDeformType(shaderTemplate.getDeformType());
+
+        switch (shaderTemplate.getDeformType())
+        {
+        case Material::DEFORM_SPRITE:
+        case Material::DEFORM_TUBE:
+        case Material::DEFORM_EYEBALL:
+            stream << "\n";
+            break;
+        case Material::DEFORM_FLARE:
+        case Material::DEFORM_EXPAND:
+        case Material::DEFORM_MOVE:
+        {
+            auto deformExpression = shaderTemplate.getDeformExpression(0);
+            stream << " " << (deformExpression ? deformExpression->getExpressionString() : "") << "\n";
+            break;
+        }
+        case Material::DEFORM_TURBULENT:
+        {
+            auto deformExpression0 = shaderTemplate.getDeformExpression(0);
+            auto deformExpression1 = shaderTemplate.getDeformExpression(1);
+            auto deformExpression2 = shaderTemplate.getDeformExpression(2);
+
+            stream << " " << shaderTemplate.getDeformDeclName() << " "
+                << (deformExpression0 ? deformExpression0->getExpressionString() : "") << " "
+                << (deformExpression1 ? deformExpression1->getExpressionString() : "") << " "
+                << (deformExpression2 ? deformExpression2->getExpressionString() : "") << "\n";
+            break;
+        }
+        case Material::DEFORM_PARTICLE:
+        case Material::DEFORM_PARTICLE2:
+            stream << " " << shaderTemplate.getDeformDeclName() << "\n";
+            break;
+        }
     }
 
     for (const auto& layer : shaderTemplate.getLayers())
