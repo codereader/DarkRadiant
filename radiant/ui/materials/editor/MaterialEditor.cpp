@@ -1047,7 +1047,7 @@ bool MaterialEditor::askUserAboutModifiedMaterial()
     // The material we're editing has been changed from the saved one
     wxutil::Messagebox box(_("Save Changes"),
         fmt::format(_("Do you want to save the changes to the material\n{0}?"), origName),
-        IDialog::MESSAGE_SAVECONFIRMATION);
+        IDialog::MESSAGE_SAVECONFIRMATION, this);
 
     auto result = box.run();
 
@@ -1113,7 +1113,7 @@ void MaterialEditor::_onRevertMaterial(wxCommandEvent& ev)
     // The material we're editing has been changed from the saved one
     wxutil::Messagebox box(_("Discard Changes"),
         fmt::format(_("Do you want to discard all the changes to the material\n{0}?"), _material->getName()),
-        IDialog::MESSAGE_ASK);
+        IDialog::MESSAGE_ASK, this);
 
     if (box.run() == IDialog::RESULT_YES)
     {
