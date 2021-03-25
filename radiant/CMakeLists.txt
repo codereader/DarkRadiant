@@ -103,9 +103,9 @@ add_executable(darkradiant
                ui/mainframe/TopLevelFrame.cpp
                ui/mapselector/MapSelector.cpp
                ui/materials/MaterialDefinitionView.cpp
-               ui/materials/MaterialEditor.cpp
-               ui/materials/MaterialEditorModule.cpp
-               ui/materials/MaterialPreview.cpp
+               ui/materials/editor/MaterialEditor.cpp
+               ui/materials/editor/MaterialEditorModule.cpp
+               ui/materials/editor/MaterialPreview.cpp
                ui/materials/MaterialPopulator.cpp
                ui/materials/MaterialTreeView.cpp
                ui/animationpreview/AnimationPreview.cpp

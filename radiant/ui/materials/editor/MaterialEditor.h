@@ -10,7 +10,7 @@
 #include "MaterialPreview.h"
 #include "wxutil/SourceView.h"
 
-#include "MaterialTreeView.h"
+#include "../MaterialTreeView.h"
 #include "Binding.h"
 
 namespace ui
