@@ -16,6 +16,13 @@ inline void expectDefinitionContains(const MaterialPtr& material, const std::str
         << "Definition was: \n" << material->getDefinition();
 }
 
+inline void expectDefinitionDoesNotContain(const MaterialPtr& material, const std::string& expectedContainedString)
+{
+    EXPECT_EQ(material->getDefinition().find(expectedContainedString), std::string::npos)
+        << "Material definition contains " << expectedContainedString << " but that shouldn't be the case.\n"
+        << "Definition was: \n" << material->getDefinition();
+}
+
 TEST_F(MaterialExportTest, Description)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/exporttest/empty");
@@ -32,6 +39,25 @@ TEST_F(MaterialExportTest, Description)
     material->setDescription(doubleQuoted);
 
     expectDefinitionContains(material, fmt::format("description \"{0}\"", singleQuoted));
+}
+
+TEST_F(MaterialExportTest, PolygonOffset)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/exporttest/empty");
+
+    EXPECT_EQ(string::trim_copy(material->getDefinition()), "");
+
+    material->setPolygonOffset(0.0);
+    expectDefinitionContains(material, fmt::format("polygonOffset {0}", 0.0));
+
+    material->setPolygonOffset(-1.5);
+    expectDefinitionContains(material, fmt::format("polygonOffset {0}", -1.5));
+
+    material->setPolygonOffset(+1.5);
+    expectDefinitionContains(material, fmt::format("polygonOffset {0}", 1.5));
+
+    material->clearMaterialFlag(Material::FLAG_POLYGONOFFSET);
+    expectDefinitionDoesNotContain(material, "polygonOffset");
 }
 
 }

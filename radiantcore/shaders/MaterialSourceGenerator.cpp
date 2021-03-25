@@ -2,6 +2,7 @@
 
 #include "ShaderTemplate.h"
 #include "string/replace.h"
+#include <fmt/format.h>
 
 namespace shaders
 {
@@ -13,6 +14,11 @@ std::ostream& operator<<(std::ostream& stream, ShaderTemplate& shaderTemplate)
     if (!shaderTemplate.getDescription().empty())
     {
         stream << "\tdescription \"" << string::replace_all_copy(shaderTemplate.getDescription(), "\"", "'") << "\"\n";
+    }
+
+    if (shaderTemplate.getMaterialFlags() & Material::FLAG_POLYGONOFFSET)
+    {
+        stream << fmt::format("\tpolygonOffset {0}\n", shaderTemplate.getPolygonOffset());
     }
 
     for (const auto& layer : shaderTemplate.getLayers())
