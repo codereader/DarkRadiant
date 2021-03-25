@@ -118,4 +118,21 @@ TEST_F(MaterialExportTest, ClampType)
     expectDefinitionDoesNotContain(material, "alphazeroclamp");
 }
 
+TEST_F(MaterialExportTest, CullType)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/exporttest/empty");
+
+    EXPECT_EQ(string::trim_copy(material->getDefinition()), "");
+
+    material->setCullType(Material::CULL_FRONT);
+    expectDefinitionContains(material, "backsided");
+
+    material->setCullType(Material::CULL_NONE);
+    expectDefinitionContains(material, "twosided");
+
+    material->setCullType(Material::CULL_BACK); // This is the default
+    expectDefinitionDoesNotContain(material, "twosided");
+    expectDefinitionDoesNotContain(material, "backsided");
+}
+
 }

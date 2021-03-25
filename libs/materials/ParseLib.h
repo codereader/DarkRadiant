@@ -83,9 +83,9 @@ inline Material::SurfaceType getSurfaceTypeForString(const std::string& surfaceT
 
 constexpr std::pair<const char*, Material::CullType> CullTypes[]
 {
-    { "Frontsided", Material::CULL_BACK },
-    { "Backsided", Material::CULL_FRONT },
-    { "Twosided", Material::CULL_NONE },
+    { "frontsided", Material::CULL_BACK },
+    { "backsided", Material::CULL_FRONT },
+    { "twosided", Material::CULL_NONE },
 };
 
 inline std::string getStringForCullType(Material::CullType type)

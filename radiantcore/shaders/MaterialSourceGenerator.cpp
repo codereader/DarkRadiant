@@ -31,14 +31,22 @@ std::ostream& operator<<(std::ostream& stream, ShaderTemplate& shaderTemplate)
         }
     }
 
+    // Polygon Offset
     if (shaderTemplate.getMaterialFlags() & Material::FLAG_POLYGONOFFSET)
     {
         stream << fmt::format("\tpolygonOffset {0}\n", shaderTemplate.getPolygonOffset());
     }
 
+    // Clamping
     if (shaderTemplate.getClampType() != CLAMP_REPEAT)
     {
         stream << "\t" << getStringForClampType(shaderTemplate.getClampType()) << "\n";
+    }
+
+    // Culling
+    if (shaderTemplate.getCullType() != Material::CULL_BACK)
+    {
+        stream << "\t" << getStringForCullType(shaderTemplate.getCullType()) << "\n";
     }
 
     for (const auto& layer : shaderTemplate.getLayers())
