@@ -33,11 +33,15 @@ CShader::CShader(const std::string& name, const ShaderDefinition& definition, bo
     m_bInUse(false),
     _visible(true)
 {
+    subscribeToTemplateChanges();
+
     // Realise the shader
     realise();
 }
 
-CShader::~CShader() {
+CShader::~CShader()
+{
+    _templateChanged.disconnect();
 	unrealise();
 	GetTextureManager().checkBindings();
 }
@@ -320,6 +324,8 @@ void CShader::revertModifications()
 {
     _template = _originalTemplate;
 
+    subscribeToTemplateChanges();
+
     // We need to update that layer reference vector on change
     unrealise();
     realise();
@@ -543,12 +549,26 @@ void CShader::ensureTemplateCopy()
         return; // copy is already in place
     }
 
+    // Create a clone of the original template
     _template = _originalTemplate->clone();
+
+    subscribeToTemplateChanges();
 
     // We need to update that layer reference vector
     // as long as it's there
     unrealise();
     realise();
+}
+
+void CShader::subscribeToTemplateChanges()
+{
+    // Disconnect from any signal first
+    _templateChanged.disconnect();
+
+    _templateChanged = _template->sig_TemplateChanged().connect([this]()
+    {
+        _sigMaterialModified.emit();
+    });
 }
 
 bool CShader::m_lightingEnabled = false;

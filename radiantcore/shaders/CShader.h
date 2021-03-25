@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ShaderDefinition.h"
+#include <sigc++/connection.h>
 #include <memory>
 
 namespace shaders {
@@ -21,6 +22,8 @@ private:
     // The template this material is working with - if this instance 
     // has not been altered, this is the same as _originalTemplate
 	ShaderTemplatePtr _template;
+
+    sigc::connection _templateChanged;
 
 	// The shader file name (i.e. the file where this one is defined)
 	vfs::FileInfo _fileInfo;
@@ -145,6 +148,7 @@ public:
 
 private:
     void ensureTemplateCopy();
+    void subscribeToTemplateChanges();
 };
 typedef std::shared_ptr<CShader> CShaderPtr;
 

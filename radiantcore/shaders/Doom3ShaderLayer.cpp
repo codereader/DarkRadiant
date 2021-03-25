@@ -704,7 +704,6 @@ void Doom3ShaderLayer::setMapExpressionFromString(const std::string& expression)
     {
         setBindableTexture(MapExpression::createForString(expression));
     }
-
     _material.onLayerChanged();
 }
 

@@ -31,6 +31,8 @@ private:
 	// Temporary current layer (used by the parsing functions)
 	Doom3ShaderLayer::Ptr _currentLayer;
 
+    sigc::signal<void> _sigTemplateChanged;
+
 public:
 
   	// Vector of LayerTemplates representing each stage in the material
@@ -451,7 +453,12 @@ public:
     // Invoked when one of the shader layers has been modified
     void onLayerChanged()
     {
+        _sigTemplateChanged.emit();
+    }
 
+    sigc::signal<void>& sig_TemplateChanged()
+    {
+        return _sigTemplateChanged;
     }
 
 private:
