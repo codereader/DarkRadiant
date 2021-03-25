@@ -180,6 +180,16 @@ TexturePtr Doom3ShaderLayer::getTexture() const
     return _texture;
 }
 
+bool Doom3ShaderLayer::isVisible() const
+{
+    return _enabled && _registers[_expressionSlots[Expression::Condition].registerIndex] != 0;
+}
+
+bool Doom3ShaderLayer::isEnabled() const
+{
+    return _enabled;
+}
+
 BlendFunc Doom3ShaderLayer::getBlendFunc() const
 {
     return blendFuncFromStrings(_blendFuncStrings);
@@ -268,6 +278,8 @@ void Doom3ShaderLayer::setColourExpression(ColourComponentSelector comp, const I
         _expressionSlots[Expression::ColourAlpha].expression = _expressionSlots[Expression::ColourRed].expression;
 		break;
 	};
+
+    _material.onLayerChanged();
 }
 
 void Doom3ShaderLayer::setColour(const Vector4& col)
@@ -367,6 +379,237 @@ const IShaderExpression::Ptr& Doom3ShaderLayer::getAlphaTestExpression() const
     return _expressionSlots[Expression::AlphaTest].expression;
 }
 
+void Doom3ShaderLayer::setAlphaTestExpressionFromString(const std::string& expression)
+{
+    _expressionSlots.assignFromString(Expression::AlphaTest, expression, REG_ZERO);
+}
+
+const shaders::IShaderExpression::Ptr& Doom3ShaderLayer::getConditionExpression() const
+{
+    return _expressionSlots[Expression::Condition].expression;
+}
+
+void Doom3ShaderLayer::setCondition(const IShaderExpression::Ptr& conditionExpr)
+{
+    _expressionSlots.assign(Expression::Condition, conditionExpr, REG_ONE);
+}
+
+void Doom3ShaderLayer::evaluateExpressions(std::size_t time)
+{
+    for (const auto& slot : _expressionSlots)
+    {
+        if (slot.expression)
+        {
+            slot.expression->evaluate(time);
+        }
+    }
+
+    for (const auto& parm : _vertexParms)
+    {
+        if (parm.expression)
+        {
+            parm.expression->evaluate(time);
+        }
+    }
+}
+
+void Doom3ShaderLayer::evaluateExpressions(std::size_t time, const IRenderEntity& entity)
+{
+    for (const auto& slot : _expressionSlots)
+    {
+        if (slot.expression)
+        {
+            slot.expression->evaluate(time, entity);
+        }
+    }
+
+    for (const auto& parm : _vertexParms)
+    {
+        if (parm.expression)
+        {
+            parm.expression->evaluate(time, entity);
+        }
+    }
+}
+
+IShaderExpression::Ptr Doom3ShaderLayer::getExpression(Expression::Slot slot)
+{
+    return _expressionSlots[slot].expression;
+}
+
+void Doom3ShaderLayer::setBindableTexture(NamedBindablePtr btex)
+{
+    _bindableTex = btex;
+}
+
+NamedBindablePtr Doom3ShaderLayer::getBindableTexture() const
+{
+    return _bindableTex;
+}
+
+void Doom3ShaderLayer::setLayerType(IShaderLayer::Type type)
+{
+    _type = type;
+}
+
+IShaderLayer::Type Doom3ShaderLayer::getType() const
+{
+    return _type;
+}
+
+int Doom3ShaderLayer::getStageFlags() const
+{
+    return _stageFlags;
+}
+
+void Doom3ShaderLayer::setStageFlags(int flags)
+{
+    _stageFlags = flags;
+}
+
+void Doom3ShaderLayer::setStageFlag(IShaderLayer::Flags flag)
+{
+    _stageFlags |= flag;
+}
+
+void Doom3ShaderLayer::clearStageFlag(IShaderLayer::Flags flag)
+{
+    _stageFlags &= ~flag;
+}
+
+ClampType Doom3ShaderLayer::getClampType() const
+{
+    return _clampType;
+}
+
+void Doom3ShaderLayer::setClampType(ClampType type)
+{
+    _clampType = type;
+}
+
+IShaderLayer::TexGenType Doom3ShaderLayer::getTexGenType() const
+{
+    return _texGenType;
+}
+
+void Doom3ShaderLayer::setTexGenType(TexGenType type)
+{
+    _texGenType = type;
+}
+
+float Doom3ShaderLayer::getTexGenParam(std::size_t index) const
+{
+    assert(index < 3);
+    auto slot = static_cast<Expression::Slot>(Expression::TexGenParam1 + index);
+    return _registers[_expressionSlots[slot].registerIndex];
+}
+
+IShaderExpression::Ptr Doom3ShaderLayer::getTexGenExpression(std::size_t index) const
+{
+    assert(index < 3);
+    return _expressionSlots[static_cast<Expression::Slot>(Expression::TexGenParam1 + index)].expression;
+}
+
+void Doom3ShaderLayer::setTexGenExpression(std::size_t index, const IShaderExpression::Ptr& expression)
+{
+    assert(index < 3);
+
+    // Store the expression in our list
+    auto slot = static_cast<Expression::Slot>(Expression::TexGenParam1 + index);
+
+    _expressionSlots.assign(slot, expression, REG_ZERO);
+}
+
+void Doom3ShaderLayer::setBlendFuncStrings(const StringPair& func)
+{
+    _blendFuncStrings = func;
+
+    if (_blendFuncStrings.first == "diffusemap")
+    {
+        setLayerType(IShaderLayer::DIFFUSE);
+    }
+    else if (_blendFuncStrings.first == "bumpmap")
+    {
+        setLayerType(IShaderLayer::BUMP);
+    }
+    else if (_blendFuncStrings.first == "specularmap")
+    {
+        setLayerType(IShaderLayer::SPECULAR);
+    }
+    else
+    {
+        setLayerType(IShaderLayer::BLEND);
+    }
+}
+
+const StringPair& Doom3ShaderLayer::getBlendFuncStrings() const
+{
+    return _blendFuncStrings;
+}
+
+void Doom3ShaderLayer::setVertexColourMode(VertexColourMode mode)
+{
+    _vertexColourMode = mode;
+}
+
+void Doom3ShaderLayer::setTexture(const TexturePtr& tex)
+{
+    _texture = tex;
+}
+
+void Doom3ShaderLayer::setCubeMapMode(CubeMapMode mode)
+{
+    _cubeMapMode = mode;
+}
+
+void Doom3ShaderLayer::setAlphaTest(const IShaderExpression::Ptr& expression)
+{
+    _expressionSlots.assign(Expression::AlphaTest, expression, REG_ZERO);
+}
+
+float Doom3ShaderLayer::getRegisterValue(std::size_t index) const
+{
+    assert(index < _registers.size());
+    return _registers[index];
+}
+
+void Doom3ShaderLayer::setRegister(std::size_t index, float value)
+{
+    assert(index < _registers.size());
+    _registers[index] = value;
+}
+
+std::size_t Doom3ShaderLayer::getNewRegister(float newVal)
+{
+    _registers.push_back(newVal);
+    return _registers.size() - 1;
+}
+
+const std::string& Doom3ShaderLayer::getVertexProgram() const
+{
+    return _vertexProgram;
+}
+
+void Doom3ShaderLayer::setVertexProgram(const std::string& name)
+{
+    _vertexProgram = name;
+}
+
+const std::string& Doom3ShaderLayer::getFragmentProgram() const
+{
+    return _fragmentProgram;
+}
+
+void Doom3ShaderLayer::setFragmentProgram(const std::string& name)
+{
+    _fragmentProgram = name;
+}
+
+std::size_t Doom3ShaderLayer::getNumFragmentMaps() const
+{
+    return _fragmentMaps.size();
+}
+
 TexturePtr Doom3ShaderLayer::getFragmentMapTexture(int index) const
 {
 	if (index < 0 || index >= static_cast<int>(_fragmentMaps.size()))
@@ -406,6 +649,16 @@ std::string Doom3ShaderLayer::getMapImageFilename() const
     }
      
     return std::string();
+}
+
+float Doom3ShaderLayer::getPrivatePolygonOffset() const
+{
+    return _privatePolygonOffset;
+}
+
+void Doom3ShaderLayer::setPrivatePolygonOffset(double value)
+{
+    _privatePolygonOffset = static_cast<float>(value);
 }
 
 IMapExpression::Ptr Doom3ShaderLayer::getMapExpression() const

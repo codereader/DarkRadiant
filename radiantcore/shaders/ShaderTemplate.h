@@ -448,6 +448,12 @@ public:
         return _guiDeclName;
     }
 
+    // Invoked when one of the shader layers has been modified
+    void onLayerChanged()
+    {
+
+    }
+
 private:
 
 	// Add the given layer and assigns editor preview layer if applicable

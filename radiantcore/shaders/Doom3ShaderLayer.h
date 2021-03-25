@@ -120,215 +120,79 @@ public:
     bool hasAlphaTest() const override;
     float getAlphaTest() const override;
     const shaders::IShaderExpression::Ptr& getAlphaTestExpression() const override;
-
-    void setAlphaTestExpressionFromString(const std::string& expression) override
-    {
-        _expressionSlots.assignFromString(Expression::AlphaTest, expression, REG_ZERO);
-    }
+    void setAlphaTestExpressionFromString(const std::string& expression) override;
 
     // True if the condition for this stage is fulfilled 
     // (expressions must have been evaluated before this call)
-    bool isVisible() const override
-    {
-        return _enabled && _registers[_expressionSlots[Expression::Condition].registerIndex] != 0;
-    }
+    bool isVisible() const override;
 
-    bool isEnabled() const override
-    {
-        return _enabled;
-    }
+    bool isEnabled() const override;
 
-    const shaders::IShaderExpression::Ptr& getConditionExpression() const override
-    {
-        return _expressionSlots[Expression::Condition].expression;
-    }
+    const shaders::IShaderExpression::Ptr& getConditionExpression() const override;
 
-    void setCondition(const IShaderExpression::Ptr& conditionExpr)
-    {
-        _expressionSlots.assign(Expression::Condition, conditionExpr, REG_ONE);
-    }
+    void setCondition(const IShaderExpression::Ptr& conditionExpr);
 
-    void evaluateExpressions(std::size_t time) 
-    {
-        for (const auto& slot : _expressionSlots)
-        {
-            if (slot.expression)
-            {
-                slot.expression->evaluate(time);
-            }
-        }
+    void evaluateExpressions(std::size_t time) override;
+    void evaluateExpressions(std::size_t time, const IRenderEntity& entity) override;
 
-        for (const auto& parm : _vertexParms)
-        {
-            if (parm.expression)
-            {
-                parm.expression->evaluate(time);
-            }
-        }
-    }
-
-    void evaluateExpressions(std::size_t time, const IRenderEntity& entity)
-    {
-        for (const auto& slot : _expressionSlots)
-        {
-            if (slot.expression)
-            {
-                slot.expression->evaluate(time, entity);
-            }
-        }
-
-        for (const auto& parm : _vertexParms)
-        {
-            if (parm.expression)
-            {
-                parm.expression->evaluate(time, entity);
-            }
-        }
-    }
-
-    shaders::IShaderExpression::Ptr getExpression(Expression::Slot slot) override
-    {
-        return _expressionSlots[slot].expression;
-    }
+    IShaderExpression::Ptr getExpression(Expression::Slot slot) override;
 
     /**
      * \brief
      * Set the bindable texture object.
      */
-    void setBindableTexture(NamedBindablePtr btex)
-    {
-        _bindableTex = btex;
-    }
+    void setBindableTexture(NamedBindablePtr btex);
 
     /**
      * \brief
      * Get the bindable texture object.
      */
-    NamedBindablePtr getBindableTexture() const
-    {
-        return _bindableTex;
-    }
+    NamedBindablePtr getBindableTexture() const;
 
     /**
      * \brief
      * Set the layer type.
      */
-    void setLayerType(IShaderLayer::Type type)
-    {
-        _type = type;
-    }
+    void setLayerType(IShaderLayer::Type type);
 
     /**
      * \brief
      * Get the layer type.
      */
-    IShaderLayer::Type getType() const
-    {
-        return _type;
-    }
+    IShaderLayer::Type getType() const override;
 
-    int getStageFlags() const
-    {
-        return _stageFlags;
-    }
+    int getStageFlags() const override;
 
-    void setStageFlags(int flags)
-    {
-        _stageFlags = flags;
-    }
+    void setStageFlags(int flags);
 
-    void setStageFlag(IShaderLayer::Flags flag) override
-    {
-        _stageFlags |= flag;
-    }
+    void setStageFlag(IShaderLayer::Flags flag) override;
+    void clearStageFlag(IShaderLayer::Flags flag) override;
 
-    void clearStageFlag(IShaderLayer::Flags flag) override
-    {
-        _stageFlags &= ~flag;
-    }
+    ClampType getClampType() const override;
+    void setClampType(ClampType type) override;
 
-    ClampType getClampType() const 
-    {
-        return _clampType;
-    }
+    TexGenType getTexGenType() const override;
+    void setTexGenType(TexGenType type) override;
 
-    void setClampType(ClampType type) override
-    {
-        _clampType = type;
-    }
+    float getTexGenParam(std::size_t index) const override;
 
-    TexGenType getTexGenType() const
-    {
-        return _texGenType;
-    }
+    IShaderExpression::Ptr getTexGenExpression(std::size_t index) const override;
 
-    void setTexGenType(TexGenType type) override
-    {
-        _texGenType = type;
-    }
-
-    float getTexGenParam(std::size_t index) const override
-    {
-        assert(index < 3);
-        auto slot = static_cast<Expression::Slot>(Expression::TexGenParam1 + index);
-        return _registers[_expressionSlots[slot].registerIndex];
-    }
-
-    IShaderExpression::Ptr getTexGenExpression(std::size_t index) const override
-    {
-        assert(index < 3);
-        return _expressionSlots[static_cast<Expression::Slot>(Expression::TexGenParam1 + index)].expression;
-    }
-
-    void setTexGenExpression(std::size_t index, const IShaderExpression::Ptr& expression)
-    {
-        assert(index < 3);
-
-        // Store the expression in our list
-        auto slot = static_cast<Expression::Slot>(Expression::TexGenParam1 + index);
-
-        _expressionSlots.assign(slot, expression, REG_ZERO);
-    }
+    void setTexGenExpression(std::size_t index, const IShaderExpression::Ptr& expression);
 
     /**
      * \brief
      * Set the blend function string.
      */
-    void setBlendFuncStrings(const StringPair& func) override
-    {
-        _blendFuncStrings = func;
+    void setBlendFuncStrings(const StringPair& func) override;
 
-        if (_blendFuncStrings.first == "diffusemap")
-        {
-            setLayerType(IShaderLayer::DIFFUSE);
-        }
-        else if (_blendFuncStrings.first == "bumpmap")
-        {
-            setLayerType(IShaderLayer::BUMP);
-        }
-        else if (_blendFuncStrings.first == "specularmap")
-        {
-            setLayerType(IShaderLayer::SPECULAR);
-        }
-        else
-        {
-            setLayerType(IShaderLayer::BLEND);
-        }
-    }
-
-    const StringPair& getBlendFuncStrings() const override
-    {
-        return _blendFuncStrings;
-    }
+    const StringPair& getBlendFuncStrings() const override;
 
     /**
      * \brief
      * Set vertex colour mode.
      */
-    void setVertexColourMode(VertexColourMode mode) override
-    {
-        _vertexColourMode = mode;
-    }
+    void setVertexColourMode(VertexColourMode mode) override;
 
     /**
      * \brief
@@ -351,10 +215,7 @@ public:
      * Set a texture object (overrides the map expression when getTexture is
      * called).
      */
-    void setTexture(const TexturePtr& tex)
-    {
-        _texture = tex;
-    }
+    void setTexture(const TexturePtr& tex);
 
     void appendTransformation(const Transformation& transform) override;
     const std::vector<Transformation>& getTransformations() override;
@@ -364,50 +225,26 @@ public:
      * \brief
      * Set cube map mode.
      */
-    void setCubeMapMode(CubeMapMode mode)
-    {
-        _cubeMapMode = mode;
-    }
+    void setCubeMapMode(CubeMapMode mode);
 
     /**
      * \brief
      * Set alphatest expression
      */
-    void setAlphaTest(const IShaderExpression::Ptr& expression)
-    {
-        _expressionSlots.assign(Expression::AlphaTest, expression, REG_ZERO);
-    }
+    void setAlphaTest(const IShaderExpression::Ptr& expression);
 
     // Returns the value of the given register
-    float getRegisterValue(std::size_t index) const
-    {
-        assert(index < _registers.size());
-        return _registers[index];
-    }
+    float getRegisterValue(std::size_t index) const;
 
-    void setRegister(std::size_t index, float value)
-    {
-        assert(index < _registers.size());
-        _registers[index] = value;
-    }
+    void setRegister(std::size_t index, float value);
 
     // Allocates a new register, initialised with the given value
-    std::size_t getNewRegister(float newVal)
-    {
-        _registers.push_back(newVal);
-        return _registers.size() - 1;
-    }
+    std::size_t getNewRegister(float newVal);
 
     // Vertex program name
-    const std::string& getVertexProgram() const override
-    {
-        return _vertexProgram;
-    }
+    const std::string& getVertexProgram() const override;
 
-    void setVertexProgram(const std::string& name)
-    {
-        _vertexProgram = name;
-    }
+    void setVertexProgram(const std::string& name);
 
     Vector4 getVertexParmValue(int parm) const override;
     const VertexParm& getVertexParm(int parm) const override;
@@ -417,20 +254,11 @@ public:
     void addVertexParm(const VertexParm& parm);
 
     // Fragment program name
-    const std::string& getFragmentProgram() const override
-    {
-        return _fragmentProgram;
-    }
+    const std::string& getFragmentProgram() const override;
 
-    void setFragmentProgram(const std::string& name)
-    {
-        _fragmentProgram = name;
-    }
+    void setFragmentProgram(const std::string& name);
 
-    std::size_t getNumFragmentMaps() const override
-    {
-        return _fragmentMaps.size();
-    }
+    std::size_t getNumFragmentMaps() const override;
 
     const FragmentMap& getFragmentMap(int index) const override;
 
@@ -438,15 +266,9 @@ public:
 
     void addFragmentMap(const FragmentMap& fragmentMap);
 
-    float getPrivatePolygonOffset() const override
-    {
-        return _privatePolygonOffset;
-    }
+    float getPrivatePolygonOffset() const override;
 
-    void setPrivatePolygonOffset(double value) override
-    {
-        _privatePolygonOffset = static_cast<float>(value);
-    }
+    void setPrivatePolygonOffset(double value) override;
 
     std::string getMapImageFilename() const override;
 
