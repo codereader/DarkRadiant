@@ -13,9 +13,24 @@ MaterialDefinitionView::MaterialDefinitionView(const std::string& shaderName, wx
 	_material = GlobalMaterialManager().getMaterial(shaderName);
 }
 
+MaterialDefinitionView::~MaterialDefinitionView()
+{
+    _materialChanged.disconnect();
+}
+
 void MaterialDefinitionView::setShader(const std::string& shader)
 {
+    _materialChanged.disconnect();
+
 	_material = GlobalMaterialManager().getMaterial(shader);
+
+    if (_material)
+    {
+        _materialChanged = _material->sig_materialChanged().connect(
+            sigc::mem_fun(this, &MaterialDefinitionView::update)
+        );
+    }
+
 	update();
 }
 
