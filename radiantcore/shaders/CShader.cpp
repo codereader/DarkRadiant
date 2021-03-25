@@ -55,14 +55,12 @@ void CShader::setSortRequest(float sortRequest)
 {
     ensureTemplateCopy();
     _template->setSortRequest(sortRequest);
-    _sigMaterialModified.emit();
 }
 
 void CShader::resetSortReqest()
 {
     ensureTemplateCopy();
     _template->resetSortReqest();
-    _sigMaterialModified.emit();
 }
 
 float CShader::getPolygonOffset() const
@@ -74,7 +72,6 @@ void CShader::setPolygonOffset(float offset)
 {
     ensureTemplateCopy();
     _template->setPolygonOffset(offset);
-    _sigMaterialModified.emit();
 }
 
 TexturePtr CShader::getEditorImage()
@@ -104,7 +101,6 @@ void CShader::setLightFalloffExpressionFromString(const std::string& expressionS
 {
     ensureTemplateCopy();
     _template->setLightFalloffExpressionFromString(expressionString);
-    _sigMaterialModified.emit();
 }
 
 IShaderLayer::MapType CShader::getLightFalloffCubeMapType()
@@ -116,7 +112,6 @@ void CShader::setLightFalloffCubeMapType(IShaderLayer::MapType type)
 {
     ensureTemplateCopy();
     _template->setLightFalloffCubeMapType(type);
-    _sigMaterialModified.emit();
 }
 
 /*
@@ -165,7 +160,6 @@ void CShader::setDescription(const std::string& description)
 {
     ensureTemplateCopy();
     _template->setDescription(description);
-    _sigMaterialModified.emit();
 }
 
 bool CShader::IsInUse() const {
@@ -186,14 +180,12 @@ void CShader::setMaterialFlag(Flags flag)
 {
     ensureTemplateCopy();
     _template->setMaterialFlag(flag);
-    _sigMaterialModified.emit();
 }
 
 void CShader::clearMaterialFlag(Flags flag)
 {
     ensureTemplateCopy();
     _template->clearMaterialFlag(flag);
-    _sigMaterialModified.emit();
 }
 
 bool CShader::IsDefault() const
@@ -211,7 +203,6 @@ void CShader::setCullType(CullType type)
 {
     ensureTemplateCopy();
     _template->setCullType(type);
-    _sigMaterialModified.emit();
 }
 
 ClampType CShader::getClampType() const
@@ -223,7 +214,6 @@ void CShader::setClampType(ClampType type)
 {
     ensureTemplateCopy();
     _template->setClampType(type);
-    _sigMaterialModified.emit();
 }
 
 int CShader::getSurfaceFlags() const
@@ -235,14 +225,12 @@ void CShader::setSurfaceFlag(Material::SurfaceFlags flag)
 {
     ensureTemplateCopy();
     _template->setSurfaceFlag(flag);
-    _sigMaterialModified.emit();
 }
 
 void CShader::clearSurfaceFlag(Material::SurfaceFlags flag)
 {
     ensureTemplateCopy();
     _template->clearSurfaceFlag(flag);
-    _sigMaterialModified.emit();
 }
 
 Material::SurfaceType CShader::getSurfaceType() const
@@ -254,7 +242,6 @@ void CShader::setSurfaceType(SurfaceType type)
 {
     ensureTemplateCopy();
     _template->setSurfaceType(type);
-    _sigMaterialModified.emit();
 }
 
 Material::DeformType CShader::getDeformType() const
@@ -281,7 +268,6 @@ void CShader::setSpectrum(int spectrum)
 {
     ensureTemplateCopy();
     _template->setSpectrum(spectrum);
-    _sigMaterialModified.emit();
 }
 
 Material::DecalInfo CShader::getDecalInfo() const
@@ -407,6 +393,7 @@ std::size_t CShader::addLayer(IShaderLayer::Type type)
     unrealiseLighting();
     realiseLighting();
 
+    // We need another signal after the realiseLighting call
     _sigMaterialModified.emit();
 
     return newIndex;
@@ -421,6 +408,7 @@ void CShader::removeLayer(std::size_t index)
     unrealiseLighting();
     realiseLighting();
 
+    // We need another signal after the realiseLighting call
     _sigMaterialModified.emit();
 }
 
@@ -433,6 +421,7 @@ void CShader::swapLayerPosition(std::size_t first, std::size_t second)
     unrealiseLighting();
     realiseLighting();
 
+    // We need another signal after the realiseLighting call
     _sigMaterialModified.emit();
 }
 
@@ -445,6 +434,7 @@ std::size_t CShader::duplicateLayer(std::size_t index)
     unrealiseLighting();
     realiseLighting();
 
+    // We need another signal after the realiseLighting call
     _sigMaterialModified.emit();
 
     return newIndex;
@@ -483,28 +473,24 @@ void CShader::setIsAmbientLight(bool newValue)
 {
     ensureTemplateCopy();
     _template->setIsAmbientLight(newValue);
-    _sigMaterialModified.emit();
 }
 
 void CShader::setIsBlendLight(bool newValue)
 {
     ensureTemplateCopy();
     _template->setIsBlendLight(newValue);
-    _sigMaterialModified.emit();
 }
 
 void CShader::setIsFogLight(bool newValue)
 {
     ensureTemplateCopy();
     _template->setIsFogLight(newValue);
-    _sigMaterialModified.emit();
 }
 
 void CShader::setIsCubicLight(bool newValue)
 {
     ensureTemplateCopy();
     _template->setIsCubicLight(newValue);
-    _sigMaterialModified.emit();
 }
 
 

@@ -166,6 +166,8 @@ public:
 	{
 		if (!_parsed) parseDefinition();
 		description = newDescription;
+
+        onTemplateChanged();
 	}
 
 	int getMaterialFlags()
@@ -178,12 +180,14 @@ public:
     {
         if (!_parsed) parseDefinition();
         _materialFlags |= flag;
+        onTemplateChanged();
     }
 
     void clearMaterialFlag(Material::Flags flag)
     {
         if (!_parsed) parseDefinition();
         _materialFlags &= ~flag;
+        onTemplateChanged();
     }
 
 	Material::CullType getCullType()
@@ -196,6 +200,8 @@ public:
     {
         if (!_parsed) parseDefinition();
         _cullType = type;
+
+        onTemplateChanged();
     }
 
 	ClampType getClampType()
@@ -208,6 +214,8 @@ public:
     {
         if (!_parsed) parseDefinition();
         _clampType = type;
+
+        onTemplateChanged();
     }
 
 	int getSurfaceFlags()
@@ -220,12 +228,16 @@ public:
     {
         if (!_parsed) parseDefinition();
         _surfaceFlags |= flag;
+
+        onTemplateChanged();
     }
 
     void clearSurfaceFlag(Material::SurfaceFlags flag)
     {
         if (!_parsed) parseDefinition();
         _surfaceFlags &= ~flag;
+
+        onTemplateChanged();
     }
 
 	Material::SurfaceType getSurfaceType()
@@ -238,6 +250,7 @@ public:
     {
         if (!_parsed) parseDefinition();
         _surfaceType = type;
+        onTemplateChanged();
     }
 
 	Material::DeformType getDeformType()
@@ -270,6 +283,8 @@ public:
     {
         if (!_parsed) parseDefinition();
         _spectrum = spectrum;
+
+        onTemplateChanged();
     }
 
 	const Material::DecalInfo& getDecalInfo()
@@ -318,24 +333,32 @@ public:
     {
         if (!_parsed) parseDefinition();
         ambientLight = newValue;
+
+        onTemplateChanged();
     }
 
     void setIsBlendLight(bool newValue)
     {
         if (!_parsed) parseDefinition();
         blendLight = newValue;
+
+        onTemplateChanged();
     }
 
     void setIsFogLight(bool newValue)
     {
         if (!_parsed) parseDefinition();
         fogLight = newValue;
+
+        onTemplateChanged();
     }
 
     void setIsCubicLight(bool newValue)
     {
         if (!_parsed) parseDefinition();
         _cubicLight = newValue;
+
+        onTemplateChanged();
     }
 
     float getSortRequest()
@@ -350,6 +373,8 @@ public:
 
         _materialFlags |= Material::FLAG_HAS_SORT_DEFINED;
         _sortReq = sortRequest;
+
+        onTemplateChanged();
     }
 
     void resetSortReqest()
@@ -367,6 +392,8 @@ public:
         {
             _sortReq = Material::SORT_OPAQUE;
         }
+
+        onTemplateChanged();
     }
 
     float getPolygonOffset()
@@ -380,18 +407,14 @@ public:
         if (!_parsed) parseDefinition();
         setMaterialFlag(Material::FLAG_POLYGONOFFSET);
         _polygonOffset = offset;
+
+        onTemplateChanged();
     }
 
 	// Sets the raw block definition contents, will be parsed on demand
-	void setBlockContents(const std::string& blockContents)
-	{
-		_blockContents = blockContents;
-	}
+    void setBlockContents(const std::string& blockContents);
 
-	const std::string& getBlockContents() const
-	{
-		return _blockContents;
-	}
+    const std::string& getBlockContents() const;
 
     /**
      * \brief
@@ -410,6 +433,8 @@ public:
     {
         if (!_parsed) parseDefinition();
         _lightFalloff = MapExpression::createForString(expressionString);
+
+        onTemplateChanged();
     }
     
     IShaderLayer::MapType getLightFalloffCubeMapType()
@@ -422,6 +447,8 @@ public:
     {
         if (!_parsed) parseDefinition();
         _lightFalloffCubeMapType = type;
+
+        onTemplateChanged();
     }
 
     std::size_t addLayer(IShaderLayer::Type type);
@@ -450,10 +477,15 @@ public:
         return _guiDeclName;
     }
 
+    void onTemplateChanged()
+    {
+        _sigTemplateChanged.emit();
+    }
+
     // Invoked when one of the shader layers has been modified
     void onLayerChanged()
     {
-        _sigTemplateChanged.emit();
+        onTemplateChanged();
     }
 
     sigc::signal<void>& sig_TemplateChanged()

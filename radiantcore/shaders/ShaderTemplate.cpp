@@ -1418,11 +1418,15 @@ std::size_t ShaderTemplate::addLayer(IShaderLayer::Type type)
 
     addLayer(std::make_shared<Doom3ShaderLayer>(*this, type, map));
     return _layers.size() - 1;
+
+    onTemplateChanged();
 }
 
 void ShaderTemplate::removeLayer(std::size_t index)
 {
     _layers.erase(_layers.begin() + index);
+
+    onTemplateChanged();
 }
 
 void ShaderTemplate::swapLayerPosition(std::size_t first, std::size_t second)
@@ -1433,6 +1437,8 @@ void ShaderTemplate::swapLayerPosition(std::size_t first, std::size_t second)
     }
 
     _layers[first].swap(_layers[second]);
+
+    onTemplateChanged();
 }
 
 std::size_t ShaderTemplate::duplicateLayer(std::size_t index)
@@ -1443,6 +1449,9 @@ std::size_t ShaderTemplate::duplicateLayer(std::size_t index)
     }
 
     _layers.emplace_back(std::make_shared<Doom3ShaderLayer>(*_layers[index], *this));
+
+    onTemplateChanged();
+
     return _layers.size() - 1;
 }
 
@@ -1480,6 +1489,16 @@ std::string ShaderTemplate::getRenderBumpFlagArguments()
     if (!_parsed) parseDefinition();
 
     return _renderBumpFlatArguments;
+}
+
+void ShaderTemplate::setBlockContents(const std::string& blockContents)
+{
+    _blockContents = blockContents;
+}
+
+const std::string& ShaderTemplate::getBlockContents() const
+{
+    return _blockContents;
 }
 
 } // namespace
