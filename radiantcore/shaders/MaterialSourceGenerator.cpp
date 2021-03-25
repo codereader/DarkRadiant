@@ -89,6 +89,12 @@ std::ostream& operator<<(std::ostream& stream, ShaderTemplate& shaderTemplate)
         }
     }
 
+    // Spectrum
+    if (shaderTemplate.getSpectrum() != 0)
+    {
+        stream << "\tspectrum " << shaderTemplate.getSpectrum() << "\n";
+    }
+
     for (const auto& layer : shaderTemplate.getLayers())
     {
         stream << "\t{\n";

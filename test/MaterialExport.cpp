@@ -194,4 +194,25 @@ TEST_F(MaterialExportTest, Sort)
     expectDefinitionDoesNotContain(material, "sort");
 }
 
+TEST_F(MaterialExportTest, Spectrum)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/exporttest/empty");
+
+    EXPECT_EQ(string::trim_copy(material->getDefinition()), "");
+
+    for (int i = -50; i < 50; ++i)
+    {
+        material->setSpectrum(i);
+
+        if (i != 0)
+        {
+            expectDefinitionContains(material, fmt::format("spectrum {0}", i));
+        }
+        else // spectrum 0 is the default, doesn't need to be declared
+        {
+            expectDefinitionDoesNotContain(material, "spectrum");
+        }
+    }
+}
+
 }
