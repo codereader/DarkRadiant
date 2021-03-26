@@ -1015,4 +1015,31 @@ TEST_F(MaterialsTest, MaterialParserTextureQuality)
     EXPECT_NE(material->getAllLayers().front()->getStageFlags() & IShaderLayer::FLAG_NO_PICMIP, 0);
 }
 
+TEST_F(MaterialsTest, MaterialParserTexGen)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/texgen/normal");
+    EXPECT_EQ(material->getAllLayers().front()->getTexGenType(), IShaderLayer::TEXGEN_NORMAL);
+    EXPECT_FALSE(material->getAllLayers().front()->getTexGenExpression(0));
+    EXPECT_FALSE(material->getAllLayers().front()->getTexGenExpression(1));
+    EXPECT_FALSE(material->getAllLayers().front()->getTexGenExpression(2));
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/texgen/reflect");
+    EXPECT_EQ(material->getAllLayers().front()->getTexGenType(), IShaderLayer::TEXGEN_REFLECT);
+    EXPECT_FALSE(material->getAllLayers().front()->getTexGenExpression(0));
+    EXPECT_FALSE(material->getAllLayers().front()->getTexGenExpression(1));
+    EXPECT_FALSE(material->getAllLayers().front()->getTexGenExpression(2));
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/texgen/skybox");
+    EXPECT_EQ(material->getAllLayers().front()->getTexGenType(), IShaderLayer::TEXGEN_SKYBOX);
+    EXPECT_FALSE(material->getAllLayers().front()->getTexGenExpression(0));
+    EXPECT_FALSE(material->getAllLayers().front()->getTexGenExpression(1));
+    EXPECT_FALSE(material->getAllLayers().front()->getTexGenExpression(2));
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/texgen/wobblesky");
+    EXPECT_EQ(material->getAllLayers().front()->getTexGenType(), IShaderLayer::TEXGEN_WOBBLESKY);
+    EXPECT_EQ(material->getAllLayers().front()->getTexGenExpression(0)->getExpressionString(), "1.0");
+    EXPECT_EQ(material->getAllLayers().front()->getTexGenExpression(1)->getExpressionString(), "0.5");
+    EXPECT_EQ(material->getAllLayers().front()->getTexGenExpression(2)->getExpressionString(), "(time * 0.6)");
+}
+
 }

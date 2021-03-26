@@ -106,6 +106,27 @@ std::ostream& operator<<(std::ostream& stream, Doom3ShaderLayer& layer)
         stream << "\t\tnopicmip\n";
     }
 
+    // Texgen
+    if (layer.getTexGenType() == IShaderLayer::TEXGEN_REFLECT)
+    {
+        stream << "\t\ttexgen reflect\n";
+    }
+    else if (layer.getTexGenType() == IShaderLayer::TEXGEN_SKYBOX)
+    {
+        stream << "\t\ttexgen skybox\n";
+    }
+    else if (layer.getTexGenType() == IShaderLayer::TEXGEN_WOBBLESKY)
+    {
+        auto expr0 = layer.getTexGenExpression(0);
+        auto expr1 = layer.getTexGenExpression(1);
+        auto expr2 = layer.getTexGenExpression(2);
+        
+        stream << "\t\ttexgen wobblesky " << 
+            (expr0 ? expr0->getExpressionString() : "") << " " <<
+            (expr1 ? expr1->getExpressionString() : "") << " " <<
+            (expr2 ? expr2->getExpressionString() : "") << "\n";
+    }
+
     stream << "\t}\n";
 
     return stream;

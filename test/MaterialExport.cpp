@@ -576,4 +576,27 @@ TEST_F(MaterialExportTest, TextureQuality)
     expectDefinitionDoesNotContain(material, "nopicmip");
 }
 
+TEST_F(MaterialExportTest, TexGen)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/exporttest/empty");
+
+    EXPECT_EQ(string::trim_copy(material->getDefinition()), "");
+
+    auto layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+    layer->setTexGenType(IShaderLayer::TEXGEN_NORMAL);
+    expectDefinitionDoesNotContain(material, "texgen");
+
+    layer->setTexGenType(IShaderLayer::TEXGEN_REFLECT);
+    expectDefinitionContains(material, "texgen reflect");
+
+    layer->setTexGenType(IShaderLayer::TEXGEN_SKYBOX);
+    expectDefinitionContains(material, "texgen skybox");
+
+    layer->setTexGenType(IShaderLayer::TEXGEN_WOBBLESKY);
+    layer->setTexGenExpressionFromString(0, "1");
+    layer->setTexGenExpressionFromString(1, "0.5");
+    layer->setTexGenExpressionFromString(2, "(time * 0.6)");
+    expectDefinitionContains(material, "texgen wobblesky 1.0 0.5 (time * 0.6)");
+}
+
 }

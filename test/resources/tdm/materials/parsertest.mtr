@@ -572,12 +572,12 @@ textures/parsertest/texgen/skybox
 	}
 }
 
-textures/parsertest/texgen/skybox
+textures/parsertest/texgen/wobblesky
 {
 	{
 		blend diffusemap
 		map _white
-        texgen skybox
+        texgen wobblesky 1.0 0.5 (time*0.6)
 	}
 }
 
