@@ -1008,4 +1008,17 @@ TEST_F(MaterialExportTest, FragmentPrograms)
     expectDefinitionContains(material, "fragmentMap 2 temp/texture");
 }
 
+TEST_F(MaterialExportTest, EditorImage)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/exporttest/empty");
+
+    EXPECT_EQ(string::trim_copy(material->getDefinition()), "");
+
+    material->setEditorImageExpressionFromString("textures/numbers/0.tga");
+    expectDefinitionContains(material, "qer_editorimage textures/numbers/0.tga");
+
+    material->setEditorImageExpressionFromString("");
+    expectDefinitionDoesNotContain(material, "qer_editorimage");
+}
+
 }

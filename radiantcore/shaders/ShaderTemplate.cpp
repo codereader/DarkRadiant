@@ -79,13 +79,7 @@ void ShaderTemplate::setEditorImageExpressionFromString(const std::string& expre
 {
     if (!_parsed) parseDefinition();
 
-    if (expression.empty())
-    {
-        _editorTex.reset();
-        return;
-    }
-
-    _editorTex = MapExpression::createForString(expression);
+    _editorTex = !expression.empty() ? MapExpression::createForString(expression) : MapExpressionPtr();
     onTemplateChanged();
 }
 

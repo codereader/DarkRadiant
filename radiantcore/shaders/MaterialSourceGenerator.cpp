@@ -355,6 +355,11 @@ std::ostream& operator<<(std::ostream& stream, ShaderTemplate& shaderTemplate)
 {
     stream << "\n";
 
+    if (shaderTemplate.getEditorTexture())
+    {
+        stream << "\tqer_editorimage " << shaderTemplate.getEditorTexture()->getExpressionString() << "\n";
+    }
+
     if (shaderTemplate.getSurfaceType() != Material::SURFTYPE_DEFAULT)
     {
         stream << "\t" << getStringForSurfaceType(shaderTemplate.getSurfaceType()) << "\n";
