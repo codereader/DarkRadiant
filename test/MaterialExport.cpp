@@ -461,4 +461,66 @@ TEST_F(MaterialExportTest, StageBlendTypes)
     }
 }
 
+TEST_F(MaterialExportTest, StageMaps)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/exporttest/empty");
+
+    EXPECT_EQ(string::trim_copy(material->getDefinition()), "");
+
+    auto layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+    layer->setMapType(IShaderLayer::MapType::CubeMap);
+    layer->setMapExpressionFromString("env/shot");
+    expectDefinitionContains(material, "cubeMap env/shot");
+
+    material->revertModifications();
+
+    layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+    layer->setMapType(IShaderLayer::MapType::CameraCubeMap);
+    layer->setMapExpressionFromString("env/shot");
+    expectDefinitionContains(material, "cameraCubeMap env/shot");
+
+    material->revertModifications();
+
+    layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+    layer->setMapType(IShaderLayer::MapType::MirrorRenderMap);
+    layer->setRenderMapSize(Vector2(512, 256));
+    expectDefinitionContains(material, "mirrorRenderMap 512, 256");
+
+    material->revertModifications();
+
+    layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+    layer->setMapType(IShaderLayer::MapType::RemoteRenderMap);
+    layer->setRenderMapSize(Vector2(512, 256));
+    expectDefinitionContains(material, "remoteRenderMap 512, 256");
+
+    material->revertModifications();
+
+    layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+    layer->setMapType(IShaderLayer::MapType::VideoMap);
+    layer->setVideoMapProperties("guis/videos/test", false);
+    expectDefinitionContains(material, "videoMap guis/videos/test");
+
+    material->revertModifications();
+
+    layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+    layer->setMapType(IShaderLayer::MapType::VideoMap);
+    layer->setVideoMapProperties("guis/videos/test", true);
+    expectDefinitionContains(material, "videoMap loop guis/videos/test");
+
+    material->revertModifications();
+
+    layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+    layer->setMapType(IShaderLayer::MapType::SoundMap);
+    layer->setSoundMapWaveForm(false);
+    expectDefinitionContains(material, "soundMap");
+    expectDefinitionDoesNotContain(material, "waveform");
+
+    material->revertModifications();
+
+    layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+    layer->setMapType(IShaderLayer::MapType::SoundMap);
+    layer->setSoundMapWaveForm(true);
+    expectDefinitionContains(material, "soundMap waveform");
+}
+
 }

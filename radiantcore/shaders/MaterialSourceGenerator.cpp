@@ -31,9 +31,52 @@ std::ostream& operator<<(std::ostream& stream, Doom3ShaderLayer& layer)
     }
 
     // Map
+    auto mapExpr = layer.getMapExpression();
+
     if (layer.getMapExpression())
     {
-        stream << "\t\tmap " << layer.getMapExpression()->getExpressionString() << "\n";
+        stream << "\t\t";
+
+        switch (layer.getMapType())
+        {
+        case IShaderLayer::MapType::Map:
+            stream << "map " << mapExpr->getExpressionString() << "\n";
+            break;
+        case IShaderLayer::MapType::CubeMap:
+            stream << "cubeMap " << mapExpr->getExpressionString() << "\n";
+            break;
+        case IShaderLayer::MapType::CameraCubeMap:
+            stream << "cameraCubeMap " << mapExpr->getExpressionString() << "\n";
+            break;
+        case IShaderLayer::MapType::MirrorRenderMap:
+            stream << "mirrorRenderMap " << static_cast<int>(layer.getRenderMapSize().x()) << ", " 
+                << static_cast<int>(layer.getRenderMapSize().y()) << "\n";
+            break;
+        case IShaderLayer::MapType::RemoteRenderMap:
+            stream << "remoteRenderMap " << static_cast<int>(layer.getRenderMapSize().x()) << ", " 
+                << static_cast<int>(layer.getRenderMapSize().y()) << "\n";
+            break;
+        case IShaderLayer::MapType::VideoMap:
+        {
+            auto videoMap = std::dynamic_pointer_cast<IVideoMapExpression>(mapExpr);
+
+            if (videoMap)
+            {
+                stream << "videoMap " << (videoMap->isLooping() ? "loop " : "") << videoMap->getExpressionString() << "\n";
+            }
+            break;
+        }
+        case IShaderLayer::MapType::SoundMap:
+        {
+            auto soundMap = std::dynamic_pointer_cast<ISoundMapExpression>(mapExpr);
+
+            if (soundMap)
+            {
+                stream << "soundMap " << (soundMap->isWaveform() ? "waveform\n" : "\n");
+            }
+            break;
+        }
+        } // switch
     }
 
     stream << "\t}\n";
