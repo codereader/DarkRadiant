@@ -680,3 +680,88 @@ textures/parsertest/clamping/alphazeroclamp
         alphazeroclamp
 	}
 }
+
+textures/parsertest/stageflags/ignorealphatest
+{
+	{
+		blend diffusemap
+		map _white
+        ignoreAlphaTest
+	}
+}
+
+textures/parsertest/stageflags/ignoredepth
+{
+	{
+		blend diffusemap
+		map _white
+        ignoreDepth
+	}
+}
+
+textures/parsertest/stageflags/maskRed
+{
+	{
+		blend diffusemap
+		map _white
+        maskRed
+	}
+}
+
+textures/parsertest/stageflags/maskGreen
+{
+	{
+		blend diffusemap
+		map _white
+        maskGreen
+	}
+}
+
+textures/parsertest/stageflags/maskBlue
+{
+	{
+		blend diffusemap
+		map _white
+        maskBlue
+	}
+}
+
+textures/parsertest/stageflags/maskAlpha
+{
+	{
+		blend diffusemap
+		map _white
+        maskAlpha
+	}
+}
+
+textures/parsertest/stageflags/maskColor
+{
+	{
+		blend diffusemap
+		map _white
+        maskColor
+	}
+}
+
+textures/parsertest/stageflags/maskDepth
+{
+	{
+		blend diffusemap
+		map _white
+        maskDepth
+	}
+}
+
+textures/parsertest/stageflags/maskEverything
+{
+	{
+		blend diffusemap
+		map _white
+        maskRed
+        maskGreen
+        maskBlue
+        maskAlpha
+        maskDepth
+	}
+}

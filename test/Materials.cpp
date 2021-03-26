@@ -1057,4 +1057,29 @@ TEST_F(MaterialsTest, MaterialParserStageClamp)
     EXPECT_EQ(material->getAllLayers().front()->getClampType(), CLAMP_ALPHAZEROCLAMP);
 }
 
+TEST_F(MaterialsTest, MaterialParserStageFlags)
+{
+    constexpr std::pair<const char*, int> testCases[] =
+    {
+        { "textures/parsertest/stageflags/ignorealphatest", IShaderLayer::FLAG_IGNORE_ALPHATEST },
+        { "textures/parsertest/stageflags/ignoredepth", IShaderLayer::FLAG_IGNORE_DEPTH },
+        { "textures/parsertest/stageflags/maskRed", IShaderLayer::FLAG_MASK_RED },
+        { "textures/parsertest/stageflags/maskGreen", IShaderLayer::FLAG_MASK_GREEN },
+        { "textures/parsertest/stageflags/maskBlue", IShaderLayer::FLAG_MASK_BLUE },
+        { "textures/parsertest/stageflags/maskAlpha", IShaderLayer::FLAG_MASK_ALPHA },
+        { "textures/parsertest/stageflags/maskDepth", IShaderLayer::FLAG_MASK_DEPTH },
+        { "textures/parsertest/stageflags/maskEverything", 
+            (IShaderLayer::FLAG_MASK_RED | IShaderLayer::FLAG_MASK_GREEN |
+             IShaderLayer::FLAG_MASK_BLUE | IShaderLayer::FLAG_MASK_ALPHA | IShaderLayer::FLAG_MASK_DEPTH) },
+        { "textures/parsertest/stageflags/maskColor",
+            (IShaderLayer::FLAG_MASK_RED | IShaderLayer::FLAG_MASK_GREEN | IShaderLayer::FLAG_MASK_BLUE) },
+    };
+
+    for (const auto& testCase : testCases)
+    {
+        auto material = GlobalMaterialManager().getMaterial(testCase.first);
+        EXPECT_EQ(material->getAllLayers().front()->getStageFlags() & testCase.second, testCase.second);
+    }
+}
+
 }

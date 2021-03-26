@@ -133,6 +133,51 @@ std::ostream& operator<<(std::ostream& stream, Doom3ShaderLayer& layer)
         stream << "\t\t" << shaders::getStringForClampType(layer.getClampType()) << "\n";
     }
 
+    if (layer.getStageFlags() & IShaderLayer::FLAG_IGNORE_ALPHATEST)
+    {
+        stream << "\t\tignoreAlphaTest\n";
+    }
+
+    if (layer.getStageFlags() & IShaderLayer::FLAG_IGNORE_DEPTH)
+    {
+        stream << "\t\tignoreDepth\n";
+    }
+
+    auto coloredMask = IShaderLayer::FLAG_MASK_RED | IShaderLayer::FLAG_MASK_GREEN | IShaderLayer::FLAG_MASK_BLUE;
+
+    // Summarise red+green+blue to maskColor if possible
+    if ((layer.getStageFlags() & coloredMask) == coloredMask)
+    {
+        stream << "\t\tmaskColor\n";
+    }
+    else
+    {
+        if (layer.getStageFlags() & IShaderLayer::FLAG_MASK_RED)
+        {
+            stream << "\t\tmaskRed\n";
+        }
+
+        if (layer.getStageFlags() & IShaderLayer::FLAG_MASK_GREEN)
+        {
+            stream << "\t\tmaskGreen\n";
+        }
+
+        if (layer.getStageFlags() & IShaderLayer::FLAG_MASK_BLUE)
+        {
+            stream << "\t\tmaskBlue\n";
+        }
+    }
+
+    if (layer.getStageFlags() & IShaderLayer::FLAG_MASK_ALPHA)
+    {
+        stream << "\t\tmaskAlpha\n";
+    }
+
+    if (layer.getStageFlags() & IShaderLayer::FLAG_MASK_DEPTH)
+    {
+        stream << "\t\tmaskDepth\n";
+    }
+
     stream << "\t}\n";
 
     return stream;

@@ -626,4 +626,74 @@ TEST_F(MaterialExportTest, StageClamp)
     expectDefinitionContains(material, "alphazeroclamp");
 }
 
+TEST_F(MaterialExportTest, StageFlags)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/exporttest/empty");
+
+    EXPECT_EQ(string::trim_copy(material->getDefinition()), "");
+
+    auto layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+    layer->setStageFlag(IShaderLayer::FLAG_IGNORE_ALPHATEST);
+    expectDefinitionContains(material, "ignoreAlphaTest");
+
+    layer->clearStageFlag(IShaderLayer::FLAG_IGNORE_ALPHATEST);
+    expectDefinitionDoesNotContain(material, "ignoreAlphaTest");
+
+    layer->setStageFlag(IShaderLayer::FLAG_IGNORE_DEPTH);
+    expectDefinitionContains(material, "ignoreDepth");
+
+    layer->clearStageFlag(IShaderLayer::FLAG_IGNORE_DEPTH);
+    expectDefinitionDoesNotContain(material, "ignoreDepth");
+
+    layer->setStageFlag(IShaderLayer::FLAG_MASK_RED);
+    expectDefinitionContains(material, "maskRed");
+
+    layer->clearStageFlag(IShaderLayer::FLAG_MASK_RED);
+    expectDefinitionDoesNotContain(material, "maskRed");
+
+    layer->setStageFlag(IShaderLayer::FLAG_MASK_GREEN);
+    expectDefinitionContains(material, "maskGreen");
+
+    layer->clearStageFlag(IShaderLayer::FLAG_MASK_GREEN);
+    expectDefinitionDoesNotContain(material, "maskGreen");
+
+    layer->setStageFlag(IShaderLayer::FLAG_MASK_BLUE);
+    expectDefinitionContains(material, "maskBlue");
+
+    layer->clearStageFlag(IShaderLayer::FLAG_MASK_BLUE);
+    expectDefinitionDoesNotContain(material, "maskBlue");
+
+    layer->setStageFlag(IShaderLayer::FLAG_MASK_ALPHA);
+    expectDefinitionContains(material, "maskAlpha");
+
+    layer->clearStageFlag(IShaderLayer::FLAG_MASK_ALPHA);
+    expectDefinitionDoesNotContain(material, "maskAlpha");
+
+    layer->setStageFlag(IShaderLayer::FLAG_MASK_DEPTH);
+    expectDefinitionContains(material, "maskDepth");
+
+    layer->clearStageFlag(IShaderLayer::FLAG_MASK_DEPTH);
+    expectDefinitionDoesNotContain(material, "maskDepth");
+
+    layer->setStageFlag(IShaderLayer::FLAG_MASK_RED);
+    layer->setStageFlag(IShaderLayer::FLAG_MASK_GREEN);
+    layer->setStageFlag(IShaderLayer::FLAG_MASK_BLUE);
+    expectDefinitionContains(material, "maskColor");
+    expectDefinitionDoesNotContain(material, "maskRed");
+    expectDefinitionDoesNotContain(material, "maskGreen");
+    expectDefinitionDoesNotContain(material, "maskBlue");
+
+    layer->setStageFlag(IShaderLayer::FLAG_MASK_RED);
+    layer->setStageFlag(IShaderLayer::FLAG_MASK_GREEN);
+    layer->setStageFlag(IShaderLayer::FLAG_MASK_BLUE);
+    layer->setStageFlag(IShaderLayer::FLAG_MASK_ALPHA);
+    layer->setStageFlag(IShaderLayer::FLAG_MASK_DEPTH);
+    expectDefinitionContains(material, "maskColor");
+    expectDefinitionDoesNotContain(material, "maskRed");
+    expectDefinitionDoesNotContain(material, "maskGreen");
+    expectDefinitionDoesNotContain(material, "maskBlue");
+    expectDefinitionContains(material, "maskAlpha");
+    expectDefinitionContains(material, "maskDepth");
+}
+
 }
