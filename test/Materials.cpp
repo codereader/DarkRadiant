@@ -1228,4 +1228,15 @@ TEST_F(MaterialsTest, MaterialParserStageAlphaTest)
     EXPECT_EQ(layer->getAlphaTestExpression()->getExpressionString(), "sinTable[time]");
 }
 
+TEST_F(MaterialsTest, MaterialParserStageCondition)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/notransform");
+    EXPECT_FALSE(material->getAllLayers().at(0)->getConditionExpression());
+    
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/condition");
+
+    auto layer = material->getAllLayers().at(0);
+    EXPECT_EQ(material->getAllLayers().at(0)->getConditionExpression()->getExpressionString(), "(parm4 > 0.0)");
+}
+
 }

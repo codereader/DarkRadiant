@@ -13,6 +13,12 @@ std::ostream& operator<<(std::ostream& stream, Doom3ShaderLayer& layer)
 {
     stream << "\t{\n";
 
+    // Condition goes first
+    if (layer.getConditionExpression())
+    {
+        stream << "\t\tif " << layer.getConditionExpression()->getExpressionString() << "\n";
+    }
+
     // Blend types
     const auto& blendFunc = layer.getBlendFuncStrings();
 

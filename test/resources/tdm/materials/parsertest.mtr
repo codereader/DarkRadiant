@@ -895,3 +895,12 @@ textures/parsertest/alphaTest
 		alphaTest sinTable[time]
 	}
 }
+
+textures/parsertest/condition
+{
+    {
+        if (parm4 > 0)
+		blend diffusemap
+		map _white
+	}
+}

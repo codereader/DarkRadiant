@@ -898,6 +898,15 @@ void Doom3ShaderLayer::setColourExpressionFromString(ColourComponentSelector com
 void Doom3ShaderLayer::setConditionExpressionFromString(const std::string& expression)
 {
     _expressionSlots.assignFromString(Expression::Condition, expression, REG_ONE);
+
+    // Make sure the condition expression is surrounded by parens
+    auto condition = std::dynamic_pointer_cast<ShaderExpression>(_expressionSlots[Expression::Condition].expression);
+    
+    if (condition)
+    {
+        condition->setIsSurroundedByParentheses(true);
+    }
+
     _material.onLayerChanged();
 }
 

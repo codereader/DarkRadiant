@@ -880,7 +880,6 @@ TEST_F(MaterialExportTest, StageTransforms)
     expectDefinitionDoesNotContainAnyOf(material, { "shear", "centerScale", "scroll" });
 }
 
-
 TEST_F(MaterialExportTest, StageAlphaTest)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/exporttest/empty");
@@ -902,6 +901,32 @@ TEST_F(MaterialExportTest, StageAlphaTest)
     layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
     layer->setAlphaTestExpressionFromString("");
     expectDefinitionDoesNotContain(material, "alphaTest");
+}
+
+TEST_F(MaterialExportTest, StageCondition)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/exporttest/empty");
+
+    EXPECT_EQ(string::trim_copy(material->getDefinition()), "");
+
+    // Add condition without parentheses
+    auto layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+    layer->setConditionExpressionFromString("parm5 > 3");
+    expectDefinitionContains(material, "if (parm5 > 3.0)");
+
+    material->revertModifications();
+
+    // Add condition with parentheses
+    layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+    layer->setConditionExpressionFromString("(parm5 > 3");
+    expectDefinitionContains(material, "if (parm5 > 3.0)");
+
+    material->revertModifications();
+
+    // Clear condition
+    layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+    layer->setConditionExpressionFromString("");
+    expectDefinitionDoesNotContain(material, "if");
 }
 
 }
