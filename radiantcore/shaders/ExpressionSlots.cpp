@@ -79,6 +79,24 @@ void ExpressionSlots::assignFromString(IShaderLayer::Expression::Slot slot, cons
     assign(slot, expression, defaultRegisterIndex);
 }
 
+bool ExpressionSlots::expressionsAreEquivalent(IShaderLayer::Expression::Slot slotA, IShaderLayer::Expression::Slot slotB) const
+{
+    auto a = at(slotA);
+    auto b = at(slotB);
+
+    if (a.expression == b.expression)
+    {
+        return true;
+    }
+
+    if (a.expression && b.expression)
+    {
+        return a.expression->getExpressionString() == b.expression->getExpressionString();
+    }
+
+    return false;
+}
+
 bool ExpressionSlots::registerIsShared(std::size_t index) const
 {
     std::size_t useCount = 0;

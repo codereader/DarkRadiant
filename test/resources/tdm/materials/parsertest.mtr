@@ -765,3 +765,78 @@ textures/parsertest/stageflags/maskEverything
         maskDepth
 	}
 }
+
+textures/parsertest/vertexcolours/none
+{
+	diffusemap _white
+}
+
+textures/parsertest/vertexcolours/vertexcolour
+{
+	{
+		blend diffusemap
+		map _white
+        vertexColor
+	}
+    {
+		blend diffusemap
+		map _white
+        inverseVertexColor
+	}
+}
+
+textures/parsertest/vertexcolours/colourcomponents
+{
+	{
+		blend diffusemap
+		map _white
+        red 0.5
+	}
+    {
+		blend diffusemap
+		map _white
+        green 0.4
+	}
+    {
+		blend diffusemap
+		map _white
+        blue 0.3
+	}
+    {
+		blend diffusemap
+		map _white
+        alpha 0.2
+	}
+}
+
+textures/parsertest/vertexcolours/combinations
+{
+	{
+		blend diffusemap
+		map _white
+        red 0.5
+        green 0.5
+        blue 0.5
+        alpha time // alpha is different
+	}
+    {
+		blend diffusemap
+		map _white
+        red 0.5
+        green 0.5
+        blue 0.5
+        alpha 0.5
+	}
+    {
+		blend diffusemap
+		map _white
+        rgb 0.3
+        red 0.4
+	}
+    {
+		blend diffusemap
+		map _white
+        rgba 0.2
+        alpha time
+	}
+}

@@ -224,17 +224,18 @@ const IShaderExpression::Ptr& Doom3ShaderLayer::getColourExpression(ColourCompon
     case COMP_ALPHA:
         return _expressionSlots[Expression::ColourAlpha].expression;
     case COMP_RGB:
-        // Select if all RGB are using the same expression
-        if (_expressionSlots[Expression::ColourRed].expression == _expressionSlots[Expression::ColourGreen].expression && 
-            _expressionSlots[Expression::ColourGreen].expression == _expressionSlots[Expression::ColourBlue].expression)
+        // Select if all RGB components are using equivalent expressions
+        if (_expressionSlots.expressionsAreEquivalent(Expression::ColourRed, Expression::ColourGreen) &&
+            _expressionSlots.expressionsAreEquivalent(Expression::ColourGreen, Expression::ColourBlue))
         {
             return _expressionSlots[Expression::ColourRed].expression;
         }
         break;
     case COMP_RGBA:
-        if (_expressionSlots[Expression::ColourRed].expression == _expressionSlots[Expression::ColourGreen].expression &&
-            _expressionSlots[Expression::ColourGreen].expression == _expressionSlots[Expression::ColourBlue].expression &&
-            _expressionSlots[Expression::ColourBlue].expression == _expressionSlots[Expression::ColourAlpha].expression)
+        // Select if all RGBA components are using equivalent expressions
+        if (_expressionSlots.expressionsAreEquivalent(Expression::ColourRed, Expression::ColourGreen) &&
+            _expressionSlots.expressionsAreEquivalent(Expression::ColourGreen, Expression::ColourBlue) &&
+            _expressionSlots.expressionsAreEquivalent(Expression::ColourBlue, Expression::ColourAlpha))
         {
             return _expressionSlots[Expression::ColourRed].expression;
         }
