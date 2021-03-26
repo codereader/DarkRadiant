@@ -102,6 +102,9 @@ public:
     // The string value specified by the guisurf keyword, if other than entity[2]3]
     std::string _guiDeclName;
 
+    // The three ambient rim colour expressions (empty if not defined)
+    IShaderExpression::Ptr _ambientRimColour[3];
+
     // Private copy ctor, used for cloning
     ShaderTemplate(const ShaderTemplate& other);
 
@@ -482,6 +485,12 @@ public:
     {
         if (!_parsed) parseDefinition();
         return _guiDeclName;
+    }
+
+    IShaderExpression::Ptr getAmbientRimColourExpression(std::size_t index)
+    {
+        assert(index < 3);
+        return _ambientRimColour[index];
     }
 
     void onTemplateChanged()

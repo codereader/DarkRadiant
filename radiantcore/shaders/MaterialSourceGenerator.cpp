@@ -553,6 +553,16 @@ std::ostream& operator<<(std::ostream& stream, ShaderTemplate& shaderTemplate)
         }
     }
 
+    // AmbientRimColor
+    if (shaderTemplate.getAmbientRimColourExpression(0) && 
+        shaderTemplate.getAmbientRimColourExpression(1) && 
+        shaderTemplate.getAmbientRimColourExpression(2))
+    {
+        stream << "\tambientRimColor " << shaderTemplate.getAmbientRimColourExpression(0)->getExpressionString() << ", " 
+            << shaderTemplate.getAmbientRimColourExpression(1)->getExpressionString() << ", "
+            << shaderTemplate.getAmbientRimColourExpression(2)->getExpressionString() << "\n";
+    }
+
     for (const auto& layer : shaderTemplate.getLayers())
     {
         stream << *layer;

@@ -1021,4 +1021,12 @@ TEST_F(MaterialExportTest, EditorImage)
     expectDefinitionDoesNotContain(material, "qer_editorimage");
 }
 
+TEST_F(MaterialExportTest, AmbientRimColour)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/withAmbientRimColor");
+
+    material->setDescription("-");
+    expectDefinitionContains(material, "ambientRimColor parm1 * 3.0, 0.0, time * 6.0");
+}
+
 }

@@ -56,6 +56,10 @@ ShaderTemplate::ShaderTemplate(const ShaderTemplate& other) :
     _parseFlags(other._parseFlags),
     _guiDeclName(other._guiDeclName)
 {
+    _ambientRimColour[0] = other._ambientRimColour[0];
+    _ambientRimColour[1] = other._ambientRimColour[1];
+    _ambientRimColour[2] = other._ambientRimColour[2];
+
     // Clone the layers
     for (const auto& otherLayer : other._layers)
     {
@@ -444,6 +448,9 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
         if (red && green && blue)
         {
             // ambientrimcolor support not yet added, we need material registers first
+            _ambientRimColour[0] = red;
+            _ambientRimColour[1] = green;
+            _ambientRimColour[2] = blue;
         }
         else
         {
