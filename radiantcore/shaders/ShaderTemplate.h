@@ -436,7 +436,8 @@ public:
     void setLightFalloffExpressionFromString(const std::string& expressionString)
     {
         if (!_parsed) parseDefinition();
-        _lightFalloff = MapExpression::createForString(expressionString);
+        _lightFalloff = !expressionString.empty() ? 
+            MapExpression::createForString(expressionString) : MapExpressionPtr();
 
         onTemplateChanged();
     }

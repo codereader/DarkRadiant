@@ -331,4 +331,57 @@ TEST_F(MaterialExportTest, RenderBumpFlat)
     expectDefinitionContains(material, "renderbumpflat models/hipoly");
 }
 
+TEST_F(MaterialExportTest, LightFlags)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/exporttest/empty");
+
+    EXPECT_EQ(string::trim_copy(material->getDefinition()), "");
+
+    material->setIsAmbientLight(true);
+    expectDefinitionContains(material, "ambientLight");
+    material->setIsAmbientLight(false);
+    expectDefinitionDoesNotContain(material, "ambientLight");
+
+    material->setIsBlendLight(true);
+    expectDefinitionContains(material, "blendLight");
+    material->setIsBlendLight(false);
+    expectDefinitionDoesNotContain(material, "blendLight");
+
+    material->setIsFogLight(true);
+    expectDefinitionContains(material, "fogLight");
+    material->setIsFogLight(false);
+    expectDefinitionDoesNotContain(material, "fogLight");
+
+    material->setIsCubicLight(true);
+    expectDefinitionContains(material, "cubicLight");
+    material->setIsCubicLight(false);
+    expectDefinitionDoesNotContain(material, "cubicLight");
+
+    material->setIsCubicLight(true);
+    material->setIsAmbientLight(true);
+    expectDefinitionContains(material, "ambientCubicLight");
+
+    material->setIsAmbientLight(false);
+    material->setIsCubicLight(false);
+    expectDefinitionDoesNotContain(material, "ambientCubicLight");
+}
+
+TEST_F(MaterialExportTest, LightFalloffImage)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/exporttest/empty");
+
+    EXPECT_EQ(string::trim_copy(material->getDefinition()), "");
+
+    material->setLightFalloffCubeMapType(IShaderLayer::MapType::Map);
+    material->setLightFalloffExpressionFromString("makeintensity(lights/standard)");
+    expectDefinitionContains(material, "lightFalloffImage makeIntensity(lights/standard)");
+
+    material->setLightFalloffExpressionFromString("");
+    expectDefinitionDoesNotContain(material, "lightFalloffImage");
+
+    material->setLightFalloffCubeMapType(IShaderLayer::MapType::CameraCubeMap);
+    material->setLightFalloffExpressionFromString("env/standard");
+    expectDefinitionContains(material, "lightFalloffCubeMap env/standard");
+}
+
 }

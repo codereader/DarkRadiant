@@ -158,6 +158,44 @@ std::ostream& operator<<(std::ostream& stream, ShaderTemplate& shaderTemplate)
         stream << "\trenderbumpflat " << shaderTemplate.getRenderBumpFlatArguments() << "\n";
     }
 
+    // Light Flags
+    if (shaderTemplate.isAmbientLight() && shaderTemplate.isCubicLight())
+    {
+        stream << "\tambientCubicLight\n";
+    }
+    else
+    {
+        if (shaderTemplate.isAmbientLight())
+        {
+            stream << "\tambientLight\n";
+        }
+        else if (shaderTemplate.isCubicLight())
+        {
+            stream << "\tcubicLight\n";
+        }
+    }
+
+    if (shaderTemplate.isFogLight())
+    {
+        stream << "\tfogLight\n";
+    }
+    else if (shaderTemplate.isBlendLight())
+    {
+        stream << "\tblendLight\n";
+    }
+
+    if (shaderTemplate.getLightFalloff())
+    {
+        if (shaderTemplate.getLightFalloffCubeMapType() == IShaderLayer::MapType::CameraCubeMap)
+        {
+            stream << "\tlightFalloffCubeMap " << shaderTemplate.getLightFalloff()->getExpressionString() << "\n";
+        }
+        else
+        {
+            stream << "\tlightFalloffImage " << shaderTemplate.getLightFalloff()->getExpressionString() << "\n";
+        }
+    }
+
     for (const auto& layer : shaderTemplate.getLayers())
     {
         stream << "\t{\n";
