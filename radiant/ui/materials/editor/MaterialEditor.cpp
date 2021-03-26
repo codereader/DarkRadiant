@@ -261,6 +261,21 @@ void MaterialEditor::setupMaterialProperties()
     // Place map expression controls where needed
     convertTextCtrlToMapExpressionEntry("MaterialStageImageMap");
     convertTextCtrlToMapExpressionEntry("MaterialLightFalloffMap");
+    convertTextCtrlToMapExpressionEntry("MaterialEditorImage");
+
+    auto editorImage = getControl<MapExpressionEntry>("MaterialEditorImage");
+    _materialBindings.emplace(std::make_shared<ExpressionBinding<MaterialPtr>>(editorImage->GetTextCtrl(),
+        [](const MaterialPtr& material)
+        {
+            auto expr = material->getEditorImageExpression();
+            return expr ? expr->getExpressionString() : std::string();
+        },
+        [this](const MaterialPtr& material, const std::string& value)
+        {
+            if (_materialUpdateInProgress || !_material) return;
+            material->setEditorImageExpressionFromString(value);
+        },
+        [this]() { onMaterialChanged(); }));
 
     auto* typeDropdown = getControl<wxChoice>("MaterialType");
 

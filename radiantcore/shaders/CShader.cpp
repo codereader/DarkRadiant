@@ -96,6 +96,8 @@ IMapExpression::Ptr CShader::getEditorImageExpression()
 void CShader::setEditorImageExpressionFromString(const std::string& editorImagePath)
 {
     ensureTemplateCopy();
+
+    _editorTexture.reset();
     _template->setEditorImageExpressionFromString(editorImagePath);
 }
 
