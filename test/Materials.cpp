@@ -991,4 +991,13 @@ TEST_F(MaterialsTest, MaterialParserSurfaceFlags)
     }
 }
 
+TEST_F(MaterialsTest, MaterialParserTextureFiltering)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/texturefilter/nearest");
+    EXPECT_NE(material->getAllLayers().front()->getStageFlags() & IShaderLayer::FLAG_FILTER_NEAREST, 0);
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/texturefilter/linear");
+    EXPECT_NE(material->getAllLayers().front()->getStageFlags() & IShaderLayer::FLAG_FILTER_LINEAR, 0);
+}
+
 }

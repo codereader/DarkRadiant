@@ -79,6 +79,17 @@ std::ostream& operator<<(std::ostream& stream, Doom3ShaderLayer& layer)
         } // switch
     }
 
+    // Texture Filter
+    if (layer.getStageFlags() & IShaderLayer::FLAG_FILTER_NEAREST)
+    {
+        stream << "\t\tnearest\n";
+    }
+
+    if (layer.getStageFlags() & IShaderLayer::FLAG_FILTER_LINEAR)
+    {
+        stream << "\t\tlinear\n";
+    }
+
     stream << "\t}\n";
 
     return stream;

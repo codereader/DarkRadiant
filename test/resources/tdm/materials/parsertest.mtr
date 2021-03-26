@@ -545,3 +545,56 @@ textures/parsertest/surfaceflags/noimpact           { noimpact }
 textures/parsertest/surfaceflags/nodamage           { nodamage }
 textures/parsertest/surfaceflags/ladder             { ladder }
 textures/parsertest/surfaceflags/nosteps            { nosteps }
+
+textures/parsertest/texgen/normal
+{
+	{
+		blend diffusemap
+		map _white
+	}
+}
+
+textures/parsertest/texgen/reflect
+{
+	{
+		blend diffusemap
+		map _white
+        texgen reflect
+	}
+}
+
+textures/parsertest/texgen/skybox
+{
+	{
+		blend diffusemap
+		map _white
+        texgen skybox
+	}
+}
+
+textures/parsertest/texgen/skybox
+{
+	{
+		blend diffusemap
+		map _white
+        texgen skybox
+	}
+}
+
+textures/parsertest/texturefilter/nearest
+{
+	{
+		blend diffusemap
+		map _white
+        nearest
+	}
+}
+
+textures/parsertest/texturefilter/linear
+{
+	{
+		blend diffusemap
+		map _white
+        linear
+	}
+}

@@ -523,4 +523,28 @@ TEST_F(MaterialExportTest, StageMaps)
     expectDefinitionContains(material, "soundMap waveform");
 }
 
+TEST_F(MaterialExportTest, TextureFilter)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/exporttest/empty");
+
+    EXPECT_EQ(string::trim_copy(material->getDefinition()), "");
+
+    auto layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+    layer->setStageFlag(IShaderLayer::FLAG_FILTER_NEAREST);
+    expectDefinitionContains(material, "nearest");
+    expectDefinitionDoesNotContain(material, "linear");
+
+    layer->clearStageFlag(IShaderLayer::FLAG_FILTER_NEAREST);
+    expectDefinitionDoesNotContain(material, "nearest");
+    expectDefinitionDoesNotContain(material, "linear");
+
+    layer->setStageFlag(IShaderLayer::FLAG_FILTER_LINEAR);
+    expectDefinitionContains(material, "linear");
+    expectDefinitionDoesNotContain(material, "nearest");
+
+    layer->clearStageFlag(IShaderLayer::FLAG_FILTER_LINEAR);
+    expectDefinitionDoesNotContain(material, "nearest");
+    expectDefinitionDoesNotContain(material, "linear");
+}
+
 }
