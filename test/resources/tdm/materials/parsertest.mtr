@@ -809,6 +809,20 @@ textures/parsertest/vertexcolours/colourcomponents
 	}
 }
 
+textures/parsertest/vertexcolours/coloured
+{
+	{
+		blend diffusemap
+		map _white
+        color 0.7, 0.6, 0.5, 0.9
+	}
+    {
+		blend diffusemap
+		map _white
+        colored
+	}
+}
+
 textures/parsertest/vertexcolours/combinations
 {
 	{
@@ -839,4 +853,27 @@ textures/parsertest/vertexcolours/combinations
         rgba 0.2
         alpha time
 	}
+}
+
+textures/parsertest/vertexcolours/combinations2
+{
+    {
+		blend diffusemap
+		map _white
+        color 0.1, 0.2, 0.3, 0.4
+        green time
+	}
+    {
+		blend diffusemap
+		map _white
+        color 0.1, 0.2, 0.3, 0.4
+        green 0.1
+        blue 0.1
+	}
+    {
+		blend diffusemap
+		map _white
+        colored
+        alpha time
+    }
 }

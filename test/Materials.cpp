@@ -1125,6 +1125,24 @@ TEST_F(MaterialsTest, MaterialParserStageVertexColours)
     EXPECT_FALSE(material->getAllLayers().at(3)->getColourExpression(IShaderLayer::COMP_RGB));
     EXPECT_FALSE(material->getAllLayers().at(3)->getColourExpression(IShaderLayer::COMP_RGBA));
 
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/vertexcolours/coloured");
+
+    // Stage 1: color expr
+    EXPECT_EQ(material->getAllLayers().at(0)->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "0.7");
+    EXPECT_EQ(material->getAllLayers().at(0)->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "0.6");
+    EXPECT_EQ(material->getAllLayers().at(0)->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "0.5");
+    EXPECT_EQ(material->getAllLayers().at(0)->getColourExpression(IShaderLayer::COMP_ALPHA)->getExpressionString(), "0.9");
+    EXPECT_FALSE(material->getAllLayers().at(0)->getColourExpression(IShaderLayer::COMP_RGB));
+    EXPECT_FALSE(material->getAllLayers().at(0)->getColourExpression(IShaderLayer::COMP_RGBA));
+
+    // Stage 2: colored
+    EXPECT_EQ(material->getAllLayers().at(1)->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "parm0");
+    EXPECT_EQ(material->getAllLayers().at(1)->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "parm1");
+    EXPECT_EQ(material->getAllLayers().at(1)->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "parm2");
+    EXPECT_EQ(material->getAllLayers().at(1)->getColourExpression(IShaderLayer::COMP_ALPHA)->getExpressionString(), "parm3");
+    EXPECT_FALSE(material->getAllLayers().at(1)->getColourExpression(IShaderLayer::COMP_RGB));
+    EXPECT_FALSE(material->getAllLayers().at(1)->getColourExpression(IShaderLayer::COMP_RGBA));
+
     material = GlobalMaterialManager().getMaterial("textures/parsertest/vertexcolours/combinations");
 
     // Stage 1: RGB the same, alpha is different
@@ -1158,6 +1176,32 @@ TEST_F(MaterialsTest, MaterialParserStageVertexColours)
     EXPECT_EQ(material->getAllLayers().at(3)->getColourExpression(IShaderLayer::COMP_ALPHA)->getExpressionString(), "time");
     EXPECT_EQ(material->getAllLayers().at(3)->getColourExpression(IShaderLayer::COMP_RGB)->getExpressionString(), "0.2");
     EXPECT_FALSE(material->getAllLayers().at(3)->getColourExpression(IShaderLayer::COMP_RGBA));
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/vertexcolours/combinations2");
+
+    // Stage 1: color overridden by green
+    EXPECT_EQ(material->getAllLayers().at(0)->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "0.1");
+    EXPECT_EQ(material->getAllLayers().at(0)->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "time");
+    EXPECT_EQ(material->getAllLayers().at(0)->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "0.3");
+    EXPECT_EQ(material->getAllLayers().at(0)->getColourExpression(IShaderLayer::COMP_ALPHA)->getExpressionString(), "0.4");
+    EXPECT_FALSE(material->getAllLayers().at(0)->getColourExpression(IShaderLayer::COMP_RGB));
+    EXPECT_FALSE(material->getAllLayers().at(0)->getColourExpression(IShaderLayer::COMP_RGBA));
+
+    // Stage 2: color overridden by blue and green such that RGB are equivalent
+    EXPECT_EQ(material->getAllLayers().at(1)->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "0.1");
+    EXPECT_EQ(material->getAllLayers().at(1)->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "0.1");
+    EXPECT_EQ(material->getAllLayers().at(1)->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "0.1");
+    EXPECT_EQ(material->getAllLayers().at(1)->getColourExpression(IShaderLayer::COMP_ALPHA)->getExpressionString(), "0.4");
+    EXPECT_EQ(material->getAllLayers().at(1)->getColourExpression(IShaderLayer::COMP_RGB)->getExpressionString(), "0.1");
+    EXPECT_FALSE(material->getAllLayers().at(1)->getColourExpression(IShaderLayer::COMP_RGBA));
+
+    // Stage 3: colored overridden by alpha
+    EXPECT_EQ(material->getAllLayers().at(2)->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "parm0");
+    EXPECT_EQ(material->getAllLayers().at(2)->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "parm1");
+    EXPECT_EQ(material->getAllLayers().at(2)->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "parm2");
+    EXPECT_EQ(material->getAllLayers().at(2)->getColourExpression(IShaderLayer::COMP_ALPHA)->getExpressionString(), "time");
+    EXPECT_FALSE(material->getAllLayers().at(2)->getColourExpression(IShaderLayer::COMP_RGB));
+    EXPECT_FALSE(material->getAllLayers().at(2)->getColourExpression(IShaderLayer::COMP_RGBA));
 }
 
 }
