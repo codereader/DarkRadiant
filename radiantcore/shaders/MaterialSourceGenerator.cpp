@@ -8,6 +8,40 @@
 namespace shaders
 {
 
+// Write a single layer to the given stream, including curly braces (contents indented by two tabs)
+std::ostream& operator<<(std::ostream& stream, Doom3ShaderLayer& layer)
+{
+    stream << "\t{\n";
+
+    // Blend types
+    const auto& blendFunc = layer.getBlendFuncStrings();
+
+    if (!blendFunc.first.empty())
+    {
+        stream << "\t\tblend " << blendFunc.first;
+
+        if (!blendFunc.second.empty())
+        {
+            stream << ", " << blendFunc.second << "\n";
+        }
+        else
+        {
+            stream << "\n";
+        }
+    }
+
+    // Map
+    if (layer.getMapExpression())
+    {
+        stream << "\t\tmap " << layer.getMapExpression()->getExpressionString() << "\n";
+    }
+
+    stream << "\t}\n";
+
+    return stream;
+}
+
+// Write the material to the given stream (one tab indentation)
 std::ostream& operator<<(std::ostream& stream, ShaderTemplate& shaderTemplate)
 {
     stream << "\n";
@@ -207,9 +241,7 @@ std::ostream& operator<<(std::ostream& stream, ShaderTemplate& shaderTemplate)
 
     for (const auto& layer : shaderTemplate.getLayers())
     {
-        stream << "\t{\n";
-
-        stream << "\t}\n";
+        stream << *layer;
     }
 
     return stream;

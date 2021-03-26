@@ -400,4 +400,65 @@ TEST_F(MaterialExportTest, SurfaceFlags)
     }
 }
 
+TEST_F(MaterialExportTest, StageBlendTypes)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/exporttest/empty");
+
+    EXPECT_EQ(string::trim_copy(material->getDefinition()), "");
+
+    auto layer = material->getEditableLayer(material->addLayer(IShaderLayer::DIFFUSE));
+    layer->setMapExpressionFromString("_white");
+
+    // one custom option to prevent cutting the stage down to "diffusemap _white"
+    layer->setStageFlag(IShaderLayer::FLAG_MASK_GREEN); 
+
+    expectDefinitionContains(material, "blend diffusemap");
+    expectDefinitionContains(material, "map _white");
+
+    material->revertModifications();
+
+    layer = material->getEditableLayer(material->addLayer(IShaderLayer::BUMP));
+    layer->setMapExpressionFromString("_flat");
+    layer->setStageFlag(IShaderLayer::FLAG_MASK_GREEN);
+
+    expectDefinitionContains(material, "blend bumpmap");
+    expectDefinitionContains(material, "map _flat");
+
+    material->revertModifications();
+
+    layer = material->getEditableLayer(material->addLayer(IShaderLayer::SPECULAR));
+    layer->setMapExpressionFromString("_black");
+    layer->setStageFlag(IShaderLayer::FLAG_MASK_GREEN);
+
+    expectDefinitionContains(material, "blend specularmap");
+    expectDefinitionContains(material, "map _black");
+
+    // Test that the shortcuts get preserved
+    for (const auto& testCase : shaders::BlendTypeShortcuts)
+    {
+        material->revertModifications();
+
+        layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+        layer->setBlendFuncStrings(std::make_pair(testCase.first, ""));
+        layer->setMapExpressionFromString("_black");
+        layer->setStageFlag(IShaderLayer::FLAG_MASK_GREEN);
+
+        expectDefinitionContains(material, fmt::format("blend {0}", testCase.first));
+        expectDefinitionDoesNotContain(material, fmt::format("blend {0},", testCase.first));
+    }
+
+    // Test custom blend funcs
+    for (const auto& testCase : shaders::BlendTypeShortcuts)
+    {
+        material->revertModifications();
+
+        layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+        layer->setBlendFuncStrings(testCase.second);
+        layer->setMapExpressionFromString("_black");
+        layer->setStageFlag(IShaderLayer::FLAG_MASK_GREEN);
+
+        expectDefinitionContains(material, fmt::format("blend {0}, {1}", testCase.second.first, testCase.second.second));
+    }
+}
+
 }
