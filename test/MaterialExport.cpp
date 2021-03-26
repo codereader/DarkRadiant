@@ -17,11 +17,19 @@ inline void expectDefinitionContains(const MaterialPtr& material, const std::str
         << "Definition was: \n" << material->getDefinition();
 }
 
-inline void expectDefinitionDoesNotContain(const MaterialPtr& material, const std::string& expectedContainedString)
+inline void expectDefinitionDoesNotContain(const MaterialPtr& material, const std::string& unexpectedString)
 {
-    EXPECT_EQ(material->getDefinition().find(expectedContainedString), std::string::npos)
-        << "Material definition contains " << expectedContainedString << " but that shouldn't be the case.\n"
+    EXPECT_EQ(material->getDefinition().find(unexpectedString), std::string::npos)
+        << "Material definition contains " << unexpectedString << " but that shouldn't be the case.\n"
         << "Definition was: \n" << material->getDefinition();
+}
+
+inline void expectDefinitionDoesNotContainAnyOf(const MaterialPtr& material, const std::vector<std::string>& unexpectedStrings)
+{
+    for (const auto& unexpectedString : unexpectedStrings)
+    {
+        expectDefinitionDoesNotContain(material, unexpectedString);
+    }
 }
 
 TEST_F(MaterialExportTest, Description)
@@ -694,6 +702,91 @@ TEST_F(MaterialExportTest, StageFlags)
     expectDefinitionDoesNotContain(material, "maskBlue");
     expectDefinitionContains(material, "maskAlpha");
     expectDefinitionContains(material, "maskDepth");
+}
+
+TEST_F(MaterialExportTest, StageVertexColours)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/exporttest/empty");
+
+    EXPECT_EQ(string::trim_copy(material->getDefinition()), "");
+
+    auto layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+    layer->setColourExpressionFromString(IShaderLayer::COMP_RED, "time * 0.1");
+    expectDefinitionContains(material, "red time * 0.1");
+    expectDefinitionDoesNotContainAnyOf(material, { "blue", "green", "alpha", "colored", "color", "rgb", "rgba" });
+
+    material->revertModifications();
+
+    layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+    layer->setColourExpressionFromString(IShaderLayer::COMP_BLUE, "time * 0.1");
+    expectDefinitionContains(material, "blue time * 0.1");
+    expectDefinitionDoesNotContainAnyOf(material, { "red", "green", "alpha", "colored", "color", "rgb", "rgba" });
+
+    material->revertModifications();
+
+    layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+    layer->setColourExpressionFromString(IShaderLayer::COMP_GREEN, "time * 0.1");
+    expectDefinitionContains(material, "green time * 0.1");
+    expectDefinitionDoesNotContainAnyOf(material, { "red", "blue", "alpha", "colored", "color", "rgb", "rgba" });
+
+    material->revertModifications();
+
+    layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+    layer->setColourExpressionFromString(IShaderLayer::COMP_ALPHA, "time * 0.1");
+    expectDefinitionContains(material, "alpha time * 0.1");
+    expectDefinitionDoesNotContainAnyOf(material, { "red", "green", "blue", "colored", "color", "rgb", "rgba" });
+
+    material->revertModifications();
+
+    layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+    layer->setColourExpressionFromString(IShaderLayer::COMP_RED, "time * 0.1");
+    layer->setColourExpressionFromString(IShaderLayer::COMP_GREEN, "time * 7");
+    expectDefinitionContains(material, "red time * 0.1");
+    expectDefinitionContains(material, "green time * 7.0");
+    expectDefinitionDoesNotContainAnyOf(material, { "blue", "alpha", "colored", "color", "rgb", "rgba" });
+
+    material->revertModifications();
+
+    layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+    layer->setColourExpressionFromString(IShaderLayer::COMP_RED, "time * 0.1");
+    layer->setColourExpressionFromString(IShaderLayer::COMP_GREEN, "time * 0.1");
+    layer->setColourExpressionFromString(IShaderLayer::COMP_BLUE, "time * 0.1");
+    layer->setColourExpressionFromString(IShaderLayer::COMP_ALPHA, "7");
+    expectDefinitionContains(material, "rgb time * 0.1");
+    expectDefinitionContains(material, "alpha 7.0");
+    expectDefinitionDoesNotContainAnyOf(material, { "red", "green", "blue", "colored", "color", "rgba" });
+
+    material->revertModifications();
+
+    layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+    layer->setColourExpressionFromString(IShaderLayer::COMP_RED, "time * 0.1");
+    layer->setColourExpressionFromString(IShaderLayer::COMP_GREEN, "time * 0.1");
+    layer->setColourExpressionFromString(IShaderLayer::COMP_BLUE, "time * 0.1");
+    layer->setColourExpressionFromString(IShaderLayer::COMP_ALPHA, "time * 0.1");
+    expectDefinitionContains(material, "rgba time * 0.1");
+    expectDefinitionDoesNotContainAnyOf(material, { "red", "green", "blue", "alpha", "colored", "color", "rgb" });
+
+    material->revertModifications();
+
+    // Recognise colored
+    layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+    layer->setColourExpressionFromString(IShaderLayer::COMP_RED, "parm0");
+    layer->setColourExpressionFromString(IShaderLayer::COMP_GREEN, "parm1");
+    layer->setColourExpressionFromString(IShaderLayer::COMP_BLUE, "parm2");
+    layer->setColourExpressionFromString(IShaderLayer::COMP_ALPHA, "parm3");
+    expectDefinitionContains(material, "colored");
+    expectDefinitionDoesNotContainAnyOf(material, { "red", "green", "blue", "alpha", "color", "rgb", "rgba" });
+
+    material->revertModifications();
+
+    // Make use of color shortcut
+    layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+    layer->setColourExpressionFromString(IShaderLayer::COMP_RED, "time * 0.1");
+    layer->setColourExpressionFromString(IShaderLayer::COMP_GREEN, "2");
+    layer->setColourExpressionFromString(IShaderLayer::COMP_BLUE, "parm2");
+    layer->setColourExpressionFromString(IShaderLayer::COMP_ALPHA, "parm3");
+    expectDefinitionContains(material, "color time * 0.1, 2, parm2, parm3");
+    expectDefinitionDoesNotContainAnyOf(material, { "red", "green", "blue", "alpha", "colored", "rgb", "rgba" });
 }
 
 }
