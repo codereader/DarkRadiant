@@ -2,6 +2,7 @@
 
 #include "ShaderTemplate.h"
 #include "string/replace.h"
+#include "string/join.h"
 #include "materials/ParseLib.h"
 #include <fmt/format.h>
 
@@ -293,11 +294,22 @@ std::ostream& operator<<(std::ostream& stream, Doom3ShaderLayer& layer)
         };
     }
 
+    if (!layer.getVertexProgram().empty() && layer.getVertexProgram() == layer.getFragmentProgram())
+    {
+        stream << "\t\tprogram " << layer.getVertexProgram() << "\n";
+    }
+    else if(!layer.getVertexProgram().empty())
+    {
+        stream << "\t\tvertexProgram " << layer.getVertexProgram() << "\n";
+    }
+    else if (!layer.getFragmentProgram().empty())
+    {
+        stream << "\t\tfragmentProgram " << layer.getFragmentProgram() << "\n";
+    }
+
     // Vertex Programs
     if (!layer.getVertexProgram().empty())
     {
-        stream << "\t\tvertexProgram " << layer.getVertexProgram() << "\n";
-
         for (int i = 0; i < layer.getNumVertexParms(); ++i)
         {
             const auto& parm = layer.getVertexParm(i);
@@ -312,6 +324,24 @@ std::ostream& operator<<(std::ostream& stream, Doom3ShaderLayer& layer)
                 << (parm.expressions[1] ? ", " + parm.expressions[1]->getExpressionString() : "")
                 << (parm.expressions[2] ? ", " + parm.expressions[2]->getExpressionString() : "")
                 << (parm.expressions[3] ? ", " + parm.expressions[3]->getExpressionString() : "") << "\n";
+        }
+    }
+
+    // Fragment Maps
+    if (!layer.getFragmentProgram().empty())
+    {
+        for (int i = 0; i < layer.getNumFragmentMaps(); ++i)
+        {
+            const auto& fragmentMap = layer.getFragmentMap(i);
+
+            if (!fragmentMap.map)
+            {
+                continue;
+            }
+
+            stream << "\t\tfragmentMap " << i << " " 
+                << (fragmentMap.options.empty() ? "" : string::join(fragmentMap.options, " ") + " ") 
+                << fragmentMap.map->getExpressionString() << "\n";
         }
     }
 

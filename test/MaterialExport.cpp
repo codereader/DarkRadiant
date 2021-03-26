@@ -985,4 +985,27 @@ TEST_F(MaterialExportTest, VertexPrograms)
     expectDefinitionContains(material, "vertexParm 2 5.0, 6.0, 7.0, 8.0");
 }
 
+TEST_F(MaterialExportTest, FragmentPrograms)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/program/fragmentProgram1");
+    EXPECT_EQ(material->getAllLayers().at(0)->getFragmentProgram(), "glprogs/test.vfp");
+
+    // Mark the definition as modified by setting the description
+    material->setDescription("-");
+
+    expectDefinitionContains(material, "fragmentMap 0 cubeMap forceHighQuality alphaZeroClamp env/gen1");
+    expectDefinitionContains(material, "fragmentMap 1 temp/texture");
+    expectDefinitionContains(material, "fragmentMap 2 cubemap cameracubemap nearest linear clamp noclamp zeroclamp alphazeroclamp forcehighquality uncompressed highquality nopicmip temp/optionsftw");
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/program/fragmentProgram2");
+    EXPECT_EQ(material->getAllLayers().at(0)->getFragmentProgram(), "glprogs/test.vfp");
+
+    // Mark the definition as modified by setting the description
+    material->setDescription("-");
+
+    expectDefinitionContains(material, "fragmentMap 0 env/gen1");
+    expectDefinitionDoesNotContain(material, "fragmentMap 1"); // 1 is missing
+    expectDefinitionContains(material, "fragmentMap 2 temp/texture");
+}
+
 }
