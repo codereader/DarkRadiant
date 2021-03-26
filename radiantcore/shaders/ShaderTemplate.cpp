@@ -1089,99 +1089,16 @@ bool ShaderTemplate::parseMaterialType(parser::DefTokeniser& tokeniser, const st
 bool ShaderTemplate::parseSurfaceFlags(parser::DefTokeniser& tokeniser,
                                        const std::string& token)
 {
-    if (token == "solid")
+    for (const auto& pair : SurfaceFlags)
     {
-        _surfaceFlags |= Material::SURF_SOLID;
+        if (token == pair.first)
+        {
+            _surfaceFlags |= pair.second;
+            return true;
+        }
     }
-    else if (token == "water")
-    {
-        _surfaceFlags |= Material::SURF_WATER;
-    }
-    else if (token == "playerclip")
-    {
-        _surfaceFlags |= Material::SURF_PLAYERCLIP;
-    }
-    else if (token == "monsterclip")
-    {
-        _surfaceFlags |= Material::SURF_MONSTERCLIP;
-    }
-	else if (token == "moveableclip")
-    {
-        _surfaceFlags |= Material::SURF_MOVEABLECLIP;
-    }
-	else if (token == "ikclip")
-    {
-        _surfaceFlags |= Material::SURF_IKCLIP;
-    }
-	else if (token == "blood")
-    {
-        _surfaceFlags |= Material::SURF_BLOOD;
-    }
-	else if (token == "trigger")
-    {
-        _surfaceFlags |= Material::SURF_TRIGGER;
-    }
-	else if (token == "aassolid")
-    {
-		_surfaceFlags |= Material::SURF_AASSOLID;
-    }
-	else if (token == "aasobstacle")
-    {
-        _surfaceFlags |= Material::SURF_AASOBSTACLE;
-    }
-	else if (token == "flashlight_trigger")
-    {
-        _surfaceFlags |= Material::SURF_FLASHLIGHT_TRIGGER;
-    }
-	else if (token == "nonsolid")
-    {
-        _surfaceFlags |= Material::SURF_NONSOLID;
-    }
-	else if (token == "nullnormal")
-    {
-        _surfaceFlags |= Material::SURF_NULLNORMAL;
-    }
-	else if (token == "areaportal")
-    {
-		_surfaceFlags |= Material::SURF_AREAPORTAL;
-    }
-	else if (token == "qer_nocarve")
-    {
-		_surfaceFlags |= Material::SURF_NOCARVE;
-    }
-	else if (token == "discrete")
-    {
-        _surfaceFlags |= Material::SURF_DISCRETE;
-    }
-	else if (token == "nofragment")
-    {
-        _surfaceFlags |= Material::SURF_NOFRAGMENT;
-    }
-	else if (token == "slick")
-    {
-        _surfaceFlags |= Material::SURF_SLICK;
-    }
-	else if (token == "collision")
-    {
-        _surfaceFlags |= Material::SURF_COLLISION;
-    }
-	else if (token == "noimpact")
-    {
-        _surfaceFlags |= Material::SURF_NOIMPACT;
-    }
-	else if (token == "nodamage")
-    {
-        _surfaceFlags |= Material::SURF_NODAMAGE;
-    }
-	else if (token == "ladder")
-    {
-        _surfaceFlags |= Material::SURF_LADDER;
-    }
-	else if (token == "nosteps")
-    {
-        _surfaceFlags |= Material::SURF_NOSTEPS;
-    }
-	else if (token == "guisurf")
+
+	if (token == "guisurf")
 	{
 		// "guisurf blah.gui" or "guisurf entity[2|3]"
 		_surfaceFlags |= Material::SURF_GUISURF;
@@ -1204,13 +1121,11 @@ bool ShaderTemplate::parseSurfaceFlags(parser::DefTokeniser& tokeniser,
         {
             _guiDeclName = argument;
         }
-	}
-	else
-	{
-		return false; // unrecognised token, return false
-	}
 
-	return true;
+        return true;
+	}
+	
+    return false; // unrecognised token, return false
 }
 
 bool ShaderTemplate::parseCondition(parser::DefTokeniser& tokeniser, const std::string& token)
