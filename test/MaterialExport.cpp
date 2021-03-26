@@ -121,9 +121,7 @@ TEST_F(MaterialExportTest, ClampType)
     expectDefinitionContains(material, "alphazeroclamp");
 
     material->setClampType(CLAMP_REPEAT); // this is the default => no keyword necessary
-    expectDefinitionDoesNotContain(material, "clamp");
-    expectDefinitionDoesNotContain(material, "zeroclamp");
-    expectDefinitionDoesNotContain(material, "alphazeroclamp");
+    expectDefinitionDoesNotContainAnyOf(material, { "clamp", "zeroclamp", "alphazeroclamp" });
 }
 
 TEST_F(MaterialExportTest, CullType)
@@ -139,8 +137,7 @@ TEST_F(MaterialExportTest, CullType)
     expectDefinitionContains(material, "twosided");
 
     material->setCullType(Material::CULL_BACK); // This is the default
-    expectDefinitionDoesNotContain(material, "twosided");
-    expectDefinitionDoesNotContain(material, "backsided");
+    expectDefinitionDoesNotContainAnyOf(material, { "twosided", "backsided" });
 }
 
 TEST_F(MaterialExportTest, GuiSurf)
@@ -543,16 +540,14 @@ TEST_F(MaterialExportTest, TextureFilter)
     expectDefinitionDoesNotContain(material, "linear");
 
     layer->clearStageFlag(IShaderLayer::FLAG_FILTER_NEAREST);
-    expectDefinitionDoesNotContain(material, "nearest");
-    expectDefinitionDoesNotContain(material, "linear");
+    expectDefinitionDoesNotContainAnyOf(material, { "nearest", "linear" });
 
     layer->setStageFlag(IShaderLayer::FLAG_FILTER_LINEAR);
     expectDefinitionContains(material, "linear");
     expectDefinitionDoesNotContain(material, "nearest");
 
     layer->clearStageFlag(IShaderLayer::FLAG_FILTER_LINEAR);
-    expectDefinitionDoesNotContain(material, "nearest");
-    expectDefinitionDoesNotContain(material, "linear");
+    expectDefinitionDoesNotContainAnyOf(material, { "nearest", "linear" });
 }
 
 TEST_F(MaterialExportTest, TextureQuality)
@@ -687,9 +682,7 @@ TEST_F(MaterialExportTest, StageFlags)
     layer->setStageFlag(IShaderLayer::FLAG_MASK_GREEN);
     layer->setStageFlag(IShaderLayer::FLAG_MASK_BLUE);
     expectDefinitionContains(material, "maskColor");
-    expectDefinitionDoesNotContain(material, "maskRed");
-    expectDefinitionDoesNotContain(material, "maskGreen");
-    expectDefinitionDoesNotContain(material, "maskBlue");
+    expectDefinitionDoesNotContainAnyOf(material, { "maskRed", "maskGreen", "maskBlue" });
 
     layer->setStageFlag(IShaderLayer::FLAG_MASK_RED);
     layer->setStageFlag(IShaderLayer::FLAG_MASK_GREEN);
@@ -697,9 +690,7 @@ TEST_F(MaterialExportTest, StageFlags)
     layer->setStageFlag(IShaderLayer::FLAG_MASK_ALPHA);
     layer->setStageFlag(IShaderLayer::FLAG_MASK_DEPTH);
     expectDefinitionContains(material, "maskColor");
-    expectDefinitionDoesNotContain(material, "maskRed");
-    expectDefinitionDoesNotContain(material, "maskGreen");
-    expectDefinitionDoesNotContain(material, "maskBlue");
+    expectDefinitionDoesNotContainAnyOf(material, { "maskRed", "maskGreen", "maskBlue" });
     expectDefinitionContains(material, "maskAlpha");
     expectDefinitionContains(material, "maskDepth");
 }
@@ -713,28 +704,28 @@ TEST_F(MaterialExportTest, StageVertexColours)
     auto layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
     layer->setColourExpressionFromString(IShaderLayer::COMP_RED, "time * 0.1");
     expectDefinitionContains(material, "red time * 0.1");
-    expectDefinitionDoesNotContainAnyOf(material, { "blue", "green", "alpha", "colored", "color", "rgb", "rgba" });
+    expectDefinitionDoesNotContainAnyOf(material, { "blue", "green", "alpha", "colored", "color", "rgb ", "rgba" });
 
     material->revertModifications();
 
     layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
     layer->setColourExpressionFromString(IShaderLayer::COMP_BLUE, "time * 0.1");
     expectDefinitionContains(material, "blue time * 0.1");
-    expectDefinitionDoesNotContainAnyOf(material, { "red", "green", "alpha", "colored", "color", "rgb", "rgba" });
+    expectDefinitionDoesNotContainAnyOf(material, { "red", "green", "alpha", "colored", "color", "rgb ", "rgba" });
 
     material->revertModifications();
 
     layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
     layer->setColourExpressionFromString(IShaderLayer::COMP_GREEN, "time * 0.1");
     expectDefinitionContains(material, "green time * 0.1");
-    expectDefinitionDoesNotContainAnyOf(material, { "red", "blue", "alpha", "colored", "color", "rgb", "rgba" });
+    expectDefinitionDoesNotContainAnyOf(material, { "red", "blue", "alpha", "colored", "color", "rgb ", "rgba" });
 
     material->revertModifications();
 
     layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
     layer->setColourExpressionFromString(IShaderLayer::COMP_ALPHA, "time * 0.1");
     expectDefinitionContains(material, "alpha time * 0.1");
-    expectDefinitionDoesNotContainAnyOf(material, { "red", "green", "blue", "colored", "color", "rgb", "rgba" });
+    expectDefinitionDoesNotContainAnyOf(material, { "red", "green", "blue", "colored", "color", "rgb ", "rgba" });
 
     material->revertModifications();
 
@@ -743,7 +734,7 @@ TEST_F(MaterialExportTest, StageVertexColours)
     layer->setColourExpressionFromString(IShaderLayer::COMP_GREEN, "time * 7");
     expectDefinitionContains(material, "red time * 0.1");
     expectDefinitionContains(material, "green time * 7.0");
-    expectDefinitionDoesNotContainAnyOf(material, { "blue", "alpha", "colored", "color", "rgb", "rgba" });
+    expectDefinitionDoesNotContainAnyOf(material, { "blue", "alpha", "colored", "color", "rgb ", "rgba" });
 
     material->revertModifications();
 
@@ -764,7 +755,8 @@ TEST_F(MaterialExportTest, StageVertexColours)
     layer->setColourExpressionFromString(IShaderLayer::COMP_BLUE, "time * 0.1");
     layer->setColourExpressionFromString(IShaderLayer::COMP_ALPHA, "time * 0.1");
     expectDefinitionContains(material, "rgba time * 0.1");
-    expectDefinitionDoesNotContainAnyOf(material, { "red", "green", "blue", "alpha", "colored", "color", "rgb" });
+    // Note: we use a space after "rgb " because a valid RGBA keyword also contains "RGB"
+    expectDefinitionDoesNotContainAnyOf(material, { "red", "green", "blue", "alpha", "colored", "color", "rgb " });
 
     material->revertModifications();
 
@@ -775,7 +767,8 @@ TEST_F(MaterialExportTest, StageVertexColours)
     layer->setColourExpressionFromString(IShaderLayer::COMP_BLUE, "parm2");
     layer->setColourExpressionFromString(IShaderLayer::COMP_ALPHA, "parm3");
     expectDefinitionContains(material, "colored");
-    expectDefinitionDoesNotContainAnyOf(material, { "red", "green", "blue", "alpha", "color", "rgb", "rgba" });
+    // Note: we use a space after "red " because the colored keyword also contains "red", some for "color "
+    expectDefinitionDoesNotContainAnyOf(material, { "red ", "green", "blue", "alpha", "color ", "rgb ", "rgba" });
 
     material->revertModifications();
 
@@ -785,8 +778,21 @@ TEST_F(MaterialExportTest, StageVertexColours)
     layer->setColourExpressionFromString(IShaderLayer::COMP_GREEN, "2");
     layer->setColourExpressionFromString(IShaderLayer::COMP_BLUE, "parm2");
     layer->setColourExpressionFromString(IShaderLayer::COMP_ALPHA, "parm3");
-    expectDefinitionContains(material, "color time * 0.1, 2, parm2, parm3");
-    expectDefinitionDoesNotContainAnyOf(material, { "red", "green", "blue", "alpha", "colored", "rgb", "rgba" });
+    expectDefinitionContains(material, "color time * 0.1, 2.0, parm2, parm3");
+    expectDefinitionDoesNotContainAnyOf(material, { "red", "green", "blue", "alpha", "colored", "rgb ", "rgba" });
+
+    material->revertModifications();
+
+    // Make use of color shortcut
+    layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+    layer->setVertexColourMode(IShaderLayer::VERTEX_COLOUR_MULTIPLY);
+    expectDefinitionContains(material, { "vertexColor" });
+
+    layer->setVertexColourMode(IShaderLayer::VERTEX_COLOUR_INVERSE_MULTIPLY);
+    expectDefinitionContains(material, { "inverseVertexColor" });
+    
+    layer->setVertexColourMode(IShaderLayer::VERTEX_COLOUR_NONE);
+    expectDefinitionDoesNotContainAnyOf(material, { "vertexColor", "inverseVertexColor" });
 }
 
 }

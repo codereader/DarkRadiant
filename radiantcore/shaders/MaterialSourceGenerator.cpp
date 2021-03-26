@@ -178,6 +178,77 @@ std::ostream& operator<<(std::ostream& stream, Doom3ShaderLayer& layer)
         stream << "\t\tmaskDepth\n";
     }
 
+    // Vertex colours
+    if (layer.getVertexColourMode() == IShaderLayer::VERTEX_COLOUR_MULTIPLY)
+    {
+        stream << "\t\tvertexColor\n";
+    }
+    else if (layer.getVertexColourMode() == IShaderLayer::VERTEX_COLOUR_INVERSE_MULTIPLY)
+    {
+        stream << "\t\tinverseVertexColor\n";
+    }
+
+    auto redExpr = layer.getColourExpression(IShaderLayer::COMP_RED);
+    auto greenExpr = layer.getColourExpression(IShaderLayer::COMP_GREEN);
+    auto blueExpr = layer.getColourExpression(IShaderLayer::COMP_BLUE);
+    auto alphaExpr = layer.getColourExpression(IShaderLayer::COMP_ALPHA);
+
+    if (layer.getColourExpression(IShaderLayer::COMP_RGBA))
+    {
+        // All RGBA components are equivalent
+        stream << "\t\trgba " << layer.getColourExpression(IShaderLayer::COMP_RGBA)->getExpressionString() << "\n";
+    }
+    else if (redExpr && greenExpr && blueExpr && alphaExpr)
+    {
+        // All 4 expressions in use, check for the colored special case
+        if (redExpr->getExpressionString() == "parm0" &&
+            greenExpr->getExpressionString() == "parm1" &&
+            blueExpr->getExpressionString() == "parm2" &&
+            alphaExpr->getExpressionString() == "parm3")
+        {
+            stream << "\t\tcolored\n";
+        }
+        // No colored, but RGB+Alpha is still possible
+        else if (layer.getColourExpression(IShaderLayer::COMP_RGB))
+        {
+            stream << "\t\trgb " << layer.getColourExpression(IShaderLayer::COMP_RGB)->getExpressionString() << "\n";
+            stream << "\t\talpha " << alphaExpr->getExpressionString() << "\n";
+        }
+        else // make use of the color shortcut to define all 4 in one line
+        {
+            stream << "\t\tcolor " << redExpr->getExpressionString() << ", " 
+                << greenExpr->getExpressionString() << ", " 
+                << blueExpr->getExpressionString() << ", " 
+                << alphaExpr->getExpressionString() << "\n";
+        }
+    }
+    else if (layer.getColourExpression(IShaderLayer::COMP_RGB))
+    {
+        stream << "\t\trgb " << layer.getColourExpression(IShaderLayer::COMP_RGB)->getExpressionString() << "\n";
+    }
+    else // No shortcuts possible, just write out any non-empty expressions
+    {
+        if (redExpr)
+        {
+            stream << "\t\tred " << redExpr->getExpressionString() << "\n";
+        }
+
+        if (greenExpr)
+        {
+            stream << "\t\tgreen " << greenExpr->getExpressionString() << "\n";
+        }
+
+        if (blueExpr)
+        {
+            stream << "\t\tblue " << blueExpr->getExpressionString() << "\n";
+        }
+
+        if (alphaExpr)
+        {
+            stream << "\t\talpha " << alphaExpr->getExpressionString() << "\n";
+        }
+    }
+
     stream << "\t}\n";
 
     return stream;
