@@ -953,4 +953,42 @@ TEST_F(MaterialsTest, MaterialParserDecalInfo)
     EXPECT_NEAR(material->getDecalInfo().endColour.z(), 0.4, TestEpsilon);
     EXPECT_NEAR(material->getDecalInfo().endColour.w(), 0.3, TestEpsilon);
 }
+
+TEST_F(MaterialsTest, MaterialParserSurfaceFlags)
+{
+    constexpr std::pair<const char*, Material::SurfaceFlags> testCases[] =
+    {
+        { "textures/parsertest/surfaceflags/solid", Material::SURF_SOLID },
+        { "textures/parsertest/surfaceflags/water", Material::SURF_WATER },
+        { "textures/parsertest/surfaceflags/playerclip", Material::SURF_PLAYERCLIP },
+        { "textures/parsertest/surfaceflags/monsterclip", Material::SURF_MONSTERCLIP },
+        { "textures/parsertest/surfaceflags/moveableclip", Material::SURF_MOVEABLECLIP },
+        { "textures/parsertest/surfaceflags/ikclip", Material::SURF_IKCLIP },
+        { "textures/parsertest/surfaceflags/blood", Material::SURF_BLOOD },
+        { "textures/parsertest/surfaceflags/trigger", Material::SURF_TRIGGER },
+        { "textures/parsertest/surfaceflags/aassolid", Material::SURF_AASSOLID },
+        { "textures/parsertest/surfaceflags/aasobstacle", Material::SURF_AASOBSTACLE },
+        { "textures/parsertest/surfaceflags/flashlight_trigger", Material::SURF_FLASHLIGHT_TRIGGER },
+        { "textures/parsertest/surfaceflags/nonsolid", Material::SURF_NONSOLID },
+        { "textures/parsertest/surfaceflags/nullnormal", Material::SURF_NULLNORMAL },
+        { "textures/parsertest/surfaceflags/areaportal", Material::SURF_AREAPORTAL },
+        { "textures/parsertest/surfaceflags/nocarve", Material::SURF_NOCARVE },
+        { "textures/parsertest/surfaceflags/discrete", Material::SURF_DISCRETE },
+        { "textures/parsertest/surfaceflags/nofragment", Material::SURF_NOFRAGMENT },
+        { "textures/parsertest/surfaceflags/slick", Material::SURF_SLICK },
+        { "textures/parsertest/surfaceflags/collision", Material::SURF_COLLISION },
+        { "textures/parsertest/surfaceflags/noimpact", Material::SURF_NOIMPACT },
+        { "textures/parsertest/surfaceflags/nodamage", Material::SURF_NODAMAGE },
+        { "textures/parsertest/surfaceflags/ladder", Material::SURF_LADDER },
+        { "textures/parsertest/surfaceflags/nosteps", Material::SURF_NOSTEPS },
+    };
+
+    for (const auto& testCase : testCases)
+    {
+        auto material = GlobalMaterialManager().getMaterial(testCase.first);
+
+        EXPECT_EQ((material->getSurfaceFlags() & testCase.second), testCase.second);
+    }
+}
+
 }

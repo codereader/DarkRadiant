@@ -196,6 +196,15 @@ std::ostream& operator<<(std::ostream& stream, ShaderTemplate& shaderTemplate)
         }
     }
 
+    // Surface flags
+    for (const auto& pair : SurfaceFlags)
+    {
+        if (shaderTemplate.getSurfaceFlags() & pair.second)
+        {
+            stream << "\t" << pair.first << "\n";
+        }
+    }
+
     for (const auto& layer : shaderTemplate.getLayers())
     {
         stream << "\t{\n";

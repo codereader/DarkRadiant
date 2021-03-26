@@ -522,3 +522,26 @@ textures/parsertest/decalinfo
 	decalinfo 14.3 1.5 ( 0.9 0.8 0.7 0.6 ) (0.5 0.5 0.4 0.3)
 }
 
+textures/parsertest/surfaceflags/solid              { solid }
+textures/parsertest/surfaceflags/water              { water }
+textures/parsertest/surfaceflags/playerclip         { playerclip }
+textures/parsertest/surfaceflags/monsterclip        { monsterclip }
+textures/parsertest/surfaceflags/moveableclip       { moveableclip }
+textures/parsertest/surfaceflags/ikclip             { ikclip }
+textures/parsertest/surfaceflags/blood              { blood }
+textures/parsertest/surfaceflags/trigger            { trigger }
+textures/parsertest/surfaceflags/aassolid           { aassolid }
+textures/parsertest/surfaceflags/aasobstacle        { aasobstacle }
+textures/parsertest/surfaceflags/flashlight_trigger { flashlight_trigger }
+textures/parsertest/surfaceflags/nonsolid           { nonsolid }
+textures/parsertest/surfaceflags/nullnormal         { nullnormal }
+textures/parsertest/surfaceflags/areaportal         { areaportal }
+textures/parsertest/surfaceflags/nocarve            { qer_nocarve }
+textures/parsertest/surfaceflags/discrete           { discrete }
+textures/parsertest/surfaceflags/nofragment         { nofragment }
+textures/parsertest/surfaceflags/slick              { slick }
+textures/parsertest/surfaceflags/collision          { collision }
+textures/parsertest/surfaceflags/noimpact           { noimpact }
+textures/parsertest/surfaceflags/nodamage           { nodamage }
+textures/parsertest/surfaceflags/ladder             { ladder }
+textures/parsertest/surfaceflags/nosteps            { nosteps }

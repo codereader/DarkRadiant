@@ -81,6 +81,34 @@ inline Material::SurfaceType getSurfaceTypeForString(const std::string& surfaceT
     return Material::SURFTYPE_DEFAULT;
 }
 
+// Surface flags with a single corresponding keyword
+constexpr std::pair<const char*, Material::SurfaceFlags> SurfaceFlags[]
+{
+    { "solid", Material::SURF_SOLID },
+    { "water", Material::SURF_WATER },
+    { "playerclip", Material::SURF_PLAYERCLIP },
+    { "monsterclip", Material::SURF_MONSTERCLIP },
+    { "moveableclip", Material::SURF_MOVEABLECLIP },
+    { "ikclip", Material::SURF_IKCLIP },
+    { "blood", Material::SURF_BLOOD },
+    { "trigger", Material::SURF_TRIGGER },
+    { "aassolid", Material::SURF_AASSOLID },
+    { "aasobstacle", Material::SURF_AASOBSTACLE },
+    { "flashlight_trigger", Material::SURF_FLASHLIGHT_TRIGGER },
+    { "nonsolid", Material::SURF_NONSOLID },
+    { "nullnormal", Material::SURF_NULLNORMAL },
+    { "areaportal", Material::SURF_AREAPORTAL },
+    { "qer_nocarve", Material::SURF_NOCARVE },
+    { "discrete", Material::SURF_DISCRETE },
+    { "nofragment", Material::SURF_NOFRAGMENT },
+    { "slick", Material::SURF_SLICK },
+    { "collision", Material::SURF_COLLISION },
+    { "noimpact", Material::SURF_NOIMPACT },
+    { "nodamage", Material::SURF_NODAMAGE },
+    { "ladder", Material::SURF_LADDER },
+    { "nosteps", Material::SURF_NOSTEPS },
+};
+
 constexpr std::pair<const char*, Material::CullType> CullTypes[]
 {
     { "frontsided", Material::CULL_BACK },

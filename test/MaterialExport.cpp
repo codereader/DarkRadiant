@@ -384,4 +384,20 @@ TEST_F(MaterialExportTest, LightFalloffImage)
     expectDefinitionContains(material, "lightFalloffCubeMap env/standard");
 }
 
+TEST_F(MaterialExportTest, SurfaceFlags)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/exporttest/empty");
+
+    EXPECT_EQ(string::trim_copy(material->getDefinition()), "");
+
+    for (const auto& pair : shaders::SurfaceFlags)
+    {
+        material->setSurfaceFlag(pair.second);
+        expectDefinitionContains(material, pair.first);
+
+        material->clearSurfaceFlag(pair.second);
+        expectDefinitionDoesNotContain(material, pair.first);
+    }
+}
+
 }
