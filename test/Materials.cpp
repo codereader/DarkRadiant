@@ -1000,4 +1000,19 @@ TEST_F(MaterialsTest, MaterialParserTextureFiltering)
     EXPECT_NE(material->getAllLayers().front()->getStageFlags() & IShaderLayer::FLAG_FILTER_LINEAR, 0);
 }
 
+TEST_F(MaterialsTest, MaterialParserTextureQuality)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/texturequality/highquality");
+    EXPECT_NE(material->getAllLayers().front()->getStageFlags() & IShaderLayer::FLAG_HIGHQUALITY, 0);
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/texturequality/uncompressed");
+    EXPECT_NE(material->getAllLayers().front()->getStageFlags() & IShaderLayer::FLAG_HIGHQUALITY, 0);
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/texturequality/forcehighquality");
+    EXPECT_NE(material->getAllLayers().front()->getStageFlags() & IShaderLayer::FLAG_FORCE_HIGHQUALITY, 0);
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/texturequality/nopicmip");
+    EXPECT_NE(material->getAllLayers().front()->getStageFlags() & IShaderLayer::FLAG_NO_PICMIP, 0);
+}
+
 }

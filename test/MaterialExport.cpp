@@ -547,4 +547,33 @@ TEST_F(MaterialExportTest, TextureFilter)
     expectDefinitionDoesNotContain(material, "linear");
 }
 
+TEST_F(MaterialExportTest, TextureQuality)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/exporttest/empty");
+
+    EXPECT_EQ(string::trim_copy(material->getDefinition()), "");
+
+    auto layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+    layer->setStageFlag(IShaderLayer::FLAG_HIGHQUALITY);
+    expectDefinitionContains(material, "highQuality");
+    expectDefinitionDoesNotContain(material, "uncompressed");
+
+    layer->clearStageFlag(IShaderLayer::FLAG_HIGHQUALITY);
+    expectDefinitionDoesNotContain(material, "highQuality");
+    expectDefinitionDoesNotContain(material, "uncompressed");
+
+    layer->setStageFlag(IShaderLayer::FLAG_FORCE_HIGHQUALITY);
+    expectDefinitionContains(material, "forceHighQuality");
+    expectDefinitionDoesNotContain(material, "highQuality");
+
+    layer->clearStageFlag(IShaderLayer::FLAG_FORCE_HIGHQUALITY);
+    expectDefinitionDoesNotContain(material, "forceHighQuality");
+
+    layer->setStageFlag(IShaderLayer::FLAG_NO_PICMIP);
+    expectDefinitionContains(material, "nopicmip");
+
+    layer->clearStageFlag(IShaderLayer::FLAG_NO_PICMIP);
+    expectDefinitionDoesNotContain(material, "nopicmip");
+}
+
 }

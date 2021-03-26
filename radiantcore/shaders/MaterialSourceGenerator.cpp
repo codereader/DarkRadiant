@@ -90,6 +90,22 @@ std::ostream& operator<<(std::ostream& stream, Doom3ShaderLayer& layer)
         stream << "\t\tlinear\n";
     }
 
+    // Texture Quality
+    if (layer.getStageFlags() & IShaderLayer::FLAG_HIGHQUALITY)
+    {
+        stream << "\t\thighQuality\n";
+    }
+
+    if (layer.getStageFlags() & IShaderLayer::FLAG_FORCE_HIGHQUALITY)
+    {
+        stream << "\t\tforceHighQuality\n";
+    }
+
+    if (layer.getStageFlags() & IShaderLayer::FLAG_NO_PICMIP)
+    {
+        stream << "\t\tnopicmip\n";
+    }
+
     stream << "\t}\n";
 
     return stream;

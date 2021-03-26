@@ -598,3 +598,40 @@ textures/parsertest/texturefilter/linear
         linear
 	}
 }
+
+textures/parsertest/texturequality/highquality
+{
+	{
+		blend diffusemap
+		map _white
+        highquality
+	}
+}
+
+// uncompressed is the same as highquality
+textures/parsertest/texturequality/uncompressed
+{
+	{
+		blend diffusemap
+		map _white
+        uncompressed
+	}
+}
+
+textures/parsertest/texturequality/forcehighquality
+{
+	{
+		blend diffusemap
+		map _white
+        forcehighquality
+	}
+}
+
+textures/parsertest/texturequality/nopicmip
+{
+	{
+		blend diffusemap
+		map _white
+        nopicmip
+	}
+}
