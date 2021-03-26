@@ -127,6 +127,12 @@ std::ostream& operator<<(std::ostream& stream, Doom3ShaderLayer& layer)
             (expr2 ? expr2->getExpressionString() : "") << "\n";
     }
 
+    // Clamp Type
+    if (layer.getClampType() != CLAMP_REPEAT || layer.hasOverridingClampType())
+    {
+        stream << "\t\t" << shaders::getStringForClampType(layer.getClampType()) << "\n";
+    }
+
     stream << "\t}\n";
 
     return stream;

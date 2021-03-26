@@ -171,6 +171,9 @@ public:
     ClampType getClampType() const override;
     void setClampType(ClampType type) override;
 
+    // Whether this layer overrides the clamp type of the material
+    bool hasOverridingClampType() const;
+
     TexGenType getTexGenType() const override;
     void setTexGenType(TexGenType type) override;
 

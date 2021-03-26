@@ -599,4 +599,31 @@ TEST_F(MaterialExportTest, TexGen)
     expectDefinitionContains(material, "texgen wobblesky 1.0 0.5 (time * 0.6)");
 }
 
+TEST_F(MaterialExportTest, StageClamp)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/exporttest/empty");
+
+    EXPECT_EQ(string::trim_copy(material->getDefinition()), "");
+
+    // Material has default (CLAMP_REPEAT)
+    auto layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+    layer->setClampType(CLAMP_REPEAT);
+    expectDefinitionDoesNotContain(material, "noclamp"); // not needed on the stage level
+
+    // Set the material to no-repeat
+    material->setClampType(CLAMP_NOREPEAT);
+
+    layer->setClampType(CLAMP_REPEAT);
+    expectDefinitionContains(material, "noclamp"); // noclamp is necessary
+
+    layer->setClampType(CLAMP_NOREPEAT);
+    expectDefinitionContains(material, "clamp");
+
+    layer->setClampType(CLAMP_ZEROCLAMP);
+    expectDefinitionContains(material, "zeroclamp");
+
+    layer->setClampType(CLAMP_ALPHAZEROCLAMP);
+    expectDefinitionContains(material, "alphazeroclamp");
+}
+
 }

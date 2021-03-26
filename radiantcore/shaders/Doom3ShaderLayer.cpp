@@ -500,6 +500,11 @@ void Doom3ShaderLayer::setClampType(ClampType type)
     _material.onLayerChanged();
 }
 
+bool Doom3ShaderLayer::hasOverridingClampType() const
+{
+    return _material.getClampType() != _clampType;
+}
+
 IShaderLayer::TexGenType Doom3ShaderLayer::getTexGenType() const
 {
     return _texGenType;

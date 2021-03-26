@@ -635,3 +635,48 @@ textures/parsertest/texturequality/nopicmip
         nopicmip
 	}
 }
+
+textures/parsertest/clamping/noclamp
+{
+	{
+		blend diffusemap
+		map _white
+        noclamp
+	}
+}
+
+textures/parsertest/clamping/noclamp
+{
+	{
+		blend diffusemap
+		map _white
+        noclamp
+	}
+}
+
+textures/parsertest/clamping/clamp
+{
+	{
+		blend diffusemap
+		map _white
+        clamp
+	}
+}
+
+textures/parsertest/clamping/zeroclamp
+{
+	{
+		blend diffusemap
+		map _white
+        zeroclamp
+	}
+}
+
+textures/parsertest/clamping/alphazeroclamp
+{
+	{
+		blend diffusemap
+		map _white
+        alphazeroclamp
+	}
+}

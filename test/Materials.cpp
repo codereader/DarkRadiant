@@ -991,7 +991,7 @@ TEST_F(MaterialsTest, MaterialParserSurfaceFlags)
     }
 }
 
-TEST_F(MaterialsTest, MaterialParserTextureFiltering)
+TEST_F(MaterialsTest, MaterialParserStageTextureFiltering)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/texturefilter/nearest");
     EXPECT_NE(material->getAllLayers().front()->getStageFlags() & IShaderLayer::FLAG_FILTER_NEAREST, 0);
@@ -1000,7 +1000,7 @@ TEST_F(MaterialsTest, MaterialParserTextureFiltering)
     EXPECT_NE(material->getAllLayers().front()->getStageFlags() & IShaderLayer::FLAG_FILTER_LINEAR, 0);
 }
 
-TEST_F(MaterialsTest, MaterialParserTextureQuality)
+TEST_F(MaterialsTest, MaterialParserStageTextureQuality)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/texturequality/highquality");
     EXPECT_NE(material->getAllLayers().front()->getStageFlags() & IShaderLayer::FLAG_HIGHQUALITY, 0);
@@ -1015,7 +1015,7 @@ TEST_F(MaterialsTest, MaterialParserTextureQuality)
     EXPECT_NE(material->getAllLayers().front()->getStageFlags() & IShaderLayer::FLAG_NO_PICMIP, 0);
 }
 
-TEST_F(MaterialsTest, MaterialParserTexGen)
+TEST_F(MaterialsTest, MaterialParserStageTexGen)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/texgen/normal");
     EXPECT_EQ(material->getAllLayers().front()->getTexGenType(), IShaderLayer::TEXGEN_NORMAL);
@@ -1040,6 +1040,21 @@ TEST_F(MaterialsTest, MaterialParserTexGen)
     EXPECT_EQ(material->getAllLayers().front()->getTexGenExpression(0)->getExpressionString(), "1.0");
     EXPECT_EQ(material->getAllLayers().front()->getTexGenExpression(1)->getExpressionString(), "0.5");
     EXPECT_EQ(material->getAllLayers().front()->getTexGenExpression(2)->getExpressionString(), "(time * 0.6)");
+}
+
+TEST_F(MaterialsTest, MaterialParserStageClamp)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/clamping/noclamp");
+    EXPECT_EQ(material->getAllLayers().front()->getClampType(), CLAMP_REPEAT);
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/clamping/clamp");
+    EXPECT_EQ(material->getAllLayers().front()->getClampType(), CLAMP_NOREPEAT);
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/clamping/zeroclamp");
+    EXPECT_EQ(material->getAllLayers().front()->getClampType(), CLAMP_ZEROCLAMP);
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/clamping/alphazeroclamp");
+    EXPECT_EQ(material->getAllLayers().front()->getClampType(), CLAMP_ALPHAZEROCLAMP);
 }
 
 }
