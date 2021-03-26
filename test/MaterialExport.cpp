@@ -812,4 +812,72 @@ TEST_F(MaterialExportTest, StagePrivatePolygonOffset)
     expectDefinitionDoesNotContain(material, "privatePolygonOffset");
 }
 
+TEST_F(MaterialExportTest, StageTransforms)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/exporttest/empty");
+
+    EXPECT_EQ(string::trim_copy(material->getDefinition()), "");
+
+    auto layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+    layer->appendTransformation(IShaderLayer::Transformation{ IShaderLayer::TransformType::Translate });
+    layer->updateTransformation(0, IShaderLayer::TransformType::Translate, "time * 0.5", "sinTable[7.6]");
+
+    expectDefinitionContains(material, "translate time * 0.5, sinTable[7.6]");
+    expectDefinitionDoesNotContainAnyOf(material, { "rotate", "scroll", "scale", "shear", "centerScale" });
+
+    material->revertModifications();
+
+    layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+    layer->appendTransformation(IShaderLayer::Transformation{ IShaderLayer::TransformType::CenterScale });
+    layer->updateTransformation(0, IShaderLayer::TransformType::CenterScale, "0.4", "time");
+
+    expectDefinitionContains(material, "centerScale 0.4, time");
+    expectDefinitionDoesNotContainAnyOf(material, { "rotate", "scroll", "scale", "shear", "translate" });
+
+    material->revertModifications();
+
+    layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+    layer->appendTransformation(IShaderLayer::Transformation{ IShaderLayer::TransformType::Rotate });
+    layer->updateTransformation(0, IShaderLayer::TransformType::Rotate, "time", "");
+
+    expectDefinitionContains(material, "rotate time");
+    expectDefinitionDoesNotContainAnyOf(material, { "centerScale", "scroll", "scale", "shear", "translate" });
+
+    material->revertModifications();
+
+    layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+    layer->appendTransformation(IShaderLayer::Transformation{ IShaderLayer::TransformType::Scale });
+    layer->updateTransformation(0, IShaderLayer::TransformType::Scale, "time", "time % 4");
+
+    expectDefinitionContains(material, "scale time, time % 4.0");
+    expectDefinitionDoesNotContainAnyOf(material, { "centerScale", "scroll", "rotate", "shear", "translate" });
+
+    material->revertModifications();
+
+    layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+    layer->appendTransformation(IShaderLayer::Transformation{ IShaderLayer::TransformType::Shear });
+    layer->updateTransformation(0, IShaderLayer::TransformType::Shear, "time / 6", "global4");
+
+    expectDefinitionContains(material, "shear time / 6.0, global4");
+    expectDefinitionDoesNotContainAnyOf(material, { "centerScale", "scroll", "rotate", "scale", "translate" });
+
+    material->revertModifications();
+
+    layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+    layer->appendTransformation(IShaderLayer::Transformation{ IShaderLayer::TransformType::Translate });
+    layer->updateTransformation(0, IShaderLayer::TransformType::Translate, "1", "2");
+    layer->appendTransformation(IShaderLayer::Transformation{ IShaderLayer::TransformType::Scale });
+    layer->updateTransformation(1, IShaderLayer::TransformType::Scale, "1", "1");
+    layer->appendTransformation(IShaderLayer::Transformation{ IShaderLayer::TransformType::Translate });
+    layer->updateTransformation(2, IShaderLayer::TransformType::Translate, "time", "1");
+    layer->appendTransformation(IShaderLayer::Transformation{ IShaderLayer::TransformType::Rotate });
+    layer->updateTransformation(3, IShaderLayer::TransformType::Rotate, "time", "");
+
+    expectDefinitionContains(material, "translate 1.0, 2.0");
+    expectDefinitionContains(material, "scale 1.0, 1.0");
+    expectDefinitionContains(material, "translate time, 1.0");
+    expectDefinitionContains(material, "rotate time");
+    expectDefinitionDoesNotContainAnyOf(material, { "shear", "centerScale", "scroll" });
+}
+
 }

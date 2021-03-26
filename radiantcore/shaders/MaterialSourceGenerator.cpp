@@ -255,6 +255,32 @@ std::ostream& operator<<(std::ostream& stream, Doom3ShaderLayer& layer)
         stream << "\t\tprivatePolygonOffset " << layer.getPrivatePolygonOffset() << "\n";
     }
 
+    // Stage Transforms
+    for (const auto& transform : layer.getTransformations())
+    {
+        const auto& expr1 = transform.expression1;
+        const auto& expr2 = transform.expression2;
+
+        switch (transform.type)
+        {
+        case IShaderLayer::TransformType::Translate:
+            stream << "\t\ttranslate " << (expr1 ? expr1->getExpressionString() : "") << ", " << (expr2 ? expr2->getExpressionString() : "") << "\n";
+            break;
+        case IShaderLayer::TransformType::Scale:
+            stream << "\t\tscale " << (expr1 ? expr1->getExpressionString() : "") << ", " << (expr2 ? expr2->getExpressionString() : "") << "\n";
+            break;
+        case IShaderLayer::TransformType::CenterScale:
+            stream << "\t\tcenterScale " << (expr1 ? expr1->getExpressionString() : "") << ", " << (expr2 ? expr2->getExpressionString() : "") << "\n";
+            break;
+        case IShaderLayer::TransformType::Shear:
+            stream << "\t\tshear " << (expr1 ? expr1->getExpressionString() : "") << ", " << (expr2 ? expr2->getExpressionString() : "") << "\n";
+            break;
+        case IShaderLayer::TransformType::Rotate:
+            stream << "\t\trotate " << (expr1 ? expr1->getExpressionString() : "") << "\n";
+            break;
+        };
+    }
+
     stream << "\t}\n";
 
     return stream;
