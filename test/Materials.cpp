@@ -1204,4 +1204,13 @@ TEST_F(MaterialsTest, MaterialParserStageVertexColours)
     EXPECT_FALSE(material->getAllLayers().at(2)->getColourExpression(IShaderLayer::COMP_RGBA));
 }
 
+TEST_F(MaterialsTest, MaterialParserStagePrivatePolygonOffset)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/notransform");
+    EXPECT_EQ(material->getAllLayers().at(0)->getPrivatePolygonOffset(), 0.0f);
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/privatePolygonOffset");
+    EXPECT_EQ(material->getAllLayers().at(0)->getPrivatePolygonOffset(), -45.9f);
+}
+
 }

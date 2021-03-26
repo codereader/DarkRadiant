@@ -877,3 +877,12 @@ textures/parsertest/vertexcolours/combinations2
         alpha time
     }
 }
+
+textures/parsertest/privatePolygonOffset
+{
+    {
+		blend diffusemap
+		map _white
+        privatePolygonOffset -45.9
+	}
+}

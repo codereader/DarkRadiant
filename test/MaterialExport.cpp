@@ -786,13 +786,30 @@ TEST_F(MaterialExportTest, StageVertexColours)
     // Make use of color shortcut
     layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
     layer->setVertexColourMode(IShaderLayer::VERTEX_COLOUR_MULTIPLY);
-    expectDefinitionContains(material, { "vertexColor" });
+    expectDefinitionContains(material, "vertexColor");
 
     layer->setVertexColourMode(IShaderLayer::VERTEX_COLOUR_INVERSE_MULTIPLY);
-    expectDefinitionContains(material, { "inverseVertexColor" });
+    expectDefinitionContains(material, "inverseVertexColor");
     
     layer->setVertexColourMode(IShaderLayer::VERTEX_COLOUR_NONE);
     expectDefinitionDoesNotContainAnyOf(material, { "vertexColor", "inverseVertexColor" });
+}
+
+TEST_F(MaterialExportTest, StagePrivatePolygonOffset)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/exporttest/empty");
+
+    EXPECT_EQ(string::trim_copy(material->getDefinition()), "");
+
+    auto layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+    layer->setPrivatePolygonOffset(0.1);
+    expectDefinitionContains(material, "privatePolygonOffset 0.1");
+
+    layer->setPrivatePolygonOffset(-15.7);
+    expectDefinitionContains(material, "privatePolygonOffset -15.7");
+
+    layer->setPrivatePolygonOffset(0);
+    expectDefinitionDoesNotContain(material, "privatePolygonOffset");
 }
 
 }

@@ -249,6 +249,12 @@ std::ostream& operator<<(std::ostream& stream, Doom3ShaderLayer& layer)
         }
     }
 
+    // Private Polygon Offset
+    if (layer.getPrivatePolygonOffset() != 0)
+    {
+        stream << "\t\tprivatePolygonOffset " << layer.getPrivatePolygonOffset() << "\n";
+    }
+
     stream << "\t}\n";
 
     return stream;
