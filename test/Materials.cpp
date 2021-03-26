@@ -1213,4 +1213,19 @@ TEST_F(MaterialsTest, MaterialParserStagePrivatePolygonOffset)
     EXPECT_EQ(material->getAllLayers().at(0)->getPrivatePolygonOffset(), -45.9f);
 }
 
+TEST_F(MaterialsTest, MaterialParserStageAlphaTest)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/notransform");
+    EXPECT_FALSE(material->getAllLayers().at(0)->hasAlphaTest());
+    EXPECT_EQ(material->getAllLayers().at(0)->getAlphaTest(), 0.0f);
+    
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/alphaTest");
+
+    auto layer = material->getAllLayers().at(0);
+    layer->evaluateExpressions(0);
+    EXPECT_TRUE(layer->hasAlphaTest());
+    EXPECT_EQ(layer->getAlphaTest(), 0.0f); // sinTable[0] evaluates to 0.0
+    EXPECT_EQ(layer->getAlphaTestExpression()->getExpressionString(), "sinTable[time]");
+}
+
 }

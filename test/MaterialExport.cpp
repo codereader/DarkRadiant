@@ -880,4 +880,28 @@ TEST_F(MaterialExportTest, StageTransforms)
     expectDefinitionDoesNotContainAnyOf(material, { "shear", "centerScale", "scroll" });
 }
 
+
+TEST_F(MaterialExportTest, StageAlphaTest)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/exporttest/empty");
+
+    EXPECT_EQ(string::trim_copy(material->getDefinition()), "");
+
+    auto layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+    layer->setAlphaTestExpressionFromString("sinTable[time]");
+    expectDefinitionContains(material, "alphaTest sinTable[time]"); 
+
+    material->revertModifications();
+
+    layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+    layer->setAlphaTestExpressionFromString("0.775");
+    expectDefinitionContains(material, "alphaTest 0.775");
+
+    material->revertModifications();
+    
+    layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+    layer->setAlphaTestExpressionFromString("");
+    expectDefinitionDoesNotContain(material, "alphaTest");
+}
+
 }

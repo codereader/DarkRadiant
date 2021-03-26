@@ -79,6 +79,12 @@ std::ostream& operator<<(std::ostream& stream, Doom3ShaderLayer& layer)
         } // switch
     }
 
+    // Alpha Test
+    if (layer.hasAlphaTest())
+    {
+        stream << "\t\talphaTest " << layer.getAlphaTestExpression()->getExpressionString() << "\n";
+    }
+
     // Texture Filter
     if (layer.getStageFlags() & IShaderLayer::FLAG_FILTER_NEAREST)
     {

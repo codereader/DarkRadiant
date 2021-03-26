@@ -886,3 +886,12 @@ textures/parsertest/privatePolygonOffset
         privatePolygonOffset -45.9
 	}
 }
+
+textures/parsertest/alphaTest
+{
+	{
+		blend diffusemap
+		map _white
+		alphaTest sinTable[time]
+	}
+}
