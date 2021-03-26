@@ -929,4 +929,60 @@ TEST_F(MaterialExportTest, StageCondition)
     expectDefinitionDoesNotContain(material, "if");
 }
 
+TEST_F(MaterialExportTest, VertexPrograms)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/program/vertexProgram1");
+    EXPECT_EQ(material->getAllLayers().at(0)->getVertexProgram(), "glprogs/test.vfp");
+
+    // Mark the definition as modified by setting the description
+    material->setDescription("-");
+
+    expectDefinitionContains(material, "vertexProgram glprogs/test.vfp");
+    expectDefinitionContains(material, "vertexParm 0 time");
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/program/vertexProgram2");
+    EXPECT_EQ(material->getAllLayers().at(0)->getVertexProgram(), "glprogs/test.vfp");
+    material->setDescription("-");
+
+    expectDefinitionContains(material, "vertexProgram glprogs/test.vfp");
+    expectDefinitionContains(material, "vertexParm 0 time, 3.0");
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/program/vertexProgram3");
+    EXPECT_EQ(material->getAllLayers().at(0)->getVertexProgram(), "glprogs/test.vfp");
+    material->setDescription("-");
+
+    expectDefinitionContains(material, "vertexProgram glprogs/test.vfp");
+    expectDefinitionContains(material, "vertexParm 0 time, 3.0, global3");
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/program/vertexProgram4");
+    EXPECT_EQ(material->getAllLayers().at(0)->getVertexProgram(), "glprogs/test.vfp");
+    material->setDescription("-");
+
+    expectDefinitionContains(material, "vertexProgram glprogs/test.vfp");
+    expectDefinitionContains(material, "vertexParm 0 time, 3.0, global3, time * 2.0");
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/program/vertexProgram5");
+    EXPECT_EQ(material->getAllLayers().at(0)->getVertexProgram(), "glprogs/test.vfp");
+    material->setDescription("-");
+
+    expectDefinitionContains(material, "vertexProgram glprogs/test.vfp");
+    expectDefinitionContains(material, "vertexParm 0 time, 3.0, global3, time * 2.0");
+    expectDefinitionContains(material, "vertexParm 1 1.0, 2.0, 3.0, 4.0");
+    expectDefinitionContains(material, "vertexParm 2 5.0, 6.0, 7.0, 8.0");
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/program/vertexProgram6");
+    EXPECT_EQ(material->getAllLayers().at(0)->getVertexProgram(), "glprogs/test.vfp");
+    // Vertex Parm 1 is empty
+    EXPECT_FALSE(material->getAllLayers().at(0)->getVertexParm(1).expressions[0]);
+    EXPECT_FALSE(material->getAllLayers().at(0)->getVertexParm(1).expressions[1]);
+    EXPECT_FALSE(material->getAllLayers().at(0)->getVertexParm(1).expressions[2]);
+    EXPECT_FALSE(material->getAllLayers().at(0)->getVertexParm(1).expressions[3]);
+    material->setDescription("-");
+
+    expectDefinitionContains(material, "vertexProgram glprogs/test.vfp");
+    expectDefinitionContains(material, "vertexParm 0 time, 3.0, global3, time * 2.0");
+    expectDefinitionDoesNotContain(material, "vertexParm 1"); // should be missing
+    expectDefinitionContains(material, "vertexParm 2 5.0, 6.0, 7.0, 8.0");
+}
+
 }

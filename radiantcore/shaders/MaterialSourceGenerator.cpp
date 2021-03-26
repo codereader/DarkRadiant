@@ -293,6 +293,28 @@ std::ostream& operator<<(std::ostream& stream, Doom3ShaderLayer& layer)
         };
     }
 
+    // Vertex Programs
+    if (!layer.getVertexProgram().empty())
+    {
+        stream << "\t\tvertexProgram " << layer.getVertexProgram() << "\n";
+
+        for (int i = 0; i < layer.getNumVertexParms(); ++i)
+        {
+            const auto& parm = layer.getVertexParm(i);
+
+            if (!parm.expressions[0])
+            {
+                continue; // skip empty parms
+            }
+
+            stream << "\t\tvertexParm " << i << " " 
+                << (parm.expressions[0] ? parm.expressions[0]->getExpressionString() : "")
+                << (parm.expressions[1] ? ", " + parm.expressions[1]->getExpressionString() : "")
+                << (parm.expressions[2] ? ", " + parm.expressions[2]->getExpressionString() : "")
+                << (parm.expressions[3] ? ", " + parm.expressions[3]->getExpressionString() : "") << "\n";
+        }
+    }
+
     stream << "\t}\n";
 
     return stream;
