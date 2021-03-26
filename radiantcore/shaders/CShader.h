@@ -65,6 +65,8 @@ public:
     float getPolygonOffset() const override;
     void setPolygonOffset(float offset) override;
 	TexturePtr getEditorImage() override;
+    IMapExpression::Ptr getEditorImageExpression() override;
+    void setEditorImageExpressionFromString(const std::string& editorImagePath) override;
 	bool isEditorImageNoTex() override;
 	TexturePtr lightFalloffImage() override;
 	std::string getName() const override;

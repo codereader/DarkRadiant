@@ -190,6 +190,13 @@ public:
     /// Return true if the editor image is no tex for this shader.
     virtual bool isEditorImageNoTex() = 0;
 
+    // Returns the expression defining the editor image of this material, as passed to qer_editorimage statement,
+    // or an empty string if this keyword was not used at all in this declaration.
+    virtual shaders::IMapExpression::Ptr getEditorImageExpression() = 0;
+
+    // Set the editor image path of this material
+    virtual void setEditorImageExpressionFromString(const std::string& editorImagePath) = 0;
+
     /// Get the string name of this material
     virtual std::string getName() const = 0;
 

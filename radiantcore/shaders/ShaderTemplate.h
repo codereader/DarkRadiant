@@ -40,7 +40,7 @@ public:
     std::vector<Doom3ShaderLayer::Ptr> _layers;
 
     // Editorimage texture
-	NamedBindablePtr _editorTex;
+	MapExpressionPtr _editorTex;
 
 	// Map expressions
 	MapExpressionPtr _lightFalloff;
@@ -425,7 +425,9 @@ public:
      * Return the named bindable corresponding to the editor preview texture
      * (qer_editorimage).
      */
-	NamedBindablePtr getEditorTexture();
+	const MapExpressionPtr& getEditorTexture();
+
+    void setEditorImageExpressionFromString(const std::string& expression);
 
 	const MapExpressionPtr& getLightFalloff()
 	{

@@ -68,12 +68,25 @@ std::shared_ptr<ShaderTemplate> ShaderTemplate::clone() const
     return std::make_shared<ShaderTemplate>(*this);
 }
 
-NamedBindablePtr ShaderTemplate::getEditorTexture()
+const MapExpressionPtr& ShaderTemplate::getEditorTexture()
 {
-    if (!_parsed)
-        parseDefinition();
+    if (!_parsed) parseDefinition();
 
     return _editorTex;
+}
+
+void ShaderTemplate::setEditorImageExpressionFromString(const std::string& expression)
+{
+    if (!_parsed) parseDefinition();
+
+    if (expression.empty())
+    {
+        _editorTex.reset();
+        return;
+    }
+
+    _editorTex = MapExpression::createForString(expression);
+    onTemplateChanged();
 }
 
 IShaderExpression::Ptr ShaderTemplate::parseSingleExpressionTerm(parser::DefTokeniser& tokeniser)
@@ -1307,10 +1320,10 @@ void ShaderTemplate::addLayer(const Doom3ShaderLayer::Ptr& layer)
 	_layers.emplace_back(layer);
 
 	// If there is no editor texture yet, use the bindable texture, but no Bump or speculars
-	if (!_editorTex && layer->getBindableTexture() &&
-		layer->getType() != IShaderLayer::BUMP && layer->getType() != IShaderLayer::SPECULAR)
+	if (!_editorTex && layer->getType() != IShaderLayer::BUMP && 
+        layer->getType() != IShaderLayer::SPECULAR && std::dynamic_pointer_cast<MapExpression>(layer->getMapExpression()))
 	{
-		_editorTex = layer->getBindableTexture();
+		_editorTex = std::static_pointer_cast<MapExpression>(layer->getMapExpression());
 	}
 }
 

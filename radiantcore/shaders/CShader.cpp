@@ -1,5 +1,6 @@
 #include "CShader.h"
 #include "Doom3ShaderSystem.h"
+#include "MapExpression.h"
 
 #include "iregistry.h"
 #include "ishaders.h"
@@ -85,6 +86,17 @@ TexturePtr CShader::getEditorImage()
     }
 
     return _editorTexture;
+}
+
+IMapExpression::Ptr CShader::getEditorImageExpression()
+{
+    return _template->getEditorTexture();
+}
+
+void CShader::setEditorImageExpressionFromString(const std::string& editorImagePath)
+{
+    ensureTemplateCopy();
+    _template->setEditorImageExpressionFromString(editorImagePath);
 }
 
 bool CShader::isEditorImageNoTex()
