@@ -207,6 +207,11 @@ bool Doom3ShaderSystem::materialCanBeModified(const std::string& name)
 {
     ensureDefsLoaded();
 
+    if (!_library->definitionExists(name))
+    {
+        return false;
+    }
+
     const auto& def = _library->getDefinition(name);
     return def.file.getIsPhysicalFile();
 }

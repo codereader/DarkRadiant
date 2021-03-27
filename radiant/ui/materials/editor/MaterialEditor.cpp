@@ -20,6 +20,7 @@
 #include "wxutil/SourceView.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/dataview/ResourceTreeViewToolbar.h"
+#include "wxutil/dataview/TreeViewItemStyle.h"
 #include "wxutil/Bitmap.h"
 #include "fmt/format.h"
 #include "string/join.h"
@@ -245,6 +246,9 @@ void MaterialEditor::setupMaterialTreeView()
     panel->GetSizer()->Add(treeToolbar, 0, wxEXPAND | wxBOTTOM, 6);
     panel->GetSizer()->Add(_treeView, 1, wxEXPAND);
 
+    auto newButton = getControl<wxButton>("MaterialEditorNewDefButton");
+    newButton->Bind(wxEVT_BUTTON, &MaterialEditor::_onNewMaterial, this);
+    
     auto saveButton = getControl<wxButton>("MaterialEditorSaveDefButton");
     saveButton->Disable();
     saveButton->Bind(wxEVT_BUTTON, &MaterialEditor::_onSaveMaterial, this);
@@ -1147,6 +1151,18 @@ void MaterialEditor::_onSaveMaterial(wxCommandEvent& ev)
     // TODO
 }
 
+void MaterialEditor::_onNewMaterial(wxCommandEvent& ev)
+{
+    if (!_material) return;
+
+    if (_material->isModified())
+    {
+        
+    }
+
+    // TODO
+}
+
 void MaterialEditor::_onCopyMaterial(wxCommandEvent& ev)
 {
     if (!_material) return;
@@ -1251,8 +1267,10 @@ void MaterialEditor::_onStageListItemActivated(wxDataViewEvent& ev)
     toggleSelectedStage();
 }
 
-void MaterialEditor::updateMaterialButtonSensitivity()
+void MaterialEditor::updateMaterialControlSensitivity()
 {
+    getControl<wxButton>("MaterialEditorNewDefButton")->Enable(!_material || !_material->isModified());
+
     getControl<wxButton>("MaterialEditorSaveDefButton")->Enable(_material && _material->isModified() &&
         GlobalMaterialManager().materialCanBeModified(_material->getName()));
 
@@ -1266,7 +1284,7 @@ void MaterialEditor::updateControlsFromMaterial()
 
     _preview->setMaterial(_material);
 
-    updateMaterialButtonSensitivity();
+    updateMaterialControlSensitivity();
     updateMaterialPropertiesFromMaterial();
     updateStageListFromMaterial();
 }
@@ -2109,9 +2127,42 @@ void MaterialEditor::_onSortRequestChanged(wxCommandEvent& ev)
     onMaterialChanged();
 }
 
+void MaterialEditor::updateMaterialTreeItem()
+{
+    if (!_material) return;
+
+    auto item = _treeView->GetTreeModel()->FindString(_material->getName(), _treeView->Columns().fullName);
+
+    if (!item.IsOk())
+    {
+        return;
+    }
+
+    bool isModified = _material->isModified();
+
+    wxutil::TreeModel::Row row(item, *_treeView->GetModel());
+    row[_treeView->Columns().iconAndName] = wxutil::TreeViewItemStyle::Modified(isModified);
+
+    wxDataViewIconText value = row[_treeView->Columns().iconAndName];
+        
+    if (!isModified && value.GetText().EndsWith("*"))
+    {
+        value.SetText(value.GetText().RemoveLast(1));
+        row[_treeView->Columns().iconAndName] = wxVariant(value);
+    }
+    else if (isModified && !value.GetText().EndsWith("*"))
+    {
+        value.SetText(value.GetText() + "*");
+        row[_treeView->Columns().iconAndName] = wxVariant(value);
+    }
+
+    row.SendItemChanged();
+}
+
 void MaterialEditor::onMaterialChanged()
 {
-    updateMaterialButtonSensitivity();
+    updateMaterialTreeItem();
+    updateMaterialControlSensitivity();
     updateSourceView();
 }
 
