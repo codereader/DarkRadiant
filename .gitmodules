@@ -1,4 +1,4 @@
-[submodule "libs/eigen"]
-	path = libs/eigen
+[submodule "external/eigen"]
+	path = external/eigen
 	url = https://gitlab.com/libeigen/eigen.git
     shallow = true
