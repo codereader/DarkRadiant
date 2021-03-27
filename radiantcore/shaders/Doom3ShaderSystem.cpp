@@ -353,10 +353,10 @@ MaterialPtr Doom3ShaderSystem::createEmptyMaterial(const std::string& name)
 
     _library->addDefinition(candidate, def);
 
-    _sigMaterialCreated.emit(candidate);
-
     auto material = _library->findShader(candidate);
     material->setIsModified();
+
+    _sigMaterialCreated.emit(candidate);
 
     return material;
 }

@@ -1069,6 +1069,7 @@ void MaterialEditor::revertCurrentMaterial()
 
 bool MaterialEditor::askUserAboutModifiedMaterial()
 {
+#if 0
     // Get the original name
     std::string origName = _material->getName();
 
@@ -1098,17 +1099,13 @@ bool MaterialEditor::askUserAboutModifiedMaterial()
         return false; // user cancelled
     }
 
+#endif
     // User doesn't want to save
     return true;
 }
 
 bool MaterialEditor::isAllowedToChangeMaterial()
 {
-    if (_material && _material->isModified())
-    {
-        return askUserAboutModifiedMaterial();
-    }
-
     return true;
 }
 
@@ -1153,14 +1150,17 @@ void MaterialEditor::_onSaveMaterial(wxCommandEvent& ev)
 
 void MaterialEditor::_onNewMaterial(wxCommandEvent& ev)
 {
-    if (!_material) return;
+    auto materialName = "textures/darkmod/map_specific/unnamed";
 
-    if (_material->isModified())
+    auto newMaterial = GlobalMaterialManager().createEmptyMaterial(materialName);
+
+    auto newItem = _treeView->GetTreeModel()->FindString(newMaterial->getName(), _treeView->Columns().fullName);
+    
+    if (newItem.IsOk())
     {
-        
+        _treeView->Select(newItem);
+        updateMaterialTreeItem();
     }
-
-    // TODO
 }
 
 void MaterialEditor::_onCopyMaterial(wxCommandEvent& ev)

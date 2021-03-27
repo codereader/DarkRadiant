@@ -1,5 +1,6 @@
 #pragma once
 
+#include <sigc++/connection.h>
 #include "wxutil/dataview/ResourceTreeView.h"
 
 namespace ui
@@ -23,8 +24,14 @@ public:
         wxutil::TreeModel::Column isOtherMaterialsFolder;
     };
 
+    // Subscriptions to the material manager
+    sigc::connection _materialCreated;
+    sigc::connection _materialRenamed;
+    sigc::connection _materialRemoved;
+
 public:
     MaterialTreeView(wxWindow* parent);
+    virtual ~MaterialTreeView();
 
     const TreeColumns& Columns() const;
     
@@ -32,6 +39,11 @@ public:
 
     // Loads all the materials
     virtual void Populate();
+
+private:
+    void onMaterialCreated(const std::string& name);
+    void onMaterialRenamed(const std::string& oldName, const std::string& newName);
+    void onMaterialRemoved(const std::string& name);
 };
 
 }

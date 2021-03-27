@@ -146,6 +146,20 @@ MaterialPopulator::~MaterialPopulator()
     EnsureStopped();
 }
 
+void MaterialPopulator::AddSingleMaterial(const wxutil::TreeModel::Ptr& model, const std::string& materialName)
+{
+    ShaderNameFunctor functor(*model, _columns, _favourites);
+    functor.visit(materialName);
+}
+
+void MaterialPopulator::RemoveSingleMaterial(const wxutil::TreeModel::Ptr& model, const std::string& materialName)
+{
+    auto item = model->FindString(materialName, _columns.fullName);
+    if (!item.IsOk()) return;
+
+    model->RemoveItem(item);
+}
+
 void MaterialPopulator::PopulateModel(const wxutil::TreeModel::Ptr& model)
 {
     model->SetHasDefaultCompare(false);
