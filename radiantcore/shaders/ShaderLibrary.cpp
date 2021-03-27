@@ -75,9 +75,26 @@ ShaderDefinition& ShaderLibrary::getDefinition(const std::string& name)
 
 bool ShaderLibrary::definitionExists(const std::string& name) const
 {
-	ShaderDefinitionMap::const_iterator i = _definitions.find(name);
+	return _definitions.count(name) > 0;
+}
 
-	return i != _definitions.end();
+void ShaderLibrary::renameDefinition(const std::string& oldName, const std::string& newName)
+{
+    // These need to be checked by the caller
+    assert(definitionExists(oldName));
+    assert(!definitionExists(newName));
+
+    auto extracted = _definitions.extract(oldName);
+    extracted.key() = newName;
+
+    _definitions.insert(std::move(extracted));
+}
+
+void ShaderLibrary::removeDefinition(const std::string& name)
+{
+    assert(definitionExists(name));
+
+    _definitions.erase(name);
 }
 
 ShaderDefinition& ShaderLibrary::getEmptyDefinition()

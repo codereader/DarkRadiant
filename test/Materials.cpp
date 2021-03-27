@@ -44,6 +44,126 @@ TEST_F(MaterialsTest, MaterialFileInfo)
     EXPECT_EQ(hiddenTex2->getShaderFileInfo().visibility, vfs::Visibility::HIDDEN);
 }
 
+TEST_F(MaterialsTest, MaterialCanBeModified)
+{
+    auto& materialManager = GlobalMaterialManager();
+
+    EXPECT_TRUE(materialManager.materialCanBeModified("textures/numbers/0"));
+    EXPECT_FALSE(materialManager.materialCanBeModified("textures/AFX/AFXweight"));
+}
+
+TEST_F(MaterialsTest, MaterialCreation)
+{
+    auto& materialManager = GlobalMaterialManager();
+
+    std::string firedName;
+
+    materialManager.signal_materialCreated().connect([&](const std::string& name)
+    {
+        firedName = name;
+    });
+
+    auto material = materialManager.createEmptyMaterial("textures/test/doesnotexistyet");
+    EXPECT_TRUE(material);
+    EXPECT_EQ(material->getName(), "textures/test/doesnotexistyet");
+
+    // Check that the signal got emitted
+    EXPECT_NE(firedName, "");
+    EXPECT_EQ(firedName, material->getName());
+
+    firedName.clear();
+
+    // Attempting to use the same name again will not succeed
+    material = materialManager.createEmptyMaterial("textures/test/doesnotexistyet");
+    EXPECT_TRUE(material);
+    EXPECT_EQ(material->getName(), "textures/test/doesnotexistyet01");
+
+    // Check that the signal got emitted
+    EXPECT_NE(firedName, "");
+    EXPECT_EQ(firedName, material->getName());
+}
+
+TEST_F(MaterialsTest, MaterialRenaming)
+{
+    auto& materialManager = GlobalMaterialManager();
+
+    std::string firedOldName;
+    std::string firedNewName;
+
+    materialManager.signal_materialRenamed().connect([&](const std::string& oldName, const std::string& newName)
+    {
+        firedOldName = oldName;
+        firedNewName = newName;
+    });
+
+    auto material = materialManager.createEmptyMaterial("textures/test/firstname");
+    EXPECT_TRUE(material);
+    EXPECT_EQ(material->getName(), "textures/test/firstname");
+
+    // Rename the first material
+    EXPECT_TRUE(materialManager.renameMaterial("textures/test/firstname", "textures/test/anothername"));
+
+    // Check signal emission
+    EXPECT_EQ(firedOldName, "textures/test/firstname");
+    EXPECT_EQ(firedNewName, "textures/test/anothername");
+
+    firedOldName.clear();
+    firedNewName.clear();
+
+    // Cannot rename a non-existent material
+    EXPECT_FALSE(materialManager.renameMaterial("textures/test/firstname", "whatevername"));
+
+    // Check signal emission
+    EXPECT_EQ(firedOldName, "");
+    EXPECT_EQ(firedNewName, "");
+
+    // Create a new material
+    materialManager.createEmptyMaterial("textures/test/secondname");
+
+    // Cannot rename a material to a conflicting name
+    EXPECT_FALSE(materialManager.renameMaterial("textures/test/secondname", "textures/test/anothername"));
+
+    // Check signal emission
+    EXPECT_EQ(firedOldName, "");
+    EXPECT_EQ(firedNewName, "");
+
+    // Cannot rename a material to the same name
+    EXPECT_FALSE(materialManager.renameMaterial("textures/test/secondname", "textures/test/secondname"));
+
+    // Check signal emission
+    EXPECT_EQ(firedOldName, "");
+    EXPECT_EQ(firedNewName, "");
+}
+
+TEST_F(MaterialsTest, MaterialRemoval)
+{
+    auto& materialManager = GlobalMaterialManager();
+
+    std::string firedName;
+
+    materialManager.signal_materialRemoved().connect([&](const std::string& name)
+    {
+        firedName = name;
+    });
+
+    auto material = materialManager.createEmptyMaterial("textures/test/firstname");
+    EXPECT_TRUE(material);
+    EXPECT_EQ(material->getName(), "textures/test/firstname");
+
+    materialManager.removeMaterial("textures/test/firstname");
+    EXPECT_FALSE(materialManager.materialExists("textures/test/firstname"));
+
+    // Check signal emission
+    EXPECT_EQ(firedName, "textures/test/firstname");
+
+    firedName.clear();
+
+    // Removing a non-existent material is not firing any signals
+    materialManager.removeMaterial("textures/test/firstname");
+
+    EXPECT_EQ(firedName, "");
+}
+
 TEST_F(MaterialsTest, MaterialParser)
 {
     auto& materialManager = GlobalMaterialManager();

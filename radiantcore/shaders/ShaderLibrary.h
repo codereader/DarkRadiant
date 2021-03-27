@@ -41,6 +41,12 @@ public:
 	 */
 	bool definitionExists(const std::string& name) const;
 
+    // Renames the definition oldName => newName. oldName must be present, newName must not be present
+    void renameDefinition(const std::string& oldName, const std::string& newName);
+
+    // Removes the named definition. The name must be present in the library.
+    void removeDefinition(const std::string& name);
+
     // Returns an empty definition, just enough to construct a shader from it
     ShaderDefinition& getEmptyDefinition();
 

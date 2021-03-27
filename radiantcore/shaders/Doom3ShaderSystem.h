@@ -47,6 +47,10 @@ class Doom3ShaderSystem :
 	sigc::signal<void> _signalDefsLoaded;
 	sigc::signal<void> _signalDefsUnloaded;
 
+    sigc::signal<void, const std::string&> _sigMaterialCreated;
+    sigc::signal<void, const std::string&, const std::string&> _sigMaterialRenamed;
+    sigc::signal<void, const std::string&> _sigMaterialRemoved;
+
 public:
 
 	// Constructor, allocates the library
@@ -72,6 +76,10 @@ public:
 
 	sigc::signal<void>& signal_DefsLoaded() override;
 	sigc::signal<void>& signal_DefsUnloaded() override;
+
+    sigc::signal<void, const std::string&>& signal_materialCreated() override;
+    sigc::signal<void, const std::string&, const std::string&>& signal_materialRenamed() override;
+    sigc::signal<void, const std::string&>& signal_materialRemoved() override;
 
 	// Return a shader by name
     MaterialPtr getMaterial(const std::string& name) override;
@@ -109,7 +117,11 @@ public:
 
     IShaderExpression::Ptr createShaderExpressionFromString(const std::string& exprStr) override;
 
+    MaterialPtr createEmptyMaterial(const std::string& name) override;
+
     MaterialPtr createDefaultMaterial(const std::string& name) override;
+    bool renameMaterial(const std::string& oldName, const std::string& newName) override;
+    void removeMaterial(const std::string& name) override;
 
 	// Look up a table def, return NULL if not found
 	ITableDefinition::Ptr getTable(const std::string& name);
@@ -139,7 +151,9 @@ private:
     ShaderLibraryPtr loadMaterialFiles();
 
 	void testShaderExpressionParsing();
-}; // class Doom3ShaderSystem
+
+    std::string ensureNonConflictingName(const std::string& name);
+};
 
 typedef std::shared_ptr<Doom3ShaderSystem> Doom3ShaderSystemPtr;
 

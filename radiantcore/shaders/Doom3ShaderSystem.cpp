@@ -309,9 +309,93 @@ TexturePtr Doom3ShaderSystem::loadTextureFromFile(const std::string& filename)
     return _textureManager->getBinding(filename);
 }
 
+sigc::signal<void, const std::string&>& Doom3ShaderSystem::signal_materialCreated()
+{
+    return _sigMaterialCreated;
+}
+
+sigc::signal<void, const std::string&, const std::string&>& Doom3ShaderSystem::signal_materialRenamed()
+{
+    return _sigMaterialRenamed;
+}
+
+sigc::signal<void, const std::string&>& Doom3ShaderSystem::signal_materialRemoved()
+{
+    return _sigMaterialRemoved;
+}
+
 IShaderExpression::Ptr Doom3ShaderSystem::createShaderExpressionFromString(const std::string& exprStr)
 {
     return ShaderExpression::createFromString(exprStr);
+}
+
+std::string Doom3ShaderSystem::ensureNonConflictingName(const std::string& name)
+{
+    auto candidate = name;
+    auto i = 0;
+
+    while (_library->definitionExists(candidate))
+    {
+        candidate += fmt::format("{0:02d}", ++i);
+    }
+
+    return candidate;
+}
+
+MaterialPtr Doom3ShaderSystem::createEmptyMaterial(const std::string& name)
+{
+    auto candidate = ensureNonConflictingName(name);
+
+    // Create a new template/definition
+    auto shaderTemplate = std::make_shared<ShaderTemplate>(candidate, "");
+
+    ShaderDefinition def{ shaderTemplate, vfs::FileInfo("", "", vfs::Visibility::HIDDEN)};
+
+    _library->addDefinition(candidate, def);
+
+    _sigMaterialCreated.emit(candidate);
+
+    return std::make_shared<CShader>(candidate, def, true);
+}
+
+bool Doom3ShaderSystem::renameMaterial(const std::string& oldName, const std::string& newName)
+{
+    if (oldName == newName)
+    {
+        rWarning() << "Cannot rename, the new name is no different" << std::endl;
+        return false;
+    }
+
+    if (!_library->definitionExists(oldName))
+    {
+        rWarning() << "Cannot rename non-existent material " << oldName << std::endl;
+        return false;
+    }
+
+    if (_library->definitionExists(newName))
+    {
+        rWarning() << "Cannot rename material to " << newName << " since this name is already in use" << std::endl;
+        return false;
+    }
+
+    _library->renameDefinition(oldName, newName);
+
+    _sigMaterialRenamed(oldName, newName);
+
+    return true;
+}
+
+void Doom3ShaderSystem::removeMaterial(const std::string& name)
+{
+    if (!_library->definitionExists(name))
+    {
+        rWarning() << "Cannot remove non-existent material " << name << std::endl;
+        return;
+    }
+
+    _library->removeDefinition(name);
+
+    _sigMaterialRemoved.emit(name);
 }
 
 MaterialPtr Doom3ShaderSystem::createDefaultMaterial(const std::string& name)
