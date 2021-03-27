@@ -1029,4 +1029,45 @@ TEST_F(MaterialExportTest, AmbientRimColour)
     expectDefinitionContains(material, "ambientRimColor parm1 * 3.0, 0.0, time * 6.0");
 }
 
+TEST_F(MaterialExportTest, BlendShortcuts)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/exporttest/empty");
+
+    EXPECT_EQ(string::trim_copy(material->getDefinition()), "");
+
+    auto layer = material->getEditableLayer(material->addLayer(IShaderLayer::DIFFUSE));
+    layer->setMapExpressionFromString("_white");
+
+    expectDefinitionContains(material, "diffusemap _white");
+
+    // Adding a piece of complexity should prevent the shortcut from being used
+    layer->setClampType(CLAMP_ZEROCLAMP);
+    expectDefinitionContains(material, "blend diffusemap");
+    expectDefinitionDoesNotContain(material, "diffusemap _white");
+
+    material->revertModifications();
+
+    layer = material->getEditableLayer(material->addLayer(IShaderLayer::BUMP));
+    layer->setMapExpressionFromString("_flat");
+
+    expectDefinitionContains(material, "bumpmap _flat");
+
+    layer->setClampType(CLAMP_ZEROCLAMP);
+    expectDefinitionContains(material, "blend bumpmap");
+    expectDefinitionDoesNotContain(material, "bumpmap _flat");
+    
+    material->revertModifications();
+
+    layer = material->getEditableLayer(material->addLayer(IShaderLayer::SPECULAR));
+    layer->setMapExpressionFromString("_black");
+
+    expectDefinitionContains(material, "specularmap _black");
+
+    layer->setClampType(CLAMP_ZEROCLAMP);
+    expectDefinitionContains(material, "blend specularmap");
+    expectDefinitionDoesNotContain(material, "specularmap _black");
+
+    material->revertModifications();
+}
+
 }

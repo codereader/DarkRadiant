@@ -102,7 +102,7 @@
 								</object>
 							</object>
 							<object class="sizeritem">
-								<option>3</option>
+								<option>2</option>
 								<flag>wxEXPAND|wxLEFT</flag>
 								<border>6</border>
 								<object class="wxBoxSizer">

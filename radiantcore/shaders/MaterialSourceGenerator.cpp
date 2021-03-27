@@ -9,83 +9,17 @@
 namespace shaders
 {
 
-// Write a single layer to the given stream, including curly braces (contents indented by two tabs)
-std::ostream& operator<<(std::ostream& stream, Doom3ShaderLayer& layer)
+void writeStageCondition(std::ostream& stream, Doom3ShaderLayer& layer)
 {
-    stream << "\t{\n";
-
     // Condition goes first
     if (layer.getConditionExpression())
     {
         stream << "\t\tif " << layer.getConditionExpression()->getExpressionString() << "\n";
     }
+}
 
-    // Blend types
-    const auto& blendFunc = layer.getBlendFuncStrings();
-
-    if (!blendFunc.first.empty())
-    {
-        stream << "\t\tblend " << blendFunc.first;
-
-        if (!blendFunc.second.empty())
-        {
-            stream << ", " << blendFunc.second << "\n";
-        }
-        else
-        {
-            stream << "\n";
-        }
-    }
-
-    // Map
-    auto mapExpr = layer.getMapExpression();
-
-    if (layer.getMapExpression())
-    {
-        stream << "\t\t";
-
-        switch (layer.getMapType())
-        {
-        case IShaderLayer::MapType::Map:
-            stream << "map " << mapExpr->getExpressionString() << "\n";
-            break;
-        case IShaderLayer::MapType::CubeMap:
-            stream << "cubeMap " << mapExpr->getExpressionString() << "\n";
-            break;
-        case IShaderLayer::MapType::CameraCubeMap:
-            stream << "cameraCubeMap " << mapExpr->getExpressionString() << "\n";
-            break;
-        case IShaderLayer::MapType::MirrorRenderMap:
-            stream << "mirrorRenderMap " << static_cast<int>(layer.getRenderMapSize().x()) << ", " 
-                << static_cast<int>(layer.getRenderMapSize().y()) << "\n";
-            break;
-        case IShaderLayer::MapType::RemoteRenderMap:
-            stream << "remoteRenderMap " << static_cast<int>(layer.getRenderMapSize().x()) << ", " 
-                << static_cast<int>(layer.getRenderMapSize().y()) << "\n";
-            break;
-        case IShaderLayer::MapType::VideoMap:
-        {
-            auto videoMap = std::dynamic_pointer_cast<IVideoMapExpression>(mapExpr);
-
-            if (videoMap)
-            {
-                stream << "videoMap " << (videoMap->isLooping() ? "loop " : "") << videoMap->getExpressionString() << "\n";
-            }
-            break;
-        }
-        case IShaderLayer::MapType::SoundMap:
-        {
-            auto soundMap = std::dynamic_pointer_cast<ISoundMapExpression>(mapExpr);
-
-            if (soundMap)
-            {
-                stream << "soundMap " << (soundMap->isWaveform() ? "waveform\n" : "\n");
-            }
-            break;
-        }
-        } // switch
-    }
-
+void writeStageModifiers(std::ostream& stream, Doom3ShaderLayer& layer)
+{
     // Alpha Test
     if (layer.hasAlphaTest())
     {
@@ -133,8 +67,8 @@ std::ostream& operator<<(std::ostream& stream, Doom3ShaderLayer& layer)
         auto expr0 = layer.getTexGenExpression(0);
         auto expr1 = layer.getTexGenExpression(1);
         auto expr2 = layer.getTexGenExpression(2);
-        
-        stream << "\t\ttexgen wobblesky " << 
+
+        stream << "\t\ttexgen wobblesky " <<
             (expr0 ? expr0->getExpressionString() : "") << " " <<
             (expr1 ? expr1->getExpressionString() : "") << " " <<
             (expr2 ? expr2->getExpressionString() : "") << "\n";
@@ -229,9 +163,9 @@ std::ostream& operator<<(std::ostream& stream, Doom3ShaderLayer& layer)
         }
         else // make use of the color shortcut to define all 4 in one line
         {
-            stream << "\t\tcolor " << redExpr->getExpressionString() << ", " 
-                << greenExpr->getExpressionString() << ", " 
-                << blueExpr->getExpressionString() << ", " 
+            stream << "\t\tcolor " << redExpr->getExpressionString() << ", "
+                << greenExpr->getExpressionString() << ", "
+                << blueExpr->getExpressionString() << ", "
                 << alphaExpr->getExpressionString() << "\n";
         }
     }
@@ -298,7 +232,7 @@ std::ostream& operator<<(std::ostream& stream, Doom3ShaderLayer& layer)
     {
         stream << "\t\tprogram " << layer.getVertexProgram() << "\n";
     }
-    else if(!layer.getVertexProgram().empty())
+    else if (!layer.getVertexProgram().empty())
     {
         stream << "\t\tvertexProgram " << layer.getVertexProgram() << "\n";
     }
@@ -319,7 +253,7 @@ std::ostream& operator<<(std::ostream& stream, Doom3ShaderLayer& layer)
                 continue; // skip empty parms
             }
 
-            stream << "\t\tvertexParm " << i << " " 
+            stream << "\t\tvertexParm " << i << " "
                 << (parm.expressions[0] ? parm.expressions[0]->getExpressionString() : "")
                 << (parm.expressions[1] ? ", " + parm.expressions[1]->getExpressionString() : "")
                 << (parm.expressions[2] ? ", " + parm.expressions[2]->getExpressionString() : "")
@@ -339,13 +273,146 @@ std::ostream& operator<<(std::ostream& stream, Doom3ShaderLayer& layer)
                 continue;
             }
 
-            stream << "\t\tfragmentMap " << i << " " 
-                << (fragmentMap.options.empty() ? "" : string::join(fragmentMap.options, " ") + " ") 
+            stream << "\t\tfragmentMap " << i << " "
+                << (fragmentMap.options.empty() ? "" : string::join(fragmentMap.options, " ") + " ")
                 << fragmentMap.map->getExpressionString() << "\n";
         }
     }
+}
 
-    stream << "\t}\n";
+void writeBlendMap(std::ostream& stream, Doom3ShaderLayer& layer)
+{
+    // Blend types
+    const auto& blendFunc = layer.getBlendFuncStrings();
+
+    if (!blendFunc.first.empty())
+    {
+        stream << "\t\tblend " << blendFunc.first;
+
+        if (!blendFunc.second.empty())
+        {
+            stream << ", " << blendFunc.second << "\n";
+        }
+        else
+        {
+            stream << "\n";
+        }
+    }
+
+    // Map
+    auto mapExpr = layer.getMapExpression();
+
+    if (layer.getMapExpression())
+    {
+        stream << "\t\t";
+
+        switch (layer.getMapType())
+        {
+        case IShaderLayer::MapType::Map:
+            stream << "map " << mapExpr->getExpressionString() << "\n";
+            break;
+        case IShaderLayer::MapType::CubeMap:
+            stream << "cubeMap " << mapExpr->getExpressionString() << "\n";
+            break;
+        case IShaderLayer::MapType::CameraCubeMap:
+            stream << "cameraCubeMap " << mapExpr->getExpressionString() << "\n";
+            break;
+        case IShaderLayer::MapType::MirrorRenderMap:
+            stream << "mirrorRenderMap " << static_cast<int>(layer.getRenderMapSize().x()) << ", "
+                << static_cast<int>(layer.getRenderMapSize().y()) << "\n";
+            break;
+        case IShaderLayer::MapType::RemoteRenderMap:
+            stream << "remoteRenderMap " << static_cast<int>(layer.getRenderMapSize().x()) << ", "
+                << static_cast<int>(layer.getRenderMapSize().y()) << "\n";
+            break;
+        case IShaderLayer::MapType::VideoMap:
+        {
+            auto videoMap = std::dynamic_pointer_cast<IVideoMapExpression>(mapExpr);
+
+            if (videoMap)
+            {
+                stream << "videoMap " << (videoMap->isLooping() ? "loop " : "") << videoMap->getExpressionString() << "\n";
+            }
+            break;
+        }
+        case IShaderLayer::MapType::SoundMap:
+        {
+            auto soundMap = std::dynamic_pointer_cast<ISoundMapExpression>(mapExpr);
+
+            if (soundMap)
+            {
+                stream << "soundMap " << (soundMap->isWaveform() ? "waveform\n" : "\n");
+            }
+            break;
+        }
+        } // switch
+    }
+}
+
+bool stageQualifiesForShortcut(Doom3ShaderLayer& layer)
+{
+    if (layer.getConditionExpression())
+    {
+        return false;
+    }
+
+    auto mapExpr = layer.getMapExpression();
+
+    if (!mapExpr)
+    {
+        return false; // no map expression => disqualified
+    }
+
+    // Only DBS qualify for shortcuts
+    if (layer.getType() != IShaderLayer::DIFFUSE &&
+        layer.getType() != IShaderLayer::BUMP &&
+        layer.getType() != IShaderLayer::SPECULAR)
+    {
+        return false;
+    }
+
+    // Check the map type, it must be a regular "map"
+    return layer.getMapType() == IShaderLayer::MapType::Map;
+}
+
+void writeBlendShortcut(std::ostream& stream, Doom3ShaderLayer& layer)
+{
+    assert(!layer.getConditionExpression());
+
+    auto mapExpr = layer.getMapExpression();
+    assert(mapExpr); // this has already been checked by "stageQualifiesForShortcut"
+
+    switch (layer.getType())
+    {
+    case IShaderLayer::DIFFUSE:  stream << "\tdiffusemap " << mapExpr->getExpressionString() << "\n"; break;
+    case IShaderLayer::BUMP:     stream << "\tbumpmap " << mapExpr->getExpressionString() << "\n"; break;
+    case IShaderLayer::SPECULAR: stream << "\tspecularmap " << mapExpr->getExpressionString() << "\n"; break;
+    default:
+        throw std::logic_error("Wrong stage type stranded in writeBlendShortcut");
+    };
+}
+
+// Write a single layer to the given stream, including curly braces (contents indented by two tabs)
+std::ostream& operator<<(std::ostream& stream, Doom3ShaderLayer& layer)
+{
+    // We're writing all the options to a separate buffer first
+    // if the buffer turns out to be empty we can safely switch to the simpler stage shortcuts like "diffusemap _white"
+    std::stringstream stageModifierStream;
+    writeStageModifiers(stageModifierStream, layer);
+
+    // If we didn't get any modifiers exported, check if the stage has a simple enough image mapping
+    if (stageModifierStream.tellp() == 0 && stageQualifiesForShortcut(layer))
+    {
+        writeBlendShortcut(stream, layer);
+    }
+    else // Stage is too complex, write the proper block
+    {
+        stream << "\t{\n";
+        writeStageCondition(stream, layer);
+        writeBlendMap(stream, layer);
+        stream << stageModifierStream.str();
+        stream << "\t}\n";
+    }
 
     return stream;
 }
