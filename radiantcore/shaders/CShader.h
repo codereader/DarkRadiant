@@ -145,6 +145,10 @@ public:
     int getParseFlags() const override;
 
     bool isModified() override;
+
+    // Set this material to modified (this just creates the internal backup copy)
+    void setIsModified();
+
     void revertModifications() override;
     sigc::signal<void>& sig_materialChanged() override;
 

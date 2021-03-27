@@ -349,13 +349,16 @@ MaterialPtr Doom3ShaderSystem::createEmptyMaterial(const std::string& name)
     // Create a new template/definition
     auto shaderTemplate = std::make_shared<ShaderTemplate>(candidate, "");
 
-    ShaderDefinition def{ shaderTemplate, vfs::FileInfo("", "", vfs::Visibility::HIDDEN)};
+    ShaderDefinition def{ shaderTemplate, vfs::FileInfo("", "", vfs::Visibility::HIDDEN) };
 
     _library->addDefinition(candidate, def);
 
     _sigMaterialCreated.emit(candidate);
 
-    return std::make_shared<CShader>(candidate, def, true);
+    auto material = _library->findShader(candidate);
+    material->setIsModified();
+
+    return material;
 }
 
 bool Doom3ShaderSystem::renameMaterial(const std::string& oldName, const std::string& newName)

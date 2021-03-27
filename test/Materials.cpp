@@ -66,6 +66,7 @@ TEST_F(MaterialsTest, MaterialCreation)
     auto material = materialManager.createEmptyMaterial("textures/test/doesnotexistyet");
     EXPECT_TRUE(material);
     EXPECT_EQ(material->getName(), "textures/test/doesnotexistyet");
+    EXPECT_TRUE(material->isModified()); // new material should be marked as modified
 
     // Check that the signal got emitted
     EXPECT_NE(firedName, "");
@@ -102,6 +103,16 @@ TEST_F(MaterialsTest, MaterialRenaming)
 
     // Rename the first material
     EXPECT_TRUE(materialManager.renameMaterial("textures/test/firstname", "textures/test/anothername"));
+
+    // The material reference needs to be renamed too
+    EXPECT_EQ(material->getName(), "textures/test/anothername");
+    
+    // Renamed material should still be marked as modified
+    EXPECT_TRUE(material->isModified());
+
+    // Re-acquiring the material reference should also deliver the same modified instance
+    material = materialManager.getMaterial("textures/test/anothername");
+    EXPECT_TRUE(material->isModified());
 
     // Check signal emission
     EXPECT_EQ(firedOldName, "textures/test/firstname");

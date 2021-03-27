@@ -320,6 +320,11 @@ bool CShader::isModified()
     return _template != _originalTemplate;
 }
 
+void CShader::setIsModified()
+{
+    ensureTemplateCopy();
+}
+
 void CShader::revertModifications()
 {
     _template = _originalTemplate;

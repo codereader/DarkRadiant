@@ -84,10 +84,23 @@ void ShaderLibrary::renameDefinition(const std::string& oldName, const std::stri
     assert(definitionExists(oldName));
     assert(!definitionExists(newName));
 
+    // Rename in definition table
     auto extracted = _definitions.extract(oldName);
     extracted.key() = newName;
 
     _definitions.insert(std::move(extracted));
+
+    // Rename in shaders table (if existing)
+    if (_shaders.count(oldName) > 0)
+    {
+        auto extractedShader = _shaders.extract(oldName);
+        extractedShader.key() = newName;
+
+        // Rename the CShader instance
+        extractedShader.mapped()->setName(newName);
+
+        _shaders.insert(std::move(extractedShader));
+    }
 }
 
 void ShaderLibrary::removeDefinition(const std::string& name)
@@ -95,6 +108,7 @@ void ShaderLibrary::removeDefinition(const std::string& name)
     assert(definitionExists(name));
 
     _definitions.erase(name);
+    _shaders.erase(name);
 }
 
 ShaderDefinition& ShaderLibrary::getEmptyDefinition()
