@@ -203,6 +203,14 @@ bool Doom3ShaderSystem::materialExists(const std::string& name)
     return _library->definitionExists(name);
 }
 
+bool Doom3ShaderSystem::materialCanBeModified(const std::string& name)
+{
+    ensureDefsLoaded();
+
+    const auto& def = _library->getDefinition(name);
+    return def.file.getIsPhysicalFile();
+}
+
 void Doom3ShaderSystem::foreachShaderName(const ShaderNameCallback& callback)
 {
     ensureDefsLoaded();

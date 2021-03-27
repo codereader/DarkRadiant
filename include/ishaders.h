@@ -518,6 +518,12 @@ public:
 	 */
 	virtual bool materialExists(const std::string& name) = 0;
 
+    /**
+     * A material can be modified if it has been declared in a physical file,
+     * i.e. outside a PAK file.
+     */
+    virtual bool materialCanBeModified(const std::string& name) = 0;
+
 	virtual void foreachShaderName(const ShaderNameCallback& callback) = 0;
 
     /**

@@ -138,11 +138,28 @@
 																	<border>6</border>
 																	<object class="wxFlexGridSizer">
 																		<rows>0</rows>
-																		<cols>4</cols>
+																		<cols>2</cols>
 																		<vgap>6</vgap>
 																		<hgap>6</hgap>
-																		<growablecols>3</growablecols>
+																		<growablecols>1</growablecols>
 																		<growablerows></growablerows>
+																		<object class="sizeritem">
+																			<option>0</option>
+																			<flag>wxALIGN_CENTER_VERTICAL</flag>
+																			<border>0</border>
+																			<object class="wxStaticText" name="m_staticText61">
+																				<label>Name:</label>
+																				<wrap>-1</wrap>
+																			</object>
+																		</object>
+																		<object class="sizeritem">
+																			<option>0</option>
+																			<flag>wxEXPAND</flag>
+																			<border>0</border>
+																			<object class="wxTextCtrl" name="MaterialName">
+																				<value></value>
+																			</object>
+																		</object>
 																		<object class="sizeritem">
 																			<option>0</option>
 																			<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
@@ -153,29 +170,37 @@
 																			</object>
 																		</object>
 																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL</flag>
-																			<border>0</border>
-																			<object class="wxChoice" name="MaterialType">
-																				<selection>0</selection>
-																				<content />
-																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																			<border>0</border>
-																			<object class="wxStaticText" name="m_staticText57">
-																				<label>Description:</label>
-																				<wrap>-1</wrap>
-																			</object>
-																		</object>
-																		<object class="sizeritem">
 																			<option>1</option>
-																			<flag>wxEXPAND|wxLEFT</flag>
+																			<flag>wxEXPAND</flag>
 																			<border>0</border>
-																			<object class="wxTextCtrl" name="MaterialDescription">
-																				<value></value>
+																			<object class="wxBoxSizer">
+																				<orient>wxHORIZONTAL</orient>
+																				<object class="sizeritem">
+																					<option>0</option>
+																					<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
+																					<border>12</border>
+																					<object class="wxChoice" name="MaterialType">
+																						<selection>0</selection>
+																						<content />
+																					</object>
+																				</object>
+																				<object class="sizeritem">
+																					<option>0</option>
+																					<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																					<border>0</border>
+																					<object class="wxStaticText" name="m_staticText57">
+																						<label>Description:</label>
+																						<wrap>-1</wrap>
+																					</object>
+																				</object>
+																				<object class="sizeritem">
+																					<option>1</option>
+																					<flag>wxEXPAND|wxLEFT</flag>
+																					<border>6</border>
+																					<object class="wxTextCtrl" name="MaterialDescription">
+																						<value></value>
+																					</object>
+																				</object>
 																			</object>
 																		</object>
 																	</object>

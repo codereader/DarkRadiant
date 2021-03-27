@@ -151,6 +151,8 @@ private:
     void revertCurrentMaterial();
 
     void _onMaterialSelectionChanged(wxDataViewEvent& ev);
+    void _onSaveMaterial(wxCommandEvent& ev);
+    void _onCopyMaterial(wxCommandEvent& ev);
     void _onRevertMaterial(wxCommandEvent& ev);
     void _onStageListSelectionChanged(wxDataViewEvent& ev);
     void _onStageListItemActivated(wxDataViewEvent& ev);

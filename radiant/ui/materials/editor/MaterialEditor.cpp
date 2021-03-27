@@ -245,6 +245,14 @@ void MaterialEditor::setupMaterialTreeView()
     panel->GetSizer()->Add(treeToolbar, 0, wxEXPAND | wxBOTTOM, 6);
     panel->GetSizer()->Add(_treeView, 1, wxEXPAND);
 
+    auto saveButton = getControl<wxButton>("MaterialEditorSaveDefButton");
+    saveButton->Disable();
+    saveButton->Bind(wxEVT_BUTTON, &MaterialEditor::_onSaveMaterial, this);
+
+    auto copyButton = getControl<wxButton>("MaterialEditorCopyDefButton");
+    copyButton->Disable();
+    copyButton->Bind(wxEVT_BUTTON, &MaterialEditor::_onCopyMaterial, this);
+
     auto revertButton = getControl<wxButton>("MaterialEditorRevertButton");
     revertButton->Disable();
     revertButton->Bind(wxEVT_BUTTON, &MaterialEditor::_onRevertMaterial, this);
@@ -306,6 +314,7 @@ void MaterialEditor::setupMaterialProperties()
         if (_material && !_materialUpdateInProgress)
         {
             _material->setDescription(description->GetValue().ToStdString());
+            onMaterialChanged();
         }
     });
     
@@ -1131,6 +1140,18 @@ void MaterialEditor::_onMaterialSelectionChanged(wxDataViewEvent& ev)
     updateControlsFromMaterial();
 }
 
+void MaterialEditor::_onSaveMaterial(wxCommandEvent& ev)
+{
+    if (!_material) return;
+
+    // TODO
+}
+
+void MaterialEditor::_onCopyMaterial(wxCommandEvent& ev)
+{
+    if (!_material) return;
+}
+
 void MaterialEditor::_onRevertMaterial(wxCommandEvent& ev)
 {
     if (!_material) return;
@@ -1232,6 +1253,10 @@ void MaterialEditor::_onStageListItemActivated(wxDataViewEvent& ev)
 
 void MaterialEditor::updateMaterialButtonSensitivity()
 {
+    getControl<wxButton>("MaterialEditorSaveDefButton")->Enable(_material && _material->isModified() &&
+        GlobalMaterialManager().materialCanBeModified(_material->getName()));
+
+    getControl<wxButton>("MaterialEditorCopyDefButton")->Enable(_material != nullptr);
     getControl<wxButton>("MaterialEditorRevertButton")->Enable(_material && _material->isModified());
 }
 
@@ -1372,6 +1397,10 @@ void MaterialEditor::updateStageListFromMaterial()
 void MaterialEditor::updateMaterialPropertiesFromMaterial()
 {
     util::ScopedBoolLock lock(_materialUpdateInProgress);
+
+    auto nameEntry = getControl<wxTextCtrl>("MaterialName");
+    nameEntry->Enable(_material != nullptr);
+    nameEntry->SetValue(_material ? _material->getName() : "");
 
     getControl<wxPanel>("MaterialEditorStageSettingsPanel")->Enable(_material != nullptr);
     

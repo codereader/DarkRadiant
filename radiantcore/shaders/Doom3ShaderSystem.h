@@ -77,6 +77,7 @@ public:
     MaterialPtr getMaterial(const std::string& name) override;
 
     bool materialExists(const std::string& name) override;
+    bool materialCanBeModified(const std::string& name) override;
 
     void foreachShaderName(const ShaderNameCallback& callback) override;
 
