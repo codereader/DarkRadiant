@@ -18,11 +18,13 @@
 #include <wx/collpane.h>
 
 #include "wxutil/SourceView.h"
+#include "wxutil/FileChooser.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/dataview/ResourceTreeViewToolbar.h"
 #include "wxutil/dataview/TreeViewItemStyle.h"
 #include "wxutil/Bitmap.h"
-#include "fmt/format.h"
+#include <fmt/format.h>
+#include "gamelib.h"
 #include "string/join.h"
 #include "materials/ParseLib.h"
 #include "ExpressionBinding.h"
@@ -1091,7 +1093,35 @@ void MaterialEditor::updateStageColoredStatus()
 
 bool MaterialEditor::saveCurrentMaterial()
 {
-    // TODO
+    if (_material->getShaderFileInfo().fullPath().empty())
+    {
+        // Ask the user where to save it
+        wxutil::FileChooser chooser(this, _("Select .mtr file"), false, "material", ".mtr");
+
+        fs::path modMaterialsPath = GlobalGameManager().getModPath();
+        modMaterialsPath /= "materials";
+
+        if (!os::fileOrDirExists(modMaterialsPath.string()))
+        {
+            rMessage() << "Ensuring mod materials path: " << modMaterialsPath << std::endl;
+            fs::create_directories(modMaterialsPath);
+        }
+
+        // Point the file chooser to that new file
+        chooser.setCurrentPath(GlobalGameManager().getModPath() + "/materials");
+        chooser.askForOverwrite(false);
+
+        std::string result = chooser.display();
+
+        if (result.empty())
+        {
+            return false; // save aborted
+        }
+        
+        _material->setShaderFileName(os::standardPath(result));
+    }
+
+    // TODO: Let the shader module write the material file
 
     return true;
 }

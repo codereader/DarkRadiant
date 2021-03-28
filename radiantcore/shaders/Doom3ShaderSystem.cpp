@@ -5,6 +5,7 @@
 #include "iradiant.h"
 #include "iregistry.h"
 #include "ifilesystem.h"
+#include "ifiletypes.h"
 #include "ipreferencesystem.h"
 #include "imainframe.h"
 #include "ieventmanager.h"
@@ -428,6 +429,7 @@ MaterialPtr Doom3ShaderSystem::copyMaterial(const std::string& nameOfOriginal, c
 
     auto material = _library->findShader(candidate);
     material->setIsModified();
+    material->setShaderFileName("");
 
     return material;
 }
@@ -454,6 +456,7 @@ const StringSet& Doom3ShaderSystem::getDependencies() const
         _dependencies.insert(MODULE_VIRTUALFILESYSTEM);
         _dependencies.insert(MODULE_XMLREGISTRY);
         _dependencies.insert(MODULE_GAMEMANAGER);
+        _dependencies.insert(MODULE_FILETYPES);
     }
 
     return _dependencies;
@@ -469,6 +472,9 @@ void Doom3ShaderSystem::initialiseModule(const IApplicationContext& ctx)
 #if 0
     testShaderExpressionParsing();
 #endif
+
+    // Register the mtr file extension
+    GlobalFiletypes().registerPattern("material", FileTypePattern(_("Material File"), "mtr", "*.mtr"));
 }
 
 // Horrible evil macro to avoid assertion failures if expr is NULL

@@ -77,6 +77,7 @@ public:
     void clearMaterialFlag(Flags flag) override;
 	bool IsDefault() const override;
 	const char* getShaderFileName() const override;
+	void setShaderFileName(const std::string& fullPath) override;
     const vfs::FileInfo& getShaderFileInfo() const override;
 	CullType getCullType() const override;
     void setCullType(CullType type) override;

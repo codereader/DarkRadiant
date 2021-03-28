@@ -67,6 +67,7 @@ TEST_F(MaterialsTest, MaterialCreation)
     EXPECT_TRUE(material);
     EXPECT_EQ(material->getName(), "textures/test/doesnotexistyet");
     EXPECT_TRUE(material->isModified()); // new material should be marked as modified
+    EXPECT_TRUE(materialManager.materialCanBeModified(material->getName()));
 
     // Check that the signal got emitted
     EXPECT_NE(firedName, "");
@@ -168,6 +169,8 @@ TEST_F(MaterialsTest, MaterialCopy)
     auto material = materialManager.copyMaterial("textures/AFX/AFXweight", "texures/copytest");
     EXPECT_TRUE(material);
     EXPECT_EQ(material->getName(), "texures/copytest");
+    EXPECT_TRUE(materialManager.materialCanBeModified("texures/copytest"));
+    EXPECT_STREQ(material->getShaderFileName(), "");
 
     // Check signal emission
     EXPECT_EQ(firedNewName, "texures/copytest");

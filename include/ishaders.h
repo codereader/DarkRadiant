@@ -209,6 +209,9 @@ public:
     /// get shader file name (ie the file where this one is defined)
     virtual const char* getShaderFileName() const = 0;
 
+    // Set the mtr file name to define where this material should be saved to
+    virtual void setShaderFileName(const std::string& fullPath) = 0;
+
     // Returns the VFS info structure of the file this shader is defined in
     virtual const vfs::FileInfo& getShaderFileInfo() const = 0;
 
