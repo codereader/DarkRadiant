@@ -37,6 +37,14 @@ namespace
         EXPECT_DOUBLE_EQ(m1.tz(), m2.tz());
         EXPECT_DOUBLE_EQ(m1.tw(), m2.tw());
     }
+
+    // EXPECT that two Vector3s are close to each other
+    void expectNear(const Vector3& v1, const Vector3& v2, double eps = EPSILON)
+    {
+        EXPECT_NEAR(v1.x(), v2.x(), eps);
+        EXPECT_NEAR(v1.y(), v2.y(), eps);
+        EXPECT_NEAR(v1.z(), v2.z(), eps);
+    }
 }
 
 TEST(MathTest, CreateIdentityMatrix)
@@ -227,6 +235,25 @@ TEST(MathTest, MatrixRotationAboutZRadians)
                                      sinAngle, cosAngle, 0, 0,
                                      0, 0, 1, 0,
                                      0, 0, 0, 1));
+}
+
+TEST(MathTest, MatrixRotationForAxisAngle)
+{
+    // Rotation with a zero angle should do nothing
+    Matrix4 noRot = Matrix4::getRotation(Vector3(0, 0, 1), 0);
+    EXPECT_EQ(noRot, Matrix4::getIdentity());
+
+    // Simple 90 degree rotation about Z axis (note this Matrix4::getRotation
+    // method always expects radians)
+    Matrix4 z90 = Matrix4::getRotation(Vector3(0, 0, 1), math::PI / 2);
+    expectNear(z90, Matrix4::getRotationAboutZ(math::Degrees(-90)));
+    expectNear(z90 * Vector3(1, 0, 0), Vector3(0, -1, 0));
+
+    // Rotate unit X vector 180 degrees around a 45 degree axis, which should
+    // map it on to the unit Y vector.
+    Vector3 axis = Vector3(1, 1, 0).getNormalised();
+    Matrix4 rot45 = Matrix4::getRotation(axis, math::PI);
+    expectNear(rot45 * Vector3(1, 0, 0), Vector3(0, 1, 0));
 }
 
 TEST(MathTest, MatrixRotationForEulerXYZDegrees)
