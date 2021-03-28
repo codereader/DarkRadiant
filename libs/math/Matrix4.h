@@ -367,11 +367,11 @@ public:
      */
     void scaleBy(const Vector3& scale, const Vector3& pivot);
 
-    /**
-     * Returns true if this and the given matrix are exactly element-wise equal.
-     * This and the other matrix must be affine.
-     */
-    bool isAffineEqual(const Matrix4& other) const;
+    /// Compare the affine part of this matrix with another for equality
+    bool isAffineEqual(const Matrix4& other) const
+    {
+        return eigen().affine() == other.eigen().affine();
+    }
 
     /**
      * Returns RIGHTHANDED if this is right-handed, else returns LEFTHANDED.
@@ -497,22 +497,6 @@ inline bool operator==(const Matrix4& l, const Matrix4& r)
 inline bool operator!=(const Matrix4& l, const Matrix4& r)
 {
     return !(l == r);
-}
-
-inline bool Matrix4::isAffineEqual(const Matrix4& other) const
-{
-    return xx() == other.xx() &&
-            xy() == other.xy() &&
-            xz() == other.xz() &&
-            yx() == other.yx() &&
-            yy() == other.yy() &&
-            yz() == other.yz() &&
-            zx() == other.zx() &&
-            zy() == other.zy() &&
-            zz() == other.zz() &&
-            tx() == other.tx() &&
-            ty() == other.ty() &&
-            tz() == other.tz();
 }
 
 inline Matrix4::Handedness Matrix4::getHandedness() const
