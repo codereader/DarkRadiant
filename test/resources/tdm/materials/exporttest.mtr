@@ -59,23 +59,22 @@ textures/exporttest/decalinfo
 	decalinfo 14.3 1.5 ( 0.9 0.8 0.7 0.6 ) (0.5 0.5 0.4 0.3)
 }
 
-textures/exporttest/renderBump1
-{
+textures/exporttest/renderBump1 { // Opening brace in the same line as the name (DON'T REMOVE THIS)
     renderBump textures/output.tga models/hipoly 
 }
 
-textures/exporttest/renderBump2
+textures/exporttest/renderBump2  // Comment in the same line as the name (DON'T REMOVE THIS)
 {
     renderBump -size 100 200 textures/output.tga models/hipoly 
 }
 
 textures/exporttest/renderBump3
+ // Comment in between the name and the definition (DON'T REMOVE THIS)
 {
     renderBump -aa 2 textures/output.tga models/hipoly 
 }
 
-textures/exporttest/renderBump4
-{
+textures/exporttest/renderBump4 {
     renderBump -aa 2 -size 10 10 textures/output.tga models/hipoly 
 }
 

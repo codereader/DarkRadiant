@@ -11,6 +11,7 @@ namespace decl
 // The part of the input stream leading up to the def is piped to the output stream in unmodified form,
 // excluding the declaration block itself.
 // Piping will either stop once the declaration is found (and omitted) or the input stream is exhausted.
+// The capture group in the regex is used to identify an opening brace in the same line as the decl name.
 class SpliceHelper
 {
 public:

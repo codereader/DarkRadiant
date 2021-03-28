@@ -1070,4 +1070,58 @@ TEST_F(MaterialExportTest, BlendShortcuts)
     material->revertModifications();
 }
 
+void expectFileContainsText(const fs::path& path, const std::string& textToFind)
+{
+    std::stringstream contents;
+    std::ifstream input(path);
+
+    contents << input.rdbuf();
+
+    EXPECT_NE(contents.str().find(textToFind), std::string::npos) 
+        << "The text '" << textToFind << "' was not found "
+        << " in the file " << path;
+}
+
+class BackupCopy
+{
+private:
+    fs::path _originalFile;
+    fs::path _backupFile;
+public:
+    BackupCopy(const fs::path& originalFile) :
+        _originalFile(originalFile)
+    {
+        _backupFile = _originalFile;
+        _backupFile.replace_extension("bak");
+
+        fs::copy(_originalFile, _backupFile);
+    }
+
+    ~BackupCopy()
+    {
+        fs::remove(_originalFile);
+        fs::rename(_backupFile, _originalFile);
+    }
+};
+
+TEST_F(MaterialExportTest, WritingMaterialFiles)
+{
+    // Create a backup copy of the material file we're going to manipulate
+    fs::path exportTestFile = _context.getTestProjectPath() + "materials/exporttest.mtr";
+    BackupCopy backup(exportTestFile);
+
+    std::string description = "Newly Generated Block";
+
+    expectFileContainsText(exportTestFile, "textures/exporttest/renderBump1 {\n"
+        "    renderBump textures/output.tga models/hipoly\n"
+        "}");
+
+    auto material = GlobalMaterialManager().getMaterial("textures/exporttest/renderBump1");
+    material->setDescription(description);
+
+    GlobalMaterialManager().saveMaterial(material->getName());
+
+    expectFileContainsText(exportTestFile, "textures/exporttest/renderBump1\n{" + material->getDefinition() + "}");
+}
+
 }
