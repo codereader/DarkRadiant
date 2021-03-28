@@ -41,6 +41,9 @@ public:
 	 */
 	bool definitionExists(const std::string& name) const;
 
+    // Copies the given definition, original name must be present, new name must not conflict
+    void copyDefinition(const std::string& nameOfOriginal, const std::string& nameOfCopy);
+
     // Renames the definition oldName => newName. oldName must be present, newName must not be present
     void renameDefinition(const std::string& oldName, const std::string& newName);
 

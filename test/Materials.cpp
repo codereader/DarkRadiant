@@ -146,6 +146,33 @@ TEST_F(MaterialsTest, MaterialRenaming)
     EXPECT_EQ(firedNewName, "");
 }
 
+TEST_F(MaterialsTest, MaterialCopy)
+{
+    auto& materialManager = GlobalMaterialManager();
+
+    std::string firedNewName;
+
+    materialManager.signal_materialCreated().connect([&](const std::string& newName)
+    {
+        firedNewName = newName;
+    });
+
+    EXPECT_TRUE(materialManager.materialExists("textures/AFX/AFXweight"));
+
+    // Copy name must not be empty => returns empty material
+    EXPECT_FALSE(materialManager.copyMaterial("textures/AFX/AFXweight", ""));
+
+    // Source material name must be existent
+    EXPECT_FALSE(materialManager.copyMaterial("textures/menotexist", "texures/copytest"));
+
+    auto material = materialManager.copyMaterial("textures/AFX/AFXweight", "texures/copytest");
+    EXPECT_TRUE(material);
+    EXPECT_EQ(material->getName(), "texures/copytest");
+
+    // Check signal emission
+    EXPECT_EQ(firedNewName, "texures/copytest");
+}
+
 TEST_F(MaterialsTest, MaterialRemoval)
 {
     auto& materialManager = GlobalMaterialManager();

@@ -213,7 +213,7 @@ bool Doom3ShaderSystem::materialCanBeModified(const std::string& name)
     }
 
     const auto& def = _library->getDefinition(name);
-    return def.file.getIsPhysicalFile();
+    return def.file.name.empty() || def.file.getIsPhysicalFile();
 }
 
 void Doom3ShaderSystem::foreachShaderName(const ShaderNameCallback& callback)
@@ -404,6 +404,32 @@ void Doom3ShaderSystem::removeMaterial(const std::string& name)
 MaterialPtr Doom3ShaderSystem::createDefaultMaterial(const std::string& name)
 {
     return std::make_shared<CShader>(name, _library->getEmptyDefinition(), true);
+}
+
+MaterialPtr Doom3ShaderSystem::copyMaterial(const std::string& nameOfOriginal, const std::string& nameOfCopy)
+{
+    if (nameOfCopy.empty())
+    {
+        rWarning() << "Cannot copy, the new name must not be empty" << std::endl;
+        return MaterialPtr();
+    }
+
+    auto candidate = ensureNonConflictingName(nameOfCopy);
+
+    if (!_library->definitionExists(nameOfOriginal))
+    {
+        rWarning() << "Cannot copy non-existent material " << nameOfOriginal << std::endl;
+        return MaterialPtr();
+    }
+
+    _library->copyDefinition(nameOfOriginal, candidate);
+
+    _sigMaterialCreated.emit(candidate);
+
+    auto material = _library->findShader(candidate);
+    material->setIsModified();
+
+    return material;
 }
 
 ITableDefinition::Ptr Doom3ShaderSystem::getTable(const std::string& name)

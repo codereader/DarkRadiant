@@ -1227,9 +1227,19 @@ void MaterialEditor::_onNewMaterial(wxCommandEvent& ev)
     selectMaterial(newMaterial);
 }
 
-void MaterialEditor::_onCopyMaterial(wxCommandEvent& ev)
+void MaterialEditor::copySelectedMaterial()
 {
     if (!_material) return;
+
+    auto newMaterialName = _material->getName() + _("_copy");
+    auto newMaterial = GlobalMaterialManager().copyMaterial(_material->getName(), newMaterialName);
+
+    selectMaterial(newMaterial);
+}
+
+void MaterialEditor::_onCopyMaterial(wxCommandEvent& ev)
+{
+    copySelectedMaterial();
 }
 
 void MaterialEditor::_onRevertMaterial(wxCommandEvent& ev)
@@ -1250,9 +1260,7 @@ void MaterialEditor::_onRevertMaterial(wxCommandEvent& ev)
 
 void MaterialEditor::_onUnlockMaterial(wxCommandEvent& ev)
 {
-    if (!_material) return;
-
-    // TODO: Generate a name for this material and copy it
+    copySelectedMaterial();
 }
 
 void MaterialEditor::_onStageListSelectionChanged(wxDataViewEvent& ev)
@@ -1342,15 +1350,15 @@ void MaterialEditor::updateMaterialControlSensitivity()
 {
     getControl<wxButton>("MaterialEditorNewDefButton")->Enable(true);
 
-    getControl<wxButton>("MaterialEditorSaveDefButton")->Enable(_material && _material->isModified() &&
-        GlobalMaterialManager().materialCanBeModified(_material->getName()));
+    auto canBeModified = _material && GlobalMaterialManager().materialCanBeModified(_material->getName());
 
-    // TODO: Copy not implemented yet
-    getControl<wxButton>("MaterialEditorCopyDefButton")->Enable(false/*_material != nullptr*/);
+    getControl<wxButton>("MaterialEditorSaveDefButton")->Enable(_material && 
+        _material->isModified() && canBeModified);
+
+    getControl<wxButton>("MaterialEditorCopyDefButton")->Enable(_material != nullptr);
     getControl<wxButton>("MaterialEditorRevertButton")->Enable(_material && _material->isModified());
 
-    getControl<wxButton>("MaterialEditorUnlockButton")->Enable(_material != nullptr && 
-        !GlobalMaterialManager().materialCanBeModified(_material->getName()));
+    getControl<wxButton>("MaterialEditorUnlockButton")->Enable(_material && !canBeModified);
 }
 
 void MaterialEditor::updateControlsFromMaterial()

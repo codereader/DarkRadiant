@@ -78,6 +78,18 @@ bool ShaderLibrary::definitionExists(const std::string& name) const
 	return _definitions.count(name) > 0;
 }
 
+void ShaderLibrary::copyDefinition(const std::string& nameOfOriginal, const std::string& nameOfCopy)
+{
+    // These need to be checked by the caller
+    assert(definitionExists(nameOfOriginal));
+    assert(!definitionExists(nameOfCopy));
+
+    auto found = _definitions.find(nameOfOriginal);
+
+    auto result = _definitions.emplace(nameOfCopy, found->second);
+    result.first->second.file = vfs::FileInfo{"", "", vfs::Visibility::HIDDEN};
+}
+
 void ShaderLibrary::renameDefinition(const std::string& oldName, const std::string& newName)
 {
     // These need to be checked by the caller

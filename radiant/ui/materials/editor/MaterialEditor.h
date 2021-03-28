@@ -153,6 +153,7 @@ private:
     bool askUserAboutModifiedMaterial();
     bool saveCurrentMaterial();
     void revertCurrentMaterial();
+    void copySelectedMaterial();
 
     void _onMaterialSelectionChanged(wxDataViewEvent& ev);
     void _onNewMaterial(wxCommandEvent& ev);
