@@ -431,11 +431,8 @@ inline Matrix4 operator* (const Matrix4& m1, const Matrix4& m2)
 /// Subtract two matrices
 inline Matrix4 operator- (const Matrix4& l, const Matrix4& r)
 {
-    return Matrix4::byColumns(
-        l.xx() - r.xx(), l.xy() - r.xy(), l.xz() - r.xz(), l.xw() - r.xw(),
-        l.yx() - r.yx(), l.yy() - r.yy(), l.yz() - r.yz(), l.yw() - r.yw(),
-        l.zx() - r.zx(), l.zy() - r.zy(), l.zz() - r.zz(), l.zw() - r.zw(),
-        l.tx() - r.tx(), l.ty() - r.ty(), l.tz() - r.tz(), l.tw() - r.tw()
+    return Matrix4(
+        Eigen::Projective3d(l.eigen().matrix() - r.eigen().matrix())
     );
 }
 
