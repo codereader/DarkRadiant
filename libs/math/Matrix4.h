@@ -490,10 +490,7 @@ inline Matrix4 Matrix4::byRows(double xx, double yx, double zx, double tx,
 /// Compare two matrices elementwise for equality
 inline bool operator==(const Matrix4& l, const Matrix4& r)
 {
-    return l.xx() == r.xx() && l.xy() == r.xy() && l.xz() == r.xz() && l.xw() == r.xw()
-        && l.yx() == r.yx() && l.yy() == r.yy() && l.yz() == r.yz() && l.yw() == r.yw()
-        && l.zx() == r.zx() && l.zy() == r.zy() && l.zz() == r.zz() && l.zw() == r.zw()
-        && l.tx() == r.tx() && l.ty() == r.ty() && l.tz() == r.tz() && l.tw() == r.tw();
+    return l.eigen().matrix() == r.eigen().matrix();
 }
 
 /// Compare two matrices elementwise for inequality
