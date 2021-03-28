@@ -129,6 +129,7 @@ private:
     void updateMaterialPropertiesFromMaterial();
 
     void selectStageByIndex(std::size_t index);
+    void selectMaterial(const MaterialPtr& material);
     IShaderLayer::Ptr getSelectedStage();
     IEditableShaderLayer::Ptr getEditableStageForSelection();
 

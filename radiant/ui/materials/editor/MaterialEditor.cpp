@@ -218,6 +218,28 @@ int MaterialEditor::ShowModal()
 
 void MaterialEditor::_onClose(wxCommandEvent& ev)
 {
+    // Check all unsaved materials
+    std::list<MaterialPtr> modifiedMaterials;
+    GlobalMaterialManager().foreachMaterial([&](const MaterialPtr& material)
+    {
+        if (material->isModified())
+        {
+            modifiedMaterials.push_back(material);
+        }
+    });
+
+    for (const auto& material : modifiedMaterials)
+    {
+        selectMaterial(material);
+
+        // Prompt user to save or discard
+        if (!askUserAboutModifiedMaterial())
+        {
+            return; // cancel the close event
+        }
+    }
+
+    // At this point, everything is saved
     EndModal(wxID_CLOSE);
 }
 
@@ -1080,7 +1102,6 @@ void MaterialEditor::revertCurrentMaterial()
 
 bool MaterialEditor::askUserAboutModifiedMaterial()
 {
-#if 0
     // Get the original name
     std::string origName = _material->getName();
 
@@ -1110,7 +1131,6 @@ bool MaterialEditor::askUserAboutModifiedMaterial()
         return false; // user cancelled
     }
 
-#endif
     // User doesn't want to save
     return true;
 }
@@ -1164,21 +1184,26 @@ void MaterialEditor::_onSaveMaterial(wxCommandEvent& ev)
     // TODO
 }
 
-void MaterialEditor::_onNewMaterial(wxCommandEvent& ev)
+void MaterialEditor::selectMaterial(const MaterialPtr& material)
 {
-    auto materialName = "textures/darkmod/map_specific/unnamed";
+    auto newItem = _treeView->GetTreeModel()->FindString(material->getName(), _treeView->Columns().fullName);
 
-    auto newMaterial = GlobalMaterialManager().createEmptyMaterial(materialName);
-
-    auto newItem = _treeView->GetTreeModel()->FindString(newMaterial->getName(), _treeView->Columns().fullName);
-    
     if (newItem.IsOk())
     {
         _treeView->Select(newItem);
         _treeView->EnsureVisible(newItem);
-        updateMaterialTreeItem();
+
         handleMaterialSelectionChange();
+        updateMaterialTreeItem();
     }
+}
+
+void MaterialEditor::_onNewMaterial(wxCommandEvent& ev)
+{
+    auto materialName = "textures/darkmod/map_specific/unnamed";
+    auto newMaterial = GlobalMaterialManager().createEmptyMaterial(materialName);
+
+    selectMaterial(newMaterial);
 }
 
 void MaterialEditor::_onCopyMaterial(wxCommandEvent& ev)
