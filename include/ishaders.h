@@ -585,6 +585,9 @@ public:
     // a generated one will be assigned to the created material
     virtual MaterialPtr createEmptyMaterial(const std::string& name) = 0;
 
+    // Creates a copy of the given material and returns the reference to it
+    virtual MaterialPtr copyMaterial(const std::string& nameOfOriginal, const std::string& nameOfCopy) = 0;
+
     virtual bool renameMaterial(const std::string& oldName, const std::string& newName) = 0;
 
     virtual void removeMaterial(const std::string& name) = 0;

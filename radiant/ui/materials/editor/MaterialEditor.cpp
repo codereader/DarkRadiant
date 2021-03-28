@@ -282,6 +282,10 @@ void MaterialEditor::setupMaterialTreeView()
     auto revertButton = getControl<wxButton>("MaterialEditorRevertButton");
     revertButton->Disable();
     revertButton->Bind(wxEVT_BUTTON, &MaterialEditor::_onRevertMaterial, this);
+
+    auto unlockButton = getControl<wxButton>("MaterialEditorUnlockButton");
+    unlockButton->Disable();
+    unlockButton->Bind(wxEVT_BUTTON, &MaterialEditor::_onUnlockMaterial, this);
 }
 
 void MaterialEditor::setupMaterialProperties()
@@ -1244,6 +1248,13 @@ void MaterialEditor::_onRevertMaterial(wxCommandEvent& ev)
     }
 }
 
+void MaterialEditor::_onUnlockMaterial(wxCommandEvent& ev)
+{
+    if (!_material) return;
+
+    // TODO: Generate a name for this material and copy it
+}
+
 void MaterialEditor::_onStageListSelectionChanged(wxDataViewEvent& ev)
 {
     auto item = _stageView->GetSelection();
@@ -1337,6 +1348,9 @@ void MaterialEditor::updateMaterialControlSensitivity()
     // TODO: Copy not implemented yet
     getControl<wxButton>("MaterialEditorCopyDefButton")->Enable(false/*_material != nullptr*/);
     getControl<wxButton>("MaterialEditorRevertButton")->Enable(_material && _material->isModified());
+
+    getControl<wxButton>("MaterialEditorUnlockButton")->Enable(_material != nullptr && 
+        !GlobalMaterialManager().materialCanBeModified(_material->getName()));
 }
 
 void MaterialEditor::updateControlsFromMaterial()
@@ -1477,14 +1491,15 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
 {
     util::ScopedBoolLock lock(_materialUpdateInProgress);
 
-    getControl<wxPanel>("MaterialNameAndDescription")->Enable(_material != nullptr);
+    bool materialCanBeModified = _material && GlobalMaterialManager().materialCanBeModified(_material->getName());
+
+    getControl<wxPanel>("MaterialNameAndDescription")->Enable(materialCanBeModified);
+    getControl<wxPanel>("MaterialEditorStageSettingsPanel")->Enable(materialCanBeModified);
 
     auto nameEntry = getControl<wxTextCtrl>("MaterialName");
     nameEntry->Enable(_material != nullptr);
     nameEntry->SetValue(_material ? _material->getName() : "");
     updateMaterialNameControl();
-
-    getControl<wxPanel>("MaterialEditorStageSettingsPanel")->Enable(_material != nullptr);
     
     // Update all registered bindings
     for (const auto& binding : _materialBindings)
