@@ -929,6 +929,12 @@ void OpenGLShader::construct()
 
 void OpenGLShader::onMaterialChanged()
 {
+    // It's possible that the name of the material got changed, update it
+    if (_material && _material->getName() != _name)
+    {
+        _name = _material->getName();
+    }
+
     unrealise();
     realise();
 }

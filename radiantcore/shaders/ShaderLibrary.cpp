@@ -96,10 +96,13 @@ void ShaderLibrary::renameDefinition(const std::string& oldName, const std::stri
         auto extractedShader = _shaders.extract(oldName);
         extractedShader.key() = newName;
 
-        // Rename the CShader instance
-        extractedShader.mapped()->setName(newName);
+        // Insert it under the new name before setting the CShader instance's name
+        // the observing OpenGLShader instance will request the material to reconstruct itself
+        // If the new name is not present at that point, the library will create a default material.
+        auto result = _shaders.insert(std::move(extractedShader));
 
-        _shaders.insert(std::move(extractedShader));
+        // Rename the CShader instance
+        result.position->second->setName(newName);
     }
 }
 

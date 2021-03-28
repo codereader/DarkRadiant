@@ -1292,7 +1292,8 @@ void MaterialEditor::updateMaterialControlSensitivity()
     getControl<wxButton>("MaterialEditorSaveDefButton")->Enable(_material && _material->isModified() &&
         GlobalMaterialManager().materialCanBeModified(_material->getName()));
 
-    getControl<wxButton>("MaterialEditorCopyDefButton")->Enable(_material != nullptr);
+    // TODO: Copy not implemented yet
+    getControl<wxButton>("MaterialEditorCopyDefButton")->Enable(false/*_material != nullptr*/);
     getControl<wxButton>("MaterialEditorRevertButton")->Enable(_material && _material->isModified());
 }
 
@@ -2165,7 +2166,8 @@ void MaterialEditor::updateMaterialTreeItem()
 {
     if (!_material) return;
 
-    auto item = _treeView->GetTreeModel()->FindString(_material->getName(), _treeView->Columns().fullName);
+    const auto& columns = _treeView->Columns();
+    auto item = _treeView->GetTreeModel()->FindString(_material->getName(), columns.fullName);
 
     if (!item.IsOk())
     {
@@ -2176,26 +2178,26 @@ void MaterialEditor::updateMaterialTreeItem()
 
     wxutil::TreeModel::Row row(item, *_treeView->GetModel());
     
-    if (!row[_treeView->Columns().isFolder].getBool())
+    if (!row[columns.isFolder].getBool())
     {
-        row[_treeView->Columns().iconAndName] = wxutil::TreeViewItemStyle::Modified(isModified);
+        row[columns.iconAndName] = wxutil::TreeViewItemStyle::Modified(isModified);
     }
     else
     {
-        row[_treeView->Columns().iconAndName] = wxDataViewItemAttr();
+        row[columns.iconAndName] = wxDataViewItemAttr();
     }
 
-    wxDataViewIconText value = row[_treeView->Columns().iconAndName];
+    wxDataViewIconText value = row[columns.iconAndName];
         
     if (!isModified && value.GetText().EndsWith("*"))
     {
         value.SetText(value.GetText().RemoveLast(1));
-        row[_treeView->Columns().iconAndName] = wxVariant(value);
+        row[columns.iconAndName] = wxVariant(value);
     }
     else if (isModified && !value.GetText().EndsWith("*"))
     {
         value.SetText(value.GetText() + "*");
-        row[_treeView->Columns().iconAndName] = wxVariant(value);
+        row[columns.iconAndName] = wxVariant(value);
     }
 
     row.SendItemChanged();
