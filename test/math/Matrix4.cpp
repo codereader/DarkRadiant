@@ -330,6 +330,35 @@ TEST(MathTest, MatrixTransformation)
     EXPECT_EQ(a.tCol().z(), 53) << "Matrix4::t failed";
 }
 
+TEST(MathTest, MatrixTransformVectorEqualsMultiplication)
+{
+    const Vector3 TRANSLATION(2, 5, -7);
+    auto t = Matrix4::getTranslation(TRANSLATION)
+           * Matrix4::getRotation(Vector3(0, 1, 0), 2.1)
+           * Matrix4::getScale(Vector3(2, 2.5, 0.75));
+
+    // transformPoint must be equivalent to a multiplication
+    Vector3 vec3(16, -32, 0.05);
+    EXPECT_EQ(t * vec3, t.transformPoint(vec3));
+
+    // transformDirection does NOT give the same result, because it ignores
+    // translation (vector's W coordinate is assumed 0).
+    EXPECT_NE(t * vec3, t.transformDirection(vec3));
+
+    // If we transform the direction then add the translation manually, we
+    // should get the same result as transformPoint.
+    EXPECT_EQ(t * vec3, t.transformDirection(vec3) + TRANSLATION);
+
+    // transform() must be equivalent to a multiplication with a full Vector4
+    Vector4 vec4(128, 0.025, -8198, 0.5);
+    EXPECT_EQ(t * vec4, t.transform(vec4));
+
+    // transformPoint() and transformDirection() must be equivalent to a
+    // multiplication with the appropriate Vector4 (W == 0 or W == 1).
+    EXPECT_EQ((t * Vector4(vec3, 1)).getVector3(), t.transformPoint(vec3));
+    EXPECT_EQ((t * Vector4(vec3, 0)).getVector3(), t.transformDirection(vec3));
+}
+
 TEST(MathTest, MatrixScaleAffineInverse)
 {
     // Construct a scale matrix
