@@ -123,6 +123,7 @@ public:
     MaterialPtr copyMaterial(const std::string& nameOfOriginal, const std::string& nameOfCopy) override;
     bool renameMaterial(const std::string& oldName, const std::string& newName) override;
     void removeMaterial(const std::string& name) override;
+    void saveMaterial(const std::string& name) override;
 
 	// Look up a table def, return NULL if not found
 	ITableDefinition::Ptr getTable(const std::string& name);

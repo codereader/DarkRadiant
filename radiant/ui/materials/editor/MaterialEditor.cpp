@@ -1121,7 +1121,20 @@ bool MaterialEditor::saveCurrentMaterial()
         _material->setShaderFileName(os::standardPath(result));
     }
 
-    // TODO: Let the shader module write the material file
+    try
+    {
+        // Write to the specified .mtr file
+        GlobalMaterialManager().saveMaterial(_material->getName());
+    }
+    catch (const std::runtime_error& ex)
+    {
+        rError() << "Could not save file: " << ex.what() << std::endl;
+        wxutil::Messagebox::ShowError(ex.what(), this);
+
+        return false; // failure means to abort the process
+    }
+
+    updateMaterialTreeItem();
 
     return true;
 }

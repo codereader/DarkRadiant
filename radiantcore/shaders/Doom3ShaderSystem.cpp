@@ -434,6 +434,13 @@ MaterialPtr Doom3ShaderSystem::copyMaterial(const std::string& nameOfOriginal, c
     return material;
 }
 
+void Doom3ShaderSystem::saveMaterial(const std::string& name)
+{
+    ensureDefsLoaded();
+
+
+}
+
 ITableDefinition::Ptr Doom3ShaderSystem::getTable(const std::string& name)
 {
     ensureDefsLoaded();

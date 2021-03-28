@@ -595,6 +595,10 @@ public:
 
     virtual void removeMaterial(const std::string& name) = 0;
 
+    // Saves the named material to the file location as specified in its shaderfile info.
+    // If the path is not writable or the material is not suitable for saving, this will throw an exception
+    virtual void saveMaterial(const std::string& name) = 0;
+
     // Creates a named, internal material for debug/testing etc.
     // Used by shaders without corresponding material declaration, like entity wireframe shaders
     virtual MaterialPtr createDefaultMaterial(const std::string& name) = 0;
