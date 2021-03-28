@@ -29,6 +29,7 @@
 #include "stream/TemporaryOutputStream.h"
 #include "string/predicate.h"
 #include "string/replace.h"
+#include "materials/ParseLib.h"
 #include "parser/DefBlockTokeniser.h"
 #include <functional>
 
@@ -463,6 +464,12 @@ void Doom3ShaderSystem::saveMaterial(const std::string& name)
 
     // Construct the output path for this material
     fs::path outputPath = GlobalGameManager().getModPath();
+
+    if (outputPath.empty())
+    {
+        outputPath = GlobalGameManager().getUserEnginePath();
+    }
+
     outputPath /= material->getShaderFileInfo().fullPath();
 
     auto outputDir = os::getContainingDir(outputPath.string());
@@ -491,7 +498,7 @@ void Doom3ShaderSystem::saveMaterial(const std::string& name)
         }
 
         // Write the file to the output stream, up to the point the material def should be written to
-        std::regex pattern("^[\\s]*" + material->getName() + "\\s*(\\{)*\\s*$");
+        std::regex pattern(getDeclNamePatternForMaterialName(material->getName()));
 
         decl::SpliceHelper::PipeStreamUntilInsertionPoint(inheritStream, stream, pattern);
 

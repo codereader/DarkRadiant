@@ -1,7 +1,9 @@
 #include "RadiantTest.h"
 
+#include <regex>
 #include "ishaders.h"
 #include "string/trim.h"
+#include "string/replace.h"
 #include "materials/ParseLib.h"
 #include <fmt/format.h>
 
@@ -1070,16 +1072,16 @@ TEST_F(MaterialExportTest, BlendShortcuts)
     material->revertModifications();
 }
 
-void expectFileContainsText(const fs::path& path, const std::string& textToFind)
+bool fileContainsText(const fs::path& path, const std::string& textToFind)
 {
-    std::stringstream contents;
+    std::stringstream contentStream;
     std::ifstream input(path);
 
-    contents << input.rdbuf();
+    contentStream << input.rdbuf();
 
-    EXPECT_NE(contents.str().find(textToFind), std::string::npos) 
-        << "The text '" << textToFind << "' was not found "
-        << " in the file " << path;
+    std::string contents = string::replace_all_copy(contentStream.str(), "\r\n", "\n");
+
+    return contents.find(textToFind) != std::string::npos;
 }
 
 class BackupCopy
@@ -1104,6 +1106,29 @@ public:
     }
 };
 
+TEST_F(MaterialExportTest, MaterialDefDetectionRegex)
+{
+    std::smatch matches;
+    std::string line1("textures/exporttest/renderBump1 { // comment");
+    std::string line2(" textures/exporttest/renderBump1 { // comment");
+    std::string line3("textures/exporttest/renderBump1");
+    std::string line4("textures/exporttest/renderBump1 // comment");
+
+    std::regex pattern(shaders::getDeclNamePatternForMaterialName("textures/exporttest/renderBump1"));
+
+    EXPECT_TRUE(std::regex_match(line1, matches, pattern));
+    EXPECT_EQ(matches[1].str(), "{");
+
+    EXPECT_TRUE(std::regex_match(line2, matches, pattern));
+    EXPECT_EQ(matches[1].str(), "{");
+
+    EXPECT_TRUE(std::regex_match(line3, matches, pattern));
+    EXPECT_EQ(matches[1].str(), "");
+    
+    EXPECT_TRUE(std::regex_match(line4, matches, pattern));
+    EXPECT_EQ(matches[1].str(), "");
+}
+
 TEST_F(MaterialExportTest, WritingMaterialFiles)
 {
     // Create a backup copy of the material file we're going to manipulate
@@ -1112,16 +1137,21 @@ TEST_F(MaterialExportTest, WritingMaterialFiles)
 
     std::string description = "Newly Generated Block";
 
-    expectFileContainsText(exportTestFile, "textures/exporttest/renderBump1 {\n"
-        "    renderBump textures/output.tga models/hipoly\n"
-        "}");
+    auto originalDefinition = "textures/exporttest/renderBump1 { // Opening brace in the same line as the name (DON'T REMOVE THIS)\n"
+        "    renderBump textures/output.tga models/hipoly \n"
+        "}";
+    EXPECT_TRUE(fileContainsText(exportTestFile, originalDefinition)) << "Original definition not found in file " << exportTestFile;
 
     auto material = GlobalMaterialManager().getMaterial("textures/exporttest/renderBump1");
     material->setDescription(description);
 
     GlobalMaterialManager().saveMaterial(material->getName());
 
-    expectFileContainsText(exportTestFile, "textures/exporttest/renderBump1\n{" + material->getDefinition() + "}");
+    EXPECT_TRUE(fileContainsText(exportTestFile, "textures/exporttest/renderBump1\n{" + material->getDefinition() + "}")) 
+        << "New definition not found in file";
+
+    EXPECT_FALSE(fileContainsText(exportTestFile, originalDefinition)) 
+        << "Original definition still in file";
 }
 
 }

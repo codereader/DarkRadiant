@@ -656,10 +656,10 @@ void MaterialSourceGenerator::WriteMaterialGenerationComment(std::ostream& strea
 
 void MaterialSourceGenerator::WriteFullMaterialToStream(std::ostream& stream, const MaterialPtr& material)
 {
-    stream << material->getName();
+    stream << material->getName() << "\n";
     stream << "{";
     stream << material->getDefinition();
-    stream << "}" << std::endl << std::endl;
+    stream << "}" << "\n" << std::endl;
 }
 
 }

@@ -7,6 +7,13 @@
 namespace shaders
 {
 
+// A regex pattern that can be used to detect a material name in a single line of a material file
+// which is optionally detecting an opening curly brace in the same line
+inline std::string getDeclNamePatternForMaterialName(const std::string& name)
+{
+    return "^\\s*" + name + "\\s*(\\{*).*$";
+}
+
 constexpr std::pair<const char*, Material::Flags> MaterialFlagKeywords[]
 {
     { "noShadows", Material::FLAG_NOSHADOWS },
