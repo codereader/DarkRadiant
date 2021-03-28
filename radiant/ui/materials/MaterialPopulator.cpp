@@ -174,12 +174,22 @@ void MaterialPopulator::AddSingleMaterial(const wxutil::TreeModel::Ptr& model, c
         parts.insert(parts.begin(), otherMaterialsFolder);
     }
 
+    while (parts.back().empty())
+    {
+        parts.pop_back();
+    }
+
     wxDataViewItem parentItem;
     std::string parentPath;
 
     // Ensure all the parent folders are present
     for (auto i = 0; i < parts.size() - 1; ++i)
     {
+        if (parts[i].empty())
+        {
+            continue;
+        }
+
         parentPath += !parentPath.empty() ? "/" : "";
         parentPath += parts[i];
 
@@ -207,10 +217,25 @@ void MaterialPopulator::AddSingleMaterial(const wxutil::TreeModel::Ptr& model, c
 
 void MaterialPopulator::RemoveSingleMaterial(const wxutil::TreeModel::Ptr& model, const std::string& materialName)
 {
-    auto item = model->FindString(materialName, _columns.fullName);
-    if (!item.IsOk()) return;
+    auto normalisedName = string::replace_all_copy(materialName, "//", "/");
 
-    model->RemoveItem(item);
+    // Walk up the parents to check if the removed material leaves any empty folders behind
+    auto item = model->FindString(normalisedName, _columns.fullName);
+    
+    while (item.IsOk())
+    {
+        auto parentItem = model->GetParent(item);
+
+        model->RemoveItem(item);
+
+        wxDataViewItemArray children;
+        if (!parentItem.IsOk() || model->GetChildren(parentItem, children) > 0)
+        {
+            break;
+        }
+
+        item = parentItem; // remove the parent too
+    }
 }
 
 void MaterialPopulator::PopulateModel(const wxutil::TreeModel::Ptr& model)
