@@ -1129,6 +1129,8 @@ TEST_F(MaterialExportTest, MaterialDefDetectionRegex)
     EXPECT_EQ(matches[1].str(), "");
 }
 
+// Testing the replacement of several declaration blocks in a given material file
+// with some variation in the opening line of the declname syntax
 TEST_F(MaterialExportTest, WritingMaterialFiles)
 {
     // Create a backup copy of the material file we're going to manipulate
@@ -1137,6 +1139,7 @@ TEST_F(MaterialExportTest, WritingMaterialFiles)
 
     std::string description = "Newly Generated Block";
 
+    // RenderBump1
     auto originalDefinition = "textures/exporttest/renderBump1 { // Opening brace in the same line as the name (DON'T REMOVE THIS)\n"
         "    renderBump textures/output.tga models/hipoly \n"
         "}";
@@ -1147,11 +1150,73 @@ TEST_F(MaterialExportTest, WritingMaterialFiles)
 
     GlobalMaterialManager().saveMaterial(material->getName());
 
-    EXPECT_TRUE(fileContainsText(exportTestFile, "textures/exporttest/renderBump1\n{" + material->getDefinition() + "}")) 
+    EXPECT_TRUE(fileContainsText(exportTestFile, material->getName() + "\n{" + material->getDefinition() + "}"))
         << "New definition not found in file";
-
     EXPECT_FALSE(fileContainsText(exportTestFile, originalDefinition)) 
         << "Original definition still in file";
+
+    // RenderBump2
+    originalDefinition = "textures/exporttest/renderBump2  // Comment in the same line as the name (DON'T REMOVE THIS)\n"
+        "{\n"
+        "    renderBump -size 100 200 textures/output.tga models/hipoly \n"
+        "}";
+    EXPECT_TRUE(fileContainsText(exportTestFile, originalDefinition)) << "Original definition not found in file " << exportTestFile;
+
+    material = GlobalMaterialManager().getMaterial("textures/exporttest/renderBump2");
+    material->setDescription(description);
+
+    GlobalMaterialManager().saveMaterial(material->getName());
+
+    EXPECT_TRUE(fileContainsText(exportTestFile, material->getName() + "\n{" + material->getDefinition() + "}"))
+        << "New definition not found in file";
+    EXPECT_FALSE(fileContainsText(exportTestFile, originalDefinition))
+        << "Original definition still in file";
+
+    // RenderBump3
+    originalDefinition = "textures/exporttest/renderBump3\n"
+        " // Comment in between the name and the definition (DON'T REMOVE THIS)\n"
+        "{\n"
+        "    renderBump -aa 2 textures/output.tga models/hipoly \n"
+        "}";
+    EXPECT_TRUE(fileContainsText(exportTestFile, originalDefinition)) << "Original definition not found in file " << exportTestFile;
+
+    material = GlobalMaterialManager().getMaterial("textures/exporttest/renderBump3");
+    material->setDescription(description);
+
+    GlobalMaterialManager().saveMaterial(material->getName());
+
+    EXPECT_TRUE(fileContainsText(exportTestFile, material->getName() + "\n{" + material->getDefinition() + "}"))
+        << "New definition not found in file";
+    EXPECT_FALSE(fileContainsText(exportTestFile, originalDefinition))
+        << "Original definition still in file";
+
+    // RenderBump4
+    originalDefinition = "textures/exporttest/renderBump4 {\n"
+        "    renderBump -aa 2 -size 10 10 textures/output.tga models/hipoly \n"
+        "}";
+    EXPECT_TRUE(fileContainsText(exportTestFile, originalDefinition)) << "Original definition not found in file " << exportTestFile;
+
+    material = GlobalMaterialManager().getMaterial("textures/exporttest/renderBump4");
+    material->setDescription(description);
+
+    GlobalMaterialManager().saveMaterial(material->getName());
+
+    EXPECT_TRUE(fileContainsText(exportTestFile, material->getName() + "\n{" + material->getDefinition() + "}"))
+        << "New definition not found in file";
+    EXPECT_FALSE(fileContainsText(exportTestFile, originalDefinition))
+        << "Original definition still in file";
+
+    // Create a new material, which is definitely not present in the file
+    auto newMaterial = GlobalMaterialManager().copyMaterial("textures/exporttest/renderBumpFlat1", "textures/exporttest/renderBumpX");
+    newMaterial->setDescription(description);
+    newMaterial->setShaderFileName(exportTestFile.string());
+
+    EXPECT_FALSE(fileContainsText(exportTestFile, newMaterial->getName()));
+
+    GlobalMaterialManager().saveMaterial(newMaterial->getName());
+
+    EXPECT_TRUE(fileContainsText(exportTestFile, newMaterial->getName() + "\n{" + newMaterial->getDefinition() + "}"))
+        << "New definition not found in file";
 }
 
 }

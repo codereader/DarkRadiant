@@ -302,8 +302,8 @@ const char* CShader::getShaderFileName() const
 
 void CShader::setShaderFileName(const std::string& fullPath)
 {
-    _fileInfo.name = os::getFilename(fullPath);
     _fileInfo.topDir = os::getDirectory(GlobalFileSystem().findRoot(fullPath));
+    _fileInfo.name = os::getRelativePath(fullPath, _fileInfo.topDir);
 }
 
 const vfs::FileInfo& CShader::getShaderFileInfo() const
