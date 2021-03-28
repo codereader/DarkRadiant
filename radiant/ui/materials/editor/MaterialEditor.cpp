@@ -1096,7 +1096,17 @@ void MaterialEditor::revertCurrentMaterial()
 {
     if (!_material) return;
 
+    if (_material->isModified() && _material->getShaderFileInfo().name.empty())
+    {
+        // This material has been created and not been saved yet, 
+        // discarding it means removing it
+        GlobalMaterialManager().removeMaterial(_material->getName());
+        selectMaterial(MaterialPtr());
+        return;
+    }
+
     _material->revertModifications();
+
     onMaterialChanged();
 }
 
@@ -1147,7 +1157,7 @@ void MaterialEditor::handleMaterialSelectionChange()
     _materialChanged.disconnect();
 
     // Update the preview if a texture is selected
-    if (!_treeView->IsDirectorySelected())
+    if (_selectedMaterialItem.IsOk() && !_treeView->IsDirectorySelected())
     {
         _material = GlobalMaterialManager().getMaterial(_treeView->GetSelectedFullname());
 
@@ -1181,11 +1191,18 @@ void MaterialEditor::_onSaveMaterial(wxCommandEvent& ev)
 {
     if (!_material) return;
 
-    // TODO
+    saveCurrentMaterial();
 }
 
 void MaterialEditor::selectMaterial(const MaterialPtr& material)
 {
+    if (!material)
+    {
+        _treeView->UnselectAll();
+        handleMaterialSelectionChange();
+        return;
+    }
+
     auto newItem = _treeView->GetTreeModel()->FindString(material->getName(), _treeView->Columns().fullName);
 
     if (newItem.IsOk())
@@ -1459,6 +1476,8 @@ void MaterialEditor::updateStageListFromMaterial()
 void MaterialEditor::updateMaterialPropertiesFromMaterial()
 {
     util::ScopedBoolLock lock(_materialUpdateInProgress);
+
+    getControl<wxPanel>("MaterialNameAndDescription")->Enable(_material != nullptr);
 
     auto nameEntry = getControl<wxTextCtrl>("MaterialName");
     nameEntry->Enable(_material != nullptr);
