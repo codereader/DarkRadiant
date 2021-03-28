@@ -571,6 +571,17 @@ void CShader::ensureTemplateCopy()
     realise();
 }
 
+void CShader::commitModifications()
+{
+    // Overwrite the original template reference, the material is now unmodified again
+    _originalTemplate = _template;
+}
+
+const ShaderTemplatePtr& CShader::getTemplate()
+{
+    return _template;
+}
+
 void CShader::subscribeToTemplateChanges()
 {
     // Disconnect from any signal first

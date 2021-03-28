@@ -527,6 +527,12 @@ void Doom3ShaderSystem::saveMaterial(const std::string& name)
     }
 
     tempStream.closeAndReplaceTargetFile();
+
+    // Store the modifications in our actual template and un-mark the file
+    material->commitModifications();
+
+    // Update the template in our library
+    _library->replaceDefinition(material->getName(), ShaderDefinition{ material->getTemplate(), material->getShaderFileInfo() });
 }
 
 ITableDefinition::Ptr Doom3ShaderSystem::getTable(const std::string& name)

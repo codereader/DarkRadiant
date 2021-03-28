@@ -150,8 +150,12 @@ public:
     // Set this material to modified (this just creates the internal backup copy)
     void setIsModified();
 
+    void commitModifications();
     void revertModifications() override;
     sigc::signal<void>& sig_materialChanged() override;
+
+    // Returns the current template (including any modifications) of this material
+    const ShaderTemplatePtr& getTemplate();
 
 private:
     void ensureTemplateCopy();

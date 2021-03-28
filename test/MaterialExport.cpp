@@ -1096,6 +1096,11 @@ public:
         _backupFile = _originalFile;
         _backupFile.replace_extension("bak");
 
+        if (fs::exists(_backupFile))
+        {
+            fs::remove(_backupFile);
+        }
+
         fs::copy(_originalFile, _backupFile);
     }
 
@@ -1210,11 +1215,14 @@ TEST_F(MaterialExportTest, WritingMaterialFiles)
     auto newMaterial = GlobalMaterialManager().copyMaterial("textures/exporttest/renderBumpFlat1", "textures/exporttest/renderBumpX");
     newMaterial->setDescription(description);
     newMaterial->setShaderFileName(exportTestFile.string());
+    EXPECT_TRUE(newMaterial->isModified());
 
     EXPECT_FALSE(fileContainsText(exportTestFile, newMaterial->getName()));
 
     GlobalMaterialManager().saveMaterial(newMaterial->getName());
 
+    // After saving the material should no longer be "modified"
+    EXPECT_FALSE(newMaterial->isModified());
     EXPECT_TRUE(fileContainsText(exportTestFile, newMaterial->getName() + "\n{" + newMaterial->getDefinition() + "}"))
         << "New definition not found in file";
 }

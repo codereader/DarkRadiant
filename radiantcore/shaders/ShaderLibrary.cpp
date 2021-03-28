@@ -78,6 +78,19 @@ bool ShaderLibrary::definitionExists(const std::string& name) const
 	return _definitions.count(name) > 0;
 }
 
+void ShaderLibrary::replaceDefinition(const std::string& name, const ShaderDefinition& def)
+{
+    auto found = _definitions.find(name);
+
+    if (found == _definitions.end())
+    {
+        addDefinition(name, def);
+        return;
+    }
+
+    found->second = def;
+}
+
 void ShaderLibrary::copyDefinition(const std::string& nameOfOriginal, const std::string& nameOfCopy)
 {
     // These need to be checked by the caller
