@@ -1368,7 +1368,7 @@ void MaterialEditor::updateStageButtonSensitivity()
 {
     auto item = _stageView->GetSelection();
 
-    if (_material && item.IsOk())
+    if (_material && item.IsOk() && GlobalMaterialManager().materialCanBeModified(_material->getName()))
     {
         auto row = wxutil::TreeModel::Row(item, *_stageList);
         auto index = row[STAGE_COLS().index].getInteger();
@@ -1380,6 +1380,7 @@ void MaterialEditor::updateStageButtonSensitivity()
         getControl<wxButton>("MaterialEditorMoveUpStageButton")->Enable(!isGlobalStage && index > 0);
         getControl<wxButton>("MaterialEditorMoveDownStageButton")->Enable(!isGlobalStage && index + 1 < layersCount);
         getControl<wxButton>("MaterialEditorDuplicateStageButton")->Enable(!isGlobalStage);
+        getControl<wxButton>("MaterialEditorAddStageButton")->Enable();
     }
     else
     {
@@ -1388,6 +1389,7 @@ void MaterialEditor::updateStageButtonSensitivity()
         getControl<wxButton>("MaterialEditorMoveUpStageButton")->Disable();
         getControl<wxButton>("MaterialEditorMoveDownStageButton")->Disable();
         getControl<wxButton>("MaterialEditorDuplicateStageButton")->Disable();
+        getControl<wxButton>("MaterialEditorAddStageButton")->Disable();
     }
 }
 
@@ -1555,7 +1557,7 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
     getControl<wxPanel>("MaterialEditorStageSettingsPanel")->Enable(materialCanBeModified);
 
     auto nameEntry = getControl<wxTextCtrl>("MaterialName");
-    nameEntry->Enable(_material != nullptr);
+    nameEntry->Enable(materialCanBeModified);
     nameEntry->SetValue(_material ? _material->getName() : "");
     updateMaterialNameControl();
     

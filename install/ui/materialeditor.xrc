@@ -2779,7 +2779,7 @@
 						<flag>wxALIGN_CENTER_VERTICAL</flag>
 						<border>5</border>
 						<object class="wxStaticText" name="MaterialEditorSaveNote">
-							<label>Note: changes will be written to the file .....</label>
+							<label></label>
 							<wrap>-1</wrap>
 						</object>
 					</object>
