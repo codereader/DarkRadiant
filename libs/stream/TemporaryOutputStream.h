@@ -32,6 +32,30 @@ public:
         }
     }
 
+    ~TemporaryOutputStream()
+    {
+        // Remove the temporary file if it still existing at the End Of Life of this object
+        if (_stream.is_open())
+        {
+            _stream.close();
+        }
+
+        if (fs::exists(_temporaryPath))
+        {
+            rMessage() << "Cleaning up temporary file " << _temporaryPath << std::endl;
+
+            try
+            {
+                fs::remove(_temporaryPath);
+            }
+            catch (fs::filesystem_error& e)
+            {
+                rError() << "Could not remove the temporary file " << _temporaryPath << std::endl
+                    << e.what() << std::endl;
+            }
+        }
+    }
+
     std::ostream& getStream()
     {
         return _stream;

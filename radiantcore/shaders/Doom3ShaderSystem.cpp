@@ -1,5 +1,6 @@
 #include "Doom3ShaderSystem.h"
 #include "ShaderFileLoader.h"
+#include "MaterialSourceGenerator.h"
 
 #include "i18n.h"
 #include "iradiant.h"
@@ -24,6 +25,8 @@
 
 #include "os/file.h"
 #include "os/path.h"
+#include "decl/SpliceHelper.h"
+#include "stream/TemporaryOutputStream.h"
 #include "string/predicate.h"
 #include "string/replace.h"
 #include "parser/DefBlockTokeniser.h"
@@ -448,7 +451,7 @@ void Doom3ShaderSystem::saveMaterial(const std::string& name)
         return;
     }
 
-    if (!materialCanBeModified(name))
+    if (!materialCanBeModified(material->getName()))
     {
         throw std::runtime_error("Cannot save this material, it's read-only.");
     }
@@ -469,9 +472,54 @@ void Doom3ShaderSystem::saveMaterial(const std::string& name)
         fs::create_directories(outputDir);
     }
 
-    rMessage() << "Saving material " << name << " to " << outputPath << std::endl;
+    rMessage() << "Saving material " << material->getName() << " to " << outputPath << std::endl;
 
+    stream::TemporaryOutputStream tempStream(outputPath);
 
+    std::string tempString;
+    auto& stream = tempStream.getStream();
+
+    // If a previous file exists, open it for reading and filter out the material def we'll be writing
+    if (fs::exists(outputPath))
+    {
+        std::ifstream inheritStream(outputPath);
+
+        if (!inheritStream.is_open())
+        {
+            throw std::runtime_error(
+                fmt::format(_("Cannot open file for reading: {0}"), outputPath.string()));
+        }
+
+        // Write the file to the output stream, up to the point the material def should be written to
+        std::regex pattern("^[\\s]*" + material->getName() + "\\s*(\\{)*\\s*$");
+
+        decl::SpliceHelper::PipeStreamUntilInsertionPoint(inheritStream, stream, pattern);
+
+        if (inheritStream.eof())
+        {
+            // Material declaration was not found in the inherited stream, write our comment
+            stream << std::endl << std::endl;
+
+            MaterialSourceGenerator::WriteMaterialGenerationComment(stream);
+        }
+
+        // We're at the insertion point (which might as well be EOF of the inheritStream)
+
+        // Write the name, curly braces and block contents
+        MaterialSourceGenerator::WriteFullMaterialToStream(stream, material);
+
+        stream << inheritStream.rdbuf();
+
+        inheritStream.close();
+    }
+    else
+    {
+        // File is empty, just write the comment and the declaration
+        MaterialSourceGenerator::WriteMaterialGenerationComment(stream);
+        MaterialSourceGenerator::WriteFullMaterialToStream(stream, material);
+    }
+
+    tempStream.closeAndReplaceTargetFile();
 }
 
 ITableDefinition::Ptr Doom3ShaderSystem::getTable(const std::string& name)

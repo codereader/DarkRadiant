@@ -15,6 +15,7 @@
 #include "i18n.h"
 
 #include "parser/DefTokeniser.h"
+#include "decl/SpliceHelper.h"
 #include "stream/TemporaryOutputStream.h"
 #include "math/Vector4.h"
 #include "os/fs.h"
@@ -364,7 +365,9 @@ void ParticlesManager::saveParticleDef(const std::string& particleName)
 		}
 
 		// Write the file to the output stream, up to the point the particle def should be written to
-		stripParticleDefFromStream(inheritStream, stream, particleName);
+        std::regex pattern("^[\\s]*particle[\\s]+" + particleName + "\\s*(\\{)*\\s*$");
+
+        decl::SpliceHelper::PipeStreamUntilInsertionPoint(inheritStream, stream, pattern);
 
 		if (inheritStream.eof())
 		{
@@ -393,64 +396,6 @@ void ParticlesManager::saveParticleDef(const std::string& particleName)
 	}
 
 	tempStream.closeAndReplaceTargetFile();
-}
-
-void ParticlesManager::stripParticleDefFromStream(std::istream& input,
-	std::ostream& output, const std::string& particleName)
-{
-	std::string line;
-	std::regex pattern("^[\\s]*particle[\\s]+" + particleName + "\\s*(\\{)*\\s*$");
-
-	while (std::getline(input, line))
-	{
-		std::smatch matches;
-
-		// See if this line contains the particle def in question
-		if (std::regex_match(line, matches, pattern))
-		{
-			// Line matches, march from opening brace to the other one
-			std::size_t openBraces = 0;
-			bool blockStarted = false;
-
-			if (!matches[1].str().empty())
-			{
-				// We've had an opening brace in the first line
-				openBraces++;
-				blockStarted = true;
-			}
-
-			while (std::getline(input, line))
-			{
-				for (std::size_t i = 0; i < line.length(); ++i)
-				{
-					if (line[i] == '{')
-					{
-						openBraces++;
-						blockStarted = true;
-					}
-					else if (line[i] == '}')
-					{
-						openBraces--;
-					}
-				}
-
-				if (blockStarted && openBraces == 0)
-				{
-					break;
-				}
-			}
-
-			return; // stop right here, return to caller
-		}
-		else
-		{
-			// No particular match, add line to output
-			output << line;
-		}
-
-		// Append a newline in any case
-		output << std::endl;
-	}
 }
 
 module::StaticModule<ParticlesManager> particlesManagerModule;

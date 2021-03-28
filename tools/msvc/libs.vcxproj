@@ -149,6 +149,7 @@
     <ClInclude Include="..\..\libs\debugging\render.h" />
     <ClInclude Include="..\..\libs\debugging\ScenegraphUtils.h" />
     <ClInclude Include="..\..\libs\debugging\ScopedDebugTimer.h" />
+    <ClInclude Include="..\..\libs\decl\SpliceHelper.h" />
     <ClInclude Include="..\..\libs\DirectoryArchiveFile.h" />
     <ClInclude Include="..\..\libs\dragplanes.h" />
     <ClInclude Include="..\..\libs\eclass.h" />
