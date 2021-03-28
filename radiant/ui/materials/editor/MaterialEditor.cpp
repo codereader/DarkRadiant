@@ -2175,7 +2175,15 @@ void MaterialEditor::updateMaterialTreeItem()
     bool isModified = _material->isModified();
 
     wxutil::TreeModel::Row row(item, *_treeView->GetModel());
-    row[_treeView->Columns().iconAndName] = wxutil::TreeViewItemStyle::Modified(isModified);
+    
+    if (!row[_treeView->Columns().isFolder].getBool())
+    {
+        row[_treeView->Columns().iconAndName] = wxutil::TreeViewItemStyle::Modified(isModified);
+    }
+    else
+    {
+        row[_treeView->Columns().iconAndName] = wxDataViewItemAttr();
+    }
 
     wxDataViewIconText value = row[_treeView->Columns().iconAndName];
         

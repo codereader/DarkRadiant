@@ -209,10 +209,18 @@ void MaterialPopulator::AddSingleMaterial(const wxutil::TreeModel::Ptr& model, c
         }
     }
 
-    // Insert the material leaf
-    parentPath += !parentPath.empty() ? "/" : "";
-    auto row = functor.insertTexture(parentPath + parts.back(), parts.back(), parentItem);
-    row.SendItemAdded();
+    // Insert the material leaf (but don't insert dupes)
+    std::string itemPath = parentPath;
+    itemPath += !itemPath.empty() ? "/" : "";
+    itemPath += parts.back();
+
+    auto existingItem = model->FindString(itemPath, _columns.fullName, parentItem);
+
+    if (!existingItem.IsOk())
+    {
+        auto row = functor.insertTexture(itemPath, parts.back(), parentItem);
+        row.SendItemAdded();
+    }
 }
 
 void MaterialPopulator::RemoveSingleMaterial(const wxutil::TreeModel::Ptr& model, const std::string& materialName)
@@ -222,19 +230,20 @@ void MaterialPopulator::RemoveSingleMaterial(const wxutil::TreeModel::Ptr& model
     // Walk up the parents to check if the removed material leaves any empty folders behind
     auto item = model->FindString(normalisedName, _columns.fullName);
     
-    while (item.IsOk())
+    // Prevent removal of items with children
+    wxDataViewItemArray children;
+    while (item.IsOk() && model->GetChildren(item, children) == 0)
     {
         auto parentItem = model->GetParent(item);
 
         model->RemoveItem(item);
 
-        wxDataViewItemArray children;
-        if (!parentItem.IsOk() || model->GetChildren(parentItem, children) > 0)
+        if (!parentItem.IsOk())
         {
             break;
         }
 
-        item = parentItem; // remove the parent too
+        item = parentItem; // remove the parent too (if it is empty)
     }
 }
 

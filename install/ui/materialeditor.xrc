@@ -55,10 +55,10 @@
 											<orient>wxVERTICAL</orient>
 											<object class="sizeritem">
 												<option>0</option>
-												<flag>wxALL</flag>
+												<flag>wxALL|wxEXPAND</flag>
 												<border>0</border>
 												<object class="wxButton" name="MaterialEditorNewDefButton">
-													<label>New</label>
+													<label>New Material</label>
 													<default>0</default>
 													<markup>0</markup>
 													<bitmap />
@@ -66,10 +66,10 @@
 											</object>
 											<object class="sizeritem">
 												<option>0</option>
-												<flag>wxTOP</flag>
+												<flag>wxEXPAND|wxTOP</flag>
 												<border>6</border>
 												<object class="wxButton" name="MaterialEditorSaveDefButton">
-													<label>Save</label>
+													<label>Save Material</label>
 													<default>0</default>
 													<markup>0</markup>
 													<bitmap />
@@ -77,10 +77,10 @@
 											</object>
 											<object class="sizeritem">
 												<option>0</option>
-												<flag>wxTOP</flag>
+												<flag>wxEXPAND|wxTOP</flag>
 												<border>6</border>
 												<object class="wxButton" name="MaterialEditorCopyDefButton">
-													<label>Copy</label>
+													<label>Copy Material</label>
 													<default>0</default>
 													<markup>0</markup>
 													<bitmap />
@@ -91,7 +91,7 @@
 												<flag>wxTOP</flag>
 												<border>6</border>
 												<object class="wxButton" name="MaterialEditorRevertButton">
-													<label>Revert</label>
+													<label>Discard Changes</label>
 													<default>0</default>
 													<markup>0</markup>
 													<bitmap />
