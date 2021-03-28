@@ -659,7 +659,7 @@ void MaterialSourceGenerator::WriteFullMaterialToStream(std::ostream& stream, co
     stream << material->getName() << "\n";
     stream << "{";
     stream << material->getDefinition();
-    stream << "}" << "\n" << std::endl;
+    stream << "}" << std::endl;
 }
 
 }

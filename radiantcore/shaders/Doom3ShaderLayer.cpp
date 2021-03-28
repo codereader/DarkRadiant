@@ -854,6 +854,7 @@ void Doom3ShaderLayer::removeTransformation(std::size_t index)
     _transformations.erase(_transformations.begin() + index);
 
     recalculateTransformationMatrix();
+    _material.onLayerChanged();
 }
 
 void Doom3ShaderLayer::updateTransformation(std::size_t index, TransformType type, const std::string& expression1, const std::string& expression2)

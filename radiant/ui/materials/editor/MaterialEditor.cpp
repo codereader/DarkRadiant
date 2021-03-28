@@ -1140,6 +1140,7 @@ bool MaterialEditor::saveCurrentMaterial()
     }
 
     updateMaterialTreeItem();
+    updateMaterialControlSensitivity();
 
     return true;
 }
@@ -1216,6 +1217,7 @@ void MaterialEditor::handleMaterialSelectionChange()
         _material->sig_materialChanged().connect([this]()
         {
             updateSourceView();
+            updateMaterialTreeItem();
         });
     }
     else
@@ -2017,7 +2019,7 @@ void MaterialEditor::_onMaterialTypeChoice(wxCommandEvent& ev)
 
 void MaterialEditor::_onAddStageTransform(wxCommandEvent& ev)
 {
-    auto selectedStage = getSelectedStage();
+    auto selectedStage = getEditableStageForSelection();
 
     if (selectedStage)
     {
@@ -2027,6 +2029,7 @@ void MaterialEditor::_onAddStageTransform(wxCommandEvent& ev)
         selectedStage->appendTransformation(IShaderLayer::Transformation{ type });
 
         updateStageControls();
+        onMaterialChanged();
     }
 }
 
@@ -2042,6 +2045,7 @@ void MaterialEditor::_onRemoveStageTransform(wxCommandEvent& ev)
         stage->removeTransformation(index);
 
         updateStageControls();
+        onMaterialChanged();
     }
 }
 
@@ -2086,6 +2090,7 @@ void MaterialEditor::_onStageTransformEdited(wxDataViewEvent& ev)
 #endif
 
     stage->updateTransformation(transformIndex, type, expression1, expression2);
+    onMaterialChanged();
 }
 
 void MaterialEditor::_onStageColoredChecked(const IEditableShaderLayer::Ptr& stage, bool newValue)
