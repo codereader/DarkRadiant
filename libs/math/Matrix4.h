@@ -283,31 +283,34 @@ public:
     }
 
     /**
-     * \brief
-     * Returns the given 3-component point transformed by this matrix.
+     * \brief Returns the given 3-component point transformed by this matrix.
      *
-     * The point is assumed to have a W component of 1.
+     * The point is assumed to have a W component of 1, and no division by W is
+     * performed before returning the 3-component vector.
      */
-    template<typename Element>
-    BasicVector3<Element> transformPoint(const BasicVector3<Element>& point) const;
+    template<typename T>
+    BasicVector3<T> transformPoint(const BasicVector3<T>& point) const
+    {
+        return transform(BasicVector4<T>(point, 1)).getVector3();
+    }
 
     /**
-     * Returns the given 3-component direction transformed by this matrix.
-     * The given vector is treated as direction so it won't receive a translation, just like
-     * a 4-component vector with its w-component set to 0 would be transformed.
-     */
-    template<typename Element>
-    BasicVector3<Element> transformDirection(const BasicVector3<Element>& direction) const;
+     * \brief Returns the given 3-component direction transformed by this
+     * matrix.
 
-    /**
-     * \brief Use this matrix to transform the provided vector and return a new
-     * vector containing the result.
-     *
-     * \param vector4
-     * The 4-element vector to transform.
+     * The given vector is treated as direction so it won't receive a
+     * translation, just like a 4-component vector with its w-component set to
+     * 0 would be transformed.
      */
-    template<typename Element>
-    BasicVector4<Element> transform(const BasicVector4<Element>& vector4) const;
+    template<typename T>
+    BasicVector3<T> transformDirection(const BasicVector3<T>& direction) const
+    {
+        return transform(BasicVector4<T>(direction, 0)).getVector3();
+    }
+
+    /// Return the given 4-component vector transformed by this matrix.
+    template<typename T>
+    BasicVector4<T> transform(const BasicVector4<T>& vector4) const;
 
     /// Return the result of this matrix post-multiplied by another matrix.
     Matrix4 getMultipliedBy(const Matrix4& other) const
@@ -502,26 +505,6 @@ inline bool operator!=(const Matrix4& l, const Matrix4& r)
 inline Matrix4::Handedness Matrix4::getHandedness() const
 {
     return (xCol().getVector3().crossProduct(yCol().getVector3()).dot(zCol().getVector3()) < 0.0f) ? LEFTHANDED : RIGHTHANDED;
-}
-
-template<typename Element>
-BasicVector3<Element> Matrix4::transformPoint(const BasicVector3<Element>& point) const
-{
-    return BasicVector3<Element>(
-        static_cast<Element>(xx() * point[0] + yx() * point[1] + zx() * point[2] + tx()),
-        static_cast<Element>(xy() * point[0] + yy() * point[1] + zy() * point[2] + ty()),
-        static_cast<Element>(xz() * point[0] + yz() * point[1] + zz() * point[2] + tz())
-    );
-}
-
-template<typename Element>
-BasicVector3<Element> Matrix4::transformDirection(const BasicVector3<Element>& direction) const
-{
-    return BasicVector3<Element>(
-        static_cast<Element>(xx() * direction[0] + yx() * direction[1] + zx() * direction[2]),
-        static_cast<Element>(xy() * direction[0] + yy() * direction[1] + zy() * direction[2]),
-        static_cast<Element>(xz() * direction[0] + yz() * direction[1] + zz() * direction[2])
-    );
 }
 
 template<typename T>
