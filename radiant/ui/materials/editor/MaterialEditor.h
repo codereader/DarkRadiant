@@ -145,6 +145,8 @@ private:
     void updateMaterialControlSensitivity();
     void updateSourceView();
     void updateMaterialTreeItem();
+    void updateMaterialNameControl();
+    void handleMaterialSelectionChange();
 
     bool isAllowedToChangeMaterial();
     bool askUserAboutModifiedMaterial();

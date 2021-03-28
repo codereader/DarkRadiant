@@ -157,6 +157,7 @@
 																			<flag>wxEXPAND</flag>
 																			<border>0</border>
 																			<object class="wxTextCtrl" name="MaterialName">
+																				<style>wxTE_PROCESS_ENTER</style>
 																				<value></value>
 																			</object>
 																		</object>
@@ -198,6 +199,7 @@
 																					<flag>wxEXPAND|wxLEFT</flag>
 																					<border>6</border>
 																					<object class="wxTextCtrl" name="MaterialDescription">
+																						<style>wxTE_PROCESS_ENTER</style>
 																						<value></value>
 																					</object>
 																				</object>
@@ -381,6 +383,7 @@
 																													<flag>wxALIGN_CENTER_VERTICAL</flag>
 																													<border>6</border>
 																													<object class="wxTextCtrl" name="MaterialEditorImage">
+																														<style>wxTE_PROCESS_ENTER</style>
 																														<value></value>
 																													</object>
 																												</object>
@@ -1767,6 +1770,7 @@
 																																			<flag></flag>
 																																			<border>0</border>
 																																			<object class="wxTextCtrl" name="MaterialStageImageMap">
+																																				<style>wxTE_PROCESS_ENTER</style>
 																																				<value></value>
 																																			</object>
 																																		</object>

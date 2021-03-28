@@ -183,13 +183,19 @@ void MaterialPopulator::AddSingleMaterial(const wxutil::TreeModel::Ptr& model, c
         parentPath += !parentPath.empty() ? "/" : "";
         parentPath += parts[i];
 
-        parentItem = model->FindString(parentPath, _columns.fullName, parentItem);
+        auto existingItem = model->FindString(parentPath, _columns.fullName, parentItem);
 
-        if (!parentItem.IsOk())
+        if (!existingItem.IsOk())
         {
             // Insert this folder
             auto row = functor.insertFolder(parentPath, parts[i], parentItem, i == 0 && parts[i] == otherMaterialsFolder);
             row.SendItemAdded();
+
+            parentItem = row.getItem();
+        }
+        else
+        {
+            parentItem = existingItem;
         }
     }
 
