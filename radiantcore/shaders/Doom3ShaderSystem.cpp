@@ -22,6 +22,8 @@
 #include "debugging/ScopedDebugTimer.h"
 #include "module/StaticModule.h"
 
+#include "os/file.h"
+#include "os/path.h"
 #include "string/predicate.h"
 #include "string/replace.h"
 #include "parser/DefBlockTokeniser.h"
@@ -437,6 +439,37 @@ MaterialPtr Doom3ShaderSystem::copyMaterial(const std::string& nameOfOriginal, c
 void Doom3ShaderSystem::saveMaterial(const std::string& name)
 {
     ensureDefsLoaded();
+
+    auto material = _library->findShader(name);
+
+    if (!material->isModified())
+    {
+        rMessage() << "Material is not modified, nothing to save." << std::endl;
+        return;
+    }
+
+    if (!materialCanBeModified(name))
+    {
+        throw std::runtime_error("Cannot save this material, it's read-only.");
+    }
+
+    if (material->getShaderFileInfo().fullPath().empty())
+    {
+        throw std::runtime_error("No file path set on this material, cannot save.");
+    }
+
+    // Construct the output path for this material
+    fs::path outputPath = GlobalGameManager().getModPath();
+    outputPath /= material->getShaderFileInfo().fullPath();
+
+    auto outputDir = os::getContainingDir(outputPath.string());
+    if (!os::fileOrDirExists(outputDir))
+    {
+        rMessage() << "Creating mod materials path: " << outputDir << std::endl;
+        fs::create_directories(outputDir);
+    }
+
+    rMessage() << "Saving material " << name << " to " << outputPath << std::endl;
 
 
 }

@@ -230,6 +230,7 @@
     <ClInclude Include="..\..\libs\stream\MapResourceStream.h" />
     <ClInclude Include="..\..\libs\stream\PointerInputStream.h" />
     <ClInclude Include="..\..\libs\stream\ScopedArchiveBuffer.h" />
+    <ClInclude Include="..\..\libs\stream\TemporaryOutputStream.h" />
     <ClInclude Include="..\..\libs\stream\TextFileInputStream.h" />
     <ClInclude Include="..\..\libs\stream\utils.h" />
     <ClInclude Include="..\..\libs\string\case_conv.h" />

@@ -283,6 +283,9 @@
     <ClInclude Include="..\..\libs\materials\ParseLib.h">
       <Filter>materials</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\stream\TemporaryOutputStream.h">
+      <Filter>stream</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

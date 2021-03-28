@@ -1093,6 +1093,11 @@ void MaterialEditor::updateStageColoredStatus()
 
 bool MaterialEditor::saveCurrentMaterial()
 {
+    if (!_material->isModified())
+    {
+        return true;
+    }
+
     if (_material->getShaderFileInfo().fullPath().empty())
     {
         // Ask the user where to save it
