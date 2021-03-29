@@ -21,6 +21,7 @@ class OpenGLShader final :
 	public Shader
 {
 private:
+    // Name used to construct the shader
     std::string _name;
 
     // The state manager we will be inserting/removing OpenGL states from
@@ -29,10 +30,6 @@ private:
     // List of shader passes for this shader
 	typedef std::list<OpenGLShaderPassPtr> Passes;
 	Passes _shaderPasses;
-
-    // Name used to construct the shader. Currently only used for
-    // tests/debugging.
-    std::string _name;
 
     // The Material corresponding to this OpenGLShader
 	MaterialPtr _material;

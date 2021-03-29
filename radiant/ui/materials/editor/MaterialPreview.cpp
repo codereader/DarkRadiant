@@ -172,7 +172,7 @@ bool MaterialPreview::onPreRender()
         auto time = _renderSystem->getTime();
 
         // one full rotation per 10 seconds
-        auto newAngle = 2 * c_pi * time / 10000;
+        auto newAngle = 2 * math::PI * time / 10000;
 
         Node_getEntity(_entity)->setKeyValue("angle", string::to_string(radians_to_degrees(newAngle)));
     }

@@ -641,8 +641,6 @@ void OpenGLShader::constructNormalShader()
 // Main shader construction entry point
 void OpenGLShader::construct()
 {
-    _name = name;
-
 	// Retrieve the highlight colour from the colourschemes (once)
 	const static Colour4 highLightColour(
         GlobalColourSchemeManager().getColour("selected_brush_camera"), 0.3f

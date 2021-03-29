@@ -32,7 +32,10 @@ public:
     /// Construct a Colour4 from a Vector3 and optional alpha
     template<typename U>
     Colour4(const BasicVector3<U>& vec, float alpha = 1.0f)
-    : Vector4f(vec.x(), vec.y(), vec.z(), alpha)
+    : Vector4f(static_cast<ElementType>(vec.x()), 
+               static_cast<ElementType>(vec.y()), 
+               static_cast<ElementType>(vec.z()), 
+               alpha)
     {}
 
     /// Return true if this colour contains valid component values
