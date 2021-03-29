@@ -3,6 +3,14 @@
 #include "icameraview.h"
 #include "math/Matrix4.h"
 
+// Undef stupid global definitions from minwindef.h
+#ifdef near
+#undef near
+#endif
+#ifdef far
+#undef far
+#endif
+
 namespace camera
 {
 
