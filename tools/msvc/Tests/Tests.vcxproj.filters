@@ -56,6 +56,9 @@
       <Filter>algorithm</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\test\TestLogFile.h" />
+    <ClInclude Include="..\..\..\test\math\MatrixUtils.h">
+      <Filter>math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

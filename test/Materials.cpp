@@ -6,6 +6,7 @@
 #include "string/case_conv.h"
 #include "string/trim.h"
 #include "string/join.h"
+#include "math/MatrixUtils.h"
 
 namespace test
 {
@@ -386,7 +387,7 @@ TEST_F(MaterialsTest, MaterialRotationEvaluation)
         0,              0,              1,  0,
         0,              0,              0,  1
     );
-    EXPECT_TRUE(stage->getTextureTransform().isEqual(expectedMatrix, TestEpsilon)) << "Expected:\n " << expectedMatrix << " but got:\n  " << stage->getTextureTransform();
+    expectNear(stage->getTextureTransform(), expectedMatrix);
 }
 
 TEST_F(MaterialsTest, MaterialParserPolygonOffset)
@@ -612,7 +613,7 @@ TEST_F(MaterialsTest, MaterialParserStageTranslate)
     EXPECT_EQ(stage->getTransformations().at(0).expression2->getExpressionString(), "parm3 + 5.0");
 
     stage->evaluateExpressions(1000);
-    EXPECT_TRUE(stage->getTextureTransform().isEqual(Matrix4::getTranslation(Vector3(3.0, 5.0, 0)), TestEpsilon));
+    expectNear(stage->getTextureTransform(), Matrix4::getTranslation(Vector3(3.0, 5.0, 0)));
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/translation2");
     stage = material->getAllLayers().front();
@@ -623,7 +624,7 @@ TEST_F(MaterialsTest, MaterialParserStageTranslate)
     EXPECT_EQ(stage->getTransformations().at(0).expression2->getExpressionString(), "0.5");
 
     stage->evaluateExpressions(1000);
-    EXPECT_TRUE(stage->getTextureTransform().isEqual(Matrix4::getTranslation(Vector3(1.0, 0.5, 0)), TestEpsilon));
+    expectNear(stage->getTextureTransform(), Matrix4::getTranslation(Vector3(1.0, 0.5, 0)));
 }
 
 TEST_F(MaterialsTest, MaterialParserStageRotate)
@@ -637,16 +638,16 @@ TEST_F(MaterialsTest, MaterialParserStageRotate)
     EXPECT_FALSE(stage->getTransformations().at(0).expression2);
 
     // sintable and costable lookups are [0..1], translate them to [0..2pi]
-    auto cosValue = cos(0.03 * 2 * c_pi);
-    auto sinValue = sin(0.03 * 2 * c_pi);
+    auto cosValue = cos(0.03 * 2 * math::PI);
+    auto sinValue = sin(0.03 * 2 * math::PI);
 
     stage->evaluateExpressions(1000);
-    EXPECT_TRUE(stage->getTextureTransform().isEqual(Matrix4::byRows(
+    expectNear(stage->getTextureTransform(), Matrix4::byRows(
         cosValue, -sinValue, 0, (-0.5*cosValue + 0.5*sinValue) + 0.5,
         sinValue,  cosValue, 0, (-0.5*sinValue - 0.5*cosValue) + 0.5,
         0, 0, 1, 0,
         0, 0, 0, 1
-    ), TestEpsilon));
+    ));
 }
 
 TEST_F(MaterialsTest, MaterialParserStageScale)
@@ -660,12 +661,12 @@ TEST_F(MaterialsTest, MaterialParserStageScale)
     EXPECT_EQ(stage->getTransformations().at(0).expression2->getExpressionString(), "time * 3.0");
 
     stage->evaluateExpressions(1000);
-    EXPECT_TRUE(stage->getTextureTransform().isEqual(Matrix4::byRows(
+    expectNear(stage->getTextureTransform(), Matrix4::byRows(
         4, 0, 0, 0,
         0, 3, 0, 0,
         0, 0, 1, 0,
         0, 0, 0, 1
-    ), TestEpsilon));
+    ));
 }
 
 TEST_F(MaterialsTest, MaterialParserStageCenterScale)
@@ -679,12 +680,12 @@ TEST_F(MaterialsTest, MaterialParserStageCenterScale)
     EXPECT_EQ(stage->getTransformations().at(0).expression2->getExpressionString(), "time * 3.0");
 
     stage->evaluateExpressions(1000);
-    EXPECT_TRUE(stage->getTextureTransform().isEqual(Matrix4::byRows(
+    expectNear(stage->getTextureTransform(), Matrix4::byRows(
         4, 0, 0, 0.5 - 0.5 * 4,
         0, 3, 0, 0.5 - 0.5 * 3,
         0, 0, 1, 0,
         0, 0, 0, 1
-    ), TestEpsilon));
+    ));
 }
 
 TEST_F(MaterialsTest, MaterialParserStageShear)
@@ -697,12 +698,12 @@ TEST_F(MaterialsTest, MaterialParserStageShear)
     EXPECT_EQ(stage->getTransformations().at(0).expression2->getExpressionString(), "4.0");
 
     stage->evaluateExpressions(1000);
-    EXPECT_TRUE(stage->getTextureTransform().isEqual(Matrix4::byRows(
+    expectNear(stage->getTextureTransform(), Matrix4::byRows(
         1,  5,  0,  -0.5 * 5,
         4,  1,  0,  -0.5 * 4,
         0,  0,  1,   0,
         0,  0,  0,   1
-    ), TestEpsilon));
+    ));
 }
 
 TEST_F(MaterialsTest, MaterialParserStageTransforms)
@@ -719,7 +720,7 @@ TEST_F(MaterialsTest, MaterialParserStageTransforms)
     EXPECT_EQ(stage->getTransformations().at(1).expression2->getExpressionString(), "0.5");
 
     stage->evaluateExpressions(1000);
-    EXPECT_TRUE(stage->getTextureTransform().isEqual(Matrix4::getTranslation(Vector3(1, 0.5, 0) + Vector3(0.7, 0.5, 0)), TestEpsilon));
+    expectNear(stage->getTextureTransform(), Matrix4::getTranslation(Vector3(1, 0.5, 0) + Vector3(0.7, 0.5, 0)));
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/combined2");
 
@@ -739,7 +740,7 @@ TEST_F(MaterialsTest, MaterialParserStageTransforms)
     auto combinedMatrix = Matrix4::getTranslation(Vector3(1, 0.5, 0));
     combinedMatrix.premultiplyBy(Matrix4::getScale(Vector3(0.6, 0.2, 1)));
     combinedMatrix.premultiplyBy(Matrix4::getTranslation(Vector3(0.7, 0.5, 0)));
-    EXPECT_TRUE(stage->getTextureTransform().isEqual(combinedMatrix, TestEpsilon));
+    expectNear(stage->getTextureTransform(), combinedMatrix);
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/combined3");
 
@@ -777,8 +778,8 @@ TEST_F(MaterialsTest, MaterialParserStageTransforms)
     combinedMatrix.premultiplyBy(shear);
 
     // sintable and costable lookups are [0..1], translate them to [0..2pi]
-    auto cosValue = cos(0.22 * 2 * c_pi);
-    auto sinValue = sin(0.22 * 2 * c_pi);
+    auto cosValue = cos(0.22 * 2 * math::PI);
+    auto sinValue = sin(0.22 * 2 * math::PI);
 
     auto rotate = Matrix4::byRows(cosValue, -sinValue, 0, (-0.5*cosValue+0.5*sinValue) + 0.5,
         sinValue, cosValue, 0, (-0.5*sinValue-0.5*cosValue) + 0.5,
@@ -794,7 +795,7 @@ TEST_F(MaterialsTest, MaterialParserStageTransforms)
     combinedMatrix.premultiplyBy(Matrix4::getScale(Vector3(0.5, 0.4, 1)));
     combinedMatrix.premultiplyBy(Matrix4::getTranslation(Vector3(1, 1, 0)));
 
-    EXPECT_TRUE(stage->getTextureTransform().isEqual(combinedMatrix, TestEpsilon));
+    expectNear(stage->getTextureTransform(), combinedMatrix);
 }
 
 TEST_F(MaterialsTest, MaterialParserStageVertexProgram)
