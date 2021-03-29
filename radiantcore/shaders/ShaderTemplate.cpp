@@ -1355,9 +1355,9 @@ std::size_t ShaderTemplate::addLayer(IShaderLayer::Type type)
     }
 
     addLayer(std::make_shared<Doom3ShaderLayer>(*this, type, map));
-    return _layers.size() - 1;
-
     onTemplateChanged();
+
+    return _layers.size() - 1;
 }
 
 void ShaderTemplate::removeLayer(std::size_t index)
