@@ -218,8 +218,8 @@ void MaterialPreview::setupSceneGraph()
         _light = GlobalEntityModule().createEntity(
             GlobalEntityClassManager().findClass("light"));
 
-        Node_getEntity(_light)->setKeyValue("light_radius", "600 600 600");
-        Node_getEntity(_light)->setKeyValue("origin", "250 250 250");
+        Node_getEntity(_light)->setKeyValue("light_radius", "750 750 750");
+        Node_getEntity(_light)->setKeyValue("origin", "150 150 150");
 
         _rootNode->addChildNode(_light);
 
