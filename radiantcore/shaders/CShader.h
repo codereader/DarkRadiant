@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ShaderDefinition.h"
+#include <sigc++/connection.h>
 #include <memory>
 
 namespace shaders {
@@ -22,6 +23,8 @@ private:
     // has not been altered, this is the same as _originalTemplate
 	ShaderTemplatePtr _template;
 
+    sigc::connection _templateChanged;
+
 	// The shader file name (i.e. the file where this one is defined)
 	vfs::FileInfo _fileInfo;
 
@@ -39,6 +42,8 @@ private:
 
     // Vector of shader layers
 	IShaderLayerVector _layers;
+
+    sigc::signal<void> _sigMaterialModified;
 
 public:
 	static bool m_lightingEnabled;
@@ -60,6 +65,8 @@ public:
     float getPolygonOffset() const override;
     void setPolygonOffset(float offset) override;
 	TexturePtr getEditorImage() override;
+    IMapExpression::Ptr getEditorImageExpression() override;
+    void setEditorImageExpressionFromString(const std::string& editorImagePath) override;
 	bool isEditorImageNoTex() override;
 	TexturePtr lightFalloffImage() override;
 	std::string getName() const override;
@@ -70,6 +77,7 @@ public:
     void clearMaterialFlag(Flags flag) override;
 	bool IsDefault() const override;
 	const char* getShaderFileName() const override;
+	void setShaderFileName(const std::string& fullPath) override;
     const vfs::FileInfo& getShaderFileInfo() const override;
 	CullType getCullType() const override;
     void setCullType(CullType type) override;
@@ -139,8 +147,19 @@ public:
 
     bool isModified() override;
 
+    // Set this material to modified (this just creates the internal backup copy)
+    void setIsModified();
+
+    void commitModifications();
+    void revertModifications() override;
+    sigc::signal<void>& sig_materialChanged() override;
+
+    // Returns the current template (including any modifications) of this material
+    const ShaderTemplatePtr& getTemplate();
+
 private:
     void ensureTemplateCopy();
+    void subscribeToTemplateChanges();
 };
 typedef std::shared_ptr<CShader> CShaderPtr;
 

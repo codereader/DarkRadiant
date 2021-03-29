@@ -7,6 +7,42 @@
 namespace shaders
 {
 
+// A regex pattern that can be used to detect a material name in a single line of a material file
+// which is optionally detecting an opening curly brace in the same line
+inline std::string getDeclNamePatternForMaterialName(const std::string& name)
+{
+    return "^\\s*" + name + "\\s*(\\{*).*$";
+}
+
+constexpr std::pair<const char*, Material::Flags> MaterialFlagKeywords[]
+{
+    { "noShadows", Material::FLAG_NOSHADOWS },
+    { "noSelfShadow", Material::FLAG_NOSELFSHADOW },
+    { "forceShadows", Material::FLAG_FORCESHADOWS },
+    { "noOverlays", Material::FLAG_NOOVERLAYS },
+    { "forceOverlays", Material::FLAG_FORCEOVERLAYS },
+    { "translucent", Material::FLAG_TRANSLUCENT },
+    { "forceOpaque", Material::FLAG_FORCEOPAQUE },
+    { "noFog", Material::FLAG_NOFOG },
+    { "noPortalFog", Material::FLAG_NOPORTALFOG },
+    { "unsmoothedTangents", Material::FLAG_UNSMOOTHEDTANGENTS },
+    { "mirror", Material::FLAG_MIRROR },
+    { "isLightgemSurf", Material::FLAG_ISLIGHTGEMSURF },
+};
+
+inline std::string getStringForMaterialFlag(Material::Flags flag)
+{
+    for (const auto& pair : MaterialFlagKeywords)
+    {
+        if (flag == pair.second)
+        {
+            return pair.first;
+        }
+    }
+
+    return std::string();
+}
+
 constexpr std::pair<const char*, Material::SurfaceType> SurfaceTypeMapping[]
 {
     { "metal", Material::SURFTYPE_METAL },
@@ -52,11 +88,39 @@ inline Material::SurfaceType getSurfaceTypeForString(const std::string& surfaceT
     return Material::SURFTYPE_DEFAULT;
 }
 
+// Surface flags with a single corresponding keyword
+constexpr std::pair<const char*, Material::SurfaceFlags> SurfaceFlags[]
+{
+    { "solid", Material::SURF_SOLID },
+    { "water", Material::SURF_WATER },
+    { "playerclip", Material::SURF_PLAYERCLIP },
+    { "monsterclip", Material::SURF_MONSTERCLIP },
+    { "moveableclip", Material::SURF_MOVEABLECLIP },
+    { "ikclip", Material::SURF_IKCLIP },
+    { "blood", Material::SURF_BLOOD },
+    { "trigger", Material::SURF_TRIGGER },
+    { "aassolid", Material::SURF_AASSOLID },
+    { "aasobstacle", Material::SURF_AASOBSTACLE },
+    { "flashlight_trigger", Material::SURF_FLASHLIGHT_TRIGGER },
+    { "nonsolid", Material::SURF_NONSOLID },
+    { "nullnormal", Material::SURF_NULLNORMAL },
+    { "areaportal", Material::SURF_AREAPORTAL },
+    { "qer_nocarve", Material::SURF_NOCARVE },
+    { "discrete", Material::SURF_DISCRETE },
+    { "nofragment", Material::SURF_NOFRAGMENT },
+    { "slick", Material::SURF_SLICK },
+    { "collision", Material::SURF_COLLISION },
+    { "noimpact", Material::SURF_NOIMPACT },
+    { "nodamage", Material::SURF_NODAMAGE },
+    { "ladder", Material::SURF_LADDER },
+    { "nosteps", Material::SURF_NOSTEPS },
+};
+
 constexpr std::pair<const char*, Material::CullType> CullTypes[]
 {
-    { "Frontsided", Material::CULL_BACK },
-    { "Backsided", Material::CULL_FRONT },
-    { "Twosided", Material::CULL_NONE },
+    { "frontsided", Material::CULL_BACK },
+    { "backsided", Material::CULL_FRONT },
+    { "twosided", Material::CULL_NONE },
 };
 
 inline std::string getStringForCullType(Material::CullType type)
@@ -111,6 +175,19 @@ inline std::string getStringForSortRequestValue(float value)
     }
 
     return std::string();
+}
+
+inline float getSortRequestValueForString(const std::string& value)
+{
+    for (const auto& pair : PredefinedSortValues)
+    {
+        if (value == pair.first)
+        {
+            return static_cast<float>(pair.second);
+        }
+    }
+
+    return string::convert<float>(value, Material::SORT_OPAQUE);
 }
 
 constexpr std::pair<const char*, IShaderLayer::MapType> MapTypeNames[]

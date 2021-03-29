@@ -262,6 +262,7 @@ add_library(radiantcore MODULE
             shaders/Doom3ShaderSystem.cpp
             shaders/ExpressionSlots.cpp
             shaders/MapExpression.cpp
+            shaders/MaterialSourceGenerator.cpp
             shaders/ShaderExpression.cpp
             shaders/ShaderLibrary.cpp
             shaders/ShaderTemplate.cpp

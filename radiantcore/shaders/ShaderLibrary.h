@@ -36,10 +36,22 @@ public:
 	 */
 	ShaderDefinition& getDefinition(const std::string& name);
 
+    // Updates the stored definition in the library with the given one
+    void replaceDefinition(const std::string& name, const ShaderDefinition& def);
+
 	/**
 	 * Returns true if the given shader definition exists.
 	 */
 	bool definitionExists(const std::string& name) const;
+
+    // Copies the given definition, original name must be present, new name must not conflict
+    void copyDefinition(const std::string& nameOfOriginal, const std::string& nameOfCopy);
+
+    // Renames the definition oldName => newName. oldName must be present, newName must not be present
+    void renameDefinition(const std::string& oldName, const std::string& newName);
+
+    // Removes the named definition. The name must be present in the library.
+    void removeDefinition(const std::string& name);
 
     // Returns an empty definition, just enough to construct a shader from it
     ShaderDefinition& getEmptyDefinition();

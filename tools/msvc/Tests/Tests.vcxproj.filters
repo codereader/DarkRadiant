@@ -40,6 +40,7 @@
     <ClCompile Include="..\..\..\test\Parsing.cpp" />
     <ClCompile Include="..\..\..\test\Entity.cpp" />
     <ClCompile Include="..\..\..\test\Basic.cpp" />
+    <ClCompile Include="..\..\..\test\MaterialExport.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\HeadlessOpenGLContext.h" />

@@ -1,5 +1,6 @@
 #include "CShader.h"
 #include "Doom3ShaderSystem.h"
+#include "MapExpression.h"
 
 #include "iregistry.h"
 #include "ishaders.h"
@@ -33,11 +34,15 @@ CShader::CShader(const std::string& name, const ShaderDefinition& definition, bo
     m_bInUse(false),
     _visible(true)
 {
+    subscribeToTemplateChanges();
+
     // Realise the shader
     realise();
 }
 
-CShader::~CShader() {
+CShader::~CShader()
+{
+    _templateChanged.disconnect();
 	unrealise();
 	GetTextureManager().checkBindings();
 }
@@ -81,6 +86,19 @@ TexturePtr CShader::getEditorImage()
     }
 
     return _editorTexture;
+}
+
+IMapExpression::Ptr CShader::getEditorImageExpression()
+{
+    return _template->getEditorTexture();
+}
+
+void CShader::setEditorImageExpressionFromString(const std::string& editorImagePath)
+{
+    ensureTemplateCopy();
+
+    _editorTexture.reset();
+    _template->setEditorImageExpressionFromString(editorImagePath);
 }
 
 bool CShader::isEditorImageNoTex()
@@ -142,11 +160,6 @@ TexturePtr CShader::lightFalloffImage() {
 	return _texLightFalloff;
 }
 
-
-
-/*
- * Return name of shader.
- */
 std::string CShader::getName() const
 {
 	return _name;
@@ -287,6 +300,12 @@ const char* CShader::getShaderFileName() const
 	return _fileInfo.name.c_str();
 }
 
+void CShader::setShaderFileName(const std::string& fullPath)
+{
+    _fileInfo.topDir = os::getDirectory(GlobalFileSystem().findRoot(fullPath));
+    _fileInfo.name = os::getRelativePath(fullPath, _fileInfo.topDir);
+}
+
 const vfs::FileInfo& CShader::getShaderFileInfo() const
 {
     return _fileInfo;
@@ -307,6 +326,29 @@ bool CShader::isModified()
     return _template != _originalTemplate;
 }
 
+void CShader::setIsModified()
+{
+    ensureTemplateCopy();
+}
+
+void CShader::revertModifications()
+{
+    _template = _originalTemplate;
+
+    subscribeToTemplateChanges();
+
+    // We need to update that layer reference vector on change
+    unrealise();
+    realise();
+
+    _sigMaterialModified.emit();
+}
+
+sigc::signal<void>& CShader::sig_materialChanged()
+{
+    return _sigMaterialModified;
+}
+
 std::string CShader::getRenderBumpArguments()
 {
     return _template->getRenderBumpArguments();
@@ -314,7 +356,7 @@ std::string CShader::getRenderBumpArguments()
 
 std::string CShader::getRenderBumpFlatArguments()
 {
-    return _template->getRenderBumpFlagArguments();
+    return _template->getRenderBumpFlatArguments();
 }
 
 const std::string& CShader::getGuiSurfArgument()
@@ -346,11 +388,10 @@ void CShader::unrealiseLighting()
 	_layers.clear();
 }
 
-/*
- * Set name of shader.
- */
-void CShader::setName(const std::string& name) {
+void CShader::setName(const std::string& name)
+{
 	_name = name;
+    _sigMaterialModified.emit();
 }
 
 IShaderLayer* CShader::firstLayer() const
@@ -377,6 +418,9 @@ std::size_t CShader::addLayer(IShaderLayer::Type type)
     unrealiseLighting();
     realiseLighting();
 
+    // We need another signal after the realiseLighting call
+    _sigMaterialModified.emit();
+
     return newIndex;
 }
 
@@ -388,6 +432,9 @@ void CShader::removeLayer(std::size_t index)
 
     unrealiseLighting();
     realiseLighting();
+
+    // We need another signal after the realiseLighting call
+    _sigMaterialModified.emit();
 }
 
 void CShader::swapLayerPosition(std::size_t first, std::size_t second)
@@ -398,6 +445,9 @@ void CShader::swapLayerPosition(std::size_t first, std::size_t second)
 
     unrealiseLighting();
     realiseLighting();
+
+    // We need another signal after the realiseLighting call
+    _sigMaterialModified.emit();
 }
 
 std::size_t CShader::duplicateLayer(std::size_t index)
@@ -408,6 +458,9 @@ std::size_t CShader::duplicateLayer(std::size_t index)
 
     unrealiseLighting();
     realiseLighting();
+
+    // We need another signal after the realiseLighting call
+    _sigMaterialModified.emit();
 
     return newIndex;
 }
@@ -495,7 +548,8 @@ bool CShader::isVisible() const {
 	return _visible;
 }
 
-void CShader::setVisible(bool visible) {
+void CShader::setVisible(bool visible)
+{
 	_visible = visible;
 }
 
@@ -506,12 +560,37 @@ void CShader::ensureTemplateCopy()
         return; // copy is already in place
     }
 
+    // Create a clone of the original template
     _template = _originalTemplate->clone();
+
+    subscribeToTemplateChanges();
 
     // We need to update that layer reference vector
     // as long as it's there
     unrealise();
     realise();
+}
+
+void CShader::commitModifications()
+{
+    // Overwrite the original template reference, the material is now unmodified again
+    _originalTemplate = _template;
+}
+
+const ShaderTemplatePtr& CShader::getTemplate()
+{
+    return _template;
+}
+
+void CShader::subscribeToTemplateChanges()
+{
+    // Disconnect from any signal first
+    _templateChanged.disconnect();
+
+    _templateChanged = _template->sig_TemplateChanged().connect([this]()
+    {
+        _sigMaterialModified.emit();
+    });
 }
 
 bool CShader::m_lightingEnabled = false;

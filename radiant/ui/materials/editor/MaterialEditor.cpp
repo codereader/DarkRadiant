@@ -18,9 +18,13 @@
 #include <wx/collpane.h>
 
 #include "wxutil/SourceView.h"
+#include "wxutil/FileChooser.h"
+#include "wxutil/dialog/MessageBox.h"
 #include "wxutil/dataview/ResourceTreeViewToolbar.h"
+#include "wxutil/dataview/TreeViewItemStyle.h"
 #include "wxutil/Bitmap.h"
-#include "fmt/format.h"
+#include <fmt/format.h>
+#include "gamelib.h"
 #include "string/join.h"
 #include "materials/ParseLib.h"
 #include "ExpressionBinding.h"
@@ -124,20 +128,7 @@ MaterialEditor::MaterialEditor() :
     getControl<wxButton>("MaterialEditorCloseButton")->Bind(wxEVT_BUTTON, &MaterialEditor::_onClose, this);
 
     // Add the treeview
-    auto* panel = getControl<wxPanel>("MaterialEditorTreeView");
-    _treeView = new MaterialTreeView(panel);
-    _treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &MaterialEditor::_onTreeViewSelectionChanged, this);
-
-    auto* treeToolbar = new wxutil::ResourceTreeViewToolbar(panel, _treeView);
-    treeToolbar->EnableFavouriteManagement(false);
-
-    auto definitionLabel = getControl<wxStaticText>("MaterialEditorDefinitionLabel");
-    definitionLabel->GetContainingSizer()->Detach(definitionLabel);
-    definitionLabel->Reparent(treeToolbar);
-    treeToolbar->GetLeftSizer()->Add(definitionLabel, 0, wxALIGN_LEFT);
-
-    panel->GetSizer()->Add(treeToolbar, 0, wxEXPAND | wxBOTTOM, 6);
-    panel->GetSizer()->Add(_treeView, 1, wxEXPAND);
+    setupMaterialTreeView();
 
     // Setup the splitter and preview
     auto* splitter = getControl<wxSplitterWindow>("MaterialEditorSplitter");
@@ -229,6 +220,28 @@ int MaterialEditor::ShowModal()
 
 void MaterialEditor::_onClose(wxCommandEvent& ev)
 {
+    // Check all unsaved materials
+    std::list<MaterialPtr> modifiedMaterials;
+    GlobalMaterialManager().foreachMaterial([&](const MaterialPtr& material)
+    {
+        if (material->isModified())
+        {
+            modifiedMaterials.push_back(material);
+        }
+    });
+
+    for (const auto& material : modifiedMaterials)
+    {
+        selectMaterial(material);
+
+        // Prompt user to save or discard
+        if (!askUserAboutModifiedMaterial())
+        {
+            return; // cancel the close event
+        }
+    }
+
+    // At this point, everything is saved
     EndModal(wxID_CLOSE);
 }
 
@@ -238,6 +251,43 @@ void MaterialEditor::ShowDialog(const cmd::ArgumentList& args)
 
     editor->ShowModal();
     editor->Destroy();
+}
+
+void MaterialEditor::setupMaterialTreeView()
+{
+    auto* panel = getControl<wxPanel>("MaterialEditorTreeView");
+    _treeView = new MaterialTreeView(panel);
+    _treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &MaterialEditor::_onMaterialSelectionChanged, this);
+
+    auto* treeToolbar = new wxutil::ResourceTreeViewToolbar(panel, _treeView);
+    treeToolbar->EnableFavouriteManagement(false);
+
+    auto definitionLabel = getControl<wxStaticText>("MaterialEditorDefinitionLabel");
+    definitionLabel->GetContainingSizer()->Detach(definitionLabel);
+    definitionLabel->Reparent(treeToolbar);
+    treeToolbar->GetLeftSizer()->Add(definitionLabel, 0, wxALIGN_LEFT);
+
+    panel->GetSizer()->Add(treeToolbar, 0, wxEXPAND | wxBOTTOM, 6);
+    panel->GetSizer()->Add(_treeView, 1, wxEXPAND);
+
+    auto newButton = getControl<wxButton>("MaterialEditorNewDefButton");
+    newButton->Bind(wxEVT_BUTTON, &MaterialEditor::_onNewMaterial, this);
+    
+    auto saveButton = getControl<wxButton>("MaterialEditorSaveDefButton");
+    saveButton->Disable();
+    saveButton->Bind(wxEVT_BUTTON, &MaterialEditor::_onSaveMaterial, this);
+
+    auto copyButton = getControl<wxButton>("MaterialEditorCopyDefButton");
+    copyButton->Disable();
+    copyButton->Bind(wxEVT_BUTTON, &MaterialEditor::_onCopyMaterial, this);
+
+    auto revertButton = getControl<wxButton>("MaterialEditorRevertButton");
+    revertButton->Disable();
+    revertButton->Bind(wxEVT_BUTTON, &MaterialEditor::_onRevertMaterial, this);
+
+    auto unlockButton = getControl<wxButton>("MaterialEditorUnlockButton");
+    unlockButton->Disable();
+    unlockButton->Bind(wxEVT_BUTTON, &MaterialEditor::_onUnlockMaterial, this);
 }
 
 void MaterialEditor::setupMaterialProperties()
@@ -251,6 +301,32 @@ void MaterialEditor::setupMaterialProperties()
     // Place map expression controls where needed
     convertTextCtrlToMapExpressionEntry("MaterialStageImageMap");
     convertTextCtrlToMapExpressionEntry("MaterialLightFalloffMap");
+    convertTextCtrlToMapExpressionEntry("MaterialEditorImage");
+
+    auto nameEntry = getControl<wxTextCtrl>("MaterialName");
+    nameEntry->Bind(wxEVT_TEXT, [nameEntry, this](wxCommandEvent& ev)
+    {
+        if (_materialUpdateInProgress || !_material) return;
+
+        GlobalMaterialManager().renameMaterial(_material->getName(), nameEntry->GetValue().ToStdString());
+        auto item = _treeView->GetTreeModel()->FindString(_material->getName(), _treeView->Columns().fullName);
+        _treeView->EnsureVisible(item);
+        onMaterialChanged();
+    });
+
+    auto editorImage = getControl<MapExpressionEntry>("MaterialEditorImage");
+    _materialBindings.emplace(std::make_shared<ExpressionBinding<MaterialPtr>>(editorImage->GetTextCtrl(),
+        [](const MaterialPtr& material)
+        {
+            auto expr = material->getEditorImageExpression();
+            return expr ? expr->getExpressionString() : std::string();
+        },
+        [this](const MaterialPtr& material, const std::string& value)
+        {
+            if (_materialUpdateInProgress || !_material) return;
+            material->setEditorImageExpressionFromString(value);
+        },
+        [this]() { onMaterialChanged(); }));
 
     auto* typeDropdown = getControl<wxChoice>("MaterialType");
 
@@ -281,6 +357,7 @@ void MaterialEditor::setupMaterialProperties()
         if (_material && !_materialUpdateInProgress)
         {
             _material->setDescription(description->GetValue().ToStdString());
+            onMaterialChanged();
         }
     });
     
@@ -297,7 +374,10 @@ void MaterialEditor::setupMaterialProperties()
             }
             else
             {
-                material->setSortRequest(Material::SORT_OPAQUE);
+                auto sortValue = getControl<wxComboBox>("MaterialSortValue")->GetValue().ToStdString();
+                material->setSortRequest(!sortValue.empty() ? 
+                    shaders::getSortRequestValueForString(sortValue) : 
+                    static_cast<float>(Material::SORT_OPAQUE));
             }
         },
         [this]() { onMaterialChanged(); }));
@@ -1011,12 +1091,134 @@ void MaterialEditor::updateStageColoredStatus()
     getControl<wxTextCtrl>("MaterialStageAlpha")->Enable(!stageIsColoured);
 }
 
-void MaterialEditor::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
+bool MaterialEditor::saveCurrentMaterial()
 {
+    if (!_material->isModified())
+    {
+        return true;
+    }
+
+    if (_material->getShaderFileInfo().fullPath().empty())
+    {
+        // Ask the user where to save it
+        wxutil::FileChooser chooser(this, _("Select .mtr file"), false, "material", ".mtr");
+
+        fs::path modMaterialsPath = GlobalGameManager().getModPath();
+        modMaterialsPath /= "materials";
+
+        if (!os::fileOrDirExists(modMaterialsPath.string()))
+        {
+            rMessage() << "Ensuring mod materials path: " << modMaterialsPath << std::endl;
+            fs::create_directories(modMaterialsPath);
+        }
+
+        // Point the file chooser to that new file
+        chooser.setCurrentPath(GlobalGameManager().getModPath() + "/materials");
+        chooser.askForOverwrite(false);
+
+        std::string result = chooser.display();
+
+        if (result.empty())
+        {
+            return false; // save aborted
+        }
+        
+        _material->setShaderFileName(os::standardPath(result));
+    }
+
+    try
+    {
+        // Write to the specified .mtr file
+        GlobalMaterialManager().saveMaterial(_material->getName());
+    }
+    catch (const std::runtime_error& ex)
+    {
+        rError() << "Could not save file: " << ex.what() << std::endl;
+        wxutil::Messagebox::ShowError(ex.what(), this);
+
+        return false; // failure means to abort the process
+    }
+
+    updateMaterialTreeItem();
+    updateMaterialControlSensitivity();
+
+    return true;
+}
+
+void MaterialEditor::revertCurrentMaterial()
+{
+    if (!_material) return;
+
+    if (_material->isModified() && _material->getShaderFileInfo().name.empty())
+    {
+        // This material has been created and not been saved yet, 
+        // discarding it means removing it
+        GlobalMaterialManager().removeMaterial(_material->getName());
+        selectMaterial(MaterialPtr());
+        return;
+    }
+
+    _material->revertModifications();
+
+    onMaterialChanged();
+}
+
+bool MaterialEditor::askUserAboutModifiedMaterial()
+{
+    // Get the original name
+    std::string origName = _material->getName();
+
+    // Does not make sense to save a null material
+    assert(!origName.empty());
+
+    // The material we're editing has been changed from the saved one
+    wxutil::Messagebox box(_("Save Changes"),
+        fmt::format(_("Do you want to save the changes to the material\n{0}?"), origName),
+        IDialog::MESSAGE_SAVECONFIRMATION, this);
+
+    auto result = box.run();
+
+    if (result == IDialog::RESULT_YES)
+    {
+        // User wants to save, return true if save was successful
+        return saveCurrentMaterial();
+    }
+    else if (result == IDialog::RESULT_NO)
+    {
+        // Discard changes
+        revertCurrentMaterial();
+        return true;
+    }
+    else if (result == IDialog::RESULT_CANCELLED)
+    {
+        return false; // user cancelled
+    }
+
+    // User doesn't want to save
+    return true;
+}
+
+bool MaterialEditor::isAllowedToChangeMaterial()
+{
+    return true;
+}
+
+void MaterialEditor::handleMaterialSelectionChange()
+{
+    _selectedMaterialItem = _treeView->GetSelection();
+
+    _materialChanged.disconnect();
+
     // Update the preview if a texture is selected
-    if (!_treeView->IsDirectorySelected())
+    if (_selectedMaterialItem.IsOk() && !_treeView->IsDirectorySelected())
     {
         _material = GlobalMaterialManager().getMaterial(_treeView->GetSelectedFullname());
+
+        _material->sig_materialChanged().connect([this]()
+        {
+            updateSourceView();
+            updateMaterialTreeItem();
+        });
     }
     else
     {
@@ -1024,6 +1226,91 @@ void MaterialEditor::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
     }
 
     updateControlsFromMaterial();
+}
+
+void MaterialEditor::_onMaterialSelectionChanged(wxDataViewEvent& ev)
+{
+    // Check if the material has been modified and ask for save
+    if (!isAllowedToChangeMaterial())
+    {
+        // Revert the selection and cancel the operation
+        _treeView->Select(_selectedMaterialItem);
+        return;
+    }
+
+    handleMaterialSelectionChange();
+}
+
+void MaterialEditor::_onSaveMaterial(wxCommandEvent& ev)
+{
+    if (!_material) return;
+
+    saveCurrentMaterial();
+}
+
+void MaterialEditor::selectMaterial(const MaterialPtr& material)
+{
+    if (!material)
+    {
+        _treeView->UnselectAll();
+        handleMaterialSelectionChange();
+        return;
+    }
+
+    auto newItem = _treeView->GetTreeModel()->FindString(material->getName(), _treeView->Columns().fullName);
+
+    if (newItem.IsOk())
+    {
+        _treeView->Select(newItem);
+        _treeView->EnsureVisible(newItem);
+
+        handleMaterialSelectionChange();
+        updateMaterialTreeItem();
+    }
+}
+
+void MaterialEditor::_onNewMaterial(wxCommandEvent& ev)
+{
+    auto materialName = "textures/darkmod/map_specific/unnamed";
+    auto newMaterial = GlobalMaterialManager().createEmptyMaterial(materialName);
+
+    selectMaterial(newMaterial);
+}
+
+void MaterialEditor::copySelectedMaterial()
+{
+    if (!_material) return;
+
+    auto newMaterialName = _material->getName() + _("_copy");
+    auto newMaterial = GlobalMaterialManager().copyMaterial(_material->getName(), newMaterialName);
+
+    selectMaterial(newMaterial);
+}
+
+void MaterialEditor::_onCopyMaterial(wxCommandEvent& ev)
+{
+    copySelectedMaterial();
+}
+
+void MaterialEditor::_onRevertMaterial(wxCommandEvent& ev)
+{
+    if (!_material) return;
+
+    // The material we're editing has been changed from the saved one
+    wxutil::Messagebox box(_("Discard Changes"),
+        fmt::format(_("Do you want to discard all the changes to the material\n{0}?"), _material->getName()),
+        IDialog::MESSAGE_ASK, this);
+
+    if (box.run() == IDialog::RESULT_YES)
+    {
+        revertCurrentMaterial();
+        updateControlsFromMaterial();
+    }
+}
+
+void MaterialEditor::_onUnlockMaterial(wxCommandEvent& ev)
+{
+    copySelectedMaterial();
 }
 
 void MaterialEditor::_onStageListSelectionChanged(wxDataViewEvent& ev)
@@ -1081,7 +1368,7 @@ void MaterialEditor::updateStageButtonSensitivity()
 {
     auto item = _stageView->GetSelection();
 
-    if (_material && item.IsOk())
+    if (_material && item.IsOk() && GlobalMaterialManager().materialCanBeModified(_material->getName()))
     {
         auto row = wxutil::TreeModel::Row(item, *_stageList);
         auto index = row[STAGE_COLS().index].getInteger();
@@ -1093,6 +1380,7 @@ void MaterialEditor::updateStageButtonSensitivity()
         getControl<wxButton>("MaterialEditorMoveUpStageButton")->Enable(!isGlobalStage && index > 0);
         getControl<wxButton>("MaterialEditorMoveDownStageButton")->Enable(!isGlobalStage && index + 1 < layersCount);
         getControl<wxButton>("MaterialEditorDuplicateStageButton")->Enable(!isGlobalStage);
+        getControl<wxButton>("MaterialEditorAddStageButton")->Enable();
     }
     else
     {
@@ -1101,6 +1389,7 @@ void MaterialEditor::updateStageButtonSensitivity()
         getControl<wxButton>("MaterialEditorMoveUpStageButton")->Disable();
         getControl<wxButton>("MaterialEditorMoveDownStageButton")->Disable();
         getControl<wxButton>("MaterialEditorDuplicateStageButton")->Disable();
+        getControl<wxButton>("MaterialEditorAddStageButton")->Disable();
     }
 }
 
@@ -1109,12 +1398,28 @@ void MaterialEditor::_onStageListItemActivated(wxDataViewEvent& ev)
     toggleSelectedStage();
 }
 
+void MaterialEditor::updateMaterialControlSensitivity()
+{
+    getControl<wxButton>("MaterialEditorNewDefButton")->Enable(true);
+
+    auto canBeModified = _material && GlobalMaterialManager().materialCanBeModified(_material->getName());
+
+    getControl<wxButton>("MaterialEditorSaveDefButton")->Enable(_material && 
+        _material->isModified() && canBeModified);
+
+    getControl<wxButton>("MaterialEditorCopyDefButton")->Enable(_material != nullptr);
+    getControl<wxButton>("MaterialEditorRevertButton")->Enable(_material && _material->isModified());
+
+    getControl<wxButton>("MaterialEditorUnlockButton")->Enable(_material && !canBeModified);
+}
+
 void MaterialEditor::updateControlsFromMaterial()
 {
     util::ScopedBoolLock lock(_materialUpdateInProgress);
 
     _preview->setMaterial(_material);
 
+    updateMaterialControlSensitivity();
     updateMaterialPropertiesFromMaterial();
     updateStageListFromMaterial();
 }
@@ -1246,7 +1551,15 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
 {
     util::ScopedBoolLock lock(_materialUpdateInProgress);
 
-    getControl<wxPanel>("MaterialEditorStageSettingsPanel")->Enable(_material != nullptr);
+    bool materialCanBeModified = _material && GlobalMaterialManager().materialCanBeModified(_material->getName());
+
+    getControl<wxPanel>("MaterialNameAndDescription")->Enable(materialCanBeModified);
+    getControl<wxPanel>("MaterialEditorStageSettingsPanel")->Enable(materialCanBeModified);
+
+    auto nameEntry = getControl<wxTextCtrl>("MaterialName");
+    nameEntry->Enable(materialCanBeModified);
+    nameEntry->SetValue(_material ? _material->getName() : "");
+    updateMaterialNameControl();
     
     // Update all registered bindings
     for (const auto& binding : _materialBindings)
@@ -1256,6 +1569,7 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
     }
 
     updateDeformControlsFromMaterial();
+    updateSourceView();
 
     if (_material)
     {
@@ -1347,10 +1661,6 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
         getControl<wxRadioButton>("MaterialGuiSurfEntity")->SetValue(_material->getSurfaceFlags() & Material::SURF_ENTITYGUI);
         getControl<wxRadioButton>("MaterialGuiSurfEntity2")->SetValue(_material->getSurfaceFlags() & Material::SURF_ENTITYGUI2);
         getControl<wxRadioButton>("MaterialGuiSurfEntity3")->SetValue(_material->getSurfaceFlags() & Material::SURF_ENTITYGUI3);
-
-        // Surround the definition with curly braces, these are not included
-        auto definition = fmt::format("{0}\n{{{1}}}", _material->getName(), _material->getDefinition());
-        _sourceView->SetValue(definition);
     }
     else
     {
@@ -1371,6 +1681,19 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
         getControl<wxCheckBox>("MaterialHasSpectrum")->SetValue(false);
         getControl<wxSpinCtrl>("MaterialSpectrumValue")->SetValue(0);
         getControl<wxTextCtrl>("MaterialDescription")->SetValue("");
+    }
+}
+
+void MaterialEditor::updateSourceView()
+{
+    if (_material)
+    {
+        // Surround the definition with curly braces, these are not included
+        auto definition = fmt::format("{0}\n{{{1}}}", _material->getName(), _material->getDefinition());
+        _sourceView->SetValue(definition);
+    }
+    else
+    {
         _sourceView->SetValue("");
     }
 }
@@ -1698,7 +2021,7 @@ void MaterialEditor::_onMaterialTypeChoice(wxCommandEvent& ev)
 
 void MaterialEditor::_onAddStageTransform(wxCommandEvent& ev)
 {
-    auto selectedStage = getSelectedStage();
+    auto selectedStage = getEditableStageForSelection();
 
     if (selectedStage)
     {
@@ -1708,6 +2031,7 @@ void MaterialEditor::_onAddStageTransform(wxCommandEvent& ev)
         selectedStage->appendTransformation(IShaderLayer::Transformation{ type });
 
         updateStageControls();
+        onMaterialChanged();
     }
 }
 
@@ -1723,6 +2047,7 @@ void MaterialEditor::_onRemoveStageTransform(wxCommandEvent& ev)
         stage->removeTransformation(index);
 
         updateStageControls();
+        onMaterialChanged();
     }
 }
 
@@ -1767,6 +2092,7 @@ void MaterialEditor::_onStageTransformEdited(wxDataViewEvent& ev)
 #endif
 
     stage->updateTransformation(transformIndex, type, expression1, expression2);
+    onMaterialChanged();
 }
 
 void MaterialEditor::_onStageColoredChecked(const IEditableShaderLayer::Ptr& stage, bool newValue)
@@ -1937,13 +2263,74 @@ void MaterialEditor::_onSortRequestChanged(wxCommandEvent& ev)
     if (!_material || _materialUpdateInProgress) return;
 
     auto sortDropdown = getControl<wxComboBox>("MaterialSortValue");
-    _material->setSortRequest(string::convert<float>(sortDropdown->GetValue().ToStdString(), Material::SORT_OPAQUE));
+    auto value = sortDropdown->GetValue().ToStdString();
+    _material->setSortRequest(shaders::getSortRequestValueForString(value));
+    
     onMaterialChanged();
+}
+
+void MaterialEditor::updateMaterialNameControl()
+{
+    if (!_material) return;
+
+    auto nameControl = getControl<wxTextCtrl>("MaterialName");
+    if (nameControl->GetValue() != _material->getName())
+    {
+        nameControl->SetForegroundColour(wxColor(220, 0, 0));
+    }
+    else
+    {
+        nameControl->SetForegroundColour(wxNullColour);
+    }
+}
+
+void MaterialEditor::updateMaterialTreeItem()
+{
+    if (!_material) return;
+
+    const auto& columns = _treeView->Columns();
+    auto item = _treeView->GetTreeModel()->FindString(_material->getName(), columns.fullName);
+
+    if (!item.IsOk())
+    {
+        return;
+    }
+
+    bool isModified = _material->isModified();
+
+    wxutil::TreeModel::Row row(item, *_treeView->GetModel());
+    
+    if (!row[columns.isFolder].getBool())
+    {
+        row[columns.iconAndName] = wxutil::TreeViewItemStyle::Modified(isModified);
+    }
+    else
+    {
+        row[columns.iconAndName] = wxDataViewItemAttr();
+    }
+
+    wxDataViewIconText value = row[columns.iconAndName];
+        
+    if (!isModified && value.GetText().EndsWith("*"))
+    {
+        value.SetText(value.GetText().RemoveLast(1));
+        row[columns.iconAndName] = wxVariant(value);
+    }
+    else if (isModified && !value.GetText().EndsWith("*"))
+    {
+        value.SetText(value.GetText() + "*");
+        row[columns.iconAndName] = wxVariant(value);
+    }
+
+    row.SendItemChanged();
 }
 
 void MaterialEditor::onMaterialChanged()
 {
-    _preview->onMaterialChanged();
+    updateMaterialNameControl();
+    updateMaterialTreeItem();
+    updateMaterialControlSensitivity();
+    updateSourceView();
 }
 
 void MaterialEditor::convertTextCtrlToMapExpressionEntry(const std::string& ctrlName)

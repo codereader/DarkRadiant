@@ -22,6 +22,19 @@ public:
          
         return wxDataViewItemAttr();
     }
+
+    static wxDataViewItemAttr Modified(bool isModified)
+    {
+        if (isModified)
+        {
+            wxDataViewItemAttr bold;
+            bold.SetBold(true);
+
+            return bold;
+        }
+
+        return wxDataViewItemAttr();
+    }
 };
 
 }

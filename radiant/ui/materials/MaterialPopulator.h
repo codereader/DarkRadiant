@@ -23,6 +23,12 @@ public:
 
     virtual ~MaterialPopulator();
 
+    // Add the given named material to the tree (assuming it was not present before)
+    void AddSingleMaterial(const wxutil::TreeModel::Ptr& model, const std::string& materialName);
+
+    // Remove the given named material from the tree (assuming it is present)
+    void RemoveSingleMaterial(const wxutil::TreeModel::Ptr& model, const std::string& materialName);
+
 protected:
     virtual void PopulateModel(const wxutil::TreeModel::Ptr& model) override;
 

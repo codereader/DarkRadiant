@@ -31,13 +31,16 @@ private:
 	// Temporary current layer (used by the parsing functions)
 	Doom3ShaderLayer::Ptr _currentLayer;
 
+    sigc::signal<void> _sigTemplateChanged;
+    bool _suppressChangeSignal;
+
 public:
 
   	// Vector of LayerTemplates representing each stage in the material
     std::vector<Doom3ShaderLayer::Ptr> _layers;
 
     // Editorimage texture
-	NamedBindablePtr _editorTex;
+	MapExpressionPtr _editorTex;
 
 	// Map expressions
 	MapExpressionPtr _lightFalloff;
@@ -89,6 +92,7 @@ public:
 
 	// Raw material declaration
 	std::string _blockContents;
+    bool _blockContentsNeedUpdate;
 
 	// Whether the block has been parsed
 	bool _parsed;
@@ -97,6 +101,9 @@ public:
 
     // The string value specified by the guisurf keyword, if other than entity[2]3]
     std::string _guiDeclName;
+
+    // The three ambient rim colour expressions (empty if not defined)
+    IShaderExpression::Ptr _ambientRimColour[3];
 
     // Private copy ctor, used for cloning
     ShaderTemplate(const ShaderTemplate& other);
@@ -110,6 +117,7 @@ public:
 	ShaderTemplate(const std::string& name, const std::string& blockContents) : 
         _name(name),
         _currentLayer(new Doom3ShaderLayer(*this)),
+        _suppressChangeSignal(false),
         _lightFalloffCubeMapType(IShaderLayer::MapType::Map),
         fogLight(false),
         ambientLight(false),
@@ -126,6 +134,7 @@ public:
         _polygonOffset(0.0f),
         _coverage(Material::MC_UNDETERMINED),
         _blockContents(blockContents),
+        _blockContentsNeedUpdate(false),
         _parsed(false),
         _parseFlags(0)
 	{
@@ -164,6 +173,8 @@ public:
 	{
 		if (!_parsed) parseDefinition();
 		description = newDescription;
+
+        onTemplateChanged();
 	}
 
 	int getMaterialFlags()
@@ -176,12 +187,14 @@ public:
     {
         if (!_parsed) parseDefinition();
         _materialFlags |= flag;
+        onTemplateChanged();
     }
 
     void clearMaterialFlag(Material::Flags flag)
     {
         if (!_parsed) parseDefinition();
         _materialFlags &= ~flag;
+        onTemplateChanged();
     }
 
 	Material::CullType getCullType()
@@ -194,6 +207,8 @@ public:
     {
         if (!_parsed) parseDefinition();
         _cullType = type;
+
+        onTemplateChanged();
     }
 
 	ClampType getClampType()
@@ -206,6 +221,8 @@ public:
     {
         if (!_parsed) parseDefinition();
         _clampType = type;
+
+        onTemplateChanged();
     }
 
 	int getSurfaceFlags()
@@ -218,12 +235,16 @@ public:
     {
         if (!_parsed) parseDefinition();
         _surfaceFlags |= flag;
+
+        onTemplateChanged();
     }
 
     void clearSurfaceFlag(Material::SurfaceFlags flag)
     {
         if (!_parsed) parseDefinition();
         _surfaceFlags &= ~flag;
+
+        onTemplateChanged();
     }
 
 	Material::SurfaceType getSurfaceType()
@@ -236,6 +257,7 @@ public:
     {
         if (!_parsed) parseDefinition();
         _surfaceType = type;
+        onTemplateChanged();
     }
 
 	Material::DeformType getDeformType()
@@ -268,6 +290,8 @@ public:
     {
         if (!_parsed) parseDefinition();
         _spectrum = spectrum;
+
+        onTemplateChanged();
     }
 
 	const Material::DecalInfo& getDecalInfo()
@@ -316,24 +340,32 @@ public:
     {
         if (!_parsed) parseDefinition();
         ambientLight = newValue;
+
+        onTemplateChanged();
     }
 
     void setIsBlendLight(bool newValue)
     {
         if (!_parsed) parseDefinition();
         blendLight = newValue;
+
+        onTemplateChanged();
     }
 
     void setIsFogLight(bool newValue)
     {
         if (!_parsed) parseDefinition();
         fogLight = newValue;
+
+        onTemplateChanged();
     }
 
     void setIsCubicLight(bool newValue)
     {
         if (!_parsed) parseDefinition();
         _cubicLight = newValue;
+
+        onTemplateChanged();
     }
 
     float getSortRequest()
@@ -348,6 +380,8 @@ public:
 
         _materialFlags |= Material::FLAG_HAS_SORT_DEFINED;
         _sortReq = sortRequest;
+
+        onTemplateChanged();
     }
 
     void resetSortReqest()
@@ -365,6 +399,8 @@ public:
         {
             _sortReq = Material::SORT_OPAQUE;
         }
+
+        onTemplateChanged();
     }
 
     float getPolygonOffset()
@@ -378,25 +414,23 @@ public:
         if (!_parsed) parseDefinition();
         setMaterialFlag(Material::FLAG_POLYGONOFFSET);
         _polygonOffset = offset;
+
+        onTemplateChanged();
     }
 
 	// Sets the raw block definition contents, will be parsed on demand
-	void setBlockContents(const std::string& blockContents)
-	{
-		_blockContents = blockContents;
-	}
+    void setBlockContents(const std::string& blockContents);
 
-	const std::string& getBlockContents() const
-	{
-		return _blockContents;
-	}
+    const std::string& getBlockContents();
 
     /**
      * \brief
      * Return the named bindable corresponding to the editor preview texture
      * (qer_editorimage).
      */
-	NamedBindablePtr getEditorTexture();
+	const MapExpressionPtr& getEditorTexture();
+
+    void setEditorImageExpressionFromString(const std::string& expression);
 
 	const MapExpressionPtr& getLightFalloff()
 	{
@@ -407,7 +441,10 @@ public:
     void setLightFalloffExpressionFromString(const std::string& expressionString)
     {
         if (!_parsed) parseDefinition();
-        _lightFalloff = MapExpression::createForString(expressionString);
+        _lightFalloff = !expressionString.empty() ? 
+            MapExpression::createForString(expressionString) : MapExpressionPtr();
+
+        onTemplateChanged();
     }
     
     IShaderLayer::MapType getLightFalloffCubeMapType()
@@ -420,6 +457,8 @@ public:
     {
         if (!_parsed) parseDefinition();
         _lightFalloffCubeMapType = type;
+
+        onTemplateChanged();
     }
 
     std::size_t addLayer(IShaderLayer::Type type);
@@ -440,12 +479,37 @@ public:
     std::string getRenderBumpArguments();
     
     // renderbumpflat argument string
-    std::string getRenderBumpFlagArguments();
+    std::string getRenderBumpFlatArguments();
 
     const std::string& getGuiSurfArgument()
     {
         if (!_parsed) parseDefinition();
         return _guiDeclName;
+    }
+
+    IShaderExpression::Ptr getAmbientRimColourExpression(std::size_t index)
+    {
+        assert(index < 3);
+        return _ambientRimColour[index];
+    }
+
+    void onTemplateChanged()
+    {
+        if (_suppressChangeSignal) return;
+
+        _blockContentsNeedUpdate = true;
+        _sigTemplateChanged.emit();
+    }
+
+    // Invoked when one of the shader layers has been modified
+    void onLayerChanged()
+    {
+        onTemplateChanged();
+    }
+
+    sigc::signal<void>& sig_TemplateChanged()
+    {
+        return _sigTemplateChanged;
     }
 
 private:

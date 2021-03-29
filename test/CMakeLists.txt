@@ -13,6 +13,7 @@ add_executable(drtest
                LayerManipulation.cpp
                MapExport.cpp
                MapSavingLoading.cpp
+               MaterialExport.cpp
                Materials.cpp
                math/Matrix4.cpp
                math/Plane3.cpp

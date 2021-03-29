@@ -15,6 +15,8 @@
 #include "i18n.h"
 
 #include "parser/DefTokeniser.h"
+#include "decl/SpliceHelper.h"
+#include "stream/TemporaryOutputStream.h"
 #include "math/Vector4.h"
 #include "os/fs.h"
 
@@ -346,20 +348,10 @@ void ParticlesManager::saveParticleDef(const std::string& particleName)
 	}
 
 	// Open a temporary file
-	fs::path tempFile = targetFile;
-
-	tempFile.remove_filename();
-	tempFile /= "_" + targetFile.filename().string();
-
-	std::ofstream tempStream(tempFile.string().c_str());
-
-	if (!tempStream.is_open())
-	{
-		throw std::runtime_error(
-				fmt::format(_("Cannot open file for writing: {0}"), tempFile.string()));
-	}
+    stream::TemporaryOutputStream tempStream(targetFile);
 
 	std::string tempString;
+    auto& stream = tempStream.getStream();
 
 	// If a previous file exists, open it for reading and filter out the particle def we'll be writing
 	if (fs::exists(targetFile))
@@ -373,123 +365,37 @@ void ParticlesManager::saveParticleDef(const std::string& particleName)
 		}
 
 		// Write the file to the output stream, up to the point the particle def should be written to
-		stripParticleDefFromStream(inheritStream, tempStream, particleName);
+        std::regex pattern("^[\\s]*particle[\\s]+" + particleName + "\\s*(\\{)*\\s*$");
+
+        decl::SpliceHelper::PipeStreamUntilInsertionPoint(inheritStream, stream, pattern);
 
 		if (inheritStream.eof())
 		{
 			// Particle def was not found in the inherited stream, write our comment
-			tempStream << std::endl << std::endl;
+            stream << std::endl << std::endl;
 
-			writeParticleCommentHeader(tempStream);
+			writeParticleCommentHeader(stream);
 		}
 
 		// We're at the insertion point (which might as well be EOF of the inheritStream)
 
 		// Write the particle declaration
-		tempStream << *particle << std::endl;
+        stream << *particle << std::endl;
 
-		tempStream << inheritStream.rdbuf();
+        stream << inheritStream.rdbuf();
 
 		inheritStream.close();
 	}
 	else
 	{
 		// Just put the particle def into the file and that's it, leave a comment at the head of the decl
-		writeParticleCommentHeader(tempStream);
+		writeParticleCommentHeader(stream);
 
 		// Write the particle declaration
-		tempStream << *particle << std::endl;
+        stream << *particle << std::endl;
 	}
 
-	tempStream.close();
-
-	// Move the temporary stream over the actual file, removing the target first
-	if (fs::exists(targetFile))
-	{
-		try
-		{
-			fs::remove(targetFile);
-		}
-		catch (fs::filesystem_error& e)
-		{
-			rError() << "Could not remove the file " << targetFile.string() << std::endl
-				<< e.what() << std::endl;
-
-			throw std::runtime_error(
-				fmt::format(_("Could not remove the file {0}"), targetFile.string()));
-		}
-	}
-
-	try
-	{
-		fs::rename(tempFile, targetFile);
-	}
-	catch (fs::filesystem_error& e)
-	{
-		rError() << "Could not rename the temporary file " << tempFile.string() << std::endl
-			<< e.what() << std::endl;
-
-		throw std::runtime_error(
-			fmt::format(_("Could not rename the temporary file {0}"), tempFile.string()));
-	}
-}
-
-void ParticlesManager::stripParticleDefFromStream(std::istream& input,
-	std::ostream& output, const std::string& particleName)
-{
-	std::string line;
-	std::regex pattern("^[\\s]*particle[\\s]+" + particleName + "\\s*(\\{)*\\s*$");
-
-	while (std::getline(input, line))
-	{
-		std::smatch matches;
-
-		// See if this line contains the particle def in question
-		if (std::regex_match(line, matches, pattern))
-		{
-			// Line matches, march from opening brace to the other one
-			std::size_t openBraces = 0;
-			bool blockStarted = false;
-
-			if (!matches[1].str().empty())
-			{
-				// We've had an opening brace in the first line
-				openBraces++;
-				blockStarted = true;
-			}
-
-			while (std::getline(input, line))
-			{
-				for (std::size_t i = 0; i < line.length(); ++i)
-				{
-					if (line[i] == '{')
-					{
-						openBraces++;
-						blockStarted = true;
-					}
-					else if (line[i] == '}')
-					{
-						openBraces--;
-					}
-				}
-
-				if (blockStarted && openBraces == 0)
-				{
-					break;
-				}
-			}
-
-			return; // stop right here, return to caller
-		}
-		else
-		{
-			// No particular match, add line to output
-			output << line;
-		}
-
-		// Append a newline in any case
-		output << std::endl;
-	}
+	tempStream.closeAndReplaceTargetFile();
 }
 
 module::StaticModule<ParticlesManager> particlesManagerModule;

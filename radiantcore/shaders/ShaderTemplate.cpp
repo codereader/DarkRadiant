@@ -3,6 +3,7 @@
 #include "CameraCubeMapDecl.h"
 
 #include "MapExpression.h"
+#include "MaterialSourceGenerator.h"
 #include "VideoMapExpression.h"
 #include "SoundMapExpression.h"
 
@@ -17,6 +18,7 @@
 #include <iostream>
 
 #include "ShaderExpression.h"
+#include "util/ScopedBoolLock.h"
 #include "materials/ParseLib.h"
 
 namespace shaders
@@ -25,6 +27,7 @@ namespace shaders
 ShaderTemplate::ShaderTemplate(const ShaderTemplate& other) :
     _name(other._name),
     _currentLayer(new Doom3ShaderLayer(*this)),
+    _suppressChangeSignal(false),
     _lightFalloff(other._lightFalloff),
     _lightFalloffCubeMapType(other._lightFalloffCubeMapType),
     fogLight(other.fogLight),
@@ -48,10 +51,15 @@ ShaderTemplate::ShaderTemplate(const ShaderTemplate& other) :
     _renderBumpArguments(other._renderBumpArguments),
     _renderBumpFlatArguments(other._renderBumpFlatArguments),
     _blockContents(other._blockContents),
+    _blockContentsNeedUpdate(other._blockContentsNeedUpdate),
     _parsed(other._parsed),
     _parseFlags(other._parseFlags),
     _guiDeclName(other._guiDeclName)
 {
+    _ambientRimColour[0] = other._ambientRimColour[0];
+    _ambientRimColour[1] = other._ambientRimColour[1];
+    _ambientRimColour[2] = other._ambientRimColour[2];
+
     // Clone the layers
     for (const auto& otherLayer : other._layers)
     {
@@ -64,12 +72,19 @@ std::shared_ptr<ShaderTemplate> ShaderTemplate::clone() const
     return std::make_shared<ShaderTemplate>(*this);
 }
 
-NamedBindablePtr ShaderTemplate::getEditorTexture()
+const MapExpressionPtr& ShaderTemplate::getEditorTexture()
 {
-    if (!_parsed)
-        parseDefinition();
+    if (!_parsed) parseDefinition();
 
     return _editorTex;
+}
+
+void ShaderTemplate::setEditorImageExpressionFromString(const std::string& expression)
+{
+    if (!_parsed) parseDefinition();
+
+    _editorTex = !expression.empty() ? MapExpression::createForString(expression) : MapExpressionPtr();
+    onTemplateChanged();
 }
 
 IShaderExpression::Ptr ShaderTemplate::parseSingleExpressionTerm(parser::DefTokeniser& tokeniser)
@@ -433,6 +448,9 @@ bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
         if (red && green && blue)
         {
             // ambientrimcolor support not yet added, we need material registers first
+            _ambientRimColour[0] = red;
+            _ambientRimColour[1] = green;
+            _ambientRimColour[2] = blue;
         }
         else
         {
@@ -1085,99 +1103,16 @@ bool ShaderTemplate::parseMaterialType(parser::DefTokeniser& tokeniser, const st
 bool ShaderTemplate::parseSurfaceFlags(parser::DefTokeniser& tokeniser,
                                        const std::string& token)
 {
-    if (token == "solid")
+    for (const auto& pair : SurfaceFlags)
     {
-        _surfaceFlags |= Material::SURF_SOLID;
+        if (token == pair.first)
+        {
+            _surfaceFlags |= pair.second;
+            return true;
+        }
     }
-    else if (token == "water")
-    {
-        _surfaceFlags |= Material::SURF_WATER;
-    }
-    else if (token == "playerclip")
-    {
-        _surfaceFlags |= Material::SURF_PLAYERCLIP;
-    }
-    else if (token == "monsterclip")
-    {
-        _surfaceFlags |= Material::SURF_MONSTERCLIP;
-    }
-	else if (token == "moveableclip")
-    {
-        _surfaceFlags |= Material::SURF_MOVEABLECLIP;
-    }
-	else if (token == "ikclip")
-    {
-        _surfaceFlags |= Material::SURF_IKCLIP;
-    }
-	else if (token == "blood")
-    {
-        _surfaceFlags |= Material::SURF_BLOOD;
-    }
-	else if (token == "trigger")
-    {
-        _surfaceFlags |= Material::SURF_TRIGGER;
-    }
-	else if (token == "aassolid")
-    {
-		_surfaceFlags |= Material::SURF_AASSOLID;
-    }
-	else if (token == "aasobstacle")
-    {
-        _surfaceFlags |= Material::SURF_AASOBSTACLE;
-    }
-	else if (token == "flashlight_trigger")
-    {
-        _surfaceFlags |= Material::SURF_FLASHLIGHT_TRIGGER;
-    }
-	else if (token == "nonsolid")
-    {
-        _surfaceFlags |= Material::SURF_NONSOLID;
-    }
-	else if (token == "nullnormal")
-    {
-        _surfaceFlags |= Material::SURF_NULLNORMAL;
-    }
-	else if (token == "areaportal")
-    {
-		_surfaceFlags |= Material::SURF_AREAPORTAL;
-    }
-	else if (token == "qer_nocarve")
-    {
-		_surfaceFlags |= Material::SURF_NOCARVE;
-    }
-	else if (token == "discrete")
-    {
-        _surfaceFlags |= Material::SURF_DISCRETE;
-    }
-	else if (token == "nofragment")
-    {
-        _surfaceFlags |= Material::SURF_NOFRAGMENT;
-    }
-	else if (token == "slick")
-    {
-        _surfaceFlags |= Material::SURF_SLICK;
-    }
-	else if (token == "collision")
-    {
-        _surfaceFlags |= Material::SURF_COLLISION;
-    }
-	else if (token == "noimpact")
-    {
-        _surfaceFlags |= Material::SURF_NOIMPACT;
-    }
-	else if (token == "nodamage")
-    {
-        _surfaceFlags |= Material::SURF_NODAMAGE;
-    }
-	else if (token == "ladder")
-    {
-        _surfaceFlags |= Material::SURF_LADDER;
-    }
-	else if (token == "nosteps")
-    {
-        _surfaceFlags |= Material::SURF_NOSTEPS;
-    }
-	else if (token == "guisurf")
+
+	if (token == "guisurf")
 	{
 		// "guisurf blah.gui" or "guisurf entity[2|3]"
 		_surfaceFlags |= Material::SURF_GUISURF;
@@ -1200,13 +1135,11 @@ bool ShaderTemplate::parseSurfaceFlags(parser::DefTokeniser& tokeniser,
         {
             _guiDeclName = argument;
         }
-	}
-	else
-	{
-		return false; // unrecognised token, return false
-	}
 
-	return true;
+        return true;
+	}
+	
+    return false; // unrecognised token, return false
 }
 
 bool ShaderTemplate::parseCondition(parser::DefTokeniser& tokeniser, const std::string& token)
@@ -1247,6 +1180,8 @@ bool ShaderTemplate::saveLayer()
 
 void ShaderTemplate::parseDefinition()
 {
+    util::ScopedBoolLock parseLock(_suppressChangeSignal);
+
     // Construct a local deftokeniser to parse the unparsed block
     parser::BasicDefTokeniser<std::string> tokeniser(
         _blockContents,
@@ -1375,6 +1310,9 @@ void ShaderTemplate::parseDefinition()
 		// mark the contents as opaque
 		_surfaceFlags |= Material::SURF_OPAQUE;
 	}
+
+    // We might have invoked a few setters during this process, clear the flag now
+    _blockContentsNeedUpdate = false;
 }
 
 void ShaderTemplate::addLayer(const Doom3ShaderLayer::Ptr& layer)
@@ -1383,10 +1321,10 @@ void ShaderTemplate::addLayer(const Doom3ShaderLayer::Ptr& layer)
 	_layers.emplace_back(layer);
 
 	// If there is no editor texture yet, use the bindable texture, but no Bump or speculars
-	if (!_editorTex && layer->getBindableTexture() &&
-		layer->getType() != IShaderLayer::BUMP && layer->getType() != IShaderLayer::SPECULAR)
+	if (!_editorTex && layer->getType() != IShaderLayer::BUMP && 
+        layer->getType() != IShaderLayer::SPECULAR && std::dynamic_pointer_cast<MapExpression>(layer->getMapExpression()))
 	{
-		_editorTex = layer->getBindableTexture();
+		_editorTex = std::static_pointer_cast<MapExpression>(layer->getMapExpression());
 	}
 }
 
@@ -1418,11 +1356,15 @@ std::size_t ShaderTemplate::addLayer(IShaderLayer::Type type)
 
     addLayer(std::make_shared<Doom3ShaderLayer>(*this, type, map));
     return _layers.size() - 1;
+
+    onTemplateChanged();
 }
 
 void ShaderTemplate::removeLayer(std::size_t index)
 {
     _layers.erase(_layers.begin() + index);
+
+    onTemplateChanged();
 }
 
 void ShaderTemplate::swapLayerPosition(std::size_t first, std::size_t second)
@@ -1433,6 +1375,8 @@ void ShaderTemplate::swapLayerPosition(std::size_t first, std::size_t second)
     }
 
     _layers[first].swap(_layers[second]);
+
+    onTemplateChanged();
 }
 
 std::size_t ShaderTemplate::duplicateLayer(std::size_t index)
@@ -1443,6 +1387,9 @@ std::size_t ShaderTemplate::duplicateLayer(std::size_t index)
     }
 
     _layers.emplace_back(std::make_shared<Doom3ShaderLayer>(*_layers[index], *this));
+
+    onTemplateChanged();
+
     return _layers.size() - 1;
 }
 
@@ -1475,11 +1422,27 @@ std::string ShaderTemplate::getRenderBumpArguments()
     return _renderBumpArguments;
 }
 
-std::string ShaderTemplate::getRenderBumpFlagArguments()
+std::string ShaderTemplate::getRenderBumpFlatArguments()
 {
     if (!_parsed) parseDefinition();
 
     return _renderBumpFlatArguments;
+}
+
+void ShaderTemplate::setBlockContents(const std::string& blockContents)
+{
+    _blockContents = blockContents;
+}
+
+const std::string& ShaderTemplate::getBlockContents()
+{
+    if (_blockContentsNeedUpdate)
+    {
+        _blockContentsNeedUpdate = false;
+        _blockContents = MaterialSourceGenerator::GenerateDefinitionBlock(*this);
+    }
+
+    return _blockContents;
 }
 
 } // namespace

@@ -75,9 +75,68 @@ ShaderDefinition& ShaderLibrary::getDefinition(const std::string& name)
 
 bool ShaderLibrary::definitionExists(const std::string& name) const
 {
-	ShaderDefinitionMap::const_iterator i = _definitions.find(name);
+	return _definitions.count(name) > 0;
+}
 
-	return i != _definitions.end();
+void ShaderLibrary::replaceDefinition(const std::string& name, const ShaderDefinition& def)
+{
+    auto found = _definitions.find(name);
+
+    if (found == _definitions.end())
+    {
+        addDefinition(name, def);
+        return;
+    }
+
+    found->second = def;
+}
+
+void ShaderLibrary::copyDefinition(const std::string& nameOfOriginal, const std::string& nameOfCopy)
+{
+    // These need to be checked by the caller
+    assert(definitionExists(nameOfOriginal));
+    assert(!definitionExists(nameOfCopy));
+
+    auto found = _definitions.find(nameOfOriginal);
+
+    auto result = _definitions.emplace(nameOfCopy, found->second);
+    result.first->second.file = vfs::FileInfo{"", "", vfs::Visibility::HIDDEN};
+}
+
+void ShaderLibrary::renameDefinition(const std::string& oldName, const std::string& newName)
+{
+    // These need to be checked by the caller
+    assert(definitionExists(oldName));
+    assert(!definitionExists(newName));
+
+    // Rename in definition table
+    auto extracted = _definitions.extract(oldName);
+    extracted.key() = newName;
+
+    _definitions.insert(std::move(extracted));
+
+    // Rename in shaders table (if existing)
+    if (_shaders.count(oldName) > 0)
+    {
+        auto extractedShader = _shaders.extract(oldName);
+        extractedShader.key() = newName;
+
+        // Insert it under the new name before setting the CShader instance's name
+        // the observing OpenGLShader instance will request the material to reconstruct itself
+        // If the new name is not present at that point, the library will create a default material.
+        auto result = _shaders.insert(std::move(extractedShader));
+
+        // Rename the CShader instance
+        result.position->second->setName(newName);
+    }
+}
+
+void ShaderLibrary::removeDefinition(const std::string& name)
+{
+    assert(definitionExists(name));
+
+    _definitions.erase(name);
+    _shaders.erase(name);
 }
 
 ShaderDefinition& ShaderLibrary::getEmptyDefinition()

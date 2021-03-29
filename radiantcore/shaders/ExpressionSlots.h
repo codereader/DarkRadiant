@@ -41,6 +41,11 @@ public:
     // Parsing failures of non-empty strings will not change the slot
     void assignFromString(IShaderLayer::Expression::Slot slot, const std::string& expression, std::size_t defaultRegisterIndex);
 
+    // Returns true if the two given slots are equipped with equivalent expressions 
+    // (i.e. are reference-equal or using the same string representation)
+    // This also returns true if both slots are empty
+    bool expressionsAreEquivalent(IShaderLayer::Expression::Slot slotA, IShaderLayer::Expression::Slot slotB) const;
+
 private:
     // Returns true if the given register index is in use by more than one expression
     bool registerIsShared(std::size_t index) const;

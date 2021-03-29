@@ -190,6 +190,13 @@ public:
     /// Return true if the editor image is no tex for this shader.
     virtual bool isEditorImageNoTex() = 0;
 
+    // Returns the expression defining the editor image of this material, as passed to qer_editorimage statement,
+    // or an empty string if this keyword was not used at all in this declaration.
+    virtual shaders::IMapExpression::Ptr getEditorImageExpression() = 0;
+
+    // Set the editor image path of this material
+    virtual void setEditorImageExpressionFromString(const std::string& editorImagePath) = 0;
+
     /// Get the string name of this material
     virtual std::string getName() const = 0;
 
@@ -201,6 +208,9 @@ public:
 
     /// get shader file name (ie the file where this one is defined)
     virtual const char* getShaderFileName() const = 0;
+
+    // Set the mtr file name to define where this material should be saved to
+    virtual void setShaderFileName(const std::string& fullPath) = 0;
 
     // Returns the VFS info structure of the file this shader is defined in
     virtual const vfs::FileInfo& getShaderFileInfo() const = 0;
@@ -407,6 +417,12 @@ public:
 
     // True if this mateiral has been altered from its original definition
     virtual bool isModified() = 0;
+
+    // Roll back the changes made to this material
+    virtual void revertModifications() = 0;
+
+    // Signal emitted when this material is modified
+    virtual sigc::signal<void>& sig_materialChanged() = 0;
 };
 
 typedef std::shared_ptr<Material> MaterialPtr;
@@ -505,6 +521,12 @@ public:
 	 */
 	virtual bool materialExists(const std::string& name) = 0;
 
+    /**
+     * A material can be modified if it has been declared in a physical file,
+     * i.e. outside a PAK file.
+     */
+    virtual bool materialCanBeModified(const std::string& name) = 0;
+
 	virtual void foreachShaderName(const ShaderNameCallback& callback) = 0;
 
     /**
@@ -514,6 +536,15 @@ public:
 
     // Set the callback to be invoked when the active shaders list has changed
 	virtual sigc::signal<void> signal_activeShadersChanged() const = 0;
+
+    // Is invoked when a new material is inserted into the resource tree, passing the name as argument
+    virtual sigc::signal<void, const std::string&>& signal_materialCreated() = 0;
+
+    // Is called when a material name is changed, passing the old and the new name as arguments
+    virtual sigc::signal<void, const std::string&, const std::string&>& signal_materialRenamed() = 0;
+
+    // Is emitted when a named material is removed from the library
+    virtual sigc::signal<void, const std::string&>& signal_materialRemoved() = 0;
 
     /**
      * Enable or disable active shaders updates (for performance).
@@ -552,6 +583,21 @@ public:
 	 * expression objects for unit testing purposes.
 	 */
 	virtual shaders::IShaderExpression::Ptr createShaderExpressionFromString(const std::string& exprStr) = 0;
+
+    // Creates a new material using the given name. In case the name is already in use,
+    // a generated one will be assigned to the created material
+    virtual MaterialPtr createEmptyMaterial(const std::string& name) = 0;
+
+    // Creates a copy of the given material and returns the reference to it
+    virtual MaterialPtr copyMaterial(const std::string& nameOfOriginal, const std::string& nameOfCopy) = 0;
+
+    virtual bool renameMaterial(const std::string& oldName, const std::string& newName) = 0;
+
+    virtual void removeMaterial(const std::string& name) = 0;
+
+    // Saves the named material to the file location as specified in its shaderfile info.
+    // If the path is not writable or the material is not suitable for saving, this will throw an exception
+    virtual void saveMaterial(const std::string& name) = 0;
 
     // Creates a named, internal material for debug/testing etc.
     // Used by shaders without corresponding material declaration, like entity wireframe shaders

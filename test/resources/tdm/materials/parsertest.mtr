@@ -516,3 +516,391 @@ textures/parsertest/expressions/rotationCalculation
 		rotate 		0.005 * sintable [ time * 0.1]
 	}
 }
+
+textures/parsertest/decalinfo
+{
+	decalinfo 14.3 1.5 ( 0.9 0.8 0.7 0.6 ) (0.5 0.5 0.4 0.3)
+}
+
+textures/parsertest/surfaceflags/solid              { solid }
+textures/parsertest/surfaceflags/water              { water }
+textures/parsertest/surfaceflags/playerclip         { playerclip }
+textures/parsertest/surfaceflags/monsterclip        { monsterclip }
+textures/parsertest/surfaceflags/moveableclip       { moveableclip }
+textures/parsertest/surfaceflags/ikclip             { ikclip }
+textures/parsertest/surfaceflags/blood              { blood }
+textures/parsertest/surfaceflags/trigger            { trigger }
+textures/parsertest/surfaceflags/aassolid           { aassolid }
+textures/parsertest/surfaceflags/aasobstacle        { aasobstacle }
+textures/parsertest/surfaceflags/flashlight_trigger { flashlight_trigger }
+textures/parsertest/surfaceflags/nonsolid           { nonsolid }
+textures/parsertest/surfaceflags/nullnormal         { nullnormal }
+textures/parsertest/surfaceflags/areaportal         { areaportal }
+textures/parsertest/surfaceflags/nocarve            { qer_nocarve }
+textures/parsertest/surfaceflags/discrete           { discrete }
+textures/parsertest/surfaceflags/nofragment         { nofragment }
+textures/parsertest/surfaceflags/slick              { slick }
+textures/parsertest/surfaceflags/collision          { collision }
+textures/parsertest/surfaceflags/noimpact           { noimpact }
+textures/parsertest/surfaceflags/nodamage           { nodamage }
+textures/parsertest/surfaceflags/ladder             { ladder }
+textures/parsertest/surfaceflags/nosteps            { nosteps }
+
+textures/parsertest/texgen/normal
+{
+	{
+		blend diffusemap
+		map _white
+	}
+}
+
+textures/parsertest/texgen/reflect
+{
+	{
+		blend diffusemap
+		map _white
+        texgen reflect
+	}
+}
+
+textures/parsertest/texgen/skybox
+{
+	{
+		blend diffusemap
+		map _white
+        texgen skybox
+	}
+}
+
+textures/parsertest/texgen/wobblesky
+{
+	{
+		blend diffusemap
+		map _white
+        texgen wobblesky 1.0 0.5 (time*0.6)
+	}
+}
+
+textures/parsertest/texturefilter/nearest
+{
+	{
+		blend diffusemap
+		map _white
+        nearest
+	}
+}
+
+textures/parsertest/texturefilter/linear
+{
+	{
+		blend diffusemap
+		map _white
+        linear
+	}
+}
+
+textures/parsertest/texturequality/highquality
+{
+	{
+		blend diffusemap
+		map _white
+        highquality
+	}
+}
+
+// uncompressed is the same as highquality
+textures/parsertest/texturequality/uncompressed
+{
+	{
+		blend diffusemap
+		map _white
+        uncompressed
+	}
+}
+
+textures/parsertest/texturequality/forcehighquality
+{
+	{
+		blend diffusemap
+		map _white
+        forcehighquality
+	}
+}
+
+textures/parsertest/texturequality/nopicmip
+{
+	{
+		blend diffusemap
+		map _white
+        nopicmip
+	}
+}
+
+textures/parsertest/clamping/noclamp
+{
+	{
+		blend diffusemap
+		map _white
+        noclamp
+	}
+}
+
+textures/parsertest/clamping/noclamp
+{
+	{
+		blend diffusemap
+		map _white
+        noclamp
+	}
+}
+
+textures/parsertest/clamping/clamp
+{
+	{
+		blend diffusemap
+		map _white
+        clamp
+	}
+}
+
+textures/parsertest/clamping/zeroclamp
+{
+	{
+		blend diffusemap
+		map _white
+        zeroclamp
+	}
+}
+
+textures/parsertest/clamping/alphazeroclamp
+{
+	{
+		blend diffusemap
+		map _white
+        alphazeroclamp
+	}
+}
+
+textures/parsertest/stageflags/ignorealphatest
+{
+	{
+		blend diffusemap
+		map _white
+        ignoreAlphaTest
+	}
+}
+
+textures/parsertest/stageflags/ignoredepth
+{
+	{
+		blend diffusemap
+		map _white
+        ignoreDepth
+	}
+}
+
+textures/parsertest/stageflags/maskRed
+{
+	{
+		blend diffusemap
+		map _white
+        maskRed
+	}
+}
+
+textures/parsertest/stageflags/maskGreen
+{
+	{
+		blend diffusemap
+		map _white
+        maskGreen
+	}
+}
+
+textures/parsertest/stageflags/maskBlue
+{
+	{
+		blend diffusemap
+		map _white
+        maskBlue
+	}
+}
+
+textures/parsertest/stageflags/maskAlpha
+{
+	{
+		blend diffusemap
+		map _white
+        maskAlpha
+	}
+}
+
+textures/parsertest/stageflags/maskColor
+{
+	{
+		blend diffusemap
+		map _white
+        maskColor
+	}
+}
+
+textures/parsertest/stageflags/maskDepth
+{
+	{
+		blend diffusemap
+		map _white
+        maskDepth
+	}
+}
+
+textures/parsertest/stageflags/maskEverything
+{
+	{
+		blend diffusemap
+		map _white
+        maskRed
+        maskGreen
+        maskBlue
+        maskAlpha
+        maskDepth
+	}
+}
+
+textures/parsertest/vertexcolours/none
+{
+	diffusemap _white
+}
+
+textures/parsertest/vertexcolours/vertexcolour
+{
+	{
+		blend diffusemap
+		map _white
+        vertexColor
+	}
+    {
+		blend diffusemap
+		map _white
+        inverseVertexColor
+	}
+}
+
+textures/parsertest/vertexcolours/colourcomponents
+{
+	{
+		blend diffusemap
+		map _white
+        red 0.5
+	}
+    {
+		blend diffusemap
+		map _white
+        green 0.4
+	}
+    {
+		blend diffusemap
+		map _white
+        blue 0.3
+	}
+    {
+		blend diffusemap
+		map _white
+        alpha 0.2
+	}
+}
+
+textures/parsertest/vertexcolours/coloured
+{
+	{
+		blend diffusemap
+		map _white
+        color 0.7, 0.6, 0.5, 0.9
+	}
+    {
+		blend diffusemap
+		map _white
+        colored
+	}
+}
+
+textures/parsertest/vertexcolours/combinations
+{
+	{
+		blend diffusemap
+		map _white
+        red 0.5
+        green 0.5
+        blue 0.5
+        alpha time // alpha is different
+	}
+    {
+		blend diffusemap
+		map _white
+        red 0.5
+        green 0.5
+        blue 0.5
+        alpha 0.5
+	}
+    {
+		blend diffusemap
+		map _white
+        rgb 0.3
+        red 0.4
+	}
+    {
+		blend diffusemap
+		map _white
+        rgba 0.2
+        alpha time
+	}
+}
+
+textures/parsertest/vertexcolours/combinations2
+{
+    {
+		blend diffusemap
+		map _white
+        color 0.1, 0.2, 0.3, 0.4
+        green time
+	}
+    {
+		blend diffusemap
+		map _white
+        color 0.1, 0.2, 0.3, 0.4
+        green 0.1
+        blue 0.1
+	}
+    {
+		blend diffusemap
+		map _white
+        colored
+        alpha time
+    }
+}
+
+textures/parsertest/privatePolygonOffset
+{
+    {
+		blend diffusemap
+		map _white
+        privatePolygonOffset -45.9
+	}
+}
+
+textures/parsertest/alphaTest
+{
+	{
+		blend diffusemap
+		map _white
+		alphaTest sinTable[time]
+	}
+}
+
+textures/parsertest/condition
+{
+    {
+        if (parm4 > 0)
+		blend diffusemap
+		map _white
+	}
+}

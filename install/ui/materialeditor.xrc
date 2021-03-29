@@ -51,36 +51,72 @@
 										<option>0</option>
 										<flag>wxEXPAND|wxLEFT|wxRIGHT</flag>
 										<border>6</border>
-										<object class="wxBoxSizer">
-											<orient>wxVERTICAL</orient>
+										<object class="wxFlexGridSizer">
+											<rows>0</rows>
+											<cols>1</cols>
+											<vgap>0</vgap>
+											<hgap>6</hgap>
+											<growablecols></growablecols>
+											<growablerows>0</growablerows>
 											<object class="sizeritem">
 												<option>0</option>
-												<flag>wxALL</flag>
+												<flag>wxEXPAND|wxLEFT|wxRIGHT</flag>
 												<border>0</border>
-												<object class="wxButton" name="MaterialEditorNewDefButton">
-													<label>New</label>
-													<default>0</default>
-													<markup>0</markup>
-													<bitmap />
+												<object class="wxBoxSizer">
+													<orient>wxVERTICAL</orient>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxALL|wxEXPAND</flag>
+														<border>0</border>
+														<object class="wxButton" name="MaterialEditorNewDefButton">
+															<label>New Material</label>
+															<default>0</default>
+															<markup>0</markup>
+															<bitmap />
+														</object>
+													</object>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxEXPAND|wxTOP</flag>
+														<border>6</border>
+														<object class="wxButton" name="MaterialEditorCopyDefButton">
+															<label>Copy Material</label>
+															<default>0</default>
+															<markup>0</markup>
+															<bitmap />
+														</object>
+													</object>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxTOP</flag>
+														<border>6</border>
+														<object class="wxButton" name="MaterialEditorRevertButton">
+															<label>Discard Changes</label>
+															<default>0</default>
+															<markup>0</markup>
+															<bitmap />
+														</object>
+													</object>
+													<object class="sizeritem">
+														<option>0</option>
+														<flag>wxEXPAND|wxTOP</flag>
+														<border>6</border>
+														<object class="wxButton" name="MaterialEditorSaveDefButton">
+															<label>Save Material</label>
+															<default>0</default>
+															<markup>0</markup>
+															<bitmap />
+														</object>
+													</object>
 												</object>
 											</object>
 											<object class="sizeritem">
 												<option>0</option>
-												<flag>wxTOP</flag>
-												<border>6</border>
-												<object class="wxButton" name="MaterialEditorSaveDefButton">
-													<label>Save</label>
-													<default>0</default>
-													<markup>0</markup>
-													<bitmap />
-												</object>
-											</object>
-											<object class="sizeritem">
-												<option>0</option>
-												<flag>wxTOP</flag>
-												<border>6</border>
-												<object class="wxButton" name="MaterialEditorCopyDefButton">
-													<label>Copy</label>
+												<flag>wxALIGN_BOTTOM|wxALL|wxEXPAND</flag>
+												<border>0</border>
+												<object class="wxButton" name="MaterialEditorUnlockButton">
+													<tooltip>This material is defined in a PK4 file and cannot be modified.\nClick unlock to create a copy.</tooltip>
+													<label>Unlock Editing</label>
 													<default>0</default>
 													<markup>0</markup>
 													<bitmap />
@@ -91,7 +127,7 @@
 								</object>
 							</object>
 							<object class="sizeritem">
-								<option>3</option>
+								<option>2</option>
 								<flag>wxEXPAND|wxLEFT</flag>
 								<border>6</border>
 								<object class="wxBoxSizer">
@@ -123,48 +159,78 @@
 																<orient>wxVERTICAL</orient>
 																<object class="sizeritem">
 																	<option>0</option>
-																	<flag>wxBOTTOM|wxEXPAND</flag>
-																	<border>6</border>
-																	<object class="wxFlexGridSizer">
-																		<rows>0</rows>
-																		<cols>4</cols>
-																		<vgap>6</vgap>
-																		<hgap>6</hgap>
-																		<growablecols>3</growablecols>
-																		<growablerows></growablerows>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																			<border>0</border>
-																			<object class="wxStaticText" name="m_staticText571">
-																				<label>Material:</label>
-																				<wrap>-1</wrap>
+																	<flag>wxEXPAND | wxALL</flag>
+																	<border>0</border>
+																	<object class="wxPanel" name="MaterialNameAndDescription">
+																		<style>wxTAB_TRAVERSAL</style>
+																		<object class="wxFlexGridSizer">
+																			<rows>0</rows>
+																			<cols>2</cols>
+																			<vgap>6</vgap>
+																			<hgap>6</hgap>
+																			<growablecols>1</growablecols>
+																			<growablerows></growablerows>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL</flag>
+																				<border>0</border>
+																				<object class="wxStaticText" name="m_staticText61">
+																					<label>Name:</label>
+																					<wrap>-1</wrap>
+																				</object>
 																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL</flag>
-																			<border>0</border>
-																			<object class="wxChoice" name="MaterialType">
-																				<selection>0</selection>
-																				<content />
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxEXPAND</flag>
+																				<border>0</border>
+																				<object class="wxTextCtrl" name="MaterialName">
+																					<style>wxTE_PROCESS_ENTER</style>
+																					<value></value>
+																				</object>
 																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-																			<border>0</border>
-																			<object class="wxStaticText" name="m_staticText57">
-																				<label>Description:</label>
-																				<wrap>-1</wrap>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																				<border>0</border>
+																				<object class="wxStaticText" name="m_staticText571">
+																					<label>Material:</label>
+																					<wrap>-1</wrap>
+																				</object>
 																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>1</option>
-																			<flag>wxEXPAND|wxLEFT</flag>
-																			<border>0</border>
-																			<object class="wxTextCtrl" name="MaterialDescription">
-																				<value></value>
+																			<object class="sizeritem">
+																				<option>1</option>
+																				<flag>wxEXPAND</flag>
+																				<border>0</border>
+																				<object class="wxBoxSizer">
+																					<orient>wxHORIZONTAL</orient>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
+																						<border>12</border>
+																						<object class="wxChoice" name="MaterialType">
+																							<selection>0</selection>
+																							<content />
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>0</option>
+																						<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																						<border>0</border>
+																						<object class="wxStaticText" name="m_staticText57">
+																							<label>Description:</label>
+																							<wrap>-1</wrap>
+																						</object>
+																					</object>
+																					<object class="sizeritem">
+																						<option>1</option>
+																						<flag>wxEXPAND|wxLEFT</flag>
+																						<border>6</border>
+																						<object class="wxTextCtrl" name="MaterialDescription">
+																							<style>wxTE_PROCESS_ENTER</style>
+																							<value></value>
+																						</object>
+																					</object>
+																				</object>
 																			</object>
 																		</object>
 																	</object>
@@ -322,6 +388,36 @@
 																								<border>6</border>
 																								<object class="wxBoxSizer">
 																									<orient>wxVERTICAL</orient>
+																									<object class="sizeritem">
+																										<option>0</option>
+																										<flag>wxBOTTOM|wxEXPAND|wxTOP</flag>
+																										<border>6</border>
+																										<object class="wxPanel" name="MaterialEditorImagePanel">
+																											<style>wxTAB_TRAVERSAL</style>
+																											<object class="wxBoxSizer">
+																												<orient>wxHORIZONTAL</orient>
+																												<object class="sizeritem">
+																													<option>0</option>
+																													<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
+																													<border>6</border>
+																													<object class="wxStaticText" name="m_staticText59">
+																														<tooltip>qer__editorimage</tooltip>
+																														<label>Editor Image:</label>
+																														<wrap>-1</wrap>
+																													</object>
+																												</object>
+																												<object class="sizeritem">
+																													<option>1</option>
+																													<flag>wxALIGN_CENTER_VERTICAL</flag>
+																													<border>6</border>
+																													<object class="wxTextCtrl" name="MaterialEditorImage">
+																														<style>wxTE_PROCESS_ENTER</style>
+																														<value></value>
+																													</object>
+																												</object>
+																											</object>
+																										</object>
+																									</object>
 																									<object class="sizeritem">
 																										<option>1</option>
 																										<flag>wxEXPAND</flag>
@@ -1702,6 +1798,7 @@
 																																			<flag></flag>
 																																			<border>0</border>
 																																			<object class="wxTextCtrl" name="MaterialStageImageMap">
+																																				<style>wxTE_PROCESS_ENTER</style>
 																																				<value></value>
 																																			</object>
 																																		</object>
@@ -2682,7 +2779,7 @@
 						<flag>wxALIGN_CENTER_VERTICAL</flag>
 						<border>5</border>
 						<object class="wxStaticText" name="MaterialEditorSaveNote">
-							<label>Note: changes will be written to the file .....</label>
+							<label></label>
 							<wrap>-1</wrap>
 						</object>
 					</object>

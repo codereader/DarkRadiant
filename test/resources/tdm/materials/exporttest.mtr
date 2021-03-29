@@ -1,0 +1,89 @@
+textures/exporttest/empty
+{
+}
+
+textures/exporttest/guisurf1
+{
+    guiSurf	guis/lvlmaps/genericmap.gui
+}
+
+textures/exporttest/guisurf2
+{
+    guiSurf	entity
+}
+
+textures/exporttest/guisurf3
+{
+    guiSurf	entity2
+}
+
+textures/exporttest/guisurf4
+{
+    guiSurf	entity3
+}
+
+table deformexporttesttable { { 0, 0, 0, 0, 1, 1 } }
+
+textures/exporttest/deform1
+{
+	deform flare 1.5
+}
+
+textures/exporttest/deform2
+{
+	deform expand (0.1 * deformexporttesttable[time * (0.3+time)] - global3)
+}
+
+textures/exporttest/deform3
+{
+	deform move (1.7 + time + 4 - global3)
+}
+
+textures/exporttest/deform4
+{
+	deform turbulent deformexporttesttable time*2 (parm11-4) -global5
+}
+
+textures/exporttest/deform5
+{
+	deform particle testparticle
+}
+
+textures/exporttest/deform6
+{
+	deform particle2 testparticle
+}
+
+textures/exporttest/decalinfo
+{
+	decalinfo 14.3 1.5 ( 0.9 0.8 0.7 0.6 ) (0.5 0.5 0.4 0.3)
+}
+
+textures/exporttest/renderBump1 { // Opening brace in the same line as the name (DON'T REMOVE THIS)
+    renderBump textures/output.tga models/hipoly 
+}
+
+textures/exporttest/renderBump2  // Comment in the same line as the name (DON'T REMOVE THIS)
+{
+    renderBump -size 100 200 textures/output.tga models/hipoly 
+}
+
+textures/exporttest/renderBump3
+ // Comment in between the name and the definition (DON'T REMOVE THIS)
+{
+    renderBump -aa 2 textures/output.tga models/hipoly 
+}
+
+textures/exporttest/renderBump4 {
+    renderBump -aa 2 -size 10 10 textures/output.tga models/hipoly 
+}
+
+textures/exporttest/renderBumpFlat1
+{
+    renderBumpflat -size 200 100 models/hipoly 
+}
+
+textures/exporttest/renderBumpFlat2
+{
+    renderBumpflat models/hipoly 
+}

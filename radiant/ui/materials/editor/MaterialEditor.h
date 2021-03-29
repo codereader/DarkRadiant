@@ -1,5 +1,6 @@
 #pragma once
 
+#include <sigc++/connection.h>
 #include "icommandsystem.h"
 #include "ishaders.h"
 
@@ -10,7 +11,7 @@
 #include "MaterialPreview.h"
 #include "wxutil/SourceView.h"
 
-#include "ui/common/MaterialTreeView.h"
+#include "../MaterialTreeView.h"
 #include "Binding.h"
 
 namespace ui
@@ -22,6 +23,7 @@ class MaterialEditor :
 {
 private:
     MaterialTreeView* _treeView;
+    wxDataViewItem _selectedMaterialItem;
 
     wxutil::TreeModel::Ptr _stageList;
     wxutil::TreeView* _stageView;
@@ -37,6 +39,7 @@ private:
     wxutil::D3MaterialSourceViewCtrl* _sourceView;
 
     MaterialPtr _material;
+    sigc::connection _materialChanged;
 
     std::set<std::shared_ptr<Binding<MaterialPtr>>> _materialBindings;
     std::set<std::shared_ptr<Binding<IShaderLayer::Ptr>>> _stageBindings;
@@ -94,6 +97,7 @@ public:
     void _onClose(wxCommandEvent& ev);
 
 private:
+    void setupMaterialTreeView();
     void setupMaterialStageView();
     void setupMaterialStageProperties();
     void setupMaterialProperties();
@@ -125,6 +129,7 @@ private:
     void updateMaterialPropertiesFromMaterial();
 
     void selectStageByIndex(std::size_t index);
+    void selectMaterial(const MaterialPtr& material);
     IShaderLayer::Ptr getSelectedStage();
     IEditableShaderLayer::Ptr getEditableStageForSelection();
 
@@ -138,8 +143,24 @@ private:
     void moveStagePosition(int direction);
     void updateStageButtonSensitivity();
     void updateSettingsNotebook();
+    void updateMaterialControlSensitivity();
+    void updateSourceView();
+    void updateMaterialTreeItem();
+    void updateMaterialNameControl();
+    void handleMaterialSelectionChange();
 
-    void _onTreeViewSelectionChanged(wxDataViewEvent& ev);
+    bool isAllowedToChangeMaterial();
+    bool askUserAboutModifiedMaterial();
+    bool saveCurrentMaterial();
+    void revertCurrentMaterial();
+    void copySelectedMaterial();
+
+    void _onMaterialSelectionChanged(wxDataViewEvent& ev);
+    void _onNewMaterial(wxCommandEvent& ev);
+    void _onSaveMaterial(wxCommandEvent& ev);
+    void _onCopyMaterial(wxCommandEvent& ev);
+    void _onRevertMaterial(wxCommandEvent& ev);
+    void _onUnlockMaterial(wxCommandEvent& ev);
     void _onStageListSelectionChanged(wxDataViewEvent& ev);
     void _onStageListItemActivated(wxDataViewEvent& ev);
     void _onMaterialTypeChoice(wxCommandEvent& ev);

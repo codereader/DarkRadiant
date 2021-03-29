@@ -7,6 +7,7 @@
 #include "string/string.h"
 
 #include <list>
+#include <sigc++/connection.h>
 
 namespace render
 {
@@ -16,9 +17,12 @@ class OpenGLRenderSystem;
 /**
  * Implementation of the Shader class.
  */
-class OpenGLShader : 
+class OpenGLShader final : 
 	public Shader
 {
+private:
+    std::string _name;
+
     // The state manager we will be inserting/removing OpenGL states from
     OpenGLRenderSystem& _renderSystem;
 
@@ -28,6 +32,7 @@ class OpenGLShader :
 
     // The Material corresponding to this OpenGLShader
 	MaterialPtr _material;
+    sigc::connection _materialChanged;
 
     // Visibility flag
     bool _isVisible;
@@ -41,11 +46,11 @@ class OpenGLShader :
 private:
 
     // Start point for constructing shader passes from the shader name
-	void construct(const std::string& name);
+	void construct();
 
     // Construct shader passes from a regular shader (as opposed to a special
     // built-in shader)
-    void constructNormalShader(const std::string& name);
+    void constructNormalShader();
 
     // Shader pass construction helpers
     void appendBlendLayer(const IShaderLayer::Ptr& layer);
@@ -70,10 +75,14 @@ private:
 
     void insertPasses();
     void removePasses();
+
+    void onMaterialChanged();
     
 public:
     /// Construct and initialise
-    OpenGLShader(OpenGLRenderSystem& renderSystem);
+    OpenGLShader(const std::string& name, OpenGLRenderSystem& renderSystem);
+
+    ~OpenGLShader();
 
     // Returns the owning render system
     OpenGLRenderSystem& getRenderSystem();
@@ -94,9 +103,9 @@ public:
 	bool isRealised() override;
 
 	/**
-	 * Realise this shader, setting the name in the process.
+	 * Realise this shader
 	 */
-	void realise(const std::string& name);
+	void realise();
 
 	void unrealise();
 

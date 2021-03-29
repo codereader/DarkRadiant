@@ -91,13 +91,13 @@ ShaderPtr OpenGLRenderSystem::capture(const std::string& name)
     // Either the shader was not found, or the weak pointer failed to lock
     // because the shader had been deleted. Either way, create a new shader
     // and insert into the cache.
-    OpenGLShaderPtr shd(new OpenGLShader(*this));
+    OpenGLShaderPtr shd(new OpenGLShader(name, *this));
     _shaders[name] = shd;
 
     // Realise the shader if the cache is realised
     if (_realised)
     {
-        shd->realise(name);
+        shd->realise();
     }
 
     // Return the new shader
@@ -231,7 +231,7 @@ void OpenGLRenderSystem::realise()
         OpenGLShaderPtr sp = i->second;
         assert(sp);
 
-        sp->realise(i->first);
+        sp->realise();
     }
 }
 
@@ -259,20 +259,6 @@ void OpenGLRenderSystem::unrealise()
         // Unrealise the GLPrograms
         _glProgramFactory->unrealise();
     }
-}
-
-void OpenGLRenderSystem::onMaterialChanged(const std::string& materialName)
-{
-    auto existingShader = _shaders.find(materialName);
-
-    if (existingShader == _shaders.end() || !_realised)
-    {
-        return;
-    }
-
-    // Re-realise this shader
-    existingShader->second->unrealise();
-    existingShader->second->realise(materialName);
 }
 
 GLProgramFactory& OpenGLRenderSystem::getGLProgramFactory()

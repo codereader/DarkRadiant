@@ -1,7 +1,8 @@
 #pragma once
 
 #include "ishaders.h"
-#include "DefinitionView.h"
+#include <sigc++/connection.h>
+#include "ui/common/DefinitionView.h"
 
 namespace ui
 {
@@ -13,8 +14,12 @@ private:
 	// The material which should be previewed
 	MaterialPtr _material;
 
+    sigc::connection _materialChanged;
+
 public:
 	MaterialDefinitionView(const std::string& shaderName, wxWindow* parent = nullptr);
+
+    ~MaterialDefinitionView();
 
 	void setShader(const std::string& shader);
 

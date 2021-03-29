@@ -3,7 +3,7 @@
 #include "i18n.h"
 #include "icommandsystem.h"
 
-#include "ui/common/MaterialDefinitionView.h"
+#include "ui/materials/MaterialDefinitionView.h"
 #include "TextureDirectoryLoader.h"
 #include "wxutil/ModalProgressDialog.h"
 

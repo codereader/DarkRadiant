@@ -149,6 +149,7 @@
     <ClInclude Include="..\..\libs\debugging\render.h" />
     <ClInclude Include="..\..\libs\debugging\ScenegraphUtils.h" />
     <ClInclude Include="..\..\libs\debugging\ScopedDebugTimer.h" />
+    <ClInclude Include="..\..\libs\decl\SpliceHelper.h" />
     <ClInclude Include="..\..\libs\DirectoryArchiveFile.h" />
     <ClInclude Include="..\..\libs\dragplanes.h" />
     <ClInclude Include="..\..\libs\eclass.h" />
@@ -230,6 +231,7 @@
     <ClInclude Include="..\..\libs\stream\MapResourceStream.h" />
     <ClInclude Include="..\..\libs\stream\PointerInputStream.h" />
     <ClInclude Include="..\..\libs\stream\ScopedArchiveBuffer.h" />
+    <ClInclude Include="..\..\libs\stream\TemporaryOutputStream.h" />
     <ClInclude Include="..\..\libs\stream\TextFileInputStream.h" />
     <ClInclude Include="..\..\libs\stream\utils.h" />
     <ClInclude Include="..\..\libs\string\case_conv.h" />
