@@ -42,7 +42,7 @@ public:
 	 */
 	static Quaternion createForUnitVectors(const Vector3& from, const Vector3& to);
 
-	/** 
+	/**
 	 * Constructs a rotation quaternion for the given euler angles.
 	 * Each component of the given vector refers to an angle (in degrees)
 	 * of one of the x-/y-/z-axis.
@@ -54,17 +54,12 @@ public:
 	 */
 	static Quaternion createForAxisAngle(const Vector3& axis, double angle);
 
-	/** 
+	/**
 	 * Constructs a rotation quaternion about a given axis.
 	 */
 	static Quaternion createForX(double angle);
 	static Quaternion createForY(double angle);
 	static Quaternion createForZ(double angle);
-
-	/**
-	 * Retrieves the quaternion from the given matrix.
-	 */
-	static Quaternion createForMatrix(const Matrix4& matrix4);
 
 	/**
 	 * Returns this quaternion multiplied by the other one.
@@ -227,3 +222,10 @@ inline Vector3 Quaternion::transformPoint(const Vector3& point) const
 
 const double c_half_sqrt2 = 0.70710678118654752440084436210485;
 const float c_half_sqrt2f = static_cast<float>(c_half_sqrt2);
+
+/// Stream insertion for Quaternion
+inline std::ostream& operator<< (std::ostream& s, const Quaternion& q)
+{
+    return s << "Quaternion(x=" << q.x() << ", y=" << q.y() << ", z=" << q.z()
+             << ", w=" << q.w() << ")";
+}

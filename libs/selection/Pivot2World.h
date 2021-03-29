@@ -45,7 +45,7 @@ private:
 		_viewpointSpace.multiplyBy(scale);
 
 		billboard_viewpointOriented(scale, pivot2screen);
-		_axisScreen = scale.z().getVector3();
+		_axisScreen = scale.zCol().getVector3();
 		_viewpointSpace.multiplyBy(scale);
 
 		scale = getPerspectiveScale(pivot2screen);
@@ -59,7 +59,7 @@ private:
 		Matrix4 pivot2screen = constructObject2Screen(pivot2world, modelview, projection, viewport);
 
 		Matrix4 scale = getInverseScale(pivot2screen);
-		
+
 		_viewplaneSpace.multiplyBy(scale);
 
 		billboard_viewplaneOriented(scale, pivot2screen);

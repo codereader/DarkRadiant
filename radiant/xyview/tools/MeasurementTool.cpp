@@ -178,7 +178,7 @@ void MeasurementTool::render(RenderSystem& renderSystem, RenderableCollector& co
 		const Vector3& a = _points[i-1].vertex;
 		const Vector3& b = _points[i].vertex;
 
-		glColor4dv(_colour);
+		glColor4fv(_colour);
 		glRasterPos3dv((a+b)*0.5);
 		GlobalOpenGL().drawString(string::to_string((a-b).getLength()));
 	}

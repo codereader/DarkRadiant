@@ -114,18 +114,18 @@ void exportSelectedAsModel(const ModelExportOptions& options)
 	selection::algorithm::deleteSelection();
 
 	// Create a func_static in its place
-	try 
+	try
 	{
 		// Place the model in the world origin, unless we set "center objects" to true
 		Vector3 modelPos(0, 0, 0);
 
 		if (options.centerObjects)
 		{
-			modelPos = -exporter.getCenterTransform().t().getVector3();
+			modelPos = -exporter.getCenterTransform().tCol().getVector3();
 		}
 
 		scene::INodePtr modelNode = GlobalEntityModule().createEntityFromSelection("func_static", modelPos);
-		
+
 		Node_getEntity(modelNode)->setKeyValue("model", relativeModelPath);
 
 		// It's possible that the export overwrote a model we're already using in this map, refresh it

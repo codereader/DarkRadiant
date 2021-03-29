@@ -58,9 +58,9 @@ namespace debug
         GLboolean vals[4];
         glGetBooleanv(GL_COLOR_WRITEMASK, &vals[0]);
 
-        os << "{ R = " << boolFromGLBool(vals[0]) 
+        os << "{ R = " << boolFromGLBool(vals[0])
            << ", G = " << boolFromGLBool(vals[1])
-           << ", B = " << boolFromGLBool(vals[2]) 
+           << ", B = " << boolFromGLBool(vals[2])
            << ", A = " << boolFromGLBool(vals[3]) << " }";
         return os;
     }
@@ -82,7 +82,7 @@ namespace debug
     inline Colour4 getGLColor()
     {
         Colour4 result;
-        glGetDoublev(GL_CURRENT_COLOR, &result[0]);
+        glGetFloatv(GL_CURRENT_COLOR, &result[0]);
         return result;
     }
 

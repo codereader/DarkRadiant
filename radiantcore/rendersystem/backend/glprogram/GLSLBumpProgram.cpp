@@ -53,10 +53,10 @@ void GLSLBumpProgram::create()
     // Set the uniform locations to the correct bound values
     _locLightOrigin = glGetUniformLocation(_programObj, "u_light_origin");
     _locLightColour = glGetUniformLocation(_programObj, "u_light_color");
-    _locViewOrigin  = glGetUniformLocation(_programObj, "u_view_origin");
-    _locLightScale  = glGetUniformLocation(_programObj, "u_light_scale");
-    _locVColScale   = glGetUniformLocation(_programObj, "u_vcol_scale");
-    _locVColOffset  = glGetUniformLocation(_programObj, "u_vcol_offset");
+    _locViewOrigin = glGetUniformLocation(_programObj, "u_view_origin");
+    _locLightScale = glGetUniformLocation(_programObj, "u_light_scale");
+    _locInvertVCol = glGetUniformLocation(_programObj, "uInvertVCol");
+    _locAmbientLight = glGetUniformLocation(_programObj, "uAmbientLight");
 
     // Set up the texture uniforms. The renderer uses fixed texture units for
     // particular textures, so make sure they are correct here.
@@ -139,35 +139,22 @@ void GLSLBumpProgram::applyRenderParams(const Vector3& viewer,
     local2light.multiplyBy(objectToWorld); // local->world->light
 
     // Set lighting parameters in the shader
-    glUniform3f(_locViewOrigin, 
-        static_cast<float>(viewer.x()), 
-        static_cast<float>(viewer.y()), 
+    glUniform3f(_locViewOrigin,
+        static_cast<float>(viewer.x()),
+        static_cast<float>(viewer.y()),
         static_cast<float>(viewer.z())
     );
-    glUniform3f(_locLightOrigin, 
-        static_cast<float>(localLight.x()), 
-        static_cast<float>(localLight.y()), 
+    glUniform3f(_locLightOrigin,
+        static_cast<float>(localLight.x()),
+        static_cast<float>(localLight.y()),
         static_cast<float>(localLight.z())
     );
-    glUniform3f(
-        _locLightColour,
-        static_cast<float>(parms.lightColour.x()), 
-        static_cast<float>(parms.lightColour.y()), 
-        static_cast<float>(parms.lightColour.z())
-    );
+    glUniform3fv(_locLightColour, 1, parms.lightColour);
     glUniform1f(_locLightScale, _lightScale);
+    glUniform1i(_locAmbientLight, parms.isAmbientLight);
 
     // Set vertex colour parameters
-    if (parms.invertVertexColour)
-    {
-        glUniform1f(_locVColScale,  -1.0f);
-        glUniform1f(_locVColOffset,  1.0f);
-    }
-    else
-    {
-        glUniform1f(_locVColScale,  1.0f);
-        glUniform1f(_locVColOffset, 0.0f);
-    }
+    glUniform1i(_locInvertVCol, parms.invertVertexColour);
 
     glActiveTexture(GL_TEXTURE3);
     glClientActiveTexture(GL_TEXTURE3);

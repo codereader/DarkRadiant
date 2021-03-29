@@ -105,7 +105,6 @@
     <ClCompile Include="..\..\libs\math\Frustum.cpp" />
     <ClCompile Include="..\..\libs\math\Matrix4.cpp" />
     <ClCompile Include="..\..\libs\math\Plane3.cpp" />
-    <ClCompile Include="..\..\libs\math\Quaternion.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\libs\math\AABB.h" />

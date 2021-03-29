@@ -11,7 +11,7 @@ namespace selection
 
 template<typename remap_policy>
 inline void draw_semicircle(const std::size_t segments, const float radius, VertexCb* vertices, remap_policy remap) {
-  const double increment = c_pi / double(segments << 2);
+  const double increment = math::PI / double(segments << 2);
 
   std::size_t count = 0;
   float x = radius;
@@ -93,16 +93,16 @@ void RotateManipulator::UpdateColours()
 void RotateManipulator::updateCircleTransforms()
 {
     Vector3 localViewpoint(
-		_pivot2World._worldSpace.getTransposed().transformDirection(_pivot2World._viewpointSpace.z().getVector3())
+		_pivot2World._worldSpace.getTransposed().transformDirection(_pivot2World._viewpointSpace.zCol().getVector3())
     );
 
     _circleX_visible = !g_vector3_axis_x.isEqual(localViewpoint, 1e-6);
     if(_circleX_visible)
     {
       _local2worldX = Matrix4::getIdentity();
-      _local2worldX.y().getVector3() = g_vector3_axis_x.crossProduct(localViewpoint).getNormalised();
-      _local2worldX.z().getVector3() = _local2worldX.x().getVector3().crossProduct(
-        											_local2worldX.y().getVector3()).getNormalised();
+      _local2worldX.yCol().getVector3() = g_vector3_axis_x.crossProduct(localViewpoint).getNormalised();
+      _local2worldX.zCol().getVector3() = _local2worldX.xCol().getVector3().crossProduct(
+        											_local2worldX.yCol().getVector3()).getNormalised();
 	  _local2worldX.premultiplyBy(_pivot2World._worldSpace);
     }
 
@@ -110,9 +110,9 @@ void RotateManipulator::updateCircleTransforms()
     if(_circleY_visible)
     {
       _local2worldY = Matrix4::getIdentity();
-      _local2worldY.z().getVector3() = g_vector3_axis_y.crossProduct(localViewpoint).getNormalised();
-      _local2worldY.x().getVector3() = _local2worldY.y().getVector3().crossProduct(
-      													_local2worldY.z().getVector3()).getNormalised();
+      _local2worldY.zCol().getVector3() = g_vector3_axis_y.crossProduct(localViewpoint).getNormalised();
+      _local2worldY.xCol().getVector3() = _local2worldY.yCol().getVector3().crossProduct(
+      													_local2worldY.zCol().getVector3()).getNormalised();
       _local2worldY.premultiplyBy(_pivot2World._worldSpace);
     }
 
@@ -120,9 +120,9 @@ void RotateManipulator::updateCircleTransforms()
     if(_circleZ_visible)
     {
       _local2worldZ = Matrix4::getIdentity();
-      _local2worldZ.x().getVector3() = g_vector3_axis_z.crossProduct(localViewpoint).getNormalised();
-      _local2worldZ.y().getVector3() = _local2worldZ.z().getVector3().crossProduct(
-      												_local2worldZ.x().getVector3()).getNormalised();
+      _local2worldZ.xCol().getVector3() = g_vector3_axis_z.crossProduct(localViewpoint).getNormalised();
+      _local2worldZ.yCol().getVector3() = _local2worldZ.zCol().getVector3().crossProduct(
+      												_local2worldZ.xCol().getVector3()).getNormalised();
 	  _local2worldZ.premultiplyBy(_pivot2World._worldSpace);
     }
 }
@@ -158,12 +158,12 @@ void RotateManipulator::render(RenderableCollector& collector, const VolumeTest&
 
 void RotateManipulator::render(const RenderInfo& info) const
 {
-	if (_selectableX.isSelected() || _selectableY.isSelected() || 
+	if (_selectableX.isSelected() || _selectableY.isSelected() ||
 		_selectableZ.isSelected() || _selectableScreen.isSelected())
 	{
 		glColor3d(0.75, 0, 0);
 
-		glRasterPos3dv(_pivot2World._worldSpace.t().getVector3() - Vector3(10, 10, 10));
+		glRasterPos3dv(_pivot2World._worldSpace.tCol().getVector3() - Vector3(10, 10, 10));
 
 		double angle = static_cast<double>(c_RAD2DEGMULT * _rotateAxis.getCurAngle());
         _glFont->drawString(fmt::format("Rotate: {0:3.2f} degrees", angle));
@@ -172,7 +172,7 @@ void RotateManipulator::render(const RenderInfo& info) const
 
 void RotateManipulator::testSelect(SelectionTest& test, const Matrix4& pivot2world)
 {
-    _pivot2World.update(_pivot.getMatrix4(), test.getVolume().GetModelview(), 
+    _pivot2World.update(_pivot.getMatrix4(), test.getVolume().GetModelview(),
         test.getVolume().GetProjection(), test.getVolume().GetViewport());
     updateCircleTransforms();
 
@@ -278,10 +278,10 @@ void RotateManipulator::setSelected(bool select)
 
 bool RotateManipulator::isSelected() const
 {
-    return _selectableX.isSelected() || 
+    return _selectableX.isSelected() ||
 		_selectableY.isSelected() ||
-		_selectableZ.isSelected() || 
-		_selectableScreen.isSelected() || 
+		_selectableZ.isSelected() ||
+		_selectableScreen.isSelected() ||
 		_selectableSphere.isSelected() ||
 		_selectablePivotPoint.isSelected();
 }

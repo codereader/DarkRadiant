@@ -9,17 +9,6 @@
 
 class Quaternion;
 
-typedef unsigned char ClipResult;
-
-const ClipResult c_CLIP_PASS = 0x00; // 000000
-const ClipResult c_CLIP_LT_X = 0x01; // 000001
-const ClipResult c_CLIP_GT_X = 0x02; // 000010
-const ClipResult c_CLIP_LT_Y = 0x04; // 000100
-const ClipResult c_CLIP_GT_Y = 0x08; // 001000
-const ClipResult c_CLIP_LT_Z = 0x10; // 010000
-const ClipResult c_CLIP_GT_Z = 0x20; // 100000
-const ClipResult c_CLIP_FAIL = 0x3F; // 111111
-
 /**
  * A 4x4 matrix stored in double-precision floating-point.
  *
@@ -51,43 +40,33 @@ private:
             double yx_, double yy_, double yz_, double yw_,
             double zx_, double zy_, double zz_, double zw_,
             double tx_, double ty_, double tz_, double tw_);
+
+    // Construct a pure-rotation matrix about the X axis from sin and cosine of
+    // an angle in radians
+    static Matrix4 getRotationAboutXForSinCos(double s, double c);
+
+    // Construct a pure-rotation matrix about the Y axis from sin and cosine of
+    // an angle in radians
+    static Matrix4 getRotationAboutYForSinCos(double s, double c);
+
+    // Construct a pure-rotation matrix about the Z axis from sin and cosine of
+    // an angle in radians
+    static Matrix4 getRotationAboutZForSinCos(double s, double c);
+
 public:
 
     /// Construct a matrix with uninitialised values.
     Matrix4() { }
 
-    /* NAMED CONSTRUCTORS FOR SPECIFIC MATRICES */
-
-    /**
-     * \brief
-     * Obtain the identity matrix.
-     */
+    /// Obtain the identity matrix.
     static const Matrix4& getIdentity();
 
-    /**
-     * \brief
-     * Get a matrix representing the given 3D translation.
-     *
-     * @param translation
-     * Vector3 representing the translation in 3D space.
-     */
+    /// Get a matrix representing the given 3D translation.
     static Matrix4 getTranslation(const Vector3& translation);
 
     /**
-     * greebo: Attempts to parse the rotation from the given string, which is
-     * a whitespace-separated chain of nine floating point values, as used 
-     * in entity spawnargs.
-     * 
-     * Example: "0 1 0 -1 0 0 0 0 1"
+     * \brief Construct a rotation from one vector onto another vector.
      *
-     * Returns: the parsed (translation-free) matrix. In case of parser errors
-     * the identity matrix is returned.
-     */
-    static Matrix4 getRotation(const std::string& rotationString);
-
-    /**
-     * greebo: Returns the rotation matrix defined by two three-component
-     * vectors.
      * The rotational axis is defined by the normalised cross product of those
      * two vectors, the angle can be retrieved from the dot product.
      */
@@ -111,50 +90,12 @@ public:
      */
     static Matrix4 getRotationQuantised(const Quaternion& quaternion);
 
-    /**
-     * Constructs a pure-rotation matrix about the x axis from sin and cosine of an angle.
-     */
-    static Matrix4 getRotationAboutXForSinCos(double s, double c);
-
-    /**
-     * Constructs a pure-rotation matrix about the x axis from an angle in radians
-     */
-    static Matrix4 getRotationAboutX(double angle);
-
-    /**
-     * Constructs a pure-rotation matrix about the x axis from an angle in degrees.
-     */
-    static Matrix4 getRotationAboutXDegrees(double angle);
-
-    /**
-     * Constructs a pure-rotation matrix about the y axis from sin and cosine of an angle.
-     */
-    static Matrix4 getRotationAboutYForSinCos(double s, double c);
-
-    /**
-     * Constructs a pure-rotation matrix about the y axis from an angle in radians
-     */
-    static Matrix4 getRotationAboutY(double angle);
-
-    /**
-     * Constructs a pure-rotation matrix about the y axis from an angle in degrees.
-     */
-    static Matrix4 getRotationAboutYDegrees(double angle);
-
-    /**
-     * Constructs a pure-rotation matrix about the z axis from sin and cosine of an angle.
-     */
-    static Matrix4 getRotationAboutZForSinCos(double s, double c);
-
-    /**
-     * Constructs a pure-rotation matrix about the z axis from an angle in radians
-     */
-    static Matrix4 getRotationAboutZ(double angle);
-
-    /**
-     * Constructs a pure-rotation matrix about the z axis from an angle in degrees.
-     */
-    static Matrix4 getRotationAboutZDegrees(double angle);
+    /// Construct a rotation matrix about the Z axis for a given angle
+    template<typename Unit_T> static Matrix4 getRotationAboutZ(Unit_T angle)
+    {
+        double radians = angle.asRadians();
+        return getRotationAboutZForSinCos(sin(radians), cos(radians));
+    }
 
     /**
      * Constructs a pure-rotation matrix from a set of euler angles (radians) in the order (x, y, z).
@@ -167,56 +108,6 @@ public:
     static Matrix4 getRotationForEulerXYZDegrees(const Vector3& euler);
 
     /**
-     * Constructs a pure-rotation matrix from a set of euler angles (radians) in the order (y, z, x).
-     */
-    static Matrix4 getRotationForEulerYZX(const Vector3& euler);
-
-    /**
-     * Constructs a pure-rotation matrix from a set of euler angles (degrees) in the order (y, z, x).
-     */
-    static Matrix4 getRotationForEulerYZXDegrees(const Vector3& euler);
-
-    /**
-     * Constructs a pure-rotation matrix from a set of euler angles (radians) in the order (x, z, y).
-     */
-    static Matrix4 getRotationForEulerXZY(const Vector3& euler);
-
-    /**
-     * Constructs a pure-rotation matrix from a set of euler angles (degrees) in the order (x, z, y).
-     */
-    static Matrix4 getRotationForEulerXZYDegrees(const Vector3& euler);
-
-    /**
-     * Constructs a pure-rotation matrix from a set of euler angles (radians) in the order (y, x, z).
-     */
-    static Matrix4 getRotationForEulerYXZ(const Vector3& euler);
-
-    /**
-     * Constructs a pure-rotation matrix from a set of euler angles (degrees) in the order (y, x, z).
-     */
-    static Matrix4 getRotationForEulerYXZDegrees(const Vector3& euler);
-
-    /**
-     * Constructs a pure-rotation matrix from a set of euler angles (radians) in the order (z, x, y).
-     */
-    static Matrix4 getRotationForEulerZXY(const Vector3& euler);
-
-    /**
-     * Constructs a pure-rotation matrix from a set of euler angles (degrees) in the order (z, x, y).
-     */
-    static Matrix4 getRotationForEulerZXYDegrees(const Vector3& euler);
-
-    /**
-     * Constructs a pure-rotation matrix from a set of euler angles (radians) in the order (z, y, x).
-     */
-    static Matrix4 getRotationForEulerZYX(const Vector3& euler);
-
-    /**
-     * Constructs a pure-rotation matrix from a set of euler angles (degrees) in the order (z, y, x).
-     */
-    static Matrix4 getRotationForEulerZYXDegrees(const Vector3& euler);
-
-    /**
      * \brief
      * Get a matrix representing the given scale in 3D space.
      *
@@ -224,12 +115,6 @@ public:
      * Vector3 representing the scale.
      */
     static Matrix4 getScale(const Vector3& scale);
-
-    /**
-     * Returns a perspective projection matrix for the six given frustum planes. The result is the projection
-     * matrix as constructed by openGL when  calling the glFrustum() function.
-     */
-    static Matrix4 getProjectionForFrustum(double left, double right, double bottom, double top, double nearval, double farval);
 
     /**
      * \brief
@@ -304,35 +189,35 @@ public:
      * Return columns of the matrix as vectors.
      * \{
      */
-    Vector4& x()
+    Vector4& xCol()
     {
         return reinterpret_cast<Vector4&>(xx());
     }
-    const Vector4& x() const
+    const Vector4& xCol() const
     {
         return reinterpret_cast<const Vector4&>(xx());
     }
-    Vector4& y()
+    Vector4& yCol()
     {
         return reinterpret_cast<Vector4&>(yx());
     }
-    const Vector4& y() const
+    const Vector4& yCol() const
     {
         return reinterpret_cast<const Vector4&>(yx());
     }
-    Vector4& z()
+    Vector4& zCol()
     {
         return reinterpret_cast<Vector4&>(zx());
     }
-    const Vector4& z() const
+    const Vector4& zCol() const
     {
         return reinterpret_cast<const Vector4&>(zx());
     }
-    Vector4& t()
+    Vector4& tCol()
     {
         return reinterpret_cast<Vector4&>(tx());
     }
-    const Vector4& t() const
+    const Vector4& tCol() const
     {
         return reinterpret_cast<const Vector4&>(tx());
     }
@@ -357,41 +242,31 @@ public:
         return _m;
     }
 
-    /**
-     * \brief
-     * Transpose this matrix in-place.
-     */
+    /// Transpose this matrix in-place.
     void transpose();
 
-    /**
-     * \brief
-     * Return a transposed copy of this matrix.
-     */
+    /// Return a transposed copy of this matrix.
     Matrix4 getTransposed() const;
 
-    /**
-     * \brief
-     * Return the affine inverse of this transformation matrix.
-     */
+    /// Return the affine inverse of this transformation matrix.
     Matrix4 getInverse() const;
 
-    /**
-     * Affine invert this matrix in-place.
-     */
-    void invert();
+    /// Affine invert this matrix in-place.
+    void invert()
+    {
+        *this = getInverse();
+    }
 
-    /**
-     * \brief
-     * Return the full inverse of this matrix.
-     */
+    /// Return the full inverse of this matrix.
     Matrix4 getFullInverse() const;
 
-    /**
-     * Invert this matrix in-place.
-     */
-    void invertFull();
+    /// Invert this matrix in-place.
+    void invertFull()
+    {
+        *this = getFullInverse();
+    }
 
-    /** 
+    /**
      * \brief
      * Returns the given 3-component point transformed by this matrix.
      *
@@ -400,7 +275,7 @@ public:
     template<typename Element>
     BasicVector3<Element> transformPoint(const BasicVector3<Element>& point) const;
 
-    /** 
+    /**
      * Returns the given 3-component direction transformed by this matrix.
      * The given vector is treated as direction so it won't receive a translation, just like
      * a 4-component vector with its w-component set to 0 would be transformed.
@@ -409,9 +284,8 @@ public:
     BasicVector3<Element> transformDirection(const BasicVector3<Element>& direction) const;
 
     /**
-     * \brief
-     * Use this matrix to transform the provided vector and return a new vector
-     * containing the result.
+     * \brief Use this matrix to transform the provided vector and return a new
+     * vector containing the result.
      *
      * \param vector4
      * The 4-element vector to transform.
@@ -431,15 +305,17 @@ public:
      */
     void multiplyBy(const Matrix4& other);
 
-    /**
-     * Returns this matrix pre-multiplied by the other
-     */
-    Matrix4 getPremultipliedBy(const Matrix4& other) const;
+    /// Returns this matrix pre-multiplied by the other
+    Matrix4 getPremultipliedBy(const Matrix4& other) const
+    {
+        return other.getMultipliedBy(*this);
+    }
 
-    /**
-     * Pre-multiplies this matrix by other in-place.
-     */
-    void premultiplyBy(const Matrix4& other);
+    /// Pre-multiplies this matrix by other in-place.
+    void premultiplyBy(const Matrix4& other)
+    {
+        *this = getPremultipliedBy(other);
+    }
 
     /**
      * \brief
@@ -451,33 +327,15 @@ public:
     void translateBy(const Vector3& translation);
 
     /**
-     * \brief
-     * Add a translation component to the transformation represented by this
-     * matrix.
+     * \brief Add a translation component to the transformation represented by
+     * this matrix.
      *
      * Equivalent to getMultipliedBy(Matrix4::getTranslation(translation));
      */
-    Matrix4 getTranslatedBy(const Vector3& translation) const;
-
-    /**
-     * Returns this matrix concatenated with the rotation transform produced by the given quat.
-     * The concatenated rotation occurs before the transformation of this matrix.
-     * 
-     * Equivalent to getMultipliedBy(getRotation(rotation));
-     */
-    Matrix4 getRotatedBy(const Quaternion& rotation) const;
-
-    /**
-     * Concatenates this matrix with the rotation transform produced by the given quat.
-     * The concatenated rotation occurs before the transformation of this matrix.
-     */
-    void rotateBy(const Quaternion& rotation);
-
-    /**
-     * Concatenates this matrix with the pivoted rotation transform produced by the given quat.
-     * The concatenated rotation occurs before the transformation of this matrix.
-     */
-    void rotateBy(const Quaternion& rotation, const Vector3& pivot);
+    Matrix4 getTranslatedBy(const Vector3& translation) const
+    {
+        return getMultipliedBy(Matrix4::getTranslation(translation));
+    }
 
     /**
      * \brief
@@ -494,21 +352,6 @@ public:
     void scaleBy(const Vector3& scale, const Vector3& pivot);
 
     /**
-     * Equality operator, Returns true if this and the other are exactly element-wise equal.
-     */
-    bool operator==(const Matrix4& other) const;
-
-    /** 
-     * Inequality operator.
-     */
-    bool operator!=(const Matrix4& other) const;
-
-    /**
-     * Returns true if self and other are element-wise equal within epsilon.
-     */
-    bool isEqual(const Matrix4& other, double epsilon) const;
-
-    /**
      * Returns true if this and the given matrix are exactly element-wise equal.
      * This and the other matrix must be affine.
      */
@@ -519,174 +362,66 @@ public:
      */
     Handedness getHandedness() const;
 
-    /**
-     * Returns true if this matrix is affine.
-     */
-    bool isAffine() const;
-
-    /**
-     * Returns this matrix post-multiplied by the other.
-     * This and the other matrix must be affine.
-     */
-    Matrix4 getAffineMultipliedBy(const Matrix4& other) const;
-
-    /**
-     * Post-multiplies this matrix by the other in-place.
-     * This and the other matrix must be affine.
-     */
-    void affineMultiplyBy(const Matrix4& other);
-
-    /**
-     * Returns this matrix pre-multiplied by the other.
-     * This matrix and the other must be affine.
-     */
-    Matrix4 getAffinePremultipliedBy(const Matrix4& other) const;
-
-    /**
-     * Pre-multiplies this matrix by the other in-place.
-     * This and the other matrix must be affine.
-     */
-    void affinePremultiplyBy(const Matrix4& other);
-
-    /**
-     * Returns the determinant of this 4x4 matrix
-     */
-    double getDeterminant() const;
-
     /// Return the 3-element translation component of this matrix
-    const Vector3& translation() const;
+    const Vector3& translation() const
+    {
+        return tCol().getVector3();
+    }
 
     /**
-     * Concatenates this with the rotation transform produced 
+     * Concatenates this with the rotation transform produced
      * by euler angles (degrees) in the order (x, y, z).
      * The concatenated rotation occurs before self.
      */
-    void rotateByEulerXYZDegrees(const Vector3& euler);
+    void rotateByEulerXYZDegrees(const Vector3& euler)
+    {
+        multiplyBy(getRotationForEulerXYZDegrees(euler));
+    }
 
     /**
-     * Concatenates this with the pivoted rotation transform produced 
-     * by euler angles (degrees) in the order (x, y, z).
-     * The concatenated rotation occurs before self.
-     */
-    void rotateByEulerXYZDegrees(const Vector3& euler, const Vector3& pivot);
-
-    /**
-     * Returns this matrix concatenated with the rotation transform produced by the given
-     * euler angles (degrees) in the order (y, x, z). The concatenated rotation occurs before this matrix.
-     */
-    Matrix4 getRotatedByEulerYXZDegrees(const Vector3& euler) const;
-
-    /**
-     * Concatenates this with the rotation transform produced 
-     * by euler angles (degrees) in the order (y, x, z).
-     * The concatenated rotation occurs before self.
-     */
-    void rotateByEulerYXZDegrees(const Vector3& euler);
-
-    /**
-     * Returns this matrix concatenated with the rotation transform produced by the given
-     * euler angles (degrees) in the order (z, x, y). The concatenated rotation occurs before this matrix.
-     */
-    Matrix4 getRotatedByEulerZXYDegrees(const Vector3& euler) const;
-
-    /**
-     * Concatenates this with the rotation transform produced 
-     * by euler angles (degrees) in the order (z, x, y).
-     * The concatenated rotation occurs before self.
-     */
-    void rotateByEulerZXYDegrees(const Vector3& euler);
-
-    /**
-     * Calculates and returns a set of euler angles in radians that produce 
-     * the rotation component of this matrix when applied in the order (x, y, z). 
+     * Calculates and returns a set of euler angles in radians that produce
+     * the rotation component of this matrix when applied in the order (x, y, z).
      * This matrix must be affine and orthonormal (unscaled) to produce a meaningful result.
      */
     Vector3 getEulerAnglesXYZ() const;
 
     /**
      * Calculates and returns a set of euler angles in degrees that produce
-     * the rotation component of this matrix when applied in the order (x, y, z). 
+     * the rotation component of this matrix when applied in the order (x, y, z).
      * This matrix must be affine and orthonormal (unscaled) to produce a meaningful result.
      */
     Vector3 getEulerAnglesXYZDegrees() const;
-
-    /**
-     * Calculates and returns a set of euler angles in radians that produce 
-     * the rotation component of this matrix when applied in the order (y, x, z). 
-     * This matrix must be affine and orthonormal (unscaled) to produce a meaningful result.
-     */
-    Vector3 getEulerAnglesYXZ() const;
-
-    /**
-     * Calculates and returns a set of euler angles in degrees that produce
-     * the rotation component of this matrix when applied in the order (y, x, z). 
-     * This matrix must be affine and orthonormal (unscaled) to produce a meaningful result.
-     */
-    Vector3 getEulerAnglesYXZDegrees() const;
-
-    /**
-     * Calculates and returns a set of euler angles in radians that produce 
-     * the rotation component of this matrix when applied in the order (z, x, y). 
-     * This matrix must be affine and orthonormal (unscaled) to produce a meaningful result.
-     */
-    Vector3 getEulerAnglesZXY() const;
-
-    /**
-     * Calculates and returns a set of euler angles in degrees that produce
-     * the rotation component of this matrix when applied in the order (z, x, y). 
-     * This matrix must be affine and orthonormal (unscaled) to produce a meaningful result.
-     */
-    Vector3 getEulerAnglesZXYDegrees() const;
-
-    /**
-     * Calculates and returns a set of euler angles in radians that produce 
-     * the rotation component of this matrix when applied in the order (z, y, x). 
-     * This matrix must be affine and orthonormal (unscaled) to produce a meaningful result.
-     */
-    Vector3 getEulerAnglesZYX() const;
-
-    /**
-     * Calculates and returns a set of euler angles in degrees that produce
-     * the rotation component of this matrix when applied in the order (z, y, x). 
-     * This matrix must be affine and orthonormal (unscaled) to produce a meaningful result.
-     */
-    Vector3 getEulerAnglesZYXDegrees() const;
 
     /**
      * Calculates and returns the (x, y, z) scale values that produce the scale component of this matrix.
      * This matrix must be affine and orthogonal to produce a meaningful result.
      */
     Vector3 getScale() const;
-
-    /**
-     * Transforms and clips the line formed by p0, p1 by this canonical matrix.
-     * Stores the resulting line in clipped. 
-     * 
-     * @returns: the number of points in the resulting line.
-     */
-    std::size_t clipLine(const Vector3& p0, const Vector3& p1, Vector4 clipped[2]) const;
-
-    /** 
-     * Clips point by this canonical matrix and stores the result in clipped.
-     * Returns a bitmask indicating which clip-planes the point was outside.
-     */
-    ClipResult clipPoint(const Vector3& point, Vector4& clipped) const;
-
-    /** 
-     * Transforms and clips the triangle formed by p0, p1, p2 by this canonical matrix.
-     * Stores the resulting polygon in clipped.
-     * Returns the number of points in the resulting polygon.
-     */
-    std::size_t clipTriangle(const Vector3& p0, const Vector3& p1, const Vector3& p2, Vector4 clipped[9]) const;
 };
 
 // ===========================================================================
 // Operators
 // ===========================================================================
 
+/// Multiply two matrices together
+inline Matrix4 operator* (const Matrix4& m1, const Matrix4& m2)
+{
+    return m1.getMultipliedBy(m2);
+}
+
+/// Subtract two matrices
+inline Matrix4 operator- (const Matrix4& l, const Matrix4& r)
+{
+    return Matrix4::byColumns(
+        l.xx() - r.xx(), l.xy() - r.xy(), l.xz() - r.xz(), l.xw() - r.xw(),
+        l.yx() - r.yx(), l.yy() - r.yy(), l.yz() - r.yz(), l.yw() - r.yw(),
+        l.zx() - r.zx(), l.zy() - r.zy(), l.zz() - r.zz(), l.zw() - r.zw(),
+        l.tx() - r.tx(), l.ty() - r.ty(), l.tz() - r.tz(), l.tw() - r.tw()
+    );
+}
+
 /**
- * \brief
- * Multiply a 4-component vector by this matrix.
+ * \brief Multiply a 4-component vector by this matrix.
  *
  * Equivalent to m.transform(v).
  */
@@ -697,8 +432,7 @@ BasicVector4<T> operator* (const Matrix4& m, const BasicVector4<T>& v)
 }
 
 /**
- * \brief
- * Multiply a 3-component vector by this matrix.
+ * \brief Multiply a 3-component vector by this matrix.
  *
  * The vector is upgraded to a 4-component vector with a W component of 1, i.e.
  * equivalent to m.transformPoint(v).
@@ -710,7 +444,7 @@ BasicVector3<T> operator* (const Matrix4& m, const BasicVector3<T>& v)
 }
 
 // =========================================================================================
-// Inlined member definitions 
+// Inlined member definitions
 // =========================================================================================
 
 // Construct a matrix with given column elements
@@ -760,162 +494,40 @@ inline Matrix4 Matrix4::getMultipliedBy(const Matrix4& other) const
     );
 }
 
-inline Matrix4 Matrix4::getPremultipliedBy(const Matrix4& other) const
+/// Compare two matrices elementwise for equality
+inline bool operator==(const Matrix4& l, const Matrix4& r)
 {
-    return other.getMultipliedBy(*this);
+    return l.xx() == r.xx() && l.xy() == r.xy() && l.xz() == r.xz() && l.xw() == r.xw()
+        && l.yx() == r.yx() && l.yy() == r.yy() && l.yz() == r.yz() && l.yw() == r.yw()
+        && l.zx() == r.zx() && l.zy() == r.zy() && l.zz() == r.zz() && l.zw() == r.zw()
+        && l.tx() == r.tx() && l.ty() == r.ty() && l.tz() == r.tz() && l.tw() == r.tw();
 }
 
-inline Matrix4 Matrix4::getRotationAboutX(double angle)
+/// Compare two matrices elementwise for inequality
+inline bool operator!=(const Matrix4& l, const Matrix4& r)
 {
-    return getRotationAboutXForSinCos(sin(angle), cos(angle));
-}
-
-inline Matrix4 Matrix4::getRotationAboutXDegrees(double angle)
-{
-    return getRotationAboutX(degrees_to_radians(angle));
-}
-
-inline Matrix4 Matrix4::getRotationAboutY(double angle)
-{
-    return getRotationAboutYForSinCos(sin(angle), cos(angle));
-}
-
-inline Matrix4 Matrix4::getRotationAboutYDegrees(double angle)
-{
-    return getRotationAboutY(degrees_to_radians(angle));
-}
-
-inline Matrix4 Matrix4::getRotationAboutZ(double angle)
-{
-    return getRotationAboutZForSinCos(sin(angle), cos(angle));
-}
-
-inline Matrix4 Matrix4::getRotationAboutZDegrees(double angle)
-{
-    return getRotationAboutZ(degrees_to_radians(angle));
-}
-
-inline Matrix4 Matrix4::getProjectionForFrustum(double left, double right, double bottom, double top, double nearval, double farval)
-{
-    return Matrix4::byColumns(
-        (2*nearval) / (right-left),
-        0,
-        0,
-        0,
-        0,
-        (2*nearval) / (top-bottom),
-        0,
-        0,
-        (right+left) / (right-left),
-        (top+bottom) / (top-bottom),
-        -(farval+nearval) / (farval-nearval),
-        -1,
-        0,
-        0,
-        -(2*farval*nearval) / (farval-nearval),
-        0
-    );
-}
-
-inline bool Matrix4::operator==(const Matrix4& other) const
-{
-    return xx() == other.xx() && xy() == other.xy() && xz() == other.xz() && xw() == other.xw()
-        && yx() == other.yx() && yy() == other.yy() && yz() == other.yz() && yw() == other.yw()
-        && zx() == other.zx() && zy() == other.zy() && zz() == other.zz() && zw() == other.zw()
-        && tx() == other.tx() && ty() == other.ty() && tz() == other.tz() && tw() == other.tw();
-}
-
-inline bool Matrix4::operator!=(const Matrix4& other) const
-{
-    return !operator==(other);
-}
-
-inline bool Matrix4::isEqual(const Matrix4& other, double epsilon) const
-{
-    return float_equal_epsilon(xx(), other.xx(), epsilon)
-        && float_equal_epsilon(xy(), other.xy(), epsilon)
-        && float_equal_epsilon(xz(), other.xz(), epsilon)
-        && float_equal_epsilon(xw(), other.xw(), epsilon)
-        && float_equal_epsilon(yx(), other.yx(), epsilon)
-        && float_equal_epsilon(yy(), other.yy(), epsilon)
-        && float_equal_epsilon(yz(), other.yz(), epsilon)
-        && float_equal_epsilon(yw(), other.yw(), epsilon)
-        && float_equal_epsilon(zx(), other.zx(), epsilon)
-        && float_equal_epsilon(zy(), other.zy(), epsilon)
-        && float_equal_epsilon(zz(), other.zz(), epsilon)
-        && float_equal_epsilon(zw(), other.zw(), epsilon)
-        && float_equal_epsilon(tx(), other.tx(), epsilon)
-        && float_equal_epsilon(ty(), other.ty(), epsilon)
-        && float_equal_epsilon(tz(), other.tz(), epsilon)
-        && float_equal_epsilon(tw(), other.tw(), epsilon);
+    return !(l == r);
 }
 
 inline bool Matrix4::isAffineEqual(const Matrix4& other) const
 {
-    return xx() == other.xx() && 
-            xy() == other.xy() && 
-            xz() == other.xz() && 
-            yx() == other.yx() && 
-            yy() == other.yy() && 
-            yz() == other.yz() && 
-            zx() == other.zx() && 
-            zy() == other.zy() && 
-            zz() == other.zz() && 
-            tx() == other.tx() && 
-            ty() == other.ty() && 
+    return xx() == other.xx() &&
+            xy() == other.xy() &&
+            xz() == other.xz() &&
+            yx() == other.yx() &&
+            yy() == other.yy() &&
+            yz() == other.yz() &&
+            zx() == other.zx() &&
+            zy() == other.zy() &&
+            zz() == other.zz() &&
+            tx() == other.tx() &&
+            ty() == other.ty() &&
             tz() == other.tz();
 }
 
 inline Matrix4::Handedness Matrix4::getHandedness() const
 {
-    return (x().getVector3().crossProduct(y().getVector3()).dot(z().getVector3()) < 0.0f) ? LEFTHANDED : RIGHTHANDED;
-}
-
-inline void Matrix4::premultiplyBy(const Matrix4& other)
-{
-    *this = getPremultipliedBy(other);
-}
-
-inline bool Matrix4::isAffine() const
-{
-    return xw() == 0 && yw() == 0 && zw() == 0 && tw() == 1;
-}
-
-inline Matrix4 Matrix4::getAffineMultipliedBy(const Matrix4& other) const
-{
-    return Matrix4::byColumns(
-        other.xx() * xx() + other.xy() * yx() + other.xz() * zx(),
-        other.xx() * xy() + other.xy() * yy() + other.xz() * zy(),
-        other.xx() * xz() + other.xy() * yz() + other.xz() * zz(),
-        0,
-        other.yx() * xx() + other.yy() * yx() + other.yz() * zx(),
-        other.yx() * xy() + other.yy() * yy() + other.yz() * zy(),
-        other.yx() * xz() + other.yy() * yz() + other.yz() * zz(),
-        0,
-        other.zx() * xx() + other.zy() * yx() + other.zz()* zx(),
-        other.zx() * xy() + other.zy() * yy() + other.zz()* zy(),
-        other.zx() * xz() + other.zy() * yz() + other.zz()* zz(),
-        0,
-        other.tx()* xx() + other.ty()* yx() + other.tz()* zx() + tx(),
-        other.tx()* xy() + other.ty()* yy() + other.tz()* zy() + ty(),
-        other.tx()* xz() + other.ty()* yz() + other.tz()* zz()+ tz(),
-        1
-    );
-}
-
-inline void Matrix4::affineMultiplyBy(const Matrix4& other)
-{
-    *this = getAffineMultipliedBy(other);
-}
-
-inline Matrix4 Matrix4::getAffinePremultipliedBy(const Matrix4& other) const
-{
-    return other.getAffineMultipliedBy(*this);
-}
-
-inline void Matrix4::affinePremultiplyBy(const Matrix4& other)
-{
-    *this = getAffinePremultipliedBy(other);
+    return (xCol().getVector3().crossProduct(yCol().getVector3()).dot(zCol().getVector3()) < 0.0f) ? LEFTHANDED : RIGHTHANDED;
 }
 
 template<typename Element>
@@ -949,103 +561,6 @@ BasicVector4<Element> Matrix4::transform(const BasicVector4<Element>& vector4) c
     );
 }
 
-inline void Matrix4::invert()
-{
-    *this = getInverse();
-}
-
-inline void Matrix4::invertFull()
-{
-    *this = getFullInverse();
-}
-
-inline double Matrix4::getDeterminant() const
-{
-    // greebo: This is following Laplace's formula by expanding it along the first column
-    // It needs a couple of 2x2 minors (which are re-used two times each) and four 3x3 minors
-    
-    // The expanded formula is like this: det A = a11*M11 - a21*M21 + a31*M31 + a41*M41
-    // where aij is a matrix element, and Mij is the minor leaving out the i-th row and j-th column
-
-    // Six 2x2 minors, each is used two times
-    double minor1 = zz() * tw() - zw() * tz();
-    double minor2 = zy() * tw() - zw() * ty();
-    double minor3 = zx() * tw() - zw() * tx();
-    double minor4 = zy() * tz() - zz() * ty();
-    double minor5 = zx() * tz() - zz() * tx();
-    double minor6 = zx() * ty() - zy() * tx();
-
-    // Four 3x3 minors
-    double minor11 = yy() * minor1 - yz() * minor2 + yw() * minor4;
-    double minor21 = yx() * minor1 - yz() * minor3 + yw() * minor5;
-    double minor31 = yx() * minor2 - yy() * minor3 + yw() * minor6;
-    double minor41 = yx() * minor4 - yy() * minor5 + yz() * minor6;
-    
-    // Assemble and return final determinant
-    return xx() * minor11 - xy() * minor21 + xz() * minor31 - xw() * minor41;
-}
-
-inline const Vector3& Matrix4::translation() const
-{
-    return t().getVector3();
-}
-
-inline Matrix4 Matrix4::getTranslatedBy(const Vector3& translation) const
-{
-    return getMultipliedBy(Matrix4::getTranslation(translation));
-}
-
-inline Matrix4 Matrix4::getRotatedBy(const Quaternion& rotation) const
-{
-    return getMultipliedBy(getRotation(rotation));
-}
-
-inline void Matrix4::rotateBy(const Quaternion& rotation)
-{
-    *this = getRotatedBy(rotation);
-}
-
-inline void Matrix4::rotateBy(const Quaternion& rotation, const Vector3& pivot)
-{
-    translateBy(pivot);
-    rotateBy(rotation);
-    translateBy(-pivot);
-}
-
-inline void Matrix4::rotateByEulerXYZDegrees(const Vector3& euler)
-{
-    multiplyBy(getRotationForEulerXYZDegrees(euler));
-}
-
-inline void Matrix4::rotateByEulerXYZDegrees(const Vector3& euler, const Vector3& pivot)
-{
-    translateBy(pivot);
-    rotateByEulerXYZDegrees(euler);
-    translateBy(-pivot);
-}
-
-inline Matrix4 Matrix4::getRotatedByEulerYXZDegrees(const Vector3& euler) const
-{
-    return getMultipliedBy(getRotationForEulerYXZDegrees(euler));
-}
-
-/// \brief Concatenates \p self with the rotation transform produced by \p euler angles (degrees) in the order (y, x, z).
-/// The concatenated rotation occurs before \p self.
-inline void Matrix4::rotateByEulerYXZDegrees(const Vector3& euler)
-{
-    *this = getRotatedByEulerYXZDegrees(euler);
-}
-
-inline Matrix4 Matrix4::getRotatedByEulerZXYDegrees(const Vector3& euler) const
-{
-    return getMultipliedBy(getRotationForEulerZXYDegrees(euler));
-}
-
-inline void Matrix4::rotateByEulerZXYDegrees(const Vector3& euler)
-{
-    *this = getRotatedByEulerZXYDegrees(euler);
-}
-
 inline Vector3 Matrix4::getEulerAnglesXYZ() const
 {
     double a = asin(-xz());
@@ -1075,99 +590,12 @@ inline Vector3 Matrix4::getEulerAnglesXYZDegrees() const
     return Vector3(radians_to_degrees(eulerRad.x()), radians_to_degrees(eulerRad.y()), radians_to_degrees(eulerRad.z()));
 }
 
-inline Vector3 Matrix4::getEulerAnglesYXZ() const
-{
-    double a = asin(yz());
-    double ca = cos(a);
-
-    if (fabs(ca) > 0.005f) // Gimbal lock?
-    {
-        return Vector3(
-            a,
-            atan2(-xz() / ca, zz() / ca),
-            atan2(-yx() / ca, yy() / ca)
-        );
-    }
-    else // Gimbal lock has occurred
-    {
-        return Vector3(
-            a,
-            atan2(zx(), xx()),
-            0
-        );
-    }
-}
-
-inline Vector3 Matrix4::getEulerAnglesYXZDegrees() const
-{
-    Vector3 eulerRad = getEulerAnglesYXZ();
-    return Vector3(radians_to_degrees(eulerRad.x()), radians_to_degrees(eulerRad.y()), radians_to_degrees(eulerRad.z()));
-}
-
-inline Vector3 Matrix4::getEulerAnglesZXY() const
-{
-    double a = asin(-zy());
-    double ca = cos(a);
-
-    if (fabs(ca) > 0.005f) // Gimbal lock?
-    {
-        return Vector3(
-            a,
-            atan2(zx() / ca, zz() / ca),
-            atan2(xy() / ca, yy()/ ca)
-        );
-    }
-    else // Gimbal lock has occurred
-    {
-        return Vector3(
-            a,
-            0,
-            atan2(-yx(), xx())
-        );
-    }
-}
-
-inline Vector3 Matrix4::getEulerAnglesZXYDegrees() const
-{
-    Vector3 eulerRad = getEulerAnglesZXY();
-    return Vector3(radians_to_degrees(eulerRad.x()), radians_to_degrees(eulerRad.y()), radians_to_degrees(eulerRad.z()));
-}
-
-inline Vector3 Matrix4::getEulerAnglesZYX() const
-{
-    double a = asin(zx());
-    double ca = cos(a);
-
-    if (fabs(ca) > 0.005f) // Gimbal lock?
-    {
-        return Vector3(
-            atan2(-zy() / ca, zz()/ ca),
-            a,
-            atan2(-yx() / ca, xx() / ca)
-        );
-    }
-    else // Gimbal lock has occurred
-    {
-        return Vector3(
-            0,
-            a,
-            atan2(xy(), yy())
-        );
-    }
-}
-
-inline Vector3 Matrix4::getEulerAnglesZYXDegrees() const
-{
-    Vector3 eulerRad = getEulerAnglesZYX();
-    return Vector3(radians_to_degrees(eulerRad.x()), radians_to_degrees(eulerRad.y()), radians_to_degrees(eulerRad.z()));
-}
-
 inline Vector3 Matrix4::getScale() const
 {
     return Vector3(
-        x().getVector3().getLength(),
-        y().getVector3().getLength(),
-        z().getVector3().getLength()
+        xCol().getVector3().getLength(),
+        yCol().getVector3().getLength(),
+        zCol().getVector3().getLength()
     );
 }
 
@@ -1178,13 +606,12 @@ inline void Matrix4::scaleBy(const Vector3& scale, const Vector3& pivot)
     translateBy(-pivot);
 }
 
-/** Stream insertion operator for Matrix4.
- */
+/// Debug stream insertion operator for Matrix4
 inline std::ostream& operator<<(std::ostream& st, const Matrix4& m)
 {
-    st << "|" << m[0] << ", " << m[4] << ", " << m[8] << ", " << m[12] << "|\n";
-    st << "|" << m[1] << ", " << m[5] << ", " << m[9] << ", " << m[13] << "|\n";
-    st << "|" << m[2] << ", " << m[6] << ", " << m[10] << ", " << m[14] << "|\n";
-    st << "|" << m[3] << ", " << m[7] << ", " << m[11] << ", " << m[15] << "|\n";
+    st << "[" << m[0] << " " << m[4] << " " << m[8] << " " << m[12] << "; ";
+    st << m[1] << " " << m[5] << " " << m[9] << " " << m[13] << "; ";
+    st << m[2] << " " << m[6] << " " << m[10] << " " << m[14] << "; ";
+    st << m[3] << " " << m[7] << " " << m[11] << " " << m[15] << "]";
     return st;
 }

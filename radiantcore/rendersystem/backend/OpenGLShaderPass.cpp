@@ -294,7 +294,7 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
         if (current.glProgram != 0)
         {
             current.glProgram->disable();
-            glColor4dv(current.getColour());
+            glColor4fv(current.getColour());
         }
 
         current.glProgram = program;
@@ -477,7 +477,7 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
     {
         _glState.setColour(_glState.stage0->getColour());
     }
-    glColor4dv(_glState.getColour());
+    glColor4fv(_glState.getColour());
     current.setColour(_glState.getColour());
     debug::assertNoGlErrors();
 
@@ -638,7 +638,7 @@ void OpenGLShaderPass::setUpLightingCalculation(OpenGLState& current,
     GLProgram::Params parms(
         light->getLightOrigin(), layer->getColour(), world2light
     );
-    parms.ambientFactor = lightMat->isAmbientLight() ? 1.0f : 0.0f;
+    parms.isAmbientLight = lightMat->isAmbientLight();
     parms.invertVertexColour = _glState.isColourInverted();
 
     assert(current.glProgram);

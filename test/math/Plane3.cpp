@@ -104,7 +104,7 @@ TEST(MathTest, RotatePlane)
 
     // Rotate 45 degrees around the Z axis
     Matrix4 rot = Matrix4::getRotation(
-        Vector3(0, 0, 1), c_pi / 4
+        Vector3(0, 0, 1), math::PI / 4
     );
     Plane3 rotated = plane.transformed(rot);
 

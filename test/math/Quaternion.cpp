@@ -1,9 +1,46 @@
 #include "gtest/gtest.h"
 
 #include "math/Quaternion.h"
+#include "math/Matrix4.h"
 
 namespace test
 {
+
+// Fuzzy equality assertion for Quaternions
+void expectNear(const Quaternion& q1, const Quaternion& q2)
+{
+    EXPECT_DOUBLE_EQ(q1.x(), q2.x());
+    EXPECT_DOUBLE_EQ(q1.y(), q2.y());
+    EXPECT_DOUBLE_EQ(q1.z(), q2.z());
+    EXPECT_DOUBLE_EQ(q1.w(), q2.w());
+}
+
+TEST(MathTest, QuaternionForXRotation)
+{
+    math::Degrees angle(45);
+    Quaternion xRot = Quaternion::createForX(angle.asRadians());
+
+    expectNear(xRot, Quaternion(sin(angle.asRadians() / 2), 0, 0,
+                                cos(angle.asRadians() / 2)));
+}
+
+TEST(MathTest, QuaternionForYRotation)
+{
+    math::Degrees angle(60);
+    Quaternion yRot = Quaternion::createForY(angle.asRadians());
+
+    expectNear(yRot, Quaternion(0, sin(angle.asRadians() / 2), 0,
+                                cos(angle.asRadians() / 2)));
+}
+
+TEST(MathTest, QuaternionForZRotation)
+{
+    math::Degrees angle(75);
+    Quaternion zRot = Quaternion::createForZ(angle.asRadians());
+
+    expectNear(zRot, Quaternion(0, 0, sin(angle.asRadians() / 2),
+                                cos(angle.asRadians() / 2)));
+}
 
 TEST(MathTest, QuaternionMultiplication)
 {

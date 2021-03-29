@@ -195,27 +195,6 @@ public:
 		return *this;
     }
 
-    /*  Define the multiplications * and *= with a scalar
-     */
-    template<typename OtherElement>
-    BasicVector3<Element> operator* (const OtherElement& other) const {
-        Element factor = static_cast<Element>(other);
-        return BasicVector3<Element>(
-            _v[0] * factor,
-            _v[1] * factor,
-            _v[2] * factor
-        );
-    }
-
-    template<typename OtherElement>
-	BasicVector3<Element>& operator*= (const OtherElement& other) {
-        Element factor = static_cast<Element>(other);
-        _v[0] *= factor;
-        _v[1] *= factor;
-        _v[2] *= factor;
-		return *this;
-    }
-
     /*  Define the division operators / and /= with another Vector3 of type OtherElement
      *  The vectors are divided element-wise
      */
@@ -300,7 +279,7 @@ public:
         _v[0] *= inverseLength;
         _v[1] *= inverseLength;
         _v[2] *= inverseLength;
-        
+
         return length;
     }
 
@@ -402,8 +381,8 @@ public:
     template<typename OtherT>
     bool isParallel(const BasicVector3<OtherT>& other) const
 	{
-        return float_equal_epsilon(angle(other), 0.0, 0.001) || 
-			   float_equal_epsilon(angle(other), c_pi, 0.001);
+        return float_equal_epsilon(angle(other), 0.0, 0.001) ||
+			   float_equal_epsilon(angle(other), math::PI, 0.001);
     }
 
     // Swaps all components with the other vector
@@ -425,8 +404,8 @@ public:
     template<typename OtherElement, typename Epsilon>
     bool isEqual(const BasicVector3<OtherElement>& other, Epsilon epsilon) const
     {
-        return float_equal_epsilon(x(), other.x(), epsilon) && 
-               float_equal_epsilon(y(), other.y(), epsilon) && 
+        return float_equal_epsilon(x(), other.x(), epsilon) &&
+               float_equal_epsilon(y(), other.y(), epsilon) &&
                float_equal_epsilon(z(), other.z(), epsilon);
     }
 
@@ -472,6 +451,30 @@ public:
         *this = getSnapped(snap);
     }
 };
+
+/// Multiply vector components with a scalar and return the result
+template <typename T, typename S>
+BasicVector3<T> operator*(const BasicVector3<T>& v, S s)
+{
+    T factor = static_cast<T>(s);
+    return BasicVector3<T>(v.x() * factor, v.y() * factor, v.z() * factor);
+}
+
+/// Multiply vector components with a scalar and return the result
+template <typename T>
+BasicVector3<T> operator*(T s, const BasicVector3<T>& v)
+{
+    return v * s;
+}
+
+/// Multiply vector components with a scalar and modify in place
+template <typename T, typename S>
+BasicVector3<T>& operator*=(BasicVector3<T>& v, S other)
+{
+    T factor = static_cast<T>(other);
+    v.set(v.x() * factor, v.y() * factor, v.z() * factor);
+    return v;
+}
 
 /// Stream insertion for BasicVector3
 template<typename T>

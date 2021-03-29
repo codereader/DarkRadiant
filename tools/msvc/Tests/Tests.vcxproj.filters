@@ -6,7 +6,6 @@
     <ClCompile Include="..\..\..\test\Camera.cpp" />
     <ClCompile Include="..\..\..\test\SelectionAlgorithm.cpp" />
     <ClCompile Include="..\..\..\test\ModelScale.cpp" />
-    <ClCompile Include="..\..\..\test\FacePlane.cpp" />
     <ClCompile Include="..\..\..\test\VFS.cpp" />
     <ClCompile Include="..\..\..\test\Materials.cpp" />
     <ClCompile Include="..\..\..\test\math\Quaternion.cpp">
@@ -24,7 +23,6 @@
     <ClCompile Include="..\..\..\test\ModelExport.cpp" />
     <ClCompile Include="..\..\..\test\MapExport.cpp" />
     <ClCompile Include="..\..\..\test\Models.cpp" />
-    <ClCompile Include="..\..\..\test\Face.cpp" />
     <ClCompile Include="..\..\..\test\Selection.cpp" />
     <ClCompile Include="..\..\..\test\FileTypes.cpp" />
     <ClCompile Include="..\..\..\test\MessageBus.cpp" />
@@ -41,6 +39,8 @@
     <ClCompile Include="..\..\..\test\Entity.cpp" />
     <ClCompile Include="..\..\..\test\Basic.cpp" />
     <ClCompile Include="..\..\..\test\MaterialExport.cpp" />
+    <ClCompile Include="..\..\..\test\Brush.cpp" />
+    <ClCompile Include="..\..\..\test\Renderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\HeadlessOpenGLContext.h" />

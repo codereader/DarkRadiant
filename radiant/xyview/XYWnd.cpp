@@ -107,7 +107,7 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
 
 	_wxGLWidget->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(XYWnd::onGLWindowScroll), NULL, this);
     _wxGLWidget->Connect(wxEVT_MOTION, wxMouseEventHandler(XYWnd::onGLMouseMove), NULL, this);
-	
+
 	_wxGLWidget->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
     _wxGLWidget->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
 	_wxGLWidget->Connect(wxEVT_LEFT_UP, wxMouseEventHandler(XYWnd::onGLMouseButtonRelease), NULL, this);
@@ -309,7 +309,7 @@ bool XYWnd::isActive() const {
     return _isActive;
 };
 
-const Vector3& XYWnd::getOrigin() const 
+const Vector3& XYWnd::getOrigin() const
 {
     return _origin;
 }
@@ -391,7 +391,7 @@ bool XYWnd::checkChaseMouse(unsigned int state)
 		{
             _chasemouseDeltaY = std::max(y - epsilon, -GlobalXYWnd().chaseMouseCap());
 		}
-		else if (y > _height - epsilon) 
+		else if (y > _height - epsilon)
 		{
             _chasemouseDeltaY = std::min(y - _height + epsilon, GlobalXYWnd().chaseMouseCap());
 		}
@@ -605,7 +605,7 @@ void XYWnd::snapToGrid(Vector3& point)
         point[1] = float_snapped(point[1], GlobalGrid().getGridSize());
         point[2] = float_snapped(point[2], GlobalGrid().getGridSize());
     }
-    else 
+    else
     {
         point[0] = float_snapped(point[0], GlobalGrid().getGridSize());
         point[2] = float_snapped(point[2], GlobalGrid().getGridSize());
@@ -1072,9 +1072,9 @@ void XYWnd::drawCameraIcon()
         glEnd();
 
         glBegin(GL_LINE_STRIP);
-        glVertex3f(x + static_cast<float>(fov * cos(a + c_pi / 4)), y + static_cast<float>(fov * sin(a + c_pi / 4)), 0);
+        glVertex3f(x + static_cast<float>(fov * cos(a + math::PI / 4)), y + static_cast<float>(fov * sin(a + math::PI / 4)), 0);
         glVertex3f(x, y, 0);
-        glVertex3f(x + static_cast<float>(fov * cos(a - c_pi / 4)), y + static_cast<float>(fov * sin(a - c_pi / 4)), 0);
+        glVertex3f(x + static_cast<float>(fov * cos(a - math::PI / 4)), y + static_cast<float>(fov * sin(a - math::PI / 4)), 0);
         glEnd();
     }
     catch (const std::runtime_error&)
@@ -1467,7 +1467,7 @@ void XYWnd::draw()
             i.second->renderOverlay();
         }
     }
-    
+
     if (xyWndManager.showOutline()) {
         if (isActive()) {
             glMatrixMode (GL_PROJECTION);
@@ -1584,7 +1584,7 @@ bool XYWnd::onRender()
 
         return true;
 	}
-    
+
 
     return false; // nothing rendered
 }
@@ -1681,7 +1681,7 @@ void XYWnd::startCapture(const MouseToolPtr& tool)
 
     unsigned int pointerMode = tool->getPointerMode();
 
-     _freezePointer.startCapture(_wxGLWidget, 
+     _freezePointer.startCapture(_wxGLWidget,
         [&, tool](int x, int y, unsigned int state) { handleGLCapturedMouseMotion(tool, x, y, state); }, // Motion Functor
         [&, tool]() { MouseToolHandler::handleCaptureLost(tool); }, // called when the capture is lost.
         (pointerMode & MouseTool::PointerMode::Freeze) != 0,
@@ -1709,4 +1709,4 @@ IInteractiveView& XYWnd::getInteractiveView()
 ShaderPtr XYWnd::_selectedShader;
 ShaderPtr XYWnd::_selectedShaderGroup;
 
-} // namespace 
+} // namespace

@@ -30,12 +30,11 @@ uniform vec3		u_light_origin;
 uniform vec3		u_light_color;
 uniform float		u_light_scale;
 
-// Vertex colour parameters. Vertex colour is calculated as
-// (colour * scale + offset), so for normal vertex colouring scale should be 1.0
-// and offset 0.0, and for inverse colouring scale should be -1.0 and offset
-// 1.0.
-uniform float       u_vcol_scale;
-uniform float       u_vcol_offset;
+// Invert vertex colour
+uniform bool uInvertVCol;
+
+// Activate ambbient light mode (brightness unaffected by direction)
+uniform bool uAmbientLight;
 
 varying vec3		var_vertex;
 varying vec4		var_tex_diffuse_bump;
@@ -60,7 +59,8 @@ void	main()
 
 	// compute the diffuse term
 	vec4 diffuse = texture2D(u_diffusemap, var_tex_diffuse_bump.st);
-	diffuse.rgb *= u_light_color * u_light_scale * clamp(dot(N, L), 0.0, 1.0);
+    float lightBrightness = uAmbientLight ? 1.0 : clamp(dot(N, L), 0.0, 1.0);
+	diffuse.rgb *= u_light_color * u_light_scale * lightBrightness;
 
 	// compute the specular term
     float specIntensity = clamp(dot(N, H), 0.0, 1.0);
@@ -82,8 +82,7 @@ void	main()
     ).rgb;
 
 	// compute final color
-    gl_FragColor = diffuse * (gl_Color * u_vcol_scale + u_vcol_offset);
-    gl_FragColor.rgb *= 2.0; // replacement for RENDER_SCREEN light scaling
+    gl_FragColor = diffuse * (uInvertVCol ? vec4(1.0, 1.0, 1.0, 1.0) - gl_Color : gl_Color);
     gl_FragColor.rgb += specular;
 	gl_FragColor.rgb *= attenuation_xy;
 	gl_FragColor.rgb *= attenuation_z;

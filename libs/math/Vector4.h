@@ -38,8 +38,13 @@ public:
         _v[3] = 0;
     }
 
-    // Construct a BasicVector4 out of the 4 arguments
-    BasicVector4(Element x_, Element y_, Element z_, Element w_) {
+    /**
+     * \brief Construct a BasicVector4 out of 4 explicit values.
+     *
+     * If the W coordinate is unspecified it will default to 1.
+     */
+    BasicVector4(Element x_, Element y_, Element z_, Element w_ = 1)
+    {
         _v[0] = x_;
         _v[1] = y_;
         _v[2] = z_;
@@ -306,9 +311,9 @@ public:
     template<typename OtherElement>
     bool isEqual(const BasicVector4<OtherElement>& other, Element epsilon) const
     {
-        return float_equal_epsilon(x(), other.x(), epsilon) && 
-               float_equal_epsilon(y(), other.y(), epsilon) && 
-               float_equal_epsilon(z(), other.z(), epsilon) && 
+        return float_equal_epsilon(x(), other.x(), epsilon) &&
+               float_equal_epsilon(y(), other.y(), epsilon) &&
+               float_equal_epsilon(z(), other.z(), epsilon) &&
                float_equal_epsilon(w(), other.w(), epsilon);
     }
 

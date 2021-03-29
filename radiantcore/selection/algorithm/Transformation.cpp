@@ -44,13 +44,13 @@ void rotateSelected(const Quaternion& rotation)
 	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
 	{
 		GlobalSelectionSystem().foreachSelectedComponent(
-			RotateComponentSelected(rotation, GlobalSelectionSystem().getPivot2World().t().getVector3()));
+			RotateComponentSelected(rotation, GlobalSelectionSystem().getPivot2World().tCol().getVector3()));
 	}
 	else
 	{
 		// Cycle through the selections and rotate them
 		GlobalSelectionSystem().foreachSelected(RotateSelected(rotation,
-			GlobalSelectionSystem().getPivot2World().t().getVector3()));
+			GlobalSelectionSystem().getPivot2World().tCol().getVector3()));
 	}
 
 	// Update the views
@@ -94,13 +94,13 @@ void scaleSelected(const Vector3& scaleXYZ)
 		// Pass the scale to the according traversor
 		if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
 		{
-			GlobalSelectionSystem().foreachSelectedComponent(ScaleComponentSelected(scaleXYZ, 
-				GlobalSelectionSystem().getPivot2World().t().getVector3()));
+			GlobalSelectionSystem().foreachSelectedComponent(ScaleComponentSelected(scaleXYZ,
+				GlobalSelectionSystem().getPivot2World().tCol().getVector3()));
 		}
 		else
 		{
-			GlobalSelectionSystem().foreachSelected(ScaleSelected(scaleXYZ, 
-				GlobalSelectionSystem().getPivot2World().t().getVector3()));
+			GlobalSelectionSystem().foreachSelected(ScaleSelected(scaleXYZ,
+				GlobalSelectionSystem().getPivot2World().tCol().getVector3()));
 		}
 
 		// Update the scene views
@@ -108,7 +108,7 @@ void scaleSelected(const Vector3& scaleXYZ)
 
 		GlobalSceneGraph().foreachNode(scene::freezeTransformableNode);
 	}
-	else 
+	else
 	{
 		throw cmd::ExecutionFailure(_("Cannot scale by zero value."));
 	}
@@ -466,7 +466,7 @@ void moveSelectedCmd(const cmd::ArgumentList& args)
 
 	std::string arg = string::to_lower_copy(args[0].getString());
 
-	if (arg == "up") 
+	if (arg == "up")
 	{
 		moveSelectedAlongZ(GlobalGrid().getGridSize());
 	}
@@ -529,29 +529,6 @@ inline Quaternion quaternion_for_axis90(axis_t axis, sign_t sign)
 	}
 }
 
-void rotateSelectionAboutAxis(axis_t axis, float deg)
-{
-	if (fabs(deg) == 90.0f)
-	{
-		rotateSelected(quaternion_for_axis90(axis, (deg > 0) ? eSignPositive : eSignNegative));
-	}
-	else
-	{
-		switch(axis)
-		{
-		case 0:
-			rotateSelected(Quaternion::createForMatrix(Matrix4::getRotationAboutXDegrees(deg)));
-			break;
-		case 1:
-			rotateSelected(Quaternion::createForMatrix(Matrix4::getRotationAboutYDegrees(deg)));
-			break;
-		case 2:
-			rotateSelected(Quaternion::createForMatrix(Matrix4::getRotationAboutZDegrees(deg)));
-			break;
-		}
-	}
-}
-
 void rotateSelectionX(const cmd::ArgumentList& args)
 {
 	if (GlobalSelectionSystem().countSelected() == 0)
@@ -561,7 +538,7 @@ void rotateSelectionX(const cmd::ArgumentList& args)
 	}
 
 	UndoableCommand undo("rotateSelected -axis x -angle -90");
-	rotateSelectionAboutAxis(eAxisX, -90);
+    rotateSelected(quaternion_for_axis90(eAxisX, eSignNegative));
 }
 
 void rotateSelectionY(const cmd::ArgumentList& args)
@@ -573,7 +550,7 @@ void rotateSelectionY(const cmd::ArgumentList& args)
 	}
 
 	UndoableCommand undo("rotateSelected -axis y -angle 90");
-	rotateSelectionAboutAxis(eAxisY, 90);
+    rotateSelected(quaternion_for_axis90(eAxisY, eSignPositive));
 }
 
 void rotateSelectionZ(const cmd::ArgumentList& args)
@@ -585,7 +562,7 @@ void rotateSelectionZ(const cmd::ArgumentList& args)
 	}
 
 	UndoableCommand undo("rotateSelected -axis z -angle -90");
-	rotateSelectionAboutAxis(eAxisZ, -90);
+    rotateSelected(quaternion_for_axis90(eAxisZ, eSignNegative));
 }
 
 void mirrorSelection(int axis)

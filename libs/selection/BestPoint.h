@@ -13,6 +13,17 @@ enum clipcull_t
     eClipCullCCW,
 };
 
+typedef unsigned char ClipResult;
+
+const ClipResult c_CLIP_PASS = 0x00; // 000000
+const ClipResult c_CLIP_LT_X = 0x01; // 000001
+const ClipResult c_CLIP_GT_X = 0x02; // 000010
+const ClipResult c_CLIP_LT_Y = 0x04; // 000100
+const ClipResult c_CLIP_GT_Y = 0x08; // 001000
+const ClipResult c_CLIP_LT_Z = 0x10; // 010000
+const ClipResult c_CLIP_GT_Z = 0x20; // 100000
+const ClipResult c_CLIP_FAIL = 0x3F; // 111111
+
 class Segment3D
 {
 public:
@@ -129,12 +140,326 @@ inline void BestPoint(std::size_t count, Vector4 clipped[9], SelectionIntersecti
     }
 }
 
+namespace
+{
+
+class Vector4ClipLT
+{
+public:
+  static bool compare(const Vector4& self, std::size_t index)
+  {
+    return self[index] < self[3];
+  }
+
+  static double scale(const Vector4& self, const Vector4& other, std::size_t index)
+  {
+    return (self[index] - self[3]) / (other[3] - other[index]);
+  }
+};
+
+class Vector4ClipGT
+{
+public:
+  static bool compare(const Vector4& self, std::size_t index)
+  {
+    return self[index] > -self[3];
+  }
+
+  static double scale(const Vector4& self, const Vector4& other, std::size_t index)
+  {
+    return (self[index] + self[3]) / (-other[3] - other[index]);
+  }
+
+};
+
+template<typename ClipPlane>
+class Vector4ClipPolygon
+{
+public:
+  typedef Vector4* iterator;
+  typedef const Vector4* const_iterator;
+
+  static std::size_t apply(const_iterator first, const_iterator last, iterator out, std::size_t index)
+  {
+    const_iterator next = first, i = last - 1;
+    iterator tmp(out);
+    bool b0 = ClipPlane::compare(*i, index);
+    while(next != last)
+    {
+      bool b1 = ClipPlane::compare(*next, index);
+      if(b0 ^ b1)
+      {
+        *out = *next - *i;
+
+        double scale = ClipPlane::scale(*i, *out, index);
+
+        (*out)[0] = (*i)[0] + scale*((*out)[0]);
+        (*out)[1] = (*i)[1] + scale*((*out)[1]);
+        (*out)[2] = (*i)[2] + scale*((*out)[2]);
+        (*out)[3] = (*i)[3] + scale*((*out)[3]);
+
+        ++out;
+      }
+
+      if(b1)
+      {
+        *out = *next;
+        ++out;
+      }
+
+      i = next;
+      ++next;
+      b0 = b1;
+    }
+
+    return out - tmp;
+  }
+};
+
+#define CLIP_X_LT_W(p) (Vector4ClipLT::compare(p, 0))
+#define CLIP_X_GT_W(p) (Vector4ClipGT::compare(p, 0))
+#define CLIP_Y_LT_W(p) (Vector4ClipLT::compare(p, 1))
+#define CLIP_Y_GT_W(p) (Vector4ClipGT::compare(p, 1))
+#define CLIP_Z_LT_W(p) (Vector4ClipLT::compare(p, 2))
+#define CLIP_Z_GT_W(p) (Vector4ClipGT::compare(p, 2))
+
+inline ClipResult homogenous_clip_point(const Vector4& clipped)
+{
+    ClipResult result = c_CLIP_FAIL;
+
+    if (CLIP_X_LT_W(clipped)) result &= ~c_CLIP_LT_X; // X < W
+    if (CLIP_X_GT_W(clipped)) result &= ~c_CLIP_GT_X; // X > -W
+    if (CLIP_Y_LT_W(clipped)) result &= ~c_CLIP_LT_Y; // Y < W
+    if (CLIP_Y_GT_W(clipped)) result &= ~c_CLIP_GT_Y; // Y > -W
+    if (CLIP_Z_LT_W(clipped)) result &= ~c_CLIP_LT_Z; // Z < W
+    if (CLIP_Z_GT_W(clipped)) result &= ~c_CLIP_GT_Z; // Z > -W
+
+    return result;
+}
+
+inline std::size_t homogenous_clip_line(Vector4 clipped[2])
+{
+    const Vector4& p0 = clipped[0];
+    const Vector4& p1 = clipped[1];
+
+    // early out
+    {
+        ClipResult mask0 = homogenous_clip_point(clipped[0]);
+        ClipResult mask1 = homogenous_clip_point(clipped[1]);
+
+        if ((mask0 | mask1) == c_CLIP_PASS) // both points passed all planes
+        {
+            return 2;
+        }
+
+        if (mask0 & mask1) // both points failed any one plane
+        {
+            return 0;
+        }
+    }
+
+    {
+        const bool index = CLIP_X_LT_W(p0);
+
+        if (index ^ CLIP_X_LT_W(p1))
+        {
+            Vector4 clip(p1 - p0);
+
+            double scale = (p0[0] - p0[3]) / (clip[3] - clip[0]);
+
+            clip[0] = p0[0] + scale * clip[0];
+            clip[1] = p0[1] + scale * clip[1];
+            clip[2] = p0[2] + scale * clip[2];
+            clip[3] = p0[3] + scale * clip[3];
+
+            clipped[index] = clip;
+        }
+        else if(index == 0)
+        {
+            return 0;
+        }
+    }
+
+    {
+        const bool index = CLIP_X_GT_W(p0);
+
+        if (index ^ CLIP_X_GT_W(p1))
+        {
+            Vector4 clip(p1 - p0);
+
+            double scale = (p0[0] + p0[3]) / (-clip[3] - clip[0]);
+
+            clip[0] = p0[0] + scale * clip[0];
+            clip[1] = p0[1] + scale * clip[1];
+            clip[2] = p0[2] + scale * clip[2];
+            clip[3] = p0[3] + scale * clip[3];
+
+            clipped[index] = clip;
+        }
+        else if(index == 0)
+        {
+            return 0;
+        }
+    }
+
+    {
+        const bool index = CLIP_Y_LT_W(p0);
+
+        if (index ^ CLIP_Y_LT_W(p1))
+        {
+            Vector4 clip(p1 - p0);
+
+            double scale = (p0[1] - p0[3]) / (clip[3] - clip[1]);
+
+            clip[0] = p0[0] + scale * clip[0];
+            clip[1] = p0[1] + scale * clip[1];
+            clip[2] = p0[2] + scale * clip[2];
+            clip[3] = p0[3] + scale * clip[3];
+
+            clipped[index] = clip;
+        }
+        else if (index == 0)
+        {
+            return 0;
+        }
+    }
+
+    {
+        const bool index = CLIP_Y_GT_W(p0);
+
+        if (index ^ CLIP_Y_GT_W(p1))
+        {
+            Vector4 clip(p1 - p0);
+
+            double scale = (p0[1] + p0[3]) / (-clip[3] - clip[1]);
+
+            clip[0] = p0[0] + scale * clip[0];
+            clip[1] = p0[1] + scale * clip[1];
+            clip[2] = p0[2] + scale * clip[2];
+            clip[3] = p0[3] + scale * clip[3];
+
+            clipped[index] = clip;
+        }
+        else if (index == 0)
+        {
+            return 0;
+        }
+    }
+
+    {
+        const bool index = CLIP_Z_LT_W(p0);
+
+        if (index ^ CLIP_Z_LT_W(p1))
+        {
+            Vector4 clip(p1 - p0);
+
+            double scale = (p0[2] - p0[3]) / (clip[3] - clip[2]);
+
+            clip[0] = p0[0] + scale * clip[0];
+            clip[1] = p0[1] + scale * clip[1];
+            clip[2] = p0[2] + scale * clip[2];
+            clip[3] = p0[3] + scale * clip[3];
+
+            clipped[index] = clip;
+        }
+        else if (index == 0)
+        {
+            return 0;
+        }
+    }
+
+    {
+        const bool index = CLIP_Z_GT_W(p0);
+
+        if (index ^ CLIP_Z_GT_W(p1))
+        {
+            Vector4 clip(p1 - p0);
+
+            double scale = (p0[2] + p0[3]) / (-clip[3] - clip[2]);
+
+            clip[0] = p0[0] + scale * clip[0];
+            clip[1] = p0[1] + scale * clip[1];
+            clip[2] = p0[2] + scale * clip[2];
+            clip[3] = p0[3] + scale * clip[3];
+
+            clipped[index] = clip;
+        }
+        else if (index == 0)
+        {
+            return 0;
+        }
+    }
+
+    return 2;
+}
+
+inline std::size_t homogenous_clip_triangle(Vector4 clipped[9])
+{
+    Vector4 buffer[9];
+    std::size_t count = 3;
+
+    count = Vector4ClipPolygon< Vector4ClipLT >::apply(clipped, clipped + count, buffer, 0);
+    count = Vector4ClipPolygon< Vector4ClipGT >::apply(buffer, buffer + count, clipped, 0);
+    count = Vector4ClipPolygon< Vector4ClipLT >::apply(clipped, clipped + count, buffer, 1);
+    count = Vector4ClipPolygon< Vector4ClipGT >::apply(buffer, buffer + count, clipped, 1);
+    count = Vector4ClipPolygon< Vector4ClipLT >::apply(clipped, clipped + count, buffer, 2);
+
+    return Vector4ClipPolygon< Vector4ClipGT >::apply(buffer, buffer + count, clipped, 2);
+}
+
+} // namespace
+
+
+/**
+ * \brief Clip point by this canonical matrix and store the result in clipped.
+ *
+ * \return Bitmask indicating which clip-planes the point was outside.
+ */
+inline ClipResult clipPoint(const Matrix4& matrix, const Vector3& point,
+                            Vector4& clipped)
+{
+	clipped[0] = point[0];
+	clipped[1] = point[1];
+	clipped[2] = point[2];
+	clipped[3] = 1;
+
+	clipped = matrix.transform(clipped);
+
+	return homogenous_clip_point(clipped);
+}
+
+/**
+ * \brief Transform and clip the line formed by p0, p1 by this canonical
+ * matrix.
+ *
+ * Stores the resulting line in clipped.
+ *
+ * \returns the number of points in the resulting line.
+ */
+inline std::size_t clipLine(const Matrix4& matrix, const Vector3& p0,
+                            const Vector3& p1, Vector4 clipped[2])
+{
+	clipped[0][0] = p0[0];
+	clipped[0][1] = p0[1];
+	clipped[0][2] = p0[2];
+	clipped[0][3] = 1;
+	clipped[1][0] = p1[0];
+	clipped[1][1] = p1[1];
+	clipped[1][2] = p1[2];
+	clipped[1][3] = 1;
+
+	clipped[0] = matrix.transform(clipped[0]);
+	clipped[1] = matrix.transform(clipped[1]);
+
+	return homogenous_clip_line(clipped);
+}
+
 inline void LineStrip_BestPoint(const Matrix4& local2view, const VertexCb* vertices, const std::size_t size, SelectionIntersection& best)
 {
     Vector4 clipped[2];
     for (std::size_t i = 0; (i + 1) < size; ++i)
     {
-        const std::size_t count = local2view.clipLine(vertices[i].vertex, vertices[i + 1].vertex, clipped);
+        const std::size_t count = clipLine(local2view, vertices[i].vertex, vertices[i + 1].vertex, clipped);
         BestPoint(count, clipped, best, eClipCullNone);
     }
 }
@@ -144,7 +469,7 @@ inline void LineLoop_BestPoint(const Matrix4& local2view, const VertexCb* vertic
     Vector4 clipped[2];
     for (std::size_t i = 0; i < size; ++i)
     {
-        const std::size_t count = local2view.clipLine(vertices[i].vertex, vertices[(i + 1) % size].vertex, clipped);
+        const std::size_t count = clipLine(local2view, vertices[i].vertex, vertices[(i + 1) % size].vertex, clipped);
         BestPoint(count, clipped, best, eClipCullNone);
     }
 }
@@ -152,8 +477,39 @@ inline void LineLoop_BestPoint(const Matrix4& local2view, const VertexCb* vertic
 inline void Line_BestPoint(const Matrix4& local2view, const VertexCb vertices[2], SelectionIntersection& best)
 {
     Vector4 clipped[2];
-    const std::size_t count = local2view.clipLine(vertices[0].vertex, vertices[1].vertex, clipped);
+    const std::size_t count = clipLine(local2view, vertices[0].vertex, vertices[1].vertex, clipped);
     BestPoint(count, clipped, best, eClipCullNone);
+}
+
+/**
+ * \brief Use the given Matrix to transform and clips the triangle formed by p0, p1,
+ * p2.
+ *
+ * Stores the resulting polygon in clipped.
+ * Returns the number of points in the resulting polygon.
+ */
+inline std::size_t clipTriangle(const Matrix4& matrix, const Vector3& p0,
+                                const Vector3& p1, const Vector3& p2,
+                                Vector4 clipped[9])
+{
+	clipped[0][0] = p0[0];
+	clipped[0][1] = p0[1];
+	clipped[0][2] = p0[2];
+	clipped[0][3] = 1;
+	clipped[1][0] = p1[0];
+	clipped[1][1] = p1[1];
+	clipped[1][2] = p1[2];
+	clipped[1][3] = 1;
+	clipped[2][0] = p2[0];
+	clipped[2][1] = p2[1];
+	clipped[2][2] = p2[2];
+	clipped[2][3] = 1;
+
+	clipped[0] = matrix.transform(clipped[0]);
+	clipped[1] = matrix.transform(clipped[1]);
+	clipped[2] = matrix.transform(clipped[2]);
+
+	return homogenous_clip_triangle(clipped);
 }
 
 inline void Circle_BestPoint(const Matrix4& local2view, clipcull_t cull, const VertexCb* vertices, const std::size_t size, SelectionIntersection& best)
@@ -161,7 +517,10 @@ inline void Circle_BestPoint(const Matrix4& local2view, clipcull_t cull, const V
     Vector4 clipped[9];
     for (std::size_t i = 0; i < size; ++i)
     {
-        const std::size_t count = local2view.clipTriangle(g_vector3_identity, vertices[i].vertex, vertices[(i + 1) % size].vertex, clipped);
+        const std::size_t count = clipTriangle(
+            local2view, g_vector3_identity, vertices[i].vertex,
+            vertices[(i + 1) % size].vertex, clipped
+        );
         BestPoint(count, clipped, best, cull);
     }
 }
@@ -170,11 +529,11 @@ inline void Quad_BestPoint(const Matrix4& local2view, clipcull_t cull, const Ver
 {
     Vector4 clipped[9];
     {
-        const std::size_t count = local2view.clipTriangle(vertices[0].vertex, vertices[1].vertex, vertices[3].vertex, clipped);
+        const std::size_t count = clipTriangle(local2view, vertices[0].vertex, vertices[1].vertex, vertices[3].vertex, clipped);
         BestPoint(count, clipped, best, cull);
     }
     {
-        const std::size_t count = local2view.clipTriangle(vertices[1].vertex, vertices[2].vertex, vertices[3].vertex, clipped);
+        const std::size_t count = clipTriangle(local2view, vertices[1].vertex, vertices[2].vertex, vertices[3].vertex, clipped);
         BestPoint(count, clipped, best, cull);
     }
 }
@@ -186,15 +545,8 @@ inline void Triangles_BestPoint(const Matrix4& local2view, clipcull_t cull, Flat
     {
         Vector4 clipped[9];
         BestPoint(
-            local2view.clipTriangle(
-                x->vertex,
-                y->vertex,
-                z->vertex,
-                clipped
-            ),
-            clipped,
-            best,
-            cull
+            clipTriangle(local2view, x->vertex, y->vertex, z->vertex, clipped),
+            clipped, best, cull
         );
     }
 }

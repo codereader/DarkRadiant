@@ -212,7 +212,7 @@ public:
 		if (_vector.empty()) return;
 
         // Enable point colours if required
-		bool enablePointColours = info.checkFlag(RENDER_VERTEX_COLOUR) || 
+		bool enablePointColours = info.checkFlag(RENDER_VERTEX_COLOUR) ||
 			(info.checkFlag(RENDER_POINT_COLOUR) && _mode == GL_POINTS);
 
         if (enablePointColours)
@@ -297,7 +297,7 @@ public:
     {
 		bool enableColours = info.checkFlag(RENDER_VERTEX_COLOUR)
 			|| (info.checkFlag(RENDER_POINT_COLOUR) && _mode == GL_POINTS);
-        
+
 		if (enableColours)
         {
             glEnableClientState(GL_COLOR_ARRAY);
@@ -373,7 +373,7 @@ public:
 
 template<typename remap_policy>
 inline void draw_circle(const std::size_t segments, const float radius, VertexCb* vertices, remap_policy remap) {
-	const double increment = c_pi / double(segments << 2);
+	const double increment = math::PI / double(segments << 2);
 
 	std::size_t count = 0;
 	float x = radius;

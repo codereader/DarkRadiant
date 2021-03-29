@@ -1,11 +1,10 @@
 add_executable(drtest
                Basic.cpp
+               Brush.cpp
                Camera.cpp
                ColourSchemes.cpp
                CSG.cpp
                Entity.cpp
-               Face.cpp
-               FacePlane.cpp
                Favourites.cpp
                FileTypes.cpp
                HeadlessOpenGLContext.cpp
@@ -26,6 +25,7 @@ add_executable(drtest
                PatchIterators.cpp
                PatchWelding.cpp
                Prefabs.cpp
+               Renderer.cpp
                SelectionAlgorithm.cpp
                Selection.cpp
                VFS.cpp

@@ -641,6 +641,8 @@ void OpenGLShader::constructNormalShader()
 // Main shader construction entry point
 void OpenGLShader::construct()
 {
+    _name = name;
+
 	// Retrieve the highlight colour from the colourschemes (once)
 	const static Colour4 highLightColour(
         GlobalColourSchemeManager().getColour("selected_brush_camera"), 0.3f
@@ -656,7 +658,7 @@ void OpenGLShader::construct()
 			state.setName(_name);
 
             Colour4 colour;
-            sscanf(_name.c_str(), "(%lf %lf %lf)", &colour[0], &colour[1], &colour[2]);
+            sscanf(_name.c_str(), "(%f %f %f)", &colour[0], &colour[1], &colour[2]);
             colour[3] = 1.0f;
             state.setColour(colour);
 
@@ -675,7 +677,7 @@ void OpenGLShader::construct()
 			state.setName(_name);
 
             Colour4 colour;
-            sscanf(_name.c_str(), "[%lf %lf %lf]", &colour[0], &colour[1], &colour[2]);
+            sscanf(_name.c_str(), "[%f %f %f]", &colour[0], &colour[1], &colour[2]);
             colour[3] = 0.5f;
             state.setColour(colour);
 
@@ -695,7 +697,7 @@ void OpenGLShader::construct()
 			state.setName(_name);
 
             Colour4 colour;
-            sscanf(_name.c_str(), "<%lf %lf %lf>", &colour[0], &colour[1], &colour[2]);
+            sscanf(_name.c_str(), "<%f %f %f>", &colour[0], &colour[1], &colour[2]);
             colour[3] = 1;
             state.setColour(colour);
 
@@ -919,12 +921,6 @@ void OpenGLShader::construct()
             constructNormalShader();
         }
     } // switch (name[0])
-
-    // If there is no Material, create an internal one for debug/testing etc
-    if (!_material)
-    {
-        _material = GlobalMaterialManager().createDefaultMaterial(_name);
-    }
 }
 
 void OpenGLShader::onMaterialChanged()

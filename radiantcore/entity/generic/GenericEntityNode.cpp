@@ -214,8 +214,9 @@ void GenericEntityNode::updateTransform()
 	}
 	else
 	{
-		m_ray.direction = Matrix4::getRotationAboutZDegrees(m_angle).transformDirection(Vector3(1, 0, 0));
-	}
+        m_ray.direction = Matrix4::getRotationAboutZ(math::Degrees(m_angle))
+                                  .transformDirection(Vector3(1, 0, 0));
+    }
 
 	transformChanged();
 }
@@ -251,7 +252,7 @@ const Vector3& GenericEntityNode::getUntransformedOrigin()
     return m_originKey.get();
 }
 
-void GenericEntityNode::onChildAdded(const scene::INodePtr& child) 
+void GenericEntityNode::onChildAdded(const scene::INodePtr& child)
 {
     EntityNode::onChildAdded(child);
 
@@ -268,7 +269,7 @@ void GenericEntityNode::onChildAdded(const scene::INodePtr& child)
         }
 
         return true;
-    });  
+    });
 }
 
 void GenericEntityNode::onChildRemoved(const scene::INodePtr& child)

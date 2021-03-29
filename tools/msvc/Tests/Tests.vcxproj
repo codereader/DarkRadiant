@@ -69,12 +69,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\test\Basic.cpp" />
+    <ClCompile Include="..\..\..\test\Brush.cpp" />
     <ClCompile Include="..\..\..\test\Camera.cpp" />
     <ClCompile Include="..\..\..\test\ColourSchemes.cpp" />
     <ClCompile Include="..\..\..\test\CSG.cpp" />
     <ClCompile Include="..\..\..\test\Entity.cpp" />
-    <ClCompile Include="..\..\..\test\Face.cpp" />
-    <ClCompile Include="..\..\..\test\FacePlane.cpp" />
     <ClCompile Include="..\..\..\test\Favourites.cpp" />
     <ClCompile Include="..\..\..\test\FileTypes.cpp" />
     <ClCompile Include="..\..\..\test\HeadlessOpenGLContext.cpp" />
@@ -96,6 +95,7 @@
     <ClCompile Include="..\..\..\test\PatchIterators.cpp" />
     <ClCompile Include="..\..\..\test\PatchWelding.cpp" />
     <ClCompile Include="..\..\..\test\Prefabs.cpp" />
+    <ClCompile Include="..\..\..\test\Renderer.cpp" />
     <ClCompile Include="..\..\..\test\Selection.cpp" />
     <ClCompile Include="..\..\..\test\SelectionAlgorithm.cpp" />
     <ClCompile Include="..\..\..\test\VFS.cpp" />

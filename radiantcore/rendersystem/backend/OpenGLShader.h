@@ -30,6 +30,10 @@ private:
 	typedef std::list<OpenGLShaderPassPtr> Passes;
 	Passes _shaderPasses;
 
+    // Name used to construct the shader. Currently only used for
+    // tests/debugging.
+    std::string _name;
+
     // The Material corresponding to this OpenGLShader
 	MaterialPtr _material;
     sigc::connection _materialChanged;
@@ -88,6 +92,7 @@ public:
     OpenGLRenderSystem& getRenderSystem();
 
     // Shader implementation
+    std::string getName() const override { return _name; }
 	void addRenderable(const OpenGLRenderable& renderable,
 					   const Matrix4& modelview,
 					   const LightSources* lights,

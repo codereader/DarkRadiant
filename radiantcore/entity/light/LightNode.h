@@ -58,6 +58,9 @@ private:
 public:
 	static LightNodePtr Create(const IEntityClassPtr& eclass);
 
+    // ILightNode implementation
+    const RendererLight& getRendererLight() const { return _light; }
+
 	// RenderEntity implementation
 	virtual float getShaderParm(int parmNum) const override;
 

@@ -48,28 +48,24 @@ public:
         /// Transformation from world space into light space
         Matrix4 world2Light;
 
-        /// Amount of directionality, 0.0 for normal light, 1.0 for ambient
-        float ambientFactor;
+        /// True if this is an ambient light, false for a directional light
+        bool isAmbientLight = false;
 
         /// Whether vertex colours should be inverted
-        bool invertVertexColour;
+        bool invertVertexColour = false;
 
         Params(const Vector3& lightOrigin_,
                const Colour4& lightColour_,
                const Matrix4& world2Light_)
         : lightOrigin(lightOrigin_),
           lightColour(lightColour_),
-          world2Light(world2Light_),
-          ambientFactor(0.0),
-          invertVertexColour(false)
+          world2Light(world2Light_)
         {
-
         }
     };
 
 	/**
-	 * \brief
-     * Apply render parameters used by this program to OpenGL.
+	 * \brief Apply render parameters used by this program to OpenGL.
      *
      * This method is invoked shortly before the renderable geometry is
      * submitted for rendering; the GLProgram must apply to the GL state any
