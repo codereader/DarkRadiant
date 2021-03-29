@@ -453,7 +453,7 @@ public:
 };
 
 /// Multiply vector components with a scalar and return the result
-template <typename T, typename S, typename SMustBeScalar = std::enable_if<std::is_scalar<S>::value>::type>
+template <typename T, typename S, typename SMustBeScalar = typename std::enable_if<std::is_scalar<S>::value>::type>
 BasicVector3<T> operator*(const BasicVector3<T>& v, S s)
 {
     T factor = static_cast<T>(s);
