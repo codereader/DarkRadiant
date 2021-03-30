@@ -494,4 +494,29 @@ TEST(MathTest, MatrixFullInverse)
     EXPECT_DOUBLE_EQ(inv.tw(), 0.3571428571428571) << "Matrix inversion failed on tw";
 }
 
+TEST(MathTest, MatrixTranslateBy)
+{
+    const Vector3 TRANS(27, -16, 0.84);
+
+    // Add a translation to a matrix which already includes a transformation
+    const Vector3 SCALE(2, 3, 2);
+    Matrix4 m = Matrix4::getScale(SCALE);
+    m.translateBy(TRANS);
+
+    // Because translateBy() does a post-multiplication, the scale will affect
+    // the translation
+    EXPECT_EQ(m.translation(), SCALE*TRANS /* Componentwise product */);
+    EXPECT_EQ(m, Matrix4::byRows(2, 0, 0, SCALE.x() * TRANS.x(),
+                                 0, 3, 0, SCALE.y() * TRANS.y(),
+                                 0, 0, 2, SCALE.z() * TRANS.z(),
+                                 0, 0, 0, 1));
+
+    // Add further translations and ensure the result is cumulative
+    const Vector3 ONE(1, 1, 1);
+    m.translateBy(ONE);
+    expectNear(m.translation(), SCALE * (TRANS+ONE));
+    m.translateBy(-TRANS);
+    expectNear(m.translation(), SCALE * ONE);
+}
+
 }
