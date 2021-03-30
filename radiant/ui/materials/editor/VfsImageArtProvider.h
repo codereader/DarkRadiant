@@ -32,23 +32,24 @@ public:
         // We listen only to "vfs" art IDs
         if (string::starts_with(id, prefix))
         {
-            return CreateBitmapFromVfsPath(id.substr(prefix.length()));
+            return wxBitmap(CreateImageFromVfsPath(id.substr(prefix.length())));
         }
 
         return wxNullBitmap;
     }
 
-    static wxBitmap CreateBitmapFromVfsPath(const std::string& vfsPath)
+    static wxImage CreateImageFromVfsPath(const std::string& vfsPath)
     {
         auto image = GlobalImageLoader().imageFromVFS(vfsPath);
 
-        if (!image) return wxNullBitmap;
+        if (!image) return wxNullImage;
 
         // wxWidgets is expecting separate buffers for RGB and Alpha, split the RGBA data
         auto width = image->getWidth();
         auto height = image->getHeight();
         auto numPixels = width * height;
 
+        // wxImage can take ownership of data allocated with malloc() - maybe use that one
         std::shared_ptr<uint8_t[]> rgb(new uint8_t[numPixels * 3]);
         std::shared_ptr<uint8_t[]> alpha(new uint8_t[numPixels]);
 
@@ -67,7 +68,7 @@ public:
             }
         }
 
-        return wxBitmap(wxImage(width, height, rgb.get(), alpha.get(), true));
+        return wxImage(width, height, rgb.get(), alpha.get(), true).Copy();
     }
 
     static const std::string& ArtIdPrefix()

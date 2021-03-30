@@ -295,7 +295,7 @@ void MaterialEditor::setupMaterialTreeView()
 
 void MaterialEditor::setupBasicMaterialPage()
 {
-    getControl<wxStaticBitmap>("BasicEditorImageTabImage")->SetBitmap(VfsImageArtProvider::CreateBitmapFromVfsPath("textures/common/caulk.tga"));
+    convertTextCtrlToMapExpressionEntry("BasicImageFileEntry");
 }
 
 void MaterialEditor::setupMaterialProperties()
@@ -1421,6 +1421,34 @@ void MaterialEditor::updateMaterialControlSensitivity()
     getControl<wxButton>("MaterialEditorUnlockButton")->Enable(_material && !canBeModified);
 }
 
+void MaterialEditor::updateBasicPageFromMaterial()
+{
+    auto editorImgTabImage = getControl<wxStaticBitmap>("BasicEditorImageTabImage");
+
+    if (!_material)
+    {
+        auto defaultBitmap = wxutil::GetLocalBitmap("_white.bmp");
+        getControl<wxStaticBitmap>("BasicEditorImageTabImage")->SetBitmap(defaultBitmap);
+        return;
+    }
+
+    auto editorImg = _material->getEditorImageExpression();
+    
+    if (editorImg)
+    {
+        auto image = VfsImageArtProvider::CreateImageFromVfsPath(editorImg->getExpressionString());
+
+        if (!image.IsOk())
+        {
+            image = wxutil::GetLocalBitmap("shadernotex.bmp").ConvertToImage();
+        }
+
+        image.Rescale(editorImgTabImage->GetSize().GetWidth(), editorImgTabImage->GetSize().GetHeight(), wxIMAGE_QUALITY_BICUBIC);
+
+        editorImgTabImage->SetBitmap(wxBitmap(image));
+    }
+}
+
 void MaterialEditor::updateControlsFromMaterial()
 {
     util::ScopedBoolLock lock(_materialUpdateInProgress);
@@ -1576,6 +1604,7 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
         binding->updateFromSource();
     }
 
+    updateBasicPageFromMaterial();
     updateDeformControlsFromMaterial();
     updateSourceView();
 

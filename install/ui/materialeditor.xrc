@@ -382,7 +382,7 @@
 																				<option>1</option>
 																				<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
 																				<border>6</border>
-																				<object class="wxTextCtrl" name="m_textCtrl41">
+																				<object class="wxTextCtrl" name="BasicImageFileEntry">
 																					<value></value>
 																				</object>
 																			</object>

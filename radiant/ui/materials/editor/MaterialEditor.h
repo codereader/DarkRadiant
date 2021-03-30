@@ -134,6 +134,7 @@ private:
     IShaderLayer::Ptr getSelectedStage();
     IEditableShaderLayer::Ptr getEditableStageForSelection();
 
+    void updateBasicPageFromMaterial();
     void updateStageControls();
     void updateStageBlendControls();
     void updateStageTextureControls();
