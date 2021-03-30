@@ -1383,6 +1383,9 @@
     <ClInclude Include="..\..\radiant\ui\materials\editor\TestModelSkin.h">
       <Filter>src\ui\materials\editor</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\materials\editor\VfsImageArtProvider.h">
+      <Filter>src\ui\materials\editor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />

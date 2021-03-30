@@ -2,6 +2,7 @@
 
 #include "i18n.h"
 #include "ishaderexpression.h"
+#include "VfsImageArtProvider.h"
 
 #include <wx/panel.h>
 #include <wx/splitter.h>
@@ -16,6 +17,7 @@
 #include <wx/notebook.h>
 #include <wx/radiobut.h>
 #include <wx/collpane.h>
+#include <wx/statbmp.h>
 
 #include "wxutil/SourceView.h"
 #include "wxutil/FileChooser.h"
@@ -157,6 +159,7 @@ MaterialEditor::MaterialEditor() :
     previewPanel->GetSizer()->Add(_preview->getWidget(), 1, wxEXPAND);
     previewPanel->GetSizer()->Add(sourceTextPanel, 0, wxEXPAND);
 
+    setupBasicMaterialPage();
     setupMaterialProperties();
     setupMaterialStageView();
     setupMaterialStageProperties();
@@ -288,6 +291,11 @@ void MaterialEditor::setupMaterialTreeView()
     auto unlockButton = getControl<wxButton>("MaterialEditorUnlockButton");
     unlockButton->Disable();
     unlockButton->Bind(wxEVT_BUTTON, &MaterialEditor::_onUnlockMaterial, this);
+}
+
+void MaterialEditor::setupBasicMaterialPage()
+{
+    getControl<wxStaticBitmap>("BasicEditorImageTabImage")->SetBitmap(VfsImageArtProvider::CreateBitmapFromVfsPath("textures/common/caulk.tga"));
 }
 
 void MaterialEditor::setupMaterialProperties()

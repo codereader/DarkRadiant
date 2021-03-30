@@ -139,14 +139,294 @@
 										<object class="wxNotebook" name="MaterialEditorBasicAdvancedNotebook">
 											<object class="notebookpage">
 												<label>Basic</label>
-												<selected>0</selected>
+												<selected>1</selected>
 												<object class="wxPanel" name="m_panel40">
 													<style>wxTAB_TRAVERSAL</style>
+													<object class="wxBoxSizer">
+														<orient>wxVERTICAL</orient>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxEXPAND | wxALL</flag>
+															<border>12</border>
+															<object class="wxPanel" name="BasicNameAndDescription">
+																<style>wxTAB_TRAVERSAL</style>
+																<object class="wxFlexGridSizer">
+																	<rows>0</rows>
+																	<cols>2</cols>
+																	<vgap>12</vgap>
+																	<hgap>6</hgap>
+																	<growablecols>1</growablecols>
+																	<growablerows></growablerows>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALIGN_CENTER_VERTICAL</flag>
+																		<border>0</border>
+																		<object class="wxStaticText" name="m_staticText611">
+																			<label>Name:</label>
+																			<wrap>-1</wrap>
+																		</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxEXPAND</flag>
+																		<border>0</border>
+																		<object class="wxTextCtrl" name="BasicName">
+																			<style>wxTE_PROCESS_ENTER</style>
+																			<value></value>
+																		</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																		<border>0</border>
+																		<object class="wxStaticText" name="m_staticText5711">
+																			<label>Material:</label>
+																			<wrap>-1</wrap>
+																		</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>1</option>
+																		<flag>wxEXPAND</flag>
+																		<border>0</border>
+																		<object class="wxBoxSizer">
+																			<orient>wxHORIZONTAL</orient>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
+																				<border>12</border>
+																				<object class="wxChoice" name="BasicMaterialType">
+																					<selection>0</selection>
+																					<content />
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																				<border>0</border>
+																				<object class="wxStaticText" name="m_staticText572">
+																					<label>Description:</label>
+																					<wrap>-1</wrap>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>1</option>
+																				<flag>wxEXPAND|wxLEFT</flag>
+																				<border>6</border>
+																				<object class="wxTextCtrl" name="BasicDescription">
+																					<style>wxTE_PROCESS_ENTER</style>
+																					<value></value>
+																				</object>
+																			</object>
+																		</object>
+																	</object>
+																</object>
+															</object>
+														</object>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxEXPAND|wxTOP</flag>
+															<border>12</border>
+															<object class="wxBoxSizer">
+																<orient>wxHORIZONTAL</orient>
+																<object class="sizeritem">
+																	<option>1</option>
+																	<flag>wxALIGN_CENTER</flag>
+																	<border>0</border>
+																	<object class="wxBoxSizer">
+																		<orient>wxVERTICAL</orient>
+																		<object class="sizeritem">
+																			<option>0</option>
+																			<flag>wxALL</flag>
+																			<border>0</border>
+																			<object class="wxBoxSizer">
+																				<orient>wxHORIZONTAL</orient>
+																				<object class="sizeritem">
+																					<option>1</option>
+																					<flag>wxALL|wxEXPAND</flag>
+																					<border>12</border>
+																					<object class="wxBoxSizer">
+																						<orient>wxVERTICAL</orient>
+																						<object class="sizeritem">
+																							<option>0</option>
+																							<flag>wxALIGN_CENTER_HORIZONTAL</flag>
+																							<border>0</border>
+																							<object class="wxStaticText" name="m_staticText6811">
+																								<label>Editor Image</label>
+																								<wrap>-1</wrap>
+																							</object>
+																						</object>
+																						<object class="sizeritem">
+																							<option>0</option>
+																							<flag>wxALIGN_CENTER_HORIZONTAL|wxTOP</flag>
+																							<border>6</border>
+																							<object class="wxStaticBitmap" name="BasicEditorImageTabImage">
+																								<size>100,100</size>
+																								<bitmap />
+																							</object>
+																						</object>
+																					</object>
+																				</object>
+																				<object class="sizeritem">
+																					<option>1</option>
+																					<flag>wxEXPAND | wxALL</flag>
+																					<border>0</border>
+																					<object class="wxPanel" name="m_panel42">
+																						<style>wxTAB_TRAVERSAL</style>
+																						<bg>#e3e3e3</bg>
+																						<object class="wxBoxSizer">
+																							<orient>wxVERTICAL</orient>
+																							<object class="sizeritem">
+																								<option>0</option>
+																								<flag>wxALIGN_CENTER_HORIZONTAL|wxLEFT|wxRIGHT|wxTOP</flag>
+																								<border>12</border>
+																								<object class="wxStaticText" name="m_staticText681">
+																									<label>Diffuse</label>
+																									<wrap>-1</wrap>
+																								</object>
+																							</object>
+																							<object class="sizeritem">
+																								<option>0</option>
+																								<flag>wxALIGN_CENTER_HORIZONTAL|wxTOP</flag>
+																								<border>6</border>
+																								<object class="wxStaticBitmap" name="m_bitmap1">
+																									<size>100,100</size>
+																									<bitmap />
+																								</object>
+																							</object>
+																						</object>
+																					</object>
+																				</object>
+																				<object class="sizeritem">
+																					<option>0</option>
+																					<flag>wxALL|wxEXPAND</flag>
+																					<border>12</border>
+																					<object class="wxBoxSizer">
+																						<orient>wxVERTICAL</orient>
+																						<object class="sizeritem">
+																							<option>0</option>
+																							<flag>wxALIGN_CENTER_HORIZONTAL</flag>
+																							<border>0</border>
+																							<object class="wxStaticText" name="m_staticText6812">
+																								<label>Bump</label>
+																								<wrap>-1</wrap>
+																							</object>
+																						</object>
+																						<object class="sizeritem">
+																							<option>0</option>
+																							<flag>wxALIGN_CENTER_HORIZONTAL|wxTOP</flag>
+																							<border>6</border>
+																							<object class="wxStaticBitmap" name="m_bitmap12">
+																								<size>100,100</size>
+																								<bitmap />
+																							</object>
+																						</object>
+																					</object>
+																				</object>
+																				<object class="sizeritem">
+																					<option>0</option>
+																					<flag>wxALL|wxEXPAND</flag>
+																					<border>12</border>
+																					<object class="wxBoxSizer">
+																						<orient>wxVERTICAL</orient>
+																						<object class="sizeritem">
+																							<option>0</option>
+																							<flag>wxALIGN_CENTER_HORIZONTAL</flag>
+																							<border>0</border>
+																							<object class="wxStaticText" name="m_staticText6813">
+																								<label>Specular</label>
+																								<wrap>-1</wrap>
+																							</object>
+																						</object>
+																						<object class="sizeritem">
+																							<option>0</option>
+																							<flag>wxALIGN_CENTER_HORIZONTAL|wxTOP</flag>
+																							<border>6</border>
+																							<object class="wxStaticBitmap" name="m_bitmap13">
+																								<size>100,100</size>
+																								<bitmap />
+																							</object>
+																						</object>
+																					</object>
+																				</object>
+																			</object>
+																		</object>
+																	</object>
+																</object>
+															</object>
+														</object>
+														<object class="sizeritem">
+															<option>1</option>
+															<flag>wxBOTTOM|wxEXPAND|wxRIGHT</flag>
+															<border>1</border>
+															<object class="wxPanel" name="m_panel41">
+																<style>wxTAB_TRAVERSAL</style>
+																<bg>#e3e3e3</bg>
+																<object class="wxBoxSizer">
+																	<orient>wxVERTICAL</orient>
+																	<object class="sizeritem">
+																		<option>0</option>
+																		<flag>wxALL|wxEXPAND</flag>
+																		<border>12</border>
+																		<object class="wxBoxSizer">
+																			<orient>wxHORIZONTAL</orient>
+																			<object class="sizeritem">
+																				<option>0</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																				<border>0</border>
+																				<object class="wxStaticText" name="m_staticText78">
+																					<label>Image File:</label>
+																					<wrap>-1</wrap>
+																				</object>
+																			</object>
+																			<object class="sizeritem">
+																				<option>1</option>
+																				<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+																				<border>6</border>
+																				<object class="wxTextCtrl" name="m_textCtrl41">
+																					<value></value>
+																				</object>
+																			</object>
+																		</object>
+																	</object>
+																	<object class="sizeritem">
+																		<option>1</option>
+																		<flag>wxEXPAND | wxALL</flag>
+																		<border>12</border>
+																		<object class="wxPanel" name="m_panel43">
+																			<style>wxTAB_TRAVERSAL</style>
+																			<object class="wxFlexGridSizer">
+																				<rows>1</rows>
+																				<cols>1</cols>
+																				<vgap>0</vgap>
+																				<hgap>0</hgap>
+																				<growablecols>0</growablecols>
+																				<growablerows>0</growablerows>
+																				<object class="sizeritem">
+																					<option>0</option>
+																					<flag>wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxALL</flag>
+																					<border>0</border>
+																					<object class="wxStaticText" name="m_staticText79">
+																						<font>
+																							<style>italic</style>
+																							<weight>normal</weight>
+																							<underlined>0</underlined>
+																						</font>
+																						<label>Drag and drop an Image File here to create a new Texture Map</label>
+																						<wrap>-1</wrap>
+																					</object>
+																				</object>
+																			</object>
+																		</object>
+																	</object>
+																</object>
+															</object>
+														</object>
+													</object>
 												</object>
 											</object>
 											<object class="notebookpage">
 												<label>Advanced</label>
-												<selected>1</selected>
+												<selected>0</selected>
 												<object class="wxPanel" name="m_panel38">
 													<style>wxTAB_TRAVERSAL</style>
 													<object class="wxBoxSizer">

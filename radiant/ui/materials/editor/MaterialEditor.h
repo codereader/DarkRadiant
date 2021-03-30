@@ -97,6 +97,7 @@ public:
     void _onClose(wxCommandEvent& ev);
 
 private:
+    void setupBasicMaterialPage();
     void setupMaterialTreeView();
     void setupMaterialStageView();
     void setupMaterialStageProperties();
