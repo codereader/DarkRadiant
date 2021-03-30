@@ -259,13 +259,24 @@ public:
     }
 
     /// Transpose this matrix in-place.
-    void transpose();
+    void transpose()
+    {
+        _transform.matrix().transposeInPlace();
+    }
 
     /// Return a transposed copy of this matrix.
-    Matrix4 getTransposed() const;
+    Matrix4 getTransposed() const
+    {
+        Matrix4 copy = *this;
+        copy.transpose();
+        return copy;
+    }
 
     /// Return the affine inverse of this transformation matrix.
-    Matrix4 getInverse() const;
+    Matrix4 getInverse() const
+    {
+        return Matrix4(_transform.inverse(Eigen::Affine));
+    }
 
     /// Affine invert this matrix in-place.
     void invert()
@@ -274,7 +285,10 @@ public:
     }
 
     /// Return the full inverse of this matrix.
-    Matrix4 getFullInverse() const;
+    Matrix4 getFullInverse() const
+    {
+        return Matrix4(_transform.inverse(Eigen::Projective));
+    }
 
     /// Invert this matrix in-place.
     void invertFull()
@@ -318,11 +332,11 @@ public:
         return Matrix4(_transform * other.eigen());
     }
 
-    /**
-     * \brief
-     * Post-multiply this matrix by another matrix, in-place.
-     */
-    void multiplyBy(const Matrix4& other);
+    /// Post-multiply this matrix by another matrix, in-place.
+    void multiplyBy(const Matrix4& other)
+    {
+        *this = getMultipliedBy(other);
+    }
 
     /// Returns this matrix pre-multiplied by the other
     Matrix4 getPremultipliedBy(const Matrix4& other) const
