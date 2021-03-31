@@ -48,18 +48,6 @@ Matrix4::Matrix4(double xx_, double xy_, double xz_, double xw_,
 
 // Named constructors
 
-// Identity matrix
-const Matrix4& Matrix4::getIdentity()
-{
-    static const Matrix4 _identity(
-        1, 0, 0, 0,
-        0, 1, 0, 0,
-        0, 0, 1, 0,
-        0, 0, 0, 1
-    );
-    return _identity;
-}
-
 // Get a translation matrix for the given vector
 Matrix4 Matrix4::getTranslation(const Vector3& translation)
 {
