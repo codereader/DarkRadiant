@@ -351,13 +351,17 @@ public:
     }
 
     /**
-     * \brief
-     * Add a translation component to the transformation represented by this
-     * matrix.
+     * \brief Add a translation component to the transformation represented by
+     * this matrix.
      *
-     * Equivalent to multiplyBy(Matrix4::getTranslation(translation));
+     * Equivalent to multiplyBy(Matrix4::getTranslation(tr)); note that this is
+     * a post-multiplication so the translation will be applied before (and be
+     * affected by) any existing rotation/scale in the current matrix.
      */
-    void translateBy(const Vector3& translation);
+    void translateBy(const Vector3& tr)
+    {
+        _transform *= Eigen::Translation3d(tr.x(), tr.y(), tr.z());
+    }
 
     /**
      * \brief Add a translation component to the transformation represented by

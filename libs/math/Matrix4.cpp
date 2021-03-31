@@ -249,12 +249,6 @@ Matrix4 Matrix4::getScale(const Vector3& scale)
     );
 }
 
-// Add a translation component
-void Matrix4::translateBy(const Vector3& translation)
-{
-    multiplyBy(getTranslation(translation));
-}
-
 // Add a scale component
 void Matrix4::scaleBy(const Vector3& scale)
 {
