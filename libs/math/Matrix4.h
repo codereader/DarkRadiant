@@ -355,7 +355,7 @@ public:
 
     /**
      * \brief Add a translation component to the transformation represented by
-     * this matrix.
+     * this matrix, modifying in-place.
      *
      * Equivalent to multiplyBy(Matrix4::getTranslation(tr)); note that this is
      * a post-multiplication so the translation will be applied before (and be
@@ -368,13 +368,14 @@ public:
 
     /**
      * \brief Add a translation component to the transformation represented by
-     * this matrix.
+     * this matrix and return the result.
      *
-     * Equivalent to getMultipliedBy(Matrix4::getTranslation(translation));
+     * Equivalent to getMultipliedBy(Matrix4::getTranslation(tr));
      */
-    Matrix4 getTranslatedBy(const Vector3& translation) const
+    Matrix4 getTranslatedBy(const Vector3& tr) const
     {
-        return getMultipliedBy(Matrix4::getTranslation(translation));
+        return Matrix4(_transform
+                       * Eigen::Translation3d(tr.x(), tr.y(), tr.z()));
     }
 
     /**

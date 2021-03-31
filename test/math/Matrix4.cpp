@@ -511,6 +511,11 @@ TEST(MathTest, MatrixTranslateBy)
                                  0, 0, 2, SCALE.z() * TRANS.z(),
                                  0, 0, 0, 1));
 
+    // Check the non-mutating getTranslatedBy as well
+    const Matrix4 orig = Matrix4::getScale(SCALE);
+    EXPECT_EQ(orig.getTranslatedBy(TRANS), m);
+    EXPECT_NE(orig, m);
+
     // Add further translations and ensure the result is cumulative
     const Vector3 ONE(1, 1, 1);
     m.translateBy(ONE);
