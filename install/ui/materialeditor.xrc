@@ -230,114 +230,181 @@
 																<orient>wxVERTICAL</orient>
 																<object class="sizeritem">
 																	<option>1</option>
-																	<flag>wxEXPAND</flag>
-																	<border>0</border>
+																	<flag>wxEXPAND|wxLEFT|wxRIGHT</flag>
+																	<border>12</border>
 																	<object class="wxFlexGridSizer">
 																		<rows>0</rows>
-																		<cols>4</cols>
+																		<cols>3</cols>
 																		<vgap>6</vgap>
 																		<hgap>6</hgap>
-																		<growablecols>0,1,2,3</growablecols>
-																		<growablerows>1</growablerows>
+																		<growablecols>2</growablecols>
+																		<growablerows>0</growablerows>
 																		<object class="sizeritem">
 																			<option>0</option>
-																			<flag>wxALIGN_CENTER_HORIZONTAL|wxLEFT|wxRIGHT|wxTOP</flag>
-																			<border>12</border>
-																			<object class="wxStaticText" name="m_staticText6811">
-																				<label>Editor Image</label>
-																				<wrap>-1</wrap>
-																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_HORIZONTAL|wxLEFT|wxRIGHT|wxTOP</flag>
-																			<border>12</border>
-																			<object class="wxStaticText" name="m_staticText681">
-																				<label>Diffuse</label>
-																				<wrap>-1</wrap>
-																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_HORIZONTAL|wxLEFT|wxRIGHT|wxTOP</flag>
-																			<border>12</border>
-																			<object class="wxStaticText" name="m_staticText6812">
-																				<label>Bump</label>
-																				<wrap>-1</wrap>
-																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_HORIZONTAL|wxLEFT|wxRIGHT|wxTOP</flag>
-																			<border>12</border>
-																			<object class="wxStaticText" name="m_staticText6813">
-																				<label>Specular</label>
-																				<wrap>-1</wrap>
-																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_HORIZONTAL|wxALL|wxSHAPED|wxTOP</flag>
-																			<border>12</border>
+																			<flag>wxSHAPED</flag>
+																			<border>6</border>
 																			<object class="wxStaticBitmap" name="BasicEditorImageTabImage">
-																				<size>120,120</size>
+																				<size>40,40</size>
 																				<bitmap />
 																			</object>
 																		</object>
 																		<object class="sizeritem">
 																			<option>0</option>
-																			<flag>wxALIGN_CENTER_HORIZONTAL|wxALL|wxSHAPED|wxTOP</flag>
-																			<border>12</border>
+																			<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP</flag>
+																			<border>0</border>
+																			<object class="wxStaticText" name="m_staticText6811">
+																				<label>Editor Image:</label>
+																				<wrap>-1</wrap>
+																			</object>
+																		</object>
+																		<object class="sizeritem">
+																			<option>0</option>
+																			<flag>wxEXPAND</flag>
+																			<border>0</border>
+																			<object class="wxBoxSizer">
+																				<orient>wxHORIZONTAL</orient>
+																				<object class="sizeritem">
+																					<option>1</option>
+																					<flag>wxALIGN_CENTER_VERTICAL</flag>
+																					<border>0</border>
+																					<object class="wxBoxSizer">
+																						<orient>wxVERTICAL</orient>
+																						<object class="sizeritem">
+																							<option>0</option>
+																							<flag>wxEXPAND</flag>
+																							<border>0</border>
+																							<object class="wxTextCtrl" name="BasicEditorImageEntry">
+																								<value></value>
+																							</object>
+																						</object>
+																					</object>
+																				</object>
+																			</object>
+																		</object>
+																		<object class="sizeritem">
+																			<option>0</option>
+																			<flag>wxSHAPED</flag>
+																			<border>6</border>
 																			<object class="wxStaticBitmap" name="BasicDiffuseTabImage">
+																				<size>40,40</size>
 																				<bitmap />
 																			</object>
 																		</object>
 																		<object class="sizeritem">
 																			<option>0</option>
-																			<flag>wxALIGN_CENTER_HORIZONTAL|wxALL|wxSHAPED|wxTOP</flag>
-																			<border>12</border>
+																			<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP</flag>
+																			<border>0</border>
+																			<object class="wxStaticText" name="m_staticText681">
+																				<label>Diffusemap:</label>
+																				<wrap>-1</wrap>
+																			</object>
+																		</object>
+																		<object class="sizeritem">
+																			<option>0</option>
+																			<flag>wxEXPAND</flag>
+																			<border>0</border>
+																			<object class="wxBoxSizer">
+																				<orient>wxHORIZONTAL</orient>
+																				<object class="sizeritem">
+																					<option>1</option>
+																					<flag>wxALIGN_CENTER_VERTICAL</flag>
+																					<border>0</border>
+																					<object class="wxBoxSizer">
+																						<orient>wxVERTICAL</orient>
+																						<object class="sizeritem">
+																							<option>0</option>
+																							<flag>wxALL|wxEXPAND</flag>
+																							<border>0</border>
+																							<object class="wxTextCtrl" name="BasicDiffuseImageEntry">
+																								<value></value>
+																							</object>
+																						</object>
+																					</object>
+																				</object>
+																			</object>
+																		</object>
+																		<object class="sizeritem">
+																			<option>0</option>
+																			<flag>wxSHAPED</flag>
+																			<border>6</border>
 																			<object class="wxStaticBitmap" name="BasicBumpTabImage">
+																				<size>40,40</size>
 																				<bitmap />
 																			</object>
 																		</object>
 																		<object class="sizeritem">
 																			<option>0</option>
-																			<flag>wxALIGN_CENTER_HORIZONTAL|wxALL|wxSHAPED|wxTOP</flag>
-																			<border>12</border>
+																			<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP</flag>
+																			<border>0</border>
+																			<object class="wxStaticText" name="m_staticText6812">
+																				<label>Bumpmap:</label>
+																				<wrap>-1</wrap>
+																			</object>
+																		</object>
+																		<object class="sizeritem">
+																			<option>1</option>
+																			<flag>wxEXPAND</flag>
+																			<border>0</border>
+																			<object class="wxBoxSizer">
+																				<orient>wxHORIZONTAL</orient>
+																				<object class="sizeritem">
+																					<option>1</option>
+																					<flag>wxALIGN_CENTER_VERTICAL</flag>
+																					<border>0</border>
+																					<object class="wxBoxSizer">
+																						<orient>wxVERTICAL</orient>
+																						<object class="sizeritem">
+																							<option>0</option>
+																							<flag>wxALL|wxEXPAND</flag>
+																							<border>0</border>
+																							<object class="wxTextCtrl" name="BasicBumpImageEntry">
+																								<value></value>
+																							</object>
+																						</object>
+																					</object>
+																				</object>
+																			</object>
+																		</object>
+																		<object class="sizeritem">
+																			<option>0</option>
+																			<flag>wxSHAPED</flag>
+																			<border>6</border>
 																			<object class="wxStaticBitmap" name="BasicSpecularTabImage">
+																				<size>40,40</size>
 																				<bitmap />
 																			</object>
 																		</object>
 																		<object class="sizeritem">
 																			<option>0</option>
-																			<flag>wxALIGN_CENTER_HORIZONTAL|wxALL</flag>
+																			<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT|wxTOP</flag>
 																			<border>0</border>
-																			<object class="wxTextCtrl" name="BasicEditorImageEntry">
-																				<value></value>
+																			<object class="wxStaticText" name="m_staticText6813">
+																				<label>Specularmap:</label>
+																				<wrap>-1</wrap>
 																			</object>
 																		</object>
 																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_HORIZONTAL|wxALL</flag>
+																			<option>1</option>
+																			<flag>wxEXPAND</flag>
 																			<border>0</border>
-																			<object class="wxTextCtrl" name="BasicDiffuseImageEntry">
-																				<value></value>
-																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_HORIZONTAL|wxALL</flag>
-																			<border>0</border>
-																			<object class="wxTextCtrl" name="BasicBumpImageEntry">
-																				<value></value>
-																			</object>
-																		</object>
-																		<object class="sizeritem">
-																			<option>0</option>
-																			<flag>wxALIGN_CENTER_HORIZONTAL|wxALL</flag>
-																			<border>0</border>
-																			<object class="wxTextCtrl" name="BasicSpecularImageEntry">
-																				<value></value>
+																			<object class="wxBoxSizer">
+																				<orient>wxHORIZONTAL</orient>
+																				<object class="sizeritem">
+																					<option>1</option>
+																					<flag>wxALIGN_CENTER_VERTICAL</flag>
+																					<border>0</border>
+																					<object class="wxBoxSizer">
+																						<orient>wxVERTICAL</orient>
+																						<object class="sizeritem">
+																							<option>0</option>
+																							<flag>wxALL|wxEXPAND</flag>
+																							<border>0</border>
+																							<object class="wxTextCtrl" name="BasicSpecularImageEntry">
+																								<value></value>
+																							</object>
+																						</object>
+																					</object>
+																				</object>
 																			</object>
 																		</object>
 																	</object>
