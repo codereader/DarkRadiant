@@ -2,7 +2,6 @@
 
 #include "i18n.h"
 #include "ishaderexpression.h"
-#include "VfsImageArtProvider.h"
 
 #include <wx/panel.h>
 #include <wx/splitter.h>
@@ -1445,54 +1444,6 @@ void MaterialEditor::updateBasicPageFromMaterial()
     diffuseTabImage->SetMaterial(_material);
     bumpTabImage->SetMaterial(_material);
     specularTabImage->SetMaterial(_material);
-
-#if 0
-    auto editorImg = _material->getEditorImageExpression();
-    
-    if (editorImg)
-    {
-        auto image = VfsImageArtProvider::CreateImageFromVfsPath(editorImg->getExpressionString());
-
-        if (!image.IsOk())
-        {
-            image = wxutil::GetLocalBitmap("shadernotex.bmp").ConvertToImage();
-        }
-
-        image.Rescale(editorImgTabImage->GetSize().GetWidth(), editorImgTabImage->GetSize().GetHeight(), wxIMAGE_QUALITY_BICUBIC);
-
-        editorImgTabImage->SetBitmap(wxBitmap(image));
-    }
-
-    for (const auto& layer : _material->getAllLayers())
-    {
-        wxStaticBitmap* bitmap = nullptr;
-
-        switch (layer->getType())
-        {
-        case IShaderLayer::DIFFUSE: bitmap = diffuseTabImage; break;
-        case IShaderLayer::BUMP: bitmap = bumpTabImage; break;
-        case IShaderLayer::SPECULAR: bitmap = specularTabImage; break;
-        }
-
-        if (bitmap == nullptr)
-        {
-            continue;
-        }
-
-        auto mapExpression = layer->getMapExpression();
-
-        auto image = VfsImageArtProvider::CreateImageFromVfsPath(mapExpression->getExpressionString());
-
-        if (!image.IsOk())
-        {
-            image = wxutil::GetLocalBitmap("shadernotex.bmp").ConvertToImage();
-        }
-
-        image.Rescale(bitmap->GetSize().GetWidth(), bitmap->GetSize().GetHeight(), wxIMAGE_QUALITY_BICUBIC);
-
-        bitmap->SetBitmap(wxBitmap(image));
-    }
-#endif
 }
 
 void MaterialEditor::updateControlsFromMaterial()

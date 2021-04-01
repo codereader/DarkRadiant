@@ -6,7 +6,6 @@
 #include "itextstream.h"
 #include "imenumanager.h"
 #include "module/StaticModule.h"
-#include "VfsImageArtProvider.h"
 
 namespace ui
 {
@@ -14,9 +13,6 @@ namespace ui
 class MaterialEditorModule :
     public RegisterableModule
 {
-private:
-    std::unique_ptr<VfsImageArtProvider> _vfsArtProvider;
-
 public:
     // RegisterableModule
     const std::string& getName() const override
@@ -49,8 +45,6 @@ public:
             _("Material Editor (experimental)..."),	// caption
             "icon_texture.png",	// icon
             "MaterialEditor"); // event name
-
-        _vfsArtProvider = std::make_unique<VfsImageArtProvider>();
     }
 };
 

@@ -470,7 +470,6 @@
     <ClInclude Include="..\..\radiant\ui\materials\editor\SpinCtrlBinding.h" />
     <ClInclude Include="..\..\radiant\ui\materials\editor\TestModelSkin.h" />
     <ClInclude Include="..\..\radiant\ui\materials\editor\TexturePreview.h" />
-    <ClInclude Include="..\..\radiant\ui\materials\editor\VfsImageArtProvider.h" />
     <ClInclude Include="..\..\radiant\ui\materials\MaterialDefinitionView.h" />
     <ClInclude Include="..\..\radiant\ui\materials\MaterialPopulator.h" />
     <ClInclude Include="..\..\radiant\ui\materials\MaterialTreeView.h" />
