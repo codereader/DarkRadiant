@@ -288,7 +288,7 @@
 																								<option>0</option>
 																								<flag>wxALIGN_CENTER_HORIZONTAL|wxTOP</flag>
 																								<border>6</border>
-																								<object class="wxStaticBitmap" name="m_bitmap1">
+																								<object class="wxStaticBitmap" name="BasicDiffuseTabImage">
 																									<size>100,100</size>
 																									<bitmap />
 																								</object>
@@ -315,7 +315,7 @@
 																							<option>0</option>
 																							<flag>wxALIGN_CENTER_HORIZONTAL|wxTOP</flag>
 																							<border>6</border>
-																							<object class="wxStaticBitmap" name="m_bitmap12">
+																							<object class="wxStaticBitmap" name="BasicBumpTabImage">
 																								<size>100,100</size>
 																								<bitmap />
 																							</object>
@@ -341,7 +341,7 @@
 																							<option>0</option>
 																							<flag>wxALIGN_CENTER_HORIZONTAL|wxTOP</flag>
 																							<border>6</border>
-																							<object class="wxStaticBitmap" name="m_bitmap13">
+																							<object class="wxStaticBitmap" name="BasicSpecularTabImage">
 																								<size>100,100</size>
 																								<bitmap />
 																							</object>

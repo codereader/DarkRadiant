@@ -34,6 +34,7 @@
 #include "SpinCtrlBinding.h"
 #include "CheckBoxBinding.h"
 #include "MapExpressionEntry.h"
+#include "TexturePreview.h"
 
 namespace ui
 {
@@ -296,6 +297,18 @@ void MaterialEditor::setupMaterialTreeView()
 void MaterialEditor::setupBasicMaterialPage()
 {
     convertTextCtrlToMapExpressionEntry("BasicImageFileEntry");
+
+    auto editorImgTabImage = getControl<wxStaticBitmap>("BasicEditorImageTabImage");
+    replaceControl(editorImgTabImage, new TexturePreview(editorImgTabImage->GetParent(), TexturePreview::ImageType::EditorImage));
+
+    auto diffuseTabImage = getControl<wxStaticBitmap>("BasicDiffuseTabImage");
+    replaceControl(diffuseTabImage, new TexturePreview(diffuseTabImage->GetParent(), TexturePreview::ImageType::Diffuse));
+
+    auto bumpTabImage = getControl<wxStaticBitmap>("BasicBumpTabImage");
+    replaceControl(bumpTabImage, new TexturePreview(bumpTabImage->GetParent(), TexturePreview::ImageType::Bump));
+
+    auto specularTabImage = getControl<wxStaticBitmap>("BasicSpecularTabImage");
+    replaceControl(specularTabImage, new TexturePreview(specularTabImage->GetParent(), TexturePreview::ImageType::Specular));
 }
 
 void MaterialEditor::setupMaterialProperties()
@@ -1423,15 +1436,17 @@ void MaterialEditor::updateMaterialControlSensitivity()
 
 void MaterialEditor::updateBasicPageFromMaterial()
 {
-    auto editorImgTabImage = getControl<wxStaticBitmap>("BasicEditorImageTabImage");
+    auto editorImgTabImage = getControl<TexturePreview>("BasicEditorImageTabImage");
+    auto diffuseTabImage = getControl<TexturePreview>("BasicDiffuseTabImage");
+    auto bumpTabImage = getControl<TexturePreview>("BasicBumpTabImage");
+    auto specularTabImage = getControl<TexturePreview>("BasicSpecularTabImage");
 
-    if (!_material)
-    {
-        auto defaultBitmap = wxutil::GetLocalBitmap("_white.bmp");
-        getControl<wxStaticBitmap>("BasicEditorImageTabImage")->SetBitmap(defaultBitmap);
-        return;
-    }
+    editorImgTabImage->SetMaterial(_material);
+    diffuseTabImage->SetMaterial(_material);
+    bumpTabImage->SetMaterial(_material);
+    specularTabImage->SetMaterial(_material);
 
+#if 0
     auto editorImg = _material->getEditorImageExpression();
     
     if (editorImg)
@@ -1447,6 +1462,37 @@ void MaterialEditor::updateBasicPageFromMaterial()
 
         editorImgTabImage->SetBitmap(wxBitmap(image));
     }
+
+    for (const auto& layer : _material->getAllLayers())
+    {
+        wxStaticBitmap* bitmap = nullptr;
+
+        switch (layer->getType())
+        {
+        case IShaderLayer::DIFFUSE: bitmap = diffuseTabImage; break;
+        case IShaderLayer::BUMP: bitmap = bumpTabImage; break;
+        case IShaderLayer::SPECULAR: bitmap = specularTabImage; break;
+        }
+
+        if (bitmap == nullptr)
+        {
+            continue;
+        }
+
+        auto mapExpression = layer->getMapExpression();
+
+        auto image = VfsImageArtProvider::CreateImageFromVfsPath(mapExpression->getExpressionString());
+
+        if (!image.IsOk())
+        {
+            image = wxutil::GetLocalBitmap("shadernotex.bmp").ConvertToImage();
+        }
+
+        image.Rescale(bitmap->GetSize().GetWidth(), bitmap->GetSize().GetHeight(), wxIMAGE_QUALITY_BICUBIC);
+
+        bitmap->SetBitmap(wxBitmap(image));
+    }
+#endif
 }
 
 void MaterialEditor::updateControlsFromMaterial()

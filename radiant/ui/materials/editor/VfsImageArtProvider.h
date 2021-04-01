@@ -42,16 +42,16 @@ public:
     {
         auto image = GlobalImageLoader().imageFromVFS(vfsPath);
 
-        if (!image) return wxNullImage;
+        if (!image || image->isPrecompressed()) return wxNullImage;
 
         // wxWidgets is expecting separate buffers for RGB and Alpha, split the RGBA data
         auto width = image->getWidth();
         auto height = image->getHeight();
         auto numPixels = width * height;
 
-        // wxImage can take ownership of data allocated with malloc() - maybe use that one
-        std::shared_ptr<uint8_t[]> rgb(new uint8_t[numPixels * 3]);
-        std::shared_ptr<uint8_t[]> alpha(new uint8_t[numPixels]);
+        // wxImage can take ownership of data allocated with malloc()
+        uint8_t* rgb = (uint8_t*)malloc(sizeof(uint8_t) * numPixels * 3);
+        uint8_t* alpha = (uint8_t*)malloc(sizeof(uint8_t) * numPixels);
 
         auto rgba = image->getPixels();
 
@@ -68,7 +68,8 @@ public:
             }
         }
 
-        return wxImage(width, height, rgb.get(), alpha.get(), true).Copy();
+        // Let the wxImage take ownership of the RGB+A buffers we just allocated
+        return wxImage(width, height, rgb, alpha, false);
     }
 
     static const std::string& ArtIdPrefix()

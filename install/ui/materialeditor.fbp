@@ -1596,7 +1596,7 @@
                                                                                                             <property name="minimize_button">0</property>
                                                                                                             <property name="minimum_size"></property>
                                                                                                             <property name="moveable">1</property>
-                                                                                                            <property name="name">m_bitmap1</property>
+                                                                                                            <property name="name">BasicDiffuseTabImage</property>
                                                                                                             <property name="pane_border">1</property>
                                                                                                             <property name="pane_position"></property>
                                                                                                             <property name="pane_size"></property>
@@ -1727,7 +1727,7 @@
                                                                                                         <property name="minimize_button">0</property>
                                                                                                         <property name="minimum_size"></property>
                                                                                                         <property name="moveable">1</property>
-                                                                                                        <property name="name">m_bitmap12</property>
+                                                                                                        <property name="name">BasicBumpTabImage</property>
                                                                                                         <property name="pane_border">1</property>
                                                                                                         <property name="pane_position"></property>
                                                                                                         <property name="pane_size"></property>
@@ -1857,7 +1857,7 @@
                                                                                                         <property name="minimize_button">0</property>
                                                                                                         <property name="minimum_size"></property>
                                                                                                         <property name="moveable">1</property>
-                                                                                                        <property name="name">m_bitmap13</property>
+                                                                                                        <property name="name">BasicSpecularTabImage</property>
                                                                                                         <property name="pane_border">1</property>
                                                                                                         <property name="pane_position"></property>
                                                                                                         <property name="pane_size"></property>

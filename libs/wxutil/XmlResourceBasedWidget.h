@@ -94,11 +94,13 @@ protected:
     {
         bool wasEnabled = oldCtrl->IsEnabled();
         auto name = oldCtrl->GetName();
+        auto minSize = oldCtrl->GetMinSize();
         oldCtrl->GetContainingSizer()->Replace(oldCtrl, newCtrl);
         oldCtrl->Destroy();
 
         newCtrl->SetName(name);
         newCtrl->Enable(wasEnabled);
+        newCtrl->SetMinSize(minSize);
         newCtrl->GetContainingSizer()->Layout();
     }
 
