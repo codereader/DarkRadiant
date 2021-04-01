@@ -215,17 +215,6 @@ Matrix4 Matrix4::getRotationForEulerXYZDegrees(const Vector3& euler)
 	return getRotationForEulerXYZ(euler_degrees_to_radians(euler));
 }
 
-// Get a scale matrix
-Matrix4 Matrix4::getScale(const Vector3& scale)
-{
-    return Matrix4::byColumns(
-        scale[0], 0, 0, 0,
-        0, scale[1], 0, 0,
-        0, 0, scale[2], 0,
-        0, 0, 0,        1
-    );
-}
-
 // Add a scale component
 void Matrix4::scaleBy(const Vector3& scale)
 {

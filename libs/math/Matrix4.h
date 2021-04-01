@@ -126,14 +126,13 @@ public:
      */
     static Matrix4 getRotationForEulerXYZDegrees(const Vector3& euler);
 
-    /**
-     * \brief
-     * Get a matrix representing the given scale in 3D space.
-     *
-     * \param scale
-     * Vector3 representing the scale.
-     */
-    static Matrix4 getScale(const Vector3& scale);
+    /// Get a matrix representing the given scale in 3D space.
+    static Matrix4 getScale(const Vector3& scale)
+    {
+        return Matrix4(
+            Transform(Eigen::Scaling(scale.x(), scale.y(), scale.z()))
+        );
+    }
 
     /**
      * \brief
