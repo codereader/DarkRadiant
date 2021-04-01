@@ -295,7 +295,11 @@ void MaterialEditor::setupMaterialTreeView()
 
 void MaterialEditor::setupBasicMaterialPage()
 {
-    convertTextCtrlToMapExpressionEntry("BasicImageFileEntry");
+    //convertTextCtrlToMapExpressionEntry("BasicImageFileEntry");
+    convertTextCtrlToMapExpressionEntry("BasicEditorImageEntry");
+    convertTextCtrlToMapExpressionEntry("BasicDiffuseImageEntry");
+    convertTextCtrlToMapExpressionEntry("BasicBumpImageEntry");
+    convertTextCtrlToMapExpressionEntry("BasicSpecularImageEntry");
 
     auto editorImgTabImage = getControl<wxStaticBitmap>("BasicEditorImageTabImage");
     replaceControl(editorImgTabImage, new TexturePreview(editorImgTabImage->GetParent(), TexturePreview::ImageType::EditorImage));
