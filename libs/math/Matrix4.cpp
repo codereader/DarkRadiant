@@ -48,17 +48,6 @@ Matrix4::Matrix4(double xx_, double xy_, double xz_, double xw_,
 
 // Named constructors
 
-// Get a translation matrix for the given vector
-Matrix4 Matrix4::getTranslation(const Vector3& translation)
-{
-    return Matrix4::byColumns(
-        1, 0, 0, 0,
-        0, 1, 0, 0,
-        0, 0, 1, 0,
-        translation.x(), translation.y(), translation.z(), 1
-    );
-}
-
 // Get a rotation from 2 vectors (named constructor)
 Matrix4 Matrix4::getRotation(const Vector3& a, const Vector3& b)
 {

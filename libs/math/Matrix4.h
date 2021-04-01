@@ -29,7 +29,7 @@ class Quaternion;
  * | xz   yz   zz   tz |
  * | xw   yw   zw   tw |
  */
-class Matrix4
+class alignas(16) Matrix4
 {
     // Underlying Eigen transform object (which can in turn be reduced to a 4x4
     // Matrix)
@@ -78,7 +78,10 @@ public:
     }
 
     /// Get a matrix representing the given 3D translation.
-    static Matrix4 getTranslation(const Vector3& translation);
+    static Matrix4 getTranslation(const Vector3& tr)
+    {
+        return Matrix4(Transform(Eigen::Translation3d(tr.x(), tr.y(), tr.z())));
+    }
 
     /**
      * \brief Construct a rotation from one vector onto another vector.

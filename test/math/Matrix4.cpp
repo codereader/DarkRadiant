@@ -112,6 +112,18 @@ TEST(MathTest, ConstructMatrixByRows)
     EXPECT_EQ(m.tw(), 32);
 }
 
+TEST(MathTest, ConstructTranslationMatrix)
+{
+    const Vector3 TRANS(1.5, -2939, 357);
+    Matrix4 tm = Matrix4::getTranslation(TRANS);
+
+    EXPECT_EQ(tm, Matrix4::byRows(1, 0, 0, TRANS.x(),
+                                  0, 1, 0, TRANS.y(),
+                                  0, 0, 1, TRANS.z(),
+                                  0, 0, 0, 1));
+    EXPECT_EQ(tm.translation(), TRANS);
+}
+
 TEST(MathTest, AccessMatrixColumnVectors)
 {
     Matrix4 m = Matrix4::byRows(1, 4, 8, -5,
