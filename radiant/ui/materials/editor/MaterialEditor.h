@@ -137,6 +137,7 @@ private:
 
     void updateBasicPageFromMaterial();
     void updateBasicImagePreview();
+    void updateBasicFrobStageControls();
     void updateStageControls();
     void updateStageBlendControls();
     void updateStageTextureControls();

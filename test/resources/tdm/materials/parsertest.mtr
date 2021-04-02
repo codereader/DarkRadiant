@@ -904,3 +904,91 @@ textures/parsertest/condition
 		map _white
 	}
 }
+
+textures/parsertest/frobstage_present1
+{
+    qer_editorimage textures/numbers/0
+    diffusemap      textures/numbers/0
+    bumpmap         textures/numbers/1
+
+    {
+        if ( parm11 > 0 )
+        blend       gl_dst_color, gl_one
+        map         _white
+        rgb         0.40 * parm11
+    }
+    {
+        if ( parm11 > 0 )
+        blend       add
+        map         textures/numbers/0
+        rgb         0.15 * parm11
+    }
+}
+
+textures/parsertest/frobstage_missing1
+{
+    diffusemap      textures/numbers/0
+    bumpmap         textures/numbers/1
+}
+
+textures/parsertest/frobstage_missing2 // has only one stage
+{
+    diffusemap      textures/numbers/0
+    bumpmap         textures/numbers/1
+
+    {
+        if ( parm11 > 0 )
+        blend       gl_dst_color, gl_one
+        map         _white
+        rgb         0.40 * parm11
+    }
+}
+
+textures/parsertest/frobstage_missing3 // has only one stage
+{
+    diffusemap      textures/numbers/0
+    bumpmap         textures/numbers/1
+
+    {
+        if ( parm11 > 0 )
+        blend       add
+        map         textures/numbers/0
+        rgb         0.15 * parm11
+    }
+}
+
+textures/parsertest/frobstage_missing4 // has no diffuse to compare
+{
+    bumpmap         textures/numbers/1
+
+    {
+        if ( parm11 > 0 )
+        blend       gl_dst_color, gl_one
+        map         _white
+        rgb         0.40 * parm11
+    }
+    {
+        if ( parm11 > 0 )
+        blend       add
+        map         textures/numbers/0
+        rgb         0.15 * parm11
+    }
+}
+
+textures/parsertest/frobstage_missing5 // mismatching map in additive stage
+{
+    diffusemap textures/numbers/0
+
+    {
+        if ( parm11 > 0 )
+        blend       gl_dst_color, gl_one
+        map         _white
+        rgb         0.40 * parm11
+    }
+    {
+        if ( parm11 > 0 )
+        blend       add
+        map         textures/numbers/1
+        rgb         0.15 * parm11
+    }
+}

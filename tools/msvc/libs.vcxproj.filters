@@ -287,6 +287,9 @@
       <Filter>stream</Filter>
     </ClInclude>
     <ClInclude Include="..\..\libs\decl\SpliceHelper.h" />
+    <ClInclude Include="..\..\libs\materials\FrobStageSetup.h">
+      <Filter>materials</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

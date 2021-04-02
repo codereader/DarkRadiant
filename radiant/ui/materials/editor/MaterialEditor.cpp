@@ -1601,6 +1601,16 @@ void MaterialEditor::updateBasicPageFromMaterial()
     auto specular = findMaterialStageByType(IShaderLayer::SPECULAR).first;
     expression = specular ? specular->getMapExpression() : shaders::IMapExpression::Ptr();
     specularImageMap->SetValue(expression ? expression->getExpressionString() : "");
+
+    updateBasicFrobStageControls();
+}
+
+void MaterialEditor::updateBasicFrobStageControls()
+{
+    auto addFrob = getControl<wxButton>("BasicAddFrobStages");
+    auto removeFrob = getControl<wxButton>("BasicRemoveFrobStages");
+
+
 }
 
 void MaterialEditor::updateBasicImagePreview()

@@ -7,6 +7,7 @@
 #include "string/trim.h"
 #include "string/join.h"
 #include "math/MatrixUtils.h"
+#include "materials/FrobStageSetup.h"
 
 namespace test
 {
@@ -1399,6 +1400,27 @@ TEST_F(MaterialsTest, MaterialParserStageCondition)
 
     auto layer = material->getAllLayers().at(0);
     EXPECT_EQ(material->getAllLayers().at(0)->getConditionExpression()->getExpressionString(), "(parm4 > 0.0)");
+}
+
+TEST_F(MaterialsTest, MaterialFrobStageDetection)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/frobstage_present1");
+    EXPECT_TRUE(shaders::FrobStageSetup::IsPresent(material));
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/frobstage_missing1");
+    EXPECT_FALSE(shaders::FrobStageSetup::IsPresent(material));
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/frobstage_missing2");
+    EXPECT_FALSE(shaders::FrobStageSetup::IsPresent(material));
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/frobstage_missing3");
+    EXPECT_FALSE(shaders::FrobStageSetup::IsPresent(material));
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/frobstage_missing4");
+    EXPECT_FALSE(shaders::FrobStageSetup::IsPresent(material));
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/frobstage_missing5");
+    EXPECT_FALSE(shaders::FrobStageSetup::IsPresent(material));
 }
 
 }
