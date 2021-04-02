@@ -300,20 +300,54 @@ void MaterialEditor::_onBasicMapEntryChanged(const std::string& entryName, IShad
         return;
     }
 
-    auto existingStage = findMaterialStageByType(type);
+    auto textCtrl = getControl<MapExpressionEntry>(entryName)->GetTextCtrl();
+    
+    auto newValue = textCtrl->GetValue().ToStdString();
 
-    if (!existingStage.first)
+    // Clearing the text control is the same as removing the stage
+    if (newValue.empty())
     {
-        // Create stage?
+        // Remove the corresponding stage
+        auto stageToRemove = findMaterialStageByType(type);
+
+        if (stageToRemove.first)
+        {
+            _material->removeLayer(stageToRemove.second);
+            updateStageListFromMaterial(); 
+            onMaterialChanged();
+            updateBasicImagePreview();
+        }
+
         return;
     }
 
-    auto stage = _material->getEditableLayer(existingStage.second);
-    
-    auto textCtrl = getControl<MapExpressionEntry>(entryName)->GetTextCtrl();
+    // Non-empty text, create the stage if necessary
+    auto existingStage = findMaterialStageByType(type);
+    IEditableShaderLayer::Ptr stage;
+    bool stageCreated = false;
+
+    if (existingStage.first)
+    {
+        stage = _material->getEditableLayer(existingStage.second);
+    }
+
+    if (!stage)
+    {
+        auto index = _material->addLayer(type);
+
+        stage = _material->getEditableLayer(index);
+        stageCreated = true;
+    }
+
     stage->setMapExpressionFromString(textCtrl->GetValue().ToStdString());
     
+    if (stageCreated)
+    {
+        updateStageListFromMaterial();
+    }
+
     updateStageControls();
+    updateBasicImagePreview();
     onMaterialChanged();
 }
 
@@ -1545,15 +1579,7 @@ void MaterialEditor::updateBasicPageFromMaterial()
         materialTypeDropdown->Select(materialTypeDropdown->FindString(surfType));
     }
 
-    auto editorImgTabImage = getControl<TexturePreview>("BasicEditorImageTabImage");
-    auto diffuseTabImage = getControl<TexturePreview>("BasicDiffuseTabImage");
-    auto bumpTabImage = getControl<TexturePreview>("BasicBumpTabImage");
-    auto specularTabImage = getControl<TexturePreview>("BasicSpecularTabImage");
-
-    editorImgTabImage->SetMaterial(_material);
-    diffuseTabImage->SetMaterial(_material);
-    bumpTabImage->SetMaterial(_material);
-    specularTabImage->SetMaterial(_material);
+    updateBasicImagePreview();
 
     auto editorImageMap = getControl<MapExpressionEntry>("BasicEditorImageEntry");
     auto diffuseImageMap = getControl<MapExpressionEntry>("BasicDiffuseImageEntry");
@@ -1574,6 +1600,19 @@ void MaterialEditor::updateBasicPageFromMaterial()
     auto specular = findMaterialStageByType(IShaderLayer::SPECULAR).first;
     expression = specular ? specular->getMapExpression() : shaders::IMapExpression::Ptr();
     specularImageMap->SetValue(expression ? expression->getExpressionString() : "");
+}
+
+void MaterialEditor::updateBasicImagePreview()
+{
+    auto editorImgTabImage = getControl<TexturePreview>("BasicEditorImageTabImage");
+    auto diffuseTabImage = getControl<TexturePreview>("BasicDiffuseTabImage");
+    auto bumpTabImage = getControl<TexturePreview>("BasicBumpTabImage");
+    auto specularTabImage = getControl<TexturePreview>("BasicSpecularTabImage");
+
+    editorImgTabImage->SetMaterial(_material);
+    diffuseTabImage->SetMaterial(_material);
+    bumpTabImage->SetMaterial(_material);
+    specularTabImage->SetMaterial(_material);
 }
 
 void MaterialEditor::updateControlsFromMaterial()

@@ -136,6 +136,7 @@ private:
     std::pair<IShaderLayer::Ptr, std::size_t> findMaterialStageByType(IShaderLayer::Type type);
 
     void updateBasicPageFromMaterial();
+    void updateBasicImagePreview();
     void updateStageControls();
     void updateStageBlendControls();
     void updateStageTextureControls();
