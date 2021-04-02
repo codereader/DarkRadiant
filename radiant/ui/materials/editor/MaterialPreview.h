@@ -43,6 +43,8 @@ public:
     const MaterialPtr& getMaterial();
     void setMaterial(const MaterialPtr& material);
 
+    void enableFrobHighlight(bool enable);
+
 protected:
     bool canDrawGrid() override;
     void setupSceneGraph() override;

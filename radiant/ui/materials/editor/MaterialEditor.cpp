@@ -413,6 +413,16 @@ void MaterialEditor::setupBasicMaterialPage()
 
     auto specularTabImage = getControl<wxStaticBitmap>("BasicSpecularTabImage");
     replaceControl(specularTabImage, new TexturePreview(specularTabImage->GetParent(), TexturePreview::ImageType::Specular));
+
+    auto addFrob = getControl<wxButton>("BasicAddFrobStages");
+    auto removeFrob = getControl<wxButton>("BasicRemoveFrobStages");
+    auto testFrob = getControl<wxButton>("BasicTestFrobStages");
+
+    addFrob->Bind(wxEVT_BUTTON, &MaterialEditor::_onBasicAddFrobStages, this);
+    removeFrob->Bind(wxEVT_BUTTON, &MaterialEditor::_onBasicRemoveFrobStages, this);
+
+    testFrob->Bind(wxEVT_LEFT_DOWN, &MaterialEditor::_onBasicTestFrobStages, this);
+    testFrob->Bind(wxEVT_LEFT_UP, &MaterialEditor::_onBasicTestFrobStages, this);
 }
 
 void MaterialEditor::setupMaterialProperties()
@@ -1616,6 +1626,9 @@ void MaterialEditor::updateBasicFrobStageControls()
 
     addFrob->Enable(materialCanBeModified && !hasFrobStages);
     removeFrob->Enable(materialCanBeModified && hasFrobStages);
+
+    auto testFrob = getControl<wxButton>("BasicTestFrobStages");
+    testFrob->Enable(materialCanBeModified && hasFrobStages);
 }
 
 void MaterialEditor::updateBasicImagePreview()
@@ -2571,6 +2584,32 @@ void MaterialEditor::convertTextCtrlToMapExpressionEntry(const std::string& ctrl
 
     auto oldCtrl = findNamedObject<wxTextCtrl>(this, ctrlName);
     replaceControl(oldCtrl, new MapExpressionEntry(oldCtrl->GetParent(), windowToPlaceDialogsOn));
+}
+
+void MaterialEditor::_onBasicAddFrobStages(wxCommandEvent& ev)
+{
+    if (!_material || !GlobalMaterialManager().materialCanBeModified(_material->getName()))
+    {
+        return;
+    }
+
+    // TODO
+}
+
+void MaterialEditor::_onBasicRemoveFrobStages(wxCommandEvent& ev)
+{
+    if (!_material || !GlobalMaterialManager().materialCanBeModified(_material->getName()))
+    {
+        return;
+    }
+
+    // TODO
+}
+
+void MaterialEditor::_onBasicTestFrobStages(wxMouseEvent& ev)
+{
+    _preview->enableFrobHighlight(ev.ButtonDown());
+    ev.Skip();
 }
 
 }

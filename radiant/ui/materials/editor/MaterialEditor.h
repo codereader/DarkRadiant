@@ -182,6 +182,9 @@ private:
     void _onDuplicateStage(wxCommandEvent& ev);
     void _onSortRequestChanged(wxCommandEvent& ev);
     void _onBasicMapEntryChanged(const std::string& entryName, IShaderLayer::Type type);
+    void _onBasicAddFrobStages(wxCommandEvent& ev);
+    void _onBasicRemoveFrobStages(wxCommandEvent& ev);
+    void _onBasicTestFrobStages(wxMouseEvent& ev);
 
     void toggleSelectedStage();
     void onMaterialChanged();

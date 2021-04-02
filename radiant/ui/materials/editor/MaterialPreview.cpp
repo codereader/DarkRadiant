@@ -154,6 +154,14 @@ void MaterialPreview::setMaterial(const MaterialPtr& material)
     queueDraw();
 }
 
+void MaterialPreview::enableFrobHighlight(bool enable)
+{
+    if (!_entity) return;
+
+    Node_getEntity(_entity)->setKeyValue("shaderParm11", enable ? "1" : "0");
+    queueDraw();
+}
+
 void MaterialPreview::onMaterialChanged()
 {
     queueDraw();
@@ -207,6 +215,9 @@ void MaterialPreview::setupSceneGraph()
 
         _entity = GlobalEntityModule().createEntity(
             GlobalEntityClassManager().findClass(FUNC_STATIC_CLASS));
+
+        // Make sure the shaderParm11 spawnarg is present
+        Node_getEntity(_entity)->setKeyValue("shaderParm11", "0");
 
         _rootNode->addChildNode(_entity);
 
