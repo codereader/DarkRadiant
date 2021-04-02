@@ -1,5 +1,6 @@
 #pragma once
 
+#include "i18n.h"
 #include "ishaders.h"
 #include "ishaderlayer.h"
 
@@ -26,6 +27,14 @@ namespace shaders
  *     rgb         0.15 * parm11
  * }
  */
+
+constexpr const char* const FrobCondition = "(parm11 > 0.0)";
+constexpr const char* const AdditiveRgbExpression = "0.15 * parm11";
+constexpr const char* const WhiteBlendRgbExpression = "0.4 * parm11";
+constexpr const char* const WhiteBlendFuncSrc = "gl_dst_color";
+constexpr const char* const WhiteBlendFuncDest = "gl_one";
+constexpr const char* const WhiteBlendMap = "_white";
+
 class FrobStageSetup
 {
 public:
@@ -34,19 +43,19 @@ public:
         for (const auto& layer : material->getAllLayers())
         {
             // if ( parm11 > 0 )
-            if (!layer->getConditionExpression() || layer->getConditionExpression()->getExpressionString() != "(parm11 > 0.0)")
+            if (!layer->getConditionExpression() || layer->getConditionExpression()->getExpressionString() != FrobCondition)
             {
                 continue;
             }
 
             // blend gl_dst_color, gl_one
-            if (layer->getBlendFuncStrings().first != "gl_dst_color" || layer->getBlendFuncStrings().second != "gl_one")
+            if (layer->getBlendFuncStrings().first != WhiteBlendFuncSrc || layer->getBlendFuncStrings().second != WhiteBlendFuncDest)
             {
                 continue;
             }
 
             // map _white
-            if (!layer->getMapExpression() || layer->getMapExpression()->getExpressionString() != "_white")
+            if (!layer->getMapExpression() || layer->getMapExpression()->getExpressionString() != WhiteBlendMap)
             {
                 continue;
             }
@@ -54,7 +63,7 @@ public:
             // rgb 0.40 * parm11
             auto rgb = layer->getColourExpression(IShaderLayer::COMP_RGB);
 
-            if (rgb && rgb->getExpressionString() == "0.4 * parm11")
+            if (rgb && rgb->getExpressionString() == WhiteBlendRgbExpression)
             {
                 return true;
             }
@@ -72,7 +81,7 @@ public:
         for (const auto& layer : material->getAllLayers())
         {
             // if ( parm11 > 0 )
-            if (!layer->getConditionExpression() || layer->getConditionExpression()->getExpressionString() != "(parm11 > 0.0)")
+            if (!layer->getConditionExpression() || layer->getConditionExpression()->getExpressionString() != FrobCondition)
             {
                 continue;
             }
@@ -92,7 +101,7 @@ public:
             // rgb 0.15 * parm11
             auto rgb = layer->getColourExpression(IShaderLayer::COMP_RGB);
 
-            if (rgb && rgb->getExpressionString() == "0.15 * parm11")
+            if (rgb && rgb->getExpressionString() == AdditiveRgbExpression)
             {
                 return true;
             }
@@ -111,7 +120,22 @@ public:
         return !diffuse.empty() && HasWhiteBlendStage(material) && HasAdditiveDiffuseStage(material);
     }
 
-private:
+    // Add the needed frob stages to this material
+    static void AddToMaterial(const MaterialPtr& material)
+    {
+        if (!material) return;
+
+        if (!HasAdditiveDiffuseStage(material))
+        {
+            AddAdditiveDiffuseStage(material);
+        }
+
+        if (!HasWhiteBlendStage(material))
+        {
+            AddWhiteBlendStage(material);
+        }
+    }
+
     static std::string GetDiffuseMap(const MaterialPtr& material)
     {
         for (const auto& layer : material->getAllLayers())
@@ -123,6 +147,36 @@ private:
         }
 
         return std::string();
+    }
+
+private:
+    static void AddAdditiveDiffuseStage(const MaterialPtr& material)
+    {
+        auto index = material->addLayer(IShaderLayer::BLEND);
+        auto stage = material->getEditableLayer(index);
+
+        auto diffuse = GetDiffuseMap(material);
+
+        if (diffuse.empty())
+        {
+            throw std::runtime_error(_("No diffusemap present, cannot add the frob stages."));
+        }
+
+        stage->setConditionExpressionFromString(FrobCondition);
+        stage->setBlendFuncStrings({ "add", "" });
+        stage->setMapExpressionFromString(diffuse);
+        stage->setColourExpressionFromString(IShaderLayer::COMP_RGB, AdditiveRgbExpression);
+    }
+
+    static void AddWhiteBlendStage(const MaterialPtr& material)
+    {
+        auto index = material->addLayer(IShaderLayer::BLEND);
+        auto stage = material->getEditableLayer(index);
+
+        stage->setConditionExpressionFromString(FrobCondition);
+        stage->setBlendFuncStrings({ WhiteBlendFuncSrc, WhiteBlendFuncDest });
+        stage->setMapExpressionFromString(WhiteBlendMap);
+        stage->setColourExpressionFromString(IShaderLayer::COMP_RGB, WhiteBlendRgbExpression);
     }
 };
 

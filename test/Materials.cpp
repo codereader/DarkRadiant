@@ -1435,4 +1435,43 @@ TEST_F(MaterialsTest, MaterialFrobStageDetection)
     EXPECT_TRUE(shaders::FrobStageSetup::HasWhiteBlendStage(material));
 }
 
+TEST_F(MaterialsTest, MaterialFrobStageAddition)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/frobstage_missing1");
+    EXPECT_FALSE(shaders::FrobStageSetup::IsPresent(material));
+
+    shaders::FrobStageSetup::AddToMaterial(material);
+    EXPECT_TRUE(shaders::FrobStageSetup::HasAdditiveDiffuseStage(material));
+    EXPECT_TRUE(shaders::FrobStageSetup::HasWhiteBlendStage(material));
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/frobstage_missing2");
+    EXPECT_FALSE(shaders::FrobStageSetup::IsPresent(material));
+
+    shaders::FrobStageSetup::AddToMaterial(material);
+    EXPECT_TRUE(shaders::FrobStageSetup::HasAdditiveDiffuseStage(material));
+    EXPECT_TRUE(shaders::FrobStageSetup::HasWhiteBlendStage(material));
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/frobstage_missing3");
+    EXPECT_FALSE(shaders::FrobStageSetup::IsPresent(material));
+
+    shaders::FrobStageSetup::AddToMaterial(material);
+    EXPECT_TRUE(shaders::FrobStageSetup::HasAdditiveDiffuseStage(material));
+    EXPECT_TRUE(shaders::FrobStageSetup::HasWhiteBlendStage(material));
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/frobstage_missing4");
+    EXPECT_FALSE(shaders::FrobStageSetup::IsPresent(material));
+
+    // Throws because there's no diffuse
+    EXPECT_THROW(shaders::FrobStageSetup::AddToMaterial(material), std::runtime_error);
+    EXPECT_FALSE(shaders::FrobStageSetup::HasAdditiveDiffuseStage(material));
+    EXPECT_TRUE(shaders::FrobStageSetup::HasWhiteBlendStage(material));
+
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/frobstage_missing5");
+    EXPECT_FALSE(shaders::FrobStageSetup::IsPresent(material));
+
+    shaders::FrobStageSetup::AddToMaterial(material);
+    EXPECT_TRUE(shaders::FrobStageSetup::HasAdditiveDiffuseStage(material));
+    EXPECT_TRUE(shaders::FrobStageSetup::HasWhiteBlendStage(material));
+}
+
 }

@@ -1624,7 +1624,8 @@ void MaterialEditor::updateBasicFrobStageControls()
     bool hasFrobStages = shaders::FrobStageSetup::IsPresent(_material);
     bool materialCanBeModified = _material && GlobalMaterialManager().materialCanBeModified(_material->getName());
 
-    addFrob->Enable(materialCanBeModified && !hasFrobStages);
+    // We can add the frob stage if a diffuse map is present
+    addFrob->Enable(materialCanBeModified && !hasFrobStages && !shaders::FrobStageSetup::GetDiffuseMap(_material).empty());
     removeFrob->Enable(materialCanBeModified && hasFrobStages);
 
     auto testFrob = getControl<wxButton>("BasicTestFrobStages");
@@ -2593,7 +2594,18 @@ void MaterialEditor::_onBasicAddFrobStages(wxCommandEvent& ev)
         return;
     }
 
-    // TODO
+    try
+    {
+        shaders::FrobStageSetup::AddToMaterial(_material);
+    }
+    catch (const std::runtime_error& ex)
+    {
+        wxutil::Messagebox::ShowError(ex.what(), this);
+        rError() << ex.what() << std::endl;
+    }
+
+    updateMaterialPropertiesFromMaterial();
+    onMaterialChanged();
 }
 
 void MaterialEditor::_onBasicRemoveFrobStages(wxCommandEvent& ev)
@@ -2603,7 +2615,19 @@ void MaterialEditor::_onBasicRemoveFrobStages(wxCommandEvent& ev)
         return;
     }
 
-    // TODO
+    try
+    {
+        // TODO
+        //shaders::FrobStageSetup::RemoveFromMaterial(_material);
+    }
+    catch (const std::runtime_error& ex)
+    {
+        wxutil::Messagebox::ShowError(ex.what(), this);
+        rError() << ex.what() << std::endl;
+    }
+    
+    updateMaterialPropertiesFromMaterial();
+    onMaterialChanged();
 }
 
 void MaterialEditor::_onBasicTestFrobStages(wxMouseEvent& ev)
