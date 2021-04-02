@@ -1756,10 +1756,15 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
 
     bool materialCanBeModified = _material && GlobalMaterialManager().materialCanBeModified(_material->getName());
 
-    getControl<wxPanel>("MaterialNameAndDescription")->Enable(materialCanBeModified);
-    getControl<wxPanel>("MaterialEditorStageSettingsPanel")->Enable(materialCanBeModified);
-    
     getControl<wxPanel>("BasicEditorPanel")->Enable(materialCanBeModified);
+    getControl<wxPanel>("MaterialNameAndDescription")->Enable(materialCanBeModified);
+    getControl<wxPanel>("MaterialEditorImagePanel")->Enable(materialCanBeModified);
+    
+    // Enable/disable the settings pages
+    for (const auto& pair : _notebookPages)
+    {
+        pair.second.first->Enable(materialCanBeModified);
+    }
 
     auto nameEntry = getControl<wxTextCtrl>("MaterialName");
     nameEntry->Enable(materialCanBeModified);
