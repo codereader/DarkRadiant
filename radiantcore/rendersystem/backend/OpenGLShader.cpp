@@ -396,14 +396,15 @@ void OpenGLShader::constructLightingPassesFromMaterial()
     DBSTriplet triplet;
     const IShaderLayerVector allLayers = _material->getAllLayers();
 
-    for (IShaderLayerVector::const_iterator i = allLayers.begin();
-         i != allLayers.end();
-         ++i)
+    for (const auto& layer : allLayers)
     {
-		// Make sure we had at least one evaluation call to fill the material registers
-		(*i)->evaluateExpressions(0);
+        // Skip programmatically disabled layers
+        if (!layer->isEnabled()) continue;
 
-        switch ((*i)->getType())
+		// Make sure we had at least one evaluation call to fill the material registers
+		layer->evaluateExpressions(0);
+
+        switch (layer->getType())
         {
         case IShaderLayer::DIFFUSE:
             if (triplet.diffuse)
@@ -411,7 +412,7 @@ void OpenGLShader::constructLightingPassesFromMaterial()
                 appendInteractionLayer(triplet);
                 triplet.reset();
             }
-            triplet.diffuse = *i;
+            triplet.diffuse = layer;
             break;
 
         case IShaderLayer::BUMP:
@@ -420,7 +421,7 @@ void OpenGLShader::constructLightingPassesFromMaterial()
                 appendInteractionLayer(triplet);
                 triplet.reset();
             }
-            triplet.bump = *i;
+            triplet.bump = layer;
             break;
 
         case IShaderLayer::SPECULAR:
@@ -429,7 +430,7 @@ void OpenGLShader::constructLightingPassesFromMaterial()
                 appendInteractionLayer(triplet);
                 triplet.reset();
             }
-            triplet.specular = *i;
+            triplet.specular = layer;
             break;
 
         case IShaderLayer::BLEND:
@@ -439,7 +440,7 @@ void OpenGLShader::constructLightingPassesFromMaterial()
                 triplet.reset();
             }
 
-            appendBlendLayer(*i);
+            appendBlendLayer(layer);
         }
     }
 

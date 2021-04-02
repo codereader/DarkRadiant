@@ -833,6 +833,7 @@ void Doom3ShaderLayer::recalculateTransformationMatrix()
 void Doom3ShaderLayer::setEnabled(bool enabled)
 {
     _enabled = enabled;
+    _material.onLayerChanged();
 }
 
 std::size_t Doom3ShaderLayer::addTransformation(TransformType type, const std::string& expression1, const std::string& expression2)
