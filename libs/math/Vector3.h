@@ -375,15 +375,6 @@ public:
 			   float_equal_epsilon(angle(other), math::PI, 0.001);
     }
 
-    // Swaps all components with the other vector
-    template<typename OtherElement>
-    void swap(BasicVector3<OtherElement>& other)
-    {
-        std::swap(x(), other.x());
-        std::swap(y(), other.y());
-        std::swap(z(), other.z());
-    }
-
     // Returns the mid-point of this vector and the other one
     BasicVector3<Element> mid(const BasicVector3<Element>& other) const
     {
@@ -409,14 +400,6 @@ public:
             static_cast<Element>(float_to_integer(y())),
             static_cast<Element>(float_to_integer(z()))
         );
-    }
-
-    /**
-     * Snaps this vector to integer values in place.
-     */
-    void snap()
-    {
-        *this = getSnapped();
     }
 
     /**
