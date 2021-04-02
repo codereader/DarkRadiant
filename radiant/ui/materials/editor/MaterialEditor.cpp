@@ -334,6 +334,28 @@ void MaterialEditor::setupBasicMaterialPage()
         onMaterialChanged();
     });
 
+    auto description = getControl<wxTextCtrl>("BasicDescription");
+    description->Bind(wxEVT_TEXT, [description, this](wxCommandEvent& ev)
+    {
+        if (_material && !_materialUpdateInProgress)
+        {
+            _material->setDescription(description->GetValue().ToStdString());
+            updateMaterialPropertiesFromMaterial();
+            onMaterialChanged();
+        }
+    });
+
+    auto* typeDropdown = getControl<wxChoice>("BasicMaterialType");
+
+    typeDropdown->AppendString(""); // empty string for undefined
+
+    for (const auto& pair : shaders::SurfaceTypeMapping)
+    {
+        typeDropdown->AppendString(pair.first);
+    }
+
+    typeDropdown->Bind(wxEVT_CHOICE, &MaterialEditor::_onMaterialTypeChoice, this);
+
     auto diffuseMapEntry = getControl<MapExpressionEntry>("BasicDiffuseImageEntry")->GetTextCtrl();
     diffuseMapEntry->Bind(wxEVT_TEXT, [this](wxCommandEvent&) { _onBasicMapEntryChanged("BasicDiffuseImageEntry", IShaderLayer::DIFFUSE); });
     auto bumpMapEntry = getControl<MapExpressionEntry>("BasicBumpImageEntry")->GetTextCtrl();
@@ -421,6 +443,7 @@ void MaterialEditor::setupMaterialProperties()
         if (_material && !_materialUpdateInProgress)
         {
             _material->setDescription(description->GetValue().ToStdString());
+            updateBasicPageFromMaterial();
             onMaterialChanged();
         }
     });
@@ -1495,6 +1518,24 @@ std::pair<IShaderLayer::Ptr, std::size_t> MaterialEditor::findMaterialStageByTyp
 
 void MaterialEditor::updateBasicPageFromMaterial()
 {
+    auto nameEntry = getControl<wxTextCtrl>("BasicName");
+    nameEntry->SetValue(_material ? _material->getName() : "");
+    
+    getControl<wxTextCtrl>("BasicDescription")->SetValue(_material ? _material->getDescription() : "");
+
+    // Type dropdown
+    auto* materialTypeDropdown = getControl<wxChoice>("BasicMaterialType");
+    
+    if (!_material || _material->getSurfaceType() == Material::SURFTYPE_DEFAULT)
+    {
+        materialTypeDropdown->Select(0);
+    }
+    else
+    {
+        auto surfType = shaders::getStringForSurfaceType(_material->getSurfaceType());
+        materialTypeDropdown->Select(materialTypeDropdown->FindString(surfType));
+    }
+
     auto editorImgTabImage = getControl<TexturePreview>("BasicEditorImageTabImage");
     auto diffuseTabImage = getControl<TexturePreview>("BasicDiffuseTabImage");
     auto bumpTabImage = getControl<TexturePreview>("BasicBumpTabImage");
@@ -1668,6 +1709,8 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
 
     getControl<wxPanel>("MaterialNameAndDescription")->Enable(materialCanBeModified);
     getControl<wxPanel>("MaterialEditorStageSettingsPanel")->Enable(materialCanBeModified);
+    
+    getControl<wxPanel>("BasicEditorPanel")->Enable(materialCanBeModified);
 
     auto nameEntry = getControl<wxTextCtrl>("MaterialName");
     nameEntry->Enable(materialCanBeModified);
@@ -2127,10 +2170,12 @@ void MaterialEditor::updateStageControls()
 
 void MaterialEditor::_onMaterialTypeChoice(wxCommandEvent& ev)
 {
-    if (!_material) return;
+    if (!_material || _materialUpdateInProgress) return;
     
-    auto selectedString = getControl<wxChoice>("MaterialType")->GetStringSelection();
+    auto selectedString = static_cast<wxChoice*>(ev.GetEventObject())->GetStringSelection();
     _material->setSurfaceType(shaders::getSurfaceTypeForString(selectedString.ToStdString()));
+
+    updateMaterialPropertiesFromMaterial();
 }
 
 void MaterialEditor::_onAddStageTransform(wxCommandEvent& ev)
