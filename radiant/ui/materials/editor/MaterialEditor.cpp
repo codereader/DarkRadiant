@@ -24,6 +24,7 @@
 #include "wxutil/dataview/ResourceTreeViewToolbar.h"
 #include "wxutil/dataview/TreeViewItemStyle.h"
 #include "wxutil/Bitmap.h"
+#include "materials/FrobStageSetup.h"
 #include <fmt/format.h>
 #include "gamelib.h"
 #include "string/join.h"
@@ -1610,7 +1611,11 @@ void MaterialEditor::updateBasicFrobStageControls()
     auto addFrob = getControl<wxButton>("BasicAddFrobStages");
     auto removeFrob = getControl<wxButton>("BasicRemoveFrobStages");
 
+    bool hasFrobStages = shaders::FrobStageSetup::IsPresent(_material);
+    bool materialCanBeModified = _material && GlobalMaterialManager().materialCanBeModified(_material->getName());
 
+    addFrob->Enable(materialCanBeModified && !hasFrobStages);
+    removeFrob->Enable(materialCanBeModified && hasFrobStages);
 }
 
 void MaterialEditor::updateBasicImagePreview()

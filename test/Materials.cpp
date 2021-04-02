@@ -1406,21 +1406,33 @@ TEST_F(MaterialsTest, MaterialFrobStageDetection)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/frobstage_present1");
     EXPECT_TRUE(shaders::FrobStageSetup::IsPresent(material));
+    EXPECT_TRUE(shaders::FrobStageSetup::HasAdditiveDiffuseStage(material));
+    EXPECT_TRUE(shaders::FrobStageSetup::HasWhiteBlendStage(material));
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/frobstage_missing1");
     EXPECT_FALSE(shaders::FrobStageSetup::IsPresent(material));
+    EXPECT_FALSE(shaders::FrobStageSetup::HasAdditiveDiffuseStage(material));
+    EXPECT_FALSE(shaders::FrobStageSetup::HasWhiteBlendStage(material));
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/frobstage_missing2");
     EXPECT_FALSE(shaders::FrobStageSetup::IsPresent(material));
+    EXPECT_FALSE(shaders::FrobStageSetup::HasAdditiveDiffuseStage(material));
+    EXPECT_TRUE(shaders::FrobStageSetup::HasWhiteBlendStage(material));
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/frobstage_missing3");
     EXPECT_FALSE(shaders::FrobStageSetup::IsPresent(material));
+    EXPECT_TRUE(shaders::FrobStageSetup::HasAdditiveDiffuseStage(material));
+    EXPECT_FALSE(shaders::FrobStageSetup::HasWhiteBlendStage(material));
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/frobstage_missing4");
     EXPECT_FALSE(shaders::FrobStageSetup::IsPresent(material));
+    EXPECT_FALSE(shaders::FrobStageSetup::HasAdditiveDiffuseStage(material));
+    EXPECT_TRUE(shaders::FrobStageSetup::HasWhiteBlendStage(material));
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/frobstage_missing5");
     EXPECT_FALSE(shaders::FrobStageSetup::IsPresent(material));
+    EXPECT_FALSE(shaders::FrobStageSetup::HasAdditiveDiffuseStage(material));
+    EXPECT_TRUE(shaders::FrobStageSetup::HasWhiteBlendStage(material));
 }
 
 }
