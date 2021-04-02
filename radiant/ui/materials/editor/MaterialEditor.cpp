@@ -1111,14 +1111,14 @@ void MaterialEditor::setupMaterialStageProperties()
     auto transformationPanel = getControl<wxPanel>("MaterialStageTransformations");
     _stageTransformations = wxutil::TreeModel::Ptr(new wxutil::TreeModel(_stageTransformationColumns, true));
 
-    _stageTransformView = wxutil::TreeView::CreateWithModel(transformationPanel, _stageTransformations.get(), wxDV_NO_HEADER);
-    _stageTransformView->AppendTextColumn("Type", _stageTransformationColumns.type.getColumnIndex(),
+    _stageTransformView = wxutil::TreeView::CreateWithModel(transformationPanel, _stageTransformations.get());
+    _stageTransformView->AppendTextColumn(_("#"), _stageTransformationColumns.index.getColumnIndex(),
         wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
-    _stageTransformView->AppendTextColumn("Index", _stageTransformationColumns.index.getColumnIndex(),
+    _stageTransformView->AppendTextColumn(_("Type"), _stageTransformationColumns.type.getColumnIndex(),
         wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
-    _stageTransformView->AppendTextColumn("Expr1", _stageTransformationColumns.expression1.getColumnIndex(),
+    _stageTransformView->AppendTextColumn(_("Expression 1"), _stageTransformationColumns.expression1.getColumnIndex(),
         wxDATAVIEW_CELL_EDITABLE, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
-    _stageTransformView->AppendTextColumn("Expr2", _stageTransformationColumns.expression2.getColumnIndex(),
+    _stageTransformView->AppendTextColumn(_("Expression 2"), _stageTransformationColumns.expression2.getColumnIndex(),
         wxDATAVIEW_CELL_EDITABLE, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
     _stageTransformView->Bind(wxEVT_DATAVIEW_ITEM_EDITING_DONE, &MaterialEditor::_onStageTransformEdited, this);
