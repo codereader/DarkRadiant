@@ -158,6 +158,7 @@ private:
     void revertCurrentMaterial();
     void copySelectedMaterial();
 
+    void _onMaterialNameChanged(wxCommandEvent& ev);
     void _onMaterialSelectionChanged(wxDataViewEvent& ev);
     void _onNewMaterial(wxCommandEvent& ev);
     void _onSaveMaterial(wxCommandEvent& ev);

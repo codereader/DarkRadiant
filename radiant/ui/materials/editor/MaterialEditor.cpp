@@ -324,6 +324,9 @@ void MaterialEditor::setupBasicMaterialPage()
     convertTextCtrlToMapExpressionEntry("BasicBumpImageEntry");
     convertTextCtrlToMapExpressionEntry("BasicSpecularImageEntry");
 
+    auto nameEntry = getControl<wxTextCtrl>("BasicName");
+    nameEntry->Bind(wxEVT_TEXT, &MaterialEditor::_onMaterialNameChanged, this);
+
     auto editorImageEntry = getControl<MapExpressionEntry>("BasicEditorImageEntry")->GetTextCtrl();
     editorImageEntry->Bind(wxEVT_TEXT, [this, editorImageEntry](wxCommandEvent&)
     { 
@@ -390,15 +393,7 @@ void MaterialEditor::setupMaterialProperties()
     convertTextCtrlToMapExpressionEntry("MaterialEditorImage");
 
     auto nameEntry = getControl<wxTextCtrl>("MaterialName");
-    nameEntry->Bind(wxEVT_TEXT, [nameEntry, this](wxCommandEvent& ev)
-    {
-        if (_materialUpdateInProgress || !_material) return;
-
-        GlobalMaterialManager().renameMaterial(_material->getName(), nameEntry->GetValue().ToStdString());
-        auto item = _treeView->GetTreeModel()->FindString(_material->getName(), _treeView->Columns().fullName);
-        _treeView->EnsureVisible(item);
-        onMaterialChanged();
-    });
+    nameEntry->Bind(wxEVT_TEXT, &MaterialEditor::_onMaterialNameChanged, this);
 
     auto editorImage = getControl<MapExpressionEntry>("MaterialEditorImage");
     _materialBindings.emplace(std::make_shared<ExpressionBinding<MaterialPtr>>(editorImage->GetTextCtrl(),
@@ -1313,6 +1308,20 @@ void MaterialEditor::handleMaterialSelectionChange()
     }
 
     updateControlsFromMaterial();
+}
+
+void MaterialEditor::_onMaterialNameChanged(wxCommandEvent& ev)
+{
+    if (_materialUpdateInProgress || !_material) return;
+
+    auto nameEntry = static_cast<wxTextCtrl*>(ev.GetEventObject());
+
+    GlobalMaterialManager().renameMaterial(_material->getName(), nameEntry->GetValue().ToStdString());
+    auto item = _treeView->GetTreeModel()->FindString(_material->getName(), _treeView->Columns().fullName);
+    _treeView->EnsureVisible(item);
+ 
+    updateMaterialPropertiesFromMaterial();
+    onMaterialChanged();
 }
 
 void MaterialEditor::_onMaterialSelectionChanged(wxDataViewEvent& ev)
