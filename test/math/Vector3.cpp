@@ -52,6 +52,14 @@ TEST(MathTest, NormaliseVector3)
     EXPECT_EQ(v, vN);
 }
 
+TEST(MathTest, AddVector3)
+{
+    Vector3 v1(2, -5, 17);
+    Vector3 v2(11, 12, -0.5);
+
+    EXPECT_EQ(v1 + v2, Vector3(13, 7, 16.5));
+}
+
 TEST(MathTest, Vector3IsPacked)
 {
     Vector3 vec(256, -10, 10000);
