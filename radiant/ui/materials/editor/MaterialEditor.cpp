@@ -368,6 +368,7 @@ void MaterialEditor::setupBasicMaterialPage()
         
         _material->setEditorImageExpressionFromString(editorImageEntry->GetValue().ToStdString());
         updateStageBlendControls();
+        updateBasicImagePreview();
         onMaterialChanged();
     });
 

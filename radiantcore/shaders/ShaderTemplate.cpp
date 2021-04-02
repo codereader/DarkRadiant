@@ -56,6 +56,8 @@ ShaderTemplate::ShaderTemplate(const ShaderTemplate& other) :
     _parseFlags(other._parseFlags),
     _guiDeclName(other._guiDeclName)
 {
+    _editorTex = other._editorTex ? MapExpression::createForString(other._editorTex->getExpressionString()) : MapExpressionPtr();
+
     _ambientRimColour[0] = other._ambientRimColour[0];
     _ambientRimColour[1] = other._ambientRimColour[1];
     _ambientRimColour[2] = other._ambientRimColour[2];
