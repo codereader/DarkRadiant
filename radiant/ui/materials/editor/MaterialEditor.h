@@ -133,6 +133,7 @@ private:
     void selectMaterial(const MaterialPtr& material);
     IShaderLayer::Ptr getSelectedStage();
     IEditableShaderLayer::Ptr getEditableStageForSelection();
+    IShaderLayer::Ptr findMaterialStageByType(IShaderLayer::Type type);
 
     void updateBasicPageFromMaterial();
     void updateStageControls();

@@ -295,7 +295,6 @@ void MaterialEditor::setupMaterialTreeView()
 
 void MaterialEditor::setupBasicMaterialPage()
 {
-    //convertTextCtrlToMapExpressionEntry("BasicImageFileEntry");
     convertTextCtrlToMapExpressionEntry("BasicEditorImageEntry");
     convertTextCtrlToMapExpressionEntry("BasicDiffuseImageEntry");
     convertTextCtrlToMapExpressionEntry("BasicBumpImageEntry");
@@ -1437,6 +1436,21 @@ void MaterialEditor::updateMaterialControlSensitivity()
     getControl<wxButton>("MaterialEditorUnlockButton")->Enable(_material && !canBeModified);
 }
 
+IShaderLayer::Ptr MaterialEditor::findMaterialStageByType(IShaderLayer::Type type)
+{
+    if (!_material) return IShaderLayer::Ptr();
+
+    for (const auto& layer : _material->getAllLayers())
+    {
+        if (layer->getType() == type)
+        {
+            return layer;
+        }
+    }
+
+    return IShaderLayer::Ptr();
+}
+
 void MaterialEditor::updateBasicPageFromMaterial()
 {
     auto editorImgTabImage = getControl<TexturePreview>("BasicEditorImageTabImage");
@@ -1448,6 +1462,26 @@ void MaterialEditor::updateBasicPageFromMaterial()
     diffuseTabImage->SetMaterial(_material);
     bumpTabImage->SetMaterial(_material);
     specularTabImage->SetMaterial(_material);
+
+    auto editorImageMap = getControl<MapExpressionEntry>("BasicEditorImageEntry");
+    auto diffuseImageMap = getControl<MapExpressionEntry>("BasicDiffuseImageEntry");
+    auto bumpImageMap = getControl<MapExpressionEntry>("BasicBumpImageEntry");
+    auto specularImageMap = getControl<MapExpressionEntry>("BasicSpecularImageEntry");
+
+    auto editorImg = _material ? _material->getEditorImageExpression() : shaders::IMapExpression::Ptr();
+    editorImageMap->SetValue(editorImg ? editorImg->getExpressionString() : "");
+
+    auto diffuse = findMaterialStageByType(IShaderLayer::DIFFUSE);
+    auto expression = diffuse ? diffuse->getMapExpression() : shaders::IMapExpression::Ptr();
+    diffuseImageMap->SetValue(expression ? expression->getExpressionString() : "");
+
+    auto bump = findMaterialStageByType(IShaderLayer::BUMP);
+    expression = bump ? bump->getMapExpression() : shaders::IMapExpression::Ptr();
+    bumpImageMap->SetValue(expression ? expression->getExpressionString() : "");
+
+    auto specular = findMaterialStageByType(IShaderLayer::SPECULAR);
+    expression = specular ? specular->getMapExpression() : shaders::IMapExpression::Ptr();
+    specularImageMap->SetValue(expression ? expression->getExpressionString() : "");
 }
 
 void MaterialEditor::updateControlsFromMaterial()
