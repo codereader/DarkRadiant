@@ -293,12 +293,53 @@ void MaterialEditor::setupMaterialTreeView()
     unlockButton->Bind(wxEVT_BUTTON, &MaterialEditor::_onUnlockMaterial, this);
 }
 
+void MaterialEditor::_onBasicMapEntryChanged(const std::string& entryName, IShaderLayer::Type type)
+{
+    if (!_material || _materialUpdateInProgress)
+    {
+        return;
+    }
+
+    auto existingStage = findMaterialStageByType(type);
+
+    if (!existingStage.first)
+    {
+        // Create stage?
+        return;
+    }
+
+    auto stage = _material->getEditableLayer(existingStage.second);
+    
+    auto textCtrl = getControl<MapExpressionEntry>(entryName)->GetTextCtrl();
+    stage->setMapExpressionFromString(textCtrl->GetValue().ToStdString());
+    
+    updateStageControls();
+    onMaterialChanged();
+}
+
 void MaterialEditor::setupBasicMaterialPage()
 {
     convertTextCtrlToMapExpressionEntry("BasicEditorImageEntry");
     convertTextCtrlToMapExpressionEntry("BasicDiffuseImageEntry");
     convertTextCtrlToMapExpressionEntry("BasicBumpImageEntry");
     convertTextCtrlToMapExpressionEntry("BasicSpecularImageEntry");
+
+    auto editorImageEntry = getControl<MapExpressionEntry>("BasicEditorImageEntry")->GetTextCtrl();
+    editorImageEntry->Bind(wxEVT_TEXT, [this, editorImageEntry](wxCommandEvent&)
+    { 
+        if (!_material || _materialUpdateInProgress) return;
+        
+        _material->setEditorImageExpressionFromString(editorImageEntry->GetValue().ToStdString());
+        updateStageBlendControls();
+        onMaterialChanged();
+    });
+
+    auto diffuseMapEntry = getControl<MapExpressionEntry>("BasicDiffuseImageEntry")->GetTextCtrl();
+    diffuseMapEntry->Bind(wxEVT_TEXT, [this](wxCommandEvent&) { _onBasicMapEntryChanged("BasicDiffuseImageEntry", IShaderLayer::DIFFUSE); });
+    auto bumpMapEntry = getControl<MapExpressionEntry>("BasicBumpImageEntry")->GetTextCtrl();
+    bumpMapEntry->Bind(wxEVT_TEXT, [this](wxCommandEvent&) { _onBasicMapEntryChanged("BasicBumpImageEntry", IShaderLayer::BUMP); });
+    auto specularMapEntry = getControl<MapExpressionEntry>("BasicSpecularImageEntry")->GetTextCtrl();
+    specularMapEntry->Bind(wxEVT_TEXT, [this](wxCommandEvent&) { _onBasicMapEntryChanged("BasicSpecularImageEntry", IShaderLayer::SPECULAR); });
 
     auto editorImgTabImage = getControl<wxStaticBitmap>("BasicEditorImageTabImage");
     replaceControl(editorImgTabImage, new TexturePreview(editorImgTabImage->GetParent(), TexturePreview::ImageType::EditorImage));
@@ -1436,19 +1477,20 @@ void MaterialEditor::updateMaterialControlSensitivity()
     getControl<wxButton>("MaterialEditorUnlockButton")->Enable(_material && !canBeModified);
 }
 
-IShaderLayer::Ptr MaterialEditor::findMaterialStageByType(IShaderLayer::Type type)
+std::pair<IShaderLayer::Ptr, std::size_t> MaterialEditor::findMaterialStageByType(IShaderLayer::Type type)
 {
-    if (!_material) return IShaderLayer::Ptr();
+    if (!_material) return std::pair<IShaderLayer::Ptr, std::size_t>();
 
-    for (const auto& layer : _material->getAllLayers())
+    const auto& layers = _material->getAllLayers();
+    for (auto i = 0; i < layers.size(); ++i)
     {
-        if (layer->getType() == type)
+        if (layers[i]->getType() == type)
         {
-            return layer;
+            return std::make_pair(layers[i], i);
         }
     }
 
-    return IShaderLayer::Ptr();
+    return std::pair<IShaderLayer::Ptr, std::size_t>();
 }
 
 void MaterialEditor::updateBasicPageFromMaterial()
@@ -1471,15 +1513,15 @@ void MaterialEditor::updateBasicPageFromMaterial()
     auto editorImg = _material ? _material->getEditorImageExpression() : shaders::IMapExpression::Ptr();
     editorImageMap->SetValue(editorImg ? editorImg->getExpressionString() : "");
 
-    auto diffuse = findMaterialStageByType(IShaderLayer::DIFFUSE);
+    auto diffuse = findMaterialStageByType(IShaderLayer::DIFFUSE).first;
     auto expression = diffuse ? diffuse->getMapExpression() : shaders::IMapExpression::Ptr();
     diffuseImageMap->SetValue(expression ? expression->getExpressionString() : "");
 
-    auto bump = findMaterialStageByType(IShaderLayer::BUMP);
+    auto bump = findMaterialStageByType(IShaderLayer::BUMP).first;
     expression = bump ? bump->getMapExpression() : shaders::IMapExpression::Ptr();
     bumpImageMap->SetValue(expression ? expression->getExpressionString() : "");
 
-    auto specular = findMaterialStageByType(IShaderLayer::SPECULAR);
+    auto specular = findMaterialStageByType(IShaderLayer::SPECULAR).first;
     expression = specular ? specular->getMapExpression() : shaders::IMapExpression::Ptr();
     specularImageMap->SetValue(expression ? expression->getExpressionString() : "");
 }

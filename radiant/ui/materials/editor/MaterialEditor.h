@@ -133,7 +133,7 @@ private:
     void selectMaterial(const MaterialPtr& material);
     IShaderLayer::Ptr getSelectedStage();
     IEditableShaderLayer::Ptr getEditableStageForSelection();
-    IShaderLayer::Ptr findMaterialStageByType(IShaderLayer::Type type);
+    std::pair<IShaderLayer::Ptr, std::size_t> findMaterialStageByType(IShaderLayer::Type type);
 
     void updateBasicPageFromMaterial();
     void updateStageControls();
@@ -178,6 +178,7 @@ private:
     void _onToggleStage(wxCommandEvent& ev);
     void _onDuplicateStage(wxCommandEvent& ev);
     void _onSortRequestChanged(wxCommandEvent& ev);
+    void _onBasicMapEntryChanged(const std::string& entryName, IShaderLayer::Type type);
 
     void toggleSelectedStage();
     void onMaterialChanged();
