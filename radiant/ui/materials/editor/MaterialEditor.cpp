@@ -2402,7 +2402,11 @@ void MaterialEditor::toggleSelectedStage()
 
     wxutil::TreeModel::Row row(_stageView->GetSelection(), *_stageList);
 
-    if (!_material || row[STAGE_COLS().global].getBool()) return;
+    if (!_material || !GlobalMaterialManager().materialCanBeModified(_material->getName()) ||
+        row[STAGE_COLS().global].getBool())
+    {
+        return;
+    }
 
     auto stage = getEditableStageForSelection();
 
