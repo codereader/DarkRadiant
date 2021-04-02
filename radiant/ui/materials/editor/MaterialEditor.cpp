@@ -2617,8 +2617,7 @@ void MaterialEditor::_onBasicRemoveFrobStages(wxCommandEvent& ev)
 
     try
     {
-        // TODO
-        //shaders::FrobStageSetup::RemoveFromMaterial(_material);
+        shaders::FrobStageSetup::RemoveFromMaterial(_material);
     }
     catch (const std::runtime_error& ex)
     {

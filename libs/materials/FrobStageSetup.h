@@ -40,74 +40,12 @@ class FrobStageSetup
 public:
     static bool HasWhiteBlendStage(const MaterialPtr& material)
     {
-        for (const auto& layer : material->getAllLayers())
-        {
-            // if ( parm11 > 0 )
-            if (!layer->getConditionExpression() || layer->getConditionExpression()->getExpressionString() != FrobCondition)
-            {
-                continue;
-            }
-
-            // blend gl_dst_color, gl_one
-            if (layer->getBlendFuncStrings().first != WhiteBlendFuncSrc || layer->getBlendFuncStrings().second != WhiteBlendFuncDest)
-            {
-                continue;
-            }
-
-            // map _white
-            if (!layer->getMapExpression() || layer->getMapExpression()->getExpressionString() != WhiteBlendMap)
-            {
-                continue;
-            }
-
-            // rgb 0.40 * parm11
-            auto rgb = layer->getColourExpression(IShaderLayer::COMP_RGB);
-
-            if (rgb && rgb->getExpressionString() == WhiteBlendRgbExpression)
-            {
-                return true;
-            }
-        }
-
-        return false;
+        return FindWhiteBlendStage(material).first != nullptr;
     }
 
     static bool HasAdditiveDiffuseStage(const MaterialPtr& material)
     {
-        auto diffuse = GetDiffuseMap(material);
-
-        if (diffuse.empty()) return false;
-
-        for (const auto& layer : material->getAllLayers())
-        {
-            // if ( parm11 > 0 )
-            if (!layer->getConditionExpression() || layer->getConditionExpression()->getExpressionString() != FrobCondition)
-            {
-                continue;
-            }
-
-            // blend add
-            if (layer->getBlendFuncStrings().first != "add" || !layer->getBlendFuncStrings().second.empty())
-            {
-                continue;
-            }
-
-            // map <diffuse>
-            if (!layer->getMapExpression() || layer->getMapExpression()->getExpressionString() != diffuse)
-            {
-                continue;
-            }
-
-            // rgb 0.15 * parm11
-            auto rgb = layer->getColourExpression(IShaderLayer::COMP_RGB);
-
-            if (rgb && rgb->getExpressionString() == AdditiveRgbExpression)
-            {
-                return true;
-            }
-        }
-
-        return false;
+        return FindAdditiveDiffuseStage(material).first != nullptr;
     }
 
     // Checks whether the default frob stages are present on this material
@@ -136,6 +74,26 @@ public:
         }
     }
 
+    // Removes the two frob stages from this material
+    static void RemoveFromMaterial(const MaterialPtr& material)
+    {
+        if (!material) return;
+
+        auto additiveStage = FindAdditiveDiffuseStage(material);
+
+        if (additiveStage.second > 0)
+        {
+            material->removeLayer(static_cast<std::size_t>(additiveStage.second));
+        }
+
+        auto whiteBlendStage = FindWhiteBlendStage(material);
+
+        if (whiteBlendStage.second > 0)
+        {
+            material->removeLayer(static_cast<std::size_t>(whiteBlendStage.second));
+        }
+    }
+
     static std::string GetDiffuseMap(const MaterialPtr& material)
     {
         for (const auto& layer : material->getAllLayers())
@@ -150,6 +108,85 @@ public:
     }
 
 private:
+    static std::pair<IShaderLayer::Ptr, int> FindWhiteBlendStage(const MaterialPtr& material)
+    {
+        const auto& layers = material->getAllLayers();
+
+        for (int index = 0; index < layers.size(); ++index)
+        {
+            const auto& layer = layers[index];
+
+            // if ( parm11 > 0 )
+            if (!layer->getConditionExpression() || layer->getConditionExpression()->getExpressionString() != FrobCondition)
+            {
+                continue;
+            }
+
+            // blend gl_dst_color, gl_one
+            if (layer->getBlendFuncStrings().first != WhiteBlendFuncSrc || layer->getBlendFuncStrings().second != WhiteBlendFuncDest)
+            {
+                continue;
+            }
+
+            // map _white
+            if (!layer->getMapExpression() || layer->getMapExpression()->getExpressionString() != WhiteBlendMap)
+            {
+                continue;
+            }
+
+            // rgb 0.40 * parm11
+            auto rgb = layer->getColourExpression(IShaderLayer::COMP_RGB);
+
+            if (rgb && rgb->getExpressionString() == WhiteBlendRgbExpression)
+            {
+                return std::make_pair(layer, index);
+            }
+        }
+
+        return std::make_pair(IShaderLayer::Ptr(), -1);
+    }
+
+    static std::pair<IShaderLayer::Ptr, int> FindAdditiveDiffuseStage(const MaterialPtr& material)
+    {
+        auto diffuse = GetDiffuseMap(material);
+
+        if (diffuse.empty()) return std::make_pair(IShaderLayer::Ptr(), -1);
+
+        const auto& layers = material->getAllLayers();
+        for (int index = 0; index < layers.size(); ++index)
+        {
+            const auto& layer = layers[index];
+
+            // if ( parm11 > 0 )
+            if (!layer->getConditionExpression() || layer->getConditionExpression()->getExpressionString() != FrobCondition)
+            {
+                continue;
+            }
+
+            // blend add
+            if (layer->getBlendFuncStrings().first != "add" || !layer->getBlendFuncStrings().second.empty())
+            {
+                continue;
+            }
+
+            // map <diffuse>
+            if (!layer->getMapExpression() || layer->getMapExpression()->getExpressionString() != diffuse)
+            {
+                continue;
+            }
+
+            // rgb 0.15 * parm11
+            auto rgb = layer->getColourExpression(IShaderLayer::COMP_RGB);
+
+            if (rgb && rgb->getExpressionString() == AdditiveRgbExpression)
+            {
+                return std::make_pair(layer, index);
+            }
+        }
+
+        return std::make_pair(IShaderLayer::Ptr(), -1);
+    }
+
     static void AddAdditiveDiffuseStage(const MaterialPtr& material)
     {
         auto index = material->addLayer(IShaderLayer::BLEND);

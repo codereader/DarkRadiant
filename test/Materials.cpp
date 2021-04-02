@@ -1474,4 +1474,23 @@ TEST_F(MaterialsTest, MaterialFrobStageAddition)
     EXPECT_TRUE(shaders::FrobStageSetup::HasWhiteBlendStage(material));
 }
 
+void checkFrobStageRemoval(const std::string& materialName)
+{
+    auto material = GlobalMaterialManager().getMaterial(materialName);
+
+    shaders::FrobStageSetup::RemoveFromMaterial(material);
+    EXPECT_FALSE(shaders::FrobStageSetup::HasAdditiveDiffuseStage(material));
+    EXPECT_FALSE(shaders::FrobStageSetup::HasWhiteBlendStage(material));
+}
+
+TEST_F(MaterialsTest, MaterialFrobStageRemoval)
+{
+    checkFrobStageRemoval("textures/parsertest/frobstage_present1");
+    checkFrobStageRemoval("textures/parsertest/frobstage_missing1");
+    checkFrobStageRemoval("textures/parsertest/frobstage_missing2");
+    checkFrobStageRemoval("textures/parsertest/frobstage_missing3");
+    checkFrobStageRemoval("textures/parsertest/frobstage_missing4");
+    checkFrobStageRemoval("textures/parsertest/frobstage_missing5");
+}
+
 }
