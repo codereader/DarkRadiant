@@ -926,7 +926,7 @@ void MaterialEditor::setupMaterialStageProperties()
             if (_stageUpdateInProgress) return;
             stage->setMapExpressionFromString(value);
         },
-        [this]() { onMaterialChanged(); },
+        [this]() { onMaterialChanged(); updateBasicPageFromMaterial(); },
         std::bind(&MaterialEditor::getEditableStageForSelection, this)));
 
     setupStageFlag("MaterialStageFlagMaskRed", IShaderLayer::FLAG_MASK_RED);
@@ -2604,7 +2604,7 @@ void MaterialEditor::_onBasicAddFrobStages(wxCommandEvent& ev)
         rError() << ex.what() << std::endl;
     }
 
-    updateMaterialPropertiesFromMaterial();
+    updateControlsFromMaterial();
     onMaterialChanged();
 }
 
@@ -2625,7 +2625,7 @@ void MaterialEditor::_onBasicRemoveFrobStages(wxCommandEvent& ev)
         rError() << ex.what() << std::endl;
     }
     
-    updateMaterialPropertiesFromMaterial();
+    updateControlsFromMaterial();
     onMaterialChanged();
 }
 
