@@ -3,6 +3,7 @@
 #include "i18n.h"
 #include "ishaders.h"
 #include "ishaderlayer.h"
+#include "string/predicate.h"
 
 namespace shaders
 {
@@ -128,8 +129,8 @@ private:
                 continue;
             }
 
-            // map _white
-            if (!layer->getMapExpression() || layer->getMapExpression()->getExpressionString() != WhiteBlendMap)
+            // map _white (or _white.tga)
+            if (!layer->getMapExpression() || !string::starts_with(layer->getMapExpression()->getExpressionString(), WhiteBlendMap))
             {
                 continue;
             }

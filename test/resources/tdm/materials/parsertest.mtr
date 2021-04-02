@@ -925,6 +925,26 @@ textures/parsertest/frobstage_present1
     }
 }
 
+textures/parsertest/frobstage_present2 // is using _white.tga instead _white
+{
+    qer_editorimage textures/numbers/0
+    diffusemap      textures/numbers/0
+    bumpmap         textures/numbers/1
+
+    {
+        if ( parm11 > 0 )
+        blend       gl_dst_color, gl_one
+        map         _white.tga
+        rgb         0.40 * parm11
+    }
+    {
+        if ( parm11 > 0 )
+        blend       add
+        map         textures/numbers/0
+        rgb         0.15 * parm11
+    }
+}
+
 textures/parsertest/frobstage_missing1
 {
     diffusemap      textures/numbers/0
