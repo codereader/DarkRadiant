@@ -368,16 +368,6 @@ public:
         return _v;
     }
 
-    // Returns the maximum absolute value of the components
-    Element max() const {
-        return std::max(fabs(_v[0]), std::max(fabs(_v[1]), fabs(_v[2])));
-    }
-
-    // Returns the minimum absolute value of the components
-    Element min() const {
-        return std::min(fabs(_v[0]), std::min(fabs(_v[1]), fabs(_v[2])));
-    }
-
     template<typename OtherT>
     bool isParallel(const BasicVector3<OtherT>& other) const
 	{
