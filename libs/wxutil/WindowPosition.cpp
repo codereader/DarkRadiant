@@ -110,6 +110,12 @@ void WindowPosition::applyPosition()
 {
 	if (_window == nullptr) return;
 
+    if (_size[0] == 0 || _size[1] == 0)
+    {
+        // Don't apply empty sizes
+        return;
+    }
+
 	// On multi-monitor setups, wxWidgets offers a virtual big screen with
 	// coordinates going from 0,0 to whatever lower-rightmost point there is
 

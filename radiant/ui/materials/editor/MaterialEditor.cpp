@@ -169,7 +169,7 @@ MaterialEditor::MaterialEditor() :
     setupMaterialDeformPage();
 
     // Set the default size of the window
-    FitToScreen(0.8f, 0.6f);
+    FitToScreen(0.8f, 0.9f);
 
     Layout();
     Fit();
