@@ -51,7 +51,11 @@ GLenum glBlendFromString(const std::string& value)
 BlendFunc blendFuncFromStrings(const StringPair& blendFunc)
 {
     // Handle predefined blend modes first: add, modulate, filter
-    if (blendFunc.first == "add")
+    if (blendFunc.first == "diffusemap" || blendFunc.first == "bumpmap" || blendFunc.first == "specularmap")
+    {
+        return BlendFunc(GL_ONE, GL_ZERO);
+    }
+    else if (blendFunc.first == "add")
     {
         return BlendFunc(GL_ONE, GL_ONE);
     }
