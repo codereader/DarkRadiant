@@ -547,6 +547,7 @@ void OpenGLShader::appendBlendLayer(const IShaderLayer::Ptr& layer)
     state.setRenderFlag(RENDER_FILL);
     state.setRenderFlag(RENDER_BLEND);
     state.setRenderFlag(RENDER_DEPTHTEST);
+    state.setDepthFunc(GL_LEQUAL);
 
 	// Remember the stage for later evaluation of shader expressions
 	state.stage0 = layer;
