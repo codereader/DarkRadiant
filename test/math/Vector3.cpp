@@ -38,6 +38,20 @@ TEST(MathTest, VectorLength)
     EXPECT_NEAR(v3.getLength(), sqrt(3*3 + 4*4 + 5*5), 1E-6);
 }
 
+TEST(MathTest, NormaliseVector3)
+{
+    Vector3 v(10, 5, 4);
+    Vector3 vN = v.getNormalised();
+
+    // getNormalised should return correct result and not change the original
+    EXPECT_EQ(vN, v * 1.0/v.getLength());
+    EXPECT_NE(vN, v);
+
+    // Normalise in place gives same result
+    v.normalise();
+    EXPECT_EQ(v, vN);
+}
+
 TEST(MathTest, Vector3IsPacked)
 {
     Vector3 vec(256, -10, 10000);

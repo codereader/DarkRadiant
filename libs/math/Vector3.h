@@ -260,27 +260,29 @@ public:
     }
 
     /**
-     * Return a new BasicVector3 equivalent to the normalised version of this
-     * BasicVector3 (scaled by the inverse of its size)
-     */
-    BasicVector3<Element> getNormalised() const {
-        return (*this)/getLength();
-    }
+     * \brief Normalise this vector in-place by scaling by the inverse of its
+     * size.
 
-    /**
-     * Normalise this vector in-place by scaling by the inverse of its size.
-     * Returns the length it had before normalisation.
+     * \return The length of the vector before normalisation.
      */
-    float normalise()
+    Element normalise()
     {
-        float length = getLength();
-        float inverseLength = 1/length;
+        Element length = getLength();
+        Element inverseLength = 1/length;
 
         _v[0] *= inverseLength;
         _v[1] *= inverseLength;
         _v[2] *= inverseLength;
 
         return length;
+    }
+
+    /// Return the result of normalising this vector
+    BasicVector3<Element> getNormalised() const
+    {
+        BasicVector3<Element> copy = *this;
+        copy.normalise();
+        return copy;
     }
 
     // Returns a vector with the reciprocal values of each component
