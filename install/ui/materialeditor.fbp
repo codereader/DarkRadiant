@@ -2948,7 +2948,7 @@
                                                                                 <property name="window_extra_style"></property>
                                                                                 <property name="window_name"></property>
                                                                                 <property name="window_style">wxTAB_TRAVERSAL</property>
-                                                                                <object class="wxFlexGridSizer" expanded="1">
+                                                                                <object class="wxFlexGridSizer" expanded="0">
                                                                                     <property name="cols">2</property>
                                                                                     <property name="flexible_direction">wxBOTH</property>
                                                                                     <property name="growablecols">1</property>

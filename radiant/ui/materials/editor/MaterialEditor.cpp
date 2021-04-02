@@ -292,6 +292,16 @@ void MaterialEditor::setupMaterialTreeView()
     auto unlockButton = getControl<wxButton>("MaterialEditorUnlockButton");
     unlockButton->Disable();
     unlockButton->Bind(wxEVT_BUTTON, &MaterialEditor::_onUnlockMaterial, this);
+    unlockButton->Bind(wxEVT_ENTER_WINDOW, [unlockButton](wxMouseEvent&)
+    {
+        if (!unlockButton->IsEnabled()) { return; }
+        unlockButton->SetForegroundColour(wxNullColour);
+    });
+    unlockButton->Bind(wxEVT_LEAVE_WINDOW, [unlockButton](wxMouseEvent&)
+    {
+        if (!unlockButton->IsEnabled()) { return; }
+        unlockButton->SetForegroundColour(*wxWHITE);
+    });
 }
 
 void MaterialEditor::_onBasicMapEntryChanged(const std::string& entryName, IShaderLayer::Type type)
@@ -1552,7 +1562,12 @@ void MaterialEditor::updateMaterialControlSensitivity()
     getControl<wxButton>("MaterialEditorCopyDefButton")->Enable(_material != nullptr);
     getControl<wxButton>("MaterialEditorRevertButton")->Enable(_material && _material->isModified());
 
-    getControl<wxButton>("MaterialEditorUnlockButton")->Enable(_material && !canBeModified);
+    auto unlockButton = getControl<wxButton>("MaterialEditorUnlockButton");
+    unlockButton->Show(_material != nullptr);
+    unlockButton->Enable(_material && !canBeModified);
+    unlockButton->SetBackgroundColour(unlockButton->IsEnabled() ? wxColour(255, 70, 70) : wxNullColour);
+    unlockButton->SetLabelText(unlockButton->IsEnabled() ? _("Unlock Editing") : _("Is editable"));
+    unlockButton->SetForegroundColour(unlockButton->IsEnabled() ? *wxWHITE : wxNullColour);
 }
 
 std::pair<IShaderLayer::Ptr, std::size_t> MaterialEditor::findMaterialStageByType(IShaderLayer::Type type)
