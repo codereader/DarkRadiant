@@ -60,7 +60,31 @@ TEST(MathTest, AddVector3)
     EXPECT_EQ(v1 + v2, Vector3(13, 7, 16.5));
 }
 
-TEST(MathTest, Vector3IsPacked)
+TEST(MathTest, AddVector4)
+{
+    Vector4 v1(10, 0.25, -60, 11);
+    Vector4 v2(0, -18, 276, 0.75);
+
+    EXPECT_EQ(v1 + v2, Vector4(10, -17.75, 216, 11.75));
+}
+
+TEST(MathTest, SubtractVector3)
+{
+    Vector3 v1(-9, 14.5, 650);
+    Vector3 v2(4, 18, -7.5);
+
+    EXPECT_EQ(v1 - v2, Vector3(-13, -3.5, 657.5));
+}
+
+TEST(MathTest, SubtractVector4)
+{
+    Vector4 v1(0, 96, 457, -3.5);
+    Vector4 v2(0.125, 4, 7.5, 90);
+
+    EXPECT_EQ(v1 - v2, Vector4(-0.125, 92, 449.5, -93.5));
+}
+
+TEST(MathTest, Vector3AsCArray)
 {
     Vector3 vec(256, -10, 10000);
 
@@ -75,7 +99,7 @@ TEST(MathTest, Vector3IsPacked)
     EXPECT_EQ(array[2], 10000);
 }
 
-TEST(MathTest, Vector3fIsPacked)
+TEST(MathTest, Vector3fAsCArray)
 {
     Vector3f vec(-0.5, 485, 0);
 
