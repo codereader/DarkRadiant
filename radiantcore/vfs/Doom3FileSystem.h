@@ -6,6 +6,8 @@
 namespace vfs
 {
 
+class AssetsList;
+
 class Doom3FileSystem :
 	public VirtualFileSystem
 {
@@ -67,6 +69,7 @@ public:
 	void removeObserver(Observer& observer) override;
 
 	const SearchPaths& getVfsSearchPaths() override;
+    FileInfo getFileInfo(const std::string& vfsRelativePath) override;
 
 	// RegisterableModule implementation
 	const std::string& getName() const override;
@@ -77,6 +80,8 @@ public:
 private:
 	void initDirectory(const std::string& path);
 	void initPakFile(const std::string& filename);
+
+    std::shared_ptr<AssetsList> findAssetsList(const std::string& topLevelPath);
 };
 
 }

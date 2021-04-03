@@ -209,4 +209,35 @@ TEST_F(VfsTest, VisitEachFileInAbsolutePath)
     EXPECT_EQ(foundFiles.count("materials/___NONEXISTENTFILE.mtr"), 0);
 }
 
+TEST_F(VfsTest, GetFileInfo)
+{
+    // Use a visitor to walk the tree
+    std::map<std::string, vfs::FileInfo> foundFiles;
+
+    auto info = GlobalFileSystem().getFileInfo("models/moss_patch.ase");
+    EXPECT_FALSE(info.isEmpty());
+    EXPECT_TRUE(info.getIsPhysicalFile());
+    EXPECT_EQ(info.visibility, vfs::Visibility::NORMAL);
+
+    info = GlobalFileSystem().getFileInfo("materials/example.mtr");
+    EXPECT_FALSE(info.isEmpty());
+    EXPECT_TRUE(info.getIsPhysicalFile());
+    EXPECT_EQ(info.visibility, vfs::Visibility::NORMAL);
+
+    // Unit cube should be hidden
+    info = GlobalFileSystem().getFileInfo("models/darkmod/test/unit_cube.ase");
+    EXPECT_FALSE(info.isEmpty());
+    EXPECT_FALSE(info.getIsPhysicalFile());
+    EXPECT_EQ(info.visibility, vfs::Visibility::HIDDEN);
+
+    info = GlobalFileSystem().getFileInfo("models/darkmod/test/unit_cube.lwo");
+    EXPECT_FALSE(info.isEmpty());
+    EXPECT_FALSE(info.getIsPhysicalFile());
+    EXPECT_EQ(info.visibility, vfs::Visibility::NORMAL);
+
+    info = GlobalFileSystem().getFileInfo("nonexistentfile.lwo");
+    EXPECT_TRUE(info.isEmpty());
+    EXPECT_EQ(info.visibility, vfs::Visibility::HIDDEN);
+}
+
 }

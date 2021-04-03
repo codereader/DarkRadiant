@@ -18,8 +18,7 @@ namespace archive
  * Archives are owned and instantiated by the GlobalFileSystem instance.
  */
 class ZipArchive final :
-	public IArchive,
-    public IArchiveFileInfoProvider
+	public IArchive
 {
 private:
 	class ZipRecord

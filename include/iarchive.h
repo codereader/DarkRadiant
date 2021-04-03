@@ -81,7 +81,8 @@ typedef std::shared_ptr<ArchiveTextFile> ArchiveTextFilePtr;
  * 
  * \ingroup vfs
  */
-class IArchive
+class IArchive :
+    public IArchiveFileInfoProvider
 {
 public:
     typedef std::shared_ptr<IArchive> Ptr;

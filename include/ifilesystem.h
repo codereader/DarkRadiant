@@ -63,8 +63,11 @@ private:
     // Info provider to load additional info on demand, used by e.g. getSize()
     IArchiveFileInfoProvider* _infoProvider;
 public:
-    FileInfo(const std::string& topDir_, const std::string& name_,
-        Visibility visibility_) :
+    FileInfo() :
+        FileInfo(std::string(), std::string(), Visibility::HIDDEN)
+    {}
+
+    FileInfo(const std::string& topDir_, const std::string& name_, Visibility visibility_) :
         _infoProvider(nullptr),
         topDir(topDir_),
         name(name_),
@@ -89,6 +92,11 @@ public:
 
     /// Visibility of the file
     Visibility visibility = Visibility::NORMAL;
+
+    bool isEmpty() const
+    {
+        return name.empty();
+    }
 
     /// Return the full mod-relative path, including the containing directory
     std::string fullPath() const
@@ -250,6 +258,10 @@ public:
 
 	// Returns the list of registered VFS paths, ordered by search priority
 	virtual const SearchPaths& getVfsSearchPaths() = 0;
+
+    // Gets the file info structure for the given VFS file.
+    // The info structure will be empty if the file was not located in the current VFS tree
+    virtual vfs::FileInfo getFileInfo(const std::string& vfsRelativePath) = 0;
 };
 
 }

@@ -10,8 +10,7 @@
  * added to the list of PK4 archives, using this class.
  */
 class DirectoryArchive final :
-	public IArchive,
-    public IArchiveFileInfoProvider
+	public IArchive
 {
 	std::string _root;
 

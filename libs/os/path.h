@@ -228,6 +228,29 @@ namespace os
 		return path.substr(0, lastSlash + 1);
 	}
 
+    /**
+     * Returns the outermost directory name of the given path, which must be
+     * provided in standardised form (forward slashes only).
+     * 
+     * E.g. 
+     * blah/bleh/file.ext   -> "blah/"
+	 * blah/bloog           -> "blah/"
+     * blah                 -> ""
+     * test.mtr             -> ""
+     * ""                   -> ""
+     */
+    inline std::string getToplevelDirectory(const std::string& path)
+    {
+        std::size_t firstSlash = path.find('/');
+
+        if (firstSlash == std::string::npos)
+        {
+            return std::string();
+        }
+
+        return path.substr(0, firstSlash + 1); // include the slash
+    }
+
 	/**
 	 * Returns true if the given string qualifies as path to a directory,
 	 * which is equal to the path string ending with the slash '/' character.

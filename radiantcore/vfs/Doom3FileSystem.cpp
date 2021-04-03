@@ -197,6 +197,34 @@ int Doom3FileSystem::getFileCount(const std::string& filename)
     return count;
 }
 
+FileInfo Doom3FileSystem::getFileInfo(const std::string& vfsRelativePath)
+{
+    for (const ArchiveDescriptor& descriptor : _archives)
+    {
+        if (!descriptor.archive->containsFile(vfsRelativePath))
+        {
+            continue;
+        }
+
+        // Determine the visibility of this file
+        auto topLevelDir = os::getToplevelDirectory(vfsRelativePath);
+
+        auto visibility = Visibility::NORMAL;
+        auto assetsList = findAssetsList(topLevelDir);
+
+        if (assetsList)
+        {
+            // Information in the assets list file are relative to the top-level dir
+            auto relativePath = os::getRelativePath(vfsRelativePath, topLevelDir);
+            visibility = assetsList->getVisibility(relativePath);
+        }
+
+        return FileInfo("", vfsRelativePath, visibility, *descriptor.archive);
+    }
+
+    return FileInfo();
+}
+
 ArchiveFilePtr Doom3FileSystem::openFile(const std::string& filename)
 {
     if (filename.find("\\") != std::string::npos)
@@ -271,6 +299,15 @@ IArchive::Ptr Doom3FileSystem::openArchiveInAbsolutePath(const std::string& path
     return std::make_shared<archive::ZipArchive>(pathToArchive);
 }
 
+std::shared_ptr<AssetsList> Doom3FileSystem::findAssetsList(const std::string& topLevelDir)
+{
+    // Look for an assets.lst in the top-level dir (can be an empty empty)
+    std::string assetsLstName = topLevelDir + AssetsList::FILENAME;
+
+    ArchiveTextFilePtr assetsLstFile = openTextFile(assetsLstName);
+    return std::make_shared<AssetsList>(assetsLstFile);
+}
+
 void Doom3FileSystem::forEachFile(const std::string& basedir,
                                   const std::string& extension,
                                   const VisitorFunc& visitorFunc,
@@ -279,13 +316,11 @@ void Doom3FileSystem::forEachFile(const std::string& basedir,
     std::string dirWithSlash = os::standardPathWithSlash(basedir);
 
     // Look for an assets.lst in the base dir
-    std::string assetsLstName = dirWithSlash + AssetsList::FILENAME;
-    ArchiveTextFilePtr assetsLstFile = openTextFile(assetsLstName);
-    AssetsList assetsList(assetsLstFile);
+    auto assetsList = findAssetsList(dirWithSlash);
 
     // Construct our FileVisitor filtering out the right elements
     FileVisitor fileVisitor(visitorFunc, dirWithSlash, extension, depth);
-    fileVisitor.setAssetsList(assetsList);
+    fileVisitor.setAssetsList(*assetsList);
 
     // Visit each Archive, applying the FileVisitor to each one (which in
     // turn calls the callback for each matching file.

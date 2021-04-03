@@ -62,4 +62,16 @@ TEST(PathTests, RemoveFileExtension)
     EXPECT_EQ(os::removeExtension("dds/textures/darkmod/test.dds"), "dds/textures/darkmod/test");
 }
 
+TEST(PathTests, GetToplevelDirectory)
+{
+    EXPECT_EQ(os::getToplevelDirectory(""), "");
+    EXPECT_EQ(os::getToplevelDirectory("file55"), "");
+    EXPECT_EQ(os::getToplevelDirectory("file.tga"), "");
+    EXPECT_EQ(os::getToplevelDirectory("dir22/"), "dir22/");
+    EXPECT_EQ(os::getToplevelDirectory("relativefolder/file.tga"), "relativefolder/");
+    EXPECT_EQ(os::getToplevelDirectory("c:/absolutepath/tork.bak"), "c:/");
+    EXPECT_EQ(os::getToplevelDirectory("/absolutepath/tork.doc"), "/");
+    EXPECT_EQ(os::getToplevelDirectory("dds/textures/darkmod/test.dds"), "dds/");
+}
+
 }
