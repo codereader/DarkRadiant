@@ -15,6 +15,21 @@ TEST(MathTest, ConstructVector3)
     EXPECT_EQ(vec.z(), 3.5);
 }
 
+TEST(MathTest, DefaultConstructVector3)
+{
+    Vector3 vec;
+
+    EXPECT_EQ(vec, Vector3(0, 0, 0));
+}
+
+TEST(MathTest, ConstructVector3FromArray)
+{
+    double values[3] = { 1.0, 14.0, -96.5 };
+    Vector3 vec(values);
+
+    EXPECT_EQ(vec, Vector3(1.0, 14.0, -96.5));
+}
+
 TEST(MathTest, PromoteVector3To4)
 {
     Vector3 v3(8, 12, -5);
@@ -29,6 +44,24 @@ TEST(MathTest, DemoteVector4To3)
     Vector3 v3 = v4.getVector3();
 
     EXPECT_EQ(v3, Vector3(1, -96, 0.125));
+}
+
+TEST(MathTest, Vector3EqualityComparison)
+{
+    Vector3 v1(1, 2, 8);
+    Vector3 v1a(1, 2, 8);
+    Vector3 v2(9, 14, -0.5);
+
+    EXPECT_EQ(v1, v1);
+    EXPECT_EQ(v1, v1a);
+    EXPECT_NE(v1, v2);
+}
+
+TEST(MathTest, NegateVector3)
+{
+    Vector3 vec(5, 10, 125);
+
+    EXPECT_EQ(-vec, Vector3(-5, -10, -125));
 }
 
 TEST(MathTest, VectorLength)

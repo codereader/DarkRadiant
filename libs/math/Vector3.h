@@ -119,15 +119,10 @@ public:
         return !(*this == other);
     }
 
-    /*  Define the negation operator -
-     *  All the vector's components are negated
-     */
-    BasicVector3<T> operator- () const {
-        return BasicVector3<T>(
-            -_v[0],
-            -_v[1],
-            -_v[2]
-        );
+    /// Return the componentwise negation of this vector
+    BasicVector3<T> operator- () const
+    {
+        return BasicVector3<T>(-_v[0], -_v[1], -_v[2]);
     }
 
     /*  Define the addition operators + and += with any other BasicVector3 of type OtherElement
