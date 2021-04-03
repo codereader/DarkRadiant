@@ -423,7 +423,10 @@ public:
 };
 
 /// Multiply vector components with a scalar and return the result
-template <typename T, typename S>
+template <
+    typename T, typename S,
+    typename = typename std::enable_if<std::is_arithmetic<S>::value, S>::type
+>
 BasicVector3<T> operator*(const BasicVector3<T>& v, S s)
 {
     T factor = static_cast<T>(s);
@@ -431,8 +434,11 @@ BasicVector3<T> operator*(const BasicVector3<T>& v, S s)
 }
 
 /// Multiply vector components with a scalar and return the result
-template <typename T>
-BasicVector3<T> operator*(T s, const BasicVector3<T>& v)
+template <
+    typename T, typename S,
+    typename = typename std::enable_if<std::is_arithmetic<S>::value, S>::type
+>
+BasicVector3<T> operator*(S s, const BasicVector3<T>& v)
 {
     return v * s;
 }

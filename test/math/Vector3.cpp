@@ -117,6 +117,17 @@ TEST(MathTest, SubtractVector4)
     EXPECT_EQ(v1 - v2, Vector4(-0.125, 92, 449.5, -93.5));
 }
 
+TEST(MathTest, ScalarMultiplyVector3)
+{
+    Vector3 vec(2, 4, -5);
+
+    EXPECT_EQ(vec * 2, Vector3(4, 8, -10));
+    EXPECT_EQ(2 * vec, Vector3(4, 8, -10));
+
+    EXPECT_EQ(vec * 0.5, Vector3(1, 2, -2.5));
+    EXPECT_EQ(0.5 * vec, Vector3(1, 2, -2.5));
+}
+
 TEST(MathTest, Vector3AsCArray)
 {
     Vector3 vec(256, -10, 10000);
