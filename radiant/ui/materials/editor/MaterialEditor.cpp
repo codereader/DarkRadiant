@@ -327,6 +327,7 @@ void MaterialEditor::_onBasicMapEntryChanged(const std::string& entryName, IShad
             updateStageListFromMaterial(); 
             onMaterialChanged();
             updateBasicImagePreview();
+            updateBasicFrobStageControls();
         }
 
         return;
@@ -359,6 +360,7 @@ void MaterialEditor::_onBasicMapEntryChanged(const std::string& entryName, IShad
 
     updateStageControls();
     updateBasicImagePreview();
+    updateBasicFrobStageControls();
     onMaterialChanged();
 }
 
@@ -380,6 +382,7 @@ void MaterialEditor::setupBasicMaterialPage()
         _material->setEditorImageExpressionFromString(editorImageEntry->GetValue().ToStdString());
         updateStageBlendControls();
         updateBasicImagePreview();
+        updateBasicFrobStageControls();
         onMaterialChanged();
     });
 
