@@ -1271,6 +1271,9 @@ bool MaterialEditor::saveCurrentMaterial()
     {
         // Write to the specified .mtr file
         GlobalMaterialManager().saveMaterial(_material->getName());
+
+        _material = GlobalMaterialManager().getMaterial(_material->getName());
+        selectMaterial(_material);
     }
     catch (const std::runtime_error& ex)
     {

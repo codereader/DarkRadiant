@@ -532,7 +532,12 @@ void Doom3ShaderSystem::saveMaterial(const std::string& name)
     material->commitModifications();
 
     // Update the template in our library
-    _library->replaceDefinition(material->getName(), ShaderDefinition{ material->getTemplate(), material->getShaderFileInfo() });
+    // Re-acquire the vfs::FileInfo structure which might still be empty for a newly created material
+    _library->replaceDefinition(material->getName(), ShaderDefinition
+    { 
+        material->getTemplate(), 
+        GlobalFileSystem().getFileInfo(material->getShaderFileInfo().fullPath())
+    });
 }
 
 ITableDefinition::Ptr Doom3ShaderSystem::getTable(const std::string& name)
