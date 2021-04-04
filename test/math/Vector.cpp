@@ -128,6 +128,17 @@ TEST(MathTest, ScalarMultiplyVector3)
     EXPECT_EQ(0.5 * vec, Vector3(1, 2, -2.5));
 }
 
+TEST(MathTest, ScalarMultiplyVector4)
+{
+    Vector4 vec(8, -14, 26, 1.8);
+
+    EXPECT_EQ(vec * 2, Vector4(16, -28, 52, 3.6));
+    EXPECT_EQ(2 * vec, Vector4(16, -28, 52, 3.6));
+
+    EXPECT_EQ(vec * 0.5, Vector4(4, -7, 13, 0.9));
+    EXPECT_EQ(0.5 * vec, Vector4(4, -7, 13, 0.9));
+}
+
 TEST(MathTest, Vector3AsCArray)
 {
     Vector3 vec(256, -10, 10000);

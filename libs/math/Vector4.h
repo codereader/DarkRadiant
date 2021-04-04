@@ -184,17 +184,6 @@ public:
     /*  Define the multiplications * and *= with a scalar
      */
     template<typename OtherElement>
-    BasicVector4<Element> operator* (const OtherElement& other) const {
-        Element factor = static_cast<Element>(other);
-        return BasicVector4<Element>(
-            _v[0] * factor,
-            _v[1] * factor,
-            _v[2] * factor,
-            _v[3] * factor
-        );
-    }
-
-    template<typename OtherElement>
 	BasicVector4<Element>& operator*= (const OtherElement& other) {
         Element factor = static_cast<Element>(other);
         _v[0] *= factor;
@@ -318,6 +307,26 @@ public:
     }
 
 }; // BasicVector4
+
+/// Multiply BasicVector4 with a scalar
+template <
+    typename T, typename S,
+    typename = typename std::enable_if<std::is_arithmetic<S>::value, S>::type
+>
+BasicVector4<T> operator*(const BasicVector4<T>& v, S s)
+{
+    return BasicVector4<T>(v.x() * s, v.y() * s, v.z() * s, v.w() * s);
+}
+
+/// Multiply BasicVector3 with a scalar
+template <
+    typename T, typename S,
+    typename = typename std::enable_if<std::is_arithmetic<S>::value, S>::type
+>
+BasicVector4<T> operator*(S s, const BasicVector4<T>& v)
+{
+    return v * s;
+}
 
 /// Stream insertion for BasicVector4
 template<typename T>
