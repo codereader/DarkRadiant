@@ -116,26 +116,6 @@ public:
         return BasicVector3<T>(-_v[0], -_v[1], -_v[2]);
     }
 
-    /*  Define the substraction operators - and -= with any other BasicVector3 of type OtherElement
-     *  The vectors are substracted from each other element-wise
-     */
-    template<typename OtherElement>
-    BasicVector3<T> operator- (const BasicVector3<OtherElement>& other) const {
-        return BasicVector3<T>(
-            _v[0] - static_cast<T>(other.x()),
-            _v[1] - static_cast<T>(other.y()),
-            _v[2] - static_cast<T>(other.z())
-        );
-    }
-
-    template<typename OtherElement>
-	BasicVector3<T>& operator-= (const BasicVector3<OtherElement>& other) {
-        _v[0] -= static_cast<T>(other.x());
-        _v[1] -= static_cast<T>(other.y());
-        _v[2] -= static_cast<T>(other.z());
-		return *this;
-    }
-
     /*  Define the multiplication operators * and *= with another Vector3 of type OtherElement
      *
      *  The vectors are multiplied element-wise
@@ -416,10 +396,9 @@ BasicVector3<T> operator*(S s, const BasicVector3<T>& v)
 
 /// Multiply vector components with a scalar and modify in place
 template <typename T, typename S>
-BasicVector3<T>& operator*=(BasicVector3<T>& v, S other)
+BasicVector3<T>& operator*=(BasicVector3<T>& v, S s)
 {
-    T factor = static_cast<T>(other);
-    v.set(v.x() * factor, v.y() * factor, v.z() * factor);
+    v = v * s;
     return v;
 }
 
@@ -434,9 +413,22 @@ BasicVector3<T> operator+(const BasicVector3<T>& v1, const BasicVector3<T>& v2)
 template <typename T>
 BasicVector3<T>& operator+=(BasicVector3<T>& v1, const BasicVector3<T>& v2)
 {
-    v1.x() += v2.x();
-    v1.y() += v2.y();
-    v1.z() += v2.z();
+    v1 = v1 + v2;
+    return v1;
+}
+
+/// Componentwise subtraction of two vectors
+template <typename T>
+BasicVector3<T> operator-(const BasicVector3<T>& v1, const BasicVector3<T>& v2)
+{
+    return BasicVector3<T>(v1.x() - v2.x(), v1.y() - v2.y(), v1.z() - v2.z());
+}
+
+/// Componentwise vector subtraction in place
+template<typename T>
+BasicVector3<T>& operator-= (BasicVector3<T>& v1, const BasicVector3<T>& v2)
+{
+    v1 = v1 - v2;
     return v1;
 }
 

@@ -120,9 +120,17 @@ TEST(MathTest, AddVector4)
 TEST(MathTest, SubtractVector3)
 {
     Vector3 v1(-9, 14.5, 650);
-    Vector3 v2(4, 18, -7.5);
+    const Vector3 v1Orig = v1;
+    const Vector3 v2(4, 18, -7.5);
 
-    EXPECT_EQ(v1 - v2, Vector3(-13, -3.5, 657.5));
+    // Subtract and return
+    const Vector3 diff = v1 - v2;
+    EXPECT_EQ(diff, Vector3(-13, -3.5, 657.5));
+
+    // Subtract in place
+    EXPECT_EQ(v1, v1Orig);
+    v1 -= v2;
+    EXPECT_EQ(v1, diff);
 }
 
 TEST(MathTest, SubtractVector4)
@@ -136,12 +144,19 @@ TEST(MathTest, SubtractVector4)
 TEST(MathTest, ScalarMultiplyVector3)
 {
     Vector3 vec(2, 4, -5);
+    const Vector3 vecOrig = vec;
 
+    // Multiply and return
     EXPECT_EQ(vec * 2, Vector3(4, 8, -10));
     EXPECT_EQ(2 * vec, Vector3(4, 8, -10));
 
     EXPECT_EQ(vec * 0.5, Vector3(1, 2, -2.5));
     EXPECT_EQ(0.5 * vec, Vector3(1, 2, -2.5));
+
+    // Multiply in place
+    EXPECT_EQ(vec, vecOrig);
+    vec *= 3;
+    EXPECT_EQ(vec, Vector3(6, 12, -15));
 }
 
 TEST(MathTest, ScalarMultiplyVector4)
