@@ -66,9 +66,13 @@ TEST(MathTest, NegateVector3)
 
 TEST(MathTest, VectorLength)
 {
-    Vector3 v3(3, 4, 5);
-    EXPECT_EQ(v3.getLengthSquared(), 3*3 + 4*4 + 5*5);
-    EXPECT_NEAR(v3.getLength(), sqrt(3*3 + 4*4 + 5*5), 1E-6);
+    const Vector3 vA(3, 4, 5);
+    EXPECT_EQ(vA.getLengthSquared(), 3*3 + 4*4 + 5*5);
+    EXPECT_EQ(vA.getLength(), sqrt(3*3 + 4*4 + 5*5));
+
+    const Vector3 vB(-2, 0.5, 16);
+    EXPECT_EQ(vB.getLengthSquared(), 4 + 0.25 + 256);
+    EXPECT_EQ(vB.getLength(), sqrt(4 + 0.25 + 256));
 }
 
 TEST(MathTest, NormaliseVector3)

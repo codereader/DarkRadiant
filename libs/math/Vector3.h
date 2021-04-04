@@ -158,17 +158,15 @@ public:
     }
 
     /// Return the Pythagorean length of this vector.
-    float getLength() const {
-        float lenSquared = getLengthSquared();
-        return sqrt(lenSquared);
+    double getLength() const
+    {
+        return sqrt(getLengthSquared());
     }
 
     /// Return the squared length of this vector.
-    float getLengthSquared() const {
-        float lenSquared = float(_v[0]) * float(_v[0]) +
-                            float(_v[1]) * float(_v[1]) +
-                            float(_v[2]) * float(_v[2]);
-        return lenSquared;
+    T getLengthSquared() const
+    {
+        return dot(*this);
     }
 
     /**
