@@ -246,7 +246,6 @@ void expectVertexWithNormal(const model::IModelSurface& surface, const Vertex3f&
 
 TEST_F(AseImportTest, VertexNormals)
 {
-    // Test Cube doesn't have any offset
     auto model = GlobalModelCache().getModel("models/ase/testcube.ase");
     EXPECT_EQ(model->getSurfaceCount(), 1);
 
@@ -274,6 +273,33 @@ TEST_F(AseImportTest, VertexNormals)
     expectVertexWithNormal(model->getSurface(0), Vertex3f(-16, 16, 16), Normal3f(0, 0, 1));
     expectVertexWithNormal(model->getSurface(0), Vertex3f(16, 16, 16), Normal3f(0, 0, 1));
     expectVertexWithNormal(model->getSurface(0), Vertex3f(16, -16, 16), Normal3f(0, 0, 1));
+}
+
+void expectVertexWithColour(const model::IModelSurface& surface, const Vertex3f& vertex, const Vector3& colour)
+{
+    EXPECT_TRUE(surfaceHasVertexWith(surface, [&](const ArbitraryMeshVertex& v)->bool
+    {
+        return v.vertex.isEqual(vertex, 1e-5) && v.colour.isEqual(colour, 1e-5);
+    })) << "Could not find a vertex with xyz = " << vertex << " and colour " << colour;
+}
+
+TEST_F(AseImportTest, VertexColours)
+{
+    auto model = GlobalModelCache().getModel("models/ase/tiles_with_shared_vertex_and_colour.ase");
+    EXPECT_EQ(model->getSurfaceCount(), 1);
+
+    // Check for a few specific vertex/colour combinations
+    expectVertexWithColour(model->getSurface(0), Vertex3f(56, 56, 2), Vector3(0, 0, 0));
+    expectVertexWithColour(model->getSurface(0), Vertex3f(56, 18, 2), Vector3(0, 0, 0));
+    expectVertexWithColour(model->getSurface(0), Vertex3f(19, 18, 2), Vector3(251 / 255.0, 251 / 255.0, 251 / 255.0));
+    expectVertexWithColour(model->getSurface(0), Vertex3f(19, 56, 2), Vector3(1, 1, 1));
+    expectVertexWithColour(model->getSurface(0), Vertex3f(-19, -19, 2), Vector3(0, 0, 0));
+    expectVertexWithColour(model->getSurface(0), Vertex3f(19, -19, 2), Vector3(0, 0, 0));
+    expectVertexWithColour(model->getSurface(0), Vertex3f(-19, 56, 2), Vector3(0, 0, 0));
+    expectVertexWithColour(model->getSurface(0), Vertex3f(19, 56, 2), Vector3(1, 1, 1));
+    expectVertexWithColour(model->getSurface(0), Vertex3f(-19, 18, 2), Vector3(235 / 255.0, 235 / 255.0, 235 / 255.0));
+    expectVertexWithColour(model->getSurface(0), Vertex3f(56, -19, 2), Vector3(188 / 255.0, 188 / 255.0, 188 / 255.0));
+    expectVertexWithColour(model->getSurface(0), Vertex3f(19, -19, 2), Vector3(0, 0, 0));
 }
 
 }
