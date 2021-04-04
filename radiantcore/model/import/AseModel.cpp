@@ -296,7 +296,7 @@ picoSurface_t* PicoModelFindOrAddSurface( picoModel_t *model, picoShader_t* shad
 	}
 }
 
-static void _ase_submit_triangles( model::AseModel& model , aseMaterial_t* materials , aseVertex_t* vertices, aseTexCoord_t* texcoords, aseColor_t* colors, aseFace_t* faces, int numFaces )
+static void _ase_submit_triangles( model::AseModel& model , aseMaterial_t* materials , std::vector<ArbitraryMeshVertex>& vertices, aseTexCoord_t* texcoords, aseColor_t* colors, aseFace_t* faces, int numFaces )
 {
 	aseFacesIter_t i = faces, end = faces + numFaces;
 	for(; i != end; ++i)
@@ -309,12 +309,12 @@ static void _ase_submit_triangles( model::AseModel& model , aseMaterial_t* mater
 		}
 
 		{
-			picoVec3_t* xyz[3];
-			picoVec3_t* normal[3];
+			Vertex3f* xyz[3];
+			Normal3f* normal[3];
 			picoVec2_t* stRef[3];
 			picoVec2_t st[3];
 			picoColor_t* color[3];
-			picoIndex_t smooth[3];
+			//picoIndex_t smooth[3];
 			double u,v;
 
 			double materialSin = sin(subMtl->uvAngle);
@@ -324,7 +324,7 @@ static void _ase_submit_triangles( model::AseModel& model , aseMaterial_t* mater
 			/* we pull the data from the vertex, color and texcoord arrays using the face index data */
 			for ( j = 0 ; j < 3 ; j ++ )
 			{
-				xyz[j]    = &vertices[(*i).indices[j]].xyz;
+				xyz[j]    = &vertices[(*i).indices[j]].vertex;
 				normal[j] = &vertices[(*i).indices[j]].normal;
 
                 /* greebo: Apply shift, scale and rotation */
@@ -346,7 +346,7 @@ static void _ase_submit_triangles( model::AseModel& model , aseMaterial_t* mater
 					color[j] = &white;
 				}
 
-				smooth[j] = (vertices[(*i).indices[j]].id * (1 << 16)) + (*i).smoothingGroup; /* don't merge vertices */
+				//smooth[j] = (vertices[(*i).indices[j]].id * (1 << 16)) + (*i).smoothingGroup; /* don't merge vertices */
 
 			}
 
@@ -412,9 +412,9 @@ std::shared_ptr<AseModel> AseModel::CreateFromStream(std::istream& stream)
     auto model = std::make_shared<AseModel>();
 
 	picoParser_t   *p;
-	char			lastNodeName[ 1024 ];
 
-	aseVertex_t* vertices = NULL;
+    std::vector<ArbitraryMeshVertex> vertices;
+	
 	aseTexCoord_t* texcoords = NULL;
 	aseColor_t* colors = NULL;
 	aseFace_t* faces = NULL;
@@ -431,7 +431,7 @@ std::shared_ptr<AseModel> AseModel::CreateFromStream(std::istream& stream)
 	/* helper */
 	#define _ase_error_return(m) \
 	{ \
-		throw parser::ParseException(fmt::format("{0} in ASE, line {0:d}.", m ,p->curLine)); \
+		throw parser::ParseException(fmt::format("{0} in ASE, line {0:d}.", m, p->curLine)); \
 		_pico_free_parser( p ); \
 		return model; \
 	}
@@ -444,9 +444,6 @@ std::shared_ptr<AseModel> AseModel::CreateFromStream(std::istream& stream)
 	/* create a new pico parser */
 	p = _pico_new_parser( (picoByte_t *)stringBuffer.c_str(), static_cast<int>(stringBuffer.length()));
 	if (p == NULL) return NULL;
-
-	/* initialize some stuff */
-	memset( lastNodeName,0,sizeof(lastNodeName) );
 
 	/* parse ase model file */
 	while( 1 )
@@ -472,9 +469,6 @@ std::shared_ptr<AseModel> AseModel::CreateFromStream(std::istream& stream)
 			char *ptr = _pico_parse( p,0 );
 			if (ptr == NULL)
 				_ase_error_return("Node name parse error");
-
-			/* remember node name */
-			strncpy( lastNodeName,ptr,sizeof(lastNodeName)-1 );
 		}
 		/* model mesh (originally contained within geomobject) */
 		else if (!_pico_stricmp(p->token,"*mesh"))
@@ -482,12 +476,11 @@ std::shared_ptr<AseModel> AseModel::CreateFromStream(std::istream& stream)
 			/* finish existing surface */
 			_ase_submit_triangles(*model, materials, vertices, texcoords, colors, faces, numFaces);
 			_pico_free(faces);
-			_pico_free(vertices);
 			_pico_free(texcoords);
 			_pico_free(colors);
 			colors = NULL; /* OrbWeaver: reset all pointers to avoid double-free */
 			faces = NULL;
-			vertices = NULL;
+			vertices.clear();
 			texcoords = NULL;
 		}
 		else if (!_pico_stricmp(p->token,"*mesh_numvertex"))
@@ -495,7 +488,7 @@ std::shared_ptr<AseModel> AseModel::CreateFromStream(std::istream& stream)
 			if (!_pico_parse_int( p, &numVertices) )
 				_ase_error_return("Missing MESH_NUMVERTEX value");
 
-			vertices = (aseVertex_t*)_pico_calloc(numVertices, sizeof(aseVertex_t));
+			vertices.resize(numVertices);
 		}
 		else if (!_pico_stricmp(p->token,"*mesh_numfaces"))
 		{
@@ -562,7 +555,7 @@ std::shared_ptr<AseModel> AseModel::CreateFromStream(std::istream& stream)
 			/* get vertex data (orig: index +y -x +z) */
 			if (!_pico_parse_int( p,&index ))
 				_ase_error_return("Vertex parse error");
-			if (!_pico_parse_vec( p,vertices[index].xyz ))
+			if (!_pico_parse_vec( p,vertices[index].vertex ))
 				_ase_error_return("Vertex parse error");
 
 			if (index >= numVertices)
@@ -570,7 +563,7 @@ std::shared_ptr<AseModel> AseModel::CreateFromStream(std::istream& stream)
 				_ase_error_return("Error: MESH_VERTEX index out of bounds (is >= MESH_NUMVERTEX)");
 			}
 
-			vertices[index].id = vertexId++;
+			//vertices[index].id = vertexId++;
 		}
 		/* model mesh vertex normal */
 		else if (!_pico_stricmp(p->token,"*mesh_vertexnormal"))
@@ -1176,7 +1169,6 @@ std::shared_ptr<AseModel> AseModel::CreateFromStream(std::istream& stream)
 	/* ydnar: finish existing surface */
 	_ase_submit_triangles(*model, materials, vertices, texcoords, colors, faces, numFaces);
 	_pico_free(faces);
-	_pico_free(vertices);
 	_pico_free(texcoords);
 	_pico_free(colors);
 
