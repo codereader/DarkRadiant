@@ -4,7 +4,7 @@
 #include "os/path.h"
 #include "string/case_conv.h"
 
-#include "../picomodel/StaticModel.h"
+#include "../StaticModel.h"
 #include "../picomodel/PicoModelLoader.h"
 
 extern "C"

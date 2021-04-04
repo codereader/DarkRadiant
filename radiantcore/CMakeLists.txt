@@ -158,9 +158,9 @@ add_library(radiantcore MODULE
             model/import/ModelImporterBase.cpp
             model/picomodel/PicoModelLoader.cpp
             model/picomodel/PicoModelModule.cpp
-            model/picomodel/StaticModel.cpp
-            model/picomodel/StaticModelNode.cpp
-            model/picomodel/StaticModelSurface.cpp
+            model/StaticModel.cpp
+            model/StaticModelNode.cpp
+            model/StaticModelSurface.cpp
             model/picomodel/lib/lwo/clip.c
             model/picomodel/lib/lwo/envelope.c
             model/picomodel/lib/lwo/list.c

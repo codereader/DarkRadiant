@@ -1,7 +1,7 @@
 #pragma once
 
 #include "GLProgramAttributes.h"
-#include "lib/picomodel.h"
+#include "picomodel/lib/picomodel.h"
 #include "render.h"
 #include "math/AABB.h"
 

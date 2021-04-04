@@ -994,15 +994,6 @@
     <ClCompile Include="..\..\radiantcore\eclass\EClassColourManager.cpp">
       <Filter>src\eclass</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiantcore\model\picomodel\StaticModel.cpp">
-      <Filter>src\model\picomodel</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiantcore\model\picomodel\StaticModelNode.cpp">
-      <Filter>src\model\picomodel</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiantcore\model\picomodel\StaticModelSurface.cpp">
-      <Filter>src\model\picomodel</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiantcore\rendersystem\GLFont.cpp">
       <Filter>src\rendersystem</Filter>
     </ClCompile>
@@ -1035,6 +1026,15 @@
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\model\import\ModelImporterBase.cpp">
       <Filter>src\model\import</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\model\StaticModel.cpp">
+      <Filter>src\model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\model\StaticModelNode.cpp">
+      <Filter>src\model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\model\StaticModelSurface.cpp">
+      <Filter>src\model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2058,15 +2058,6 @@
     <ClInclude Include="..\..\radiantcore\eclass\EClassColourManager.h">
       <Filter>src\eclass</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\model\picomodel\StaticModel.h">
-      <Filter>src\model\picomodel</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\model\picomodel\StaticModelNode.h">
-      <Filter>src\model\picomodel</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\model\picomodel\StaticModelSurface.h">
-      <Filter>src\model\picomodel</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\rendersystem\GLFont.h">
       <Filter>src\rendersystem</Filter>
     </ClInclude>
@@ -2111,6 +2102,15 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\model\import\ModelImporterBase.h">
       <Filter>src\model\import</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\model\StaticModel.h">
+      <Filter>src\model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\model\StaticModelNode.h">
+      <Filter>src\model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\model\StaticModelSurface.h">
+      <Filter>src\model</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../import/ModelImporterBase.h"
-#include "StaticModel.h"
+#include "../StaticModel.h"
 
 typedef struct picoModule_s picoModule_t;
 typedef struct picoSurface_s picoSurface_t;

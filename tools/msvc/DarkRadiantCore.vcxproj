@@ -581,9 +581,9 @@
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\model\picomodel\PicoModelLoader.cpp" />
     <ClCompile Include="..\..\radiantcore\model\picomodel\PicoModelModule.cpp" />
-    <ClCompile Include="..\..\radiantcore\model\picomodel\StaticModel.cpp" />
-    <ClCompile Include="..\..\radiantcore\model\picomodel\StaticModelNode.cpp" />
-    <ClCompile Include="..\..\radiantcore\model\picomodel\StaticModelSurface.cpp" />
+    <ClCompile Include="..\..\radiantcore\model\StaticModel.cpp" />
+    <ClCompile Include="..\..\radiantcore\model\StaticModelNode.cpp" />
+    <ClCompile Include="..\..\radiantcore\model\StaticModelSurface.cpp" />
     <ClCompile Include="..\..\radiantcore\particles\ParticleDef.cpp" />
     <ClCompile Include="..\..\radiantcore\particles\ParticleNode.cpp" />
     <ClCompile Include="..\..\radiantcore\particles\ParticleParameter.cpp" />
@@ -897,9 +897,9 @@
     <ClInclude Include="..\..\radiantcore\model\picomodel\lib\pm_fm.h" />
     <ClInclude Include="..\..\radiantcore\model\picomodel\PicoModelLoader.h" />
     <ClInclude Include="..\..\radiantcore\model\picomodel\PicoModelModule.h" />
-    <ClInclude Include="..\..\radiantcore\model\picomodel\StaticModel.h" />
-    <ClInclude Include="..\..\radiantcore\model\picomodel\StaticModelNode.h" />
-    <ClInclude Include="..\..\radiantcore\model\picomodel\StaticModelSurface.h" />
+    <ClInclude Include="..\..\radiantcore\model\StaticModel.h" />
+    <ClInclude Include="..\..\radiantcore\model\StaticModelNode.h" />
+    <ClInclude Include="..\..\radiantcore\model\StaticModelSurface.h" />
     <ClInclude Include="..\..\radiantcore\particles\ParticleDef.h" />
     <ClInclude Include="..\..\radiantcore\particles\ParticleNode.h" />
     <ClInclude Include="..\..\radiantcore\particles\ParticleParameter.h" />

@@ -10,8 +10,8 @@
 
 #include "idatastream.h"
 #include "string/case_conv.h"
-#include "StaticModel.h"
-#include "StaticModelSurface.h"
+#include "../StaticModel.h"
+#include "../StaticModelSurface.h"
 
 namespace model {
 
