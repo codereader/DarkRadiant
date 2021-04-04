@@ -1027,6 +1027,12 @@
     <ClCompile Include="..\..\radiantcore\shaders\MaterialSourceGenerator.cpp">
       <Filter>src\shaders</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\model\picomodel\AseModelLoader.cpp">
+      <Filter>src\model\picomodel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\model\picomodel\ModelImporterBase.cpp">
+      <Filter>src\model\picomodel</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
@@ -2096,6 +2102,12 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\shaders\MaterialSourceGenerator.h">
       <Filter>src\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\model\picomodel\AseModelLoader.h">
+      <Filter>src\model\picomodel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\model\picomodel\ModelImporterBase.h">
+      <Filter>src\model\picomodel</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

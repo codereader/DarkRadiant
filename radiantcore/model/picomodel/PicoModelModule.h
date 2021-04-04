@@ -13,6 +13,7 @@
 
 #include "string/case_conv.h"
 #include "PicoModelLoader.h"
+#include "AseModelLoader.h"
 
 namespace model
 {
@@ -70,6 +71,8 @@ public:
 				}
 			}
 		}
+
+        GlobalModelFormatManager().registerImporter(std::make_shared<AseModelLoader>());
 	}
 
 private:

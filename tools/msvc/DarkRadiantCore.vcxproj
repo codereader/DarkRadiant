@@ -163,6 +163,7 @@
     <ClCompile Include="..\..\radiantcore\model\ModelFormatManager.cpp" />
     <ClCompile Include="..\..\radiantcore\model\NullModel.cpp" />
     <ClCompile Include="..\..\radiantcore\model\NullModelNode.cpp" />
+    <ClCompile Include="..\..\radiantcore\model\picomodel\AseModelLoader.cpp" />
     <ClCompile Include="..\..\radiantcore\model\picomodel\lib\lwo\clip.c">
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsC</CompileAs>
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsC</CompileAs>
@@ -577,6 +578,7 @@
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </ForcedIncludeFiles>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\model\picomodel\ModelImporterBase.cpp" />
     <ClCompile Include="..\..\radiantcore\model\picomodel\PicoModelLoader.cpp" />
     <ClCompile Include="..\..\radiantcore\model\picomodel\PicoModelModule.cpp" />
     <ClCompile Include="..\..\radiantcore\model\picomodel\StaticModel.cpp" />
@@ -887,10 +889,12 @@
     <ClInclude Include="..\..\radiantcore\model\NullModel.h" />
     <ClInclude Include="..\..\radiantcore\model\NullModelLoader.h" />
     <ClInclude Include="..\..\radiantcore\model\NullModelNode.h" />
+    <ClInclude Include="..\..\radiantcore\model\picomodel\AseModelLoader.h" />
     <ClInclude Include="..\..\radiantcore\model\picomodel\lib\lwo\lwo2.h" />
     <ClInclude Include="..\..\radiantcore\model\picomodel\lib\picointernal.h" />
     <ClInclude Include="..\..\radiantcore\model\picomodel\lib\picomodel.h" />
     <ClInclude Include="..\..\radiantcore\model\picomodel\lib\pm_fm.h" />
+    <ClInclude Include="..\..\radiantcore\model\picomodel\ModelImporterBase.h" />
     <ClInclude Include="..\..\radiantcore\model\picomodel\PicoModelLoader.h" />
     <ClInclude Include="..\..\radiantcore\model\picomodel\PicoModelModule.h" />
     <ClInclude Include="..\..\radiantcore\model\picomodel\StaticModel.h" />

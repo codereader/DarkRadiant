@@ -8,70 +8,23 @@
 
 #include "os/path.h"
 
-#include "StaticModelNode.h"
-
 #include "idatastream.h"
 #include "string/case_conv.h"
+#include "StaticModel.h"
 
 namespace model {
 
-namespace {
-	// name may be absolute or relative
-	inline std::string rootPath(const std::string& name) {
-		return GlobalFileSystem().findRoot(
-			path_is_absolute(name.c_str()) ? name : GlobalFileSystem().findFile(name)
-		);
-	}
-
+namespace
+{
 	size_t picoInputStreamReam(void* inputStream, unsigned char* buffer, size_t length) {
 		return reinterpret_cast<InputStream*>(inputStream)->read(buffer, length);
 	}
 } // namespace
 
 PicoModelLoader::PicoModelLoader(const picoModule_t* module, const std::string& extension) :
-	_module(module),
-	_extension(string::to_upper_copy(extension))
+    ModelImporterBase(extension),
+	_module(module)
 {}
-
-const std::string& PicoModelLoader::getExtension() const
-{
-	return _extension;
-}
-
-// Returns a new ModelNode for the given model name
-scene::INodePtr PicoModelLoader::loadModel(const std::string& modelName) 
-{
-	// Initialise the paths, this is all needed for realisation
-	std::string path = rootPath(modelName);
-	std::string name = os::getRelativePath(modelName, path);
-
-	// greebo: Path is empty for models in PK4 files, don't check this
-
-	// Try to load the model from the given VFS path
-	IModelPtr model = GlobalModelCache().getModel(name);
-
-	if (!model)
-	{
-		rError() << "PicoModelLoader: Could not load model << " << modelName << std::endl;
-		return scene::INodePtr();
-	}
-
-	// The cached model should be an PicoModel, otherwise we're in the wrong movie
-	StaticModelPtr picoModel =
-		std::dynamic_pointer_cast<StaticModel>(model);
-
-	if (picoModel)
-	{
-		// Load was successful, construct a modelnode using this resource
-		return std::make_shared<StaticModelNode>(picoModel);
-	}
-	else
-	{
-		rError() << "PicoModelLoader: Cached model is not a PicoModel?" << std::endl;
-	}
-
-	return scene::INodePtr();
-}
 
 // Load the given model from the VFS path
 IModelPtr PicoModelLoader::loadModelFromPath(const std::string& path)
@@ -107,9 +60,7 @@ IModelPtr PicoModelLoader::loadModelFromPath(const std::string& path)
 		return IModelPtr();
 	}
 
-	StaticModelPtr modelObj(
-		new StaticModel(model, fExt)
-	);
+	auto modelObj = std::make_shared<StaticModel>(model, fExt);
 
 	// Set the filename
 	modelObj->setFilename(os::getFilename(file->getName()));

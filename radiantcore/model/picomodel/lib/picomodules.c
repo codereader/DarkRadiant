@@ -63,7 +63,7 @@ const picoModule_t *picoModules[] =
 {
 	&picoModuleMD3,		/* quake3 arena md3 */
 	&picoModule3DS,		/* autodesk 3ds */
-	&picoModuleASE,		/* autodesk ase */
+	//&picoModuleASE,		/* autodesk ase */
 	&picoModuleMS3D,	/* milkshape3d */
 	&picoModuleMDC,		/* return to castle wolfenstein mdc */
 	&picoModuleMD2,		/* quake2 md2 */
