@@ -26,6 +26,8 @@ public:
     // Read/Write access
     std::vector<Surface>& getSurfaces();
 
+    // Create a new ASE model from the given stream
+    // throws parser::ParseException on any failure
     static std::shared_ptr<AseModel> CreateFromStream(std::istream& stream);
 };
 

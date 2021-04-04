@@ -34,21 +34,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ----------------------------------------------------------------------------- */
 
-
-/* marker */
-#define PM_ASE_C
-
-/* uncomment when debugging this module */
-//#define DEBUG_PM_ASE
-//#define DEBUG_PM_ASE_EX
-
-
 /* dependencies */
 #include "../picomodel/lib/picointernal.h"
-
-#ifdef DEBUG_PM_ASE
-#include "time.h"
-#endif
 
 /* plain white */
 static picoColor_t white = { 255, 255, 255, 255 };
@@ -469,7 +456,7 @@ static void _ase_submit_triangles_unshared ( picoModel_t* model , aseMaterial_t*
 
 #endif
 
-static void _ase_submit_triangles( picoModel_t* model , aseMaterial_t* materials , aseVertex_t* vertices, aseTexCoord_t* texcoords, aseColor_t* colors, aseFace_t* faces, int numFaces )
+static void _ase_submit_triangles( model::AseModel& model , aseMaterial_t* materials , aseVertex_t* vertices, aseTexCoord_t* texcoords, aseColor_t* colors, aseFace_t* faces, int numFaces )
 {
 	aseFacesIter_t i = faces, end = faces + numFaces;
 	for(; i != end; ++i)
@@ -499,11 +486,8 @@ static void _ase_submit_triangles( picoModel_t* model , aseMaterial_t* materials
 			{
 				xyz[j]    = &vertices[(*i).indices[j]].xyz;
 				normal[j] = &vertices[(*i).indices[j]].normal;
-				/* Old code
-				st[j]     = &texcoords[(*i).indices[j + 3]].texcoord;
-				*/
 
-				/* greebo: Apply shift, scale and rotation */
+                /* greebo: Apply shift, scale and rotation */
 				/* Also check for NULL texcoords pointer, some models surfaces don't have any tverts */
 				u = texcoords != NULL ? texcoords[(*i).indices[j + 3]].texcoord[0] * subMtl->uScale + subMtl->uOffset : 0.0;
 				v = texcoords != NULL ? texcoords[(*i).indices[j + 3]].texcoord[1] * subMtl->vScale + subMtl->vOffset : 0.0;
@@ -527,7 +511,7 @@ static void _ase_submit_triangles( picoModel_t* model , aseMaterial_t* materials
 			}
 
 			/* submit the triangle to the model */
-			PicoAddTriangleToModel ( model , xyz , normal , 1 , stRef, 1 , color , subMtl->shader, smooth );
+			// TODO PicoAddTriangleToModel ( model , xyz , normal , 1 , stRef, 1 , color , subMtl->shader, smooth );
 		}
 	}
 }
@@ -560,17 +544,8 @@ std::vector<AseModel::Surface>& AseModel::getSurfaces()
 
 std::shared_ptr<AseModel> AseModel::CreateFromStream(std::istream& stream)
 {
-    return std::make_shared<AseModel>();
-}
+    auto model = std::make_shared<AseModel>();
 
-}
-
-/* _ase_load:
- *  loads a 3dsmax ase model file.
-*/
-static picoModel_t *_ase_load( PM_PARAMS_LOAD )
-{
-	picoModel_t    *model;
 	picoParser_t   *p;
 	char			lastNodeName[ 1024 ];
 
@@ -588,35 +563,22 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 
 	aseMaterial_t* materials = NULL;
 
-#ifdef DEBUG_PM_ASE
-	clock_t start, finish;
-	double elapsed;
-	start = clock();
-#endif
-
 	/* helper */
 	#define _ase_error_return(m) \
 	{ \
 		_pico_printf( PICO_ERROR,"%s in ASE, line %d.",m,p->curLine); \
 		_pico_free_parser( p ); \
-		PicoFreeModel( model ); \
-		return NULL; \
+		return model; \
 	}
-	/* create a new pico parser */
-	p = _pico_new_parser( (picoByte_t *)buffer,bufSize );
-	if (p == NULL) return NULL;
 
-	/* create a new pico model */
-	model = PicoNewModel();
-	if (model == NULL)
-	{
-		_pico_free_parser( p );
-		return NULL;
-	}
-	/* do model setup */
-	PicoSetModelFrameNum( model, frameNum );
-	PicoSetModelName( model, fileName );
-	PicoSetModelFileName( model, fileName );
+    // Temporary buffer to get the pico parser up and running
+    std::stringstream buffer;
+    buffer << stream.rdbuf();
+    std::string stringBuffer = buffer.str();
+
+	/* create a new pico parser */
+	p = _pico_new_parser( (picoByte_t *)stringBuffer.c_str(), static_cast<int>(stringBuffer.length()));
+	if (p == NULL) return NULL;
 
 	/* initialize some stuff */
 	memset( lastNodeName,0,sizeof(lastNodeName) );
@@ -653,7 +615,7 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 		else if (!_pico_stricmp(p->token,"*mesh"))
 		{
 			/* finish existing surface */
-			_ase_submit_triangles(model, materials, vertices, texcoords, colors, faces, numFaces);
+			_ase_submit_triangles(*model, materials, vertices, texcoords, colors, faces, numFaces);
 			_pico_free(faces);
 			_pico_free(vertices);
 			_pico_free(texcoords);
@@ -1044,6 +1006,7 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 				}
 
 				/* parse submaterial index */
+#if 0
 				if (!_pico_stricmp(p->token,"*submaterial"))
 				{
 					/* allocate new pico shader */
@@ -1057,8 +1020,10 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 					}
 					subMaterialLevel = level;
 				}
+				else
+#endif
 				/* parse material name */
-				else if (!_pico_stricmp(p->token,"*material_name"))
+                if (!_pico_stricmp(p->token,"*material_name"))
 				{
 					char* name = _pico_parse(p,0);
 					if ( name == NULL)
@@ -1244,13 +1209,9 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 
 			if( subMaterial == NULL )
 			{
-				/* allocate new pico shader */
-				shader = PicoNewShader( model );
-				if (shader == NULL)
-				{
-					PicoFreeModel( model );
-					return NULL;
-				}
+                /* allocate and clear */
+                shader = (picoShader_t*)_pico_alloc(sizeof(picoShader_t));
+                memset(shader, 0, sizeof(picoShader_t));
 
 				/* set material name */
 				shadername_convert(materialName);
@@ -1348,24 +1309,17 @@ static picoModel_t *_ase_load( PM_PARAMS_LOAD )
 	}
 
 	/* ydnar: finish existing surface */
-	_ase_submit_triangles(model, materials, vertices, texcoords, colors, faces, numFaces);
+	_ase_submit_triangles(*model, materials, vertices, texcoords, colors, faces, numFaces);
 	_pico_free(faces);
 	_pico_free(vertices);
 	_pico_free(texcoords);
 	_pico_free(colors);
 
-#ifdef DEBUG_PM_ASE
-	_ase_print_materials(materials);
-	finish = clock();
-	elapsed = (double)(finish - start) / CLOCKS_PER_SEC;
-	_pico_printf( PICO_NORMAL, "Loaded model in in %-.2f second(s)\n", elapsed );
-#endif //DEBUG_PM_ASE
-
 	_ase_free_materials(&materials);
 
   _pico_free_parser( p );
 
-	/* return allocated pico model */
-	return model;
+    return model;
 }
 
+} // namespace

@@ -7,6 +7,7 @@
 #include "string/case_conv.h"
 
 #include "../StaticModel.h"
+#include "parser/ParseException.h"
 
 namespace model
 {
@@ -28,29 +29,37 @@ IModelPtr AseModelLoader::loadModelFromPath(const std::string& path)
         return IModelPtr();
     }
 
-    // Parse the ASE model data from the given stream
-    std::istream stream(&(file->getInputStream()));
-    auto model = AseModel::CreateFromStream(stream);
-
-    // Convert the AseModel to StaticModelSurfaces, destructing it during the process
-    std::vector<StaticModelSurfacePtr> staticSurfaces;
-
-    for (auto& aseSurface : model->getSurfaces())
+    try
     {
-        // Move the vertex and index data to construct the StaticModelSurface
-        auto& staticSurface = staticSurfaces.emplace_back(std::make_shared<StaticModelSurface>(
-            std::move(aseSurface.vertices), std::move(aseSurface.indices)));
+        // Parse the ASE model data from the given stream
+        std::istream stream(&(file->getInputStream()));
+        auto model = AseModel::CreateFromStream(stream);
 
-        staticSurface->setDefaultMaterial(aseSurface.material);
+        // Convert the AseModel to StaticModelSurfaces, destructing it during the process
+        std::vector<StaticModelSurfacePtr> staticSurfaces;
+
+        for (auto& aseSurface : model->getSurfaces())
+        {
+            // Move the vertex and index data to construct the StaticModelSurface
+            auto& staticSurface = staticSurfaces.emplace_back(std::make_shared<StaticModelSurface>(
+                std::move(aseSurface.vertices), std::move(aseSurface.indices)));
+
+            staticSurface->setDefaultMaterial(aseSurface.material);
+        }
+
+        auto staticModel = std::make_shared<StaticModel>(staticSurfaces);
+
+        // Set the filename
+        staticModel->setFilename(os::getFilename(file->getName()));
+        staticModel->setModelPath(path);
+
+        return staticModel;
     }
-
-    auto staticModel = std::make_shared<StaticModel>(staticSurfaces);
-    
-    // Set the filename
-    staticModel->setFilename(os::getFilename(file->getName()));
-    staticModel->setModelPath(path);
-
-    return staticModel;
+    catch (const parser::ParseException& ex)
+    {
+        rError() << "AseModelLoader: " << ex.what() << std::endl;
+        return IModelPtr();
+    }
 }
 
 }
