@@ -291,14 +291,14 @@ TEST_F(AseImportTest, VertexColours)
     // Check for a few specific vertex/colour combinations
     expectVertexWithColour(model->getSurface(0), Vertex3f(56, 56, 2), Vector3(0, 0, 0));
     expectVertexWithColour(model->getSurface(0), Vertex3f(56, 18, 2), Vector3(0, 0, 0));
-    expectVertexWithColour(model->getSurface(0), Vertex3f(19, 18, 2), Vector3(251 / 255.0, 251 / 255.0, 251 / 255.0));
+    expectVertexWithColour(model->getSurface(0), Vertex3f(19, 18, 2), Vector3(0.9882, 0.9882, 0.9882));
     expectVertexWithColour(model->getSurface(0), Vertex3f(19, 56, 2), Vector3(1, 1, 1));
     expectVertexWithColour(model->getSurface(0), Vertex3f(-19, -19, 2), Vector3(0, 0, 0));
     expectVertexWithColour(model->getSurface(0), Vertex3f(19, -19, 2), Vector3(0, 0, 0));
     expectVertexWithColour(model->getSurface(0), Vertex3f(-19, 56, 2), Vector3(0, 0, 0));
     expectVertexWithColour(model->getSurface(0), Vertex3f(19, 56, 2), Vector3(1, 1, 1));
-    expectVertexWithColour(model->getSurface(0), Vertex3f(-19, 18, 2), Vector3(235 / 255.0, 235 / 255.0, 235 / 255.0));
-    expectVertexWithColour(model->getSurface(0), Vertex3f(56, -19, 2), Vector3(188 / 255.0, 188 / 255.0, 188 / 255.0));
+    expectVertexWithColour(model->getSurface(0), Vertex3f(-19, 18, 2), Vector3(0.9216, 0.9216, 0.9216));
+    expectVertexWithColour(model->getSurface(0), Vertex3f(56, -19, 2), Vector3(0.7373, 0.7373, 0.7373));
     expectVertexWithColour(model->getSurface(0), Vertex3f(19, -19, 2), Vector3(0, 0, 0));
 }
 
