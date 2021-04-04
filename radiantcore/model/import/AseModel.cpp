@@ -285,23 +285,21 @@ std::shared_ptr<AseModel> AseModel::CreateFromStream(std::istream& stream)
 
             if (index >= faces.size()) throw parser::ParseException("MESH_FACE index out of bounds >= MESH_NUMFACES");
 
-            tokeniser.assertNextToken("A:");
-
             auto& face = faces[index];
             
-            face.vertexIndices[0] = string::convert<std::size_t>(tokeniser.nextToken());
+            // Note: we're reversing the winding to get CW ordering
+            tokeniser.assertNextToken("A:");
+            face.vertexIndices[2] = string::convert<std::size_t>(tokeniser.nextToken());
 
             tokeniser.assertNextToken("B:");
-
             face.vertexIndices[1] = string::convert<std::size_t>(tokeniser.nextToken());
 
             tokeniser.assertNextToken("C:");
+            face.vertexIndices[0] = string::convert<std::size_t>(tokeniser.nextToken());
 
-            face.vertexIndices[2] = string::convert<std::size_t>(tokeniser.nextToken());
-
-            if (face.vertexIndices[0] >= vertices.size()) throw parser::ParseException("MESH_FACE vertex index 0 out of bounds >= MESH_NUMFACES");
+            if (face.vertexIndices[2] >= vertices.size()) throw parser::ParseException("MESH_FACE vertex index 0 out of bounds >= MESH_NUMFACES");
             if (face.vertexIndices[1] >= vertices.size()) throw parser::ParseException("MESH_FACE vertex index 1 out of bounds >= MESH_NUMFACES");
-            if (face.vertexIndices[2] >= vertices.size()) throw parser::ParseException("MESH_FACE vertex index 2 out of bounds >= MESH_NUMFACES");
+            if (face.vertexIndices[0] >= vertices.size()) throw parser::ParseException("MESH_FACE vertex index 2 out of bounds >= MESH_NUMFACES");
 
             tokeniser.skipTokens(9);
         }
@@ -329,13 +327,14 @@ std::shared_ptr<AseModel> AseModel::CreateFromStream(std::istream& stream)
 
             auto& face = faces[index];
 
-            face.texcoordIndices[0] = string::convert<std::size_t>(tokeniser.nextToken());
-            face.texcoordIndices[1] = string::convert<std::size_t>(tokeniser.nextToken());
+            // Reverse the winding order
             face.texcoordIndices[2] = string::convert<std::size_t>(tokeniser.nextToken());
+            face.texcoordIndices[1] = string::convert<std::size_t>(tokeniser.nextToken());
+            face.texcoordIndices[0] = string::convert<std::size_t>(tokeniser.nextToken());
 
-            if (face.texcoordIndices[0] >= texcoords.size()) throw parser::ParseException("MESH_TFACE texcoord index 0 out of bounds >= MESH_NUMTVERTEX");
+            if (face.texcoordIndices[2] >= texcoords.size()) throw parser::ParseException("MESH_TFACE texcoord index 0 out of bounds >= MESH_NUMTVERTEX");
             if (face.texcoordIndices[1] >= texcoords.size()) throw parser::ParseException("MESH_TFACE texcoord index 1 out of bounds >= MESH_NUMTVERTEX");
-            if (face.texcoordIndices[2] >= texcoords.size()) throw parser::ParseException("MESH_TFACE texcoord index 2 out of bounds >= MESH_NUMTVERTEX");
+            if (face.texcoordIndices[0] >= texcoords.size()) throw parser::ParseException("MESH_TFACE texcoord index 2 out of bounds >= MESH_NUMTVERTEX");
         }
         /* model color vertex */
         else if (token == "*mesh_vertcol")
@@ -359,13 +358,14 @@ std::shared_ptr<AseModel> AseModel::CreateFromStream(std::istream& stream)
 
             auto& face = faces[index];
 
-            face.colourIndices[0] = string::convert<std::size_t>(tokeniser.nextToken());
-            face.colourIndices[1] = string::convert<std::size_t>(tokeniser.nextToken());
+            // Reverse the winding order
             face.colourIndices[2] = string::convert<std::size_t>(tokeniser.nextToken());
+            face.colourIndices[1] = string::convert<std::size_t>(tokeniser.nextToken());
+            face.colourIndices[0] = string::convert<std::size_t>(tokeniser.nextToken());
 
-            if (face.colourIndices[0] >= colours.size()) throw parser::ParseException("MESH_CFACE colour index 0 out of bounds >= MESH_NUMCVERTEX");
+            if (face.colourIndices[2] >= colours.size()) throw parser::ParseException("MESH_CFACE colour index 0 out of bounds >= MESH_NUMCVERTEX");
             if (face.colourIndices[1] >= colours.size()) throw parser::ParseException("MESH_CFACE colour index 1 out of bounds >= MESH_NUMCVERTEX");
-            if (face.colourIndices[2] >= colours.size()) throw parser::ParseException("MESH_CFACE colour index 2 out of bounds >= MESH_NUMCVERTEX");
+            if (face.colourIndices[0] >= colours.size()) throw parser::ParseException("MESH_CFACE colour index 2 out of bounds >= MESH_NUMCVERTEX");
         }
         else if (token == "*material_count")
         {
