@@ -154,6 +154,7 @@ add_library(radiantcore MODULE
             model/ModelFormatManager.cpp
             model/NullModel.cpp
             model/NullModelNode.cpp
+            model/import/AseModel.cpp
             model/import/AseModelLoader.cpp
             model/import/ModelImporterBase.cpp
             model/picomodel/PicoModelLoader.cpp
@@ -175,7 +176,6 @@ add_library(radiantcore MODULE
             model/picomodel/lib/picomodel.c
             model/picomodel/lib/picomodules.c
             model/picomodel/lib/pm_3ds.c
-            model/picomodel/lib/pm_ase.c
             model/picomodel/lib/pm_fm.c
             model/picomodel/lib/pm_lwo.c
             model/picomodel/lib/pm_md2.c

@@ -151,6 +151,7 @@
     <ClCompile Include="..\..\radiantcore\model\export\PatchSurface.cpp" />
     <ClCompile Include="..\..\radiantcore\model\export\ScaledModelExporter.cpp" />
     <ClCompile Include="..\..\radiantcore\model\export\WavefrontExporter.cpp" />
+    <ClCompile Include="..\..\radiantcore\model\import\AseModel.cpp" />
     <ClCompile Include="..\..\radiantcore\model\import\AseModelLoader.cpp" />
     <ClCompile Include="..\..\radiantcore\model\import\ModelImporterBase.cpp" />
     <ClCompile Include="..\..\radiantcore\model\md5\MD5Anim.cpp" />
@@ -400,24 +401,6 @@
       </ForcedIncludeFiles>
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\model\picomodel\lib\pm_3ds.c">
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsC</CompileAs>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsC</CompileAs>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsC</CompileAs>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-      </ForcedIncludeFiles>
-      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-      </ForcedIncludeFiles>
-      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-      </ForcedIncludeFiles>
-      <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-      </ForcedIncludeFiles>
-    </ClCompile>
-    <ClCompile Include="..\..\radiantcore\model\picomodel\lib\pm_ase.c">
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CompileAsC</CompileAs>
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsC</CompileAs>
       <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CompileAsC</CompileAs>

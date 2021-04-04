@@ -667,9 +667,6 @@
     <ClCompile Include="..\..\radiantcore\model\picomodel\lib\pm_3ds.c">
       <Filter>src\model\picomodel\lib</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiantcore\model\picomodel\lib\pm_ase.c">
-      <Filter>src\model\picomodel\lib</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiantcore\model\picomodel\lib\pm_fm.c">
       <Filter>src\model\picomodel\lib</Filter>
     </ClCompile>
@@ -1035,6 +1032,9 @@
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\model\StaticModelSurface.cpp">
       <Filter>src\model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\model\import\AseModel.cpp">
+      <Filter>src\model\import</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

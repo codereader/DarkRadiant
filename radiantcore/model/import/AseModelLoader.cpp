@@ -7,11 +7,6 @@
 #include "../StaticModel.h"
 #include "../picomodel/PicoModelLoader.h"
 
-extern "C"
-{
-    extern const picoModule_t picoModuleASE;
-}
-
 namespace model
 {
 
@@ -42,6 +37,7 @@ IModelPtr AseModelLoader::loadModelFromPath(const std::string& path)
         return IModelPtr();
     }
 
+#if 0
     auto* model = PicoModuleLoadModelStream(
         &picoModuleASE,
         &file->getInputStream(),
@@ -60,7 +56,6 @@ IModelPtr AseModelLoader::loadModelFromPath(const std::string& path)
     auto surfaces = PicoModelLoader::CreateSurfaces(model, string::to_lower_copy(getExtension()));
 
     auto modelObj = std::make_shared<StaticModel>(surfaces);
-    
     // Set the filename
     modelObj->setFilename(os::getFilename(file->getName()));
     modelObj->setModelPath(path);
@@ -68,6 +63,9 @@ IModelPtr AseModelLoader::loadModelFromPath(const std::string& path)
     PicoFreeModel(model);
 
     return modelObj;
+#else 
+    return IModelPtr();
+#endif
 }
 
 }
