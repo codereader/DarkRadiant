@@ -15,36 +15,6 @@
 namespace model
 {
 
-StaticModel::StaticModel(picoModel_t* mod, const std::string& fExt) :
-    StaticModel(std::vector<StaticModelSurfacePtr>{})
-{
-    // Get the number of surfaces to create
-    int nSurf = PicoGetModelNumSurfaces(mod);
-
-    // Create a StaticModelSurface for each surface in the structure
-    for (int n = 0; n < nSurf; ++n)
-    {
-        // Retrieve the surface, discarding it if it is null or non-triangulated (?)
-        picoSurface_t* surf = PicoGetModelSurface(mod, n);
-
-        if (surf == 0 || PicoGetSurfaceType(surf) != PICO_TRIANGLES)
-        {
-            continue;
-        }
-
-        // Fix the normals of the surface (?)
-        PicoFixSurfaceNormals(surf);
-
-        // Create the StaticModelSurface object and add it to the vector
-        auto rSurf = std::make_shared<StaticModelSurface>(surf, fExt);
-
-        _surfVec.push_back(Surface(rSurf));
-
-        // Extend the model AABB to include the surface's AABB
-        _localAABB.includeAABB(rSurf->getAABB());
-    }
-}
-
 StaticModel::StaticModel(const std::vector<StaticModelSurfacePtr>& surfaces) :
     _scaleTransformed(1, 1, 1),
     _scale(1, 1, 1),

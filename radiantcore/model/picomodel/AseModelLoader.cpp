@@ -5,6 +5,8 @@
 #include "string/case_conv.h"
 #include "StaticModel.h"
 
+#include "PicoModelLoader.h"
+
 extern "C"
 {
     extern const picoModule_t picoModuleASE;
@@ -55,7 +57,9 @@ IModelPtr AseModelLoader::loadModelFromPath(const std::string& path)
         return IModelPtr();
     }
 
-    auto modelObj = std::make_shared<StaticModel>(model, string::to_lower_copy(getExtension()));
+    auto surfaces = PicoModelLoader::CreateSurfaces(model, string::to_lower_copy(getExtension()));
+
+    auto modelObj = std::make_shared<StaticModel>(surfaces);
     
     // Set the filename
     modelObj->setFilename(os::getFilename(file->getName()));

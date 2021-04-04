@@ -3,7 +3,6 @@
 #include "iundo.h"
 #include "mapfile.h"
 #include "imodel.h"
-#include "lib/picomodel.h"
 #include "math/AABB.h"
 #include "imodelsurface.h"
 
@@ -39,7 +38,7 @@ class StaticModel :
 	public IUndoable
 {
 private:
-	// greebo: RenderablePicoSurfaces are shared objects, the actual shaders 
+	// greebo: StaticModelSurfaces are shared objects, the actual shaders 
 	// and the model skin handling are managed by the nodes/imodels referencing them
 	struct Surface
 	{
@@ -62,7 +61,6 @@ private:
 		{}
 	};
 
-	// List of RenderablePicoSurfaces.
 	typedef std::vector<Surface> SurfaceList;
 
 	// Vector of renderable surfaces for this model
@@ -109,13 +107,6 @@ private:
 	void foreachVisibleSurface(const std::function<void(const Surface& s)>& func) const;
 
 public:
-
-	/**
-	 * Constructor. Accepts a picoModel_t struct containing the raw model data
-	 * loaded from picomodel, and a string filename extension to allow the
-	 * correct handling of material paths (which differs between ASE and LWO)
-	 */
-	StaticModel(picoModel_t* mod, const std::string& fExt);
 
     /**
      * Construct a StaticModel with the given set of surfaces.

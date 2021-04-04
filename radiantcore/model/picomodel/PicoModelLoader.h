@@ -1,8 +1,11 @@
 #pragma once
 
 #include "ModelImporterBase.h"
+#include "StaticModel.h"
 
 typedef struct picoModule_s picoModule_t;
+typedef struct picoSurface_s picoSurface_t;
+typedef struct picoModel_s picoModel_t;
 
 namespace model
 {
@@ -18,6 +21,12 @@ public:
 
   	// Load the given model from the path, VFS or absolute
 	IModelPtr loadModelFromPath(const std::string& name) override;
+
+public:
+    static std::vector<StaticModelSurfacePtr> CreateSurfaces(picoModel_t* picoModel, const std::string& extension);
+
+private:
+    static StaticModelSurfacePtr CreateSurface(picoSurface_t* picoSurface, const std::string& extension);
 };
 
 } // namespace model
