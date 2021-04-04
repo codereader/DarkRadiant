@@ -1,7 +1,6 @@
 #pragma once
 
 #include "GLProgramAttributes.h"
-#include "picomodel/lib/picomodel.h"
 #include "render.h"
 #include "math/AABB.h"
 
@@ -31,6 +30,7 @@ class StaticModelSurface :
 	public IIndexedModelSurface,
 	public OpenGLRenderable
 {
+private:
 	// Name of the material this surface is using by default (without any skins)
 	std::string _defaultMaterial;
 
@@ -74,7 +74,8 @@ private:
 	std::string cleanupShaderName(const std::string& mapName);
 
 public:
-	StaticModelSurface(picoSurface_t* surf);
+    // Move-construct this static model surface from the given vertex- and index array
+	StaticModelSurface(std::vector<ArbitraryMeshVertex>&& vertices, std::vector<unsigned int>&& indices);
 
 	// Copy-constructor.
 	StaticModelSurface(const StaticModelSurface& other);

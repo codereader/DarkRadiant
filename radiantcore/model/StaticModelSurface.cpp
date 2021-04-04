@@ -13,53 +13,21 @@
 namespace model
 {
 
-// Constructor. Copy the provided picoSurface_t structure into this object
-StaticModelSurface::StaticModelSurface(picoSurface_t* surf)
-: _defaultMaterial(""),
-  _dlRegular(0),
-  _dlProgramVcol(0),
-  _dlProgramNoVCol(0)
+StaticModelSurface::StaticModelSurface(std::vector<ArbitraryMeshVertex>&& vertices, std::vector<unsigned int>&& indices) :
+    _vertices(vertices),
+    _indices(indices),
+    _dlRegular(0),
+    _dlProgramVcol(0),
+    _dlProgramNoVCol(0)
 {
-	// Capturing the shader happens later on when we have a RenderSystem reference
-
-    // Get the number of vertices and indices, and reserve capacity in our
-    // vectors in advance by populating them with empty structs.
-    int nVerts = PicoGetSurfaceNumVertexes(surf);
-    _nIndices = PicoGetSurfaceNumIndexes(surf);
-    _vertices.resize(nVerts);
-    _indices.resize(_nIndices);
-
-	// Stream in the vertex data from the raw struct, expanding the local AABB
-    // to include each vertex.
-    for (int vNum = 0; vNum < nVerts; ++vNum) {
-
-    	// Get the vertex position and colour
-		Vertex3f vertex(PicoGetSurfaceXYZ(surf, vNum));
-		
-		Normal3f normal = PicoGetSurfaceNormal(surf, vNum);
-
-		// Expand the AABB to include this new vertex
-    	_localAABB.includePoint(vertex);
-
-    	_vertices[vNum].vertex = vertex;
-    	_vertices[vNum].normal = normal;
-    	_vertices[vNum].texcoord = TexCoord2f(PicoGetSurfaceST(surf, 0, vNum));
-    	_vertices[vNum].colour =
-    		getColourVector(PicoGetSurfaceColor(surf, 0, vNum));
-    }
-
-    // Stream in the index data
-    picoIndex_t* ind = PicoGetSurfaceIndexes(surf, 0);
-    for (unsigned int i = 0; i < _nIndices; i++)
+    // Expand the local AABB to include all vertices
+    for (const auto& vertex : _vertices)
     {
-    	_indices[i] = ind[i];
+        _localAABB.includePoint(vertex.vertex);
     }
 
-	// Calculate the tangent and bitangent vectors
-	calculateTangents();
-
-	// Construct the DLs
-	createDisplayLists();
+    calculateTangents();
+    createDisplayLists();
 }
 
 StaticModelSurface::StaticModelSurface(const StaticModelSurface& other) :
@@ -83,19 +51,9 @@ StaticModelSurface::~StaticModelSurface()
 	glDeleteLists(_dlProgramVcol, 1);
 }
 
-// Convert byte pointers to colour vector
-Vector3 StaticModelSurface::getColourVector(unsigned char* array) {
-	if (array) {
-		return Vector3(array[0] / 255.0f, array[1] / 255.0f, array[2] / 255.0f);
-	}
-	else {
-		return Vector3(1.0f, 1.0f, 1.0f); // white
-	}
-}
-
 // Tangent calculation
-void StaticModelSurface::calculateTangents() {
-
+void StaticModelSurface::calculateTangents()
+{
 	// Calculate the tangents and bitangents using the indices into the vertex
 	// array.
 	for (Indices::iterator i = _indices.begin();

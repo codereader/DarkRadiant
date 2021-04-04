@@ -8,13 +8,23 @@ namespace model
 
 class AseModel
 {
+public:
+    struct Surface
+    {
+        std::string material;
+
+        std::vector<ArbitraryMeshVertex> vertices;
+        std::vector<unsigned int> indices;
+    };
+
 private:
-    std::vector<StaticModelSurfacePtr> _surfaces;
+    std::vector<Surface> _surfaces;
 
 public:
-    StaticModelSurface& addSurface();
+    Surface& addSurface();
 
-    const std::vector<StaticModelSurfacePtr>& getSurfaces() const;
+    // Read/Write access
+    std::vector<Surface>& getSurfaces();
 
     static std::shared_ptr<AseModel> CreateFromStream(std::istream& stream);
 };

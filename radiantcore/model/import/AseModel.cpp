@@ -548,14 +548,12 @@ static void shadername_convert(char* shaderName)
 namespace model
 {
 
-#if 0
-StaticModelSurface& AseModel::addSurface()
+AseModel::Surface& AseModel::addSurface()
 {
-    return *_surfaces.emplace_back(std::make_shared<StaticModelSurface>());
+    return _surfaces.emplace_back();
 }
-#endif
 
-const std::vector<StaticModelSurfacePtr>& AseModel::getSurfaces() const
+std::vector<AseModel::Surface>& AseModel::getSurfaces()
 {
     return _surfaces;
 }

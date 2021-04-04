@@ -19,9 +19,21 @@ namespace model {
 
 namespace
 {
-	size_t picoInputStreamReam(void* inputStream, unsigned char* buffer, size_t length) {
+	size_t picoInputStreamReam(void* inputStream, unsigned char* buffer, size_t length)
+    {
 		return reinterpret_cast<InputStream*>(inputStream)->read(buffer, length);
 	}
+
+    // Convert byte pointers to colour vector
+    inline Vector3 getColourVector(unsigned char* array)
+    {
+        if (array)
+        {
+            return Vector3(array[0] / 255.0f, array[1] / 255.0f, array[2] / 255.0f);
+        }
+        
+        return Vector3(1.0f, 1.0f, 1.0f); // white
+    }
 } // namespace
 
 PicoModelLoader::PicoModelLoader(const picoModule_t* module, const std::string& extension) :
@@ -197,8 +209,45 @@ StaticModelSurfacePtr PicoModelLoader::CreateSurface(picoSurface_t* picoSurface,
     // Fix the normals of the surface (?)
     PicoFixSurfaceNormals(picoSurface);
 
-    // Create the StaticModelSurface object and add it to the vector
-    auto staticSurface = std::make_shared<StaticModelSurface>(picoSurface);
+    // Convert the pico vertex data to the types we need to construct a StaticModelSurface
+
+    // Get the number of vertices and indices, and reserve capacity in our
+    // vectors in advance by populating them with empty structs.
+    auto numVertices = PicoGetSurfaceNumVertexes(picoSurface);
+    unsigned int numIndices = PicoGetSurfaceNumIndexes(picoSurface);
+    
+    std::shared_ptr<StaticModelSurface> staticSurface;
+
+    {
+        // Allocate the vectors that will be moved to the surface at end of scope
+        std::vector<ArbitraryMeshVertex> vertices(numVertices);
+        std::vector<unsigned int> indices(numIndices);
+
+        // Stream in the vertex data from the raw struct, expanding the local AABB
+        // to include each vertex.
+        for (int vNum = 0; vNum < numVertices; ++vNum) {
+
+            // Get the vertex position and colour
+            Vertex3f vertex(PicoGetSurfaceXYZ(picoSurface, vNum));
+
+            Normal3f normal = PicoGetSurfaceNormal(picoSurface, vNum);
+
+            vertices[vNum].vertex = vertex;
+            vertices[vNum].normal = normal;
+            vertices[vNum].texcoord = TexCoord2f(PicoGetSurfaceST(picoSurface, 0, vNum));
+            vertices[vNum].colour = getColourVector(PicoGetSurfaceColor(picoSurface, 0, vNum));
+        }
+
+        // Stream in the index data
+        picoIndex_t* ind = PicoGetSurfaceIndexes(picoSurface, 0);
+
+        for (unsigned int i = 0; i < numIndices; i++)
+        {
+            indices[i] = ind[i];
+        }
+
+        staticSurface = std::make_shared<StaticModelSurface>(std::move(vertices), std::move(indices));
+    }
 
     staticSurface->setDefaultMaterial(DetermineDefaultMaterial(picoSurface, extension));
 
