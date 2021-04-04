@@ -117,6 +117,11 @@ public:
 	 */
 	StaticModel(picoModel_t* mod, const std::string& fExt);
 
+    /**
+     * Construct a StaticModel with the given set of surfaces.
+     */
+    StaticModel(const std::vector<StaticModelSurfacePtr>& surfaces);
+
 	/**
 	 * Copy constructor: re-use the surfaces from the other model
 	 * but make it possible to assign custom skins to the surfaces.

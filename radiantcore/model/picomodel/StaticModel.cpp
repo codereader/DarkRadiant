@@ -15,12 +15,8 @@
 namespace model
 {
 
-// Constructor
 StaticModel::StaticModel(picoModel_t* mod, const std::string& fExt) :
-    _scaleTransformed(1,1,1),
-    _scale(1,1,1),
-    _undoStateSaver(nullptr),
-    _mapFileChangeTracker(nullptr)
+    StaticModel(std::vector<StaticModelSurfacePtr>{})
 {
     // Get the number of surfaces to create
     int nSurf = PicoGetModelNumSurfaces(mod);
@@ -32,18 +28,35 @@ StaticModel::StaticModel(picoModel_t* mod, const std::string& fExt) :
         picoSurface_t* surf = PicoGetModelSurface(mod, n);
 
         if (surf == 0 || PicoGetSurfaceType(surf) != PICO_TRIANGLES)
+        {
             continue;
+        }
 
         // Fix the normals of the surface (?)
         PicoFixSurfaceNormals(surf);
 
         // Create the StaticModelSurface object and add it to the vector
-        StaticModelSurfacePtr rSurf(new StaticModelSurface(surf, fExt));
+        auto rSurf = std::make_shared<StaticModelSurface>(surf, fExt);
 
         _surfVec.push_back(Surface(rSurf));
 
         // Extend the model AABB to include the surface's AABB
         _localAABB.includeAABB(rSurf->getAABB());
+    }
+}
+
+StaticModel::StaticModel(const std::vector<StaticModelSurfacePtr>& surfaces) :
+    _scaleTransformed(1, 1, 1),
+    _scale(1, 1, 1),
+    _undoStateSaver(nullptr),
+    _mapFileChangeTracker(nullptr)
+{
+    for (const auto& surface : surfaces)
+    {
+        auto& inserted = _surfVec.emplace_back(surface);
+
+        // Extend the model AABB to include each surface's AABB
+        _localAABB.includeAABB(inserted.surface->getAABB());
     }
 }
 
