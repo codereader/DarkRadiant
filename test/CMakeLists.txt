@@ -16,7 +16,7 @@ add_executable(drtest
                math/Matrix4.cpp
                math/Plane3.cpp
                math/Quaternion.cpp
-               math/Vector3.cpp
+               math/Vector.cpp
                MessageBus.cpp
                ModelExport.cpp
                ModelScale.cpp
