@@ -88,17 +88,33 @@ TEST(MathTest, NormaliseVector3)
 TEST(MathTest, AddVector3)
 {
     Vector3 v1(2, -5, 17);
-    Vector3 v2(11, 12, -0.5);
+    const Vector3 v1Orig = v1;
+    const Vector3 v2(11, 12, -0.5);
 
-    EXPECT_EQ(v1 + v2, Vector3(13, 7, 16.5));
+    // Add and return
+    const Vector3 sum = v1 + v2;
+    EXPECT_EQ(sum, Vector3(13, 7, 16.5));
+    EXPECT_EQ(v1, v1Orig);
+
+    // Add in place
+    v1 += v2;
+    EXPECT_EQ(v1, sum);
 }
 
 TEST(MathTest, AddVector4)
 {
     Vector4 v1(10, 0.25, -60, 11);
-    Vector4 v2(0, -18, 276, 0.75);
+    const Vector4 v1Orig = v1;
+    const Vector4 v2(0, -18, 276, 0.75);
 
-    EXPECT_EQ(v1 + v2, Vector4(10, -17.75, 216, 11.75));
+    // Add and return
+    const Vector4 sum = v1 + v2;
+    EXPECT_EQ(sum, Vector4(10, -17.75, 216, 11.75));
+    EXPECT_EQ(v1, v1Orig);
+
+    // Add in place
+    v1 += v2;
+    EXPECT_EQ(v1, sum);
 }
 
 TEST(MathTest, SubtractVector3)
