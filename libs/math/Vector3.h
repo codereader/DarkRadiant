@@ -204,21 +204,10 @@ public:
         );
     }
 
-    /* Scalar product this vector with another Vector3,
-     * returning the projection of <self> onto <other>
-     *
-     * @param other
-     * The Vector3 to dot-product with this Vector3.
-     *
-     * @returns
-     * The inner product (a scalar): a[0]*b[0] + a[1]*b[1] + a[2]*b[2]
-     */
-
-    template<typename OtherT>
-    T dot(const BasicVector3<OtherT>& other) const {
-        return  T(_v[0] * other.x() +
-                        _v[1] * other.y() +
-                        _v[2] * other.z());
+    /// Return dot product of this and another vector
+    T dot(const BasicVector3<T>& other) const
+    {
+        return x() * other.x() + y() * other.y() + z() * other.z();
     }
 
     /* Returns the angle between <self> and <other>

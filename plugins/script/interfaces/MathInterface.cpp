@@ -30,7 +30,7 @@ void MathInterface::registerInterface(py::module& scope, py::dict& globals)
 	vec3.def("getNormalised", &Vector3::getNormalised);
 	vec3.def("normalise", &Vector3::normalise);
 	vec3.def("getInversed", &Vector3::getInversed);
-	vec3.def("dot", &Vector3::dot<double>);
+	vec3.def("dot", &Vector3::dot);
 	vec3.def("angle", &Vector3::angle<double>);
 	vec3.def("crossProduct", &Vector3::crossProduct<double>);
 	vec3.def("isParallel", &Vector3::isParallel<double>);

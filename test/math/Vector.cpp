@@ -191,6 +191,21 @@ TEST(MathTest, ComponentwiseMultiplyVector3)
     EXPECT_EQ(v, prod);
 }
 
+TEST(MathTest, Vector3DotProduct)
+{
+    const Vector3 v1(2, 4, 30);
+    const Vector3 v2(8, 0.25, -5);
+    const Vector3 v3(0.5, 2, 0.25);
+
+    EXPECT_EQ(v1.dot(v2), 16 + 1 - 150);
+    EXPECT_EQ(v1.dot(v3), 1 + 8 + 7.5);
+    EXPECT_EQ(v2.dot(v3), 4 + 0.5 - 1.25);
+
+    EXPECT_EQ(v1.dot(v1), v1.getLengthSquared());
+    EXPECT_EQ(v2.dot(v2), v2.getLengthSquared());
+    EXPECT_EQ(v3.dot(v3), v3.getLengthSquared());
+}
+
 TEST(MathTest, Vector3AsCArray)
 {
     Vector3 vec(256, -10, 10000);
