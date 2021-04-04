@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ModelImporterBase.h"
+#include "../import/ModelImporterBase.h"
 #include "StaticModel.h"
 
 typedef struct picoModule_s picoModule_t;

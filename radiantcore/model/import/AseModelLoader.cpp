@@ -1,11 +1,11 @@
 #include "AseModelLoader.h"
 
-#include "lib/picomodel.h"
+#include "../picomodel/lib/picomodel.h"
 #include "os/path.h"
 #include "string/case_conv.h"
-#include "StaticModel.h"
 
-#include "PicoModelLoader.h"
+#include "../picomodel/StaticModel.h"
+#include "../picomodel/PicoModelLoader.h"
 
 extern "C"
 {

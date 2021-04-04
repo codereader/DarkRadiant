@@ -154,8 +154,8 @@ add_library(radiantcore MODULE
             model/ModelFormatManager.cpp
             model/NullModel.cpp
             model/NullModelNode.cpp
-            model/picomodel/AseModelLoader.cpp
-            model/picomodel/ModelImporterBase.cpp
+            model/import/AseModelLoader.cpp
+            model/import/ModelImporterBase.cpp
             model/picomodel/PicoModelLoader.cpp
             model/picomodel/PicoModelModule.cpp
             model/picomodel/StaticModel.cpp

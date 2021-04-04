@@ -5,8 +5,8 @@
 #include "imodelcache.h"
 #include "string/case_conv.h"
 #include "os/path.h"
-#include "StaticModelNode.h"
-#include "StaticModel.h"
+#include "../picomodel/StaticModelNode.h"
+#include "../picomodel/StaticModel.h"
 
 namespace model
 {

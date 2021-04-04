@@ -13,7 +13,7 @@
 
 #include "string/case_conv.h"
 #include "PicoModelLoader.h"
-#include "AseModelLoader.h"
+#include "../import/AseModelLoader.h"
 
 namespace model
 {
