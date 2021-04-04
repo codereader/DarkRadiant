@@ -170,6 +170,23 @@ TEST(MathTest, ScalarMultiplyVector4)
     EXPECT_EQ(0.5 * vec, Vector4(4, -7, 13, 0.9));
 }
 
+TEST(MathTest, ComponentwiseMultiplyVector3)
+{
+    Vector3 v(0.8, 24, -300);
+    const Vector3 vOrig = v;
+    const Vector3 scale(2, 0.5, 3);
+
+    // Multiply and return
+    const Vector3 prod = v * scale;
+    EXPECT_EQ(prod, Vector3(1.6, 12, -900));
+    EXPECT_EQ(scale * v, prod);
+
+    // Multiply in place
+    EXPECT_EQ(v, vOrig);
+    v *= scale;
+    EXPECT_EQ(v, prod);
+}
+
 TEST(MathTest, Vector3AsCArray)
 {
     Vector3 vec(256, -10, 10000);

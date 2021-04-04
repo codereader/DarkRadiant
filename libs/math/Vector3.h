@@ -116,31 +116,6 @@ public:
         return BasicVector3<T>(-_v[0], -_v[1], -_v[2]);
     }
 
-    /*  Define the multiplication operators * and *= with another Vector3 of type OtherElement
-     *
-     *  The vectors are multiplied element-wise
-     *
-     *  greebo: This is mathematically kind of senseless, as this is a mixture of
-     *  a dot product and scalar multiplication. It can be used to scale each
-     *  vector component by a different factor, so maybe this comes in handy.
-     */
-    template<typename OtherElement>
-    BasicVector3<T> operator* (const BasicVector3<OtherElement>& other) const {
-        return BasicVector3<T>(
-            _v[0] * static_cast<T>(other.x()),
-            _v[1] * static_cast<T>(other.y()),
-            _v[2] * static_cast<T>(other.z())
-        );
-    }
-
-    template<typename OtherElement>
-	BasicVector3<T>& operator*= (const BasicVector3<OtherElement>& other) {
-        _v[0] *= static_cast<T>(other.x());
-        _v[1] *= static_cast<T>(other.y());
-        _v[2] *= static_cast<T>(other.z());
-		return *this;
-    }
-
     /*  Define the division operators / and /= with another Vector3 of type OtherElement
      *  The vectors are divided element-wise
      */
@@ -182,22 +157,13 @@ public:
 		return *this;
     }
 
-    /*
-     * Mathematical operations on the BasicVector3
-     */
-
-    /** Return the length of this vector.
-     *
-     * @returns
-     * The Pythagorean length of this vector.
-     */
+    /// Return the Pythagorean length of this vector.
     float getLength() const {
         float lenSquared = getLengthSquared();
         return sqrt(lenSquared);
     }
 
-    /** Return the squared length of this vector.
-     */
+    /// Return the squared length of this vector.
     float getLengthSquared() const {
         float lenSquared = float(_v[0]) * float(_v[0]) +
                             float(_v[1]) * float(_v[1]) +
@@ -429,6 +395,21 @@ template<typename T>
 BasicVector3<T>& operator-= (BasicVector3<T>& v1, const BasicVector3<T>& v2)
 {
     v1 = v1 - v2;
+    return v1;
+}
+
+/// Componentwise (Hadamard) product of two vectors
+template <typename T>
+BasicVector3<T> operator*(const BasicVector3<T>& v1, const BasicVector3<T>& v2)
+{
+    return BasicVector3<T>(v1.x() * v2.x(), v1.y() * v2.y(), v1.z() * v2.z());
+}
+
+/// Componentwise (Hadamard) product of two vectors, in place
+template<typename T>
+BasicVector3<T>& operator*= (BasicVector3<T>& v1, const BasicVector3<T>& v2)
+{
+    v1 = v1 * v2;
     return v1;
 }
 
