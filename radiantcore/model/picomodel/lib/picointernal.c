@@ -965,7 +965,7 @@ int _pico_parse_skip_braced( picoParser_t *p )
 	return 1;
 }
 
-int _pico_parse_check( picoParser_t *p, int allowLFs, char *str )
+int _pico_parse_check( picoParser_t *p, int allowLFs, const char *str )
 {
 	if (!_pico_parse_ex( p,allowLFs,1 ))
 		return 0;
@@ -974,7 +974,7 @@ int _pico_parse_check( picoParser_t *p, int allowLFs, char *str )
     return 0;
 }
 
-int _pico_parse_checki( picoParser_t *p, int allowLFs, char *str )
+int _pico_parse_checki( picoParser_t *p, int allowLFs, const char *str )
 {
 	if (!_pico_parse_ex( p,allowLFs,1 ))
 		return 0;
