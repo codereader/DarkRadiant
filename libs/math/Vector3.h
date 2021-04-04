@@ -136,27 +136,6 @@ public:
 		return *this;
     }
 
-    /*  Define the scalar divisions / and /=
-     */
-    template<typename OtherElement>
-    BasicVector3<T> operator/ (const OtherElement& other) const {
-        T divisor = static_cast<T>(other);
-        return BasicVector3<T>(
-            _v[0] / divisor,
-            _v[1] / divisor,
-            _v[2] / divisor
-        );
-    }
-
-    template<typename OtherElement>
-	BasicVector3<T>& operator/= (const OtherElement& other) {
-        T divisor = static_cast<T>(other);
-        _v[0] /= divisor;
-        _v[1] /= divisor;
-        _v[2] /= divisor;
-		return *this;
-    }
-
     /// Return the Pythagorean length of this vector.
     double getLength() const
     {
@@ -352,6 +331,21 @@ template <typename T, typename S>
 BasicVector3<T>& operator*=(BasicVector3<T>& v, S s)
 {
     v = v * s;
+    return v;
+}
+
+/// Divide vector by a scalar and return result
+template<typename T, typename S>
+BasicVector3<T> operator/ (const BasicVector3<T>& v, S s)
+{
+    return BasicVector3<T>(v.x() / s, v.y() / s, v.z() / s);
+}
+
+/// Divide vector by a scalar in place
+template<typename T, typename S>
+BasicVector3<T>& operator/= (BasicVector3<T>& v, S s)
+{
+    v = v / s;
     return v;
 }
 
