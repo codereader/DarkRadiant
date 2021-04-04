@@ -1,3 +1,5 @@
+#include "AseModel.h"
+
 /* -----------------------------------------------------------------------------
 
 PicoModel Library
@@ -543,6 +545,27 @@ static void shadername_convert(char* shaderName)
   }
 }
 
+namespace model
+{
+
+#if 0
+StaticModelSurface& AseModel::addSurface()
+{
+    return *_surfaces.emplace_back(std::make_shared<StaticModelSurface>());
+}
+#endif
+
+const std::vector<StaticModelSurfacePtr>& AseModel::getSurfaces() const
+{
+    return _surfaces;
+}
+
+std::shared_ptr<AseModel> AseModel::CreateFromStream(std::istream& stream)
+{
+    return std::make_shared<AseModel>();
+}
+
+}
 
 /* _ase_load:
  *  loads a 3dsmax ase model file.

@@ -10,54 +10,16 @@
 
 #include "string/replace.h"
 
-namespace model {
+namespace model
+{
 
 // Constructor. Copy the provided picoSurface_t structure into this object
-StaticModelSurface::StaticModelSurface(picoSurface_t* surf,
-											 const std::string& fExt)
+StaticModelSurface::StaticModelSurface(picoSurface_t* surf)
 : _defaultMaterial(""),
   _dlRegular(0),
   _dlProgramVcol(0),
   _dlProgramNoVCol(0)
 {
-	// Get the shader from the picomodel struct. If this is a LWO model, use
-	// the material name to select the shader, while for an ASE model the
-	// bitmap path should be used.
-	picoShader_t* shader = PicoGetSurfaceShader(surf);
-	std::string rawName = "";
-
-	if (shader != 0)
-	{
-		if (fExt == "lwo")
-		{
-			_defaultMaterial = PicoGetShaderName(shader);
-		}
-		else if (fExt == "ase")
-		{
-			rawName = PicoGetShaderName(shader);
-			std::string rawMapName = PicoGetShaderMapName(shader);
-			_defaultMaterial = cleanupShaderName(rawMapName);
-		}
-        else // if extension is not handled explicitly, use at least something
-        {
-            _defaultMaterial = PicoGetShaderName(shader);
-        }
-	}
-
-    // #4644: Doom3 / TDM don't use the *MATERIAL_NAME in ASE models, only *BITMAP is used
-    // Use the fallback (introduced in #2499) only when the game allows it
-    if (game::current::getValue<bool>("/modelFormat/ase/useMaterialNameIfNoBitmapFound"))
-    {
-        // If shader not found, fallback to alternative if available
-        // _defaultMaterial is empty if the ase material has no BITMAP
-        // materialIsValid is false if _defaultMaterial is not an existing shader
-        if ((_defaultMaterial.empty() || !GlobalMaterialManager().materialExists(_defaultMaterial)) &&
-            !rawName.empty())
-        {
-            _defaultMaterial = cleanupShaderName(rawName);
-        }
-    }
-
 	// Capturing the shader happens later on when we have a RenderSystem reference
 
     // Get the number of vertices and indices, and reserve capacity in our
@@ -111,48 +73,6 @@ StaticModelSurface::StaticModelSurface(const StaticModelSurface& other) :
 	_dlProgramNoVCol(0)
 {
 	createDisplayLists();
-}
-
-std::string StaticModelSurface::cleanupShaderName(const std::string& inName)
-{
-	const std::string baseFolder = "base";	//FIXME: should be from game.xml
-	std::size_t basePos;
-
-	std::string mapName = string::replace_all_copy(inName, "\\", "/");
-
-	// for paths given relative, start from the beginning
-	if (mapName.substr(0,6) == "models" || mapName.substr(0,8) == "textures")
-	{
-		basePos = 0;
-	}
-	else
-	{
-		// Take off the everything before "base/", and everything after
-		// the first period if it exists (i.e. strip off ".tga")
-		basePos = mapName.find(baseFolder);
-		if (basePos == std::string::npos)
-		{
-			// Unrecognised shader path, no base folder.
-			// Try the original incase it was already given relative.
-			basePos = 0;
-		}
-		else
-		{
-			// Increment for for the length of "base/", the / is the +1
-			basePos += (baseFolder.size() + 1);
-		}
-	}
-
-	std::size_t dotPos = mapName.find(".");
-
-	if (dotPos != std::string::npos)
-	{
-		return mapName.substr(basePos, dotPos - basePos);
-	}
-	else
-	{
-		return mapName.substr(basePos);
-	}
 }
 
 // Destructor. Release the GL display lists.

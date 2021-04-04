@@ -74,20 +74,11 @@ private:
 	std::string cleanupShaderName(const std::string& mapName);
 
 public:
-	/**
-	 * Constructor. Accepts a picoSurface_t struct and the file extension to determine
-	 * how to assign materials.
-	 */
-	StaticModelSurface(picoSurface_t* surf, const std::string& fExt);
+	StaticModelSurface(picoSurface_t* surf);
 
-	/**
-	 * Copy-constructor.
-	 */
+	// Copy-constructor.
 	StaticModelSurface(const StaticModelSurface& other);
 
-	/**
-	 * Destructor.
-	 */
 	~StaticModelSurface();
 
 	/**

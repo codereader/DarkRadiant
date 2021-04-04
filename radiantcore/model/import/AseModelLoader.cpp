@@ -1,5 +1,8 @@
 #include "AseModelLoader.h"
 
+#include <istream>
+#include "AseModel.h"
+
 #include "../picomodel/lib/picomodel.h"
 #include "os/path.h"
 #include "string/case_conv.h"
@@ -28,8 +31,8 @@ IModelPtr AseModelLoader::loadModelFromPath(const std::string& path)
 {
     // Open an ArchiveFile to load
     auto file = path_is_absolute(path.c_str()) ?
-        GlobalFileSystem().openFileInAbsolutePath(path) :
-        GlobalFileSystem().openFile(path);
+        GlobalFileSystem().openTextFileInAbsolutePath(path) :
+        GlobalFileSystem().openTextFile(path);
 
     if (!file)
     {
@@ -64,7 +67,16 @@ IModelPtr AseModelLoader::loadModelFromPath(const std::string& path)
 
     return modelObj;
 #else 
-    return IModelPtr();
+    std::istream stream(&(file->getInputStream()));
+    auto model = AseModel::CreateFromStream(stream);
+
+    auto modelObj = std::make_shared<StaticModel>(model->getSurfaces());
+    
+    // Set the filename
+    modelObj->setFilename(os::getFilename(file->getName()));
+    modelObj->setModelPath(path);
+
+    return modelObj;
 #endif
 }
 

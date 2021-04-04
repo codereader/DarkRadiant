@@ -25,7 +25,11 @@ public:
 public:
     static std::vector<StaticModelSurfacePtr> CreateSurfaces(picoModel_t* picoModel, const std::string& extension);
 
+    static std::string DetermineDefaultMaterial(picoSurface_t* picoSurface, const std::string& extension);
+
 private:
+    static std::string CleanupShaderName(const std::string& inName);
+
     static StaticModelSurfacePtr CreateSurface(picoSurface_t* picoSurface, const std::string& extension);
 };
 
