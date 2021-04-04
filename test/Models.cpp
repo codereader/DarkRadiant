@@ -219,4 +219,61 @@ TEST_F(AseImportTest, UVAngleKeyword)
     EXPECT_NEAR(model->getSurface(0).getVertex(2).texcoord.y(), 1 * -sinValue + 1 * cosValue, 1e-5);
 }
 
+bool surfaceHasVertexWith(const model::IModelSurface& surface, 
+    const std::function<bool(const ArbitraryMeshVertex& vertex)>& predicate)
+{
+    bool found = false;
+
+    for (auto i = 0; i < surface.getNumVertices(); ++i)
+    {
+        if (predicate(surface.getVertex(i)))
+        {
+            found = true;
+            break;
+        }
+    }
+
+    return found;
+}
+
+void expectVertexWithNormal(const model::IModelSurface& surface, const Vertex3f& vertex, const Normal3f& normal)
+{
+    EXPECT_TRUE(surfaceHasVertexWith(surface, [&](const ArbitraryMeshVertex& v)->bool
+    {
+        return v.vertex.isEqual(vertex, 1e-5) && v.normal.isEqual(normal, 1e-5);
+    })) << "Could not find a vertex with xyz = " << vertex << " and normal " << normal;
+}
+
+TEST_F(AseImportTest, VertexNormals)
+{
+    // Test Cube doesn't have any offset
+    auto model = GlobalModelCache().getModel("models/ase/testcube.ase");
+    EXPECT_EQ(model->getSurfaceCount(), 1);
+
+    // Check for a few specific vertex/normal combinations
+    expectVertexWithNormal(model->getSurface(0), Vertex3f(-16, -16, 16), Normal3f(-1, 0, 0));
+    expectVertexWithNormal(model->getSurface(0), Vertex3f(-16, -16, -16), Normal3f(-1, 0, 0));
+    expectVertexWithNormal(model->getSurface(0), Vertex3f(-16, 16, -16), Normal3f(-1, 0, 0));
+
+    expectVertexWithNormal(model->getSurface(0), Vertex3f(-16, 16, 16), Normal3f(0, 1, 0));
+    expectVertexWithNormal(model->getSurface(0), Vertex3f(-16, 16, -16), Normal3f(0, 1, 0));
+    expectVertexWithNormal(model->getSurface(0), Vertex3f(16, 16, -16), Normal3f(0, 1, 0));
+
+    expectVertexWithNormal(model->getSurface(0), Vertex3f(16, 16, 16), Normal3f(1, 0, 0));
+    expectVertexWithNormal(model->getSurface(0), Vertex3f(16, 16, -16), Normal3f(1, 0, 0));
+    expectVertexWithNormal(model->getSurface(0), Vertex3f(16, -16, -16), Normal3f(1, 0, 0));
+
+    expectVertexWithNormal(model->getSurface(0), Vertex3f(16, -16, 16), Normal3f(0, -1, 0));
+    expectVertexWithNormal(model->getSurface(0), Vertex3f(16, -16, -16), Normal3f(0, -1, 0));
+    expectVertexWithNormal(model->getSurface(0), Vertex3f(-16, -16, -16), Normal3f(0, -1, 0));
+
+    expectVertexWithNormal(model->getSurface(0), Vertex3f(16, 16, -16), Normal3f(0, 0, -1));
+    expectVertexWithNormal(model->getSurface(0), Vertex3f(-16, 16, -16), Normal3f(0, 0, -1));
+    expectVertexWithNormal(model->getSurface(0), Vertex3f(-16, -16, -16), Normal3f(0, 0, -1));
+
+    expectVertexWithNormal(model->getSurface(0), Vertex3f(-16, 16, 16), Normal3f(0, 0, 1));
+    expectVertexWithNormal(model->getSurface(0), Vertex3f(16, 16, 16), Normal3f(0, 0, 1));
+    expectVertexWithNormal(model->getSurface(0), Vertex3f(16, -16, 16), Normal3f(0, 0, 1));
+}
+
 }
