@@ -1,7 +1,7 @@
 #include "AseModel.h"
 
 #include <fmt/format.h>
-#include "parser/DefTokeniser.h"
+#include "parser/Tokeniser.h"
 #include "parser/ParseException.h"
 #include "string/case_conv.h"
 #include "string/trim.h"
@@ -175,7 +175,7 @@ std::shared_ptr<AseModel> AseModel::CreateFromStream(std::istream& stream)
 {
     auto model = std::make_shared<AseModel>();
 
-    parser::BasicDefTokeniser tokeniser(stream);
+    parser::BasicStringTokeniser tokeniser(stream);
 
     std::vector<AseMaterial> materials;
     std::vector<Vertex3f> vertices;
