@@ -150,4 +150,73 @@ TEST_F(AseImportTest, TriangleWindingCW)
     EXPECT_NEAR(normal.z(), -1.0, 1e-4);
 }
 
+TEST_F(AseImportTest, UVOffsetKeyword)
+{
+    // Test Cube doesn't have any offset
+    auto model = GlobalModelCache().getModel("models/ase/testcube.ase");
+    EXPECT_EQ(model->getSurfaceCount(), 1);
+
+    EXPECT_NEAR(model->getSurface(0).getVertex(0).texcoord.x(), 0, 1e-5);
+    EXPECT_NEAR(model->getSurface(0).getVertex(0).texcoord.y(), 1, 1e-5);
+
+    EXPECT_NEAR(model->getSurface(0).getVertex(1).texcoord.x(), 0, 1e-5);
+    EXPECT_NEAR(model->getSurface(0).getVertex(1).texcoord.y(), 0, 1e-5);
+
+    EXPECT_NEAR(model->getSurface(0).getVertex(2).texcoord.x(), 1, 1e-5);
+    EXPECT_NEAR(model->getSurface(0).getVertex(2).texcoord.y(), 1, 1e-5);
+
+    // Model has UVW_U_OFFSET == 0.5 and UVW_V_OFFSET == 0.3
+    model = GlobalModelCache().getModel("models/ase/testcube_uv_offset.ase");
+    EXPECT_EQ(model->getSurfaceCount(), 1);
+
+    // U_OFFSET is negated and applied => -0.5
+    EXPECT_NEAR(model->getSurface(0).getVertex(0).texcoord.x(), -0.5, 1e-5);
+    EXPECT_NEAR(model->getSurface(0).getVertex(0).texcoord.y(), 1.3, 1e-5);
+
+    EXPECT_NEAR(model->getSurface(0).getVertex(1).texcoord.x(), -0.5, 1e-5);
+    EXPECT_NEAR(model->getSurface(0).getVertex(1).texcoord.y(), 0.3, 1e-5);
+
+    EXPECT_NEAR(model->getSurface(0).getVertex(2).texcoord.x(), 0.5, 1e-5);
+    EXPECT_NEAR(model->getSurface(0).getVertex(2).texcoord.y(), 1.3, 1e-5);
+}
+
+TEST_F(AseImportTest, UVTilingKeyword)
+{
+    // Default testcube.ase is already tested in the UVOffsetKeyword test
+
+    // Model has UVW_U_TILING == 2 and UVW_V_TILING == 3
+    auto model = GlobalModelCache().getModel("models/ase/testcube_uv_tiling.ase");
+    EXPECT_EQ(model->getSurfaceCount(), 1);
+
+    EXPECT_NEAR(model->getSurface(0).getVertex(0).texcoord.x(), 0, 1e-5);
+    EXPECT_NEAR(model->getSurface(0).getVertex(0).texcoord.y(), 3, 1e-5);
+
+    EXPECT_NEAR(model->getSurface(0).getVertex(1).texcoord.x(), 0, 1e-5);
+    EXPECT_NEAR(model->getSurface(0).getVertex(1).texcoord.y(), 0, 1e-5);
+
+    EXPECT_NEAR(model->getSurface(0).getVertex(2).texcoord.x(), 2, 1e-5);
+    EXPECT_NEAR(model->getSurface(0).getVertex(2).texcoord.y(), 3, 1e-5);
+}
+
+TEST_F(AseImportTest, UVAngleKeyword)
+{
+    // Default testcube.ase is already tested in the UVOffsetKeyword test
+
+    // Model has UVW_ANGLE == 1.570796 (pi/2)
+    auto model = GlobalModelCache().getModel("models/ase/testcube_uv_angle.ase");
+    EXPECT_EQ(model->getSurfaceCount(), 1);
+
+    auto sinValue = sin(math::PI / 2);
+    auto cosValue = cos(math::PI / 2);
+
+    EXPECT_NEAR(model->getSurface(0).getVertex(0).texcoord.x(), 0 * cosValue + 1 * sinValue, 1e-5);
+    EXPECT_NEAR(model->getSurface(0).getVertex(0).texcoord.y(), 0 * -sinValue + 1 * cosValue, 1e-5);
+
+    EXPECT_NEAR(model->getSurface(0).getVertex(1).texcoord.x(), 0 * cosValue + 0 * sinValue, 1e-5);
+    EXPECT_NEAR(model->getSurface(0).getVertex(1).texcoord.y(), 0 * -sinValue + 0 * cosValue, 1e-5);
+
+    EXPECT_NEAR(model->getSurface(0).getVertex(2).texcoord.x(), 1 * cosValue + 1 * sinValue, 1e-5);
+    EXPECT_NEAR(model->getSurface(0).getVertex(2).texcoord.y(), 1 * -sinValue + 1 * cosValue, 1e-5);
+}
+
 }
