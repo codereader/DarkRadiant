@@ -35,9 +35,7 @@ public:
     // Public typedef to read the type of our elements
     typedef T ElementType;
 
-    /**
-     * Default constructor. Initialise Vector with all zeroes.
-     */
+    /// Initialise Vector with all zeroes.
     BasicVector3()
     {
         _v[0] = 0;
@@ -52,8 +50,10 @@ public:
         z() = z_;
     }
 
-    /** Construct a BasicVector3 from a 3-element array. The array must be
-     * valid as no bounds checking is done.
+    /**
+     * \brief Construct a BasicVector3 from a 3-element array.
+     *
+     * The array must be valid as no bounds checking is done.
      */
     BasicVector3(const T* array)
     {
@@ -73,20 +73,11 @@ public:
         );
     }
 
-    /** Set all 3 components to the provided values.
-     */
+    /// Set all 3 components to the provided values.
     void set(const T& x, const T& y, const T& z) {
         _v[0] = x;
         _v[1] = y;
         _v[2] = z;
-    }
-
-    /**
-     * Check if this Vector is valid. A Vector is invalid if any of its
-     * components are NaN.
-     */
-    bool isValid() const {
-        return !isnan(_v[0]) && !isnan(_v[1]) && !isnan(_v[2]);
     }
 
     // Return NON-CONSTANT references to the vector components
