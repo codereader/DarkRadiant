@@ -8,6 +8,7 @@
 
 #include "../StaticModel.h"
 #include "parser/ParseException.h"
+#include "../picomodel/PicoModelLoader.h"
 
 namespace model
 {
@@ -44,7 +45,7 @@ IModelPtr AseModelLoader::loadModelFromPath(const std::string& path)
             auto& staticSurface = staticSurfaces.emplace_back(std::make_shared<StaticModelSurface>(
                 std::move(aseSurface.vertices), std::move(aseSurface.indices)));
 
-            staticSurface->setDefaultMaterial(aseSurface.material);
+            staticSurface->setDefaultMaterial(PicoModelLoader::CleanupShaderName(aseSurface.material));
         }
 
         auto staticModel = std::make_shared<StaticModel>(staticSurfaces);
