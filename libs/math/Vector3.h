@@ -425,6 +425,20 @@ inline std::istream& operator>>(std::istream& st, BasicVector3<T>& vec)
     return st >> std::skipws >> vec.x() >> vec.y() >> vec.z();
 }
 
+namespace math
+{
+
+/// Epsilon equality test for BasicVector3
+template <typename T>
+bool near(const BasicVector3<T>& v1, const BasicVector3<T>& v2, double epsilon)
+{
+    BasicVector3<T> diff = v1 - v2;
+    return std::abs(diff.x()) < epsilon && std::abs(diff.y()) < epsilon
+        && std::abs(diff.z()) < epsilon;
+}
+
+}
+
 // ==========================================================================================
 
 // A 3-element vector stored in double-precision floating-point.

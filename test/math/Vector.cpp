@@ -81,7 +81,7 @@ TEST(MathTest, NormaliseVector3)
     Vector3 vN = v.getNormalised();
 
     // getNormalised should return correct result and not change the original
-    EXPECT_EQ(vN, v * 1.0/v.getLength());
+    EXPECT_TRUE(math::near(vN, v * 1.0/v.getLength(), 10E-6));
     EXPECT_NE(vN, v);
 
     // Normalise in place gives same result
