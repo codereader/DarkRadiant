@@ -183,7 +183,12 @@ std::shared_ptr<AseModel> AseModel::CreateFromStream(std::istream& stream)
     std::vector<AseFace> faces;
     std::vector<TexCoord2f> texcoords;
     std::vector<Vector3> colours;
-    std::size_t materialIndex;
+    int materialIndex = -1;
+
+    if (string::to_lower_copy(tokeniser.nextToken()) != "*3dsmax_asciiexport")
+    {
+        throw parser::ParseException("Missing 3DSMAX_ASCIIEXPORT header");
+    }
 
     while (tokeniser.hasMoreTokens())
     {
@@ -202,11 +207,17 @@ std::shared_ptr<AseModel> AseModel::CreateFromStream(std::istream& stream)
         if (token == "*mesh")
         {
             /* finish existing surface */
-            _ase_submit_triangles(*model, materials, materialIndex, vertices, normals, texcoords, colours, faces);
-            colours.clear();
-            texcoords.clear();
-            faces.clear();
-            vertices.clear();
+            if (materialIndex != -1 && !vertices.empty())
+            {
+                _ase_submit_triangles(*model, materials, materialIndex, vertices, normals, texcoords, colours, faces);
+
+                materialIndex = -1;
+                colours.clear();
+                texcoords.clear();
+                faces.clear();
+                normals.clear();
+                vertices.clear();
+            }
         }
         else if (token == "*mesh_numvertex")
         {
@@ -236,9 +247,11 @@ std::shared_ptr<AseModel> AseModel::CreateFromStream(std::istream& stream)
          * the material reference id (shader index) now. */
         else if (token == "*material_ref")
         {
-            materialIndex = string::convert<std::size_t>(tokeniser.nextToken());
+            auto index = string::convert<std::size_t>(tokeniser.nextToken());
 
-            if (materialIndex >= materials.size()) throw parser::ParseException("MATERIAL_REF index out of bounds >= MATERIAL_COUNT");
+            if (index >= materials.size()) throw parser::ParseException("MATERIAL_REF index out of bounds >= MATERIAL_COUNT");
+
+            materialIndex = static_cast<int>(index);
         }
         /* model mesh vertex */
         else if (token == "*mesh_vertex")
@@ -268,34 +281,29 @@ std::shared_ptr<AseModel> AseModel::CreateFromStream(std::istream& stream)
         else if (token == "*mesh_face")
         {
             // *MESH_FACE    0:    A:    3 B:    1 C:    2 AB:    0 BC:    0 CA:    0	 *MESH_SMOOTHING 0	 *MESH_MTLID 0
-            auto index = string::convert<std::size_t>(tokeniser.nextToken());
+            auto index = string::convert<std::size_t>(string::trim_right_copy(tokeniser.nextToken(), ":"));
 
             if (index >= faces.size()) throw parser::ParseException("MESH_FACE index out of bounds >= MESH_NUMFACES");
 
-            tokeniser.assertNextToken(":");
-
-            tokeniser.assertNextToken("A");
-            tokeniser.assertNextToken(":");
+            tokeniser.assertNextToken("A:");
 
             auto& face = faces[index];
             
             face.vertexIndices[0] = string::convert<std::size_t>(tokeniser.nextToken());
 
-            tokeniser.assertNextToken("B");
-            tokeniser.assertNextToken(":");
+            tokeniser.assertNextToken("B:");
 
             face.vertexIndices[1] = string::convert<std::size_t>(tokeniser.nextToken());
 
-            tokeniser.assertNextToken("C");
-            tokeniser.assertNextToken(":");
+            tokeniser.assertNextToken("C:");
 
             face.vertexIndices[2] = string::convert<std::size_t>(tokeniser.nextToken());
-
-            tokeniser.skipTokens(13);
 
             if (face.vertexIndices[0] >= vertices.size()) throw parser::ParseException("MESH_FACE vertex index 0 out of bounds >= MESH_NUMFACES");
             if (face.vertexIndices[1] >= vertices.size()) throw parser::ParseException("MESH_FACE vertex index 1 out of bounds >= MESH_NUMFACES");
             if (face.vertexIndices[2] >= vertices.size()) throw parser::ParseException("MESH_FACE vertex index 2 out of bounds >= MESH_NUMFACES");
+
+            tokeniser.skipTokens(9);
         }
         /* model texture vertex */
         else if (token == "*mesh_tvert")
