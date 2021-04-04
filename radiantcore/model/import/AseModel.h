@@ -21,7 +21,9 @@ private:
     std::vector<Surface> _surfaces;
 
 public:
-    Surface& addSurface();
+    Surface& addSurface(const std::string& name);
+
+    Surface& ensureSurface(const std::string& name);
 
     // Read/Write access
     std::vector<Surface>& getSurfaces();

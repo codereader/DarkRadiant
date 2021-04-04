@@ -1,5 +1,8 @@
 #include "AseModel.h"
 
+#include <fmt/format.h>
+#include "parser/ParseException.h"
+
 /* -----------------------------------------------------------------------------
 
 PicoModel Library
@@ -511,6 +514,18 @@ static void _ase_submit_triangles( model::AseModel& model , aseMaterial_t* mater
 			}
 
 			/* submit the triangle to the model */
+            auto& surface = model.ensureSurface(subMtl->shader->name);
+
+            auto nextIndex = static_cast<unsigned int>(surface.indices.size());
+
+            surface.vertices.emplace_back(ArbitraryMeshVertex{ Vertex3f(*(xyz[0])), Normal3f(*(normal[0])), TexCoord2f(st[0]) });
+            surface.vertices.emplace_back(ArbitraryMeshVertex{ Vertex3f(*(xyz[1])), Normal3f(*(normal[1])), TexCoord2f(st[1]) });
+            surface.vertices.emplace_back(ArbitraryMeshVertex{ Vertex3f(*(xyz[2])), Normal3f(*(normal[2])), TexCoord2f(st[2]) });
+
+            surface.indices.emplace_back(nextIndex++);
+            surface.indices.emplace_back(nextIndex++);
+            surface.indices.emplace_back(nextIndex++);
+            
 			// TODO PicoAddTriangleToModel ( model , xyz , normal , 1 , stRef, 1 , color , subMtl->shader, smooth );
 		}
 	}
@@ -532,9 +547,22 @@ static void shadername_convert(char* shaderName)
 namespace model
 {
 
-AseModel::Surface& AseModel::addSurface()
+AseModel::Surface& AseModel::addSurface(const std::string& name)
 {
-    return _surfaces.emplace_back();
+    return _surfaces.emplace_back(Surface{name});
+}
+
+AseModel::Surface& AseModel::ensureSurface(const std::string& name)
+{
+    for (auto& surface : _surfaces)
+    {
+        if (surface.material == name)
+        {
+            return surface;
+        }
+    }
+
+    return addSurface(name);
 }
 
 std::vector<AseModel::Surface>& AseModel::getSurfaces()
@@ -566,7 +594,7 @@ std::shared_ptr<AseModel> AseModel::CreateFromStream(std::istream& stream)
 	/* helper */
 	#define _ase_error_return(m) \
 	{ \
-		_pico_printf( PICO_ERROR,"%s in ASE, line %d.",m,p->curLine); \
+		throw parser::ParseException(fmt::format("{0} in ASE, line {0:d}.", m ,p->curLine)); \
 		_pico_free_parser( p ); \
 		return model; \
 	}
