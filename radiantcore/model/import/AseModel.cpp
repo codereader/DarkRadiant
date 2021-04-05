@@ -6,6 +6,8 @@
 #include "string/case_conv.h"
 #include "string/trim.h"
 
+#include "Hashing.h"
+
 /* -----------------------------------------------------------------------------
 
 ASE Loading Code based on the original PicoModel ASE parser (licence as follows)
@@ -41,59 +43,6 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ----------------------------------------------------------------------------- */
-
-namespace
-{
-    inline void combineHash(std::size_t& seed, std::size_t hash)
-    {
-        seed ^= hash + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-    }
-}
-
-template<>
-struct std::hash<Vector3>
-{
-    size_t operator()(const Vector3& v) const
-    {
-        std::hash<double> hasher;
-
-        auto hash = hasher(v.x());
-        combineHash(hash, hasher(v.y()));
-        combineHash(hash, hasher(v.z()));
-        
-        return hash;
-    }
-};
-
-// Hash specialisation such that ArbitraryMeshVertex can be used as key type in std::unordered_map<>
-template<>
-struct std::hash<ArbitraryMeshVertex>
-{
-    size_t operator()(const ArbitraryMeshVertex& v) const
-    {
-        std::hash<Vector3> vectorHash;
-        std::hash<double> doubleHash;
-
-        auto hash = vectorHash(v.vertex);
-
-        combineHash(hash, vectorHash(v.normal));
-        combineHash(hash, doubleHash(v.texcoord.x()));
-        combineHash(hash, doubleHash(v.texcoord.y()));
-        combineHash(hash, vectorHash(v.colour));
-
-        return hash;
-    }
-};
-
-// Assumes equality of two ArbitraryMeshVertices if all of (vertex, normal, texcoord, colour) are equal
-template<>
-struct std::equal_to<ArbitraryMeshVertex>
-{
-    bool operator()(const ArbitraryMeshVertex& a, const ArbitraryMeshVertex& b) const
-    {
-        return a.vertex == b.vertex && a.normal == b.normal && a.texcoord == b.texcoord && a.colour == b.colour;
-    }
-};
 
 namespace model
 {
@@ -142,13 +91,11 @@ void AseModel::finishSurface(Mesh& mesh, std::size_t materialIndex, const Matrix
     double materialSin = sin(material.uvAngle);
     double materialCos = cos(material.uvAngle);
 
-    // 
+    // Hash table to provide quick (and coarse) lookup of vertices with similar XYZ coords
     std::unordered_map<ArbitraryMeshVertex, std::size_t> vertexIndices;
 
     for (const auto& face : mesh.faces)
     {
-        //rMessage() << "We got " << mesh.faces.size() << " faces, that's " << mesh.faces.size() * 3 << " vertices to inspect" << std::endl;
-
         // we pull the data from the vertex, color and texcoord arrays using the face index data
         for (int j = 0; j < 3; ++j)
         {
@@ -179,21 +126,11 @@ void AseModel::finishSurface(Mesh& mesh, std::size_t materialIndex, const Matrix
                 colour
             );
 
-            //rMessage() << "---" << std::endl;
-            //rMessage() << "New vertex: " << meshVertex << std::endl;
-            //rMessage() << "Existing vertices: " << std::endl;
-            
-            //for (const auto& pair : vertexIndices)
-            //{
-            //    rMessage() << pair.second << " : " << pair.first << std::endl;
-            //}
-
             // Try to look up an existing vertex or add a new index
             auto emplaceResult = vertexIndices.try_emplace(meshVertex, surface.vertices.size());
 
             if (emplaceResult.second)
             {
-                //rMessage() << "This was a new one" << std::endl;
                 // This was a new vertex, copy it to the vertex array
                 surface.vertices.emplace_back(emplaceResult.first->first);
             }

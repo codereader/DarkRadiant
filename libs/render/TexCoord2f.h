@@ -49,4 +49,11 @@ public:
 		}
 		return false;
 	}
+
+    template<typename Epsilon>
+    bool isEqual(const TexCoord2f& other, Epsilon epsilon) const
+    {
+        return float_equal_epsilon(x(), other.x(), epsilon) &&
+               float_equal_epsilon(y(), other.y(), epsilon);
+    }
 };
