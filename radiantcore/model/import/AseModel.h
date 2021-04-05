@@ -26,6 +26,15 @@ private:
 
     struct Face;
 
+    struct Mesh
+    {
+        std::vector<Vertex3f> vertices;
+        std::vector<Normal3f> normals;
+        std::vector<Face> faces;
+        std::vector<TexCoord2f> texcoords;
+        std::vector<Vector3> colours;
+    };
+
 public:
     struct Surface
     {
@@ -56,10 +65,10 @@ private:
     void parseFromTokens(parser::StringTokeniser& tokeniser);
 
     void parseMaterialList(parser::StringTokeniser& tokeniser);
+    void parseGeomObject(parser::StringTokeniser& tokeniser);
+    void parseMesh(Mesh& mesh, parser::StringTokeniser& tokeniser);
 
-    void finishSurface(std::size_t materialIndex,
-        std::vector<Vertex3f>& vertices, std::vector<Normal3f>& normals, std::vector<TexCoord2f>& texcoords,
-        std::vector<Vector3>& colours, std::vector<Face>& faces);
+    void finishSurface(Mesh& mesh, std::size_t materialIndex);
 };
 
 }

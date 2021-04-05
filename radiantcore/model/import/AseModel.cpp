@@ -67,11 +67,9 @@ AseModel::Material::Material() :
     uvAngle(0)
 {}
 
-void AseModel::finishSurface(std::size_t materialIndex,
-    std::vector<Vertex3f>& vertices, std::vector<Normal3f>& normals, std::vector<TexCoord2f>& texcoords,
-    std::vector<Vector3>& colours, std::vector<Face>& faces)
+void AseModel::finishSurface(Mesh& mesh, std::size_t materialIndex)
 {
-    assert(vertices.size() == normals.size());
+    assert(mesh.vertices.size() == mesh.normals.size());
 
     if (materialIndex >= _materials.size())
     {
@@ -83,30 +81,30 @@ void AseModel::finishSurface(std::size_t materialIndex,
     // submit the triangle to the model
     auto& surface = ensureSurface(material.diffuseBitmap);
 
-    surface.vertices.reserve(surface.vertices.size() + vertices.size());
-    surface.indices.reserve(surface.indices.size() + faces.size() * 3);
+    surface.vertices.reserve(surface.vertices.size() + mesh.vertices.size());
+    surface.indices.reserve(surface.indices.size() + mesh.faces.size() * 3);
 
     double materialSin = sin(material.uvAngle);
     double materialCos = cos(material.uvAngle);
 
-    for (const auto& face : faces)
+    for (const auto& face : mesh.faces)
     {
         /* we pull the data from the vertex, color and texcoord arrays using the face index data */
         for (int j = 0 ; j < 3 ; j ++ )
         {
             auto nextIndex = static_cast<unsigned int>(surface.indices.size());
 
-            auto& vertex = vertices[face.vertexIndices[j]];
-            auto& normal = normals[face.vertexIndices[j]];
+            auto& vertex = mesh.vertices[face.vertexIndices[j]];
+            auto& normal = mesh.normals[face.vertexIndices[j]];
 
             double u, v;
 
             /* greebo: Apply shift, scale and rotation */
             /* Also check for empty texcoords, some models surfaces don't have any tverts */
-            if (!texcoords.empty())
+            if (!mesh.texcoords.empty())
             {
-                u = texcoords[face.texcoordIndices[j]].x() * material.uTiling + material.uOffset;
-                v = texcoords[face.texcoordIndices[j]].y() * material.vTiling + material.vOffset;
+                u = mesh.texcoords[face.texcoordIndices[j]].x() * material.uTiling + material.uOffset;
+                v = mesh.texcoords[face.texcoordIndices[j]].y() * material.vTiling + material.vOffset;
             }
             else
             {
@@ -123,9 +121,9 @@ void AseModel::finishSurface(std::size_t materialIndex,
 
             surface.indices.emplace_back(nextIndex++);
 
-            if (!colours.empty())
+            if (!mesh.colours.empty())
             {
-                meshVertex.colour = colours[face.colourIndices[j]];
+                meshVertex.colour = mesh.colours[face.colourIndices[j]];
             }
             else
             {
@@ -169,7 +167,7 @@ void AseModel::parseMaterialList(parser::StringTokeniser& tokeniser)
         auto token = tokeniser.nextToken();
         string::to_lower(token);
 
-        if (token != "}")
+        if (token == "}")
         {
             if (--blockLevel == 0) break;
         }
@@ -262,72 +260,191 @@ void AseModel::parseMaterialList(parser::StringTokeniser& tokeniser)
     }
 }
 
-void AseModel::parseFromTokens(parser::StringTokeniser& tokeniser)
+void AseModel::parseMesh(Mesh& mesh, parser::StringTokeniser& tokeniser)
 {
-    std::vector<Vertex3f> vertices;
-    std::vector<Normal3f> normals;
-    std::vector<Face> faces;
-    std::vector<TexCoord2f> texcoords;
-    std::vector<Vector3> colours;
-    int materialIndex = -1;
-
-    if (string::to_lower_copy(tokeniser.nextToken()) != "*3dsmax_asciiexport")
-    {
-        throw parser::ParseException("Missing 3DSMAX_ASCIIEXPORT header");
-    }
+    int blockLevel = 0;
 
     while (tokeniser.hasMoreTokens())
     {
         auto token = tokeniser.nextToken();
         string::to_lower(token);
 
-        /* we skip invalid ase statements */
-        if (token[0] != '*' && token[0] != '{' && token[0] != '}')
+        if (token == "}")
         {
-            continue;
+            if (--blockLevel == 0) break;
         }
-
-        if (token == "*material_list")
+        else if (token == "{")
         {
-            parseMaterialList(tokeniser);
-        }
-        /* model mesh (originally contained within geomobject) */
-        else if (token == "*mesh")
-        {
-            /* finish existing surface */
-            if (materialIndex != -1 && !vertices.empty())
-            {
-                finishSurface(materialIndex, vertices, normals, texcoords, colours, faces);
-
-                materialIndex = -1;
-                colours.clear();
-                texcoords.clear();
-                faces.clear();
-                normals.clear();
-                vertices.clear();
-            }
+            ++blockLevel;
         }
         else if (token == "*mesh_numvertex")
         {
             // Parse the number to allocate space in the vertex vector
             auto numVertices = string::convert<std::size_t>(tokeniser.nextToken());
-            vertices.resize(numVertices);
-            normals.resize(numVertices);
+            mesh.vertices.resize(numVertices);
+            mesh.normals.resize(numVertices);
         }
         else if (token == "*mesh_numfaces")
         {
             auto numFaces = string::convert<std::size_t>(tokeniser.nextToken());
-            faces.resize(numFaces);
+            mesh.faces.resize(numFaces);
         }
         else if (token == "*mesh_numtvertex")
         {
             auto numTextureVertices = string::convert<std::size_t>(tokeniser.nextToken());
-            texcoords.resize(numTextureVertices);
+            mesh.texcoords.resize(numTextureVertices);
         }
         else if (token == "*mesh_numcvertex")
         {
             auto numColorVertices = string::convert<std::size_t>(tokeniser.nextToken());
-            colours.resize(numColorVertices, Vector3(1.0, 1.0, 1.0));
+            mesh.colours.resize(numColorVertices, Vector3(1.0, 1.0, 1.0));
+        }
+        /* model mesh vertex */
+        else if (token == "*mesh_vertex")
+        {
+            auto index = string::convert<std::size_t>(tokeniser.nextToken());
+
+            if (index >= mesh.vertices.size()) throw parser::ParseException("MESH_VERTEX index out of bounds >= MESH_NUMVERTEX");
+
+            auto& vertex = mesh.vertices[index];
+            vertex.x() = string::convert<double>(tokeniser.nextToken());
+            vertex.y() = string::convert<double>(tokeniser.nextToken());
+            vertex.z() = string::convert<double>(tokeniser.nextToken());
+        }
+        /* model mesh vertex normal */
+        else if (token == "*mesh_vertexnormal")
+        {
+            auto index = string::convert<std::size_t>(tokeniser.nextToken());
+
+            if (index >= mesh.vertices.size()) throw parser::ParseException("MESH_VERTEXNORMAL index out of bounds >= MESH_NUMVERTEX");
+
+            auto& normal = mesh.normals[index];
+            normal.x() = string::convert<double>(tokeniser.nextToken());
+            normal.y() = string::convert<double>(tokeniser.nextToken());
+            normal.z() = string::convert<double>(tokeniser.nextToken());
+        }
+        /* model mesh face */
+        else if (token == "*mesh_face")
+        {
+            // *MESH_FACE    0:    A:    3 B:    1 C:    2 AB:    0 BC:    0 CA:    0	 *MESH_SMOOTHING 0	 *MESH_MTLID 0
+            auto index = string::convert<std::size_t>(string::trim_right_copy(tokeniser.nextToken(), ":"));
+
+            if (index >= mesh.faces.size()) throw parser::ParseException("MESH_FACE index out of bounds >= MESH_NUMFACES");
+
+            auto& face = mesh.faces[index];
+
+            // Note: we're reversing the winding to get CW ordering
+            tokeniser.assertNextToken("A:");
+            face.vertexIndices[2] = string::convert<std::size_t>(tokeniser.nextToken());
+
+            tokeniser.assertNextToken("B:");
+            face.vertexIndices[1] = string::convert<std::size_t>(tokeniser.nextToken());
+
+            tokeniser.assertNextToken("C:");
+            face.vertexIndices[0] = string::convert<std::size_t>(tokeniser.nextToken());
+
+            if (face.vertexIndices[2] >= mesh.vertices.size()) throw parser::ParseException("MESH_FACE vertex index 0 out of bounds >= MESH_NUMFACES");
+            if (face.vertexIndices[1] >= mesh.vertices.size()) throw parser::ParseException("MESH_FACE vertex index 1 out of bounds >= MESH_NUMFACES");
+            if (face.vertexIndices[0] >= mesh.vertices.size()) throw parser::ParseException("MESH_FACE vertex index 2 out of bounds >= MESH_NUMFACES");
+
+            tokeniser.skipTokens(9);
+        }
+        /* model texture vertex */
+        else if (token == "*mesh_tvert")
+        {
+            auto index = string::convert<std::size_t>(tokeniser.nextToken());
+
+            if (index >= mesh.texcoords.size()) throw parser::ParseException("MESH_TVERT index out of bounds >= MESH_NUMTVERTEX");
+
+            auto& texcoord = mesh.texcoords[index];
+            texcoord.x() = string::convert<double>(tokeniser.nextToken());
+            /* ydnar: invert t */
+            texcoord.y() = 1.0 - string::convert<double>(tokeniser.nextToken());
+            // ignore the third texcoord value
+            tokeniser.nextToken();
+        }
+        /* ydnar: model mesh texture face */
+        else if (token == "*mesh_tface")
+        {
+            // *MESH_TFACE 0    0   1   2
+            auto index = string::convert<std::size_t>(tokeniser.nextToken());
+
+            if (index >= mesh.faces.size()) throw parser::ParseException("MESH_TFACE index out of bounds >= MESH_NUMFACES");
+
+            auto& face = mesh.faces[index];
+
+            // Reverse the winding order
+            face.texcoordIndices[2] = string::convert<std::size_t>(tokeniser.nextToken());
+            face.texcoordIndices[1] = string::convert<std::size_t>(tokeniser.nextToken());
+            face.texcoordIndices[0] = string::convert<std::size_t>(tokeniser.nextToken());
+
+            if (face.texcoordIndices[2] >= mesh.texcoords.size()) throw parser::ParseException("MESH_TFACE texcoord index 0 out of bounds >= MESH_NUMTVERTEX");
+            if (face.texcoordIndices[1] >= mesh.texcoords.size()) throw parser::ParseException("MESH_TFACE texcoord index 1 out of bounds >= MESH_NUMTVERTEX");
+            if (face.texcoordIndices[0] >= mesh.texcoords.size()) throw parser::ParseException("MESH_TFACE texcoord index 2 out of bounds >= MESH_NUMTVERTEX");
+        }
+        /* model color vertex */
+        else if (token == "*mesh_vertcol")
+        {
+            auto index = string::convert<std::size_t>(tokeniser.nextToken());
+
+            if (index >= mesh.colours.size()) throw parser::ParseException("MESH_VERTCOL index out of bounds >= MESH_NUMCVERTEX");
+
+            auto& colour = mesh.colours[index];
+            colour.x() = string::convert<double>(tokeniser.nextToken());
+            colour.y() = string::convert<double>(tokeniser.nextToken());
+            colour.z() = string::convert<double>(tokeniser.nextToken());
+        }
+        /* model color face */
+        else if (token == "*mesh_cface")
+        {
+            // *MESH_CFACE 0    0   1   2
+            auto index = string::convert<std::size_t>(tokeniser.nextToken());
+
+            if (index >= mesh.faces.size()) throw parser::ParseException("MESH_CFACE index out of bounds >= MESH_NUMFACES");
+
+            auto& face = mesh.faces[index];
+
+            // Reverse the winding order
+            face.colourIndices[2] = string::convert<std::size_t>(tokeniser.nextToken());
+            face.colourIndices[1] = string::convert<std::size_t>(tokeniser.nextToken());
+            face.colourIndices[0] = string::convert<std::size_t>(tokeniser.nextToken());
+
+            if (face.colourIndices[2] >= mesh.colours.size()) throw parser::ParseException("MESH_CFACE colour index 0 out of bounds >= MESH_NUMCVERTEX");
+            if (face.colourIndices[1] >= mesh.colours.size()) throw parser::ParseException("MESH_CFACE colour index 1 out of bounds >= MESH_NUMCVERTEX");
+            if (face.colourIndices[0] >= mesh.colours.size()) throw parser::ParseException("MESH_CFACE colour index 2 out of bounds >= MESH_NUMCVERTEX");
+        }
+    }
+}
+
+void AseModel::parseGeomObject(parser::StringTokeniser& tokeniser)
+{
+    Mesh mesh;
+    Matrix4 nodeMatrix = Matrix4::getIdentity();
+    int materialIndex = -1;
+
+    int blockLevel = 0;
+
+    while (tokeniser.hasMoreTokens())
+    {
+        auto token = tokeniser.nextToken();
+        string::to_lower(token);
+
+        if (token == "}")
+        {
+            if (--blockLevel == 0) break;
+        }
+        else if (token == "{")
+        {
+            ++blockLevel;
+        }
+        else if (token == "*mesh")
+        {
+            parseMesh(mesh, tokeniser);
+        }
+        else if (token == "*node_tm")
+        {
+            // The NODE_TM block is parsed by the engine and applied to the
+            // normals of the mesh, needs to be implemented.
         }
         /* mesh material reference. this usually comes at the end of
          * geomobjects after the mesh blocks. we must assume that the
@@ -341,124 +458,38 @@ void AseModel::parseFromTokens(parser::StringTokeniser& tokeniser)
 
             materialIndex = static_cast<int>(index);
         }
-        /* model mesh vertex */
-        else if (token == "*mesh_vertex")
-        {
-            auto index = string::convert<std::size_t>(tokeniser.nextToken());
-
-            if (index >= vertices.size()) throw parser::ParseException("MESH_VERTEX index out of bounds >= MESH_NUMVERTEX");
-
-            auto& vertex = vertices[index];
-            vertex.x() = string::convert<double>(tokeniser.nextToken());
-            vertex.y() = string::convert<double>(tokeniser.nextToken());
-            vertex.z() = string::convert<double>(tokeniser.nextToken());
-        }
-        /* model mesh vertex normal */
-        else if (token == "*mesh_vertexnormal")
-        {
-            auto index = string::convert<std::size_t>(tokeniser.nextToken());
-
-            if (index >= vertices.size()) throw parser::ParseException("MESH_VERTEXNORMAL index out of bounds >= MESH_NUMVERTEX");
-
-            auto& normal = normals[index];
-            normal.x() = string::convert<double>(tokeniser.nextToken());
-            normal.y() = string::convert<double>(tokeniser.nextToken());
-            normal.z() = string::convert<double>(tokeniser.nextToken());
-        }
-        /* model mesh face */
-        else if (token == "*mesh_face")
-        {
-            // *MESH_FACE    0:    A:    3 B:    1 C:    2 AB:    0 BC:    0 CA:    0	 *MESH_SMOOTHING 0	 *MESH_MTLID 0
-            auto index = string::convert<std::size_t>(string::trim_right_copy(tokeniser.nextToken(), ":"));
-
-            if (index >= faces.size()) throw parser::ParseException("MESH_FACE index out of bounds >= MESH_NUMFACES");
-
-            auto& face = faces[index];
-
-            // Note: we're reversing the winding to get CW ordering
-            tokeniser.assertNextToken("A:");
-            face.vertexIndices[2] = string::convert<std::size_t>(tokeniser.nextToken());
-
-            tokeniser.assertNextToken("B:");
-            face.vertexIndices[1] = string::convert<std::size_t>(tokeniser.nextToken());
-
-            tokeniser.assertNextToken("C:");
-            face.vertexIndices[0] = string::convert<std::size_t>(tokeniser.nextToken());
-
-            if (face.vertexIndices[2] >= vertices.size()) throw parser::ParseException("MESH_FACE vertex index 0 out of bounds >= MESH_NUMFACES");
-            if (face.vertexIndices[1] >= vertices.size()) throw parser::ParseException("MESH_FACE vertex index 1 out of bounds >= MESH_NUMFACES");
-            if (face.vertexIndices[0] >= vertices.size()) throw parser::ParseException("MESH_FACE vertex index 2 out of bounds >= MESH_NUMFACES");
-
-            tokeniser.skipTokens(9);
-        }
-        /* model texture vertex */
-        else if (token == "*mesh_tvert")
-        {
-            auto index = string::convert<std::size_t>(tokeniser.nextToken());
-
-            if (index >= texcoords.size()) throw parser::ParseException("MESH_TVERT index out of bounds >= MESH_NUMTVERTEX");
-
-            auto& texcoord = texcoords[index];
-            texcoord.x() = string::convert<double>(tokeniser.nextToken());
-            /* ydnar: invert t */
-            texcoord.y() = 1.0 - string::convert<double>(tokeniser.nextToken());
-            // ignore the third texcoord value
-            tokeniser.nextToken();
-        }
-        /* ydnar: model mesh texture face */
-        else if (token == "*mesh_tface")
-        {
-            // *MESH_TFACE 0    0   1   2
-            auto index = string::convert<std::size_t>(tokeniser.nextToken());
-
-            if (index >= faces.size()) throw parser::ParseException("MESH_TFACE index out of bounds >= MESH_NUMFACES");
-
-            auto& face = faces[index];
-
-            // Reverse the winding order
-            face.texcoordIndices[2] = string::convert<std::size_t>(tokeniser.nextToken());
-            face.texcoordIndices[1] = string::convert<std::size_t>(tokeniser.nextToken());
-            face.texcoordIndices[0] = string::convert<std::size_t>(tokeniser.nextToken());
-
-            if (face.texcoordIndices[2] >= texcoords.size()) throw parser::ParseException("MESH_TFACE texcoord index 0 out of bounds >= MESH_NUMTVERTEX");
-            if (face.texcoordIndices[1] >= texcoords.size()) throw parser::ParseException("MESH_TFACE texcoord index 1 out of bounds >= MESH_NUMTVERTEX");
-            if (face.texcoordIndices[0] >= texcoords.size()) throw parser::ParseException("MESH_TFACE texcoord index 2 out of bounds >= MESH_NUMTVERTEX");
-        }
-        /* model color vertex */
-        else if (token == "*mesh_vertcol")
-        {
-            auto index = string::convert<std::size_t>(tokeniser.nextToken());
-
-            if (index >= colours.size()) throw parser::ParseException("MESH_VERTCOL index out of bounds >= MESH_NUMCVERTEX");
-
-            auto& colour = colours[index];
-            colour.x() = string::convert<double>(tokeniser.nextToken());
-            colour.y() = string::convert<double>(tokeniser.nextToken());
-            colour.z() = string::convert<double>(tokeniser.nextToken());
-        }
-        /* model color face */
-        else if (token == "*mesh_cface")
-        {
-            // *MESH_CFACE 0    0   1   2
-            auto index = string::convert<std::size_t>(tokeniser.nextToken());
-
-            if (index >= faces.size()) throw parser::ParseException("MESH_CFACE index out of bounds >= MESH_NUMFACES");
-
-            auto& face = faces[index];
-
-            // Reverse the winding order
-            face.colourIndices[2] = string::convert<std::size_t>(tokeniser.nextToken());
-            face.colourIndices[1] = string::convert<std::size_t>(tokeniser.nextToken());
-            face.colourIndices[0] = string::convert<std::size_t>(tokeniser.nextToken());
-
-            if (face.colourIndices[2] >= colours.size()) throw parser::ParseException("MESH_CFACE colour index 0 out of bounds >= MESH_NUMCVERTEX");
-            if (face.colourIndices[1] >= colours.size()) throw parser::ParseException("MESH_CFACE colour index 1 out of bounds >= MESH_NUMCVERTEX");
-            if (face.colourIndices[0] >= colours.size()) throw parser::ParseException("MESH_CFACE colour index 2 out of bounds >= MESH_NUMCVERTEX");
-        }
     }
 
-    /* ydnar: finish existing surface */
-    finishSurface(materialIndex, vertices, normals, texcoords, colours, faces);
+    finishSurface(mesh, materialIndex);
+}
+
+void AseModel::parseFromTokens(parser::StringTokeniser& tokeniser)
+{
+    if (string::to_lower_copy(tokeniser.nextToken()) != "*3dsmax_asciiexport")
+    {
+        throw parser::ParseException("Missing 3DSMAX_ASCIIEXPORT header");
+    }
+
+    while (tokeniser.hasMoreTokens())
+    {
+        auto token = tokeniser.nextToken();
+        string::to_lower(token);
+
+        // skip invalid ase statements
+        if (token[0] != '*' && token[0] != '{' && token[0] != '}')
+        {
+            continue;
+        }
+
+        if (token == "*material_list")
+        {
+            parseMaterialList(tokeniser);
+        }
+        else if (token== "*geomobject")
+        {
+            parseGeomObject(tokeniser);
+        }
+    }
 }
 
 std::shared_ptr<AseModel> AseModel::CreateFromStream(std::istream& stream)
