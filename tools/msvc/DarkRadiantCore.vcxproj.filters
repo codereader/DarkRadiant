@@ -2115,8 +2115,5 @@
     <ClInclude Include="..\..\radiantcore\model\import\AseModel.h">
       <Filter>src\model\import</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\model\import\Hashing.h">
-      <Filter>src\model\import</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

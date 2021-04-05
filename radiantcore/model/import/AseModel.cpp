@@ -6,7 +6,7 @@
 #include "string/case_conv.h"
 #include "string/trim.h"
 
-#include "Hashing.h"
+#include "render/VertexHashing.h"
 
 /* -----------------------------------------------------------------------------
 

@@ -3,6 +3,8 @@
 #include "imodelsurface.h"
 #include "imodelcache.h"
 
+#include "render/VertexHashing.h"
+
 namespace test
 {
 
@@ -245,7 +247,7 @@ void expectVertexWithNormal(const model::IModelSurface& surface, const Vertex3f&
 {
     EXPECT_TRUE(surfaceHasVertexWith(surface, [&](const ArbitraryMeshVertex& v)->bool
     {
-        return v.vertex.isEqual(vertex, 0.01) && v.normal.dot(normal) > 1.0 - 0.02;
+        return v.vertex.isEqual(vertex, render::VertexEpsilon) && v.normal.dot(normal) > 1.0 - render::NormalEpsilon;
     })) << "Could not find a vertex with xyz = " << vertex << " and normal " << normal;
 }
 
@@ -284,7 +286,7 @@ void expectVertexWithColour(const model::IModelSurface& surface, const Vertex3f&
 {
     EXPECT_TRUE(surfaceHasVertexWith(surface, [&](const ArbitraryMeshVertex& v)->bool
     {
-        return v.vertex.isEqual(vertex, 1e-5) && v.colour.isEqual(colour, 1e-5);
+        return v.vertex.isEqual(vertex, render::VertexEpsilon) && v.colour.isEqual(colour, render::VertexEpsilon);
     })) << "Could not find a vertex with xyz = " << vertex << " and colour " << colour;
 }
 

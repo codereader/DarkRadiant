@@ -860,7 +860,6 @@
     <ClInclude Include="..\..\radiantcore\model\export\WavefrontExporter.h" />
     <ClInclude Include="..\..\radiantcore\model\import\AseModel.h" />
     <ClInclude Include="..\..\radiantcore\model\import\AseModelLoader.h" />
-    <ClInclude Include="..\..\radiantcore\model\import\Hashing.h" />
     <ClInclude Include="..\..\radiantcore\model\import\ModelImporterBase.h" />
     <ClInclude Include="..\..\radiantcore\model\md5\MD5Anim.h" />
     <ClInclude Include="..\..\radiantcore\model\md5\MD5AnimationCache.h" />

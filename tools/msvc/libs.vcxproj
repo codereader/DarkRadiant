@@ -211,6 +211,7 @@
     <ClInclude Include="..\..\libs\render\VectorLightList.h" />
     <ClInclude Include="..\..\libs\render\Vertex3f.h" />
     <ClInclude Include="..\..\libs\render\VertexCb.h" />
+    <ClInclude Include="..\..\libs\render\VertexHashing.h" />
     <ClInclude Include="..\..\libs\render\VertexNCb.h" />
     <ClInclude Include="..\..\libs\render\VertexNT.h" />
     <ClInclude Include="..\..\libs\render\View.h" />

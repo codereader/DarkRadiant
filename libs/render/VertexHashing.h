@@ -23,24 +23,27 @@
 * duplicates in meshes with many verts. Each "colliding" vertex will then be compared
 * in-depth by the std::equal_to<> specialisation, where the epsilon-comparison is performed.
 */
-namespace
+namespace render
 {
-    // A hash combination function based on the one used in boost and found on stackoverflow
-    inline void combineHash(std::size_t& seed, std::size_t hash)
+    namespace detail
     {
-        seed ^= hash + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+        // A hash combination function based on the one used in boost and found on stackoverflow
+        inline void combineHash(std::size_t& seed, std::size_t hash)
+        {
+            seed ^= hash + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+        }
+
+        // Delivers 10.0^signficantDigits
+        constexpr double RoundingFactor(std::size_t significantVertexDigits)
+        {
+            return significantVertexDigits == 1 ? 10.0 : 10.0 * RoundingFactor(significantVertexDigits - 1);
+        }
     }
 
     // These epsilons below correspond to the CVARs in the game code
     constexpr double VertexEpsilon = 0.01; // r_slopVertex
     constexpr double NormalEpsilon = 0.02; // r_slopNormal
     constexpr double TexCoordEpsilon = 0.001; // r_slopTexCoord
-
-    // Delivers 10.0^signficantDigits
-    constexpr double RoundingFactor(std::size_t significantVertexDigits)
-    {
-        return significantVertexDigits == 1 ? 10.0 : 10.0 * RoundingFactor(significantVertexDigits - 1);
-    }
 }
 
 // Coarse hash of the 3-component vector
@@ -54,12 +57,12 @@ struct std::hash<Vector3>
 
     size_t operator()(const Vector3& v) const
     {
-        auto xHash = static_cast<std::size_t>(v.x() * RoundingFactor(SignificantVertexDigits));
-        auto yHash = static_cast<std::size_t>(v.y() * RoundingFactor(SignificantVertexDigits));
-        auto zHash = static_cast<std::size_t>(v.z() * RoundingFactor(SignificantVertexDigits));
+        auto xHash = static_cast<std::size_t>(v.x() * render::detail::RoundingFactor(SignificantVertexDigits));
+        auto yHash = static_cast<std::size_t>(v.y() * render::detail::RoundingFactor(SignificantVertexDigits));
+        auto zHash = static_cast<std::size_t>(v.z() * render::detail::RoundingFactor(SignificantVertexDigits));
 
-        combineHash(xHash, yHash);
-        combineHash(xHash, zHash);
+        render::detail::combineHash(xHash, yHash);
+        render::detail::combineHash(xHash, zHash);
 
         return xHash;
     }
@@ -85,9 +88,9 @@ struct std::equal_to<ArbitraryMeshVertex>
 {
     bool operator()(const ArbitraryMeshVertex& a, const ArbitraryMeshVertex& b) const
     {
-        return a.vertex.isEqual(b.vertex, VertexEpsilon) &&
-            a.normal.dot(b.normal) > (1.0 - NormalEpsilon) &&
-            a.texcoord.isEqual(b.texcoord, TexCoordEpsilon) &&
-            a.colour.isEqual(b.colour, VertexEpsilon);
+        return a.vertex.isEqual(b.vertex, render::VertexEpsilon) &&
+            a.normal.dot(b.normal) > (1.0 - render::NormalEpsilon) &&
+            a.texcoord.isEqual(b.texcoord, render::TexCoordEpsilon) &&
+            a.colour.isEqual(b.colour, render::VertexEpsilon);
     }
 };

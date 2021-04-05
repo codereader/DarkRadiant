@@ -290,6 +290,9 @@
     <ClInclude Include="..\..\libs\materials\FrobStageSetup.h">
       <Filter>materials</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\render\VertexHashing.h">
+      <Filter>render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">
