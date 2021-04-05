@@ -245,7 +245,7 @@ void expectVertexWithNormal(const model::IModelSurface& surface, const Vertex3f&
 {
     EXPECT_TRUE(surfaceHasVertexWith(surface, [&](const ArbitraryMeshVertex& v)->bool
     {
-        return v.vertex.isEqual(vertex, 1e-3) && v.normal.isEqual(normal, 1e-3);
+        return v.vertex.isEqual(vertex, 0.01) && v.normal.dot(normal) > 1.0 - 0.02;
     })) << "Could not find a vertex with xyz = " << vertex << " and normal " << normal;
 }
 
