@@ -42,22 +42,56 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ----------------------------------------------------------------------------- */
 
+namespace
+{
+    inline void combineHash(std::size_t& seed, std::size_t hash)
+    {
+        seed ^= hash + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+    }
+}
+
+template<>
+struct std::hash<Vector3>
+{
+    size_t operator()(const Vector3& v) const
+    {
+        std::hash<double> hasher;
+
+        auto hash = hasher(v.x());
+        combineHash(hash, hasher(v.y()));
+        combineHash(hash, hasher(v.z()));
+        
+        return hash;
+    }
+};
+
 // Hash specialisation such that ArbitraryMeshVertex can be used as key type in std::unordered_map<>
 template<>
 struct std::hash<ArbitraryMeshVertex>
 {
     size_t operator()(const ArbitraryMeshVertex& v) const
     {
-        return 0; // TODO
+        std::hash<Vector3> vectorHash;
+        std::hash<double> doubleHash;
+
+        auto hash = vectorHash(v.vertex);
+
+        combineHash(hash, vectorHash(v.normal));
+        combineHash(hash, doubleHash(v.texcoord.x()));
+        combineHash(hash, doubleHash(v.texcoord.y()));
+        combineHash(hash, vectorHash(v.colour));
+
+        return hash;
     }
 };
 
+// Assumes equality of two ArbitraryMeshVertices if all of (vertex, normal, texcoord, colour) are equal
 template<>
 struct std::equal_to<ArbitraryMeshVertex>
 {
     bool operator()(const ArbitraryMeshVertex& a, const ArbitraryMeshVertex& b) const
     {
-        return false; // TODO
+        return a.vertex == b.vertex && a.normal == b.normal && a.texcoord == b.texcoord && a.colour == b.colour;
     }
 };
 
@@ -113,7 +147,7 @@ void AseModel::finishSurface(Mesh& mesh, std::size_t materialIndex, const Matrix
     for (const auto& face : mesh.faces)
     {
         // we pull the data from the vertex, color and texcoord arrays using the face index data
-        for (int j = 0 ; j < 3 ; j ++ )
+        for (int j = 0; j < 3; ++j)
         {
             const auto& vertex = mesh.vertices[face.vertexIndices[j]];
             const auto& normal = mesh.normals[face.vertexIndices[j]];
