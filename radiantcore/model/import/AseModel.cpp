@@ -70,6 +70,7 @@ AseModel::Material::Material() :
 void AseModel::finishSurface(Mesh& mesh, std::size_t materialIndex, const Matrix4& nodeMatrix)
 {
     assert(mesh.vertices.size() == mesh.normals.size());
+    static Vector3 White(1, 1, 1);
 
     if (materialIndex >= _materials.size())
     {
@@ -112,23 +113,17 @@ void AseModel::finishSurface(Mesh& mesh, std::size_t materialIndex, const Matrix
                 v = 0;
             }
 
+            const auto& colour = !mesh.colours.empty() ? mesh.colours[face.colourIndices[j]] : White;
+
             auto& meshVertex = surface.vertices.emplace_back(ArbitraryMeshVertex
             { 
                 vertex, 
                 nodeMatrix.transformDirection(normal).getNormalised(), 
-                TexCoord2f(u * materialCos + v * materialSin, u * -materialSin + v * materialCos) 
+                TexCoord2f(u * materialCos + v * materialSin, u * -materialSin + v * materialCos),
+                colour
             });
 
             surface.indices.emplace_back(nextIndex++);
-
-            if (!mesh.colours.empty())
-            {
-                meshVertex.colour = mesh.colours[face.colourIndices[j]];
-            }
-            else
-            {
-                meshVertex.colour.set(1, 1, 1);
-            }
         }
     }
 }
