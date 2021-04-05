@@ -7,11 +7,25 @@
 namespace model
 {
 
-struct AseMaterial;
-struct AseFace;
-
 class AseModel
 {
+private:
+    struct Material
+    {
+        AseModel::Material();
+
+        std::string materialName;   // *MATERIAL_NAME
+        std::string diffuseBitmap;  // *BITMAP
+
+        float uOffset;              // * UVW_U_OFFSET
+        float vOffset;              // * UVW_V_OFFSET
+        float uTiling;              // * UVW_U_TILING
+        float vTiling;              // * UVW_V_TILING
+        float uvAngle;              // * UVW_ANGLE
+    };
+
+    struct Face;
+
 public:
     struct Surface
     {
@@ -23,6 +37,8 @@ public:
 
 private:
     std::vector<Surface> _surfaces;
+
+    std::vector<Material> _materials;
 
 public:
     Surface& addSurface(const std::string& name);
@@ -39,9 +55,11 @@ public:
 private:
     void parseFromTokens(parser::StringTokeniser& tokeniser);
 
-    void finishSurface(std::vector<AseMaterial>& materials, std::size_t materialIndex,
+    void parseMaterialList(parser::StringTokeniser& tokeniser);
+
+    void finishSurface(std::size_t materialIndex,
         std::vector<Vertex3f>& vertices, std::vector<Normal3f>& normals, std::vector<TexCoord2f>& texcoords,
-        std::vector<Vector3>& colours, std::vector<AseFace>& faces);
+        std::vector<Vector3>& colours, std::vector<Face>& faces);
 };
 
 }

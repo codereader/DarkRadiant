@@ -45,9 +45,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 namespace model
 {
 
-struct AseFace
+struct AseModel::Face
 {
-    AseFace()
+    AseModel::Face()
     {
         vertexIndices[0] = vertexIndices[1] = vertexIndices[2] = 0;
         texcoordIndices[0] = texcoordIndices[1] = texcoordIndices[2] = 0;
@@ -59,38 +59,26 @@ struct AseFace
     std::size_t colourIndices[3];
 };
 
-struct AseMaterial
-{
-    AseMaterial() :
-        uOffset(0),
-        vOffset(0),
-        uTiling(1),
-        vTiling(1),
-        uvAngle(0)
-    {}
+AseModel::Material::Material() :
+    uOffset(0),
+    vOffset(0),
+    uTiling(1),
+    vTiling(1),
+    uvAngle(0)
+{}
 
-    std::string materialName;   // *MATERIAL_NAME
-    std::string diffuseBitmap;  // *BITMAP
-
-    float uOffset;              // * UVW_U_OFFSET
-    float vOffset;              // * UVW_V_OFFSET
-    float uTiling;              // * UVW_U_TILING
-    float vTiling;              // * UVW_V_TILING
-    float uvAngle;              // * UVW_ANGLE
-};
-
-void AseModel::finishSurface(std::vector<model::AseMaterial>& materials, std::size_t materialIndex,
+void AseModel::finishSurface(std::size_t materialIndex,
     std::vector<Vertex3f>& vertices, std::vector<Normal3f>& normals, std::vector<TexCoord2f>& texcoords,
-    std::vector<Vector3>& colours, std::vector<model::AseFace>& faces)
+    std::vector<Vector3>& colours, std::vector<Face>& faces)
 {
     assert(vertices.size() == normals.size());
 
-    if (materialIndex >= materials.size())
+    if (materialIndex >= _materials.size())
     {
         throw parser::ParseException(fmt::format("Cannot submit triangles, material index {0} is out of range", materialIndex));
     }
 
-    const auto& material = materials[materialIndex];
+    const auto& material = _materials[materialIndex];
 
     // submit the triangle to the model
     auto& surface = ensureSurface(material.diffuseBitmap);
@@ -170,12 +158,115 @@ std::vector<AseModel::Surface>& AseModel::getSurfaces()
     return _surfaces;
 }
 
+void AseModel::parseMaterialList(parser::StringTokeniser& tokeniser)
+{
+    _materials.clear();
+
+    int blockLevel = 0;
+
+    while (tokeniser.hasMoreTokens())
+    {
+        auto token = tokeniser.nextToken();
+        string::to_lower(token);
+
+        if (token != "}")
+        {
+            if (--blockLevel == 0) break;
+        }
+        else if (token == "{")
+        {
+            ++blockLevel;
+        }
+        else if (token == "*material_count")
+        {
+            auto numMaterials = string::convert<std::size_t>(tokeniser.nextToken());
+            _materials.resize(numMaterials);
+        }
+        else if (token == "*material")
+        {
+            auto index = string::convert<std::size_t>(tokeniser.nextToken());
+
+            if (index >= _materials.size()) throw parser::ParseException("MATERIAL index out of bounds >= MATERIAL_COUNT");
+
+            tokeniser.assertNextToken("{");
+            int level = 1;
+
+            /* parse material block */
+            while (tokeniser.hasMoreTokens())
+            {
+                token = tokeniser.nextToken();
+                string::to_lower(token);
+
+                if (token.empty()) continue;
+
+                /* handle levels */
+                if (token[0] == '{') level++;
+                if (token[0] == '}') level--;
+
+                if (level == 0) break;
+
+                /* parse material name */
+                if (token == "*material_name")
+                {
+                    _materials[index].materialName = string::trim_copy(tokeniser.nextToken(), "\"");
+                }
+                /* material diffuse map */
+                else if (token == "*map_diffuse")
+                {
+                    int sublevel = 0;
+
+                    /* parse material block */
+                    while (tokeniser.hasMoreTokens())
+                    {
+                        token = tokeniser.nextToken();
+                        string::to_lower(token);
+
+                        if (token.empty()) continue;
+
+                        /* handle levels */
+                        if (token[0] == '{') sublevel++;
+                        if (token[0] == '}') sublevel--;
+
+                        if (sublevel == 0) break;
+
+                        /* parse diffuse map bitmap */
+                        if (token == "*bitmap")
+                        {
+                            _materials[index].diffuseBitmap = string::trim_copy(tokeniser.nextToken(), "\"");
+                        }
+                        else if (token == "*uvw_u_offset")
+                        {
+                            // Negate the u offset value
+                            _materials[index].uOffset = -string::convert<float>(tokeniser.nextToken());
+                        }
+                        else if (token == "*uvw_v_offset")
+                        {
+                            _materials[index].vOffset = string::convert<float>(tokeniser.nextToken());
+                        }
+                        else if (token == "*uvw_u_tiling")
+                        {
+                            _materials[index].uTiling = string::convert<float>(tokeniser.nextToken());
+                        }
+                        else if (token == "*uvw_v_tiling")
+                        {
+                            _materials[index].vTiling = string::convert<float>(tokeniser.nextToken());
+                        }
+                        else if (token == "*uvw_angle")
+                        {
+                            _materials[index].uvAngle = string::convert<float>(tokeniser.nextToken());
+                        }
+                    }
+                } // end map_diffuse block
+            } // end material block
+        }
+    }
+}
+
 void AseModel::parseFromTokens(parser::StringTokeniser& tokeniser)
 {
-    std::vector<AseMaterial> materials;
     std::vector<Vertex3f> vertices;
     std::vector<Normal3f> normals;
-    std::vector<AseFace> faces;
+    std::vector<Face> faces;
     std::vector<TexCoord2f> texcoords;
     std::vector<Vector3> colours;
     int materialIndex = -1;
@@ -190,21 +281,23 @@ void AseModel::parseFromTokens(parser::StringTokeniser& tokeniser)
         auto token = tokeniser.nextToken();
         string::to_lower(token);
 
-        if (token.length() == 0) continue;
-
         /* we skip invalid ase statements */
         if (token[0] != '*' && token[0] != '{' && token[0] != '}')
         {
             continue;
         }
 
+        if (token == "*material_list")
+        {
+            parseMaterialList(tokeniser);
+        }
         /* model mesh (originally contained within geomobject) */
-        if (token == "*mesh")
+        else if (token == "*mesh")
         {
             /* finish existing surface */
             if (materialIndex != -1 && !vertices.empty())
             {
-                finishSurface(materials, materialIndex, vertices, normals, texcoords, colours, faces);
+                finishSurface(materialIndex, vertices, normals, texcoords, colours, faces);
 
                 materialIndex = -1;
                 colours.clear();
@@ -244,7 +337,7 @@ void AseModel::parseFromTokens(parser::StringTokeniser& tokeniser)
         {
             auto index = string::convert<std::size_t>(tokeniser.nextToken());
 
-            if (index >= materials.size()) throw parser::ParseException("MATERIAL_REF index out of bounds >= MATERIAL_COUNT");
+            if (index >= _materials.size()) throw parser::ParseException("MATERIAL_REF index out of bounds >= MATERIAL_COUNT");
 
             materialIndex = static_cast<int>(index);
         }
@@ -362,93 +455,10 @@ void AseModel::parseFromTokens(parser::StringTokeniser& tokeniser)
             if (face.colourIndices[1] >= colours.size()) throw parser::ParseException("MESH_CFACE colour index 1 out of bounds >= MESH_NUMCVERTEX");
             if (face.colourIndices[0] >= colours.size()) throw parser::ParseException("MESH_CFACE colour index 2 out of bounds >= MESH_NUMCVERTEX");
         }
-        else if (token == "*material_count")
-        {
-            auto numMaterials = string::convert<std::size_t>(tokeniser.nextToken());
-            materials.resize(numMaterials);
-        }
-        /* model material */
-        else if (token == "*material")
-        {
-            auto index = string::convert<std::size_t>(tokeniser.nextToken());
-
-            if (index >= materials.size()) throw parser::ParseException("MATERIAL index out of bounds >= MATERIAL_COUNT");
-
-            tokeniser.assertNextToken("{");
-            int level = 1;
-
-            /* parse material block */
-            while (tokeniser.hasMoreTokens())
-            {
-                token = tokeniser.nextToken();
-                string::to_lower(token);
-
-                if (token.empty()) continue;
-
-                /* handle levels */
-                if (token[0] == '{') level++;
-                if (token[0] == '}') level--;
-
-                if (level == 0) break;
-
-                /* parse material name */
-                if (token == "*material_name")
-                {
-                    materials[index].materialName = string::trim_copy(tokeniser.nextToken(), "\"");
-                }
-                /* material diffuse map */
-                else if (token == "*map_diffuse")
-                {
-                    int sublevel = 0;
-
-                    /* parse material block */
-                    while (tokeniser.hasMoreTokens())
-                    {
-                        token = tokeniser.nextToken();
-                        string::to_lower(token);
-
-                        if (token.empty()) continue;
-
-                        /* handle levels */
-                        if (token[0] == '{') sublevel++;
-                        if (token[0] == '}') sublevel--;
-
-                        if (sublevel == 0) break;
-
-                        /* parse diffuse map bitmap */
-                        if (token == "*bitmap")
-                        {
-                            materials[index].diffuseBitmap = string::trim_copy(tokeniser.nextToken(), "\"");
-                        }
-                        else if (token == "*uvw_u_offset")
-                        {
-                            // Negate the u offset value
-                            materials[index].uOffset = -string::convert<float>(tokeniser.nextToken());
-                        }
-                        else if (token == "*uvw_v_offset")
-                        {
-                            materials[index].vOffset = string::convert<float>(tokeniser.nextToken());
-                        }
-                        else if (token == "*uvw_u_tiling")
-                        {
-                            materials[index].uTiling = string::convert<float>(tokeniser.nextToken());
-                        }
-                        else if (token == "*uvw_v_tiling")
-                        {
-                            materials[index].vTiling = string::convert<float>(tokeniser.nextToken());
-                        }
-                        else if (token == "*uvw_angle")
-                        {
-                            materials[index].uvAngle = string::convert<float>(tokeniser.nextToken());
-                        }
-                    }
-                } /* end map_diffuse block */
-            } /* end material block */
-        }
     }
 
     /* ydnar: finish existing surface */
-    finishSurface(materials, materialIndex, vertices, normals, texcoords, colours, faces);
+    finishSurface(materialIndex, vertices, normals, texcoords, colours, faces);
 }
 
 std::shared_ptr<AseModel> AseModel::CreateFromStream(std::istream& stream)
