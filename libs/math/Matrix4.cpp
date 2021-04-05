@@ -51,12 +51,7 @@ Matrix4::Matrix4(double xx_, double xy_, double xz_, double xw_,
 // Identity matrix
 const Matrix4& Matrix4::getIdentity()
 {
-    static const Matrix4 _identity(
-        1, 0, 0, 0,
-        0, 1, 0, 0,
-        0, 0, 1, 0,
-        0, 0, 0, 1
-    );
+    static const Matrix4 _identity(Eigen::Projective3d::Identity());
     return _identity;
 }
 
