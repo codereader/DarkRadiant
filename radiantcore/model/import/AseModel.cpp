@@ -42,6 +42,25 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ----------------------------------------------------------------------------- */
 
+// Hash specialisation such that ArbitraryMeshVertex can be used as key type in std::unordered_map<>
+template<>
+struct std::hash<ArbitraryMeshVertex>
+{
+    size_t operator()(const ArbitraryMeshVertex& v) const
+    {
+        return 0; // TODO
+    }
+};
+
+template<>
+struct std::equal_to<ArbitraryMeshVertex>
+{
+    bool operator()(const ArbitraryMeshVertex& a, const ArbitraryMeshVertex& b) const
+    {
+        return false; // TODO
+    }
+};
+
 namespace model
 {
 
@@ -88,20 +107,21 @@ void AseModel::finishSurface(Mesh& mesh, std::size_t materialIndex, const Matrix
     double materialSin = sin(material.uvAngle);
     double materialCos = cos(material.uvAngle);
 
+    // 
+    std::unordered_map<ArbitraryMeshVertex, std::size_t> vertexIndices;
+
     for (const auto& face : mesh.faces)
     {
-        /* we pull the data from the vertex, color and texcoord arrays using the face index data */
+        // we pull the data from the vertex, color and texcoord arrays using the face index data
         for (int j = 0 ; j < 3 ; j ++ )
         {
-            auto nextIndex = static_cast<unsigned int>(surface.indices.size());
-
-            auto& vertex = mesh.vertices[face.vertexIndices[j]];
-            auto& normal = mesh.normals[face.vertexIndices[j]];
+            const auto& vertex = mesh.vertices[face.vertexIndices[j]];
+            const auto& normal = mesh.normals[face.vertexIndices[j]];
 
             double u, v;
 
-            /* greebo: Apply shift, scale and rotation */
-            /* Also check for empty texcoords, some models surfaces don't have any tverts */
+            // greebo: Apply shift, scale and rotation
+            // Also check for empty texcoords, some models surfaces don't have any tverts
             if (!mesh.texcoords.empty())
             {
                 u = mesh.texcoords[face.texcoordIndices[j]].x() * material.uTiling + material.uOffset;
@@ -114,16 +134,23 @@ void AseModel::finishSurface(Mesh& mesh, std::size_t materialIndex, const Matrix
             }
 
             const auto& colour = !mesh.colours.empty() ? mesh.colours[face.colourIndices[j]] : White;
-
-            auto& meshVertex = surface.vertices.emplace_back(ArbitraryMeshVertex
-            { 
-                vertex, 
-                nodeMatrix.transformDirection(normal).getNormalised(), 
+            
+            // Try to look up an existing vertex or add a new index
+            auto emplaceResult = vertexIndices.try_emplace(ArbitraryMeshVertex(
+                vertex,
+                nodeMatrix.transformDirection(normal).getNormalised(),
                 TexCoord2f(u * materialCos + v * materialSin, u * -materialSin + v * materialCos),
                 colour
-            });
+            ), surface.vertices.size());
 
-            surface.indices.emplace_back(nextIndex++);
+            if (emplaceResult.second)
+            {
+                // This was a new vertex, copy it to the vertex array
+                surface.vertices.emplace_back(emplaceResult.first->first);
+            }
+            
+            // The emplaceResult now points to a valid index in the vertex array
+            surface.indices.emplace_back(static_cast<IndexBuffer::value_type>(emplaceResult.first->second));
         }
     }
 }
