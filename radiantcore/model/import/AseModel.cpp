@@ -5,6 +5,7 @@
 #include "parser/ParseException.h"
 #include "string/case_conv.h"
 #include "string/trim.h"
+#include "string/convert.h"
 
 #include "render/VertexHashing.h"
 
@@ -49,7 +50,7 @@ namespace model
 
 struct AseModel::Face
 {
-    AseModel::Face()
+    Face()
     {
         vertexIndices[0] = vertexIndices[1] = vertexIndices[2] = 0;
         normalIndices[0] = normalIndices[1] = normalIndices[2] = 0;

@@ -13,7 +13,7 @@ class AseModel
 private:
     struct Material
     {
-        AseModel::Material();
+        Material();
 
         std::string materialName;   // *MATERIAL_NAME
         std::string diffuseBitmap;  // *BITMAP
