@@ -67,7 +67,7 @@ AseModel::Material::Material() :
     uvAngle(0)
 {}
 
-void AseModel::finishSurface(Mesh& mesh, std::size_t materialIndex)
+void AseModel::finishSurface(Mesh& mesh, std::size_t materialIndex, const Matrix4& nodeMatrix)
 {
     assert(mesh.vertices.size() == mesh.normals.size());
 
@@ -115,7 +115,7 @@ void AseModel::finishSurface(Mesh& mesh, std::size_t materialIndex)
             auto& meshVertex = surface.vertices.emplace_back(ArbitraryMeshVertex
             { 
                 vertex, 
-                normal, 
+                nodeMatrix.transformDirection(normal).getNormalised(), 
                 TexCoord2f(u * materialCos + v * materialSin, u * -materialSin + v * materialCos) 
             });
 
@@ -416,6 +416,47 @@ void AseModel::parseMesh(Mesh& mesh, parser::StringTokeniser& tokeniser)
     }
 }
 
+void AseModel::parseNodeMatrix(Matrix4& matrix, parser::StringTokeniser& tokeniser)
+{
+    int blockLevel = 0;
+
+    // We parse the rows in the ASE file into the columns of the matrix
+    // to be able to just use Matrix4::transformDirection() to transform the normal
+    while (tokeniser.hasMoreTokens())
+    {
+        auto token = tokeniser.nextToken();
+        string::to_lower(token);
+
+        if (token == "}")
+        {
+            if (--blockLevel == 0) break;
+        }
+        else if (token == "{")
+        {
+            ++blockLevel;
+        }
+        else if (token == "*tm_row0")
+        {
+            matrix.xx() = string::convert<double>(tokeniser.nextToken());
+            matrix.xy() = string::convert<double>(tokeniser.nextToken());
+            matrix.xz() = string::convert<double>(tokeniser.nextToken());
+        }
+        else if (token == "*tm_row1")
+        {
+            matrix.yx() = string::convert<double>(tokeniser.nextToken());
+            matrix.yy() = string::convert<double>(tokeniser.nextToken());
+            matrix.yz() = string::convert<double>(tokeniser.nextToken());
+        }
+        else if (token == "*tm_row2")
+        {
+            matrix.zx() = string::convert<double>(tokeniser.nextToken());
+            matrix.zy() = string::convert<double>(tokeniser.nextToken());
+            matrix.zz() = string::convert<double>(tokeniser.nextToken());
+        }
+        // The fourth row *TM_ROW3 is ignored, translations are not applicable to normals
+    }
+}
+
 void AseModel::parseGeomObject(parser::StringTokeniser& tokeniser)
 {
     Mesh mesh;
@@ -444,7 +485,8 @@ void AseModel::parseGeomObject(parser::StringTokeniser& tokeniser)
         else if (token == "*node_tm")
         {
             // The NODE_TM block is parsed by the engine and applied to the
-            // normals of the mesh, needs to be implemented.
+            // normals of the mesh.
+            parseNodeMatrix(nodeMatrix, tokeniser);
         }
         /* mesh material reference. this usually comes at the end of
          * geomobjects after the mesh blocks. we must assume that the
@@ -460,7 +502,7 @@ void AseModel::parseGeomObject(parser::StringTokeniser& tokeniser)
         }
     }
 
-    finishSurface(mesh, materialIndex);
+    finishSurface(mesh, materialIndex, nodeMatrix);
 }
 
 void AseModel::parseFromTokens(parser::StringTokeniser& tokeniser)

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <istream>
+#include "math/Matrix4.h"
 #include "../StaticModelSurface.h"
 #include "parser/Tokeniser.h"
 
@@ -67,8 +68,9 @@ private:
     void parseMaterialList(parser::StringTokeniser& tokeniser);
     void parseGeomObject(parser::StringTokeniser& tokeniser);
     void parseMesh(Mesh& mesh, parser::StringTokeniser& tokeniser);
+    void parseNodeMatrix(Matrix4& matrix, parser::StringTokeniser& tokeniser);
 
-    void finishSurface(Mesh& mesh, std::size_t materialIndex);
+    void finishSurface(Mesh& mesh, std::size_t materialIndex, const Matrix4& nodeMatrix);
 };
 
 }
