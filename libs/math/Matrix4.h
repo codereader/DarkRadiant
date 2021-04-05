@@ -72,10 +72,7 @@ public:
     const Eigen::Projective3d& eigen() const { return _transform; }
 
     /// Obtain the identity matrix.
-    static Matrix4 getIdentity()
-    {
-        return Matrix4(Eigen::Projective3d::Identity());
-    }
+    static const Matrix4& getIdentity();
 
     /// Get a matrix representing the given 3D translation.
     static Matrix4 getTranslation(const Vector3& tr)

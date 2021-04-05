@@ -13,8 +13,7 @@ public:
 	/// \brief Returns the identity matrix.
 	const Matrix4& localToParent() const
 	{
-		static const Matrix4 ID = Matrix4::getIdentity();
-        return ID;
+		return Matrix4::getIdentity();
 	}
 };
 
