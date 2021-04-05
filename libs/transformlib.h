@@ -11,7 +11,7 @@ class IdentityTransform :
 {
 public:
 	/// \brief Returns the identity matrix.
-	const Matrix4& localToParent() const
+	Matrix4 localToParent() const
 	{
 		return Matrix4::getIdentity();
 	}

@@ -36,7 +36,7 @@ std::size_t ParticleNode::getHighlightFlags()
 	return Highlight::NoHighlight;
 }
 
-const Matrix4& ParticleNode::localToParent() const
+Matrix4 ParticleNode::localToParent() const
 {
 	scene::INodePtr parent = getParent();
 

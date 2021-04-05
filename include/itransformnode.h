@@ -11,7 +11,7 @@ public:
     virtual ~ITransformNode() {}
 
 	/// \brief Returns the transform which maps the node's local-space into the local-space of its parent node.
-	virtual const Matrix4& localToParent() const = 0;
+	virtual Matrix4 localToParent() const = 0;
 };
 typedef std::shared_ptr<ITransformNode> ITransformNodePtr;
 

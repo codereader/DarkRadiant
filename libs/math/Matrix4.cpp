@@ -48,13 +48,6 @@ Matrix4::Matrix4(double xx_, double xy_, double xz_, double xw_,
 
 // Named constructors
 
-// Identity matrix
-const Matrix4& Matrix4::getIdentity()
-{
-    static const Matrix4 _identity(Eigen::Projective3d::Identity());
-    return _identity;
-}
-
 // Get a rotation from 2 vectors (named constructor)
 Matrix4 Matrix4::getRotation(const Vector3& a, const Vector3& b)
 {

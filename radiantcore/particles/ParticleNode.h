@@ -25,7 +25,7 @@ class ParticleNode :
 	mutable Matrix4 _local2Parent;
 
 public:
-	// Construct the node giving a renderable particle 
+	// Construct the node giving a renderable particle
 	ParticleNode(const RenderableParticlePtr& particle);
 
 	std::string name() const override;
@@ -41,7 +41,7 @@ public:
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 
 	// ITransformNode
-	const Matrix4& localToParent() const override;
+	Matrix4 localToParent() const override;
 
 private:
 	void update(const VolumeTest& viewVolume) const;

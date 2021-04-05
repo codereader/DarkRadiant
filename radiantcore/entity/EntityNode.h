@@ -110,7 +110,7 @@ public:
 	virtual const Vector3& getDirection() const override;
 
     // IMatrixTransform implementation
-    const Matrix4& localToParent() const override { return _localToParent; }
+    Matrix4 localToParent() const override { return _localToParent; }
     Matrix4& localToParent() override { return _localToParent; }
 
 	// SelectionTestable implementation
