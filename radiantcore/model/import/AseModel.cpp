@@ -103,11 +103,13 @@ struct AseModel::Face
     AseModel::Face()
     {
         vertexIndices[0] = vertexIndices[1] = vertexIndices[2] = 0;
+        normalIndices[0] = normalIndices[1] = normalIndices[2] = 0;
         texcoordIndices[0] = texcoordIndices[1] = texcoordIndices[2] = 0;
         colourIndices[0] = colourIndices[1] = colourIndices[2] = 0;
     }
 
     std::size_t vertexIndices[3];
+    std::size_t normalIndices[3];
     std::size_t texcoordIndices[3];
     std::size_t colourIndices[3];
 };
@@ -122,7 +124,6 @@ AseModel::Material::Material() :
 
 void AseModel::finishSurface(Mesh& mesh, std::size_t materialIndex, const Matrix4& nodeMatrix)
 {
-    assert(mesh.vertices.size() == mesh.normals.size());
     static Vector3 White(1, 1, 1);
 
     if (materialIndex >= _materials.size())
@@ -146,11 +147,13 @@ void AseModel::finishSurface(Mesh& mesh, std::size_t materialIndex, const Matrix
 
     for (const auto& face : mesh.faces)
     {
+        //rMessage() << "We got " << mesh.faces.size() << " faces, that's " << mesh.faces.size() * 3 << " vertices to inspect" << std::endl;
+
         // we pull the data from the vertex, color and texcoord arrays using the face index data
         for (int j = 0; j < 3; ++j)
         {
             const auto& vertex = mesh.vertices[face.vertexIndices[j]];
-            const auto& normal = mesh.normals[face.vertexIndices[j]];
+            const auto& normal = mesh.normals[face.normalIndices[j]];
 
             double u, v;
 
@@ -169,16 +172,28 @@ void AseModel::finishSurface(Mesh& mesh, std::size_t materialIndex, const Matrix
 
             const auto& colour = !mesh.colours.empty() ? mesh.colours[face.colourIndices[j]] : White;
             
-            // Try to look up an existing vertex or add a new index
-            auto emplaceResult = vertexIndices.try_emplace(ArbitraryMeshVertex(
+            ArbitraryMeshVertex meshVertex(
                 vertex,
                 nodeMatrix.transformDirection(normal).getNormalised(),
                 TexCoord2f(u * materialCos + v * materialSin, u * -materialSin + v * materialCos),
                 colour
-            ), surface.vertices.size());
+            );
+
+            //rMessage() << "---" << std::endl;
+            //rMessage() << "New vertex: " << meshVertex << std::endl;
+            //rMessage() << "Existing vertices: " << std::endl;
+            
+            //for (const auto& pair : vertexIndices)
+            //{
+            //    rMessage() << pair.second << " : " << pair.first << std::endl;
+            //}
+
+            // Try to look up an existing vertex or add a new index
+            auto emplaceResult = vertexIndices.try_emplace(meshVertex, surface.vertices.size());
 
             if (emplaceResult.second)
             {
+                //rMessage() << "This was a new one" << std::endl;
                 // This was a new vertex, copy it to the vertex array
                 surface.vertices.emplace_back(emplaceResult.first->first);
             }
@@ -316,6 +331,65 @@ void AseModel::parseMaterialList(parser::StringTokeniser& tokeniser)
     }
 }
 
+void AseModel::parseFaceNormals(Mesh& mesh, parser::StringTokeniser& tokeniser)
+{
+    // *MESH_FACENORMAL 0   -1.0000   0.0000  0.0000
+    
+    // Get the face index from this keyword, disregard the normal itself
+    auto faceIndex = string::convert<std::size_t>(tokeniser.nextToken());
+
+    if (faceIndex >= mesh.faces.size()) throw parser::ParseException("MESH_FACENORMAL index out of bounds >= MESH_NUMFACES");
+    if (faceIndex * 3 + 2 >= mesh.normals.size()) throw parser::ParseException("Not enough normals allocated < 3*MESH_NUMFACES");
+
+    tokeniser.skipTokens(3); // skip the 3 face normal components
+
+    auto& face = mesh.faces[faceIndex];
+
+    // Parse three vertex normals following the face normal
+    for (int i = 0; i < 3; ++i)
+    {
+        // model mesh vertex normal
+        if (string::to_lower_copy(tokeniser.nextToken()) != "*mesh_vertexnormal")
+        {
+            throw parser::ParseException("Expected three *MESH_VERTEXNORMAL after *MESH_FACENORMAL");
+        }
+
+        // *MESH_VERTEXNORMAL 1  -1.0000  0.0000  0.0000
+
+        // Validate the index, just in case
+        auto index = string::convert<std::size_t>(tokeniser.nextToken());
+        if (index >= mesh.vertices.size()) throw parser::ParseException("MESH_VERTEXNORMAL index out of bounds >= MESH_NUMVERTEX");
+
+        // Parse the normal and add it to the pile (don't bother checking for duplicates)
+        auto normalIndex = faceIndex * 3 + i;
+
+        auto& normal = mesh.normals[normalIndex];
+
+        normal.x() = string::convert<double>(tokeniser.nextToken());
+        normal.y() = string::convert<double>(tokeniser.nextToken());
+        normal.z() = string::convert<double>(tokeniser.nextToken());
+
+        // To keep the same winding order, look up the [0..2] index by matching the normal index
+        // against what is already stored in the face.vertexIndices array.
+        int n;
+
+        for (n = 0; n < 3; ++n)
+        {
+            if (face.vertexIndices[n] == index)
+            {
+                face.normalIndices[n] = normalIndex;
+                break;
+            }
+        }
+
+        if (n == 3)
+        {
+            throw parser::ParseException(fmt::format("Could not match the face vertex indices against the "
+                "index specified in MESH_VERTEXNORMAL (face index: {0})", faceIndex));
+        }
+    }
+}
+
 void AseModel::parseMesh(Mesh& mesh, parser::StringTokeniser& tokeniser)
 {
     int blockLevel = 0;
@@ -338,12 +412,14 @@ void AseModel::parseMesh(Mesh& mesh, parser::StringTokeniser& tokeniser)
             // Parse the number to allocate space in the vertex vector
             auto numVertices = string::convert<std::size_t>(tokeniser.nextToken());
             mesh.vertices.resize(numVertices);
-            mesh.normals.resize(numVertices);
         }
         else if (token == "*mesh_numfaces")
         {
             auto numFaces = string::convert<std::size_t>(tokeniser.nextToken());
             mesh.faces.resize(numFaces);
+
+            // We will get 3 vertex normals per face, make room for that
+            mesh.normals.resize(numFaces * 3);
         }
         else if (token == "*mesh_numtvertex")
         {
@@ -367,17 +443,9 @@ void AseModel::parseMesh(Mesh& mesh, parser::StringTokeniser& tokeniser)
             vertex.y() = string::convert<double>(tokeniser.nextToken());
             vertex.z() = string::convert<double>(tokeniser.nextToken());
         }
-        /* model mesh vertex normal */
-        else if (token == "*mesh_vertexnormal")
+        else if (token == "*mesh_facenormal")
         {
-            auto index = string::convert<std::size_t>(tokeniser.nextToken());
-
-            if (index >= mesh.vertices.size()) throw parser::ParseException("MESH_VERTEXNORMAL index out of bounds >= MESH_NUMVERTEX");
-
-            auto& normal = mesh.normals[index];
-            normal.x() = string::convert<double>(tokeniser.nextToken());
-            normal.y() = string::convert<double>(tokeniser.nextToken());
-            normal.z() = string::convert<double>(tokeniser.nextToken());
+            parseFaceNormals(mesh, tokeniser);
         }
         /* model mesh face */
         else if (token == "*mesh_face")

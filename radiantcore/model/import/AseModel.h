@@ -67,6 +67,7 @@ private:
 
     void parseMaterialList(parser::StringTokeniser& tokeniser);
     void parseGeomObject(parser::StringTokeniser& tokeniser);
+    void parseFaceNormals(Mesh& mesh, parser::StringTokeniser& tokeniser);
     void parseMesh(Mesh& mesh, parser::StringTokeniser& tokeniser);
     void parseNodeMatrix(Matrix4& matrix, parser::StringTokeniser& tokeniser);
 

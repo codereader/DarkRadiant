@@ -148,7 +148,7 @@ inline std::ostream& operator<< (std::ostream& os, const ArbitraryMeshVertex& v)
 {
 	os << "ArbitraryMeshVertex { "
 	   << " vertex = " << v.vertex << ", normal = " << v.normal
-	   << ", texcoord = " << v.texcoord
+	   << ", texcoord = " << v.texcoord << ", colour = " << v.colour
 	   << " }";
 
 	return os;
