@@ -120,6 +120,11 @@ TEST_F(AseImportTest, VertexAndTriangleCount)
     EXPECT_EQ(model->getSurfaceCount(), 1);
     EXPECT_EQ(model->getSurface(0).getNumVertices(), 24);
     EXPECT_EQ(model->getSurface(0).getNumTriangles(), 12);
+
+    model = GlobalModelCache().getModel("models/ase/gauge_needle.ase");
+    EXPECT_EQ(model->getSurfaceCount(), 1);
+    EXPECT_EQ(model->getSurface(0).getNumVertices(), 14);
+    EXPECT_EQ(model->getSurface(0).getNumTriangles(), 11);
 }
 
 TEST_F(AseImportTest, TriangleWindingCW)
@@ -300,6 +305,29 @@ TEST_F(AseImportTest, VertexColours)
     expectVertexWithColour(model->getSurface(0), Vertex3f(-19, 18, 2), Vector3(0.9216, 0.9216, 0.9216));
     expectVertexWithColour(model->getSurface(0), Vertex3f(56, -19, 2), Vector3(0.7373, 0.7373, 0.7373));
     expectVertexWithColour(model->getSurface(0), Vertex3f(19, -19, 2), Vector3(0, 0, 0));
+}
+
+// Tests the NODE_TM transform application to vertex normals
+TEST_F(AseImportTest, VertexNormalTransformation)
+{
+    auto model = GlobalModelCache().getModel("models/ase/gauge_needle.ase");
+    EXPECT_EQ(model->getSurfaceCount(), 1);
+
+    // Check for a few specific vertex/colour combinations (values taken directly from the TDM parse result)
+    expectVertexWithNormal(model->getSurface(0), Vertex3f(-0.140799999, -0.745599985, 0.125799999), Normal3f(0, -1, 0));
+    expectVertexWithNormal(model->getSurface(0), Vertex3f(0.188199997, -0.745599985, 0.125900000), Normal3f(0, -1, 0));
+    expectVertexWithNormal(model->getSurface(0), Vertex3f(-0.0364999995, -0.745599985, 0.0203000009), Normal3f(0, -1, 0));
+    expectVertexWithNormal(model->getSurface(0), Vertex3f(0.0839999989, -0.745599985, 0.0203000009), Normal3f(0, -1, 0));
+    expectVertexWithNormal(model->getSurface(0), Vertex3f(-0.140900001, -0.745599985, 0.331900001), Normal3f(0.000499708927, -0.999999583, 0.000800181471));
+    expectVertexWithNormal(model->getSurface(0), Vertex3f(0.188199997, -0.745599985, 0.331999987), Normal3f(-3.27272573e-07, -0.999999583, 0.000899999577));
+    expectVertexWithNormal(model->getSurface(0), Vertex3f(-0.0218000002, -0.744899988, 2.23850012), Normal3f(0.0139053408, -0.999789357, -0.0150947841));
+    expectVertexWithNormal(model->getSurface(0), Vertex3f(0.0679000020, -0.742100000, 2.23850012), Normal3f(0.0298263635, -0.996775806, -0.0744873509));
+    expectVertexWithNormal(model->getSurface(0), Vertex3f(-0.133800000, -0.745599985, 2.29660010), Normal3f(1.23635652e-06, -0.999994278, -0.00339998049));
+    expectVertexWithNormal(model->getSurface(0), Vertex3f(0.179800004, -0.745599985, 2.29670000), Normal3f(0.00370575022, -0.999861956, -0.0161980372));
+    expectVertexWithNormal(model->getSurface(0), Vertex3f(0.0229000002, -0.745599985, 2.69810009), Normal3f(0, -1, 0));
+    expectVertexWithNormal(model->getSurface(0), Vertex3f(-0.0218000002, -0.744899988, 2.23850012), Normal3f(-0.869799972, 0.00000000, -0.493404597));
+    expectVertexWithNormal(model->getSurface(0), Vertex3f(-0.133800000, -0.745599985, 2.29660010), Normal3f(-0.460478902, 0.00000000, -0.887670696));
+    expectVertexWithNormal(model->getSurface(0), Vertex3f(-0.140900001, -0.745599985, 0.331900001), Normal3f(-0.998054981, -0.00000000, 0.0623391047));
 }
 
 }
