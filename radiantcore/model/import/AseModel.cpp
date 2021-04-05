@@ -79,8 +79,7 @@ struct AseMaterial
     float uvAngle;              // * UVW_ANGLE
 };
 
-void _ase_submit_triangles(model::AseModel& model, 
-    std::vector<model::AseMaterial>& materials, std::size_t materialIndex,
+void AseModel::finishSurface(std::vector<model::AseMaterial>& materials, std::size_t materialIndex,
     std::vector<Vertex3f>& vertices, std::vector<Normal3f>& normals, std::vector<TexCoord2f>& texcoords,
     std::vector<Vector3>& colours, std::vector<model::AseFace>& faces)
 {
@@ -94,7 +93,7 @@ void _ase_submit_triangles(model::AseModel& model,
     const auto& material = materials[materialIndex];
 
     // submit the triangle to the model
-    auto& surface = model.ensureSurface(material.diffuseBitmap);
+    auto& surface = ensureSurface(material.diffuseBitmap);
 
     surface.vertices.reserve(surface.vertices.size() + vertices.size());
     surface.indices.reserve(surface.indices.size() + faces.size() * 3);
@@ -171,12 +170,8 @@ std::vector<AseModel::Surface>& AseModel::getSurfaces()
     return _surfaces;
 }
 
-std::shared_ptr<AseModel> AseModel::CreateFromStream(std::istream& stream)
+void AseModel::parseFromTokens(parser::StringTokeniser& tokeniser)
 {
-    auto model = std::make_shared<AseModel>();
-
-    parser::BasicStringTokeniser tokeniser(stream);
-
     std::vector<AseMaterial> materials;
     std::vector<Vertex3f> vertices;
     std::vector<Normal3f> normals;
@@ -209,7 +204,7 @@ std::shared_ptr<AseModel> AseModel::CreateFromStream(std::istream& stream)
             /* finish existing surface */
             if (materialIndex != -1 && !vertices.empty())
             {
-                _ase_submit_triangles(*model, materials, materialIndex, vertices, normals, texcoords, colours, faces);
+                finishSurface(materials, materialIndex, vertices, normals, texcoords, colours, faces);
 
                 materialIndex = -1;
                 colours.clear();
@@ -241,7 +236,7 @@ std::shared_ptr<AseModel> AseModel::CreateFromStream(std::istream& stream)
             auto numColorVertices = string::convert<std::size_t>(tokeniser.nextToken());
             colours.resize(numColorVertices, Vector3(1.0, 1.0, 1.0));
         }
-        /* mesh material reference. this usually comes at the end of 
+        /* mesh material reference. this usually comes at the end of
          * geomobjects after the mesh blocks. we must assume that the
          * new mesh was already created so all we can do here is assign
          * the material reference id (shader index) now. */
@@ -286,7 +281,7 @@ std::shared_ptr<AseModel> AseModel::CreateFromStream(std::istream& stream)
             if (index >= faces.size()) throw parser::ParseException("MESH_FACE index out of bounds >= MESH_NUMFACES");
 
             auto& face = faces[index];
-            
+
             // Note: we're reversing the winding to get CW ordering
             tokeniser.assertNextToken("A:");
             face.vertexIndices[2] = string::convert<std::size_t>(tokeniser.nextToken());
@@ -393,7 +388,7 @@ std::shared_ptr<AseModel> AseModel::CreateFromStream(std::istream& stream)
                 /* handle levels */
                 if (token[0] == '{') level++;
                 if (token[0] == '}') level--;
-                
+
                 if (level == 0) break;
 
                 /* parse material name */
@@ -425,7 +420,7 @@ std::shared_ptr<AseModel> AseModel::CreateFromStream(std::istream& stream)
                         {
                             materials[index].diffuseBitmap = string::trim_copy(tokeniser.nextToken(), "\"");
                         }
-                        else if (token ==  "*uvw_u_offset")
+                        else if (token == "*uvw_u_offset")
                         {
                             // Negate the u offset value
                             materials[index].uOffset = -string::convert<float>(tokeniser.nextToken());
@@ -453,7 +448,15 @@ std::shared_ptr<AseModel> AseModel::CreateFromStream(std::istream& stream)
     }
 
     /* ydnar: finish existing surface */
-    _ase_submit_triangles(*model, materials, materialIndex, vertices, normals, texcoords, colours, faces);
+    finishSurface(materials, materialIndex, vertices, normals, texcoords, colours, faces);
+}
+
+std::shared_ptr<AseModel> AseModel::CreateFromStream(std::istream& stream)
+{
+    auto model = std::make_shared<AseModel>();
+
+    parser::BasicStringTokeniser tokeniser(stream);
+    model->parseFromTokens(tokeniser);
 
     return model;
 }
