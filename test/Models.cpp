@@ -1,5 +1,6 @@
 #include "RadiantTest.h"
 
+#include <unordered_set>
 #include "imodelsurface.h"
 #include "imodelcache.h"
 
@@ -330,6 +331,42 @@ TEST_F(AseImportTest, VertexNormalTransformation)
     expectVertexWithNormal(model->getSurface(0), Vertex3f(-0.0218000002, -0.744899988, 2.23850012), Normal3f(-0.869799972, 0.00000000, -0.493404597));
     expectVertexWithNormal(model->getSurface(0), Vertex3f(-0.133800000, -0.745599985, 2.29660010), Normal3f(-0.460478902, 0.00000000, -0.887670696));
     expectVertexWithNormal(model->getSurface(0), Vertex3f(-0.140900001, -0.745599985, 0.331900001), Normal3f(-0.998054981, -0.00000000, 0.0623391047));
+}
+
+
+TEST_F(AseImportTest, VertexHashFunction)
+{
+    // Construct two mesh vertices which should be considered equal
+    ArbitraryMeshVertex vertex1(Vertex3f(-0.0218, -0.7449, 2.2385), Normal3f(-0.8698, 0, -0.493405), 
+        TexCoord2f(0.9808, 0.8198), Vector3(1, 1, 1));
+
+    ArbitraryMeshVertex vertex2(Vertex3f(-0.0218, -0.7434, 2.2385), Normal3f(-0.872, 0, -0.489505), 
+        TexCoord2f(0.9808, 0.8198), Vector3(1, 1, 1));
+
+    // Construct a that is differing in the normal part
+    ArbitraryMeshVertex vertex3(Vertex3f(-0.0218, -0.7434, 2.2385), Normal3f(-1, 0, 0),
+        TexCoord2f(0.9808, 0.8198), Vector3(1, 1, 1));
+
+    // Check the hash behaviour
+    std::hash<ArbitraryMeshVertex> hasher;
+    EXPECT_EQ(hasher(vertex1), hasher(vertex2));
+    EXPECT_EQ(hasher(vertex1), hasher(vertex3));
+
+    std::equal_to<ArbitraryMeshVertex> equalityComparer;
+    EXPECT_TRUE(equalityComparer(vertex1, vertex2));
+    EXPECT_FALSE(equalityComparer(vertex1, vertex3));
+
+    // With the included hash specialisations from render/VertexHashing.h, the two vertices should be considered equal
+    std::unordered_set<ArbitraryMeshVertex> set;
+
+    // Insert the first vertex
+    EXPECT_TRUE(set.insert(vertex1).second);
+
+    // Inserting the second vertex should fail
+    EXPECT_FALSE(set.insert(vertex2).second);
+
+    // Inserting the third vertex should succeed
+    EXPECT_TRUE(set.insert(vertex3).second);
 }
 
 }
