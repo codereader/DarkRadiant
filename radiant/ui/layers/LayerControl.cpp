@@ -33,7 +33,8 @@ namespace
 LayerControl::LayerControl(wxWindow* parent, int layerID) :
 	_layerID(layerID),
 	_activeColour(0,0,0),
-	_inactiveColour(90,90,90,1)
+	_inactiveColour(90,90,90,1),
+    _updateActive(false)
 {
 	// Create the toggle button
 	_toggle = new wxBitmapToggleButton(parent, wxID_ANY, 
