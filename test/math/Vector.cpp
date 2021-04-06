@@ -30,6 +30,21 @@ TEST(MathTest, ConstructVector3FromArray)
     EXPECT_EQ(vec, Vector3(1.0, 14.0, -96.5));
 }
 
+TEST(MathTest, SetVector3Components)
+{
+    Vector3 vec(-16, 256, 0.95);
+
+    // Set values with the set() method
+    vec.set(156, -83, -1.25);
+    EXPECT_EQ(vec, Vector3(156, -83, -1.25));
+
+    // Set values with the reference accessors
+    vec.x() = -20;
+    vec.y() = 1230;
+    vec.z() = 9;
+    EXPECT_EQ(vec, Vector3(-20, 1230, 9));
+}
+
 TEST(MathTest, PromoteVector3To4)
 {
     Vector3 v3(8, 12, -5);
