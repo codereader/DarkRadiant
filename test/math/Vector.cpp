@@ -226,6 +226,23 @@ TEST(MathTest, ComponentwiseMultiplyVector3)
     EXPECT_EQ(v, prod);
 }
 
+TEST(MathTest, ComponentwiseDivideVector3)
+{
+    Vector3 vec(320, -240, 128);
+    const Vector3 vOrig = vec;
+    const Vector3 scale(2, 3, -4);
+
+    // Divide and return
+    const Vector3 result = vec / scale;
+    EXPECT_EQ(result, Vector3(160, -80, -32));
+    EXPECT_EQ(result / (1.0 / scale), vOrig);
+
+    // Divide in place
+    EXPECT_EQ(vec, vOrig);
+    vec /= scale;
+    EXPECT_EQ(vec, result);
+}
+
 TEST(MathTest, Vector3DotProduct)
 {
     const Vector3 v1(2, 4, 30);

@@ -116,26 +116,6 @@ public:
         return BasicVector3<T>(-_v[0], -_v[1], -_v[2]);
     }
 
-    /*  Define the division operators / and /= with another Vector3 of type OtherElement
-     *  The vectors are divided element-wise
-     */
-    template<typename OtherElement>
-    BasicVector3<T> operator/ (const BasicVector3<OtherElement>& other) const {
-        return BasicVector3<T>(
-            _v[0] / static_cast<T>(other.x()),
-            _v[1] / static_cast<T>(other.y()),
-            _v[2] / static_cast<T>(other.z())
-        );
-    }
-
-    template<typename OtherElement>
-	BasicVector3<T>& operator/= (const BasicVector3<OtherElement>& other) {
-        _v[0] /= static_cast<T>(other.x());
-        _v[1] /= static_cast<T>(other.y());
-        _v[2] /= static_cast<T>(other.z());
-		return *this;
-    }
-
     /// Return the Pythagorean length of this vector.
     double getLength() const
     {
@@ -347,6 +327,31 @@ BasicVector3<T>& operator/= (BasicVector3<T>& v, S s)
 {
     v = v / s;
     return v;
+}
+
+/// Divide a scalar by a vector and return result
+template <
+    typename S, typename T,
+    typename = typename std::enable_if<std::is_arithmetic<S>::value, S>::type
+>
+BasicVector3<T> operator/(S s, const BasicVector3<T>& v)
+{
+    return BasicVector3<T>(s / v.x(), s / v.y(), s / v.z());
+}
+
+/// Divide a vector componentwise with another vector and return result
+template <typename T>
+BasicVector3<T> operator/(const BasicVector3<T>& v1, const BasicVector3<T>& v2)
+{
+    return BasicVector3<T>(v1.x() / v2.x(), v1.y() / v2.y(), v1.z() / v2.z());
+}
+
+/// Divide a vector componentwise with another vector, in place
+template <typename T>
+BasicVector3<T>& operator/=(BasicVector3<T>& v1, const BasicVector3<T>& v2)
+{
+    v1 = v1 / v2;
+    return v1;
 }
 
 /// Componentwise addition of two vectors
