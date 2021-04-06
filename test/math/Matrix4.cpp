@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 
 #include "math/Matrix4.h"
+#include "pivot.h"
 
 namespace test
 {
@@ -546,6 +547,23 @@ TEST(MatrixTest, MatrixTranslateBy)
     expectNear(m.translation(), SCALE * (TRANS+ONE));
     m.translateBy(-TRANS);
     expectNear(m.translation(), SCALE * ONE);
+}
+
+TEST(MatrixTest, GetInverseScale)
+{
+    // Create an arbitrary transformation
+    Matrix4 m = Matrix4::getRotationAboutZ(math::Degrees(15))
+              * Matrix4::getScale(Vector3(3, 2.5, 8.2))
+              * Matrix4::getTranslation(Vector3(10, 30, -61));
+
+    // Get the inverse scale
+    Matrix4 invSc = getInverseScale(m);
+
+    // Result should be a diagonal matrix containing only a scale
+    EXPECT_TRUE(math::near(invSc.xCol(), Vector4(1.0 / 3, 0, 0, 0), 1E-6));
+    EXPECT_TRUE(math::near(invSc.yCol(), Vector4(0, 1.0 / 2.5, 0, 0), 1E-6));
+    EXPECT_TRUE(math::near(invSc.zCol(), Vector4(0, 0, 1.0 / 8.2, 0), 1E-6));
+    EXPECT_TRUE(math::near(invSc.tCol(), Vector4(0, 0, 0, 1), 1E-6));
 }
 
 }

@@ -154,15 +154,6 @@ public:
         return copy;
     }
 
-    // Returns a vector with the reciprocal values of each component
-    BasicVector3<T> getInversed() {
-        return BasicVector3<T>(
-            1.0f / _v[0],
-            1.0f / _v[1],
-            1.0f / _v[2]
-        );
-    }
-
     /// Return dot product of this and another vector
     T dot(const BasicVector3<T>& other) const
     {

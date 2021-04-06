@@ -138,16 +138,7 @@ inline Matrix4 constructDevice2Object(const Matrix4& object2world, const Matrix4
  **/
 inline Matrix4 getInverseScale(const Matrix4& transform)
 {
-#if 1
-	return Matrix4::getScale(transform.getScale().getInversed());
-#else
-	// Old code like described above
-	// Extract the scale of the pivot2screen (transform) matrix and
-	// store that in another matrix
-	Matrix4 pre_scale = Matrix4::getScale(transform.getScale());
-
-	return transform.getMultipliedBy(pre_scale).getFullInverse().getMultipliedBy(transform);
-#endif
+	return Matrix4::getScale(1.0 / transform.getScale());
 }
 
 // scale by (inverse) W

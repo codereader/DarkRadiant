@@ -347,3 +347,17 @@ typedef BasicVector4<double> Vector4;
 
 // A 4-element vector stored in single-precision floating-point.
 typedef BasicVector4<float> Vector4f;
+
+namespace math
+{
+
+/// Epsilon equality test for BasicVector4
+template <typename T>
+bool near(const BasicVector4<T>& v1, const BasicVector4<T>& v2, double epsilon)
+{
+    BasicVector4<T> diff = v1 - v2;
+    return std::abs(diff.x()) < epsilon && std::abs(diff.y()) < epsilon
+        && std::abs(diff.z()) < epsilon && std::abs(diff.w()) < epsilon;
+}
+
+}
