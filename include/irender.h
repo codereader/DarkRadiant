@@ -517,7 +517,7 @@ public:
     virtual void render(RenderStateFlags globalFlagsMask,
                         const Matrix4& modelview,
                         const Matrix4& projection,
-                        const Vector3& viewer = Vector3(0, 0, 0)) = 0;
+                        const Vector3& viewer) = 0;
 
     virtual void realise() = 0;
     virtual void unrealise() = 0;

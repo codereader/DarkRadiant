@@ -497,7 +497,7 @@ bool RenderPreview::drawPreview()
 
     // Launch the back end rendering
     renderer.submitToShaders();
-    _renderSystem->render(flags, _volumeTest.GetModelview(), projection);
+    _renderSystem->render(flags, _volumeTest.GetModelview(), projection, _viewOrigin);
 
     // Give subclasses an opportunity to render their own on-screen stuff
     onPostRender();
@@ -521,7 +521,7 @@ void RenderPreview::renderWireFrame()
     getScene()->foreachVisibleNodeInVolume(_volumeTest, sceneWalker);
 
     // Launch the back end rendering
-    _renderSystem->render(flags, _volumeTest.GetModelview(), projection);
+    _renderSystem->render(flags, _volumeTest.GetModelview(), projection, _viewOrigin);
 }
 
 void RenderPreview::onGLMouseClick(wxMouseEvent& ev)
