@@ -47,7 +47,7 @@ model::ModelPolygon createPolyCCW(const Vertex3f& a, const Vertex3f& b, const Ve
 	poly.c.vertex = c;
 
 	// Calc normals for all three vertices
-	poly.a.normal = poly.b.normal = poly.c.normal = (b-a).crossProduct(c-a).getNormalised();
+	poly.a.normal = poly.b.normal = poly.c.normal = (b-a).cross(c-a).getNormalised();
 
 	return poly;
 }
@@ -218,7 +218,7 @@ void ModelExporter::processBrush(const scene::INodePtr& node)
 			continue;
 		}
 
-		// Create triangles for this winding 
+		// Create triangles for this winding
 		for (std::size_t i = 1; i < winding.size() - 1; ++i)
 		{
 			model::ModelPolygon poly;

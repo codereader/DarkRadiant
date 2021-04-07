@@ -13,16 +13,9 @@
 class Quaternion;
 
 /**
- * A 4x4 matrix stored in double-precision floating-point.
+ * \brief A 4x4 matrix stored in double-precision floating-point.
  *
- * The elements of this matrix are stored columnwise in memory:
- *
- * |  0    4    8   12 |
- * |  1    5    9   13 |
- * |  2    6   10   14 |
- * |  3    7   11   15 |
- *
- * or, alternatively, as the 4 columns are regarded as 4 vectors named x, y, z, t:
+ * The 4 columns may regarded as 4 vectors named x, y, z, t:
  *
  * | xx   yx   zx   tx |
  * | xy   yy   zy   ty |
@@ -525,7 +518,7 @@ inline bool operator!=(const Matrix4& l, const Matrix4& r)
 
 inline Matrix4::Handedness Matrix4::getHandedness() const
 {
-    return (xCol().getVector3().crossProduct(yCol().getVector3()).dot(zCol().getVector3()) < 0.0f) ? LEFTHANDED : RIGHTHANDED;
+    return (xCol().getVector3().cross(yCol().getVector3()).dot(zCol().getVector3()) < 0.0f) ? LEFTHANDED : RIGHTHANDED;
 }
 
 template<typename T>

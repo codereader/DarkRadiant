@@ -146,7 +146,7 @@ void Patch::setDims(std::size_t w, std::size_t h)
   else if(h < MIN_PATCH_HEIGHT)
     h = MIN_PATCH_HEIGHT;
 
-  _width = w; 
+  _width = w;
   _height = h;
 
   if(_width * _height != _ctrl.size())
@@ -185,7 +185,7 @@ void Patch::onAllocate(std::size_t size)
 }
 
 // Return the interally stored AABB
-const AABB& Patch::localAABB() const 
+const AABB& Patch::localAABB() const
 {
     return _localAABB;
 }
@@ -195,7 +195,7 @@ void Patch::renderWireframe(RenderableCollector& collector, const VolumeTest& vo
     // Defer the tesselation calculation to the last minute
     const_cast<Patch&>(*this).updateTesselation();
 
-    collector.addRenderable(*entity.getWireShader(), 
+    collector.addRenderable(*entity.getWireShader(),
         _patchDef3 ? _fixedWireframeRenderable : _wireframeRenderable, localToWorld);
 }
 
@@ -314,7 +314,7 @@ void Patch::freezeTransform()
     // Save the transformed working set array over _ctrl
     _ctrl = _ctrlTransformed;
 
-    // Don't call controlPointsChanged() here since that one will re-apply the 
+    // Don't call controlPointsChanged() here since that one will re-apply the
     // current transformation matrix, possible the second time.
     transformChanged();
     updateTesselation();
@@ -359,9 +359,9 @@ const std::string& Patch::getShader() const
 void Patch::setShader(const std::string& name)
 {
     undoSave();
-    
+
     _shader.setMaterialName(name);
-    
+
     // Check if the shader is ok
     check_shader();
     // Call the callback functions
@@ -386,7 +386,7 @@ bool Patch::hasVisibleMaterial() const
     return material && material->isVisible();
 }
 
-int Patch::getShaderFlags() const 
+int Patch::getShaderFlags() const
 {
     if (_shader.getGLShader() != 0)
     {
@@ -527,7 +527,7 @@ void Patch::updateTesselation()
 
     _ctrl_vertices.clear();
     _latticeIndices.clear();
-    
+
     if (!isValid())
     {
         _mesh.clear();
@@ -542,7 +542,7 @@ void Patch::updateTesselation()
 
     // Generate the indices for the coloured control points and the lines in between
     IndexBuffer ctrl_indices;
-    
+
     _latticeIndices.reserve(((_width * (_height - 1)) + (_height * (_width - 1))) << 1);
     ctrl_indices.reserve(_ctrlTransformed.size());
 
@@ -1850,7 +1850,7 @@ PatchRenderIndices Patch::getRenderIndices() const
 {
 	// Ensure the tesselation is up to date
 	const_cast<Patch&>(*this).updateTesselation();
-	
+
 	PatchRenderIndices info;
 
 	info.indices = _mesh.indices;
@@ -2374,8 +2374,8 @@ Vector3 calculateNormalForTangents(Vector3 colTangent[2], Vector3 rowTangent[2],
     if (colTangent[1].getLengthSquared() > 0)
     {
         // Two column normals to calculate
-        Vector3 normal1 = rowTangent[0].crossProduct(colTangent[0]);
-        Vector3 normal2 = rowTangent[0].crossProduct(colTangent[1]);
+        Vector3 normal1 = rowTangent[0].cross(colTangent[0]);
+        Vector3 normal2 = rowTangent[0].cross(colTangent[1]);
 
         if (normal1.getLengthSquared() > 0)
         {
@@ -2398,8 +2398,8 @@ Vector3 calculateNormalForTangents(Vector3 colTangent[2], Vector3 rowTangent[2],
         if (rowTangent[1].getLengthSquared() > 0)
         {
             // Two row normals to calculate
-            Vector3 normal1 = rowTangent[0].crossProduct(colTangent[0]);
-            Vector3 normal2 = rowTangent[1].crossProduct(colTangent[0]);
+            Vector3 normal1 = rowTangent[0].cross(colTangent[0]);
+            Vector3 normal2 = rowTangent[1].cross(colTangent[0]);
 
             if (normal1.getLengthSquared() > 0)
             {
@@ -2418,7 +2418,7 @@ Vector3 calculateNormalForTangents(Vector3 colTangent[2], Vector3 rowTangent[2],
         }
         else
         {
-            normal = rowTangent[0].crossProduct(colTangent[0]);
+            normal = rowTangent[0].cross(colTangent[0]);
 
             if (normal.getLengthSquared() > 0)
             {
@@ -2693,7 +2693,7 @@ void Patch::normaliseTexture() {
     }
 }
 
-const Subdivisions& Patch::getSubdivisions() const 
+const Subdivisions& Patch::getSubdivisions() const
 {
     return _subDivisions;
 }

@@ -52,7 +52,7 @@ Matrix4::Matrix4(double xx_, double xy_, double xz_, double xw_,
 Matrix4 Matrix4::getRotation(const Vector3& a, const Vector3& b)
 {
 	double angle = a.angle(b);
-	Vector3 axis = b.crossProduct(a).getNormalised();
+	Vector3 axis = b.cross(a).getNormalised();
 
 	return getRotation(axis, angle);
 }

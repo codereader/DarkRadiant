@@ -422,7 +422,7 @@ void makeVisportal(const cmd::ArgumentList& args)
 			{
 				Vector3 edge1 = centroid - winding[i].vertex;
 				Vector3 edge2 = centroid - winding[(i+1) % winding.size()].vertex;
-				area += edge1.crossProduct(edge2).getLength() * 0.5f;
+				area += edge1.cross(edge2).getLength() * 0.5f;
 			}
 
 			if (area > largestArea)
@@ -486,7 +486,7 @@ void resizeBrushesToBounds(const AABB& aabb, const std::string& shader)
 	}
 
 	GlobalSelectionSystem().foreachBrush([&] (Brush& brush)
-	{ 
+	{
 		brush.constructCuboid(aabb, shader);
 	});
 
@@ -586,9 +586,9 @@ void brushMakePrefab(const cmd::ArgumentList& args)
 		throw cmd::ExecutionNotPossible(_("At least one brush must be selected for this operation."));
 	}
 
-	if (args.empty() || 
-		args.size() > 2 || 
-		(args[0].getInt() == 0 && args.size() > 1) || 
+	if (args.empty() ||
+		args.size() > 2 ||
+		(args[0].getInt() == 0 && args.size() > 1) ||
 		(args[0].getInt() != 0 && args.size() < 2))
 	{
 		rError() << "Usage: " << std::endl
@@ -659,18 +659,18 @@ void brushSetDetailFlag(const cmd::ArgumentList& args)
 	if (arg == "detail")
 	{
 		UndoableCommand undo("BrushMakeDetail");
-		
+
 		GlobalSelectionSystem().foreachBrush([&] (Brush& brush)
-		{ 
+		{
 			brush.setDetailFlag(IBrush::Detail);
 		});
 	}
 	else if (arg == "structural")
 	{
 		UndoableCommand undo("BrushMakeStructural");
-		
+
 		GlobalSelectionSystem().foreachBrush([&] (Brush& brush)
-		{ 
+		{
 			brush.setDetailFlag(IBrush::Structural);
 		});
 	}

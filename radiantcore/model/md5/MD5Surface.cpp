@@ -15,7 +15,7 @@ inline VertexPointer vertexpointer_arbitrarymeshvertex(const ArbitraryMeshVertex
 }
 
 // Constructor
-MD5Surface::MD5Surface() : 
+MD5Surface::MD5Surface() :
 	_originalShaderName(""),
 	_mesh(new MD5Mesh),
 	_normalList(0),
@@ -187,11 +187,11 @@ bool MD5Surface::getIntersection(const Ray& ray, Vector3& intersection, const Ma
 		const ArbitraryMeshVertex& p2 = _vertices[*(i+1)];
 		const ArbitraryMeshVertex& p3 = _vertices[*(i+2)];
 
-		if (ray.intersectTriangle(localToWorld.transformPoint(p1.vertex), 
+		if (ray.intersectTriangle(localToWorld.transformPoint(p1.vertex),
 			localToWorld.transformPoint(p2.vertex), localToWorld.transformPoint(p3.vertex), triIntersection))
 		{
 			intersection = triIntersection;
-			
+
 			// Test if this surface intersection is better than what we currently have
 			float oldDistSquared = (bestIntersection - ray.origin).getLengthSquared();
 			float newDistSquared = (triIntersection - ray.origin).getLengthSquared();
@@ -344,7 +344,7 @@ void MD5Surface::updateToSkeleton(const MD5Skeleton& skeleton)
 		_vertices[j].texcoord = TexCoord2f(vert.u, vert.v);
 		_vertices[j].normal = Normal3f(0,0,0);
 	}
-    
+
 	// Ensure the index array is ok
 	if (_indices.empty())
 	{
@@ -364,7 +364,7 @@ void MD5Surface::buildVertexNormals()
 		ArbitraryMeshVertex& b = _vertices[*(j + 1)];
 		ArbitraryMeshVertex& c = _vertices[*(j + 2)];
 
-		Vector3 weightedNormal((c.vertex - a.vertex).crossProduct(b.vertex - a.vertex));
+		Vector3 weightedNormal((c.vertex - a.vertex).cross(b.vertex - a.vertex));
 
 		a.normal += weightedNormal;
 		b.normal += weightedNormal;

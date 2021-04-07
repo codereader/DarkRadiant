@@ -14,7 +14,7 @@ inline bool triangle_reversed(std::size_t x, std::size_t y, std::size_t z) {
 
 template<typename Element>
 inline Vector3 triangle_cross(const BasicVector3<Element>& x, const BasicVector3<Element> y, const BasicVector3<Element>& z) {
-	return (y - x).crossProduct(z - x);
+	return (y - x).cross(z - x);
 }
 template<typename Element>
 inline bool triangles_same_winding(const BasicVector3<Element>& x1, const BasicVector3<Element> y1, const BasicVector3<Element>& z1,

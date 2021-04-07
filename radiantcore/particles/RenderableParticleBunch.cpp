@@ -203,7 +203,7 @@ Matrix4 RenderableParticleBunch::getAimedMatrix(const Vector3& particleVelocity)
     double aimedAngle = z.angle(-viewProj);
 
     // Use the cross to check whether to rotate in negative or positive direction
-    if (z.crossProduct(-viewProj).dot(vel) > 0)
+    if (z.cross(-viewProj).dot(vel) > 0)
     {
         aimedAngle *= -1;
     }

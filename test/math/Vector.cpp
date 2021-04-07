@@ -258,6 +258,35 @@ TEST(MathTest, Vector3DotProduct)
     EXPECT_EQ(v3.dot(v3), v3.getLengthSquared());
 }
 
+TEST(MathTest, Vector3CrossProduct)
+{
+    const Vector3 i(1, 0, 0);
+    const Vector3 j(0, 1, 0);
+    const Vector3 k(0, 0, 1);
+
+    // Validate the cross product unit vector identities
+    EXPECT_EQ(i.cross(j), k);
+    EXPECT_EQ(j.cross(i), -k);
+    EXPECT_EQ(i.cross(k), -j);
+    EXPECT_EQ(k.cross(i), j);
+    EXPECT_EQ(j.cross(k), i);
+    EXPECT_EQ(k.cross(j), -i);
+
+    const Vector3 ZERO(0, 0, 0);
+    EXPECT_EQ(i.cross(i), ZERO);
+    EXPECT_EQ(j.cross(j), ZERO);
+    EXPECT_EQ(k.cross(k), ZERO);
+
+    // Check with non-unit vectors
+    EXPECT_EQ((2 * i).cross(3 * j), 6 * k);
+    EXPECT_EQ((0.5 * k).cross(8 * j), -4 * i);
+
+    // Arbitrary vectors
+    EXPECT_EQ(Vector3(2, 4, 5).cross(Vector3(3, 5, 9)), Vector3(11, -3, -2));
+    EXPECT_EQ(Vector3(-0.25, 4.8, 512).cross(Vector3(56, -5.625, 96)),
+              Vector3(3340.8, 28696.0, -267.39375));
+}
+
 TEST(MathTest, Vector3AsCArray)
 {
     Vector3 vec(256, -10, 10000);

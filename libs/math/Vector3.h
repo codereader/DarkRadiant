@@ -187,18 +187,9 @@ public:
         return acos(dot);
     }
 
-    /* Cross-product this vector with another Vector3, returning the result
-     * in a new Vector3.
-     *
-     * @param other
-     * The Vector3 to cross-product with this Vector3.
-     *
-     * @returns
-     * The cross-product of the two vectors.
-     */
-
-    template<typename OtherT>
-    BasicVector3<T> crossProduct(const BasicVector3<OtherT>& other) const {
+    /// Return the cross product of this and another vector
+    BasicVector3<T> cross(const BasicVector3<T>& other) const
+    {
         return BasicVector3<T>(
             _v[1] * other.z() - _v[2] * other.y(),
             _v[2] * other.x() - _v[0] * other.z(),
