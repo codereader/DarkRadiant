@@ -271,7 +271,12 @@ void MaterialEditor::setupPreviewLightProperties(wxWindow* previewPanel)
         _preview->setLightClassname(ev.GetString().ToStdString());
     });
 
-    getControl<wxColourPickerCtrl>("MaterialPreviewLightColour")->Bind(wxEVT_COLOURPICKER_CURRENT_CHANGED,
+#if defined(__WXMSW__) && wxCHECK_VERSION(3,1,3)
+    const auto& colourEvtType = wxEVT_COLOURPICKER_CURRENT_CHANGED;
+#else
+    const auto& colourEvtType = wxEVT_COLOURPICKER_CHANGED;
+#endif
+    getControl<wxColourPickerCtrl>("MaterialPreviewLightColour")->Bind(colourEvtType,
     [this](wxColourPickerEvent& ev)
     {
         if (_lightUpdateInProgress) return;

@@ -1,5 +1,6 @@
 #include "GLSLDepthFillAlphaProgram.h"
 
+#include "GLProgramAttributes.h"
 #include "../GLProgramFactory.h"
 #include "debugging/gl.h"
 
