@@ -25,6 +25,7 @@ class OpenGLShader;
  */
 class OpenGLShaderPass
 {
+protected:
 	OpenGLShader& _owner;
 
 	// The state applied to this bucket

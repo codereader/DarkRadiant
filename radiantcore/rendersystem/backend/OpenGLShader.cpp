@@ -2,6 +2,7 @@
 
 #include "GLProgramFactory.h"
 #include "../OpenGLRenderSystem.h"
+#include "DepthFillPass.h"
 
 #include "icolourscheme.h"
 #include "ishaders.h"
@@ -256,6 +257,12 @@ OpenGLState& OpenGLShader::appendDefaultPass()
     return state;
 }
 
+OpenGLState& OpenGLShader::appendDepthFillPass()
+{
+    auto& pass = _shaderPasses.emplace_back(std::make_shared<DepthFillPass>(*this, _renderSystem));
+    return pass->state();
+}
+
 // Test if we can render in bump map mode
 bool OpenGLShader::canUseLightingMode() const
 {
@@ -316,23 +323,14 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
     if (triplet.needDepthFill && triplet.diffuse)
     {
         // Create depth-buffer fill pass with alpha test
-        OpenGLState& zPass = appendDefaultPass();
-        zPass.setRenderFlag(RENDER_MASKCOLOUR);
-        zPass.setRenderFlag(RENDER_FILL);
-        zPass.setRenderFlag(RENDER_CULLFACE);
-        zPass.setRenderFlag(RENDER_DEPTHTEST);
-        zPass.setRenderFlag(RENDER_DEPTHWRITE);
-        zPass.setRenderFlag(RENDER_PROGRAM);
-        zPass.setRenderFlag(RENDER_ALPHATEST);
-        zPass.setRenderFlag(RENDER_TEXTURE_2D);
-        zPass.setRenderFlag(RENDER_BUMP);
+        OpenGLState& zPass = appendDepthFillPass();
+
+        // Store the alpha test value
         zPass.alphaThreshold = static_cast<GLfloat>(alphaTest);
 
-        zPass.setSortPosition(OpenGLState::SORT_ZFILL);
+        // We need a diffuse stage to be able to performthe alpha test
         zPass.stage0 = triplet.diffuse;
         zPass.texture0 = getTextureOrInteractionDefault(triplet.diffuse)->getGLTexNum();
-
-        zPass.glProgram = _renderSystem.getGLProgramFactory().getBuiltInProgram("depthFillAlpha");
     }
 
     // Add the DBS pass

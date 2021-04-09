@@ -1042,6 +1042,9 @@
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLDepthFillAlphaProgram.cpp">
       <Filter>src\rendersystem\backend\glprogram</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\DepthFillPass.cpp">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
@@ -2126,6 +2129,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLProgramBase.h">
       <Filter>src\rendersystem\backend\glprogram</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\DepthFillPass.h">
+      <Filter>src\rendersystem\backend</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

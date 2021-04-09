@@ -70,6 +70,7 @@ private:
 
     // Add a shader pass to the end of the list, and return its state object
 	OpenGLState& appendDefaultPass();
+	OpenGLState& appendDepthFillPass();
 
     // Test if we can render using lighting mode
     bool canUseLightingMode() const;

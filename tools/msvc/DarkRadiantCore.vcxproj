@@ -598,6 +598,7 @@
     <ClCompile Include="..\..\radiantcore\log\StringLogDevice.cpp" />
     <ClCompile Include="..\..\radiantcore\modulesystem\ModuleLoader.cpp" />
     <ClCompile Include="..\..\radiantcore\modulesystem\ModuleRegistry.cpp" />
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\DepthFillPass.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\GLProgramFactory.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\GenericVFPProgram.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLBumpProgram.cpp" />
@@ -928,6 +929,7 @@
     <ClInclude Include="..\..\radiantcore\messagebus\MessageBus.h" />
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h" />
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleRegistry.h" />
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\DepthFillPass.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\GLProgramFactory.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\GenericVFPProgram.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLBumpProgram.h" />

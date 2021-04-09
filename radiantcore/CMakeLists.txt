@@ -211,6 +211,7 @@ add_library(radiantcore MODULE
             rendersystem/backend/glprogram/GLSLDepthFillAlphaProgram.cpp
             rendersystem/backend/OpenGLShader.cpp
             rendersystem/backend/OpenGLShaderPass.cpp
+            rendersystem/backend/DepthFillPass.cpp
             rendersystem/debug/SpacePartitionRenderer.cpp
             rendersystem/GLFont.cpp
             rendersystem/OpenGLModule.cpp
