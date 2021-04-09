@@ -16,12 +16,9 @@
 namespace render
 {
 
-namespace
-{
-
 // Bind the given texture to the texture unit, if it is different from the
 // current state, then set the current state to the new texture.
-inline void setTextureState(GLint& current,
+void OpenGLShaderPass::setTextureState(GLint& current,
                             const GLint& texture,
                             GLenum textureUnit,
                             GLenum textureMode)
@@ -37,7 +34,7 @@ inline void setTextureState(GLint& current,
 }
 
 // Same as setTextureState() above without texture unit parameter
-inline void setTextureState(GLint& current,
+void OpenGLShaderPass::setTextureState(GLint& current,
                             const GLint& texture,
                             GLenum textureMode)
 {
@@ -48,6 +45,9 @@ inline void setTextureState(GLint& current,
         current = texture;
     }
 }
+
+namespace
+{
 
 // Utility function to toggle an OpenGL state flag
 inline void setState(unsigned int state,
@@ -287,38 +287,13 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
     const unsigned changingBitsMask = requiredState ^ current.getRenderFlags();
 
     // Set the GLProgram if required
-    GLProgram* program = (requiredState & RENDER_PROGRAM) != 0
-                          ? _glState.glProgram
-                          : 0;
-
-    if (program != current.glProgram)
+    if (requiredState & RENDER_PROGRAM)
     {
-        if (current.glProgram != 0)
-        {
-            current.glProgram->disable();
-            glColor4fv(current.getColour());
-        }
-
-        current.glProgram = program;
-
-        if (current.glProgram != 0)
-        {
-            current.glProgram->enable();
-        }
-
-        // Check if we need to set the alpha test value
-        if ((requiredState & (RENDER_ALPHATEST | RENDER_FILL)) == (RENDER_ALPHATEST | RENDER_FILL))
-        {
-            auto zFillAlphaProgram = dynamic_cast<GLSLDepthFillAlphaProgram*>(current.glProgram);
-
-            if (zFillAlphaProgram != nullptr)
-            {
-                zFillAlphaProgram->applyAlphaTest(_glState.alphaThreshold);
-
-                setTextureState(current.texture0, _glState.texture0, GL_TEXTURE0, GL_TEXTURE_2D);
-                setupTextureMatrix(GL_TEXTURE0, _glState.stage0);
-            }
-        }
+        activateShaderProgram(current);
+    }
+    else
+    {
+        deactivateShaderProgram(current);
     }
 
     // State changes. Only perform these if changingBitsMask > 0, since if there are
@@ -528,6 +503,34 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
   current.setRenderFlags(requiredState);
 
   debug::assertNoGlErrors();
+}
+
+void OpenGLShaderPass::activateShaderProgram(OpenGLState& current)
+{
+    if (current.glProgram == _glState.glProgram)
+    {
+        // nothing to do
+        return;
+    }
+
+    // Deactivate the previous program first
+    deactivateShaderProgram(current);
+
+    if (_glState.glProgram != nullptr)
+    {
+        current.glProgram = _glState.glProgram;
+        current.glProgram->enable();
+    }
+}
+
+void OpenGLShaderPass::deactivateShaderProgram(OpenGLState& current)
+{
+    if (current.glProgram == nullptr) return;
+
+    current.glProgram->disable();
+    glColor4fv(current.getColour());
+
+    current.glProgram = nullptr;
 }
 
 // Add a Renderable to this bucket

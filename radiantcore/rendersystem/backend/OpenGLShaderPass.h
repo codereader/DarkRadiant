@@ -69,7 +69,16 @@ protected:
 	typedef std::map<const IRenderEntity*, Renderables> RenderablesByEntity;
 	RenderablesByEntity _renderables;
 
-private:
+protected:
+
+    void setTextureState(GLint& current,
+        const GLint& texture,
+        GLenum textureUnit,
+        GLenum textureMode);
+
+    void setTextureState(GLint& current,
+        const GLint& texture,
+        GLenum textureMode);
 
 	// Apply own state to the "current" state object passed in as a reference,
 	// in combination with the global state mask, as well as setting
@@ -118,6 +127,9 @@ private:
                                   const Vector3& viewer,
                                   const Matrix4& objTransform,
 								  std::size_t time);
+
+    virtual void activateShaderProgram(OpenGLState& current);
+    virtual void deactivateShaderProgram(OpenGLState& current);
 
 public:
 

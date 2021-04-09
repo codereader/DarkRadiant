@@ -2,6 +2,7 @@
 
 #include "../OpenGLRenderSystem.h"
 #include "GLProgramFactory.h"
+#include "glprogram/GLSLDepthFillAlphaProgram.h"
 
 namespace render
 {
@@ -30,6 +31,23 @@ DepthFillPass::DepthFillPass(OpenGLShader& owner, OpenGLRenderSystem& renderSyst
 
     // Load the GLSL program tailored for this pass
     _glState.glProgram = renderSystem.getGLProgramFactory().getBuiltInProgram("depthFillAlpha");
+    assert(dynamic_cast<GLSLDepthFillAlphaProgram*>(_glState.glProgram));
+}
+
+void DepthFillPass::activateShaderProgram(OpenGLState& current)
+{
+    // We need a program, it is set up in the constructor
+    assert(_glState.glProgram);
+
+    // Let the base class enable the program
+    OpenGLShaderPass::activateShaderProgram(current);
+
+    auto zFillAlphaProgram = static_cast<GLSLDepthFillAlphaProgram*>(current.glProgram);
+
+    zFillAlphaProgram->applyAlphaTest(_glState.alphaThreshold);
+
+    setTextureState(current.texture0, _glState.texture0, GL_TEXTURE0, GL_TEXTURE_2D);
+    setupTextureMatrix(GL_TEXTURE0, _glState.stage0);
 }
 
 }

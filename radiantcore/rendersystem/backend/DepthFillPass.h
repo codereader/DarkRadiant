@@ -16,6 +16,9 @@ class DepthFillPass :
 {
 public:
     DepthFillPass(OpenGLShader& owner, OpenGLRenderSystem& renderSystem);
+
+protected:
+    virtual void activateShaderProgram(OpenGLState& current) override;
 };
 
 }
