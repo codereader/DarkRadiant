@@ -17,6 +17,7 @@
 #include <wx/radiobut.h>
 #include <wx/collpane.h>
 #include <wx/statbmp.h>
+#include <wx/clrpicker.h>
 
 #include "wxutil/SourceView.h"
 #include "wxutil/FileChooser.h"
@@ -142,23 +143,9 @@ MaterialEditor::MaterialEditor() :
     auto* previewPanel = getControl<wxPanel>("MaterialEditorPreviewPanel");
     _preview.reset(new MaterialPreview(previewPanel));
 
-    // Collapsible preview pane
-    auto sourceTextPanel = new wxCollapsiblePane(previewPanel, wxID_ANY, _("Material Source Text"));
-    _sourceView = new wxutil::D3MaterialSourceViewCtrl(sourceTextPanel->GetPane());
-    _sourceView->SetMinSize(wxSize(-1, 400));
-
-    sourceTextPanel->Bind(wxEVT_COLLAPSIBLEPANE_CHANGED, [=](wxCollapsiblePaneEvent& ev)
-    {
-        previewPanel->Layout();
-    });
-
-    auto paneSizer = new wxBoxSizer(wxVERTICAL);
-    paneSizer->Add(_sourceView, 1, wxGROW | wxEXPAND);
-    sourceTextPanel->GetPane()->SetSizer(paneSizer);
-    sourceTextPanel->Collapse();
-
     previewPanel->GetSizer()->Add(_preview->getWidget(), 1, wxEXPAND);
-    previewPanel->GetSizer()->Add(sourceTextPanel, 0, wxEXPAND);
+    setupSourceTextPanel(previewPanel);
+    setupPreviewLightProperties(previewPanel);
 
     setupBasicMaterialPage();
     setupMaterialProperties();
@@ -220,6 +207,59 @@ int MaterialEditor::ShowModal()
     _windowPosition.saveToPath(RKEY_WINDOW_STATE);
 
     return returnCode;
+}
+
+void MaterialEditor::setupSourceTextPanel(wxWindow* previewPanel)
+{
+    auto sourceTextPanel = new wxCollapsiblePane(previewPanel, wxID_ANY, _("Material Source Text"));
+    _sourceView = new wxutil::D3MaterialSourceViewCtrl(sourceTextPanel->GetPane());
+    _sourceView->SetMinSize(wxSize(-1, 400));
+
+    sourceTextPanel->Bind(wxEVT_COLLAPSIBLEPANE_CHANGED, [=](wxCollapsiblePaneEvent& ev)
+    {
+        previewPanel->Layout();
+    });
+
+    auto paneSizer = new wxBoxSizer(wxVERTICAL);
+    paneSizer->Add(_sourceView, 1, wxGROW | wxEXPAND);
+    sourceTextPanel->GetPane()->SetSizer(paneSizer);
+    sourceTextPanel->Collapse();
+
+    previewPanel->GetSizer()->Add(sourceTextPanel, 0, wxEXPAND);
+}
+
+void MaterialEditor::setupPreviewLightProperties(wxWindow* previewPanel)
+{
+    auto collapsiblePane = new wxCollapsiblePane(previewPanel, wxID_ANY, _("Light Properties"));
+    
+    auto propertyPanel = getControl<wxPanel>("MaterialPreviewLightPanel");
+    propertyPanel->GetContainingSizer()->Detach(propertyPanel);
+    propertyPanel->Reparent(collapsiblePane->GetPane());
+    propertyPanel->SetMinSize(wxSize(-1, 100));
+
+    collapsiblePane->Bind(wxEVT_COLLAPSIBLEPANE_CHANGED, [=](wxCollapsiblePaneEvent& ev)
+    {
+        previewPanel->Layout();
+    });
+
+    auto paneSizer = new wxBoxSizer(wxVERTICAL);
+    paneSizer->Add(propertyPanel, 1, wxGROW | wxEXPAND);
+    collapsiblePane->GetPane()->SetSizer(paneSizer);
+    collapsiblePane->Collapse();
+
+    previewPanel->GetSizer()->Add(collapsiblePane, 0, wxEXPAND);
+
+    // Wire up the signals
+    _preview->signal_LightChanged().connect([this] ()
+    {
+        getControl<wxTextCtrl>("MaterialPreviewLightClassname")->SetValue(_preview->getLightClassname());
+
+        auto colour = _preview->getLightColour() * 255.0;
+        getControl<wxColourPickerCtrl>("MaterialPreviewLightColour")->SetColour(
+            wxColour(static_cast<wxColour::ChannelType>(colour.x()), 
+                     static_cast<wxColour::ChannelType>(colour.y()), 
+                     static_cast<wxColour::ChannelType>(colour.z())));
+    });
 }
 
 void MaterialEditor::_onClose(wxCommandEvent& ev)

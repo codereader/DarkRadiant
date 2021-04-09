@@ -109,6 +109,8 @@ private:
     void setupSurfaceFlag(const std::string& controlName, Material::SurfaceFlags flag);
     void setupMaterialFlag(const std::string& controlName, Material::Flags flag);
     void setupStageFlag(const std::string& controlName, IShaderLayer::Flags flags);
+    void setupSourceTextPanel(wxWindow* previewPanel);
+    void setupPreviewLightProperties(wxWindow* previewPanel);
 
     void createExpressionBinding(const std::string& textCtrlName,
         const std::function<shaders::IShaderExpression::Ptr(const IShaderLayer::Ptr&)>& loadFunc,

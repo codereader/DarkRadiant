@@ -239,6 +239,8 @@ void MaterialPreview::setupSceneGraph()
 
         setViewOrigin(Vector3(1, 1, 1) * distance);
         setViewAngles(Vector3(37, 135, 0));
+
+        _sigLightChanged.emit();
     }
     catch (std::runtime_error&)
     {
@@ -293,6 +295,40 @@ void MaterialPreview::onTestModelSelectionChanged(wxCommandEvent& ev)
 {
     setupTestModel();
     queueDraw();
+}
+
+sigc::signal<void>& MaterialPreview::signal_LightChanged()
+{
+    return _sigLightChanged;
+}
+
+std::string MaterialPreview::getLightClassname()
+{
+    return _light ? Node_getEntity(_light)->getEntityClass()->getName() : "";
+}
+
+void MaterialPreview::setLightClassname(const std::string& className)
+{
+
+}
+
+Vector3 MaterialPreview::getLightColour()
+{
+    if (!_light) return Vector3(0,0,0);
+    
+    auto value = Node_getEntity(_light)->getKeyValue("_color");
+    
+    if (value.empty())
+    {
+        value = "1 1 1";
+    }
+
+    return string::convert<Vector3>(value, Vector3(0,0,0));
+}
+
+void MaterialPreview::setLightColour(const Vector3& colour)
+{
+
 }
 
 }

@@ -35,6 +35,8 @@ private:
     wxToolBarToolBase* _testModelSphereButton;
     wxToolBarToolBase* _testModelTilesButton;
 
+    sigc::signal<void> _sigLightChanged;
+
 public:
     MaterialPreview(wxWindow* parent);
 
@@ -44,6 +46,13 @@ public:
     void setMaterial(const MaterialPtr& material);
 
     void enableFrobHighlight(bool enable);
+
+    std::string getLightClassname();
+    void setLightClassname(const std::string& className);
+    Vector3 getLightColour();
+    void setLightColour(const Vector3& colour);
+
+    sigc::signal<void>& signal_LightChanged();
 
 protected:
     bool canDrawGrid() override;
