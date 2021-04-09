@@ -21,6 +21,7 @@ namespace
 {
     const char* const FUNC_STATIC_CLASS = "func_static";
     const char* const GKEY_DEFAULT_ROOM_MATERIAL = "/materialPreview/defaultRoomMaterial";
+    const char* const GKEY_DEFAULT_LIGHT_DEF = "/materialPreview/defaultLightDef";
 }
 
 MaterialPreview::MaterialPreview(wxWindow* parent) :
@@ -102,6 +103,18 @@ void MaterialPreview::updateModelSkin()
 std::string MaterialPreview::getRoomMaterial()
 {
     return game::current::getValue<std::string>(GKEY_DEFAULT_ROOM_MATERIAL);
+}
+
+std::string MaterialPreview::getDefaultLightDef()
+{
+    auto className = game::current::getValue<std::string>(GKEY_DEFAULT_LIGHT_DEF);
+
+    if (className.empty() || !GlobalEntityClassManager().findClass(className))
+    {
+        className = "light";
+    }
+
+    return className;
 }
 
 void MaterialPreview::updateRoomSkin()
@@ -228,7 +241,7 @@ void MaterialPreview::setupSceneGraph()
 
         // Set up the light
         _light = GlobalEntityModule().createEntity(
-            GlobalEntityClassManager().findClass("light"));
+            GlobalEntityClassManager().findClass(getDefaultLightDef()));
 
         Node_getEntity(_light)->setKeyValue("light_radius", "750 750 750");
         Node_getEntity(_light)->setKeyValue("origin", "150 150 150");

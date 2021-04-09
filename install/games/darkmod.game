@@ -350,5 +350,6 @@
 	
 	<materialPreview>
 		<defaultRoomMaterial value="textures/darkmod/stone/brick/blocks_brown" />
+		<defaultLightDef value="light_torchflame" />
 	</materialPreview>
 </game>

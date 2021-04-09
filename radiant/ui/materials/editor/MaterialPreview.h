@@ -71,6 +71,7 @@ private:
     void updateModelSkin();
     void updateRoomSkin();
     std::string getRoomMaterial();
+    std::string getDefaultLightDef();
     void onTestModelSelectionChanged(wxCommandEvent& ev);
 };
 
