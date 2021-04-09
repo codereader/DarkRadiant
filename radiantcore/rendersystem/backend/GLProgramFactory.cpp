@@ -1,6 +1,7 @@
 #include "GLProgramFactory.h"
 
 #include "glprogram/GLSLDepthFillProgram.h"
+#include "glprogram/GLSLDepthFillAlphaProgram.h"
 #include "glprogram/GLSLBumpProgram.h"
 #include "glprogram/GenericVFPProgram.h"
 
@@ -21,6 +22,7 @@ namespace render
 GLProgramFactory::GLProgramFactory()
 {
     _builtInPrograms["depthFill"] = std::make_shared<GLSLDepthFillProgram>();
+    _builtInPrograms["depthFillAlpha"] = std::make_shared<GLSLDepthFillAlphaProgram>();
     _builtInPrograms["bumpMap"] = std::make_shared<GLSLBumpProgram>();
 }
 

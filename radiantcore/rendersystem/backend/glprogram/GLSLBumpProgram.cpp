@@ -92,16 +92,9 @@ void GLSLBumpProgram::create()
     debug::assertNoGlErrors();
 }
 
-void GLSLBumpProgram::destroy()
-{
-    glDeleteProgram(_programObj);
-
-    debug::assertNoGlErrors();
-}
-
 void GLSLBumpProgram::enable()
 {
-    glUseProgram(_programObj);
+    GLSLProgramBase::enable();
 
     glEnableVertexAttribArrayARB(ATTR_TEXCOORD);
     glEnableVertexAttribArrayARB(ATTR_TANGENT);
@@ -113,7 +106,7 @@ void GLSLBumpProgram::enable()
 
 void GLSLBumpProgram::disable()
 {
-    glUseProgram(0);
+    GLSLProgramBase::disable();
 
     glDisableVertexAttribArrayARB(ATTR_TEXCOORD);
     glDisableVertexAttribArrayARB(ATTR_TANGENT);

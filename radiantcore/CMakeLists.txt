@@ -205,8 +205,10 @@ add_library(radiantcore MODULE
             Radiant.cpp
             rendersystem/backend/GLProgramFactory.cpp
             rendersystem/backend/glprogram/GenericVFPProgram.cpp
+            rendersystem/backend/glprogram/GLSLProgramBase.cpp
             rendersystem/backend/glprogram/GLSLBumpProgram.cpp
             rendersystem/backend/glprogram/GLSLDepthFillProgram.cpp
+            rendersystem/backend/glprogram/GLSLDepthFillAlphaProgram.cpp
             rendersystem/backend/OpenGLShader.cpp
             rendersystem/backend/OpenGLShaderPass.cpp
             rendersystem/debug/SpacePartitionRenderer.cpp

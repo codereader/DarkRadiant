@@ -1,14 +1,13 @@
 #pragma once
 
 #include "GLProgramAttributes.h"
-#include "iglprogram.h"
-#include "igl.h"
+#include "GLSLProgramBase.h"
 
 namespace render
 {
 
-class GLSLBumpProgram
-: public GLProgram
+class GLSLBumpProgram : 
+    public GLSLProgramBase
 {
 	// The value all lights should be scaled by, obtained from the game description
 	float _lightScale;
@@ -27,10 +26,10 @@ class GLSLBumpProgram
 public:
 
     /* GLProgram implementation */
-    void create();
-    void destroy();
-    void enable();
-    void disable();
+    void create() override;
+    void enable() override;
+    void disable() override;
+
     void applyRenderParams(const Vector3& viewer,
                            const Matrix4& localToWorld,
                            const Params&);
