@@ -9,6 +9,7 @@ namespace render
 class GLSLBumpProgram : 
     public GLSLProgramBase
 {
+private:
 	// The value all lights should be scaled by, obtained from the game description
 	float _lightScale;
 
@@ -19,9 +20,6 @@ class GLSLBumpProgram :
     int _locLightScale;
     int _locAmbientLight;
     int _locInvertVCol;
-
-    // Program object identifier
-    GLuint _programObj;
 
 public:
 

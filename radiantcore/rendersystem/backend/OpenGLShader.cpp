@@ -312,6 +312,7 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
         alphaTest = triplet.diffuse->getAlphaTest();
     }
 
+#if 0
     // Append a depthfill shader pass if requested (not applicable for
     // alpha-test materials)
     if (triplet.needDepthFill && alphaTest <= 0.0)
@@ -329,7 +330,30 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
 
         zPass.glProgram = _renderSystem.getGLProgramFactory().getBuiltInProgram("depthFill");
     }
+    else
+#else
+    if (triplet.needDepthFill && triplet.diffuse)
+    {
+        // Create depth-buffer fill pass with alpha test
+        OpenGLState& zPass = appendDefaultPass();
+        zPass.setRenderFlag(RENDER_MASKCOLOUR);
+        zPass.setRenderFlag(RENDER_FILL);
+        zPass.setRenderFlag(RENDER_CULLFACE);
+        zPass.setRenderFlag(RENDER_DEPTHTEST);
+        zPass.setRenderFlag(RENDER_DEPTHWRITE);
+        zPass.setRenderFlag(RENDER_PROGRAM);
+        zPass.setRenderFlag(RENDER_ALPHATEST);
+        zPass.setRenderFlag(RENDER_TEXTURE_2D);
+        zPass.setRenderFlag(RENDER_BUMP);
+        zPass.alphaThreshold = static_cast<GLfloat>(alphaTest);
 
+        zPass.setSortPosition(OpenGLState::SORT_ZFILL);
+        zPass.stage0 = triplet.diffuse;
+        zPass.texture0 = getTextureOrInteractionDefault(triplet.diffuse)->getGLTexNum();
+
+        zPass.glProgram = _renderSystem.getGLProgramFactory().getBuiltInProgram("depthFillAlpha");
+    }
+#endif
     // Add the DBS pass
     OpenGLState& dbsPass = appendDefaultPass();
 
@@ -337,7 +361,7 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
     setGLTexturesFromTriplet(dbsPass, triplet);
 
     // Set render flags
-    dbsPass.setRenderFlag(RENDER_BLEND);
+    //dbsPass.setRenderFlag(RENDER_BLEND);
     dbsPass.setRenderFlag(RENDER_FILL);
     dbsPass.setRenderFlag(RENDER_TEXTURE_2D);
     dbsPass.setRenderFlag(RENDER_CULLFACE);

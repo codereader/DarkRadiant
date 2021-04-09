@@ -22,13 +22,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 attribute vec4		attr_TexCoord0;
 
+varying vec2		var_tex_diffuse;
+
 void	main()
 {
 	// transform vertex position into homogenous clip-space
 	gl_Position = ftransform();
 
 	// transform texcoords
-	gl_TexCoord[0] = gl_TextureMatrix[0] * gl_MultiTexCoord0;
+	var_tex_diffuse = (gl_TextureMatrix[0] * attr_TexCoord0).st;
 
 	// assign color
 	gl_FrontColor = gl_Color;

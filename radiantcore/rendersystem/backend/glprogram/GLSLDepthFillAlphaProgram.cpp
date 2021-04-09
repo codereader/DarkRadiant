@@ -23,6 +23,49 @@ void GLSLDepthFillAlphaProgram::create()
         DEPTHFILL_ALPHA_VP_FILENAME, DEPTHFILL_ALPHA_FP_FILENAME
     );
 
+    glBindAttribLocation(_programObj, ATTR_TEXCOORD, "attr_TexCoord0");
+
+    glLinkProgram(_programObj);
+
+    debug::assertNoGlErrors();
+
+    _locAlphaTest = glGetUniformLocation(_programObj, "u_alpha_test");
+
+    glUseProgram(_programObj);
+    debug::assertNoGlErrors();
+
+    GLint samplerLoc = glGetUniformLocation(_programObj, "u_diffuse");
+    glUniform1i(samplerLoc, 0);
+
+    debug::assertNoGlErrors();
+}
+
+void GLSLDepthFillAlphaProgram::enable()
+{
+    GLSLProgramBase::enable();
+
+    glEnableVertexAttribArrayARB(ATTR_TEXCOORD);
+}
+
+void GLSLDepthFillAlphaProgram::disable()
+{
+    GLSLProgramBase::disable();
+
+    glDisableVertexAttribArrayARB(ATTR_TEXCOORD);
+}
+
+void GLSLDepthFillAlphaProgram::applyAlphaTest(float alphaTest)
+{
+    glUniform1f(_locAlphaTest, alphaTest);
+
+    debug::assertNoGlErrors();
+
+    glActiveTexture(GL_TEXTURE0);
+    glClientActiveTexture(GL_TEXTURE0);
+
+    glMatrixMode(GL_TEXTURE);
+    glLoadIdentity();
+    
     debug::assertNoGlErrors();
 }
 

@@ -11,6 +11,8 @@
 #include "debugging/render.h"
 #include "debugging/gl.h"
 
+#include "glprogram/GLSLDepthFillAlphaProgram.h"
+
 namespace render
 {
 
@@ -302,6 +304,20 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
         if (current.glProgram != 0)
         {
             current.glProgram->enable();
+        }
+
+        // Check if we need to set the alpha test value
+        if ((requiredState & (RENDER_ALPHATEST | RENDER_FILL)) == (RENDER_ALPHATEST | RENDER_FILL))
+        {
+            auto zFillAlphaProgram = dynamic_cast<GLSLDepthFillAlphaProgram*>(current.glProgram);
+
+            if (zFillAlphaProgram != nullptr)
+            {
+                zFillAlphaProgram->applyAlphaTest(_glState.alphaThreshold);
+
+                setTextureState(current.texture0, _glState.texture0, GL_TEXTURE0, GL_TEXTURE_2D);
+                setupTextureMatrix(GL_TEXTURE0, _glState.stage0);
+            }
         }
     }
 
