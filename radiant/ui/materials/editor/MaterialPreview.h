@@ -47,10 +47,12 @@ public:
 
     void enableFrobHighlight(bool enable);
 
+    // Light management
     std::string getLightClassname();
     void setLightClassname(const std::string& className);
     Vector3 getLightColour();
     void setLightColour(const Vector3& colour);
+    void resetLightColour();
 
     sigc::signal<void>& signal_LightChanged();
 

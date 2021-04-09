@@ -11,6 +11,7 @@
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/Bitmap.h"
 #include <wx/toolbar.h>
+#include "entitylib.h"
 #include "gamelib.h"
 
 namespace ui
@@ -309,7 +310,10 @@ std::string MaterialPreview::getLightClassname()
 
 void MaterialPreview::setLightClassname(const std::string& className)
 {
+    if (!_light || className.empty()) return;
 
+    _light = changeEntityClassname(_light, className);
+    _sigLightChanged.emit();
 }
 
 Vector3 MaterialPreview::getLightColour()
@@ -328,7 +332,18 @@ Vector3 MaterialPreview::getLightColour()
 
 void MaterialPreview::setLightColour(const Vector3& colour)
 {
+    if (!_light) return;
 
+    Node_getEntity(_light)->setKeyValue("_color", string::to_string(colour));
+    _sigLightChanged.emit();
+}
+
+void MaterialPreview::resetLightColour()
+{
+    if (!_light) return;
+
+    Node_getEntity(_light)->setKeyValue("_color", "");
+    _sigLightChanged.emit();
 }
 
 }

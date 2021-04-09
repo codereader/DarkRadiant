@@ -24,6 +24,7 @@
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/dataview/ResourceTreeViewToolbar.h"
 #include "wxutil/dataview/TreeViewItemStyle.h"
+#include "wxutil/EntityClassChooser.h"
 #include "wxutil/Bitmap.h"
 #include "materials/FrobStageSetup.h"
 #include <fmt/format.h>
@@ -120,7 +121,8 @@ MaterialEditor::MaterialEditor() :
     _stageList(new wxutil::TreeModel(STAGE_COLS(), true)),
     _stageView(nullptr),
     _stageUpdateInProgress(false),
-    _materialUpdateInProgress(false)
+    _materialUpdateInProgress(false),
+    _lightUpdateInProgress(false)
 {
     loadNamedPanel(this, "MaterialEditorMainPanel");
 
@@ -252,6 +254,8 @@ void MaterialEditor::setupPreviewLightProperties(wxWindow* previewPanel)
     // Wire up the signals
     _preview->signal_LightChanged().connect([this] ()
     {
+        util::ScopedBoolLock lock(_lightUpdateInProgress);
+
         getControl<wxTextCtrl>("MaterialPreviewLightClassname")->SetValue(_preview->getLightClassname());
 
         auto colour = _preview->getLightColour() * 255.0;
@@ -259,6 +263,32 @@ void MaterialEditor::setupPreviewLightProperties(wxWindow* previewPanel)
             wxColour(static_cast<wxColour::ChannelType>(colour.x()), 
                      static_cast<wxColour::ChannelType>(colour.y()), 
                      static_cast<wxColour::ChannelType>(colour.z())));
+    });
+
+    getControl<wxTextCtrl>("MaterialPreviewLightClassname")->Bind(wxEVT_TEXT, [this](wxCommandEvent& ev)
+    {
+        if (_lightUpdateInProgress) return;
+        _preview->setLightClassname(ev.GetString().ToStdString());
+    });
+
+    getControl<wxColourPickerCtrl>("MaterialPreviewLightColour")->Bind(wxEVT_COLOURPICKER_CURRENT_CHANGED,
+    [this](wxColourPickerEvent& ev)
+    {
+        if (_lightUpdateInProgress) return;
+        auto colour = ev.GetColour();
+        _preview->setLightColour(Vector3(colour.Red() / 255.0, colour.Green() / 255.0, colour.Blue() / 255.0));
+    });
+
+    getControl<wxButton>("MaterialPreviewLightChooseClassnameButton")->Bind(wxEVT_BUTTON, [this](wxCommandEvent& ev)
+    {
+        auto textCtrl = getControl<wxTextCtrl>("MaterialPreviewLightClassname");
+        auto newClassName = wxutil::EntityClassChooser::chooseEntityClass(textCtrl->GetValue().ToStdString());
+        textCtrl->SetValue(newClassName);
+    });
+    
+    getControl<wxButton>("MaterialPreviewLightResetColourButton")->Bind(wxEVT_BUTTON, [this](wxCommandEvent& ev)
+    {
+        _preview->resetLightColour();
     });
 }
 

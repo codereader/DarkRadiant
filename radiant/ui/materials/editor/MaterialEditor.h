@@ -84,6 +84,7 @@ private:
 
     bool _stageUpdateInProgress;
     bool _materialUpdateInProgress;
+    bool _lightUpdateInProgress;
 
 private:
     MaterialEditor();
