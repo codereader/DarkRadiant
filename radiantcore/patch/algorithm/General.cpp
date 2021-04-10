@@ -26,7 +26,7 @@ namespace algorithm
 void thicken(const PatchNodePtr& sourcePatch, float thickness, bool createSeams, int axis)
 {
 	if (axis < 0 || axis > 3)  throw cmd::ExecutionFailure(fmt::format(_("Invalid axis value: {0}"), string::to_string(axis)));
-	
+
 	// Get a shortcut to the patchcreator
 	auto& patchCreator = GlobalPatchModule();
 
@@ -112,7 +112,7 @@ void stitchTextures(const cmd::ArgumentList& args)
 			// Stitch the texture leaving the source patch intact
 			target->stitchTextureFrom(*source);
 		}
-		else 
+		else
 		{
 			throw cmd::ExecutionFailure(_("Cannot stitch textures. \nCould not cast nodes to patches."));
 		}
@@ -171,7 +171,7 @@ namespace
 constexpr double WELD_EPSILON = 0.001;
 
 // Returns true if <num> elements in the given sequences are equal
-inline bool firstNItemsAreEqual(const PatchControlIterator& sequence1, 
+inline bool firstNItemsAreEqual(const PatchControlIterator& sequence1,
     const PatchControlIterator& sequence2, std::size_t num, double epsilon)
 {
     // If the iterators are invalid from the start, return false
@@ -185,7 +185,7 @@ inline bool firstNItemsAreEqual(const PatchControlIterator& sequence1,
 
     for (std::size_t n = 0; n < num && p1.isValid() && p2.isValid(); ++n, ++p1, ++p2)
     {
-        if (!p1->vertex.isEqual(p2->vertex, epsilon))
+        if (!math::near(p1->vertex, p2->vertex, epsilon))
         {
             return false;
         }
@@ -226,7 +226,7 @@ inline bool meshesAreFacingOppositeDirections(const PatchMesh& mesh1, const Patc
     {
         for (const auto& v2 : mesh2.vertices)
         {
-            if (v1.vertex.isEqual(v2.vertex, 0.01))
+            if (math::near(v1.vertex, v2.vertex, 0.01))
             {
                 return std::abs(v1.normal.angle(v2.normal)) > c_half_pi;
             }
@@ -271,7 +271,7 @@ scene::INodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNo
         { ColumnWisePatchIterator(patch2), patch2.getHeight(), EdgeType::Column },
         { RowWisePatchIterator(patch2, patch2.getHeight() - 1, 0), patch2.getWidth(), EdgeType::Row },
         { ColumnWisePatchIterator(patch2, patch2.getWidth() - 1, 0), patch2.getHeight(), EdgeType::Column },
-        
+
         { RowWisePatchReverseIterator(patch2), patch2.getWidth(), EdgeType::Row },
         { ColumnWisePatchReverseIterator(patch2), patch2.getHeight(), EdgeType::Column },
         { RowWisePatchReverseIterator(patch2, patch2.getHeight() - 1, 0), patch2.getWidth(), EdgeType::Row },
@@ -279,7 +279,7 @@ scene::INodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNo
     };
 
     // As soon as we've found a matching edge, we know exactly how the resulting merged patch
-    // should look like. We know the dimensions and we know whether we need to expand the 
+    // should look like. We know the dimensions and we know whether we need to expand the
     // patch row-wise or column-wise.
     for (const auto& p1Iter : patch1Edges)
     {
@@ -397,7 +397,7 @@ void weldPatchPool()
             for (auto p2 = p1 + 1; p2 != pair.second.end(); ++p2)
             {
                 if (!(*p2)->getParent()) continue;// patch has been merged already
-                
+
                 try
                 {
                     weldPatches(*p1, *p2);

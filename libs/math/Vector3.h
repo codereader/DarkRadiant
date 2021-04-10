@@ -223,15 +223,6 @@ public:
         return (*this + other) * 0.5f;
     }
 
-    // Returns true if this vector is equal to the other one, considering the given tolerance.
-    template<typename OtherElement, typename Epsilon>
-    bool isEqual(const BasicVector3<OtherElement>& other, Epsilon epsilon) const
-    {
-        return float_equal_epsilon(x(), other.x(), epsilon) &&
-               float_equal_epsilon(y(), other.y(), epsilon) &&
-               float_equal_epsilon(z(), other.z(), epsilon);
-    }
-
     /**
      * Returns a "snapped" copy of this Vector, each component rounded to integers.
      */

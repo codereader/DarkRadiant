@@ -506,7 +506,7 @@ bool Patch::isDegenerate() const {
     for (PatchControlConstIter i = _ctrl.begin(); i != _ctrl.end(); ++i) {
 
         // Skip the first comparison
-        if (i != _ctrl.begin() && !i->vertex.isEqual(prev, 0.0001)) {
+        if (i != _ctrl.begin() && !math::near(i->vertex, prev, 0.0001)) {
             return false;
         }
 

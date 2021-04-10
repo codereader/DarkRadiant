@@ -137,7 +137,7 @@ TEST_F(SelectionTest, LightBoundsChangedAfterRadiusChange)
 
     auto defaultBounds = string::convert<Vector3>(entity->getKeyValue("light_radius"));
 
-    EXPECT_TRUE(GlobalSelectionSystem().getWorkZone().bounds.getExtents().isEqual(defaultBounds, 0.01));
+    EXPECT_TRUE(math::near(GlobalSelectionSystem().getWorkZone().bounds.getExtents(), defaultBounds, 0.01));
 
     // Modify just the light_radius spawnarg
     entity->setKeyValue("light_radius", "30 20 10");
@@ -145,7 +145,7 @@ TEST_F(SelectionTest, LightBoundsChangedAfterRadiusChange)
     // The work zone should have adapted itself to the new bounds
     // assuming that the LightNode recalculates its AABB
     auto changedBounds = string::convert<Vector3>(entity->getKeyValue("light_radius"));
-    EXPECT_TRUE(GlobalSelectionSystem().getWorkZone().bounds.getExtents().isEqual(changedBounds, 0.01));
+    EXPECT_TRUE(math::near(GlobalSelectionSystem().getWorkZone().bounds.getExtents(), changedBounds, 0.01));
 }
 
 // #5484: Projected lights don't rotate around their origin anymore

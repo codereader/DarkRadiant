@@ -252,7 +252,7 @@ void Face::translate(const Vector3& translation)
 {
     if (GlobalBrush().textureLockEnabled())
     {
-        m_texdefTransformed.transformLocked(_shader.getWidth(), _shader.getHeight(), 
+        m_texdefTransformed.transformLocked(_shader.getWidth(), _shader.getHeight(),
             m_plane.getPlane(), Matrix4::getTranslation(translation));
     }
 
@@ -263,7 +263,7 @@ void Face::translate(const Vector3& translation)
 
 void Face::transform(const Matrix4& matrix)
 {
-    if (GlobalBrush().textureLockEnabled()) 
+    if (GlobalBrush().textureLockEnabled())
     {
         m_texdefTransformed.transformLocked(_shader.getWidth(), _shader.getHeight(), m_plane.getPlane(), matrix);
     }
@@ -424,7 +424,7 @@ void Face::SetTexdef(const TextureProjection& projection)
 void Face::setTexdef(const TexDef& texDef)
 {
     TextureProjection projection;
-    
+
     // Construct the BPTexDef out of the TexDef by using the according constructor
     projection.matrix = TextureMatrix(texDef);
 
@@ -446,7 +446,7 @@ ShiftScaleRotation Face::getShiftScaleRotation()
 {
     TextureProjection curProjection = _texdef;
 
-    // Multiply the texture dimensions to the projection matrix such that 
+    // Multiply the texture dimensions to the projection matrix such that
     // the shift/scale/rotation represent pixel values within the image.
     Vector2 shaderDims(_shader.getWidth(), _shader.getHeight());
 
@@ -486,7 +486,7 @@ void Face::applyShaderFromFace(const Face& other)
     for (Winding::const_iterator i = other.m_winding.begin(); i != other.m_winding.end(); ++i) {
         for (Winding::const_iterator j = m_winding.begin(); j != m_winding.end(); ++j) {
             // Check if the vertices are matching
-            if (j->vertex.isEqual(i->vertex, 0.001))
+            if (math::near(j->vertex, i->vertex, 0.001))
             {
                 // Match found, add to list
                 thisVerts.push_back(j);
