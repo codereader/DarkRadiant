@@ -8,6 +8,13 @@
 #include "math/pi.h"
 
 #undef Success // get rid of fuckwit X.h macro
+
+// Silence C++17 deprecation warnings from Eigen\src\Core\util\Meta.h(373), will be unsilenced at the bottom of this file
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 4996) 
+#endif
+
 #include <Eigen/Geometry>
 
 class Quaternion;
@@ -583,3 +590,7 @@ inline std::ostream& operator<<(std::ostream& st, const Matrix4& m)
     st << m[3] << " " << m[7] << " " << m[11] << " " << m[15] << "]";
     return st;
 }
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif

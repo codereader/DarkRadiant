@@ -150,7 +150,7 @@ TEST_F(AseImportTest, TriangleWindingCW)
     const auto& b = vertices[indices[1]].vertex;
     const auto& c = vertices[indices[2]].vertex;
 
-    auto normal = (b - a).crossProduct(c - b).getNormalised();
+    auto normal = (b - a).cross(c - b).getNormalised();
     
     // We know the triangle in the ASE file is facing upwards, 
     // For CW order, the cross-product will point in the opposite direction 

@@ -536,10 +536,10 @@ TEST(MatrixTest, GetInverseScale)
     Matrix4 invSc = getInverseScale(m);
 
     // Result should be a diagonal matrix containing only a scale
-    EXPECT_TRUE(math::near(invSc.xCol(), Vector4(1.0 / 3, 0, 0, 0), 1E-6));
-    EXPECT_TRUE(math::near(invSc.yCol(), Vector4(0, 1.0 / 2.5, 0, 0), 1E-6));
-    EXPECT_TRUE(math::near(invSc.zCol(), Vector4(0, 0, 1.0 / 8.2, 0), 1E-6));
-    EXPECT_TRUE(math::near(invSc.tCol(), Vector4(0, 0, 0, 1), 1E-6));
+    EXPECT_TRUE(math::isNear(invSc.xCol(), Vector4(1.0 / 3, 0, 0, 0), 1E-6));
+    EXPECT_TRUE(math::isNear(invSc.yCol(), Vector4(0, 1.0 / 2.5, 0, 0), 1E-6));
+    EXPECT_TRUE(math::isNear(invSc.zCol(), Vector4(0, 0, 1.0 / 8.2, 0), 1E-6));
+    EXPECT_TRUE(math::isNear(invSc.tCol(), Vector4(0, 0, 0, 1), 1E-6));
 }
 
 }

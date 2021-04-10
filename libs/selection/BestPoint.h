@@ -123,7 +123,7 @@ inline void BestPoint(std::size_t count, Vector4 clipped[9], SelectionIntersecti
             point.z() = 0;
             auto distance = point.getLengthSquared();
 
-            best.assignIfCloser(SelectionIntersection(static_cast<float>(depth), distance));
+            best.assignIfCloser(SelectionIntersection(static_cast<float>(depth), static_cast<float>(distance)));
         }
     }
     else if (count > 2)

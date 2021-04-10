@@ -400,7 +400,7 @@ namespace math
 
 /// Epsilon equality test for BasicVector3
 template <typename T>
-bool near(const BasicVector3<T>& v1, const BasicVector3<T>& v2, double epsilon)
+inline bool isNear(const BasicVector3<T>& v1, const BasicVector3<T>& v2, double epsilon)
 {
     BasicVector3<T> diff = v1 - v2;
     return std::abs(diff.x()) < epsilon && std::abs(diff.y()) < epsilon

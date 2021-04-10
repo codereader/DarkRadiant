@@ -223,7 +223,7 @@ inline const Vector3& AABB::getExtents() const
 
 inline float AABB::getRadius() const
 {
-	return extents.getLength(); // Pythagorean length of extents vector
+	return static_cast<float>(extents.getLength()); // Pythagorean length of extents vector
 }
 
 inline bool AABB::contains(const AABB& other) const
