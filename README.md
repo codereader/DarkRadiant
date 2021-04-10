@@ -40,6 +40,8 @@ Open this file with Visual Studio and start a build by right-clicking on the top
 "Solution 'DarkRadiant'" item and choosing Build Solution. The DarkRadiant.exe file will be 
 placed into the `install/` folder.
 
+In case of compilation errors related to *external/Eigen*, make sure the submodule sources are present, either by using the *--recurse-submodules* clone switch, or by invoking *git submodule update -i* if you already cloned the repository.
+
 # Compiling on Linux
 
 ## Prerequisites
