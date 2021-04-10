@@ -717,7 +717,7 @@ void Light::updateProjection() const
     Vector3 right = _lightRightTransformed / rLen;
     float uLen = _lightUpTransformed.getLength();
     Vector3 up = _lightUpTransformed / uLen;
-    Vector3 normal = up.crossProduct(right).getNormalised();
+    Vector3 normal = up.cross(right).getNormalised();
 
     double dist = _lightTargetTransformed.dot(normal);
     if ( dist < 0 ) {

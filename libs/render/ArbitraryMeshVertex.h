@@ -168,7 +168,7 @@ inline void ArbitraryMeshTriangle_calcTangents(const ArbitraryMeshVertex& a,
 		bVec.set(b.vertex.x(), b.texcoord.s(), b.texcoord.t());
 		cVec.set(c.vertex.x(), c.texcoord.s(), c.texcoord.t());
 
-		Vector3 cross( (bVec-aVec).crossProduct(cVec-aVec) );
+		Vector3 cross( (bVec-aVec).cross(cVec-aVec) );
 
 		if(fabs(cross.x()) > 0.000001f) {
 			s.x() = -cross.y() / cross.x();
@@ -184,7 +184,7 @@ inline void ArbitraryMeshTriangle_calcTangents(const ArbitraryMeshVertex& a,
 		bVec.set(b.vertex.y(), b.texcoord.s(), b.texcoord.t());
 		cVec.set(c.vertex.y(), c.texcoord.s(), c.texcoord.t());
 
-		Vector3 cross( (bVec-aVec).crossProduct(cVec-aVec));
+		Vector3 cross( (bVec-aVec).cross(cVec-aVec));
 
 		if(fabs(cross.x()) > 0.000001f) {
 			s.y() = -cross.y() / cross.x();
@@ -200,7 +200,7 @@ inline void ArbitraryMeshTriangle_calcTangents(const ArbitraryMeshVertex& a,
 		bVec.set(b.vertex.z(), b.texcoord.s(), b.texcoord.t());
 		cVec.set(c.vertex.z(), c.texcoord.s(), c.texcoord.t());
 
-		Vector3 cross( (bVec-aVec).crossProduct(cVec-aVec));
+		Vector3 cross( (bVec-aVec).cross(cVec-aVec));
 
 		if(fabs(cross.x()) > 0.000001f) {
 			s.z() = -cross.y() / cross.x();

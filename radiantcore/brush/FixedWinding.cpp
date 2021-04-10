@@ -23,7 +23,7 @@ namespace {
 	/// \brief Returns the infinite line that is the intersection of \p plane and \p other.
 	inline DoubleLine plane3_intersect_plane3(const Plane3& plane, const Plane3& other) {
 		DoubleLine line;
-		line.direction = plane.normal().crossProduct(other.normal());
+		line.direction = plane.normal().cross(other.normal());
 
 		switch (vector3_largest_absolute_component_index(line.direction)) {
 		case 0:
@@ -97,7 +97,7 @@ void FixedWinding::createInfinite(const Plane3& plane, double infinity) {
 
 	Vector3 org = plane.normal() * plane.dist();
 
-	Vector3 vright = vup.crossProduct(plane.normal());
+	Vector3 vright = vup.cross(plane.normal());
 
 	vup *= infinity;
 	vright *= infinity;

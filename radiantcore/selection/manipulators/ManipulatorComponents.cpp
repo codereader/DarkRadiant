@@ -74,7 +74,7 @@ Vector3 ManipulatorComponentBase::getAxisConstrained(const Vector3& direction, c
 
 Vector3::ElementType ManipulatorComponentBase::getAngleForAxis(const Vector3& a, const Vector3& b, const Vector3& axis)
 {
-	if (axis.dot(a.crossProduct(b)) > 0.0)
+	if (axis.dot(a.cross(b)) > 0.0)
 	{
 		return a.angle(b);
 	}

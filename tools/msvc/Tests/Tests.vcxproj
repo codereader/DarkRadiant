@@ -87,7 +87,7 @@
     <ClCompile Include="..\..\..\test\math\Matrix4.cpp" />
     <ClCompile Include="..\..\..\test\math\Plane3.cpp" />
     <ClCompile Include="..\..\..\test\math\Quaternion.cpp" />
-    <ClCompile Include="..\..\..\test\math\Vector3.cpp" />
+    <ClCompile Include="..\..\..\test\math\Vector.cpp" />
     <ClCompile Include="..\..\..\test\MessageBus.cpp" />
     <ClCompile Include="..\..\..\test\ModelExport.cpp" />
     <ClCompile Include="..\..\..\test\Models.cpp" />

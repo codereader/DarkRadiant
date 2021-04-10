@@ -58,14 +58,14 @@ public:
     // Construct a plane from three points <p0>, <p1> and <p2>
     template<typename Element>
     Plane3(const BasicVector3<Element>& p0, const BasicVector3<Element>& p1, const BasicVector3<Element>& p2) :
-        _normal((p1 - p0).crossProduct(p2 - p0).getNormalised()),
+        _normal((p1 - p0).cross(p2 - p0).getNormalised()),
         _dist(p0.dot(_normal))
     {}
 
     // Construct a plane from three points (same as above, just with an array as argument
     template<typename Element>
     Plane3(const BasicVector3<Element> points[3]) :
-        _normal((points[1] - points[0]).crossProduct(points[2] - points[0]).getNormalised()),
+        _normal((points[1] - points[0]).cross(points[2] - points[0]).getNormalised()),
         _dist(points[0].dot(_normal))
     {}
 
@@ -93,8 +93,8 @@ public:
     // Subtracts plane equations: the returned plane is (a1-a2)*x + (b1-b2)*y + (c1-c2)*z + (d1-d2) = 0
     Plane3  operator-(const Plane3& other) const
     {
-        return Plane3(_normal[0] - other._normal[0], 
-                      _normal[1] - other._normal[1], 
+        return Plane3(_normal[0] - other._normal[0],
+                      _normal[1] - other._normal[1],
                       _normal[2] - other._normal[2],
                       _dist - other._dist);
     }
@@ -207,9 +207,9 @@ public:
         const Vector3& n2 = plane2.normal();
         const Vector3& n3 = plane3.normal();
 
-        Vector3 n1n2 = n1.crossProduct(n2);
-        Vector3 n2n3 = n2.crossProduct(n3);
-        Vector3 n3n1 = n3.crossProduct(n1);
+        Vector3 n1n2 = n1.cross(n2);
+        Vector3 n2n3 = n2.cross(n3);
+        Vector3 n3n1 = n3.cross(n1);
 
         double denom = n1.dot(n2n3);
 
@@ -227,7 +227,7 @@ public:
 
     double distanceToOrientedExtents(const Vector3& extents, const Matrix4& orientation) const;
 
-    /** 
+    /**
      * Return false if the given AABB with the given orientation is partially or completely outside this plane.
      */
     bool containsAABB(const AABB& aabb, const Matrix4& orientation) const;

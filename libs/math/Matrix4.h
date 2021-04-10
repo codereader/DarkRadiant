@@ -7,31 +7,27 @@
 #include "math/Vector4.h"
 #include "math/pi.h"
 
+#undef Success // get rid of fuckwit X.h macro
+#include <Eigen/Geometry>
+
 class Quaternion;
 
 /**
- * A 4x4 matrix stored in double-precision floating-point.
+ * \brief A 4x4 matrix stored in double-precision floating-point.
  *
- * The elements of this matrix are stored columnwise in memory:
- *
- * |  0    4    8   12 |
- * |  1    5    9   13 |
- * |  2    6   10   14 |
- * |  3    7   11   15 |
- *
- * or, alternatively, as the 4 columns are regarded as 4 vectors named x, y, z, t:
+ * The 4 columns may regarded as 4 vectors named x, y, z, t:
  *
  * | xx   yx   zx   tx |
  * | xy   yy   zy   ty |
  * | xz   yz   zz   tz |
  * | xw   yw   zw   tw |
  */
-class Matrix4
+class alignas(16) Matrix4
 {
-    // Elements of the 4x4 matrix. These appear to be treated COLUMNWISE, i.e.
-    // elements [0] through [3] are the first column, [4] through [7] are the
-    // second column, etc.
-    double _m[16];
+    // Underlying Eigen transform object (which can in turn be reduced to a 4x4
+    // Matrix)
+    using Transform = Eigen::Projective3d;
+    Transform _transform;
 
 private:
 
@@ -58,11 +54,27 @@ public:
     /// Construct a matrix with uninitialised values.
     Matrix4() { }
 
+    /// Construct from Eigen transform
+    explicit Matrix4(const Eigen::Projective3d& t): _transform(t)
+    {}
+
+    /// Get the underlying Eigen transform
+    Eigen::Projective3d& eigen() { return _transform; }
+
+    /// Get the underlying const Eigen transform
+    const Eigen::Projective3d& eigen() const { return _transform; }
+
     /// Obtain the identity matrix.
-    static const Matrix4& getIdentity();
+    static Matrix4 getIdentity()
+    {
+        return Matrix4(Eigen::Projective3d::Identity());
+    }
 
     /// Get a matrix representing the given 3D translation.
-    static Matrix4 getTranslation(const Vector3& translation);
+    static Matrix4 getTranslation(const Vector3& tr)
+    {
+        return Matrix4(Transform(Eigen::Translation3d(tr.x(), tr.y(), tr.z())));
+    }
 
     /**
      * \brief Construct a rotation from one vector onto another vector.
@@ -107,14 +119,13 @@ public:
      */
     static Matrix4 getRotationForEulerXYZDegrees(const Vector3& euler);
 
-    /**
-     * \brief
-     * Get a matrix representing the given scale in 3D space.
-     *
-     * \param scale
-     * Vector3 representing the scale.
-     */
-    static Matrix4 getScale(const Vector3& scale);
+    /// Get a matrix representing the given scale in 3D space.
+    static Matrix4 getScale(const Vector3& scale)
+    {
+        return Matrix4(
+            Transform(Eigen::Scaling(scale.x(), scale.y(), scale.z()))
+        );
+    }
 
     /**
      * \brief
@@ -149,38 +160,41 @@ public:
      * Return matrix elements
      * \{
      */
-    double& xx()             { return _m[0]; }
-    const double& xx() const { return _m[0]; }
-    double& xy()             { return _m[1]; }
-    const double& xy() const { return _m[1]; }
-    double& xz()             { return _m[2]; }
-    const double& xz() const { return _m[2]; }
-    double& xw()             { return _m[3]; }
-    const double& xw() const { return _m[3]; }
-    double& yx()             { return _m[4]; }
-    const double& yx() const { return _m[4]; }
-    double& yy()             { return _m[5]; }
-    const double& yy() const { return _m[5]; }
-    double& yz()             { return _m[6]; }
-    const double& yz() const { return _m[6]; }
-    double& yw()             { return _m[7]; }
-    const double& yw() const { return _m[7]; }
-    double& zx()             { return _m[8]; }
-    const double& zx() const { return _m[8]; }
-    double& zy()             { return _m[9]; }
-    const double& zy() const { return _m[9]; }
-    double& zz()             { return _m[10]; }
-    const double& zz() const { return _m[10]; }
-    double& zw()             { return _m[11]; }
-    const double& zw() const { return _m[11]; }
-    double& tx()             { return _m[12]; }
-    const double& tx() const { return _m[12]; }
-    double& ty()             { return _m[13]; }
-    const double& ty() const { return _m[13]; }
-    double& tz()             { return _m[14]; }
-    const double& tz() const { return _m[14]; }
-    double& tw()             { return _m[15]; }
-    const double& tw() const { return _m[15]; }
+    double& xx()             { return _transform.matrix()(0, 0); }
+    const double& xx() const { return _transform.matrix()(0, 0); }
+    double& xy()             { return _transform.matrix()(1, 0); }
+    const double& xy() const { return _transform.matrix()(1, 0); }
+    double& xz()             { return _transform.matrix()(2, 0); }
+    const double& xz() const { return _transform.matrix()(2, 0); }
+    double& xw()             { return _transform.matrix()(3, 0); }
+    const double& xw() const { return _transform.matrix()(3, 0); }
+
+    double& yx()             { return _transform.matrix()(0, 1); }
+    const double& yx() const { return _transform.matrix()(0, 1); }
+    double& yy()             { return _transform.matrix()(1, 1); }
+    const double& yy() const { return _transform.matrix()(1, 1); }
+    double& yz()             { return _transform.matrix()(2, 1); }
+    const double& yz() const { return _transform.matrix()(2, 1); }
+    double& yw()             { return _transform.matrix()(3, 1); }
+    const double& yw() const { return _transform.matrix()(3, 1); }
+
+    double& zx()             { return _transform.matrix()(0, 2); }
+    const double& zx() const { return _transform.matrix()(0, 2); }
+    double& zy()             { return _transform.matrix()(1, 2); }
+    const double& zy() const { return _transform.matrix()(1, 2); }
+    double& zz()             { return _transform.matrix()(2, 2); }
+    const double& zz() const { return _transform.matrix()(2, 2); }
+    double& zw()             { return _transform.matrix()(3, 2); }
+    const double& zw() const { return _transform.matrix()(3, 2); }
+
+    double& tx()             { return _transform.matrix()(0, 3); }
+    const double& tx() const { return _transform.matrix()(0, 3); }
+    double& ty()             { return _transform.matrix()(1, 3); }
+    const double& ty() const { return _transform.matrix()(1, 3); }
+    double& tz()             { return _transform.matrix()(2, 3); }
+    const double& tz() const { return _transform.matrix()(2, 3); }
+    double& tw()             { return _transform.matrix()(3, 3); }
+    const double& tw() const { return _transform.matrix()(3, 3); }
     /**
      * \}
      */
@@ -231,7 +245,7 @@ public:
      */
     operator double* ()
     {
-        return _m;
+        return _transform.matrix().data();
     }
 
     /**
@@ -239,17 +253,28 @@ public:
      */
     operator const double* () const
     {
-        return _m;
+        return _transform.matrix().data();
     }
 
     /// Transpose this matrix in-place.
-    void transpose();
+    void transpose()
+    {
+        _transform.matrix().transposeInPlace();
+    }
 
     /// Return a transposed copy of this matrix.
-    Matrix4 getTransposed() const;
+    Matrix4 getTransposed() const
+    {
+        Matrix4 copy = *this;
+        copy.transpose();
+        return copy;
+    }
 
     /// Return the affine inverse of this transformation matrix.
-    Matrix4 getInverse() const;
+    Matrix4 getInverse() const
+    {
+        return Matrix4(_transform.inverse(Eigen::Affine));
+    }
 
     /// Affine invert this matrix in-place.
     void invert()
@@ -258,7 +283,10 @@ public:
     }
 
     /// Return the full inverse of this matrix.
-    Matrix4 getFullInverse() const;
+    Matrix4 getFullInverse() const
+    {
+        return Matrix4(_transform.inverse(Eigen::Projective));
+    }
 
     /// Invert this matrix in-place.
     void invertFull()
@@ -267,43 +295,46 @@ public:
     }
 
     /**
-     * \brief
-     * Returns the given 3-component point transformed by this matrix.
+     * \brief Returns the given 3-component point transformed by this matrix.
      *
-     * The point is assumed to have a W component of 1.
+     * The point is assumed to have a W component of 1, and no division by W is
+     * performed before returning the 3-component vector.
      */
-    template<typename Element>
-    BasicVector3<Element> transformPoint(const BasicVector3<Element>& point) const;
+    template<typename T>
+    BasicVector3<T> transformPoint(const BasicVector3<T>& point) const
+    {
+        return transform(BasicVector4<T>(point, 1)).getVector3();
+    }
 
     /**
-     * Returns the given 3-component direction transformed by this matrix.
-     * The given vector is treated as direction so it won't receive a translation, just like
-     * a 4-component vector with its w-component set to 0 would be transformed.
-     */
-    template<typename Element>
-    BasicVector3<Element> transformDirection(const BasicVector3<Element>& direction) const;
+     * \brief Returns the given 3-component direction transformed by this
+     * matrix.
 
-    /**
-     * \brief Use this matrix to transform the provided vector and return a new
-     * vector containing the result.
-     *
-     * \param vector4
-     * The 4-element vector to transform.
+     * The given vector is treated as direction so it won't receive a
+     * translation, just like a 4-component vector with its w-component set to
+     * 0 would be transformed.
      */
-    template<typename Element>
-    BasicVector4<Element> transform(const BasicVector4<Element>& vector4) const;
+    template<typename T>
+    BasicVector3<T> transformDirection(const BasicVector3<T>& direction) const
+    {
+        return transform(BasicVector4<T>(direction, 0)).getVector3();
+    }
 
-    /**
-     * \brief
-     * Return the result of this matrix post-multiplied by another matrix.
-     */
-    Matrix4 getMultipliedBy(const Matrix4& other) const;
+    /// Return the given 4-component vector transformed by this matrix.
+    template<typename T>
+    BasicVector4<T> transform(const BasicVector4<T>& vector4) const;
 
-    /**
-     * \brief
-     * Post-multiply this matrix by another matrix, in-place.
-     */
-    void multiplyBy(const Matrix4& other);
+    /// Return the result of this matrix post-multiplied by another matrix.
+    Matrix4 getMultipliedBy(const Matrix4& other) const
+    {
+        return Matrix4(_transform * other.eigen());
+    }
+
+    /// Post-multiply this matrix by another matrix, in-place.
+    void multiplyBy(const Matrix4& other)
+    {
+        *this = getMultipliedBy(other);
+    }
 
     /// Returns this matrix pre-multiplied by the other
     Matrix4 getPremultipliedBy(const Matrix4& other) const
@@ -318,23 +349,28 @@ public:
     }
 
     /**
-     * \brief
-     * Add a translation component to the transformation represented by this
-     * matrix.
+     * \brief Add a translation component to the transformation represented by
+     * this matrix, modifying in-place.
      *
-     * Equivalent to multiplyBy(Matrix4::getTranslation(translation));
+     * Equivalent to multiplyBy(Matrix4::getTranslation(tr)); note that this is
+     * a post-multiplication so the translation will be applied before (and be
+     * affected by) any existing rotation/scale in the current matrix.
      */
-    void translateBy(const Vector3& translation);
+    void translateBy(const Vector3& tr)
+    {
+        _transform *= Eigen::Translation3d(tr.x(), tr.y(), tr.z());
+    }
 
     /**
      * \brief Add a translation component to the transformation represented by
-     * this matrix.
+     * this matrix and return the result.
      *
-     * Equivalent to getMultipliedBy(Matrix4::getTranslation(translation));
+     * Equivalent to getMultipliedBy(Matrix4::getTranslation(tr));
      */
-    Matrix4 getTranslatedBy(const Vector3& translation) const
+    Matrix4 getTranslatedBy(const Vector3& tr) const
     {
-        return getMultipliedBy(Matrix4::getTranslation(translation));
+        return Matrix4(_transform
+                       * Eigen::Translation3d(tr.x(), tr.y(), tr.z()));
     }
 
     /**
@@ -351,11 +387,11 @@ public:
      */
     void scaleBy(const Vector3& scale, const Vector3& pivot);
 
-    /**
-     * Returns true if this and the given matrix are exactly element-wise equal.
-     * This and the other matrix must be affine.
-     */
-    bool isAffineEqual(const Matrix4& other) const;
+    /// Compare the affine part of this matrix with another for equality
+    bool isAffineEqual(const Matrix4& other) const
+    {
+        return eigen().affine() == other.eigen().affine();
+    }
 
     /**
      * Returns RIGHTHANDED if this is right-handed, else returns LEFTHANDED.
@@ -412,11 +448,8 @@ inline Matrix4 operator* (const Matrix4& m1, const Matrix4& m2)
 /// Subtract two matrices
 inline Matrix4 operator- (const Matrix4& l, const Matrix4& r)
 {
-    return Matrix4::byColumns(
-        l.xx() - r.xx(), l.xy() - r.xy(), l.xz() - r.xz(), l.xw() - r.xw(),
-        l.yx() - r.yx(), l.yy() - r.yy(), l.yz() - r.yz(), l.yw() - r.yw(),
-        l.zx() - r.zx(), l.zy() - r.zy(), l.zz() - r.zz(), l.zw() - r.zw(),
-        l.tx() - r.tx(), l.ty() - r.ty(), l.tz() - r.tz(), l.tw() - r.tw()
+    return Matrix4(
+        Eigen::Projective3d(l.eigen().matrix() - r.eigen().matrix())
     );
 }
 
@@ -471,36 +504,10 @@ inline Matrix4 Matrix4::byRows(double xx, double yx, double zx, double tx,
                    tx, ty, tz, tw);
 }
 
-// Post-multiply this with other
-inline Matrix4 Matrix4::getMultipliedBy(const Matrix4& other) const
-{
-    return Matrix4::byColumns(
-        other[0] * _m[0] + other[1] * _m[4] + other[2] * _m[8] + other[3] * _m[12],
-        other[0] * _m[1] + other[1] * _m[5] + other[2] * _m[9] + other[3] * _m[13],
-        other[0] * _m[2] + other[1] * _m[6] + other[2] * _m[10]+ other[3] * _m[14],
-        other[0] * _m[3] + other[1] * _m[7] + other[2] * _m[11]+ other[3] * _m[15],
-        other[4] * _m[0] + other[5] * _m[4] + other[6] * _m[8] + other[7] * _m[12],
-        other[4] * _m[1] + other[5] * _m[5] + other[6] * _m[9] + other[7] * _m[13],
-        other[4] * _m[2] + other[5] * _m[6] + other[6] * _m[10]+ other[7] * _m[14],
-        other[4] * _m[3] + other[5] * _m[7] + other[6] * _m[11]+ other[7] * _m[15],
-        other[8] * _m[0] + other[9] * _m[4] + other[10]* _m[8] + other[11]* _m[12],
-        other[8] * _m[1] + other[9] * _m[5] + other[10]* _m[9] + other[11]* _m[13],
-        other[8] * _m[2] + other[9] * _m[6] + other[10]* _m[10]+ other[11]* _m[14],
-        other[8] * _m[3] + other[9] * _m[7] + other[10]* _m[11]+ other[11]* _m[15],
-        other[12]* _m[0] + other[13]* _m[4] + other[14]* _m[8] + other[15]* _m[12],
-        other[12]* _m[1] + other[13]* _m[5] + other[14]* _m[9] + other[15]* _m[13],
-        other[12]* _m[2] + other[13]* _m[6] + other[14]* _m[10]+ other[15]* _m[14],
-        other[12]* _m[3] + other[13]* _m[7] + other[14]* _m[11]+ other[15]* _m[15]
-    );
-}
-
 /// Compare two matrices elementwise for equality
 inline bool operator==(const Matrix4& l, const Matrix4& r)
 {
-    return l.xx() == r.xx() && l.xy() == r.xy() && l.xz() == r.xz() && l.xw() == r.xw()
-        && l.yx() == r.yx() && l.yy() == r.yy() && l.yz() == r.yz() && l.yw() == r.yw()
-        && l.zx() == r.zx() && l.zy() == r.zy() && l.zz() == r.zz() && l.zw() == r.zw()
-        && l.tx() == r.tx() && l.ty() == r.ty() && l.tz() == r.tz() && l.tw() == r.tw();
+    return l.eigen().matrix() == r.eigen().matrix();
 }
 
 /// Compare two matrices elementwise for inequality
@@ -509,56 +516,17 @@ inline bool operator!=(const Matrix4& l, const Matrix4& r)
     return !(l == r);
 }
 
-inline bool Matrix4::isAffineEqual(const Matrix4& other) const
-{
-    return xx() == other.xx() &&
-            xy() == other.xy() &&
-            xz() == other.xz() &&
-            yx() == other.yx() &&
-            yy() == other.yy() &&
-            yz() == other.yz() &&
-            zx() == other.zx() &&
-            zy() == other.zy() &&
-            zz() == other.zz() &&
-            tx() == other.tx() &&
-            ty() == other.ty() &&
-            tz() == other.tz();
-}
-
 inline Matrix4::Handedness Matrix4::getHandedness() const
 {
-    return (xCol().getVector3().crossProduct(yCol().getVector3()).dot(zCol().getVector3()) < 0.0f) ? LEFTHANDED : RIGHTHANDED;
+    return (xCol().getVector3().cross(yCol().getVector3()).dot(zCol().getVector3()) < 0.0f) ? LEFTHANDED : RIGHTHANDED;
 }
 
-template<typename Element>
-BasicVector3<Element> Matrix4::transformPoint(const BasicVector3<Element>& point) const
+template<typename T>
+BasicVector4<T> Matrix4::transform(const BasicVector4<T>& vector4) const
 {
-    return BasicVector3<Element>(
-        static_cast<Element>(xx() * point[0] + yx() * point[1] + zx() * point[2] + tx()),
-        static_cast<Element>(xy() * point[0] + yy() * point[1] + zy() * point[2] + ty()),
-        static_cast<Element>(xz() * point[0] + yz() * point[1] + zz() * point[2] + tz())
-    );
-}
-
-template<typename Element>
-BasicVector3<Element> Matrix4::transformDirection(const BasicVector3<Element>& direction) const
-{
-    return BasicVector3<Element>(
-        static_cast<Element>(xx() * direction[0] + yx() * direction[1] + zx() * direction[2]),
-        static_cast<Element>(xy() * direction[0] + yy() * direction[1] + zy() * direction[2]),
-        static_cast<Element>(xz() * direction[0] + yz() * direction[1] + zz() * direction[2])
-    );
-}
-
-template<typename Element>
-BasicVector4<Element> Matrix4::transform(const BasicVector4<Element>& vector4) const
-{
-    return BasicVector4<Element>(
-        static_cast<Element>(_m[0] * vector4[0] + _m[4] * vector4[1] + _m[8]  * vector4[2] + _m[12] * vector4[3]),
-        static_cast<Element>(_m[1] * vector4[0] + _m[5] * vector4[1] + _m[9]  * vector4[2] + _m[13] * vector4[3]),
-        static_cast<Element>(_m[2] * vector4[0] + _m[6] * vector4[1] + _m[10] * vector4[2] + _m[14] * vector4[3]),
-        static_cast<Element>(_m[3] * vector4[0] + _m[7] * vector4[1] + _m[11] * vector4[2] + _m[15] * vector4[3])
-    );
+    Eigen::Matrix<T, 4, 1> eVec(&vector4.x());
+    auto result = _transform * eVec;
+    return BasicVector4<T>(result[0], result[1], result[2], result[3]);
 }
 
 inline Vector3 Matrix4::getEulerAnglesXYZ() const

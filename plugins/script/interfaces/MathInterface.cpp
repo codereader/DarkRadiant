@@ -20,7 +20,7 @@ void MathInterface::registerInterface(py::module& scope, py::dict& globals)
 	py::class_<Vector3> vec3(scope, "Vector3");
 	vec3.def(py::init<double, double, double>());
 	vec3.def(py::init<const Vector3&>());
-	
+
 	// greebo: Pick the correct overload - this is hard to read, but it is necessary
 	vec3.def("x", static_cast<double& (Vector3::*)()>(&Vector3::x), py::return_value_policy::reference);
 	vec3.def("y", static_cast<double& (Vector3::*)()>(&Vector3::y), py::return_value_policy::reference);
@@ -29,12 +29,9 @@ void MathInterface::registerInterface(py::module& scope, py::dict& globals)
 	vec3.def("getLengthSquared", &Vector3::getLengthSquared);
 	vec3.def("getNormalised", &Vector3::getNormalised);
 	vec3.def("normalise", &Vector3::normalise);
-	vec3.def("getInversed", &Vector3::getInversed);
-	vec3.def("dot", &Vector3::dot<double>);
+	vec3.def("dot", &Vector3::dot);
 	vec3.def("angle", &Vector3::angle<double>);
-	vec3.def("crossProduct", &Vector3::crossProduct<double>);
-	vec3.def("max", &Vector3::max);
-	vec3.def("min", &Vector3::min);
+	vec3.def("crossProduct", &Vector3::cross);
 	vec3.def("isParallel", &Vector3::isParallel<double>);
 	// Most important operators
 	vec3.def(py::self + py::self);		// __add__
@@ -42,9 +39,9 @@ void MathInterface::registerInterface(py::module& scope, py::dict& globals)
 	vec3.def(py::self += py::self);		// __iadd__
 	vec3.def(py::self -= py::self);		// __isub__
 	vec3.def(py::self < py::self);	// __lt__
-	vec3.def("__repr__", [](const Vector3& vec) 
-	{ 
-		return "(" + string::to_string(vec.x()) + " " + string::to_string(vec.y()) + 
+	vec3.def("__repr__", [](const Vector3& vec)
+	{
+		return "(" + string::to_string(vec.x()) + " " + string::to_string(vec.y()) +
 			" " + string::to_string(vec.z()) + ")";
 	});
 
@@ -97,7 +94,7 @@ void MathInterface::registerInterface(py::module& scope, py::dict& globals)
 	vec4.def(py::self -= py::self);
 	vec4.def("__repr__", [](const Vector4& vec)
 	{
-		return "(" + string::to_string(vec.x()) + " " + string::to_string(vec.y()) + " " + 
+		return "(" + string::to_string(vec.x()) + " " + string::to_string(vec.y()) + " " +
 			string::to_string(vec.z()) + " " + string::to_string(vec.w()) + ")";
 	});
 

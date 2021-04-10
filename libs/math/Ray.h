@@ -15,7 +15,7 @@ public:
 	{}
 
 	Ray(const Vector3& origin_, const Vector3& direction_) :
-		origin(origin_), 
+		origin(origin_),
 		direction(direction_)
 	{}
 
@@ -87,7 +87,7 @@ public:
 		Vector3 aabbMax = aabb.getOrigin() + aabb.getExtents();
 
 		// Find candidate planes; this loop can be avoided if
-   		// rays cast all from the eye(assume perpsective view) 
+   		// rays cast all from the eye(assume perpsective view)
 		for (int i = 0; i < 3; i++)
 		{
 			if (origin[i] < aabbMin[i])
@@ -108,7 +108,7 @@ public:
 			}
 		}
 
-		// Ray origin inside bounding box 
+		// Ray origin inside bounding box
 		if (inside)
 		{
 			intersection = origin;
@@ -141,7 +141,7 @@ public:
 			}
 		}
 
-		// Check final candidate actually inside box 
+		// Check final candidate actually inside box
 		if (maxT[whichPlane] < 0) return false;
 
 		for (int i = 0; i < 3; i++)
@@ -154,8 +154,8 @@ public:
 				{
 					return false;
 				}
-			} 
-			else 
+			}
+			else
 			{
 				intersection[i] = candidatePlane[i];
 			}
@@ -173,7 +173,7 @@ public:
 	};
 
 	/**
-	 * Intersect this ray with the given triangle as represented by the 3 given points and 
+	 * Intersect this ray with the given triangle as represented by the 3 given points and
 	 * returns the found intersection type. Only in the case of eTriangleIntersectionType::POINT
 	 * the intersection argument will be filled with suitable coordinates, otherwise it's undefined.
 	 *
@@ -185,9 +185,9 @@ public:
 		// get triangle edge vectors and plane normal
 		Vector3 u = p2 - p1;
 		Vector3 v = p3 - p1;
-		Vector3 n = u.crossProduct(v);
+		Vector3 n = u.cross(v);
 
-		if (n.getLengthSquared() == 0) 
+		if (n.getLengthSquared() == 0)
 		{
 			return NO_INTERSECTION;  // triangle is degenerate
 		}
@@ -206,7 +206,7 @@ public:
 			{
 				return COPLANAR; // ray lies in triangle plane
 			}
-			else 
+			else
 			{
 				return NO_INTERSECTION; // ray disjoint from plane
 			}
@@ -244,7 +244,7 @@ public:
 
 		double t = (uv * wu - uu * wv) / D;
 
-		if (t < 0.0 || (s + t) > 1.0) 
+		if (t < 0.0 || (s + t) > 1.0)
 		{
 			return NO_INTERSECTION; // intersection is outside T
 		}
@@ -257,7 +257,7 @@ public:
 	 * origin and radius. The intersection will be written to the given Vector3.
 	 * Returns false if the Ray misses the sphere, in which case the intersection will
 	 * be returned as the Ray's nearest point to the sphere.
-	 * Taken from GtkRadiant's sphere_intersect_ray() function. 
+	 * Taken from GtkRadiant's sphere_intersect_ray() function.
 	 */
 	bool intersectSphere(const Vector3& sphereOrigin, double radius, Vector3& intersection) const
 	{

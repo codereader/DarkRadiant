@@ -20,15 +20,15 @@ void PatchTesselation::generateNormals()
 	extent[1] = vertices[(height - 1) * width + width - 1].vertex - vertices[0].vertex;
 	extent[2] = vertices[(height - 1) * width].vertex - vertices[0].vertex;
 
-	Vector3 norm = extent[0].crossProduct(extent[1]);
+	Vector3 norm = extent[0].cross(extent[1]);
 
 	if (norm.getLengthSquared() == 0.0f)
 	{
-		norm = extent[0].crossProduct(extent[2]);
+		norm = extent[0].cross(extent[2]);
 
 		if (norm.getLengthSquared() == 0.0f)
 		{
-			norm = extent[1].crossProduct(extent[2]);
+			norm = extent[1].cross(extent[2]);
 		}
 	}
 
@@ -177,7 +177,7 @@ void PatchTesselation::generateNormals()
 					continue;	// didn't get two points
 				}
 
-				Vector3 tempNormal = around[(k + 1) & 7].crossProduct(around[k]);
+				Vector3 tempNormal = around[(k + 1) & 7].cross(around[k]);
 				if (tempNormal.normalise() == 0.0f)
 				{
 					continue;
@@ -260,7 +260,7 @@ void PatchTesselation::sampleSinglePatchPoint(const ArbitraryMeshVertex ctrl[3][
 	}
 }
 
-void PatchTesselation::sampleSinglePatch(const ArbitraryMeshVertex ctrl[3][3], 
+void PatchTesselation::sampleSinglePatch(const ArbitraryMeshVertex ctrl[3][3],
 	std::size_t baseCol, std::size_t baseRow,
 	std::size_t w, std::size_t horzSub, std::size_t vertSub,
 	std::vector<ArbitraryMeshVertex>& outVerts) const
@@ -313,7 +313,7 @@ void PatchTesselation::subdivideMeshFixed(std::size_t subdivX, std::size_t subdi
 	}
 
 	vertices.swap(dv);
-	
+
 	width = _maxWidth = outWidth;
 	height = _maxHeight = outHeight;
 }
@@ -704,7 +704,7 @@ void PatchTesselation::deriveFaceTangents(std::vector<FaceTangents>& faceTangent
 
 	// calculate tangent vectors for each face in isolation
 
-	// DR is using indices that are sent to openGL as GL_QUAD_STRIPs 
+	// DR is using indices that are sent to openGL as GL_QUAD_STRIPs
 	// It takes N+2 indices to describe N triangles when using QUAD_STRIPs
 	std::size_t numFacesPerStrip = lenStrips - 2;
 	std::size_t numFaces = numFacesPerStrip * numStrips;
@@ -835,7 +835,7 @@ void PatchTesselation::generateIndices()
 	}
 }
 
-void PatchTesselation::generate(std::size_t patchWidth, std::size_t patchHeight, 
+void PatchTesselation::generate(std::size_t patchWidth, std::size_t patchHeight,
 	const PatchControlArray& controlPoints, bool subdivionsFixed, const Subdivisions& subdivs)
 {
 	width = patchWidth;

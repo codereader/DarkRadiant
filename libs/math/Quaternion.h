@@ -112,7 +112,7 @@ inline const Quaternion& Quaternion::Identity()
 
 inline Quaternion Quaternion::createForUnitVectors(const Vector3& from, const Vector3& to)
 {
-	return Quaternion(from.crossProduct(to), from.dot(to));
+	return Quaternion(from.cross(to), from.dot(to));
 }
 
 inline Quaternion Quaternion::createForEulerXYZDegrees(const Vector3& eulerXYZ)

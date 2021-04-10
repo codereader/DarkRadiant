@@ -5,7 +5,7 @@
 #include "Matrix4.h"
 #include "ViewProjection.h"
 
-class Viewer : 
+class Viewer :
 	public Vector4
 {
 public:
@@ -34,7 +34,7 @@ public:
 
 inline bool Viewer::testPlane(const Plane3& plane) const
 {
-	return (plane.normal().x() * x()) + (plane.normal().y() * y()) + 
+	return (plane.normal().x() * x()) + (plane.normal().y() * y()) +
 		   (plane.normal().z() * z()) + (plane.dist() * w()) > 0;
 }
 
@@ -57,7 +57,7 @@ inline Viewer Viewer::createFromTransformedViewer(const Vector4& viewer, const M
 
 inline Vector3 triangle_cross(const Vector3& p0, const Vector3& p1, const Vector3& p2)
 {
-	return (p1 - p0).crossProduct(p1 - p2);
+	return (p1 - p0).cross(p1 - p2);
 }
 
 inline bool Viewer::testTriangle(const Vector3& p0, const Vector3& p1, const Vector3& p2) const
@@ -79,6 +79,6 @@ inline Viewer Viewer::createFromViewProjection(const ViewProjection& viewproj)
 		viewer[2] /= viewer[3];
 		viewer[3] /= viewer[3];
 	}
-	
+
 	return viewer;
 }

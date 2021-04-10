@@ -232,8 +232,8 @@ inline void ComputeAxisBase(const Vector3& normal, Vector3& texS, Vector3& texT)
 	}
 	else
 	{
-		texS = normal.crossProduct(up).getNormalised();
-		texT = normal.crossProduct(texS).getNormalised();
+		texS = normal.cross(up).getNormalised();
+		texT = normal.cross(texS).getNormalised();
 		texS = -texS;
 	}
 }
@@ -254,7 +254,7 @@ inline void getVirtualPatchBase(const Vector3& widthVector, const Vector3& heigh
 
 	if (widthVectorIsParallel) {
 		// Calculate a orthogonal width vector
-		widthBase = faceNormal.crossProduct(heightVector).getNormalised();
+		widthBase = faceNormal.cross(heightVector).getNormalised();
 	}
 	else {
 		// Project the vector onto the faceplane (this is the width direction)
@@ -263,7 +263,7 @@ inline void getVirtualPatchBase(const Vector3& widthVector, const Vector3& heigh
 
 	if (heightVectorIsParallel) {
 		// Calculate a orthogonal height vector
-		heightBase = faceNormal.crossProduct(widthVector).getNormalised();
+		heightBase = faceNormal.cross(widthVector).getNormalised();
 	}
 	else {
 		// Project the vector onto the faceplane (this is the height direction)

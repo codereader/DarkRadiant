@@ -14,9 +14,6 @@
     <ClCompile Include="..\..\..\test\math\Matrix4.cpp">
       <Filter>math</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\test\math\Vector3.cpp">
-      <Filter>math</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\test\math\Plane3.cpp">
       <Filter>math</Filter>
     </ClCompile>
@@ -41,6 +38,9 @@
     <ClCompile Include="..\..\..\test\MaterialExport.cpp" />
     <ClCompile Include="..\..\..\test\Brush.cpp" />
     <ClCompile Include="..\..\..\test\Renderer.cpp" />
+    <ClCompile Include="..\..\..\test\math\Vector.cpp">
+      <Filter>math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\HeadlessOpenGLContext.h" />

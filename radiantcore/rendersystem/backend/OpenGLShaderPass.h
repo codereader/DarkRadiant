@@ -1,6 +1,7 @@
 #pragma once
 
 #include "math/Vector3.h"
+#include "math/Matrix4.h"
 #include "iglrender.h"
 
 #include <vector>
@@ -12,8 +13,8 @@ class OpenGLRenderable;
 class RendererLight;
 
 namespace render
-{ 
-    
+{
+
 class OpenGLShader;
 
 /**
@@ -41,7 +42,7 @@ protected:
     	const OpenGLRenderable* renderable;
 
     	// The modelview transform for this renderable
-    	const Matrix4* transform;
+    	const Matrix4 transform;
 
 		// The light falling on this obejct
     	const RendererLight* light;
@@ -55,7 +56,7 @@ protected:
 							  const RendererLight* l,
 							  const IRenderEntity* e)
 		: renderable(&r),
-		  transform(&t),
+		  transform(t),
 		  light(l),
 		  entity(e)
 		{}
@@ -64,7 +65,7 @@ protected:
 	// Vector of transformed renderables using this state
 	typedef std::vector<TransformedRenderable> Renderables;
 	Renderables _renderablesWithoutEntity;
-	
+
 	// Renderables sorted by RenderEntity
 	typedef std::map<const IRenderEntity*, Renderables> RenderablesByEntity;
 	RenderablesByEntity _renderables;

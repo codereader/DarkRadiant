@@ -2,6 +2,7 @@
 
 #include "math/Matrix4.h"
 #include "MatrixUtils.h"
+#include "pivot.h"
 
 namespace test
 {
@@ -13,9 +14,17 @@ namespace
     double cosAngle = cos(degrees_to_radians(angle));
     double sinAngle = sin(degrees_to_radians(angle));
     double EPSILON = 0.00001f;
+
+    // EXPECT that two Vector3s are close to each other
+    void expectNear(const Vector3& v1, const Vector3& v2, double eps = EPSILON)
+    {
+        EXPECT_NEAR(v1.x(), v2.x(), eps);
+        EXPECT_NEAR(v1.y(), v2.y(), eps);
+        EXPECT_NEAR(v1.z(), v2.z(), eps);
+    }
 }
 
-TEST(MathTest, CreateIdentityMatrix)
+TEST(MatrixTest, CreateIdentityMatrix)
 {
     const Matrix4 identity = Matrix4::getIdentity();
     EXPECT_EQ(identity, Matrix4::byRows(1, 0, 0, 0,
@@ -24,7 +33,7 @@ TEST(MathTest, CreateIdentityMatrix)
                                         0, 0, 0, 1));
 }
 
-TEST(MathTest, AssignMatrixComponents)
+TEST(MatrixTest, AssignMatrixComponents)
 {
     Matrix4 identity;
 
@@ -51,7 +60,7 @@ TEST(MathTest, AssignMatrixComponents)
     EXPECT_EQ(identity, Matrix4::getIdentity());
 }
 
-TEST(MathTest, ConstructMatrixByRows)
+TEST(MatrixTest, ConstructMatrixByRows)
 {
     auto m = Matrix4::byRows(1, 2.5, 3, 0.34,
         51, -6, 7, 9,
@@ -80,7 +89,31 @@ TEST(MathTest, ConstructMatrixByRows)
     EXPECT_EQ(m.tw(), 32);
 }
 
-TEST(MathTest, AccessMatrixColumnVectors)
+TEST(MatrixTest, ConstructTranslationMatrix)
+{
+    const Vector3 TRANS(1.5, -2939, 357);
+    Matrix4 tm = Matrix4::getTranslation(TRANS);
+
+    EXPECT_EQ(tm, Matrix4::byRows(1, 0, 0, TRANS.x(),
+                                  0, 1, 0, TRANS.y(),
+                                  0, 0, 1, TRANS.z(),
+                                  0, 0, 0, 1));
+    EXPECT_EQ(tm.translation(), TRANS);
+}
+
+TEST(MatrixTest, ConstructScaleMatrix)
+{
+    const Vector3 SCALE(0.75, 1.25, 960);
+    Matrix4 sm = Matrix4::getScale(SCALE);
+
+    EXPECT_EQ(sm, Matrix4::byRows(SCALE.x(), 0, 0, 0,
+                                  0, SCALE.y(), 0, 0,
+                                  0, 0, SCALE.z(), 0,
+                                  0, 0, 0, 1));
+    EXPECT_EQ(sm.getScale(), SCALE);
+}
+
+TEST(MatrixTest, AccessMatrixColumnVectors)
 {
     Matrix4 m = Matrix4::byRows(1, 4, 8, -5,
                                 2, 9, 7, 13,
@@ -105,7 +138,7 @@ TEST(MathTest, AccessMatrixColumnVectors)
                                     1.3, 1.4, 1.5, 1.6));
 }
 
-TEST(MathTest, MatrixRawArrayData)
+TEST(MatrixTest, MatrixRawArrayData)
 {
     Matrix4 m = Matrix4::byRows(1, 0.2, 35, 4,
                                 5, -6, 17, 300,
@@ -133,7 +166,7 @@ TEST(MathTest, MatrixRawArrayData)
     EXPECT_EQ(data[15], -4.5);
 }
 
-TEST(MathTest, MatrixEquality)
+TEST(MatrixTest, MatrixEquality)
 {
     Matrix4 m1 = Matrix4::byRows(1, 2, 3.5, 4,
                                  5, -6, 17, 800,
@@ -146,7 +179,7 @@ TEST(MathTest, MatrixEquality)
     EXPECT_TRUE(m2 != Matrix4::getIdentity());
 }
 
-TEST(MathTest, MatrixTranspose)
+TEST(MatrixTest, MatrixTranspose)
 {
     Matrix4 m = Matrix4::byRows(1, 2, 3, 4,
                                 5, 6, 7, 8,
@@ -166,7 +199,7 @@ TEST(MathTest, MatrixTranspose)
     EXPECT_EQ(m, mT);
 }
 
-TEST(MathTest, ConvertDegreesAndRadians)
+TEST(MatrixTest, ConvertDegreesAndRadians)
 {
     math::Degrees thirtyD(30);
     EXPECT_DOUBLE_EQ(thirtyD.asDegrees(), 30);
@@ -177,7 +210,7 @@ TEST(MathTest, ConvertDegreesAndRadians)
     EXPECT_DOUBLE_EQ(twoPiBy3R.asRadians(), 2 * math::PI / 3.0);
 }
 
-TEST(MathTest, MatrixRotationAboutZDegrees)
+TEST(MatrixTest, MatrixRotationAboutZDegrees)
 {
     math::Degrees angle(60.0);
     double cosAngle = cos(angle.asRadians());
@@ -191,7 +224,7 @@ TEST(MathTest, MatrixRotationAboutZDegrees)
                                      0, 0, 0, 1));
 }
 
-TEST(MathTest, MatrixRotationAboutZRadians)
+TEST(MatrixTest, MatrixRotationAboutZRadians)
 {
     double angle = math::PI / 3.0; // 60 degrees in radians
     double cosAngle = cos(angle);
@@ -205,7 +238,26 @@ TEST(MathTest, MatrixRotationAboutZRadians)
                                      0, 0, 0, 1));
 }
 
-TEST(MathTest, MatrixRotationForEulerXYZDegrees)
+TEST(MatrixTest, MatrixRotationForAxisAngle)
+{
+    // Rotation with a zero angle should do nothing
+    Matrix4 noRot = Matrix4::getRotation(Vector3(0, 0, 1), 0);
+    EXPECT_EQ(noRot, Matrix4::getIdentity());
+
+    // Simple 90 degree rotation about Z axis (note this Matrix4::getRotation
+    // method always expects radians)
+    Matrix4 z90 = Matrix4::getRotation(Vector3(0, 0, 1), math::PI / 2);
+    expectNear(z90, Matrix4::getRotationAboutZ(math::Degrees(-90)));
+    expectNear(z90 * Vector3(1, 0, 0), Vector3(0, -1, 0));
+
+    // Rotate unit X vector 180 degrees around a 45 degree axis, which should
+    // map it on to the unit Y vector.
+    Vector3 axis = Vector3(1, 1, 0).getNormalised();
+    Matrix4 rot45 = Matrix4::getRotation(axis, math::PI);
+    expectNear(rot45 * Vector3(1, 0, 0), Vector3(0, 1, 0));
+}
+
+TEST(MatrixTest, MatrixRotationForEulerXYZDegrees)
 {
     // Test euler angle constructors
     Vector3 euler(30, -55, 75);
@@ -249,7 +301,7 @@ TEST(MathTest, MatrixRotationForEulerXYZDegrees)
     EXPECT_DOUBLE_EQ(testEuler.z(), euler.z()) << "getEulerAnglesXYZDegrees fault at z()";
 }
 
-TEST(MathTest, MatrixMultiplication)
+TEST(MatrixTest, MatrixMultiplication)
 {
     auto a = Matrix4::byColumns(3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59);
     auto b = Matrix4::byColumns(61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137);
@@ -271,7 +323,7 @@ TEST(MathTest, MatrixMultiplication)
     EXPECT_EQ(b.getMultipliedBy(a), a.getPremultipliedBy(b)) << "Matrix pre-multiplication mismatch";
 }
 
-TEST(MathTest, MatrixTransformation)
+TEST(MatrixTest, MatrixTransformation)
 {
     auto a = Matrix4::byColumns(3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59);
 
@@ -306,7 +358,36 @@ TEST(MathTest, MatrixTransformation)
     EXPECT_EQ(a.tCol().z(), 53) << "Matrix4::t failed";
 }
 
-TEST(MathTest, MatrixScaleAffineInverse)
+TEST(MatrixTest, MatrixTransformVectorEqualsMultiplication)
+{
+    const Vector3 TRANSLATION(2, 5, -7);
+    auto t = Matrix4::getTranslation(TRANSLATION)
+           * Matrix4::getRotation(Vector3(0, 1, 0), 2.1)
+           * Matrix4::getScale(Vector3(2, 2.5, 0.75));
+
+    // transformPoint must be equivalent to a multiplication
+    Vector3 vec3(16, -32, 0.05);
+    EXPECT_EQ(t * vec3, t.transformPoint(vec3));
+
+    // transformDirection does NOT give the same result, because it ignores
+    // translation (vector's W coordinate is assumed 0).
+    EXPECT_NE(t * vec3, t.transformDirection(vec3));
+
+    // If we transform the direction then add the translation manually, we
+    // should get the same result as transformPoint.
+    EXPECT_EQ(t * vec3, t.transformDirection(vec3) + TRANSLATION);
+
+    // transform() must be equivalent to a multiplication with a full Vector4
+    Vector4 vec4(128, 0.025, -8198, 0.5);
+    EXPECT_EQ(t * vec4, t.transform(vec4));
+
+    // transformPoint() and transformDirection() must be equivalent to a
+    // multiplication with the appropriate Vector4 (W == 0 or W == 1).
+    EXPECT_EQ((t * Vector4(vec3, 1)).getVector3(), t.transformPoint(vec3));
+    EXPECT_EQ((t * Vector4(vec3, 0)).getVector3(), t.transformDirection(vec3));
+}
+
+TEST(MatrixTest, MatrixScaleAffineInverse)
 {
     // Construct a scale matrix
     Vector3 SCALE(2, 4, 8);
@@ -324,7 +405,7 @@ TEST(MathTest, MatrixScaleAffineInverse)
               Vector3(1.0 / SCALE.x(), 1.0 / SCALE.y(), 1.0 / SCALE.z()));
 }
 
-TEST(MathTest, MatrixTranslationAffineInverse)
+TEST(MatrixTest, MatrixTranslationAffineInverse)
 {
     // Construct a translation matrix
     Vector3 TRANS(4, 32, -8);
@@ -344,7 +425,7 @@ TEST(MathTest, MatrixTranslationAffineInverse)
                                        0, 0, 0, 1));
 }
 
-TEST(MathTest, MatrixRotationAffineInverse)
+TEST(MatrixTest, MatrixRotationAffineInverse)
 {
     // Construct a translation matrix
     const math::Degrees ANGLE(60);
@@ -359,7 +440,7 @@ TEST(MathTest, MatrixRotationAffineInverse)
     expectNear(inverse, backRotMat);
 }
 
-TEST(MathTest, MatrixAffineInverseMatchesFullInverse)
+TEST(MatrixTest, MatrixAffineInverseMatchesFullInverse)
 {
     // Create an affine transformation
     Matrix4 affTrans = Matrix4::getRotationAboutZ(math::Degrees(78))
@@ -387,7 +468,7 @@ TEST(MathTest, MatrixAffineInverseMatchesFullInverse)
     EXPECT_GT(diffInv.ty(), 8);
 }
 
-TEST(MathTest, MatrixFullInverse)
+TEST(MatrixTest, MatrixFullInverse)
 {
     auto a = Matrix4::byColumns(3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59);
 
@@ -412,6 +493,53 @@ TEST(MathTest, MatrixFullInverse)
     EXPECT_DOUBLE_EQ(inv.ty(), -0.42857142857142855) << "Matrix inversion failed on ty";
     EXPECT_DOUBLE_EQ(inv.tz(), -0.39285714285714285) << "Matrix inversion failed on tz";
     EXPECT_DOUBLE_EQ(inv.tw(), 0.3571428571428571) << "Matrix inversion failed on tw";
+}
+
+TEST(MatrixTest, MatrixTranslateBy)
+{
+    const Vector3 TRANS(27, -16, 0.84);
+
+    // Add a translation to a matrix which already includes a transformation
+    const Vector3 SCALE(2, 3, 2);
+    Matrix4 m = Matrix4::getScale(SCALE);
+    m.translateBy(TRANS);
+
+    // Because translateBy() does a post-multiplication, the scale will affect
+    // the translation
+    EXPECT_EQ(m.translation(), SCALE*TRANS /* Componentwise product */);
+    EXPECT_EQ(m, Matrix4::byRows(2, 0, 0, SCALE.x() * TRANS.x(),
+                                 0, 3, 0, SCALE.y() * TRANS.y(),
+                                 0, 0, 2, SCALE.z() * TRANS.z(),
+                                 0, 0, 0, 1));
+
+    // Check the non-mutating getTranslatedBy as well
+    const Matrix4 orig = Matrix4::getScale(SCALE);
+    EXPECT_EQ(orig.getTranslatedBy(TRANS), m);
+    EXPECT_NE(orig, m);
+
+    // Add further translations and ensure the result is cumulative
+    const Vector3 ONE(1, 1, 1);
+    m.translateBy(ONE);
+    expectNear(m.translation(), SCALE * (TRANS+ONE));
+    m.translateBy(-TRANS);
+    expectNear(m.translation(), SCALE * ONE);
+}
+
+TEST(MatrixTest, GetInverseScale)
+{
+    // Create an arbitrary transformation
+    Matrix4 m = Matrix4::getRotationAboutZ(math::Degrees(15))
+              * Matrix4::getScale(Vector3(3, 2.5, 8.2))
+              * Matrix4::getTranslation(Vector3(10, 30, -61));
+
+    // Get the inverse scale
+    Matrix4 invSc = getInverseScale(m);
+
+    // Result should be a diagonal matrix containing only a scale
+    EXPECT_TRUE(math::near(invSc.xCol(), Vector4(1.0 / 3, 0, 0, 0), 1E-6));
+    EXPECT_TRUE(math::near(invSc.yCol(), Vector4(0, 1.0 / 2.5, 0, 0), 1E-6));
+    EXPECT_TRUE(math::near(invSc.zCol(), Vector4(0, 0, 1.0 / 8.2, 0), 1E-6));
+    EXPECT_TRUE(math::near(invSc.tCol(), Vector4(0, 0, 0, 1), 1E-6));
 }
 
 }

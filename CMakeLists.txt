@@ -7,6 +7,9 @@ project(darkradiant VERSION 2.11.0)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+# Global compiler options and warnings (TODO: may need updating for CLang)
+add_compile_options(-Werror=return-local-addr)
+
 # GCC 8 and earlier require explicit linking against stdc++fs
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 9)
 	link_libraries(stdc++fs)
@@ -75,7 +78,7 @@ include(${wxWidgets_USE_FILE})
 find_package(Python REQUIRED COMPONENTS Development)
 
 # Global includes and flags
-include_directories(libs libs/libfmt include)
+include_directories(libs libs/libfmt external/eigen include)
 add_compile_definitions(POSIX
                         WXINTL_NO_GETTEXT_MACRO
                         FMT_HEADER_ONLY
