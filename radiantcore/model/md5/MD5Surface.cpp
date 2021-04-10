@@ -193,8 +193,8 @@ bool MD5Surface::getIntersection(const Ray& ray, Vector3& intersection, const Ma
 			intersection = triIntersection;
 
 			// Test if this surface intersection is better than what we currently have
-			float oldDistSquared = (bestIntersection - ray.origin).getLengthSquared();
-			float newDistSquared = (triIntersection - ray.origin).getLengthSquared();
+            auto oldDistSquared = (bestIntersection - ray.origin).getLengthSquared();
+            auto newDistSquared = (triIntersection - ray.origin).getLengthSquared();
 
 			if ((oldDistSquared == 0 && newDistSquared > 0) || newDistSquared < oldDistSquared)
 			{

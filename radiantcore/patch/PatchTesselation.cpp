@@ -423,7 +423,7 @@ void PatchTesselation::removeLinearColumnsRows()
 {
 	for (std::size_t j = 1; j < width - 1; j++)
 	{
-		float maxLength = 0;
+		double maxLength = 0;
 
 		for (std::size_t i = 0; i < height; i++)
 		{
@@ -433,7 +433,7 @@ void PatchTesselation::removeLinearColumnsRows()
 
 			Vector3 dir = vertices[i*_maxWidth + j].vertex - proj;
 
-			float len = dir.getLengthSquared();
+			auto len = dir.getLengthSquared();
 
 			if (len > maxLength)
 			{
@@ -441,7 +441,7 @@ void PatchTesselation::removeLinearColumnsRows()
 			}
 		}
 
-		if (maxLength < 0.2f*0.2f)
+		if (maxLength < 0.2*0.2)
 		{
 			width--;
 
@@ -459,7 +459,7 @@ void PatchTesselation::removeLinearColumnsRows()
 
 	for (std::size_t j = 1; j < height - 1; j++)
 	{
-		float maxLength = 0;
+		double maxLength = 0;
 
 		for (std::size_t i = 0; i < width; i++)
 		{
@@ -469,7 +469,7 @@ void PatchTesselation::removeLinearColumnsRows()
 
 			Vector3 dir = vertices[j*_maxWidth + i].vertex - proj;
 
-			float len = dir.getLengthSquared();
+			auto len = dir.getLengthSquared();
 
 			if (len > maxLength)
 			{
@@ -477,7 +477,7 @@ void PatchTesselation::removeLinearColumnsRows()
 			}
 		}
 
-		if (maxLength < 0.2f*0.2f)
+		if (maxLength < 0.2*0.2)
 		{
 			height--;
 

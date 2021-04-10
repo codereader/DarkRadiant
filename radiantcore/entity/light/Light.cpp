@@ -713,13 +713,13 @@ void Light::updateProjection() const
 
     Plane3 lightProject[4];
 
-    float rLen = _lightRightTransformed.getLength();
+    auto rLen = _lightRightTransformed.getLength();
     Vector3 right = _lightRightTransformed / rLen;
-    float uLen = _lightUpTransformed.getLength();
+    auto uLen = _lightUpTransformed.getLength();
     Vector3 up = _lightUpTransformed / uLen;
     Vector3 normal = up.cross(right).getNormalised();
 
-    double dist = _lightTargetTransformed.dot(normal);
+    auto dist = _lightTargetTransformed.dot(normal);
     if ( dist < 0 ) {
         dist = -dist;
         normal = -normal;
@@ -768,7 +768,7 @@ void Light::updateProjection() const
     // Calculate the falloff vector
     Vector3 falloff = stop - start;
 
-    float length = falloff.getLength();
+    auto length = falloff.getLength();
     falloff /= length;
     if ( length <= 0 ) {
         length = 1;

@@ -97,8 +97,8 @@ bool MD5Model::getIntersection(const Ray& ray, Vector3& intersection, const Matr
 		if (i->surface->getIntersection(ray, surfaceIntersection, localToWorld))
 		{
 			// Test if this surface intersection is better than what we currently have
-			float oldDistSquared = (bestIntersection - ray.origin).getLengthSquared();
-			float newDistSquared = (surfaceIntersection - ray.origin).getLengthSquared();
+			auto oldDistSquared = (bestIntersection - ray.origin).getLengthSquared();
+			auto newDistSquared = (surfaceIntersection - ray.origin).getLengthSquared();
 
 			if ((oldDistSquared == 0 && newDistSquared > 0) || newDistSquared < oldDistSquared)
 			{
@@ -306,9 +306,9 @@ void MD5Model::parseFromTokens(parser::DefTokeniser& tok)
 
 	    // Calculate the W value. If it is NaN (due to underflow in the sqrt),
 	    // set it to 0.
-	    float lSq = rawRotation.getLengthSquared();
+	    auto lSq = rawRotation.getLengthSquared();
 
-	    float w = -sqrt(1.0f - lSq);
+	    auto w = -sqrt(1.0 - lSq);
 	    if (isNaN(w)) {
 	    	w = 0;
 	    }

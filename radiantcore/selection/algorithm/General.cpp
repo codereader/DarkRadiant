@@ -789,8 +789,8 @@ public:
 				return true; // ignore this node
 			}
 
-			float oldDistSquared = (_bestPoint - _ray.origin).getLengthSquared();
-			float newDistSquared = (intersection - _ray.origin).getLengthSquared();
+			auto oldDistSquared = (_bestPoint - _ray.origin).getLengthSquared();
+			auto newDistSquared = (intersection - _ray.origin).getLengthSquared();
 
 			if ((oldDistSquared == 0 && newDistSquared > 0) || newDistSquared < oldDistSquared)
 			{

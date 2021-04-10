@@ -404,7 +404,7 @@ void makeVisportal(const cmd::ArgumentList& args)
 
 		// Find the largest face (in terms of area)
 		Face* largestFace = NULL;
-		float largestArea = 0;
+		double largestArea = 0;
 
 		brush.forEachFace([&] (Face& face)
 		{
@@ -414,7 +414,7 @@ void makeVisportal(const cmd::ArgumentList& args)
 			}
 
 			// Calculate face area
-			float area = 0;
+            double area = 0;
 			Winding& winding = face.getWinding();
 			const Vector3& centroid = face.centroid();
 
@@ -422,7 +422,7 @@ void makeVisportal(const cmd::ArgumentList& args)
 			{
 				Vector3 edge1 = centroid - winding[i].vertex;
 				Vector3 edge2 = centroid - winding[(i+1) % winding.size()].vertex;
-				area += edge1.cross(edge2).getLength() * 0.5f;
+				area += edge1.cross(edge2).getLength() * 0.5;
 			}
 
 			if (area > largestArea)

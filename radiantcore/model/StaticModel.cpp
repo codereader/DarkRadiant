@@ -306,8 +306,8 @@ bool StaticModel::getIntersection(const Ray& ray, Vector3& intersection, const M
         if (i->surface->getIntersection(ray, surfaceIntersection, localToWorld))
         {
             // Test if this surface intersection is better than what we currently have
-            float oldDistSquared = (bestIntersection - ray.origin).getLengthSquared();
-            float newDistSquared = (surfaceIntersection - ray.origin).getLengthSquared();
+            auto oldDistSquared = (bestIntersection - ray.origin).getLengthSquared();
+            auto newDistSquared = (surfaceIntersection - ray.origin).getLengthSquared();
 
             if ((oldDistSquared == 0 && newDistSquared > 0) || newDistSquared < oldDistSquared)
             {

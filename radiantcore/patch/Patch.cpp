@@ -2635,10 +2635,10 @@ void Patch::stitchTextureFrom(Patch& sourcePatch) {
                     // Get the other control
                     const PatchControl& other = sourcePatch.ctrlAt(srcRow, srcCol);
 
-                    float dist = (other.vertex - self.vertex).getLength();
+                    auto dist = (other.vertex - self.vertex).getLength();
 
                     // Allow the coords to be a _bit_ distant
-                    if (fabs(dist) < 0.005f) {
+                    if (fabs(dist) < 0.005) {
                         // Assimilate the texture coordinates
                         self.texcoord = other.texcoord;
                     }

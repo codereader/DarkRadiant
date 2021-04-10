@@ -95,8 +95,8 @@ void MD5Anim::parseBaseFrame(parser::DefTokeniser& tok)
 		rawRotation.z() = string::convert<float>(tok.nextToken());
 
 		// Calculate the fourth component of the quaternion
-		float lSq = rawRotation.getLengthSquared();
-	    float w = -sqrt(1.0f - lSq);
+		auto lSq = rawRotation.getLengthSquared();
+        auto w = -sqrt(1.0 - lSq);
 
 	    if (isNaN(w))
 		{

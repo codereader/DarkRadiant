@@ -155,8 +155,8 @@ void MD5Skeleton::update(const IMD5AnimPtr& anim, std::size_t time)
 
 		if (joint.animComponents & (Joint::YAW | Joint::PITCH | Joint::ROLL))
 		{
-			float lSq = orientation.getVector3().getLengthSquared();
-			float w = -sqrt(1.0f - lSq);
+			auto lSq = orientation.getVector3().getLengthSquared();
+            auto w = -sqrt(1.0 - lSq);
 
 			orientation.w() = isNaN(w) ? 0 : w;
 

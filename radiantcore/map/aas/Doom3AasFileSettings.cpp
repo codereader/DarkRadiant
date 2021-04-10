@@ -19,7 +19,7 @@ Doom3AasFileSettings::Doom3AasFileSettings() :
 	gravity(0, 0, -1066),
 	gravityDir(gravity.getNormalised()),
 	invGravityDir(-gravityDir),
-    gravityValue(gravity.getLength()),
+    gravityValue(static_cast<float>(gravity.getLength())),
 	maxStepHeight(14.0f),
 	maxBarrierHeight(32.0f),
 	maxWaterJumpHeight(20.0f),
@@ -104,7 +104,7 @@ void Doom3AasFileSettings::parseFromTokens(parser::DefTokeniser& tok)
             gravity = parseVector3(tok);
 
             gravityDir = gravity.getNormalised();
-			gravityValue = gravity.getLength();
+			gravityValue = static_cast<float>(gravity.getLength());
 			invGravityDir = -gravityDir;
         }
         else if (token == "maxStepHeight")
