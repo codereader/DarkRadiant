@@ -340,7 +340,7 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
     setGLTexturesFromTriplet(dbsPass, triplet);
 
     // Set render flags
-    //dbsPass.setRenderFlag(RENDER_BLEND);
+    dbsPass.setRenderFlag(RENDER_BLEND);
     dbsPass.setRenderFlag(RENDER_FILL);
     dbsPass.setRenderFlag(RENDER_TEXTURE_2D);
     dbsPass.setRenderFlag(RENDER_CULLFACE);
