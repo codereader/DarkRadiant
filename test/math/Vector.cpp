@@ -72,6 +72,17 @@ TEST(MathTest, Vector3EqualityComparison)
     EXPECT_NE(v1, v2);
 }
 
+TEST(MathTest, VectorEpsilonComparison)
+{
+    const Vector3 v(1, 8, 320);
+    const Vector3 increment(1e-8, 1e-7, 1e-8);
+
+    EXPECT_TRUE(v.isEqual(v, 1e-8));
+    EXPECT_TRUE(v.isEqual(v + increment, 1e-6));
+    EXPECT_FALSE(v.isEqual(v + increment, 1e-9));
+    EXPECT_TRUE(v.isEqual(v + Vector3(1000, 10000, 20000), 1e6));
+}
+
 TEST(MathTest, NegateVector3)
 {
     Vector3 vec(5, 10, 125);
