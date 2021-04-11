@@ -64,6 +64,7 @@ newMaterial.setSurfaceType(dr.Material.SurfaceType.WOOD)
 newMaterial.setSpectrum(5)
 newMaterial.setIsFogLight(1)
 newMaterial.setIsBlendLight(0)
+newMaterial.setDescription("New Material")
 
 print('Full Material definition:\n{0}\n{{{1}}}'.format(newMaterial.getName(), newMaterial.getDefinition()))
 

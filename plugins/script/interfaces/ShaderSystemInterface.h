@@ -43,6 +43,12 @@ public:
 		return _material ? _material->getDescription() : "";
 	}
 
+    void setDescription(const std::string& description)
+    {
+        throwIfMaterialCannotBeModified();
+        _material->setDescription(description);
+    }
+
 	std::string getDefinition() {
 		return _material ? _material->getDefinition() : "";
 	}
