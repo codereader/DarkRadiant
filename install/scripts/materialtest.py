@@ -45,6 +45,10 @@ print('Deform Type: {0}'.format(newMaterial.getDeformType()))
 print('Deform Expression #1: {0}'.format(newMaterial.getDeformExpressionString(0)))
 print('Deform Decl Name: {0}'.format(newMaterial.getDeformDeclName()))
 print('Spectrum: {0}'.format(newMaterial.getSpectrum()))
+print('DecalInfo.stayMilliSeconds: {0}'.format(newMaterial.getDecalInfo().stayMilliSeconds))
+print('DecalInfo.fadeMilliSeconds: {0}'.format(newMaterial.getDecalInfo().fadeMilliSeconds))
+print('DecalInfo.startColour: {0}'.format(newMaterial.getDecalInfo().startColour))
+print('DecalInfo.endColour: {0}'.format(newMaterial.getDecalInfo().endColour))
 
 # There are a couple of pre-defined sort requests, corresponding to the engine code
 newMaterial.setSortRequest(dr.Material.SortRequest.NEAREST)

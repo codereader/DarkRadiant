@@ -194,6 +194,13 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
         .value("PARTICLE2", Material::DEFORM_PARTICLE2)
         .export_values();
 
+    py::class_<Material::DecalInfo> decalInfo(material, "DecalInfo");
+
+    decalInfo.def_readwrite("stayMilliSeconds", &Material::DecalInfo::stayMilliSeconds);
+    decalInfo.def_readwrite("fadeMilliSeconds", &Material::DecalInfo::fadeMilliSeconds);
+    decalInfo.def_readwrite("startColour", &Material::DecalInfo::startColour);
+    decalInfo.def_readwrite("endColour", &Material::DecalInfo::endColour);
+
 	material.def(py::init<const MaterialPtr&>());
 	material.def("getName", &ScriptMaterial::getName);
 	material.def("getShaderFileName", &ScriptMaterial::getShaderFileName);
@@ -231,6 +238,7 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
     material.def("getDeformDeclName", &ScriptMaterial::getDeformDeclName);
     material.def("getSpectrum", &ScriptMaterial::getSpectrum);
     material.def("setSpectrum", &ScriptMaterial::setSpectrum);
+    material.def("getDecalInfo", &ScriptMaterial::getDecalInfo);
 
 	// Expose the MaterialVisitor interface
 

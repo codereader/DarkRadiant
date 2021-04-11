@@ -213,6 +213,11 @@ public:
         if (_material) _material->setSpectrum(spectrum);
     }
 
+    Material::DecalInfo getDecalInfo()
+    {
+        return _material ? _material->getDecalInfo() : Material::DecalInfo();
+    }
+
 private:
     void throwIfMaterialCannotBeModified()
     {
