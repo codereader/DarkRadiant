@@ -289,6 +289,22 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
     material.def("duplicateStage", &ScriptMaterial::duplicateStage);
     material.def("swapStagePosition", &ScriptMaterial::swapStagePosition);
 
+    // Stage Flags
+    py::enum_<IShaderLayer::Flags>(stage, "Flag")
+        .value("IGNORE_ALPHATEST", IShaderLayer::FLAG_IGNORE_ALPHATEST)
+        .value("FILTER_NEAREST", IShaderLayer::FLAG_FILTER_NEAREST)
+        .value("FILTER_LINEAR", IShaderLayer::FLAG_FILTER_LINEAR)
+        .value("HIGHQUALITY", IShaderLayer::FLAG_HIGHQUALITY)
+        .value("FORCE_HIGHQUALITY", IShaderLayer::FLAG_FORCE_HIGHQUALITY)
+        .value("NO_PICMIP", IShaderLayer::FLAG_NO_PICMIP)
+        .value("MASK_RED", IShaderLayer::FLAG_MASK_RED)
+        .value("MASK_GREEN", IShaderLayer::FLAG_MASK_GREEN)
+        .value("MASK_BLUE", IShaderLayer::FLAG_MASK_BLUE)
+        .value("MASK_ALPHA", IShaderLayer::FLAG_MASK_ALPHA)
+        .value("MASK_DEPTH", IShaderLayer::FLAG_MASK_DEPTH)
+        .value("IGNORE_DEPTH", IShaderLayer::FLAG_IGNORE_DEPTH)
+        .export_values();
+
     // Shader Stage
     stage.def(py::init<const IShaderLayer::Ptr&>());
     stage.def("getType", &ScriptMaterialStage::getType);
