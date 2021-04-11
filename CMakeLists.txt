@@ -68,6 +68,7 @@ pkg_check_modules(VORBIS vorbisfile REQUIRED)
 pkg_check_modules(X11 x11 REQUIRED)
 pkg_check_modules(ZLIB zlib REQUIRED)
 pkg_check_modules(GLIB glib-2.0 REQUIRED)
+pkg_check_modules(EIGEN eigen3 REQUIRED)
 
 # Locate wxWidgets
 find_package(wxWidgets REQUIRED
@@ -78,7 +79,7 @@ include(${wxWidgets_USE_FILE})
 find_package(Python REQUIRED COMPONENTS Development)
 
 # Global includes and flags
-include_directories(libs libs/libfmt external/eigen include)
+include_directories(libs libs/libfmt include)
 add_compile_definitions(POSIX
                         WXINTL_NO_GETTEXT_MACRO
                         FMT_HEADER_ONLY
