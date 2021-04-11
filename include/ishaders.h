@@ -591,8 +591,11 @@ public:
     // Creates a copy of the given material and returns the reference to it
     virtual MaterialPtr copyMaterial(const std::string& nameOfOriginal, const std::string& nameOfCopy) = 0;
 
+    // Renames the material named oldName to newName, and returns true if the operation was successful. 
+    // If the new name is already in use, this returns false too.
     virtual bool renameMaterial(const std::string& oldName, const std::string& newName) = 0;
 
+    // Removes the named material
     virtual void removeMaterial(const std::string& name) = 0;
 
     // Saves the named material to the file location as specified in its shaderfile info.
