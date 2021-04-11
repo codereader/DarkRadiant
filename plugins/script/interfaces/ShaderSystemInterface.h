@@ -141,6 +141,23 @@ public:
         if (_material) _material->setCullType(type);
     }
 
+    int getMaterialFlags() const
+    {
+        return _material ? _material->getMaterialFlags() : 0;
+    }
+
+    void setMaterialFlag(Material::Flags flag)
+    {
+        throwIfMaterialCannotBeModified();
+        if (_material) _material->setMaterialFlag(flag);
+    }
+
+    void clearMaterialFlag(Material::Flags flag)
+    {
+        throwIfMaterialCannotBeModified();
+        if (_material) _material->clearMaterialFlag(flag);
+    }
+
 private:
     void throwIfMaterialCannotBeModified()
     {

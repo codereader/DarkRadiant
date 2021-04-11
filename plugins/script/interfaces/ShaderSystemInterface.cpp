@@ -114,6 +114,22 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
         .value("ALPHAZEROCLAMP", CLAMP_ALPHAZEROCLAMP)
         .export_values();
 
+    py::enum_<Material::Flags>(material, "Flag")
+        .value("NOSHADOWS", Material::FLAG_NOSHADOWS)
+        .value("NOSELFSHADOW", Material::FLAG_NOSELFSHADOW)
+        .value("FORCESHADOWS", Material::FLAG_FORCESHADOWS)
+        .value("NOOVERLAYS", Material::FLAG_NOOVERLAYS)
+        .value("FORCEOVERLAYS", Material::FLAG_FORCEOVERLAYS)
+        .value("TRANSLUCENT", Material::FLAG_TRANSLUCENT)
+        .value("FORCEOPAQUE", Material::FLAG_FORCEOPAQUE)
+        .value("NOFOG", Material::FLAG_NOFOG)
+        .value("NOPORTALFOG", Material::FLAG_NOPORTALFOG)
+        .value("UNSMOOTHEDTANGENTS", Material::FLAG_UNSMOOTHEDTANGENTS)
+        .value("MIRROR", Material::FLAG_MIRROR)
+        .value("POLYGONOFFSET", Material::FLAG_POLYGONOFFSET)
+        .value("ISLIGHTGEMSURF", Material::FLAG_ISLIGHTGEMSURF)
+        .export_values();
+
 	material.def(py::init<const MaterialPtr&>());
 	material.def("getName", &ScriptMaterial::getName);
 	material.def("getShaderFileName", &ScriptMaterial::getShaderFileName);
@@ -138,6 +154,9 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
 	material.def("setClampType", &ScriptMaterial::setClampType);
 	material.def("getCullType", &ScriptMaterial::getCullType);
 	material.def("setCullType", &ScriptMaterial::setCullType);
+	material.def("getMaterialFlags", &ScriptMaterial::getMaterialFlags);
+	material.def("setMaterialFlag", &ScriptMaterial::setMaterialFlag);
+	material.def("clearMaterialFlag", &ScriptMaterial::clearMaterialFlag);
 
 	// Expose the MaterialVisitor interface
 
