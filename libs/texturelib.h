@@ -220,12 +220,12 @@ inline void ComputeAxisBase(const Vector3& normal, Vector3& texS, Vector3& texT)
 	const Vector3 up(0, 0, 1);
 	const Vector3 down(0, 0, -1);
 
-	if (normal.isEqual(up, 1e-6))
+	if (math::near(normal, up, 1e-6))
 	{
 		texS = Vector3(0, 1, 0);
 		texT = Vector3(1, 0, 0);
 	}
-	else if (normal.isEqual(down, 1e-6))
+	else if (math::near(normal, down, 1e-6))
 	{
 		texS = Vector3(0, 1, 0);
 		texT = Vector3(-1, 0, 0);

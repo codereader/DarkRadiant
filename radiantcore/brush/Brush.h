@@ -16,7 +16,7 @@ class Ray;
 /// \brief Returns true if 'self' takes priority when building brush b-rep.
 inline bool plane3_inside(const Plane3& self, const Plane3& other)
 {
-	if (self.normal().isEqual(other.normal(), 0.001))
+	if (math::near(self.normal(), other.normal(), 0.001))
 	{
 		return self.dist() < other.dist();
 	}
@@ -125,15 +125,15 @@ private:
 	// ----
 
 	DetailFlag _detailFlag;
-	
+
 public:
 	/// \brief The undo memento for a brush stores only the list of face references - the faces are not copied.
-	class BrushUndoMemento : 
+	class BrushUndoMemento :
 		public IUndoMemento
 	{
 	public:
-		BrushUndoMemento(const Faces& faces, DetailFlag detailFlag) : 
-			_faces(faces), 
+		BrushUndoMemento(const Faces& faces, DetailFlag detailFlag) :
+			_faces(faces),
 			_detailFlag(detailFlag)
 		{}
 

@@ -32,7 +32,7 @@ inline void compareNormalOfFirstSharedVertex(const PatchMesh& mesh1, const Patch
     {
         for (const auto& v2 : mesh2.vertices)
         {
-            if (v1.vertex.isEqual(v2.vertex, 0.01))
+            if (math::near(v1.vertex, v2.vertex, 0.01))
             {
                 EXPECT_LT(std::abs(v1.normal.angle(v2.normal)), c_half_pi);
                 return;
@@ -114,10 +114,10 @@ TEST_P(PatchWelding3x3, WeldWithOther3x3Patch)
 }
 
 // Patch 1 is sharing its first row
-INSTANTIATE_TEST_CASE_P(WeldPatch1WithOther3x3, PatchWelding3x3, 
-    testing::Values(std::tuple{ "1", "2", 5, 3 }, 
-                    std::tuple{ "1", "3", 5, 3 }, 
-                    std::tuple{ "1", "4", 5, 3 }, 
+INSTANTIATE_TEST_CASE_P(WeldPatch1WithOther3x3, PatchWelding3x3,
+    testing::Values(std::tuple{ "1", "2", 5, 3 },
+                    std::tuple{ "1", "3", 5, 3 },
+                    std::tuple{ "1", "4", 5, 3 },
                     std::tuple{ "1", "5", 5, 3 },
                     std::tuple{ "2", "1", 5, 3 },
                     std::tuple{ "3", "1", 5, 3 },
@@ -126,9 +126,9 @@ INSTANTIATE_TEST_CASE_P(WeldPatch1WithOther3x3, PatchWelding3x3,
 
 // Patch 6 is sharing its last row
 INSTANTIATE_TEST_CASE_P(WeldPatch6WithOther3x3, PatchWelding3x3,
-    testing::Values(std::tuple{ "6", "7", 5, 3 }, 
-                    std::tuple{ "6", "8", 5, 3 }, 
-                    std::tuple{ "6", "9", 5, 3 }, 
+    testing::Values(std::tuple{ "6", "7", 5, 3 },
+                    std::tuple{ "6", "8", 5, 3 },
+                    std::tuple{ "6", "9", 5, 3 },
                     std::tuple{ "6", "10", 5, 3 },
                     std::tuple{ "7", "6", 5, 3 },
                     std::tuple{ "8", "6", 5, 3 },
@@ -137,9 +137,9 @@ INSTANTIATE_TEST_CASE_P(WeldPatch6WithOther3x3, PatchWelding3x3,
 
 // Patch 11 is sharing a row
 INSTANTIATE_TEST_CASE_P(WeldPatch11WithOther3x3, PatchWelding3x3,
-    testing::Values(std::tuple{ "11", "12", 3, 5 }, 
-                    std::tuple{ "11", "13", 3, 5 }, 
-                    std::tuple{ "11", "14", 3, 5 }, 
+    testing::Values(std::tuple{ "11", "12", 3, 5 },
+                    std::tuple{ "11", "13", 3, 5 },
+                    std::tuple{ "11", "14", 3, 5 },
                     std::tuple{ "11", "15", 3, 5 },
                     std::tuple{ "12", "11", 5, 3 },
                     std::tuple{ "13", "11", 5, 3 },
@@ -148,16 +148,16 @@ INSTANTIATE_TEST_CASE_P(WeldPatch11WithOther3x3, PatchWelding3x3,
 
 // Patch 16 is sharing a column
 INSTANTIATE_TEST_CASE_P(WeldPatch16WithOther3x3, PatchWelding3x3,
-    testing::Values(std::tuple{ "16", "17", 3, 5 }, 
-                    std::tuple{ "16", "18", 3, 5 }, 
-                    std::tuple{ "16", "19", 3, 5 }, 
+    testing::Values(std::tuple{ "16", "17", 3, 5 },
+                    std::tuple{ "16", "18", 3, 5 },
+                    std::tuple{ "16", "19", 3, 5 },
                     std::tuple{ "16", "20", 3, 5 },
                     std::tuple{ "17", "16", 5, 3 },
                     std::tuple{ "18", "16", 5, 3 },
                     std::tuple{ "19", "16", 5, 3 },
                     std::tuple{ "20", "16", 5, 3 }));
 
-// Patch 4 = worldspawn, Patch 7 = func_static 
+// Patch 4 = worldspawn, Patch 7 = func_static
 TEST_F(PatchWeldingTest, TryToWeldPatchesOfDifferentParents)
 {
     loadMap("weld_patches.mapx");
@@ -223,7 +223,7 @@ TEST_F(PatchWeldingTest, WeldedPatchInheritsSelectionGroups)
     // After merging we expect the merged patch to have the same groups as patch 1 had
     auto mergedNode = performPatchWelding("1", "2");
     auto mergedNodeSelectionGroup = std::dynamic_pointer_cast<IGroupSelectable>(firstPatch);
-    
+
     EXPECT_EQ(mergedNodeSelectionGroup->getGroupIds(), firstPatchGroups);
 }
 
@@ -337,7 +337,7 @@ TEST_F(PatchWeldingTest, WeldingIsUndoable)
     }
 
     GlobalCommandSystem().executeCommand("WeldSelectedPatches");
-    
+
     // Patch 2 should be gone now
     EXPECT_TRUE(findPatchWithNumber("1")); // this is the merged patch
     EXPECT_FALSE(findPatchWithNumber("2"));

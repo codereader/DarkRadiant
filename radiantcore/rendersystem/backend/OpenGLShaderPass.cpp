@@ -670,8 +670,8 @@ void OpenGLShaderPass::renderAllContained(const Renderables& renderables,
                                           const Vector3& viewer,
                                           std::size_t time)
 {
-    // Keep a copy of the last transform matrix and render entity used
-    Matrix4 transform = Matrix4::getIdentity();
+    // Keep a pointer to the last transform matrix used
+    const Matrix4* transform = nullptr;
 
     glPushMatrix();
 
@@ -680,16 +680,16 @@ void OpenGLShaderPass::renderAllContained(const Renderables& renderables,
     {
         // If the current iteration's transform matrix was different from the
         // last, apply it and store for the next iteration
-        if (!transform.isAffineEqual(r.transform))
+        if (!transform || !transform->isAffineEqual(r.transform))
         {
-            transform = r.transform;
+            transform = &r.transform;
             glPopMatrix();
             glPushMatrix();
-            glMultMatrixd(transform);
+            glMultMatrixd(*transform);
 
             // Determine the face direction
             if (current.testRenderFlag(RENDER_CULLFACE)
-                && transform.getHandedness() == Matrix4::RIGHTHANDED)
+                && transform->getHandedness() == Matrix4::RIGHTHANDED)
             {
                 glFrontFace(GL_CW);
             }
@@ -704,7 +704,7 @@ void OpenGLShaderPass::renderAllContained(const Renderables& renderables,
         const RendererLight* light = r.light;
         if (current.glProgram && light)
         {
-            setUpLightingCalculation(current, light, viewer, transform, time);
+            setUpLightingCalculation(current, light, viewer, *transform, time);
         }
 
         // Render the renderable
