@@ -35,30 +35,65 @@ void ShaderSystemInterface::foreachMaterial(MaterialVisitor& visitor)
 		std::bind(&ShaderNameToShaderWrapper::visit, &adaptor, std::placeholders::_1));
 }
 
-ScriptShader ShaderSystemInterface::getMaterial(const std::string& name)
+ScriptMaterial ShaderSystemInterface::getMaterial(const std::string& name)
 {
-	return ScriptShader(GlobalMaterialManager().getMaterial(name));
+	return ScriptMaterial(GlobalMaterialManager().getMaterial(name));
+}
+
+bool ShaderSystemInterface::materialExists(const std::string& name)
+{
+    return GlobalMaterialManager().materialExists(name);
+}
+
+bool ShaderSystemInterface::materialCanBeModified(const std::string& name)
+{
+    return GlobalMaterialManager().materialCanBeModified(name);
+}
+
+ScriptMaterial ShaderSystemInterface::createEmptyMaterial(const std::string& name)
+{
+    return ScriptMaterial(GlobalMaterialManager().createEmptyMaterial(name));
+}
+
+ScriptMaterial ShaderSystemInterface::copyMaterial(const std::string& nameOfOriginal, const std::string& nameOfCopy)
+{
+    return ScriptMaterial(GlobalMaterialManager().copyMaterial(nameOfOriginal, nameOfCopy));
+}
+
+bool ShaderSystemInterface::renameMaterial(const std::string& oldName, const std::string& newName)
+{
+    return GlobalMaterialManager().renameMaterial(oldName, newName);
+}
+
+void ShaderSystemInterface::removeMaterial(const std::string& name)
+{
+    GlobalMaterialManager().removeMaterial(name);
+}
+
+void ShaderSystemInterface::saveMaterial(const std::string& name)
+{
+    GlobalMaterialManager().saveMaterial(name);
 }
 
 // IScriptInterface implementation
 void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globals)
 {
-	// Add the declaration for a Shader object
-	py::class_<ScriptShader> shader(scope, "Material");
+	// Add the declaration for a Material object
+	py::class_<ScriptMaterial> material(scope, "Material");
 
     // Add the old name as alias
-    scope.add_object("Shader", shader);
+    scope.add_object("Shader", material);
 
-	shader.def(py::init<const MaterialPtr&>());
-	shader.def("getName", &ScriptShader::getName);
-	shader.def("getShaderFileName", &ScriptShader::getShaderFileName);
-	shader.def("getDescription", &ScriptShader::getDescription);
-	shader.def("getDefinition", &ScriptShader::getDefinition);
-	shader.def("isVisible", &ScriptShader::isVisible);
-	shader.def("isAmbientLight", &ScriptShader::isAmbientLight);
-	shader.def("isBlendLight", &ScriptShader::isBlendLight);
-	shader.def("isFogLight", &ScriptShader::isFogLight);
-	shader.def("isNull", &ScriptShader::isNull);
+	material.def(py::init<const MaterialPtr&>());
+	material.def("getName", &ScriptMaterial::getName);
+	material.def("getShaderFileName", &ScriptMaterial::getShaderFileName);
+	material.def("getDescription", &ScriptMaterial::getDescription);
+	material.def("getDefinition", &ScriptMaterial::getDefinition);
+	material.def("isVisible", &ScriptMaterial::isVisible);
+	material.def("isAmbientLight", &ScriptMaterial::isAmbientLight);
+	material.def("isBlendLight", &ScriptMaterial::isBlendLight);
+	material.def("isFogLight", &ScriptMaterial::isFogLight);
+	material.def("isNull", &ScriptMaterial::isNull);
 
 	// Expose the MaterialVisitor interface
 
@@ -71,6 +106,13 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
 
 	materialManager.def("foreachMaterial", &ShaderSystemInterface::foreachMaterial);
 	materialManager.def("getMaterial", &ShaderSystemInterface::getMaterial);
+	materialManager.def("materialExists", &ShaderSystemInterface::materialExists);
+	materialManager.def("materialCanBeModified", &ShaderSystemInterface::materialCanBeModified);
+	materialManager.def("createEmptyMaterial", &ShaderSystemInterface::createEmptyMaterial);
+	materialManager.def("copyMaterial", &ShaderSystemInterface::copyMaterial);
+	materialManager.def("renameMaterial", &ShaderSystemInterface::renameMaterial);
+	materialManager.def("removeMaterial", &ShaderSystemInterface::removeMaterial);
+	materialManager.def("saveMaterial", &ShaderSystemInterface::saveMaterial);
 
     scope.add_object("ShaderVisitor", visitor); // old compatibility name
 	materialManager.def("foreachShader", &ShaderSystemInterface::foreachMaterial); // old compatibility name

@@ -10,14 +10,14 @@ namespace script
 {
 
 /**
- * This class represents a single Shader as seen by the Python script.
+ * This class represents a single Material as seen by the Python script.
  */
-class ScriptShader
+class ScriptMaterial
 {
 	// The contained shader (can be NULL)
 	MaterialPtr _shader;
 public:
-	ScriptShader(const MaterialPtr& shader) :
+    ScriptMaterial(const MaterialPtr& shader) :
 		_shader(shader)
 	{}
 
@@ -81,7 +81,7 @@ public:
 			void,			/* Return type */
             MaterialVisitor,    /* Parent class */
 			visit,			/* Name of function in C++ (must match Python name) */
-			ScriptShader(shader)			/* Argument(s) */
+			ScriptMaterial(shader)			/* Argument(s) */
 		);
 	}
 };
@@ -94,7 +94,14 @@ class ShaderSystemInterface :
 {
 public:
 	void foreachMaterial(MaterialVisitor& visitor);
-	ScriptShader getMaterial(const std::string& name);
+	ScriptMaterial getMaterial(const std::string& name);
+    bool materialExists(const std::string& name);
+    bool materialCanBeModified(const std::string& name);
+    ScriptMaterial createEmptyMaterial(const std::string& name);
+    ScriptMaterial copyMaterial(const std::string& nameOfOriginal, const std::string& nameOfCopy);
+    bool renameMaterial(const std::string& oldName, const std::string& newName);
+    void removeMaterial(const std::string& name);
+    void saveMaterial(const std::string& name);
 
 	// IScriptInterface implementation
 	void registerInterface(py::module& scope, py::dict& globals) override;
