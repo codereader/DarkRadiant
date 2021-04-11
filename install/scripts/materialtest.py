@@ -44,6 +44,7 @@ print('Surface Flags: {0}'.format(newMaterial.getSurfaceFlags()))
 print('Deform Type: {0}'.format(newMaterial.getDeformType()))
 print('Deform Expression #1: {0}'.format(newMaterial.getDeformExpressionString(0)))
 print('Deform Decl Name: {0}'.format(newMaterial.getDeformDeclName()))
+print('Spectrum: {0}'.format(newMaterial.getSpectrum()))
 
 # There are a couple of pre-defined sort requests, corresponding to the engine code
 newMaterial.setSortRequest(dr.Material.SortRequest.NEAREST)
@@ -54,6 +55,7 @@ newMaterial.setMaterialFlag(dr.Material.Flag.NOSHADOWS)
 newMaterial.setSurfaceFlag(dr.Material.SurfaceFlag.LADDER)
 newMaterial.setSurfaceFlag(dr.Material.SurfaceFlag.NONSOLID)
 newMaterial.setSurfaceType(dr.Material.SurfaceType.WOOD)
+newMaterial.setSpectrum(5)
 
 print('Full Material definition:\n{0}\n{{{1}}}'.format(newMaterial.getName(), newMaterial.getDefinition()))
 

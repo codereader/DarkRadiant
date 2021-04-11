@@ -229,6 +229,8 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
     material.def("getDeformType", &ScriptMaterial::getDeformType);
     material.def("getDeformExpressionString", &ScriptMaterial::getDeformExpressionString);
     material.def("getDeformDeclName", &ScriptMaterial::getDeformDeclName);
+    material.def("getSpectrum", &ScriptMaterial::getSpectrum);
+    material.def("setSpectrum", &ScriptMaterial::setSpectrum);
 
 	// Expose the MaterialVisitor interface
 
