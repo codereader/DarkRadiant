@@ -1,6 +1,7 @@
 #include "ShaderSystemInterface.h"
 
 #include <functional>
+#include <pybind11/stl.h>
 
 namespace script
 {
@@ -209,6 +210,13 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
         .value("TRANSLUCENT", Material::MC_TRANSLUCENT)
         .export_values();
 
+    py::enum_<IShaderLayer::Type>(stage, "Type")
+        .value("DIFFUSE", IShaderLayer::Type::DIFFUSE)
+        .value("BUMP", IShaderLayer::Type::BUMP)
+        .value("SPECULAR", IShaderLayer::Type::SPECULAR)
+        .value("BLEND", IShaderLayer::Type::BLEND)
+        .export_values();
+
     py::enum_<IShaderLayer::MapType>(stage, "MapType")
         .value("Map", IShaderLayer::MapType::Map)
         .value("CubeMap", IShaderLayer::MapType::CubeMap)
@@ -273,6 +281,13 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
     material.def("getRenderBumpFlatArguments", &ScriptMaterial::getRenderBumpFlatArguments);
     material.def("isModified", &ScriptMaterial::isModified);
     material.def("revertModifications", &ScriptMaterial::revertModifications);
+    material.def("getAllStages", &ScriptMaterial::getAllStages);
+    material.def("getNumStages", &ScriptMaterial::getNumStages);
+    material.def("getStage", &ScriptMaterial::getStage);
+    material.def("addStage", &ScriptMaterial::addStage);
+    material.def("removeStage", &ScriptMaterial::removeStage);
+    material.def("duplicateStage", &ScriptMaterial::duplicateStage);
+    material.def("swapStagePosition", &ScriptMaterial::swapStagePosition);
 
 	// Expose the MaterialVisitor interface
 

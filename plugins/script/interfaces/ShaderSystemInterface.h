@@ -58,6 +58,58 @@ public:
         _material->setDescription(description);
     }
 
+    std::vector<ScriptMaterialStage> getAllStages()
+    {
+        std::vector<ScriptMaterialStage> list;
+
+        if (!_material) return list;
+
+        for (const auto& layer : _material->getAllLayers())
+        {
+            list.emplace_back(layer);
+        }
+
+        return list;
+    }
+
+    std::size_t getNumStages()
+    {
+        return _material ? _material->getAllLayers().size() : 0;
+    }
+
+    ScriptMaterialStage getStage(int index)
+    {
+        if (!_material) return ScriptMaterialStage(IShaderLayer::Ptr());
+
+        const auto& layers = _material->getAllLayers();
+        
+        return ScriptMaterialStage(index >= 0 && index < layers.size() ? layers[index] : IShaderLayer::Ptr());
+    }
+
+    std::size_t addStage(IShaderLayer::Type type)
+    {
+        throwIfMaterialCannotBeModified();
+        return _material->addLayer(type);
+    }
+
+    void removeStage(std::size_t index)
+    {
+        throwIfMaterialCannotBeModified();
+        _material->removeLayer(index);
+    }
+
+    std::size_t duplicateStage(std::size_t index)
+    {
+        throwIfMaterialCannotBeModified();
+        return _material->duplicateLayer(index);
+    }
+
+    void swapStagePosition(std::size_t first, std::size_t second)
+    {
+        throwIfMaterialCannotBeModified();
+        _material->swapLayerPosition(first, second);
+    }
+
 	std::string getDefinition() {
 		return _material ? _material->getDefinition() : "";
 	}

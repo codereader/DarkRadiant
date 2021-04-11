@@ -67,6 +67,25 @@ newMaterial.setIsFogLight(1)
 newMaterial.setIsBlendLight(0)
 newMaterial.setDescription("New Material")
 
+stageIndex = newMaterial.addStage(dr.MaterialStage.Type.BLEND)
+
+print('Material has now {0} stages'.format(newMaterial.getNumStages()))
+
+for stage in newMaterial.getAllStages():
+    print('Stage iterated')
+
+newMaterial.removeStage(stageIndex)
+
+diffuseStageIndex = newMaterial.addStage(dr.MaterialStage.Type.DIFFUSE)
+diffuseStage = newMaterial.getStage(diffuseStageIndex)
+
+bumpStageIndex = newMaterial.duplicateStage(diffuseStageIndex)
+bumpStage = newMaterial.getStage(bumpStageIndex)
+
+print('Material has now {0} stages'.format(newMaterial.getNumStages()))
+
+newMaterial.swapStagePosition(diffuseStageIndex, bumpStageIndex)
+
 print("The new material has been modified" if newMaterial.isModified() else "The new material is not modified?")
 
 print('\n\nFull Material definition:\n{0}\n{{{1}}}\n\n'.format(newMaterial.getName(), newMaterial.getDefinition()))
