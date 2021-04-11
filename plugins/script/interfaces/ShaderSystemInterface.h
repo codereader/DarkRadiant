@@ -218,6 +218,11 @@ public:
         return _material ? _material->getDecalInfo() : Material::DecalInfo();
     }
 
+    Material::Coverage getCoverage()
+    {
+        return _material ? _material->getCoverage() : Material::MC_UNDETERMINED;
+    }
+
 private:
     void throwIfMaterialCannotBeModified()
     {

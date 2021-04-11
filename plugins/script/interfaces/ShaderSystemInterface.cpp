@@ -201,6 +201,13 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
     decalInfo.def_readwrite("startColour", &Material::DecalInfo::startColour);
     decalInfo.def_readwrite("endColour", &Material::DecalInfo::endColour);
 
+    py::enum_<Material::Coverage>(material, "Coverage")
+        .value("UNDETERMINED", Material::MC_UNDETERMINED)
+        .value("OPAQUE", Material::MC_OPAQUE)
+        .value("PERFORATED", Material::MC_PERFORATED)
+        .value("TRANSLUCENT", Material::MC_TRANSLUCENT)
+        .export_values();
+
 	material.def(py::init<const MaterialPtr&>());
 	material.def("getName", &ScriptMaterial::getName);
 	material.def("getShaderFileName", &ScriptMaterial::getShaderFileName);
@@ -239,6 +246,7 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
     material.def("getSpectrum", &ScriptMaterial::getSpectrum);
     material.def("setSpectrum", &ScriptMaterial::setSpectrum);
     material.def("getDecalInfo", &ScriptMaterial::getDecalInfo);
+    material.def("getCoverage", &ScriptMaterial::getCoverage);
 
 	// Expose the MaterialVisitor interface
 
