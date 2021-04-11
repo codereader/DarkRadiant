@@ -82,6 +82,7 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
 	// Add the declaration for a Material and Stage object
 	py::class_<ScriptMaterial> material(scope, "Material");
 	py::class_<ScriptMaterialStage> stage(scope, "MaterialStage");
+	py::class_<ScriptEditableMaterialStage, ScriptMaterialStage> editableStage(scope, "EditableMaterialStage");
 
     // Add the old name as alias
     scope.add_object("Shader", material);
@@ -284,6 +285,7 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
     material.def("getAllStages", &ScriptMaterial::getAllStages);
     material.def("getNumStages", &ScriptMaterial::getNumStages);
     material.def("getStage", &ScriptMaterial::getStage);
+    material.def("getEditableStage", &ScriptMaterial::getEditableStage);
     material.def("addStage", &ScriptMaterial::addStage);
     material.def("removeStage", &ScriptMaterial::removeStage);
     material.def("duplicateStage", &ScriptMaterial::duplicateStage);
@@ -374,6 +376,11 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
     stage.def("getVertexParm", &ScriptMaterialStage::getVertexParm);
     stage.def("getFragmentMap", &ScriptMaterialStage::getFragmentMap);
     stage.def("getPrivatePolygonOffset", &ScriptMaterialStage::getPrivatePolygonOffset);
+
+    // Stage edit interface
+    stage.def(py::init<const IEditableShaderLayer::Ptr&>());
+    editableStage.def("setStageFlag", &ScriptEditableMaterialStage::setStageFlag);
+    editableStage.def("clearStageFlag", &ScriptEditableMaterialStage::clearStageFlag);
 
 	// Expose the MaterialVisitor interface
 

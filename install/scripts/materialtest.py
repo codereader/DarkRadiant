@@ -81,6 +81,11 @@ bumpStage = newMaterial.getStage(bumpStageIndex)
 
 print('Material has now {0} stages'.format(newMaterial.getNumStages()))
 
+# Edit some stage parameters
+editableDiffuseStage = newMaterial.getEditableStage(diffuseStageIndex)
+editableDiffuseStage.setStageFlag(dr.MaterialStage.Flag.IGNORE_ALPHATEST)
+editableDiffuseStage.clearStageFlag(dr.MaterialStage.Flag.FILTER_LINEAR)
+
 for stage in newMaterial.getAllStages():
     print('Stage type: {0}'.format(stage.getType()))
     print('Stage map type: {0}'.format(stage.getMapType()))

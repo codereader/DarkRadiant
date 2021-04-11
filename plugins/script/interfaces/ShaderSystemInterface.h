@@ -191,6 +191,30 @@ public:
     }
 };
 
+// Editable shader stage interface
+class ScriptEditableMaterialStage :
+    public ScriptMaterialStage
+{
+private:
+    IEditableShaderLayer::Ptr _layer;
+
+public:
+    ScriptEditableMaterialStage(const IEditableShaderLayer::Ptr& layer) :
+        ScriptMaterialStage(layer),
+        _layer(layer)
+    {}
+
+    void setStageFlag(IShaderLayer::Flags flag)
+    {
+        if (_layer) _layer->setStageFlag(flag);
+    }
+
+    void clearStageFlag(IShaderLayer::Flags flag)
+    {
+        if (_layer) _layer->clearStageFlag(flag);
+    }
+};
+
 /**
  * This class represents a single Material as seen by the Python script.
  */
@@ -246,13 +270,21 @@ public:
         return _material ? _material->getAllLayers().size() : 0;
     }
 
-    ScriptMaterialStage getStage(int index)
+    ScriptMaterialStage getStage(std::size_t index)
     {
         if (!_material) return ScriptMaterialStage(IShaderLayer::Ptr());
 
         const auto& layers = _material->getAllLayers();
         
         return ScriptMaterialStage(index >= 0 && index < layers.size() ? layers[index] : IShaderLayer::Ptr());
+    }
+
+    ScriptEditableMaterialStage getEditableStage(std::size_t index)
+    {
+        throwIfMaterialCannotBeModified();
+
+        return ScriptEditableMaterialStage(index >= 0 && index < getNumStages() ? 
+            _material->getEditableLayer(index) : IEditableShaderLayer::Ptr());
     }
 
     std::size_t addStage(IShaderLayer::Type type)
