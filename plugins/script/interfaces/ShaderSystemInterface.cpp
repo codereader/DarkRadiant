@@ -181,6 +181,19 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
         .value("SURFTYPE15", Material::SURFTYPE_15)
         .export_values();
 
+    py::enum_<Material::DeformType>(material, "DeformType")
+        .value("NONE", Material::DEFORM_NONE)
+        .value("SPRITE", Material::DEFORM_SPRITE)
+        .value("TUBE", Material::DEFORM_TUBE)
+        .value("FLARE", Material::DEFORM_FLARE)
+        .value("EXPAND", Material::DEFORM_EXPAND)
+        .value("MOVE", Material::DEFORM_MOVE)
+        .value("TURBULENT", Material::DEFORM_TURBULENT)
+        .value("EYEBALL", Material::DEFORM_EYEBALL)
+        .value("PARTICLE", Material::DEFORM_PARTICLE)
+        .value("PARTICLE2", Material::DEFORM_PARTICLE2)
+        .export_values();
+
 	material.def(py::init<const MaterialPtr&>());
 	material.def("getName", &ScriptMaterial::getName);
 	material.def("getShaderFileName", &ScriptMaterial::getShaderFileName);
@@ -213,6 +226,9 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
 	material.def("clearSurfaceFlag", &ScriptMaterial::clearSurfaceFlag);
     material.def("getSurfaceType", &ScriptMaterial::getSurfaceType);
     material.def("setSurfaceType", &ScriptMaterial::setSurfaceType);
+    material.def("getDeformType", &ScriptMaterial::getDeformType);
+    material.def("getDeformExpressionString", &ScriptMaterial::getDeformExpressionString);
+    material.def("getDeformDeclName", &ScriptMaterial::getDeformDeclName);
 
 	// Expose the MaterialVisitor interface
 

@@ -41,6 +41,9 @@ print('Cull type: {0}'.format(newMaterial.getCullType()))
 print('Clamp type: {0}'.format(newMaterial.getClampType()))
 print('Flags: {0}'.format(newMaterial.getMaterialFlags()))
 print('Surface Flags: {0}'.format(newMaterial.getSurfaceFlags()))
+print('Deform Type: {0}'.format(newMaterial.getDeformType()))
+print('Deform Expression #1: {0}'.format(newMaterial.getDeformExpressionString(0)))
+print('Deform Decl Name: {0}'.format(newMaterial.getDeformDeclName()))
 
 # There are a couple of pre-defined sort requests, corresponding to the engine code
 newMaterial.setSortRequest(dr.Material.SortRequest.NEAREST)

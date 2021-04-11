@@ -186,6 +186,25 @@ public:
         if (_material) _material->setSurfaceType(type);
     }
 
+    /// Get the deform type of this material
+    Material::DeformType getDeformType()
+    {
+        return _material ? _material->getDeformType() : Material::DEFORM_NONE;
+    }
+
+    // Returns the shader expression used to define the deform parameters (valid indices in [0..2])
+    std::string getDeformExpressionString(std::size_t index)
+    {
+        return _material && _material->getDeformExpression(index) ? 
+            _material->getDeformExpression(index)->getExpressionString() : std::string();
+    }
+
+    // Used for Deform_Particle/Particle2 defines the name of the particle def
+    std::string getDeformDeclName()
+    {
+        return _material ? _material->getDeformDeclName() : std::string();
+    }
+
 private:
     void throwIfMaterialCannotBeModified()
     {
