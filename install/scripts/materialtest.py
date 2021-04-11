@@ -96,6 +96,9 @@ for stage in newMaterial.getAllStages():
     print('Stage colour expression RGB: {0}'.format(stage.getColourExpressionString(dr.MaterialStage.ColourComponent.RGB)))
     print('Stage colour expression RGBA: {0}'.format(stage.getColourExpressionString(dr.MaterialStage.ColourComponent.RGBA)))
     print('Stage vertex colour mode: {0}'.format(stage.getVertexColourMode()))
+    print('Stage render map size: {0}'.format(stage.getRenderMapSize()))
+    print('Stage alpha test expression: {0}'.format(stage.getAlphaTestExpressionString()))
+    print('Stage condition expression: {0}'.format(stage.getConditionExpressionString()))
 
     for transform in stage.getTransformations():
         print('Stage transform type: {0}'.format(transform.type))

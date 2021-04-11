@@ -355,6 +355,9 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
     stage.def("getVertexColourMode", &ScriptMaterialStage::getVertexColourMode);
     stage.def("getMapType", &ScriptMaterialStage::getMapType);
     stage.def("getTransformations", &ScriptMaterialStage::getTransformations);
+    stage.def("getRenderMapSize", &ScriptMaterialStage::getRenderMapSize);
+    stage.def("getAlphaTestExpressionString", &ScriptMaterialStage::getAlphaTestExpressionString);
+    stage.def("getConditionExpressionString", &ScriptMaterialStage::getConditionExpressionString);
 
 	// Expose the MaterialVisitor interface
 

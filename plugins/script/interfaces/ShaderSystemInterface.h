@@ -91,6 +91,23 @@ public:
 
         return list;
     }
+
+    Vector2 getRenderMapSize()
+    {
+        return _layer ? _layer->getRenderMapSize() : Vector2(0,0);
+    }
+
+    std::string getAlphaTestExpressionString()
+    {
+        return _layer && _layer->getAlphaTestExpression() ?
+            _layer->getAlphaTestExpression()->getExpressionString() : std::string();
+    }
+    
+    std::string getConditionExpressionString()
+    {
+        return _layer && _layer->getConditionExpression() ?
+            _layer->getConditionExpression()->getExpressionString() : std::string();
+    }
 };
 
 /**
