@@ -14,52 +14,73 @@ namespace script
  */
 class ScriptMaterial
 {
-	// The contained shader (can be NULL)
-	MaterialPtr _shader;
+	// The contained shader (can be empty)
+	MaterialPtr _material;
 public:
-    ScriptMaterial(const MaterialPtr& shader) :
-		_shader(shader)
+    ScriptMaterial(const MaterialPtr& material) :
+		_material(material)
 	{}
 
 	operator const MaterialPtr&() const {
-		return _shader;
+		return _material;
 	}
 
 	std::string getName() {
-		return (_shader != NULL) ? _shader->getName() : "";
+		return _material ? _material->getName() : "";
 	}
 
 	std::string getShaderFileName() {
-		return (_shader != NULL) ? _shader->getShaderFileName() : "";
+		return _material ? _material->getShaderFileName() : "";
 	}
 
 	std::string getDescription() {
-		return (_shader != NULL) ? _shader->getDescription() : "";
+		return _material ? _material->getDescription() : "";
 	}
 
 	std::string getDefinition() {
-		return (_shader != NULL) ? _shader->getDefinition() : "";
+		return _material ? _material->getDefinition() : "";
 	}
 
 	bool isVisible() {
-		return (_shader != NULL) ? _shader->isVisible() : false;
+		return _material ? _material->isVisible() : false;
 	}
 
 	bool isAmbientLight() {
-		return (_shader != NULL) ? _shader->isAmbientLight() : false;
+		return _material ? _material->isAmbientLight() : false;
 	}
 
 	bool isBlendLight() {
-		return (_shader != NULL) ? _shader->isBlendLight() : false;
+		return _material ? _material->isBlendLight() : false;
 	}
 
 	bool isFogLight() {
-		return (_shader != NULL) ? _shader->isFogLight() : false;
+		return _material ? _material->isFogLight() : false;
 	}
 
 	bool isNull() const {
-		return _shader == NULL;
+		return _material == nullptr;
 	}
+
+    std::string getEditorImageExpressionString()
+    {
+        return _material && _material->getEditorImageExpression() ? 
+            _material->getEditorImageExpression()->getExpressionString() : std::string();
+    }
+
+    void setEditorImageExpressionFromString(const std::string& editorImagePath)
+    {
+        throwIfMaterialCannotBeModified();
+        _material->setEditorImageExpressionFromString(editorImagePath);
+    }
+
+private:
+    void throwIfMaterialCannotBeModified()
+    {
+        if (!_material || !GlobalMaterialManager().materialCanBeModified(_material->getName()))
+        {
+            throw std::runtime_error("Material cannot be modified");
+        }
+    }
 };
 
 class MaterialVisitor

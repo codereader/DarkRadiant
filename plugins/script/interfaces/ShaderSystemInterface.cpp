@@ -94,6 +94,8 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
 	material.def("isBlendLight", &ScriptMaterial::isBlendLight);
 	material.def("isFogLight", &ScriptMaterial::isFogLight);
 	material.def("isNull", &ScriptMaterial::isNull);
+	material.def("getEditorImageExpressionString", &ScriptMaterial::getEditorImageExpressionString);
+	material.def("setEditorImageExpressionFromString", &ScriptMaterial::setEditorImageExpressionFromString);
 
 	// Expose the MaterialVisitor interface
 
