@@ -36,7 +36,7 @@ public:
     {
         rMessage() << getName() << "::initialiseModule called." << std::endl;
 
-        GlobalCommandSystem().addCommand("MaterialEditor", MaterialEditor::ShowDialog);
+        GlobalCommandSystem().addCommand("MaterialEditor", MaterialEditor::ShowDialog, { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
 
         // Bind the command to the menu
         GlobalMenuManager().add("main/entity", 	// menu location path

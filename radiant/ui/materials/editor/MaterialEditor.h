@@ -86,13 +86,16 @@ private:
     bool _materialUpdateInProgress;
     bool _lightUpdateInProgress;
 
+    std::string _materialToPreselect;
+
 private:
     MaterialEditor();
     ~MaterialEditor();
 
-    int ShowModal() override;
-
 public:
+    int ShowModal() override;
+    int ShowModal(const std::string& materialToPreselect);
+
     static void ShowDialog(const cmd::ArgumentList& args);
 
     void _onClose(wxCommandEvent& ev);

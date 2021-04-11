@@ -174,8 +174,6 @@ MaterialEditor::MaterialEditor() :
 
     CenterOnParent();
 
-    _treeView->Populate();
-
     updateControlsFromMaterial();
 }
 
@@ -203,12 +201,26 @@ int MaterialEditor::ShowModal()
     // Restore the position
     _windowPosition.applyPosition();
 
+    _treeView->Populate();
+
+    if (!_materialToPreselect.empty())
+    {
+        _treeView->SetSelectedFullname(_materialToPreselect);
+    }
+
     int returnCode = DialogBase::ShowModal();
 
     // Tell the position tracker to save the information
     _windowPosition.saveToPath(RKEY_WINDOW_STATE);
 
     return returnCode;
+}
+
+int MaterialEditor::ShowModal(const std::string& materialToPreselect)
+{
+    _materialToPreselect = materialToPreselect;
+
+    return ShowModal();
 }
 
 void MaterialEditor::setupSourceTextPanel(wxWindow* previewPanel)
@@ -328,7 +340,14 @@ void MaterialEditor::ShowDialog(const cmd::ArgumentList& args)
 {
     auto* editor = new MaterialEditor;
 
-    editor->ShowModal();
+    std::string materialToPreselect;
+
+    if (!args.empty())
+    {
+        materialToPreselect = args[0].getString();
+    }
+
+    editor->ShowModal(materialToPreselect);
     editor->Destroy();
 }
 
