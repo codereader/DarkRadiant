@@ -388,6 +388,10 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
     editableStage.def("addTransformation", &ScriptEditableMaterialStage::addTransformation);
     editableStage.def("removeTransformation", &ScriptEditableMaterialStage::removeTransformation);
     editableStage.def("updateTransformation", &ScriptEditableMaterialStage::updateTransformation);
+    editableStage.def("setColourExpressionFromString", &ScriptEditableMaterialStage::setColourExpressionFromString);
+    editableStage.def("setConditionExpressionFromString", &ScriptEditableMaterialStage::setConditionExpressionFromString);
+    editableStage.def("setTexGenType", &ScriptEditableMaterialStage::setTexGenType);
+    editableStage.def("setTexGenExpressionFromString", &ScriptEditableMaterialStage::setTexGenExpressionFromString);
 
 	// Expose the MaterialVisitor interface
 

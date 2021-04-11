@@ -249,6 +249,26 @@ public:
     {
         if (_layer) _layer->updateTransformation(index, type, expression1, expression2);
     }
+    
+    void setColourExpressionFromString(IShaderLayer::ColourComponentSelector component, const std::string& expression)
+    {
+        if (_layer) _layer->setColourExpressionFromString(component, expression);
+    }
+
+    void setConditionExpressionFromString(const std::string& expression)
+    {
+        if (_layer) _layer->setConditionExpressionFromString(expression);
+    }
+
+    void setTexGenType(IShaderLayer::TexGenType type)
+    {
+        if (_layer) _layer->setTexGenType(type);
+    }
+
+    void setTexGenExpressionFromString(std::size_t index, const std::string& expression)
+    {
+        if (_layer) _layer->setTexGenExpressionFromString(index, expression);
+    }
 };
 
 /**
