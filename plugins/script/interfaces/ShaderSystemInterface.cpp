@@ -130,6 +130,37 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
         .value("ISLIGHTGEMSURF", Material::FLAG_ISLIGHTGEMSURF)
         .export_values();
 
+    py::enum_<Material::SurfaceFlags>(material, "SurfaceFlag")
+        .value("SOLID", Material::SURF_SOLID)
+        .value("OPAQUE", Material::SURF_OPAQUE)
+        .value("WATER", Material::SURF_WATER)
+        .value("PLAYERCLIP", Material::SURF_PLAYERCLIP)
+        .value("MONSTERCLIP", Material::SURF_MONSTERCLIP)
+        .value("MOVEABLECLIP", Material::SURF_MOVEABLECLIP)
+        .value("IKCLIP", Material::SURF_IKCLIP)
+        .value("BLOOD", Material::SURF_BLOOD)
+        .value("TRIGGER", Material::SURF_TRIGGER)
+        .value("AASSOLID", Material::SURF_AASSOLID)
+        .value("AASOBSTACLE", Material::SURF_AASOBSTACLE)
+        .value("FLASHLIGHT_TRIGGER", Material::SURF_FLASHLIGHT_TRIGGER)
+        .value("NONSOLID", Material::SURF_NONSOLID)
+        .value("NULLNORMAL", Material::SURF_NULLNORMAL)
+        .value("AREAPORTAL", Material::SURF_AREAPORTAL)
+        .value("NOCARVE", Material::SURF_NOCARVE)
+        .value("DISCRETE", Material::SURF_DISCRETE)
+        .value("NOFRAGMENT", Material::SURF_NOFRAGMENT)
+        .value("SLICK", Material::SURF_SLICK)
+        .value("COLLISION", Material::SURF_COLLISION)
+        .value("NOIMPACT", Material::SURF_NOIMPACT)
+        .value("NODAMAGE", Material::SURF_NODAMAGE)
+        .value("LADDER", Material::SURF_LADDER)
+        .value("NOSTEPS", Material::SURF_NOSTEPS)
+        .value("GUISURF", Material::SURF_GUISURF)
+        .value("ENTITYGUI", Material::SURF_ENTITYGUI)
+        .value("ENTITYGUI2", Material::SURF_ENTITYGUI2)
+        .value("ENTITYGUI3", Material::SURF_ENTITYGUI3)
+        .export_values();
+
 	material.def(py::init<const MaterialPtr&>());
 	material.def("getName", &ScriptMaterial::getName);
 	material.def("getShaderFileName", &ScriptMaterial::getShaderFileName);
@@ -157,6 +188,9 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
 	material.def("getMaterialFlags", &ScriptMaterial::getMaterialFlags);
 	material.def("setMaterialFlag", &ScriptMaterial::setMaterialFlag);
 	material.def("clearMaterialFlag", &ScriptMaterial::clearMaterialFlag);
+	material.def("getSurfaceFlags", &ScriptMaterial::getSurfaceFlags);
+	material.def("setSurfaceFlag", &ScriptMaterial::setSurfaceFlag);
+	material.def("clearSurfaceFlag", &ScriptMaterial::clearSurfaceFlag);
 
 	// Expose the MaterialVisitor interface
 

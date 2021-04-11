@@ -39,6 +39,7 @@ newMaterial.setSortRequest(45.3)
 print('Cull type: {0}'.format(newMaterial.getCullType()))
 print('Clamp type: {0}'.format(newMaterial.getClampType()))
 print('Flags: {0}'.format(newMaterial.getMaterialFlags()))
+print('Surface Flags: {0}'.format(newMaterial.getSurfaceFlags()))
 
 # There are a couple of pre-defined sort requests, corresponding to the engine code
 newMaterial.setSortRequest(dr.Material.SortRequest.NEAREST)
@@ -46,12 +47,15 @@ newMaterial.setClampType(dr.Material.ClampType.NOREPEAT) # clamp
 newMaterial.setCullType(dr.Material.CullType.NONE) # twosided
 newMaterial.setPolygonOffset(0.3)
 newMaterial.setMaterialFlag(dr.Material.Flag.NOSHADOWS)
+newMaterial.setSurfaceFlag(dr.Material.SurfaceFlag.LADDER)
+newMaterial.setSurfaceFlag(dr.Material.SurfaceFlag.NONSOLID)
 
 print('Full Material definition:\n{0}\n{{{1}}}'.format(newMaterial.getName(), newMaterial.getDefinition()))
 
 GlobalMaterialManager.saveMaterial(newMaterial.getName())
 
 newMaterial.clearMaterialFlag(dr.Material.Flag.NOSHADOWS)
+newMaterial.clearSurfaceFlag(dr.Material.SurfaceFlag.NONSOLID)
 
 fullPath = GlobalFileSystem.findFile(filename) + filename
 print(fullPath)
