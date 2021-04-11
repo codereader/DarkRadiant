@@ -108,6 +108,11 @@ for stage in newMaterial.getAllStages():
         print('Stage transform expression1: {0}'.format(transform.expression1))
         print('Stage transform expression2: {0}'.format(transform.expression2))
 
+    for v in range(0, stage.getNumVertexParms()):
+        parm = stage.getVertexParm(v)
+        print('Stage Vertex Parm #{0}: {1}'.format(parm.index, ' '.join(parm.expressions)))
+
+
 newMaterial.swapStagePosition(diffuseStageIndex, bumpStageIndex)
 
 print("The new material has been modified" if newMaterial.isModified() else "The new material is not modified?")

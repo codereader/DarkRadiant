@@ -338,10 +338,13 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
         .export_values();
 
     py::class_<ScriptMaterialStage::Transformation> stageTransform(stage, "Transformation");
-
     stageTransform.def_readwrite("type", &ScriptMaterialStage::Transformation::type);
     stageTransform.def_readwrite("expression1", &ScriptMaterialStage::Transformation::expression1);
     stageTransform.def_readwrite("expression2", &ScriptMaterialStage::Transformation::expression2);
+
+    py::class_<ScriptMaterialStage::VertexParm> stageVertexParm(stage, "VertexParm");
+    stageVertexParm.def_readwrite("index", &ScriptMaterialStage::VertexParm::index);
+    stageVertexParm.def_readwrite("expressions", &ScriptMaterialStage::VertexParm::expressions);
 
     // Shader Stage
     stage.def(py::init<const IShaderLayer::Ptr&>());
@@ -362,6 +365,7 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
     stage.def("getFragmentProgram", &ScriptMaterialStage::getFragmentProgram);
     stage.def("getNumVertexParms", &ScriptMaterialStage::getNumVertexParms);
     stage.def("getNumFragmentMaps", &ScriptMaterialStage::getNumFragmentMaps);
+    stage.def("getVertexParm", &ScriptMaterialStage::getVertexParm);
 
 	// Expose the MaterialVisitor interface
 

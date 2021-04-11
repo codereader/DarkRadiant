@@ -119,14 +119,42 @@ public:
         return _layer ? _layer->getFragmentProgram() : std::string();
     }
 
-    int getNumVertexParms()
+    std::size_t getNumVertexParms()
     {
         return _layer ? _layer->getNumVertexParms() : 0;
     }
 
-    int getNumFragmentMaps()
+    std::size_t getNumFragmentMaps()
     {
         return _layer ? _layer->getNumFragmentMaps() : 0;
+    }
+
+    struct VertexParm
+    {
+        std::size_t index;
+        std::vector<std::string> expressions;
+    };
+
+    VertexParm getVertexParm(int index)
+    {
+        VertexParm parm;
+
+        if (_layer && index >= 0 && index < 4)
+        {
+            const auto& vp = _layer->getVertexParm(index);
+            
+            parm.index = vp.index;
+
+            for (auto i = 0; i < 4; ++i)
+            {
+                if (vp.expressions[i])
+                {
+                    parm.expressions.emplace_back(vp.expressions[i]->getExpressionString());
+                }
+            }
+        }
+
+        return parm;
     }
 };
 
