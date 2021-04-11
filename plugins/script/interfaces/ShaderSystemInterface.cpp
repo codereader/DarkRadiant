@@ -161,6 +161,26 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
         .value("ENTITYGUI3", Material::SURF_ENTITYGUI3)
         .export_values();
 
+    py::enum_<Material::SurfaceType>(material, "SurfaceType")
+        .value("DEFAULT", Material::SURFTYPE_DEFAULT)
+        .value("METAL", Material::SURFTYPE_METAL)
+        .value("STONE", Material::SURFTYPE_STONE)
+        .value("FLESH", Material::SURFTYPE_FLESH)
+        .value("WOOD", Material::SURFTYPE_WOOD)
+        .value("CARDBOARD", Material::SURFTYPE_CARDBOARD)
+        .value("LIQUID", Material::SURFTYPE_LIQUID)
+        .value("GLASS", Material::SURFTYPE_GLASS)
+        .value("PLASTIC", Material::SURFTYPE_PLASTIC)
+        .value("RICOCHET", Material::SURFTYPE_RICOCHET)
+        .value("AASOBSTACLE", Material::SURFTYPE_AASOBSTACLE)
+        .value("SURFTYPE10", Material::SURFTYPE_10)
+        .value("SURFTYPE11", Material::SURFTYPE_11)
+        .value("SURFTYPE12", Material::SURFTYPE_12)
+        .value("SURFTYPE13", Material::SURFTYPE_13)
+        .value("SURFTYPE14", Material::SURFTYPE_14)
+        .value("SURFTYPE15", Material::SURFTYPE_15)
+        .export_values();
+
 	material.def(py::init<const MaterialPtr&>());
 	material.def("getName", &ScriptMaterial::getName);
 	material.def("getShaderFileName", &ScriptMaterial::getShaderFileName);
@@ -191,6 +211,8 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
 	material.def("getSurfaceFlags", &ScriptMaterial::getSurfaceFlags);
 	material.def("setSurfaceFlag", &ScriptMaterial::setSurfaceFlag);
 	material.def("clearSurfaceFlag", &ScriptMaterial::clearSurfaceFlag);
+    material.def("getSurfaceType", &ScriptMaterial::getSurfaceType);
+    material.def("setSurfaceType", &ScriptMaterial::setSurfaceType);
 
 	// Expose the MaterialVisitor interface
 

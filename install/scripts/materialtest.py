@@ -36,6 +36,7 @@ newMaterial.setEditorImageExpressionFromString('textures/common/caulk')
 
 newMaterial.setSortRequest(45.3)
 
+print('Surface Type: {0}'.format(newMaterial.getSurfaceType()))
 print('Cull type: {0}'.format(newMaterial.getCullType()))
 print('Clamp type: {0}'.format(newMaterial.getClampType()))
 print('Flags: {0}'.format(newMaterial.getMaterialFlags()))
@@ -49,6 +50,7 @@ newMaterial.setPolygonOffset(0.3)
 newMaterial.setMaterialFlag(dr.Material.Flag.NOSHADOWS)
 newMaterial.setSurfaceFlag(dr.Material.SurfaceFlag.LADDER)
 newMaterial.setSurfaceFlag(dr.Material.SurfaceFlag.NONSOLID)
+newMaterial.setSurfaceType(dr.Material.SurfaceType.WOOD)
 
 print('Full Material definition:\n{0}\n{{{1}}}'.format(newMaterial.getName(), newMaterial.getDefinition()))
 
@@ -56,6 +58,7 @@ GlobalMaterialManager.saveMaterial(newMaterial.getName())
 
 newMaterial.clearMaterialFlag(dr.Material.Flag.NOSHADOWS)
 newMaterial.clearSurfaceFlag(dr.Material.SurfaceFlag.NONSOLID)
+newMaterial.setSurfaceType(dr.Material.SurfaceType.DEFAULT)
 
 fullPath = GlobalFileSystem.findFile(filename) + filename
 print(fullPath)

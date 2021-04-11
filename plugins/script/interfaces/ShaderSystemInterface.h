@@ -175,6 +175,17 @@ public:
         if (_material) _material->clearSurfaceFlag(flag);
     }
 
+    Material::SurfaceType getSurfaceType()
+    {
+        return _material ? _material->getSurfaceType() : Material::SURFTYPE_DEFAULT;
+    }
+
+    void setSurfaceType(Material::SurfaceType type)
+    {
+        throwIfMaterialCannotBeModified();
+        if (_material) _material->setSurfaceType(type);
+    }
+
 private:
     void throwIfMaterialCannotBeModified()
     {
