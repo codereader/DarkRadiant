@@ -329,6 +329,20 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
         .value("INVERSE_MULTIPLY", IShaderLayer::VERTEX_COLOUR_INVERSE_MULTIPLY)
         .export_values();
 
+    py::enum_<IShaderLayer::TransformType>(stage, "TransformType")
+        .value("TRANSLATE", IShaderLayer::TransformType::Translate)
+        .value("SCALE", IShaderLayer::TransformType::Scale)
+        .value("ROTATE", IShaderLayer::TransformType::Rotate)
+        .value("CENTERSCALE", IShaderLayer::TransformType::CenterScale)
+        .value("SHEAR", IShaderLayer::TransformType::Shear)
+        .export_values();
+
+    py::class_<ScriptMaterialStage::Transformation> stageTransform(stage, "Transformation");
+
+    stageTransform.def_readwrite("type", &ScriptMaterialStage::Transformation::type);
+    stageTransform.def_readwrite("expression1", &ScriptMaterialStage::Transformation::expression1);
+    stageTransform.def_readwrite("expression2", &ScriptMaterialStage::Transformation::expression2);
+
     // Shader Stage
     stage.def(py::init<const IShaderLayer::Ptr&>());
     stage.def("getType", &ScriptMaterialStage::getType);
@@ -340,6 +354,7 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
     stage.def("getColourExpressionString", &ScriptMaterialStage::getColourExpressionString);
     stage.def("getVertexColourMode", &ScriptMaterialStage::getVertexColourMode);
     stage.def("getMapType", &ScriptMaterialStage::getMapType);
+    stage.def("getTransformations", &ScriptMaterialStage::getTransformations);
 
 	// Expose the MaterialVisitor interface
 

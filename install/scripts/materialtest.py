@@ -97,6 +97,11 @@ for stage in newMaterial.getAllStages():
     print('Stage colour expression RGBA: {0}'.format(stage.getColourExpressionString(dr.MaterialStage.ColourComponent.RGBA)))
     print('Stage vertex colour mode: {0}'.format(stage.getVertexColourMode()))
 
+    for transform in stage.getTransformations():
+        print('Stage transform type: {0}'.format(transform.type))
+        print('Stage transform expression1: {0}'.format(transform.expression1))
+        print('Stage transform expression2: {0}'.format(transform.expression2))
+
 newMaterial.swapStagePosition(diffuseStageIndex, bumpStageIndex)
 
 print("The new material has been modified" if newMaterial.isModified() else "The new material is not modified?")

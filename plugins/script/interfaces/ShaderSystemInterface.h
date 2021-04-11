@@ -15,6 +15,13 @@ private:
     IShaderLayer::Ptr _layer;
 
 public:
+    struct Transformation
+    {
+        IShaderLayer::TransformType type;
+        std::string expression1;
+        std::string expression2;
+    };
+
     ScriptMaterialStage(const IShaderLayer::Ptr& layer) :
         _layer(layer)
     {}
@@ -64,6 +71,25 @@ public:
     IShaderLayer::MapType getMapType()
     {
         return _layer ? _layer->getMapType() : IShaderLayer::MapType::Map;
+    }
+
+    std::vector<Transformation> getTransformations()
+    {
+        std::vector<Transformation> list;
+
+        if (!_layer) return list;
+
+        for (const auto& transform : _layer->getTransformations())
+        {
+            list.emplace_back(Transformation
+            {
+                transform.type,
+                transform.expression1 ? transform.expression1->getExpressionString() : "",
+                transform.expression2 ? transform.expression2->getExpressionString() : "",
+            });
+        }
+
+        return list;
     }
 };
 
