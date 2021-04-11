@@ -213,6 +213,42 @@ public:
     {
         if (_layer) _layer->clearStageFlag(flag);
     }
+
+    void setMapType(IShaderLayer::MapType mapType)
+    {
+        if (_layer) _layer->setMapType(mapType);
+    }
+
+    void setBlendFuncStrings(const std::pair<std::string, std::string>& pair)
+    {
+        if (_layer) _layer->setBlendFuncStrings(pair);
+    }
+
+    void setAlphaTestExpressionFromString(const std::string& expression)
+    {
+        if (_layer) _layer->setAlphaTestExpressionFromString(expression);
+    }
+
+    void setMapExpressionFromString(const std::string& expression)
+    {
+        if (_layer) _layer->setMapExpressionFromString(expression);
+    }
+
+    std::size_t addTransformation(IShaderLayer::TransformType type, const std::string& expression1, const std::string& expression2)
+    {
+        return _layer ? _layer->addTransformation(type, expression1, expression2) : -1;
+    }
+
+    void removeTransformation(std::size_t index)
+    {
+        if (_layer) _layer->removeTransformation(index);
+    }
+
+    void updateTransformation(std::size_t index, IShaderLayer::TransformType type,
+        const std::string& expression1, const std::string& expression2)
+    {
+        if (_layer) _layer->updateTransformation(index, type, expression1, expression2);
+    }
 };
 
 /**

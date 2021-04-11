@@ -381,6 +381,13 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
     stage.def(py::init<const IEditableShaderLayer::Ptr&>());
     editableStage.def("setStageFlag", &ScriptEditableMaterialStage::setStageFlag);
     editableStage.def("clearStageFlag", &ScriptEditableMaterialStage::clearStageFlag);
+    editableStage.def("setMapType", &ScriptEditableMaterialStage::setMapType);
+    editableStage.def("setMapExpressionFromString", &ScriptEditableMaterialStage::setMapExpressionFromString);
+    editableStage.def("setBlendFuncStrings", &ScriptEditableMaterialStage::setBlendFuncStrings);
+    editableStage.def("setAlphaTestExpressionFromString", &ScriptEditableMaterialStage::setAlphaTestExpressionFromString);
+    editableStage.def("addTransformation", &ScriptEditableMaterialStage::addTransformation);
+    editableStage.def("removeTransformation", &ScriptEditableMaterialStage::removeTransformation);
+    editableStage.def("updateTransformation", &ScriptEditableMaterialStage::updateTransformation);
 
 	// Expose the MaterialVisitor interface
 
