@@ -156,6 +156,29 @@ public:
 
         return parm;
     }
+
+    struct FragmentMap
+    {
+        int index = -1;
+        std::vector<std::string> options;
+        std::string mapExpression;
+    };
+
+    FragmentMap getFragmentMap(int index)
+    {
+        FragmentMap map;
+
+        if (_layer && index >= 0 && index < _layer->getNumFragmentMaps())
+        {
+            const auto& fm = _layer->getFragmentMap(index);
+
+            map.index = fm.index;
+            map.options = fm.options;
+            map.mapExpression = fm.map ? fm.map->getExpressionString() : std::string();
+        }
+
+        return map;
+    }
 };
 
 /**

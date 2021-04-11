@@ -346,6 +346,11 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
     stageVertexParm.def_readwrite("index", &ScriptMaterialStage::VertexParm::index);
     stageVertexParm.def_readwrite("expressions", &ScriptMaterialStage::VertexParm::expressions);
 
+    py::class_<ScriptMaterialStage::FragmentMap> stageFragmentMap(stage, "FragmentMap");
+    stageFragmentMap.def_readwrite("index", &ScriptMaterialStage::FragmentMap::index);
+    stageFragmentMap.def_readwrite("options", &ScriptMaterialStage::FragmentMap::options);
+    stageFragmentMap.def_readwrite("mapExpression", &ScriptMaterialStage::FragmentMap::mapExpression);
+
     // Shader Stage
     stage.def(py::init<const IShaderLayer::Ptr&>());
     stage.def("getType", &ScriptMaterialStage::getType);
@@ -366,6 +371,7 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
     stage.def("getNumVertexParms", &ScriptMaterialStage::getNumVertexParms);
     stage.def("getNumFragmentMaps", &ScriptMaterialStage::getNumFragmentMaps);
     stage.def("getVertexParm", &ScriptMaterialStage::getVertexParm);
+    stage.def("getFragmentMap", &ScriptMaterialStage::getFragmentMap);
 
 	// Expose the MaterialVisitor interface
 

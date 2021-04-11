@@ -112,6 +112,10 @@ for stage in newMaterial.getAllStages():
         parm = stage.getVertexParm(v)
         print('Stage Vertex Parm #{0}: {1}'.format(parm.index, ' '.join(parm.expressions)))
 
+    for f in range(0, stage.getNumFragmentMaps()):
+        fm = stage.getFragmentMap(f)
+        print('Stage Fragment Map #{0}: {1} {2}'.format(fm.index, ' '.join(fm.options), fm.mapExpression))
+
 
 newMaterial.swapStagePosition(diffuseStageIndex, bumpStageIndex)
 
