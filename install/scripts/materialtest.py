@@ -72,7 +72,12 @@ stageIndex = newMaterial.addStage(dr.MaterialStage.Type.BLEND)
 print('Material has now {0} stages'.format(newMaterial.getNumStages()))
 
 for stage in newMaterial.getAllStages():
-    print('Stage of type {0} iterated'.format(stage.getType()))
+    print('Stage type: {0}'.format(stage.getType()))
+    print('Stage flags: {0}'.format(stage.getStageFlags()))
+    print('Stage clamp type: {0}'.format(stage.getClampType()))
+    print('Stage texgen type: {0}'.format(stage.getTexGenType()))
+    print('Stage texgen param #1: {0}'.format(stage.getTexGenParam(0)))
+    print('Stage texgen expression #1: {0}'.format(stage.getTexGenExpressionString(0)))
 
 newMaterial.removeStage(stageIndex)
 

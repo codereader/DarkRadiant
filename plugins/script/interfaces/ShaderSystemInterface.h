@@ -28,6 +28,27 @@ public:
     {
         return _layer ? _layer->getStageFlags() : 0;
     }
+
+    ClampType getClampType()
+    {
+        return _layer ? _layer->getClampType() : CLAMP_REPEAT;
+    }
+
+    IShaderLayer::TexGenType getTexGenType()
+    {
+        return _layer ? _layer->getTexGenType() : IShaderLayer::TEXGEN_NORMAL;
+    }
+
+    float getTexGenParam(std::size_t index)
+    {
+        return _layer && index < 2 ? _layer->getTexGenParam(index) : 0;
+    }
+
+    std::string getTexGenExpressionString(std::size_t index)
+    {
+        return _layer && index < 2 && _layer->getTexGenExpression(index) ? 
+            _layer->getTexGenExpression(index)->getExpressionString() : std::string();
+    }
 };
 
 /**

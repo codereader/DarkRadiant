@@ -305,10 +305,23 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
         .value("IGNORE_DEPTH", IShaderLayer::FLAG_IGNORE_DEPTH)
         .export_values();
 
+    // Texgen enum
+    py::enum_<IShaderLayer::TexGenType>(stage, "TexGenType")
+        .value("NORMAL", IShaderLayer::TEXGEN_NORMAL)
+        .value("REFLECT", IShaderLayer::TEXGEN_REFLECT)
+        .value("SCREEN", IShaderLayer::TEXGEN_SCREEN)
+        .value("SKYBOX", IShaderLayer::TEXGEN_SKYBOX)
+        .value("WOBBLESKY", IShaderLayer::TEXGEN_WOBBLESKY)
+        .export_values();
+
     // Shader Stage
     stage.def(py::init<const IShaderLayer::Ptr&>());
     stage.def("getType", &ScriptMaterialStage::getType);
     stage.def("getStageFlags", &ScriptMaterialStage::getStageFlags);
+    stage.def("getClampType", &ScriptMaterialStage::getClampType);
+    stage.def("getTexGenType", &ScriptMaterialStage::getTexGenType);
+    stage.def("getTexGenParam", &ScriptMaterialStage::getTexGenParam);
+    stage.def("getTexGenExpressionString", &ScriptMaterialStage::getTexGenExpressionString);
 
 	// Expose the MaterialVisitor interface
 
