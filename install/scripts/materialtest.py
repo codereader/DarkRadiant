@@ -71,14 +71,6 @@ stageIndex = newMaterial.addStage(dr.MaterialStage.Type.BLEND)
 
 print('Material has now {0} stages'.format(newMaterial.getNumStages()))
 
-for stage in newMaterial.getAllStages():
-    print('Stage type: {0}'.format(stage.getType()))
-    print('Stage flags: {0}'.format(stage.getStageFlags()))
-    print('Stage clamp type: {0}'.format(stage.getClampType()))
-    print('Stage texgen type: {0}'.format(stage.getTexGenType()))
-    print('Stage texgen param #1: {0}'.format(stage.getTexGenParam(0)))
-    print('Stage texgen expression #1: {0}'.format(stage.getTexGenExpressionString(0)))
-
 newMaterial.removeStage(stageIndex)
 
 diffuseStageIndex = newMaterial.addStage(dr.MaterialStage.Type.DIFFUSE)
@@ -88,6 +80,20 @@ bumpStageIndex = newMaterial.duplicateStage(diffuseStageIndex)
 bumpStage = newMaterial.getStage(bumpStageIndex)
 
 print('Material has now {0} stages'.format(newMaterial.getNumStages()))
+
+for stage in newMaterial.getAllStages():
+    print('Stage type: {0}'.format(stage.getType()))
+    print('Stage flags: {0}'.format(stage.getStageFlags()))
+    print('Stage clamp type: {0}'.format(stage.getClampType()))
+    print('Stage texgen type: {0}'.format(stage.getTexGenType()))
+    print('Stage texgen expression #1: {0}'.format(stage.getTexGenExpressionString(0)))
+    print('Stage blend func strings: {0},{1}'.format(stage.getBlendFuncStrings()[0], stage.getBlendFuncStrings()[1]))
+    print('Stage colour expression RED: {0}'.format(stage.getColourExpressionString(dr.MaterialStage.ColourComponent.RED)))
+    print('Stage colour expression GREEN: {0}'.format(stage.getColourExpressionString(dr.MaterialStage.ColourComponent.GREEN)))
+    print('Stage colour expression BLUE: {0}'.format(stage.getColourExpressionString(dr.MaterialStage.ColourComponent.BLUE)))
+    print('Stage colour expression ALPHA: {0}'.format(stage.getColourExpressionString(dr.MaterialStage.ColourComponent.ALPHA)))
+    print('Stage colour expression RGB: {0}'.format(stage.getColourExpressionString(dr.MaterialStage.ColourComponent.RGB)))
+    print('Stage colour expression RGBA: {0}'.format(stage.getColourExpressionString(dr.MaterialStage.ColourComponent.RGBA)))
 
 newMaterial.swapStagePosition(diffuseStageIndex, bumpStageIndex)
 

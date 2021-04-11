@@ -314,14 +314,24 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
         .value("WOBBLESKY", IShaderLayer::TEXGEN_WOBBLESKY)
         .export_values();
 
+    py::enum_<IShaderLayer::ColourComponentSelector>(stage, "ColourComponent")
+        .value("RED", IShaderLayer::COMP_RED)
+        .value("GREEN", IShaderLayer::COMP_GREEN)
+        .value("BLUE", IShaderLayer::COMP_BLUE)
+        .value("ALPHA", IShaderLayer::COMP_ALPHA)
+        .value("RGB", IShaderLayer::COMP_RGB)
+        .value("RGBA", IShaderLayer::COMP_RGBA)
+        .export_values();
+
     // Shader Stage
     stage.def(py::init<const IShaderLayer::Ptr&>());
     stage.def("getType", &ScriptMaterialStage::getType);
+    stage.def("getBlendFuncStrings", &ScriptMaterialStage::getBlendFuncStrings);
     stage.def("getStageFlags", &ScriptMaterialStage::getStageFlags);
     stage.def("getClampType", &ScriptMaterialStage::getClampType);
     stage.def("getTexGenType", &ScriptMaterialStage::getTexGenType);
-    stage.def("getTexGenParam", &ScriptMaterialStage::getTexGenParam);
     stage.def("getTexGenExpressionString", &ScriptMaterialStage::getTexGenExpressionString);
+    stage.def("getColourExpressionString", &ScriptMaterialStage::getColourExpressionString);
 
 	// Expose the MaterialVisitor interface
 

@@ -24,6 +24,11 @@ public:
         return _layer ? _layer->getType() : IShaderLayer::BLEND;
     }
 
+    std::pair<std::string, std::string> getBlendFuncStrings()
+    {
+        return _layer ? _layer->getBlendFuncStrings() : std::pair<std::string, std::string>();
+    }
+
     int getStageFlags()
     {
         return _layer ? _layer->getStageFlags() : 0;
@@ -39,15 +44,16 @@ public:
         return _layer ? _layer->getTexGenType() : IShaderLayer::TEXGEN_NORMAL;
     }
 
-    float getTexGenParam(std::size_t index)
-    {
-        return _layer && index < 2 ? _layer->getTexGenParam(index) : 0;
-    }
-
     std::string getTexGenExpressionString(std::size_t index)
     {
         return _layer && index < 2 && _layer->getTexGenExpression(index) ? 
             _layer->getTexGenExpression(index)->getExpressionString() : std::string();
+    }
+
+    std::string getColourExpressionString(IShaderLayer::ColourComponentSelector component)
+    {
+        return _layer && _layer->getColourExpression(component) ?
+            _layer->getColourExpression(component)->getExpressionString() : std::string();
     }
 };
 
