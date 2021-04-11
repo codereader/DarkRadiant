@@ -87,6 +87,7 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
 	material.def(py::init<const MaterialPtr&>());
 	material.def("getName", &ScriptMaterial::getName);
 	material.def("getShaderFileName", &ScriptMaterial::getShaderFileName);
+	material.def("setShaderFileName", &ScriptMaterial::setShaderFileName);
 	material.def("getDescription", &ScriptMaterial::getDescription);
 	material.def("getDefinition", &ScriptMaterial::getDefinition);
 	material.def("isVisible", &ScriptMaterial::isVisible);

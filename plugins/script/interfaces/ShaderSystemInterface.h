@@ -33,6 +33,12 @@ public:
 		return _material ? _material->getShaderFileName() : "";
 	}
 
+    void setShaderFileName(const std::string& filename)
+    {
+        throwIfMaterialCannotBeModified();
+        if (_material) _material->setShaderFileName(filename);
+    }
+
 	std::string getDescription() {
 		return _material ? _material->getDescription() : "";
 	}

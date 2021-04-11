@@ -1,3 +1,5 @@
+import os
+
 # Some interface tests
 
 print("bc_rat can be modified" if GlobalMaterialManager.materialCanBeModified('bc_rat') else "bc_rat cannot be modified")
@@ -27,7 +29,15 @@ print("The rename operation was successful" if renameResult else "The rename ope
 # Do something with the new material
 print('The existing material reference now has the name {0}'.format(newMaterial.getName()))
 
+filename = 'materials/_python_test.mtr'
+newMaterial.setShaderFileName(filename)
 newMaterial.setEditorImageExpressionFromString('textures/common/caulk')
+
+GlobalMaterialManager.saveMaterial(newMaterial.getName())
+
+fullPath = GlobalFileSystem.findFile(filename) + filename
+print(fullPath)
+os.remove(fullPath)
 
 print("Removing {0} again...".format(newMaterial.getName()))
 GlobalMaterialManager.removeMaterial(newMaterial.getName())
