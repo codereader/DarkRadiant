@@ -39,10 +39,10 @@ public:
         GlobalCommandSystem().addCommand("MaterialEditor", MaterialEditor::ShowDialog, { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
 
         // Bind the command to the menu
-        GlobalMenuManager().add("main/entity", 	// menu location path
+        GlobalMenuManager().add("main/map", 	// menu location path
             "MaterialEditor", // name
             ui::menu::ItemType::Item,	// type
-            _("Material Editor (experimental)..."),	// caption
+            _("Material Editor..."),	// caption
             "icon_texture.png",	// icon
             "MaterialEditor"); // event name
     }

@@ -20,6 +20,9 @@ namespace
      
     constexpr const char* const SHOW_SHADER_DEF_TEXT = N_("Show Shader Definition");
     constexpr const char* const SHOW_SHADER_DEF_ICON = "icon_script.png";
+
+    constexpr const char* const OPEN_IN_MATERIAL_EDITOR_TEXT = N_("Open in Material Editor");
+    constexpr const char* const OPEN_IN_MATERIAL_EDITOR_ICON = "edit.png";
      
     constexpr const char* const SELECT_ITEMS = N_("Select elements using this shader");
     constexpr const char* const DESELECT_ITEMS = N_("Deselect elements using this shader");
@@ -49,6 +52,14 @@ void MediaBrowserTreeView::PopulateContextMenu(wxutil::PopupMenu& popupMenu)
     popupMenu.addItem(
         new wxutil::IconTextMenuItem(_(SHOW_SHADER_DEF_TEXT), SHOW_SHADER_DEF_ICON),
         std::bind(&MediaBrowserTreeView::_onShowShaderDefinition, this),
+        std::bind(&MediaBrowserTreeView::_testSingleTexSel, this)
+    );
+    popupMenu.addItem(
+        new wxutil::IconTextMenuItem(_(OPEN_IN_MATERIAL_EDITOR_TEXT), OPEN_IN_MATERIAL_EDITOR_ICON),
+        [this]()
+        {
+            GlobalCommandSystem().executeCommand("MaterialEditor", cmd::ArgumentList{ GetSelectedFullname() });
+        },
         std::bind(&MediaBrowserTreeView::_testSingleTexSel, this)
     );
     popupMenu.addItem(
