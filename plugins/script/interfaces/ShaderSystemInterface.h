@@ -280,6 +280,32 @@ public:
         if (_material) _material->setLightFalloffCubeMapType(type);
     }
 
+    std::string getRenderBumpArguments()
+    {
+        return _material ? _material->getRenderBumpArguments() : std::string();
+    }
+
+    std::string getRenderBumpFlatArguments()
+    {
+        return _material ? _material->getRenderBumpFlatArguments() : std::string();
+    }
+
+    std::string getGuiSurfArgument()
+    {
+        return _material ? _material->getGuiSurfArgument() : std::string();
+    }
+
+    bool isModified()
+    {
+        return _material ? _material->isModified() : false;
+    }
+
+    void revertModifications()
+    {
+        throwIfMaterialCannotBeModified();
+        if (_material) _material->revertModifications();
+    }
+
 private:
     void throwIfMaterialCannotBeModified()
     {

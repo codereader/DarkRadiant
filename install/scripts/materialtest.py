@@ -51,6 +51,7 @@ print('DecalInfo.startColour: {0}'.format(newMaterial.getDecalInfo().startColour
 print('DecalInfo.endColour: {0}'.format(newMaterial.getDecalInfo().endColour))
 print('Coverage: {0}'.format(newMaterial.getCoverage()))
 print('Light Falloff Map Type: {0}'.format(newMaterial.getLightFalloffCubeMapType()))
+print('Renderbump Arguments: {0}'.format(newMaterial.getRenderBumpArguments()))
 
 # There are a couple of pre-defined sort requests, corresponding to the engine code
 newMaterial.setSortRequest(dr.Material.SortRequest.NEAREST)
@@ -66,9 +67,13 @@ newMaterial.setIsFogLight(1)
 newMaterial.setIsBlendLight(0)
 newMaterial.setDescription("New Material")
 
-print('Full Material definition:\n{0}\n{{{1}}}'.format(newMaterial.getName(), newMaterial.getDefinition()))
+print("The new material has been modified" if newMaterial.isModified() else "The new material is not modified?")
+
+print('\n\nFull Material definition:\n{0}\n{{{1}}}\n\n'.format(newMaterial.getName(), newMaterial.getDefinition()))
 
 GlobalMaterialManager.saveMaterial(newMaterial.getName())
+
+print("After save, the material is not modified" if not newMaterial.isModified() else "After save, the material is still modified?")
 
 newMaterial.clearMaterialFlag(dr.Material.Flag.NOSHADOWS)
 newMaterial.clearSurfaceFlag(dr.Material.SurfaceFlag.NONSOLID)

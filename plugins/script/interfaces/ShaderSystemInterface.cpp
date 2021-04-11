@@ -267,6 +267,11 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
     material.def("setLightFalloffExpressionFromString", &ScriptMaterial::setLightFalloffExpressionFromString);
     material.def("getLightFalloffCubeMapType", &ScriptMaterial::getLightFalloffCubeMapType);
     material.def("setLightFalloffCubeMapType", &ScriptMaterial::setLightFalloffCubeMapType);
+    material.def("getGuiSurfArgument", &ScriptMaterial::getGuiSurfArgument);
+    material.def("getRenderBumpArguments", &ScriptMaterial::getRenderBumpArguments);
+    material.def("getRenderBumpFlatArguments", &ScriptMaterial::getRenderBumpFlatArguments);
+    material.def("isModified", &ScriptMaterial::isModified);
+    material.def("revertModifications", &ScriptMaterial::revertModifications);
 
 	// Expose the MaterialVisitor interface
 
