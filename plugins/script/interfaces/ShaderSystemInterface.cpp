@@ -358,6 +358,10 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
     stage.def("getRenderMapSize", &ScriptMaterialStage::getRenderMapSize);
     stage.def("getAlphaTestExpressionString", &ScriptMaterialStage::getAlphaTestExpressionString);
     stage.def("getConditionExpressionString", &ScriptMaterialStage::getConditionExpressionString);
+    stage.def("getVertexProgram", &ScriptMaterialStage::getVertexProgram);
+    stage.def("getFragmentProgram", &ScriptMaterialStage::getFragmentProgram);
+    stage.def("getNumVertexParms", &ScriptMaterialStage::getNumVertexParms);
+    stage.def("getNumFragmentMaps", &ScriptMaterialStage::getNumFragmentMaps);
 
 	// Expose the MaterialVisitor interface
 

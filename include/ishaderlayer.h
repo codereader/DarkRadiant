@@ -320,7 +320,7 @@ public:
     virtual const shaders::IShaderExpression::Ptr& getConditionExpression() const = 0;
 
 	/**
-	 * Returns the name of this stage's fragment program.
+	 * Returns the name of this stage's vertex program.
 	 */
 	virtual const std::string& getVertexProgram()const = 0;
 

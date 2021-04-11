@@ -108,6 +108,26 @@ public:
         return _layer && _layer->getConditionExpression() ?
             _layer->getConditionExpression()->getExpressionString() : std::string();
     }
+
+    std::string getVertexProgram()
+    {
+        return _layer ? _layer->getVertexProgram() : std::string();
+    }
+    
+    std::string getFragmentProgram()
+    {
+        return _layer ? _layer->getFragmentProgram() : std::string();
+    }
+
+    int getNumVertexParms()
+    {
+        return _layer ? _layer->getNumVertexParms() : 0;
+    }
+
+    int getNumFragmentMaps()
+    {
+        return _layer ? _layer->getNumFragmentMaps() : 0;
+    }
 };
 
 /**
