@@ -36,6 +36,11 @@ public:
         return _layer ? _layer->getBlendFuncStrings() : std::pair<std::string, std::string>();
     }
 
+    std::string getMapExpressionString()
+    {
+        return _layer && _layer->getMapExpression() ? _layer->getMapExpression()->getExpressionString() : std::string();
+    }
+
     int getStageFlags()
     {
         return _layer ? _layer->getStageFlags() : 0;
@@ -178,6 +183,11 @@ public:
         }
 
         return map;
+    }
+
+    float getPrivatePolygonOffset()
+    {
+        return _layer ? _layer->getPrivatePolygonOffset() : 0;
     }
 };
 

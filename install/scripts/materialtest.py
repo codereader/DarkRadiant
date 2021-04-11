@@ -84,6 +84,7 @@ print('Material has now {0} stages'.format(newMaterial.getNumStages()))
 for stage in newMaterial.getAllStages():
     print('Stage type: {0}'.format(stage.getType()))
     print('Stage map type: {0}'.format(stage.getMapType()))
+    print('Stage map expression: {0}'.format(stage.getMapExpressionString()))
     print('Stage flags: {0}'.format(stage.getStageFlags()))
     print('Stage clamp type: {0}'.format(stage.getClampType()))
     print('Stage texgen type: {0}'.format(stage.getTexGenType()))
@@ -102,6 +103,7 @@ for stage in newMaterial.getAllStages():
     print('Stage vertex program: {0}'.format(stage.getVertexProgram()))
     print('Stage fragment program: {0}'.format(stage.getFragmentProgram()))
     print('Stage has {0} vertex parameters and {1} fragment maps'.format(stage.getNumVertexParms(), stage.getNumFragmentMaps()))
+    print('Stage private polygon offset: {0}'.format(stage.getPrivatePolygonOffset()))
 
     for transform in stage.getTransformations():
         print('Stage transform type: {0}'.format(transform.type))

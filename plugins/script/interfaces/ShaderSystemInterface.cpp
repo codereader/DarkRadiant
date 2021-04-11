@@ -355,6 +355,7 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
     stage.def(py::init<const IShaderLayer::Ptr&>());
     stage.def("getType", &ScriptMaterialStage::getType);
     stage.def("getBlendFuncStrings", &ScriptMaterialStage::getBlendFuncStrings);
+    stage.def("getMapExpressionString", &ScriptMaterialStage::getMapExpressionString);
     stage.def("getStageFlags", &ScriptMaterialStage::getStageFlags);
     stage.def("getClampType", &ScriptMaterialStage::getClampType);
     stage.def("getTexGenType", &ScriptMaterialStage::getTexGenType);
@@ -372,6 +373,7 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
     stage.def("getNumFragmentMaps", &ScriptMaterialStage::getNumFragmentMaps);
     stage.def("getVertexParm", &ScriptMaterialStage::getVertexParm);
     stage.def("getFragmentMap", &ScriptMaterialStage::getFragmentMap);
+    stage.def("getPrivatePolygonOffset", &ScriptMaterialStage::getPrivatePolygonOffset);
 
 	// Expose the MaterialVisitor interface
 
