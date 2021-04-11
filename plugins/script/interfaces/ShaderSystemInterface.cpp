@@ -392,6 +392,12 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
     editableStage.def("setConditionExpressionFromString", &ScriptEditableMaterialStage::setConditionExpressionFromString);
     editableStage.def("setTexGenType", &ScriptEditableMaterialStage::setTexGenType);
     editableStage.def("setTexGenExpressionFromString", &ScriptEditableMaterialStage::setTexGenExpressionFromString);
+    editableStage.def("setVertexColourMode", &ScriptEditableMaterialStage::setVertexColourMode);
+    editableStage.def("setClampType", &ScriptEditableMaterialStage::setClampType);
+    editableStage.def("setPrivatePolygonOffset", &ScriptEditableMaterialStage::setPrivatePolygonOffset);
+    editableStage.def("setRenderMapSize", &ScriptEditableMaterialStage::setRenderMapSize);
+    editableStage.def("setSoundMapWaveForm", &ScriptEditableMaterialStage::setSoundMapWaveForm);
+    editableStage.def("setVideoMapProperties", &ScriptEditableMaterialStage::setVideoMapProperties);
 
 	// Expose the MaterialVisitor interface
 

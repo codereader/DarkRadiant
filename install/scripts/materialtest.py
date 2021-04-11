@@ -100,6 +100,15 @@ editableDiffuseStage.setTexGenType(dr.MaterialStage.TexGenType.WOBBLESKY)
 editableDiffuseStage.setTexGenExpressionFromString(0, "0.1")
 editableDiffuseStage.setTexGenExpressionFromString(1, "0.2")
 editableDiffuseStage.setTexGenExpressionFromString(2, "0.3")
+editableDiffuseStage.setVertexColourMode(dr.MaterialStage.VertexColourMode.MULTIPLY)
+editableDiffuseStage.setClampType(dr.Material.ClampType.NOREPEAT)
+editableDiffuseStage.setPrivatePolygonOffset(-1.2)
+editableDiffuseStage.setRenderMapSize(dr.Vector2(640, 480))
+
+editableBumpStage = newMaterial.getEditableStage(bumpStageIndex)
+editableBumpStage.setSoundMapWaveForm(1)
+editableBumpStage.setMapType(dr.MaterialStage.MapType.VIDEOMAP)
+editableBumpStage.setVideoMapProperties("videos/blah", 1)
 
 for stage in newMaterial.getAllStages():
     print('Stage type: {0}'.format(stage.getType()))

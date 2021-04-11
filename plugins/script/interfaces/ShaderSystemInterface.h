@@ -269,6 +269,36 @@ public:
     {
         if (_layer) _layer->setTexGenExpressionFromString(index, expression);
     }
+
+    void setVertexColourMode(IShaderLayer::VertexColourMode mode)
+    {
+        if (_layer) _layer->setVertexColourMode(mode);
+    }
+
+    void setClampType(ClampType clampType)
+    {
+        if (_layer) _layer->setClampType(clampType);
+    }
+
+    void setPrivatePolygonOffset(double offset)
+    {
+        if (_layer) _layer->setPrivatePolygonOffset(offset);
+    }
+
+    void setRenderMapSize(const Vector2& size)
+    {
+        if (_layer) _layer->setRenderMapSize(size);
+    }
+
+    void setSoundMapWaveForm(bool waveForm)
+    {
+        if (_layer) _layer->setSoundMapWaveForm(waveForm);
+    }
+
+    void setVideoMapProperties(const std::string& filePath, bool looping)
+    {
+        if (_layer) _layer->setVideoMapProperties(filePath, looping);
+    }
 };
 
 /**
