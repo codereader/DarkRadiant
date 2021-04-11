@@ -60,6 +60,11 @@ public:
     {
         return _layer ? _layer->getVertexColourMode() : IShaderLayer::VERTEX_COLOUR_NONE;
     }
+
+    IShaderLayer::MapType getMapType()
+    {
+        return _layer ? _layer->getMapType() : IShaderLayer::MapType::Map;
+    }
 };
 
 /**

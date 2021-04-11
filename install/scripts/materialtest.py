@@ -83,6 +83,7 @@ print('Material has now {0} stages'.format(newMaterial.getNumStages()))
 
 for stage in newMaterial.getAllStages():
     print('Stage type: {0}'.format(stage.getType()))
+    print('Stage map type: {0}'.format(stage.getMapType()))
     print('Stage flags: {0}'.format(stage.getStageFlags()))
     print('Stage clamp type: {0}'.format(stage.getClampType()))
     print('Stage texgen type: {0}'.format(stage.getTexGenType()))
