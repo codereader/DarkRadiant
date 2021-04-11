@@ -208,6 +208,16 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
         .value("TRANSLUCENT", Material::MC_TRANSLUCENT)
         .export_values();
 
+    py::enum_<IShaderLayer::MapType>(material, "MapType")
+        .value("Map", IShaderLayer::MapType::Map)
+        .value("CubeMap", IShaderLayer::MapType::CubeMap)
+        .value("CameraCubeMap", IShaderLayer::MapType::CameraCubeMap)
+        .value("VideoMap", IShaderLayer::MapType::VideoMap)
+        .value("SoundMap", IShaderLayer::MapType::SoundMap)
+        .value("MirrorRenderMap", IShaderLayer::MapType::MirrorRenderMap)
+        .value("RemoteRenderMap", IShaderLayer::MapType::RemoteRenderMap)
+        .export_values();
+
 	material.def(py::init<const MaterialPtr&>());
 	material.def("getName", &ScriptMaterial::getName);
 	material.def("getShaderFileName", &ScriptMaterial::getShaderFileName);
@@ -252,6 +262,10 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
     material.def("setSpectrum", &ScriptMaterial::setSpectrum);
     material.def("getDecalInfo", &ScriptMaterial::getDecalInfo);
     material.def("getCoverage", &ScriptMaterial::getCoverage);
+    material.def("getLightFalloffExpressionString", &ScriptMaterial::getLightFalloffExpressionString);
+    material.def("setLightFalloffExpressionFromString", &ScriptMaterial::setLightFalloffExpressionFromString);
+    material.def("getLightFalloffCubeMapType", &ScriptMaterial::getLightFalloffCubeMapType);
+    material.def("setLightFalloffCubeMapType", &ScriptMaterial::setLightFalloffCubeMapType);
 
 	// Expose the MaterialVisitor interface
 

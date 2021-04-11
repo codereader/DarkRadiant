@@ -251,6 +251,29 @@ public:
         return _material ? _material->getCoverage() : Material::MC_UNDETERMINED;
     }
 
+    std::string getLightFalloffExpressionString()
+    {
+        return _material && _material->getLightFalloffExpression() ?
+            _material->getLightFalloffExpression()->getExpressionString() : std::string();
+    }
+
+    void setLightFalloffExpressionFromString(const std::string& expressionString)
+    {
+        throwIfMaterialCannotBeModified();
+        if (_material) _material->setLightFalloffExpressionFromString(expressionString);
+    }
+
+    IShaderLayer::MapType getLightFalloffCubeMapType()
+    {
+        return _material ? _material->getLightFalloffCubeMapType() : IShaderLayer::MapType::Map;
+    }
+
+    void setLightFalloffCubeMapType(IShaderLayer::MapType type)
+    {
+        throwIfMaterialCannotBeModified();
+        if (_material) _material->setLightFalloffCubeMapType(type);
+    }
+
 private:
     void throwIfMaterialCannotBeModified()
     {

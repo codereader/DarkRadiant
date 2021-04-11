@@ -50,6 +50,7 @@ print('DecalInfo.fadeMilliSeconds: {0}'.format(newMaterial.getDecalInfo().fadeMi
 print('DecalInfo.startColour: {0}'.format(newMaterial.getDecalInfo().startColour))
 print('DecalInfo.endColour: {0}'.format(newMaterial.getDecalInfo().endColour))
 print('Coverage: {0}'.format(newMaterial.getCoverage()))
+print('Light Falloff Map Type: {0}'.format(newMaterial.getLightFalloffCubeMapType()))
 
 # There are a couple of pre-defined sort requests, corresponding to the engine code
 newMaterial.setSortRequest(dr.Material.SortRequest.NEAREST)
