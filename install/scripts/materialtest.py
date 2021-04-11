@@ -38,6 +38,7 @@ newMaterial.setSortRequest(45.3)
 
 # There are a couple of pre-defined sort requests, corresponding to the engine code
 newMaterial.setSortRequest(dr.Material.SortRequest.NEAREST)
+newMaterial.setPolygonOffset(0.3)
 
 print('Full Material definition:\n{0}\n{{{1}}}'.format(newMaterial.getName(), newMaterial.getDefinition()))
 

@@ -118,6 +118,9 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
 	material.def("setSortRequest", static_cast<void(ScriptMaterial::*)(float)>(&ScriptMaterial::setSortRequest));
 	material.def("setSortRequest", static_cast<void(ScriptMaterial::*)(Material::SortRequest)>(&ScriptMaterial::setSortRequest));
 	material.def("resetSortRequest", &ScriptMaterial::resetSortRequest);
+	material.def("getPolygonOffset", &ScriptMaterial::getPolygonOffset);
+	material.def("setPolygonOffset", &ScriptMaterial::setPolygonOffset);
+	material.def("clearPolygonOffset", &ScriptMaterial::clearPolygonOffset);
 
 	// Expose the MaterialVisitor interface
 

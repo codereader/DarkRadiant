@@ -102,6 +102,23 @@ public:
         if (_material) _material->resetSortRequest();
     }
 
+    float getPolygonOffset()
+    {
+        return _material ? _material->getPolygonOffset() : 0;
+    }
+
+    void setPolygonOffset(float offset)
+    {
+        throwIfMaterialCannotBeModified();
+        if (_material) _material->setPolygonOffset(offset);
+    }
+
+    void clearPolygonOffset()
+    {
+        throwIfMaterialCannotBeModified();
+        if (_material) _material->clearMaterialFlag(Material::FLAG_POLYGONOFFSET);
+    }
+
 private:
     void throwIfMaterialCannotBeModified()
     {
