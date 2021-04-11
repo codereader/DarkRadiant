@@ -218,13 +218,13 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
         .export_values();
 
     py::enum_<IShaderLayer::MapType>(stage, "MapType")
-        .value("Map", IShaderLayer::MapType::Map)
-        .value("CubeMap", IShaderLayer::MapType::CubeMap)
-        .value("CameraCubeMap", IShaderLayer::MapType::CameraCubeMap)
-        .value("VideoMap", IShaderLayer::MapType::VideoMap)
-        .value("SoundMap", IShaderLayer::MapType::SoundMap)
-        .value("MirrorRenderMap", IShaderLayer::MapType::MirrorRenderMap)
-        .value("RemoteRenderMap", IShaderLayer::MapType::RemoteRenderMap)
+        .value("MAP", IShaderLayer::MapType::Map)
+        .value("CUBEMAP", IShaderLayer::MapType::CubeMap)
+        .value("CAMERACUBEMAP", IShaderLayer::MapType::CameraCubeMap)
+        .value("VIDEOMAP", IShaderLayer::MapType::VideoMap)
+        .value("SOUNDMAP", IShaderLayer::MapType::SoundMap)
+        .value("MIRRORRENDERMAP", IShaderLayer::MapType::MirrorRenderMap)
+        .value("REMOTERENDERMAP", IShaderLayer::MapType::RemoteRenderMap)
         .export_values();
 
 	material.def(py::init<const MaterialPtr&>());
@@ -288,6 +288,11 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
     material.def("removeStage", &ScriptMaterial::removeStage);
     material.def("duplicateStage", &ScriptMaterial::duplicateStage);
     material.def("swapStagePosition", &ScriptMaterial::swapStagePosition);
+
+    // Shader Stage
+    stage.def(py::init<const IShaderLayer::Ptr&>());
+    stage.def("getType", &ScriptMaterialStage::getType);
+    stage.def("getStageFlags", &ScriptMaterialStage::getStageFlags);
 
 	// Expose the MaterialVisitor interface
 

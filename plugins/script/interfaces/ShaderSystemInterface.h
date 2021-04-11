@@ -19,7 +19,15 @@ public:
         _layer(layer)
     {}
 
+    IShaderLayer::Type getType()
+    {
+        return _layer ? _layer->getType() : IShaderLayer::BLEND;
+    }
 
+    int getStageFlags()
+    {
+        return _layer ? _layer->getStageFlags() : 0;
+    }
 };
 
 /**

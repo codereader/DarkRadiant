@@ -72,7 +72,7 @@ stageIndex = newMaterial.addStage(dr.MaterialStage.Type.BLEND)
 print('Material has now {0} stages'.format(newMaterial.getNumStages()))
 
 for stage in newMaterial.getAllStages():
-    print('Stage iterated')
+    print('Stage of type {0} iterated'.format(stage.getType()))
 
 newMaterial.removeStage(stageIndex)
 
