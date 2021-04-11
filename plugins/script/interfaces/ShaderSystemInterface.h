@@ -62,16 +62,16 @@ public:
 	}
 };
 
-class ShaderVisitor
+class MaterialVisitor
 {
 public:
-    virtual ~ShaderVisitor() {}
+    virtual ~MaterialVisitor() {}
     virtual void visit(const MaterialPtr& shader) = 0;
 };
 
 // Wrap around the EntityClassVisitor interface
-class ShaderVisitorWrapper :
-	public ShaderVisitor
+class MaterialVisitorWrapper :
+	public MaterialVisitor
 {
 public:
     void visit(const MaterialPtr& shader) override
@@ -79,7 +79,7 @@ public:
 		// Wrap this method to python
 		PYBIND11_OVERLOAD_PURE(
 			void,			/* Return type */
-			ShaderVisitor,    /* Parent class */
+            MaterialVisitor,    /* Parent class */
 			visit,			/* Name of function in C++ (must match Python name) */
 			ScriptShader(shader)			/* Argument(s) */
 		);
@@ -93,8 +93,8 @@ class ShaderSystemInterface :
 	public IScriptInterface
 {
 public:
-	void foreachShader(ShaderVisitor& visitor);
-	ScriptShader getMaterialForName(const std::string& name);
+	void foreachShader(MaterialVisitor& visitor);
+	ScriptShader getMaterial(const std::string& name);
 
 	// IScriptInterface implementation
 	void registerInterface(py::module& scope, py::dict& globals) override;

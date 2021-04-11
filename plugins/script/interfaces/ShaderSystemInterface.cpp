@@ -10,23 +10,23 @@ namespace
 	class ShaderNameToShaderWrapper
 	{
 	private:
-		ShaderVisitor& _visitor;
+        MaterialVisitor& _visitor;
 
 	public:
-		ShaderNameToShaderWrapper(ShaderVisitor& visitor) :
+		ShaderNameToShaderWrapper(MaterialVisitor& visitor) :
 			_visitor(visitor)
 		{}
 
 		void visit(const std::string& name)
 		{
 			// Resolve the material name and pass it on
-			MaterialPtr material = GlobalMaterialManager().getMaterial(name);
+			auto material = GlobalMaterialManager().getMaterial(name);
 			_visitor.visit(material);
 		}
 	};
 }
 
-void ShaderSystemInterface::foreachShader(ShaderVisitor& visitor)
+void ShaderSystemInterface::foreachShader(MaterialVisitor& visitor)
 {
 	// Note: foreachShader only traverses the loaded materials, use a small adaptor to traverse all known
 	ShaderNameToShaderWrapper adaptor(visitor);
@@ -35,7 +35,7 @@ void ShaderSystemInterface::foreachShader(ShaderVisitor& visitor)
 		std::bind(&ShaderNameToShaderWrapper::visit, &adaptor, std::placeholders::_1));
 }
 
-ScriptShader ShaderSystemInterface::getMaterialForName(const std::string& name)
+ScriptShader ShaderSystemInterface::getMaterial(const std::string& name)
 {
 	return ScriptShader(GlobalMaterialManager().getMaterial(name));
 }
@@ -44,7 +44,10 @@ ScriptShader ShaderSystemInterface::getMaterialForName(const std::string& name)
 void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globals)
 {
 	// Add the declaration for a Shader object
-	py::class_<ScriptShader> shader(scope, "Shader");
+	py::class_<ScriptShader> shader(scope, "Material");
+
+    // Add the old name as alias
+    scope.add_object("Shader", shader);
 
 	shader.def(py::init<const MaterialPtr&>());
 	shader.def("getName", &ScriptShader::getName);
@@ -57,17 +60,20 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
 	shader.def("isFogLight", &ScriptShader::isFogLight);
 	shader.def("isNull", &ScriptShader::isNull);
 
-	// Expose the ShaderVisitor interface
+	// Expose the MaterialVisitor interface
 
-	py::class_<ShaderVisitor, ShaderVisitorWrapper> visitor(scope, "ShaderVisitor");
+	py::class_<MaterialVisitor, MaterialVisitorWrapper> visitor(scope, "MaterialVisitor");
 	visitor.def(py::init<>());
-	visitor.def("visit", &ShaderVisitor::visit);
+	visitor.def("visit", &MaterialVisitor::visit);
+
+    scope.add_object("ShaderVisitor", visitor); // old compatibility name
 
 	// Add the module declaration to the given python namespace
 	py::class_<ShaderSystemInterface> materialManager(scope, "MaterialManager");
 
 	materialManager.def("foreachShader", &ShaderSystemInterface::foreachShader);
-	materialManager.def("getMaterialForName", &ShaderSystemInterface::getMaterialForName);
+	materialManager.def("getMaterial", &ShaderSystemInterface::getMaterial);
+	materialManager.def("getMaterialForName", &ShaderSystemInterface::getMaterial); // old compatibility name
 
 	// Now point the Python variable "GlobalMaterialManager" to this instance
 	globals["GlobalMaterialManager"] = this;

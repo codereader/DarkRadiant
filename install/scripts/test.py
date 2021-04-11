@@ -153,19 +153,19 @@ print(filecontents)
 print('Current grid size = ' + str(GlobalGrid.getGridSize()))
 
 # Test the ShaderSystem interface
-class TestShaderVisitor(dr.ShaderVisitor) :
+class TestMaterialVisitor(dr.MaterialVisitor) :
 	def visit(self, shader):
 		if not shader.isNull():
 			print('Found shader: ' + shader.getName() + ' defined in ' + shader.getShaderFileName())
 
 # Disabled code, takes very long in TDM
-# shadervisitor = TestShaderVisitor()
-# GlobalMaterialManager.foreachShader(shadervisitor)
+# materialVisitor = TestMaterialVisitor()
+# GlobalMaterialManager.foreachShader(materialVisitor)
 
-shader = GlobalMaterialManager.getMaterialForName('bc_rat')
+material = GlobalMaterialManager.getMaterialForName('bc_rat')
 
-if not shader.isNull():
-	print('Shader ' + shader.getName() + ' is defined in ' + shader.getShaderFileName())
+if not material.isNull():
+	print('Material ' + material.getName() + ' is defined in ' + material.getShaderFileName())
 
 # Test finding a model
 class ModelFinder(dr.SceneNodeVisitor) :
