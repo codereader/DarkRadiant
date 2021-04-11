@@ -160,7 +160,7 @@ class TestMaterialVisitor(dr.MaterialVisitor) :
 
 # Disabled code, takes very long in TDM
 # materialVisitor = TestMaterialVisitor()
-# GlobalMaterialManager.foreachShader(materialVisitor)
+# GlobalMaterialManager.foreachMaterial(materialVisitor)
 
 material = GlobalMaterialManager.getMaterialForName('bc_rat')
 

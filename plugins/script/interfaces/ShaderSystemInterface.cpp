@@ -26,7 +26,7 @@ namespace
 	};
 }
 
-void ShaderSystemInterface::foreachShader(MaterialVisitor& visitor)
+void ShaderSystemInterface::foreachMaterial(MaterialVisitor& visitor)
 {
 	// Note: foreachShader only traverses the loaded materials, use a small adaptor to traverse all known
 	ShaderNameToShaderWrapper adaptor(visitor);
@@ -66,13 +66,14 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
 	visitor.def(py::init<>());
 	visitor.def("visit", &MaterialVisitor::visit);
 
-    scope.add_object("ShaderVisitor", visitor); // old compatibility name
-
 	// Add the module declaration to the given python namespace
 	py::class_<ShaderSystemInterface> materialManager(scope, "MaterialManager");
 
-	materialManager.def("foreachShader", &ShaderSystemInterface::foreachShader);
+	materialManager.def("foreachMaterial", &ShaderSystemInterface::foreachMaterial);
 	materialManager.def("getMaterial", &ShaderSystemInterface::getMaterial);
+
+    scope.add_object("ShaderVisitor", visitor); // old compatibility name
+	materialManager.def("foreachShader", &ShaderSystemInterface::foreachMaterial); // old compatibility name
 	materialManager.def("getMaterialForName", &ShaderSystemInterface::getMaterial); // old compatibility name
 
 	// Now point the Python variable "GlobalMaterialManager" to this instance

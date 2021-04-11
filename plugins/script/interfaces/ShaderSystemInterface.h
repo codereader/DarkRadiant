@@ -93,7 +93,7 @@ class ShaderSystemInterface :
 	public IScriptInterface
 {
 public:
-	void foreachShader(MaterialVisitor& visitor);
+	void foreachMaterial(MaterialVisitor& visitor);
 	ScriptShader getMaterial(const std::string& name);
 
 	// IScriptInterface implementation
