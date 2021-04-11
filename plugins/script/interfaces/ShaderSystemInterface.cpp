@@ -101,6 +101,19 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
         .value("POST_PROCESS", Material::SORT_POST_PROCESS)
         .export_values();
 
+    py::enum_<Material::CullType>(material, "CullType")
+        .value("BACK", Material::CULL_BACK)
+        .value("FRONT", Material::CULL_FRONT)
+        .value("NONE", Material::CULL_NONE)
+        .export_values();
+
+    py::enum_<ClampType>(material, "ClampType")
+        .value("REPEAT", CLAMP_REPEAT)
+        .value("NOREPEAT", CLAMP_NOREPEAT)
+        .value("ZEROCLAMP", CLAMP_ZEROCLAMP)
+        .value("ALPHAZEROCLAMP", CLAMP_ALPHAZEROCLAMP)
+        .export_values();
+
 	material.def(py::init<const MaterialPtr&>());
 	material.def("getName", &ScriptMaterial::getName);
 	material.def("getShaderFileName", &ScriptMaterial::getShaderFileName);
@@ -121,6 +134,10 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
 	material.def("getPolygonOffset", &ScriptMaterial::getPolygonOffset);
 	material.def("setPolygonOffset", &ScriptMaterial::setPolygonOffset);
 	material.def("clearPolygonOffset", &ScriptMaterial::clearPolygonOffset);
+	material.def("getClampType", &ScriptMaterial::getClampType);
+	material.def("setClampType", &ScriptMaterial::setClampType);
+	material.def("getCullType", &ScriptMaterial::getCullType);
+	material.def("setCullType", &ScriptMaterial::setCullType);
 
 	// Expose the MaterialVisitor interface
 

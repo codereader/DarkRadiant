@@ -119,6 +119,28 @@ public:
         if (_material) _material->clearMaterialFlag(Material::FLAG_POLYGONOFFSET);
     }
 
+    ClampType getClampType()
+    {
+        return _material ? _material->getClampType() : CLAMP_REPEAT;
+    }
+
+    void setClampType(ClampType type)
+    {
+        throwIfMaterialCannotBeModified();
+        if (_material) _material->setClampType(type);
+    }
+
+    Material::CullType getCullType()
+    {
+        return _material ? _material->getCullType() : Material::CULL_BACK;
+    }
+
+    void setCullType(Material::CullType type)
+    {
+        throwIfMaterialCannotBeModified();
+        if (_material) _material->setCullType(type);
+    }
+
 private:
     void throwIfMaterialCannotBeModified()
     {
