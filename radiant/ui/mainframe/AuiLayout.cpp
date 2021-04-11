@@ -164,7 +164,7 @@ void AuiLayout::deactivate()
     _auiMgr.UnInit();
 
     // Dispose of the managed window
-    delete _auiMgr.GetManagedWindow();
+    _auiMgr.GetManagedWindow()->Destroy();
 }
 
 void AuiLayout::restoreStateFromRegistry()
