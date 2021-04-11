@@ -78,8 +78,9 @@ void ShaderSystemInterface::saveMaterial(const std::string& name)
 // IScriptInterface implementation
 void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globals)
 {
-	// Add the declaration for a Material object
+	// Add the declaration for a Material and Stage object
 	py::class_<ScriptMaterial> material(scope, "Material");
+	py::class_<ScriptMaterialStage> stage(scope, "MaterialStage");
 
     // Add the old name as alias
     scope.add_object("Shader", material);
@@ -208,7 +209,7 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
         .value("TRANSLUCENT", Material::MC_TRANSLUCENT)
         .export_values();
 
-    py::enum_<IShaderLayer::MapType>(material, "MapType")
+    py::enum_<IShaderLayer::MapType>(stage, "MapType")
         .value("Map", IShaderLayer::MapType::Map)
         .value("CubeMap", IShaderLayer::MapType::CubeMap)
         .value("CameraCubeMap", IShaderLayer::MapType::CameraCubeMap)

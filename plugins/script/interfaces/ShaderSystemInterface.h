@@ -9,6 +9,19 @@
 namespace script
 {
 
+class ScriptMaterialStage
+{
+private:
+    IShaderLayer::Ptr _layer;
+
+public:
+    ScriptMaterialStage(const IShaderLayer::Ptr& layer) :
+        _layer(layer)
+    {}
+
+
+};
+
 /**
  * This class represents a single Material as seen by the Python script.
  */
@@ -20,10 +33,6 @@ public:
     ScriptMaterial(const MaterialPtr& material) :
 		_material(material)
 	{}
-
-	operator const MaterialPtr&() const {
-		return _material;
-	}
 
 	std::string getName() {
 		return _material ? _material->getName() : "";
