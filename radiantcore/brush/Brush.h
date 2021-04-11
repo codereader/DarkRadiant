@@ -16,7 +16,7 @@ class Ray;
 /// \brief Returns true if 'self' takes priority when building brush b-rep.
 inline bool plane3_inside(const Plane3& self, const Plane3& other)
 {
-	if (math::near(self.normal(), other.normal(), 0.001))
+	if (math::isNear(self.normal(), other.normal(), 0.001))
 	{
 		return self.dist() < other.dist();
 	}

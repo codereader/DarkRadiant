@@ -248,7 +248,7 @@ void expectVertexWithNormal(const model::IModelSurface& surface, const Vertex3f&
 {
     EXPECT_TRUE(surfaceHasVertexWith(surface, [&](const ArbitraryMeshVertex& v)->bool
     {
-        return v.vertex.isEqual(vertex, render::VertexEpsilon) && v.normal.dot(normal) > 1.0 - render::NormalEpsilon;
+        return math::isNear(v.vertex, vertex, render::VertexEpsilon) && v.normal.dot(normal) > 1.0 - render::NormalEpsilon;
     })) << "Could not find a vertex with xyz = " << vertex << " and normal " << normal;
 }
 
@@ -287,7 +287,7 @@ void expectVertexWithColour(const model::IModelSurface& surface, const Vertex3f&
 {
     EXPECT_TRUE(surfaceHasVertexWith(surface, [&](const ArbitraryMeshVertex& v)->bool
     {
-        return v.vertex.isEqual(vertex, render::VertexEpsilon) && v.colour.isEqual(colour, render::VertexEpsilon);
+        return math::isNear(v.vertex, vertex, render::VertexEpsilon) && math::isNear(v.colour, colour, render::VertexEpsilon);
     })) << "Could not find a vertex with xyz = " << vertex << " and colour " << colour;
 }
 

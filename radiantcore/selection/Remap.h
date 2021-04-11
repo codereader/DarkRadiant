@@ -54,10 +54,11 @@ public:
 const float arrowhead_length = 16;
 const float arrowhead_radius = 4;
 
-inline void draw_arrowline(const float length, VertexCb* line, const std::size_t axis) {
-  (*line++).vertex = Vertex3f::Identity();
-  (*line).vertex = Vertex3f::Identity();
-  (*line).vertex[axis] = length - arrowhead_length;
+inline void draw_arrowline(const float length, VertexCb* line, const std::size_t axis)
+{
+    (*line++).vertex = Vector3(0, 0, 0);
+    (*line).vertex = Vector3(0, 0, 0);
+    (*line).vertex[axis] = length - arrowhead_length;
 }
 
 template<typename VertexRemap, typename NormalRemap>

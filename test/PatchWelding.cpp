@@ -32,7 +32,7 @@ inline void compareNormalOfFirstSharedVertex(const PatchMesh& mesh1, const Patch
     {
         for (const auto& v2 : mesh2.vertices)
         {
-            if (math::near(v1.vertex, v2.vertex, 0.01))
+            if (math::isNear(v1.vertex, v2.vertex, 0.01))
             {
                 EXPECT_LT(std::abs(v1.normal.angle(v2.normal)), c_half_pi);
                 return;

@@ -81,7 +81,7 @@ public:
      */
     bool operator== (const Plane3& other) const
     {
-        return math::near(_normal, other._normal, EPSILON_NORMAL) &&
+        return math::isNear(_normal, other._normal, EPSILON_NORMAL) &&
                float_equal_epsilon(_dist, other._dist, EPSILON_DIST);
     }
 

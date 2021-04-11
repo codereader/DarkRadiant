@@ -25,12 +25,6 @@ public:
 		vertex(vector)
 	{}
 
-	// greebo: Same as above, but with a Vector3 as <point> argument
-	VertexCb(const Vector3& point, const Colour4b& _colour) :
-		colour(_colour),
-		vertex(point)
-	{}
-
 	bool operator< (const VertexCb& other) const {
 		if (vertex != other.vertex) {
 			return vertex < other.vertex;

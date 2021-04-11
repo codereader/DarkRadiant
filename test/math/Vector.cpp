@@ -77,12 +77,12 @@ TEST(MathTest, VectorEpsilonComparison)
     const Vector3 v(1, 8, 320);
     const Vector3 increment(1e-8, 1e-7, 1e-8);
 
-    EXPECT_TRUE(math::near(v, v, 1e-8));
-    EXPECT_TRUE(math::near(v, v + increment, 1e-6));
-    EXPECT_TRUE(math::near(v, v - increment, 1e-6));
-    EXPECT_FALSE(math::near(v, v + increment, 1e-9));
-    EXPECT_FALSE(math::near(v, v - increment, 1e-9));
-    EXPECT_TRUE(math::near(v, v + Vector3(1000, 10000, 20000), 1e6));
+    EXPECT_TRUE(math::isNear(v, v, 1e-8));
+    EXPECT_TRUE(math::isNear(v, v + increment, 1e-6));
+    EXPECT_TRUE(math::isNear(v, v - increment, 1e-6));
+    EXPECT_FALSE(math::isNear(v, v + increment, 1e-9));
+    EXPECT_FALSE(math::isNear(v, v - increment, 1e-9));
+    EXPECT_TRUE(math::isNear(v, v + Vector3(1000, 10000, 20000), 1e6));
 }
 
 TEST(MathTest, NegateVector3)

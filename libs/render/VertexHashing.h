@@ -88,9 +88,9 @@ struct std::equal_to<ArbitraryMeshVertex>
 {
     bool operator()(const ArbitraryMeshVertex& a, const ArbitraryMeshVertex& b) const
     {
-        return a.vertex.isEqual(b.vertex, render::VertexEpsilon) &&
+        return math::isNear(a.vertex, b.vertex, render::VertexEpsilon) &&
             a.normal.dot(b.normal) > (1.0 - render::NormalEpsilon) &&
-            a.texcoord.isEqual(b.texcoord, render::TexCoordEpsilon) &&
-            a.colour.isEqual(b.colour, render::VertexEpsilon);
+            math::isNear(a.texcoord, b.texcoord, render::TexCoordEpsilon) &&
+            math::isNear(a.colour, b.colour, render::VertexEpsilon);
     }
 };

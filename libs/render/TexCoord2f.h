@@ -49,11 +49,17 @@ public:
 		}
 		return false;
 	}
-
-    template<typename Epsilon>
-    bool isEqual(const TexCoord2f& other, Epsilon epsilon) const
-    {
-        return float_equal_epsilon(x(), other.x(), epsilon) &&
-               float_equal_epsilon(y(), other.y(), epsilon);
-    }
 };
+
+namespace math
+{
+
+/// Epsilon equality test for TexCoord2f
+inline bool isNear(const TexCoord2f& v1, const TexCoord2f& v2, double epsilon)
+{
+    TexCoord2f diff = v1 - v2;
+    return std::abs(diff.x()) < epsilon && std::abs(diff.y()) < epsilon;
+}
+
+}
+
