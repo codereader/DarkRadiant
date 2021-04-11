@@ -94,6 +94,7 @@ for stage in newMaterial.getAllStages():
     print('Stage colour expression ALPHA: {0}'.format(stage.getColourExpressionString(dr.MaterialStage.ColourComponent.ALPHA)))
     print('Stage colour expression RGB: {0}'.format(stage.getColourExpressionString(dr.MaterialStage.ColourComponent.RGB)))
     print('Stage colour expression RGBA: {0}'.format(stage.getColourExpressionString(dr.MaterialStage.ColourComponent.RGBA)))
+    print('Stage vertex colour mode: {0}'.format(stage.getVertexColourMode()))
 
 newMaterial.swapStagePosition(diffuseStageIndex, bumpStageIndex)
 

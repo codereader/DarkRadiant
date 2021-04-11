@@ -55,6 +55,11 @@ public:
         return _layer && _layer->getColourExpression(component) ?
             _layer->getColourExpression(component)->getExpressionString() : std::string();
     }
+
+    IShaderLayer::VertexColourMode getVertexColourMode()
+    {
+        return _layer ? _layer->getVertexColourMode() : IShaderLayer::VERTEX_COLOUR_NONE;
+    }
 };
 
 /**

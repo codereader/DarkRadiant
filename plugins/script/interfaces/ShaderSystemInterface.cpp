@@ -323,6 +323,12 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
         .value("RGBA", IShaderLayer::COMP_RGBA)
         .export_values();
 
+    py::enum_<IShaderLayer::VertexColourMode>(stage, "VertexColourMode")
+        .value("NONE", IShaderLayer::VERTEX_COLOUR_NONE)
+        .value("MULTIPLY", IShaderLayer::VERTEX_COLOUR_MULTIPLY)
+        .value("INVERSE_MULTIPLY", IShaderLayer::VERTEX_COLOUR_INVERSE_MULTIPLY)
+        .export_values();
+
     // Shader Stage
     stage.def(py::init<const IShaderLayer::Ptr&>());
     stage.def("getType", &ScriptMaterialStage::getType);
@@ -332,6 +338,7 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
     stage.def("getTexGenType", &ScriptMaterialStage::getTexGenType);
     stage.def("getTexGenExpressionString", &ScriptMaterialStage::getTexGenExpressionString);
     stage.def("getColourExpressionString", &ScriptMaterialStage::getColourExpressionString);
+    stage.def("getVertexColourMode", &ScriptMaterialStage::getVertexColourMode);
 
 	// Expose the MaterialVisitor interface
 
