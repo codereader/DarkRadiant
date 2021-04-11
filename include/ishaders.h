@@ -224,7 +224,7 @@ public:
     virtual void setSortRequest(float sortRequest) = 0;
 
     // Resets the sort request to the default value
-    virtual void resetSortReqest() = 0;
+    virtual void resetSortRequest() = 0;
 
     /// Return a polygon offset if one is defined. The default is 0.
     virtual float getPolygonOffset() const = 0;

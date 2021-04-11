@@ -79,6 +79,29 @@ public:
         _material->setEditorImageExpressionFromString(editorImagePath);
     }
 
+    float getSortRequest()
+    {
+        return _material ? _material->getSortRequest() : -1;
+    }
+
+    void setSortRequest(float sortRequest)
+    {
+        throwIfMaterialCannotBeModified();
+        if (_material) _material->setSortRequest(sortRequest);
+    }
+
+    void setSortRequest(Material::SortRequest sortRequest) // overload needed for python
+    {
+        throwIfMaterialCannotBeModified();
+        if (_material) _material->setSortRequest(static_cast<float>(sortRequest));
+    }
+
+    void resetSortRequest()
+    {
+        throwIfMaterialCannotBeModified();
+        if (_material) _material->resetSortRequest();
+    }
+
 private:
     void throwIfMaterialCannotBeModified()
     {

@@ -1252,7 +1252,7 @@ void ShaderTemplate::parseDefinition()
 	// Some blend materials get SORT_MEDIUM applied by default, diffuses get OPAQUE assigned, but lights do not, etc.
 	if (_sortReq == SORT_UNDEFINED)
 	{
-        resetSortReqest();
+        resetSortRequest();
 	}
 
 	std::size_t numAmbientStages = 0;

@@ -586,7 +586,7 @@ void MaterialEditor::setupMaterialProperties()
         {
             if (!value)
             {
-                material->resetSortReqest();
+                material->resetSortRequest();
             }
             else
             {

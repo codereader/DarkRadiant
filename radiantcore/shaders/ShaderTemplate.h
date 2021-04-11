@@ -384,7 +384,7 @@ public:
         onTemplateChanged();
     }
 
-    void resetSortReqest()
+    void resetSortRequest()
     {
         if (!_parsed) parseDefinition();
 

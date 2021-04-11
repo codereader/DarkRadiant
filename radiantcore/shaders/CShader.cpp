@@ -58,10 +58,10 @@ void CShader::setSortRequest(float sortRequest)
     _template->setSortRequest(sortRequest);
 }
 
-void CShader::resetSortReqest()
+void CShader::resetSortRequest()
 {
     ensureTemplateCopy();
-    _template->resetSortReqest();
+    _template->resetSortRequest();
 }
 
 float CShader::getPolygonOffset() const

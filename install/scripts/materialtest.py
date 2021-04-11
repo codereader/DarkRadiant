@@ -1,4 +1,5 @@
 import os
+import darkradiant as dr
 
 # Some interface tests
 
@@ -32,6 +33,13 @@ print('The existing material reference now has the name {0}'.format(newMaterial.
 filename = 'materials/_python_test.mtr'
 newMaterial.setShaderFileName(filename)
 newMaterial.setEditorImageExpressionFromString('textures/common/caulk')
+
+newMaterial.setSortRequest(45.3)
+
+# There are a couple of pre-defined sort requests, corresponding to the engine code
+newMaterial.setSortRequest(dr.Material.SortRequest.NEAREST)
+
+print('Full Material definition:\n{0}\n{{{1}}}'.format(newMaterial.getName(), newMaterial.getDefinition()))
 
 GlobalMaterialManager.saveMaterial(newMaterial.getName())
 

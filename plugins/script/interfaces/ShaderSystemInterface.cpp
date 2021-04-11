@@ -84,6 +84,23 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
     // Add the old name as alias
     scope.add_object("Shader", material);
 
+    // Expose the enums in the material scope
+    py::enum_<Material::SortRequest>(material, "SortRequest")
+        .value("SUBVIEW", Material::SORT_SUBVIEW)
+        .value("GUI", Material::SORT_GUI)
+        .value("BAD", Material::SORT_BAD)
+        .value("OPAQUE", Material::SORT_OPAQUE)
+        .value("PORTAL_SKY", Material::SORT_PORTAL_SKY)
+        .value("DECAL", Material::SORT_DECAL)
+        .value("FAR", Material::SORT_FAR)
+        .value("MEDIUM", Material::SORT_MEDIUM)
+        .value("CLOSE", Material::SORT_CLOSE)
+        .value("ALMOST_NEAREST", Material::SORT_ALMOST_NEAREST)
+        .value("NEAREST", Material::SORT_NEAREST)
+        .value("AFTER_FOG", Material::SORT_AFTER_FOG)
+        .value("POST_PROCESS", Material::SORT_POST_PROCESS)
+        .export_values();
+
 	material.def(py::init<const MaterialPtr&>());
 	material.def("getName", &ScriptMaterial::getName);
 	material.def("getShaderFileName", &ScriptMaterial::getShaderFileName);
@@ -97,6 +114,10 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
 	material.def("isNull", &ScriptMaterial::isNull);
 	material.def("getEditorImageExpressionString", &ScriptMaterial::getEditorImageExpressionString);
 	material.def("setEditorImageExpressionFromString", &ScriptMaterial::setEditorImageExpressionFromString);
+	material.def("getSortRequest", &ScriptMaterial::getSortRequest);
+	material.def("setSortRequest", static_cast<void(ScriptMaterial::*)(float)>(&ScriptMaterial::setSortRequest));
+	material.def("setSortRequest", static_cast<void(ScriptMaterial::*)(Material::SortRequest)>(&ScriptMaterial::setSortRequest));
+	material.def("resetSortRequest", &ScriptMaterial::resetSortRequest);
 
 	// Expose the MaterialVisitor interface
 
