@@ -61,6 +61,8 @@ newMaterial.setSurfaceFlag(dr.Material.SurfaceFlag.LADDER)
 newMaterial.setSurfaceFlag(dr.Material.SurfaceFlag.NONSOLID)
 newMaterial.setSurfaceType(dr.Material.SurfaceType.WOOD)
 newMaterial.setSpectrum(5)
+newMaterial.setIsFogLight(1)
+newMaterial.setIsBlendLight(0)
 
 print('Full Material definition:\n{0}\n{{{1}}}'.format(newMaterial.getName(), newMaterial.getDefinition()))
 

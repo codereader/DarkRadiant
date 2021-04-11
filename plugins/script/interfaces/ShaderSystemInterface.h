@@ -63,6 +63,34 @@ public:
 		return _material ? _material->isFogLight() : false;
 	}
 
+    bool isCubicLight() {
+        return _material ? _material->isCubicLight() : false;
+    }
+
+    void setIsAmbientLight(bool newValue)
+    {
+        throwIfMaterialCannotBeModified();
+        _material->setIsAmbientLight(newValue);
+    }
+
+    void setIsBlendLight(bool newValue)
+    {
+        throwIfMaterialCannotBeModified();
+        _material->setIsBlendLight(newValue);
+    }
+
+    void setIsFogLight(bool newValue)
+    {
+        throwIfMaterialCannotBeModified();
+        _material->setIsFogLight(newValue);
+    }
+
+    void setIsCubicLight(bool newValue)
+    {
+        throwIfMaterialCannotBeModified();
+        _material->setIsCubicLight(newValue);
+    }
+
 	bool isNull() const {
 		return _material == nullptr;
 	}
