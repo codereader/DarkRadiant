@@ -22,14 +22,6 @@ DarkRadiant is built on Windows using *Microsoft Visual Studio*, the free Commun
 
 When installing Studio please make sure to enable the "Desktop Development with C++" workload.
 
-Since DarkRadiant uses a couple of open-source libraries that are not available on Windows by default, you will also need to download and install the dependencies. A 7-Zip package containing the necessary files is available at the URL below ([Get 7-zip here](http://www.7-zip.org/)):
-
-https://github.com/codereader/DarkRadiant/releases/download/2.10.0/windeps.7z  
-
-The dependencies packages need to be extracted into the main DarkRadiant
-source directory, i.e. alongside the `include/` and `radiant/` directories.
-Just drop the windeps.7z in the DarkRadiant folder and use 7-zip's "Extract to here"
-
 ## Build
 
 The main Visual C++ solution file is located in:
@@ -37,10 +29,20 @@ The main Visual C++ solution file is located in:
 `tools/msvc/DarkRadiant.sln`
 
 Open this file with Visual Studio and start a build by right-clicking on the top-level 
-"Solution 'DarkRadiant'" item and choosing Build Solution. The DarkRadiant.exe file will be 
-placed into the `install/` folder.
+"Solution 'DarkRadiant'" item and choosing Build Solution. The DarkRadiant.exe file will be placed in the `install/` folder.
 
-In case of compilation errors related to *external/Eigen*, make sure the submodule sources are present, either by using the *--recurse-submodules* clone switch, or by invoking *git submodule update -i* if you already cloned the repository.
+### Windows Build Dependencies
+
+Since DarkRadiant uses a couple of open-source libraries that are not available on Windows by default, it will try to download and install the dependencies when the build starts. If it fails for some reason, you can try to run this script:
+
+ `tools/scripts/download_windeps.ps1`
+
+or extract the tools manually, downloading the 7-Zip package containing the necessary files from the URL below ([Get 7-zip here](https://www.7-zip.org/)):
+
+https://github.com/codereader/DarkRadiant_WinDeps/releases/latest/  
+
+The dependencies packages need to be extracted into the main DarkRadiant source directory, i.e. alongside the `include/` and `radiant/` directories.
+Just drop the windeps.7z in the DarkRadiant folder and use 7-zip's "Extract to here"
 
 # Compiling on Linux
 
@@ -59,6 +61,7 @@ To compile DarkRadiant, a number of libraries (with development headers) and a s
 * libalut-dev 
 * libvorbis-dev
 * libgtest-dev
+* libeigen-dev
 
 This does not include core development tools such as g++ or the git client
 to download the sources (use sudo apt-get install git for that). One possible set of packages might be:
