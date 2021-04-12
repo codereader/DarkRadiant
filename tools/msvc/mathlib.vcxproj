@@ -87,7 +87,8 @@
     <PreBuildEvent>
       <Message>
       </Message>
-      <Command>if not exist "$(DarkRadiantRoot)\external\eigen\Eigen" (echo The external/eigen/Eigen folder is missing, please ensure you've run 'git submodule update' &amp;&amp; git submodule update -i)</Command>
+      <Command>
+      </Command>
     </PreBuildEvent>
     <ClCompile>
       <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -101,7 +102,8 @@
     <PreBuildEvent>
       <Message>
       </Message>
-      <Command>if not exist "$(DarkRadiantRoot)\external\eigen\Eigen" (echo The external/eigen/Eigen folder is missing, please ensure you've run 'git submodule update' &amp;&amp; git submodule update -i)</Command>
+      <Command>
+      </Command>
     </PreBuildEvent>
     <ClCompile>
       <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -112,7 +114,8 @@
     <PreBuildEvent>
       <Message>
       </Message>
-      <Command>if not exist "$(DarkRadiantRoot)\external\eigen\Eigen" (echo The external/eigen/Eigen folder is missing, please ensure you've run 'git submodule update' &amp;&amp; git submodule update -i)</Command>
+      <Command>
+      </Command>
     </PreBuildEvent>
     <ClCompile>
       <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
@@ -126,7 +129,8 @@
     <PreBuildEvent>
       <Message>
       </Message>
-      <Command>if not exist "$(DarkRadiantRoot)\external\eigen\Eigen" (echo The external/eigen/Eigen folder is missing, please ensure you've run 'git submodule update' &amp;&amp; git submodule update -i)</Command>
+      <Command>
+      </Command>
     </PreBuildEvent>
     <ClCompile>
       <DisableSpecificWarnings>4996;%(DisableSpecificWarnings)</DisableSpecificWarnings>
