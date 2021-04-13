@@ -8,9 +8,9 @@ Get the latest DarkRadiant binaries from the [releases page](https://github.com/
 
 # Getting started
 
-DarkRadiant requires game resources to work with, these resources are not installed by this editor. You'll need to point DarkRadiant to one of these games (The Dark Mod, Doom 3, Quake 4, etc.) before you can start to work on your map. Visit www.thedarkmod.com for download instructions, then proceed with one of the tutorials available on the web.
+DarkRadiant requires game resources to work with, these resources are not installed by this editor. You'll need to point DarkRadiant to one of these games (The Dark Mod, Doom 3, Quake 4, etc.) before you can start to work on your map. Visit [www.thedarkmod.com](https://www.thedarkmod.com) for download instructions, then proceed with one of the tutorials available on the web.
 
-For The Dark Mod mappers, there's an extensive [Beginner's Guide](https://wiki.thedarkmod.com/index.php?title=A_-_Z_Beginner_Full_Guide_Start_Here!) on the project's wiki, which covers a lot of steps almost from scratch. Moreover, a couple of excellent video tutorials are available, linked from the top of that wiki article above.
+For The Dark Mod mappers, there are a couple of [Video Tutorials](https://wiki.thedarkmod.com/index.php?title=DarkRadiant_Video_Tutorials) on the project's wiki, which should get you started.
 
 # Compiling on Windows
 
@@ -29,7 +29,7 @@ The main Visual C++ solution file is located in:
 `tools/msvc/DarkRadiant.sln`
 
 Open this file with Visual Studio and start a build by right-clicking on the top-level 
-"Solution 'DarkRadiant'" item and choosing Build Solution. The DarkRadiant.exe file will be placed in the `install/` folder.
+"Solution 'DarkRadiant'" item and choosing Build Solution. The `DarkRadiant.exe` file will be placed in the `install/` folder.
 
 ### Windows Build Dependencies
 
