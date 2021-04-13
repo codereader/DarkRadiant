@@ -27,9 +27,14 @@ build
 # Windows build files
 *.dll
 *.pdb
-*.exe
+install/*.exe
+tools/msvc/*.exe
+/tools/innosetup/*.exe
 *.exp
 *.lib
+
+# Image Source Files
+*.psd
 
 # Windows Visual Studio stuff
 *.user
@@ -41,21 +46,16 @@ testsuite.ilk
 # VS Code
 .vscode
 
-# VS 2012
+# VS
 /winbuild
-/tools\msvc2012/ipch
-/tools\msvc2012/Debug
 *.psess
 *.suo
-/tools\msvc2010/ipch
-/tools\msvc2012/ipch
 *.ipch
 *.dirstamp
 /tools/innosetup/*.7z
 *.vspx
 *.bak
 *.opendb
-tools/msvc2015/DarkRadiant.VC.db
 *.iobj
 *.ipdb
 
