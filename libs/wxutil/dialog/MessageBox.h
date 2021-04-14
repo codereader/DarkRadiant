@@ -14,7 +14,7 @@ namespace wxutil
  *
  * Each messagebox is equipped with a special stock icon, corresponding to its type.
  *
- * Note: had to change this to lowercase to not conflict with the MessageBox #define in 
+ * Note: had to change this to lowercase to not conflict with the MessageBox #define in
  * some of those windows headers.
  */
 class Messagebox :
@@ -75,16 +75,14 @@ public:
 			   ui::IDialog::MessageType type,
 			   wxWindow* parent = GlobalMainFrame().getWxTopLevelWindow());
 
-	/**
-	 * Display a modal error dialog. 
-	 */
-	static void ShowError(const std::string& errorText, 
+    /// Display a modal error message
+	static void ShowError(const std::string& errorText,
 						  wxWindow* parent = GlobalMainFrame().getWxTopLevelWindow());
 
 	/**
 	 * Display a modal error dialog and quit immediately.
 	 */
-	static void ShowFatalError(const std::string& errorText, 
+	static void ShowFatalError(const std::string& errorText,
 							   wxWindow* parent = GlobalMainFrame().getWxTopLevelWindow());
 };
 typedef std::shared_ptr<Messagebox> MessageboxPtr;

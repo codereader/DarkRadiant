@@ -8,6 +8,7 @@
 #include "util/ScopedBoolLock.h"
 #include "CameraWndManager.h"
 #include "string/convert.h"
+#include "wxutil/dialog/MessageBox.h"
 
 namespace ui
 {
@@ -66,7 +67,7 @@ void CameraSettings::observeKey(const std::string& key)
     );
 }
 
-void CameraSettings::constructPreferencePage() 
+void CameraSettings::constructPreferencePage()
 {
 	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Camera"));
 
@@ -119,7 +120,7 @@ int CameraSettings::gridSpacing() const
     return _gridSpacing;
 }
 
-void CameraSettings::importDrawMode(const int mode) 
+void CameraSettings::importDrawMode(const int mode)
 {
 	switch (mode) {
 		case 0:
@@ -138,11 +139,21 @@ void CameraSettings::importDrawMode(const int mode)
 			_cameraDrawMode = RENDER_MODE_TEXTURED;
 	}
 
-	GlobalRenderSystem().setShaderProgram(
-        _cameraDrawMode == RENDER_MODE_LIGHTING 
-        ? RenderSystem::SHADER_PROGRAM_INTERACTION
-        : RenderSystem::SHADER_PROGRAM_NONE
-    );
+    // Enabling camera modes may throw an exception if there is a problem with
+    // GL shaders.
+    try
+    {
+        GlobalRenderSystem().setShaderProgram(
+            _cameraDrawMode == RENDER_MODE_LIGHTING
+            ? RenderSystem::SHADER_PROGRAM_INTERACTION
+            : RenderSystem::SHADER_PROGRAM_NONE
+        );
+    }
+    catch (const std::runtime_error& e)
+    {
+        wxutil::Messagebox::ShowError("Failed to enable lighting mode:\n\n"
+                                      + std::string(e.what()));
+    }
 
     _sigRenderModeChanged.emit();
 }
@@ -153,7 +164,7 @@ void CameraSettings::keyChanged()
 	if (_callbackActive) {
 		return;
 	}
-		
+
     util::ScopedBoolLock lock(_callbackActive);
 
 	// Load the values from the registry
@@ -204,24 +215,24 @@ void CameraSettings::keyChanged()
 	GlobalCamera().update();
 }
 
-CameraDrawMode CameraSettings::getRenderMode() const 
+CameraDrawMode CameraSettings::getRenderMode() const
 {
 	return _cameraDrawMode;
 }
 
-void CameraSettings::setRenderMode(const CameraDrawMode& mode) 
+void CameraSettings::setRenderMode(const CameraDrawMode& mode)
 {
     // Write the value into the registry, this should trigger the keyChanged()
     // callback that in turn calls the update functions
 	registry::setValue(RKEY_DRAWMODE, static_cast<int>(mode));
 }
 
-void CameraSettings::toggleLightingMode() 
+void CameraSettings::toggleLightingMode()
 {
 	// switch between textured and lighting mode
 	setRenderMode(
-        (_cameraDrawMode == RENDER_MODE_LIGHTING) 
-        ? RENDER_MODE_TEXTURED 
+        (_cameraDrawMode == RENDER_MODE_LIGHTING)
+        ? RENDER_MODE_TEXTURED
         : RENDER_MODE_LIGHTING
     );
 }
