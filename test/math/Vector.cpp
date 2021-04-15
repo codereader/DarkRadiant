@@ -300,6 +300,26 @@ TEST(MathTest, Vector3CrossProduct)
               Vector3(3340.8, 28696.0, -267.39375));
 }
 
+TEST(MathTest, AngleBetweenVector3s)
+{
+    const Vector3 i(1, 0, 0);
+    const Vector3 j(0, 1, 0);
+    const Vector3 k(0, 0, 1);
+
+    // Obvious unit vector angles
+    EXPECT_DOUBLE_EQ(i.angle(i), 0);
+    EXPECT_DOUBLE_EQ(i.angle(j), math::PI / 2.0);
+    EXPECT_DOUBLE_EQ(i.angle(k), math::PI / 2.0);
+    EXPECT_DOUBLE_EQ(j.angle(k), math::PI / 2.0);
+    EXPECT_DOUBLE_EQ(j.angle(-j), math::PI);
+
+    // Arbitrary vectors
+    EXPECT_DOUBLE_EQ(Vector3(2, 4, 5).angle(Vector3(4, 9, -7)),
+                     1.4595319160396403);
+    EXPECT_DOUBLE_EQ(Vector3(0.1, -0.5, 19).angle(Vector3(2.4, 156.1, -27.8)),
+                     1.7732415935926593);
+}
+
 TEST(MathTest, Vector3AsCArray)
 {
     Vector3 vec(256, -10, 10000);
