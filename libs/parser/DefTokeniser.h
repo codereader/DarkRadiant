@@ -347,7 +347,7 @@ public:
     }
 };
 
-const char* const WHITESPACE = " \t\n\v\r";
+constexpr const char* const WHITESPACE = " \t\n\v\r";
 
 /**
  * DefTokeniser abstract base class. This class provides a unified interface to

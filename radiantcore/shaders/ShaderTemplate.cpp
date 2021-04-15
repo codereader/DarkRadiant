@@ -1187,8 +1187,8 @@ void ShaderTemplate::parseDefinition()
     // Construct a local deftokeniser to parse the unparsed block
     parser::BasicDefTokeniser<std::string> tokeniser(
         _blockContents,
-		parser::WHITESPACE, // delimiters (whitespace)
-        "{}(),"  // add the comma character to the kept delimiters
+        DiscardedDelimiters, // delimiters (whitespace)
+        KeptDelimiters
     );
 
     _parsed = true; // we're parsed from now on

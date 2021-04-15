@@ -36,6 +36,10 @@ private:
 
 public:
 
+    // Shared parsing constants
+    constexpr static const char* DiscardedDelimiters = parser::WHITESPACE;
+    constexpr static const char* KeptDelimiters = "{}(),"; // add the comma character to the kept delimiters
+
   	// Vector of LayerTemplates representing each stage in the material
     std::vector<Doom3ShaderLayer::Ptr> _layers;
 

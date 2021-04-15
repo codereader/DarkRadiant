@@ -16,6 +16,7 @@
 #include "textures/HeightmapCreator.h"
 #include "textures/TextureManipulator.h"
 #include "string/predicate.h"
+#include "ShaderTemplate.h"
 
 /* CONSTANTS */
 namespace
@@ -96,8 +97,12 @@ MapExpressionPtr MapExpression::createForString(const std::string& str)
 {
     try
     {
-        parser::BasicDefTokeniser<std::string> token(str);
-        return createForToken(token);
+        parser::BasicDefTokeniser<std::string> tokeniser(
+            str,
+            ShaderTemplate::DiscardedDelimiters, // delimiters (whitespace)
+            ShaderTemplate::KeptDelimiters
+        );
+        return createForToken(tokeniser);
     }
     catch (const parser::ParseException&)
     {
