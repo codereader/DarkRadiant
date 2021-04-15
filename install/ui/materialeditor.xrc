@@ -3296,6 +3296,7 @@
 						<flag>wxRIGHT</flag>
 						<border>24</border>
 						<object class="wxButton" name="MaterialEditorReloadImagesButton">
+							<tooltip>Reloads the image files for the selected material only</tooltip>
 							<label>Reload Image Files</label>
 							<default>0</default>
 							<markup>0</markup>
