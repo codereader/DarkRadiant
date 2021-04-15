@@ -369,4 +369,19 @@ TEST_F(AseImportTest, VertexHashFunction)
     EXPECT_TRUE(set.insert(vertex3).second);
 }
 
+// #5590: ASE models with a misleading *MATERIAL_COUNT are still loaded successfully by the in-game importer
+TEST_F(AseImportTest, LoadAseWithWrongMaterialCount)
+{
+    auto model = GlobalModelCache().getModel("models/darkmod/test/cube_wrong_material_count.ase");
+    EXPECT_EQ(model->getSurfaceCount(), 4);
+
+    auto activeMaterials = model->getActiveMaterials();
+    std::set<std::string> materials{ activeMaterials.begin(), activeMaterials.end() };
+
+    EXPECT_EQ(materials.count("material01"), 1) << "material01 not found";
+    EXPECT_EQ(materials.count("material02"), 1) << "material02 not found";
+    EXPECT_EQ(materials.count("material03"), 1) << "material03 not found";
+    EXPECT_EQ(materials.count("material04"), 1) << "material04 not found";
+}
+
 }
