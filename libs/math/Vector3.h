@@ -210,18 +210,6 @@ public:
     }
 
     /**
-     * Returns a "snapped" copy of this Vector, each component rounded to integers.
-     */
-    BasicVector3<T> getSnapped() const
-    {
-        return BasicVector3<T>(
-            static_cast<T>(float_to_integer(x())),
-            static_cast<T>(float_to_integer(y())),
-            static_cast<T>(float_to_integer(z()))
-        );
-    }
-
-    /**
      * Returns a "snapped" copy of this Vector, each component rounded to the given precision.
      */
     template<typename OtherElement>
