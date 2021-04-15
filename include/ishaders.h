@@ -421,6 +421,9 @@ public:
     // Roll back the changes made to this material
     virtual void revertModifications() = 0;
 
+    // Reloads the textures used by this material from disk
+    virtual void refreshImageMaps() = 0;
+
     // Signal emitted when this material is modified
     virtual sigc::signal<void>& sig_materialChanged() = 0;
 };

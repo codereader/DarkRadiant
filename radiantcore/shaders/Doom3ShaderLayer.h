@@ -106,6 +106,7 @@ public:
 
     /* IShaderLayer implementation */
     TexturePtr getTexture() const;
+    void refreshImageMaps();
     BlendFunc getBlendFunc() const;
     Colour4 getColour() const;
     VertexColourMode getVertexColourMode() const;
@@ -213,13 +214,6 @@ public:
      */
     void setColourExpression(ColourComponentSelector comp, const IShaderExpression::Ptr& expr);
     
-    /**
-     * \brief
-     * Set a texture object (overrides the map expression when getTexture is
-     * called).
-     */
-    void setTexture(const TexturePtr& tex);
-
     void appendTransformation(const Transformation& transform) override;
     const std::vector<Transformation>& getTransformations() override;
     Matrix4 getTextureTransform() override;

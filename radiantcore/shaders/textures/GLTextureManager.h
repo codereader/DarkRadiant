@@ -29,7 +29,7 @@ public:
      * \brief
      * Construct a bound texture from a generic named bindable.
      */
-	TexturePtr getBinding(NamedBindablePtr bindable);
+	TexturePtr getBinding(const NamedBindablePtr& bindable);
 
 	/** greebo: This loads a texture directly from the disk using the
 	 * 			specified <fullPath>.
@@ -38,6 +38,10 @@ public:
      * The path to the file (no VFS paths).
 	 */
 	TexturePtr getBinding(const std::string& fullPath);
+
+    // Removes any Texture references held in the cache referring to this bindable's ID.
+    // The next call to getBinding() will produce a new TexturePtr object.
+    void clearCacheForBindable(const NamedBindablePtr& bindable);
 
 	/**
      * \brief

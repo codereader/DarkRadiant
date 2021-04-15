@@ -184,6 +184,16 @@ TexturePtr Doom3ShaderLayer::getTexture() const
     return _texture;
 }
 
+void Doom3ShaderLayer::refreshImageMaps()
+{
+    if (_bindableTex)
+    {
+        GetTextureManager().clearCacheForBindable(_bindableTex);
+    }
+
+    _texture.reset();
+}
+
 bool Doom3ShaderLayer::isVisible() const
 {
     return _enabled && _registers[_expressionSlots[Expression::Condition].registerIndex] != 0;
@@ -578,12 +588,6 @@ const StringPair& Doom3ShaderLayer::getBlendFuncStrings() const
 void Doom3ShaderLayer::setVertexColourMode(VertexColourMode mode)
 {
     _vertexColourMode = mode;
-    _material.onLayerChanged();
-}
-
-void Doom3ShaderLayer::setTexture(const TexturePtr& tex)
-{
-    _texture = tex;
     _material.onLayerChanged();
 }
 

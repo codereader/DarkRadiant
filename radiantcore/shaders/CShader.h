@@ -154,6 +154,8 @@ public:
     void revertModifications() override;
     sigc::signal<void>& sig_materialChanged() override;
 
+    void refreshImageMaps() override;
+
     // Returns the current template (including any modifications) of this material
     const ShaderTemplatePtr& getTemplate();
 

@@ -38,7 +38,7 @@ void GLTextureManager::checkBindings()
     }
 }
 
-TexturePtr GLTextureManager::getBinding(NamedBindablePtr bindable)
+TexturePtr GLTextureManager::getBinding(const NamedBindablePtr& bindable)
 {
     // Check if we got an empty MapExpression, and return the NOT FOUND texture
     // if so
@@ -48,29 +48,27 @@ TexturePtr GLTextureManager::getBinding(NamedBindablePtr bindable)
     }
 
     // Check if we already have the texture, otherwise construct it
-    std::string identifier = bindable->getIdentifier();
-    TextureMap::iterator i = _textures.find(identifier);
-    if (i != _textures.end())
+    auto identifier = bindable->getIdentifier();
+
+    auto existing = _textures.find(identifier);
+
+    if (existing != _textures.end())
     {
         // Found, return
-        return i->second;
+        return existing->second;
     }
-    else
+
+    // Create and insert texture object, if it is valid
+    auto texture = bindable->bindTexture(identifier);
+
+    if (texture)
     {
-        // Create and insert texture object, if it is valid
-        TexturePtr texture = bindable->bindTexture(identifier);
-        if (texture)
-        {
-            _textures.insert(TextureMap::value_type(identifier, texture));
-            return texture;
-        }
-        else
-        {
-            rError() << "[shaders] Unable to load texture: "
-                                << identifier << std::endl;
-            return getShaderNotFound();
-        }
+        _textures.emplace(identifier, texture);
+        return texture;
     }
+     
+    rError() << "[shaders] Unable to load texture: " << identifier << std::endl;
+    return getShaderNotFound();
 }
 
 TexturePtr GLTextureManager::getBinding(const std::string& fullPath)
@@ -100,6 +98,13 @@ TexturePtr GLTextureManager::getBinding(const std::string& fullPath)
 
     // Cast should succeed since all single image textures will be Texture2D
     return _textures[fullPath];
+}
+
+void GLTextureManager::clearCacheForBindable(const NamedBindablePtr& bindable)
+{
+    if (!bindable) return;
+
+    _textures.erase(bindable->getIdentifier());
 }
 
 // Return the shader-not-found texture, loading if necessary

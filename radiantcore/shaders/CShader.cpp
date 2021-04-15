@@ -593,6 +593,29 @@ void CShader::subscribeToTemplateChanges()
     });
 }
 
+void CShader::refreshImageMaps()
+{
+    if (_template->getEditorTexture())
+    {
+        GetTextureManager().clearCacheForBindable(_template->getEditorTexture());
+    }
+
+    if (_template->getLightFalloff())
+    {
+        GetTextureManager().clearCacheForBindable(_template->getLightFalloff());
+    }
+
+    for (const auto& layer : _template->getLayers())
+    {
+        layer->refreshImageMaps();
+    }
+
+    _editorTexture.reset();
+    _texLightFalloff.reset();
+
+    _sigMaterialModified.emit();
+}
+
 bool CShader::m_lightingEnabled = false;
 
 } // namespace shaders
