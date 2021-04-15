@@ -130,8 +130,9 @@ MaterialEditor::MaterialEditor() :
     makeLabelBold(this, "MaterialEditorStagePropertiesLabel");
     makeLabelBold(this, "MaterialEditorMaterialStagesLabel");
 
-    // Wire up the close button
+    // Wire up the buttons
     getControl<wxButton>("MaterialEditorCloseButton")->Bind(wxEVT_BUTTON, &MaterialEditor::_onClose, this);
+    getControl<wxButton>("MaterialEditorReloadImagesButton")->Bind(wxEVT_BUTTON, &MaterialEditor::_onReloadImages, this);
 
     // Add the treeview
     setupMaterialTreeView();
@@ -307,6 +308,13 @@ void MaterialEditor::setupPreviewLightProperties(wxWindow* previewPanel)
     {
         _preview->resetLightColour();
     });
+}
+
+void MaterialEditor::_onReloadImages(wxCommandEvent& ev)
+{
+    if (!_material) return;
+
+    _material->refreshImageMaps();
 }
 
 void MaterialEditor::_onClose(wxCommandEvent& ev)
@@ -1668,6 +1676,8 @@ void MaterialEditor::updateMaterialControlSensitivity()
     unlockButton->SetBackgroundColour(unlockButton->IsEnabled() ? wxColour(255, 70, 70) : wxNullColour);
     unlockButton->SetLabelText(unlockButton->IsEnabled() ? _("Unlock Editing") : _("Is editable"));
     unlockButton->SetForegroundColour(unlockButton->IsEnabled() ? *wxWHITE : wxNullColour);
+
+    getControl<wxButton>("MaterialEditorReloadImagesButton")->Enable(_material != nullptr);
 }
 
 std::pair<IShaderLayer::Ptr, std::size_t> MaterialEditor::findMaterialStageByType(IShaderLayer::Type type)

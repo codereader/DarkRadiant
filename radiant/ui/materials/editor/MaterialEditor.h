@@ -99,6 +99,7 @@ public:
     static void ShowDialog(const cmd::ArgumentList& args);
 
     void _onClose(wxCommandEvent& ev);
+    void _onReloadImages(wxCommandEvent& ev);
 
 private:
     void setupBasicMaterialPage();
