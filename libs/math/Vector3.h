@@ -160,30 +160,16 @@ public:
         return x() * other.x() + y() * other.y() + z() * other.z();
     }
 
-    /* Returns the angle between <self> and <other>
-     *
-     * @returns
-     * The angle as defined by the arccos( (a*b) / (|a|*|b|) )
-     */
-    template<typename OtherT>
-    T angle(const BasicVector3<OtherT>& other) const
+    /// Return the angle between <self> and <other>
+    T angle(const BasicVector3<T>& other) const
     {
-        BasicVector3<T> aNormalised = getNormalised();
-        BasicVector3<OtherT> otherNormalised = other.getNormalised();
+        // Get dot product of normalised vectors, ensuring it lies between -1
+        // and 1.
+        T dot = std::clamp(
+            getNormalised().dot(other.getNormalised()), -1.0, 1.0
+        );
 
-        T dot = aNormalised.dot(otherNormalised);
-
-        // greebo: Sanity correction: Make sure the dot product
-        // of two normalised vectors is not greater than 1
-        if (dot > 1.0)
-        {
-            dot = 1;
-        }
-        else if (dot < -1.0)
-        {
-            dot = -1.0;
-        }
-
+        // Angle is the arccos of the dot product
         return acos(dot);
     }
 
