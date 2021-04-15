@@ -186,14 +186,15 @@ void AseModel::parseMaterialList(parser::StringTokeniser& tokeniser)
         }
         else if (token == "*material_count")
         {
-            auto numMaterials = string::convert<std::size_t>(tokeniser.nextToken());
-            _materials.resize(numMaterials);
+            // Material count is ignored, we just add every *MATERIAL block we encounter
+            tokeniser.skipTokens(1);
         }
         else if (token == "*material")
         {
-            auto index = string::convert<std::size_t>(tokeniser.nextToken());
+            // The next token must be numeric, but we ignore it
+            string::convert<std::size_t>(tokeniser.nextToken());
 
-            if (index >= _materials.size()) throw parser::ParseException("MATERIAL index out of bounds >= MATERIAL_COUNT");
+            auto& material = _materials.emplace_back();
 
             tokeniser.assertNextToken("{");
             int level = 1;
@@ -215,7 +216,7 @@ void AseModel::parseMaterialList(parser::StringTokeniser& tokeniser)
                 /* parse material name */
                 if (token == "*material_name")
                 {
-                    _materials[index].materialName = string::trim_copy(tokeniser.nextToken(), "\"");
+                    material.materialName = string::trim_copy(tokeniser.nextToken(), "\"");
                 }
                 /* material diffuse map */
                 else if (token == "*map_diffuse")
@@ -239,28 +240,28 @@ void AseModel::parseMaterialList(parser::StringTokeniser& tokeniser)
                         /* parse diffuse map bitmap */
                         if (token == "*bitmap")
                         {
-                            _materials[index].diffuseBitmap = string::trim_copy(tokeniser.nextToken(), "\"");
+                            material.diffuseBitmap = string::trim_copy(tokeniser.nextToken(), "\"");
                         }
                         else if (token == "*uvw_u_offset")
                         {
                             // Negate the u offset value
-                            _materials[index].uOffset = -string::convert<float>(tokeniser.nextToken());
+                            material.uOffset = -string::convert<float>(tokeniser.nextToken());
                         }
                         else if (token == "*uvw_v_offset")
                         {
-                            _materials[index].vOffset = string::convert<float>(tokeniser.nextToken());
+                            material.vOffset = string::convert<float>(tokeniser.nextToken());
                         }
                         else if (token == "*uvw_u_tiling")
                         {
-                            _materials[index].uTiling = string::convert<float>(tokeniser.nextToken());
+                            material.uTiling = string::convert<float>(tokeniser.nextToken());
                         }
                         else if (token == "*uvw_v_tiling")
                         {
-                            _materials[index].vTiling = string::convert<float>(tokeniser.nextToken());
+                            material.vTiling = string::convert<float>(tokeniser.nextToken());
                         }
                         else if (token == "*uvw_angle")
                         {
-                            _materials[index].uvAngle = string::convert<float>(tokeniser.nextToken());
+                            material.uvAngle = string::convert<float>(tokeniser.nextToken());
                         }
                     }
                 } // end map_diffuse block

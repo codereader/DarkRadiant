@@ -375,8 +375,12 @@ TEST_F(AseImportTest, LoadAseWithWrongMaterialCount)
     auto model = GlobalModelCache().getModel("models/darkmod/test/cube_wrong_material_count.ase");
     EXPECT_EQ(model->getSurfaceCount(), 4);
 
-    auto activeMaterials = model->getActiveMaterials();
-    std::set<std::string> materials{ activeMaterials.begin(), activeMaterials.end() };
+    std::set<std::string> materials;
+
+    for (auto i = 0; i < model->getSurfaceCount(); ++i)
+    {
+        materials.insert(model->getSurface(i).getDefaultMaterial());
+    }
 
     EXPECT_EQ(materials.count("material01"), 1) << "material01 not found";
     EXPECT_EQ(materials.count("material02"), 1) << "material02 not found";
