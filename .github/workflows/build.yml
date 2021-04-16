@@ -12,16 +12,17 @@ jobs:
       TESTS_FILE_PATH: .\install\Tests.exe
       VERSION_HEADER_FILE: include\version.h
       BUILD_CONFIGURATION: Release
-      SHA7: ${GITHUB_SHA::7}
+      SHA: ${{github.sha}}
 
     steps:
     - uses: actions/checkout@v2
 
     - name: Inject commit hash in version.h Header
       run: |
-        Write-Host "Writing {$env:SHA7} to {{$env:VERSION_HEADER_FILE}}"
-        $replaced = Get-Content {{$env:VERSION_HEADER_FILE}} | % { if ($_ -match '#define RADIANT_VERSION "\d+.\d+.\d+([\w\d]*)"') { $_.Replace($matches[1], "rev{{$env:SHA7}}") } else { $_ } }; 
-        $replaced | Out-File {{$env:VERSION_HEADER_FILE}}
+        $sha = $env:SHA.Substring(0, 7)
+        Write-Host "Writing $sha to {$env:VERSION_HEADER_FILE}"
+        $replaced = Get-Content {$env:VERSION_HEADER_FILE} | % { if ($_ -match '#define RADIANT_VERSION "\d+.\d+.\d+([\w\d]*)"') { $_.Replace($matches[1], "rev$sha") } else { $_ } }; 
+        $replaced | Out-File {$env:VERSION_HEADER_FILE}
       shell: powershell
 
     - name: Add MSBuild to PATH
