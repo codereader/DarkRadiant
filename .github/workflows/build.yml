@@ -21,8 +21,8 @@ jobs:
       run: |
         $sha = $env:SHA.Substring(0, 7)
         Write-Host "Writing $sha to {$env:VERSION_HEADER_FILE}"
-        $replaced = Get-Content {$env:VERSION_HEADER_FILE} | % { if ($_ -match '#define RADIANT_VERSION "\d+.\d+.\d+([\w\d]*)"') { $_.Replace($matches[1], "rev$sha") } else { $_ } }; 
-        $replaced | Out-File {$env:VERSION_HEADER_FILE}
+        $replaced = Get-Content $env:VERSION_HEADER_FILE | % { if ($_ -match '#define RADIANT_VERSION "\d+.\d+.\d+([\w\d]*)"') { $_.Replace($matches[1], "rev$sha") } else { $_ } }; 
+        $replaced | Out-File $env:VERSION_HEADER_FILE
       shell: powershell
 
     - name: Add MSBuild to PATH
