@@ -10,10 +10,19 @@ jobs:
       # Path to the solution file relative to the root of the project.
       SOLUTION_FILE_PATH: .\tools\msvc\DarkRadiant.sln
       TESTS_FILE_PATH: .\install\Tests.exe
+      VERSION_HEADER_FILE: include\version.h
       BUILD_CONFIGURATION: Release
+      SHA7: ${GITHUB_SHA::7}
 
     steps:
     - uses: actions/checkout@v2
+
+    - name: Inject commit hash in version.h Header
+      run: |
+        Write-Host "Writing {$env:SHA7} to {{$env:VERSION_HEADER_FILE}}"
+        $replaced = Get-Content {{$env:VERSION_HEADER_FILE}} | % { if ($_ -match '#define RADIANT_VERSION "\d+.\d+.\d+([\w\d]*)"') { $_.Replace($matches[1], "rev{{$env:SHA7}}") } else { $_ } }; 
+        $replaced | Out-File {{$env:VERSION_HEADER_FILE}}
+      shell: powershell
 
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1
@@ -44,8 +53,17 @@ jobs:
     - name: Upload Portable Package
       uses: actions/upload-artifact@v2
       with:
-        name: portable-package-x64
-        path: PortablePackage\*.7z
+        name: darkradiant-portable-package-x64
+        path: |
+          PortablePackage/**/*
+          !PortablePackage/**/*.pdb
+
+    - name: Upload Portable Package PDBs
+      uses: actions/upload-artifact@v2
+      with:
+        name: darkradiant-pdb-files-x64
+        path: |
+          PortablePackage/**/*.pdb
 
     - name: Upload Test Results
       uses: actions/upload-artifact@v2
