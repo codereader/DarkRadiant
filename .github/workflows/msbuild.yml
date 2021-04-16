@@ -23,7 +23,7 @@ jobs:
       run: nuget restore ${{env.SOLUTION_FILE_PATH}}  
 
     - name: Find Google Test Adapter
-      run: for /f "tokens=*" %i in ('dir /s /b "GoogleTestAdapter.TestAdapter.dll"') do set GTEST_ADAPTER_PATH=%%~dpi
+      run: FOR /F "tokens=* USEBACKQ" %%g IN (`powershell -Command "(Get-ChildItem -Recurse -Path GoogleTestAdapter.TestAdapter.dll -ErrorAction SilentlyContinue).DirectoryName"`) do (SET "GTEST_ADAPTER_PATH=%%g")
       shell: cmd
       working-directory: C:\Program Files (x86)\Microsoft Visual Studio
 
