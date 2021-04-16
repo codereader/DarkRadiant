@@ -6,7 +6,13 @@ param (
     [string]$OutputFolder,
 
     [Parameter(Mandatory=$false)]
-    [switch]$SkipBuild  
+    [switch]$SkipBuild,
+    
+    [Parameter(Mandatory=$false)]
+    [switch]$GenerateSetupPackage = $true,
+
+    [Parameter(Mandatory=$false)]
+    [switch]$GeneratePortablePackage = $true
 )
 
 if ($SkipBuild)
@@ -14,26 +20,40 @@ if ($SkipBuild)
     Write-Host "skipbuild: Will skip the build process."
 }
 
+if ($null -eq $GenerateSetupPackage)
+{
+    $GenerateSetupPackage = $true
+}
+
+if ($null -eq $GeneratePortablePackage)
+{
+    $GeneratePortablePackage = $true
+}
+
+Write-Host ("Generate InnoSetup Package: {0}" -f $(if ($GenerateSetupPackage -eq $true) { "yes" } else { "no" }))
+Write-Host ("Generate Portable Package: {0}" -f $(if ($GeneratePortablePackage -eq $true) { "yes" } else { "no" }))
+
 $dummy = [Reflection.Assembly]::LoadWithPartialName("System.IO");
 
 if ([string]::IsNullOrEmpty($OutputFolder) -eq $false)
 {
     if (-not [System.IO.Directory]::Exists($OutputFolder))
     {
-        throw "The given output path $OutputFolder doesn't exist"
+        Write-Host "The given output path $OutputFolder doesn't exist, creating..."
+        $dummy = New-Item -Path $OutputFolder -ItemType Directory -ErrorAction Stop
     }
 
     Write-Host ("Will copy the resulting packages to the folder {0}" -f $OutputFolder)
 }
 
 # Check tool reachability
-if ((Get-Command "compil32" -ErrorAction SilentlyContinue) -eq $null)
+if ($GenerateSetupPackage -and $null -eq (Get-Command "compil32" -ErrorAction SilentlyContinue))
 {
     Write-Host -ForegroundColor Red "For this script to run, please make sure that InnoSetup's compil32 is found via the PATH environment variable"
     return
 }
 
-if ((Get-Command "msbuild" -ErrorAction SilentlyContinue) -eq $null -or $env:VCToolsRedistDir -eq $null)
+if ($null -eq (Get-Command "msbuild" -ErrorAction SilentlyContinue) -or $null -eq $env:VCToolsRedistDir)
 {
     Write-Host -ForegroundColor Red "For this script to run, please make sure that you've opened the corresponding studio developer command prompt."
     return
@@ -92,7 +112,7 @@ if (-not $SkipBuild)
 $pathToCheck = ".\$portablePath"
 $portableFilesFolder = Get-Item -Path $pathToCheck -ErrorAction SilentlyContinue
 
-if ($portableFilesFolder -eq $null)
+if ($null -eq $portableFilesFolder)
 {
 	$portableFilesFolder = New-Item -Path $pathToCheck -ItemType Directory -ErrorAction Stop
 }
@@ -110,7 +130,7 @@ Get-ChildItem $installFolder -Recurse -Exclude $excludes | Copy-Item -Destinatio
 # Copy the VC++ redist files
 $vcFolder = Get-Item $redistSource -Erroraction SilentlyContinue
 
-if ($vcFolder -ne $null)
+if ($null -ne $vcFolder)
 {
 	Get-ChildItem "msvcp140.dll" -Path $vcFolder | Copy-Item -Destination $portableFilesFolder
     Get-ChildItem "vcruntime140.dll" -Path $vcFolder | Copy-Item -Destination $portableFilesFolder
@@ -125,37 +145,54 @@ $portableFilename = Join-Path "..\innosetup\" ($portableFilenameTemplate -f $fou
 $pdbFilename = Join-Path "..\innosetup\" ($pdbFilenameTemplate -f $foundVersionString)
 $innoSetupFilename = Join-Path "..\innosetup\" ($innoSetupFilenameTemplate -f $foundVersionString)
 
-# Write the version to the innosetup source file
-Write-Host ("Writing version {0} to InnoSetup file" -f $foundVersionString)
-$issContent = Get-Content $issFile
-$issContent = $issContent -replace '#define DarkRadiantVersion "(.+)"', ('#define DarkRadiantVersion "{0}"' -f $foundVersionString)
-Write-Host ("Writing redist folder {0} to InnoSetup file" -f $env:VCToolsRedistDir)
-$issContent = $issContent -replace '#define VCRedistDir "(.+)"', ('#define VCRedistDir "{0}"' -f $env:VCToolsRedistDir)
-Set-Content -Path $issFile -Value $issContent
-
-# Compile the installer package
-Start-Process "compil32" -ArgumentList ("/cc", $issFile)
-
-# Compress to portable 7z package 
-if ((Get-ChildItem -Path $portableFilename -ErrorAction SilentlyContinue) -ne $null)
+if ($GenerateSetupPackage)
 {
-    Remove-Item -Path $portableFilename
-}
-Start-Process -FilePath "C:\Program Files\7-Zip\7z.exe" -ArgumentList ("a", "-r", "-x!*.pdb", "-mx9", "-mmt2", $portableFilename, "$portableFilesFolder\*.*")
+    # Write the version to the innosetup source file
+    Write-Host ("Writing version {0} to InnoSetup file" -f $foundVersionString)
+    $issContent = Get-Content $issFile
+    $issContent = $issContent -replace '#define DarkRadiantVersion "(.+)"', ('#define DarkRadiantVersion "{0}"' -f $foundVersionString)
+    Write-Host ("Writing redist folder {0} to InnoSetup file" -f $env:VCToolsRedistDir)
+    $issContent = $issContent -replace '#define VCRedistDir "(.+)"', ('#define VCRedistDir "{0}"' -f $env:VCToolsRedistDir)
+    Set-Content -Path $issFile -Value $issContent
 
-# Compress Program Database Files
-if ((Get-ChildItem -Path $pdbFilename -ErrorAction SilentlyContinue) -ne $null)
-{
-    Remove-Item -Path $pdbFilename
+    # Compile the installer package
+    Start-Process "compil32" -ArgumentList ("/cc", $issFile)
 }
-Start-Process -FilePath "C:\Program Files\7-Zip\7z.exe" -ArgumentList ("a", "-r", "-mx9", "-mmt2", $pdbFilename, "$portableFilesFolder\*.pdb") -Wait
+
+if ($GeneratePortablePackage)
+{
+    $pathTo7z = "..\7z\7za.exe"
+
+    # Compress to portable 7z package 
+    if ($null -ne (Get-ChildItem -Path $portableFilename -ErrorAction SilentlyContinue))
+    {
+        Remove-Item -Path $portableFilename
+    }
+
+    Start-Process -FilePath $pathTo7z -ArgumentList ("a", "-r", "-x!*.pdb", "-mx9", "-mmt2", $portableFilename, "$portableFilesFolder\*.*")
+
+    # Compress Program Database Files
+    if ($null -ne (Get-ChildItem -Path $pdbFilename -ErrorAction SilentlyContinue))
+    {
+        Remove-Item -Path $pdbFilename
+    }
+
+    Start-Process -FilePath $pathTo7z -ArgumentList ("a", "-r", "-mx9", "-mmt2", $pdbFilename, "$portableFilesFolder\*.pdb") -Wait
+}
 
 # Copy to target folder when everything is done
 if ([string]::IsNullOrEmpty($OutputFolder) -eq $false)
 {
     Write-Host "Copying files to output folder $OutputFolder..."
 
-    Copy-Item -Path $innoSetupFilename -Destination (Join-Path $OutputFolder ([System.IO.Path]::GetFileName($innoSetupFilename))) -Force
-    Copy-Item -Path $portableFilename -Destination (Join-Path $OutputFolder ([System.IO.Path]::GetFileName($portableFilename))) -Force
-    Copy-Item -Path $pdbFilename -Destination (Join-Path $OutputFolder ([System.IO.Path]::GetFileName($pdbFilename))) -Force
+    if ($GenerateSetupPackage)
+    {
+        Copy-Item -Path $innoSetupFilename -Destination (Join-Path $OutputFolder ([System.IO.Path]::GetFileName($innoSetupFilename))) -Force
+    }
+
+    if ($GeneratePortablePackage)
+    {
+        Copy-Item -Path $portableFilename -Destination (Join-Path $OutputFolder ([System.IO.Path]::GetFileName($portableFilename))) -Force
+        Copy-Item -Path $pdbFilename -Destination (Join-Path $OutputFolder ([System.IO.Path]::GetFileName($pdbFilename))) -Force
+    }
 }
