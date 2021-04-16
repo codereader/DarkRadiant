@@ -17,7 +17,7 @@ param (
 
 if ($SkipBuild)
 {
-    Write-Host "skipbuild: Will skip the build process."
+    Write-Host "SkipBuild specified: Will skip the build process."
 }
 
 if ($null -eq $GenerateSetupPackage)
@@ -53,7 +53,7 @@ if ($GenerateSetupPackage -and $null -eq (Get-Command "compil32" -ErrorAction Si
     return
 }
 
-if ($null -eq (Get-Command "msbuild" -ErrorAction SilentlyContinue) -or $null -eq $env:VCToolsRedistDir)
+if (-not $SkipBuild -and ($null -eq (Get-Command "msbuild" -ErrorAction SilentlyContinue) -or $null -eq $env:VCToolsRedistDir))
 {
     Write-Host -ForegroundColor Red "For this script to run, please make sure that you've opened the corresponding studio developer command prompt."
     return

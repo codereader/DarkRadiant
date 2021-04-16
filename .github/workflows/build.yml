@@ -32,7 +32,7 @@ jobs:
     - name: Run Unit Tests
       run: |
         FOR /F "tokens=* USEBACKQ" %%g IN (`powershell -Command "(Get-ChildItem -Recurse -Path 'C:\Program Files (x86)\Microsoft Visual Studio\' -Filter "GoogleTestAdapter.TestAdapter.dll" -ErrorAction SilentlyContinue).DirectoryName"`) do (SET "GTEST_ADAPTER_PATH=%%g")
-        echo Test Adapter Path resolved to: %%GTEST_ADAPTER_PATH%%
+        echo Test Adapter Path resolved to: %GTEST_ADAPTER_PATH%
         vstest.console.exe ${{env.TESTS_FILE_PATH}} /Platform:x64 /Logger:trx /TestAdapterPath:"%%GTEST_ADAPTER_PATH%%"
       shell: cmd
     
@@ -45,4 +45,10 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: portable-package-x64
-        path: ../../PortablePackage/*.7z
+        path: PortablePackage\*.7z
+
+    - name: Upload Test Results
+      uses: actions/upload-artifact@v2
+      with:
+        name: unit-test-results
+        path: TestResults\*.trx
