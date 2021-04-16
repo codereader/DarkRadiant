@@ -22,18 +22,24 @@ jobs:
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: nuget restore ${{env.SOLUTION_FILE_PATH}}  
 
+    - name: Find Google Test Adapter
+      run: for /f "tokens=*" %i in ('dir /s /b "C:\Program Files (x86)\Microsoft Visual Studio\GoogleTestAdapter.TestAdapter.dll"') do set GTEST_ADAPTER_PATH=%%~dpi
+      shell: cmd
+
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} /p:Platform=x64 /maxcpucount:4 /nodeReuse:false /p:UseSharedConfiguration=false ${{env.SOLUTION_FILE_PATH}}
-
-    - name: Find Google Test Adapter
-      run: for /f "tokens=*" %i in ('dir /s /b "C:\Program Files (x86)\Microsoft Visual Studio\GoogleTestAdapter.TestAdapter.dll"') do set GTEST_ADAPTER_PATH=%~dpi
-      shell: cmd
       
-    - name: Run Google Tests
+    - name: Run Unit Tests
       run: vstest.console.exe ${{env.TESTS_FILE_PATH}} /Platform:x64 /Logger:trx /TestAdapterPath:"${{env.GTEST_ADAPTER_PATH}}"
     
     - name: Generate Portable Package
       run: powershell -ExecutionPolicy ByPass .\compile_release_package.ps1 -Platform x64 -SkipBuild -GenerateSetupPackage:$false -GeneratePortablePackage:$true -OutputFolder ..\..\PortablePackage\
       shell: cmd
       working-directory: .\tools\scripts
+
+    - name: Upload Portable Package
+      uses: actions/upload-artifact@v2
+      with:
+        name: portable-package-x64
+        path: ../../PortablePackage/*.7z
