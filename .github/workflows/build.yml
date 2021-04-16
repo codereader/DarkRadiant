@@ -2,15 +2,15 @@ name: MSBuild
 
 on: [push]
 
-env:
-  # Path to the solution file relative to the root of the project.
-  SOLUTION_FILE_PATH: .\tools\msvc\DarkRadiant.sln
-  TESTS_FILE_PATH: .\install\Tests.exe
-  BUILD_CONFIGURATION: Release
-
 jobs:
-  build:
+  Windows Build:
     runs-on: windows-latest
+
+    env:
+      # Path to the solution file relative to the root of the project.
+      SOLUTION_FILE_PATH: .\tools\msvc\DarkRadiant.sln
+      TESTS_FILE_PATH: .\install\Tests.exe
+      BUILD_CONFIGURATION: Release
 
     steps:
     - uses: actions/checkout@v2
