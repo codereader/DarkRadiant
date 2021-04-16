@@ -3,7 +3,7 @@ name: MSBuild
 on: [push]
 
 jobs:
-  Windows Build:
+  Windows-Build:
     runs-on: windows-latest
 
     env:
