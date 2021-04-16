@@ -53,7 +53,7 @@ if ($GenerateSetupPackage -and $null -eq (Get-Command "compil32" -ErrorAction Si
     return
 }
 
-if (-not $SkipBuild -and ($null -eq (Get-Command "msbuild" -ErrorAction SilentlyContinue) -or $null -eq $env:VCToolsRedistDir))
+if (-not $SkipBuild -and ($null -eq (Get-Command "msbuild" -ErrorAction SilentlyContinue)))
 {
     Write-Host -ForegroundColor Red "For this script to run, please make sure that you've opened the corresponding studio developer command prompt."
     return
@@ -87,19 +87,39 @@ foreach ($line in $content)
     }
 }
 
+# Check the location of the VC redist folder
+$vcRedistFolder = $env:VCToolsRedistDir
+
+if ($null -eq $vcRedistFolder)
+{
+    Write-Host "Trying to guess the VCRedistTools folder location..."
+
+    $candidate = Get-ChildItem -Path "C:\Program Files (x86)\Microsoft Visual Studio\" -Recurse -Filter "Redist" | ? { (Get-ChildItem -Path $_.FullName -Filter "MSVC") }
+
+    if ($null -ne $candidate)
+    {
+        $candidate = Join-Path $candidate.FullName "MSVC"
+        
+        $candidate = Get-ChildItem -Recurse -Path $candidate -Filter $target -Depth 1 | ? { (Get-ChildItem -Path $_.FullName -Filter "Microsoft.VC142.CRT") } | Select -First 1
+        
+        $vcRedistFolder = $candidate.Parent.FullName
+        Write-Host "Guessed this path: $vcRedistFolder"
+    }
+}
+
 if ($target -eq "x86")
 {
     $platform = "Win32"
     $issFile = "..\innosetup\darkradiant.iss"
     $portablePath = "DarkRadiant_install"
-	$redistSource = Join-Path $env:VCToolsRedistDir "x86\Microsoft.VC142.CRT"
+	$redistSource = Join-Path $vcRedistFolder "x86\Microsoft.VC142.CRT"
 } 
 else
 {
     $platform = "x64"
     $issFile = "..\innosetup\darkradiant.x64.iss"
     $portablePath = "DarkRadiant_install.x64"
-	$redistSource = Join-Path $env:VCToolsRedistDir "x64\Microsoft.VC142.CRT"
+	$redistSource = Join-Path $vcRedistFolder "x64\Microsoft.VC142.CRT"
 }
 
 if (-not $SkipBuild)
@@ -151,8 +171,8 @@ if ($GenerateSetupPackage)
     Write-Host ("Writing version {0} to InnoSetup file" -f $foundVersionString)
     $issContent = Get-Content $issFile
     $issContent = $issContent -replace '#define DarkRadiantVersion "(.+)"', ('#define DarkRadiantVersion "{0}"' -f $foundVersionString)
-    Write-Host ("Writing redist folder {0} to InnoSetup file" -f $env:VCToolsRedistDir)
-    $issContent = $issContent -replace '#define VCRedistDir "(.+)"', ('#define VCRedistDir "{0}"' -f $env:VCToolsRedistDir)
+    Write-Host ("Writing redist folder {0} to InnoSetup file" -f $vcRedistFolder)
+    $issContent = $issContent -replace '#define VCRedistDir "(.+)"', ('#define VCRedistDir "{0}"' -f $vcRedistFolder)
     Set-Content -Path $issFile -Value $issContent
 
     # Compile the installer package

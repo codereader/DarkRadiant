@@ -48,7 +48,7 @@ jobs:
       shell: cmd
     
     - name: Generate Portable Package
-      run: powershell -ExecutionPolicy ByPass .\compile_release_package.ps1 -Platform x64 -SkipBuild -GenerateSetupPackage:$false -GeneratePortablePackage:$true -OutputFolder ..\..\PortablePackage\
+      run: powershell -ExecutionPolicy ByPass .\compile_release_package.ps1 -Platform x64 -SkipBuild -GenerateSetupPackage:$false -GeneratePortablePackage:$false -OutputFolder ..\..\PortablePackage\
       shell: cmd
       working-directory: .\tools\scripts
 
@@ -57,15 +57,15 @@ jobs:
       with:
         name: darkradiant-portable-package-x64
         path: |
-          PortablePackage/**/*
-          !PortablePackage/**/*.pdb
+          tools/scripts/DarkRadiant_install.x64/**/*
+          !tools/scripts/DarkRadiant_install.x64/**/*.pdb
 
     - name: Upload Portable Package PDBs
       uses: actions/upload-artifact@v2
       with:
         name: darkradiant-pdb-files-x64
         path: |
-          PortablePackage/**/*.pdb
+          tools/scripts/DarkRadiant_install.x64/**/*.pdb
 
     - name: Upload Test Results
       uses: actions/upload-artifact@v2
