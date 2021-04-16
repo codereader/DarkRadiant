@@ -25,7 +25,7 @@ jobs:
     - name: Find Google Test Adapter
       run: for /f "tokens=*" %i in ('dir /s /b "GoogleTestAdapter.TestAdapter.dll"') do set GTEST_ADAPTER_PATH=%%~dpi
       shell: cmd
-      working-directory: "C:\Program Files (x86)\Microsoft Visual Studio"
+      working-directory: C:\Program Files (x86)\Microsoft Visual Studio
 
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
