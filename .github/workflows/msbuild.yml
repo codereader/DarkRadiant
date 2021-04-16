@@ -20,7 +20,7 @@ jobs:
 
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} /p:Platform=x64 ${{env.SOLUTION_FILE_PATH}}
+      run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} /p:Platform=x64 /maxcpucount:4 /nodeReuse:false /p:UseSharedConfiguration=false ${{env.SOLUTION_FILE_PATH}}
 
     - name: Find Google Test Adapter
       run: for /f "tokens=*" %i in ('dir /s /b "%vsinstalldir%\GoogleTestAdapter.TestAdapter.dll"') do set GTEST_ADAPTER_PATH=%~dpi
