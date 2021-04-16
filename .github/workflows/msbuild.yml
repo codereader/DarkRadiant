@@ -5,6 +5,7 @@ on: [push]
 env:
   # Path to the solution file relative to the root of the project.
   SOLUTION_FILE_PATH: .\tools\msvc\DarkRadiant.sln
+  TESTS_FILE_PATH: .\install\Tests.exe
   BUILD_CONFIGURATION: Release
 
 jobs:
@@ -17,10 +18,13 @@ jobs:
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1
 
-    #- name: Restore NuGet packages
-    #  working-directory: ${{env.GITHUB_WORKSPACE}}
-    #  run: nuget restore ${{env.SOLUTION_FILE_PATH}}
-
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} /p:Platform=x64 ${{env.SOLUTION_FILE_PATH}}
+
+    - name: Find Google Test Adapter
+      run: for /f "tokens=*" %i in ('dir /s /b "%vsinstalldir%\GoogleTestAdapter.TestAdapter.dll"') do set GTEST_ADAPTER_PATH=%~dpi
+      shell: cmd
+      
+    - name: Run Google Tests
+      run: vstest.console.exe ${{env.TESTS_FILE_PATH}} /Platform:x64 /Logger:trx /TestAdapterPath:"${{env.GTEST_ADAPTER_PATH}}"
