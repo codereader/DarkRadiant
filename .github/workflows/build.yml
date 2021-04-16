@@ -22,13 +22,25 @@ jobs:
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: nuget restore ${{env.SOLUTION_FILE_PATH}}  
 
+    - name: Experimental Setup VSTest.console.exe
+      uses: darenm/Setup-VSTest@v1
+
+    - name: Experimental Run Unit Tests
+      run: |
+        FOR /F "tokens=* USEBACKQ" %%g IN (`powershell -Command "(Get-ChildItem -Recurse -Path 'C:\Program Files (x86)\Microsoft Visual Studio\' -Filter "GoogleTestAdapter.TestAdapter.dll" -ErrorAction SilentlyContinue).DirectoryName"`) do (SET "GTEST_ADAPTER_PATH=%%g")
+        vstest.console.exe ${{env.TESTS_FILE_PATH}} /Platform:x64 /Logger:trx /TestAdapterPath:"${{env.GTEST_ADAPTER_PATH}}"
+      shell: cmd
+
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} /p:Platform=x64 /maxcpucount:4 /nodeReuse:false /p:UseSharedConfiguration=false ${{env.SOLUTION_FILE_PATH}}
       
+    - name: Setup VSTest.console.exe
+      uses: darenm/Setup-VSTest@v1
+
     - name: Run Unit Tests
       run: |
-        FOR /F "tokens=* USEBACKQ" %%g IN (`powershell -Command "(Get-ChildItem -Recurse -Path 'C:\Program Files (x86)\' -Filter "GoogleTestAdapter.TestAdapter.dll" -ErrorAction SilentlyContinue).DirectoryName"`) do (SET "GTEST_ADAPTER_PATH=%%g")
+        FOR /F "tokens=* USEBACKQ" %%g IN (`powershell -Command "(Get-ChildItem -Recurse -Path 'C:\Program Files (x86)\Microsoft Visual Studio\' -Filter "GoogleTestAdapter.TestAdapter.dll" -ErrorAction SilentlyContinue).DirectoryName"`) do (SET "GTEST_ADAPTER_PATH=%%g")
         vstest.console.exe ${{env.TESTS_FILE_PATH}} /Platform:x64 /Logger:trx /TestAdapterPath:"${{env.GTEST_ADAPTER_PATH}}"
       shell: cmd
     
