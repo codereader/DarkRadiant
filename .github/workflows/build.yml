@@ -10,17 +10,18 @@ jobs:
       # Path to the solution file relative to the root of the project.
       SOLUTION_FILE_PATH: .\tools\msvc\DarkRadiant.sln
       TESTS_FILE_PATH: .\install\Tests.exe
-      VERSION_HEADER_FILE: include\version.h
       BUILD_CONFIGURATION: Release
-      SHA: ${{github.sha}}
 
     steps:
     - uses: actions/checkout@v2
 
     - name: Inject commit hash in version.h Header
+      env:
+        VERSION_HEADER_FILE: include\version.h
+        SHA: ${{github.sha}}
       run: |
         $sha = $env:SHA.Substring(0, 7)
-        Write-Host "Writing $sha to {$env:VERSION_HEADER_FILE}"
+        Write-Host "Writing $sha to $env:VERSION_HEADER_FILE"
         $replaced = Get-Content $env:VERSION_HEADER_FILE | % { if ($_ -match '#define RADIANT_VERSION "\d+.\d+.\d+([\w\d]*)"') { $_.Replace($matches[1], "rev$sha") } else { $_ } }; 
         $replaced | Out-File $env:VERSION_HEADER_FILE
       shell: powershell
