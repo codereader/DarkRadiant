@@ -17,6 +17,10 @@ jobs:
 
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1
+      
+    - name: Restore NuGet packages
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      run: nuget restore ${{env.SOLUTION_FILE_PATH}}  
 
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
@@ -28,3 +32,5 @@ jobs:
       
     - name: Run Google Tests
       run: vstest.console.exe ${{env.TESTS_FILE_PATH}} /Platform:x64 /Logger:trx /TestAdapterPath:"${{env.GTEST_ADAPTER_PATH}}"
+      
+  
