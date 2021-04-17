@@ -79,10 +79,24 @@ TexturePtr CShader::getEditorImage()
 {
     if (!_editorTexture)
     {
+        auto editorTex = _template->getEditorTexture();
+
+        if (!editorTex)
+        {
+            // If there is no editor expression defined, use the an image from a layer, but no Bump or speculars
+            for (const auto& layer : _layers)
+            {
+                if (layer->getType() != IShaderLayer::BUMP && layer->getType() != IShaderLayer::SPECULAR &&
+                    std::dynamic_pointer_cast<MapExpression>(layer->getMapExpression()))
+                {
+                    editorTex = std::static_pointer_cast<MapExpression>(layer->getMapExpression());
+                    break;
+                }
+            }
+        }
+
         // Pass the call to the GLTextureManager to realise this image
-        _editorTexture = GetTextureManager().getBinding(
-            _template->getEditorTexture()
-        );
+        _editorTexture = GetTextureManager().getBinding(editorTex);
     }
 
     return _editorTexture;
@@ -590,7 +604,25 @@ void CShader::subscribeToTemplateChanges()
     _templateChanged = _template->sig_TemplateChanged().connect([this]()
     {
         _sigMaterialModified.emit();
+
+        // Check if the editor image needs an update
+        updateEditorImage();
     });
+}
+
+void CShader::updateEditorImage()
+{
+    // In case the editor tex is pointing to the fallback "shader not found"
+    // check if we have some possible replacements
+    if (!_editorTexture) return;
+
+    if (isEditorImageNoTex() || !_template->getEditorTexture())
+    {
+        // The editor image is "shader not found", but we might have layers and/or an qer_editorImage defined
+        // In case we don't have an editor texture expression, remove it from the slot
+        // we will update it again as soon as it will be requested
+        _editorTexture.reset();
+    }
 }
 
 void CShader::refreshImageMaps()

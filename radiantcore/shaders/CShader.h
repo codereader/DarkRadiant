@@ -162,6 +162,7 @@ public:
 private:
     void ensureTemplateCopy();
     void subscribeToTemplateChanges();
+    void updateEditorImage();
 };
 typedef std::shared_ptr<CShader> CShaderPtr;
 

@@ -1321,13 +1321,6 @@ void ShaderTemplate::addLayer(const Doom3ShaderLayer::Ptr& layer)
 {
 	// Add the layer
 	_layers.emplace_back(layer);
-
-	// If there is no editor texture yet, use the bindable texture, but no Bump or speculars
-	if (!_editorTex && layer->getType() != IShaderLayer::BUMP && 
-        layer->getType() != IShaderLayer::SPECULAR && std::dynamic_pointer_cast<MapExpression>(layer->getMapExpression()))
-	{
-		_editorTex = std::static_pointer_cast<MapExpression>(layer->getMapExpression());
-	}
 }
 
 void ShaderTemplate::addLayer(IShaderLayer::Type type, const MapExpressionPtr& mapExpr)
