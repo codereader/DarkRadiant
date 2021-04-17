@@ -59,6 +59,7 @@
     <ClInclude Include="..\..\..\test\math\MatrixUtils.h">
       <Filter>math</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\test\TdmMissionSetup.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

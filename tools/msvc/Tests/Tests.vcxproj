@@ -65,6 +65,7 @@
     <ClInclude Include="..\..\..\test\HeadlessOpenGLContext.h" />
     <ClInclude Include="..\..\..\test\math\MatrixUtils.h" />
     <ClInclude Include="..\..\..\test\RadiantTest.h" />
+    <ClInclude Include="..\..\..\test\TdmMissionSetup.h" />
     <ClInclude Include="..\..\..\test\TestContext.h" />
     <ClInclude Include="..\..\..\test\TestLogFile.h" />
   </ItemGroup>

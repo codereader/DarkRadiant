@@ -1,4 +1,5 @@
 #include "RadiantTest.h"
+#include "TdmMissionSetup.h"
 
 #include <regex>
 #include "ishaders.h"
@@ -11,6 +12,7 @@ namespace test
 {
 
 using MaterialExportTest = RadiantTest;
+using MaterialExportTest_TdmMissionSetup = TdmMissionSetup;
 
 inline void expectDefinitionContains(const MaterialPtr& material, const std::string& expectedContainedString)
 {
@@ -1225,6 +1227,63 @@ TEST_F(MaterialExportTest, WritingMaterialFiles)
     EXPECT_FALSE(newMaterial->isModified());
     EXPECT_TRUE(fileContainsText(exportTestFile, newMaterial->getName() + "\n{" + newMaterial->getDefinition() + "}"))
         << "New definition not found in file";
+}
+
+// Not all shader file paths are valid, they must be within the current mod's VFS structure, and in the materials/ folder
+
+TEST_F(MaterialExportTest, ShaderFilePathValidation)
+{
+    auto newMaterial = GlobalMaterialManager().createEmptyMaterial("textures/exporttest/somePath");
+    newMaterial->setDescription("--");
+
+    auto projectPath = _context.getTestProjectPath();
+
+    EXPECT_NO_THROW(newMaterial->setShaderFileName(projectPath + "materials/exporttest.mtr"));
+    EXPECT_NO_THROW(newMaterial->setShaderFileName(projectPath + "materials/_test.mtr"));
+
+    // materials2 is not a valid folder
+    EXPECT_THROW(newMaterial->setShaderFileName(projectPath + "materials2/exporttest.mtr"), std::invalid_argument);
+    EXPECT_THROW(newMaterial->setShaderFileName(projectPath + "exporttest.mtr"), std::invalid_argument);
+
+    // Wrong file extension
+    EXPECT_THROW(newMaterial->setShaderFileName(projectPath + "materials/exporttest.mtr2"), std::invalid_argument);
+
+    // No FM setup present
+    EXPECT_THROW(newMaterial->setShaderFileName(projectPath + "fms/testfm/materials/exporttest.mtr"), std::invalid_argument);
+}
+
+TEST_F(MaterialExportTest_TdmMissionSetup, ShaderFilePathValidation)
+{
+    auto newMaterial = GlobalMaterialManager().createEmptyMaterial("textures/exporttest/somePath");
+    newMaterial->setDescription("--");
+
+    auto tdmPath = _context.getTestProjectPath();
+
+    // The base project path is OK to be used
+    EXPECT_NO_THROW(newMaterial->setShaderFileName(tdmPath + "materials/exporttest.mtr"));
+    EXPECT_NO_THROW(newMaterial->setShaderFileName(tdmPath + "materials/_test.mtr"));
+
+    // materials2 is not a valid folder
+    EXPECT_THROW(newMaterial->setShaderFileName(tdmPath + "materials2/exporttest.mtr"), std::invalid_argument);
+    EXPECT_THROW(newMaterial->setShaderFileName(tdmPath + "exporttest.mtr"), std::invalid_argument);
+
+    // Wrong file extension
+    EXPECT_THROW(newMaterial->setShaderFileName(tdmPath + "materials/exporttest.mtr2"), std::invalid_argument);
+
+    // FM setup says this is OK
+    auto missionPath = tdmPath + MaterialExportTest_TdmMissionSetup::MissionBasePath + "/" + MaterialExportTest_TdmMissionSetup::TestMissionName + "/";
+    auto wrongMissionPath = tdmPath + MaterialExportTest_TdmMissionSetup::MissionBasePath + "/tork/";
+
+    EXPECT_NO_THROW(newMaterial->setShaderFileName(missionPath + "materials/exporttest.mtr"));
+
+    EXPECT_THROW(newMaterial->setShaderFileName(missionPath + "materials2/exporttest.mtr"), std::invalid_argument);
+    EXPECT_THROW(newMaterial->setShaderFileName(missionPath + "exporttest.mtr"), std::invalid_argument);
+
+    // Wrong file extension
+    EXPECT_THROW(newMaterial->setShaderFileName(missionPath + "materials/exporttest.mtr2"), std::invalid_argument);
+
+    // Wrong mission name
+    EXPECT_THROW(newMaterial->setShaderFileName(wrongMissionPath + "materials/exporttest.mtr"), std::invalid_argument);
 }
 
 }
