@@ -1255,72 +1255,88 @@ void ShaderTemplate::parseDefinition()
         resetSortRequest();
 	}
 
-	std::size_t numAmbientStages = 0;
-
-	for (const auto& layer : _layers)
-	{
-		if (layer->getType() == IShaderLayer::BLEND)
-		{
-			numAmbientStages++;
-		}
-	}
-	
-	// Determine coverage if not yet done
-	if (_coverage == Material::MC_UNDETERMINED)
-	{
-		// automatically set MC_TRANSLUCENT if we don't have any interaction stages and 
-		// the first stage is blended and not an alpha test mask or a subview
-		if (_layers.empty())
-		{
-			// non-visible
-			_coverage = Material::MC_TRANSLUCENT;
-		} 
-		else if (_layers.size() != numAmbientStages)
-		{
-			// we have an interaction draw
-			_coverage = Material::MC_OPAQUE;
-		}
-		else
-		{
-			const Doom3ShaderLayer& firstLayer = **_layers.begin();
-
-			BlendFunc blend = firstLayer.getBlendFunc();
-
-			// If the layers are blended with the destination, we consider it translucent
-			if (blend.dest != GL_ZERO || 
-				blend.src == GL_DST_COLOR ||
-				blend.src == GL_ONE_MINUS_DST_COLOR ||
-				blend.src == GL_DST_ALPHA ||
-				blend.src == GL_ONE_MINUS_DST_ALPHA)
-			{
-				_coverage = Material::MC_TRANSLUCENT;
-			}
-			else
-			{
-				_coverage = Material::MC_OPAQUE;
-			}
-		}
-	}
-
-	// translucent automatically implies noshadows
-	if (_coverage == Material::MC_TRANSLUCENT)
-	{
-		_materialFlags |= Material::FLAG_NOSHADOWS;
-	} 
-	else 
-	{
-		// mark the contents as opaque
-		_surfaceFlags |= Material::SURF_OPAQUE;
-	}
+	determineCoverage();
 
     // We might have invoked a few setters during this process, clear the flag now
     _blockContentsNeedUpdate = false;
 }
 
+void ShaderTemplate::determineCoverage()
+{
+    // Determine coverage if not yet done
+    if (_coverage == Material::MC_UNDETERMINED)
+    {
+        std::size_t numAmbientStages = 0;
+
+        for (const auto& layer : _layers)
+        {
+            if (layer->getType() == IShaderLayer::BLEND)
+            {
+                numAmbientStages++;
+            }
+        }
+
+        // automatically set MC_TRANSLUCENT if we don't have any interaction stages and 
+        // the first stage is blended and not an alpha test mask or a subview
+        if (_layers.empty())
+        {
+            // non-visible
+            _coverage = Material::MC_TRANSLUCENT;
+        }
+        else if (_layers.size() != numAmbientStages)
+        {
+            // we have an interaction draw
+            _coverage = Material::MC_OPAQUE;
+        }
+        else
+        {
+            const Doom3ShaderLayer& firstLayer = **_layers.begin();
+
+            BlendFunc blend = firstLayer.getBlendFunc();
+
+            // If the layers are blended with the destination, we consider it translucent
+            if (blend.dest != GL_ZERO ||
+                blend.src == GL_DST_COLOR ||
+                blend.src == GL_ONE_MINUS_DST_COLOR ||
+                blend.src == GL_DST_ALPHA ||
+                blend.src == GL_ONE_MINUS_DST_ALPHA)
+            {
+                _coverage = Material::MC_TRANSLUCENT;
+            }
+            else
+            {
+                _coverage = Material::MC_OPAQUE;
+            }
+        }
+    }
+
+    // translucent automatically implies noshadows
+    if (_coverage == Material::MC_TRANSLUCENT)
+    {
+        _materialFlags |= Material::FLAG_NOSHADOWS;
+    }
+    else
+    {
+        // mark the contents as opaque
+        _surfaceFlags |= Material::SURF_OPAQUE;
+    }
+}
+
 void ShaderTemplate::addLayer(const Doom3ShaderLayer::Ptr& layer)
 {
-	// Add the layer
-	_layers.emplace_back(layer);
+    // Add the layer
+    _layers.emplace_back(layer);
+
+    // If this is our first layer, clear the noshadows flag that was set before
+    // and redetermine the coverage
+    if (_layers.size() == 1)
+    {
+        _materialFlags &= ~Material::FLAG_NOSHADOWS;
+        _coverage = Material::MC_UNDETERMINED;
+        determineCoverage();
+    }
+
+    onTemplateChanged();
 }
 
 void ShaderTemplate::addLayer(IShaderLayer::Type type, const MapExpressionPtr& mapExpr)
@@ -1350,7 +1366,6 @@ std::size_t ShaderTemplate::addLayer(IShaderLayer::Type type)
     }
 
     addLayer(std::make_shared<Doom3ShaderLayer>(*this, type, map));
-    onTemplateChanged();
 
     return _layers.size() - 1;
 }
@@ -1358,6 +1373,12 @@ std::size_t ShaderTemplate::addLayer(IShaderLayer::Type type)
 void ShaderTemplate::removeLayer(std::size_t index)
 {
     _layers.erase(_layers.begin() + index);
+
+    if (_layers.empty())
+    {
+        _coverage = Material::MC_UNDETERMINED;
+        determineCoverage();
+    }
 
     onTemplateChanged();
 }

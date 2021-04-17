@@ -1628,7 +1628,9 @@ void MaterialEditor::updateStageButtonSensitivity()
 {
     auto item = _stageView->GetSelection();
 
-    if (_material && item.IsOk() && GlobalMaterialManager().materialCanBeModified(_material->getName()))
+    bool materialCanBeModified = _material && GlobalMaterialManager().materialCanBeModified(_material->getName());
+
+    if (materialCanBeModified && item.IsOk())
     {
         auto row = wxutil::TreeModel::Row(item, *_stageList);
         auto index = row[STAGE_COLS().index].getInteger();
@@ -1649,7 +1651,7 @@ void MaterialEditor::updateStageButtonSensitivity()
         getControl<wxButton>("MaterialEditorMoveUpStageButton")->Disable();
         getControl<wxButton>("MaterialEditorMoveDownStageButton")->Disable();
         getControl<wxButton>("MaterialEditorDuplicateStageButton")->Disable();
-        getControl<wxButton>("MaterialEditorAddStageButton")->Disable();
+        getControl<wxButton>("MaterialEditorAddStageButton")->Enable(materialCanBeModified);
     }
 }
 
@@ -2526,7 +2528,7 @@ void MaterialEditor::_onAddStage(wxCommandEvent& ev)
 {
     std::size_t index = _material->addLayer(determineStageTypeToCreate(_material));
 
-    updateStageListFromMaterial();
+    updateControlsFromMaterial();
     selectStageByIndex(index);
 }
 
@@ -2698,7 +2700,7 @@ void MaterialEditor::updateMaterialTreeItem()
 
 void MaterialEditor::onMaterialChanged()
 {
-    updateMaterialNameControl();
+    updateMaterialPropertiesFromMaterial();
     updateMaterialTreeItem();
     updateMaterialControlSensitivity();
     updateSourceView();

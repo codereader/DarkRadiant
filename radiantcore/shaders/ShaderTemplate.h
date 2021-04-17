@@ -543,7 +543,7 @@ private:
 	IShaderExpression::Ptr parseSingleExpressionTerm(parser::DefTokeniser& tokeniser);
 
 	bool saveLayer();
-
+    void determineCoverage();
 };
 
 /* TYPEDEFS */
