@@ -1343,30 +1343,46 @@ bool MaterialEditor::saveCurrentMaterial()
 
     if (_material->getShaderFileInfo().fullPath().empty())
     {
-        // Ask the user where to save it
-        wxutil::FileChooser chooser(this, _("Select .mtr file"), false, "material", ".mtr");
-
-        fs::path modMaterialsPath = GlobalGameManager().getModPath();
-        modMaterialsPath /= "materials";
-
-        if (!os::fileOrDirExists(modMaterialsPath.string()))
-        {
-            rMessage() << "Ensuring mod materials path: " << modMaterialsPath << std::endl;
-            fs::create_directories(modMaterialsPath);
-        }
-
-        // Point the file chooser to that new file
-        chooser.setCurrentPath(GlobalGameManager().getModPath() + "/materials");
-        chooser.askForOverwrite(false);
-
-        std::string result = chooser.display();
-
-        if (result.empty())
-        {
-            return false; // save aborted
-        }
+        auto mtrExtension = shaders::getMaterialFileExtension();
+        auto materialsFolderName = shaders::getMaterialsFolderName();
         
-        _material->setShaderFileName(os::standardPath(result));
+        while (true)
+        {
+            // Ask the user where to save it
+            wxutil::FileChooser chooser(this, _("Select Material file"), false, "material", "." + mtrExtension);
+
+            fs::path modMaterialsPath = GlobalGameManager().getModPath();
+            modMaterialsPath /= materialsFolderName;
+
+            if (!os::fileOrDirExists(modMaterialsPath.string()))
+            {
+                rMessage() << "Ensuring mod materials path: " << modMaterialsPath << std::endl;
+                fs::create_directories(modMaterialsPath);
+            }
+
+            // Point the file chooser to that new file
+            chooser.setCurrentPath(GlobalGameManager().getModPath() + materialsFolderName);
+            chooser.askForOverwrite(false);
+
+            std::string result = chooser.display();
+
+            if (result.empty())
+            {
+                return false; // save aborted
+            }
+
+            try
+            {
+                // Setting the path might fail if it's invalid, try to set it and break the loop
+                _material->setShaderFileName(os::standardPath(result));
+                break;
+            }
+            catch (const std::invalid_argument& ex)
+            {
+                // Invalid path, notify user and get ready for the next round
+                wxutil::Messagebox::ShowError(ex.what(), this);
+            }
+        }
     }
 
     try

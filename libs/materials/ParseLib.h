@@ -14,6 +14,7 @@ namespace shaders
 constexpr const char* MISSING_BASEPATH_NODE = "Failed to find \"/game/filesystem/shaders/basepath\" node in game descriptor";
 constexpr const char* MISSING_EXTENSION_NODE = "Failed to find \"/game/filesystem/shaders/extension\" node in game descriptor";
 
+// returns the materials folder with a trailing slash, e.g. "materials/"
 inline std::string getMaterialsFolderName()
 {
     auto nodes = game::current::getNodes("/filesystem/shaders/basepath");
