@@ -2,6 +2,7 @@
 
 #include "i18n.h"
 #include "ishaderexpression.h"
+#include "ishaderclipboard.h"
 
 #include <wx/panel.h>
 #include <wx/splitter.h>
@@ -220,6 +221,13 @@ int MaterialEditor::ShowModal()
 int MaterialEditor::ShowModal(const std::string& materialToPreselect)
 {
     _materialToPreselect = materialToPreselect;
+
+    // If we don't get any input from the arguments, use the
+    // currently selected material for starters
+    if (_materialToPreselect.empty())
+    {
+        _materialToPreselect = GlobalShaderClipboard().getShaderName();
+    }
 
     return ShowModal();
 }
