@@ -36,13 +36,6 @@
 namespace
 {
     const char* TEXTURE_PREFIX = "textures/";
-    const char* MISSING_BASEPATH_NODE =
-        "Failed to find \"/game/filesystem/shaders/basepath\" node \
-in game descriptor";
-
-    const char* MISSING_EXTENSION_NODE =
-        "Failed to find \"/game/filesystem/shaders/extension\" node \
-in game descriptor";
 
     // Default image maps for optional material stages
     const std::string IMAGE_FLAT = "_flat.bmp";
@@ -92,30 +85,17 @@ void Doom3ShaderSystem::destroy()
 ShaderLibraryPtr Doom3ShaderSystem::loadMaterialFiles()
 {
     // Get the shaders path and extension from the XML game file
-    xml::NodeList nlShaderPath =
-        GlobalGameManager().currentGame()->getLocalXPath("/filesystem/shaders/basepath");
-    if (nlShaderPath.empty())
-        throw xml::MissingXMLNodeException(MISSING_BASEPATH_NODE);
-
-    xml::NodeList nlShaderExt =
-        GlobalGameManager().currentGame()->getLocalXPath("/filesystem/shaders/extension");
-    if (nlShaderExt.empty())
-        throw xml::MissingXMLNodeException(MISSING_EXTENSION_NODE);
+    auto materialsFolder = getMaterialsFolderName();
+    auto extension = getMaterialFileExtension();
 
     // Load the shader files from the VFS
-    std::string sPath = nlShaderPath[0].getContent();
-    if (!string::ends_with(sPath, "/"))
-        sPath += "/";
-
-    std::string extension = nlShaderExt[0].getContent();
-
     ShaderLibraryPtr library = std::make_shared<ShaderLibrary>();
 
     // Load each file from the global filesystem
     {
         ScopedDebugTimer timer("ShaderFiles parsed: ");
         ShaderFileLoader<ShaderLibrary> loader(GlobalFileSystem(), *library,
-                                               sPath, extension);
+            materialsFolder, extension);
         loader.parseFiles();
     }
 

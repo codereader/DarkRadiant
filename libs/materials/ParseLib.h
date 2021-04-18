@@ -1,11 +1,42 @@
 #pragma once
 
 #include <map>
+#include <stdexcept>
 #include "ishaders.h"
 #include "ishaderlayer.h"
+#include "gamelib.h"
+#include "os/path.h"
+#include "xmlutil/MissingXMLNodeException.h"
 
 namespace shaders
 {
+
+constexpr const char* MISSING_BASEPATH_NODE = "Failed to find \"/game/filesystem/shaders/basepath\" node in game descriptor";
+constexpr const char* MISSING_EXTENSION_NODE = "Failed to find \"/game/filesystem/shaders/extension\" node in game descriptor";
+
+inline std::string getMaterialsFolderName()
+{
+    auto nodes = game::current::getNodes("/filesystem/shaders/basepath");
+
+    if (nodes.empty())
+    {
+        throw xml::MissingXMLNodeException(MISSING_BASEPATH_NODE);
+    }
+
+    return os::standardPathWithSlash(nodes[0].getContent());
+}
+
+inline std::string getMaterialFileExtension()
+{
+    auto nodes = game::current::getNodes("/filesystem/shaders/extension");
+
+    if (nodes.empty())
+    {
+        throw xml::MissingXMLNodeException(MISSING_EXTENSION_NODE);
+    }
+
+    return nodes[0].getContent();
+}
 
 // A regex pattern that can be used to detect a material name in a single line of a material file
 // which is optionally detecting an opening curly brace in the same line

@@ -210,6 +210,8 @@ public:
     virtual const char* getShaderFileName() const = 0;
 
     // Set the mtr file name to define where this material should be saved to
+    // This will throw an exception if the given path (absolute or relative) 
+    // is not located within the current mod file tree (VFS)
     virtual void setShaderFileName(const std::string& fullPath) = 0;
 
     // Returns the VFS info structure of the file this shader is defined in

@@ -1229,6 +1229,26 @@ TEST_F(MaterialExportTest, WritingMaterialFiles)
         << "New definition not found in file";
 }
 
+TEST_F(MaterialExportTest, SetShaderFilePath)
+{
+    auto newMaterial = GlobalMaterialManager().createEmptyMaterial("textures/exporttest/somePath");
+    newMaterial->setDescription("--");
+
+    auto projectPath = _context.getTestProjectPath();
+
+    newMaterial->setShaderFileName(projectPath + "materials/exporttest.mtr");
+    EXPECT_EQ(newMaterial->getShaderFileInfo().topDir, "materials/");
+    EXPECT_EQ(newMaterial->getShaderFileInfo().name, "exporttest.mtr");
+
+    newMaterial->setShaderFileName(projectPath + "materials/_test.mtr");
+    EXPECT_EQ(newMaterial->getShaderFileInfo().topDir, "materials/");
+    EXPECT_EQ(newMaterial->getShaderFileInfo().name, "_test.mtr");
+
+    newMaterial->setShaderFileName("materials/blah.mtr");
+    EXPECT_EQ(newMaterial->getShaderFileInfo().topDir, "materials/");
+    EXPECT_EQ(newMaterial->getShaderFileInfo().name, "blah.mtr");
+}
+
 // Not all shader file paths are valid, they must be within the current mod's VFS structure, and in the materials/ folder
 
 TEST_F(MaterialExportTest, ShaderFilePathValidation)

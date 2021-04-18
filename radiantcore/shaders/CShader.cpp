@@ -6,6 +6,7 @@
 #include "ishaders.h"
 #include "texturelib.h"
 #include "gamelib.h"
+#include "materials/ParseLib.h"
 #include "parser/DefTokeniser.h"
 
 /* CONSTANTS */
@@ -316,8 +317,39 @@ const char* CShader::getShaderFileName() const
 
 void CShader::setShaderFileName(const std::string& fullPath)
 {
-    _fileInfo.topDir = os::getDirectory(GlobalFileSystem().findRoot(fullPath));
-    _fileInfo.name = os::getRelativePath(fullPath, _fileInfo.topDir);
+    std::string path = fullPath;
+
+    if (path_is_absolute(path.c_str()))
+    {
+        auto rootPath = GlobalFileSystem().findRoot(path);
+
+        if (rootPath.empty())
+        {
+            throw std::invalid_argument("The path " + path + " is not located in the current mod file structure");
+        }
+
+        path = os::getRelativePath(path, rootPath);
+    }
+
+    auto materialsFolder = getMaterialsFolderName();
+    auto pathRelativeToMaterialsFolder = os::getRelativePath(path, materialsFolder);
+
+    // Check if the path starts with a "materials/" folder
+    // getRelativePath will return the unchanged path if this is not the case
+    if (pathRelativeToMaterialsFolder == path)
+    {
+        throw std::invalid_argument("The path " + path + " does not point to a " + materialsFolder + " folder");
+    }
+
+    auto extension = getMaterialFileExtension();
+    if (os::getExtension(pathRelativeToMaterialsFolder) != extension)
+    {
+        throw std::invalid_argument("The file extension must be " + extension);
+    }
+
+    _fileInfo.topDir = materialsFolder;
+    _fileInfo.name = pathRelativeToMaterialsFolder;
+    _fileInfo.visibility = vfs::Visibility::NORMAL;
 }
 
 const vfs::FileInfo& CShader::getShaderFileInfo() const
