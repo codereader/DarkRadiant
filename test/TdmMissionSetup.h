@@ -22,7 +22,7 @@ public:
         os::makeDirectory(_projectFolder);
     }
 
-    ~TdmMissionContext()
+    virtual ~TdmMissionContext()
     {
         if (!_projectFolder.empty())
         {
@@ -68,6 +68,8 @@ protected:
     virtual void TearDown() override
     {
         os::removeDirectory(_fmBasePath);
+
+        RadiantTest::TearDown();
     }
 
     virtual void handleGameConfigMessage(game::ConfigurationNeeded& message) override
@@ -76,7 +78,7 @@ protected:
 
         config.gameType = "The Dark Mod 2.0 (Standalone)";
         config.enginePath = _context.getTestProjectPath();
-        config.modPath = std::string(MissionBasePath) + "/" + TestMissionName;
+        config.modPath = getTestMissionPath();
 
         message.setConfig(config);
         message.setHandled(true);

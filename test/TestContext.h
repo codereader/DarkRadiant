@@ -43,7 +43,7 @@ public:
 		});
 	}
 
-	~TestContext()
+	virtual ~TestContext()
 	{
 		if (!_settingsFolder.empty())
 		{

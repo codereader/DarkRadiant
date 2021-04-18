@@ -173,6 +173,8 @@ TEST_F(MaterialsTest, MaterialCopy)
     EXPECT_EQ(material->getName(), "texures/copytest");
     EXPECT_TRUE(materialManager.materialCanBeModified("texures/copytest"));
     EXPECT_STREQ(material->getShaderFileName(), "");
+    EXPECT_EQ(material->getShaderFileInfo().name, "");
+    EXPECT_EQ(material->getShaderFileInfo().topDir, "");
 
     // Check signal emission
     EXPECT_EQ(firedNewName, "texures/copytest");

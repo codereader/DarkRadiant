@@ -415,7 +415,6 @@ MaterialPtr Doom3ShaderSystem::copyMaterial(const std::string& nameOfOriginal, c
 
     auto material = _library->findShader(candidate);
     material->setIsModified();
-    material->setShaderFileName("");
 
     return material;
 }

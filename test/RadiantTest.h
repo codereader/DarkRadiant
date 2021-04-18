@@ -128,7 +128,7 @@ protected:
     /// Override this to perform custom actions after the main module shuts down
     virtual void postShutdown() {}
 
-	~RadiantTest()
+	virtual ~RadiantTest()
 	{
         _coreModule->get()->getLogWriter().detach(_testLogFile.get());
         _testLogFile->close();

@@ -1215,6 +1215,10 @@ TEST_F(MaterialExportTest, WritingMaterialFiles)
 
     // Create a new material, which is definitely not present in the file
     auto newMaterial = GlobalMaterialManager().copyMaterial("textures/exporttest/renderBumpFlat1", "textures/exporttest/renderBumpX");
+    EXPECT_EQ(newMaterial->getShaderFileInfo().name, "");
+    EXPECT_EQ(newMaterial->getShaderFileInfo().topDir, "");
+    EXPECT_EQ(newMaterial->getShaderFileInfo().visibility, vfs::Visibility::HIDDEN);
+
     newMaterial->setDescription(description);
     newMaterial->setShaderFileName(exportTestFile.string());
     EXPECT_TRUE(newMaterial->isModified());
@@ -1291,7 +1295,7 @@ TEST_F(MaterialExportTest_TdmMissionSetup, ShaderFilePathValidation)
     EXPECT_THROW(newMaterial->setShaderFileName(tdmPath + "materials/exporttest.mtr2"), std::invalid_argument);
 
     // FM setup says this is OK
-    auto missionPath = tdmPath + MaterialExportTest_TdmMissionSetup::MissionBasePath + "/" + MaterialExportTest_TdmMissionSetup::TestMissionName + "/";
+    auto missionPath = getTestMissionPath();
     auto wrongMissionPath = tdmPath + MaterialExportTest_TdmMissionSetup::MissionBasePath + "/tork/";
 
     EXPECT_NO_THROW(newMaterial->setShaderFileName(missionPath + "materials/exporttest.mtr"));

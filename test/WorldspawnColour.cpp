@@ -30,7 +30,7 @@ public:
         os::makeDirectory(_projectFolder);
     }
 
-    ~Quake4TestContext()
+    virtual ~Quake4TestContext()
     {
         if (!_projectFolder.empty())
         {
@@ -57,6 +57,8 @@ public:
 protected:
     virtual void setupGameFolder() override
     {
+        RadiantTest::setupGameFolder();
+
         // Create the q4base folder
         os::makeDirectory(_context.getTestProjectPath() + "q4base");
 
