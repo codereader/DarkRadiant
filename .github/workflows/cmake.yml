@@ -16,7 +16,7 @@ jobs:
       run: |
         sudo apt-get update 
         sudo apt-get install -yq gettext pkg-config zlib1g-dev libjpeg-dev libxml2-dev libsigc++-2.0-dev
-        sudo apt-get install -yq libgtest-dev libeigen3-dev apt-get install libwxgtk3.0-gtk3-dev libpng-dev 
+        sudo apt-get install -yq libgtest-dev libeigen3-dev libwxgtk3.0-gtk3-dev libpng-dev 
         sudo apt-get install -yq libftgl-dev libglew-dev libalut-dev libvorbis-dev python3-dev
 
     - name: Create Build Environment
