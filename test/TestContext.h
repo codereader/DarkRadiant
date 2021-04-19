@@ -65,8 +65,9 @@ public:
 	virtual std::string getTestResourcePath() const
 	{
 #if defined(POSIX) 
-	#if defined(TESTRESOURCEDIR)
-		fs::path testResourcePath(TESTRESOURCEDIR);
+	#if defined(TEST_BASE_PATH)
+		fs::path testResourcePath(TEST_BASE_PATH);
+		testResourcePath /= "resources/";
 	#else
 		// make check will compile the test binary to $top_builddir/test/.libs/
 		fs::path testResourcePath = getApplicationPath();
@@ -91,8 +92,30 @@ public:
         return _tempDataPath;
     }
 
+	std::string getRuntimeDataPath() const override
+	{
+// Allow special build settings to override the runtime data path
+// this is needed to run the test binary through ctest from the build root
+#ifdef TEST_BASE_PATH
+		fs::path runtimeDataPath(TEST_BASE_PATH);
+		runtimeDataPath /= "../install/";
+		return runtimeDataPath.string();
+#else
+		return ApplicationContextBase::getRuntimeDataPath();
+#endif
+	}
+
 	std::vector<std::string> getLibraryPaths() const override
 	{
+#ifdef TEST_BASE_PATH
+		fs::path libraryPath(TEST_BASE_PATH);
+		libraryPath /= "../radiantcore/";
+
+		return
+		{
+			libraryPath.string(),
+		};
+#else
 		auto libBasePath = os::standardPathWithSlash(getLibraryBasePath());
 
 		// Don't load modules from the plugins/ folder, as these
@@ -102,6 +125,7 @@ public:
 		{
 			libBasePath + MODULES_DIR,
 		};
+#endif
 	}
 };
 

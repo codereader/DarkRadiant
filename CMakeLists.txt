@@ -121,6 +121,7 @@ add_subdirectory(radiant)
 pkg_check_modules(GTEST gtest)
 pkg_check_modules(GTEST_MAIN gtest_main)
 if (${GTEST_FOUND} AND ${GTEST_MAIN_FOUND})
+    include(CTest)
     add_subdirectory(test)
 endif()
 

@@ -1,3 +1,5 @@
+include(GoogleTest)
+
 add_executable(drtest
                Basic.cpp
                Brush.cpp
@@ -35,8 +37,10 @@ find_package(Threads REQUIRED)
 
 target_compile_options(drtest PUBLIC ${SIGC_CFLAGS})
 
-get_filename_component(TESTRESOURCEDIR "./resources" ABSOLUTE)
-add_compile_definitions(TESTRESOURCEDIR="${TESTRESOURCEDIR}")
+# Set up the paths such that the drtest executable can find the test resources
+# and the core binary in the build workspace (in install/ and test/resources/)
+get_filename_component(TEST_BASE_PATH "./" ABSOLUTE)
+add_compile_definitions(TEST_BASE_PATH="${TEST_BASE_PATH}")
 
 target_link_libraries(drtest PUBLIC
                       math xmlutil scenegraph module
@@ -44,3 +48,5 @@ target_link_libraries(drtest PUBLIC
                       ${SIGC_LIBRARIES} ${GLEW_LIBRARIES} ${X11_LIBRARIES}
                       PRIVATE Threads::Threads)
 install(TARGETS drtest)
+
+gtest_discover_tests(drtest)
