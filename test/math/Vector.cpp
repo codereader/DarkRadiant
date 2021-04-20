@@ -320,6 +320,23 @@ TEST(MathTest, AngleBetweenVector3s)
                      1.7732415935926593);
 }
 
+TEST(MathTest, VectorIsParallel)
+{
+    const Vector3 i(1, 0, 0);
+    const Vector3 j(0, 1, 0);
+    const Vector3 k(0, 0, 1);
+
+    // Vectors are parallel to themselves and not parallel to other unit vectors
+    EXPECT_TRUE(i.isParallel(i));
+    EXPECT_TRUE(j.isParallel(j));
+    EXPECT_FALSE(i.isParallel(j));
+    EXPECT_FALSE(k.isParallel(i));
+
+    // Scaling does not change parallelism
+    EXPECT_TRUE((i * 2.5).isParallel(i));
+    EXPECT_TRUE((j * 356).isParallel(j * 0.05));
+}
+
 TEST(MathTest, Vector3AsCArray)
 {
     Vector3 vec(256, -10, 10000);
