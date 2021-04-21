@@ -342,6 +342,23 @@ TEST(MathTest, VectorIsParallel)
     EXPECT_TRUE(math::isParallel(j * 356, j * 0.05));
 }
 
+TEST(MathTest, SnapVector3)
+{
+    Vector3 v1(5, -15.25, -28);
+    const Vector3 v1Orig = v1;
+
+    // Non-mutating version
+    EXPECT_EQ(v1.getSnapped(0.25), v1);
+    EXPECT_EQ(v1.getSnapped(1), Vector3(5, -15, -28));
+    EXPECT_EQ(v1.getSnapped(2), Vector3(4, -16, -28));
+    EXPECT_EQ(v1.getSnapped(5), Vector3(5, -15, -30));
+
+    // Mutating version
+    EXPECT_EQ(v1, v1Orig);
+    v1.snap(3);
+    EXPECT_EQ(v1, Vector3(6, -15, -27));
+}
+
 TEST(MathTest, Vector3AsCArray)
 {
     Vector3 vec(256, -10, 10000);

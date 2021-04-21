@@ -202,24 +202,16 @@ public:
         return (*this + other) * 0.5f;
     }
 
-    /**
-     * Returns a "snapped" copy of this Vector, each component rounded to the given precision.
-     */
-    template<typename OtherElement>
-    BasicVector3<T> getSnapped(const OtherElement& snap) const
+    /// Returns a "snapped" copy of this Vector, each component rounded to the given precision.
+    BasicVector3<T> getSnapped(T snap) const
     {
-        return BasicVector3<T>(
-            static_cast<T>(float_snapped(x(), snap)),
-            static_cast<T>(float_snapped(y(), snap)),
-            static_cast<T>(float_snapped(z(), snap))
-        );
+        return BasicVector3<T>(float_snapped(x(), snap),
+                               float_snapped(y(), snap),
+                               float_snapped(z(), snap));
     }
 
-    /**
-     * Snaps this vector to the given precision in place.
-     */
-    template<typename OtherElement>
-    void snap(const OtherElement& snap)
+    /// Snaps this vector to the given precision in place.
+    void snap(T snap)
     {
         *this = getSnapped(snap);
     }
