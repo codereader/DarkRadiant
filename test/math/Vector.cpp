@@ -327,14 +327,19 @@ TEST(MathTest, VectorIsParallel)
     const Vector3 k(0, 0, 1);
 
     // Vectors are parallel to themselves and not parallel to other unit vectors
-    EXPECT_TRUE(i.isParallel(i));
-    EXPECT_TRUE(j.isParallel(j));
-    EXPECT_FALSE(i.isParallel(j));
-    EXPECT_FALSE(k.isParallel(i));
+    EXPECT_TRUE(math::isParallel(i, i));
+    EXPECT_TRUE(math::isParallel(j, j));
+    EXPECT_FALSE(math::isParallel(i, j));
+    EXPECT_FALSE(math::isParallel(k, i));
+
+    // Vectors are parallel even in opposite directions
+    EXPECT_TRUE(math::isParallel(i, -i));
+    EXPECT_TRUE(math::isParallel(j, -j));
+    EXPECT_TRUE(math::isParallel(k, -k));
 
     // Scaling does not change parallelism
-    EXPECT_TRUE((i * 2.5).isParallel(i));
-    EXPECT_TRUE((j * 356).isParallel(j * 0.05));
+    EXPECT_TRUE(math::isParallel(i * 2, i));
+    EXPECT_TRUE(math::isParallel(j * 356, j * 0.05));
 }
 
 TEST(MathTest, Vector3AsCArray)

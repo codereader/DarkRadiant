@@ -119,7 +119,7 @@ TEST_F(BrushTest, FacePlaneRotateWithMatrix)
         {
             auto& face = brush->getIBrush().getFace(i);
 
-            if (face.getPlane3().normal().isParallel(Vector3(1, 0, 0)))
+            if (math::isParallel(face.getPlane3().normal(), Vector3(1, 0, 0)))
             {
                 Plane3 orig = face.getPlane3();
 
@@ -154,7 +154,7 @@ TEST_F(BrushTest, FacePlaneTranslate)
         {
             auto& face = brush->getIBrush().getFace(i);
 
-            if (face.getPlane3().normal().isParallel(Vector3(0, 1, 0)))
+            if (math::isParallel(face.getPlane3().normal(), Vector3(0, 1, 0)))
             {
                 Plane3 orig = face.getPlane3();
 

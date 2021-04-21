@@ -196,13 +196,6 @@ public:
         return _v;
     }
 
-    template<typename OtherT>
-    bool isParallel(const BasicVector3<OtherT>& other) const
-	{
-        return float_equal_epsilon(angle(other), 0.0, 0.001) ||
-			   float_equal_epsilon(angle(other), math::PI, 0.001);
-    }
-
     // Returns the mid-point of this vector and the other one
     BasicVector3<T> mid(const BasicVector3<T>& other) const
     {
@@ -370,6 +363,15 @@ bool near(const BasicVector3<T>& v1, const BasicVector3<T>& v2, double epsilon)
     BasicVector3<T> diff = v1 - v2;
     return std::abs(diff.x()) < epsilon && std::abs(diff.y()) < epsilon
         && std::abs(diff.z()) < epsilon;
+}
+
+/// Test if two vectors are parallel (in similar or opposite directions)
+template<typename T>
+bool isParallel(const BasicVector3<T>& v1, const BasicVector3<T>& v2)
+{
+    T angle = v1.angle(v2);
+    return float_equal_epsilon(angle, 0.0, 0.001)
+        || float_equal_epsilon(angle, PI, 0.001);
 }
 
 }

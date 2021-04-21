@@ -2319,7 +2319,7 @@ inline void calculateColTangentForCtrl(const Patch& sourcePatch, std::size_t row
         colTangent[1] *= -1;
 
         // Cull redundant tangents
-        if (colTangent[1].isParallel(colTangent[0]))
+        if (math::isParallel(colTangent[1], colTangent[0]))
         {
             colTangent[1] = Vector3(0, 0, 0);
         }
@@ -2359,7 +2359,7 @@ inline void calculateRowTangentForCtrl(const Patch& sourcePatch, std::size_t row
         rowTangent[1] *= -1;
 
         // Cull redundant tangents
-        if (rowTangent[1].isParallel(rowTangent[0]))
+        if (math::isParallel(rowTangent[1], rowTangent[0]))
         {
             rowTangent[1] = Vector3(0, 0, 0);
         }
