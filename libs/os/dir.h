@@ -55,8 +55,8 @@ inline bool makeDirectory(const std::string& name)
 	{
 		fs::path dirPath(name);
 
-		// Create the directory 
-		if (fs::create_directory(dirPath))
+		// Create the directory, including nonexistent parents
+		if (fs::create_directories(dirPath))
 		{
 			// Directory has been created, set permissions
 			rMessage() << "Directory " << dirPath << " created successfully." << std::endl;
