@@ -196,12 +196,6 @@ public:
         return _v;
     }
 
-    // Returns the mid-point of this vector and the other one
-    BasicVector3<T> mid(const BasicVector3<T>& other) const
-    {
-        return (*this + other) * 0.5f;
-    }
-
     /// Returns a "snapped" copy of this Vector, each component rounded to the given precision.
     BasicVector3<T> getSnapped(T snap) const
     {
@@ -364,6 +358,13 @@ bool isParallel(const BasicVector3<T>& v1, const BasicVector3<T>& v2)
     T angle = v1.angle(v2);
     return float_equal_epsilon(angle, 0.0, 0.001)
         || float_equal_epsilon(angle, PI, 0.001);
+}
+
+/// Return the midpoint of two vectors
+template<typename T>
+BasicVector3<T> midPoint(const BasicVector3<T>& v1, const BasicVector3<T>& v2)
+{
+    return (v1 + v2) * 0.5;
 }
 
 }

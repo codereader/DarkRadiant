@@ -13,15 +13,15 @@ public:
 	{}
 
 	Segment(const Vector3& origin_, const Vector3& extents_) :
-		origin(origin_), 
+		origin(origin_),
 		extents(extents_)
 	{}
 
 	static Segment createForStartEnd(const Vector3& start, const Vector3& end)
 	{
 		Segment segment;
-		
-		segment.origin = start.mid(end);
+
+		segment.origin = math::midPoint(start, end);
 		segment.extents = end - segment.origin;
 
 		return segment;

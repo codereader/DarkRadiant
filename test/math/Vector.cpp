@@ -359,6 +359,16 @@ TEST(MathTest, SnapVector3)
     EXPECT_EQ(v1, Vector3(6, -15, -27));
 }
 
+TEST(MathTest, Vector3MidPoint)
+{
+    Vector3 v1(18, 26, -350);
+    Vector3 v2(-4.5, 96, 10);
+
+    EXPECT_EQ(math::midPoint(v1, v2), Vector3(6.75, 61, -170));
+    EXPECT_EQ(math::midPoint(v2, v1), Vector3(6.75, 61, -170));
+    EXPECT_EQ(math::midPoint(v1, Vector3()), v1 / 2);
+}
+
 TEST(MathTest, Vector3AsCArray)
 {
     Vector3 vec(256, -10, 10000);

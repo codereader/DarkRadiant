@@ -643,7 +643,7 @@ void Patch::Redisperse(EMatrixMajor mt)
     {
       p2 = p1+col_stride;
       p3 = p2+col_stride;
-      p2->vertex = p1->vertex.mid(p3->vertex);
+      p2->vertex = math::midPoint(p1->vertex, p3->vertex);
       p1 = p3;
     }
   }
@@ -1301,7 +1301,7 @@ void Patch::ConstructSeam(patch::CapType eType, Vector3* p, std::size_t width)
     break;
   case patch::CapType::EndCap:
     {
-      Vector3 p5(p[0].mid(p[4]));
+      Vector3 p5(math::midPoint(p[0], p[4]));
 
       setDims(3, 3);
       _ctrl[0].vertex = p[0];
