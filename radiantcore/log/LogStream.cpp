@@ -45,7 +45,7 @@ void LogStream::InitialiseStreams(ILogWriter& logWriter)
 #if !defined(POSIX) || !defined(_DEBUG)
 	// Redirect std::cout to the log, except on Linux debug builds where
     // logging to the console is more useful
-	COutRedirector::init(logWriter);
+	//COutRedirector::init(logWriter);
 #endif
 }
 
@@ -53,7 +53,7 @@ void LogStream::ShutdownStreams()
 {
 #if !defined(POSIX) || !defined(_DEBUG)
 	// Stop redirecting std::cout
-	COutRedirector::destroy();
+	//COutRedirector::destroy();
 #endif
 }
 
