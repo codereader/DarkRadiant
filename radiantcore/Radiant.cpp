@@ -44,7 +44,7 @@ namespace
 
         for (int j = 0; j < numAddresses; j++)
         {
-            std::cerr << j << "j: " << strings[j] << std::endl;
+            std::cerr << j << ": " << strings[j] << std::endl;
         }
 
         free(strings);
