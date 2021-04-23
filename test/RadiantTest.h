@@ -105,19 +105,30 @@ protected:
 
 		try
 		{
+			std::cout << "Entering core module startup" << std::endl;
+
 			// Startup the application
 			_coreModule->get()->startup();
+
+			std::cout << "Core module startup done" << std::endl;
 		}
 		catch (const radiant::IRadiant::StartupFailure & ex)
 		{
 			// An unhandled exception during module initialisation => display a popup and exit
 			rError() << "Unhandled Exception: " << ex.what() << std::endl;
+			std::cout << "Unhandled Exception: " << ex.what() << std::endl;
 			abort();
 		}
 
+		std::cout << "Creating GL context" << std::endl;
+
 		_glContextModule->createContext();
 
+		std::cout << "Creating new map" << std::endl;
+
         GlobalMapModule().createNewMap();
+
+		std::cout << "RadiantTest::Setup done" << std::endl;
 	}
 
     /// Override this to perform custom actions before the main module shuts down

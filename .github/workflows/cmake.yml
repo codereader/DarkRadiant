@@ -30,7 +30,7 @@ jobs:
         CMAKE_BUILD_PARALLEL_LEVEL: 3
         CTEST_OUTPUT_ON_FAILURE: ON
       shell: bash
-      run: cmake --build . --config $BUILD_TYPE
+      run: cmake --build . --config $BUILD_TYPE --target install
 
     - name: Run Unit Tests
       env: 
