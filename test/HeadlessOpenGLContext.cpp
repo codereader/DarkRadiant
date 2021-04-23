@@ -129,11 +129,14 @@ public:
 
         _display = XOpenDisplay(nullptr);
 
+		std::cout << "XOpenDisplay returned: " << _display << std::endl;
+
 		static int pixelFormat[] = { GLX_DRAWABLE_TYPE, GLX_PBUFFER_BIT, None };
 
 		int glx_major, glx_minor;
 		if (!glXQueryVersion(_display, &glx_major, &glx_minor))
 		{
+			std::cerr << "glXQueryVersion failed" << std::endl;
 			throw new std::runtime_error("Failed to query GLX version");
 		}
 
