@@ -125,31 +125,55 @@ public:
 		auto glxcreatepixelbuffer = (PFNGLXCREATEPBUFFERPROC)glXGetProcAddress((GLubyte*)"glXCreatePbuffer");
 		auto glxmakecurrent = (PFNGLXMAKECONTEXTCURRENTPROC)glXGetProcAddress((GLubyte*)"glXMakeContextCurrent");
 
+		std::cout << "XOpenDisplay..." << std::endl;
+
         _display = XOpenDisplay(nullptr);
 
 		static int pixelFormat[] = { GLX_DRAWABLE_TYPE, GLX_PBUFFER_BIT, None };
 
+		int glx_major, glx_minor;
+		if (!glXQueryVersion(_display, &glx_major, &glx_minor))
+		{
+			throw new std::runtime_error("Failed to query GLX version");
+		}
+
+		std::cout << "GLX version: " << glx_major << "." << glx_minor << std::endl;
+
+		std::cout << "glxcfbconfig..." << std::endl;
+
 		int configs = 0;
         _fbConfigs = glxcfbconfig(_display, DefaultScreen(_display), 0, &configs);
 
+		std::cout << "glxcreatenewctx..." << std::endl;
+
 		_context = glxcreatenewctx(_display, _fbConfigs[0], GLX_RGBA_TYPE, None, True);
+
+		std::cout << "glxcreatepixelbuffer..." << std::endl;
 
 		// Create a dummy pbuffer. We will render to framebuffers anyway, but we need a pbuffer to
         // activate the context.
         int pixelBufferAttributes[] = { GLX_PBUFFER_WIDTH, 8, GLX_PBUFFER_HEIGHT, 8, None };
         _pixelBuffer = glxcreatepixelbuffer(_display, _fbConfigs[0], pixelBufferAttributes);
 
+		std::cout << "glxmakecurrent..." << std::endl;
+
          // try to make it the current context
         if (!glxmakecurrent(_display, _pixelBuffer, _pixelBuffer, _context))
 		{
+			std::cout << "1st glxmakecurrent failed..." << std::endl;
+
 			// some drivers does not support context without default framebuffer, so fallback on
 			// using the default window.
 			if (!glxmakecurrent(_display, DefaultRootWindow(_display), DefaultRootWindow(_display), _context))
 			{
+				std::cout << "2nd glxmakecurrent failed..." << std::endl;
+
 				rError() << "Failed to make current" << std::endl;
 				throw new std::runtime_error("Failed to make current");
 			}
         }
+
+		std::cout << "HeadlessOpenGLContext done." << std::endl;
 	}
 
 	~HeadlessOpenGLContext()
@@ -174,6 +198,8 @@ void HeadlessOpenGLContextModule::initialiseModule(const IApplicationContext& ct
 
 void HeadlessOpenGLContextModule::createContext()
 {
+	try
+	{
 #ifdef WIN32
 	GlobalOpenGLContext().setSharedContext(std::make_shared<HeadlessOpenGLContext>());
 #elif defined(POSIX)
@@ -181,6 +207,11 @@ void HeadlessOpenGLContextModule::createContext()
 #else
 #error "Headless openGL context not implemented for this platform."
 #endif
+	}
+	catch (const std::runtime_error& ex)
+	{
+		std::cerr << "Headless GL context creation failed: " << ex.what() << std::endl;
+	}
 }
 
 }
