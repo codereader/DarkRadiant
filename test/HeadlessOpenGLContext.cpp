@@ -106,6 +106,13 @@ HGLRC HeadlessOpenGLContext::_tempContext;
 
 #elif defined(POSIX)
 
+// Get an environment variable as a string
+std::string strenv(const std::string& key)
+{
+    const char* v = getenv(key.c_str());
+    return v ? std::string(v) : std::string();
+}
+
 class HeadlessOpenGLContext :
 	public IGLContext
 {
@@ -125,9 +132,13 @@ public:
 		auto glxcreatepixelbuffer = (PFNGLXCREATEPBUFFERPROC)glXGetProcAddress((GLubyte*)"glXCreatePbuffer");
 		auto glxmakecurrent = (PFNGLXMAKECONTEXTCURRENTPROC)glXGetProcAddress((GLubyte*)"glXMakeContextCurrent");
 
+		auto displayName = strenv("DISPLAY");
+
+		std::cout << "DISPLAY environment variable = '" << displayName << "'" << std::endl;
+
 		std::cout << "XOpenDisplay..." << std::endl;
 
-        _display = XOpenDisplay(nullptr);
+        _display = XOpenDisplay(displayName.empty() ? ":0" : displayName.c_str());
 
 		std::cout << "XOpenDisplay returned: " << _display << std::endl;
 
