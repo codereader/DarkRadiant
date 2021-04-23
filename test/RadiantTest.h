@@ -11,6 +11,7 @@
 
 #include "TestContext.h"
 #include "TestLogFile.h"
+#include "ConsoleLogger.h"
 #include "HeadlessOpenGLContext.h"
 #include "module/CoreModule.h"
 #include "messages/GameConfigNeededMessage.h"
@@ -39,6 +40,7 @@ protected:
 	std::shared_ptr<gl::HeadlessOpenGLContextModule> _glContextModule;
 
     std::unique_ptr<TestLogFile> _testLogFile;
+	std::unique_ptr<ConsoleLogger> _consoleLogger;
 
 protected:
 	RadiantTest()
@@ -144,6 +146,9 @@ protected:
         auto fullPath = _context.getCacheDataPath() + "test.log";
         _testLogFile.reset(new TestLogFile(fullPath));
         _coreModule->get()->getLogWriter().attach(_testLogFile.get());
+
+		_consoleLogger.reset(new ConsoleLogger);
+		_coreModule->get()->getLogWriter().attach(_consoleLogger.get());
     }
 
 	virtual void setupGameFolder()
