@@ -20,6 +20,17 @@
 namespace test
 {
 
+namespace
+{
+	// Get an environment variable as a string (because getenv() can return nullptr
+	// and it is not safe to construct a string from a nullptr)
+	inline std::string strenv(const std::string& key)
+	{
+		const char* v = getenv(key.c_str());
+		return v ? std::string(v) : std::string();
+	}
+}
+
 /**
  * Test fixture setting up the application context and
  * the radiant core module.
@@ -147,8 +158,11 @@ protected:
         _testLogFile.reset(new TestLogFile(fullPath));
         _coreModule->get()->getLogWriter().attach(_testLogFile.get());
 
-		_consoleLogger.reset(new ConsoleLogger);
-		_coreModule->get()->getLogWriter().attach(_consoleLogger.get());
+		//if (strenv("DR_VERBOSE_TEST_LOG") != "")
+		{
+			_consoleLogger.reset(new ConsoleLogger);
+			_coreModule->get()->getLogWriter().attach(_consoleLogger.get());
+		}
     }
 
 	virtual void setupGameFolder()
