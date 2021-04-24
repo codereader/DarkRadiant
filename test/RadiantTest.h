@@ -11,7 +11,6 @@
 
 #include "TestContext.h"
 #include "TestLogFile.h"
-#include "ConsoleLogger.h"
 #include "HeadlessOpenGLContext.h"
 #include "module/CoreModule.h"
 #include "messages/GameConfigNeededMessage.h"
@@ -19,17 +18,6 @@
 
 namespace test
 {
-
-namespace
-{
-	// Get an environment variable as a string (because getenv() can return nullptr
-	// and it is not safe to construct a string from a nullptr)
-	inline std::string strenv(const std::string& key)
-	{
-		const char* v = getenv(key.c_str());
-		return v ? std::string(v) : std::string();
-	}
-}
 
 /**
  * Test fixture setting up the application context and
@@ -51,7 +39,6 @@ protected:
 	std::shared_ptr<gl::HeadlessOpenGLContextModule> _glContextModule;
 
     std::unique_ptr<TestLogFile> _testLogFile;
-	std::unique_ptr<ConsoleLogger> _consoleLogger;
 
 protected:
 	RadiantTest()
@@ -105,30 +92,19 @@ protected:
 
 		try
 		{
-			std::cout << "Entering core module startup" << std::endl;
-
 			// Startup the application
 			_coreModule->get()->startup();
-
-			std::cout << "Core module startup done" << std::endl;
 		}
 		catch (const radiant::IRadiant::StartupFailure & ex)
 		{
 			// An unhandled exception during module initialisation => display a popup and exit
 			rError() << "Unhandled Exception: " << ex.what() << std::endl;
-			std::cout << "Unhandled Exception: " << ex.what() << std::endl;
 			abort();
 		}
 
-		std::cout << "Creating GL context" << std::endl;
-
 		_glContextModule->createContext();
 
-		std::cout << "Creating new map" << std::endl;
-
         GlobalMapModule().createNewMap();
-
-		std::cout << "RadiantTest::Setup done" << std::endl;
 	}
 
     /// Override this to perform custom actions before the main module shuts down
@@ -168,12 +144,6 @@ protected:
         auto fullPath = _context.getCacheDataPath() + "test.log";
         _testLogFile.reset(new TestLogFile(fullPath));
         _coreModule->get()->getLogWriter().attach(_testLogFile.get());
-
-		//if (strenv("DR_VERBOSE_TEST_LOG") != "")
-		{
-			_consoleLogger.reset(new ConsoleLogger);
-			_coreModule->get()->getLogWriter().attach(_consoleLogger.get());
-		}
     }
 
 	virtual void setupGameFolder()

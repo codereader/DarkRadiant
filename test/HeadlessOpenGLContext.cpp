@@ -123,78 +123,56 @@ private:
 	GLXPbuffer _pixelBuffer;
 
 public:
-	HeadlessOpenGLContext() :
-		_context(nullptr),
-		_pixelBuffer(0)
-	{
-		auto glxcfbconfig = (PFNGLXCHOOSEFBCONFIGPROC)glXGetProcAddress((GLubyte*)"glXChooseFBConfig");
-		auto glxcreatenewctx = (PFNGLXCREATENEWCONTEXTPROC)glXGetProcAddress((GLubyte*)"glXCreateNewContext");
-		auto glxcreatepixelbuffer = (PFNGLXCREATEPBUFFERPROC)glXGetProcAddress((GLubyte*)"glXCreatePbuffer");
-		auto glxmakecurrent = (PFNGLXMAKECONTEXTCURRENTPROC)glXGetProcAddress((GLubyte*)"glXMakeContextCurrent");
+    HeadlessOpenGLContext() :
+        _context(nullptr),
+        _pixelBuffer(0)
+    {
+        auto glxcfbconfig = (PFNGLXCHOOSEFBCONFIGPROC)glXGetProcAddress((GLubyte*)"glXChooseFBConfig");
+        auto glxcreatenewctx = (PFNGLXCREATENEWCONTEXTPROC)glXGetProcAddress((GLubyte*)"glXCreateNewContext");
+        auto glxcreatepixelbuffer = (PFNGLXCREATEPBUFFERPROC)glXGetProcAddress((GLubyte*)"glXCreatePbuffer");
+        auto glxmakecurrent = (PFNGLXMAKECONTEXTCURRENTPROC)glXGetProcAddress((GLubyte*)"glXMakeContextCurrent");
 
-		auto displayName = strenv("DISPLAY");
-
-		std::cout << "DISPLAY environment variable = '" << displayName << "'" << std::endl;
-
-		if (displayName.empty())
-		{
-			displayName = ":1";
-			std::cout << "Using fallback value DISPLAY = '" << displayName << "'" << std::endl;
-		}
-
-		std::cout << "XOpenDisplay..." << std::endl;
+        auto displayName = strenv("DISPLAY");
 
         _display = XOpenDisplay(displayName.c_str());
 
-		std::cout << "XOpenDisplay returned: " << _display << std::endl;
+        if (_display == nullptr)
+        {
+            throw std::runtime_error("Failed to open X display, DISPLAY environment variable is set to '" + displayName + "'");
+        }
 
-		static int pixelFormat[] = { GLX_DRAWABLE_TYPE, GLX_PBUFFER_BIT, None };
+        static int pixelFormat[] = { GLX_DRAWABLE_TYPE, GLX_PBUFFER_BIT, None };
+        
+        int glx_major, glx_minor;
+        if (!glXQueryVersion(_display, &glx_major, &glx_minor))
+        {
+            throw std::runtime_error("Failed to query GLX version");
+        }
 
-		int glx_major, glx_minor;
-		if (!glXQueryVersion(_display, &glx_major, &glx_minor))
-		{
-			std::cerr << "glXQueryVersion failed" << std::endl;
-			throw new std::runtime_error("Failed to query GLX version");
-		}
+        rMessage() << "GLX version: " << glx_major << "." << glx_minor << std::endl;
 
-		std::cout << "GLX version: " << glx_major << "." << glx_minor << std::endl;
-
-		std::cout << "glxcfbconfig..." << std::endl;
-
-		int configs = 0;
+        int configs = 0;
         _fbConfigs = glxcfbconfig(_display, DefaultScreen(_display), 0, &configs);
 
-		std::cout << "glxcreatenewctx..." << std::endl;
+        _context = glxcreatenewctx(_display, _fbConfigs[0], GLX_RGBA_TYPE, None, True);
 
-		_context = glxcreatenewctx(_display, _fbConfigs[0], GLX_RGBA_TYPE, None, True);
-
-		std::cout << "glxcreatepixelbuffer..." << std::endl;
-
-		// Create a dummy pbuffer. We will render to framebuffers anyway, but we need a pbuffer to
+        // Create a dummy pbuffer. We will render to framebuffers anyway, but we need a pbuffer to
         // activate the context.
         int pixelBufferAttributes[] = { GLX_PBUFFER_WIDTH, 8, GLX_PBUFFER_HEIGHT, 8, None };
         _pixelBuffer = glxcreatepixelbuffer(_display, _fbConfigs[0], pixelBufferAttributes);
 
-		std::cout << "glxmakecurrent..." << std::endl;
-
          // try to make it the current context
         if (!glxmakecurrent(_display, _pixelBuffer, _pixelBuffer, _context))
-		{
-			std::cout << "1st glxmakecurrent failed..." << std::endl;
-
-			// some drivers does not support context without default framebuffer, so fallback on
-			// using the default window.
-			if (!glxmakecurrent(_display, DefaultRootWindow(_display), DefaultRootWindow(_display), _context))
-			{
-				std::cout << "2nd glxmakecurrent failed..." << std::endl;
-
-				rError() << "Failed to make current" << std::endl;
-				throw new std::runtime_error("Failed to make current");
-			}
+        {
+            // some drivers does not support context without default framebuffer, so fallback on
+            // using the default window.
+            if (!glxmakecurrent(_display, DefaultRootWindow(_display), DefaultRootWindow(_display), _context))
+            {
+                rError() << "Failed to make current" << std::endl;
+                throw std::runtime_error("Failed to make current");
+            }
         }
-
-		std::cout << "HeadlessOpenGLContext done." << std::endl;
-	}
+    }
 
 	~HeadlessOpenGLContext()
 	{
@@ -230,7 +208,8 @@ void HeadlessOpenGLContextModule::createContext()
 	}
 	catch (const std::runtime_error& ex)
 	{
-		std::cerr << "Headless GL context creation failed: " << ex.what() << std::endl;
+        rError() << "Headless GL context creation failed: " << ex.what() << std::endl;
+        std::cerr << "Headless GL context creation failed: " << ex.what() << std::endl;
 	}
 }
 
