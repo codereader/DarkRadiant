@@ -1,0 +1,24 @@
+name: Test
+
+on: [push]
+
+env:
+  BUILD_TYPE: Debug
+
+jobs:
+  Linux-Build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Checks
+      shell: bash
+      run: |
+        type Xorg
+        echo "$DISPLAY"
+        DISPLAY=:0 xset q
+        DISPLAY=:1 xset q
+        DISPLAY=127.0.0.1:0 xset q
+        DISPLAY=127.0.0.1:1 xset q
+        ls /usr/share/xsessions/
