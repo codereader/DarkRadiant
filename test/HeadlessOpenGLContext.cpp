@@ -136,9 +136,15 @@ public:
 
 		std::cout << "DISPLAY environment variable = '" << displayName << "'" << std::endl;
 
+		if (displayName.empty())
+		{
+			displayName = ":1";
+			std::cout << "Using fallback value DISPLAY = '" << displayName << "'" << std::endl;
+		}
+
 		std::cout << "XOpenDisplay..." << std::endl;
 
-        _display = XOpenDisplay(displayName.empty() ? ":0" : displayName.c_str());
+        _display = XOpenDisplay(displayName.c_str());
 
 		std::cout << "XOpenDisplay returned: " << _display << std::endl;
 
