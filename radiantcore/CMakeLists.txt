@@ -83,6 +83,7 @@ add_library(radiantcore MODULE
             log/LogStreamBuf.cpp
             log/LogStream.cpp
             log/LogWriter.cpp
+            log/SegFaultHandler.cpp
             log/StringLogDevice.cpp
             map/aas/AasFileManager.cpp
             map/aas/Doom3AasFile.cpp

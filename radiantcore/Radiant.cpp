@@ -9,14 +9,10 @@
 #include "log/LogStream.h"
 #include "log/LogWriter.h"
 #include "log/LogFile.h"
+#include "log/SegFaultHandler.h"
 #include "module/StaticModule.h"
 #include "messagebus/MessageBus.h"
 #include "settings/LanguageManager.h"
-
-#ifdef POSIX
-#include <execinfo.h>
-#include <signal.h>
-#endif
 
 namespace radiant
 {
@@ -24,32 +20,6 @@ namespace radiant
 namespace
 {
 	const char* const TIME_FMT = "%Y-%m-%d %H:%M:%S";
-
-    void sigsegv_handler(int sig)
-    {
-        rError() << "SIGSEGV signal caught: " << sig << std::endl;
-        std::cerr << "SIGSEGV signal caught: " << sig << std::endl;
-
-        void* buffer[100];
-        int numAddresses = backtrace(buffer, sizeof(buffer));
-        printf("backtrace() returned %d addresses\n", numAddresses);
-
-        char** strings = backtrace_symbols(buffer, numAddresses);
-
-        if (strings == nullptr)
-        {
-            std::cerr << "backtrace() returned nullptr" << std::endl;
-            exit(EXIT_FAILURE);
-        }
-
-        for (int j = 0; j < numAddresses; j++)
-        {
-            std::cerr << j << ": " << strings[j] << std::endl;
-        }
-
-        free(strings);
-        exit(1);
-    }
 }
 
 Radiant::Radiant(IApplicationContext& context) :
@@ -67,7 +37,7 @@ Radiant::Radiant(IApplicationContext& context) :
 	createLogFile();
 
 #ifdef POSIX
-	signal(SIGSEGV, sigsegv_handler);
+    applog::SegFaultHandler::Install();
 #endif
 
 	_moduleRegistry.reset(new module::ModuleRegistry(_context));

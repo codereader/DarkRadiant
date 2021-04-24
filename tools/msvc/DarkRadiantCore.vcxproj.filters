@@ -1045,6 +1045,9 @@
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\DepthFillPass.cpp">
       <Filter>src\rendersystem\backend</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\log\SegFaultHandler.cpp">
+      <Filter>src\log</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
@@ -2132,6 +2135,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\DepthFillPass.h">
       <Filter>src\rendersystem\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\log\SegFaultHandler.h">
+      <Filter>src\log</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
