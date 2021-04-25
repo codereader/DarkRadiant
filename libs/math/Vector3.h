@@ -23,43 +23,36 @@
 #include "lrint.h"
 #include "FloatTools.h"
 
+#undef Success // get rid of fuckwit X.h macro
+#include <Eigen/Dense>
+
 /// A 3-element vector of type T
 template<typename T>
 class BasicVector3
 {
-    // The actual values of the vector, an array containing 3 values of type
-    // T
-    T _v[3];
+    // Internal Eigen vector for storage and calculations
+    using Vec = Eigen::Matrix<T, 3, 1>;
+    Vec _v;
 
 public:
     // Public typedef to read the type of our elements
     typedef T ElementType;
 
     /// Initialise Vector with all zeroes.
-    BasicVector3()
-    {
-        _v[0] = 0;
-        _v[1] = 0;
-        _v[2] = 0;
-    }
+    BasicVector3(): _v(0, 0, 0)
+    {}
 
     /// Construct a BasicVector3 with the 3 provided components.
-    BasicVector3(const T& x_, const T& y_, const T& z_) {
-        x() = x_;
-        y() = y_;
-        z() = z_;
-    }
+    BasicVector3(T x, T y, T z): _v(x, y, z)
+    {}
 
     /**
      * \brief Construct a BasicVector3 from a 3-element array.
      *
      * The array must be valid as no bounds checking is done.
      */
-    BasicVector3(const T* array)
-    {
-        for (int i = 0; i < 3; ++i)
-            _v[i] = array[i];
-    }
+    BasicVector3(const T* array): _v(array[0], array[1], array[2])
+    {}
 
     /**
      * Named constructor, returning a vector on the unit sphere for the given spherical coordinates.
@@ -74,21 +67,20 @@ public:
     }
 
     /// Set all 3 components to the provided values.
-    void set(const T& x, const T& y, const T& z) {
-        _v[0] = x;
-        _v[1] = y;
-        _v[2] = z;
+    void set(T x, T y, T z)
+    {
+        _v = Vec(x, y, z);
     }
 
-    // Return NON-CONSTANT references to the vector components
+    // Return mutable references to the vector components
     T& x() { return _v[0]; }
     T& y() { return _v[1]; }
     T& z() { return _v[2]; }
 
-    // Return CONSTANT references to the vector components
-    const T& x() const { return _v[0]; }
-    const T& y() const { return _v[1]; }
-    const T& z() const { return _v[2]; }
+    // Return vector component values
+    T x() const { return _v[0]; }
+    T y() const { return _v[1]; }
+    T z() const { return _v[2]; }
 
     /// Return human readable debug string (pretty print)
     std::string pp() const
@@ -189,11 +181,11 @@ public:
      */
 
     operator const T* () const {
-        return _v;
+        return _v.data();
     }
 
     operator T* () {
-        return _v;
+        return _v.data();
     }
 
     /// Returns a "snapped" copy of this Vector, each component rounded to the given precision.
