@@ -90,6 +90,7 @@ TEST(MathTest, NegateVector3)
     Vector3 vec(5, 10, 125);
 
     EXPECT_EQ(-vec, Vector3(-5, -10, -125));
+    EXPECT_EQ(-(-vec), vec);
 }
 
 TEST(MathTest, VectorLength)

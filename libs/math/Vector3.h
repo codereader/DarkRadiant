@@ -30,13 +30,18 @@
 template<typename T>
 class BasicVector3
 {
-    // Internal Eigen vector for storage and calculations
-    using Vec = Eigen::Matrix<T, 3, 1>;
-    Vec _v;
+public:
+    /// Eigen vector type to store a BasicVector3's data
+    using Eigen_T = Eigen::Matrix<T, 3, 1>;
+
+    // Public typedef to read the type of our elements
+    using ElementType = T;
+
+private:
+    // Eigen vector for storage and calculations
+    Eigen_T _v;
 
 public:
-    // Public typedef to read the type of our elements
-    typedef T ElementType;
 
     /// Initialise Vector with all zeroes.
     BasicVector3(): _v(0, 0, 0)
@@ -44,6 +49,10 @@ public:
 
     /// Construct a BasicVector3 with the 3 provided components.
     BasicVector3(T x, T y, T z): _v(x, y, z)
+    {}
+
+    /// Construct directly from the underlying Eigen vector type
+    BasicVector3(const Eigen_T& vec): _v(vec)
     {}
 
     /**
@@ -69,7 +78,7 @@ public:
     /// Set all 3 components to the provided values.
     void set(T x, T y, T z)
     {
-        _v = Vec(x, y, z);
+        _v = Eigen_T(x, y, z);
     }
 
     // Return mutable references to the vector components
@@ -105,7 +114,7 @@ public:
     /// Return the componentwise negation of this vector
     BasicVector3<T> operator- () const
     {
-        return BasicVector3<T>(-_v[0], -_v[1], -_v[2]);
+        return BasicVector3<T>(-_v);
     }
 
     /// Return the Pythagorean length of this vector.
