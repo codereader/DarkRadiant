@@ -120,13 +120,13 @@ public:
     /// Return the Pythagorean length of this vector.
     double getLength() const
     {
-        return sqrt(getLengthSquared());
+        return _v.norm();
     }
 
     /// Return the squared length of this vector.
     T getLengthSquared() const
     {
-        return dot(*this);
+        return _v.squaredNorm();
     }
 
     /**
@@ -135,30 +135,23 @@ public:
 
      * \return The length of the vector before normalisation.
      */
-    T normalise()
+    double normalise()
     {
-        T length = getLength();
-        T inverseLength = 1/length;
-
-        _v[0] *= inverseLength;
-        _v[1] *= inverseLength;
-        _v[2] *= inverseLength;
-
+        double length = getLength();
+        _v.normalize();
         return length;
     }
 
     /// Return the result of normalising this vector
     BasicVector3<T> getNormalised() const
     {
-        BasicVector3<T> copy = *this;
-        copy.normalise();
-        return copy;
+        return BasicVector3<T>(_v.normalized());
     }
 
     /// Return dot product of this and another vector
     T dot(const BasicVector3<T>& other) const
     {
-        return x() * other.x() + y() * other.y() + z() * other.z();
+        return _v.dot(other._v);
     }
 
     /// Return the angle between <self> and <other>
@@ -177,10 +170,7 @@ public:
     /// Return the cross product of this and another vector
     BasicVector3<T> cross(const BasicVector3<T>& other) const
     {
-        return BasicVector3<T>(
-            _v[1] * other.z() - _v[2] * other.y(),
-            _v[2] * other.x() - _v[0] * other.z(),
-            _v[0] * other.y() - _v[1] * other.x());
+        return BasicVector3<T>(_v.cross(other._v));
     }
 
     /** Implicit cast to C-style array. This allows a Vector3 to be
