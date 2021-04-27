@@ -280,14 +280,14 @@ BasicVector3<T>& operator/=(BasicVector3<T>& v1, const BasicVector3<T>& v2)
 template <typename T>
 BasicVector3<T> operator+(const BasicVector3<T>& v1, const BasicVector3<T>& v2)
 {
-    return BasicVector3<T>(v1.x() + v2.x(), v1.y() + v2.y(), v1.z() + v2.z());
+    return BasicVector3<T>(v1.eigen() + v2.eigen());
 }
 
 /// Componentwise vector addition in place
 template <typename T>
 BasicVector3<T>& operator+=(BasicVector3<T>& v1, const BasicVector3<T>& v2)
 {
-    v1 = v1 + v2;
+    v1.eigen() += v2.eigen();
     return v1;
 }
 
@@ -295,14 +295,14 @@ BasicVector3<T>& operator+=(BasicVector3<T>& v1, const BasicVector3<T>& v2)
 template <typename T>
 BasicVector3<T> operator-(const BasicVector3<T>& v1, const BasicVector3<T>& v2)
 {
-    return BasicVector3<T>(v1.x() - v2.x(), v1.y() - v2.y(), v1.z() - v2.z());
+    return BasicVector3<T>(v1.eigen() - v2.eigen());
 }
 
 /// Componentwise vector subtraction in place
 template<typename T>
 BasicVector3<T>& operator-= (BasicVector3<T>& v1, const BasicVector3<T>& v2)
 {
-    v1 = v1 - v2;
+    v1.eigen() -= v2.eigen();
     return v1;
 }
 
