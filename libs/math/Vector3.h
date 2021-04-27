@@ -75,6 +75,12 @@ public:
         );
     }
 
+    /// Read-only access to the internal Eigen vector
+    const Eigen_T& eigen() const { return _v; }
+
+    /// Mutable access to the internal Eigen vector
+    Eigen_T& eigen() { return _v; }
+
     /// Set all 3 components to the provided values.
     void set(T x, T y, T z)
     {
@@ -209,8 +215,7 @@ template <
 >
 BasicVector3<T> operator*(const BasicVector3<T>& v, S s)
 {
-    T factor = static_cast<T>(s);
-    return BasicVector3<T>(v.x() * factor, v.y() * factor, v.z() * factor);
+    return BasicVector3<T>(v.eigen() * s);
 }
 
 /// Multiply vector components with a scalar and return the result
@@ -227,7 +232,7 @@ BasicVector3<T> operator*(S s, const BasicVector3<T>& v)
 template <typename T, typename S>
 BasicVector3<T>& operator*=(BasicVector3<T>& v, S s)
 {
-    v = v * s;
+    v.eigen() *= s;
     return v;
 }
 
