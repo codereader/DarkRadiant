@@ -410,7 +410,16 @@ void AseModel::parseMesh(Mesh& mesh, parser::StringTokeniser& tokeniser)
             if (face.vertexIndices[1] >= mesh.vertices.size()) throw parser::ParseException("MESH_FACE vertex index 1 out of bounds >= MESH_NUMFACES");
             if (face.vertexIndices[0] >= mesh.vertices.size()) throw parser::ParseException("MESH_FACE vertex index 2 out of bounds >= MESH_NUMFACES");
 
-            tokeniser.skipTokens(9);
+            // Skip over the edge stuff
+            tokeniser.assertNextToken("AB:");
+            tokeniser.skipTokens(1);
+            tokeniser.assertNextToken("BC:");
+            tokeniser.skipTokens(1);
+            tokeniser.assertNextToken("CA:");
+            tokeniser.skipTokens(1);
+
+            // Leave the rest of the line (*MESH_MTLID and *MESH_SMOOTHING) unparsed, 
+            // and let the outer loop deal with any keywords that might follow or might not follow
         }
         /* model texture vertex */
         else if (token == "*mesh_tvert")
