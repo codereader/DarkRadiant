@@ -1,0 +1,8 @@
+//
+//  eigen3.xcconfig
+//  DarkRadiant
+//
+//  Created by greebo on 28/04/21.
+//
+//
+EIGEN_HEADER_SEARCH_PATHS = "/opt/local/include/eigen3"

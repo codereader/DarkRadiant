@@ -3183,6 +3183,7 @@
 		3AE5C341263930D900643850 /* TextureMatrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextureMatrix.cpp; path = ../../radiantcore/shaders/TextureMatrix.cpp; sourceTree = SOURCE_ROOT; };
 		3AE5C342263930D900643850 /* TextureMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextureMatrix.h; path = ../../radiantcore/shaders/TextureMatrix.h; sourceTree = SOURCE_ROOT; };
 		3AE5C343263930D900643850 /* VideoMapExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VideoMapExpression.h; path = ../../radiantcore/shaders/VideoMapExpression.h; sourceTree = SOURCE_ROOT; };
+		3AE5C34C263967FF00643850 /* eigen3.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = eigen3.xcconfig; sourceTree = "<group>"; };
 		3AE6F12A1E8E9B72008A1B2D /* GridItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GridItem.h; path = ../../radiantcore/grid/GridItem.h; sourceTree = SOURCE_ROOT; };
 		3AE6F12B1E8E9B72008A1B2D /* GridManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GridManager.cpp; path = ../../radiantcore/grid/GridManager.cpp; sourceTree = SOURCE_ROOT; };
 		3AE6F12C1E8E9B72008A1B2D /* GridManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GridManager.h; path = ../../radiantcore/grid/GridManager.h; sourceTree = SOURCE_ROOT; };
@@ -5253,6 +5254,7 @@
 				3AFF06DA253BFF12002B1472 /* jpeg.xcconfig */,
 				3AFF06DB253BFF64002B1472 /* png.xcconfig */,
 				3AC88782253C1DB900E6CCCE /* picomodel.xcconfig */,
+				3AE5C34C263967FF00643850 /* eigen3.xcconfig */,
 			);
 			name = Configuration;
 			sourceTree = "<group>";

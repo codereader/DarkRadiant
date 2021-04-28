@@ -61,7 +61,7 @@ To compile DarkRadiant, a number of libraries (with development headers) and a s
 * libalut-dev 
 * libvorbis-dev
 * libgtest-dev
-* libeigen-dev
+* libeigen3-dev
 
 This does not include core development tools such as g++ or the git client
 to download the sources (use sudo apt-get install git for that). One possible set of packages might be:
@@ -101,7 +101,7 @@ Install MacPorts, then open a fresh console and issue these commands:
 
 ```
 sudo port install jpeg wxwidgets-3.0 pkgconfig libsigcxx2 freetype ftgl glew
-sudo port install boost libxml2 freealut libvorbis libogg openal
+sudo port install boost libxml2 freealut libvorbis libogg openal eigen3
 ```
 
 ## Build
