@@ -388,4 +388,20 @@ TEST_F(AseImportTest, LoadAseWithWrongMaterialCount)
     EXPECT_EQ(materials.count("material04"), 1) << "material04 not found";
 }
 
+TEST_F(AseImportTest, ParseMeshFaceWithoutSmoothing)
+{
+    // This model contains *MESH_FACE lines without *MESH_SMOOTHING, the parser needs to be able to deal with that
+    auto model = GlobalModelCache().getModel("models/ase/testcube_no_smoothing_in_mesh_face.ase");
+
+    // Model should be loaded successfully
+    EXPECT_TRUE(model);
+
+    if (model)
+    {
+        EXPECT_EQ(model->getSurfaceCount(), 1);
+        EXPECT_EQ(model->getSurface(0).getNumVertices(), 24);
+        EXPECT_EQ(model->getSurface(0).getNumTriangles(), 12);
+    }
+}
+
 }
