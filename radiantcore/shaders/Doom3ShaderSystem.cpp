@@ -451,7 +451,7 @@ void Doom3ShaderSystem::saveMaterial(const std::string& name)
 
     outputPath /= material->getShaderFileInfo().fullPath();
 
-    auto outputDir = os::getContainingDir(outputPath.string());
+    auto outputDir = os::getDirectory(outputPath.string());
     if (!os::fileOrDirExists(outputDir))
     {
         rMessage() << "Creating mod materials path: " << outputDir << std::endl;
