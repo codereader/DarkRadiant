@@ -101,7 +101,7 @@ Install MacPorts, then open a fresh console and issue these commands:
 
 ```
 sudo port install jpeg wxwidgets-3.0 pkgconfig libsigcxx2 freetype ftgl glew
-sudo port install boost libxml2 freealut libvorbis libogg openal eigen3
+sudo port install libxml2 freealut libvorbis libogg openal-soft eigen3
 ```
 
 ## Build

@@ -160,7 +160,7 @@ std::string getExecutablePath(char* argv[])
     {
         // Success
         fs::path execPath = std::string(pathBuf);
-        fs::path appPath = execPath.remove_leaf();
+        fs::path appPath = execPath.remove_filename();
 
         rConsole() << "Application path: " << appPath << std::endl;
 

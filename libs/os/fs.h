@@ -15,7 +15,8 @@
 
 // If C++17 <filesystem> is available, use that one
 // e.g. Visual Studio 2019 provides the regular C++17 header
-#if defined(HAVE_STD_FILESYSTEM) || defined(__cpp_lib_filesystem) || _MSC_VER >= 1920
+#if defined(HAVE_STD_FILESYSTEM) || _MSC_VER >= 1920 || \
+    defined(__cpp_lib_filesystem) || defined(__has_include) && __has_include(<filesystem>)
 
 #include <filesystem>
 namespace fs = std::filesystem;

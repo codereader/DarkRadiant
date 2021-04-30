@@ -298,6 +298,8 @@
 		3A01240B1E503D4D00A62BC1 /* white.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01232F1E503D3200A62BC1 /* white.bmp */; };
 		3A01240C1E503D4D00A62BC1 /* wireframe.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0123301E503D3200A62BC1 /* wireframe.png */; };
 		3A01240D1E503D4D00A62BC1 /* wireframeMode16.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0123311E503D3200A62BC1 /* wireframeMode16.png */; };
+		3A8D4CC0263C7895000C068E /* Bitmap.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A8D4CBE263C7893000C068E /* Bitmap.h */; };
+		3A8D4CC1263C7895000C068E /* LocalBitmapArtProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A8D4CBF263C7894000C068E /* LocalBitmapArtProvider.h */; };
 		3AA6E07923B2343200BF9AD7 /* ParticleEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F3F623B1B764008A1B2D /* ParticleEditor.cpp */; };
 		3AA6E08723BB4E9F00BF9AD7 /* GLWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AA6E08623BB4E9F00BF9AD7 /* GLWidget.h */; };
 		3AA6E08923BB4EF200BF9AD7 /* ScrollWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AA6E08823BB4EF200BF9AD7 /* ScrollWindow.h */; };
@@ -502,7 +504,6 @@
 		3AE5C26A26392C3000643850 /* tiles.ase in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AE5C26026392BBE00643850 /* tiles.ase */; };
 		3AE5C26C26392C7F00643850 /* find_duplicate_entities.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AE5C26B26392C6600643850 /* find_duplicate_entities.py */; };
 		3AE5C26D26392C9900643850 /* find_duplicate_entities.py in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AE5C26B26392C6600643850 /* find_duplicate_entities.py */; };
-		3AE5C26F26392D1700643850 /* wxutil in Headers */ = {isa = PBXBuildFile; fileRef = 3AE5C26E26392D1700643850 /* wxutil */; };
 		3AE5C27226392D3900643850 /* FilterPopupMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE5C27026392D3900643850 /* FilterPopupMenu.cpp */; };
 		3AE5C27326392D3900643850 /* FilterPopupMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE5C27126392D3900643850 /* FilterPopupMenu.h */; };
 		3AE5C29F26392DB300643850 /* DialogManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE5C27426392D6D00643850 /* DialogManager.cpp */; };
@@ -2983,6 +2984,8 @@
 		3A01232F1E503D3200A62BC1 /* white.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; name = white.bmp; path = ../../install/bitmaps/white.bmp; sourceTree = SOURCE_ROOT; };
 		3A0123301E503D3200A62BC1 /* wireframe.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = wireframe.png; path = ../../install/bitmaps/wireframe.png; sourceTree = SOURCE_ROOT; };
 		3A0123311E503D3200A62BC1 /* wireframeMode16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = wireframeMode16.png; path = ../../install/bitmaps/wireframeMode16.png; sourceTree = SOURCE_ROOT; };
+		3A8D4CBE263C7893000C068E /* Bitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Bitmap.h; path = ../../libs/wxutil/Bitmap.h; sourceTree = SOURCE_ROOT; };
+		3A8D4CBF263C7894000C068E /* LocalBitmapArtProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LocalBitmapArtProvider.h; path = ../../libs/wxutil/LocalBitmapArtProvider.h; sourceTree = SOURCE_ROOT; };
 		3AA6E08623BB4E9F00BF9AD7 /* GLWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLWidget.h; path = ../../libs/wxutil/GLWidget.h; sourceTree = SOURCE_ROOT; };
 		3AA6E08823BB4EF200BF9AD7 /* ScrollWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScrollWindow.h; path = ../../libs/wxutil/ScrollWindow.h; sourceTree = SOURCE_ROOT; };
 		3AA6E08C23BB50DE00BF9AD7 /* stimresponseeditor.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = stimresponseeditor.xrc; path = ../../install/ui/stimresponseeditor.xrc; sourceTree = SOURCE_ROOT; };
@@ -3083,7 +3086,6 @@
 		3AE5C25F26392BBE00643850 /* sphere.ase */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = sphere.ase; path = ../../install/resources/preview/sphere.ase; sourceTree = SOURCE_ROOT; };
 		3AE5C26026392BBE00643850 /* tiles.ase */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = tiles.ase; path = ../../install/resources/preview/tiles.ase; sourceTree = SOURCE_ROOT; };
 		3AE5C26B26392C6600643850 /* find_duplicate_entities.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = find_duplicate_entities.py; path = ../../install/scripts/commands/find_duplicate_entities.py; sourceTree = SOURCE_ROOT; };
-		3AE5C26E26392D1700643850 /* wxutil */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = folder; name = wxutil; path = ../../libs/wxutil; sourceTree = SOURCE_ROOT; };
 		3AE5C27026392D3900643850 /* FilterPopupMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FilterPopupMenu.cpp; path = ../../libs/wxutil/menu/FilterPopupMenu.cpp; sourceTree = SOURCE_ROOT; };
 		3AE5C27126392D3900643850 /* FilterPopupMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilterPopupMenu.h; path = ../../libs/wxutil/menu/FilterPopupMenu.h; sourceTree = SOURCE_ROOT; };
 		3AE5C27426392D6D00643850 /* DialogManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DialogManager.cpp; path = ../../radiant/ui/common/DialogManager.cpp; sourceTree = SOURCE_ROOT; };
@@ -4455,7 +4457,6 @@
 		3AF746BC1E4FAE12003465B5 /* Node.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Node.cpp; path = ../../libs/xmlutil/Node.cpp; sourceTree = SOURCE_ROOT; };
 		3AF746BD1E4FAE12003465B5 /* Node.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Node.h; path = ../../libs/xmlutil/Node.h; sourceTree = SOURCE_ROOT; };
 		3AF746BE1E4FAE12003465B5 /* XPathException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XPathException.h; path = ../../libs/xmlutil/XPathException.h; sourceTree = SOURCE_ROOT; };
-		3AF746C81E4FAF3D003465B5 /* boost.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = boost.xcconfig; sourceTree = "<group>"; };
 		3AFF03E724548619002B1472 /* ikeyvaluestore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ikeyvaluestore.h; path = ../../include/ikeyvaluestore.h; sourceTree = SOURCE_ROOT; };
 		3AFF03E824548655002B1472 /* DialogBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DialogBase.cpp; sourceTree = "<group>"; };
 		3AFF03EA245489BF002B1472 /* SetObjectSelectionByFilterWalker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SetObjectSelectionByFilterWalker.h; path = ../../radiantcore/filters/SetObjectSelectionByFilterWalker.h; sourceTree = SOURCE_ROOT; };
@@ -4816,7 +4817,8 @@
 		3A011FC41E50275700A62BC1 /* wxutil */ = {
 			isa = PBXGroup;
 			children = (
-				3AE5C26E26392D1700643850 /* wxutil */,
+				3A8D4CBE263C7893000C068E /* Bitmap.h */,
+				3A8D4CBF263C7894000C068E /* LocalBitmapArtProvider.h */,
 				3AC88A9A25BC100900E6CCCE /* dataview */,
 				3AC88A702596F68D00E6CCCE /* fsview */,
 				3AFF0633253AE829002B1472 /* Button.h */,
@@ -5236,7 +5238,6 @@
 			isa = PBXGroup;
 			children = (
 				3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */,
-				3AF746C81E4FAF3D003465B5 /* boost.xcconfig */,
 				3AEDE3CB1E4EEEDF005A8641 /* DarkRadiant.xcconfig */,
 				3AFF0467253AB775002B1472 /* DarkRadiantCore.xcconfig */,
 				3AEBE49D1E50E41F0062D9AF /* dm.editing.xcconfig */,
@@ -6601,9 +6602,9 @@
 		3AEDE39B1E4EEA1F005A8641 /* DarkRadiant */ = {
 			isa = PBXGroup;
 			children = (
-				3AC88791253C24BA00E6CCCE /* clipboard */,
 				3AFF0604253AE741002B1472 /* ApplicationContext.h */,
 				3AF743371E4F861A003465B5 /* camera */,
+				3AC88791253C24BA00E6CCCE /* clipboard */,
 				3AE6F328239F4E46008A1B2D /* eventmanager */,
 				3AF743611E4F861A003465B5 /* log */,
 				3AF743741E4F861A003465B5 /* main.cpp */,
@@ -8201,9 +8202,11 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3A8D4CC1263C7895000C068E /* LocalBitmapArtProvider.h in Headers */,
 				3AE5C27326392D3900643850 /* FilterPopupMenu.h in Headers */,
 				3A0120331E50278400A62BC1 /* DirChooser.h in Headers */,
 				3AE6F1E81FD1A529008A1B2D /* GuiView.h in Headers */,
+				3A8D4CC0263C7895000C068E /* Bitmap.h in Headers */,
 				3AC88AAD25BC102500E6CCCE /* IResourceTreePopulator.h in Headers */,
 				3A0120381E50278400A62BC1 /* FileChooser.h in Headers */,
 				3A0120521E50278400A62BC1 /* PanedPosition.h in Headers */,
@@ -8218,7 +8221,6 @@
 				3A0120211E50278400A62BC1 /* ChoiceHelper.h in Headers */,
 				3A01203A1E50278400A62BC1 /* FreezePointer.h in Headers */,
 				3A01203F1E50278400A62BC1 /* IConv.h in Headers */,
-				3AE5C26F26392D1700643850 /* wxutil in Headers */,
 				3A01205F1E50278400A62BC1 /* SourceView.h in Headers */,
 				3A01205A1E50278400A62BC1 /* RenderPreview.h in Headers */,
 				3A0120561E50278400A62BC1 /* ModelPreview.h in Headers */,
@@ -9115,6 +9117,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = 3ADBCC681E4E4B7C00CA94F6;
@@ -10369,7 +10372,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
 			buildSettings = {
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
 			};
 			name = Debug;
 		};
@@ -10377,7 +10380,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3AEDE3CD1E4F04BD005A8641 /* base.xcconfig */;
 			buildSettings = {
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
 			};
 			name = Release;
 		};
