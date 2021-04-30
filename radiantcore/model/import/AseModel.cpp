@@ -1,5 +1,6 @@
 #include "AseModel.h"
 
+#include <unordered_map>
 #include <fmt/format.h>
 #include "parser/Tokeniser.h"
 #include "parser/ParseException.h"
