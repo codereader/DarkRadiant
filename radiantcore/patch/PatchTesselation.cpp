@@ -377,8 +377,8 @@ void PatchTesselation::resizeExpandedMesh(std::size_t newHeight, std::size_t new
 
 void PatchTesselation::lerpVert(const ArbitraryMeshVertex& a, const ArbitraryMeshVertex& b, ArbitraryMeshVertex&out)
 {
-	out.vertex = a.vertex.mid(b.vertex);
-	out.normal = a.normal.mid(b.normal);
+	out.vertex = math::midPoint(a.vertex, b.vertex);
+	out.normal = math::midPoint(a.normal, b.normal);
 	out.texcoord = a.texcoord.mid(b.texcoord);
 }
 

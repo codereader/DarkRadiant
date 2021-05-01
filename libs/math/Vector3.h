@@ -23,43 +23,45 @@
 #include "lrint.h"
 #include "FloatTools.h"
 
+#undef Success // get rid of fuckwit X.h macro
+#include <Eigen/Dense>
+
 /// A 3-element vector of type T
 template<typename T>
 class BasicVector3
 {
-    // The actual values of the vector, an array containing 3 values of type
-    // T
-    T _v[3];
+public:
+    /// Eigen vector type to store a BasicVector3's data
+    using Eigen_T = Eigen::Matrix<T, 3, 1>;
+
+    // Public typedef to read the type of our elements
+    using ElementType = T;
+
+private:
+    // Eigen vector for storage and calculations
+    Eigen_T _v;
 
 public:
-    // Public typedef to read the type of our elements
-    typedef T ElementType;
 
     /// Initialise Vector with all zeroes.
-    BasicVector3()
-    {
-        _v[0] = 0;
-        _v[1] = 0;
-        _v[2] = 0;
-    }
+    BasicVector3(): _v(0, 0, 0)
+    {}
 
     /// Construct a BasicVector3 with the 3 provided components.
-    BasicVector3(const T& x_, const T& y_, const T& z_) {
-        x() = x_;
-        y() = y_;
-        z() = z_;
-    }
+    BasicVector3(T x, T y, T z): _v(x, y, z)
+    {}
+
+    /// Construct directly from the underlying Eigen vector type
+    BasicVector3(const Eigen_T& vec): _v(vec)
+    {}
 
     /**
      * \brief Construct a BasicVector3 from a 3-element array.
      *
      * The array must be valid as no bounds checking is done.
      */
-    BasicVector3(const T* array)
-    {
-        for (int i = 0; i < 3; ++i)
-            _v[i] = array[i];
-    }
+    BasicVector3(const T* array): _v(array[0], array[1], array[2])
+    {}
 
     /**
      * Named constructor, returning a vector on the unit sphere for the given spherical coordinates.
@@ -73,22 +75,27 @@ public:
         );
     }
 
+    /// Read-only access to the internal Eigen vector
+    const Eigen_T& eigen() const { return _v; }
+
+    /// Mutable access to the internal Eigen vector
+    Eigen_T& eigen() { return _v; }
+
     /// Set all 3 components to the provided values.
-    void set(const T& x, const T& y, const T& z) {
-        _v[0] = x;
-        _v[1] = y;
-        _v[2] = z;
+    void set(T x, T y, T z)
+    {
+        _v = Eigen_T(x, y, z);
     }
 
-    // Return NON-CONSTANT references to the vector components
+    // Return mutable references to the vector components
     T& x() { return _v[0]; }
     T& y() { return _v[1]; }
     T& z() { return _v[2]; }
 
-    // Return CONSTANT references to the vector components
-    const T& x() const { return _v[0]; }
-    const T& y() const { return _v[1]; }
-    const T& z() const { return _v[2]; }
+    // Return vector component values
+    T x() const { return _v[0]; }
+    T y() const { return _v[1]; }
+    T z() const { return _v[2]; }
 
     /// Return human readable debug string (pretty print)
     std::string pp() const
@@ -113,19 +120,19 @@ public:
     /// Return the componentwise negation of this vector
     BasicVector3<T> operator- () const
     {
-        return BasicVector3<T>(-_v[0], -_v[1], -_v[2]);
+        return BasicVector3<T>(-_v);
     }
 
     /// Return the Pythagorean length of this vector.
     double getLength() const
     {
-        return sqrt(getLengthSquared());
+        return _v.norm();
     }
 
     /// Return the squared length of this vector.
     T getLengthSquared() const
     {
-        return dot(*this);
+        return _v.squaredNorm();
     }
 
     /**
@@ -134,66 +141,42 @@ public:
 
      * \return The length of the vector before normalisation.
      */
-    T normalise()
+    double normalise()
     {
-        T length = getLength();
-        T inverseLength = 1/length;
-
-        _v[0] *= inverseLength;
-        _v[1] *= inverseLength;
-        _v[2] *= inverseLength;
-
+        double length = getLength();
+        _v.normalize();
         return length;
     }
 
     /// Return the result of normalising this vector
     BasicVector3<T> getNormalised() const
     {
-        BasicVector3<T> copy = *this;
-        copy.normalise();
-        return copy;
+        return BasicVector3<T>(_v.normalized());
     }
 
     /// Return dot product of this and another vector
     T dot(const BasicVector3<T>& other) const
     {
-        return x() * other.x() + y() * other.y() + z() * other.z();
+        return _v.dot(other._v);
     }
 
-    /* Returns the angle between <self> and <other>
-     *
-     * @returns
-     * The angle as defined by the arccos( (a*b) / (|a|*|b|) )
-     */
-    template<typename OtherT>
-    T angle(const BasicVector3<OtherT>& other) const
+    /// Return the angle between <self> and <other>
+    T angle(const BasicVector3<T>& other) const
     {
-        BasicVector3<T> aNormalised = getNormalised();
-        BasicVector3<OtherT> otherNormalised = other.getNormalised();
+        // Get dot product of normalised vectors, ensuring it lies between -1
+        // and 1.
+        T dot = std::clamp(
+            getNormalised().dot(other.getNormalised()), -1.0, 1.0
+        );
 
-        T dot = aNormalised.dot(otherNormalised);
-
-        // greebo: Sanity correction: Make sure the dot product
-        // of two normalised vectors is not greater than 1
-        if (dot > 1.0)
-        {
-            dot = 1;
-        }
-        else if (dot < -1.0)
-        {
-            dot = -1.0;
-        }
-
+        // Angle is the arccos of the dot product
         return acos(dot);
     }
 
     /// Return the cross product of this and another vector
     BasicVector3<T> cross(const BasicVector3<T>& other) const
     {
-        return BasicVector3<T>(
-            _v[1] * other.z() - _v[2] * other.y(),
-            _v[2] * other.x() - _v[0] * other.z(),
-            _v[0] * other.y() - _v[1] * other.x());
+        return BasicVector3<T>(_v.cross(other._v));
     }
 
     /** Implicit cast to C-style array. This allows a Vector3 to be
@@ -203,56 +186,23 @@ public:
      */
 
     operator const T* () const {
-        return _v;
+        return _v.data();
     }
 
     operator T* () {
-        return _v;
+        return _v.data();
     }
 
-    template<typename OtherT>
-    bool isParallel(const BasicVector3<OtherT>& other) const
-	{
-        return float_equal_epsilon(angle(other), 0.0, 0.001) ||
-			   float_equal_epsilon(angle(other), math::PI, 0.001);
-    }
-
-    // Returns the mid-point of this vector and the other one
-    BasicVector3<T> mid(const BasicVector3<T>& other) const
+    /// Returns a "snapped" copy of this Vector, each component rounded to the given precision.
+    BasicVector3<T> getSnapped(T snap) const
     {
-        return (*this + other) * 0.5f;
+        return BasicVector3<T>(float_snapped(x(), snap),
+                               float_snapped(y(), snap),
+                               float_snapped(z(), snap));
     }
 
-    /**
-     * Returns a "snapped" copy of this Vector, each component rounded to integers.
-     */
-    BasicVector3<T> getSnapped() const
-    {
-        return BasicVector3<T>(
-            static_cast<T>(float_to_integer(x())),
-            static_cast<T>(float_to_integer(y())),
-            static_cast<T>(float_to_integer(z()))
-        );
-    }
-
-    /**
-     * Returns a "snapped" copy of this Vector, each component rounded to the given precision.
-     */
-    template<typename OtherElement>
-    BasicVector3<T> getSnapped(const OtherElement& snap) const
-    {
-        return BasicVector3<T>(
-            static_cast<T>(float_snapped(x(), snap)),
-            static_cast<T>(float_snapped(y(), snap)),
-            static_cast<T>(float_snapped(z(), snap))
-        );
-    }
-
-    /**
-     * Snaps this vector to the given precision in place.
-     */
-    template<typename OtherElement>
-    void snap(const OtherElement& snap)
+    /// Snaps this vector to the given precision in place.
+    void snap(T snap)
     {
         *this = getSnapped(snap);
     }
@@ -265,8 +215,7 @@ template <
 >
 BasicVector3<T> operator*(const BasicVector3<T>& v, S s)
 {
-    T factor = static_cast<T>(s);
-    return BasicVector3<T>(v.x() * factor, v.y() * factor, v.z() * factor);
+    return BasicVector3<T>(v.eigen() * s);
 }
 
 /// Multiply vector components with a scalar and return the result
@@ -283,7 +232,7 @@ BasicVector3<T> operator*(S s, const BasicVector3<T>& v)
 template <typename T, typename S>
 BasicVector3<T>& operator*=(BasicVector3<T>& v, S s)
 {
-    v = v * s;
+    v.eigen() *= s;
     return v;
 }
 
@@ -331,14 +280,14 @@ BasicVector3<T>& operator/=(BasicVector3<T>& v1, const BasicVector3<T>& v2)
 template <typename T>
 BasicVector3<T> operator+(const BasicVector3<T>& v1, const BasicVector3<T>& v2)
 {
-    return BasicVector3<T>(v1.x() + v2.x(), v1.y() + v2.y(), v1.z() + v2.z());
+    return BasicVector3<T>(v1.eigen() + v2.eigen());
 }
 
 /// Componentwise vector addition in place
 template <typename T>
 BasicVector3<T>& operator+=(BasicVector3<T>& v1, const BasicVector3<T>& v2)
 {
-    v1 = v1 + v2;
+    v1.eigen() += v2.eigen();
     return v1;
 }
 
@@ -346,14 +295,14 @@ BasicVector3<T>& operator+=(BasicVector3<T>& v1, const BasicVector3<T>& v2)
 template <typename T>
 BasicVector3<T> operator-(const BasicVector3<T>& v1, const BasicVector3<T>& v2)
 {
-    return BasicVector3<T>(v1.x() - v2.x(), v1.y() - v2.y(), v1.z() - v2.z());
+    return BasicVector3<T>(v1.eigen() - v2.eigen());
 }
 
 /// Componentwise vector subtraction in place
 template<typename T>
 BasicVector3<T>& operator-= (BasicVector3<T>& v1, const BasicVector3<T>& v2)
 {
-    v1 = v1 - v2;
+    v1.eigen() -= v2.eigen();
     return v1;
 }
 
@@ -396,6 +345,22 @@ inline bool isNear(const BasicVector3<T>& v1, const BasicVector3<T>& v2, double 
     BasicVector3<T> diff = v1 - v2;
     return std::abs(diff.x()) < epsilon && std::abs(diff.y()) < epsilon
         && std::abs(diff.z()) < epsilon;
+}
+
+/// Test if two vectors are parallel (in similar or opposite directions)
+template<typename T>
+bool isParallel(const BasicVector3<T>& v1, const BasicVector3<T>& v2)
+{
+    T angle = v1.angle(v2);
+    return float_equal_epsilon(angle, 0.0, 0.001)
+        || float_equal_epsilon(angle, PI, 0.001);
+}
+
+/// Return the midpoint of two vectors
+template<typename T>
+BasicVector3<T> midPoint(const BasicVector3<T>& v1, const BasicVector3<T>& v2)
+{
+    return (v1 + v2) * 0.5;
 }
 
 }

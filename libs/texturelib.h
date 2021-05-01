@@ -249,8 +249,8 @@ inline void ComputeAxisBase(const Vector3& normal, Vector3& texS, Vector3& texT)
 inline void getVirtualPatchBase(const Vector3& widthVector, const Vector3& heightVector,
 								const Vector3& faceNormal, Vector3& widthBase, Vector3& heightBase)
 {
-	bool widthVectorIsParallel = widthVector.isParallel(faceNormal);
-	bool heightVectorIsParallel = heightVector.isParallel(faceNormal);
+	bool widthVectorIsParallel = math::isParallel(widthVector, faceNormal);
+	bool heightVectorIsParallel = math::isParallel(heightVector, faceNormal);
 
 	if (widthVectorIsParallel) {
 		// Calculate a orthogonal width vector

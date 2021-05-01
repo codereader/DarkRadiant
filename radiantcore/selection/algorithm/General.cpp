@@ -77,7 +77,7 @@ bool EntitySelectByClassnameWalker::entityMatches(Entity* entity) const {
 
 void selectAllOfType(const cmd::ArgumentList& args)
 {
-	if (GlobalSelectionSystem().getSelectionInfo().componentCount > 0 && 
+	if (GlobalSelectionSystem().getSelectionInfo().componentCount > 0 &&
 		!FaceInstance::Selection().empty())
 	{
 		std::set<std::string> shaders;
@@ -103,7 +103,7 @@ void selectAllOfType(const cmd::ArgumentList& args)
 			if (shaders.find(instance.getFace().getShader()) != shaders.end())
 			{
 				instance.setSelected(SelectionSystem::eFace, true);
-			} 
+			}
 		});
 
 		// Select all visible patches carrying any of the shaders in the set
@@ -112,10 +112,10 @@ void selectAllOfType(const cmd::ArgumentList& args)
 			if (shaders.find(node->getPatch().getShader()) != shaders.end())
 			{
 				Node_setSelected(std::dynamic_pointer_cast<scene::INode>(node), true);
-			} 
+			}
 		});
 	}
-	else 
+	else
 	{
 		// Find any classnames of selected entities
 		ClassnameList classnames;
@@ -142,7 +142,7 @@ void selectAllOfType(const cmd::ArgumentList& args)
 		}
 		else
 		{
-			// No entities found, select all elements with textures 
+			// No entities found, select all elements with textures
 			// matching the one in the texture browser
 			auto shader = ShaderClipboard::Instance().getSource().getShader();
 
@@ -151,7 +151,7 @@ void selectAllOfType(const cmd::ArgumentList& args)
 				if (brush.hasShader(shader))
 				{
 					brush.getBrushNode().setSelected(true);
-				} 
+				}
 			});
 
 			// Select all visible patches carrying any of the shaders in the set
@@ -160,7 +160,7 @@ void selectAllOfType(const cmd::ArgumentList& args)
 				if (node->getPatch().getShader() == shader)
 				{
 					Node_setSelected(std::dynamic_pointer_cast<scene::INode>(node), true);
-				} 
+				}
 			});
 		}
 	}
@@ -232,7 +232,7 @@ inline void setComponentSelection(const scene::INodePtr& node, bool selected)
 void hideSelected(const cmd::ArgumentList& args)
 {
 	// Traverse the selection, hiding all nodes
-	GlobalSelectionSystem().foreachSelected([] (const scene::INodePtr& node) 
+	GlobalSelectionSystem().foreachSelected([] (const scene::INodePtr& node)
 	{
 		hideSubgraph(node, true);
 
@@ -330,10 +330,10 @@ void showAllHidden(const cmd::ArgumentList& args) {
 
 /**
  * Invert Selection walker
- * Worldspawn brushes and patches will be considered, unless 
+ * Worldspawn brushes and patches will be considered, unless
  * entity selection mode is active.
- * An entity with or without any child nodes will be considered. 
- * The worldspawn node itself will be ignored. 
+ * An entity with or without any child nodes will be considered.
+ * The worldspawn node itself will be ignored.
  * func_static children will be ignored.
  */
 class InvertSelectionWalker :
@@ -674,7 +674,7 @@ AABB getCurrentSelectionBounds(bool considerLightVolumes)
 			return;
 		}
 
-		// We were asked to ignore light volumes, so for lights we'll only 
+		// We were asked to ignore light volumes, so for lights we'll only
 		// sum up the small diamond AABB to calculate the selection bounds (#4578)
 		ILightNodePtr lightNode = Node_getLightNode(node);
 
@@ -697,9 +697,16 @@ AABB getCurrentSelectionBounds()
 	return getCurrentSelectionBounds(true);
 }
 
+// Snap vector components to whole numbers
+Vector3 snapToInt(const Vector3& v)
+{
+    return Vector3(float_to_integer(v.x()), float_to_integer(v.y()),
+                   float_to_integer(v.z()));
+}
+
 Vector3 getCurrentSelectionCenter()
 {
-	return getCurrentSelectionBounds().getOrigin().getSnapped();
+	return snapToInt(getCurrentSelectionBounds().getOrigin());
 }
 
 void snapSelectionToGrid(const cmd::ArgumentList& args)
@@ -711,7 +718,7 @@ void snapSelectionToGrid(const cmd::ArgumentList& args)
 	{
 		// Component mode
 		GlobalSelectionSystem().foreachSelectedComponent([&] (const scene::INodePtr& node)
-		{ 			
+		{
 			// Don't do anything with hidden nodes
 			if (!node->visible()) return;
 
@@ -728,7 +735,7 @@ void snapSelectionToGrid(const cmd::ArgumentList& args)
 	{
 		// Non-component mode
 		GlobalSelectionSystem().foreachSelected([&] (const scene::INodePtr& node)
-		{ 			
+		{
 			// Don't do anything with hidden nodes
 			if (!node->visible()) return;
 
@@ -742,7 +749,7 @@ void snapSelectionToGrid(const cmd::ArgumentList& args)
 	}
 }
 
-class IntersectionFinder : 
+class IntersectionFinder :
 	public scene::NodeVisitor
 {
 private:
@@ -826,7 +833,7 @@ Vector3 getLowestVertexOfModel(const model::IModel& model, const Matrix4& localT
 	return bestValue;
 }
 
-class ChildModelFinder : 
+class ChildModelFinder :
 	public scene::NodeVisitor
 {
 	model::ModelNodePtr _modelNode;
@@ -840,7 +847,7 @@ public:
 	{
 		model::ModelNodePtr modelNode = Node_getModel(node);
 
-		if (modelNode != NULL) 
+		if (modelNode != NULL)
 		{
 			_modelNode = modelNode;
 			return false;
@@ -977,7 +984,7 @@ void registerCommands()
 	GlobalCommandSystem().addCommand("FlipTextureY", flipTextureT);
 
 	GlobalCommandSystem().addCommand("MoveSelectionVertically", moveSelectedCmd, { cmd::ARGTYPE_STRING });
-	
+
 	GlobalCommandSystem().addCommand("CurveAppendControlPoint", appendCurveControlPoint);
 	GlobalCommandSystem().addCommand("CurveRemoveControlPoint", removeCurveControlPoints);
 	GlobalCommandSystem().addCommand("CurveInsertControlPoint", insertCurveControlPoints);

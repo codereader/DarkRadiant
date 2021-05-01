@@ -90,6 +90,7 @@ TEST(MathTest, NegateVector3)
     Vector3 vec(5, 10, 125);
 
     EXPECT_EQ(-vec, Vector3(-5, -10, -125));
+    EXPECT_EQ(-(-vec), vec);
 }
 
 TEST(MathTest, VectorLength)
@@ -298,6 +299,75 @@ TEST(MathTest, Vector3CrossProduct)
     EXPECT_EQ(Vector3(2, 4, 5).cross(Vector3(3, 5, 9)), Vector3(11, -3, -2));
     EXPECT_EQ(Vector3(-0.25, 4.8, 512).cross(Vector3(56, -5.625, 96)),
               Vector3(3340.8, 28696.0, -267.39375));
+}
+
+TEST(MathTest, AngleBetweenVector3s)
+{
+    const Vector3 i(1, 0, 0);
+    const Vector3 j(0, 1, 0);
+    const Vector3 k(0, 0, 1);
+
+    // Obvious unit vector angles
+    EXPECT_DOUBLE_EQ(i.angle(i), 0);
+    EXPECT_DOUBLE_EQ(i.angle(j), math::PI / 2.0);
+    EXPECT_DOUBLE_EQ(i.angle(k), math::PI / 2.0);
+    EXPECT_DOUBLE_EQ(j.angle(k), math::PI / 2.0);
+    EXPECT_DOUBLE_EQ(j.angle(-j), math::PI);
+
+    // Arbitrary vectors
+    EXPECT_DOUBLE_EQ(Vector3(2, 4, 5).angle(Vector3(4, 9, -7)),
+                     1.4595319160396403);
+    EXPECT_DOUBLE_EQ(Vector3(0.1, -0.5, 19).angle(Vector3(2.4, 156.1, -27.8)),
+                     1.7732415935926593);
+}
+
+TEST(MathTest, VectorIsParallel)
+{
+    const Vector3 i(1, 0, 0);
+    const Vector3 j(0, 1, 0);
+    const Vector3 k(0, 0, 1);
+
+    // Vectors are parallel to themselves and not parallel to other unit vectors
+    EXPECT_TRUE(math::isParallel(i, i));
+    EXPECT_TRUE(math::isParallel(j, j));
+    EXPECT_FALSE(math::isParallel(i, j));
+    EXPECT_FALSE(math::isParallel(k, i));
+
+    // Vectors are parallel even in opposite directions
+    EXPECT_TRUE(math::isParallel(i, -i));
+    EXPECT_TRUE(math::isParallel(j, -j));
+    EXPECT_TRUE(math::isParallel(k, -k));
+
+    // Scaling does not change parallelism
+    EXPECT_TRUE(math::isParallel(i * 2, i));
+    EXPECT_TRUE(math::isParallel(j * 356, j * 0.05));
+}
+
+TEST(MathTest, SnapVector3)
+{
+    Vector3 v1(5, -15.25, -28);
+    const Vector3 v1Orig = v1;
+
+    // Non-mutating version
+    EXPECT_EQ(v1.getSnapped(0.25), v1);
+    EXPECT_EQ(v1.getSnapped(1), Vector3(5, -15, -28));
+    EXPECT_EQ(v1.getSnapped(2), Vector3(4, -16, -28));
+    EXPECT_EQ(v1.getSnapped(5), Vector3(5, -15, -30));
+
+    // Mutating version
+    EXPECT_EQ(v1, v1Orig);
+    v1.snap(3);
+    EXPECT_EQ(v1, Vector3(6, -15, -27));
+}
+
+TEST(MathTest, Vector3MidPoint)
+{
+    Vector3 v1(18, 26, -350);
+    Vector3 v2(-4.5, 96, 10);
+
+    EXPECT_EQ(math::midPoint(v1, v2), Vector3(6.75, 61, -170));
+    EXPECT_EQ(math::midPoint(v2, v1), Vector3(6.75, 61, -170));
+    EXPECT_EQ(math::midPoint(v1, Vector3()), v1 / 2);
 }
 
 TEST(MathTest, Vector3AsCArray)
