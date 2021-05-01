@@ -23,6 +23,11 @@
 #include "lrint.h"
 #include "FloatTools.h"
 
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 4127)
+#endif
+
 #undef Success // get rid of fuckwit X.h macro
 #include <Eigen/Dense>
 
@@ -381,3 +386,7 @@ const Vector3 g_vector3_axis_y(0, 1, 0);
 const Vector3 g_vector3_axis_z(0, 0, 1);
 
 const Vector3 g_vector3_axes[3] = { g_vector3_axis_x, g_vector3_axis_y, g_vector3_axis_z };
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
