@@ -94,6 +94,8 @@ Other useful variables are `CMAKE_BUILD_TYPE` to choose Debug or Release builds,
 
 ## Prerequisites
 
+You'll need an Xcode version supporting C++17 and the macOS 10.15 (Catalina) target at minimum. Xcode 11.3 should be working fine. You will need to install the Xcode command line tools to install MacPorts (run `xcode-select --install`)
+
 To compile DarkRadiant, a number of libraries (with development headers) are
 required. You can obtain them by using [MacPorts](https://distfiles.macports.org/MacPorts/):
 
