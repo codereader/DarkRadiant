@@ -1,3 +1,16 @@
+darkradiant (2.12.0~focal1) focal; urgency=medium
+
+  * New major release on all platforms.
+  * Add a customisable UI layout using wxAUI.
+  * New material editor for visual editing of material definitions.
+  * Renderer improvements: entities with attached lights now render as lights,
+    and ambient lights display correctly regardless of surface orientation.
+  * New 3D grid feature.
+  * Add a script to detect duplicated objects.
+  * Various bug fixes and improvements.
+
+ -- Matthew Mott <orbweaver3d@gmail.com>  Mon, 03 May 2021 13:39:18 +0100
+
 darkradiant (2.11.0~focal2) focal; urgency=medium
 
   * New favourites system for assets like entities, textures and sound shaders.
