@@ -64,7 +64,7 @@ public:
 
 	virtual std::string getTestResourcePath() const
 	{
-#if defined(POSIX) 
+#if defined(POSIX)
 	#if defined(TEST_BASE_PATH)
 		fs::path testResourcePath(TEST_BASE_PATH);
 		testResourcePath /= "resources/";
@@ -107,25 +107,26 @@ public:
 
 	std::vector<std::string> getLibraryPaths() const override
 	{
+        std::vector<std::string> paths;
+
 #ifdef TEST_BASE_PATH
+        // Look for a radiantcore module in the actual radiantcore/ source
+        // directory. This will not be valid for out-of-source builds.
 		fs::path libraryPath(TEST_BASE_PATH);
 		libraryPath /= "../radiantcore/";
 
-		return
-		{
-			libraryPath.string(),
-		};
-#else
+        paths.push_back(libraryPath.string());
+#endif
+
+        // Also look for modules in the module install destination directory
+        // (for out-of-source builds)
 		auto libBasePath = os::standardPathWithSlash(getLibraryBasePath());
 
-		// Don't load modules from the plugins/ folder, as these
-		// are relying on a working UI. For the test environment
-		// we are only interested in non-UI modules, for now at least.
-		return
-		{
-			libBasePath + MODULES_DIR,
-		};
-#endif
+		// Don't load modules from the plugins/ folder, as these are relying on
+		// a working UI. For the test environment we are only interested in
+		// non-UI modules, for now at least.
+        paths.push_back(libBasePath + MODULES_DIR);
+        return paths;
 	}
 };
 
