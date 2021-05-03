@@ -111,15 +111,21 @@ public:
 
 #ifdef TEST_BASE_PATH
         // Look for a radiantcore module in the actual radiantcore/ source
-        // directory. This will not be valid for out-of-source builds.
+        // directory. This will not be valid for out-of-source builds, but is
+        // required for in-source builds.
 		fs::path libraryPath(TEST_BASE_PATH);
 		libraryPath /= "../radiantcore/";
-
         paths.push_back(libraryPath.string());
+
+        // Look for a radiantcore module relative to the executable (drtest).
+        // This will be needed if running drtest directly from the build
+        // directory, without installing to a prefix (which dpkg-buildpackage
+        // does).
+        paths.push_back(getApplicationPath() + "../radiantcore/");
 #endif
 
         // Also look for modules in the module install destination directory
-        // (for out-of-source builds)
+        // (for out-of-source builds installed to the final prefix).
 		auto libBasePath = os::standardPathWithSlash(getLibraryBasePath());
 
 		// Don't load modules from the plugins/ folder, as these are relying on
