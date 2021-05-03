@@ -63,7 +63,12 @@ protected:
 		catch (module::CoreModule::FailureException & ex)
 		{
 			// Streams are not yet initialised, so log to std::err at this point
+            std::cerr << "RadiantTest initialisation failed:\n\t";
 			std::cerr << ex.what() << std::endl;
+
+            // Re-throw the exception and abort the test. There's no point in
+            // continuing if we couldn't construct the core module.
+            throw;
 		}
 	}
 
