@@ -161,6 +161,7 @@ install(DIRECTORY install/bitmaps DESTINATION ${PKGDATADIR})
 install(DIRECTORY install/gl DESTINATION ${PKGDATADIR})
 install(DIRECTORY install/ui DESTINATION ${PKGDATADIR}
         FILES_MATCHING PATTERN "*.ttf" PATTERN "*.xrc")
+install(DIRECTORY install/resources DESTINATION ${PKGDATADIR})
 
 # Install locale data
 if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.14")

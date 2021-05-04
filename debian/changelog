@@ -1,3 +1,9 @@
+darkradiant (2.12.0~focal3) focal; urgency=medium
+
+  * Include resources needed by the Material Editor preview.
+
+ -- Matthew Mott <orbweaver3d@gmail.com>  Tue, 04 May 2021 19:35:53 +0100
+
 darkradiant (2.12.0~focal2) focal; urgency=medium
 
   * New major release on all platforms.
