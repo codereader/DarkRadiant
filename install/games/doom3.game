@@ -329,4 +329,9 @@
 		<appTypeIgnore value="_IGNORE" />
 		<difficultyMenuEclass value="difficultyMenu" />
 	</difficulty>
+    
+    <materialPreview>
+        <defaultRoomMaterial value="textures/base_wall/lfwall13f3" />
+        <defaultLightDef value="lights/defaultPointLight" />
+    </materialPreview>
 </game>
