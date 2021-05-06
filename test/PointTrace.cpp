@@ -12,6 +12,17 @@ const std::string LIN_DATA = "544.000000 64.000000 112.000000\n"
                              "512.000000 64.000000 112.000000\n"
                              "544.000000 64.000000 112.000000\n";
 
+TEST(PointTraceTest, ConstructPointTraceEmpty)
+{
+    std::string s("");
+    std::istringstream ss(s);
+
+    // Constructing with empty data should not crash, or add any undefined or
+    // [0, 0, 0] points.
+    map::PointTrace trace(ss);
+    EXPECT_EQ(trace.size(), 0);
+}
+
 TEST(PointTraceTest, ConstructPointTraceWithData)
 {
     // Construct a stream to read the data
