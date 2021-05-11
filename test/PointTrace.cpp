@@ -44,7 +44,7 @@ TEST_F(PointTraceTest, IdentifyMapPointfiles)
     int pointfiles = 0;
     GlobalMapModule().forEachPointfile([&](const std::string&)
                                        { ++pointfiles; });
-    EXPECT_EQ(pointfiles, 0);
+    EXPECT_EQ(pointfiles, 2);
 }
 
 }
