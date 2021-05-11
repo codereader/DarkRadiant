@@ -28,8 +28,8 @@ class ITargetManager;
 // see ilayer.h
 class ILayerManager;
 
-namespace selection 
-{ 
+namespace selection
+{
 	class ISelectionSetManager;
 	class ISelectionGroupManager;
 }
@@ -161,7 +161,7 @@ public:
 	// Create a MapExporter instance which can be used to export a scene,
 	// including the necessary preparation, info-file handling, etc.
 	// This is mainly a service method for external code, like the gameconnection.
-	virtual map::IMapExporter::Ptr createMapExporter(map::IMapWriter& writer, 
+	virtual map::IMapExporter::Ptr createMapExporter(map::IMapWriter& writer,
 		const scene::IMapRootNodePtr& root, std::ostream& mapStream) = 0;
 
     // Exports the current selection to the given output stream, using the map's format
@@ -169,6 +169,12 @@ public:
 
     // Exports the current selection to the given output stream, using the given map format
     virtual void exportSelected(std::ostream& out, const map::MapFormatPtr& format) = 0;
+
+    /// Functor to receive pointfile names
+    using PointfileFunctor = std::function<void(const std::string&)>;
+
+    /// Enumerate pointfiles associated with the current map
+    virtual void forEachPointfile(PointfileFunctor func) const = 0;
 };
 typedef std::shared_ptr<IMap> IMapPtr;
 

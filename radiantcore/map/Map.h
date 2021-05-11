@@ -82,20 +82,12 @@ public:
 	// Gets called when a node is removed from the scenegraph
 	void onSceneNodeErase(const scene::INodePtr& node) override;
 
-	/** greebo: Returns true if the map has not been named yet.
-	 */
+    // IMap implementation
 	bool isUnnamed() const override;
-
-	/** greebo: Updates the name of the map (and triggers an update
-	 * 			of the mainframe window title)
-	 */
 	void setMapName(const std::string& newName);
-
-	/** greebo: Returns the name of this map
-	 */
 	std::string getMapName() const override;
-
 	sigc::signal<void>& signal_mapNameChanged() override;
+    void forEachPointfile(PointfileFunctor func) const override;
 
 	/**
 	 * greebo: Saves the current map, doesn't ask for any filenames,
@@ -126,7 +118,7 @@ public:
 	void saveCopyAs();
 
     /**
-     * Saves a copy of the current map to the given path, using the 
+     * Saves a copy of the current map to the given path, using the
      * given format (which may be an empty reference, in which case the map format
      * will be guessed from the filename).
      */
@@ -145,7 +137,7 @@ public:
 	 */
 	bool import(const std::string& filename);
 
-	/** 
+	/**
 	 * greebo: Exports the current map directly to the given filename.
 	 * This skips any "modified" or "unnamed" checks, it just dumps
 	 * the current scenegraph content to the file.
@@ -210,7 +202,7 @@ public:
 	static void saveSelectedAsPrefab(const cmd::ArgumentList& args);
 
 private:
-	/** 
+	/**
 	 * greebo: Asks the user if the current changes should be saved.
 	 *
 	 * @returns: true, if the user gave clearance (map was saved, had no
@@ -225,7 +217,7 @@ private:
 	void loadPrefabAt(const cmd::ArgumentList& args);
 
 	/**
-	 * greebo: Tries to locate the worldspawn in the global scenegraph and 
+	 * greebo: Tries to locate the worldspawn in the global scenegraph and
 	 * stores it into the local member variable.
 	 * Returns the node that was found (can be an empty ptr).
 	 */

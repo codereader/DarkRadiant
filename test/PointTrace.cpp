@@ -36,4 +36,15 @@ TEST_F(PointTraceTest, ConstructPointTraceWithData)
     EXPECT_EQ(trace.size(), 5);
 }
 
+TEST_F(PointTraceTest, IdentifyMapPointfiles)
+{
+    GlobalCommandSystem().executeCommand("OpenMap", std::string("altar.map"));
+
+    // Check the number of pointfiles for this map
+    int pointfiles = 0;
+    GlobalMapModule().forEachPointfile([&](const std::string&)
+                                       { ++pointfiles; });
+    EXPECT_EQ(pointfiles, 0);
+}
+
 }
