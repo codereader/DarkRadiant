@@ -193,9 +193,42 @@ bool Map::isUnnamed() const {
     return _mapName == _(MAP_UNNAMED_STRING);
 }
 
+namespace
+{
+    bool pointfileNameMatch(const std::string& candidate,
+                            const std::string& mapStem)
+    {
+        // A matching point file either has an identical stem to the map file,
+        // or the map file stem with an underscore suffix (e.g.
+        // "mapfile_portal_123_456.lin")
+        if (candidate == mapStem)
+            return true;
+        else if (candidate.rfind(mapStem + "_", 0) == 0)
+            return true;
+        else
+            return false;
+    }
+}
+
 void Map::forEachPointfile(PointfileFunctor func) const
 {
+    static const char* LIN_EXT = ".lin";
 
+    const fs::path map(getMapName());
+    const fs::path mapDir = map.parent_path();
+    const fs::path mapStem = map.stem();
+
+    // Iterate over files in the map directory
+    for (const auto& entry: fs::directory_iterator(mapDir))
+    {
+        // Ignore anything which isn't a .lin file
+        auto entryPath = entry.path();
+        if (entryPath.extension() == LIN_EXT
+            && pointfileNameMatch(entryPath.stem(), mapStem))
+        {
+            func(entryPath);
+        }
+    }
 }
 
 void Map::onSceneNodeErase(const scene::INodePtr& node)
