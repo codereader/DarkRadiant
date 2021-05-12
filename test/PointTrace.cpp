@@ -1,4 +1,4 @@
-#include "gtest/gtest.h"
+#include "RadiantTest.h"
 #include "scene/PointTrace.h"
 
 #include <sstream>
@@ -6,13 +6,15 @@
 namespace test
 {
 
+using PointTraceTest = RadiantTest;
+
 const std::string LIN_DATA = "544.000000 64.000000 112.000000\n"
                              "544.000000 64.000000 240.000000\n"
                              "512.000000 64.000000 240.000000\n"
                              "512.000000 64.000000 112.000000\n"
                              "544.000000 64.000000 112.000000\n";
 
-TEST(PointTraceTest, ConstructPointTraceEmpty)
+TEST_F(PointTraceTest, ConstructPointTraceEmpty)
 {
     std::string s("");
     std::istringstream ss(s);
@@ -23,7 +25,7 @@ TEST(PointTraceTest, ConstructPointTraceEmpty)
     EXPECT_EQ(trace.size(), 0);
 }
 
-TEST(PointTraceTest, ConstructPointTraceWithData)
+TEST_F(PointTraceTest, ConstructPointTraceWithData)
 {
     // Construct a stream to read the data
     std::istringstream iss(LIN_DATA);
