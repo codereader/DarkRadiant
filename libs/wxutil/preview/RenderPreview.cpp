@@ -218,6 +218,9 @@ void RenderPreview::initialisePreview()
         setLightingModeEnabled(false);
     }
 
+    // In case it didn't happen until now, make sure the rendersystem is realised
+    _renderSystem->realise();
+
     updateModelViewMatrix();
 }
 
