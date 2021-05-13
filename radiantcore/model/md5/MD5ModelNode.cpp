@@ -109,9 +109,8 @@ void MD5ModelNode::render(RenderableCollector& collector, const VolumeTest& volu
 
         // Get the Material to test the shader name against the filter system
         const MaterialPtr& surfaceShader = i->shader->getMaterial();
-        if (surfaceShader->isVisible())
+        if (surfaceShader && surfaceShader->isVisible())
         {
-            assert(i->shader); // shader must be captured at this point
             collector.addRenderable(
                 collector.supportsFullMaterials() ? *i->shader
                                                   : *entity.getWireShader(),
