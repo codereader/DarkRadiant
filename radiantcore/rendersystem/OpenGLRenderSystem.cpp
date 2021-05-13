@@ -47,6 +47,8 @@ OpenGLRenderSystem::OpenGLRenderSystem() :
     _time(0),
     m_traverseRenderablesMutex(false)
 {
+    bool shouldRealise = false;
+
     // For the static default rendersystem, the MaterialManager is not existent yet,
     // hence it will be attached in initialiseModule().
     if (module::GlobalModuleRegistry().moduleExists(MODULE_SHADERSYSTEM))
@@ -58,16 +60,23 @@ OpenGLRenderSystem::OpenGLRenderSystem() :
 
         if (GlobalMaterialManager().isRealised())
         {
-            realise();
+            // Hold back with the realise() call until we know whether we can call 
+            // extensionsInitialised() below - this should happen before realise()
+            shouldRealise = true;
         }
     }
 
     // If the openGL module is already initialised and a shared context is created
     // trigger a call to extensionsInitialised().
-    if (GlobalRadiantCore().getModuleRegistry().moduleExists(MODULE_SHARED_GL_CONTEXT) &&
+    if (module::GlobalModuleRegistry().moduleExists(MODULE_SHARED_GL_CONTEXT) &&
         GlobalOpenGLContext().getSharedContext())
     {
         extensionsInitialised();
+    }
+
+    if (shouldRealise)
+    {
+        realise();
     }
 }
 
