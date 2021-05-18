@@ -39,7 +39,7 @@ bool PointFile::isVisible() const
 	return !_points.empty();
 }
 
-void PointFile::show(bool show) 
+void PointFile::show(bool show)
 {
 	// Update the status if required
 	if (show)
@@ -59,7 +59,7 @@ void PointFile::show(bool show)
 	SceneChangeNotify();
 }
 
-void PointFile::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const 
+void PointFile::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
 {
 	if (isVisible())
 	{
@@ -75,18 +75,22 @@ void PointFile::renderWireframe(RenderableCollector& collector, const VolumeTest
 // Parse the current pointfile and read the vectors into the point list
 void PointFile::parse()
 {
-	// Pointfile is the same as the map file but with a .lin extension
-	// instead of .map
-	std::string mapName = GlobalMapModule().getMapName();
-	std::string pfName = mapName.substr(0, mapName.rfind(".")) + ".lin";
+    // Obtain list of pointfiles
+    std::list<fs::path> pointfiles;
+    GlobalMapModule().forEachPointfile([&](const fs::path& p)
+                                       { pointfiles.push_back(p); });
+    if (pointfiles.empty())
+        throw cmd::ExecutionFailure(_("No pointfiles found for current map."));
 
-	// Open the pointfile and get its input stream if possible
-	std::ifstream inFile(pfName);
-
-	if (!inFile) 
+    // Open the first pointfile and get its input stream if possible
+    auto pf = *pointfiles.begin();
+	std::ifstream inFile(pf);
+	if (!inFile)
 	{
-		throw cmd::ExecutionFailure(fmt::format(_("Could not open pointfile: {0}"), pfName));
-	}
+        throw cmd::ExecutionFailure(
+            fmt::format(_("Could not open pointfile: {0}"), std::string(pf))
+        );
+    }
 
 	// Pointfile is a list of float vectors, one per line, with components
 	// separated by spaces.
@@ -99,7 +103,7 @@ void PointFile::parse()
 }
 
 // advance camera to previous point
-void PointFile::advance(bool forward) 
+void PointFile::advance(bool forward)
 {
 	if (!isVisible())
 	{
@@ -108,7 +112,7 @@ void PointFile::advance(bool forward)
 
 	if (forward)
 	{
-		if (_curPos + 2 >= _points.size())	
+		if (_curPos + 2 >= _points.size())
 		{
 			rMessage() << "End of pointfile" << std::endl;
 			return;
