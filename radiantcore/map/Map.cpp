@@ -223,7 +223,8 @@ void Map::forEachPointfile(PointfileFunctor func) const
     if (!fs::is_directory(mapDir))
         return;
 
-    // Iterate over files in the map directory
+    // Iterate over files in the map directory, putting them in a sorted set
+    std::set<fs::path> paths;
     for (const auto& entry: fs::directory_iterator(mapDir))
     {
         // Ignore anything which isn't a .lin file
@@ -231,9 +232,13 @@ void Map::forEachPointfile(PointfileFunctor func) const
         if (entryPath.extension() == LIN_EXT
             && pointfileNameMatch(entryPath.stem(), mapStem))
         {
-            func(entryPath);
+            paths.insert(entryPath);
         }
     }
+
+    // Call functor on paths in order
+    for (const fs::path& p: paths)
+        func(p);
 }
 
 void Map::onSceneNodeErase(const scene::INodePtr& node)
