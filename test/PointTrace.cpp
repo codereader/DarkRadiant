@@ -39,13 +39,13 @@ TEST_F(PointTraceTest, ConstructPointTraceWithData)
 namespace
 {
 
-using StringList = std::list<std::string>;
+using Paths = std::vector<fs::path>;
 
 // Get pointfile names in a list
-StringList pointfiles()
+Paths pointfiles()
 {
-    StringList result;
-    GlobalMapModule().forEachPointfile([&](const std::string& pf)
+    Paths result;
+    GlobalMapModule().forEachPointfile([&](const fs::path& pf)
                                        { result.push_back(pf); });
     return result;
 }
@@ -56,8 +56,11 @@ TEST_F(PointTraceTest, IdentifyMapPointfiles)
 {
     GlobalCommandSystem().executeCommand("OpenMap", std::string("altar.map"));
 
-    // Check the number of pointfiles for this map
-    EXPECT_EQ(pointfiles().size(), 2);
+    // Check the pointfiles for this map
+    auto pfs = pointfiles();
+    ASSERT_EQ(pfs.size(), 2);
+    EXPECT_EQ(pfs[0].filename(), "altar.lin");
+    EXPECT_EQ(pfs[1].filename(), "altar_portalL_544_64_112.lin");
 }
 
 TEST_F(PointTraceTest, PointFilesAssociatedWithCorrectMap)

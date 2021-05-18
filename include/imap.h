@@ -7,6 +7,8 @@
 #include "ikeyvaluestore.h"
 #include <sigc++/signal.h>
 
+#include <os/fs.h>
+
 // Registry setting for suppressing the map load progress dialog
 const char* const RKEY_MAP_SUPPRESS_LOAD_STATUS_DIALOG = "user/ui/map/suppressMapLoadDialog";
 
@@ -170,8 +172,8 @@ public:
     // Exports the current selection to the given output stream, using the given map format
     virtual void exportSelected(std::ostream& out, const map::MapFormatPtr& format) = 0;
 
-    /// Functor to receive pointfile names
-    using PointfileFunctor = std::function<void(const std::string&)>;
+    /// Functor to receive pointfile paths
+    using PointfileFunctor = std::function<void(const fs::path&)>;
 
     /// Enumerate pointfiles associated with the current map
     virtual void forEachPointfile(PointfileFunctor func) const = 0;
