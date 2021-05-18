@@ -218,6 +218,11 @@ void Map::forEachPointfile(PointfileFunctor func) const
     const fs::path mapDir = map.parent_path();
     const fs::path mapStem = map.stem();
 
+    // Don't bother trying to iterate over a missing map directory, this will
+    // just throw an exception.
+    if (!fs::is_directory(mapDir))
+        return;
+
     // Iterate over files in the map directory
     for (const auto& entry: fs::directory_iterator(mapDir))
     {

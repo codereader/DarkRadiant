@@ -36,15 +36,38 @@ TEST_F(PointTraceTest, ConstructPointTraceWithData)
     EXPECT_EQ(trace.size(), 5);
 }
 
+namespace
+{
+
+using StringList = std::list<std::string>;
+
+// Get pointfile names in a list
+StringList pointfiles()
+{
+    StringList result;
+    GlobalMapModule().forEachPointfile([&](const std::string& pf)
+                                       { result.push_back(pf); });
+    return result;
+}
+
+}
+
 TEST_F(PointTraceTest, IdentifyMapPointfiles)
 {
     GlobalCommandSystem().executeCommand("OpenMap", std::string("altar.map"));
 
     // Check the number of pointfiles for this map
-    int pointfiles = 0;
-    GlobalMapModule().forEachPointfile([&](const std::string&)
-                                       { ++pointfiles; });
-    EXPECT_EQ(pointfiles, 2);
+    EXPECT_EQ(pointfiles().size(), 2);
+}
+
+TEST_F(PointTraceTest, PointFilesAssociatedWithCorrectMap)
+{
+    std::string modRelativePath = "maps/altar_in_pk4.map";
+    GlobalCommandSystem().executeCommand("OpenMap", modRelativePath);
+
+    // No pointfiles should be associated with this map, even though it also
+    // starts with "altar_"
+    EXPECT_EQ(pointfiles().size(), 0);
 }
 
 }
