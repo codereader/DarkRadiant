@@ -212,9 +212,6 @@ void EntityInspector::onKeyChange(const std::string& key,
     // Set the values for the row
     wxutil::TreeModel::Row row(keyValueIter, *_kvStore);
 
-    wxDataViewItemAttr black;
-    black.SetColour(wxColor(0,0,0));
-
     wxIcon icon;
     icon.CopyFromBitmap(parms.type.empty() ? _emptyIcon : PropertyEditorFactory::getBitmapFor(parms.type));
 
@@ -234,10 +231,6 @@ void EntityInspector::onKeyChange(const std::string& key,
         row[_columns.booleanValue] = false;
         row[_columns.booleanValue].setEnabled(false);
     }
-
-    // Text colour
-    row[_columns.name] = black;
-    row[_columns.value] = black;
 
     row[_columns.isInherited] = false;
     row[_columns.hasHelpText] = hasDescription;
@@ -1086,7 +1079,7 @@ void EntityInspector::addClassAttribute(const EntityClassAttribute& a)
         wxutil::TreeModel::Row row = _kvStore->AddItem();
 
         wxDataViewItemAttr grey;
-        grey.SetColour(wxColor(112, 112, 112));
+        grey.SetItalic(true);
 
         row[_columns.name] = wxVariant(wxDataViewIconText(a.getName(), _emptyIcon));
         row[_columns.value] = a.getValue();
