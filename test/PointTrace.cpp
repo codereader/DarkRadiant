@@ -22,7 +22,7 @@ TEST_F(PointTraceTest, ConstructPointTraceEmpty)
     // Constructing with empty data should not crash, or add any undefined or
     // [0, 0, 0] points.
     map::PointTrace trace(ss);
-    EXPECT_EQ(trace.size(), 0);
+    EXPECT_EQ(trace.points().size(), 0);
 }
 
 TEST_F(PointTraceTest, ConstructPointTraceWithData)
@@ -33,7 +33,13 @@ TEST_F(PointTraceTest, ConstructPointTraceWithData)
     // Construct the PointTrace to read the stream and confirm the expected
     // number of points are parsed
     map::PointTrace trace(iss);
-    EXPECT_EQ(trace.size(), 5);
+    auto ps = trace.points();
+    ASSERT_EQ(ps.size(), 5);
+    EXPECT_EQ(ps[0], Vector3(544, 64, 112));
+    EXPECT_EQ(ps[1], Vector3(544, 64, 240));
+    EXPECT_EQ(ps[2], Vector3(512, 64, 240));
+    EXPECT_EQ(ps[3], Vector3(512, 64, 112));
+    EXPECT_EQ(ps[4], Vector3(544, 64, 112));
 }
 
 namespace

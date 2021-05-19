@@ -8,8 +8,13 @@ namespace map
 /// Parsed point positions from a .lin file
 class PointTrace
 {
+public:
+    using Points = std::vector<Vector3>;
+
+private:
+
     // List of point positions
-    std::vector<Vector3> _points;
+    Points _points;
 
 public:
 
@@ -24,8 +29,8 @@ public:
         }
     }
 
-    /// Return number of points parsed
-    std::size_t size() const { return _points.size(); }
+    /// Return points parsed
+    const Points& points() const { return _points; }
 };
 
 }
