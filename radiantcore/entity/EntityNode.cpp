@@ -5,6 +5,8 @@
 #include "icounter.h"
 #include "imodel.h"
 #include "itransformable.h"
+#include "math/Hash.h"
+#include "string/case_conv.h"
 
 #include "EntitySettings.h"
 
@@ -200,6 +202,20 @@ float EntityNode::getShaderParm(int parmNum) const
 const Vector3& EntityNode::getDirection() const
 {
 	return _direction;
+}
+
+std::size_t EntityNode::getFingerprint()
+{
+    std::size_t hash = 0;
+
+    // Entities are just a collection of key/value pairs, use them lower case, ignore inherited keys
+    _spawnArgs.forEachKeyValue([&](const std::string& key, const std::string& value)
+    {
+        math::combineHash(hash, std::hash<std::string>()(string::to_lower_copy(key)));
+        math::combineHash(hash, std::hash<std::string>()(string::to_lower_copy(value)));
+    }, false);
+
+    return hash;
 }
 
 void EntityNode::testSelect(Selector& selector, SelectionTest& test)

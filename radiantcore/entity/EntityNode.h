@@ -3,6 +3,7 @@
 #include <sigc++/connection.h>
 #include "ientity.h"
 #include "inamespace.h"
+#include "icomparablenode.h"
 #include "Bounded.h"
 
 #include "scene/SelectableNode.h"
@@ -32,7 +33,8 @@ class EntityNode :
 	public SelectionTestable,
 	public Namespaced,
 	public TargetableNode,
-	public Transformable
+	public Transformable,
+    public scene::IComparableNode
 {
 protected:
 	// The entity class
@@ -112,6 +114,9 @@ public:
     // IMatrixTransform implementation
     Matrix4 localToParent() const override { return _localToParent; }
     Matrix4& localToParent() override { return _localToParent; }
+
+    // IComparableNode implementation
+    std::size_t getFingerprint() override;
 
 	// SelectionTestable implementation
 	virtual void testSelect(Selector& selector, SelectionTest& test) override;
