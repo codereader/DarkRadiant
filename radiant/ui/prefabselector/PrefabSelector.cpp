@@ -49,6 +49,7 @@ namespace
     const std::string RKEY_LAST_CUSTOM_PREFAB_PATH = RKEY_BASE + "lastPrefabPath";
     const std::string RKEY_RECENT_PREFAB_PATHS = RKEY_BASE + "recentPaths";
 	const std::string RKEY_INSERT_AS_GROUP = RKEY_BASE + "insertAsGroup";
+	const std::string RKEY_RECALCULATE_PREFAB_ORIGIN = RKEY_BASE + "recalculatePrefabOrigin";
 }
 
 // Constructor.
@@ -64,6 +65,7 @@ PrefabSelector::PrefabSelector() :
     _recentPathSelector(nullptr),
     _customPath(nullptr),
 	_insertAsGroupBox(nullptr),
+    _recalculatePrefabOriginBox(nullptr),
 	_handlingSelectionChange(false)
 {
 	SetSizer(new wxBoxSizer(wxVERTICAL));
@@ -103,10 +105,16 @@ PrefabSelector::PrefabSelector() :
 
 	_insertAsGroupBox = new wxCheckBox(this, wxID_ANY, _("Create Group out of Prefab parts"));
 	registry::bindWidget(_insertAsGroupBox, RKEY_INSERT_AS_GROUP);
+    
+    _recalculatePrefabOriginBox = new wxCheckBox(this, wxID_ANY, _("Recalculate Prefab Origin"));
+    _recalculatePrefabOriginBox->SetToolTip(_("Check to move uncentered prefabs back to the prefab's 0,0,0 coordinate before insertion"));
+
+	registry::bindWidget(_recalculatePrefabOriginBox, RKEY_RECALCULATE_PREFAB_ORIGIN);
 
 	wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
 
-	hbox->Add(_insertAsGroupBox, 1, wxALL, 6);
+	hbox->Add(_insertAsGroupBox, 0, wxALL, 6);
+	hbox->Add(_recalculatePrefabOriginBox, 1, wxALL, 6);
 	hbox->Add(buttonSizer, 0);
 
 	vbox->Add(hbox, 0, wxEXPAND | wxTOP, 12);
@@ -299,17 +307,18 @@ PrefabSelector::Result PrefabSelector::ChoosePrefab(const std::string& curPrefab
 	Result returnValue;
 
 	returnValue.insertAsGroup = false;
+	returnValue.recalculatePrefabOrigin = true;
 	returnValue.prefabPath = "";
 
 	if (Instance().ShowModal() == wxID_OK)
 	{
 		returnValue.prefabPath = Instance().getSelectedPath();
 		returnValue.insertAsGroup = Instance().getInsertAsGroup();
+		returnValue.recalculatePrefabOrigin = Instance().getRecalculatePrefabOrigin();
 	}
 
 	Instance().Hide();
 
-	// Use the instance to select a model.
 	return returnValue;
 }
 
@@ -374,6 +383,11 @@ std::string PrefabSelector::getSelectedPath()
 bool PrefabSelector::getInsertAsGroup()
 {
 	return _insertAsGroupBox->GetValue();
+}
+
+bool PrefabSelector::getRecalculatePrefabOrigin()
+{
+    return _recalculatePrefabOriginBox->GetValue();
 }
 
 void PrefabSelector::clearPreview()

@@ -47,6 +47,7 @@
     </ModelSelector>
     <prefabSelector>
       <insertAsGroup value="1"/>
+      <recalculatePrefabOrigin value="1"/>
     </prefabSelector>
     <aasViewer>
       <showNumbers value="1" />
