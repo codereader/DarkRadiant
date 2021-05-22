@@ -74,8 +74,10 @@ private:
 
 	void rotate(const Quaternion& rotation);
 
-	void revertTransform() override;
-	void freezeTransform() override;
+    // not to be confused with the methods inherited from Transformable
+	void _revertTransform();
+	void _freezeTransform();
+
 	void updateTransform();
 
 	void originChanged();
