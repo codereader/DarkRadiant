@@ -25,6 +25,7 @@ class GameConnection :
     public RegisterableModule
 {
 public:
+    GameConnection();
     ~GameConnection();
 
     //connect to TDM instance if not connected yet
@@ -103,8 +104,9 @@ private:
     std::unique_ptr<MessageTcp> _connection;
     //when connected, this timer calls Think periodically
     std::unique_ptr<wxTimer> _thinkTimer;
+    bool _timerInProgress;
 
-    void onTimerEvent(wxTimerEvent& ev) { think(); }
+    void onTimerEvent(wxTimerEvent& ev);
 
     //signal listener for when map is saved, loaded, unloaded, etc.
     sigc::connection _mapEventListener;

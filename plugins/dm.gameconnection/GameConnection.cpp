@@ -16,6 +16,7 @@
 
 #include "scene/Traverse.h"
 #include "wxutil/Bitmap.h"
+#include "util/ScopedBoolLock.h"
 
 #include <sigc++/signal.h>
 #include <sigc++/connection.h>
@@ -50,6 +51,10 @@ namespace
     }
 #endif
 }
+
+GameConnection::GameConnection() :
+    _timerInProgress(false)
+{}
 
 std::size_t GameConnection::generateNewSequenceNumber() {
     return ++_seqno;
@@ -101,6 +106,15 @@ void GameConnection::think() {
         //just lost connection: disable everything
         disconnect(true);
     }
+}
+
+void GameConnection::onTimerEvent(wxTimerEvent& ev)
+{ 
+    if (_timerInProgress) return; // avoid double-entering
+
+    util::ScopedBoolLock guard(_timerInProgress);
+
+    think();
 }
 
 void GameConnection::waitAction() {
