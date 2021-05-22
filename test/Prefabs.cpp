@@ -96,4 +96,25 @@ TEST_F(PrefabTest, PrefabInsertPosition)
     EXPECT_EQ(brush->worldAABB().getOrigin(), Vector3(0, 0, 0));
 }
 
+TEST_F(PrefabTest, PrefabInsertPositionWithoutOriginCorrection)
+{
+    // The saved prefab is slightly off-center at 128 0 0
+    // When inserting it at 0,0,0 the insertion code should NOT compensate the offset since the
+    // fourth argument of LoadPrefabAt is set to recalculatePrefabOrigin == false
+
+    fs::path prefabPath = _context.getTestProjectPath();
+    prefabPath /= "prefabs/large_bounds.pfbx";
+
+    GlobalCommandSystem().executeCommand("LoadPrefabAt", cmd::ArgumentList{ prefabPath.string(), Vector3(0, 0, 0), 1, 0 });
+
+    auto speaker = algorithm::getEntityByName(GlobalMapModule().getRoot(), "speaker_1");
+    EXPECT_EQ(speaker->worldAABB().getOrigin(), Vector3(128, 0, 0));
+
+    auto light = algorithm::getEntityByName(GlobalMapModule().getRoot(), "light_1");
+    EXPECT_EQ(light->worldAABB().getOrigin(), Vector3(128, 0, 0));
+
+    auto brush = algorithm::findFirstBrushWithMaterial(GlobalMapModule().getWorldspawn(), "textures/common/caulk");
+    EXPECT_EQ(brush->worldAABB().getOrigin(), Vector3(128, 0, 0));
+}
+
 }

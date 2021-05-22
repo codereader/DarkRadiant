@@ -634,16 +634,17 @@ void Map::saveCopyAs(const std::string& absolutePath, const MapFormatPtr& mapFor
 
 void Map::loadPrefabAt(const cmd::ArgumentList& args)
 {
-    if (args.size() < 2 || args.size() > 3)
+    if (args.size() < 2 || args.size() > 4)
     {
         rWarning() << "Usage: " << LOAD_PREFAB_AT_CMD << 
-            " <prefabPath:String> <targetCoords:Vector3> [insertAsGroup:0|1]" << std::endl;
+            " <prefabPath:String> <targetCoords:Vector3> [insertAsGroup:0|1] [recalculatePrefabOrigin:0|1]" << std::endl;
         return;
     }
 
     auto prefabPath = args[0].getString();
     auto targetCoords = args[1].getVector3();
     auto insertAsGroup = args.size() > 2 ? args[2].getBoolean() : false;
+    auto recalculatePrefabOrigin = args.size() > 3 ? args[3].getBoolean() : true;
 
 	if (!prefabPath.empty())
 	{
@@ -659,17 +660,20 @@ void Map::loadPrefabAt(const cmd::ArgumentList& args)
         scene::PrefabBoundsAccumulator accumulator;
         GlobalSelectionSystem().foreachSelected(accumulator);
 
-        auto prefabCenter = accumulator.getBounds().getOrigin().getSnapped(GlobalGrid().getGridSize());
+        if (recalculatePrefabOrigin)
+        {
+            auto prefabCenter = accumulator.getBounds().getOrigin().getSnapped(GlobalGrid().getGridSize());
 
-        // Switch texture lock on
-        bool prevTexLockState = GlobalBrush().textureLockEnabled();
-        GlobalBrush().setTextureLock(true);
+            // Switch texture lock on
+            bool prevTexLockState = GlobalBrush().textureLockEnabled();
+            GlobalBrush().setTextureLock(true);
 
-        // Translate the selection to the given point
-        selection::algorithm::translateSelected(targetCoords - prefabCenter);
+            // Translate the selection to the given point
+            selection::algorithm::translateSelected(targetCoords - prefabCenter);
 
-        // Revert to previous state
-        GlobalBrush().setTextureLock(prevTexLockState);
+            // Revert to previous state
+            GlobalBrush().setTextureLock(prevTexLockState);
+        }
 
 		// Check whether we should group the prefab parts
 		if (insertAsGroup && GlobalSelectionSystem().countSelected() > 1)
@@ -708,7 +712,7 @@ void Map::registerCommands()
     GlobalCommandSystem().addCommand("OpenMapFromArchive", Map::openMapFromArchive, { cmd::ARGTYPE_STRING, cmd::ARGTYPE_STRING });
     GlobalCommandSystem().addCommand("ImportMap", Map::importMap);
     GlobalCommandSystem().addCommand(LOAD_PREFAB_AT_CMD, std::bind(&Map::loadPrefabAt, this, std::placeholders::_1), 
-        { cmd::ARGTYPE_STRING, cmd::ARGTYPE_VECTOR3, cmd::ARGTYPE_INT|cmd::ARGTYPE_OPTIONAL });
+        { cmd::ARGTYPE_STRING, cmd::ARGTYPE_VECTOR3, cmd::ARGTYPE_INT|cmd::ARGTYPE_OPTIONAL, cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL });
     GlobalCommandSystem().addCommand("SaveSelectedAsPrefab", Map::saveSelectedAsPrefab);
     GlobalCommandSystem().addCommand("SaveMap", std::bind(&Map::saveMapCmd, this, std::placeholders::_1));
     GlobalCommandSystem().addCommand("SaveMapAs", Map::saveMapAs);
