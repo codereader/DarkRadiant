@@ -711,6 +711,7 @@ void Map::registerCommands()
     GlobalCommandSystem().addCommand("OpenMap", Map::openMap, { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
     GlobalCommandSystem().addCommand("OpenMapFromArchive", Map::openMapFromArchive, { cmd::ARGTYPE_STRING, cmd::ARGTYPE_STRING });
     GlobalCommandSystem().addCommand("ImportMap", Map::importMap);
+    GlobalCommandSystem().addCommand("MergeMap", std::bind(&Map::mergeMap, this, std::placeholders::_1), { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
     GlobalCommandSystem().addCommand(LOAD_PREFAB_AT_CMD, std::bind(&Map::loadPrefabAt, this, std::placeholders::_1), 
         { cmd::ARGTYPE_STRING, cmd::ARGTYPE_VECTOR3, cmd::ARGTYPE_INT|cmd::ARGTYPE_OPTIONAL, cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL });
     GlobalCommandSystem().addCommand("SaveSelectedAsPrefab", Map::saveSelectedAsPrefab);
@@ -921,6 +922,29 @@ void Map::exportSelected(std::ostream& out, const MapFormatPtr& format)
 
     // Pass the traverseSelected function and start writing selected nodes
     exporter.exportMap(GlobalSceneGraph().root(), scene::traverseSelected);
+}
+
+void Map::mergeMap(const cmd::ArgumentList& args)
+{
+    std::string candidate;
+
+    if (!args.empty())
+    {
+        candidate = args[0].getString();
+    }
+    else
+    {
+        // No arguments passed, get the map file name to load
+        auto fileInfo = MapFileManager::getMapFileSelection(true, _("Select Map File to merge"), filetype::TYPE_MAP);
+        candidate = fileInfo.fullPath;
+    }
+
+    if (!os::fileOrDirExists(candidate))
+    {
+        throw cmd::ExecutionFailure(fmt::format(_("File doesn't exist: {0}"), candidate));
+    }
+
+
 }
 
 void Map::emitMapEvent(MapEvent ev)

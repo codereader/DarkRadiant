@@ -246,6 +246,8 @@ private:
 	void loadMapResourceFromPath(const std::string& path);
 	void loadMapResourceFromArchive(const std::string& archive, const std::string& archiveRelativePath);
 
+    void mergeMap(const cmd::ArgumentList& args);
+
 	void emitMapEvent(MapEvent ev);
 
 	void clearMapResource();
