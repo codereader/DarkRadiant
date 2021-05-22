@@ -5,6 +5,7 @@
 
 #include "i18n.h"
 #include "imap.h"
+#include "icomparablenode.h"
 #include "imapformat.h"
 #include "inamespace.h"
 #include "iselectiongroup.h"
@@ -370,6 +371,61 @@ void importFromStream(std::istream& stream)
         
 		throw cmd::ExecutionFailure(fmt::format(_("Failure reading map from clipboard:\n{0}"), ex.what()));
     }
+}
+
+using Fingerprints = std::map<std::size_t, scene::INodePtr>;
+using FingerprintsByType = std::map<scene::INode::Type, Fingerprints>;
+
+FingerprintsByType collectFingerprints(const scene::INodePtr& node)
+{
+    FingerprintsByType result;
+
+    node->foreachNode([&](const scene::INodePtr& node)
+    {
+        auto comparable = std::dynamic_pointer_cast<scene::IComparableNode>(node);
+
+        if (!comparable) return true; // skip
+
+        // Find or insert the map for this node type
+        auto fingerprints = result.try_emplace(comparable->getNodeType()).first->second;
+        
+        // Store the fingerprint and check for collisions
+        auto insertResult = fingerprints.try_emplace(comparable->getFingerprint(), node);
+
+        if (!insertResult.second)
+        {
+            rWarning() << "More than one node with the same fingerprint found in the map " << node->name() << std::endl;
+        }
+
+        return true;
+    });
+
+    return result;
+}
+
+ComparisonResult::Ptr compareGraphs(const scene::IMapRootNodePtr& target, const scene::IMapRootNodePtr& source)
+{
+    assert(source && target);
+
+    auto result = std::make_shared<ComparisonResult>();
+
+    auto sourceFingerprints = collectFingerprints(source);
+    auto targetFingerprints = collectFingerprints(target);
+
+    rMessage() << "Source Node Types: " << sourceFingerprints.size() << std::endl;
+    rMessage() << "Target Node Types: " << targetFingerprints.size() << std::endl;
+
+    for (const auto& pair : sourceFingerprints)
+    {
+        rMessage() << "Source Fingerprints for node type " << static_cast<std::size_t>(pair.first) << ": " << pair.second.size() << std::endl;
+    }
+    
+    for (const auto& pair : targetFingerprints)
+    {
+        rMessage() << "Target Fingerprints for node type " << static_cast<std::size_t>(pair.first) << ": " << pair.second.size() << std::endl;
+    }
+
+    return result;
 }
 
 }

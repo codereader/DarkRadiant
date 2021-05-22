@@ -926,6 +926,11 @@ void Map::exportSelected(std::ostream& out, const MapFormatPtr& format)
 
 void Map::mergeMap(const cmd::ArgumentList& args)
 {
+    if (!getRoot())
+    {
+        throw cmd::ExecutionNotPossible(_("No map loaded, cannot merge"));
+    }
+
     std::string candidate;
 
     if (!args.empty())
@@ -944,6 +949,22 @@ void Map::mergeMap(const cmd::ArgumentList& args)
         throw cmd::ExecutionFailure(fmt::format(_("File doesn't exist: {0}"), candidate));
     }
 
+    auto resource = GlobalMapResourceManager().createFromPath(candidate);
+
+    try
+    {
+        if (resource->load())
+        {
+            const auto& otherRoot = resource->getRootNode();
+
+            // Compare the scenes and get the report
+            auto result = algorithm::compareGraphs(otherRoot, getRoot());
+        }
+    }
+    catch (const IMapResource::OperationException& ex)
+    {
+        radiant::NotificationMessage::SendError(ex.what());
+    }
 }
 
 void Map::emitMapEvent(MapEvent ev)

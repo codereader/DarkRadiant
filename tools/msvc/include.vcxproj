@@ -106,6 +106,7 @@
     <ClInclude Include="..\..\include\iclipper.h" />
     <ClInclude Include="..\..\include\icolourscheme.h" />
     <ClInclude Include="..\..\include\icommandsystem.h" />
+    <ClInclude Include="..\..\include\icomparablenode.h" />
     <ClInclude Include="..\..\include\icounter.h" />
     <ClInclude Include="..\..\include\icurve.h" />
     <ClInclude Include="..\..\include\idatastream.h" />

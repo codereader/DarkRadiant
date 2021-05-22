@@ -55,6 +55,14 @@ MapFormatPtr determineMapFormat(std::istream& stream, const std::string& type);
   */
 MapFormatPtr determineMapFormat(std::istream& stream);
 
+struct ComparisonResult
+{
+    using Ptr = std::shared_ptr<ComparisonResult>;
+};
+
+// Runs a comparison of "source" (to be merged) against the "target" (merge target)
+ComparisonResult::Ptr compareGraphs(const scene::IMapRootNodePtr& source, const scene::IMapRootNodePtr& target);
+
 }
 
 }
