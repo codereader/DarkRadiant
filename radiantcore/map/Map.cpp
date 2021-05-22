@@ -426,7 +426,7 @@ bool Map::import(const std::string& filename)
             // Adjust all new names to fit into the existing map namespace
             algorithm::prepareNamesForImport(getRoot(), otherRoot);
 
-            algorithm::mergeMap(otherRoot);
+            algorithm::importMap(otherRoot);
             success = true;
         }
 
@@ -943,7 +943,6 @@ void Map::mergeMap(const cmd::ArgumentList& args)
     {
         throw cmd::ExecutionFailure(fmt::format(_("File doesn't exist: {0}"), candidate));
     }
-
 
 }
 

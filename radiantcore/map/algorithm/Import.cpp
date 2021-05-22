@@ -227,7 +227,7 @@ public:
 	}
 };
 
-void mergeMap(const scene::INodePtr& node)
+void importMap(const scene::INodePtr& node)
 {
 	if (!GlobalSceneGraph().root())
 	{
@@ -360,7 +360,7 @@ void importFromStream(std::istream& stream)
         // Adjust all new names to fit into the existing map namespace
         prepareNamesForImport(GlobalMap().getRoot(), importFilter.getRootNode());
 
-        mergeMap(importFilter.getRootNode());
+        importMap(importFilter.getRootNode());
     }
     catch (IMapReader::FailureException& ex)
     {
