@@ -376,18 +376,18 @@ void importFromStream(std::istream& stream)
 using Fingerprints = std::map<std::size_t, scene::INodePtr>;
 using FingerprintsByType = std::map<scene::INode::Type, Fingerprints>;
 
-FingerprintsByType collectFingerprints(const scene::INodePtr& node)
+FingerprintsByType collectFingerprints(const scene::INodePtr& root)
 {
     FingerprintsByType result;
 
-    node->foreachNode([&](const scene::INodePtr& node)
+    root->foreachNode([&](const scene::INodePtr& node)
     {
         auto comparable = std::dynamic_pointer_cast<scene::IComparableNode>(node);
 
         if (!comparable) return true; // skip
 
         // Find or insert the map for this node type
-        auto fingerprints = result.try_emplace(comparable->getNodeType()).first->second;
+        auto& fingerprints = result.try_emplace(comparable->getNodeType()).first->second;
         
         // Store the fingerprint and check for collisions
         auto insertResult = fingerprints.try_emplace(comparable->getFingerprint(), node);

@@ -7,6 +7,7 @@
 #include "iclipper.h"
 #include "ientity.h"
 #include "math/Frustum.h"
+#include "math/Hash.h"
 #include <functional>
 
 // Constructor
@@ -58,6 +59,42 @@ scene::INode::Type BrushNode::getNodeType() const
 
 const AABB& BrushNode::localAABB() const {
 	return m_brush.localAABB();
+}
+
+std::size_t BrushNode::getFingerprint()
+{
+    constexpr std::size_t SignificantDigits = 6;
+
+    if (m_brush.getNumFaces() == 0)
+    {
+        return 0; // empty brushes produce a zero fingerprint
+    }
+
+    auto hash = static_cast<std::size_t>(m_brush.getDetailFlag() + 1);
+
+    math::combineHash(hash, m_brush.getNumFaces());
+
+    // Combine all face plane equations
+    for (const auto& face : m_brush)
+    {
+        // Plane equation
+        math::combineHash(hash, math::hashVector3(face->getPlane3().normal(), SignificantDigits));
+        math::combineHash(hash, math::hashDouble(face->getPlane3().dist(), SignificantDigits));
+
+        // Material Name
+        math::combineHash(hash, std::hash<std::string>()(face->getShader()));
+
+        // Texture Matrix
+        auto texdef = face->getTexDefMatrix();
+        math::combineHash(hash, math::hashDouble(texdef.xx(), SignificantDigits));
+        math::combineHash(hash, math::hashDouble(texdef.yx(), SignificantDigits));
+        math::combineHash(hash, math::hashDouble(texdef.tx(), SignificantDigits));
+        math::combineHash(hash, math::hashDouble(texdef.xy(), SignificantDigits));
+        math::combineHash(hash, math::hashDouble(texdef.yy(), SignificantDigits));
+        math::combineHash(hash, math::hashDouble(texdef.ty(), SignificantDigits));
+    }
+
+    return hash;
 }
 
 // Snappable implementation
