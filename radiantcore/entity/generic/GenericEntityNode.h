@@ -72,7 +72,6 @@ public:
 private:
 	GenericEntityNode(const GenericEntityNode& other);
 
-	void translate(const Vector3& translation);
 	void rotate(const Quaternion& rotation);
 
 	void revertTransform() override;
