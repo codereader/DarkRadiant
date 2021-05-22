@@ -63,7 +63,7 @@ const AABB& BrushNode::localAABB() const {
 
 std::size_t BrushNode::getFingerprint()
 {
-    constexpr std::size_t SignificantDigits = 6;
+    constexpr std::size_t SignificantDigits = scene::SignificantFingerprintDoubleDigits;
 
     if (m_brush.getNumFaces() == 0)
     {

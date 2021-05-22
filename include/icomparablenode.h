@@ -21,4 +21,7 @@ public:
     virtual std::size_t getFingerprint() = 0;
 };
 
+// The number of digits that are considered when hashing floating point values in fingerprinting
+constexpr std::size_t SignificantFingerprintDoubleDigits = 6;
+
 }

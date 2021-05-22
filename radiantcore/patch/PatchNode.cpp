@@ -5,6 +5,7 @@
 #include "iradiant.h"
 #include "icounter.h"
 #include "math/Frustum.h"
+#include "math/Hash.h"
 
 // Construct a PatchNode with no arguments
 PatchNode::PatchNode(patch::PatchDefType type) :
@@ -43,6 +44,40 @@ PatchNode::~PatchNode()
 scene::INode::Type PatchNode::getNodeType() const
 {
 	return Type::Patch;
+}
+
+std::size_t PatchNode::getFingerprint()
+{
+    constexpr std::size_t SignificantDigits = scene::SignificantFingerprintDoubleDigits;
+
+    if (m_patch.getHeight() * m_patch.getWidth() == 0)
+    {
+        return 0; // empty patches produce a zero fingerprint
+    }
+
+    // Width & Height
+    auto hash = m_patch.getHeight();
+    math::combineHash(hash, m_patch.getWidth());
+
+    // Subdivision Settings
+    if (m_patch.subdivisionsFixed())
+    {
+        math::combineHash(hash, static_cast<std::size_t>(m_patch.getSubdivisions().x()));
+        math::combineHash(hash, static_cast<std::size_t>(m_patch.getSubdivisions().y()));
+    }
+
+    // Material Name
+    math::combineHash(hash, std::hash<std::string>()(m_patch.getShader()));
+
+    // Combine all control point data
+    for (const auto& ctrl : m_patch.getControlPoints())
+    {
+        math::combineHash(hash, math::hashVector3(ctrl.vertex, SignificantDigits));
+        math::combineHash(hash, math::hashDouble(ctrl.texcoord.x(), SignificantDigits));
+        math::combineHash(hash, math::hashDouble(ctrl.texcoord.y(), SignificantDigits));
+    }
+
+    return hash;
 }
 
 void PatchNode::allocate(std::size_t size) {

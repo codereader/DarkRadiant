@@ -1,6 +1,7 @@
 #pragma once
 
 #include "irenderable.h"
+#include "icomparablenode.h"
 #include "iscenegraph.h"
 #include "itraceable.h"
 #include "imap.h"
@@ -22,7 +23,8 @@ class PatchNode :
 	public PlaneSelectable,
 	public LitObject,
 	public Transformable,
-	public ITraceable
+	public ITraceable,
+    public scene::IComparableNode
 {
 	selection::DragPlanes m_dragPlanes;
 
@@ -59,6 +61,9 @@ public:
 
 	std::string name() const override;
 	Type getNodeType() const override;
+
+    // IComparableNode implementation
+    std::size_t getFingerprint() override;
 
 	// Bounded implementation
 	const AABB& localAABB() const override;
