@@ -7,6 +7,7 @@
 #include "i18n.h"
 #include "icameraview.h"
 #include "inode.h"
+#include "imap.h"
 #include "ientity.h"
 #include "iselection.h"
 #include "imenumanager.h"
@@ -17,6 +18,7 @@
 #include "scene/Traverse.h"
 #include "wxutil/Bitmap.h"
 #include "util/ScopedBoolLock.h"
+#include "registry/registry.h"
 
 #include <sigc++/signal.h>
 #include <sigc++/connection.h>
@@ -577,6 +579,8 @@ std::string saveMapDiff(const DiffEntityStatuses& entityStatuses)
 
     //write added/modified entities as usual
     {
+        registry::ScopedKeyChanger progressDisabler(RKEY_MAP_SUPPRESS_LOAD_STATUS_DIALOG, true);
+
         // Get a scoped exporter class
         auto exporter = GlobalMapModule().createMapExporter(writer, root, outStream);
         exporter->exportMap(root, scene::traverseSubset(subsetNodes));
