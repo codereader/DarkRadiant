@@ -81,6 +81,12 @@ void nudgeSelected(ENudgeDirection direction, float amount, EViewType viewtype);
 void nudgeSelectedCmd(const cmd::ArgumentList& args);
 
 /**
+* Generic move command, always moves the selection in the given direction.
+* args[0]: Vector defining the translation
+*/
+void moveSelectedCmd(const cmd::ArgumentList& args);
+
+/**
 * Moves the selection along the z axis by the given amount.
 */
 void moveSelectedAlongZ(float amount);
@@ -90,7 +96,7 @@ void moveSelectedAlongZ(float amount);
 * args[0]: String indicating the direction: "up" or "down".
 * Each move command is using the current grid size as amount.
 */
-void moveSelectedCmd(const cmd::ArgumentList& args);
+void moveSelectedVerticallyCmd(const cmd::ArgumentList& args);
 
 /**
  * Rotates the current selection about one of the main axes.

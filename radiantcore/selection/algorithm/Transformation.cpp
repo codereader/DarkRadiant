@@ -448,7 +448,7 @@ void moveSelectedAlongZ(float amount)
 	nudgeByAxis(2, amount);
 }
 
-void moveSelectedCmd(const cmd::ArgumentList& args)
+void moveSelectedVerticallyCmd(const cmd::ArgumentList& args)
 {
 	if (args.size() != 1)
 	{
@@ -480,6 +480,26 @@ void moveSelectedCmd(const cmd::ArgumentList& args)
 		rMessage() << "Usage: moveSelectionVertically [up|down]" << std::endl;
 		return;
 	}
+}
+
+void moveSelectedCmd(const cmd::ArgumentList& args)
+{
+	if (args.size() != 1)
+	{
+		rMessage() << "Usage: moveSelection <vector>" << std::endl;
+		return;
+	}
+
+	if (GlobalSelectionSystem().countSelected() == 0)
+	{
+		rMessage() << "Nothing selected." << std::endl;
+		return;
+	}
+
+	UndoableCommand undo("moveSelection");
+
+	auto translation = args[0].getVector3();
+    translateSelected(translation);
 }
 
 enum axis_t

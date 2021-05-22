@@ -983,7 +983,8 @@ void registerCommands()
 	GlobalCommandSystem().addCommand("FlipTextureX", flipTextureS);
 	GlobalCommandSystem().addCommand("FlipTextureY", flipTextureT);
 
-	GlobalCommandSystem().addCommand("MoveSelectionVertically", moveSelectedCmd, { cmd::ARGTYPE_STRING });
+	GlobalCommandSystem().addCommand("MoveSelectionVertically", moveSelectedVerticallyCmd, { cmd::ARGTYPE_STRING });
+    GlobalCommandSystem().addCommand("MoveSelection", moveSelectedCmd, { cmd::ARGTYPE_VECTOR3 });
 
 	GlobalCommandSystem().addCommand("CurveAppendControlPoint", appendCurveControlPoint);
 	GlobalCommandSystem().addCommand("CurveRemoveControlPoint", removeCurveControlPoints);
