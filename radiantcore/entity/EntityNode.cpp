@@ -223,18 +223,25 @@ std::size_t EntityNode::getFingerprint()
         math::combineHash(hash, std::hash<std::string>()(pair.second));
     }
 
-    // Entities need to include any child hashes
+    // Entities need to include any child hashes, but be insensitive to their order
+    std::set<std::size_t> childFingerprints;
+
     foreachNode([&](const scene::INodePtr& child)
     {
         auto comparable = std::dynamic_pointer_cast<scene::IComparableNode>(child);
 
         if (comparable)
         {
-            math::combineHash(hash, comparable->getFingerprint());
+            childFingerprints.insert(comparable->getFingerprint());
         }
 
         return true;
     });
+
+    for (auto childFingerprint : childFingerprints)
+    {
+        math::combineHash(hash, childFingerprint);
+    }
 
     return hash;
 }
