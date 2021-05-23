@@ -126,7 +126,6 @@ TEST_F(MapMergeTest, EntityFingerprint)
     EXPECT_TRUE(comparable) << "EntityNode is not implementing IComparableNode";
 
     auto entity = std::dynamic_pointer_cast<IEntityNode>(entityNode);
-
     auto originalFingerprint = comparable->getFingerprint();
 
     EXPECT_NE(originalFingerprint, 0); // shouldn't be empty
@@ -147,7 +146,7 @@ TEST_F(MapMergeTest, EntityFingerprint)
     // Add a new spawnarg
     entity->getEntity().setKeyValue("origin22", "whatever");
     EXPECT_NE(comparable->getFingerprint(), originalFingerprint);
-    
+
     // Change it back
     entity->getEntity().setKeyValue("origin22", "");
     EXPECT_EQ(comparable->getFingerprint(), originalFingerprint);
@@ -161,15 +160,65 @@ TEST_F(MapMergeTest, EntityFingerprint)
     // Change it back, even though the order is different, the fingerprint should be the same
     entity->getEntity().setKeyValue("dummyspawnarg", originalValue);
     EXPECT_EQ(comparable->getFingerprint(), originalFingerprint);
+}
+
+TEST_F(MapMergeTest, EntityFingerprintConsidersChildNodes)
+{
+    GlobalCommandSystem().executeCommand("OpenMap", cmd::Argument("maps/fingerprinting.mapx"));
+
+    auto entityNode = algorithm::getEntityByName(GlobalMapModule().getRoot(), "func_static_1");
+
+    auto comparable = std::dynamic_pointer_cast<scene::IComparableNode>(entityNode);
+    EXPECT_TRUE(comparable) << "EntityNode is not implementing IComparableNode";
+
+    auto entity = std::dynamic_pointer_cast<IEntityNode>(entityNode);
+    auto originalFingerprint = comparable->getFingerprint();
 
     // Add a child patch
     auto patchNode = GlobalPatchModule().createPatch(patch::PatchDefType::Def3);
     scene::addNodeToContainer(patchNode, entityNode);
-
     EXPECT_NE(comparable->getFingerprint(), originalFingerprint);
 
     // Remove the patch again
     scene::removeNodeFromParent(patchNode);
+    EXPECT_EQ(comparable->getFingerprint(), originalFingerprint);
+}
+
+TEST_F(MapMergeTest, EntityFingerprintInsensitiveToChildOrder)
+{
+    GlobalCommandSystem().executeCommand("OpenMap", cmd::Argument("maps/fingerprinting.mapx"));
+
+    auto entityNode = algorithm::getEntityByName(GlobalMapModule().getRoot(), "func_static_1");
+
+    auto comparable = std::dynamic_pointer_cast<scene::IComparableNode>(entityNode);
+    EXPECT_TRUE(comparable) << "EntityNode is not implementing IComparableNode";
+
+    auto entity = std::dynamic_pointer_cast<IEntityNode>(entityNode);
+    auto originalFingerprint = comparable->getFingerprint();
+
+    // Find the first brush of this func_static
+    scene::INodePtr firstChild;
+    std::size_t numChildren = 0;
+    entity->foreachNode([&](const scene::INodePtr& node) 
+    { 
+        numChildren++;
+        if (!firstChild)
+        {
+            firstChild = node;
+        }
+
+        return true;
+    });
+    EXPECT_TRUE(firstChild) << "func_static doesn't have any child nodes";
+    EXPECT_GT(numChildren, 1) << "We need to have more than one child node in this func_static";
+
+    // Remove it from the parent
+    scene::removeNodeFromParent(firstChild);
+    EXPECT_NE(comparable->getFingerprint(), originalFingerprint);
+
+    // Adding it back to the entity will change the order of children,
+    scene::addNodeToContainer(firstChild, entityNode);
+    // Hash should stay the same
     EXPECT_EQ(comparable->getFingerprint(), originalFingerprint);
 }
 
