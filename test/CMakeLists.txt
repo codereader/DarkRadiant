@@ -13,6 +13,7 @@ add_executable(drtest
                ImageLoading.cpp
                LayerManipulation.cpp
                MapExport.cpp
+               MapMerging.cpp
                MapSavingLoading.cpp
                MaterialExport.cpp
                Materials.cpp
