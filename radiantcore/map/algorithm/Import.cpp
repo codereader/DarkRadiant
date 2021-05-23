@@ -447,16 +447,10 @@ ComparisonResult::Ptr compareGraphs(const scene::IMapRootNodePtr& target, const 
     for (const auto& targetEntity : targetEntities)
     {
         // Check each source node for an equivalent node in the target
-        auto matchingSourceNode = sourceEntities.find(targetEntity.first);
-
-        if (matchingSourceNode != sourceEntities.end())
+        // Matching nodes have already been checked in the above loop
+        if (sourceEntities.count(targetEntity.first) == 0)
         {
-            // Found an equivalent node
-            result->equivalentEntities.emplace_back(ComparisonResult::Match{ targetEntity.first, matchingSourceNode->second, targetEntity.second });
-        }
-        else
-        {
-            result->differingEntities.emplace_back(ComparisonResult::Mismatch{ targetEntity.first, targetEntity.second });
+            result->differingEntities.emplace_back(ComparisonResult::Mismatch{ targetEntity.first, scene::INodePtr(), targetEntity.second });
         }
     }
 
@@ -471,9 +465,14 @@ ComparisonResult::Ptr compareGraphs(const scene::IMapRootNodePtr& target, const 
 
     for (const auto& mismatch : result->differingEntities)
     {
-        rMessage() << " - Differing Entity " << mismatch.sourceNode->name() << std::endl;
-
-        // Check if there's a counter-part 
+        if (mismatch.sourceNode)
+        {
+            rMessage() << " - No match found for source entity: " << mismatch.sourceNode->name() << std::endl;
+        }
+        else if (mismatch.targetNode)
+        {
+            rMessage() << " - No match found for target entity " << mismatch.targetNode->name() << std::endl;
+        }
     }
     
     return result;
