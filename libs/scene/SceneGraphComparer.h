@@ -39,7 +39,7 @@ struct ComparisonResult
 
     struct EntityDifference
     {
-        std::string fingerPrint;
+        std::string fingerprint;
         scene::INodePtr node;
         std::string entityName;
 

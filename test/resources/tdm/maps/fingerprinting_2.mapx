@@ -8,10 +8,10 @@
   <selectionGroups/>
   <selectionSets/>
   <properties>
-    <property key="EditTimeInSeconds" value="367"/>
-    <property key="LastCameraAngle" value="-36.9 45.6 0"/>
+    <property key="EditTimeInSeconds" value="474"/>
+    <property key="LastCameraAngle" value="-35.1 51.9 0"/>
     <property key="LastCameraPosition" value="-81.4144 -139.899 261.902"/>
-    <property key="LastShaderClipboardMaterial" value="textures/numbers/2"/>
+    <property key="LastShaderClipboardMaterial" value="textures/numbers/4"/>
   </properties>
   <entity number="0">
     <primitives>
@@ -38,7 +38,7 @@
           <face>
             <plane x="-1.000000" y="0" z="0" d="64.000000"/>
             <textureProjection xx="0.031250" yx="0" tx="0" xy="0" yy="0.031250" ty="0"/>
-            <material name="textures/numbers/1"/>
+            <material name="textures/numbers/4"/>
             <contentsFlag value="0"/>
           </face>
           <face>
@@ -174,7 +174,7 @@
       <patch number="4" width="3" height="3" fixedSubdivisions="false">
         <material name="textures/numbers/1"/>
         <controlVertices>
-          <controlVertex row="0" column="0" x="-64.000046" y="63.999958" z="0" u="0" v="0"/>
+          <controlVertex row="0" column="0" x="-64.000046" y="47.999958" z="0" u="0" v="0"/>
           <controlVertex row="1" column="0" x="-64.000046" y="95.999977" z="0" u="0" v="-1.000001"/>
           <controlVertex row="2" column="0" x="-64.000046" y="128.000000" z="0" u="0" v="-2.000001"/>
           <controlVertex row="0" column="1" x="-32.000023" y="63.999958" z="0" u="1.000001" v="0"/>
@@ -191,7 +191,7 @@
         <selectionSets/>
       </patch>
       <patch number="5" width="3" height="3" fixedSubdivisions="false">
-        <material name="textures/numbers/2"/>
+        <material name="textures/numbers/3"/>
         <controlVertices>
           <controlVertex row="0" column="0" x="-0.000043" y="63.999958" z="0" u="1.999999" v="-0.000001"/>
           <controlVertex row="1" column="0" x="-0.000043" y="95.999977" z="0" u="2.999999" v="-0.000001"/>
@@ -237,7 +237,7 @@
             <contentsFlag value="0"/>
           </face>
           <face>
-            <plane x="0" y="-1.000000" z="0" d="-32.000000"/>
+            <plane x="0.242536" y="-0.970143" z="0" d="-38.805698"/>
             <textureProjection xx="0.031250" yx="0" tx="0" xy="0" yy="0.031250" ty="0"/>
             <material name="textures/numbers/1"/>
             <contentsFlag value="0"/>
@@ -318,10 +318,12 @@
     <primitives/>
     <keyValues>
       <keyValue key="classname" value="light"/>
-      <keyValue key="name" value="light_2"/>
+      <keyValue key="name" value="light_1"/>
+      <keyValue key="ai_see" value="1"/>
       <keyValue key="light_center" value="0 0 0"/>
       <keyValue key="light_radius" value="208 208 320"/>
-      <keyValue key="origin" value="256 96 0"/>
+      <keyValue key="origin" value="144 96 0"/>
+      <keyValue key="dist_check_period" value="40"/>
     </keyValues>
     <layers>
       <layer id="0"/>
@@ -333,12 +335,10 @@
     <primitives/>
     <keyValues>
       <keyValue key="classname" value="light"/>
-      <keyValue key="name" value="light_1"/>
-      <keyValue key="ai_see" value="0"/>
+      <keyValue key="name" value="light_2"/>
       <keyValue key="light_center" value="0 0 0"/>
       <keyValue key="light_radius" value="208 208 320"/>
-      <keyValue key="origin" value="144 96 0"/>
-      <keyValue key="break" value="1"/>
+      <keyValue key="origin" value="280 160 0"/>
     </keyValues>
     <layers>
       <layer id="0"/>
@@ -349,10 +349,11 @@
   <entity number="4">
     <primitives/>
     <keyValues>
-      <keyValue key="classname" value="info_player_start"/>
-      <keyValue key="name" value="info_player_start_1"/>
-      <keyValue key="origin" value="64 160 0"/>
-      <keyValue key="angle" value="90"/>
+      <keyValue key="classname" value="light"/>
+      <keyValue key="name" value="light_3"/>
+      <keyValue key="light_center" value="0 0 0"/>
+      <keyValue key="light_radius" value="48 48 320"/>
+      <keyValue key="origin" value="304 0 0"/>
     </keyValues>
     <layers>
       <layer id="0"/>
