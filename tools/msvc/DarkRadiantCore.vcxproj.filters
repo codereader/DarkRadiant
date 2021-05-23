@@ -1048,9 +1048,6 @@
     <ClCompile Include="..\..\radiantcore\log\SegFaultHandler.cpp">
       <Filter>src\log</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiantcore\map\algorithm\SceneGraphComparer.cpp">
-      <Filter>src\map\algorithm</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
@@ -2141,9 +2138,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\log\SegFaultHandler.h">
       <Filter>src\log</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\map\algorithm\SceneGraphComparer.h">
-      <Filter>src\map\algorithm</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

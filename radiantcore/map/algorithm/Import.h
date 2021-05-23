@@ -3,7 +3,7 @@
 #include <istream>
 #include <string>
 #include <memory>
-#include "SceneGraphComparer.h"
+#include "scene/SceneGraphComparer.h"
 
 namespace scene
 {
@@ -57,7 +57,7 @@ MapFormatPtr determineMapFormat(std::istream& stream, const std::string& type);
 MapFormatPtr determineMapFormat(std::istream& stream);
 
 // Runs a comparison of "source" (to be merged) against the "target" (merge target)
-ComparisonResult::Ptr compareGraphs(const scene::IMapRootNodePtr& source, const scene::IMapRootNodePtr& target);
+scene::ComparisonResult::Ptr compareGraphs(const scene::IMapRootNodePtr& source, const scene::IMapRootNodePtr& target);
 
 }
 

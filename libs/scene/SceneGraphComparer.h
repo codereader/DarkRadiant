@@ -7,10 +7,7 @@
 #include "imap.h"
 #include "itextstream.h"
 
-namespace map
-{
-
-namespace algorithm
+namespace scene
 {
 
 struct ComparisonResult
@@ -107,7 +104,5 @@ private:
     std::list<ComparisonResult::KeyValueDifference> compareKeyValues(
         const scene::INodePtr& sourceNode, const scene::INodePtr& targetNode);
 };
-
-}
 
 }

@@ -119,6 +119,7 @@
     <ClCompile Include="..\..\libs\scene\LayerUsageBreakdown.cpp" />
     <ClCompile Include="..\..\libs\scene\ModelFinder.cpp" />
     <ClCompile Include="..\..\libs\scene\Node.cpp" />
+    <ClCompile Include="..\..\libs\scene\SceneGraphComparer.cpp" />
     <ClCompile Include="..\..\libs\scene\SelectableNode.cpp" />
     <ClCompile Include="..\..\libs\scene\SelectionIndex.cpp" />
     <ClCompile Include="..\..\libs\scene\TraversableNodeSet.cpp" />
@@ -140,6 +141,7 @@
     <ClInclude Include="..\..\libs\scene\ModelFinder.h" />
     <ClInclude Include="..\..\libs\scene\Node.h" />
     <ClInclude Include="..\..\libs\scene\PrefabBoundsAccumulator.h" />
+    <ClInclude Include="..\..\libs\scene\SceneGraphComparer.h" />
     <ClInclude Include="..\..\libs\scene\SelectableNode.h" />
     <ClInclude Include="..\..\libs\scene\SelectionIndex.h" />
     <ClInclude Include="..\..\libs\scene\ShaderBreakdown.h" />

@@ -4,6 +4,7 @@ add_library(scenegraph
             LayerUsageBreakdown.cpp
             ModelFinder.cpp
             Node.cpp
+            SceneGraphComparer.cpp
             SelectableNode.cpp
             SelectionIndex.cpp
             TraversableNodeSet.cpp

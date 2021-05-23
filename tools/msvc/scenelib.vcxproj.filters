@@ -33,6 +33,9 @@
     <ClCompile Include="..\..\libs\scene\ModelFinder.cpp">
       <Filter>scene</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\libs\scene\SceneGraphComparer.cpp">
+      <Filter>scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\libs\scene\InstanceWalkers.h">
@@ -95,6 +98,9 @@
       <Filter>scene</Filter>
     </ClInclude>
     <ClInclude Include="..\..\libs\scene\PrefabBoundsAccumulator.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\SceneGraphComparer.h">
       <Filter>scene</Filter>
     </ClInclude>
   </ItemGroup>

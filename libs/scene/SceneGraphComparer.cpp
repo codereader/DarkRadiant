@@ -1,14 +1,14 @@
 #include "SceneGraphComparer.h"
 
 #include <algorithm>
+#include "ientity.h"
+#include "i18n.h"
+#include "itextstream.h"
 #include "icomparablenode.h"
 #include "string/string.h"
 #include "command/ExecutionNotPossible.h"
 
-namespace map
-{
-
-namespace algorithm
+namespace scene
 {
 
 void SceneGraphComparer::compare()
@@ -261,8 +261,6 @@ SceneGraphComparer::Fingerprints SceneGraphComparer::collectEntityFingerprints(c
     });
 
     return result;
-}
-
 }
 
 }

@@ -18,7 +18,7 @@
 #include "scenelib.h"
 #include "entitylib.h"
 #include "command/ExecutionFailure.h"
-#include "SceneGraphComparer.h"
+#include "scene/SceneGraphComparer.h"
 
 #include "string/join.h"
 
@@ -375,11 +375,11 @@ void importFromStream(std::istream& stream)
     }
 }
 
-ComparisonResult::Ptr compareGraphs(const scene::IMapRootNodePtr& source, const scene::IMapRootNodePtr& target)
+scene::ComparisonResult::Ptr compareGraphs(const scene::IMapRootNodePtr& source, const scene::IMapRootNodePtr& target)
 {
     assert(source && target);
 
-    SceneGraphComparer comparer(source, target);
+    scene::SceneGraphComparer comparer(source, target);
 
     comparer.compare();
 
