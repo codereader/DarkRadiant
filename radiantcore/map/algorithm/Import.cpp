@@ -375,7 +375,7 @@ void importFromStream(std::istream& stream)
     }
 }
 
-ComparisonResult::Ptr compareGraphs(const scene::IMapRootNodePtr& target, const scene::IMapRootNodePtr& source)
+ComparisonResult::Ptr compareGraphs(const scene::IMapRootNodePtr& source, const scene::IMapRootNodePtr& target)
 {
     assert(source && target);
 

@@ -25,18 +25,27 @@ struct ComparisonResult
         scene::INodePtr targetNode;
     };
 
-    struct Mismatch
+    struct EntityDifference
     {
         std::string fingerPrint;
         scene::INodePtr node;
         std::string entityName;
+
+        enum class Type
+        {
+            EntityMissingInSource,
+            EntityMissingInTarget,
+            EntityPresentButDifferent,
+        };
+
+        Type type;
     };
 
     // The collection of entities with the same fingerprint value
     std::list<Match> equivalentEntities;
 
-    // The collection of entities with differing fingerprint values
-    std::list<Mismatch> differingEntities;
+    // The collection of differing entities
+    std::list<EntityDifference> differingEntities;
 };
 
 class SceneGraphComparer
@@ -51,7 +60,14 @@ private:
     using FingerprintsByType = std::map<scene::INode::Type, Fingerprints>;
 
 public:
-    using EntityMismatchByName = std::map<std::string, ComparisonResult::Mismatch>;
+    struct EntityMismatch
+    {
+        std::string fingerPrint;
+        scene::INodePtr node;
+        std::string entityName;
+    };
+
+    using EntityMismatchByName = std::map<std::string, EntityMismatch>;
 
 public:
     SceneGraphComparer(const scene::IMapRootNodePtr& source, const scene::IMapRootNodePtr& target) :
@@ -68,7 +84,7 @@ public:
     }
 
 private:
-    void compareDifferingEntities(const EntityMismatchByName& sourceMismatches, const EntityMismatchByName& targetMismatches);
+    void processDifferingEntities(const EntityMismatchByName& sourceMismatches, const EntityMismatchByName& targetMismatches);
 
     Fingerprints collectEntityFingerprints(const scene::INodePtr& root);
 };

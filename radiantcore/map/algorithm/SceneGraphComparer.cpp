@@ -43,7 +43,7 @@ void SceneGraphComparer::compare()
         {
             auto entityName = Node_getEntity(sourceEntity.second)->getKeyValue("name");
 
-            sourceMismatches.emplace(entityName, ComparisonResult::Mismatch{ sourceEntity.first, sourceEntity.second, entityName });
+            sourceMismatches.emplace(entityName, EntityMismatch{ sourceEntity.first, sourceEntity.second, entityName });
         }
     }
 
@@ -57,7 +57,7 @@ void SceneGraphComparer::compare()
         {
             auto entityName = Node_getEntity(targetEntity.second)->getKeyValue("name");
 
-            targetMismatches.emplace(entityName, ComparisonResult::Mismatch{ targetEntity.first, targetEntity.second, entityName });
+            targetMismatches.emplace(entityName, EntityMismatch{ targetEntity.first, targetEntity.second, entityName });
         }
     }
 
@@ -72,10 +72,10 @@ void SceneGraphComparer::compare()
     rMessage() << "Mismatching Target Entities: " << targetMismatches.size() << std::endl;
 
     // Enter the second stage and try to match entities and detailing diffs
-    compareDifferingEntities(sourceMismatches, targetMismatches);
+    processDifferingEntities(sourceMismatches, targetMismatches);
 }
 
-void SceneGraphComparer::compareDifferingEntities(const EntityMismatchByName& sourceMismatches, const EntityMismatchByName& targetMismatches)
+void SceneGraphComparer::processDifferingEntities(const EntityMismatchByName& sourceMismatches, const EntityMismatchByName& targetMismatches)
 {
     // Find all entities that are missing in either source or target (by name)
     std::list<EntityMismatchByName::value_type> missingInSource;
@@ -99,17 +99,41 @@ void SceneGraphComparer::compareDifferingEntities(const EntityMismatchByName& so
 
     for (const auto& match : matchingByName)
     {
-        rMessage() << " - Entity Names matching up: " << match.first << std::endl;
+        rMessage() << " - EntityPresentButDifferent: " << match.first << std::endl;
+
+        _result->differingEntities.emplace_back(ComparisonResult::EntityDifference
+        {
+            match.second.fingerPrint,
+            match.second.node,
+            match.second.entityName,
+            ComparisonResult::EntityDifference::Type::EntityPresentButDifferent
+        });
     }
 
     for (const auto& mismatch : missingInSource)
     {
-        rMessage() << " - Entity Names missing in source: " << mismatch.first << std::endl;
+        rMessage() << " - EntityMissingInSource: " << mismatch.first << std::endl;
+
+        _result->differingEntities.emplace_back(ComparisonResult::EntityDifference
+        {
+            mismatch.second.fingerPrint,
+            mismatch.second.node,
+            mismatch.second.entityName,
+            ComparisonResult::EntityDifference::Type::EntityMissingInSource
+        });
     }
 
     for (const auto& mismatch : missingInTarget)
     {
-        rMessage() << " - Entity Names missing in target: " << mismatch.first << std::endl;
+        rMessage() << " - EntityMissingInTarget: " << mismatch.first << std::endl;
+
+        _result->differingEntities.emplace_back(ComparisonResult::EntityDifference
+        {
+            mismatch.second.fingerPrint,
+            mismatch.second.node,
+            mismatch.second.entityName,
+            ComparisonResult::EntityDifference::Type::EntityMissingInTarget
+        });
     }
 }
 
