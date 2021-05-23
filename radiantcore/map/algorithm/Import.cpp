@@ -374,9 +374,12 @@ void importFromStream(std::istream& stream)
     }
 }
 
-ComparisonResult::FingerprintsByType collectFingerprints(const scene::INodePtr& root)
+using Fingerprints = std::map<std::size_t, scene::INodePtr>;
+using FingerprintsByType = std::map<scene::INode::Type, Fingerprints>;
+
+FingerprintsByType collectFingerprints(const scene::INodePtr& root)
 {
-    ComparisonResult::FingerprintsByType result;
+    FingerprintsByType result;
 
     root->foreachNode([&](const scene::INodePtr& node)
     {
@@ -426,42 +429,32 @@ ComparisonResult::Ptr compareGraphs(const scene::IMapRootNodePtr& target, const 
 
     for (const auto& sourceEntity : sourceFingerprints[scene::INode::Type::Entity])
     {
-        // Create the collection to hold the of matching node pairs
-        auto& matchingNodeList = result->equivalentNodes.try_emplace(scene::INode::Type::Entity).first->second;
-        auto& differingNodes = result->differingNodes.try_emplace(scene::INode::Type::Entity).first->second;
-
         // Check each source node for an equivalent node in the target
         auto matchingTargetNode = targetEntities.find(sourceEntity.first);
 
         if (matchingTargetNode != targetEntities.end())
         {
             // Found an equivalent node
-            matchingNodeList.emplace_back(ComparisonResult::Match{ sourceEntity.first, sourceEntity.second, matchingTargetNode->second });
+            result->equivalentEntities.emplace_back(ComparisonResult::Match{ sourceEntity.first, sourceEntity.second, matchingTargetNode->second });
         }
         else
         {
-            differingNodes.emplace(sourceEntity.first, sourceEntity.second);
+            result->differingEntities.emplace_back(ComparisonResult::Mismatch{ sourceEntity.first, sourceEntity.second });
         }
     }
 
-    for (const auto& pair : result->equivalentNodes)
-    {
-        rMessage() << "Equivalent Nodes of Type " << static_cast<std::size_t>(pair.first) << ": " << pair.second.size() << std::endl;
+    rMessage() << "Equivalent Entities " << result->equivalentEntities.size() << std::endl;
 
-        for (const auto& fingerprintedNode : pair.second)
-        {
-            rMessage() << " - Equivalent Node: " << fingerprintedNode.sourceNode->name() << std::endl;
-        }
+    for (const auto& match: result->equivalentEntities)
+    {
+        rMessage() << " - Equivalent Entity: " << match.sourceNode->name() << std::endl;
     }
 
-    for (const auto& pair : result->differingNodes)
-    {
-        rMessage() << "Different Nodes of Type " << static_cast<std::size_t>(pair.first) << ": " << pair.second.size() << std::endl;
+    rMessage() << "Mismatching Entities: " << result->differingEntities.size() << std::endl;
 
-        for (const auto& fingerprintedNode : pair.second)
-        {
-            rMessage() << " - Differing Node: " << fingerprintedNode.second->name() << std::endl;
-        }
+    for (const auto& mismatch : result->differingEntities)
+    {
+        rMessage() << " - Differing Entity " << mismatch.sourceNode->name() << std::endl;
     }
     
     return result;

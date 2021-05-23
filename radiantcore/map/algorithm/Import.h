@@ -59,8 +59,6 @@ MapFormatPtr determineMapFormat(std::istream& stream);
 struct ComparisonResult
 {
     using Ptr = std::shared_ptr<ComparisonResult>;
-    using Fingerprints = std::map<std::size_t, scene::INodePtr>;
-    using FingerprintsByType = std::map<scene::INode::Type, Fingerprints>;
 
     // Represents a matching node pair
     struct Match
@@ -70,11 +68,17 @@ struct ComparisonResult
         scene::INodePtr targetNode;
     };
 
-    // The collection of nodes with the same fingerprint value, grouped by type
-    std::map<scene::INode::Type, std::list<Match>> equivalentNodes;
+    struct Mismatch
+    {
+        std::size_t fingerPrint;
+        scene::INodePtr sourceNode;
+    };
 
-    // The collection of nodes with differing fingerprint values, grouped by type
-    FingerprintsByType differingNodes;
+    // The collection of entities with the same fingerprint value
+    std::list<Match> equivalentEntities;
+
+    // The collection of entities with differing fingerprint values
+    std::list<Mismatch> differingEntities;
 };
 
 // Runs a comparison of "source" (to be merged) against the "target" (merge target)
