@@ -1,5 +1,6 @@
 #include "SceneGraphComparer.h"
 
+#include <algorithm>
 #include "icomparablenode.h"
 #include "command/ExecutionNotPossible.h"
 
@@ -26,6 +27,8 @@ void SceneGraphComparer::compare()
 
     rMessage() << "Entity Fingerprints in source: " << sourceEntities.size() << std::endl;
 
+    EntityMismatchByName sourceMismatches;
+
     for (const auto& sourceEntity : sourceEntities)
     {
         // Check each source node for an equivalent node in the target
@@ -38,9 +41,13 @@ void SceneGraphComparer::compare()
         }
         else
         {
-            _result->differingEntities.emplace_back(ComparisonResult::Mismatch{ sourceEntity.first, sourceEntity.second });
+            auto entityName = Node_getEntity(sourceEntity.second)->getKeyValue("name");
+
+            sourceMismatches.emplace(entityName, ComparisonResult::Mismatch{ sourceEntity.first, sourceEntity.second, entityName });
         }
     }
+
+    EntityMismatchByName targetMismatches;
 
     for (const auto& targetEntity : targetEntities)
     {
@@ -48,7 +55,9 @@ void SceneGraphComparer::compare()
         // Matching nodes have already been checked in the above loop
         if (sourceEntities.count(targetEntity.first) == 0)
         {
-            _result->differingEntities.emplace_back(ComparisonResult::Mismatch{ targetEntity.first, scene::INodePtr(), targetEntity.second });
+            auto entityName = Node_getEntity(targetEntity.second)->getKeyValue("name");
+
+            targetMismatches.emplace(entityName, ComparisonResult::Mismatch{ targetEntity.first, targetEntity.second, entityName });
         }
     }
 
@@ -59,18 +68,48 @@ void SceneGraphComparer::compare()
         rMessage() << " - Equivalent Entity: " << match.sourceNode->name() << std::endl;
     }
 
-    rMessage() << "Mismatching Entities: " << _result->differingEntities.size() << std::endl;
+    rMessage() << "Mismatching Source Entities: " << sourceMismatches.size() << std::endl;
+    rMessage() << "Mismatching Target Entities: " << targetMismatches.size() << std::endl;
 
-    for (const auto& mismatch : _result->differingEntities)
+    // Enter the second stage and try to match entities and detailing diffs
+    compareDifferingEntities(sourceMismatches, targetMismatches);
+}
+
+void SceneGraphComparer::compareDifferingEntities(const EntityMismatchByName& sourceMismatches, const EntityMismatchByName& targetMismatches)
+{
+    // Find all entities that are missing in either source or target (by name)
+    std::list<EntityMismatchByName::value_type> missingInSource;
+    std::list<EntityMismatchByName::value_type> missingInTarget;
+
+    std::list<EntityMismatchByName::value_type> matchingByName;
+
+    auto compareEntityNames = [](const EntityMismatchByName::value_type& left, const EntityMismatchByName::value_type& right)
     {
-        if (mismatch.sourceNode)
-        {
-            rMessage() << " - No match found for source entity: " << mismatch.sourceNode->name() << std::endl;
-        }
-        else if (mismatch.targetNode)
-        {
-            rMessage() << " - No match found for target entity " << mismatch.targetNode->name() << std::endl;
-        }
+        return left.first < right.first;
+    };
+
+    std::set_intersection(sourceMismatches.begin(), sourceMismatches.end(), targetMismatches.begin(), targetMismatches.end(),
+        std::back_inserter(matchingByName), compareEntityNames);
+
+    std::set_difference(sourceMismatches.begin(), sourceMismatches.end(), targetMismatches.begin(), targetMismatches.end(),
+        std::back_inserter(missingInTarget), compareEntityNames);
+
+    std::set_difference(targetMismatches.begin(), targetMismatches.end(), sourceMismatches.begin(), sourceMismatches.end(),
+        std::back_inserter(missingInSource), compareEntityNames);
+
+    for (const auto& match : matchingByName)
+    {
+        rMessage() << " - Entity Names matching up: " << match.first << std::endl;
+    }
+
+    for (const auto& mismatch : missingInSource)
+    {
+        rMessage() << " - Entity Names missing in source: " << mismatch.first << std::endl;
+    }
+
+    for (const auto& mismatch : missingInTarget)
+    {
+        rMessage() << " - Entity Names missing in target: " << mismatch.first << std::endl;
     }
 }
 
@@ -82,7 +121,7 @@ SceneGraphComparer::Fingerprints SceneGraphComparer::collectEntityFingerprints(c
     {
         if (node->getNodeType() != scene::INode::Type::Entity)
         {
-            return false;
+            return true;
         }
 
         auto comparable = std::dynamic_pointer_cast<scene::IComparableNode>(node);

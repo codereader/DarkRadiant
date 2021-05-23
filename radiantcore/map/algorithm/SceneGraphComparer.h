@@ -28,8 +28,8 @@ struct ComparisonResult
     struct Mismatch
     {
         std::string fingerPrint;
-        scene::INodePtr sourceNode;
-        scene::INodePtr targetNode;
+        scene::INodePtr node;
+        std::string entityName;
     };
 
     // The collection of entities with the same fingerprint value
@@ -51,6 +51,9 @@ private:
     using FingerprintsByType = std::map<scene::INode::Type, Fingerprints>;
 
 public:
+    using EntityMismatchByName = std::map<std::string, ComparisonResult::Mismatch>;
+
+public:
     SceneGraphComparer(const scene::IMapRootNodePtr& source, const scene::IMapRootNodePtr& target) :
         _source(source),
         _target(target),
@@ -65,6 +68,8 @@ public:
     }
 
 private:
+    void compareDifferingEntities(const EntityMismatchByName& sourceMismatches, const EntityMismatchByName& targetMismatches);
+
     Fingerprints collectEntityFingerprints(const scene::INodePtr& root);
 };
 
