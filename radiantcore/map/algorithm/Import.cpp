@@ -2,6 +2,7 @@
 
 #include <map>
 #include <limits>
+#include <algorithm>
 
 #include "i18n.h"
 #include "imap.h"
@@ -373,12 +374,9 @@ void importFromStream(std::istream& stream)
     }
 }
 
-using Fingerprints = std::map<std::size_t, scene::INodePtr>;
-using FingerprintsByType = std::map<scene::INode::Type, Fingerprints>;
-
-FingerprintsByType collectFingerprints(const scene::INodePtr& root)
+ComparisonResult::FingerprintsByType collectFingerprints(const scene::INodePtr& root)
 {
-    FingerprintsByType result;
+    ComparisonResult::FingerprintsByType result;
 
     root->foreachNode([&](const scene::INodePtr& node)
     {
@@ -415,16 +413,51 @@ ComparisonResult::Ptr compareGraphs(const scene::IMapRootNodePtr& target, const 
     rMessage() << "Source Node Types: " << sourceFingerprints.size() << std::endl;
     rMessage() << "Target Node Types: " << targetFingerprints.size() << std::endl;
 
-    for (const auto& pair : sourceFingerprints)
+    // Filter out all the matching nodes and store them in the result
+    for (const auto& sourceCollection : sourceFingerprints)
     {
-        rMessage() << "Source Fingerprints for node type " << static_cast<std::size_t>(pair.first) << ": " << pair.second.size() << std::endl;
-    }
-    
-    for (const auto& pair : targetFingerprints)
-    {
-        rMessage() << "Target Fingerprints for node type " << static_cast<std::size_t>(pair.first) << ": " << pair.second.size() << std::endl;
+        rMessage() << "Source Fingerprints for node type " << static_cast<std::size_t>(sourceCollection.first) << ": " << sourceCollection.second.size() << std::endl;
+
+        auto targetNodesOfSameType = targetFingerprints.find(sourceCollection.first);
+
+        if (targetNodesOfSameType == targetFingerprints.end())
+        {
+            // target has no nodes of that type, copy whole node collection to differingNodes
+            result->differingNodes[sourceCollection.first] = sourceCollection.second;
+            continue; 
+        }
+
+        // Create the collection to hold the of matching node pairs
+        auto& matchingNodeList = result->equivalentNodes.try_emplace(sourceCollection.first).first->second;
+        auto& differingNodes = result->differingNodes.try_emplace(sourceCollection.first).first->second;
+
+        // Check each source node for an equivalent node in the target
+        for (const auto& sourcePair : sourceCollection.second)
+        {
+            auto matchingTargetNode = targetNodesOfSameType->second.find(sourcePair.first);
+
+            if (matchingTargetNode != targetNodesOfSameType->second.end())
+            {
+                // Found an equivalent node
+                matchingNodeList.emplace_back(ComparisonResult::Match{ sourcePair.first, sourcePair.second, matchingTargetNode->second });
+            }
+            else
+            {
+                differingNodes.insert(sourcePair);
+            }
+        }
     }
 
+    for (const auto& pair : result->equivalentNodes)
+    {
+        rMessage() << "Equivalent Nodes of Type " << static_cast<std::size_t>(pair.first) << ": " << pair.second.size() << std::endl;
+    }
+
+    for (const auto& pair : result->differingNodes)
+    {
+        rMessage() << "Different Nodes of Type " << static_cast<std::size_t>(pair.first) << ": " << pair.second.size() << std::endl;
+    }
+    
     return result;
 }
 
