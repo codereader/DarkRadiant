@@ -16,17 +16,12 @@ void SceneGraphComparer::compare()
     auto sourceEntities = collectEntityFingerprints(_source);
     auto baseEntities = collectEntityFingerprints(_base);
 
-    rMessage() << "Source Node Types: " << sourceEntities.size() << std::endl;
-    rMessage() << "base Node Types: " << baseEntities.size() << std::endl;
-
     // Filter out all the matching nodes and store them in the result
     if (sourceEntities.empty())
     {
         // Cannot merge the source without any entities in it
         throw cmd::ExecutionNotPossible(_("The source map doesn't contain any entities, cannot merge"));
     }
-
-    rMessage() << "Entity Fingerprints in source: " << sourceEntities.size() << std::endl;
 
     EntityMismatchByName sourceMismatches;
 
@@ -62,13 +57,6 @@ void SceneGraphComparer::compare()
         }
     }
 
-    rMessage() << "Equivalent Entities " << _result->equivalentEntities.size() << std::endl;
-
-    for (const auto& match : _result->equivalentEntities)
-    {
-        rMessage() << " - Equivalent Entity: " << match.sourceNode->name() << std::endl;
-    }
-
     rMessage() << "Mismatching Source Entities: " << sourceMismatches.size() << std::endl;
     rMessage() << "Mismatching Base Entities: " << baseMismatches.size() << std::endl;
 
@@ -101,8 +89,6 @@ void SceneGraphComparer::processDifferingEntities(const EntityMismatchByName& so
 
     for (const auto& match : matchingByName)
     {
-        rMessage() << " - EntityPresentButDifferent: " << match.first << std::endl;
-
         auto& entityDiff = _result->differingEntities.emplace_back(ComparisonResult::EntityDifference
         {
             match.second.fingerPrint,
@@ -120,8 +106,6 @@ void SceneGraphComparer::processDifferingEntities(const EntityMismatchByName& so
 
     for (const auto& mismatch : missingInSource)
     {
-        rMessage() << " - EntityMissingInSource: " << mismatch.first << std::endl;
-
         _result->differingEntities.emplace_back(ComparisonResult::EntityDifference
         {
             mismatch.second.fingerPrint,
@@ -133,8 +117,6 @@ void SceneGraphComparer::processDifferingEntities(const EntityMismatchByName& so
 
     for (const auto& mismatch : missingInBase)
     {
-        rMessage() << " - EntityMissingInBase: " << mismatch.first << std::endl;
-
         _result->differingEntities.emplace_back(ComparisonResult::EntityDifference
         {
             mismatch.second.fingerPrint,
@@ -191,8 +173,6 @@ std::list<ComparisonResult::KeyValueDifference> SceneGraphComparer::compareKeyVa
 
     for (const auto& pair : missingInBase)
     {
-        rMessage() << " - Key " << pair.first << " not present in base entity" << std::endl;
-
         result.emplace_back(ComparisonResult::KeyValueDifference
         {
             pair.first,
@@ -203,8 +183,6 @@ std::list<ComparisonResult::KeyValueDifference> SceneGraphComparer::compareKeyVa
 
     for (const auto& pair : missingInSource)
     {
-        rMessage() << " - Key " << pair.first << " not present in source entity" << std::endl;
-
         result.emplace_back(ComparisonResult::KeyValueDifference
         {
             pair.first,
@@ -220,8 +198,6 @@ std::list<ComparisonResult::KeyValueDifference> SceneGraphComparer::compareKeyVa
         {
             continue;
         }
-
-        rMessage() << " - Key " << pair.first << " changed in source to value " << pair.second << std::endl;
 
         result.emplace_back(ComparisonResult::KeyValueDifference
         {
