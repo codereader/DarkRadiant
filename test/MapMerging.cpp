@@ -7,6 +7,7 @@
 #include "icomparablenode.h"
 #include "algorithm/Scene.h"
 #include "registry/registry.h"
+#include "scenelib.h"
 
 namespace test
 {
@@ -159,6 +160,16 @@ TEST_F(MapMergeTest, EntityFingerprint)
 
     // Change it back, even though the order is different, the fingerprint should be the same
     entity->getEntity().setKeyValue("dummyspawnarg", originalValue);
+    EXPECT_EQ(comparable->getFingerprint(), originalFingerprint);
+
+    // Add a child patch
+    auto patchNode = GlobalPatchModule().createPatch(patch::PatchDefType::Def3);
+    scene::addNodeToContainer(patchNode, entityNode);
+
+    EXPECT_NE(comparable->getFingerprint(), originalFingerprint);
+
+    // Remove the patch again
+    scene::removeNodeFromParent(patchNode);
     EXPECT_EQ(comparable->getFingerprint(), originalFingerprint);
 }
 

@@ -223,6 +223,19 @@ std::size_t EntityNode::getFingerprint()
         math::combineHash(hash, std::hash<std::string>()(pair.second));
     }
 
+    // Entities need to include any child hashes
+    foreachNode([&](const scene::INodePtr& child)
+    {
+        auto comparable = std::dynamic_pointer_cast<scene::IComparableNode>(child);
+
+        if (comparable)
+        {
+            math::combineHash(hash, comparable->getFingerprint());
+        }
+
+        return true;
+    });
+
     return hash;
 }
 
