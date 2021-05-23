@@ -14,10 +14,10 @@ namespace scene
 void SceneGraphComparer::compare()
 {
     auto sourceEntities = collectEntityFingerprints(_source);
-    auto targetEntities = collectEntityFingerprints(_target);
+    auto baseEntities = collectEntityFingerprints(_base);
 
     rMessage() << "Source Node Types: " << sourceEntities.size() << std::endl;
-    rMessage() << "Target Node Types: " << targetEntities.size() << std::endl;
+    rMessage() << "base Node Types: " << baseEntities.size() << std::endl;
 
     // Filter out all the matching nodes and store them in the result
     if (sourceEntities.empty())
@@ -32,13 +32,13 @@ void SceneGraphComparer::compare()
 
     for (const auto& sourceEntity : sourceEntities)
     {
-        // Check each source node for an equivalent node in the target
-        auto matchingTargetNode = targetEntities.find(sourceEntity.first);
+        // Check each source node for an equivalent node in the base
+        auto matchingBaseNode = baseEntities.find(sourceEntity.first);
 
-        if (matchingTargetNode != targetEntities.end())
+        if (matchingBaseNode != baseEntities.end())
         {
             // Found an equivalent node
-            _result->equivalentEntities.emplace_back(ComparisonResult::Match{ sourceEntity.first, sourceEntity.second, matchingTargetNode->second });
+            _result->equivalentEntities.emplace_back(ComparisonResult::Match{ sourceEntity.first, sourceEntity.second, matchingBaseNode->second });
         }
         else
         {
@@ -48,17 +48,17 @@ void SceneGraphComparer::compare()
         }
     }
 
-    EntityMismatchByName targetMismatches;
+    EntityMismatchByName baseMismatches;
 
-    for (const auto& targetEntity : targetEntities)
+    for (const auto& baseEntity : baseEntities)
     {
-        // Check each source node for an equivalent node in the target
+        // Check each source node for an equivalent node in the base
         // Matching nodes have already been checked in the above loop
-        if (sourceEntities.count(targetEntity.first) == 0)
+        if (sourceEntities.count(baseEntity.first) == 0)
         {
-            auto entityName = Node_getEntity(targetEntity.second)->getKeyValue("name");
+            auto entityName = Node_getEntity(baseEntity.second)->getKeyValue("name");
 
-            targetMismatches.emplace(entityName, EntityMismatch{ targetEntity.first, targetEntity.second, entityName });
+            baseMismatches.emplace(entityName, EntityMismatch{ baseEntity.first, baseEntity.second, entityName });
         }
     }
 
@@ -70,17 +70,17 @@ void SceneGraphComparer::compare()
     }
 
     rMessage() << "Mismatching Source Entities: " << sourceMismatches.size() << std::endl;
-    rMessage() << "Mismatching Target Entities: " << targetMismatches.size() << std::endl;
+    rMessage() << "Mismatching Base Entities: " << baseMismatches.size() << std::endl;
 
     // Enter the second stage and try to match entities and detailing diffs
-    processDifferingEntities(sourceMismatches, targetMismatches);
+    processDifferingEntities(sourceMismatches, baseMismatches);
 }
 
-void SceneGraphComparer::processDifferingEntities(const EntityMismatchByName& sourceMismatches, const EntityMismatchByName& targetMismatches)
+void SceneGraphComparer::processDifferingEntities(const EntityMismatchByName& sourceMismatches, const EntityMismatchByName& baseMismatches)
 {
-    // Find all entities that are missing in either source or target (by name)
+    // Find all entities that are missing in either source or base (by name)
     std::list<EntityMismatchByName::value_type> missingInSource;
-    std::list<EntityMismatchByName::value_type> missingInTarget;
+    std::list<EntityMismatchByName::value_type> missingInBase;
 
     std::list<EntityMismatchByName::value_type> matchingByName;
 
@@ -90,13 +90,13 @@ void SceneGraphComparer::processDifferingEntities(const EntityMismatchByName& so
     };
 
     // Calculate intersection and two-way exclusives
-    std::set_intersection(sourceMismatches.begin(), sourceMismatches.end(), targetMismatches.begin(), targetMismatches.end(),
+    std::set_intersection(sourceMismatches.begin(), sourceMismatches.end(), baseMismatches.begin(), baseMismatches.end(),
         std::back_inserter(matchingByName), compareEntityNames);
 
-    std::set_difference(sourceMismatches.begin(), sourceMismatches.end(), targetMismatches.begin(), targetMismatches.end(),
-        std::back_inserter(missingInTarget), compareEntityNames);
+    std::set_difference(sourceMismatches.begin(), sourceMismatches.end(), baseMismatches.begin(), baseMismatches.end(),
+        std::back_inserter(missingInBase), compareEntityNames);
 
-    std::set_difference(targetMismatches.begin(), targetMismatches.end(), sourceMismatches.begin(), sourceMismatches.end(),
+    std::set_difference(baseMismatches.begin(), baseMismatches.end(), sourceMismatches.begin(), sourceMismatches.end(),
         std::back_inserter(missingInSource), compareEntityNames);
 
     for (const auto& match : matchingByName)
@@ -112,10 +112,10 @@ void SceneGraphComparer::processDifferingEntities(const EntityMismatchByName& so
         });
 
         auto sourceNode = sourceMismatches.find(match.second.entityName)->second.node;
-        auto targetNode = targetMismatches.find(match.second.entityName)->second.node;
+        auto baseNode = baseMismatches.find(match.second.entityName)->second.node;
 
         // Analyse the key values
-        entityDiff.differingKeyValues = compareKeyValues(sourceNode, targetNode);
+        entityDiff.differingKeyValues = compareKeyValues(sourceNode, baseNode);
     }
 
     for (const auto& mismatch : missingInSource)
@@ -131,16 +131,16 @@ void SceneGraphComparer::processDifferingEntities(const EntityMismatchByName& so
         });
     }
 
-    for (const auto& mismatch : missingInTarget)
+    for (const auto& mismatch : missingInBase)
     {
-        rMessage() << " - EntityMissingInTarget: " << mismatch.first << std::endl;
+        rMessage() << " - EntityMissingInBase: " << mismatch.first << std::endl;
 
         _result->differingEntities.emplace_back(ComparisonResult::EntityDifference
         {
             mismatch.second.fingerPrint,
             mismatch.second.node,
             mismatch.second.entityName,
-            ComparisonResult::EntityDifference::Type::EntityMissingInTarget
+            ComparisonResult::EntityDifference::Type::EntityMissingInBase
         });
     }
 }
@@ -165,12 +165,12 @@ namespace
 }
 
 std::list<ComparisonResult::KeyValueDifference> SceneGraphComparer::compareKeyValues(
-    const scene::INodePtr& sourceNode, const scene::INodePtr& targetNode)
+    const scene::INodePtr& sourceNode, const scene::INodePtr& baseNode)
 {
     std::list<ComparisonResult::KeyValueDifference> result;
 
     auto sourceKeyValues = loadKeyValues(sourceNode);
-    auto targetKeyValues = loadKeyValues(targetNode);
+    auto baseKeyValues = loadKeyValues(baseNode);
 
     string::ILess icmp;
     auto compareKeysNoCase = [&](const KeyValueMap::value_type& left, const KeyValueMap::value_type& right)
@@ -179,19 +179,19 @@ std::list<ComparisonResult::KeyValueDifference> SceneGraphComparer::compareKeyVa
     };
 
     std::vector<KeyValueMap::value_type> missingInSource;
-    std::vector<KeyValueMap::value_type> missingInTarget;
+    std::vector<KeyValueMap::value_type> missingInBase;
     std::vector<KeyValueMap::value_type> presentInBoth;
 
     std::set_intersection(sourceKeyValues.begin(), sourceKeyValues.end(),
-        targetKeyValues.begin(), targetKeyValues.end(), std::back_inserter(presentInBoth), compareKeysNoCase);
+        baseKeyValues.begin(), baseKeyValues.end(), std::back_inserter(presentInBoth), compareKeysNoCase);
     std::set_difference(sourceKeyValues.begin(), sourceKeyValues.end(),
-        targetKeyValues.begin(), targetKeyValues.end(), std::back_inserter(missingInTarget), compareKeysNoCase);
-    std::set_difference(targetKeyValues.begin(), targetKeyValues.end(),
+        baseKeyValues.begin(), baseKeyValues.end(), std::back_inserter(missingInBase), compareKeysNoCase);
+    std::set_difference(baseKeyValues.begin(), baseKeyValues.end(),
         sourceKeyValues.begin(), sourceKeyValues.end(), std::back_inserter(missingInSource), compareKeysNoCase);
 
-    for (const auto& pair : missingInTarget)
+    for (const auto& pair : missingInBase)
     {
-        rMessage() << " - Key " << pair.first << " not present in target entity" << std::endl;
+        rMessage() << " - Key " << pair.first << " not present in base entity" << std::endl;
 
         result.emplace_back(ComparisonResult::KeyValueDifference
         {
@@ -216,7 +216,7 @@ std::list<ComparisonResult::KeyValueDifference> SceneGraphComparer::compareKeyVa
     // Compare each value which is present on both entities
     for (const auto& pair : presentInBoth)
     {
-        if (sourceKeyValues[pair.first] == targetKeyValues[pair.first])
+        if (sourceKeyValues[pair.first] == baseKeyValues[pair.first])
         {
             continue;
         }

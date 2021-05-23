@@ -19,7 +19,7 @@ struct ComparisonResult
     {
         std::string fingerPrint;
         scene::INodePtr sourceNode;
-        scene::INodePtr targetNode;
+        scene::INodePtr baseNode;
     };
 
     struct KeyValueDifference
@@ -46,7 +46,7 @@ struct ComparisonResult
         enum class Type
         {
             EntityMissingInSource,
-            EntityMissingInTarget,
+            EntityMissingInBase,
             EntityPresentButDifferent,
         };
 
@@ -66,7 +66,7 @@ class SceneGraphComparer
 {
 private:
     scene::IMapRootNodePtr _source;
-    scene::IMapRootNodePtr _target;
+    scene::IMapRootNodePtr _base;
 
     ComparisonResult::Ptr _result;
 
@@ -83,9 +83,9 @@ public:
     using EntityMismatchByName = std::map<std::string, EntityMismatch>;
 
 public:
-    SceneGraphComparer(const scene::IMapRootNodePtr& source, const scene::IMapRootNodePtr& target) :
+    SceneGraphComparer(const scene::IMapRootNodePtr& source, const scene::IMapRootNodePtr& base) :
         _source(source),
-        _target(target),
+        _base(base),
         _result(new ComparisonResult)
     {}
 
