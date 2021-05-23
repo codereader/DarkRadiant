@@ -25,6 +25,21 @@ struct ComparisonResult
         scene::INodePtr targetNode;
     };
 
+    struct KeyValueDifference
+    {
+        std::string key;
+        std::string value;
+
+        enum class Type
+        {
+            KeyValueAdded,   // key is present on the source entity, but not on the target
+            KeyValueRemoved, // key is present on the target entity, but not on the source
+            KeyValueChanged, // key present on both, but value is different
+        };
+
+        Type type;
+    };
+
     struct EntityDifference
     {
         std::string fingerPrint;
@@ -39,6 +54,8 @@ struct ComparisonResult
         };
 
         Type type;
+
+        std::list<KeyValueDifference> differingKeyValues;
     };
 
     // The collection of entities with the same fingerprint value
@@ -57,7 +74,6 @@ private:
     ComparisonResult::Ptr _result;
 
     using Fingerprints = std::map<std::string, scene::INodePtr>;
-    using FingerprintsByType = std::map<scene::INode::Type, Fingerprints>;
 
 public:
     struct EntityMismatch
@@ -87,6 +103,9 @@ private:
     void processDifferingEntities(const EntityMismatchByName& sourceMismatches, const EntityMismatchByName& targetMismatches);
 
     Fingerprints collectEntityFingerprints(const scene::INodePtr& root);
+
+    std::list<ComparisonResult::KeyValueDifference> compareKeyValues(
+        const scene::INodePtr& sourceNode, const scene::INodePtr& targetNode);
 };
 
 }
