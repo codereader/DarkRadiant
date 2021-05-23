@@ -3,6 +3,7 @@
 #include "icommandsystem.h"
 #include "itransformable.h"
 #include "ibrush.h"
+#include "ipatch.h"
 #include "icomparablenode.h"
 #include "algorithm/Scene.h"
 #include "registry/registry.h"
@@ -66,6 +67,99 @@ TEST_F(MapMergeTest, BrushFingerprint)
 
     EXPECT_NE(comparable->getFingerprint(), lastFingerprint);
     lastFingerprint = comparable->getFingerprint();
+}
+
+TEST_F(MapMergeTest, PatchFingerprint)
+{
+    GlobalCommandSystem().executeCommand("OpenMap", cmd::Argument("maps/fingerprinting.mapx"));
+
+    auto originalMaterial = "textures/numbers/1";
+    auto patch = std::dynamic_pointer_cast<IPatchNode>(algorithm::findFirstPatchWithMaterial(
+        GlobalMapModule().findOrInsertWorldspawn(), originalMaterial));
+
+    auto comparable = std::dynamic_pointer_cast<scene::IComparableNode>(patch);
+    EXPECT_TRUE(comparable) << "PatchNode is not implementing IComparableNode";
+
+    auto originalFingerprint = comparable->getFingerprint();
+
+    EXPECT_NE(originalFingerprint, 0); // shouldn't be empty
+
+    // Calling it twice shouldn't change the value
+    EXPECT_EQ(comparable->getFingerprint(), originalFingerprint);
+
+    // Change the material of this patch, the fingerprint should change now
+    patch->getPatch().setShader("textures/somethingelse");
+    EXPECT_NE(comparable->getFingerprint(), originalFingerprint);
+
+    // Change it back
+    patch->getPatch().setShader(originalMaterial);
+    EXPECT_EQ(comparable->getFingerprint(), originalFingerprint);
+
+    // Change a single control vertex
+    auto& control = patch->getPatch().ctrlAt(0, 0);
+
+    auto lastFingerprint = comparable->getFingerprint();
+
+    // Change a 3D coordinate
+    control.vertex.x() += 0.1;
+    EXPECT_NE(comparable->getFingerprint(), lastFingerprint);
+    lastFingerprint = comparable->getFingerprint();
+
+    // Change a 2D component
+    control.texcoord.x() += 0.1;
+    EXPECT_NE(comparable->getFingerprint(), lastFingerprint);
+    lastFingerprint = comparable->getFingerprint();
+
+    // Append vertices
+    patch->getPatch().appendPoints(true, false);
+    EXPECT_NE(comparable->getFingerprint(), lastFingerprint);
+}
+
+TEST_F(MapMergeTest, EntityFingerprint)
+{
+    GlobalCommandSystem().executeCommand("OpenMap", cmd::Argument("maps/fingerprinting.mapx"));
+
+    auto entityNode = algorithm::getEntityByName(GlobalMapModule().getRoot(), "func_static_1");
+
+    auto comparable = std::dynamic_pointer_cast<scene::IComparableNode>(entityNode);
+    EXPECT_TRUE(comparable) << "EntityNode is not implementing IComparableNode";
+
+    auto entity = std::dynamic_pointer_cast<IEntityNode>(entityNode);
+
+    auto originalFingerprint = comparable->getFingerprint();
+
+    EXPECT_NE(originalFingerprint, 0); // shouldn't be empty
+
+    // Calling it twice shouldn't change the value
+    EXPECT_EQ(comparable->getFingerprint(), originalFingerprint);
+
+    // Change a spawnarg slightly
+    auto oldOrigin = entity->getEntity().getKeyValue("origin");
+
+    entity->getEntity().setKeyValue("origin", "96 -32 53");
+    EXPECT_NE(comparable->getFingerprint(), originalFingerprint);
+
+    // Change it back
+    entity->getEntity().setKeyValue("origin", oldOrigin);
+    EXPECT_EQ(comparable->getFingerprint(), originalFingerprint);
+
+    // Add a new spawnarg
+    entity->getEntity().setKeyValue("origin22", "whatever");
+    EXPECT_NE(comparable->getFingerprint(), originalFingerprint);
+    
+    // Change it back
+    entity->getEntity().setKeyValue("origin22", "");
+    EXPECT_EQ(comparable->getFingerprint(), originalFingerprint);
+
+    // Remove a spawnarg, this alters the order of keyvalues
+    auto originalValue = entity->getEntity().getKeyValue("dummyspawnarg");
+
+    entity->getEntity().setKeyValue("dummyspawnarg", "");
+    EXPECT_NE(comparable->getFingerprint(), originalFingerprint);
+
+    // Change it back, even though the order is different, the fingerprint should be the same
+    entity->getEntity().setKeyValue("dummyspawnarg", originalValue);
+    EXPECT_EQ(comparable->getFingerprint(), originalFingerprint);
 }
 
 }

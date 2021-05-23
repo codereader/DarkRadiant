@@ -8,7 +8,7 @@
   <selectionGroups/>
   <selectionSets/>
   <properties>
-    <property key="EditTimeInSeconds" value="257"/>
+    <property key="EditTimeInSeconds" value="287"/>
     <property key="LastCameraAngle" value="-36.9 45.6 0"/>
     <property key="LastCameraPosition" value="-81.4144 -139.899 261.902"/>
     <property key="LastShaderClipboardMaterial" value="textures/numbers/2"/>
@@ -306,6 +306,7 @@
       <keyValue key="name" value="func_static_1"/>
       <keyValue key="model" value="func_static_1"/>
       <keyValue key="origin" value="96 -32 0"/>
+      <keyValue key="dummyspawnarg" value="dummyvalue"/>
     </keyValues>
     <layers>
       <layer id="0"/>

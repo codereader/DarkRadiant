@@ -206,14 +206,22 @@ const Vector3& EntityNode::getDirection() const
 
 std::size_t EntityNode::getFingerprint()
 {
-    std::size_t hash = 0;
+    std::map<std::string, std::string> sortedKeyValues;
 
-    // Entities are just a collection of key/value pairs, use them lower case, ignore inherited keys
+    // Entities are just a collection of key/value pairs, 
+    // use them in lower case form, ignore inherited keys, sort before hashing
     _spawnArgs.forEachKeyValue([&](const std::string& key, const std::string& value)
     {
-        math::combineHash(hash, std::hash<std::string>()(string::to_lower_copy(key)));
-        math::combineHash(hash, std::hash<std::string>()(string::to_lower_copy(value)));
+        sortedKeyValues.emplace(string::to_lower_copy(key), string::to_lower_copy(value));
     }, false);
+
+    std::size_t hash = 0;
+
+    for (const auto& pair : sortedKeyValues)
+    {
+        math::combineHash(hash, std::hash<std::string>()(pair.first));
+        math::combineHash(hash, std::hash<std::string>()(pair.second));
+    }
 
     return hash;
 }
