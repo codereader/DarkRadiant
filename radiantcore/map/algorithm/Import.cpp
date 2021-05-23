@@ -414,48 +414,54 @@ ComparisonResult::Ptr compareGraphs(const scene::IMapRootNodePtr& target, const 
     rMessage() << "Target Node Types: " << targetFingerprints.size() << std::endl;
 
     // Filter out all the matching nodes and store them in the result
-    for (const auto& sourceCollection : sourceFingerprints)
+    if (sourceFingerprints.count(scene::INode::Type::Entity) == 0)
     {
-        rMessage() << "Source Fingerprints for node type " << static_cast<std::size_t>(sourceCollection.first) << ": " << sourceCollection.second.size() << std::endl;
+        // Cannot merge the source without any entities in it
+        throw cmd::ExecutionFailure(_("The source map doesn't contain any entities, cannot merge"));
+    }
 
-        auto targetNodesOfSameType = targetFingerprints.find(sourceCollection.first);
+    rMessage() << "Entity Fingerprints in source: " << sourceFingerprints[scene::INode::Type::Entity].size() << std::endl;
 
-        if (targetNodesOfSameType == targetFingerprints.end())
-        {
-            // target has no nodes of that type, copy whole node collection to differingNodes
-            result->differingNodes[sourceCollection.first] = sourceCollection.second;
-            continue; 
-        }
+    auto& targetEntities = targetFingerprints.try_emplace(scene::INode::Type::Entity).first->second;
 
+    for (const auto& sourceEntity : sourceFingerprints[scene::INode::Type::Entity])
+    {
         // Create the collection to hold the of matching node pairs
-        auto& matchingNodeList = result->equivalentNodes.try_emplace(sourceCollection.first).first->second;
-        auto& differingNodes = result->differingNodes.try_emplace(sourceCollection.first).first->second;
+        auto& matchingNodeList = result->equivalentNodes.try_emplace(scene::INode::Type::Entity).first->second;
+        auto& differingNodes = result->differingNodes.try_emplace(scene::INode::Type::Entity).first->second;
 
         // Check each source node for an equivalent node in the target
-        for (const auto& sourcePair : sourceCollection.second)
-        {
-            auto matchingTargetNode = targetNodesOfSameType->second.find(sourcePair.first);
+        auto matchingTargetNode = targetEntities.find(sourceEntity.first);
 
-            if (matchingTargetNode != targetNodesOfSameType->second.end())
-            {
-                // Found an equivalent node
-                matchingNodeList.emplace_back(ComparisonResult::Match{ sourcePair.first, sourcePair.second, matchingTargetNode->second });
-            }
-            else
-            {
-                differingNodes.insert(sourcePair);
-            }
+        if (matchingTargetNode != targetEntities.end())
+        {
+            // Found an equivalent node
+            matchingNodeList.emplace_back(ComparisonResult::Match{ sourceEntity.first, sourceEntity.second, matchingTargetNode->second });
+        }
+        else
+        {
+            differingNodes.emplace(sourceEntity.first, sourceEntity.second);
         }
     }
 
     for (const auto& pair : result->equivalentNodes)
     {
         rMessage() << "Equivalent Nodes of Type " << static_cast<std::size_t>(pair.first) << ": " << pair.second.size() << std::endl;
+
+        for (const auto& fingerprintedNode : pair.second)
+        {
+            rMessage() << " - Equivalent Node: " << fingerprintedNode.sourceNode->name() << std::endl;
+        }
     }
 
     for (const auto& pair : result->differingNodes)
     {
         rMessage() << "Different Nodes of Type " << static_cast<std::size_t>(pair.first) << ": " << pair.second.size() << std::endl;
+
+        for (const auto& fingerprintedNode : pair.second)
+        {
+            rMessage() << " - Differing Node: " << fingerprintedNode.second->name() << std::endl;
+        }
     }
     
     return result;

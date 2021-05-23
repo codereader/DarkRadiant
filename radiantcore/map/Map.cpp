@@ -941,6 +941,12 @@ void Map::mergeMap(const cmd::ArgumentList& args)
     {
         // No arguments passed, get the map file name to load
         auto fileInfo = MapFileManager::getMapFileSelection(true, _("Select Map File to merge"), filetype::TYPE_MAP);
+
+        if (fileInfo.fullPath.empty())
+        {
+            return; // operation cancelled
+        }
+
         candidate = fileInfo.fullPath;
     }
 
