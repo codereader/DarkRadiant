@@ -1,4 +1,4 @@
-DarkRadiant License (last update: 2017-09-12)
+DarkRadiant License (last update: 2021-05-23)
 ----------------------------------------------------------------------------------------------
 
 DarkRadiant is free software originally based on GtkRadiant, which has been licensed under
@@ -9,7 +9,7 @@ under the same GPLv2 license. Unless stated otherwise in the source file header,
 applies to the DarkRadiant source code:
 
     DarkRadiant - Open Source Level Editor for Doom 3 and The Dark Mod
-    Copyright (C) 2017 Matthias Baumann (on behalf of the DarkRadiant Team, see AUTHORS file)
+    Copyright (C) 2021 Matthias Baumann (on behalf of the DarkRadiant Team, see AUTHORS file)
     ==========================================================================================
 
     This program is free software; you can redistribute it and/or modify it under the terms of 
@@ -33,3 +33,5 @@ PicoModel Library - published under the modified Berkeley Software Distribution 
 DDS Library - published under the modified Berkeley Software Distribution (BSD) license
 pybind11 Library - see the LICENSE file in the libs/pybind folder
 fmtlib Library - see the LICENSE file in the libs/libfmt folder (BSD 2-clause "Simplified" License)
+SHA256 implementation - by Brad Conte, released into the public domain, see this URL: 
+    (https://github.com/B-Con/crypto-algorithms/tree/master#readme)

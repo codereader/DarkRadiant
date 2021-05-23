@@ -141,6 +141,7 @@
     <ClCompile Include="..\..\libs\math\Frustum.cpp" />
     <ClCompile Include="..\..\libs\math\Matrix4.cpp" />
     <ClCompile Include="..\..\libs\math\Plane3.cpp" />
+    <ClCompile Include="..\..\libs\math\SHA256.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\libs\math\AABB.h" />
@@ -156,6 +157,7 @@
     <ClInclude Include="..\..\libs\math\Quaternion.h" />
     <ClInclude Include="..\..\libs\math\Ray.h" />
     <ClInclude Include="..\..\libs\math\Segment.h" />
+    <ClInclude Include="..\..\libs\math\SHA256.h" />
     <ClInclude Include="..\..\libs\math\Vector2.h" />
     <ClInclude Include="..\..\libs\math\Vector3.h" />
     <ClInclude Include="..\..\libs\math\Vector4.h" />

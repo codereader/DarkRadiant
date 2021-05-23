@@ -3,7 +3,7 @@
 #include <istream>
 #include <string>
 #include <memory>
-#include <map>
+#include <list>
 
 namespace scene
 {
@@ -63,15 +63,16 @@ struct ComparisonResult
     // Represents a matching node pair
     struct Match
     {
-        std::size_t fingerPrint;
+        std::string fingerPrint;
         scene::INodePtr sourceNode;
         scene::INodePtr targetNode;
     };
 
     struct Mismatch
     {
-        std::size_t fingerPrint;
+        std::string fingerPrint;
         scene::INodePtr sourceNode;
+        scene::INodePtr targetNode;
     };
 
     // The collection of entities with the same fingerprint value

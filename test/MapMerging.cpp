@@ -27,7 +27,7 @@ TEST_F(MapMergeTest, BrushFingerprint)
 
     auto originalFingerprint = comparable->getFingerprint();
 
-    EXPECT_NE(originalFingerprint, 0); // shouldn't be empty
+    EXPECT_FALSE(originalFingerprint.empty()); // shouldn't be empty
 
     // Calling it twice shouldn't change the value
     EXPECT_EQ(comparable->getFingerprint(), originalFingerprint);
@@ -83,7 +83,7 @@ TEST_F(MapMergeTest, PatchFingerprint)
 
     auto originalFingerprint = comparable->getFingerprint();
 
-    EXPECT_NE(originalFingerprint, 0); // shouldn't be empty
+    EXPECT_FALSE(originalFingerprint.empty()); // shouldn't be empty
 
     // Calling it twice shouldn't change the value
     EXPECT_EQ(comparable->getFingerprint(), originalFingerprint);
@@ -128,7 +128,7 @@ TEST_F(MapMergeTest, EntityFingerprint)
     auto entity = std::dynamic_pointer_cast<IEntityNode>(entityNode);
     auto originalFingerprint = comparable->getFingerprint();
 
-    EXPECT_NE(originalFingerprint, 0); // shouldn't be empty
+    EXPECT_FALSE(originalFingerprint.empty()); // shouldn't be empty
 
     // Calling it twice shouldn't change the value
     EXPECT_EQ(comparable->getFingerprint(), originalFingerprint);
@@ -176,6 +176,7 @@ TEST_F(MapMergeTest, EntityFingerprintConsidersChildNodes)
 
     // Add a child patch
     auto patchNode = GlobalPatchModule().createPatch(patch::PatchDefType::Def3);
+    std::dynamic_pointer_cast<IPatchNode>(patchNode)->getPatch().setDims(3, 3);
     scene::addNodeToContainer(patchNode, entityNode);
     EXPECT_NE(comparable->getFingerprint(), originalFingerprint);
 

@@ -1,7 +1,11 @@
 #pragma once
 
 #include <cstdlib>
+#include <memory>
+#include <sstream>
+#include <iomanip>
 #include "Vector3.h"
+#include "SHA256.h"
 
 namespace math
 {
@@ -37,5 +41,65 @@ inline std::size_t hashVector3(const Vector3& v, std::size_t significantDigits)
 
     return xHash;
 }
+
+// Convenience wrapper around the C-style functions in the SHA256.h header
+class Hash
+{
+private:
+    std::unique_ptr<SHA256_CTX> _context;
+
+public:
+    Hash() :
+        _context(new SHA256_CTX)
+    {
+        sha256_init(_context.get());
+    }
+
+    void addSizet(std::size_t value)
+    {
+        sha256_update(_context.get(), reinterpret_cast<const uint8_t*>(&value), sizeof(value));
+    }
+
+    void addDouble(double value, std::size_t significantDigits)
+    {
+        auto intValue = static_cast<std::size_t>(value * detail::RoundingFactor(significantDigits));
+        addSizet(intValue);
+    }
+
+    void addVector3(const Vector3& v, std::size_t significantDigits)
+    {
+        std::size_t components[3] =
+        {
+            static_cast<std::size_t>(v.x() * detail::RoundingFactor(significantDigits)),
+            static_cast<std::size_t>(v.y() * detail::RoundingFactor(significantDigits)),
+            static_cast<std::size_t>(v.z() * detail::RoundingFactor(significantDigits)),
+        };
+        
+        sha256_update(_context.get(), reinterpret_cast<const uint8_t*>(&components), sizeof(components));
+    }
+
+    void addString(const std::string& str)
+    {
+        if (str.length() == 0) return;
+
+        sha256_update(_context.get(), reinterpret_cast<const uint8_t*>(str.data()), str.length());
+    }
+
+    operator std::string() const
+    {
+        uint8_t digest[SHA256_BLOCK_SIZE];
+        sha256_final(_context.get(), digest);
+
+        std::ostringstream oss;
+        oss << std::hex << std::setfill('0');
+
+        for (uint8_t val : digest)
+        {
+            oss << std::setw(2) << (unsigned int)val;
+        }
+
+        return oss.str();
+    }
+};
 
 }

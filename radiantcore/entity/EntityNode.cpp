@@ -204,7 +204,7 @@ const Vector3& EntityNode::getDirection() const
 	return _direction;
 }
 
-std::size_t EntityNode::getFingerprint()
+std::string EntityNode::getFingerprint()
 {
     std::map<std::string, std::string> sortedKeyValues;
 
@@ -215,16 +215,16 @@ std::size_t EntityNode::getFingerprint()
         sortedKeyValues.emplace(string::to_lower_copy(key), string::to_lower_copy(value));
     }, false);
 
-    std::size_t hash = 0;
+    math::Hash hash;
 
     for (const auto& pair : sortedKeyValues)
     {
-        math::combineHash(hash, std::hash<std::string>()(pair.first));
-        math::combineHash(hash, std::hash<std::string>()(pair.second));
+        hash.addString(pair.first);
+        hash.addString(pair.second);
     }
 
     // Entities need to include any child hashes, but be insensitive to their order
-    std::set<std::size_t> childFingerprints;
+    std::set<std::string> childFingerprints;
 
     foreachNode([&](const scene::INodePtr& child)
     {
@@ -240,7 +240,7 @@ std::size_t EntityNode::getFingerprint()
 
     for (auto childFingerprint : childFingerprints)
     {
-        math::combineHash(hash, childFingerprint);
+        hash.addString(childFingerprint);
     }
 
     return hash;

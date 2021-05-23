@@ -46,35 +46,37 @@ scene::INode::Type PatchNode::getNodeType() const
 	return Type::Patch;
 }
 
-std::size_t PatchNode::getFingerprint()
+std::string PatchNode::getFingerprint()
 {
     constexpr std::size_t SignificantDigits = scene::SignificantFingerprintDoubleDigits;
 
     if (m_patch.getHeight() * m_patch.getWidth() == 0)
     {
-        return 0; // empty patches produce a zero fingerprint
+        return std::string(); // empty patches produce an empty fingerprint
     }
 
+    math::Hash hash;
+
     // Width & Height
-    auto hash = m_patch.getHeight();
-    math::combineHash(hash, m_patch.getWidth());
+    hash.addSizet(m_patch.getHeight());
+    hash.addSizet(m_patch.getWidth());
 
     // Subdivision Settings
     if (m_patch.subdivisionsFixed())
     {
-        math::combineHash(hash, static_cast<std::size_t>(m_patch.getSubdivisions().x()));
-        math::combineHash(hash, static_cast<std::size_t>(m_patch.getSubdivisions().y()));
+        hash.addSizet(static_cast<std::size_t>(m_patch.getSubdivisions().x()));
+        hash.addSizet(static_cast<std::size_t>(m_patch.getSubdivisions().y()));
     }
 
     // Material Name
-    math::combineHash(hash, std::hash<std::string>()(m_patch.getShader()));
+    hash.addString(m_patch.getShader());
 
     // Combine all control point data
     for (const auto& ctrl : m_patch.getControlPoints())
     {
-        math::combineHash(hash, math::hashVector3(ctrl.vertex, SignificantDigits));
-        math::combineHash(hash, math::hashDouble(ctrl.texcoord.x(), SignificantDigits));
-        math::combineHash(hash, math::hashDouble(ctrl.texcoord.y(), SignificantDigits));
+        hash.addVector3(ctrl.vertex, SignificantDigits);
+        hash.addDouble(ctrl.texcoord.x(), SignificantDigits);
+        hash.addDouble(ctrl.texcoord.y(), SignificantDigits);
     }
 
     return hash;

@@ -116,7 +116,7 @@ public:
     Matrix4& localToParent() override { return _localToParent; }
 
     // IComparableNode implementation
-    std::size_t getFingerprint() override;
+    std::string getFingerprint() override;
 
 	// SelectionTestable implementation
 	virtual void testSelect(Selector& selector, SelectionTest& test) override;

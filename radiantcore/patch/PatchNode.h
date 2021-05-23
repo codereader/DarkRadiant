@@ -63,7 +63,7 @@ public:
 	Type getNodeType() const override;
 
     // IComparableNode implementation
-    std::size_t getFingerprint() override;
+    std::string getFingerprint() override;
 
 	// Bounded implementation
 	const AABB& localAABB() const override;

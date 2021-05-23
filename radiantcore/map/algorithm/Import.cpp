@@ -374,7 +374,7 @@ void importFromStream(std::istream& stream)
     }
 }
 
-using Fingerprints = std::map<std::size_t, scene::INodePtr>;
+using Fingerprints = std::map<std::string, scene::INodePtr>;
 using FingerprintsByType = std::map<scene::INode::Type, Fingerprints>;
 
 FingerprintsByType collectFingerprints(const scene::INodePtr& root)
@@ -426,8 +426,9 @@ ComparisonResult::Ptr compareGraphs(const scene::IMapRootNodePtr& target, const 
     rMessage() << "Entity Fingerprints in source: " << sourceFingerprints[scene::INode::Type::Entity].size() << std::endl;
 
     auto& targetEntities = targetFingerprints.try_emplace(scene::INode::Type::Entity).first->second;
+    auto& sourceEntities = sourceFingerprints[scene::INode::Type::Entity];
 
-    for (const auto& sourceEntity : sourceFingerprints[scene::INode::Type::Entity])
+    for (const auto& sourceEntity : sourceEntities)
     {
         // Check each source node for an equivalent node in the target
         auto matchingTargetNode = targetEntities.find(sourceEntity.first);
@@ -443,6 +444,22 @@ ComparisonResult::Ptr compareGraphs(const scene::IMapRootNodePtr& target, const 
         }
     }
 
+    for (const auto& targetEntity : targetEntities)
+    {
+        // Check each source node for an equivalent node in the target
+        auto matchingSourceNode = sourceEntities.find(targetEntity.first);
+
+        if (matchingSourceNode != sourceEntities.end())
+        {
+            // Found an equivalent node
+            result->equivalentEntities.emplace_back(ComparisonResult::Match{ targetEntity.first, matchingSourceNode->second, targetEntity.second });
+        }
+        else
+        {
+            result->differingEntities.emplace_back(ComparisonResult::Mismatch{ targetEntity.first, targetEntity.second });
+        }
+    }
+
     rMessage() << "Equivalent Entities " << result->equivalentEntities.size() << std::endl;
 
     for (const auto& match: result->equivalentEntities)
@@ -455,6 +472,8 @@ ComparisonResult::Ptr compareGraphs(const scene::IMapRootNodePtr& target, const 
     for (const auto& mismatch : result->differingEntities)
     {
         rMessage() << " - Differing Entity " << mismatch.sourceNode->name() << std::endl;
+
+        // Check if there's a counter-part 
     }
     
     return result;

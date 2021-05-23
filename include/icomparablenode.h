@@ -1,6 +1,7 @@
 #pragma once
 
 #include "inode.h"
+#include <string>
 
 namespace scene
 {
@@ -15,10 +16,10 @@ class IComparableNode :
 public:
     virtual ~IComparableNode() {}
 
-    // Returns the fingerprint (hash) of this node, to allow for quick 
+    // Returns the fingerprint (checksum) of this node, to allow for quick 
     // matching against other nodes of the same type. Fingerprints of different
     // types are not comparable, be sure to check the node type first.
-    virtual std::size_t getFingerprint() = 0;
+    virtual std::string getFingerprint() = 0;
 };
 
 // The number of digits that are considered when hashing floating point values in fingerprinting
