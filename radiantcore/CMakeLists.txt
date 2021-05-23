@@ -94,6 +94,7 @@ add_library(radiantcore MODULE
             map/algorithm/MapExporter.cpp
             map/algorithm/MapImporter.cpp
             map/algorithm/Models.cpp
+            map/algorithm/SceneGraphComparer.cpp
             map/algorithm/Skins.cpp
             map/ArchivedMapResource.cpp
             map/CounterManager.cpp

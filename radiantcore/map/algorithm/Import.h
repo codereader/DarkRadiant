@@ -3,7 +3,7 @@
 #include <istream>
 #include <string>
 #include <memory>
-#include <list>
+#include "SceneGraphComparer.h"
 
 namespace scene
 {
@@ -55,32 +55,6 @@ MapFormatPtr determineMapFormat(std::istream& stream, const std::string& type);
  * After this call, the stream is guaranteed to be rewound to the beginning
   */
 MapFormatPtr determineMapFormat(std::istream& stream);
-
-struct ComparisonResult
-{
-    using Ptr = std::shared_ptr<ComparisonResult>;
-
-    // Represents a matching node pair
-    struct Match
-    {
-        std::string fingerPrint;
-        scene::INodePtr sourceNode;
-        scene::INodePtr targetNode;
-    };
-
-    struct Mismatch
-    {
-        std::string fingerPrint;
-        scene::INodePtr sourceNode;
-        scene::INodePtr targetNode;
-    };
-
-    // The collection of entities with the same fingerprint value
-    std::list<Match> equivalentEntities;
-
-    // The collection of entities with differing fingerprint values
-    std::list<Mismatch> differingEntities;
-};
 
 // Runs a comparison of "source" (to be merged) against the "target" (merge target)
 ComparisonResult::Ptr compareGraphs(const scene::IMapRootNodePtr& source, const scene::IMapRootNodePtr& target);

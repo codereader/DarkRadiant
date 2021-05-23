@@ -18,6 +18,7 @@
 #include "scenelib.h"
 #include "entitylib.h"
 #include "command/ExecutionFailure.h"
+#include "SceneGraphComparer.h"
 
 #include "string/join.h"
 
@@ -374,108 +375,15 @@ void importFromStream(std::istream& stream)
     }
 }
 
-using Fingerprints = std::map<std::string, scene::INodePtr>;
-using FingerprintsByType = std::map<scene::INode::Type, Fingerprints>;
-
-FingerprintsByType collectFingerprints(const scene::INodePtr& root)
-{
-    FingerprintsByType result;
-
-    root->foreachNode([&](const scene::INodePtr& node)
-    {
-        auto comparable = std::dynamic_pointer_cast<scene::IComparableNode>(node);
-
-        if (!comparable) return true; // skip
-
-        // Find or insert the map for this node type
-        auto& fingerprints = result.try_emplace(comparable->getNodeType()).first->second;
-        
-        // Store the fingerprint and check for collisions
-        auto insertResult = fingerprints.try_emplace(comparable->getFingerprint(), node);
-
-        if (!insertResult.second)
-        {
-            rWarning() << "More than one node with the same fingerprint found in the map " << node->name() << std::endl;
-        }
-
-        return true;
-    });
-
-    return result;
-}
-
 ComparisonResult::Ptr compareGraphs(const scene::IMapRootNodePtr& target, const scene::IMapRootNodePtr& source)
 {
     assert(source && target);
 
-    auto result = std::make_shared<ComparisonResult>();
+    SceneGraphComparer comparer(source, target);
 
-    auto sourceFingerprints = collectFingerprints(source);
-    auto targetFingerprints = collectFingerprints(target);
+    comparer.compare();
 
-    rMessage() << "Source Node Types: " << sourceFingerprints.size() << std::endl;
-    rMessage() << "Target Node Types: " << targetFingerprints.size() << std::endl;
-
-    // Filter out all the matching nodes and store them in the result
-    if (sourceFingerprints.count(scene::INode::Type::Entity) == 0)
-    {
-        // Cannot merge the source without any entities in it
-        throw cmd::ExecutionFailure(_("The source map doesn't contain any entities, cannot merge"));
-    }
-
-    rMessage() << "Entity Fingerprints in source: " << sourceFingerprints[scene::INode::Type::Entity].size() << std::endl;
-
-    auto& targetEntities = targetFingerprints.try_emplace(scene::INode::Type::Entity).first->second;
-    auto& sourceEntities = sourceFingerprints[scene::INode::Type::Entity];
-
-    for (const auto& sourceEntity : sourceEntities)
-    {
-        // Check each source node for an equivalent node in the target
-        auto matchingTargetNode = targetEntities.find(sourceEntity.first);
-
-        if (matchingTargetNode != targetEntities.end())
-        {
-            // Found an equivalent node
-            result->equivalentEntities.emplace_back(ComparisonResult::Match{ sourceEntity.first, sourceEntity.second, matchingTargetNode->second });
-        }
-        else
-        {
-            result->differingEntities.emplace_back(ComparisonResult::Mismatch{ sourceEntity.first, sourceEntity.second });
-        }
-    }
-
-    for (const auto& targetEntity : targetEntities)
-    {
-        // Check each source node for an equivalent node in the target
-        // Matching nodes have already been checked in the above loop
-        if (sourceEntities.count(targetEntity.first) == 0)
-        {
-            result->differingEntities.emplace_back(ComparisonResult::Mismatch{ targetEntity.first, scene::INodePtr(), targetEntity.second });
-        }
-    }
-
-    rMessage() << "Equivalent Entities " << result->equivalentEntities.size() << std::endl;
-
-    for (const auto& match: result->equivalentEntities)
-    {
-        rMessage() << " - Equivalent Entity: " << match.sourceNode->name() << std::endl;
-    }
-
-    rMessage() << "Mismatching Entities: " << result->differingEntities.size() << std::endl;
-
-    for (const auto& mismatch : result->differingEntities)
-    {
-        if (mismatch.sourceNode)
-        {
-            rMessage() << " - No match found for source entity: " << mismatch.sourceNode->name() << std::endl;
-        }
-        else if (mismatch.targetNode)
-        {
-            rMessage() << " - No match found for target entity " << mismatch.targetNode->name() << std::endl;
-        }
-    }
-    
-    return result;
+    return comparer.getResult();
 }
 
 }
