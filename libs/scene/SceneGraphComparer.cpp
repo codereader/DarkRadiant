@@ -11,6 +11,16 @@
 namespace scene
 {
 
+namespace
+{
+    inline std::string getEntityName(const scene::INodePtr& node)
+    {
+        auto entity = Node_getEntity(node);
+        
+        return entity->isWorldspawn() ? "worldspawn" : entity->getKeyValue("name");
+    }
+}
+
 void SceneGraphComparer::compare()
 {
     auto sourceEntities = collectEntityFingerprints(_source);
@@ -37,8 +47,7 @@ void SceneGraphComparer::compare()
         }
         else
         {
-            auto entityName = Node_getEntity(sourceEntity.second)->getKeyValue("name");
-
+            auto entityName = getEntityName(sourceEntity.second);
             sourceMismatches.emplace(entityName, EntityMismatch{ sourceEntity.first, sourceEntity.second, entityName });
         }
     }
@@ -51,8 +60,7 @@ void SceneGraphComparer::compare()
         // Matching nodes have already been checked in the above loop
         if (sourceEntities.count(baseEntity.first) == 0)
         {
-            auto entityName = Node_getEntity(baseEntity.second)->getKeyValue("name");
-
+            auto entityName = getEntityName(baseEntity.second);
             baseMismatches.emplace(entityName, EntityMismatch{ baseEntity.first, baseEntity.second, entityName });
         }
     }
@@ -102,6 +110,9 @@ void SceneGraphComparer::processDifferingEntities(const EntityMismatchByName& so
 
         // Analyse the key values
         entityDiff.differingKeyValues = compareKeyValues(sourceNode, baseNode);
+
+        // Analyse the child nodes
+        entityDiff.differingChildren = compareChildNodes(sourceNode, baseNode);
     }
 
     for (const auto& mismatch : missingInSource)
@@ -210,18 +221,61 @@ std::list<ComparisonResult::KeyValueDifference> SceneGraphComparer::compareKeyVa
     return result;
 }
 
-SceneGraphComparer::Fingerprints SceneGraphComparer::collectEntityFingerprints(const scene::INodePtr& root)
+std::list<ComparisonResult::PrimitiveDifference> SceneGraphComparer::compareChildNodes(
+    const scene::INodePtr& sourceNode, const scene::INodePtr& baseNode)
+{
+    std::list<ComparisonResult::PrimitiveDifference> result;
+
+    auto sourceChildren = collectPrimitiveFingerprints(sourceNode);
+    auto baseChildren = collectPrimitiveFingerprints(baseNode);
+
+    std::vector<Fingerprints::value_type> missingInSource;
+    std::vector<Fingerprints::value_type> missingInBase;
+
+    auto compareFingerprint = [](const Fingerprints::value_type& left, const Fingerprints::value_type& right)
+    {
+        return left.first < right.first;
+    };
+
+    std::set_difference(sourceChildren.begin(), sourceChildren.end(),
+        baseChildren.begin(), baseChildren.end(), std::back_inserter(missingInBase), compareFingerprint);
+    std::set_difference(baseChildren.begin(), baseChildren.end(),
+        sourceChildren.begin(), sourceChildren.end(), std::back_inserter(missingInSource), compareFingerprint);
+
+    for (const auto& pair : missingInBase)
+    {
+        result.emplace_back(ComparisonResult::PrimitiveDifference
+        {
+            pair.first,
+            pair.second,
+            ComparisonResult::PrimitiveDifference::Type::PrimitiveAdded
+        });
+    }
+
+    for (const auto& pair : missingInSource)
+    {
+        result.emplace_back(ComparisonResult::PrimitiveDifference
+        {
+            pair.first,
+            pair.second,
+            ComparisonResult::PrimitiveDifference::Type::PrimitiveRemoved
+        });
+    }
+
+    return result;
+}
+
+SceneGraphComparer::Fingerprints SceneGraphComparer::collectNodeFingerprints(const scene::INodePtr& parent, 
+    const std::function<bool(const scene::INodePtr& node)>& nodePredicate)
 {
     Fingerprints result;
 
-    root->foreachNode([&](const scene::INodePtr& node)
+    parent->foreachNode([&](const scene::INodePtr& node)
     {
-        if (node->getNodeType() != scene::INode::Type::Entity)
-        {
-            return true;
-        }
+        if (!nodePredicate(node)) return true; // predicate says "skip"
 
         auto comparable = std::dynamic_pointer_cast<scene::IComparableNode>(node);
+        assert(comparable);
 
         if (!comparable) return true; // skip
 
@@ -230,13 +284,29 @@ SceneGraphComparer::Fingerprints SceneGraphComparer::collectEntityFingerprints(c
 
         if (!insertResult.second)
         {
-            rWarning() << "More than one entity with the same fingerprint found in the map " << node->name() << std::endl;
+            rWarning() << "More than one node with the same fingerprint found in the parent node with name " << parent->name() << std::endl;
         }
 
         return true;
     });
 
     return result;
+}
+
+SceneGraphComparer::Fingerprints SceneGraphComparer::collectPrimitiveFingerprints(const scene::INodePtr& parent)
+{
+    return collectNodeFingerprints(parent, [](const scene::INodePtr& node)
+    {
+        return node->getNodeType() == scene::INode::Type::Brush || node->getNodeType() == scene::INode::Type::Patch;
+    });
+}
+
+SceneGraphComparer::Fingerprints SceneGraphComparer::collectEntityFingerprints(const scene::INodePtr& root)
+{
+    return collectNodeFingerprints(root, [](const scene::INodePtr& node)
+    {
+        return node->getNodeType() == scene::INode::Type::Entity;
+    });
 }
 
 }

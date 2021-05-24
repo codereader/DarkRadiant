@@ -10,10 +10,18 @@
 namespace scene
 {
 
-struct ComparisonResult
+class ComparisonResult
 {
+public:
     using Ptr = std::shared_ptr<ComparisonResult>;
 
+private:
+    // This result instance will hold references to the root nodes of the compared graph
+    // to ensure the graph stays alive as long as the result
+    scene::IMapRootNodePtr _sourceRoot;
+    scene::IMapRootNodePtr _baseRoot;
+
+public:
     // Represents a matching node pair
     struct Match
     {
@@ -29,9 +37,23 @@ struct ComparisonResult
 
         enum class Type
         {
-            KeyValueAdded,   // key is present on the source entity, but not on the target
-            KeyValueRemoved, // key is present on the target entity, but not on the source
+            KeyValueAdded,   // key is present on the source entity, but not on the base
+            KeyValueRemoved, // key is present on the base entity, but not on the source
             KeyValueChanged, // key present on both, but value is different
+        };
+
+        Type type;
+    };
+
+    struct PrimitiveDifference
+    {
+        std::string fingerprint;
+        scene::INodePtr node;
+
+        enum class Type
+        {
+            PrimitiveAdded,   // child is present on the source entity, but not on the base
+            PrimitiveRemoved, // child is present on the base entity, but not on the source
         };
 
         Type type;
@@ -53,7 +75,15 @@ struct ComparisonResult
         Type type;
 
         std::list<KeyValueDifference> differingKeyValues;
+
+        std::list<PrimitiveDifference> differingChildren;
     };
+
+public:
+    ComparisonResult(const scene::IMapRootNodePtr& sourceRoot, const scene::IMapRootNodePtr& baseRoot) :
+        _sourceRoot(sourceRoot),
+        _baseRoot(baseRoot)
+    {}
 
     // The collection of entities with the same fingerprint value
     std::list<Match> equivalentEntities;
@@ -86,7 +116,7 @@ public:
     SceneGraphComparer(const scene::IMapRootNodePtr& source, const scene::IMapRootNodePtr& base) :
         _source(source),
         _base(base),
-        _result(new ComparisonResult)
+        _result(new ComparisonResult(_source, _base))
     {}
 
     void compare();
@@ -97,12 +127,19 @@ public:
     }
 
 private:
-    void processDifferingEntities(const EntityMismatchByName& sourceMismatches, const EntityMismatchByName& targetMismatches);
+    void processDifferingEntities(const EntityMismatchByName& sourceMismatches, const EntityMismatchByName& baseMismatches);
 
     Fingerprints collectEntityFingerprints(const scene::INodePtr& root);
+    Fingerprints collectPrimitiveFingerprints(const scene::INodePtr& parent);
+
+    Fingerprints collectNodeFingerprints(const scene::INodePtr& parent,
+        const std::function<bool(const scene::INodePtr& node)>& nodePredicate);
 
     std::list<ComparisonResult::KeyValueDifference> compareKeyValues(
-        const scene::INodePtr& sourceNode, const scene::INodePtr& targetNode);
+        const scene::INodePtr& sourceNode, const scene::INodePtr& baseNode);
+
+    std::list<ComparisonResult::PrimitiveDifference> compareChildNodes(
+        const scene::INodePtr& sourceNode, const scene::INodePtr& baseNode);
 };
 
 }

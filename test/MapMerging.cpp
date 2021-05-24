@@ -293,6 +293,7 @@ TEST_F(MapMergeTest, DetectAddedEntities)
 
     // light_3 start has been added to the changed map
     EXPECT_TRUE(resultHasEntityDifference(result, "light_3", scene::ComparisonResult::EntityDifference::Type::EntityMissingInBase));
+    EXPECT_TRUE(resultHasEntityDifference(result, "func_static_2", scene::ComparisonResult::EntityDifference::Type::EntityMissingInBase));
 }
 
 TEST_F(MapMergeTest, DetectAddedKeyValues)
@@ -331,6 +332,21 @@ TEST_F(MapMergeTest, DetectChangedKeyValues)
     diff = getEntityDifference(result, "light_2");
     EXPECT_EQ(diff.type, scene::ComparisonResult::EntityDifference::Type::EntityPresentButDifferent);
     EXPECT_TRUE(hasKeyValueDifference(diff, "origin", "280 160 0", scene::ComparisonResult::KeyValueDifference::Type::KeyValueChanged));
+}
+
+TEST_F(MapMergeTest, DetectAddedChildPrimitives)
+{
+    auto result = performComparison("maps/fingerprinting.mapx", _context.getTestProjectPath() + "maps/fingerprinting_2.mapx");
+
+    // func_static_1 has changed primitived
+    auto diff = getEntityDifference(result, "func_static_30");
+
+    EXPECT_EQ(diff.type, scene::ComparisonResult::EntityDifference::Type::EntityPresentButDifferent);
+    EXPECT_EQ(diff.differingChildren.size(), 1);
+    EXPECT_EQ(diff.differingChildren.front().type, scene::ComparisonResult::PrimitiveDifference::Type::PrimitiveAdded);
+    EXPECT_EQ(diff.differingChildren.front().node->getNodeType(), scene::INode::Type::Brush);
+
+
 }
 
 }
