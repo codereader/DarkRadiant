@@ -10,6 +10,7 @@ namespace merge
 
 enum class ActionType
 {
+    AddEntity,
     RemoveEntity,
 };
 

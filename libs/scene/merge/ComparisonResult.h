@@ -91,6 +91,11 @@ public:
 
     // The collection of differing entities
     std::list<EntityDifference> differingEntities;
+
+    const scene::IMapRootNodePtr& getBaseRootNode() const
+    {
+        return _baseRoot;
+    }
 };
 
 }
