@@ -375,15 +375,11 @@ void importFromStream(std::istream& stream)
     }
 }
 
-scene::merge::ComparisonResult::Ptr compareGraphs(const scene::IMapRootNodePtr& source, const scene::IMapRootNodePtr& target)
+scene::merge::ComparisonResult::Ptr compareGraphs(const scene::IMapRootNodePtr& source, const scene::IMapRootNodePtr& base)
 {
-    assert(source && target);
+    assert(source && base);
 
-    scene::merge::GraphComparer comparer(source, target);
-
-    comparer.compare();
-
-    return comparer.getResult();
+    return scene::merge::GraphComparer::Compare(source, base);
 }
 
 }

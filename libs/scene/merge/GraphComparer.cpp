@@ -24,10 +24,12 @@ namespace
     }
 }
 
-void GraphComparer::compare()
+ComparisonResult::Ptr GraphComparer::Compare(const scene::IMapRootNodePtr& source, const scene::IMapRootNodePtr& base)
 {
-    auto sourceEntities = collectEntityFingerprints(_source);
-    auto baseEntities = collectEntityFingerprints(_base);
+    auto result = std::make_shared<ComparisonResult>(source, base);
+
+    auto sourceEntities = collectEntityFingerprints(source);
+    auto baseEntities = collectEntityFingerprints(base);
 
     // Filter out all the matching nodes and store them in the result
     if (sourceEntities.empty())
@@ -46,7 +48,7 @@ void GraphComparer::compare()
         if (matchingBaseNode != baseEntities.end())
         {
             // Found an equivalent node
-            _result->equivalentEntities.emplace_back(ComparisonResult::Match{ sourceEntity.first, sourceEntity.second, matchingBaseNode->second });
+            result->equivalentEntities.emplace_back(ComparisonResult::Match{ sourceEntity.first, sourceEntity.second, matchingBaseNode->second });
         }
         else
         {
@@ -68,14 +70,13 @@ void GraphComparer::compare()
         }
     }
 
-    rMessage() << "Mismatching Source Entities: " << sourceMismatches.size() << std::endl;
-    rMessage() << "Mismatching Base Entities: " << baseMismatches.size() << std::endl;
-
     // Enter the second stage and try to match entities and detailing diffs
-    processDifferingEntities(sourceMismatches, baseMismatches);
+    processDifferingEntities(*result, sourceMismatches, baseMismatches);
+
+    return result;
 }
 
-void GraphComparer::processDifferingEntities(const EntityMismatchByName& sourceMismatches, const EntityMismatchByName& baseMismatches)
+void GraphComparer::processDifferingEntities(ComparisonResult& result, const EntityMismatchByName& sourceMismatches, const EntityMismatchByName& baseMismatches)
 {
     // Find all entities that are missing in either source or base (by name)
     std::list<EntityMismatchByName::value_type> missingInSource;
@@ -100,7 +101,7 @@ void GraphComparer::processDifferingEntities(const EntityMismatchByName& sourceM
 
     for (const auto& match : matchingByName)
     {
-        auto& entityDiff = _result->differingEntities.emplace_back(ComparisonResult::EntityDifference
+        auto& entityDiff = result.differingEntities.emplace_back(ComparisonResult::EntityDifference
         {
             match.second.fingerPrint,
             match.second.node,
@@ -120,7 +121,7 @@ void GraphComparer::processDifferingEntities(const EntityMismatchByName& sourceM
 
     for (const auto& mismatch : missingInSource)
     {
-        _result->differingEntities.emplace_back(ComparisonResult::EntityDifference
+        result.differingEntities.emplace_back(ComparisonResult::EntityDifference
         {
             mismatch.second.fingerPrint,
             mismatch.second.node,
@@ -131,7 +132,7 @@ void GraphComparer::processDifferingEntities(const EntityMismatchByName& sourceM
 
     for (const auto& mismatch : missingInBase)
     {
-        _result->differingEntities.emplace_back(ComparisonResult::EntityDifference
+        result.differingEntities.emplace_back(ComparisonResult::EntityDifference
         {
             mismatch.second.fingerPrint,
             mismatch.second.node,

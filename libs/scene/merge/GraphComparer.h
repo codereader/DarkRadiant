@@ -17,14 +17,12 @@ namespace scene
 namespace merge
 {
 
+/**
+ * Static utility class to compare two scenes given by their root nodes.
+ */
 class GraphComparer
 {
 private:
-    scene::IMapRootNodePtr _source;
-    scene::IMapRootNodePtr _base;
-
-    ComparisonResult::Ptr _result;
-
     using Fingerprints = std::map<std::string, scene::INodePtr>;
 
 public:
@@ -38,32 +36,23 @@ public:
     using EntityMismatchByName = std::map<std::string, EntityMismatch>;
 
 public:
-    GraphComparer(const scene::IMapRootNodePtr& source, const scene::IMapRootNodePtr& base) :
-        _source(source),
-        _base(base),
-        _result(new ComparisonResult(_source, _base))
-    {}
-
-    void compare();
-
-    const ComparisonResult::Ptr& getResult() const
-    {
-        return _result;
-    }
+    // Compares the two graphs and returns the result
+    static ComparisonResult::Ptr Compare(const scene::IMapRootNodePtr& source, const scene::IMapRootNodePtr& base);
 
 private:
-    void processDifferingEntities(const EntityMismatchByName& sourceMismatches, const EntityMismatchByName& baseMismatches);
+    static void processDifferingEntities(ComparisonResult& result, const EntityMismatchByName& sourceMismatches, 
+        const EntityMismatchByName& baseMismatches);
 
-    Fingerprints collectEntityFingerprints(const scene::INodePtr& root);
-    Fingerprints collectPrimitiveFingerprints(const scene::INodePtr& parent);
+    static Fingerprints collectEntityFingerprints(const scene::INodePtr& root);
+    static Fingerprints collectPrimitiveFingerprints(const scene::INodePtr& parent);
 
-    Fingerprints collectNodeFingerprints(const scene::INodePtr& parent,
+    static Fingerprints collectNodeFingerprints(const scene::INodePtr& parent,
         const std::function<bool(const scene::INodePtr& node)>& nodePredicate);
 
-    std::list<ComparisonResult::KeyValueDifference> compareKeyValues(
+    static std::list<ComparisonResult::KeyValueDifference> compareKeyValues(
         const scene::INodePtr& sourceNode, const scene::INodePtr& baseNode);
 
-    std::list<ComparisonResult::PrimitiveDifference> compareChildNodes(
+    static std::list<ComparisonResult::PrimitiveDifference> compareChildNodes(
         const scene::INodePtr& sourceNode, const scene::INodePtr& baseNode);
 };
 

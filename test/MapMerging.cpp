@@ -234,10 +234,7 @@ inline ComparisonResult::Ptr performComparison(const std::string& targetMap, con
     auto resource = GlobalMapResourceManager().createFromPath(sourceMapPath);
     EXPECT_TRUE(resource->load()) << "Test map not found in path " << sourceMapPath;
 
-    GraphComparer comparer(resource->getRootNode(), GlobalMapModule().getRoot());
-    comparer.compare();
-
-    return comparer.getResult();
+    return GraphComparer::Compare(resource->getRootNode(), GlobalMapModule().getRoot());
 }
 
 inline bool resultHasEntityDifference(const ComparisonResult::Ptr& result, const std::string& name, 
