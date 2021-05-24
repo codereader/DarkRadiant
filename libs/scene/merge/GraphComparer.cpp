@@ -1,4 +1,4 @@
-#include "SceneGraphComparer.h"
+#include "GraphComparer.h"
 
 #include <algorithm>
 #include "ientity.h"
@@ -11,6 +11,9 @@
 namespace scene
 {
 
+namespace merge
+{
+
 namespace
 {
     inline std::string getEntityName(const scene::INodePtr& node)
@@ -21,7 +24,7 @@ namespace
     }
 }
 
-void SceneGraphComparer::compare()
+void GraphComparer::compare()
 {
     auto sourceEntities = collectEntityFingerprints(_source);
     auto baseEntities = collectEntityFingerprints(_base);
@@ -72,7 +75,7 @@ void SceneGraphComparer::compare()
     processDifferingEntities(sourceMismatches, baseMismatches);
 }
 
-void SceneGraphComparer::processDifferingEntities(const EntityMismatchByName& sourceMismatches, const EntityMismatchByName& baseMismatches)
+void GraphComparer::processDifferingEntities(const EntityMismatchByName& sourceMismatches, const EntityMismatchByName& baseMismatches)
 {
     // Find all entities that are missing in either source or base (by name)
     std::list<EntityMismatchByName::value_type> missingInSource;
@@ -157,7 +160,7 @@ namespace
     }
 }
 
-std::list<ComparisonResult::KeyValueDifference> SceneGraphComparer::compareKeyValues(
+std::list<ComparisonResult::KeyValueDifference> GraphComparer::compareKeyValues(
     const scene::INodePtr& sourceNode, const scene::INodePtr& baseNode)
 {
     std::list<ComparisonResult::KeyValueDifference> result;
@@ -221,7 +224,7 @@ std::list<ComparisonResult::KeyValueDifference> SceneGraphComparer::compareKeyVa
     return result;
 }
 
-std::list<ComparisonResult::PrimitiveDifference> SceneGraphComparer::compareChildNodes(
+std::list<ComparisonResult::PrimitiveDifference> GraphComparer::compareChildNodes(
     const scene::INodePtr& sourceNode, const scene::INodePtr& baseNode)
 {
     std::list<ComparisonResult::PrimitiveDifference> result;
@@ -265,7 +268,7 @@ std::list<ComparisonResult::PrimitiveDifference> SceneGraphComparer::compareChil
     return result;
 }
 
-SceneGraphComparer::Fingerprints SceneGraphComparer::collectNodeFingerprints(const scene::INodePtr& parent, 
+GraphComparer::Fingerprints GraphComparer::collectNodeFingerprints(const scene::INodePtr& parent, 
     const std::function<bool(const scene::INodePtr& node)>& nodePredicate)
 {
     Fingerprints result;
@@ -293,7 +296,7 @@ SceneGraphComparer::Fingerprints SceneGraphComparer::collectNodeFingerprints(con
     return result;
 }
 
-SceneGraphComparer::Fingerprints SceneGraphComparer::collectPrimitiveFingerprints(const scene::INodePtr& parent)
+GraphComparer::Fingerprints GraphComparer::collectPrimitiveFingerprints(const scene::INodePtr& parent)
 {
     return collectNodeFingerprints(parent, [](const scene::INodePtr& node)
     {
@@ -301,12 +304,14 @@ SceneGraphComparer::Fingerprints SceneGraphComparer::collectPrimitiveFingerprint
     });
 }
 
-SceneGraphComparer::Fingerprints SceneGraphComparer::collectEntityFingerprints(const scene::INodePtr& root)
+GraphComparer::Fingerprints GraphComparer::collectEntityFingerprints(const scene::INodePtr& root)
 {
     return collectNodeFingerprints(root, [](const scene::INodePtr& node)
     {
         return node->getNodeType() == scene::INode::Type::Entity;
     });
+}
+
 }
 
 }

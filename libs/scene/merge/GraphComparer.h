@@ -3,11 +3,16 @@
 #include <string>
 #include <list>
 #include <map>
+#include <memory>
+
 #include "inode.h"
 #include "imap.h"
 #include "itextstream.h"
 
 namespace scene
+{
+
+namespace merge
 {
 
 class ComparisonResult
@@ -92,7 +97,7 @@ public:
     std::list<EntityDifference> differingEntities;
 };
 
-class SceneGraphComparer
+class GraphComparer
 {
 private:
     scene::IMapRootNodePtr _source;
@@ -113,7 +118,7 @@ public:
     using EntityMismatchByName = std::map<std::string, EntityMismatch>;
 
 public:
-    SceneGraphComparer(const scene::IMapRootNodePtr& source, const scene::IMapRootNodePtr& base) :
+    GraphComparer(const scene::IMapRootNodePtr& source, const scene::IMapRootNodePtr& base) :
         _source(source),
         _base(base),
         _result(new ComparisonResult(_source, _base))
@@ -141,5 +146,7 @@ private:
     std::list<ComparisonResult::PrimitiveDifference> compareChildNodes(
         const scene::INodePtr& sourceNode, const scene::INodePtr& baseNode);
 };
+
+}
 
 }

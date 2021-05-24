@@ -9,7 +9,7 @@
 #include "algorithm/Scene.h"
 #include "registry/registry.h"
 #include "scenelib.h"
-#include "scene/SceneGraphComparer.h"
+#include "scene/merge/GraphComparer.h"
 
 namespace test
 {
@@ -225,21 +225,23 @@ TEST_F(MapMergeTest, EntityFingerprintInsensitiveToChildOrder)
     EXPECT_EQ(comparable->getFingerprint(), originalFingerprint);
 }
 
-inline scene::ComparisonResult::Ptr performComparison(const std::string& targetMap, const std::string& sourceMapPath)
+using namespace scene::merge;
+
+inline ComparisonResult::Ptr performComparison(const std::string& targetMap, const std::string& sourceMapPath)
 {
     GlobalCommandSystem().executeCommand("OpenMap", cmd::Argument("maps/fingerprinting.mapx"));
 
     auto resource = GlobalMapResourceManager().createFromPath(sourceMapPath);
     EXPECT_TRUE(resource->load()) << "Test map not found in path " << sourceMapPath;
 
-    scene::SceneGraphComparer comparer(resource->getRootNode(), GlobalMapModule().getRoot());
+    GraphComparer comparer(resource->getRootNode(), GlobalMapModule().getRoot());
     comparer.compare();
 
     return comparer.getResult();
 }
 
-inline bool resultHasEntityDifference(const scene::ComparisonResult::Ptr& result, const std::string& name, 
-    const scene::ComparisonResult::EntityDifference::Type type)
+inline bool resultHasEntityDifference(const ComparisonResult::Ptr& result, const std::string& name, 
+    const ComparisonResult::EntityDifference::Type type)
 {
     for (const auto& difference : result->differingEntities)
     {
@@ -252,8 +254,8 @@ inline bool resultHasEntityDifference(const scene::ComparisonResult::Ptr& result
     return false;
 }
 
-inline std::size_t countPrimitiveDifference(const scene::ComparisonResult::EntityDifference& diff, 
-    const scene::ComparisonResult::PrimitiveDifference::Type type)
+inline std::size_t countPrimitiveDifference(const ComparisonResult::EntityDifference& diff, 
+    const ComparisonResult::PrimitiveDifference::Type type)
 {
     std::size_t count = 0;
 
@@ -268,8 +270,8 @@ inline std::size_t countPrimitiveDifference(const scene::ComparisonResult::Entit
     return count;
 }
 
-inline bool hasKeyValueDifference(const scene::ComparisonResult::EntityDifference& diff, 
-    const std::string& key, const std::string& value, scene::ComparisonResult::KeyValueDifference::Type type)
+inline bool hasKeyValueDifference(const ComparisonResult::EntityDifference& diff, 
+    const std::string& key, const std::string& value, ComparisonResult::KeyValueDifference::Type type)
 {
     for (const auto& difference : diff.differingKeyValues)
     {
@@ -282,7 +284,7 @@ inline bool hasKeyValueDifference(const scene::ComparisonResult::EntityDifferenc
     return false;
 }
 
-inline scene::ComparisonResult::EntityDifference getEntityDifference(const scene::ComparisonResult::Ptr& result, const std::string& name)
+inline ComparisonResult::EntityDifference getEntityDifference(const ComparisonResult::Ptr& result, const std::string& name)
 {
     for (const auto& difference : result->differingEntities)
     {
@@ -292,7 +294,7 @@ inline scene::ComparisonResult::EntityDifference getEntityDifference(const scene
         }
     }
 
-    return scene::ComparisonResult::EntityDifference();
+    return ComparisonResult::EntityDifference();
 }
 
 TEST_F(MapMergeTest, DetectMissingEntities)
@@ -300,7 +302,7 @@ TEST_F(MapMergeTest, DetectMissingEntities)
     auto result = performComparison("maps/fingerprinting.mapx", _context.getTestProjectPath() + "maps/fingerprinting_2.mapx");
 
     // The player start has been removed in the changed map
-    EXPECT_TRUE(resultHasEntityDifference(result, "info_player_start_1", scene::ComparisonResult::EntityDifference::Type::EntityMissingInSource));
+    EXPECT_TRUE(resultHasEntityDifference(result, "info_player_start_1", ComparisonResult::EntityDifference::Type::EntityMissingInSource));
 }
 
 TEST_F(MapMergeTest, DetectAddedEntities)
@@ -308,8 +310,8 @@ TEST_F(MapMergeTest, DetectAddedEntities)
     auto result = performComparison("maps/fingerprinting.mapx", _context.getTestProjectPath() + "maps/fingerprinting_2.mapx");
 
     // light_3 start has been added to the changed map
-    EXPECT_TRUE(resultHasEntityDifference(result, "light_3", scene::ComparisonResult::EntityDifference::Type::EntityMissingInBase));
-    EXPECT_TRUE(resultHasEntityDifference(result, "func_static_2", scene::ComparisonResult::EntityDifference::Type::EntityMissingInBase));
+    EXPECT_TRUE(resultHasEntityDifference(result, "light_3", ComparisonResult::EntityDifference::Type::EntityMissingInBase));
+    EXPECT_TRUE(resultHasEntityDifference(result, "func_static_2", ComparisonResult::EntityDifference::Type::EntityMissingInBase));
 }
 
 TEST_F(MapMergeTest, DetectAddedKeyValues)
@@ -319,8 +321,8 @@ TEST_F(MapMergeTest, DetectAddedKeyValues)
     // light_1 has different key values, dist_check_period = 40 has been added
     auto diff = getEntityDifference(result, "light_1");
 
-    EXPECT_EQ(diff.type, scene::ComparisonResult::EntityDifference::Type::EntityPresentButDifferent);
-    EXPECT_TRUE(hasKeyValueDifference(diff, "dist_check_period", "40", scene::ComparisonResult::KeyValueDifference::Type::KeyValueAdded));
+    EXPECT_EQ(diff.type, ComparisonResult::EntityDifference::Type::EntityPresentButDifferent);
+    EXPECT_TRUE(hasKeyValueDifference(diff, "dist_check_period", "40", ComparisonResult::KeyValueDifference::Type::KeyValueAdded));
 }
 
 TEST_F(MapMergeTest, DetectRemovedKeyValues)
@@ -330,8 +332,8 @@ TEST_F(MapMergeTest, DetectRemovedKeyValues)
     // light_1 has different key values, break = 1 has been removed
     auto diff = getEntityDifference(result, "light_1");
 
-    EXPECT_EQ(diff.type, scene::ComparisonResult::EntityDifference::Type::EntityPresentButDifferent);
-    EXPECT_TRUE(hasKeyValueDifference(diff, "break", "1", scene::ComparisonResult::KeyValueDifference::Type::KeyValueRemoved));
+    EXPECT_EQ(diff.type, ComparisonResult::EntityDifference::Type::EntityPresentButDifferent);
+    EXPECT_TRUE(hasKeyValueDifference(diff, "break", "1", ComparisonResult::KeyValueDifference::Type::KeyValueRemoved));
 }
 
 TEST_F(MapMergeTest, DetectChangedKeyValues)
@@ -341,13 +343,13 @@ TEST_F(MapMergeTest, DetectChangedKeyValues)
     // light_1 has different key values, "ai_see" has been changed to "1"
     auto diff = getEntityDifference(result, "light_1");
 
-    EXPECT_EQ(diff.type, scene::ComparisonResult::EntityDifference::Type::EntityPresentButDifferent);
-    EXPECT_TRUE(hasKeyValueDifference(diff, "ai_see", "1", scene::ComparisonResult::KeyValueDifference::Type::KeyValueChanged));
+    EXPECT_EQ(diff.type, ComparisonResult::EntityDifference::Type::EntityPresentButDifferent);
+    EXPECT_TRUE(hasKeyValueDifference(diff, "ai_see", "1", ComparisonResult::KeyValueDifference::Type::KeyValueChanged));
 
     // light_2 has a different origin
     diff = getEntityDifference(result, "light_2");
-    EXPECT_EQ(diff.type, scene::ComparisonResult::EntityDifference::Type::EntityPresentButDifferent);
-    EXPECT_TRUE(hasKeyValueDifference(diff, "origin", "280 160 0", scene::ComparisonResult::KeyValueDifference::Type::KeyValueChanged));
+    EXPECT_EQ(diff.type, ComparisonResult::EntityDifference::Type::EntityPresentButDifferent);
+    EXPECT_TRUE(hasKeyValueDifference(diff, "origin", "280 160 0", ComparisonResult::KeyValueDifference::Type::KeyValueChanged));
 }
 
 TEST_F(MapMergeTest, DetectChildPrimitiveChanges)
@@ -357,24 +359,24 @@ TEST_F(MapMergeTest, DetectChildPrimitiveChanges)
     // func_static_30 has changed primitives
     auto diff = getEntityDifference(result, "func_static_30");
 
-    EXPECT_EQ(diff.type, scene::ComparisonResult::EntityDifference::Type::EntityPresentButDifferent);
+    EXPECT_EQ(diff.type, ComparisonResult::EntityDifference::Type::EntityPresentButDifferent);
     EXPECT_EQ(diff.differingChildren.size(), 1);
-    EXPECT_EQ(diff.differingChildren.front().type, scene::ComparisonResult::PrimitiveDifference::Type::PrimitiveAdded);
+    EXPECT_EQ(diff.differingChildren.front().type, ComparisonResult::PrimitiveDifference::Type::PrimitiveAdded);
     EXPECT_EQ(diff.differingChildren.front().node->getNodeType(), scene::INode::Type::Brush);
 
     // func_static_1 has 2 additions and 1 removal (== 1 addition, 1 replacement)
     diff = getEntityDifference(result, "func_static_1");
 
-    EXPECT_EQ(diff.type, scene::ComparisonResult::EntityDifference::Type::EntityPresentButDifferent);
-    EXPECT_EQ(countPrimitiveDifference(diff, scene::ComparisonResult::PrimitiveDifference::Type::PrimitiveAdded), 2);
-    EXPECT_EQ(countPrimitiveDifference(diff, scene::ComparisonResult::PrimitiveDifference::Type::PrimitiveRemoved), 1);
+    EXPECT_EQ(diff.type, ComparisonResult::EntityDifference::Type::EntityPresentButDifferent);
+    EXPECT_EQ(countPrimitiveDifference(diff, ComparisonResult::PrimitiveDifference::Type::PrimitiveAdded), 2);
+    EXPECT_EQ(countPrimitiveDifference(diff, ComparisonResult::PrimitiveDifference::Type::PrimitiveRemoved), 1);
 
     // worldspawn has a couple of changes
     diff = getEntityDifference(result, "worldspawn");
 
-    EXPECT_EQ(diff.type, scene::ComparisonResult::EntityDifference::Type::EntityPresentButDifferent);
-    EXPECT_EQ(countPrimitiveDifference(diff, scene::ComparisonResult::PrimitiveDifference::Type::PrimitiveAdded), 3);
-    EXPECT_EQ(countPrimitiveDifference(diff, scene::ComparisonResult::PrimitiveDifference::Type::PrimitiveRemoved), 3);
+    EXPECT_EQ(diff.type, ComparisonResult::EntityDifference::Type::EntityPresentButDifferent);
+    EXPECT_EQ(countPrimitiveDifference(diff, ComparisonResult::PrimitiveDifference::Type::PrimitiveAdded), 3);
+    EXPECT_EQ(countPrimitiveDifference(diff, ComparisonResult::PrimitiveDifference::Type::PrimitiveRemoved), 3);
 }
 
 }
