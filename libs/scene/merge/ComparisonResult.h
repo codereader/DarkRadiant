@@ -62,8 +62,8 @@ public:
 
     struct EntityDifference
     {
-        std::string fingerprint;
-        scene::INodePtr node;
+        scene::INodePtr sourceNode;
+        scene::INodePtr baseNode;
         std::string entityName;
 
         enum class Type

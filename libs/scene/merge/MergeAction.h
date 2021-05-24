@@ -12,6 +12,9 @@ enum class ActionType
 {
     AddEntity,
     RemoveEntity,
+    AddKeyValue,
+    RemoveKeyValue,
+    ChangeKeyValue,
 };
 
 // Represents a single step of a merge process, like adding a brush,

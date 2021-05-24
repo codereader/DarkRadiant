@@ -101,16 +101,16 @@ void GraphComparer::processDifferingEntities(ComparisonResult& result, const Ent
 
     for (const auto& match : matchingByName)
     {
+        auto sourceNode = sourceMismatches.find(match.second.entityName)->second.node;
+        auto baseNode = baseMismatches.find(match.second.entityName)->second.node;
+
         auto& entityDiff = result.differingEntities.emplace_back(ComparisonResult::EntityDifference
         {
-            match.second.fingerPrint,
-            match.second.node,
+            sourceNode,
+            baseNode,
             match.second.entityName,
             ComparisonResult::EntityDifference::Type::EntityPresentButDifferent
         });
-
-        auto sourceNode = sourceMismatches.find(match.second.entityName)->second.node;
-        auto baseNode = baseMismatches.find(match.second.entityName)->second.node;
 
         // Analyse the key values
         entityDiff.differingKeyValues = compareKeyValues(sourceNode, baseNode);
@@ -123,7 +123,7 @@ void GraphComparer::processDifferingEntities(ComparisonResult& result, const Ent
     {
         result.differingEntities.emplace_back(ComparisonResult::EntityDifference
         {
-            mismatch.second.fingerPrint,
+            scene::INodePtr(), // source node is empty
             mismatch.second.node,
             mismatch.second.entityName,
             ComparisonResult::EntityDifference::Type::EntityMissingInSource
@@ -134,8 +134,8 @@ void GraphComparer::processDifferingEntities(ComparisonResult& result, const Ent
     {
         result.differingEntities.emplace_back(ComparisonResult::EntityDifference
         {
-            mismatch.second.fingerPrint,
             mismatch.second.node,
+            scene::INodePtr(), // base node is empty
             mismatch.second.entityName,
             ComparisonResult::EntityDifference::Type::EntityMissingInBase
         });
