@@ -237,20 +237,6 @@ inline ComparisonResult::Ptr performComparison(const std::string& targetMap, con
     return GraphComparer::Compare(resource->getRootNode(), GlobalMapModule().getRoot());
 }
 
-inline bool resultHasEntityDifference(const ComparisonResult::Ptr& result, const std::string& name, 
-    const ComparisonResult::EntityDifference::Type type)
-{
-    for (const auto& difference : result->differingEntities)
-    {
-        if (difference.entityName == name && difference.type == type)
-        {
-            return true;
-        }
-    }
-
-    return false;
-}
-
 inline std::size_t countPrimitiveDifference(const ComparisonResult::EntityDifference& diff, 
     const ComparisonResult::PrimitiveDifference::Type type)
 {
@@ -299,7 +285,11 @@ TEST_F(MapMergeTest, DetectMissingEntities)
     auto result = performComparison("maps/fingerprinting.mapx", _context.getTestProjectPath() + "maps/fingerprinting_2.mapx");
 
     // The player start has been removed in the changed map
-    EXPECT_TRUE(resultHasEntityDifference(result, "info_player_start_1", ComparisonResult::EntityDifference::Type::EntityMissingInSource));
+    auto diff = getEntityDifference(result, "info_player_start_1");
+    
+    EXPECT_EQ(diff.type, ComparisonResult::EntityDifference::Type::EntityMissingInSource);
+    EXPECT_TRUE(diff.baseNode);
+    EXPECT_FALSE(diff.sourceNode); // source node is missing, so it must be empty
 }
 
 TEST_F(MapMergeTest, DetectAddedEntities)
@@ -307,8 +297,16 @@ TEST_F(MapMergeTest, DetectAddedEntities)
     auto result = performComparison("maps/fingerprinting.mapx", _context.getTestProjectPath() + "maps/fingerprinting_2.mapx");
 
     // light_3 start has been added to the changed map
-    EXPECT_TRUE(resultHasEntityDifference(result, "light_3", ComparisonResult::EntityDifference::Type::EntityMissingInBase));
-    EXPECT_TRUE(resultHasEntityDifference(result, "func_static_2", ComparisonResult::EntityDifference::Type::EntityMissingInBase));
+    auto diff = getEntityDifference(result, "light_3");
+
+    EXPECT_EQ(diff.type, ComparisonResult::EntityDifference::Type::EntityMissingInBase);
+    EXPECT_TRUE(diff.sourceNode);
+    EXPECT_FALSE(diff.baseNode); // base node is missing, so it must be empty
+
+    diff = getEntityDifference(result, "func_static_2");
+    EXPECT_EQ(diff.type, ComparisonResult::EntityDifference::Type::EntityMissingInBase);
+    EXPECT_TRUE(diff.sourceNode);
+    EXPECT_FALSE(diff.baseNode); // base node is missing, so it must be empty
 }
 
 TEST_F(MapMergeTest, DetectAddedKeyValues)
