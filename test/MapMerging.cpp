@@ -416,6 +416,7 @@ TEST_F(MapMergeTest, MergeActionsForMissingEntities)
     auto result = performComparison("maps/fingerprinting.mapx", _context.getTestProjectPath() + "maps/fingerprinting_2.mapx");
     auto operation = MergeOperation::CreateFromComparisonResult(*result);
 
+    // light_3
     auto action = findAction<AddEntityAction>(operation, [](const std::shared_ptr<AddEntityAction>& action)
     {
         auto sourceEntity = Node_getEntity(action->getSourceNodeToAdd());
@@ -424,6 +425,16 @@ TEST_F(MapMergeTest, MergeActionsForMissingEntities)
 
     EXPECT_TRUE(action) << "No merge action found for missing entity";
 
+    // Check pre-requisites and apply the action
+    auto entityNode = algorithm::getEntityByName(result->getBaseRootNode(), "light_3");
+    EXPECT_FALSE(entityNode);
+
+    action->applyChanges();
+
+    entityNode = algorithm::getEntityByName(result->getBaseRootNode(), "light_3");
+    EXPECT_TRUE(entityNode);
+
+    // func_static_2
     action = findAction<AddEntityAction>(operation, [](const std::shared_ptr<AddEntityAction>& action)
     {
         auto sourceEntity = Node_getEntity(action->getSourceNodeToAdd());
@@ -431,6 +442,18 @@ TEST_F(MapMergeTest, MergeActionsForMissingEntities)
     });
 
     EXPECT_TRUE(action) << "No merge action found for missing entity";
+
+    // Check pre-requisites and apply the action
+    entityNode = algorithm::getEntityByName(result->getBaseRootNode(), "func_static_2");
+    EXPECT_FALSE(entityNode);
+
+    action->applyChanges();
+
+    entityNode = algorithm::getEntityByName(result->getBaseRootNode(), "func_static_2");
+    EXPECT_TRUE(entityNode);
+
+    // Assume the child primitives have been added too
+    EXPECT_TRUE(scene::hasChildPrimitives(entityNode));
 }
 
 TEST_F(MapMergeTest, MergeActionsForRemovedEntities)
@@ -445,6 +468,15 @@ TEST_F(MapMergeTest, MergeActionsForRemovedEntities)
     });
 
     EXPECT_TRUE(action) << "No merge action found for removed entity";
+
+    // Check pre-requisites and apply the action
+    auto entityNode = algorithm::getEntityByName(result->getBaseRootNode(), "info_player_start_1");
+    EXPECT_TRUE(entityNode);
+
+    action->applyChanges();
+
+    entityNode = algorithm::getEntityByName(result->getBaseRootNode(), "info_player_start_1");
+    EXPECT_FALSE(entityNode);
 }
 
 TEST_F(MapMergeTest, MergeActionsForAddedKeyValues)
