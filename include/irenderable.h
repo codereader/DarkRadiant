@@ -99,6 +99,7 @@ public:
             Faces       = 1 << 0, /// Highlight faces of subsequently-submitted objects, if supported
             Primitives  = 1 << 1, /// Highlight primitives of subsequently-submitted objects, if supported
             GroupMember = 1 << 2, /// Highlight as member of group, if supported
+            MergeAction = 1 << 3, /// Highlight as merge action
         };
     };
 
@@ -149,6 +150,7 @@ public:
             NoHighlight = 0,
             Selected    = 1 << 0,
             GroupMember = 1 << 1,
+            MergeAction = 1 << 2,
         };
     };
 

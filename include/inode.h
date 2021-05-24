@@ -102,6 +102,7 @@ public:
 		Model,
 		Particle,
         EntityConnection,
+        MergeAction,
 	};
 
 public:

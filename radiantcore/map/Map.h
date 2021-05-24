@@ -18,6 +18,7 @@
 #include <sigc++/signal.h>
 #include "time/StopWatch.h"
 #include "scene/merge/MergeOperation.h"
+#include "MergeActionNode.h"
 
 class TextInputStream;
 
@@ -67,6 +68,7 @@ private:
 	std::size_t _shutdownListener;
 
     scene::merge::MergeOperation::Ptr _mergeOperation;
+    std::list<MergeActionNode::Ptr> _mergeActionNodes;
 
 private:
     std::string getSaveConfirmationText() const;

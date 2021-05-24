@@ -223,12 +223,14 @@ void XYWnd::captureStates()
 {
     _selectedShader = GlobalRenderSystem().capture("$XY_OVERLAY");
 	_selectedShaderGroup = GlobalRenderSystem().capture("$XY_OVERLAY_GROUP");
+    _mergeActionShader = GlobalRenderSystem().capture("$XY_OVERLAY_GROUP");
 }
 
 void XYWnd::releaseStates()
 {
 	_selectedShader.reset();
 	_selectedShaderGroup.reset();
+    _mergeActionShader.reset();
 }
 
 void XYWnd::ensureFont()
@@ -897,6 +899,13 @@ void XYWnd::drawGrid()
         }
     }
 
+    if (GlobalMapModule().getEditMode() == IMap::EditMode::Merge)
+    {
+        glColor3d(0.9, 0, 0);
+        glRasterPos2d(_origin[nDim1] - 50 / _scale, _origin[nDim2] + h - 30 / _scale);
+        _font->drawString("Merge Mode");
+    }
+
     if (GlobalXYWnd().showAxes())
     {
         const char* g_AxisName[3] = { "X", "Y", "Z" };
@@ -1351,7 +1360,7 @@ void XYWnd::draw()
 
     {
         // Construct the renderer and render the scene
-        XYRenderer renderer(flagsMask, _selectedShader.get(), _selectedShaderGroup.get());
+        XYRenderer renderer(flagsMask, _selectedShader.get(), _selectedShaderGroup.get(), _mergeActionShader.get());
 
         // First pass (scenegraph traversal)
         render::RenderableCollectionWalker::CollectRenderablesInScene(renderer,
@@ -1708,5 +1717,6 @@ IInteractiveView& XYWnd::getInteractiveView()
 /* STATICS */
 ShaderPtr XYWnd::_selectedShader;
 ShaderPtr XYWnd::_selectedShaderGroup;
+ShaderPtr XYWnd::_mergeActionShader;
 
 } // namespace

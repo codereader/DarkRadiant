@@ -46,6 +46,10 @@ public:
     // It's the caller's responsibility to set up any Undo operations.
     // Implementations are allowed to throw std::runtime_errors on failure.
     virtual void applyChanges() = 0;
+
+    // Returns the node this action is affecting when applied
+    // This is used to identify the scene node and display it appropriately
+    virtual scene::INodePtr getAffectedNode() = 0;
 };
 
 // Various implementations of the above MergeAction base type following
@@ -74,6 +78,11 @@ public:
     {
         removeNodeFromParent(_nodeToRemove);
     }
+
+    scene::INodePtr getAffectedNode() override
+    {
+        return getNodeToRemove();
+    }
 };
 
 class RemoveChildAction :
@@ -100,6 +109,7 @@ class AddCloneToParentAction :
 private:
     scene::INodePtr _node;
     scene::INodePtr _parent;
+    scene::INodePtr _cloneToBeInserted;
 
 protected:
     // Will add the given node to the parent when applyChanges() is called
@@ -110,20 +120,20 @@ protected:
     {
         assert(_node);
         assert(Node_getCloneable(node));
+
+        // No post-clone callback since we don't care about selection groups right now
+        _cloneToBeInserted = cloneNodeIncludingDescendants(_node, PostCloneCallback());
+
+        if (!_cloneToBeInserted)
+        {
+            throw std::runtime_error("Node " + _node->name() + " is not cloneable");
+        }
     }
 
 public:
     void applyChanges() override
     {
-        // No post-clone callback since we don't care about selection groups right now
-        auto cloned = cloneNodeIncludingDescendants(_node, PostCloneCallback());
-
-        if (!cloned)
-        {
-            throw std::runtime_error("Node " + _node->name() + " is not cloneable");
-        }
-
-        addNodeToContainer(cloned, _parent);
+        addNodeToContainer(_cloneToBeInserted, _parent);
     }
 
     const scene::INodePtr& getParent() const
@@ -134,6 +144,11 @@ public:
     const scene::INodePtr& getSourceNodeToAdd() const
     {
         return _node;
+    }
+
+    scene::INodePtr getAffectedNode() override
+    {
+        return _cloneToBeInserted;
     }
 };
 
@@ -202,6 +217,11 @@ public:
     const std::string& getValue() const
     {
         return _value;
+    }
+
+    scene::INodePtr getAffectedNode() override
+    {
+        return getEntityNode();
     }
 };
 

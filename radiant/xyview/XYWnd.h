@@ -58,6 +58,7 @@ protected:
     // Shader to use for selected items
     static ShaderPtr _selectedShader;
 	static ShaderPtr _selectedShaderGroup;
+	static ShaderPtr _mergeActionShader;
 
     Vector3 _mousePosition;
 

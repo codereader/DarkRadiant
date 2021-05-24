@@ -54,6 +54,7 @@
 #include "command/ExecutionNotPossible.h"
 #include "MapPropertyInfoFileModule.h"
 #include "messages/NotificationMessage.h"
+#include "MergeActionNode.h"
 
 #include <fmt/format.h>
 #include "scene/ChildPrimitives.h"
@@ -981,6 +982,19 @@ void Map::mergeMap(const cmd::ArgumentList& args)
 
             // Create the merge actions
             _mergeOperation = scene::merge::MergeOperation::CreateFromComparisonResult(*result);
+
+            // Create renderable merge actions
+            _mergeOperation->foreachAction([&](const scene::merge::MergeAction::Ptr& action)
+            {
+                if (action->getType() == scene::merge::ActionType::AddChildNode ||
+                    action->getType() == scene::merge::ActionType::AddEntity)
+                {
+                    return;
+                }
+
+                _mergeActionNodes.emplace_back(std::make_shared<MergeActionNode>(action));
+                getRoot()->addChildNode(_mergeActionNodes.back());
+            });
 
             // Switch to merge mode
             setEditMode(EditMode::Merge);

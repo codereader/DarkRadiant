@@ -2139,5 +2139,8 @@
     <ClInclude Include="..\..\radiantcore\log\SegFaultHandler.h">
       <Filter>src\log</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\MergeActionNode.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

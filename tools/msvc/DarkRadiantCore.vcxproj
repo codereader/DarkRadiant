@@ -841,6 +841,7 @@
     <ClInclude Include="..\..\radiantcore\map\MapResource.h" />
     <ClInclude Include="..\..\radiantcore\map\MapResourceLoader.h" />
     <ClInclude Include="..\..\radiantcore\map\MapResourceManager.h" />
+    <ClInclude Include="..\..\radiantcore\map\MergeActionNode.h" />
     <ClInclude Include="..\..\radiantcore\map\ModelBreakdown.h" />
     <ClInclude Include="..\..\radiantcore\map\mru\MRU.h" />
     <ClInclude Include="..\..\radiantcore\map\mru\MRUList.h" />

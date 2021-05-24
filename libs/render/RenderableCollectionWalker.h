@@ -62,6 +62,15 @@ public:
 			highlightFlags |= parent->getHighlightFlags();
 		}
 
+        if (highlightFlags & Renderable::Highlight::MergeAction)
+        {
+            _collector.setHighlightFlag(RenderableCollector::Highlight::MergeAction, true);
+        }
+        else
+        {
+            _collector.setHighlightFlag(RenderableCollector::Highlight::MergeAction, false);
+        }
+
         if (highlightFlags & Renderable::Highlight::Selected)
         {
             if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent)

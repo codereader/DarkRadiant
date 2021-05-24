@@ -10,11 +10,13 @@ class XYRenderer: public RenderableCollector
     {
         bool highlightPrimitives;
         bool highlightAsGroupMember;
+        bool highlightAsMergeAction;
 
         // Constructor
         State() : 
             highlightPrimitives(false), 
-            highlightAsGroupMember(false)
+            highlightAsGroupMember(false),
+            highlightAsMergeAction(false)
         {}
     };
 
@@ -24,12 +26,14 @@ class XYRenderer: public RenderableCollector
     // Shader to use for highlighted objects
     Shader* _selectedShader;
     Shader* _selectedShaderGroup;
+    Shader* _mergeActionShader;
 
 public:
-    XYRenderer(RenderStateFlags globalstate, Shader* selected, Shader* selectedGroup) :
+    XYRenderer(RenderStateFlags globalstate, Shader* selected, Shader* selectedGroup, Shader* mergeActionShader) :
         _globalstate(globalstate),
         _selectedShader(selected),
-        _selectedShaderGroup(selectedGroup)
+        _selectedShaderGroup(selectedGroup),
+        _mergeActionShader(mergeActionShader)
     {}
 
     bool supportsFullMaterials() const override
@@ -48,6 +52,11 @@ public:
         {
             _state.highlightAsGroupMember = enabled;
         }
+
+        if (flags & Highlight::MergeAction)
+        {
+            _state.highlightAsMergeAction = enabled;
+        }
     }
 
     // Ortho view never processes lights
@@ -59,7 +68,11 @@ public:
                        const LitObject* /* litObject */,
                        const IRenderEntity* entity = nullptr) override
     {
-        if (_state.highlightPrimitives)
+        if (_state.highlightAsMergeAction)
+        {
+            _mergeActionShader->addRenderable(renderable, localToWorld, nullptr, entity);
+        }
+        else if (_state.highlightPrimitives)
         {
             if (_state.highlightAsGroupMember)
                 _selectedShaderGroup->addRenderable(renderable, localToWorld,
