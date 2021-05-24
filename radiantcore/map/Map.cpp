@@ -214,6 +214,17 @@ Map::MapEventSignal Map::signal_mapEvent() const
 	return _mapEvent;
 }
 
+Map::EditMode Map::getEditMode()
+{
+    return _editMode;
+}
+
+void Map::setEditMode(EditMode mode)
+{
+    _editMode = mode;
+    SceneChangeNotify();
+}
+
 const scene::INodePtr& Map::getWorldspawn()
 {
     return _worldSpawnNode;
@@ -969,7 +980,10 @@ void Map::mergeMap(const cmd::ArgumentList& args)
             auto result = scene::merge::GraphComparer::Compare(otherRoot, getRoot());
 
             // Create the merge actions
-            auto operation = scene::merge::MergeOperation::CreateFromComparisonResult(*result);
+            _mergeOperation = scene::merge::MergeOperation::CreateFromComparisonResult(*result);
+
+            // Switch to merge mode
+            setEditMode(EditMode::Merge);
         }
     }
     catch (const IMapResource::OperationException& ex)

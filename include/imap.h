@@ -110,6 +110,18 @@ public:
 	/// Returns the signal that is emitted on various events
 	virtual MapEventSignal signal_mapEvent() const = 0;
 
+    enum class EditMode
+    {
+        Normal,
+        Merge,
+    };
+
+    // The currently active edit mode
+    virtual EditMode getEditMode() = 0;
+
+    // Change the edit mode to the specified value
+    virtual void setEditMode(EditMode mode) = 0;
+
 	/**
 	 * Returns the worldspawn node of this map. The worldspawn
 	 * node is NOT created if it doesn't exist yet, so this

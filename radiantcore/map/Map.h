@@ -17,6 +17,7 @@
 
 #include <sigc++/signal.h>
 #include "time/StopWatch.h"
+#include "scene/merge/MergeOperation.h"
 
 class TextInputStream;
 
@@ -31,6 +32,9 @@ class Map :
 	public IMap,
 	public scene::Graph::Observer
 {
+private:
+    EditMode _editMode;
+
 	// The map name
 	std::string _mapName;
 
@@ -62,6 +66,8 @@ class Map :
 
 	std::size_t _shutdownListener;
 
+    scene::merge::MergeOperation::Ptr _mergeOperation;
+
 private:
     std::string getSaveConfirmationText() const;
 
@@ -69,6 +75,10 @@ public:
 	Map();
 
 	MapEventSignal signal_mapEvent() const override;
+
+    EditMode getEditMode() override;
+    void setEditMode(EditMode mode) override;
+
 	const scene::INodePtr& getWorldspawn() override;
 	const scene::INodePtr& findOrInsertWorldspawn() override;
 	scene::IMapRootNodePtr getRoot() override;

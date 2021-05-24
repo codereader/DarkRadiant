@@ -18,7 +18,6 @@
 #include "scenelib.h"
 #include "entitylib.h"
 #include "command/ExecutionFailure.h"
-#include "scene/merge/GraphComparer.h"
 
 #include "string/join.h"
 
