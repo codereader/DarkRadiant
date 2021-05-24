@@ -10,44 +10,64 @@ namespace scene
 namespace merge
 {
 
-class RemoveEntityAction :
+class RemoveNodeFromParentAction :
     public MergeAction
 {
 private:
-    scene::INodePtr _node;
+    scene::INodePtr _child;
 
-public:
-    RemoveEntityAction(const scene::INodePtr& node) :
-        MergeAction(ActionType::RemoveEntity),
-        _node(node)
+protected:
+    RemoveNodeFromParentAction(const scene::INodePtr& child, ActionType type) :
+        MergeAction(type),
+        _child(child)
     {
-        assert(_node);
+        assert(_child);
     }
 
+public:
     void applyChanges() override
     {
-        removeNodeFromParent(_node);
+        removeNodeFromParent(_child);
     }
 };
 
-class AddEntityAction :
+class RemoveChildAction :
+    public RemoveNodeFromParentAction
+{
+public:
+    RemoveChildAction(const scene::INodePtr& node) :
+        RemoveNodeFromParentAction(node, ActionType::RemoveChildNode)
+    {}
+};
+
+class RemoveEntityAction :
+    public RemoveNodeFromParentAction
+{
+public:
+    RemoveEntityAction(const scene::INodePtr& node) :
+        RemoveNodeFromParentAction(node, ActionType::RemoveEntity)
+    {}
+};
+
+class AddCloneToParentAction :
     public MergeAction
 {
 private:
     scene::INodePtr _node;
-    scene::IMapRootNodePtr _targetRoot;
+    scene::INodePtr _parent;
 
-public:
-    // Will add the given node to the targetRoot when applyChanges() is called
-    AddEntityAction(const scene::INodePtr& node, const scene::IMapRootNodePtr& targetRoot) :
-        MergeAction(ActionType::AddEntity),
+protected:
+    // Will add the given node to the parent when applyChanges() is called
+    AddCloneToParentAction(const scene::INodePtr& node, const scene::INodePtr& parent, ActionType type) :
+        MergeAction(type),
         _node(node),
-        _targetRoot(targetRoot)
+        _parent(parent)
     {
         assert(_node);
         assert(Node_getCloneable(node));
     }
 
+public:
     void applyChanges() override
     {
         // No post-clone callback since we don't care about selection groups right now
@@ -58,8 +78,26 @@ public:
             throw std::runtime_error("Node " + _node->name() + " is not cloneable");
         }
 
-        addNodeToContainer(cloned, _targetRoot);
+        addNodeToContainer(cloned, _parent);
     }
+};
+
+class AddEntityAction :
+    public AddCloneToParentAction
+{
+public:
+    AddEntityAction(const scene::INodePtr& node, const scene::IMapRootNodePtr& targetRoot) :
+        AddCloneToParentAction(node, targetRoot, ActionType::AddEntity)
+    {}
+};
+
+class AddChildAction :
+    public AddCloneToParentAction
+{
+public:
+    AddChildAction(const scene::INodePtr& node, const scene::INodePtr& parent) :
+        AddCloneToParentAction(node, parent, ActionType::AddChildNode)
+    {}
 };
 
 class SetEntityKeyValueAction :
@@ -129,20 +167,35 @@ void MergeOperation::addAction(const MergeAction::Ptr& action)
 }
 
 void MergeOperation::createActionsForKeyValueDiff(const ComparisonResult::KeyValueDifference& difference, 
-    const scene::INodePtr& targetNode)
+    const scene::INodePtr& targetEntity)
 {
     switch (difference.type)
     {
     case ComparisonResult::KeyValueDifference::Type::KeyValueAdded:
-        addAction(std::make_shared<AddEntityKeyValueAction>(targetNode, difference.key, difference.value));
+        addAction(std::make_shared<AddEntityKeyValueAction>(targetEntity, difference.key, difference.value));
         break;
 
     case ComparisonResult::KeyValueDifference::Type::KeyValueRemoved:
-        addAction(std::make_shared<RemoveEntityKeyValueAction>(targetNode, difference.key));
+        addAction(std::make_shared<RemoveEntityKeyValueAction>(targetEntity, difference.key));
         break;
 
     case ComparisonResult::KeyValueDifference::Type::KeyValueChanged:
-        addAction(std::make_shared<ChangeEntityKeyValueAction>(targetNode, difference.key, difference.value));
+        addAction(std::make_shared<ChangeEntityKeyValueAction>(targetEntity, difference.key, difference.value));
+        break;
+    }
+}
+
+void MergeOperation::createActionsForPrimitiveDiff(const ComparisonResult::PrimitiveDifference& difference,
+    const scene::INodePtr& targetEntity)
+{
+    switch (difference.type)
+    {
+    case ComparisonResult::PrimitiveDifference::Type::PrimitiveAdded:
+        addAction(std::make_shared<AddChildAction>(difference.node, targetEntity));
+        break;
+
+    case ComparisonResult::PrimitiveDifference::Type::PrimitiveRemoved:
+        addAction(std::make_shared<RemoveChildAction>(difference.node));
         break;
     }
 }
@@ -164,6 +217,11 @@ void MergeOperation::createActionsForEntity(const ComparisonResult::EntityDiffer
         for (const auto& keyValueDiff : difference.differingKeyValues)
         {
             createActionsForKeyValueDiff(keyValueDiff, difference.baseNode);
+        }
+
+        for (const auto& primitiveDiff : difference.differingChildren)
+        {
+            createActionsForPrimitiveDiff(primitiveDiff, difference.baseNode);
         }
         break;
     }

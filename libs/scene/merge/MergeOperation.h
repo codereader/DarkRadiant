@@ -36,7 +36,9 @@ public:
 private:
     void createActionsForEntity(const ComparisonResult::EntityDifference& difference);
     void createActionsForKeyValueDiff(const ComparisonResult::KeyValueDifference& difference,
-        const scene::INodePtr& targetNode);
+        const scene::INodePtr& targetEntity);
+    void createActionsForPrimitiveDiff(const ComparisonResult::PrimitiveDifference& difference,
+        const scene::INodePtr& targetEntity);
 };
 
 }

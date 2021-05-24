@@ -15,6 +15,8 @@ enum class ActionType
     AddKeyValue,
     RemoveKeyValue,
     ChangeKeyValue,
+    AddChildNode,
+    RemoveChildNode,
 };
 
 // Represents a single step of a merge process, like adding a brush,
