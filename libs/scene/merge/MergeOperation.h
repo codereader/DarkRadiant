@@ -12,19 +12,21 @@ namespace merge
 {
 
 // A MergeOperation groups one or more merge actions
-// together in order to apply a set of changes to an existing map
+// together in order to apply a set of changes from source => base
 class MergeOperation
 {
 private:
-    scene::IMapRootNodePtr _targetRoot;
+    scene::IMapRootNodePtr _sourceRoot;
+    scene::IMapRootNodePtr _baseRoot;
 
     std::list<MergeAction::Ptr> _actions;
 
 public:
     using Ptr = std::shared_ptr<MergeOperation>;
 
-    MergeOperation(scene::IMapRootNodePtr targetRoot) :
-        _targetRoot(targetRoot)
+    MergeOperation(scene::IMapRootNodePtr sourceRoot, scene::IMapRootNodePtr baseRoot) :
+        _sourceRoot(sourceRoot),
+        _baseRoot(baseRoot)
     {}
 
     // Creates the merge operation from the given comparison result. 

@@ -209,7 +209,7 @@ void MergeOperation::createActionsForEntity(const ComparisonResult::EntityDiffer
         break;
 
     case ComparisonResult::EntityDifference::Type::EntityMissingInBase:
-        addAction(std::make_shared<AddEntityAction>(difference.sourceNode, _targetRoot));
+        addAction(std::make_shared<AddEntityAction>(difference.sourceNode, _baseRoot));
         break;
 
     case ComparisonResult::EntityDifference::Type::EntityPresentButDifferent:
@@ -228,11 +228,11 @@ void MergeOperation::createActionsForEntity(const ComparisonResult::EntityDiffer
     };
 }
 
-MergeOperation::Ptr MergeOperation::CreateFromComparisonResult(const ComparisonResult& comparisonResult)
+MergeOperation::Ptr MergeOperation::CreateFromComparisonResult(const ComparisonResult& result)
 {
-    auto operation = std::make_shared<MergeOperation>(comparisonResult.getBaseRootNode());
+    auto operation = std::make_shared<MergeOperation>(result.getSourceRootNode(), result.getBaseRootNode());
 
-    for (const auto& difference : comparisonResult.differingEntities)
+    for (const auto& difference : result.differingEntities)
     {
         operation->createActionsForEntity(difference);
     }

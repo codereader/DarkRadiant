@@ -96,6 +96,11 @@ public:
     {
         return _baseRoot;
     }
+
+    const scene::IMapRootNodePtr& getSourceRootNode() const
+    {
+        return _sourceRoot;
+    }
 };
 
 }
