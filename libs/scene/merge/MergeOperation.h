@@ -2,7 +2,7 @@
 
 #include <list>
 #include <memory>
-#include "../SceneGraphComparer.h"
+#include "ComparisonResult.h"
 #include "MergeAction.h"
 
 namespace scene

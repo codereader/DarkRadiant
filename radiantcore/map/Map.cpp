@@ -57,6 +57,8 @@
 
 #include <fmt/format.h>
 #include "scene/ChildPrimitives.h"
+#include "scene/merge/GraphComparer.h"
+#include "scene/merge/MergeOperation.h"
 
 namespace map 
 {
@@ -964,7 +966,10 @@ void Map::mergeMap(const cmd::ArgumentList& args)
             const auto& otherRoot = resource->getRootNode();
 
             // Compare the scenes and get the report
-            auto result = algorithm::compareGraphs(otherRoot, getRoot());
+            auto result = scene::merge::GraphComparer::Compare(otherRoot, getRoot());
+
+            // Create the merge actions
+            auto operation = scene::merge::MergeOperation::CreateFromComparisonResult(*result);
         }
     }
     catch (const IMapResource::OperationException& ex)

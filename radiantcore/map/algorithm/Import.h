@@ -3,7 +3,6 @@
 #include <istream>
 #include <string>
 #include <memory>
-#include "scene/merge/ComparisonResult.h"
 
 namespace scene
 {
@@ -55,9 +54,6 @@ MapFormatPtr determineMapFormat(std::istream& stream, const std::string& type);
  * After this call, the stream is guaranteed to be rewound to the beginning
   */
 MapFormatPtr determineMapFormat(std::istream& stream);
-
-// Runs a comparison of "source" (changed map) against the "base" (original)
-scene::merge::ComparisonResult::Ptr compareGraphs(const scene::IMapRootNodePtr& source, const scene::IMapRootNodePtr& base);
 
 }
 
