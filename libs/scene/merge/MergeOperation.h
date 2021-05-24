@@ -35,6 +35,11 @@ public:
 
     void addAction(const MergeAction::Ptr& action);
 
+    // Executes all actions defined in this operation
+    void applyActions();
+
+    void foreachAction(const std::function<void(const MergeAction::Ptr&)>& visitor);
+
 private:
     void createActionsForEntity(const ComparisonResult::EntityDifference& difference);
     void createActionsForKeyValueDiff(const ComparisonResult::KeyValueDifference& difference,

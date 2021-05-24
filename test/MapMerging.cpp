@@ -10,6 +10,7 @@
 #include "registry/registry.h"
 #include "scenelib.h"
 #include "scene/merge/GraphComparer.h"
+#include "scene/merge/MergeOperation.h"
 
 namespace test
 {
@@ -372,6 +373,47 @@ TEST_F(MapMergeTest, DetectChildPrimitiveChanges)
     EXPECT_EQ(diff.type, ComparisonResult::EntityDifference::Type::EntityPresentButDifferent);
     EXPECT_EQ(countPrimitiveDifference(diff, ComparisonResult::PrimitiveDifference::Type::PrimitiveAdded), 3);
     EXPECT_EQ(countPrimitiveDifference(diff, ComparisonResult::PrimitiveDifference::Type::PrimitiveRemoved), 3);
+}
+
+template<typename T>
+std::shared_ptr<T> findAction(const MergeOperation::Ptr& operation, const std::function<bool(const std::shared_ptr<T>&)>& predicate)
+{
+    std::shared_ptr<T> foundAction;
+
+    operation->foreachAction([&](const MergeAction::Ptr& action)
+    {
+        if (foundAction) return;
+
+        auto derivedAction = std::dynamic_pointer_cast<T>(action);
+
+        if (!derivedAction || !predicate(derivedAction)) return;
+
+        foundAction = derivedAction;
+    });
+
+    return foundAction;
+}
+
+TEST_F(MapMergeTest, MergeActionsForMissingEntities)
+{
+    auto result = performComparison("maps/fingerprinting.mapx", _context.getTestProjectPath() + "maps/fingerprinting_2.mapx");
+    auto operation = MergeOperation::CreateFromComparisonResult(*result);
+
+    auto addEntityAction = findAction<AddEntityAction>(operation, [](const std::shared_ptr<AddEntityAction>& action)
+    {
+        auto sourceEntity = Node_getEntity(action->getSourceNodeToAdd());
+        return sourceEntity->getKeyValue("name") == "light_3";
+    });
+
+    EXPECT_TRUE(addEntityAction) << "No merge action found for missing entity";
+
+    addEntityAction = findAction<AddEntityAction>(operation, [](const std::shared_ptr<AddEntityAction>& action)
+    {
+        auto sourceEntity = Node_getEntity(action->getSourceNodeToAdd());
+        return sourceEntity->getKeyValue("name") == "func_static_2";
+    });
+
+    EXPECT_TRUE(addEntityAction) << "No merge action found for missing entity";
 }
 
 }
