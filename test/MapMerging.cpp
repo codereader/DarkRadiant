@@ -394,26 +394,150 @@ std::shared_ptr<T> findAction(const MergeOperation::Ptr& operation, const std::f
     return foundAction;
 }
 
+template<typename T>
+std::size_t countActions(const MergeOperation::Ptr& operation, const std::function<bool(const std::shared_ptr<T>&)>& predicate)
+{
+    std::size_t count = 0;
+
+    operation->foreachAction([&](const MergeAction::Ptr& action)
+    {
+        auto derivedAction = std::dynamic_pointer_cast<T>(action);
+
+        if (!derivedAction || !predicate(derivedAction)) return;
+
+        ++count;
+    });
+
+    return count;
+}
+
 TEST_F(MapMergeTest, MergeActionsForMissingEntities)
 {
     auto result = performComparison("maps/fingerprinting.mapx", _context.getTestProjectPath() + "maps/fingerprinting_2.mapx");
     auto operation = MergeOperation::CreateFromComparisonResult(*result);
 
-    auto addEntityAction = findAction<AddEntityAction>(operation, [](const std::shared_ptr<AddEntityAction>& action)
+    auto action = findAction<AddEntityAction>(operation, [](const std::shared_ptr<AddEntityAction>& action)
     {
         auto sourceEntity = Node_getEntity(action->getSourceNodeToAdd());
         return sourceEntity->getKeyValue("name") == "light_3";
     });
 
-    EXPECT_TRUE(addEntityAction) << "No merge action found for missing entity";
+    EXPECT_TRUE(action) << "No merge action found for missing entity";
 
-    addEntityAction = findAction<AddEntityAction>(operation, [](const std::shared_ptr<AddEntityAction>& action)
+    action = findAction<AddEntityAction>(operation, [](const std::shared_ptr<AddEntityAction>& action)
     {
         auto sourceEntity = Node_getEntity(action->getSourceNodeToAdd());
         return sourceEntity->getKeyValue("name") == "func_static_2";
     });
 
-    EXPECT_TRUE(addEntityAction) << "No merge action found for missing entity";
+    EXPECT_TRUE(action) << "No merge action found for missing entity";
+}
+
+TEST_F(MapMergeTest, MergeActionsForRemovedEntities)
+{
+    auto result = performComparison("maps/fingerprinting.mapx", _context.getTestProjectPath() + "maps/fingerprinting_2.mapx");
+    auto operation = MergeOperation::CreateFromComparisonResult(*result);
+
+    auto action = findAction<RemoveEntityAction>(operation, [](const std::shared_ptr<RemoveEntityAction>& action)
+    {
+        auto entity = Node_getEntity(action->getNodeToRemove());
+        return entity->getKeyValue("name") == "info_player_start_1";
+    });
+
+    EXPECT_TRUE(action) << "No merge action found for removed entity";
+}
+
+TEST_F(MapMergeTest, MergeActionsForAddedKeyValues)
+{
+    auto result = performComparison("maps/fingerprinting.mapx", _context.getTestProjectPath() + "maps/fingerprinting_2.mapx");
+    auto operation = MergeOperation::CreateFromComparisonResult(*result);
+
+    auto action = findAction<AddEntityKeyValueAction>(operation, [](const std::shared_ptr<AddEntityKeyValueAction>& action)
+    {
+        auto entity = Node_getEntity(action->getEntityNode());
+        return entity->getKeyValue("name") == "light_1" && action->getKey() == "dist_check_period" && action->getValue() == "40";
+    });
+
+    EXPECT_TRUE(action) << "No merge action found for added key value";
+}
+
+TEST_F(MapMergeTest, MergeActionsForRemovedKeyValues)
+{
+    auto result = performComparison("maps/fingerprinting.mapx", _context.getTestProjectPath() + "maps/fingerprinting_2.mapx");
+    auto operation = MergeOperation::CreateFromComparisonResult(*result);
+
+    auto action = findAction<RemoveEntityKeyValueAction>(operation, [](const std::shared_ptr<RemoveEntityKeyValueAction>& action)
+    {
+        auto entity = Node_getEntity(action->getEntityNode());
+        return entity->getKeyValue("name") == "light_1" && action->getKey() == "break" && action->getValue().empty();
+    });
+
+    EXPECT_TRUE(action) << "No merge action found for removed key value";
+}
+
+TEST_F(MapMergeTest, MergeActionsForChangedKeyValues)
+{
+    auto result = performComparison("maps/fingerprinting.mapx", _context.getTestProjectPath() + "maps/fingerprinting_2.mapx");
+    auto operation = MergeOperation::CreateFromComparisonResult(*result);
+
+    auto action = findAction<ChangeEntityKeyValueAction>(operation, [](const std::shared_ptr<ChangeEntityKeyValueAction>& action)
+    {
+        auto entity = Node_getEntity(action->getEntityNode());
+        return entity->getKeyValue("name") == "light_1" && action->getKey() == "ai_see" && action->getValue() == "1";
+    });
+
+    EXPECT_TRUE(action) << "No merge action found for changed key value";
+
+    action = findAction<ChangeEntityKeyValueAction>(operation, [](const std::shared_ptr<ChangeEntityKeyValueAction>& action)
+    {
+        auto entity = Node_getEntity(action->getEntityNode());
+        return entity->getKeyValue("name") == "light_2" && action->getKey() == "origin" && action->getValue() == "280 160 0";
+    });
+
+    EXPECT_TRUE(action) << "No merge action found for changed key value";
+}
+
+TEST_F(MapMergeTest, MergeActionsForChangedPrimitives)
+{
+    auto result = performComparison("maps/fingerprinting.mapx", _context.getTestProjectPath() + "maps/fingerprinting_2.mapx");
+    auto operation = MergeOperation::CreateFromComparisonResult(*result);
+
+    auto addAction = findAction<AddChildAction>(operation, [](const std::shared_ptr<AddChildAction>& action)
+    {
+        auto entity = Node_getEntity(action->getParent());
+        return entity->getKeyValue("name") == "func_static_30" && action->getSourceNodeToAdd()->getNodeType() == scene::INode::Type::Brush;
+    });
+
+    EXPECT_TRUE(addAction) << "No merge action found for added child node";
+
+    // func_static_1 has 2 additions and 1 removal (== 1 addition, 1 replacement)
+    auto addActionCount = countActions<AddChildAction>(operation, [](const std::shared_ptr<AddChildAction>& action)
+    {
+        auto entity = Node_getEntity(action->getParent());
+        return entity->getKeyValue("name") == "func_static_1";
+    });
+    auto removeActionCount = countActions<RemoveChildAction>(operation, [](const std::shared_ptr<RemoveChildAction>& action)
+    {
+        auto entity = Node_getEntity(action->getNodeToRemove()->getParent());
+        return entity->getKeyValue("name") == "func_static_1";
+    });
+
+    EXPECT_EQ(addActionCount, 2) << "No merge action found for added child node";
+    EXPECT_EQ(removeActionCount, 1) << "No merge action found for removed child node";
+
+    addActionCount = countActions<AddChildAction>(operation, [](const std::shared_ptr<AddChildAction>& action)
+    {
+        auto entity = Node_getEntity(action->getParent());
+        return entity->isWorldspawn();
+    });
+    removeActionCount = countActions<RemoveChildAction>(operation, [](const std::shared_ptr<RemoveChildAction>& action)
+    {
+        auto entity = Node_getEntity(action->getNodeToRemove()->getParent());
+        return entity->isWorldspawn();
+    });
+
+    EXPECT_EQ(addActionCount, 3) << "No merge action found for added child node";
+    EXPECT_EQ(removeActionCount, 3) << "No merge action found for removed child node";
 }
 
 }

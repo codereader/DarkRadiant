@@ -1,8 +1,5 @@
 #include "MergeOperation.h"
-
-#include "ientity.h"
-#include "../Clone.h"
-#include "../scenelib.h"
+#include "MergeAction.h"
 
 namespace scene
 {

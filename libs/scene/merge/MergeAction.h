@@ -64,12 +64,12 @@ protected:
         assert(_nodeToRemove);
     }
 
+public:
     const scene::INodePtr& getNodeToRemove() const
     {
         return _nodeToRemove;
     }
 
-public:
     void applyChanges() override
     {
         removeNodeFromParent(_nodeToRemove);
