@@ -137,6 +137,8 @@
     <ClInclude Include="..\..\libs\scene\InstanceWalkers.h" />
     <ClInclude Include="..\..\libs\scene\LayerUsageBreakdown.h" />
     <ClInclude Include="..\..\libs\scene\LayerValidityCheckWalker.h" />
+    <ClInclude Include="..\..\libs\scene\merge\MergeAction.h" />
+    <ClInclude Include="..\..\libs\scene\merge\MergeOperation.h" />
     <ClInclude Include="..\..\libs\scene\ModelBreakdown.h" />
     <ClInclude Include="..\..\libs\scene\ModelFinder.h" />
     <ClInclude Include="..\..\libs\scene\Node.h" />

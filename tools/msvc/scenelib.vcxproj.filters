@@ -4,6 +4,9 @@
     <Filter Include="scene">
       <UniqueIdentifier>{7effd458-1286-4c86-a9c4-cd4922f14c82}</UniqueIdentifier>
     </Filter>
+    <Filter Include="scene\merge">
+      <UniqueIdentifier>{b3592cff-e97d-4da2-ade5-caef2835f906}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\scene\InstanceWalkers.cpp">
@@ -102,6 +105,12 @@
     </ClInclude>
     <ClInclude Include="..\..\libs\scene\SceneGraphComparer.h">
       <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\merge\MergeAction.h">
+      <Filter>scene\merge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\merge\MergeOperation.h">
+      <Filter>scene\merge</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
