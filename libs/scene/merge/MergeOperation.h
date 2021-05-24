@@ -22,6 +22,8 @@ public:
     using Ptr = std::shared_ptr<MergeOperation>;
 
     static MergeOperation::Ptr CreateFromComparisonResult(const ComparisonResult& comparisonResult);
+
+    void addAction(const MergeAction::Ptr& action);
 };
 
 }

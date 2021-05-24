@@ -10,7 +10,7 @@ namespace merge
 
 enum class ActionType
 {
-    
+    RemoveEntity,
 };
 
 // Represents a single step of a merge process, like adding a brush,
@@ -33,10 +33,10 @@ public:
         return _type;
     }
 
-    // Applies this action, changing the nodes affecting by it
+    // Applies all changes defined by this action.
     // It's the caller's responsibility to set up any Undo operations.
     // Implementations are allowed to throw std::runtime_errors on failure.
-    virtual bool apply() = 0;
+    virtual void applyChanges() = 0;
 };
 
 
