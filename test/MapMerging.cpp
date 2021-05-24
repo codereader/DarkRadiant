@@ -491,6 +491,15 @@ TEST_F(MapMergeTest, MergeActionsForAddedKeyValues)
     });
 
     EXPECT_TRUE(action) << "No merge action found for added key value";
+
+    // Check pre-requisites and apply the action
+    auto entityNode = algorithm::getEntityByName(result->getBaseRootNode(), "light_1");
+    EXPECT_EQ(Node_getEntity(entityNode)->getKeyValue("dist_check_period"), "");
+
+    action->applyChanges();
+
+    entityNode = algorithm::getEntityByName(result->getBaseRootNode(), "light_1");
+    EXPECT_EQ(Node_getEntity(entityNode)->getKeyValue("dist_check_period"), "40");
 }
 
 TEST_F(MapMergeTest, MergeActionsForRemovedKeyValues)
@@ -505,6 +514,15 @@ TEST_F(MapMergeTest, MergeActionsForRemovedKeyValues)
     });
 
     EXPECT_TRUE(action) << "No merge action found for removed key value";
+
+    // Check pre-requisites and apply the action
+    auto entityNode = algorithm::getEntityByName(result->getBaseRootNode(), "light_1");
+    EXPECT_EQ(Node_getEntity(entityNode)->getKeyValue("break"), "1");
+
+    action->applyChanges();
+
+    entityNode = algorithm::getEntityByName(result->getBaseRootNode(), "light_1");
+    EXPECT_EQ(Node_getEntity(entityNode)->getKeyValue("break"), "");
 }
 
 TEST_F(MapMergeTest, MergeActionsForChangedKeyValues)
@@ -520,6 +538,15 @@ TEST_F(MapMergeTest, MergeActionsForChangedKeyValues)
 
     EXPECT_TRUE(action) << "No merge action found for changed key value";
 
+    // Check pre-requisites and apply the action
+    auto entityNode = algorithm::getEntityByName(result->getBaseRootNode(), "light_1");
+    EXPECT_EQ(Node_getEntity(entityNode)->getKeyValue("ai_see"), "0");
+
+    action->applyChanges();
+
+    entityNode = algorithm::getEntityByName(result->getBaseRootNode(), "light_1");
+    EXPECT_EQ(Node_getEntity(entityNode)->getKeyValue("ai_see"), "1");
+
     action = findAction<ChangeEntityKeyValueAction>(operation, [](const std::shared_ptr<ChangeEntityKeyValueAction>& action)
     {
         auto entity = Node_getEntity(action->getEntityNode());
@@ -527,6 +554,31 @@ TEST_F(MapMergeTest, MergeActionsForChangedKeyValues)
     });
 
     EXPECT_TRUE(action) << "No merge action found for changed key value";
+
+    // Check pre-requisites and apply the action
+    entityNode = algorithm::getEntityByName(result->getBaseRootNode(), "light_2");
+    EXPECT_NE(Node_getEntity(entityNode)->getKeyValue("origin"), "280 160 0");
+
+    action->applyChanges();
+
+    entityNode = algorithm::getEntityByName(result->getBaseRootNode(), "light_2");
+    EXPECT_EQ(Node_getEntity(entityNode)->getKeyValue("origin"), "280 160 0");
+}
+
+inline std::size_t getChildPrimitiveCount(const scene::INodePtr& node)
+{
+    std::size_t count = 0;
+    node->foreachNode([&](const scene::INodePtr& node)
+    {
+        if (Node_isPrimitive(node))
+        {
+            ++count;
+        }
+
+        return true;
+    });
+
+    return count;
 }
 
 TEST_F(MapMergeTest, MergeActionsForChangedPrimitives)
@@ -570,6 +622,38 @@ TEST_F(MapMergeTest, MergeActionsForChangedPrimitives)
 
     EXPECT_EQ(addActionCount, 3) << "No merge action found for added child node";
     EXPECT_EQ(removeActionCount, 3) << "No merge action found for removed child node";
+
+    // func_static_1 should have 3 brushes after execution of the actions
+    // Check prerequisites and execute action
+    auto entityNode = algorithm::getEntityByName(result->getBaseRootNode(), "func_static_1");
+    EXPECT_EQ(getChildPrimitiveCount(entityNode), 2);
+
+    operation->applyActions();
+
+    entityNode = algorithm::getEntityByName(result->getBaseRootNode(), "func_static_1");
+    EXPECT_EQ(getChildPrimitiveCount(entityNode), 3);
+}
+
+TEST_F(MapMergeTest, ApplyMergeOperation)
+{
+    GlobalCommandSystem().executeCommand("OpenMap", cmd::Argument("maps/fingerprinting.mapx"));
+
+    auto changedMap = _context.getTestProjectPath() + "maps/fingerprinting_2.mapx";
+    auto resource = GlobalMapResourceManager().createFromPath(changedMap);
+    EXPECT_TRUE(resource->load()) << "Test map not found in path " << changedMap;
+
+    auto result = GraphComparer::Compare(resource->getRootNode(), GlobalMapModule().getRoot());
+
+    // The result should have differences
+    EXPECT_FALSE(result->differingEntities.empty());
+
+    auto operation = MergeOperation::CreateFromComparisonResult(*result);
+    operation->applyActions();
+
+    auto resultAfterExecution = GraphComparer::Compare(resource->getRootNode(), GlobalMapModule().getRoot());
+
+    // The result should not list any differences anymore
+    EXPECT_TRUE(resultAfterExecution->differingEntities.empty());
 }
 
 }
