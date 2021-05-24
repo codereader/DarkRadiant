@@ -3,7 +3,7 @@
 #include <istream>
 #include <string>
 #include <memory>
-#include "scene/merge/GraphComparer.h"
+#include "scene/merge/ComparisonResult.h"
 
 namespace scene
 {
