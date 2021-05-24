@@ -16,15 +16,12 @@ namespace merge
 class MergeOperation
 {
 private:
-    std::list<MergeAction> _actions;
+    std::list<MergeAction::Ptr> _actions;
 
 public:
     using Ptr = std::shared_ptr<MergeOperation>;
 
-    static MergeOperation::Ptr CreateFromComparisonResult(const ComparisonResult& comparisonResult)
-    {
-        return std::make_shared<MergeOperation>();
-    }
+    static MergeOperation::Ptr CreateFromComparisonResult(const ComparisonResult& comparisonResult);
 };
 
 }

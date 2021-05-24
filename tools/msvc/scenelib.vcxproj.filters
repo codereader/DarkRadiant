@@ -39,6 +39,9 @@
     <ClCompile Include="..\..\libs\scene\merge\GraphComparer.cpp">
       <Filter>scene\merge</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\libs\scene\merge\MergeOperation.cpp">
+      <Filter>scene\merge</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\libs\scene\InstanceWalkers.h">
