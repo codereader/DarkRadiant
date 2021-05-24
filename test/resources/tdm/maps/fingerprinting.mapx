@@ -8,9 +8,9 @@
   <selectionGroups/>
   <selectionSets/>
   <properties>
-    <property key="EditTimeInSeconds" value="490"/>
+    <property key="EditTimeInSeconds" value="543"/>
     <property key="LastCameraAngle" value="-61.8 87.6 0"/>
-    <property key="LastCameraPosition" value="21.3173 -151.294 265.02"/>
+    <property key="LastCameraPosition" value="16.5681 -264.607 476.533"/>
     <property key="LastShaderClipboardMaterial" value="textures/numbers/2"/>
   </properties>
   <entity number="0">
@@ -147,6 +147,7 @@
         </controlVertices>
         <layers>
           <layer id="0"/>
+          <layer id="2"/>
         </layers>
         <selectionGroups/>
         <selectionSets/>
@@ -508,6 +509,7 @@
         </faces>
         <layers>
           <layer id="0"/>
+          <layer id="2"/>
         </layers>
         <selectionGroups/>
         <selectionSets/>
@@ -553,6 +555,7 @@
         </faces>
         <layers>
           <layer id="0"/>
+          <layer id="2"/>
         </layers>
         <selectionGroups/>
         <selectionSets/>
@@ -566,6 +569,7 @@
     </keyValues>
     <layers>
       <layer id="0"/>
+      <layer id="2"/>
     </layers>
     <selectionGroups/>
     <selectionSets/>

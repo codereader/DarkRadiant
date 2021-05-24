@@ -2,15 +2,16 @@
 <map version="1" format="portable">
   <layers>
     <layer id="0" name="Default"/>
-    <layer id="1" name="Second Layer"/>
+    <layer id="1" name="Second Layer Renamed"/>
     <layer id="2" name="Third Layer"/>
+    <layer id="3" name="Fourth Layer"/>
   </layers>
   <selectionGroups/>
   <selectionSets/>
   <properties>
-    <property key="EditTimeInSeconds" value="593"/>
-    <property key="LastCameraAngle" value="-56.4 78.9 0"/>
-    <property key="LastCameraPosition" value="-105.216 -198.194 328.917"/>
+    <property key="EditTimeInSeconds" value="679"/>
+    <property key="LastCameraAngle" value="-51.3 94.8 0"/>
+    <property key="LastCameraPosition" value="-9.90357 -335.668 424.076"/>
     <property key="LastShaderClipboardMaterial" value="textures/numbers/2"/>
   </properties>
   <entity number="0">
@@ -147,6 +148,8 @@
         </controlVertices>
         <layers>
           <layer id="0"/>
+          <layer id="2"/>
+          <layer id="3"/>
         </layers>
         <selectionGroups/>
         <selectionSets/>
@@ -387,6 +390,7 @@
     </keyValues>
     <layers>
       <layer id="0"/>
+      <layer id="2"/>
     </layers>
     <selectionGroups/>
     <selectionSets/>
@@ -402,6 +406,7 @@
     </keyValues>
     <layers>
       <layer id="0"/>
+      <layer id="2"/>
     </layers>
     <selectionGroups/>
     <selectionSets/>
@@ -633,6 +638,7 @@
         </faces>
         <layers>
           <layer id="0"/>
+          <layer id="2"/>
         </layers>
         <selectionGroups/>
         <selectionSets/>
@@ -678,6 +684,7 @@
         </faces>
         <layers>
           <layer id="0"/>
+          <layer id="2"/>
         </layers>
         <selectionGroups/>
         <selectionSets/>
@@ -723,6 +730,7 @@
         </faces>
         <layers>
           <layer id="0"/>
+          <layer id="2"/>
         </layers>
         <selectionGroups/>
         <selectionSets/>
@@ -736,6 +744,7 @@
     </keyValues>
     <layers>
       <layer id="0"/>
+      <layer id="2"/>
     </layers>
     <selectionGroups/>
     <selectionSets/>
