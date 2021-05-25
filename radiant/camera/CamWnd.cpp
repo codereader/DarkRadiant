@@ -961,7 +961,6 @@ void CamWnd::captureStates()
     _shaders.mergeActionShaderAdd = GlobalRenderSystem().capture("$MERGE_ACTION_ADD");
     _shaders.mergeActionShaderChange = GlobalRenderSystem().capture("$MERGE_ACTION_CHANGE");
     _shaders.mergeActionShaderRemove = GlobalRenderSystem().capture("$MERGE_ACTION_REMOVE");
-    _shaders.nonMergeActionNodeShader = GlobalRenderSystem().capture("$CAM_INACTIVE_NODE");
 }
 
 void CamWnd::releaseStates() 
@@ -971,7 +970,6 @@ void CamWnd::releaseStates()
     _shaders.mergeActionShaderAdd.reset();
     _shaders.mergeActionShaderChange.reset();
     _shaders.mergeActionShaderRemove.reset();
-    _shaders.nonMergeActionNodeShader.reset();
 }
 
 void CamWnd::queueDraw()

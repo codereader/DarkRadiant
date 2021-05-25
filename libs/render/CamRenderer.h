@@ -23,7 +23,6 @@ public:
         ShaderPtr mergeActionShaderAdd;
         ShaderPtr mergeActionShaderChange;
         ShaderPtr mergeActionShaderRemove;
-        ShaderPtr nonMergeActionNodeShader;
     };
 
 private:
