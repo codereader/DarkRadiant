@@ -28,7 +28,9 @@ PointFileChooser::PointFileChooser(const wxArrayString& files)
 
     // Add dialog buttons
     auto btnSizer = CreateStdDialogButtonSizer(wxOK | wxCANCEL);
-    GetSizer()->Add(btnSizer, 0, wxALIGN_RIGHT | wxALIGN_BOTTOM, 0);
+    GetSizer()->Add(btnSizer, 0, wxALIGN_RIGHT | wxALIGN_BOTTOM | wxBOTTOM, 12);
+
+    Fit();
 }
 
 void PointFileChooser::chooseAndToggle()
@@ -50,7 +52,11 @@ void PointFileChooser::chooseAndToggle()
 
         // Show dialog with list of pointfiles
         PointFileChooser chooser(filenames);
-        chooser.ShowModal();
+        if (chooser.ShowModal() != wxID_OK)
+        {
+            // Dialog cancelled, don't proceed to showing point trace
+            return;
+        }
     }
 
     // Hand over to the actual pointfile renderer to toggle visibility
