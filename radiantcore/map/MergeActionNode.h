@@ -1,5 +1,6 @@
 #pragma once
 
+#include "imergeaction.h"
 #include "math/AABB.h"
 #include "scene/SelectableNode.h"
 #include "scene/merge/MergeAction.h"
@@ -8,6 +9,7 @@ namespace map
 {
 
 class MergeActionNode :
+    public scene::IMergeActionNode,
     public scene::SelectableNode
 {
 private:
@@ -40,6 +42,11 @@ public:
         });
     }
 
+    scene::merge::ActionType getType() const override
+    {
+        return _action->getType();
+    }
+
     scene::INode::Type getNodeType() const override
     {
         return scene::INode::Type::MergeAction;
@@ -48,7 +55,7 @@ public:
     const AABB& localAABB() const override
     {
         return _affectedNode->localAABB();
-    }
+    } 
 
     void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override
     {

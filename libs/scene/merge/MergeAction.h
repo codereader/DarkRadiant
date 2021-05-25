@@ -2,6 +2,7 @@
 
 #include <memory>
 #include "ientity.h"
+#include "imergeaction.h"
 #include "../Clone.h"
 #include "../scenelib.h"
 
@@ -11,20 +12,10 @@ namespace scene
 namespace merge
 {
 
-enum class ActionType
-{
-    AddEntity,
-    RemoveEntity,
-    AddKeyValue,
-    RemoveKeyValue,
-    ChangeKeyValue,
-    AddChildNode,
-    RemoveChildNode,
-};
-
 // Represents a single step of a merge process, like adding a brush,
 // removing an entity, setting a keyvalue, etc.
-class MergeAction
+class MergeAction : 
+    public IMergeAction
 {
 private:
     ActionType _type;
@@ -37,19 +28,10 @@ protected:
 public:
     using Ptr = std::shared_ptr<MergeAction>;
 
-    ActionType getType() const
+    ActionType getType() const override
     {
         return _type;
     }
-
-    // Applies all changes defined by this action.
-    // It's the caller's responsibility to set up any Undo operations.
-    // Implementations are allowed to throw std::runtime_errors on failure.
-    virtual void applyChanges() = 0;
-
-    // Returns the node this action is affecting when applied
-    // This is used to identify the scene node and display it appropriately
-    virtual scene::INodePtr getAffectedNode() = 0;
 };
 
 // Various implementations of the above MergeAction base type following

@@ -184,8 +184,6 @@ public:
             {
                 _nonMergeActionNodeShader->addRenderable(renderable, localToWorld, nullptr, entity);
             }
-
-            return;
         }
 
         if (_highlightPrimitives && _highlightedPrimitiveShader)
