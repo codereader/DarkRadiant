@@ -29,7 +29,7 @@
 		<menuSeparator />
 		<menuItem name="gameSelector" caption="&amp;Game/Project Setup..." command="ProjectSettings" />
 		<menuSeparator />
-		<menuItem name="pointfile" caption="&amp;Pointfile" command="TogglePointfile" icon="pointfile16.png"/>
+		<menuItem name="pointfile" caption="&amp;Pointfile" command="ChooseAndTogglePointfile" icon="pointfile16.png"/>
 		<menuSeparator />
 		<!-- MRU is inserted automatically at this position -->
 		<menuItem name="exit" caption="E&amp;xit" command="Exit" />

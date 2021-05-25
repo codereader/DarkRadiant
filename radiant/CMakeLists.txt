@@ -148,6 +148,7 @@ add_executable(darkradiant
                ui/patch/PatchCreateDialog.cpp
                ui/patch/PatchInspector.cpp
                ui/patch/PatchThickenDialog.cpp
+               ui/PointFileChooser.cpp
                ui/prefabselector/PrefabSelector.cpp
                ui/prefdialog/GameSetupDialog.cpp
                ui/prefdialog/GameSetupPage.cpp
