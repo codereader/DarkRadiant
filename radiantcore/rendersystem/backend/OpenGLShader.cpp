@@ -812,10 +812,32 @@ void OpenGLShader::construct()
                 state.setRenderFlag(RENDER_CULLFACE);
                 state.setRenderFlag(RENDER_BLEND);
 
-                state.setColour(Colour4(0, 0.4, 0.9, 0.4));
+                state.setColour(Colour4(0, 0.4, 0.9, 0.5));
                 state.setSortPosition(OpenGLState::SORT_HIGHLIGHT);
                 state.polygonOffset = 0.5f;
                 state.setDepthFunc(GL_LEQUAL);
+
+                auto& linesOverlay = appendDefaultPass();
+                linesOverlay.setColour(0, 0.4, 0.9, 0.78);
+                // This is the shader drawing a solid line to outline
+                // a selected item. The first pass has its depth test
+                // activated using GL_LESS, whereas the second pass
+                // draws the hidden lines in stippled appearance
+                // with its depth test using GL_GREATER.
+                linesOverlay.setRenderFlags(RENDER_OFFSETLINE | RENDER_DEPTHTEST | RENDER_BLEND);
+                linesOverlay.setSortPosition(OpenGLState::SORT_OVERLAY_LAST);
+#if 0
+                // Second pass for hidden lines
+                OpenGLState& hiddenLine = appendDefaultPass();
+                hiddenLine.setColour(0.6, 0.6, 0.6, 0.15);
+                hiddenLine.setRenderFlags(RENDER_CULLFACE
+                    | RENDER_DEPTHTEST
+                    | RENDER_OFFSETLINE
+                    | RENDER_LINESTIPPLE | RENDER_BLEND);
+                hiddenLine.setSortPosition(OpenGLState::SORT_OVERLAY_FIRST);
+                hiddenLine.setDepthFunc(GL_GREATER);
+                hiddenLine.m_linestipple_factor = 2;
+#endif
             }
             else if (_name == "$CAM_INACTIVE_NODE")
             {
@@ -827,10 +849,32 @@ void OpenGLShader::construct()
                 state.setRenderFlag(RENDER_CULLFACE);
                 state.setRenderFlag(RENDER_BLEND);
 
-                state.setColour(Colour4(0.3, 0.3, 0.3, 0.3));
+                state.setColour(Colour4(0.7, 0.7, 0.7, 0.15));
                 state.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
                 state.polygonOffset = 0.5f;
                 state.setDepthFunc(GL_LEQUAL);
+
+                auto& linesOverlay = appendDefaultPass();
+                linesOverlay.setColour(0.6, 0.6, 0.6, 0.01);
+                // This is the shader drawing a solid line to outline
+                // a selected item. The first pass has its depth test
+                // activated using GL_LESS, whereas the second pass
+                // draws the hidden lines in stippled appearance
+                // with its depth test using GL_GREATER.
+                linesOverlay.setRenderFlags(RENDER_OFFSETLINE | RENDER_DEPTHTEST | RENDER_BLEND);
+                linesOverlay.setSortPosition(OpenGLState::SORT_OVERLAY_FIRST);
+#if 0
+                // Second pass for hidden lines
+                OpenGLState& hiddenLine = appendDefaultPass();
+                hiddenLine.setColour(0.6, 0.6, 0.6, 0.05);
+                hiddenLine.setRenderFlags(RENDER_CULLFACE
+                    | RENDER_DEPTHTEST
+                    | RENDER_OFFSETLINE
+                    | RENDER_LINESTIPPLE | RENDER_BLEND);
+                hiddenLine.setSortPosition(OpenGLState::SORT_OVERLAY_FIRST);
+                hiddenLine.setDepthFunc(GL_GREATER);
+                hiddenLine.m_linestipple_factor = 2;
+#endif
             }
             else if (_name == "$XY_OVERLAY")
             {
@@ -858,7 +902,7 @@ void OpenGLShader::construct()
 			}
             else if (_name == "$XY_MERGE_ACTION")
 			{
-                Vector3 mergeActionColour(0, 0, 1);
+                Vector3 mergeActionColour(0, 0.4, 0.9);
                 state.setColour(static_cast<float>(mergeActionColour[0]),
                     static_cast<float>(mergeActionColour[1]),
                     static_cast<float>(mergeActionColour[2]),
