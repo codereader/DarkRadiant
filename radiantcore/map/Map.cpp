@@ -986,12 +986,6 @@ void Map::mergeMap(const cmd::ArgumentList& args)
             // Create renderable merge actions
             _mergeOperation->foreachAction([&](const scene::merge::MergeAction::Ptr& action)
             {
-                if (action->getType() == scene::merge::ActionType::AddChildNode ||
-                    action->getType() == scene::merge::ActionType::AddEntity)
-                {
-                    return;
-                }
-
                 _mergeActionNodes.emplace_back(std::make_shared<MergeActionNode>(action));
                 getRoot()->addChildNode(_mergeActionNodes.back());
             });

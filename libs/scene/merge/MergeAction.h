@@ -128,6 +128,15 @@ protected:
         {
             throw std::runtime_error("Node " + _node->name() + " is not cloneable");
         }
+
+        // Reset all layers of the clone to the active one
+        auto activeLayer = parent->getRootNode()->getLayerManager().getActiveLayer();
+
+        _cloneToBeInserted->moveToLayer(activeLayer);
+        _cloneToBeInserted->foreachNode([=](const scene::INodePtr& child) 
+        { 
+            child->moveToLayer(activeLayer); return true; 
+        });
     }
 
 public:

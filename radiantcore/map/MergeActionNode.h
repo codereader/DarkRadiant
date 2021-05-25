@@ -22,35 +22,22 @@ public:
     {
         _affectedNode = _action->getAffectedNode();
 
-        // Hide the affected node itself
+        auto addNodeAction = std::dynamic_pointer_cast<scene::merge::AddCloneToParentAction>(_action);
+
+        if (addNodeAction)
+        {
+            // Get the clone and add it to the target scene, it needs to be renderable here
+            scene::addNodeToContainer(_affectedNode, addNodeAction->getParent());
+        }
+
+        // Hide the affected node itself, we're doing the rendering ourselves, recursively
         _affectedNode->enable(Node::eHidden);
-    }
 
-    void onInsertIntoScene(scene::IMapRootNode& root) override
-    {
-        SelectableNode::onInsertIntoScene(root);
-
-        if (_affectedNode->getRootNode() != getRootNode())
+        _affectedNode->foreachNode([&](const scene::INodePtr& child)
         {
-            scene::addNodeToContainer(_affectedNode, getRootNode());
-        }
-    }
-
-    void onRemoveFromScene(scene::IMapRootNode& root) override
-    {
-        SelectableNode::onRemoveFromScene(root);
-
-        if (!_affectedNode->inScene())
-        {
-            scene::removeNodeFromParent(_affectedNode);
-        }
-    }
-
-    void setRenderSystem(const RenderSystemPtr& renderSystem) override
-    {
-        SelectableNode::setRenderSystem(renderSystem);
-
-        _affectedNode->setRenderSystem(renderSystem);
+            child->enable(Node::eHidden);
+            return true;
+        });
     }
 
     scene::INode::Type getNodeType() const override
@@ -65,12 +52,26 @@ public:
 
     void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override
     {
+        _affectedNode->viewChanged();
         _affectedNode->renderSolid(collector, volume);
+        _affectedNode->foreachNode([&](const scene::INodePtr& child)
+        {
+            child->viewChanged();
+            child->renderSolid(collector, volume);
+            return true;
+        });
     }
 
     void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override
     {
+        _affectedNode->viewChanged();
         _affectedNode->renderWireframe(collector, volume);
+        _affectedNode->foreachNode([&](const scene::INodePtr& child)
+        {
+            child->viewChanged();
+            child->renderWireframe(collector, volume);
+            return true;
+        });
     }
 
     std::size_t getHighlightFlags() override
