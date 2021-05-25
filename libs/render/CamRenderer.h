@@ -1,6 +1,7 @@
 #pragma once
 
 #include "irenderable.h"
+#include "imap.h"
 #include "ivolumetest.h"
 
 #include "VectorLightList.h"
@@ -16,6 +17,8 @@ class CamRenderer: public RenderableCollector
     // The VolumeTest object for object culling
     const VolumeTest& _view;
 
+    IMap::EditMode _editMode;
+
     // Render statistics
     int _totalLights = 0;
     int _visibleLights = 0;
@@ -23,8 +26,11 @@ class CamRenderer: public RenderableCollector
     // Highlight state
     bool _highlightFaces = false;
     bool _highlightPrimitives = false;
+    bool _highlightAsMergeAction = false;
     Shader* _highlightedPrimitiveShader = nullptr;
     Shader* _highlightedFaceShader = nullptr;
+    Shader* _highlightedMergeActionShader = nullptr;
+    Shader* _nonMergeActionNodeShader = nullptr;
 
     // All lights we have received from the scene
     std::list<const RendererLight*> _sceneLights;
@@ -73,10 +79,14 @@ public:
 
     /// Initialise CamRenderer with optional highlight shaders
     CamRenderer(const VolumeTest& view, Shader* primHighlightShader = nullptr,
-                Shader* faceHighlightShader = nullptr)
+                Shader* faceHighlightShader = nullptr, Shader* highlightedMergeActionShader = nullptr,
+                Shader* nonMergeActionNodeShader = nullptr)
     : _view(view),
+      _editMode(GlobalMapModule().getEditMode()),
       _highlightedPrimitiveShader(primHighlightShader),
-      _highlightedFaceShader(faceHighlightShader)
+      _highlightedFaceShader(faceHighlightShader),
+      _highlightedMergeActionShader(highlightedMergeActionShader),
+      _nonMergeActionNodeShader(nonMergeActionNodeShader)
     {}
 
     /**
@@ -134,6 +144,11 @@ public:
         {
             _highlightPrimitives = enabled;
         }
+
+        if (flags & Highlight::MergeAction)
+        {
+            _highlightAsMergeAction = enabled;
+        }
     }
 
     void addLight(const RendererLight& light) override
@@ -159,6 +174,20 @@ public:
                        const LitObject* litObject = nullptr,
                        const IRenderEntity* entity = nullptr) override
     {
+        if (_editMode == IMap::EditMode::Merge)
+        {
+            if (_highlightAsMergeAction && _highlightedMergeActionShader)
+            {
+                _highlightedMergeActionShader->addRenderable(renderable, localToWorld, nullptr, entity);
+            }
+            else if (!_highlightAsMergeAction && _nonMergeActionNodeShader)
+            {
+                _nonMergeActionNodeShader->addRenderable(renderable, localToWorld, nullptr, entity);
+            }
+
+            return;
+        }
+
         if (_highlightPrimitives && _highlightedPrimitiveShader)
             _highlightedPrimitiveShader->addRenderable(renderable, localToWorld,
                                                        nullptr, entity);

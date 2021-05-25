@@ -63,6 +63,8 @@ class CamWnd :
 
     static ShaderPtr _faceHighlightShader;
     static ShaderPtr _primitiveHighlightShader;
+    static ShaderPtr _mergeActionShader;
+    static ShaderPtr _nonMergeActionNodeShader;
 
     wxutil::FreezePointer _freezePointer;
 

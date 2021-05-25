@@ -802,6 +802,36 @@ void OpenGLShader::construct()
 				hiddenLine.setDepthFunc(GL_GREATER);
 				hiddenLine.m_linestipple_factor = 2;
             }
+            else if (_name == "$MERGE_ACTION_OVERLAY")
+            {
+                // This is the shader drawing a coloured overlay
+                // over faces/polys. Its colour is configurable,
+                // and it has depth test activated.
+                state.setRenderFlag(RENDER_FILL);
+                state.setRenderFlag(RENDER_DEPTHTEST);
+                state.setRenderFlag(RENDER_CULLFACE);
+                state.setRenderFlag(RENDER_BLEND);
+
+                state.setColour(Colour4(0, 0.4, 0.9, 0.4));
+                state.setSortPosition(OpenGLState::SORT_HIGHLIGHT);
+                state.polygonOffset = 0.5f;
+                state.setDepthFunc(GL_LEQUAL);
+            }
+            else if (_name == "$CAM_INACTIVE_NODE")
+            {
+                // This is the shader drawing a coloured overlay
+                // over faces/polys. Its colour is configurable,
+                // and it has depth test activated.
+                state.setRenderFlag(RENDER_FILL);
+                state.setRenderFlag(RENDER_DEPTHTEST);
+                state.setRenderFlag(RENDER_CULLFACE);
+                state.setRenderFlag(RENDER_BLEND);
+
+                state.setColour(Colour4(0.3, 0.3, 0.3, 0.3));
+                state.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
+                state.polygonOffset = 0.5f;
+                state.setDepthFunc(GL_LEQUAL);
+            }
             else if (_name == "$XY_OVERLAY")
             {
               Vector3 colorSelBrushes = GlobalColourSchemeManager().getColour("selected_brush");

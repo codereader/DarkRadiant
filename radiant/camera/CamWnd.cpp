@@ -778,7 +778,8 @@ void CamWnd::Cam_Draw()
     {
         // Front end (renderable collection from scene)
         render::CamRenderer renderer(_view, _primitiveHighlightShader.get(),
-                                     _faceHighlightShader.get());
+                                     _faceHighlightShader.get(), _mergeActionShader.get(),
+                                     _nonMergeActionNodeShader.get());
         render::RenderableCollectionWalker::CollectRenderablesInScene(renderer, _view);
 
         // Accumulate render statistics
@@ -959,11 +960,16 @@ void CamWnd::captureStates()
 {
     _faceHighlightShader = GlobalRenderSystem().capture("$CAM_HIGHLIGHT");
     _primitiveHighlightShader = GlobalRenderSystem().capture("$CAM_OVERLAY");
+    _mergeActionShader = GlobalRenderSystem().capture("$MERGE_ACTION_OVERLAY");
+    _nonMergeActionNodeShader = GlobalRenderSystem().capture("$CAM_INACTIVE_NODE");
 }
 
-void CamWnd::releaseStates() {
-    _faceHighlightShader = ShaderPtr();
-    _primitiveHighlightShader = ShaderPtr();
+void CamWnd::releaseStates() 
+{
+    _faceHighlightShader.reset();
+    _primitiveHighlightShader.reset();
+    _mergeActionShader.reset();
+    _nonMergeActionNodeShader.reset();
 }
 
 void CamWnd::queueDraw()
@@ -1380,6 +1386,8 @@ void CamWnd::rotateRightDiscrete()
 
 ShaderPtr CamWnd::_faceHighlightShader;
 ShaderPtr CamWnd::_primitiveHighlightShader;
+ShaderPtr CamWnd::_mergeActionShader;
+ShaderPtr CamWnd::_nonMergeActionNodeShader;
 int CamWnd::_maxId = 0;
 
 } // namespace
