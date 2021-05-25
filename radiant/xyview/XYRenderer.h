@@ -1,6 +1,7 @@
 #pragma once
 
 #include "irenderable.h"
+#include "imap.h"
 
 /// RenderableCollector implementation for the ortho view
 class XYRenderer: public RenderableCollector
@@ -27,13 +28,19 @@ class XYRenderer: public RenderableCollector
     Shader* _selectedShader;
     Shader* _selectedShaderGroup;
     Shader* _mergeActionShader;
+    Shader* _nonMergeActionNodeShader;
+
+    IMap::EditMode _editMode;
 
 public:
-    XYRenderer(RenderStateFlags globalstate, Shader* selected, Shader* selectedGroup, Shader* mergeActionShader) :
+    XYRenderer(RenderStateFlags globalstate, Shader* selected, Shader* selectedGroup, 
+        Shader* mergeActionShader, Shader* nonMergeActionNodeShader) :
         _globalstate(globalstate),
         _selectedShader(selected),
         _selectedShaderGroup(selectedGroup),
-        _mergeActionShader(mergeActionShader)
+        _mergeActionShader(mergeActionShader),
+        _nonMergeActionNodeShader(nonMergeActionNodeShader),
+        _editMode(GlobalMapModule().getEditMode())
     {}
 
     bool supportsFullMaterials() const override
@@ -68,17 +75,33 @@ public:
                        const LitObject* /* litObject */,
                        const IRenderEntity* entity = nullptr) override
     {
-        if (_state.highlightAsMergeAction)
+        if (_editMode == IMap::EditMode::Merge)
         {
-            _mergeActionShader->addRenderable(renderable, localToWorld, nullptr, entity);
+            if (_state.highlightAsMergeAction)
+            {
+                // Merge actions get rendered in a special colour
+                _mergeActionShader->addRenderable(renderable, localToWorld, nullptr, entity);
+            }
+            else
+            {
+                // Everything else is using the shader for non-merge-affected nodes
+                _nonMergeActionNodeShader->addRenderable(renderable, localToWorld, nullptr, entity);
+            }
+
+            return;
         }
-        else if (_state.highlightPrimitives)
+        
+        // Regular editing mode, add all highlighted nodes to the corresponding shader
+        if (_state.highlightPrimitives)
         {
             if (_state.highlightAsGroupMember)
-                _selectedShaderGroup->addRenderable(renderable, localToWorld,
-                                                    nullptr, entity);
+            {
+                _selectedShaderGroup->addRenderable(renderable, localToWorld, nullptr, entity);
+            }
             else
+            {
                 _selectedShader->addRenderable(renderable, localToWorld, nullptr, entity);
+            }
         }
 
         shader.addRenderable(renderable, localToWorld, nullptr, entity);

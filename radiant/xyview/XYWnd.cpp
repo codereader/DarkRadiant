@@ -223,7 +223,9 @@ void XYWnd::captureStates()
 {
     _selectedShader = GlobalRenderSystem().capture("$XY_OVERLAY");
 	_selectedShaderGroup = GlobalRenderSystem().capture("$XY_OVERLAY_GROUP");
-    _mergeActionShader = GlobalRenderSystem().capture("$XY_OVERLAY_GROUP");
+
+    _mergeActionShader = GlobalRenderSystem().capture("$XY_MERGE_ACTION");
+    _nonMergeActionNodeShader = GlobalRenderSystem().capture("$XY_INACTIVE_NODE");
 }
 
 void XYWnd::releaseStates()
@@ -231,6 +233,7 @@ void XYWnd::releaseStates()
 	_selectedShader.reset();
 	_selectedShaderGroup.reset();
     _mergeActionShader.reset();
+    _nonMergeActionNodeShader.reset();
 }
 
 void XYWnd::ensureFont()
@@ -1358,9 +1361,15 @@ void XYWnd::draw()
         flagsMask |= RENDER_LINESTIPPLE;
     }
 
+    if (GlobalMapModule().getEditMode() == IMap::EditMode::Merge)
+    {
+        flagsMask |= RENDER_BLEND;
+    }
+
     {
         // Construct the renderer and render the scene
-        XYRenderer renderer(flagsMask, _selectedShader.get(), _selectedShaderGroup.get(), _mergeActionShader.get());
+        XYRenderer renderer(flagsMask, _selectedShader.get(), _selectedShaderGroup.get(), 
+            _mergeActionShader.get(), _nonMergeActionNodeShader.get());
 
         // First pass (scenegraph traversal)
         render::RenderableCollectionWalker::CollectRenderablesInScene(renderer,
@@ -1718,5 +1727,6 @@ IInteractiveView& XYWnd::getInteractiveView()
 ShaderPtr XYWnd::_selectedShader;
 ShaderPtr XYWnd::_selectedShaderGroup;
 ShaderPtr XYWnd::_mergeActionShader;
+ShaderPtr XYWnd::_nonMergeActionNodeShader;
 
 } // namespace

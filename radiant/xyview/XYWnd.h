@@ -59,6 +59,7 @@ protected:
     static ShaderPtr _selectedShader;
 	static ShaderPtr _selectedShaderGroup;
 	static ShaderPtr _mergeActionShader;
+	static ShaderPtr _nonMergeActionNodeShader;
 
     Vector3 _mousePosition;
 

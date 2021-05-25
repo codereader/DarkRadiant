@@ -826,6 +826,36 @@ void OpenGLShader::construct()
 				state.m_linewidth = 2;
 				state.m_linestipple_factor = 3;
 			}
+            else if (_name == "$XY_MERGE_ACTION")
+			{
+                Vector3 mergeActionColour(0, 0, 1);
+                state.setColour(static_cast<float>(mergeActionColour[0]),
+                    static_cast<float>(mergeActionColour[1]),
+                    static_cast<float>(mergeActionColour[2]),
+                    static_cast<float>(0.5));
+				state.setRenderFlag(RENDER_LINESTIPPLE);
+				state.setSortPosition(OpenGLState::SORT_OVERLAY_FIRST);
+				state.m_linewidth = 2;
+				state.m_linestipple_factor = 2;
+			}
+            else if (_name == "$XY_INACTIVE_NODE")
+            {
+                Colour4 colour(0, 0, 0, 0.05f);
+                state.setColour(static_cast<float>(colour[0]),
+                    static_cast<float>(colour[1]),
+                    static_cast<float>(colour[2]),
+                    static_cast<float>(colour[3]));
+
+                state.m_blend_src = GL_SRC_ALPHA;
+                state.m_blend_dst = GL_ONE_MINUS_SRC_ALPHA;
+
+                state.setRenderFlags(RENDER_DEPTHTEST | RENDER_DEPTHWRITE | RENDER_BLEND);
+                state.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
+                state.setDepthFunc(GL_LESS);
+
+                state.m_linewidth = 1;
+                state.m_pointsize = 1;
+            }
             else if (_name == "$DEBUG_CLIPPED")
             {
               state.setRenderFlag(RENDER_DEPTHWRITE);
