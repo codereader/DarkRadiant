@@ -777,9 +777,7 @@ void CamWnd::Cam_Draw()
     // Main scene render
     {
         // Front end (renderable collection from scene)
-        render::CamRenderer renderer(_view, _primitiveHighlightShader.get(),
-                                     _faceHighlightShader.get(), _mergeActionShader.get(),
-                                     _nonMergeActionNodeShader.get());
+        render::CamRenderer renderer(_view, _shaders);
         render::RenderableCollectionWalker::CollectRenderablesInScene(renderer, _view);
 
         // Accumulate render statistics
@@ -958,18 +956,22 @@ camera::ICameraView& CamWnd::getCamera()
 
 void CamWnd::captureStates()
 {
-    _faceHighlightShader = GlobalRenderSystem().capture("$CAM_HIGHLIGHT");
-    _primitiveHighlightShader = GlobalRenderSystem().capture("$CAM_OVERLAY");
-    _mergeActionShader = GlobalRenderSystem().capture("$MERGE_ACTION_OVERLAY");
-    _nonMergeActionNodeShader = GlobalRenderSystem().capture("$CAM_INACTIVE_NODE");
+    _shaders.faceHighlightShader = GlobalRenderSystem().capture("$CAM_HIGHLIGHT");
+    _shaders.primitiveHighlightShader = GlobalRenderSystem().capture("$CAM_OVERLAY");
+    _shaders.mergeActionShaderAdd = GlobalRenderSystem().capture("$MERGE_ACTION_ADD");
+    _shaders.mergeActionShaderChange = GlobalRenderSystem().capture("$MERGE_ACTION_CHANGE");
+    _shaders.mergeActionShaderRemove = GlobalRenderSystem().capture("$MERGE_ACTION_REMOVE");
+    _shaders.nonMergeActionNodeShader = GlobalRenderSystem().capture("$CAM_INACTIVE_NODE");
 }
 
 void CamWnd::releaseStates() 
 {
-    _faceHighlightShader.reset();
-    _primitiveHighlightShader.reset();
-    _mergeActionShader.reset();
-    _nonMergeActionNodeShader.reset();
+    _shaders.faceHighlightShader.reset();
+    _shaders.primitiveHighlightShader.reset();
+    _shaders.mergeActionShaderAdd.reset();
+    _shaders.mergeActionShaderChange.reset();
+    _shaders.mergeActionShaderRemove.reset();
+    _shaders.nonMergeActionNodeShader.reset();
 }
 
 void CamWnd::queueDraw()
@@ -1384,10 +1386,7 @@ void CamWnd::rotateRightDiscrete()
 
 // -------------------------------------------------------------------------------
 
-ShaderPtr CamWnd::_faceHighlightShader;
-ShaderPtr CamWnd::_primitiveHighlightShader;
-ShaderPtr CamWnd::_mergeActionShader;
-ShaderPtr CamWnd::_nonMergeActionNodeShader;
+render::CamRenderer::HighlightShaders CamWnd::_shaders;
 int CamWnd::_maxId = 0;
 
 } // namespace

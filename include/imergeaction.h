@@ -56,7 +56,7 @@ public:
     virtual ~IMergeActionNode() {}
 
     // Return the action type represented by this node
-    virtual merge::ActionType getType() const = 0;
+    virtual merge::ActionType getActionType() const = 0;
 };
 
 }

@@ -13,6 +13,7 @@
 
 #include "../FreezePointer.h"
 #include "render/NopVolumeTest.h"
+#include "render/CamRenderer.h"
 
 class wxToolBarToolBase;
 
@@ -84,6 +85,8 @@ private:
     FreezePointer _freezePointer;
 
 	bool _renderGrid;
+
+    render::CamRenderer::HighlightShaders _shaders;
 
 protected:
     const unsigned int MSEC_PER_FRAME = 16;

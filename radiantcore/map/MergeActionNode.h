@@ -42,7 +42,7 @@ public:
         });
     }
 
-    scene::merge::ActionType getType() const override
+    scene::merge::ActionType getActionType() const override
     {
         return _action->getType();
     }
@@ -55,7 +55,7 @@ public:
     const AABB& localAABB() const override
     {
         return _affectedNode->localAABB();
-    } 
+    }
 
     void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override
     {
@@ -83,7 +83,7 @@ public:
 
     std::size_t getHighlightFlags() override
     {
-        return Highlight::MergeAction;
+        return Highlight::NoHighlight;
     }
 };
 

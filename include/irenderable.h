@@ -95,11 +95,14 @@ public:
     {
         enum Flags
         {
-            NoHighlight = 0,
-            Faces       = 1 << 0, /// Highlight faces of subsequently-submitted objects, if supported
-            Primitives  = 1 << 1, /// Highlight primitives of subsequently-submitted objects, if supported
-            GroupMember = 1 << 2, /// Highlight as member of group, if supported
-            MergeAction = 1 << 3, /// Highlight as merge action
+            NoHighlight       = 0,
+            Faces             = 1 << 0, /// Highlight faces of subsequently-submitted objects, if supported
+            Primitives        = 1 << 1, /// Highlight primitives of subsequently-submitted objects, if supported
+            GroupMember       = 1 << 2, /// Highlight as member of group, if supported
+            MergeAction       = 1 << 3, /// Highlight as merge action (combined with the flags below)
+            MergeActionAdd    = 1 << 4, /// Highlight as merge action that is adding something
+            MergeActionRemove = 1 << 5, /// Highlight as merge action that is removing something
+            MergeActionChange = 1 << 6, /// Highlight as merge action that is changing something
         };
     };
 
@@ -150,7 +153,6 @@ public:
             NoHighlight = 0,
             Selected    = 1 << 0,
             GroupMember = 1 << 1,
-            MergeAction = 1 << 2,
         };
     };
 

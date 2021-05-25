@@ -1,6 +1,7 @@
 #pragma once
 
 #include "iselection.h"
+#include "imergeaction.h"
 #include "ientity.h"
 #include "ieclass.h"
 #include "iscenegraph.h"
@@ -62,13 +63,44 @@ public:
 			highlightFlags |= parent->getHighlightFlags();
 		}
 
-        if (highlightFlags & Renderable::Highlight::MergeAction)
+        if (node->getNodeType() == scene::INode::Type::MergeAction)
         {
             _collector.setHighlightFlag(RenderableCollector::Highlight::MergeAction, true);
+
+            auto mergeActionNode = std::dynamic_pointer_cast<scene::IMergeActionNode>(node);
+            assert(mergeActionNode);
+
+            switch (mergeActionNode->getActionType())
+            {
+            case scene::merge::ActionType::AddChildNode:
+            case scene::merge::ActionType::AddEntity:
+                _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionAdd, true);
+                _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionChange, false);
+                _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionRemove, false);
+                break;
+
+            case scene::merge::ActionType::AddKeyValue:
+            case scene::merge::ActionType::ChangeKeyValue:
+            case scene::merge::ActionType::RemoveKeyValue:
+                _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionChange, true);
+                _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionAdd, false);
+                _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionRemove, false);
+                break;
+
+            case scene::merge::ActionType::RemoveChildNode:
+            case scene::merge::ActionType::RemoveEntity:
+                _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionRemove, true);
+                _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionAdd, false);
+                _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionChange, false);
+                break;
+            }
         }
         else
         {
             _collector.setHighlightFlag(RenderableCollector::Highlight::MergeAction, false);
+            _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionAdd, false);
+            _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionChange, false);
+            _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionRemove, false);
         }
 
         if (highlightFlags & Renderable::Highlight::Selected)
