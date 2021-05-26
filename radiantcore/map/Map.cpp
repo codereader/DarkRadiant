@@ -107,6 +107,9 @@ void Map::loadMapResourceFromLocation(const MapLocation& location)
 	// Map loading started
 	emitMapEvent(MapLoading);
 
+    // Abort any ongoing merge
+    abortMergeOperation();
+
 	_resource = location.isArchive ? 
         GlobalMapResourceManager().createFromArchiveFile(location.path, location.archiveRelativePath) :
         GlobalMapResourceManager().createFromPath(location.path);
@@ -161,6 +164,13 @@ void Map::loadMapResourceFromLocation(const MapLocation& location)
 
     // Clear the modified flag
     setModified(false);
+}
+
+void Map::abortMergeOperation()
+{
+    _mergeActionNodes.clear();
+    _mergeOperation.reset();
+    setEditMode(EditMode::Normal);
 }
 
 void Map::setMapName(const std::string& newName)
@@ -250,6 +260,9 @@ MapFormatPtr Map::getFormat()
 // free all map elements, reinitialize the structures that depend on them
 void Map::freeMap() 
 {
+    // Abort any ongoing merge
+    abortMergeOperation();
+
 	// Fire the map unloading event, 
 	// This will de-select stuff, clear the pointfile, etc.
     emitMapEvent(MapUnloading);
@@ -992,6 +1005,9 @@ void Map::mergeMap(const cmd::ArgumentList& args)
 
             // Switch to merge mode
             setEditMode(EditMode::Merge);
+
+            // Dispose of the resource, we don't need it anymore
+            _resource->clear();
         }
     }
     catch (const IMapResource::OperationException& ex)

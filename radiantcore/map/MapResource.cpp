@@ -239,6 +239,12 @@ void MapResource::setRootNode(const scene::IMapRootNodePtr& root)
 
 void MapResource::clear()
 {
+    // Disconnect from the old root first
+    if (_mapRoot)
+    {
+        _mapRoot->getUndoChangeTracker().setChangedCallback(Callback());
+    }
+
     _mapRoot = std::make_shared<RootNode>("");
 	connectMap();
 }

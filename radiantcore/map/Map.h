@@ -263,6 +263,7 @@ private:
 	void emitMapEvent(MapEvent ev);
 
 	void clearMapResource();
+    void abortMergeOperation();
 
 }; // class Map
 
