@@ -24,7 +24,13 @@ namespace map
 PointFile::PointFile() :
 	_points(GL_LINE_STRIP),
 	_curPos(0)
-{}
+{
+	registerCommands();
+}
+
+PointFile::~PointFile()
+{
+}
 
 void PointFile::onMapEvent(IMap::MapEvent ev)
 {
@@ -46,10 +52,16 @@ void PointFile::show(bool show)
 	{
 		// Parse the pointfile from disk
 		parse();
+
+        // Construct shader if needed, and activate rendering
+        if (!_renderstate)
+            _renderstate = GlobalRenderSystem().capture("$POINTFILE");
+        GlobalRenderSystem().attachRenderable(*this);
 	}
-	else
-	{
-		_points.clear();
+	else if (isVisible())
+    {
+        _points.clear();
+        GlobalRenderSystem().detachRenderable(*this);
 	}
 
 	// Regardless whether hide or show, we reset the current position
@@ -187,47 +199,5 @@ void PointFile::registerCommands()
 	GlobalCommandSystem().addCommand("NextLeakSpot", sigc::mem_fun(*this, &PointFile::nextLeakSpot));
 	GlobalCommandSystem().addCommand("PrevLeakSpot", sigc::mem_fun(*this, &PointFile::prevLeakSpot));
 }
-
-// RegisterableModule implementation
-const std::string& PointFile::getName() const
-{
-	static std::string _name("PointFile");
-	return _name;
-}
-
-const StringSet& PointFile::getDependencies() const
-{
-	static StringSet _dependencies;
-
-	if (_dependencies.empty())
-	{
-		_dependencies.insert(MODULE_COMMANDSYSTEM);
-		_dependencies.insert(MODULE_RENDERSYSTEM);
-		_dependencies.insert(MODULE_MAP);
-	}
-
-	return _dependencies;
-}
-
-void PointFile::initialiseModule(const IApplicationContext& ctx)
-{
-	rMessage() << getName() << "::initialiseModule called" << std::endl;
-
-	registerCommands();
-
-	_renderstate = GlobalRenderSystem().capture("$POINTFILE");
-
-	GlobalRenderSystem().attachRenderable(*this);
-
-	GlobalMap().signal_mapEvent().connect(sigc::mem_fun(*this, &PointFile::onMapEvent));
-}
-
-void PointFile::shutdownModule()
-{
-	GlobalRenderSystem().detachRenderable(*this);
-	_renderstate.reset();
-}
-
-module::StaticModule<PointFile> pointFileModule;
 
 } // namespace map

@@ -13,6 +13,7 @@
 #include "model/export/ScaledModelExporter.h"
 #include "model/export/ModelScalePreserver.h"
 #include "MapPositionManager.h"
+#include "PointFile.h"
 #include "messages/ApplicationShutdownRequest.h"
 
 #include <sigc++/signal.h>
@@ -59,8 +60,10 @@ class Map :
     util::StopWatch _mapSaveTimer;
 
 	MapEventSignal _mapEvent;
-
 	std::size_t _shutdownListener;
+
+    // Point trace for leak detection
+    std::unique_ptr<PointFile> _pointTrace;
 
 private:
     std::string getSaveConfirmationText() const;

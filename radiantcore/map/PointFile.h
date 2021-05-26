@@ -3,23 +3,20 @@
 #include <vector>
 #include "irender.h"
 #include "imap.h"
-#include "imodule.h"
 #include "icommandsystem.h"
 #include "irenderable.h"
 #include "math/Vector3.h"
 #include "render.h"
 
-namespace map 
+namespace map
 {
 
-class PointFile :
-	public RegisterableModule,
-	public Renderable
+/// Renderable point trace to identify leak positions
+class PointFile: public Renderable
 {
-private:
 	// Vector of point coordinates
 	RenderablePointVector _points;
-	
+
 	// Holds the current position in the point file chain
 	std::size_t _curPos;
 
@@ -30,7 +27,7 @@ public:
 	PointFile();
 
 	// Destructor
-	virtual ~PointFile() {}
+	virtual ~PointFile();
 
 	// Query whether the point path is currently visible
 	bool isVisible() const;
@@ -53,10 +50,7 @@ public:
 		return Highlight::NoHighlight;
 	}
 
-	const std::string& getName() const override;
-	const StringSet& getDependencies() const override;
-	void initialiseModule(const IApplicationContext& ctx) override;
-	void shutdownModule() override;
+	void onMapEvent(IMap::MapEvent ev);
 
 private:
 	// Registers the events to the EventManager
@@ -73,7 +67,7 @@ private:
 	 */
 	void clear();
 
-	/** 
+	/**
 	 * greebo: This sets the camera position to the next/prev leak spot.
 	 * @forward: pass true to set to the next leak spot, false for the previous
 	 */
@@ -87,8 +81,6 @@ private:
 
 	// Parse the current pointfile and read the vectors into the point list
 	void parse();
-
-	void onMapEvent(IMap::MapEvent ev);
 };
 
 } // namespace map

@@ -997,6 +997,7 @@ const StringSet& Map::getDependencies() const
 		_dependencies.insert(MODULE_MAPINFOFILEMANAGER);
 		_dependencies.insert(MODULE_FILETYPES);
 		_dependencies.insert(MODULE_MAPRESOURCEMANAGER);
+        _dependencies.insert(MODULE_COMMANDSYSTEM);
     }
 
     return _dependencies;
@@ -1016,6 +1017,11 @@ void Map::initialiseModule(const IApplicationContext& ctx)
 
     _scaledModelExporter.initialise();
     _modelScalePreserver.reset(new ModelScalePreserver);
+
+    // Construct point trace and connect it to map signals
+    _pointTrace.reset(new PointFile());
+    signal_mapEvent().connect([this](IMap::MapEvent e)
+                              { _pointTrace->onMapEvent(e); });
 
 	MapFileManager::registerFileTypes();
 
