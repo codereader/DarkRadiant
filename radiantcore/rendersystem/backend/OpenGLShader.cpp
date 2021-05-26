@@ -873,18 +873,34 @@ void OpenGLShader::construct()
 				state.m_linewidth = 2;
 				state.m_linestipple_factor = 3;
 			}
-            else if (_name == "$XY_MERGE_ACTION")
-			{
-                Vector3 mergeActionColour(0, 0.4, 0.9);
-                state.setColour(static_cast<float>(mergeActionColour[0]),
-                    static_cast<float>(mergeActionColour[1]),
-                    static_cast<float>(mergeActionColour[2]),
-                    static_cast<float>(0.5));
-				state.setRenderFlag(RENDER_LINESTIPPLE);
-				state.setSortPosition(OpenGLState::SORT_OVERLAY_FIRST);
-				state.m_linewidth = 2;
-				state.m_linestipple_factor = 2;
-			}
+            else if (string::starts_with(_name, "$XY_MERGE_ACTION_"))
+            {
+                Colour4 colour;
+                auto sortPosition = OpenGLState::SORT_OVERLAY_FIRST;
+                auto lineSortPosition = OpenGLState::SORT_OVERLAY_LAST;
+
+                if (string::ends_with(_name, "_ADD"))
+                {
+                    colour = Colour4(0, 0.5f, 0, 0.5f);
+                    sortPosition = OpenGLState::SORT_OVERLAY_THIRD; // render additions over removals
+                }
+                else if (string::ends_with(_name, "_REMOVE"))
+                {
+                    colour = Colour4(0.6f, 0.1f, 0, 0.5f);
+                    lineSortPosition = OpenGLState::SORT_OVERLAY_ONE_BEFORE_LAST;
+                }
+                else if (string::ends_with(_name, "_CHANGE"))
+                {
+                    colour = Colour4(0, 0.4f, 0.9f, 0.5f);
+                    sortPosition = OpenGLState::SORT_OVERLAY_SECOND;
+                }
+
+                state.setColour(colour);
+                //state.setRenderFlag(RENDER_LINESTIPPLE);
+                state.setSortPosition(OpenGLState::SORT_OVERLAY_FIRST);
+                state.m_linewidth = 2;
+                //state.m_linestipple_factor = 1;
+            }
             else if (_name == "$XY_INACTIVE_NODE")
             {
                 Colour4 colour(0, 0, 0, 0.05f);

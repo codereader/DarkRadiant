@@ -221,19 +221,22 @@ int XYWnd::getDeviceHeight() const
 
 void XYWnd::captureStates()
 {
-    _selectedShader = GlobalRenderSystem().capture("$XY_OVERLAY");
-	_selectedShaderGroup = GlobalRenderSystem().capture("$XY_OVERLAY_GROUP");
-
-    _mergeActionShader = GlobalRenderSystem().capture("$XY_MERGE_ACTION");
-    _nonMergeActionNodeShader = GlobalRenderSystem().capture("$XY_INACTIVE_NODE");
+    _highlightShaders.selectedShader = GlobalRenderSystem().capture("$XY_OVERLAY");
+    _highlightShaders.selectedShaderGroup = GlobalRenderSystem().capture("$XY_OVERLAY_GROUP");
+    _highlightShaders.mergeActionShaderAdd = GlobalRenderSystem().capture("$XY_MERGE_ACTION_ADD");
+    _highlightShaders.mergeActionShaderChange = GlobalRenderSystem().capture("$XY_MERGE_ACTION_CHANGE");
+    _highlightShaders.mergeActionShaderRemove = GlobalRenderSystem().capture("$XY_MERGE_ACTION_REMOVE");
+    _highlightShaders.nonMergeActionNodeShader = GlobalRenderSystem().capture("$XY_INACTIVE_NODE");
 }
 
 void XYWnd::releaseStates()
 {
-	_selectedShader.reset();
-	_selectedShaderGroup.reset();
-    _mergeActionShader.reset();
-    _nonMergeActionNodeShader.reset();
+	_highlightShaders.selectedShader.reset();
+	_highlightShaders.selectedShaderGroup.reset();
+    _highlightShaders.mergeActionShaderAdd.reset();
+    _highlightShaders.mergeActionShaderChange.reset();
+    _highlightShaders.mergeActionShaderRemove.reset();
+    _highlightShaders.nonMergeActionNodeShader.reset();
 }
 
 void XYWnd::ensureFont()
@@ -1368,8 +1371,7 @@ void XYWnd::draw()
 
     {
         // Construct the renderer and render the scene
-        XYRenderer renderer(flagsMask, _selectedShader.get(), _selectedShaderGroup.get(), 
-            _mergeActionShader.get(), _nonMergeActionNodeShader.get());
+        XYRenderer renderer(flagsMask, _highlightShaders);
 
         // First pass (scenegraph traversal)
         render::RenderableCollectionWalker::CollectRenderablesInScene(renderer,
@@ -1724,9 +1726,6 @@ IInteractiveView& XYWnd::getInteractiveView()
 }
 
 /* STATICS */
-ShaderPtr XYWnd::_selectedShader;
-ShaderPtr XYWnd::_selectedShaderGroup;
-ShaderPtr XYWnd::_mergeActionShader;
-ShaderPtr XYWnd::_nonMergeActionNodeShader;
+XYRenderer::HighlightShaders XYWnd::_highlightShaders;
 
 } // namespace

@@ -4,43 +4,34 @@
 #include "imap.h"
 
 /// RenderableCollector implementation for the ortho view
-class XYRenderer: public RenderableCollector
+class XYRenderer : 
+    public RenderableCollector
 {
-    // State type structure
-    struct State
+public:
+    struct HighlightShaders
     {
-        bool highlightPrimitives;
-        bool highlightAsGroupMember;
-        bool highlightAsMergeAction;
-
-        // Constructor
-        State() : 
-            highlightPrimitives(false), 
-            highlightAsGroupMember(false),
-            highlightAsMergeAction(false)
-        {}
+        ShaderPtr selectedShader;
+        ShaderPtr selectedShaderGroup;
+        ShaderPtr mergeActionShaderAdd;
+        ShaderPtr mergeActionShaderChange;
+        ShaderPtr mergeActionShaderRemove;
+        ShaderPtr nonMergeActionNodeShader;
     };
 
-    State _state;
+private:
+    std::size_t _flags;
     RenderStateFlags _globalstate;
-
-    // Shader to use for highlighted objects
-    Shader* _selectedShader;
-    Shader* _selectedShaderGroup;
-    Shader* _mergeActionShader;
-    Shader* _nonMergeActionNodeShader;
 
     IMap::EditMode _editMode;
 
+    const HighlightShaders& _shaders;
+
 public:
-    XYRenderer(RenderStateFlags globalstate, Shader* selected, Shader* selectedGroup, 
-        Shader* mergeActionShader, Shader* nonMergeActionNodeShader) :
+    XYRenderer(RenderStateFlags globalstate, const HighlightShaders& shaders) :
+        _flags(Highlight::Flags::NoHighlight),
         _globalstate(globalstate),
-        _selectedShader(selected),
-        _selectedShaderGroup(selectedGroup),
-        _mergeActionShader(mergeActionShader),
-        _nonMergeActionNodeShader(nonMergeActionNodeShader),
-        _editMode(GlobalMapModule().getEditMode())
+        _editMode(GlobalMapModule().getEditMode()),
+        _shaders(shaders)
     {}
 
     bool supportsFullMaterials() const override
@@ -50,19 +41,13 @@ public:
 
     void setHighlightFlag(Highlight::Flags flags, bool enabled) override
     {
-        if (flags & Highlight::Primitives)
+        if (enabled)
         {
-            _state.highlightPrimitives = enabled;
+            _flags |= flags;
         }
-
-        if (flags & Highlight::GroupMember)
+        else
         {
-            _state.highlightAsGroupMember = enabled;
-        }
-
-        if (flags & Highlight::MergeAction)
-        {
-            _state.highlightAsMergeAction = enabled;
+            _flags &= ~flags;
         }
     }
 
@@ -77,30 +62,36 @@ public:
     {
         if (_editMode == IMap::EditMode::Merge)
         {
-            if (_state.highlightAsMergeAction)
+            if (_flags & Highlight::Flags::MergeAction)
             {
-                // Merge actions get rendered in a special colour
-                _mergeActionShader->addRenderable(renderable, localToWorld, nullptr, entity);
+                // This is a merge-relevant node that should be rendered in a special colour
+                const auto& mergeShader = (_flags & Highlight::Flags::MergeActionAdd) != 0 ? _shaders.mergeActionShaderAdd :
+                    (_flags & Highlight::Flags::MergeActionRemove) != 0 ? _shaders.mergeActionShaderRemove : _shaders.mergeActionShaderChange;
+
+                if (mergeShader)
+                {
+                    mergeShader->addRenderable(renderable, localToWorld, nullptr, entity);
+                }
             }
             else
             {
                 // Everything else is using the shader for non-merge-affected nodes
-                _nonMergeActionNodeShader->addRenderable(renderable, localToWorld, nullptr, entity);
+                _shaders.nonMergeActionNodeShader->addRenderable(renderable, localToWorld, nullptr, entity);
             }
 
             return;
         }
         
         // Regular editing mode, add all highlighted nodes to the corresponding shader
-        if (_state.highlightPrimitives)
+        if ((_flags & Highlight::Flags::Primitives) != 0)
         {
-            if (_state.highlightAsGroupMember)
+            if ((_flags & Highlight::Flags::GroupMember) != 0)
             {
-                _selectedShaderGroup->addRenderable(renderable, localToWorld, nullptr, entity);
+                _shaders.selectedShaderGroup->addRenderable(renderable, localToWorld, nullptr, entity);
             }
             else
             {
-                _selectedShader->addRenderable(renderable, localToWorld, nullptr, entity);
+                _shaders.selectedShader->addRenderable(renderable, localToWorld, nullptr, entity);
             }
         }
 
