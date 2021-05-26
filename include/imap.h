@@ -172,11 +172,16 @@ public:
     // Exports the current selection to the given output stream, using the given map format
     virtual void exportSelected(std::ostream& out, const map::MapFormatPtr& format) = 0;
 
+    /* POINTFILE MANAGEMENT */
+
     /// Functor to receive pointfile paths
     using PointfileFunctor = std::function<void(const fs::path&)>;
 
     /// Enumerate pointfiles associated with the current map
     virtual void forEachPointfile(PointfileFunctor func) const = 0;
+
+    /// Return true if a point trace is currently visible
+    virtual bool isPointTraceVisible() const = 0;
 };
 typedef std::shared_ptr<IMap> IMapPtr;
 

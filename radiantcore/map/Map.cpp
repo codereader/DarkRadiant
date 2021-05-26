@@ -241,6 +241,11 @@ void Map::forEachPointfile(PointfileFunctor func) const
         func(p);
 }
 
+bool Map::isPointTraceVisible() const
+{
+    return _pointTrace->isVisible();
+}
+
 void Map::onSceneNodeErase(const scene::INodePtr& node)
 {
 	// Detect when worldspawn is removed from the map

@@ -43,7 +43,7 @@ void PointFileChooser::chooseAndToggle()
         throw cmd::ExecutionFailure("No pointfiles found for current map.");
 
     // If there is a choice to make, show the dialog
-    if (pointfiles.size() > 1)
+    if (!GlobalMapModule().isPointTraceVisible() && pointfiles.size() > 1)
     {
         // Construct list of wxString filenames
         wxArrayString filenames;

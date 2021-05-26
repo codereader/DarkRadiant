@@ -91,6 +91,7 @@ public:
 	std::string getMapName() const override;
 	sigc::signal<void>& signal_mapNameChanged() override;
     void forEachPointfile(PointfileFunctor func) const override;
+    bool isPointTraceVisible() const override;
 
 	/**
 	 * greebo: Saves the current map, doesn't ask for any filenames,
