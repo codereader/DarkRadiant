@@ -168,6 +168,11 @@ void Map::loadMapResourceFromLocation(const MapLocation& location)
 
 void Map::abortMergeOperation()
 {
+    for (const auto& mergeAction : _mergeActionNodes)
+    {
+        scene::removeNodeFromParent(mergeAction);
+    }
+
     _mergeActionNodes.clear();
     _mergeOperation.reset();
     setEditMode(EditMode::Normal);
@@ -982,6 +987,8 @@ void Map::mergeMap(const cmd::ArgumentList& args)
         throw cmd::ExecutionFailure(fmt::format(_("File doesn't exist: {0}"), candidate));
     }
 
+    abortMergeOperation();
+
     auto resource = GlobalMapResourceManager().createFromPath(candidate);
 
     try
@@ -1086,6 +1093,8 @@ void Map::initialiseModule(const IApplicationContext& ctx)
 
 void Map::shutdownModule()
 {
+    abortMergeOperation();
+
     GlobalRadiantCore().getMessageBus().removeListener(_shutdownListener);
 
     _scaledModelExporter.shutdown();
