@@ -91,10 +91,7 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
             EntitySelector entityTester(selector, test);
             GlobalSceneGraph().foreachVisibleNodeInVolume(view, entityTester);
 
-            for (SelectionPool::const_iterator i = selector.begin(); i != selector.end(); ++i)
-            {
-                targetList.push_back(i->second);
-            }
+            std::for_each(selector.begin(), selector.end(), [&](const auto& p) { targetList.push_back(p.second); });
         }
         break;
 
@@ -121,9 +118,7 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
             }
 
             // Add the first selection crop to the target vector
-            for (SelectionPool::const_iterator i = selector.begin(); i != selector.end(); ++i) {
-                targetList.push_back(i->second);
-            }
+            std::for_each(selector.begin(), selector.end(), [&](const auto& p) { targetList.push_back(p.second); });
 
             // Add the secondary crop to the vector (if it has any entries)
             for (SelectionPool::const_iterator i = sel2.begin(); i != sel2.end(); ++i) {
@@ -147,10 +142,7 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
             GlobalSceneGraph().foreachVisibleNodeInVolume(view, primitiveTester);
 
             // Add the selection crop to the target vector
-            for (SelectionPool::const_iterator i = selector.begin(); i != selector.end(); ++i)
-            {
-                targetList.push_back(i->second);
-            }
+            std::for_each(selector.begin(), selector.end(), [&](const auto& p) { targetList.push_back(p.second); });
         }
         break;
 
@@ -159,10 +151,17 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
             ComponentSelector selectionTester(selector, test, componentMode);
             foreachSelected(selectionTester);
 
-            for (SelectionPool::const_iterator i = selector.begin(); i != selector.end(); ++i)
-            {
-                targetList.push_back(i->second);
-            }
+            std::for_each(selector.begin(), selector.end(), [&](const auto& p) { targetList.push_back(p.second); });
+        }
+        break;
+
+        case eMergeAction:
+        {
+            MergeActionSelector tester(selector, test);
+            GlobalSceneGraph().foreachVisibleNodeInVolume(view, tester);
+
+            // Add the selection crop to the target vector
+            std::for_each(selector.begin(), selector.end(), [&](const auto& p) { targetList.push_back(p.second); });
         }
         break;
     } // switch
