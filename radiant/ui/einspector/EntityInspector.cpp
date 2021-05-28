@@ -1194,6 +1194,11 @@ void EntityInspector::getEntityFromSelectionSystem()
         scene::INodePtr selectedNodeParent = selectedNode->getParent();
         changeSelectedEntity(selectedNodeParent);
 
+        if (!_selectedEntity.lock())
+        {
+            return;
+        }
+
         try
         {
             auto indices = scene::getNodeIndices(selectedNode);
@@ -1243,7 +1248,7 @@ void EntityInspector::changeSelectedEntity(const scene::INodePtr& newEntity)
     _keyValueTreeView->ResetSortingOnAllColumns();
 
     // Attach to new entity if it is non-NULL
-    if (newEntity)
+    if (newEntity && newEntity->getNodeType() == scene::INode::Type::Entity)
     {
         _selectedEntity = newEntity;
 
