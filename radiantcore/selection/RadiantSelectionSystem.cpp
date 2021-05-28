@@ -1023,6 +1023,7 @@ void RadiantSelectionSystem::initialiseModule(const IApplicationContext& ctx)
 
     GlobalCommandSystem().addCommand("ToggleEntitySelectionMode", std::bind(&RadiantSelectionSystem::toggleEntityMode, this, std::placeholders::_1));
     GlobalCommandSystem().addCommand("ToggleGroupPartSelectionMode", std::bind(&RadiantSelectionSystem::toggleGroupPartMode, this, std::placeholders::_1));
+    GlobalCommandSystem().addCommand("ToggleMergeActionSelectionMode", std::bind(&RadiantSelectionSystem::toggleMergeActionMode, this, std::placeholders::_1));
 
     GlobalCommandSystem().addCommand("ToggleComponentSelectionMode",
         std::bind(&RadiantSelectionSystem::toggleComponentModeCmd, this, std::placeholders::_1), { cmd::ARGTYPE_STRING });
@@ -1328,6 +1329,32 @@ void RadiantSelectionSystem::toggleGroupPartMode(const cmd::ArgumentList& args)
 
 	onManipulatorModeChanged();
 	onComponentModeChanged();
+}
+
+void RadiantSelectionSystem::toggleMergeActionMode(const cmd::ArgumentList& args)
+{
+    auto oldMode = Mode();
+
+    if (Mode() == eMergeAction)
+    {
+        activateDefaultMode();
+    }
+    // Only allow switching if the map has an active merge operation
+    else if (GlobalMapModule().getEditMode() == IMap::EditMode::Merge)
+    {
+        // De-select everything when switching to merge mode
+        setSelectedAll(false);
+        setSelectedAllComponents(false);
+
+        SetMode(eMergeAction);
+        SetComponentMode(eDefault);
+    }
+
+    if (oldMode != Mode())
+    {
+        onManipulatorModeChanged();
+        onComponentModeChanged();
+    }
 }
 
 void RadiantSelectionSystem::onManipulatorModeChanged()

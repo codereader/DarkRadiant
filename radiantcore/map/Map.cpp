@@ -238,6 +238,16 @@ Map::EditMode Map::getEditMode()
 void Map::setEditMode(EditMode mode)
 {
     _editMode = mode;
+
+    if (_editMode == EditMode::Merge)
+    {
+        GlobalSelectionSystem().SetMode(SelectionSystem::eMergeAction);
+    }
+    else
+    {
+        GlobalSelectionSystem().SetMode(SelectionSystem::ePrimitive);
+    }
+
     SceneChangeNotify();
 }
 

@@ -838,14 +838,10 @@ void OpenGLShader::construct()
                 state.polygonOffset = 0.5f;
                 state.setDepthFunc(GL_LEQUAL);
 
+                // This is the outline pass
                 auto& linesOverlay = appendDefaultPass();
                 colour[3] = 0.78f;
                 linesOverlay.setColour(colour);
-                // This is the shader drawing a solid line to outline
-                // a selected item. The first pass has its depth test
-                // activated using GL_LESS, whereas the second pass
-                // draws the hidden lines in stippled appearance
-                // with its depth test using GL_GREATER.
                 linesOverlay.setRenderFlags(RENDER_OFFSETLINE | RENDER_DEPTHTEST | RENDER_BLEND);
                 linesOverlay.setSortPosition(lineSortPosition);
             }
