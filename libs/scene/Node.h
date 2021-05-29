@@ -94,6 +94,7 @@ public:
 	void enable(unsigned int state) override;
 	void disable(unsigned int state) override;
     bool checkStateFlag(unsigned int state) const override;
+    virtual bool supportsStateFlag(unsigned int state) const override;
 
 	bool visible() const override;
 	bool excluded() const override;

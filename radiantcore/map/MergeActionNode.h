@@ -73,6 +73,16 @@ public:
         return scene::INode::Type::MergeAction;
     }
 
+    bool supportsStateFlag(unsigned int state) const override
+    {
+        if ((state & (eHidden|eFiltered|eExcluded|eLayered)) != 0)
+        {
+            return false; // don't allow this node to be hidden
+        }
+
+        return Node::supportsStateFlag(state);
+    }
+
     const AABB& localAABB() const override
     {
         return _affectedNode->localAABB();

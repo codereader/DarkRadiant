@@ -261,24 +261,24 @@ public:
 // Copies all visibility flags from the source to the target
 inline void assignVisibilityFlagsFromNode(INode& target, const INode& source)
 {
-    if (source.checkStateFlag(scene::Node::eHidden))
+    if (source.checkStateFlag(Node::eHidden) && target.supportsStateFlag(Node::eHidden))
     {
-        target.enable(scene::Node::eHidden);
+        target.enable(Node::eHidden);
     }
 
-    if (source.checkStateFlag(scene::Node::eFiltered))
+    if (source.checkStateFlag(Node::eFiltered) && target.supportsStateFlag(Node::eFiltered))
     {
-        target.enable(scene::Node::eFiltered);
+        target.enable(Node::eFiltered);
     }
 
-    if (source.checkStateFlag(scene::Node::eExcluded))
+    if (source.checkStateFlag(Node::eExcluded) && target.supportsStateFlag(Node::eExcluded))
     {
-        target.enable(scene::Node::eExcluded);
+        target.enable(Node::eExcluded);
     }
 
-    if (source.checkStateFlag(scene::Node::eLayered))
+    if (source.checkStateFlag(Node::eLayered) && target.supportsStateFlag(Node::eLayered))
     {
-        target.enable(scene::Node::eLayered);
+        target.enable(Node::eLayered);
     }
 }
 
