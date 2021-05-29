@@ -656,4 +656,150 @@ TEST_F(MapMergeTest, ApplyMergeOperation)
     EXPECT_TRUE(resultAfterExecution->differingEntities.empty());
 }
 
+TEST_F(MapMergeTest, DeactivatedAddEntityAction)
+{
+    auto result = performComparison("maps/fingerprinting.mapx", _context.getTestProjectPath() + "maps/fingerprinting_2.mapx");
+    auto operation = MergeOperation::CreateFromComparisonResult(*result);
+
+    auto action = findAction<AddEntityAction>(operation, [](const std::shared_ptr<AddEntityAction>& action)
+    {
+        auto sourceEntity = Node_getEntity(action->getSourceNodeToAdd());
+        return sourceEntity->getKeyValue("name") == "light_3";
+    });
+
+    // Check pre-requisites and apply the action
+    auto entityNode = algorithm::getEntityByName(result->getBaseRootNode(), "light_3");
+    EXPECT_FALSE(entityNode);
+
+    action->deactivate();
+    action->applyChanges();
+
+    entityNode = algorithm::getEntityByName(result->getBaseRootNode(), "light_3");
+    EXPECT_FALSE(entityNode); // must still be missing
+}
+
+TEST_F(MapMergeTest, DeactivatedRemoveEntityAction)
+{
+    auto result = performComparison("maps/fingerprinting.mapx", _context.getTestProjectPath() + "maps/fingerprinting_2.mapx");
+    auto operation = MergeOperation::CreateFromComparisonResult(*result);
+
+    auto action = findAction<RemoveEntityAction>(operation, [](const std::shared_ptr<RemoveEntityAction>& action)
+    {
+        auto entity = Node_getEntity(action->getNodeToRemove());
+        return entity->getKeyValue("name") == "info_player_start_1";
+    });
+
+    // Check pre-requisites and apply the action
+    auto entityNode = algorithm::getEntityByName(result->getBaseRootNode(), "info_player_start_1");
+    EXPECT_TRUE(entityNode);
+
+    action->deactivate();
+    action->applyChanges();
+
+    entityNode = algorithm::getEntityByName(result->getBaseRootNode(), "info_player_start_1");
+    EXPECT_TRUE(entityNode); // must still be here
+}
+
+TEST_F(MapMergeTest, DeactivatedAddEntityKeyValueAction)
+{
+    auto result = performComparison("maps/fingerprinting.mapx", _context.getTestProjectPath() + "maps/fingerprinting_2.mapx");
+    auto operation = MergeOperation::CreateFromComparisonResult(*result);
+
+    auto action = findAction<AddEntityKeyValueAction>(operation, [](const std::shared_ptr<AddEntityKeyValueAction>& action)
+    {
+        auto entity = Node_getEntity(action->getEntityNode());
+        return entity->getKeyValue("name") == "light_1" && action->getKey() == "dist_check_period" && action->getValue() == "40";
+    });
+
+    // Check pre-requisites and apply the action
+    auto entityNode = algorithm::getEntityByName(result->getBaseRootNode(), "light_1");
+    EXPECT_EQ(Node_getEntity(entityNode)->getKeyValue("dist_check_period"), "");
+
+    action->deactivate();
+    action->applyChanges();
+
+    entityNode = algorithm::getEntityByName(result->getBaseRootNode(), "light_1");
+    EXPECT_EQ(Node_getEntity(entityNode)->getKeyValue("dist_check_period"), ""); // must still be unchanged
+}
+
+TEST_F(MapMergeTest, DeactivatedRemoveEntityKeyValueAction)
+{
+    auto result = performComparison("maps/fingerprinting.mapx", _context.getTestProjectPath() + "maps/fingerprinting_2.mapx");
+    auto operation = MergeOperation::CreateFromComparisonResult(*result);
+
+    auto action = findAction<RemoveEntityKeyValueAction>(operation, [](const std::shared_ptr<RemoveEntityKeyValueAction>& action)
+    {
+        auto entity = Node_getEntity(action->getEntityNode());
+        return entity->getKeyValue("name") == "light_1" && action->getKey() == "break" && action->getValue().empty();
+    });
+
+    // Check pre-requisites and apply the action
+    auto entityNode = algorithm::getEntityByName(result->getBaseRootNode(), "light_1");
+    EXPECT_EQ(Node_getEntity(entityNode)->getKeyValue("break"), "1");
+
+    action->deactivate();
+    action->applyChanges();
+
+    entityNode = algorithm::getEntityByName(result->getBaseRootNode(), "light_1");
+    EXPECT_EQ(Node_getEntity(entityNode)->getKeyValue("break"), "1"); // must be unchanged
+}
+
+TEST_F(MapMergeTest, DeactivatedChangeEntityKeyValueAction)
+{
+    auto result = performComparison("maps/fingerprinting.mapx", _context.getTestProjectPath() + "maps/fingerprinting_2.mapx");
+    auto operation = MergeOperation::CreateFromComparisonResult(*result);
+
+    auto action = findAction<ChangeEntityKeyValueAction>(operation, [](const std::shared_ptr<ChangeEntityKeyValueAction>& action)
+    {
+        auto entity = Node_getEntity(action->getEntityNode());
+        return entity->getKeyValue("name") == "light_1" && action->getKey() == "ai_see" && action->getValue() == "1";
+    });
+
+    // Check pre-requisites and apply the action
+    auto entityNode = algorithm::getEntityByName(result->getBaseRootNode(), "light_1");
+    EXPECT_EQ(Node_getEntity(entityNode)->getKeyValue("ai_see"), "0");
+
+    action->deactivate();
+    action->applyChanges();
+
+    entityNode = algorithm::getEntityByName(result->getBaseRootNode(), "light_1");
+    EXPECT_EQ(Node_getEntity(entityNode)->getKeyValue("ai_see"), "0");
+}
+
+TEST_F(MapMergeTest, DeactivatedChangePrimitiveActions)
+{
+    auto result = performComparison("maps/fingerprinting.mapx", _context.getTestProjectPath() + "maps/fingerprinting_2.mapx");
+    auto operation = MergeOperation::CreateFromComparisonResult(*result);
+
+    // func_static_1 has 2 additions and 1 removal (== 1 addition, 1 replacement)
+    operation->foreachAction([&](const MergeAction::Ptr& action)
+    {
+        auto addChildAction = std::dynamic_pointer_cast<AddChildAction>(action);
+
+        if (addChildAction && Node_isEntity(addChildAction->getParent()) && 
+            Node_getEntity(addChildAction->getParent())->getKeyValue("name") == "func_static_1")
+        {
+            addChildAction->deactivate();
+        }
+
+        auto removeChildAction = std::dynamic_pointer_cast<RemoveChildAction>(action);
+
+        if (removeChildAction && Node_isEntity(removeChildAction->getNodeToRemove()->getParent()) &&
+            Node_getEntity(removeChildAction->getNodeToRemove()->getParent())->getKeyValue("name") == "func_static_1")
+        {
+            removeChildAction->deactivate();
+        }
+    });
+    
+    // func_static_1 has 2 brushes, this should stay the same
+    // Check prerequisites and execute action
+    auto entityNode = algorithm::getEntityByName(result->getBaseRootNode(), "func_static_1");
+    EXPECT_EQ(getChildPrimitiveCount(entityNode), 2);
+
+    operation->applyActions();
+
+    entityNode = algorithm::getEntityByName(result->getBaseRootNode(), "func_static_1");
+    EXPECT_EQ(getChildPrimitiveCount(entityNode), 2);
+}
+
 }
