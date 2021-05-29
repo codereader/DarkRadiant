@@ -20,9 +20,12 @@ class MergeAction :
 private:
     ActionType _type;
 
+    bool _isActive;
+
 protected:
     MergeAction(ActionType type) :
-        _type(type)
+        _type(type),
+        _isActive(true)
     {}
 
 public:
@@ -31,6 +34,21 @@ public:
     ActionType getType() const override
     {
         return _type;
+    }
+
+    virtual void activate() override
+    {
+        _isActive = true;
+    }
+
+    virtual void deactivate() override
+    {
+        _isActive = false;
+    }
+
+    virtual bool isActive() const override
+    {
+        return _isActive;
     }
 };
 
@@ -58,6 +76,8 @@ public:
 
     void applyChanges() override
     {
+        if (!isActive()) return;
+
         removeNodeFromParent(_nodeToRemove);
     }
 
@@ -124,6 +144,8 @@ protected:
 public:
     void applyChanges() override
     {
+        if (!isActive()) return;
+
         addNodeToContainer(_cloneToBeInserted, _parent);
     }
 
@@ -184,6 +206,8 @@ public:
 
     void applyChanges() override
     {
+        if (!isActive()) return;
+
         // No post-clone callback since we don't care about selection groups right now
         auto entity = Node_getEntity(_node);
 

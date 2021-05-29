@@ -22,6 +22,7 @@ enum class ActionType
 
 /**
  * Represents a merge action, i.e. one single step of a merge operation.
+ * Only active actions will be processed when the merge run starts.
  */ 
 class IMergeAction
 {
@@ -33,7 +34,17 @@ public:
     // The type performed by this action
     virtual ActionType getType() const = 0;
 
-    // Applies all changes defined by this action.
+    // Activate this action, it will be executed during the merge
+    virtual void activate() = 0;
+
+    // Deactivate this action, it will NOT be executed during the merge
+    virtual void deactivate() = 0;
+
+    // Returns the active state of this action
+    virtual bool isActive() const = 0;
+
+    // Applies all changes defined by this action (if it is active,
+    // deactivated action will not take any effect).
     // It's the caller's responsibility to set up any Undo operations.
     // Implementations are allowed to throw std::runtime_errors on failure.
     virtual void applyChanges() = 0;

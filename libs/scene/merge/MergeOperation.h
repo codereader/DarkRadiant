@@ -35,7 +35,7 @@ public:
 
     void addAction(const MergeAction::Ptr& action);
 
-    // Executes all actions defined in this operation
+    // Executes all active actions defined in this operation
     void applyActions();
 
     void foreachAction(const std::function<void(const MergeAction::Ptr&)>& visitor);

@@ -168,10 +168,26 @@ void Map::loadMapResourceFromLocation(const MapLocation& location)
 
 void Map::finishMergeOperation()
 {
+    if (getEditMode() != EditMode::Merge)
+    {
+        rWarning() << "Not in merge edit mode, cannot finish any operation" << std::endl;
+        return;
+    }
 
+    if (!_mergeOperation)
+    {
+        rError() << "Cannot merge, no active operation attached to this map." << std::endl;
+        return;
+    }
+
+    UndoableCommand cmd("mergeMap");
+    _mergeOperation->applyActions();
+
+    cleanupMergeOperation();
+    setEditMode(EditMode::Normal);
 }
 
-void Map::abortMergeOperation()
+void Map::cleanupMergeOperation()
 {
     for (const auto& mergeAction : _mergeActionNodes)
     {
@@ -180,7 +196,12 @@ void Map::abortMergeOperation()
 
     _mergeActionNodes.clear();
     _mergeOperation.reset();
-    setEditMode(EditMode::Normal);
+}
+
+void Map::abortMergeOperation()
+{
+    // Remove the nodes and switch back to normal without applying the operation
+    cleanupMergeOperation();
 }
 
 void Map::setMapName(const std::string& newName)

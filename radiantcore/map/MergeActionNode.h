@@ -44,6 +44,13 @@ public:
         });
     }
 
+    void onInsertIntoScene(scene::IMapRootNode& rootNode) override
+    {
+        SelectableNode::onInsertIntoScene(rootNode);
+
+        _action->activate();
+    }
+
     void onRemoveFromScene(scene::IMapRootNode& rootNode) override
     {
         auto addNodeAction = std::dynamic_pointer_cast<scene::merge::AddCloneToParentAction>(_action);
@@ -61,6 +68,8 @@ public:
             child->disable(Node::eHidden);
             return true;
         });
+
+        _action->deactivate();
 
         SelectableNode::onRemoveFromScene(rootNode);
     }

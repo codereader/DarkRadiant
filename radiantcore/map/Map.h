@@ -266,6 +266,8 @@ private:
 	void emitMapEvent(MapEvent ev);
 
 	void clearMapResource();
+
+    void cleanupMergeOperation();
 };
 
 } // namespace map
