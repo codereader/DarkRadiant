@@ -214,6 +214,7 @@ void Map::abortMergeOperation()
 {
     // Remove the nodes and switch back to normal without applying the operation
     cleanupMergeOperation();
+    setEditMode(EditMode::Normal);
 }
 
 void Map::setMapName(const std::string& newName)
@@ -1046,6 +1047,12 @@ void Map::startMergeOperation(const cmd::ArgumentList& args)
         {
             throw cmd::ExecutionFailure(fmt::format(_("File doesn't exist: {0}"), baseCandidate));
         }
+    }
+
+    {
+        // Make sure we have a worldspawn in this map
+        UndoableCommand cmd("ensureWorldSpawn");
+        findOrInsertWorldspawn();
     }
 
     // Stop any pending merge operation

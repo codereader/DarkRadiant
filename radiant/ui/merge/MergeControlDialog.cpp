@@ -20,6 +20,9 @@ namespace ui
 namespace
 {
     const char* const WINDOW_TITLE = N_("Merge Maps");
+
+    const std::string RKEY_ROOT = "user/ui/mergeControlDialog/";
+    const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
 }
 
 MergeControlDialog::MergeControlDialog() :
@@ -52,10 +55,10 @@ MergeControlDialog::MergeControlDialog() :
     finishButton->Bind(wxEVT_BUTTON, &MergeControlDialog::onFinishMerge, this);
 
     updateControlSensitivity();
-
-    SetMinSize(wxSize(300, 300));
-
     Bind(wxEVT_IDLE, &MergeControlDialog::onIdle, this);
+
+    SetMinSize(wxSize(300, 400));
+    InitialiseWindowPosition(300, 400, RKEY_WINDOW_STATE);
 }
 
 std::shared_ptr<MergeControlDialog>& MergeControlDialog::InstancePtr()
@@ -136,7 +139,7 @@ void MergeControlDialog::onLoadAndCompare(wxCommandEvent& ev)
 
 void MergeControlDialog::onAbortMerge(wxCommandEvent& ev)
 {
-    GlobalMapModule().abortMergeOperation(); 
+    GlobalMapModule().abortMergeOperation();
     updateControlSensitivity();
 }
 
