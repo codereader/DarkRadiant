@@ -18,20 +18,33 @@ private:
     scene::merge::MergeAction::Ptr _action;
     scene::INodePtr _affectedNode;
 
+    bool _syncActionStatus;
+
 public:
     using Ptr = std::shared_ptr<MergeActionNode>;
 
     MergeActionNode(const scene::merge::MergeAction::Ptr& action) :
-        _action(action)
+        _action(action),
+        _syncActionStatus(true)
     {
         _affectedNode = _action->getAffectedNode();
+    }
+
+    // Prepare this node right before a merge, such that it
+    // doesn't change the action's status when removed from the scene
+    void prepareForMerge()
+    {
+        _syncActionStatus = false;
     }
 
     void onInsertIntoScene(scene::IMapRootNode& rootNode) override
     {
         SelectableNode::onInsertIntoScene(rootNode);
 
-        _action->activate();
+        if (_syncActionStatus)
+        {
+            _action->activate();
+        }
 
         addPreviewNodeForAddAction();
         hideAffectedNodes();
@@ -42,7 +55,10 @@ public:
         unhideAffectedNodes();
         removePreviewNodeForAddAction();
 
-        _action->deactivate();
+        if (_syncActionStatus)
+        {
+            _action->deactivate();
+        }
 
         SelectableNode::onRemoveFromScene(rootNode);
     }

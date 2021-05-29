@@ -180,6 +180,18 @@ void Map::finishMergeOperation()
         return;
     }
 
+    // Prepare the scene, let the merge nodes know about the upcoming merge
+    // and remove them from the scene, to leave it untouched
+    for (const auto& mergeActionNode : _mergeActionNodes)
+    {
+        mergeActionNode->prepareForMerge();
+        scene::removeNodeFromParent(mergeActionNode);
+    }
+
+    _mergeActionNodes.clear();
+
+    // At this point the scene should look the same as before the merge
+
     UndoableCommand cmd("mergeMap");
     _mergeOperation->applyActions();
 
