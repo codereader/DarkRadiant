@@ -1,6 +1,7 @@
 #pragma once
 
 #include "iselection.h"
+#include "icommandsystem.h"
 #include <sigc++/connection.h>
 #include "wxutil/window/TransientWindow.h"
 #include "wxutil/XmlResourceBasedWidget.h"

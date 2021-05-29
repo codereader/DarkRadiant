@@ -90,7 +90,14 @@ void MergeOperation::applyActions()
 {
     for (auto& action : _actions)
     {
-        action->applyChanges();
+        try
+        {
+            action->applyChanges();
+        }
+        catch (const std::runtime_error& ex)
+        {
+            rError() << "Failed to apply action: " << ex.what() << std::endl;
+        }
     }
 }
 
