@@ -1,5 +1,6 @@
 #pragma once
 
+#include "irender.h"
 #include "irenderable.h"
 #include "imap.h"
 
