@@ -25,23 +25,6 @@ public:
         _action(action)
     {
         _affectedNode = _action->getAffectedNode();
-
-        auto addNodeAction = std::dynamic_pointer_cast<scene::merge::AddCloneToParentAction>(_action);
-
-        if (addNodeAction)
-        {
-            // Get the clone and add it to the target scene, it needs to be renderable here
-            scene::addNodeToContainer(_affectedNode, addNodeAction->getParent());
-        }
-
-        // Hide the affected node itself, we're doing the rendering ourselves, recursively
-        _affectedNode->enable(Node::eHidden);
-
-        _affectedNode->foreachNode([&](const scene::INodePtr& child)
-        {
-            child->enable(Node::eHidden);
-            return true;
-        });
     }
 
     void onInsertIntoScene(scene::IMapRootNode& rootNode) override
@@ -49,25 +32,15 @@ public:
         SelectableNode::onInsertIntoScene(rootNode);
 
         _action->activate();
+
+        addPreviewNodeForAddAction();
+        hideAffectedNodes();
     }
 
     void onRemoveFromScene(scene::IMapRootNode& rootNode) override
     {
-        auto addNodeAction = std::dynamic_pointer_cast<scene::merge::AddCloneToParentAction>(_action);
-
-        if (addNodeAction)
-        {
-            scene::removeNodeFromParent(_affectedNode);
-        }
-
-        // Release the hidden state of the contained nodes
-        _affectedNode->disable(Node::eHidden);
-
-        _affectedNode->foreachNode([&](const scene::INodePtr& child)
-        {
-            child->disable(Node::eHidden);
-            return true;
-        });
+        unhideAffectedNodes();
+        removePreviewNodeForAddAction();
 
         _action->deactivate();
 
@@ -143,6 +116,52 @@ private:
         }
 
         selector.popSelectable();
+    }
+
+    void hideAffectedNodes()
+    {
+        // Hide the affected node itself, we're doing the rendering ourselves, recursively
+        _affectedNode->enable(Node::eExcluded);
+
+        _affectedNode->foreachNode([&](const scene::INodePtr& child)
+        {
+            child->enable(Node::eExcluded);
+            return true;
+        });
+    }
+
+    void unhideAffectedNodes()
+    {
+        // Release the excluded state of the contained nodes
+        _affectedNode->disable(Node::eExcluded);
+
+        _affectedNode->foreachNode([&](const scene::INodePtr& child)
+        {
+            child->disable(Node::eExcluded);
+            return true;
+        });
+    }
+
+    void addPreviewNodeForAddAction()
+    {
+        // We add the node to the target scene, for preview purposes
+        auto addNodeAction = std::dynamic_pointer_cast<scene::merge::AddCloneToParentAction>(_action);
+
+        if (addNodeAction)
+        {
+            // Get the clone and add it to the target scene, it needs to be renderable here
+            scene::addNodeToContainer(_affectedNode, addNodeAction->getParent());
+        }
+    }
+
+    void removePreviewNodeForAddAction()
+    {
+        auto addNodeAction = std::dynamic_pointer_cast<scene::merge::AddCloneToParentAction>(_action);
+
+        if (addNodeAction)
+        {
+            scene::removeNodeFromParent(_affectedNode);
+        }
     }
 };
 
