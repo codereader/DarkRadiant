@@ -25,11 +25,29 @@
 									<border>5</border>
 									<object class="wxFlexGridSizer">
 										<rows>2</rows>
-										<cols>2</cols>
+										<cols>3</cols>
 										<vgap>0</vgap>
 										<hgap>0</hgap>
-										<growablecols>0,1</growablecols>
+										<growablecols>0,2</growablecols>
 										<growablerows></growablerows>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxBOTTOM</flag>
+											<border>6</border>
+											<object class="wxStaticText" name="MergeMapSelector">
+												<tooltip>The map file to merge into the target map</tooltip>
+												<label>Map to be merged</label>
+												<wrap>-1</wrap>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag></flag>
+											<border>5</border>
+											<object class="wxBoxSizer">
+												<orient>wxVERTICAL</orient>
+											</object>
+										</object>
 										<object class="sizeritem">
 											<option>0</option>
 											<flag>wxBOTTOM|wxRIGHT</flag>
@@ -40,49 +58,29 @@
 											</object>
 										</object>
 										<object class="sizeritem">
-											<option>0</option>
-											<flag>wxBOTTOM</flag>
-											<border>6</border>
-											<object class="wxStaticText" name="MergeMapSelector">
-												<tooltip>The map file to merge into the base map</tooltip>
-												<label>Map to be merged</label>
-												<wrap>-1</wrap>
-											</object>
-										</object>
-										<object class="sizeritem">
-											<option>0</option>
-											<flag>wxEXPAND|wxRIGHT</flag>
-											<border>6</border>
-											<object class="wxTextCtrl" name="BaseMapFilename">
+											<option>1</option>
+											<flag>wxEXPAND</flag>
+											<border>0</border>
+											<object class="wxTextCtrl" name="MergeMapFilename">
+												<tooltip>The map file to merge into the target map</tooltip>
 												<value></value>
 											</object>
 										</object>
 										<object class="sizeritem">
-											<option>1</option>
+											<option>0</option>
+											<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+											<border>0</border>
+											<object class="wxStaticBitmap" name="m_bitmap2">
+												<bitmap stock_id="darkradiant:merge_arrow.png" stock_client="">undefined.png</bitmap>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>0</option>
 											<flag>wxEXPAND</flag>
 											<border>0</border>
-											<object class="wxBoxSizer">
-												<orient>wxHORIZONTAL</orient>
-												<object class="sizeritem">
-													<option>1</option>
-													<flag>wxEXPAND</flag>
-													<border>0</border>
-													<object class="wxTextCtrl" name="MergeMapFilename">
-														<value></value>
-													</object>
-												</object>
-												<object class="sizeritem">
-													<option>0</option>
-													<flag>wxEXPAND</flag>
-													<border>0</border>
-													<object class="wxButton" name="MergeMapBrowseButton">
-														<size>20,-1</size>
-														<label>...</label>
-														<default>0</default>
-														<markup>0</markup>
-														<bitmap />
-													</object>
-												</object>
+											<object class="wxTextCtrl" name="TargetMapFilename">
+												<tooltip>The target map (this is the currently loaded one)</tooltip>
+												<value></value>
 											</object>
 										</object>
 									</object>
@@ -98,49 +96,59 @@
 											<flag>wxALIGN_CENTER|wxALL</flag>
 											<border>0</border>
 											<object class="wxStaticBitmap" name="m_bitmap1">
-												<bitmap stock_id="darkradiant:merge_path.png" stock_client="">undefined.png</bitmap>
+												<bitmap stock_id="darkradiant:merge_fork.png" stock_client="">undefined.png</bitmap>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>1</option>
+											<flag>wxEXPAND</flag>
+											<border>0</border>
+											<object class="wxTextCtrl" name="BaseMapFilename">
+												<tooltip>A common base map both maps have started from, makes detecting merge conflicts much easier.</tooltip>
+												<value></value>
 											</object>
 										</object>
 										<object class="sizeritem">
 											<option>0</option>
-											<flag>wxBOTTOM|wxEXPAND</flag>
-											<border>6</border>
-											<object class="wxBoxSizer">
-												<orient>wxHORIZONTAL</orient>
-												<object class="sizeritem">
-													<option>1</option>
-													<flag>wxEXPAND</flag>
-													<border>0</border>
-													<object class="wxTextCtrl" name="BaseMapFilename">
-														<tooltip>A common base map both maps have started from</tooltip>
-														<value></value>
-													</object>
-												</object>
-												<object class="sizeritem">
-													<option>0</option>
-													<flag>wxEXPAND</flag>
-													<border>0</border>
-													<object class="wxButton" name="BaseMapBrowseButton">
-														<size>20,-1</size>
-														<label>...</label>
-														<default>0</default>
-														<markup>0</markup>
-														<bitmap />
-													</object>
-												</object>
-											</object>
-										</object>
-										<object class="sizeritem">
-											<option>0</option>
-											<flag>wxALIGN_CENTER</flag>
+											<flag>wxALIGN_CENTER|wxTOP</flag>
 											<border>6</border>
 											<object class="wxStaticText" name="BaseMapLabel">
-												<tooltip>A common base map both maps have started from</tooltip>
-												<label>Base Map (optional)</label>
+												<tooltip>A common base map both maps have started from, makes detecting merge conflicts much easier.</tooltip>
+												<label>Common Ancestor (optional)</label>
 												<wrap>-1</wrap>
 											</object>
 										</object>
 									</object>
+								</object>
+							</object>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxBOTTOM|wxEXPAND|wxTOP</flag>
+						<border>12</border>
+						<object class="wxBoxSizer">
+							<orient>wxHORIZONTAL</orient>
+							<object class="sizeritem">
+								<option>1</option>
+								<flag>wxRIGHT</flag>
+								<border>6</border>
+								<object class="wxButton" name="LoadAndCompareButton">
+									<label>Load and Compare</label>
+									<default>0</default>
+									<markup>0</markup>
+									<bitmap />
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>1</option>
+								<flag>wxALL</flag>
+								<border>0</border>
+								<object class="wxButton" name="AbortMergeButton">
+									<label>Abort Merge</label>
+									<default>0</default>
+									<markup>0</markup>
+									<bitmap />
 								</object>
 							</object>
 						</object>

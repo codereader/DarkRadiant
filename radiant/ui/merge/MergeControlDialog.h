@@ -23,6 +23,12 @@ public:
 private:
     void onMainFrameShuttingDown();
     static std::shared_ptr<MergeControlDialog>& InstancePtr();
+
+    void convertTextCtrlToPathEntry(const std::string& ctrlName);
+    void onMergeSourceChanged(wxCommandEvent& ev);
+    void onLoadAndCompare(wxCommandEvent& ev);
+    void onAbortMerge(wxCommandEvent& ev);
+    void updateControlSensitivity();
 };
 
 }

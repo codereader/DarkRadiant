@@ -753,7 +753,8 @@ void Map::registerCommands()
     GlobalCommandSystem().addCommand("OpenMap", Map::openMap, { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
     GlobalCommandSystem().addCommand("OpenMapFromArchive", Map::openMapFromArchive, { cmd::ARGTYPE_STRING, cmd::ARGTYPE_STRING });
     GlobalCommandSystem().addCommand("ImportMap", Map::importMap);
-    GlobalCommandSystem().addCommand("MergeMap", std::bind(&Map::mergeMap, this, std::placeholders::_1), { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
+    GlobalCommandSystem().addCommand("StartMergeOperation", std::bind(&Map::startMergeOperation, this, std::placeholders::_1), 
+        { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL, cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
     GlobalCommandSystem().addCommand(LOAD_PREFAB_AT_CMD, std::bind(&Map::loadPrefabAt, this, std::placeholders::_1), 
         { cmd::ARGTYPE_STRING, cmd::ARGTYPE_VECTOR3, cmd::ARGTYPE_INT|cmd::ARGTYPE_OPTIONAL, cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL });
     GlobalCommandSystem().addCommand("SaveSelectedAsPrefab", Map::saveSelectedAsPrefab);
@@ -966,18 +967,19 @@ void Map::exportSelected(std::ostream& out, const MapFormatPtr& format)
     exporter.exportMap(GlobalSceneGraph().root(), scene::traverseSelected);
 }
 
-void Map::mergeMap(const cmd::ArgumentList& args)
+void Map::startMergeOperation(const cmd::ArgumentList& args)
 {
     if (!getRoot())
     {
         throw cmd::ExecutionNotPossible(_("No map loaded, cannot merge"));
     }
 
-    std::string candidate;
+    std::string sourceCandidate;
+    std::string baseCandidate;
 
     if (!args.empty())
     {
-        candidate = args[0].getString();
+        sourceCandidate = args[0].getString();
     }
     else
     {
@@ -989,23 +991,35 @@ void Map::mergeMap(const cmd::ArgumentList& args)
             return; // operation cancelled
         }
 
-        candidate = fileInfo.fullPath;
+        sourceCandidate = fileInfo.fullPath;
     }
 
-    if (!os::fileOrDirExists(candidate))
+    if (!os::fileOrDirExists(sourceCandidate))
     {
-        throw cmd::ExecutionFailure(fmt::format(_("File doesn't exist: {0}"), candidate));
+        throw cmd::ExecutionFailure(fmt::format(_("File doesn't exist: {0}"), sourceCandidate));
     }
 
+    // Do we have a second argument (base map)
+    if (args.size() > 1)
+    {
+        baseCandidate = args[1].getString();
+
+        if (!os::fileOrDirExists(baseCandidate))
+        {
+            throw cmd::ExecutionFailure(fmt::format(_("File doesn't exist: {0}"), baseCandidate));
+        }
+    }
+
+    // Stop any pending merge operation
     abortMergeOperation();
 
-    auto resource = GlobalMapResourceManager().createFromPath(candidate);
+    auto sourceMapResource = GlobalMapResourceManager().createFromPath(sourceCandidate);
 
     try
     {
-        if (resource->load())
+        if (sourceMapResource->load())
         {
-            const auto& otherRoot = resource->getRootNode();
+            const auto& otherRoot = sourceMapResource->getRootNode();
 
             // Compare the scenes and get the report
             auto result = scene::merge::GraphComparer::Compare(otherRoot, getRoot());
@@ -1024,7 +1038,7 @@ void Map::mergeMap(const cmd::ArgumentList& args)
             setEditMode(EditMode::Merge);
 
             // Dispose of the resource, we don't need it anymore
-            _resource->clear();
+            sourceMapResource->clear();
         }
     }
     catch (const IMapResource::OperationException& ex)

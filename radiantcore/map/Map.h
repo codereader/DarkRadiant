@@ -169,6 +169,8 @@ public:
 	void exportSelected(std::ostream& out) override;
 	void exportSelected(std::ostream& out, const MapFormatPtr& format) override;
 
+    void abortMergeOperation() override;
+
 	// free all map elements, reinitialize the structures that depend on them
 	void freeMap();
 
@@ -258,14 +260,12 @@ private:
 	void loadMapResourceFromPath(const std::string& path);
 	void loadMapResourceFromArchive(const std::string& archive, const std::string& archiveRelativePath);
 
-    void mergeMap(const cmd::ArgumentList& args);
+    void startMergeOperation(const cmd::ArgumentList& args);
 
 	void emitMapEvent(MapEvent ev);
 
 	void clearMapResource();
-    void abortMergeOperation();
-
-}; // class Map
+};
 
 } // namespace map
 
