@@ -106,7 +106,7 @@ public:
 
     std::size_t getHighlightFlags() override
     {
-        return Highlight::NoHighlight;
+        return isSelected() ? Highlight::Selected : Highlight::NoHighlight;
     }
 
     void testSelect(Selector& selector, SelectionTest& test) override

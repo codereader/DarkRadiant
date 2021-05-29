@@ -853,7 +853,7 @@ void OpenGLShader::construct()
                               static_cast<float>(colorSelBrushes[2]),
                               static_cast<float>(1));
               state.setRenderFlag(RENDER_LINESTIPPLE);
-              state.setSortPosition(OpenGLState::SORT_OVERLAY_FIRST);
+              state.setSortPosition(OpenGLState::SORT_HIGHLIGHT);
               state.m_linewidth = 2;
               state.m_linestipple_factor = 3;
             }
@@ -865,7 +865,7 @@ void OpenGLShader::construct()
                     static_cast<float>(colorSelBrushes[2]),
                     static_cast<float>(1));
 				state.setRenderFlag(RENDER_LINESTIPPLE);
-				state.setSortPosition(OpenGLState::SORT_OVERLAY_FIRST);
+				state.setSortPosition(OpenGLState::SORT_HIGHLIGHT);
 				state.m_linewidth = 2;
 				state.m_linestipple_factor = 3;
 			}

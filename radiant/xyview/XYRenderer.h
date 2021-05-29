@@ -79,6 +79,12 @@ public:
                 _shaders.nonMergeActionNodeShader->addRenderable(renderable, localToWorld, nullptr, entity);
             }
 
+            // Elements can still be selected in merge mode
+            if ((_flags & Highlight::Flags::Primitives) != 0)
+            {
+                _shaders.selectedShader->addRenderable(renderable, localToWorld, nullptr, entity);
+            }
+
             return;
         }
         
