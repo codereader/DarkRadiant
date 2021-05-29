@@ -8,6 +8,7 @@
 #include "iundo.h"
 #include "imap.h"
 #include "wxutil/PathEntry.h"
+#include "scenelib.h"
 
 #include <wx/textctrl.h>
 #include <wx/button.h>
@@ -43,6 +44,12 @@ MergeControlDialog::MergeControlDialog() :
 
     auto* loadAndCompareButton = findNamedObject<wxButton>(this, "LoadAndCompareButton");
     loadAndCompareButton->Bind(wxEVT_BUTTON, &MergeControlDialog::onLoadAndCompare, this);
+
+    auto* rejectButton = findNamedObject<wxButton>(this, "RejectSelectionButton");
+    rejectButton->Bind(wxEVT_BUTTON, &MergeControlDialog::onRejectSelection, this);
+
+    auto* finishButton = findNamedObject<wxButton>(this, "FinishMergeButton");
+    finishButton->Bind(wxEVT_BUTTON, &MergeControlDialog::onFinishMerge, this);
 
     updateControlSensitivity();
 
@@ -133,30 +140,81 @@ void MergeControlDialog::onAbortMerge(wxCommandEvent& ev)
     updateControlSensitivity();
 }
 
+void MergeControlDialog::onRejectSelection(wxCommandEvent& ev)
+{
+    UndoableCommand undo("deleteSelectedMergeNodes");
+
+    auto mergeNodes = getSelectedMergeNodes();
+
+    for (const auto& mergeNode : mergeNodes)
+    {
+        scene::removeNodeFromParent(mergeNode);
+    }
+
+    updateControlSensitivity();
+}
+
+void MergeControlDialog::onFinishMerge(wxCommandEvent& ev)
+{
+    GlobalMapModule().finishMergeOperation();
+
+    if (GlobalMapModule().getEditMode() != IMap::EditMode::Merge)
+    {
+        // We're done here
+        Hide();
+        return;
+    }
+
+    updateControlSensitivity();
+}
+
+std::vector<scene::INodePtr> MergeControlDialog::getSelectedMergeNodes()
+{
+    std::vector<scene::INodePtr> mergeNodes;
+
+    // Remove the selected nodes
+    GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
+    {
+        if (node->getNodeType() == scene::INode::Type::MergeAction)
+        {
+            mergeNodes.push_back(node);
+        }
+    });
+
+    return mergeNodes;
+}
+
+std::size_t MergeControlDialog::getNumSelectedMergeNodes()
+{
+    return getSelectedMergeNodes().size();
+}
+
 void MergeControlDialog::updateControlSensitivity()
 {
+    auto numSelectedMergeNodes = getNumSelectedMergeNodes();
     bool mergeInProgress = GlobalMapModule().getEditMode() == IMap::EditMode::Merge;
     auto sourceMapPath = findNamedObject<wxutil::PathEntry>(this, "MergeMapFilename")->getValue();
 
     findNamedObject<wxButton>(this, "AbortMergeButton")->Enable(mergeInProgress);
+    findNamedObject<wxButton>(this, "FinishMergeButton")->Enable(mergeInProgress);
     findNamedObject<wxButton>(this, "LoadAndCompareButton")->Enable(!mergeInProgress && !sourceMapPath.empty());
     findNamedObject<wxWindow>(this, "BaseMapFilename")->Enable(!mergeInProgress);
     findNamedObject<wxWindow>(this, "MergeMapFilename")->Enable(!mergeInProgress);
+
+    findNamedObject<wxButton>(this, "RejectSelectionButton")->Enable(mergeInProgress && numSelectedMergeNodes > 0);
 }
 
-// Pre-hide callback
 void MergeControlDialog::_preHide()
 {
     TransientWindow::_preHide();
 
-    // A hidden PatchInspector doesn't need to listen for events
+    // A hidden window doesn't need to listen for events
     _undoHandler.disconnect();
     _redoHandler.disconnect();
 
     GlobalSelectionSystem().removeObserver(this);
 }
 
-// Pre-show callback
 void MergeControlDialog::_preShow()
 {
     TransientWindow::_preShow();
@@ -173,12 +231,12 @@ void MergeControlDialog::_preShow()
         sigc::mem_fun(this, &MergeControlDialog::queueUpdate));
 
     // Check for selection changes before showing the dialog again
-    rescanSelection();
+    updateControlSensitivity();
 }
 
 void MergeControlDialog::rescanSelection()
 {
-
+    
 }
 
 void MergeControlDialog::selectionChanged(const scene::INodePtr& node, bool isComponent)
@@ -188,7 +246,7 @@ void MergeControlDialog::selectionChanged(const scene::INodePtr& node, bool isCo
         return; // we only care about merge actions here
     }
 
-    rescanSelection();
+    queueUpdate();
 }
 
 void MergeControlDialog::queueUpdate()
@@ -202,6 +260,7 @@ void MergeControlDialog::onIdle(wxIdleEvent& ev)
 
     _updateNeeded = false;
     rescanSelection();
+    updateControlSensitivity();
 }
 
 }

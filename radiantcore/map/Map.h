@@ -169,6 +169,7 @@ public:
 	void exportSelected(std::ostream& out) override;
 	void exportSelected(std::ostream& out, const MapFormatPtr& format) override;
 
+    void finishMergeOperation() override;
     void abortMergeOperation() override;
 
 	// free all map elements, reinitialize the structures that depend on them

@@ -166,6 +166,11 @@ void Map::loadMapResourceFromLocation(const MapLocation& location)
     setModified(false);
 }
 
+void Map::finishMergeOperation()
+{
+
+}
+
 void Map::abortMergeOperation()
 {
     for (const auto& mergeAction : _mergeActionNodes)

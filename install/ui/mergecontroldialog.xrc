@@ -178,7 +178,7 @@
 										<option>1</option>
 										<flag>wxALL</flag>
 										<border>0</border>
-										<object class="wxButton" name="RejectModificationButton">
+										<object class="wxButton" name="RejectSelectionButton">
 											<label>Reject selected Modifications</label>
 											<default>0</default>
 											<markup>0</markup>
@@ -189,7 +189,8 @@
 										<option>1</option>
 										<flag>wxLEFT</flag>
 										<border>6</border>
-										<object class="wxButton" name="FinishMergeOperation">
+										<object class="wxButton" name="FinishMergeButton">
+											<tooltip>Apply the visible set of changes to the current map and finish the merge operation.</tooltip>
 											<label>Finish Merge Operation</label>
 											<default>0</default>
 											<markup>0</markup>

@@ -45,11 +45,16 @@ private:
     void convertTextCtrlToPathEntry(const std::string& ctrlName);
     void onMergeSourceChanged(wxCommandEvent& ev);
     void onLoadAndCompare(wxCommandEvent& ev);
+    void onFinishMerge(wxCommandEvent& ev);
     void onAbortMerge(wxCommandEvent& ev);
+    void onRejectSelection(wxCommandEvent& ev);
     void updateControlSensitivity();
     void rescanSelection();
     void queueUpdate();
     void onIdle(wxIdleEvent& ev);
+
+    std::size_t getNumSelectedMergeNodes();
+    std::vector<scene::INodePtr> getSelectedMergeNodes();
 };
 
 }
