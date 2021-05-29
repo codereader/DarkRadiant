@@ -54,7 +54,7 @@ void SelectionTestWalker::performSelectionTest(const scene::INodePtr& selectable
 
 	_selector.pushSelectable(*selectable);
 
-	// Test the entity for selection, this will add an intersection to the selector
+	// Test the node for selection, this will add an intersection to the selector
 	auto selectionTestable = Node_getSelectionTestable(nodeToBeTested);
 
 	if (selectionTestable)
@@ -196,14 +196,8 @@ MergeActionSelector::MergeActionSelector(Selector& selector, SelectionTest& test
 
 bool MergeActionSelector::visit(const scene::INodePtr& node)
 {
-    if (node->getNodeType() != scene::INode::Type::MergeAction)
-    {
-        return true; // skip over every mismatching type
-    }
-
     performSelectionTest(node, node);
-
-    return false;
+    return true;
 }
 
 bool MergeActionSelector::nodeIsEligibleForTesting(const scene::INodePtr& node)
