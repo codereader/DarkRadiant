@@ -4,6 +4,8 @@
 #include "itextstream.h"
 #include "imainframe.h"
 #include "icommandsystem.h"
+#include "iselection.h"
+#include "iundo.h"
 #include "imap.h"
 #include "wxutil/PathEntry.h"
 
@@ -20,7 +22,8 @@ namespace
 }
 
 MergeControlDialog::MergeControlDialog() :
-    TransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getWxTopLevelWindow(), true)
+    TransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getWxTopLevelWindow(), true),
+    _updateNeeded(false)
 {
     SetSizer(new wxBoxSizer(wxVERTICAL));
     GetSizer()->Add(loadNamedPanel(this, "MergeControlDialogMainPanel"), 1, wxEXPAND);
@@ -44,6 +47,8 @@ MergeControlDialog::MergeControlDialog() :
     updateControlSensitivity();
 
     SetMinSize(wxSize(300, 300));
+
+    Bind(wxEVT_IDLE, &MergeControlDialog::onIdle, this);
 }
 
 std::shared_ptr<MergeControlDialog>& MergeControlDialog::InstancePtr()
@@ -137,6 +142,66 @@ void MergeControlDialog::updateControlSensitivity()
     findNamedObject<wxButton>(this, "LoadAndCompareButton")->Enable(!mergeInProgress && !sourceMapPath.empty());
     findNamedObject<wxWindow>(this, "BaseMapFilename")->Enable(!mergeInProgress);
     findNamedObject<wxWindow>(this, "MergeMapFilename")->Enable(!mergeInProgress);
+}
+
+// Pre-hide callback
+void MergeControlDialog::_preHide()
+{
+    TransientWindow::_preHide();
+
+    // A hidden PatchInspector doesn't need to listen for events
+    _undoHandler.disconnect();
+    _redoHandler.disconnect();
+
+    GlobalSelectionSystem().removeObserver(this);
+}
+
+// Pre-show callback
+void MergeControlDialog::_preShow()
+{
+    TransientWindow::_preShow();
+
+    _undoHandler.disconnect();
+    _redoHandler.disconnect();
+
+    // Register self to the SelSystem to get notified upon selection changes.
+    GlobalSelectionSystem().addObserver(this);
+
+    _undoHandler = GlobalUndoSystem().signal_postUndo().connect(
+        sigc::mem_fun(this, &MergeControlDialog::queueUpdate));
+    _redoHandler = GlobalUndoSystem().signal_postRedo().connect(
+        sigc::mem_fun(this, &MergeControlDialog::queueUpdate));
+
+    // Check for selection changes before showing the dialog again
+    rescanSelection();
+}
+
+void MergeControlDialog::rescanSelection()
+{
+
+}
+
+void MergeControlDialog::selectionChanged(const scene::INodePtr& node, bool isComponent)
+{
+    if (node->getNodeType() != scene::INode::Type::MergeAction)
+    {
+        return; // we only care about merge actions here
+    }
+
+    rescanSelection();
+}
+
+void MergeControlDialog::queueUpdate()
+{
+    _updateNeeded = true;
+}
+
+void MergeControlDialog::onIdle(wxIdleEvent& ev)
+{
+    if (!_updateNeeded) return;
+
+    _updateNeeded = false;
+    rescanSelection();
 }
 
 }

@@ -1102,6 +1102,11 @@ void XYWnd::drawCameraIcon()
 // which is not an excuse, just a fact
 void XYWnd::drawSizeInfo(int nDim1, int nDim2, const Vector3& vMinBounds, const Vector3& vMaxBounds)
 {
+    if (GlobalMapModule().getEditMode() == IMap::EditMode::Merge)
+    {
+        return;
+    }
+
   if (vMinBounds == vMaxBounds) {
     return;
   }
