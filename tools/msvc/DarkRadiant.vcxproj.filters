@@ -185,6 +185,9 @@
     <Filter Include="src\ui\materials\editor">
       <UniqueIdentifier>{d374722a-7ea0-4a6e-9954-69e32a7cbec8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ui\merge">
+      <UniqueIdentifier>{dcd24411-0e8c-45d3-8f5d-8b4f7faab72b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\main.cpp">
@@ -714,6 +717,9 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\materials\editor\MaterialPreview.cpp">
       <Filter>src\ui\materials\editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\merge\MergeControlDialog.cpp">
+      <Filter>src\ui\merge</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1385,6 +1391,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\materials\editor\TexturePreview.h">
       <Filter>src\ui\materials\editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\merge\MergeControlDialog.h">
+      <Filter>src\ui\merge</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

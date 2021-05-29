@@ -61,6 +61,7 @@
 #include "ui/brush/FindBrush.h"
 #include "ui/mousetool/RegistrationHelper.h"
 #include "ui/mapselector/MapSelector.h"
+#include "ui/merge/MergeControlDialog.h"
 
 #include <wx/version.h>
 
@@ -363,6 +364,7 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addCommand("ToggleLightInspector", LightInspector::toggleInspector);
 	GlobalCommandSystem().addCommand("SurfaceInspector", SurfaceInspector::toggle);
 	GlobalCommandSystem().addCommand("PatchInspector", PatchInspector::toggle);
+	GlobalCommandSystem().addCommand("MergeControlDialog", MergeControlDialog::Toggle);
 	GlobalCommandSystem().addCommand("OverlayDialog", OverlayDialog::toggle);
 	GlobalCommandSystem().addCommand("TransformDialog", TransformDialog::toggle);
 

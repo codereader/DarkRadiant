@@ -277,6 +277,7 @@
     <ClCompile Include="..\..\radiant\ui\menu\MenuItem.cpp" />
     <ClCompile Include="..\..\radiant\ui\menu\MenuManager.cpp" />
     <ClCompile Include="..\..\radiant\ui\menu\MenuSeparator.cpp" />
+    <ClCompile Include="..\..\radiant\ui\merge\MergeControlDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\modelexport\ExportAsModelDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\modelexport\ExportCollisionModelDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\modelselector\MaterialsList.cpp" />
@@ -481,6 +482,7 @@
     <ClInclude Include="..\..\radiant\ui\menu\MenuManager.h" />
     <ClInclude Include="..\..\radiant\ui\menu\MenuRootElement.h" />
     <ClInclude Include="..\..\radiant\ui\menu\MenuSeparator.h" />
+    <ClInclude Include="..\..\radiant\ui\merge\MergeControlDialog.h" />
     <ClInclude Include="..\..\radiant\ui\modelexport\ExportAsModelDialog.h" />
     <ClInclude Include="..\..\radiant\ui\modelexport\ExportCollisionModelDialog.h" />
     <ClInclude Include="..\..\radiant\ui\modelselector\MaterialsList.h" />
