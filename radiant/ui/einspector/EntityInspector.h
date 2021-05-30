@@ -5,6 +5,7 @@
 #include "ientityinspector.h"
 #include "iradiant.h"
 #include "icommandsystem.h"
+#include "imergeaction.h"
 #include "iselection.h"
 #include "ientity.h"
 #include "string/string.h"
@@ -57,7 +58,9 @@ public:
 			value(add(wxutil::TreeModel::Column::String)),
 			isInherited(add(wxutil::TreeModel::Column::Boolean)),
 			hasHelpText(add(wxutil::TreeModel::Column::Boolean)),
-			booleanValue(add(wxutil::TreeModel::Column::Boolean))
+			booleanValue(add(wxutil::TreeModel::Column::Boolean)),
+            oldValue(wxutil::TreeModel::Column::String),
+            newValue(wxutil::TreeModel::Column::String)
 		{}
 
 		wxutil::TreeModel::Column name;
@@ -65,6 +68,8 @@ public:
 		wxutil::TreeModel::Column isInherited;
 		wxutil::TreeModel::Column hasHelpText;
 		wxutil::TreeModel::Column booleanValue;
+		wxutil::TreeModel::Column oldValue; // when displaying merge changes
+		wxutil::TreeModel::Column newValue; // when displaying merge changes
 	};
 
 private:
@@ -139,6 +144,9 @@ private:
 	sigc::connection _undoHandler;
 	sigc::connection _redoHandler;
 
+    // Maps the key names to a possible merge action that should be displayed
+    std::map<std::string, scene::merge::IEntityKeyValueMergeAction::Ptr> _mergeActions;
+
 private:
     bool canUpdateEntity();
 
@@ -194,7 +202,7 @@ private:
     void getEntityFromSelectionSystem();
 
     // Change the selected entity pointer, setting up the observer
-    void changeSelectedEntity(const scene::INodePtr& newEntity);
+    void changeSelectedEntity(const scene::INodePtr& newEntity, const scene::INodePtr& selectedNode);
 
     // Set the keyval on all selected entities from the key and value textboxes
 	void setPropertyFromEntries();

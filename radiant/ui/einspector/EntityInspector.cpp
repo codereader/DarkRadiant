@@ -361,7 +361,7 @@ void EntityInspector::onMainFrameShuttingDown()
 void EntityInspector::onUndoRedoOperation()
 {
     // Clear the previous entity (detaches this class as observer)
-    changeSelectedEntity(nullptr);
+    changeSelectedEntity(scene::INodePtr(), scene::INodePtr());
 
     // Now rescan the selection and update the stores
     requestIdleCallback();
@@ -1181,18 +1181,18 @@ void EntityInspector::getEntityFromSelectionSystem()
     // A single entity must be selected
     if (GlobalSelectionSystem().countSelected() != 1)
     {
-        changeSelectedEntity(scene::INodePtr());
+        changeSelectedEntity(scene::INodePtr(), scene::INodePtr());
         _primitiveNumLabel->SetLabelText("");
         return;
     }
 
-    scene::INodePtr selectedNode = GlobalSelectionSystem().ultimateSelected();
+    auto selectedNode = GlobalSelectionSystem().ultimateSelected();
 
     // The root node must not be selected (this can happen if Invert Selection is
     // activated with an empty scene, or by direct selection in the entity list).
     if (selectedNode->isRoot())
     {
-        changeSelectedEntity(scene::INodePtr());
+        changeSelectedEntity(scene::INodePtr(), selectedNode);
         _primitiveNumLabel->SetLabelText("");
         return;
     }
@@ -1204,7 +1204,7 @@ void EntityInspector::getEntityFromSelectionSystem()
     if (newSelectedEntity)
     {
         // Node was an entity, use this
-        changeSelectedEntity(selectedNode);
+        changeSelectedEntity(selectedNode, selectedNode);
 
         // Just set the entity number
         auto indices = scene::getNodeIndices(selectedNode);
@@ -1223,7 +1223,7 @@ void EntityInspector::getEntityFromSelectionSystem()
             if (mergeAction && Node_isEntity(mergeAction->getAffectedNode()))
             {
                 // Use the entity of the merge node
-                changeSelectedEntity(mergeAction->getAffectedNode());
+                changeSelectedEntity(mergeAction->getAffectedNode(), selectedNode);
                 _primitiveNumLabel->SetLabelText(_("Merge Preview"));
                 return;
             }
@@ -1231,7 +1231,7 @@ void EntityInspector::getEntityFromSelectionSystem()
 
         // Node was not an entity, try parent instead
         scene::INodePtr selectedNodeParent = selectedNode->getParent();
-        changeSelectedEntity(selectedNodeParent);
+        changeSelectedEntity(selectedNodeParent, selectedNode);
 
         if (!_selectedEntity.lock())
         {
@@ -1252,8 +1252,7 @@ void EntityInspector::getEntityFromSelectionSystem()
     }
 }
 
-// Change selected entity pointer
-void EntityInspector::changeSelectedEntity(const scene::INodePtr& newEntity)
+void EntityInspector::changeSelectedEntity(const scene::INodePtr& newEntity, const scene::INodePtr& selectedNode)
 {
     // Check what we need to do with the existing entity
     scene::INodePtr oldEntity = _selectedEntity.lock();
@@ -1282,6 +1281,7 @@ void EntityInspector::changeSelectedEntity(const scene::INodePtr& newEntity)
     // a chance to disconnect the list store might contain remnants
     _keyValueIterMap.clear();
     _kvStore->Clear();
+    _mergeActions.clear();
 
     // Reset the sorting when changing entities
     _keyValueTreeView->ResetSortingOnAllColumns();
@@ -1290,6 +1290,26 @@ void EntityInspector::changeSelectedEntity(const scene::INodePtr& newEntity)
     if (newEntity && newEntity->getNodeType() == scene::INode::Type::Entity)
     {
         _selectedEntity = newEntity;
+
+        // Any possible merge actions go in first
+        if (GlobalMapModule().getEditMode() == IMap::EditMode::Merge && selectedNode &&
+            selectedNode->getNodeType() == scene::INode::Type::MergeAction)
+        {
+            auto mergeNode = std::dynamic_pointer_cast<scene::IMergeActionNode>(selectedNode);
+
+            if (mergeNode)
+            {
+                mergeNode->foreachMergeAction([&](const scene::merge::IMergeAction::Ptr& action)
+                {
+                    auto entityKeyValueAction = std::dynamic_pointer_cast<scene::merge::IEntityKeyValueMergeAction>(action);
+
+                    if (entityKeyValueAction)
+                    {
+                        _mergeActions[entityKeyValueAction->getKey()] = entityKeyValueAction;
+                    }
+                });
+            }
+        }
 
         // Attach as observer to fill the listview
         Node_getEntity(newEntity)->attachObserver(this);

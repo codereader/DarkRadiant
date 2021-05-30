@@ -54,6 +54,21 @@ public:
     virtual scene::INodePtr getAffectedNode() = 0;
 };
 
+class IEntityKeyValueMergeAction :
+    public virtual IMergeAction
+{
+public:
+    virtual ~IEntityKeyValueMergeAction() {}
+
+    using Ptr = std::shared_ptr<IEntityKeyValueMergeAction>;
+
+    // Gets the key name affected by this action
+    virtual const std::string& getKey() const = 0;
+
+    // Gets the value that is going to be set by this action
+    virtual const std::string& getValue() const = 0;
+};
+
 }
 
 /**

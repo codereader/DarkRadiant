@@ -15,7 +15,7 @@ namespace merge
 // Represents a single step of a merge process, like adding a brush,
 // removing an entity, setting a keyvalue, etc.
 class MergeAction : 
-    public IMergeAction
+    public virtual IMergeAction
 {
 private:
     ActionType _type;
@@ -184,7 +184,8 @@ public:
 };
 
 class SetEntityKeyValueAction :
-    public MergeAction
+    public MergeAction,
+    public virtual IEntityKeyValueMergeAction
 {
 private:
     scene::INodePtr _node;
@@ -224,12 +225,12 @@ public:
         return _node;
     }
 
-    const std::string& getKey() const
+    const std::string& getKey() const override
     {
         return _key;
     }
 
-    const std::string& getValue() const
+    const std::string& getValue() const override
     {
         return _value;
     }
