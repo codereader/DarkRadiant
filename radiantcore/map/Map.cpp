@@ -185,7 +185,11 @@ void Map::finishMergeOperation()
     for (const auto& mergeActionNode : _mergeActionNodes)
     {
         mergeActionNode->prepareForMerge();
+
         scene::removeNodeFromParent(mergeActionNode);
+
+        // Clear any references this node holds
+        mergeActionNode->clear();
     }
 
     _mergeActionNodes.clear();
@@ -201,9 +205,13 @@ void Map::finishMergeOperation()
 
 void Map::cleanupMergeOperation()
 {
-    for (const auto& mergeAction : _mergeActionNodes)
+    for (const auto& mergeActionNode : _mergeActionNodes)
     {
-        scene::removeNodeFromParent(mergeAction);
+        // If the node is already removed from the scene, this does nothing
+        scene::removeNodeFromParent(mergeActionNode);
+
+        // Clear any references this node holds
+        mergeActionNode->clear();
     }
 
     _mergeActionNodes.clear();

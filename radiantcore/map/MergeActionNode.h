@@ -33,6 +33,10 @@ public:
     // doesn't change the action's status when removed from the scene
     void prepareForMerge();
 
+    // Clears the references to actions and nodes, such that it doesn't hold 
+    // any strong refs to scene::Nodes, causing trouble when clearing the undo stack later
+    virtual void clear();
+
     virtual void onInsertIntoScene(scene::IMapRootNode& rootNode) override;
     virtual void onRemoveFromScene(scene::IMapRootNode& rootNode) override;
 
@@ -70,6 +74,8 @@ private:
 public:
     KeyValueMergeActionNode(const std::vector<scene::merge::MergeAction::Ptr>& actions);
 
+    void clear() override;
+
     scene::merge::ActionType getActionType() const override;
 
     void onInsertIntoScene(scene::IMapRootNode& rootNode) override;
@@ -96,6 +102,8 @@ public:
 
     void onInsertIntoScene(scene::IMapRootNode& rootNode) override;
     void onRemoveFromScene(scene::IMapRootNode& rootNode) override;
+
+    void clear() override;
 
     scene::merge::ActionType getActionType() const override;
 

@@ -107,7 +107,7 @@ void MergeControlDialog::Toggle(const cmd::ArgumentList& args)
 void MergeControlDialog::convertTextCtrlToPathEntry(const std::string& ctrlName)
 {
     auto oldCtrl = findNamedObject<wxTextCtrl>(this, ctrlName);
-    replaceControl(oldCtrl, new wxutil::PathEntry(oldCtrl->GetParent(), false));
+    replaceControl(oldCtrl, new wxutil::PathEntry(oldCtrl->GetParent(), "map", true));
 }
 
 void MergeControlDialog::onMergeSourceChanged(wxCommandEvent& ev)

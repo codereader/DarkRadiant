@@ -12,6 +12,11 @@ void MergeActionNodeBase::prepareForMerge()
     _syncActionStatus = false;
 }
 
+void MergeActionNodeBase::clear()
+{
+    _affectedNode.reset();
+}
+
 void MergeActionNodeBase::onInsertIntoScene(scene::IMapRootNode& rootNode)
 {
     SelectableNode::onInsertIntoScene(rootNode);
@@ -137,6 +142,11 @@ KeyValueMergeActionNode::KeyValueMergeActionNode(const std::vector<scene::merge:
         [&](const scene::merge::MergeAction::Ptr& action) { return action->getAffectedNode() != _affectedNode; }) == _actions.end());
 }
 
+void KeyValueMergeActionNode::clear()
+{
+    _actions.clear();
+}
+
 scene::merge::ActionType KeyValueMergeActionNode::getActionType() const
 {
     // We report the change key value type since we're doing all kinds of key value changes
@@ -201,6 +211,11 @@ void RegularMergeActionNode::onRemoveFromScene(scene::IMapRootNode& rootNode)
     {
         _action->deactivate();
     }
+}
+
+void RegularMergeActionNode::clear()
+{
+    _action.reset();
 }
 
 scene::merge::ActionType RegularMergeActionNode::getActionType() const
