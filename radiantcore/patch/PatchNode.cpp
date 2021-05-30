@@ -149,9 +149,6 @@ void PatchNode::snapComponents(float snap) {
 // Test the Patch instance for selection
 void PatchNode::testSelect(Selector& selector, SelectionTest& test)
 {
-	// Do not select patch if it is filtered
-	if (!isVisible()) return;
-
     // Check if this patch has a twosided material
     bool isTwosided = m_patch.getSurfaceShader().getGLShader()->getMaterial()->getCullType() == Material::CULL_NONE;
 
