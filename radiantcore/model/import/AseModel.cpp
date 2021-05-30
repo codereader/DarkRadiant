@@ -390,7 +390,7 @@ void AseModel::parseMesh(Mesh& mesh, parser::StringTokeniser& tokeniser)
         /* model mesh face */
         else if (token == "*mesh_face")
         {
-            // *MESH_FACE    0:    A:    3 B:    1 C:    2 AB:    0 BC:    0 CA:    0	 *MESH_SMOOTHING 0	 *MESH_MTLID 0
+            // *MESH_FACE    0:    A:    3 B:    1 C:    2 [AB:    0 BC:    0 CA:    0]	 [*MESH_SMOOTHING 0]	 *MESH_MTLID 0
             auto index = string::convert<std::size_t>(string::trim_right_copy(tokeniser.nextToken(), ":"));
 
             if (index >= mesh.faces.size()) throw parser::ParseException("MESH_FACE index out of bounds >= MESH_NUMFACES");
@@ -410,14 +410,6 @@ void AseModel::parseMesh(Mesh& mesh, parser::StringTokeniser& tokeniser)
             if (face.vertexIndices[2] >= mesh.vertices.size()) throw parser::ParseException("MESH_FACE vertex index 0 out of bounds >= MESH_NUMFACES");
             if (face.vertexIndices[1] >= mesh.vertices.size()) throw parser::ParseException("MESH_FACE vertex index 1 out of bounds >= MESH_NUMFACES");
             if (face.vertexIndices[0] >= mesh.vertices.size()) throw parser::ParseException("MESH_FACE vertex index 2 out of bounds >= MESH_NUMFACES");
-
-            // Skip over the edge stuff
-            tokeniser.assertNextToken("AB:");
-            tokeniser.skipTokens(1);
-            tokeniser.assertNextToken("BC:");
-            tokeniser.skipTokens(1);
-            tokeniser.assertNextToken("CA:");
-            tokeniser.skipTokens(1);
 
             // Leave the rest of the line (*MESH_MTLID and *MESH_SMOOTHING) unparsed, 
             // and let the outer loop deal with any keywords that might follow or might not follow
