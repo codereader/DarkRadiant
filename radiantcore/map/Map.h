@@ -68,7 +68,7 @@ private:
 	std::size_t _shutdownListener;
 
     scene::merge::MergeOperation::Ptr _mergeOperation;
-    std::list<MergeActionNode::Ptr> _mergeActionNodes;
+    std::list<MergeActionNodeBase::Ptr> _mergeActionNodes;
 
 private:
     std::string getSaveConfirmationText() const;
@@ -262,6 +262,7 @@ private:
 	void loadMapResourceFromArchive(const std::string& archive, const std::string& archiveRelativePath);
 
     void startMergeOperation(const cmd::ArgumentList& args);
+    void createMergeOperation(const scene::merge::ComparisonResult& result);
 
 	void emitMapEvent(MapEvent ev);
 

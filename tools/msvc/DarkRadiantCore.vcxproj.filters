@@ -1048,6 +1048,9 @@
     <ClCompile Include="..\..\radiantcore\log\SegFaultHandler.cpp">
       <Filter>src\log</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\map\MergeActionNode.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">

@@ -1006,6 +1006,47 @@ void Map::exportSelected(std::ostream& out, const MapFormatPtr& format)
     exporter.exportMap(GlobalSceneGraph().root(), scene::traverseSelected);
 }
 
+void Map::createMergeOperation(const scene::merge::ComparisonResult& result)
+{
+    // Create the merge actions
+    _mergeOperation = scene::merge::MergeOperation::CreateFromComparisonResult(result);
+
+    // Group spawnarg actions into one single node if applicable
+    std::map<scene::INodePtr, std::vector<scene::merge::MergeAction::Ptr>> entityChanges;
+    std::vector<scene::merge::MergeAction::Ptr> otherChanges;
+
+    _mergeOperation->foreachAction([&](const scene::merge::MergeAction::Ptr& action)
+    {
+        scene::INodePtr affectedNode = action->getAffectedNode();
+
+        if (action->getType() == scene::merge::ActionType::AddKeyValue ||
+            action->getType() == scene::merge::ActionType::RemoveKeyValue ||
+            action->getType() == scene::merge::ActionType::ChangeKeyValue)
+        {
+            auto& actions = entityChanges.try_emplace(action->getAffectedNode()).first->second;
+            actions.push_back(action);
+        }
+        else // regular change, add it to the misc pile
+        {
+            otherChanges.push_back(action);
+        }
+    });
+
+    // Construct all entity changes...
+    for (const auto& pair : entityChanges)
+    {
+        _mergeActionNodes.emplace_back(std::make_shared<KeyValueMergeActionNode>(pair.second));
+        getRoot()->addChildNode(_mergeActionNodes.back());
+    }
+
+    // ...and the regular ones
+    for (const auto& action : otherChanges)
+    {
+        _mergeActionNodes.emplace_back(std::make_shared<RegularMergeActionNode>(action));
+        getRoot()->addChildNode(_mergeActionNodes.back());
+    }
+}
+
 void Map::startMergeOperation(const cmd::ArgumentList& args)
 {
     if (!getRoot())
@@ -1069,15 +1110,8 @@ void Map::startMergeOperation(const cmd::ArgumentList& args)
             // Compare the scenes and get the report
             auto result = scene::merge::GraphComparer::Compare(otherRoot, getRoot());
 
-            // Create the merge actions
-            _mergeOperation = scene::merge::MergeOperation::CreateFromComparisonResult(*result);
-
             // Create renderable merge actions
-            _mergeOperation->foreachAction([&](const scene::merge::MergeAction::Ptr& action)
-            {
-                _mergeActionNodes.emplace_back(std::make_shared<MergeActionNode>(action));
-                getRoot()->addChildNode(_mergeActionNodes.back());
-            });
+            createMergeOperation(*result);
 
             // Switch to merge mode
             setEditMode(EditMode::Merge);

@@ -9,186 +9,99 @@
 namespace map
 {
 
-class MergeActionNode final :
+/**
+ * Common node type for visualising a merge action in the scene, targeting a single node.
+ * Can be selected and tested for selection, but cannot be hidden.
+ * The node affected by the operation is "taken over" and is hidden while this node is active.
+ * Rendering of the node is explicitly performed by this merge node.
+ */
+class MergeActionNodeBase :
     public scene::IMergeActionNode,
     public scene::SelectableNode,
     public SelectionTestable
 {
-private:
-    scene::merge::MergeAction::Ptr _action;
+protected:
     scene::INodePtr _affectedNode;
-
     bool _syncActionStatus;
 
-public:
-    using Ptr = std::shared_ptr<MergeActionNode>;
+    MergeActionNodeBase();
 
-    MergeActionNode(const scene::merge::MergeAction::Ptr& action) :
-        _action(action),
-        _syncActionStatus(true)
-    {
-        _affectedNode = _action->getAffectedNode();
-    }
+public:
+    using Ptr = std::shared_ptr<MergeActionNodeBase>;
 
     // Prepare this node right before a merge, such that it
     // doesn't change the action's status when removed from the scene
-    void prepareForMerge()
-    {
-        _syncActionStatus = false;
-    }
+    void prepareForMerge();
 
-    void onInsertIntoScene(scene::IMapRootNode& rootNode) override
-    {
-        SelectableNode::onInsertIntoScene(rootNode);
+    virtual void onInsertIntoScene(scene::IMapRootNode& rootNode) override;
+    virtual void onRemoveFromScene(scene::IMapRootNode& rootNode) override;
 
-        if (_syncActionStatus)
-        {
-            _action->activate();
-        }
+    scene::INode::Type getNodeType() const override;
 
-        addPreviewNodeForAddAction();
-        hideAffectedNodes();
-    }
+    bool supportsStateFlag(unsigned int state) const override;
 
-    void onRemoveFromScene(scene::IMapRootNode& rootNode) override
-    {
-        unhideAffectedNodes();
-        removePreviewNodeForAddAction();
+    const AABB& localAABB() const override;
 
-        if (_syncActionStatus)
-        {
-            _action->deactivate();
-        }
+    void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
+    void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
 
-        SelectableNode::onRemoveFromScene(rootNode);
-    }
+    std::size_t getHighlightFlags() override;
 
-    scene::merge::ActionType getActionType() const override
-    {
-        return _action->getType();
-    }
-
-    scene::INode::Type getNodeType() const override
-    {
-        return scene::INode::Type::MergeAction;
-    }
-
-    bool supportsStateFlag(unsigned int state) const override
-    {
-        if ((state & (eHidden|eFiltered|eExcluded|eLayered)) != 0)
-        {
-            return false; // don't allow this node to be hidden
-        }
-
-        return Node::supportsStateFlag(state);
-    }
-
-    const AABB& localAABB() const override
-    {
-        return _affectedNode->localAABB();
-    }
-
-    void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override
-    {
-        _affectedNode->viewChanged();
-        _affectedNode->renderSolid(collector, volume);
-        _affectedNode->foreachNode([&](const scene::INodePtr& child)
-        {
-            child->viewChanged();
-            child->renderSolid(collector, volume);
-            return true;
-        });
-    }
-
-    void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override
-    {
-        _affectedNode->viewChanged();
-        _affectedNode->renderWireframe(collector, volume);
-        _affectedNode->foreachNode([&](const scene::INodePtr& child)
-        {
-            child->viewChanged();
-            child->renderWireframe(collector, volume);
-            return true;
-        });
-    }
-
-    std::size_t getHighlightFlags() override
-    {
-        return isSelected() ? Highlight::Selected : Highlight::NoHighlight;
-    }
-
-    void testSelect(Selector& selector, SelectionTest& test) override
-    {
-        testSelectNode(_affectedNode, selector, test);
-
-        _affectedNode->foreachNode([&](const scene::INodePtr& child)
-        {
-            testSelectNode(child, selector, test);
-            return true;
-        });
-    }
+    void testSelect(Selector& selector, SelectionTest& test) override;
 
 private:
-    void testSelectNode(const scene::INodePtr& node, Selector& selector, SelectionTest& test)
-    {
-        auto selectionTestable = std::dynamic_pointer_cast<SelectionTestable>(node);
+    void testSelectNode(const scene::INodePtr& node, Selector& selector, SelectionTest& test);
 
-        // Regardless of what node we test, it will always be the MergeActionNode that will be selected
-        selector.pushSelectable(*this);
+    void hideAffectedNodes();
+    void unhideAffectedNodes();
+};
 
-        if (selectionTestable)
-        {
-            selectionTestable->testSelect(selector, test);
-        }
+/**
+ * Special merge node representing one or more key value changes of a single entity.
+ * Will report as "ChangeKeyValue" action type, even though the contained set of 
+ * merge actions can comprise various types.
+ */
+class KeyValueMergeActionNode final :
+    public MergeActionNodeBase
+{
+private:
+    std::vector<scene::merge::MergeAction::Ptr> _actions;
 
-        selector.popSelectable();
-    }
+public:
+    KeyValueMergeActionNode(const std::vector<scene::merge::MergeAction::Ptr>& actions);
 
-    void hideAffectedNodes()
-    {
-        // Hide the affected node itself, we're doing the rendering ourselves, recursively
-        _affectedNode->enable(Node::eExcluded);
+    scene::merge::ActionType getActionType() const override;
 
-        _affectedNode->foreachNode([&](const scene::INodePtr& child)
-        {
-            child->enable(Node::eExcluded);
-            return true;
-        });
-    }
+    void onInsertIntoScene(scene::IMapRootNode& rootNode) override;
+    void onRemoveFromScene(scene::IMapRootNode& rootNode) override;
+};
 
-    void unhideAffectedNodes()
-    {
-        // Release the excluded state of the contained nodes
-        _affectedNode->disable(Node::eExcluded);
+/**
+ * For all merge action types other than key value changes this "regular"
+ * merge action node is used to represent it in the scene.
+ * Encapsulates a single merge action only.
+ * 
+ * For AddChildNode/AddEntityNode action types this node will take care
+ * of inserting and removing the affected node into the target scene,
+ * such that it can be previewed by the user.
+ */
+class RegularMergeActionNode final :
+    public MergeActionNodeBase
+{
+private:
+    scene::merge::MergeAction::Ptr _action;
 
-        _affectedNode->foreachNode([&](const scene::INodePtr& child)
-        {
-            child->disable(Node::eExcluded);
-            return true;
-        });
-    }
+public:
+    RegularMergeActionNode(const scene::merge::MergeAction::Ptr& action);
 
-    void addPreviewNodeForAddAction()
-    {
-        // We add the node to the target scene, for preview purposes
-        auto addNodeAction = std::dynamic_pointer_cast<scene::merge::AddCloneToParentAction>(_action);
+    void onInsertIntoScene(scene::IMapRootNode& rootNode) override;
+    void onRemoveFromScene(scene::IMapRootNode& rootNode) override;
 
-        if (addNodeAction)
-        {
-            // Get the clone and add it to the target scene, it needs to be renderable here
-            scene::addNodeToContainer(_affectedNode, addNodeAction->getParent());
-        }
-    }
+    scene::merge::ActionType getActionType() const override;
 
-    void removePreviewNodeForAddAction()
-    {
-        auto addNodeAction = std::dynamic_pointer_cast<scene::merge::AddCloneToParentAction>(_action);
-
-        if (addNodeAction)
-        {
-            scene::removeNodeFromParent(_affectedNode);
-        }
-    }
+private:
+    void addPreviewNodeForAddAction();
+    void removePreviewNodeForAddAction();
 };
 
 }
