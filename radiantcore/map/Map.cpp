@@ -288,6 +288,7 @@ void Map::setEditMode(EditMode mode)
 
     if (_editMode == EditMode::Merge)
     {
+        GlobalSelectionSystem().setSelectedAll(false);
         GlobalSelectionSystem().SetMode(SelectionSystem::eMergeAction);
     }
     else

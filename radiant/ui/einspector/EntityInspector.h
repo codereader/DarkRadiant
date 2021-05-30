@@ -27,6 +27,8 @@ class EntityClassAttribute;
 class wxCheckBox;
 class wxStaticText;
 class wxTextCtrl;
+class wxBitmapButton;
+class wxDataViewColumn;
 
 namespace ui
 {
@@ -88,6 +90,7 @@ private:
 	wxutil::TreeView* _keyValueTreeView;
 	TreeColumns _columns;
 	wxutil::TreeModel::Ptr _kvStore;
+    wxDataViewColumn* _booleanColumn;
 
 	wxIcon _emptyIcon;
 
@@ -100,6 +103,7 @@ private:
     // selections.
 	wxTextCtrl* _keyEntry;
 	wxTextCtrl* _valEntry;
+    wxBitmapButton* _setButton;
 
 	wxTextCtrl* _helpText;
 
@@ -118,7 +122,7 @@ private:
 	// The clipboard for spawnargs
 	typedef std::pair<std::string, std::string> KeyValuePair;
 	typedef std::vector<KeyValuePair> ClipBoard;
-	ClipBoard _clipBoard;
+	ClipBoard _clipboard;
 
 	// Data structure to store the type (vector3, text etc) and the options
 	// string for a single property.
@@ -136,6 +140,7 @@ private:
 	sigc::connection _redoHandler;
 
 private:
+    bool canUpdateEntity();
 
     // Utility functions to construct the Gtk components
 	void construct();

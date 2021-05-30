@@ -63,8 +63,10 @@ EntityInspector::EntityInspector() :
     _showHelpColumnCheckbox(nullptr),
     _primitiveNumLabel(nullptr),
     _keyValueTreeView(nullptr),
+    _booleanColumn(nullptr),
     _keyEntry(nullptr),
-    _valEntry(nullptr)
+    _valEntry(nullptr),
+    _setButton(nullptr)
 {}
 
 void EntityInspector::construct()
@@ -450,7 +452,7 @@ wxWindow* EntityInspector::createTreeViewPane(wxWindow* parent)
     _keyValueTreeView->AddSearchColumn(_columns.value);
 
     // Add the checkbox for boolean properties
-    _keyValueTreeView->AppendToggleColumn("", _columns.booleanValue.getColumnIndex(),
+    _booleanColumn = _keyValueTreeView->AppendToggleColumn("", _columns.booleanValue.getColumnIndex(),
         wxDATAVIEW_CELL_ACTIVATABLE, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
 
     // Create the Property column (has an icon)
@@ -481,16 +483,16 @@ wxWindow* EntityInspector::createTreeViewPane(wxWindow* parent)
     _valEntry = new wxTextCtrl(treeViewPanel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
 
     wxBitmap icon = wxArtProvider::GetBitmap(wxART_TICK_MARK, wxART_MENU);
-    wxBitmapButton* setButton = new wxBitmapButton(treeViewPanel, wxID_APPLY, icon);
+    _setButton = new wxBitmapButton(treeViewPanel, wxID_APPLY, icon);
 
     buttonHbox->Add(_valEntry, 1, wxEXPAND);
-    buttonHbox->Add(setButton, 0, wxEXPAND);
+    buttonHbox->Add(_setButton, 0, wxEXPAND);
 
     treeViewPanel->GetSizer()->Add(_keyValueTreeView, 1, wxEXPAND);
     treeViewPanel->GetSizer()->Add(_keyEntry, 0, wxEXPAND);
     treeViewPanel->GetSizer()->Add(buttonHbox, 0, wxEXPAND);
 
-    setButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(EntityInspector::_onSetProperty), NULL, this);
+    _setButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(EntityInspector::_onSetProperty), NULL, this);
     _keyEntry->Connect(wxEVT_TEXT_ENTER, wxCommandEventHandler(EntityInspector::_onEntryActivate), NULL, this);
     _valEntry->Connect(wxEVT_TEXT_ENTER, wxCommandEventHandler(EntityInspector::_onEntryActivate), NULL, this);
 
@@ -554,21 +556,36 @@ bool EntityInspector::getListSelectionBool(const wxutil::TreeModel::Column& col)
     return row[col].getBool();
 }
 
+bool EntityInspector::canUpdateEntity()
+{
+    return GlobalMapModule().getEditMode() != IMap::EditMode::Merge;
+}
+
 // Redraw the GUI elements
 void EntityInspector::updateGUIElements()
 {
     // Update from selection system
     getEntityFromSelectionSystem();
 
+    auto entityCanBeUpdated = canUpdateEntity();
+
     if (!_selectedEntity.expired())
     {
-        _editorFrame->Enable(true);
+        _editorFrame->Enable(entityCanBeUpdated);
         _keyValueTreeView->Enable(true);
         _showInheritedCheckbox->Enable(true);
         _showHelpColumnCheckbox->Enable(true);
+        _keyEntry->Enable(entityCanBeUpdated);
+        _valEntry->Enable(entityCanBeUpdated);
+        _setButton->Enable(entityCanBeUpdated);
+        _booleanColumn->GetRenderer()->SetMode(entityCanBeUpdated ? wxDATAVIEW_CELL_ACTIVATABLE : wxDATAVIEW_CELL_INERT);
 
+        if (!entityCanBeUpdated)
+        {
+            _currentPropertyEditor.reset();
+        }
 		// Update the target entity on any active property editor (#5092)
-		if (_currentPropertyEditor)
+        else if (_currentPropertyEditor)
 		{
 			auto newEntity = Node_getEntity(_selectedEntity.lock());
 			assert(newEntity != nullptr);
@@ -681,7 +698,7 @@ void EntityInspector::_onAddKey()
 
 bool EntityInspector::_testAddKey()
 {
-    return !_selectedEntity.expired();
+    return !_selectedEntity.expired() && canUpdateEntity();
 }
 
 void EntityInspector::_onDeleteKey()
@@ -730,7 +747,7 @@ void EntityInspector::_onCopyKey()
 
     if (selectedItems.Count() == 0) return;
 
-    _clipBoard.clear();
+    _clipboard.clear();
 
     for (const wxDataViewItem& item : selectedItems)
     {
@@ -741,7 +758,7 @@ void EntityInspector::_onCopyKey()
         std::string key = iconAndName.GetText().ToStdString();
         std::string value = row[_columns.value];
 
-        _clipBoard.emplace_back(key, value);
+        _clipboard.emplace_back(key, value);
     }
 }
 
@@ -760,7 +777,7 @@ void EntityInspector::_onCutKey()
     assert(!_selectedEntity.expired());
     Entity* selectedEntity = Node_getEntity(_selectedEntity.lock());
 
-    _clipBoard.clear();
+    _clipboard.clear();
     std::unique_ptr<UndoableCommand> cmd;
 
     for (const wxDataViewItem& item : selectedItems)
@@ -781,7 +798,7 @@ void EntityInspector::_onCutKey()
         auto key = iconAndName.GetText().ToStdString();
         auto value = row[_columns.value];
 
-        _clipBoard.emplace_back(key, value);
+        _clipboard.emplace_back(key, value);
 
         // Clear the key after copying
         selectedEntity->setKeyValue(key, "");
@@ -804,7 +821,7 @@ bool EntityInspector::isItemDeletable(const wxutil::TreeModel::Row& row)
 
 bool EntityInspector::_testNonEmptyAndDeletableSelection()
 {
-    if (_selectedEntity.expired()) return false;
+    if (_selectedEntity.expired() || !canUpdateEntity()) return false;
 
     wxDataViewItemArray selectedItems;
     _keyValueTreeView->GetSelections(selectedItems);
@@ -833,7 +850,7 @@ void EntityInspector::_onPasteKey()
     // greebo: Instantiate a scoped object to make this operation undoable
     UndoableCommand command("entitySetProperties");
 
-    for (const KeyValuePair& kv : _clipBoard)
+    for (const KeyValuePair& kv : _clipboard)
     {
         // skip empty entries
         if (kv.first.empty() || kv.second.empty()) continue;
@@ -852,7 +869,7 @@ bool EntityInspector::_testPasteKey()
     }
 
     // Return true if the clipboard contains data
-    return !_clipBoard.empty();
+    return !_clipboard.empty() && canUpdateEntity();
 }
 
 // wxWidget callbacks
@@ -1011,30 +1028,6 @@ void EntityInspector::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
         std::string key = getSelectedKey();
         std::string value = getListSelection(_columns.value);
 
-        // Get the type for this key if it exists, and the options
-        PropertyParms parms = getPropertyParmsForKey(key);
-
-        Entity* selectedEntity = Node_getEntity(_selectedEntity.lock());
-
-        // If the type was not found, also try looking on the entity class
-        if (parms.type.empty())
-        {
-            IEntityClassConstPtr eclass = selectedEntity->getEntityClass();
-            parms.type = eclass->getAttribute(key).getType();
-        }
-
-        // Construct and add a new PropertyEditor
-        _currentPropertyEditor = PropertyEditorFactory::create(_editorFrame,
-            parms.type, selectedEntity, key, parms.options);
-
-        if (_currentPropertyEditor)
-        {
-            // Don't use wxEXPAND to allow for horizontal centering, just add a 6 pixel border
-            // Using wxALIGN_CENTER_HORIZONTAL will position the property editor's panel in the middle
-            _editorFrame->GetSizer()->Add(_currentPropertyEditor->getWidget(), 1, wxALIGN_CENTER_HORIZONTAL | wxALL, 6);
-            _editorFrame->GetSizer()->Layout();
-        }
-
         // Update key and value entry boxes, but only if there is a key value. If
         // there is no selection we do not clear the boxes, to allow keyval copying
         // between entities.
@@ -1042,6 +1035,34 @@ void EntityInspector::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
         {
             _keyEntry->SetValue(key);
             _valEntry->SetValue(value);
+        }
+
+        // Update property editor, unless we're in merge mode
+        if (canUpdateEntity())
+        {
+            // Get the type for this key if it exists, and the options
+            PropertyParms parms = getPropertyParmsForKey(key);
+
+            Entity* selectedEntity = Node_getEntity(_selectedEntity.lock());
+
+            // If the type was not found, also try looking on the entity class
+            if (parms.type.empty())
+            {
+                IEntityClassConstPtr eclass = selectedEntity->getEntityClass();
+                parms.type = eclass->getAttribute(key).getType();
+            }
+
+            // Construct and add a new PropertyEditor
+            _currentPropertyEditor = PropertyEditorFactory::create(_editorFrame,
+                parms.type, selectedEntity, key, parms.options);
+
+            if (_currentPropertyEditor)
+            {
+                // Don't use wxEXPAND to allow for horizontal centering, just add a 6 pixel border
+                // Using wxALIGN_CENTER_HORIZONTAL will position the property editor's panel in the middle
+                _editorFrame->GetSizer()->Add(_currentPropertyEditor->getWidget(), 1, wxALIGN_CENTER_HORIZONTAL | wxALL, 6);
+                _editorFrame->GetSizer()->Layout();
+            }
         }
     }
     else if (selectedItems.Count() > 1)
