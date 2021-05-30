@@ -526,7 +526,8 @@ void AseModel::parseGeomObject(parser::StringTokeniser& tokeniser)
 {
     Mesh mesh;
     Matrix4 nodeMatrix = Matrix4::getIdentity();
-    int materialIndex = -1;
+    // even if no *MATERIAL_REF is found in the object, we use material 0 by default
+    std::size_t materialIndex = 0;
 
     int blockLevel = 0;
 
@@ -553,7 +554,7 @@ void AseModel::parseGeomObject(parser::StringTokeniser& tokeniser)
             // normals of the mesh.
             parseNodeMatrix(nodeMatrix, tokeniser);
         }
-        /* mesh material reference. this usually comes at the end of
+        /* Optional: mesh material reference. This usually comes at the end of
          * geomobjects after the mesh blocks. we must assume that the
          * new mesh was already created so all we can do here is assign
          * the material reference id (shader index) now. */
@@ -563,7 +564,7 @@ void AseModel::parseGeomObject(parser::StringTokeniser& tokeniser)
 
             if (index >= _materials.size()) throw parser::ParseException("MATERIAL_REF index out of bounds >= MATERIAL_COUNT");
 
-            materialIndex = static_cast<int>(index);
+            materialIndex = index;
         }
     }
 

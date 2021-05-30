@@ -420,4 +420,21 @@ TEST_F(AseImportTest, ParseMeshFaceWithoutABBCCA)
     }
 }
 
+TEST_F(AseImportTest, ParseGeomObjectWithoutMaterialRef)
+{
+    // This model contains a *GEOMOBJECT without any *MATERIAL_REF the parser needs to be able to deal with that
+    auto model = GlobalModelCache().getModel("models/ase/testcube_without_material_ref.ase");
+
+    // Model should be loaded successfully
+    EXPECT_TRUE(model);
+
+    if (model)
+    {
+        EXPECT_EQ(model->getSurfaceCount(), 1);
+        EXPECT_EQ(model->getSurface(0).getDefaultMaterial(), "textures/darkmod/stone/flat/tiles_rough_grey");
+        EXPECT_EQ(model->getSurface(0).getNumVertices(), 24);
+        EXPECT_EQ(model->getSurface(0).getNumTriangles(), 12);
+    }
+}
+
 }
