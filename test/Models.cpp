@@ -404,4 +404,20 @@ TEST_F(AseImportTest, ParseMeshFaceWithoutSmoothing)
     }
 }
 
+TEST_F(AseImportTest, ParseMeshFaceWithoutABBCCA)
+{
+    // This model contains *MESH_FACE lines without AB, BC, CA, the parser needs to be able to deal with that
+    auto model = GlobalModelCache().getModel("models/ase/testcube_no_ab_bc_ca_in_mesh_face.ase");
+
+    // Model should be loaded successfully
+    EXPECT_TRUE(model);
+
+    if (model)
+    {
+        EXPECT_EQ(model->getSurfaceCount(), 1);
+        EXPECT_EQ(model->getSurface(0).getNumVertices(), 24);
+        EXPECT_EQ(model->getSurface(0).getNumTriangles(), 12);
+    }
+}
+
 }
