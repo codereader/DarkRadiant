@@ -2,7 +2,7 @@
 <resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
 	<object class="wxPanel" name="MergeControlDialogMainPanel">
 		<style>wxTAB_TRAVERSAL</style>
-		<size>391,366</size>
+		<size>391,372</size>
 		<object class="wxBoxSizer">
 			<orient>wxVERTICAL</orient>
 			<object class="sizeritem">
@@ -89,33 +89,37 @@
 									<option>0</option>
 									<flag>wxALIGN_CENTER</flag>
 									<border>0</border>
-									<object class="wxBoxSizer">
-										<orient>wxVERTICAL</orient>
-										<object class="sizeritem">
-											<option>0</option>
-											<flag>wxALIGN_CENTER|wxALL</flag>
-											<border>0</border>
-											<object class="wxStaticBitmap" name="m_bitmap1">
-												<bitmap stock_id="darkradiant:merge_fork.png" stock_client="">undefined.png</bitmap>
+									<object class="wxPanel" name="BaseMapPanel">
+										<style>wxTAB_TRAVERSAL</style>
+										<hidden>1</hidden>
+										<object class="wxBoxSizer">
+											<orient>wxVERTICAL</orient>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxALIGN_CENTER|wxALL</flag>
+												<border>0</border>
+												<object class="wxStaticBitmap" name="m_bitmap1">
+													<bitmap stock_id="darkradiant:merge_fork.png" stock_client="">undefined.png</bitmap>
+												</object>
 											</object>
-										</object>
-										<object class="sizeritem">
-											<option>1</option>
-											<flag>wxEXPAND</flag>
-											<border>0</border>
-											<object class="wxTextCtrl" name="BaseMapFilename">
-												<tooltip>A common base map both maps have started from, makes detecting merge conflicts much easier.</tooltip>
-												<value></value>
+											<object class="sizeritem">
+												<option>1</option>
+												<flag>wxEXPAND</flag>
+												<border>0</border>
+												<object class="wxTextCtrl" name="BaseMapFilename">
+													<tooltip>A common base map both maps have started from, makes detecting merge conflicts much easier.</tooltip>
+													<value></value>
+												</object>
 											</object>
-										</object>
-										<object class="sizeritem">
-											<option>0</option>
-											<flag>wxALIGN_CENTER|wxTOP</flag>
-											<border>6</border>
-											<object class="wxStaticText" name="BaseMapLabel">
-												<tooltip>A common base map both maps have started from, makes detecting merge conflicts much easier.</tooltip>
-												<label>Common Ancestor (optional)</label>
-												<wrap>-1</wrap>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxALIGN_CENTER|wxTOP</flag>
+												<border>6</border>
+												<object class="wxStaticText" name="BaseMapLabel">
+													<tooltip>A common base map both maps have started from, makes detecting merge conflicts much easier.</tooltip>
+													<label>Common Ancestor (optional)</label>
+													<wrap>-1</wrap>
+												</object>
 											</object>
 										</object>
 									</object>
