@@ -64,6 +64,9 @@ EntityInspector::EntityInspector() :
     _primitiveNumLabel(nullptr),
     _keyValueTreeView(nullptr),
     _booleanColumn(nullptr),
+    _valueColumn(nullptr),
+    _oldValueColumn(nullptr),
+    _newValueColumn(nullptr),
     _keyEntry(nullptr),
     _valEntry(nullptr),
     _setButton(nullptr)
@@ -237,6 +240,20 @@ void EntityInspector::onKeyChange(const std::string& key,
         // Store false to render the checkbox as unchecked
         row[_columns.booleanValue] = false;
         row[_columns.booleanValue].setEnabled(false);
+    }
+
+    // Check if this key is affected by a merge operation
+    auto action = _mergeActions.find(key);
+
+    if (action != _mergeActions.end())
+    {
+        row[_columns.oldValue] = value;
+        row[_columns.newValue] = action->second->getValue();
+    }
+    else
+    {
+        row[_columns.oldValue] = std::string();
+        row[_columns.newValue] = std::string();
     }
 
     // Text colour
@@ -446,6 +463,7 @@ wxWindow* EntityInspector::createTreeViewPane(wxWindow* parent)
     _kvStore = new wxutil::TreeModel(_columns, true); // this is a list model
 
     _keyValueTreeView = wxutil::TreeView::CreateWithModel(treeViewPanel, _kvStore.get(), wxDV_MULTIPLE);
+    _keyValueTreeView->EnableAutoColumnWidthFix(true);
 
     // Search in both name and value columns
     _keyValueTreeView->AddSearchColumn(_columns.name);
@@ -461,20 +479,24 @@ wxWindow* EntityInspector::createTreeViewPane(wxWindow* parent)
         wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_SORTABLE);
 
     // Create the value column
-    _keyValueTreeView->AppendTextColumn(_("Value"),
+    _valueColumn = _keyValueTreeView->AppendTextColumn(_("Value"),
         _columns.value.getColumnIndex(), wxDATAVIEW_CELL_INERT,
         wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_SORTABLE);
 
+    _oldValueColumn = _keyValueTreeView->AppendTextColumn(_("Old Value"),
+        _columns.oldValue.getColumnIndex(), wxDATAVIEW_CELL_INERT,
+        wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_SORTABLE);
+    _newValueColumn = _keyValueTreeView->AppendTextColumn(_("New Value"),
+        _columns.newValue.getColumnIndex(), wxDATAVIEW_CELL_INERT,
+        wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_SORTABLE);
+
     // Used to update the help text
-    _keyValueTreeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED,
-        wxDataViewEventHandler(EntityInspector::_onTreeViewSelectionChanged), NULL, this);
-    _keyValueTreeView->Connect(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU,
-        wxDataViewEventHandler(EntityInspector::_onContextMenu), NULL, this);
+    _keyValueTreeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &EntityInspector::_onTreeViewSelectionChanged, this);
+    _keyValueTreeView->Bind(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, &EntityInspector::_onContextMenu, this);
 
     // When the toggle column is clicked to check/uncheck the box, the model's column value
     // is directly changed by the wxWidgets event handlers. On model value change, this event is fired afterwards
-    _keyValueTreeView->Connect(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED,
-        wxDataViewEventHandler(EntityInspector::_onDataViewItemChanged), NULL, this);
+    _keyValueTreeView->Bind(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED, &EntityInspector::_onDataViewItemChanged, this);
 
     wxBoxSizer* buttonHbox = new wxBoxSizer(wxHORIZONTAL);
 
@@ -492,9 +514,9 @@ wxWindow* EntityInspector::createTreeViewPane(wxWindow* parent)
     treeViewPanel->GetSizer()->Add(_keyEntry, 0, wxEXPAND);
     treeViewPanel->GetSizer()->Add(buttonHbox, 0, wxEXPAND);
 
-    _setButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(EntityInspector::_onSetProperty), NULL, this);
-    _keyEntry->Connect(wxEVT_TEXT_ENTER, wxCommandEventHandler(EntityInspector::_onEntryActivate), NULL, this);
-    _valEntry->Connect(wxEVT_TEXT_ENTER, wxCommandEventHandler(EntityInspector::_onEntryActivate), NULL, this);
+    _setButton->Bind(wxEVT_BUTTON, &EntityInspector::_onSetProperty, this);
+    _keyEntry->Bind(wxEVT_TEXT_ENTER, &EntityInspector::_onEntryActivate, this);
+    _valEntry->Bind(wxEVT_TEXT_ENTER, &EntityInspector::_onEntryActivate, this);
 
     return treeViewPanel;
 }
@@ -568,6 +590,13 @@ void EntityInspector::updateGUIElements()
     getEntityFromSelectionSystem();
 
     auto entityCanBeUpdated = canUpdateEntity();
+
+    auto isMergeMode = GlobalMapModule().getEditMode() == IMap::EditMode::Merge;
+    _oldValueColumn->SetHidden(!isMergeMode);
+    _newValueColumn->SetHidden(!isMergeMode);
+
+    // Set the value column back to the default AUTO setting
+    _valueColumn->SetWidth(wxCOL_WIDTH_AUTOSIZE);
 
     if (!_selectedEntity.expired())
     {
@@ -1292,24 +1321,7 @@ void EntityInspector::changeSelectedEntity(const scene::INodePtr& newEntity, con
         _selectedEntity = newEntity;
 
         // Any possible merge actions go in first
-        if (GlobalMapModule().getEditMode() == IMap::EditMode::Merge && selectedNode &&
-            selectedNode->getNodeType() == scene::INode::Type::MergeAction)
-        {
-            auto mergeNode = std::dynamic_pointer_cast<scene::IMergeActionNode>(selectedNode);
-
-            if (mergeNode)
-            {
-                mergeNode->foreachMergeAction([&](const scene::merge::IMergeAction::Ptr& action)
-                {
-                    auto entityKeyValueAction = std::dynamic_pointer_cast<scene::merge::IEntityKeyValueMergeAction>(action);
-
-                    if (entityKeyValueAction)
-                    {
-                        _mergeActions[entityKeyValueAction->getKey()] = entityKeyValueAction;
-                    }
-                });
-            }
-        }
+        handleMergeActions(selectedNode);
 
         // Attach as observer to fill the listview
         Node_getEntity(newEntity)->attachObserver(this);
@@ -1320,6 +1332,36 @@ void EntityInspector::changeSelectedEntity(const scene::INodePtr& newEntity, con
             addClassProperties();
         }
     }
+}
+
+void EntityInspector::handleMergeActions(const scene::INodePtr& selectedNode)
+{
+    // Any possible merge actions go in first
+    if (GlobalMapModule().getEditMode() != IMap::EditMode::Merge || !selectedNode ||
+        selectedNode->getNodeType() != scene::INode::Type::MergeAction)
+    {
+        return;
+    }
+
+    auto mergeNode = std::dynamic_pointer_cast<scene::IMergeActionNode>(selectedNode);
+
+    if (!mergeNode) return;
+    
+    mergeNode->foreachMergeAction([&](const scene::merge::IMergeAction::Ptr& action)
+    {
+        auto entityKeyValueAction = std::dynamic_pointer_cast<scene::merge::IEntityKeyValueMergeAction>(action);
+
+        if (!entityKeyValueAction) return;
+         
+        // Remember this action in the map, it will be used in onKeyChange()
+        _mergeActions[entityKeyValueAction->getKey()] = entityKeyValueAction;
+
+        // Keys added by a merge operation won't be handled in onKeyChange(), so do this here
+        if (entityKeyValueAction->getType() == scene::merge::ActionType::AddKeyValue)
+        {
+            onKeyChange(entityKeyValueAction->getKey(), entityKeyValueAction->getValue());
+        }
+    });
 }
 
 void EntityInspector::toggle(const cmd::ArgumentList& args)

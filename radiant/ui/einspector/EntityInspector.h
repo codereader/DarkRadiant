@@ -59,8 +59,8 @@ public:
 			isInherited(add(wxutil::TreeModel::Column::Boolean)),
 			hasHelpText(add(wxutil::TreeModel::Column::Boolean)),
 			booleanValue(add(wxutil::TreeModel::Column::Boolean)),
-            oldValue(wxutil::TreeModel::Column::String),
-            newValue(wxutil::TreeModel::Column::String)
+            oldValue(add(wxutil::TreeModel::Column::String)),
+            newValue(add(wxutil::TreeModel::Column::String))
 		{}
 
 		wxutil::TreeModel::Column name;
@@ -96,6 +96,9 @@ private:
 	TreeColumns _columns;
 	wxutil::TreeModel::Ptr _kvStore;
     wxDataViewColumn* _booleanColumn;
+    wxDataViewColumn* _valueColumn;
+    wxDataViewColumn* _oldValueColumn;
+    wxDataViewColumn* _newValueColumn;
 
 	wxIcon _emptyIcon;
 
@@ -203,6 +206,8 @@ private:
 
     // Change the selected entity pointer, setting up the observer
     void changeSelectedEntity(const scene::INodePtr& newEntity, const scene::INodePtr& selectedNode);
+
+    void handleMergeActions(const scene::INodePtr& selectedNode);
 
     // Set the keyval on all selected entities from the key and value textboxes
 	void setPropertyFromEntries();
