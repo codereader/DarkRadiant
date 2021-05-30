@@ -7,7 +7,9 @@
 #include "ieclass.h"
 #include "iregistry.h"
 #include "ieventmanager.h"
+#include "imergeaction.h"
 #include "igame.h"
+#include "imap.h"
 #include "iundo.h"
 #include "igroupdialog.h"
 #include "imainframe.h"
@@ -1190,6 +1192,22 @@ void EntityInspector::getEntityFromSelectionSystem()
     }
     else
     {
+        // Check if this is a special merge node
+        if (selectedNode->getNodeType() == scene::INode::Type::MergeAction &&
+            GlobalMapModule().getEditMode() == IMap::EditMode::Merge)
+        {
+            auto mergeAction = std::dynamic_pointer_cast<scene::IMergeActionNode>(selectedNode);
+            assert(mergeAction);
+
+            if (mergeAction && Node_isEntity(mergeAction->getAffectedNode()))
+            {
+                // Use the entity of the merge node
+                changeSelectedEntity(mergeAction->getAffectedNode());
+                _primitiveNumLabel->SetLabelText(_("Merge Preview"));
+                return;
+            }
+        }
+
         // Node was not an entity, try parent instead
         scene::INodePtr selectedNodeParent = selectedNode->getParent();
         changeSelectedEntity(selectedNodeParent);

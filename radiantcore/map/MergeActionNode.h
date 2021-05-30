@@ -33,6 +33,8 @@ public:
     // doesn't change the action's status when removed from the scene
     void prepareForMerge();
 
+    scene::INodePtr getAffectedNode() override;
+
     // Clears the references to actions and nodes, such that it doesn't hold 
     // any strong refs to scene::Nodes, causing trouble when clearing the undo stack later
     virtual void clear();
@@ -77,6 +79,7 @@ public:
     void clear() override;
 
     scene::merge::ActionType getActionType() const override;
+    void foreachMergeAction(const std::function<void(const scene::merge::IMergeAction::Ptr&)>& functor) override;
 
     void onInsertIntoScene(scene::IMapRootNode& rootNode) override;
     void onRemoveFromScene(scene::IMapRootNode& rootNode) override;
@@ -106,6 +109,7 @@ public:
     void clear() override;
 
     scene::merge::ActionType getActionType() const override;
+    void foreachMergeAction(const std::function<void(const scene::merge::IMergeAction::Ptr&)>& functor) override;
 
 private:
     void addPreviewNodeForAddAction();

@@ -68,6 +68,12 @@ public:
 
     // Return the action type represented by this node
     virtual merge::ActionType getActionType() const = 0;
+
+    // Return the node this action is affecting
+    virtual scene::INodePtr getAffectedNode() = 0;
+
+    // Iterate over all actions of this node
+    virtual void foreachMergeAction(const std::function<void(const merge::IMergeAction::Ptr&)>& functor) = 0;
 };
 
 }

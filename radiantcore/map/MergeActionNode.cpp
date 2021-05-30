@@ -12,6 +12,11 @@ void MergeActionNodeBase::prepareForMerge()
     _syncActionStatus = false;
 }
 
+scene::INodePtr MergeActionNodeBase::getAffectedNode()
+{
+    return _affectedNode;
+}
+
 void MergeActionNodeBase::clear()
 {
     _affectedNode.reset();
@@ -153,6 +158,14 @@ scene::merge::ActionType KeyValueMergeActionNode::getActionType() const
     return scene::merge::ActionType::ChangeKeyValue;
 }
 
+void KeyValueMergeActionNode::foreachMergeAction(const std::function<void(const scene::merge::IMergeAction::Ptr&)>& functor)
+{
+    for (const auto& action : _actions)
+    {
+        functor(action);
+    }
+}
+
 void KeyValueMergeActionNode::onInsertIntoScene(scene::IMapRootNode& rootNode)
 {
     if (_syncActionStatus)
@@ -221,6 +234,14 @@ void RegularMergeActionNode::clear()
 scene::merge::ActionType RegularMergeActionNode::getActionType() const
 {
     return _action->getType();
+}
+
+void RegularMergeActionNode::foreachMergeAction(const std::function<void(const scene::merge::IMergeAction::Ptr&)>& functor)
+{
+    if (_action)
+    {
+        functor(_action);
+    }
 }
 
 void RegularMergeActionNode::addPreviewNodeForAddAction()
