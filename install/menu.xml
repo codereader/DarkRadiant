@@ -5,9 +5,9 @@
 		<menuSeparator />
 		<menuItem name="open" caption="&amp;Open..." command="OpenMap" />
 		<menuItem name="openMapFromProject" caption="&amp;Open Map from Project..." command="OpenMapFromProject" />
-		<menuItem name="import" caption="&amp;Import map..." command="ImportMap" />
-		<menuItem name="mergeMap" caption="&amp;Merge map..." command="MergeControlDialog" />
-		<menuItem name="loadprefab" caption="Import &amp;prefab..." command="LoadPrefab" />
+		<menuItem name="import" caption="&amp;Import Map..." command="ImportMap" />
+		<menuItem name="mergeMap" caption="&amp;Merge Map..." command="MergeControlDialog" />
+		<menuItem name="loadprefab" caption="Import &amp;Prefab..." command="LoadPrefab" />
 		<menuSeparator />
 		<menuItem name="save" caption="&amp;Save" command="SaveMap" />
 		<menuItem name="saveas" caption="Save &amp;as..." command="SaveMapAs" />
