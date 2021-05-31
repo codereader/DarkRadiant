@@ -22,6 +22,7 @@
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/menu/IconTextMenuItem.h"
 #include "wxutil/dataview/TreeModel.h"
+#include "wxutil/dataview/TreeViewItemStyle.h"
 #include "xmlutil/Document.h"
 
 #include <map>
@@ -182,7 +183,7 @@ void EntityInspector::onKeyChange(const std::string& key,
 
     // Check if we already have an iter for this key (i.e. this is a
     // modification).
-    TreeIterMap::const_iterator i = _keyValueIterMap.find(key);
+    auto i = _keyValueIterMap.find(key);
 
     if (i != _keyValueIterMap.end())
     {
@@ -219,8 +220,26 @@ void EntityInspector::onKeyChange(const std::string& key,
     // Set the values for the row
     wxutil::TreeModel::Row row(keyValueIter, *_kvStore);
 
-    wxDataViewItemAttr black;
-    black.SetColour(wxColor(0,0,0));
+    wxDataViewItemAttr style;
+
+    // Check if this key is affected by a merge operation
+    auto action = _mergeActions.find(key);
+
+    if (action != _mergeActions.end())
+    {
+        switch (action->second->getType())
+        {
+        case scene::merge::ActionType::AddKeyValue:
+            style.SetBackgroundColour(wxutil::TreeViewItemStyle::KeyValueAddedBackground());
+            break;
+        case scene::merge::ActionType::ChangeKeyValue:
+            style.SetBackgroundColour(wxutil::TreeViewItemStyle::KeyValueChangedBackground());
+            break;
+        case scene::merge::ActionType::RemoveKeyValue:
+            style.SetBackgroundColour(wxutil::TreeViewItemStyle::KeyValueRemovedBackground());
+            break;
+        }
+    }
 
     wxIcon icon;
     icon.CopyFromBitmap(parms.type.empty() ? _emptyIcon : PropertyEditorFactory::getBitmapFor(parms.type));
@@ -242,13 +261,27 @@ void EntityInspector::onKeyChange(const std::string& key,
         row[_columns.booleanValue].setEnabled(false);
     }
 
-    // Check if this key is affected by a merge operation
-    auto action = _mergeActions.find(key);
-
     if (action != _mergeActions.end())
     {
-        row[_columns.oldValue] = value;
+        if (action->second->getType() == scene::merge::ActionType::AddKeyValue)
+        {
+            row[_columns.oldValue] = std::string(); // no old value to show
+            row[_columns.oldValue] = style;
+        }
+        else
+        {
+            wxDataViewItemAttr oldAttr = style;
+            oldAttr.SetStrikethrough(true);
+            row[_columns.oldValue] = value;
+            row[_columns.oldValue] = oldAttr;
+        }
+
         row[_columns.newValue] = action->second->getValue();
+
+        wxDataViewItemAttr newAttr = style;
+        newAttr.SetBold(true);
+
+        row[_columns.newValue] = newAttr;
     }
     else
     {
@@ -256,9 +289,10 @@ void EntityInspector::onKeyChange(const std::string& key,
         row[_columns.newValue] = std::string();
     }
 
-    // Text colour
-    row[_columns.name] = black;
-    row[_columns.value] = black;
+    // Apply background style to all other columns
+    row[_columns.name] = style;
+    row[_columns.value] = style;
+    row[_columns.booleanValue] = style;
 
     row[_columns.isInherited] = false;
     row[_columns.hasHelpText] = hasDescription;

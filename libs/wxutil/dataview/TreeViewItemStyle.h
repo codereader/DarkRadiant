@@ -35,6 +35,21 @@ public:
 
         return wxDataViewItemAttr();
     }
+
+    static wxColour KeyValueAddedBackground()
+    {
+        return wxColour(100, 254, 100);
+    }
+
+    static wxColour KeyValueChangedBackground()
+    {
+        return wxColour(90, 140, 254);
+    }
+
+    static wxColour KeyValueRemovedBackground()
+    {
+        return wxColour(254, 100, 100);
+    }
 };
 
 }
