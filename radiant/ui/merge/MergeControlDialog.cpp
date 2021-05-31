@@ -60,8 +60,8 @@ MergeControlDialog::MergeControlDialog() :
     Layout();
     Fit();
 
-    SetMinSize(wxSize(300, 210));
-    InitialiseWindowPosition(300, 210, RKEY_WINDOW_STATE);
+    SetMinSize(wxSize(400, 210));
+    InitialiseWindowPosition(400, 210, RKEY_WINDOW_STATE);
 }
 
 std::shared_ptr<MergeControlDialog>& MergeControlDialog::InstancePtr()

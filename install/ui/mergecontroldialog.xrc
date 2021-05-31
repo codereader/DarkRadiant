@@ -138,6 +138,11 @@
 								<flag>wxRIGHT</flag>
 								<border>0</border>
 								<object class="wxButton" name="LoadAndCompareButton">
+									<font>
+										<style>normal</style>
+										<weight>bold</weight>
+										<underlined>0</underlined>
+									</font>
 									<label>Load and Compare</label>
 									<default>0</default>
 									<markup>0</markup>
