@@ -56,6 +56,7 @@ private:
     void queueUpdate();
     void onIdle(wxIdleEvent& ev);
     void onMapEvent(IMap::MapEvent ev);
+    void updateSummary();
 
     std::size_t getNumSelectedMergeNodes();
     std::vector<scene::INodePtr> getSelectedMergeNodes();

@@ -13,6 +13,7 @@
 #include <wx/textctrl.h>
 #include <wx/button.h>
 #include <wx/sizer.h>
+#include <wx/stattext.h>
 
 namespace ui
 {
@@ -137,6 +138,7 @@ void MergeControlDialog::onLoadAndCompare(wxCommandEvent& ev)
         GlobalCommandSystem().executeCommand("StartMergeOperation", sourceMapPath);
     }
 
+    updateSummary();
     updateControlSensitivity();
 }
 
@@ -274,6 +276,17 @@ void MergeControlDialog::onMapEvent(IMap::MapEvent ev)
     {
         updateControlSensitivity();
     }
+}
+
+void MergeControlDialog::updateSummary()
+{
+    // TODO
+
+    findNamedObject<wxStaticText>(this, "EntitiesAdded")->SetLabel("0");
+    findNamedObject<wxStaticText>(this, "EntitiesRemoved")->SetLabel("0");
+    findNamedObject<wxStaticText>(this, "EntitiesModified")->SetLabel("0");
+    findNamedObject<wxStaticText>(this, "PrimitivesAdded")->SetLabel("0");
+    findNamedObject<wxStaticText>(this, "PrimitivesRemoved")->SetLabel("0");
 }
 
 }

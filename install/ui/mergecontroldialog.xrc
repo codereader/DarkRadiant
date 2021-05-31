@@ -2,7 +2,7 @@
 <resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
 	<object class="wxPanel" name="MergeControlDialogMainPanel">
 		<style>wxTAB_TRAVERSAL</style>
-		<size>391,187</size>
+		<size>391,338</size>
 		<object class="wxBoxSizer">
 			<orient>wxVERTICAL</orient>
 			<object class="sizeritem">
@@ -171,16 +171,165 @@
 							<object class="sizeritem">
 								<option>0</option>
 								<flag>wxALL</flag>
-								<border>5</border>
+								<border>6</border>
 								<object class="wxStaticText" name="m_staticText14">
-									<label>Details</label>
+									<font>
+										<style>normal</style>
+										<weight>bold</weight>
+										<underlined>0</underlined>
+									</font>
+									<label>Summary</label>
 									<wrap>-1</wrap>
 								</object>
 							</object>
 							<object class="sizeritem">
 								<option>0</option>
-								<flag>wxEXPAND</flag>
-								<border>0</border>
+								<flag>wxEXPAND|wxLEFT</flag>
+								<border>12</border>
+								<object class="wxFlexGridSizer">
+									<rows>3</rows>
+									<cols>4</cols>
+									<vgap>0</vgap>
+									<hgap>0</hgap>
+									<growablecols>1,3</growablecols>
+									<growablerows></growablerows>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxALIGN_RIGHT|wxALL</flag>
+										<border>5</border>
+										<object class="wxStaticText" name="EntitiesAdded">
+											<font>
+												<style>normal</style>
+												<weight>bold</weight>
+												<underlined>0</underlined>
+											</font>
+											<label>0</label>
+											<wrap>-1</wrap>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxALL</flag>
+										<border>5</border>
+										<object class="wxStaticText" name="EntitiesAdded">
+											<label>Entities added</label>
+											<wrap>-1</wrap>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxALL</flag>
+										<border>5</border>
+										<object class="wxStaticText" name="EntitiesRemoved">
+											<font>
+												<style>normal</style>
+												<weight>bold</weight>
+												<underlined>0</underlined>
+											</font>
+											<label>0</label>
+											<wrap>-1</wrap>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxALL</flag>
+										<border>5</border>
+										<object class="wxStaticText" name="m_staticText24">
+											<label>Entities removed</label>
+											<wrap>-1</wrap>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxALIGN_RIGHT|wxALL</flag>
+										<border>5</border>
+										<object class="wxStaticText" name="EntitiesModified">
+											<font>
+												<style>normal</style>
+												<weight>bold</weight>
+												<underlined>0</underlined>
+											</font>
+											<label>0</label>
+											<wrap>-1</wrap>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxALL</flag>
+										<border>5</border>
+										<object class="wxStaticText" name="m_staticText28">
+											<label>Entities modified</label>
+											<wrap>-1</wrap>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>1</option>
+										<flag>wxEXPAND</flag>
+										<border>5</border>
+										<object class="wxBoxSizer">
+											<orient>wxVERTICAL</orient>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>1</option>
+										<flag>wxEXPAND</flag>
+										<border>5</border>
+										<object class="wxBoxSizer">
+											<orient>wxVERTICAL</orient>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxALIGN_RIGHT|wxALL</flag>
+										<border>5</border>
+										<object class="wxStaticText" name="PrimitivesAdded">
+											<font>
+												<style>normal</style>
+												<weight>bold</weight>
+												<underlined>0</underlined>
+											</font>
+											<label>0</label>
+											<wrap>-1</wrap>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxALL</flag>
+										<border>5</border>
+										<object class="wxStaticText" name="m_staticText29">
+											<label>Primitives added</label>
+											<wrap>-1</wrap>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxALIGN_RIGHT|wxALL</flag>
+										<border>5</border>
+										<object class="wxStaticText" name="PrimitivesRemoved">
+											<font>
+												<style>normal</style>
+												<weight>bold</weight>
+												<underlined>0</underlined>
+											</font>
+											<label>0</label>
+											<wrap>-1</wrap>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxALL</flag>
+										<border>5</border>
+										<object class="wxStaticText" name="m_staticText22">
+											<label>Primitives removed</label>
+											<wrap>-1</wrap>
+										</object>
+									</object>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxEXPAND|wxTOP</flag>
+								<border>6</border>
 								<object class="wxBoxSizer">
 									<orient>wxHORIZONTAL</orient>
 									<object class="sizeritem">
