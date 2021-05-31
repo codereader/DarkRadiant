@@ -379,6 +379,15 @@ void EntityInspector::createContextMenu()
         std::bind(&EntityInspector::_onPasteKey, this),
         std::bind(&EntityInspector::_testPasteKey, this)
     );
+
+    _contextMenu->addSeparator();
+
+    _contextMenu->addItem(
+        new wxutil::StockIconTextMenuItem(_("Reject selected Changes"), wxART_UNDO),
+        std::bind(&EntityInspector::_onRejectMergeAction, this),
+        std::bind(&EntityInspector::_testRejectMergeAction, this),
+        [] { return GlobalMapModule().getEditMode() == IMap::EditMode::Merge; }
+    );
 }
 
 void EntityInspector::onMainFrameConstructed()
@@ -933,6 +942,40 @@ bool EntityInspector::_testPasteKey()
 
     // Return true if the clipboard contains data
     return !_clipboard.empty() && canUpdateEntity();
+}
+
+void EntityInspector::_onRejectMergeAction()
+{
+
+}
+
+bool EntityInspector::_testRejectMergeAction()
+{
+    if (GlobalMapModule().getEditMode() != IMap::EditMode::Merge)
+    {
+        return false;
+    }
+
+    wxDataViewItemArray selectedItems;
+    _keyValueTreeView->GetSelections(selectedItems);
+
+    for (const wxDataViewItem& item : selectedItems)
+    {
+        wxutil::TreeModel::Row row(item, *_kvStore);
+
+        if (isItemAffecedByMergeOperation(row))
+        {
+            return true; // we have at least one non-inherited value that is not "classname"
+        }
+    }
+
+    return false;
+}
+
+bool EntityInspector::isItemAffecedByMergeOperation(const wxutil::TreeModel::Row& row)
+{
+    auto key = row[_columns.name].getString().ToStdString();
+    return _mergeActions.count(key) > 0;
 }
 
 // wxWidget callbacks
