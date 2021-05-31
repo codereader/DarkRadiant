@@ -57,8 +57,11 @@ MergeControlDialog::MergeControlDialog() :
     updateControlSensitivity();
     Bind(wxEVT_IDLE, &MergeControlDialog::onIdle, this);
 
-    SetMinSize(wxSize(300, 400));
-    InitialiseWindowPosition(300, 400, RKEY_WINDOW_STATE);
+    Layout();
+    Fit();
+
+    SetMinSize(wxSize(300, 210));
+    InitialiseWindowPosition(300, 210, RKEY_WINDOW_STATE);
 }
 
 std::shared_ptr<MergeControlDialog>& MergeControlDialog::InstancePtr()

@@ -43,7 +43,7 @@
             <property name="minimum_size">300,-1</property>
             <property name="name">MergeControlDialogMainPanel</property>
             <property name="pos"></property>
-            <property name="size">391,372</property>
+            <property name="size">391,187</property>
             <property name="subclass"></property>
             <property name="tooltip"></property>
             <property name="window_extra_style"></property>
@@ -274,7 +274,7 @@
                                             </object>
                                             <object class="sizeritem" expanded="0">
                                                 <property name="border">0</property>
-                                                <property name="flag">wxEXPAND</property>
+                                                <property name="flag">wxEXPAND|wxRIGHT</property>
                                                 <property name="proportion">1</property>
                                                 <object class="wxTextCtrl" expanded="0">
                                                     <property name="BottomDockable">1</property>
@@ -337,8 +337,8 @@
                                                 </object>
                                             </object>
                                             <object class="sizeritem" expanded="1">
-                                                <property name="border">0</property>
-                                                <property name="flag">wxALIGN_CENTER_VERTICAL|wxALL</property>
+                                                <property name="border">3</property>
+                                                <property name="flag">wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</property>
                                                 <property name="proportion">0</property>
                                                 <object class="wxStaticBitmap" expanded="1">
                                                     <property name="BottomDockable">1</property>
@@ -719,7 +719,7 @@
                                 <property name="orient">wxHORIZONTAL</property>
                                 <property name="permission">none</property>
                                 <object class="sizeritem" expanded="1">
-                                    <property name="border">6</property>
+                                    <property name="border">0</property>
                                     <property name="flag">wxRIGHT</property>
                                     <property name="proportion">1</property>
                                     <object class="wxButton" expanded="1">
@@ -791,8 +791,8 @@
                                     </object>
                                 </object>
                                 <object class="sizeritem" expanded="1">
-                                    <property name="border">0</property>
-                                    <property name="flag">wxALL</property>
+                                    <property name="border">6</property>
+                                    <property name="flag">wxLEFT</property>
                                     <property name="proportion">1</property>
                                     <object class="wxButton" expanded="1">
                                         <property name="BottomDockable">1</property>
