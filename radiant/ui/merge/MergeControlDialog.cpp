@@ -214,6 +214,7 @@ void MergeControlDialog::_preHide()
     // A hidden window doesn't need to listen for events
     _undoHandler.disconnect();
     _redoHandler.disconnect();
+    _mapEventHandler.disconnect();
 
     GlobalSelectionSystem().removeObserver(this);
 }
@@ -227,6 +228,10 @@ void MergeControlDialog::_preShow()
 
     // Register self to the SelSystem to get notified upon selection changes.
     GlobalSelectionSystem().addObserver(this);
+    
+    _mapEventHandler = GlobalMapModule().signal_mapEvent().connect(
+        sigc::mem_fun(this, &MergeControlDialog::onMapEvent)
+    );
 
     _undoHandler = GlobalUndoSystem().signal_postUndo().connect(
         sigc::mem_fun(this, &MergeControlDialog::queueUpdate));
@@ -264,6 +269,14 @@ void MergeControlDialog::onIdle(wxIdleEvent& ev)
     _updateNeeded = false;
     rescanSelection();
     updateControlSensitivity();
+}
+
+void MergeControlDialog::onMapEvent(IMap::MapEvent ev)
+{
+    if (ev == IMap::MapLoaded || ev == IMap::MapUnloaded)
+    {
+        updateControlSensitivity();
+    }
 }
 
 }

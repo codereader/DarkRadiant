@@ -1,6 +1,7 @@
 #pragma once
 
 #include "iselection.h"
+#include "imap.h"
 #include "icommandsystem.h"
 #include <sigc++/connection.h>
 #include "wxutil/window/TransientWindow.h"
@@ -19,6 +20,7 @@ class MergeControlDialog :
 private:
     sigc::connection _undoHandler;
     sigc::connection _redoHandler;
+    sigc::connection _mapEventHandler;
 
     bool _updateNeeded;
 
@@ -54,6 +56,7 @@ private:
     void rescanSelection();
     void queueUpdate();
     void onIdle(wxIdleEvent& ev);
+    void onMapEvent(IMap::MapEvent ev);
 
     std::size_t getNumSelectedMergeNodes();
     std::vector<scene::INodePtr> getSelectedMergeNodes();
