@@ -30,7 +30,7 @@ public:
     static MergeControlDialog& Instance();
 
     // The command target
-    static void Toggle(const cmd::ArgumentList& args);
+    static void ShowDialog(const cmd::ArgumentList& args);
 
     /** greebo: SelectionSystem::Observer implementation. Gets called by
      * the SelectionSystem upon selection change to allow updating of the
@@ -53,7 +53,6 @@ private:
     void onAbortMerge(wxCommandEvent& ev);
     void onRejectSelection(wxCommandEvent& ev);
     void updateControlSensitivity();
-    void rescanSelection();
     void queueUpdate();
     void onIdle(wxIdleEvent& ev);
     void onMapEvent(IMap::MapEvent ev);

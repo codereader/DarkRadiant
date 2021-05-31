@@ -102,9 +102,9 @@ void MergeControlDialog::onMainFrameShuttingDown()
     InstancePtr().reset();
 }
 
-void MergeControlDialog::Toggle(const cmd::ArgumentList& args)
+void MergeControlDialog::ShowDialog(const cmd::ArgumentList& args)
 {
-    Instance().ToggleVisibility();
+    Instance().Show();
 }
 
 void MergeControlDialog::convertTextCtrlToPathEntry(const std::string& ctrlName)
@@ -245,11 +245,6 @@ void MergeControlDialog::_preShow()
     updateControlSensitivity();
 }
 
-void MergeControlDialog::rescanSelection()
-{
-    
-}
-
 void MergeControlDialog::selectionChanged(const scene::INodePtr& node, bool isComponent)
 {
     if (node->getNodeType() != scene::INode::Type::MergeAction)
@@ -270,7 +265,6 @@ void MergeControlDialog::onIdle(wxIdleEvent& ev)
     if (!_updateNeeded) return;
 
     _updateNeeded = false;
-    rescanSelection();
     updateControlSensitivity();
 }
 

@@ -364,7 +364,7 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addCommand("ToggleLightInspector", LightInspector::toggleInspector);
 	GlobalCommandSystem().addCommand("SurfaceInspector", SurfaceInspector::toggle);
 	GlobalCommandSystem().addCommand("PatchInspector", PatchInspector::toggle);
-	GlobalCommandSystem().addCommand("MergeControlDialog", MergeControlDialog::Toggle);
+	GlobalCommandSystem().addCommand("MergeControlDialog", MergeControlDialog::ShowDialog);
 	GlobalCommandSystem().addCommand("OverlayDialog", OverlayDialog::toggle);
 	GlobalCommandSystem().addCommand("TransformDialog", TransformDialog::toggle);
 
