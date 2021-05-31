@@ -9,6 +9,7 @@
 #include "imap.h"
 #include "wxutil/PathEntry.h"
 #include "scenelib.h"
+#include "string/convert.h"
 
 #include <wx/textctrl.h>
 #include <wx/button.h>
@@ -61,8 +62,8 @@ MergeControlDialog::MergeControlDialog() :
     Layout();
     Fit();
 
-    SetMinSize(wxSize(400, 210));
-    InitialiseWindowPosition(400, 210, RKEY_WINDOW_STATE);
+    SetMinSize(wxSize(400, 290));
+    InitialiseWindowPosition(400, 290, RKEY_WINDOW_STATE);
 }
 
 std::shared_ptr<MergeControlDialog>& MergeControlDialog::InstancePtr()
@@ -116,6 +117,7 @@ void MergeControlDialog::convertTextCtrlToPathEntry(const std::string& ctrlName)
 
 void MergeControlDialog::onMergeSourceChanged(wxCommandEvent& ev)
 {
+    updateSummary();
     updateControlSensitivity();
 }
 
@@ -145,6 +147,7 @@ void MergeControlDialog::onLoadAndCompare(wxCommandEvent& ev)
 void MergeControlDialog::onAbortMerge(wxCommandEvent& ev)
 {
     GlobalMapModule().abortMergeOperation();
+    updateSummary();
     updateControlSensitivity();
 }
 
@@ -244,6 +247,7 @@ void MergeControlDialog::_preShow()
         sigc::mem_fun(this, &MergeControlDialog::queueUpdate));
 
     // Check for selection changes before showing the dialog again
+    updateSummary();
     updateControlSensitivity();
 }
 
@@ -281,13 +285,55 @@ void MergeControlDialog::onMapEvent(IMap::MapEvent ev)
 
 void MergeControlDialog::updateSummary()
 {
-    // TODO
+    auto operation = GlobalMapModule().getActiveMergeOperation();
 
-    findNamedObject<wxStaticText>(this, "EntitiesAdded")->SetLabel("0");
-    findNamedObject<wxStaticText>(this, "EntitiesRemoved")->SetLabel("0");
-    findNamedObject<wxStaticText>(this, "EntitiesModified")->SetLabel("0");
-    findNamedObject<wxStaticText>(this, "PrimitivesAdded")->SetLabel("0");
-    findNamedObject<wxStaticText>(this, "PrimitivesRemoved")->SetLabel("0");
+    std::size_t entitiesAdded = 0;
+    std::size_t entitiesModified = 0;
+    std::size_t entitiesRemoved = 0;
+    std::size_t primitivesAdded = 0;
+    std::size_t primitivesRemoved = 0;
+
+    if (operation)
+    {
+        std::set<scene::INodePtr> modifiedEntities;
+
+        operation->foreachAction([&](const scene::merge::IMergeAction::Ptr& action)
+        {
+            if (!action->isActive()) return;
+
+            switch (action->getType())
+            {
+            case scene::merge::ActionType::AddChildNode:
+                primitivesAdded++;
+                break;
+            case scene::merge::ActionType::RemoveChildNode:
+                primitivesRemoved++;
+                break;
+            case scene::merge::ActionType::AddEntity:
+                entitiesAdded++;
+                break;
+            case scene::merge::ActionType::RemoveEntity:
+                entitiesRemoved++;
+                break;
+            case scene::merge::ActionType::AddKeyValue:
+            case scene::merge::ActionType::ChangeKeyValue:
+            case scene::merge::ActionType::RemoveKeyValue:
+                modifiedEntities.insert(action->getAffectedNode());
+                break;
+            }
+        });
+
+        entitiesModified = modifiedEntities.size();
+    }
+
+    findNamedObject<wxStaticText>(this, "EntitiesAdded")->SetLabel(string::to_string(entitiesAdded));
+    findNamedObject<wxStaticText>(this, "EntitiesRemoved")->SetLabel(string::to_string(entitiesRemoved));
+    findNamedObject<wxStaticText>(this, "EntitiesModified")->SetLabel(string::to_string(entitiesModified));
+    findNamedObject<wxStaticText>(this, "PrimitivesAdded")->SetLabel(string::to_string(primitivesAdded));
+    findNamedObject<wxStaticText>(this, "PrimitivesRemoved")->SetLabel(string::to_string(primitivesRemoved));
+
+    Layout();
+    Fit();
 }
 
 }
