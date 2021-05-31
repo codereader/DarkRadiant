@@ -237,6 +237,7 @@ void EntityInspector::onKeyChange(const std::string& key,
             break;
         case scene::merge::ActionType::RemoveKeyValue:
             style.SetBackgroundColour(wxutil::TreeViewItemStyle::KeyValueRemovedBackground());
+            style.SetStrikethrough(true);
             break;
         }
     }
@@ -946,7 +947,26 @@ bool EntityInspector::_testPasteKey()
 
 void EntityInspector::_onRejectMergeAction()
 {
+    wxDataViewItemArray selectedItems;
+    _keyValueTreeView->GetSelections(selectedItems);
 
+    for (const wxDataViewItem& item : selectedItems)
+    {
+        wxutil::TreeModel::Row row(item, *_kvStore);
+
+        auto key = row[_columns.name].getString().ToStdString();
+        
+        auto action = _mergeActions.find(key);
+        
+        if (action != _mergeActions.end())
+        {
+            action->second->deactivate();
+        }
+    }
+
+    // We perform a full refresh of the view
+    changeSelectedEntity(scene::INodePtr(), scene::INodePtr());
+    getEntityFromSelectionSystem();
 }
 
 bool EntityInspector::_testRejectMergeAction()
