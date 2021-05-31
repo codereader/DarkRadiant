@@ -1383,6 +1383,8 @@ void EntityInspector::handleMergeActions(const scene::INodePtr& selectedNode)
     
     mergeNode->foreachMergeAction([&](const scene::merge::IMergeAction::Ptr& action)
     {
+        if (!action->isActive()) return; // don't apply inactive actions to our view
+
         auto entityKeyValueAction = std::dynamic_pointer_cast<scene::merge::IEntityKeyValueMergeAction>(action);
 
         if (!entityKeyValueAction) return;
