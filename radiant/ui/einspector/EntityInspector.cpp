@@ -230,14 +230,13 @@ void EntityInspector::onKeyChange(const std::string& key,
         switch (action->second->getType())
         {
         case scene::merge::ActionType::AddKeyValue:
-            style.SetBackgroundColour(wxutil::TreeViewItemStyle::KeyValueAddedBackground());
+            wxutil::TreeViewItemStyle::ApplyKeyValueAddedStyle(style);
             break;
         case scene::merge::ActionType::ChangeKeyValue:
-            style.SetBackgroundColour(wxutil::TreeViewItemStyle::KeyValueChangedBackground());
+            wxutil::TreeViewItemStyle::ApplyKeyValueChangedStyle(style);
             break;
         case scene::merge::ActionType::RemoveKeyValue:
-            style.SetBackgroundColour(wxutil::TreeViewItemStyle::KeyValueRemovedBackground());
-            style.SetStrikethrough(true);
+            wxutil::TreeViewItemStyle::ApplyKeyValueRemovedStyle(style);
             break;
         }
     }
@@ -272,7 +271,7 @@ void EntityInspector::onKeyChange(const std::string& key,
         else
         {
             wxDataViewItemAttr oldAttr = style;
-            oldAttr.SetStrikethrough(true);
+            wxutil::TreeViewItemStyle::SetStrikethrough(oldAttr, true);
             row[_columns.oldValue] = value;
             row[_columns.oldValue] = oldAttr;
         }
@@ -408,6 +407,8 @@ void EntityInspector::onMainFrameConstructed()
 
 void EntityInspector::onMainFrameShuttingDown()
 {
+    _mergeActions.clear();
+
     _undoHandler.disconnect();
     _redoHandler.disconnect();
 
