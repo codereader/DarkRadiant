@@ -1,6 +1,6 @@
 #pragma once
 
-#include "imergeaction.h"
+#include "imapmerge.h"
 #include "iselectiontest.h"
 #include "math/AABB.h"
 #include "scene/SelectableNode.h"
@@ -71,10 +71,10 @@ class KeyValueMergeActionNode final :
     public MergeActionNodeBase
 {
 private:
-    std::vector<scene::merge::MergeAction::Ptr> _actions;
+    std::vector<scene::merge::IMergeAction::Ptr> _actions;
 
 public:
-    KeyValueMergeActionNode(const std::vector<scene::merge::MergeAction::Ptr>& actions);
+    KeyValueMergeActionNode(const std::vector<scene::merge::IMergeAction::Ptr>& actions);
 
     void clear() override;
 
@@ -98,10 +98,10 @@ class RegularMergeActionNode final :
     public MergeActionNodeBase
 {
 private:
-    scene::merge::MergeAction::Ptr _action;
+    scene::merge::IMergeAction::Ptr _action;
 
 public:
-    RegularMergeActionNode(const scene::merge::MergeAction::Ptr& action);
+    RegularMergeActionNode(const scene::merge::IMergeAction::Ptr& action);
 
     void onInsertIntoScene(scene::IMapRootNode& rootNode) override;
     void onRemoveFromScene(scene::IMapRootNode& rootNode) override;

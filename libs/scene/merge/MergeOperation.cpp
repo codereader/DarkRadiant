@@ -101,7 +101,7 @@ void MergeOperation::applyActions()
     }
 }
 
-void MergeOperation::foreachAction(const std::function<void(const MergeAction::Ptr&)>& visitor)
+void MergeOperation::foreachAction(const std::function<void(const IMergeAction::Ptr&)>& visitor)
 {
     for (const auto& action : _actions)
     {

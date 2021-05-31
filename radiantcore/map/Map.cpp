@@ -225,6 +225,11 @@ void Map::abortMergeOperation()
     setEditMode(EditMode::Normal);
 }
 
+scene::merge::IMergeOperation::Ptr Map::getActiveMergeOperation()
+{
+    return _editMode == EditMode::Merge ? _mergeOperation : scene::merge::IMergeOperation::Ptr();
+}
+
 void Map::setMapName(const std::string& newName)
 {
     bool mapNameChanged = _mapName != newName;
@@ -1021,10 +1026,10 @@ void Map::createMergeOperation(const scene::merge::ComparisonResult& result)
     _mergeOperation = scene::merge::MergeOperation::CreateFromComparisonResult(result);
 
     // Group spawnarg actions into one single node if applicable
-    std::map<scene::INodePtr, std::vector<scene::merge::MergeAction::Ptr>> entityChanges;
-    std::vector<scene::merge::MergeAction::Ptr> otherChanges;
+    std::map<scene::INodePtr, std::vector<scene::merge::IMergeAction::Ptr>> entityChanges;
+    std::vector<scene::merge::IMergeAction::Ptr> otherChanges;
 
-    _mergeOperation->foreachAction([&](const scene::merge::MergeAction::Ptr& action)
+    _mergeOperation->foreachAction([&](const scene::merge::IMergeAction::Ptr& action)
     {
         scene::INodePtr affectedNode = action->getAffectedNode();
 

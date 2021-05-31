@@ -5,7 +5,7 @@
 #include "ientityinspector.h"
 #include "iradiant.h"
 #include "icommandsystem.h"
-#include "imergeaction.h"
+#include "imapmerge.h"
 #include "iselection.h"
 #include "ientity.h"
 #include "string/string.h"

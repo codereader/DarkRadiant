@@ -13,7 +13,8 @@ namespace merge
 
 // A MergeOperation groups one or more merge actions
 // together in order to apply a set of changes from source => base
-class MergeOperation
+class MergeOperation :
+    public IMergeOperation
 {
 private:
     scene::IMapRootNodePtr _sourceRoot;
@@ -36,9 +37,9 @@ public:
     void addAction(const MergeAction::Ptr& action);
 
     // Executes all active actions defined in this operation
-    void applyActions();
+    void applyActions() override;
 
-    void foreachAction(const std::function<void(const MergeAction::Ptr&)>& visitor);
+    void foreachAction(const std::function<void(const IMergeAction::Ptr&)>& visitor) override;
 
 private:
     void createActionsForEntity(const ComparisonResult::EntityDifference& difference);

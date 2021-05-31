@@ -137,14 +137,14 @@ void MergeActionNodeBase::unhideAffectedNodes()
 
 // ------------ KeyValueMergeActionNode ----------------------------
 
-KeyValueMergeActionNode::KeyValueMergeActionNode(const std::vector<scene::merge::MergeAction::Ptr>& actions) :
+KeyValueMergeActionNode::KeyValueMergeActionNode(const std::vector<scene::merge::IMergeAction::Ptr>& actions) :
     _actions(actions)
 {
     assert(!_actions.empty());
 
     _affectedNode = _actions.front()->getAffectedNode();
     assert(std::find_if(_actions.begin(), _actions.end(),
-        [&](const scene::merge::MergeAction::Ptr& action) { return action->getAffectedNode() != _affectedNode; }) == _actions.end());
+        [&](const scene::merge::IMergeAction::Ptr& action) { return action->getAffectedNode() != _affectedNode; }) == _actions.end());
 }
 
 void KeyValueMergeActionNode::clear()
@@ -194,7 +194,7 @@ void KeyValueMergeActionNode::onRemoveFromScene(scene::IMapRootNode& rootNode)
 
 // RegularMergeActionNode
 
-RegularMergeActionNode::RegularMergeActionNode(const scene::merge::MergeAction::Ptr& action) :
+RegularMergeActionNode::RegularMergeActionNode(const scene::merge::IMergeAction::Ptr& action) :
     _action(action)
 {
     _affectedNode = _action->getAffectedNode();

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <functional>
 #include "inode.h"
 
 namespace scene
@@ -67,6 +68,22 @@ public:
 
     // Gets the value that is going to be set by this action
     virtual const std::string& getValue() const = 0;
+};
+
+// A MergeOperation groups one or more merge actions
+// together in order to apply a set of changes from source => base
+class IMergeOperation
+{
+public:
+    using Ptr = std::shared_ptr<IMergeOperation>;
+
+    virtual ~IMergeOperation() {}
+
+    // Executes all active actions defined in this operation
+    virtual void applyActions() = 0;
+
+    // Invokes the given functor for each action in this operation
+    virtual void foreachAction(const std::function<void(const IMergeAction::Ptr&)>& visitor) = 0;
 };
 
 }

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "iselection.h"
-#include "imergeaction.h"
+#include "imapmerge.h"
 #include "ientity.h"
 #include "ieclass.h"
 #include "iscenegraph.h"

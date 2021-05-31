@@ -171,6 +171,7 @@ public:
 
     void finishMergeOperation() override;
     void abortMergeOperation() override;
+    scene::merge::IMergeOperation::Ptr getActiveMergeOperation() override;
 
 	// free all map elements, reinitialize the structures that depend on them
 	void freeMap();

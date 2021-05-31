@@ -4,6 +4,7 @@
 #include "inode.h"
 #include "imapexporter.h"
 #include "imapformat.h"
+#include "imapmerge.h"
 #include "ikeyvaluestore.h"
 #include <sigc++/signal.h>
 
@@ -187,6 +188,9 @@ public:
 
     // Can be called when in EditMode::Merge, will abort the current merge process
     virtual void abortMergeOperation() = 0;
+
+    // Returns the currently active merge operation (or an empty reference if no merge is ongoing)
+    virtual scene::merge::IMergeOperation::Ptr getActiveMergeOperation() = 0;
 };
 typedef std::shared_ptr<IMap> IMapPtr;
 

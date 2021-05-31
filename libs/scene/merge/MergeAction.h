@@ -2,7 +2,7 @@
 
 #include <memory>
 #include "ientity.h"
-#include "imergeaction.h"
+#include "imapmerge.h"
 #include "../Clone.h"
 #include "../scenelib.h"
 

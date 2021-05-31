@@ -267,6 +267,7 @@ void MergeControlDialog::onIdle(wxIdleEvent& ev)
     if (!_updateNeeded) return;
 
     _updateNeeded = false;
+    updateSummary();
     updateControlSensitivity();
 }
 

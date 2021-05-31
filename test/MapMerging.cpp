@@ -380,7 +380,7 @@ std::shared_ptr<T> findAction(const MergeOperation::Ptr& operation, const std::f
 {
     std::shared_ptr<T> foundAction;
 
-    operation->foreachAction([&](const MergeAction::Ptr& action)
+    operation->foreachAction([&](const IMergeAction::Ptr& action)
     {
         if (foundAction) return;
 
@@ -399,7 +399,7 @@ std::size_t countActions(const MergeOperation::Ptr& operation, const std::functi
 {
     std::size_t count = 0;
 
-    operation->foreachAction([&](const MergeAction::Ptr& action)
+    operation->foreachAction([&](const IMergeAction::Ptr& action)
     {
         auto derivedAction = std::dynamic_pointer_cast<T>(action);
 
@@ -772,7 +772,7 @@ TEST_F(MapMergeTest, DeactivatedChangePrimitiveActions)
     auto operation = MergeOperation::CreateFromComparisonResult(*result);
 
     // func_static_1 has 2 additions and 1 removal (== 1 addition, 1 replacement)
-    operation->foreachAction([&](const MergeAction::Ptr& action)
+    operation->foreachAction([&](const IMergeAction::Ptr& action)
     {
         auto addChildAction = std::dynamic_pointer_cast<AddChildAction>(action);
 

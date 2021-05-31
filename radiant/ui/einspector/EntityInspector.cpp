@@ -7,7 +7,6 @@
 #include "ieclass.h"
 #include "iregistry.h"
 #include "ieventmanager.h"
-#include "imergeaction.h"
 #include "igame.h"
 #include "imap.h"
 #include "iundo.h"
