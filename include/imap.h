@@ -180,6 +180,18 @@ public:
     /// Enumerate pointfiles associated with the current map
     virtual void forEachPointfile(PointfileFunctor func) const = 0;
 
+    /**
+     * \brief Show the point trace contained in the specified file.
+     *
+     * \param filePath
+     * Filesystem path of the file to parse for point coordinates, or an empty
+     * path to hide any current point trace.
+     *
+     * \exception std::runtime_error
+     * Thrown if filePath is not empty but the file is inaccessible.
+     */
+    virtual void showPointFile(const fs::path& filePath) = 0;
+
     /// Return true if a point trace is currently visible
     virtual bool isPointTraceVisible() const = 0;
 };

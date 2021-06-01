@@ -45,13 +45,13 @@ bool PointFile::isVisible() const
 	return !_points.empty();
 }
 
-void PointFile::show(bool show)
+void PointFile::show(const fs::path& pointfile)
 {
 	// Update the status if required
-	if (show)
+	if (!pointfile.empty())
 	{
 		// Parse the pointfile from disk
-		parse();
+		parse(pointfile);
 
         // Construct shader if needed, and activate rendering
         if (!_renderstate)
@@ -85,22 +85,14 @@ void PointFile::renderWireframe(RenderableCollector& collector, const VolumeTest
 }
 
 // Parse the current pointfile and read the vectors into the point list
-void PointFile::parse()
+void PointFile::parse(const fs::path& pointfile)
 {
-    // Obtain list of pointfiles
-    std::list<fs::path> pointfiles;
-    GlobalMapModule().forEachPointfile([&](const fs::path& p)
-                                       { pointfiles.push_back(p); });
-    if (pointfiles.empty())
-        throw cmd::ExecutionFailure(_("No pointfiles found for current map."));
-
     // Open the first pointfile and get its input stream if possible
-    auto pf = *pointfiles.begin();
-	std::ifstream inFile(pf);
+	std::ifstream inFile(pointfile);
 	if (!inFile)
 	{
         throw cmd::ExecutionFailure(
-            fmt::format(_("Could not open pointfile: {0}"), std::string(pf))
+            fmt::format(_("Could not open pointfile: {0}"), std::string(pointfile))
         );
     }
 
@@ -185,17 +177,11 @@ void PointFile::prevLeakSpot(const cmd::ArgumentList& args)
 
 void PointFile::clear()
 {
-	show(false);
-}
-
-void PointFile::toggle(const cmd::ArgumentList& args)
-{
-	show(!isVisible());
+	show({});
 }
 
 void PointFile::registerCommands()
 {
-	GlobalCommandSystem().addCommand("TogglePointfile", sigc::mem_fun(*this, &PointFile::toggle));
 	GlobalCommandSystem().addCommand("NextLeakSpot", sigc::mem_fun(*this, &PointFile::nextLeakSpot));
 	GlobalCommandSystem().addCommand("PrevLeakSpot", sigc::mem_fun(*this, &PointFile::prevLeakSpot));
 }

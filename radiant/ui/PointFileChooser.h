@@ -1,6 +1,8 @@
 #pragma once
 
 #include <wx/dialog.h>
+#include <wx/choice.h>
+#include <wx/windowptr.h>
 
 namespace ui
 {
@@ -8,6 +10,9 @@ namespace ui
 /// Selector dialog for pointfiles associated with the current map
 class PointFileChooser: public wxDialog
 {
+    // wxChoice containing the chosen pointfile
+    wxWindowPtr<wxChoice> _pfChoice;
+
     // Dialog constructor
     PointFileChooser(const wxArrayString& files);
 

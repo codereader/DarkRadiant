@@ -91,6 +91,7 @@ public:
 	std::string getMapName() const override;
 	sigc::signal<void>& signal_mapNameChanged() override;
     void forEachPointfile(PointfileFunctor func) const override;
+    void showPointFile(const fs::path& filePath) override;
     bool isPointTraceVisible() const override;
 
 	/**

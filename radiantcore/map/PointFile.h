@@ -52,15 +52,12 @@ public:
 
 	void onMapEvent(IMap::MapEvent ev);
 
+    /// Show the specified pointfile, or hide if the path is empty
+	void show(const fs::path& pointfile);
+
 private:
 	// Registers the events to the EventManager
 	void registerCommands();
-
-	/*
-	 * Toggle the status of the pointfile rendering. If the pointfile must be
-	 * shown, the file is parsed automatically.
-	 */
-	void show(bool show);
 
 	/**
 	 * greebo: Clears the point file vector, which is the same as hiding it.
@@ -75,12 +72,11 @@ private:
 
 	// command targets
 	// Toggles visibility of the point file line
-	void toggle(const cmd::ArgumentList& args);
 	void nextLeakSpot(const cmd::ArgumentList& args);
 	void prevLeakSpot(const cmd::ArgumentList& args);
 
-	// Parse the current pointfile and read the vectors into the point list
-	void parse();
+	// Parse the specified pointfile and read the vectors into the point list
+	void parse(const fs::path& pointfile);
 };
 
 } // namespace map

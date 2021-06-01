@@ -21,10 +21,11 @@ PointFileChooser::PointFileChooser(const wxArrayString& files)
     SetSizer(new wxBoxSizer(wxVERTICAL));
 
     // Construct and populate the dropdown list
-    auto list = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
-                             files);
-    list->SetSelection(0);
-    GetSizer()->Add(list, 0, wxEXPAND | wxALL, 12);
+    _pfChoice.reset(
+        new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, files)
+    );
+    _pfChoice->SetSelection(0);
+    GetSizer()->Add(_pfChoice.get(), 0, wxEXPAND | wxALL, 12);
 
     // Add dialog buttons
     auto btnSizer = CreateStdDialogButtonSizer(wxOK | wxCANCEL);
@@ -35,15 +36,24 @@ PointFileChooser::PointFileChooser(const wxArrayString& files)
 
 void PointFileChooser::chooseAndToggle()
 {
+    // If the point trace is currently visible, toggle it to invisible and we're
+    // done.
+    if (GlobalMapModule().isPointTraceVisible())
+    {
+        GlobalMapModule().showPointFile({});
+        return;
+    }
+
     // Determine the list of pointfiles
-    std::list<fs::path> pointfiles;
+    std::vector<fs::path> pointfiles;
     GlobalMapModule().forEachPointfile([&](const fs::path& p)
                                        { pointfiles.push_back(p); });
     if (pointfiles.empty())
         throw cmd::ExecutionFailure("No pointfiles found for current map.");
 
     // If there is a choice to make, show the dialog
-    if (!GlobalMapModule().isPointTraceVisible() && pointfiles.size() > 1)
+    std::size_t chosenPointfile = 0;
+    if (pointfiles.size() > 1)
     {
         // Construct list of wxString filenames
         wxArrayString filenames;
@@ -52,15 +62,16 @@ void PointFileChooser::chooseAndToggle()
 
         // Show dialog with list of pointfiles
         PointFileChooser chooser(filenames);
-        if (chooser.ShowModal() != wxID_OK)
-        {
+        if (chooser.ShowModal() == wxID_OK)
+            chosenPointfile = chooser._pfChoice->GetSelection();
+        else
             // Dialog cancelled, don't proceed to showing point trace
             return;
-        }
     }
 
-    // Hand over to the actual pointfile renderer to toggle visibility
-    GlobalCommandSystem().executeCommand("TogglePointfile");
+    // Show the chosen (or only) pointfile
+    if (chosenPointfile >= 0 && chosenPointfile < pointfiles.size())
+        GlobalMapModule().showPointFile(pointfiles[chosenPointfile]);
 }
 
 }

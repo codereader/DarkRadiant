@@ -241,6 +241,11 @@ void Map::forEachPointfile(PointfileFunctor func) const
         func(p);
 }
 
+void Map::showPointFile(const fs::path& filePath)
+{
+    _pointTrace->show(filePath);
+}
+
 bool Map::isPointTraceVisible() const
 {
     return _pointTrace->isVisible();
