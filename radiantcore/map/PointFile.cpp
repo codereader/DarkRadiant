@@ -12,6 +12,7 @@
 #include "math/Matrix4.h"
 #include "math/Vector3.h"
 #include "map/Map.h"
+#include "scene/PointTrace.h"
 #include <fmt/format.h>
 
 #include "module/StaticModule.h"
@@ -19,6 +20,11 @@
 
 namespace map
 {
+
+namespace
+{
+    const Colour4b RED(255, 0, 0, 1);
+}
 
 // Constructor
 PointFile::PointFile() :
@@ -96,14 +102,10 @@ void PointFile::parse(const fs::path& pointfile)
         );
     }
 
-	// Pointfile is a list of float vectors, one per line, with components
-	// separated by spaces.
-	while (inFile.good())
-	{
-		float x, y, z;
-		inFile >> x; inFile >> y; inFile >> z;
-		_points.push_back(VertexCb(Vertex3f(x, y, z), Colour4b(255,0,0,1)));
-	}
+    // Construct vertices from parsed point data
+    PointTrace trace(inFile);
+    for (auto pos: trace.points())
+		_points.push_back(VertexCb(pos, RED));
 }
 
 // advance camera to previous point
