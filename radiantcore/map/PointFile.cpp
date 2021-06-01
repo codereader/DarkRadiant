@@ -31,7 +31,12 @@ PointFile::PointFile() :
 	_points(GL_LINE_STRIP),
 	_curPos(0)
 {
-	registerCommands();
+    GlobalCommandSystem().addCommand(
+        "NextLeakSpot", sigc::mem_fun(*this, &PointFile::nextLeakSpot)
+    );
+    GlobalCommandSystem().addCommand(
+        "PrevLeakSpot", sigc::mem_fun(*this, &PointFile::prevLeakSpot)
+    );
 }
 
 PointFile::~PointFile()
@@ -42,7 +47,7 @@ void PointFile::onMapEvent(IMap::MapEvent ev)
 {
 	if (ev == IMap::MapUnloading || ev == IMap::MapSaved)
 	{
-		clear();
+        show({});
 	}
 }
 
@@ -60,8 +65,8 @@ void PointFile::show(const fs::path& pointfile)
 		parse(pointfile);
 
         // Construct shader if needed, and activate rendering
-        if (!_renderstate)
-            _renderstate = GlobalRenderSystem().capture("$POINTFILE");
+        if (!_shader)
+            _shader = GlobalRenderSystem().capture("$POINTFILE");
         GlobalRenderSystem().attachRenderable(*this);
 	}
 	else if (isVisible())
@@ -81,7 +86,7 @@ void PointFile::renderSolid(RenderableCollector& collector, const VolumeTest& vo
 {
 	if (isVisible())
 	{
-		collector.addRenderable(*_renderstate, _points, Matrix4::getIdentity());
+		collector.addRenderable(*_shader, _points, Matrix4::getIdentity());
 	}
 }
 
@@ -175,17 +180,6 @@ void PointFile::nextLeakSpot(const cmd::ArgumentList& args)
 void PointFile::prevLeakSpot(const cmd::ArgumentList& args)
 {
 	advance(false);
-}
-
-void PointFile::clear()
-{
-	show({});
-}
-
-void PointFile::registerCommands()
-{
-	GlobalCommandSystem().addCommand("NextLeakSpot", sigc::mem_fun(*this, &PointFile::nextLeakSpot));
-	GlobalCommandSystem().addCommand("PrevLeakSpot", sigc::mem_fun(*this, &PointFile::prevLeakSpot));
 }
 
 } // namespace map

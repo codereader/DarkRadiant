@@ -20,7 +20,8 @@ class PointFile: public Renderable
 	// Holds the current position in the point file chain
 	std::size_t _curPos;
 
-	ShaderPtr _renderstate;
+    // The shader for rendering the line
+	ShaderPtr _shader;
 
 public:
 	// Constructor
@@ -56,13 +57,6 @@ public:
 	void show(const fs::path& pointfile);
 
 private:
-	// Registers the events to the EventManager
-	void registerCommands();
-
-	/**
-	 * greebo: Clears the point file vector, which is the same as hiding it.
-	 */
-	void clear();
 
 	/**
 	 * greebo: This sets the camera position to the next/prev leak spot.
