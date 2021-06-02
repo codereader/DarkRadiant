@@ -61,10 +61,10 @@
 #include "scene/merge/GraphComparer.h"
 #include "scene/merge/MergeOperation.h"
 
-namespace map 
+namespace map
 {
 
-namespace 
+namespace
 {
     const char* const MAP_UNNAMED_STRING = N_("unnamed.map");
 }
@@ -101,7 +101,7 @@ void Map::loadMapResourceFromArchive(const std::string& archive, const std::stri
 
 void Map::loadMapResourceFromLocation(const MapLocation& location)
 {
-    rMessage() << "Loading map from " << location.path << 
+    rMessage() << "Loading map from " << location.path <<
         (location.isArchive ? " [" + location.archiveRelativePath + "]" : "") << std::endl;
 
 	// Map loading started
@@ -110,7 +110,7 @@ void Map::loadMapResourceFromLocation(const MapLocation& location)
     // Abort any ongoing merge
     abortMergeOperation();
 
-	_resource = location.isArchive ? 
+	_resource = location.isArchive ?
         GlobalMapResourceManager().createFromArchiveFile(location.path, location.archiveRelativePath) :
         GlobalMapResourceManager().createFromPath(location.path);
 
@@ -263,6 +263,64 @@ bool Map::isUnnamed() const {
     return _mapName == _(MAP_UNNAMED_STRING);
 }
 
+namespace
+{
+    bool pointfileNameMatch(const std::string& candidate,
+                            const std::string& mapStem)
+    {
+        // A matching point file either has an identical stem to the map file,
+        // or the map file stem with an underscore suffix (e.g.
+        // "mapfile_portal_123_456.lin")
+        if (candidate == mapStem)
+            return true;
+        else if (candidate.rfind(mapStem + "_", 0) == 0)
+            return true;
+        else
+            return false;
+    }
+}
+
+void Map::forEachPointfile(PointfileFunctor func) const
+{
+    static const char* LIN_EXT = ".lin";
+
+    const fs::path map(getMapName());
+    const fs::path mapDir = map.parent_path();
+    const fs::path mapStem = map.stem();
+
+    // Don't bother trying to iterate over a missing map directory, this will
+    // just throw an exception.
+    if (!fs::is_directory(mapDir))
+        return;
+
+    // Iterate over files in the map directory, putting them in a sorted set
+    std::set<fs::path> paths;
+    for (const auto& entry: fs::directory_iterator(mapDir))
+    {
+        // Ignore anything which isn't a .lin file
+        auto entryPath = entry.path();
+        if (entryPath.extension() == LIN_EXT
+            && pointfileNameMatch(entryPath.stem(), mapStem))
+        {
+            paths.insert(entryPath);
+        }
+    }
+
+    // Call functor on paths in order
+    for (const fs::path& p: paths)
+        func(p);
+}
+
+void Map::showPointFile(const fs::path& filePath)
+{
+    _pointTrace->show(filePath);
+}
+
+bool Map::isPointTraceVisible() const
+{
+    return _pointTrace->isVisible();
+}
+
 void Map::onSceneNodeErase(const scene::INodePtr& node)
 {
 	// Detect when worldspawn is removed from the map
@@ -326,12 +384,12 @@ MapFormatPtr Map::getFormat()
 }
 
 // free all map elements, reinitialize the structures that depend on them
-void Map::freeMap() 
+void Map::freeMap()
 {
     // Abort any ongoing merge
     abortMergeOperation();
 
-	// Fire the map unloading event, 
+	// Fire the map unloading event,
 	// This will de-select stuff, clear the pointfile, etc.
     emitMapEvent(MapUnloading);
 
@@ -389,7 +447,7 @@ scene::INodePtr Map::findWorldspawn()
     // Traverse the scenegraph and search for the worldspawn
 	GlobalSceneGraph().root()->foreachNode([&](const scene::INodePtr& node)
 	{
-		if (Node_isWorldspawn(node)) 
+		if (Node_isWorldspawn(node))
 		{
 			worldspawn = node;
 			return false; // done traversing
@@ -478,7 +536,7 @@ bool Map::save(const MapFormatPtr& mapFormat)
 
     _saveInProgress = false;
 
-    // Redraw the views, sometimes the backbuffer containing 
+    // Redraw the views, sometimes the backbuffer containing
     // the previous frame will remain visible
     SceneChangeNotify();
 
@@ -660,7 +718,7 @@ bool Map::saveAs()
 {
     if (_saveInProgress) return false; // safeguard
 
-    auto fileInfo = MapFileManager::getMapFileSelection(false, 
+    auto fileInfo = MapFileManager::getMapFileSelection(false,
         _("Save Map"), filetype::TYPE_MAP, getMapName());
 
     if (fileInfo.fullPath.empty())
@@ -674,7 +732,7 @@ bool Map::saveAs()
 
     // Create a new resource pointing to the given path...
     _resource = GlobalMapResourceManager().createFromPath(fileInfo.fullPath);
-        
+
     // ...and import the existing root node into that resource
     _resource->setRootNode(oldResource->getRootNode());
 
@@ -703,7 +761,7 @@ void Map::saveCopyAs()
         _lastCopyMapName = getMapName();
     }
 
-	auto fileInfo = MapFileManager::getMapFileSelection(false, 
+	auto fileInfo = MapFileManager::getMapFileSelection(false,
         _("Save Copy As..."), filetype::TYPE_MAP, _lastCopyMapName);
 
 	if (!fileInfo.fullPath.empty())
@@ -731,7 +789,7 @@ void Map::loadPrefabAt(const cmd::ArgumentList& args)
 {
     if (args.size() < 2 || args.size() > 4)
     {
-        rWarning() << "Usage: " << LOAD_PREFAB_AT_CMD << 
+        rWarning() << "Usage: " << LOAD_PREFAB_AT_CMD <<
             " <prefabPath:String> <targetCoords:Vector3> [insertAsGroup:0|1] [recalculatePrefabOrigin:0|1]" << std::endl;
         return;
     }
@@ -818,7 +876,7 @@ void Map::registerCommands()
     GlobalCommandSystem().addCommand("SaveSelected", Map::exportSelection);
 	GlobalCommandSystem().addCommand("ReloadSkins", map::algorithm::reloadSkins);
 	GlobalCommandSystem().addCommand("ExportSelectedAsModel", map::algorithm::exportSelectedAsModelCmd,
-        { cmd::ARGTYPE_STRING, 
+        { cmd::ARGTYPE_STRING,
           cmd::ARGTYPE_STRING,
           cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL,
           cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL,
@@ -1161,7 +1219,7 @@ const std::string& Map::getName() const
     return _name;
 }
 
-const StringSet& Map::getDependencies() const 
+const StringSet& Map::getDependencies() const
 {
     static StringSet _dependencies;
 
@@ -1172,6 +1230,7 @@ const StringSet& Map::getDependencies() const
 		_dependencies.insert(MODULE_MAPINFOFILEMANAGER);
 		_dependencies.insert(MODULE_FILETYPES);
 		_dependencies.insert(MODULE_MAPRESOURCEMANAGER);
+        _dependencies.insert(MODULE_COMMANDSYSTEM);
     }
 
     return _dependencies;
@@ -1191,6 +1250,11 @@ void Map::initialiseModule(const IApplicationContext& ctx)
 
     _scaledModelExporter.initialise();
     _modelScalePreserver.reset(new ModelScalePreserver);
+
+    // Construct point trace and connect it to map signals
+    _pointTrace.reset(new PointFile());
+    signal_mapEvent().connect([this](IMap::MapEvent e)
+                              { _pointTrace->onMapEvent(e); });
 
 	MapFileManager::registerFileTypes();
 

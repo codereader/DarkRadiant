@@ -1235,7 +1235,7 @@ void EntityInspector::addClassAttribute(const EntityClassAttribute& a)
         wxutil::TreeModel::Row row = _kvStore->AddItem();
 
         wxDataViewItemAttr grey;
-        grey.SetColour(wxColor(112, 112, 112));
+        grey.SetItalic(true);
 
         row[_columns.name] = wxVariant(wxDataViewIconText(a.getName(), _emptyIcon));
         row[_columns.value] = a.getValue();

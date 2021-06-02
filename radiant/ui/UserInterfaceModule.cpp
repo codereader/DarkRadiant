@@ -62,6 +62,7 @@
 #include "ui/mousetool/RegistrationHelper.h"
 #include "ui/mapselector/MapSelector.h"
 #include "ui/merge/MergeControlDialog.h"
+#include "ui/PointFileChooser.h"
 
 #include <wx/version.h>
 
@@ -131,19 +132,19 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
 
 	// Add the orthocontext menu's layer actions
 	GlobalOrthoContextMenu().addItem(
-		std::make_shared<LayerOrthoContextMenuItem>(_(ADD_TO_LAYER_TEXT), 
+		std::make_shared<LayerOrthoContextMenuItem>(_(ADD_TO_LAYER_TEXT),
 			LayerOrthoContextMenuItem::AddToLayer),
 		IOrthoContextMenu::SECTION_LAYER
 	);
 
 	GlobalOrthoContextMenu().addItem(
-		std::make_shared<LayerOrthoContextMenuItem>(_(MOVE_TO_LAYER_TEXT), 
+		std::make_shared<LayerOrthoContextMenuItem>(_(MOVE_TO_LAYER_TEXT),
 			LayerOrthoContextMenuItem::MoveToLayer),
 		IOrthoContextMenu::SECTION_LAYER
 	);
 
 	GlobalOrthoContextMenu().addItem(
-		std::make_shared<LayerOrthoContextMenuItem>(_(REMOVE_FROM_LAYER_TEXT), 
+		std::make_shared<LayerOrthoContextMenuItem>(_(REMOVE_FROM_LAYER_TEXT),
 			LayerOrthoContextMenuItem::RemoveFromLayer),
 		IOrthoContextMenu::SECTION_LAYER
 	);
@@ -240,7 +241,7 @@ void UserInterfaceModule::shutdownModule()
 	_editStopwatchStatus.reset();
 	_manipulatorToggle.reset();
 	_selectionModeToggle.reset();
-	
+
 	_mruMenu.reset();
 }
 
@@ -266,17 +267,17 @@ void UserInterfaceModule::HandleNotificationMessage(radiant::NotificationMessage
 	switch (msg.getType())
 	{
 	case radiant::NotificationMessage::Information:
-		wxutil::Messagebox::Show(msg.hasTitle() ? msg.getTitle() : _("Notification"), 
+		wxutil::Messagebox::Show(msg.hasTitle() ? msg.getTitle() : _("Notification"),
 			msg.getMessage(), IDialog::MessageType::MESSAGE_CONFIRM, parentWindow);
 		break;
 
 	case radiant::NotificationMessage::Warning:
-		wxutil::Messagebox::Show(msg.hasTitle() ? msg.getTitle() : _("Warning"), 
+		wxutil::Messagebox::Show(msg.hasTitle() ? msg.getTitle() : _("Warning"),
 			msg.getMessage(), IDialog::MessageType::MESSAGE_WARNING, parentWindow);
 		break;
 
 	case radiant::NotificationMessage::Error:
-		wxutil::Messagebox::Show(msg.hasTitle() ? msg.getTitle() : _("Error"), 
+		wxutil::Messagebox::Show(msg.hasTitle() ? msg.getTitle() : _("Error"),
 			msg.getMessage(), IDialog::MessageType::MESSAGE_ERROR, parentWindow);
 		break;
 	};
@@ -301,9 +302,9 @@ void UserInterfaceModule::initialiseEntitySettings()
 	applyPatchVertexColours();
 
 	_coloursUpdatedConn = ColourSchemeEditor::signal_ColoursChanged().connect(
-		[this]() { 
-			applyEntityVertexColours(); 
-			applyBrushVertexColours(); 
+		[this]() {
+			applyEntityVertexColours();
+			applyBrushVertexColours();
 			applyPatchVertexColours();
 		}
 	);
@@ -344,7 +345,7 @@ void UserInterfaceModule::refreshShadersCmd(const cmd::ArgumentList& args)
 	// Disable screen updates for the scope of this function
 	auto blocker = GlobalMainFrame().getScopedScreenUpdateBlocker(_("Processing..."), _("Loading Shaders"));
 
-	// Reload the Shadersystem, this will also trigger an 
+	// Reload the Shadersystem, this will also trigger an
 	// OpenGLRenderSystem unrealise/realise sequence as the rendersystem
 	// is attached to this class as Observer
 	// We can't do this refresh() operation in a thread it seems due to context binding
@@ -367,8 +368,11 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addCommand("MergeControlDialog", MergeControlDialog::ShowDialog);
 	GlobalCommandSystem().addCommand("OverlayDialog", OverlayDialog::toggle);
 	GlobalCommandSystem().addCommand("TransformDialog", TransformDialog::toggle);
+    GlobalCommandSystem().addCommand("ChooseAndTogglePointfile",
+                                     [](const cmd::ArgumentList&)
+                                     { PointFileChooser::chooseAndToggle(); });
 
-	GlobalCommandSystem().addCommand("FindBrush", FindBrushDialog::Show);
+    GlobalCommandSystem().addCommand("FindBrush", FindBrushDialog::Show);
     GlobalCommandSystem().addCommand("AnimationPreview", MD5AnimationViewer::Show);
     GlobalCommandSystem().addCommand("EditColourScheme", ColourSchemeEditor::DisplayDialog);
 

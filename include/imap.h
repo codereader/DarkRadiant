@@ -8,6 +8,8 @@
 #include "ikeyvaluestore.h"
 #include <sigc++/signal.h>
 
+#include <os/fs.h>
+
 // Registry setting for suppressing the map load progress dialog
 const char* const RKEY_MAP_SUPPRESS_LOAD_STATUS_DIALOG = "user/ui/map/suppressMapLoadDialog";
 
@@ -29,8 +31,8 @@ class ITargetManager;
 // see ilayer.h
 class ILayerManager;
 
-namespace selection 
-{ 
+namespace selection
+{
 	class ISelectionSetManager;
 	class ISelectionGroupManager;
 }
@@ -174,7 +176,7 @@ public:
 	// Create a MapExporter instance which can be used to export a scene,
 	// including the necessary preparation, info-file handling, etc.
 	// This is mainly a service method for external code, like the gameconnection.
-	virtual map::IMapExporter::Ptr createMapExporter(map::IMapWriter& writer, 
+	virtual map::IMapExporter::Ptr createMapExporter(map::IMapWriter& writer,
 		const scene::IMapRootNodePtr& root, std::ostream& mapStream) = 0;
 
     // Exports the current selection to the given output stream, using the map's format
@@ -191,6 +193,29 @@ public:
 
     // Returns the currently active merge operation (or an empty reference if no merge is ongoing)
     virtual scene::merge::IMergeOperation::Ptr getActiveMergeOperation() = 0;
+
+    /* POINTFILE MANAGEMENT */
+
+    /// Functor to receive pointfile paths
+    using PointfileFunctor = std::function<void(const fs::path&)>;
+
+    /// Enumerate pointfiles associated with the current map
+    virtual void forEachPointfile(PointfileFunctor func) const = 0;
+
+    /**
+     * \brief Show the point trace contained in the specified file.
+     *
+     * \param filePath
+     * Filesystem path of the file to parse for point coordinates, or an empty
+     * path to hide any current point trace.
+     *
+     * \exception std::runtime_error
+     * Thrown if filePath is not empty but the file is inaccessible.
+     */
+    virtual void showPointFile(const fs::path& filePath) = 0;
+
+    /// Return true if a point trace is currently visible
+    virtual bool isPointTraceVisible() const = 0;
 };
 typedef std::shared_ptr<IMap> IMapPtr;
 

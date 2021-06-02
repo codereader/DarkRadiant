@@ -12,6 +12,7 @@
 #include "math/Matrix4.h"
 #include "math/Vector3.h"
 #include "map/Map.h"
+#include "scene/PointTrace.h"
 #include <fmt/format.h>
 
 #include "module/StaticModule.h"
@@ -20,17 +21,33 @@
 namespace map
 {
 
+namespace
+{
+    const Colour4b RED(255, 0, 0, 1);
+}
+
 // Constructor
 PointFile::PointFile() :
 	_points(GL_LINE_STRIP),
 	_curPos(0)
-{}
+{
+    GlobalCommandSystem().addCommand(
+        "NextLeakSpot", sigc::mem_fun(*this, &PointFile::nextLeakSpot)
+    );
+    GlobalCommandSystem().addCommand(
+        "PrevLeakSpot", sigc::mem_fun(*this, &PointFile::prevLeakSpot)
+    );
+}
+
+PointFile::~PointFile()
+{
+}
 
 void PointFile::onMapEvent(IMap::MapEvent ev)
 {
 	if (ev == IMap::MapUnloading || ev == IMap::MapSaved)
 	{
-		clear();
+        show({});
 	}
 }
 
@@ -39,17 +56,23 @@ bool PointFile::isVisible() const
 	return !_points.empty();
 }
 
-void PointFile::show(bool show) 
+void PointFile::show(const fs::path& pointfile)
 {
 	// Update the status if required
-	if (show)
+	if (!pointfile.empty())
 	{
 		// Parse the pointfile from disk
-		parse();
+		parse(pointfile);
+
+        // Construct shader if needed, and activate rendering
+        if (!_shader)
+            _shader = GlobalRenderSystem().capture("$POINTFILE");
+        GlobalRenderSystem().attachRenderable(*this);
 	}
-	else
-	{
-		_points.clear();
+	else if (isVisible())
+    {
+        _points.clear();
+        GlobalRenderSystem().detachRenderable(*this);
 	}
 
 	// Regardless whether hide or show, we reset the current position
@@ -59,11 +82,11 @@ void PointFile::show(bool show)
 	SceneChangeNotify();
 }
 
-void PointFile::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const 
+void PointFile::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
 {
 	if (isVisible())
 	{
-		collector.addRenderable(*_renderstate, _points, Matrix4::getIdentity());
+		collector.addRenderable(*_shader, _points, Matrix4::getIdentity());
 	}
 }
 
@@ -73,33 +96,25 @@ void PointFile::renderWireframe(RenderableCollector& collector, const VolumeTest
 }
 
 // Parse the current pointfile and read the vectors into the point list
-void PointFile::parse()
+void PointFile::parse(const fs::path& pointfile)
 {
-	// Pointfile is the same as the map file but with a .lin extension
-	// instead of .map
-	std::string mapName = GlobalMapModule().getMapName();
-	std::string pfName = mapName.substr(0, mapName.rfind(".")) + ".lin";
-
-	// Open the pointfile and get its input stream if possible
-	std::ifstream inFile(pfName);
-
-	if (!inFile) 
+    // Open the first pointfile and get its input stream if possible
+	std::ifstream inFile(pointfile);
+	if (!inFile)
 	{
-		throw cmd::ExecutionFailure(fmt::format(_("Could not open pointfile: {0}"), pfName));
-	}
+        throw cmd::ExecutionFailure(
+            fmt::format(_("Could not open pointfile: {0}"), std::string(pointfile))
+        );
+    }
 
-	// Pointfile is a list of float vectors, one per line, with components
-	// separated by spaces.
-	while (inFile.good())
-	{
-		float x, y, z;
-		inFile >> x; inFile >> y; inFile >> z;
-		_points.push_back(VertexCb(Vertex3f(x, y, z), Colour4b(255,0,0,1)));
-	}
+    // Construct vertices from parsed point data
+    PointTrace trace(inFile);
+    for (auto pos: trace.points())
+		_points.push_back(VertexCb(pos, RED));
 }
 
 // advance camera to previous point
-void PointFile::advance(bool forward) 
+void PointFile::advance(bool forward)
 {
 	if (!isVisible())
 	{
@@ -108,7 +123,7 @@ void PointFile::advance(bool forward)
 
 	if (forward)
 	{
-		if (_curPos + 2 >= _points.size())	
+		if (_curPos + 2 >= _points.size())
 		{
 			rMessage() << "End of pointfile" << std::endl;
 			return;
@@ -166,64 +181,5 @@ void PointFile::prevLeakSpot(const cmd::ArgumentList& args)
 {
 	advance(false);
 }
-
-void PointFile::clear()
-{
-	show(false);
-}
-
-void PointFile::toggle(const cmd::ArgumentList& args)
-{
-	show(!isVisible());
-}
-
-void PointFile::registerCommands()
-{
-	GlobalCommandSystem().addCommand("TogglePointfile", sigc::mem_fun(*this, &PointFile::toggle));
-	GlobalCommandSystem().addCommand("NextLeakSpot", sigc::mem_fun(*this, &PointFile::nextLeakSpot));
-	GlobalCommandSystem().addCommand("PrevLeakSpot", sigc::mem_fun(*this, &PointFile::prevLeakSpot));
-}
-
-// RegisterableModule implementation
-const std::string& PointFile::getName() const
-{
-	static std::string _name("PointFile");
-	return _name;
-}
-
-const StringSet& PointFile::getDependencies() const
-{
-	static StringSet _dependencies;
-
-	if (_dependencies.empty())
-	{
-		_dependencies.insert(MODULE_COMMANDSYSTEM);
-		_dependencies.insert(MODULE_RENDERSYSTEM);
-		_dependencies.insert(MODULE_MAP);
-	}
-
-	return _dependencies;
-}
-
-void PointFile::initialiseModule(const IApplicationContext& ctx)
-{
-	rMessage() << getName() << "::initialiseModule called" << std::endl;
-
-	registerCommands();
-
-	_renderstate = GlobalRenderSystem().capture("$POINTFILE");
-
-	GlobalRenderSystem().attachRenderable(*this);
-
-	GlobalMap().signal_mapEvent().connect(sigc::mem_fun(*this, &PointFile::onMapEvent));
-}
-
-void PointFile::shutdownModule()
-{
-	GlobalRenderSystem().detachRenderable(*this);
-	_renderstate.reset();
-}
-
-module::StaticModule<PointFile> pointFileModule;
 
 } // namespace map

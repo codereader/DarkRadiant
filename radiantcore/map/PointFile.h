@@ -3,34 +3,32 @@
 #include <vector>
 #include "irender.h"
 #include "imap.h"
-#include "imodule.h"
 #include "icommandsystem.h"
 #include "irenderable.h"
 #include "math/Vector3.h"
 #include "render.h"
 
-namespace map 
+namespace map
 {
 
-class PointFile :
-	public RegisterableModule,
-	public Renderable
+/// Renderable point trace to identify leak positions
+class PointFile: public Renderable
 {
-private:
 	// Vector of point coordinates
 	RenderablePointVector _points;
-	
+
 	// Holds the current position in the point file chain
 	std::size_t _curPos;
 
-	ShaderPtr _renderstate;
+    // The shader for rendering the line
+	ShaderPtr _shader;
 
 public:
 	// Constructor
 	PointFile();
 
 	// Destructor
-	virtual ~PointFile() {}
+	virtual ~PointFile();
 
 	// Query whether the point path is currently visible
 	bool isVisible() const;
@@ -53,27 +51,14 @@ public:
 		return Highlight::NoHighlight;
 	}
 
-	const std::string& getName() const override;
-	const StringSet& getDependencies() const override;
-	void initialiseModule(const IApplicationContext& ctx) override;
-	void shutdownModule() override;
+	void onMapEvent(IMap::MapEvent ev);
+
+    /// Show the specified pointfile, or hide if the path is empty
+	void show(const fs::path& pointfile);
 
 private:
-	// Registers the events to the EventManager
-	void registerCommands();
-
-	/*
-	 * Toggle the status of the pointfile rendering. If the pointfile must be
-	 * shown, the file is parsed automatically.
-	 */
-	void show(bool show);
 
 	/**
-	 * greebo: Clears the point file vector, which is the same as hiding it.
-	 */
-	void clear();
-
-	/** 
 	 * greebo: This sets the camera position to the next/prev leak spot.
 	 * @forward: pass true to set to the next leak spot, false for the previous
 	 */
@@ -81,14 +66,11 @@ private:
 
 	// command targets
 	// Toggles visibility of the point file line
-	void toggle(const cmd::ArgumentList& args);
 	void nextLeakSpot(const cmd::ArgumentList& args);
 	void prevLeakSpot(const cmd::ArgumentList& args);
 
-	// Parse the current pointfile and read the vectors into the point list
-	void parse();
-
-	void onMapEvent(IMap::MapEvent ev);
+	// Parse the specified pointfile and read the vectors into the point list
+	void parse(const fs::path& pointfile);
 };
 
 } // namespace map
