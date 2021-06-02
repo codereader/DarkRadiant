@@ -2,9 +2,11 @@
 
 #include <map>
 #include <limits>
+#include <algorithm>
 
 #include "i18n.h"
 #include "imap.h"
+#include "icomparablenode.h"
 #include "imapformat.h"
 #include "inamespace.h"
 #include "iselectiongroup.h"
@@ -227,7 +229,7 @@ public:
 	}
 };
 
-void mergeMap(const scene::INodePtr& node)
+void importMap(const scene::INodePtr& node)
 {
 	if (!GlobalSceneGraph().root())
 	{
@@ -360,7 +362,7 @@ void importFromStream(std::istream& stream)
         // Adjust all new names to fit into the existing map namespace
         prepareNamesForImport(GlobalMap().getRoot(), importFilter.getRootNode());
 
-        mergeMap(importFilter.getRootNode());
+        importMap(importFilter.getRootNode());
     }
     catch (IMapReader::FailureException& ex)
     {

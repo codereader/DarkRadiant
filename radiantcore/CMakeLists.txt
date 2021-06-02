@@ -128,6 +128,7 @@ add_library(radiantcore MODULE
             map/MapResource.cpp
             map/MapResourceLoader.cpp
             map/MapResourceManager.cpp
+            map/MergeActionNode.cpp
             map/mru/MRU.cpp
             map/namespace/ComplexName.cpp
             map/namespace/Namespace.cpp

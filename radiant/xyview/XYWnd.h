@@ -19,6 +19,7 @@
 #include "imousetool.h"
 #include "tools/XYMouseToolEvent.h"
 #include "wxutil/MouseToolHandler.h"
+#include "XYRenderer.h"
 
 namespace ui
 {
@@ -55,9 +56,8 @@ protected:
 
     render::View _view;
 
-    // Shader to use for selected items
-    static ShaderPtr _selectedShader;
-	static ShaderPtr _selectedShaderGroup;
+    // Shaders used for highlighting nodes
+    static XYRenderer::HighlightShaders _highlightShaders;
 
     Vector3 _mousePosition;
 

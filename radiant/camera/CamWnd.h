@@ -26,6 +26,7 @@
 #include <sigc++/connection.h>
 #include "tools/CameraMouseToolEvent.h"
 #include "render/RenderStatistics.h"
+#include "render/CamRenderer.h"
 
 const int CAMWND_MINSIZE_X = 240;
 const int CAMWND_MINSIZE_Y = 200;
@@ -61,8 +62,7 @@ class CamWnd :
     // The contained camera
     camera::ICameraView::Ptr _camera;
 
-    static ShaderPtr _faceHighlightShader;
-    static ShaderPtr _primitiveHighlightShader;
+    static render::CamRenderer::HighlightShaders _shaders;
 
     wxutil::FreezePointer _freezePointer;
 

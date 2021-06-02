@@ -117,6 +117,8 @@
     <ClCompile Include="..\..\libs\scene\ChildPrimitives.cpp" />
     <ClCompile Include="..\..\libs\scene\InstanceWalkers.cpp" />
     <ClCompile Include="..\..\libs\scene\LayerUsageBreakdown.cpp" />
+    <ClCompile Include="..\..\libs\scene\merge\GraphComparer.cpp" />
+    <ClCompile Include="..\..\libs\scene\merge\MergeOperation.cpp" />
     <ClCompile Include="..\..\libs\scene\ModelFinder.cpp" />
     <ClCompile Include="..\..\libs\scene\Node.cpp" />
     <ClCompile Include="..\..\libs\scene\SelectableNode.cpp" />
@@ -136,6 +138,10 @@
     <ClInclude Include="..\..\libs\scene\InstanceWalkers.h" />
     <ClInclude Include="..\..\libs\scene\LayerUsageBreakdown.h" />
     <ClInclude Include="..\..\libs\scene\LayerValidityCheckWalker.h" />
+    <ClInclude Include="..\..\libs\scene\merge\ComparisonResult.h" />
+    <ClInclude Include="..\..\libs\scene\merge\GraphComparer.h" />
+    <ClInclude Include="..\..\libs\scene\merge\MergeAction.h" />
+    <ClInclude Include="..\..\libs\scene\merge\MergeOperation.h" />
     <ClInclude Include="..\..\libs\scene\ModelBreakdown.h" />
     <ClInclude Include="..\..\libs\scene\ModelFinder.h" />
     <ClInclude Include="..\..\libs\scene\Node.h" />

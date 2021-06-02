@@ -4,6 +4,7 @@
 #include "inode.h"
 #include "imapexporter.h"
 #include "imapformat.h"
+#include "imapmerge.h"
 #include "ikeyvaluestore.h"
 #include <sigc++/signal.h>
 
@@ -110,6 +111,18 @@ public:
 	/// Returns the signal that is emitted on various events
 	virtual MapEventSignal signal_mapEvent() const = 0;
 
+    enum class EditMode
+    {
+        Normal,
+        Merge,
+    };
+
+    // The currently active edit mode
+    virtual EditMode getEditMode() = 0;
+
+    // Change the edit mode to the specified value
+    virtual void setEditMode(EditMode mode) = 0;
+
 	/**
 	 * Returns the worldspawn node of this map. The worldspawn
 	 * node is NOT created if it doesn't exist yet, so this
@@ -169,6 +182,15 @@ public:
 
     // Exports the current selection to the given output stream, using the given map format
     virtual void exportSelected(std::ostream& out, const map::MapFormatPtr& format) = 0;
+
+    // When called in EditMode::Merge, this will apply the currently active set of actions
+    virtual void finishMergeOperation() = 0;
+
+    // Can be called when in EditMode::Merge, will abort the current merge process
+    virtual void abortMergeOperation() = 0;
+
+    // Returns the currently active merge operation (or an empty reference if no merge is ongoing)
+    virtual scene::merge::IMergeOperation::Ptr getActiveMergeOperation() = 0;
 };
 typedef std::shared_ptr<IMap> IMapPtr;
 

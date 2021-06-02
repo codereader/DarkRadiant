@@ -2,6 +2,15 @@
 
 #include <wx/dataview.h>
 
+// Background colour needs support by wxWidgets 3.1.1 or 3.1.4 on platforms other than MSW
+#if defined(__WXMSW__) || \
+    defined(__APPLE__) && wxCHECK_VERSION(3, 1, 4) || \
+    defined(__WXGTK__) && wxCHECK_VERSION(3, 1, 1)
+#define ATTR_SUPPORTS_BACKGROUND (true)
+#else
+#define ATTR_SUPPORTS_BACKGROUND (false)
+#endif
+
 namespace wxutil
 {
 
@@ -34,6 +43,71 @@ public:
         }
 
         return wxDataViewItemAttr();
+    }
+
+    // Styles used by the merge action visualisation in data views
+
+    static void ApplyKeyValueAddedStyle(wxDataViewItemAttr& attr)
+    {
+        if (SupportsBackgroundColour())
+        {
+            SetBackgroundColour(attr, wxColour(100, 254, 100));
+        }
+        else
+        {
+            attr.SetColour(wxColour(30, 130, 20));
+            attr.SetBold(true);
+        }
+    }
+
+    static void ApplyKeyValueChangedStyle(wxDataViewItemAttr& attr)
+    {
+        if (SupportsBackgroundColour())
+        {
+            SetBackgroundColour(attr, wxColour(90, 140, 254));
+        }
+        else
+        {
+            attr.SetColour(wxColour(90, 140, 254));
+            attr.SetBold(true);
+        }
+    }
+
+    static void ApplyKeyValueRemovedStyle(wxDataViewItemAttr& attr)
+    {
+        if (SupportsBackgroundColour())
+        {
+            SetBackgroundColour(attr, wxColour(254, 100, 100));
+        }
+        else
+        {
+            attr.SetColour(wxColour(254, 100, 100));
+            attr.SetBold(true);
+        }
+
+        SetStrikethrough(attr, true);
+    }
+
+    static void SetStrikethrough(wxDataViewItemAttr& attr, bool enabled)
+    {
+#if wxCHECK_VERSION(3, 1, 2)
+        attr.SetStrikethrough(enabled);
+#endif
+    }
+
+private:
+
+    // Returns true if wxWidgets supports setting the background colour of items
+    static bool SupportsBackgroundColour()
+    {
+        return ATTR_SUPPORTS_BACKGROUND;
+    }
+
+    static void SetBackgroundColour(wxDataViewItemAttr& attr, const wxColour& colour)
+    {
+#if ATTR_SUPPORTS_BACKGROUND
+        attr.SetBackgroundColour(colour);
+#endif
     }
 };
 

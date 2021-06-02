@@ -42,6 +42,7 @@
       <Filter>math</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\test\Transformation.cpp" />
+    <ClCompile Include="..\..\..\test\MapMerging.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\HeadlessOpenGLContext.h" />

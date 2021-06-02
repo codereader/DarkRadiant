@@ -777,8 +777,7 @@ void CamWnd::Cam_Draw()
     // Main scene render
     {
         // Front end (renderable collection from scene)
-        render::CamRenderer renderer(_view, _primitiveHighlightShader.get(),
-                                     _faceHighlightShader.get());
+        render::CamRenderer renderer(_view, _shaders);
         render::RenderableCollectionWalker::CollectRenderablesInScene(renderer, _view);
 
         // Accumulate render statistics
@@ -957,13 +956,20 @@ camera::ICameraView& CamWnd::getCamera()
 
 void CamWnd::captureStates()
 {
-    _faceHighlightShader = GlobalRenderSystem().capture("$CAM_HIGHLIGHT");
-    _primitiveHighlightShader = GlobalRenderSystem().capture("$CAM_OVERLAY");
+    _shaders.faceHighlightShader = GlobalRenderSystem().capture("$CAM_HIGHLIGHT");
+    _shaders.primitiveHighlightShader = GlobalRenderSystem().capture("$CAM_OVERLAY");
+    _shaders.mergeActionShaderAdd = GlobalRenderSystem().capture("$MERGE_ACTION_ADD");
+    _shaders.mergeActionShaderChange = GlobalRenderSystem().capture("$MERGE_ACTION_CHANGE");
+    _shaders.mergeActionShaderRemove = GlobalRenderSystem().capture("$MERGE_ACTION_REMOVE");
 }
 
-void CamWnd::releaseStates() {
-    _faceHighlightShader = ShaderPtr();
-    _primitiveHighlightShader = ShaderPtr();
+void CamWnd::releaseStates() 
+{
+    _shaders.faceHighlightShader.reset();
+    _shaders.primitiveHighlightShader.reset();
+    _shaders.mergeActionShaderAdd.reset();
+    _shaders.mergeActionShaderChange.reset();
+    _shaders.mergeActionShaderRemove.reset();
 }
 
 void CamWnd::queueDraw()
@@ -1378,8 +1384,7 @@ void CamWnd::rotateRightDiscrete()
 
 // -------------------------------------------------------------------------------
 
-ShaderPtr CamWnd::_faceHighlightShader;
-ShaderPtr CamWnd::_primitiveHighlightShader;
+render::CamRenderer::HighlightShaders CamWnd::_shaders;
 int CamWnd::_maxId = 0;
 
 } // namespace

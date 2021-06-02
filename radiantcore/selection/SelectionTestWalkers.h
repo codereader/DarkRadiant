@@ -32,11 +32,16 @@ protected:
 	// Returns true if the node is worldspawn
 	bool entityIsWorldspawn(const scene::INodePtr& node);
 
+    virtual bool nodeIsEligibleForTesting(const scene::INodePtr& node)
+    {
+        return node->getNodeType() != scene::INode::Type::MergeAction;
+    }
+
 	// Performs the actual selection test on the given node
 	// The nodeToBeTested is the node that is tested against, whereas 
 	// the selectableNode is the one that gets pushed to the Selector
 	// These two might be the same node, but this is not mandatory.
-	void performSelectionTest(const scene::INodePtr& selectableNode, const scene::INodePtr& nodeToBeTested);
+	virtual void performSelectionTest(const scene::INodePtr& selectableNode, const scene::INodePtr& nodeToBeTested);
 };
 
 // A Selector which is testing for entities. This successfully
@@ -49,7 +54,7 @@ public:
 		SelectionTestWalker(selector, test)
 	{}
 
-	bool visit(const scene::INodePtr& node);
+	bool visit(const scene::INodePtr& node) override;
 };
 
 // A Selector looking for worldspawn primitives only.
@@ -61,7 +66,7 @@ public:
 		SelectionTestWalker(selector, test)
 	{}
 
-	bool visit(const scene::INodePtr& node);
+	bool visit(const scene::INodePtr& node) override;
 };
 
 // A Selector looking for child primitives of group nodes only, non-worldspawn parent
@@ -73,7 +78,7 @@ public:
 		SelectionTestWalker(selector, test)
 	{}
 
-	bool visit(const scene::INodePtr& node);
+	bool visit(const scene::INodePtr& node) override;
 };
 
 // A selector testing for all kinds of selectable items, entities and primitives.
@@ -87,7 +92,7 @@ public:
 		SelectionTestWalker(selector, test)
 	{}
 
-	bool visit(const scene::INodePtr& node);
+	bool visit(const scene::INodePtr& node) override;
 };
 
 // A class seeking for components, can be used either to traverse the
@@ -107,13 +112,29 @@ public:
 	{}
 
 	// scene::Graph::Walker implementation
-	bool visit(const scene::INodePtr& node);
+	bool visit(const scene::INodePtr& node) override;
 
 	// SelectionSystem::Visitor implementation
-	void visit(const scene::INodePtr& node) const;
+	void visit(const scene::INodePtr& node) const override;
 
 protected:
 	void performComponentselectionTest(const scene::INodePtr& node) const;
+};
+
+/**
+ * Selector class specifically testing merge actions only
+ */
+class MergeActionSelector :
+    public SelectionTestWalker
+{
+public:
+    MergeActionSelector(Selector& selector, SelectionTest& test);
+
+    bool visit(const scene::INodePtr& node) override;
+
+protected:
+    // Invert the logic of the base class and only allow merge action nodes to be tested
+    bool nodeIsEligibleForTesting(const scene::INodePtr& node) override;
 };
 
 }

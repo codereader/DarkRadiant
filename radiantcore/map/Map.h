@@ -17,6 +17,8 @@
 
 #include <sigc++/signal.h>
 #include "time/StopWatch.h"
+#include "scene/merge/MergeOperation.h"
+#include "MergeActionNode.h"
 
 class TextInputStream;
 
@@ -31,6 +33,9 @@ class Map :
 	public IMap,
 	public scene::Graph::Observer
 {
+private:
+    EditMode _editMode;
+
 	// The map name
 	std::string _mapName;
 
@@ -62,6 +67,9 @@ class Map :
 
 	std::size_t _shutdownListener;
 
+    scene::merge::MergeOperation::Ptr _mergeOperation;
+    std::list<MergeActionNodeBase::Ptr> _mergeActionNodes;
+
 private:
     std::string getSaveConfirmationText() const;
 
@@ -69,6 +77,10 @@ public:
 	Map();
 
 	MapEventSignal signal_mapEvent() const override;
+
+    EditMode getEditMode() override;
+    void setEditMode(EditMode mode) override;
+
 	const scene::INodePtr& getWorldspawn() override;
 	const scene::INodePtr& findOrInsertWorldspawn() override;
 	scene::IMapRootNodePtr getRoot() override;
@@ -156,6 +168,10 @@ public:
 
 	void exportSelected(std::ostream& out) override;
 	void exportSelected(std::ostream& out, const MapFormatPtr& format) override;
+
+    void finishMergeOperation() override;
+    void abortMergeOperation() override;
+    scene::merge::IMergeOperation::Ptr getActiveMergeOperation() override;
 
 	// free all map elements, reinitialize the structures that depend on them
 	void freeMap();
@@ -246,11 +262,15 @@ private:
 	void loadMapResourceFromPath(const std::string& path);
 	void loadMapResourceFromArchive(const std::string& archive, const std::string& archiveRelativePath);
 
+    void startMergeOperation(const cmd::ArgumentList& args);
+    void createMergeOperation(const scene::merge::ComparisonResult& result);
+
 	void emitMapEvent(MapEvent ev);
 
 	void clearMapResource();
 
-}; // class Map
+    void cleanupMergeOperation();
+};
 
 } // namespace map
 

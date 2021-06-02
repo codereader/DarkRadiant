@@ -9,6 +9,7 @@
 #include "ifilter.h"
 #include "irender.h"
 #include "texturelib.h"
+#include "string/predicate.h"
 
 #include <functional>
 
@@ -802,6 +803,48 @@ void OpenGLShader::construct()
 				hiddenLine.setDepthFunc(GL_GREATER);
 				hiddenLine.m_linestipple_factor = 2;
             }
+            else if (string::starts_with(_name, "$MERGE_ACTION_"))
+            {
+                Colour4 colour;
+                auto sortPosition = OpenGLState::SORT_OVERLAY_FIRST;
+                auto lineSortPosition = OpenGLState::SORT_OVERLAY_LAST;
+
+                if (string::ends_with(_name, "_ADD"))
+                {
+                    colour = Colour4(0, 0.9f, 0, 0.5f);
+                    sortPosition = OpenGLState::SORT_OVERLAY_THIRD; // render additions over removals
+                }
+                else if (string::ends_with(_name, "_REMOVE"))
+                {
+                    colour = Colour4(0.6f, 0.1f, 0, 0.5f);
+                    lineSortPosition = OpenGLState::SORT_OVERLAY_ONE_BEFORE_LAST;
+                }
+                else if (string::ends_with(_name, "_CHANGE"))
+                {
+                    colour = Colour4(0, 0.4f, 0.9f, 0.5f);
+                    sortPosition = OpenGLState::SORT_OVERLAY_SECOND;
+                }
+
+                // This is the shader drawing a coloured overlay
+                // over faces/polys. Its colour is configurable,
+                // and it has depth test activated.
+                state.setRenderFlag(RENDER_FILL);
+                state.setRenderFlag(RENDER_DEPTHTEST);
+                state.setRenderFlag(RENDER_CULLFACE);
+                state.setRenderFlag(RENDER_BLEND);
+
+                state.setColour(colour);
+                state.setSortPosition(sortPosition);
+                state.polygonOffset = 0.5f;
+                state.setDepthFunc(GL_LEQUAL);
+
+                // This is the outline pass
+                auto& linesOverlay = appendDefaultPass();
+                colour[3] = 0.78f;
+                linesOverlay.setColour(colour);
+                linesOverlay.setRenderFlags(RENDER_OFFSETLINE | RENDER_DEPTHTEST | RENDER_BLEND);
+                linesOverlay.setSortPosition(lineSortPosition);
+            }
             else if (_name == "$XY_OVERLAY")
             {
               Vector3 colorSelBrushes = GlobalColourSchemeManager().getColour("selected_brush");
@@ -810,7 +853,7 @@ void OpenGLShader::construct()
                               static_cast<float>(colorSelBrushes[2]),
                               static_cast<float>(1));
               state.setRenderFlag(RENDER_LINESTIPPLE);
-              state.setSortPosition(OpenGLState::SORT_OVERLAY_FIRST);
+              state.setSortPosition(OpenGLState::SORT_HIGHLIGHT);
               state.m_linewidth = 2;
               state.m_linestipple_factor = 3;
             }
@@ -822,10 +865,56 @@ void OpenGLShader::construct()
                     static_cast<float>(colorSelBrushes[2]),
                     static_cast<float>(1));
 				state.setRenderFlag(RENDER_LINESTIPPLE);
-				state.setSortPosition(OpenGLState::SORT_OVERLAY_FIRST);
+				state.setSortPosition(OpenGLState::SORT_HIGHLIGHT);
 				state.m_linewidth = 2;
 				state.m_linestipple_factor = 3;
 			}
+            else if (string::starts_with(_name, "$XY_MERGE_ACTION_"))
+            {
+                Colour4 colour;
+                auto sortPosition = OpenGLState::SORT_OVERLAY_FIRST;
+                auto lineSortPosition = OpenGLState::SORT_OVERLAY_LAST;
+
+                if (string::ends_with(_name, "_ADD"))
+                {
+                    colour = Colour4(0, 0.5f, 0, 0.5f);
+                    sortPosition = OpenGLState::SORT_OVERLAY_THIRD; // render additions over removals
+                }
+                else if (string::ends_with(_name, "_REMOVE"))
+                {
+                    colour = Colour4(0.6f, 0.1f, 0, 0.5f);
+                    lineSortPosition = OpenGLState::SORT_OVERLAY_ONE_BEFORE_LAST;
+                }
+                else if (string::ends_with(_name, "_CHANGE"))
+                {
+                    colour = Colour4(0, 0.4f, 0.9f, 0.5f);
+                    sortPosition = OpenGLState::SORT_OVERLAY_SECOND;
+                }
+
+                state.setColour(colour);
+                //state.setRenderFlag(RENDER_LINESTIPPLE);
+                state.setSortPosition(OpenGLState::SORT_OVERLAY_FIRST);
+                state.m_linewidth = 2;
+                //state.m_linestipple_factor = 1;
+            }
+            else if (_name == "$XY_INACTIVE_NODE")
+            {
+                Colour4 colour(0, 0, 0, 0.05f);
+                state.setColour(static_cast<float>(colour[0]),
+                    static_cast<float>(colour[1]),
+                    static_cast<float>(colour[2]),
+                    static_cast<float>(colour[3]));
+
+                state.m_blend_src = GL_SRC_ALPHA;
+                state.m_blend_dst = GL_ONE_MINUS_SRC_ALPHA;
+
+                state.setRenderFlags(RENDER_DEPTHTEST | RENDER_DEPTHWRITE | RENDER_BLEND);
+                state.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
+                state.setDepthFunc(GL_LESS);
+
+                state.m_linewidth = 1;
+                state.m_pointsize = 1;
+            }
             else if (_name == "$DEBUG_CLIPPED")
             {
               state.setRenderFlag(RENDER_DEPTHWRITE);

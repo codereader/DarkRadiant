@@ -174,7 +174,11 @@ class HideSubgraphWalker :
 public:
 	bool pre(const scene::INodePtr& node)
 	{
-		node->enable(scene::Node::eHidden);
+        if (node->supportsStateFlag(scene::Node::eHidden))
+        {
+		    node->enable(scene::Node::eHidden);
+        }
+
 		return true;
 	}
 };
@@ -185,7 +189,11 @@ class ShowSubgraphWalker :
 public:
 	bool pre(const scene::INodePtr& node)
 	{
-		node->disable(scene::Node::eHidden);
+        if (node->supportsStateFlag(scene::Node::eHidden))
+        {
+            node->disable(scene::Node::eHidden);
+        }
+
 		return true;
 	}
 };
@@ -206,6 +214,11 @@ inline void hideSubgraph(const scene::INodePtr& node, bool hide)
 
 inline void hideNode(const scene::INodePtr& node, bool hide)
 {
+    if (!node->supportsStateFlag(scene::Node::eHidden))
+    {
+        return;
+    }
+
 	if (hide)
 	{
 		node->enable(scene::Node::eHidden);

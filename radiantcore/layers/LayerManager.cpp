@@ -384,6 +384,11 @@ void LayerManager::removeSelectionFromLayer(int layerID) {
 
 bool LayerManager::updateNodeVisibility(const scene::INodePtr& node)
 {
+    if (!node->supportsStateFlag(Node::eLayered))
+    {
+        return true; // doesn't support layers, return true for visible
+    }
+
 	// Get the list of layers the node is associated with
 	const auto& layers = node->getLayers();
 

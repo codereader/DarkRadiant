@@ -80,6 +80,9 @@
         <window xPosition="57" yPosition="449" width="164" height="299" />
       </controlDialog>
     </layers>
+    <mergeControlDialog>
+        <window xPosition="158" yPosition="241" width="400" height="290"/>
+    </mergeControlDialog>
     <textures>
       <shaderChooser>
         <window xPosition="200" yPosition="100" width="550" height="500" />
@@ -237,6 +240,7 @@
       <toggletoolbutton name="dragfaces" action="DragFaces" tooltip="Select Faces" icon="modify_faces.png"/>
       <toggletoolbutton name="dragentities" action="DragEntities" tooltip="Select Entities" icon="select_entities.png"/>
       <toggletoolbutton name="selectionModeGroupPart" action="SelectionModeGroupPart" tooltip="Select Group Parts" icon="select_group_parts.png"/>
+      <toggletoolbutton name="selectionModeMergeAction" action="SelectionModeMergeActions" tooltip="Select Merge Actions" icon="merge_selection_mode.png"/>
       <separator/>
       <toggletoolbutton name="showlightradii" action="ToggleShowAllLightRadii" tooltip="Show/hide all light volumes" icon="view_show_lightradii.png"/>
       <toggletoolbutton name="showspeakerradii" action="ToggleShowAllSpeakerRadii" tooltip="Show/hide all speaker volumes" icon="view_show_speakerradii.png"/>

@@ -5,6 +5,7 @@
 #include "iradiant.h"
 #include "icounter.h"
 #include "math/Frustum.h"
+#include "math/Hash.h"
 
 // Construct a PatchNode with no arguments
 PatchNode::PatchNode(patch::PatchDefType type) :
@@ -43,6 +44,42 @@ PatchNode::~PatchNode()
 scene::INode::Type PatchNode::getNodeType() const
 {
 	return Type::Patch;
+}
+
+std::string PatchNode::getFingerprint()
+{
+    constexpr std::size_t SignificantDigits = scene::SignificantFingerprintDoubleDigits;
+
+    if (m_patch.getHeight() * m_patch.getWidth() == 0)
+    {
+        return std::string(); // empty patches produce an empty fingerprint
+    }
+
+    math::Hash hash;
+
+    // Width & Height
+    hash.addSizet(m_patch.getHeight());
+    hash.addSizet(m_patch.getWidth());
+
+    // Subdivision Settings
+    if (m_patch.subdivisionsFixed())
+    {
+        hash.addSizet(static_cast<std::size_t>(m_patch.getSubdivisions().x()));
+        hash.addSizet(static_cast<std::size_t>(m_patch.getSubdivisions().y()));
+    }
+
+    // Material Name
+    hash.addString(m_patch.getShader());
+
+    // Combine all control point data
+    for (const auto& ctrl : m_patch.getControlPoints())
+    {
+        hash.addVector3(ctrl.vertex, SignificantDigits);
+        hash.addDouble(ctrl.texcoord.x(), SignificantDigits);
+        hash.addDouble(ctrl.texcoord.y(), SignificantDigits);
+    }
+
+    return hash;
 }
 
 void PatchNode::allocate(std::size_t size) {
@@ -112,9 +149,6 @@ void PatchNode::snapComponents(float snap) {
 // Test the Patch instance for selection
 void PatchNode::testSelect(Selector& selector, SelectionTest& test)
 {
-	// Do not select patch if it is filtered
-	if (!isVisible()) return;
-
     // Check if this patch has a twosided material
     bool isTwosided = m_patch.getSurfaceShader().getGLShader()->getMaterial()->getCullType() == Material::CULL_NONE;
 
