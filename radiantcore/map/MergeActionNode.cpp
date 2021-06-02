@@ -155,7 +155,7 @@ void KeyValueMergeActionNode::clear()
 scene::merge::ActionType KeyValueMergeActionNode::getActionType() const
 {
     // We report the change key value type since we're doing all kinds of key value changes
-    return !_actions.empty() ? scene::merge::ActionType::ChangeKeyValue : scene::merge::ActionType::None;
+    return !_actions.empty() ? scene::merge::ActionType::ChangeKeyValue : scene::merge::ActionType::NoAction;
 }
 
 std::size_t KeyValueMergeActionNode::getMergeActionCount()
@@ -238,7 +238,7 @@ void RegularMergeActionNode::clear()
 
 scene::merge::ActionType RegularMergeActionNode::getActionType() const
 {
-    return _action ? _action->getType() : scene::merge::ActionType::None;
+    return _action ? _action->getType() : scene::merge::ActionType::NoAction;
 }
 
 void RegularMergeActionNode::foreachMergeAction(const std::function<void(const scene::merge::IMergeAction::Ptr&)>& functor)

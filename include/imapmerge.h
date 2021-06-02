@@ -12,7 +12,7 @@ namespace merge
 
 enum class ActionType
 {
-    None,
+    NoAction,
     AddEntity,
     RemoveEntity,
     AddKeyValue,
