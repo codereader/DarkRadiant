@@ -1253,6 +1253,8 @@ void EntityInspector::addClassAttribute(const EntityClassAttribute& a)
 
         row[_columns.name] = grey;
         row[_columns.value] = grey;
+        row[_columns.oldValue] = std::string();
+        row[_columns.newValue] = std::string();
 
         row[_columns.isInherited] = true;
         row[_columns.hasHelpText] = hasDescription;
