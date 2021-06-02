@@ -80,6 +80,7 @@ public:
 
     scene::merge::ActionType getActionType() const override;
     void foreachMergeAction(const std::function<void(const scene::merge::IMergeAction::Ptr&)>& functor) override;
+    std::size_t getMergeActionCount() override;
 
     void onInsertIntoScene(scene::IMapRootNode& rootNode) override;
     void onRemoveFromScene(scene::IMapRootNode& rootNode) override;
@@ -110,6 +111,7 @@ public:
 
     scene::merge::ActionType getActionType() const override;
     void foreachMergeAction(const std::function<void(const scene::merge::IMergeAction::Ptr&)>& functor) override;
+    std::size_t getMergeActionCount() override;
 
 private:
     void addPreviewNodeForAddAction();

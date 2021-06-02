@@ -12,6 +12,7 @@ namespace merge
 
 enum class ActionType
 {
+    None,
     AddEntity,
     RemoveEntity,
     AddKeyValue,
@@ -103,6 +104,10 @@ public:
 
     // Return the node this action is affecting
     virtual scene::INodePtr getAffectedNode() = 0;
+
+    // The number of merge actions associated to this node.
+    // This can be 0 if the node has been cleared out after completing a merge operation
+    virtual std::size_t getMergeActionCount() = 0;
 
     // Iterate over all actions of this node
     virtual void foreachMergeAction(const std::function<void(const merge::IMergeAction::Ptr&)>& functor) = 0;
