@@ -1046,6 +1046,8 @@ void Map::createMergeOperation(const scene::merge::ComparisonResult& result)
         }
     });
 
+    UndoableCommand cmd("createMergeOperation");
+
     // Construct all entity changes...
     for (const auto& pair : entityChanges)
     {
