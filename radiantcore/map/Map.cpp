@@ -300,7 +300,7 @@ void Map::forEachPointfile(PointfileFunctor func) const
         // Ignore anything which isn't a .lin file
         auto entryPath = entry.path();
         if (entryPath.extension() == LIN_EXT
-            && pointfileNameMatch(entryPath.stem(), mapStem))
+            && pointfileNameMatch(entryPath.stem().string(), mapStem.string()))
         {
             paths.insert(entryPath);
         }

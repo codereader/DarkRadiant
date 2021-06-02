@@ -721,6 +721,9 @@
     <ClCompile Include="..\..\radiant\ui\merge\MergeControlDialog.cpp">
       <Filter>src\ui\merge</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\PointFileChooser.cpp">
+      <Filter>src\ui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h">
@@ -1394,6 +1397,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\merge\MergeControlDialog.h">
       <Filter>src\ui\merge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\PointFileChooser.h">
+      <Filter>src\ui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

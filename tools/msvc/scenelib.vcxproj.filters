@@ -118,5 +118,8 @@
     <ClInclude Include="..\..\libs\scene\merge\ComparisonResult.h">
       <Filter>scene\merge</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\scene\PointTrace.h">
+      <Filter>scene</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

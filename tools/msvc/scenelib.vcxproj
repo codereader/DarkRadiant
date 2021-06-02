@@ -145,6 +145,7 @@
     <ClInclude Include="..\..\libs\scene\ModelBreakdown.h" />
     <ClInclude Include="..\..\libs\scene\ModelFinder.h" />
     <ClInclude Include="..\..\libs\scene\Node.h" />
+    <ClInclude Include="..\..\libs\scene\PointTrace.h" />
     <ClInclude Include="..\..\libs\scene\PrefabBoundsAccumulator.h" />
     <ClInclude Include="..\..\libs\scene\SelectableNode.h" />
     <ClInclude Include="..\..\libs\scene\SelectionIndex.h" />

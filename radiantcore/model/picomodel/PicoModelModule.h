@@ -107,7 +107,7 @@ private:
 
 	static void PicoLoadFileFunc(char *name, unsigned char** buffer, int *bufSize)
 	{
-		std::string fixedFilename(os::standardPathWithSlash(name));
+		std::string fixedFilename(os::standardPathWithSlash(std::string(name)));
 
 		ArchiveFilePtr file = GlobalFileSystem().openFile(fixedFilename);
 

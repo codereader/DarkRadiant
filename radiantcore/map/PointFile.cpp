@@ -103,7 +103,7 @@ void PointFile::parse(const fs::path& pointfile)
 	if (!inFile)
 	{
         throw cmd::ExecutionFailure(
-            fmt::format(_("Could not open pointfile: {0}"), std::string(pointfile))
+            fmt::format(_("Could not open pointfile: {0}"), pointfile.string())
         );
     }
 

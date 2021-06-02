@@ -43,6 +43,7 @@
     </ClCompile>
     <ClCompile Include="..\..\..\test\Transformation.cpp" />
     <ClCompile Include="..\..\..\test\MapMerging.cpp" />
+    <ClCompile Include="..\..\..\test\PointTrace.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\HeadlessOpenGLContext.h" />
