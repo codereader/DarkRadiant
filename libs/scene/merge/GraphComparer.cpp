@@ -4,7 +4,9 @@
 #include "ientity.h"
 #include "i18n.h"
 #include "itextstream.h"
+#include "iselectiongroup.h"
 #include "icomparablenode.h"
+#include "math/Hash.h"
 #include "string/string.h"
 #include "command/ExecutionNotPossible.h"
 
@@ -16,7 +18,7 @@ namespace merge
 
 namespace
 {
-    inline std::string getEntityName(const scene::INodePtr& node)
+    inline std::string getEntityName(const INodePtr& node)
     {
         auto entity = Node_getEntity(node);
         
@@ -24,7 +26,7 @@ namespace
     }
 }
 
-ComparisonResult::Ptr GraphComparer::Compare(const scene::IMapRootNodePtr& source, const scene::IMapRootNodePtr& base)
+ComparisonResult::Ptr GraphComparer::Compare(const IMapRootNodePtr& source, const IMapRootNodePtr& base)
 {
     auto result = std::make_shared<ComparisonResult>(source, base);
 
@@ -72,6 +74,9 @@ ComparisonResult::Ptr GraphComparer::Compare(const scene::IMapRootNodePtr& sourc
 
     // Enter the second stage and try to match entities and detailing diffs
     processDifferingEntities(*result, sourceMismatches, baseMismatches);
+
+    // Compare the group configurations of all nodes
+    compareSelectionGroups(*result);
 
     return result;
 }
@@ -123,7 +128,7 @@ void GraphComparer::processDifferingEntities(ComparisonResult& result, const Ent
     {
         result.differingEntities.emplace_back(ComparisonResult::EntityDifference
         {
-            scene::INodePtr(), // source node is empty
+            INodePtr(), // source node is empty
             mismatch.second.node,
             mismatch.second.entityName,
             ComparisonResult::EntityDifference::Type::EntityMissingInSource
@@ -135,7 +140,7 @@ void GraphComparer::processDifferingEntities(ComparisonResult& result, const Ent
         result.differingEntities.emplace_back(ComparisonResult::EntityDifference
         {
             mismatch.second.node,
-            scene::INodePtr(), // base node is empty
+            INodePtr(), // base node is empty
             mismatch.second.entityName,
             ComparisonResult::EntityDifference::Type::EntityMissingInBase
         });
@@ -146,7 +151,7 @@ namespace
 {
     using KeyValueMap = std::map<std::string, std::string, string::ILess>;
 
-    inline KeyValueMap loadKeyValues(const scene::INodePtr& entityNode)
+    inline KeyValueMap loadKeyValues(const INodePtr& entityNode)
     {
         KeyValueMap result;
 
@@ -162,7 +167,7 @@ namespace
 }
 
 std::list<ComparisonResult::KeyValueDifference> GraphComparer::compareKeyValues(
-    const scene::INodePtr& sourceNode, const scene::INodePtr& baseNode)
+    const INodePtr& sourceNode, const INodePtr& baseNode)
 {
     std::list<ComparisonResult::KeyValueDifference> result;
 
@@ -226,7 +231,7 @@ std::list<ComparisonResult::KeyValueDifference> GraphComparer::compareKeyValues(
 }
 
 std::list<ComparisonResult::PrimitiveDifference> GraphComparer::compareChildNodes(
-    const scene::INodePtr& sourceNode, const scene::INodePtr& baseNode)
+    const INodePtr& sourceNode, const INodePtr& baseNode)
 {
     std::list<ComparisonResult::PrimitiveDifference> result;
 
@@ -269,16 +274,16 @@ std::list<ComparisonResult::PrimitiveDifference> GraphComparer::compareChildNode
     return result;
 }
 
-GraphComparer::Fingerprints GraphComparer::collectNodeFingerprints(const scene::INodePtr& parent, 
-    const std::function<bool(const scene::INodePtr& node)>& nodePredicate)
+GraphComparer::Fingerprints GraphComparer::collectNodeFingerprints(const INodePtr& parent, 
+    const std::function<bool(const INodePtr& node)>& nodePredicate)
 {
     Fingerprints result;
 
-    parent->foreachNode([&](const scene::INodePtr& node)
+    parent->foreachNode([&](const INodePtr& node)
     {
         if (!nodePredicate(node)) return true; // predicate says "skip"
 
-        auto comparable = std::dynamic_pointer_cast<scene::IComparableNode>(node);
+        auto comparable = std::dynamic_pointer_cast<IComparableNode>(node);
         assert(comparable);
 
         if (!comparable) return true; // skip
@@ -297,20 +302,119 @@ GraphComparer::Fingerprints GraphComparer::collectNodeFingerprints(const scene::
     return result;
 }
 
-GraphComparer::Fingerprints GraphComparer::collectPrimitiveFingerprints(const scene::INodePtr& parent)
+GraphComparer::Fingerprints GraphComparer::collectPrimitiveFingerprints(const INodePtr& parent)
 {
-    return collectNodeFingerprints(parent, [](const scene::INodePtr& node)
+    return collectNodeFingerprints(parent, [](const INodePtr& node)
     {
-        return node->getNodeType() == scene::INode::Type::Brush || node->getNodeType() == scene::INode::Type::Patch;
+        return node->getNodeType() == INode::Type::Brush || node->getNodeType() == INode::Type::Patch;
     });
 }
 
-GraphComparer::Fingerprints GraphComparer::collectEntityFingerprints(const scene::INodePtr& root)
+GraphComparer::Fingerprints GraphComparer::collectEntityFingerprints(const INodePtr& root)
 {
-    return collectNodeFingerprints(root, [](const scene::INodePtr& node)
+    return collectNodeFingerprints(root, [](const INodePtr& node)
     {
-        return node->getNodeType() == scene::INode::Type::Entity;
+        return node->getNodeType() == INode::Type::Entity;
     });
+}
+
+void GraphComparer::compareSelectionGroups(ComparisonResult& result)
+{
+    // Compare all matching entities first, their geometry is matching up
+    for (const auto& matchingEntity : result.equivalentEntities)
+    {
+        compareSelectionGroups(result, matchingEntity.sourceNode, matchingEntity.baseNode);
+    }
+}
+
+void GraphComparer::compareSelectionGroups(ComparisonResult& result, const INodePtr& sourceNode, const INodePtr& baseNode)
+{
+    // Entities really should be group selectable
+    assert(std::dynamic_pointer_cast<IGroupSelectable>(sourceNode));
+    assert(std::dynamic_pointer_cast<IGroupSelectable>(baseNode));
+
+    auto& baseManager = result.getBaseRootNode()->getSelectionGroupManager();
+    auto& sourceManager = result.getSourceRootNode()->getSelectionGroupManager();
+
+    auto baseSelectable = std::dynamic_pointer_cast<IGroupSelectable>(baseNode);
+    auto sourceSelectable = std::dynamic_pointer_cast<IGroupSelectable>(sourceNode);
+
+    if (!sourceSelectable || !baseSelectable)
+    {
+        return;
+    }
+
+    const auto& sourceGroupIds = sourceSelectable->getGroupIds();
+    const auto& baseGroupIds = baseSelectable->getGroupIds();
+
+    // Check the number of memberships, if that differs, we don't need to look further
+    if (sourceGroupIds.size() != baseGroupIds.size())
+    {
+        rMessage() << "Source node " << sourceNode->name() << " has different number of groups than base node " << baseNode->name() << std::endl;
+
+        result.selectionGroupDifferences.emplace_back(ComparisonResult::GroupDifference
+        {
+            sourceSelectable,
+            baseSelectable,
+            ComparisonResult::GroupDifference::Type::MembershipCountMismatch
+        });
+
+        return;
+    }
+
+    // Go through the group memberships of the source node and compare
+    for (auto sourceGroupIter = sourceGroupIds.begin(), baseGroupIter = baseGroupIds.begin();
+         sourceGroupIter != sourceGroupIds.end() && baseGroupIter != baseGroupIds.end();
+         ++sourceGroupIter, ++baseGroupIter)
+    {
+        auto sourceGroup = sourceManager.getSelectionGroup(*sourceGroupIter);
+        auto baseGroup = baseManager.getSelectionGroup(*baseGroupIter);
+
+        if (!sourceGroup || !baseGroup) continue;
+
+        auto sourceGroupFingerprint = calculateGroupFingerprint(sourceGroup);
+        auto baseGroupFingerprint = calculateGroupFingerprint(baseGroup);
+
+        if (sourceGroupFingerprint != baseGroupFingerprint)
+        {
+            rMessage() << "Source node " << sourceNode->name() << " groups are different than base node " << baseNode->name() << " groups" << std::endl;
+
+            result.selectionGroupDifferences.emplace_back(ComparisonResult::GroupDifference
+            {
+                sourceSelectable,
+                baseSelectable,
+                ComparisonResult::GroupDifference::Type::GroupMemberMismatch
+            });
+            break;
+        }
+    }
+}
+
+std::string GraphComparer::calculateGroupFingerprint(const selection::ISelectionGroupPtr& group)
+{
+    std::vector<std::string> memberFingerprints(group->size());
+    group->foreachNode([&](const INodePtr& member)
+    {
+        auto comparable = std::dynamic_pointer_cast<IComparableNode>(member);
+
+        if (comparable)
+        {
+            memberFingerprints.emplace_back(comparable->getFingerprint()); 
+        }
+    });
+
+    // Sort the fingerprints to be insensitive against actual member node ordering
+    std::sort(memberFingerprints.begin(), memberFingerprints.end());
+
+    // Combine all member hashes and we're done
+    math::Hash hash;
+
+    for (const auto& fingerprint : memberFingerprints)
+    {
+        hash.addString(fingerprint);
+    }
+
+    return hash;
 }
 
 }

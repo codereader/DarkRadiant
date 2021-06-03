@@ -3,6 +3,7 @@
 #include <memory>
 #include <list>
 #include "imap.h"
+#include "iselectiongroup.h"
 #include "inode.h"
 
 namespace scene
@@ -19,16 +20,16 @@ public:
 private:
     // This result instance will hold references to the root nodes of the compared graph
     // to ensure the graph stays alive as long as the result
-    scene::IMapRootNodePtr _sourceRoot;
-    scene::IMapRootNodePtr _baseRoot;
+    IMapRootNodePtr _sourceRoot;
+    IMapRootNodePtr _baseRoot;
 
 public:
     // Represents a matching node pair
     struct Match
     {
         std::string fingerPrint;
-        scene::INodePtr sourceNode;
-        scene::INodePtr baseNode;
+        INodePtr sourceNode;
+        INodePtr baseNode;
     };
 
     struct KeyValueDifference
@@ -49,7 +50,7 @@ public:
     struct PrimitiveDifference
     {
         std::string fingerprint;
-        scene::INodePtr node;
+        INodePtr node;
 
         enum class Type
         {
@@ -62,8 +63,8 @@ public:
 
     struct EntityDifference
     {
-        scene::INodePtr sourceNode;
-        scene::INodePtr baseNode;
+        INodePtr sourceNode;
+        INodePtr baseNode;
         std::string entityName;
 
         enum class Type
@@ -80,8 +81,22 @@ public:
         std::list<PrimitiveDifference> differingChildren;
     };
 
+    struct GroupDifference
+    {
+        std::shared_ptr<IGroupSelectable> sourceNode;
+        std::shared_ptr<IGroupSelectable> baseNode;
+
+        enum class Type
+        {
+            MembershipCountMismatch,    // nodes are member of a differing number of groups
+            GroupMemberMismatch,        // membership count matches, but the groups have different members
+        };
+
+        Type type;
+    };
+
 public:
-    ComparisonResult(const scene::IMapRootNodePtr& sourceRoot, const scene::IMapRootNodePtr& baseRoot) :
+    ComparisonResult(const IMapRootNodePtr& sourceRoot, const IMapRootNodePtr& baseRoot) :
         _sourceRoot(sourceRoot),
         _baseRoot(baseRoot)
     {}
@@ -92,12 +107,15 @@ public:
     // The collection of differing entities
     std::list<EntityDifference> differingEntities;
 
-    const scene::IMapRootNodePtr& getBaseRootNode() const
+    // All nodes which have differing group configuration
+    std::list<GroupDifference> selectionGroupDifferences;
+
+    const IMapRootNodePtr& getBaseRootNode() const
     {
         return _baseRoot;
     }
 
-    const scene::IMapRootNodePtr& getSourceRootNode() const
+    const IMapRootNodePtr& getSourceRootNode() const
     {
         return _sourceRoot;
     }
