@@ -99,6 +99,11 @@ void MergeOperation::applyActions()
             rError() << "Failed to apply action: " << ex.what() << std::endl;
         }
     }
+
+    if (_mergeSelectionGroups)
+    {
+        // TODO
+    }
 }
 
 void MergeOperation::foreachAction(const std::function<void(const IMergeAction::Ptr&)>& visitor)
@@ -107,6 +112,11 @@ void MergeOperation::foreachAction(const std::function<void(const IMergeAction::
     {
         visitor(action);
     }
+}
+
+void MergeOperation::setMergeSelectionGroups(bool enabled)
+{
+    _mergeSelectionGroups = enabled;
 }
 
 }

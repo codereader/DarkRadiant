@@ -13,6 +13,7 @@
 
 #include <wx/textctrl.h>
 #include <wx/button.h>
+#include <wx/checkbox.h>
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 
@@ -55,6 +56,8 @@ MergeControlDialog::MergeControlDialog() :
 
     auto* finishButton = findNamedObject<wxButton>(this, "FinishMergeButton");
     finishButton->Bind(wxEVT_BUTTON, &MergeControlDialog::onFinishMerge, this);
+
+    findNamedObject<wxCheckBox>(this, "KeepSelectionGroupsIntact")->SetValue(true);
 
     updateControlSensitivity();
     Bind(wxEVT_IDLE, &MergeControlDialog::onIdle, this);
@@ -167,13 +170,21 @@ void MergeControlDialog::onRejectSelection(wxCommandEvent& ev)
 
 void MergeControlDialog::onFinishMerge(wxCommandEvent& ev)
 {
-    GlobalMapModule().finishMergeOperation();
+    auto operation = GlobalMapModule().getActiveMergeOperation();
 
-    if (GlobalMapModule().getEditMode() != IMap::EditMode::Merge)
+    if (operation)
     {
-        // We're done here
-        Hide();
-        return;
+        auto mergeSelectionGroups = findNamedObject<wxCheckBox>(this, "KeepSelectionGroupsIntact")->GetValue();
+        operation->setMergeSelectionGroups(mergeSelectionGroups);
+
+         GlobalMapModule().finishMergeOperation();
+
+        if (GlobalMapModule().getEditMode() != IMap::EditMode::Merge)
+        {
+            // We're done here
+            Hide();
+            return;
+        }
     }
 
     updateControlSensitivity();

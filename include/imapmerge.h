@@ -85,6 +85,9 @@ public:
 
     // Invokes the given functor for each action in this operation
     virtual void foreachAction(const std::function<void(const IMergeAction::Ptr&)>& visitor) = 0;
+
+    // Enables or disable the merge of selection groups
+    virtual void setMergeSelectionGroups(bool enabled) = 0;
 };
 
 }
