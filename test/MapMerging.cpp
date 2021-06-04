@@ -857,6 +857,52 @@ TEST_F(MapMergeTest, GroupMemberOrdering)
     EXPECT_TRUE(result->selectionGroupDifferences.empty()) << "Group ordering shouldn't make a difference";
 }
 
+// Group links between entities should use the entity's name to check for equivalence
+// even if the entity has changed key values or primitives, the link is intact when the name is equal
+TEST_F(MapMergeTest, GroupLinksBetweenEntities)
+{
+    auto originalResource = GlobalMapResourceManager().createFromPath("maps/merging_groups_1.mapx");
+    EXPECT_TRUE(originalResource->load()) << "Test map not found";
+
+    auto changedResource = GlobalMapResourceManager().createFromPath("maps/merging_groups_1.mapx");
+    EXPECT_TRUE(changedResource->load()) << "Test map not found";
+
+    auto result = GraphComparer::Compare(changedResource->getRootNode(), originalResource->getRootNode());
+    EXPECT_TRUE(result->selectionGroupDifferences.empty()) << "Unchanged resource should be the same as the original";
+
+    // Create a group out of two brushes and an entity
+    auto& originalGroupManager = originalResource->getRootNode()->getSelectionGroupManager();
+    auto originalGroup = originalGroupManager.createSelectionGroup();
+
+    // Find the two defined brushes
+    auto brush11 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(originalResource->getRootNode()), "textures/numbers/11");
+    auto brush12 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(originalResource->getRootNode()), "textures/numbers/12");
+    auto funcStatic = algorithm::getEntityByName(originalResource->getRootNode(), "expandable");
+
+    originalGroup->addNode(brush11);
+    originalGroup->addNode(brush12);
+    originalGroup->addNode(funcStatic);
+
+    // Do the same in the other map, but in a different order
+    auto& changedGroupManager = changedResource->getRootNode()->getSelectionGroupManager();
+    auto changedGroup = changedGroupManager.createSelectionGroup();
+
+    // Find the two defined brushes
+    brush11 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(changedResource->getRootNode()), "textures/numbers/11");
+    brush12 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(changedResource->getRootNode()), "textures/numbers/12");
+    funcStatic = algorithm::getEntityByName(changedResource->getRootNode(), "expandable");
+
+    // Change a key value on the entity to change its fingerprint
+    Node_getEntity(funcStatic)->setKeyValue("changedkey", "changedvalue");
+
+    changedGroup->addNode(brush11);
+    changedGroup->addNode(funcStatic);
+    changedGroup->addNode(brush12);
+
+    result = GraphComparer::Compare(changedResource->getRootNode(), originalResource->getRootNode());
+    EXPECT_TRUE(result->selectionGroupDifferences.empty()) << "Group ordering shouldn't make a difference and should only look at the names";
+}
+
 // Entity with no changed geometry, but with changed group membership in its children
 TEST_F(MapMergeTest, GroupDifferenceInMatchingEntity)
 {
@@ -1002,7 +1048,7 @@ TEST_F(MapMergeTest, GroupDifferenceOfMismatchingEntity)
     Node_getEntity(funcStatic)->setKeyValue("dummyvalue", "changed");
 
     // Add this func_static into a new group together with brush 11
-    auto brush11 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(originalResource->getRootNode()), "textures/numbers/11");
+    auto brush11 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(changedResource->getRootNode()), "textures/numbers/11");
 
     changedGroup->addNode(funcStatic);
     changedGroup->addNode(brush11);

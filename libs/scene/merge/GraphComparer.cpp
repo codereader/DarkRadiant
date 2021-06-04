@@ -21,8 +21,9 @@ namespace
 {
     inline std::string getEntityName(const INodePtr& node)
     {
+        assert(node->getNodeType() == INode::Type::Entity);
         auto entity = Node_getEntity(node);
-        
+
         return entity->isWorldspawn() ? "worldspawn" : entity->getKeyValue("name");
     }
 }
@@ -327,25 +328,43 @@ void GraphComparer::compareSelectionGroups(ComparisonResult& result)
         compareSelectionGroups(result, matchingEntity.sourceNode, matchingEntity.baseNode);
 
         // Each node of the matching source entity must have a counter-part in the base entity
-        auto sourcePrimitives = collectPrimitiveFingerprints(matchingEntity.sourceNode);
-        auto basePrimitives = collectPrimitiveFingerprints(matchingEntity.baseNode);
-
-        for (const auto& pair : sourcePrimitives)
-        {
-            // Look up the counterart in the base map and compare
-            const auto& sourcePrimitive = pair.second;
-            auto counterpart = basePrimitives.find(pair.first);
-
-            if (counterpart != basePrimitives.end())
-            {
-                const auto& basePrimitive = counterpart->second;
-
-                compareSelectionGroups(result, sourcePrimitive, basePrimitive);
-            }
-        }
+        compareSelectionGroupsOfPrimitives(result, matchingEntity.sourceNode, matchingEntity.baseNode);
     }
 
-    // Compare mismatching source entities
+    // Compare mismatching entities that have a counterpart in the base map
+    for (const auto& mismatchingEntity : result.differingEntities)
+    {
+        // We only compare entities which are present in both maps
+        if (!mismatchingEntity.sourceNode || !mismatchingEntity.baseNode)
+        {
+            continue;
+        }
+
+        compareSelectionGroups(result, mismatchingEntity.sourceNode, mismatchingEntity.baseNode);
+
+        // Check each child of the mismatching source entity, it might have counter-parts in the base map
+        compareSelectionGroupsOfPrimitives(result, mismatchingEntity.sourceNode, mismatchingEntity.baseNode);
+    }
+}
+
+void GraphComparer::compareSelectionGroupsOfPrimitives(ComparisonResult& result, const INodePtr& sourceNode, const INodePtr& baseNode)
+{
+    // Check each node of the mismatching source entity, it might have counter-parts in the base map
+    auto sourcePrimitives = collectPrimitiveFingerprints(sourceNode);
+    auto basePrimitives = collectPrimitiveFingerprints(baseNode);
+
+    for (const auto& pair : sourcePrimitives)
+    {
+        // Look up the counterart in the base map and compare
+        const auto& sourcePrimitive = pair.second;
+        auto counterpart = basePrimitives.find(pair.first);
+
+        if (counterpart != basePrimitives.end())
+        {
+            const auto& basePrimitive = counterpart->second;
+            compareSelectionGroups(result, sourcePrimitive, basePrimitive);
+        }
+    }
 }
 
 void GraphComparer::compareSelectionGroups(ComparisonResult& result, const INodePtr& sourceNode, const INodePtr& baseNode)
@@ -416,11 +435,19 @@ std::string GraphComparer::calculateGroupFingerprint(const selection::ISelection
     std::vector<std::string> memberFingerprints(group->size());
     group->foreachNode([&](const INodePtr& member)
     {
+        if (member->getNodeType() == INode::Type::Entity)
+        {
+            // Group links between entities should use the entity's name to check for equivalence
+            // even if the entity has changed key values or primitives, the link is intact when the name is equal
+            memberFingerprints.emplace_back(getEntityName(member));
+            return;
+        }
+
         auto comparable = std::dynamic_pointer_cast<IComparableNode>(member);
 
         if (comparable)
         {
-            memberFingerprints.emplace_back(comparable->getFingerprint()); 
+            memberFingerprints.emplace_back(comparable->getFingerprint());
         }
     });
 
