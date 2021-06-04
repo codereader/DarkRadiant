@@ -922,12 +922,86 @@ TEST_F(MapMergeTest, GroupDifferenceOfMatchingEntity)
     auto result = GraphComparer::Compare(changedResource->getRootNode(), originalResource->getRootNode());
     EXPECT_TRUE(result->selectionGroupDifferences.empty()) << "Unchanged resource should be the same as the original";
 
-    // Create a group from 3 defined brushes in the one map
     auto& changedGroupManager = changedResource->getRootNode()->getSelectionGroupManager();
     auto changedGroup = changedGroupManager.createSelectionGroup();
 
     // This entity already forms a group with light, add another group on top of that
     auto funcStatic = algorithm::getEntityByName(changedResource->getRootNode(), "expandable");
+    auto brush11 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(originalResource->getRootNode()), "textures/numbers/11");
+
+    changedGroup->addNode(funcStatic);
+    changedGroup->addNode(brush11);
+
+    // Compare the unchanged map to the one with the new group
+    result = GraphComparer::Compare(changedResource->getRootNode(), originalResource->getRootNode());
+
+    // We should get 2 differences: one for the entity node itself and one for brush 11 (both have different group membership count)
+    EXPECT_EQ(result->selectionGroupDifferences.size(), 2) << "Group difference not detected";
+
+    auto membershipCountMismatches = std::count_if(result->selectionGroupDifferences.begin(), result->selectionGroupDifferences.end(),
+        [&](const ComparisonResult::GroupDifference& diff) { return diff.type == ComparisonResult::GroupDifference::Type::MembershipCountMismatch; });
+    EXPECT_EQ(membershipCountMismatches, 2);
+}
+
+// Entity with mismatching geometry, three of the child primitives have different group memberships
+TEST_F(MapMergeTest, GroupDifferenceInMismatchingEntity)
+{
+    auto originalResource = GlobalMapResourceManager().createFromPath("maps/merging_groups_1.mapx");
+    EXPECT_TRUE(originalResource->load()) << "Test map not found";
+
+    auto changedResource = GlobalMapResourceManager().createFromPath("maps/merging_groups_1.mapx");
+    EXPECT_TRUE(changedResource->load()) << "Test map not found";
+
+    auto result = GraphComparer::Compare(changedResource->getRootNode(), originalResource->getRootNode());
+    EXPECT_TRUE(result->selectionGroupDifferences.empty()) << "Unchanged resource should be the same as the original";
+
+    auto& changedGroupManager = changedResource->getRootNode()->getSelectionGroupManager();
+    auto changedGroup = changedGroupManager.createSelectionGroup();
+
+    // This entity already forms a group with light, change a spawnarg to make it mismatching
+    auto funcStatic = algorithm::getEntityByName(changedResource->getRootNode(), "expandable");
+    Node_getEntity(funcStatic)->setKeyValue("dummyvalue", "changed");
+
+    // Create a group from 3 defined brushes in this map
+    auto brush11 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(changedResource->getRootNode()), "textures/numbers/11");
+    auto brush12 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(changedResource->getRootNode()), "textures/numbers/12");
+    auto brush13 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(changedResource->getRootNode()), "textures/numbers/13");
+
+    changedGroup->addNode(brush11);
+    changedGroup->addNode(brush12);
+    changedGroup->addNode(brush13);
+
+    // Compare the unchanged map to the one with the new group
+    result = GraphComparer::Compare(changedResource->getRootNode(), originalResource->getRootNode());
+
+    // We should get 3 differences, one for each brush
+    EXPECT_EQ(result->selectionGroupDifferences.size(), 3) << "Group difference not detected";
+
+    auto membershipCountMismatches = std::count_if(result->selectionGroupDifferences.begin(), result->selectionGroupDifferences.end(),
+        [&](const ComparisonResult::GroupDifference& diff) { return diff.type == ComparisonResult::GroupDifference::Type::MembershipCountMismatch; });
+    EXPECT_EQ(membershipCountMismatches, 3);
+}
+
+// Entity with mismatching geometry, entity itself has different group membership
+TEST_F(MapMergeTest, GroupDifferenceOfMismatchingEntity)
+{
+    auto originalResource = GlobalMapResourceManager().createFromPath("maps/merging_groups_1.mapx");
+    EXPECT_TRUE(originalResource->load()) << "Test map not found";
+
+    auto changedResource = GlobalMapResourceManager().createFromPath("maps/merging_groups_1.mapx");
+    EXPECT_TRUE(changedResource->load()) << "Test map not found";
+
+    auto result = GraphComparer::Compare(changedResource->getRootNode(), originalResource->getRootNode());
+    EXPECT_TRUE(result->selectionGroupDifferences.empty()) << "Unchanged resource should be the same as the original";
+
+    auto& changedGroupManager = changedResource->getRootNode()->getSelectionGroupManager();
+    auto changedGroup = changedGroupManager.createSelectionGroup();
+
+    // This entity already forms a group with light, change a spawnarg to make it mismatching
+    auto funcStatic = algorithm::getEntityByName(changedResource->getRootNode(), "expandable");
+    Node_getEntity(funcStatic)->setKeyValue("dummyvalue", "changed");
+
+    // Add this func_static into a new group together with brush 11
     auto brush11 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(originalResource->getRootNode()), "textures/numbers/11");
 
     changedGroup->addNode(funcStatic);
