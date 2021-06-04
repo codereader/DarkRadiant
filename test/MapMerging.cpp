@@ -230,7 +230,7 @@ using namespace scene::merge;
 
 inline ComparisonResult::Ptr performComparison(const std::string& targetMap, const std::string& sourceMapPath)
 {
-    GlobalCommandSystem().executeCommand("OpenMap", cmd::Argument("maps/fingerprinting.mapx"));
+    GlobalCommandSystem().executeCommand("OpenMap", cmd::Argument(targetMap));
 
     auto resource = GlobalMapResourceManager().createFromPath(sourceMapPath);
     EXPECT_TRUE(resource->load()) << "Test map not found in path " << sourceMapPath;
@@ -802,4 +802,17 @@ TEST_F(MapMergeTest, DeactivatedChangePrimitiveActions)
     EXPECT_EQ(getChildPrimitiveCount(entityNode), 2);
 }
 
+TEST_F(MapMergeTest, GroupDifferenceSameMap)
+{
+    auto result = performComparison("maps/merging_groups_1.mapx", _context.getTestProjectPath() + "maps/merging_groups_1.mapx");
+
+    // Make sure we do have groups in the map
+    std::size_t groupCount = 0;
+    result->getSourceRootNode()->getSelectionGroupManager().foreachSelectionGroup([&](const selection::ISelectionGroup& group)
+    {
+        ++groupCount;
+    });
+    EXPECT_NE(groupCount, 0) << "We don't have any groups in the test map, this test is useless.";
+    EXPECT_TRUE(result->selectionGroupDifferences.empty()) << "Comparing a map with itself shouldn't produce a group diff";
+}
 }
