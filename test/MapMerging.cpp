@@ -815,4 +815,46 @@ TEST_F(MapMergeTest, GroupDifferenceSameMap)
     EXPECT_NE(groupCount, 0) << "We don't have any groups in the test map, this test is useless.";
     EXPECT_TRUE(result->selectionGroupDifferences.empty()) << "Comparing a map with itself shouldn't produce a group diff";
 }
+
+TEST_F(MapMergeTest, GroupMemberOrdering)
+{
+    auto originalResource = GlobalMapResourceManager().createFromPath("maps/merging_groups_1.mapx");
+    EXPECT_TRUE(originalResource->load()) << "Test map not found";
+
+    auto changedResource = GlobalMapResourceManager().createFromPath("maps/merging_groups_1.mapx");
+    EXPECT_TRUE(changedResource->load()) << "Test map not found";
+
+    auto result = GraphComparer::Compare(changedResource->getRootNode(), originalResource->getRootNode());
+    EXPECT_TRUE(result->selectionGroupDifferences.empty()) << "Unchanged resource should be the same as the original";
+
+    // Create a group from 3 defined brushes, in a specific order
+    auto& originalGroupManager = originalResource->getRootNode()->getSelectionGroupManager();
+    auto originalGroup = originalGroupManager.createSelectionGroup();
+
+    // Find the three defined brushes
+    auto brush11 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(originalResource->getRootNode()), "textures/numbers/11");
+    auto brush12 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(originalResource->getRootNode()), "textures/numbers/12");
+    auto brush13 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(originalResource->getRootNode()), "textures/numbers/13");
+    
+    originalGroup->addNode(brush11);
+    originalGroup->addNode(brush12);
+    originalGroup->addNode(brush13);
+
+    // Do the same in the other map, but in a different order
+    auto& changedGroupManager = changedResource->getRootNode()->getSelectionGroupManager();
+    auto changedGroup = changedGroupManager.createSelectionGroup();
+
+    // Find the three defined brushes
+    brush11 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(changedResource->getRootNode()), "textures/numbers/11");
+    brush12 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(changedResource->getRootNode()), "textures/numbers/12");
+    brush13 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(changedResource->getRootNode()), "textures/numbers/13");
+
+    changedGroup->addNode(brush11);
+    changedGroup->addNode(brush13);
+    changedGroup->addNode(brush12);
+
+    result = GraphComparer::Compare(changedResource->getRootNode(), originalResource->getRootNode());
+    EXPECT_TRUE(result->selectionGroupDifferences.empty()) << "Group ordering shouldn't make a difference";
+}
+
 }
