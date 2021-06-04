@@ -115,6 +115,14 @@ inline scene::INodePtr findFirstEntity(const scene::INodePtr& parent,
     return candidate;
 }
 
+inline scene::INodePtr findWorldspawn(const scene::INodePtr& root)
+{
+    return findFirstEntity(root, [&](IEntityNode& entity)
+    {
+        return entity.getEntity().isWorldspawn();
+    });
+}
+
 inline scene::INodePtr getEntityByName(const scene::INodePtr& parent, const std::string& name)
 {
     return findFirstEntity(parent, [&](IEntityNode& entity)

@@ -425,22 +425,25 @@ void PortableMapReader::readLayerInformation(const xml::Node& tag, const scene::
 
 void PortableMapReader::readSelectionGroupInformation(const xml::Node& tag, const scene::INodePtr& sceneNode)
 {
-	auto selectable = std::dynamic_pointer_cast<IGroupSelectable>(sceneNode);
+    auto groupsTag = getNamedChild(tag, TAG_OBJECT_SELECTIONGROUPS);
+    auto groupTags = groupsTag.getNamedChildren(TAG_OBJECT_SELECTIONGROUP);
 
-	if (!selectable) return;
+    auto& groupManager = _importFilter.getRootNode()->getSelectionGroupManager();
 
-	auto groupsTag = getNamedChild(tag, TAG_OBJECT_SELECTIONGROUPS);
-	auto groupTags = groupsTag.getNamedChildren(TAG_OBJECT_SELECTIONGROUP);
+    // Read the list of group IDs
+    for (const auto& groupTag : groupTags)
+    {
+        auto groupId = string::convert<IGroupSelectable::GroupIds::value_type>(
+            groupTag.getAttributeValue(ATTR_OBJECT_SELECTIONGROUP_ID)
+        );
 
-	// Read the list of group IDs
-	for (const auto& groupTag : groupTags)
-	{
-		auto groupId = string::convert<IGroupSelectable::GroupIds::value_type>(
-			groupTag.getAttributeValue(ATTR_OBJECT_SELECTIONGROUP_ID)
-		);
+        auto group = groupManager.getSelectionGroup(groupId);
 
-		selectable->addToGroup(groupId);
-	}
+        if (group)
+        {
+            group->addNode(sceneNode);
+        }
+    }
 }
 
 void PortableMapReader::readSelectionSetInformation(const xml::Node& tag, const scene::INodePtr& sceneNode)
