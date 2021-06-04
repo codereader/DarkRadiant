@@ -857,7 +857,8 @@ TEST_F(MapMergeTest, GroupMemberOrdering)
     EXPECT_TRUE(result->selectionGroupDifferences.empty()) << "Group ordering shouldn't make a difference";
 }
 
-TEST_F(MapMergeTest, GroupMemberDifference)
+// Entity with no changed geometry, but with changed group membership in its children
+TEST_F(MapMergeTest, GroupDifferenceInMatchingEntity)
 {
     auto originalResource = GlobalMapResourceManager().createFromPath("maps/merging_groups_1.mapx");
     EXPECT_TRUE(originalResource->load()) << "Test map not found";
@@ -907,6 +908,40 @@ TEST_F(MapMergeTest, GroupMemberDifference)
     auto membershipCountMismatches = std::count_if(result->selectionGroupDifferences.begin(), result->selectionGroupDifferences.end(),
         [&](const ComparisonResult::GroupDifference& diff) { return diff.type == ComparisonResult::GroupDifference::Type::MembershipCountMismatch; });
     EXPECT_EQ(membershipCountMismatches, 1);
+}
+
+// Entity with no changed geometry, entity itself has different group membership
+TEST_F(MapMergeTest, GroupDifferenceOfMatchingEntity)
+{
+    auto originalResource = GlobalMapResourceManager().createFromPath("maps/merging_groups_1.mapx");
+    EXPECT_TRUE(originalResource->load()) << "Test map not found";
+
+    auto changedResource = GlobalMapResourceManager().createFromPath("maps/merging_groups_1.mapx");
+    EXPECT_TRUE(changedResource->load()) << "Test map not found";
+
+    auto result = GraphComparer::Compare(changedResource->getRootNode(), originalResource->getRootNode());
+    EXPECT_TRUE(result->selectionGroupDifferences.empty()) << "Unchanged resource should be the same as the original";
+
+    // Create a group from 3 defined brushes in the one map
+    auto& changedGroupManager = changedResource->getRootNode()->getSelectionGroupManager();
+    auto changedGroup = changedGroupManager.createSelectionGroup();
+
+    // This entity already forms a group with light, add another group on top of that
+    auto funcStatic = algorithm::getEntityByName(changedResource->getRootNode(), "expandable");
+    auto brush11 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(originalResource->getRootNode()), "textures/numbers/11");
+
+    changedGroup->addNode(funcStatic);
+    changedGroup->addNode(brush11);
+
+    // Compare the unchanged map to the one with the new group
+    result = GraphComparer::Compare(changedResource->getRootNode(), originalResource->getRootNode());
+
+    // We should get 2 differences: one for the entity node itself and one for brush 11 (both have different group membership count)
+    EXPECT_EQ(result->selectionGroupDifferences.size(), 2) << "Group difference not detected";
+
+    auto membershipCountMismatches = std::count_if(result->selectionGroupDifferences.begin(), result->selectionGroupDifferences.end(),
+        [&](const ComparisonResult::GroupDifference& diff) { return diff.type == ComparisonResult::GroupDifference::Type::MembershipCountMismatch; });
+    EXPECT_EQ(membershipCountMismatches, 2);
 }
 
 }
