@@ -7,6 +7,7 @@
 #include "iselectiongroup.h"
 #include "icomparablenode.h"
 #include "math/Hash.h"
+#include "scenelib.h"
 #include "string/string.h"
 #include "command/ExecutionNotPossible.h"
 
@@ -320,16 +321,36 @@ GraphComparer::Fingerprints GraphComparer::collectEntityFingerprints(const INode
 
 void GraphComparer::compareSelectionGroups(ComparisonResult& result)
 {
-    // Compare all matching entities first, their geometry is matching up
+    // Compare all matching entities first, their primitives are matching
     for (const auto& matchingEntity : result.equivalentEntities)
     {
         compareSelectionGroups(result, matchingEntity.sourceNode, matchingEntity.baseNode);
+
+        // Each node of the matching source entity must have a counter-part in the base entity
+        auto sourcePrimitives = collectPrimitiveFingerprints(matchingEntity.sourceNode);
+        auto basePrimitives = collectPrimitiveFingerprints(matchingEntity.baseNode);
+
+        for (const auto& pair : sourcePrimitives)
+        {
+            // Look up the counterart in the base map and compare
+            const auto& sourcePrimitive = pair.second;
+            auto counterpart = basePrimitives.find(pair.first);
+
+            if (counterpart != basePrimitives.end())
+            {
+                const auto& basePrimitive = counterpart->second;
+
+                compareSelectionGroups(result, sourcePrimitive, basePrimitive);
+            }
+        }
     }
+
+    // Compare mismatching source entities
 }
 
 void GraphComparer::compareSelectionGroups(ComparisonResult& result, const INodePtr& sourceNode, const INodePtr& baseNode)
 {
-    // Entities really should be group selectable
+    // The nodes should be group selectable
     assert(std::dynamic_pointer_cast<IGroupSelectable>(sourceNode));
     assert(std::dynamic_pointer_cast<IGroupSelectable>(baseNode));
 

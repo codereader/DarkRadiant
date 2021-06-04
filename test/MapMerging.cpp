@@ -896,8 +896,17 @@ TEST_F(MapMergeTest, GroupMemberDifference)
     changedGroup->addNode(brush14); // one additional brush
 
     result = GraphComparer::Compare(changedResource->getRootNode(), originalResource->getRootNode());
-    EXPECT_EQ(result->selectionGroupDifferences.size(), 1) << "Group difference not detected";
-    EXPECT_EQ(result->selectionGroupDifferences.front().type, ComparisonResult::GroupDifference::Type::GroupMemberMismatch) << "Group difference not detected";
+
+    // We should get 4 differences: one for each brush (brush11/12/13 and the additional brush14)
+    EXPECT_EQ(result->selectionGroupDifferences.size(), 4) << "Group difference not detected";
+
+    auto groupMemberMismatches = std::count_if(result->selectionGroupDifferences.begin(), result->selectionGroupDifferences.end(),
+        [&](const ComparisonResult::GroupDifference& diff) { return diff.type == ComparisonResult::GroupDifference::Type::GroupMemberMismatch; });
+    EXPECT_EQ(groupMemberMismatches, 3);
+
+    auto membershipCountMismatches = std::count_if(result->selectionGroupDifferences.begin(), result->selectionGroupDifferences.end(),
+        [&](const ComparisonResult::GroupDifference& diff) { return diff.type == ComparisonResult::GroupDifference::Type::MembershipCountMismatch; });
+    EXPECT_EQ(membershipCountMismatches, 1);
 }
 
 }
