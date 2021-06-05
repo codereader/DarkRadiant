@@ -11,11 +11,13 @@
 #include "scenelib.h"
 #include "scene/merge/GraphComparer.h"
 #include "scene/merge/MergeOperation.h"
+#include "scene/merge/SelectionGroupMerger.h"
 
 namespace test
 {
 
 using MapMergeTest = RadiantTest;
+using SelectionGroupMergeTest = RadiantTest;
 
 TEST_F(MapMergeTest, BrushFingerprint)
 {
@@ -1062,6 +1064,51 @@ TEST_F(MapMergeTest, GroupDifferenceOfMismatchingEntity)
     auto membershipCountMismatches = std::count_if(result->selectionGroupDifferences.begin(), result->selectionGroupDifferences.end(),
         [&](const ComparisonResult::GroupDifference& diff) { return diff.type == ComparisonResult::GroupDifference::Type::MembershipCountMismatch; });
     EXPECT_EQ(membershipCountMismatches, 2);
+}
+
+inline bool hasChange(const std::vector<SelectionGroupMerger::Change>& log, 
+    const std::function<bool(const SelectionGroupMerger::Change&)>& predicate)
+{
+    return std::find_if(log.begin(), log.end(), predicate) != log.end();
+}
+
+inline bool changeCountByType(const std::vector<SelectionGroupMerger::Change>& log,
+    SelectionGroupMerger::Change::Type type)
+{
+    return std::count_if(log.begin(), log.end(), [=](const SelectionGroupMerger::Change& change)
+    {
+        return change.type == type;
+    });
+}
+
+inline std::unique_ptr<SelectionGroupMerger> setupMerger(const std::string& sourceMap, const std::string& baseMap)
+{
+    auto originalResource = GlobalMapResourceManager().createFromPath(baseMap);
+    EXPECT_TRUE(originalResource->load()) << "Test map not found: " << baseMap;
+
+    auto changedResource = GlobalMapResourceManager().createFromPath(sourceMap);
+    EXPECT_TRUE(changedResource->load()) << "Test map not found: " << sourceMap;
+
+    auto result = GraphComparer::Compare(changedResource->getRootNode(), originalResource->getRootNode());
+    auto operation = MergeOperation::CreateFromComparisonResult(*result);
+    operation->setMergeSelectionGroups(false); // we do this manually
+    operation->applyActions();
+
+    return std::make_unique<SelectionGroupMerger>(result->getSourceRootNode(), result->getBaseRootNode());
+}
+
+// A group has been dissolved in the changed map
+TEST_F(SelectionGroupMergeTest, GroupRemoved)
+{
+    auto merger = setupMerger("maps/merging_groups_2.mapx", "maps/merging_groups_1.mapx");
+
+    merger->adjustBaseGroups();
+
+    EXPECT_EQ(changeCountByType(merger->getChangeLog(), SelectionGroupMerger::Change::Type::BaseGroupRemoved), 1);
+    EXPECT_TRUE(hasChange(merger->getChangeLog(), [](const SelectionGroupMerger::Change& change)
+    {
+        return change.type == SelectionGroupMerger::Change::Type::BaseGroupRemoved;
+    }));
 }
 
 }

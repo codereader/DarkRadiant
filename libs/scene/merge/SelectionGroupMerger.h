@@ -23,6 +23,23 @@ namespace merge
  */
 class SelectionGroupMerger
 {
+public:
+    struct Change
+    {
+        enum class Type
+        {
+            NodeAddedToGroup,
+            NodeRemovedFromGroup,
+            BaseGroupCreated,
+            BaseGroupRemoved, 
+            NodeGroupsReordered,
+        };
+
+        std::size_t groupId;
+        INodePtr member;
+        Type type;
+    };
+
 private:
     IMapRootNodePtr _sourceRoot;
     IMapRootNodePtr _baseRoot;
@@ -36,8 +53,10 @@ private:
     std::vector<std::size_t> _baseGroupIdsToRemove;
 
     std::stringstream _log;
+    std::vector<Change> _changes;
 
 public:
+
     SelectionGroupMerger(const IMapRootNodePtr& sourceRoot, const IMapRootNodePtr& baseRoot) :
         _sourceRoot(sourceRoot),
         _baseRoot(baseRoot),
@@ -48,6 +67,11 @@ public:
     std::string getLogMessages() const
     {
         return _log.str();
+    }
+
+    const std::vector<Change>& getChangeLog() const
+    {
+        return _changes;
     }
 
     void adjustBaseGroups()
@@ -132,6 +156,13 @@ private:
 
         for (const auto& node : nodesToRemove)
         {
+            _changes.emplace_back(Change
+            {
+                group.getId(),
+                node,
+                Change::Type::NodeRemovedFromGroup
+            });
+
             _log << "Removing node " << node->name() << " from group " << 
                 group.getId() << ", since it is not exclusive to the base map." << std::endl;
 
@@ -141,6 +172,13 @@ private:
         if (group.size() < 2)
         {
             _log << "Base group " << group.getId() << " ends up with less than two members and is marked for removal." << std::endl;
+
+            _changes.emplace_back(Change
+            {
+                group.getId(),
+                INodePtr(),
+                Change::Type::BaseGroupRemoved
+            });
 
             _baseGroupIdsToRemove.push_back(group.getId());
         }
@@ -158,6 +196,13 @@ private:
             _log << "Creating group with ID " << group.getId() << " in the base map" << std::endl;
 
             baseGroup = _baseManager.createSelectionGroup(group.getId());
+
+            _changes.emplace_back(Change
+            {
+                group.getId(),
+                INodePtr(),
+                Change::Type::BaseGroupCreated
+            });
         }
 
         // Ensure the correct members are in the group, if they are available in the map
@@ -184,12 +229,26 @@ private:
         {
             _log << "Removing node " << pair.second->name() << " from group " << group.getId() << std::endl;
             baseGroup->removeNode(pair.second);
+
+            _changes.emplace_back(Change
+            {
+                group.getId(),
+                pair.second,
+                Change::Type::NodeRemovedFromGroup
+            });
         }
 
         for (const auto& pair : membersToBeAdded)
         {
             _log << "Adding node " << pair.second->name() << " to group " << group.getId() << std::endl;
             baseGroup->addNode(pair.second);
+
+            _changes.emplace_back(Change
+            {
+                group.getId(),
+                pair.second,
+                Change::Type::NodeAddedToGroup
+            });
         }
     }
 
@@ -235,6 +294,13 @@ private:
 
                 // Re-assign the group to the sorted set
                 selection::assignNodeToSelectionGroups(node, copiedSet);
+
+                _changes.emplace_back(Change
+                {
+                    0,
+                    node,
+                    Change::Type::NodeGroupsReordered
+                });
             }
 
             return true;
