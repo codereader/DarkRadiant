@@ -220,9 +220,9 @@ void MergeControlDialog::updateControlSensitivity()
     findNamedObject<wxButton>(this, "AbortMergeButton")->Enable(mergeInProgress);
     findNamedObject<wxButton>(this, "FinishMergeButton")->Enable(mergeInProgress);
     findNamedObject<wxButton>(this, "LoadAndCompareButton")->Enable(!mergeInProgress && !sourceMapPath.empty());
+    findNamedObject<wxWindow>(this, "SummaryPanel")->Enable(mergeInProgress);
     findNamedObject<wxWindow>(this, "BaseMapFilename")->Enable(!mergeInProgress);
     findNamedObject<wxWindow>(this, "MergeMapFilename")->Enable(!mergeInProgress);
-
     findNamedObject<wxButton>(this, "RejectSelectionButton")->Enable(mergeInProgress && numSelectedMergeNodes > 0);
 }
 
