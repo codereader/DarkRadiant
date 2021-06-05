@@ -142,6 +142,8 @@
     <ClInclude Include="..\..\libs\scene\merge\GraphComparer.h" />
     <ClInclude Include="..\..\libs\scene\merge\MergeAction.h" />
     <ClInclude Include="..\..\libs\scene\merge\MergeOperation.h" />
+    <ClInclude Include="..\..\libs\scene\merge\NodeUtils.h" />
+    <ClInclude Include="..\..\libs\scene\merge\SelectionGroupMerger.h" />
     <ClInclude Include="..\..\libs\scene\ModelBreakdown.h" />
     <ClInclude Include="..\..\libs\scene\ModelFinder.h" />
     <ClInclude Include="..\..\libs\scene\Node.h" />

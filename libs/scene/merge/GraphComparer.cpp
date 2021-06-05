@@ -10,23 +10,13 @@
 #include "scenelib.h"
 #include "string/string.h"
 #include "command/ExecutionNotPossible.h"
+#include "NodeUtils.h"
 
 namespace scene
 {
 
 namespace merge
 {
-
-namespace
-{
-    inline std::string getEntityName(const INodePtr& node)
-    {
-        assert(node->getNodeType() == INode::Type::Entity);
-        auto entity = Node_getEntity(node);
-
-        return entity->isWorldspawn() ? "worldspawn" : entity->getKeyValue("name");
-    }
-}
 
 ComparisonResult::Ptr GraphComparer::Compare(const IMapRootNodePtr& source, const IMapRootNodePtr& base)
 {
@@ -56,7 +46,7 @@ ComparisonResult::Ptr GraphComparer::Compare(const IMapRootNodePtr& source, cons
         }
         else
         {
-            auto entityName = getEntityName(sourceEntity.second);
+            auto entityName = NodeUtils::GetEntityName(sourceEntity.second);
             sourceMismatches.emplace(entityName, EntityMismatch{ sourceEntity.first, sourceEntity.second, entityName });
         }
     }
@@ -69,7 +59,7 @@ ComparisonResult::Ptr GraphComparer::Compare(const IMapRootNodePtr& source, cons
         // Matching nodes have already been checked in the above loop
         if (sourceEntities.count(baseEntity.first) == 0)
         {
-            auto entityName = getEntityName(baseEntity.second);
+            auto entityName = NodeUtils::GetEntityName(baseEntity.second);
             baseMismatches.emplace(entityName, EntityMismatch{ baseEntity.first, baseEntity.second, entityName });
         }
     }
@@ -435,20 +425,7 @@ std::string GraphComparer::calculateGroupFingerprint(const selection::ISelection
     std::vector<std::string> memberFingerprints(group->size());
     group->foreachNode([&](const INodePtr& member)
     {
-        if (member->getNodeType() == INode::Type::Entity)
-        {
-            // Group links between entities should use the entity's name to check for equivalence
-            // even if the entity has changed key values or primitives, the link is intact when the name is equal
-            memberFingerprints.emplace_back(getEntityName(member));
-            return;
-        }
-
-        auto comparable = std::dynamic_pointer_cast<IComparableNode>(member);
-
-        if (comparable)
-        {
-            memberFingerprints.emplace_back(comparable->getFingerprint());
-        }
+        memberFingerprints.emplace_back(NodeUtils::GetGroupMemberFingerprint(member));
     });
 
     // Sort the fingerprints to be insensitive against actual member node ordering

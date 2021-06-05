@@ -1,5 +1,6 @@
 #include "MergeOperation.h"
 #include "MergeAction.h"
+#include "SelectionGroupMerger.h"
 
 namespace scene
 {
@@ -102,7 +103,9 @@ void MergeOperation::applyActions()
 
     if (_mergeSelectionGroups)
     {
-        // TODO
+        SelectionGroupMerger merger(_sourceRoot, _baseRoot);
+
+        merger.adjustBaseGroups();
     }
 }
 
