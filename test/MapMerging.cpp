@@ -1241,4 +1241,73 @@ TEST_F(SelectionGroupMergeTest, GroupInsertion)
     EXPECT_TRUE(merger->getChangeLog().empty());
 }
 
+// Changed map introduces light_2 and expandable1
+// Groups: [[light_2+expandable1] + [light_1+expandable]]
+TEST_F(SelectionGroupMergeTest, NewEntitiesWithGroups)
+{
+    auto merger = setupMerger("maps/merging_groups_5.mapx", "maps/merging_groups_1.mapx");
+
+    auto light_1 = algorithm::getEntityByName(merger->getBaseRoot(), "light_1");
+    auto light_2 = algorithm::getEntityByName(merger->getBaseRoot(), "light_2");
+    auto expandable = algorithm::getEntityByName(merger->getBaseRoot(), "expandable");
+    auto expandable1 = algorithm::getEntityByName(merger->getBaseRoot(), "expandable1");
+
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(light_1)->getGroupIds().size(), 1);
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(expandable)->getGroupIds().size(), 1);
+
+    // Groups of the new nodes haven't been imported yet
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(light_2)->getGroupIds().size(), 0);
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(expandable1)->getGroupIds().size(), 0);
+
+    merger->adjustBaseGroups();
+
+    // 2 new groups in this map
+    EXPECT_EQ(changeCountByType(merger->getChangeLog(), SelectionGroupMerger::Change::Type::BaseGroupCreated), 2);
+    EXPECT_EQ(changeCountByType(merger->getChangeLog(), SelectionGroupMerger::Change::Type::BaseGroupRemoved), 0);
+
+    // Check the new group membership counts
+    auto light1Groups = std::dynamic_pointer_cast<IGroupSelectable>(light_1)->getGroupIds();
+    auto light2Groups = std::dynamic_pointer_cast<IGroupSelectable>(light_2)->getGroupIds();
+    auto expandableGroups = std::dynamic_pointer_cast<IGroupSelectable>(expandable)->getGroupIds();
+    auto expandable1Groups = std::dynamic_pointer_cast<IGroupSelectable>(expandable1)->getGroupIds();
+
+    EXPECT_EQ(light1Groups.size(), 2);
+    EXPECT_EQ(light2Groups.size(), 2);
+    EXPECT_EQ(expandableGroups.size(), 2);
+    EXPECT_EQ(expandable1Groups.size(), 2);
+
+    // Check the exact groups of light_2
+    auto& baseManager = merger->getBaseRoot()->getSelectionGroupManager();
+
+    auto firstGroup = baseManager.getSelectionGroup(light2Groups[0]);
+    EXPECT_TRUE(groupContains(firstGroup, light_2));
+    EXPECT_TRUE(groupContains(firstGroup, expandable1));
+    EXPECT_FALSE(groupContains(firstGroup, light_1));
+    EXPECT_FALSE(groupContains(firstGroup, expandable));
+
+    auto secondGroup = baseManager.getSelectionGroup(light2Groups[1]);
+    EXPECT_TRUE(groupContains(secondGroup, light_1));
+    EXPECT_TRUE(groupContains(secondGroup, expandable));
+    EXPECT_TRUE(groupContains(secondGroup, light_2));
+    EXPECT_TRUE(groupContains(secondGroup, expandable1));
+
+    // Check the exact groups of light_1
+    firstGroup = baseManager.getSelectionGroup(light1Groups[0]);
+    EXPECT_TRUE(groupContains(firstGroup, light_1));
+    EXPECT_TRUE(groupContains(firstGroup, expandable));
+    EXPECT_FALSE(groupContains(firstGroup, light_2));
+    EXPECT_FALSE(groupContains(firstGroup, expandable1));
+
+    secondGroup = baseManager.getSelectionGroup(light1Groups[1]);
+    EXPECT_TRUE(groupContains(secondGroup, light_1));
+    EXPECT_TRUE(groupContains(secondGroup, expandable));
+    EXPECT_TRUE(groupContains(secondGroup, light_2));
+    EXPECT_TRUE(groupContains(secondGroup, expandable1));
+
+    // Run another merger, it shouldn't find any actions to take
+    merger = std::make_unique<SelectionGroupMerger>(merger->getSourceRoot(), merger->getBaseRoot());
+    merger->adjustBaseGroups();
+    EXPECT_TRUE(merger->getChangeLog().empty());
+}
+
 }
