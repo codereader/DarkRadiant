@@ -1310,4 +1310,120 @@ TEST_F(SelectionGroupMergeTest, NewEntitiesWithGroups)
     EXPECT_TRUE(merger->getChangeLog().empty());
 }
 
+// Group of [[Brush8+Brush8]+func_static_8] has been dissolved
+// [Brush8+Brush8] have been deleted, but have been kept by the user during merge
+// func_static_8 has been grouped with [[Brush7+Brush7]+func_static_7]
+TEST_F(SelectionGroupMergeTest, BrushesKeptDuringMerge)
+{
+    auto originalResource = GlobalMapResourceManager().createFromPath("maps/merging_groups_1.mapx");
+    EXPECT_TRUE(originalResource->load()) << "Test map not found: " << "maps/merging_groups_1.mapx";
+
+    auto changedResource = GlobalMapResourceManager().createFromPath("maps/merging_groups_6.mapx");
+    EXPECT_TRUE(changedResource->load()) << "Test map not found: " << "maps/merging_groups_6.mapx";
+
+    auto result = GraphComparer::Compare(changedResource->getRootNode(), originalResource->getRootNode());
+    auto operation = MergeOperation::CreateFromComparisonResult(*result);
+
+    // Deactivate the action removing the two brushes
+    std::size_t deactivationCount = 0;
+    operation->foreachAction([&](const scene::merge::IMergeAction::Ptr& action)
+    {
+        auto brush = Node_getIBrush(action->getAffectedNode());
+        
+        if (brush && brush->hasShader("textures/numbers/8"))
+        {
+            action->deactivate();
+            deactivationCount++;
+        }
+    });
+    EXPECT_EQ(deactivationCount, 2);
+
+    operation->setMergeSelectionGroups(false); // we do this manually
+    operation->applyActions();
+
+    auto merger = std::make_unique<SelectionGroupMerger>(result->getSourceRootNode(), result->getBaseRootNode());
+
+    auto func_static_7 = algorithm::getEntityByName(merger->getBaseRoot(), "func_static_7");
+    auto func_static_8 = algorithm::getEntityByName(merger->getBaseRoot(), "func_static_8");
+    auto brush7 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(merger->getBaseRoot()), "textures/numbers/7");
+    auto brush8 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(merger->getBaseRoot()), "textures/numbers/8");
+
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(brush7)->getGroupIds().size(), 2);
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(brush8)->getGroupIds().size(), 2);
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(func_static_7)->getGroupIds().size(), 1);
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(func_static_8)->getGroupIds().size(), 1);
+
+    merger->adjustBaseGroups();
+
+    // 1 added group
+    EXPECT_EQ(changeCountByType(merger->getChangeLog(), SelectionGroupMerger::Change::Type::BaseGroupCreated), 1);
+    EXPECT_EQ(changeCountByType(merger->getChangeLog(), SelectionGroupMerger::Change::Type::BaseGroupRemoved), 0);
+
+    // Check the new group membership counts
+    auto funcStatic7Groups = std::dynamic_pointer_cast<IGroupSelectable>(func_static_7)->getGroupIds();
+    auto funcStatic8Groups = std::dynamic_pointer_cast<IGroupSelectable>(func_static_8)->getGroupIds();
+    auto brush7Groups = std::dynamic_pointer_cast<IGroupSelectable>(brush7)->getGroupIds();
+    auto brush8Groups = std::dynamic_pointer_cast<IGroupSelectable>(brush8)->getGroupIds();
+
+    EXPECT_EQ(funcStatic7Groups.size(), 2); // has been grouped with func_static_8 (had one group before)
+    EXPECT_EQ(funcStatic8Groups.size(), 1); // has been grouped with func_static_7
+    EXPECT_EQ(brush7Groups.size(), 3); // one additional group with func_static_8
+    // The group of brush8 with func_static_8 should've been trimmed down but it's still there, so the count is 2
+    EXPECT_EQ(brush8Groups.size(), 2); // two groups remaining, with the second brush8.
+
+    auto& baseManager = merger->getBaseRoot()->getSelectionGroupManager();
+
+    // Check the exact groups of func_static_7
+    auto firstGroup = baseManager.getSelectionGroup(funcStatic7Groups[0]);
+    EXPECT_TRUE(groupContains(firstGroup, func_static_7));
+    EXPECT_TRUE(groupContains(firstGroup, brush7));
+    EXPECT_FALSE(groupContains(firstGroup, brush8));
+    EXPECT_FALSE(groupContains(firstGroup, func_static_8));
+
+    auto secondGroup = baseManager.getSelectionGroup(funcStatic7Groups[1]);
+    EXPECT_TRUE(groupContains(secondGroup, func_static_7));
+    EXPECT_TRUE(groupContains(secondGroup, brush7));
+    EXPECT_TRUE(groupContains(secondGroup, func_static_8));
+    EXPECT_FALSE(groupContains(secondGroup, brush8));
+
+    // Check the exact groups of func_static_8
+    firstGroup = baseManager.getSelectionGroup(funcStatic8Groups[0]);
+    EXPECT_TRUE(groupContains(firstGroup, func_static_8));
+    EXPECT_TRUE(groupContains(firstGroup, func_static_7));
+    EXPECT_TRUE(groupContains(firstGroup, brush7));
+    EXPECT_FALSE(groupContains(firstGroup, brush8));
+
+    // Check the exact groups of brush "8"
+    firstGroup = baseManager.getSelectionGroup(brush8Groups[0]);
+    EXPECT_TRUE(groupContains(firstGroup, brush8));
+    EXPECT_FALSE(groupContains(firstGroup, brush7));
+    EXPECT_FALSE(groupContains(firstGroup, func_static_7));
+    EXPECT_FALSE(groupContains(firstGroup, func_static_8));
+
+    secondGroup = baseManager.getSelectionGroup(brush8Groups[1]);
+    EXPECT_TRUE(groupContains(firstGroup, brush8));
+    EXPECT_FALSE(groupContains(firstGroup, brush7));
+    EXPECT_FALSE(groupContains(firstGroup, func_static_7));
+    EXPECT_FALSE(groupContains(firstGroup, func_static_8));
+
+    std::set<std::string> firstGroupNodes;
+    std::set<std::string> secondGroupNodes;
+    firstGroup->foreachNode([&](const scene::INodePtr& node)
+    {
+        firstGroupNodes.emplace(NodeUtils::GetGroupMemberFingerprint(node));
+    });
+    secondGroup->foreachNode([&](const scene::INodePtr& node)
+    {
+        secondGroupNodes.emplace(NodeUtils::GetGroupMemberFingerprint(node));
+    });
+
+    // These two groups are redundant after func_static_8 has dropped out
+    EXPECT_EQ(firstGroupNodes, secondGroupNodes);
+
+    // Run another merger, it shouldn't find any actions to take
+    merger = std::make_unique<SelectionGroupMerger>(merger->getSourceRoot(), merger->getBaseRoot());
+    merger->adjustBaseGroups();
+    EXPECT_TRUE(merger->getChangeLog().empty());
+}
+
 }
