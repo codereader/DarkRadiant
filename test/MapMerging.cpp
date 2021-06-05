@@ -1072,7 +1072,7 @@ inline bool hasChange(const std::vector<SelectionGroupMerger::Change>& log,
     return std::find_if(log.begin(), log.end(), predicate) != log.end();
 }
 
-inline bool changeCountByType(const std::vector<SelectionGroupMerger::Change>& log,
+inline std::size_t changeCountByType(const std::vector<SelectionGroupMerger::Change>& log,
     SelectionGroupMerger::Change::Type type)
 {
     return std::count_if(log.begin(), log.end(), [=](const SelectionGroupMerger::Change& change)
@@ -1097,18 +1097,148 @@ inline std::unique_ptr<SelectionGroupMerger> setupMerger(const std::string& sour
     return std::make_unique<SelectionGroupMerger>(result->getSourceRootNode(), result->getBaseRootNode());
 }
 
-// A group has been dissolved in the changed map
+inline bool groupContains(const selection::ISelectionGroupPtr& group, const scene::INodePtr& node)
+{
+    bool found = false;
+
+    group->foreachNode([&](const scene::INodePtr& member) 
+    { 
+        if (member == node) found = true; 
+    });
+
+    return found;
+}
+
+// The group containing the 1 brushes has been dissolved in the changed map
 TEST_F(SelectionGroupMergeTest, GroupRemoved)
 {
     auto merger = setupMerger("maps/merging_groups_2.mapx", "maps/merging_groups_1.mapx");
 
+    // Worldspawn Brush with "1" should be part of 1 group
+    auto brush1 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(merger->getBaseRoot()), "textures/numbers/1");
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(brush1)->getGroupIds().size(), 2);
+
     merger->adjustBaseGroups();
 
+    // Worldspawn Brush with "1" should no longer be part of 1 group
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(brush1)->getGroupIds().size(), 1);
+
+    EXPECT_EQ(changeCountByType(merger->getChangeLog(), SelectionGroupMerger::Change::Type::BaseGroupCreated), 0);
     EXPECT_EQ(changeCountByType(merger->getChangeLog(), SelectionGroupMerger::Change::Type::BaseGroupRemoved), 1);
-    EXPECT_TRUE(hasChange(merger->getChangeLog(), [](const SelectionGroupMerger::Change& change)
-    {
-        return change.type == SelectionGroupMerger::Change::Type::BaseGroupRemoved;
-    }));
+
+    // Run another merger, it shouldn't find any actions to take
+    merger = std::make_unique<SelectionGroupMerger>(merger->getSourceRoot(), merger->getBaseRoot());
+    merger->adjustBaseGroups();
+    EXPECT_TRUE(merger->getChangeLog().empty());
+}
+
+// Brushes 1 & 2 have been grouped together, brushes 15/16/17/18 form a new group
+TEST_F(SelectionGroupMergeTest, GroupAdded)
+{
+    auto merger = setupMerger("maps/merging_groups_3.mapx", "maps/merging_groups_1.mapx");
+
+    auto brush15 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(merger->getBaseRoot()), "textures/numbers/15");
+    auto brush16 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(merger->getBaseRoot()), "textures/numbers/16");
+    auto brush17 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(merger->getBaseRoot()), "textures/numbers/17");
+    auto brush18 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(merger->getBaseRoot()), "textures/numbers/18");
+
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(brush15)->getGroupIds().size(), 0);
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(brush16)->getGroupIds().size(), 0);
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(brush17)->getGroupIds().size(), 0);
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(brush18)->getGroupIds().size(), 0);
+
+    // Verify the other targets
+    auto brush1 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(merger->getBaseRoot()), "textures/numbers/1");
+    auto brush2 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(merger->getBaseRoot()), "textures/numbers/2");
+    auto funcStatic1 = algorithm::getEntityByName(merger->getBaseRoot(), "func_static_1");
+    auto funcStatic2 = algorithm::getEntityByName(merger->getBaseRoot(), "func_static_2");
+
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(brush1)->getGroupIds().size(), 2); // worldspawn brush has 2 groups
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(brush2)->getGroupIds().size(), 2); // worldspawn brush has 2 groups
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(funcStatic1)->getGroupIds().size(), 1); // func_static has 1 group
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(funcStatic2)->getGroupIds().size(), 1); // func_static has 1 group
+
+    merger->adjustBaseGroups();
+
+    // 2 new groups in this map
+    EXPECT_EQ(changeCountByType(merger->getChangeLog(), SelectionGroupMerger::Change::Type::BaseGroupCreated), 2);
+    EXPECT_EQ(changeCountByType(merger->getChangeLog(), SelectionGroupMerger::Change::Type::BaseGroupRemoved), 0);
+    
+    // Brushes 15/16/17/18 are now in a group
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(brush15)->getGroupIds().size(), 1);
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(brush16)->getGroupIds().size(), 1);
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(brush17)->getGroupIds().size(), 1);
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(brush18)->getGroupIds().size(), 1);
+
+    // It must be the same group
+    auto groupId = std::dynamic_pointer_cast<IGroupSelectable>(brush15)->getGroupIds().front();
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(brush16)->getGroupIds().front(), groupId);
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(brush17)->getGroupIds().front(), groupId);
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(brush18)->getGroupIds().front(), groupId);
+
+    // Verify the other changed nodes
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(brush1)->getGroupIds().size(), 3); // worldspawn brush now has 3 groups
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(brush2)->getGroupIds().size(), 3); // worldspawn brush now has 3 groups
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(funcStatic1)->getGroupIds().size(), 2); // func_static now has 2 group
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(funcStatic2)->getGroupIds().size(), 2); // func_static now has 2 group
+
+    // Run another merger, it shouldn't find any actions to take
+    merger = std::make_unique<SelectionGroupMerger>(merger->getSourceRoot(), merger->getBaseRoot());
+    merger->adjustBaseGroups();
+    EXPECT_TRUE(merger->getChangeLog().empty());
+}
+
+// Base: [[Brush7+Brush7] + func_static_7] => Brushes 7/7 are grouped, and this group in turn forms a group with func_static_7
+// Changed map: [[[Brush7+Brush7] + Brush17] + func_static_7] => Intermediate group of B7+B7 with B17
+TEST_F(SelectionGroupMergeTest, GroupInsertion)
+{
+    auto merger = setupMerger("maps/merging_groups_4.mapx", "maps/merging_groups_1.mapx");
+
+    auto brush7 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(merger->getBaseRoot()), "textures/numbers/7");
+    auto brush17 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(merger->getBaseRoot()), "textures/numbers/17");
+    auto funcStatic7 = algorithm::getEntityByName(merger->getBaseRoot(), "func_static_7");
+
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(brush7)->getGroupIds().size(), 2);
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(brush17)->getGroupIds().size(), 0);
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(funcStatic7)->getGroupIds().size(), 1);
+
+    merger->adjustBaseGroups();
+
+    // 2 new groups in this map, 1 old one removed
+    EXPECT_EQ(changeCountByType(merger->getChangeLog(), SelectionGroupMerger::Change::Type::BaseGroupCreated), 2);
+    EXPECT_EQ(changeCountByType(merger->getChangeLog(), SelectionGroupMerger::Change::Type::BaseGroupRemoved), 1);
+
+    // Brush 7 now has 3 group memberships
+    auto brush7Groups = std::dynamic_pointer_cast<IGroupSelectable>(brush7)->getGroupIds();
+    auto brush17Groups = std::dynamic_pointer_cast<IGroupSelectable>(brush17)->getGroupIds();
+    auto funcStatic7Groups = std::dynamic_pointer_cast<IGroupSelectable>(funcStatic7)->getGroupIds();
+
+    EXPECT_EQ(brush7Groups.size(), 3);
+    EXPECT_EQ(brush17Groups.size(), 2);
+    EXPECT_EQ(funcStatic7Groups.size(), 1);
+
+    // Check the exact groups
+    auto& baseManager = merger->getBaseRoot()->getSelectionGroupManager();
+
+    auto firstGroup = baseManager.getSelectionGroup(brush7Groups[0]);
+    EXPECT_TRUE(groupContains(firstGroup, brush7));
+    EXPECT_FALSE(groupContains(firstGroup, brush17));
+    EXPECT_FALSE(groupContains(firstGroup, funcStatic7));
+
+    auto secondGroup = baseManager.getSelectionGroup(brush7Groups[1]);
+    EXPECT_TRUE(groupContains(secondGroup, brush7));
+    EXPECT_TRUE(groupContains(secondGroup, brush17));
+    EXPECT_FALSE(groupContains(secondGroup, funcStatic7));
+
+    auto thirdGroup = baseManager.getSelectionGroup(brush7Groups[2]);
+    EXPECT_TRUE(groupContains(thirdGroup, brush7));
+    EXPECT_TRUE(groupContains(thirdGroup, brush17));
+    EXPECT_TRUE(groupContains(thirdGroup, funcStatic7));
+    
+    // Run another merger, it shouldn't find any actions to take
+    merger = std::make_unique<SelectionGroupMerger>(merger->getSourceRoot(), merger->getBaseRoot());
+    merger->adjustBaseGroups();
+    EXPECT_TRUE(merger->getChangeLog().empty());
 }
 
 }

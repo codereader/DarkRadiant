@@ -64,6 +64,16 @@ public:
         _baseManager(_baseRoot->getSelectionGroupManager())
     {}
 
+    const IMapRootNodePtr& getSourceRoot() const
+    {
+        return _sourceRoot;
+    }
+
+    const IMapRootNodePtr& getBaseRoot() const
+    {
+        return _baseRoot;
+    }
+
     std::string getLogMessages() const
     {
         return _log.str();
@@ -227,26 +237,44 @@ private:
 
         for (const auto& pair : membersToBeRemoved)
         {
-            _log << "Removing node " << pair.second->name() << " from group " << group.getId() << std::endl;
-            baseGroup->removeNode(pair.second);
+            // Look up the base node with that fingerprint
+            auto baseNode = _baseNodes.find(pair.first);
+
+            if (baseNode == _baseNodes.end())
+            {
+                _log << "Could not lookup the node " << pair.second->name() << " in the base map for removal" << std::endl;
+                continue;
+            }
+
+            _log << "Removing node " << baseNode->second->name() << " from group " << baseGroup->getId() << std::endl;
+            baseGroup->removeNode(baseNode->second);
 
             _changes.emplace_back(Change
             {
                 group.getId(),
-                pair.second,
+                baseNode->second,
                 Change::Type::NodeRemovedFromGroup
             });
         }
 
         for (const auto& pair : membersToBeAdded)
         {
-            _log << "Adding node " << pair.second->name() << " to group " << group.getId() << std::endl;
-            baseGroup->addNode(pair.second);
+            // Look up the base node with that fingerprint
+            auto baseNode = _baseNodes.find(pair.first);
+
+            if (baseNode == _baseNodes.end())
+            {
+                _log << "Could not lookup the node " << pair.second->name() << " in the base map for addition" << std::endl;
+                continue;
+            }
+
+            _log << "Adding node " << baseNode->second->name() << " to group " << baseGroup->getId() << std::endl;
+            baseGroup->addNode(baseNode->second);
 
             _changes.emplace_back(Change
             {
                 group.getId(),
-                pair.second,
+                baseNode->second,
                 Change::Type::NodeAddedToGroup
             });
         }
