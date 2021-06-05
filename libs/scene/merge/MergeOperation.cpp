@@ -106,6 +106,8 @@ void MergeOperation::applyActions()
         SelectionGroupMerger merger(_sourceRoot, _baseRoot);
 
         merger.adjustBaseGroups();
+
+        rMessage() << "Group merge log: " << std::endl << merger.getLogMessages() << std::endl;
     }
 }
 

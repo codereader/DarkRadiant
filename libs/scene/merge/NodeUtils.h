@@ -36,6 +36,8 @@ public:
         {
             return comparable->getFingerprint();
         }
+
+        return std::string();
     }
 };
 

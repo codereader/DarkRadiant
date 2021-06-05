@@ -35,6 +35,8 @@ private:
 
     std::vector<std::size_t> _baseGroupIdsToRemove;
 
+    std::stringstream _log;
+
 public:
     SelectionGroupMerger(const IMapRootNodePtr& sourceRoot, const IMapRootNodePtr& baseRoot) :
         _sourceRoot(sourceRoot),
@@ -42,6 +44,11 @@ public:
         _sourceManager(_sourceRoot->getSelectionGroupManager()),
         _baseManager(_baseRoot->getSelectionGroupManager())
     {}
+
+    std::string getLogMessages() const
+    {
+        return _log.str();
+    }
 
     void adjustBaseGroups()
     {
@@ -54,6 +61,8 @@ public:
             return true;
         });
 
+        _log << "Got " << _sourceNodes.size() << " groups in the source map" << std::endl;
+
         _baseRoot->foreachNode([&](const INodePtr& node)
         {
             if (!std::dynamic_pointer_cast<IGroupSelectable>(node)) return true;
@@ -62,12 +71,20 @@ public:
             return true;
         });
 
+        _log << "Got " << _baseNodes.size() << " in the base map" << std::endl;
+
+        _log << "Start Processing base groups" << std::endl;
+
         // Remove all base groups not present in the source scene, unless we decide to keep it
         _baseManager.foreachSelectionGroup(
             std::bind(&SelectionGroupMerger::processBaseGroup, this, std::placeholders::_1));
 
+        _log << "Start Processing source groups" << std::endl;
+
         _sourceManager.foreachSelectionGroup(
             std::bind(&SelectionGroupMerger::processSourceGroup, this, std::placeholders::_1));
+
+        _log << "Removing " << _baseGroupIdsToRemove.size() << " base groups that have been marked for removal." << std::endl;
 
         // Remove all base groups that are no longer necessary
         for (auto baseGroupId : _baseGroupIdsToRemove)
@@ -89,7 +106,11 @@ private:
         auto sourceGroup = _sourceManager.getSelectionGroup(group.getId());
 
         // Existing groups are ok, leave them, conflicts will be resolved in processSourceGroup
-        if (sourceGroup) return;
+        if (sourceGroup)
+        {
+            _log << "Base group " << group.getId() << " is present in source too, skipping." << std::endl;
+            return;
+        }
 
         // This base group is no longer present in the source scene,
         // we'll remove it, unless it's referenced by nodes which are base-only
@@ -111,22 +132,31 @@ private:
 
         for (const auto& node : nodesToRemove)
         {
+            _log << "Removing node " << node->name() << " from group " << 
+                group.getId() << ", since it is not exclusive to the base map." << std::endl;
+
             group.removeNode(node);
         }
 
         if (group.size() < 2)
         {
+            _log << "Base group " << group.getId() << " ends up with less than two members and is marked for removal." << std::endl;
+
             _baseGroupIdsToRemove.push_back(group.getId());
         }
     }
 
     void processSourceGroup(selection::ISelectionGroup& group)
     {
+        _log << "Processing source group with ID: " << group.getId() << ", size: " << group.size() << std::endl;
+
         // Make sure the group exists in the base
         auto baseGroup = _baseManager.getSelectionGroup(group.getId());
 
         if (!baseGroup)
         {
+            _log << "Creating group with ID " << group.getId() << " in the base map" << std::endl;
+
             baseGroup = _baseManager.createSelectionGroup(group.getId());
         }
 
@@ -142,19 +172,23 @@ private:
         };
 
         std::set_difference(currentGroupMembers.begin(), currentGroupMembers.end(),
-            currentGroupMembers.begin(), currentGroupMembers.end(), 
+            desiredGroupMembers.begin(), desiredGroupMembers.end(),
             std::back_inserter(membersToBeRemoved), compareFingerprint);
-        std::set_difference(currentGroupMembers.begin(), currentGroupMembers.end(), 
+        std::set_difference(desiredGroupMembers.begin(), desiredGroupMembers.end(),
             currentGroupMembers.begin(), currentGroupMembers.end(), 
             std::back_inserter(membersToBeAdded), compareFingerprint);
 
+        _log << "Members to be added: " << membersToBeAdded.size() << ", members to be removed: " << membersToBeRemoved.size() << std::endl;
+
         for (const auto& pair : membersToBeRemoved)
         {
+            _log << "Removing node " << pair.second->name() << " from group " << group.getId() << std::endl;
             baseGroup->removeNode(pair.second);
         }
 
         for (const auto& pair : membersToBeAdded)
         {
+            _log << "Adding node " << pair.second->name() << " to group " << group.getId() << std::endl;
             baseGroup->addNode(pair.second);
         }
     }
@@ -180,6 +214,8 @@ private:
             baseGroupSizes.emplace(group.getId(), group.size());
         });
 
+        _log << "Checking size ordering, got " << baseGroupSizes.size() << " base groups" << std::endl;
+
         _baseRoot->foreachNode([&](const INodePtr& node)
         {
             auto selectable = std::dynamic_pointer_cast<IGroupSelectable>(node);
@@ -193,8 +229,13 @@ private:
                 return baseGroupSizes[a] < baseGroupSizes[b];
             });
 
-            // Re-assign the group to the sorted set
-            selection::assignNodeToSelectionGroups(node, copiedSet);
+            if (copiedSet != selectable->getGroupIds())
+            {
+                _log << "Group membership order in node " << node->name() << " has changed." << std::endl;
+
+                // Re-assign the group to the sorted set
+                selection::assignNodeToSelectionGroups(node, copiedSet);
+            }
 
             return true;
         });
