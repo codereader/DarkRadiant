@@ -1426,4 +1426,25 @@ TEST_F(SelectionGroupMergeTest, BrushesKeptDuringMerge)
     EXPECT_TRUE(merger->getChangeLog().empty());
 }
 
+// Checks that setting the flag "merge selection groups" in the MergeOperation is working
+TEST_F(SelectionGroupMergeTest, MergeSelectionGroupsFlag)
+{
+    auto originalResource = GlobalMapResourceManager().createFromPath("maps/merging_groups_1.mapx");
+    EXPECT_TRUE(originalResource->load()) << "Test map not found: " << "maps/merging_groups_1.mapx";
+
+    auto changedResource = GlobalMapResourceManager().createFromPath("maps/merging_groups_6.mapx");
+    EXPECT_TRUE(changedResource->load()) << "Test map not found: " << "maps/merging_groups_6.mapx";
+
+    auto result = GraphComparer::Compare(changedResource->getRootNode(), originalResource->getRootNode());
+    auto operation = MergeOperation::CreateFromComparisonResult(*result);
+    
+    operation->setMergeSelectionGroups(true);
+    operation->applyActions();
+
+    // Set up a merger class, it should find nothing to do
+    auto merger = std::make_unique<SelectionGroupMerger>(result->getSourceRootNode(), result->getBaseRootNode());
+    merger->adjustBaseGroups();
+    EXPECT_TRUE(merger->getChangeLog().empty());
+}
+
 }
