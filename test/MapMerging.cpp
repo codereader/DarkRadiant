@@ -1552,4 +1552,41 @@ TEST_F(LayerMergeTest, AddedLayer)
     EXPECT_TRUE(merger->getChangeLog().empty());
 }
 
+// The layer "8" has been removed from the changed map, the brushes with texture "8" now are part of layer "Shared" only
+TEST_F(LayerMergeTest, RemovedLayer)
+{
+    auto merger = setupLayerMerger("maps/merging_layers_3.mapx", "maps/merging_layers_1.mapx");
+
+    auto func_static_8 = algorithm::getEntityByName(merger->getBaseRoot(), "func_static_8");
+    auto brush8 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(merger->getBaseRoot()), "textures/numbers/8");
+
+    EXPECT_TRUE(nodeIsMemberOfLayer(func_static_8, { "Shared", "8" }));
+    EXPECT_TRUE(nodeIsMemberOfLayer(brush8, { "Shared", "8" }));
+
+    EXPECT_EQ(func_static_8->getLayers().size(), 2); // only these two layers
+    EXPECT_EQ(brush8->getLayers().size(), 2); // only these two layers
+
+    merger->adjustBaseLayers();
+
+    EXPECT_FALSE(merger->getChangeLog().empty());
+
+    // 1 removed layer
+    EXPECT_EQ(changeCountByType(merger->getChangeLog(), LayerMerger::Change::Type::BaseLayerCreated), 0);
+    EXPECT_EQ(changeCountByType(merger->getChangeLog(), LayerMerger::Change::Type::BaseLayerRemoved), 1);
+
+    // The "8" must be gone now
+    EXPECT_EQ(merger->getBaseRoot()->getLayerManager().getLayerID("8"), -1);
+
+    EXPECT_TRUE(nodeIsMemberOfLayer(func_static_8, { "Shared" }));
+    EXPECT_TRUE(nodeIsMemberOfLayer(brush8, { "Shared" }));
+
+    EXPECT_EQ(func_static_8->getLayers().size(), 1); // only part of "Shared"
+    EXPECT_EQ(brush8->getLayers().size(), 1); // only part of "Shared"
+
+    // Finally run another merger across the scene, it shouldn't find anything to do
+    merger = std::make_unique<LayerMerger>(merger->getSourceRoot(), merger->getBaseRoot());
+    merger->adjustBaseLayers();
+    EXPECT_TRUE(merger->getChangeLog().empty());
+}
+
 }
