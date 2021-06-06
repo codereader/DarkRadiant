@@ -93,6 +93,22 @@ GlobalSelectionSystem.foreachSelected(visitor)
 
 print('Map name is ' + GlobalMap.getMapName())
 
+print(GlobalMap.getEditMode())
+
+# Switching Map Modes
+GlobalMap.setEditMode(MapEditMode.Merge)
+GlobalMap.setEditMode(MapEditMode.Normal)
+
+# Point File Management is visible
+print(GlobalMap.showPointFile("test.lin"))
+print(GlobalMap.isPointTraceVisible())
+
+# Enumerate the point files available for the current map
+print("Point files found: " + str(len(GlobalMap.getPointFileList())))
+
+for path in GlobalMap.getPointFileList:
+	print("Pointfile: " + path)
+
 # Try to find the map's worldspawn
 worldspawn = GlobalMap.getWorldSpawn()
 
