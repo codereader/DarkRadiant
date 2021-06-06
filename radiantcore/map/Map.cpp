@@ -359,7 +359,13 @@ void Map::setEditMode(EditMode mode)
         GlobalSelectionSystem().SetMode(SelectionSystem::ePrimitive);
     }
 
+    signal_editModeChanged().emit(_editMode);
     SceneChangeNotify();
+}
+
+sigc::signal<void, IMap::EditMode>& Map::signal_editModeChanged()
+{
+    return _mapEditModeChangedSignal;
 }
 
 const scene::INodePtr& Map::getWorldspawn()
@@ -864,8 +870,10 @@ void Map::registerCommands()
     GlobalCommandSystem().addCommand("OpenMap", Map::openMap, { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
     GlobalCommandSystem().addCommand("OpenMapFromArchive", Map::openMapFromArchive, { cmd::ARGTYPE_STRING, cmd::ARGTYPE_STRING });
     GlobalCommandSystem().addCommand("ImportMap", Map::importMap);
-    GlobalCommandSystem().addCommand("StartMergeOperation", std::bind(&Map::startMergeOperation, this, std::placeholders::_1), 
+    GlobalCommandSystem().addCommand("StartMergeOperation", std::bind(&Map::startMergeOperationCmd, this, std::placeholders::_1), 
         { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL, cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
+    GlobalCommandSystem().addCommand("AbortMergeOperation", std::bind(&Map::abortMergeOperationCmd, this, std::placeholders::_1));
+    GlobalCommandSystem().addCommand("FinishMergeOperation", std::bind(&Map::finishMergeOperationCmd, this, std::placeholders::_1));
     GlobalCommandSystem().addCommand(LOAD_PREFAB_AT_CMD, std::bind(&Map::loadPrefabAt, this, std::placeholders::_1), 
         { cmd::ARGTYPE_STRING, cmd::ARGTYPE_VECTOR3, cmd::ARGTYPE_INT|cmd::ARGTYPE_OPTIONAL, cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL });
     GlobalCommandSystem().addCommand("SaveSelectedAsPrefab", Map::saveSelectedAsPrefab);
@@ -1121,7 +1129,55 @@ void Map::createMergeOperation(const scene::merge::ComparisonResult& result)
     }
 }
 
-void Map::startMergeOperation(const cmd::ArgumentList& args)
+void Map::startMergeOperation(const std::string& sourceMap)
+{
+    if (!getRoot())
+    {
+        throw cmd::ExecutionNotPossible(_("No map loaded, cannot merge"));
+    }
+
+    if (!os::fileOrDirExists(sourceMap))
+    {
+        throw cmd::ExecutionFailure(fmt::format(_("File doesn't exist: {0}"), sourceMap));
+    }
+
+    {
+        // Make sure we have a worldspawn in this map
+        UndoableCommand cmd("ensureWorldSpawn");
+        findOrInsertWorldspawn();
+    }
+
+    // Stop any pending merge operation
+    abortMergeOperation();
+
+    auto sourceMapResource = GlobalMapResourceManager().createFromPath(sourceMap);
+
+    try
+    {
+        if (sourceMapResource->load())
+        {
+            const auto& otherRoot = sourceMapResource->getRootNode();
+
+            // Compare the scenes and get the report
+            auto result = scene::merge::GraphComparer::Compare(otherRoot, getRoot());
+
+            // Create renderable merge actions
+            createMergeOperation(*result);
+
+            // Switch to merge mode
+            setEditMode(EditMode::Merge);
+
+            // Dispose of the resource, we don't need it anymore
+            sourceMapResource->clear();
+        }
+    }
+    catch (const IMapResource::OperationException& ex)
+    {
+        radiant::NotificationMessage::SendError(ex.what());
+    }
+}
+
+void Map::startMergeOperationCmd(const cmd::ArgumentList& args)
 {
     if (!getRoot())
     {
@@ -1153,6 +1209,7 @@ void Map::startMergeOperation(const cmd::ArgumentList& args)
         throw cmd::ExecutionFailure(fmt::format(_("File doesn't exist: {0}"), sourceCandidate));
     }
 
+#if false // base map handling not yet implemented
     // Do we have a second argument (base map)
     if (args.size() > 1)
     {
@@ -1163,41 +1220,19 @@ void Map::startMergeOperation(const cmd::ArgumentList& args)
             throw cmd::ExecutionFailure(fmt::format(_("File doesn't exist: {0}"), baseCandidate));
         }
     }
+#endif
 
-    {
-        // Make sure we have a worldspawn in this map
-        UndoableCommand cmd("ensureWorldSpawn");
-        findOrInsertWorldspawn();
-    }
+    startMergeOperation(sourceCandidate);
+}
 
-    // Stop any pending merge operation
+void Map::abortMergeOperationCmd(const cmd::ArgumentList& args)
+{
     abortMergeOperation();
+}
 
-    auto sourceMapResource = GlobalMapResourceManager().createFromPath(sourceCandidate);
-
-    try
-    {
-        if (sourceMapResource->load())
-        {
-            const auto& otherRoot = sourceMapResource->getRootNode();
-
-            // Compare the scenes and get the report
-            auto result = scene::merge::GraphComparer::Compare(otherRoot, getRoot());
-
-            // Create renderable merge actions
-            createMergeOperation(*result);
-
-            // Switch to merge mode
-            setEditMode(EditMode::Merge);
-
-            // Dispose of the resource, we don't need it anymore
-            sourceMapResource->clear();
-        }
-    }
-    catch (const IMapResource::OperationException& ex)
-    {
-        radiant::NotificationMessage::SendError(ex.what());
-    }
+void Map::finishMergeOperationCmd(const cmd::ArgumentList& args)
+{
+    finishMergeOperation();
 }
 
 void Map::emitMapEvent(MapEvent ev)

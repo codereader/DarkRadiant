@@ -127,13 +127,16 @@ void MergeControlDialog::onMergeSourceChanged(wxCommandEvent& ev)
 void MergeControlDialog::onLoadAndCompare(wxCommandEvent& ev)
 {
     auto sourceMapPath = findNamedObject<wxutil::PathEntry>(this, "MergeMapFilename")->getValue();
+#if false
     auto baseMapPath = findNamedObject<wxutil::PathEntry>(this, "BaseMapFilename")->getValue();
+#endif
 
     if (sourceMapPath.empty())
     {
         return;
     }
 
+#if false
     if (!baseMapPath.empty())
     { 
         GlobalCommandSystem().executeCommand("StartMergeOperation", sourceMapPath, baseMapPath);
@@ -142,6 +145,8 @@ void MergeControlDialog::onLoadAndCompare(wxCommandEvent& ev)
     {
         GlobalCommandSystem().executeCommand("StartMergeOperation", sourceMapPath);
     }
+#endif
+    GlobalMapModule().startMergeOperation(sourceMapPath);
 
     updateSummary();
     updateControlSensitivity();
@@ -234,6 +239,7 @@ void MergeControlDialog::_preHide()
     _undoHandler.disconnect();
     _redoHandler.disconnect();
     _mapEventHandler.disconnect();
+    _mapEditModeHandler.disconnect();
 
     GlobalSelectionSystem().removeObserver(this);
 }
@@ -250,6 +256,9 @@ void MergeControlDialog::_preShow()
     
     _mapEventHandler = GlobalMapModule().signal_mapEvent().connect(
         sigc::mem_fun(this, &MergeControlDialog::onMapEvent)
+    );
+    _mapEditModeHandler = GlobalMapModule().signal_editModeChanged().connect(
+        sigc::mem_fun(this, &MergeControlDialog::onMapEditModeChanged)
     );
 
     _undoHandler = GlobalUndoSystem().signal_postUndo().connect(
@@ -292,6 +301,12 @@ void MergeControlDialog::onMapEvent(IMap::MapEvent ev)
     {
         updateControlSensitivity();
     }
+}
+
+void MergeControlDialog::onMapEditModeChanged(IMap::EditMode newMode)
+{
+    updateSummary();
+    updateControlSensitivity();
 }
 
 void MergeControlDialog::updateSummary()

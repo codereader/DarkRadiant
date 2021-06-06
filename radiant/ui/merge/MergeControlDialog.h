@@ -21,6 +21,7 @@ private:
     sigc::connection _undoHandler;
     sigc::connection _redoHandler;
     sigc::connection _mapEventHandler;
+    sigc::connection _mapEditModeHandler;
 
     bool _updateNeeded;
 
@@ -56,6 +57,7 @@ private:
     void queueUpdate();
     void onIdle(wxIdleEvent& ev);
     void onMapEvent(IMap::MapEvent ev);
+    void onMapEditModeChanged(IMap::EditMode newMode);
     void updateSummary();
 
     std::size_t getNumSelectedMergeNodes();

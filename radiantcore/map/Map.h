@@ -45,6 +45,7 @@ private:
 
 	sigc::signal<void> _mapNameChangedSignal;
 	sigc::signal<void> _mapModifiedChangedSignal;
+	sigc::signal<void, EditMode> _mapEditModeChangedSignal;
 
 	// Pointer to the resource for this map
 	IMapResourcePtr _resource;
@@ -83,6 +84,8 @@ public:
 
     EditMode getEditMode() override;
     void setEditMode(EditMode mode) override;
+
+    sigc::signal<void, EditMode>& signal_editModeChanged() override;
 
 	const scene::INodePtr& getWorldspawn() override;
 	const scene::INodePtr& findOrInsertWorldspawn() override;
@@ -166,6 +169,7 @@ public:
 	void exportSelected(std::ostream& out) override;
 	void exportSelected(std::ostream& out, const MapFormatPtr& format) override;
 
+    void startMergeOperation(const std::string& sourceMap) override;
     void finishMergeOperation() override;
     void abortMergeOperation() override;
     scene::merge::IMergeOperation::Ptr getActiveMergeOperation() override;
@@ -259,7 +263,9 @@ private:
 	void loadMapResourceFromPath(const std::string& path);
 	void loadMapResourceFromArchive(const std::string& archive, const std::string& archiveRelativePath);
 
-    void startMergeOperation(const cmd::ArgumentList& args);
+    void startMergeOperationCmd(const cmd::ArgumentList& args);
+    void abortMergeOperationCmd(const cmd::ArgumentList& args);
+    void finishMergeOperationCmd(const cmd::ArgumentList& args);
     void createMergeOperation(const scene::merge::ComparisonResult& result);
 
 	void emitMapEvent(MapEvent ev);

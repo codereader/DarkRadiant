@@ -125,6 +125,9 @@ public:
     // Change the edit mode to the specified value
     virtual void setEditMode(EditMode mode) = 0;
 
+    // Signal fired when the map edit mode has been changed
+    virtual sigc::signal<void, EditMode>& signal_editModeChanged() = 0;
+
 	/**
 	 * Returns the worldspawn node of this map. The worldspawn
 	 * node is NOT created if it doesn't exist yet, so this
@@ -184,6 +187,10 @@ public:
 
     // Exports the current selection to the given output stream, using the given map format
     virtual void exportSelected(std::ostream& out, const map::MapFormatPtr& format) = 0;
+
+    // Starts a merge operation which imports differences from the given sourceMap into this one
+    // Will throw exceptions when the given map cannot be found, or this map doesn't have a root
+    virtual void startMergeOperation(const std::string& sourceMap) = 0;
 
     // When called in EditMode::Merge, this will apply the currently active set of actions
     virtual void finishMergeOperation() = 0;
