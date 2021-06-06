@@ -12,12 +12,14 @@
 #include "scene/merge/GraphComparer.h"
 #include "scene/merge/MergeOperation.h"
 #include "scene/merge/SelectionGroupMerger.h"
+#include "scene/merge/LayerMerger.h"
 
 namespace test
 {
 
 using MapMergeTest = RadiantTest;
 using SelectionGroupMergeTest = RadiantTest;
+using LayerMergeTest = RadiantTest;
 
 TEST_F(MapMergeTest, BrushFingerprint)
 {
@@ -1081,7 +1083,7 @@ inline std::size_t changeCountByType(const std::vector<SelectionGroupMerger::Cha
     });
 }
 
-inline std::unique_ptr<SelectionGroupMerger> setupMerger(const std::string& sourceMap, const std::string& baseMap)
+inline std::unique_ptr<SelectionGroupMerger> setupGroupMerger(const std::string& sourceMap, const std::string& baseMap)
 {
     auto originalResource = GlobalMapResourceManager().createFromPath(baseMap);
     EXPECT_TRUE(originalResource->load()) << "Test map not found: " << baseMap;
@@ -1112,7 +1114,7 @@ inline bool groupContains(const selection::ISelectionGroupPtr& group, const scen
 // The group containing the 1 brushes has been dissolved in the changed map
 TEST_F(SelectionGroupMergeTest, GroupRemoved)
 {
-    auto merger = setupMerger("maps/merging_groups_2.mapx", "maps/merging_groups_1.mapx");
+    auto merger = setupGroupMerger("maps/merging_groups_2.mapx", "maps/merging_groups_1.mapx");
 
     // Worldspawn Brush with "1" should be part of 1 group
     auto brush1 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(merger->getBaseRoot()), "textures/numbers/1");
@@ -1135,7 +1137,7 @@ TEST_F(SelectionGroupMergeTest, GroupRemoved)
 // Brushes 1 & 2 have been grouped together, brushes 15/16/17/18 form a new group
 TEST_F(SelectionGroupMergeTest, GroupAdded)
 {
-    auto merger = setupMerger("maps/merging_groups_3.mapx", "maps/merging_groups_1.mapx");
+    auto merger = setupGroupMerger("maps/merging_groups_3.mapx", "maps/merging_groups_1.mapx");
 
     auto brush15 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(merger->getBaseRoot()), "textures/numbers/15");
     auto brush16 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(merger->getBaseRoot()), "textures/numbers/16");
@@ -1192,7 +1194,7 @@ TEST_F(SelectionGroupMergeTest, GroupAdded)
 // Changed map: [[[Brush7+Brush7] + Brush17] + func_static_7] => Intermediate group of B7+B7 with B17
 TEST_F(SelectionGroupMergeTest, GroupInsertion)
 {
-    auto merger = setupMerger("maps/merging_groups_4.mapx", "maps/merging_groups_1.mapx");
+    auto merger = setupGroupMerger("maps/merging_groups_4.mapx", "maps/merging_groups_1.mapx");
 
     auto brush7 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(merger->getBaseRoot()), "textures/numbers/7");
     auto brush17 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(merger->getBaseRoot()), "textures/numbers/17");
@@ -1245,7 +1247,7 @@ TEST_F(SelectionGroupMergeTest, GroupInsertion)
 // Groups: [[light_2+expandable1] + [light_1+expandable]]
 TEST_F(SelectionGroupMergeTest, NewEntitiesWithGroups)
 {
-    auto merger = setupMerger("maps/merging_groups_5.mapx", "maps/merging_groups_1.mapx");
+    auto merger = setupGroupMerger("maps/merging_groups_5.mapx", "maps/merging_groups_1.mapx");
 
     auto light_1 = algorithm::getEntityByName(merger->getBaseRoot(), "light_1");
     auto light_2 = algorithm::getEntityByName(merger->getBaseRoot(), "light_2");
@@ -1444,6 +1446,41 @@ TEST_F(SelectionGroupMergeTest, MergeSelectionGroupsFlag)
     // Set up a merger class, it should find nothing to do
     auto merger = std::make_unique<SelectionGroupMerger>(result->getSourceRootNode(), result->getBaseRootNode());
     merger->adjustBaseGroups();
+    EXPECT_TRUE(merger->getChangeLog().empty());
+}
+
+std::unique_ptr<LayerMerger> setupLayerMerger(const std::string& sourceMap, const std::string& baseMap)
+{
+    auto originalResource = GlobalMapResourceManager().createFromPath(baseMap);
+    EXPECT_TRUE(originalResource->load()) << "Test map not found: " << baseMap;
+
+    auto changedResource = GlobalMapResourceManager().createFromPath(sourceMap);
+    EXPECT_TRUE(changedResource->load()) << "Test map not found: " << sourceMap;
+
+    auto result = GraphComparer::Compare(changedResource->getRootNode(), originalResource->getRootNode());
+    auto operation = MergeOperation::CreateFromComparisonResult(*result);
+
+    operation->setMergeSelectionGroups(true); // we do this manually
+    operation->applyActions();
+
+    return std::make_unique<LayerMerger>(result->getSourceRootNode(), result->getBaseRootNode());
+}
+
+// Merge operation against the same map shouldn't detect any changes
+TEST_F(LayerMergeTest, UnchangedMap)
+{
+    auto merger = setupLayerMerger("maps/merging_layers_1.mapx", "maps/merging_layers_1.mapx");
+
+    merger->adjustBaseLayers();
+    EXPECT_TRUE(merger->getChangeLog().empty());
+}
+
+// A new layer has been introduced with both new and existing nodes as members
+TEST_F(LayerMergeTest, AddedLayer)
+{
+    auto merger = setupLayerMerger("maps/merging_layers_2.mapx", "maps/merging_layers_1.mapx");
+
+    merger->adjustBaseLayers();
     EXPECT_TRUE(merger->getChangeLog().empty());
 }
 

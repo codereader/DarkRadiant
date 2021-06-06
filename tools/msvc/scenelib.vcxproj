@@ -140,6 +140,7 @@
     <ClInclude Include="..\..\libs\scene\LayerValidityCheckWalker.h" />
     <ClInclude Include="..\..\libs\scene\merge\ComparisonResult.h" />
     <ClInclude Include="..\..\libs\scene\merge\GraphComparer.h" />
+    <ClInclude Include="..\..\libs\scene\merge\LayerMerger.h" />
     <ClInclude Include="..\..\libs\scene\merge\MergeAction.h" />
     <ClInclude Include="..\..\libs\scene\merge\MergeOperation.h" />
     <ClInclude Include="..\..\libs\scene\merge\NodeUtils.h" />
