@@ -81,7 +81,7 @@
       </controlDialog>
     </layers>
     <mergeControlDialog>
-        <window xPosition="158" yPosition="241" width="400" height="290"/>
+        <window xPosition="158" yPosition="241" width="400" height="300"/>
     </mergeControlDialog>
     <textures>
       <shaderChooser>
