@@ -1466,6 +1466,30 @@ std::unique_ptr<LayerMerger> setupLayerMerger(const std::string& sourceMap, cons
     return std::make_unique<LayerMerger>(result->getSourceRootNode(), result->getBaseRootNode());
 }
 
+// Returns true if this node is (at least) member of all the given layers
+bool nodeIsMemberOfLayer(const scene::INodePtr& node, const std::set<std::string>& layerNames)
+{
+    auto& layerManager = node->getRootNode()->getLayerManager();
+    
+    std::set<std::string> nodeLayerNames;
+
+    for (auto layerId : node->getLayers())
+    {
+        nodeLayerNames.emplace(layerManager.getLayerName(layerId));
+    }
+    
+    return std::includes(layerNames.begin(), layerNames.end(), nodeLayerNames.begin(), nodeLayerNames.end());
+}
+
+inline std::size_t changeCountByType(const std::vector<LayerMerger::Change>& log,
+    LayerMerger::Change::Type type)
+{
+    return std::count_if(log.begin(), log.end(), [=](const LayerMerger::Change& change)
+    {
+        return change.type == type;
+    });
+}
+
 // Merge operation against the same map shouldn't detect any changes
 TEST_F(LayerMergeTest, UnchangedMap)
 {
@@ -1476,10 +1500,54 @@ TEST_F(LayerMergeTest, UnchangedMap)
 }
 
 // A new layer has been introduced with both new and existing nodes as members
+// func_static_6/7/8 has been added to "New Layer"
+// new_func_static, brush 0 and brush 11 have been moved to "New Layer" (all of these are new nodes)
+// func_static_6/7/8 are still members of "Shared" and "6", "7" and "8", respectively.
 TEST_F(LayerMergeTest, AddedLayer)
 {
     auto merger = setupLayerMerger("maps/merging_layers_2.mapx", "maps/merging_layers_1.mapx");
 
+    auto func_static_6 = algorithm::getEntityByName(merger->getBaseRoot(), "func_static_6");
+    auto func_static_7 = algorithm::getEntityByName(merger->getBaseRoot(), "func_static_7");
+    auto func_static_8 = algorithm::getEntityByName(merger->getBaseRoot(), "func_static_8");
+    auto new_func_static = algorithm::getEntityByName(merger->getBaseRoot(), "new_func_static");
+    auto brush11 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(merger->getBaseRoot()), "textures/numbers/11");
+    auto brush0 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(merger->getBaseRoot()), "textures/numbers/0");
+
+    EXPECT_TRUE(nodeIsMemberOfLayer(func_static_6, { "Shared", "6" }));
+    EXPECT_TRUE(nodeIsMemberOfLayer(func_static_7, { "Shared", "7" }));
+    EXPECT_TRUE(nodeIsMemberOfLayer(func_static_8, { "Shared", "8" }));
+    EXPECT_TRUE(nodeIsMemberOfLayer(brush11, { "Default" }));
+    EXPECT_TRUE(nodeIsMemberOfLayer(brush0, { "Default" }));
+    EXPECT_TRUE(nodeIsMemberOfLayer(new_func_static, { "Default" }));
+
+    EXPECT_EQ(new_func_static->getLayers().size(), 1); // only part of the active layer
+    EXPECT_EQ(brush0->getLayers().size(), 1); // only part of the active layer
+
+    merger->adjustBaseLayers();
+    
+    EXPECT_FALSE(merger->getChangeLog().empty());
+
+    // 1 created layer
+    EXPECT_EQ(changeCountByType(merger->getChangeLog(), LayerMerger::Change::Type::BaseLayerCreated), 1);
+    EXPECT_EQ(changeCountByType(merger->getChangeLog(), LayerMerger::Change::Type::BaseLayerRemoved), 0);
+
+    // The "New Layer" must exist now
+    EXPECT_NE(merger->getBaseRoot()->getLayerManager().getLayerID("New Layer"), -1);
+
+    EXPECT_TRUE(nodeIsMemberOfLayer(func_static_6, { "Shared", "6", "New Layer" }));
+    EXPECT_TRUE(nodeIsMemberOfLayer(func_static_7, { "Shared", "7", "New Layer" }));
+    EXPECT_TRUE(nodeIsMemberOfLayer(func_static_8, { "Shared", "8", "New Layer" }));
+    EXPECT_TRUE(nodeIsMemberOfLayer(brush11, { "New Layer" }));
+    EXPECT_TRUE(nodeIsMemberOfLayer(brush0, { "New Layer" }));
+    EXPECT_TRUE(nodeIsMemberOfLayer(new_func_static, { "New Layer" }));
+
+    EXPECT_EQ(new_func_static->getLayers().size(), 1); // only part of "New Layer"
+    EXPECT_EQ(brush0->getLayers().size(), 1); // only part of "New Layer"
+    EXPECT_EQ(brush11->getLayers().size(), 1); // only part of "New Layer"
+
+    // Finally run another merger across the scene, it shouldn't find anything to do
+    merger = std::make_unique<LayerMerger>(merger->getSourceRoot(), merger->getBaseRoot());
     merger->adjustBaseLayers();
     EXPECT_TRUE(merger->getChangeLog().empty());
 }
