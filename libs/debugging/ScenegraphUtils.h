@@ -18,6 +18,7 @@ inline std::string getNameForNodeType(scene::INode::Type type)
     case scene::INode::Type::Model: return "model";
     case scene::INode::Type::Particle: return "particle";
     case scene::INode::Type::EntityConnection: return "entityconnection";
+    case scene::INode::Type::MergeAction: return "mergeaction";
     default: return "unknown";
     };
 }
