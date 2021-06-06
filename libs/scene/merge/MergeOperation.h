@@ -23,6 +23,7 @@ private:
     std::list<MergeAction::Ptr> _actions;
 
     bool _mergeSelectionGroups;
+    bool _mergeLayers;
 
 public:
     using Ptr = std::shared_ptr<MergeOperation>;
@@ -30,7 +31,8 @@ public:
     MergeOperation(scene::IMapRootNodePtr sourceRoot, scene::IMapRootNodePtr baseRoot) :
         _sourceRoot(sourceRoot),
         _baseRoot(baseRoot),
-        _mergeSelectionGroups(true)
+        _mergeSelectionGroups(true),
+        _mergeLayers(true)
     {}
 
     // Creates the merge operation from the given comparison result. 
@@ -45,6 +47,7 @@ public:
     void foreachAction(const std::function<void(const IMergeAction::Ptr&)>& visitor) override;
 
     void setMergeSelectionGroups(bool enabled) override;
+    void setMergeLayers(bool enabled) override;
 
 private:
     void createActionsForEntity(const ComparisonResult::EntityDifference& difference);

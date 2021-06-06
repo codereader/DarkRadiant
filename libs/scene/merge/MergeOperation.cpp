@@ -124,6 +124,11 @@ void MergeOperation::setMergeSelectionGroups(bool enabled)
     _mergeSelectionGroups = enabled;
 }
 
+void MergeOperation::setMergeLayers(bool enabled)
+{
+    _mergeLayers = enabled;
+}
+
 }
 
 }

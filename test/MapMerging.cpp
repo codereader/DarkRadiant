@@ -1460,7 +1460,7 @@ std::unique_ptr<LayerMerger> setupLayerMerger(const std::string& sourceMap, cons
     auto result = GraphComparer::Compare(changedResource->getRootNode(), originalResource->getRootNode());
     auto operation = MergeOperation::CreateFromComparisonResult(*result);
 
-    operation->setMergeSelectionGroups(true); // we do this manually
+    operation->setMergeLayers(false); // we do this manually
     operation->applyActions();
 
     return std::make_unique<LayerMerger>(result->getSourceRootNode(), result->getBaseRootNode());
@@ -1582,6 +1582,67 @@ TEST_F(LayerMergeTest, RemovedLayer)
 
     EXPECT_EQ(func_static_8->getLayers().size(), 1); // only part of "Shared"
     EXPECT_EQ(brush8->getLayers().size(), 1); // only part of "Shared"
+
+    // Finally run another merger across the scene, it shouldn't find anything to do
+    merger = std::make_unique<LayerMerger>(merger->getSourceRoot(), merger->getBaseRoot());
+    merger->adjustBaseLayers();
+    EXPECT_TRUE(merger->getChangeLog().empty());
+}
+
+// Brushes with texture "8" and the corresponding layer "8" have been removed from the changed map
+// The user chose to keep the "8" brushes, and that's why the layer "8" should be preserved too.
+TEST_F(LayerMergeTest, KeptNodesInRemovedLayer)
+{
+    auto originalResource = GlobalMapResourceManager().createFromPath("maps/merging_layers_1.mapx");
+    EXPECT_TRUE(originalResource->load()) << "Test map not found: " << "maps/merging_layers_1.mapx";
+
+    auto changedResource = GlobalMapResourceManager().createFromPath("maps/merging_layers_4.mapx");
+    EXPECT_TRUE(changedResource->load()) << "Test map not found: " << "maps/merging_layers_4.mapx";
+
+    auto result = GraphComparer::Compare(changedResource->getRootNode(), originalResource->getRootNode());
+    auto operation = MergeOperation::CreateFromComparisonResult(*result);
+
+    // Deactivate the action removing the two "8" brushes
+    std::size_t deactivationCount = 0;
+    operation->foreachAction([&](const scene::merge::IMergeAction::Ptr& action)
+    {
+        auto brush = Node_getIBrush(action->getAffectedNode());
+
+        if (brush && brush->hasShader("textures/numbers/8"))
+        {
+            action->deactivate();
+            deactivationCount++;
+        }
+    });
+    EXPECT_EQ(deactivationCount, 2);
+
+    operation->setMergeLayers(false); // we do this manually
+    operation->applyActions();
+
+    auto merger = std::make_unique<LayerMerger>(result->getSourceRootNode(), result->getBaseRootNode());
+
+    auto func_static_8 = algorithm::getEntityByName(merger->getBaseRoot(), "func_static_8");
+    auto brush8 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(merger->getBaseRoot()), "textures/numbers/8");
+
+    EXPECT_FALSE(func_static_8); // func_static_8 is gone
+    EXPECT_TRUE(nodeIsMemberOfLayer(brush8, { "Shared", "8" }));
+
+    EXPECT_EQ(brush8->getLayers().size(), 2); // only these two layers
+
+    merger->adjustBaseLayers();
+
+    EXPECT_FALSE(merger->getChangeLog().empty());
+
+    // No removed layers
+    EXPECT_EQ(changeCountByType(merger->getChangeLog(), LayerMerger::Change::Type::BaseLayerCreated), 0);
+    EXPECT_EQ(changeCountByType(merger->getChangeLog(), LayerMerger::Change::Type::BaseLayerRemoved), 0);
+
+    // The "8" must still be there
+    EXPECT_NE(merger->getBaseRoot()->getLayerManager().getLayerID("8"), -1);
+
+    // The 8 brush must be part of this layer, and the "Shared" one too
+    EXPECT_TRUE(nodeIsMemberOfLayer(brush8, { "Shared", "8" }));
+    EXPECT_EQ(brush8->getLayers().size(), 2); // still part of "8" and "Shared"
 
     // Finally run another merger across the scene, it shouldn't find anything to do
     merger = std::make_unique<LayerMerger>(merger->getSourceRoot(), merger->getBaseRoot());
