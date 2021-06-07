@@ -49,13 +49,21 @@ private:
     scene::ILayerManager& _sourceManager;
     scene::ILayerManager& _baseManager;
 
+    std::stringstream _log;
+    std::vector<Change> _changes;
+
+private: 
+    // Working members that is only needed during processing
+
     std::map<std::string, INodePtr> _sourceNodes;
     std::map<std::string, INodePtr> _baseNodes;
 
     std::vector<std::string> _baseLayerNamesToRemove;
 
-    std::stringstream _log;
-    std::vector<Change> _changes;
+    // The remove-node-from-layer action that needs to be executed
+    std::vector<std::pair<int, INodePtr>> _baseNodesToRemoveFromLayers;
+    // The add-node-to-layer action that needs to be executed
+    std::vector<std::pair<int, INodePtr>> _baseNodesToAddToLayers;
 
 public:
 
@@ -88,6 +96,10 @@ public:
 
     void adjustBaseLayers()
     {
+        cleanupWorkingData();
+        _changes.clear();
+        _log.str(std::string());
+
         // Collect all source and base nodes for easier lookup
         _sourceRoot->foreachNode([&](const INodePtr& node)
         {
@@ -116,6 +128,36 @@ public:
         _sourceManager.foreachLayer(
             std::bind(&LayerMerger::processSourceLayer, this, std::placeholders::_1, std::placeholders::_2));
 
+        // Execute the actions we found during source layer processing
+        // Add to new layers first, since removing a node from its last layer might not succeed otherwise
+        for (const auto& pair : _baseNodesToAddToLayers)
+        {
+            _log << "Adding node " << pair.second->name() << " to layer " << pair.first << std::endl;
+
+            pair.second->addToLayer(pair.first);
+
+            _changes.emplace_back(Change
+            {
+                pair.first,
+                pair.second,
+                Change::Type::NodeAddedToLayer
+            });
+        }
+
+        for (const auto& pair : _baseNodesToRemoveFromLayers)
+        {
+            _log << "Removing node " << pair.second->name() << " from layer " << pair.first << std::endl;
+
+            pair.second->removeFromLayer(pair.first);
+
+            _changes.emplace_back(Change
+            {
+                pair.first,
+                pair.second,
+                Change::Type::NodeRemovedFromLayer
+            });
+        }
+
         _log << "Removing " << _baseLayerNamesToRemove.size() << " base layers that have been marked for removal." << std::endl;
 
         // Remove all base layers that are no longer necessary
@@ -133,9 +175,20 @@ public:
                 Change::Type::BaseLayerRemoved
             });
         }
+
+        cleanupWorkingData();
     }
 
 private:
+    void cleanupWorkingData()
+    {
+        _sourceNodes.clear();
+        _baseNodes.clear();
+        _baseLayerNamesToRemove.clear();
+        _baseNodesToRemoveFromLayers.clear();
+        _baseNodesToAddToLayers.clear();
+    }
+
     using LayerMembers = std::map<std::string, scene::INodePtr>;
 
     void processBaseLayer(int baseLayerId, const std::string& baseLayerName)
@@ -268,15 +321,8 @@ private:
                 continue;
             }
 
-            _log << "Removing node " << baseNode->second->name() << " from layer " << sourceLayerName << std::endl;
-            baseNode->second->removeFromLayer(baseLayerId);
-
-            _changes.emplace_back(Change
-            {
-                baseLayerId,
-                baseNode->second,
-                Change::Type::NodeRemovedFromLayer
-            });
+            _log << "Marking node " << baseNode->second->name() << " for removal from layer " << sourceLayerName << std::endl;
+            _baseNodesToRemoveFromLayers.emplace_back(std::make_pair(baseLayerId, baseNode->second));
         }
 
         for (const auto& pair : membersToBeAdded)
@@ -290,15 +336,8 @@ private:
                 continue;
             }
 
-            _log << "Adding node " << baseNode->second->name() << " to layer " << sourceLayerName << std::endl;
-            baseNode->second->addToLayer(baseLayerId);
-
-            _changes.emplace_back(Change
-            {
-                baseLayerId,
-                baseNode->second,
-                Change::Type::NodeAddedToLayer
-            });
+            _log << "Marking node " << baseNode->second->name() << " for addition to layer " << sourceLayerName << std::endl;
+            _baseNodesToAddToLayers.emplace_back(std::make_pair(baseLayerId, baseNode->second));
         }
     }
 
