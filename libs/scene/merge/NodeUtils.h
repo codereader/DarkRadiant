@@ -23,9 +23,20 @@ public:
 
     static std::string GetGroupMemberFingerprint(const INodePtr& member)
     {
+        return GetEntityNameOrFingerprint(member);
+    }
+
+    static std::string GetLayerMemberFingerprint(const INodePtr& member)
+    {
+        return GetEntityNameOrFingerprint(member);
+    }
+
+private:
+    static std::string GetEntityNameOrFingerprint(const INodePtr& member)
+    {
         if (member->getNodeType() == INode::Type::Entity)
         {
-            // Group links between entities should use the entity's name to check for equivalence
+            // Links between entities should use the entity's name to check for equivalence
             // even if the entity has changed key values or primitives, the link is intact when the name is equal
             return GetEntityName(member);
         }

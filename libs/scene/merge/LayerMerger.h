@@ -37,7 +37,7 @@ public:
             BaseLayerRemoved,
         };
 
-        std::size_t groupId;
+        int layerId;
         INodePtr member;
         Type type;
     };
@@ -88,36 +88,32 @@ public:
 
     void adjustBaseLayers()
     {
-#if 0
         // Collect all source and base nodes for easier lookup
         _sourceRoot->foreachNode([&](const INodePtr& node)
         {
-            if (!std::dynamic_pointer_cast<IGroupSelectable>(node)) return true;
-
-            _sourceNodes.emplace(NodeUtils::GetGroupMemberFingerprint(node), node);
+            _sourceNodes.emplace(NodeUtils::GetLayerMemberFingerprint(node), node);
             return true;
         });
 
-        _log << "Got " << _sourceNodes.size() << " groups in the source map" << std::endl;
+        _log << "Got " << _sourceNodes.size() << " nodes in the source map" << std::endl;
 
         _baseRoot->foreachNode([&](const INodePtr& node)
         {
-            if (!std::dynamic_pointer_cast<IGroupSelectable>(node)) return true;
-
-            _baseNodes.emplace(NodeUtils::GetGroupMemberFingerprint(node), node);
+            _baseNodes.emplace(NodeUtils::GetLayerMemberFingerprint(node), node);
             return true;
         });
 
-        _log << "Got " << _baseNodes.size() << " in the base map" << std::endl;
+        _log << "Got " << _baseNodes.size() << " nodes in the base map" << std::endl;
 
-        _log << "Start Processing base groups" << std::endl;
+        _log << "Start Processing base layers" << std::endl;
 
-        // Remove all base groups not present in the source scene, unless we decide to keep it
-        _baseManager.foreachSelectionGroup(
-            std::bind(&SelectionGroupMerger::processBaseGroup, this, std::placeholders::_1));
+        // Remove all base layers not present in the source scene, unless we decide to keep it
+        _baseManager.foreachLayer(
+            std::bind(&LayerMerger::processBaseLayer, this, std::placeholders::_1, std::placeholders::_2));
 
-        _log << "Start Processing source groups" << std::endl;
+        _log << "Start Processing source layers" << std::endl;
 
+#if 0
         _sourceManager.foreachSelectionGroup(
             std::bind(&SelectionGroupMerger::processSourceGroup, this, std::placeholders::_1));
 
@@ -138,30 +134,29 @@ public:
 private:
     using LayerMembers = std::map<std::string, scene::INodePtr>;
 
-#if 0
-    void processBaseGroup(selection::ISelectionGroup& group)
+    void processBaseLayer(int baseLayerId, const std::string& baseLayerName)
     {
-        // Check if there's a counter-part in the source scene
-        auto sourceGroup = _sourceManager.getSelectionGroup(group.getId());
+        // Check if there's a counter-part in the source scene (by name)
+        auto sourceLayer = _sourceManager.getLayerID(baseLayerName);
 
-        // Existing groups are ok, leave them, conflicts will be resolved in processSourceGroup
-        if (sourceGroup)
+        // Existing layers are ok, leave them, conflicts will be resolved in processSourceLayer
+        if (sourceLayer != -1)
         {
-            _log << "Base group " << group.getId() << " is present in source too, skipping." << std::endl;
+            _log << "Base layer " << baseLayerName << " is present in source too, skipping." << std::endl;
             return;
         }
 
-        // This base group is no longer present in the source scene,
+        // This base layer is no longer present in the source scene,
         // we'll remove it, unless it's referenced by nodes which are base-only
         // which indicates that the base nodes have explicitly been chosen by the user
         // to be kept during the merge operation
         std::vector<INodePtr> nodesToRemove;
 
-        group.foreachNode([&](const INodePtr& node)
+        foreachNodeInLayer(baseLayerId, [&](const INodePtr& node)
         {
-            auto fingerprint = NodeUtils::GetGroupMemberFingerprint(node);
+            auto fingerprint = NodeUtils::GetLayerMemberFingerprint(node);
 
-            // All nodes that are also present in the source map are removed from this group
+            // All nodes that are also present in the source map are removed from this layer
             // we only keep the base nodes that are preserved during merge
             if (_sourceNodes.count(fingerprint) > 0)
             {
@@ -172,33 +167,40 @@ private:
         for (const auto& node : nodesToRemove)
         {
             _changes.emplace_back(Change
-                {
-                    group.getId(),
-                    node,
-                    Change::Type::NodeRemovedFromGroup
-                });
+            {
+                baseLayerId,
+                node,
+                Change::Type::NodeRemovedFromLayer
+            });
 
-            _log << "Removing node " << node->name() << " from group " <<
-                group.getId() << ", since it is not exclusive to the base map." << std::endl;
+            _log << "Removing node " << node->name() << " from layer " <<
+                baseLayerName << ", since it is not exclusive to the base map." << std::endl;
 
-            group.removeNode(node);
-        }
-
-        if (group.size() < 2)
-        {
-            _log << "Base group " << group.getId() << " ends up with less than two members and is marked for removal." << std::endl;
-
-            _changes.emplace_back(Change
-                {
-                    group.getId(),
-                    INodePtr(),
-                    Change::Type::BaseGroupRemoved
-                });
-
-            _baseGroupIdsToRemove.push_back(group.getId());
+            node->removeFromLayer(baseLayerId);
         }
     }
 
+    void foreachNodeInLayer(int layerId, const std::function<void(const INodePtr&)>& functor)
+    {
+        _baseRoot->foreachNode([&](const INodePtr& node)
+        {
+            if (node->getNodeType() != INode::Type::Entity &&
+                node->getNodeType() != INode::Type::Brush &&
+                node->getNodeType() != INode::Type::Patch)
+            {
+                return true;
+            }
+
+            if (node->getLayers().count(layerId) > 0)
+            {
+                functor(node);
+            }
+
+            return true;
+        });
+    }
+
+#if 0
     void processSourceGroup(selection::ISelectionGroup& group)
     {
         _log << "Processing source group with ID: " << group.getId() << ", size: " << group.size() << std::endl;
