@@ -1650,4 +1650,47 @@ TEST_F(LayerMergeTest, KeptNodesInRemovedLayer)
     EXPECT_TRUE(merger->getChangeLog().empty());
 }
 
+// Layer "8" has been renamed to "8 renamed"
+// func_static_8 has been removed from "8 renamed", brush 18 has been added
+TEST_F(LayerMergeTest, LayerRenamedAndModified)
+{
+    auto merger = setupLayerMerger("maps/merging_layers_5.mapx", "maps/merging_layers_1.mapx");
+
+    auto func_static_8 = algorithm::getEntityByName(merger->getBaseRoot(), "func_static_8");
+    auto brush8 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(merger->getBaseRoot()), "textures/numbers/8");
+    auto brush18 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(merger->getBaseRoot()), "textures/numbers/18");
+
+    EXPECT_TRUE(nodeIsMemberOfLayer(brush8, { "Shared", "8" }));
+    EXPECT_TRUE(nodeIsMemberOfLayer(func_static_8, { "Shared", "8" }));
+    EXPECT_FALSE(nodeIsMemberOfLayer(brush18, { "8" }));
+
+    merger->adjustBaseLayers();
+
+    EXPECT_FALSE(merger->getChangeLog().empty());
+
+    // A rename results in 1 removal and 1 addition
+    EXPECT_EQ(changeCountByType(merger->getChangeLog(), LayerMerger::Change::Type::BaseLayerCreated), 1);
+    EXPECT_EQ(changeCountByType(merger->getChangeLog(), LayerMerger::Change::Type::BaseLayerRemoved), 1);
+
+    // The "8" must be gone, "8 renamed" should be here
+    EXPECT_EQ(merger->getBaseRoot()->getLayerManager().getLayerID("8"), -1);
+    EXPECT_NE(merger->getBaseRoot()->getLayerManager().getLayerID("8 renamed"), -1);
+
+    // The 8 brush must be part of this new layer, and the "Shared" one too
+    EXPECT_TRUE(nodeIsMemberOfLayer(brush8, { "Shared", "8 renamed" }));
+    EXPECT_EQ(brush8->getLayers().size(), 2); // only part of "8" and "Shared"
+
+    EXPECT_TRUE(nodeIsMemberOfLayer(func_static_8, { "Shared" }));
+    EXPECT_EQ(func_static_8->getLayers().size(), 1); // only part of "Shared"
+
+    // The 18 brush must be part of this new layer
+    EXPECT_TRUE(nodeIsMemberOfLayer(brush18, { "Default", "8 renamed" }));
+    EXPECT_EQ(brush18->getLayers().size(), 2); // only part of "8" and "Default"
+
+    // Finally run another merger across the scene, it shouldn't find anything to do
+    merger = std::make_unique<LayerMerger>(merger->getSourceRoot(), merger->getBaseRoot());
+    merger->adjustBaseLayers();
+    EXPECT_TRUE(merger->getChangeLog().empty());
+}
+
 }

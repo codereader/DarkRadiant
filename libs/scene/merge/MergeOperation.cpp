@@ -1,6 +1,7 @@
 #include "MergeOperation.h"
 #include "MergeAction.h"
 #include "SelectionGroupMerger.h"
+#include "LayerMerger.h"
 
 namespace scene
 {
@@ -106,8 +107,15 @@ void MergeOperation::applyActions()
         SelectionGroupMerger merger(_sourceRoot, _baseRoot);
 
         merger.adjustBaseGroups();
+    }
 
-        rMessage() << "Group merge log: " << std::endl << merger.getLogMessages() << std::endl;
+    if (_mergeLayers)
+    {
+        LayerMerger merger(_sourceRoot, _baseRoot);
+
+        merger.adjustBaseLayers();
+
+        rMessage() << "Layer merge log: " << std::endl << merger.getLogMessages() << std::endl;
     }
 }
 
