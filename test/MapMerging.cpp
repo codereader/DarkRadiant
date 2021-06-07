@@ -1498,7 +1498,7 @@ bool nodeIsMemberOfLayer(const scene::INodePtr& node, const std::set<std::string
         nodeLayerNames.emplace(layerManager.getLayerName(layerId));
     }
     
-    return std::includes(layerNames.begin(), layerNames.end(), nodeLayerNames.begin(), nodeLayerNames.end());
+    return std::includes(nodeLayerNames.begin(), nodeLayerNames.end(), layerNames.begin(), layerNames.end());
 }
 
 inline std::size_t changeCountByType(const std::vector<LayerMerger::Change>& log,
@@ -1718,8 +1718,8 @@ TEST_F(LayerMergeTest, MergeLayersFlagSet)
     auto originalResource = GlobalMapResourceManager().createFromPath("maps/merging_layers_1.mapx");
     EXPECT_TRUE(originalResource->load()) << "Test map not found: " << "maps/merging_layers_1.mapx";
 
-    auto changedResource = GlobalMapResourceManager().createFromPath("maps/merging_layers_5.mapx");
-    EXPECT_TRUE(changedResource->load()) << "Test map not found: " << "maps/merging_layers_5.mapx";
+    auto changedResource = GlobalMapResourceManager().createFromPath("maps/merging_layers_2.mapx");
+    EXPECT_TRUE(changedResource->load()) << "Test map not found: " << "maps/merging_layers_2.mapx";
 
     auto result = GraphComparer::Compare(changedResource->getRootNode(), originalResource->getRootNode());
     auto operation = MergeOperation::CreateFromComparisonResult(*result);
@@ -1738,14 +1738,20 @@ TEST_F(LayerMergeTest, MergeLayersFlagNotSet)
     auto originalResource = GlobalMapResourceManager().createFromPath("maps/merging_layers_1.mapx");
     EXPECT_TRUE(originalResource->load()) << "Test map not found: " << "maps/merging_layers_1.mapx";
 
-    auto changedResource = GlobalMapResourceManager().createFromPath("maps/merging_layers_5.mapx");
-    EXPECT_TRUE(changedResource->load()) << "Test map not found: " << "maps/merging_layers_5.mapx";
+    auto changedResource = GlobalMapResourceManager().createFromPath("maps/merging_layers_2.mapx");
+    EXPECT_TRUE(changedResource->load()) << "Test map not found: " << "maps/merging_layers_2.mapx";
 
     auto result = GraphComparer::Compare(changedResource->getRootNode(), originalResource->getRootNode());
     auto operation = MergeOperation::CreateFromComparisonResult(*result);
 
     operation->setMergeLayers(false);
     operation->applyActions();
+
+    auto new_func_static = algorithm::getEntityByName(originalResource->getRootNode(), "new_func_static");
+
+    // New objects go into default (which is the active layer here)
+    EXPECT_TRUE(nodeIsMemberOfLayer(new_func_static, { "Default" }));
+    EXPECT_EQ(new_func_static->getLayers().size(), 1); // only part of the active layer
 
     // Set up a merger class, it should do something
     auto merger = std::make_unique<LayerMerger>(result->getSourceRootNode(), result->getBaseRootNode());
