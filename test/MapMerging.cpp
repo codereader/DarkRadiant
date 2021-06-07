@@ -1429,7 +1429,7 @@ TEST_F(SelectionGroupMergeTest, BrushesKeptDuringMerge)
 }
 
 // Checks that setting the flag "merge selection groups" in the MergeOperation is working
-TEST_F(SelectionGroupMergeTest, MergeSelectionGroupsFlag)
+TEST_F(SelectionGroupMergeTest, MergeSelectionGroupsFlagSet)
 {
     auto originalResource = GlobalMapResourceManager().createFromPath("maps/merging_groups_1.mapx");
     EXPECT_TRUE(originalResource->load()) << "Test map not found: " << "maps/merging_groups_1.mapx";
@@ -1447,6 +1447,26 @@ TEST_F(SelectionGroupMergeTest, MergeSelectionGroupsFlag)
     auto merger = std::make_unique<SelectionGroupMerger>(result->getSourceRootNode(), result->getBaseRootNode());
     merger->adjustBaseGroups();
     EXPECT_TRUE(merger->getChangeLog().empty());
+}
+
+TEST_F(SelectionGroupMergeTest, MergeSelectionGroupsFlagNotSet)
+{
+    auto originalResource = GlobalMapResourceManager().createFromPath("maps/merging_groups_1.mapx");
+    EXPECT_TRUE(originalResource->load()) << "Test map not found: " << "maps/merging_groups_1.mapx";
+
+    auto changedResource = GlobalMapResourceManager().createFromPath("maps/merging_groups_6.mapx");
+    EXPECT_TRUE(changedResource->load()) << "Test map not found: " << "maps/merging_groups_6.mapx";
+
+    auto result = GraphComparer::Compare(changedResource->getRootNode(), originalResource->getRootNode());
+    auto operation = MergeOperation::CreateFromComparisonResult(*result);
+
+    operation->setMergeSelectionGroups(false);
+    operation->applyActions();
+
+    // Set up a merger class, it should do something
+    auto merger = std::make_unique<SelectionGroupMerger>(result->getSourceRootNode(), result->getBaseRootNode());
+    merger->adjustBaseGroups();
+    EXPECT_FALSE(merger->getChangeLog().empty());
 }
 
 std::unique_ptr<LayerMerger> setupLayerMerger(const std::string& sourceMap, const std::string& baseMap)
@@ -1691,6 +1711,46 @@ TEST_F(LayerMergeTest, LayerRenamedAndModified)
     merger = std::make_unique<LayerMerger>(merger->getSourceRoot(), merger->getBaseRoot());
     merger->adjustBaseLayers();
     EXPECT_TRUE(merger->getChangeLog().empty());
+}
+
+TEST_F(LayerMergeTest, MergeLayersFlagSet)
+{
+    auto originalResource = GlobalMapResourceManager().createFromPath("maps/merging_layers_1.mapx");
+    EXPECT_TRUE(originalResource->load()) << "Test map not found: " << "maps/merging_layers_1.mapx";
+
+    auto changedResource = GlobalMapResourceManager().createFromPath("maps/merging_layers_5.mapx");
+    EXPECT_TRUE(changedResource->load()) << "Test map not found: " << "maps/merging_layers_5.mapx";
+
+    auto result = GraphComparer::Compare(changedResource->getRootNode(), originalResource->getRootNode());
+    auto operation = MergeOperation::CreateFromComparisonResult(*result);
+
+    operation->setMergeLayers(true);
+    operation->applyActions();
+
+    // Set up a merger class, it shouldn't find anything to do
+    auto merger = std::make_unique<LayerMerger>(result->getSourceRootNode(), result->getBaseRootNode());
+    merger->adjustBaseLayers();
+    EXPECT_TRUE(merger->getChangeLog().empty());
+}
+
+TEST_F(LayerMergeTest, MergeLayersFlagNotSet)
+{
+    auto originalResource = GlobalMapResourceManager().createFromPath("maps/merging_layers_1.mapx");
+    EXPECT_TRUE(originalResource->load()) << "Test map not found: " << "maps/merging_layers_1.mapx";
+
+    auto changedResource = GlobalMapResourceManager().createFromPath("maps/merging_layers_5.mapx");
+    EXPECT_TRUE(changedResource->load()) << "Test map not found: " << "maps/merging_layers_5.mapx";
+
+    auto result = GraphComparer::Compare(changedResource->getRootNode(), originalResource->getRootNode());
+    auto operation = MergeOperation::CreateFromComparisonResult(*result);
+
+    operation->setMergeLayers(false);
+    operation->applyActions();
+
+    // Set up a merger class, it should do something
+    auto merger = std::make_unique<LayerMerger>(result->getSourceRootNode(), result->getBaseRootNode());
+    merger->adjustBaseLayers();
+    EXPECT_FALSE(merger->getChangeLog().empty());
 }
 
 }
