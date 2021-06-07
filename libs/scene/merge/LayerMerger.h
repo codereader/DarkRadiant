@@ -52,7 +52,7 @@ private:
     std::map<std::string, INodePtr> _sourceNodes;
     std::map<std::string, INodePtr> _baseNodes;
 
-    std::vector<std::size_t> _baseLayerIdsToRemove;
+    std::vector<std::string> _baseLayerNamesToRemove;
 
     std::stringstream _log;
     std::vector<Change> _changes;
@@ -113,22 +113,26 @@ public:
 
         _log << "Start Processing source layers" << std::endl;
 
-#if 0
-        _sourceManager.foreachSelectionGroup(
-            std::bind(&SelectionGroupMerger::processSourceGroup, this, std::placeholders::_1));
+        _sourceManager.foreachLayer(
+            std::bind(&LayerMerger::processSourceLayer, this, std::placeholders::_1, std::placeholders::_2));
 
-        _log << "Removing " << _baseGroupIdsToRemove.size() << " base groups that have been marked for removal." << std::endl;
+        _log << "Removing " << _baseLayerNamesToRemove.size() << " base layers that have been marked for removal." << std::endl;
 
-        // Remove all base groups that are no longer necessary
-        for (auto baseGroupId : _baseGroupIdsToRemove)
+        // Remove all base layers that are no longer necessary
+        for (auto baseLayerName : _baseLayerNamesToRemove)
         {
-            _baseManager.deleteSelectionGroup(baseGroupId);
-        }
+            auto baseLayerId = _baseManager.getLayerID(baseLayerName);
+            assert(baseLayerId != -1);
 
-        // Run a final pass over the node membership to ensure the group sizes are ascending for each node
-        // Each group on every node is a superset of any group that was set on that node before
-        ensureGroupSizeOrder();
-#endif
+            _baseManager.deleteLayer(baseLayerName);
+
+            _changes.emplace_back(Change
+            {
+                baseLayerId,
+                INodePtr(),
+                Change::Type::BaseLayerRemoved
+            });
+        }
     }
 
 private:
@@ -151,8 +155,9 @@ private:
         // which indicates that the base nodes have explicitly been chosen by the user
         // to be kept during the merge operation
         std::vector<INodePtr> nodesToRemove;
+        std::size_t keptNodeCount = 0;
 
-        foreachNodeInLayer(baseLayerId, [&](const INodePtr& node)
+        foreachNodeInLayer(_baseRoot, baseLayerId, [&](const INodePtr& node)
         {
             auto fingerprint = NodeUtils::GetLayerMemberFingerprint(node);
 
@@ -161,6 +166,10 @@ private:
             if (_sourceNodes.count(fingerprint) > 0)
             {
                 nodesToRemove.push_back(node);
+            }
+            else
+            {
+                keptNodeCount++;
             }
         });
 
@@ -178,11 +187,17 @@ private:
 
             node->removeFromLayer(baseLayerId);
         }
+
+        // Remove any layers that turn out empty
+        if (keptNodeCount == 0)
+        {
+            _baseLayerNamesToRemove.push_back(baseLayerName);
+        }
     }
 
-    void foreachNodeInLayer(int layerId, const std::function<void(const INodePtr&)>& functor)
+    static void foreachNodeInLayer(const INodePtr& root, int layerId, const std::function<void(const INodePtr&)>& functor)
     {
-        _baseRoot->foreachNode([&](const INodePtr& node)
+        root->foreachNode([&](const INodePtr& node)
         {
             if (node->getNodeType() != INode::Type::Entity &&
                 node->getNodeType() != INode::Type::Brush &&
@@ -200,35 +215,35 @@ private:
         });
     }
 
-#if 0
-    void processSourceGroup(selection::ISelectionGroup& group)
+    void processSourceLayer(int sourceLayerId, const std::string& sourceLayerName)
     {
-        _log << "Processing source group with ID: " << group.getId() << ", size: " << group.size() << std::endl;
+        _log << "Processing source layer with ID: " << sourceLayerId << " and name: " << sourceLayerName << std::endl;
 
-        // Make sure the group exists in the base
-        auto baseGroup = _baseManager.getSelectionGroup(group.getId());
+        // Make sure the layer exists in the base
+        auto baseLayerId = _baseManager.getLayerID(sourceLayerName);
 
-        if (!baseGroup)
+        if (baseLayerId == -1)
         {
-            _log << "Creating group with ID " << group.getId() << " in the base map" << std::endl;
+            _log << "Creating layer with ID " << sourceLayerId << " in the base map" << std::endl;
 
-            baseGroup = _baseManager.createSelectionGroup(group.getId());
+            // We only care about names, so don't specify any IDs here
+            baseLayerId = _baseManager.createLayer(sourceLayerName);
 
             _changes.emplace_back(Change
-                {
-                    group.getId(),
-                    INodePtr(),
-                    Change::Type::BaseGroupCreated
-                });
+            {
+                baseLayerId,
+                INodePtr(),
+                Change::Type::BaseLayerCreated
+            });
         }
 
         // Ensure the correct members are in the group, if they are available in the map
-        auto desiredGroupMembers = getGroupMemberFingerprints(group);
-        auto currentGroupMembers = getGroupMemberFingerprints(*baseGroup);
-        std::vector<GroupMembers::value_type> membersToBeRemoved;
-        std::vector<GroupMembers::value_type> membersToBeAdded;
+        auto desiredGroupMembers = getLayerMemberFingerprints(_sourceRoot, sourceLayerId);
+        auto currentGroupMembers = getLayerMemberFingerprints(_baseRoot, baseLayerId);
+        std::vector<LayerMembers::value_type> membersToBeRemoved;
+        std::vector<LayerMembers::value_type> membersToBeAdded;
 
-        auto compareFingerprint = [](const GroupMembers::value_type& left, const GroupMembers::value_type& right)
+        auto compareFingerprint = [](const LayerMembers::value_type& left, const LayerMembers::value_type& right)
         {
             return left.first < right.first;
         };
@@ -253,15 +268,15 @@ private:
                 continue;
             }
 
-            _log << "Removing node " << baseNode->second->name() << " from group " << baseGroup->getId() << std::endl;
-            baseGroup->removeNode(baseNode->second);
+            _log << "Removing node " << baseNode->second->name() << " from layer " << sourceLayerName << std::endl;
+            baseNode->second->removeFromLayer(baseLayerId);
 
             _changes.emplace_back(Change
-                {
-                    group.getId(),
-                    baseNode->second,
-                    Change::Type::NodeRemovedFromGroup
-                });
+            {
+                baseLayerId,
+                baseNode->second,
+                Change::Type::NodeRemovedFromLayer
+            });
         }
 
         for (const auto& pair : membersToBeAdded)
@@ -275,30 +290,29 @@ private:
                 continue;
             }
 
-            _log << "Adding node " << baseNode->second->name() << " to group " << baseGroup->getId() << std::endl;
-            baseGroup->addNode(baseNode->second);
+            _log << "Adding node " << baseNode->second->name() << " to layer " << sourceLayerName << std::endl;
+            baseNode->second->addToLayer(baseLayerId);
 
             _changes.emplace_back(Change
-                {
-                    group.getId(),
-                    baseNode->second,
-                    Change::Type::NodeAddedToGroup
-                });
+            {
+                baseLayerId,
+                baseNode->second,
+                Change::Type::NodeAddedToLayer
+            });
         }
     }
 
-    GroupMembers getGroupMemberFingerprints(selection::ISelectionGroup& group)
+    static LayerMembers getLayerMemberFingerprints(const INodePtr& root, int layerId)
     {
-        GroupMembers members;
+        LayerMembers members;
 
-        group.foreachNode([&](const INodePtr& member)
+        foreachNodeInLayer(root, layerId, [&](const INodePtr& member)
         {
-            members.emplace(NodeUtils::GetGroupMemberFingerprint(member), member);
+            members.emplace(NodeUtils::GetLayerMemberFingerprint(member), member);
         });
 
         return members;
     }
-#endif
 };
 
 }
