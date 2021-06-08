@@ -411,7 +411,7 @@
 												<border>6</border>
 												<object class="wxCheckBox" name="MergeLayers">
 													<tooltip>With this option checked the layers in this map are going to be adjusted to fit the incoming map, i.e. any changes made to layers in the merged map are applied to this map. New layers in the imported map are going to be created here. Layers in this map that are not present in the incoming map will be removed.\nLeave this option unchecked to reject any layer changes from the incoming map, all newly created elements will be placed in the active layer in this case.</tooltip>
-													<label>Merge Layers</label>
+													<label>Merge Layers (cannot be undone!)</label>
 													<checked>0</checked>
 												</object>
 											</object>
