@@ -3,6 +3,17 @@
 #include "iimage.h"
 #include "RGBAImage.h"
 
+// Helpers for examining pixel data
+using RGB8 = BasicVector3<uint8_t>;
+
+// Override operator<< to print RGB8 components as numbers, rather than random
+// ASCII characters
+std::ostream& operator<< (std::ostream& os, const RGB8& rgb)
+{
+    return os << "[" << int(rgb.x()) << ", " << int(rgb.y()) << ", "
+              << int(rgb.z()) << "]";
+}
+
 namespace test
 {
 
@@ -70,8 +81,19 @@ TEST_F(ImageLoadingTest, LoadDDSUncompressed)
 {
     auto img = loadImage("textures/dds/test_16x16_uncomp.dds");
 
+    // Check size is correct
     EXPECT_EQ(img->getWidth(), 16);
     EXPECT_EQ(img->getHeight(), 16);
+
+    // Examine pixel data
+    uint8_t* bytes = img->getPixels();
+    RGB8* pixels = reinterpret_cast<RGB8*>(bytes);
+
+    EXPECT_EQ(pixels[0], RGB8(0, 0, 0));        // border
+    EXPECT_EQ(pixels[18], RGB8(255, 255, 255)); // background
+    EXPECT_EQ(pixels[113], RGB8(0, 255, 0));    // green band
+    EXPECT_EQ(pixels[119], RGB8(0, 0, 255));    // red centre (but BGR)
+    EXPECT_EQ(pixels[255], RGB8(0, 0, 0));      // border
 }
 
 }
