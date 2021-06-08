@@ -38,7 +38,7 @@ TEST_F(ImageLoadingTest, LoadPngGreyscaleWithAlpha)
 
     // If the image loader interprets the file correctly, we should have an RGBA
     // image with the colour values being the same for R, G and B.
-    // If the image loader didn't convert grey to RGB, the grey value is 
+    // If the image loader didn't convert grey to RGB, the grey value is
     // smeared across the whole RGB channels and they are not uniform
 
     EXPECT_TRUE(std::dynamic_pointer_cast<RGBAImage>(img));
@@ -55,6 +55,15 @@ TEST_F(ImageLoadingTest, LoadPngGreyscaleWithAlpha)
             break;
         }
     }
+}
+
+TEST_F(ImageLoadingTest, LoadDDSUncompressed)
+{
+    auto filePath = _context.getTestProjectPath() + "textures/dds/test_16x16_uncomp.dds";
+    auto img = GlobalImageLoader().imageFromFile(filePath);
+
+    EXPECT_EQ(img->getWidth(), 16);
+    EXPECT_EQ(img->getHeight(), 16);
 }
 
 }
