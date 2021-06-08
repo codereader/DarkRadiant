@@ -6,12 +6,23 @@
 namespace test
 {
 
-using ImageLoadingTest = RadiantTest;
+// Test fixture for image loading. Provides a convenient method to load an image
+// relative to the test project path.
+class ImageLoadingTest: public RadiantTest
+{
+protected:
+
+    // Load an image from the given path
+    ImagePtr loadImage(const std::string& path)
+    {
+        auto filePath = _context.getTestProjectPath() + path;
+        return GlobalImageLoader().imageFromFile(filePath);
+    }
+};
 
 TEST_F(ImageLoadingTest, LoadPng8Bit)
 {
-    auto filePath = _context.getTestProjectPath() + "textures/pngs/twentyone_8bit.png";
-    auto img = GlobalImageLoader().imageFromFile(filePath);
+    auto img = loadImage("textures/pngs/twentyone_8bit.png");
 
     EXPECT_EQ(img->getWidth(), 32);
     EXPECT_EQ(img->getHeight(), 32);
@@ -19,8 +30,7 @@ TEST_F(ImageLoadingTest, LoadPng8Bit)
 
 TEST_F(ImageLoadingTest, LoadPng16Bit)
 {
-    auto filePath = _context.getTestProjectPath() + "textures/pngs/twentyone_16bit.png";
-    auto img = GlobalImageLoader().imageFromFile(filePath);
+    auto img = loadImage("textures/pngs/twentyone_16bit.png");
 
     EXPECT_EQ(img->getWidth(), 32);
     EXPECT_EQ(img->getHeight(), 32);
@@ -29,8 +39,7 @@ TEST_F(ImageLoadingTest, LoadPng16Bit)
 TEST_F(ImageLoadingTest, LoadPngGreyscaleWithAlpha)
 {
     // This is a 8-Bit Greyscale PNG with Alpha channel, so pixel depth is 16 bits
-    auto filePath = _context.getTestProjectPath() + "textures/pngs/transparent_greyscale.png";
-    auto img = GlobalImageLoader().imageFromFile(filePath);
+    auto img = loadImage("textures/pngs/transparent_greyscale.png");
 
     EXPECT_EQ(img->getWidth(), 32);
     EXPECT_EQ(img->getHeight(), 32);
@@ -59,8 +68,7 @@ TEST_F(ImageLoadingTest, LoadPngGreyscaleWithAlpha)
 
 TEST_F(ImageLoadingTest, LoadDDSUncompressed)
 {
-    auto filePath = _context.getTestProjectPath() + "textures/dds/test_16x16_uncomp.dds";
-    auto img = GlobalImageLoader().imageFromFile(filePath);
+    auto img = loadImage("textures/dds/test_16x16_uncomp.dds");
 
     EXPECT_EQ(img->getWidth(), 16);
     EXPECT_EQ(img->getHeight(), 16);
