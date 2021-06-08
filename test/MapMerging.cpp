@@ -1651,7 +1651,9 @@ TEST_F(LayerMergeTest, KeptNodesInRemovedLayer)
 
     merger->adjustBaseLayers();
 
-    EXPECT_FALSE(merger->getChangeLog().empty());
+    // We expect no changes, since nothing else apart of the two brushes has changed
+    // The presence of the "8" brushes preserve the "8" layer, and therefore no change is registered
+    EXPECT_TRUE(merger->getChangeLog().empty());
 
     // No removed layers
     EXPECT_EQ(changeCountByType(merger->getChangeLog(), LayerMerger::Change::Type::BaseLayerCreated), 0);
@@ -1663,11 +1665,6 @@ TEST_F(LayerMergeTest, KeptNodesInRemovedLayer)
     // The 8 brush must be part of this layer, and the "Shared" one too
     EXPECT_TRUE(nodeIsMemberOfLayer(brush8, { "Shared", "8" }));
     EXPECT_EQ(brush8->getLayers().size(), 2); // still part of "8" and "Shared"
-
-    // Finally run another merger across the scene, it shouldn't find anything to do
-    merger = std::make_unique<LayerMerger>(merger->getSourceRoot(), merger->getBaseRoot());
-    merger->adjustBaseLayers();
-    EXPECT_TRUE(merger->getChangeLog().empty());
 }
 
 // Layer "8" has been renamed to "8 renamed"

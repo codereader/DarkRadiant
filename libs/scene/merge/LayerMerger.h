@@ -321,6 +321,12 @@ private:
                 continue;
             }
 
+            // We keep all the layer memberships of nodes that the user wants to keep
+            if (_sourceNodes.count(pair.first) == 0)
+            {
+                continue;
+            }
+
             _log << "Marking node " << baseNode->second->name() << " for removal from layer " << sourceLayerName << std::endl;
             _baseNodesToRemoveFromLayers.emplace_back(std::make_pair(baseLayerId, baseNode->second));
         }
