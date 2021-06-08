@@ -18,6 +18,14 @@ void SelectionInterface::foreachSelectedComponent(const SelectionSystem::Visitor
 	GlobalSelectionSystem().foreachSelectedComponent(visitor);
 }
 
+void SelectionInterface::foreachSelectedFace(SelectedFaceVisitor& visitor)
+{
+    GlobalSelectionSystem().foreachFace([&](IFace& face)
+    {
+        visitor.visitFace(face);
+    });
+}
+
 void SelectionInterface::setSelectedAll(int selected)
 {
 	GlobalSelectionSystem().setSelectedAll(static_cast<bool>(selected));
@@ -55,12 +63,18 @@ void SelectionInterface::registerInterface(py::module& scope, py::dict& globals)
 	visitor.def(py::init<>());
 	visitor.def("visit", &SelectionSystem::Visitor::visit);
 
+    // Expose the SelectionFaceVisitor interface
+    py::class_<SelectedFaceVisitor, SelectedFaceVisitorWrapper> faceVisitor(scope, "SelectedFaceVisitor");
+    faceVisitor.def(py::init<>());
+    faceVisitor.def("visitFace", &SelectedFaceVisitor::visitFace);
+
 	// Add the module declaration to the given python namespace
 	py::class_<SelectionInterface> selSys(scope, "SelectionSystem");
 
 	selSys.def("getSelectionInfo", &SelectionInterface::getSelectionInfo, py::return_value_policy::reference);
 	selSys.def("foreachSelected", &SelectionInterface::foreachSelected);
 	selSys.def("foreachSelectedComponent", &SelectionInterface::foreachSelectedComponent);
+	selSys.def("foreachSelectedFace", &SelectionInterface::foreachSelectedFace);
 	selSys.def("setSelectedAll", &SelectionInterface::setSelectedAll);
 	selSys.def("setSelectedAllComponents", &SelectionInterface::setSelectedAllComponents);
 	selSys.def("ultimateSelected", &SelectionInterface::ultimateSelected);

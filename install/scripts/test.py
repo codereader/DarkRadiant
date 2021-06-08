@@ -91,6 +91,14 @@ class Walker(dr.SelectionVisitor) :
 visitor = Walker()
 GlobalSelectionSystem.foreachSelected(visitor)
 
+# Visit every selected face
+class FaceVisitor(dr.SelectedFaceVisitor) :
+	def visitFace(self, face):
+		print(face.getShader())
+
+visitor = FaceVisitor()
+GlobalSelectionSystem.foreachSelectedFace(visitor)
+
 print('Map name is ' + GlobalMap.getMapName())
 
 print(GlobalMap.getEditMode())
