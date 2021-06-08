@@ -18,6 +18,7 @@
 #include "selectionlib.h"
 #include "scene/SelectionIndex.h"
 #include "scenelib.h"
+#include "eclass.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/menu/IconTextMenuItem.h"
 #include "wxutil/dataview/TreeModel.h"
@@ -294,7 +295,7 @@ void EntityInspector::onKeyChange(const std::string& key,
     row[_columns.booleanValue] = style;
 
     row[_columns.isInherited] = false;
-    row[_columns.hasHelpText] = hasDescription;
+    row[_columns.hasHelpText] = key == "classname" || hasDescription; // classname always has a description
 
     if (added)
     {
@@ -1102,16 +1103,23 @@ void EntityInspector::updateHelpText(const wxutil::TreeModel::Row& row)
     // Get the key pointed at
     bool hasHelp = row[_columns.hasHelpText].getBool();
 
-    if (hasHelp)
+    if (!hasHelp) return;
+    
+    std::string key = getSelectedKey();
+
+    assert(!_selectedEntity.expired());
+    auto* selectedEntity = Node_getEntity(_selectedEntity.lock());
+
+    auto eclass = selectedEntity->getEntityClass();
+    assert(eclass);
+
+    if (key == "classname")
     {
-        std::string key = getSelectedKey();
-
-        assert(!_selectedEntity.expired());
-        Entity* selectedEntity = Node_getEntity(_selectedEntity.lock());
-
-        IEntityClassConstPtr eclass = selectedEntity->getEntityClass();
-        assert(eclass != NULL);
-
+        // #5621: Show the editor_usage string when the classname is selected
+        _helpText->SetValue(eclass::getUsage(*eclass));
+    }
+    else
+    {
         // Find the attribute on the eclass, that's where the descriptions are defined
         const EntityClassAttribute& attr = eclass->getAttribute(key);
 
