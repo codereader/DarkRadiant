@@ -2,11 +2,11 @@
 <resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
 	<object class="wxPanel" name="MergeControlDialogMainPanel">
 		<style>wxTAB_TRAVERSAL</style>
-		<size>391,295</size>
+		<size>391,354</size>
 		<object class="wxBoxSizer">
 			<orient>wxVERTICAL</orient>
 			<object class="sizeritem">
-				<option>1</option>
+				<option>0</option>
 				<flag>wxALL|wxEXPAND</flag>
 				<border>12</border>
 				<object class="wxBoxSizer">
@@ -170,7 +170,7 @@
 						<object class="wxBoxSizer">
 							<orient>wxVERTICAL</orient>
 							<object class="sizeritem">
-								<option>1</option>
+								<option>0</option>
 								<flag>wxEXPAND|wxLEFT</flag>
 								<border>0</border>
 								<object class="wxPanel" name="SummaryPanel">
@@ -370,19 +370,51 @@
 								</object>
 							</object>
 							<object class="sizeritem">
-								<option>1</option>
-								<flag>wxLEFT|wxTOP</flag>
+								<option>0</option>
+								<flag>wxEXPAND|wxTOP</flag>
 								<border>12</border>
 								<object class="wxBoxSizer">
 									<orient>wxVERTICAL</orient>
 									<object class="sizeritem">
 										<option>0</option>
-										<flag>wxLEFT|wxTOP</flag>
-										<border>0</border>
-										<object class="wxCheckBox" name="KeepSelectionGroupsIntact">
-											<tooltip>With this option checked, DarkRadiant will attempt to keep all links between selection groups intact. There&apos;s no guarantee that this will work 100%, since it&apos;s usually problematic when both maps have seen changes to the same elements and their grouping.</tooltip>
-											<label>Merge Selection Group Information</label>
-											<checked>0</checked>
+										<flag>wxBOTTOM</flag>
+										<border>6</border>
+										<object class="wxStaticText" name="m_staticText141">
+											<font>
+												<style>normal</style>
+												<weight>bold</weight>
+												<underlined>0</underlined>
+											</font>
+											<label>Options</label>
+											<wrap>-1</wrap>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxLEFT</flag>
+										<border>12</border>
+										<object class="wxBoxSizer">
+											<orient>wxVERTICAL</orient>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxBOTTOM|wxTOP</flag>
+												<border>6</border>
+												<object class="wxCheckBox" name="KeepSelectionGroupsIntact">
+													<tooltip>With this option checked, DarkRadiant will attempt to keep all links between selection groups intact. There&apos;s no guarantee that this will work 100%, since it&apos;s usually problematic when both maps have seen changes to the same elements and their grouping.</tooltip>
+													<label>Merge Selection Group Information</label>
+													<checked>0</checked>
+												</object>
+											</object>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxTOP</flag>
+												<border>6</border>
+												<object class="wxCheckBox" name="MergeLayers">
+													<tooltip>With this option checked the layers in this map are going to be adjusted to fit the incoming map, i.e. any changes made to layers in the merged map are applied to this map. New layers in the imported map are going to be created here. Layers in this map that are not present in the incoming map will be removed.\nLeave this option unchecked to reject any layer changes from the incoming map, all newly created elements will be placed in the active layer in this case.</tooltip>
+													<label>Merge Layers</label>
+													<checked>0</checked>
+												</object>
+											</object>
 										</object>
 									</object>
 								</object>

@@ -58,6 +58,7 @@ MergeControlDialog::MergeControlDialog() :
     finishButton->Bind(wxEVT_BUTTON, &MergeControlDialog::onFinishMerge, this);
 
     findNamedObject<wxCheckBox>(this, "KeepSelectionGroupsIntact")->SetValue(true);
+    findNamedObject<wxCheckBox>(this, "MergeLayers")->SetValue(true);
 
     updateControlSensitivity();
     Bind(wxEVT_IDLE, &MergeControlDialog::onIdle, this);
@@ -180,7 +181,9 @@ void MergeControlDialog::onFinishMerge(wxCommandEvent& ev)
     if (operation)
     {
         auto mergeSelectionGroups = findNamedObject<wxCheckBox>(this, "KeepSelectionGroupsIntact")->GetValue();
+        auto mergeLayers = findNamedObject<wxCheckBox>(this, "MergeLayers")->GetValue();
         operation->setMergeSelectionGroups(mergeSelectionGroups);
+        operation->setMergeLayers(mergeLayers);
 
          GlobalMapModule().finishMergeOperation();
 

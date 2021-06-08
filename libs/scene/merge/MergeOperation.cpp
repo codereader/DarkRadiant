@@ -114,8 +114,6 @@ void MergeOperation::applyActions()
         LayerMerger merger(_sourceRoot, _baseRoot);
 
         merger.adjustBaseLayers();
-
-        rMessage() << "Layer merge log: " << std::endl << merger.getLogMessages() << std::endl;
     }
 }
 
