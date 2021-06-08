@@ -13,6 +13,8 @@
 #include "string/convert.h"
 #include "transformlib.h"
 #include "registry/registry.h"
+#include "eclass.h"
+#include "string/join.h"
 
 namespace test
 {
@@ -126,6 +128,30 @@ TEST_F(EntityTest, VisitInheritedClassAttributes)
     EXPECT_EQ(attributes.at("maxs"), false);
     EXPECT_EQ(attributes.at("clipmodel_contents"), false);
     EXPECT_EQ(attributes.at("editor_displayFolder"), false);
+}
+
+// #5621: When the classname key is selected in the entity inspector, the description of that
+// attribute should deliver the text that is stored in the editor_usage attributes
+TEST_F(EntityTest, MultiLineEditorUsage)
+{
+    auto eclass = GlobalEntityClassManager().findClass("eclass_with_usage_attribute");
+    ASSERT_TRUE(eclass);
+
+    // Assume we have non-empty editor_usage/1/2 attributes
+    EXPECT_NE(eclass->getAttribute("editor_usage").getValue(), "");
+    EXPECT_NE(eclass->getAttribute("editor_usage1").getValue(), "");
+    EXPECT_NE(eclass->getAttribute("editor_usage2").getValue(), "");
+
+    auto editor_usage = eclass::getUsage(*eclass);
+
+    std::vector<std::string> singleAttributes =
+    {
+        eclass->getAttribute("editor_usage").getValue(),
+        eclass->getAttribute("editor_usage1").getValue(),
+        eclass->getAttribute("editor_usage2").getValue()
+    };
+
+    EXPECT_EQ(editor_usage, string::join(singleAttributes, "\n"));
 }
 
 TEST_F(EntityTest, CannotCreateEntityWithoutClass)

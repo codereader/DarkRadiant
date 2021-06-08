@@ -213,3 +213,12 @@ entityDef fixed_size_entity
 
 	"spawnclass"					"idStaticEntity"
 }
+
+entityDef eclass_with_usage_attribute
+{
+	"editor_usage"					"Moveable barrel. Works just like a func_moveable. However the barrel"
+	"editor_usage1"					"has special handling to make it appear more round. This version also explodes when damaged enough."
+	"editor_usage2"					"Only add model, model_detonate or model_burn or health to override defaults"
+
+	"spawnclass"					"idStaticEntity"
+}
