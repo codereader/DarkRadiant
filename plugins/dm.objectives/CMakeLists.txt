@@ -42,3 +42,8 @@ add_library(dm_objectives MODULE
             SpecifierType.cpp)
 target_compile_options(dm_objectives PUBLIC ${SIGC_CFLAGS})
 target_link_libraries(dm_objectives PUBLIC wxutil)
+
+# Enable precompiled header for dm_objectives
+if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.16.0")
+target_precompile_headers(dm_objectives PRIVATE "precompiled.h")
+endif()

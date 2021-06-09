@@ -34,3 +34,8 @@ target_include_directories(script SYSTEM PUBLIC
 target_link_libraries(script PUBLIC
                       math
                       ${Python_LIBRARIES} ${SIGC_LIBRARIES})
+
+# Enable precompiled header for script plugin
+if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.16.0")
+target_precompile_headers(script PRIVATE "precompiled.h")
+endif()
