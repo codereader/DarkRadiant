@@ -183,5 +183,7 @@ target_link_libraries(darkradiant PRIVATE
                       ${GLIB_LIBRARIES})
 
 # Enable precompiled header for radiant
+if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.16.0")
 target_precompile_headers(darkradiant PRIVATE
                           "$<$<COMPILE_LANGUAGE:CXX>:precompiled.h>")
+endif()

@@ -291,5 +291,7 @@ target_link_libraries(radiantcore PUBLIC
                       ${JPEG_LIBRARIES} ${PNG_LIBRARIES} ${ZLIB_LIBRARIES})
 
 # Enable precompiled header for radiantcore
+if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.16.0")
 target_precompile_headers(radiantcore PRIVATE
                           "$<$<COMPILE_LANGUAGE:CXX>:precompiled.h>")
+endif()
