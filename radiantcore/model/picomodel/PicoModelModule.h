@@ -53,13 +53,13 @@ public:
 		// Register all importers available through picomodel
 		const picoModule_t** modules = PicoModuleList(0);
 
-		while (*modules != nullptr) 
+		while (*modules != nullptr)
 		{
 			const picoModule_t* module = *modules++;
 
-			if (module->canload && module->load) 
+			if (module->canload && module->load)
 			{
-				for (char* const* ext = module->defaultExts; *ext != 0; ++ext) 
+				for (char* const* ext = module->defaultExts; *ext != 0; ++ext)
 				{
 					// greebo: File extension is expected to be UPPERCASE
 					std::string extension(*ext);
@@ -107,7 +107,7 @@ private:
 
 	static void PicoLoadFileFunc(char *name, unsigned char** buffer, int *bufSize)
 	{
-		std::string fixedFilename(os::standardPathWithSlash(name));
+		std::string fixedFilename(os::standardPathWithSlash(std::string(name)));
 
 		ArchiveFilePtr file = GlobalFileSystem().openFile(fixedFilename);
 
