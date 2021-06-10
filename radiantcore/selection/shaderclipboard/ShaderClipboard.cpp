@@ -4,7 +4,9 @@
 #include "imap.h"
 #include "iselectiontest.h"
 #include "iscenegraph.h"
+#include "ishaders.h"
 #include "iclipboard.h"
+#include "string/trim.h"
 #include "ClosestTexturableFinder.h"
 
 #include "util/ScopedBoolLock.h"
@@ -52,6 +54,12 @@ void ShaderClipboard::sourceChanged()
 	util::ScopedBoolLock lock(_updatesDisabled); // prevent loopbacks
 
 	_signalSourceChanged.emit();
+
+    // Sync the material name to the system clipboard
+    if (!_source.empty() && module::GlobalModuleRegistry().moduleExists(MODULE_CLIPBOARD))
+    {
+        GlobalClipboard().setString(_source.getShader());
+    }
 }
 
 void ShaderClipboard::clear() 
@@ -93,12 +101,6 @@ void ShaderClipboard::pickFromSelectionTest(SelectionTest& test)
 	if (_updatesDisabled) return; // loopback guard
 
 	_source = getTexturable(test);
-
-    // Copy the material name to the system clipboard when picking
-    if (!_source.empty() && module::GlobalModuleRegistry().moduleExists(MODULE_CLIPBOARD))
-    {
-        GlobalClipboard().setString(_source.getShader());
-    }
 
 	sourceChanged();
 }
@@ -234,6 +236,10 @@ void ShaderClipboard::initialiseModule(const IApplicationContext& ctx)
 		sigc::mem_fun(this, &ShaderClipboard::onMapEvent));
 
 	clear();
+
+    module::GlobalModuleRegistry().signal_allModulesInitialised().connect(
+        sigc::mem_fun(this, &ShaderClipboard::postModuleInitialisation)
+    );
 }
 
 void ShaderClipboard::shutdownModule()
@@ -241,6 +247,37 @@ void ShaderClipboard::shutdownModule()
 	_postUndoConn.disconnect();
 	_postRedoConn.disconnect();
 	_mapEventConn.disconnect();
+    _clipboardContentsChangedConn.disconnect();
+}
+
+void ShaderClipboard::postModuleInitialisation()
+{
+    if (module::GlobalModuleRegistry().moduleExists(MODULE_CLIPBOARD))
+    {
+        // Subscribe to clipboard changes to check for copied material names
+        _clipboardContentsChangedConn = GlobalClipboard().signal_clipboardContentChanged().connect(
+            sigc::mem_fun(this, &ShaderClipboard::onSystemClipboardContentsChanged)
+        );
+    }
+}
+
+void ShaderClipboard::onSystemClipboardContentsChanged()
+{
+    if (_updatesDisabled) return;
+
+    auto candidate = GlobalClipboard().getString();
+
+    // If we get a single line, check if the contents point to a material we know
+    if (!candidate.empty() && candidate.find('\n') == std::string::npos)
+    {
+        string::trim(candidate);
+
+        if (GlobalMaterialManager().materialExists(candidate))
+        {
+            rMessage() << "Found a valid material name in the system clipboard: " << candidate << std::endl;
+            setSourceShader(candidate);
+        }
+    }
 }
 
 // Define the static module

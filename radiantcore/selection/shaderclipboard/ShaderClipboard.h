@@ -24,6 +24,7 @@ private:
 	sigc::connection _postUndoConn;
 	sigc::connection _postRedoConn;
 	sigc::connection _mapEventConn;
+	sigc::connection _clipboardContentsChangedConn;
 
 public:
 	ShaderClipboard();
@@ -82,6 +83,9 @@ private:
 	 * 			given SelectionTest.
 	 */
 	Texturable getTexturable(SelectionTest& test);
+
+    void postModuleInitialisation();
+    void onSystemClipboardContentsChanged();
 };
 
 } // namespace selection
