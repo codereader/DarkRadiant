@@ -12,6 +12,7 @@ class ClipboardModule :
 {
 private:
     sigc::signal<void> _sigContentsChanged;
+    std::string _contentHash;
 
 public:
 	std::string getString() override;

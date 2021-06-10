@@ -1,6 +1,7 @@
 #include "ClipboardModule.h"
 
 #include "itextstream.h"
+#include "math/Hash.h"
 #include <wx/clipbrd.h>
 #include <wx/app.h>
 
@@ -74,9 +75,18 @@ void ClipboardModule::onAppActivated(wxActivateEvent& ev)
 {
     if (ev.GetActive())
     {
-        // Update the shader clipboard when the main window regains focus
-        // TODO
-        rMessage() << "App activated" << std::endl;
+        // Inspect the clipboard when the main window regains focus
+        // and fire the event if the contents changed
+        math::Hash hash;
+        hash.addString(getString());
+
+        std::string newHash = hash;
+
+        if (newHash != _contentHash)
+        {
+            _contentHash.swap(newHash);
+            _sigContentsChanged.emit();
+        }
     }
 
     ev.Skip();
