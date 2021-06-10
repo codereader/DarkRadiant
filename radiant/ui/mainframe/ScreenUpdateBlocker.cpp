@@ -127,6 +127,8 @@ void ScreenUpdateBlocker::onMainWindowFocus(wxFocusEvent& ev)
 	{
 		showModalProgressDialog();
 	}
+
+    ev.Skip();
 }
 
 void ScreenUpdateBlocker::onCloseEvent(wxCloseEvent& ev)
