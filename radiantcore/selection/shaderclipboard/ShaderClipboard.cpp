@@ -4,6 +4,7 @@
 #include "imap.h"
 #include "iselectiontest.h"
 #include "iscenegraph.h"
+#include "iclipboard.h"
 #include "ClosestTexturableFinder.h"
 
 #include "util/ScopedBoolLock.h"
@@ -92,6 +93,12 @@ void ShaderClipboard::pickFromSelectionTest(SelectionTest& test)
 	if (_updatesDisabled) return; // loopback guard
 
 	_source = getTexturable(test);
+
+    // Copy the material name to the system clipboard when picking
+    if (!_source.empty() && module::GlobalModuleRegistry().moduleExists(MODULE_CLIPBOARD))
+    {
+        GlobalClipboard().setString(_source.getShader());
+    }
 
 	sourceChanged();
 }
