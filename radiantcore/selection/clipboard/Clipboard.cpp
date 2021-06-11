@@ -88,7 +88,13 @@ void paste(const cmd::ArgumentList& args)
         {
             UndoableCommand undo("pasteMaterialFromClipboard");
 
-            GlobalShaderClipboard().setSourceShader(clipboardMaterial);
+            // Activate the material name in the shader clipboard, but don't overwrite
+            // anything there if the material is already matching to not overwrite Face/Patch information
+            if (GlobalShaderClipboard().getShaderName() != clipboardMaterial)
+            {
+                GlobalShaderClipboard().setSourceShader(clipboardMaterial);
+            }
+
             algorithm::pasteShaderToSelection(args);
             return;
         }

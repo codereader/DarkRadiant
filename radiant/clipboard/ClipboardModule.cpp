@@ -10,6 +10,19 @@
 namespace ui
 {
 
+namespace
+{
+    inline std::string getContentHash(const std::string& content)
+    {
+        // Inspect the clipboard when the main window regains focus
+        // and fire the event if the contents changed
+        math::Hash hash;
+        hash.addString(content);
+
+        return hash;
+    }
+}
+
 std::string ClipboardModule::getString()
 {
 	std::string returnValue;
@@ -36,6 +49,8 @@ void ClipboardModule::setString(const std::string& str)
 		// This data objects are held by the clipboard, so do not delete them in the app.
 		wxTheClipboard->SetData(new wxTextDataObject(str));
 		wxTheClipboard->Close();
+
+        _contentHash = getContentHash(str);
 
         // Contents changed signal
         _sigContentsChanged.emit();
@@ -77,10 +92,7 @@ void ClipboardModule::onAppActivated(wxActivateEvent& ev)
     {
         // Inspect the clipboard when the main window regains focus
         // and fire the event if the contents changed
-        math::Hash hash;
-        hash.addString(getString());
-
-        std::string newHash = hash;
+        auto newHash = getContentHash(getString());
 
         if (newHash != _contentHash)
         {
