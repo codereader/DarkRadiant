@@ -6,6 +6,7 @@
 #include "icameraview.h"
 #include "imapformat.h"
 #include "iclipboard.h"
+#include "ishaderclipboard.h"
 #include "string/trim.h"
 
 #include "map/Map.h"
