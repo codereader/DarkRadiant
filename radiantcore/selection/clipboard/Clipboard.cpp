@@ -6,6 +6,7 @@
 #include "icameraview.h"
 #include "imapformat.h"
 #include "iclipboard.h"
+#include "string/trim.h"
 
 #include "map/Map.h"
 #include "brush/FaceInstance.h"
@@ -13,6 +14,7 @@
 #include "selection/algorithm/General.h"
 #include "selection/algorithm/Transformation.h"
 #include "command/ExecutionNotPossible.h"
+#include "command/ExecutionFailure.h"
 
 namespace selection
 {
@@ -56,12 +58,44 @@ void copy(const cmd::ArgumentList& args)
 	}
 }
 
+std::string getMaterialNameFromClipboard()
+{
+    if (!module::GlobalModuleRegistry().moduleExists(MODULE_CLIPBOARD))
+    {
+        return std::string();
+    }
+
+    auto candidate = GlobalClipboard().getString();
+    string::trim(candidate);
+
+    // If we get a single line, check if the contents point to a material we know
+    if (!candidate.empty() && candidate.find('\n') == std::string::npos &&
+        GlobalMaterialManager().materialExists(candidate))
+    {
+        return candidate;
+    }
+    
+    return std::string();
+}
+
 void paste(const cmd::ArgumentList& args)
 {
 	if (FaceInstance::Selection().empty())
     {
-		UndoableCommand undo("paste");
-		pasteToMap();
+        auto clipboardMaterial = getMaterialNameFromClipboard();
+
+        if (!clipboardMaterial.empty())
+        {
+            UndoableCommand undo("pasteMaterialFromClipboard");
+
+            GlobalShaderClipboard().setSourceShader(clipboardMaterial);
+            algorithm::pasteShaderToSelection(args);
+            return;
+        }
+
+        // Try to parse the map and apply it
+        UndoableCommand undo("paste");
+        pasteToMap();
 	}
 	else
 	{

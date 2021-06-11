@@ -13,6 +13,7 @@
 #include "patch/PatchNode.h"
 #include "brush/BrushNode.h"
 #include "module/StaticModule.h"
+#include "../clipboard/Clipboard.h"
 
 namespace selection 
 {
@@ -265,18 +266,12 @@ void ShaderClipboard::onSystemClipboardContentsChanged()
 {
     if (_updatesDisabled) return;
 
-    auto candidate = GlobalClipboard().getString();
+    auto candidate = clipboard::getMaterialNameFromClipboard();
 
-    // If we get a single line, check if the contents point to a material we know
-    if (!candidate.empty() && candidate.find('\n') == std::string::npos)
+    if (!candidate.empty())
     {
-        string::trim(candidate);
-
-        if (GlobalMaterialManager().materialExists(candidate))
-        {
-            rMessage() << "Found a valid material name in the system clipboard: " << candidate << std::endl;
-            setSourceShader(candidate);
-        }
+        rMessage() << "Found a valid material name in the system clipboard: " << candidate << std::endl;
+        setSourceShader(candidate);
     }
 }
 
