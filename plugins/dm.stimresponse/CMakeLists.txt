@@ -17,3 +17,8 @@ add_library(dm_stimresponse MODULE
             StimTypes.cpp)
 target_compile_options(dm_stimresponse PUBLIC ${SIGC_CFLAGS})
 target_link_libraries(dm_stimresponse PUBLIC wxutil)
+
+# Enable precompiled header for dm_stimresponse
+if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.16.0")
+target_precompile_headers(dm_stimresponse PRIVATE "precompiled.h")
+endif()

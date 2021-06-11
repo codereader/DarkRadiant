@@ -10,8 +10,8 @@ namespace wxutil
 ConsoleView::ConsoleView(wxWindow* parent) :
 	wxTextCtrl(parent, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_RICH2|wxTE_READONLY),
 	_errorAttr(*wxRED),
-	_warningAttr(wxColour(128, 128, 0)),
-	_standardAttr(*wxBLACK)
+	_warningAttr(wxColour(255, 96, 0)),
+	_standardAttr(wxNullColour)
 {
     _lineBuffer.reserve(512);
 }
@@ -54,7 +54,7 @@ void ConsoleView::flushLine()
 
 void ConsoleView::onIdle()
 {
-    // Idle events occur in the main thread - prevent interrupting 
+    // Idle events occur in the main thread - prevent interrupting
     // threads in the middle of a line
     std::lock_guard<std::mutex> idleLock(GlobalRadiantCore().getLogWriter().getStreamLock());
 
@@ -87,7 +87,7 @@ void ConsoleView::onIdle()
         // Insert at the end of the text buffer
         AppendText(pair.second);
     }
-	
+
     _lineBuffer.clear();
 
     // Scroll to bottom

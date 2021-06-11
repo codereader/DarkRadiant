@@ -203,7 +203,6 @@ add_library(radiantcore MODULE
             patch/PatchNode.cpp
             patch/PatchRenderables.cpp
             patch/PatchTesselation.cpp
-            precompiled.cpp
             Radiant.cpp
             rendersystem/backend/GLProgramFactory.cpp
             rendersystem/backend/glprogram/GenericVFPProgram.cpp
@@ -291,3 +290,9 @@ target_include_directories(radiantcore PRIVATE .)
 target_link_libraries(radiantcore PUBLIC
                       math xmlutil scenegraph wxutil module
                       ${JPEG_LIBRARIES} ${PNG_LIBRARIES} ${ZLIB_LIBRARIES})
+
+# Enable precompiled header for radiantcore
+if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.16.0")
+target_precompile_headers(radiantcore PRIVATE
+                          "$<$<COMPILE_LANGUAGE:CXX>:precompiled.h>")
+endif()

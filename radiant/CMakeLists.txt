@@ -16,7 +16,6 @@ add_executable(darkradiant
                main.cpp
                map/AutoSaver.cpp
                map/StartupMapLoader.cpp
-               precompiled.cpp
                RadiantApp.cpp
                selection/ManipulateMouseTool.cpp
                selection/SelectionMouseTools.cpp
@@ -183,3 +182,9 @@ target_include_directories(darkradiant PRIVATE .)
 target_link_libraries(darkradiant PRIVATE
                       math xmlutil scenegraph wxutil module
                       ${GLIB_LIBRARIES})
+
+# Enable precompiled header for radiant
+if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.16.0")
+target_precompile_headers(darkradiant PRIVATE
+                          "$<$<COMPILE_LANGUAGE:CXX>:precompiled.h>")
+endif()
