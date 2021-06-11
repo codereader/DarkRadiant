@@ -27,7 +27,8 @@ namespace wxutil
 namespace
 {
     const char* const ECLASS_CHOOSER_TITLE = N_("Create entity");
-    const std::string RKEY_SPLIT_POS = "user/ui/entityClassChooser/splitPos";
+    const char* const RKEY_SPLIT_POS = "user/ui/entityClassChooser/splitPos";
+    const char* const RKEY_WINDOW_STATE = "user/ui/entityClassChooser/window";
 
     const char* const FOLDER_ICON = "folder16.png";
     const char* const ENTITY_ICON = "cmenu_add_entity.png";
@@ -180,8 +181,6 @@ EntityClassChooser::EntityClassChooser() :
     makeLabelBold(this, "EntityClassChooserDefFileNameLabel");
     makeLabelBold(this, "EntityClassChooserUsageLabel");
 
-    FitToScreen(0.7f, 0.8f);
-
     wxSplitterWindow* splitter = findNamedObject<wxSplitterWindow>(this, "EntityClassChooserSplitter");
 
     // Disallow unsplitting
@@ -189,6 +188,8 @@ EntityClassChooser::EntityClassChooser() :
     splitter->SetSashPosition(static_cast<int>(GetSize().GetWidth() * 0.2f));
 
     // Persist layout to registry
+    _windowPosition.initialise(this, RKEY_WINDOW_STATE, 0.7f, 0.8f);
+
     _panedPosition.connect(splitter);
     _panedPosition.loadFromPath(RKEY_SPLIT_POS);
 
@@ -247,6 +248,8 @@ void EntityClassChooser::onDeleteEvent(wxCloseEvent& ev)
 
 int EntityClassChooser::ShowModal()
 {
+    _windowPosition.applyPosition();
+
     _treeViewToolbar->ClearFilter();
 
     // Update the member variables
@@ -258,6 +261,7 @@ int EntityClassChooser::ShowModal()
     int returnCode = DialogBase::ShowModal();
 
     _panedPosition.saveToPath(RKEY_SPLIT_POS);
+    _windowPosition.saveToPath(RKEY_WINDOW_STATE);
 
     return returnCode;
 }

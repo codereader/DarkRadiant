@@ -9,6 +9,7 @@
 #include "dataview/ResourceTreeViewToolbar.h"
 #include "XmlResourceBasedWidget.h"
 #include "PanedPosition.h"
+#include "WindowPosition.h"
 
 #include <memory>
 #include <sigc++/connection.h>
@@ -38,6 +39,7 @@ private:
     // Model preview widget
     ModelPreviewPtr _modelPreview;
 
+    WindowPosition _windowPosition;
     PanedPosition _panedPosition;
 
     sigc::connection _defsReloaded;
