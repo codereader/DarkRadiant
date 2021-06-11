@@ -51,7 +51,7 @@ namespace
     }
 
     const int VIEWPORT_BORDER = 12;
-    const int TILE_BORDER = 6;
+    const int TILE_BORDER = 2;
 }
 
 class TextureBrowser::TextureTile
@@ -102,8 +102,8 @@ private:
         // draw an additional square around with 0.5 1 0.5 color
         if (shader_equal(_owner.getSelectedShader(), material->getName()))
         {
-            glLineWidth(3);
-            glColor3f(1, 0, 0);
+            glLineWidth(2);
+            glColor3f(0.8f, 0, 0);
             glDisable(GL_TEXTURE_2D);
 
             glBegin(GL_LINE_LOOP);
@@ -125,9 +125,9 @@ private:
             glLineWidth(1);
 
             // material border:
-            if (!material->IsDefault())
+            if (true && !material->IsDefault())
             {
-                glColor3f(1, 1, 1);
+                glColor3f(0.5f, 0.5f, 0.5f);
                 glDisable(GL_TEXTURE_2D);
 
                 glBegin(GL_LINE_LOOP);
@@ -143,6 +143,7 @@ private:
                 glEnable(GL_TEXTURE_2D);
             }
 
+#if false
             // highlight in-use textures
             if (!_owner._hideUnused && material->IsInUse())
             {
@@ -160,6 +161,7 @@ private:
                 glEnd();
                 glEnable(GL_TEXTURE_2D);
             }
+#endif
         }
     }
 
@@ -184,7 +186,7 @@ private:
     void drawTextureName()
     {
         glDisable(GL_TEXTURE_2D);
-        glColor3f(1, 1, 1);
+        glColor3f(0.7f, 0.7f, 0.7f);
 
         const static int FONT_OFFSET = 6;
         glRasterPos2i(position.x(), position.y() - FONT_HEIGHT() + FONT_OFFSET);
