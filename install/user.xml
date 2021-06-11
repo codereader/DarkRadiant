@@ -293,6 +293,7 @@
       <toolbutton name="flush" action="RefreshShaders" tooltip="Reload Materials" icon="texwindow_flushandreload.png"/>
       <toggletoolbutton name="showinuse" action="TextureBrowserHideUnused" tooltip="Hide Unused" icon="texwindow_hideunused.png"/>
       <toggletoolbutton name="showfavourites" action="TextureBrowserShowFavouritesOnly" tooltip="Show Favourites only" icon="favourite.png"/>
+      <toggletoolbutton name="useuniformscale" action="TextureBrowserToggleUniformScale" tooltip="Use Uniform Thumbnail Scale" icon="texwindow_uniformsize.png"/>
       <separator/>
       <toolbutton name="findandreplace" action="FindReplaceTextures" tooltip="Find &amp; Replace" icon="texwindow_findandreplace.png"/>
     </toolbar>
