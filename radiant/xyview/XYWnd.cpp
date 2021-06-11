@@ -1562,7 +1562,7 @@ void XYWnd::zoomOut()
 
 void XYWnd::zoomIn()
 {
-    float max_scale = 64;
+    float max_scale = GlobalXYWnd().maxZoomFactor();
     float scale = getScale() * 5.0f / 4.0f;
 
     if (scale > max_scale) {

@@ -47,12 +47,14 @@ namespace
 	const std::string RKEY_TRANSLATE_CONSTRAINED = "user/ui/xyview/translateConstrained";
 	const std::string RKEY_FONT_SIZE = "user/ui/xyview/fontSize";
 	const std::string RKEY_FONT_STYLE = "user/ui/xyview/fontStyle";
+	const std::string RKEY_MAX_ZOOM_FACTOR = "user/ui/xyview/maxZoomFactor";
 
     const int DEFAULT_CHASE_MOUSE_CAP = 32; // pixels per chase moue timer interval
 }
 
 // Constructor
-XYWndManager::XYWndManager()
+XYWndManager::XYWndManager() :
+    _maxZoomFactor(1024)
 {}
 
 /* greebo: This method restores all xy views from the information stored in the registry.
@@ -200,6 +202,7 @@ void XYWndManager::constructPreferences()
 	page.appendCheckBox(_("Show Workzone"), RKEY_SHOW_WORKZONE);
 	page.appendCheckBox(_("Translate Manipulator always constrained to Axis"), RKEY_TRANSLATE_CONSTRAINED);
 	page.appendCheckBox(_("Higher Selection Priority for Entities"), RKEY_HIGHER_ENTITY_PRIORITY);
+    page.appendSpinner(_("Maximum Zoom Factor"), RKEY_MAX_ZOOM_FACTOR, 1, 65536, 0);
     page.appendCombo(_("Font Style"), RKEY_FONT_STYLE, { "Sans", "Mono" }, true);
     page.appendSpinner(_("Font Size"), RKEY_FONT_SIZE, 4, 48, 0);
 }
@@ -221,6 +224,7 @@ void XYWndManager::refreshFromRegistry()
 	_defaultBlockSize = registry::getValue<int>(RKEY_DEFAULT_BLOCKSIZE);
     _fontSize = registry::getValue<int>(RKEY_FONT_SIZE);
     _fontStyle = registry::getValue<std::string>(RKEY_FONT_STYLE) == "Sans" ? IGLFont::Style::Sans : IGLFont::Style::Mono;
+    _maxZoomFactor = registry::getValue<float>(RKEY_MAX_ZOOM_FACTOR);
 
 	updateAllViews();
 
@@ -287,6 +291,11 @@ int XYWndManager::fontSize() const
 IGLFont::Style XYWndManager::fontStyle() const
 {
     return _fontStyle;
+}
+
+float XYWndManager::maxZoomFactor() const
+{
+    return _maxZoomFactor;
 }
 
 void XYWndManager::updateAllViews(bool force)
@@ -689,6 +698,7 @@ void XYWndManager::initialiseModule(const IApplicationContext& ctx)
 	observeKey(RKEY_DEFAULT_BLOCKSIZE);
 	observeKey(RKEY_FONT_SIZE);
 	observeKey(RKEY_FONT_STYLE);
+	observeKey(RKEY_MAX_ZOOM_FACTOR);
 
 	// Trigger loading the values of the observed registry keys
 	refreshFromRegistry();

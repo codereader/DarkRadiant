@@ -163,6 +163,7 @@
       <showCoordinates value="1" />
       <showOutline value="0" />
       <showAxes value="1" />
+      <maxZoomFactor value="1024" />
       <showWorkzone value="0" />
       <fontSize value="14" />
       <fontStyle value="Sans" />
