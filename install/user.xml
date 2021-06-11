@@ -91,6 +91,7 @@
         <hideUnused value="0" />
         <textureScale value="2" />
         <uniformSize value="128" />
+        <useUniformScale value="1" />
         <showScrollBar value="1" />
         <mouseWheelIncrement value="64" />
         <showFilter value="0" />
