@@ -4,6 +4,7 @@
 #include "wxutil/dialog/DialogBase.h"
 #include "wxutil/dataview/ResourceTreeView.h"
 #include "wxutil/menu/PopupMenu.h"
+#include "wxutil/WindowPosition.h"
 
 #include "SoundShaderPreview.h"
 #include <memory>
@@ -31,6 +32,8 @@ private:
 	std::string _selectedShader;
 
     sigc::connection _shadersReloaded;
+
+    wxutil::WindowPosition _windowPosition;
 
 private:
 
