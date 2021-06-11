@@ -63,11 +63,7 @@ void TextureBrowserManager::registerPreferencePage()
 
     std::list<std::string> textureScaleList
     {
-        "10%",
-        "25%",
-        "50%",
-        "100%",
-        "200%",
+        "5%", "10%", "25%", "50%", "100%", "200%",
     };
 
     page.appendCombo(_("Texture Thumbnail Scale"), RKEY_TEXTURE_SCALE, textureScaleList);

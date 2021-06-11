@@ -366,11 +366,12 @@ void TextureBrowser::loadScaleFromRegistry()
 
     switch (index)
     {
-    case 0: _textureScale = 10; break;
-    case 1: _textureScale = 25; break;
-    case 2: _textureScale = 50; break;
-    case 3: _textureScale = 100; break;
-    case 4: _textureScale = 200; break;
+    case 0: _textureScale = 5; break;
+    case 1: _textureScale = 10; break;
+    case 2: _textureScale = 25; break;
+    case 3: _textureScale = 50; break;
+    case 4: _textureScale = 100; break;
+    case 5: _textureScale = 200; break;
     };
 
     queueDraw();

@@ -89,7 +89,7 @@
       </shaderChooser>
       <browser>
         <hideUnused value="0" />
-        <textureScale value="2" />
+        <textureScale value="3" />
         <uniformSize value="128" />
         <useUniformScale value="1" />
         <showScrollBar value="1" />
