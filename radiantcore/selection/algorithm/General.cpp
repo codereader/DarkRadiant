@@ -623,31 +623,68 @@ public:
 			deleteSelection();
 		}
 
-		// Instantiate a "self" object SelectByBounds and use it as visitor
-		SelectByBounds<TSelectionPolicy> walker(aabbs);
-		GlobalSceneGraph().root()->traverse(walker);
-
-		SceneChangeNotify();
+        DoSelection(aabbs);
 	}
+
+    static void DoSelection(const std::vector<AABB>& aabbs)
+    {
+        SelectByBounds<TSelectionPolicy> walker(aabbs);
+        GlobalSceneGraph().root()->traverse(walker);
+
+        SceneChangeNotify();
+    }
+
+    static void DoSelection(const AABB& bounds)
+    {
+        DoSelection(std::vector<AABB>{ bounds });
+    }
 };
 
 void selectInside(const cmd::ArgumentList& args)
 {
+    if (args.size() == 2)
+    {
+        auto bounds = AABB::createFromMinMax(args[0].getVector3(), args[1].getVector3());
+        SelectByBounds<SelectionPolicy_Inside>::DoSelection(bounds);
+        return;
+    }
+
 	SelectByBounds<SelectionPolicy_Inside>::DoSelection();
 }
 
 void selectFullyInside(const cmd::ArgumentList& args)
 {
+    if (args.size() == 2)
+    {
+        auto bounds = AABB::createFromMinMax(args[0].getVector3(), args[1].getVector3());
+        SelectByBounds<SelectionPolicy_FullyInside>::DoSelection(bounds);
+        return;
+    }
+
     SelectByBounds<SelectionPolicy_FullyInside>::DoSelection();
 }
 
 void selectTouching(const cmd::ArgumentList& args)
 {
+    if (args.size() == 2)
+    {
+        auto bounds = AABB::createFromMinMax(args[0].getVector3(), args[1].getVector3());
+        SelectByBounds<SelectionPolicy_Touching>::DoSelection(bounds);
+        return;
+    }
+
 	SelectByBounds<SelectionPolicy_Touching>::DoSelection(false);
 }
 
 void selectCompleteTall(const cmd::ArgumentList& args)
 {
+    if (args.size() == 2)
+    {
+        auto bounds = AABB::createFromMinMax(args[0].getVector3(), args[1].getVector3());
+        SelectByBounds<SelectionPolicy_Complete_Tall>::DoSelection(bounds);
+        return;
+    }
+
 	SelectByBounds<SelectionPolicy_Complete_Tall>::DoSelection();
 }
 
@@ -931,16 +968,20 @@ void floorSelection(const cmd::ArgumentList& args)
 
 void registerCommands()
 {
-	GlobalCommandSystem().addCommand("CloneSelection", cloneSelected);
-	GlobalCommandSystem().addCommand("DeleteSelection", deleteSelectionCmd);
-	GlobalCommandSystem().addCommand("ParentSelection", parentSelection);
-	GlobalCommandSystem().addCommand("ParentSelectionToWorldspawn", parentSelectionToWorldspawn);
+    GlobalCommandSystem().addCommand("CloneSelection", cloneSelected);
+    GlobalCommandSystem().addCommand("DeleteSelection", deleteSelectionCmd);
+    GlobalCommandSystem().addCommand("ParentSelection", parentSelection);
+    GlobalCommandSystem().addCommand("ParentSelectionToWorldspawn", parentSelectionToWorldspawn);
 
-	GlobalCommandSystem().addCommand("InvertSelection", invertSelection);
-	GlobalCommandSystem().addCommand("SelectInside", selectInside);
-	GlobalCommandSystem().addCommand("SelectFullyInside", selectFullyInside);
-	GlobalCommandSystem().addCommand("SelectTouching", selectTouching);
-	GlobalCommandSystem().addCommand("SelectCompleteTall", selectCompleteTall);
+    GlobalCommandSystem().addCommand("InvertSelection", invertSelection);
+    GlobalCommandSystem().addCommand("SelectInside", selectInside,
+        { cmd::ARGTYPE_VECTOR3 | cmd::ARGTYPE_OPTIONAL, cmd::ARGTYPE_VECTOR3 | cmd::ARGTYPE_OPTIONAL });
+    GlobalCommandSystem().addCommand("SelectFullyInside", selectFullyInside, 
+        { cmd::ARGTYPE_VECTOR3 | cmd::ARGTYPE_OPTIONAL, cmd::ARGTYPE_VECTOR3 | cmd::ARGTYPE_OPTIONAL });
+	GlobalCommandSystem().addCommand("SelectTouching", selectTouching,
+        { cmd::ARGTYPE_VECTOR3 | cmd::ARGTYPE_OPTIONAL, cmd::ARGTYPE_VECTOR3 | cmd::ARGTYPE_OPTIONAL });
+	GlobalCommandSystem().addCommand("SelectCompleteTall", selectCompleteTall,
+        { cmd::ARGTYPE_VECTOR3 | cmd::ARGTYPE_OPTIONAL, cmd::ARGTYPE_VECTOR3 | cmd::ARGTYPE_OPTIONAL });
 	GlobalCommandSystem().addCommand("ExpandSelectionToSiblings", expandSelectionToSiblings);
 	GlobalCommandSystem().addCommand("SelectParentEntities", selectParentEntitiesOfSelected);
 	GlobalCommandSystem().addCommand("MergeSelectedEntities", mergeSelectedEntities);
