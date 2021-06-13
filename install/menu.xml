@@ -62,6 +62,7 @@
 		<menuItem name="invertSelection" caption="&amp;Invert selection" command="InvertSelection" />
 		<menuItem name="selectCompleteTall" caption="Select complete t&amp;all" command="SelectCompleteTall" icon="selection_selectcompletetall.png" />
 		<menuItem name="selectInside" caption="Select i&amp;nside" command="SelectInside" icon="selection_selectinside.png" />
+		<menuItem name="selectFullyInside" caption="Select fully inside" command="SelectFullyInside" icon="selection_selectinside.png" />
 		<menuItem name="selectTouching" caption="Select &amp;touching" command="SelectTouching" icon="selection_selecttouching.png" />
 		<menuItem name="selectionChildren" caption="Select Children" command="SelectChildren" />
 		<menuItem name="selectionParentEntity" caption="Select Parent Entities" command="SelectParentEntities" />
