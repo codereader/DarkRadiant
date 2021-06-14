@@ -37,7 +37,7 @@ public:
 
     // Creates the merge operation from the given comparison result. 
     // The operation will (on application) change the base map such that it matches the source map.
-    static MergeOperation::Ptr CreateFromComparisonResult(const ComparisonResult& comparisonResult);
+    static Ptr CreateFromComparisonResult(const ComparisonResult& comparisonResult);
 
     void addAction(const MergeAction::Ptr& action);
 
