@@ -4,6 +4,7 @@
 #include <memory>
 #include "ComparisonResult.h"
 #include "MergeAction.h"
+#include "MergeOperationBase.h"
 
 namespace scene
 {
@@ -14,13 +15,11 @@ namespace merge
 // A MergeOperation groups one or more merge actions
 // together in order to apply a set of changes from source => base
 class MergeOperation :
-    public IMergeOperation
+    public MergeOperationBase
 {
 private:
     scene::IMapRootNodePtr _sourceRoot;
     scene::IMapRootNodePtr _baseRoot;
-
-    std::list<MergeAction::Ptr> _actions;
 
     bool _mergeSelectionGroups;
     bool _mergeLayers;
@@ -39,22 +38,11 @@ public:
     // The operation will (on application) change the base map such that it matches the source map.
     static Ptr CreateFromComparisonResult(const ComparisonResult& comparisonResult);
 
-    void addAction(const MergeAction::Ptr& action);
-
     // Executes all active actions defined in this operation
     void applyActions() override;
 
-    void foreachAction(const std::function<void(const IMergeAction::Ptr&)>& visitor) override;
-
     void setMergeSelectionGroups(bool enabled) override;
     void setMergeLayers(bool enabled) override;
-
-private:
-    void createActionsForEntity(const ComparisonResult::EntityDifference& difference);
-    void createActionsForKeyValueDiff(const ComparisonResult::KeyValueDifference& difference,
-        const scene::INodePtr& targetEntity);
-    void createActionsForPrimitiveDiff(const ComparisonResult::PrimitiveDifference& difference,
-        const scene::INodePtr& targetEntity);
 };
 
 }
