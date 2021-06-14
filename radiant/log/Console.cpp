@@ -49,6 +49,12 @@ void Console::toggle(const cmd::ArgumentList& args)
 	GlobalGroupDialog().togglePage("console");
 }
 
+void Console::SetFocus()
+{
+    // Propagate focus to command entry
+    _commandEntry->SetFocus();
+}
+
 void Console::writeLog(const std::string& outputStr, applog::LogLevel level)
 {
 	switch (level)

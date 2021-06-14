@@ -61,6 +61,8 @@ public:
 	{
 		return true; // Receive the buffered log output when attached
 	}
+
+    void SetFocus() override;
 };
 
 } // namespace ui
