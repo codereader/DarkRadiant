@@ -22,8 +22,8 @@ ComparisonResult::Ptr GraphComparer::Compare(const IMapRootNodePtr& source, cons
 {
     auto result = std::make_shared<ComparisonResult>(source, base);
 
-    auto sourceEntities = collectEntityFingerprints(source);
-    auto baseEntities = collectEntityFingerprints(base);
+    auto sourceEntities = NodeUtils::CollectEntityFingerprints(source);
+    auto baseEntities = NodeUtils::CollectEntityFingerprints(base);
 
     // Filter out all the matching nodes and store them in the result
     if (sourceEntities.empty())
@@ -227,8 +227,8 @@ std::list<ComparisonResult::PrimitiveDifference> GraphComparer::compareChildNode
 {
     std::list<ComparisonResult::PrimitiveDifference> result;
 
-    auto sourceChildren = collectPrimitiveFingerprints(sourceNode);
-    auto baseChildren = collectPrimitiveFingerprints(baseNode);
+    auto sourceChildren = NodeUtils::CollectPrimitiveFingerprints(sourceNode);
+    auto baseChildren = NodeUtils::CollectPrimitiveFingerprints(baseNode);
 
     std::vector<Fingerprints::value_type> missingInSource;
     std::vector<Fingerprints::value_type> missingInBase;
@@ -266,50 +266,6 @@ std::list<ComparisonResult::PrimitiveDifference> GraphComparer::compareChildNode
     return result;
 }
 
-GraphComparer::Fingerprints GraphComparer::collectNodeFingerprints(const INodePtr& parent, 
-    const std::function<bool(const INodePtr& node)>& nodePredicate)
-{
-    Fingerprints result;
-
-    parent->foreachNode([&](const INodePtr& node)
-    {
-        if (!nodePredicate(node)) return true; // predicate says "skip"
-
-        auto comparable = std::dynamic_pointer_cast<IComparableNode>(node);
-        assert(comparable);
-
-        if (!comparable) return true; // skip
-
-        // Store the fingerprint and check for collisions
-        auto insertResult = result.try_emplace(comparable->getFingerprint(), node);
-
-        if (!insertResult.second)
-        {
-            rWarning() << "More than one node with the same fingerprint found in the parent node with name " << parent->name() << std::endl;
-        }
-
-        return true;
-    });
-
-    return result;
-}
-
-GraphComparer::Fingerprints GraphComparer::collectPrimitiveFingerprints(const INodePtr& parent)
-{
-    return collectNodeFingerprints(parent, [](const INodePtr& node)
-    {
-        return node->getNodeType() == INode::Type::Brush || node->getNodeType() == INode::Type::Patch;
-    });
-}
-
-GraphComparer::Fingerprints GraphComparer::collectEntityFingerprints(const INodePtr& root)
-{
-    return collectNodeFingerprints(root, [](const INodePtr& node)
-    {
-        return node->getNodeType() == INode::Type::Entity;
-    });
-}
-
 void GraphComparer::compareSelectionGroups(ComparisonResult& result)
 {
     // Compare all matching entities first, their primitives are matching
@@ -340,8 +296,8 @@ void GraphComparer::compareSelectionGroups(ComparisonResult& result)
 void GraphComparer::compareSelectionGroupsOfPrimitives(ComparisonResult& result, const INodePtr& sourceNode, const INodePtr& baseNode)
 {
     // Check each node of the mismatching source entity, it might have counter-parts in the base map
-    auto sourcePrimitives = collectPrimitiveFingerprints(sourceNode);
-    auto basePrimitives = collectPrimitiveFingerprints(baseNode);
+    auto sourcePrimitives = NodeUtils::CollectPrimitiveFingerprints(sourceNode);
+    auto basePrimitives = NodeUtils::CollectPrimitiveFingerprints(baseNode);
 
     for (const auto& pair : sourcePrimitives)
     {

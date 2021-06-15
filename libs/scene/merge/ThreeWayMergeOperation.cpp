@@ -1,6 +1,7 @@
 #include "ThreeWayMergeOperation.h"
 
 #include "itextstream.h"
+#include "NodeUtils.h"
 
 namespace scene
 {
@@ -61,18 +62,43 @@ void ThreeWayMergeOperation::processEntityModification(const ComparisonResult::E
     if (targetDiff.type == ComparisonResult::EntityDifference::Type::EntityMissingInSource)
     {
         // This is a conflicting change, the source modified it, the target removed it
-        // TODO: Add a conflict resolution action
+        // When the user chooses to import the change, it will be an AddEntity action
+        addAction(std::make_shared<EntityConflictResolutionAction>(
+            targetDiff.sourceNode,
+            std::make_shared<AddEntityAction>(sourceDiff.sourceNode, _targetRoot)
+        ));
         return;
     }
 
     // Both graphs modified this entity, do an in-depth comparison
+    auto targetChildren = NodeUtils::CollectPrimitiveFingerprints(targetDiff.sourceNode);
 
     // Every primitive change that has been done to the target map can be applied
     // to the source map, since we can't detect whether one of them has been moved or retextured
     for (const auto& primitiveDiff : sourceDiff.differingChildren)
     {
-        // TODO: Don't create duplicates though
-        addActionsForPrimitiveDiff(primitiveDiff, targetDiff.sourceNode);
+        bool primitivePresentInTargetMap = targetChildren.count(primitiveDiff.fingerprint) != 0;
+
+        switch (primitiveDiff.type)
+        {
+        case ComparisonResult::PrimitiveDifference::Type::PrimitiveAdded:
+        {
+            // Add this primitive if it isn't there already
+            if (!primitivePresentInTargetMap)
+            {
+                addAction(std::make_shared<AddChildAction>(primitiveDiff.node, targetDiff.sourceNode));
+            }
+            break;
+        }
+
+        case ComparisonResult::PrimitiveDifference::Type::PrimitiveRemoved:
+            // Check if this primitive is still present in the target map, otherwise we can't remove it
+            if (primitivePresentInTargetMap)
+            {
+                addAction(std::make_shared<RemoveChildAction>(targetChildren[primitiveDiff.fingerprint]));
+            }
+            break;
+        }
     }
 
     // The key value changes can be applied only if they are not targeting the same key

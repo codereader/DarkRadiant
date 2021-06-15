@@ -45,12 +45,6 @@ private:
     static void processDifferingEntities(ComparisonResult& result, const EntityMismatchByName& sourceMismatches, 
         const EntityMismatchByName& baseMismatches);
 
-    static Fingerprints collectEntityFingerprints(const INodePtr& root);
-    static Fingerprints collectPrimitiveFingerprints(const INodePtr& parent);
-
-    static Fingerprints collectNodeFingerprints(const INodePtr& parent,
-        const std::function<bool(const INodePtr& node)>& nodePredicate);
-
     static std::list<ComparisonResult::KeyValueDifference> compareKeyValues(
         const INodePtr& sourceNode, const INodePtr& baseNode);
 
