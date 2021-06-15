@@ -1798,9 +1798,28 @@ ThreeWayMergeOperation::Ptr setupThreeWayMergeOperation(const std::string& baseP
     return ThreeWayMergeOperation::CreateFromComparisonResults(*baseToSource, *baseToTarget);
 }
 
+// Asserts that the changes to the target map have not been reverted
+void verifyTargetChanges(const scene::IMapRootNodePtr& targetRoot)
+{
+    EXPECT_TRUE(algorithm::getEntityByName(targetRoot, "light_3")); // light_3 has been added
+    EXPECT_TRUE(algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(targetRoot), "textures/numbers/17")); // brush_17 been added to worldspawn
+    auto func_static_7 = algorithm::getEntityByName(targetRoot, "func_static_7");
+    EXPECT_TRUE(algorithm::findFirstBrushWithMaterial(func_static_7, "textures/numbers/9")); // brush_7 in func_static_7 retextured to brush 9
+    EXPECT_EQ(Node_getEntity(algorithm::getEntityByName(targetRoot, "expandable"))->getKeyValue("target_spawnarg"), "target_value");
+    EXPECT_EQ(Node_getEntity(algorithm::getEntityByName(targetRoot, "expandable"))->getKeyValue("extra2"), "");
+    EXPECT_EQ(Node_getEntity(algorithm::getEntityByName(targetRoot, "expandable"))->getKeyValue("origin"), "-100 350 32");
+    EXPECT_FALSE(algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(targetRoot), "textures/numbers/4")); // both brush_4 have been deleted from worldspawn
+    EXPECT_FALSE(algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(targetRoot), "textures/numbers/3")); // func_static_3 had two brush_3 added (were part of worldspawn before)
+    auto func_static_3 = algorithm::getEntityByName(targetRoot, "func_static_3");
+    EXPECT_TRUE(algorithm::getChildCount(func_static_3, [](const scene::INodePtr& node) { return Node_isBrush(node) && Node_getIBrush(node)->hasShader("textures/numbers/3"); }));
+    EXPECT_TRUE(algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(targetRoot), "textures/numbers/12")); // brush_12 got moved to the left
+}
+
 TEST_F(ThreeWayMergeTest, IndependentEntityAddition)
 {
     auto operation = setupThreeWayMergeOperation("maps/threeway_merge_base.mapx", "maps/threeway_merge_target_1.mapx", "maps/threeway_merge_source_1.mapx");
+
+    verifyTargetChanges(operation->getTargetRoot());
 
     // light_2 must be added to target
     auto action = findAction<AddEntityAction>(operation, [](const std::shared_ptr<AddEntityAction>& action)
@@ -1819,6 +1838,8 @@ TEST_F(ThreeWayMergeTest, IndependentEntityAddition)
 
     entityNode = algorithm::getEntityByName(operation->getTargetRoot(), "light_2");
     EXPECT_TRUE(entityNode);
+
+    verifyTargetChanges(operation->getTargetRoot());
 }
 
 }
