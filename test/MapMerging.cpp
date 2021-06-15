@@ -1766,7 +1766,7 @@ TEST_F(LayerMergeTest, MergeLayersFlagNotSet)
 // - brush_8 in func_static_8 retextured to brush 9
 // - entity expandable got a new spawnarg: "source_spawnarg" => "source_value"
 // - entity expandable got a spawnarg removed: "extra1"
-// - entity expandable got a spawnarg modified: "extra3" => "extra3_changed"
+// - entity expandable got a spawnarg modified: "extra3" => "value3_changed"
 // - both brush_6 have been deleted from worldspawn
 // - func_static_5 had two brush_5 added (were part of worldspawn before)
 // - brush_11 got moved to the left
@@ -1890,6 +1890,52 @@ TEST_F(ThreeWayMergeTest, NonconflictingFuncStaticPrimitiveAddition)
     action->applyChanges();
 
     EXPECT_TRUE(algorithm::findFirstBrushWithMaterial(func_static_8, "textures/numbers/9")); // brush_9 added to func_static_8
+
+    verifyTargetChanges(operation->getTargetRoot());
+}
+
+// - entity expandable got a new spawnarg: "source_spawnarg" => "source_value"
+// - entity expandable got a spawnarg removed: "extra1"
+// - entity expandable got a spawnarg modified: "extra3" => "value3_changed"
+TEST_F(ThreeWayMergeTest, NonconflictingSpawnargManipulation)
+{
+    auto operation = setupThreeWayMergeOperation("maps/threeway_merge_base.mapx", "maps/threeway_merge_target_1.mapx", "maps/threeway_merge_source_1.mapx");
+
+    verifyTargetChanges(operation->getTargetRoot());
+
+    auto expandable = algorithm::getEntityByName(operation->getTargetRoot(), "expandable");
+
+    // Find the spawnarg actions
+    auto addAction = findAction<AddEntityKeyValueAction>(operation, [&](const std::shared_ptr<AddEntityKeyValueAction>& action)
+    {
+        return action->getKey() == "source_spawnarg" && action->getEntityNode() == expandable;
+    });
+    auto removeAction = findAction<RemoveEntityKeyValueAction>(operation, [&](const std::shared_ptr<RemoveEntityKeyValueAction>& action)
+    {
+        return action->getKey() == "extra1" && action->getEntityNode() == expandable;
+    });
+    auto modifyAction = findAction<ChangeEntityKeyValueAction>(operation, [&](const std::shared_ptr<ChangeEntityKeyValueAction>& action)
+    {
+        return action->getKey() == "extra3" && action->getEntityNode() == expandable;
+    });
+
+    EXPECT_TRUE(addAction) << "No merge action found for adding the spawnarg";
+    EXPECT_TRUE(modifyAction) << "No merge action found for modifying the spawnarg";
+    EXPECT_TRUE(removeAction) << "No merge action found for removing the spawnarg";
+
+    // Check pre-requisites and apply the action
+    EXPECT_NE(Node_getEntity(expandable)->getKeyValue("source_spawnarg"), "source_value");
+    EXPECT_NE(Node_getEntity(expandable)->getKeyValue("extra1"), "");
+    EXPECT_NE(Node_getEntity(expandable)->getKeyValue("extra3"), "value3_changed");
+
+    addAction->applyChanges();
+    EXPECT_EQ(Node_getEntity(expandable)->getKeyValue("source_spawnarg"), "source_value");
+
+    removeAction->applyChanges();
+    EXPECT_EQ(Node_getEntity(expandable)->getKeyValue("extra1"), "");
+    
+    modifyAction->applyChanges();
+    EXPECT_EQ(Node_getEntity(expandable)->getKeyValue("extra3"), "value3_changed");
 
     verifyTargetChanges(operation->getTargetRoot());
 }
