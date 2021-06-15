@@ -58,10 +58,10 @@ class RemoveNodeFromParentAction :
     public MergeAction
 {
 private:
-    scene::INodePtr _nodeToRemove;
+    INodePtr _nodeToRemove;
 
 protected:
-    RemoveNodeFromParentAction(const scene::INodePtr& nodeToRemove, ActionType type) :
+    RemoveNodeFromParentAction(const INodePtr& nodeToRemove, ActionType type) :
         MergeAction(type),
         _nodeToRemove(nodeToRemove)
     {
@@ -69,7 +69,7 @@ protected:
     }
 
 public:
-    const scene::INodePtr& getNodeToRemove() const
+    const INodePtr& getNodeToRemove() const
     {
         return _nodeToRemove;
     }
@@ -81,7 +81,7 @@ public:
         removeNodeFromParent(_nodeToRemove);
     }
 
-    scene::INodePtr getAffectedNode() override
+    INodePtr getAffectedNode() override
     {
         return getNodeToRemove();
     }
@@ -91,7 +91,7 @@ class RemoveChildAction :
     public RemoveNodeFromParentAction
 {
 public:
-    RemoveChildAction(const scene::INodePtr& node) :
+    RemoveChildAction(const INodePtr& node) :
         RemoveNodeFromParentAction(node, ActionType::RemoveChildNode)
     {}
 };
@@ -100,7 +100,7 @@ class RemoveEntityAction :
     public RemoveNodeFromParentAction
 {
 public:
-    RemoveEntityAction(const scene::INodePtr& node) :
+    RemoveEntityAction(const INodePtr& node) :
         RemoveNodeFromParentAction(node, ActionType::RemoveEntity)
     {}
 };
@@ -109,13 +109,13 @@ class AddCloneToParentAction :
     public MergeAction
 {
 private:
-    scene::INodePtr _node;
-    scene::INodePtr _parent;
-    scene::INodePtr _cloneToBeInserted;
+    INodePtr _node;
+    INodePtr _parent;
+    INodePtr _cloneToBeInserted;
 
 protected:
     // Will add the given node to the parent when applyChanges() is called
-    AddCloneToParentAction(const scene::INodePtr& node, const scene::INodePtr& parent, ActionType type) :
+    AddCloneToParentAction(const INodePtr& node, const INodePtr& parent, ActionType type) :
         MergeAction(type),
         _node(node),
         _parent(parent)
@@ -135,7 +135,7 @@ protected:
         auto activeLayer = parent->getRootNode()->getLayerManager().getActiveLayer();
 
         _cloneToBeInserted->moveToLayer(activeLayer);
-        _cloneToBeInserted->foreachNode([=](const scene::INodePtr& child) 
+        _cloneToBeInserted->foreachNode([=](const INodePtr& child) 
         { 
             child->moveToLayer(activeLayer); return true; 
         });
@@ -149,17 +149,17 @@ public:
         addNodeToContainer(_cloneToBeInserted, _parent);
     }
 
-    const scene::INodePtr& getParent() const
+    const INodePtr& getParent() const
     {
         return _parent;
     }
 
-    const scene::INodePtr& getSourceNodeToAdd() const
+    const INodePtr& getSourceNodeToAdd() const
     {
         return _node;
     }
 
-    scene::INodePtr getAffectedNode() override
+    INodePtr getAffectedNode() override
     {
         return _cloneToBeInserted;
     }
@@ -169,7 +169,7 @@ class AddEntityAction :
     public AddCloneToParentAction
 {
 public:
-    AddEntityAction(const scene::INodePtr& node, const scene::IMapRootNodePtr& targetRoot) :
+    AddEntityAction(const INodePtr& node, const IMapRootNodePtr& targetRoot) :
         AddCloneToParentAction(node, targetRoot, ActionType::AddEntity)
     {}
 };
@@ -178,7 +178,7 @@ class AddChildAction :
     public AddCloneToParentAction
 {
 public:
-    AddChildAction(const scene::INodePtr& node, const scene::INodePtr& parent) :
+    AddChildAction(const INodePtr& node, const INodePtr& parent) :
         AddCloneToParentAction(node, parent, ActionType::AddChildNode)
     {}
 };
@@ -188,13 +188,13 @@ class SetEntityKeyValueAction :
     public virtual IEntityKeyValueMergeAction
 {
 private:
-    scene::INodePtr _node;
+    INodePtr _node;
     std::string _key;
     std::string _value;
 
 public:
     // Will call setKeyValue(key, value) on the targetnode when applyChanges() is called
-    SetEntityKeyValueAction(const scene::INodePtr& node, const std::string& key, const std::string& value, ActionType mergeActionType) :
+    SetEntityKeyValueAction(const INodePtr& node, const std::string& key, const std::string& value, ActionType mergeActionType) :
         MergeAction(mergeActionType),
         _node(node),
         _key(key),
@@ -220,7 +220,7 @@ public:
         entity->setKeyValue(_key, _value);
     }
 
-    const scene::INodePtr& getEntityNode() const
+    const INodePtr& getEntityNode() const
     {
         return _node;
     }
@@ -235,7 +235,7 @@ public:
         return _value;
     }
 
-    scene::INodePtr getAffectedNode() override
+    INodePtr getAffectedNode() override
     {
         return getEntityNode();
     }
@@ -245,7 +245,7 @@ class AddEntityKeyValueAction :
     public SetEntityKeyValueAction
 {
 public:
-    AddEntityKeyValueAction(const scene::INodePtr& node, const std::string& key, const std::string& value) :
+    AddEntityKeyValueAction(const INodePtr& node, const std::string& key, const std::string& value) :
         SetEntityKeyValueAction(node, key, value, ActionType::AddKeyValue)
     {}
 };
@@ -254,7 +254,7 @@ class RemoveEntityKeyValueAction :
     public SetEntityKeyValueAction
 {
 public:
-    RemoveEntityKeyValueAction(const scene::INodePtr& node, const std::string& key) :
+    RemoveEntityKeyValueAction(const INodePtr& node, const std::string& key) :
         SetEntityKeyValueAction(node, key, std::string(), ActionType::RemoveKeyValue)
     {}
 };
@@ -263,29 +263,43 @@ class ChangeEntityKeyValueAction :
     public SetEntityKeyValueAction
 {
 public:
-    ChangeEntityKeyValueAction(const scene::INodePtr& node, const std::string& key, const std::string& value) :
+    ChangeEntityKeyValueAction(const INodePtr& node, const std::string& key, const std::string& value) :
         SetEntityKeyValueAction(node, key, value, ActionType::ChangeKeyValue)
     {}
 };
 
+/**
+ * A ConflictResolutionAction encapsulates a source change that has a
+ * encountered a conflicting target change.
+ * 
+ * The source change will only be applied if this action has been
+ * told to do so by calling setResolvedByUsingSource(true),
+ * otherwise nothing happens and the target change stays in effect.
+ */
 class ConflictResolutionAction :
     public MergeAction
 {
 protected:
+    INodePtr _conflictingEntity;
+
     // The action the source diff is trying to apply
     MergeAction::Ptr _sourceAction;
     // The action that happened in the target
     MergeAction::Ptr _targetAction;
 
+    bool _applySourceChange;
+
 protected:
-    ConflictResolutionAction(ActionType actionType, const MergeAction::Ptr& sourceAction) :
-        ConflictResolutionAction(actionType, sourceAction, MergeAction::Ptr())
+    ConflictResolutionAction(ActionType actionType, const INodePtr& conflictingEntity, const MergeAction::Ptr& sourceAction) :
+        ConflictResolutionAction(actionType, conflictingEntity, sourceAction, MergeAction::Ptr())
     {}
 
-    ConflictResolutionAction(ActionType actionType, const MergeAction::Ptr& sourceAction, const MergeAction::Ptr& targetAction) :
+    ConflictResolutionAction(ActionType actionType, const INodePtr& conflictingEntity, const MergeAction::Ptr& sourceAction, const MergeAction::Ptr& targetAction) :
         MergeAction(actionType),
+        _conflictingEntity(conflictingEntity),
         _sourceAction(sourceAction),
-        _targetAction(targetAction)
+        _targetAction(targetAction),
+        _applySourceChange(false)
     {}
 
 public:
@@ -303,11 +317,34 @@ public:
         return _targetAction;
     }
 
+    const INodePtr& getConflictingEntity() const
+    {
+        return _conflictingEntity;
+    }
+
+    INodePtr getAffectedNode() override
+    {
+        return getConflictingEntity();
+    }
+
+    bool isResolvedByUsingSource() const
+    {
+        return _applySourceChange;
+    }
+
+    void setResolvedByUsingSource(bool applySourceChange)
+    {
+        _applySourceChange = applySourceChange;
+    }
+
     void applyChanges() override
     {
         if (!isActive()) return;
 
-        // TODO
+        if (_applySourceChange)
+        {
+            _sourceAction->applyChanges();
+        }
     }
 };
 
@@ -315,9 +352,6 @@ public:
 class EntityConflictResolutionAction :
     public ConflictResolutionAction
 {
-private:
-    INodePtr _conflictingEntity;
-
 public:
     EntityConflictResolutionAction(const INodePtr& conflictingEntity, const MergeAction::Ptr& sourceAction) :
         EntityConflictResolutionAction(conflictingEntity, sourceAction, MergeAction::Ptr())
@@ -326,38 +360,20 @@ public:
     EntityConflictResolutionAction(const INodePtr& conflictingEntity, 
                                    const MergeAction::Ptr& sourceAction, 
                                    const MergeAction::Ptr& targetAction) :
-        ConflictResolutionAction(ActionType::EntityNodeConflict, sourceAction, targetAction)
+        ConflictResolutionAction(ActionType::EntityNodeConflict, conflictingEntity, sourceAction, targetAction)
     {}
-
-    const INodePtr& getConflictingEntity() const
-    {
-        return _conflictingEntity;
-    }
-
-    scene::INodePtr getAffectedNode() override
-    {
-        return _conflictingEntity;
-    }
 };
 
 // An entity key value is a conflicting subject in both maps
 class EntityKeyValueConflictResolutionAction :
     public ConflictResolutionAction
 {
-private:
-    INodePtr _conflictingEntity;
-
 public:
     EntityKeyValueConflictResolutionAction(const INodePtr& conflictingEntity, 
                                            const MergeAction::Ptr& sourceAction, 
                                            const MergeAction::Ptr& targetAction) :
-        ConflictResolutionAction(ActionType::EntityKeyValueConflict, sourceAction, targetAction)
+        ConflictResolutionAction(ActionType::EntityKeyValueConflict, conflictingEntity, sourceAction, targetAction)
     {}
-
-    scene::INodePtr getAffectedNode() override
-    {
-        return _conflictingEntity;
-    }
 };
 
 }
