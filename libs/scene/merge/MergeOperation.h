@@ -34,6 +34,8 @@ public:
         _mergeLayers(true)
     {}
 
+    virtual ~MergeOperation();
+
     // Creates the merge operation from the given comparison result. 
     // The operation will (on application) change the base map such that it matches the source map.
     static Ptr CreateFromComparisonResult(const ComparisonResult& comparisonResult);
@@ -43,6 +45,9 @@ public:
 
     void setMergeSelectionGroups(bool enabled) override;
     void setMergeLayers(bool enabled) override;
+
+private:
+    void createActionsForEntity(const ComparisonResult::EntityDifference& difference, const IMapRootNodePtr& targetRoot);
 };
 
 }

@@ -153,6 +153,17 @@ void ThreeWayMergeOperation::processEntityDifferences(const std::list<Comparison
         _targetDifferences[it->entityName] = it;
     }
 
+    // Collect a map of all target entities for faster lookup later
+    _targetRoot->foreachNode([&](const INodePtr& candidate)
+    {
+        if (candidate->getNodeType() == INode::Type::Entity)
+        {
+            _targetEntities.emplace(NodeUtils::GetEntityName(candidate), candidate);
+        }
+
+        return true;
+    });
+
     // Check each entity difference from the base to the source map
     // fully accept only those entities that are not altered in the target map, and detect conflicts
     for (const auto& pair : _sourceDifferences)
@@ -162,7 +173,37 @@ void ThreeWayMergeOperation::processEntityDifferences(const std::list<Comparison
         if (targetDiff == _targetDifferences.end())
         {
             // Change is targeting an entity that has not been altered in the source map => accept
-            createActionsForEntity(*pair.second, _targetRoot);
+            switch (pair.second->type)
+            {
+            case ComparisonResult::EntityDifference::Type::EntityMissingInSource:
+                {
+                    auto entityToRemove = findTargetEntityByName(pair.first);
+                    assert(entityToRemove);
+                    addAction(std::make_shared<RemoveEntityAction>(entityToRemove));
+                }
+                break;
+
+            case ComparisonResult::EntityDifference::Type::EntityMissingInBase:
+                addAction(std::make_shared<AddEntityAction>(pair.second->sourceNode, _targetRoot));
+                break;
+
+            case ComparisonResult::EntityDifference::Type::EntityPresentButDifferent:
+                {
+                    auto entityToModify = findTargetEntityByName(pair.first);
+                    assert(entityToModify);
+
+                    for (const auto& keyValueDiff : pair.second->differingKeyValues)
+                    {
+                        addActionForKeyValueDiff(keyValueDiff, entityToModify);
+                    }
+
+                    for (const auto& primitiveDiff : pair.second->differingChildren)
+                    {
+                        addActionsForPrimitiveDiff(primitiveDiff, entityToModify);
+                    }
+                }
+                break;
+            };
             continue;
         }
 
@@ -236,6 +277,12 @@ void ThreeWayMergeOperation::setMergeSelectionGroups(bool enabled)
 void ThreeWayMergeOperation::setMergeLayers(bool enabled)
 {
     // TODO
+}
+
+INodePtr ThreeWayMergeOperation::findTargetEntityByName(const std::string& name)
+{
+    auto found = _targetEntities.find(name);
+    return found != _targetEntities.end() ? found->second : INodePtr();
 }
 
 }

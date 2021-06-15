@@ -34,8 +34,6 @@ protected:
 
     void addActionsForPrimitiveDiff(const ComparisonResult::PrimitiveDifference& difference,
         const scene::INodePtr& targetEntity);
-
-    void createActionsForEntity(const ComparisonResult::EntityDifference& difference, const IMapRootNodePtr& targetRoot);
 };
 
 }

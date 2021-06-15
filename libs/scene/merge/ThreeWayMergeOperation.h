@@ -30,6 +30,7 @@ private:
     // Volatile data only needed to construct the actions
     std::map<std::string, std::list<ComparisonResult::EntityDifference>::const_iterator> _sourceDifferences;
     std::map<std::string, std::list<ComparisonResult::EntityDifference>::const_iterator> _targetDifferences;
+    std::map<std::string, INodePtr> _targetEntities;
 
 public:
     using Ptr = std::shared_ptr<ThreeWayMergeOperation>;
@@ -57,6 +58,8 @@ public:
     }
 
 private:
+    INodePtr findTargetEntityByName(const std::string& name);
+
     void processEntityDifferences(const std::list<ComparisonResult::EntityDifference>& sourceDiffs, 
         const std::list<ComparisonResult::EntityDifference>& targetDiffs);
     void processEntityModification(const ComparisonResult::EntityDifference& sourceDiff,

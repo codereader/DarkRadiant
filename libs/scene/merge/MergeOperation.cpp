@@ -9,6 +9,39 @@ namespace scene
 namespace merge
 {
 
+MergeOperation::~MergeOperation()
+{
+    clearActions();
+}
+
+void MergeOperation::createActionsForEntity(const ComparisonResult::EntityDifference& difference, const IMapRootNodePtr& targetRoot)
+{
+    switch (difference.type)
+    {
+    case ComparisonResult::EntityDifference::Type::EntityMissingInSource:
+        addAction(std::make_shared<RemoveEntityAction>(difference.baseNode));
+        break;
+
+    case ComparisonResult::EntityDifference::Type::EntityMissingInBase:
+        addAction(std::make_shared<AddEntityAction>(difference.sourceNode, targetRoot));
+        break;
+
+    case ComparisonResult::EntityDifference::Type::EntityPresentButDifferent:
+    {
+        for (const auto& keyValueDiff : difference.differingKeyValues)
+        {
+            addActionForKeyValueDiff(keyValueDiff, difference.baseNode);
+        }
+
+        for (const auto& primitiveDiff : difference.differingChildren)
+        {
+            addActionsForPrimitiveDiff(primitiveDiff, difference.baseNode);
+        }
+        break;
+    }
+    };
+}
+
 MergeOperation::Ptr MergeOperation::CreateFromComparisonResult(const ComparisonResult& result)
 {
     auto operation = std::make_shared<MergeOperation>(result.getSourceRootNode(), result.getBaseRootNode());

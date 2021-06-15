@@ -1815,7 +1815,7 @@ void verifyTargetChanges(const scene::IMapRootNodePtr& targetRoot)
     EXPECT_TRUE(algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(targetRoot), "textures/numbers/12")); // brush_12 got moved to the left
 }
 
-TEST_F(ThreeWayMergeTest, IndependentEntityAddition)
+TEST_F(ThreeWayMergeTest, NonconflictingEntityAddition)
 {
     auto operation = setupThreeWayMergeOperation("maps/threeway_merge_base.mapx", "maps/threeway_merge_target_1.mapx", "maps/threeway_merge_source_1.mapx");
 
@@ -1838,6 +1838,58 @@ TEST_F(ThreeWayMergeTest, IndependentEntityAddition)
 
     entityNode = algorithm::getEntityByName(operation->getTargetRoot(), "light_2");
     EXPECT_TRUE(entityNode);
+
+    verifyTargetChanges(operation->getTargetRoot());
+}
+
+TEST_F(ThreeWayMergeTest, NonconflictingWorldspawnPrimitiveAddition)
+{
+    auto operation = setupThreeWayMergeOperation("maps/threeway_merge_base.mapx", "maps/threeway_merge_target_1.mapx", "maps/threeway_merge_source_1.mapx");
+
+    verifyTargetChanges(operation->getTargetRoot());
+
+    // brush_16 should be added to worldspawn
+    auto action = findAction<AddChildAction>(operation, [](const std::shared_ptr<AddChildAction>& action)
+    {
+        auto sourceBrush = Node_getIBrush(action->getSourceNodeToAdd());
+        return sourceBrush && sourceBrush->hasShader("textures/numbers/16");
+    });
+
+    EXPECT_TRUE(action) << "No merge action found for missing brush";
+
+    // Check pre-requisites and apply the action
+    EXPECT_FALSE(algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(operation->getTargetRoot()), "textures/numbers/16")); // brush_16 not in worldspawn
+
+    action->applyChanges();
+
+    EXPECT_TRUE(algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(operation->getTargetRoot()), "textures/numbers/16")); // brush_16 added to worldspawn
+
+    verifyTargetChanges(operation->getTargetRoot());
+}
+
+TEST_F(ThreeWayMergeTest, NonconflictingFuncStaticPrimitiveAddition)
+{
+    auto operation = setupThreeWayMergeOperation("maps/threeway_merge_base.mapx", "maps/threeway_merge_target_1.mapx", "maps/threeway_merge_source_1.mapx");
+
+    verifyTargetChanges(operation->getTargetRoot());
+
+    auto func_static_8 = algorithm::getEntityByName(operation->getTargetRoot(), "func_static_8");
+
+    // brush_9 should be added to func_static_8
+    auto action = findAction<AddChildAction>(operation, [](const std::shared_ptr<AddChildAction>& action)
+    {
+        auto sourceBrush = Node_getIBrush(action->getSourceNodeToAdd());
+        return sourceBrush && sourceBrush->hasShader("textures/numbers/9");
+    });
+
+    EXPECT_TRUE(action) << "No merge action found for retextured brush";
+
+    // Check pre-requisites and apply the action
+    EXPECT_FALSE(algorithm::findFirstBrushWithMaterial(func_static_8, "textures/numbers/9")); // brush_9 not in func_static_8
+
+    action->applyChanges();
+
+    EXPECT_TRUE(algorithm::findFirstBrushWithMaterial(func_static_8, "textures/numbers/9")); // brush_9 added to func_static_8
 
     verifyTargetChanges(operation->getTargetRoot());
 }
