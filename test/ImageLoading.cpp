@@ -102,9 +102,10 @@ TEST_F(ImageLoadingTest, LoadDDSUncompressed)
     auto img = loadImage("textures/dds/test_16x16_uncomp.dds");
     ASSERT_TRUE(img);
 
-    // Check size is correct
+    // Check properties are correct
     EXPECT_EQ(img->getWidth(), 16);
     EXPECT_EQ(img->getHeight(), 16);
+    EXPECT_EQ(img->getLevels(), 1);
 
     // Examine pixel data
     Pixelator<RGB8> pixels(*img);
@@ -116,6 +117,19 @@ TEST_F(ImageLoadingTest, LoadDDSUncompressed)
     EXPECT_EQ(pixels(8, 8), RGB8(0, 0, 255));       // red centre (BGR)
     EXPECT_EQ(pixels(14, 13), RGB8(255, 255, 255)); // background
     EXPECT_EQ(pixels(15, 15), RGB8(0, 0, 0));       // border
+}
+
+TEST_F(ImageLoadingTest, LoadDDSUncompressedMipMaps)
+{
+    auto img = loadImage("textures/dds/test_16x16_uncomp_mips.dds");
+    ASSERT_TRUE(img);
+
+    // Overall size is unchanged
+    EXPECT_EQ(img->getWidth(), 16);
+    EXPECT_EQ(img->getHeight(), 16);
+
+    // 5 mipmap levels (16, 8, 4, 2, 1)
+    EXPECT_EQ(img->getLevels(), 5);
 }
 
 }

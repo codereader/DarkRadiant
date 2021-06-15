@@ -49,6 +49,9 @@ public:
     /// Return the height of the image in pixels
     virtual std::size_t getHeight() const = 0;
 
+    /// Return number of resolution levels (mipmaps)
+    virtual std::size_t getLevels() const = 0;
+
     // greebo: Returns TRUE whether this image is precompressed (DDS)
     virtual bool isPrecompressed() const {
         return false;

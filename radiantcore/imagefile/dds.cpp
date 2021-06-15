@@ -105,6 +105,7 @@ public:
     uint8_t* getPixels() const override { return _pixelData.data(); }
     std::size_t getWidth() const override { return _mipMapInfo[0].width; }
     std::size_t getHeight() const override { return _mipMapInfo[0].height; }
+    std::size_t getLevels() const override { return _mipMapInfo.size(); }
 
     /* BindableTexture implementation */
     TexturePtr bindTexture(const std::string& name) const
