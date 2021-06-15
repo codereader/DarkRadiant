@@ -16,6 +16,12 @@ ThreeWayMergeOperation::ThreeWayMergeOperation(const scene::IMapRootNodePtr& bas
     _targetRoot(targetRoot)
 {}
 
+ThreeWayMergeOperation::~ThreeWayMergeOperation()
+{
+    // Clear the actions held by the base class before the root nodes are cleared
+    clearActions();
+}
+
 std::list<ComparisonResult::KeyValueDifference>::const_iterator ThreeWayMergeOperation::FindTargetDiffByKey(
     const std::list<ComparisonResult::KeyValueDifference>& targetKeyValueDiffs, const std::string& key)
 {

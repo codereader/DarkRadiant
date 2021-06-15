@@ -22,9 +22,9 @@ class ThreeWayMergeOperation :
     public MergeOperationBase
 {
 private:
-    scene::IMapRootNodePtr _baseRoot;   // a common ancestor of the two maps
-    scene::IMapRootNodePtr _sourceRoot; // the map to be merged
-    scene::IMapRootNodePtr _targetRoot; // the map where elements are going to be merged into
+    IMapRootNodePtr _baseRoot;   // a common ancestor of the two maps
+    IMapRootNodePtr _sourceRoot; // the map to be merged
+    IMapRootNodePtr _targetRoot; // the map where elements are going to be merged into
 
 private:
     // Volatile data only needed to construct the actions
@@ -34,8 +34,10 @@ private:
 public:
     using Ptr = std::shared_ptr<ThreeWayMergeOperation>;
 
-    ThreeWayMergeOperation(const scene::IMapRootNodePtr& baseRoot,
-        const scene::IMapRootNodePtr& sourceRoot, const scene::IMapRootNodePtr& targetRoot);
+    ThreeWayMergeOperation(const IMapRootNodePtr& baseRoot,
+        const IMapRootNodePtr& sourceRoot, const IMapRootNodePtr& targetRoot);
+
+    virtual ~ThreeWayMergeOperation();
 
     // Creates the merge operation from the given comparison results. 
     // The operation will apply the missing changes in the source map to the target map 
@@ -43,6 +45,16 @@ public:
 
     void setMergeSelectionGroups(bool enabled) override;
     void setMergeLayers(bool enabled) override;
+
+    const IMapRootNodePtr& getSourceRoot() const
+    {
+        return _sourceRoot;
+    }
+
+    const IMapRootNodePtr& getTargetRoot() const
+    {
+        return _targetRoot;
+    }
 
 private:
     void processEntityDifferences(const std::list<ComparisonResult::EntityDifference>& sourceDiffs, 

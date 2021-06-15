@@ -25,6 +25,7 @@ public:
 
 protected:
     virtual void addAction(const MergeAction::Ptr& action);
+    void clearActions();
     
     void addActionForKeyValueDiff(const ComparisonResult::KeyValueDifference& difference,
         const scene::INodePtr& targetEntity);

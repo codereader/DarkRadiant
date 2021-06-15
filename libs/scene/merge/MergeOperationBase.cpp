@@ -36,6 +36,11 @@ void MergeOperationBase::foreachAction(const std::function<void(const IMergeActi
     }
 }
 
+void MergeOperationBase::clearActions()
+{
+    _actions.clear();
+}
+
 void MergeOperationBase::addActionForKeyValueDiff(const ComparisonResult::KeyValueDifference& difference, 
     const scene::INodePtr& targetEntity)
 {

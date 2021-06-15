@@ -11,6 +11,7 @@
 #include "scenelib.h"
 #include "scene/merge/GraphComparer.h"
 #include "scene/merge/MergeOperation.h"
+#include "scene/merge/ThreeWayMergeOperation.h"
 #include "scene/merge/SelectionGroupMerger.h"
 #include "scene/merge/LayerMerger.h"
 
@@ -20,6 +21,7 @@ namespace test
 using MapMergeTest = RadiantTest;
 using SelectionGroupMergeTest = RadiantTest;
 using LayerMergeTest = RadiantTest;
+using ThreeWayMergeTest = RadiantTest;
 
 TEST_F(MapMergeTest, BrushFingerprint)
 {
@@ -380,7 +382,7 @@ TEST_F(MapMergeTest, DetectChildPrimitiveChanges)
 }
 
 template<typename T>
-std::shared_ptr<T> findAction(const MergeOperation::Ptr& operation, const std::function<bool(const std::shared_ptr<T>&)>& predicate)
+std::shared_ptr<T> findAction(const IMergeOperation::Ptr& operation, const std::function<bool(const std::shared_ptr<T>&)>& predicate)
 {
     std::shared_ptr<T> foundAction;
 
@@ -1754,6 +1756,69 @@ TEST_F(LayerMergeTest, MergeLayersFlagNotSet)
     auto merger = std::make_unique<LayerMerger>(result->getSourceRootNode(), result->getBaseRootNode());
     merger->adjustBaseLayers();
     EXPECT_FALSE(merger->getChangeLog().empty());
+}
+
+// Map changelog of source and target against their base, used in several test cases below:
+// 
+// Source:
+// - light_2 has been added
+// - brush 16 added to worldspawn
+// - brush_8 in func_static_8 retextured to brush 9
+// - entity expandable got a new spawnarg: "source_spawnarg" => "source_value"
+// - entity expandable got a spawnarg removed: "extra1"
+// - entity expandable got a spawnarg modified: "extra3" => "extra3_changed"
+// - both brush_6 have been deleted from worldspawn
+// - func_static_5 had two brush_5 added (were part of worldspawn before)
+// - brush_11 got moved to the left
+// 
+// Target Map:
+// - light_3 has been added
+// - brush_17 been added to worldspawn
+// - brush_7 in func_static_7 retextured to brush 9
+// - entity expandable got a new spawnarg: "target_spawnarg" => "target_value"
+// - entity expandable got a spawnarg removed: "extra2"
+// - entity expandable got a spawnarg modified: "origin" => "-100 350 32"
+// - both brush_4 have been deleted from worldspawn
+// - func_static_3 had two brush_3 added (were part of worldspawn before)
+// - brush_12 got moved to the left
+ThreeWayMergeOperation::Ptr setupThreeWayMergeOperation(const std::string& basePath, const std::string& targetPath, const std::string& sourcePath)
+{
+    auto baseResource = GlobalMapResourceManager().createFromPath(basePath);
+    EXPECT_TRUE(baseResource->load()) << "Test map not found: " << basePath;
+
+    auto targetResource = GlobalMapResourceManager().createFromPath(targetPath);
+    EXPECT_TRUE(targetResource->load()) << "Test map not found: " << targetPath;
+
+    auto sourceResource = GlobalMapResourceManager().createFromPath(sourcePath);
+    EXPECT_TRUE(sourceResource->load()) << "Test map not found: " << sourcePath;
+
+    auto baseToSource = GraphComparer::Compare(sourceResource->getRootNode(), baseResource->getRootNode());
+    auto baseToTarget = GraphComparer::Compare(targetResource->getRootNode(), baseResource->getRootNode());
+
+    return ThreeWayMergeOperation::CreateFromComparisonResults(*baseToSource, *baseToTarget);
+}
+
+TEST_F(ThreeWayMergeTest, IndependentEntityAddition)
+{
+    auto operation = setupThreeWayMergeOperation("maps/threeway_merge_base.mapx", "maps/threeway_merge_target_1.mapx", "maps/threeway_merge_source_1.mapx");
+
+    // light_2 must be added to target
+    auto action = findAction<AddEntityAction>(operation, [](const std::shared_ptr<AddEntityAction>& action)
+    {
+        auto sourceEntity = Node_getEntity(action->getSourceNodeToAdd());
+        return sourceEntity->getKeyValue("name") == "light_2";
+    });
+
+    EXPECT_TRUE(action) << "No merge action found for missing entity";
+
+    // Check pre-requisites and apply the action
+    auto entityNode = algorithm::getEntityByName(operation->getTargetRoot(), "light_2");
+    EXPECT_FALSE(entityNode);
+
+    action->applyChanges();
+
+    entityNode = algorithm::getEntityByName(operation->getTargetRoot(), "light_2");
+    EXPECT_TRUE(entityNode);
 }
 
 }
