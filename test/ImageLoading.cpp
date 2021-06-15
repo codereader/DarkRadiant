@@ -134,6 +134,24 @@ TEST_F(ImageLoadingTest, LoadDDSUncompressedMipMaps)
     EXPECT_EQ(img->getLevels(), 5);
 }
 
+TEST_F(ImageLoadingTest, LoadDDSUncompressedNPOT)
+{
+    auto img = loadImage("textures/dds/test_10x16_uncomp.dds");
+    ASSERT_TRUE(img);
+
+    EXPECT_EQ(img->getWidth(), 10);
+    EXPECT_EQ(img->getHeight(), 16);
+    EXPECT_FALSE(img->isPrecompressed());
+
+    // Examine pixel data
+    Pixelator<RGB8> pixels(*img);
+    EXPECT_EQ(pixels(0, 0), RGB8(0, 0, 0));      // border
+    EXPECT_EQ(pixels(1, 1), RGB8(0, 0, 255));    // red diag
+    EXPECT_EQ(pixels(8, 1), RGB8(255, 0, 255));  // magenta pillar
+    EXPECT_EQ(pixels(8, 14), RGB8(255, 255, 0)); // cyan pillar
+    EXPECT_EQ(pixels(9, 15), RGB8(0, 0, 0));     // border
+}
+
 TEST_F(ImageLoadingTest, LoadDDSCompressedDXT1)
 {
     auto img = loadImage("textures/dds/test_128x128_dxt1.dds");
