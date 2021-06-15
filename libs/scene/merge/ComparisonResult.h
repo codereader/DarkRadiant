@@ -45,6 +45,12 @@ public:
         };
 
         Type type;
+
+        // A KeyValueDiff is the same if the same key is changed to the same value the same way
+        bool operator==(const KeyValueDifference& other) const
+        {
+            return other.type == type && other.key == key && other.value == value;
+        }
     };
 
     struct PrimitiveDifference
@@ -66,6 +72,8 @@ public:
         INodePtr sourceNode;
         INodePtr baseNode;
         std::string entityName;
+        std::string sourceFingerprint;
+        std::string baseFingerprint;
 
         enum class Type
         {

@@ -1758,9 +1758,9 @@ TEST_F(LayerMergeTest, MergeLayersFlagNotSet)
     EXPECT_FALSE(merger->getChangeLog().empty());
 }
 
-// Map changelog of source and target against their base, used in several test cases below:
+// Map changelog of source and target against their base (threeway_merge_base.mapx), used in several test cases below:
 // 
-// Source:
+// Source (threeway_merge_source_1.mapx):
 // - light_2 has been added
 // - brush 16 added to worldspawn
 // - brush_8 in func_static_8 retextured to brush 9
@@ -1771,7 +1771,7 @@ TEST_F(LayerMergeTest, MergeLayersFlagNotSet)
 // - func_static_5 had two brush_5 added (were part of worldspawn before)
 // - brush_11 got moved to the left
 // 
-// Target Map:
+// Target Map (threeway_merge_target_1.mapx):
 // - light_3 has been added
 // - brush_17 been added to worldspawn
 // - brush_7 in func_static_7 retextured to brush 9
@@ -1781,6 +1781,7 @@ TEST_F(LayerMergeTest, MergeLayersFlagNotSet)
 // - both brush_4 have been deleted from worldspawn
 // - func_static_3 had two brush_3 added (were part of worldspawn before)
 // - brush_12 got moved to the left
+
 ThreeWayMergeOperation::Ptr setupThreeWayMergeOperation(const std::string& basePath, const std::string& targetPath, const std::string& sourcePath)
 {
     auto baseResource = GlobalMapResourceManager().createFromPath(basePath);
@@ -2041,6 +2042,19 @@ TEST_F(ThreeWayMergeTest, NonconflictingPrimitiveMove)
     EXPECT_EQ(worldspawn_childCount, 1);
 
     verifyTargetChanges(operation->getTargetRoot());
+}
+
+// A seemingly trivial case where the source changes and the target changes against their base match up 1:1
+TEST_F(ThreeWayMergeTest, SourceAndTargetAreTheSame)
+{
+    // Load the same map twice as source and target
+    auto operation = setupThreeWayMergeOperation("maps/threeway_merge_base.mapx", "maps/threeway_merge_target_1.mapx", "maps/threeway_merge_target_1.mapx");
+
+    verifyTargetChanges(operation->getTargetRoot());
+
+    auto actionCount = countActions<IMergeAction>(operation, [&](const IMergeAction::Ptr&) { return true; });
+
+    EXPECT_EQ(actionCount, 0);
 }
 
 }

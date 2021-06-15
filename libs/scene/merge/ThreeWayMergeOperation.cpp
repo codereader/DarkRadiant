@@ -47,8 +47,8 @@ bool ThreeWayMergeOperation::KeyValueDiffHasConflicts(const ComparisonResult::Ke
     // On key value change or add, the value must be the same to not conflict
     case ComparisonResult::KeyValueDifference::Type::KeyValueAdded:
     case ComparisonResult::KeyValueDifference::Type::KeyValueChanged:
-        return sourceKeyValueDiff.type != ComparisonResult::KeyValueDifference::Type::KeyValueRemoved &&
-            sourceKeyValueDiff.value == targetKeyValueDiff.value;
+        return sourceKeyValueDiff.type == ComparisonResult::KeyValueDifference::Type::KeyValueRemoved ||
+            sourceKeyValueDiff.value != targetKeyValueDiff.value;
     }
 
     throw std::logic_error("Unhandled key value diff type in ThreeWayMergeOperation::KeyValueDiffHasConflicts");
@@ -120,8 +120,13 @@ void ThreeWayMergeOperation::processEntityModification(const ComparisonResult::E
             continue;
         }
 
-        // Check if this key change is conflicting with the target change
+        // Ignore NOP changes, when the target obviously made the same change
+        if (sourceKeyValueDiff == *targetKeyValueDiff)
+        {
+            continue;
+        }
 
+        // Check if this key change is conflicting with the target change
         if (!KeyValueDiffHasConflicts(sourceKeyValueDiff, *targetKeyValueDiff))
         {
             // Accept this change
@@ -220,7 +225,11 @@ void ThreeWayMergeOperation::processEntityDifferences(const std::list<Comparison
             }
 
             // Both graphs had this entity added, mark this for inclusion
-            addAction(std::make_shared<AddEntityAction>(pair.second->sourceNode, _targetRoot));
+            // unless it turns out this added entity in the source is 100% the same as in the target
+            if (pair.second->sourceFingerprint != targetDiff->second->sourceFingerprint)
+            {
+                addAction(std::make_shared<AddEntityAction>(pair.second->sourceNode, _targetRoot));
+            }
             break;
 
         case ComparisonResult::EntityDifference::Type::EntityMissingInSource: // entity was removed in source

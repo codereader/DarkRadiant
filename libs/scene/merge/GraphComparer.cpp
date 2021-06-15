@@ -98,22 +98,24 @@ void GraphComparer::processDifferingEntities(ComparisonResult& result, const Ent
 
     for (const auto& match : matchingByName)
     {
-        auto sourceNode = sourceMismatches.find(match.second.entityName)->second.node;
-        auto baseNode = baseMismatches.find(match.second.entityName)->second.node;
+        auto sourceMismatch = sourceMismatches.find(match.second.entityName)->second;
+        auto baseMismatch = baseMismatches.find(match.second.entityName)->second;
 
         auto& entityDiff = result.differingEntities.emplace_back(ComparisonResult::EntityDifference
         {
-            sourceNode,
-            baseNode,
+            sourceMismatch.node,
+            baseMismatch.node,
             match.second.entityName,
+            sourceMismatch.fingerPrint,
+            baseMismatch.fingerPrint,
             ComparisonResult::EntityDifference::Type::EntityPresentButDifferent
         });
 
         // Analyse the key values
-        entityDiff.differingKeyValues = compareKeyValues(sourceNode, baseNode);
+        entityDiff.differingKeyValues = compareKeyValues(sourceMismatch.node, baseMismatch.node);
 
         // Analyse the child nodes
-        entityDiff.differingChildren = compareChildNodes(sourceNode, baseNode);
+        entityDiff.differingChildren = compareChildNodes(sourceMismatch.node, baseMismatch.node);
     }
 
     for (const auto& mismatch : missingInSource)
@@ -123,6 +125,8 @@ void GraphComparer::processDifferingEntities(ComparisonResult& result, const Ent
             INodePtr(), // source node is empty
             mismatch.second.node,
             mismatch.second.entityName,
+            std::string(),// source fingerprint is empty
+            mismatch.second.fingerPrint, // base fingerprint
             ComparisonResult::EntityDifference::Type::EntityMissingInSource
         });
     }
@@ -134,6 +138,8 @@ void GraphComparer::processDifferingEntities(ComparisonResult& result, const Ent
             mismatch.second.node,
             INodePtr(), // base node is empty
             mismatch.second.entityName,
+            mismatch.second.fingerPrint, // source fingerprint
+            std::string(),// base fingerprint is empty
             ComparisonResult::EntityDifference::Type::EntityMissingInBase
         });
     }
