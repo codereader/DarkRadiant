@@ -106,6 +106,7 @@ TEST_F(ImageLoadingTest, LoadDDSUncompressed)
     EXPECT_EQ(img->getWidth(), 16);
     EXPECT_EQ(img->getHeight(), 16);
     EXPECT_EQ(img->getLevels(), 1);
+    EXPECT_FALSE(img->isPrecompressed());
 
     // Examine pixel data
     Pixelator<RGB8> pixels(*img);
@@ -127,9 +128,24 @@ TEST_F(ImageLoadingTest, LoadDDSUncompressedMipMaps)
     // Overall size is unchanged
     EXPECT_EQ(img->getWidth(), 16);
     EXPECT_EQ(img->getHeight(), 16);
+    EXPECT_FALSE(img->isPrecompressed());
 
     // 5 mipmap levels (16, 8, 4, 2, 1)
     EXPECT_EQ(img->getLevels(), 5);
+}
+
+TEST_F(ImageLoadingTest, LoadDDSCompressedDXT1)
+{
+    auto img = loadImage("textures/dds/test_128x128_dxt1.dds");
+    ASSERT_TRUE(img);
+
+    // 128x128 image with no mipmaps
+    EXPECT_EQ(img->getWidth(), 128);
+    EXPECT_EQ(img->getHeight(), 128);
+    EXPECT_EQ(img->getLevels(), 1);
+
+    // Must be compressed
+    EXPECT_TRUE(img->isPrecompressed());
 }
 
 }

@@ -106,6 +106,7 @@ public:
     std::size_t getWidth() const override { return _mipMapInfo[0].width; }
     std::size_t getHeight() const override { return _mipMapInfo[0].height; }
     std::size_t getLevels() const override { return _mipMapInfo.size(); }
+    bool isPrecompressed() const override { return _compressed; }
 
     /* BindableTexture implementation */
     TexturePtr bindTexture(const std::string& name) const
@@ -178,10 +179,6 @@ public:
         debug::assertNoGlErrors();
 
         return texObj;
-    }
-
-    bool isPrecompressed() const {
-        return true;
     }
 };
 typedef std::shared_ptr<DDSImage> DDSImagePtr;
