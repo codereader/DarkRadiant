@@ -268,6 +268,98 @@ public:
     {}
 };
 
+class ConflictResolutionAction :
+    public MergeAction
+{
+protected:
+    // The action the source diff is trying to apply
+    MergeAction::Ptr _sourceAction;
+    // The action that happened in the target
+    MergeAction::Ptr _targetAction;
+
+protected:
+    ConflictResolutionAction(ActionType actionType, const MergeAction::Ptr& sourceAction) :
+        ConflictResolutionAction(actionType, sourceAction, MergeAction::Ptr())
+    {}
+
+    ConflictResolutionAction(ActionType actionType, const MergeAction::Ptr& sourceAction, const MergeAction::Ptr& targetAction) :
+        MergeAction(actionType),
+        _sourceAction(sourceAction),
+        _targetAction(targetAction)
+    {}
+
+public:
+    using Ptr = std::shared_ptr<ConflictResolutionAction>;
+
+    // The action the source diff is trying to apply
+    const MergeAction::Ptr& getSourceAction() const
+    {
+        return _sourceAction;
+    }
+
+    // The action that happened in the target (can be empty)
+    const MergeAction::Ptr& getTargetAction() const
+    {
+        return _targetAction;
+    }
+
+    void applyChanges() override
+    {
+        if (!isActive()) return;
+
+        // TODO
+    }
+};
+
+// An entity node is a conflicting subject in both maps
+class EntityConflictResolutionAction :
+    public ConflictResolutionAction
+{
+private:
+    INodePtr _conflictingEntity;
+
+public:
+    EntityConflictResolutionAction(const INodePtr& conflictingEntity, const MergeAction::Ptr& sourceAction) :
+        EntityConflictResolutionAction(conflictingEntity, sourceAction, MergeAction::Ptr())
+    {}
+
+    EntityConflictResolutionAction(const INodePtr& conflictingEntity, 
+                                   const MergeAction::Ptr& sourceAction, 
+                                   const MergeAction::Ptr& targetAction) :
+        ConflictResolutionAction(ActionType::EntityNodeConflict, sourceAction, targetAction)
+    {}
+
+    const INodePtr& getConflictingEntity() const
+    {
+        return _conflictingEntity;
+    }
+
+    scene::INodePtr getAffectedNode() override
+    {
+        return _conflictingEntity;
+    }
+};
+
+// An entity key value is a conflicting subject in both maps
+class EntityKeyValueConflictResolutionAction :
+    public ConflictResolutionAction
+{
+private:
+    INodePtr _conflictingEntity;
+
+public:
+    EntityKeyValueConflictResolutionAction(const INodePtr& conflictingEntity, 
+                                           const MergeAction::Ptr& sourceAction, 
+                                           const MergeAction::Ptr& targetAction) :
+        ConflictResolutionAction(ActionType::EntityKeyValueConflict, sourceAction, targetAction)
+    {}
+
+    scene::INodePtr getAffectedNode() override
+    {
+        return _conflictingEntity;
+    }
+};
+
 }
 
 }

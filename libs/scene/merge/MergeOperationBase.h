@@ -26,10 +26,12 @@ public:
 protected:
     virtual void addAction(const MergeAction::Ptr& action);
     
-    void createActionsForKeyValueDiff(const ComparisonResult::KeyValueDifference& difference,
+    void addActionForKeyValueDiff(const ComparisonResult::KeyValueDifference& difference,
+        const scene::INodePtr& targetEntity);
+    MergeAction::Ptr createActionForKeyValueDiff(const ComparisonResult::KeyValueDifference& difference,
         const scene::INodePtr& targetEntity);
 
-    void createActionsForPrimitiveDiff(const ComparisonResult::PrimitiveDifference& difference,
+    void addActionsForPrimitiveDiff(const ComparisonResult::PrimitiveDifference& difference,
         const scene::INodePtr& targetEntity);
 
     void createActionsForEntity(const ComparisonResult::EntityDifference& difference, const IMapRootNodePtr& targetRoot);

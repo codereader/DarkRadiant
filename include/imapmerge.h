@@ -20,6 +20,8 @@ enum class ActionType
     ChangeKeyValue,
     AddChildNode,
     RemoveChildNode,
+    EntityNodeConflict,
+    EntityKeyValueConflict,
 };
 
 /**

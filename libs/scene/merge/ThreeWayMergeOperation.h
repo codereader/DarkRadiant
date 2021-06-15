@@ -51,7 +51,9 @@ private:
         const ComparisonResult::EntityDifference& targetDiff);
 
     static bool KeyValueDiffHasConflicts(const ComparisonResult::KeyValueDifference& sourceKeyValueDiff,
-        const std::list<ComparisonResult::KeyValueDifference>& targetKeyValueDiffs);
+        const ComparisonResult::KeyValueDifference& targetKeyValueDiff);
+    static std::list<ComparisonResult::KeyValueDifference>::const_iterator FindTargetDiffByKey(
+        const std::list<ComparisonResult::KeyValueDifference>& targetKeyValueDiffs, const std::string& key);
 };
 
 }

@@ -36,26 +36,31 @@ void MergeOperationBase::foreachAction(const std::function<void(const IMergeActi
     }
 }
 
-void MergeOperationBase::createActionsForKeyValueDiff(const ComparisonResult::KeyValueDifference& difference, 
+void MergeOperationBase::addActionForKeyValueDiff(const ComparisonResult::KeyValueDifference& difference, 
+    const scene::INodePtr& targetEntity)
+{
+    addAction(createActionForKeyValueDiff(difference, targetEntity));
+}
+
+MergeAction::Ptr MergeOperationBase::createActionForKeyValueDiff(const ComparisonResult::KeyValueDifference& difference,
     const scene::INodePtr& targetEntity)
 {
     switch (difference.type)
     {
     case ComparisonResult::KeyValueDifference::Type::KeyValueAdded:
-        addAction(std::make_shared<AddEntityKeyValueAction>(targetEntity, difference.key, difference.value));
-        break;
+        return std::make_shared<AddEntityKeyValueAction>(targetEntity, difference.key, difference.value);
 
     case ComparisonResult::KeyValueDifference::Type::KeyValueRemoved:
-        addAction(std::make_shared<RemoveEntityKeyValueAction>(targetEntity, difference.key));
-        break;
+        return std::make_shared<RemoveEntityKeyValueAction>(targetEntity, difference.key);
 
     case ComparisonResult::KeyValueDifference::Type::KeyValueChanged:
-        addAction(std::make_shared<ChangeEntityKeyValueAction>(targetEntity, difference.key, difference.value));
-        break;
+        return std::make_shared<ChangeEntityKeyValueAction>(targetEntity, difference.key, difference.value);
     }
+
+    throw std::logic_error("Unhandled key value diff type in MergeOperationBase::createActionForKeyValueDiff");
 }
 
-void MergeOperationBase::createActionsForPrimitiveDiff(const ComparisonResult::PrimitiveDifference& difference,
+void MergeOperationBase::addActionsForPrimitiveDiff(const ComparisonResult::PrimitiveDifference& difference,
     const scene::INodePtr& targetEntity)
 {
     switch (difference.type)
@@ -86,12 +91,12 @@ void MergeOperationBase::createActionsForEntity(const ComparisonResult::EntityDi
     {
         for (const auto& keyValueDiff : difference.differingKeyValues)
         {
-            createActionsForKeyValueDiff(keyValueDiff, difference.baseNode);
+            addActionForKeyValueDiff(keyValueDiff, difference.baseNode);
         }
 
         for (const auto& primitiveDiff : difference.differingChildren)
         {
-            createActionsForPrimitiveDiff(primitiveDiff, difference.baseNode);
+            addActionsForPrimitiveDiff(primitiveDiff, difference.baseNode);
         }
         break;
     }
