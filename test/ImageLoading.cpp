@@ -14,6 +14,26 @@ std::ostream& operator<< (std::ostream& os, const RGB8& rgb)
               << int(rgb.z()) << "]";
 }
 
+// Helper class for retrieving pixels by X and Y coordinates and casting them to
+// the appropriate pixel type.
+template<typename Pixel_T> class Pixelator
+{
+    const Image& _image;
+
+public:
+
+    // Construct with image to access
+    Pixelator(const Image& im): _image(im)
+    {}
+
+    // Get pixel at given coordinates
+    Pixel_T& operator() (int x, int y)
+    {
+        Pixel_T* p0 = reinterpret_cast<Pixel_T*>(_image.getPixels());
+        return *(p0 + x + y * _image.getWidth());
+    }
+};
+
 namespace test
 {
 
@@ -80,20 +100,22 @@ TEST_F(ImageLoadingTest, LoadPngGreyscaleWithAlpha)
 TEST_F(ImageLoadingTest, LoadDDSUncompressed)
 {
     auto img = loadImage("textures/dds/test_16x16_uncomp.dds");
+    ASSERT_TRUE(img);
 
     // Check size is correct
     EXPECT_EQ(img->getWidth(), 16);
     EXPECT_EQ(img->getHeight(), 16);
 
     // Examine pixel data
-    uint8_t* bytes = img->getPixels();
-    RGB8* pixels = reinterpret_cast<RGB8*>(bytes);
-
-    EXPECT_EQ(pixels[0], RGB8(0, 0, 0));        // border
-    EXPECT_EQ(pixels[18], RGB8(255, 255, 255)); // background
-    EXPECT_EQ(pixels[113], RGB8(0, 255, 0));    // green band
-    EXPECT_EQ(pixels[119], RGB8(0, 0, 255));    // red centre (but BGR)
-    EXPECT_EQ(pixels[255], RGB8(0, 0, 0));      // border
+    Pixelator<RGB8> pixels(*img);
+    EXPECT_EQ(pixels(0, 0), RGB8(0, 0, 0));         // border
+    EXPECT_EQ(pixels(2, 1), RGB8(255, 255, 255));   // background
+    EXPECT_EQ(pixels(6, 7), RGB8(0, 255, 0));       // green band
+    EXPECT_EQ(pixels(7, 14), RGB8(255, 255, 0));    // cyan pillar (BGR)
+    EXPECT_EQ(pixels(8, 1), RGB8(255, 0, 255));     // magenta pillar
+    EXPECT_EQ(pixels(8, 8), RGB8(0, 0, 255));       // red centre (BGR)
+    EXPECT_EQ(pixels(14, 13), RGB8(255, 255, 255)); // background
+    EXPECT_EQ(pixels(15, 15), RGB8(0, 0, 0));       // border
 }
 
 }
