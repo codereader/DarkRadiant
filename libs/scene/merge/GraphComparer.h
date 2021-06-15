@@ -19,6 +19,8 @@ namespace merge
 
 /**
  * Static utility class to compare two scenes given by their root nodes.
+ * The Source is considered to be the "newer" graph with the changes,
+ * the Base resembles the "older" or unchanged graph the Source graph is based on.
  */
 class GraphComparer
 {

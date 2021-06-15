@@ -47,7 +47,11 @@ public:
 private:
     void processEntityDifferences(const std::list<ComparisonResult::EntityDifference>& sourceDiffs, 
         const std::list<ComparisonResult::EntityDifference>& targetDiffs);
-    void processEntityDifference(const ComparisonResult::EntityDifference& diff);
+    void processEntityModification(const ComparisonResult::EntityDifference& sourceDiff,
+        const ComparisonResult::EntityDifference& targetDiff);
+
+    static bool KeyValueDiffHasConflicts(const ComparisonResult::KeyValueDifference& sourceKeyValueDiff,
+        const std::list<ComparisonResult::KeyValueDifference>& targetKeyValueDiffs);
 };
 
 }
