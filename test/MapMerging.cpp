@@ -401,7 +401,7 @@ std::shared_ptr<T> findAction(const IMergeOperation::Ptr& operation, const std::
 }
 
 template<typename T>
-std::size_t countActions(const MergeOperation::Ptr& operation, const std::function<bool(const std::shared_ptr<T>&)>& predicate)
+std::size_t countActions(const IMergeOperation::Ptr& operation, const std::function<bool(const std::shared_ptr<T>&)>& predicate)
 {
     std::size_t count = 0;
 
@@ -1810,8 +1810,11 @@ void verifyTargetChanges(const scene::IMapRootNodePtr& targetRoot)
     EXPECT_EQ(Node_getEntity(algorithm::getEntityByName(targetRoot, "expandable"))->getKeyValue("origin"), "-100 350 32");
     EXPECT_FALSE(algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(targetRoot), "textures/numbers/4")); // both brush_4 have been deleted from worldspawn
     EXPECT_FALSE(algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(targetRoot), "textures/numbers/3")); // func_static_3 had two brush_3 added (were part of worldspawn before)
+
     auto func_static_3 = algorithm::getEntityByName(targetRoot, "func_static_3");
-    EXPECT_TRUE(algorithm::getChildCount(func_static_3, [](const scene::INodePtr& node) { return Node_isBrush(node) && Node_getIBrush(node)->hasShader("textures/numbers/3"); }));
+    auto func_static_3_childCount = algorithm::getChildCount(func_static_3, [](const scene::INodePtr& node) { return Node_isBrush(node) && Node_getIBrush(node)->hasShader("textures/numbers/3"); });
+    EXPECT_EQ(func_static_3_childCount, 4);
+
     EXPECT_TRUE(algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(targetRoot), "textures/numbers/12")); // brush_12 got moved to the left
 }
 
@@ -1863,6 +1866,71 @@ TEST_F(ThreeWayMergeTest, NonconflictingWorldspawnPrimitiveAddition)
     action->applyChanges();
 
     EXPECT_TRUE(algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(operation->getTargetRoot()), "textures/numbers/16")); // brush_16 added to worldspawn
+
+    verifyTargetChanges(operation->getTargetRoot());
+}
+
+TEST_F(ThreeWayMergeTest, NonconflictingWorldspawnPrimitiveRemoval)
+{
+    auto operation = setupThreeWayMergeOperation("maps/threeway_merge_base.mapx", "maps/threeway_merge_target_1.mapx", "maps/threeway_merge_source_1.mapx");
+
+    verifyTargetChanges(operation->getTargetRoot());
+
+    // brush_6 should be removed from worldspawn
+    auto action = findAction<RemoveChildAction>(operation, [](const std::shared_ptr<RemoveChildAction>& action)
+    {
+        auto sourceBrush = Node_getIBrush(action->getNodeToRemove());
+        return sourceBrush && sourceBrush->hasShader("textures/numbers/6");
+    });
+
+    EXPECT_TRUE(action) << "No merge action found for removed brush";
+
+    // Check pre-requisites and apply the action
+    EXPECT_TRUE(algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(operation->getTargetRoot()), "textures/numbers/6")); // brush_6 in worldspawn
+
+    operation->applyActions();
+
+    EXPECT_FALSE(algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(operation->getTargetRoot()), "textures/numbers/6")); // brush_6 not in worldspawn
+
+    verifyTargetChanges(operation->getTargetRoot());
+}
+
+// - func_static_5 had two brush_5 added (were part of worldspawn before)
+TEST_F(ThreeWayMergeTest, NonconflictingPrimitiveParentChange)
+{
+    auto operation = setupThreeWayMergeOperation("maps/threeway_merge_base.mapx", "maps/threeway_merge_target_1.mapx", "maps/threeway_merge_source_1.mapx");
+
+    verifyTargetChanges(operation->getTargetRoot());
+
+    auto func_static_5 = algorithm::getEntityByName(operation->getTargetRoot(), "func_static_5");
+    auto worldspawn = algorithm::findWorldspawn(operation->getTargetRoot());
+
+    // brush_5 should be removed from worldspawn
+    auto removeActionCount = countActions<RemoveChildAction>(operation, [](const std::shared_ptr<RemoveChildAction>& action)
+    {
+        auto sourceBrush = Node_getIBrush(action->getNodeToRemove());
+        return sourceBrush && sourceBrush->hasShader("textures/numbers/5");
+    });
+    auto addActionCount = countActions<AddChildAction>(operation, [&](const std::shared_ptr<AddChildAction>& action)
+    {
+        auto sourceBrush = Node_getIBrush(action->getSourceNodeToAdd());
+        return sourceBrush && sourceBrush->hasShader("textures/numbers/5") && action->getParent() == func_static_5;
+    });
+
+    EXPECT_EQ(removeActionCount, 2) << "No remove action found for reparented brush";
+    EXPECT_EQ(addActionCount, 2) << "No add action found for reparented brush";
+
+    auto func_static_5_childCount = algorithm::getChildCount(func_static_5, [](const scene::INodePtr& node) { return Node_isBrush(node) && Node_getIBrush(node)->hasShader("textures/numbers/5"); });
+    auto worldspawn_childCount = algorithm::getChildCount(worldspawn, [](const scene::INodePtr& node) { return Node_isBrush(node) && Node_getIBrush(node)->hasShader("textures/numbers/5"); });
+    EXPECT_EQ(func_static_5_childCount, 2);
+    EXPECT_EQ(worldspawn_childCount, 2);
+
+    operation->applyActions();
+
+    func_static_5_childCount = algorithm::getChildCount(func_static_5, [](const scene::INodePtr& node) { return Node_isBrush(node) && Node_getIBrush(node)->hasShader("textures/numbers/5"); });
+    worldspawn_childCount = algorithm::getChildCount(worldspawn, [](const scene::INodePtr& node) { return Node_isBrush(node) && Node_getIBrush(node)->hasShader("textures/numbers/5"); });
+    EXPECT_EQ(func_static_5_childCount, 4);
+    EXPECT_EQ(worldspawn_childCount, 0);
 
     verifyTargetChanges(operation->getTargetRoot());
 }
@@ -1936,6 +2004,41 @@ TEST_F(ThreeWayMergeTest, NonconflictingSpawnargManipulation)
     
     modifyAction->applyChanges();
     EXPECT_EQ(Node_getEntity(expandable)->getKeyValue("extra3"), "value3_changed");
+
+    verifyTargetChanges(operation->getTargetRoot());
+}
+
+TEST_F(ThreeWayMergeTest, NonconflictingPrimitiveMove)
+{
+    auto operation = setupThreeWayMergeOperation("maps/threeway_merge_base.mapx", "maps/threeway_merge_target_1.mapx", "maps/threeway_merge_source_1.mapx");
+
+    verifyTargetChanges(operation->getTargetRoot());
+
+    auto worldspawn = algorithm::findWorldspawn(operation->getTargetRoot());
+
+    // one brush_11 should be removed from worldspawn
+    auto removeActionCount = countActions<RemoveChildAction>(operation, [](const std::shared_ptr<RemoveChildAction>& action)
+    {
+        auto sourceBrush = Node_getIBrush(action->getNodeToRemove());
+        return sourceBrush && sourceBrush->hasShader("textures/numbers/11");
+    });
+    // and the moved brush_11 should be added back
+    auto addActionCount = countActions<AddChildAction>(operation, [&](const std::shared_ptr<AddChildAction>& action)
+    {
+        auto sourceBrush = Node_getIBrush(action->getSourceNodeToAdd());
+        return sourceBrush && sourceBrush->hasShader("textures/numbers/11") && action->getParent() == worldspawn;
+    });
+
+    EXPECT_EQ(removeActionCount, 1) << "No remove action found for moved brush";
+    EXPECT_EQ(addActionCount, 1) << "No add action found for moved brush";
+
+    auto worldspawn_childCount = algorithm::getChildCount(worldspawn, [](const scene::INodePtr& node) { return Node_isBrush(node) && Node_getIBrush(node)->hasShader("textures/numbers/11"); });
+    EXPECT_EQ(worldspawn_childCount, 1);
+
+    operation->applyActions();
+
+    worldspawn_childCount = algorithm::getChildCount(worldspawn, [](const scene::INodePtr& node) { return Node_isBrush(node) && Node_getIBrush(node)->hasShader("textures/numbers/11"); });
+    EXPECT_EQ(worldspawn_childCount, 1);
 
     verifyTargetChanges(operation->getTargetRoot());
 }
