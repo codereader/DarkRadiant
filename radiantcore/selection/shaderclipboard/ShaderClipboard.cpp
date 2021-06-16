@@ -55,12 +55,6 @@ void ShaderClipboard::sourceChanged()
 	util::ScopedBoolLock lock(_updatesDisabled); // prevent loopbacks
 
 	_signalSourceChanged.emit();
-
-    // Sync the material name to the system clipboard
-    if (!_source.empty() && module::GlobalModuleRegistry().moduleExists(MODULE_CLIPBOARD))
-    {
-        GlobalClipboard().setString(_source.getShader());
-    }
 }
 
 void ShaderClipboard::clear() 
