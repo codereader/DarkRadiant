@@ -260,6 +260,11 @@ void ThreeWayMergeOperation::processEntityDifferences(const std::list<Comparison
             break;
         }
     }
+
+    // Cleanup temporary data
+    _sourceDifferences.clear();
+    _targetDifferences.clear();
+    _targetEntities.clear();
 }
 
 ThreeWayMergeOperation::Ptr ThreeWayMergeOperation::CreateFromComparisonResults(

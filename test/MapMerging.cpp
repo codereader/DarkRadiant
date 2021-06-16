@@ -1800,7 +1800,7 @@ ThreeWayMergeOperation::Ptr setupThreeWayMergeOperation(const std::string& baseP
 }
 
 // Asserts that the changes to the target map have not been reverted
-void verifyTargetChanges(const scene::IMapRootNodePtr& targetRoot)
+void verifyTargetChanges1(const scene::IMapRootNodePtr& targetRoot)
 {
     EXPECT_TRUE(algorithm::getEntityByName(targetRoot, "light_3")); // light_3 has been added
     EXPECT_TRUE(algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(targetRoot), "textures/numbers/17")); // brush_17 been added to worldspawn
@@ -1813,7 +1813,7 @@ void verifyTargetChanges(const scene::IMapRootNodePtr& targetRoot)
     EXPECT_FALSE(algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(targetRoot), "textures/numbers/3")); // func_static_3 had two brush_3 added (were part of worldspawn before)
 
     auto func_static_3 = algorithm::getEntityByName(targetRoot, "func_static_3");
-    auto func_static_3_childCount = algorithm::getChildCount(func_static_3, [](const scene::INodePtr& node) { return Node_isBrush(node) && Node_getIBrush(node)->hasShader("textures/numbers/3"); });
+    auto func_static_3_childCount = algorithm::getChildCount(func_static_3, algorithm::brushHasMaterial("textures/numbers/3"));
     EXPECT_EQ(func_static_3_childCount, 4);
 
     EXPECT_TRUE(algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(targetRoot), "textures/numbers/12")); // brush_12 got moved to the left
@@ -1823,7 +1823,7 @@ TEST_F(ThreeWayMergeTest, NonconflictingEntityAddition)
 {
     auto operation = setupThreeWayMergeOperation("maps/threeway_merge_base.mapx", "maps/threeway_merge_target_1.mapx", "maps/threeway_merge_source_1.mapx");
 
-    verifyTargetChanges(operation->getTargetRoot());
+    verifyTargetChanges1(operation->getTargetRoot());
 
     // light_2 must be added to target
     auto action = findAction<AddEntityAction>(operation, [](const std::shared_ptr<AddEntityAction>& action)
@@ -1843,14 +1843,14 @@ TEST_F(ThreeWayMergeTest, NonconflictingEntityAddition)
     entityNode = algorithm::getEntityByName(operation->getTargetRoot(), "light_2");
     EXPECT_TRUE(entityNode);
 
-    verifyTargetChanges(operation->getTargetRoot());
+    verifyTargetChanges1(operation->getTargetRoot());
 }
 
 TEST_F(ThreeWayMergeTest, NonconflictingWorldspawnPrimitiveAddition)
 {
     auto operation = setupThreeWayMergeOperation("maps/threeway_merge_base.mapx", "maps/threeway_merge_target_1.mapx", "maps/threeway_merge_source_1.mapx");
 
-    verifyTargetChanges(operation->getTargetRoot());
+    verifyTargetChanges1(operation->getTargetRoot());
 
     // brush_16 should be added to worldspawn
     auto action = findAction<AddChildAction>(operation, [](const std::shared_ptr<AddChildAction>& action)
@@ -1868,20 +1868,19 @@ TEST_F(ThreeWayMergeTest, NonconflictingWorldspawnPrimitiveAddition)
 
     EXPECT_TRUE(algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(operation->getTargetRoot()), "textures/numbers/16")); // brush_16 added to worldspawn
 
-    verifyTargetChanges(operation->getTargetRoot());
+    verifyTargetChanges1(operation->getTargetRoot());
 }
 
 TEST_F(ThreeWayMergeTest, NonconflictingWorldspawnPrimitiveRemoval)
 {
     auto operation = setupThreeWayMergeOperation("maps/threeway_merge_base.mapx", "maps/threeway_merge_target_1.mapx", "maps/threeway_merge_source_1.mapx");
 
-    verifyTargetChanges(operation->getTargetRoot());
+    verifyTargetChanges1(operation->getTargetRoot());
 
     // brush_6 should be removed from worldspawn
     auto action = findAction<RemoveChildAction>(operation, [](const std::shared_ptr<RemoveChildAction>& action)
     {
-        auto sourceBrush = Node_getIBrush(action->getNodeToRemove());
-        return sourceBrush && sourceBrush->hasShader("textures/numbers/6");
+        return algorithm::brushHasMaterial("textures/numbers/6")(action->getNodeToRemove());
     });
 
     EXPECT_TRUE(action) << "No merge action found for removed brush";
@@ -1893,7 +1892,7 @@ TEST_F(ThreeWayMergeTest, NonconflictingWorldspawnPrimitiveRemoval)
 
     EXPECT_FALSE(algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(operation->getTargetRoot()), "textures/numbers/6")); // brush_6 not in worldspawn
 
-    verifyTargetChanges(operation->getTargetRoot());
+    verifyTargetChanges1(operation->getTargetRoot());
 }
 
 // - func_static_5 had two brush_5 added (were part of worldspawn before)
@@ -1901,7 +1900,7 @@ TEST_F(ThreeWayMergeTest, NonconflictingPrimitiveParentChange)
 {
     auto operation = setupThreeWayMergeOperation("maps/threeway_merge_base.mapx", "maps/threeway_merge_target_1.mapx", "maps/threeway_merge_source_1.mapx");
 
-    verifyTargetChanges(operation->getTargetRoot());
+    verifyTargetChanges1(operation->getTargetRoot());
 
     auto func_static_5 = algorithm::getEntityByName(operation->getTargetRoot(), "func_static_5");
     auto worldspawn = algorithm::findWorldspawn(operation->getTargetRoot());
@@ -1909,46 +1908,43 @@ TEST_F(ThreeWayMergeTest, NonconflictingPrimitiveParentChange)
     // brush_5 should be removed from worldspawn
     auto removeActionCount = countActions<RemoveChildAction>(operation, [](const std::shared_ptr<RemoveChildAction>& action)
     {
-        auto sourceBrush = Node_getIBrush(action->getNodeToRemove());
-        return sourceBrush && sourceBrush->hasShader("textures/numbers/5");
+        return algorithm::brushHasMaterial("textures/numbers/5")(action->getNodeToRemove());
     });
     auto addActionCount = countActions<AddChildAction>(operation, [&](const std::shared_ptr<AddChildAction>& action)
     {
-        auto sourceBrush = Node_getIBrush(action->getSourceNodeToAdd());
-        return sourceBrush && sourceBrush->hasShader("textures/numbers/5") && action->getParent() == func_static_5;
+        return algorithm::brushHasMaterial("textures/numbers/5")(action->getSourceNodeToAdd()) && action->getParent() == func_static_5;
     });
 
     EXPECT_EQ(removeActionCount, 2) << "No remove action found for reparented brush";
     EXPECT_EQ(addActionCount, 2) << "No add action found for reparented brush";
 
-    auto func_static_5_childCount = algorithm::getChildCount(func_static_5, [](const scene::INodePtr& node) { return Node_isBrush(node) && Node_getIBrush(node)->hasShader("textures/numbers/5"); });
-    auto worldspawn_childCount = algorithm::getChildCount(worldspawn, [](const scene::INodePtr& node) { return Node_isBrush(node) && Node_getIBrush(node)->hasShader("textures/numbers/5"); });
+    auto func_static_5_childCount = algorithm::getChildCount(func_static_5, algorithm::brushHasMaterial("textures/numbers/5"));
+    auto worldspawn_childCount = algorithm::getChildCount(worldspawn, algorithm::brushHasMaterial("textures/numbers/5"));
     EXPECT_EQ(func_static_5_childCount, 2);
     EXPECT_EQ(worldspawn_childCount, 2);
 
     operation->applyActions();
 
-    func_static_5_childCount = algorithm::getChildCount(func_static_5, [](const scene::INodePtr& node) { return Node_isBrush(node) && Node_getIBrush(node)->hasShader("textures/numbers/5"); });
-    worldspawn_childCount = algorithm::getChildCount(worldspawn, [](const scene::INodePtr& node) { return Node_isBrush(node) && Node_getIBrush(node)->hasShader("textures/numbers/5"); });
+    func_static_5_childCount = algorithm::getChildCount(func_static_5, algorithm::brushHasMaterial("textures/numbers/5"));
+    worldspawn_childCount = algorithm::getChildCount(worldspawn, algorithm::brushHasMaterial("textures/numbers/5"));
     EXPECT_EQ(func_static_5_childCount, 4);
     EXPECT_EQ(worldspawn_childCount, 0);
 
-    verifyTargetChanges(operation->getTargetRoot());
+    verifyTargetChanges1(operation->getTargetRoot());
 }
 
 TEST_F(ThreeWayMergeTest, NonconflictingFuncStaticPrimitiveAddition)
 {
     auto operation = setupThreeWayMergeOperation("maps/threeway_merge_base.mapx", "maps/threeway_merge_target_1.mapx", "maps/threeway_merge_source_1.mapx");
 
-    verifyTargetChanges(operation->getTargetRoot());
+    verifyTargetChanges1(operation->getTargetRoot());
 
     auto func_static_8 = algorithm::getEntityByName(operation->getTargetRoot(), "func_static_8");
 
     // brush_9 should be added to func_static_8
     auto action = findAction<AddChildAction>(operation, [](const std::shared_ptr<AddChildAction>& action)
     {
-        auto sourceBrush = Node_getIBrush(action->getSourceNodeToAdd());
-        return sourceBrush && sourceBrush->hasShader("textures/numbers/9");
+        return algorithm::brushHasMaterial("textures/numbers/9")(action->getSourceNodeToAdd());
     });
 
     EXPECT_TRUE(action) << "No merge action found for retextured brush";
@@ -1960,7 +1956,7 @@ TEST_F(ThreeWayMergeTest, NonconflictingFuncStaticPrimitiveAddition)
 
     EXPECT_TRUE(algorithm::findFirstBrushWithMaterial(func_static_8, "textures/numbers/9")); // brush_9 added to func_static_8
 
-    verifyTargetChanges(operation->getTargetRoot());
+    verifyTargetChanges1(operation->getTargetRoot());
 }
 
 // - entity expandable got a new spawnarg: "source_spawnarg" => "source_value"
@@ -1970,7 +1966,7 @@ TEST_F(ThreeWayMergeTest, NonconflictingSpawnargManipulation)
 {
     auto operation = setupThreeWayMergeOperation("maps/threeway_merge_base.mapx", "maps/threeway_merge_target_1.mapx", "maps/threeway_merge_source_1.mapx");
 
-    verifyTargetChanges(operation->getTargetRoot());
+    verifyTargetChanges1(operation->getTargetRoot());
 
     auto expandable = algorithm::getEntityByName(operation->getTargetRoot(), "expandable");
 
@@ -2006,42 +2002,40 @@ TEST_F(ThreeWayMergeTest, NonconflictingSpawnargManipulation)
     modifyAction->applyChanges();
     EXPECT_EQ(Node_getEntity(expandable)->getKeyValue("extra3"), "value3_changed");
 
-    verifyTargetChanges(operation->getTargetRoot());
+    verifyTargetChanges1(operation->getTargetRoot());
 }
 
 TEST_F(ThreeWayMergeTest, NonconflictingPrimitiveMove)
 {
     auto operation = setupThreeWayMergeOperation("maps/threeway_merge_base.mapx", "maps/threeway_merge_target_1.mapx", "maps/threeway_merge_source_1.mapx");
 
-    verifyTargetChanges(operation->getTargetRoot());
+    verifyTargetChanges1(operation->getTargetRoot());
 
     auto worldspawn = algorithm::findWorldspawn(operation->getTargetRoot());
 
     // one brush_11 should be removed from worldspawn
     auto removeActionCount = countActions<RemoveChildAction>(operation, [](const std::shared_ptr<RemoveChildAction>& action)
     {
-        auto sourceBrush = Node_getIBrush(action->getNodeToRemove());
-        return sourceBrush && sourceBrush->hasShader("textures/numbers/11");
+        return algorithm::brushHasMaterial("textures/numbers/11")(action->getNodeToRemove());
     });
     // and the moved brush_11 should be added back
     auto addActionCount = countActions<AddChildAction>(operation, [&](const std::shared_ptr<AddChildAction>& action)
     {
-        auto sourceBrush = Node_getIBrush(action->getSourceNodeToAdd());
-        return sourceBrush && sourceBrush->hasShader("textures/numbers/11") && action->getParent() == worldspawn;
+        return algorithm::brushHasMaterial("textures/numbers/11")(action->getSourceNodeToAdd()) && action->getParent() == worldspawn;
     });
 
     EXPECT_EQ(removeActionCount, 1) << "No remove action found for moved brush";
     EXPECT_EQ(addActionCount, 1) << "No add action found for moved brush";
 
-    auto worldspawn_childCount = algorithm::getChildCount(worldspawn, [](const scene::INodePtr& node) { return Node_isBrush(node) && Node_getIBrush(node)->hasShader("textures/numbers/11"); });
+    auto worldspawn_childCount = algorithm::getChildCount(worldspawn, algorithm::brushHasMaterial("textures/numbers/11"));
     EXPECT_EQ(worldspawn_childCount, 1);
 
     operation->applyActions();
 
-    worldspawn_childCount = algorithm::getChildCount(worldspawn, [](const scene::INodePtr& node) { return Node_isBrush(node) && Node_getIBrush(node)->hasShader("textures/numbers/11"); });
+    worldspawn_childCount = algorithm::getChildCount(worldspawn, algorithm::brushHasMaterial("textures/numbers/11"));
     EXPECT_EQ(worldspawn_childCount, 1);
 
-    verifyTargetChanges(operation->getTargetRoot());
+    verifyTargetChanges1(operation->getTargetRoot());
 }
 
 // A seemingly trivial case where the source changes and the target changes against their base match up 1:1
@@ -2050,11 +2044,57 @@ TEST_F(ThreeWayMergeTest, SourceAndTargetAreTheSame)
     // Load the same map twice as source and target
     auto operation = setupThreeWayMergeOperation("maps/threeway_merge_base.mapx", "maps/threeway_merge_target_1.mapx", "maps/threeway_merge_target_1.mapx");
 
-    verifyTargetChanges(operation->getTargetRoot());
+    verifyTargetChanges1(operation->getTargetRoot());
 
     auto actionCount = countActions<IMergeAction>(operation, [&](const IMergeAction::Ptr&) { return true; });
 
     EXPECT_EQ(actionCount, 0);
+}
+
+// Map changelog of source and target against their base (threeway_merge_base.mapx), used in several test cases below:
+// 
+// Source (threeway_merge_source_2.mapx):
+// - add all brush "2" to func_static_1 (a subset of the target change)
+// - add all brush "4" & "5" to func_static_4
+// 
+// Target Map (threeway_merge_target_2.mapx):
+// - add all brush "1" & "2" to func_static_1
+// - add all brush "4" to func_static_4 (a subset of the source change)
+
+TEST_F(ThreeWayMergeTest, MergePrimitiveChangesOfSameEntity)
+{
+    auto operation = setupThreeWayMergeOperation("maps/threeway_merge_base.mapx", "maps/threeway_merge_target_2.mapx", "maps/threeway_merge_source_2.mapx");
+
+    // Expected result would be that func_static_1 will not be changed since it contains
+    // all changes of the source map, and more
+    // func_static_4 should be changed, but only the missing "5" brushes should be added
+    
+    auto func_static_1 = algorithm::getEntityByName(operation->getTargetRoot(), "func_static_1");
+    auto func_static_4 = algorithm::getEntityByName(operation->getTargetRoot(), "func_static_4");
+    auto worldspawn = algorithm::findWorldspawn(operation->getTargetRoot());
+
+    // brush_1 should get no actions, since they are already below func_static_1
+    auto brush1ActionCount = countActions<MergeAction>(operation, [](const std::shared_ptr<MergeAction>& action)
+    {
+        return algorithm::brushHasMaterial("textures/numbers/1")(action->getAffectedNode());
+    });
+    auto brush5ActionCount = countActions<MergeAction>(operation, [](const std::shared_ptr<MergeAction>& action)
+    {
+        return algorithm::brushHasMaterial("textures/numbers/5")(action->getAffectedNode());
+    });
+
+    EXPECT_EQ(brush1ActionCount, 0) << "Brush 1 should not take any changes";
+    EXPECT_EQ(brush5ActionCount, 4) << "Brush 5 should be 2x removed from worldspawn and 2x added to func_static_4";
+
+    EXPECT_EQ(algorithm::getChildCount(func_static_1, algorithm::brushHasMaterial("textures/numbers/1")), 4);
+    EXPECT_EQ(algorithm::getChildCount(func_static_4, algorithm::brushHasMaterial("textures/numbers/5")), 0);
+    EXPECT_EQ(algorithm::getChildCount(worldspawn, algorithm::brushHasMaterial("textures/numbers/5")), 2);
+
+    operation->applyActions();
+
+    EXPECT_EQ(algorithm::getChildCount(func_static_1, algorithm::brushHasMaterial("textures/numbers/1")), 4); // no change here
+    EXPECT_EQ(algorithm::getChildCount(func_static_4, algorithm::brushHasMaterial("textures/numbers/5")), 2); // added to func_static_4
+    EXPECT_EQ(algorithm::getChildCount(worldspawn, algorithm::brushHasMaterial("textures/numbers/5")), 0); // removed from worldspawn
 }
 
 }
