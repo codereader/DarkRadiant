@@ -1484,7 +1484,7 @@ void MaterialEditor::handleMaterialSelectionChange()
     {
         _material = GlobalMaterialManager().getMaterial(_treeView->GetSelectedFullname());
 
-        _material->sig_materialChanged().connect([this]()
+        _materialChanged = _material->sig_materialChanged().connect([this]()
         {
             updateSourceView();
             updateMaterialTreeItem();
