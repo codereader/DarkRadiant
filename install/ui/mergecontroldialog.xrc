@@ -2,7 +2,7 @@
 <resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
 	<object class="wxPanel" name="MergeControlDialogMainPanel">
 		<style>wxTAB_TRAVERSAL</style>
-		<size>391,354</size>
+		<size>391,417</size>
 		<object class="wxBoxSizer">
 			<orient>wxVERTICAL</orient>
 			<object class="sizeritem">
@@ -91,8 +91,6 @@
 									<border>0</border>
 									<object class="wxPanel" name="BaseMapPanel">
 										<style>wxTAB_TRAVERSAL</style>
-										<size>-1,0</size>
-										<hidden>1</hidden>
 										<object class="wxBoxSizer">
 											<orient>wxVERTICAL</orient>
 											<object class="sizeritem">

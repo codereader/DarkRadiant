@@ -192,6 +192,12 @@ public:
     // Will throw exceptions when the given map cannot be found, or this map doesn't have a root
     virtual void startMergeOperation(const std::string& sourceMap) = 0;
 
+    // Starts a merge operation which imports the changes made to the source map into this one
+    // baseMap defines the path to a map that both the source map and this map started from,
+    // which makes the merge process more precise and enables conflict detection.
+    // Will throw exceptions when the given map cannot be found, or this map doesn't have a root
+    virtual void startMergeOperation(const std::string& sourceMap, const std::string& baseMap) = 0;
+
     // When called in EditMode::Merge, this will apply the currently active set of actions
     virtual void finishMergeOperation() = 0;
 

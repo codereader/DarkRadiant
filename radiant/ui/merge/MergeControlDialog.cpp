@@ -10,6 +10,7 @@
 #include "wxutil/PathEntry.h"
 #include "scenelib.h"
 #include "string/convert.h"
+#include "os/path.h"
 
 #include <wx/textctrl.h>
 #include <wx/button.h>
@@ -36,7 +37,7 @@ MergeControlDialog::MergeControlDialog() :
     GetSizer()->Add(loadNamedPanel(this, "MergeControlDialogMainPanel"), 1, wxEXPAND);
 
     auto* targetMapFilename = findNamedObject<wxTextCtrl>(this, "TargetMapFilename");
-    targetMapFilename->SetValue(GlobalMapModule().getMapName());
+    targetMapFilename->SetValue(os::getFilename(GlobalMapModule().getMapName()));
     targetMapFilename->Disable();
 
     convertTextCtrlToPathEntry("MergeMapFilename");
@@ -128,26 +129,21 @@ void MergeControlDialog::onMergeSourceChanged(wxCommandEvent& ev)
 void MergeControlDialog::onLoadAndCompare(wxCommandEvent& ev)
 {
     auto sourceMapPath = findNamedObject<wxutil::PathEntry>(this, "MergeMapFilename")->getValue();
-#if false
     auto baseMapPath = findNamedObject<wxutil::PathEntry>(this, "BaseMapFilename")->getValue();
-#endif
 
     if (sourceMapPath.empty())
     {
         return;
     }
 
-#if false
     if (!baseMapPath.empty())
     { 
-        GlobalCommandSystem().executeCommand("StartMergeOperation", sourceMapPath, baseMapPath);
+        GlobalMapModule().startMergeOperation(sourceMapPath, baseMapPath);
     }
     else
     {
-        GlobalCommandSystem().executeCommand("StartMergeOperation", sourceMapPath);
+        GlobalMapModule().startMergeOperation(sourceMapPath);
     }
-#endif
-    GlobalMapModule().startMergeOperation(sourceMapPath);
 
     updateSummary();
     updateControlSensitivity();

@@ -60,6 +60,7 @@
 #include "scene/ChildPrimitives.h"
 #include "scene/merge/GraphComparer.h"
 #include "scene/merge/MergeOperation.h"
+#include "scene/merge/ThreeWayMergeOperation.h"
 
 namespace map
 {
@@ -1086,11 +1087,8 @@ void Map::exportSelected(std::ostream& out, const MapFormatPtr& format)
     exporter.exportMap(GlobalSceneGraph().root(), scene::traverseSelected);
 }
 
-void Map::createMergeOperation(const scene::merge::ComparisonResult& result)
+void Map::createMergeActions()
 {
-    // Create the merge actions
-    _mergeOperation = scene::merge::MergeOperation::CreateFromComparisonResult(result);
-
     // Group spawnarg actions into one single node if applicable
     std::map<scene::INodePtr, std::vector<scene::merge::IMergeAction::Ptr>> entityChanges;
     std::vector<scene::merge::IMergeAction::Ptr> otherChanges;
@@ -1129,16 +1127,11 @@ void Map::createMergeOperation(const scene::merge::ComparisonResult& result)
     }
 }
 
-void Map::startMergeOperation(const std::string& sourceMap)
+void Map::prepareMergeOperation()
 {
     if (!getRoot())
     {
         throw cmd::ExecutionNotPossible(_("No map loaded, cannot merge"));
-    }
-
-    if (!os::fileOrDirExists(sourceMap))
-    {
-        throw cmd::ExecutionFailure(fmt::format(_("File doesn't exist: {0}"), sourceMap));
     }
 
     {
@@ -1149,6 +1142,16 @@ void Map::startMergeOperation(const std::string& sourceMap)
 
     // Stop any pending merge operation
     abortMergeOperation();
+}
+
+void Map::startMergeOperation(const std::string& sourceMap)
+{
+    if (!os::fileOrDirExists(sourceMap))
+    {
+        throw cmd::ExecutionFailure(fmt::format(_("File doesn't exist: {0}"), sourceMap));
+    }
+
+    prepareMergeOperation();
 
     auto sourceMapResource = GlobalMapResourceManager().createFromPath(sourceMap);
 
@@ -1156,19 +1159,54 @@ void Map::startMergeOperation(const std::string& sourceMap)
     {
         if (sourceMapResource->load())
         {
-            const auto& otherRoot = sourceMapResource->getRootNode();
-
             // Compare the scenes and get the report
-            auto result = scene::merge::GraphComparer::Compare(otherRoot, getRoot());
+            auto result = scene::merge::GraphComparer::Compare(sourceMapResource->getRootNode(), getRoot());
+
+            // Create the merge actions
+            _mergeOperation = scene::merge::MergeOperation::CreateFromComparisonResult(*result);
 
             // Create renderable merge actions
-            createMergeOperation(*result);
+            createMergeActions();
 
             // Switch to merge mode
             setEditMode(EditMode::Merge);
 
             // Dispose of the resource, we don't need it anymore
             sourceMapResource->clear();
+        }
+    }
+    catch (const IMapResource::OperationException& ex)
+    {
+        radiant::NotificationMessage::SendError(ex.what());
+    }
+}
+
+void Map::startMergeOperation(const std::string& sourceMap, const std::string& baseMap)
+{
+    if (!os::fileOrDirExists(sourceMap)) throw cmd::ExecutionFailure(fmt::format(_("File doesn't exist: {0}"), sourceMap));
+    if (!os::fileOrDirExists(baseMap)) throw cmd::ExecutionFailure(fmt::format(_("File doesn't exist: {0}"), baseMap));
+
+    prepareMergeOperation();
+
+    auto baseMapResource = GlobalMapResourceManager().createFromPath(baseMap);
+    auto sourceMapResource = GlobalMapResourceManager().createFromPath(sourceMap);
+
+    try
+    {
+        if (sourceMapResource->load() && baseMapResource->load())
+        {
+            _mergeOperation = scene::merge::ThreeWayMergeOperation::Create(
+                baseMapResource->getRootNode(), sourceMapResource->getRootNode(), getRoot());
+
+            // Create renderable merge actions
+            createMergeActions();
+
+            // Switch to merge mode
+            setEditMode(EditMode::Merge);
+
+            // Dispose of the resources, we don't need it anymore
+            sourceMapResource->clear();
+            baseMapResource->clear();
         }
     }
     catch (const IMapResource::OperationException& ex)
@@ -1209,7 +1247,6 @@ void Map::startMergeOperationCmd(const cmd::ArgumentList& args)
         throw cmd::ExecutionFailure(fmt::format(_("File doesn't exist: {0}"), sourceCandidate));
     }
 
-#if false // base map handling not yet implemented
     // Do we have a second argument (base map)
     if (args.size() > 1)
     {
@@ -1220,9 +1257,15 @@ void Map::startMergeOperationCmd(const cmd::ArgumentList& args)
             throw cmd::ExecutionFailure(fmt::format(_("File doesn't exist: {0}"), baseCandidate));
         }
     }
-#endif
 
-    startMergeOperation(sourceCandidate);
+    if (!baseCandidate.empty())
+    {
+        startMergeOperation(sourceCandidate, baseCandidate);
+    }
+    else
+    {
+        startMergeOperation(sourceCandidate);
+    }
 }
 
 void Map::abortMergeOperationCmd(const cmd::ArgumentList& args)

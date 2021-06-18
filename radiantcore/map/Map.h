@@ -68,7 +68,7 @@ private:
 	MapEventSignal _mapEvent;
 	std::size_t _shutdownListener;
 
-    scene::merge::MergeOperation::Ptr _mergeOperation;
+    scene::merge::IMergeOperation::Ptr _mergeOperation;
     std::list<MergeActionNodeBase::Ptr> _mergeActionNodes;
 
     // Point trace for leak detection
@@ -170,6 +170,7 @@ public:
 	void exportSelected(std::ostream& out, const MapFormatPtr& format) override;
 
     void startMergeOperation(const std::string& sourceMap) override;
+    void startMergeOperation(const std::string& sourceMap, const std::string& baseMap) override;
     void finishMergeOperation() override;
     void abortMergeOperation() override;
     scene::merge::IMergeOperation::Ptr getActiveMergeOperation() override;
@@ -266,7 +267,9 @@ private:
     void startMergeOperationCmd(const cmd::ArgumentList& args);
     void abortMergeOperationCmd(const cmd::ArgumentList& args);
     void finishMergeOperationCmd(const cmd::ArgumentList& args);
-    void createMergeOperation(const scene::merge::ComparisonResult& result);
+
+    void createMergeActions();
+    void prepareMergeOperation();
 
 	void emitMapEvent(MapEvent ev);
 
