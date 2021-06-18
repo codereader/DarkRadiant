@@ -6,7 +6,7 @@
   <selectionGroups/>
   <selectionSets/>
   <properties>
-    <property key="EditTimeInSeconds" value="3851"/>
+    <property key="EditTimeInSeconds" value="3869"/>
     <property key="LastCameraAngle" value="-64.5 177.6 0"/>
     <property key="LastCameraPosition" value="480.842 37.4907 699.277"/>
     <property key="LastShaderClipboardMaterial" value="textures/numbers/10"/>
@@ -1906,8 +1906,7 @@
       <keyValue key="classname" value="func_static"/>
       <keyValue key="name" value="expandable"/>
       <keyValue key="extra1" value="value1"/>
-      <keyValue key="extra2" value="value2"/>
-      <keyValue key="extra3" value="value3"/>
+      <keyValue key="extra2" value="value2_changed"/>
       <keyValue key="model" value="expandable"/>
       <keyValue key="origin" value="-65 350 32"/>
     </keyValues>

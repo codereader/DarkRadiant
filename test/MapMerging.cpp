@@ -2057,7 +2057,9 @@ TEST_F(ThreeWayMergeTest, SourceAndTargetAreTheSame)
 //   with links from n1->n2->n3->n4->nbetween_4_and_5->n5->n1. The position of n4 and n5 is different from the target.
 // - light_1 got a new spawnarg _color (CONFLICT)
 // - func_static_8 has been deleted (CONFLICT)
-// - func_static_6 changes its origin to 224 180 32
+// - func_static_6 changes its origin to 224 180 32 (CONFLICT)
+// - expandable entity has its spwnarg "extra3" modified to "value3_changed" (CONFLICT)
+// - expandable entity has its spwnarg "extra2" removed (CONFLICT)
 // 
 // Target Map (threeway_merge_target_2.mapx):
 // - add all brush "1" & "2" to func_static_1
@@ -2065,7 +2067,9 @@ TEST_F(ThreeWayMergeTest, SourceAndTargetAreTheSame)
 // - added two new nodes (4 & 5) that are extend the node chain n1->n2->n3->n4->n5->n1
 // - light_1 has been removed (CONFLICT)
 // - func_static_8 got a new spawnarg "changed_in_target" => "value" (CONFLICT)
-// - func_static_6 changes its origin to 224 200 32
+// - func_static_6 changes its origin to 224 200 32 (CONFLICT)
+// - expandable entity has the spawnarg "extra3" removed (CONFLICT)
+// - expandable entity has the spawnarg "extra2" modified to "value2_changed" (CONFLICT)
 
 TEST_F(ThreeWayMergeTest, MergePrimitiveChangesOfSameEntity)
 {
@@ -2269,6 +2273,16 @@ TEST_F(ThreeWayMergeTest, SettingKeyValueToConflictingValues)
     EXPECT_TRUE(valueConflict) << "Didn't find the conflicting with subject func_static_6";
     EXPECT_EQ(valueConflict->getConflictType(), ConflictType::SettingKeyToDifferentValue);
 
+    // Verify the source action
+    EXPECT_EQ(valueConflict->getSourceAction()->getType(), ActionType::ChangeKeyValue);
+    EXPECT_EQ(std::static_pointer_cast<ChangeEntityKeyValueAction>(valueConflict->getSourceAction())->getKey(), "origin");
+    EXPECT_EQ(std::static_pointer_cast<ChangeEntityKeyValueAction>(valueConflict->getSourceAction())->getValue(), "224 180 32");
+
+    // Verify the target action
+    EXPECT_EQ(valueConflict->getTargetAction()->getType(), ActionType::ChangeKeyValue);
+    EXPECT_EQ(std::static_pointer_cast<ChangeEntityKeyValueAction>(valueConflict->getTargetAction())->getKey(), "origin");
+    EXPECT_EQ(std::static_pointer_cast<ChangeEntityKeyValueAction>(valueConflict->getTargetAction())->getValue(), "224 200 32");
+
     operation->applyActions();
 
     // The key value is still the same
@@ -2280,6 +2294,88 @@ TEST_F(ThreeWayMergeTest, SettingKeyValueToConflictingValues)
 
     // The changed value has now been imported
     EXPECT_EQ(Node_getEntity(entity)->getKeyValue("origin"), "224 180 32");
+}
+
+// Source: expandable entity has its spwnarg "extra3" modified to "value3_changed"
+// Target: expandable entity has the spawnarg "extra3" removed
+TEST_F(ThreeWayMergeTest, ModificationOfRemovedKeyValue)
+{
+    auto operation = setupThreeWayMergeOperation("maps/threeway_merge_base.mapx", "maps/threeway_merge_target_2.mapx", "maps/threeway_merge_source_2.mapx");
+
+    auto entity = algorithm::getEntityByName(operation->getTargetRoot(), "expandable");
+    EXPECT_EQ(Node_getEntity(entity)->getKeyValue("extra3"), "");
+
+    auto valueConflict = findAction<EntityKeyValueConflictResolutionAction>(operation,
+        [](const std::shared_ptr<EntityKeyValueConflictResolutionAction>& action)
+    {
+        return action->getConflictType() == ConflictType::ModificationOfRemovedKeyValue &&
+            Node_getEntity(action->getConflictingEntity())->getKeyValue("name") == "expandable";
+    });
+    EXPECT_TRUE(valueConflict) << "Didn't find the conflicting with subject expandable";
+    EXPECT_EQ(valueConflict->getConflictType(), ConflictType::ModificationOfRemovedKeyValue);
+
+    // Verify the source action
+    EXPECT_EQ(valueConflict->getSourceAction()->getType(), ActionType::ChangeKeyValue);
+    EXPECT_EQ(std::static_pointer_cast<ChangeEntityKeyValueAction>(valueConflict->getSourceAction())->getKey(), "extra3");
+    EXPECT_EQ(std::static_pointer_cast<ChangeEntityKeyValueAction>(valueConflict->getSourceAction())->getValue(), "value3_changed");
+
+    // Verify the target action
+    EXPECT_EQ(valueConflict->getTargetAction()->getType(), ActionType::RemoveKeyValue);
+    EXPECT_EQ(std::static_pointer_cast<ChangeEntityKeyValueAction>(valueConflict->getTargetAction())->getKey(), "extra3");
+    EXPECT_EQ(std::static_pointer_cast<ChangeEntityKeyValueAction>(valueConflict->getTargetAction())->getValue(), "");
+
+    operation->applyActions();
+
+    // The key value is still gone
+    EXPECT_EQ(Node_getEntity(entity)->getKeyValue("extra3"), "");
+
+    // Now accept the change explicitly
+    valueConflict->setResolvedByUsingSource(true);
+    valueConflict->applyChanges();
+
+    // The changed value has now been imported
+    EXPECT_EQ(Node_getEntity(entity)->getKeyValue("extra3"), "value3_changed");
+}
+
+// Source: expandable entity has its spwnarg "extra2" removed
+// Target: expandable entity has the spawnarg "extra2" modified to "value2_changed"
+TEST_F(ThreeWayMergeTest, RemovalOfModifiedKeyValue)
+{
+    auto operation = setupThreeWayMergeOperation("maps/threeway_merge_base.mapx", "maps/threeway_merge_target_2.mapx", "maps/threeway_merge_source_2.mapx");
+
+    auto entity = algorithm::getEntityByName(operation->getTargetRoot(), "expandable");
+    EXPECT_EQ(Node_getEntity(entity)->getKeyValue("extra2"), "value2_changed");
+
+    auto valueConflict = findAction<EntityKeyValueConflictResolutionAction>(operation,
+        [](const std::shared_ptr<EntityKeyValueConflictResolutionAction>& action)
+    {
+        return action->getConflictType() == ConflictType::RemovalOfModifiedKeyValue &&
+            Node_getEntity(action->getConflictingEntity())->getKeyValue("name") == "expandable";
+    });
+    EXPECT_TRUE(valueConflict) << "Didn't find the conflicting with subject expandable";
+    EXPECT_EQ(valueConflict->getConflictType(), ConflictType::RemovalOfModifiedKeyValue);
+
+    // Verify the source action
+    EXPECT_EQ(valueConflict->getSourceAction()->getType(), ActionType::RemoveKeyValue);
+    EXPECT_EQ(std::static_pointer_cast<ChangeEntityKeyValueAction>(valueConflict->getSourceAction())->getKey(), "extra2");
+    EXPECT_EQ(std::static_pointer_cast<ChangeEntityKeyValueAction>(valueConflict->getSourceAction())->getValue(), "");
+
+    // Verify the target action
+    EXPECT_EQ(valueConflict->getTargetAction()->getType(), ActionType::ChangeKeyValue);
+    EXPECT_EQ(std::static_pointer_cast<ChangeEntityKeyValueAction>(valueConflict->getTargetAction())->getKey(), "extra2");
+    EXPECT_EQ(std::static_pointer_cast<ChangeEntityKeyValueAction>(valueConflict->getTargetAction())->getValue(), "value2_changed");
+
+    operation->applyActions();
+
+    // The key value is still the same
+    EXPECT_EQ(Node_getEntity(entity)->getKeyValue("extra2"), "value2_changed");
+
+    // Now accept the change explicitly
+    valueConflict->setResolvedByUsingSource(true);
+    valueConflict->applyChanges();
+
+    // The changed value has now been removed
+    EXPECT_EQ(Node_getEntity(entity)->getKeyValue("extra2"), "");
 }
 
 }
