@@ -16,6 +16,7 @@ public:
         ShaderPtr mergeActionShaderAdd;
         ShaderPtr mergeActionShaderChange;
         ShaderPtr mergeActionShaderRemove;
+        ShaderPtr mergeActionShaderConflict;
         ShaderPtr nonMergeActionNodeShader;
     };
 
@@ -67,7 +68,8 @@ public:
             {
                 // This is a merge-relevant node that should be rendered in a special colour
                 const auto& mergeShader = (_flags & Highlight::Flags::MergeActionAdd) != 0 ? _shaders.mergeActionShaderAdd :
-                    (_flags & Highlight::Flags::MergeActionRemove) != 0 ? _shaders.mergeActionShaderRemove : _shaders.mergeActionShaderChange;
+                    (_flags & Highlight::Flags::MergeActionRemove) != 0 ? _shaders.mergeActionShaderRemove : 
+                    (_flags & Highlight::Flags::MergeActionConflict) != 0 ? _shaders.mergeActionShaderConflict : _shaders.mergeActionShaderChange;
 
                 if (mergeShader)
                 {

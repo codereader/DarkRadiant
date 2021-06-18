@@ -824,6 +824,11 @@ void OpenGLShader::construct()
                     colour = Colour4(0, 0.4f, 0.9f, 0.5f);
                     sortPosition = OpenGLState::SORT_OVERLAY_SECOND;
                 }
+                else if (string::ends_with(_name, "_CONFLICT"))
+                {
+                    colour = Colour4(0.9f, 0.5f, 0.0f, 0.5f);
+                    sortPosition = OpenGLState::SORT_OVERLAY_ONE_BEFORE_LAST;
+                }
 
                 // This is the shader drawing a coloured overlay
                 // over faces/polys. Its colour is configurable,
@@ -890,12 +895,15 @@ void OpenGLShader::construct()
                     colour = Colour4(0, 0.4f, 0.9f, 0.5f);
                     sortPosition = OpenGLState::SORT_OVERLAY_SECOND;
                 }
+                else if (string::ends_with(_name, "_CONFLICT"))
+                {
+                    colour = Colour4(0.9f, 0.5f, 0.0f, 0.5f);
+                    sortPosition = OpenGLState::SORT_OVERLAY_ONE_BEFORE_LAST;
+                }
 
                 state.setColour(colour);
-                //state.setRenderFlag(RENDER_LINESTIPPLE);
                 state.setSortPosition(OpenGLState::SORT_OVERLAY_FIRST);
                 state.m_linewidth = 2;
-                //state.m_linestipple_factor = 1;
             }
             else if (_name == "$XY_INACTIVE_NODE")
             {

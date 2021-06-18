@@ -226,6 +226,7 @@ void XYWnd::captureStates()
     _highlightShaders.mergeActionShaderAdd = GlobalRenderSystem().capture("$XY_MERGE_ACTION_ADD");
     _highlightShaders.mergeActionShaderChange = GlobalRenderSystem().capture("$XY_MERGE_ACTION_CHANGE");
     _highlightShaders.mergeActionShaderRemove = GlobalRenderSystem().capture("$XY_MERGE_ACTION_REMOVE");
+    _highlightShaders.mergeActionShaderConflict = GlobalRenderSystem().capture("$XY_MERGE_ACTION_CONFLICT");
     _highlightShaders.nonMergeActionNodeShader = GlobalRenderSystem().capture("$XY_INACTIVE_NODE");
 }
 
@@ -236,6 +237,7 @@ void XYWnd::releaseStates()
     _highlightShaders.mergeActionShaderAdd.reset();
     _highlightShaders.mergeActionShaderChange.reset();
     _highlightShaders.mergeActionShaderRemove.reset();
+    _highlightShaders.mergeActionShaderConflict.reset();
     _highlightShaders.nonMergeActionNodeShader.reset();
 }
 

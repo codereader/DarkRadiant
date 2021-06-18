@@ -23,6 +23,7 @@ public:
         ShaderPtr mergeActionShaderAdd;
         ShaderPtr mergeActionShaderChange;
         ShaderPtr mergeActionShaderRemove;
+        ShaderPtr mergeActionShaderConflict;
     };
 
 private:
@@ -174,7 +175,8 @@ public:
         if (_editMode == IMap::EditMode::Merge && (_flags & Highlight::Flags::MergeAction) != 0)
         {
             const auto& mergeShader = (_flags & Highlight::Flags::MergeActionAdd) != 0 ? _shaders.mergeActionShaderAdd :
-                (_flags & Highlight::Flags::MergeActionRemove) != 0 ? _shaders.mergeActionShaderRemove : _shaders.mergeActionShaderChange;
+                (_flags & Highlight::Flags::MergeActionRemove) != 0 ? _shaders.mergeActionShaderRemove : 
+                (_flags & Highlight::Flags::MergeActionConflict) != 0 ? _shaders.mergeActionShaderConflict : _shaders.mergeActionShaderChange;
             
             if (mergeShader)
             {

@@ -77,6 +77,7 @@ public:
                 _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionAdd, true);
                 _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionChange, false);
                 _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionRemove, false);
+                _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionConflict, false);
                 break;
 
             case scene::merge::ActionType::AddKeyValue:
@@ -85,6 +86,7 @@ public:
                 _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionChange, true);
                 _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionAdd, false);
                 _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionRemove, false);
+                _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionConflict, false);
                 break;
 
             case scene::merge::ActionType::RemoveChildNode:
@@ -92,6 +94,14 @@ public:
                 _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionRemove, true);
                 _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionAdd, false);
                 _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionChange, false);
+                _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionConflict, false);
+                break;
+
+            case scene::merge::ActionType::ConflictResolution:
+                _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionConflict, true);
+                _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionAdd, false);
+                _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionChange, false);
+                _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionRemove, false);
                 break;
             }
         }
@@ -101,6 +111,7 @@ public:
             _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionAdd, false);
             _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionChange, false);
             _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionRemove, false);
+            _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionConflict, false);
         }
 
         if (highlightFlags & Renderable::Highlight::Selected)
