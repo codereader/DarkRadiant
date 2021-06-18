@@ -6,7 +6,7 @@
   <selectionGroups/>
   <selectionSets/>
   <properties>
-    <property key="EditTimeInSeconds" value="3781"/>
+    <property key="EditTimeInSeconds" value="3851"/>
     <property key="LastCameraAngle" value="-64.5 177.6 0"/>
     <property key="LastCameraPosition" value="480.842 37.4907 699.277"/>
     <property key="LastShaderClipboardMaterial" value="textures/numbers/10"/>
@@ -1504,7 +1504,7 @@
             <contentsFlag value="0"/>
           </face>
           <face>
-            <plane x="0" y="1.000000" z="0" d="0"/>
+            <plane x="0" y="1.000000" z="0" d="8.000000"/>
             <textureProjection xx="0.015625" yx="0" tx="4.000000" xy="0" yy="0.015625" ty="1.000000"/>
             <material name="textures/numbers/6"/>
             <contentsFlag value="0"/>
@@ -1522,7 +1522,7 @@
             <contentsFlag value="0"/>
           </face>
           <face>
-            <plane x="0" y="-1.000000" z="0" d="-64.000000"/>
+            <plane x="0" y="-1.000000" z="0" d="-72.000000"/>
             <textureProjection xx="0.015625" yx="0" tx="29.000000" xy="0" yy="0.015625" ty="1.000000"/>
             <material name="textures/numbers/6"/>
             <contentsFlag value="0"/>
@@ -1549,7 +1549,7 @@
             <contentsFlag value="0"/>
           </face>
           <face>
-            <plane x="0" y="1.000000" z="0" d="-64.000000"/>
+            <plane x="0" y="1.000000" z="0" d="-56.000000"/>
             <textureProjection xx="0.015625" yx="0" tx="4.000000" xy="0" yy="0.015625" ty="1.000000"/>
             <material name="textures/numbers/6"/>
             <contentsFlag value="0"/>
@@ -1567,7 +1567,7 @@
             <contentsFlag value="0"/>
           </face>
           <face>
-            <plane x="0" y="-1.000000" z="0" d="0"/>
+            <plane x="0" y="-1.000000" z="0" d="-8.000000"/>
             <textureProjection xx="0.015625" yx="0" tx="29.000000" xy="0" yy="0.015625" ty="1.000000"/>
             <material name="textures/numbers/6"/>
             <contentsFlag value="0"/>
@@ -1590,7 +1590,7 @@
       <keyValue key="classname" value="func_static"/>
       <keyValue key="name" value="func_static_6"/>
       <keyValue key="model" value="func_static_6"/>
-      <keyValue key="origin" value="224 192 32"/>
+      <keyValue key="origin" value="224 200 32"/>
     </keyValues>
     <layers>
       <layer id="0"/>
@@ -1799,6 +1799,7 @@
     <keyValues>
       <keyValue key="classname" value="func_static"/>
       <keyValue key="name" value="func_static_8"/>
+      <keyValue key="changed_in_target" value="value"/>
       <keyValue key="model" value="func_static_8"/>
       <keyValue key="origin" value="352 192 32"/>
     </keyValues>
@@ -1919,21 +1920,6 @@
   <entity number="10">
     <primitives/>
     <keyValues>
-      <keyValue key="classname" value="light"/>
-      <keyValue key="name" value="light_1"/>
-      <keyValue key="light_center" value="0 0 0"/>
-      <keyValue key="light_radius" value="64 32 320"/>
-      <keyValue key="origin" value="-64 448 32"/>
-    </keyValues>
-    <layers>
-      <layer id="0"/>
-    </layers>
-    <selectionGroups/>
-    <selectionSets/>
-  </entity>
-  <entity number="11">
-    <primitives/>
-    <keyValues>
       <keyValue key="classname" value="fixed_size_entity"/>
       <keyValue key="name" value="node_1"/>
       <keyValue key="origin" value="96 352 0"/>
@@ -1945,7 +1931,7 @@
     <selectionGroups/>
     <selectionSets/>
   </entity>
-  <entity number="12">
+  <entity number="11">
     <primitives/>
     <keyValues>
       <keyValue key="classname" value="fixed_size_entity"/>
@@ -1959,7 +1945,7 @@
     <selectionGroups/>
     <selectionSets/>
   </entity>
-  <entity number="13">
+  <entity number="12">
     <primitives/>
     <keyValues>
       <keyValue key="classname" value="fixed_size_entity"/>
@@ -1973,7 +1959,7 @@
     <selectionGroups/>
     <selectionSets/>
   </entity>
-  <entity number="14">
+  <entity number="13">
     <primitives/>
     <keyValues>
       <keyValue key="classname" value="fixed_size_entity"/>
@@ -1987,7 +1973,7 @@
     <selectionGroups/>
     <selectionSets/>
   </entity>
-  <entity number="15">
+  <entity number="14">
     <primitives/>
     <keyValues>
       <keyValue key="classname" value="fixed_size_entity"/>

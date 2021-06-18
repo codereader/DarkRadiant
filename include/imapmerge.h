@@ -20,8 +20,28 @@ enum class ActionType
     ChangeKeyValue,
     AddChildNode,
     RemoveChildNode,
-    EntityNodeConflict,
-    EntityKeyValueConflict,
+    ConflictResolution,
+};
+
+enum class ConflictType
+{
+    // Not a conflict
+    NoConflict,
+
+    // Entity has been removed in target, source tries to modify it
+    ModificationOfRemovedEntity,
+
+    // Entity has been modified in target, source tries to remove it
+    RemovalOfModifiedEntity,
+
+    // Key Value has been removed in targed, source tries to change it
+    ModificationOfRemovedKeyValue,
+
+    // Key Value has been modified in targed, source tries to remove it
+    RemovalOfModifiedKeyValue,
+
+    // Both sides try to set the same key to a different value
+    SettingKeyToDifferentValue,
 };
 
 /**

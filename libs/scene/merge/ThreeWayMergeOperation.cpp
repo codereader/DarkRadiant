@@ -79,7 +79,7 @@ std::list<ComparisonResult::KeyValueDifference>::const_iterator ThreeWayMergeOpe
     });
 }
 
-bool ThreeWayMergeOperation::KeyValueDiffHasConflicts(const ComparisonResult::KeyValueDifference& sourceKeyValueDiff, 
+ConflictType ThreeWayMergeOperation::GetKeyValueConflictType(const ComparisonResult::KeyValueDifference& sourceKeyValueDiff,
     const ComparisonResult::KeyValueDifference& targetKeyValueDiff)
 {
     assert(string::iequals(targetKeyValueDiff.key, sourceKeyValueDiff.key));
@@ -87,15 +87,45 @@ bool ThreeWayMergeOperation::KeyValueDiffHasConflicts(const ComparisonResult::Ke
     // Key is matching, there's still a chance that this is not a conflict
     switch (targetKeyValueDiff.type)
     {
-    // If both are removing the key, that's fine
     case ComparisonResult::KeyValueDifference::Type::KeyValueRemoved:
-        return targetKeyValueDiff.type != sourceKeyValueDiff.type;
+    {
+        // Target had the key removed
+        if (sourceKeyValueDiff.type == ComparisonResult::KeyValueDifference::Type::KeyValueAdded)
+        {
+            throw std::logic_error("Source cannot add a key that has been removed in target, as it was present in base.");
+        }
+
+        // If both are removing the key, that's fine, otherwise it's a conflict
+        return sourceKeyValueDiff.type == ComparisonResult::KeyValueDifference::Type::KeyValueChanged ?
+            ConflictType::ModificationOfRemovedKeyValue : ConflictType::NoConflict;
+    }
 
     // On key value change or add, the value must be the same to not conflict
     case ComparisonResult::KeyValueDifference::Type::KeyValueAdded:
+    {
+        if (sourceKeyValueDiff.type != ComparisonResult::KeyValueDifference::Type::KeyValueAdded)
+        {
+            throw std::logic_error("Source cannot remove or modify a key that has been added in target, as it was present in base.");
+        }
+
+        // Value must match
+        return sourceKeyValueDiff.value != targetKeyValueDiff.value ? ConflictType::SettingKeyToDifferentValue : ConflictType::NoConflict;
+    }
     case ComparisonResult::KeyValueDifference::Type::KeyValueChanged:
-        return sourceKeyValueDiff.type == ComparisonResult::KeyValueDifference::Type::KeyValueRemoved ||
-            sourceKeyValueDiff.value != targetKeyValueDiff.value;
+    {
+        if (sourceKeyValueDiff.type == ComparisonResult::KeyValueDifference::Type::KeyValueAdded)
+        {
+            throw std::logic_error("Source cannot add a key that has been modified in target, as it was present in base.");
+        }
+
+        if (sourceKeyValueDiff.type == ComparisonResult::KeyValueDifference::Type::KeyValueRemoved)
+        {
+            return ConflictType::RemovalOfModifiedKeyValue;
+        }
+
+        // Both maps changes this value, compare the strings
+        return sourceKeyValueDiff.value != targetKeyValueDiff.value ? ConflictType::SettingKeyToDifferentValue : ConflictType::NoConflict;
+    }
     }
 
     throw std::logic_error("Unhandled key value diff type in ThreeWayMergeOperation::KeyValueDiffHasConflicts");
@@ -117,7 +147,8 @@ void ThreeWayMergeOperation::processEntityModification(const ComparisonResult::E
         // This is a conflicting change, the source modified it, the target removed it
         // When the user chooses to import the change, it will be an AddEntity action
         addAction(std::make_shared<EntityConflictResolutionAction>(
-            targetDiff.sourceNode,
+            ConflictType::ModificationOfRemovedEntity,
+            sourceDiff.sourceNode, // the conflicting entity (comes from the source map)
             std::make_shared<AddEntityAction>(sourceDiff.sourceNode, _targetRoot)
         ));
         return;
@@ -174,7 +205,9 @@ void ThreeWayMergeOperation::processEntityModification(const ComparisonResult::E
         }
 
         // Check if this key change is conflicting with the target change
-        if (!KeyValueDiffHasConflicts(sourceKeyValueDiff, *targetKeyValueDiff))
+        auto conflictType = GetKeyValueConflictType(sourceKeyValueDiff, *targetKeyValueDiff);
+
+        if (conflictType == ConflictType::NoConflict)
         {
             // Accept this change
             addActionForKeyValueDiff(sourceKeyValueDiff, targetDiff.sourceNode);
@@ -183,6 +216,7 @@ void ThreeWayMergeOperation::processEntityModification(const ComparisonResult::E
         {
             // Create a conflict resolution action for this key value change
             addAction(std::make_shared<EntityKeyValueConflictResolutionAction>(
+                conflictType,
                 targetDiff.sourceNode, // conflicting entity
                 createActionForKeyValueDiff(sourceKeyValueDiff, targetDiff.sourceNode), // conflicting source change 
                 createActionForKeyValueDiff(*targetKeyValueDiff, targetDiff.sourceNode) // conflicting target change
@@ -274,6 +308,7 @@ void ThreeWayMergeOperation::compareAndCreateActions()
 
             // Entity has been removed in source, but modified in target, this is a conflict
             addAction(std::make_shared<EntityConflictResolutionAction>(
+                ConflictType::RemovalOfModifiedEntity,
                 targetDiff->second->sourceNode, // conflicting entity
                 std::make_shared<RemoveEntityAction>(targetDiff->second->sourceNode) // conflicting change 
             ));

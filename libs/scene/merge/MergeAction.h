@@ -280,6 +280,7 @@ class ConflictResolutionAction :
     public MergeAction
 {
 protected:
+    ConflictType _conflictType;
     INodePtr _conflictingEntity;
 
     // The action the source diff is trying to apply
@@ -290,12 +291,13 @@ protected:
     bool _applySourceChange;
 
 protected:
-    ConflictResolutionAction(ActionType actionType, const INodePtr& conflictingEntity, const MergeAction::Ptr& sourceAction) :
-        ConflictResolutionAction(actionType, conflictingEntity, sourceAction, MergeAction::Ptr())
+    ConflictResolutionAction(ConflictType conflictType, const INodePtr& conflictingEntity, const MergeAction::Ptr& sourceAction) :
+        ConflictResolutionAction(conflictType, conflictingEntity, sourceAction, MergeAction::Ptr())
     {}
 
-    ConflictResolutionAction(ActionType actionType, const INodePtr& conflictingEntity, const MergeAction::Ptr& sourceAction, const MergeAction::Ptr& targetAction) :
-        MergeAction(actionType),
+    ConflictResolutionAction(ConflictType conflictType, const INodePtr& conflictingEntity, const MergeAction::Ptr& sourceAction, const MergeAction::Ptr& targetAction) :
+        MergeAction(ActionType::ConflictResolution),
+        _conflictType(conflictType),
         _conflictingEntity(conflictingEntity),
         _sourceAction(sourceAction),
         _targetAction(targetAction),
@@ -304,6 +306,11 @@ protected:
 
 public:
     using Ptr = std::shared_ptr<ConflictResolutionAction>;
+
+    ConflictType getConflictType() const
+    {
+        return _conflictType;
+    }
 
     // The action the source diff is trying to apply
     const MergeAction::Ptr& getSourceAction() const
@@ -353,14 +360,15 @@ class EntityConflictResolutionAction :
     public ConflictResolutionAction
 {
 public:
-    EntityConflictResolutionAction(const INodePtr& conflictingEntity, const MergeAction::Ptr& sourceAction) :
-        EntityConflictResolutionAction(conflictingEntity, sourceAction, MergeAction::Ptr())
+    EntityConflictResolutionAction(ConflictType conflictType, const INodePtr& conflictingEntity, const MergeAction::Ptr& sourceAction) :
+        EntityConflictResolutionAction(conflictType, conflictingEntity, sourceAction, MergeAction::Ptr())
     {}
 
-    EntityConflictResolutionAction(const INodePtr& conflictingEntity, 
+    EntityConflictResolutionAction(ConflictType conflictType, 
+                                   const INodePtr& conflictingEntity,
                                    const MergeAction::Ptr& sourceAction, 
                                    const MergeAction::Ptr& targetAction) :
-        ConflictResolutionAction(ActionType::EntityNodeConflict, conflictingEntity, sourceAction, targetAction)
+        ConflictResolutionAction(conflictType, conflictingEntity, sourceAction, targetAction)
     {}
 };
 
@@ -369,10 +377,11 @@ class EntityKeyValueConflictResolutionAction :
     public ConflictResolutionAction
 {
 public:
-    EntityKeyValueConflictResolutionAction(const INodePtr& conflictingEntity, 
+    EntityKeyValueConflictResolutionAction(ConflictType conflictType,
+                                           const INodePtr& conflictingEntity,
                                            const MergeAction::Ptr& sourceAction, 
                                            const MergeAction::Ptr& targetAction) :
-        ConflictResolutionAction(ActionType::EntityKeyValueConflict, conflictingEntity, sourceAction, targetAction)
+        ConflictResolutionAction(conflictType, conflictingEntity, sourceAction, targetAction)
     {}
 };
 

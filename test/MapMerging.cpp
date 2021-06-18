@@ -2055,11 +2055,17 @@ TEST_F(ThreeWayMergeTest, SourceAndTargetAreTheSame)
 // - add all brush "4" & "5" to func_static_4
 // - add two new nodes with the same name and one in between ("4", "between_4_and_5" and "5")
 //   with links from n1->n2->n3->n4->nbetween_4_and_5->n5->n1. The position of n4 and n5 is different from the target.
+// - light_1 got a new spawnarg _color (CONFLICT)
+// - func_static_8 has been deleted (CONFLICT)
+// - func_static_6 changes its origin to 224 180 32
 // 
 // Target Map (threeway_merge_target_2.mapx):
 // - add all brush "1" & "2" to func_static_1
 // - add all brush "4" to func_static_4 (a subset of the source change)
 // - added two new nodes (4 & 5) that are extend the node chain n1->n2->n3->n4->n5->n1
+// - light_1 has been removed (CONFLICT)
+// - func_static_8 got a new spawnarg "changed_in_target" => "value" (CONFLICT)
+// - func_static_6 changes its origin to 224 200 32
 
 TEST_F(ThreeWayMergeTest, MergePrimitiveChangesOfSameEntity)
 {
@@ -2155,6 +2161,7 @@ TEST_F(ThreeWayMergeTest, MergeEntityNameCollisions)
         return Node_getEntity(action->getConflictingEntity())->getKeyValue("name") == "node_3";
     });
     EXPECT_TRUE(keyValueConflict);
+    EXPECT_EQ(keyValueConflict->getConflictType(), ConflictType::SettingKeyToDifferentValue);
     EXPECT_EQ(keyValueConflict->getTargetAction()->getType(), scene::merge::ActionType::AddKeyValue);
 
     EXPECT_EQ(std::dynamic_pointer_cast<AddEntityKeyValueAction>(keyValueConflict->getTargetAction())->getKey(), "target0");
@@ -2188,6 +2195,91 @@ TEST_F(ThreeWayMergeTest, MergeEntityNameCollisions)
 
     node_3 = algorithm::getEntityByName(operation->getTargetRoot(), "node_3");
     EXPECT_EQ(Node_getEntity(node_3)->getKeyValue("target0"), newNode4Name);
+}
+
+// The source map tries to remove an entity that has been modified in target (func_static_8)
+TEST_F(ThreeWayMergeTest, RemovalOfModifiedEntity)
+{
+    auto operation = setupThreeWayMergeOperation("maps/threeway_merge_base.mapx", "maps/threeway_merge_target_2.mapx", "maps/threeway_merge_source_2.mapx");
+
+    // func_static_8 is still present in the target
+    EXPECT_TRUE(algorithm::getEntityByName(operation->getTargetRoot(), "func_static_8"));
+
+    auto entityConflict = findAction<EntityConflictResolutionAction>(operation,
+        [](const std::shared_ptr<EntityConflictResolutionAction>& action)
+    {
+        return Node_getEntity(action->getConflictingEntity())->getKeyValue("name") == "func_static_8";
+    });
+    EXPECT_TRUE(entityConflict) << "Didn't find the conflicting with subject func_static_8";
+    EXPECT_EQ(entityConflict->getConflictType(), ConflictType::RemovalOfModifiedEntity);
+
+    operation->applyActions();
+
+    // The entity func_static_8 is still present
+    EXPECT_TRUE(algorithm::getEntityByName(operation->getTargetRoot(), "func_static_8"));
+
+    // Now accept the change explicitly
+    entityConflict->setResolvedByUsingSource(true);
+    entityConflict->applyChanges();
+
+    // The entity func_static_8 has now been removed in target
+    EXPECT_FALSE(algorithm::getEntityByName(operation->getTargetRoot(), "func_static_8"));
+}
+
+// The source map tries to modify a spawnarg of the removed entity light_1
+TEST_F(ThreeWayMergeTest, ModificationOfRemovedEntity)
+{
+    auto operation = setupThreeWayMergeOperation("maps/threeway_merge_base.mapx", "maps/threeway_merge_target_2.mapx", "maps/threeway_merge_source_2.mapx");
+
+    EXPECT_FALSE(algorithm::getEntityByName(operation->getTargetRoot(), "light_1"));
+
+    auto entityConflict = findAction<EntityConflictResolutionAction>(operation,
+        [](const std::shared_ptr<EntityConflictResolutionAction>& action)
+    {
+        return Node_getEntity(action->getConflictingEntity())->getKeyValue("name") == "light_1";
+    });
+    EXPECT_TRUE(entityConflict) << "Didn't find the conflicting with subject light_1";
+    EXPECT_EQ(entityConflict->getConflictType(), ConflictType::ModificationOfRemovedEntity);
+
+    operation->applyActions();
+
+    // The entity light_1 is still gone
+    EXPECT_FALSE(algorithm::getEntityByName(operation->getTargetRoot(), "light_1"));
+
+    // Now accept the change explicitly
+    entityConflict->setResolvedByUsingSource(true);
+    entityConflict->applyChanges();
+
+    // The entity light_1 has now been imported to target
+    EXPECT_TRUE(algorithm::getEntityByName(operation->getTargetRoot(), "light_1"));
+}
+
+TEST_F(ThreeWayMergeTest, SettingKeyValueToConflictingValues)
+{
+    auto operation = setupThreeWayMergeOperation("maps/threeway_merge_base.mapx", "maps/threeway_merge_target_2.mapx", "maps/threeway_merge_source_2.mapx");
+
+    auto entity = algorithm::getEntityByName(operation->getTargetRoot(), "func_static_6");
+    EXPECT_EQ(Node_getEntity(entity)->getKeyValue("origin"), "224 200 32");
+
+    auto valueConflict = findAction<EntityKeyValueConflictResolutionAction>(operation,
+        [](const std::shared_ptr<EntityKeyValueConflictResolutionAction>& action)
+    {
+        return Node_getEntity(action->getConflictingEntity())->getKeyValue("name") == "func_static_6";
+    });
+    EXPECT_TRUE(valueConflict) << "Didn't find the conflicting with subject func_static_6";
+    EXPECT_EQ(valueConflict->getConflictType(), ConflictType::SettingKeyToDifferentValue);
+
+    operation->applyActions();
+
+    // The key value is still the same
+    EXPECT_EQ(Node_getEntity(entity)->getKeyValue("origin"), "224 200 32");
+
+    // Now accept the change explicitly
+    valueConflict->setResolvedByUsingSource(true);
+    valueConflict->applyChanges();
+
+    // The changed value has now been imported
+    EXPECT_EQ(Node_getEntity(entity)->getKeyValue("origin"), "224 180 32");
 }
 
 }
