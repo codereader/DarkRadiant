@@ -6,7 +6,7 @@
   <selectionGroups/>
   <selectionSets/>
   <properties>
-    <property key="EditTimeInSeconds" value="3310"/>
+    <property key="EditTimeInSeconds" value="3781"/>
     <property key="LastCameraAngle" value="-64.5 177.6 0"/>
     <property key="LastCameraPosition" value="480.842 37.4907 699.277"/>
     <property key="LastShaderClipboardMaterial" value="textures/numbers/10"/>
@@ -1924,6 +1924,76 @@
       <keyValue key="light_center" value="0 0 0"/>
       <keyValue key="light_radius" value="64 32 320"/>
       <keyValue key="origin" value="-64 448 32"/>
+    </keyValues>
+    <layers>
+      <layer id="0"/>
+    </layers>
+    <selectionGroups/>
+    <selectionSets/>
+  </entity>
+  <entity number="11">
+    <primitives/>
+    <keyValues>
+      <keyValue key="classname" value="fixed_size_entity"/>
+      <keyValue key="name" value="node_1"/>
+      <keyValue key="origin" value="96 352 0"/>
+      <keyValue key="target0" value="node_2"/>
+    </keyValues>
+    <layers>
+      <layer id="0"/>
+    </layers>
+    <selectionGroups/>
+    <selectionSets/>
+  </entity>
+  <entity number="12">
+    <primitives/>
+    <keyValues>
+      <keyValue key="classname" value="fixed_size_entity"/>
+      <keyValue key="name" value="node_2"/>
+      <keyValue key="origin" value="224 352 0"/>
+      <keyValue key="target0" value="node_3"/>
+    </keyValues>
+    <layers>
+      <layer id="0"/>
+    </layers>
+    <selectionGroups/>
+    <selectionSets/>
+  </entity>
+  <entity number="13">
+    <primitives/>
+    <keyValues>
+      <keyValue key="classname" value="fixed_size_entity"/>
+      <keyValue key="name" value="node_3"/>
+      <keyValue key="origin" value="352 352 0"/>
+      <keyValue key="target0" value="node_4"/>
+    </keyValues>
+    <layers>
+      <layer id="0"/>
+    </layers>
+    <selectionGroups/>
+    <selectionSets/>
+  </entity>
+  <entity number="14">
+    <primitives/>
+    <keyValues>
+      <keyValue key="classname" value="fixed_size_entity"/>
+      <keyValue key="name" value="node_4"/>
+      <keyValue key="origin" value="352 480 0"/>
+      <keyValue key="target0" value="node_5"/>
+    </keyValues>
+    <layers>
+      <layer id="0"/>
+    </layers>
+    <selectionGroups/>
+    <selectionSets/>
+  </entity>
+  <entity number="15">
+    <primitives/>
+    <keyValues>
+      <keyValue key="classname" value="fixed_size_entity"/>
+      <keyValue key="name" value="node_5"/>
+      <keyValue key="origin" value="224 480 0"/>
+      <keyValue key="target0" value="node_1"/>
     </keyValues>
     <layers>
       <layer id="0"/>

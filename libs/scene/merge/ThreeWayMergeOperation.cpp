@@ -1,13 +1,60 @@
 #include "ThreeWayMergeOperation.h"
 
 #include "itextstream.h"
+#include "inamespace.h"
 #include "NodeUtils.h"
+#include "GraphComparer.h"
 
 namespace scene
 {
 
 namespace merge
 {
+
+// Contains lookup tables needed during analysis of the two scenes
+struct ThreeWayMergeOperation::ComparisonData
+{
+    std::map<std::string, std::list<ComparisonResult::EntityDifference>::const_iterator> sourceDifferences;
+    std::map<std::string, std::list<ComparisonResult::EntityDifference>::const_iterator> targetDifferences;
+    std::map<std::string, INodePtr> targetEntities;
+
+    ComparisonResult::Ptr baseToSource;
+    ComparisonResult::Ptr baseToTarget;
+
+    ComparisonData(const IMapRootNodePtr& baseRoot, const IMapRootNodePtr& sourceRoot, const IMapRootNodePtr& targetRoot)
+    {
+        baseToSource = GraphComparer::Compare(sourceRoot, baseRoot);
+        baseToTarget = GraphComparer::Compare(targetRoot, baseRoot);
+
+        // Create source and target entity diff dictionaries (by entity name)
+        for (auto it = baseToSource->differingEntities.begin(); it != baseToSource->differingEntities.end(); ++it)
+        {
+            sourceDifferences[it->entityName] = it;
+        }
+
+        for (auto it = baseToTarget->differingEntities.begin(); it != baseToTarget->differingEntities.end(); ++it)
+        {
+            targetDifferences[it->entityName] = it;
+        }
+
+        // Collect a map of all target entities for faster lookup later
+        targetRoot->foreachNode([&](const INodePtr& candidate)
+        {
+            if (candidate->getNodeType() == INode::Type::Entity)
+            {
+                targetEntities.emplace(NodeUtils::GetEntityName(candidate), candidate);
+            }
+
+            return true;
+        });
+    }
+
+    INodePtr findTargetEntityByName(const std::string& name) const
+    {
+        auto found = targetEntities.find(name);
+        return found != targetEntities.end() ? found->second : INodePtr();
+    }
+};
 
 ThreeWayMergeOperation::ThreeWayMergeOperation(const scene::IMapRootNodePtr& baseRoot,
     const scene::IMapRootNodePtr& sourceRoot, const scene::IMapRootNodePtr& targetRoot) :
@@ -144,45 +191,24 @@ void ThreeWayMergeOperation::processEntityModification(const ComparisonResult::E
     }
 }
 
-void ThreeWayMergeOperation::processEntityDifferences(const std::list<ComparisonResult::EntityDifference>& sourceDiffs,
-    const std::list<ComparisonResult::EntityDifference>& targetDiffs)
+void ThreeWayMergeOperation::compareAndCreateActions()
 {
-    // Create source and target entity diff dictionaries (by entity name)
-    for (auto it = sourceDiffs.begin(); it != sourceDiffs.end(); ++it)
-    {
-        _sourceDifferences[it->entityName] = it;
-    }
-
-    for (auto it = targetDiffs.begin(); it != targetDiffs.end(); ++it)
-    {
-        _targetDifferences[it->entityName] = it;
-    }
-
-    // Collect a map of all target entities for faster lookup later
-    _targetRoot->foreachNode([&](const INodePtr& candidate)
-    {
-        if (candidate->getNodeType() == INode::Type::Entity)
-        {
-            _targetEntities.emplace(NodeUtils::GetEntityName(candidate), candidate);
-        }
-
-        return true;
-    });
+    ComparisonData data(_baseRoot, _sourceRoot, _targetRoot);
 
     // Check each entity difference from the base to the source map
     // fully accept only those entities that are not altered in the target map, and detect conflicts
-    for (const auto& pair : _sourceDifferences)
+    for (const auto& pair : data.sourceDifferences)
     {
-        auto targetDiff = _targetDifferences.find(pair.first);
+        auto targetDiff = data.targetDifferences.find(pair.first);
 
-        if (targetDiff == _targetDifferences.end())
+        if (targetDiff == data.targetDifferences.end())
         {
             // Change is targeting an entity that has not been altered in the source map => accept
             switch (pair.second->type)
             {
             case ComparisonResult::EntityDifference::Type::EntityMissingInSource:
                 {
-                    auto entityToRemove = findTargetEntityByName(pair.first);
+                    auto entityToRemove = data.findTargetEntityByName(pair.first);
                     assert(entityToRemove);
                     addAction(std::make_shared<RemoveEntityAction>(entityToRemove));
                 }
@@ -194,7 +220,7 @@ void ThreeWayMergeOperation::processEntityDifferences(const std::list<Comparison
 
             case ComparisonResult::EntityDifference::Type::EntityPresentButDifferent:
                 {
-                    auto entityToModify = findTargetEntityByName(pair.first);
+                    auto entityToModify = data.findTargetEntityByName(pair.first);
                     assert(entityToModify);
 
                     for (const auto& keyValueDiff : pair.second->differingKeyValues)
@@ -260,27 +286,67 @@ void ThreeWayMergeOperation::processEntityDifferences(const std::list<Comparison
             break;
         }
     }
-
-    // Cleanup temporary data
-    _sourceDifferences.clear();
-    _targetDifferences.clear();
-    _targetEntities.clear();
 }
 
-ThreeWayMergeOperation::Ptr ThreeWayMergeOperation::CreateFromComparisonResults(
-    const ComparisonResult& baseToSource, const ComparisonResult& baseToTarget)
+ThreeWayMergeOperation::Ptr ThreeWayMergeOperation::Create(const IMapRootNodePtr& baseRoot, 
+    const IMapRootNodePtr& sourceRoot, const IMapRootNodePtr& targetRoot)
 {
-    if (baseToSource.getBaseRootNode() != baseToTarget.getBaseRootNode())
+    if (baseRoot == sourceRoot || baseRoot == targetRoot || sourceRoot == targetRoot)
     {
-        throw std::runtime_error("The base scene of the two comparison results must be the same");
+        throw std::runtime_error("None of the root nodes must be equal to any of the other two");
     }
 
-    auto operation = std::make_shared<ThreeWayMergeOperation>(baseToSource.getBaseRootNode(), 
-        baseToSource.getSourceRootNode(), baseToTarget.getSourceRootNode());
+    auto operation = std::make_shared<ThreeWayMergeOperation>(baseRoot, sourceRoot, targetRoot);
 
-    operation->processEntityDifferences(baseToSource.differingEntities, baseToTarget.differingEntities);
+    // Phase 1 is to detect any entity additions from the source to the target that might cause name conflicts
+    // After this pass some key values might have been changed
+    operation->adjustSourceEntitiesWithNameConflicts();
+
+    // Phase 2 will run another comparison of the graphs (since key values might have been modified)
+    operation->compareAndCreateActions();
 
     return operation;
+}
+
+void ThreeWayMergeOperation::adjustSourceEntitiesWithNameConflicts()
+{
+    ComparisonData data(_baseRoot, _sourceRoot, _targetRoot);
+
+    std::set<INodePtr> sourceEntitiesToBeRenamed;
+
+    // Check each entity difference from the base to the source map
+    for (const auto& pair : data.sourceDifferences)
+    {
+        if (pair.second->type != ComparisonResult::EntityDifference::Type::EntityMissingInBase)
+        {
+            continue; // we're only looking for additions
+        }
+
+        // Find an entity change in the target map that affects the same entity name
+        // These are the source entities we have to rename first
+        auto targetDiff = data.targetDifferences.find(pair.first);
+
+        if (targetDiff == data.targetDifferences.end() || targetDiff->second->type != pair.second->type)
+        {
+            continue; // no target diff or not a target addition
+        }
+
+        // There's a chance this target entity is exactly the same as in the source
+        if (targetDiff->second->sourceFingerprint == pair.second->sourceFingerprint)
+        {
+            continue; // The entity turns out to be the same
+        }
+
+        rMessage() << "Source entity needs to be renamed." << std::endl;
+        sourceEntitiesToBeRenamed.insert(pair.second->sourceNode);
+    }
+
+    rMessage() << "Got " << sourceEntitiesToBeRenamed.size() << " entities to be renamed in "
+        "the source before they can be imported in the target" << std::endl;
+
+    // Let the target namespace detect any conflicts and assign new names to the source nodes
+    // This might change a few key values across the source scene
+    _targetRoot->getNamespace()->ensureNoConflicts(_sourceRoot, sourceEntitiesToBeRenamed);
 }
 
 void ThreeWayMergeOperation::setMergeSelectionGroups(bool enabled)
@@ -291,12 +357,6 @@ void ThreeWayMergeOperation::setMergeSelectionGroups(bool enabled)
 void ThreeWayMergeOperation::setMergeLayers(bool enabled)
 {
     // TODO
-}
-
-INodePtr ThreeWayMergeOperation::findTargetEntityByName(const std::string& name)
-{
-    auto found = _targetEntities.find(name);
-    return found != _targetEntities.end() ? found->second : INodePtr();
 }
 
 }

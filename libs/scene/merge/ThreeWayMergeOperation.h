@@ -26,11 +26,8 @@ private:
     IMapRootNodePtr _sourceRoot; // the map to be merged
     IMapRootNodePtr _targetRoot; // the map where elements are going to be merged into
 
-private:
-    // Volatile data only needed to construct the actions
-    std::map<std::string, std::list<ComparisonResult::EntityDifference>::const_iterator> _sourceDifferences;
-    std::map<std::string, std::list<ComparisonResult::EntityDifference>::const_iterator> _targetDifferences;
-    std::map<std::string, INodePtr> _targetEntities;
+    // Volatile data only needed during analysis
+    struct ComparisonData;
 
 public:
     using Ptr = std::shared_ptr<ThreeWayMergeOperation>;
@@ -40,9 +37,9 @@ public:
 
     virtual ~ThreeWayMergeOperation();
 
-    // Creates the merge operation from the given comparison results. 
-    // The operation will apply the missing changes in the source map to the target map 
-    static Ptr CreateFromComparisonResults(const ComparisonResult& baseToSource, const ComparisonResult& baseToTarget);
+    // Creates the merge operation from the given root nodes. The base root is the common ancestor of source and target,
+    // and none of the three must be equal to any of them.
+    static Ptr Create(const IMapRootNodePtr& baseRoot, const IMapRootNodePtr& sourceRoot, const IMapRootNodePtr& targetRoot);
 
     void setMergeSelectionGroups(bool enabled) override;
     void setMergeLayers(bool enabled) override;
@@ -58,10 +55,9 @@ public:
     }
 
 private:
-    INodePtr findTargetEntityByName(const std::string& name);
-
-    void processEntityDifferences(const std::list<ComparisonResult::EntityDifference>& sourceDiffs, 
-        const std::list<ComparisonResult::EntityDifference>& targetDiffs);
+    void adjustSourceEntitiesWithNameConflicts();
+    
+    void compareAndCreateActions();
     void processEntityModification(const ComparisonResult::EntityDifference& sourceDiff,
         const ComparisonResult::EntityDifference& targetDiff);
 

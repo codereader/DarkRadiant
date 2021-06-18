@@ -1793,10 +1793,7 @@ ThreeWayMergeOperation::Ptr setupThreeWayMergeOperation(const std::string& baseP
     auto sourceResource = GlobalMapResourceManager().createFromPath(sourcePath);
     EXPECT_TRUE(sourceResource->load()) << "Test map not found: " << sourcePath;
 
-    auto baseToSource = GraphComparer::Compare(sourceResource->getRootNode(), baseResource->getRootNode());
-    auto baseToTarget = GraphComparer::Compare(targetResource->getRootNode(), baseResource->getRootNode());
-
-    return ThreeWayMergeOperation::CreateFromComparisonResults(*baseToSource, *baseToTarget);
+    return ThreeWayMergeOperation::Create(baseResource->getRootNode(), sourceResource->getRootNode(), targetResource->getRootNode());
 }
 
 // Asserts that the changes to the target map have not been reverted
@@ -2056,10 +2053,13 @@ TEST_F(ThreeWayMergeTest, SourceAndTargetAreTheSame)
 // Source (threeway_merge_source_2.mapx):
 // - add all brush "2" to func_static_1 (a subset of the target change)
 // - add all brush "4" & "5" to func_static_4
+// - add two new nodes with the same name and one in between ("4", "between_4_and_5" and "5")
+//   with links from n1->n2->n3->n4->nbetween_4_and_5->n5->n1. The position of n4 and n5 is different from the target.
 // 
 // Target Map (threeway_merge_target_2.mapx):
 // - add all brush "1" & "2" to func_static_1
 // - add all brush "4" to func_static_4 (a subset of the source change)
+// - added two new nodes (4 & 5) that are extend the node chain n1->n2->n3->n4->n5->n1
 
 TEST_F(ThreeWayMergeTest, MergePrimitiveChangesOfSameEntity)
 {
@@ -2095,6 +2095,52 @@ TEST_F(ThreeWayMergeTest, MergePrimitiveChangesOfSameEntity)
     EXPECT_EQ(algorithm::getChildCount(func_static_1, algorithm::brushHasMaterial("textures/numbers/1")), 4); // no change here
     EXPECT_EQ(algorithm::getChildCount(func_static_4, algorithm::brushHasMaterial("textures/numbers/5")), 2); // added to func_static_4
     EXPECT_EQ(algorithm::getChildCount(worldspawn, algorithm::brushHasMaterial("textures/numbers/5")), 0); // removed from worldspawn
+}
+
+// Source:
+// - add two new nodes with the same name and one in between ("4", "between_4_and_5" and "5")
+//   with links from n1->n2->n3->n4->nbetween_4_and_5->n5->n1. The position of n4 and n5 is different from the target.
+// Target:
+// - added two new nodes (4 & 5) that are extend the node chain n1->n2->n3->n4->n5->n1
+TEST_F(ThreeWayMergeTest, MergeEntityNameCollisions)
+{
+    auto operation = setupThreeWayMergeOperation("maps/threeway_merge_base.mapx", "maps/threeway_merge_target_2.mapx", "maps/threeway_merge_source_2.mapx");
+
+    // The expected result is that the three nodes added in the source have their names
+    // changed to not conflict with the target map and keep their links intact after import.
+    // The nodes n4 and n5 in the target should be preserved including their links.
+
+    // TODO: Entity names should not conflict before calculating the diff
+    // TODO: Changed entity names might cause other spawnargs to change in the source map
+    // TODO: These key value changes need to be merged too, they'd cause a conflict here
+#if 0
+    auto func_static_1 = algorithm::getEntityByName(operation->getTargetRoot(), "func_static_1");
+    auto func_static_4 = algorithm::getEntityByName(operation->getTargetRoot(), "func_static_4");
+    auto worldspawn = algorithm::findWorldspawn(operation->getTargetRoot());
+
+    // brush_1 should get no actions, since they are already below func_static_1
+    auto brush1ActionCount = countActions<MergeAction>(operation, [](const std::shared_ptr<MergeAction>& action)
+    {
+        return algorithm::brushHasMaterial("textures/numbers/1")(action->getAffectedNode());
+    });
+    auto brush5ActionCount = countActions<MergeAction>(operation, [](const std::shared_ptr<MergeAction>& action)
+    {
+        return algorithm::brushHasMaterial("textures/numbers/5")(action->getAffectedNode());
+    });
+
+    EXPECT_EQ(brush1ActionCount, 0) << "Brush 1 should not take any changes";
+    EXPECT_EQ(brush5ActionCount, 4) << "Brush 5 should be 2x removed from worldspawn and 2x added to func_static_4";
+
+    EXPECT_EQ(algorithm::getChildCount(func_static_1, algorithm::brushHasMaterial("textures/numbers/1")), 4);
+    EXPECT_EQ(algorithm::getChildCount(func_static_4, algorithm::brushHasMaterial("textures/numbers/5")), 0);
+    EXPECT_EQ(algorithm::getChildCount(worldspawn, algorithm::brushHasMaterial("textures/numbers/5")), 2);
+
+    operation->applyActions();
+
+    EXPECT_EQ(algorithm::getChildCount(func_static_1, algorithm::brushHasMaterial("textures/numbers/1")), 4); // no change here
+    EXPECT_EQ(algorithm::getChildCount(func_static_4, algorithm::brushHasMaterial("textures/numbers/5")), 2); // added to func_static_4
+    EXPECT_EQ(algorithm::getChildCount(worldspawn, algorithm::brushHasMaterial("textures/numbers/5")), 0); // removed from worldspawn
+#endif
 }
 
 }
