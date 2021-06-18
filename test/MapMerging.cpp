@@ -2104,43 +2104,90 @@ TEST_F(ThreeWayMergeTest, MergePrimitiveChangesOfSameEntity)
 // - added two new nodes (4 & 5) that are extend the node chain n1->n2->n3->n4->n5->n1
 TEST_F(ThreeWayMergeTest, MergeEntityNameCollisions)
 {
-    auto operation = setupThreeWayMergeOperation("maps/threeway_merge_base.mapx", "maps/threeway_merge_target_2.mapx", "maps/threeway_merge_source_2.mapx");
+    auto baseResource = GlobalMapResourceManager().createFromPath("maps/threeway_merge_base.mapx");
+    EXPECT_TRUE(baseResource->load()) << "Base map not found.";
+
+    auto targetResource = GlobalMapResourceManager().createFromPath("maps/threeway_merge_target_2.mapx");
+    EXPECT_TRUE(targetResource->load()) << "Target map not found";
+
+    auto sourceResource = GlobalMapResourceManager().createFromPath("maps/threeway_merge_source_2.mapx");
+    EXPECT_TRUE(sourceResource->load()) << "Source map not found";
+
+    // Get the node_4 in the source scene, it will be renamed
+    auto sourceNode4 = algorithm::getEntityByName(sourceResource->getRootNode(), "node_4");
+    auto sourceNode5 = algorithm::getEntityByName(sourceResource->getRootNode(), "node_5");
+    auto sourceNodeBetween4And5 = algorithm::getEntityByName(sourceResource->getRootNode(), "node_between_4_and_5");
+
+    auto operation = ThreeWayMergeOperation::Create(baseResource->getRootNode(), sourceResource->getRootNode(), targetResource->getRootNode());
+
+    // Sources node_4 and node_5 have already been renamed, get the new names
+    auto newNode4Name = Node_getEntity(sourceNode4)->getKeyValue("name");
+    auto newNode5Name = Node_getEntity(sourceNode5)->getKeyValue("name");
+    EXPECT_NE(newNode4Name, "node_4");
+    EXPECT_NE(newNode5Name, "node_5");
+
+    EXPECT_EQ(Node_getEntity(sourceNodeBetween4And5)->getKeyValue("name"), "node_between_4_and_5"); // this on is unchanged
 
     // The expected result is that the three nodes added in the source have their names
     // changed to not conflict with the target map and keep their links intact after import.
     // The nodes n4 and n5 in the target should be preserved including their links.
+    // The only conflict occurring here is the target spawnarg on node3, which targets "n4" in the target and "n4renamed" in the source
 
-    // TODO: Entity names should not conflict before calculating the diff
-    // TODO: Changed entity names might cause other spawnargs to change in the source map
-    // TODO: These key value changes need to be merged too, they'd cause a conflict here
-#if 0
-    auto func_static_1 = algorithm::getEntityByName(operation->getTargetRoot(), "func_static_1");
-    auto func_static_4 = algorithm::getEntityByName(operation->getTargetRoot(), "func_static_4");
-    auto worldspawn = algorithm::findWorldspawn(operation->getTargetRoot());
+    // Already present in the target scene
+    EXPECT_TRUE(algorithm::getEntityByName(operation->getTargetRoot(), "node_1"));
+    EXPECT_TRUE(algorithm::getEntityByName(operation->getTargetRoot(), "node_2"));
+    EXPECT_TRUE(algorithm::getEntityByName(operation->getTargetRoot(), "node_3"));
+    EXPECT_TRUE(algorithm::getEntityByName(operation->getTargetRoot(), "node_4"));
+    EXPECT_TRUE(algorithm::getEntityByName(operation->getTargetRoot(), "node_5"));
+    // Not yet present in the target scene
+    EXPECT_FALSE(algorithm::getEntityByName(operation->getTargetRoot(), "node_between_4_and_5"));
+    EXPECT_FALSE(algorithm::getEntityByName(operation->getTargetRoot(), newNode4Name));
+    EXPECT_FALSE(algorithm::getEntityByName(operation->getTargetRoot(), newNode5Name));
 
-    // brush_1 should get no actions, since they are already below func_static_1
-    auto brush1ActionCount = countActions<MergeAction>(operation, [](const std::shared_ptr<MergeAction>& action)
+    // We should receive three new nodes from the source map, their names should have been changed to not conflict, e.g. node_6 and node_7
+    auto numAdditions = countActions<AddEntityAction>(operation, [](const std::shared_ptr<AddEntityAction>& action) { return true; });
+    EXPECT_EQ(numAdditions, 3);
+
+    // We expect the one conflict on node_3
+    auto keyValueConflict = findAction<EntityKeyValueConflictResolutionAction>(operation,
+        [](const std::shared_ptr<EntityKeyValueConflictResolutionAction>& action)
     {
-        return algorithm::brushHasMaterial("textures/numbers/1")(action->getAffectedNode());
+        return Node_getEntity(action->getConflictingEntity())->getKeyValue("name") == "node_3";
     });
-    auto brush5ActionCount = countActions<MergeAction>(operation, [](const std::shared_ptr<MergeAction>& action)
-    {
-        return algorithm::brushHasMaterial("textures/numbers/5")(action->getAffectedNode());
-    });
+    EXPECT_TRUE(keyValueConflict);
+    EXPECT_EQ(keyValueConflict->getTargetAction()->getType(), scene::merge::ActionType::AddKeyValue);
 
-    EXPECT_EQ(brush1ActionCount, 0) << "Brush 1 should not take any changes";
-    EXPECT_EQ(brush5ActionCount, 4) << "Brush 5 should be 2x removed from worldspawn and 2x added to func_static_4";
+    EXPECT_EQ(std::dynamic_pointer_cast<AddEntityKeyValueAction>(keyValueConflict->getTargetAction())->getKey(), "target0");
+    EXPECT_EQ(std::dynamic_pointer_cast<AddEntityKeyValueAction>(keyValueConflict->getTargetAction())->getValue(), "node_4");
 
-    EXPECT_EQ(algorithm::getChildCount(func_static_1, algorithm::brushHasMaterial("textures/numbers/1")), 4);
-    EXPECT_EQ(algorithm::getChildCount(func_static_4, algorithm::brushHasMaterial("textures/numbers/5")), 0);
-    EXPECT_EQ(algorithm::getChildCount(worldspawn, algorithm::brushHasMaterial("textures/numbers/5")), 2);
+    EXPECT_EQ(keyValueConflict->getSourceAction()->getType(), scene::merge::ActionType::AddKeyValue);
+    EXPECT_EQ(std::dynamic_pointer_cast<AddEntityKeyValueAction>(keyValueConflict->getSourceAction())->getKey(), "target0");
+    EXPECT_EQ(std::dynamic_pointer_cast<AddEntityKeyValueAction>(keyValueConflict->getSourceAction())->getValue(), newNode4Name);
 
     operation->applyActions();
 
-    EXPECT_EQ(algorithm::getChildCount(func_static_1, algorithm::brushHasMaterial("textures/numbers/1")), 4); // no change here
-    EXPECT_EQ(algorithm::getChildCount(func_static_4, algorithm::brushHasMaterial("textures/numbers/5")), 2); // added to func_static_4
-    EXPECT_EQ(algorithm::getChildCount(worldspawn, algorithm::brushHasMaterial("textures/numbers/5")), 0); // removed from worldspawn
-#endif
+    // Were present before in the target scene
+    EXPECT_TRUE(algorithm::getEntityByName(operation->getTargetRoot(), "node_1"));
+    EXPECT_TRUE(algorithm::getEntityByName(operation->getTargetRoot(), "node_2"));
+    EXPECT_TRUE(algorithm::getEntityByName(operation->getTargetRoot(), "node_3"));
+    EXPECT_TRUE(algorithm::getEntityByName(operation->getTargetRoot(), "node_4"));
+    EXPECT_TRUE(algorithm::getEntityByName(operation->getTargetRoot(), "node_5"));
+
+    // Are now present in the target scene
+    EXPECT_TRUE(algorithm::getEntityByName(operation->getTargetRoot(), "node_between_4_and_5"));
+    EXPECT_TRUE(algorithm::getEntityByName(operation->getTargetRoot(), newNode4Name));
+    EXPECT_TRUE(algorithm::getEntityByName(operation->getTargetRoot(), newNode5Name));
+
+    // Since we didn't resolve the action accepting the source change, the target0 key should still be at "node_4"
+    auto node_3 = algorithm::getEntityByName(operation->getTargetRoot(), "node_3");
+    EXPECT_EQ(Node_getEntity(node_3)->getKeyValue("target0"), "node_4");
+
+    // Actively resolve the conflict and apply the change
+    keyValueConflict->setResolvedByUsingSource(true);
+    keyValueConflict->applyChanges();
+
+    node_3 = algorithm::getEntityByName(operation->getTargetRoot(), "node_3");
+    EXPECT_EQ(Node_getEntity(node_3)->getKeyValue("target0"), newNode4Name);
 }
 
 }
