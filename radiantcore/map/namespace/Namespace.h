@@ -9,6 +9,7 @@
 class Namespace : 
 	public INamespace
 {
+private:
 	// The set of unique names in this namespace
 	UniqueNameSet _uniqueNames;
 
@@ -29,5 +30,9 @@ public:
 	virtual void addNameObserver(const std::string& name, NameObserver& observer) override;
 	virtual void removeNameObserver(const std::string& name, NameObserver& observer) override;
 	virtual void nameChanged(const std::string& oldName, const std::string& newName) override;
-	virtual void ensureNoConflicts(const scene::INodePtr& root) override;
+	virtual void ensureNoConflicts(const scene::INodePtr& foreignRoot) override;
+	virtual void ensureNoConflicts(const scene::INodePtr& foreignRoot, const std::set<scene::INodePtr>& foreignNodes) override;
+
+private:
+    void ensureNoConflicts(const scene::INodePtr& foreignRoot, const std::set<NamespacedPtr>& foreignNodes);
 };

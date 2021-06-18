@@ -1,5 +1,6 @@
 #pragma once
 
+#include <set>
 #include "inode.h"
 #include "imodule.h"
 
@@ -91,7 +92,17 @@ public:
      * \em not actually import the given scene graph's names into this
      * namespace.
 	 */
-	virtual void ensureNoConflicts(const scene::INodePtr& root) = 0;
+	virtual void ensureNoConflicts(const scene::INodePtr& foreignRoot) = 0;
+
+    /**
+     * Specialised variant of the above ensureNoConflicts(foreignRoot):
+     * Prepares only the given list of nodes (that are member of the foreign root) such that
+     * their names don't conflict with any name in this namespace.
+     * 
+     * Every Namespaced node will get a new unique name assigned, but only if it's
+     * actually colliding with a local name, otherwise it will remain unchanged.
+     */
+    virtual void ensureNoConflicts(const scene::INodePtr& foreignRoot, const std::set<scene::INodePtr>& foreignNodes) = 0;
 };
 typedef std::shared_ptr<INamespace> INamespacePtr;
 
