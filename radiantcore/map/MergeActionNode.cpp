@@ -163,6 +163,16 @@ std::size_t KeyValueMergeActionNode::getMergeActionCount()
     return _actions.size();
 }
 
+bool KeyValueMergeActionNode::hasActiveActions()
+{
+    for (const auto& action : _actions)
+    {
+        if (action->isActive()) return true;
+    }
+
+    return false;
+}
+
 void KeyValueMergeActionNode::foreachMergeAction(const std::function<void(const scene::merge::IMergeAction::Ptr&)>& functor)
 {
     for (const auto& action : _actions)
@@ -238,7 +248,28 @@ void RegularMergeActionNode::clear()
 
 scene::merge::ActionType RegularMergeActionNode::getActionType() const
 {
-    return _action ? _action->getType() : scene::merge::ActionType::NoAction;
+    if (!_action) return scene::merge::ActionType::NoAction;
+
+    if (_action->getType() == scene::merge::ActionType::ConflictResolution)
+    {
+        auto conflictAction = std::dynamic_pointer_cast<scene::merge::IConflictResolutionAction>(_action);
+        assert(conflictAction);
+
+        // Determine how this node should be rendered (unresolved conflict, or the type of the change that was accepted)
+        switch (conflictAction->getResolution())
+        {
+        case scene::merge::ResolutionType::Unresolved:
+            return scene::merge::ActionType::ConflictResolution;
+
+        case scene::merge::ResolutionType::ApplySourceChange: // render using the accepted action type
+            return conflictAction->getSourceAction()->getType();
+
+        case scene::merge::ResolutionType::RejectSourceChange:
+            return scene::merge::ActionType::NoAction;
+        }
+    }
+
+    return _action->getType();
 }
 
 void RegularMergeActionNode::foreachMergeAction(const std::function<void(const scene::merge::IMergeAction::Ptr&)>& functor)
@@ -252,6 +283,11 @@ void RegularMergeActionNode::foreachMergeAction(const std::function<void(const s
 std::size_t RegularMergeActionNode::getMergeActionCount()
 {
     return _action ? 1 : 0;
+}
+
+bool RegularMergeActionNode::hasActiveActions()
+{
+    return _action && _action->isActive();
 }
 
 void RegularMergeActionNode::addPreviewNodeForAddAction()

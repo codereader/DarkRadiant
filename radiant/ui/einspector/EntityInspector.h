@@ -174,6 +174,7 @@ private:
 	void _onCopyKey();
 	void _onCutKey();
 	void _onPasteKey();
+	void _onAcceptMergeAction();
 	void _onRejectMergeAction();
 
 	bool _testAddKey();
@@ -181,11 +182,13 @@ private:
 	bool _testCopyKey();
 	bool _testCutKey();
 	bool _testPasteKey();
+	bool _testAcceptMergeAction();
 	bool _testRejectMergeAction();
 
 	// Shared by cut and delete keys
 	bool _testNonEmptyAndDeletableSelection();
 	bool isItemDeletable(const wxutil::TreeModel::Row& row);
+	bool isItemAffecedByMergeConflict(const wxutil::TreeModel::Row& row);
 	bool isItemAffecedByMergeOperation(const wxutil::TreeModel::Row& row);
 
     // callbacks

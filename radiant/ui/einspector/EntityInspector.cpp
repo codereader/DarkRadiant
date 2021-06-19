@@ -242,7 +242,9 @@ void EntityInspector::onKeyChange(const std::string& key,
     }
 
     // Conflicting actions get a special render style
-    if (_conflictActions.count(key) > 0)
+    auto conflict = _conflictActions.find(key);
+
+    if (conflict != _conflictActions.end() && conflict->second->getResolution() == scene::merge::ResolutionType::Unresolved)
     {
         wxutil::TreeViewItemStyle::ApplyKeyValueConflictStyle(style);
     }
@@ -387,6 +389,13 @@ void EntityInspector::createContextMenu()
     );
 
     _contextMenu->addSeparator();
+
+    _contextMenu->addItem(
+        new wxutil::StockIconTextMenuItem(_("Accept selected Changes"), wxART_UNDO),
+        std::bind(&EntityInspector::_onAcceptMergeAction, this),
+        std::bind(&EntityInspector::_testAcceptMergeAction, this),
+        [] { return GlobalMapModule().getEditMode() == IMap::EditMode::Merge; }
+    );
 
     _contextMenu->addItem(
         new wxutil::StockIconTextMenuItem(_("Reject selected Changes"), wxART_UNDO),
@@ -953,6 +962,30 @@ bool EntityInspector::_testPasteKey()
     return !_clipboard.empty() && canUpdateEntity();
 }
 
+void EntityInspector::_onAcceptMergeAction()
+{
+    wxDataViewItemArray selectedItems;
+    _keyValueTreeView->GetSelections(selectedItems);
+
+    for (const wxDataViewItem& item : selectedItems)
+    {
+        wxutil::TreeModel::Row row(item, *_kvStore);
+
+        auto key = row[_columns.name].getString().ToStdString();
+
+        auto conflict = _conflictActions.find(key);
+
+        if (conflict != _conflictActions.end())
+        {
+            conflict->second->setResolution(scene::merge::ResolutionType::ApplySourceChange);
+        }
+    }
+
+    // We perform a full refresh of the view
+    changeSelectedEntity(scene::INodePtr(), scene::INodePtr());
+    getEntityFromSelectionSystem();
+}
+
 void EntityInspector::_onRejectMergeAction()
 {
     wxDataViewItemArray selectedItems;
@@ -969,6 +1002,8 @@ void EntityInspector::_onRejectMergeAction()
         if (conflict != _conflictActions.end())
         {
             conflict->second->setResolution(scene::merge::ResolutionType::RejectSourceChange);
+            // Deactivate the conflict action itself too, such that the node can be removed once the last action is gone
+            conflict->second->deactivate();
         }
 
         auto action = _mergeActions.find(key);
@@ -979,9 +1014,51 @@ void EntityInspector::_onRejectMergeAction()
         }
     }
 
+    // Check if the merge node is now completely empty, then remove it from the scene
+    // A single entity must be selected
+    if (GlobalSelectionSystem().countSelected() == 1)
+    {
+        auto selectedNode = GlobalSelectionSystem().ultimateSelected();
+
+        if (selectedNode && selectedNode->getNodeType() == scene::INode::Type::MergeAction)
+        {
+            auto mergeNode = std::dynamic_pointer_cast<scene::IMergeActionNode>(selectedNode);
+            assert(mergeNode);
+
+            if (!mergeNode->hasActiveActions())
+            {
+                // Remove this node from the scene, it's empty now
+                scene::removeNodeFromParent(mergeNode);
+            }
+        }
+    }
+
     // We perform a full refresh of the view
     changeSelectedEntity(scene::INodePtr(), scene::INodePtr());
     getEntityFromSelectionSystem();
+}
+
+bool EntityInspector::_testAcceptMergeAction()
+{
+    if (GlobalMapModule().getEditMode() != IMap::EditMode::Merge)
+    {
+        return false;
+    }
+
+    wxDataViewItemArray selectedItems;
+    _keyValueTreeView->GetSelections(selectedItems);
+
+    for (const wxDataViewItem& item : selectedItems)
+    {
+        wxutil::TreeModel::Row row(item, *_kvStore);
+
+        if (isItemAffecedByMergeConflict(row))
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 bool EntityInspector::_testRejectMergeAction()
@@ -1000,11 +1077,17 @@ bool EntityInspector::_testRejectMergeAction()
 
         if (isItemAffecedByMergeOperation(row))
         {
-            return true; // we have at least one non-inherited value that is not "classname"
+            return true;
         }
     }
 
     return false;
+}
+
+bool EntityInspector::isItemAffecedByMergeConflict(const wxutil::TreeModel::Row& row)
+{
+    auto key = row[_columns.name].getString().ToStdString();
+    return _mergeActions.count(key) > 0 && _conflictActions.count(key) > 0;
 }
 
 bool EntityInspector::isItemAffecedByMergeOperation(const wxutil::TreeModel::Row& row)
@@ -1491,14 +1574,23 @@ void EntityInspector::handleMergeActions(const scene::INodePtr& selectedNode)
 
         if (conflictAction)
         {
-            auto sourceAction = std::dynamic_pointer_cast<scene::merge::IEntityKeyValueMergeAction>(conflictAction->getSourceAction());
+            bool conflictIsUnresolved = conflictAction->getResolution() == scene::merge::ResolutionType::Unresolved;
 
-            if (sourceAction)
+            if (conflictIsUnresolved || conflictAction->getResolution() == scene::merge::ResolutionType::ApplySourceChange)
             {
-                // The source action will be rendered as change
-                _mergeActions[sourceAction->getKey()] = sourceAction;
-                // Remember the conflict action too
-                _conflictActions[sourceAction->getKey()] = conflictAction;
+                auto sourceAction = std::dynamic_pointer_cast<scene::merge::IEntityKeyValueMergeAction>(conflictAction->getSourceAction());
+
+                if (sourceAction)
+                {
+                    // The source action will be rendered as change
+                    _mergeActions[sourceAction->getKey()] = sourceAction;
+
+                    // Remember the conflict action if it's not yet resolved
+                    if (conflictIsUnresolved)
+                    {
+                        _conflictActions[sourceAction->getKey()] = conflictAction;
+                    }
+                }
             }
         }
     });

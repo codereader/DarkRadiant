@@ -92,11 +92,11 @@ public:
     {
         if (SupportsBackgroundColour())
         {
-            SetBackgroundColour(attr, wxColour(89, 255, 0));
+            SetBackgroundColour(attr, wxColour(230, 120, 0));
         }
         else
         {
-            attr.SetColour(wxColour(89, 255, 0));
+            attr.SetColour(wxColour(230, 120, 0));
             attr.SetBold(true);
         }
     }

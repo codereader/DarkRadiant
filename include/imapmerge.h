@@ -171,6 +171,10 @@ public:
     // This can be 0 if the node has been cleared out after completing a merge operation
     virtual std::size_t getMergeActionCount() = 0;
 
+    // Returns true if this node has one or more active actions.
+    // If all associated actions have been deactivated, this returns false.
+    virtual bool hasActiveActions() = 0;
+
     // Iterate over all actions of this node
     virtual void foreachMergeAction(const std::function<void(const merge::IMergeAction::Ptr&)>& functor) = 0;
 };
