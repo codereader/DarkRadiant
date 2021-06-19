@@ -11,6 +11,7 @@
 #include "scenelib.h"
 #include "string/convert.h"
 #include "os/path.h"
+#include "fmt/format.h"
 
 #include <wx/textctrl.h>
 #include <wx/button.h>
@@ -210,9 +211,65 @@ std::vector<scene::INodePtr> MergeControlDialog::getSelectedMergeNodes()
     return mergeNodes;
 }
 
+std::shared_ptr<scene::IMergeActionNode> MergeControlDialog::getSingleSelectedConflictNode()
+{
+    auto selectedNodes = getSelectedMergeNodes();
+
+    if (selectedNodes.size() != 1)
+    {
+        return std::shared_ptr<scene::IMergeActionNode>();
+    }
+
+    auto mergeNode = std::dynamic_pointer_cast<scene::IMergeActionNode>(selectedNodes.front());
+
+    if (mergeNode && mergeNode->getActionType() == scene::merge::ActionType::ConflictResolution)
+    {
+        return mergeNode;
+    }
+
+    return std::shared_ptr<scene::IMergeActionNode>();
+}
+
 std::size_t MergeControlDialog::getNumSelectedMergeNodes()
 {
     return getSelectedMergeNodes().size();
+}
+
+inline std::string getEntityName(const scene::merge::IConflictResolutionAction& action)
+{
+    auto entity = Node_getEntity(action.getConflictingEntity());
+    return entity ? entity->getKeyValue("name") : "?";
+}
+
+inline std::string getConflictDescription(const std::shared_ptr<scene::IMergeActionNode>& node)
+{
+    std::string text;
+
+    if (!node) return text;
+
+    node->foreachMergeAction([&](const scene::merge::IMergeAction::Ptr& action)
+    {
+        if (action->getType() != scene::merge::ActionType::ConflictResolution || !action->isActive())
+        {
+            return;
+        }
+
+        auto conflictAction = std::dynamic_pointer_cast<scene::merge::IConflictResolutionAction>(action);
+
+        switch (conflictAction->getConflictType())
+        {
+        case scene::merge::ConflictType::ModificationOfRemovedEntity:
+            text += text.empty() ? "" : "\n";
+            text += fmt::format(_("The imported map tries to modify the key values of the entity {0} that has already been deleted here."), getEntityName(*conflictAction));
+            break;
+        case scene::merge::ConflictType::RemovalOfModifiedEntity:
+            text += text.empty() ? "" : "\n";
+            text += fmt::format(_("The imported map tries to remove the entity {0} that has been modified in this map."), getEntityName(*conflictAction));
+            break;
+        }
+    });
+
+    return text;
 }
 
 void MergeControlDialog::updateControlSensitivity()
@@ -228,6 +285,20 @@ void MergeControlDialog::updateControlSensitivity()
     findNamedObject<wxWindow>(this, "BaseMapFilename")->Enable(!mergeInProgress);
     findNamedObject<wxWindow>(this, "MergeMapFilename")->Enable(!mergeInProgress);
     findNamedObject<wxButton>(this, "RejectSelectionButton")->Enable(mergeInProgress && numSelectedMergeNodes > 0);
+
+    auto conflictNode = getSingleSelectedConflictNode();
+
+    findNamedObject<wxStaticText>(this, "NoMergeConflictSelected")->Show(conflictNode == nullptr);
+    findNamedObject<wxStaticText>(this, "ConflictDescription")->Show(conflictNode != nullptr);
+
+    if (conflictNode)
+    {
+        findNamedObject<wxStaticText>(this, "ConflictDescription")->SetLabel(getConflictDescription(conflictNode));
+        findNamedObject<wxStaticText>(this, "ConflictDescription")->Layout();
+    }
+
+    Layout();
+    Fit();
 }
 
 void MergeControlDialog::_preHide()
@@ -266,8 +337,8 @@ void MergeControlDialog::_preShow()
         sigc::mem_fun(this, &MergeControlDialog::queueUpdate));
 
     // Check for selection changes before showing the dialog again
-    updateSummary();
     updateControlSensitivity();
+    updateSummary(); 
 }
 
 void MergeControlDialog::selectionChanged(const scene::INodePtr& node, bool isComponent)

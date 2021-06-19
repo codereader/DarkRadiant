@@ -2,7 +2,7 @@
 <resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
 	<object class="wxPanel" name="MergeControlDialogMainPanel">
 		<style>wxTAB_TRAVERSAL</style>
-		<size>391,442</size>
+		<size>391,-1</size>
 		<object class="wxBoxSizer">
 			<orient>wxVERTICAL</orient>
 			<object class="sizeritem">
@@ -386,6 +386,68 @@
 											<default>0</default>
 											<markup>0</markup>
 											<bitmap />
+										</object>
+									</object>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxEXPAND|wxTOP</flag>
+								<border>6</border>
+								<object class="wxPanel" name="ConflictDetailsPanel">
+									<style>wxTAB_TRAVERSAL</style>
+									<object class="wxBoxSizer">
+										<orient>wxVERTICAL</orient>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxBOTTOM|wxTOP</flag>
+											<border>6</border>
+											<object class="wxStaticText" name="m_staticText142">
+												<font>
+													<style>normal</style>
+													<weight>bold</weight>
+													<underlined>0</underlined>
+												</font>
+												<label>Conflict Details</label>
+												<wrap>-1</wrap>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxEXPAND|wxLEFT</flag>
+											<border>12</border>
+											<object class="wxBoxSizer">
+												<orient>wxVERTICAL</orient>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALL</flag>
+													<border>5</border>
+													<object class="wxStaticText" name="NoMergeConflictSelected">
+														<font>
+															<style>italic</style>
+															<weight>normal</weight>
+															<underlined>0</underlined>
+														</font>
+														<label>Select a merge conflict to show details here</label>
+														<wrap>-1</wrap>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALL</flag>
+													<border>5</border>
+													<object class="wxStaticText" name="ConflictDescription">
+														<size>-1,40</size>
+														<font>
+															<style>italic</style>
+															<weight>normal</weight>
+															<underlined>0</underlined>
+														</font>
+														<label>---</label>
+														<wrap>280</wrap>
+													</object>
+												</object>
+											</object>
 										</object>
 									</object>
 								</object>

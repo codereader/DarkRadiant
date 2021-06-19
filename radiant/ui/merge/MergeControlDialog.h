@@ -62,6 +62,7 @@ private:
 
     std::size_t getNumSelectedMergeNodes();
     std::vector<scene::INodePtr> getSelectedMergeNodes();
+    std::shared_ptr<scene::IMergeActionNode> getSingleSelectedConflictNode();
 };
 
 }
