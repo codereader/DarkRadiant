@@ -289,7 +289,7 @@ protected:
     // The action that happened in the target
     MergeAction::Ptr _targetAction;
 
-    bool _applySourceChange;
+    ResolutionType _resolution;
 
 protected:
     ConflictResolutionAction(ConflictType conflictType, const INodePtr& conflictingEntity, const MergeAction::Ptr& sourceAction) :
@@ -302,7 +302,7 @@ protected:
         _conflictingEntity(conflictingEntity),
         _sourceAction(sourceAction),
         _targetAction(targetAction),
-        _applySourceChange(false)
+        _resolution(ResolutionType::Unresolved)
     {}
 
 public:
@@ -335,21 +335,21 @@ public:
         return getConflictingEntity();
     }
 
-    bool isResolvedByUsingSource() const
+    ResolutionType getResolution() const override
     {
-        return _applySourceChange;
+        return _resolution;
     }
 
-    void setResolvedByUsingSource(bool applySourceChange)
+    void setResolution(ResolutionType resolution) override
     {
-        _applySourceChange = applySourceChange;
+        _resolution = resolution;
     }
 
     void applyChanges() override
     {
         if (!isActive()) return;
 
-        if (_applySourceChange)
+        if (_resolution == ResolutionType::ApplySourceChange)
         {
             _sourceAction->applyChanges();
         }

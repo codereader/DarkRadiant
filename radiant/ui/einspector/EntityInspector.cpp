@@ -241,6 +241,12 @@ void EntityInspector::onKeyChange(const std::string& key,
         }
     }
 
+    // Conflicting actions get a special render style
+    if (_conflictActions.count(key) > 0)
+    {
+        wxutil::TreeViewItemStyle::ApplyKeyValueConflictStyle(style);
+    }
+
     wxIcon icon;
     icon.CopyFromBitmap(parms.type.empty() ? _emptyIcon : PropertyEditorFactory::getBitmapFor(parms.type));
 
@@ -408,6 +414,7 @@ void EntityInspector::onMainFrameConstructed()
 void EntityInspector::onMainFrameShuttingDown()
 {
     _mergeActions.clear();
+    _conflictActions.clear();
 
     _undoHandler.disconnect();
     _redoHandler.disconnect();
@@ -957,6 +964,13 @@ void EntityInspector::_onRejectMergeAction()
 
         auto key = row[_columns.name].getString().ToStdString();
         
+        auto conflict = _conflictActions.find(key);
+
+        if (conflict != _conflictActions.end())
+        {
+            conflict->second->setResolution(scene::merge::ResolutionType::RejectSourceChange);
+        }
+
         auto action = _mergeActions.find(key);
         
         if (action != _mergeActions.end())
@@ -996,7 +1010,7 @@ bool EntityInspector::_testRejectMergeAction()
 bool EntityInspector::isItemAffecedByMergeOperation(const wxutil::TreeModel::Row& row)
 {
     auto key = row[_columns.name].getString().ToStdString();
-    return _mergeActions.count(key) > 0;
+    return _mergeActions.count(key) > 0 || _conflictActions.count(key) > 0;
 }
 
 // wxWidget callbacks
@@ -1418,6 +1432,7 @@ void EntityInspector::changeSelectedEntity(const scene::INodePtr& newEntity, con
     _keyValueIterMap.clear();
     _kvStore->Clear();
     _mergeActions.clear();
+    _conflictActions.clear();
 
     // Reset the sorting when changing entities
     _keyValueTreeView->ResetSortingOnAllColumns();
@@ -1472,7 +1487,20 @@ void EntityInspector::handleMergeActions(const scene::INodePtr& selectedNode)
             }
         }
 
-        // TODO: Conflict resolution actions
+        auto conflictAction = std::dynamic_pointer_cast<scene::merge::IConflictResolutionAction>(action);
+
+        if (conflictAction)
+        {
+            auto sourceAction = std::dynamic_pointer_cast<scene::merge::IEntityKeyValueMergeAction>(conflictAction->getSourceAction());
+
+            if (sourceAction)
+            {
+                // The source action will be rendered as change
+                _mergeActions[sourceAction->getKey()] = sourceAction;
+                // Remember the conflict action too
+                _conflictActions[sourceAction->getKey()] = conflictAction;
+            }
+        }
     });
 }
 

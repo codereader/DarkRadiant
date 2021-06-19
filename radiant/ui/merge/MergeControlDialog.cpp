@@ -317,7 +317,7 @@ void MergeControlDialog::updateSummary()
     std::size_t entitiesRemoved = 0;
     std::size_t primitivesAdded = 0;
     std::size_t primitivesRemoved = 0;
-    std::size_t changeConflicts = 0;
+    std::size_t unresolvedConflicts = 0;
 
     if (operation)
     {
@@ -347,8 +347,15 @@ void MergeControlDialog::updateSummary()
                 modifiedEntities.insert(action->getAffectedNode());
                 break;
             case scene::merge::ActionType::ConflictResolution:
-                changeConflicts++;
+            {
+                auto conflict = std::dynamic_pointer_cast<scene::merge::IConflictResolutionAction>(action);
+
+                if (conflict && conflict->getResolution() == scene::merge::ResolutionType::Unresolved)
+                {
+                    unresolvedConflicts++;
+                }
                 break;
+            }
             }
         });
 
@@ -360,7 +367,30 @@ void MergeControlDialog::updateSummary()
     findNamedObject<wxStaticText>(this, "EntitiesModified")->SetLabel(string::to_string(entitiesModified));
     findNamedObject<wxStaticText>(this, "PrimitivesAdded")->SetLabel(string::to_string(primitivesAdded));
     findNamedObject<wxStaticText>(this, "PrimitivesRemoved")->SetLabel(string::to_string(primitivesRemoved));
-    findNamedObject<wxStaticText>(this, "ChangeConflicts")->SetLabel(string::to_string(changeConflicts));
+    findNamedObject<wxStaticText>(this, "UnresolvedConflicts")->SetLabel(string::to_string(unresolvedConflicts));
+
+    if (unresolvedConflicts > 0)
+    {
+        makeLabelBold(this, "UnresolvedConflicts");
+        makeLabelBold(this, "UnresolvedConflictsLabel");
+
+        findNamedObject<wxStaticText>(this, "UnresolvedConflicts")->SetForegroundColour(wxColour(200, 0, 0));
+        findNamedObject<wxStaticText>(this, "UnresolvedConflictsLabel")->SetForegroundColour(wxColour(200, 0, 0));
+    }
+    else
+    {
+        auto label = findNamedObject<wxStaticText>(this, "UnresolvedConflicts");
+        auto font = label->GetFont();
+        font.SetWeight(wxFONTWEIGHT_NORMAL);
+        label->SetFont(font);
+        label->SetForegroundColour(wxNullColour);
+
+        label = findNamedObject<wxStaticText>(this, "UnresolvedConflictsLabel");
+        font = label->GetFont();
+        font.SetWeight(wxFONTWEIGHT_NORMAL);
+        label->SetFont(font);
+        label->SetForegroundColour(wxNullColour);
+    }
 
     Layout();
     Fit();

@@ -149,6 +149,7 @@ private:
 
     // Maps the key names to a possible merge action that should be displayed
     std::map<std::string, scene::merge::IEntityKeyValueMergeAction::Ptr> _mergeActions;
+    std::map<std::string, scene::merge::IConflictResolutionAction::Ptr> _conflictActions;
 
 private:
     bool canUpdateEntity();

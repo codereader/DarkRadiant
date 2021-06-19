@@ -44,6 +44,13 @@ enum class ConflictType
     SettingKeyToDifferentValue,
 };
 
+enum class ResolutionType
+{
+    Unresolved,
+    RejectSourceChange,
+    ApplySourceChange,
+};
+
 /**
  * Represents a merge action, i.e. one single step of a merge operation.
  * Only active actions will be processed when the merge run starts.
@@ -113,12 +120,11 @@ public:
     // The affected entity node
     virtual const INodePtr& getConflictingEntity() const = 0;
 
-    // Whether this action has been resolved by importing the source change over the target
-    virtual bool isResolvedByUsingSource() const = 0;
+    // Whether this action has been resolved at all, and what has been chosen
+    virtual ResolutionType getResolution() const = 0;
 
-    // Resolve this action by accepting the source changes, causing the to overwrite the
-    // conflicting change in the target map.
-    virtual void setResolvedByUsingSource(bool applySourceChange) = 0;
+    // Resolve this action by either accepting or rejecting the source change
+    virtual void setResolution(ResolutionType resolution) = 0;
 };
 
 // A MergeOperation groups one or more merge actions

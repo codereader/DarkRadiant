@@ -2194,7 +2194,7 @@ TEST_F(ThreeWayMergeTest, MergeEntityNameCollisions)
     EXPECT_EQ(Node_getEntity(node_3)->getKeyValue("target0"), "node_4");
 
     // Actively resolve the conflict and apply the change
-    keyValueConflict->setResolvedByUsingSource(true);
+    keyValueConflict->setResolution(ResolutionType::ApplySourceChange);
     keyValueConflict->applyChanges();
 
     node_3 = algorithm::getEntityByName(operation->getTargetRoot(), "node_3");
@@ -2223,7 +2223,7 @@ TEST_F(ThreeWayMergeTest, RemovalOfModifiedEntity)
     EXPECT_TRUE(algorithm::getEntityByName(operation->getTargetRoot(), "func_static_8"));
 
     // Now accept the change explicitly
-    entityConflict->setResolvedByUsingSource(true);
+    entityConflict->setResolution(ResolutionType::ApplySourceChange);
     entityConflict->applyChanges();
 
     // The entity func_static_8 has now been removed in target
@@ -2251,7 +2251,7 @@ TEST_F(ThreeWayMergeTest, ModificationOfRemovedEntity)
     EXPECT_FALSE(algorithm::getEntityByName(operation->getTargetRoot(), "light_1"));
 
     // Now accept the change explicitly
-    entityConflict->setResolvedByUsingSource(true);
+    entityConflict->setResolution(ResolutionType::ApplySourceChange);
     entityConflict->applyChanges();
 
     // The entity light_1 has now been imported to target
@@ -2289,7 +2289,7 @@ TEST_F(ThreeWayMergeTest, SettingKeyValueToConflictingValues)
     EXPECT_EQ(Node_getEntity(entity)->getKeyValue("origin"), "224 200 32");
 
     // Now accept the change explicitly
-    valueConflict->setResolvedByUsingSource(true);
+    valueConflict->setResolution(ResolutionType::ApplySourceChange);
     valueConflict->applyChanges();
 
     // The changed value has now been imported
@@ -2330,7 +2330,7 @@ TEST_F(ThreeWayMergeTest, ModificationOfRemovedKeyValue)
     EXPECT_EQ(Node_getEntity(entity)->getKeyValue("extra3"), "");
 
     // Now accept the change explicitly
-    valueConflict->setResolvedByUsingSource(true);
+    valueConflict->setResolution(ResolutionType::ApplySourceChange);
     valueConflict->applyChanges();
 
     // The changed value has now been imported
@@ -2371,7 +2371,7 @@ TEST_F(ThreeWayMergeTest, RemovalOfModifiedKeyValue)
     EXPECT_EQ(Node_getEntity(entity)->getKeyValue("extra2"), "value2_changed");
 
     // Now accept the change explicitly
-    valueConflict->setResolvedByUsingSource(true);
+    valueConflict->setResolution(ResolutionType::ApplySourceChange);
     valueConflict->applyChanges();
 
     // The changed value has now been removed

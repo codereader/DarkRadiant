@@ -88,6 +88,19 @@ public:
         SetStrikethrough(attr, true);
     }
 
+    static void ApplyKeyValueConflictStyle(wxDataViewItemAttr& attr)
+    {
+        if (SupportsBackgroundColour())
+        {
+            SetBackgroundColour(attr, wxColour(89, 255, 0));
+        }
+        else
+        {
+            attr.SetColour(wxColour(89, 255, 0));
+            attr.SetBold(true);
+        }
+    }
+
     static void SetStrikethrough(wxDataViewItemAttr& attr, bool enabled)
     {
 #if wxCHECK_VERSION(3, 1, 2)

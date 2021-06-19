@@ -335,7 +335,7 @@
 													<option>0</option>
 													<flag>wxALL</flag>
 													<border>5</border>
-													<object class="wxStaticText" name="ChangeConflicts">
+													<object class="wxStaticText" name="UnresolvedConflicts">
 														<font>
 															<style>normal</style>
 															<weight>bold</weight>
@@ -349,8 +349,8 @@
 													<option>0</option>
 													<flag>wxALL</flag>
 													<border>5</border>
-													<object class="wxStaticText" name="m_staticText221">
-														<label>Change Conflicts</label>
+													<object class="wxStaticText" name="UnresolvedConflictsLabel">
+														<label>Unresolved Conflicts</label>
 														<wrap>-1</wrap>
 													</object>
 												</object>
