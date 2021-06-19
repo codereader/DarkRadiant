@@ -345,6 +345,14 @@ public:
         _resolution = resolution;
     }
 
+    virtual bool isActive() const override
+    {
+        // The conflict resolution action is active when either not resolved yet
+        // or the wrapped and chosen action is active.
+        return _resolution == ResolutionType::Unresolved ||
+            _resolution == ResolutionType::ApplySourceChange && _sourceAction->isActive();
+    }
+
     void applyChanges() override
     {
         if (!isActive()) return;
