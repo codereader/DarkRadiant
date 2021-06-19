@@ -2321,8 +2321,8 @@ TEST_F(ThreeWayMergeTest, ModificationOfRemovedKeyValue)
 
     // Verify the target action
     EXPECT_EQ(valueConflict->getTargetAction()->getType(), ActionType::RemoveKeyValue);
-    EXPECT_EQ(std::dynamic_pointer_cast<ChangeEntityKeyValueAction>(valueConflict->getTargetAction())->getKey(), "extra3");
-    EXPECT_EQ(std::dynamic_pointer_cast<ChangeEntityKeyValueAction>(valueConflict->getTargetAction())->getValue(), "");
+    EXPECT_EQ(std::dynamic_pointer_cast<RemoveEntityKeyValueAction>(valueConflict->getTargetAction())->getKey(), "extra3");
+    EXPECT_EQ(std::dynamic_pointer_cast<RemoveEntityKeyValueAction>(valueConflict->getTargetAction())->getValue(), "");
 
     operation->applyActions();
 
@@ -2357,8 +2357,8 @@ TEST_F(ThreeWayMergeTest, RemovalOfModifiedKeyValue)
 
     // Verify the source action
     EXPECT_EQ(valueConflict->getSourceAction()->getType(), ActionType::RemoveKeyValue);
-    EXPECT_EQ(std::dynamic_pointer_cast<ChangeEntityKeyValueAction>(valueConflict->getSourceAction())->getKey(), "extra2");
-    EXPECT_EQ(std::dynamic_pointer_cast<ChangeEntityKeyValueAction>(valueConflict->getSourceAction())->getValue(), "");
+    EXPECT_EQ(std::dynamic_pointer_cast<RemoveEntityKeyValueAction>(valueConflict->getSourceAction())->getKey(), "extra2");
+    EXPECT_EQ(std::dynamic_pointer_cast<RemoveEntityKeyValueAction>(valueConflict->getSourceAction())->getValue(), "");
 
     // Verify the target action
     EXPECT_EQ(valueConflict->getTargetAction()->getType(), ActionType::ChangeKeyValue);
