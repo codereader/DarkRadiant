@@ -2,7 +2,7 @@
 <resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
 	<object class="wxPanel" name="MergeControlDialogMainPanel">
 		<style>wxTAB_TRAVERSAL</style>
-		<size>391,417</size>
+		<size>391,442</size>
 		<object class="wxBoxSizer">
 			<orient>wxVERTICAL</orient>
 			<object class="sizeritem">
@@ -194,7 +194,7 @@
 											<flag>wxEXPAND|wxLEFT</flag>
 											<border>12</border>
 											<object class="wxFlexGridSizer">
-												<rows>3</rows>
+												<rows>4</rows>
 												<cols>4</cols>
 												<vgap>0</vgap>
 												<hgap>0</hgap>
@@ -328,6 +328,29 @@
 													<border>5</border>
 													<object class="wxStaticText" name="m_staticText22">
 														<label>Primitives to be removed</label>
+														<wrap>-1</wrap>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALL</flag>
+													<border>5</border>
+													<object class="wxStaticText" name="ChangeConflicts">
+														<font>
+															<style>normal</style>
+															<weight>bold</weight>
+															<underlined>0</underlined>
+														</font>
+														<label>0</label>
+														<wrap>-1</wrap>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALL</flag>
+													<border>5</border>
+													<object class="wxStaticText" name="m_staticText221">
+														<label>Change Conflicts</label>
 														<wrap>-1</wrap>
 													</object>
 												</object>

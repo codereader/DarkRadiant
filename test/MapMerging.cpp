@@ -2275,13 +2275,13 @@ TEST_F(ThreeWayMergeTest, SettingKeyValueToConflictingValues)
 
     // Verify the source action
     EXPECT_EQ(valueConflict->getSourceAction()->getType(), ActionType::ChangeKeyValue);
-    EXPECT_EQ(std::static_pointer_cast<ChangeEntityKeyValueAction>(valueConflict->getSourceAction())->getKey(), "origin");
-    EXPECT_EQ(std::static_pointer_cast<ChangeEntityKeyValueAction>(valueConflict->getSourceAction())->getValue(), "224 180 32");
+    EXPECT_EQ(std::dynamic_pointer_cast<ChangeEntityKeyValueAction>(valueConflict->getSourceAction())->getKey(), "origin");
+    EXPECT_EQ(std::dynamic_pointer_cast<ChangeEntityKeyValueAction>(valueConflict->getSourceAction())->getValue(), "224 180 32");
 
     // Verify the target action
     EXPECT_EQ(valueConflict->getTargetAction()->getType(), ActionType::ChangeKeyValue);
-    EXPECT_EQ(std::static_pointer_cast<ChangeEntityKeyValueAction>(valueConflict->getTargetAction())->getKey(), "origin");
-    EXPECT_EQ(std::static_pointer_cast<ChangeEntityKeyValueAction>(valueConflict->getTargetAction())->getValue(), "224 200 32");
+    EXPECT_EQ(std::dynamic_pointer_cast<ChangeEntityKeyValueAction>(valueConflict->getTargetAction())->getKey(), "origin");
+    EXPECT_EQ(std::dynamic_pointer_cast<ChangeEntityKeyValueAction>(valueConflict->getTargetAction())->getValue(), "224 200 32");
 
     operation->applyActions();
 
@@ -2316,13 +2316,13 @@ TEST_F(ThreeWayMergeTest, ModificationOfRemovedKeyValue)
 
     // Verify the source action
     EXPECT_EQ(valueConflict->getSourceAction()->getType(), ActionType::ChangeKeyValue);
-    EXPECT_EQ(std::static_pointer_cast<ChangeEntityKeyValueAction>(valueConflict->getSourceAction())->getKey(), "extra3");
-    EXPECT_EQ(std::static_pointer_cast<ChangeEntityKeyValueAction>(valueConflict->getSourceAction())->getValue(), "value3_changed");
+    EXPECT_EQ(std::dynamic_pointer_cast<ChangeEntityKeyValueAction>(valueConflict->getSourceAction())->getKey(), "extra3");
+    EXPECT_EQ(std::dynamic_pointer_cast<ChangeEntityKeyValueAction>(valueConflict->getSourceAction())->getValue(), "value3_changed");
 
     // Verify the target action
     EXPECT_EQ(valueConflict->getTargetAction()->getType(), ActionType::RemoveKeyValue);
-    EXPECT_EQ(std::static_pointer_cast<ChangeEntityKeyValueAction>(valueConflict->getTargetAction())->getKey(), "extra3");
-    EXPECT_EQ(std::static_pointer_cast<ChangeEntityKeyValueAction>(valueConflict->getTargetAction())->getValue(), "");
+    EXPECT_EQ(std::dynamic_pointer_cast<ChangeEntityKeyValueAction>(valueConflict->getTargetAction())->getKey(), "extra3");
+    EXPECT_EQ(std::dynamic_pointer_cast<ChangeEntityKeyValueAction>(valueConflict->getTargetAction())->getValue(), "");
 
     operation->applyActions();
 
@@ -2357,13 +2357,13 @@ TEST_F(ThreeWayMergeTest, RemovalOfModifiedKeyValue)
 
     // Verify the source action
     EXPECT_EQ(valueConflict->getSourceAction()->getType(), ActionType::RemoveKeyValue);
-    EXPECT_EQ(std::static_pointer_cast<ChangeEntityKeyValueAction>(valueConflict->getSourceAction())->getKey(), "extra2");
-    EXPECT_EQ(std::static_pointer_cast<ChangeEntityKeyValueAction>(valueConflict->getSourceAction())->getValue(), "");
+    EXPECT_EQ(std::dynamic_pointer_cast<ChangeEntityKeyValueAction>(valueConflict->getSourceAction())->getKey(), "extra2");
+    EXPECT_EQ(std::dynamic_pointer_cast<ChangeEntityKeyValueAction>(valueConflict->getSourceAction())->getValue(), "");
 
     // Verify the target action
     EXPECT_EQ(valueConflict->getTargetAction()->getType(), ActionType::ChangeKeyValue);
-    EXPECT_EQ(std::static_pointer_cast<ChangeEntityKeyValueAction>(valueConflict->getTargetAction())->getKey(), "extra2");
-    EXPECT_EQ(std::static_pointer_cast<ChangeEntityKeyValueAction>(valueConflict->getTargetAction())->getValue(), "value2_changed");
+    EXPECT_EQ(std::dynamic_pointer_cast<ChangeEntityKeyValueAction>(valueConflict->getTargetAction())->getKey(), "extra2");
+    EXPECT_EQ(std::dynamic_pointer_cast<ChangeEntityKeyValueAction>(valueConflict->getTargetAction())->getValue(), "value2_changed");
 
     operation->applyActions();
 

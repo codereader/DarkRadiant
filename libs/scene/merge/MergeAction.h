@@ -277,7 +277,8 @@ public:
  * otherwise nothing happens and the target change stays in effect.
  */
 class ConflictResolutionAction :
-    public MergeAction
+    public MergeAction,
+    public virtual IConflictResolutionAction
 {
 protected:
     ConflictType _conflictType;
@@ -307,24 +308,24 @@ protected:
 public:
     using Ptr = std::shared_ptr<ConflictResolutionAction>;
 
-    ConflictType getConflictType() const
+    ConflictType getConflictType() const override
     {
         return _conflictType;
     }
 
     // The action the source diff is trying to apply
-    const MergeAction::Ptr& getSourceAction() const
+    const IMergeAction::Ptr& getSourceAction() const override
     {
         return _sourceAction;
     }
 
     // The action that happened in the target (can be empty)
-    const MergeAction::Ptr& getTargetAction() const
+    const IMergeAction::Ptr& getTargetAction() const override
     {
         return _targetAction;
     }
 
-    const INodePtr& getConflictingEntity() const
+    const INodePtr& getConflictingEntity() const override
     {
         return _conflictingEntity;
     }

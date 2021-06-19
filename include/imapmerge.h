@@ -93,6 +93,34 @@ public:
     virtual const std::string& getValue() const = 0;
 };
 
+class IConflictResolutionAction :
+    public virtual IMergeAction
+{
+public:
+    virtual ~IConflictResolutionAction() {}
+
+    using Ptr = std::shared_ptr<IConflictResolutionAction>;
+
+    // The exact conflict type of this node
+    virtual ConflictType getConflictType() const = 0;
+
+    // Gets the value that is going to be set by this action
+    virtual const IMergeAction::Ptr& getSourceAction() const = 0;
+
+    // The action that happened in the target (can be empty)
+    virtual const IMergeAction::Ptr& getTargetAction() const = 0;
+
+    // The affected entity node
+    virtual const INodePtr& getConflictingEntity() const = 0;
+
+    // Whether this action has been resolved by importing the source change over the target
+    virtual bool isResolvedByUsingSource() const = 0;
+
+    // Resolve this action by accepting the source changes, causing the to overwrite the
+    // conflicting change in the target map.
+    virtual void setResolvedByUsingSource(bool applySourceChange) = 0;
+};
+
 // A MergeOperation groups one or more merge actions
 // together in order to apply a set of changes from source => base
 class IMergeOperation

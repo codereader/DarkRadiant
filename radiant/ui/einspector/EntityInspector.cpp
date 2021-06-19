@@ -1460,16 +1460,19 @@ void EntityInspector::handleMergeActions(const scene::INodePtr& selectedNode)
 
         auto entityKeyValueAction = std::dynamic_pointer_cast<scene::merge::IEntityKeyValueMergeAction>(action);
 
-        if (!entityKeyValueAction) return;
-         
-        // Remember this action in the map, it will be used in onKeyChange()
-        _mergeActions[entityKeyValueAction->getKey()] = entityKeyValueAction;
-
-        // Keys added by a merge operation won't be handled in onKeyChange(), so do this here
-        if (entityKeyValueAction->getType() == scene::merge::ActionType::AddKeyValue)
+        if (entityKeyValueAction)
         {
-            onKeyChange(entityKeyValueAction->getKey(), entityKeyValueAction->getValue());
+            // Remember this action in the map, it will be used in onKeyChange()
+            _mergeActions[entityKeyValueAction->getKey()] = entityKeyValueAction;
+
+            // Keys added by a merge operation won't be handled in onKeyChange(), so do this here
+            if (entityKeyValueAction->getType() == scene::merge::ActionType::AddKeyValue)
+            {
+                onKeyChange(entityKeyValueAction->getKey(), entityKeyValueAction->getValue());
+            }
         }
+
+        // TODO: Conflict resolution actions
     });
 }
 

@@ -317,6 +317,7 @@ void MergeControlDialog::updateSummary()
     std::size_t entitiesRemoved = 0;
     std::size_t primitivesAdded = 0;
     std::size_t primitivesRemoved = 0;
+    std::size_t changeConflicts = 0;
 
     if (operation)
     {
@@ -345,6 +346,9 @@ void MergeControlDialog::updateSummary()
             case scene::merge::ActionType::RemoveKeyValue:
                 modifiedEntities.insert(action->getAffectedNode());
                 break;
+            case scene::merge::ActionType::ConflictResolution:
+                changeConflicts++;
+                break;
             }
         });
 
@@ -356,6 +360,7 @@ void MergeControlDialog::updateSummary()
     findNamedObject<wxStaticText>(this, "EntitiesModified")->SetLabel(string::to_string(entitiesModified));
     findNamedObject<wxStaticText>(this, "PrimitivesAdded")->SetLabel(string::to_string(primitivesAdded));
     findNamedObject<wxStaticText>(this, "PrimitivesRemoved")->SetLabel(string::to_string(primitivesRemoved));
+    findNamedObject<wxStaticText>(this, "ChangeConflicts")->SetLabel(string::to_string(changeConflicts));
 
     Layout();
     Fit();
