@@ -285,18 +285,18 @@ protected:
     INodePtr _conflictingEntity;
 
     // The action the source diff is trying to apply
-    MergeAction::Ptr _sourceAction;
+    IMergeAction::Ptr _sourceAction;
     // The action that happened in the target
-    MergeAction::Ptr _targetAction;
+    IMergeAction::Ptr _targetAction;
 
     ResolutionType _resolution;
 
 protected:
-    ConflictResolutionAction(ConflictType conflictType, const INodePtr& conflictingEntity, const MergeAction::Ptr& sourceAction) :
-        ConflictResolutionAction(conflictType, conflictingEntity, sourceAction, MergeAction::Ptr())
+    ConflictResolutionAction(ConflictType conflictType, const INodePtr& conflictingEntity, const IMergeAction::Ptr& sourceAction) :
+        ConflictResolutionAction(conflictType, conflictingEntity, sourceAction, IMergeAction::Ptr())
     {}
 
-    ConflictResolutionAction(ConflictType conflictType, const INodePtr& conflictingEntity, const MergeAction::Ptr& sourceAction, const MergeAction::Ptr& targetAction) :
+    ConflictResolutionAction(ConflictType conflictType, const INodePtr& conflictingEntity, const IMergeAction::Ptr& sourceAction, const IMergeAction::Ptr& targetAction) :
         MergeAction(ActionType::ConflictResolution),
         _conflictType(conflictType),
         _conflictingEntity(conflictingEntity),
