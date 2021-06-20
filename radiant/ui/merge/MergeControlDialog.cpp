@@ -165,17 +165,7 @@ void MergeControlDialog::onAbortMerge(wxCommandEvent& ev)
 
 void MergeControlDialog::onRejectSelection(wxCommandEvent& ev)
 {
-    UndoableCommand undo("deleteSelectedMergeNodes");
-
-    auto mergeNodes = getSelectedMergeNodes();
-
-    for (const auto& mergeNode : mergeNodes)
-    {
-        scene::removeNodeFromParent(mergeNode);
-    }
-
-    updateSummary();
-    updateControlSensitivity();
+    rejectSelectedNodesByDeletion();
 }
 
 void MergeControlDialog::onResolveAccept(wxCommandEvent& ev)
@@ -197,26 +187,40 @@ void MergeControlDialog::onResolveAccept(wxCommandEvent& ev)
     updateControlSensitivity();
 }
 
-void MergeControlDialog::onResolveReject(wxCommandEvent& ev)
+void MergeControlDialog::rejectSelectedNodesByDeletion()
 {
-    auto conflictNode = getSingleSelectedConflictNode();
+    UndoableCommand undo("deleteSelectedMergeNodes");
 
-    if (conflictNode)
+    auto mergeNodes = getSelectedMergeNodes();
+
+    for (const auto& node : mergeNodes)
     {
-        conflictNode->foreachMergeAction([&](const scene::merge::IMergeAction::Ptr& action)
+        auto mergeNode = std::dynamic_pointer_cast<scene::IMergeActionNode>(node);
+
+        if (!mergeNode) continue;
+
+        if (mergeNode->getActionType() == scene::merge::ActionType::ConflictResolution)
         {
-            auto conflictAction = std::dynamic_pointer_cast<scene::merge::IConflictResolutionAction>(action);
-            assert(conflictAction);
+            mergeNode->foreachMergeAction([&](const scene::merge::IMergeAction::Ptr& action)
+            {
+                auto conflictAction = std::dynamic_pointer_cast<scene::merge::IConflictResolutionAction>(action);
+                assert(conflictAction);
 
-            conflictAction->setResolution(scene::merge::ResolutionType::RejectSourceChange);
-        });
+                conflictAction->setResolution(scene::merge::ResolutionType::RejectSourceChange);
+            });
+        }
 
-        UndoableCommand undo("deleteSelectedConflictNode");
-        scene::removeNodeFromParent(conflictNode);
+        scene::removeNodeFromParent(mergeNode);
     }
 
     updateSummary();
     updateControlSensitivity();
+}
+
+void MergeControlDialog::onResolveReject(wxCommandEvent& ev)
+{
+    UndoableCommand undo("deleteSelectedConflictNode");
+    rejectSelectedNodesByDeletion();
 }
 
 void MergeControlDialog::onFinishMerge(wxCommandEvent& ev)
