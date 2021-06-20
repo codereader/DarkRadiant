@@ -24,16 +24,41 @@ void MergeActionNodeBase::clear()
 
 void MergeActionNodeBase::onInsertIntoScene(scene::IMapRootNode& rootNode)
 {
-    SelectableNode::onInsertIntoScene(rootNode);
+    if (_syncActionStatus)
+    {
+        foreachMergeAction([&](const scene::merge::IMergeAction::Ptr& action)
+        {
+            action->activate();
+        });
+    }
 
     hideAffectedNodes();
+
+    SelectableNode::onInsertIntoScene(rootNode);
 }
 
 void MergeActionNodeBase::onRemoveFromScene(scene::IMapRootNode& rootNode)
 {
+    SelectableNode::onRemoveFromScene(rootNode);
+    
     unhideAffectedNodes();
 
-    SelectableNode::onRemoveFromScene(rootNode);
+    if (_syncActionStatus)
+    {
+        foreachMergeAction([&](const scene::merge::IMergeAction::Ptr& action)
+        {
+            // Removing an unresolved conflict action from the scene implies rejecting the source change
+            auto conflictAction = std::dynamic_pointer_cast<scene::merge::IConflictResolutionAction>(action);
+            
+            if (conflictAction && conflictAction->getResolution() == scene::merge::ResolutionType::Unresolved)
+            {
+                conflictAction->setResolution(scene::merge::ResolutionType::RejectSourceChange);
+            }
+
+            // Removing any action from the scene means to deactivate it
+            action->deactivate();
+        });
+    }
 }
 
 scene::INode::Type MergeActionNodeBase::getNodeType() const
@@ -194,32 +219,6 @@ void KeyValueMergeActionNode::foreachMergeAction(const std::function<void(const 
     }
 }
 
-void KeyValueMergeActionNode::onInsertIntoScene(scene::IMapRootNode& rootNode)
-{
-    if (_syncActionStatus)
-    {
-        for (const auto& action : _actions)
-        {
-            action->activate();
-        }
-    }
-
-    MergeActionNodeBase::onInsertIntoScene(rootNode);
-}
-
-void KeyValueMergeActionNode::onRemoveFromScene(scene::IMapRootNode& rootNode)
-{
-    MergeActionNodeBase::onRemoveFromScene(rootNode);
-
-    if (_syncActionStatus)
-    {
-        for (const auto& action : _actions)
-        {
-            action->deactivate();
-        }
-    }
-}
-
 // RegularMergeActionNode
 
 RegularMergeActionNode::RegularMergeActionNode(const scene::merge::IMergeAction::Ptr& action) :
@@ -230,11 +229,6 @@ RegularMergeActionNode::RegularMergeActionNode(const scene::merge::IMergeAction:
 
 void RegularMergeActionNode::onInsertIntoScene(scene::IMapRootNode& rootNode)
 {
-    if (_syncActionStatus)
-    {
-        _action->activate();
-    }
-
     // Add the nodes that are missing in this scene, for preview purposes
     addPreviewNodeForAddAction();
 
@@ -247,11 +241,6 @@ void RegularMergeActionNode::onRemoveFromScene(scene::IMapRootNode& rootNode)
     MergeActionNodeBase::onRemoveFromScene(rootNode);
 
     removePreviewNodeForAddAction();
-
-    if (_syncActionStatus)
-    {
-        _action->deactivate();
-    }
 }
 
 void RegularMergeActionNode::clear()

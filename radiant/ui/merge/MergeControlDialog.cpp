@@ -193,23 +193,8 @@ void MergeControlDialog::rejectSelectedNodesByDeletion()
 
     auto mergeNodes = getSelectedMergeNodes();
 
-    for (const auto& node : mergeNodes)
+    for (const auto& mergeNode : mergeNodes)
     {
-        auto mergeNode = std::dynamic_pointer_cast<scene::IMergeActionNode>(node);
-
-        if (!mergeNode) continue;
-
-        if (mergeNode->getActionType() == scene::merge::ActionType::ConflictResolution)
-        {
-            mergeNode->foreachMergeAction([&](const scene::merge::IMergeAction::Ptr& action)
-            {
-                auto conflictAction = std::dynamic_pointer_cast<scene::merge::IConflictResolutionAction>(action);
-                assert(conflictAction);
-
-                conflictAction->setResolution(scene::merge::ResolutionType::RejectSourceChange);
-            });
-        }
-
         scene::removeNodeFromParent(mergeNode);
     }
 
