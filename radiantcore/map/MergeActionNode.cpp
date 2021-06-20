@@ -303,10 +303,23 @@ bool RegularMergeActionNode::hasActiveActions()
     return _action && _action->isActive();
 }
 
+std::shared_ptr<scene::merge::AddCloneToParentAction> RegularMergeActionNode::getAddNodeAction()
+{
+    // In case this is a conflicting source action modified an entity that is no longer present, add the old node
+    auto conflictAction = std::dynamic_pointer_cast<scene::merge::IConflictResolutionAction>(_action);
+
+    if (conflictAction && conflictAction->getConflictType() == scene::merge::ConflictType::ModificationOfRemovedEntity)
+    {
+        return std::dynamic_pointer_cast<scene::merge::AddCloneToParentAction>(conflictAction->getSourceAction());
+    }
+
+    // Check the regular action for type AddEntityNode
+    return std::dynamic_pointer_cast<scene::merge::AddCloneToParentAction>(_action);
+}
+
 void RegularMergeActionNode::addPreviewNodeForAddAction()
 {
-    // We add the node to the target scene, for preview purposes
-    auto addNodeAction = std::dynamic_pointer_cast<scene::merge::AddCloneToParentAction>(_action);
+    auto addNodeAction = getAddNodeAction();
 
     if (addNodeAction)
     {
@@ -317,7 +330,7 @@ void RegularMergeActionNode::addPreviewNodeForAddAction()
 
 void RegularMergeActionNode::removePreviewNodeForAddAction()
 {
-    auto addNodeAction = std::dynamic_pointer_cast<scene::merge::AddCloneToParentAction>(_action);
+    auto addNodeAction = getAddNodeAction();
 
     if (addNodeAction)
     {

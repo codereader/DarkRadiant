@@ -118,6 +118,8 @@ public:
 private:
     void addPreviewNodeForAddAction();
     void removePreviewNodeForAddAction();
+
+    std::shared_ptr<scene::merge::AddCloneToParentAction> getAddNodeAction();
 };
 
 }
