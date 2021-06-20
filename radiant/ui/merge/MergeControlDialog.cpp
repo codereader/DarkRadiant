@@ -301,11 +301,9 @@ inline std::string getKeyValue(const scene::merge::IConflictResolutionAction::Pt
     return keyConflictAction ? keyConflictAction->getValue() : std::string();
 }
 
-inline std::string getConflictDescription(const std::shared_ptr<scene::IMergeActionNode>& node)
+inline void addConflictDescription(wxPanel* panel, const std::shared_ptr<scene::IMergeActionNode>& node)
 {
-    std::string text;
-
-    if (!node) return text;
+    if (!node) return;
 
     node->foreachMergeAction([&](const scene::merge::IMergeAction::Ptr& action)
     {
@@ -316,35 +314,33 @@ inline std::string getConflictDescription(const std::shared_ptr<scene::IMergeAct
 
         auto conflictAction = std::dynamic_pointer_cast<scene::merge::IConflictResolutionAction>(action);
 
+        auto* text = new wxStaticText(panel, wxID_ANY, "");
+        
         switch (conflictAction->getConflictType())
         {
         case scene::merge::ConflictType::ModificationOfRemovedEntity:
-            text += text.empty() ? "" : "\n";
-            text += fmt::format(_("The imported map tries to modify the key values of the entity {0} that has already been deleted here."), getEntityName(conflictAction));
+            text->SetLabel(fmt::format(_("The imported map tries to modify the key values of the entity {0} that has already been deleted here."), getEntityName(conflictAction)));
             break;
         case scene::merge::ConflictType::RemovalOfModifiedEntity:
-            text += text.empty() ? "" : "\n";
-            text += fmt::format(_("The imported map tries to remove the entity {0} that has been modified in this map."), getEntityName(conflictAction));
+            text->SetLabel(fmt::format(_("The imported map tries to remove the entity {0} that has been modified in this map."), getEntityName(conflictAction)));
             break;
         case scene::merge::ConflictType::RemovalOfModifiedKeyValue:
-            text += text.empty() ? "" : "\n";
-            text += fmt::format(_("The imported map tries to remove the key {0} on entity {1} but this key has been modified in this map."), 
-                getKeyName(conflictAction), getEntityName(conflictAction));
+            text->SetLabel(fmt::format(_("The imported map tries to remove the key {0} on entity {1} but this key has been modified in this map."),
+                getKeyName(conflictAction), getEntityName(conflictAction)));
             break;
         case scene::merge::ConflictType::ModificationOfRemovedKeyValue:
-            text += text.empty() ? "" : "\n";
-            text += fmt::format(_("The imported map tries to modify the key \"{0}\" on entity {1} but this key has already been removed in this map."),
-                getKeyName(conflictAction), getEntityName(conflictAction));
+            text->SetLabel(fmt::format(_("The imported map tries to modify the key \"{0}\" on entity {1} but this key has already been removed in this map."),
+                getKeyName(conflictAction), getEntityName(conflictAction)));
             break;
         case scene::merge::ConflictType::SettingKeyToDifferentValue:
-            text += text.empty() ? "" : "\n";
-            text += fmt::format(_("The imported map tries to set the key \"{0}\" on entity {1} to the value \"{2}\" but this key has already been set to a different value in this map."),
-                getKeyName(conflictAction), getEntityName(conflictAction), getKeyValue(conflictAction));
+            text->SetLabel(fmt::format(_("The imported map tries to set the key \"{0}\" on entity {1} to the value \"{2}\" but this key has already been set to a different value in this map."),
+                getKeyName(conflictAction), getEntityName(conflictAction), getKeyValue(conflictAction)));
             break;
         }
-    });
 
-    return text;
+        text->Wrap(panel->GetSize().x);
+        panel->GetSizer()->Add(text, 0, wxBOTTOM, 6);
+    });
 }
 
 void MergeControlDialog::updateControlSensitivity()
@@ -361,17 +357,20 @@ void MergeControlDialog::updateControlSensitivity()
     findNamedObject<wxWindow>(this, "MergeMapFilename")->Enable(!mergeInProgress);
     findNamedObject<wxButton>(this, "RejectSelectionButton")->Enable(mergeInProgress && numSelectedMergeNodes > 0);
 
+    auto conflictDescriptionPanel = findNamedObject<wxPanel>(this, "ConflictDescriptionPanel");
+
     auto conflictNode = getSingleSelectedConflictNode();
 
     findNamedObject<wxStaticText>(this, "NoMergeConflictSelected")->Show(conflictNode == nullptr);
-    findNamedObject<wxStaticText>(this, "ConflictDescription")->Show(conflictNode != nullptr);
     findNamedObject<wxButton>(this, "ResolveAcceptButton")->Show(conflictNode != nullptr);
     findNamedObject<wxButton>(this, "ResolveRejectButton")->Show(conflictNode != nullptr);
+    conflictDescriptionPanel->Show(conflictNode != nullptr);
+
+    conflictDescriptionPanel->DestroyChildren();
 
     if (conflictNode)
     {
-        findNamedObject<wxStaticText>(this, "ConflictDescription")->SetLabel(getConflictDescription(conflictNode));
-        findNamedObject<wxStaticText>(this, "ConflictDescription")->Layout();
+        addConflictDescription(conflictDescriptionPanel, conflictNode);
     }
 
     Layout();

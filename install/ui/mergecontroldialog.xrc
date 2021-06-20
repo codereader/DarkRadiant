@@ -434,17 +434,13 @@
 												</object>
 												<object class="sizeritem">
 													<option>0</option>
-													<flag>wxALL</flag>
+													<flag>wxEXPAND | wxALL</flag>
 													<border>5</border>
-													<object class="wxStaticText" name="ConflictDescription">
-														<size>-1,55</size>
-														<font>
-															<style>normal</style>
-															<weight>normal</weight>
-															<underlined>0</underlined>
-														</font>
-														<label>---</label>
-														<wrap>280</wrap>
+													<object class="wxPanel" name="ConflictDescriptionPanel">
+														<style>wxTAB_TRAVERSAL</style>
+														<object class="wxBoxSizer">
+															<orient>wxVERTICAL</orient>
+														</object>
 													</object>
 												</object>
 												<object class="sizeritem">

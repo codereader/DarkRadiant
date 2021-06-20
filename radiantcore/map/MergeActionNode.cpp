@@ -154,7 +154,20 @@ void KeyValueMergeActionNode::clear()
 
 scene::merge::ActionType KeyValueMergeActionNode::getActionType() const
 {
-    // We report the change key value type since we're doing all kinds of key value changes
+    // We report the change key value type since we're doing all kinds of key value changes,
+    // unless we have an unresolved conflict in our collection
+    auto activeConflict = std::find_if(_actions.begin(), _actions.end(), [&](const scene::merge::IMergeAction::Ptr& action) 
+    {
+        auto conflict = std::dynamic_pointer_cast<scene::merge::IConflictResolutionAction>(action);
+
+        return conflict && conflict->isActive() && conflict->getResolution() == scene::merge::ResolutionType::Unresolved;
+    });
+    
+    if (activeConflict != _actions.end())
+    {
+        return scene::merge::ActionType::ConflictResolution;
+    }
+
     return !_actions.empty() ? scene::merge::ActionType::ChangeKeyValue : scene::merge::ActionType::NoAction;
 }
 

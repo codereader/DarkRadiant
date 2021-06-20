@@ -1087,6 +1087,31 @@ void Map::exportSelected(std::ostream& out, const MapFormatPtr& format)
     exporter.exportMap(GlobalSceneGraph().root(), scene::traverseSelected);
 }
 
+inline bool actionIsTargetingKeyValue(const scene::merge::IMergeAction::Ptr& action)
+{
+    if (action->getType() == scene::merge::ActionType::AddKeyValue ||
+        action->getType() == scene::merge::ActionType::RemoveKeyValue ||
+        action->getType() == scene::merge::ActionType::ChangeKeyValue)
+    {
+        return true;
+    }
+
+    // Conflict actions can be targeting key values too
+    if (action->getType() == scene::merge::ActionType::ConflictResolution)
+    {
+        auto conflictAction = std::dynamic_pointer_cast<scene::merge::IConflictResolutionAction>(action);
+
+        if (conflictAction->getConflictType() == scene::merge::ConflictType::ModificationOfRemovedKeyValue ||
+            conflictAction->getConflictType() == scene::merge::ConflictType::RemovalOfModifiedKeyValue ||
+            conflictAction->getConflictType() == scene::merge::ConflictType::SettingKeyToDifferentValue)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 void Map::createMergeActions()
 {
     // Group spawnarg actions into one single node if applicable
@@ -1097,9 +1122,7 @@ void Map::createMergeActions()
     {
         scene::INodePtr affectedNode = action->getAffectedNode();
 
-        if (action->getType() == scene::merge::ActionType::AddKeyValue ||
-            action->getType() == scene::merge::ActionType::RemoveKeyValue ||
-            action->getType() == scene::merge::ActionType::ChangeKeyValue)
+        if (actionIsTargetingKeyValue(action))
         {
             auto& actions = entityChanges.try_emplace(action->getAffectedNode()).first->second;
             actions.push_back(action);
