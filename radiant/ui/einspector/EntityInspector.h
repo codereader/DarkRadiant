@@ -215,6 +215,7 @@ private:
     void changeSelectedEntity(const scene::INodePtr& newEntity, const scene::INodePtr& selectedNode);
 
     void handleMergeActions(const scene::INodePtr& selectedNode);
+    void handleKeyValueMergeAction(const scene::merge::IEntityKeyValueMergeAction::Ptr& mergeAction);
 
     // Set the keyval on all selected entities from the key and value textboxes
 	void setPropertyFromEntries();

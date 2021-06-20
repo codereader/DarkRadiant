@@ -59,6 +59,12 @@ MergeControlDialog::MergeControlDialog() :
     auto* finishButton = findNamedObject<wxButton>(this, "FinishMergeButton");
     finishButton->Bind(wxEVT_BUTTON, &MergeControlDialog::onFinishMerge, this);
 
+    auto* resolveAcceptButton = findNamedObject<wxButton>(this, "ResolveAcceptButton");
+    resolveAcceptButton->Bind(wxEVT_BUTTON, &MergeControlDialog::onResolveAccept, this);
+
+    auto* resolveRejectButton = findNamedObject<wxButton>(this, "ResolveRejectButton");
+    resolveRejectButton->Bind(wxEVT_BUTTON, &MergeControlDialog::onResolveReject, this);
+
     findNamedObject<wxCheckBox>(this, "KeepSelectionGroupsIntact")->SetValue(true);
     findNamedObject<wxCheckBox>(this, "MergeLayers")->SetValue(true);
 
@@ -168,6 +174,48 @@ void MergeControlDialog::onRejectSelection(wxCommandEvent& ev)
         scene::removeNodeFromParent(mergeNode);
     }
 
+    updateSummary();
+    updateControlSensitivity();
+}
+
+void MergeControlDialog::onResolveAccept(wxCommandEvent& ev)
+{
+    auto conflictNode = getSingleSelectedConflictNode();
+
+    if (conflictNode)
+    {
+        conflictNode->foreachMergeAction([&](const scene::merge::IMergeAction::Ptr& action)
+        {
+            auto conflictAction = std::dynamic_pointer_cast<scene::merge::IConflictResolutionAction>(action);
+            assert(conflictAction);
+            
+            conflictAction->setResolution(scene::merge::ResolutionType::ApplySourceChange);
+        });
+    }
+
+    updateSummary();
+    updateControlSensitivity();
+}
+
+void MergeControlDialog::onResolveReject(wxCommandEvent& ev)
+{
+    auto conflictNode = getSingleSelectedConflictNode();
+
+    if (conflictNode)
+    {
+        conflictNode->foreachMergeAction([&](const scene::merge::IMergeAction::Ptr& action)
+        {
+            auto conflictAction = std::dynamic_pointer_cast<scene::merge::IConflictResolutionAction>(action);
+            assert(conflictAction);
+
+            conflictAction->setResolution(scene::merge::ResolutionType::RejectSourceChange);
+        });
+
+        UndoableCommand undo("deleteSelectedConflictNode");
+        scene::removeNodeFromParent(conflictNode);
+    }
+
+    updateSummary();
     updateControlSensitivity();
 }
 
@@ -235,10 +283,22 @@ std::size_t MergeControlDialog::getNumSelectedMergeNodes()
     return getSelectedMergeNodes().size();
 }
 
-inline std::string getEntityName(const scene::merge::IConflictResolutionAction& action)
+inline std::string getEntityName(const scene::merge::IConflictResolutionAction::Ptr& action)
 {
-    auto entity = Node_getEntity(action.getConflictingEntity());
+    auto entity = Node_getEntity(action->getConflictingEntity());
     return entity ? entity->getKeyValue("name") : "?";
+}
+
+inline std::string getKeyName(const scene::merge::IConflictResolutionAction::Ptr& action)
+{
+    auto keyConflictAction = std::dynamic_pointer_cast<scene::merge::IEntityKeyValueMergeAction>(action->getSourceAction());
+    return keyConflictAction ? keyConflictAction->getKey() : std::string();
+}
+
+inline std::string getKeyValue(const scene::merge::IConflictResolutionAction::Ptr& action)
+{
+    auto keyConflictAction = std::dynamic_pointer_cast<scene::merge::IEntityKeyValueMergeAction>(action->getSourceAction());
+    return keyConflictAction ? keyConflictAction->getValue() : std::string();
 }
 
 inline std::string getConflictDescription(const std::shared_ptr<scene::IMergeActionNode>& node)
@@ -260,11 +320,26 @@ inline std::string getConflictDescription(const std::shared_ptr<scene::IMergeAct
         {
         case scene::merge::ConflictType::ModificationOfRemovedEntity:
             text += text.empty() ? "" : "\n";
-            text += fmt::format(_("The imported map tries to modify the key values of the entity {0} that has already been deleted here."), getEntityName(*conflictAction));
+            text += fmt::format(_("The imported map tries to modify the key values of the entity {0} that has already been deleted here."), getEntityName(conflictAction));
             break;
         case scene::merge::ConflictType::RemovalOfModifiedEntity:
             text += text.empty() ? "" : "\n";
-            text += fmt::format(_("The imported map tries to remove the entity {0} that has been modified in this map."), getEntityName(*conflictAction));
+            text += fmt::format(_("The imported map tries to remove the entity {0} that has been modified in this map."), getEntityName(conflictAction));
+            break;
+        case scene::merge::ConflictType::RemovalOfModifiedKeyValue:
+            text += text.empty() ? "" : "\n";
+            text += fmt::format(_("The imported map tries to remove the key {0} on entity {1} but this key has been modified in this map."), 
+                getKeyName(conflictAction), getEntityName(conflictAction));
+            break;
+        case scene::merge::ConflictType::ModificationOfRemovedKeyValue:
+            text += text.empty() ? "" : "\n";
+            text += fmt::format(_("The imported map tries to modify the key \"{0}\" on entity {1} but this key has already been removed in this map."),
+                getKeyName(conflictAction), getEntityName(conflictAction));
+            break;
+        case scene::merge::ConflictType::SettingKeyToDifferentValue:
+            text += text.empty() ? "" : "\n";
+            text += fmt::format(_("The imported map tries to set the key \"{0}\" on entity {1} to the value \"{2}\" but this key has already been set to a different value in this map."),
+                getKeyName(conflictAction), getEntityName(conflictAction), getKeyValue(conflictAction));
             break;
         }
     });
@@ -290,6 +365,8 @@ void MergeControlDialog::updateControlSensitivity()
 
     findNamedObject<wxStaticText>(this, "NoMergeConflictSelected")->Show(conflictNode == nullptr);
     findNamedObject<wxStaticText>(this, "ConflictDescription")->Show(conflictNode != nullptr);
+    findNamedObject<wxButton>(this, "ResolveAcceptButton")->Show(conflictNode != nullptr);
+    findNamedObject<wxButton>(this, "ResolveRejectButton")->Show(conflictNode != nullptr);
 
     if (conflictNode)
     {

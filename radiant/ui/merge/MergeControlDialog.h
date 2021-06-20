@@ -53,6 +53,8 @@ private:
     void onFinishMerge(wxCommandEvent& ev);
     void onAbortMerge(wxCommandEvent& ev);
     void onRejectSelection(wxCommandEvent& ev);
+    void onResolveAccept(wxCommandEvent& ev);
+    void onResolveReject(wxCommandEvent& ev);
     void updateControlSensitivity();
     void queueUpdate();
     void onIdle(wxIdleEvent& ev);

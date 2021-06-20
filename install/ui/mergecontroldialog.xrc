@@ -437,14 +437,44 @@
 													<flag>wxALL</flag>
 													<border>5</border>
 													<object class="wxStaticText" name="ConflictDescription">
-														<size>-1,40</size>
+														<size>-1,55</size>
 														<font>
-															<style>italic</style>
+															<style>normal</style>
 															<weight>normal</weight>
 															<underlined>0</underlined>
 														</font>
 														<label>---</label>
 														<wrap>280</wrap>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>1</option>
+													<flag>wxEXPAND</flag>
+													<border>0</border>
+													<object class="wxBoxSizer">
+														<orient>wxHORIZONTAL</orient>
+														<object class="sizeritem">
+															<option>1</option>
+															<flag>wxRIGHT</flag>
+															<border>6</border>
+															<object class="wxButton" name="ResolveAcceptButton">
+																<label>Accept this change</label>
+																<default>0</default>
+																<markup>0</markup>
+																<bitmap />
+															</object>
+														</object>
+														<object class="sizeritem">
+															<option>1</option>
+															<flag>wxALL</flag>
+															<border>0</border>
+															<object class="wxButton" name="ResolveRejectButton">
+																<label>Reject this change</label>
+																<default>0</default>
+																<markup>0</markup>
+																<bitmap />
+															</object>
+														</object>
 													</object>
 												</object>
 											</object>

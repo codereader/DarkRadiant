@@ -1539,6 +1539,22 @@ void EntityInspector::changeSelectedEntity(const scene::INodePtr& newEntity, con
     }
 }
 
+void EntityInspector::handleKeyValueMergeAction(const scene::merge::IEntityKeyValueMergeAction::Ptr& mergeAction)
+{
+    // Remember this action in the map, it will be used in onKeyChange()
+    _mergeActions[mergeAction->getKey()] = mergeAction;
+
+    auto selectedEntity = _selectedEntity.lock();
+
+    // Keys added by a merge operation won't be handled in onKeyChange(), so do this here
+    if (mergeAction->getType() == scene::merge::ActionType::AddKeyValue ||
+        (mergeAction->getType() == scene::merge::ActionType::ChangeKeyValue && selectedEntity && 
+         Node_getEntity(selectedEntity)->getKeyValue(mergeAction->getKey()).empty()))
+    {
+        onKeyChange(mergeAction->getKey(), mergeAction->getValue());
+    }
+}
+
 void EntityInspector::handleMergeActions(const scene::INodePtr& selectedNode)
 {
     // Any possible merge actions go in first
@@ -1560,14 +1576,7 @@ void EntityInspector::handleMergeActions(const scene::INodePtr& selectedNode)
 
         if (entityKeyValueAction)
         {
-            // Remember this action in the map, it will be used in onKeyChange()
-            _mergeActions[entityKeyValueAction->getKey()] = entityKeyValueAction;
-
-            // Keys added by a merge operation won't be handled in onKeyChange(), so do this here
-            if (entityKeyValueAction->getType() == scene::merge::ActionType::AddKeyValue)
-            {
-                onKeyChange(entityKeyValueAction->getKey(), entityKeyValueAction->getValue());
-            }
+            handleKeyValueMergeAction(entityKeyValueAction);
         }
 
         auto conflictAction = std::dynamic_pointer_cast<scene::merge::IConflictResolutionAction>(action);
@@ -1582,8 +1591,7 @@ void EntityInspector::handleMergeActions(const scene::INodePtr& selectedNode)
 
                 if (sourceAction)
                 {
-                    // The source action will be rendered as change
-                    _mergeActions[sourceAction->getKey()] = sourceAction;
+                    handleKeyValueMergeAction(sourceAction);
 
                     // Remember the conflict action if it's not yet resolved
                     if (conflictIsUnresolved)
