@@ -2,7 +2,7 @@
 <resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
 	<object class="wxPanel" name="MergeControlDialogMainPanel">
 		<style>wxTAB_TRAVERSAL</style>
-		<size>391,-1</size>
+		<size>391,504</size>
 		<object class="wxBoxSizer">
 			<orient>wxVERTICAL</orient>
 			<object class="sizeritem">
@@ -159,6 +159,23 @@
 									<bitmap />
 								</object>
 							</object>
+							<object class="sizeritem">
+								<option>1</option>
+								<flag>wxLEFT</flag>
+								<border>6</border>
+								<object class="wxButton" name="FinishMergeButton">
+									<font>
+										<style>normal</style>
+										<weight>bold</weight>
+										<underlined>0</underlined>
+									</font>
+									<tooltip>Apply the visible set of changes to the current map and finish the merge operation.</tooltip>
+									<label>Finish Merge</label>
+									<default>0</default>
+									<markup>0</markup>
+									<bitmap />
+								</object>
+							</object>
 						</object>
 					</object>
 					<object class="sizeritem">
@@ -185,7 +202,7 @@
 													<weight>bold</weight>
 													<underlined>0</underlined>
 												</font>
-												<label>Summary</label>
+												<label>Merge Summary</label>
 												<wrap>-1</wrap>
 											</object>
 										</object>
@@ -361,38 +378,7 @@
 							</object>
 							<object class="sizeritem">
 								<option>0</option>
-								<flag>wxEXPAND|wxTOP</flag>
-								<border>6</border>
-								<object class="wxBoxSizer">
-									<orient>wxHORIZONTAL</orient>
-									<object class="sizeritem">
-										<option>1</option>
-										<flag>wxALL</flag>
-										<border>0</border>
-										<object class="wxButton" name="RejectSelectionButton">
-											<label>Reject selected Modifications</label>
-											<default>0</default>
-											<markup>0</markup>
-											<bitmap />
-										</object>
-									</object>
-									<object class="sizeritem">
-										<option>1</option>
-										<flag>wxLEFT</flag>
-										<border>6</border>
-										<object class="wxButton" name="FinishMergeButton">
-											<tooltip>Apply the visible set of changes to the current map and finish the merge operation.</tooltip>
-											<label>Finish Merge Operation</label>
-											<default>0</default>
-											<markup>0</markup>
-											<bitmap />
-										</object>
-									</object>
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxEXPAND|wxTOP</flag>
+								<flag>wxEXPAND</flag>
 								<border>6</border>
 								<object class="wxPanel" name="ConflictDetailsPanel">
 									<style>wxTAB_TRAVERSAL</style>
@@ -408,7 +394,7 @@
 													<weight>bold</weight>
 													<underlined>0</underlined>
 												</font>
-												<label>Conflict Details</label>
+												<label>Details</label>
 												<wrap>-1</wrap>
 											</object>
 										</object>
@@ -454,7 +440,7 @@
 															<flag>wxRIGHT</flag>
 															<border>6</border>
 															<object class="wxButton" name="ResolveAcceptButton">
-																<label>Accept this change</label>
+																<label>Accept selected Changes</label>
 																<default>0</default>
 																<markup>0</markup>
 																<bitmap />
@@ -465,7 +451,7 @@
 															<flag>wxALL</flag>
 															<border>0</border>
 															<object class="wxButton" name="ResolveRejectButton">
-																<label>Reject this change</label>
+																<label>Reject selected Changes</label>
 																<default>0</default>
 																<markup>0</markup>
 																<bitmap />

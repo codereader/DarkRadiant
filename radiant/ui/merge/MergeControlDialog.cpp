@@ -37,10 +37,6 @@ MergeControlDialog::MergeControlDialog() :
     SetSizer(new wxBoxSizer(wxVERTICAL));
     GetSizer()->Add(loadNamedPanel(this, "MergeControlDialogMainPanel"), 1, wxEXPAND);
 
-    auto* targetMapFilename = findNamedObject<wxTextCtrl>(this, "TargetMapFilename");
-    targetMapFilename->SetValue(os::getFilename(GlobalMapModule().getMapName()));
-    targetMapFilename->Disable();
-
     convertTextCtrlToPathEntry("MergeMapFilename");
     convertTextCtrlToPathEntry("BaseMapFilename");
 
@@ -52,9 +48,6 @@ MergeControlDialog::MergeControlDialog() :
 
     auto* loadAndCompareButton = findNamedObject<wxButton>(this, "LoadAndCompareButton");
     loadAndCompareButton->Bind(wxEVT_BUTTON, &MergeControlDialog::onLoadAndCompare, this);
-
-    auto* rejectButton = findNamedObject<wxButton>(this, "RejectSelectionButton");
-    rejectButton->Bind(wxEVT_BUTTON, &MergeControlDialog::onRejectSelection, this);
 
     auto* finishButton = findNamedObject<wxButton>(this, "FinishMergeButton");
     finishButton->Bind(wxEVT_BUTTON, &MergeControlDialog::onFinishMerge, this);
@@ -68,7 +61,7 @@ MergeControlDialog::MergeControlDialog() :
     findNamedObject<wxCheckBox>(this, "KeepSelectionGroupsIntact")->SetValue(true);
     findNamedObject<wxCheckBox>(this, "MergeLayers")->SetValue(true);
 
-    updateControlSensitivity();
+    updateControls();
     Bind(wxEVT_IDLE, &MergeControlDialog::onIdle, this);
 
     Layout();
@@ -130,7 +123,7 @@ void MergeControlDialog::convertTextCtrlToPathEntry(const std::string& ctrlName)
 void MergeControlDialog::onMergeSourceChanged(wxCommandEvent& ev)
 {
     updateSummary();
-    updateControlSensitivity();
+    updateControls();
 }
 
 void MergeControlDialog::onLoadAndCompare(wxCommandEvent& ev)
@@ -153,19 +146,14 @@ void MergeControlDialog::onLoadAndCompare(wxCommandEvent& ev)
     }
 
     updateSummary();
-    updateControlSensitivity();
+    updateControls();
 }
 
 void MergeControlDialog::onAbortMerge(wxCommandEvent& ev)
 {
     GlobalMapModule().abortMergeOperation();
     updateSummary();
-    updateControlSensitivity();
-}
-
-void MergeControlDialog::onRejectSelection(wxCommandEvent& ev)
-{
-    rejectSelectedNodesByDeletion();
+    updateControls();
 }
 
 void MergeControlDialog::onResolveAccept(wxCommandEvent& ev)
@@ -184,7 +172,7 @@ void MergeControlDialog::onResolveAccept(wxCommandEvent& ev)
     }
 
     updateSummary();
-    updateControlSensitivity();
+    updateControls();
 }
 
 void MergeControlDialog::rejectSelectedNodesByDeletion()
@@ -199,7 +187,7 @@ void MergeControlDialog::rejectSelectedNodesByDeletion()
     }
 
     updateSummary();
-    updateControlSensitivity();
+    updateControls();
 }
 
 void MergeControlDialog::onResolveReject(wxCommandEvent& ev)
@@ -229,7 +217,7 @@ void MergeControlDialog::onFinishMerge(wxCommandEvent& ev)
         }
     }
 
-    updateControlSensitivity();
+    updateControls();
 }
 
 std::vector<scene::INodePtr> MergeControlDialog::getSelectedMergeNodes()
@@ -328,12 +316,17 @@ inline void addConflictDescription(wxPanel* panel, const std::shared_ptr<scene::
         }
 
         text->Wrap(panel->GetSize().x);
+        text->Layout();
         panel->GetSizer()->Add(text, 0, wxBOTTOM, 6);
     });
 }
 
-void MergeControlDialog::updateControlSensitivity()
+void MergeControlDialog::updateControls()
 {
+    auto* targetMapFilename = findNamedObject<wxTextCtrl>(this, "TargetMapFilename");
+    targetMapFilename->SetValue(os::getFilename(GlobalMapModule().getMapName()));
+    targetMapFilename->Disable();
+
     auto numSelectedMergeNodes = getNumSelectedMergeNodes();
     bool mergeInProgress = GlobalMapModule().getEditMode() == IMap::EditMode::Merge;
     auto sourceMapPath = findNamedObject<wxutil::PathEntry>(this, "MergeMapFilename")->getValue();
@@ -344,15 +337,14 @@ void MergeControlDialog::updateControlSensitivity()
     findNamedObject<wxWindow>(this, "SummaryPanel")->Enable(mergeInProgress);
     findNamedObject<wxWindow>(this, "BaseMapFilename")->Enable(!mergeInProgress);
     findNamedObject<wxWindow>(this, "MergeMapFilename")->Enable(!mergeInProgress);
-    findNamedObject<wxButton>(this, "RejectSelectionButton")->Enable(mergeInProgress && numSelectedMergeNodes > 0);
 
     auto conflictDescriptionPanel = findNamedObject<wxPanel>(this, "ConflictDescriptionPanel");
 
     auto conflictNode = getSingleSelectedConflictNode();
 
     findNamedObject<wxStaticText>(this, "NoMergeConflictSelected")->Show(conflictNode == nullptr);
-    findNamedObject<wxButton>(this, "ResolveAcceptButton")->Show(conflictNode != nullptr);
-    findNamedObject<wxButton>(this, "ResolveRejectButton")->Show(conflictNode != nullptr);
+    findNamedObject<wxButton>(this, "ResolveAcceptButton")->Show(mergeInProgress && conflictNode != nullptr);
+    findNamedObject<wxButton>(this, "ResolveRejectButton")->Show(mergeInProgress && numSelectedMergeNodes > 0);
     conflictDescriptionPanel->Show(conflictNode != nullptr);
 
     conflictDescriptionPanel->DestroyChildren();
@@ -402,7 +394,7 @@ void MergeControlDialog::_preShow()
         sigc::mem_fun(this, &MergeControlDialog::queueUpdate));
 
     // Check for selection changes before showing the dialog again
-    updateControlSensitivity();
+    updateControls();
     updateSummary(); 
 }
 
@@ -426,22 +418,23 @@ void MergeControlDialog::onIdle(wxIdleEvent& ev)
     if (!_updateNeeded) return;
 
     _updateNeeded = false;
+
+    updateControls();
     updateSummary();
-    updateControlSensitivity();
 }
 
 void MergeControlDialog::onMapEvent(IMap::MapEvent ev)
 {
     if (ev == IMap::MapLoaded || ev == IMap::MapUnloaded)
     {
-        updateControlSensitivity();
+        updateControls();
     }
 }
 
 void MergeControlDialog::onMapEditModeChanged(IMap::EditMode newMode)
 {
     updateSummary();
-    updateControlSensitivity();
+    updateControls();
 }
 
 void MergeControlDialog::updateSummary()
@@ -516,13 +509,10 @@ void MergeControlDialog::updateSummary()
     else
     {
         auto label = findNamedObject<wxStaticText>(this, "UnresolvedConflicts");
-        auto font = label->GetFont();
-        font.SetWeight(wxFONTWEIGHT_NORMAL);
-        label->SetFont(font);
         label->SetForegroundColour(wxNullColour);
 
         label = findNamedObject<wxStaticText>(this, "UnresolvedConflictsLabel");
-        font = label->GetFont();
+        auto font = label->GetFont();
         font.SetWeight(wxFONTWEIGHT_NORMAL);
         label->SetFont(font);
         label->SetForegroundColour(wxNullColour);

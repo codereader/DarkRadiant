@@ -52,10 +52,9 @@ private:
     void onLoadAndCompare(wxCommandEvent& ev);
     void onFinishMerge(wxCommandEvent& ev);
     void onAbortMerge(wxCommandEvent& ev);
-    void onRejectSelection(wxCommandEvent& ev);
     void onResolveAccept(wxCommandEvent& ev);
     void onResolveReject(wxCommandEvent& ev);
-    void updateControlSensitivity();
+    void updateControls();
     void queueUpdate();
     void onIdle(wxIdleEvent& ev);
     void onMapEvent(IMap::MapEvent ev);
