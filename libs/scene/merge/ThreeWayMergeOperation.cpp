@@ -4,6 +4,7 @@
 #include "inamespace.h"
 #include "NodeUtils.h"
 #include "GraphComparer.h"
+#include "ThreeWaySelectionGroupMerger.h"
 
 namespace scene
 {
@@ -60,7 +61,8 @@ ThreeWayMergeOperation::ThreeWayMergeOperation(const scene::IMapRootNodePtr& bas
     const scene::IMapRootNodePtr& sourceRoot, const scene::IMapRootNodePtr& targetRoot) :
     _baseRoot(baseRoot),
     _sourceRoot(sourceRoot),
-    _targetRoot(targetRoot)
+    _targetRoot(targetRoot),
+    _mergeSelectionGroups(true)
 {}
 
 ThreeWayMergeOperation::~ThreeWayMergeOperation()
@@ -384,9 +386,21 @@ void ThreeWayMergeOperation::adjustSourceEntitiesWithNameConflicts()
     _targetRoot->getNamespace()->ensureNoConflicts(_sourceRoot, sourceEntitiesToBeRenamed);
 }
 
+void ThreeWayMergeOperation::applyActions()
+{
+    MergeOperationBase::applyActions();
+
+    if (_mergeSelectionGroups)
+    {
+        ThreeWaySelectionGroupMerger merger(_baseRoot, _sourceRoot, _targetRoot);
+
+        merger.adjustTargetGroups();
+    }
+}
+
 void ThreeWayMergeOperation::setMergeSelectionGroups(bool enabled)
 {
-    // TODO
+    _mergeSelectionGroups = enabled;
 }
 
 void ThreeWayMergeOperation::setMergeLayers(bool enabled)

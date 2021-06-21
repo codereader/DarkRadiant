@@ -29,6 +29,8 @@ private:
     // Volatile data only needed during analysis
     struct ComparisonData;
 
+    bool _mergeSelectionGroups;
+
 public:
     using Ptr = std::shared_ptr<ThreeWayMergeOperation>;
 
@@ -53,6 +55,8 @@ public:
     {
         return _targetRoot;
     }
+
+    void applyActions() override;
 
 private:
     void adjustSourceEntitiesWithNameConflicts();

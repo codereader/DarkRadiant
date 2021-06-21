@@ -7,6 +7,7 @@
 #include <functional>
 #include "NodeUtils.h"
 #include "selectionlib.h"
+#include "SelectionGroupMergerBase.h"
 
 namespace scene
 {
@@ -21,7 +22,8 @@ namespace merge
  * It tries to keep group links between nodes intact if the nodes are only present 
  * in the base scene (were not removed during the geometry merge phase).
  */
-class SelectionGroupMerger
+class SelectionGroupMerger :
+    public SelectionGroupMergerBase
 {
 public:
     struct Change
@@ -52,7 +54,6 @@ private:
 
     std::vector<std::size_t> _baseGroupIdsToRemove;
 
-    std::stringstream _log;
     std::vector<Change> _changes;
 
 public:
@@ -72,11 +73,6 @@ public:
     const IMapRootNodePtr& getBaseRoot() const
     {
         return _baseRoot;
-    }
-
-    std::string getLogMessages() const
-    {
-        return _log.str();
     }
 
     const std::vector<Change>& getChangeLog() const
@@ -132,8 +128,6 @@ public:
     }
 
 private:
-    using GroupMembers = std::map<std::string, scene::INodePtr>;
-
     void processBaseGroup(selection::ISelectionGroup& group)
     {
         // Check if there's a counter-part in the source scene
@@ -278,18 +272,6 @@ private:
                 Change::Type::NodeAddedToGroup
             });
         }
-    }
-
-    GroupMembers getGroupMemberFingerprints(selection::ISelectionGroup& group)
-    {
-        GroupMembers members;
-
-        group.foreachNode([&](const INodePtr& member)
-        {
-            members.emplace(NodeUtils::GetGroupMemberFingerprint(member), member);
-        });
-
-        return members;
     }
 
     void ensureGroupSizeOrder()

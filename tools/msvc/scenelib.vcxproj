@@ -148,7 +148,9 @@
     <ClInclude Include="..\..\libs\scene\merge\MergeOperationBase.h" />
     <ClInclude Include="..\..\libs\scene\merge\NodeUtils.h" />
     <ClInclude Include="..\..\libs\scene\merge\SelectionGroupMerger.h" />
+    <ClInclude Include="..\..\libs\scene\merge\SelectionGroupMergerBase.h" />
     <ClInclude Include="..\..\libs\scene\merge\ThreeWayMergeOperation.h" />
+    <ClInclude Include="..\..\libs\scene\merge\ThreeWaySelectionGroupMerger.h" />
     <ClInclude Include="..\..\libs\scene\ModelBreakdown.h" />
     <ClInclude Include="..\..\libs\scene\ModelFinder.h" />
     <ClInclude Include="..\..\libs\scene\Node.h" />
