@@ -1188,11 +1188,18 @@ void Map::startMergeOperation(const std::string& sourceMap)
             // Create the merge actions
             _mergeOperation = scene::merge::MergeOperation::CreateFromComparisonResult(*result);
 
-            // Create renderable merge actions
-            createMergeActions();
+            if (_mergeOperation->hasActions())
+            {
+                // Create renderable merge actions
+                createMergeActions();
 
-            // Switch to merge mode
-            setEditMode(EditMode::Merge);
+                // Switch to merge mode
+                setEditMode(EditMode::Merge);
+            }
+            else
+            {
+                radiant::NotificationMessage::SendInformation(_("The Merge Operation turns out to be empty, nothing to do."));
+            }
 
             // Dispose of the resource, we don't need it anymore
             sourceMapResource->clear();
@@ -1221,11 +1228,18 @@ void Map::startMergeOperation(const std::string& sourceMap, const std::string& b
             _mergeOperation = scene::merge::ThreeWayMergeOperation::Create(
                 baseMapResource->getRootNode(), sourceMapResource->getRootNode(), getRoot());
 
-            // Create renderable merge actions
-            createMergeActions();
+            if (_mergeOperation->hasActions())
+            {
+                // Create renderable merge actions
+                createMergeActions();
 
-            // Switch to merge mode
-            setEditMode(EditMode::Merge);
+                // Switch to merge mode
+                setEditMode(EditMode::Merge);
+            }
+            else
+            {
+                radiant::NotificationMessage::SendInformation(_("The Merge Operation turns out to be empty, nothing to do."));
+            }
 
             // Dispose of the resources, we don't need it anymore
             sourceMapResource->clear();

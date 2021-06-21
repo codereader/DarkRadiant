@@ -12,6 +12,7 @@
 #include "string/convert.h"
 #include "os/path.h"
 #include "fmt/format.h"
+#include "scene/merge/MergeAction.h"
 
 #include <wx/textctrl.h>
 #include <wx/button.h>
@@ -260,64 +261,106 @@ std::size_t MergeControlDialog::getNumSelectedMergeNodes()
     return getSelectedMergeNodes().size();
 }
 
-inline std::string getEntityName(const scene::merge::IConflictResolutionAction::Ptr& action)
+inline std::string getEntityName(const scene::merge::IMergeAction::Ptr& action)
 {
-    auto entity = Node_getEntity(action->getConflictingEntity());
-    return entity ? entity->getKeyValue("name") : "?";
+    auto entity = Node_getEntity(action->getAffectedNode());
+
+    if (entity == nullptr && action->getAffectedNode())
+    {
+        entity = Node_getEntity(action->getAffectedNode()->getParent());
+    }
+
+    return entity ? (entity->isWorldspawn() ? "worldspawn" : entity->getKeyValue("name")) : "?";
 }
 
-inline std::string getKeyName(const scene::merge::IConflictResolutionAction::Ptr& action)
+inline std::string getKeyName(const scene::merge::IMergeAction::Ptr& action)
 {
-    auto keyConflictAction = std::dynamic_pointer_cast<scene::merge::IEntityKeyValueMergeAction>(action->getSourceAction());
-    return keyConflictAction ? keyConflictAction->getKey() : std::string();
+    auto conflictAction = std::dynamic_pointer_cast<scene::merge::IConflictResolutionAction>(action);
+
+    auto keyValueAction = std::dynamic_pointer_cast<scene::merge::IEntityKeyValueMergeAction>(
+        conflictAction ? conflictAction->getSourceAction() : action);
+
+    return keyValueAction ? keyValueAction->getKey() : std::string();
 }
 
-inline std::string getKeyValue(const scene::merge::IConflictResolutionAction::Ptr& action)
+inline std::string getKeyValue(const scene::merge::IMergeAction::Ptr& action)
 {
-    auto keyConflictAction = std::dynamic_pointer_cast<scene::merge::IEntityKeyValueMergeAction>(action->getSourceAction());
-    return keyConflictAction ? keyConflictAction->getValue() : std::string();
+    auto conflictAction = std::dynamic_pointer_cast<scene::merge::IConflictResolutionAction>(action);
+
+    auto keyValueAction = std::dynamic_pointer_cast<scene::merge::IEntityKeyValueMergeAction>(
+        conflictAction ? conflictAction->getSourceAction() : action);
+
+    return keyValueAction ? keyValueAction->getValue() : std::string();
 }
 
-inline void addConflictDescription(wxPanel* panel, const std::shared_ptr<scene::IMergeActionNode>& node)
+inline void addActionDescription(wxPanel* panel, const scene::INodePtr& candidate)
 {
+    auto node = std::dynamic_pointer_cast<scene::IMergeActionNode>(candidate);
+
     if (!node) return;
 
     node->foreachMergeAction([&](const scene::merge::IMergeAction::Ptr& action)
     {
-        if (action->getType() != scene::merge::ActionType::ConflictResolution || !action->isActive())
-        {
-            return;
-        }
+        if (!action->isActive()) return;
+
+        std::string text = "-";
 
         auto conflictAction = std::dynamic_pointer_cast<scene::merge::IConflictResolutionAction>(action);
 
-        auto* text = new wxStaticText(panel, wxID_ANY, "");
-        
-        switch (conflictAction->getConflictType())
+        if (conflictAction && conflictAction->getResolution() == scene::merge::ResolutionType::Unresolved)
         {
-        case scene::merge::ConflictType::ModificationOfRemovedEntity:
-            text->SetLabel(fmt::format(_("The imported map tries to modify the key values of the entity {0} that has already been deleted here."), getEntityName(conflictAction)));
-            break;
-        case scene::merge::ConflictType::RemovalOfModifiedEntity:
-            text->SetLabel(fmt::format(_("The imported map tries to remove the entity {0} that has been modified in this map."), getEntityName(conflictAction)));
-            break;
-        case scene::merge::ConflictType::RemovalOfModifiedKeyValue:
-            text->SetLabel(fmt::format(_("The imported map tries to remove the key {0} on entity {1} but this key has been modified in this map."),
-                getKeyName(conflictAction), getEntityName(conflictAction)));
-            break;
-        case scene::merge::ConflictType::ModificationOfRemovedKeyValue:
-            text->SetLabel(fmt::format(_("The imported map tries to modify the key \"{0}\" on entity {1} but this key has already been removed in this map."),
-                getKeyName(conflictAction), getEntityName(conflictAction)));
-            break;
-        case scene::merge::ConflictType::SettingKeyToDifferentValue:
-            text->SetLabel(fmt::format(_("The imported map tries to set the key \"{0}\" on entity {1} to the value \"{2}\" but this key has already been set to a different value in this map."),
-                getKeyName(conflictAction), getEntityName(conflictAction), getKeyValue(conflictAction)));
-            break;
+            switch (conflictAction->getConflictType())
+            {
+            case scene::merge::ConflictType::ModificationOfRemovedEntity:
+                text = fmt::format(_("The imported map tries to modify the key values of the entity {0} that has already been deleted here."), getEntityName(conflictAction));
+                break;
+            case scene::merge::ConflictType::RemovalOfModifiedEntity:
+                text = fmt::format(_("The imported map tries to remove the entity {0} that has been modified in this map."), getEntityName(conflictAction));
+                break;
+            case scene::merge::ConflictType::RemovalOfModifiedKeyValue:
+                text = fmt::format(_("The imported map tries to remove the key {0} on entity {1} but this key has been modified in this map."),
+                    getKeyName(conflictAction), getEntityName(conflictAction));
+                break;
+            case scene::merge::ConflictType::ModificationOfRemovedKeyValue:
+                text = fmt::format(_("The imported map tries to modify the key \"{0}\" on entity {1} but this key has already been removed in this map."),
+                    getKeyName(conflictAction), getEntityName(conflictAction));
+                break;
+            case scene::merge::ConflictType::SettingKeyToDifferentValue:
+                text = fmt::format(_("The imported map tries to set the key \"{0}\" on entity {1} to the value \"{2}\" but this key has already been set to a different value in this map."),
+                    getKeyName(conflictAction), getEntityName(conflictAction), getKeyValue(conflictAction));
+                break;
+            }
+        }
+        else
+        {
+            switch (action->getType())
+            {
+            case scene::merge::ActionType::AddEntity:
+                text = fmt::format(_("The entity {0} will be added to this map."), getEntityName(action));
+                break;
+            case scene::merge::ActionType::RemoveEntity:
+                text = fmt::format(_("The entity {0} will be removed from this map."), getEntityName(action));
+                break;
+            case scene::merge::ActionType::RemoveKeyValue:
+                text = fmt::format(_("The key \"{0}\" will be removed from entity {1}."), getKeyName(action), getEntityName(action));
+                break;
+            case scene::merge::ActionType::AddKeyValue:
+            case scene::merge::ActionType::ChangeKeyValue:
+                text = fmt::format(_("The key \"{0}\" on entity {1} will be set to \"{2}\"."), getKeyName(action), getEntityName(action), getKeyValue(action));
+                break;
+            case scene::merge::ActionType::AddChildNode:
+                text = fmt::format(_("A new primitive will be added to entity {0}."), getEntityName(action));
+                break;
+            case scene::merge::ActionType::RemoveChildNode:
+                text = fmt::format(_("A primitive will be removed from {0}."), getEntityName(action));
+                break;
+            }
         }
 
-        text->Wrap(panel->GetSize().x);
-        text->Layout();
-        panel->GetSizer()->Add(text, 0, wxBOTTOM, 6);
+        auto* staticText = new wxStaticText(panel, wxID_ANY, text);
+        staticText->Wrap(panel->GetSize().x);
+        staticText->Layout();
+        panel->GetSizer()->Add(staticText, 0, wxBOTTOM, 6);
     });
 }
 
@@ -327,7 +370,7 @@ void MergeControlDialog::updateControls()
     targetMapFilename->SetValue(os::getFilename(GlobalMapModule().getMapName()));
     targetMapFilename->Disable();
 
-    auto numSelectedMergeNodes = getNumSelectedMergeNodes();
+    auto selectedMergeNodes = getSelectedMergeNodes();
     bool mergeInProgress = GlobalMapModule().getEditMode() == IMap::EditMode::Merge;
     auto sourceMapPath = findNamedObject<wxutil::PathEntry>(this, "MergeMapFilename")->getValue();
 
@@ -338,20 +381,20 @@ void MergeControlDialog::updateControls()
     findNamedObject<wxWindow>(this, "BaseMapFilename")->Enable(!mergeInProgress);
     findNamedObject<wxWindow>(this, "MergeMapFilename")->Enable(!mergeInProgress);
 
-    auto conflictDescriptionPanel = findNamedObject<wxPanel>(this, "ConflictDescriptionPanel");
+    auto actionDescriptionPanel = findNamedObject<wxPanel>(this, "ActionDescriptionPanel");
 
     auto conflictNode = getSingleSelectedConflictNode();
 
-    findNamedObject<wxStaticText>(this, "NoMergeConflictSelected")->Show(conflictNode == nullptr);
+    findNamedObject<wxStaticText>(this, "NoMergeNodeSelected")->Show(selectedMergeNodes.size() != 1);
     findNamedObject<wxButton>(this, "ResolveAcceptButton")->Show(mergeInProgress && conflictNode != nullptr);
-    findNamedObject<wxButton>(this, "ResolveRejectButton")->Show(mergeInProgress && numSelectedMergeNodes > 0);
-    conflictDescriptionPanel->Show(conflictNode != nullptr);
+    findNamedObject<wxButton>(this, "ResolveRejectButton")->Show(mergeInProgress && !selectedMergeNodes.empty());
 
-    conflictDescriptionPanel->DestroyChildren();
+    actionDescriptionPanel->Show(selectedMergeNodes.size() == 1);
+    actionDescriptionPanel->DestroyChildren();
 
-    if (conflictNode)
+    if (selectedMergeNodes.size() == 1)
     {
-        addConflictDescription(conflictDescriptionPanel, conflictNode);
+        addActionDescription(actionDescriptionPanel, selectedMergeNodes.front());
     }
 
     Layout();

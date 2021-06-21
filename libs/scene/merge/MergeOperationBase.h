@@ -21,6 +21,7 @@ private:
 public:
     // Executes all active actions defined in this operation
     virtual void applyActions() override;
+    virtual bool hasActions() override;
     virtual void foreachAction(const std::function<void(const IMergeAction::Ptr&)>& visitor) override;
 
 protected:

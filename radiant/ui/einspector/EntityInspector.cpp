@@ -391,7 +391,7 @@ void EntityInspector::createContextMenu()
     _contextMenu->addSeparator();
 
     _contextMenu->addItem(
-        new wxutil::StockIconTextMenuItem(_("Accept selected Changes"), wxART_UNDO),
+        new wxutil::StockIconTextMenuItem(_("Accept selected Changes"), wxART_TICK_MARK),
         std::bind(&EntityInspector::_onAcceptMergeAction, this),
         std::bind(&EntityInspector::_testAcceptMergeAction, this),
         [] { return GlobalMapModule().getEditMode() == IMap::EditMode::Merge; }

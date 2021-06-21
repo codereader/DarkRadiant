@@ -139,6 +139,9 @@ public:
     // Executes all active actions defined in this operation
     virtual void applyActions() = 0;
 
+    // Whether this operation has any actions to perform
+    virtual bool hasActions() = 0;
+
     // Invokes the given functor for each action in this operation
     virtual void foreachAction(const std::function<void(const IMergeAction::Ptr&)>& visitor) = 0;
 

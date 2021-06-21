@@ -408,13 +408,13 @@
 													<option>0</option>
 													<flag>wxALL</flag>
 													<border>5</border>
-													<object class="wxStaticText" name="NoMergeConflictSelected">
+													<object class="wxStaticText" name="NoMergeNodeSelected">
 														<font>
 															<style>italic</style>
 															<weight>normal</weight>
 															<underlined>0</underlined>
 														</font>
-														<label>Select a merge conflict to show details here</label>
+														<label>Select a single merge action to display its details here</label>
 														<wrap>-1</wrap>
 													</object>
 												</object>
@@ -422,7 +422,7 @@
 													<option>0</option>
 													<flag>wxEXPAND | wxALL</flag>
 													<border>5</border>
-													<object class="wxPanel" name="ConflictDescriptionPanel">
+													<object class="wxPanel" name="ActionDescriptionPanel">
 														<style>wxTAB_TRAVERSAL</style>
 														<object class="wxBoxSizer">
 															<orient>wxVERTICAL</orient>

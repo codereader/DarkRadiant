@@ -28,6 +28,11 @@ void MergeOperationBase::applyActions()
     }
 }
 
+bool MergeOperationBase::hasActions()
+{
+    return !_actions.empty();
+}
+
 void MergeOperationBase::foreachAction(const std::function<void(const IMergeAction::Ptr&)>& visitor)
 {
     for (const auto& action : _actions)
