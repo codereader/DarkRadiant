@@ -6,6 +6,7 @@
 #include "iselectable.h"
 #include "ipatch.h"
 #include "ibrush.h"
+#include "icameraview.h"
 
 #include "scene/Node.h"
 
@@ -280,6 +281,22 @@ inline void assignVisibilityFlagsFromNode(INode& target, const INode& source)
     {
         target.enable(Node::eLayered);
     }
+}
+
+inline std::pair<Vector3, Vector3> getOriginAndAnglesToLookAtNode(const scene::INode& node)
+{
+    const AABB& aabb = node.worldAABB();
+    Vector3 origin(aabb.origin);
+
+    // Move the camera a bit off the AABB origin
+    origin += Vector3(aabb.extents.getLength() * 5, 0, aabb.extents.getLength() * 5);
+
+    // Rotate the camera a bit towards the "ground"
+    Vector3 angles(0, 0, 0);
+    angles[camera::CAMERA_PITCH] = -40;
+    angles[camera::CAMERA_YAW] = 180;
+
+    return std::make_pair(origin, angles);
 }
 
 } // namespace scene

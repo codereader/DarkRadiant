@@ -33,7 +33,8 @@ namespace
 
 MergeControlDialog::MergeControlDialog() :
     TransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getWxTopLevelWindow(), true),
-    _updateNeeded(false)
+    _updateNeeded(false),
+    _numUnresolvedConflicts(0)
 {
     SetSizer(new wxBoxSizer(wxVERTICAL));
     GetSizer()->Add(loadNamedPanel(this, "MergeControlDialogMainPanel"), 1, wxEXPAND);
@@ -58,6 +59,9 @@ MergeControlDialog::MergeControlDialog() :
 
     auto* resolveRejectButton = findNamedObject<wxButton>(this, "ResolveRejectButton");
     resolveRejectButton->Bind(wxEVT_BUTTON, &MergeControlDialog::onResolveReject, this);
+
+    auto* jumpToNextConflict = findNamedObject<wxButton>(this, "JumpToNextConflictButton");
+    jumpToNextConflict->Bind(wxEVT_BUTTON, &MergeControlDialog::onJumpToNextConflict, this);
 
     findNamedObject<wxCheckBox>(this, "KeepSelectionGroupsIntact")->SetValue(true);
     findNamedObject<wxCheckBox>(this, "MergeLayers")->SetValue(true);
@@ -123,8 +127,7 @@ void MergeControlDialog::convertTextCtrlToPathEntry(const std::string& ctrlName)
 
 void MergeControlDialog::onMergeSourceChanged(wxCommandEvent& ev)
 {
-    updateSummary();
-    updateControls();
+    update();
 }
 
 void MergeControlDialog::onLoadAndCompare(wxCommandEvent& ev)
@@ -146,15 +149,13 @@ void MergeControlDialog::onLoadAndCompare(wxCommandEvent& ev)
         GlobalMapModule().startMergeOperation(sourceMapPath);
     }
 
-    updateSummary();
-    updateControls();
+    update();
 }
 
 void MergeControlDialog::onAbortMerge(wxCommandEvent& ev)
 {
     GlobalMapModule().abortMergeOperation();
-    updateSummary();
-    updateControls();
+    update();
 }
 
 void MergeControlDialog::onResolveAccept(wxCommandEvent& ev)
@@ -172,8 +173,7 @@ void MergeControlDialog::onResolveAccept(wxCommandEvent& ev)
         });
     }
 
-    updateSummary();
-    updateControls();
+    update();
 }
 
 void MergeControlDialog::rejectSelectedNodesByDeletion()
@@ -187,14 +187,61 @@ void MergeControlDialog::rejectSelectedNodesByDeletion()
         scene::removeNodeFromParent(mergeNode);
     }
 
-    updateSummary();
-    updateControls();
+    update();
 }
 
 void MergeControlDialog::onResolveReject(wxCommandEvent& ev)
 {
     UndoableCommand undo("deleteSelectedConflictNode");
     rejectSelectedNodesByDeletion();
+}
+
+void MergeControlDialog::onJumpToNextConflict(wxCommandEvent& ev)
+{
+    std::vector<std::shared_ptr<scene::IMergeActionNode>> mergeNodes;
+
+    // Remove the selected nodes
+    GlobalMapModule().getRoot()->foreachNode([&](const scene::INodePtr& node)
+    {
+        if (node->getNodeType() == scene::INode::Type::MergeAction)
+        {
+            auto mergeNode = std::dynamic_pointer_cast<scene::IMergeActionNode>(node);
+
+            if (mergeNode && mergeNode->getActionType() == scene::merge::ActionType::ConflictResolution)
+            {
+                mergeNodes.push_back(mergeNode);
+            }
+        }
+
+        return true;
+    });
+
+    if (mergeNodes.empty())
+    {
+        return;
+    }
+
+    scene::INodePtr current;
+    
+    if (GlobalSelectionSystem().countSelected() == 1 &&
+        GlobalSelectionSystem().ultimateSelected()->getNodeType() == scene::INode::Type::MergeAction)
+    {
+        current = GlobalSelectionSystem().ultimateSelected();
+    }
+
+    auto nextNode = mergeNodes.front();
+    auto currentNode = std::find(mergeNodes.begin(), mergeNodes.end(), current);
+    
+    if (currentNode != mergeNodes.end() && ++currentNode != mergeNodes.end())
+    {
+        nextNode = *currentNode;
+    }
+
+    GlobalSelectionSystem().setSelectedAll(false);
+    Node_setSelected(nextNode, true);
+
+    auto originAndAngles = scene::getOriginAndAnglesToLookAtNode(*nextNode->getAffectedNode());
+    GlobalCommandSystem().executeCommand("FocusViews", cmd::ArgumentList{ originAndAngles.first, originAndAngles.second });
 }
 
 void MergeControlDialog::onFinishMerge(wxCommandEvent& ev)
@@ -218,7 +265,7 @@ void MergeControlDialog::onFinishMerge(wxCommandEvent& ev)
         }
     }
 
-    updateControls();
+    update();
 }
 
 std::vector<scene::INodePtr> MergeControlDialog::getSelectedMergeNodes()
@@ -388,6 +435,7 @@ void MergeControlDialog::updateControls()
     findNamedObject<wxStaticText>(this, "NoMergeNodeSelected")->Show(selectedMergeNodes.size() != 1);
     findNamedObject<wxButton>(this, "ResolveAcceptButton")->Show(mergeInProgress && conflictNode != nullptr);
     findNamedObject<wxButton>(this, "ResolveRejectButton")->Show(mergeInProgress && !selectedMergeNodes.empty());
+    findNamedObject<wxButton>(this, "JumpToNextConflictButton")->Enable(mergeInProgress && _numUnresolvedConflicts > 0);
 
     actionDescriptionPanel->Show(selectedMergeNodes.size() == 1);
     actionDescriptionPanel->DestroyChildren();
@@ -437,8 +485,7 @@ void MergeControlDialog::_preShow()
         sigc::mem_fun(this, &MergeControlDialog::queueUpdate));
 
     // Check for selection changes before showing the dialog again
-    updateControls();
-    updateSummary(); 
+    update();
 }
 
 void MergeControlDialog::selectionChanged(const scene::INodePtr& node, bool isComponent)
@@ -451,6 +498,13 @@ void MergeControlDialog::selectionChanged(const scene::INodePtr& node, bool isCo
     queueUpdate();
 }
 
+void MergeControlDialog::update()
+{
+    // Update the stats first to be able to enable/disable controls based on the numbers
+    updateSummary();
+    updateControls();
+}
+
 void MergeControlDialog::queueUpdate()
 {
     _updateNeeded = true;
@@ -461,9 +515,7 @@ void MergeControlDialog::onIdle(wxIdleEvent& ev)
     if (!_updateNeeded) return;
 
     _updateNeeded = false;
-
-    updateControls();
-    updateSummary();
+    update();
 }
 
 void MergeControlDialog::onMapEvent(IMap::MapEvent ev)
@@ -476,8 +528,7 @@ void MergeControlDialog::onMapEvent(IMap::MapEvent ev)
 
 void MergeControlDialog::onMapEditModeChanged(IMap::EditMode newMode)
 {
-    updateSummary();
-    updateControls();
+    update();
 }
 
 void MergeControlDialog::updateSummary()
@@ -489,7 +540,7 @@ void MergeControlDialog::updateSummary()
     std::size_t entitiesRemoved = 0;
     std::size_t primitivesAdded = 0;
     std::size_t primitivesRemoved = 0;
-    std::size_t unresolvedConflicts = 0;
+    _numUnresolvedConflicts = 0;
 
     if (operation)
     {
@@ -524,7 +575,7 @@ void MergeControlDialog::updateSummary()
 
                 if (conflict && conflict->getResolution() == scene::merge::ResolutionType::Unresolved)
                 {
-                    unresolvedConflicts++;
+                    _numUnresolvedConflicts++;
                 }
                 break;
             }
@@ -539,9 +590,9 @@ void MergeControlDialog::updateSummary()
     findNamedObject<wxStaticText>(this, "EntitiesModified")->SetLabel(string::to_string(entitiesModified));
     findNamedObject<wxStaticText>(this, "PrimitivesAdded")->SetLabel(string::to_string(primitivesAdded));
     findNamedObject<wxStaticText>(this, "PrimitivesRemoved")->SetLabel(string::to_string(primitivesRemoved));
-    findNamedObject<wxStaticText>(this, "UnresolvedConflicts")->SetLabel(string::to_string(unresolvedConflicts));
+    findNamedObject<wxStaticText>(this, "UnresolvedConflicts")->SetLabel(string::to_string(_numUnresolvedConflicts));
 
-    if (unresolvedConflicts > 0)
+    if (_numUnresolvedConflicts > 0)
     {
         makeLabelBold(this, "UnresolvedConflicts");
         makeLabelBold(this, "UnresolvedConflictsLabel");

@@ -24,6 +24,7 @@ private:
     sigc::connection _mapEditModeHandler;
 
     bool _updateNeeded;
+    std::size_t _numUnresolvedConflicts;
 
 public:
     MergeControlDialog();
@@ -54,12 +55,15 @@ private:
     void onAbortMerge(wxCommandEvent& ev);
     void onResolveAccept(wxCommandEvent& ev);
     void onResolveReject(wxCommandEvent& ev);
+    void onJumpToNextConflict(wxCommandEvent& ev);
     void updateControls();
     void queueUpdate();
     void onIdle(wxIdleEvent& ev);
     void onMapEvent(IMap::MapEvent ev);
     void onMapEditModeChanged(IMap::EditMode newMode);
     void updateSummary();
+
+    void update();
 
     std::size_t getNumSelectedMergeNodes();
     std::vector<scene::INodePtr> getSelectedMergeNodes();

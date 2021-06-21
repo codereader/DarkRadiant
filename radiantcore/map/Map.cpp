@@ -447,6 +447,17 @@ void Map::focusViews(const Vector3& point, const Vector3& angles)
     }
 }
 
+void Map::focusViewCmd(const cmd::ArgumentList& args)
+{
+    if (args.size() != 2)
+    {
+        rWarning() << "Usage: FocusViews <origin:Vector3> <angles:Vector3>" << std::endl;
+        return;
+    }
+
+    focusViews(args[0].getVector3(), args[1].getVector3());
+}
+
 scene::INodePtr Map::findWorldspawn()
 {
 	scene::INodePtr worldspawn;
@@ -884,6 +895,7 @@ void Map::registerCommands()
     GlobalCommandSystem().addCommand("ExportMap", Map::exportMap);
     GlobalCommandSystem().addCommand("SaveSelected", Map::exportSelection);
 	GlobalCommandSystem().addCommand("ReloadSkins", map::algorithm::reloadSkins);
+    GlobalCommandSystem().addCommand("FocusViews", std::bind(&Map::focusViewCmd, this, std::placeholders::_1), { cmd::ARGTYPE_VECTOR3, cmd::ARGTYPE_VECTOR3 });
 	GlobalCommandSystem().addCommand("ExportSelectedAsModel", map::algorithm::exportSelectedAsModelCmd,
         { cmd::ARGTYPE_STRING,
           cmd::ARGTYPE_STRING,

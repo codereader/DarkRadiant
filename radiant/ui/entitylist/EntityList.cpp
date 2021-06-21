@@ -2,9 +2,11 @@
 
 #include "ieventmanager.h"
 #include "imainframe.h"
+#include "icommandsystem.h"
 
 #include "registry/Widgets.h"
 #include "entitylib.h"
+#include "scenelib.h"
 #include "iselectable.h"
 #include "icameraview.h"
 #include "i18n.h"
@@ -332,17 +334,8 @@ void EntityList::onSelection(wxDataViewEvent& ev)
 
 			if (isSelected && _focusSelected->GetValue())
 			{
-				const AABB& aabb = node->worldAABB();
-				Vector3 origin(aabb.origin);
-
-				// Move the camera a bit off the AABB origin
-				origin += Vector3(-50, 0, 50);
-
-				// Rotate the camera a bit towards the "ground"
-				Vector3 angles(0, 0, 0);
-				angles[camera::CAMERA_PITCH] = -30;
-
-				GlobalCameraManager().focusAllCameras(origin, angles);
+                auto originAndAngles = scene::getOriginAndAnglesToLookAtNode(*node);
+                GlobalCommandSystem().executeCommand("FocusViews", cmd::ArgumentList{ originAndAngles.first, originAndAngles.second });
 			}
 
 			// Now reactivate the callbacks

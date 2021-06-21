@@ -200,10 +200,6 @@ public:
 	 */
 	MapFormatPtr getFormat();
 
-	/** greebo: Focus the XYViews and the Camera to the given point/angle.
-	 */
-	static void focusViews(const Vector3& point, const Vector3& angles);
-
 	/** greebo: Registers the commands with the EventManager.
 	 */
 	void registerCommands();
@@ -276,6 +272,11 @@ private:
 	void clearMapResource();
 
     void cleanupMergeOperation();
+
+    /** greebo: Focus the XYViews and the Camera to the given point/angle.
+     */
+    void focusViews(const Vector3& point, const Vector3& angles);
+    void focusViewCmd(const cmd::ArgumentList& args);
 };
 
 } // namespace map
