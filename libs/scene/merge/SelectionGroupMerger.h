@@ -49,8 +49,8 @@ private:
     selection::ISelectionGroupManager& _sourceManager;
     selection::ISelectionGroupManager& _baseManager;
 
-    std::map<std::string, INodePtr> _sourceNodes;
-    std::map<std::string, INodePtr> _baseNodes;
+    NodeFingerprints _sourceNodes;
+    NodeFingerprints _baseNodes;
 
     std::vector<std::size_t> _baseGroupIdsToRemove;
 
@@ -83,24 +83,10 @@ public:
     void adjustBaseGroups()
     {
         // Collect all source and base nodes for easier lookup
-        _sourceRoot->foreachNode([&](const INodePtr& node)
-        {
-            if (!std::dynamic_pointer_cast<IGroupSelectable>(node)) return true;
-
-            _sourceNodes.emplace(NodeUtils::GetGroupMemberFingerprint(node), node);
-            return true;
-        });
-
+        _sourceNodes = collectNodeFingerprints(_sourceRoot);
         _log << "Got " << _sourceNodes.size() << " groups in the source map" << std::endl;
 
-        _baseRoot->foreachNode([&](const INodePtr& node)
-        {
-            if (!std::dynamic_pointer_cast<IGroupSelectable>(node)) return true;
-
-            _baseNodes.emplace(NodeUtils::GetGroupMemberFingerprint(node), node);
-            return true;
-        });
-
+        _baseNodes = collectNodeFingerprints(_baseRoot);
         _log << "Got " << _baseNodes.size() << " in the base map" << std::endl;
 
         _log << "Start Processing base groups" << std::endl;

@@ -20,6 +20,10 @@ private:
     selection::ISelectionGroupManager& _sourceManager;
     selection::ISelectionGroupManager& _targetManager;
 
+    NodeFingerprints _baseNodes;
+    NodeFingerprints _sourceNodes;
+    NodeFingerprints _targetNodes;
+
 public:
     ThreeWaySelectionGroupMerger(const IMapRootNodePtr& baseRoot, const IMapRootNodePtr& sourceRoot, const IMapRootNodePtr& targetRoot) :
         _baseRoot(baseRoot),
@@ -47,7 +51,15 @@ public:
     
     void adjustTargetGroups()
     {
+        // Collect all node fingerprints for easier lookup
+        _sourceNodes = collectNodeFingerprints(_sourceRoot);
+        _log << "Got " << _sourceNodes.size() << " groups in the source map" << std::endl;
 
+        _targetNodes = collectNodeFingerprints(_targetRoot);
+        _log << "Got " << _targetNodes.size() << " in the target map" << std::endl;
+
+        _baseNodes = collectNodeFingerprints(_baseRoot);
+        _log << "Got " << _baseNodes.size() << " in the base map" << std::endl;
     }
 };
 
