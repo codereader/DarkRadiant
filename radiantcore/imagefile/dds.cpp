@@ -39,19 +39,17 @@ namespace image
 // Metadata for a single MipMap level
 struct MipMapInfo
 {
-    std::size_t width;  // pixel width
-    std::size_t height; // pixel height
+    /// Width in pixels
+    std::size_t width = 0;
 
-    std::size_t size;   // memory size used by this mipmap
+    /// Height in pixels
+    std::size_t height = 0;
 
-    std::size_t offset; // offset in _pixelData to the beginning of this mipmap
+    /// Size in bytes
+    std::size_t size = 0;
 
-    MipMapInfo() :
-        width(0),
-        height(0),
-        size(0),
-        offset(0)
-    {}
+    /// Offset from data buffer start to the beginning of this mipmap
+    std::size_t offset = 0;
 };
 typedef std::vector<MipMapInfo> MipMapInfoList;
 
@@ -85,20 +83,14 @@ public:
 
     // Add a new mipmap with the given parameters and return a pointer to its
     // allocated byte data
-    uint8_t* addMipMap(std::size_t width, std::size_t height,
-                       std::size_t size, std::size_t offset)
+    uint8_t* addMipMap(const MipMapInfo& info)
     {
-        // Create the MipMapInfo metadata and store it in our list
-        MipMapInfo info;
-        info.size = size;
-        info.width = width;
-        info.height = height;
-        info.offset = offset;
+        // Store MipMapInfo metadata in our list
         _mipMapInfo.push_back(info);
 
         // Return the absolute pointer to the new mipmap's byte data
-        assert(offset < _pixelData.size());
-        return _pixelData.data() + offset;
+        assert(info.offset < _pixelData.size());
+        return _pixelData.data() + info.offset;
     }
 
     /* Image implementation */
@@ -268,11 +260,9 @@ DDSImagePtr LoadDDSFromStream(InputStream& stream)
     // Load the mipmaps into the allocated memory
     for (std::size_t i = 0; i < mipMapInfo.size(); ++i)
     {
+        // Appaned a new mipmap and store the offset
         const MipMapInfo& mipMap = mipMapInfo[i];
-
-        // Declare a new mipmap and store the offset
-        uint8_t* mipMapBytes = image->addMipMap(mipMap.width, mipMap.height,
-                                                mipMap.size, mipMap.offset);
+        uint8_t* mipMapBytes = image->addMipMap(mipMap);
 
         // Read the data into the DDSImage's memory
         std::size_t bytesRead = stream.read(
