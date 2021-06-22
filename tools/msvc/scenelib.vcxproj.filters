@@ -148,5 +148,8 @@
     <ClInclude Include="..\..\libs\scene\merge\SelectionGroupMergerBase.h">
       <Filter>scene\merge</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\scene\merge\ThreeWayLayerMerger.h">
+      <Filter>scene\merge</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

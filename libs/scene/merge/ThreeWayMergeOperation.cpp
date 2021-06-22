@@ -5,6 +5,7 @@
 #include "NodeUtils.h"
 #include "GraphComparer.h"
 #include "ThreeWaySelectionGroupMerger.h"
+#include "ThreeWayLayerMerger.h"
 
 namespace scene
 {
@@ -62,7 +63,8 @@ ThreeWayMergeOperation::ThreeWayMergeOperation(const scene::IMapRootNodePtr& bas
     _baseRoot(baseRoot),
     _sourceRoot(sourceRoot),
     _targetRoot(targetRoot),
-    _mergeSelectionGroups(true)
+    _mergeSelectionGroups(true),
+    _mergeLayers(true)
 {}
 
 ThreeWayMergeOperation::~ThreeWayMergeOperation()
@@ -396,6 +398,12 @@ void ThreeWayMergeOperation::applyActions()
 
         merger.adjustTargetGroups();
     }
+
+    if (_mergeLayers)
+    {
+        ThreeWayLayerMerger merger(_baseRoot, _sourceRoot, _targetRoot);
+        merger.adjustTargetLayers();
+    }
 }
 
 void ThreeWayMergeOperation::setMergeSelectionGroups(bool enabled)
@@ -405,7 +413,7 @@ void ThreeWayMergeOperation::setMergeSelectionGroups(bool enabled)
 
 void ThreeWayMergeOperation::setMergeLayers(bool enabled)
 {
-    // TODO
+    _mergeLayers = enabled;
 }
 
 }

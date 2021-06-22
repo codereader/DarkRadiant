@@ -30,6 +30,7 @@ private:
     struct ComparisonData;
 
     bool _mergeSelectionGroups;
+    bool _mergeLayers;
 
 public:
     using Ptr = std::shared_ptr<ThreeWayMergeOperation>;
