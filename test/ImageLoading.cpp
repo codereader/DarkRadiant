@@ -166,4 +166,18 @@ TEST_F(ImageLoadingTest, LoadDDSCompressedDXT1)
     EXPECT_TRUE(img->isPrecompressed());
 }
 
+TEST_F(ImageLoadingTest, LoadDDSCompressedDXT5NPOT)
+{
+    auto img = loadImage("textures/dds/test_60x128_dxt5.dds");
+    ASSERT_TRUE(img);
+
+    // 60x128 image with no mipmaps
+    EXPECT_EQ(img->getWidth(), 60);
+    EXPECT_EQ(img->getHeight(), 128);
+    EXPECT_EQ(img->getLevels(), 1);
+
+    // Must be compressed
+    EXPECT_TRUE(img->isPrecompressed());
+}
+
 }
