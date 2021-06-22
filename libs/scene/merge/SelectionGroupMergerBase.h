@@ -80,14 +80,16 @@ protected:
 
     void ensureGroupSizeOrder(const IMapRootNodePtr& root, const std::function<void(const INodePtr&)>& actionCallback)
     {
-        std::map<std::size_t, std::size_t> baseGroupSizes;
+        std::map<std::size_t, std::size_t> groupSizes;
 
-        root->getSelectionGroupManager().foreachSelectionGroup([&](selection::ISelectionGroup& group)
+        auto& selectionGroupManager = root->getSelectionGroupManager();
+
+        selectionGroupManager.foreachSelectionGroup([&](selection::ISelectionGroup& group)
         {
-            baseGroupSizes.emplace(group.getId(), group.size());
+            groupSizes.emplace(group.getId(), group.size());
         });
 
-        _log << "Checking size ordering, got " << baseGroupSizes.size() << " base groups" << std::endl;
+        _log << "Checking size ordering, got " << groupSizes.size() << " base groups" << std::endl;
 
         root->foreachNode([&](const INodePtr& node)
         {
@@ -99,8 +101,60 @@ protected:
 
             std::sort(copiedSet.begin(), copiedSet.end(), [&](std::size_t a, std::size_t b)
             {
-                return baseGroupSizes[a] < baseGroupSizes[b];
+                return groupSizes[a] < groupSizes[b];
             });
+
+            // Check if any of the group sizes in this sequence are the same
+            if (copiedSet.size() > 1)
+            {
+                bool groupsWereMerged = false;
+
+                for (auto index = 1; index < copiedSet.size(); ++index)
+                {
+                    auto curGroupId = copiedSet[index];
+                    auto prevGroupId = copiedSet[index - 1];
+                    if (groupSizes[prevGroupId] != groupSizes[curGroupId]) continue; // not the same size
+
+                    // Merge this group with the one below, build the union of the two nodes
+                    std::set<INodePtr> members1;
+                    selectionGroupManager.getSelectionGroup(curGroupId)->foreachNode([&](const INodePtr& member) { members1.insert(member); });
+
+                    std::set<INodePtr> members2;
+                    auto groupToKeep = selectionGroupManager.getSelectionGroup(prevGroupId);
+                    groupToKeep->foreachNode([&](const INodePtr& member) { members2.insert(member); });
+
+                    std::set<INodePtr> membersNotIn2;
+                    std::set_difference(members1.begin(), members1.end(), members2.begin(), members2.end(), std::inserter(membersNotIn2, membersNotIn2.begin()));
+
+                    // Remove the redundant group
+                    selectionGroupManager.deleteSelectionGroup(curGroupId);
+
+                    // Remove this group Id from the sorted set
+                    copiedSet.erase(std::remove(copiedSet.begin(), copiedSet.end(), curGroupId), copiedSet.end());
+                    
+                    // Add all missing members to group
+                    for (const auto& missingMember : membersNotIn2)
+                    {
+                        groupToKeep->addNode(missingMember);
+                    }
+
+                    // Update the group size map
+                    groupSizes[groupToKeep->getId()] = groupToKeep->size();
+                    groupsWereMerged = true;
+
+                    // Move the index back one spot, it will be pushed +1 in the for-loop statement
+                    --index;
+                }
+
+                // We have to sort the groups again after the merge process, to keep the order
+                if (groupsWereMerged)
+                {
+                    std::sort(copiedSet.begin(), copiedSet.end(), [&](std::size_t a, std::size_t b)
+                    {
+                        return groupSizes[a] < groupSizes[b];
+                    });
+                }
+            }
 
             if (copiedSet != selectable->getGroupIds())
             {

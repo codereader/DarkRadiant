@@ -290,7 +290,7 @@ private:
         }
 
         // The base group exists, check if it has the same members
-        if (targetFingerprint == getGroupFingerprint(*baseGroup))
+        if (targetFingerprint != getGroupFingerprint(*baseGroup))
         {
             _modifiedTargetGroupIds.insert(group.getId());
         }
