@@ -194,8 +194,8 @@ static const std::map<std::string, GLenum> GL_FMT_FOR_FOURCC
 // Map uncompressed DDS bit depths to GLenum memory layouts
 static const std::map<int, GLenum> GL_FMT_FOR_BITDEPTH
 {
-    { 24, GL_RGB },
-    { 32, GL_RGBA }
+    { 24, GL_BGR },
+    { 32, GL_BGRA }
 };
 
 DDSImagePtr LoadDDSFromStream(InputStream& stream)
