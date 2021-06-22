@@ -1374,8 +1374,8 @@ TEST_F(SelectionGroupMergeTest, BrushesKeptDuringMerge)
     EXPECT_EQ(funcStatic7Groups.size(), 2); // has been grouped with func_static_8 (had one group before)
     EXPECT_EQ(funcStatic8Groups.size(), 1); // has been grouped with func_static_7
     EXPECT_EQ(brush7Groups.size(), 3); // one additional group with func_static_8
-    // The group of brush8 with func_static_8 should've been trimmed down but it's still there, so the count is 2
-    EXPECT_EQ(brush8Groups.size(), 2); // two groups remaining, with the second brush8.
+    // The 2 groups brush8 was a member of has been been merged down to 1, so the count is 1
+    EXPECT_EQ(brush8Groups.size(), 1); // one group remaining, with the second brush8.
 
     auto& baseManager = merger->getBaseRoot()->getSelectionGroupManager();
 
@@ -1405,26 +1405,6 @@ TEST_F(SelectionGroupMergeTest, BrushesKeptDuringMerge)
     EXPECT_FALSE(groupContains(firstGroup, brush7));
     EXPECT_FALSE(groupContains(firstGroup, func_static_7));
     EXPECT_FALSE(groupContains(firstGroup, func_static_8));
-
-    secondGroup = baseManager.getSelectionGroup(brush8Groups[1]);
-    EXPECT_TRUE(groupContains(firstGroup, brush8));
-    EXPECT_FALSE(groupContains(firstGroup, brush7));
-    EXPECT_FALSE(groupContains(firstGroup, func_static_7));
-    EXPECT_FALSE(groupContains(firstGroup, func_static_8));
-
-    std::set<std::string> firstGroupNodes;
-    std::set<std::string> secondGroupNodes;
-    firstGroup->foreachNode([&](const scene::INodePtr& node)
-    {
-        firstGroupNodes.emplace(NodeUtils::GetGroupMemberFingerprint(node));
-    });
-    secondGroup->foreachNode([&](const scene::INodePtr& node)
-    {
-        secondGroupNodes.emplace(NodeUtils::GetGroupMemberFingerprint(node));
-    });
-
-    // These two groups are redundant after func_static_8 has dropped out
-    EXPECT_EQ(firstGroupNodes, secondGroupNodes);
 
     // Run another merger, it shouldn't find any actions to take
     merger = std::make_unique<SelectionGroupMerger>(merger->getSourceRoot(), merger->getBaseRoot());
