@@ -110,7 +110,15 @@ public:
 
         // Run a final pass over the node membership to ensure the group sizes are ascending for each node
         // Each group on every node is a superset of any group that was set on that node before
-        ensureGroupSizeOrder();
+        ensureGroupSizeOrder(_baseRoot, [&](const INodePtr& affectedNode)
+        {
+            _changes.emplace_back(Change
+            {
+                0,
+                affectedNode,
+                Change::Type::NodeGroupsReordered
+            });
+        });
     }
 
 private:
@@ -258,49 +266,6 @@ private:
                 Change::Type::NodeAddedToGroup
             });
         }
-    }
-
-    void ensureGroupSizeOrder()
-    {
-        std::map<std::size_t, std::size_t> baseGroupSizes;
-
-        _baseManager.foreachSelectionGroup([&](selection::ISelectionGroup& group)
-        {
-            baseGroupSizes.emplace(group.getId(), group.size());
-        });
-
-        _log << "Checking size ordering, got " << baseGroupSizes.size() << " base groups" << std::endl;
-
-        _baseRoot->foreachNode([&](const INodePtr& node)
-        {
-            auto selectable = std::dynamic_pointer_cast<IGroupSelectable>(node);
-
-            if (!selectable) return true;
-
-            auto copiedSet = selectable->getGroupIds();
-            
-            std::sort(copiedSet.begin(), copiedSet.end(), [&](std::size_t a, std::size_t b)
-            {
-                return baseGroupSizes[a] < baseGroupSizes[b];
-            });
-
-            if (copiedSet != selectable->getGroupIds())
-            {
-                _log << "Group membership order in node " << node->name() << " has changed." << std::endl;
-
-                // Re-assign the group to the sorted set
-                selection::assignNodeToSelectionGroups(node, copiedSet);
-
-                _changes.emplace_back(Change
-                {
-                    0,
-                    node,
-                    Change::Type::NodeGroupsReordered
-                });
-            }
-
-            return true;
-        });
     }
 };
 

@@ -114,6 +114,18 @@ public:
 
         // Try to replicate all membership changes to groups in the source map
         adjustGroupMemberships();
+
+        // Run a final pass over the node membership to ensure the group sizes are ascending for each node
+        // Each group on every node is a superset of any group that was set on that node before
+        ensureGroupSizeOrder(_targetRoot, [&](const INodePtr& affectedNode)
+        {
+            _changes.emplace_back(Change
+            {
+                0,
+                affectedNode,
+                Change::Type::NodeGroupsReordered
+            });
+        });
     }
 
 private:
@@ -157,6 +169,13 @@ private:
 
             _log << "Removing group with ID " << id << " from the target map, as it has been removed in the source" << std::endl;
             _targetManager.deleteSelectionGroup(id);
+
+            _changes.emplace_back(Change
+            {
+                id,
+                INodePtr(),
+                Change::Type::TargetGroupRemoved
+            });
         }
     }
     
@@ -175,6 +194,13 @@ private:
 
             auto targetGroup = _targetManager.createSelectionGroup();
 
+            _changes.emplace_back(Change
+            {
+                targetGroup->getId(),
+                INodePtr(),
+                Change::Type::TargetGroupAdded
+            });
+
             _log << "Adding missing source group to the target map: ID=" << targetGroup->getId() << std::endl;
 
             auto sourceGroup = _sourceManager.getSelectionGroup(id);
@@ -187,6 +213,13 @@ private:
                 {
                     _log << "Adding target node to newly created group" << std::endl;
                     targetGroup->addNode(existingTargetNode->second);
+
+                    _changes.emplace_back(Change
+                    {
+                        targetGroup->getId(),
+                        existingTargetNode->second,
+                        Change::Type::NodeAddedToGroup
+                    });
                 }
             });
         }

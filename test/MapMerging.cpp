@@ -2441,12 +2441,14 @@ inline bool groupContainsNodes(selection::ISelectionGroup& group, const std::vec
 // FS1-FS2 group dissolved
 // Added Brushes 15 and 16
 // [5-6]-15 group added
+// 7-FS7 group added (same as in source)
 //
 // Source Map Changes:
 // [[N1-N2-N3]-L1]-L2 group added
 // Brush 14 removed by degeneration 11-12-13 remains
 // [5-6]-4 group added
 // FS3-FS4 group dissolved
+// 7-FS7 group added (same as in target)
 
 void verifyTargetScene(const scene::IMapRootNodePtr& targetRoot)
 {
@@ -2496,6 +2498,18 @@ void verifyTargetScene(const scene::IMapRootNodePtr& targetRoot)
         std::dynamic_pointer_cast<IGroupSelectable>(brush11)->getGroupIds().front());
 
     EXPECT_TRUE(groupContainsNodes(*brush11Group, { brush11, brush12, brush13 }));
+
+    // brush 7 and func_static_7 form a group
+    auto brush7 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(targetRoot), "textures/numbers/7");
+    auto func_static_7 = algorithm::getEntityByName(targetRoot, "func_static_7");
+
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(brush7)->getGroupIds().size(), 1);
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(func_static_7)->getGroupIds().size(), 1);
+
+    auto brush7Group = targetRoot->getSelectionGroupManager().getSelectionGroup(
+        std::dynamic_pointer_cast<IGroupSelectable>(brush7)->getGroupIds().front());
+
+    EXPECT_TRUE(groupContainsNodes(*brush7Group, { brush7, func_static_7 }));
 }
 
 TEST_F(ThreeWaySelectionGroupMergeTest, GroupRemoval)
@@ -2559,6 +2573,39 @@ TEST_F(ThreeWaySelectionGroupMergeTest, GroupAddition)
     EXPECT_EQ(changeCountByType(merger->getChangeLog(), ThreeWaySelectionGroupMerger::Change::Type::TargetGroupAdded), 1);
 
     // The rest of the target changes should still be intact
+    verifyTargetScene(merger->getTargetRoot());
+
+    // Run another merger, it shouldn't find any actions to take
+    merger = std::make_unique<ThreeWaySelectionGroupMerger>(merger->getBaseRoot(), merger->getSourceRoot(), merger->getTargetRoot());
+    merger->adjustTargetGroups();
+    EXPECT_TRUE(merger->getChangeLog().empty());
+
+    verifyTargetScene(merger->getTargetRoot());
+}
+
+// Checks that a source group which has an exact counter-part in the target map is not added as a redundant group
+TEST_F(ThreeWaySelectionGroupMergeTest, RedundantGroupNotAdded)
+{
+    auto merger = setupThreeWayGroupMerger("maps/threeway_merge_groups_base.mapx", "maps/threeway_merge_groups_source_1.mapx", "maps/threeway_merge_groups_target_1.mapx");
+
+    verifyTargetScene(merger->getTargetRoot());
+
+    merger->adjustTargetGroups();
+
+    // Make sure the func_static_7 + brush7 group is not duplicated
+    auto brush7 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(merger->getTargetRoot()), "textures/numbers/7");
+    auto func_static_7 = algorithm::getEntityByName(merger->getTargetRoot(), "func_static_7");
+
+    // Only one group with brush7
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(brush7)->getGroupIds().size(), 1);
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(func_static_7)->getGroupIds().size(), 1);
+
+    auto brush7Group = merger->getTargetRoot()->getSelectionGroupManager().getSelectionGroup(
+        std::dynamic_pointer_cast<IGroupSelectable>(brush7)->getGroupIds().front());
+
+    EXPECT_TRUE(groupContainsNodes(*brush7Group, { brush7, func_static_7 }));
+
+    // The target changes should still be intact
     verifyTargetScene(merger->getTargetRoot());
 
     // Run another merger, it shouldn't find any actions to take

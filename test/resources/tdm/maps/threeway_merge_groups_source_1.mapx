@@ -13,10 +13,11 @@
     <selectionGroup id="6" name=""/>
     <selectionGroup id="8" name=""/>
     <selectionGroup id="9" name=""/>
+    <selectionGroup id="10" name=""/>
   </selectionGroups>
   <selectionSets/>
   <properties>
-    <property key="EditTimeInSeconds" value="3635"/>
+    <property key="EditTimeInSeconds" value="3638"/>
     <property key="LastCameraAngle" value="-64.5 177.6 0"/>
     <property key="LastCameraPosition" value="480.842 37.4907 699.277"/>
     <property key="LastShaderClipboardMaterial" value="textures/numbers/10"/>
@@ -113,7 +114,9 @@
         <layers>
           <layer id="0"/>
         </layers>
-        <selectionGroups/>
+        <selectionGroups>
+          <selectionGroup id="10"/>
+        </selectionGroups>
         <selectionSets/>
       </brush>
       <brush number="2">
@@ -1241,7 +1244,9 @@
     <layers>
       <layer id="0"/>
     </layers>
-    <selectionGroups/>
+    <selectionGroups>
+      <selectionGroup id="10"/>
+    </selectionGroups>
     <selectionSets/>
   </entity>
   <entity number="8">

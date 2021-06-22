@@ -6,6 +6,7 @@
 #include "imap.h"
 #include "NodeUtils.h"
 #include "math/Hash.h"
+#include "selectionlib.h"
 
 namespace scene
 {
@@ -75,6 +76,45 @@ protected:
         });
 
         return result;
+    }
+
+    void ensureGroupSizeOrder(const IMapRootNodePtr& root, const std::function<void(const INodePtr&)>& actionCallback)
+    {
+        std::map<std::size_t, std::size_t> baseGroupSizes;
+
+        root->getSelectionGroupManager().foreachSelectionGroup([&](selection::ISelectionGroup& group)
+        {
+            baseGroupSizes.emplace(group.getId(), group.size());
+        });
+
+        _log << "Checking size ordering, got " << baseGroupSizes.size() << " base groups" << std::endl;
+
+        root->foreachNode([&](const INodePtr& node)
+        {
+            auto selectable = std::dynamic_pointer_cast<IGroupSelectable>(node);
+
+            if (!selectable) return true;
+
+            auto copiedSet = selectable->getGroupIds();
+
+            std::sort(copiedSet.begin(), copiedSet.end(), [&](std::size_t a, std::size_t b)
+            {
+                return baseGroupSizes[a] < baseGroupSizes[b];
+            });
+
+            if (copiedSet != selectable->getGroupIds())
+            {
+                _log << "Group membership order in node " << node->name() << " has changed." << std::endl;
+
+                // Re-assign the group to the sorted set
+                selection::assignNodeToSelectionGroups(node, copiedSet);
+
+                // Notify the client code
+                actionCallback(node);
+            }
+
+            return true;
+        });
     }
 };
 
