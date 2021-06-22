@@ -8,6 +8,13 @@ namespace scene
 namespace merge
 {
 
+/**
+ * Three-way merger class to detect the changes that have been made
+ * to selection groups in the source map, replaying them onto the target scene.
+ * 
+ * It will try to keep all added grouping information intact, while it will 
+ * only remove group links if they haven't been altered in the target map.
+ */
 class ThreeWaySelectionGroupMerger :
     public SelectionGroupMergerBase
 {
@@ -17,7 +24,6 @@ public:
         enum class Type
         {
             NodeAddedToGroup,
-            NodeRemovedFromGroup,
             TargetGroupAdded,
             TargetGroupRemoved,
             NodeGroupsReordered,
@@ -37,18 +43,15 @@ private:
     selection::ISelectionGroupManager& _sourceManager;
     selection::ISelectionGroupManager& _targetManager;
 
-    NodeFingerprints _baseNodes;
-    NodeFingerprints _sourceNodes;
+private:
+    // Temporary data only needed during analysis/processing
     NodeFingerprints _targetNodes;
 
     std::map<std::size_t, std::string> _sourceGroupFingerprints;
     std::set<std::string> _targetGroupFingerprints;
 
     std::set<std::size_t> _addedSourceGroupIds; // groups that have been added to source
-    std::set<std::size_t> _addedTargetGroupIds; // groups that have been added to target
-
     std::set<std::size_t> _removedSourceGroupIds; // base groups that have been removed in source
-    std::set<std::size_t> _removedTargetGroupIds; // base groups that have been removed in target
 
     std::set<std::size_t> _modifiedSourceGroupIds; // groups that have been modified in source
     std::set<std::size_t> _modifiedTargetGroupIds; // groups that have been modified in target
@@ -87,15 +90,13 @@ public:
     
     void adjustTargetGroups()
     {
-        // Collect all node fingerprints for easier lookup
-        _sourceNodes = collectNodeFingerprints(_sourceRoot);
-        _log << "Got " << _sourceNodes.size() << " groups in the source map" << std::endl;
+        cleanupWorkingData();
+        _changes.clear();
+        _log.str(std::string());
 
+        // Collect all node fingerprints for easier lookup
         _targetNodes = collectNodeFingerprints(_targetRoot);
         _log << "Got " << _targetNodes.size() << " in the target map" << std::endl;
-
-        _baseNodes = collectNodeFingerprints(_baseRoot);
-        _log << "Got " << _baseNodes.size() << " in the base map" << std::endl;
 
         _baseManager.foreachSelectionGroup(
             std::bind(&ThreeWaySelectionGroupMerger::processBaseGroup, this, std::placeholders::_1));
@@ -126,9 +127,26 @@ public:
                 Change::Type::NodeGroupsReordered
             });
         });
+
+        cleanupWorkingData();
     }
 
 private:
+    void cleanupWorkingData()
+    {
+        _targetNodes.clear();
+
+        _sourceGroupFingerprints.clear();
+        _targetGroupFingerprints.clear();
+
+        _addedSourceGroupIds.clear();
+
+        _removedSourceGroupIds.clear();
+
+        _modifiedSourceGroupIds.clear();
+        _modifiedTargetGroupIds.clear();
+    }
+
     void adjustGroupMemberships()
     {
         for (auto id : _modifiedSourceGroupIds)
@@ -237,15 +255,6 @@ private:
             _log << "Base group is not present in source: " << group.getId() << std::endl;
             _removedSourceGroupIds.insert(group.getId());
         }
-
-        // Check if this group exists in target
-        auto targetGroup = _targetManager.getSelectionGroup(group.getId());
-
-        if (!targetGroup)
-        {
-            _log << "Base group is not present in target: " << group.getId() << std::endl;
-            _removedTargetGroupIds.insert(group.getId());
-        }
     }
 
     void processSourceGroup(selection::ISelectionGroup& group)
@@ -285,7 +294,6 @@ private:
         if (!baseGroup)
         {
             _log << "Target group is not present in base: " << group.getId() << std::endl;
-            _addedTargetGroupIds.insert(group.getId());
             return;
         }
 
