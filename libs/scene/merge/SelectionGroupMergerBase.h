@@ -5,6 +5,7 @@
 #include "iselectiongroup.h"
 #include "imap.h"
 #include "NodeUtils.h"
+#include "math/Hash.h"
 
 namespace scene
 {
@@ -36,6 +37,26 @@ protected:
         });
 
         return members;
+    }
+
+    // A group fingerprint only consists of the member fingerprints, its ID and the member ordering is irrelevant
+    std::string getGroupFingerprint(selection::ISelectionGroup& group)
+    {
+        std::set<std::string> memberFingerprints;
+
+        group.foreachNode([&](const INodePtr& member)
+        {
+            memberFingerprints.emplace(NodeUtils::GetGroupMemberFingerprint(member));
+        });
+
+        math::Hash hash;
+
+        for (const auto& fingerprint : memberFingerprints)
+        {
+            hash.addString(fingerprint);
+        }
+
+        return hash;
     }
 
     using NodeFingerprints = std::map<std::string, scene::INodePtr>;

@@ -13,6 +13,7 @@
 #include "scene/merge/MergeOperation.h"
 #include "scene/merge/ThreeWayMergeOperation.h"
 #include "scene/merge/SelectionGroupMerger.h"
+#include "scene/merge/ThreeWaySelectionGroupMerger.h"
 #include "scene/merge/LayerMerger.h"
 
 namespace test
@@ -22,6 +23,7 @@ using MapMergeTest = RadiantTest;
 using SelectionGroupMergeTest = RadiantTest;
 using LayerMergeTest = RadiantTest;
 using ThreeWayMergeTest = RadiantTest;
+using ThreeWaySelectionGroupMergeTest = RadiantTest;
 
 TEST_F(MapMergeTest, BrushFingerprint)
 {
@@ -2376,6 +2378,195 @@ TEST_F(ThreeWayMergeTest, RemovalOfModifiedKeyValue)
 
     // The changed value has now been removed
     EXPECT_EQ(Node_getEntity(entity)->getKeyValue("extra2"), "");
+}
+
+inline std::unique_ptr<ThreeWaySelectionGroupMerger> setupThreeWayGroupMerger(const std::string& baseMap,
+    const std::string& sourceMap, const std::string& targetMap)
+{
+    auto baseResource = GlobalMapResourceManager().createFromPath(baseMap);
+    EXPECT_TRUE(baseResource->load()) << "Test map not found: " << baseMap;
+
+    auto changedResource = GlobalMapResourceManager().createFromPath(sourceMap);
+    EXPECT_TRUE(changedResource->load()) << "Test map not found: " << sourceMap;
+
+    auto targetResource = GlobalMapResourceManager().createFromPath(targetMap);
+    EXPECT_TRUE(targetResource->load()) << "Test map not found: " << targetMap;
+
+    auto operation = ThreeWayMergeOperation::Create(baseResource->getRootNode(), changedResource->getRootNode(), targetResource->getRootNode());
+    operation->setMergeSelectionGroups(false); // we do this manually
+    operation->applyActions();
+
+    return std::make_unique<ThreeWaySelectionGroupMerger>(baseResource->getRootNode(), changedResource->getRootNode(), targetResource->getRootNode());
+}
+
+inline std::size_t changeCountByType(const std::vector<ThreeWaySelectionGroupMerger::Change>& log,
+    ThreeWaySelectionGroupMerger::Change::Type type)
+{
+    return std::count_if(log.begin(), log.end(), [=](const ThreeWaySelectionGroupMerger::Change& change)
+    {
+        return change.type == type;
+    });
+}
+
+inline bool groupContainsNodes(selection::ISelectionGroup& group, const std::vector<scene::INodePtr>& nodes)
+{
+    std::set<scene::INodePtr> groupMembers;
+    group.foreachNode([&](const scene::INodePtr& node) { groupMembers.insert(node); });
+
+    for (const auto& requiredNode : nodes)
+    {
+        if (groupMembers.count(requiredNode) != 1)
+        {
+            return false;
+        }
+    }
+
+    return !nodes.empty();
+}
+
+// Three-Way Selection Group Merge Scenarios
+// 
+// Base Map Groups:
+// N1-N2-N3
+// [N1-N2-N3]-L1
+// 11-12-13-14
+// FS1-FS2
+// FS3-FS4
+// 1-2
+// [1-2]-3
+// 5-6
+// 
+// Target Map Changes:
+// L2 deleted
+// FS1-FS2 group dissolved
+// Added Brushes 15 and 16
+// [5-6]-15 group added
+//
+// Source Map Changes:
+// [[N1-N2-N3]-L1]-L2 group added
+// Brush 14 removed by degeneration 11-12-13 remains
+// [5-6]-4 group added
+// FS3-FS4 group dissolved
+
+void verifyTargetScene(const scene::IMapRootNodePtr& targetRoot)
+{
+    // FS1 and FS2 no longer form a group
+    auto func_static_1 = algorithm::getEntityByName(targetRoot, "func_static_1");
+    auto func_static_2 = algorithm::getEntityByName(targetRoot, "func_static_2");
+
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(func_static_1)->getGroupIds().size(), 0);
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(func_static_2)->getGroupIds().size(), 0);
+
+    // FS3 and FS4 still form a group
+    auto func_static_3 = algorithm::getEntityByName(targetRoot, "func_static_3");
+    auto func_static_4 = algorithm::getEntityByName(targetRoot, "func_static_4");
+
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(func_static_3)->getGroupIds().size(), 1);
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(func_static_4)->getGroupIds().size(), 1);
+
+    // [5-6]-15 group added
+    auto brush15 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(targetRoot), "textures/numbers/15");
+    auto brush5 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(targetRoot), "textures/numbers/5");
+    auto brush6 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(targetRoot), "textures/numbers/6");
+
+    bool foundGroup = false;
+
+    for (auto groupId : std::dynamic_pointer_cast<IGroupSelectable>(brush15)->getGroupIds())
+    {
+        auto group = targetRoot->getSelectionGroupManager().getSelectionGroup(groupId);
+
+        if (groupContainsNodes(*group, { brush15, brush5, brush6 }))
+        {
+            foundGroup = true;
+            break;
+        }
+    }
+
+    EXPECT_TRUE(foundGroup) << "Brush 15 does not form a group with brush 5 and 6";
+
+    auto brush11 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(targetRoot), "textures/numbers/11");
+    auto brush12 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(targetRoot), "textures/numbers/12");
+    auto brush13 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(targetRoot), "textures/numbers/13");
+
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(brush11)->getGroupIds().size(), 1);
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(brush12)->getGroupIds().size(), 1);
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(brush13)->getGroupIds().size(), 1);
+
+    auto brush11Group = targetRoot->getSelectionGroupManager().getSelectionGroup(
+        std::dynamic_pointer_cast<IGroupSelectable>(brush11)->getGroupIds().front());
+
+    EXPECT_TRUE(groupContainsNodes(*brush11Group, { brush11, brush12, brush13 }));
+}
+
+TEST_F(ThreeWaySelectionGroupMergeTest, GroupRemoval)
+{
+    auto merger = setupThreeWayGroupMerger("maps/threeway_merge_groups_base.mapx", "maps/threeway_merge_groups_source_1.mapx", "maps/threeway_merge_groups_target_1.mapx");
+
+    verifyTargetScene(merger->getTargetRoot());
+
+    merger->adjustTargetGroups();
+
+    // Target scene tries to add a group with L2 in it, but this node is no longer present
+    EXPECT_FALSE(algorithm::getEntityByName(merger->getTargetRoot(), "light_2"));
+
+    // FS3 and FS4 no longer form a group
+    auto func_static_3 = algorithm::getEntityByName(merger->getTargetRoot(), "func_static_3");
+    auto func_static_4 = algorithm::getEntityByName(merger->getTargetRoot(), "func_static_4");
+
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(func_static_3)->getGroupIds().size(), 0);
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(func_static_4)->getGroupIds().size(), 0);
+
+    EXPECT_EQ(changeCountByType(merger->getChangeLog(), ThreeWaySelectionGroupMerger::Change::Type::TargetGroupRemoved), 1);
+
+    // The rest of the target changes should still be intact
+    verifyTargetScene(merger->getTargetRoot());
+
+    // Run another merger, it shouldn't find any actions to take
+    merger = std::make_unique<ThreeWaySelectionGroupMerger>(merger->getBaseRoot(), merger->getSourceRoot(), merger->getTargetRoot());
+    merger->adjustTargetGroups();
+    EXPECT_TRUE(merger->getChangeLog().empty());
+
+    verifyTargetScene(merger->getTargetRoot());
+}
+
+TEST_F(ThreeWaySelectionGroupMergeTest, GroupAddition)
+{
+    auto merger = setupThreeWayGroupMerger("maps/threeway_merge_groups_base.mapx", "maps/threeway_merge_groups_source_1.mapx", "maps/threeway_merge_groups_target_1.mapx");
+
+    verifyTargetScene(merger->getTargetRoot());
+
+    // Brush 4 is not part of any group yet
+    auto brush4 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(merger->getTargetRoot()), "textures/numbers/4");
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(brush4)->getGroupIds().size(), 0);
+
+    merger->adjustTargetGroups();
+
+    // Target scene tries to add a group with L2 in it, but this node is no longer present
+    EXPECT_FALSE(algorithm::getEntityByName(merger->getTargetRoot(), "light_2"));
+
+    // Brushes 5+6 already formed a group, Brush 4 should have been added
+    brush4 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(merger->getTargetRoot()), "textures/numbers/4");
+    auto brush5 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(merger->getTargetRoot()), "textures/numbers/5");
+    auto brush6 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(merger->getTargetRoot()), "textures/numbers/6");
+
+    EXPECT_EQ(std::dynamic_pointer_cast<IGroupSelectable>(brush4)->getGroupIds().size(), 1);
+
+    auto group = merger->getTargetRoot()->getSelectionGroupManager().getSelectionGroup(std::dynamic_pointer_cast<IGroupSelectable>(brush4)->getGroupIds().front());
+
+    EXPECT_TRUE(groupContainsNodes(*group, { brush4, brush5, brush6 }));
+
+    // This change should have been recorded
+    EXPECT_EQ(changeCountByType(merger->getChangeLog(), ThreeWaySelectionGroupMerger::Change::Type::TargetGroupAdded), 1);
+
+    // The rest of the target changes should still be intact
+    verifyTargetScene(merger->getTargetRoot());
+
+    // Run another merger, it shouldn't find any actions to take
+    merger = std::make_unique<ThreeWaySelectionGroupMerger>(merger->getBaseRoot(), merger->getSourceRoot(), merger->getTargetRoot());
+    merger->adjustTargetGroups();
+    EXPECT_TRUE(merger->getChangeLog().empty());
+
+    verifyTargetScene(merger->getTargetRoot());
 }
 
 }
