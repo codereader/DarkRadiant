@@ -43,14 +43,14 @@ public:
     /// Return the start of the pixel data for this image
     virtual uint8_t* getPixels() const = 0;
 
-    /// Return the width of the image in pixels
-    virtual std::size_t getWidth() const = 0;
-
-    /// Return the height of the image in pixels
-    virtual std::size_t getHeight() const = 0;
-
     /// Return number of resolution levels (mipmaps)
     virtual std::size_t getLevels() const = 0;
+
+    /// Return the width of the specified level in pixels
+    virtual std::size_t getWidth(std::size_t level = 0) const = 0;
+
+    /// Return the height of the specified level in pixels
+    virtual std::size_t getHeight(std::size_t level = 0) const = 0;
 
     // greebo: Returns TRUE whether this image is precompressed (DDS)
     virtual bool isPrecompressed() const {

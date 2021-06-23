@@ -95,8 +95,14 @@ public:
 
     /* Image implementation */
     uint8_t* getPixels() const override { return _pixelData.data(); }
-    std::size_t getWidth() const override { return _mipMapInfo[0].width; }
-    std::size_t getHeight() const override { return _mipMapInfo[0].height; }
+    std::size_t getWidth(std::size_t level = 0) const override
+    {
+        return _mipMapInfo[level].width;
+    }
+    std::size_t getHeight(std::size_t level = 0) const override
+    {
+        return _mipMapInfo[level].height;
+    }
     std::size_t getLevels() const override { return _mipMapInfo.size(); }
     bool isPrecompressed() const override { return _compressed; }
 

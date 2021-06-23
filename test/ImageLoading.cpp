@@ -132,6 +132,12 @@ TEST_F(ImageLoadingTest, LoadDDSUncompressedMipMaps)
 
     // 5 mipmap levels (16, 8, 4, 2, 1)
     EXPECT_EQ(img->getLevels(), 5);
+    EXPECT_EQ(img->getWidth(0), 16);
+    EXPECT_EQ(img->getWidth(1), 8);
+    EXPECT_EQ(img->getHeight(1), 8);
+    EXPECT_EQ(img->getWidth(2), 4);
+    EXPECT_EQ(img->getHeight(3), 2);
+    EXPECT_EQ(img->getHeight(4), 1);
 }
 
 TEST_F(ImageLoadingTest, LoadDDSUncompressedNPOT)
