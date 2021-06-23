@@ -1,0 +1,2156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<map version="1" format="portable">
+  <layers>
+    <layer id="0" name="Default"/>
+    <layer id="1" name="1"/>
+    <layer id="2" name="2"/>
+    <layer id="3" name="3"/>
+    <layer id="4" name="4"/>
+    <layer id="5" name="5"/>
+    <layer id="6" name="NewLayer"/>
+    <layer id="7" name="NewLayer2"/>
+    <layer id="8" name="NewLayer3"/>
+    <layer id="9" name="Shared"/>
+  </layers>
+  <selectionGroups/>
+  <selectionSets/>
+  <properties>
+    <property key="EditTimeInSeconds" value="3763"/>
+    <property key="LastCameraAngle" value="-63.9 179.1 0"/>
+    <property key="LastCameraPosition" value="469.534 24.9854 704.864"/>
+    <property key="LastShaderClipboardMaterial" value="textures/numbers/0"/>
+  </properties>
+  <entity number="0">
+    <primitives>
+      <brush number="0">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="1.000000" xy="0" yy="0.015625" ty="2.000000"/>
+            <material name="textures/numbers/1"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="31.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/1"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="1.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/1"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="1.000000" xy="0" yy="0.015625" ty="31.000000"/>
+            <material name="textures/numbers/1"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="2.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/1"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="-128.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="0" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/1"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="9"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+      <brush number="1">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="1.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/2"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="0" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/2"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="1.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/2"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="1.000000" xy="0" yy="0.015625" ty="0"/>
+            <material name="textures/numbers/2"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="1.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/2"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="0" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/2"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="9"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+      <brush number="2">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="1.000000" xy="0" yy="0.015625" ty="0"/>
+            <material name="textures/numbers/3"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="1.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/3"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="1.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/3"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="1.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/3"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="0" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/3"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="0" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/3"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="9"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+      <brush number="3">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="1.000000" xy="0" yy="0.015625" ty="31.000000"/>
+            <material name="textures/numbers/4"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="2.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/4"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="-128.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="1.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/4"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="1.000000" xy="0" yy="0.015625" ty="2.000000"/>
+            <material name="textures/numbers/4"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="31.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/4"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="0" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/4"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="9"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+      <brush number="4">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="1.000000" xy="0" yy="0.015625" ty="30.000000"/>
+            <material name="textures/numbers/5"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="3.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/5"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="-192.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="1.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/5"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="1.000000" xy="0" yy="0.015625" ty="3.000000"/>
+            <material name="textures/numbers/5"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="30.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/5"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="128.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="0" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/5"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="5"/>
+          <layer id="9"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+      <brush number="5">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="1.000000" xy="0" yy="0.015625" ty="29.000000"/>
+            <material name="textures/numbers/6"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="4.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/6"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="-256.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="1.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/6"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="1.000000" xy="0" yy="0.015625" ty="4.000000"/>
+            <material name="textures/numbers/6"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="29.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/6"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="192.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="0" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/6"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="9"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+      <brush number="6">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="1.000000" xy="0" yy="0.015625" ty="28.000000"/>
+            <material name="textures/numbers/7"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="5.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/7"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="-320.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="1.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/7"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="1.000000" xy="0" yy="0.015625" ty="5.000000"/>
+            <material name="textures/numbers/7"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="28.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/7"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="256.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="0" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/7"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="9"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+      <brush number="7">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="1.000000" xy="0" yy="0.015625" ty="27.000000"/>
+            <material name="textures/numbers/8"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="6.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/8"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="-384.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="1.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/8"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="1.000000" xy="0" yy="0.015625" ty="6.000000"/>
+            <material name="textures/numbers/8"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="27.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/8"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="320.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="0" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/8"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="9"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+      <brush number="8">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="31.500000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/2"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="-96.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="0" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/2"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="31.500000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/2"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="31.500000" xy="0" yy="0.015625" ty="0"/>
+            <material name="textures/numbers/2"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="1.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/2"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="1.500000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/2"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="9"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+      <brush number="9">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="31.500000" xy="0" yy="0.015625" ty="28.000000"/>
+            <material name="textures/numbers/7"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="-96.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="5.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/7"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="-320.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="31.500000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/7"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="31.500000" xy="0" yy="0.015625" ty="5.000000"/>
+            <material name="textures/numbers/7"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="28.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/7"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="256.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="1.500000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/7"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="9"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+      <brush number="10">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="31.500000" xy="0" yy="0.015625" ty="27.000000"/>
+            <material name="textures/numbers/8"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="-96.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="6.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/8"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="-384.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="31.500000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/8"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="31.500000" xy="0" yy="0.015625" ty="6.000000"/>
+            <material name="textures/numbers/8"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="27.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/8"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="320.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="1.500000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/8"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="9"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+      <brush number="11">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="31.500000" xy="0" yy="0.015625" ty="2.000000"/>
+            <material name="textures/numbers/1"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="-96.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="31.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/1"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="31.500000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/1"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="31.500000" xy="0" yy="0.015625" ty="31.000000"/>
+            <material name="textures/numbers/1"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="2.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/1"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="-128.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="1.500000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/1"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="9"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+      <brush number="12">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="31.500000" xy="0" yy="0.015625" ty="0"/>
+            <material name="textures/numbers/3"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="-96.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="1.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/3"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="31.500000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/3"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="31.500000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/3"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="0" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/3"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="1.500000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/3"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="9"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+      <brush number="13">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="31.500000" xy="0" yy="0.015625" ty="31.000000"/>
+            <material name="textures/numbers/4"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="-96.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="2.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/4"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="-128.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="31.500000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/4"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="31.500000" xy="0" yy="0.015625" ty="2.000000"/>
+            <material name="textures/numbers/4"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="31.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/4"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="1.500000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/4"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="9"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+      <brush number="14">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="31.500000" xy="0" yy="0.015625" ty="30.000000"/>
+            <material name="textures/numbers/5"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="-96.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="3.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/5"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="-192.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="31.500000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/5"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="31.500000" xy="0" yy="0.015625" ty="3.000000"/>
+            <material name="textures/numbers/5"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="30.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/5"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="128.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="1.500000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/5"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="5"/>
+          <layer id="9"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+      <brush number="15">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="31.500000" xy="0" yy="0.015625" ty="29.000000"/>
+            <material name="textures/numbers/6"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="-96.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="4.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/6"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="-256.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="31.500000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/6"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="31.500000" xy="0" yy="0.015625" ty="4.000000"/>
+            <material name="textures/numbers/6"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="29.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/6"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="192.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="1.500000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/6"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="9"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+      <brush number="16">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="3.500000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/12"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="160.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="0" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/12"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="3.500000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/12"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="3.500000" xy="0" yy="0.015625" ty="0"/>
+            <material name="textures/numbers/12"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="-224.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="1.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/12"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="29.500000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/12"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="0"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+      <brush number="17">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="3.500000" xy="0" yy="0.015625" ty="28.000000"/>
+            <material name="textures/numbers/17"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="160.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="5.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/17"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="-320.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="3.500000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/17"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="3.500000" xy="0" yy="0.015625" ty="5.000000"/>
+            <material name="textures/numbers/17"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="-224.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="28.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/17"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="256.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="29.500000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/17"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="0"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+      <brush number="18">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="3.500000" xy="0" yy="0.015625" ty="0"/>
+            <material name="textures/numbers/13"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="160.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="1.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/13"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="3.500000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/13"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="3.500000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/13"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="-224.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="0" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/13"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="29.500000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/13"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="0"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+      <brush number="19">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="3.500000" xy="0" yy="0.015625" ty="31.000000"/>
+            <material name="textures/numbers/14"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="160.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="2.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/14"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="-128.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="3.500000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/14"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="3.500000" xy="0" yy="0.015625" ty="2.000000"/>
+            <material name="textures/numbers/14"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="-224.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="31.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/14"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="29.500000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/14"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="0"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+      <brush number="20">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="3.500000" xy="0" yy="0.015625" ty="2.000000"/>
+            <material name="textures/numbers/11"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="160.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="31.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/11"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="3.500000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/11"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="3.500000" xy="0" yy="0.015625" ty="31.000000"/>
+            <material name="textures/numbers/11"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="-224.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="2.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/11"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="-128.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="29.500000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/11"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="0"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+      <brush number="21">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="3.500000" xy="0" yy="0.015625" ty="30.000000"/>
+            <material name="textures/numbers/15"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="160.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="3.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/15"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="-192.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="3.500000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/15"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="3.500000" xy="0" yy="0.015625" ty="3.000000"/>
+            <material name="textures/numbers/15"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="-224.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="30.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/15"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="128.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="29.500000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/15"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="0"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+      <brush number="22">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="3.500000" xy="0" yy="0.015625" ty="29.000000"/>
+            <material name="textures/numbers/16"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="160.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="4.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/16"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="-256.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="3.500000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/16"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="3.500000" xy="0" yy="0.015625" ty="4.000000"/>
+            <material name="textures/numbers/16"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="-224.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="29.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/16"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="192.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="29.500000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/16"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="0"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+      <brush number="23">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="3.500000" xy="0" yy="0.015625" ty="27.000000"/>
+            <material name="textures/numbers/18"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="160.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="6.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/18"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="-384.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="3.500000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/18"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="3.500000" xy="0" yy="0.015625" ty="6.000000"/>
+            <material name="textures/numbers/18"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="-224.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="27.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/18"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="320.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="29.500000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/18"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="0"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+      <brush number="24">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="27.000000" xy="0" yy="0.015625" ty="30.000000"/>
+            <material name="textures/numbers/0"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="-384.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="3.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/0"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="-192.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="27.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/0"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="27.000000" xy="0" yy="0.015625" ty="3.000000"/>
+            <material name="textures/numbers/0"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="320.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="30.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/0"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="128.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="6.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/0"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="0"/>
+          <layer id="1"/>
+          <layer id="2"/>
+          <layer id="4"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+    </primitives>
+    <keyValues>
+      <keyValue key="classname" value="worldspawn"/>
+    </keyValues>
+    <layers>
+      <layer id="0"/>
+    </layers>
+    <selectionGroups/>
+    <selectionSets/>
+  </entity>
+  <entity number="1">
+    <primitives>
+      <brush number="0">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="30.000000" xy="0" yy="0.015625" ty="2.000000"/>
+            <material name="textures/numbers/1"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="31.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/1"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="30.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/1"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="30.000000" xy="0" yy="0.015625" ty="31.000000"/>
+            <material name="textures/numbers/1"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="2.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/1"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="3.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/1"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="1"/>
+          <layer id="9"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+      <brush number="1">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="29.000000" xy="0" yy="0.015625" ty="2.000000"/>
+            <material name="textures/numbers/1"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="31.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/1"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="29.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/1"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="29.000000" xy="0" yy="0.015625" ty="31.000000"/>
+            <material name="textures/numbers/1"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="2.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/1"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="4.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/1"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="1"/>
+          <layer id="9"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+    </primitives>
+    <keyValues>
+      <keyValue key="classname" value="func_static"/>
+      <keyValue key="name" value="func_static_1"/>
+      <keyValue key="model" value="func_static_1"/>
+      <keyValue key="origin" value="-96 192 32"/>
+    </keyValues>
+    <layers>
+      <layer id="1"/>
+      <layer id="9"/>
+    </layers>
+    <selectionGroups/>
+    <selectionSets/>
+  </entity>
+  <entity number="2">
+    <primitives>
+      <brush number="0">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="30.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/2"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="0" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/2"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="30.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/2"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="30.000000" xy="0" yy="0.015625" ty="0"/>
+            <material name="textures/numbers/2"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="1.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/2"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="3.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/2"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="2"/>
+          <layer id="9"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+      <brush number="1">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="29.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/2"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="0" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/2"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="29.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/2"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="29.000000" xy="0" yy="0.015625" ty="0"/>
+            <material name="textures/numbers/2"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="1.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/2"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="4.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/2"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="2"/>
+          <layer id="9"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+    </primitives>
+    <keyValues>
+      <keyValue key="classname" value="func_static"/>
+      <keyValue key="name" value="func_static_2"/>
+      <keyValue key="model" value="func_static_2"/>
+      <keyValue key="origin" value="-32 192 32"/>
+    </keyValues>
+    <layers>
+      <layer id="2"/>
+      <layer id="9"/>
+    </layers>
+    <selectionGroups/>
+    <selectionSets/>
+  </entity>
+  <entity number="3">
+    <primitives>
+      <brush number="0">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="30.000000" xy="0" yy="0.015625" ty="0"/>
+            <material name="textures/numbers/3"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="1.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/3"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="30.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/3"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="30.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/3"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="0" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/3"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="3.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/3"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="3"/>
+          <layer id="9"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+      <brush number="1">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="29.000000" xy="0" yy="0.015625" ty="0"/>
+            <material name="textures/numbers/3"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="1.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/3"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="29.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/3"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="29.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/3"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="0" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/3"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="4.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/3"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="3"/>
+          <layer id="9"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+    </primitives>
+    <keyValues>
+      <keyValue key="classname" value="func_static"/>
+      <keyValue key="name" value="func_static_3"/>
+      <keyValue key="model" value="func_static_3"/>
+      <keyValue key="origin" value="32 192 32"/>
+    </keyValues>
+    <layers>
+      <layer id="3"/>
+      <layer id="9"/>
+    </layers>
+    <selectionGroups/>
+    <selectionSets/>
+  </entity>
+  <entity number="4">
+    <primitives>
+      <brush number="0">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="29.000000" xy="0" yy="0.015625" ty="31.000000"/>
+            <material name="textures/numbers/4"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="2.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/4"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="29.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/4"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="29.000000" xy="0" yy="0.015625" ty="2.000000"/>
+            <material name="textures/numbers/4"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="31.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/4"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="4.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/4"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="4"/>
+          <layer id="9"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+      <brush number="1">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="30.000000" xy="0" yy="0.015625" ty="31.000000"/>
+            <material name="textures/numbers/4"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="2.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/4"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="30.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/4"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="30.000000" xy="0" yy="0.015625" ty="2.000000"/>
+            <material name="textures/numbers/4"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="31.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/4"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="3.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/4"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="4"/>
+          <layer id="9"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+    </primitives>
+    <keyValues>
+      <keyValue key="classname" value="func_static"/>
+      <keyValue key="name" value="func_static_4"/>
+      <keyValue key="model" value="func_static_4"/>
+      <keyValue key="origin" value="96 192 32"/>
+    </keyValues>
+    <layers>
+      <layer id="4"/>
+      <layer id="9"/>
+    </layers>
+    <selectionGroups/>
+    <selectionSets/>
+  </entity>
+  <entity number="5">
+    <primitives>
+      <brush number="0">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="29.000000" xy="0" yy="0.015625" ty="30.000000"/>
+            <material name="textures/numbers/5"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="3.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/5"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="29.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/5"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="29.000000" xy="0" yy="0.015625" ty="3.000000"/>
+            <material name="textures/numbers/5"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="30.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/5"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="4.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/5"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="5"/>
+          <layer id="9"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+      <brush number="1">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="30.000000" xy="0" yy="0.015625" ty="30.000000"/>
+            <material name="textures/numbers/5"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="3.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/5"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="30.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/5"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="30.000000" xy="0" yy="0.015625" ty="3.000000"/>
+            <material name="textures/numbers/5"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="30.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/5"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="3.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/5"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="5"/>
+          <layer id="9"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+    </primitives>
+    <keyValues>
+      <keyValue key="classname" value="func_static"/>
+      <keyValue key="name" value="func_static_5"/>
+      <keyValue key="model" value="func_static_5"/>
+      <keyValue key="origin" value="160 192 32"/>
+    </keyValues>
+    <layers>
+      <layer id="5"/>
+      <layer id="9"/>
+    </layers>
+    <selectionGroups/>
+    <selectionSets/>
+  </entity>
+  <entity number="6">
+    <primitives>
+      <brush number="0">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="30.000000" xy="0" yy="0.015625" ty="29.000000"/>
+            <material name="textures/numbers/6"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="4.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/6"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="30.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/6"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="30.000000" xy="0" yy="0.015625" ty="4.000000"/>
+            <material name="textures/numbers/6"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="29.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/6"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="3.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/6"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="9"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+      <brush number="1">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="29.000000" xy="0" yy="0.015625" ty="29.000000"/>
+            <material name="textures/numbers/6"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="4.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/6"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="29.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/6"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="29.000000" xy="0" yy="0.015625" ty="4.000000"/>
+            <material name="textures/numbers/6"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="29.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/6"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="4.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/6"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="9"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+    </primitives>
+    <keyValues>
+      <keyValue key="classname" value="func_static"/>
+      <keyValue key="name" value="func_static_6"/>
+      <keyValue key="model" value="func_static_6"/>
+      <keyValue key="origin" value="224 192 32"/>
+    </keyValues>
+    <layers>
+      <layer id="9"/>
+    </layers>
+    <selectionGroups/>
+    <selectionSets/>
+  </entity>
+  <entity number="7">
+    <primitives>
+      <brush number="0">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="30.000000" xy="0" yy="0.015625" ty="28.000000"/>
+            <material name="textures/numbers/7"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="5.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/7"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="30.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/7"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="30.000000" xy="0" yy="0.015625" ty="5.000000"/>
+            <material name="textures/numbers/7"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="28.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/7"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="3.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/7"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="9"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+      <brush number="1">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="29.000000" xy="0" yy="0.015625" ty="28.000000"/>
+            <material name="textures/numbers/7"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="5.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/7"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="29.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/7"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="29.000000" xy="0" yy="0.015625" ty="5.000000"/>
+            <material name="textures/numbers/7"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="28.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/7"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="4.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/7"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="9"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+    </primitives>
+    <keyValues>
+      <keyValue key="classname" value="func_static"/>
+      <keyValue key="name" value="func_static_7"/>
+      <keyValue key="model" value="func_static_7"/>
+      <keyValue key="origin" value="288 192 32"/>
+    </keyValues>
+    <layers>
+      <layer id="9"/>
+    </layers>
+    <selectionGroups/>
+    <selectionSets/>
+  </entity>
+  <entity number="8">
+    <primitives>
+      <brush number="0">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="30.000000" xy="0" yy="0.015625" ty="27.000000"/>
+            <material name="textures/numbers/8"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="6.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/8"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="30.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/8"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="30.000000" xy="0" yy="0.015625" ty="6.000000"/>
+            <material name="textures/numbers/8"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="27.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/8"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="3.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/8"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="9"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+      <brush number="1">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="29.000000" xy="0" yy="0.015625" ty="27.000000"/>
+            <material name="textures/numbers/8"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="-64.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="6.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/8"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="29.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/8"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="29.000000" xy="0" yy="0.015625" ty="6.000000"/>
+            <material name="textures/numbers/8"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="0"/>
+            <textureProjection xx="0.015625" yx="0" tx="27.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/8"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="-32.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="4.000000" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/8"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="9"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+    </primitives>
+    <keyValues>
+      <keyValue key="classname" value="func_static"/>
+      <keyValue key="name" value="func_static_8"/>
+      <keyValue key="model" value="func_static_8"/>
+      <keyValue key="origin" value="352 192 32"/>
+    </keyValues>
+    <layers>
+      <layer id="9"/>
+    </layers>
+    <selectionGroups/>
+    <selectionSets/>
+  </entity>
+  <entity number="9">
+    <primitives>
+      <brush number="0">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-32.000000"/>
+            <textureProjection xx="0.015385" yx="0" tx="27.107693" xy="0" yy="0.016129" ty="1.032258"/>
+            <material name="textures/numbers/20"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="-33.000000"/>
+            <textureProjection xx="0.016129" yx="0" tx="31.967743" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/20"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="-63.000000"/>
+            <textureProjection xx="0.015385" yx="0" tx="27.107693" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/20"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="-32.000000"/>
+            <textureProjection xx="0.015385" yx="0" tx="27.107693" xy="0" yy="0.016129" ty="31.967743"/>
+            <material name="textures/numbers/20"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="-32.000000"/>
+            <textureProjection xx="0.016129" yx="0" tx="1.032258" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/20"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="1.000000"/>
+            <textureProjection xx="0.015385" yx="0" tx="5.892308" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/20"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="0"/>
+          <layer id="6"/>
+          <layer id="7"/>
+          <layer id="8"/>
+          <layer id="9"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+      <brush number="1">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-32.000000"/>
+            <textureProjection xx="0.015385" yx="0" tx="27.107693" xy="0" yy="0.016129" ty="2.064516"/>
+            <material name="textures/numbers/19"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="-33.000000"/>
+            <textureProjection xx="0.016129" yx="0" tx="30.935484" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/19"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="1.000000"/>
+            <textureProjection xx="0.015385" yx="0" tx="27.107693" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/19"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="-32.000000"/>
+            <textureProjection xx="0.015385" yx="0" tx="27.107693" xy="0" yy="0.016129" ty="30.935484"/>
+            <material name="textures/numbers/19"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="-32.000000"/>
+            <textureProjection xx="0.016129" yx="0" tx="2.064516" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/19"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="-63.000000"/>
+            <textureProjection xx="0.015385" yx="0" tx="5.892308" xy="0" yy="0.015625" ty="1.000000"/>
+            <material name="textures/numbers/19"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="0"/>
+          <layer id="6"/>
+          <layer id="7"/>
+          <layer id="8"/>
+          <layer id="9"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+    </primitives>
+    <keyValues>
+      <keyValue key="classname" value="func_static"/>
+      <keyValue key="name" value="expandable"/>
+      <keyValue key="model" value="expandable"/>
+      <keyValue key="origin" value="-65 350 32"/>
+    </keyValues>
+    <layers>
+      <layer id="0"/>
+      <layer id="6"/>
+      <layer id="7"/>
+      <layer id="8"/>
+      <layer id="9"/>
+    </layers>
+    <selectionGroups/>
+    <selectionSets/>
+  </entity>
+  <entity number="10">
+    <primitives/>
+    <keyValues>
+      <keyValue key="classname" value="light"/>
+      <keyValue key="name" value="light_1"/>
+      <keyValue key="light_center" value="0 0 0"/>
+      <keyValue key="light_radius" value="64 32 320"/>
+      <keyValue key="origin" value="-64 448 32"/>
+    </keyValues>
+    <layers>
+      <layer id="0"/>
+      <layer id="6"/>
+      <layer id="7"/>
+      <layer id="8"/>
+      <layer id="9"/>
+    </layers>
+    <selectionGroups/>
+    <selectionSets/>
+  </entity>
+</map>

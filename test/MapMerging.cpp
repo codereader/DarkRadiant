@@ -14,6 +14,7 @@
 #include "scene/merge/ThreeWayMergeOperation.h"
 #include "scene/merge/SelectionGroupMerger.h"
 #include "scene/merge/ThreeWaySelectionGroupMerger.h"
+#include "scene/merge/ThreeWayLayerMerger.h"
 #include "scene/merge/LayerMerger.h"
 
 namespace test
@@ -24,6 +25,7 @@ using SelectionGroupMergeTest = RadiantTest;
 using LayerMergeTest = RadiantTest;
 using ThreeWayMergeTest = RadiantTest;
 using ThreeWaySelectionGroupMergeTest = RadiantTest;
+using ThreeWayLayerMergeTest = RadiantTest;
 
 TEST_F(MapMergeTest, BrushFingerprint)
 {
@@ -2573,6 +2575,193 @@ TEST_F(ThreeWaySelectionGroupMergeTest, RedundantGroupNotAdded)
 
     // The target changes should still be intact
     verifyTargetScene(merger->getTargetRoot());
+}
+
+// Layer Merge Base map: merging_layers1.mapx
+// 
+// func_static_1 is part of layer 1
+// func_static_X is part of layer X
+// Shared Layer: all func_static_s, expandable entity and light_1
+// Default Layer: brush 11-18, expandable entity and light_1
+//
+// Layer Merge Source Map: threeway_merge_layers_source_1
+// --- Deletions ---
+// Layers 6, 7 and 8 deleted
+// --- Additions ---
+// Layer NewLayer has been added (with expandable and light_1)
+// Layer NewLayer2 has been added (with expandable and light_1)
+// Layer NewLayer3 has been added (with expandable and light_1)
+// --- Modifications ---
+// Layer "1": Brush 1 removed, Brush "0" added
+// Layer "2": Brush 2 removed, Brush "0" added
+// Layer "3": Brush 3 removed (only removals)
+// Layer "4": Brush 4 removed, Brush "0" added
+// 
+// Layer merge Target Map: threeway_merge_layers_target_1
+// --- Deletions ---
+// Layer 6 was not modified
+// Layer 7 got nodes added in target
+// Layer 8 got nodes removed in target
+// --- Additions ---
+// Layer NewLayer has been added (with expandable and brush11)
+// Layer NewLayer3 has been added (with expandable and light_1) - exactly the same as in source
+// --- Modifications ---
+// Layer "1": no changes
+// Layer "2": brush 19 (newly created added)
+// Layer "3" has been deleted
+// Layer "4" has been deleted
+
+std::unique_ptr<ThreeWayLayerMerger> setupThreeWayLayerMerger(const std::string& baseMap, const std::string& sourceMap, const std::string& targetMap)
+{
+    auto originalResource = GlobalMapResourceManager().createFromPath(baseMap);
+    EXPECT_TRUE(originalResource->load()) << "Test map not found: " << baseMap;
+
+    auto targetResource = GlobalMapResourceManager().createFromPath(targetMap);
+    EXPECT_TRUE(targetResource->load()) << "Test map not found: " << targetMap;
+
+    auto changedResource = GlobalMapResourceManager().createFromPath(sourceMap);
+    EXPECT_TRUE(changedResource->load()) << "Test map not found: " << sourceMap;
+
+    auto operation = ThreeWayMergeOperation::Create(originalResource->getRootNode(), changedResource->getRootNode(), targetResource->getRootNode());
+    operation->setMergeLayers(false); // we do this manually
+    operation->applyActions();
+
+    return std::make_unique<ThreeWayLayerMerger>(originalResource->getRootNode(), changedResource->getRootNode(), targetResource->getRootNode());
+}
+
+TEST_F(ThreeWayLayerMergeTest, LayerRemovedInSource)
+{
+    auto merger = setupThreeWayLayerMerger("maps/merging_layers_1.mapx", "maps/threeway_merge_layers_source_1.mapx", "maps/threeway_merge_layers_target_1.mapx");
+
+    // Layers 6,7,8 should still be present
+    auto& targetManager = merger->getTargetRoot()->getLayerManager();
+
+    EXPECT_NE(targetManager.getLayerID("6"), -1);
+    EXPECT_NE(targetManager.getLayerID("7"), -1);
+    EXPECT_NE(targetManager.getLayerID("8"), -1);
+
+    merger->adjustTargetLayers();
+
+    // Layer 6 was not modified in target, but removed in source => should be gone
+    EXPECT_EQ(targetManager.getLayerID("6"), -1);
+
+    // Layer 7 was modified and got nodes added, should not be removed from target
+    EXPECT_NE(targetManager.getLayerID("7"), -1);
+
+    // Check if the layer membership is still intact
+    auto brush17 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(merger->getTargetRoot()), "textures/numbers/17");
+    auto brush7 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(merger->getTargetRoot()), "textures/numbers/7");
+    auto func_static_7 = algorithm::getEntityByName(merger->getTargetRoot(), "func_static_7");
+
+    EXPECT_TRUE(nodeIsMemberOfLayer(brush17, { "7" }));
+    EXPECT_TRUE(nodeIsMemberOfLayer(brush7, { "7" }));
+    EXPECT_TRUE(nodeIsMemberOfLayer(func_static_7, { "7" }));
+
+    // Layer 8 was modified and got nodes removed in target (no additions) => should be gone
+    EXPECT_EQ(targetManager.getLayerID("8"), -1);
+}
+
+TEST_F(ThreeWayLayerMergeTest, LayerAddedInSource)
+{
+    auto merger = setupThreeWayLayerMerger("maps/merging_layers_1.mapx", "maps/threeway_merge_layers_source_1.mapx", "maps/threeway_merge_layers_target_1.mapx");
+
+    // Check the base situation in the target map
+    auto& targetManager = merger->getTargetRoot()->getLayerManager();
+
+    EXPECT_NE(targetManager.getLayerID("NewLayer"), -1);
+    EXPECT_EQ(targetManager.getLayerID("NewLayer2"), -1); // doesn't exist
+    EXPECT_NE(targetManager.getLayerID("NewLayer3"), -1);
+    EXPECT_EQ(targetManager.getLayerID("NewLayer4"), -1); // doesn't exist
+
+    merger->adjustTargetLayers();
+
+    // After merging, the target map should have two new layers (NewLayer2 and NewLayer4)
+    EXPECT_NE(targetManager.getLayerID("NewLayer"), -1);
+    EXPECT_NE(targetManager.getLayerID("NewLayer2"), -1);
+    EXPECT_NE(targetManager.getLayerID("NewLayer3"), -1);
+    EXPECT_NE(targetManager.getLayerID("NewLayer4"), -1);
+
+    auto brush11 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(merger->getTargetRoot()), "textures/numbers/11");
+    auto expandable = algorithm::getEntityByName(merger->getTargetRoot(), "expandable");
+    auto light_1 = algorithm::getEntityByName(merger->getTargetRoot(), "light_1");
+
+    // Brush 11 is still only part of NewLayer
+    EXPECT_TRUE(nodeIsMemberOfLayer(brush11, { "NewLayer" }));
+
+    // Expandable entity is part of every created layer
+    EXPECT_TRUE(nodeIsMemberOfLayer(expandable, { "NewLayer","NewLayer2", "NewLayer3", "NewLayer4" }));
+
+    // light_1 is now part of NewLayer2, NewLayer3 and NewLayer4 (which originates from NewLayer in source)
+    EXPECT_TRUE(nodeIsMemberOfLayer(light_1, { "NewLayer2", "NewLayer3", "NewLayer4" }));
+}
+
+TEST_F(ThreeWayLayerMergeTest, LayerModifiedInSource)
+{
+    auto merger = setupThreeWayLayerMerger("maps/merging_layers_1.mapx", "maps/threeway_merge_layers_source_1.mapx", "maps/threeway_merge_layers_target_1.mapx");
+
+    // Check the base situation in the target map
+    auto& targetManager = merger->getTargetRoot()->getLayerManager();
+
+    auto brush0 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(merger->getTargetRoot()), "textures/numbers/0");
+    auto brush1 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(merger->getTargetRoot()), "textures/numbers/1");
+    auto brush2 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(merger->getTargetRoot()), "textures/numbers/2");
+    auto brush3 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(merger->getTargetRoot()), "textures/numbers/3");
+    auto brush4 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(merger->getTargetRoot()), "textures/numbers/4");
+    auto brush19 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(merger->getTargetRoot()), "textures/numbers/19");
+    auto func_static_1 = algorithm::getEntityByName(merger->getTargetRoot(), "func_static_1");
+    auto func_static_2 = algorithm::getEntityByName(merger->getTargetRoot(), "func_static_2");
+    auto func_static_3 = algorithm::getEntityByName(merger->getTargetRoot(), "func_static_3");
+    auto func_static_4 = algorithm::getEntityByName(merger->getTargetRoot(), "func_static_4");
+
+    EXPECT_EQ(targetManager.getLayerID("3"), -1); // doesn't exist
+    EXPECT_EQ(targetManager.getLayerID("4"), -1); // doesn't exist
+
+    // Starting layer config
+
+    // Brush 0 is not part of any existing or removed layer
+    EXPECT_FALSE(nodeIsMemberOfLayer(brush0, { "1" }));
+    EXPECT_FALSE(nodeIsMemberOfLayer(brush0, { "2" }));
+    EXPECT_FALSE(nodeIsMemberOfLayer(brush0, { "3" }));
+    EXPECT_FALSE(nodeIsMemberOfLayer(brush0, { "4" }));
+
+    // func_static_1 and _2 are still part of "1" and "2"
+    EXPECT_TRUE(nodeIsMemberOfLayer(func_static_1, { "1" }));
+    EXPECT_TRUE(nodeIsMemberOfLayer(func_static_2, { "2" }));
+    EXPECT_FALSE(nodeIsMemberOfLayer(func_static_3, { "3" })); // layer 3 is gone
+    EXPECT_FALSE(nodeIsMemberOfLayer(func_static_4, { "4" })); // layer 4 is gone
+
+    // Brushes 1 and 2 have not been removed from layer "1" and "2"
+    EXPECT_TRUE(nodeIsMemberOfLayer(brush1, { "1" }));
+    EXPECT_TRUE(nodeIsMemberOfLayer(brush2, { "2" }));
+    EXPECT_FALSE(nodeIsMemberOfLayer(brush3, { "3" })); // layer 3 is gone
+    EXPECT_FALSE(nodeIsMemberOfLayer(brush4, { "4" })); // layer 4 is gone
+
+    // Brush 19 has been added to layer "2"
+    EXPECT_TRUE(nodeIsMemberOfLayer(brush19, { "2" }));
+
+    merger->adjustTargetLayers();
+
+    // After merging, the layer 4 should exist again, layer 3 should still be gone
+    EXPECT_EQ(targetManager.getLayerID("3"), -1);
+    EXPECT_NE(targetManager.getLayerID("4"), -1);
+
+    // Check Layer "1": brush 0 was added, brushes 1 removed
+    EXPECT_TRUE(nodeIsMemberOfLayer(brush0, { "1" }));
+    EXPECT_TRUE(nodeIsMemberOfLayer(func_static_1, { "1" }));
+    EXPECT_FALSE(nodeIsMemberOfLayer(brush1, { "1" }));
+
+    // Check Layer "2": brushes "2" removed, brush "0" added, brush 19 still part of it
+    EXPECT_TRUE(nodeIsMemberOfLayer(func_static_2, { "2" }));
+    EXPECT_FALSE(nodeIsMemberOfLayer(brush2, { "2" }));
+    EXPECT_TRUE(nodeIsMemberOfLayer(brush0, { "2" }));
+    EXPECT_TRUE(nodeIsMemberOfLayer(brush19, { "2" }));
+
+    // Layer "3": it's still gone
+
+    // Layer "4": brush 0 and func_static_4 remains in it, as defined by the source
+    EXPECT_TRUE(nodeIsMemberOfLayer(brush0, { "4" }));
+    EXPECT_TRUE(nodeIsMemberOfLayer(func_static_4, { "4" }));
+    EXPECT_FALSE(nodeIsMemberOfLayer(brush4, { "4" }));
 }
 
 }
