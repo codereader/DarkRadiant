@@ -103,19 +103,16 @@ public:
     /* BindableTexture implementation */
     TexturePtr bindTexture(const std::string& name) const
     {
-        GLuint textureNum;
-
-        debug::assertNoGlErrors();
-
         // Allocate a new texture number and store it into the Texture structure
+        GLuint textureNum;
         glGenTextures(1, &textureNum);
         glBindTexture(GL_TEXTURE_2D, textureNum);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                        GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
-
+        debug::checkGLErrors("before uploading DDS mipmaps");
         for (std::size_t i = 0; i < _mipMapInfo.size(); ++i)
         {
             const MipMapInfo& mipMap = _mipMapInfo[i];
@@ -129,6 +126,8 @@ public:
                     0, static_cast<GLsizei>(mipMap.size),
                     _pixelData.data() + mipMap.offset
                 );
+                debug::checkGLErrors("uploading DDS mipmap "
+                                     + string::to_string(i));
             }
             else
             {
