@@ -126,8 +126,21 @@ public:
                     0, static_cast<GLsizei>(mipMap.size),
                     _pixelData.data() + mipMap.offset
                 );
-                debug::checkGLErrors("uploading DDS mipmap "
-                                     + string::to_string(i));
+
+                // If the upload failed but this is not level 0, we can fall
+                // back to regenerating the mipmaps.
+                if (debug::checkGLErrors("uploading DDS mipmap") != GL_NO_ERROR
+                    && i > 0)
+                {
+                    rWarning() << "DDSImage: failed to upload mipmap " << (i+1)
+                               << " of " << _mipMapInfo.size()
+                               << " [" << mipMap.width << "x" << mipMap.height << "],"
+                               << " regenerating mipmaps.\n";
+                    glGenerateMipmap(GL_TEXTURE_2D);
+
+                    // Don't process any more mipmaps
+                    break;
+                }
             }
             else
             {
