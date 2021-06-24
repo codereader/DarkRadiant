@@ -47,6 +47,9 @@ MergeControlDialog::MergeControlDialog() :
     auto* mergeSourceEntry = findNamedObject<wxutil::PathEntry>(this, "MergeMapFilename");
     mergeSourceEntry->Bind(wxutil::EV_PATH_ENTRY_CHANGED, &MergeControlDialog::onMergeSourceChanged, this);
 
+    auto* baseMapEntry = findNamedObject<wxutil::PathEntry>(this, "BaseMapFilename");
+    baseMapEntry->Bind(wxutil::EV_PATH_ENTRY_CHANGED, &MergeControlDialog::onMergeSourceChanged, this);
+
     auto* abortMergeButton = findNamedObject<wxButton>(this, "AbortMergeButton");
     abortMergeButton->Bind(wxEVT_BUTTON, &MergeControlDialog::onAbortMerge, this);
 
@@ -140,6 +143,11 @@ void MergeControlDialog::onMergeSourceChanged(wxCommandEvent& ev)
     update();
 }
 
+bool MergeControlDialog::isInThreeWayMergeMode()
+{
+    return findNamedObject<wxToggleButton>(this, "ThreeWayMode")->GetValue();
+}
+
 void MergeControlDialog::setThreeWayMergeMode(bool enabled)
 {
     findNamedObject<wxToggleButton>(this, "TwoWayMode")->SetValue(!enabled);
@@ -147,7 +155,10 @@ void MergeControlDialog::setThreeWayMergeMode(bool enabled)
 
     findNamedObject<wxPanel>(this, "BaseMapPanel")->Show(enabled);
     findNamedObject<wxPanel>(this, "BaseMapPanel")->SetSize(wxSize(-1, enabled ? -1 : 0));
+ 
+    update();
 
+    InvalidateBestSize();
     Layout();
     Fit();
 }
@@ -458,11 +469,16 @@ void MergeControlDialog::updateControls()
 
     auto selectedMergeNodes = getSelectedMergeNodes();
     bool mergeInProgress = GlobalMapModule().getEditMode() == IMap::EditMode::Merge;
+    auto baseMapPath = findNamedObject<wxutil::PathEntry>(this, "BaseMapFilename")->getValue();
     auto sourceMapPath = findNamedObject<wxutil::PathEntry>(this, "MergeMapFilename")->getValue();
+
+    findNamedObject<wxWindow>(this, "TwoWayMode")->Enable(!mergeInProgress);
+    findNamedObject<wxWindow>(this, "ThreeWayMode")->Enable(!mergeInProgress);
 
     findNamedObject<wxButton>(this, "AbortMergeButton")->Enable(mergeInProgress);
     findNamedObject<wxButton>(this, "FinishMergeButton")->Enable(mergeInProgress);
-    findNamedObject<wxButton>(this, "LoadAndCompareButton")->Enable(!mergeInProgress && !sourceMapPath.empty());
+    findNamedObject<wxButton>(this, "LoadAndCompareButton")->Enable(!mergeInProgress && !sourceMapPath.empty() &&
+        (!isInThreeWayMergeMode() || !baseMapPath.empty()));
     findNamedObject<wxWindow>(this, "SummaryPanel")->Enable(mergeInProgress);
     findNamedObject<wxWindow>(this, "BaseMapFilename")->Enable(!mergeInProgress);
     findNamedObject<wxWindow>(this, "MergeMapFilename")->Enable(!mergeInProgress);
@@ -484,6 +500,7 @@ void MergeControlDialog::updateControls()
         addActionDescription(actionDescriptionPanel, selectedMergeNodes.front());
     }
 
+    InvalidateBestSize();
     Layout();
     Fit();
 }
@@ -650,9 +667,6 @@ void MergeControlDialog::updateSummary()
         label->SetFont(font);
         label->SetForegroundColour(wxNullColour);
     }
-
-    Layout();
-    Fit();
 }
 
 }

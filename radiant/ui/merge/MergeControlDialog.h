@@ -40,6 +40,7 @@ public:
      */
     void selectionChanged(const scene::INodePtr& node, bool isComponent) override;
 
+    bool isInThreeWayMergeMode();
     void setThreeWayMergeMode(bool enabled);
 
 protected:

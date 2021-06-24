@@ -2,7 +2,7 @@
 <resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
 	<object class="wxPanel" name="MergeControlDialogMainPanel">
 		<style>wxTAB_TRAVERSAL</style>
-		<size>391,504</size>
+		<size>391,-1</size>
 		<object class="wxBoxSizer">
 			<orient>wxVERTICAL</orient>
 			<object class="sizeritem">
@@ -143,7 +143,7 @@
 												<border>6</border>
 												<object class="wxStaticText" name="BaseMapLabel">
 													<tooltip>A common base map both maps have started from, makes detecting merge conflicts much easier.</tooltip>
-													<label>Common Ancestor (optional)</label>
+													<label>Common Ancestor</label>
 													<wrap>-1</wrap>
 												</object>
 											</object>
@@ -153,58 +153,67 @@
 							</object>
 						</object>
 					</object>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxEXPAND</flag>
+				<border>0</border>
+				<object class="wxBoxSizer">
+					<minsize>-1,30</minsize>
+					<orient>wxHORIZONTAL</orient>
 					<object class="sizeritem">
-						<option>0</option>
-						<flag>wxBOTTOM|wxEXPAND|wxTOP</flag>
-						<border>12</border>
-						<object class="wxBoxSizer">
-							<orient>wxHORIZONTAL</orient>
-							<object class="sizeritem">
-								<option>1</option>
-								<flag>wxRIGHT</flag>
-								<border>0</border>
-								<object class="wxButton" name="LoadAndCompareButton">
-									<font>
-										<style>normal</style>
-										<weight>bold</weight>
-										<underlined>0</underlined>
-									</font>
-									<label>Load and Compare</label>
-									<default>0</default>
-									<markup>0</markup>
-									<bitmap />
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>1</option>
-								<flag>wxLEFT</flag>
-								<border>6</border>
-								<object class="wxButton" name="AbortMergeButton">
-									<label>Abort Merge</label>
-									<default>0</default>
-									<markup>0</markup>
-									<bitmap />
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>1</option>
-								<flag>wxLEFT</flag>
-								<border>6</border>
-								<object class="wxButton" name="FinishMergeButton">
-									<font>
-										<style>normal</style>
-										<weight>bold</weight>
-										<underlined>0</underlined>
-									</font>
-									<tooltip>Apply the visible set of changes to the current map and finish the merge operation.</tooltip>
-									<label>Finish Merge</label>
-									<default>0</default>
-									<markup>0</markup>
-									<bitmap />
-								</object>
-							</object>
+						<option>1</option>
+						<flag>wxEXPAND|wxRIGHT</flag>
+						<border>0</border>
+						<object class="wxButton" name="LoadAndCompareButton">
+							<font>
+								<style>normal</style>
+								<weight>bold</weight>
+								<underlined>0</underlined>
+							</font>
+							<label>Start Merge</label>
+							<default>0</default>
+							<markup>0</markup>
+							<bitmap />
 						</object>
 					</object>
+					<object class="sizeritem">
+						<option>1</option>
+						<flag>wxEXPAND</flag>
+						<border>0</border>
+						<object class="wxButton" name="AbortMergeButton">
+							<label>Abort Merge</label>
+							<default>0</default>
+							<markup>0</markup>
+							<bitmap />
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>1</option>
+						<flag>wxEXPAND</flag>
+						<border>0</border>
+						<object class="wxButton" name="FinishMergeButton">
+							<font>
+								<style>normal</style>
+								<weight>bold</weight>
+								<underlined>0</underlined>
+							</font>
+							<tooltip>Apply the visible set of changes to the current map and finish the merge operation.</tooltip>
+							<label>Finish Merge</label>
+							<default>0</default>
+							<markup>0</markup>
+							<bitmap />
+						</object>
+					</object>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxALL|wxEXPAND</flag>
+				<border>12</border>
+				<object class="wxBoxSizer">
+					<orient>wxVERTICAL</orient>
 					<object class="sizeritem">
 						<option>0</option>
 						<flag>wxEXPAND</flag>
