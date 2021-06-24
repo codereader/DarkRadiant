@@ -91,22 +91,17 @@ private:
         std::string fingerprint;
     };
 
-    std::map<std::string, INodePtr> _sourceNodes;
     std::map<std::string, INodePtr> _targetNodes;
 
     std::vector<std::string> _baseLayerNamesRemovedInSource;
     std::vector<std::string> _baseLayerNamesRemovedInTarget;
 
     std::vector<std::string> _addedSourceLayerNames;
-    std::vector<std::string> _addedTargetLayerNames;
 
     std::map<std::string, std::vector<LayerChange>> _sourceLayerChanges;
     std::map<std::string, std::vector<LayerChange>> _targetLayerChanges;
 
     std::map<int, LayerMembers> _baseLayerMembers;
-
-    // All layers that are marked for removal in the target map
-    std::vector<std::string> _layersToBeRemovedFromTarget;
 
 public:
 
@@ -145,15 +140,7 @@ public:
         _changes.clear();
         _log.str(std::string());
 
-        // Collect all source and target nodes for easier lookup
-        _sourceRoot->foreachNode([&](const INodePtr& node)
-        {
-            _sourceNodes.emplace(NodeUtils::GetLayerMemberFingerprint(node), node);
-            return true;
-        });
-
-        _log << "Got " << _sourceNodes.size() << " nodes in the source map" << std::endl;
-
+        // Collect all target nodes for easier lookup
         _targetRoot->foreachNode([&](const INodePtr& node)
         {
             _targetNodes.emplace(NodeUtils::GetLayerMemberFingerprint(node), node);
@@ -181,81 +168,10 @@ public:
         processLayersModifiedInSource();
         processLayersRemovedInSource();
 
-        applyChanges();
-
-#if 0
-        _log << "Start Processing source layers" << std::endl;
-
-        _sourceManager.foreachLayer(
-            std::bind(&LayerMerger::processSourceLayer, this, std::placeholders::_1, std::placeholders::_2));
-
-        // Execute the actions we found during source layer processing
-        // Add to new layers first, since removing a node from its last layer might not succeed otherwise
-        for (const auto& pair : _baseNodesToAddToLayers)
-        {
-            _log << "Adding node " << pair.second->name() << " to layer " << pair.first << std::endl;
-
-            pair.second->addToLayer(pair.first);
-
-            _changes.emplace_back(Change
-                {
-                    pair.first,
-                    pair.second,
-                    Change::Type::NodeAddedToLayer
-                });
-        }
-
-        for (const auto& pair : _baseNodesToRemoveFromLayers)
-        {
-            _log << "Removing node " << pair.second->name() << " from layer " << pair.first << std::endl;
-
-            pair.second->removeFromLayer(pair.first);
-
-            _changes.emplace_back(Change
-                {
-                    pair.first,
-                    pair.second,
-                    Change::Type::NodeRemovedFromLayer
-                });
-        }
-
-        _log << "Removing " << _baseLayerNamesToRemove.size() << " base layers that have been marked for removal." << std::endl;
-
-        // Remove all base layers that are no longer necessary
-        for (auto baseLayerName : _baseLayerNamesToRemove)
-        {
-            auto baseLayerId = _baseManager.getLayerID(baseLayerName);
-            assert(baseLayerId != -1);
-
-            _baseManager.deleteLayer(baseLayerName);
-
-            _changes.emplace_back(Change
-                {
-                    baseLayerId,
-                    INodePtr(),
-                    Change::Type::BaseLayerRemoved
-                });
-        }
-#endif
         cleanupWorkingData();
     }
 
 private:
-    void applyChanges()
-    {
-        for (const auto& layerName : _layersToBeRemovedFromTarget)
-        {
-            _changes.emplace_back(Change
-            {
-                _targetManager.getLayerID(layerName),
-                INodePtr(),
-                Change::Type::LayerRemoved
-            });
-
-            _targetManager.deleteLayer(layerName);
-        }
-    }
-
     void processLayersModifiedInSource()
     {
         for (const auto& layerChanges : _sourceLayerChanges)
@@ -468,7 +384,7 @@ private:
             {
                 // No changes in the target map, we can accept this removal
                 _log << "No registered changes for removed layer " << removedLayerName << " in target, accepting this deletion" << std::endl;
-                _layersToBeRemovedFromTarget.push_back(removedLayerName);
+                removeTargetLayer(removedLayerName);
                 continue;
             }
 
@@ -480,7 +396,7 @@ private:
             {
                 // No additions in the change list of the target layer, we can accept this removal
                 _log << "No additions registered in target layer " << removedLayerName << ", accepting this deletion" << std::endl;
-                _layersToBeRemovedFromTarget.push_back(removedLayerName);
+                removeTargetLayer(removedLayerName);
                 continue;
             }
 
@@ -488,19 +404,27 @@ private:
         }
     }
 
+    void removeTargetLayer(const std::string& layerName)
+    {
+        _changes.emplace_back(Change
+        {
+            _targetManager.getLayerID(layerName),
+            INodePtr(),
+            Change::Type::LayerRemoved
+        });
+
+        _targetManager.deleteLayer(layerName);
+    }
+
     void cleanupWorkingData()
     {
-        _sourceNodes.clear();
         _targetNodes.clear();
         _baseLayerNamesRemovedInSource.clear();
         _baseLayerNamesRemovedInTarget.clear();
         _addedSourceLayerNames.clear();
-        _addedTargetLayerNames.clear();
         _sourceLayerChanges.clear();
         _targetLayerChanges.clear();
         _baseLayerMembers.clear();
-
-        _layersToBeRemovedFromTarget.clear();
     }
 
     void analyseBaseLayer(int baseLayerId, const std::string& baseLayerName)
@@ -557,11 +481,6 @@ private:
             const auto& baseMembers = _baseLayerMembers[targetLayerId];
 
             _targetLayerChanges.emplace(targetLayerName, getLayerChanges(targetMembers, baseMembers));
-        }
-        else
-        {
-            // This layer is not present in the base scene
-            _addedTargetLayerNames.push_back(targetLayerName);
         }
     }
 
@@ -626,87 +545,6 @@ private:
         }
 
         return result;
-    }
-
-    void processSourceLayer(int sourceLayerId, const std::string& sourceLayerName)
-    {
-#if 0
-        _log << "Processing source layer with ID: " << sourceLayerId << " and name: " << sourceLayerName << std::endl;
-
-        // Make sure the layer exists in the base
-        auto baseLayerId = _baseManager.getLayerID(sourceLayerName);
-
-        if (baseLayerId == -1)
-        {
-            _log << "Creating layer with ID " << sourceLayerId << " in the base map" << std::endl;
-
-            // We only care about names, so don't specify any IDs here
-            baseLayerId = _baseManager.createLayer(sourceLayerName);
-
-            _changes.emplace_back(Change
-            {
-                baseLayerId,
-                INodePtr(),
-                Change::Type::BaseLayerCreated
-            });
-        }
-
-        // Ensure the correct members are in the group, if they are available in the map
-        auto desiredGroupMembers = GetLayerMemberFingerprints(_sourceRoot, sourceLayerId);
-        auto currentGroupMembers = GetLayerMemberFingerprints(_baseRoot, baseLayerId);
-        std::vector<LayerMembers::value_type> membersToBeRemoved;
-        std::vector<LayerMembers::value_type> membersToBeAdded;
-
-        auto compareFingerprint = [](const LayerMembers::value_type& left, const LayerMembers::value_type& right)
-        {
-            return left.first < right.first;
-        };
-
-        std::set_difference(currentGroupMembers.begin(), currentGroupMembers.end(),
-            desiredGroupMembers.begin(), desiredGroupMembers.end(),
-            std::back_inserter(membersToBeRemoved), compareFingerprint);
-        std::set_difference(desiredGroupMembers.begin(), desiredGroupMembers.end(),
-            currentGroupMembers.begin(), currentGroupMembers.end(),
-            std::back_inserter(membersToBeAdded), compareFingerprint);
-
-        _log << "Members to be added: " << membersToBeAdded.size() << ", members to be removed: " << membersToBeRemoved.size() << std::endl;
-
-        for (const auto& pair : membersToBeRemoved)
-        {
-            // Look up the base node with that fingerprint
-            auto baseNode = _baseNodes.find(pair.first);
-
-            if (baseNode == _baseNodes.end())
-            {
-                _log << "Could not lookup the node " << pair.second->name() << " in the base map for removal" << std::endl;
-                continue;
-            }
-
-            // We keep all the layer memberships of nodes that the user wants to keep
-            if (_sourceNodes.count(pair.first) == 0)
-            {
-                continue;
-            }
-
-            _log << "Marking node " << baseNode->second->name() << " for removal from layer " << sourceLayerName << std::endl;
-            _baseNodesToRemoveFromLayers.emplace_back(std::make_pair(baseLayerId, baseNode->second));
-        }
-
-        for (const auto& pair : membersToBeAdded)
-        {
-            // Look up the base node with that fingerprint
-            auto baseNode = _baseNodes.find(pair.first);
-
-            if (baseNode == _baseNodes.end())
-            {
-                _log << "Could not lookup the node " << pair.second->name() << " in the base map for addition" << std::endl;
-                continue;
-            }
-
-            _log << "Marking node " << baseNode->second->name() << " for addition to layer " << sourceLayerName << std::endl;
-            _baseNodesToAddToLayers.emplace_back(std::make_pair(baseLayerId, baseNode->second));
-        }
-#endif
     }
 };
 
