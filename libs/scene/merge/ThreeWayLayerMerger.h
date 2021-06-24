@@ -178,6 +178,7 @@ public:
             std::bind(&ThreeWayLayerMerger::analyseSourceLayer, this, std::placeholders::_1, std::placeholders::_2));
 
         processLayersAddedInSource();
+        processLayersModifiedInSource();
         processLayersRemovedInSource();
 
         applyChanges();
@@ -252,6 +253,74 @@ private:
             });
 
             _targetManager.deleteLayer(layerName);
+        }
+    }
+
+    void processLayersModifiedInSource()
+    {
+        for (const auto& layerChanges : _sourceLayerChanges)
+        {
+            _log << "Processing layer " << layerChanges.first << " that has been modified in source" << std::endl;
+
+            if (std::find(_baseLayerNamesRemovedInTarget.begin(), _baseLayerNamesRemovedInTarget.end(), layerChanges.first) != _baseLayerNamesRemovedInTarget.end())
+            {
+                _log << "This modified source layer " << layerChanges.first << " has been deleted in the target map" << std::endl;
+                continue;
+            }
+
+            // Apply the changes to the target layer
+            auto targetLayerId = _targetManager.getLayerID(layerChanges.first);
+            
+            // The layer must be present, it has not been deleted and was present in the base
+            if (targetLayerId == -1) throw std::logic_error("The layer " + layerChanges.first + " must be present in the target map.");
+
+            // Apply the changes to the target, but collect them all in a map first
+            // Since removing a node from its last layer will automatically put it to Default
+            // it's better to perform all layer additions prior to the removals
+            std::vector<Change> additions;
+            std::vector<Change> removals;
+
+            for (const auto& change : layerChanges.second)
+            {
+                auto targetNode = _targetNodes.find(change.fingerprint);
+
+                if (targetNode == _targetNodes.end())
+                {
+                    continue; // skip all nodes that are no longer present
+                }
+                
+                if (change.type == LayerChange::Type::NodeAddition)
+                {
+                    additions.emplace_back(Change
+                    {
+                        targetLayerId, targetNode->second, Change::Type::NodeAddedToLayer
+                    });
+                }
+                else if (change.type == LayerChange::Type::NodeRemoval)
+                {
+                    removals.emplace_back(Change
+                    {
+                        targetLayerId, targetNode->second, Change::Type::NodeRemovedFromLayer
+                    });
+                }
+            }
+
+            _log << "Performing " << additions.size() << " additions and " << removals.size() << 
+                " removals to layer " << layerChanges.first << std::endl;
+
+            for (const auto& addition : additions)
+            {
+                addition.member->addToLayer(addition.layerId);
+            }
+
+            for (const auto& removal : removals)
+            {
+                removal.member->removeFromLayer(removal.layerId);
+            }
+
+            // Move all the locally accumulated changes to the _changes vector
+            _changes.insert(_changes.end(), std::make_move_iterator(additions.begin()), std::make_move_iterator(additions.end()));
+            _changes.insert(_changes.end(), std::make_move_iterator(removals.begin()), std::make_move_iterator(removals.end()));
         }
     }
 
