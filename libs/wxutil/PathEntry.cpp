@@ -75,6 +75,7 @@ PathEntry::PathEntry(wxWindow* parent, bool foldersOnly, bool open,
 void PathEntry::setValue(const std::string& val)
 {
 	_entry->SetValue(val);
+    _entry->SetInsertionPointEnd();
 }
 
 std::string PathEntry::getValue() const
