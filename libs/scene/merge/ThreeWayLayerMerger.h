@@ -265,6 +265,22 @@ private:
             if (std::find(_baseLayerNamesRemovedInTarget.begin(), _baseLayerNamesRemovedInTarget.end(), layerChanges.first) != _baseLayerNamesRemovedInTarget.end())
             {
                 _log << "This modified source layer " << layerChanges.first << " has been deleted in the target map" << std::endl;
+
+                // Target layer has been deleted, check if there are any member additions to import
+                auto firstAddition = std::find_if(layerChanges.second.begin(), layerChanges.second.end(),
+                    [&](const LayerChange& change) { return change.type == LayerChange::Type::NodeAddition; });
+
+                if (firstAddition == layerChanges.second.end())
+                {
+                    _log << "Source layer " << layerChanges.first << " only consists of removals, won't re-create the layer" << std::endl;
+                    // No additions to import, so the target layer can stay deleted
+                    continue;
+                }
+
+                _log << "Source layer " << layerChanges.first << " received complex changes including additions, re-creating the layer" << std::endl;
+
+                // Source map modified the layer by adding something, re-create it by copying it over
+                importLayerToTargetMap(layerChanges.first, layerChanges.first);
                 continue;
             }
 
