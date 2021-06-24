@@ -9,6 +9,7 @@
 #include "imap.h"
 #include "wxutil/PathEntry.h"
 #include "wxutil/Bitmap.h"
+#include "wxutil/dialog/MessageBox.h"
 #include "scenelib.h"
 #include "string/convert.h"
 #include "os/path.h"
@@ -125,6 +126,26 @@ void MergeControlDialog::onMainFrameShuttingDown()
     // Destroy the window 
     SendDestroyEvent();
     InstancePtr().reset();
+}
+
+bool MergeControlDialog::Show(bool show)
+{
+    // Check if there's a merge operation in progress
+    // If yes, we ask the user before closing the window
+    if (!show && IsShown() && GlobalMapModule().getEditMode() == IMap::EditMode::Merge)
+    {
+        if (wxutil::Messagebox::Show(_("Abort the Merge Operation?"),
+            _("The current merge operation hasn't been finished yet.\nDo you want to abort the merge?"),
+            IDialog::MessageType::MESSAGE_ASK, this) == IDialog::RESULT_NO)
+        {
+            return false; // block this call
+        }
+            
+        // User wants to cancel, abort the merge and continue calling base
+        GlobalMapModule().abortMergeOperation();
+    }
+
+    return TransientWindow::Show(show);
 }
 
 void MergeControlDialog::ShowDialog(const cmd::ArgumentList& args)

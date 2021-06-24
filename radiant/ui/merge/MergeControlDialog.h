@@ -11,7 +11,7 @@ namespace ui
 {
 
 
-class MergeControlDialog :
+class MergeControlDialog final :
     public wxutil::TransientWindow,
     private wxutil::XmlResourceBasedWidget,
     public SelectionSystem::Observer,
@@ -30,6 +30,8 @@ public:
     MergeControlDialog();
 
     static MergeControlDialog& Instance();
+
+    bool Show(bool show = true) override;
 
     // The command target
     static void ShowDialog(const cmd::ArgumentList& args);
