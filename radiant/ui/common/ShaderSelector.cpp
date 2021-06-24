@@ -5,6 +5,8 @@
 #include "wxutil/dataview/TreeModel.h"
 #include "wxutil/dataview/TreeView.h"
 #include "wxutil/dataview/VFSTreePopulator.h"
+#include "wxutil/menu/IconTextMenuItem.h"
+#include "ui/materials/MaterialDefinitionView.h"
 
 #include "texturelib.h"
 #include "string/string.h"
@@ -35,6 +37,9 @@ namespace
 {
 	const char* const FOLDER_ICON = "folder16.png";
 	const char* const TEXTURE_ICON = "icon_texture.png";
+
+    constexpr const char* const SHOW_MATERIAL_DEF_TEXT = N_("Show Material Definition");
+    constexpr const char* const SHOW_MATERIAL_DEF_ICON = "icon_script.png";
 }
 
 // Constructor creates elements
@@ -45,7 +50,8 @@ ShaderSelector::ShaderSelector(wxWindow* parent, Client* client, const std::stri
 	_glWidget(NULL),
 	_client(client),
 	_isLightTexture(isLightTexture),
-	_infoStore(new wxutil::TreeModel(_infoStoreColumns, true)) // is a listmodel
+	_infoStore(new wxutil::TreeModel(_infoStoreColumns, true)), // is a listmodel
+    _contextMenu(new wxutil::PopupMenu)
 {
 	SetSizer(new wxBoxSizer(wxVERTICAL));
 
@@ -55,6 +61,23 @@ ShaderSelector::ShaderSelector(wxWindow* parent, Client* client, const std::stri
 	// Pack in TreeView and info panel
 	createTreeView();
 	createPreview();
+
+    // Construct the context menu
+    _contextMenu->addItem(
+        new wxutil::IconTextMenuItem(_(SHOW_MATERIAL_DEF_TEXT), SHOW_MATERIAL_DEF_ICON),
+        std::bind(&ShaderSelector::_onShowShaderDefinition, this),
+        [this]() { return !getSelection().empty(); }
+    );
+}
+
+void ShaderSelector::_onShowShaderDefinition()
+{
+    std::string shaderName = getSelection();
+
+    // Construct a definition view and pass the shader name
+    auto view = new MaterialDefinitionView(shaderName);
+    view->ShowModal();
+    view->Destroy();
 }
 
 // Return the selection to the calling code
@@ -175,9 +198,15 @@ void ShaderSelector::createTreeView()
     _treeView->AddSearchColumn(_shaderTreeColumns.iconAndName);
 
     // Get selection and connect the changed callback
-    _treeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, wxDataViewEventHandler(ShaderSelector::_onSelChange), NULL, this);
+    _treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &ShaderSelector::_onSelChange, this);
+    _treeView->Bind(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, &ShaderSelector::_onContextMenu, this);
 
     GetSizer()->Add(_treeView, 1, wxEXPAND);
+}
+
+void ShaderSelector::_onContextMenu(wxDataViewEvent& ev)
+{
+    _contextMenu->show(_treeView);
 }
 
 // Create the preview panel (GL widget and info table)

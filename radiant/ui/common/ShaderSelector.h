@@ -5,6 +5,7 @@
 #include <memory>
 #include "wxutil/GLWidget.h"
 #include "wxutil/dataview/TreeView.h"
+#include "wxutil/menu/PopupMenu.h"
 
 #include <wx/panel.h>
 
@@ -100,6 +101,8 @@ private:
 	// List store for info table
 	wxutil::TreeModel::Ptr _infoStore;
 
+    wxutil::PopupMenuPtr _contextMenu;
+
 public:
 	// This is where the prefixes are stored (needed to filter the possible shaders)
 	typedef std::vector<std::string> PrefixList;
@@ -158,6 +161,9 @@ private:
 	// callbacks
 	bool onPreviewRender();
 	void _onSelChange(wxDataViewEvent& ev);
+    void _onContextMenu(wxDataViewEvent& ev);
+
+    void _onShowShaderDefinition();
 };
 
 } // namespace ui
