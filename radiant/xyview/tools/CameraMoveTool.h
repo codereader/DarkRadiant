@@ -4,6 +4,7 @@
 #include "imousetool.h"
 #include "iorthoview.h"
 #include "icameraview.h"
+#include "selectionlib.h"
 
 namespace ui
 {
@@ -87,16 +88,19 @@ private:
 
             Vector3 origin = xyEvent.getWorldPos();
 
+            // Substitute the third component from the selection work zone
+            auto workzoneOrigin = GlobalSelectionSystem().getWorkZone().bounds.getOrigin();
+
             switch (xyEvent.getViewType())
             {
             case XY:
-                origin[2] = camera.getCameraOrigin()[2];
+                origin[2] = workzoneOrigin[2];
                 break;
             case YZ:
-                origin[0] = camera.getCameraOrigin()[0];
+                origin[0] = workzoneOrigin[0];
                 break;
             case XZ:
-                origin[1] = camera.getCameraOrigin()[1];
+                origin[1] = workzoneOrigin[1];
                 break;
             };
 
