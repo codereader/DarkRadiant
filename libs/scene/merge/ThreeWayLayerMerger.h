@@ -6,6 +6,7 @@
 #include <map>
 #include <functional>
 #include "NodeUtils.h"
+#include "string/convert.h"
 #include "LayerMergerBase.h"
 
 namespace scene
@@ -53,8 +54,8 @@ public:
         {
             NodeAddedToLayer,
             NodeRemovedFromLayer,
-            BaseLayerCreated,
-            BaseLayerRemoved,
+            LayerCreated,
+            LayerRemoved,
         };
 
         int layerId;
@@ -96,8 +97,10 @@ private:
     std::vector<std::string> _baseLayerNamesRemovedInSource;
     std::vector<std::string> _baseLayerNamesRemovedInTarget;
 
+    std::vector<std::string> _addedSourceLayerNames;
     std::vector<std::string> _addedTargetLayerNames;
 
+    std::map<std::string, std::vector<LayerChange>> _sourceLayerChanges;
     std::map<std::string, std::vector<LayerChange>> _targetLayerChanges;
 
     std::map<int, LayerMembers> _baseLayerMembers;
@@ -169,6 +172,12 @@ public:
         _targetManager.foreachLayer(
             std::bind(&ThreeWayLayerMerger::analyseTargetLayer, this, std::placeholders::_1, std::placeholders::_2));
 
+        _log << "Analysing source layers with respect to base" << std::endl;
+
+        _sourceManager.foreachLayer(
+            std::bind(&ThreeWayLayerMerger::analyseSourceLayer, this, std::placeholders::_1, std::placeholders::_2));
+
+        processLayersAddedInSource();
         processLayersRemovedInSource();
 
         applyChanges();
@@ -235,8 +244,104 @@ private:
     {
         for (const auto& layerName : _layersToBeRemovedFromTarget)
         {
+            _changes.emplace_back(Change
+            {
+                _targetManager.getLayerID(layerName),
+                INodePtr(),
+                Change::Type::LayerRemoved
+            });
+
             _targetManager.deleteLayer(layerName);
         }
+    }
+
+    // Imports the given source layer with the given target name
+    void importLayerToTargetMap(const std::string& sourceLayerName, const std::string& targetLayerName)
+    {
+        // Create the target layer as first step
+        if (_targetManager.getLayerID(targetLayerName) != -1)
+        {
+            throw std::logic_error("Cannot import layer, the target name must not be in use");
+        }
+
+        _log << "Creating the layer " << targetLayerName << " in the target map" << std::endl;
+
+        auto targetLayerId = _targetManager.createLayer(targetLayerName);
+
+        _changes.emplace_back(Change
+        {
+            targetLayerId,
+            INodePtr(),
+            Change::Type::LayerCreated
+        });
+
+        // Get all the fingerprints and resolve them in the target map
+        auto sourceGroupMembers = GetLayerMemberFingerprints(_sourceRoot, _sourceManager.getLayerID(sourceLayerName));
+
+        for (const auto& sourceMember : sourceGroupMembers)
+        {
+            auto targetNode = _targetNodes.find(sourceMember.first);
+
+            if (targetNode == _targetNodes.end())
+            {
+                _log << "Cannot resolve the node " << sourceMember.first << " in the target map, skipping" << std::endl;
+                continue;
+            }
+
+            targetNode->second->addToLayer(targetLayerId);
+        }
+    }
+
+    void processLayersAddedInSource()
+    {
+        std::vector<std::reference_wrapper<const std::string>> conflictingNames;
+
+        // First pass will add all layers without conflict
+        // to ensure all non-conflicting layers are in before trying to resolve the rest
+        for (const auto& layerName : _addedSourceLayerNames)
+        {
+            // Check if this layer name is already in use in the target map
+            if (_targetManager.getLayerID(layerName) != -1)
+            {
+                conflictingNames.emplace_back(std::cref(layerName));
+                continue;
+            }
+
+            // Layer name is not in use, accept this addition verbatim
+            _log << "Layer name " << layerName << " is not in use in target, will add this layer" << std::endl;
+            importLayerToTargetMap(layerName, layerName);
+        }
+
+        // Second pass will find new names for the conflicting additions
+        for (const auto& layerName : conflictingNames)
+        {
+            // Double-check the target layer, it might be 100% matching the imported one
+            // TODO
+
+            // Layer name is in use, find a new name
+            auto newName = generateUnusedLayerName(_targetManager, layerName);
+
+            // Layer name is not in use, accept this addition verbatim
+            _log << "Layer name " << layerName.get() << " is in use in target, will add this layer as " << newName << std::endl;
+            importLayerToTargetMap(layerName, newName);
+        }
+    }
+
+    std::string generateUnusedLayerName(ILayerManager& layerManager, const std::string& name)
+    {
+        std::size_t suffix = 1;
+
+        while (++suffix < std::numeric_limits<decltype(suffix)>::max())
+        {
+            auto candidate = name + string::to_string(suffix);
+
+            if (layerManager.getLayerID(candidate) == -1)
+            {
+                return candidate;
+            }
+        }
+        
+        throw std::runtime_error("Ran out of layer suffixes");
     }
 
     void processLayersRemovedInSource()
@@ -276,7 +381,9 @@ private:
         _targetNodes.clear();
         _baseLayerNamesRemovedInSource.clear();
         _baseLayerNamesRemovedInTarget.clear();
+        _addedSourceLayerNames.clear();
         _addedTargetLayerNames.clear();
+        _sourceLayerChanges.clear();
         _targetLayerChanges.clear();
         _baseLayerMembers.clear();
 
@@ -342,6 +449,30 @@ private:
         {
             // This layer is not present in the base scene
             _addedTargetLayerNames.push_back(targetLayerName);
+        }
+    }
+
+    void analyseSourceLayer(int sourceLayerId, const std::string& sourceLayerName)
+    {
+        // Check if there's a counter-part in the base scene (by name)
+        auto baseLayer = _baseManager.getLayerID(sourceLayerName);
+
+        if (baseLayer != -1)
+        {
+            _log << "Source layer " << sourceLayerName << " is present in source too, checking differences." << std::endl;
+
+            // Collect member fingerprints of target and base
+            auto sourceMembers = GetLayerMemberFingerprints(_sourceRoot, sourceLayerId);
+            assert(_baseLayerMembers.count(sourceLayerId) == 1);
+
+            const auto& baseMembers = _baseLayerMembers[sourceLayerId];
+
+            _sourceLayerChanges.emplace(sourceLayerName, getLayerChanges(sourceMembers, baseMembers));
+        }
+        else
+        {
+            // This layer is not present in the base scene
+            _addedSourceLayerNames.push_back(sourceLayerName);
         }
     }
 
