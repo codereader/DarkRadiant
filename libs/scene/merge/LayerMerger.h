@@ -6,6 +6,7 @@
 #include <map>
 #include <functional>
 #include "NodeUtils.h"
+#include "LayerMergerBase.h"
 
 namespace scene
 {
@@ -24,7 +25,8 @@ namespace merge
  * unless it's needed by some nodes that are only present in the base map,
  * i.e. they have been explicitly chosen by the user to be kept.
  */
-class LayerMerger
+class LayerMerger :
+    public LayerMergerBase
 {
 public:
     struct Change
@@ -49,7 +51,6 @@ private:
     scene::ILayerManager& _sourceManager;
     scene::ILayerManager& _baseManager;
 
-    std::stringstream _log;
     std::vector<Change> _changes;
 
 private: 
@@ -189,8 +190,6 @@ private:
         _baseNodesToAddToLayers.clear();
     }
 
-    using LayerMembers = std::map<std::string, scene::INodePtr>;
-
     void processBaseLayer(int baseLayerId, const std::string& baseLayerName)
     {
         // Check if there's a counter-part in the source scene (by name)
@@ -210,7 +209,7 @@ private:
         std::vector<INodePtr> nodesToRemove;
         std::size_t keptNodeCount = 0;
 
-        foreachNodeInLayer(_baseRoot, baseLayerId, [&](const INodePtr& node)
+        ForeachNodeInLayer(_baseRoot, baseLayerId, [&](const INodePtr& node)
         {
             auto fingerprint = NodeUtils::GetLayerMemberFingerprint(node);
 
@@ -248,26 +247,6 @@ private:
         }
     }
 
-    static void foreachNodeInLayer(const INodePtr& root, int layerId, const std::function<void(const INodePtr&)>& functor)
-    {
-        root->foreachNode([&](const INodePtr& node)
-        {
-            if (node->getNodeType() != INode::Type::Entity &&
-                node->getNodeType() != INode::Type::Brush &&
-                node->getNodeType() != INode::Type::Patch)
-            {
-                return true;
-            }
-
-            if (node->getLayers().count(layerId) > 0)
-            {
-                functor(node);
-            }
-
-            return true;
-        });
-    }
-
     void processSourceLayer(int sourceLayerId, const std::string& sourceLayerName)
     {
         _log << "Processing source layer with ID: " << sourceLayerId << " and name: " << sourceLayerName << std::endl;
@@ -291,8 +270,8 @@ private:
         }
 
         // Ensure the correct members are in the group, if they are available in the map
-        auto desiredGroupMembers = getLayerMemberFingerprints(_sourceRoot, sourceLayerId);
-        auto currentGroupMembers = getLayerMemberFingerprints(_baseRoot, baseLayerId);
+        auto desiredGroupMembers = GetLayerMemberFingerprints(_sourceRoot, sourceLayerId);
+        auto currentGroupMembers = GetLayerMemberFingerprints(_baseRoot, baseLayerId);
         std::vector<LayerMembers::value_type> membersToBeRemoved;
         std::vector<LayerMembers::value_type> membersToBeAdded;
 
@@ -345,18 +324,6 @@ private:
             _log << "Marking node " << baseNode->second->name() << " for addition to layer " << sourceLayerName << std::endl;
             _baseNodesToAddToLayers.emplace_back(std::make_pair(baseLayerId, baseNode->second));
         }
-    }
-
-    static LayerMembers getLayerMemberFingerprints(const INodePtr& root, int layerId)
-    {
-        LayerMembers members;
-
-        foreachNodeInLayer(root, layerId, [&](const INodePtr& member)
-        {
-            members.emplace(NodeUtils::GetLayerMemberFingerprint(member), member);
-        });
-
-        return members;
     }
 };
 
