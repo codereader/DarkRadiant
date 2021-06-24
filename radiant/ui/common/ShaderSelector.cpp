@@ -72,10 +72,8 @@ ShaderSelector::ShaderSelector(wxWindow* parent, Client* client, const std::stri
 
 void ShaderSelector::_onShowShaderDefinition()
 {
-    std::string shaderName = getSelection();
-
-    // Construct a definition view and pass the shader name
-    auto view = new MaterialDefinitionView(shaderName);
+    // Construct a definition view and pass the material name
+    auto view = new MaterialDefinitionView(getSelection());
     view->ShowModal();
     view->Destroy();
 }
