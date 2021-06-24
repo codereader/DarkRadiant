@@ -102,10 +102,8 @@ private:
 
     std::map<int, LayerMembers> _baseLayerMembers;
 
-    // The remove-node-from-layer action that needs to be executed
-    std::vector<std::pair<int, INodePtr>> _baseNodesToRemoveFromLayers;
-    // The add-node-to-layer action that needs to be executed
-    std::vector<std::pair<int, INodePtr>> _baseNodesToAddToLayers;
+    // All layers that are marked for removal in the target map
+    std::vector<std::string> _layersToBeRemovedFromTarget;
 
 public:
 
@@ -131,11 +129,6 @@ public:
     const IMapRootNodePtr& getBaseRoot() const
     {
         return _baseRoot;
-    }
-
-    std::string getLogMessages() const
-    {
-        return _log.str();
     }
 
     const std::vector<Change>& getChangeLog() const
@@ -175,6 +168,11 @@ public:
 
         _targetManager.foreachLayer(
             std::bind(&ThreeWayLayerMerger::analyseTargetLayer, this, std::placeholders::_1, std::placeholders::_2));
+
+        processLayersRemovedInSource();
+
+        applyChanges();
+
 #if 0
         _log << "Start Processing source layers" << std::endl;
 
@@ -190,11 +188,11 @@ public:
             pair.second->addToLayer(pair.first);
 
             _changes.emplace_back(Change
-            {
-                pair.first,
-                pair.second,
-                Change::Type::NodeAddedToLayer
-            });
+                {
+                    pair.first,
+                    pair.second,
+                    Change::Type::NodeAddedToLayer
+                });
         }
 
         for (const auto& pair : _baseNodesToRemoveFromLayers)
@@ -204,11 +202,11 @@ public:
             pair.second->removeFromLayer(pair.first);
 
             _changes.emplace_back(Change
-            {
-                pair.first,
-                pair.second,
-                Change::Type::NodeRemovedFromLayer
-            });
+                {
+                    pair.first,
+                    pair.second,
+                    Change::Type::NodeRemovedFromLayer
+                });
         }
 
         _log << "Removing " << _baseLayerNamesToRemove.size() << " base layers that have been marked for removal." << std::endl;
@@ -222,25 +220,67 @@ public:
             _baseManager.deleteLayer(baseLayerName);
 
             _changes.emplace_back(Change
-            {
-                baseLayerId,
-                INodePtr(),
-                Change::Type::BaseLayerRemoved
-            });
+                {
+                    baseLayerId,
+                    INodePtr(),
+                    Change::Type::BaseLayerRemoved
+                });
         }
 #endif
         cleanupWorkingData();
     }
 
 private:
+    void applyChanges()
+    {
+        for (const auto& layerName : _layersToBeRemovedFromTarget)
+        {
+            _targetManager.deleteLayer(layerName);
+        }
+    }
+
+    void processLayersRemovedInSource()
+    {
+        for (const auto& removedLayerName : _baseLayerNamesRemovedInSource)
+        {
+            // Check if this layer has been altered in the target map
+            auto targetLayerChanges = _targetLayerChanges.find(removedLayerName);
+
+            if (targetLayerChanges == _targetLayerChanges.end() || targetLayerChanges->second.empty())
+            {
+                // No changes in the target map, we can accept this removal
+                _log << "No registered changes for removed layer " << removedLayerName << " in target, accepting this deletion" << std::endl;
+                _layersToBeRemovedFromTarget.push_back(removedLayerName);
+                continue;
+            }
+
+            // Target layer was modified, check if there are any member additions
+            auto firstAddition = std::find_if(targetLayerChanges->second.begin(), targetLayerChanges->second.end(), 
+                [&](const LayerChange& change) { return change.type == LayerChange::Type::NodeAddition; });
+
+            if (firstAddition == targetLayerChanges->second.end())
+            {
+                // No additions in the change list of the target layer, we can accept this removal
+                _log << "No additions registered in target layer " << removedLayerName << ", accepting this deletion" << std::endl;
+                _layersToBeRemovedFromTarget.push_back(removedLayerName);
+                continue;
+            }
+
+            _log << "Deletion of target layer " << removedLayerName << " rejected, it has been modified including additions." << std::endl;
+        }
+    }
+
     void cleanupWorkingData()
     {
         _sourceNodes.clear();
         _targetNodes.clear();
         _baseLayerNamesRemovedInSource.clear();
+        _baseLayerNamesRemovedInTarget.clear();
+        _addedTargetLayerNames.clear();
+        _targetLayerChanges.clear();
+        _baseLayerMembers.clear();
 
-        _baseNodesToRemoveFromLayers.clear();
-        _baseNodesToAddToLayers.clear();
+        _layersToBeRemovedFromTarget.clear();
     }
 
     void analyseBaseLayer(int baseLayerId, const std::string& baseLayerName)
@@ -258,6 +298,8 @@ private:
         }
         else
         {
+            _log << "Base layer " << baseLayerName << " is missing in source." << std::endl;
+
             // This base layer is no longer present in the source scene
             _baseLayerNamesRemovedInSource.push_back(baseLayerName);
         }
@@ -272,6 +314,8 @@ private:
         }
         else
         {
+            _log << "Base layer " << baseLayerName << " is missing in target." << std::endl;
+
             // This base layer is no longer present in the target scene
             _baseLayerNamesRemovedInTarget.push_back(baseLayerName);
         }

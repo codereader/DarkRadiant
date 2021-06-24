@@ -85,11 +85,6 @@ public:
         return _baseRoot;
     }
 
-    std::string getLogMessages() const
-    {
-        return _log.str();
-    }
-
     const std::vector<Change>& getChangeLog() const
     {
         return _changes;
