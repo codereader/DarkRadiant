@@ -2682,7 +2682,7 @@ TEST_F(ThreeWayLayerMergeTest, LayerAddedInSource)
     EXPECT_NE(targetManager.getLayerID("NewLayer4"), -1);
 
     // NewLayer5 should never be created, NewLayer3 might be renamed to this if the algorithm doesn't check 100% matches
-    EXPECT_NE(targetManager.getLayerID("NewLayer5"), -1);
+    EXPECT_EQ(targetManager.getLayerID("NewLayer5"), -1);
 
     auto brush11 = algorithm::findFirstBrushWithMaterial(algorithm::findWorldspawn(merger->getTargetRoot()), "textures/numbers/11");
     auto expandable = algorithm::getEntityByName(merger->getTargetRoot(), "expandable");

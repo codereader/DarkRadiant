@@ -316,10 +316,14 @@ private:
         for (const auto& layerName : conflictingNames)
         {
             // Double-check the target layer, it might be 100% matching the imported one
-            // TODO
+            if (sourceAndTargetLayersAreEquivalent(layerName))
+            {
+                _log << "The layer " << layerName.get() << " turns out to be equivalent to the one in the target map, won't import" << std::endl;
+                continue;
+            }
 
             // Layer name is in use, find a new name
-            auto newName = generateUnusedLayerName(_targetManager, layerName);
+            auto newName = GenerateUnusedLayerName(_targetManager, layerName);
 
             // Layer name is not in use, accept this addition verbatim
             _log << "Layer name " << layerName.get() << " is in use in target, will add this layer as " << newName << std::endl;
@@ -327,7 +331,31 @@ private:
         }
     }
 
-    std::string generateUnusedLayerName(ILayerManager& layerManager, const std::string& name)
+    bool sourceAndTargetLayersAreEquivalent(const std::string& layerName)
+    {
+        auto existingLayer = GetLayerMemberFingerprints(_targetRoot, _targetManager.getLayerID(layerName));
+        auto importedLayer = GetLayerMemberFingerprints(_sourceRoot, _sourceManager.getLayerID(layerName));
+
+        // Check the size of the maps, and compare all keys
+        if (existingLayer.size() != importedLayer.size())
+        {
+            return false; // size mismatch
+        }
+
+        // Size is the same, check every fingerprint
+        for (const auto& pair : importedLayer)
+        {
+            if (existingLayer.count(pair.first) != 1)
+            {
+                return false; // mismatch
+            }
+        }
+
+        // Every fingerprint matches, or the sets are both empty
+        return true;
+    }
+
+    static std::string GenerateUnusedLayerName(ILayerManager& layerManager, const std::string& name)
     {
         std::size_t suffix = 1;
 
