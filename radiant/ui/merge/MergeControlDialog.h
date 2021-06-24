@@ -40,6 +40,8 @@ public:
      */
     void selectionChanged(const scene::INodePtr& node, bool isComponent) override;
 
+    void setThreeWayMergeMode(bool enabled);
+
 protected:
     void _preShow() override;
     void _preHide() override;
@@ -50,6 +52,7 @@ private:
 
     void convertTextCtrlToPathEntry(const std::string& ctrlName);
     void onMergeSourceChanged(wxCommandEvent& ev);
+    void onMergeModeChanged(wxCommandEvent& ev);
     void onLoadAndCompare(wxCommandEvent& ev);
     void onFinishMerge(wxCommandEvent& ev);
     void onAbortMerge(wxCommandEvent& ev);

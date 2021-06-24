@@ -8,6 +8,7 @@
 #include "iundo.h"
 #include "imap.h"
 #include "wxutil/PathEntry.h"
+#include "wxutil/Bitmap.h"
 #include "scenelib.h"
 #include "string/convert.h"
 #include "os/path.h"
@@ -19,6 +20,7 @@
 #include <wx/checkbox.h>
 #include <wx/sizer.h>
 #include <wx/stattext.h>
+#include <wx/tglbtn.h>
 
 namespace ui
 {
@@ -65,6 +67,14 @@ MergeControlDialog::MergeControlDialog() :
 
     findNamedObject<wxCheckBox>(this, "KeepSelectionGroupsIntact")->SetValue(true);
     findNamedObject<wxCheckBox>(this, "MergeLayers")->SetValue(true);
+
+    auto twoWayButton = findNamedObject<wxToggleButton>(this, "TwoWayMode");
+    twoWayButton->SetBitmap(wxutil::GetLocalBitmap("two_way_merge.png"));
+    twoWayButton->Bind(wxEVT_TOGGLEBUTTON, &MergeControlDialog::onMergeModeChanged, this);
+
+    auto threeWayButton = findNamedObject<wxToggleButton>(this, "ThreeWayMode");
+    threeWayButton->SetBitmap(wxutil::GetLocalBitmap("three_way_merge.png"));
+    threeWayButton->Bind(wxEVT_TOGGLEBUTTON, &MergeControlDialog::onMergeModeChanged, this);
 
     updateControls();
     Bind(wxEVT_IDLE, &MergeControlDialog::onIdle, this);
@@ -128,6 +138,35 @@ void MergeControlDialog::convertTextCtrlToPathEntry(const std::string& ctrlName)
 void MergeControlDialog::onMergeSourceChanged(wxCommandEvent& ev)
 {
     update();
+}
+
+void MergeControlDialog::setThreeWayMergeMode(bool enabled)
+{
+    findNamedObject<wxToggleButton>(this, "TwoWayMode")->SetValue(!enabled);
+    findNamedObject<wxToggleButton>(this, "ThreeWayMode")->SetValue(enabled);
+
+    findNamedObject<wxPanel>(this, "BaseMapPanel")->Show(enabled);
+    findNamedObject<wxPanel>(this, "BaseMapPanel")->SetSize(wxSize(-1, enabled ? -1 : 0));
+
+    Layout();
+    Fit();
+}
+
+void MergeControlDialog::onMergeModeChanged(wxCommandEvent& ev)
+{
+    auto twoWayButton = findNamedObject<wxToggleButton>(this, "TwoWayMode");
+    auto toggleButton = wxDynamicCast(ev.GetEventObject(), wxToggleButton);
+
+    if (!toggleButton) return;
+
+    if (toggleButton == twoWayButton)
+    {
+        setThreeWayMergeMode(!toggleButton->GetValue());
+    }
+    else // three-way button has been toggled
+    {
+        setThreeWayMergeMode(toggleButton->GetValue());
+    }
 }
 
 void MergeControlDialog::onLoadAndCompare(wxCommandEvent& ev)
