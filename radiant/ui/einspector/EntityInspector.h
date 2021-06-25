@@ -146,6 +146,7 @@ private:
 
 	sigc::connection _undoHandler;
 	sigc::connection _redoHandler;
+	sigc::connection _defsReloadedHandler;
 
     // Maps the key names to a possible merge action that should be displayed
     std::map<std::string, scene::merge::IEntityKeyValueMergeAction::Ptr> _mergeActions;
@@ -234,8 +235,13 @@ private:
     // Update tree view contents and property editor
     void updateGUIElements();
 
+    // Release the current entity and rescan the selection
+    void refresh();
+
 	// Gets called after an undo operation
 	void onUndoRedoOperation();
+
+	void onDefsReloaded();
 
 protected:
     // Called when the app is idle

@@ -141,6 +141,10 @@ void EntityInspector::construct()
     // Register self to the SelectionSystem to get notified upon selection
     // changes.
     GlobalSelectionSystem().addObserver(this);
+    
+    _defsReloadedHandler = GlobalEntityClassManager().defsReloadedSignal().connect(
+        sigc::mem_fun(this, &EntityInspector::onDefsReloaded)
+    );
 
     // Observe the Undo system for undo/redo operations, to refresh the
     // keyvalues when this happens
@@ -427,6 +431,7 @@ void EntityInspector::onMainFrameShuttingDown()
 
     _undoHandler.disconnect();
     _redoHandler.disconnect();
+    _defsReloadedHandler.disconnect();
 
     // Remove all previously stored pane information
     _panedPosition.saveToPath(RKEY_PANE_STATE);
@@ -437,6 +442,16 @@ void EntityInspector::onMainFrameShuttingDown()
 }
 
 void EntityInspector::onUndoRedoOperation()
+{
+    refresh();
+}
+
+void EntityInspector::onDefsReloaded()
+{
+    refresh();
+}
+
+void EntityInspector::refresh()
 {
     // Clear the previous entity (detaches this class as observer)
     changeSelectedEntity(scene::INodePtr(), scene::INodePtr());
