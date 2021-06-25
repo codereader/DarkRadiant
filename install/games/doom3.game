@@ -220,6 +220,7 @@
 		<property match="s_omni" category="Sound" type="bool" />
 		<property match="s_volume" category="Sound" type="text" />
 		<property match="s_global" category="Sound" type="bool" />
+    <property match="def_.+" category="Basic" type="classname" hidden="1" />
 	</entityInspector>
 
 	<!-- Game-specific values for light entities -->
