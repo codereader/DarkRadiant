@@ -189,6 +189,12 @@ void EClassManager::loadDefAndResolveInheritance()
 {
     _defsLoadingSignal.emit();
 
+    // Hold back all changed signals
+    for (const auto& eclass : _entityClasses)
+    {
+        eclass.second->blockChangedSignal(true);
+    }
+
     parseDefFiles();
     resolveInheritance();
     applyColours();
@@ -349,7 +355,8 @@ void EClassManager::shutdownModule()
 
 	// Don't notify anyone anymore
 	_defsReloadedSignal.clear();
-    _changeNotificationQueue.clear();
+    _defsLoadedSignal.clear();
+    _defsLoadingSignal.clear();
 
 	// Clear member structures
 	_entityClasses.clear();
@@ -440,21 +447,13 @@ void EClassManager::parse(TextInputStream& inStr, const vfs::FileInfo& fileInfo,
 			}
 
 			// At this point, i is pointing to a valid entityclass
-
 			i->second->setParseStamp(_curParseStamp);
-
-            // Hold back the changed signal for the moment being
-            i->second->blockChangedSignal(true);
-            // Add this eclass to the queue (we'll fire the signal when we're done parsing)
-            _changeNotificationQueue.emplace_back(*i->second);
 
         	// Parse the contents of the eclass (excluding name)
 			i->second->parseFromTokens(tokeniser);
 
 			// Set the mod directory
         	i->second->setModName(modDir);
-
-            i->second->blockChangedSignal(false);
         }
         else if (blockType == "model")
 		{
@@ -515,12 +514,11 @@ void EClassManager::parseFile(const vfs::FileInfo& fileInfo)
 
 void EClassManager::onDefLoadingCompleted()
 {
-    for (auto& eclass : _changeNotificationQueue)
+    for (const auto& eclass : _entityClasses)
     {
-        eclass.get().emitChangedSignal();
+        eclass.second->blockChangedSignal(false);
+        eclass.second->emitChangedSignal();
     }
-
-    _changeNotificationQueue.clear();
 
     _defsLoadedSignal.emit();
 }
