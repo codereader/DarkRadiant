@@ -330,6 +330,9 @@ class IEntityClassManager :
     public RegisterableModule
 {
 public:
+    /// Signal emitted when starting to parse DEFs
+    virtual sigc::signal<void> defsLoadingSignal() const = 0;
+
     /// Signal emitted when all DEFs have been loaded (after module initialisation)
     virtual sigc::signal<void> defsLoadedSignal() const = 0;
 

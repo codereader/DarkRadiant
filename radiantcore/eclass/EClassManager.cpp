@@ -28,6 +28,11 @@ EClassManager::EClassManager() :
 	_curParseStamp(0)
 {}
 
+sigc::signal<void> EClassManager::defsLoadingSignal() const
+{
+    return _defsLoadingSignal;
+}
+
 sigc::signal<void> EClassManager::defsLoadedSignal() const
 {
 	return _defsLoadedSignal;
@@ -181,6 +186,8 @@ void EClassManager::ensureDefsLoaded()
 
 void EClassManager::loadDefAndResolveInheritance()
 {
+    _defsLoadingSignal.emit();
+
     parseDefFiles();
     resolveInheritance();
     applyColours();

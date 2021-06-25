@@ -19,6 +19,7 @@ private:
 	TopLevelFrame* _topLevelWindow;
 
 	bool _screenUpdatesEnabled;
+    bool _defLoadingBlocksUpdates;
 
 	wxutil::WindowPosition _windowPosition;
 
