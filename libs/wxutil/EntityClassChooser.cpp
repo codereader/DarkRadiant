@@ -201,6 +201,11 @@ EntityClassChooser::EntityClassChooser() :
         wxSize(GetSize().GetWidth() * 0.4f, GetSize().GetHeight() * 0.2f));
 }
 
+EntityClassChooser::~EntityClassChooser()
+{
+    _defsReloaded.disconnect();
+}
+
 // Display the singleton instance
 std::string EntityClassChooser::chooseEntityClass(const std::string& preselectEclass)
 {

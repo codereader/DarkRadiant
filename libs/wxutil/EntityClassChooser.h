@@ -24,7 +24,7 @@ typedef std::shared_ptr<EntityClassChooser> EntityClassChooserPtr;
  * Dialog window displaying a tree of Entity Classes, allowing the selection
  * of a class to create at the current location.
  */
-class EntityClassChooser :
+class EntityClassChooser final :
     public DialogBase,
     private XmlResourceBasedWidget
 {
@@ -46,6 +46,7 @@ private:
 
 private:
     EntityClassChooser();
+    ~EntityClassChooser();
 
     void loadEntityClasses();
 
