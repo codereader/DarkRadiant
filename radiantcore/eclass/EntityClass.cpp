@@ -430,8 +430,11 @@ void EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
             parseEditorSpawnarg(key, value);
         }
 
+        // We're only interested in non-inherited key/values when parsing
+        auto& attribute = getAttribute(key, false);
+
         // Add the EntityClassAttribute for this key/val
-        if (getAttribute(key).getType().empty())
+        if (attribute.getType().empty())
         {
             // Following key-specific processing, add the keyvalue to the eclass
             EntityClassAttribute attribute("text", key, value, "");
@@ -439,10 +442,10 @@ void EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
             // Type is empty, attribute does not exist, add it.
             addAttribute(attribute);
         }
-        else if (getAttribute(key).getValue().empty())
+        else if (attribute.getValue().empty())
         {
             // Attribute type is set, but value is empty, set the value.
-            getAttribute(key).setValue(value);
+            attribute.setValue(value);
         }
         else
         {
