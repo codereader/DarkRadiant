@@ -86,6 +86,7 @@ private:
 
     // Emitted when contents are reloaded
     sigc::signal<void> _changedSignal;
+    bool _blockChangeSignal;
 
 private:
     // Clear all contents (done before parsing from tokens)
@@ -130,8 +131,6 @@ private:
      * whether this entity has a fixed size.
      */
     EntityClass(const std::string& name, const vfs::FileInfo& fileInfo, bool fixedSize);
-
-    virtual ~EntityClass();
 
     /// Add a new attribute
     void addAttribute(const EntityClassAttribute& attribute);
@@ -208,6 +207,19 @@ private:
     std::size_t getParseStamp() const
     {
         return _parseStamp;
+    }
+
+    void emitChangedSignal()
+    {
+        if (!_blockChangeSignal)
+        {
+            _changedSignal.emit();
+        }
+    }
+
+    void blockChangedSignal(bool block)
+    {
+        _blockChangeSignal = block;
     }
 };
 

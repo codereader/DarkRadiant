@@ -49,7 +49,7 @@ public:
         ensureLoaderStarted();
     }
 
-    // Ensrues that the worker thread has been started and is done processing
+    // Ensures that the worker thread has been started and is done processing
     // This will block and wait for the worker execution before returning to the caller.
     void ensureFinished()
     {

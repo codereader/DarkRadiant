@@ -441,11 +441,18 @@ void EClassManager::parse(TextInputStream& inStr, const vfs::FileInfo& fileInfo,
 
 			i->second->setParseStamp(_curParseStamp);
 
+            // Hold back the changed signal for the moment being
+            i->second->blockChangedSignal(true);
+            // Add this eclass to the queue (we'll fire the signal when we're done parsing)
+            _changeNotificationQueue.emplace_back(*i->second);
+
         	// Parse the contents of the eclass (excluding name)
 			i->second->parseFromTokens(tokeniser);
 
 			// Set the mod directory
         	i->second->setModName(modDir);
+
+            i->second->blockChangedSignal(false);
         }
         else if (blockType == "model")
 		{

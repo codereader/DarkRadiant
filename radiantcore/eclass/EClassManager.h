@@ -55,6 +55,11 @@ class EClassManager :
 
     sigc::connection _eclassColoursChanged;
 
+    // During reparsing, we block all eclass changed signals to avoid deadlocks
+    // This queue will contain all the eclasses that need to send out their updates
+    // which will be done immediately after parsing is done
+    std::vector<std::reference_wrapper<EntityClass>> _changeNotificationQueue;
+
 public:
     // Constructor
 	EClassManager();

@@ -31,10 +31,8 @@ EntityClass::EntityClass(const std::string& name, const vfs::FileInfo& fileInfo,
   _inheritanceResolved(false),
   _modName("base"),
   _emptyAttribute("", "", ""),
-  _parseStamp(0)
-{}
-
-EntityClass::~EntityClass()
+  _parseStamp(0),
+  _blockChangeSignal(false)
 {}
 
 std::string EntityClass::getName() const
@@ -109,7 +107,7 @@ void EntityClass::setColour(const Vector3& colour)
 
     _wireShader = fmt::format("<{0:f} {1:f} {2:f}>", _colour[0], _colour[1], _colour[2]);
 
-    _changedSignal.emit();
+    emitChangedSignal();
 }
 
 void EntityClass::resetColour()
@@ -456,7 +454,7 @@ void EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
     } // while true
 
     // Notify the observers
-    _changedSignal.emit();
+    emitChangedSignal();
 }
 
 } // namespace eclass
