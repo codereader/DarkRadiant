@@ -24,7 +24,8 @@ namespace eclass {
 // Constructor
 EClassManager::EClassManager() :
     _realised(false),
-    _defLoader(std::bind(&EClassManager::loadDefAndResolveInheritance, this)),
+    _defLoader(std::bind(&EClassManager::loadDefAndResolveInheritance, this),
+               std::bind(&EClassManager::onDefLoadingCompleted, this)),
 	_curParseStamp(0)
 {}
 
@@ -192,7 +193,7 @@ void EClassManager::loadDefAndResolveInheritance()
     resolveInheritance();
     applyColours();
 
-	_defsLoadedSignal.emit();
+    // The loaded signal will be invoked in the onDefLoadingCompleted() method
 }
 
 void EClassManager::applyColours()
@@ -348,6 +349,7 @@ void EClassManager::shutdownModule()
 
 	// Don't notify anyone anymore
 	_defsReloadedSignal.clear();
+    _changeNotificationQueue.clear();
 
 	// Clear member structures
 	_entityClasses.clear();
@@ -509,6 +511,18 @@ void EClassManager::parseFile(const vfs::FileInfo& fileInfo)
 		rError() << "[eclassmgr] failed to parse " << fileInfo.fullPath()
 				 << " (" << e.what() << ")" << std::endl;
 	}
+}
+
+void EClassManager::onDefLoadingCompleted()
+{
+    for (auto& eclass : _changeNotificationQueue)
+    {
+        eclass.get().emitChangedSignal();
+    }
+
+    _changeNotificationQueue.clear();
+
+    _defsLoadedSignal.emit();
 }
 
 // Static module instance

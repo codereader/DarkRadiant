@@ -104,6 +104,9 @@ private:
     // Worker function usually done in a separate thread
     void loadDefAndResolveInheritance();
 
+    // Invokes the change notifications that have been buffered during parsing
+    void onDefLoadingCompleted();
+
     // Applies possible colour overrides to all affected eclasses
     void applyColours();
 
