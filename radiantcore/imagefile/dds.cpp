@@ -260,8 +260,8 @@ DDSImagePtr LoadDDSFromStream(InputStream& stream)
         size += mipMap.size;
 
         // Go to the next mipmap
-        width = (width+1) >> 1;
-        height = (height+1) >> 1;
+        width = std::max(width/2, 1);
+        height = std::max(height/2, 1);
     }
 
     // Allocate a new DDS image with that size
