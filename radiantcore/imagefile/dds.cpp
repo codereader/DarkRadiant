@@ -249,7 +249,7 @@ DDSImagePtr LoadDDSFromStream(InputStream& stream)
         // this is based on the block size, otherwise it derives from the bytes
         // per pixel.
         if (header.isCompressed())
-            mipMap.size = std::max( width, 4 ) / 4 * std::max( height, 4 ) / 4 * blockBytes;
+            mipMap.size = ((width + 3) / 4) * ((height + 3) / 4) * blockBytes;
         else
             mipMap.size = width * height * (bitDepth / 8);
 
