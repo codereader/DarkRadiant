@@ -30,11 +30,11 @@ class TransientWindow: public wxFrame
 
 protected:
 	// Customisable virtuals implemented by subclasses
-	virtual void _preShow();
+	virtual void _preShow() { }
 	virtual void _postShow() { }
 
-	virtual void _preHide();
-    virtual void _postHide();
+	virtual void _preHide() { }
+    virtual void _postHide() { }
 
 	virtual void _preDestroy() { }
 	virtual void _postDestroy() { }

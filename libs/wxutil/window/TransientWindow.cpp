@@ -34,26 +34,18 @@ bool TransientWindow::Show(bool show)
 {
 	if (show)
 	{
+        // Restore the position
+        _windowPosition.applyPosition();
 		_preShow();
 	}
 	else
 	{
+        SaveWindowState();
 		_preHide();
 	}
 
 	// Pass the call to base
 	return wxFrame::Show(show);
-}
-
-void TransientWindow::_postHide()
-{
-    // Bring the mainframe to foreground after closing this Window (#3965)
-    // If we don't do this, some completely different application like Windows Explorer
-    // might get the focus instead.
-    if (GlobalMainFrame().getWxTopLevelWindow() != NULL)
-    {
-        GlobalMainFrame().getWxTopLevelWindow()->SetFocus();
-    }
 }
 
 void TransientWindow::_onShowHide(wxShowEvent& ev)
@@ -66,6 +58,13 @@ void TransientWindow::_onShowHide(wxShowEvent& ev)
 	}
 	else
 	{
+        // Bring the mainframe to foreground after closing this Window (#3965)
+        // If we don't do this, some completely different application like Windows Explorer
+        // might get the focus instead.
+        if (GlobalMainFrame().getWxTopLevelWindow() != NULL)
+        {
+            GlobalMainFrame().getWxTopLevelWindow()->SetFocus();
+        }
 		_postHide();
 	}
 }
@@ -85,17 +84,6 @@ bool TransientWindow::_onDeleteEvent()
 	_postDestroy();
 
 	return false;
-}
-
-void TransientWindow::_preShow()
-{
-	// Restore the position
-	_windowPosition.applyPosition();
-}
-
-void TransientWindow::_preHide()
-{
-	SaveWindowState();
 }
 
 void TransientWindow::SaveWindowState()
