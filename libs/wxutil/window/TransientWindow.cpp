@@ -7,11 +7,17 @@
 namespace wxutil
 {
 
-TransientWindow::TransientWindow(const std::string& title, wxWindow* parent, bool hideOnDelete) :
-	wxFrame(parent, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, 
-        wxSYSTEM_MENU | wxRESIZE_BORDER | wxCLOSE_BOX | wxCAPTION | wxFRAME_TOOL_WINDOW |
-        wxCLIP_CHILDREN | wxFRAME_FLOAT_ON_PARENT | wxFRAME_NO_TASKBAR),
-	_hideOnDelete(hideOnDelete)
+TransientWindow::TransientWindow(const std::string& title, wxWindow* parent,
+                                 bool hideOnDelete)
+: wxFrame(parent, wxID_ANY, title, wxDefaultPosition, wxDefaultSize,
+          wxSYSTEM_MENU | wxRESIZE_BORDER | wxCLOSE_BOX | wxCAPTION
+#if defined(_WIN32)
+          // Avoids minimisation problems on Windows, but results in child
+          // window appearing unfocused on GTK, which is annoying.
+          | wxFRAME_TOOL_WINDOW
+#endif
+          | wxCLIP_CHILDREN | wxFRAME_FLOAT_ON_PARENT | wxFRAME_NO_TASKBAR),
+  _hideOnDelete(hideOnDelete)
 {
 	Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(TransientWindow::_onDelete), NULL, this);
 	Connect(wxEVT_SHOW, wxShowEventHandler(TransientWindow::_onShowHide), NULL, this);
@@ -73,7 +79,7 @@ bool TransientWindow::_onDeleteEvent()
     }
 
 	_preDestroy();
-	
+
 	Destroy();
 
 	_postDestroy();
@@ -116,7 +122,7 @@ void TransientWindow::ToggleVisibility()
 	}
 }
 
-void TransientWindow::InitialiseWindowPosition(int defaultWidth, int defaultHeight, 
+void TransientWindow::InitialiseWindowPosition(int defaultWidth, int defaultHeight,
 											   const std::string& windowStateKey)
 {
 	SetSize(defaultWidth, defaultHeight);

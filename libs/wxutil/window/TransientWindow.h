@@ -6,17 +6,26 @@
 namespace wxutil
 {
 
-class TransientWindow :
-	public wxFrame
+/**
+ * \brief Base class for a non-modal child window (e.g. light inspector)
+ *
+ * TransientWindows are used for inspector windows which appear above the main
+ * window but are not modal, thereby allowing selection changes which should
+ * dynamically update the inspector window contents.
+ *
+ * The window may be hidden rather than deleted, allowing it to be re-shown with
+ * the same contents as before, and it can remember its position across
+ * sessions.
+ */
+class TransientWindow: public wxFrame
 {
-private:
 	// Whether this window should be hidden rather than destroyed
 	bool _hideOnDelete;
 
 	// The window position tracker
 	WindowPosition _windowPosition;
 
-	// Registry key to load/save window position 
+	// Registry key to load/save window position
 	std::string _windowStateKey;
 
 protected:
