@@ -145,7 +145,6 @@
 		<curveCatmullRomKey value="curve_CatmullRomSpline" />
 		<bindKey value="bind" />
 		<playerHeight value="64" />
-		<nameKey value="name" />
         <speakerMinRadius value="24" />
         <speakerMaxRadius value="32" />
 		<guiSmallFontLimit value="0.15" />
