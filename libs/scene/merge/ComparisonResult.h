@@ -115,9 +115,6 @@ public:
     // The collection of differing entities
     std::list<EntityDifference> differingEntities;
 
-    // All nodes which have differing group configuration
-    std::list<GroupDifference> selectionGroupDifferences;
-
     const IMapRootNodePtr& getBaseRootNode() const
     {
         return _baseRoot;

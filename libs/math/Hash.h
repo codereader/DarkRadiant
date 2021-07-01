@@ -2,8 +2,6 @@
 
 #include <cstdlib>
 #include <memory>
-#include <sstream>
-#include <iomanip>
 #include "Vector3.h"
 #include "SHA256.h"
 
@@ -90,15 +88,17 @@ public:
         uint8_t digest[SHA256_BLOCK_SIZE];
         sha256_final(_context.get(), digest);
 
-        std::ostringstream oss;
-        oss << std::hex << std::setfill('0');
+        constexpr char hexChars[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
 
-        for (uint8_t val : digest)
+        std::string hexString(sizeof(digest) * 2, '\0');
+
+        for (auto i = 0; i < sizeof(digest); ++i)
         {
-            oss << std::setw(2) << (unsigned int)val;
+            hexString[i*2] = hexChars[(digest[i] & 0xF0) >> 4];
+            hexString[i*2 + 1] = hexChars[digest[i] & 0x0F];
         }
 
-        return oss.str();
+        return hexString;
     }
 };
 

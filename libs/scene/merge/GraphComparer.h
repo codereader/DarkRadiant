@@ -50,11 +50,6 @@ private:
 
     static std::list<ComparisonResult::PrimitiveDifference> compareChildNodes(
         const INodePtr& sourceNode, const INodePtr& baseNode);
-
-    static void compareSelectionGroups(ComparisonResult& result);
-    static void compareSelectionGroups(ComparisonResult& result, const INodePtr& sourceNode, const INodePtr& baseNode);
-    static void compareSelectionGroupsOfPrimitives(ComparisonResult& result, const INodePtr& sourceNode, const INodePtr& baseNode);
-    static std::string calculateGroupFingerprint(const selection::ISelectionGroupPtr& group);
 };
 
 }
