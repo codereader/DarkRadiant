@@ -14,6 +14,26 @@ std::ostream& operator<< (std::ostream& os, const RGB8& rgb)
               << int(rgb.z()) << "]";
 }
 
+// Helper class for retrieving pixels by X and Y coordinates and casting them to
+// the appropriate pixel type.
+template<typename Pixel_T> class Pixelator
+{
+    const Image& _image;
+
+public:
+
+    // Construct with image to access
+    Pixelator(const Image& im): _image(im)
+    {}
+
+    // Get pixel at given coordinates
+    Pixel_T& operator() (int x, int y)
+    {
+        Pixel_T* p0 = reinterpret_cast<Pixel_T*>(_image.getPixels());
+        return *(p0 + x + y * _image.getWidth());
+    }
+};
+
 namespace test
 {
 
@@ -80,20 +100,120 @@ TEST_F(ImageLoadingTest, LoadPngGreyscaleWithAlpha)
 TEST_F(ImageLoadingTest, LoadDDSUncompressed)
 {
     auto img = loadImage("textures/dds/test_16x16_uncomp.dds");
+    ASSERT_TRUE(img);
 
-    // Check size is correct
+    // Check properties are correct
     EXPECT_EQ(img->getWidth(), 16);
     EXPECT_EQ(img->getHeight(), 16);
+    EXPECT_EQ(img->getLevels(), 1);
+    EXPECT_FALSE(img->isPrecompressed());
 
     // Examine pixel data
-    uint8_t* bytes = img->getPixels();
-    RGB8* pixels = reinterpret_cast<RGB8*>(bytes);
+    Pixelator<RGB8> pixels(*img);
+    EXPECT_EQ(pixels(0, 0), RGB8(0, 0, 0));         // border
+    EXPECT_EQ(pixels(2, 1), RGB8(255, 255, 255));   // background
+    EXPECT_EQ(pixels(6, 7), RGB8(0, 255, 0));       // green band
+    EXPECT_EQ(pixels(7, 14), RGB8(255, 255, 0));    // cyan pillar (BGR)
+    EXPECT_EQ(pixels(8, 1), RGB8(255, 0, 255));     // magenta pillar
+    EXPECT_EQ(pixels(8, 8), RGB8(0, 0, 255));       // red centre (BGR)
+    EXPECT_EQ(pixels(14, 13), RGB8(255, 255, 255)); // background
+    EXPECT_EQ(pixels(15, 15), RGB8(0, 0, 0));       // border
+}
 
-    EXPECT_EQ(pixels[0], RGB8(0, 0, 0));        // border
-    EXPECT_EQ(pixels[18], RGB8(255, 255, 255)); // background
-    EXPECT_EQ(pixels[113], RGB8(0, 255, 0));    // green band
-    EXPECT_EQ(pixels[119], RGB8(0, 0, 255));    // red centre (but BGR)
-    EXPECT_EQ(pixels[255], RGB8(0, 0, 0));      // border
+TEST_F(ImageLoadingTest, LoadDDSUncompressedMipMaps)
+{
+    auto img = loadImage("textures/dds/test_16x16_uncomp_mips.dds");
+    ASSERT_TRUE(img);
+
+    // Overall size is unchanged
+    EXPECT_EQ(img->getWidth(), 16);
+    EXPECT_EQ(img->getHeight(), 16);
+    EXPECT_FALSE(img->isPrecompressed());
+
+    // 5 mipmap levels (16, 8, 4, 2, 1)
+    EXPECT_EQ(img->getLevels(), 5);
+    EXPECT_EQ(img->getWidth(0), 16);
+    EXPECT_EQ(img->getWidth(1), 8);
+    EXPECT_EQ(img->getHeight(1), 8);
+    EXPECT_EQ(img->getWidth(2), 4);
+    EXPECT_EQ(img->getHeight(3), 2);
+    EXPECT_EQ(img->getHeight(4), 1);
+}
+
+TEST_F(ImageLoadingTest, LoadDDSUncompressedNPOT)
+{
+    auto img = loadImage("textures/dds/test_10x16_uncomp.dds");
+    ASSERT_TRUE(img);
+
+    EXPECT_EQ(img->getWidth(), 10);
+    EXPECT_EQ(img->getHeight(), 16);
+    EXPECT_FALSE(img->isPrecompressed());
+
+    // Examine pixel data
+    Pixelator<RGB8> pixels(*img);
+    EXPECT_EQ(pixels(0, 0), RGB8(0, 0, 0));      // border
+    EXPECT_EQ(pixels(1, 1), RGB8(0, 0, 255));    // red diag
+    EXPECT_EQ(pixels(8, 1), RGB8(255, 0, 255));  // magenta pillar
+    EXPECT_EQ(pixels(8, 14), RGB8(255, 255, 0)); // cyan pillar
+    EXPECT_EQ(pixels(9, 15), RGB8(0, 0, 0));     // border
+}
+
+TEST_F(ImageLoadingTest, LoadDDSCompressedDXT1)
+{
+    auto img = loadImage("textures/dds/test_128x128_dxt1.dds");
+    ASSERT_TRUE(img);
+
+    // 128x128 image with no mipmaps
+    EXPECT_EQ(img->getWidth(), 128);
+    EXPECT_EQ(img->getHeight(), 128);
+    EXPECT_EQ(img->getLevels(), 1);
+
+    // Must be compressed
+    EXPECT_TRUE(img->isPrecompressed());
+}
+
+TEST_F(ImageLoadingTest, LoadDDSCompressedDXT5NPOT)
+{
+    auto img = loadImage("textures/dds/test_60x128_dxt5.dds");
+    ASSERT_TRUE(img);
+
+    // 60x128 image with no mipmaps
+    EXPECT_EQ(img->getWidth(), 60);
+    EXPECT_EQ(img->getHeight(), 128);
+    EXPECT_EQ(img->getLevels(), 1);
+
+    // Must be compressed
+    EXPECT_TRUE(img->isPrecompressed());
+}
+
+TEST_F(ImageLoadingTest, LoadDDSCompressedDXT5MipMapsNPOT)
+{
+    auto img = loadImage("textures/dds/test_60x128_dxt5_mips.dds");
+    ASSERT_TRUE(img);
+
+    // 60x128 image with 8 mipmaps
+    EXPECT_EQ(img->getWidth(), 60);
+    EXPECT_EQ(img->getHeight(), 128);
+    EXPECT_EQ(img->getLevels(), 8);
+
+    // Must be compressed
+    EXPECT_TRUE(img->isPrecompressed());
+
+    // Check mipmap size sequence
+    EXPECT_EQ(img->getWidth(1), 30);
+    EXPECT_EQ(img->getHeight(1), 64);
+    EXPECT_EQ(img->getWidth(2), 15);
+    EXPECT_EQ(img->getHeight(2), 32);
+    EXPECT_EQ(img->getWidth(3), 7);
+    EXPECT_EQ(img->getHeight(3), 16);
+    EXPECT_EQ(img->getWidth(4), 3);
+    EXPECT_EQ(img->getHeight(4), 8);
+    EXPECT_EQ(img->getWidth(5), 1);
+    EXPECT_EQ(img->getHeight(5), 4);
+    EXPECT_EQ(img->getWidth(6), 1);
+    EXPECT_EQ(img->getHeight(6), 2);
+    EXPECT_EQ(img->getWidth(7), 1);
+    EXPECT_EQ(img->getHeight(7), 1);
 }
 
 }

@@ -44,16 +44,9 @@ public:
 	{
 		return reinterpret_cast<byte*>(pixels);
 	}
-
-	std::size_t getWidth() const override
-	{
-		return width;
-	}
-
-	std::size_t getHeight() const override
-	{
-		return height;
-	}
+	std::size_t getWidth(std::size_t = 0) const override { return width; }
+	std::size_t getHeight(std::size_t = 0) const override { return height; }
+    std::size_t getLevels() const override { return 1; }
 
     /* BindableTexture implementation */
     TexturePtr bindTexture(const std::string& name) const

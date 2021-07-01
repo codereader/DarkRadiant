@@ -39,19 +39,17 @@ namespace image
 // Metadata for a single MipMap level
 struct MipMapInfo
 {
-    std::size_t width;  // pixel width
-    std::size_t height; // pixel height
+    /// Width in pixels
+    std::size_t width = 0;
 
-    std::size_t size;   // memory size used by this mipmap
+    /// Height in pixels
+    std::size_t height = 0;
 
-    std::size_t offset; // offset in _pixelData to the beginning of this mipmap
+    /// Size in bytes
+    std::size_t size = 0;
 
-    MipMapInfo() :
-        width(0),
-        height(0),
-        size(0),
-        offset(0)
-    {}
+    /// Offset from data buffer start to the beginning of this mipmap
+    std::size_t offset = 0;
 };
 typedef std::vector<MipMapInfo> MipMapInfoList;
 
@@ -85,43 +83,42 @@ public:
 
     // Add a new mipmap with the given parameters and return a pointer to its
     // allocated byte data
-    uint8_t* addMipMap(std::size_t width, std::size_t height,
-                       std::size_t size, std::size_t offset)
+    uint8_t* addMipMap(const MipMapInfo& info)
     {
-        // Create the MipMapInfo metadata and store it in our list
-        MipMapInfo info;
-        info.size = size;
-        info.width = width;
-        info.height = height;
-        info.offset = offset;
+        // Store MipMapInfo metadata in our list
         _mipMapInfo.push_back(info);
 
         // Return the absolute pointer to the new mipmap's byte data
-        assert(offset < _pixelData.size());
-        return _pixelData.data() + offset;
+        assert(info.offset < _pixelData.size());
+        return _pixelData.data() + info.offset;
     }
 
     /* Image implementation */
     uint8_t* getPixels() const override { return _pixelData.data(); }
-    std::size_t getWidth() const override { return _mipMapInfo[0].width; }
-    std::size_t getHeight() const override { return _mipMapInfo[0].height; }
+    std::size_t getWidth(std::size_t level = 0) const override
+    {
+        return _mipMapInfo[level].width;
+    }
+    std::size_t getHeight(std::size_t level = 0) const override
+    {
+        return _mipMapInfo[level].height;
+    }
+    std::size_t getLevels() const override { return _mipMapInfo.size(); }
+    bool isPrecompressed() const override { return _compressed; }
 
     /* BindableTexture implementation */
     TexturePtr bindTexture(const std::string& name) const
     {
-        GLuint textureNum;
-
-        debug::assertNoGlErrors();
-
         // Allocate a new texture number and store it into the Texture structure
+        GLuint textureNum;
         glGenTextures(1, &textureNum);
         glBindTexture(GL_TEXTURE_2D, textureNum);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                        GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
-
+        debug::checkGLErrors("before uploading DDS mipmaps");
         for (std::size_t i = 0; i < _mipMapInfo.size(); ++i)
         {
             const MipMapInfo& mipMap = _mipMapInfo[i];
@@ -135,6 +132,21 @@ public:
                     0, static_cast<GLsizei>(mipMap.size),
                     _pixelData.data() + mipMap.offset
                 );
+
+                // If the upload failed but this is not level 0, we can fall
+                // back to regenerating the mipmaps.
+                if (debug::checkGLErrors("uploading DDS mipmap") != GL_NO_ERROR
+                    && i > 0)
+                {
+                    rWarning() << "DDSImage: failed to upload mipmap " << (i+1)
+                               << " of " << _mipMapInfo.size()
+                               << " [" << mipMap.width << "x" << mipMap.height << "],"
+                               << " regenerating mipmaps.\n";
+                    glGenerateMipmap(GL_TEXTURE_2D);
+
+                    // Don't process any more mipmaps
+                    break;
+                }
             }
             else
             {
@@ -178,10 +190,6 @@ public:
 
         return texObj;
     }
-
-    bool isPrecompressed() const {
-        return true;
-    }
 };
 typedef std::shared_ptr<DDSImage> DDSImagePtr;
 
@@ -196,8 +204,8 @@ static const std::map<std::string, GLenum> GL_FMT_FOR_FOURCC
 // Map uncompressed DDS bit depths to GLenum memory layouts
 static const std::map<int, GLenum> GL_FMT_FOR_BITDEPTH
 {
-    { 24, GL_RGB },
-    { 32, GL_RGBA }
+    { 24, GL_BGR },
+    { 32, GL_BGRA }
 };
 
 DDSImagePtr LoadDDSFromStream(InputStream& stream)
@@ -241,7 +249,7 @@ DDSImagePtr LoadDDSFromStream(InputStream& stream)
         // this is based on the block size, otherwise it derives from the bytes
         // per pixel.
         if (header.isCompressed())
-            mipMap.size = std::max( width, 4 ) / 4 * std::max( height, 4 ) / 4 * blockBytes;
+            mipMap.size = ((width + 3) / 4) * ((height + 3) / 4) * blockBytes;
         else
             mipMap.size = width * height * (bitDepth / 8);
 
@@ -252,8 +260,8 @@ DDSImagePtr LoadDDSFromStream(InputStream& stream)
         size += mipMap.size;
 
         // Go to the next mipmap
-        width = (width+1) >> 1;
-        height = (height+1) >> 1;
+        width = std::max(width/2, 1);
+        height = std::max(height/2, 1);
     }
 
     // Allocate a new DDS image with that size
@@ -270,11 +278,9 @@ DDSImagePtr LoadDDSFromStream(InputStream& stream)
     // Load the mipmaps into the allocated memory
     for (std::size_t i = 0; i < mipMapInfo.size(); ++i)
     {
+        // Appaned a new mipmap and store the offset
         const MipMapInfo& mipMap = mipMapInfo[i];
-
-        // Declare a new mipmap and store the offset
-        uint8_t* mipMapBytes = image->addMipMap(mipMap.width, mipMap.height,
-                                                mipMap.size, mipMap.offset);
+        uint8_t* mipMapBytes = image->addMipMap(mipMap);
 
         // Read the data into the DDSImage's memory
         std::size_t bytesRead = stream.read(

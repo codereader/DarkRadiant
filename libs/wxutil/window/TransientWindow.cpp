@@ -7,11 +7,17 @@
 namespace wxutil
 {
 
-TransientWindow::TransientWindow(const std::string& title, wxWindow* parent, bool hideOnDelete) :
-	wxFrame(parent, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, 
-        wxSYSTEM_MENU | wxRESIZE_BORDER | wxCLOSE_BOX | wxCAPTION | wxFRAME_TOOL_WINDOW |
-        wxCLIP_CHILDREN | wxFRAME_FLOAT_ON_PARENT | wxFRAME_NO_TASKBAR),
-	_hideOnDelete(hideOnDelete)
+TransientWindow::TransientWindow(const std::string& title, wxWindow* parent,
+                                 bool hideOnDelete)
+: wxFrame(parent, wxID_ANY, title, wxDefaultPosition, wxDefaultSize,
+          wxSYSTEM_MENU | wxRESIZE_BORDER | wxCLOSE_BOX | wxCAPTION
+#if defined(_WIN32)
+          // Avoids minimisation problems on Windows, but results in child
+          // window appearing unfocused on GTK, which is annoying.
+          | wxFRAME_TOOL_WINDOW
+#endif
+          | wxCLIP_CHILDREN | wxFRAME_FLOAT_ON_PARENT | wxFRAME_NO_TASKBAR),
+  _hideOnDelete(hideOnDelete)
 {
 	Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(TransientWindow::_onDelete), NULL, this);
 	Connect(wxEVT_SHOW, wxShowEventHandler(TransientWindow::_onShowHide), NULL, this);
@@ -28,26 +34,18 @@ bool TransientWindow::Show(bool show)
 {
 	if (show)
 	{
+        // Restore the position
+        _windowPosition.applyPosition();
 		_preShow();
 	}
 	else
 	{
+        SaveWindowState();
 		_preHide();
 	}
 
 	// Pass the call to base
 	return wxFrame::Show(show);
-}
-
-void TransientWindow::_postHide()
-{
-    // Bring the mainframe to foreground after closing this Window (#3965)
-    // If we don't do this, some completely different application like Windows Explorer
-    // might get the focus instead.
-    if (GlobalMainFrame().getWxTopLevelWindow() != NULL)
-    {
-        GlobalMainFrame().getWxTopLevelWindow()->SetFocus();
-    }
 }
 
 void TransientWindow::_onShowHide(wxShowEvent& ev)
@@ -60,6 +58,13 @@ void TransientWindow::_onShowHide(wxShowEvent& ev)
 	}
 	else
 	{
+        // Bring the mainframe to foreground after closing this Window (#3965)
+        // If we don't do this, some completely different application like Windows Explorer
+        // might get the focus instead.
+        if (GlobalMainFrame().getWxTopLevelWindow() != NULL)
+        {
+            GlobalMainFrame().getWxTopLevelWindow()->SetFocus();
+        }
 		_postHide();
 	}
 }
@@ -73,23 +78,12 @@ bool TransientWindow::_onDeleteEvent()
     }
 
 	_preDestroy();
-	
+
 	Destroy();
 
 	_postDestroy();
 
 	return false;
-}
-
-void TransientWindow::_preShow()
-{
-	// Restore the position
-	_windowPosition.applyPosition();
-}
-
-void TransientWindow::_preHide()
-{
-	SaveWindowState();
 }
 
 void TransientWindow::SaveWindowState()
@@ -116,7 +110,7 @@ void TransientWindow::ToggleVisibility()
 	}
 }
 
-void TransientWindow::InitialiseWindowPosition(int defaultWidth, int defaultHeight, 
+void TransientWindow::InitialiseWindowPosition(int defaultWidth, int defaultHeight,
 											   const std::string& windowStateKey)
 {
 	SetSize(defaultWidth, defaultHeight);
