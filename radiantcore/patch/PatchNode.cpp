@@ -150,7 +150,8 @@ void PatchNode::snapComponents(float snap) {
 void PatchNode::testSelect(Selector& selector, SelectionTest& test)
 {
     // Check if this patch has a twosided material
-    bool isTwosided = m_patch.getSurfaceShader().getGLShader()->getMaterial()->getCullType() == Material::CULL_NONE;
+    const auto& shader = m_patch.getSurfaceShader().getGLShader();
+    bool isTwosided = shader && shader->getMaterial()->getCullType() == Material::CULL_NONE;
 
     test.BeginMesh(localToWorld(), isTwosided);
 
