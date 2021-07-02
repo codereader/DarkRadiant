@@ -270,7 +270,9 @@ public:
 void cloneSelected(const cmd::ArgumentList& args)
 {
 	// Check for the correct editing mode (don't clone components)
-	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent) {
+	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent ||
+        GlobalMapModule().getEditMode() != IMap::EditMode::Normal)
+    {
 		return;
 	}
 
