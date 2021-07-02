@@ -69,6 +69,9 @@ class CamWnd :
     // Is true during an active drawing process
     bool _drawing;
 
+    // Update of this window in the next idle event loop
+    bool _updateRequested;
+
     // The GL widget
     wxutil::GLWidget* _wxGLWidget;
 
@@ -242,6 +245,7 @@ private:
 
     void onFrame(wxTimerEvent& ev);
     void onFreeMoveTimer(wxTimerEvent& ev);
+    void onIdle(wxIdleEvent& ev);
 
     void handleFreeMovement(float timePassed);
     void setFreeMoveFlags(unsigned int mask);

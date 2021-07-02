@@ -70,6 +70,7 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
 	_id(id),
 	_wxGLWidget(new wxutil::GLWidget(parent, std::bind(&XYWnd::onRender, this), "XYWnd")),
     _drawing(false),
+    _updateRequested(false),
 	_minWorldCoord(game::current::getValue<float>("/defaults/minWorldCoord")),
 	_maxWorldCoord(game::current::getValue<float>("/defaults/maxWorldCoord")),
 	_defaultCursor(wxCURSOR_DEFAULT),
@@ -291,15 +292,11 @@ void XYWnd::forceRedraw()
 
 void XYWnd::queueDraw()
 {
-    if (_drawing)
-    {
-        return; // deny redraw requests if we're currently drawing
-    }
-
-	_wxGLWidget->Refresh(false);
+    _updateRequested = true;
 }
 
-void XYWnd::onSceneGraphChange() {
+void XYWnd::onSceneGraphChange()
+{
     // Pass the call to queueDraw.
     queueDraw();
 }
@@ -1587,6 +1584,12 @@ void XYWnd::onIdle(wxIdleEvent& ev)
 	{
 		performChaseMouse();
 	}
+
+    if (_updateRequested)
+    {
+        _updateRequested = false;
+        _wxGLWidget->Refresh(false);
+    }
 }
 
 void XYWnd::onGLResize(wxSizeEvent& ev)

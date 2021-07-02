@@ -73,6 +73,7 @@ CamWnd::CamWnd(wxWindow* parent) :
     _view(true),
     _camera(GlobalCameraManager().createCamera(_view, std::bind(&CamWnd::requestRedraw, this, std::placeholders::_1))),
     _drawing(false),
+    _updateRequested(false),
     _wxGLWidget(new wxutil::GLWidget(_mainWxWidget, std::bind(&CamWnd::onRender, this), "CamWnd")),
     _timer(this),
     _timerLock(false),
@@ -85,6 +86,7 @@ CamWnd::CamWnd(wxWindow* parent) :
 {
     Bind(wxEVT_TIMER, &CamWnd::onFrame, this, _timer.GetId());
     Bind(wxEVT_TIMER, &CamWnd::onFreeMoveTimer, this, _freeMoveTimer.GetId());
+    _wxGLWidget->Bind(wxEVT_IDLE, &CamWnd::onIdle, this);
 
     setFarClipPlaneDistance(calculateFarPlaneDistance(getCameraSettings()->cubicScale()));
     setFarClipPlaneEnabled(getCameraSettings()->farClipEnabled());
@@ -976,11 +978,14 @@ void CamWnd::releaseStates()
 
 void CamWnd::queueDraw()
 {
-    if (_drawing)
-    {
-        return;
-    }
+    _updateRequested = true;
+}
 
+void CamWnd::onIdle(wxIdleEvent& ev)
+{
+    if (!_updateRequested) return;
+
+    _updateRequested = false;
     _wxGLWidget->Refresh(false);
 }
 

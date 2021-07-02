@@ -36,6 +36,7 @@ protected:
 
     wxutil::GLWidget* _wxGLWidget;
     bool _drawing;
+    bool _updateRequested;
 
     // The maximum/minimum values of a coordinate
     double _minWorldCoord;
