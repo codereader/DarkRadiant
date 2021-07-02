@@ -21,6 +21,9 @@ BrushNode::BrushNode() :
     _untransformedOriginChanged(true)
 {
 	m_brush.attach(*this); // BrushObserver
+
+    // Try to anticipate a few face additions to avoid reallocations during map parsing
+    reserve(6);
 }
 
 // Copy Constructor
@@ -297,8 +300,9 @@ void BrushNode::reserve(std::size_t size) {
 	m_faceInstances.reserve(size);
 }
 
-void BrushNode::push_back(Face& face) {
-	m_faceInstances.push_back(FaceInstance(face, std::bind(&BrushNode::selectedChangedComponent, this, std::placeholders::_1)));
+void BrushNode::push_back(Face& face)
+{
+	m_faceInstances.emplace_back(face, std::bind(&BrushNode::selectedChangedComponent, this, std::placeholders::_1));
     _untransformedOriginChanged = true;
 }
 

@@ -46,6 +46,8 @@ Brush::Brush(BrushNode& owner) :
     m_transformChanged(false),
 	_detailFlag(Structural)
 {
+    // Make some space for a few faces
+    reserve(6);
     onFacePlaneChanged();
 }
 
