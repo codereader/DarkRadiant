@@ -47,8 +47,17 @@ void ConsoleView::flushLine()
     {
         std::lock_guard<std::mutex> lock(_lineBufferMutex);
 
-        _lineBuffer.emplace_back(_bufferMode, std::string());
-        _lineBuffer.back().second.swap(_buffer);
+        // If the mode didn't change, put it on the pile
+        if (!_lineBuffer.empty() && _lineBuffer.back().first == _bufferMode)
+        {
+            _lineBuffer.back().second.append(_buffer);
+        }
+        else
+        {
+            _lineBuffer.emplace_back(_bufferMode, std::move(_buffer));
+        }
+
+        _buffer = std::string();
     }
 }
 
