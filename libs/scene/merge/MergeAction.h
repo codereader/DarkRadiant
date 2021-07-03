@@ -127,6 +127,9 @@ protected:
         assert(_node);
         assert(Node_getCloneable(node));
 
+        auto* entity = Node_getEntity(node);
+        _modelIsEqualToName = entity && entity->getKeyValue("name") == entity->getKeyValue("model");
+
         // No post-clone callback since we don't care about selection groups right now
         _cloneToBeInserted = cloneNodeIncludingDescendants(_node, PostCloneCallback());
 
@@ -143,17 +146,12 @@ protected:
         { 
             child->moveToLayer(activeLayer); return true; 
         });
-
-        auto* entity = Node_getEntity(_cloneToBeInserted);
-
-        _modelIsEqualToName = entity && entity->getKeyValue("name") == entity->getKeyValue("model");
     }
 
 public:
-    void applyChanges() override
+    void addSourceNodeToScene()
     {
-        if (!isActive()) return;
-
+        // Get the clone and add it to the target scene, it needs to be renderable here
         addNodeToContainer(_cloneToBeInserted, _parent);
 
         // Check if we need to synchronise the model and name key values
@@ -171,6 +169,18 @@ public:
                 }
             }
         }
+    }
+
+    void removeSourceNodeFromScene()
+    {
+        removeNodeFromParent(_cloneToBeInserted);
+    }
+
+    void applyChanges() override
+    {
+        if (!isActive()) return;
+
+        addSourceNodeToScene();
     }
 
     const INodePtr& getParent() const

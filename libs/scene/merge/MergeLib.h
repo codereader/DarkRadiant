@@ -248,7 +248,7 @@ inline void resolveConflictByKeepingBothEntities()
 
         // Add the action to import the source node as a whole
         const auto& pair = *sourceAndTargetEntities.begin();
-        auto addSourceEntityAction = std::make_shared<AddEntityAction>(pair.first, pair.second->getRootNode()); // TODO: AddEntityAction needs to check model spawnarg
+        auto addSourceEntityAction = std::make_shared<AddEntityAction>(pair.first, pair.second->getRootNode());
 
         operation->addAction(addSourceEntityAction); // TODO: Observer pattern to notify Map class
 

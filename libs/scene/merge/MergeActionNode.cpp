@@ -313,7 +313,7 @@ void RegularMergeActionNode::addPreviewNodeForAddAction()
     if (addNodeAction)
     {
         // Get the clone and add it to the target scene, it needs to be renderable here
-        addNodeToContainer(_affectedNode, addNodeAction->getParent());
+        addNodeAction->addSourceNodeToScene();
     }
 }
 
@@ -323,7 +323,7 @@ void RegularMergeActionNode::removePreviewNodeForAddAction()
 
     if (addNodeAction)
     {
-        removeNodeFromParent(_affectedNode);
+        addNodeAction->removeSourceNodeFromScene();
     }
 }
 
