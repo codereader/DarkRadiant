@@ -64,8 +64,8 @@ private:
 
 /**
  * Special merge node representing one or more key value changes of a single entity.
- * Will report as "ChangeKeyValue" action type, even though the contained set of 
- * merge actions can comprise various types.
+ * If not pointing to a conflict, this will report as "ChangeKeyValue" action type, 
+ * even though the contained set of merge actions can comprise various types.
  */
 class KeyValueMergeActionNode final :
     public MergeActionNodeBase

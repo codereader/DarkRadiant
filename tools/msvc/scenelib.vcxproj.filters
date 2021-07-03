@@ -154,5 +154,8 @@
     <ClInclude Include="..\..\libs\scene\merge\LayerMergerBase.h">
       <Filter>scene\merge</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\scene\merge\MergeLib.h">
+      <Filter>scene\merge</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

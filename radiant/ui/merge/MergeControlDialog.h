@@ -61,6 +61,7 @@ private:
     void onAbortMerge(wxCommandEvent& ev);
     void onResolveAccept(wxCommandEvent& ev);
     void onResolveReject(wxCommandEvent& ev);
+    void onResolveKeepBoth(wxCommandEvent& ev);
     void onJumpToNextConflict(wxCommandEvent& ev);
     void updateControls();
     void queueUpdate();
@@ -70,11 +71,6 @@ private:
     void updateSummary();
 
     void update();
-
-    std::size_t getNumSelectedMergeNodes();
-    std::vector<scene::INodePtr> getSelectedMergeNodes();
-    std::shared_ptr<scene::IMergeActionNode> getSingleSelectedConflictNode();
-    void rejectSelectedNodesByDeletion();
 };
 
 }

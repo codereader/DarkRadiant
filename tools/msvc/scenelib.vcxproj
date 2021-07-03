@@ -145,6 +145,7 @@
     <ClInclude Include="..\..\libs\scene\merge\LayerMerger.h" />
     <ClInclude Include="..\..\libs\scene\merge\LayerMergerBase.h" />
     <ClInclude Include="..\..\libs\scene\merge\MergeAction.h" />
+    <ClInclude Include="..\..\libs\scene\merge\MergeLib.h" />
     <ClInclude Include="..\..\libs\scene\merge\MergeOperation.h" />
     <ClInclude Include="..\..\libs\scene\merge\MergeOperationBase.h" />
     <ClInclude Include="..\..\libs\scene\merge\NodeUtils.h" />
