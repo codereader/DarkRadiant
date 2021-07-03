@@ -118,6 +118,7 @@
     <ClCompile Include="..\..\libs\scene\InstanceWalkers.cpp" />
     <ClCompile Include="..\..\libs\scene\LayerUsageBreakdown.cpp" />
     <ClCompile Include="..\..\libs\scene\merge\GraphComparer.cpp" />
+    <ClCompile Include="..\..\libs\scene\merge\MergeActionNode.cpp" />
     <ClCompile Include="..\..\libs\scene\merge\MergeOperation.cpp" />
     <ClCompile Include="..\..\libs\scene\merge\MergeOperationBase.cpp" />
     <ClCompile Include="..\..\libs\scene\merge\ThreeWayMergeOperation.cpp" />
@@ -145,6 +146,7 @@
     <ClInclude Include="..\..\libs\scene\merge\LayerMerger.h" />
     <ClInclude Include="..\..\libs\scene\merge\LayerMergerBase.h" />
     <ClInclude Include="..\..\libs\scene\merge\MergeAction.h" />
+    <ClInclude Include="..\..\libs\scene\merge\MergeActionNode.h" />
     <ClInclude Include="..\..\libs\scene\merge\MergeLib.h" />
     <ClInclude Include="..\..\libs\scene\merge\MergeOperation.h" />
     <ClInclude Include="..\..\libs\scene\merge\MergeOperationBase.h" />

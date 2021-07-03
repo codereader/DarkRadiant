@@ -6,6 +6,7 @@ add_library(scenegraph
             Node.cpp
             merge/MergeOperation.cpp
             merge/MergeOperationBase.cpp
+            merge/MergeActionNode.cpp
             merge/GraphComparer.cpp
             merge/ThreeWayMergeOperation.cpp
             SelectableNode.cpp

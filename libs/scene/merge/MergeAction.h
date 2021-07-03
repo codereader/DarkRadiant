@@ -113,12 +113,16 @@ private:
     INodePtr _parent;
     INodePtr _cloneToBeInserted;
 
+    // For func_* based entities, the model key needs to be the same as the name
+    bool _modelIsEqualToName;
+
 protected:
     // Will add the given node to the parent when applyChanges() is called
     AddCloneToParentAction(const INodePtr& node, const INodePtr& parent, ActionType type) :
         MergeAction(type),
         _node(node),
-        _parent(parent)
+        _parent(parent),
+        _modelIsEqualToName(false)
     {
         assert(_node);
         assert(Node_getCloneable(node));
@@ -139,6 +143,10 @@ protected:
         { 
             child->moveToLayer(activeLayer); return true; 
         });
+
+        auto* entity = Node_getEntity(_cloneToBeInserted);
+
+        _modelIsEqualToName = entity && entity->getKeyValue("name") == entity->getKeyValue("model");
     }
 
 public:
@@ -147,6 +155,22 @@ public:
         if (!isActive()) return;
 
         addNodeToContainer(_cloneToBeInserted, _parent);
+
+        // Check if we need to synchronise the model and name key values
+        if (_modelIsEqualToName)
+        {
+            auto* entity = Node_getEntity(_cloneToBeInserted);
+
+            if (entity)
+            {
+                auto curName = entity->getKeyValue("name");
+
+                if (curName != entity->getKeyValue("model"))
+                {
+                    entity->setKeyValue("model", curName);
+                }
+            }
+        }
     }
 
     const INodePtr& getParent() const

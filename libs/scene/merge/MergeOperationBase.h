@@ -16,16 +16,16 @@ class MergeOperationBase :
     public IMergeOperation
 {
 private:
-    std::list<MergeAction::Ptr> _actions;
+    std::list<IMergeAction::Ptr> _actions;
 
 public:
     // Executes all active actions defined in this operation
     virtual void applyActions() override;
     virtual bool hasActions() override;
     virtual void foreachAction(const std::function<void(const IMergeAction::Ptr&)>& visitor) override;
+    virtual void addAction(const IMergeAction::Ptr& action) override;
 
 protected:
-    virtual void addAction(const MergeAction::Ptr& action);
     void clearActions();
     
     void addActionForKeyValueDiff(const ComparisonResult::KeyValueDifference& difference,

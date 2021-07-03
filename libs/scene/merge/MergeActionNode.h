@@ -3,10 +3,11 @@
 #include "imapmerge.h"
 #include "iselectiontest.h"
 #include "math/AABB.h"
-#include "scene/SelectableNode.h"
-#include "scene/merge/MergeAction.h"
 
-namespace map
+#include "../SelectableNode.h"
+#include "MergeAction.h"
+
+namespace scene
 {
 
 /**
@@ -16,12 +17,12 @@ namespace map
  * Rendering of the node is explicitly performed by this merge node.
  */
 class MergeActionNodeBase :
-    public scene::IMergeActionNode,
-    public scene::SelectableNode,
+    public IMergeActionNode,
+    public SelectableNode,
     public SelectionTestable
 {
 protected:
-    scene::INodePtr _affectedNode;
+    INodePtr _affectedNode;
     bool _syncActionStatus;
 
     MergeActionNodeBase();
@@ -33,16 +34,16 @@ public:
     // doesn't change the action's status when removed from the scene
     void prepareForMerge();
 
-    scene::INodePtr getAffectedNode() override;
+    INodePtr getAffectedNode() override;
 
     // Clears the references to actions and nodes, such that it doesn't hold 
-    // any strong refs to scene::Nodes, causing trouble when clearing the undo stack later
+    // any strong refs to Nodes, causing trouble when clearing the undo stack later
     virtual void clear();
 
-    virtual void onInsertIntoScene(scene::IMapRootNode& rootNode) override;
-    virtual void onRemoveFromScene(scene::IMapRootNode& rootNode) override;
+    virtual void onInsertIntoScene(IMapRootNode& rootNode) override;
+    virtual void onRemoveFromScene(IMapRootNode& rootNode) override;
 
-    scene::INode::Type getNodeType() const override;
+    INode::Type getNodeType() const override;
 
     bool supportsStateFlag(unsigned int state) const override;
 
@@ -56,7 +57,7 @@ public:
     void testSelect(Selector& selector, SelectionTest& test) override;
 
 private:
-    void testSelectNode(const scene::INodePtr& node, Selector& selector, SelectionTest& test);
+    void testSelectNode(const INodePtr& node, Selector& selector, SelectionTest& test);
 
     void hideAffectedNodes();
     void unhideAffectedNodes();
@@ -71,15 +72,15 @@ class KeyValueMergeActionNode final :
     public MergeActionNodeBase
 {
 private:
-    std::vector<scene::merge::IMergeAction::Ptr> _actions;
+    std::vector<merge::IMergeAction::Ptr> _actions;
 
 public:
-    KeyValueMergeActionNode(const std::vector<scene::merge::IMergeAction::Ptr>& actions);
+    KeyValueMergeActionNode(const std::vector<merge::IMergeAction::Ptr>& actions);
 
     void clear() override;
 
-    scene::merge::ActionType getActionType() const override;
-    void foreachMergeAction(const std::function<void(const scene::merge::IMergeAction::Ptr&)>& functor) override;
+    merge::ActionType getActionType() const override;
+    void foreachMergeAction(const std::function<void(const merge::IMergeAction::Ptr&)>& functor) override;
     std::size_t getMergeActionCount() override;
     bool hasActiveActions() override;
 };
@@ -97,18 +98,18 @@ class RegularMergeActionNode final :
     public MergeActionNodeBase
 {
 private:
-    scene::merge::IMergeAction::Ptr _action;
+    merge::IMergeAction::Ptr _action;
 
 public:
-    RegularMergeActionNode(const scene::merge::IMergeAction::Ptr& action);
+    RegularMergeActionNode(const merge::IMergeAction::Ptr& action);
 
-    void onInsertIntoScene(scene::IMapRootNode& rootNode) override;
-    void onRemoveFromScene(scene::IMapRootNode& rootNode) override;
+    void onInsertIntoScene(IMapRootNode& rootNode) override;
+    void onRemoveFromScene(IMapRootNode& rootNode) override;
 
     void clear() override;
 
-    scene::merge::ActionType getActionType() const override;
-    void foreachMergeAction(const std::function<void(const scene::merge::IMergeAction::Ptr&)>& functor) override;
+    merge::ActionType getActionType() const override;
+    void foreachMergeAction(const std::function<void(const merge::IMergeAction::Ptr&)>& functor) override;
     std::size_t getMergeActionCount() override;
     bool hasActiveActions() override;
 
@@ -116,7 +117,7 @@ private:
     void addPreviewNodeForAddAction();
     void removePreviewNodeForAddAction();
 
-    std::shared_ptr<scene::merge::AddCloneToParentAction> getAddNodeAction();
+    std::shared_ptr<merge::AddCloneToParentAction> getAddNodeAction();
 };
 
 }

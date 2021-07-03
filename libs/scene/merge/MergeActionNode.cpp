@@ -1,6 +1,6 @@
 #include "MergeActionNode.h"
 
-namespace map
+namespace scene
 {
 
 MergeActionNodeBase::MergeActionNodeBase() :
@@ -12,7 +12,7 @@ void MergeActionNodeBase::prepareForMerge()
     _syncActionStatus = false;
 }
 
-scene::INodePtr MergeActionNodeBase::getAffectedNode()
+INodePtr MergeActionNodeBase::getAffectedNode()
 {
     return _affectedNode;
 }
@@ -22,11 +22,11 @@ void MergeActionNodeBase::clear()
     _affectedNode.reset();
 }
 
-void MergeActionNodeBase::onInsertIntoScene(scene::IMapRootNode& rootNode)
+void MergeActionNodeBase::onInsertIntoScene(IMapRootNode& rootNode)
 {
     if (_syncActionStatus)
     {
-        foreachMergeAction([&](const scene::merge::IMergeAction::Ptr& action)
+        foreachMergeAction([&](const merge::IMergeAction::Ptr& action)
         {
             action->activate();
         });
@@ -37,7 +37,7 @@ void MergeActionNodeBase::onInsertIntoScene(scene::IMapRootNode& rootNode)
     SelectableNode::onInsertIntoScene(rootNode);
 }
 
-void MergeActionNodeBase::onRemoveFromScene(scene::IMapRootNode& rootNode)
+void MergeActionNodeBase::onRemoveFromScene(IMapRootNode& rootNode)
 {
     SelectableNode::onRemoveFromScene(rootNode);
     
@@ -45,14 +45,14 @@ void MergeActionNodeBase::onRemoveFromScene(scene::IMapRootNode& rootNode)
 
     if (_syncActionStatus)
     {
-        foreachMergeAction([&](const scene::merge::IMergeAction::Ptr& action)
+        foreachMergeAction([&](const merge::IMergeAction::Ptr& action)
         {
             // Removing an unresolved conflict action from the scene implies rejecting the source change
-            auto conflictAction = std::dynamic_pointer_cast<scene::merge::IConflictResolutionAction>(action);
+            auto conflictAction = std::dynamic_pointer_cast<merge::IConflictResolutionAction>(action);
             
-            if (conflictAction && conflictAction->getResolution() == scene::merge::ResolutionType::Unresolved)
+            if (conflictAction && conflictAction->getResolution() == merge::ResolutionType::Unresolved)
             {
-                conflictAction->setResolution(scene::merge::ResolutionType::RejectSourceChange);
+                conflictAction->setResolution(merge::ResolutionType::RejectSourceChange);
             }
 
             // Removing any action from the scene means to deactivate it
@@ -61,9 +61,9 @@ void MergeActionNodeBase::onRemoveFromScene(scene::IMapRootNode& rootNode)
     }
 }
 
-scene::INode::Type MergeActionNodeBase::getNodeType() const
+INode::Type MergeActionNodeBase::getNodeType() const
 {
-    return scene::INode::Type::MergeAction;
+    return INode::Type::MergeAction;
 }
 
 bool MergeActionNodeBase::supportsStateFlag(unsigned int state) const
@@ -85,7 +85,7 @@ void MergeActionNodeBase::renderSolid(RenderableCollector& collector, const Volu
 {
     _affectedNode->viewChanged();
     _affectedNode->renderSolid(collector, volume);
-    _affectedNode->foreachNode([&](const scene::INodePtr& child)
+    _affectedNode->foreachNode([&](const INodePtr& child)
     {
         child->viewChanged();
         child->renderSolid(collector, volume);
@@ -97,7 +97,7 @@ void MergeActionNodeBase::renderWireframe(RenderableCollector& collector, const 
 {
     _affectedNode->viewChanged();
     _affectedNode->renderWireframe(collector, volume);
-    _affectedNode->foreachNode([&](const scene::INodePtr& child)
+    _affectedNode->foreachNode([&](const INodePtr& child)
     {
         child->viewChanged();
         child->renderWireframe(collector, volume);
@@ -114,14 +114,14 @@ void MergeActionNodeBase::testSelect(Selector& selector, SelectionTest& test)
 {
     testSelectNode(_affectedNode, selector, test);
 
-    _affectedNode->foreachNode([&](const scene::INodePtr& child)
+    _affectedNode->foreachNode([&](const INodePtr& child)
     {
         testSelectNode(child, selector, test);
         return true;
     });
 }
 
-void MergeActionNodeBase::testSelectNode(const scene::INodePtr& node, Selector& selector, SelectionTest& test)
+void MergeActionNodeBase::testSelectNode(const INodePtr& node, Selector& selector, SelectionTest& test)
 {
     auto selectionTestable = std::dynamic_pointer_cast<SelectionTestable>(node);
 
@@ -141,7 +141,7 @@ void MergeActionNodeBase::hideAffectedNodes()
     // Hide the affected node itself, we're doing the rendering ourselves, recursively
     _affectedNode->enable(Node::eExcluded);
 
-    _affectedNode->foreachNode([&](const scene::INodePtr& child)
+    _affectedNode->foreachNode([&](const INodePtr& child)
     {
         child->enable(Node::eExcluded);
         return true;
@@ -153,7 +153,7 @@ void MergeActionNodeBase::unhideAffectedNodes()
     // Release the excluded state of the contained nodes
     _affectedNode->disable(Node::eExcluded);
 
-    _affectedNode->foreachNode([&](const scene::INodePtr& child)
+    _affectedNode->foreachNode([&](const INodePtr& child)
     {
         child->disable(Node::eExcluded);
         return true;
@@ -162,14 +162,14 @@ void MergeActionNodeBase::unhideAffectedNodes()
 
 // ------------ KeyValueMergeActionNode ----------------------------
 
-KeyValueMergeActionNode::KeyValueMergeActionNode(const std::vector<scene::merge::IMergeAction::Ptr>& actions) :
+KeyValueMergeActionNode::KeyValueMergeActionNode(const std::vector<merge::IMergeAction::Ptr>& actions) :
     _actions(actions)
 {
     assert(!_actions.empty());
 
     _affectedNode = _actions.front()->getAffectedNode();
     assert(std::find_if(_actions.begin(), _actions.end(),
-        [&](const scene::merge::IMergeAction::Ptr& action) { return action->getAffectedNode() != _affectedNode; }) == _actions.end());
+        [&](const merge::IMergeAction::Ptr& action) { return action->getAffectedNode() != _affectedNode; }) == _actions.end());
 }
 
 void KeyValueMergeActionNode::clear()
@@ -177,23 +177,23 @@ void KeyValueMergeActionNode::clear()
     _actions.clear();
 }
 
-scene::merge::ActionType KeyValueMergeActionNode::getActionType() const
+merge::ActionType KeyValueMergeActionNode::getActionType() const
 {
     // We report the change key value type since we're doing all kinds of key value changes,
     // unless we have an unresolved conflict in our collection
-    auto activeConflict = std::find_if(_actions.begin(), _actions.end(), [&](const scene::merge::IMergeAction::Ptr& action) 
+    auto activeConflict = std::find_if(_actions.begin(), _actions.end(), [&](const merge::IMergeAction::Ptr& action) 
     {
-        auto conflict = std::dynamic_pointer_cast<scene::merge::IConflictResolutionAction>(action);
+        auto conflict = std::dynamic_pointer_cast<merge::IConflictResolutionAction>(action);
 
-        return conflict && conflict->isActive() && conflict->getResolution() == scene::merge::ResolutionType::Unresolved;
+        return conflict && conflict->isActive() && conflict->getResolution() == merge::ResolutionType::Unresolved;
     });
     
     if (activeConflict != _actions.end())
     {
-        return scene::merge::ActionType::ConflictResolution;
+        return merge::ActionType::ConflictResolution;
     }
 
-    return !_actions.empty() ? scene::merge::ActionType::ChangeKeyValue : scene::merge::ActionType::NoAction;
+    return !_actions.empty() ? merge::ActionType::ChangeKeyValue : merge::ActionType::NoAction;
 }
 
 std::size_t KeyValueMergeActionNode::getMergeActionCount()
@@ -211,7 +211,7 @@ bool KeyValueMergeActionNode::hasActiveActions()
     return false;
 }
 
-void KeyValueMergeActionNode::foreachMergeAction(const std::function<void(const scene::merge::IMergeAction::Ptr&)>& functor)
+void KeyValueMergeActionNode::foreachMergeAction(const std::function<void(const merge::IMergeAction::Ptr&)>& functor)
 {
     for (const auto& action : _actions)
     {
@@ -221,13 +221,13 @@ void KeyValueMergeActionNode::foreachMergeAction(const std::function<void(const 
 
 // RegularMergeActionNode
 
-RegularMergeActionNode::RegularMergeActionNode(const scene::merge::IMergeAction::Ptr& action) :
+RegularMergeActionNode::RegularMergeActionNode(const merge::IMergeAction::Ptr& action) :
     _action(action)
 {
     _affectedNode = _action->getAffectedNode();
 }
 
-void RegularMergeActionNode::onInsertIntoScene(scene::IMapRootNode& rootNode)
+void RegularMergeActionNode::onInsertIntoScene(IMapRootNode& rootNode)
 {
     // Add the nodes that are missing in this scene, for preview purposes
     addPreviewNodeForAddAction();
@@ -236,7 +236,7 @@ void RegularMergeActionNode::onInsertIntoScene(scene::IMapRootNode& rootNode)
     MergeActionNodeBase::onInsertIntoScene(rootNode);
 }
 
-void RegularMergeActionNode::onRemoveFromScene(scene::IMapRootNode& rootNode)
+void RegularMergeActionNode::onRemoveFromScene(IMapRootNode& rootNode)
 {
     MergeActionNodeBase::onRemoveFromScene(rootNode);
 
@@ -248,33 +248,33 @@ void RegularMergeActionNode::clear()
     _action.reset();
 }
 
-scene::merge::ActionType RegularMergeActionNode::getActionType() const
+merge::ActionType RegularMergeActionNode::getActionType() const
 {
-    if (!_action) return scene::merge::ActionType::NoAction;
+    if (!_action) return merge::ActionType::NoAction;
 
-    if (_action->getType() == scene::merge::ActionType::ConflictResolution)
+    if (_action->getType() == merge::ActionType::ConflictResolution)
     {
-        auto conflictAction = std::dynamic_pointer_cast<scene::merge::IConflictResolutionAction>(_action);
+        auto conflictAction = std::dynamic_pointer_cast<merge::IConflictResolutionAction>(_action);
         assert(conflictAction);
 
         // Determine how this node should be rendered (unresolved conflict, or the type of the change that was accepted)
         switch (conflictAction->getResolution())
         {
-        case scene::merge::ResolutionType::Unresolved:
-            return scene::merge::ActionType::ConflictResolution;
+        case merge::ResolutionType::Unresolved:
+            return merge::ActionType::ConflictResolution;
 
-        case scene::merge::ResolutionType::ApplySourceChange: // render using the accepted action type
+        case merge::ResolutionType::ApplySourceChange: // render using the accepted action type
             return conflictAction->getSourceAction()->getType();
 
-        case scene::merge::ResolutionType::RejectSourceChange:
-            return scene::merge::ActionType::NoAction;
+        case merge::ResolutionType::RejectSourceChange:
+            return merge::ActionType::NoAction;
         }
     }
 
     return _action->getType();
 }
 
-void RegularMergeActionNode::foreachMergeAction(const std::function<void(const scene::merge::IMergeAction::Ptr&)>& functor)
+void RegularMergeActionNode::foreachMergeAction(const std::function<void(const merge::IMergeAction::Ptr&)>& functor)
 {
     if (_action)
     {
@@ -292,18 +292,18 @@ bool RegularMergeActionNode::hasActiveActions()
     return _action && _action->isActive();
 }
 
-std::shared_ptr<scene::merge::AddCloneToParentAction> RegularMergeActionNode::getAddNodeAction()
+std::shared_ptr<merge::AddCloneToParentAction> RegularMergeActionNode::getAddNodeAction()
 {
     // In case this is a conflicting source action modified an entity that is no longer present, add the old node
-    auto conflictAction = std::dynamic_pointer_cast<scene::merge::IConflictResolutionAction>(_action);
+    auto conflictAction = std::dynamic_pointer_cast<merge::IConflictResolutionAction>(_action);
 
-    if (conflictAction && conflictAction->getConflictType() == scene::merge::ConflictType::ModificationOfRemovedEntity)
+    if (conflictAction && conflictAction->getConflictType() == merge::ConflictType::ModificationOfRemovedEntity)
     {
-        return std::dynamic_pointer_cast<scene::merge::AddCloneToParentAction>(conflictAction->getSourceAction());
+        return std::dynamic_pointer_cast<merge::AddCloneToParentAction>(conflictAction->getSourceAction());
     }
 
     // Check the regular action for type AddEntityNode
-    return std::dynamic_pointer_cast<scene::merge::AddCloneToParentAction>(_action);
+    return std::dynamic_pointer_cast<merge::AddCloneToParentAction>(_action);
 }
 
 void RegularMergeActionNode::addPreviewNodeForAddAction()
@@ -313,7 +313,7 @@ void RegularMergeActionNode::addPreviewNodeForAddAction()
     if (addNodeAction)
     {
         // Get the clone and add it to the target scene, it needs to be renderable here
-        scene::addNodeToContainer(_affectedNode, addNodeAction->getParent());
+        addNodeToContainer(_affectedNode, addNodeAction->getParent());
     }
 }
 
@@ -323,7 +323,7 @@ void RegularMergeActionNode::removePreviewNodeForAddAction()
 
     if (addNodeAction)
     {
-        scene::removeNodeFromParent(_affectedNode);
+        removeNodeFromParent(_affectedNode);
     }
 }
 

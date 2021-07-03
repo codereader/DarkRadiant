@@ -19,7 +19,7 @@
 #include <sigc++/signal.h>
 #include "time/StopWatch.h"
 #include "scene/merge/MergeOperation.h"
-#include "MergeActionNode.h"
+#include "scene/merge/MergeActionNode.h"
 
 class TextInputStream;
 
@@ -69,7 +69,7 @@ private:
 	std::size_t _shutdownListener;
 
     scene::merge::IMergeOperation::Ptr _mergeOperation;
-    std::list<MergeActionNodeBase::Ptr> _mergeActionNodes;
+    std::list<scene::MergeActionNodeBase::Ptr> _mergeActionNodes;
 
     // Point trace for leak detection
     std::unique_ptr<PointFile> _pointTrace;

@@ -8,7 +8,7 @@ namespace scene
 namespace merge
 {
 
-void MergeOperationBase::addAction(const MergeAction::Ptr& action)
+void MergeOperationBase::addAction(const IMergeAction::Ptr& action)
 {
     _actions.push_back(action);
 }

@@ -254,6 +254,7 @@ void MergeControlDialog::onResolveAccept(wxCommandEvent& ev)
 void MergeControlDialog::onResolveReject(wxCommandEvent& ev)
 {
     scene::merge::rejectSelectedNodesByDeletion();
+    update();
 }
 
 void MergeControlDialog::onResolveKeepBoth(wxCommandEvent& ev)
@@ -261,6 +262,7 @@ void MergeControlDialog::onResolveKeepBoth(wxCommandEvent& ev)
     UndoableCommand undo("resolveMergeConflictByKeepingBothEntities");
 
     scene::merge::resolveConflictByKeepingBothEntities();
+    update();
 }
 
 void MergeControlDialog::onJumpToNextConflict(wxCommandEvent& ev)

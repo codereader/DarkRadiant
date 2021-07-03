@@ -386,7 +386,7 @@
 												</object>
 												<object class="sizeritem">
 													<option>0</option>
-													<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
+													<flag>wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxRIGHT</flag>
 													<border>6</border>
 													<object class="wxStaticText" name="UnresolvedConflicts">
 														<font>
@@ -516,7 +516,8 @@
 															<flag>wxLEFT</flag>
 															<border>6</border>
 															<object class="wxButton" name="ResolveKeepBothButton">
-																<label>Keep Both Entities</label>
+																<tooltip>Keeps both versions of this entity</tooltip>
+																<label>Keep both Entities</label>
 																<default>0</default>
 																<markup>0</markup>
 																<bitmap />

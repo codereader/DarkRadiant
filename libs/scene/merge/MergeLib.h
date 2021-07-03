@@ -8,7 +8,10 @@
 #include "imap.h"
 #include "iselection.h"
 #include "imapmerge.h"
+#include "itextstream.h"
 #include "scenelib.h"
+#include "MergeAction.h"
+#include "MergeActionNode.h"
 
 namespace scene
 {
@@ -161,19 +164,101 @@ inline std::string getAffectedKeyValue(const IMergeAction::Ptr& action)
     return keyValueAction ? keyValueAction->getValue() : std::string();
 }
 
+inline bool isKeyValueConflictAction(const IConflictResolutionAction::Ptr& conflictAction)
+{
+    return conflictAction && 
+           conflictAction->getConflictType() == ConflictType::ModificationOfRemovedKeyValue ||
+           conflictAction->getConflictType() == ConflictType::RemovalOfModifiedKeyValue ||
+           conflictAction->getConflictType() == ConflictType::SettingKeyToDifferentValue;
+}
+
+inline bool actionIsTargetingKeyValue(const IMergeAction::Ptr& action)
+{
+    if (action->getType() == ActionType::AddKeyValue ||
+        action->getType() == ActionType::RemoveKeyValue ||
+        action->getType() == ActionType::ChangeKeyValue)
+    {
+        return true;
+    }
+
+    // Conflict actions can be targeting key values too
+    if (action->getType() == ActionType::ConflictResolution &&
+        isKeyValueConflictAction(std::dynamic_pointer_cast<IConflictResolutionAction>(action)))
+    {
+        return true;
+    }
+
+    return false;
+}
+
 // Resolves the single selected merge conflict by keeping both entity versions.
 // The entity in the target map won't receive any changes, whereas the source entity will
 // be marked for addition to the target map.
 inline void resolveConflictByKeepingBothEntities()
 {
-    auto conflictNode = getSingleSelectedConflictNode();
+    auto operation = GlobalMapModule().getActiveMergeOperation();
 
-    if (conflictNode->getAffectedNode()->getNodeType() != INode::Type::Entity) return;
-
-    conflictNode->foreachMergeAction([&](const IMergeAction::Ptr& action)
+    if (!operation)
     {
-        // TODO
-    });
+        rError() << "Cannot resolve a conflict without an active merge operation" << std::endl;
+        return;
+    }
+
+    auto mergeNodes = getSelectedMergeNodes();
+
+    for (const auto& node : mergeNodes)
+    {
+        auto mergeNode = std::dynamic_pointer_cast<IMergeActionNode>(node);
+
+        // We are only looking for conflict resolution types
+        if (mergeNode->getAffectedNode()->getNodeType() != INode::Type::Entity ||
+            mergeNode->getActionType() != ActionType::ConflictResolution)
+        {
+            return;
+        }
+
+        // Get all the actions from the conflict node that are targeting key values
+        // and extract the source/target entity pairs from the conflict actions
+        
+        // We expect that we only get one source/target combination from a single node
+        std::set<std::pair<INodePtr, INodePtr>> sourceAndTargetEntities;
+        std::vector<IMergeAction::Ptr> keyValueActions;
+
+        mergeNode->foreachMergeAction([&](const IMergeAction::Ptr& action)
+        {
+            if (actionIsTargetingKeyValue(action))
+            {
+                keyValueActions.push_back(action);
+            }
+
+            auto conflictAction = std::dynamic_pointer_cast<IConflictResolutionAction>(action);
+
+            if (conflictAction)
+            {
+                sourceAndTargetEntities.insert(
+                    std::make_pair(conflictAction->getConflictingSourceEntity(), conflictAction->getConflictingTargetEntity()));
+            }
+        });
+
+        if (sourceAndTargetEntities.size() != 1)
+        {
+            rWarning() << "The conflict action node contains a weird combination and source and target entity nodes, cannot resolve" << std::endl;
+            return;
+        }
+
+        // Add the action to import the source node as a whole
+        const auto& pair = *sourceAndTargetEntities.begin();
+        auto addSourceEntityAction = std::make_shared<AddEntityAction>(pair.first, pair.second->getRootNode()); // TODO: AddEntityAction needs to check model spawnarg
+
+        operation->addAction(addSourceEntityAction); // TODO: Observer pattern to notify Map class
+
+        // Add a new merge action node for the addition to the target scene
+        auto mergeActionNode = std::make_shared<RegularMergeActionNode>(addSourceEntityAction);
+        GlobalMapModule().getRoot()->addChildNode(mergeActionNode);
+
+        // Remove the conflict resolution node
+        removeNodeFromParent(mergeNode);
+    }
 }
 
 }

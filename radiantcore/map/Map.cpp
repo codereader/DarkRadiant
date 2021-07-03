@@ -54,13 +54,13 @@
 #include "command/ExecutionNotPossible.h"
 #include "MapPropertyInfoFileModule.h"
 #include "messages/NotificationMessage.h"
-#include "MergeActionNode.h"
 
 #include <fmt/format.h>
 #include "scene/ChildPrimitives.h"
 #include "scene/merge/GraphComparer.h"
 #include "scene/merge/MergeOperation.h"
 #include "scene/merge/ThreeWayMergeOperation.h"
+#include "scene/merge/MergeLib.h"
 
 namespace map
 {
@@ -1099,31 +1099,6 @@ void Map::exportSelected(std::ostream& out, const MapFormatPtr& format)
     exporter.exportMap(GlobalSceneGraph().root(), scene::traverseSelected);
 }
 
-inline bool actionIsTargetingKeyValue(const scene::merge::IMergeAction::Ptr& action)
-{
-    if (action->getType() == scene::merge::ActionType::AddKeyValue ||
-        action->getType() == scene::merge::ActionType::RemoveKeyValue ||
-        action->getType() == scene::merge::ActionType::ChangeKeyValue)
-    {
-        return true;
-    }
-
-    // Conflict actions can be targeting key values too
-    if (action->getType() == scene::merge::ActionType::ConflictResolution)
-    {
-        auto conflictAction = std::dynamic_pointer_cast<scene::merge::IConflictResolutionAction>(action);
-
-        if (conflictAction->getConflictType() == scene::merge::ConflictType::ModificationOfRemovedKeyValue ||
-            conflictAction->getConflictType() == scene::merge::ConflictType::RemovalOfModifiedKeyValue ||
-            conflictAction->getConflictType() == scene::merge::ConflictType::SettingKeyToDifferentValue)
-        {
-            return true;
-        }
-    }
-
-    return false;
-}
-
 void Map::createMergeActions()
 {
     // Group spawnarg actions into one single node if applicable
@@ -1132,9 +1107,7 @@ void Map::createMergeActions()
 
     _mergeOperation->foreachAction([&](const scene::merge::IMergeAction::Ptr& action)
     {
-        scene::INodePtr affectedNode = action->getAffectedNode();
-
-        if (actionIsTargetingKeyValue(action))
+        if (scene::merge::actionIsTargetingKeyValue(action))
         {
             auto& actions = entityChanges.try_emplace(action->getAffectedNode()).first->second;
             actions.push_back(action);
@@ -1150,14 +1123,14 @@ void Map::createMergeActions()
     // Construct all entity changes...
     for (const auto& pair : entityChanges)
     {
-        _mergeActionNodes.emplace_back(std::make_shared<KeyValueMergeActionNode>(pair.second));
+        _mergeActionNodes.emplace_back(std::make_shared<scene::KeyValueMergeActionNode>(pair.second));
         getRoot()->addChildNode(_mergeActionNodes.back());
     }
 
     // ...and the regular ones
     for (const auto& action : otherChanges)
     {
-        _mergeActionNodes.emplace_back(std::make_shared<RegularMergeActionNode>(action));
+        _mergeActionNodes.emplace_back(std::make_shared<scene::RegularMergeActionNode>(action));
         getRoot()->addChildNode(_mergeActionNodes.back());
     }
 }

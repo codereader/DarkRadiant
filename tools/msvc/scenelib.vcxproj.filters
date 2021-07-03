@@ -48,6 +48,9 @@
     <ClCompile Include="..\..\libs\scene\merge\MergeOperationBase.cpp">
       <Filter>scene\merge</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\libs\scene\merge\MergeActionNode.cpp">
+      <Filter>scene\merge</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\libs\scene\InstanceWalkers.h">
@@ -155,6 +158,9 @@
       <Filter>scene\merge</Filter>
     </ClInclude>
     <ClInclude Include="..\..\libs\scene\merge\MergeLib.h">
+      <Filter>scene\merge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\merge\MergeActionNode.h">
       <Filter>scene\merge</Filter>
     </ClInclude>
   </ItemGroup>
