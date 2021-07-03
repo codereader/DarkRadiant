@@ -11,6 +11,12 @@ namespace merge
 void MergeOperationBase::addAction(const IMergeAction::Ptr& action)
 {
     _actions.push_back(action);
+    _sigActionAdded.emit(action);
+}
+
+sigc::signal<void, const IMergeAction::Ptr&>& MergeOperationBase::sig_ActionAdded()
+{
+    return _sigActionAdded;
 }
 
 void MergeOperationBase::applyActions()

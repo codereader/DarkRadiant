@@ -215,6 +215,7 @@ void Map::cleanupMergeOperation()
         mergeActionNode->clear();
     }
 
+    _mergeOperationListener.disconnect();
     _mergeActionNodes.clear();
     _mergeOperation.reset();
 }
@@ -1099,6 +1100,14 @@ void Map::exportSelected(std::ostream& out, const MapFormatPtr& format)
     exporter.exportMap(GlobalSceneGraph().root(), scene::traverseSelected);
 }
 
+void Map::onMergeActionAdded(const scene::merge::IMergeAction::Ptr& action)
+{
+    UndoableCommand cmd("insertMergeAction");
+
+    _mergeActionNodes.emplace_back(std::make_shared<scene::RegularMergeActionNode>(action));
+    getRoot()->addChildNode(_mergeActionNodes.back());
+}
+
 void Map::createMergeActions()
 {
     // Group spawnarg actions into one single node if applicable
@@ -1117,6 +1126,8 @@ void Map::createMergeActions()
             otherChanges.push_back(action);
         }
     });
+
+    _mergeOperationListener = _mergeOperation->sig_ActionAdded().connect(sigc::mem_fun(this, &Map::onMergeActionAdded));
 
     UndoableCommand cmd("createMergeOperation");
 

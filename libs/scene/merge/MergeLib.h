@@ -204,6 +204,8 @@ inline void resolveConflictByKeepingBothEntities()
         return;
     }
 
+    UndoableCommand undo("resolveConflictByKeepingBothEntities");
+
     auto mergeNodes = getSelectedMergeNodes();
 
     for (const auto& node : mergeNodes)
@@ -250,11 +252,7 @@ inline void resolveConflictByKeepingBothEntities()
         const auto& pair = *sourceAndTargetEntities.begin();
         auto addSourceEntityAction = std::make_shared<AddEntityAction>(pair.first, pair.second->getRootNode());
 
-        operation->addAction(addSourceEntityAction); // TODO: Observer pattern to notify Map class
-
-        // Add a new merge action node for the addition to the target scene
-        auto mergeActionNode = std::make_shared<RegularMergeActionNode>(addSourceEntityAction);
-        GlobalMapModule().getRoot()->addChildNode(mergeActionNode);
+        operation->addAction(addSourceEntityAction);
 
         // Remove the conflict resolution node
         removeNodeFromParent(mergeNode);

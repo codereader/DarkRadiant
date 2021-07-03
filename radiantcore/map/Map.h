@@ -70,6 +70,7 @@ private:
 
     scene::merge::IMergeOperation::Ptr _mergeOperation;
     std::list<scene::MergeActionNodeBase::Ptr> _mergeActionNodes;
+    sigc::connection _mergeOperationListener;
 
     // Point trace for leak detection
     std::unique_ptr<PointFile> _pointTrace;
@@ -266,6 +267,7 @@ private:
 
     void createMergeActions();
     void prepareMergeOperation();
+    void onMergeActionAdded(const scene::merge::IMergeAction::Ptr& action);
 
 	void emitMapEvent(MapEvent ev);
 

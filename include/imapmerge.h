@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <functional>
+#include <sigc++/signal.h>
 #include "inode.h"
 
 namespace scene
@@ -156,6 +157,9 @@ public:
 
     // Enables or disable merging of layers
     virtual void setMergeLayers(bool enabled) = 0;
+
+    // Signal which is emitted when an action is added to this operation
+    virtual sigc::signal<void, const IMergeAction::Ptr&>& sig_ActionAdded() = 0;
 };
 
 }
