@@ -117,8 +117,11 @@ public:
     // The action that happened in the target (can be empty)
     virtual const IMergeAction::Ptr& getTargetAction() const = 0;
 
-    // The affected entity node
-    virtual const INodePtr& getConflictingEntity() const = 0;
+    // The source entity node causing the conflict
+    virtual const INodePtr& getConflictingSourceEntity() const = 0;
+
+    // The affected entity node in the target map
+    virtual const INodePtr& getConflictingTargetEntity() const = 0;
 
     // Whether this action has been resolved at all, and what has been chosen
     virtual ResolutionType getResolution() const = 0;

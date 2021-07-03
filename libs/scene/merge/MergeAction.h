@@ -282,7 +282,8 @@ class ConflictResolutionAction :
 {
 protected:
     ConflictType _conflictType;
-    INodePtr _conflictingEntity;
+    INodePtr _conflictingSourceEntity;
+    INodePtr _conflictingTargetEntity;
 
     // The action the source diff is trying to apply
     IMergeAction::Ptr _sourceAction;
@@ -292,14 +293,17 @@ protected:
     ResolutionType _resolution;
 
 protected:
-    ConflictResolutionAction(ConflictType conflictType, const INodePtr& conflictingEntity, const IMergeAction::Ptr& sourceAction) :
-        ConflictResolutionAction(conflictType, conflictingEntity, sourceAction, IMergeAction::Ptr())
+    ConflictResolutionAction(ConflictType conflictType, const INodePtr& conflictingSourceEntity,
+                             const INodePtr& conflictingTargetEntity, const IMergeAction::Ptr& sourceAction) :
+        ConflictResolutionAction(conflictType, conflictingSourceEntity, conflictingTargetEntity, sourceAction, IMergeAction::Ptr())
     {}
 
-    ConflictResolutionAction(ConflictType conflictType, const INodePtr& conflictingEntity, const IMergeAction::Ptr& sourceAction, const IMergeAction::Ptr& targetAction) :
+    ConflictResolutionAction(ConflictType conflictType, const INodePtr& conflictingSourceEntity,
+                            const INodePtr& conflictingTargetEntity, const IMergeAction::Ptr& sourceAction, const IMergeAction::Ptr& targetAction) :
         MergeAction(ActionType::ConflictResolution),
         _conflictType(conflictType),
-        _conflictingEntity(conflictingEntity),
+        _conflictingSourceEntity(conflictingSourceEntity),
+        _conflictingTargetEntity(conflictingTargetEntity),
         _sourceAction(sourceAction),
         _targetAction(targetAction),
         _resolution(ResolutionType::Unresolved)
@@ -325,14 +329,20 @@ public:
         return _targetAction;
     }
 
-    const INodePtr& getConflictingEntity() const override
+    const INodePtr& getConflictingTargetEntity() const override
     {
-        return _conflictingEntity;
+        return _conflictingTargetEntity;
+    }
+
+    const INodePtr& getConflictingSourceEntity() const override
+    {
+        return _conflictingSourceEntity;
     }
 
     INodePtr getAffectedNode() override
     {
-        return getConflictingEntity();
+        // We don't want to return empty references, so use the source entity if the target entity is no longer here
+        return _conflictingTargetEntity ? _conflictingTargetEntity : _conflictingSourceEntity;
     }
 
     ResolutionType getResolution() const override
@@ -369,15 +379,17 @@ class EntityConflictResolutionAction :
     public ConflictResolutionAction
 {
 public:
-    EntityConflictResolutionAction(ConflictType conflictType, const INodePtr& conflictingEntity, const MergeAction::Ptr& sourceAction) :
-        EntityConflictResolutionAction(conflictType, conflictingEntity, sourceAction, MergeAction::Ptr())
+    EntityConflictResolutionAction(ConflictType conflictType, const INodePtr& conflictingSourceEntity,
+                                   const INodePtr& conflictingTargetEntity, const MergeAction::Ptr& sourceAction) :
+        EntityConflictResolutionAction(conflictType, conflictingSourceEntity, conflictingTargetEntity, sourceAction, MergeAction::Ptr())
     {}
 
     EntityConflictResolutionAction(ConflictType conflictType, 
-                                   const INodePtr& conflictingEntity,
+                                   const INodePtr& conflictingSourceEntity,
+                                   const INodePtr& conflictingTargetEntity,
                                    const MergeAction::Ptr& sourceAction, 
                                    const MergeAction::Ptr& targetAction) :
-        ConflictResolutionAction(conflictType, conflictingEntity, sourceAction, targetAction)
+        ConflictResolutionAction(conflictType, conflictingSourceEntity, conflictingTargetEntity, sourceAction, targetAction)
     {}
 };
 
@@ -387,10 +399,11 @@ class EntityKeyValueConflictResolutionAction :
 {
 public:
     EntityKeyValueConflictResolutionAction(ConflictType conflictType,
-                                           const INodePtr& conflictingEntity,
+                                           const INodePtr& conflictingSourceEntity,
+                                           const INodePtr& conflictingTargetEntity,
                                            const MergeAction::Ptr& sourceAction, 
                                            const MergeAction::Ptr& targetAction) :
-        ConflictResolutionAction(conflictType, conflictingEntity, sourceAction, targetAction)
+        ConflictResolutionAction(conflictType, conflictingSourceEntity, conflictingTargetEntity, sourceAction, targetAction)
     {}
 };
 

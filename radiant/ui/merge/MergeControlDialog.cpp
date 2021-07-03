@@ -258,9 +258,9 @@ void MergeControlDialog::onResolveReject(wxCommandEvent& ev)
 
 void MergeControlDialog::onResolveKeepBoth(wxCommandEvent& ev)
 {
-    UndoableCommand undo("resolveMergeConflictByKeepingBothChanges");
+    UndoableCommand undo("resolveMergeConflictByKeepingBothEntities");
 
-    // TODO
+    scene::merge::resolveConflictByKeepingBothEntities();
 }
 
 void MergeControlDialog::onJumpToNextConflict(wxCommandEvent& ev)

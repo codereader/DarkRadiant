@@ -152,7 +152,8 @@ void ThreeWayMergeOperation::processEntityModification(const ComparisonResult::E
         // When the user chooses to import the change, it will be an AddEntity action
         addAction(std::make_shared<EntityConflictResolutionAction>(
             ConflictType::ModificationOfRemovedEntity,
-            sourceDiff.sourceNode, // the conflicting entity (comes from the source map)
+            sourceDiff.sourceNode, // the conflicting source entity
+            INodePtr(), // the target entity (is no longer present)
             std::make_shared<AddEntityAction>(sourceDiff.sourceNode, _targetRoot)
         ));
         return;
@@ -221,7 +222,8 @@ void ThreeWayMergeOperation::processEntityModification(const ComparisonResult::E
             // Create a conflict resolution action for this key value change
             addAction(std::make_shared<EntityKeyValueConflictResolutionAction>(
                 conflictType,
-                targetDiff.sourceNode, // conflicting entity
+                sourceDiff.sourceNode, // conflicting source entity
+                targetDiff.sourceNode, // conflicting target entity
                 createActionForKeyValueDiff(sourceKeyValueDiff, targetDiff.sourceNode), // conflicting source change 
                 createActionForKeyValueDiff(*targetKeyValueDiff, targetDiff.sourceNode) // conflicting target change
             ));
@@ -313,7 +315,8 @@ void ThreeWayMergeOperation::compareAndCreateActions()
             // Entity has been removed in source, but modified in target, this is a conflict
             addAction(std::make_shared<EntityConflictResolutionAction>(
                 ConflictType::RemovalOfModifiedEntity,
-                targetDiff->second->sourceNode, // conflicting entity
+                INodePtr(), // conflicting source entity (is not present anymore)
+                targetDiff->second->sourceNode, // conflicting target entity
                 std::make_shared<RemoveEntityAction>(targetDiff->second->sourceNode) // conflicting change 
             ));
 

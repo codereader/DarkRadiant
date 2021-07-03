@@ -1884,7 +1884,7 @@ TEST_F(ThreeWayMergeTest, MergeEntityNameCollisions)
     auto keyValueConflict = findAction<EntityKeyValueConflictResolutionAction>(operation,
         [](const std::shared_ptr<EntityKeyValueConflictResolutionAction>& action)
     {
-        return Node_getEntity(action->getConflictingEntity())->getKeyValue("name") == "node_3";
+        return Node_getEntity(action->getConflictingSourceEntity())->getKeyValue("name") == "node_3";
     });
     EXPECT_TRUE(keyValueConflict);
     EXPECT_EQ(keyValueConflict->getConflictType(), ConflictType::SettingKeyToDifferentValue);
@@ -1934,7 +1934,7 @@ TEST_F(ThreeWayMergeTest, RemovalOfModifiedEntity)
     auto entityConflict = findAction<EntityConflictResolutionAction>(operation,
         [](const std::shared_ptr<EntityConflictResolutionAction>& action)
     {
-        return Node_getEntity(action->getConflictingEntity())->getKeyValue("name") == "func_static_8";
+        return Node_getEntity(action->getConflictingTargetEntity())->getKeyValue("name") == "func_static_8";
     });
     EXPECT_TRUE(entityConflict) << "Didn't find the conflicting with subject func_static_8";
     EXPECT_EQ(entityConflict->getConflictType(), ConflictType::RemovalOfModifiedEntity);
@@ -1962,7 +1962,8 @@ TEST_F(ThreeWayMergeTest, ModificationOfRemovedEntity)
     auto entityConflict = findAction<EntityConflictResolutionAction>(operation,
         [](const std::shared_ptr<EntityConflictResolutionAction>& action)
     {
-        return Node_getEntity(action->getConflictingEntity())->getKeyValue("name") == "light_1";
+        return action->getConflictingSourceEntity() && action->getConflictingTargetEntity() == nullptr &&
+            Node_getEntity(action->getConflictingSourceEntity())->getKeyValue("name") == "light_1";
     });
     EXPECT_TRUE(entityConflict) << "Didn't find the conflicting with subject light_1";
     EXPECT_EQ(entityConflict->getConflictType(), ConflictType::ModificationOfRemovedEntity);
@@ -1990,7 +1991,8 @@ TEST_F(ThreeWayMergeTest, SettingKeyValueToConflictingValues)
     auto valueConflict = findAction<EntityKeyValueConflictResolutionAction>(operation,
         [](const std::shared_ptr<EntityKeyValueConflictResolutionAction>& action)
     {
-        return Node_getEntity(action->getConflictingEntity())->getKeyValue("name") == "func_static_6";
+        return Node_getEntity(action->getConflictingSourceEntity())->getKeyValue("name") == "func_static_6" &&
+               Node_getEntity(action->getConflictingTargetEntity())->getKeyValue("name") == "func_static_6";
     });
     EXPECT_TRUE(valueConflict) << "Didn't find the conflicting with subject func_static_6";
     EXPECT_EQ(valueConflict->getConflictType(), ConflictType::SettingKeyToDifferentValue);
@@ -2031,7 +2033,8 @@ TEST_F(ThreeWayMergeTest, ModificationOfRemovedKeyValue)
         [](const std::shared_ptr<EntityKeyValueConflictResolutionAction>& action)
     {
         return action->getConflictType() == ConflictType::ModificationOfRemovedKeyValue &&
-            Node_getEntity(action->getConflictingEntity())->getKeyValue("name") == "expandable";
+            Node_getEntity(action->getConflictingSourceEntity())->getKeyValue("name") == "expandable" &&
+            Node_getEntity(action->getConflictingTargetEntity())->getKeyValue("name") == "expandable";
     });
     EXPECT_TRUE(valueConflict) << "Didn't find the conflicting with subject expandable";
     EXPECT_EQ(valueConflict->getConflictType(), ConflictType::ModificationOfRemovedKeyValue);
@@ -2072,7 +2075,8 @@ TEST_F(ThreeWayMergeTest, RemovalOfModifiedKeyValue)
         [](const std::shared_ptr<EntityKeyValueConflictResolutionAction>& action)
     {
         return action->getConflictType() == ConflictType::RemovalOfModifiedKeyValue &&
-            Node_getEntity(action->getConflictingEntity())->getKeyValue("name") == "expandable";
+            Node_getEntity(action->getConflictingSourceEntity())->getKeyValue("name") == "expandable" &&
+            Node_getEntity(action->getConflictingTargetEntity())->getKeyValue("name") == "expandable";
     });
     EXPECT_TRUE(valueConflict) << "Didn't find the conflicting with subject expandable";
     EXPECT_EQ(valueConflict->getConflictType(), ConflictType::RemovalOfModifiedKeyValue);

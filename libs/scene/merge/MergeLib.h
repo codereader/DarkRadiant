@@ -161,6 +161,21 @@ inline std::string getAffectedKeyValue(const IMergeAction::Ptr& action)
     return keyValueAction ? keyValueAction->getValue() : std::string();
 }
 
+// Resolves the single selected merge conflict by keeping both entity versions.
+// The entity in the target map won't receive any changes, whereas the source entity will
+// be marked for addition to the target map.
+inline void resolveConflictByKeepingBothEntities()
+{
+    auto conflictNode = getSingleSelectedConflictNode();
+
+    if (conflictNode->getAffectedNode()->getNodeType() != INode::Type::Entity) return;
+
+    conflictNode->foreachMergeAction([&](const IMergeAction::Ptr& action)
+    {
+        // TODO
+    });
+}
+
 }
 
 }
