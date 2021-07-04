@@ -6,10 +6,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\plugins\vcs\plugin.cpp">
+    <ClCompile Include="..\..\plugins\vcs\GitModule.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\plugins\vcs\GitModule.cpp">
+    <ClCompile Include="..\..\plugins\vcs\Repository.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -18,6 +18,12 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\vcs\Repository.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\vcs\Remote.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\vcs\CredentialManager.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

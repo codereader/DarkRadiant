@@ -1,8 +1,9 @@
 #pragma once
 
 #include <string>
-#include "itextstream.h"
-#include "git2.h"
+#include <memory>
+
+struct git_repository;
 
 namespace vcs
 {
@@ -10,41 +11,30 @@ namespace vcs
 namespace git
 {
 
+class Remote;
+
 /**
  * Represents a Git repository at a certain path
  */
-class Repository
+class Repository final
 {
 private:
     git_repository* _repository;
     bool _isOk;
 
 public:
-    Repository(const std::string& path) :
-        _repository(nullptr),
-        _isOk(false)
-    {
-        if (git_repository_open(&_repository, path.c_str()) == 0)
-        {
-            rMessage() << "Opened repository at " << path << std::endl;
-            _isOk = true;
-        }
-        else
-        {
-            rMessage() << "Failed to open repository at " << path << std::endl;
-        }
-    }
+    Repository(const std::string& path);
+    ~Repository();
 
-    // Status query of this repository object
-    bool isOk() const
-    {
-        return _isOk;
-    }
+    // Status query of this repository object, 
+    // returns true if this repository exists and has been successfully opened
+    bool isOk() const;
 
-    ~Repository()
-    {
-        git_repository_free(_repository);
-    }
+    // Returns the remote with the given name
+    std::shared_ptr<Remote> getRemote(const std::string& name);
+
+    // Return the raw libgit2 object
+    git_repository* _get();
 };
 
 }

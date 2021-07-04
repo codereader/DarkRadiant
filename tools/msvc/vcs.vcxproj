@@ -168,10 +168,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\plugins\vcs\GitModule.cpp" />
-    <ClCompile Include="..\..\plugins\vcs\plugin.cpp" />
+    <ClCompile Include="..\..\plugins\vcs\Repository.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\plugins\vcs\CredentialManager.h" />
     <ClInclude Include="..\..\plugins\vcs\GitModule.h" />
+    <ClInclude Include="..\..\plugins\vcs\Remote.h" />
     <ClInclude Include="..\..\plugins\vcs\Repository.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

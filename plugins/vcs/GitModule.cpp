@@ -1,8 +1,10 @@
 #include "GitModule.h"
 
 #include "igame.h"
-#include "git2.h"
+#include "icommandsystem.h"
+#include <git2.h>
 #include "Repository.h"
+#include "Remote.h"
 
 namespace vcs
 {
@@ -23,16 +25,22 @@ void GitModule::initialiseModule(const IApplicationContext& ctx)
 {
     rMessage() << getName() << "::initialiseModule called." << std::endl;
 
+    // Register commands
+    registerCommands();
+
     // Initialise libgit2 to have the memory handlers etc. set up
     git_libgit2_init();
 
     auto modPath = GlobalGameManager().getModPath();
+    _repository = std::make_unique<git::Repository>(modPath);
     
-    git::Repository repository(modPath);
-    
-    if (repository.isOk())
+    if (_repository->isOk())
     {
         rMessage() << "Opened repository at " << modPath << std::endl;
+    }
+    else
+    {
+        _repository.reset();
     }
 
 #if 0
@@ -54,7 +62,33 @@ void GitModule::shutdownModule()
 {
     rMessage() << getName() << "::shutdownModule called." << std::endl;
 
+    _repository.reset();
+
     git_libgit2_shutdown();
+}
+
+void GitModule::registerCommands()
+{
+    GlobalCommandSystem().addCommand("GitFetch", std::bind(&GitModule::fetch, this, std::placeholders::_1));
+}
+
+void GitModule::fetch(const cmd::ArgumentList& args)
+{
+    if (!_repository)
+    {
+        rWarning() << "Project is not under version control" << std::endl;
+        return;
+    }
+
+    auto remote = _repository->getRemote("origin");
+
+    if (!remote)
+    {
+        rWarning() << "Cannot fetch from remote 'origin'" << std::endl;
+        return;
+    }
+
+    remote->fetch();
 }
 
 }
