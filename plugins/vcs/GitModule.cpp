@@ -81,7 +81,22 @@ void GitModule::fetch(const cmd::ArgumentList& args)
         return;
     }
 
-    auto remote = _repository->getRemote("origin");
+    auto head = _repository->getHead();
+
+    if (!head)
+    {
+        rWarning() << "Could not retrieve HEAD reference from repository" << std::endl;
+        return;
+    }
+
+    auto trackedBranch = head->getUpstream();
+
+    rMessage() << head->getShorthandName() << " is set up to track " << (trackedBranch ? trackedBranch->getShorthandName() : "-") << std::endl;
+
+    auto remoteName = _repository->getUpstreamRemoteName(*head);
+    rMessage() << head->getShorthandName() << " is set up to track remote " << remoteName << std::endl;
+
+    auto remote = _repository->getRemote(remoteName);
 
     if (!remote)
     {

@@ -10,7 +10,7 @@ namespace vcs
 namespace git
 {
 
-class Remote
+class Remote final
 {
 private:
     git_remote* _remote;

@@ -39,25 +39,36 @@ std::shared_ptr<Remote> Repository::getRemote(const std::string& name)
     return Remote::CreateFromName(*this, name);
 }
 
-std::string Repository::getCurrentBranchName()
+Reference::Ptr Repository::getHead()
 {
-    git_reference* head = nullptr;
+    git_reference* head;
     int error = git_repository_head(&head, _repository);
 
     if (error == GIT_EUNBORNBRANCH || error == GIT_ENOTFOUND)
     {
-        return "";
+        return Reference::Ptr();
     }
 
-    std::string branchName;
+    return std::make_shared<Reference>(head);
+}
 
-    if (!error)
-    {
-        branchName = git_reference_shorthand(head);
-    }
+std::string Repository::getCurrentBranchName()
+{
+    auto head = getHead();
+    return head ? head->getShorthandName() : std::string();
+}
 
-    git_reference_free(head);
-    return branchName;
+std::string Repository::getUpstreamRemoteName(const Reference& reference)
+{
+    git_buf buf;
+    memset(&buf, 0, sizeof(git_buf));
+
+    git_branch_upstream_remote(&buf, _repository, reference.getName().c_str());
+
+    std::string upstreamRemote = buf.ptr;
+    git_buf_dispose(&buf);
+
+    return upstreamRemote;
 }
 
 git_repository* Repository::_get()

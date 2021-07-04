@@ -26,5 +26,8 @@
     <ClInclude Include="..\..\plugins\vcs\CredentialManager.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\plugins\vcs\Reference.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

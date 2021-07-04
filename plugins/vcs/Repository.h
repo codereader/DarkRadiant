@@ -2,6 +2,7 @@
 
 #include <string>
 #include <memory>
+#include "Reference.h"
 
 struct git_repository;
 
@@ -34,6 +35,10 @@ public:
     std::shared_ptr<Remote> getRemote(const std::string& name);
 
     std::string getCurrentBranchName();
+
+    std::string getUpstreamRemoteName(const Reference& reference);
+
+    Reference::Ptr getHead();
 
     // Return the raw libgit2 object
     git_repository* _get();
