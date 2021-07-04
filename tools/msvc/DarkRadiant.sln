@@ -116,6 +116,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dm.gameconnection", "dm.gam
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DependencyCheck", "..\DependencyCheck\DependencyCheck.vcxproj", "{0D4BE190-97F4-4DB9-BEAB-B0196868EC0A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vcs", "vcs.vcxproj", "{6591C1E2-6BCF-4874-B724-CC87B8AA0DA4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -284,6 +286,14 @@ Global
 		{0D4BE190-97F4-4DB9-BEAB-B0196868EC0A}.Release|Win32.Build.0 = Release|Win32
 		{0D4BE190-97F4-4DB9-BEAB-B0196868EC0A}.Release|x64.ActiveCfg = Release|x64
 		{0D4BE190-97F4-4DB9-BEAB-B0196868EC0A}.Release|x64.Build.0 = Release|x64
+		{6591C1E2-6BCF-4874-B724-CC87B8AA0DA4}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6591C1E2-6BCF-4874-B724-CC87B8AA0DA4}.Debug|Win32.Build.0 = Debug|Win32
+		{6591C1E2-6BCF-4874-B724-CC87B8AA0DA4}.Debug|x64.ActiveCfg = Debug|x64
+		{6591C1E2-6BCF-4874-B724-CC87B8AA0DA4}.Debug|x64.Build.0 = Debug|x64
+		{6591C1E2-6BCF-4874-B724-CC87B8AA0DA4}.Release|Win32.ActiveCfg = Release|Win32
+		{6591C1E2-6BCF-4874-B724-CC87B8AA0DA4}.Release|Win32.Build.0 = Release|Win32
+		{6591C1E2-6BCF-4874-B724-CC87B8AA0DA4}.Release|x64.ActiveCfg = Release|x64
+		{6591C1E2-6BCF-4874-B724-CC87B8AA0DA4}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -308,6 +318,7 @@ Global
 		{76FF9B0F-B1FF-42BF-9E1D-8FBE2B3F6215} = {026C3BBE-9A3B-4D21-A49D-12DD9DDF3CBA}
 		{471AEAFE-68CE-4010-9B8F-3CB95810BEA5} = {3C3C0B81-D1B7-4EE4-9224-99ECA5774F25}
 		{0D4BE190-97F4-4DB9-BEAB-B0196868EC0A} = {F0E8C46B-4F20-43B1-9A8D-13A9D0A3BA3D}
+		{6591C1E2-6BCF-4874-B724-CC87B8AA0DA4} = {3C3C0B81-D1B7-4EE4-9224-99ECA5774F25}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C7F73C9B-AFA1-4AF0-9F99-7C3A7F503A86}
