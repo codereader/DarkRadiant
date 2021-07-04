@@ -17,5 +17,8 @@
     <ClInclude Include="..\..\plugins\vcs\GitModule.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\plugins\vcs\Repository.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
