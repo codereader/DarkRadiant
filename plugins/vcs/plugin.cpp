@@ -1,6 +1,6 @@
 #include "itextstream.h"
 
-#include "debugging/debugging.h"
+#include "GitModule.h"
 
 /**
  * greebo: This is the module entry point which the main binary will look for.
@@ -10,5 +10,5 @@ extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry & registry)
 {
     module::performDefaultInitialisation(registry);
 
-    //registry.registerModule(script::ScriptingSystemPtr(new script::ScriptingSystem));
+    registry.registerModule(std::make_shared<vcs::GitModule>());
 }

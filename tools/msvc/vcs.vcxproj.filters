@@ -9,5 +9,13 @@
     <ClCompile Include="..\..\plugins\vcs\plugin.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\plugins\vcs\GitModule.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\plugins\vcs\GitModule.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
