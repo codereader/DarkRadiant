@@ -1,10 +1,13 @@
 #include "GitModule.h"
 
 #include "igame.h"
+#include "imainframe.h"
+#include "istatusbarmanager.h"
 #include "icommandsystem.h"
 #include <git2.h>
 #include "Repository.h"
 #include "Remote.h"
+#include "ui/VcsStatus.h"
 
 namespace vcs
 {
@@ -17,7 +20,7 @@ const std::string& GitModule::getName() const
 
 const StringSet& GitModule::getDependencies() const
 {
-    static StringSet _dependencies{};
+    static StringSet _dependencies{ MODULE_MAINFRAME, MODULE_STATUSBARMANAGER };
     return _dependencies;
 }
 
@@ -57,6 +60,12 @@ void GitModule::initialiseModule(const IApplicationContext& ctx)
 
         git_commit_free(commit);
 #endif
+
+    GlobalMainFrame().signal_MainFrameConstructed().connect([&]()
+    {
+        GlobalStatusBarManager().addElement(ui::VcsStatus::Name, new ui::VcsStatus(GlobalStatusBarManager().getStatusBar()), 
+            ::ui::statusbar::StandardPosition::MapEditStopwatch + 10);
+    });
 }
 
 void GitModule::shutdownModule()

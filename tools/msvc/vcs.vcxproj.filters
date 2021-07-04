@@ -4,6 +4,9 @@
     <Filter Include="src">
       <UniqueIdentifier>{22b23a00-962d-4a16-b2a8-7f042cdef4b3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ui">
+      <UniqueIdentifier>{820340c8-8c74-4f52-a407-1d441ea32d47}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\plugins\vcs\GitModule.cpp">
@@ -28,6 +31,9 @@
     </ClInclude>
     <ClInclude Include="..\..\plugins\vcs\Reference.h">
       <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\vcs\ui\VcsStatus.h">
+      <Filter>src\ui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
