@@ -1,5 +1,8 @@
 #include "GitModule.h"
 
+#include "igame.h"
+#include "git2/repository.h"
+
 namespace vcs
 {
 
@@ -19,6 +22,17 @@ void GitModule::initialiseModule(const IApplicationContext& ctx)
 {
     rMessage() << getName() << "::initialiseModule called." << std::endl;
 
+    auto modPath = GlobalGameManager().getModPath();
+    git_repository* repository;
+    
+    if (git_repository_open(&repository, modPath.c_str()) == 0)
+    {
+        rMessage() << "Opened repository at " << modPath << std::endl;
+    }
+    else
+    {
+        rMessage() << "Failed to open repository at " << modPath << std::endl;
+    }
 }
 
 void GitModule::shutdownModule()

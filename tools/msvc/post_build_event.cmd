@@ -2,6 +2,7 @@ for %%i in (..\..\install\*.dll) do if not "%%~nxi"=="DarkRadiantCore.dll" del "
 
 del ..\..\install\python*.zip
 
+copy ..\..\w32deps\libgit2\bin\git2.dll ..\..\install /Y
 copy ..\..\w32deps\openal\bin\OpenAL32.dll ..\..\install /Y
 copy ..\..\w32deps\openal\bin\wrap_oal.dll ..\..\install /Y
 copy ..\..\w32deps\glew\bin\glew32.dll ..\..\install /Y
