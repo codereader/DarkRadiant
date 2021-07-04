@@ -37,6 +37,7 @@ void GitModule::initialiseModule(const IApplicationContext& ctx)
     if (_repository->isOk())
     {
         rMessage() << "Opened repository at " << modPath << std::endl;
+        rMessage() << "Repository is currently on branch " << _repository->getCurrentBranchName() << std::endl;
     }
     else
     {

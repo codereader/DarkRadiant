@@ -33,6 +33,8 @@ public:
     // Returns the remote with the given name
     std::shared_ptr<Remote> getRemote(const std::string& name);
 
+    std::string getCurrentBranchName();
+
     // Return the raw libgit2 object
     git_repository* _get();
 };
