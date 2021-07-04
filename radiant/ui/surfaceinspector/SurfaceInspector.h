@@ -30,7 +30,7 @@ class SurfaceInspector;
 typedef std::shared_ptr<SurfaceInspector> SurfaceInspectorPtr;
 
 /// Inspector for properties of a surface and its applied texture
-class SurfaceInspector : 
+class SurfaceInspector :
 	public wxutil::TransientWindow,
 	public sigc::trackable
 {
@@ -134,7 +134,7 @@ private:
 	 * @returns: the structure containing the widget pointers.
 	 */
 	ManipulatorRow createManipulatorRow(wxWindow* parent,
-		const std::string& label, wxFlexGridSizer* table, bool vertical);
+		const std::string& label, wxFlexGridSizer* table);
 
 	// Adds all the widgets to the window
 	void populateWindow();
