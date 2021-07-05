@@ -105,6 +105,35 @@ void Repository::fetchFromTrackedRemote()
     remote->fetch();
 }
 
+bool Repository::isUpToDateWithRemote()
+{
+    auto head = getHead();
+
+    if (!head)
+    {
+        rWarning() << "Could not retrieve HEAD reference from repository" << std::endl;
+        return false;
+    }
+
+    auto trackedBranch = head->getUpstream();
+
+    git_revwalk* walker;
+    git_revwalk_new(&walker, _repository);
+    git_revwalk_push_ref(walker, trackedBranch->getName().c_str());
+    git_revwalk_hide_head(walker);
+
+    git_oid id;
+    std::size_t count = 0;
+    while (!git_revwalk_next(&id, walker))
+    {
+        ++count;
+    }
+
+    git_revwalk_free(walker);
+
+    return count == 0;
+}
+
 git_repository* Repository::_get()
 {
     return _repository;

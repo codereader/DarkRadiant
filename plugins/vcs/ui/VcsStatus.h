@@ -1,5 +1,6 @@
 #pragma once
 
+#include "i18n.h"
 #include "iuserinterface.h"
 #include <wx/panel.h>
 #include <wx/stattext.h>
@@ -62,7 +63,7 @@ public:
             return;
         }
 
-        _timer.Start(1000 * 30); // 5 mins
+        _timer.Start(1000 * 5 * 60); // 5 mins
     }
 
 private:
@@ -85,14 +86,15 @@ private:
 
     void performFetch(std::shared_ptr<git::Repository> repository)
     {
-        GlobalUserInterface().dispatch([this]() { _text->SetLabel("Fetching..."); });
+        GlobalUserInterface().dispatch([this]() { _text->SetLabel(_("Fetching...")); });
 
         repository->fetchFromTrackedRemote();
 
         std::lock_guard<std::mutex> guard(_fetchLock);
         _fetchInProgress = false;
 
-        GlobalUserInterface().dispatch([this]() { _text->SetLabel("Up to date"); });
+        auto status = repository->isUpToDateWithRemote() ? _("Up to date") : _("Updates available");
+        GlobalUserInterface().dispatch([&]() { _text->SetLabel(status); });
     }
 };
 

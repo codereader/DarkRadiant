@@ -45,6 +45,8 @@ public:
     // Performs a fetch from the remote the current branch is tracking
     void fetchFromTrackedRemote();
 
+    bool isUpToDateWithRemote();
+
     // Creates a new instance of this repository, not sharing any libgit2 handles with the original
     std::shared_ptr<Repository> clone();
 
