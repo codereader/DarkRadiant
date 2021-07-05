@@ -201,6 +201,7 @@
     <ClInclude Include="..\..\include\itransformable.h" />
     <ClInclude Include="..\..\include\itransformnode.h" />
     <ClInclude Include="..\..\include\iundo.h" />
+    <ClInclude Include="..\..\include\iuserinterface.h" />
     <ClInclude Include="..\..\include\ivolumetest.h" />
     <ClInclude Include="..\..\include\iwxgl.h" />
     <ClInclude Include="..\..\include\mapfile.h" />

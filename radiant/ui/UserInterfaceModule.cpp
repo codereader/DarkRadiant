@@ -84,7 +84,7 @@ namespace
 
 const std::string& UserInterfaceModule::getName() const
 {
-	static std::string _name("UserInterfaceModule");
+	static std::string _name(MODULE_USERINTERFACE);
 	return _name;
 }
 

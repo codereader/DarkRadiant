@@ -75,6 +75,12 @@ void GitModule::shutdownModule()
 {
     rMessage() << getName() << "::shutdownModule called." << std::endl;
 
+    if (_statusBarWidget)
+    {
+        _statusBarWidget->Destroy();
+        _statusBarWidget = nullptr;
+    }
+
     _repository.reset();
 
     git_libgit2_shutdown();

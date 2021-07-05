@@ -1,5 +1,6 @@
 #pragma once
 
+#include "iuserinterface.h"
 #include <wx/panel.h>
 #include <wx/stattext.h>
 #include <wx/sizer.h>
@@ -14,7 +15,7 @@ namespace vcs
 namespace ui
 {
 
-class VcsStatus :
+class VcsStatus final :
     public wxPanel
 {
 private:
@@ -41,6 +42,14 @@ public:
         GetSizer()->Add(_text);
 
         Bind(wxEVT_TIMER, &VcsStatus::onIntervalReached, this);
+    }
+
+    ~VcsStatus()
+    {
+        if (_fetchTask.valid())
+        {
+            _fetchTask.get(); // Wait for the thread to complete
+        }
     }
 
     void setRepository(const std::shared_ptr<git::Repository>& repository)
@@ -72,17 +81,18 @@ private:
         _fetchInProgress = true;
         auto repository = _repository->clone();
         _fetchTask = std::async(std::launch::async, std::bind(&VcsStatus::performFetch, this, repository));
-
-        _text->SetLabel("Fetching...");
     }
 
     void performFetch(std::shared_ptr<git::Repository> repository)
     {
-        rMessage() << "Async fetch from remote..." << std::endl;
+        GlobalUserInterface().dispatch([this]() { _text->SetLabel("Fetching..."); });
+
         repository->fetchFromTrackedRemote();
 
         std::lock_guard<std::mutex> guard(_fetchLock);
         _fetchInProgress = false;
+
+        GlobalUserInterface().dispatch([this]() { _text->SetLabel("Up to date"); });
     }
 };
 
