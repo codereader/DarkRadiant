@@ -63,8 +63,11 @@ void GitModule::initialiseModule(const IApplicationContext& ctx)
 
     GlobalMainFrame().signal_MainFrameConstructed().connect([&]()
     {
-        GlobalStatusBarManager().addElement(ui::VcsStatus::Name, new ui::VcsStatus(GlobalStatusBarManager().getStatusBar()), 
+        _statusBarWidget = new ui::VcsStatus(GlobalStatusBarManager().getStatusBar());
+        GlobalStatusBarManager().addElement(ui::VcsStatus::Name, _statusBarWidget,
             ::ui::statusbar::StandardPosition::MapEditStopwatch + 10);
+
+        _statusBarWidget->setRepository(_repository);
     });
 }
 
@@ -90,30 +93,7 @@ void GitModule::fetch(const cmd::ArgumentList& args)
         return;
     }
 
-    auto head = _repository->getHead();
-
-    if (!head)
-    {
-        rWarning() << "Could not retrieve HEAD reference from repository" << std::endl;
-        return;
-    }
-
-    auto trackedBranch = head->getUpstream();
-
-    rMessage() << head->getShorthandName() << " is set up to track " << (trackedBranch ? trackedBranch->getShorthandName() : "-") << std::endl;
-
-    auto remoteName = _repository->getUpstreamRemoteName(*head);
-    rMessage() << head->getShorthandName() << " is set up to track remote " << remoteName << std::endl;
-
-    auto remote = _repository->getRemote(remoteName);
-
-    if (!remote)
-    {
-        rWarning() << "Cannot fetch from remote 'origin'" << std::endl;
-        return;
-    }
-
-    remote->fetch();
+    _repository->fetchFromTrackedRemote();
 }
 
 }

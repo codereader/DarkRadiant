@@ -12,15 +12,16 @@ namespace git
 
 Repository::Repository(const std::string& path) :
     _repository(nullptr),
-    _isOk(false)
+    _isOk(false),
+    _path(path)
 {
-    if (git_repository_open(&_repository, path.c_str()) == 0)
+    if (git_repository_open(&_repository, _path.c_str()) == 0)
     {
         _isOk = true;
     }
     else
     {
-        rMessage() << "Failed to open repository at " << path << std::endl;
+        rMessage() << "Failed to open repository at " << _path << std::endl;
     }
 }
 
@@ -32,6 +33,11 @@ bool Repository::isOk() const
 Repository::~Repository()
 {
     git_repository_free(_repository);
+}
+
+std::shared_ptr<Repository> Repository::clone()
+{
+    return std::make_shared<Repository>(_path);
 }
 
 std::shared_ptr<Remote> Repository::getRemote(const std::string& name)
@@ -69,6 +75,34 @@ std::string Repository::getUpstreamRemoteName(const Reference& reference)
     git_buf_dispose(&buf);
 
     return upstreamRemote;
+}
+
+void Repository::fetchFromTrackedRemote()
+{
+    auto head = getHead();
+
+    if (!head)
+    {
+        rWarning() << "Could not retrieve HEAD reference from repository" << std::endl;
+        return;
+    }
+
+    auto trackedBranch = head->getUpstream();
+
+    rMessage() << head->getShorthandName() << " is set up to track " << (trackedBranch ? trackedBranch->getShorthandName() : "-") << std::endl;
+
+    auto remoteName = getUpstreamRemoteName(*head);
+    rMessage() << head->getShorthandName() << " is set up to track remote " << remoteName << std::endl;
+
+    auto remote = getRemote(remoteName);
+
+    if (!remote)
+    {
+        rWarning() << "Cannot fetch from remote 'origin'" << std::endl;
+        return;
+    }
+
+    remote->fetch();
 }
 
 git_repository* Repository::_get()

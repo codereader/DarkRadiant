@@ -7,11 +7,15 @@
 namespace vcs
 {
 
+namespace ui { class VcsStatus;  }
+
 class GitModule :
     public RegisterableModule
 {
 private:
-    std::unique_ptr<git::Repository> _repository;
+    std::shared_ptr<git::Repository> _repository;
+
+    ui::VcsStatus* _statusBarWidget = nullptr;
 
 public:
     // RegisterableModule implementation

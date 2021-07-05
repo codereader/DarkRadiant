@@ -23,6 +23,8 @@ private:
     git_repository* _repository;
     bool _isOk;
 
+    std::string _path;
+
 public:
     Repository(const std::string& path);
     ~Repository();
@@ -39,6 +41,12 @@ public:
     std::string getUpstreamRemoteName(const Reference& reference);
 
     Reference::Ptr getHead();
+
+    // Performs a fetch from the remote the current branch is tracking
+    void fetchFromTrackedRemote();
+
+    // Creates a new instance of this repository, not sharing any libgit2 handles with the original
+    std::shared_ptr<Repository> clone();
 
     // Return the raw libgit2 object
     git_repository* _get();
