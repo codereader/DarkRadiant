@@ -7,29 +7,29 @@
 			<orient>wxHORIZONTAL</orient>
 			<object class="sizeritem">
 				<option>0</option>
-				<flag>wxALL</flag>
-				<border>6</border>
+				<flag>wxALL|wxEXPAND</flag>
+				<border>12</border>
 				<object class="wxBoxSizer">
 					<orient>wxVERTICAL</orient>
 					<object class="sizeritem">
 						<option>0</option>
-						<flag>wxALL</flag>
-						<border>5</border>
+						<flag>wxBOTTOM</flag>
+						<border>12</border>
 						<object class="wxStaticText" name="LightInspectorVolumeLabel">
 							<label>Light Volume</label>
 							<wrap>-1</wrap>
 						</object>
 					</object>
 					<object class="sizeritem">
-						<option>1</option>
-						<flag>wxBOTTOM|wxLEFT</flag>
+						<option>0</option>
+						<flag>wxBOTTOM|wxEXPAND|wxLEFT</flag>
 						<border>12</border>
 						<object class="wxBoxSizer">
 							<orient>wxVERTICAL</orient>
 							<object class="sizeritem">
 								<option>0</option>
-								<flag>wxALL</flag>
-								<border>5</border>
+								<flag>wxBOTTOM</flag>
+								<border>6</border>
 								<object class="wxRadioButton" name="omniRbtn">
 									<style>wxRB_GROUP</style>
 									<label>Omnidirectional</label>
@@ -38,8 +38,8 @@
 							</object>
 							<object class="sizeritem">
 								<option>0</option>
-								<flag>wxALL</flag>
-								<border>5</border>
+								<flag>wxBOTTOM</flag>
+								<border>6</border>
 								<object class="wxRadioButton" name="projectedRbtn">
 									<label>Projected</label>
 									<value>0</value>
@@ -58,8 +58,8 @@
 					</object>
 					<object class="sizeritem">
 						<option>0</option>
-						<flag>wxALL</flag>
-						<border>5</border>
+						<flag>wxBOTTOM</flag>
+						<border>12</border>
 						<object class="wxStaticText" name="LightInspectorColourLabel">
 							<label>Colour</label>
 							<wrap>-1</wrap>
@@ -67,17 +67,28 @@
 					</object>
 					<object class="sizeritem">
 						<option>0</option>
-						<flag>wxLEFT|wxRIGHT</flag>
+						<flag>wxEXPAND|wxLEFT|wxRIGHT</flag>
 						<border>12</border>
 						<object class="wxColourPickerCtrl" name="LightInspectorColour">
 							<value>#000000</value>
-							<style>wxCLRP_DEFAULT_STYLE|wxCLRP_USE_TEXTCTRL</style>
+							<style>wxCLRP_DEFAULT_STYLE</style>
 						</object>
 					</object>
 					<object class="sizeritem">
 						<option>0</option>
-						<flag>wxALL</flag>
+						<flag>wxALL|wxEXPAND</flag>
 						<border>5</border>
+						<object class="wxSlider" name="BrightnessSlider">
+							<style>wxSL_HORIZONTAL</style>
+							<value>50</value>
+							<min>0</min>
+							<max>100</max>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxBOTTOM|wxTOP</flag>
+						<border>6</border>
 						<object class="wxStaticText" name="LightInspectorOptionsLabel">
 							<label>Options</label>
 							<wrap>-1</wrap>
@@ -103,7 +114,7 @@
 								<flag>wxALL</flag>
 								<border>5</border>
 								<object class="wxCheckBox" name="LightInspectorNoShadows">
-									<label>Do not cast shadows (fast)</label>
+									<label>No shadows</label>
 									<checked>0</checked>
 								</object>
 							</object>
@@ -112,7 +123,7 @@
 								<flag>wxALL</flag>
 								<border>5</border>
 								<object class="wxCheckBox" name="LightInspectorSkipSpecular">
-									<label>Skip specular lighting</label>
+									<label>No specular</label>
 									<checked>0</checked>
 								</object>
 							</object>
@@ -121,7 +132,7 @@
 								<flag>wxALL</flag>
 								<border>5</border>
 								<object class="wxCheckBox" name="LightInspectorSkipDiffuse">
-									<label>Skip diffuse lighting</label>
+									<label>No diffuse</label>
 									<checked>0</checked>
 								</object>
 							</object>
@@ -141,23 +152,14 @@
 			</object>
 			<object class="sizeritem">
 				<option>1</option>
-				<flag>wxALL|wxEXPAND|wxLEFT</flag>
-				<border>6</border>
+				<flag>wxALL|wxEXPAND</flag>
+				<border>12</border>
 				<object class="wxBoxSizer">
 					<orient>wxVERTICAL</orient>
 					<object class="sizeritem">
-						<option>0</option>
-						<flag>wxALL</flag>
-						<border>5</border>
-						<object class="wxStaticText" name="LightInspectorTextureLabel">
-							<label>Light Texture</label>
-							<wrap>-1</wrap>
-						</object>
-					</object>
-					<object class="sizeritem">
 						<option>1</option>
-						<flag>wxEXPAND|wxLEFT</flag>
-						<border>12</border>
+						<flag>wxEXPAND</flag>
+						<border>0</border>
 						<object class="wxPanel" name="LightInspectorChooserPanel">
 							<style>wxTAB_TRAVERSAL</style>
 							<object class="wxBoxSizer">

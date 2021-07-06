@@ -18,19 +18,18 @@ class wxColourPickerEvent;
 namespace ui
 {
 
-/** Dialog to allow adjustment of properties on lights, including the conversion
- * between projected and point lights.
- */
 class LightInspector;
 typedef std::shared_ptr<LightInspector> LightInspectorPtr;
 
-class LightInspector : 
+/**
+ * \brief Dialog to allow adjustment of properties on lights
+ */
+class LightInspector :
     public wxutil::TransientWindow,
     public ShaderSelector::Client,
     public sigc::trackable,
     private wxutil::XmlResourceBasedWidget
 {
-private:
     // Projected light flag
     bool _isProjected;
 
@@ -75,6 +74,7 @@ private:
     void _onColourChange(wxColourPickerEvent& ev);
     void _onOptionsToggle(wxCommandEvent& ev);
 
+    void updateColourWidgets(const Entity&);
     void updateLightShapeWidgets();
 
     // Update the dialog widgets from keyvals on the first selected entity

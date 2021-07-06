@@ -57,14 +57,14 @@ namespace
 }
 
 // Private constructor sets up dialog
-LightInspector::LightInspector() : 
+LightInspector::LightInspector() :
     wxutil::TransientWindow(_(LIGHTINSPECTOR_TITLE), GlobalMainFrame().getWxTopLevelWindow(), true),
     _isProjected(false),
     _texSelector(nullptr),
     _updateActive(false),
     _supportsAiSee(game::current::getValue<bool>("/light/supportsAiSeeSpawnarg", false))
 {
-    loadNamedPanel(this, "LightInspectorMainPanel");
+    wxPanel* contents = loadNamedPanel(this, "LightInspectorMainPanel");
 
     setupLightShapeOptions();
     setupOptionsPanel();
@@ -73,8 +73,8 @@ LightInspector::LightInspector() :
     makeLabelBold(this, "LightInspectorVolumeLabel");
     makeLabelBold(this, "LightInspectorColourLabel");
     makeLabelBold(this, "LightInspectorOptionsLabel");
-    makeLabelBold(this, "LightInspectorTextureLabel");
 
+    SetMinSize(contents->GetEffectiveMinSize());
     InitialiseWindowPosition(600, 360, RKEY_WINDOW_STATE);
 }
 
@@ -167,7 +167,7 @@ void LightInspector::setupOptionsPanel()
 void LightInspector::setupTextureWidgets()
 {
     wxPanel* parent = findNamedObject<wxPanel>(this, "LightInspectorChooserPanel");
-    
+
     _texSelector = new ShaderSelector(parent, this, getPrefixList(), true);
     parent->GetSizer()->Add(_texSelector, 1, wxEXPAND);
 }
@@ -317,6 +317,33 @@ void LightInspector::_onProjToggle(wxCommandEvent& ev)
     writeToAllEntities();
 }
 
+void LightInspector::updateColourWidgets(const Entity& entity)
+{
+    // Get the colour key from the entity to set the GtkColorButton. If the
+    // light has no colour key, use a default of white rather than the Vector3
+    // default of black (0, 0, 0).
+    std::string colString = entity.getKeyValue("_color");
+    if (colString.empty())
+    {
+        colString = "1.0 1.0 1.0";
+    }
+
+    Vector3 colour = string::convert<Vector3>(colString);
+    colour *= 255;
+
+    // Set colour chooser button
+    findNamedObject<wxColourPickerCtrl>(this, "LightInspectorColour")->
+        SetColour(wxColour(colour[0], colour[1], colour[2]));
+
+    // Set brightness slider based on the brightest channel
+    float highest = colour.x();
+    if (colour.y() > highest) highest = colour.y();
+    if (colour.z() > highest) highest = colour.z();
+
+    wxSlider* slider = findNamedObject<wxSlider>(this, "BrightnessSlider");
+    slider->SetValue(highest * 100.f / 255.f);
+}
+
 // Get keyvals from entity and insert into text entries
 void LightInspector::getValuesFromEntity()
 {
@@ -350,20 +377,7 @@ void LightInspector::getValuesFromEntity()
 		}
 	}
 
-    // Get the colour key from the entity to set the GtkColorButton. If the
-    // light has no colour key, use a default of white rather than the Vector3
-    // default of black (0, 0, 0).
-    std::string colString = entity->getKeyValue("_color");
-    if (colString.empty())
-    {
-        colString = "1.0 1.0 1.0";
-    }
-
-    Vector3 colour = string::convert<Vector3>(colString);
-    colour *= 255;
-
-    findNamedObject<wxColourPickerCtrl>(this, "LightInspectorColour")->
-        SetColour(wxColour(colour[0], colour[1], colour[2]));
+    updateColourWidgets(*entity);
 
     // Set the texture selection from the "texture" key
     _texSelector->setSelection(entity->getKeyValue("texture"));
@@ -437,8 +451,8 @@ void LightInspector::setValuesOnEntity(Entity* entity)
     // Set the "_color" keyvalue
     wxColour col = findNamedObject<wxColourPickerCtrl>(this, "LightInspectorColour")->GetColour();
 
-	setEntityValueIfDifferent(entity, "_color", fmt::format("{:.3f} {:.3f} {:.3f}", 
-							  		(col.Red() / 255.0f), 
+	setEntityValueIfDifferent(entity, "_color", fmt::format("{:.3f} {:.3f} {:.3f}",
+							  		(col.Red() / 255.0f),
 							  		(col.Green() / 255.0f),
 							  		(col.Blue() / 255.0f)));
 
