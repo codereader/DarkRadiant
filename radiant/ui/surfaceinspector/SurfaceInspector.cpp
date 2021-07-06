@@ -204,15 +204,10 @@ void SurfaceInspector::keyChanged()
 
 void SurfaceInspector::populateWindow()
 {
-	wxPanel* dialogPanel = new wxPanel(this, wxID_ANY);
-	dialogPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
-
 	wxBoxSizer* dialogVBox = new wxBoxSizer(wxVERTICAL);
 
-	dialogPanel->GetSizer()->Add(dialogVBox, 1, wxEXPAND | wxALL, 12);
-
 	// Create the title label (bold font)
-	wxStaticText* topLabel = new wxStaticText(dialogPanel, wxID_ANY, _(LABEL_PROPERTIES));
+	wxStaticText* topLabel = new wxStaticText(this, wxID_ANY, _(LABEL_PROPERTIES));
 	topLabel->SetFont(topLabel->GetFont().Bold());
 
 	// 6x2 table with 12 pixel hspacing and 6 pixels vspacing
@@ -220,18 +215,18 @@ void SurfaceInspector::populateWindow()
 	table->AddGrowableCol(1);
 
 	// Create the entry field and pack it into the first table row
-	wxStaticText* shaderLabel = new wxStaticText(dialogPanel, wxID_ANY, _(LABEL_SHADER));
+	wxStaticText* shaderLabel = new wxStaticText(this, wxID_ANY, _(LABEL_SHADER));
 	table->Add(shaderLabel, 0, wxALIGN_CENTER_VERTICAL);
 
 	wxBoxSizer* shaderHBox = new wxBoxSizer(wxHORIZONTAL);
 
-	_shaderEntry = new wxTextCtrl(dialogPanel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
+	_shaderEntry = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
 	_shaderEntry->SetMinSize(wxSize(100, -1));
 	_shaderEntry->Connect(wxEVT_TEXT_ENTER, wxCommandEventHandler(SurfaceInspector::onShaderEntryActivate), NULL, this);
 	shaderHBox->Add(_shaderEntry, 1, wxEXPAND);
 
 	// Create the icon button to open the ShaderChooser
-	_selectShaderButton = new wxBitmapButton(dialogPanel, wxID_ANY,
+	_selectShaderButton = new wxBitmapButton(this, wxID_ANY,
 		wxutil::GetLocalBitmap(FOLDER_ICON));
 	_selectShaderButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onShaderSelect), NULL, this);
 	shaderHBox->Add(_selectShaderButton, 0, wxLEFT, 6);
@@ -243,16 +238,16 @@ void SurfaceInspector::populateWindow()
 	dialogVBox->Add(table, 0, wxEXPAND | wxLEFT, 18); // 18 pixels left indentation
 
 	// Populate the table with the according widgets
-	_manipulators[HSHIFT] = createManipulatorRow(dialogPanel, _(LABEL_HSHIFT), table);
-	_manipulators[VSHIFT] = createManipulatorRow(dialogPanel, _(LABEL_VSHIFT), table);
-	_manipulators[HSCALE] = createManipulatorRow(dialogPanel, _(LABEL_HSCALE), table);
-	_manipulators[VSCALE] = createManipulatorRow(dialogPanel, _(LABEL_VSCALE), table);
-	_manipulators[ROTATION] = createManipulatorRow(dialogPanel, _(LABEL_ROTATION), table);
+	_manipulators[HSHIFT] = createManipulatorRow(this, _(LABEL_HSHIFT), table);
+	_manipulators[VSHIFT] = createManipulatorRow(this, _(LABEL_VSHIFT), table);
+	_manipulators[HSCALE] = createManipulatorRow(this, _(LABEL_HSCALE), table);
+	_manipulators[VSCALE] = createManipulatorRow(this, _(LABEL_VSCALE), table);
+	_manipulators[ROTATION] = createManipulatorRow(this, _(LABEL_ROTATION), table);
 
 	// ======================== Texture Operations ====================================
 
 	// Create the texture operations label (bold font)
-	wxStaticText* operLabel = new wxStaticText(dialogPanel, wxID_ANY, _(LABEL_OPERATIONS));
+	wxStaticText* operLabel = new wxStaticText(this, wxID_ANY, _(LABEL_OPERATIONS));
 	operLabel->SetFont(operLabel->GetFont().Bold());
 
     // Setup the table with default spacings
@@ -269,10 +264,10 @@ void SurfaceInspector::populateWindow()
 	wxBoxSizer* fitTextureHBox = new wxBoxSizer(wxHORIZONTAL);
 
 	// Create the "Fit Texture" label
-	_fitTexture.label = new wxStaticText(dialogPanel, wxID_ANY, _(LABEL_FIT_TEXTURE));
+	_fitTexture.label = new wxStaticText(this, wxID_ANY, _(LABEL_FIT_TEXTURE));
 
 	// Create the width entry field
-	_fitTexture.width = new wxSpinCtrlDouble(dialogPanel, wxID_ANY);
+	_fitTexture.width = new wxSpinCtrlDouble(this, wxID_ANY);
     _fitTexture.width->SetMinSize(wxSize(_fitTexture.width->GetCharWidth() * 8, -1));
 	_fitTexture.width->SetRange(0.0, 1000.0);
 	_fitTexture.width->SetIncrement(1.0);
@@ -280,17 +275,17 @@ void SurfaceInspector::populateWindow()
     _fitTexture.width->SetDigits(2);
 
 	// Create the "x" label
-	_fitTexture.x = new wxStaticText(dialogPanel, wxID_ANY, "x");
+	_fitTexture.x = new wxStaticText(this, wxID_ANY, "x");
 
 	// Create the height entry field
-	_fitTexture.height = new wxSpinCtrlDouble(dialogPanel, wxID_ANY);
+	_fitTexture.height = new wxSpinCtrlDouble(this, wxID_ANY);
     _fitTexture.height->SetMinSize(wxSize(_fitTexture.height->GetCharWidth() * 8, -1));
 	_fitTexture.height->SetRange(0.0, 1000.0);
 	_fitTexture.height->SetIncrement(1.0);
 	_fitTexture.height->SetValue(1.0);
     _fitTexture.height->SetDigits(2);
 
-	_fitTexture.button = new wxButton(dialogPanel, wxID_ANY, _(LABEL_FIT));
+	_fitTexture.button = new wxButton(this, wxID_ANY, _(LABEL_FIT));
 
 	fitTextureHBox->Add(_fitTexture.width, 0, wxALIGN_CENTER_VERTICAL);
 	fitTextureHBox->Add(_fitTexture.x, 0, wxALIGN_CENTER | wxLEFT | wxRIGHT, 3);
@@ -302,12 +297,12 @@ void SurfaceInspector::populateWindow()
 
 	// ------------------------ Align Texture -----------------------------------
 
-	_alignTexture.label = new wxStaticText(dialogPanel, wxID_ANY, _(LABEL_ALIGN_TEXTURE));
+	_alignTexture.label = new wxStaticText(this, wxID_ANY, _(LABEL_ALIGN_TEXTURE));
 
-	_alignTexture.top = new wxButton(dialogPanel, wxID_ANY, _(LABEL_ALIGN_TOP));
-	_alignTexture.bottom = new wxButton(dialogPanel, wxID_ANY, _(LABEL_ALIGN_BOTTOM));
-	_alignTexture.left = new wxButton(dialogPanel, wxID_ANY, _(LABEL_ALIGN_LEFT));
-	_alignTexture.right = new wxButton(dialogPanel, wxID_ANY, _(LABEL_ALIGN_RIGHT));
+	_alignTexture.top = new wxButton(this, wxID_ANY, _(LABEL_ALIGN_TOP));
+	_alignTexture.bottom = new wxButton(this, wxID_ANY, _(LABEL_ALIGN_BOTTOM));
+	_alignTexture.left = new wxButton(this, wxID_ANY, _(LABEL_ALIGN_LEFT));
+	_alignTexture.right = new wxButton(this, wxID_ANY, _(LABEL_ALIGN_RIGHT));
 
 	wxGridSizer* alignTextureBox = new wxGridSizer(1, 4, 0, 6);
 
@@ -321,10 +316,10 @@ void SurfaceInspector::populateWindow()
 
 	// ------------------------ Flip Texture -----------------------------------
 
-	_flipTexture.label = new wxStaticText(dialogPanel, wxID_ANY, _(LABEL_FLIP_TEXTURE));
+	_flipTexture.label = new wxStaticText(this, wxID_ANY, _(LABEL_FLIP_TEXTURE));
 
-	_flipTexture.flipX = new wxButton(dialogPanel, wxID_ANY, _(LABEL_FLIPX));
-	_flipTexture.flipY = new wxButton(dialogPanel, wxID_ANY, _(LABEL_FLIPY));
+	_flipTexture.flipX = new wxButton(this, wxID_ANY, _(LABEL_FLIPX));
+	_flipTexture.flipY = new wxButton(this, wxID_ANY, _(LABEL_FLIPY));
 
 	wxGridSizer* flipTextureBox = new wxGridSizer(1, 2, 0, 6);
 
@@ -336,10 +331,10 @@ void SurfaceInspector::populateWindow()
 
 	// ------------------------ Modify Texture -----------------------------------
 
-	_modifyTex.label = new wxStaticText(dialogPanel, wxID_ANY, _(LABEL_MODIFY_TEXTURE));
+	_modifyTex.label = new wxStaticText(this, wxID_ANY, _(LABEL_MODIFY_TEXTURE));
 
-	_modifyTex.natural = new wxButton(dialogPanel, wxID_ANY, _(LABEL_NATURAL));
-	_modifyTex.normalise = new wxButton(dialogPanel, wxID_ANY, _(LABEL_NORMALISE));
+	_modifyTex.natural = new wxButton(this, wxID_ANY, _(LABEL_NATURAL));
+	_modifyTex.normalise = new wxButton(this, wxID_ANY, _(LABEL_NORMALISE));
 
 	wxGridSizer* modTextureBox = new wxGridSizer(1, 2, 0, 6);
 
@@ -351,16 +346,16 @@ void SurfaceInspector::populateWindow()
 
 	// ------------------------ Default Scale -----------------------------------
 
-	wxStaticText* defaultScaleLabel = new wxStaticText(dialogPanel, wxID_ANY, _(LABEL_DEFAULT_SCALE));
+	wxStaticText* defaultScaleLabel = new wxStaticText(this, wxID_ANY, _(LABEL_DEFAULT_SCALE));
 
-	_defaultTexScale = new wxSpinCtrlDouble(dialogPanel, wxID_ANY);
+	_defaultTexScale = new wxSpinCtrlDouble(this, wxID_ANY);
 	_defaultTexScale->SetMinSize(wxSize(55, -1));
 	_defaultTexScale->SetRange(0.0, 1000.0);
 	_defaultTexScale->SetIncrement(0.1);
 	_defaultTexScale->SetDigits(3);
 
 	// Texture Lock Toggle
-	_texLockButton = new wxToggleButton(dialogPanel, wxID_ANY, _(LABEL_TEXTURE_LOCK));
+	_texLockButton = new wxToggleButton(this, wxID_ANY, _(LABEL_TEXTURE_LOCK));
 
 	wxGridSizer* defaultScaleBox = new wxGridSizer(1, 2, 0, 6);
 
@@ -372,6 +367,10 @@ void SurfaceInspector::populateWindow()
 
 	operTable->Add(defaultScaleLabel, 0, wxALIGN_CENTER_VERTICAL);
 	operTable->Add(defaultScaleBox, 1, wxEXPAND);
+
+    wxBoxSizer* border = new wxBoxSizer(wxVERTICAL);
+    border->Add(dialogVBox, 1, wxEXPAND | wxALL, 12);
+	SetSizerAndFit(border);
 }
 
 SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
