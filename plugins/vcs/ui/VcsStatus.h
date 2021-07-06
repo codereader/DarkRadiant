@@ -2,6 +2,7 @@
 
 #include "i18n.h"
 #include "iuserinterface.h"
+#include "imainframe.h"
 #include <wx/panel.h>
 #include <wx/stattext.h>
 #include <wx/sizer.h>

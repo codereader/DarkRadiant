@@ -16,6 +16,11 @@ namespace vcs
 class CredentialManager
 {
 public:
+    static std::pair<std::string, std::string> RetrievePassword(const std::string& accountName)
+    {
+        return RetrievePassword(string::utf8_to_unicode(accountName));
+    }
+
     static std::pair<std::string, std::string> RetrievePassword(const std::wstring& accountName)
     {
 #ifdef _MSC_VER

@@ -3,6 +3,8 @@
 #include <git2.h>
 #include "Repository.h"
 #include "CredentialManager.h"
+#include <wx/uri.h>
+#include <fmt/format.h>
 
 namespace vcs
 {
@@ -35,14 +37,22 @@ public:
             return;
         }
 
+        auto url = wxURI(git_remote_url(_remote));
+
         git_fetch_options options;
         git_fetch_options_init(&options, GIT_FETCH_OPTIONS_VERSION);
 
-        git_credential* credentials = nullptr;
-        auto userAndPass = CredentialManager::RetrievePassword(L"git:https://gitlab.com");
+        // Create the git:scheme://server string to query the credential manager
+        auto credentialResource = fmt::format("git:{0}://{1}", url.GetScheme().ToStdString(), url.GetServer().ToStdString());
+
+        auto userAndPass = CredentialManager::RetrievePassword(credentialResource);
 
         if (!userAndPass.first.empty() && !userAndPass.second.empty())
         {
+            rMessage() << "Found credentials for resource " << credentialResource << " in the credential store" << std::endl;
+
+            git_credential* credentials = nullptr;
+
             if (git_credential_userpass_plaintext_new(&credentials, userAndPass.first.c_str(), userAndPass.second.c_str()) < 0)
             {
                 rError() << "Unable to create credentials" << std::endl;
