@@ -466,7 +466,7 @@ void LightInspector::adjustBrightness() const
         // is hopefully not possible to overbrighten and lose colour
         // information).
         float origHighest = highestComponent(colour);
-        float newHighest = _brightnessSlider->GetValue() / 100.f;
+        float newHighest = std::max(_brightnessSlider->GetValue(), 1) / 100.f;
         Vector3 newColour;
         if (origHighest > 0.0f)
         {
