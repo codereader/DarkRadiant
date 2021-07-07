@@ -467,8 +467,18 @@ void LightInspector::adjustBrightness() const
         // information).
         float origHighest = highestComponent(colour);
         float newHighest = _brightnessSlider->GetValue() / 100.f;
-        float ratio = newHighest / origHighest;
-        Vector3 newColour = colour * ratio;
+        Vector3 newColour;
+        if (origHighest > 0.0f)
+        {
+            float ratio = newHighest / origHighest;
+            newColour = colour * ratio;
+        }
+        else
+        {
+            // No point in trying to brighten black, just set a grey value based
+            // on the brightness value
+            newColour = Vector3(newHighest, newHighest, newHighest);
+        }
 
         setEntityColour(light, newColour);
     }
