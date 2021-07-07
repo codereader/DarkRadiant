@@ -33,10 +33,11 @@ class LightInspector :
     // Projected light flag
     bool _isProjected;
 
-    // Texture selection combo
+    // Internal widgets
     ShaderSelector* _texSelector;
+    wxSlider* _brightnessSlider;
 
-    // The light entity to edit
+    // The light entities to edit
     typedef std::vector<Entity*> EntityList;
     EntityList _lightEntities;
 
@@ -73,6 +74,7 @@ private:
     void _onProjToggle(wxCommandEvent& ev);
     void _onColourChange(wxColourPickerEvent& ev);
     void _onOptionsToggle(wxCommandEvent& ev);
+    void adjustBrightness() const;
 
     void updateColourWidgets(const Entity&);
     void updateLightShapeWidgets();
