@@ -1,7 +1,9 @@
 #include "GitModule.h"
 
+#include "i18n.h"
 #include "igame.h"
 #include "imainframe.h"
+#include "imap.h"
 #include "ipreferencesystem.h"
 #include "istatusbarmanager.h"
 #include "icommandsystem.h"
@@ -21,7 +23,8 @@ const std::string& GitModule::getName() const
 
 const StringSet& GitModule::getDependencies() const
 {
-    static StringSet _dependencies{ MODULE_MAINFRAME, MODULE_STATUSBARMANAGER, MODULE_PREFERENCESYSTEM };
+    static StringSet _dependencies{ MODULE_MAINFRAME, MODULE_STATUSBARMANAGER, 
+        MODULE_PREFERENCESYSTEM, MODULE_MAP };
     return _dependencies;
 }
 
@@ -118,7 +121,7 @@ void GitModule::createPreferencePage()
  * greebo: This is the module entry point which the main binary will look for.
  * The symbol RegisterModule is called with the singleton ModuleRegistry as argument.
  */
-extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry & registry)
+extern "C" void DARKRADIANT_DLLEXPORT RegisterModule(IModuleRegistry& registry)
 {
     module::performDefaultInitialisation(registry);
 
