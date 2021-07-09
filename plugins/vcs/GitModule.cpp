@@ -2,6 +2,7 @@
 
 #include "igame.h"
 #include "imainframe.h"
+#include "ipreferencesystem.h"
 #include "istatusbarmanager.h"
 #include "icommandsystem.h"
 #include <git2.h>
@@ -20,7 +21,7 @@ const std::string& GitModule::getName() const
 
 const StringSet& GitModule::getDependencies() const
 {
-    static StringSet _dependencies{ MODULE_MAINFRAME, MODULE_STATUSBARMANAGER };
+    static StringSet _dependencies{ MODULE_MAINFRAME, MODULE_STATUSBARMANAGER, MODULE_PREFERENCESYSTEM };
     return _dependencies;
 }
 
@@ -30,6 +31,7 @@ void GitModule::initialiseModule(const IApplicationContext& ctx)
 
     // Register commands
     registerCommands();
+    createPreferencePage();
 
     // Initialise libgit2 to have the memory handlers etc. set up
     git_libgit2_init();
@@ -100,6 +102,14 @@ void GitModule::fetch(const cmd::ArgumentList& args)
     }
 
     _repository->fetchFromTrackedRemote();
+}
+
+void GitModule::createPreferencePage()
+{
+    auto& page = GlobalPreferenceSystem().getPage(_("Settings/Version Control"));
+
+    page.appendCheckBox(_("Enable Auto-Fetch"), RKEY_AUTO_FETCH_ENABLED);
+    page.appendSpinner(_("Fetch Interval (Minutes)"), RKEY_AUTO_FETCH_INTERVAL, 0.25, 900, 2);
 }
 
 }

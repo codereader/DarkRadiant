@@ -311,5 +311,11 @@
       <toggletoolbutton name="togglefacevertexscalepivot" action="TexToolToggleFaceVertexScalePivot" tooltip="Center Pivot when scaling faces" icon="textool_facescale_pivot.png"/>
     </toolbar>
     <userGuideUrl value="https://www.darkradiant.net/userguide" />
+    <vcs>
+      <git>
+          <autoFetchEnabled value="1" />
+          <autoFetchInterval value="10" />
+      </git>
+    </vcs>
   </ui>
 </user>

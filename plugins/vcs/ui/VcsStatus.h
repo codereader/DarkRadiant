@@ -7,9 +7,12 @@
 #include <wx/stattext.h>
 #include <wx/sizer.h>
 #include <wx/timer.h>
+#include "registry/registry.h"
 #include <mutex>
 #include <future>
+#include <sigc++/functors/mem_fun.h>
 #include "../Repository.h"
+#include "../GitModule.h"
 
 namespace vcs
 {
@@ -18,7 +21,8 @@ namespace ui
 {
 
 class VcsStatus final :
-    public wxPanel
+    public wxPanel,
+    public sigc::trackable
 {
 private:
     wxTimer _timer;
@@ -44,6 +48,13 @@ public:
         GetSizer()->Add(_text);
 
         Bind(wxEVT_TIMER, &VcsStatus::onIntervalReached, this);
+
+        GlobalRegistry().signalForKey(RKEY_AUTO_FETCH_ENABLED).connect(
+            sigc::mem_fun(this, &VcsStatus::restartTimer)
+        );
+        GlobalRegistry().signalForKey(RKEY_AUTO_FETCH_INTERVAL).connect(
+            sigc::mem_fun(this, &VcsStatus::restartTimer)
+        );
     }
 
     ~VcsStatus()
@@ -64,10 +75,25 @@ public:
             return;
         }
 
-        _timer.Start(1000 * 5 * 60); // 5 mins
+        restartTimer();
     }
 
 private:
+    void restartTimer()
+    {
+        _timer.Stop();
+
+        if (registry::getValue<bool>(RKEY_AUTO_FETCH_ENABLED))
+        {
+            int interval = static_cast<int>(registry::getValue<float>(RKEY_AUTO_FETCH_INTERVAL) * 60 * 1000);
+
+            if (interval > 0)
+            {
+                _timer.Start(interval);
+            }
+        }
+    }
+
     void onIntervalReached(wxTimerEvent& ev)
     {
         std::lock_guard<std::mutex> guard(_fetchLock);
@@ -95,7 +121,7 @@ private:
         _fetchInProgress = false;
 
         auto status = repository->isUpToDateWithRemote() ? _("Up to date") : _("Updates available");
-        GlobalUserInterface().dispatch([&]() { _text->SetLabel(status); });
+        GlobalUserInterface().dispatch([this, status]() { _text->SetLabel(status); });
     }
 };
 

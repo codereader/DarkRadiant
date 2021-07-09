@@ -9,6 +9,9 @@ namespace vcs
 
 namespace ui { class VcsStatus;  }
 
+const char* const RKEY_AUTO_FETCH_ENABLED = "user/ui/vcs/git/autoFetchEnabled";
+const char* const RKEY_AUTO_FETCH_INTERVAL = "user/ui/vcs/git/autoFetchInterval";
+
 class GitModule :
     public RegisterableModule
 {
@@ -26,6 +29,7 @@ public:
 
 private:
     void registerCommands();
+    void createPreferencePage();
 
     void fetch(const cmd::ArgumentList& args);
 };
