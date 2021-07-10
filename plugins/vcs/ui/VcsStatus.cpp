@@ -182,7 +182,7 @@ void VcsStatus::performMapFileStatusCheck(std::shared_ptr<git::Repository> repos
 
     if (relativePath == mapName)
     {
-        setMapFileStatus(_("Map not in VCS"));
+        setMapFileStatus(_("Map outside VCS"));
         return;
     }
 

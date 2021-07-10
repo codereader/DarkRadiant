@@ -142,9 +142,22 @@ bool Repository::isUpToDateWithRemote()
 
 bool Repository::fileHasUncommittedChanges(const std::string& relativePath)
 {
+    git_status_options options = GIT_STATUS_OPTIONS_INIT;
 
+    char* paths[] = { const_cast<char*>(relativePath.c_str()) };
 
-    return false;
+    options.pathspec.count = 1;
+    options.pathspec.strings = paths;
+
+    unsigned int statusFlags = 0;
+
+    git_status_foreach_ext(_repository, &options, [](const char* path, unsigned int flags, void* payload)
+    {
+        *reinterpret_cast<unsigned int*>(payload) = flags;
+        return 0;
+    }, &statusFlags);
+
+    return statusFlags & GIT_STATUS_WT_MODIFIED;
 }
 
 git_repository* Repository::_get()
