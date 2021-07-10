@@ -111,6 +111,55 @@ void Repository::fetchFromTrackedRemote()
     remote->fetch();
 }
 
+RefSyncStatus Repository::getSyncStatusOfBranch(const Reference& reference)
+{
+    RefSyncStatus status;
+
+    auto trackedBranch = reference.getUpstream();
+
+    git_revwalk* walker;
+    git_revwalk_new(&walker, _repository);
+
+    // Start from remote
+    git_revwalk_push_ref(walker, trackedBranch->getName().c_str());
+
+    // End at local
+    git_oid refOid;
+    git_reference_name_to_id(&refOid, _repository, reference.getName().c_str());
+    git_revwalk_hide(walker, &refOid);
+
+    git_oid id;
+    while (!git_revwalk_next(&id, walker))
+    {
+        rMessage() << Reference::OidToString(&id) << " => ";
+        ++status.remoteCommitsAhead;
+    }
+    rMessage() << std::endl;
+
+    git_revwalk_free(walker);
+
+    // Another walk from local to remote
+    git_revwalk_new(&walker, _repository);
+
+    git_revwalk_push(walker, &refOid);
+    git_revwalk_hide_ref(walker, trackedBranch->getName().c_str());
+
+    while (!git_revwalk_next(&id, walker))
+    {
+        rMessage() << Reference::OidToString(&id) << " => ";
+        ++status.localCommitsAhead;
+    }
+    rMessage() << std::endl;
+
+    git_revwalk_free(walker);
+
+    // Initialise the convenience flags
+    status.localIsUpToDate = status.localCommitsAhead == 0 && status.remoteCommitsAhead == 0;
+    status.localCanBePushed = status.localCommitsAhead > 0 && status.remoteCommitsAhead == 0;
+
+    return status;
+}
+
 bool Repository::isUpToDateWithRemote()
 {
     auto head = getHead();
@@ -121,23 +170,7 @@ bool Repository::isUpToDateWithRemote()
         return false;
     }
 
-    auto trackedBranch = head->getUpstream();
-
-    git_revwalk* walker;
-    git_revwalk_new(&walker, _repository);
-    git_revwalk_push_ref(walker, trackedBranch->getName().c_str());
-    git_revwalk_hide_head(walker);
-
-    git_oid id;
-    std::size_t count = 0;
-    while (!git_revwalk_next(&id, walker))
-    {
-        ++count;
-    }
-
-    git_revwalk_free(walker);
-
-    return count == 0;
+    return getSyncStatusOfBranch(*head).localIsUpToDate;
 }
 
 bool Repository::fileHasUncommittedChanges(const std::string& relativePath)

@@ -20,17 +20,23 @@ namespace ui
 {
 
 VcsStatus::VcsStatus(wxWindow* parent) :
-    wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSTATIC_BORDER | wxWANTS_CHARS, "VcsStatusBarPanel"),
+    wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS, "VcsStatusBarPanel"),
     _timer(this),
     _fetchInProgress(false)
 {
-    SetSizer(new wxBoxSizer(wxHORIZONTAL));
+    SetSizer(new wxBoxSizer(wxVERTICAL));
+
+    auto table = new wxFlexGridSizer(2);
+    table->AddGrowableCol(0);
+    table->AddGrowableCol(1);
+    table->SetHGap(6);
+    GetSizer()->Add(table, 0, wxALL | wxEXPAND, 1);
 
     _mapStatus = new wxStaticText(this, wxID_ANY, "");
-    GetSizer()->Add(_mapStatus, wxRIGHT, 6);
+    table->Add(_mapStatus, 0, wxLEFT, 6);
 
     _text = new wxStaticText(this, wxID_ANY, _("Not under Version Control"));
-    GetSizer()->Add(_text);
+    table->Add(_text, 0, wxALIGN_RIGHT | wxRIGHT, 6);
 
     Bind(wxEVT_TIMER, &VcsStatus::onIntervalReached, this);
     Bind(wxEVT_IDLE, &VcsStatus::onIdle, this);
@@ -77,6 +83,12 @@ void VcsStatus::setRepository(const std::shared_ptr<git::Repository>& repository
 
     _text->SetLabel(_repository->getCurrentBranchName());
     restartTimer();
+
+    // Run a fetch update right after connecting to the repo, if auto-fetch is enabled
+    if (registry::getValue<bool>(RKEY_AUTO_FETCH_ENABLED))
+    {
+        startFetchTask();
+    }
 }
 
 void VcsStatus::restartTimer()
@@ -102,11 +114,11 @@ void VcsStatus::onMapEvent(IMap::MapEvent ev)
     }
 }
 
-void VcsStatus::onIntervalReached(wxTimerEvent& ev)
+void VcsStatus::startFetchTask()
 {
     std::lock_guard<std::mutex> guard(_taskLock);
 
-    if (_fetchInProgress) return;
+    if (_fetchInProgress || !_repository) return;
 
     if (!GlobalMainFrame().isActiveApp())
     {
@@ -117,6 +129,11 @@ void VcsStatus::onIntervalReached(wxTimerEvent& ev)
     _fetchInProgress = true;
     auto repository = _repository->clone();
     _fetchTask = std::async(std::launch::async, std::bind(&VcsStatus::performFetch, this, repository));
+}
+
+void VcsStatus::onIntervalReached(wxTimerEvent& ev)
+{
+    startFetchTask();
 }
 
 void VcsStatus::updateMapFileStatus()
@@ -151,8 +168,28 @@ void VcsStatus::performFetch(std::shared_ptr<git::Repository> repository)
     std::lock_guard<std::mutex> guard(_taskLock);
     _fetchInProgress = false;
 
-    auto status = repository->isUpToDateWithRemote() ? _("Up to date") : _("Updates available");
-    GlobalUserInterface().dispatch([this, status]() { _text->SetLabel(status); });
+    auto status = repository->getSyncStatusOfBranch(*repository->getHead());
+
+    std::string text;
+
+    if (status.localIsUpToDate)
+    {
+        text = _("Up to date");
+    }
+    else if (status.localCanBePushed)
+    {
+        text = fmt::format(_("{0} to push"), status.localCommitsAhead);
+    }
+    else if (status.localCommitsAhead == 0)
+    {
+        text = fmt::format(_("{0} to integrate"), status.remoteCommitsAhead);
+    }
+    else
+    {
+        text = fmt::format(_("{0} to push, {1} to integrate"), status.localCommitsAhead, status.remoteCommitsAhead);
+    }
+
+    GlobalUserInterface().dispatch([this, text]() { _text->SetLabel(text); });
 }
 
 void VcsStatus::setMapFileStatus(const std::string& status)
@@ -192,7 +229,7 @@ void VcsStatus::performMapFileStatusCheck(std::shared_ptr<git::Repository> repos
     }
     else
     {
-    setMapFileStatus(_("Map committed"));
+        setMapFileStatus(_("Map committed"));
     }
 }
 

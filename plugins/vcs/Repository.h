@@ -50,6 +50,10 @@ public:
     bool isUpToDateWithRemote();
     bool fileHasUncommittedChanges(const std::string& relativePath);
 
+    // Compares the state of the given ref to the state of its tracked remote,
+    // returns the number of commits each of them is ahead of the other one.
+    RefSyncStatus getSyncStatusOfBranch(const Reference& reference);
+
     // Creates a new instance of this repository, not sharing any libgit2 handles with the original
     std::shared_ptr<Repository> clone();
 

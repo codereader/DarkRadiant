@@ -75,7 +75,7 @@ public:
             return;
         }
 
-        rMessage() << "Fetch complete";
+        rMessage() << "Fetch complete" << std::endl;
     }
 
     static Ptr CreateFromName(Repository& repository, const std::string& name)
