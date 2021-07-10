@@ -33,6 +33,8 @@ public:
     // returns true if this repository exists and has been successfully opened
     bool isOk() const;
 
+    const std::string& getPath() const;
+
     // Returns the remote with the given name
     std::shared_ptr<Remote> getRemote(const std::string& name);
 
@@ -46,6 +48,7 @@ public:
     void fetchFromTrackedRemote();
 
     bool isUpToDateWithRemote();
+    bool fileHasUncommittedChanges(const std::string& relativePath);
 
     // Creates a new instance of this repository, not sharing any libgit2 handles with the original
     std::shared_ptr<Repository> clone();

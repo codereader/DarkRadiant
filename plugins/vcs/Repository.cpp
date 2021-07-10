@@ -3,6 +3,7 @@
 #include <git2.h>
 #include "itextstream.h"
 #include "Remote.h"
+#include "os/path.h"
 
 namespace vcs
 {
@@ -13,7 +14,7 @@ namespace git
 Repository::Repository(const std::string& path) :
     _repository(nullptr),
     _isOk(false),
-    _path(path)
+    _path(os::standardPathWithSlash(path))
 {
     if (git_repository_open(&_repository, _path.c_str()) == 0)
     {
@@ -28,6 +29,11 @@ Repository::Repository(const std::string& path) :
 bool Repository::isOk() const
 {
     return _isOk;
+}
+
+const std::string& Repository::getPath() const
+{
+    return _path;
 }
 
 Repository::~Repository()
@@ -132,6 +138,13 @@ bool Repository::isUpToDateWithRemote()
     git_revwalk_free(walker);
 
     return count == 0;
+}
+
+bool Repository::fileHasUncommittedChanges(const std::string& relativePath)
+{
+
+
+    return false;
 }
 
 git_repository* Repository::_get()
