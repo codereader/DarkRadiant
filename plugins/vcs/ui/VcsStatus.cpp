@@ -227,9 +227,13 @@ void VcsStatus::performMapFileStatusCheck(std::shared_ptr<git::Repository> repos
     {
         setMapFileStatus(_("Map saved, pending commit"));
     }
-    else
+    else if (repository->fileIsIndexed(relativePath))
     {
         setMapFileStatus(_("Map committed"));
+    }
+    else
+    {
+        setMapFileStatus(_("Map saved"));
     }
 }
 

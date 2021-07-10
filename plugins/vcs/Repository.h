@@ -48,6 +48,7 @@ public:
     void fetchFromTrackedRemote();
 
     bool isUpToDateWithRemote();
+    bool fileIsIndexed(const std::string& relativePath);
     bool fileHasUncommittedChanges(const std::string& relativePath);
 
     // Compares the state of the given ref to the state of its tracked remote,
@@ -59,6 +60,9 @@ public:
 
     // Return the raw libgit2 object
     git_repository* _get();
+
+private:
+    unsigned int getFileStatus(const std::string& relativePath);
 };
 
 }

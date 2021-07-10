@@ -69,7 +69,7 @@ public:
 
     static std::string OidToString(git_oid* oid)
     {
-        std::string hexOid(GIT_OID_HEXSZ + 1, '\0');
+        std::string hexOid(GIT_OID_HEXSZ, '\0');
         git_oid_fmt(hexOid.data(), oid);
 
         return hexOid;

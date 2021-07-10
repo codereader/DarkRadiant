@@ -173,7 +173,7 @@ bool Repository::isUpToDateWithRemote()
     return getSyncStatusOfBranch(*head).localIsUpToDate;
 }
 
-bool Repository::fileHasUncommittedChanges(const std::string& relativePath)
+unsigned int Repository::getFileStatus(const std::string& relativePath)
 {
     git_status_options options = GIT_STATUS_OPTIONS_INIT;
 
@@ -181,6 +181,8 @@ bool Repository::fileHasUncommittedChanges(const std::string& relativePath)
 
     options.pathspec.count = 1;
     options.pathspec.strings = paths;
+    options.flags |= GIT_STATUS_OPT_INCLUDE_UNTRACKED | GIT_STATUS_OPT_RECURSE_UNTRACKED_DIRS;
+    options.show = GIT_STATUS_SHOW_WORKDIR_ONLY;
 
     unsigned int statusFlags = 0;
 
@@ -190,7 +192,17 @@ bool Repository::fileHasUncommittedChanges(const std::string& relativePath)
         return 0;
     }, &statusFlags);
 
-    return statusFlags & GIT_STATUS_WT_MODIFIED;
+    return statusFlags;
+}
+
+bool Repository::fileIsIndexed(const std::string& relativePath)
+{
+    return (getFileStatus(relativePath) & GIT_STATUS_WT_NEW) == 0;
+}
+
+bool Repository::fileHasUncommittedChanges(const std::string& relativePath)
+{
+    return (getFileStatus(relativePath) & GIT_STATUS_WT_MODIFIED) != 0;
 }
 
 git_repository* Repository::_get()
