@@ -13,6 +13,8 @@ namespace git
 {
 
 class Remote;
+class Commit;
+class Diff;
 
 /**
  * Represents a Git repository at a certain path
@@ -54,6 +56,12 @@ public:
     // Compares the state of the given ref to the state of its tracked remote,
     // returns the number of commits each of them is ahead of the other one.
     RefSyncStatus getSyncStatusOfBranch(const Reference& reference);
+
+    // Finds a common ancestor of the two refs, to base a merge operation on
+    std::shared_ptr<Commit> findMergeBase(const Reference& first, const Reference& second);
+
+    // Get the diff of the reference against the given commit
+    std::shared_ptr<Diff> getDiff(const Reference& ref, Commit& commit);
 
     // Creates a new instance of this repository, not sharing any libgit2 handles with the original
     std::shared_ptr<Repository> clone();

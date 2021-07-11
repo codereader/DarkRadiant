@@ -38,5 +38,14 @@
     <ClInclude Include="..\..\plugins\vcs\ui\VcsStatus.h">
       <Filter>src\ui</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\plugins\vcs\Commit.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\vcs\Diff.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\vcs\Tree.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

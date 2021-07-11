@@ -161,6 +161,8 @@ void VcsStatus::onIdle(wxIdleEvent& ev)
 
 void VcsStatus::performFetch(std::shared_ptr<git::Repository> repository)
 {
+    if (!repository->getHead()) return;
+
     GlobalUserInterface().dispatch([this]() { _text->SetLabel(_("Fetching...")); });
 
     repository->fetchFromTrackedRemote();
@@ -187,6 +189,25 @@ void VcsStatus::performFetch(std::shared_ptr<git::Repository> repository)
     else
     {
         text = fmt::format(_("{0} to push, {1} to integrate"), status.localCommitsAhead, status.remoteCommitsAhead);
+    }
+
+    if (status.remoteCommitsAhead > 0)
+    {
+        // Check the incoming commits for modifications of the loaded map
+        auto head = repository->getHead();
+        auto upstream = head->getUpstream();
+
+        // Find the merge base for this ref and its upstream
+        auto mergeBase = repository->findMergeBase(*head, *upstream);
+
+        if (mergeBase)
+        {
+            auto diffAgainstBase = repository->getDiff(*upstream, *mergeBase);
+        }
+        else
+        {
+            text = _("No merge base found");
+        }
     }
 
     GlobalUserInterface().dispatch([this, text]() { _text->SetLabel(text); });

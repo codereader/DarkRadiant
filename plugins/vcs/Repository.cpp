@@ -3,6 +3,9 @@
 #include <git2.h>
 #include "itextstream.h"
 #include "Remote.h"
+#include "Commit.h"
+#include "Tree.h"
+#include "Diff.h"
 #include "os/path.h"
 
 namespace vcs
@@ -203,6 +206,42 @@ bool Repository::fileIsIndexed(const std::string& relativePath)
 bool Repository::fileHasUncommittedChanges(const std::string& relativePath)
 {
     return (getFileStatus(relativePath) & GIT_STATUS_WT_MODIFIED) != 0;
+}
+
+Commit::Ptr Repository::findMergeBase(const Reference& first, const Reference& second)
+{
+    git_oid firstOid;
+    git_reference_name_to_id(&firstOid, _repository, first.getName().c_str());
+
+    git_oid secondOid;
+    git_reference_name_to_id(&secondOid, _repository, second.getName().c_str());
+
+    git_oid mergeBase;
+    if (git_merge_base(&mergeBase, _repository, &firstOid, &secondOid) == 0)
+    {
+        git_commit* commit;
+        git_commit_lookup(&commit, _repository, &mergeBase);
+
+        return std::make_shared<Commit>(commit);
+    }
+
+    return Commit::Ptr();
+}
+
+std::shared_ptr<Diff> Repository::getDiff(const Reference& ref, Commit& commit)
+{
+    git_oid refOid;
+    git_reference_name_to_id(&refOid, _repository, ref.getName().c_str());
+
+    git_tree* refTree;
+    git_tree_lookup(&refTree, _repository, &refOid);
+
+    git_diff* diff;
+    git_diff_tree_to_tree(&diff, _repository, commit.getTree()->_get(), refTree, nullptr);
+
+    git_tree_free(refTree);
+
+    return std::make_shared<Diff>(diff);
 }
 
 git_repository* Repository::_get()

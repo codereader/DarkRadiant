@@ -180,11 +180,14 @@
     <ClCompile Include="..\..\plugins\vcs\ui\VcsStatus.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\plugins\vcs\Commit.h" />
     <ClInclude Include="..\..\plugins\vcs\CredentialManager.h" />
+    <ClInclude Include="..\..\plugins\vcs\Diff.h" />
     <ClInclude Include="..\..\plugins\vcs\GitModule.h" />
     <ClInclude Include="..\..\plugins\vcs\Reference.h" />
     <ClInclude Include="..\..\plugins\vcs\Remote.h" />
     <ClInclude Include="..\..\plugins\vcs\Repository.h" />
+    <ClInclude Include="..\..\plugins\vcs\Tree.h" />
     <ClInclude Include="..\..\plugins\vcs\ui\VcsStatus.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
