@@ -35,10 +35,10 @@ class IFace;
 class Brush;
 class IPatch;
 
-namespace selection 
-{ 
-	
-struct WorkZone; 
+namespace selection
+{
+
+struct WorkZone;
 
 /**
 * A Manipulator is a renderable object which contains one or more
@@ -93,7 +93,7 @@ public:
 		 * Called during mouse movement, the component is asked to calculate the deltas and distances
 		 * it needs to perform the translation/rotation/scale/whatever the operator does on the selected objects.
 		 * The pivot2world transform relates to the original pivot location at the time the transformation started.
-		 * If the constrained flags are not 0, they indicate the user is holding down a key during movement, 
+		 * If the constrained flags are not 0, they indicate the user is holding down a key during movement,
 		 * usually the SHIFT or CTRL key. It's up to the component to decide how to handle the constraint.
 		 */
 		virtual void transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, unsigned int flags) = 0;
@@ -216,8 +216,7 @@ public:
   virtual void setSelectedAllComponents(bool selected) = 0;
 
     /**
-     * @brief
-     * Visitor interface the for the selection system.
+     * @brief Visitor interface for the selection system.
      *
      * This defines the Visitor interface which is used in the foreachSelected()
      * and foreachSelectedComponent() visit methods.
@@ -227,18 +226,16 @@ public:
 	public:
 		virtual ~Visitor() {}
 
-        /**
-         * @brief
-         * Called by the selection system for each visited node.
-         */
+        /// Called by the selection system for each visited node.
 		virtual void visit(const scene::INodePtr& node) const = 0;
 	};
 
-    /**
-     * @brief
-     * Use the provided Visitor object to enumerate each selected node.
-     */
-    virtual void foreachSelected(const Visitor& visitor) = 0;
+    /// Use the provided Visitor object to enumerate each selected node.
+    void foreachSelected(const Visitor& visitor)
+    {
+        foreachSelected([&visitor](const scene::INodePtr& p)
+                        { visitor.visit(p); });
+    }
 
     /**
      * @brief
@@ -246,9 +243,7 @@ public:
      */
     virtual void foreachSelectedComponent(const Visitor& visitor) = 0;
 
-	/**
-	 * Call the given functor to enumerate each selected node.
-	 */
+	/// Call the given functor to enumerate each selected node.
 	virtual void foreachSelected(const std::function<void(const scene::INodePtr&)>& functor) = 0;
 
 	/**
@@ -266,7 +261,7 @@ public:
 	/**
 	 * Call the given functor for each selected face. Selected group nodes like func_statics
 	 * are traversed recursively, invoking the functor for each visible face in question.
-	 * Singly selected faces (those which have been selected in component mode) are 
+	 * Singly selected faces (those which have been selected in component mode) are
 	 * considered as well by this method.
 	 */
 	virtual void foreachFace(const std::function<void(IFace&)>& functor) = 0;
@@ -280,7 +275,7 @@ public:
 	// Returns the number of currently selected faces
 	virtual std::size_t getSelectedFaceCount() = 0;
 
-	// Returns the reference to the singly selected face 
+	// Returns the reference to the singly selected face
 	// Calling this will cause an cmd::ExecutionFailure if getSelectedFaceCount() != 1
 	virtual IFace& getSingleSelectedFace() = 0;
 
@@ -289,7 +284,7 @@ public:
 
 	virtual const Matrix4& getPivot2World() = 0;
     virtual void pivotChanged() = 0;
-    
+
 	// Feedback events invoked by the ManipulationMouseTool
 	virtual void onManipulationStart() = 0;
 	virtual void onManipulationChanged() = 0;
@@ -298,7 +293,7 @@ public:
 
 	virtual void selectPoint(SelectionTest& test, EModifier modifier, bool face) = 0;
 	virtual void selectArea(SelectionTest& test, EModifier modifier, bool face) = 0;
-    
+
 	/**
 	 * Returns the current "work zone", which is defined by the
 	 * currently selected elements. Each time a scene node is selected,

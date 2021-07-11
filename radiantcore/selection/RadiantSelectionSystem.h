@@ -127,10 +127,8 @@ public:
 	void setSelectedAll(bool selected) override;
 	void setSelectedAllComponents(bool selected) override;
 
-	void foreachSelected(const Visitor& visitor) override;
-	void foreachSelectedComponent(const Visitor& visitor) override;
-
 	void foreachSelected(const std::function<void(const scene::INodePtr&)>& functor) override;
+	void foreachSelectedComponent(const Visitor& visitor) override;
 	void foreachSelectedComponent(const std::function<void(const scene::INodePtr&)>& functor) override;
 
 	void foreachBrush(const std::function<void(Brush&)>& functor) override;
