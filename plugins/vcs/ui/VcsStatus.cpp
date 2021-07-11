@@ -37,8 +37,8 @@ VcsStatus::VcsStatus(wxWindow* parent) :
     _mapStatus = new wxStaticText(this, wxID_ANY, "");
     table->Add(_mapStatus, 0, wxLEFT, 6);
 
-    _text = new wxStaticText(this, wxID_ANY, _("Not under Version Control"));
-    table->Add(_text, 0, wxALIGN_RIGHT | wxRIGHT, 6);
+    _remoteStatus = new wxStaticText(this, wxID_ANY, _("Not under Version Control"));
+    table->Add(_remoteStatus, 0, wxALIGN_RIGHT | wxRIGHT, 6);
 
     Bind(wxEVT_TIMER, &VcsStatus::onIntervalReached, this);
     Bind(wxEVT_IDLE, &VcsStatus::onIdle, this);
@@ -78,12 +78,12 @@ void VcsStatus::setRepository(const std::shared_ptr<git::Repository>& repository
 
     if (!_repository)
     {
-        _text->SetLabel(_("Not under version control"));
+        _remoteStatus->SetLabel(_("Not under version control"));
         _timer.Stop();
         return;
     }
 
-    _text->SetLabel(_repository->getCurrentBranchName());
+    _remoteStatus->SetLabel(_repository->getCurrentBranchName());
     restartTimer();
 
     // Run a fetch update right after connecting to the repo, if auto-fetch is enabled
@@ -118,17 +118,20 @@ void VcsStatus::onMapEvent(IMap::MapEvent ev)
 
 void VcsStatus::startFetchTask()
 {
-    std::lock_guard<std::mutex> guard(_taskLock);
-
-    if (_fetchInProgress || !_repository) return;
-
-    if (!GlobalMainFrame().isActiveApp())
     {
-        rMessage() << "Skipping fetch this round, since the app is not active." << std::endl;
-        return;
+        std::lock_guard<std::mutex> guard(_taskLock);
+
+        if (_fetchInProgress || !_repository) return;
+
+        if (!GlobalMainFrame().isActiveApp())
+        {
+            rMessage() << "Skipping fetch this round, since the app is not active." << std::endl;
+            return;
+        }
+
+        _fetchInProgress = true;
     }
 
-    _fetchInProgress = true;
     auto repository = _repository->clone();
     _fetchTask = std::async(std::launch::async, std::bind(&VcsStatus::performFetch, this, repository));
 }
@@ -163,36 +166,50 @@ void VcsStatus::onIdle(wxIdleEvent& ev)
 
 void VcsStatus::performFetch(std::shared_ptr<git::Repository> repository)
 {
-    if (!repository->getHead()) return;
+    std::string statusText;
 
-    GlobalUserInterface().dispatch([this]() { _text->SetLabel(_("Fetching...")); });
+    auto head = repository->getHead();
 
-    std::string text;
+    if (!head)
+    {
+        _fetchInProgress = false;
+        return;
+    }
 
     try
     {
-        repository->fetchFromTrackedRemote();
-
-        std::lock_guard<std::mutex> guard(_taskLock);
+        repository->getUpstreamRemoteName(*head);
+    }
+    catch (const git::GitException&)
+    {
+        setRemoteStatus(_("Not connected"));
         _fetchInProgress = false;
+        return;
+    }
+
+    try
+    {
+        setRemoteStatus(_("Fetching..."));
+
+        repository->fetchFromTrackedRemote();
 
         auto status = repository->getSyncStatusOfBranch(*repository->getHead());
 
         if (status.localIsUpToDate)
         {
-            text = _("Up to date");
+            statusText = _("Up to date");
         }
         else if (status.localCanBePushed)
         {
-            text = fmt::format(_("{0} to push"), status.localCommitsAhead);
+            statusText = fmt::format(_("{0} to push"), status.localCommitsAhead);
         }
         else if (status.localCommitsAhead == 0)
         {
-            text = fmt::format(_("{0} to integrate"), status.remoteCommitsAhead);
+            statusText = fmt::format(_("{0} to integrate"), status.remoteCommitsAhead);
         }
         else
         {
-            text = fmt::format(_("{0} to push, {1} to integrate"), status.localCommitsAhead, status.remoteCommitsAhead);
+            statusText = fmt::format(_("{0} to push, {1} to integrate"), status.localCommitsAhead, status.remoteCommitsAhead);
         }
 
         if (status.remoteCommitsAhead > 0)
@@ -212,26 +229,33 @@ void VcsStatus::performFetch(std::shared_ptr<git::Repository> repository)
 
                 if (diffAgainstBase->containsFile(mapPath))
                 {
-                    text = fmt::format(_("{0} possible conflict"), status.remoteCommitsAhead);
+                    statusText = fmt::format(_("{0} possible conflict"), status.remoteCommitsAhead);
                 }
                 else
                 {
-                    text = fmt::format(_("{0} no conflicts"), status.remoteCommitsAhead);
+                    statusText = fmt::format(_("{0} no conflicts"), status.remoteCommitsAhead);
                 }
             }
         }
     }
     catch (const git::GitException& ex)
     {
-        text = ex.what();
+        statusText = ex.what();
     }
 
-    GlobalUserInterface().dispatch([this, text]() { _text->SetLabel(text); });
+    setRemoteStatus(statusText);
+
+    _fetchInProgress = false;
 }
 
 void VcsStatus::setMapFileStatus(const std::string& status)
 {
     GlobalUserInterface().dispatch([this, status]() { _mapStatus->SetLabel(status); });
+}
+
+void VcsStatus::setRemoteStatus(const std::string& status)
+{
+    GlobalUserInterface().dispatch([this, status]() { _remoteStatus->SetLabel(status); });
 }
 
 std::string VcsStatus::getRepositoryRelativePath(const std::string& path, const std::shared_ptr<git::Repository>& repository)

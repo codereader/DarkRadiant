@@ -29,7 +29,7 @@ private:
 
     std::shared_ptr<git::Repository> _repository;
 
-    wxStaticText* _text;
+    wxStaticText* _remoteStatus;
     wxStaticText* _mapStatus;
 
 public:
@@ -50,6 +50,7 @@ private:
     void updateMapFileStatus();
     void onMapEvent(IMap::MapEvent ev);
     void setMapFileStatus(const std::string& status);
+    void setRemoteStatus(const std::string& status);
 
     std::string getRepositoryRelativePath(const std::string& path, const std::shared_ptr<git::Repository>& repository);
 };
