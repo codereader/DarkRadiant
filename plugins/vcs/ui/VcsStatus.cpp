@@ -164,10 +164,58 @@ void VcsStatus::onIdle(wxIdleEvent& ev)
     ev.Skip();
 }
 
+VcsStatus::RemoteStatus VcsStatus::analyseRemoteStatus(const std::shared_ptr<git::Repository>& repository)
+{
+    auto mapPath = getRepositoryRelativePath(GlobalMapModule().getMapName(), repository);
+
+    if (mapPath.empty())
+    {
+        return RemoteStatus{ 0, 0, _("-") };
+    }
+
+    auto status = repository->getSyncStatusOfBranch(*repository->getHead());
+
+    if (status.remoteCommitsAhead == 0)
+    {
+        return status.localCommitsAhead == 0 ? 
+            RemoteStatus{ status.localCommitsAhead, 0, _("Up to date") } :
+            RemoteStatus{ status.localCommitsAhead, 0, _("Pending Upload") };
+    }
+
+    // Check the incoming commits for modifications of the loaded map
+    auto head = repository->getHead();
+    auto upstream = head->getUpstream();
+
+    // Find the merge base for this ref and its upstream
+    auto mergeBase = repository->findMergeBase(*head, *upstream);
+
+    auto remoteDiffAgainstBase = repository->getDiff(*upstream, *mergeBase);
+        
+    if (!remoteDiffAgainstBase->containsFile(mapPath))
+    {
+        // Remote didn't change, we can integrate it without conflicting the loaded map
+        return RemoteStatus{ status.localCommitsAhead, status.remoteCommitsAhead, _("Integrate") };
+    }
+
+    auto localDiffAgainstBase = repository->getDiff(*head, *mergeBase);
+
+    if (repository->fileHasUncommittedChanges(mapPath))
+    {
+        return RemoteStatus{ status.localCommitsAhead, status.remoteCommitsAhead, _("Commit, then integrate ") };
+    }
+
+    if (!localDiffAgainstBase->containsFile(mapPath))
+    {
+        // The local diff doesn't include the map, the remote changes can be integrated
+        return RemoteStatus{ status.localCommitsAhead, status.remoteCommitsAhead, _("Integrate") };
+    }
+
+    // Both the local and the remote diff are affecting the map file, this needs resolution
+    return RemoteStatus{ status.localCommitsAhead, status.remoteCommitsAhead, _("Resolve") };
+}
+
 void VcsStatus::performFetch(std::shared_ptr<git::Repository> repository)
 {
-    std::string statusText;
-
     auto head = repository->getHead();
 
     if (!head)
@@ -182,68 +230,23 @@ void VcsStatus::performFetch(std::shared_ptr<git::Repository> repository)
     }
     catch (const git::GitException&)
     {
-        setRemoteStatus(_("Not connected"));
+        setRemoteStatus(RemoteStatus{ 0, 0, _("Not connected") });
         _fetchInProgress = false;
         return;
     }
 
     try
     {
-        setRemoteStatus(_("Fetching..."));
+        setRemoteStatus(RemoteStatus{ 0, 0, _("Fetching...") });
 
         repository->fetchFromTrackedRemote();
 
-        auto status = repository->getSyncStatusOfBranch(*repository->getHead());
-
-        if (status.localIsUpToDate)
-        {
-            statusText = _("Up to date");
-        }
-        else if (status.localCanBePushed)
-        {
-            statusText = fmt::format(_("{0} to push"), status.localCommitsAhead);
-        }
-        else if (status.localCommitsAhead == 0)
-        {
-            statusText = fmt::format(_("{0} to integrate"), status.remoteCommitsAhead);
-        }
-        else
-        {
-            statusText = fmt::format(_("{0} to push, {1} to integrate"), status.localCommitsAhead, status.remoteCommitsAhead);
-        }
-
-        if (status.remoteCommitsAhead > 0)
-        {
-            auto mapPath = getRepositoryRelativePath(GlobalMapModule().getMapName(), repository);
-
-            if (!mapPath.empty())
-            {
-                // Check the incoming commits for modifications of the loaded map
-                auto head = repository->getHead();
-                auto upstream = head->getUpstream();
-
-                // Find the merge base for this ref and its upstream
-                auto mergeBase = repository->findMergeBase(*head, *upstream);
-
-                auto diffAgainstBase = repository->getDiff(*upstream, *mergeBase);
-
-                if (diffAgainstBase->containsFile(mapPath))
-                {
-                    statusText = fmt::format(_("{0} possible conflict"), status.remoteCommitsAhead);
-                }
-                else
-                {
-                    statusText = fmt::format(_("{0} no conflicts"), status.remoteCommitsAhead);
-                }
-            }
-        }
+        setRemoteStatus(analyseRemoteStatus(repository));
     }
     catch (const git::GitException& ex)
     {
-        statusText = ex.what();
+        setRemoteStatus(RemoteStatus{ 0, 0, ex.what() });
     }
-
-    setRemoteStatus(statusText);
 
     _fetchInProgress = false;
 }
@@ -253,9 +256,12 @@ void VcsStatus::setMapFileStatus(const std::string& status)
     GlobalUserInterface().dispatch([this, status]() { _mapStatus->SetLabel(status); });
 }
 
-void VcsStatus::setRemoteStatus(const std::string& status)
+void VcsStatus::setRemoteStatus(const RemoteStatus& status)
 {
-    GlobalUserInterface().dispatch([this, status]() { _remoteStatus->SetLabel(status); });
+    GlobalUserInterface().dispatch([this, status]() 
+    { 
+        _remoteStatus->SetLabel(status.label); 
+    });
 }
 
 std::string VcsStatus::getRepositoryRelativePath(const std::string& path, const std::shared_ptr<git::Repository>& repository)

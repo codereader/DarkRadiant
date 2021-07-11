@@ -32,6 +32,13 @@ private:
     wxStaticText* _remoteStatus;
     wxStaticText* _mapStatus;
 
+    struct RemoteStatus
+    {
+        std::size_t localAheadCount;
+        std::size_t remoteAheadCount;
+        std::string label;
+    };
+
 public:
     static constexpr const char* const Name = "VcsStatusBarWidget";
 
@@ -50,8 +57,9 @@ private:
     void updateMapFileStatus();
     void onMapEvent(IMap::MapEvent ev);
     void setMapFileStatus(const std::string& status);
-    void setRemoteStatus(const std::string& status);
+    void setRemoteStatus(const RemoteStatus& status);
 
+    RemoteStatus analyseRemoteStatus(const std::shared_ptr<git::Repository>& repository);
     std::string getRepositoryRelativePath(const std::string& path, const std::shared_ptr<git::Repository>& repository);
 };
 
