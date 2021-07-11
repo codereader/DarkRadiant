@@ -76,6 +76,7 @@ private:
     void _onOptionsToggle(wxCommandEvent& ev);
     void adjustBrightness() const;
 
+    void updateColourPicker();
     void updateColourWidgets(const Entity&);
     void updateLightShapeWidgets();
 

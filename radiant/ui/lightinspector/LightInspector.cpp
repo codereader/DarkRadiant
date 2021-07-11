@@ -153,6 +153,9 @@ void LightInspector::setupOptionsPanel()
     _brightnessSlider->Bind(
         wxEVT_SLIDER, [=](wxCommandEvent&) { adjustBrightness(); }
     );
+    _brightnessSlider->Bind(
+        wxEVT_SCROLL_CHANGED, [=](wxScrollEvent&) { updateColourPicker(); }
+    );
 
     findNamedObject<wxCheckBox>(this, "LightInspectorParallel")->Bind(wxEVT_CHECKBOX, &LightInspector::_onOptionsToggle, this);
     findNamedObject<wxCheckBox>(this, "LightInspectorNoShadows")->Bind(wxEVT_CHECKBOX, &LightInspector::_onOptionsToggle, this);
@@ -368,20 +371,52 @@ namespace
             fmt::format("{:.3f} {:.3f} {:.3f}", col.x(), col.y(), col.z())
         );
     }
+
+    // Convert Vector3 colour to wxColour
+    wxColour toWx(const Vector3& rgb)
+    {
+        Vector3 eightBit = rgb * 255;
+        return wxColour(eightBit.x(), eightBit.y(), eightBit.z());
+    }
+}
+
+void LightInspector::updateColourPicker()
+{
+    // Examine colour of all entities. If they are the same, use this colour in
+    // the picker, otherwise show an "inconsistent" placeholder value.
+    auto col = wxNullColour;
+    for (const Entity* e: _lightEntities)
+    {
+        wxColour entityCol = toWx(entityColour(*e));
+        if (col == wxNullColour) {
+            // Store first colour seen
+            col = entityCol;
+        }
+        else if (col != entityCol) {
+            // Inconsistent
+            col = wxTransparentColour;
+            break;
+        }
+    }
+
+    // Set the picker to show the chosen colour
+    auto picker = findNamedObject<wxColourPickerCtrl>(this, "LightInspectorColour");
+    picker->SetColour(col);
 }
 
 void LightInspector::updateColourWidgets(const Entity& entity)
 {
     Vector3 colour = entityColour(entity);
-    colour *= 255;
 
     // Set colour chooser button
-    findNamedObject<wxColourPickerCtrl>(this, "LightInspectorColour")->
-        SetColour(wxColour(colour[0], colour[1], colour[2]));
+    updateColourPicker();
 
-    // Set brightness slider based on the brightest channel
+    // Set brightness slider based on the brightest channel. This means that
+    // 100% blue and 100% white will both show as maximum brightness, which
+    // isn't correct in terms of optics, but prevents the slider from
+    // overbrightening a colour and changing the hue.
     float highest = highestComponent(colour);
-    _brightnessSlider->SetValue(highest * 100.f / 255.f);
+    _brightnessSlider->SetValue(highest * 100.f);
 }
 
 // Get keyvals from entity and insert into text entries
