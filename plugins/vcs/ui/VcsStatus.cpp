@@ -13,6 +13,7 @@
 #include "os/path.h"
 #include "../GitModule.h"
 #include "../Diff.h"
+#include "../GitException.h"
 
 namespace vcs
 {
@@ -166,47 +167,47 @@ void VcsStatus::performFetch(std::shared_ptr<git::Repository> repository)
 
     GlobalUserInterface().dispatch([this]() { _text->SetLabel(_("Fetching...")); });
 
-    repository->fetchFromTrackedRemote();
-
-    std::lock_guard<std::mutex> guard(_taskLock);
-    _fetchInProgress = false;
-
-    auto status = repository->getSyncStatusOfBranch(*repository->getHead());
-
     std::string text;
 
-    if (status.localIsUpToDate)
+    try
     {
-        text = _("Up to date");
-    }
-    else if (status.localCanBePushed)
-    {
-        text = fmt::format(_("{0} to push"), status.localCommitsAhead);
-    }
-    else if (status.localCommitsAhead == 0)
-    {
-        text = fmt::format(_("{0} to integrate"), status.remoteCommitsAhead);
-    }
-    else
-    {
-        text = fmt::format(_("{0} to push, {1} to integrate"), status.localCommitsAhead, status.remoteCommitsAhead);
-    }
+        repository->fetchFromTrackedRemote();
 
-    if (status.remoteCommitsAhead > 0)
-    {
-        auto mapPath = getRepositoryRelativePath(GlobalMapModule().getMapName(), repository);
+        std::lock_guard<std::mutex> guard(_taskLock);
+        _fetchInProgress = false;
 
-        if (!mapPath.empty())
+        auto status = repository->getSyncStatusOfBranch(*repository->getHead());
+
+        if (status.localIsUpToDate)
         {
-            // Check the incoming commits for modifications of the loaded map
-            auto head = repository->getHead();
-            auto upstream = head->getUpstream();
+            text = _("Up to date");
+        }
+        else if (status.localCanBePushed)
+        {
+            text = fmt::format(_("{0} to push"), status.localCommitsAhead);
+        }
+        else if (status.localCommitsAhead == 0)
+        {
+            text = fmt::format(_("{0} to integrate"), status.remoteCommitsAhead);
+        }
+        else
+        {
+            text = fmt::format(_("{0} to push, {1} to integrate"), status.localCommitsAhead, status.remoteCommitsAhead);
+        }
 
-            // Find the merge base for this ref and its upstream
-            auto mergeBase = repository->findMergeBase(*head, *upstream);
+        if (status.remoteCommitsAhead > 0)
+        {
+            auto mapPath = getRepositoryRelativePath(GlobalMapModule().getMapName(), repository);
 
-            if (mergeBase)
+            if (!mapPath.empty())
             {
+                // Check the incoming commits for modifications of the loaded map
+                auto head = repository->getHead();
+                auto upstream = head->getUpstream();
+
+                // Find the merge base for this ref and its upstream
+                auto mergeBase = repository->findMergeBase(*head, *upstream);
+
                 auto diffAgainstBase = repository->getDiff(*upstream, *mergeBase);
 
                 if (diffAgainstBase->containsFile(mapPath))
@@ -218,11 +219,11 @@ void VcsStatus::performFetch(std::shared_ptr<git::Repository> repository)
                     text = fmt::format(_("{0} no conflicts"), status.remoteCommitsAhead);
                 }
             }
-            else
-            {
-                text = _("No merge base found");
-            }
         }
+    }
+    catch (const git::GitException& ex)
+    {
+        text = ex.what();
     }
 
     GlobalUserInterface().dispatch([this, text]() { _text->SetLabel(text); });
@@ -254,31 +255,38 @@ void VcsStatus::performMapFileStatusCheck(std::shared_ptr<git::Repository> repos
 {
     setMapFileStatus(_("Checking map status..."));
 
-    if (GlobalMapModule().isUnnamed())
+    try
     {
-        setMapFileStatus(_("Map not saved yet"));
-        return;
-    }
+        if (GlobalMapModule().isUnnamed())
+        {
+            setMapFileStatus(_("Map not saved yet"));
+            return;
+        }
 
-    auto relativePath = getRepositoryRelativePath(GlobalMapModule().getMapName(), repository);
+        auto relativePath = getRepositoryRelativePath(GlobalMapModule().getMapName(), repository);
 
-    if (relativePath.empty())
-    {
-        setMapFileStatus(_("Map not in VCS"));
-        return;
-    }
+        if (relativePath.empty())
+        {
+            setMapFileStatus(_("Map not in VCS"));
+            return;
+        }
 
-    if (repository->fileHasUncommittedChanges(relativePath))
-    {
-        setMapFileStatus(_("Map saved, pending commit"));
+        if (repository->fileHasUncommittedChanges(relativePath))
+        {
+            setMapFileStatus(_("Map saved, pending commit"));
+        }
+        else if (repository->fileIsIndexed(relativePath))
+        {
+            setMapFileStatus(_("Map committed"));
+        }
+        else
+        {
+            setMapFileStatus(_("Map saved"));
+        }
     }
-    else if (repository->fileIsIndexed(relativePath))
+    catch (const git::GitException& ex)
     {
-        setMapFileStatus(_("Map committed"));
-    }
-    else
-    {
-        setMapFileStatus(_("Map saved"));
+        setMapFileStatus(std::string("ERROR: ") + ex.what());
     }
 }
 

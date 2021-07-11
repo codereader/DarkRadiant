@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Repository.h"
+#include "GitException.h"
 #include "Tree.h"
 #include <git2.h>
 
@@ -30,9 +31,20 @@ public:
     std::shared_ptr<Tree> getTree()
     {
         git_tree* tree;
-        git_commit_tree(&tree, _commit);
+        auto error = git_commit_tree(&tree, _commit);
+        GitException::ThrowOnError(error);
 
         return std::make_shared<Tree>(tree);
+    }
+
+    static Ptr CreateFromOid(git_repository* repository, git_oid* oid)
+    {
+        git_commit* commit;
+
+        auto error = git_commit_lookup(&commit, repository, oid);
+        GitException::ThrowOnError(error);
+
+        return std::make_shared<Commit>(commit);
     }
 };
 

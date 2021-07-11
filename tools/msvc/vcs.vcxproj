@@ -183,6 +183,7 @@
     <ClInclude Include="..\..\plugins\vcs\Commit.h" />
     <ClInclude Include="..\..\plugins\vcs\CredentialManager.h" />
     <ClInclude Include="..\..\plugins\vcs\Diff.h" />
+    <ClInclude Include="..\..\plugins\vcs\GitException.h" />
     <ClInclude Include="..\..\plugins\vcs\GitModule.h" />
     <ClInclude Include="..\..\plugins\vcs\Reference.h" />
     <ClInclude Include="..\..\plugins\vcs\Remote.h" />

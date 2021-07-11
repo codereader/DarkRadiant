@@ -57,7 +57,7 @@ public:
     Ptr getUpstream() const
     {
         git_reference* upstream = nullptr;
-        git_branch_upstream(&upstream, _reference);
+        auto error = git_branch_upstream(&upstream, _reference);
 
         return upstream != nullptr ? std::make_shared<Reference>(upstream) : Ptr();
     }

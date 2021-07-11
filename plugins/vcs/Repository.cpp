@@ -6,6 +6,7 @@
 #include "Commit.h"
 #include "Tree.h"
 #include "Diff.h"
+#include "GitException.h"
 #include "os/path.h"
 
 namespace vcs
@@ -78,7 +79,8 @@ std::string Repository::getUpstreamRemoteName(const Reference& reference)
     git_buf buf;
     memset(&buf, 0, sizeof(git_buf));
 
-    git_branch_upstream_remote(&buf, _repository, reference.getName().c_str());
+    auto error = git_branch_upstream_remote(&buf, _repository, reference.getName().c_str());
+    GitException::ThrowOnError(error);
 
     std::string upstreamRemote = buf.ptr;
     git_buf_dispose(&buf);
@@ -100,6 +102,12 @@ void Repository::fetchFromTrackedRemote()
 
     rMessage() << head->getShorthandName() << " is set up to track " << (trackedBranch ? trackedBranch->getShorthandName() : "-") << std::endl;
 
+    if (!trackedBranch)
+    {
+        rWarning() << "No tracked remote branch configured, cannot fetch" << std::endl;
+        return;
+    }
+
     auto remoteName = getUpstreamRemoteName(*head);
     rMessage() << head->getShorthandName() << " is set up to track remote " << remoteName << std::endl;
 
@@ -119,6 +127,8 @@ RefSyncStatus Repository::getSyncStatusOfBranch(const Reference& reference)
     RefSyncStatus status;
 
     auto trackedBranch = reference.getUpstream();
+
+    if (!trackedBranch) throw GitException("No tracked branch, cannot check sync status");
 
     git_revwalk* walker;
     git_revwalk_new(&walker, _repository);
@@ -189,11 +199,12 @@ unsigned int Repository::getFileStatus(const std::string& relativePath)
 
     unsigned int statusFlags = 0;
 
-    git_status_foreach_ext(_repository, &options, [](const char* path, unsigned int flags, void* payload)
+    auto error = git_status_foreach_ext(_repository, &options, [](const char* path, unsigned int flags, void* payload)
     {
         *reinterpret_cast<unsigned int*>(payload) = flags;
         return 0;
     }, &statusFlags);
+    GitException::ThrowOnError(error);
 
     return statusFlags;
 }
@@ -211,40 +222,37 @@ bool Repository::fileHasUncommittedChanges(const std::string& relativePath)
 Commit::Ptr Repository::findMergeBase(const Reference& first, const Reference& second)
 {
     git_oid firstOid;
-    git_reference_name_to_id(&firstOid, _repository, first.getName().c_str());
+    auto error = git_reference_name_to_id(&firstOid, _repository, first.getName().c_str());
+    GitException::ThrowOnError(error);
 
     git_oid secondOid;
-    git_reference_name_to_id(&secondOid, _repository, second.getName().c_str());
+    error = git_reference_name_to_id(&secondOid, _repository, second.getName().c_str());
+    GitException::ThrowOnError(error);
 
     git_oid mergeBase;
-    if (git_merge_base(&mergeBase, _repository, &firstOid, &secondOid) == 0)
-    {
-        git_commit* commit;
-        git_commit_lookup(&commit, _repository, &mergeBase);
+    error = git_merge_base(&mergeBase, _repository, &firstOid, &secondOid);
+    GitException::ThrowOnError(error);
 
-        return std::make_shared<Commit>(commit);
-    }
+    git_commit* commit;
+    error = git_commit_lookup(&commit, _repository, &mergeBase);
+    GitException::ThrowOnError(error);
 
-    return Commit::Ptr();
+    return std::make_shared<Commit>(commit);
 }
 
 std::shared_ptr<Diff> Repository::getDiff(const Reference& ref, Commit& commit)
 {
     git_oid refOid;
-    git_reference_name_to_id(&refOid, _repository, ref.getName().c_str());
+    auto error = git_reference_name_to_id(&refOid, _repository, ref.getName().c_str());
+    GitException::ThrowOnError(error);
 
-    git_commit* refCommit;
-    git_commit_lookup(&refCommit, _repository, &refOid);
-
-    git_tree* refTree;
-    git_commit_tree(&refTree, refCommit);
+    auto refCommit = Commit::CreateFromOid(_repository, &refOid);
+    auto refTree = refCommit->getTree();
 
     git_diff* diff;
     auto baseTree = commit.getTree();
-    git_diff_tree_to_tree(&diff, _repository, baseTree->_get(), refTree, nullptr);
-
-    git_tree_free(refTree);
-    git_commit_free(refCommit);
+    error = git_diff_tree_to_tree(&diff, _repository, baseTree->_get(), refTree->_get(), nullptr);
+    GitException::ThrowOnError(error);
 
     return std::make_shared<Diff>(diff);
 }
