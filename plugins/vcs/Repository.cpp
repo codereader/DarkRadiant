@@ -233,13 +233,18 @@ std::shared_ptr<Diff> Repository::getDiff(const Reference& ref, Commit& commit)
     git_oid refOid;
     git_reference_name_to_id(&refOid, _repository, ref.getName().c_str());
 
+    git_commit* refCommit;
+    git_commit_lookup(&refCommit, _repository, &refOid);
+
     git_tree* refTree;
-    git_tree_lookup(&refTree, _repository, &refOid);
+    git_commit_tree(&refTree, refCommit);
 
     git_diff* diff;
-    git_diff_tree_to_tree(&diff, _repository, commit.getTree()->_get(), refTree, nullptr);
+    auto baseTree = commit.getTree();
+    git_diff_tree_to_tree(&diff, _repository, baseTree->_get(), refTree, nullptr);
 
     git_tree_free(refTree);
+    git_commit_free(refCommit);
 
     return std::make_shared<Diff>(diff);
 }

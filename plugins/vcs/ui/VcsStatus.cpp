@@ -12,6 +12,7 @@
 #include "os/file.h"
 #include "os/path.h"
 #include "../GitModule.h"
+#include "../Diff.h"
 
 namespace vcs
 {
@@ -193,20 +194,34 @@ void VcsStatus::performFetch(std::shared_ptr<git::Repository> repository)
 
     if (status.remoteCommitsAhead > 0)
     {
-        // Check the incoming commits for modifications of the loaded map
-        auto head = repository->getHead();
-        auto upstream = head->getUpstream();
+        auto mapPath = getRepositoryRelativePath(GlobalMapModule().getMapName(), repository);
 
-        // Find the merge base for this ref and its upstream
-        auto mergeBase = repository->findMergeBase(*head, *upstream);
+        if (!mapPath.empty())
+        {
+            // Check the incoming commits for modifications of the loaded map
+            auto head = repository->getHead();
+            auto upstream = head->getUpstream();
 
-        if (mergeBase)
-        {
-            auto diffAgainstBase = repository->getDiff(*upstream, *mergeBase);
-        }
-        else
-        {
-            text = _("No merge base found");
+            // Find the merge base for this ref and its upstream
+            auto mergeBase = repository->findMergeBase(*head, *upstream);
+
+            if (mergeBase)
+            {
+                auto diffAgainstBase = repository->getDiff(*upstream, *mergeBase);
+
+                if (diffAgainstBase->containsFile(mapPath))
+                {
+                    text = fmt::format(_("{0} possible conflict"), status.remoteCommitsAhead);
+                }
+                else
+                {
+                    text = fmt::format(_("{0} no conflicts"), status.remoteCommitsAhead);
+                }
+            }
+            else
+            {
+                text = _("No merge base found");
+            }
         }
     }
 
@@ -216,6 +231,23 @@ void VcsStatus::performFetch(std::shared_ptr<git::Repository> repository)
 void VcsStatus::setMapFileStatus(const std::string& status)
 {
     GlobalUserInterface().dispatch([this, status]() { _mapStatus->SetLabel(status); });
+}
+
+std::string VcsStatus::getRepositoryRelativePath(const std::string& path, const std::shared_ptr<git::Repository>& repository)
+{
+    if (!os::fileOrDirExists(path))
+    {
+        return ""; // doesn't exist
+    }
+
+    auto relativePath = os::getRelativePath(path, repository->getPath());
+
+    if (relativePath == path)
+    {
+        return ""; // outside VCS
+    }
+
+    return relativePath;
 }
 
 void VcsStatus::performMapFileStatusCheck(std::shared_ptr<git::Repository> repository)
@@ -228,19 +260,11 @@ void VcsStatus::performMapFileStatusCheck(std::shared_ptr<git::Repository> repos
         return;
     }
 
-    auto mapName = GlobalMapModule().getMapName();
+    auto relativePath = getRepositoryRelativePath(GlobalMapModule().getMapName(), repository);
 
-    if (!os::fileOrDirExists(mapName))
+    if (relativePath.empty())
     {
-        setMapFileStatus(_("Unknown"));
-        return;
-    }
-
-    auto relativePath = os::getRelativePath(mapName, repository->getPath());
-
-    if (relativePath == mapName)
-    {
-        setMapFileStatus(_("Map outside VCS"));
+        setMapFileStatus(_("Map not in VCS"));
         return;
     }
 
