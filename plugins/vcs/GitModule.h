@@ -18,7 +18,7 @@ class GitModule :
 private:
     std::shared_ptr<git::Repository> _repository;
 
-    ui::VcsStatus* _statusBarWidget = nullptr;
+    std::unique_ptr<ui::VcsStatus> _statusBarWidget;
 
 public:
     // RegisterableModule implementation

@@ -22,26 +22,15 @@ namespace ui
 {
 
 VcsStatus::VcsStatus(wxWindow* parent) :
-    wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS, "VcsStatusBarPanel"),
+    _panel(loadNamedPanel(parent, "VcsStatusBar")),
     _timer(this),
     _fetchInProgress(false)
 {
-    SetSizer(new wxBoxSizer(wxVERTICAL));
-
-    auto table = new wxFlexGridSizer(2);
-    table->AddGrowableCol(0);
-    table->AddGrowableCol(1);
-    table->SetHGap(6);
-    GetSizer()->Add(table, 0, wxALL | wxEXPAND, 1);
-
-    _mapStatus = new wxStaticText(this, wxID_ANY, "");
-    table->Add(_mapStatus, 0, wxLEFT, 6);
-
-    _remoteStatus = new wxStaticText(this, wxID_ANY, _("Not under Version Control"));
-    table->Add(_remoteStatus, 0, wxALIGN_RIGHT | wxRIGHT, 6);
+    _mapStatus = findNamedObject<wxStaticText>(_panel, "MapStatusLabel");
+    _remoteStatus = findNamedObject<wxStaticText>(_panel, "RemoteStatusLabel"); 
 
     Bind(wxEVT_TIMER, &VcsStatus::onIntervalReached, this);
-    Bind(wxEVT_IDLE, &VcsStatus::onIdle, this);
+    _panel->Bind(wxEVT_IDLE, &VcsStatus::onIdle, this);
 
     GlobalRegistry().signalForKey(RKEY_AUTO_FETCH_ENABLED).connect(
         sigc::mem_fun(this, &VcsStatus::restartTimer)
@@ -70,6 +59,13 @@ VcsStatus::~VcsStatus()
     {
         _mapFileTask.get(); // Wait for the thread to complete
     }
+
+    _panel->Destroy();
+}
+
+wxWindow* VcsStatus::getWidget()
+{
+    return _panel;
 }
 
 void VcsStatus::setRepository(const std::shared_ptr<git::Repository>& repository)

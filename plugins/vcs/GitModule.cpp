@@ -52,24 +52,10 @@ void GitModule::initialiseModule(const IApplicationContext& ctx)
         _repository.reset();
     }
 
-#if 0
-        git_commit* commit;
-        git_oid oid;
-        git_reference_name_to_id(&oid, repository, "refs/heads/master");
-
-        git_commit_lookup(&commit, repository, &oid);
-
-        const auto* author = git_commit_author(commit);
-        auto time = git_commit_time(commit);
-        rMessage() << "Last commit author: " << author->name << " at " << ctime(&time) << std::endl;
-
-        git_commit_free(commit);
-#endif
-
     GlobalMainFrame().signal_MainFrameConstructed().connect([&]()
     {
-        _statusBarWidget = new ui::VcsStatus(GlobalStatusBarManager().getStatusBar());
-        GlobalStatusBarManager().addElement(ui::VcsStatus::Name, _statusBarWidget,
+        _statusBarWidget = std::make_unique<ui::VcsStatus>(GlobalStatusBarManager().getStatusBar());
+        GlobalStatusBarManager().addElement(ui::VcsStatus::Name, _statusBarWidget->getWidget(),
             ::ui::statusbar::StandardPosition::MapEditStopwatch + 10);
 
         _statusBarWidget->setRepository(_repository);
@@ -80,12 +66,7 @@ void GitModule::shutdownModule()
 {
     rMessage() << getName() << "::shutdownModule called." << std::endl;
 
-    if (_statusBarWidget)
-    {
-        _statusBarWidget->Destroy();
-        _statusBarWidget = nullptr;
-    }
-
+    _statusBarWidget.reset();
     _repository.reset();
 
     git_libgit2_shutdown();

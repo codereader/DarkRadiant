@@ -9,6 +9,7 @@
 
 #include "imap.h"
 #include "../Repository.h"
+#include "wxutil/XmlResourceBasedWidget.h"
 
 namespace vcs
 {
@@ -17,10 +18,13 @@ namespace ui
 {
 
 class VcsStatus final :
-    public wxPanel,
+    public wxEvtHandler,
+    public wxutil::XmlResourceBasedWidget,
     public sigc::trackable
 {
 private:
+    wxPanel* _panel;
+
     wxTimer _timer;
     std::mutex _taskLock;
     bool _fetchInProgress;
@@ -44,6 +48,8 @@ public:
 
     VcsStatus(wxWindow* parent);
     ~VcsStatus();
+
+    wxWindow* getWidget();
 
     void setRepository(const std::shared_ptr<git::Repository>& repository);
 
