@@ -77,8 +77,11 @@ private:
     void adjustBrightness() const;
 
     void updateColourPicker();
-    void updateColourWidgets(const Entity&);
+    void updateColourWidgets();
     void updateLightShapeWidgets();
+
+    // Get the highest RGB component of ALL selected light colours
+    float highestComponentAllLights() const;
 
     // Update the dialog widgets from keyvals on the first selected entity
     void getValuesFromEntity();

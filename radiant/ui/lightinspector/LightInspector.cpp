@@ -380,6 +380,19 @@ namespace
     }
 }
 
+float LightInspector::highestComponentAllLights() const
+{
+    float highest = 0;
+    for (const Entity* e: _lightEntities)
+    {
+        Vector3 col = entityColour(*e);
+        float entityHighest = highestComponent(col);
+        if (entityHighest > highest)
+            highest = entityHighest;
+    }
+    return highest;
+}
+
 void LightInspector::updateColourPicker()
 {
     // Examine colour of all entities. If they are the same, use this colour in
@@ -404,10 +417,8 @@ void LightInspector::updateColourPicker()
     picker->SetColour(col);
 }
 
-void LightInspector::updateColourWidgets(const Entity& entity)
+void LightInspector::updateColourWidgets()
 {
-    Vector3 colour = entityColour(entity);
-
     // Set colour chooser button
     updateColourPicker();
 
@@ -415,8 +426,7 @@ void LightInspector::updateColourWidgets(const Entity& entity)
     // 100% blue and 100% white will both show as maximum brightness, which
     // isn't correct in terms of optics, but prevents the slider from
     // overbrightening a colour and changing the hue.
-    float highest = highestComponent(colour);
-    _brightnessSlider->SetValue(highest * 100.f);
+    _brightnessSlider->SetValue(highestComponentAllLights() * 100.f);
 }
 
 // Get keyvals from entity and insert into text entries
@@ -452,7 +462,7 @@ void LightInspector::getValuesFromEntity()
 		}
 	}
 
-    updateColourWidgets(*entity);
+    updateColourWidgets();
 
     // Set the texture selection from the "texture" key
     _texSelector->setSelection(entity->getKeyValue("texture"));
