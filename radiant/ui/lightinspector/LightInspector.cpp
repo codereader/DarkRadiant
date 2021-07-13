@@ -501,16 +501,18 @@ void LightInspector::getValuesFromEntity()
 
 void LightInspector::adjustBrightness() const
 {
+    // The slider represents the absolute brightness of the highest component
+    // (which means that 100% sets that component to 1.0, and it is hopefully
+    // not possible to overbrighten and lose colour information).
+    float origHighest = highestComponentAllLights();
+
+    // Adjust all lights in proportion to slider motion
     for (auto light: _lightEntities)
     {
-        // Get existing colour
+        // Get existing colour for THIS light
         Vector3 colour = entityColour(*light);
 
-        // The slider represents the absolute brightness of the highest
-        // component (which means that 100% sets that component to 1.0, and it
-        // is hopefully not possible to overbrighten and lose colour
-        // information).
-        float origHighest = highestComponent(colour);
+        // Calculate the adjustment ratio to be applied to all lights
         float newHighest = std::max(_brightnessSlider->GetValue(), 1) / 100.f;
         Vector3 newColour;
         if (origHighest > 0.0f)
