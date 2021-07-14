@@ -378,6 +378,17 @@ namespace
         Vector3 eightBit = rgb * 255;
         return wxColour(eightBit.x(), eightBit.y(), eightBit.z());
     }
+
+    // Convert linear light value to/from displayed slider value
+    const float SLIDER_POWER = 1.25;
+    float fromSlider(float value)
+    {
+        return std::pow(value / 100.f, SLIDER_POWER);
+    }
+    float toSlider(float value)
+    {
+        return std::pow(value, 1.0/SLIDER_POWER) * 100.f;
+    }
 }
 
 float LightInspector::highestComponentAllLights() const
@@ -426,7 +437,7 @@ void LightInspector::updateColourWidgets()
     // 100% blue and 100% white will both show as maximum brightness, which
     // isn't correct in terms of optics, but prevents the slider from
     // overbrightening a colour and changing the hue.
-    _brightnessSlider->SetValue(highestComponentAllLights() * 100.f);
+    _brightnessSlider->SetValue(toSlider(highestComponentAllLights()));
 }
 
 // Get keyvals from entity and insert into text entries
@@ -513,7 +524,9 @@ void LightInspector::adjustBrightness() const
         Vector3 colour = entityColour(*light);
 
         // Calculate the adjustment ratio to be applied to all lights
-        float newHighest = std::max(_brightnessSlider->GetValue(), 1) / 100.f;
+        float newHighest = std::max(
+            fromSlider(_brightnessSlider->GetValue()), 0.01f
+        );
         Vector3 newColour;
         if (origHighest > 0.0f)
         {
