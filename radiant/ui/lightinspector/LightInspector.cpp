@@ -150,11 +150,26 @@ void LightInspector::setupOptionsPanel()
     findNamedObject<wxColourPickerCtrl>(this, "LightInspectorColour")->Bind(
         wxEVT_COLOURPICKER_CHANGED, &LightInspector::_onColourChange, this
     );
-    _brightnessSlider->Bind(
-        wxEVT_SLIDER, [=](wxCommandEvent&) { adjustBrightness(); }
+    _brightnessSlider->Bind( // drag in progress
+        wxEVT_SCROLL_THUMBTRACK,
+        [=](wxScrollEvent&) {
+            if (!_adjustingBrightness && !GlobalUndoSystem().operationStarted())
+            {
+                GlobalUndoSystem().start();
+                _adjustingBrightness = true;
+            }
+            adjustBrightness();
+        }
     );
-    _brightnessSlider->Bind(
-        wxEVT_SCROLL_CHANGED, [=](wxScrollEvent&) { updateColourPicker(); }
+    _brightnessSlider->Bind( // drag finished
+        wxEVT_SCROLL_CHANGED,
+        [=](wxScrollEvent&) {
+            if (_adjustingBrightness) {
+                GlobalUndoSystem().finish("Adjust light brightness");
+                _adjustingBrightness = false;
+            }
+            updateColourPicker();
+        }
     );
 
     findNamedObject<wxCheckBox>(this, "LightInspectorParallel")->Bind(wxEVT_CHECKBOX, &LightInspector::_onOptionsToggle, this);

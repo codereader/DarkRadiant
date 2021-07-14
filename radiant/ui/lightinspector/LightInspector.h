@@ -48,6 +48,10 @@ class LightInspector :
     // Disables callbacks if set to TRUE (during widget updates)
     bool _updateActive;
 
+    // Track if a brightness adjustment is in progress (which needs an undo
+    // command when finished)
+    bool _adjustingBrightness = false;
+
     bool _supportsAiSee;
 
     sigc::connection _selectionChanged;
