@@ -6,12 +6,15 @@
 #include "imainframe.h"
 
 #include <wx/sizer.h>
+#include <wx/bmpbuttn.h>
 #include <sigc++/functors/mem_fun.h>
 
 #include "registry/registry.h"
 #include "os/file.h"
 #include "os/path.h"
 #include "string/convert.h"
+#include "wxutil/menu/CommandMenuItem.h"
+#include "wxutil/menu/IconTextMenuItem.h"
 #include "../GitModule.h"
 #include "../Diff.h"
 #include "../GitException.h"
@@ -25,10 +28,24 @@ namespace ui
 VcsStatus::VcsStatus(wxWindow* parent) :
     _panel(loadNamedPanel(parent, "VcsStatusBar")),
     _timer(this),
-    _fetchInProgress(false)
+    _fetchInProgress(false),
+    _popupMenu(new wxutil::PopupMenu)
 {
+    _popupMenu->addItem(std::make_shared<wxutil::CommandMenuItem>(
+        new wxMenuItem(nullptr, wxID_ANY, _("Check for Changes"), "Load"),
+        "GitFetch",
+        [this]() { return !_fetchInProgress; }
+    ));
+
     _mapStatus = findNamedObject<wxStaticText>(_panel, "MapStatusLabel");
     _remoteStatus = findNamedObject<wxStaticText>(_panel, "RemoteStatusLabel");
+    
+    auto* vcsMenu = findNamedObject<wxBitmapButton>(_panel, "VcsMenuButton");
+    vcsMenu->Hide();
+    vcsMenu->Bind(wxEVT_BUTTON, [this] (wxCommandEvent& ev)
+    {
+        _popupMenu->show(wxDynamicCast(ev.GetEventObject(), wxWindow));
+    });
 
     Bind(wxEVT_TIMER, &VcsStatus::onIntervalReached, this);
     _panel->Bind(wxEVT_IDLE, &VcsStatus::onIdle, this);
@@ -72,6 +89,8 @@ wxWindow* VcsStatus::getWidget()
 void VcsStatus::setRepository(const std::shared_ptr<git::Repository>& repository)
 {
     _repository = repository;
+
+    findNamedObject<wxBitmapButton>(_panel, "VcsMenuButton")->Show(_repository != nullptr);
 
     if (!_repository)
     {

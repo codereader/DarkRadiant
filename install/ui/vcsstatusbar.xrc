@@ -81,7 +81,7 @@
 									<option>0</option>
 									<flag>wxRIGHT</flag>
 									<border>4</border>
-									<object class="wxBitmapButton" name="VcsMenu">
+									<object class="wxBitmapButton" name="VcsMenuButton">
 										<style>wxBU_RIGHT</style>
 										<size>-1,20</size>
 										<bitmap stock_id="darkradiant:arrow_up.png" stock_client="">undefined.png</bitmap>

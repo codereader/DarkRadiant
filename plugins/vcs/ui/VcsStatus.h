@@ -10,6 +10,7 @@
 #include "imap.h"
 #include "../Repository.h"
 #include "wxutil/XmlResourceBasedWidget.h"
+#include "wxutil/menu/PopupMenu.h"
 
 namespace vcs
 {
@@ -42,6 +43,8 @@ private:
         std::size_t remoteAheadCount;
         std::string label;
     };
+
+    std::unique_ptr<wxutil::PopupMenu> _popupMenu;
 
 public:
     static constexpr const char* const Name = "VcsStatusBarWidget";
