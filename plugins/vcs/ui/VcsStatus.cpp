@@ -11,6 +11,7 @@
 #include "registry/registry.h"
 #include "os/file.h"
 #include "os/path.h"
+#include "string/convert.h"
 #include "../GitModule.h"
 #include "../Diff.h"
 #include "../GitException.h"
@@ -27,7 +28,7 @@ VcsStatus::VcsStatus(wxWindow* parent) :
     _fetchInProgress(false)
 {
     _mapStatus = findNamedObject<wxStaticText>(_panel, "MapStatusLabel");
-    _remoteStatus = findNamedObject<wxStaticText>(_panel, "RemoteStatusLabel"); 
+    _remoteStatus = findNamedObject<wxStaticText>(_panel, "RemoteStatusLabel");
 
     Bind(wxEVT_TIMER, &VcsStatus::onIntervalReached, this);
     _panel->Bind(wxEVT_IDLE, &VcsStatus::onIdle, this);
@@ -256,6 +257,17 @@ void VcsStatus::setRemoteStatus(const RemoteStatus& status)
 {
     GlobalUserInterface().dispatch([this, status]() 
     { 
+        findNamedObject<wxWindow>(_panel, "OutgoingCommitsIcon")->Show(status.localAheadCount > 0);
+        findNamedObject<wxWindow>(_panel, "IncomingCommitsIcon")->Show(status.remoteAheadCount > 0);
+        
+        auto* outgoingLabel = findNamedObject<wxStaticText>(_panel, "NumOutgoingCommits");
+        outgoingLabel->Show(status.localAheadCount > 0);
+        outgoingLabel->SetLabel(string::to_string(status.localAheadCount));
+
+        auto* incomingLabel = findNamedObject<wxStaticText>(_panel, "NumIncomingCommits");
+        incomingLabel->Show(status.remoteAheadCount > 0);
+        incomingLabel->SetLabel(string::to_string(status.remoteAheadCount));
+
         _remoteStatus->SetLabel(status.label); 
     });
 }

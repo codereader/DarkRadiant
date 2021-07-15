@@ -17,26 +17,76 @@
 					<growablerows></growablerows>
 					<object class="sizeritem">
 						<option>0</option>
-						<flag>wxALIGN_CENTER_VERTICAL</flag>
-						<border>0</border>
+						<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+						<border>6</border>
 						<object class="wxStaticText" name="MapStatusLabel">
 							<label>Map</label>
 							<wrap>-1</wrap>
 						</object>
 					</object>
 					<object class="sizeritem">
-						<option>1</option>
-						<flag>wxEXPAND</flag>
+						<option>0</option>
+						<flag>wxALIGN_RIGHT</flag>
 						<border>0</border>
-						<object class="wxBoxSizer">
-							<orient>wxHORIZONTAL</orient>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxALIGN_CENTER_VERTICAL</flag>
-								<border>0</border>
-								<object class="wxStaticText" name="RemoteStatusLabel">
-									<label>RemoteStatus</label>
-									<wrap>-1</wrap>
+						<object class="wxPanel" name="RemoteStatusPanel">
+							<style>wxTAB_TRAVERSAL|wxWANTS_CHARS</style>
+							<object class="wxBoxSizer">
+								<orient>wxHORIZONTAL</orient>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxALIGN_CENTER_VERTICAL</flag>
+									<border>0</border>
+									<object class="wxStaticBitmap" name="IncomingCommitsIcon">
+										<size>18,18</size>
+										<bitmap stock_id="darkradiant:incoming_commits.png" stock_client="">undefined.png</bitmap>
+									</object>
+								</object>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxALIGN_CENTER_VERTICAL</flag>
+									<border>0</border>
+									<object class="wxStaticText" name="NumOutgoingCommits">
+										<label>1</label>
+										<wrap>-1</wrap>
+									</object>
+								</object>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxALIGN_CENTER_VERTICAL</flag>
+									<border>0</border>
+									<object class="wxStaticBitmap" name="OutgoingCommitsIcon">
+										<size>18,18</size>
+										<bitmap stock_id="darkradiant:outgoing_commits.png" stock_client="">undefined.png</bitmap>
+									</object>
+								</object>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+									<border>0</border>
+									<object class="wxStaticText" name="NumIncomingCommits">
+										<label>1</label>
+										<wrap>-1</wrap>
+									</object>
+								</object>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
+									<border>6</border>
+									<object class="wxStaticText" name="RemoteStatusLabel">
+										<label>Status</label>
+										<wrap>-1</wrap>
+									</object>
+								</object>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxRIGHT</flag>
+									<border>4</border>
+									<object class="wxBitmapButton" name="VcsMenu">
+										<style>wxBU_RIGHT</style>
+										<size>-1,20</size>
+										<bitmap stock_id="darkradiant:arrow_up.png" stock_client="">undefined.png</bitmap>
+										<default>0</default>
+									</object>
 								</object>
 							</object>
 						</object>
