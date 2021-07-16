@@ -8,6 +8,7 @@
 #include <sigc++/trackable.h>
 
 #include "imap.h"
+#include "../Algorithm.h"
 #include "../Repository.h"
 #include "wxutil/XmlResourceBasedWidget.h"
 #include "wxutil/menu/PopupMenu.h"
@@ -37,13 +38,6 @@ private:
     wxStaticText* _remoteStatus;
     wxStaticText* _mapStatus;
 
-    struct RemoteStatus
-    {
-        std::size_t localAheadCount;
-        std::size_t remoteAheadCount;
-        std::string label;
-    };
-
     std::unique_ptr<wxutil::PopupMenu> _popupMenu;
 
 public:
@@ -66,9 +60,8 @@ private:
     void updateMapFileStatus();
     void onMapEvent(IMap::MapEvent ev);
     void setMapFileStatus(const std::string& status);
-    void setRemoteStatus(const RemoteStatus& status);
+    void setRemoteStatus(const git::RemoteStatus& status);
 
-    RemoteStatus analyseRemoteStatus(const std::shared_ptr<git::Repository>& repository);
     std::string getRepositoryRelativePath(const std::string& path, const std::shared_ptr<git::Repository>& repository);
 };
 

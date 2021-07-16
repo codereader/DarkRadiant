@@ -50,5 +50,8 @@
     <ClInclude Include="..\..\plugins\vcs\GitException.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\plugins\vcs\Algorithm.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

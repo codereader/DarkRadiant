@@ -2,12 +2,14 @@
 
 #include <git2.h>
 #include "itextstream.h"
+#include "imap.h"
 #include "Remote.h"
 #include "Commit.h"
 #include "Tree.h"
 #include "Diff.h"
 #include "GitException.h"
 #include "os/path.h"
+#include "os/file.h"
 
 namespace vcs
 {
@@ -30,6 +32,11 @@ Repository::Repository(const std::string& path) :
     }
 }
 
+Repository::~Repository()
+{
+    git_repository_free(_repository);
+}
+
 bool Repository::isOk() const
 {
     return _isOk;
@@ -40,9 +47,21 @@ const std::string& Repository::getPath() const
     return _path;
 }
 
-Repository::~Repository()
+std::string Repository::getRepositoryRelativePath(const std::string& path)
 {
-    git_repository_free(_repository);
+    if (!os::fileOrDirExists(path))
+    {
+        return ""; // doesn't exist
+    }
+
+    auto relativePath = os::getRelativePath(path, getPath());
+
+    if (relativePath == path)
+    {
+        return ""; // outside VCS
+    }
+
+    return relativePath;
 }
 
 std::shared_ptr<Repository> Repository::clone()

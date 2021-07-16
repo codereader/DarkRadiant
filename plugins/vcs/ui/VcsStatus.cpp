@@ -180,56 +180,6 @@ void VcsStatus::onIdle(wxIdleEvent& ev)
     ev.Skip();
 }
 
-VcsStatus::RemoteStatus VcsStatus::analyseRemoteStatus(const std::shared_ptr<git::Repository>& repository)
-{
-    auto mapPath = getRepositoryRelativePath(GlobalMapModule().getMapName(), repository);
-
-    if (mapPath.empty())
-    {
-        return RemoteStatus{ 0, 0, _("-") };
-    }
-
-    auto status = repository->getSyncStatusOfBranch(*repository->getHead());
-
-    if (status.remoteCommitsAhead == 0)
-    {
-        return status.localCommitsAhead == 0 ? 
-            RemoteStatus{ status.localCommitsAhead, 0, _("Up to date") } :
-            RemoteStatus{ status.localCommitsAhead, 0, _("Pending Upload") };
-    }
-
-    // Check the incoming commits for modifications of the loaded map
-    auto head = repository->getHead();
-    auto upstream = head->getUpstream();
-
-    // Find the merge base for this ref and its upstream
-    auto mergeBase = repository->findMergeBase(*head, *upstream);
-
-    auto remoteDiffAgainstBase = repository->getDiff(*upstream, *mergeBase);
-        
-    if (!remoteDiffAgainstBase->containsFile(mapPath))
-    {
-        // Remote didn't change, we can integrate it without conflicting the loaded map
-        return RemoteStatus{ status.localCommitsAhead, status.remoteCommitsAhead, _("Integrate") };
-    }
-
-    auto localDiffAgainstBase = repository->getDiff(*head, *mergeBase);
-
-    if (repository->fileHasUncommittedChanges(mapPath))
-    {
-        return RemoteStatus{ status.localCommitsAhead, status.remoteCommitsAhead, _("Commit, then integrate ") };
-    }
-
-    if (!localDiffAgainstBase->containsFile(mapPath))
-    {
-        // The local diff doesn't include the map, the remote changes can be integrated
-        return RemoteStatus{ status.localCommitsAhead, status.remoteCommitsAhead, _("Integrate") };
-    }
-
-    // Both the local and the remote diff are affecting the map file, this needs resolution
-    return RemoteStatus{ status.localCommitsAhead, status.remoteCommitsAhead, _("Resolve") };
-}
-
 void VcsStatus::performFetch(std::shared_ptr<git::Repository> repository)
 {
     auto head = repository->getHead();
@@ -246,22 +196,22 @@ void VcsStatus::performFetch(std::shared_ptr<git::Repository> repository)
     }
     catch (const git::GitException&)
     {
-        setRemoteStatus(RemoteStatus{ 0, 0, _("Not connected") });
+        setRemoteStatus(git::RemoteStatus{ 0, 0, _("Not connected") });
         _fetchInProgress = false;
         return;
     }
 
     try
     {
-        setRemoteStatus(RemoteStatus{ 0, 0, _("Fetching...") });
+        setRemoteStatus(git::RemoteStatus{ 0, 0, _("Fetching...") });
 
         repository->fetchFromTrackedRemote();
 
-        setRemoteStatus(analyseRemoteStatus(repository));
+        setRemoteStatus(git::analyseRemoteStatus(repository));
     }
     catch (const git::GitException& ex)
     {
-        setRemoteStatus(RemoteStatus{ 0, 0, ex.what() });
+        setRemoteStatus(git::RemoteStatus{ 0, 0, ex.what() });
     }
 
     _fetchInProgress = false;
@@ -272,7 +222,7 @@ void VcsStatus::setMapFileStatus(const std::string& status)
     GlobalUserInterface().dispatch([this, status]() { _mapStatus->SetLabel(status); });
 }
 
-void VcsStatus::setRemoteStatus(const RemoteStatus& status)
+void VcsStatus::setRemoteStatus(const git::RemoteStatus& status)
 {
     GlobalUserInterface().dispatch([this, status]() 
     { 
@@ -291,23 +241,6 @@ void VcsStatus::setRemoteStatus(const RemoteStatus& status)
     });
 }
 
-std::string VcsStatus::getRepositoryRelativePath(const std::string& path, const std::shared_ptr<git::Repository>& repository)
-{
-    if (!os::fileOrDirExists(path))
-    {
-        return ""; // doesn't exist
-    }
-
-    auto relativePath = os::getRelativePath(path, repository->getPath());
-
-    if (relativePath == path)
-    {
-        return ""; // outside VCS
-    }
-
-    return relativePath;
-}
-
 void VcsStatus::performMapFileStatusCheck(std::shared_ptr<git::Repository> repository)
 {
     setMapFileStatus(_("Checking map status..."));
@@ -320,7 +253,7 @@ void VcsStatus::performMapFileStatusCheck(std::shared_ptr<git::Repository> repos
             return;
         }
 
-        auto relativePath = getRepositoryRelativePath(GlobalMapModule().getMapName(), repository);
+        auto relativePath = repository->getRepositoryRelativePath(GlobalMapModule().getMapName());
 
         if (relativePath.empty())
         {

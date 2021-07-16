@@ -37,6 +37,8 @@ public:
 
     const std::string& getPath() const;
 
+    std::string getRepositoryRelativePath(const std::string& path);
+
     // Returns the remote with the given name
     std::shared_ptr<Remote> getRemote(const std::string& name);
 

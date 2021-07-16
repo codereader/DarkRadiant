@@ -180,6 +180,7 @@
     <ClCompile Include="..\..\plugins\vcs\ui\VcsStatus.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\plugins\vcs\Algorithm.h" />
     <ClInclude Include="..\..\plugins\vcs\Commit.h" />
     <ClInclude Include="..\..\plugins\vcs\CredentialManager.h" />
     <ClInclude Include="..\..\plugins\vcs\Diff.h" />
