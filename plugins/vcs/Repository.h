@@ -59,6 +59,8 @@ public:
     // returns the number of commits each of them is ahead of the other one.
     RefSyncStatus getSyncStatusOfBranch(const Reference& reference);
 
+    bool isReadyForMerge();
+
     // Finds a common ancestor of the two refs, to base a merge operation on
     std::shared_ptr<Commit> findMergeBase(const Reference& first, const Reference& second);
 

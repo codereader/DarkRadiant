@@ -31,12 +31,6 @@ VcsStatus::VcsStatus(wxWindow* parent) :
     _fetchInProgress(false),
     _popupMenu(new wxutil::PopupMenu)
 {
-    _popupMenu->addItem(std::make_shared<wxutil::CommandMenuItem>(
-        new wxMenuItem(nullptr, wxID_ANY, _("Check for Changes"), "Load"),
-        "GitFetch",
-        [this]() { return !_fetchInProgress; }
-    ));
-
     _mapStatus = findNamedObject<wxStaticText>(_panel, "MapStatusLabel");
     _remoteStatus = findNamedObject<wxStaticText>(_panel, "RemoteStatusLabel");
     
@@ -64,6 +58,8 @@ VcsStatus::VcsStatus(wxWindow* parent) :
     GlobalMapModule().signal_mapEvent().connect(
         sigc::mem_fun(this, &VcsStatus::onMapEvent)
     );
+
+    createPopupMenu();
 }
 
 VcsStatus::~VcsStatus()
@@ -84,6 +80,21 @@ VcsStatus::~VcsStatus()
 wxWindow* VcsStatus::getWidget()
 {
     return _panel;
+}
+
+void VcsStatus::createPopupMenu()
+{
+    _popupMenu->addItem(std::make_shared<wxutil::CommandMenuItem>(
+        new wxMenuItem(nullptr, wxID_ANY, _("Check for Changes"), ""),
+        "GitFetch",
+        [this]() { return !_fetchInProgress; }
+    ));
+
+    _popupMenu->addItem(std::make_shared<wxutil::MenuItem>(
+        new wxMenuItem(nullptr, wxID_ANY, _("Integrate Changes from Server"), ""),
+        [this]() { if (_repository) { mergeRemoteChanges(_repository); } },
+        [this]() { return !_fetchInProgress; }
+    ));
 }
 
 void VcsStatus::setRepository(const std::shared_ptr<git::Repository>& repository)

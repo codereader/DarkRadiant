@@ -238,6 +238,12 @@ bool Repository::fileHasUncommittedChanges(const std::string& relativePath)
     return (getFileStatus(relativePath) & GIT_STATUS_WT_MODIFIED) != 0;
 }
 
+bool Repository::isReadyForMerge()
+{
+    auto state = git_repository_state(_repository);
+    return state == GIT_REPOSITORY_STATE_NONE;
+}
+
 Commit::Ptr Repository::findMergeBase(const Reference& first, const Reference& second)
 {
     git_oid firstOid;
