@@ -91,8 +91,8 @@ void VcsStatus::createPopupMenu()
     ));
 
     _popupMenu->addItem(std::make_shared<wxutil::MenuItem>(
-        new wxMenuItem(nullptr, wxID_ANY, _("Integrate Changes from Server"), ""),
-        [this]() { if (_repository) { mergeRemoteChanges(_repository); } },
+        new wxMenuItem(nullptr, wxID_ANY, _("Sync Changes with Server"), ""),
+        [this]() { performSync(_repository); },
         [this]() { return !_fetchInProgress; }
     ));
 }
@@ -226,6 +226,19 @@ void VcsStatus::performFetch(std::shared_ptr<git::Repository> repository)
     }
 
     _fetchInProgress = false;
+}
+
+void VcsStatus::performSync(std::shared_ptr<git::Repository> repository)
+{
+    try
+    {
+        repository->pushToTrackedRemote();
+        setRemoteStatus(git::analyseRemoteStatus(repository));
+    }
+    catch (git::GitException& ex)
+    {
+        setRemoteStatus(git::RemoteStatus{ 0, 0, ex.what() });
+    }
 }
 
 void VcsStatus::setMapFileStatus(const std::string& status)

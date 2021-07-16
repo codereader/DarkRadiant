@@ -57,6 +57,7 @@ private:
     void onIntervalReached(wxTimerEvent& ev);
     void onIdle(wxIdleEvent& ev);
     void performFetch(std::shared_ptr<git::Repository> repository);
+    void performSync(std::shared_ptr<git::Repository> repository);
     void performMapFileStatusCheck(std::shared_ptr<git::Repository> repository);
     void updateMapFileStatus();
     void onMapEvent(IMap::MapEvent ev);

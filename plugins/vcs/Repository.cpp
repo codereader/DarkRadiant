@@ -107,14 +107,13 @@ std::string Repository::getUpstreamRemoteName(const Reference& reference)
     return upstreamRemote;
 }
 
-void Repository::fetchFromTrackedRemote()
+Remote::Ptr Repository::getTrackedRemote()
 {
     auto head = getHead();
 
     if (!head)
     {
-        rWarning() << "Could not retrieve HEAD reference from repository" << std::endl;
-        return;
+        throw GitException("Could not retrieve HEAD reference from repository");
     }
 
     auto trackedBranch = head->getUpstream();
@@ -123,8 +122,7 @@ void Repository::fetchFromTrackedRemote()
 
     if (!trackedBranch)
     {
-        rWarning() << "No tracked remote branch configured, cannot fetch" << std::endl;
-        return;
+        throw GitException("No tracked remote branch configured");
     }
 
     auto remoteName = getUpstreamRemoteName(*head);
@@ -134,11 +132,22 @@ void Repository::fetchFromTrackedRemote()
 
     if (!remote)
     {
-        rWarning() << "Cannot fetch from remote 'origin'" << std::endl;
-        return;
+        throw GitException("Failed to get the named remote: " + remoteName);
     }
 
+    return remote;
+}
+
+void Repository::fetchFromTrackedRemote()
+{
+    auto remote = getTrackedRemote();
     remote->fetch();
+}
+
+void Repository::pushToTrackedRemote()
+{
+    auto remote = getTrackedRemote();
+    remote->push(*getHead()); // getHead will succeed because getTrackedRemote did
 }
 
 RefSyncStatus Repository::getSyncStatusOfBranch(const Reference& reference)

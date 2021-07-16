@@ -51,6 +51,9 @@ public:
     // Performs a fetch from the remote the current branch is tracking
     void fetchFromTrackedRemote();
 
+    // Pushes the current head to its tracked remote branch
+    void pushToTrackedRemote();
+
     bool isUpToDateWithRemote();
     bool fileIsIndexed(const std::string& relativePath);
     bool fileHasUncommittedChanges(const std::string& relativePath);
@@ -74,6 +77,8 @@ public:
     git_repository* _get();
 
 private:
+    std::shared_ptr<Remote> getTrackedRemote();
+
     unsigned int getFileStatus(const std::string& relativePath);
 };
 

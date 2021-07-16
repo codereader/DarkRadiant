@@ -2,6 +2,7 @@
 
 #include "imap.h"
 #include "i18n.h"
+#include "itextstream.h"
 #include "Repository.h"
 #include "GitException.h"
 #include "Diff.h"
@@ -106,17 +107,34 @@ inline RemoteStatus analyseRemoteStatus(const std::shared_ptr<Repository>& repos
         RequiredMergeStrategy::MergeMap };
 }
 
-inline void mergeRemoteChanges(const std::shared_ptr<Repository>& repository)
+inline void syncWithRemote(const std::shared_ptr<Repository>& repository)
 {
+    if (GlobalMapModule().isModified())
+    {
+        throw git::GitException(_("The map file has unsaved changes, please save before merging."));
+    }
+
     auto mapPath = repository->getRepositoryRelativePath(GlobalMapModule().getMapName());
-    auto mapFileHasUncommittedChanges = !mapPath.empty() && repository->fileHasUncommittedChanges(mapPath);
+    /*auto mapFileHasUncommittedChanges = !mapPath.empty() && repository->fileHasUncommittedChanges(mapPath);
 
     if (mapFileHasUncommittedChanges)
     {
         throw git::GitException(_("The map file has uncommitted changes, cannot merge yet."));
-    }
+    }*/
 
     RemoteStatus status = analyseRemoteStatus(repository);
+
+    if (status.strategy == RequiredMergeStrategy::NoMergeRequired)
+    {
+        rMessage() << "No merge required." << std::endl;
+        return;
+    }
+    
+    if (status.strategy == RequiredMergeStrategy::JustPush)
+    {
+        repository->pushToTrackedRemote();
+        return;
+    }
 
     if (!repository->isReadyForMerge())
     {

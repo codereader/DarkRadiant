@@ -3,6 +3,7 @@
 #include <git2.h>
 #include "Repository.h"
 #include "CredentialManager.h"
+#include "GitException.h"
 #include <wx/uri.h>
 #include <fmt/format.h>
 
@@ -33,8 +34,7 @@ public:
     {
         if (!_remote)
         {
-            rError() << "Not a valid remote" << std::endl;
-            return;
+            throw GitException("Not a valid remote");
         }
 
         auto url = wxURI(git_remote_url(_remote));
@@ -42,6 +42,72 @@ public:
         git_fetch_options options;
         git_fetch_options_init(&options, GIT_FETCH_OPTIONS_VERSION);
 
+        auto credentials = getCredentialsForRemote(url);
+
+        if (credentials != nullptr)
+        {
+            options.callbacks.credentials = AcquireCredentials;
+            options.callbacks.payload = credentials;
+        }
+
+        auto remoteName = git_remote_name(_remote);
+
+        rMessage() << "Fetching from remote " << remoteName << std::endl;
+
+        auto error = git_remote_fetch(_remote, nullptr, &options, "fetch");
+        GitException::ThrowOnError(error);
+
+        rMessage() << "Fetch complete" << std::endl;
+    }
+
+    void push(const Reference& ref)
+    {
+        git_push_options options = GIT_PUSH_OPTIONS_INIT;
+        auto refName = ref.getName();
+        char* refNamePtr = refName.data();
+
+        const git_strarray refspecs = {
+            &refNamePtr,
+            1
+        };
+
+        auto url = wxURI(git_remote_url(_remote));
+        auto credentials = getCredentialsForRemote(url);
+
+        if (credentials != nullptr)
+        {
+            options.callbacks.credentials = AcquireCredentials;
+            options.callbacks.payload = credentials;
+        }
+
+        auto remoteName = git_remote_name(_remote);
+        rMessage() << "Pushing to remote " << remoteName << std::endl;
+
+        auto error = git_remote_push(_remote, &refspecs, &options);
+        GitException::ThrowOnError(error);
+
+        rMessage() << "Push complete" << std::endl;
+    }
+
+    static Ptr CreateFromName(Repository& repository, const std::string& name)
+    {
+        git_remote* remote;
+        auto error = git_remote_lookup(&remote, repository._get(), name.c_str());
+
+        GitException::ThrowOnError(error);
+
+        return std::make_shared<Remote>(remote);
+    }
+
+private:
+    static int AcquireCredentials(git_cred** out, const char* url, const char* username_from_url, unsigned int allowed_types, void* payload)
+    {
+        *out = reinterpret_cast<git_credential*>(payload);
+        return 0;
+    }
+
+    git_credential* getCredentialsForRemote(const wxURI& url)
+    {
         // Create the git:scheme://server string to query the credential manager
         auto credentialResource = fmt::format("git:{0}://{1}", url.GetScheme().ToStdString(), url.GetServer().ToStdString());
 
@@ -53,49 +119,13 @@ public:
 
             git_credential* credentials = nullptr;
 
-            if (git_credential_userpass_plaintext_new(&credentials, userAndPass.first.c_str(), userAndPass.second.c_str()) < 0)
-            {
-                rError() << "Unable to create credentials" << std::endl;
-                return;
-            }
+            auto error = git_credential_userpass_plaintext_new(&credentials, userAndPass.first.c_str(), userAndPass.second.c_str());
+            GitException::ThrowOnError(error);
 
-            options.callbacks.credentials = AcquireCredentials;
-            options.callbacks.payload = credentials;
+            return credentials;
         }
 
-        auto remoteName = git_remote_name(_remote);
-
-        rMessage() << "Fetching from remote " << remoteName << std::endl;
-
-        if (git_remote_fetch(_remote, nullptr, &options, "fetch") < 0)
-        {
-            const auto* error = git_error_last();
-
-            rError() << "Fetch error " << error->message << std::endl;
-            return;
-        }
-
-        rMessage() << "Fetch complete" << std::endl;
-    }
-
-    static Ptr CreateFromName(Repository& repository, const std::string& name)
-    {
-        git_remote* remote;
-
-        if (git_remote_lookup(&remote, repository._get(), name.c_str()) < 0)
-        {
-            rWarning() << "Failed to look up the remote " << name << std::endl;
-            return Ptr();
-        }
-
-        return std::make_shared<Remote>(remote);
-    }
-
-private:
-    static int AcquireCredentials(git_cred** out, const char* url, const char* username_from_url, unsigned int allowed_types, void* payload)
-    {
-        *out = reinterpret_cast<git_credential*>(payload);
-        return 0;
+        return nullptr;
     }
 };
 

@@ -11,6 +11,7 @@
 #include "Repository.h"
 #include "Remote.h"
 #include "ui/VcsStatus.h"
+#include "command/ExecutionFailure.h"
 
 namespace vcs
 {
@@ -85,7 +86,14 @@ void GitModule::fetch(const cmd::ArgumentList& args)
         return;
     }
 
-    _repository->fetchFromTrackedRemote();
+    try
+    {
+        _repository->fetchFromTrackedRemote();
+    }
+    catch (const git::GitException& ex)
+    {
+        throw cmd::ExecutionFailure(ex.what());
+    }
 }
 
 void GitModule::createPreferencePage()
