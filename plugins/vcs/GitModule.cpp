@@ -9,21 +9,41 @@
 #include "icommandsystem.h"
 #include <git2.h>
 #include "Repository.h"
+#include "Commit.h"
+#include "GitException.h"
 #include "Remote.h"
 #include "ui/VcsStatus.h"
+#include "VersionControlLib.h"
 #include "command/ExecutionFailure.h"
 
 namespace vcs
 {
 
-namespace
-{
-    constexpr const char* UriPrefix = "git";
-}
-
 std::string GitModule::getUriPrefix()
 {
     return UriPrefix;
+}
+
+ArchiveTextFilePtr GitModule::openTextFile(const std::string& vcsUri)
+{
+    try
+    {
+        assert(getVcsPrefix(vcsUri) == UriPrefix);
+
+        if (!_repository)
+        {
+            return ArchiveTextFilePtr();
+        }
+
+        auto tree = _repository->getTreeByRevision(vcs::getVcsRevision(vcsUri));
+        
+        return tree->openTextFile(vcs::getVcsFilePath(vcsUri), *_repository);
+    }
+    catch (const git::GitException& ex)
+    {
+        rWarning() << "git::openTextFile failed: " << ex.what() << std::endl;
+        return ArchiveTextFilePtr();
+    }
 }
 
 const std::string& GitModule::getName() const

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "imodule.h"
+#include "iarchive.h"
 
 namespace vcs
 {
@@ -22,6 +23,9 @@ public:
     // Returns the prefix which is used to construct URIs
     // that refer to a specific point in the VCS history
     virtual std::string getUriPrefix() = 0;
+
+    // Attempts to open the given resource (in text mode)
+    virtual ArchiveTextFilePtr openTextFile(const std::string& vcsUri) = 0;
 };
 
 

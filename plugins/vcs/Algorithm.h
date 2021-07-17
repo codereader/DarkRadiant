@@ -5,8 +5,11 @@
 #include "itextstream.h"
 #include "Repository.h"
 #include "GitException.h"
+#include "GitModule.h"
 #include "Commit.h"
 #include "Diff.h"
+#include "VersionControlLib.h"
+#include "command/ExecutionFailure.h"
 #include <git2.h>
 
 namespace vcs
@@ -195,11 +198,18 @@ inline void syncWithRemote(const std::shared_ptr<Repository>& repository)
         {
             auto mergeBase = repository->findMergeBase(*repository->getHead(), *upstream);
 
-            std::string baseUri = "git://" + Reference::OidToString(mergeBase->getOid()) + "/" + mapPath;
-            std::string sourceUri = "git://" + Reference::OidToString(&upstreamOid) + "/" + mapPath;
+            auto baseUri = constructVcsFileUri(GitModule::UriPrefix, Reference::OidToString(mergeBase->getOid()), mapPath);
+            auto sourceUri = constructVcsFileUri(GitModule::UriPrefix, Reference::OidToString(&upstreamOid), mapPath);
 
-            // The loaded map merge needs to be confirmed by the user
-            GlobalMapModule().startMergeOperation(sourceUri, baseUri);
+            try
+            {
+                // The loaded map merge needs to be confirmed by the user
+                GlobalMapModule().startMergeOperation(sourceUri, baseUri);
+            }
+            catch (const cmd::ExecutionFailure& ex)
+            {
+                throw GitException(ex.what());
+            }
 
             // TODO: save this state and continue to commit and cleanup later
             return;

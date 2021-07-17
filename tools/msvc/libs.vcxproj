@@ -236,6 +236,7 @@
     <ClInclude Include="..\..\libs\stream\TemporaryOutputStream.h" />
     <ClInclude Include="..\..\libs\stream\TextFileInputStream.h" />
     <ClInclude Include="..\..\libs\stream\utils.h" />
+    <ClInclude Include="..\..\libs\stream\VcsMapResourceStream.h" />
     <ClInclude Include="..\..\libs\string\case_conv.h" />
     <ClInclude Include="..\..\libs\string\convert.h" />
     <ClInclude Include="..\..\libs\string\encoding.h" />

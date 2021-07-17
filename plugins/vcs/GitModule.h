@@ -23,7 +23,10 @@ private:
     std::unique_ptr<ui::VcsStatus> _statusBarWidget;
 
 public:
+    static constexpr const char* UriPrefix = "git";
+
     std::string getUriPrefix() override;
+    ArchiveTextFilePtr openTextFile(const std::string& vcsUri) override;
 
     // RegisterableModule implementation
     const std::string& getName() const override;

@@ -294,6 +294,9 @@
       <Filter>render</Filter>
     </ClInclude>
     <ClInclude Include="..\..\libs\VersionControlLib.h" />
+    <ClInclude Include="..\..\libs\stream\VcsMapResourceStream.h">
+      <Filter>stream</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

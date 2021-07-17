@@ -1209,9 +1209,6 @@ void Map::startMergeOperation(const std::string& sourceMap)
 
 void Map::startMergeOperation(const std::string& sourceMap, const std::string& baseMap)
 {
-    if (!os::fileOrDirExists(sourceMap)) throw cmd::ExecutionFailure(fmt::format(_("File doesn't exist: {0}"), sourceMap));
-    if (!os::fileOrDirExists(baseMap)) throw cmd::ExecutionFailure(fmt::format(_("File doesn't exist: {0}"), baseMap));
-
     prepareMergeOperation();
 
     auto baseMapResource = GlobalMapResourceManager().createFromPath(baseMap);

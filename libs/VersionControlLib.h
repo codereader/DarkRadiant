@@ -2,16 +2,19 @@
 
 #include <string>
 #include <regex>
+#include <fmt/format.h>
 
 namespace vcs
 {
 
 namespace detail
 {
-    constexpr const char* const UriPattern = "^\\(w+)://(\\w+)/(.+)$";
+    constexpr const char* const UriPattern = "^(\\w+)://(\\w+)/(.+)$";
     constexpr std::size_t PrefixMatchIndex = 1;
     constexpr std::size_t RevisionMatchIndex = 2;
     constexpr std::size_t FilePathMatchIndex = 3;
+
+    constexpr const char* const UriFormat = "{0}://{1}/{2}";
 
     inline std::string getVcsPatternMatch(const std::string& uri, std::size_t index)
     {
@@ -39,6 +42,11 @@ inline std::string getVcsRevision(const std::string& uri)
 inline std::string getVcsFilePath(const std::string& uri)
 {
     return detail::getVcsPatternMatch(uri, detail::FilePathMatchIndex);
+}
+
+inline std::string constructVcsFileUri(const std::string& prefix, const std::string& revision, const std::string& path)
+{
+    return fmt::format(detail::UriFormat, prefix, revision, path);
 }
 
 }

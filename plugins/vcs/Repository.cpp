@@ -295,6 +295,19 @@ Index::Ptr Repository::getIndex()
     return std::make_shared<Index>(index);
 }
 
+std::shared_ptr<Tree> Repository::getTreeByRevision(const std::string& revision)
+{
+    git_oid revisionOid;
+    auto error = git_oid_fromstr(&revisionOid, revision.c_str());
+    GitException::ThrowOnError(error);
+
+    git_tree* tree;
+    error = git_tree_lookup(&tree, _repository, &revisionOid);
+    GitException::ThrowOnError(error);
+
+    return std::make_shared<Tree>(tree);
+}
+
 bool Repository::isReadyForMerge()
 {
     auto state = git_repository_state(_repository);

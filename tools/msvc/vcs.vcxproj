@@ -192,6 +192,7 @@
     <ClInclude Include="..\..\plugins\vcs\Repository.h" />
     <ClInclude Include="..\..\plugins\vcs\Tree.h" />
     <ClInclude Include="..\..\plugins\vcs\ui\VcsStatus.h" />
+    <ClInclude Include="..\..\plugins\vcs\GitArchiveTextFile.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

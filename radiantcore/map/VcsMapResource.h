@@ -11,14 +11,13 @@ class VcsMapResource :
     public MapResource
 {
 private:
-    std::string _uri;
-    std::string _revision;
-    std::string _filePath;
+    std::string _mapFileUri;
+    std::string _infoFileUri;
 
     vcs::IVersionControlModule::Ptr _vcsModule;
 
 public:
-    VcsMapResource(const std::string& uri);
+    VcsMapResource(const std::string& mapFileUri);
 
     virtual bool isReadOnly() override;
     virtual void save(const MapFormatPtr& mapFormat = MapFormatPtr()) override;
@@ -28,7 +27,7 @@ protected:
     virtual stream::MapResourceStream::Ptr openInfofileStream() override;
 
 private:
-    stream::MapResourceStream::Ptr openFileFromVcs(const std::string& revision, const std::string& filePath);
+    stream::MapResourceStream::Ptr openFileFromVcs(const std::string& uri);
 };
 
 }

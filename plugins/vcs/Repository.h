@@ -16,6 +16,7 @@ namespace git
 class Remote;
 class Commit;
 class Diff;
+class Tree;
 
 /**
  * Represents a Git repository at a certain path
@@ -75,6 +76,8 @@ public:
 
     // Get the diff of the reference against the given commit
     std::shared_ptr<Diff> getDiff(const Reference& ref, Commit& commit);
+
+    std::shared_ptr<Tree> getTreeByRevision(const std::string& revision);
 
     // Creates a new instance of this repository, not sharing any libgit2 handles with the original
     std::shared_ptr<Repository> clone();

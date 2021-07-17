@@ -56,5 +56,8 @@
     <ClInclude Include="..\..\plugins\vcs\Index.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\plugins\vcs\GitArchiveTextFile.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
