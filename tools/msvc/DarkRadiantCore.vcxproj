@@ -673,6 +673,7 @@
     <ClCompile Include="..\..\radiantcore\shaders\textures\TextureManipulator.cpp" />
     <ClCompile Include="..\..\radiantcore\skins\Doom3SkinCache.cpp" />
     <ClCompile Include="..\..\radiantcore\undo\UndoSystem.cpp" />
+    <ClCompile Include="..\..\radiantcore\versioncontrol\VersionControlManager.cpp" />
     <ClCompile Include="..\..\radiantcore\vfs\DeflatedInputStream.cpp" />
     <ClCompile Include="..\..\radiantcore\vfs\DirectoryArchive.cpp" />
     <ClCompile Include="..\..\radiantcore\vfs\Doom3FileSystem.cpp" />
@@ -1028,6 +1029,7 @@
     <ClInclude Include="..\..\radiantcore\undo\Stack.h" />
     <ClInclude Include="..\..\radiantcore\undo\StackFiller.h" />
     <ClInclude Include="..\..\radiantcore\undo\UndoSystem.h" />
+    <ClInclude Include="..\..\radiantcore\versioncontrol\VersionControlManager.h" />
     <ClInclude Include="..\..\radiantcore\vfs\AssetsList.h" />
     <ClInclude Include="..\..\radiantcore\vfs\DeflatedArchiveFile.h" />
     <ClInclude Include="..\..\radiantcore\vfs\DeflatedArchiveTextFile.h" />
