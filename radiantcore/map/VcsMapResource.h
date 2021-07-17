@@ -1,5 +1,6 @@
 #pragma once
 
+#include "iversioncontrol.h"
 #include "MapResource.h"
 
 namespace map
@@ -11,7 +12,10 @@ class VcsMapResource :
 {
 private:
     std::string _uri;
+    std::string _revision;
     std::string _filePath;
+
+    vcs::IVersionControlModule::Ptr _vcsModule;
 
 public:
     VcsMapResource(const std::string& uri);
@@ -24,7 +28,7 @@ protected:
     virtual stream::MapResourceStream::Ptr openInfofileStream() override;
 
 private:
-    stream::MapResourceStream::Ptr openFileFromVcs(const std::string& filePathWithinArchive);
+    stream::MapResourceStream::Ptr openFileFromVcs(const std::string& revision, const std::string& filePath);
 };
 
 }
