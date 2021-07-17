@@ -301,11 +301,8 @@ std::shared_ptr<Tree> Repository::getTreeByRevision(const std::string& revision)
     auto error = git_oid_fromstr(&revisionOid, revision.c_str());
     GitException::ThrowOnError(error);
 
-    git_tree* tree;
-    error = git_tree_lookup(&tree, _repository, &revisionOid);
-    GitException::ThrowOnError(error);
-
-    return std::make_shared<Tree>(tree);
+    auto commit = Commit::LookupFromOid(_repository, &revisionOid);
+    return commit->getTree();
 }
 
 bool Repository::isReadyForMerge()
