@@ -186,6 +186,7 @@
     <ClInclude Include="..\..\plugins\vcs\Diff.h" />
     <ClInclude Include="..\..\plugins\vcs\GitException.h" />
     <ClInclude Include="..\..\plugins\vcs\GitModule.h" />
+    <ClInclude Include="..\..\plugins\vcs\Index.h" />
     <ClInclude Include="..\..\plugins\vcs\Reference.h" />
     <ClInclude Include="..\..\plugins\vcs\Remote.h" />
     <ClInclude Include="..\..\plugins\vcs\Repository.h" />

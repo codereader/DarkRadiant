@@ -124,22 +124,26 @@ inline void syncWithRemote(const std::shared_ptr<Repository>& repository)
 
     RemoteStatus status = analyseRemoteStatus(repository);
 
-    if (status.strategy == RequiredMergeStrategy::NoMergeRequired)
+    switch (status.strategy)
     {
+    case RequiredMergeStrategy::NoMergeRequired:
         rMessage() << "No merge required." << std::endl;
         return;
-    }
-    
-    if (status.strategy == RequiredMergeStrategy::JustPush)
-    {
+
+    case RequiredMergeStrategy::JustPush:
         repository->pushToTrackedRemote();
         return;
-    }
-    
-    if (status.strategy == RequiredMergeStrategy::FastForward)
-    {
+
+    case RequiredMergeStrategy::FastForward:
         repository->fastForwardToTrackedRemote();
         return;
+    }
+
+    // All the other merge strategies include a recursive merge, prepare it
+    if (status.strategy == RequiredMergeStrategy::MergeMapWithUncommittedChanges)
+    {
+        // Commit the current map changes
+        // TODO
     }
 
     if (!repository->isReadyForMerge())
@@ -164,30 +168,52 @@ inline void syncWithRemote(const std::shared_ptr<Repository>& repository)
     error = git_annotated_commit_lookup(&mergeHead, repository->_get(), &upstreamOid);
     GitException::ThrowOnError(error);
 
-    std::vector<const git_annotated_commit*> mergeHeads;
-    mergeHeads.push_back(mergeHead);
+    try
+    {
+        std::vector<const git_annotated_commit*> mergeHeads;
+        mergeHeads.push_back(mergeHead);
 
-    error = git_merge_analysis(&analysis, &preference, repository->_get(), mergeHeads.data(), mergeHeads.size());
+        error = git_merge_analysis(&analysis, &preference, repository->_get(), mergeHeads.data(), mergeHeads.size());
+        GitException::ThrowOnError(error);
 
-    if (error < 0)
+        // The result of the analysis must be that a three-way merge is required
+        if (analysis != GIT_MERGE_ANALYSIS_NORMAL)
+        {
+            throw GitException("The repository state doesn't require a regular merge, cannot proceed.");
+        }
+        
+        git_merge_options mergeOptions = GIT_MERGE_OPTIONS_INIT;
+        git_checkout_options checkoutOptions = GIT_CHECKOUT_OPTIONS_INIT;
+        checkoutOptions.checkout_strategy = GIT_CHECKOUT_FORCE | GIT_CHECKOUT_ALLOW_CONFLICTS;
+
+        error = git_merge(repository->_get(), mergeHeads.data(), mergeHeads.size(), &mergeOptions, &checkoutOptions);
+        GitException::ThrowOnError(error);
+        
+        // At this point, check if the loaded map is affected by the merge
+        if (status.strategy == RequiredMergeStrategy::MergeMap)
+        {
+            // The loaded map merge needs to be confirmed by the user
+
+        }
+
+        auto index = repository->getIndex();
+
+        if (index->hasConflicts())
+        {
+            // Handle conflicts -notify user?
+        }
+        else
+        {
+            //create_merge_commit(repository->_get(), index, &mergeOptions);
+        }
+
+        git_repository_state_cleanup(repository->_get());
+    }
+    catch (const GitException& ex)
     {
         git_annotated_commit_free(mergeHead);
-        GitException::ThrowOnError(error);
+        throw ex;
     }
-
-    git_merge_options mergeOptions = GIT_MERGE_OPTIONS_INIT;
-    git_checkout_options checkoutOptions = GIT_CHECKOUT_OPTIONS_INIT;
-    checkoutOptions.checkout_strategy = GIT_CHECKOUT_FORCE | GIT_CHECKOUT_ALLOW_CONFLICTS;
-
-    error = git_merge(repository->_get(), mergeHeads.data(), mergeHeads.size(), &mergeOptions, &checkoutOptions);
-
-    if (error < 0)
-    {
-        git_annotated_commit_free(mergeHead);
-        GitException::ThrowOnError(error);
-    }
-
-
 }
 
 }

@@ -37,7 +37,7 @@ public:
         return std::make_shared<Tree>(tree);
     }
 
-    static Ptr CreateFromOid(git_repository* repository, git_oid* oid)
+    static Ptr LookupFromOid(git_repository* repository, git_oid* oid)
     {
         git_commit* commit;
 

@@ -286,6 +286,15 @@ bool Repository::fileHasUncommittedChanges(const std::string& relativePath)
     return (getFileStatus(relativePath) & GIT_STATUS_WT_MODIFIED) != 0;
 }
 
+Index::Ptr Repository::getIndex()
+{
+    git_index* index;
+    auto error = git_repository_index(&index, _repository);
+    GitException::ThrowOnError(error);
+
+    return std::make_shared<Index>(index);
+}
+
 bool Repository::isReadyForMerge()
 {
     auto state = git_repository_state(_repository);
@@ -319,7 +328,7 @@ std::shared_ptr<Diff> Repository::getDiff(const Reference& ref, Commit& commit)
     auto error = git_reference_name_to_id(&refOid, _repository, ref.getName().c_str());
     GitException::ThrowOnError(error);
 
-    auto refCommit = Commit::CreateFromOid(_repository, &refOid);
+    auto refCommit = Commit::LookupFromOid(_repository, &refOid);
     auto refTree = refCommit->getTree();
 
     git_diff* diff;

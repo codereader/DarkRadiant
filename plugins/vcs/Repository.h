@@ -3,6 +3,7 @@
 #include <string>
 #include <memory>
 #include "Reference.h"
+#include "Index.h"
 
 struct git_repository;
 
@@ -66,6 +67,8 @@ public:
     RefSyncStatus getSyncStatusOfBranch(const Reference& reference);
 
     bool isReadyForMerge();
+
+    Index::Ptr getIndex();
 
     // Finds a common ancestor of the two refs, to base a merge operation on
     std::shared_ptr<Commit> findMergeBase(const Reference& first, const Reference& second);
