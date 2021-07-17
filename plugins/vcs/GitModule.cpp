@@ -16,6 +16,16 @@
 namespace vcs
 {
 
+namespace
+{
+    constexpr const char* UriPrefix = "git";
+}
+
+std::string GitModule::getUriPrefix()
+{
+    return UriPrefix;
+}
+
 const std::string& GitModule::getName() const
 {
     static std::string _name("GitIntegration");
@@ -25,7 +35,7 @@ const std::string& GitModule::getName() const
 const StringSet& GitModule::getDependencies() const
 {
     static StringSet _dependencies{ MODULE_MAINFRAME, MODULE_STATUSBARMANAGER, 
-        MODULE_PREFERENCESYSTEM, MODULE_MAP };
+        MODULE_PREFERENCESYSTEM, MODULE_MAP, MODULE_VERSION_CONTROL_MANAGER };
     return _dependencies;
 }
 
@@ -61,11 +71,15 @@ void GitModule::initialiseModule(const IApplicationContext& ctx)
 
         _statusBarWidget->setRepository(_repository);
     });
+
+    GlobalVersionControlManager().registerModule(shared_from_this());
 }
 
 void GitModule::shutdownModule()
 {
     rMessage() << getName() << "::shutdownModule called." << std::endl;
+
+    GlobalVersionControlManager().unregisterModule(shared_from_this());
 
     _statusBarWidget.reset();
     _repository.reset();
