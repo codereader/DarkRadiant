@@ -293,6 +293,7 @@
     <ClInclude Include="..\..\libs\render\VertexHashing.h">
       <Filter>render</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\VersionControlLib.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

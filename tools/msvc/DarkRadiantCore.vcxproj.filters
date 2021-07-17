@@ -1054,6 +1054,9 @@
     <ClCompile Include="..\..\radiantcore\versioncontrol\VersionControlManager.cpp">
       <Filter>src\versioncontrol</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\map\VcsMapResource.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
@@ -2147,6 +2150,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\versioncontrol\VersionControlManager.h">
       <Filter>src\versioncontrol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\VcsMapResource.h">
+      <Filter>src\map</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

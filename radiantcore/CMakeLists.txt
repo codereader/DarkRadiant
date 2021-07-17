@@ -277,6 +277,7 @@ add_library(radiantcore MODULE
             shaders/textures/TextureManipulator.cpp
             skins/Doom3SkinCache.cpp
             undo/UndoSystem.cpp
+            versioncontrol/VcsMapResource.cpp
             versioncontrol/VersionControlManager.cpp
             vfs/DeflatedInputStream.cpp
             vfs/DirectoryArchive.cpp
