@@ -28,6 +28,11 @@ public:
         git_commit_free(_commit);
     }
 
+    const git_oid* getOid() const
+    {
+        return git_commit_id(_commit);
+    }
+
     std::shared_ptr<Tree> getTree()
     {
         git_tree* tree;

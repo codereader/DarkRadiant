@@ -5,6 +5,7 @@
 #include "itextstream.h"
 #include "Repository.h"
 #include "GitException.h"
+#include "Commit.h"
 #include "Diff.h"
 #include <git2.h>
 
@@ -192,8 +193,16 @@ inline void syncWithRemote(const std::shared_ptr<Repository>& repository)
         // At this point, check if the loaded map is affected by the merge
         if (status.strategy == RequiredMergeStrategy::MergeMap)
         {
-            // The loaded map merge needs to be confirmed by the user
+            auto mergeBase = repository->findMergeBase(*repository->getHead(), *upstream);
 
+            std::string baseUri = "git://" + Reference::OidToString(mergeBase->getOid()) + "/" + mapPath;
+            std::string sourceUri = "git://" + Reference::OidToString(&upstreamOid) + "/" + mapPath;
+
+            // The loaded map merge needs to be confirmed by the user
+            GlobalMapModule().startMergeOperation(sourceUri, baseUri);
+
+            // TODO: save this state and continue to commit and cleanup later
+            return;
         }
 
         auto index = repository->getIndex();

@@ -82,7 +82,7 @@ public:
         git_reference_free(_reference);
     }
 
-    static std::string OidToString(git_oid* oid)
+    static std::string OidToString(const git_oid* oid)
     {
         std::string hexOid(GIT_OID_HEXSZ, '\0');
         git_oid_fmt(hexOid.data(), oid);
