@@ -150,6 +150,45 @@ void Repository::pushToTrackedRemote()
     remote->push(*getHead()); // getHead will succeed because getTrackedRemote did
 }
 
+void Repository::fastForwardToTrackedRemote()
+{
+    auto head = getHead();
+    if (!head) throw GitException("Could not retrieve HEAD reference from repository");
+
+    auto upstream = head->getUpstream();
+    if (!upstream) throw GitException("No tracked remote branch configured");
+
+    // Lookup the target object
+    git_oid targetOid;
+    git_reference_name_to_id(&targetOid, _repository, upstream->getName().c_str());
+
+    git_object* target;
+    auto error = git_object_lookup(&target, _repository, &targetOid, GIT_OBJECT_COMMIT);
+    GitException::ThrowOnError(error);
+
+    rMessage() << "Fast-fowarding " << head->getName() << " to upstream " << upstream->getName() << std::endl;
+
+    try
+    {
+        // Checkout the result so the workdir is in the expected state
+        git_checkout_options checkoutOptions = GIT_CHECKOUT_OPTIONS_INIT;
+        checkoutOptions.checkout_strategy = GIT_CHECKOUT_SAFE;
+
+        error = git_checkout_tree(_repository, target, &checkoutOptions);
+        GitException::ThrowOnError(error);
+        
+        // Move the target reference to the target OID
+        head->setTarget(&targetOid);
+
+        rMessage() << "Fast-foward done, " << head->getName() << " is now at " << Reference::OidToString(&targetOid) << std::endl;
+    }
+    catch (const GitException& ex)
+    {
+        git_object_free(target);
+        throw ex;
+    }
+}
+
 RefSyncStatus Repository::getSyncStatusOfBranch(const Reference& reference)
 {
     RefSyncStatus status;

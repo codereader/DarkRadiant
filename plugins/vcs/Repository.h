@@ -51,6 +51,9 @@ public:
     // Performs a fetch from the remote the current branch is tracking
     void fetchFromTrackedRemote();
 
+    // Fast-forwards the current head to the tracked remote branch
+    void fastForwardToTrackedRemote();
+
     // Pushes the current head to its tracked remote branch
     void pushToTrackedRemote();
 

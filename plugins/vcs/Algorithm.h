@@ -135,6 +135,12 @@ inline void syncWithRemote(const std::shared_ptr<Repository>& repository)
         repository->pushToTrackedRemote();
         return;
     }
+    
+    if (status.strategy == RequiredMergeStrategy::FastForward)
+    {
+        repository->fastForwardToTrackedRemote();
+        return;
+    }
 
     if (!repository->isReadyForMerge())
     {

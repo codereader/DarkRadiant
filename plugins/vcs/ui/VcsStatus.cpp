@@ -18,6 +18,7 @@
 #include "../GitModule.h"
 #include "../Diff.h"
 #include "../GitException.h"
+#include "../Algorithm.h"
 
 namespace vcs
 {
@@ -232,7 +233,7 @@ void VcsStatus::performSync(std::shared_ptr<git::Repository> repository)
 {
     try
     {
-        repository->pushToTrackedRemote();
+        syncWithRemote(repository);
         setRemoteStatus(git::analyseRemoteStatus(repository));
     }
     catch (git::GitException& ex)

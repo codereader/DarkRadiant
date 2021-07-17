@@ -3,6 +3,7 @@
 #include <string>
 #include <memory>
 #include <git2.h>
+#include "GitException.h"
 
 namespace vcs
 {
@@ -60,6 +61,20 @@ public:
         auto error = git_branch_upstream(&upstream, _reference);
 
         return upstream != nullptr ? std::make_shared<Reference>(upstream) : Ptr();
+    }
+
+    // Create a new reference with the same name as the given reference but a
+    // different OID target. The new reference will be written to disk, overwriting the given reference.
+    void setTarget(git_oid* oid)
+    {
+        git_reference* newTargetRef;
+        auto error = git_reference_set_target(&newTargetRef, _reference, oid, "Reference set to new target by DarkRadiant");
+        GitException::ThrowOnError(error);
+
+        // Swap the wrapped reference pointer, release the old one
+        git_reference_free(_reference);
+
+        _reference = newTargetRef;
     }
 
     ~Reference()
