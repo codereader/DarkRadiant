@@ -5,6 +5,7 @@
 #include "VersionControlLib.h"
 #include "stream/VcsMapResourceStream.h"
 #include "os/fs.h"
+#include <fmt/format.h>
 
 namespace map
 {
@@ -27,6 +28,21 @@ VcsMapResource::VcsMapResource(const std::string& mapFileUri) :
     infoFilePath = os::replaceExtension(infoFilePath, GetInfoFileExtension());
 
     _infoFileUri = vcs::constructVcsFileUri(prefix, vcs::getVcsRevision(_mapFileUri), infoFilePath);
+}
+
+bool VcsMapResource::load()
+{
+    auto result = MapResource::load();
+
+    if (result)
+    {
+        // Set the name string to contain the revision of the map
+        auto mapName = fmt::format("{0}@{1}", os::getFilename(vcs::getVcsFilePath(_mapFileUri)), 
+            vcs::getVcsRevision(_mapFileUri).substr(0, 7));
+        getRootNode()->setName(mapName);
+    }
+
+    return result;
 }
 
 bool VcsMapResource::isReadOnly()

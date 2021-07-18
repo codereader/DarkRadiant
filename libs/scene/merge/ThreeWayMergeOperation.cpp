@@ -391,6 +391,16 @@ void ThreeWayMergeOperation::adjustSourceEntitiesWithNameConflicts()
     _targetRoot->getNamespace()->ensureNoConflicts(_sourceRoot, sourceEntitiesToBeRenamed);
 }
 
+std::string ThreeWayMergeOperation::getSourcePath()
+{
+    return _sourceRoot->getRootNode()->name();
+}
+
+std::string ThreeWayMergeOperation::getBasePath()
+{
+    return _baseRoot->getRootNode()->name();
+}
+
 void ThreeWayMergeOperation::applyActions()
 {
     MergeOperationBase::applyActions();

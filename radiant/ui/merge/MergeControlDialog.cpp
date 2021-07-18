@@ -376,8 +376,28 @@ void MergeControlDialog::updateControls()
 
     auto selectedMergeNodes = scene::merge::getSelectedMergeNodes();
     bool mergeInProgress = GlobalMapModule().getEditMode() == IMap::EditMode::Merge;
-    auto baseMapPath = findNamedObject<wxutil::PathEntry>(this, "BaseMapFilename")->getValue();
-    auto sourceMapPath = findNamedObject<wxutil::PathEntry>(this, "MergeMapFilename")->getValue();
+
+    auto baseMapPathEntry = findNamedObject<wxutil::PathEntry>(this, "BaseMapFilename");
+    auto sourceMapPathEntry = findNamedObject<wxutil::PathEntry>(this, "MergeMapFilename");
+
+    auto baseMapPath = baseMapPathEntry->getValue();
+    auto sourceMapPath = sourceMapPathEntry->getValue();
+
+    // Fill in the map names in case the merge operation has already been started by the time the dialog is shown
+    if (mergeInProgress)
+    {
+        if (baseMapPath.empty() && GlobalMapModule().getActiveMergeOperation())
+        {
+            baseMapPath = GlobalMapModule().getActiveMergeOperation()->getBasePath();
+            baseMapPathEntry->setValue(baseMapPath);
+        }
+
+        if (sourceMapPath.empty() && GlobalMapModule().getActiveMergeOperation())
+        {
+            sourceMapPath = GlobalMapModule().getActiveMergeOperation()->getSourcePath();
+            sourceMapPathEntry->setValue(sourceMapPath);
+        }
+    }
 
     findNamedObject<wxWindow>(this, "TwoWayMode")->Enable(!mergeInProgress);
     findNamedObject<wxWindow>(this, "ThreeWayMode")->Enable(!mergeInProgress);
@@ -387,8 +407,8 @@ void MergeControlDialog::updateControls()
     findNamedObject<wxButton>(this, "LoadAndCompareButton")->Enable(!mergeInProgress && !sourceMapPath.empty() &&
         (!isInThreeWayMergeMode() || !baseMapPath.empty()));
     findNamedObject<wxWindow>(this, "SummaryPanel")->Enable(mergeInProgress);
-    findNamedObject<wxWindow>(this, "BaseMapFilename")->Enable(!mergeInProgress);
-    findNamedObject<wxWindow>(this, "MergeMapFilename")->Enable(!mergeInProgress);
+    baseMapPathEntry->Enable(!mergeInProgress);
+    sourceMapPathEntry->Enable(!mergeInProgress);
 
     auto actionDescriptionPanel = findNamedObject<wxPanel>(this, "ActionDescriptionPanel");
 
@@ -490,7 +510,7 @@ void MergeControlDialog::OnMapEditModeChanged(IMap::EditMode mode)
 {
     // When switching to merge mode, make sure the dialog is shown
 
-    if (!InstancePtr() && mode == IMap::EditMode::Merge)
+    if (mode == IMap::EditMode::Merge && (!InstancePtr() || !Instance().IsShown()))
     {
         Instance().Show();
         return;

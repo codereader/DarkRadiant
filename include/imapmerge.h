@@ -132,13 +132,20 @@ public:
 };
 
 // A MergeOperation groups one or more merge actions
-// together in order to apply a set of changes from source => base
+// together in order to apply a set of changes from source => target
 class IMergeOperation
 {
 public:
     using Ptr = std::shared_ptr<IMergeOperation>;
 
     virtual ~IMergeOperation() {}
+
+    // Returns the name/path of the source scene (or a string resembling it)
+    virtual std::string getSourcePath() = 0;
+
+    // Returns the name/path of the base scene (or a string resembling it)
+    // Will return an empty string if there is no base scene defined
+    virtual std::string getBasePath() = 0;
 
     // Executes all active actions defined in this operation
     virtual void applyActions() = 0;

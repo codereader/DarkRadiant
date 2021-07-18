@@ -57,6 +57,9 @@ public:
         return _targetRoot;
     }
 
+    std::string getSourcePath() override;
+    std::string getBasePath() override;
+
     void applyActions() override;
 
 private:

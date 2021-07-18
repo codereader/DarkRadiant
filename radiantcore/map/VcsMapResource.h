@@ -19,6 +19,7 @@ private:
 public:
     VcsMapResource(const std::string& mapFileUri);
 
+    virtual bool load() override;
     virtual bool isReadOnly() override;
     virtual void save(const MapFormatPtr& mapFormat = MapFormatPtr()) override;
 

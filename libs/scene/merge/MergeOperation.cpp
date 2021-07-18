@@ -54,6 +54,16 @@ MergeOperation::Ptr MergeOperation::CreateFromComparisonResult(const ComparisonR
     return operation;
 }
 
+std::string MergeOperation::getSourcePath()
+{
+    return _sourceRoot->getRootNode()->name();
+}
+
+std::string MergeOperation::getBasePath()
+{
+    return std::string(); // no base
+}
+
 void MergeOperation::applyActions()
 {
     MergeOperationBase::applyActions();

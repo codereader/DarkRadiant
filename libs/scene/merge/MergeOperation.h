@@ -40,6 +40,9 @@ public:
     // The operation will (on application) change the base map such that it matches the source map.
     static Ptr CreateFromComparisonResult(const ComparisonResult& comparisonResult);
 
+    std::string getSourcePath() override;
+    std::string getBasePath() override;
+
     // Executes all active actions defined in this operation
     void applyActions() override;
 
