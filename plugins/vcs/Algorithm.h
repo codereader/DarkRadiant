@@ -37,6 +37,9 @@ enum class RequiredMergeStrategy
 
     // The local map has uncommitted changes, and the remote is trying to change it
     MergeMapWithUncommittedChanges,
+
+    // Merge is not possible at this point
+    MergeAlreadyInProgress,
 };
 
 struct RemoteStatus
@@ -58,6 +61,13 @@ inline RemoteStatus analyseRemoteStatus(const std::shared_ptr<Repository>& repos
     }
 
     auto status = repository->getSyncStatusOfBranch(*repository->getHead());
+
+    if (repository->mergeIsInProgress())
+    {
+        return RemoteStatus{ status.localCommitsAhead, status.remoteCommitsAhead, 
+            _("Merge in progress"), RequiredMergeStrategy::MergeAlreadyInProgress };
+    }
+
     auto mapFileHasUncommittedChanges = repository->fileHasUncommittedChanges(mapPath);
 
     if (status.remoteCommitsAhead == 0)
@@ -113,19 +123,18 @@ inline RemoteStatus analyseRemoteStatus(const std::shared_ptr<Repository>& repos
 
 inline void syncWithRemote(const std::shared_ptr<Repository>& repository)
 {
+    if (repository->mergeIsInProgress())
+    {
+        throw GitException(_("Merge in progress"));
+    }
+
     if (GlobalMapModule().isModified())
     {
-        throw git::GitException(_("The map file has unsaved changes, please save before merging."));
+        throw GitException(_("The map file has unsaved changes, please save before merging."));
     }
 
     auto mapPath = repository->getRepositoryRelativePath(GlobalMapModule().getMapName());
-    /*auto mapFileHasUncommittedChanges = !mapPath.empty() && repository->fileHasUncommittedChanges(mapPath);
-
-    if (mapFileHasUncommittedChanges)
-    {
-        throw git::GitException(_("The map file has uncommitted changes, cannot merge yet."));
-    }*/
-
+    
     RemoteStatus status = analyseRemoteStatus(repository);
 
     switch (status.strategy)

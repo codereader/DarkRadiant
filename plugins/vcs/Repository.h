@@ -68,6 +68,7 @@ public:
     RefSyncStatus getSyncStatusOfBranch(const Reference& reference);
 
     bool isReadyForMerge();
+    bool mergeIsInProgress();
 
     Index::Ptr getIndex();
 

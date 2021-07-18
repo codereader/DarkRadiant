@@ -94,7 +94,7 @@ void VcsStatus::createPopupMenu()
     _popupMenu->addItem(std::make_shared<wxutil::MenuItem>(
         new wxMenuItem(nullptr, wxID_ANY, _("Sync Changes with Server"), ""),
         [this]() { performSync(_repository); },
-        [this]() { return !_fetchInProgress; }
+        [this]() { return canSync(); }
     ));
 }
 
@@ -240,6 +240,11 @@ void VcsStatus::performSync(std::shared_ptr<git::Repository> repository)
     {
         setRemoteStatus(git::RemoteStatus{ 0, 0, ex.what() });
     }
+}
+
+bool VcsStatus::canSync()
+{
+    return !_fetchInProgress && (!_repository || !_repository->mergeIsInProgress());
 }
 
 void VcsStatus::setMapFileStatus(const std::string& status)

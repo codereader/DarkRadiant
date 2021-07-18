@@ -311,6 +311,12 @@ bool Repository::isReadyForMerge()
     return state == GIT_REPOSITORY_STATE_NONE;
 }
 
+bool Repository::mergeIsInProgress()
+{
+    auto state = git_repository_state(_repository);
+    return state == GIT_REPOSITORY_STATE_MERGE;
+}
+
 Commit::Ptr Repository::findMergeBase(const Reference& first, const Reference& second)
 {
     git_oid firstOid;
