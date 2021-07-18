@@ -21,7 +21,6 @@ private:
     sigc::connection _undoHandler;
     sigc::connection _redoHandler;
     sigc::connection _mapEventHandler;
-    sigc::connection _mapEditModeHandler;
 
     bool _updateNeeded;
     std::size_t _numUnresolvedConflicts;
@@ -45,6 +44,8 @@ public:
     bool isInThreeWayMergeMode();
     void setThreeWayMergeMode(bool enabled);
 
+    static void OnMapEditModeChanged(IMap::EditMode newMode);
+
 protected:
     void _preShow() override;
     void _preHide() override;
@@ -67,7 +68,6 @@ private:
     void queueUpdate();
     void onIdle(wxIdleEvent& ev);
     void onMapEvent(IMap::MapEvent ev);
-    void onMapEditModeChanged(IMap::EditMode newMode);
     void updateSummary();
 
     void update();

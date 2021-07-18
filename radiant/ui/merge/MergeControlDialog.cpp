@@ -421,7 +421,6 @@ void MergeControlDialog::_preHide()
     _undoHandler.disconnect();
     _redoHandler.disconnect();
     _mapEventHandler.disconnect();
-    _mapEditModeHandler.disconnect();
 
     GlobalSelectionSystem().removeObserver(this);
 }
@@ -439,10 +438,7 @@ void MergeControlDialog::_preShow()
     _mapEventHandler = GlobalMapModule().signal_mapEvent().connect(
         sigc::mem_fun(this, &MergeControlDialog::onMapEvent)
     );
-    _mapEditModeHandler = GlobalMapModule().signal_editModeChanged().connect(
-        sigc::mem_fun(this, &MergeControlDialog::onMapEditModeChanged)
-    );
-
+    
     _undoHandler = GlobalUndoSystem().signal_postUndo().connect(
         sigc::mem_fun(this, &MergeControlDialog::queueUpdate));
     _redoHandler = GlobalUndoSystem().signal_postRedo().connect(
@@ -490,9 +486,19 @@ void MergeControlDialog::onMapEvent(IMap::MapEvent ev)
     }
 }
 
-void MergeControlDialog::onMapEditModeChanged(IMap::EditMode newMode)
+void MergeControlDialog::OnMapEditModeChanged(IMap::EditMode mode)
 {
-    update();
+    // When switching to merge mode, make sure the dialog is shown
+
+    if (!InstancePtr() && mode == IMap::EditMode::Merge)
+    {
+        Instance().Show();
+        return;
+    }
+    else if (InstancePtr() && Instance().IsShown())
+    { 
+        Instance().update();
+    }
 }
 
 void MergeControlDialog::updateSummary()
