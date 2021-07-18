@@ -153,6 +153,10 @@ void EntityInspector::construct()
     _redoHandler = GlobalUndoSystem().signal_postRedo().connect(
         sigc::mem_fun(this, &EntityInspector::onUndoRedoOperation));
 
+    _mapEditModeChangedHandler = GlobalMapModule().signal_editModeChanged().connect(
+        sigc::mem_fun(this, &EntityInspector::onMapEditModeChanged)
+    );
+
     // initialise the properties
     loadPropertyMap();
 }
@@ -169,6 +173,13 @@ void EntityInspector::restoreSettings()
         // No saved information, apply standard value
         _panedPosition.setPosition(400);
     }
+}
+
+void EntityInspector::onMapEditModeChanged(IMap::EditMode mode)
+{
+    // Clear the selection to not hold any references to merge nodes
+    changeSelectedEntity(scene::INodePtr(), scene::INodePtr());
+    requestIdleCallback();
 }
 
 // Entity::Observer implementation
@@ -429,6 +440,7 @@ void EntityInspector::onMainFrameShuttingDown()
     _mergeActions.clear();
     _conflictActions.clear();
 
+    _mapEditModeChangedHandler.disconnect();
     _undoHandler.disconnect();
     _redoHandler.disconnect();
     _defsReloadedHandler.disconnect();

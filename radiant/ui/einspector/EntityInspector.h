@@ -4,6 +4,7 @@
 
 #include "ientityinspector.h"
 #include "iradiant.h"
+#include "imap.h"
 #include "icommandsystem.h"
 #include "imapmerge.h"
 #include "iselection.h"
@@ -147,6 +148,7 @@ private:
 	sigc::connection _undoHandler;
 	sigc::connection _redoHandler;
 	sigc::connection _defsReloadedHandler;
+	sigc::connection _mapEditModeChangedHandler;
 
     // Maps the key names to a possible merge action that should be displayed
     std::map<std::string, scene::merge::IEntityKeyValueMergeAction::Ptr> _mergeActions;
@@ -240,7 +242,7 @@ private:
 
 	// Gets called after an undo operation
 	void onUndoRedoOperation();
-
+    void onMapEditModeChanged(IMap::EditMode mode);
 	void onDefsReloaded();
 
 protected:
