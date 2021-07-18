@@ -3,6 +3,7 @@
 #include <string>
 #include <memory>
 #include "Reference.h"
+#include "CommitMetadata.h"
 #include "Index.h"
 
 struct git_repository;
@@ -79,6 +80,8 @@ public:
     std::shared_ptr<Diff> getDiff(const Reference& ref, Commit& commit);
 
     std::shared_ptr<Tree> getTreeByRevision(const std::string& revision);
+
+    void createCommit(const CommitMetadata& metadata);
 
     // Creates a new instance of this repository, not sharing any libgit2 handles with the original
     std::shared_ptr<Repository> clone();

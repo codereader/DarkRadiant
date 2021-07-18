@@ -15,6 +15,9 @@
 #include "string/convert.h"
 #include "wxutil/menu/CommandMenuItem.h"
 #include "wxutil/menu/IconTextMenuItem.h"
+#include "wxutil/dialog/MessageBox.h"
+#include "util/ScopedBoolLock.h"
+#include "CommitDialog.h"
 #include "../GitModule.h"
 #include "../Diff.h"
 #include "../GitException.h"
@@ -30,7 +33,7 @@ VcsStatus::VcsStatus(wxWindow* parent) :
     _panel(loadNamedPanel(parent, "VcsStatusBar")),
     _fetchTimer(this),
     _statusTimer(this),
-    _fetchInProgress(false),
+    _taskInProgress(false),
     _popupMenu(new wxutil::PopupMenu)
 {
     _mapStatus = findNamedObject<wxStaticText>(_panel, "MapStatusLabel");
@@ -68,9 +71,9 @@ VcsStatus::VcsStatus(wxWindow* parent) :
 
 VcsStatus::~VcsStatus()
 {
-    if (_fetchTask.valid())
+    if (_repositoryTask.valid())
     {
-        _fetchTask.get(); // Wait for the thread to complete
+        _repositoryTask.get(); // Wait for the thread to complete
     }
 
     if (_mapFileTask.valid())
@@ -88,10 +91,16 @@ wxWindow* VcsStatus::getWidget()
 
 void VcsStatus::createPopupMenu()
 {
+    _popupMenu->addItem(std::make_shared<wxutil::MenuItem>(
+        new wxMenuItem(nullptr, wxID_ANY, _("Commit"), ""),
+        [this]() { performCommit(); },
+        [this]() { return canCommit(); }
+
+    ));
     _popupMenu->addItem(std::make_shared<wxutil::CommandMenuItem>(
         new wxMenuItem(nullptr, wxID_ANY, _("Check for Changes"), ""),
         "GitFetch",
-        [this]() { return !_fetchInProgress; }
+        [this]() { return !_taskInProgress; }
     ));
 
     _popupMenu->addItem(std::make_shared<wxutil::MenuItem>(
@@ -157,7 +166,7 @@ void VcsStatus::startFetchTask()
     {
         std::lock_guard<std::mutex> guard(_taskLock);
 
-        if (_fetchInProgress || !_repository) return;
+        if (_taskInProgress || !_repository) return;
 
         if (!GlobalMainFrame().isActiveApp())
         {
@@ -165,11 +174,11 @@ void VcsStatus::startFetchTask()
             return;
         }
 
-        _fetchInProgress = true;
+        _taskInProgress = true;
     }
 
     auto repository = _repository->clone();
-    _fetchTask = std::async(std::launch::async, std::bind(&VcsStatus::performFetch, this, repository));
+    _repositoryTask = std::async(std::launch::async, std::bind(&VcsStatus::performFetch, this, repository));
 }
 
 void VcsStatus::onIntervalReached(wxTimerEvent& ev)
@@ -224,7 +233,7 @@ void VcsStatus::performFetch(std::shared_ptr<git::Repository> repository)
 
     if (!head)
     {
-        _fetchInProgress = false;
+        _taskInProgress = false;
         return;
     }
 
@@ -235,7 +244,7 @@ void VcsStatus::performFetch(std::shared_ptr<git::Repository> repository)
     catch (const git::GitException&)
     {
         setRemoteStatus(git::RemoteStatus{ 0, 0, _("Not connected") });
-        _fetchInProgress = false;
+        _taskInProgress = false;
         return;
     }
 
@@ -252,7 +261,7 @@ void VcsStatus::performFetch(std::shared_ptr<git::Repository> repository)
 
     analyseRemoteStatus(repository);
 
-    _fetchInProgress = false;
+    _taskInProgress = false;
 }
 
 void VcsStatus::analyseRemoteStatus(std::shared_ptr<git::Repository> repository)
@@ -275,7 +284,51 @@ void VcsStatus::performSync(std::shared_ptr<git::Repository> repository)
 
 bool VcsStatus::canSync()
 {
-    return !_fetchInProgress && (!_repository || !_repository->mergeIsInProgress());
+    return !_taskInProgress && _repository && !_repository->mergeIsInProgress();
+}
+
+bool VcsStatus::canCommit()
+{
+    return !_taskInProgress && _repository && !_repository->mergeIsInProgress();
+}
+
+void VcsStatus::performCommit()
+{
+    if (!_repository) return;
+
+    {
+        std::lock_guard<std::mutex> guard(_taskLock);
+
+        if (_taskInProgress)
+        {
+            wxutil::Messagebox::Show(_("Another Task in progress"), 
+                _("Cannot commit when another task is in progress"), 
+                ::ui::IDialog::MessageType::MESSAGE_CONFIRM);
+            return;
+        }
+
+        _taskInProgress = true;
+    }
+
+    git::CommitMetadata metadata;
+    metadata = CommitDialog::RunDialog(metadata);
+
+    if (metadata.isValid())
+    {
+        try
+        {
+            _repository->createCommit(metadata);
+        }
+        catch (const git::GitException& ex)
+        {
+            wxutil::Messagebox::ShowError(ex.what());
+        }
+    }
+
+    {
+        std::lock_guard<std::mutex> guard(_taskLock);
+        _taskInProgress = false;
+    }
 }
 
 void VcsStatus::setMapFileStatus(const std::string& status)

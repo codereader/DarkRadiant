@@ -30,8 +30,8 @@ private:
     wxTimer _fetchTimer;
     wxTimer _statusTimer;
     std::mutex _taskLock;
-    bool _fetchInProgress;
-    std::future<void> _fetchTask;
+    bool _taskInProgress;
+    std::future<void> _repositoryTask;
     std::future<void> _mapFileTask;
 
     std::shared_ptr<git::Repository> _repository;
@@ -60,6 +60,8 @@ private:
     void performFetch(std::shared_ptr<git::Repository> repository);
     void performSync(std::shared_ptr<git::Repository> repository);
     bool canSync();
+    void performCommit();
+    bool canCommit();
     void performMapFileStatusCheck(std::shared_ptr<git::Repository> repository);
     void updateMapFileStatus();
     void onMapEvent(IMap::MapEvent ev);

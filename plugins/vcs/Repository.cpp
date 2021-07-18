@@ -305,6 +305,11 @@ std::shared_ptr<Tree> Repository::getTreeByRevision(const std::string& revision)
     return commit->getTree();
 }
 
+void Repository::createCommit(const CommitMetadata& metadata)
+{
+
+}
+
 bool Repository::isReadyForMerge()
 {
     auto state = git_repository_state(_repository);

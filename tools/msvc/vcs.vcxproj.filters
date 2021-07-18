@@ -59,5 +59,11 @@
     <ClInclude Include="..\..\plugins\vcs\GitArchiveTextFile.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\plugins\vcs\ui\CommitDialog.h">
+      <Filter>src\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\vcs\CommitMetadata.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
