@@ -71,6 +71,9 @@ VcsStatus::VcsStatus(wxWindow* parent) :
 
 VcsStatus::~VcsStatus()
 {
+    _fetchTimer.Stop();
+    _statusTimer.Stop();
+
     if (_repositoryTask.valid())
     {
         _repositoryTask.get(); // Wait for the thread to complete
