@@ -27,7 +27,8 @@ class VcsStatus final :
 private:
     wxPanel* _panel;
 
-    wxTimer _timer;
+    wxTimer _fetchTimer;
+    wxTimer _statusTimer;
     std::mutex _taskLock;
     bool _fetchInProgress;
     std::future<void> _fetchTask;
@@ -53,7 +54,7 @@ public:
 private:
     void createPopupMenu();
     void startFetchTask();
-    void restartTimer();
+    void restartFetchTimer();
     void onIntervalReached(wxTimerEvent& ev);
     void onIdle(wxIdleEvent& ev);
     void performFetch(std::shared_ptr<git::Repository> repository);
@@ -64,6 +65,7 @@ private:
     void onMapEvent(IMap::MapEvent ev);
     void setMapFileStatus(const std::string& status);
     void setRemoteStatus(const git::RemoteStatus& status);
+    void analyseRemoteStatus(std::shared_ptr<git::Repository> repository);
 
     std::string getRepositoryRelativePath(const std::string& path, const std::shared_ptr<git::Repository>& repository);
 };

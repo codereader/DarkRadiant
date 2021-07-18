@@ -28,7 +28,8 @@ namespace ui
 
 VcsStatus::VcsStatus(wxWindow* parent) :
     _panel(loadNamedPanel(parent, "VcsStatusBar")),
-    _timer(this),
+    _fetchTimer(this),
+    _statusTimer(this),
     _fetchInProgress(false),
     _popupMenu(new wxutil::PopupMenu)
 {
@@ -46,10 +47,10 @@ VcsStatus::VcsStatus(wxWindow* parent) :
     _panel->Bind(wxEVT_IDLE, &VcsStatus::onIdle, this);
 
     GlobalRegistry().signalForKey(RKEY_AUTO_FETCH_ENABLED).connect(
-        sigc::mem_fun(this, &VcsStatus::restartTimer)
+        sigc::mem_fun(this, &VcsStatus::restartFetchTimer)
     );
     GlobalRegistry().signalForKey(RKEY_AUTO_FETCH_INTERVAL).connect(
-        sigc::mem_fun(this, &VcsStatus::restartTimer)
+        sigc::mem_fun(this, &VcsStatus::restartFetchTimer)
     );
 
     GlobalMapModule().signal_modifiedChanged().connect(
@@ -61,6 +62,8 @@ VcsStatus::VcsStatus(wxWindow* parent) :
     );
 
     createPopupMenu();
+
+    _statusTimer.Start(500);
 }
 
 VcsStatus::~VcsStatus()
@@ -107,12 +110,12 @@ void VcsStatus::setRepository(const std::shared_ptr<git::Repository>& repository
     if (!_repository)
     {
         _remoteStatus->SetLabel(_("Not under version control"));
-        _timer.Stop();
+        _fetchTimer.Stop();
         return;
     }
 
     _remoteStatus->SetLabel(_repository->getCurrentBranchName());
-    restartTimer();
+    restartFetchTimer();
 
     // Run a fetch update right after connecting to the repo, if auto-fetch is enabled
     if (registry::getValue<bool>(RKEY_AUTO_FETCH_ENABLED))
@@ -121,9 +124,9 @@ void VcsStatus::setRepository(const std::shared_ptr<git::Repository>& repository
     }
 }
 
-void VcsStatus::restartTimer()
+void VcsStatus::restartFetchTimer()
 {
-    _timer.Stop();
+    _fetchTimer.Stop();
 
     if (registry::getValue<bool>(RKEY_AUTO_FETCH_ENABLED))
     {
@@ -131,16 +134,21 @@ void VcsStatus::restartTimer()
 
         if (interval > 0)
         {
-            _timer.Start(interval);
+            _fetchTimer.Start(interval);
         }
     }
 }
 
 void VcsStatus::onMapEvent(IMap::MapEvent ev)
 {
-    if (ev == IMap::MapSaved)
+    if (ev == IMap::MapSaved || ev == IMap::MapLoaded)
     {
         updateMapFileStatus();
+
+        if (_repository)
+        {
+            analyseRemoteStatus(_repository);
+        }
     }
 }
 
@@ -166,24 +174,42 @@ void VcsStatus::startFetchTask()
 
 void VcsStatus::onIntervalReached(wxTimerEvent& ev)
 {
-    startFetchTask();
+    if (ev.GetTimer().GetId() == _fetchTimer.GetId())
+    {
+        startFetchTask();
+    }
+    else if (ev.GetTimer().GetId() == _statusTimer.GetId())
+    {
+        updateMapFileStatus();
+    }
 }
 
 void VcsStatus::updateMapFileStatus()
 {
+    if (GlobalMapModule().isUnnamed())
+    {
+        setMapFileStatus(_("Map not saved yet"));
+        return;
+    }
+
+    if (GlobalMapModule().getActiveMergeOperation())
+    {
+        setMapFileStatus(_("Merging"));
+        return;
+    }
+
     if (GlobalMapModule().isModified())
     {
         _mapStatus->SetLabel(_("Map is modified"));
+        return;
     }
-    else
-    {
-        _mapStatus->SetLabel(_("Map is saved"));
 
-        if (_repository)
-        {
-            auto repository = _repository->clone();
-            _mapFileTask = std::async(std::launch::async, std::bind(&VcsStatus::performMapFileStatusCheck, this, repository));
-        }
+    _mapStatus->SetLabel(_("Map is saved"));
+
+    if (_repository)
+    {
+        auto repository = _repository->clone();
+        _mapFileTask = std::async(std::launch::async, std::bind(&VcsStatus::performMapFileStatusCheck, this, repository));
     }
 }
 
@@ -218,15 +244,20 @@ void VcsStatus::performFetch(std::shared_ptr<git::Repository> repository)
         setRemoteStatus(git::RemoteStatus{ 0, 0, _("Fetching...") });
 
         repository->fetchFromTrackedRemote();
-
-        setRemoteStatus(git::analyseRemoteStatus(repository));
     }
     catch (const git::GitException& ex)
     {
         setRemoteStatus(git::RemoteStatus{ 0, 0, ex.what() });
     }
 
+    analyseRemoteStatus(repository);
+
     _fetchInProgress = false;
+}
+
+void VcsStatus::analyseRemoteStatus(std::shared_ptr<git::Repository> repository)
+{
+    setRemoteStatus(git::analyseRemoteStatus(repository));
 }
 
 void VcsStatus::performSync(std::shared_ptr<git::Repository> repository)
@@ -273,16 +304,8 @@ void VcsStatus::setRemoteStatus(const git::RemoteStatus& status)
 
 void VcsStatus::performMapFileStatusCheck(std::shared_ptr<git::Repository> repository)
 {
-    setMapFileStatus(_("Checking map status..."));
-
     try
     {
-        if (GlobalMapModule().isUnnamed())
-        {
-            setMapFileStatus(_("Map not saved yet"));
-            return;
-        }
-
         auto relativePath = repository->getRepositoryRelativePath(GlobalMapModule().getMapName());
 
         if (relativePath.empty())
