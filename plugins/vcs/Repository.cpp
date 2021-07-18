@@ -310,6 +310,32 @@ void Repository::createCommit(const CommitMetadata& metadata)
 
 }
 
+std::string Repository::getConfigValue(const std::string& key)
+{
+    git_config* config;
+    auto error = git_repository_config_snapshot(&config, _repository);
+    GitException::ThrowOnError(error);
+
+    try
+    {
+        const char* value;
+        auto error = git_config_get_string(&value, config, key.c_str());
+        GitException::ThrowOnError(error);
+
+        // Copy the value before free-ing the config
+        std::string returnValue(value);
+
+        git_config_free(config);
+
+        return returnValue;
+    }
+    catch (const GitException& ex)
+    {
+        git_config_free(config);
+        throw ex;
+    }
+}
+
 bool Repository::isReadyForMerge()
 {
     auto state = git_repository_state(_repository);

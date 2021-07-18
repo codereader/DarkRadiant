@@ -83,6 +83,8 @@ public:
 
     void createCommit(const CommitMetadata& metadata);
 
+    std::string getConfigValue(const std::string& key);
+
     // Creates a new instance of this repository, not sharing any libgit2 handles with the original
     std::shared_ptr<Repository> clone();
 

@@ -310,19 +310,24 @@ void VcsStatus::performCommit()
         _taskInProgress = true;
     }
 
-    git::CommitMetadata metadata;
-    metadata = CommitDialog::RunDialog(metadata);
-
-    if (metadata.isValid())
+    try
     {
-        try
+        git::CommitMetadata metadata;
+
+        metadata.name = _repository->getConfigValue("user.name");
+        metadata.email = _repository->getConfigValue("user.email");
+
+        metadata = CommitDialog::RunDialog(metadata);
+
+        if (metadata.isValid())
         {
+        
             _repository->createCommit(metadata);
         }
-        catch (const git::GitException& ex)
-        {
-            wxutil::Messagebox::ShowError(ex.what());
-        }
+    }
+    catch (const git::GitException& ex)
+    {
+        wxutil::Messagebox::ShowError(ex.what());
     }
 
     {
