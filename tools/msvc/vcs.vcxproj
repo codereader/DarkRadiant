@@ -176,6 +176,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\plugins\vcs\GitModule.cpp" />
+    <ClCompile Include="..\..\plugins\vcs\Index.cpp" />
     <ClCompile Include="..\..\plugins\vcs\Repository.cpp" />
     <ClCompile Include="..\..\plugins\vcs\ui\VcsStatus.cpp" />
   </ItemGroup>

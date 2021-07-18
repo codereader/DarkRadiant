@@ -25,6 +25,7 @@ public:
         
         InvalidateBestSize();
         Fit();
+        CenterOnParent();
     }
 
     static git::CommitMetadata RunDialog(const git::CommitMetadata& defaultMetadata)

@@ -321,7 +321,6 @@ void VcsStatus::performCommit()
 
         if (metadata.isValid())
         {
-        
             _repository->createCommit(metadata);
         }
     }

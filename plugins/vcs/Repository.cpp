@@ -307,7 +307,39 @@ std::shared_ptr<Tree> Repository::getTreeByRevision(const std::string& revision)
 
 void Repository::createCommit(const CommitMetadata& metadata)
 {
+    auto head = getHead();
+    auto index = getIndex();
 
+    rMessage() << "Creating commit with user " << metadata.name << std::endl;
+
+    git_signature* signature;
+    auto error = git_signature_now(&signature, metadata.name.c_str(), metadata.email.c_str());
+    GitException::ThrowOnError(error);
+
+    // Add all working copy changes
+    index->addAll();
+
+    auto tree = index->writeTree(*this);
+
+    git_oid headOid;
+    git_reference_name_to_id(&headOid, _repository, head->getName().c_str());
+    auto parentCommit = Commit::LookupFromOid(_repository, &headOid);
+
+    std::vector<const git_commit*> parentCommits;
+    parentCommits.push_back(parentCommit->_get());
+
+    git_oid commitOid;
+    error = git_commit_create(&commitOid,
+        _repository, head->getName().c_str(),
+        signature, signature,
+        nullptr, metadata.message.c_str(),
+        tree->_get(), 
+        parentCommits.size(), parentCommits.data());
+    GitException::ThrowOnError(error);
+
+    index->write();
+
+    rMessage() << "Commit created with " << Reference::OidToString(&commitOid) << std::endl;
 }
 
 std::string Repository::getConfigValue(const std::string& key)

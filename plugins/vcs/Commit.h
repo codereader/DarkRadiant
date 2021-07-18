@@ -51,6 +51,11 @@ public:
 
         return std::make_shared<Commit>(commit);
     }
+
+    const git_commit* _get()
+    {
+        return _commit;
+    }
 };
 
 }

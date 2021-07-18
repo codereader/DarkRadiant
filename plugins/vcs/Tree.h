@@ -3,6 +3,7 @@
 #include <git2.h>
 #include "GitArchiveTextFile.h"
 #include "GitException.h"
+#include "Repository.h"
 
 namespace vcs
 {

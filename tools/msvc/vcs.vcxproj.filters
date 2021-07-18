@@ -18,6 +18,9 @@
     <ClCompile Include="..\..\plugins\vcs\ui\VcsStatus.cpp">
       <Filter>src\ui</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\plugins\vcs\Index.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\plugins\vcs\GitModule.h">
