@@ -323,6 +323,8 @@ void VcsStatus::performCommit()
         {
             _repository->createCommit(metadata);
         }
+
+        analyseRemoteStatus(_repository);
     }
     catch (const git::GitException& ex)
     {

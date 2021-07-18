@@ -317,7 +317,7 @@ void Repository::createCommit(const CommitMetadata& metadata)
     GitException::ThrowOnError(error);
 
     // Add all working copy changes
-    index->addAll();
+    index->updateAll();
 
     auto tree = index->writeTree(*this);
 

@@ -46,6 +46,20 @@ void Index::addAll()
     GitException::ThrowOnError(error);
 }
 
+void Index::updateAll()
+{
+    std::string pathSpec("*");
+    char* pathSpecCstr = pathSpec.data();
+
+    const git_strarray pathSpecs = {
+        &pathSpecCstr,
+        1
+    };
+
+    auto error = git_index_update_all(_index, &pathSpecs, nullptr, nullptr);
+    GitException::ThrowOnError(error);
+}
+
 void Index::write()
 {
     auto error = git_index_write(_index);

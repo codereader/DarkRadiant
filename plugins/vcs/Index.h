@@ -27,6 +27,9 @@ public:
     // Corresponds to the operation done by "git add -A"
     void addAll();
 
+    // Update all index entries to match the working directory
+    void updateAll();
+
     // libgit2: Write an existing index object from memory back to disk using an atomic file lock.
     void write();
 

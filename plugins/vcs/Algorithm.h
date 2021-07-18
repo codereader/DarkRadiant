@@ -10,6 +10,7 @@
 #include "Diff.h"
 #include "VersionControlLib.h"
 #include "command/ExecutionFailure.h"
+#include "wxutil/dialog/MessageBox.h"
 #include <git2.h>
 
 namespace vcs
@@ -156,7 +157,10 @@ inline void syncWithRemote(const std::shared_ptr<Repository>& repository)
     if (status.strategy == RequiredMergeStrategy::MergeMapWithUncommittedChanges)
     {
         // Commit the current map changes
-        // TODO
+        wxutil::Messagebox::Show(_("Pending Commit"),
+            _("The map file has uncommitted changes, please commit first before integrating."),
+            ::ui::IDialog::MessageType::MESSAGE_CONFIRM);
+        return;
     }
 
     if (!repository->isReadyForMerge())
