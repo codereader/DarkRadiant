@@ -50,7 +50,7 @@ namespace
     const char* const LABEL_VSCALE = N_("Vert. Scale:");
     const char* const LABEL_ROTATION = N_("Rotation:");
     const char* const LABEL_SHADER = N_("Shader:");
-    const char* const FOLDER_ICON = "folder16.png";
+    const char* const FOLDER_ICON = "treeView16.png";
     const char* const LABEL_STEP = N_("Step:");
 
     const char* LABEL_FIT_TEXTURE = N_("Fit Texture:");
@@ -231,10 +231,17 @@ void SurfaceInspector::populateWindow()
 	shaderHBox->Add(_shaderEntry, 1, wxEXPAND);
 
 	// Create the icon button to open the ShaderChooser
-	_selectShaderButton = new wxBitmapButton(this, wxID_ANY,
-		wxutil::GetLocalBitmap(FOLDER_ICON));
-	_selectShaderButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onShaderSelect), NULL, this);
-	shaderHBox->Add(_selectShaderButton, 0, wxLEFT, 6);
+    _selectShaderButton = new wxBitmapButton(
+        this, wxID_ANY, wxutil::GetLocalBitmap(FOLDER_ICON)
+    );
+    _selectShaderButton->SetToolTip(
+        "Choose shader using the shader selection dialog")
+    ;
+    _selectShaderButton->Connect(
+        wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onShaderSelect),
+        NULL, this
+    );
+    shaderHBox->Add(_selectShaderButton, 0, wxLEFT, 6);
 
 	table->Add(shaderHBox, 1, wxEXPAND);
 
@@ -408,7 +415,6 @@ SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
 
 	// Create the entry field
 	manipRow.stepEntry = new wxTextCtrl(parent, wxID_ANY, "");
-	manipRow.stepEntry->SetMinSize(wxSize(40, -1));
 
 	// Arrange all items in a row
     hbox->Add(manipRow.value, 1, wxALIGN_CENTER_VERTICAL);
