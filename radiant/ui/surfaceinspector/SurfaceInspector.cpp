@@ -151,7 +151,7 @@ void SurfaceInspector::connectEvents()
 {
 	// Be sure to connect these signals BEFORE the buttons are connected
 	// to the events, so that the doUpdate() call gets invoked after the actual event has been fired.
-	_fitTexture.button->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onFit), NULL, this);
+	_fitTexture.button->Bind(wxEVT_BUTTON, [=](wxCommandEvent&) { onFit(); });
 
 	_flipTexture.flipX->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onUpdateAfterButtonClick), NULL, this);
 	_flipTexture.flipY->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onUpdateAfterButtonClick), NULL, this);
@@ -207,34 +207,35 @@ void SurfaceInspector::keyChanged()
 	_callbackActive = false;
 }
 
+wxSpinCtrlDouble* SurfaceInspector::makeFitSpinBox()
+{
+    wxSpinCtrlDouble* box = new wxSpinCtrlDouble(this, wxID_ANY);
+
+    // Set visual parameters
+    box->SetMinSize(wxSize(box->GetCharWidth() * 16, -1));
+    box->SetRange(1.0, 1000.0);
+    box->SetIncrement(1.0);
+    box->SetValue(1.0);
+    box->SetDigits(2);
+
+    // Perform a fit operation when the value changes
+    box->Bind(wxEVT_SPINCTRLDOUBLE, [=](wxSpinDoubleEvent&) { onFit(); });
+
+    return box;
+}
+
 wxBoxSizer* SurfaceInspector::createFitTextureRow()
 {
 	wxBoxSizer* fitTextureHBox = new wxBoxSizer(wxHORIZONTAL);
 
-	// Create the "Fit Texture" label
+    // Create widgets from left to right
 	_fitTexture.label = new wxStaticText(this, wxID_ANY, _(LABEL_FIT_TEXTURE));
-
-	// Create the width entry field
-	_fitTexture.width = new wxSpinCtrlDouble(this, wxID_ANY);
-    _fitTexture.width->SetMinSize(wxSize(_fitTexture.width->GetCharWidth() * 16, -1));
-	_fitTexture.width->SetRange(0.0, 1000.0);
-	_fitTexture.width->SetIncrement(1.0);
-	_fitTexture.width->SetValue(1.0);
-    _fitTexture.width->SetDigits(2);
-
-	// Create the "x" label
+	_fitTexture.width = makeFitSpinBox();
 	_fitTexture.x = new wxStaticText(this, wxID_ANY, "x");
-
-	// Create the height entry field
-	_fitTexture.height = new wxSpinCtrlDouble(this, wxID_ANY);
-    _fitTexture.height->SetMinSize(wxSize(_fitTexture.height->GetCharWidth() * 16, -1));
-	_fitTexture.height->SetRange(0.0, 1000.0);
-	_fitTexture.height->SetIncrement(1.0);
-	_fitTexture.height->SetValue(1.0);
-    _fitTexture.height->SetDigits(2);
-
+	_fitTexture.height = makeFitSpinBox();
 	_fitTexture.button = new wxButton(this, wxID_ANY, _(LABEL_FIT));
 
+    // Add widgets to the sizer
 	fitTextureHBox->Add(_fitTexture.width, 0, wxALIGN_CENTER_VERTICAL);
 	fitTextureHBox->Add(_fitTexture.x, 0, wxALIGN_CENTER | wxLEFT | wxRIGHT, 3);
     fitTextureHBox->Add(_fitTexture.height, 0, wxALIGN_CENTER_VERTICAL);
@@ -605,7 +606,7 @@ void SurfaceInspector::fitTexture()
 	}
 }
 
-void SurfaceInspector::onFit(wxCommandEvent& ev)
+void SurfaceInspector::onFit()
 {
 	// Call the according member method
 	fitTexture();

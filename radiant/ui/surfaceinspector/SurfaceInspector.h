@@ -142,6 +142,7 @@ private:
 
     // Widget construction
 	void populateWindow();
+    wxSpinCtrlDouble* makeFitSpinBox();
     wxBoxSizer* createFitTextureRow();
 
 	// Connect IEvents to the widgets
@@ -163,7 +164,7 @@ private:
 	void onShaderSelect(wxCommandEvent& ev);
 
 	// The callback for the Fit Texture button
-	void onFit(wxCommandEvent& ev);
+	void onFit();
 
 	// If any of the control button get clicked, an update is performed
 	void onUpdateAfterButtonClick(wxCommandEvent& ev);
