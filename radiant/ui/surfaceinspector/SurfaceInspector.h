@@ -140,8 +140,9 @@ private:
 	ManipulatorRow createManipulatorRow(wxWindow* parent,
 		const std::string& label, wxFlexGridSizer* table);
 
-	// Adds all the widgets to the window
+    // Widget construction
 	void populateWindow();
+    wxBoxSizer* createFitTextureRow();
 
 	// Connect IEvents to the widgets
 	void connectEvents();

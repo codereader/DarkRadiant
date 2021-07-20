@@ -207,6 +207,42 @@ void SurfaceInspector::keyChanged()
 	_callbackActive = false;
 }
 
+wxBoxSizer* SurfaceInspector::createFitTextureRow()
+{
+	wxBoxSizer* fitTextureHBox = new wxBoxSizer(wxHORIZONTAL);
+
+	// Create the "Fit Texture" label
+	_fitTexture.label = new wxStaticText(this, wxID_ANY, _(LABEL_FIT_TEXTURE));
+
+	// Create the width entry field
+	_fitTexture.width = new wxSpinCtrlDouble(this, wxID_ANY);
+    _fitTexture.width->SetMinSize(wxSize(_fitTexture.width->GetCharWidth() * 16, -1));
+	_fitTexture.width->SetRange(0.0, 1000.0);
+	_fitTexture.width->SetIncrement(1.0);
+	_fitTexture.width->SetValue(1.0);
+    _fitTexture.width->SetDigits(2);
+
+	// Create the "x" label
+	_fitTexture.x = new wxStaticText(this, wxID_ANY, "x");
+
+	// Create the height entry field
+	_fitTexture.height = new wxSpinCtrlDouble(this, wxID_ANY);
+    _fitTexture.height->SetMinSize(wxSize(_fitTexture.height->GetCharWidth() * 16, -1));
+	_fitTexture.height->SetRange(0.0, 1000.0);
+	_fitTexture.height->SetIncrement(1.0);
+	_fitTexture.height->SetValue(1.0);
+    _fitTexture.height->SetDigits(2);
+
+	_fitTexture.button = new wxButton(this, wxID_ANY, _(LABEL_FIT));
+
+	fitTextureHBox->Add(_fitTexture.width, 0, wxALIGN_CENTER_VERTICAL);
+	fitTextureHBox->Add(_fitTexture.x, 0, wxALIGN_CENTER | wxLEFT | wxRIGHT, 3);
+    fitTextureHBox->Add(_fitTexture.height, 0, wxALIGN_CENTER_VERTICAL);
+    fitTextureHBox->Add(_fitTexture.button, 1, wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
+
+    return fitTextureHBox;
+}
+
 void SurfaceInspector::populateWindow()
 {
 	wxBoxSizer* dialogVBox = new wxBoxSizer(wxVERTICAL);
@@ -273,37 +309,7 @@ void SurfaceInspector::populateWindow()
 
 	// ------------------------ Fit Texture -----------------------------------
 
-	wxBoxSizer* fitTextureHBox = new wxBoxSizer(wxHORIZONTAL);
-
-	// Create the "Fit Texture" label
-	_fitTexture.label = new wxStaticText(this, wxID_ANY, _(LABEL_FIT_TEXTURE));
-
-	// Create the width entry field
-	_fitTexture.width = new wxSpinCtrlDouble(this, wxID_ANY);
-    _fitTexture.width->SetMinSize(wxSize(_fitTexture.width->GetCharWidth() * 8, -1));
-	_fitTexture.width->SetRange(0.0, 1000.0);
-	_fitTexture.width->SetIncrement(1.0);
-	_fitTexture.width->SetValue(1.0);
-    _fitTexture.width->SetDigits(2);
-
-	// Create the "x" label
-	_fitTexture.x = new wxStaticText(this, wxID_ANY, "x");
-
-	// Create the height entry field
-	_fitTexture.height = new wxSpinCtrlDouble(this, wxID_ANY);
-    _fitTexture.height->SetMinSize(wxSize(_fitTexture.height->GetCharWidth() * 8, -1));
-	_fitTexture.height->SetRange(0.0, 1000.0);
-	_fitTexture.height->SetIncrement(1.0);
-	_fitTexture.height->SetValue(1.0);
-    _fitTexture.height->SetDigits(2);
-
-	_fitTexture.button = new wxButton(this, wxID_ANY, _(LABEL_FIT));
-
-	fitTextureHBox->Add(_fitTexture.width, 0, wxALIGN_CENTER_VERTICAL);
-	fitTextureHBox->Add(_fitTexture.x, 0, wxALIGN_CENTER | wxLEFT | wxRIGHT, 3);
-    fitTextureHBox->Add(_fitTexture.height, 0, wxALIGN_CENTER_VERTICAL);
-    fitTextureHBox->Add(_fitTexture.button, 1, wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
-
+	wxBoxSizer* fitTextureHBox = createFitTextureRow();
 	operTable->Add(_fitTexture.label, 0, wxALIGN_CENTER_VERTICAL);
 	operTable->Add(fitTextureHBox, 1, wxEXPAND);
 
