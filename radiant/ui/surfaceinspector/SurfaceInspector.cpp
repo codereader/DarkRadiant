@@ -88,6 +88,11 @@ namespace
     const double MAX_FLOAT_RESOLUTION = 1.0E-5;
 }
 
+void SurfaceInspector::ManipulatorRow::setValue(double v)
+{
+    value->SetValue(fmt::format("{}", v));
+}
+
 SurfaceInspector::SurfaceInspector() :
 	wxutil::TransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getWxTopLevelWindow(), true),
 	_callbackActive(false),
@@ -486,13 +491,11 @@ void SurfaceInspector::updateTexDef()
 	    texdef.rotate = float_snapped(texdef.rotate, MAX_FLOAT_RESOLUTION);
 
 	    // Load the values into the widgets
-	    _manipulators[HSHIFT].value->SetValue(string::to_string(texdef.shift[0]));
-	    _manipulators[VSHIFT].value->SetValue(string::to_string(texdef.shift[1]));
-
-	    _manipulators[HSCALE].value->SetValue(string::to_string(texdef.scale[0]));
-	    _manipulators[VSCALE].value->SetValue(string::to_string(texdef.scale[1]));
-
-	    _manipulators[ROTATION].value->SetValue(string::to_string(texdef.rotate));
+	    _manipulators[HSHIFT].setValue(texdef.shift[0]);
+	    _manipulators[VSHIFT].setValue(texdef.shift[1]);
+	    _manipulators[HSCALE].setValue(texdef.scale[0]);
+	    _manipulators[VSCALE].setValue(texdef.scale[1]);
+	    _manipulators[ROTATION].setValue(texdef.rotate);
     }
 }
 

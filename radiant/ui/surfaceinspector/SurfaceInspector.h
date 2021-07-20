@@ -34,12 +34,16 @@ class SurfaceInspector :
 	public wxutil::TransientWindow,
 	public sigc::trackable
 {
+    // Manipulatable value field with nudge buttons and a step size selector
 	struct ManipulatorRow
 	{
 		wxTextCtrl* value;
 		wxutil::ControlButton* smaller;
 		wxutil::ControlButton* larger;
 		wxTextCtrl* stepEntry;
+
+        // Set the text control to show the given value
+        void setValue(double val);
 	};
 
 	// This are the named manipulator rows (shift, scale, rotation, etc)
