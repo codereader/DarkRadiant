@@ -196,12 +196,14 @@ void Map::finishMergeOperation()
     _mergeActionNodes.clear();
 
     // At this point the scene should look the same as before the merge
+    {
+        UndoableCommand cmd("mergeMap");
+        _mergeOperation->applyActions();
 
-    UndoableCommand cmd("mergeMap");
-    _mergeOperation->applyActions();
-
-    cleanupMergeOperation();
+        cleanupMergeOperation();
+    }
     setEditMode(EditMode::Normal);
+    emitMapEvent(IMap::MapMergeOperationFinished);
 }
 
 void Map::cleanupMergeOperation()
@@ -222,9 +224,16 @@ void Map::cleanupMergeOperation()
 
 void Map::abortMergeOperation()
 {
+    bool mergeWasActive = _mergeOperation != nullptr;
+
     // Remove the nodes and switch back to normal without applying the operation
     cleanupMergeOperation();
     setEditMode(EditMode::Normal);
+
+    if (mergeWasActive)
+    {
+        emitMapEvent(IMap::MapMergeOperationAborted);
+    }
 }
 
 scene::merge::IMergeOperation::Ptr Map::getActiveMergeOperation()
@@ -1191,6 +1200,8 @@ void Map::startMergeOperation(const std::string& sourceMap)
 
                 // Switch to merge mode
                 setEditMode(EditMode::Merge);
+
+                emitMapEvent(IMap::MapMergeOperationStarted);
             }
             else
             {
@@ -1228,6 +1239,8 @@ void Map::startMergeOperation(const std::string& sourceMap, const std::string& b
 
                 // Switch to merge mode
                 setEditMode(EditMode::Merge);
+
+                emitMapEvent(IMap::MapMergeOperationStarted);
             }
             else
             {

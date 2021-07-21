@@ -106,6 +106,9 @@ public:
 		MapUnloaded,    // emitted after a map has been unloaded
 		MapSaving,		// emitted before a map is about to be saved (changes are possible)
 		MapSaved,		// emitted right after a map has been saved
+		MapMergeOperationStarted,		// emitted after a merge operation has been started
+		MapMergeOperationAborted,		// emitted after a merge operation has been aborted
+		MapMergeOperationFinished,		// emitted after a merge operation has been finished
 	};
 
 	typedef sigc::signal<void, MapEvent> MapEventSignal;
