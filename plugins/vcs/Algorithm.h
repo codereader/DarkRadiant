@@ -4,6 +4,7 @@
 #include "i18n.h"
 #include "itextstream.h"
 #include "Repository.h"
+#include "gamelib.h"
 #include "GitException.h"
 #include "GitModule.h"
 #include "Commit.h"
@@ -123,6 +124,39 @@ inline RemoteStatus analyseRemoteStatus(const std::shared_ptr<Repository>& repos
         RequiredMergeStrategy::MergeMap };
 }
 
+inline std::string getInfoFilePath(const std::string& mapPath)
+{
+    auto format = GlobalMapFormatManager().getMapFormatForFilename(mapPath);
+
+    if (format && format->allowInfoFileCreation())
+    {
+        return os::replaceExtension(mapPath, game::current::getInfoFileExtension());
+    }
+
+    return std::string();
+}
+
+inline void resolveMapFileConflictUsingOurs(const std::shared_ptr<Repository>& repository)
+{
+    auto mapPath = repository->getRepositoryRelativePath(GlobalMapModule().getMapName());
+    auto index = repository->getIndex();
+
+    // Remove the conflict state of the map file after save
+    if (!mapPath.empty() && index->fileIsConflicted(mapPath))
+    {
+        index->resolveByUsingOurs(mapPath);
+
+        auto infoFilePath = getInfoFilePath(mapPath);
+
+        if (!infoFilePath.empty())
+        {
+            index->resolveByUsingOurs(infoFilePath);
+        }
+
+        index->write();
+    }
+}
+
 inline void tryToFinishMerge(const std::shared_ptr<Repository>& repository)
 {
     auto mapPath = repository->getRepositoryRelativePath(GlobalMapModule().getMapName());
@@ -132,11 +166,7 @@ inline void tryToFinishMerge(const std::shared_ptr<Repository>& repository)
     if (index->hasConflicts())
     {
         // Remove the conflict state from the map
-        if (!mapPath.empty() && index->fileIsConflicted(mapPath))
-        {
-            index->resolveByUsingOurs(mapPath);
-            index->write();
-        }
+        resolveMapFileConflictUsingOurs(repository);
         
         // If the index still has conflicts, notify the user
         if (index->hasConflicts())
@@ -159,8 +189,12 @@ inline void tryToFinishMerge(const std::shared_ptr<Repository>& repository)
 
     metadata.name = repository->getConfigValue("user.name");
     metadata.email = repository->getConfigValue("user.email");
+    metadata.message = "Integrated remote changes from " + upstream->getShorthandName();
 
-    metadata = ui::CommitDialog::RunDialog(metadata);
+    if (metadata.name.empty() || metadata.email.empty())
+    {
+        metadata = ui::CommitDialog::RunDialog(metadata);
+    }
 
     if (metadata.isValid())
     {

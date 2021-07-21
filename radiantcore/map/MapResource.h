@@ -68,9 +68,6 @@ protected:
     // May return an empty reference, may throw OperationException on failure
     virtual stream::MapResourceStream::Ptr openInfofileStream();
 
-    // Returns the extension of the auxiliary info file (including the leading dot character)
-    static std::string GetInfoFileExtension();
-
     // Returns true if the file can be written to. Also returns true if the file
     // doesn't exist (assuming the file can always be created).
     static bool FileIsWriteable(const fs::path& path);

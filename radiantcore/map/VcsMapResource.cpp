@@ -5,6 +5,7 @@
 #include "VersionControlLib.h"
 #include "stream/VcsMapResourceStream.h"
 #include "os/fs.h"
+#include "gamelib.h"
 #include <fmt/format.h>
 
 namespace map
@@ -25,7 +26,7 @@ VcsMapResource::VcsMapResource(const std::string& mapFileUri) :
     }
 
     auto infoFilePath = vcs::getVcsFilePath(_mapFileUri);
-    infoFilePath = os::replaceExtension(infoFilePath, GetInfoFileExtension());
+    infoFilePath = os::replaceExtension(infoFilePath, game::current::getInfoFileExtension());
 
     _infoFileUri = vcs::constructVcsFileUri(prefix, vcs::getVcsRevision(_mapFileUri), infoFilePath);
 }

@@ -4,6 +4,7 @@
 #include "imap.h"
 #include "iuserinterface.h"
 #include "imainframe.h"
+#include "imapformat.h"
 
 #include <wx/sizer.h>
 #include <wx/bmpbuttn.h>
@@ -12,7 +13,9 @@
 #include "registry/registry.h"
 #include "os/file.h"
 #include "os/path.h"
+#include "os/fs.h"
 #include "string/convert.h"
+#include "gamelib.h"
 #include "wxutil/menu/CommandMenuItem.h"
 #include "wxutil/menu/IconTextMenuItem.h"
 #include "wxutil/dialog/MessageBox.h"
@@ -170,11 +173,7 @@ void VcsStatus::onMapEvent(IMap::MapEvent ev)
         auto index = _repository->getIndex();
 
         // Remove the conflict state of the map file after save
-        if (!mapPath.empty() && index->fileIsConflicted(mapPath))
-        {
-            index->resolveByUsingOurs(mapPath);
-            index->write();
-        }
+        resolveMapFileConflictUsingOurs(_repository);
 
         if (wxutil::Messagebox::Show(_("Complete Merge Operation?"),
             _("Map has been saved. Do you want to complete the ongoing merge operation using this state?"),
@@ -188,6 +187,9 @@ void VcsStatus::onMapEvent(IMap::MapEvent ev)
             {
                 wxutil::Messagebox::ShowError(ex.what());
             }
+
+            analyseRemoteStatus(_repository);
+            return;
         }
     }
 
@@ -317,7 +319,14 @@ void VcsStatus::performFetch(std::shared_ptr<git::Repository> repository)
 
 void VcsStatus::analyseRemoteStatus(std::shared_ptr<git::Repository> repository)
 {
-    setRemoteStatus(git::analyseRemoteStatus(repository));
+    try
+    {
+        setRemoteStatus(git::analyseRemoteStatus(repository));
+    }
+    catch (git::GitException& ex)
+    {
+        setRemoteStatus(git::RemoteStatus{ 0, 0, ex.what() });
+    }
 }
 
 void VcsStatus::performSync(std::shared_ptr<git::Repository> repository)

@@ -55,6 +55,21 @@ inline std::string getModPath(const std::string& fullPath)
     return relPath;
 }
 
+// Returns the extension of the auxiliary info file (including the leading dot character)
+inline std::string getInfoFileExtension()
+{
+    constexpr const char* const GKEY_INFO_FILE_EXTENSION = "/mapFormat/infoFileExtension";
+
+    auto extension = getValue<std::string>(GKEY_INFO_FILE_EXTENSION);
+
+    if (!extension.empty() && extension[0] != '.')
+    {
+        extension = "." + extension;
+    }
+
+    return extension;
+}
+
 } // namespace
 
 } // namespace
