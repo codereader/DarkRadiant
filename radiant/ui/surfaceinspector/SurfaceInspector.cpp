@@ -93,6 +93,16 @@ void SurfaceInspector::ManipulatorRow::setValue(double v)
     value->SetValue(fmt::format("{}", v));
 }
 
+void SurfaceInspector::FitTextureWidgets::enable(bool enabled)
+{
+    label->Enable(enabled);
+    x->Enable(enabled);
+    fitButton->Enable(enabled);
+    preserveAspectButton->Enable(enabled);
+    width->Enable(enabled);
+    height->Enable(enabled);
+}
+
 SurfaceInspector::SurfaceInspector() :
 	wxutil::TransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getWxTopLevelWindow(), true),
 	_callbackActive(false),
@@ -151,7 +161,7 @@ void SurfaceInspector::connectEvents()
 {
 	// Be sure to connect these signals BEFORE the buttons are connected
 	// to the events, so that the doUpdate() call gets invoked after the actual event has been fired.
-	_fitTexture.button->Bind(wxEVT_BUTTON, [=](wxCommandEvent&) { onFit(); });
+	_fitTexture.fitButton->Bind(wxEVT_BUTTON, [=](wxCommandEvent&) { onFit(); });
 
 	_flipTexture.flipX->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onUpdateAfterButtonClick), NULL, this);
 	_flipTexture.flipY->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onUpdateAfterButtonClick), NULL, this);
@@ -231,15 +241,37 @@ wxBoxSizer* SurfaceInspector::createFitTextureRow()
     // Create widgets from left to right
 	_fitTexture.label = new wxStaticText(this, wxID_ANY, _(LABEL_FIT_TEXTURE));
 	_fitTexture.width = makeFitSpinBox();
-	_fitTexture.x = new wxStaticText(this, wxID_ANY, "x");
-	_fitTexture.height = makeFitSpinBox();
-	_fitTexture.button = new wxButton(this, wxID_ANY, _(LABEL_FIT));
+    _fitTexture.width->SetToolTip(
+        "Number of whole texture images to fit horizontally. Use the spin "
+        "buttons to change the value and apply the result immediately."
+    );
+    _fitTexture.x = new wxStaticText(this, wxID_ANY, "x");
+    _fitTexture.height = makeFitSpinBox();
+    _fitTexture.height->SetToolTip(
+        "Number of whole texture images to fit vertically. Use the spin "
+        "buttons to change the value and apply the result immediately."
+    );
+	_fitTexture.fitButton = new wxButton(this, wxID_ANY, _(LABEL_FIT));
+    _fitTexture.fitButton->SetToolTip(
+        "Fit texture using the current values for both axes (ignoring texture "
+        "aspect ratio)"
+    );
+    _fitTexture.preserveAspectButton = new wxBitmapToggleButton(
+        this, wxID_ANY, wxutil::GetLocalBitmap("preserveAspect.png")
+    );
+    _fitTexture.preserveAspectButton->SetToolTip(
+        "When fitting texture on one axis using the spin buttons, adjust the "
+        "other axis automatically to preserve texture aspect ratio"
+    );
 
     // Add widgets to the sizer
-	fitTextureHBox->Add(_fitTexture.width, 0, wxALIGN_CENTER_VERTICAL);
-	fitTextureHBox->Add(_fitTexture.x, 0, wxALIGN_CENTER | wxLEFT | wxRIGHT, 3);
-    fitTextureHBox->Add(_fitTexture.height, 0, wxALIGN_CENTER_VERTICAL);
-    fitTextureHBox->Add(_fitTexture.button, 1, wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
+    fitTextureHBox->Add(_fitTexture.width, 1, wxALIGN_CENTER_VERTICAL);
+    fitTextureHBox->Add(_fitTexture.x, 0, wxALIGN_CENTER | wxLEFT | wxRIGHT, 3);
+    fitTextureHBox->Add(_fitTexture.height, 1, wxALIGN_CENTER_VERTICAL);
+    fitTextureHBox->Add(_fitTexture.preserveAspectButton, 0,
+                        wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
+    fitTextureHBox->Add(_fitTexture.fitButton, 1,
+                        wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
 
     return fitTextureHBox;
 }
@@ -536,10 +568,7 @@ void SurfaceInspector::doUpdate()
 	const SelectionInfo& selectionInfo = GlobalSelectionSystem().getSelectionInfo();
 
 	bool valueSensitivity = false;
-	bool fitSensitivity = (selectionInfo.totalCount > 0);
-	bool flipSensitivity = (selectionInfo.totalCount > 0);
-	bool applySensitivity = (selectionInfo.totalCount > 0);
-	bool alignSensitivity = (selectionInfo.totalCount > 0);
+	bool haveSelection = (selectionInfo.totalCount > 0);
 
 	// If patches or entities are selected, the value entry fields have no meaning
 	valueSensitivity = (selectionInfo.patchCount == 0 &&
@@ -554,28 +583,24 @@ void SurfaceInspector::doUpdate()
 	_manipulators[ROTATION].value->Enable(valueSensitivity);
 
 	// The fit widget sensitivity
-	_fitTexture.height->Enable(fitSensitivity);
-	_fitTexture.width->Enable(fitSensitivity);
-	_fitTexture.x->Enable(fitSensitivity);
-	_fitTexture.label->Enable(fitSensitivity);
-	_fitTexture.button->Enable(fitSensitivity);
+    _fitTexture.enable(haveSelection);
 
 	// The align texture widget sensitivity
-	_alignTexture.bottom->Enable(alignSensitivity);
-	_alignTexture.left->Enable(alignSensitivity);
-	_alignTexture.right->Enable(alignSensitivity);
-	_alignTexture.top->Enable(alignSensitivity);
-	_alignTexture.label->Enable(alignSensitivity);
+	_alignTexture.bottom->Enable(haveSelection);
+	_alignTexture.left->Enable(haveSelection);
+	_alignTexture.right->Enable(haveSelection);
+	_alignTexture.top->Enable(haveSelection);
+	_alignTexture.label->Enable(haveSelection);
 
 	// The flip texture widget sensitivity
-	_flipTexture.label->Enable(flipSensitivity);
-	_flipTexture.flipX->Enable(flipSensitivity);
-	_flipTexture.flipY->Enable(flipSensitivity);
+	_flipTexture.label->Enable(haveSelection);
+	_flipTexture.flipX->Enable(haveSelection);
+	_flipTexture.flipY->Enable(haveSelection);
 
 	// The natural/normalise widget sensitivity
-	_modifyTex.label->Enable(applySensitivity);
-	_modifyTex.natural->Enable(applySensitivity);
-	_modifyTex.normalise->Enable(applySensitivity);
+	_modifyTex.label->Enable(haveSelection);
+	_modifyTex.natural->Enable(haveSelection);
+	_modifyTex.normalise->Enable(haveSelection);
 
 	// Current shader name
 	_shaderEntry->SetValue(selection::getShaderFromSelection());

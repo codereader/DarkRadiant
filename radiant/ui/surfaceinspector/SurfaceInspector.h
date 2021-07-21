@@ -58,9 +58,13 @@ class SurfaceInspector :
 	{
 		wxStaticText* label;
 		wxStaticText* x;
-		wxButton* button;
+		wxButton* fitButton;
+        wxToggleButton* preserveAspectButton;
 		wxSpinCtrlDouble* width;
 		wxSpinCtrlDouble* height;
+
+        // Set sensitivity of all widgets
+        void enable(bool enabled);
 	} _fitTexture;
 
 	struct FlipTextureWidgets
