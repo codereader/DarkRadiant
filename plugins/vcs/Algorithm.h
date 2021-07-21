@@ -11,6 +11,7 @@
 #include "VersionControlLib.h"
 #include "command/ExecutionFailure.h"
 #include "wxutil/dialog/MessageBox.h"
+#include "ui/CommitDialog.h"
 #include <git2.h>
 
 namespace vcs
@@ -122,6 +123,52 @@ inline RemoteStatus analyseRemoteStatus(const std::shared_ptr<Repository>& repos
         RequiredMergeStrategy::MergeMap };
 }
 
+inline void tryToFinishMerge(const std::shared_ptr<Repository>& repository)
+{
+    auto mapPath = repository->getRepositoryRelativePath(GlobalMapModule().getMapName());
+
+    auto index = repository->getIndex();
+
+    if (index->hasConflicts())
+    {
+        // Remove the conflict state from the map
+        if (!mapPath.empty() && index->fileIsConflicted(mapPath))
+        {
+            index->resolveByUsingOurs(mapPath);
+            index->write();
+        }
+        
+        // If the index still has conflicts, notify the user
+        if (index->hasConflicts())
+        {
+            wxutil::Messagebox::Show(_("Conflicts"),
+                _("There are still unresolved conflicts in the repository.\nPlease use your Git client to resolve them and try again."),
+                ::ui::IDialog::MessageType::MESSAGE_CONFIRM);
+            return;
+        }
+    }
+
+    auto head = repository->getHead();
+    if (!head) throw git::GitException("Cannot resolve repository HEAD");
+
+    auto upstream = head->getUpstream();
+    if (!upstream) throw git::GitException("Cannot resolve upstream ref from HEAD");
+
+    // We need the commit metadata to be valid
+    git::CommitMetadata metadata;
+
+    metadata.name = repository->getConfigValue("user.name");
+    metadata.email = repository->getConfigValue("user.email");
+
+    metadata = ui::CommitDialog::RunDialog(metadata);
+
+    if (metadata.isValid())
+    {
+        repository->createCommit(metadata, upstream);
+        repository->cleanupState();
+    }
+}
+
 inline void syncWithRemote(const std::shared_ptr<Repository>& repository)
 {
     if (repository->mergeIsInProgress())
@@ -206,7 +253,7 @@ inline void syncWithRemote(const std::shared_ptr<Repository>& repository)
         error = git_merge(repository->_get(), mergeHeads.data(), mergeHeads.size(), &mergeOptions, &checkoutOptions);
         GitException::ThrowOnError(error);
         
-        // At this point, check if the loaded map is affected by the merge
+        // Check if the loaded map is affected by the merge
         if (status.strategy == RequiredMergeStrategy::MergeMap)
         {
             auto mergeBase = repository->findMergeBase(*repository->getHead(), *upstream);
@@ -224,22 +271,11 @@ inline void syncWithRemote(const std::shared_ptr<Repository>& repository)
                 throw GitException(ex.what());
             }
 
-            // TODO: save this state and continue to commit and cleanup later
+            // Wait until the user finishes or aborts the merge
             return;
         }
 
-        auto index = repository->getIndex();
-
-        if (index->hasConflicts())
-        {
-            // Handle conflicts -notify user?
-        }
-        else
-        {
-            //create_merge_commit(repository->_get(), index, &mergeOptions);
-        }
-
-        git_repository_state_cleanup(repository->_get());
+        tryToFinishMerge(repository);
     }
     catch (const GitException& ex)
     {

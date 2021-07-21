@@ -307,6 +307,11 @@ std::shared_ptr<Tree> Repository::getTreeByRevision(const std::string& revision)
 
 void Repository::createCommit(const CommitMetadata& metadata)
 {
+    createCommit(metadata, Reference::Ptr());
+}
+
+void Repository::createCommit(const CommitMetadata& metadata, const Reference::Ptr& additionalParent)
+{
     auto head = getHead();
     auto index = getIndex();
 
@@ -322,24 +327,38 @@ void Repository::createCommit(const CommitMetadata& metadata)
     auto tree = index->writeTree(*this);
 
     git_oid headOid;
-    git_reference_name_to_id(&headOid, _repository, head->getName().c_str());
+    error = git_reference_name_to_id(&headOid, _repository, head->getName().c_str());
+    GitException::ThrowOnError(error);
+
     auto parentCommit = Commit::LookupFromOid(_repository, &headOid);
 
     std::vector<const git_commit*> parentCommits;
     parentCommits.push_back(parentCommit->_get());
+
+    // Check if we have an additional parent
+    if (additionalParent)
+    {
+        git_oid parentOid;
+        auto error = git_reference_name_to_id(&parentOid, _repository, additionalParent->getName().c_str());
+        GitException::ThrowOnError(error);
+
+        auto additionalParentCommit = Commit::LookupFromOid(_repository, &parentOid);
+
+        parentCommits.push_back(additionalParentCommit->_get());
+    }
 
     git_oid commitOid;
     error = git_commit_create(&commitOid,
         _repository, head->getName().c_str(),
         signature, signature,
         nullptr, metadata.message.c_str(),
-        tree->_get(), 
+        tree->_get(),
         parentCommits.size(), parentCommits.data());
     GitException::ThrowOnError(error);
 
     index->write();
 
-    rMessage() << "Commit created with " << Reference::OidToString(&commitOid) << std::endl;
+    rMessage() << "Commit created: " << Reference::OidToString(&commitOid) << std::endl;
 }
 
 std::string Repository::getConfigValue(const std::string& key)
@@ -366,6 +385,12 @@ std::string Repository::getConfigValue(const std::string& key)
         git_config_free(config);
         throw ex;
     }
+}
+
+void Repository::cleanupState()
+{
+    auto error = git_repository_state_cleanup(_repository);
+    GitException::ThrowOnError(error);
 }
 
 bool Repository::isReadyForMerge()

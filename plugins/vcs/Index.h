@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <string>
 #include <git2.h>
 
 namespace vcs
@@ -37,6 +38,10 @@ public:
     std::shared_ptr<Tree> writeTree(Repository& repository);
 
     bool hasConflicts();
+
+    bool fileIsConflicted(const std::string& relativePath);
+
+    void resolveByUsingOurs(const std::string& relativePath);
 };
 
 }

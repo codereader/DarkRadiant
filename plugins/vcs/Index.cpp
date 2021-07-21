@@ -66,6 +66,22 @@ void Index::write()
     GitException::ThrowOnError(error);
 }
 
+void Index::resolveByUsingOurs(const std::string& relativePath)
+{
+    auto error = git_index_add_bypath(_index, relativePath.c_str());
+    GitException::ThrowOnError(error);
+}
+
+bool Index::fileIsConflicted(const std::string& relativePath)
+{
+    const git_index_entry* ancestor = nullptr;
+    const git_index_entry* ours = nullptr;
+    const git_index_entry* theirs = nullptr;
+
+    auto error = git_index_conflict_get(&ancestor, &ours, &theirs, _index, relativePath.c_str());
+    return error == 0;
+}
+
 bool Index::hasConflicts()
 {
     return git_index_has_conflicts(_index);

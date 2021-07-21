@@ -81,9 +81,16 @@ public:
 
     std::shared_ptr<Tree> getTreeByRevision(const std::string& revision);
 
+    // Create a commit with the current repository HEAD as only parent
     void createCommit(const CommitMetadata& metadata);
 
+    // Create a commit with the currrent repository HEAD and the given ref as parent
+    // It's valid to pass an empty additionalParent if no second parent is needed
+    void createCommit(const CommitMetadata& metadata, const Reference::Ptr& additionalParent);
+
     std::string getConfigValue(const std::string& key);
+
+    void cleanupState();
 
     // Creates a new instance of this repository, not sharing any libgit2 handles with the original
     std::shared_ptr<Repository> clone();

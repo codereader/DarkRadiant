@@ -162,6 +162,54 @@ void VcsStatus::onMapEvent(IMap::MapEvent ev)
             analyseRemoteStatus(_repository);
         }
     }
+
+    // Only when saving: check whether a merge is to be completed
+    if (ev == IMap::MapSaved && _repository && _repository->mergeIsInProgress())
+    {
+        auto mapPath = _repository->getRepositoryRelativePath(GlobalMapModule().getMapName());
+        auto index = _repository->getIndex();
+
+        // Remove the conflict state of the map file after save
+        if (!mapPath.empty() && index->fileIsConflicted(mapPath))
+        {
+            index->resolveByUsingOurs(mapPath);
+            index->write();
+        }
+
+        if (wxutil::Messagebox::Show(_("Complete Merge Operation?"),
+            _("Map has been saved. Do you want to complete the ongoing merge operation using this state?"),
+            ::ui::IDialog::MessageType::MESSAGE_ASK) == ::ui::IDialog::RESULT_YES)
+        {
+            try
+            {
+                tryToFinishMerge(_repository);
+            }
+            catch (git::GitException& ex)
+            {
+                wxutil::Messagebox::ShowError(ex.what());
+            }
+        }
+    }
+
+    if (ev == IMap::MapMergeOperationAborted && _repository && _repository->mergeIsInProgress())
+    {
+        // Ask the user whether to cancel the git merge status
+        if (wxutil::Messagebox::Show(_("Cancel Merge Operation?"),
+            _("You've aborted the map merge. Do you want to abort the ongoing git merge operation too?\n"
+            "This will reset the repository to the state it had before the merge was started."),
+            ::ui::IDialog::MessageType::MESSAGE_ASK) == ::ui::IDialog::RESULT_YES)
+        {
+            // TODO
+        }
+    }
+    else if (ev == IMap::MapMergeOperationFinished && _repository && _repository->mergeIsInProgress())
+    {
+        wxutil::Messagebox::Show(_("Save the map when done merging"),
+            _("Now that the merge is finished, please save the map such that the git merge operation can be completed."),
+            ::ui::IDialog::MessageType::MESSAGE_CONFIRM);
+
+        // Now wait for the merge to complete (MapSaved event)
+    }
 }
 
 void VcsStatus::startFetchTask()
