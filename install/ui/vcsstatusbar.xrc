@@ -43,9 +43,9 @@
 								</object>
 								<object class="sizeritem">
 									<option>0</option>
-									<flag>wxALIGN_CENTER_VERTICAL</flag>
+									<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
 									<border>0</border>
-									<object class="wxStaticText" name="NumOutgoingCommits">
+									<object class="wxStaticText" name="NumIncomingCommits">
 										<label>1</label>
 										<wrap>-1</wrap>
 									</object>
@@ -61,9 +61,9 @@
 								</object>
 								<object class="sizeritem">
 									<option>0</option>
-									<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+									<flag>wxALIGN_CENTER_VERTICAL</flag>
 									<border>0</border>
-									<object class="wxStaticText" name="NumIncomingCommits">
+									<object class="wxStaticText" name="NumOutgoingCommits">
 										<label>1</label>
 										<wrap>-1</wrap>
 									</object>

@@ -257,12 +257,11 @@ inline void syncWithRemote(const std::shared_ptr<Repository>& repository)
     git_merge_analysis_t analysis;
     git_merge_preference_t preference = GIT_MERGE_PREFERENCE_NONE;
 
-    git_annotated_commit* mergeHead;
-
     auto upstream = repository->getHead()->getUpstream();
     git_oid upstreamOid;
     auto error = git_reference_name_to_id(&upstreamOid, repository->_get(), upstream->getName().c_str());
 
+    git_annotated_commit* mergeHead;
     error = git_annotated_commit_lookup(&mergeHead, repository->_get(), &upstreamOid);
     GitException::ThrowOnError(error);
 
@@ -288,28 +287,35 @@ inline void syncWithRemote(const std::shared_ptr<Repository>& repository)
         GitException::ThrowOnError(error);
         
         // Check if the loaded map is affected by the merge
-        if (status.strategy == RequiredMergeStrategy::MergeMap)
+        if (status.strategy != RequiredMergeStrategy::MergeMap)
         {
-            auto mergeBase = repository->findMergeBase(*repository->getHead(), *upstream);
-
-            auto baseUri = constructVcsFileUri(GitModule::UriPrefix, Reference::OidToString(mergeBase->getOid()), mapPath);
-            auto sourceUri = constructVcsFileUri(GitModule::UriPrefix, Reference::OidToString(&upstreamOid), mapPath);
-
-            try
-            {
-                // The loaded map merge needs to be confirmed by the user
-                GlobalMapModule().startMergeOperation(sourceUri, baseUri);
-            }
-            catch (const cmd::ExecutionFailure& ex)
-            {
-                throw GitException(ex.what());
-            }
-
-            // Wait until the user finishes or aborts the merge
+            tryToFinishMerge(repository);
             return;
         }
 
-        tryToFinishMerge(repository);
+        // A map merge is required
+        wxutil::Messagebox::Show(_("Map Merge Required"),
+            _("The map has been changed both on the server and locally.\n"
+                "DarkRadiant will now switch to Merge Mode to highlight the differences.\n"
+                "Please have a look, resolve possible conflicts and finish the merge."),
+            ::ui::IDialog::MessageType::MESSAGE_CONFIRM);
+
+        auto mergeBase = repository->findMergeBase(*repository->getHead(), *upstream);
+
+        auto baseUri = constructVcsFileUri(GitModule::UriPrefix, Reference::OidToString(mergeBase->getOid()), mapPath);
+        auto sourceUri = constructVcsFileUri(GitModule::UriPrefix, Reference::OidToString(&upstreamOid), mapPath);
+
+        try
+        {
+            // The loaded map merge needs to be confirmed by the user
+            GlobalMapModule().startMergeOperation(sourceUri, baseUri);
+            // Done here, wait until the user finishes or aborts the merge
+            return;
+        }
+        catch (const cmd::ExecutionFailure& ex)
+        {
+            throw GitException(ex.what());
+        }
     }
     catch (const GitException& ex)
     {

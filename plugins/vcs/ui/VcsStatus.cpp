@@ -110,7 +110,7 @@ void VcsStatus::createPopupMenu()
     ));
 
     _popupMenu->addItem(std::make_shared<wxutil::MenuItem>(
-        new wxMenuItem(nullptr, wxID_ANY, _("Sync Changes with Server"), ""),
+        new wxMenuItem(nullptr, wxID_ANY, _("Integrate Changes from Server"), ""),
         [this]() { performSync(_repository); },
         [this]() { return canSync(); }
     ));
@@ -206,8 +206,8 @@ void VcsStatus::onMapEvent(IMap::MapEvent ev)
     }
     else if (ev == IMap::MapMergeOperationFinished && _repository && _repository->mergeIsInProgress())
     {
-        wxutil::Messagebox::Show(_("Save the map when done merging"),
-            _("Now that the merge is finished, please save the map such that the git merge operation can be completed."),
+        wxutil::Messagebox::Show(_("Save the File to complete the Merge"),
+            _("Now that the map is merged, please save the file\nsuch that the git operation can be completed."),
             ::ui::IDialog::MessageType::MESSAGE_CONFIRM);
 
         // Now wait for the merge to complete (MapSaved event)
