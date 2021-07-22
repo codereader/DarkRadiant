@@ -161,9 +161,10 @@ void SurfaceInspector::connectEvents()
 {
 	// Be sure to connect these signals BEFORE the buttons are connected
 	// to the events, so that the doUpdate() call gets invoked after the actual event has been fired.
-	_fitTexture.fitButton->Bind(wxEVT_BUTTON, [=](wxCommandEvent&) { onFit(); });
+    _fitTexture.fitButton->Bind(wxEVT_BUTTON,
+                                [=](wxCommandEvent&) { onFit(Axis::BOTH); });
 
-	_flipTexture.flipX->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onUpdateAfterButtonClick), NULL, this);
+    _flipTexture.flipX->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onUpdateAfterButtonClick), NULL, this);
 	_flipTexture.flipY->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onUpdateAfterButtonClick), NULL, this);
 	_alignTexture.top->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onUpdateAfterButtonClick), NULL, this);
 	_alignTexture.bottom->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onUpdateAfterButtonClick), NULL, this);
@@ -217,7 +218,7 @@ void SurfaceInspector::keyChanged()
 	_callbackActive = false;
 }
 
-wxSpinCtrlDouble* SurfaceInspector::makeFitSpinBox()
+wxSpinCtrlDouble* SurfaceInspector::makeFitSpinBox(Axis axis)
 {
     wxSpinCtrlDouble* box = new wxSpinCtrlDouble(this, wxID_ANY);
 
@@ -229,7 +230,7 @@ wxSpinCtrlDouble* SurfaceInspector::makeFitSpinBox()
     box->SetDigits(2);
 
     // Perform a fit operation when the value changes
-    box->Bind(wxEVT_SPINCTRLDOUBLE, [=](wxSpinDoubleEvent&) { onFit(); });
+    box->Bind(wxEVT_SPINCTRLDOUBLE, [=](wxSpinDoubleEvent&) { onFit(axis); });
 
     return box;
 }
@@ -240,13 +241,13 @@ wxBoxSizer* SurfaceInspector::createFitTextureRow()
 
     // Create widgets from left to right
 	_fitTexture.label = new wxStaticText(this, wxID_ANY, _(LABEL_FIT_TEXTURE));
-	_fitTexture.width = makeFitSpinBox();
+	_fitTexture.width = makeFitSpinBox(Axis::X);
     _fitTexture.width->SetToolTip(
         "Number of whole texture images to fit horizontally. Use the spin "
         "buttons to change the value and apply the result immediately."
     );
     _fitTexture.x = new wxStaticText(this, wxID_ANY, "x");
-    _fitTexture.height = makeFitSpinBox();
+    _fitTexture.height = makeFitSpinBox(Axis::Y);
     _fitTexture.height->SetToolTip(
         "Number of whole texture images to fit vertically. Use the spin "
         "buttons to change the value and apply the result immediately."
@@ -615,15 +616,23 @@ void SurfaceInspector::doUpdate()
 	ui::PatchInspector::Instance().queueUpdate();
 }
 
-void SurfaceInspector::fitTexture()
+void SurfaceInspector::fitTexture(Axis axis)
 {
+    // If the preserve aspect button is disabled, we always fit on both axes
+    if (!_fitTexture.preserveAspectButton->GetValue())
+        axis = Axis::BOTH;
+
 	double repeatX = _fitTexture.width->GetValue();
 	double repeatY = _fitTexture.height->GetValue();
 
 	if (repeatX > 0.0 && repeatY > 0.0)
 	{
-		GlobalCommandSystem().executeCommand("FitTexture", repeatX, repeatY);
-	}
+        // User-specified fit values must always be >0, but we use -1 internally
+        // to signal not to fit on a particular axis.
+        GlobalCommandSystem().executeCommand("FitTexture",
+                                             (axis == Axis::Y ? -1 : repeatX),
+                                             (axis == Axis::X ? -1 : repeatY));
+    }
 	else
 	{
 		// Invalid repeatX && repeatY values
@@ -631,10 +640,10 @@ void SurfaceInspector::fitTexture()
 	}
 }
 
-void SurfaceInspector::onFit()
+void SurfaceInspector::onFit(Axis axis)
 {
-	// Call the according member method
-	fitTexture();
+    // Fit the texture then update our widget values with the new transform
+	fitTexture(axis);
 	doUpdate();
 }
 

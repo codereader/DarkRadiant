@@ -146,7 +146,6 @@ private:
 
     // Widget construction
 	void populateWindow();
-    wxSpinCtrlDouble* makeFitSpinBox();
     wxBoxSizer* createFitTextureRow();
 
 	// Connect IEvents to the widgets
@@ -161,14 +160,14 @@ private:
 	// Applies the entered shader to the current selection
 	void emitShader();
 
-	// Executes the fit command for the selection
-	void fitTexture();
+    // Fit texture on one or both axes
+    enum class Axis { X, Y, BOTH };
+    wxSpinCtrlDouble* makeFitSpinBox(Axis axis);
+	void fitTexture(Axis axis);
+	void onFit(Axis axis);
 
 	// The callback when the "select shader" button is pressed, opens the ShaderChooser dialog
 	void onShaderSelect(wxCommandEvent& ev);
-
-	// The callback for the Fit Texture button
-	void onFit();
 
 	// If any of the control button get clicked, an update is performed
 	void onUpdateAfterButtonClick(wxCommandEvent& ev);
