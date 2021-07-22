@@ -405,6 +405,30 @@ bool Repository::mergeIsInProgress()
     return state == GIT_REPOSITORY_STATE_MERGE;
 }
 
+void Repository::abortMerge()
+{
+    if (!mergeIsInProgress())
+    {
+        return;
+    }
+
+    auto head = getHead();
+
+    git_oid targetOid;
+    auto error = git_reference_name_to_id(&targetOid, _repository, head->getName().c_str());
+    GitException::ThrowOnError(error);
+
+    git_object* target;
+    error = git_object_lookup(&target, _repository, &targetOid, GIT_OBJECT_COMMIT);
+    GitException::ThrowOnError(error);
+
+    git_checkout_options checkoutOptions = GIT_CHECKOUT_OPTIONS_INIT;
+    checkoutOptions.checkout_strategy = GIT_CHECKOUT_FORCE;
+
+    error = git_reset(_repository, target, GIT_RESET_HARD, &checkoutOptions);
+    GitException::ThrowOnError(error);
+}
+
 Commit::Ptr Repository::findMergeBase(const Reference& first, const Reference& second)
 {
     git_oid firstOid;

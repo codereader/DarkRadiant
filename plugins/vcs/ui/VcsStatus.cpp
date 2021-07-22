@@ -198,10 +198,20 @@ void VcsStatus::onMapEvent(IMap::MapEvent ev)
         // Ask the user whether to cancel the git merge status
         if (wxutil::Messagebox::Show(_("Cancel Merge Operation?"),
             _("You've aborted the map merge. Do you want to abort the ongoing git merge operation too?\n"
-            "This will reset the repository to the state it had before the merge was started."),
+              "This will perform a hard reset in the repository to the state it had before the merge was started.\n\n"
+              "Important: All uncommitted changes in the working tree will be lost!"),
             ::ui::IDialog::MessageType::MESSAGE_ASK) == ::ui::IDialog::RESULT_YES)
         {
-            // TODO
+            try
+            {
+                _repository->abortMerge();
+            }
+            catch (git::GitException& ex)
+            {
+                wxutil::Messagebox::ShowError(ex.what());
+            }
+            
+            analyseRemoteStatus(_repository);
         }
     }
     else if (ev == IMap::MapMergeOperationFinished && _repository && _repository->mergeIsInProgress())

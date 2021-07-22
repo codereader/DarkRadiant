@@ -71,6 +71,8 @@ public:
     bool isReadyForMerge();
     bool mergeIsInProgress();
 
+    void abortMerge();
+
     Index::Ptr getIndex();
 
     // Finds a common ancestor of the two refs, to base a merge operation on
