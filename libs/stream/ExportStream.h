@@ -51,6 +51,12 @@ public:
 
         fs::path targetPath = _outputDirectory;
 
+        if (!fs::exists(targetPath))
+        {
+            rMessage() << "Creating directory: " << targetPath << std::endl;
+            fs::create_directories(targetPath);
+        }
+
         // Open a temporary file (leading underscore)
         _tempFile = targetPath / ("_" + _filename);
 
