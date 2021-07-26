@@ -104,13 +104,13 @@ void VcsStatus::createPopupMenu()
 
     ));
     _popupMenu->addItem(std::make_shared<wxutil::CommandMenuItem>(
-        new wxMenuItem(nullptr, wxID_ANY, _("Check for Changes"), ""),
+        new wxMenuItem(nullptr, wxID_ANY, _("Check for Server Changes"), ""),
         "GitFetch",
         [this]() { return !_taskInProgress; }
     ));
 
     _popupMenu->addItem(std::make_shared<wxutil::MenuItem>(
-        new wxMenuItem(nullptr, wxID_ANY, _("Integrate Changes from Server"), ""),
+        new wxMenuItem(nullptr, wxID_ANY, _("Sync/Integrate Server Changes"), ""),
         [this]() { performSync(_repository); },
         [this]() { return canSync(); }
     ));
