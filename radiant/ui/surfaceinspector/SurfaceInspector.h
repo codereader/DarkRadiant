@@ -30,16 +30,20 @@ class SurfaceInspector;
 typedef std::shared_ptr<SurfaceInspector> SurfaceInspectorPtr;
 
 /// Inspector for properties of a surface and its applied texture
-class SurfaceInspector : 
+class SurfaceInspector :
 	public wxutil::TransientWindow,
 	public sigc::trackable
 {
+    // Manipulatable value field with nudge buttons and a step size selector
 	struct ManipulatorRow
 	{
 		wxTextCtrl* value;
 		wxutil::ControlButton* smaller;
 		wxutil::ControlButton* larger;
 		wxTextCtrl* stepEntry;
+
+        // Set the text control to show the given value
+        void setValue(double val);
 	};
 
 	// This are the named manipulator rows (shift, scale, rotation, etc)
@@ -54,9 +58,13 @@ class SurfaceInspector :
 	{
 		wxStaticText* label;
 		wxStaticText* x;
-		wxButton* button;
+		wxButton* fitButton;
+        wxToggleButton* preserveAspectButton;
 		wxSpinCtrlDouble* width;
 		wxSpinCtrlDouble* height;
+
+        // Set sensitivity of all widgets
+        void enable(bool enabled);
 	} _fitTexture;
 
 	struct FlipTextureWidgets
@@ -134,10 +142,11 @@ private:
 	 * @returns: the structure containing the widget pointers.
 	 */
 	ManipulatorRow createManipulatorRow(wxWindow* parent,
-		const std::string& label, wxFlexGridSizer* table, bool vertical);
+		const std::string& label, wxFlexGridSizer* table);
 
-	// Adds all the widgets to the window
+    // Widget construction
 	void populateWindow();
+    wxBoxSizer* createFitTextureRow();
 
 	// Connect IEvents to the widgets
 	void connectEvents();
@@ -151,14 +160,14 @@ private:
 	// Applies the entered shader to the current selection
 	void emitShader();
 
-	// Executes the fit command for the selection
-	void fitTexture();
+    // Fit texture on one or both axes
+    enum class Axis { X, Y, BOTH };
+    wxSpinCtrlDouble* makeFitSpinBox(Axis axis);
+	void fitTexture(Axis axis);
+	void onFit(Axis axis);
 
 	// The callback when the "select shader" button is pressed, opens the ShaderChooser dialog
 	void onShaderSelect(wxCommandEvent& ev);
-
-	// The callback for the Fit Texture button
-	void onFit(wxCommandEvent& ev);
 
 	// If any of the control button get clicked, an update is performed
 	void onUpdateAfterButtonClick(wxCommandEvent& ev);

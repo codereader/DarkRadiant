@@ -33,7 +33,7 @@ uniform float		u_light_scale;
 // Invert vertex colour
 uniform bool uInvertVCol;
 
-// Activate ambbient light mode (brightness unaffected by direction)
+// Activate ambient light mode (brightness unaffected by direction)
 uniform bool uAmbientLight;
 
 varying vec3		var_vertex;
@@ -83,7 +83,8 @@ void	main()
 
 	// compute final color
     gl_FragColor = diffuse * (uInvertVCol ? vec4(1.0, 1.0, 1.0, 1.0) - gl_Color : gl_Color);
-    gl_FragColor.rgb += specular;
+    if (!uAmbientLight)
+        gl_FragColor.rgb += specular;
 	gl_FragColor.rgb *= attenuation_xy;
 	gl_FragColor.rgb *= attenuation_z;
 }

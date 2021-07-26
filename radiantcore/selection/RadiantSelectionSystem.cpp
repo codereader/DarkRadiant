@@ -149,7 +149,7 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
         case eComponent:
         {
             ComponentSelector selectionTester(selector, test, componentMode);
-            foreachSelected(selectionTester);
+            SelectionSystem::foreachSelected(selectionTester);
 
             std::for_each(selector.begin(), selector.end(), [&](const auto& p) { targetList.push_back(p.second); });
         }
@@ -476,17 +476,6 @@ void RadiantSelectionSystem::setSelectedAllComponents(bool selected)
 	_activeManipulator->setSelected(selected);
 }
 
-// Traverse the current selection and visit them with the given visitor class
-void RadiantSelectionSystem::foreachSelected(const Visitor& visitor)
-{
-    for (SelectionListType::const_iterator i = _selection.begin();
-         i != _selection.end();
-         /* in-loop increment */)
-    {
-        visitor.visit((i++)->first);
-    }
-}
-
 // Traverse the current selection components and visit them with the given visitor class
 void RadiantSelectionSystem::foreachSelectedComponent(const Visitor& visitor)
 {
@@ -744,7 +733,7 @@ void RadiantSelectionSystem::selectArea(SelectionTest& test, SelectionSystem::EM
             candidates.push_back(i->second);
         }
     }
-    else 
+    else
     {
         testSelectScene(candidates, test, test.getVolume(), Mode(), ComponentMode());
     }
@@ -771,7 +760,7 @@ void RadiantSelectionSystem::selectArea(SelectionTest& test, SelectionSystem::EM
 void RadiantSelectionSystem::onSelectionPerformed()
 {
     // #5460: To fix the workzone not being recalculated when the selection changes,
-    // invoke getWorkZone() here. Since the core binary doesn't have any idle processing 
+    // invoke getWorkZone() here. Since the core binary doesn't have any idle processing
     // anymore, we need to recalculate the workzone after the user is done selecting
     getWorkZone();
 }
@@ -810,7 +799,7 @@ void RadiantSelectionSystem::onManipulationEnd()
     }
 
     // Remove all degenerated brushes from the scene graph (should emit a warning)
-    foreachSelected(RemoveDegenerateBrushWalker());
+    SelectionSystem::foreachSelected(RemoveDegenerateBrushWalker());
 
     pivotChanged();
     activeManipulator->setSelected(false);

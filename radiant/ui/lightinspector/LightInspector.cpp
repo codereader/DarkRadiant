@@ -57,14 +57,16 @@ namespace
 }
 
 // Private constructor sets up dialog
-LightInspector::LightInspector() : 
+LightInspector::LightInspector() :
     wxutil::TransientWindow(_(LIGHTINSPECTOR_TITLE), GlobalMainFrame().getWxTopLevelWindow(), true),
     _isProjected(false),
     _texSelector(nullptr),
     _updateActive(false),
     _supportsAiSee(game::current::getValue<bool>("/light/supportsAiSeeSpawnarg", false))
 {
-    loadNamedPanel(this, "LightInspectorMainPanel");
+    // Load XRC panel and access widgets
+    wxPanel* contents = loadNamedPanel(this, "LightInspectorMainPanel");
+    _brightnessSlider = findNamedObject<wxSlider>(this, "BrightnessSlider");
 
     setupLightShapeOptions();
     setupOptionsPanel();
@@ -73,8 +75,8 @@ LightInspector::LightInspector() :
     makeLabelBold(this, "LightInspectorVolumeLabel");
     makeLabelBold(this, "LightInspectorColourLabel");
     makeLabelBold(this, "LightInspectorOptionsLabel");
-    makeLabelBold(this, "LightInspectorTextureLabel");
 
+    SetMinSize(contents->GetEffectiveMinSize());
     InitialiseWindowPosition(600, 360, RKEY_WINDOW_STATE);
 }
 
@@ -144,8 +146,31 @@ void LightInspector::setupLightShapeOptions()
 // Connect the options checkboxes
 void LightInspector::setupOptionsPanel()
 {
+    // Colour and brightness
     findNamedObject<wxColourPickerCtrl>(this, "LightInspectorColour")->Bind(
-        wxEVT_COLOURPICKER_CHANGED, &LightInspector::_onColourChange, this);
+        wxEVT_COLOURPICKER_CHANGED, &LightInspector::_onColourChange, this
+    );
+    _brightnessSlider->Bind( // drag in progress
+        wxEVT_SCROLL_THUMBTRACK,
+        [=](wxScrollEvent&) {
+            if (!_adjustingBrightness && !GlobalUndoSystem().operationStarted())
+            {
+                GlobalUndoSystem().start();
+                _adjustingBrightness = true;
+            }
+            adjustBrightness();
+        }
+    );
+    _brightnessSlider->Bind( // drag finished
+        wxEVT_SCROLL_CHANGED,
+        [=](wxScrollEvent&) {
+            if (_adjustingBrightness) {
+                GlobalUndoSystem().finish("Adjust light brightness");
+                _adjustingBrightness = false;
+            }
+            updateColourPicker();
+        }
+    );
 
     findNamedObject<wxCheckBox>(this, "LightInspectorParallel")->Bind(wxEVT_CHECKBOX, &LightInspector::_onOptionsToggle, this);
     findNamedObject<wxCheckBox>(this, "LightInspectorNoShadows")->Bind(wxEVT_CHECKBOX, &LightInspector::_onOptionsToggle, this);
@@ -167,7 +192,7 @@ void LightInspector::setupOptionsPanel()
 void LightInspector::setupTextureWidgets()
 {
     wxPanel* parent = findNamedObject<wxPanel>(this, "LightInspectorChooserPanel");
-    
+
     _texSelector = new ShaderSelector(parent, this, getPrefixList(), true);
     parent->GetSizer()->Add(_texSelector, 1, wxEXPAND);
 }
@@ -317,6 +342,119 @@ void LightInspector::_onProjToggle(wxCommandEvent& ev)
     writeToAllEntities();
 }
 
+namespace
+{
+    // Return highest RGB component from a given colour
+    float highestComponent(const Vector3& colour)
+    {
+        float highest = colour.x();
+        if (colour.y() > highest) highest = colour.y();
+        if (colour.z() > highest) highest = colour.z();
+        return highest;
+    }
+
+    // Get colour of entity as float vector [0.0 - 1.0]
+    Vector3 entityColour(const Entity& entity)
+    {
+        // If the light has no colour key, use a default of white rather than
+        // the Vector3 default of black (0, 0, 0).
+        std::string colString = entity.getKeyValue("_color");
+        if (colString.empty())
+        {
+            colString = "1.0 1.0 1.0";
+        }
+        return string::convert<Vector3>(colString);
+    }
+
+    inline void setEntityValueIfDifferent(Entity* entity,
+                                          const std::string& key,
+                                          const std::string& value)
+    {
+        // Only set the values if the entity carries different ones
+        // to avoid triggering lots of undo system state savings
+        if (entity->getKeyValue(key) != value)
+        {
+            entity->setKeyValue(key, value);
+        }
+    }
+
+    // Set colour on entity
+    void setEntityColour(Entity* entity, const Vector3& col)
+    {
+        setEntityValueIfDifferent(
+            entity, "_color",
+            fmt::format("{:.3f} {:.3f} {:.3f}", col.x(), col.y(), col.z())
+        );
+    }
+
+    // Convert Vector3 colour to wxColour
+    wxColour toWx(const Vector3& rgb)
+    {
+        Vector3 eightBit = rgb * 255;
+        return wxColour(eightBit.x(), eightBit.y(), eightBit.z());
+    }
+
+    // Convert linear light value to/from displayed slider value
+    const float SLIDER_POWER = 1.25;
+    float fromSlider(float value)
+    {
+        return std::pow(value / 100.f, SLIDER_POWER);
+    }
+    float toSlider(float value)
+    {
+        return std::pow(value, 1.0/SLIDER_POWER) * 100.f;
+    }
+}
+
+float LightInspector::highestComponentAllLights() const
+{
+    float highest = 0;
+    for (const Entity* e: _lightEntities)
+    {
+        Vector3 col = entityColour(*e);
+        float entityHighest = highestComponent(col);
+        if (entityHighest > highest)
+            highest = entityHighest;
+    }
+    return highest;
+}
+
+void LightInspector::updateColourPicker()
+{
+    // Examine colour of all entities. If they are the same, use this colour in
+    // the picker, otherwise show an "inconsistent" placeholder value.
+    auto col = wxNullColour;
+    for (const Entity* e: _lightEntities)
+    {
+        wxColour entityCol = toWx(entityColour(*e));
+        if (col == wxNullColour) {
+            // Store first colour seen
+            col = entityCol;
+        }
+        else if (col != entityCol) {
+            // Inconsistent
+            col = wxTransparentColour;
+            break;
+        }
+    }
+
+    // Set the picker to show the chosen colour
+    auto picker = findNamedObject<wxColourPickerCtrl>(this, "LightInspectorColour");
+    picker->SetColour(col);
+}
+
+void LightInspector::updateColourWidgets()
+{
+    // Set colour chooser button
+    updateColourPicker();
+
+    // Set brightness slider based on the brightest channel. This means that
+    // 100% blue and 100% white will both show as maximum brightness, which
+    // isn't correct in terms of optics, but prevents the slider from
+    // overbrightening a colour and changing the hue.
+    _brightnessSlider->SetValue(toSlider(highestComponentAllLights()));
+}
+
 // Get keyvals from entity and insert into text entries
 void LightInspector::getValuesFromEntity()
 {
@@ -350,20 +488,7 @@ void LightInspector::getValuesFromEntity()
 		}
 	}
 
-    // Get the colour key from the entity to set the GtkColorButton. If the
-    // light has no colour key, use a default of white rather than the Vector3
-    // default of black (0, 0, 0).
-    std::string colString = entity->getKeyValue("_color");
-    if (colString.empty())
-    {
-        colString = "1.0 1.0 1.0";
-    }
-
-    Vector3 colour = string::convert<Vector3>(colString);
-    colour *= 255;
-
-    findNamedObject<wxColourPickerCtrl>(this, "LightInspectorColour")->
-        SetColour(wxColour(colour[0], colour[1], colour[2]));
+    updateColourWidgets();
 
     // Set the texture selection from the "texture" key
     _texSelector->setSelection(entity->getKeyValue("texture"));
@@ -400,6 +525,43 @@ void LightInspector::getValuesFromEntity()
     }
 }
 
+void LightInspector::adjustBrightness() const
+{
+    // The slider represents the absolute brightness of the highest component
+    // (which means that 100% sets that component to 1.0, and it is hopefully
+    // not possible to overbrighten and lose colour information).
+    float origHighest = highestComponentAllLights();
+
+    // Adjust all lights in proportion to slider motion
+    for (auto light: _lightEntities)
+    {
+        // Get existing colour for THIS light
+        Vector3 colour = entityColour(*light);
+
+        // Calculate the adjustment ratio to be applied to all lights
+        float newHighest = std::max(
+            fromSlider(_brightnessSlider->GetValue()), 0.01f
+        );
+        Vector3 newColour;
+        if (origHighest > 0.0f)
+        {
+            float ratio = newHighest / origHighest;
+            newColour = colour * ratio;
+        }
+        else
+        {
+            // No point in trying to brighten black, just set a grey value based
+            // on the brightness value
+            newColour = Vector3(newHighest, newHighest, newHighest);
+        }
+
+        setEntityColour(light, newColour);
+    }
+
+    // Update camera immediately to provide user feedback
+    GlobalCameraManager().getActiveView().queueDraw();
+}
+
 // Write to all entities
 void LightInspector::writeToAllEntities()
 {
@@ -421,28 +583,16 @@ void LightInspector::setKeyValueAllLights(const std::string& key,
     }
 }
 
-inline void setEntityValueIfDifferent(Entity* entity, const std::string& key, const std::string& value)
-{
-	// Only set the values if the entity carries different ones
-	// to avoid triggering lots of undo system state savings
-	if (entity->getKeyValue(key) != value)
-	{
-		entity->setKeyValue(key, value);
-	}
-}
-
 // Set the keyvalues on the entity from the dialog widgets
 void LightInspector::setValuesOnEntity(Entity* entity)
 {
     // Set the "_color" keyvalue
     wxColour col = findNamedObject<wxColourPickerCtrl>(this, "LightInspectorColour")->GetColour();
+    Vector3 colFloat(col.Red() / 255.0f, col.Green() / 255.0f,
+                     col.Blue() / 255.0f);
+    setEntityColour(entity, colFloat);
 
-	setEntityValueIfDifferent(entity, "_color", fmt::format("{:.3f} {:.3f} {:.3f}", 
-							  		(col.Red() / 255.0f), 
-							  		(col.Green() / 255.0f),
-							  		(col.Blue() / 255.0f)));
-
-	// Write out all vectors to the entity
+    // Write out all vectors to the entity
 	for (const auto& pair : _valueMap)
 	{
 		// Only set the values if the entity carries different ones

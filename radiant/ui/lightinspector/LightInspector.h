@@ -18,26 +18,26 @@ class wxColourPickerEvent;
 namespace ui
 {
 
-/** Dialog to allow adjustment of properties on lights, including the conversion
- * between projected and point lights.
- */
 class LightInspector;
 typedef std::shared_ptr<LightInspector> LightInspectorPtr;
 
-class LightInspector : 
+/**
+ * \brief Dialog to allow adjustment of properties on lights
+ */
+class LightInspector :
     public wxutil::TransientWindow,
     public ShaderSelector::Client,
     public sigc::trackable,
     private wxutil::XmlResourceBasedWidget
 {
-private:
     // Projected light flag
     bool _isProjected;
 
-    // Texture selection combo
+    // Internal widgets
     ShaderSelector* _texSelector;
+    wxSlider* _brightnessSlider;
 
-    // The light entity to edit
+    // The light entities to edit
     typedef std::vector<Entity*> EntityList;
     EntityList _lightEntities;
 
@@ -47,6 +47,10 @@ private:
 
     // Disables callbacks if set to TRUE (during widget updates)
     bool _updateActive;
+
+    // Track if a brightness adjustment is in progress (which needs an undo
+    // command when finished)
+    bool _adjustingBrightness = false;
 
     bool _supportsAiSee;
 
@@ -74,8 +78,14 @@ private:
     void _onProjToggle(wxCommandEvent& ev);
     void _onColourChange(wxColourPickerEvent& ev);
     void _onOptionsToggle(wxCommandEvent& ev);
+    void adjustBrightness() const;
 
+    void updateColourPicker();
+    void updateColourWidgets();
     void updateLightShapeWidgets();
+
+    // Get the highest RGB component of ALL selected light colours
+    float highestComponentAllLights() const;
 
     // Update the dialog widgets from keyvals on the first selected entity
     void getValuesFromEntity();

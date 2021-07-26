@@ -50,7 +50,7 @@ namespace
     const char* const LABEL_VSCALE = N_("Vert. Scale:");
     const char* const LABEL_ROTATION = N_("Rotation:");
     const char* const LABEL_SHADER = N_("Shader:");
-    const char* const FOLDER_ICON = "folder16.png";
+    const char* const FOLDER_ICON = "treeView16.png";
     const char* const LABEL_STEP = N_("Step:");
 
     const char* LABEL_FIT_TEXTURE = N_("Fit Texture:");
@@ -88,7 +88,22 @@ namespace
     const double MAX_FLOAT_RESOLUTION = 1.0E-5;
 }
 
-SurfaceInspector::SurfaceInspector() : 
+void SurfaceInspector::ManipulatorRow::setValue(double v)
+{
+    value->SetValue(fmt::format("{}", v));
+}
+
+void SurfaceInspector::FitTextureWidgets::enable(bool enabled)
+{
+    label->Enable(enabled);
+    x->Enable(enabled);
+    fitButton->Enable(enabled);
+    preserveAspectButton->Enable(enabled);
+    width->Enable(enabled);
+    height->Enable(enabled);
+}
+
+SurfaceInspector::SurfaceInspector() :
 	wxutil::TransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getWxTopLevelWindow(), true),
 	_callbackActive(false),
 	_updateNeeded(false)
@@ -146,9 +161,10 @@ void SurfaceInspector::connectEvents()
 {
 	// Be sure to connect these signals BEFORE the buttons are connected
 	// to the events, so that the doUpdate() call gets invoked after the actual event has been fired.
-	_fitTexture.button->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onFit), NULL, this);
+    _fitTexture.fitButton->Bind(wxEVT_BUTTON,
+                                [=](wxCommandEvent&) { onFit(Axis::BOTH); });
 
-	_flipTexture.flipX->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onUpdateAfterButtonClick), NULL, this);
+    _flipTexture.flipX->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onUpdateAfterButtonClick), NULL, this);
 	_flipTexture.flipY->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onUpdateAfterButtonClick), NULL, this);
 	_alignTexture.top->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onUpdateAfterButtonClick), NULL, this);
 	_alignTexture.bottom->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onUpdateAfterButtonClick), NULL, this);
@@ -162,7 +178,7 @@ void SurfaceInspector::connectEvents()
 		i->second.smaller->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onUpdateAfterButtonClick), NULL, this);
 		i->second.larger->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onUpdateAfterButtonClick), NULL, this);
 	}
-	
+
 	// Connect the ToggleTexLock item to the according command
 	GlobalEventManager().findEvent("TogTexLock")->connectToggleButton(_texLockButton);
 
@@ -170,12 +186,12 @@ void SurfaceInspector::connectEvents()
 	wxutil::button::connectToCommand(_flipTexture.flipY, "FlipTextureY");
 	wxutil::button::connectToCommand(_modifyTex.natural, "TextureNatural");
 	wxutil::button::connectToCommand(_modifyTex.normalise, "NormaliseTexture");
-	
+
 	wxutil::button::connectToCommand(_alignTexture.top, "TexAlignTop");
 	wxutil::button::connectToCommand(_alignTexture.bottom, "TexAlignBottom");
 	wxutil::button::connectToCommand(_alignTexture.right, "TexAlignRight");
 	wxutil::button::connectToCommand(_alignTexture.left, "TexAlignLeft");
-		
+
 	wxutil::button::connectToCommand(_manipulators[HSHIFT].smaller, "TexShiftLeft");
 	wxutil::button::connectToCommand(_manipulators[HSHIFT].larger, "TexShiftRight");
 	wxutil::button::connectToCommand(_manipulators[VSHIFT].larger, "TexShiftUp");
@@ -202,39 +218,100 @@ void SurfaceInspector::keyChanged()
 	_callbackActive = false;
 }
 
+wxSpinCtrlDouble* SurfaceInspector::makeFitSpinBox(Axis axis)
+{
+    wxSpinCtrlDouble* box = new wxSpinCtrlDouble(this, wxID_ANY);
+
+    // Set visual parameters
+    box->SetMinSize(wxSize(box->GetCharWidth() * 16, -1));
+    box->SetRange(1.0, 1000.0);
+    box->SetIncrement(1.0);
+    box->SetValue(1.0);
+    box->SetDigits(2);
+
+    // Perform a fit operation when the value changes
+    box->Bind(wxEVT_SPINCTRLDOUBLE, [=](wxSpinDoubleEvent&) { onFit(axis); });
+
+    return box;
+}
+
+wxBoxSizer* SurfaceInspector::createFitTextureRow()
+{
+	wxBoxSizer* fitTextureHBox = new wxBoxSizer(wxHORIZONTAL);
+
+    // Create widgets from left to right
+	_fitTexture.label = new wxStaticText(this, wxID_ANY, _(LABEL_FIT_TEXTURE));
+	_fitTexture.width = makeFitSpinBox(Axis::X);
+    _fitTexture.width->SetToolTip(
+        "Number of whole texture images to fit horizontally. Use the spin "
+        "buttons to change the value and apply the result immediately."
+    );
+    _fitTexture.x = new wxStaticText(this, wxID_ANY, "x");
+    _fitTexture.height = makeFitSpinBox(Axis::Y);
+    _fitTexture.height->SetToolTip(
+        "Number of whole texture images to fit vertically. Use the spin "
+        "buttons to change the value and apply the result immediately."
+    );
+	_fitTexture.fitButton = new wxButton(this, wxID_ANY, _(LABEL_FIT));
+    _fitTexture.fitButton->SetToolTip(
+        "Fit texture using the current values for both axes (ignoring texture "
+        "aspect ratio)"
+    );
+    _fitTexture.preserveAspectButton = new wxBitmapToggleButton(
+        this, wxID_ANY, wxutil::GetLocalBitmap("preserveAspect.png")
+    );
+    _fitTexture.preserveAspectButton->SetToolTip(
+        "When fitting texture on one axis using the spin buttons, adjust the "
+        "other axis automatically to preserve texture aspect ratio"
+    );
+
+    // Add widgets to the sizer
+    fitTextureHBox->Add(_fitTexture.width, 1, wxALIGN_CENTER_VERTICAL);
+    fitTextureHBox->Add(_fitTexture.x, 0, wxALIGN_CENTER | wxLEFT | wxRIGHT, 3);
+    fitTextureHBox->Add(_fitTexture.height, 1, wxALIGN_CENTER_VERTICAL);
+    fitTextureHBox->Add(_fitTexture.preserveAspectButton, 0,
+                        wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
+    fitTextureHBox->Add(_fitTexture.fitButton, 1,
+                        wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
+
+    return fitTextureHBox;
+}
+
 void SurfaceInspector::populateWindow()
 {
-	wxPanel* dialogPanel = new wxPanel(this, wxID_ANY);
-	dialogPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
-
 	wxBoxSizer* dialogVBox = new wxBoxSizer(wxVERTICAL);
 
-	dialogPanel->GetSizer()->Add(dialogVBox, 1, wxEXPAND | wxALL, 12);
-
 	// Create the title label (bold font)
-	wxStaticText* topLabel = new wxStaticText(dialogPanel, wxID_ANY, _(LABEL_PROPERTIES));
+	wxStaticText* topLabel = new wxStaticText(this, wxID_ANY, _(LABEL_PROPERTIES));
 	topLabel->SetFont(topLabel->GetFont().Bold());
-	
+
 	// 6x2 table with 12 pixel hspacing and 6 pixels vspacing
 	wxFlexGridSizer* table = new wxFlexGridSizer(6, 2, 6, 12);
 	table->AddGrowableCol(1);
 
 	// Create the entry field and pack it into the first table row
-	wxStaticText* shaderLabel = new wxStaticText(dialogPanel, wxID_ANY, _(LABEL_SHADER));
+	wxStaticText* shaderLabel = new wxStaticText(this, wxID_ANY, _(LABEL_SHADER));
 	table->Add(shaderLabel, 0, wxALIGN_CENTER_VERTICAL);
 
 	wxBoxSizer* shaderHBox = new wxBoxSizer(wxHORIZONTAL);
 
-	_shaderEntry = new wxTextCtrl(dialogPanel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
+	_shaderEntry = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
 	_shaderEntry->SetMinSize(wxSize(100, -1));
 	_shaderEntry->Connect(wxEVT_TEXT_ENTER, wxCommandEventHandler(SurfaceInspector::onShaderEntryActivate), NULL, this);
 	shaderHBox->Add(_shaderEntry, 1, wxEXPAND);
 
 	// Create the icon button to open the ShaderChooser
-	_selectShaderButton = new wxBitmapButton(dialogPanel, wxID_ANY, 
-		wxutil::GetLocalBitmap(FOLDER_ICON));
-	_selectShaderButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onShaderSelect), NULL, this);
-	shaderHBox->Add(_selectShaderButton, 0, wxLEFT, 6);
+    _selectShaderButton = new wxBitmapButton(
+        this, wxID_ANY, wxutil::GetLocalBitmap(FOLDER_ICON)
+    );
+    _selectShaderButton->SetToolTip(
+        "Choose shader using the shader selection dialog")
+    ;
+    _selectShaderButton->Connect(
+        wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onShaderSelect),
+        NULL, this
+    );
+    shaderHBox->Add(_selectShaderButton, 0, wxLEFT, 6);
 
 	table->Add(shaderHBox, 1, wxEXPAND);
 
@@ -243,16 +320,16 @@ void SurfaceInspector::populateWindow()
 	dialogVBox->Add(table, 0, wxEXPAND | wxLEFT, 18); // 18 pixels left indentation
 
 	// Populate the table with the according widgets
-	_manipulators[HSHIFT] = createManipulatorRow(dialogPanel, _(LABEL_HSHIFT), table, false);
-	_manipulators[VSHIFT] = createManipulatorRow(dialogPanel, _(LABEL_VSHIFT), table, true);
-	_manipulators[HSCALE] = createManipulatorRow(dialogPanel, _(LABEL_HSCALE), table, false);
-	_manipulators[VSCALE] = createManipulatorRow(dialogPanel, _(LABEL_VSCALE), table, true);
-	_manipulators[ROTATION] = createManipulatorRow(dialogPanel, _(LABEL_ROTATION), table, false);
+	_manipulators[HSHIFT] = createManipulatorRow(this, _(LABEL_HSHIFT), table);
+	_manipulators[VSHIFT] = createManipulatorRow(this, _(LABEL_VSHIFT), table);
+	_manipulators[HSCALE] = createManipulatorRow(this, _(LABEL_HSCALE), table);
+	_manipulators[VSCALE] = createManipulatorRow(this, _(LABEL_VSCALE), table);
+	_manipulators[ROTATION] = createManipulatorRow(this, _(LABEL_ROTATION), table);
 
 	// ======================== Texture Operations ====================================
 
 	// Create the texture operations label (bold font)
-	wxStaticText* operLabel = new wxStaticText(dialogPanel, wxID_ANY, _(LABEL_OPERATIONS));
+	wxStaticText* operLabel = new wxStaticText(this, wxID_ANY, _(LABEL_OPERATIONS));
 	operLabel->SetFont(operLabel->GetFont().Bold());
 
     // Setup the table with default spacings
@@ -266,48 +343,18 @@ void SurfaceInspector::populateWindow()
 
 	// ------------------------ Fit Texture -----------------------------------
 
-	wxBoxSizer* fitTextureHBox = new wxBoxSizer(wxHORIZONTAL);
-
-	// Create the "Fit Texture" label
-	_fitTexture.label = new wxStaticText(dialogPanel, wxID_ANY, _(LABEL_FIT_TEXTURE));
-	
-	// Create the width entry field
-	_fitTexture.width = new wxSpinCtrlDouble(dialogPanel, wxID_ANY);
-    _fitTexture.width->SetMinSize(wxSize(_fitTexture.width->GetCharWidth() * 8, -1));
-	_fitTexture.width->SetRange(0.0, 1000.0);
-	_fitTexture.width->SetIncrement(1.0);
-	_fitTexture.width->SetValue(1.0);
-    _fitTexture.width->SetDigits(2);
-
-	// Create the "x" label
-	_fitTexture.x = new wxStaticText(dialogPanel, wxID_ANY, "x");
-
-	// Create the height entry field
-	_fitTexture.height = new wxSpinCtrlDouble(dialogPanel, wxID_ANY);
-    _fitTexture.height->SetMinSize(wxSize(_fitTexture.height->GetCharWidth() * 8, -1));
-	_fitTexture.height->SetRange(0.0, 1000.0);
-	_fitTexture.height->SetIncrement(1.0);
-	_fitTexture.height->SetValue(1.0);
-    _fitTexture.height->SetDigits(2);
-
-	_fitTexture.button = new wxButton(dialogPanel, wxID_ANY, _(LABEL_FIT));
-
-	fitTextureHBox->Add(_fitTexture.width, 0, wxALIGN_CENTER_VERTICAL);
-	fitTextureHBox->Add(_fitTexture.x, 0, wxALIGN_CENTER | wxLEFT | wxRIGHT, 3);
-    fitTextureHBox->Add(_fitTexture.height, 0, wxALIGN_CENTER_VERTICAL);
-    fitTextureHBox->Add(_fitTexture.button, 1, wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
-
+	wxBoxSizer* fitTextureHBox = createFitTextureRow();
 	operTable->Add(_fitTexture.label, 0, wxALIGN_CENTER_VERTICAL);
 	operTable->Add(fitTextureHBox, 1, wxEXPAND);
 
 	// ------------------------ Align Texture -----------------------------------
 
-	_alignTexture.label = new wxStaticText(dialogPanel, wxID_ANY, _(LABEL_ALIGN_TEXTURE));
+	_alignTexture.label = new wxStaticText(this, wxID_ANY, _(LABEL_ALIGN_TEXTURE));
 
-	_alignTexture.top = new wxButton(dialogPanel, wxID_ANY, _(LABEL_ALIGN_TOP));
-	_alignTexture.bottom = new wxButton(dialogPanel, wxID_ANY, _(LABEL_ALIGN_BOTTOM));
-	_alignTexture.left = new wxButton(dialogPanel, wxID_ANY, _(LABEL_ALIGN_LEFT));
-	_alignTexture.right = new wxButton(dialogPanel, wxID_ANY, _(LABEL_ALIGN_RIGHT));
+	_alignTexture.top = new wxButton(this, wxID_ANY, _(LABEL_ALIGN_TOP));
+	_alignTexture.bottom = new wxButton(this, wxID_ANY, _(LABEL_ALIGN_BOTTOM));
+	_alignTexture.left = new wxButton(this, wxID_ANY, _(LABEL_ALIGN_LEFT));
+	_alignTexture.right = new wxButton(this, wxID_ANY, _(LABEL_ALIGN_RIGHT));
 
 	wxGridSizer* alignTextureBox = new wxGridSizer(1, 4, 0, 6);
 
@@ -321,10 +368,10 @@ void SurfaceInspector::populateWindow()
 
 	// ------------------------ Flip Texture -----------------------------------
 
-	_flipTexture.label = new wxStaticText(dialogPanel, wxID_ANY, _(LABEL_FLIP_TEXTURE));
+	_flipTexture.label = new wxStaticText(this, wxID_ANY, _(LABEL_FLIP_TEXTURE));
 
-	_flipTexture.flipX = new wxButton(dialogPanel, wxID_ANY, _(LABEL_FLIPX));
-	_flipTexture.flipY = new wxButton(dialogPanel, wxID_ANY, _(LABEL_FLIPY));
+	_flipTexture.flipX = new wxButton(this, wxID_ANY, _(LABEL_FLIPX));
+	_flipTexture.flipY = new wxButton(this, wxID_ANY, _(LABEL_FLIPY));
 
 	wxGridSizer* flipTextureBox = new wxGridSizer(1, 2, 0, 6);
 
@@ -336,10 +383,10 @@ void SurfaceInspector::populateWindow()
 
 	// ------------------------ Modify Texture -----------------------------------
 
-	_modifyTex.label = new wxStaticText(dialogPanel, wxID_ANY, _(LABEL_MODIFY_TEXTURE));
+	_modifyTex.label = new wxStaticText(this, wxID_ANY, _(LABEL_MODIFY_TEXTURE));
 
-	_modifyTex.natural = new wxButton(dialogPanel, wxID_ANY, _(LABEL_NATURAL));
-	_modifyTex.normalise = new wxButton(dialogPanel, wxID_ANY, _(LABEL_NORMALISE));
+	_modifyTex.natural = new wxButton(this, wxID_ANY, _(LABEL_NATURAL));
+	_modifyTex.normalise = new wxButton(this, wxID_ANY, _(LABEL_NORMALISE));
 
 	wxGridSizer* modTextureBox = new wxGridSizer(1, 2, 0, 6);
 
@@ -351,16 +398,16 @@ void SurfaceInspector::populateWindow()
 
 	// ------------------------ Default Scale -----------------------------------
 
-	wxStaticText* defaultScaleLabel = new wxStaticText(dialogPanel, wxID_ANY, _(LABEL_DEFAULT_SCALE));
+	wxStaticText* defaultScaleLabel = new wxStaticText(this, wxID_ANY, _(LABEL_DEFAULT_SCALE));
 
-	_defaultTexScale = new wxSpinCtrlDouble(dialogPanel, wxID_ANY);
+	_defaultTexScale = new wxSpinCtrlDouble(this, wxID_ANY);
 	_defaultTexScale->SetMinSize(wxSize(55, -1));
 	_defaultTexScale->SetRange(0.0, 1000.0);
 	_defaultTexScale->SetIncrement(0.1);
 	_defaultTexScale->SetDigits(3);
 
 	// Texture Lock Toggle
-	_texLockButton = new wxToggleButton(dialogPanel, wxID_ANY, _(LABEL_TEXTURE_LOCK));
+	_texLockButton = new wxToggleButton(this, wxID_ANY, _(LABEL_TEXTURE_LOCK));
 
 	wxGridSizer* defaultScaleBox = new wxGridSizer(1, 2, 0, 6);
 
@@ -372,10 +419,14 @@ void SurfaceInspector::populateWindow()
 
 	operTable->Add(defaultScaleLabel, 0, wxALIGN_CENTER_VERTICAL);
 	operTable->Add(defaultScaleBox, 1, wxEXPAND);
+
+    wxBoxSizer* border = new wxBoxSizer(wxVERTICAL);
+    border->Add(dialogVBox, 1, wxEXPAND | wxALL, 12);
+	SetSizerAndFit(border);
 }
 
 SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
-	wxWindow* parent, const std::string& label, wxFlexGridSizer* table, bool vertical)
+	wxWindow* parent, const std::string& label, wxFlexGridSizer* table)
 {
 	ManipulatorRow manipRow;
 
@@ -389,45 +440,21 @@ SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
 	manipRow.value->SetMinSize(wxSize(60, -1));
 	manipRow.value->Connect(wxEVT_TEXT_ENTER, wxCommandEventHandler(SurfaceInspector::onValueEntryActivate), NULL, this);
 
-	wxBoxSizer* controlButtonBox = NULL;
-
-	if (vertical)
-	{
-		controlButtonBox = new wxBoxSizer(wxVERTICAL);
-        controlButtonBox->SetMinSize(30, 24);
-
-		manipRow.larger = new wxutil::ControlButton(parent, 
-			wxutil::GetLocalBitmap("arrow_up.png"));
-		manipRow.larger->SetMinSize(wxSize(30, 12));
-		controlButtonBox->Add(manipRow.larger, 0);
-
-		manipRow.smaller = new wxutil::ControlButton(parent, 
-			wxutil::GetLocalBitmap("arrow_down.png"));
-		manipRow.smaller->SetMinSize(wxSize(30, 12));
-		controlButtonBox->Add(manipRow.smaller, 0);
-	}
-	else
-	{
-		controlButtonBox = new wxBoxSizer(wxHORIZONTAL);
-        controlButtonBox->SetMinSize(24, 24);
-
-		manipRow.smaller = new wxutil::ControlButton(parent, 
-			wxutil::GetLocalBitmap("arrow_left.png"));
-		manipRow.smaller->SetMinSize(wxSize(15, 24));
-		controlButtonBox->Add(manipRow.smaller, 0);
-
-		manipRow.larger = new wxutil::ControlButton(parent, 
-			wxutil::GetLocalBitmap("arrow_right.png"));
-		manipRow.larger->SetMinSize(wxSize(15, 24));
-		controlButtonBox->Add(manipRow.larger, 0);
-	}
+    // Create the nudge buttons
+	wxBoxSizer* controlButtonBox = new wxBoxSizer(wxHORIZONTAL);
+    manipRow.smaller = new wxutil::ControlButton(parent,
+        wxutil::GetLocalBitmap("arrow_left.png"));
+    controlButtonBox->Add(manipRow.smaller, 0);
+    controlButtonBox->AddSpacer(2);
+    manipRow.larger = new wxutil::ControlButton(parent,
+        wxutil::GetLocalBitmap("arrow_right.png"));
+    controlButtonBox->Add(manipRow.larger, 0);
 
 	// Create the label
 	wxStaticText* steplabel = new wxStaticText(parent, wxID_ANY, _(LABEL_STEP));
 
 	// Create the entry field
 	manipRow.stepEntry = new wxTextCtrl(parent, wxID_ANY, "");
-	manipRow.stepEntry->SetMinSize(wxSize(40, -1));
 
 	// Arrange all items in a row
     hbox->Add(manipRow.value, 1, wxALIGN_CENTER_VERTICAL);
@@ -480,12 +507,12 @@ void SurfaceInspector::emitTexDef()
 	UndoableCommand undo("textureDefinitionSetSelected");
 
 	GlobalSelectionSystem().foreachFace([&](IFace& face)
-	{ 
-		face.setShiftScaleRotation(shiftScaleRotate); 
+	{
+		face.setShiftScaleRotation(shiftScaleRotate);
 	});
 
 	SceneChangeNotify();
-	
+
 	// Update the Texture Tools
 	radiant::TextureChangedMessage::Send();
 	// Update the TexTool instance as well
@@ -510,13 +537,11 @@ void SurfaceInspector::updateTexDef()
 	    texdef.rotate = float_snapped(texdef.rotate, MAX_FLOAT_RESOLUTION);
 
 	    // Load the values into the widgets
-	    _manipulators[HSHIFT].value->SetValue(string::to_string(texdef.shift[0]));
-	    _manipulators[VSHIFT].value->SetValue(string::to_string(texdef.shift[1]));
-
-	    _manipulators[HSCALE].value->SetValue(string::to_string(texdef.scale[0]));
-	    _manipulators[VSCALE].value->SetValue(string::to_string(texdef.scale[1]));
-
-	    _manipulators[ROTATION].value->SetValue(string::to_string(texdef.rotate));
+	    _manipulators[HSHIFT].setValue(texdef.shift[0]);
+	    _manipulators[VSHIFT].setValue(texdef.shift[1]);
+	    _manipulators[HSCALE].setValue(texdef.scale[0]);
+	    _manipulators[VSCALE].setValue(texdef.scale[1]);
+	    _manipulators[ROTATION].setValue(texdef.rotate);
     }
 }
 
@@ -544,10 +569,7 @@ void SurfaceInspector::doUpdate()
 	const SelectionInfo& selectionInfo = GlobalSelectionSystem().getSelectionInfo();
 
 	bool valueSensitivity = false;
-	bool fitSensitivity = (selectionInfo.totalCount > 0);
-	bool flipSensitivity = (selectionInfo.totalCount > 0);
-	bool applySensitivity = (selectionInfo.totalCount > 0);
-	bool alignSensitivity = (selectionInfo.totalCount > 0);
+	bool haveSelection = (selectionInfo.totalCount > 0);
 
 	// If patches or entities are selected, the value entry fields have no meaning
 	valueSensitivity = (selectionInfo.patchCount == 0 &&
@@ -562,28 +584,24 @@ void SurfaceInspector::doUpdate()
 	_manipulators[ROTATION].value->Enable(valueSensitivity);
 
 	// The fit widget sensitivity
-	_fitTexture.height->Enable(fitSensitivity);
-	_fitTexture.width->Enable(fitSensitivity);
-	_fitTexture.x->Enable(fitSensitivity);
-	_fitTexture.label->Enable(fitSensitivity);
-	_fitTexture.button->Enable(fitSensitivity);
+    _fitTexture.enable(haveSelection);
 
 	// The align texture widget sensitivity
-	_alignTexture.bottom->Enable(alignSensitivity);
-	_alignTexture.left->Enable(alignSensitivity);
-	_alignTexture.right->Enable(alignSensitivity);
-	_alignTexture.top->Enable(alignSensitivity);
-	_alignTexture.label->Enable(alignSensitivity);
+	_alignTexture.bottom->Enable(haveSelection);
+	_alignTexture.left->Enable(haveSelection);
+	_alignTexture.right->Enable(haveSelection);
+	_alignTexture.top->Enable(haveSelection);
+	_alignTexture.label->Enable(haveSelection);
 
 	// The flip texture widget sensitivity
-	_flipTexture.label->Enable(flipSensitivity);
-	_flipTexture.flipX->Enable(flipSensitivity);
-	_flipTexture.flipY->Enable(flipSensitivity);
+	_flipTexture.label->Enable(haveSelection);
+	_flipTexture.flipX->Enable(haveSelection);
+	_flipTexture.flipY->Enable(haveSelection);
 
 	// The natural/normalise widget sensitivity
-	_modifyTex.label->Enable(applySensitivity);
-	_modifyTex.natural->Enable(applySensitivity);
-	_modifyTex.normalise->Enable(applySensitivity);
+	_modifyTex.label->Enable(haveSelection);
+	_modifyTex.natural->Enable(haveSelection);
+	_modifyTex.normalise->Enable(haveSelection);
 
 	// Current shader name
 	_shaderEntry->SetValue(selection::getShaderFromSelection());
@@ -598,15 +616,23 @@ void SurfaceInspector::doUpdate()
 	ui::PatchInspector::Instance().queueUpdate();
 }
 
-void SurfaceInspector::fitTexture()
+void SurfaceInspector::fitTexture(Axis axis)
 {
+    // If the preserve aspect button is disabled, we always fit on both axes
+    if (!_fitTexture.preserveAspectButton->GetValue())
+        axis = Axis::BOTH;
+
 	double repeatX = _fitTexture.width->GetValue();
 	double repeatY = _fitTexture.height->GetValue();
 
 	if (repeatX > 0.0 && repeatY > 0.0)
 	{
-		GlobalCommandSystem().executeCommand("FitTexture", repeatX, repeatY);
-	}
+        // User-specified fit values must always be >0, but we use -1 internally
+        // to signal not to fit on a particular axis.
+        GlobalCommandSystem().executeCommand("FitTexture",
+                                             (axis == Axis::Y ? -1 : repeatX),
+                                             (axis == Axis::X ? -1 : repeatY));
+    }
 	else
 	{
 		// Invalid repeatX && repeatY values
@@ -614,10 +640,10 @@ void SurfaceInspector::fitTexture()
 	}
 }
 
-void SurfaceInspector::onFit(wxCommandEvent& ev)
+void SurfaceInspector::onFit(Axis axis)
 {
-	// Call the according member method
-	fitTexture();
+    // Fit the texture then update our widget values with the new transform
+	fitTexture(axis);
 	doUpdate();
 }
 
@@ -630,7 +656,7 @@ void SurfaceInspector::onUpdateAfterButtonClick(wxCommandEvent& ev)
 void SurfaceInspector::onValueEntryActivate(wxCommandEvent& ev)
 {
 	emitTexDef();
-	
+
 	// Don't propage the keypress if the Enter could be processed
 	this->SetFocus();
 }
