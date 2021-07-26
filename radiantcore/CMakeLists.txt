@@ -135,6 +135,7 @@ add_library(radiantcore MODULE
             map/PointFile.cpp
             map/RegionManager.cpp
             map/RootNode.cpp
+            map/VcsMapResource.cpp
             model/export/AseExporter.cpp
             model/export/Lwo2Chunk.cpp
             model/export/Lwo2Exporter.cpp
@@ -277,7 +278,6 @@ add_library(radiantcore MODULE
             shaders/textures/TextureManipulator.cpp
             skins/Doom3SkinCache.cpp
             undo/UndoSystem.cpp
-            versioncontrol/VcsMapResource.cpp
             versioncontrol/VersionControlManager.cpp
             vfs/DeflatedInputStream.cpp
             vfs/DirectoryArchive.cpp
