@@ -117,6 +117,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DependencyCheck", "..\DependencyCheck\DependencyCheck.vcxproj", "{0D4BE190-97F4-4DB9-BEAB-B0196868EC0A}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "vcs", "vcs.vcxproj", "{6591C1E2-6BCF-4874-B724-CC87B8AA0DA4}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0D4BE190-97F4-4DB9-BEAB-B0196868EC0A} = {0D4BE190-97F4-4DB9-BEAB-B0196868EC0A}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

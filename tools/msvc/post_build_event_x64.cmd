@@ -2,7 +2,6 @@ for %%i in (..\..\install\*.dll) do if not "%%~nxi"=="DarkRadiantCore.dll" del "
 
 del ..\..\install\python*.zip
 
-copy ..\..\w64deps\libgit2\bin\git2.dll ..\..\install /Y
 copy ..\..\w64deps\openal\bin\OpenAL32.dll ..\..\install /Y
 copy ..\..\w64deps\openal\bin\wrap_oal.dll ..\..\install /Y
 copy ..\..\w64deps\glew\bin\glew32.dll ..\..\install /Y
@@ -36,3 +35,6 @@ copy "..\..\w64deps\libsigc++\bin\libsigc++%DEBUG_SUFFIX%-%2.dll" ..\..\install 
 
 @echo Copying libxml2 library (64 bit)
 copy ..\..\w64deps\libxml2\bin\libxml2%DEBUG_SUFFIX%-%2.dll ..\..\install /Y
+
+@echo Copying libgit2 library (64-bit)
+copy ..\..\w64deps\libgit2\bin\libgit2%DEBUG_SUFFIX%.dll ..\..\install /Y

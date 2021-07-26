@@ -276,12 +276,14 @@ void VcsStatus::updateMapFileStatus()
         return;
     }
 
-    _mapStatus->SetLabel(_("Map is saved"));
-
     if (_repository)
     {
         auto repository = _repository->clone();
         _mapFileTask = std::async(std::launch::async, std::bind(&VcsStatus::performMapFileStatusCheck, this, repository));
+    }
+    else
+    {
+        _mapStatus->SetLabel(_("Map is saved"));
     }
 }
 

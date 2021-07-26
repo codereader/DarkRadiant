@@ -8,7 +8,7 @@
       <AdditionalIncludeDirectories>$(W32DepsDir)libgit2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>git2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libgit2$(LibSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(PlatformDepsDir)\libgit2\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
