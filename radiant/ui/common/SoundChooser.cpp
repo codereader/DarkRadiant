@@ -34,6 +34,7 @@ namespace
     const char* const SHOW_SHADER_DEF_ICON = "icon_script.png";
 
     const char* const RKEY_WINDOW_STATE = "user/ui/soundChooser/window";
+    const char* const RKEY_LAST_SELECTED_SHADER = "user/ui/soundChooser/lastSelectedShader";
 }
 
 /**
@@ -304,8 +305,11 @@ void SoundChooser::onShadersReloaded()
     });
 }
 
-std::string SoundChooser::chooseResource(const std::string& preselected)
+std::string SoundChooser::chooseResource(const std::string& shaderToPreselect)
 {
+    auto preselected = !shaderToPreselect.empty() ? shaderToPreselect :
+        registry::getValue<std::string>(RKEY_LAST_SELECTED_SHADER);
+
 	if (!preselected.empty())
 	{
 		setSelectedShader(preselected);
@@ -316,6 +320,11 @@ std::string SoundChooser::chooseResource(const std::string& preselected)
 	if (ShowModal() == wxID_OK)
 	{
 		selectedShader = getSelectedShader();
+
+        if (!selectedShader.empty())
+        {
+            registry::setValue(RKEY_LAST_SELECTED_SHADER, selectedShader);
+        }
 	}
 
 	return selectedShader;
