@@ -57,4 +57,32 @@ TEST_F(ModelExportTest, ExportPatchMesh)
     fs::remove(outputFilename);
 }
 
+// #5658: Model exporter failed to write the file if the folder doesn't exist
+TEST_F(ModelExportTest, ExportFolderNotExisting)
+{
+    // Load a map with a cylinder patch
+    loadMap("modelexport_patch.map");
+
+    auto patchNode = algorithm::findFirstPatchWithMaterial(GlobalMapModule().findOrInsertWorldspawn(),
+        "textures/darkmod/wood/boards/ship_hull_medium");
+    EXPECT_TRUE(patchNode);
+
+    Node_setSelected(patchNode, true);
+
+    // A temporary location
+    fs::path outputFolder = _context.getTemporaryDataPath();
+    outputFolder /= "nonexistingfolder";
+
+    EXPECT_FALSE(fs::exists(outputFolder)) << "Output folder shouldn't exist";
+
+    auto exporter = GlobalModelFormatManager().getExporter("lwo");
+
+    constexpr const char* filename = "test.lwo";
+    auto outputPath = outputFolder / filename;
+    
+    EXPECT_NO_THROW(exporter->exportToPath(outputFolder.string(), filename)) << "Exporter failed to export to " << outputPath;
+
+    EXPECT_TRUE(fs::exists(outputPath)) << "Exporter didn't create the file " << outputPath;
+}
+
 }
