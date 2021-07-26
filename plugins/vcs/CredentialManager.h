@@ -7,8 +7,8 @@
 #include <windows.h>
 #include <wincred.h>
 #include <tchar.h>
-#include "string/encoding.h"
 #endif
+#include "string/encoding.h"
 
 namespace vcs
 {
@@ -39,7 +39,7 @@ public:
 
         return std::make_pair(user, pw);
 #else
-        return "";
+        return { "", "" };
 #endif
     }
 };

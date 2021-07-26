@@ -39,8 +39,7 @@ public:
 
         auto url = wxURI(git_remote_url(_remote));
 
-        git_fetch_options options;
-        git_fetch_options_init(&options, GIT_FETCH_OPTIONS_VERSION);
+        git_fetch_options options = GIT_FETCH_OPTIONS_INIT;
 
         auto credentials = getCredentialsForRemote(url);
 
@@ -100,6 +99,14 @@ public:
     }
 
 private:
+
+// Compatibility hack: In Ubuntu 20 we only have older libgit2 versions,
+// where git_credential was still called git_cred, map them
+#if LIBGIT2_VER_MAJOR < 1
+#define git_credential git_cred
+#define git_credential_userpass_plaintext_new git_cred_userpass_plaintext_new
+#endif
+
     static int AcquireCredentials(git_cred** out, const char* url, const char* username_from_url, unsigned int allowed_types, void* payload)
     {
         *out = reinterpret_cast<git_credential*>(payload);

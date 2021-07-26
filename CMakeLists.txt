@@ -102,6 +102,11 @@ add_subdirectory(libs/module)
 add_subdirectory(plugins/script)
 add_subdirectory(plugins/sound)
 
+pkg_check_modules(LIBGIT libgit2)
+if (${LIBGIT_FOUND})
+    add_subdirectory(plugins/vcs)
+endif()
+
 # Dark Mod plugins
 if (${ENABLE_DM_PLUGINS})
     add_subdirectory(plugins/dm.conversation)
@@ -144,6 +149,11 @@ install(TARGETS radiantcore script sound
 if (${ENABLE_DM_PLUGINS})
     install(TARGETS dm_stimresponse dm_objectives dm_difficulty dm_editing
                     dm_gui dm_gameconnection dm_conversation
+            LIBRARY DESTINATION ${PKGLIBDIR}/plugins)
+endif()
+
+if (${LIBGIT_FOUND})
+    install(TARGETS vcs 
             LIBRARY DESTINATION ${PKGLIBDIR}/plugins)
 endif()
 
