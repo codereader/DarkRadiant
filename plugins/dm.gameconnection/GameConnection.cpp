@@ -3,6 +3,7 @@
 #include "DiffStatus.h"
 #include "DiffDoom3MapWriter.h"
 #include "clsocket/ActiveSocket.h"
+#include "GameConnectionDialog.h"
 
 #include "i18n.h"
 #include "icameraview.h"
@@ -599,9 +600,7 @@ void GameConnection::initialiseModule(const IApplicationContext& ctx)
            _("Respawn selected entities"), "", "GameConnectionRespawnSelected");
 
     // Add menu button which shows up the dialog
-    GlobalCommandSystem().addCommand("GameConnectionDialog",
-        [this](const cmd::ArgumentList&) { reloadMap(); }
-    );
+    GlobalCommandSystem().addCommand("GameConnectionDialogToggle", ui::GameConnectionDialog::toggleDialog);
     // Add the menu item
     GlobalMenuManager().add(
         "main/connection", 	// menu location path
@@ -609,7 +608,7 @@ void GameConnection::initialiseModule(const IApplicationContext& ctx)
         ui::menu::ItemType::Item,	// type
         _("Game Connection..."),	// caption
         "stimresponse.png",	// icon
-        "GameConnectionEvent" // event name
+        "GameConnectionDialogToggle" // event name
     );
 
     // Toolbar button(s)
