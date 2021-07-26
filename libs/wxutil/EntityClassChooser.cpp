@@ -29,6 +29,7 @@ namespace
     const char* const ECLASS_CHOOSER_TITLE = N_("Create entity");
     const char* const RKEY_SPLIT_POS = "user/ui/entityClassChooser/splitPos";
     const char* const RKEY_WINDOW_STATE = "user/ui/entityClassChooser/window";
+    const char* const RKEY_LAST_SELECTED_ECLASS = "user/ui/entityClassChooser/lastSelectedEclass";
 
     const char* const FOLDER_ICON = "folder16.png";
     const char* const ENTITY_ICON = "cmenu_add_entity.png";
@@ -207,9 +208,13 @@ EntityClassChooser::~EntityClassChooser()
 }
 
 // Display the singleton instance
-std::string EntityClassChooser::chooseEntityClass(const std::string& preselectEclass)
+std::string EntityClassChooser::chooseEntityClass(const std::string& eclassToSelect)
 {
     EntityClassChooser instance;
+
+    // Fall back to the value we saved in the registry if we didn't get any other instructions
+    auto preselectEclass = !eclassToSelect.empty() ? eclassToSelect : 
+        registry::getValue<std::string>(RKEY_LAST_SELECTED_ECLASS);
 
     if (!preselectEclass.empty())
     {
@@ -218,12 +223,18 @@ std::string EntityClassChooser::chooseEntityClass(const std::string& preselectEc
 
     if (instance.ShowModal() == wxID_OK)
     {
-        return instance.getSelectedEntityClass();
+        auto selection = instance.getSelectedEntityClass();
+
+        // Remember this selection on OK
+        if (!selection.empty())
+        {
+            registry::setValue(RKEY_LAST_SELECTED_ECLASS, selection);
+        }
+
+        return selection;
     }
-    else
-    {
-        return ""; // Empty selection on cancel
-    }
+    
+    return ""; // Empty selection on cancel
 }
 
 void EntityClassChooser::loadEntityClasses()
