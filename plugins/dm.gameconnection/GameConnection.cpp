@@ -598,6 +598,20 @@ void GameConnection::initialiseModule(const IApplicationContext& ctx)
     mm.add("main/connection", "respawnSelected", ui::menu::ItemType::Item,
            _("Respawn selected entities"), "", "GameConnectionRespawnSelected");
 
+    // Add menu button which shows up the dialog
+    GlobalCommandSystem().addCommand("GameConnectionDialog",
+        [this](const cmd::ArgumentList&) { reloadMap(); }
+    );
+    // Add the menu item
+    GlobalMenuManager().add(
+        "main/connection", 	// menu location path
+        "GameConnectionDialog", // name
+        ui::menu::ItemType::Item,	// type
+        _("Game Connection..."),	// caption
+        "stimresponse.png",	// icon
+        "GameConnectionEvent" // event name
+    );
+
     // Toolbar button(s)
     GlobalMainFrame().signal_MainFrameConstructed().connect(
         sigc::mem_fun(this, &GameConnection::addToolbarItems)
