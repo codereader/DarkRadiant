@@ -175,10 +175,17 @@ void ParticleEditor::populateParticleDefList()
     // Create and use a ParticlesVisitor to populate the list
     GlobalParticlesManager().forEachParticleDef([&] (const IParticleDef& particle)
 	{
+        auto name = particle.getName();
+
+        if (string::ends_with(name, EDIT_SUFFIX))
+        {
+            return; // skip the edit particles, they should not be showing up
+        }
+
 		// Add the Def name to the list store
         wxutil::TreeModel::Row row = _defList->AddItem();
 
-        row[DEF_COLS().name] = particle.getName();
+        row[DEF_COLS().name] = name;
 
 		row.SendItemAdded();
 	});
