@@ -1617,6 +1617,56 @@ TIP: For details of more advanced difficulty-dependent changes, such as
 modifying the behaviour of a *single* entity (rather than an entire entity
 class), consult the Dark Mod Wiki.
 
+=== Game Connection
+
+The Dark Mod includes functionality to dynamically interact with a DarkRadiant
+session running on the same machine, allowing certain information (such as
+camera position) to be synchronised both to and from the game, and for certain
+entity property changes to be pushed to the running game without needing to
+restart.
+
+These features are accessed in DarkRadiant through the *Connection* menu and
+buttons on the camera view toolbar.
+
+==== Activating the connection
+
+. In *The Dark Mod*, load the map which you are currently editing in DarkRadiant.
+. Bring down the game console and enter the command
+[listing]
+com_automation 1
++
+This should result in a status message indicating that the game is listening for
+connections on a particular network port.
+[listing]
+Automation now listens on port 3879
+
+The game process is now ready to exchange data with DarkRadiant.
+
+==== Synchronising camera position
+
+You can synchronise the DarkRadiant camera position and the game player position
+in both directions: editor to game and game to editor. This feature is most
+easily controlled with the buttons on the camera view toolbar, but it can also
+be activated from the *Connection* menu.
+
+[cols="^1h,3h,10"]
+|===
+|image:CameraSync.png[align="center",width=24]
+|Game position follows DarkRadiant camera|
+Any motion of the DarkRadiant camera will be transmitted in realtime to the
+game, resulting in the player position moving (in *noclip* mode) to the same
+position and view direction.
+
+This is a toggled option which remains active until switched off.
+|image:CameraSyncBack.png[align="center",width=24]
+|Move camera to current game position|
+Update the DarkRadiant camera to match the current player position and view
+direction in game.
+
+This is a single-shot command; there is no mechanism to continuously move the
+DarkRadiant camera in response to player motion in game.
+|===
+
 == Command reference
 
 === File menu
