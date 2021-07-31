@@ -151,7 +151,7 @@ private:
     //returns response content
     std::string executeRequest(const std::string &request);
 
-    //given a command to be executed in game console (no EOLs), returns its full response text (except for seqno)
+    //given a command to be executed in game console (no EOLs), returns its full request text (except for seqno)
     static std::string composeConExecRequest(std::string consoleLine);
     //set noclip/god/notarget to specific state (blocking)
     //toggleCommand is the command which toggles state
@@ -159,6 +159,8 @@ private:
     void executeSetTogglableFlag(const std::string &toggleCommand, bool enable, const std::string &offKeyword);
     //learn state of the specified cvar (blocking)
     std::string executeGetCvarValue(const std::string &cvarName, std::string *defaultValue = nullptr);
+    //learn current status: installed mod/map, active gui, etc. (blocking)
+    std::map<std::string, std::string> executeQueryStatus();
 
     //called from camera modification callback: schedules async "setviewpos" action for future
     void updateCamera();

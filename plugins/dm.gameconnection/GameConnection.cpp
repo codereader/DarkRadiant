@@ -47,11 +47,9 @@ namespace
         return messagePreamble("action") + fmt::format("action \"{0}\"\n", type);
     }
 
-#if 0
     inline std::string queryPreamble(std::string type) {
         return messagePreamble("query") + fmt::format("query \"{}\"\n", type);
     }
-#endif
 }
 
 GameConnection::GameConnection() :
@@ -279,6 +277,31 @@ std::string GameConnection::executeGetCvarValue(const std::string &cvarName, std
     if (defaultValue)
         *defaultValue = defValue;
     return currValue;
+}
+
+std::map<std::string, std::string> GameConnection::executeQueryStatus() {
+    std::string request = queryPreamble("status") + "content:\n";
+    std::string response = executeRequest(request);
+
+    std::map<std::string, std::string> statusProps;
+    int pos = 0;
+    while (1) {
+        int eolPos = response.find('\n', pos);
+        if (eolPos < 0)
+            break;
+        int spacePos = response.find(' ', pos);
+        if (spacePos >= eolPos) {
+            rError() << fmt::format("ExecuteQueryStatus: can't parse response");
+            return {};
+        }
+
+        std::string key = response.substr(pos, spacePos - pos);
+        std::string value = response.substr((spacePos + 1), eolPos - (spacePos + 1));
+        pos = eolPos + 1;
+        statusProps[key] = value;
+    }
+
+    return statusProps;
 }
 
 void GameConnection::updateCamera() {
