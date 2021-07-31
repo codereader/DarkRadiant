@@ -181,17 +181,13 @@ bool GameConnection::connect() {
         || !connection->SetNonblocking()
         || !connection->Open(DEFAULT_HOST, DEFAULT_PORT))
     {
-        showError(_("Failed to connect to game process"));
         return false;
     }
 
     _connection.reset(new MessageTcp());
     _connection->init(std::move(connection));
     if (!_connection->isAlive())
-    {
-        showError(_("Failed to connect to game process"));
         return false;
-    }
 
     _thinkTimer.reset(new wxTimer());
     _thinkTimer->Bind(wxEVT_TIMER, &GameConnection::onTimerEvent, this);
