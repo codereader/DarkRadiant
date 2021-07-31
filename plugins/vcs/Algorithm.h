@@ -100,7 +100,7 @@ inline RemoteStatus analyseRemoteStatus(const std::shared_ptr<Repository>& repos
     {
         // Remote didn't change the map, we can integrate it without conflicting the loaded map
         return RemoteStatus{ status.localCommitsAhead, status.remoteCommitsAhead, _("Integrate"), 
-            RequiredMergeStrategy::MergeRecursively };
+            status.localCommitsAhead == 0 ? RequiredMergeStrategy::FastForward : RequiredMergeStrategy::MergeRecursively };
     }
 
     if (mapFileHasUncommittedChanges)

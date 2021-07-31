@@ -351,6 +351,7 @@ void VcsStatus::performSync(std::shared_ptr<git::Repository> repository)
     catch (git::GitException& ex)
     {
         setRemoteStatus(git::RemoteStatus{ 0, 0, ex.what() });
+        wxutil::Messagebox::ShowError(ex.what());
     }
 }
 
