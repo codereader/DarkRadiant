@@ -227,8 +227,8 @@ GameConnection::~GameConnection() {
 void GameConnection::restartGame(bool dmap) {
     //BIG TODO!!
     static const char *TODO_TDM_DIR = R"(G:\TheDarkMod\darkmod)";
-    static const char *TODO_MISSION = "bakery";
-    static const char *TODO_MAP = "bakery";
+    static const char *TODO_MISSION = "bakery_job";
+    static const char *TODO_MAP = "bakery.map";
 
     std::string savedViewPos;
     if (isAlive()) {
@@ -249,9 +249,9 @@ void GameConnection::restartGame(bool dmap) {
 #else
         static const char *TDM_NAME = "thedarkmod.x64";
 #endif
-        wxString cmdline = wxString::Format("%s +set com_automation 1", TDM_NAME);
         wxExecuteEnv env;
         env.cwd = TODO_TDM_DIR;
+        wxString cmdline = wxString::Format("%s/%s +set com_automation 1", TODO_TDM_DIR, TDM_NAME);
         long res = wxExecute(cmdline, wxEXEC_ASYNC, nullptr, &env);
         if (res <= 0) {
             showError("Failed to run TheDarkMod executable.");
@@ -307,12 +307,12 @@ void GameConnection::restartGame(bool dmap) {
         showError(fmt::format("Installed mission is still {}.", statusProps["currentfm"]));
         return;
     }
-    if (statusProps["mapname"] != TODO_MISSION) {
-        showError(fmt::format("Active map is %s despite trying to start the map.", statusProps["mapname"]));
+    if (statusProps["mapname"] != TODO_MAP) {
+        showError(fmt::format("Active map is {} despite trying to start the map.", statusProps["mapname"]));
         return;
     }
-    if (statusProps["guiactive"] != TODO_MISSION) {
-        showError(fmt::format("GUI %s is active while we expect the game to start", statusProps["guiactive"]));
+    if (statusProps["guiactive"] != "") {
+        showError(fmt::format("GUI {} is active while we expect the game to start", statusProps["guiactive"]));
         return;
     }
 
@@ -320,8 +320,8 @@ void GameConnection::restartGame(bool dmap) {
     std::string waitUntilReady = executeGetCvarValue("tdm_player_wait_until_ready");
     if (waitUntilReady != "0") {
         //button0 is "attack" button
-        //numbers in parens mean: hold for 100 milliseconds
-        std::string request = actionPreamble("gamectrl") + "content:\n" + "timemode astro\n" + "button0 (1 1 0 0 0 100)\n";
+        //numbers in parens mean: hold for 100 gameplay milliseconds (time is stopped at waiting screen)
+        std::string request = actionPreamble("gamectrl") + "content:\n" + "timemode \"game\"\n" + "button0 (1 1 0 0 0 0.1)\n";
         std::string response = executeRequest(request);
     }
 
