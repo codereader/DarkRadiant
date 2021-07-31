@@ -1,6 +1,7 @@
 #pragma once
 
 #include <sigc++/connection.h>
+#include <sigc++/trackable.h>
 #include "icommandsystem.h"
 #include "ishaders.h"
 
@@ -19,7 +20,8 @@ namespace ui
 
 class MaterialEditor :
     public wxutil::DialogBase,
-    private wxutil::XmlResourceBasedWidget
+    private wxutil::XmlResourceBasedWidget,
+    public sigc::trackable
 {
 private:
     MaterialTreeView* _treeView;
