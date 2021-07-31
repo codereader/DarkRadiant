@@ -120,14 +120,7 @@ void GitModule::fetch(const cmd::ArgumentList& args)
         return;
     }
 
-    try
-    {
-        _repository->fetchFromTrackedRemote();
-    }
-    catch (const git::GitException& ex)
-    {
-        throw cmd::ExecutionFailure(ex.what());
-    }
+    _statusBarWidget->startFetchTask();
 }
 
 void GitModule::createPreferencePage()

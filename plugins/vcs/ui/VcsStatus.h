@@ -51,9 +51,10 @@ public:
 
     void setRepository(const std::shared_ptr<git::Repository>& repository);
 
+    void startFetchTask();
+
 private:
     void createPopupMenu();
-    void startFetchTask();
     void restartFetchTimer();
     void onIntervalReached(wxTimerEvent& ev);
     void onIdle(wxIdleEvent& ev);
