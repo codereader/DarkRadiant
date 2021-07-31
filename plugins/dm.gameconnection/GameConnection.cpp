@@ -24,6 +24,7 @@
 #include <sigc++/connection.h>
 #include <wx/toolbar.h>
 #include <wx/artprov.h>
+#include <wx/process.h>
 
 namespace gameconn
 {
@@ -221,6 +222,115 @@ void GameConnection::disconnect(bool force)
 GameConnection::~GameConnection() {
     disconnect(true);
 };
+
+
+void GameConnection::restartGame(bool dmap) {
+    //BIG TODO!!
+    static const char *TODO_TDM_DIR = R"(G:\TheDarkMod\darkmod)";
+    static const char *TODO_MISSION = "bakery";
+    static const char *TODO_MAP = "bakery";
+
+    std::string savedViewPos;
+    if (isAlive()) {
+        //save current position
+        savedViewPos = executeRequest(composeConExecRequest("getviewpos"));
+    }
+
+    //save .map file
+    saveMapIfNeeded();
+
+    //try to attach to TDM with automation enabled
+    bool attached = connect();
+
+    if (!attached) {
+        //run new TDM process
+#ifdef _WIN32
+        static const char *TDM_NAME = "TheDarkModx64.exe";
+#else
+        static const char *TDM_NAME = "thedarkmod.x64";
+#endif
+        wxString cmdline = wxString::Format("%s +set com_automation 1", TDM_NAME);
+        wxExecuteEnv env;
+        env.cwd = TODO_TDM_DIR;
+        long res = wxExecute(cmdline, wxEXEC_ASYNC, nullptr, &env);
+        if (res <= 0) {
+            showError("Failed to run TheDarkMod executable.");
+            return;
+        }
+
+        //attach to the new process
+        static const int TDM_LAUNCH_TIMEOUT = 5000;  //in milliseconds
+        wxLongLong timestampStart = wxGetUTCTimeMillis();
+        do {
+            wxMilliSleep(500);
+            if (wxGetUTCTimeMillis() - timestampStart > TDM_LAUNCH_TIMEOUT) {
+                showError("Timeout when connecting to just started TheDarkMod process.\nMake sure the game is in main menu, has com_automation enabled, and firewall does not block it.");
+                return;
+            }
+        } while (!connect());
+    }
+
+    //check the current status
+    std::map<std::string, std::string> statusProps = executeQueryStatus();
+    if (statusProps["currentfm"] != TODO_MISSION) {
+        //change mission/mod and restart TDM engine
+        std::string request = actionPreamble("installfm") + "content:\n" + TODO_MISSION + "\n";
+        std::string response = executeRequest(request);
+        if (response != "done") {
+            showError("Failed to change installed mission in TheDarkMod.\nMake sure ?DR mission? is configured properly and game version is 2.09 or above.");
+            return;
+        }
+    }
+    statusProps = executeQueryStatus();
+    if (statusProps["currentfm"] != TODO_MISSION) {
+        showError(fmt::format("Installed mission is {} despite trying to change it.", statusProps["currentfm"]));
+        return;
+    }
+
+    if (dmap) {
+        //run dmap command
+        std::string request = composeConExecRequest("dmap " + std::string(TODO_MAP));
+        std::string response = executeRequest(request);
+        if (response.find("ERROR:") != std::string::npos) {
+            showError("Dmap printed error.\nPlease look at TheDarkMod console.");
+            return;
+        }
+    }
+
+    {
+        //start map
+        std::string request = composeConExecRequest("map " + std::string(TODO_MAP));
+        std::string response = executeRequest(request);
+    }
+    statusProps = executeQueryStatus();
+    if (statusProps["currentfm"] != TODO_MISSION) {
+        showError(fmt::format("Installed mission is still {}.", statusProps["currentfm"]));
+        return;
+    }
+    if (statusProps["mapname"] != TODO_MISSION) {
+        showError(fmt::format("Active map is %s despite trying to start the map.", statusProps["mapname"]));
+        return;
+    }
+    if (statusProps["guiactive"] != TODO_MISSION) {
+        showError(fmt::format("GUI %s is active while we expect the game to start", statusProps["guiactive"]));
+        return;
+    }
+
+    //confirm player is ready
+    std::string waitUntilReady = executeGetCvarValue("tdm_player_wait_until_ready");
+    if (waitUntilReady != "0") {
+        //button0 is "attack" button
+        //numbers in parens mean: hold for 100 milliseconds
+        std::string request = actionPreamble("gamectrl") + "content:\n" + "timemode astro\n" + "button0 (1 1 0 0 0 100)\n";
+        std::string response = executeRequest(request);
+    }
+
+    if (!savedViewPos.empty()) {
+        //restore camera position
+        std::string request = composeConExecRequest(fmt::format("setviewpos {}", savedViewPos));
+        std::string response = executeRequest(request);
+    }
+}
 
 //-------------------------------------------------------------
 

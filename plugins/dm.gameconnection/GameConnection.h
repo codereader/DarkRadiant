@@ -28,6 +28,11 @@ public:
     GameConnection();
     ~GameConnection();
 
+    /**
+     * Restart game and connect to it.
+     */
+    void restartGame(bool dmap);
+
     //connect to TDM instance if not connected yet
     //return false if failed to connect
     bool connect();
