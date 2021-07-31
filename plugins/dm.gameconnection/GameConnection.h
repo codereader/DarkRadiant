@@ -164,6 +164,8 @@ private:
     void updateCamera();
     //send request for camera update, which is pending yet
     bool sendPendingCameraUpdate();
+    //saves map using DR code if there are pending modifications
+    void saveMapIfNeeded();
 
     //signal observer on map saving
     void onMapEvent(IMap::MapEvent ev);

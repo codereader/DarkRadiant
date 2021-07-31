@@ -413,11 +413,16 @@ bool GameConnection::setAutoReloadMapEnabled(bool enable)
     return true;
 }
 
+void GameConnection::saveMapIfNeeded()
+{
+    GlobalCommandSystem().executeCommand("SaveMap");
+}
+
 void GameConnection::activateMapObserver(bool on)
 {
     if (on && !_mapObserver.isEnabled()) {
         //save map to file, and reload from file, to ensure DR and TDM are in sync
-        GlobalCommandSystem().executeCommand("SaveMap");
+        saveMapIfNeeded();
         reloadMap();
     }
     _mapObserver.setEnabled(on);
