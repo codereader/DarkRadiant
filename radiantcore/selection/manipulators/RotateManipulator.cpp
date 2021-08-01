@@ -156,17 +156,28 @@ void RotateManipulator::render(RenderableCollector& collector, const VolumeTest&
 	collector.addRenderable(*_pivotPointShader, *this, Matrix4::getIdentity());
 }
 
+std::string RotateManipulator::getRotationAxisName() const
+{
+    if (_selectableX.isSelected()) return "X";
+    if (_selectableY.isSelected()) return "Y";
+    if (_selectableZ.isSelected()) return "Z";
+    
+    return std::string();
+}
+
 void RotateManipulator::render(const RenderInfo& info) const
 {
-	if (_selectableX.isSelected() || _selectableY.isSelected() ||
-		_selectableZ.isSelected() || _selectableScreen.isSelected())
+    if (_selectableX.isSelected() || _selectableY.isSelected() ||
+        _selectableZ.isSelected() || _selectableScreen.isSelected())
 	{
 		glColor3d(0.75, 0, 0);
 
 		glRasterPos3dv(_pivot2World._worldSpace.tCol().getVector3() - Vector3(10, 10, 10));
 
 		double angle = static_cast<double>(c_RAD2DEGMULT * _rotateAxis.getCurAngle());
-        _glFont->drawString(fmt::format("Rotate: {0:3.2f} degrees", angle));
+        auto rotationAxisName = getRotationAxisName();
+
+        _glFont->drawString(fmt::format("Rotate: {0:3.2f} degrees {1}", angle, rotationAxisName));
 	}
 }
 
