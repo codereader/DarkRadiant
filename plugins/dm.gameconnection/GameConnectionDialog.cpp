@@ -71,6 +71,7 @@ GameConnectionDialog::GameConnectionDialog() :
     //don't want to call findNamedObject every time, risking a typo
     _connectedCheckbox               = findNamedObject<wxCheckBox>(this, "ConnectedCheckbox");
     _restartGameButton               = findNamedObject<wxButton  >(this, "RestartGameButton");
+    _dmapCheckbox                    = findNamedObject<wxCheckBox>(this, "DmapCheckbox");
     _cameraLoadFromGameButton        = findNamedObject<wxButton  >(this, "CameraLoadFromGameButton");
     _cameraSendToGameCheckbox        = findNamedObject<wxCheckBox>(this, "CameraSendToGameCheckbox");
     _mapFileReloadNowButton          = findNamedObject<wxButton  >(this, "MapFileReloadNowButton");
@@ -103,7 +104,8 @@ GameConnectionDialog::GameConnectionDialog() :
         updateConnectedStatus();
     });
     _restartGameButton->Bind(wxEVT_BUTTON, [this](wxCommandEvent& ev) {
-        //TODO
+        bool dmap = _dmapCheckbox->IsChecked();
+        Impl().restartGame(dmap);
     });
 
     _cameraLoadFromGameButton->Bind(wxEVT_BUTTON, [this](wxCommandEvent& ev) {

@@ -26,6 +26,7 @@ class GameConnectionDialog :
 {
     wxCheckBox* _connectedCheckbox               = nullptr;
     wxButton*   _restartGameButton               = nullptr;
+    wxCheckBox* _dmapCheckbox                    = nullptr;
     wxButton*   _cameraLoadFromGameButton        = nullptr;
     wxCheckBox* _cameraSendToGameCheckbox        = nullptr;
     wxButton*   _mapFileReloadNowButton          = nullptr;
