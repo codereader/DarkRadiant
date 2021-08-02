@@ -77,10 +77,19 @@ public:
      * \return
      * true on success, false if the game connection failed.
      */
-    bool setMapHotReload(bool on);
+    void setUpdateMapObserverEnabled(bool on);
+
+    bool isUpdateMapObserverEnabled() const;
+
+    bool setUpdateMapAlways(bool on);
 
     //send map update to TDM right now
     void doUpdateMap();
+
+    //signal is emitted when status changes:
+    //  connected/disconnected
+    //  UpdateMap mode is enabled/disabled
+    sigc::signal<void, int> signal_StatusChanged;
 
     //RegisterableModule implementation
     const std::string& getName() const override;
@@ -104,7 +113,7 @@ private:
     std::unique_ptr<MessageTcp> _connection;
     //when connected, this timer calls Think periodically
     std::unique_ptr<wxTimer> _thinkTimer;
-    bool _timerInProgress;
+    bool _timerInProgress = false;
 
     void onTimerEvent(wxTimerEvent& ev);
 
@@ -131,9 +140,6 @@ private:
     bool _autoReloadMap = false;
     //set to true when "update map" is set to "always"
     bool _updateMapAlways = false;
-
-    // Enable or disable the map observer
-    void activateMapObserver(bool on);
 
     //every request should get unique seqno, otherwise we won't be able to distinguish their responses
     std::size_t generateNewSequenceNumber();

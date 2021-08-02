@@ -31,15 +31,19 @@ void showError(const std::string& text)
 
 GameConnectionDialog& GameConnectionDialog::Instance()
 {
-    static std::unique_ptr<GameConnectionDialog> _instance(new GameConnectionDialog());
+    static std::unique_ptr<GameConnectionDialog> _instance;
 
-    // Pre-destruction cleanup
-    GlobalMainFrame().signal_MainFrameShuttingDown().connect([]() {
-        if (_instance->IsShownOnScreen())
-            _instance->Hide();
-        _instance->SendDestroyEvent();
-        _instance.reset();
-    });
+    if (!_instance) {
+        _instance.reset(new GameConnectionDialog());
+
+        // Pre-destruction cleanup
+        GlobalMainFrame().signal_MainFrameShuttingDown().connect([]() {
+            if (_instance->IsShownOnScreen())
+                _instance->Hide();
+            _instance->SendDestroyEvent();
+            _instance.reset();
+        });
+    }
 
     return *_instance;
 }
@@ -48,6 +52,11 @@ void GameConnectionDialog::toggleDialog(const cmd::ArgumentList& args)
 {
     // Toggle the instance
     Instance().ToggleVisibility();
+}
+
+GameConnectionDialog::~GameConnectionDialog()
+{
+    _updateOnStatusChangeSignal.disconnect();
 }
 
 GameConnectionDialog::GameConnectionDialog() :
@@ -73,6 +82,10 @@ GameConnectionDialog::GameConnectionDialog() :
 
     //initially we are not connected, so disable most of GUI
     updateConnectedStatus();
+    //update GUI when anything changes in connection
+    _updateOnStatusChangeSignal = Impl().signal_StatusChanged.connect([this](int) {
+        GameConnectionDialog::updateConnectedStatus();
+    });
 
     //===================================
     //         EVENT HANDLERS
@@ -114,7 +127,7 @@ GameConnectionDialog::GameConnectionDialog() :
     });
     _hotReloadUpdateOnChangeCheckbox->Bind(wxEVT_CHECKBOX, [this](wxCommandEvent& ev) {
         bool makeEnabled = _hotReloadUpdateOnChangeCheckbox->IsChecked();
-        Impl().setMapHotReload(makeEnabled);
+        Impl().setUpdateMapAlways(makeEnabled);
     });
 
     _respawnSelectedButton->Bind(wxEVT_BUTTON, [this](wxCommandEvent& ev) {
@@ -144,6 +157,7 @@ GameConnection& GameConnectionDialog::Impl()
 void GameConnectionDialog::updateConnectedStatus()
 {
     bool connected = Impl().isAlive();
+    bool updateMapMode = Impl().isUpdateMapObserverEnabled();
 
     _connectedCheckbox->SetValue(connected);
 
@@ -151,14 +165,19 @@ void GameConnectionDialog::updateConnectedStatus()
     _cameraSendToGameCheckbox           ->Enable(connected);
     _mapFileReloadNowButton             ->Enable(connected);
     _mapFileReloadOnSaveCheckbox        ->Enable(connected);
-    _hotReloadUpdateNowButton           ->Enable(connected);
-    _hotReloadUpdateOnChangeCheckbox    ->Enable(connected);
+    _hotReloadUpdateNowButton           ->Enable(connected && updateMapMode);
+    _hotReloadUpdateOnChangeCheckbox    ->Enable(connected && updateMapMode);
     _respawnSelectedButton              ->Enable(connected);
     _pauseGameButton                    ->Enable(connected);
 
-    _cameraSendToGameCheckbox           ->SetValue(false);
-    _mapFileReloadOnSaveCheckbox        ->SetValue(false);
-    _hotReloadUpdateOnChangeCheckbox    ->SetValue(false);
+    if (!connected) {
+        _cameraSendToGameCheckbox           ->SetValue(false);
+        _mapFileReloadOnSaveCheckbox        ->SetValue(false);
+        _hotReloadUpdateOnChangeCheckbox    ->SetValue(false);
+    }
+    if (!updateMapMode) {
+        _hotReloadUpdateOnChangeCheckbox    ->SetValue(false);
+    }
 }
 
 }

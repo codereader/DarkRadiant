@@ -5,6 +5,8 @@
 #include "wxutil/window/TransientWindow.h"
 #include "wxutil/XmlResourceBasedWidget.h"
 
+#include <sigc++/connection.h>
+
 class wxCheckBox;
 class wxButton;
 
@@ -33,7 +35,11 @@ class GameConnectionDialog :
     wxButton*   _respawnSelectedButton           = nullptr;
     wxButton*   _pauseGameButton                 = nullptr;
 
+    sigc::connection _updateOnStatusChangeSignal;
+
 public:
+    ~GameConnectionDialog();
+
     // This is the actual home of the static instance
     static GameConnectionDialog& Instance();
 

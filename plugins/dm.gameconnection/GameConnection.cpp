@@ -52,8 +52,7 @@ namespace
     }
 }
 
-GameConnection::GameConnection() :
-    _timerInProgress(false)
+GameConnection::GameConnection()
 {}
 
 std::size_t GameConnection::generateNewSequenceNumber() {
@@ -187,14 +186,16 @@ bool GameConnection::connect() {
         sigc::mem_fun(*this, &GameConnection::onMapEvent)
     );
 
+    signal_StatusChanged.emit(0);
+
     return true;
 }
 
 void GameConnection::disconnect(bool force)
 {
     _autoReloadMap = false;
-    activateMapObserver(false);
-    _updateMapAlways = false;
+    setUpdateMapAlways(false);
+    setUpdateMapObserverEnabled(false);
     setCameraSyncEnabled(false);
     if (force) {
         //drop everything pending 
@@ -213,6 +214,8 @@ void GameConnection::disconnect(bool force)
         _thinkTimer.reset();
     }
     _mapEventListener.disconnect();
+
+    signal_StatusChanged.emit(0);
 }
 
 GameConnection::~GameConnection() {
@@ -407,6 +410,8 @@ void GameConnection::reloadMap() {
         return;
     std::string text = composeConExecRequest("reloadMap nocheck");
     executeRequest(text);
+
+    setUpdateMapObserverEnabled(!GlobalMapModule().isModified());
 }
 
 void GameConnection::onMapEvent(IMap::MapEvent ev) {
@@ -430,25 +435,28 @@ bool GameConnection::setAutoReloadMapEnabled(bool enable)
 
 void GameConnection::saveMapIfNeeded()
 {
-    GlobalCommandSystem().executeCommand("SaveMap");
+    if (GlobalMapModule().isModified())
+        GlobalCommandSystem().executeCommand("SaveMap");
 }
 
-void GameConnection::activateMapObserver(bool on)
+bool GameConnection::isUpdateMapObserverEnabled() const
 {
-    if (on && !_mapObserver.isEnabled()) {
-        //save map to file, and reload from file, to ensure DR and TDM are in sync
-        saveMapIfNeeded();
-        reloadMap();
-    }
-    _mapObserver.setEnabled(on);
+    return _mapObserver.isEnabled();
 }
 
-bool GameConnection::setMapHotReload(bool on)
+void GameConnection::setUpdateMapObserverEnabled(bool on)
+{
+    _mapObserver.setEnabled(on);
+
+    signal_StatusChanged.emit(0);
+}
+
+bool GameConnection::setUpdateMapAlways(bool on)
 {
     if (on && !connect())
         return false;
 
-    activateMapObserver(on);
+    setUpdateMapObserverEnabled(on);
     _updateMapAlways = on;
     return true;
 }
@@ -502,8 +510,6 @@ void GameConnection::doUpdateMap()
     if (!connect())
         return;
 
-    activateMapObserver(true);
-
     // Get map diff
     std::string diff = saveMapDiff(_mapObserver.getChanges());
     if (diff.empty()) {
@@ -545,7 +551,7 @@ void GameConnection::initialiseModule(const IApplicationContext& ctx)
     );
     GlobalEventManager().addAdvancedToggle(
         "GameConnectionToggleHotReload",
-        [this](bool v) { return setMapHotReload(v); }
+        [this](bool v) { return setUpdateMapAlways(v); }
     );
 
     // Add one-shot commands and associated toolbar buttons
