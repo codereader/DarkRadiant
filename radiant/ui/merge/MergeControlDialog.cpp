@@ -215,11 +215,13 @@ void MergeControlDialog::onLoadAndCompare(wxCommandEvent& ev)
         return;
     }
 
-    if (!baseMapPath.empty())
+    bool isThreeWay = isInThreeWayMergeMode();
+
+    if (isThreeWay && !baseMapPath.empty())
     { 
         GlobalMapModule().startMergeOperation(sourceMapPath, baseMapPath);
     }
-    else
+    else if (!isThreeWay)
     {
         GlobalMapModule().startMergeOperation(sourceMapPath);
     }
