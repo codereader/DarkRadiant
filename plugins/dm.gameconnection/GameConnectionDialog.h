@@ -9,6 +9,7 @@
 
 class wxCheckBox;
 class wxButton;
+class wxActivityIndicator;
 
 namespace gameconn
 {
@@ -35,6 +36,7 @@ class GameConnectionDialog :
     wxCheckBox* _hotReloadUpdateOnChangeCheckbox = nullptr;
     wxButton*   _respawnSelectedButton           = nullptr;
     wxButton*   _pauseGameButton                 = nullptr;
+    wxActivityIndicator* _connectedActivityIndicator = nullptr;
 
     sigc::connection _updateOnStatusChangeSignal;
 

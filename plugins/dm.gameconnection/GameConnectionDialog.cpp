@@ -65,8 +65,8 @@ GameConnectionDialog::GameConnectionDialog() :
     wxPanel* panel = loadNamedPanel(this, "GameConnectionMainPanel");
 
     //could not find activity indicator in wxFormBuilder
-    wxActivityIndicator* ConnectedActivityIndicator = new wxActivityIndicator(panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, wxT("OMG"));
-    replaceControl(findNamedObject<wxWindow>(this, "ConnectedActivityIndicator"), ConnectedActivityIndicator);
+    _connectedActivityIndicator = new wxActivityIndicator(panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, wxT("OMG"));
+    replaceControl(findNamedObject<wxWindow>(this, "ConnectedActivityIndicator"), _connectedActivityIndicator);
 
     //don't want to call findNamedObject every time, risking a typo
     _connectedCheckbox               = findNamedObject<wxCheckBox>(this, "ConnectedCheckbox");

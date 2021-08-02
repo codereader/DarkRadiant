@@ -117,7 +117,8 @@ void GameConnection::onTimerEvent(wxTimerEvent& ev)
     think();
 }
 
-void GameConnection::waitAction() {
+void GameConnection::waitAction()
+{
     while (_seqnoInProgress)
         think();
 }
@@ -148,10 +149,6 @@ std::string GameConnection::executeRequest(const std::string &request) {
 
 bool GameConnection::isAlive() const {
     return _connection && _connection->isAlive();
-}
-
-namespace
-{
 }
 
 bool GameConnection::connect() {
