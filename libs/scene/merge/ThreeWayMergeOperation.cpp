@@ -150,11 +150,13 @@ void ThreeWayMergeOperation::processEntityModification(const ComparisonResult::E
     {
         // This is a conflicting change, the source modified it, the target removed it
         // When the user chooses to import the change, it will be an AddEntity action
+        auto addEntityAction = std::make_shared<AddEntityAction>(sourceDiff.sourceNode, _targetRoot);
+
         addAction(std::make_shared<EntityConflictResolutionAction>(
             ConflictType::ModificationOfRemovedEntity,
-            sourceDiff.sourceNode, // the conflicting source entity
+            addEntityAction->getAffectedNode(), // the clone of the conflicting source entity
             INodePtr(), // the target entity (is no longer present)
-            std::make_shared<AddEntityAction>(sourceDiff.sourceNode, _targetRoot)
+            addEntityAction
         ));
         return;
     }
