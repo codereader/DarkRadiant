@@ -5,8 +5,13 @@
 #include "wxutil/window/TransientWindow.h"
 #include "wxutil/XmlResourceBasedWidget.h"
 
-namespace ui
+class wxCheckBox;
+class wxButton;
+
+namespace gameconn
 {
+
+class GameConnection;
 
 /**
  * stgatilov: This is top-level non-modal window
@@ -17,16 +22,16 @@ class GameConnectionDialog :
 	public wxutil::TransientWindow,
 	private wxutil::XmlResourceBasedWidget
 {
-private:
-/*	wxButton* _addConvButton;
-	wxButton* _editConvButton;
-	wxButton* _deleteConvButton;
-	wxButton* _moveUpConvButton;
-	wxButton* _moveDownConvButton;
-	wxButton* _clearConvButton;
-
-	wxButton* _addEntityButton;
-	wxButton* _deleteEntityButton;*/
+    wxCheckBox* _connectedCheckbox               = nullptr;
+    wxButton*   _restartGameButton               = nullptr;
+    wxButton*   _cameraLoadFromGameButton        = nullptr;
+    wxCheckBox* _cameraSendToGameCheckbox        = nullptr;
+    wxButton*   _mapFileReloadNowButton          = nullptr;
+    wxCheckBox* _mapFileReloadOnSaveCheckbox     = nullptr;
+    wxButton*   _hotReloadUpdateNowButton        = nullptr;
+    wxCheckBox* _hotReloadUpdateOnChangeCheckbox = nullptr;
+    wxButton*   _respawnSelectedButton           = nullptr;
+    wxButton*   _pauseGameButton                 = nullptr;
 
 public:
     // This is the actual home of the static instance
@@ -34,6 +39,9 @@ public:
 
     // Toggle the visibility of the dialog instance, constructing it if necessary.
     static void toggleDialog(const cmd::ArgumentList& args);
+
+    // Makes all GUI inactive / active depending on whether connection is alive.
+    void updateConnectedStatus();
 
 protected:
     // TransientWindow callbacks
@@ -43,40 +51,9 @@ protected:
 private:
     GameConnectionDialog();
 
-    
-    /*	// greebo: Saves the current working set to the entity
-	void save();
-
-	// Clears out all stored data
-	void clear();
-
-	void populateWidgets();
-
-	// Re-loads the conversation from the selected entity
-	void refreshConversationList();
-	void updateConversationPanelSensitivity();
-	void handleConversationSelectionChange();
-
-	// WIDGET POPULATION
-	void populateWindow();
-
-	// Button callbacks
-	void onOK(wxCommandEvent& ev);
-	void onCancel(wxCommandEvent& ev);
-
-	void onEntitySelectionChanged(wxDataViewEvent& ev);
-	void onAddEntity(wxCommandEvent& ev);
-	void onDeleteEntity(wxCommandEvent& ev);
-
-	void onConversationSelectionChanged(wxDataViewEvent& ev);
-	void onAddConversation(wxCommandEvent& ev);
-	void onEditConversation(wxCommandEvent& ev);
-	void onDeleteConversation(wxCommandEvent& ev);
-	void onMoveConversationUpOrDown(wxCommandEvent& ev);
-	void onClearConversations(wxCommandEvent& ev);
-
-	int getSelectedConvIndex();
-	void selectConvByIndex(int index);*/
+    GameConnection& Impl();
 };
+
+void showError(const std::string& text);
 
 } // namespace ui

@@ -13,7 +13,6 @@
 #include "iselection.h"
 #include "imenumanager.h"
 #include "ieventmanager.h"
-#include "idialogmanager.h"
 #include "imainframe.h"
 
 #include "scene/Traverse.h"
@@ -153,14 +152,6 @@ bool GameConnection::isAlive() const {
 
 namespace
 {
-    void showError(const std::string& text)
-    {
-        auto dlg = GlobalDialogManager().createMessageBox(
-            _("Game connection error"), text, ui::IDialog::MESSAGE_ERROR
-        );
-        if (dlg)
-            dlg->run();
-    }
 }
 
 bool GameConnection::connect() {
@@ -600,7 +591,7 @@ void GameConnection::initialiseModule(const IApplicationContext& ctx)
            _("Respawn selected entities"), "", "GameConnectionRespawnSelected");
 
     // Add menu button which shows up the dialog
-    GlobalCommandSystem().addCommand("GameConnectionDialogToggle", ui::GameConnectionDialog::toggleDialog);
+    GlobalCommandSystem().addCommand("GameConnectionDialogToggle", gameconn::GameConnectionDialog::toggleDialog);
     // Add the menu item
     GlobalMenuManager().add(
         "main/connection", 	// menu location path
