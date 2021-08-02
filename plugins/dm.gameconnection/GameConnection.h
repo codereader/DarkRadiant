@@ -131,6 +131,12 @@ private:
     std::size_t _seqnoInProgress = 0;
     //response from current in-progress request will be saved here
     std::vector<char> _response;
+    //function for the current multistep procedure
+    std::function<int(int)> _multistepProcedureFunction;
+    //current step index for multistep procedure
+    int _multistepProcedureStep = -1;
+    //multistep procedure waits for this request
+    int _multistepWaitsForSeqno = 0;
 
     //true <=> cameraOutData holds new camera position, which should be sent to TDM
     bool _cameraOutPending = false;
@@ -161,6 +167,8 @@ private:
     //send given request synchronously, i.e. wait until its completition (blocking)
     //returns response content
     std::string executeRequest(const std::string &request);
+    //execute next step of the current multistep procedure
+    void continueMultistepProcedure();
 
     //given a command to be executed in game console (no EOLs), returns its full request text (except for seqno)
     static std::string composeConExecRequest(std::string consoleLine);

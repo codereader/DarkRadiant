@@ -68,6 +68,7 @@ void GameConnection::sendRequest(const std::string &request) {
     std::string fullMessage = seqnoPreamble(seqno) + request;
     _connection->writeMessage(fullMessage.data(), fullMessage.size());
     _seqnoInProgress = seqno;
+    signal_StatusChanged.emit(0);
 }
 
 bool GameConnection::sendAnyPendingAsync() {
@@ -95,6 +96,12 @@ void GameConnection::think() {
             //mark request as "no longer in progress"
             //note: response can be used in outer function
             _seqnoInProgress = 0;
+
+            if (responseSeqno == _multistepWaitsForSeqno) {
+                _multistepWaitsForSeqno = 0;
+                continueMultistepProcedure();
+            }
+            signal_StatusChanged.emit(0);
         }
     }
     else {
@@ -145,6 +152,18 @@ std::string GameConnection::executeRequest(const std::string &request) {
     waitAction();
 
     return std::string(_response.begin(), _response.end());
+}
+
+void GameConnection::continueMultistepProcedure() {
+    if (!_multistepProcedureFunction)
+        return;
+    while (!_multistepWaitsForSeqno) {
+        _multistepProcedureStep = _multistepProcedureFunction(_multistepProcedureStep);
+        if (_multistepProcedureStep < 0) {
+            _multistepProcedureFunction = std::function<int(int)>();
+            break;
+        }
+    }
 }
 
 bool GameConnection::isAlive() const {
@@ -222,111 +241,148 @@ GameConnection::~GameConnection() {
 
 
 void GameConnection::restartGame(bool dmap) {
-    //BIG TODO!!
-    static const char *TODO_TDM_DIR = R"(G:\TheDarkMod\darkmod)";
-    static const char *TODO_MISSION = "bakery_job";
-    static const char *TODO_MAP = "bakery.map";
+    auto implementation = [this, dmap](int step) -> int {
+        //BIG TODO!!
+        static const char *TODO_TDM_DIR = R"(G:\TheDarkMod\darkmod)";
+        static const char *TODO_MISSION = "bakery_job";
+        static const char *TODO_MAP = "bakery.map";
 
-    std::string savedViewPos;
-    if (isAlive()) {
-        //save current position
-        savedViewPos = executeRequest(composeConExecRequest("getviewpos"));
-    }
+        static bool changingFm;
+        static std::string savedViewPos;
 
-    //save .map file
-    saveMapIfNeeded();
+        if (step == 0) {
 
-    //try to attach to TDM with automation enabled
-    bool attached = connect();
-
-    if (!attached) {
-        //run new TDM process
-#ifdef _WIN32
-        static const char *TDM_NAME = "TheDarkModx64.exe";
-#else
-        static const char *TDM_NAME = "thedarkmod.x64";
-#endif
-        wxExecuteEnv env;
-        env.cwd = TODO_TDM_DIR;
-        wxString cmdline = wxString::Format("%s/%s +set com_automation 1", TODO_TDM_DIR, TDM_NAME);
-        long res = wxExecute(cmdline, wxEXEC_ASYNC, nullptr, &env);
-        if (res <= 0) {
-            showError("Failed to run TheDarkMod executable.");
-            return;
-        }
-
-        //attach to the new process
-        static const int TDM_LAUNCH_TIMEOUT = 5000;  //in milliseconds
-        wxLongLong timestampStart = wxGetUTCTimeMillis();
-        do {
-            wxMilliSleep(500);
-            if (wxGetUTCTimeMillis() - timestampStart > TDM_LAUNCH_TIMEOUT) {
-                showError("Timeout when connecting to just started TheDarkMod process.\nMake sure the game is in main menu, has com_automation enabled, and firewall does not block it.");
-                return;
+            if (isAlive()) {
+                //save current position
+                savedViewPos = executeRequest(composeConExecRequest("getviewpos"));
             }
-        } while (!connect());
-    }
 
-    //check the current status
-    std::map<std::string, std::string> statusProps = executeQueryStatus();
-    if (statusProps["currentfm"] != TODO_MISSION) {
-        //change mission/mod and restart TDM engine
-        std::string request = actionPreamble("installfm") + "content:\n" + TODO_MISSION + "\n";
-        std::string response = executeRequest(request);
-        if (response != "done") {
-            showError("Failed to change installed mission in TheDarkMod.\nMake sure ?DR mission? is configured properly and game version is 2.09 or above.");
-            return;
+            //save .map file
+            saveMapIfNeeded();
+
+            //try to attach to TDM with automation enabled
+            bool attached = connect();
+
+            if (!attached) {
+                //run new TDM process
+#ifdef _WIN32
+                static const char *TDM_NAME = "TheDarkModx64.exe";
+#else
+                static const char *TDM_NAME = "thedarkmod.x64";
+#endif
+                wxExecuteEnv env;
+                env.cwd = TODO_TDM_DIR;
+                wxString cmdline = wxString::Format("%s/%s +set com_automation 1", TODO_TDM_DIR, TDM_NAME);
+                long res = wxExecute(cmdline, wxEXEC_ASYNC, nullptr, &env);
+                if (res <= 0) {
+                    showError("Failed to run TheDarkMod executable.");
+                    return -1;
+                }
+
+                //attach to the new process
+                static const int TDM_LAUNCH_TIMEOUT = 5000;  //in milliseconds
+                wxLongLong timestampStart = wxGetUTCTimeMillis();
+                do {
+                    wxMilliSleep(500);
+                    if (wxGetUTCTimeMillis() - timestampStart > TDM_LAUNCH_TIMEOUT) {
+                        showError("Timeout when connecting to just started TheDarkMod process.\nMake sure the game is in main menu, has com_automation enabled, and firewall does not block it.");
+                        return -1;
+                    }
+                } while (!connect());
+            }
+
+            //check the current status
+            std::map<std::string, std::string> statusProps = executeQueryStatus();
+            changingFm = false;
+            if (statusProps["currentfm"] != TODO_MISSION) {
+                //change mission/mod and restart TDM engine
+                std::string request = actionPreamble("installfm") + "content:\n" + TODO_MISSION + "\n";
+                sendRequest(request);
+                _multistepWaitsForSeqno = _seqnoInProgress;
+                changingFm = true;
+            }
+
+            return 1;
         }
-    }
-    statusProps = executeQueryStatus();
-    if (statusProps["currentfm"] != TODO_MISSION) {
-        showError(fmt::format("Installed mission is {} despite trying to change it.", statusProps["currentfm"]));
-        return;
-    }
 
-    if (dmap) {
-        //run dmap command
-        std::string request = composeConExecRequest("dmap " + std::string(TODO_MAP));
-        std::string response = executeRequest(request);
-        if (response.find("ERROR:") != std::string::npos) {
-            showError("Dmap printed error.\nPlease look at TheDarkMod console.");
-            return;
+        if (step == 1) {
+            std::string response(_response.begin(), _response.end());
+            if (changingFm && response != "done") {
+                showError("Failed to change installed mission in TheDarkMod.\nMake sure ?DR mission? is configured properly and game version is 2.09 or above.");
+                return -1;
+            }
+            std::map<std::string, std::string> statusProps = executeQueryStatus();
+            if (statusProps["currentfm"] != TODO_MISSION) {
+                showError(fmt::format("Installed mission is {} despite trying to change it.", statusProps["currentfm"]));
+                return -1;
+            }
+
+            if (dmap) {
+                //run dmap command
+                std::string request = composeConExecRequest("dmap " + std::string(TODO_MAP));
+                sendRequest(request);
+                _multistepWaitsForSeqno = _seqnoInProgress;
+            }
+
+            return 2;
         }
-    }
 
-    {
-        //start map
-        std::string request = composeConExecRequest("map " + std::string(TODO_MAP));
-        std::string response = executeRequest(request);
-    }
-    statusProps = executeQueryStatus();
-    if (statusProps["currentfm"] != TODO_MISSION) {
-        showError(fmt::format("Installed mission is still {}.", statusProps["currentfm"]));
-        return;
-    }
-    if (statusProps["mapname"] != TODO_MAP) {
-        showError(fmt::format("Active map is {} despite trying to start the map.", statusProps["mapname"]));
-        return;
-    }
-    if (statusProps["guiactive"] != "") {
-        showError(fmt::format("GUI {} is active while we expect the game to start", statusProps["guiactive"]));
-        return;
-    }
+        if (step == 2) {
+            if (dmap) {
+                std::string response(_response.begin(), _response.end());
+                if (response.find("ERROR:") != std::string::npos) {
+                    showError("Dmap printed error.\nPlease look at TheDarkMod console.");
+                    return -1;
+                }
+            }
 
-    //confirm player is ready
-    std::string waitUntilReady = executeGetCvarValue("tdm_player_wait_until_ready");
-    if (waitUntilReady != "0") {
-        //button0 is "attack" button
-        //numbers in parens mean: hold for 100 gameplay milliseconds (time is stopped at waiting screen)
-        std::string request = actionPreamble("gamectrl") + "content:\n" + "timemode \"game\"\n" + "button0 (1 1 0 0 0 0.1)\n";
-        std::string response = executeRequest(request);
-    }
+            //start map
+            std::string request = composeConExecRequest("map " + std::string(TODO_MAP));
+            sendRequest(request);
+            _multistepWaitsForSeqno = _seqnoInProgress;
 
-    if (!savedViewPos.empty()) {
-        //restore camera position
-        std::string request = composeConExecRequest(fmt::format("setviewpos {}", savedViewPos));
-        std::string response = executeRequest(request);
-    }
+            return 3;
+        }
+
+        if (step == 3) {
+            std::string response(_response.begin(), _response.end());
+
+            std::map<std::string, std::string> statusProps = executeQueryStatus();
+            if (statusProps["currentfm"] != TODO_MISSION) {
+                showError(fmt::format("Installed mission is still {}.", statusProps["currentfm"]));
+                return -1;
+            }
+            if (statusProps["mapname"] != TODO_MAP) {
+                showError(fmt::format("Active map is {} despite trying to start the map.", statusProps["mapname"]));
+                return -1;
+            }
+            if (statusProps["guiactive"] != "") {
+                showError(fmt::format("GUI {} is active while we expect the game to start", statusProps["guiactive"]));
+                return -1;
+            }
+
+            //confirm player is ready
+            std::string waitUntilReady = executeGetCvarValue("tdm_player_wait_until_ready");
+            if (waitUntilReady != "0") {
+                //button0 is "attack" button
+                //numbers in parens mean: hold for 100 gameplay milliseconds (time is stopped at waiting screen)
+                std::string request = actionPreamble("gamectrl") + "content:\n" + "timemode \"game\"\n" + "button0 (1 1 0 0 0 0.1)\n";
+                std::string response = executeRequest(request);
+            }
+
+            if (!savedViewPos.empty()) {
+                //restore camera position
+                std::string request = composeConExecRequest(fmt::format("setviewpos {}", savedViewPos));
+                std::string response = executeRequest(request);
+            }
+
+            return -1;
+        }
+    };
+
+    _multistepProcedureFunction = implementation;
+    _multistepProcedureStep = 0;
+    continueMultistepProcedure();
 }
 
 //-------------------------------------------------------------
