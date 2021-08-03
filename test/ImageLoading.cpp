@@ -216,4 +216,15 @@ TEST_F(ImageLoadingTest, LoadDDSCompressedDXT5MipMapsNPOT)
     EXPECT_EQ(img->getHeight(7), 1);
 }
 
+TEST_F(ImageLoadingTest, LoadDDSCompressedBC5MipMaps)
+{
+    auto img = loadImage("textures/dds/test_16x16_bc5.dds");
+    ASSERT_TRUE(img);
+
+    // 16x16 image
+    EXPECT_EQ(img->getWidth(), 16);
+    EXPECT_EQ(img->getHeight(), 16);
+    EXPECT_EQ(img->getLevels(), 5);
+}
+
 }
