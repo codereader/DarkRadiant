@@ -225,6 +225,9 @@ TEST_F(ImageLoadingTest, LoadDDSCompressedBC5MipMaps)
     EXPECT_EQ(img->getWidth(), 16);
     EXPECT_EQ(img->getHeight(), 16);
     EXPECT_EQ(img->getLevels(), 5);
+
+    // Check compressed GL format
+    EXPECT_EQ(img->getGLFormat(), GL_COMPRESSED_RG_RGTC2);
 }
 
 }

@@ -105,6 +105,7 @@ public:
     }
     std::size_t getLevels() const override { return _mipMapInfo.size(); }
     bool isPrecompressed() const override { return _compressed; }
+    GLenum getGLFormat() const override { return _format; }
 
     /* BindableTexture implementation */
     TexturePtr bindTexture(const std::string& name) const
