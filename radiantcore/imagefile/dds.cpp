@@ -200,6 +200,7 @@ static const std::map<std::string, GLenum> GL_FMT_FOR_FOURCC
     { "DXT1", GL_COMPRESSED_RGBA_S3TC_DXT1_EXT },
     { "DXT3", GL_COMPRESSED_RGBA_S3TC_DXT3_EXT },
     { "DXT5", GL_COMPRESSED_RGBA_S3TC_DXT5_EXT },
+    { "ATI2", GL_COMPRESSED_RG_RGTC2 }
 };
 
 // Map uncompressed DDS bit depths to GLenum memory layouts
