@@ -176,6 +176,7 @@ TEST_F(ImageLoadingTest, LoadDDSCompressedDXT1)
 
     // Must be compressed
     EXPECT_TRUE(img->isPrecompressed());
+    EXPECT_EQ(img->getGLFormat(), GL_COMPRESSED_RGBA_S3TC_DXT1_EXT);
 }
 
 TEST_F(ImageLoadingTest, LoadDDSCompressedDXT5NPOT)
@@ -190,6 +191,7 @@ TEST_F(ImageLoadingTest, LoadDDSCompressedDXT5NPOT)
 
     // Must be compressed
     EXPECT_TRUE(img->isPrecompressed());
+    EXPECT_EQ(img->getGLFormat(), GL_COMPRESSED_RGBA_S3TC_DXT5_EXT);
 }
 
 TEST_F(ImageLoadingTest, LoadDDSCompressedDXT5MipMapsNPOT)
@@ -204,6 +206,7 @@ TEST_F(ImageLoadingTest, LoadDDSCompressedDXT5MipMapsNPOT)
 
     // Must be compressed
     EXPECT_TRUE(img->isPrecompressed());
+    EXPECT_EQ(img->getGLFormat(), GL_COMPRESSED_RGBA_S3TC_DXT5_EXT);
 
     // Check mipmap size sequence
     EXPECT_EQ(img->getWidth(1), 30);
