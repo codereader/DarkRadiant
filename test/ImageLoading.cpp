@@ -97,6 +97,12 @@ TEST_F(ImageLoadingTest, LoadPngGreyscaleWithAlpha)
     }
 }
 
+TEST_F(ImageLoadingTest, LoadInvalidDDS)
+{
+    auto img = loadImage("textures/dds/not_a_dds.dds");
+    ASSERT_FALSE(img);
+}
+
 TEST_F(ImageLoadingTest, LoadDDSUncompressed)
 {
     auto img = loadImage("textures/dds/test_16x16_uncomp.dds");

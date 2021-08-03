@@ -221,6 +221,7 @@ DDSImagePtr LoadDDSFromStream(InputStream& stream)
     if (!header.isValid())
     {
         rError() << "Invalid DDS header" << std::endl;
+        return {};
     }
 
     // Extract basic metadata: width, height, format and mipmap count
@@ -270,12 +271,16 @@ DDSImagePtr LoadDDSFromStream(InputStream& stream)
     DDSImagePtr image(new DDSImage(size));
 
     // Set the format of this DDS image
-    if (GL_FMT_FOR_FOURCC.count(compressionFormat) == 1)
+    if (GL_FMT_FOR_FOURCC.count(compressionFormat) == 1) {
         image->setFormat(GL_FMT_FOR_FOURCC.at(compressionFormat), true);
-    else if (GL_FMT_FOR_BITDEPTH.count(bitDepth) == 1)
+    }
+    else if (GL_FMT_FOR_BITDEPTH.count(bitDepth) == 1) {
         image->setFormat(GL_FMT_FOR_BITDEPTH.at(bitDepth), false);
-    else
+    }
+    else {
         rError() << "Unknown DDS format (" << compressionFormat << ")" << std::endl;
+        return {};
+    }
 
     // Load the mipmaps into the allocated memory
     for (std::size_t i = 0; i < mipMapInfo.size(); ++i)
