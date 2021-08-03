@@ -54,7 +54,9 @@ void	main()
 	vec3 H = normalize(L + V);
 
 	// compute normal in tangent space from bumpmap
-	vec3 N = 2.0 * (texture2D(u_bumpmap, var_tex_diffuse_bump.pq).xyz - 0.5);
+    vec2 normalRG = texture2D(u_bumpmap, var_tex_diffuse_bump.pq).rg;
+    float normalB = sqrt(1.0 - pow(normalRG.r, 2.0) - pow(normalRG.g, 2.0));
+	vec3 N = 2.0 * (vec3(normalRG, normalB) - 0.5);
 	N = normalize(N);
 
 	// compute the diffuse term
