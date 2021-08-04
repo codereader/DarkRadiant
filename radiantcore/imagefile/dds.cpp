@@ -105,6 +105,7 @@ public:
     }
     std::size_t getLevels() const override { return _mipMapInfo.size(); }
     bool isPrecompressed() const override { return _compressed; }
+    GLenum getGLFormat() const override { return _format; }
 
     /* BindableTexture implementation */
     TexturePtr bindTexture(const std::string& name) const
@@ -199,6 +200,7 @@ static const std::map<std::string, GLenum> GL_FMT_FOR_FOURCC
     { "DXT1", GL_COMPRESSED_RGBA_S3TC_DXT1_EXT },
     { "DXT3", GL_COMPRESSED_RGBA_S3TC_DXT3_EXT },
     { "DXT5", GL_COMPRESSED_RGBA_S3TC_DXT5_EXT },
+    { "ATI2", GL_COMPRESSED_RG_RGTC2 }
 };
 
 // Map uncompressed DDS bit depths to GLenum memory layouts
@@ -219,6 +221,7 @@ DDSImagePtr LoadDDSFromStream(InputStream& stream)
     if (!header.isValid())
     {
         rError() << "Invalid DDS header" << std::endl;
+        return {};
     }
 
     // Extract basic metadata: width, height, format and mipmap count
@@ -268,12 +271,16 @@ DDSImagePtr LoadDDSFromStream(InputStream& stream)
     DDSImagePtr image(new DDSImage(size));
 
     // Set the format of this DDS image
-    if (GL_FMT_FOR_FOURCC.count(compressionFormat) == 1)
+    if (GL_FMT_FOR_FOURCC.count(compressionFormat) == 1) {
         image->setFormat(GL_FMT_FOR_FOURCC.at(compressionFormat), true);
-    else if (GL_FMT_FOR_BITDEPTH.count(bitDepth) == 1)
+    }
+    else if (GL_FMT_FOR_BITDEPTH.count(bitDepth) == 1) {
         image->setFormat(GL_FMT_FOR_BITDEPTH.at(bitDepth), false);
-    else
+    }
+    else {
         rError() << "Unknown DDS format (" << compressionFormat << ")" << std::endl;
+        return {};
+    }
 
     // Load the mipmaps into the allocated memory
     for (std::size_t i = 0; i < mipMapInfo.size(); ++i)

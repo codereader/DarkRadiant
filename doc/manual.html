@@ -529,6 +529,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_dark_mod_features">Dark Mod features</a>
 <ul class="sectlevel2">
 <li><a href="#_the_difficulty_editor">The Difficulty editor</a></li>
+<li><a href="#_game_connection">Game Connection</a>
+<ul class="sectlevel3">
+<li><a href="#_activating_the_connection">Activating the connection</a></li>
+<li><a href="#_synchronising_camera_position">Synchronising camera position</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a href="#_command_reference">Command reference</a>
@@ -3211,6 +3217,84 @@ class), consult the Dark Mod Wiki.
 </table>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_game_connection">Game Connection</h3>
+<div class="paragraph">
+<p>The Dark Mod includes functionality to dynamically interact with a DarkRadiant
+session running on the same machine, allowing certain information (such as
+camera position) to be synchronised both to and from the game, and for certain
+entity property changes to be pushed to the running game without needing to
+restart.</p>
+</div>
+<div class="paragraph">
+<p>These features are accessed in DarkRadiant through the <strong>Connection</strong> menu and
+buttons on the camera view toolbar.</p>
+</div>
+<div class="sect3">
+<h4 id="_activating_the_connection">Activating the connection</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>In <strong>The Dark Mod</strong>, load the map which you are currently editing in DarkRadiant.</p>
+</li>
+<li>
+<p>Bring down the game console and enter the command</p>
+<div class="listingblock">
+<div class="content">
+<pre>com_automation 1</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This should result in a status message indicating that the game is listening for
+connections on a particular network port.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Automation now listens on port 3879</pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>The game process is now ready to exchange data with DarkRadiant.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_synchronising_camera_position">Synchronising camera position</h4>
+<div class="paragraph">
+<p>You can synchronise the DarkRadiant camera position and the game player position
+in both directions: editor to game and game to editor. This feature is most
+easily controlled with the buttons on the camera view toolbar, but it can also
+be activated from the <strong>Connection</strong> menu.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 7.1428%;">
+<col style="width: 21.4285%;">
+<col style="width: 71.4287%;">
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-center valign-top"><p class="tableblock"><span class="image"><img src="img/CameraSync.png" alt="CameraSync" width="24"></span></p></th>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Game position follows DarkRadiant camera</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Any motion of the DarkRadiant camera will be transmitted in realtime to the
+game, resulting in the player position moving (in <strong>noclip</strong> mode) to the same
+position and view direction.</p>
+<p class="tableblock">This is a toggled option which remains active until switched off.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-center valign-top"><p class="tableblock"><span class="image"><img src="img/CameraSyncBack.png" alt="CameraSyncBack" width="24"></span></p></th>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Move camera to current game position</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Update the DarkRadiant camera to match the current player position and view
+direction in game.</p>
+<p class="tableblock">This is a single-shot command; there is no mechanism to continuously move the
+DarkRadiant camera in response to player motion in game.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -3868,7 +3952,7 @@ these into one or more MTR files which are listed as hidden.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-01-17 20:46:29 UTC
+Last updated 2021-07-28 20:36:17 +0100
 </div>
 </div>
 </body>

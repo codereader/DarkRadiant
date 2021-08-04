@@ -46,10 +46,10 @@ class Flip11 {}; // both
 template<typename PixelDecoder>
 void image_decode(stream::PointerInputStream& istream, PixelDecoder& decode, RGBAImage& image, const Flip00&)
 {
-  RGBAPixel* end = image.pixels + (image.height * image.width);
-  for(RGBAPixel* row = end; row != image.pixels; row -= image.width)
+  RGBAPixel* end = image.pixels + (image.getHeight() * image.getWidth());
+  for(RGBAPixel* row = end; row != image.pixels; row -= image.getWidth())
   {
-    for(RGBAPixel* pixel = row - image.width; pixel != row; ++pixel)
+    for(RGBAPixel* pixel = row - image.getWidth(); pixel != row; ++pixel)
     {
       decode(istream, *pixel);
     }
@@ -59,10 +59,10 @@ void image_decode(stream::PointerInputStream& istream, PixelDecoder& decode, RGB
 template<typename PixelDecoder>
 void image_decode(stream::PointerInputStream& istream, PixelDecoder& decode, RGBAImage& image, const Flip01&)
 {
-  RGBAPixel* end = image.pixels + (image.height * image.width);
-  for(RGBAPixel* row = image.pixels; row != end; row += image.width)
+  RGBAPixel* end = image.pixels + (image.getHeight() * image.getWidth());
+  for(RGBAPixel* row = image.pixels; row != end; row += image.getWidth())
   {
-    for(RGBAPixel* pixel = row; pixel != row + image.width; ++pixel)
+    for(RGBAPixel* pixel = row; pixel != row + image.getWidth(); ++pixel)
     {
       decode(istream, *pixel);
     }
@@ -72,10 +72,10 @@ void image_decode(stream::PointerInputStream& istream, PixelDecoder& decode, RGB
 template<typename PixelDecoder>
 void image_decode(stream::PointerInputStream& istream, PixelDecoder& decode, RGBAImage& image, const Flip10&)
 {
-  RGBAPixel* end = image.pixels + (image.height * image.width);
-  for(RGBAPixel* row = end; row != image.pixels; row -= image.width)
+  RGBAPixel* end = image.pixels + (image.getHeight() * image.getWidth());
+  for(RGBAPixel* row = end; row != image.pixels; row -= image.getWidth())
   {
-    for(RGBAPixel* pixel = row; pixel != row - image.width;)
+    for(RGBAPixel* pixel = row; pixel != row - image.getWidth();)
     {
       decode(istream, *--pixel);
     }
@@ -85,10 +85,10 @@ void image_decode(stream::PointerInputStream& istream, PixelDecoder& decode, RGB
 template<typename PixelDecoder>
 void image_decode(stream::PointerInputStream& istream, PixelDecoder& decode, RGBAImage& image, const Flip11&)
 {
-  RGBAPixel* end = image.pixels + (image.height * image.width);
-  for(RGBAPixel* row = image.pixels; row != end; row += image.width)
+  RGBAPixel* end = image.pixels + (image.getHeight() * image.getWidth());
+  for(RGBAPixel* row = image.pixels; row != end; row += image.getWidth())
   {
-    for(RGBAPixel* pixel = row + image.width; pixel != row;)
+    for(RGBAPixel* pixel = row + image.getWidth(); pixel != row;)
     {
       decode(istream, *--pixel);
     }

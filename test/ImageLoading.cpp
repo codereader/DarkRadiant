@@ -97,6 +97,12 @@ TEST_F(ImageLoadingTest, LoadPngGreyscaleWithAlpha)
     }
 }
 
+TEST_F(ImageLoadingTest, LoadInvalidDDS)
+{
+    auto img = loadImage("textures/dds/not_a_dds.dds");
+    ASSERT_FALSE(img);
+}
+
 TEST_F(ImageLoadingTest, LoadDDSUncompressed)
 {
     auto img = loadImage("textures/dds/test_16x16_uncomp.dds");
@@ -170,6 +176,7 @@ TEST_F(ImageLoadingTest, LoadDDSCompressedDXT1)
 
     // Must be compressed
     EXPECT_TRUE(img->isPrecompressed());
+    EXPECT_EQ(img->getGLFormat(), GL_COMPRESSED_RGBA_S3TC_DXT1_EXT);
 }
 
 TEST_F(ImageLoadingTest, LoadDDSCompressedDXT5NPOT)
@@ -184,6 +191,7 @@ TEST_F(ImageLoadingTest, LoadDDSCompressedDXT5NPOT)
 
     // Must be compressed
     EXPECT_TRUE(img->isPrecompressed());
+    EXPECT_EQ(img->getGLFormat(), GL_COMPRESSED_RGBA_S3TC_DXT5_EXT);
 }
 
 TEST_F(ImageLoadingTest, LoadDDSCompressedDXT5MipMapsNPOT)
@@ -198,6 +206,7 @@ TEST_F(ImageLoadingTest, LoadDDSCompressedDXT5MipMapsNPOT)
 
     // Must be compressed
     EXPECT_TRUE(img->isPrecompressed());
+    EXPECT_EQ(img->getGLFormat(), GL_COMPRESSED_RGBA_S3TC_DXT5_EXT);
 
     // Check mipmap size sequence
     EXPECT_EQ(img->getWidth(1), 30);
@@ -214,6 +223,20 @@ TEST_F(ImageLoadingTest, LoadDDSCompressedDXT5MipMapsNPOT)
     EXPECT_EQ(img->getHeight(6), 2);
     EXPECT_EQ(img->getWidth(7), 1);
     EXPECT_EQ(img->getHeight(7), 1);
+}
+
+TEST_F(ImageLoadingTest, LoadDDSCompressedBC5MipMaps)
+{
+    auto img = loadImage("textures/dds/test_16x16_bc5.dds");
+    ASSERT_TRUE(img);
+
+    // 16x16 image
+    EXPECT_EQ(img->getWidth(), 16);
+    EXPECT_EQ(img->getHeight(), 16);
+    EXPECT_EQ(img->getLevels(), 5);
+
+    // Check compressed GL format
+    EXPECT_EQ(img->getGLFormat(), GL_COMPRESSED_RG_RGTC2);
 }
 
 }

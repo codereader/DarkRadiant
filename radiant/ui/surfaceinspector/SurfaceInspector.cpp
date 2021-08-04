@@ -627,17 +627,31 @@ void SurfaceInspector::fitTexture(Axis axis)
 
 	if (repeatX > 0.0 && repeatY > 0.0)
 	{
-        // User-specified fit values must always be >0, but we use -1 internally
-        // to signal not to fit on a particular axis.
-        GlobalCommandSystem().executeCommand("FitTexture",
-                                             (axis == Axis::Y ? -1 : repeatX),
-                                             (axis == Axis::X ? -1 : repeatY));
+        GlobalCommandSystem().executeCommand("FitTexture", repeatX, repeatY);
     }
 	else
 	{
 		// Invalid repeatX && repeatY values
 		wxutil::Messagebox::ShowError(_("Both fit values must be > 0."));
+        return;
 	}
+
+    // If only fitting on a single axis, propagate the scale factor for the
+    // fitted axis to the non-fitted axis, which should preserve the texture
+    // aspect ratio.
+    if (axis != Axis::BOTH)
+    {
+        GlobalSelectionSystem().foreachFace(
+            [&](IFace& face) {
+                ShiftScaleRotation texdef = face.getShiftScaleRotation();
+                if (axis == Axis::X)
+                    texdef.scale[1] = texdef.scale[0];
+                else
+                    texdef.scale[0] = texdef.scale[1];
+                face.setShiftScaleRotation(texdef);
+            }
+        );
+    }
 }
 
 void SurfaceInspector::onFit(Axis axis)

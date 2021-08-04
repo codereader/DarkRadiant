@@ -201,12 +201,8 @@ void TextureProjection::fitTexture(std::size_t width, std::size_t height,
     bounds.extents.z() = 1;
 
     // the bounds of a perfectly fitted texture transform
-    AABB perfect(Vector3(s_repeat > 0 ? s_repeat * 0.5 : bounds.origin.x(),
-                         t_repeat > 0 ? t_repeat * 0.5 : bounds.origin.y(),
-                         0),
-                 Vector3(s_repeat > 0 ? s_repeat * 0.5 : bounds.extents.x(),
-                         t_repeat > 0 ? t_repeat * 0.5 : bounds.extents.y(),
-                         1));
+    AABB perfect(Vector3(s_repeat * 0.5, t_repeat * 0.5, 0),
+                 Vector3(s_repeat * 0.5, t_repeat * 0.5, 1));
 
     // the difference between the current texture transform and the perfectly fitted transform
     Matrix4 diffMatrix = Matrix4::getTranslation(bounds.origin - perfect.origin);

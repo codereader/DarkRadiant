@@ -22,16 +22,17 @@ class RGBAImage :
 	public Image,
 	public util::Noncopyable
 {
+	std::size_t _width;
+	std::size_t _height;
+
 public:
 	RGBAPixel* pixels;
 
-	std::size_t width;
-	std::size_t height;
-
-	RGBAImage(std::size_t _width, std::size_t _height) :
-		pixels(new RGBAPixel[_width * _height]),
-		width(_width),
-		height(_height)
+    /// Construct image and initialise internal storage
+	RGBAImage(std::size_t width, std::size_t height):
+		_width(width),
+		_height(height),
+		pixels(new RGBAPixel[_width * _height])
 	{}
 
 	~RGBAImage()
@@ -44,9 +45,10 @@ public:
 	{
 		return reinterpret_cast<byte*>(pixels);
 	}
-	std::size_t getWidth(std::size_t = 0) const override { return width; }
-	std::size_t getHeight(std::size_t = 0) const override { return height; }
+	std::size_t getWidth(std::size_t = 0) const override { return _width; }
+	std::size_t getHeight(std::size_t = 0) const override { return _height; }
     std::size_t getLevels() const override { return 1; }
+    GLenum getGLFormat() const override { return GL_RGBA; }
 
     /* BindableTexture implementation */
     TexturePtr bindTexture(const std::string& name) const

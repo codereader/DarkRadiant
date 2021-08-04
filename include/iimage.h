@@ -52,10 +52,20 @@ public:
     /// Return the height of the specified level in pixels
     virtual std::size_t getHeight(std::size_t level = 0) const = 0;
 
-    // greebo: Returns TRUE whether this image is precompressed (DDS)
+    /**
+     * \brief Test whether this image is precompressed.
+     *
+     * Precompressed images cannot be used as input for image manipulation
+     * operations in shaders, due to quality loss. Note that not all DDS images
+     * are necessarily compressed (although uncompressed DDS images are rarely
+     * used in TDM).
+     */
     virtual bool isPrecompressed() const {
         return false;
     }
+
+    /// Return the OpenGL format for this image
+    virtual GLenum getGLFormat() const = 0;
 };
 typedef std::shared_ptr<Image> ImagePtr;
 
