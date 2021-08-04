@@ -7,8 +7,8 @@ namespace shaders
 {
 
 /**
- * \brief
- * Declaration parsed from a "cameraCubeMap" stage in a material definition.
+ * \brief Declaration parsed from a "cameraCubeMap" stage in a material
+ * definition.
  *
  * A cameraCubeMap specifies a texture prefix, to which the suffixes "_up",
  * "_down", "_left", "_right", "_forward" and "_back" are appended to give the
@@ -18,7 +18,7 @@ namespace shaders
  * NamedBindable interface so that it can bind the cube map texture in GL and
  * return it to the texture manager.
  */
-class CameraCubeMapDecl : 
+class CameraCubeMapDecl :
     public IMapExpression,
     public NamedBindable
 {
@@ -41,7 +41,7 @@ public:
 
     /* NamedBindable implementation */
     std::string getIdentifier() const override;
-    TexturePtr bindTexture(const std::string& name) const override;
+    TexturePtr bindTexture(const std::string& name, Role role) const override;
 
     std::string getExpressionString() override;
 

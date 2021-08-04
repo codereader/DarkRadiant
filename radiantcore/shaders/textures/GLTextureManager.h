@@ -25,11 +25,9 @@ private:
 
 public:
 
-    /**
-     * \brief
-     * Construct a bound texture from a generic named bindable.
-     */
-	TexturePtr getBinding(const NamedBindablePtr& bindable);
+    /// Construct a bound texture from a generic named bindable.
+    TexturePtr getBinding(const NamedBindablePtr& bindable,
+                          BindableTexture::Role role = BindableTexture::Role::COLOUR);
 
 	/** greebo: This loads a texture directly from the disk using the
 	 * 			specified <fullPath>.

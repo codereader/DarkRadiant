@@ -23,7 +23,7 @@ typedef std::shared_ptr<MapExpression> MapExpressionPtr;
  * Map expression are recursive expressions that generate an image, such as
  * "heightmap(addnormals(blah, bleh), 1).
  */
-class MapExpression : 
+class MapExpression :
     public IMapExpression,
     public NamedBindable
 {
@@ -37,11 +37,11 @@ public: /* INTERFACE METHODS */
 public:
 
     /* BindableTexture interface */
-    TexturePtr bindTexture(const std::string& name) const override
+    TexturePtr bindTexture(const std::string& name, Role role) const override
     {
         ImagePtr img = getImage();
         if (img)
-            return img->bindTexture(name);
+            return img->bindTexture(name, role);
         else
             return TexturePtr();
     }
@@ -73,7 +73,7 @@ protected:
 };
 
 // the specific MapExpressions
-class HeightMapExpression : 
+class HeightMapExpression :
     public MapExpression
 {
 	MapExpressionPtr heightMapExp;
@@ -85,8 +85,8 @@ public:
     std::string getExpressionString() override;
 };
 
-class AddNormalsExpression : 
-    public MapExpression 
+class AddNormalsExpression :
+    public MapExpression
 {
 	MapExpressionPtr mapExpOne;
 	MapExpressionPtr mapExpTwo;
@@ -97,7 +97,7 @@ public:
     std::string getExpressionString() override;
 };
 
-class SmoothNormalsExpression : 
+class SmoothNormalsExpression :
     public MapExpression
 {
 	MapExpressionPtr mapExp;
@@ -118,8 +118,8 @@ public:
     std::string getExpressionString() override;
 };
 
-class ScaleExpression : 
-    public MapExpression 
+class ScaleExpression :
+    public MapExpression
 {
 	MapExpressionPtr mapExp;
 	float scaleRed;
@@ -133,8 +133,8 @@ public:
     std::string getExpressionString() override;
 };
 
-class InvertAlphaExpression : 
-    public MapExpression 
+class InvertAlphaExpression :
+    public MapExpression
 {
 	MapExpressionPtr mapExp;
 public:
@@ -144,7 +144,7 @@ public:
     std::string getExpressionString() override;
 };
 
-class InvertColorExpression : 
+class InvertColorExpression :
     public MapExpression
 {
 	MapExpressionPtr mapExp;
@@ -155,8 +155,8 @@ public:
     std::string getExpressionString() override;
 };
 
-class MakeIntensityExpression : 
-    public MapExpression 
+class MakeIntensityExpression :
+    public MapExpression
 {
 	MapExpressionPtr mapExp;
 public:
@@ -166,7 +166,7 @@ public:
     std::string getExpressionString() override;
 };
 
-class MakeAlphaExpression : 
+class MakeAlphaExpression :
     public MapExpression
 {
 	MapExpressionPtr mapExp;

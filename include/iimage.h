@@ -9,8 +9,8 @@ class Texture;
 typedef std::shared_ptr<Texture> TexturePtr;
 
 /**
- * \brief
- * Interface for GL bindable texture objects.
+ * \brief Interface for an object (typically an image) which can produce a bound
+ * OpenGL texture wrapped in a Texture object.
  */
 class BindableTexture
 {
@@ -18,8 +18,21 @@ public:
     virtual ~BindableTexture() {}
 
     /**
-     * \brief
-     * Bind this texture to OpenGL.
+     * Enumeration of possible roles for a texture, which might be used to
+     * choose an appropriate OpenGL format (e.g. RGB for colour images, RG for
+     * normal maps etc).
+     */
+    enum class Role
+    {
+        /// A regular colour texture requiring RGB channels
+        COLOUR,
+
+        /// A normal map which requires only R & G channels
+        NORMAL_MAP
+    };
+
+    /**
+     * \brief Bind this texture to OpenGL.
      *
      * This method invokes the necessary GL calls to bind and upload the
      * object's texture. It returns a Texture object representing the texture in
@@ -28,8 +41,16 @@ public:
      * \param name
      * Optional name to give the texture at bind time. This would usually be the
      * name of the image map, e.g. "textures/blah/bleh".
+     *
+     * \param role
+     * Optional role to suggest an internal OpenGL format for the bound texture.
+     * The implementing object may (but is not required to) use this information
+     * to help choose a suitable format when binding the texture. In particular,
+     * compressed images loaded from DDS files already have a specific format
+     * which cannot be changed at bind time.
      */
-    virtual TexturePtr bindTexture(const std::string& name = "") const = 0;
+    virtual TexturePtr bindTexture(const std::string& name = "",
+                                   Role role = Role::COLOUR) const = 0;
 };
 
 typedef std::shared_ptr<BindableTexture> BindableTexturePtr;

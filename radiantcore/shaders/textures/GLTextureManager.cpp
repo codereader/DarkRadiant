@@ -38,7 +38,8 @@ void GLTextureManager::checkBindings()
     }
 }
 
-TexturePtr GLTextureManager::getBinding(const NamedBindablePtr& bindable)
+TexturePtr GLTextureManager::getBinding(const NamedBindablePtr& bindable,
+                                        BindableTexture::Role role)
 {
     // Check if we got an empty MapExpression, and return the NOT FOUND texture
     // if so
@@ -49,9 +50,7 @@ TexturePtr GLTextureManager::getBinding(const NamedBindablePtr& bindable)
 
     // Check if we already have the texture, otherwise construct it
     auto identifier = bindable->getIdentifier();
-
     auto existing = _textures.find(identifier);
-
     if (existing != _textures.end())
     {
         // Found, return
@@ -59,14 +58,13 @@ TexturePtr GLTextureManager::getBinding(const NamedBindablePtr& bindable)
     }
 
     // Create and insert texture object, if it is valid
-    auto texture = bindable->bindTexture(identifier);
-
+    auto texture = bindable->bindTexture(identifier, role);
     if (texture)
     {
         _textures.emplace(identifier, texture);
         return texture;
     }
-     
+
     rError() << "[shaders] Unable to load texture: " << identifier << std::endl;
     return getShaderNotFound();
 }
@@ -133,7 +131,7 @@ TexturePtr GLTextureManager::loadStandardTexture(const std::string& filename)
         // The getProcessed() call may substitute the passed image by another
         return img->bindTexture(filename);
     }
-    
+
     rError() << "[shaders] Couldn't load Standard Texture texture: " << filename << "\n";
 
     return TexturePtr();

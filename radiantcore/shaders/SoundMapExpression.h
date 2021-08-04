@@ -45,7 +45,7 @@ public:
         return isWaveform() ? "__soundMapWave__" : "__soundMap__";
     }
 
-    virtual TexturePtr bindTexture(const std::string& name) const override
+    virtual TexturePtr bindTexture(const std::string& name, Role) const override
     {
         auto imagePath = module::GlobalModuleRegistry().getApplicationContext().getBitmapsPath();
         imagePath += isWaveform() ? SOUND_MAP_PLACEHOLDER_WAVE : SOUND_MAP_PLACEHOLDER;
