@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\..\libs\math\AABB.cpp" />
+    <ClCompile Include="..\..\libs\math\Frustum.cpp" />
+    <ClCompile Include="..\..\libs\math\Matrix4.cpp" />
+    <ClCompile Include="..\..\libs\math\Plane3.cpp" />
+    <ClCompile Include="..\..\libs\math\SHA256.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\libs\math\AABB.h" />
+    <ClInclude Include="..\..\libs\math\curve.h" />
+    <ClInclude Include="..\..\libs\math\FloatTools.h" />
+    <ClInclude Include="..\..\libs\math\Frustum.h" />
+    <ClInclude Include="..\..\libs\math\Hash.h" />
+    <ClInclude Include="..\..\libs\math\Line.h" />
+    <ClInclude Include="..\..\libs\math\lrint.h" />
+    <ClInclude Include="..\..\libs\math\Matrix4.h" />
+    <ClInclude Include="..\..\libs\math\pi.h" />
+    <ClInclude Include="..\..\libs\math\Plane3.h" />
+    <ClInclude Include="..\..\libs\math\Quaternion.h" />
+    <ClInclude Include="..\..\libs\math\Ray.h" />
+    <ClInclude Include="..\..\libs\math\Segment.h" />
+    <ClInclude Include="..\..\libs\math\SHA256.h" />
+    <ClInclude Include="..\..\libs\math\Vector2.h" />
+    <ClInclude Include="..\..\libs\math\Vector3.h" />
+    <ClInclude Include="..\..\libs\math\Vector4.h" />
+    <ClInclude Include="..\..\libs\math\Viewer.h" />
+    <ClInclude Include="..\..\libs\math\ViewProjection.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="natvis">
+      <UniqueIdentifier>{a5b2cf41-c388-44a9-a8b9-963b93482d56}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="natvis\mathlib.natvis">
+      <Filter>natvis</Filter>
+    </Natvis>
+  </ItemGroup>
+</Project>

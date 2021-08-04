@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010"> 
+  <Type Name="BasicVector3&lt;*&gt;">
+    <DisplayString>{(*((Eigen::PlainObjectBase&lt;Eigen::Matrix&lt;double,3,1,0,3,1&gt; &gt;*)&amp;_v)).m_storage.m_data.array[0]}
+ {(*((Eigen::PlainObjectBase&lt;Eigen::Matrix&lt;double,3,1,0,3,1&gt; &gt;*)&amp;_v)).m_storage.m_data.array[1]}
+ {(*((Eigen::PlainObjectBase&lt;Eigen::Matrix&lt;double,3,1,0,3,1&gt; &gt;*)&amp;_v)).m_storage.m_data.array[2]}</DisplayString>
+    <Expand>
+      <Item Name="X">(*((Eigen::PlainObjectBase&lt;Eigen::Matrix&lt;double,3,1,0,3,1&gt; &gt;*)&amp;_v)).m_storage.m_data.array[0]</Item>
+      <Item Name="Y">(*((Eigen::PlainObjectBase&lt;Eigen::Matrix&lt;double,3,1,0,3,1&gt; &gt;*)&amp;_v)).m_storage.m_data.array[1]</Item>
+      <Item Name="Z">(*((Eigen::PlainObjectBase&lt;Eigen::Matrix&lt;double,3,1,0,3,1&gt; &gt;*)&amp;_v)).m_storage.m_data.array[2]</Item>
+    </Expand>
+  </Type>
+</AutoVisualizer>
