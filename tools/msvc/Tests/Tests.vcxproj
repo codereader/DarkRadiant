@@ -61,6 +61,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\test\algorithm\Primitives.h" />
     <ClInclude Include="..\..\..\test\algorithm\Scene.h" />
+    <ClInclude Include="..\..\..\test\algorithm\View.h" />
     <ClInclude Include="..\..\..\test\algorithm\XmlUtils.h" />
     <ClInclude Include="..\..\..\test\HeadlessOpenGLContext.h" />
     <ClInclude Include="..\..\..\test\math\MatrixUtils.h" />

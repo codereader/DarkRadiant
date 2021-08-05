@@ -55,6 +55,11 @@ public:
 	{
 		return _selected;
 	}
+
+    ISelectable* getSelectable() const
+    {
+        return _selectable;
+    }
 };
 
 }
