@@ -149,7 +149,7 @@ bool GameConnection::connect()
 void GameConnection::disconnect(bool force)
 {
     _autoReloadMap = false;
-    setUpdateMapAlways(false);
+    setAlwaysUpdateMapEnabled(false);
     setUpdateMapObserverEnabled(false);
     setCameraSyncEnabled(false);
 
@@ -181,167 +181,199 @@ void GameConnection::restartGame(bool dmap)
     };
 
     auto implementation = [this, dmap](int step) -> MultistepProcReturn {
-        //BIG TODO!!
-        static const char *TODO_TDM_DIR = R"(G:\TheDarkMod\darkmod)";
-        static const char *TODO_MISSION = "bakery_job";
-        static const char *TODO_MAP = "bakery.map";
+        try {
 
-        //perhaps it is not the best idea to store state in global/static variables...
-        static std::string savedViewPos;
-        static wxLongLong timestampStartAttach = 0, timestampLastTry = 0;
-        static int pendingSeqno = 0;
+            //BIG TODO!!
+            static const char *TODO_TDM_DIR = R"(G:\TheDarkMod\darkmod)";
+            static const char *TODO_MISSION = "bakery_job";
+            static const char *TODO_MAP = "bakery.map";
 
-        if (step == STEP_START) {
-            if (isAlive()) {
-                //save current position
-                _engine->waitForTags(TAG_CAMERA);
-                savedViewPos = executeGenericRequest(composeConExecRequest("getviewpos"));
-            }
+            //perhaps it is not the best idea to store state in global/static variables...
+            static std::string savedViewPos;
+            static bool savedCameraSyncEnabled, savedAutoReloadMapEnabled, savedAlwaysUpdateMapEnabled;
+            static wxLongLong timestampStartAttach, timestampLastTry;
+            static int pendingSeqno;
 
-            //save .map file
-            saveMapIfNeeded();
+            if (step == STEP_START) {
+                //save enabled modes
+                savedCameraSyncEnabled = isCameraSyncEnabled();
+                savedAutoReloadMapEnabled = isAutoReloadMapEnabled();
+                savedAlwaysUpdateMapEnabled = isAlwaysUpdateMapEnabled();
+                savedViewPos = "";
 
-            //try to attach to TDM with automation enabled
-            bool attached = connect();
+                if (isAlive()) {
+                    //save current position
+                    _engine->waitForTags(TAG_CAMERA);
+                    savedViewPos = executeGenericRequest(composeConExecRequest("getviewpos"));
+                    //disable modes
+                    setCameraSyncEnabled(false);
+                    setAutoReloadMapEnabled(false);
+                    setAlwaysUpdateMapEnabled(false);
+                    setUpdateMapObserverEnabled(false);
+                }
 
-            if (!attached) {
-                //run new TDM process
+                //save .map file
+                saveMapIfNeeded();
+
+                //try to attach to TDM with automation enabled
+                bool attached = connect();
+
+                if (!attached) {
+                    //run new TDM process
 #ifdef _WIN32
-                static const char *TDM_NAME = "TheDarkModx64.exe";
+                    static const char *TDM_NAME = "TheDarkModx64.exe";
 #else
-                static const char *TDM_NAME = "thedarkmod.x64";
+                    static const char *TDM_NAME = "thedarkmod.x64";
 #endif
-                wxExecuteEnv env;
-                env.cwd = TODO_TDM_DIR;
-                wxString cmdline = wxString::Format("%s/%s +set com_automation 1", TODO_TDM_DIR, TDM_NAME);
-                long res = wxExecute(cmdline, wxEXEC_ASYNC, nullptr, &env);
-                if (res <= 0) {
-                    showError("Failed to run TheDarkMod executable.");
+                    wxExecuteEnv env;
+                    env.cwd = TODO_TDM_DIR;
+                    wxString cmdline = wxString::Format("%s/%s +set com_automation 1", TODO_TDM_DIR, TDM_NAME);
+                    long res = wxExecute(cmdline, wxEXEC_ASYNC, nullptr, &env);
+                    if (res <= 0) {
+                        showError("Failed to run TheDarkMod executable.");
+                        return {STEP_FINISHED, {}};
+                    }
+
+                    timestampStartAttach = wxGetUTCTimeMillis();
+                    timestampLastTry = 0;
+                    return {STEP_ATTACH, {}};
+                }
+
+                return {STEP_SETMOD, {}};
+            }
+
+            if (step == STEP_ATTACH) {
+                //attach to the new process
+                static const int TDM_ATTACH_TIMEOUT = 10000;    //in milliseconds
+                static const int TDM_ATTACH_RETRY = 1000;
+
+                wxLongLong timestampNow = wxGetUTCTimeMillis();
+                if (timestampNow - timestampLastTry > TDM_ATTACH_RETRY) {
+                    timestampLastTry = timestampNow;
+                    if (connect())
+                        return {STEP_SETMOD, {}};
+                }
+                if (timestampNow - timestampStartAttach > TDM_ATTACH_TIMEOUT) {
+                    showError("Timeout when connecting to just started TheDarkMod process.\nMake sure the game is in main menu, has com_automation enabled, and firewall does not block it.");
                     return {STEP_FINISHED, {}};
                 }
 
-                timestampStartAttach = wxGetUTCTimeMillis();
-                timestampLastTry = 0;
-                return {STEP_ATTACH, {}};
+                //keep calling this step on every think
+                return {STEP_ATTACH, {SEQNO_WAIT_POLL}};
             }
 
-            return {STEP_SETMOD, {}};
-        }
+            if (step == STEP_SETMOD) {
+                //check the current status
+                std::map<std::string, std::string> statusProps = executeQueryStatus();
 
-        if (step == STEP_ATTACH) {
-            //attach to the new process
-            static const int TDM_ATTACH_TIMEOUT = 10000;    //in milliseconds
-            static const int TDM_ATTACH_RETRY = 1000;
+                if (statusProps["currentfm"] != TODO_MISSION) {
+                    //change mission/mod and restart TDM engine
+                    std::string request = actionPreamble("installfm") + "content:\n" + TODO_MISSION + "\n";
+                    pendingSeqno = _engine->executeRequestAsync(TAG_GENERIC, request);
+                    return {STEP_DMAP, {pendingSeqno}};
+                }
 
-            wxLongLong timestampNow = wxGetUTCTimeMillis();
-            if (timestampNow - timestampLastTry > TDM_ATTACH_RETRY) {
-                timestampLastTry = timestampNow;
-                if (connect())
-                    return {STEP_SETMOD, {}};
+                pendingSeqno = 0;
+                return {STEP_DMAP, {}};
             }
-            if (timestampNow - timestampStartAttach > TDM_ATTACH_TIMEOUT) {
-                showError("Timeout when connecting to just started TheDarkMod process.\nMake sure the game is in main menu, has com_automation enabled, and firewall does not block it.");
-                return {STEP_FINISHED, {}};
+
+            if (step == STEP_DMAP) {
+                //handle response of mission/mod request
+                if (pendingSeqno) {
+                    std::string response = _engine->getResponse(pendingSeqno);
+                    if (response != "done") {
+                        showError("Failed to change installed mission in TheDarkMod.\nMake sure ?DR mission? is configured properly and game version is 2.09 or above.");
+                        return {STEP_FINISHED, {}};
+                    }
+                }
+                //recheck currently installed FM just to be sure
+                std::map<std::string, std::string> statusProps = executeQueryStatus();
+                if (statusProps["currentfm"] != TODO_MISSION) {
+                    showError(fmt::format("Installed mission is {} despite trying to change it.", statusProps["currentfm"]));
+                    return {STEP_FINISHED, {}};
+                }
+
+                if (dmap) {
+                    //run dmap command
+                    std::string request = composeConExecRequest("dmap " + std::string(TODO_MAP));
+                    pendingSeqno = _engine->executeRequestAsync(TAG_GENERIC, request);
+                    return {STEP_SETMAP, {pendingSeqno}};
+                }
+                pendingSeqno = 0;
+                return {STEP_SETMAP, {}};
             }
-            
-            //keep calling this step on every think
-            return {STEP_ATTACH, {SEQNO_WAIT_POLL}};
-        }
 
-        if (step == STEP_SETMOD) {
-            //check the current status
-            std::map<std::string, std::string> statusProps = executeQueryStatus();
+            if (step == STEP_SETMAP) {
+                //handle response of dmap command
+                if (pendingSeqno) {
+                    std::string response = _engine->getResponse(pendingSeqno);
+                    if (response.find("ERROR:") != std::string::npos) {
+                        showError("Dmap printed error.\nPlease look at TheDarkMod console.");
+                        return {STEP_FINISHED, {}};
+                    }
+                }
 
-            if (statusProps["currentfm"] != TODO_MISSION) {
-                //change mission/mod and restart TDM engine
-                std::string request = actionPreamble("installfm") + "content:\n" + TODO_MISSION + "\n";
+                //start map
+                std::string request = composeConExecRequest("map " + std::string(TODO_MAP));
                 pendingSeqno = _engine->executeRequestAsync(TAG_GENERIC, request);
-                return {STEP_DMAP, {pendingSeqno}};
+
+                return {STEP_INGAME, {pendingSeqno}};
             }
 
-            pendingSeqno = 0;
-            return {STEP_DMAP, {}};
-        }
-
-        if (step == STEP_DMAP) {
-            //handle response of mission/mod request
-            if (pendingSeqno) {
+            if (step == STEP_INGAME) {
+                //don't care what was written to console while loading map =)
                 std::string response = _engine->getResponse(pendingSeqno);
-                if (response != "done") {
-                    showError("Failed to change installed mission in TheDarkMod.\nMake sure ?DR mission? is configured properly and game version is 2.09 or above.");
+
+                //last check: everything should match!
+                std::map<std::string, std::string> statusProps = executeQueryStatus();
+                if (statusProps["currentfm"] != TODO_MISSION) {
+                    showError(fmt::format("Installed mission is still {}.", statusProps["currentfm"]));
                     return {STEP_FINISHED, {}};
                 }
-            }
-            //recheck currently installed FM just to be sure
-            std::map<std::string, std::string> statusProps = executeQueryStatus();
-            if (statusProps["currentfm"] != TODO_MISSION) {
-                showError(fmt::format("Installed mission is {} despite trying to change it.", statusProps["currentfm"]));
-                return {STEP_FINISHED, {}};
-            }
-
-            if (dmap) {
-                //run dmap command
-                std::string request = composeConExecRequest("dmap " + std::string(TODO_MAP));
-                pendingSeqno = _engine->executeRequestAsync(TAG_GENERIC, request);
-                return {STEP_SETMAP, {pendingSeqno}};
-            }
-            pendingSeqno = 0;
-            return {STEP_SETMAP, {}};
-        }
-
-        if (step == STEP_SETMAP) {
-            //handle response of dmap command
-            if (pendingSeqno) {
-                std::string response = _engine->getResponse(pendingSeqno);
-                if (response.find("ERROR:") != std::string::npos) {
-                    showError("Dmap printed error.\nPlease look at TheDarkMod console.");
+                if (statusProps["mapname"] != TODO_MAP) {
+                    showError(fmt::format("Active map is {} despite trying to start the map.", statusProps["mapname"]));
                     return {STEP_FINISHED, {}};
                 }
+                if (statusProps["guiactive"] != "") {
+                    showError(fmt::format("GUI {} is active while we expect the game to start", statusProps["guiactive"]));
+                    return {STEP_FINISHED, {}};
+                }
+
+                //confirm player is ready
+                std::string waitUntilReady = executeGetCvarValue("tdm_player_wait_until_ready");
+                if (waitUntilReady != "0") {
+                    //button0 is "attack" button
+                    //numbers in parens mean: hold for 100 gameplay milliseconds (time is stopped at waiting screen)
+                    std::string request = actionPreamble("gamectrl") + "content:\n" + "timemode \"game\"\n" + "button0 (1 1 0 0 0 0.1)\n";
+                    response = executeGenericRequest(request);
+                }
+
+                if (!savedViewPos.empty()) {
+                    //force god/noclip/notarget on
+                    enableGhostMode();
+                    //restore camera position
+                    std::string request = composeConExecRequest(fmt::format("setviewpos {}", savedViewPos));
+                    response = executeGenericRequest(request);
+                }
+
+                //enable back all the modes
+                setCameraSyncEnabled(savedCameraSyncEnabled);
+                setAutoReloadMapEnabled(savedAutoReloadMapEnabled);
+                //if user has changed something, don't enable "update map" mode to avoid desync
+                if (!GlobalMapModule().isModified()) {
+                    setUpdateMapObserverEnabled(true);
+                    setAlwaysUpdateMapEnabled(savedAlwaysUpdateMapEnabled);
+                }
+
+                return {STEP_FINISHED, {}};
             }
-
-            //start map
-            std::string request = composeConExecRequest("map " + std::string(TODO_MAP));
-            pendingSeqno = _engine->executeRequestAsync(TAG_GENERIC, request);
-
-            return {STEP_INGAME, {pendingSeqno}};
         }
-
-        if (step == STEP_INGAME) {
-            //don't care what was written to console while loading map =)
-            std::string response = _engine->getResponse(pendingSeqno);
-
-            //last check: everything should match!
-            std::map<std::string, std::string> statusProps = executeQueryStatus();
-            if (statusProps["currentfm"] != TODO_MISSION) {
-                showError(fmt::format("Installed mission is still {}.", statusProps["currentfm"]));
-                return {STEP_FINISHED, {}};
-            }
-            if (statusProps["mapname"] != TODO_MAP) {
-                showError(fmt::format("Active map is {} despite trying to start the map.", statusProps["mapname"]));
-                return {STEP_FINISHED, {}};
-            }
-            if (statusProps["guiactive"] != "") {
-                showError(fmt::format("GUI {} is active while we expect the game to start", statusProps["guiactive"]));
-                return {STEP_FINISHED, {}};
-            }
-
-            //confirm player is ready
-            std::string waitUntilReady = executeGetCvarValue("tdm_player_wait_until_ready");
-            if (waitUntilReady != "0") {
-                //button0 is "attack" button
-                //numbers in parens mean: hold for 100 gameplay milliseconds (time is stopped at waiting screen)
-                std::string request = actionPreamble("gamectrl") + "content:\n" + "timemode \"game\"\n" + "button0 (1 1 0 0 0 0.1)\n";
-                response = executeGenericRequest(request);
-            }
-
-            if (!savedViewPos.empty()) {
-                //restore camera position
-                std::string request = composeConExecRequest(fmt::format("setviewpos {}", savedViewPos));
-                response = executeGenericRequest(request);
-            }
-
-            return {STEP_FINISHED, {}};
+        catch(const DisconnectException&) {
+            //connection was lost unexpectedly during some step
+            //most likely user has closed TDM while it was still being prepared
+            showError("Game restart failed: connection lost unexpectedly.");
         }
+        return {STEP_FINISHED, {}};
     };
 
     _engine->executeMultistepProc(TAG_RESTART, implementation, STEP_START);
@@ -475,6 +507,13 @@ bool GameConnection::sendPendingCameraUpdate()
     return false;
 }
 
+void GameConnection::enableGhostMode()
+{
+    executeSetTogglableFlag("god", true, "OFF");
+    executeSetTogglableFlag("noclip", true, "OFF");
+    executeSetTogglableFlag("notarget", true, "OFF");
+}
+
 bool GameConnection::setCameraSyncEnabled(bool enable)
 {
     try {
@@ -487,9 +526,7 @@ bool GameConnection::setCameraSyncEnabled(bool enable)
                 sigc::mem_fun(this, &GameConnection::updateCamera)
             );
 
-            executeSetTogglableFlag("god", true, "OFF");
-            executeSetTogglableFlag("noclip", true, "OFF");
-            executeSetTogglableFlag("notarget", true, "OFF");
+            enableGhostMode();
 
             //sync camera location right now
             updateCamera();
@@ -501,6 +538,11 @@ bool GameConnection::setCameraSyncEnabled(bool enable)
         return false;
     }
     return true;
+}
+
+bool GameConnection::isCameraSyncEnabled() const
+{
+    return !_cameraChangedSignal.empty();
 }
 
 void GameConnection::backSyncCamera()
@@ -612,6 +654,11 @@ bool GameConnection::setAutoReloadMapEnabled(bool enable)
     return true;
 }
 
+bool GameConnection::isAutoReloadMapEnabled() const
+{
+    return _autoReloadMap;
+}
+
 void GameConnection::saveMapIfNeeded()
 {
     if (GlobalMapModule().isModified())
@@ -623,14 +670,16 @@ bool GameConnection::isUpdateMapObserverEnabled() const
     return _mapObserver.isEnabled();
 }
 
-void GameConnection::setUpdateMapObserverEnabled(bool on)
+void GameConnection::setUpdateMapObserverEnabled(bool enable)
 {
-    _mapObserver.setEnabled(on);
+    _mapObserver.setEnabled(enable);
+    if (!enable)
+        setAlwaysUpdateMapEnabled(false);
 
     signal_StatusChanged.emit(0);
 }
 
-bool GameConnection::setUpdateMapAlways(bool enable)
+bool GameConnection::setAlwaysUpdateMapEnabled(bool enable)
 {
     if (enable) {
         if (!_engine->isAlive())
@@ -641,6 +690,11 @@ bool GameConnection::setUpdateMapAlways(bool enable)
 
     _updateMapAlways = enable;
     return true;
+}
+
+bool GameConnection::isAlwaysUpdateMapEnabled() const
+{
+    return _updateMapAlways;
 }
 
 /**
@@ -742,7 +796,7 @@ void GameConnection::initialiseModule(const IApplicationContext& ctx)
     );
     GlobalEventManager().addAdvancedToggle(
         "GameConnectionToggleHotReload",
-        [this](bool v) { return setUpdateMapAlways(v); }
+        [this](bool v) { return setAlwaysUpdateMapEnabled(v); }
     );
 
     // Add one-shot commands and associated toolbar buttons
@@ -763,29 +817,6 @@ void GameConnection::initialiseModule(const IApplicationContext& ctx)
     // Add menu items
     ui::menu::IMenuManager& mm = GlobalMenuManager();
     mm.insert("main/help", "connection", ui::menu::ItemType::Folder, _("Connection"), "", "");
-
-    mm.add("main/connection", "cameraSyncEnable", ui::menu::ItemType::Item,
-           _("Game position follows DarkRadiant camera"), "", "GameConnectionToggleCameraSync");
-    mm.add("main/connection", "backSyncCamera", ui::menu::ItemType::Item,
-           _("Move camera to current game position"), "", "GameConnectionBackSyncCamera");
-    mm.add("main/connection", "postCameraSep", ui::menu::ItemType::Separator);
-
-    mm.add("main/connection", "reloadMapAutoEnable", ui::menu::ItemType::Item,
-           _("Game reloads .map file on save"), "", "GameConnectionToggleAutoMapReload");
-    mm.add("main/connection", "reloadMap", ui::menu::ItemType::Item,
-           _("Tell game to reload .map file now"), "", "GameConnectionReloadMap");
-    mm.add("main/connection", "postMapFileSep", ui::menu::ItemType::Separator);
-
-    mm.add("main/connection", "mapHotReload", ui::menu::ItemType::Item,
-           _("Update entities on every change"), "", "GameConnectionToggleHotReload");
-    mm.add("main/connection", "updateMap", ui::menu::ItemType::Item,
-           _("Update entities now"), "", "GameConnectionUpdateMap");
-    mm.add("main/connection", "postHotReloadSep", ui::menu::ItemType::Separator);
-
-    mm.add("main/connection", "pauseGame", ui::menu::ItemType::Item,
-           _("Pause game"), "", "GameConnectionPauseGame");
-    mm.add("main/connection", "respawnSelected", ui::menu::ItemType::Item,
-           _("Respawn selected entities"), "", "GameConnectionRespawnSelected");
 
     // Add menu button which shows up the dialog
     GlobalCommandSystem().addCommand("GameConnectionDialogToggle", gameconn::GameConnectionDialog::toggleDialog);

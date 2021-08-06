@@ -67,6 +67,8 @@ GameConnectionDialog::GameConnectionDialog() :
     //could not find activity indicator in wxFormBuilder
     _connectedActivityIndicator = new wxActivityIndicator(panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, wxT("OMG"));
     replaceControl(findNamedObject<wxWindow>(this, "ConnectedActivityIndicator"), _connectedActivityIndicator);
+    _connectedActivityIndicator->Start();
+    Layout();
 
     //don't want to call findNamedObject every time, risking a typo
     _connectedCheckbox               = findNamedObject<wxCheckBox>(this, "ConnectedCheckbox");
@@ -129,7 +131,7 @@ GameConnectionDialog::GameConnectionDialog() :
     });
     _hotReloadUpdateOnChangeCheckbox->Bind(wxEVT_CHECKBOX, [this](wxCommandEvent& ev) {
         bool makeEnabled = _hotReloadUpdateOnChangeCheckbox->IsChecked();
-        Impl().setUpdateMapAlways(makeEnabled);
+        Impl().setAlwaysUpdateMapEnabled(makeEnabled);
     });
 
     _respawnSelectedButton->Bind(wxEVT_BUTTON, [this](wxCommandEvent& ev) {
@@ -164,6 +166,11 @@ void GameConnectionDialog::updateConnectedStatus()
 
     _connectedCheckbox->SetValue(connected);
 
+    if (restarting)
+        _connectedActivityIndicator->Show();
+    else
+        _connectedActivityIndicator->Hide();
+
     _cameraLoadFromGameButton           ->Enable(connected && !restarting);
     _cameraSendToGameCheckbox           ->Enable(connected && !restarting);
     _mapFileReloadNowButton             ->Enable(connected && !restarting);
@@ -173,14 +180,9 @@ void GameConnectionDialog::updateConnectedStatus()
     _respawnSelectedButton              ->Enable(connected && !restarting);
     _pauseGameButton                    ->Enable(connected && !restarting);
 
-    if (!connected) {
-        _cameraSendToGameCheckbox           ->SetValue(false);
-        _mapFileReloadOnSaveCheckbox        ->SetValue(false);
-        _hotReloadUpdateOnChangeCheckbox    ->SetValue(false);
-    }
-    if (!updateMapMode) {
-        _hotReloadUpdateOnChangeCheckbox    ->SetValue(false);
-    }
+    _cameraSendToGameCheckbox           ->SetValue(Impl().isCameraSyncEnabled());
+    _mapFileReloadOnSaveCheckbox        ->SetValue(Impl().isAutoReloadMapEnabled());
+    _hotReloadUpdateOnChangeCheckbox    ->SetValue(Impl().isAlwaysUpdateMapEnabled());
 }
 
 }

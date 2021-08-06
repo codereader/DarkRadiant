@@ -56,6 +56,8 @@ public:
      */
     bool setCameraSyncEnabled(bool enable);
 
+    bool isCameraSyncEnabled() const;
+
     /// Trigger one-off sync of game position back to Radiant camera
     void backSyncCamera();
 
@@ -76,6 +78,8 @@ public:
      */
     bool setAutoReloadMapEnabled(bool enable);
 
+    bool isAutoReloadMapEnabled() const;
+
     /**
      * \brief
      * Enable hot reload of map entity changes.
@@ -87,7 +91,9 @@ public:
 
     bool isUpdateMapObserverEnabled() const;
 
-    bool setUpdateMapAlways(bool on);
+    bool setAlwaysUpdateMapEnabled(bool on);
+
+    bool isAlwaysUpdateMapEnabled() const;
 
     //send map update to TDM right now
     void doUpdateMap();
@@ -167,9 +173,11 @@ private:
     void updateCamera();
     //send request for camera update, which is pending yet
     bool sendPendingCameraUpdate();
+    //enable notarget/god/noclip to allow player to fly around without problems
+    void enableGhostMode();
+
     //saves map using DR code if there are pending modifications
     void saveMapIfNeeded();
-
     //signal observer on map saving
     void onMapEvent(IMap::MapEvent ev);
 };
