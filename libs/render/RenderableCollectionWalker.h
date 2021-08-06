@@ -58,12 +58,16 @@ public:
 
 		std::size_t highlightFlags = node->getHighlightFlags();
 
-		if (parent)
+        auto nodeType = node->getNodeType();
+
+        // Particle nodes shouldn't inherit the highlight flags from their parent, 
+        // as it obstructs the view when their wireframe gets rendered (#5682)
+		if (parent && nodeType != scene::INode::Type::Particle)
 		{
 			highlightFlags |= parent->getHighlightFlags();
 		}
 
-        if (node->getNodeType() == scene::INode::Type::MergeAction)
+        if (nodeType == scene::INode::Type::MergeAction)
         {
             _collector.setHighlightFlag(RenderableCollector::Highlight::MergeAction, true);
 
