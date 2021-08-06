@@ -124,6 +124,8 @@ bool GameConnection::connect()
         sigc::mem_fun(*this, &GameConnection::onMapEvent)
     );
 
+    signal_StatusChanged.emit(0);
+
     return true;
 }
 
@@ -142,6 +144,8 @@ void GameConnection::disconnect(bool force)
         _thinkTimer.reset();
     }
     _mapEventListener.disconnect();
+
+    signal_StatusChanged.emit(0);
 }
 
 GameConnection::~GameConnection() {
@@ -555,14 +559,19 @@ bool GameConnection::isUpdateMapObserverEnabled() const
 void GameConnection::setUpdateMapObserverEnabled(bool on)
 {
     _mapObserver.setEnabled(on);
+
+    signal_StatusChanged.emit(0);
 }
 
 bool GameConnection::setUpdateMapAlways(bool enable)
 {
-    if (enable && !_engine->isAlive())
-        return false;
+    if (enable) {
+        if (!_engine->isAlive())
+            return false;
+        if (enable)
+            setUpdateMapObserverEnabled(true);
+    }
 
-    setUpdateMapObserverEnabled(enable);
     _updateMapAlways = enable;
     return true;
 }

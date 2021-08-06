@@ -18,12 +18,12 @@ namespace
     }
 
     struct ScopedDepthCounter {
-        int *ptr;
-        ScopedDepthCounter(int& counter) : ptr(&counter) {
-            *ptr++;
+        int& ref;
+        ScopedDepthCounter(int& counter) : ref(counter) {
+            ref++;
         }
         ~ScopedDepthCounter() {
-            *ptr--;
+            ref--;
         }
     };
 }
@@ -92,6 +92,9 @@ int AutomationEngine::generateNewSequenceNumber()
 
 AutomationEngine::Request* AutomationEngine::sendRequest(const std::string& request, int tag) {
     assert(tag < 31);
+    if (!_connection)
+        throw DisconnectException();
+
     Request req;
     req._seqno = generateNewSequenceNumber();
     req._request = request;

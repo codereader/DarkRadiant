@@ -78,18 +78,18 @@ public:
 
     // Send given request synchronously, i.e. wait until its completition.
     // Returns response content.
-    // Throws DisconnectException if connection is missing.
+    // Throws DisconnectException if connection is missing or lost during execution.
     std::string executeRequestBlocking(int tag, const std::string& request);
 
     // Send request !a!synchronously, i.e. send it to socket and return immediately.
     // Returns seqno of the request: it can be put to wait-list of multistep procedure or used for polling.
     // When request is finished, optional callback will be executed (from "think" method).
     // Note that if connection is lost already of while request is being executed, NO special callback is called.
+    // May throw DisconnectException is connection is missing (but never throws if isAlive() is true).
     int executeRequestAsync(int tag, const std::string& request, const std::function<void(int)>& callback = {});
 
-    // Start executing given multistep procedure starting on next think.
+    // Execute given multistep procedure, starting on the next think.
     // Returns ID of procedure for future queries.
-    // Throws DisconnectException if connection is missing (in case of blocking requests).
     int executeMultistepProc(int tag, const std::function<MultistepProcReturn(int)>& function, int startStep = 0);
 
 
