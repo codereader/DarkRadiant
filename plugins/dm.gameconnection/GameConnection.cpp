@@ -5,6 +5,7 @@
 #include "GameConnectionDialog.h"
 
 #include "i18n.h"
+#include "igame.h"
 #include "icameraview.h"
 #include "inode.h"
 #include "imap.h"
@@ -182,19 +183,33 @@ void GameConnection::restartGame(bool dmap)
 
     auto implementation = [this, dmap](int step) -> MultistepProcReturn {
         try {
-
-            //BIG TODO!!
-            static const char *TODO_TDM_DIR = R"(G:\TheDarkMod\darkmod)";
-            static const char *TODO_MISSION = "bakery_job";
-            static const char *TODO_MAP = "bakery.map";
+#ifdef _WIN32
+            static const char *TDM_EXE_NAME = "TheDarkModx64.exe";
+#else
+            static const char *TDM_EXE_NAME = "thedarkmod.x64";
+#endif
 
             //perhaps it is not the best idea to store state in global/static variables...
+            static std::string tdmDir, drModName, drMapName;
             static std::string savedViewPos;
             static bool savedCameraSyncEnabled, savedAutoReloadMapEnabled, savedAlwaysUpdateMapEnabled;
             static wxLongLong timestampStartAttach, timestampLastTry;
             static int pendingSeqno;
 
             if (step == STEP_START) {
+                //fetch all settings: mission, map, TDM path
+                if (GlobalMapModule().isUnnamed()) {
+                    showError("Cannot start TDM because no map file is opened.");
+                    return {STEP_FINISHED, {}};
+                }
+                tdmDir = os::standardPathWithSlash(registry::getValue<std::string>(RKEY_ENGINE_PATH));
+                std::string fullModPath = registry::getValue<std::string>(RKEY_MOD_PATH);
+                std::string fullMapPath = GlobalMapModule().getMapName();
+                if (!fullModPath.empty() && strchr("/\\", fullModPath.back()))
+                    fullModPath.pop_back();
+                drModName = fs::path(fullModPath).filename().string();
+                drMapName = fs::path(fullMapPath).filename().string();
+
                 //save enabled modes
                 savedCameraSyncEnabled = isCameraSyncEnabled();
                 savedAutoReloadMapEnabled = isAutoReloadMapEnabled();
@@ -220,14 +235,11 @@ void GameConnection::restartGame(bool dmap)
 
                 if (!attached) {
                     //run new TDM process
-#ifdef _WIN32
-                    static const char *TDM_NAME = "TheDarkModx64.exe";
-#else
-                    static const char *TDM_NAME = "thedarkmod.x64";
-#endif
                     wxExecuteEnv env;
-                    env.cwd = TODO_TDM_DIR;
-                    wxString cmdline = wxString::Format("%s/%s +set com_automation 1", TODO_TDM_DIR, TDM_NAME);
+                    env.cwd = tdmDir;
+                    fs::path exeFullPath = fs::path(tdmDir);
+                    exeFullPath.concat(TDM_EXE_NAME);
+                    wxString cmdline = wxString::Format("%s +set com_automation 1", exeFullPath.c_str());
                     long res = wxExecute(cmdline, wxEXEC_ASYNC, nullptr, &env);
                     if (res <= 0) {
                         showError("Failed to run TheDarkMod executable.");
@@ -266,9 +278,14 @@ void GameConnection::restartGame(bool dmap)
                 //check the current status
                 std::map<std::string, std::string> statusProps = executeQueryStatus();
 
-                if (statusProps["currentfm"] != TODO_MISSION) {
+                if (statusProps["currentfm"] != drModName) {
+                    //TDM crashes if we restart engine from in-game or immediately after stopping it
+                    //workaround it by giving it a bit of time after stop
+                    executeGenericRequest(composeConExecRequest("disconnect"));
+                    wxMilliSleep(1000);
+
                     //change mission/mod and restart TDM engine
-                    std::string request = actionPreamble("installfm") + "content:\n" + TODO_MISSION + "\n";
+                    std::string request = actionPreamble("installfm") + "content:\n" + drModName + "\n";
                     pendingSeqno = _engine->executeRequestAsync(TAG_GENERIC, request);
                     return {STEP_DMAP, {pendingSeqno}};
                 }
@@ -288,14 +305,14 @@ void GameConnection::restartGame(bool dmap)
                 }
                 //recheck currently installed FM just to be sure
                 std::map<std::string, std::string> statusProps = executeQueryStatus();
-                if (statusProps["currentfm"] != TODO_MISSION) {
+                if (statusProps["currentfm"] != drModName) {
                     showError(fmt::format("Installed mission is {} despite trying to change it.", statusProps["currentfm"]));
                     return {STEP_FINISHED, {}};
                 }
 
                 if (dmap) {
                     //run dmap command
-                    std::string request = composeConExecRequest("dmap " + std::string(TODO_MAP));
+                    std::string request = composeConExecRequest("dmap " + drMapName);
                     pendingSeqno = _engine->executeRequestAsync(TAG_GENERIC, request);
                     return {STEP_SETMAP, {pendingSeqno}};
                 }
@@ -314,7 +331,7 @@ void GameConnection::restartGame(bool dmap)
                 }
 
                 //start map
-                std::string request = composeConExecRequest("map " + std::string(TODO_MAP));
+                std::string request = composeConExecRequest("map " + drMapName);
                 pendingSeqno = _engine->executeRequestAsync(TAG_GENERIC, request);
 
                 return {STEP_INGAME, {pendingSeqno}};
@@ -326,11 +343,11 @@ void GameConnection::restartGame(bool dmap)
 
                 //last check: everything should match!
                 std::map<std::string, std::string> statusProps = executeQueryStatus();
-                if (statusProps["currentfm"] != TODO_MISSION) {
+                if (statusProps["currentfm"] != drModName) {
                     showError(fmt::format("Installed mission is still {}.", statusProps["currentfm"]));
                     return {STEP_FINISHED, {}};
                 }
-                if (statusProps["mapname"] != TODO_MAP) {
+                if (statusProps["mapname"] != drMapName) {
                     showError(fmt::format("Active map is {} despite trying to start the map.", statusProps["mapname"]));
                     return {STEP_FINISHED, {}};
                 }
@@ -532,6 +549,8 @@ bool GameConnection::setCameraSyncEnabled(bool enable)
             updateCamera();
             _engine->waitForTags(1 << TAG_CAMERA);
         }
+
+        signal_StatusChanged.emit(0);
     }
     catch (const DisconnectException&) {
         //disconnected: will be handled during next think
@@ -651,6 +670,7 @@ bool GameConnection::setAutoReloadMapEnabled(bool enable)
         return false;
 
     _autoReloadMap = enable;
+    signal_StatusChanged.emit(0);
     return true;
 }
 
@@ -689,6 +709,7 @@ bool GameConnection::setAlwaysUpdateMapEnabled(bool enable)
     }
 
     _updateMapAlways = enable;
+    signal_StatusChanged.emit(0);
     return true;
 }
 

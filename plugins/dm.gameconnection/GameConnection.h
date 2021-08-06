@@ -100,8 +100,8 @@ public:
 
     //signal is emitted when status changes:
     //  connected/disconnected
-    //  UpdateMap mode is enabled/disabled
     //  restart game starts/ends
+    //  any mode starts/ends
     sigc::signal<void, int> signal_StatusChanged;
 
     //RegisterableModule implementation
