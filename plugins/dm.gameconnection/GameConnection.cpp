@@ -531,19 +531,19 @@ void GameConnection::enableGhostMode()
     executeSetTogglableFlag("notarget", true, "OFF");
 }
 
-bool GameConnection::setCameraSyncEnabled(bool enable)
+void GameConnection::setCameraSyncEnabled(bool enable)
 {
     try {
         if (!enable) {
             _cameraChangedSignal.disconnect();
         }
         if (enable) {
+            enableGhostMode();
+
             _cameraChangedSignal.disconnect();
             _cameraChangedSignal = GlobalCameraManager().signal_cameraChanged().connect(
                 sigc::mem_fun(this, &GameConnection::updateCamera)
             );
-
-            enableGhostMode();
 
             //sync camera location right now
             updateCamera();
@@ -554,9 +554,7 @@ bool GameConnection::setCameraSyncEnabled(bool enable)
     }
     catch (const DisconnectException&) {
         //disconnected: will be handled during next think
-        return false;
     }
-    return true;
 }
 
 bool GameConnection::isCameraSyncEnabled() const
@@ -664,14 +662,13 @@ void GameConnection::onMapEvent(IMap::MapEvent ev)
     }
 }
 
-bool GameConnection::setAutoReloadMapEnabled(bool enable)
+void GameConnection::setAutoReloadMapEnabled(bool enable)
 {
     if (enable && !_engine->isAlive())
-        return false;
+        return;
 
     _autoReloadMap = enable;
     signal_StatusChanged.emit(0);
-    return true;
 }
 
 bool GameConnection::isAutoReloadMapEnabled() const
@@ -699,18 +696,17 @@ void GameConnection::setUpdateMapObserverEnabled(bool enable)
     signal_StatusChanged.emit(0);
 }
 
-bool GameConnection::setAlwaysUpdateMapEnabled(bool enable)
+void GameConnection::setAlwaysUpdateMapEnabled(bool enable)
 {
     if (enable) {
         if (!_engine->isAlive())
-            return false;
+            return;
         if (enable)
             setUpdateMapObserverEnabled(true);
     }
 
     _updateMapAlways = enable;
     signal_StatusChanged.emit(0);
-    return true;
 }
 
 bool GameConnection::isAlwaysUpdateMapEnabled() const
@@ -809,36 +805,30 @@ void GameConnection::initialiseModule(const IApplicationContext& ctx)
     // Construct toggles
     _camSyncToggle = GlobalEventManager().addAdvancedToggle(
         "GameConnectionToggleCameraSync",
-        [this](bool v) { return setCameraSyncEnabled(v); }
+        [this](bool v) {
+            bool oldEnabled = isCameraSyncEnabled();
+            setCameraSyncEnabled(v);
+            return isCameraSyncEnabled() != oldEnabled;
+        }
     );
-    GlobalEventManager().addAdvancedToggle(
-        "GameConnectionToggleAutoMapReload",
-        [this](bool v) { return setAutoReloadMapEnabled(v); }
-    );
-    GlobalEventManager().addAdvancedToggle(
-        "GameConnectionToggleHotReload",
-        [this](bool v) { return setAlwaysUpdateMapEnabled(v); }
-    );
-
     // Add one-shot commands and associated toolbar buttons
-    GlobalCommandSystem().addCommand("GameConnectionBackSyncCamera",
-        [this](const cmd::ArgumentList&) { backSyncCamera(); });
+    GlobalCommandSystem().addCommand(
+        "GameConnectionBackSyncCamera",
+        [this](const cmd::ArgumentList&) {
+            backSyncCamera();
+        }
+    );
     _camSyncBackButton = GlobalEventManager().addCommand(
         "GameConnectionBackSyncCamera", "GameConnectionBackSyncCamera", false
     );
-    GlobalCommandSystem().addCommand("GameConnectionReloadMap",
-        [this](const cmd::ArgumentList&) { reloadMap(); });
-    GlobalCommandSystem().addCommand("GameConnectionUpdateMap",
-        [this](const cmd::ArgumentList&) { doUpdateMap(); });
-    GlobalCommandSystem().addCommand("GameConnectionPauseGame",
-        [this](const cmd::ArgumentList&) { togglePauseGame(); });
-    GlobalCommandSystem().addCommand("GameConnectionRespawnSelected",
-        [this](const cmd::ArgumentList&) { respawnSelectedEntities(); });
+    // Toolbar button(s)
+    GlobalMainFrame().signal_MainFrameConstructed().connect(
+        sigc::mem_fun(this, &GameConnection::addToolbarItems)
+    );
 
     // Add menu items
     ui::menu::IMenuManager& mm = GlobalMenuManager();
     mm.insert("main/help", "connection", ui::menu::ItemType::Folder, _("Connection"), "", "");
-
     // Add menu button which shows up the dialog
     GlobalCommandSystem().addCommand("GameConnectionDialogToggle", gameconn::GameConnectionDialog::toggleDialog);
     // Add the menu item
@@ -849,11 +839,6 @@ void GameConnection::initialiseModule(const IApplicationContext& ctx)
         _("Game Connection..."),	// caption
         "stimresponse.png",	// icon
         "GameConnectionDialogToggle" // event name
-    );
-
-    // Toolbar button(s)
-    GlobalMainFrame().signal_MainFrameConstructed().connect(
-        sigc::mem_fun(this, &GameConnection::addToolbarItems)
     );
 }
 

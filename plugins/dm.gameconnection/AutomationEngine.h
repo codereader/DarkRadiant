@@ -17,11 +17,11 @@ public:
     DisconnectException() : std::runtime_error("Game connection lost") {}
 };
 
-//bitmask with all tag bits set
+// Bitmask with all tag bits set.
 static const int TAGMASK_ALL = -1;
 
 // Putting this to wait-list of multistep procedure
-// results in it waking up on next think (timer tick).
+// results in waking up on next think (suitable for polling).
 static const int SEQNO_WAIT_POLL = -10000;
 
 struct MultistepProcReturn {
@@ -35,7 +35,7 @@ struct MultistepProcReturn {
 
 
 /**
- * stgatilov: This is engine for connection to TheDarkMod's automation via socket
+ * stgatilov: The engine for connection to TheDarkMod's automation via socket.
  */
 class AutomationEngine
 {
@@ -47,7 +47,6 @@ public:
     // Connect to TDM instance if not connected yet.
     // Returns false if failed to connect, true on success.
     bool connect();
-
     // Disconnect from TDM instance if connected.
     // If force = false, then it waits until all pending requests are finished.
     // If force = true, then all pending requests are dropped, no blocking for sure.
@@ -59,21 +58,9 @@ public:
     bool hasLostConnection() const;
 
 
-    //check how socket is doing, accept responses, call callbacks
-    //this should be done regularly: in fact, timer calls it often
+    // Check how socket is doing, accept responses, call callbacks.
+    // This should be done regularly, e.g. in a timer.
     void think();
-
-    // Return true iff any of the given requests of multistep procedures are not finished yet.
-    bool areInProgress(const std::vector<int>& reqSeqnos, const std::vector<int>& procIds);
-    // Wait for specified requests and multistep procedures to finish.
-    // Throws DisconnectException if it cannot be done due to lost connection.
-    void wait(const std::vector<int>& reqSeqnos, const std::vector<int>& procIds);
-
-    // Return true iff any of the given requests of multistep procedures are not finished yet.
-    bool areTagsInProgress(int tagMask = TAGMASK_ALL);
-    // Wait for all active requests and multistep procedures matching the given mask to finish.
-    // Throws DisconnectException if it cannot be done due to lost connection.
-    void waitForTags(int tagMask = TAGMASK_ALL);
 
 
     // Send given request synchronously, i.e. wait until its completition.
@@ -82,15 +69,31 @@ public:
     std::string executeRequestBlocking(int tag, const std::string& request);
 
     // Send request !a!synchronously, i.e. send it to socket and return immediately.
-    // Returns seqno of the request: it can be put to wait-list of multistep procedure or used for polling.
+    // Returns seqno of the request: it can be put to wait-list of multistep procedure or used in queries.
     // When request is finished, optional callback will be executed (from "think" method).
-    // Note that if connection is lost already of while request is being executed, NO special callback is called.
-    // May throw DisconnectException is connection is missing (but never throws if isAlive() is true).
+    // Note that if connection is lost, NO special callback is called.
+    // May throw DisconnectException if connection is missing (but never throws if isAlive() is true before call).
     int executeRequestAsync(int tag, const std::string& request, const std::function<void(int)>& callback = {});
 
     // Execute given multistep procedure, starting on the next think.
-    // Returns ID of procedure for future queries.
+    // Returns ID of procedure for queries.
+    // Multistep procedure is like a DFA of "steps", each step is executed till start to end.
+    // When step is over, you can specify async requests to wait for, and which step to resume when they are finished.
     int executeMultistepProc(int tag, const std::function<MultistepProcReturn(int)>& function, int startStep = 0);
+
+
+    // Return true iff any of the given requests or multistep procedures are not finished yet.
+    bool areInProgress(const std::vector<int>& reqSeqnos, const std::vector<int>& procIds);
+    // Wait for specified requests and multistep procedures to finish.
+    // Throws DisconnectException if it cannot be done due to lost connection.
+    void wait(const std::vector<int>& reqSeqnos, const std::vector<int>& procIds);
+
+    // Return true iff any request or multistep procedure matching the given mask is not finished yet.
+    // Note: tagMask is a bitmask, so pass (1<<tag) in order to wait for one tag only.
+    bool areTagsInProgress(int tagMask = TAGMASK_ALL);
+    // Wait for all active requests and multistep procedures matching the given mask to finish.
+    // Throws DisconnectException if it cannot be done due to lost connection.
+    void waitForTags(int tagMask = TAGMASK_ALL);
 
 
     // Returns response for just finished request with given seqno.
@@ -101,7 +104,7 @@ public:
 
 private:
     // Connection to TDM game (i.e. the socket with custom message framing).
-    // Tt can be "dead" in two ways:
+    // It can be "dead" in two ways:
     //   _connection is NULL --- no connection
     //   *_connection is dead --- just lost connection
     std::unique_ptr<MessageTcp> _connection;
@@ -114,8 +117,8 @@ private:
 
     struct Request {
         int _seqno = 0;
-        bool _finished = false;
         int _tag = 0;
+        bool _finished = false;
         std::string _request;
         std::string _response;
 
@@ -132,22 +135,14 @@ private:
     };
     std::vector<MultistepProcedure> _multistepProcs;
 
-    // Every request should get unique seqno, otherwise we won't be able to distinguish their responses.
     int generateNewSequenceNumber();
+    Request* sendRequest(int tag, const std::string& request);
 
     Request* findRequest(int seqno) const;
     MultistepProcedure* findMultistepProc(int id) const;
 
     bool isMultistepProcStillWaiting(const MultistepProcedure& proc, bool waitForPoll) const;
-
-
-    // Prepend seqno to specified request and send it to game.
-    // Returns pointer to the created request.
-    Request* sendRequest(const std::string& request, int tag);
-
-    //execute next step of the current multistep procedure
     void resumeMultistepProcedure(int id);
-
 };
 
 }

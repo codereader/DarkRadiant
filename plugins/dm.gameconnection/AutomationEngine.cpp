@@ -90,7 +90,7 @@ int AutomationEngine::generateNewSequenceNumber()
     return ++_seqno;
 }
 
-AutomationEngine::Request* AutomationEngine::sendRequest(const std::string& request, int tag) {
+AutomationEngine::Request* AutomationEngine::sendRequest(int tag, const std::string& request) {
     assert(tag < 31);
     if (!_connection)
         throw DisconnectException();
@@ -255,7 +255,7 @@ void AutomationEngine::waitForTags(int tagMask)
 
 std::string AutomationEngine::executeRequestBlocking(int tag, const std::string& request)
 {
-    Request* req = sendRequest(request, tag);
+    Request* req = sendRequest(tag, request);
     int seqno = req->_seqno;
 
     std::string response;
@@ -272,7 +272,7 @@ std::string AutomationEngine::executeRequestBlocking(int tag, const std::string&
 
 int AutomationEngine::executeRequestAsync(int tag, const std::string& request, const std::function<void(int)>& callback)
 {
-    Request* req = sendRequest(request, tag);
+    Request* req = sendRequest(tag, request);
     req->_callback = callback;
     return req->_seqno;
 }
