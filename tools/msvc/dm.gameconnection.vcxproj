@@ -148,6 +148,7 @@ copy $(SolutionDir)..\..\plugins\dm.gameconnection\*.png $(SolutionDir)..\..\ins
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\plugins\dm.gameconnection\AutomationEngine.cpp" />
     <ClCompile Include="..\..\plugins\dm.gameconnection\clsocket\ActiveSocket.cpp" />
     <ClCompile Include="..\..\plugins\dm.gameconnection\clsocket\PassiveSocket.cpp" />
     <ClCompile Include="..\..\plugins\dm.gameconnection\clsocket\SimpleSocket.cpp" />
@@ -158,6 +159,7 @@ copy $(SolutionDir)..\..\plugins\dm.gameconnection\*.png $(SolutionDir)..\..\ins
     <ClCompile Include="..\..\plugins\dm.gameconnection\MessageTcp.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\plugins\dm.gameconnection\AutomationEngine.h" />
     <ClInclude Include="..\..\plugins\dm.gameconnection\clsocket\ActiveSocket.h" />
     <ClInclude Include="..\..\plugins\dm.gameconnection\clsocket\Host.h" />
     <ClInclude Include="..\..\plugins\dm.gameconnection\clsocket\PassiveSocket.h" />

@@ -13,6 +13,7 @@ namespace gameconn
 {
 
 class MessageTcp;
+class AutomationEngine;
 
 /**
  * stgatilov: This is TheDarkMod-only system for connecting to game process via socket.
@@ -42,9 +43,6 @@ public:
     void disconnect(bool force = false);
     //returns false if connection is not yet established or has been closed for whatever reason
     bool isAlive() const;
-
-    //flush all async commands (e.g. camera update) and wait until everything finishes
-    void finish();
 
     /**
      * \brief
@@ -111,11 +109,8 @@ private:
     IEventPtr _camSyncToggle;
     IEventPtr _camSyncBackButton;
 
-    //connection to TDM game (i.e. the socket with custom message framing)
-    //it can be "dead" in two ways:
-    //  _connection is NULL --- no connection, all modes/observers disabled
-    //  *_connection is dead --- just lost connection, must call "disconnect" ASAP to disable modes/observers
-    std::unique_ptr<MessageTcp> _connection;
+    //underlying engine for connection to TDM game
+    std::unique_ptr<AutomationEngine> _engine;
     //when connected, this timer calls Think periodically
     std::unique_ptr<wxTimer> _thinkTimer;
     bool _timerInProgress = false;
@@ -124,19 +119,6 @@ private:
 
     //signal listener for when map is saved, loaded, unloaded, etc.
     sigc::connection _mapEventListener;
-    //sequence number of the last sent request (incremented sequentally)
-    std::size_t _seqno = 0;
-
-    //nonzero: request with this seqno sent to game, response not recieved yet
-    std::size_t _seqnoInProgress = 0;
-    //response from current in-progress request will be saved here
-    std::vector<char> _response;
-    //function for the current multistep procedure
-    std::function<int(int)> _multistepProcedureFunction;
-    //current step index for multistep procedure
-    int _multistepProcedureStep = -1;
-    //multistep procedure waits for this request
-    int _multistepWaitsForSeqno = 0;
 
     //true <=> cameraOutData holds new camera position, which should be sent to TDM
     bool _cameraOutPending = false;
@@ -152,24 +134,15 @@ private:
     //set to true when "update map" is set to "always"
     bool _updateMapAlways = false;
 
-    //every request should get unique seqno, otherwise we won't be able to distinguish their responses
-    std::size_t generateNewSequenceNumber();
-    //prepend seqno to specified request and send it to game
-    void sendRequest(const std::string &request);
     //if there are any pending async commands (camera update), send one now
     //returns true iff anything was sent to game
     bool sendAnyPendingAsync();
     //check how socket is doing, accept responses and send pending async requests 
     //this should be done regularly: in fact, timer calls it often
     void think();
-    //wait until the currently executed request is finished
-    void waitAction();
-    //send given request synchronously, i.e. wait until its completition (blocking)
-    //returns response content
-    std::string executeRequest(const std::string &request);
-    //execute next step of the current multistep procedure
-    void continueMultistepProcedure();
 
+    //waits for previous TAG_GENERIC requests to finish, then executes request as TAG_GENERIC in blocking fashion
+    std::string executeGenericRequest(const std::string& request);
     //given a command to be executed in game console (no EOLs), returns its full request text (except for seqno)
     static std::string composeConExecRequest(std::string consoleLine);
     //set noclip/god/notarget to specific state (blocking)

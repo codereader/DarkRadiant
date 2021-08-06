@@ -1,8 +1,7 @@
 #include "GameConnection.h"
-#include "MessageTcp.h"
 #include "DiffStatus.h"
 #include "DiffDoom3MapWriter.h"
-#include "clsocket/ActiveSocket.h"
+#include "AutomationEngine.h"
 #include "GameConnectionDialog.h"
 
 #include "i18n.h"
@@ -33,12 +32,13 @@ namespace
 {
     //this is how often this class "thinks" when idle
     const int THINK_INTERVAL = 123;
-    const char* const DEFAULT_HOST = "localhost";
-    const int DEFAULT_PORT = 3879;
 
-    inline std::string seqnoPreamble(std::size_t seq) {
-        return fmt::format("seqno {0}\n", seq);
-    }
+    //all ordinary requests, executed synchronously
+    const int TAG_GENERIC = 5;
+    //camera DR->TDM sync is continuous, executed asynchronously
+    const int TAG_CAMERA = 6;
+    //multistep procedure for TDM game start/restart
+    const int TAG_RESTART = 7;
 
     inline std::string messagePreamble(const std::string& type) {
         return fmt::format("message \"{}\"\n", type);
@@ -54,24 +54,18 @@ namespace
 }
 
 GameConnection::GameConnection()
-{}
-
-std::size_t GameConnection::generateNewSequenceNumber() {
-    return ++_seqno;
+{
+    _engine.reset(new AutomationEngine());
 }
 
-void GameConnection::sendRequest(const std::string &request) {
-    if (!isAlive())
-        return; //connection is down, drop all requests
-    assert(_seqnoInProgress == 0);
-    auto seqno = generateNewSequenceNumber();
-    std::string fullMessage = seqnoPreamble(seqno) + request;
-    _connection->writeMessage(fullMessage.data(), fullMessage.size());
-    _seqnoInProgress = seqno;
-    signal_StatusChanged.emit(0);
+std::string GameConnection::executeGenericRequest(const std::string& request)
+{
+    _engine->waitForTags(TAG_GENERIC);
+    return _engine->executeRequestBlocking(TAG_GENERIC, request);
 }
 
-bool GameConnection::sendAnyPendingAsync() {
+bool GameConnection::sendAnyPendingAsync()
+{
     if (_mapObserver.getChanges().size() && _updateMapAlways) {
         //note: this is blocking
         doUpdateMap();
@@ -80,38 +74,20 @@ bool GameConnection::sendAnyPendingAsync() {
     return sendPendingCameraUpdate();
 }
 
-void GameConnection::think() {
-    if (!_connection)
-        return; //everything disabled, so just don't do anything
-    _connection->think();
-    if (_seqnoInProgress) {
-        //check if full response is here
-        if (_connection->readMessage(_response)) {
-            //validate and remove preamble
-            int responseSeqno, lineLen;
-            int ret = sscanf(_response.data(), "response %d\n%n", &responseSeqno, &lineLen);
-            assert(ret == 1);
-            assert(static_cast<std::size_t>(responseSeqno) == _seqnoInProgress);
-            _response.erase(_response.begin(), _response.begin() + lineLen);
-            //mark request as "no longer in progress"
-            //note: response can be used in outer function
-            _seqnoInProgress = 0;
-
-            if (responseSeqno == _multistepWaitsForSeqno) {
-                _multistepWaitsForSeqno = 0;
-                continueMultistepProcedure();
-            }
-            signal_StatusChanged.emit(0);
-        }
+void GameConnection::think()
+{
+    if (_engine->hasLostConnection()) {
+        //lost connection recently: disable everything
+        disconnect(true);
     }
-    else {
+
+    _engine->think();
+
+    if (!_engine->areTagsInProgress()) {
         //doing nothing now: send async command if present
         sendAnyPendingAsync();
-    }
-    _connection->think();
-    if (!_connection->isAlive()) {
-        //just lost connection: disable everything
-        disconnect(true);
+        //think now, don't delay to next frame
+        _engine->think();
     }
 }
 
@@ -124,76 +100,21 @@ void GameConnection::onTimerEvent(wxTimerEvent& ev)
     think();
 }
 
-void GameConnection::waitAction()
+bool GameConnection::isAlive() const
 {
-    while (_seqnoInProgress)
-        think();
+    return _engine->isAlive();
 }
 
-void GameConnection::finish()
+bool GameConnection::connect()
 {
-    do
-    {
-        //wait for current request in progress to finish
-        waitAction();
-        //send pending async commands and wait for them to finish
-    } while (sendAnyPendingAsync());
-}
+    if (_engine->isAlive())
+        return true;        //good already: don't do anything
 
-std::string GameConnection::executeRequest(const std::string &request) {
-    //make sure current request is finished (if any)
-    waitAction();
-    assert(_seqnoInProgress == 0);
+    if (_engine->hasLostConnection())
+        disconnect(true);   //lost connection recently: disable everything
 
-    //prepend seqno line and send message
-    sendRequest(request);
-
-    //wait until response is ready
-    waitAction();
-
-    return std::string(_response.begin(), _response.end());
-}
-
-void GameConnection::continueMultistepProcedure() {
-    if (!_multistepProcedureFunction)
-        return;
-    while (!_multistepWaitsForSeqno) {
-        _multistepProcedureStep = _multistepProcedureFunction(_multistepProcedureStep);
-        if (_multistepProcedureStep < 0) {
-            _multistepProcedureFunction = std::function<int(int)>();
-            break;
-        }
-    }
-}
-
-bool GameConnection::isAlive() const {
-    return _connection && _connection->isAlive();
-}
-
-bool GameConnection::connect() {
-    if (isAlive())
-        return true;    //already connected
-
-    if (_connection) {
-        //connection recently lost: disable everything
-        disconnect(true);
-        assert(!_connection);
-    }
-
-    // Make connection using clsocket
-    // TODO: make port configurable, as it is in TDM?
-    std::unique_ptr<CActiveSocket> connection(new CActiveSocket());
-    if (!connection->Initialize()
-        || !connection->SetNonblocking()
-        || !connection->Open(DEFAULT_HOST, DEFAULT_PORT))
-    {
-        return false;
-    }
-
-    _connection.reset(new MessageTcp());
-    _connection->init(std::move(connection));
-    if (!_connection->isAlive())
-        return false;
+    if (!_engine->connect())
+        return false;       //failed to connect
 
     _thinkTimer.reset(new wxTimer());
     _thinkTimer->Bind(wxEVT_TIMER, &GameConnection::onTimerEvent, this);
@@ -202,8 +123,6 @@ bool GameConnection::connect() {
     _mapEventListener = GlobalMapModule().signal_mapEvent().connect(
         sigc::mem_fun(*this, &GameConnection::onMapEvent)
     );
-
-    signal_StatusChanged.emit(0);
 
     return true;
 }
@@ -214,25 +133,15 @@ void GameConnection::disconnect(bool force)
     setUpdateMapAlways(false);
     setUpdateMapObserverEnabled(false);
     setCameraSyncEnabled(false);
-    if (force) {
-        //drop everything pending 
-        _seqnoInProgress = 0;
-        _mapObserver.clear();
-        _cameraOutPending = false;
-    }
-    else {
-        //try to finish all pending
-        finish();
-    }
-    if (_connection)
-        _connection.reset();
+
+    _engine->disconnect(force);
+    assert(!_engine->isAlive() && !_engine->hasLostConnection());
+
     if (_thinkTimer) {
         _thinkTimer->Stop();
         _thinkTimer.reset();
     }
     _mapEventListener.disconnect();
-
-    signal_StatusChanged.emit(0);
 }
 
 GameConnection::~GameConnection() {
@@ -241,7 +150,7 @@ GameConnection::~GameConnection() {
 
 
 void GameConnection::restartGame(bool dmap) {
-    auto implementation = [this, dmap](int step) -> int {
+/*    auto implementation = [this, dmap](int step) -> int {
         //BIG TODO!!
         static const char *TODO_TDM_DIR = R"(G:\TheDarkMod\darkmod)";
         static const char *TODO_MISSION = "bakery_job";
@@ -382,7 +291,7 @@ void GameConnection::restartGame(bool dmap) {
 
     _multistepProcedureFunction = implementation;
     _multistepProcedureStep = 0;
-    continueMultistepProcedure();
+    continueMultistepProcedure();*/
 }
 
 //-------------------------------------------------------------
@@ -395,12 +304,10 @@ std::string GameConnection::composeConExecRequest(std::string consoleLine) {
 }
 
 void GameConnection::executeSetTogglableFlag(const std::string &toggleCommand, bool enable, const std::string &offKeyword) {
-    if (!connect())
-        return;
     std::string text = composeConExecRequest(toggleCommand);
     int attempt;
     for (attempt = 0; attempt < 2; attempt++) {
-        std::string response = executeRequest(text);
+        std::string response = executeGenericRequest(text);
         bool isEnabled = (response.find(offKeyword) == std::string::npos);
         if (enable == isEnabled)
             break;
@@ -410,10 +317,9 @@ void GameConnection::executeSetTogglableFlag(const std::string &toggleCommand, b
 }
 
 std::string GameConnection::executeGetCvarValue(const std::string &cvarName, std::string *defaultValue) {
-    if (!connect())
-        return "";
     std::string text = composeConExecRequest(cvarName);
-    std::string response = executeRequest(text);
+    std::string response = executeGenericRequest(text);
+
     //parse response (imagine how easy that would be with regex...)
     while (response.size() && isspace(response.back()))
         response.pop_back();
@@ -431,6 +337,7 @@ std::string GameConnection::executeGetCvarValue(const std::string &cvarName, std
     int posRight = response.size() - expRight.size();
     std::string currValue = response.substr(posLeftEnd, posMid - posLeftEnd);
     std::string defValue = response.substr(posMidEnd, posRight - posMidEnd);
+
     //return results
     if (defaultValue)
         *defaultValue = defValue;
@@ -439,7 +346,7 @@ std::string GameConnection::executeGetCvarValue(const std::string &cvarName, std
 
 std::map<std::string, std::string> GameConnection::executeQueryStatus() {
     std::string request = queryPreamble("status") + "content:\n";
-    std::string response = executeRequest(request);
+    std::string response = executeGenericRequest(request);
 
     std::map<std::string, std::string> statusProps;
     int pos = 0;
@@ -463,23 +370,21 @@ std::map<std::string, std::string> GameConnection::executeQueryStatus() {
 }
 
 void GameConnection::updateCamera() {
-    connect();
-    try
-    {
+    try {
         auto& camera = GlobalCameraManager().getActiveView();
 
-        auto& orig = camera.getCameraOrigin();
-        auto& angles = camera.getCameraAngles();
+        Vector3 orig = camera.getCameraOrigin();
+        Vector3 angles = camera.getCameraAngles();
 
         _cameraOutData[0] = orig;
         _cameraOutData[1] = angles;
         //note: the update is not necessarily sent right now
         _cameraOutPending = true;
     }
-    catch (const std::runtime_error&)
-    {
+    catch (const std::runtime_error&) {
         // no camera
     }
+
     think();
 }
 
@@ -490,8 +395,10 @@ bool GameConnection::sendPendingCameraUpdate() {
             _cameraOutData[0].x(), _cameraOutData[0].y(), _cameraOutData[0].z(),
             -_cameraOutData[1].x(), _cameraOutData[1].y(), _cameraOutData[1].z()
         ));
-        sendRequest(text);
+
+        _engine->executeRequestAsync(TAG_CAMERA, text);
         _cameraOutPending = false;
+
         return true;
     }
     return false;
@@ -499,85 +406,123 @@ bool GameConnection::sendPendingCameraUpdate() {
 
 bool GameConnection::setCameraSyncEnabled(bool enable)
 {
-    if (!enable) {
-        _cameraChangedSignal.disconnect();
+    try {
+        if (!enable) {
+            _cameraChangedSignal.disconnect();
+        }
+        if (enable) {
+            _cameraChangedSignal.disconnect();
+            _cameraChangedSignal = GlobalCameraManager().signal_cameraChanged().connect(
+                sigc::mem_fun(this, &GameConnection::updateCamera)
+            );
+
+            executeSetTogglableFlag("god", true, "OFF");
+            executeSetTogglableFlag("noclip", true, "OFF");
+            executeSetTogglableFlag("notarget", true, "OFF");
+
+            //sync camera location right now
+            updateCamera();
+            _engine->waitForTags(1 << TAG_CAMERA);
+        }
     }
-    if (enable) {
-        if (!connect())
-            return false;
-        _cameraChangedSignal.disconnect();
-        _cameraChangedSignal = GlobalCameraManager().signal_cameraChanged().connect(
-            sigc::mem_fun(this, &GameConnection::updateCamera)
-        );
-        executeSetTogglableFlag("god", true, "OFF");
-        executeSetTogglableFlag("noclip", true, "OFF");
-        executeSetTogglableFlag("notarget", true, "OFF");
-        //sync camera location right now
-        updateCamera();
-        finish();
+    catch (const DisconnectException&) {
+        //disconnected: will be handled during next think
+        return false;
     }
     return true;
 }
 
-void GameConnection::backSyncCamera() {
-    if (!connect())
+void GameConnection::backSyncCamera()
+{
+    try {
+        _engine->waitForTags();
+        std::string text = executeGenericRequest(composeConExecRequest("getviewpos"));
+
+        Vector3 orig, angles;
+        if (sscanf(text.c_str(), "%lf%lf%lf%lf%lf%lf", &orig.x(), &orig.y(), &orig.z(), &angles.x(), &angles.y(), &angles.z()) == 6) {
+            try {
+                auto& camera = GlobalCameraManager().getActiveView();
+                angles.x() *= -1.0;
+                camera.setOriginAndAngles(orig, angles);
+            }
+            catch (const std::runtime_error&) {
+                // no camera view
+            }
+        }
+    }
+    catch (const DisconnectException&) {
+        //disconnected: will be handled during next think
         return;
-    std::string text = executeRequest(composeConExecRequest("getviewpos"));
-    Vector3 orig, angles;
-    if (sscanf(text.c_str(), "%lf%lf%lf%lf%lf%lf", &orig.x(), &orig.y(), &orig.z(), &angles.x(), &angles.y(), &angles.z()) == 6) {
-        try
-        {
-            auto& camera = GlobalCameraManager().getActiveView();
-            
-            angles.x() *= -1.0;
-            camera.setOriginAndAngles(orig, angles);
-        }
-        catch (const std::runtime_error&)
-        {
-            // no camera view
-        }
     }
 }
 
-void GameConnection::togglePauseGame() {
-    if (!connect())
+void GameConnection::togglePauseGame()
+{
+    try {
+        std::string value = executeGetCvarValue("g_stopTime");
+        std::string oppositeValue = (value == "0" ? "1" : "0");
+        std::string text = composeConExecRequest(fmt::format("g_stopTime {}", oppositeValue));
+        executeGenericRequest(text);
+    }
+    catch (const DisconnectException&) {
+        //disconnected: will be handled during next think
         return;
-    std::string value = executeGetCvarValue("g_stopTime");
-    std::string oppositeValue = (value == "0" ? "1" : "0");
-    std::string text = composeConExecRequest(fmt::format("g_stopTime {}", oppositeValue));
-    executeRequest(text);
+    }
 }
 
-void GameConnection::respawnSelectedEntities() {
-    if (!connect())
-        return;
-    std::set<std::string> selectedEntityNames;
-    GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr &node) {
-        //Node_isEntity
-        if (Entity* entity = Node_getEntity(node)) {
-            const std::string &name = entity->getKeyValue("name");
-            if (!name.empty()) {
-                selectedEntityNames.insert(name);
+void GameConnection::respawnSelectedEntities()
+{
+    try {
+        std::set<std::string> selectedEntityNames;
+        GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr &node) {
+            //Node_isEntity
+            if (Entity* entity = Node_getEntity(node)) {
+                const std::string &name = entity->getKeyValue("name");
+                if (!name.empty()) {
+                    selectedEntityNames.insert(name);
+                }
             }
-        }
-    });
-    std::string command;
-    for (const std::string &name : selectedEntityNames)
-        command += "respawn " + name + "\n";
-    std::string text = composeConExecRequest(command);
-    executeRequest(text);
-}
-
-void GameConnection::reloadMap() {
-    if (!connect())
+        });
+        std::string command;
+        for (const std::string &name : selectedEntityNames)
+            command += "respawn " + name + "\n";
+        std::string text = composeConExecRequest(command);
+        executeGenericRequest(text);
+    }
+    catch (const DisconnectException&) {
+        //disconnected: will be handled during next think
         return;
-    std::string text = composeConExecRequest("reloadMap nocheck");
-    executeRequest(text);
-
-    setUpdateMapObserverEnabled(!GlobalMapModule().isModified());
+    }
 }
 
-void GameConnection::onMapEvent(IMap::MapEvent ev) {
+void GameConnection::reloadMap()
+{
+    try {
+        std::string text = composeConExecRequest("reloadMap nocheck");
+        executeGenericRequest(text);
+
+        if (!GlobalMapModule().isModified()) {
+            //TDM has reloaded .map file while we have no local changes
+            //it means all three version of the map are in sync
+            //so we can enable "update map" mode without fear for confusion
+            setUpdateMapObserverEnabled(true);
+        }
+        else {
+            //TDM has reloaded .map file but we have local changes
+            //next "update map" will send diff based on our modified version
+            //but it will be applied on top of TDM's state (which is different)
+            //better disable the mode to avoid confusion!
+            setUpdateMapObserverEnabled(false);
+        }
+    }
+    catch (const DisconnectException&) {
+        //disconnected: will be handled during next think
+        return;
+    }
+}
+
+void GameConnection::onMapEvent(IMap::MapEvent ev)
+{
     if (ev == IMap::MapSaved && _autoReloadMap) {
         reloadMap();
         _mapObserver.clear();
@@ -589,7 +534,7 @@ void GameConnection::onMapEvent(IMap::MapEvent ev) {
 
 bool GameConnection::setAutoReloadMapEnabled(bool enable)
 {
-    if (enable && !connect())
+    if (enable && !_engine->isAlive())
         return false;
 
     _autoReloadMap = enable;
@@ -610,17 +555,15 @@ bool GameConnection::isUpdateMapObserverEnabled() const
 void GameConnection::setUpdateMapObserverEnabled(bool on)
 {
     _mapObserver.setEnabled(on);
-
-    signal_StatusChanged.emit(0);
 }
 
-bool GameConnection::setUpdateMapAlways(bool on)
+bool GameConnection::setUpdateMapAlways(bool enable)
 {
-    if (on && !connect())
+    if (enable && !_engine->isAlive())
         return false;
 
-    setUpdateMapObserverEnabled(on);
-    _updateMapAlways = on;
+    setUpdateMapObserverEnabled(enable);
+    _updateMapAlways = enable;
     return true;
 }
 
@@ -670,17 +613,26 @@ std::string saveMapDiff(const DiffEntityStatuses& entityStatuses)
 
 void GameConnection::doUpdateMap()
 {
-    if (!connect())
-        return;
+    try {
+        if (!_engine->isAlive())
+            return; //no connection, don't even try
 
-    // Get map diff
-    std::string diff = saveMapDiff(_mapObserver.getChanges());
-    if (diff.empty()) {
-        return; //TODO: fail
+        // Get map diff
+        std::string diff = saveMapDiff(_mapObserver.getChanges());
+        if (diff.empty()) {
+            return; //TODO: fail
+        }
+
+        std::string response = executeGenericRequest(actionPreamble("reloadmap-diff") + "content:\n" + diff);
+        if (response.find("HotReload: SUCCESS") != std::string::npos) {
+            //success: clear current diff, so that we don't reapply it next time
+            _mapObserver.clear();
+        }
     }
-    std::string response = executeRequest(actionPreamble("reloadmap-diff") + "content:\n" + diff);
-    if (response.find("HotReload: SUCCESS") != std::string::npos)
-        _mapObserver.clear();
+    catch (const DisconnectException&) {
+        //disconnected: will be handled during next think
+        return;
+    }
 }
 
 //-------------------------------------------------------------
