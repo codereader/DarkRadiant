@@ -290,6 +290,12 @@ void MapExporter::finishScene()
 
 void MapExporter::recalculateBrushWindings()
 {
+	if (registry::getValue<std::string>("MapExporter_recalculateBrushWindings_ignore") == "yes")
+	{
+		// stgatilov: Hack to disable recalculateBrushWindings for hot-reload diffs
+		return;
+	}
+
 	_root->foreachNode([] (const scene::INodePtr& child)->bool
 	{
 		auto* brush = Node_getIBrush(child);
