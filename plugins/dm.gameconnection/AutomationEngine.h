@@ -93,9 +93,11 @@ public:
     int executeMultistepProc(int tag, const std::function<MultistepProcReturn(int)>& function, int startStep = 0);
 
 
-    /*//signal is emitted when status changes:
-    //  connected/disconnected
-    sigc::signal<void, int> signal_StatusChanged;*/
+    // Returns response for just finished request with given seqno.
+    // Can be called inside:
+    //   * executeRequestAsync callback
+    //   * multistep procedure
+    std::string getResponse(int seqno) const;
 
 private:
     // Connection to TDM game (i.e. the socket with custom message framing).

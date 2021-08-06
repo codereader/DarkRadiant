@@ -159,18 +159,19 @@ GameConnection& GameConnectionDialog::Impl()
 void GameConnectionDialog::updateConnectedStatus()
 {
     bool connected = Impl().isAlive();
+    bool restarting = Impl().isGameRestarting();
     bool updateMapMode = Impl().isUpdateMapObserverEnabled();
 
     _connectedCheckbox->SetValue(connected);
 
-    _cameraLoadFromGameButton           ->Enable(connected);
-    _cameraSendToGameCheckbox           ->Enable(connected);
-    _mapFileReloadNowButton             ->Enable(connected);
-    _mapFileReloadOnSaveCheckbox        ->Enable(connected);
-    _hotReloadUpdateNowButton           ->Enable(connected && updateMapMode);
-    _hotReloadUpdateOnChangeCheckbox    ->Enable(connected && updateMapMode);
-    _respawnSelectedButton              ->Enable(connected);
-    _pauseGameButton                    ->Enable(connected);
+    _cameraLoadFromGameButton           ->Enable(connected && !restarting);
+    _cameraSendToGameCheckbox           ->Enable(connected && !restarting);
+    _mapFileReloadNowButton             ->Enable(connected && !restarting);
+    _mapFileReloadOnSaveCheckbox        ->Enable(connected && !restarting);
+    _hotReloadUpdateNowButton           ->Enable(connected && !restarting && updateMapMode);
+    _hotReloadUpdateOnChangeCheckbox    ->Enable(connected && !restarting && updateMapMode);
+    _respawnSelectedButton              ->Enable(connected && !restarting);
+    _pauseGameButton                    ->Enable(connected && !restarting);
 
     if (!connected) {
         _cameraSendToGameCheckbox           ->SetValue(false);

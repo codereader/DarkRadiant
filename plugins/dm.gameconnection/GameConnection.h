@@ -33,6 +33,9 @@ public:
      * Restart game and connect to it.
      */
     void restartGame(bool dmap);
+    //returns true if restartGame sequence is in progress
+    bool isGameRestarting() const;
+
 
     //connect to TDM instance if not connected yet
     //return false if failed to connect
@@ -92,6 +95,7 @@ public:
     //signal is emitted when status changes:
     //  connected/disconnected
     //  UpdateMap mode is enabled/disabled
+    //  restart game starts/ends
     sigc::signal<void, int> signal_StatusChanged;
 
     //RegisterableModule implementation
@@ -134,12 +138,17 @@ private:
     //set to true when "update map" is set to "always"
     bool _updateMapAlways = false;
 
+    //set to true when restartGame procedure is executed
+    bool _restartInProgress = false;
+
     //if there are any pending async commands (camera update), send one now
     //returns true iff anything was sent to game
     bool sendAnyPendingAsync();
     //check how socket is doing, accept responses and send pending async requests 
     //this should be done regularly: in fact, timer calls it often
     void think();
+    //enable/disable timer calling think method regularly
+    void setThinkLoop(bool enable);
 
     //waits for previous TAG_GENERIC requests to finish, then executes request as TAG_GENERIC in blocking fashion
     std::string executeGenericRequest(const std::string& request);

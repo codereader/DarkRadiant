@@ -111,24 +111,23 @@ AutomationEngine::Request* AutomationEngine::sendRequest(const std::string& requ
 void AutomationEngine::think() {
     ScopedDepthCounter dc(_thinkDepth);
 
-    if (!_connection)
-        return; //everything disabled, so just don't do anything
+    if (_connection) {
+        _connection->think();
 
-    _connection->think();
+        //check if full response is here
+        std::vector<char> responseBytes;
+        while (_connection->readMessage(responseBytes)) {
+            //validate and remove preamble
+            int responseSeqno, lineLen;
+            int ret = sscanf(responseBytes.data(), "response %d\n%n", &responseSeqno, &lineLen);
+            assert(ret == 1);
+            std::string response(responseBytes.begin() + lineLen, responseBytes.end());
 
-    //check if full response is here
-    std::vector<char> responseBytes;
-    while (_connection->readMessage(responseBytes)) {
-        //validate and remove preamble
-        int responseSeqno, lineLen;
-        int ret = sscanf(responseBytes.data(), "response %d\n%n", &responseSeqno, &lineLen);
-        assert(ret == 1);
-        std::string response(responseBytes.begin() + lineLen, responseBytes.end());
-
-        //find request, mark it as "no longer in progress"
-        if (Request* req = findRequest(responseSeqno)) {
-            req->_finished = true;
-            req->_response = response;
+            //find request, mark it as "no longer in progress"
+            if (Request* req = findRequest(responseSeqno)) {
+                req->_finished = true;
+                req->_response = response;
+            }
         }
     }
 
@@ -136,21 +135,24 @@ void AutomationEngine::think() {
     for (int i = 0; i < _requests.size(); i++) {
         if (_requests[i]._finished && _requests[i]._callback) {
             _requests[i]._callback(_requests[i]._seqno);
+            _requests[i]._callback = {};
         }
     }
 
-    //resume multistep procedures
-    for (int i = 0; i < _multistepProcs.size(); i++) {
-        MultistepProcedure& proc = _multistepProcs[i];
-        if (!isMultistepProcStillWaiting(proc, false)) {
-            //BEWARE: it may call blocking requests,
-            //which in turn call think recursively!
-            resumeMultistepProcedure(proc._id);
-        }
-    }
-
-    //don't remove requests/procs in nested think call
+    //don't do some stuff in nested think calls:
+    //  1) don't delete finished requests (multistep proc might still need it)
+    //  2) don't resume multistep procedures (to avoid recursion)
     if (_thinkDepth == 1) {
+        //resume multistep procedures
+        for (int i = 0; i < _multistepProcs.size(); i++) {
+            MultistepProcedure& proc = _multistepProcs[i];
+            if (!isMultistepProcStillWaiting(proc, false)) {
+                //BEWARE: it may call blocking requests,
+                //which in turn call think recursively!
+                resumeMultistepProcedure(proc._id);
+            }
+        }
+
         //remove finished requests
         int k = 0;
         for (int i = 0; i < _requests.size(); i++) {
@@ -195,6 +197,9 @@ void AutomationEngine::resumeMultistepProcedure(int id)
     do {
         proc = findMultistepProc(id);
         assert(proc);
+
+        if (proc->_currentStep < 0)
+            break;  //finished
 
         auto ret = proc->_function(proc->_currentStep);
 
@@ -300,6 +305,19 @@ AutomationEngine::MultistepProcedure* AutomationEngine::findMultistepProc(int id
             return const_cast<MultistepProcedure*>(&_multistepProcs[i]);
     }
     return nullptr;
+}
+
+std::string AutomationEngine::getResponse(int seqno) const
+{
+    const Request* req = findRequest(seqno);
+
+    //TODO: perhaps we should simply keep finished requests in memory forever?...
+    assert(req);
+    if (!req)
+        return "";
+
+    assert(req->_finished);
+    return req->_response;
 }
 
 }
