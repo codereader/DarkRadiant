@@ -120,7 +120,7 @@ void AutomationEngine::think() {
             //validate and remove preamble
             int responseSeqno, lineLen;
             int ret = sscanf(responseBytes.data(), "response %d\n%n", &responseSeqno, &lineLen);
-            assert(ret == 1);
+            assert(ret == 1); ret;
             std::string response(responseBytes.begin() + lineLen, responseBytes.end());
 
             //find request, mark it as "no longer in progress"
