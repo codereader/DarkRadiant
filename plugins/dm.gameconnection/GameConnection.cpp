@@ -749,7 +749,7 @@ std::string saveMapDiff(const DiffEntityStatuses& entityStatuses)
         registry::ScopedKeyChanger progressDisabler(RKEY_MAP_SUPPRESS_LOAD_STATUS_DIALOG, true);
 
         // Hack: disable recalculateBrushWindings for this export
-        registry::ScopedKeyChanger<std::string> guard("MapExporter_recalculateBrushWindings_ignore", "yes");
+        registry::ScopedKeyChanger<std::string> guard("MapExporter_IgnoreBrushes", "yes");
 
         // Get a scoped exporter class
         auto exporter = GlobalMapModule().createMapExporter(writer, root, outStream);

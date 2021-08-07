@@ -262,10 +262,14 @@ void MapExporter::disableProgressMessages()
 
 void MapExporter::prepareScene()
 {
-	removeOriginFromChildPrimitives(_root);
+	// stgatilov: Hack to disable recalculateBrushWindings for hot-reload diffs
+	if (registry::getValue<std::string>("MapExporter_IgnoreBrushes") != "yes")
+	{
+		removeOriginFromChildPrimitives(_root);
 
-	// Re-evaluate all brushes, to update the Winding calculations
-	recalculateBrushWindings();
+		// Re-evaluate all brushes, to update the Winding calculations
+		recalculateBrushWindings();
+	}
 
 	// Emit the pre-export event to give subscribers a chance to prepare the scene
 	GlobalMapResourceManager().signal_onResourceExporting().emit(_root);
@@ -276,10 +280,14 @@ void MapExporter::finishScene()
 	// Emit the post-export event to give subscribers a chance to cleanup the scene
 	GlobalMapResourceManager().signal_onResourceExported().emit(_root);
 
-	scene::addOriginToChildPrimitives(_root);
+	// stgatilov: Hack to disable recalculateBrushWindings for hot-reload diffs
+	if (registry::getValue<std::string>("MapExporter_IgnoreBrushes") != "yes")
+	{
+		scene::addOriginToChildPrimitives(_root);
 
-	// Re-evaluate all brushes, to update the Winding calculations
-	recalculateBrushWindings();
+		// Re-evaluate all brushes, to update the Winding calculations
+		recalculateBrushWindings();
+	}
 
     if (_sendProgressMessages)
     {
@@ -290,12 +298,6 @@ void MapExporter::finishScene()
 
 void MapExporter::recalculateBrushWindings()
 {
-	if (registry::getValue<std::string>("MapExporter_recalculateBrushWindings_ignore") == "yes")
-	{
-		// stgatilov: Hack to disable recalculateBrushWindings for hot-reload diffs
-		return;
-	}
-
 	_root->foreachNode([] (const scene::INodePtr& child)->bool
 	{
 		auto* brush = Node_getIBrush(child);
