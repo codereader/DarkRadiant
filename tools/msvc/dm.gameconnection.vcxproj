@@ -104,7 +104,7 @@ copy $(SolutionDir)..\..\plugins\dm.gameconnection\*.png $(SolutionDir)..\..\ins
     <ClCompile />
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>scenelib.lib;wsock32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wxutillib.lib;scenelib.lib;wsock32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ClCompile />
     <ClCompile>
@@ -120,7 +120,7 @@ copy $(SolutionDir)..\..\plugins\dm.gameconnection\*.png $(SolutionDir)..\..\ins
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>scenelib.lib;wsock32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wxutillib.lib;scenelib.lib;wsock32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ClCompile />
     <ClCompile>
