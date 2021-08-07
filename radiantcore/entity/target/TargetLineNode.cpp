@@ -50,14 +50,10 @@ std::size_t TargetLineNode::getHighlightFlags()
 
 Vector3 TargetLineNode::getOwnerPosition() const
 {
-    try
-    {
-        // Try to use the origin if this is a light
-        auto& light = dynamic_cast<ILightNode&>(_owner);
+    // Try to use the origin if this is a light
+    auto* light = dynamic_cast<ILightNode*>(&_owner);
 
-        return light.getSelectAABB().getOrigin();
-    }
-    catch (std::bad_cast&)
+    if (!light)
     {
         const AABB& bounds = _owner.worldAABB();
 
@@ -68,6 +64,8 @@ Vector3 TargetLineNode::getOwnerPosition() const
 
         return _owner.localToWorld().tCol().getVector3();
     }
+
+    return light->getSelectAABB().getOrigin();
 }
 
 }
