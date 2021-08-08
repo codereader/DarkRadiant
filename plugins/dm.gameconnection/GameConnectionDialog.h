@@ -9,7 +9,18 @@
 
 class wxCheckBox;
 class wxButton;
-class wxActivityIndicator;
+
+//wxActivityIndicator was added in 3.1.0
+//so we have to use something else
+#define HAVE_ACTIVITYINDICATOR wxUSE_ACTIVITYINDICATOR
+
+#if HAVE_ACTIVITYINDICATOR
+    class wxActivityIndicator;
+    typedef wxActivityIndicator ActivityIndicatorOrImage;
+#else
+    class wxStaticBitmap;
+    typedef wxStaticBitmap ActivityIndicatorOrImage;
+#endif
 
 namespace gameconn
 {
@@ -36,7 +47,7 @@ class GameConnectionDialog :
     wxCheckBox* _hotReloadUpdateOnChangeCheckbox = nullptr;
     wxButton*   _respawnSelectedButton           = nullptr;
     wxButton*   _pauseGameButton                 = nullptr;
-    wxActivityIndicator* _connectedActivityIndicator = nullptr;
+    ActivityIndicatorOrImage* _connectedActivityIndicator = nullptr;
 
     sigc::connection _updateOnStatusChangeSignal;
 

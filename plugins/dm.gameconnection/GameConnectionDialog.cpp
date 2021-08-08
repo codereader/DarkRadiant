@@ -5,7 +5,11 @@
 #include "imainframe.h"
 #include "idialogmanager.h"
 
-#include <wx/activityindicator.h>
+#if HAVE_ACTIVITYINDICATOR
+    #include <wx/activityindicator.h>
+#else
+    #include <wx/statbmp.h>
+#endif
 #include <wx/checkbox.h>
 #include <wx/button.h>
 #include <wx/sizer.h>
@@ -64,10 +68,15 @@ GameConnectionDialog::GameConnectionDialog() :
 {
     wxPanel* panel = loadNamedPanel(this, "GameConnectionMainPanel");
 
+#if HAVE_ACTIVITYINDICATOR
     //could not find activity indicator in wxFormBuilder
-    _connectedActivityIndicator = new wxActivityIndicator(panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, wxT("OMG"));
+    _connectedActivityIndicator = new wxActivityIndicator(panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, wxT("ConnectedActivityIndicator"));
     replaceControl(findNamedObject<wxWindow>(this, "ConnectedActivityIndicator"), _connectedActivityIndicator);
     _connectedActivityIndicator->Start();
+#else
+    _connectedActivityIndicator = findNamedObject<wxStaticBitmap>(this, "ConnectedActivityIndicator");
+    panel;  //fix warning
+#endif
     Layout();
 
     //don't want to call findNamedObject every time, risking a typo
