@@ -203,6 +203,35 @@ inline void tryToFinishMerge(const std::shared_ptr<Repository>& repository)
     }
 }
 
+inline void performFastForward(const std::shared_ptr<Repository>& repository)
+{
+    auto head = repository->getHead();
+    auto upstream = head->getUpstream();
+
+    // Find the merge base for this ref and its upstream
+    auto mergeBase = repository->findMergeBase(*head, *upstream);
+
+    auto remoteDiffAgainstBase = repository->getDiff(*upstream, *mergeBase);
+
+    auto mapPath = repository->getRepositoryRelativePath(GlobalMapModule().getMapName());
+    bool remoteDiffContainsMap = remoteDiffAgainstBase->containsFile(mapPath);
+
+    repository->fastForwardToTrackedRemote();
+
+    if (!remoteDiffContainsMap)
+    {
+        return;
+    }
+
+    // The map has been modified on disk, so it might be a good choice to reload the map
+    if (wxutil::Messagebox::Show(_("Map has been updated"),
+        _("The map file has been updated on disk, reload the map file now?"),
+        ::ui::IDialog::MessageType::MESSAGE_ASK) == ::ui::IDialog::RESULT_YES)
+    {
+        GlobalCommandSystem().executeCommand("OpenMap", GlobalMapModule().getMapName());
+    }
+}
+
 inline void syncWithRemote(const std::shared_ptr<Repository>& repository)
 {
     if (repository->mergeIsInProgress())
@@ -230,7 +259,7 @@ inline void syncWithRemote(const std::shared_ptr<Repository>& repository)
         return;
 
     case RequiredMergeStrategy::FastForward:
-        repository->fastForwardToTrackedRemote();
+        performFastForward(repository);
         return;
     }
 
