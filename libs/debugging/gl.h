@@ -1,9 +1,7 @@
 #pragma once
 
-#ifdef _DEBUG
 #include "igl.h"
 #include "string/convert.h"
-#endif
 
 namespace debug
 {
