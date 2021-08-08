@@ -3,6 +3,7 @@
 #include "math/Vector3.h"
 #include "math/Vector4.h"
 #include <sstream>
+#include <cstdlib>
 
 namespace string
 {
@@ -241,6 +242,20 @@ template<typename Src> float to_float(const Src& src)
     return convert<float>(src, 0.0f);
 }
 #endif
+
+// Attempts to convert the given source string to a float value,
+// returning true on success. The value reference will then be holding
+// the resulting float value (or 0 in case of failure).
+// Note: this is using the exception-less std::strtof, making it preferable
+// over the string::convert<float> method (in certain hot code paths).
+inline bool tryConvertToFloat(const std::string& src, float& value)
+{
+    char* lastChar;
+    auto* firstChar = src.c_str();
+    value = std::strtof(firstChar, &lastChar);
+
+    return lastChar != firstChar;
+}
 
 // Convert the given type to a std::string
 template<typename Src> 

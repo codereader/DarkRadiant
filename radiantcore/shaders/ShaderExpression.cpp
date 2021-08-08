@@ -338,16 +338,13 @@ private:
 			else
 			{
 				// Attempt to convert the token into a floating point value
-				try
-				{
-					float value = std::stof(token);
+                float value;
+                if (string::tryConvertToFloat(token, value))
+                {
+                    _tokeniser.nextToken(); // valid token, exhaust
 
-					_tokeniser.nextToken(); // valid token, exhaust
-
-					return std::make_shared<ConstantExpression>(value);
-				}
-				catch (std::invalid_argument&)
-				{}
+                    return std::make_shared<ConstantExpression>(value);
+                }
 			}
 		}
 
