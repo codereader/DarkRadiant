@@ -86,6 +86,7 @@ private:
 	void onEditFilter(wxCommandEvent& ev);
 	void onViewFilter(wxCommandEvent& ev);
 	void onDeleteFilter(wxCommandEvent& ev);
+	void onCopyFilter(wxCommandEvent& ev);
 
 	void onFilterSelectionChanged(wxDataViewEvent& ev);
 };
