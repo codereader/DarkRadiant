@@ -178,7 +178,11 @@ TexturePtr Doom3ShaderLayer::getTexture() const
     // Bind texture to GL if needed
     if (!_texture && _bindableTex)
     {
-        _texture = GetTextureManager().getBinding(_bindableTex);
+        BindableTexture::Role role(
+            _type == BUMP ? BindableTexture::Role::NORMAL_MAP
+                          : BindableTexture::Role::COLOUR
+        );
+        _texture = GetTextureManager().getBinding(_bindableTex, role);
     }
 
     return _texture;
@@ -212,9 +216,9 @@ BlendFunc Doom3ShaderLayer::getBlendFunc() const
 Colour4 Doom3ShaderLayer::getColour() const
 {
 	// Resolve the register values
-    Colour4 colour(getRegisterValue(_expressionSlots[Expression::ColourRed].registerIndex), 
+    Colour4 colour(getRegisterValue(_expressionSlots[Expression::ColourRed].registerIndex),
                    getRegisterValue(_expressionSlots[Expression::ColourGreen].registerIndex),
-                   getRegisterValue(_expressionSlots[Expression::ColourBlue].registerIndex), 
+                   getRegisterValue(_expressionSlots[Expression::ColourBlue].registerIndex),
                    getRegisterValue(_expressionSlots[Expression::ColourAlpha].registerIndex));
 
     if (!colour.isValid())
@@ -686,7 +690,7 @@ std::string Doom3ShaderLayer::getMapImageFilename() const
     {
         return image->getIdentifier();
     }
-     
+
     return std::string();
 }
 
@@ -911,7 +915,7 @@ void Doom3ShaderLayer::setConditionExpressionFromString(const std::string& expre
 
     // Make sure the condition expression is surrounded by parens
     auto condition = std::dynamic_pointer_cast<ShaderExpression>(_expressionSlots[Expression::Condition].expression);
-    
+
     if (condition)
     {
         condition->setIsSurroundedByParentheses(true);

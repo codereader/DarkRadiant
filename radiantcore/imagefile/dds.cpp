@@ -108,7 +108,7 @@ public:
     GLenum getGLFormat() const override { return _format; }
 
     /* BindableTexture implementation */
-    TexturePtr bindTexture(const std::string& name) const
+    TexturePtr bindTexture(const std::string& name, Role /* role */) const
     {
         // Allocate a new texture number and store it into the Texture structure
         GLuint textureNum;

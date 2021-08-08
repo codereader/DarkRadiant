@@ -59,7 +59,8 @@ std::string CameraCubeMapDecl::getExpressionString()
     return _prefix;
 }
 
-TexturePtr CameraCubeMapDecl::bindTexture(const std::string& name) const
+TexturePtr CameraCubeMapDecl::bindTexture(const std::string& name,
+                                          Role /* role */) const
 {
     // Load the six images from the prefix
     try

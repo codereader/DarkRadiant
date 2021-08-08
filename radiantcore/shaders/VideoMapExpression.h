@@ -45,11 +45,11 @@ public:
         return "__videoMap__" + _filePath;
     }
 
-    virtual TexturePtr bindTexture(const std::string& name) const override
+    virtual TexturePtr bindTexture(const std::string& name, Role) const override
     {
         auto bitmapsPath = module::GlobalModuleRegistry().getApplicationContext().getBitmapsPath();
         auto img = GlobalImageLoader().imageFromFile(bitmapsPath + VIDEO_MAP_PLACEHOLDER);
-        
+
         return img ? img->bindTexture(name) : TexturePtr();
     }
 

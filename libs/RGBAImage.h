@@ -51,7 +51,7 @@ public:
     GLenum getGLFormat() const override { return GL_RGBA; }
 
     /* BindableTexture implementation */
-    TexturePtr bindTexture(const std::string& name) const
+    TexturePtr bindTexture(const std::string& name, Role role) const
     {
 		GLuint textureNum;
 
@@ -61,18 +61,20 @@ public:
 		glGenTextures(1, &textureNum);
 		glBindTexture(GL_TEXTURE_2D, textureNum);
 
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-		glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-		// Download the image to OpenGL
-		gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA,
-			static_cast<GLint>(getWidth()), static_cast<GLint>(getHeight()),
-			GL_RGBA, GL_UNSIGNED_BYTE,
-			getPixels()
-		);
+		// Upload the image to OpenGL, choosing an internal format based on role
+        GLint format = GL_RGBA8;
+        if (role == Role::NORMAL_MAP) {
+            format = GL_RG8;
+        }
+        glTexImage2D(GL_TEXTURE_2D, 0, format, static_cast<GLint>(getWidth()),
+                     static_cast<GLint>(getHeight()), 0, GL_RGBA,
+                     GL_UNSIGNED_BYTE, getPixels());
+        glGenerateMipmap(GL_TEXTURE_2D);
 
-		// Un-bind the texture
+        // Un-bind the texture
 		glBindTexture(GL_TEXTURE_2D, 0);
 
         // Construct texture object
