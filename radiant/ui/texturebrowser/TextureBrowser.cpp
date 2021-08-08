@@ -72,7 +72,7 @@ public:
         return _owner.materialIsVisible(material);
     }
 
-    void render()
+    void render(bool drawName)
     {
         if (!isVisible())
         {
@@ -88,7 +88,8 @@ public:
         {
             drawBorder();
             drawTextureQuad(texture->getGLTexNum());
-            drawTextureName();
+            if (drawName)
+                drawTextureName();
         }
     }
 
@@ -224,6 +225,7 @@ TextureBrowser::TextureBrowser(wxWindow* parent) :
     _showTextureScrollbar(registry::getValue<bool>(RKEY_TEXTURE_SHOW_SCROLLBAR)),
     _hideUnused(registry::getValue<bool>(RKEY_TEXTURES_HIDE_UNUSED)),
     _showFavouritesOnly(registry::getValue<bool>(RKEY_TEXTURES_SHOW_FAVOURITES_ONLY)),
+    _showNamesKey(RKEY_TEXTURES_SHOW_NAMES),
     _showOtherMaterials(registry::getValue<bool>(RKEY_TEXTURES_SHOW_OTHER_MATERIALS)),
     _uniformTextureSize(registry::getValue<int>(RKEY_TEXTURE_UNIFORM_SIZE)),
     _maxNameLength(registry::getValue<int>(RKEY_TEXTURE_MAX_NAME_LENGTH)),
@@ -238,6 +240,8 @@ TextureBrowser::TextureBrowser(wxWindow* parent) :
     observeKey(RKEY_TEXTURE_MAX_NAME_LENGTH);
     observeKey(RKEY_TEXTURES_SHOW_FAVOURITES_ONLY);
 
+    SetToolTip("Texture brwoser");
+
     _shader = texdef_name_default();
 
     _shaderLabel = new wxutil::IconTextMenuItem(_("No shader"), TEXTURE_ICON);
@@ -245,7 +249,7 @@ TextureBrowser::TextureBrowser(wxWindow* parent) :
     _popupMenu->addItem(_shaderLabel, []() {}, []()->bool { return false; }); // always insensitive
 
     // Construct the popup context menu
-    _seekInMediaBrowser = new wxutil::IconTextMenuItem(_(SEEK_IN_MEDIA_BROWSER_TEXT), 
+    _seekInMediaBrowser = new wxutil::IconTextMenuItem(_(SEEK_IN_MEDIA_BROWSER_TEXT),
 		TEXTURE_ICON);
 
     _popupMenu->addItem(_seekInMediaBrowser,
@@ -310,6 +314,7 @@ TextureBrowser::TextureBrowser(wxWindow* parent) :
 
         _wxGLWidget->Bind(wxEVT_SIZE, &TextureBrowser::onGLResize, this);
         _wxGLWidget->Bind(wxEVT_MOUSEWHEEL, &TextureBrowser::onGLMouseScroll, this);
+        _wxGLWidget->Bind(wxEVT_MOTION, [=](wxMouseEvent& e) { SetToolTip("Moved"); });
 
         _wxGLWidget->Bind(wxEVT_LEFT_DOWN, &TextureBrowser::onGLMouseButtonPress, this);
         _wxGLWidget->Bind(wxEVT_LEFT_DCLICK, &TextureBrowser::onGLMouseButtonPress, this);
@@ -440,7 +445,7 @@ int TextureBrowser::getTextureWidth(const Texture& tex) const
     else
     {
         // Otherwise, preserve the texture's aspect ratio
-        return static_cast<int>(_uniformTextureSize * 
+        return static_cast<int>(_uniformTextureSize *
             (static_cast<float>(tex.getWidth()) / tex.getHeight())
         );
     }
@@ -749,10 +754,10 @@ void TextureBrowser::draw()
     Vector3 colorBackground = GlobalColourSchemeManager().getColour("texture_background");
     glClearColor(colorBackground[0], colorBackground[1], colorBackground[2], 0);
     glViewport(0, 0, _viewportSize.x(), _viewportSize.y());
-    
+
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	
+
 	glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
@@ -769,7 +774,7 @@ void TextureBrowser::draw()
 
     for (TextureTile& tile : _tiles)
     {
-        tile.render();
+        tile.render(_showNamesKey.get());
     }
 
 	debug::assertNoGlErrors();
@@ -922,7 +927,7 @@ void TextureBrowser::onGLMouseButtonPress(wxMouseEvent& ev)
 {
 	if (ev.RightDown())
     {
-        _freezePointer.startCapture(_wxGLWidget, 
+        _freezePointer.startCapture(_wxGLWidget,
 			std::bind(&TextureBrowser::onFrozenMouseMotion, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3),
 			std::bind(&TextureBrowser::onFrozenMouseCaptureLost, this));
 

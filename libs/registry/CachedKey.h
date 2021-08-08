@@ -28,7 +28,7 @@ private:
 public:
 
     /// Construct a CachedKey to observe the given registry key
-    CachedKey(const std::string& key)
+    explicit CachedKey(const std::string& key)
     : _key(key)
     {
         updateCachedValue();
