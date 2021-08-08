@@ -249,50 +249,53 @@ void FilterDialog::onSave(wxCommandEvent& ev)
 	EndModal(wxID_OK);
 }
 
+void FilterDialog::showEditDialogForNewFilter(const FilterPtr& newFilter)
+{
+    // Instantiate a new editor, will block
+    auto* editor = new FilterEditor(*newFilter, this, false);
+
+    auto editorResult = editor->ShowModal();
+
+    editor->Destroy();
+
+    if (editorResult != wxID_OK)
+    {
+        // User hit cancel, we're done
+        return;
+    }
+
+    if (newFilter->rules.empty())
+    {
+        // Empty ruleset, notify user
+        auto dialog = GlobalDialogManager().createMessageBox(_("Empty Filter"),
+            _("No rules defined for this filter, cannot insert."), ui::IDialog::MESSAGE_ERROR);
+
+        dialog->run();
+        return;
+    }
+
+    auto result = _filters.emplace(newFilter->name, newFilter);
+
+    if (!result.second)
+    {
+        // Empty ruleset, notify user
+        auto dialog = GlobalDialogManager().createMessageBox(_("Name Conflict"),
+            _("Cannot add, filter with same name already exists."), ui::IDialog::MESSAGE_ERROR);
+
+        dialog->run();
+        return;
+    }
+
+    update();
+}
+
 void FilterDialog::onAddFilter(wxCommandEvent& ev)
 {
 	// Construct a new filter with an empty name (this indicates it has not been there before when saving)
-	FilterPtr workingCopy(new Filter("", false, false));
-	workingCopy->name = _("NewFilter");
+	auto newFilter = std::make_shared<Filter>("", false, false);
+    newFilter->name = _("NewFilter");
 
-	// Instantiate a new editor, will block
-	FilterEditor* editor = new FilterEditor(*workingCopy, this, false);
-
-	int editorResult = editor->ShowModal();
-	
-	editor->Destroy();
-
-	if (editorResult != wxID_OK)
-	{
-		// User hit cancel, we're done
-		return;
-	}
-
-	if (workingCopy->rules.empty())
-	{
-		// Empty ruleset, notify user
-		IDialogPtr dialog = GlobalDialogManager().createMessageBox(_("Empty Filter"),
-			_("No rules defined for this filter, cannot insert."), ui::IDialog::MESSAGE_ERROR);
-
-		dialog->run();
-		return;
-	}
-
-	std::pair<FilterMap::iterator, bool> result = _filters.insert(
-		FilterMap::value_type(workingCopy->name, workingCopy)
-	);
-
-	if (!result.second)
-	{
-		// Empty ruleset, notify user
-		IDialogPtr dialog = GlobalDialogManager().createMessageBox(_("Name Conflict"),
-			_("Cannot add, filter with same name already exists."), ui::IDialog::MESSAGE_ERROR);
-
-		dialog->run();
-		return;
-	}
-
-	update();
+    showEditDialogForNewFilter(newFilter);
 }
 
 void FilterDialog::onViewFilter(wxCommandEvent& ev)
@@ -403,10 +406,17 @@ void FilterDialog::onCopyFilter(wxCommandEvent& ev)
         return; // not found or read-only
     }
 
-    // TODO: Copy
+    // Construct a new filter with an empty name (this indicates it has not been there before when saving)
+    auto newFilter = std::make_shared<Filter>("", false, false);
+    newFilter->name = f->second->name + " " + _("Copy");
 
-    // Update all widgets
-    update();
+    // Copy all the rules
+    for (const auto& existingRule : f->second->rules)
+    {
+        newFilter->rules.push_back(existingRule);
+    }
+
+    showEditDialogForNewFilter(newFilter);
 }
 
 void FilterDialog::onFilterSelectionChanged(wxDataViewEvent& ev)
