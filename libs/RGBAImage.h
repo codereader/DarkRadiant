@@ -61,7 +61,6 @@ public:
 		glGenTextures(1, &textureNum);
 		glBindTexture(GL_TEXTURE_2D, textureNum);
 
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 		// Upload the image to OpenGL, choosing an internal format based on role
@@ -72,7 +71,11 @@ public:
         glTexImage2D(GL_TEXTURE_2D, 0, format, static_cast<GLint>(getWidth()),
                      static_cast<GLint>(getHeight()), 0, GL_RGBA,
                      GL_UNSIGNED_BYTE, getPixels());
-        glGenerateMipmap(GL_TEXTURE_2D);
+        if (GLEW_VERSION_3_0) {
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+                            GL_LINEAR_MIPMAP_LINEAR);
+            glGenerateMipmap(GL_TEXTURE_2D);
+        }
 
         // Un-bind the texture
 		glBindTexture(GL_TEXTURE_2D, 0);
