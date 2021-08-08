@@ -72,7 +72,12 @@ public:
         glTexImage2D(GL_TEXTURE_2D, 0, format, static_cast<GLint>(getWidth()),
                      static_cast<GLint>(getHeight()), 0, GL_RGBA,
                      GL_UNSIGNED_BYTE, getPixels());
-        glGenerateMipmap(GL_TEXTURE_2D);
+
+        // glGenerateMipMaps is supported in openGL 3.0+
+        if (GLEW_VERSION_3_0)
+        {
+            glGenerateMipmap(GL_TEXTURE_2D);
+        }
 
         // Un-bind the texture
 		glBindTexture(GL_TEXTURE_2D, 0);
