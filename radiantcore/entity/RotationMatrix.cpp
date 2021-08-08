@@ -130,6 +130,13 @@ void RotationMatrix::rotate(const Quaternion& rotate)
 
 void RotationMatrix::setFromAngleString(const std::string& value)
 {
+    // Quick check before trying to parse anything
+    if (value.empty())
+    {
+        setIdentity();
+        return;
+    }
+
     try
     {
         float angle = std::stof(value);
