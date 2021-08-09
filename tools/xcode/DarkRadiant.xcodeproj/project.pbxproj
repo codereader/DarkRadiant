@@ -298,6 +298,73 @@
 		3A01240B1E503D4D00A62BC1 /* white.bmp in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A01232F1E503D3200A62BC1 /* white.bmp */; };
 		3A01240C1E503D4D00A62BC1 /* wireframe.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0123301E503D3200A62BC1 /* wireframe.png */; };
 		3A01240D1E503D4D00A62BC1 /* wireframeMode16.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A0123311E503D3200A62BC1 /* wireframeMode16.png */; };
+		3A2C48E4263D2F5F00FCE0C0 /* materialeditor.xrc in Resources */ = {isa = PBXBuildFile; fileRef = 3A2C48E3263D2F5F00FCE0C0 /* materialeditor.xrc */; };
+		3A2C48E5263D2FAC00FCE0C0 /* materialeditor.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A2C48E3263D2F5F00FCE0C0 /* materialeditor.xrc */; };
+		3A2C48E6263D2FD200FCE0C0 /* materialeditor.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A2C48E3263D2F5F00FCE0C0 /* materialeditor.xrc */; };
+		3A382F9F26C176340049C4A1 /* merge_arrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 3A382F9726C176310049C4A1 /* merge_arrow.png */; };
+		3A382FA026C176340049C4A1 /* merge_fork.png in Resources */ = {isa = PBXBuildFile; fileRef = 3A382F9826C176320049C4A1 /* merge_fork.png */; };
+		3A382FA126C176340049C4A1 /* preserveAspect.png in Resources */ = {isa = PBXBuildFile; fileRef = 3A382F9926C176320049C4A1 /* preserveAspect.png */; };
+		3A382FA226C176340049C4A1 /* three_way_merge.png in Resources */ = {isa = PBXBuildFile; fileRef = 3A382F9A26C176330049C4A1 /* three_way_merge.png */; };
+		3A382FA426C176340049C4A1 /* incoming_commits.png in Resources */ = {isa = PBXBuildFile; fileRef = 3A382F9C26C176330049C4A1 /* incoming_commits.png */; };
+		3A382FA526C176340049C4A1 /* outgoing_commits.png in Resources */ = {isa = PBXBuildFile; fileRef = 3A382F9D26C176340049C4A1 /* outgoing_commits.png */; };
+		3A382FA626C176340049C4A1 /* merge_selection_mode.png in Resources */ = {isa = PBXBuildFile; fileRef = 3A382F9E26C176340049C4A1 /* merge_selection_mode.png */; };
+		3A382FA726C176800049C4A1 /* two_way_merge.png in Resources */ = {isa = PBXBuildFile; fileRef = 3A382F9B26C176330049C4A1 /* two_way_merge.png */; };
+		3A382FAB26C176AD0049C4A1 /* vcsstatusbar.xrc in Resources */ = {isa = PBXBuildFile; fileRef = 3A382FA826C176AC0049C4A1 /* vcsstatusbar.xrc */; };
+		3A382FAC26C176AD0049C4A1 /* mergecontroldialog.xrc in Resources */ = {isa = PBXBuildFile; fileRef = 3A382FA926C176AD0049C4A1 /* mergecontroldialog.xrc */; };
+		3A382FAD26C176AD0049C4A1 /* vcscommitdialog.xrc in Resources */ = {isa = PBXBuildFile; fileRef = 3A382FAA26C176AD0049C4A1 /* vcscommitdialog.xrc */; };
+		3A382FB126C177000049C4A1 /* SHA256.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A382FAE26C176FF0049C4A1 /* SHA256.cpp */; };
+		3A382FB226C177000049C4A1 /* Hash.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A382FAF26C176FF0049C4A1 /* Hash.h */; };
+		3A382FB326C177000049C4A1 /* SHA256.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A382FB026C176FF0049C4A1 /* SHA256.h */; };
+		3A382FB626C1774B0049C4A1 /* PointTrace.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A382FB526C1774B0049C4A1 /* PointTrace.h */; };
+		3A382FCC26C177930049C4A1 /* SelectionGroupMergerBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A382FB826C1778D0049C4A1 /* SelectionGroupMergerBase.h */; };
+		3A382FCD26C177930049C4A1 /* LayerMerger.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A382FB926C1778D0049C4A1 /* LayerMerger.h */; };
+		3A382FCE26C177930049C4A1 /* MergeOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A382FBA26C1778E0049C4A1 /* MergeOperation.cpp */; };
+		3A382FCF26C177930049C4A1 /* ThreeWayMergeOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A382FBB26C1778E0049C4A1 /* ThreeWayMergeOperation.h */; };
+		3A382FD026C177930049C4A1 /* MergeActionNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A382FBC26C1778E0049C4A1 /* MergeActionNode.cpp */; };
+		3A382FD126C177930049C4A1 /* MergeActionNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A382FBD26C1778F0049C4A1 /* MergeActionNode.h */; };
+		3A382FD226C177930049C4A1 /* ThreeWayMergeOperation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A382FBE26C1778F0049C4A1 /* ThreeWayMergeOperation.cpp */; };
+		3A382FD326C177930049C4A1 /* LayerMergerBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A382FBF26C1778F0049C4A1 /* LayerMergerBase.h */; };
+		3A382FD426C177930049C4A1 /* ThreeWaySelectionGroupMerger.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A382FC026C177900049C4A1 /* ThreeWaySelectionGroupMerger.h */; };
+		3A382FD526C177930049C4A1 /* MergeLib.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A382FC126C177900049C4A1 /* MergeLib.h */; };
+		3A382FD626C177930049C4A1 /* MergeOperationBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A382FC226C177900049C4A1 /* MergeOperationBase.h */; };
+		3A382FD726C177930049C4A1 /* ComparisonResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A382FC326C177900049C4A1 /* ComparisonResult.h */; };
+		3A382FD826C177930049C4A1 /* SelectionGroupMerger.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A382FC426C177910049C4A1 /* SelectionGroupMerger.h */; };
+		3A382FD926C177930049C4A1 /* MergeOperationBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A382FC526C177910049C4A1 /* MergeOperationBase.cpp */; };
+		3A382FDA26C177930049C4A1 /* NodeUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A382FC626C177910049C4A1 /* NodeUtils.h */; };
+		3A382FDB26C177930049C4A1 /* MergeAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A382FC726C177920049C4A1 /* MergeAction.h */; };
+		3A382FDC26C177930049C4A1 /* GraphComparer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A382FC826C177920049C4A1 /* GraphComparer.cpp */; };
+		3A382FDD26C177930049C4A1 /* MergeOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A382FC926C177920049C4A1 /* MergeOperation.h */; };
+		3A382FDE26C177930049C4A1 /* ThreeWayLayerMerger.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A382FCA26C177930049C4A1 /* ThreeWayLayerMerger.h */; };
+		3A382FDF26C177930049C4A1 /* GraphComparer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A382FCB26C177930049C4A1 /* GraphComparer.h */; };
+		3A382FE126C177C20049C4A1 /* AutoSaveRequestBlocker.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A382FE026C177C20049C4A1 /* AutoSaveRequestBlocker.h */; };
+		3A382FE426C178190049C4A1 /* PointFileChooser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A382FE226C178180049C4A1 /* PointFileChooser.cpp */; };
+		3A382FE826C178530049C4A1 /* MergeControlDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A382FE726C178530049C4A1 /* MergeControlDialog.cpp */; };
+		3A382FEB26C1788F0049C4A1 /* VcsMapResource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A382FE926C1788E0049C4A1 /* VcsMapResource.cpp */; };
+		3A382FEC26C1788F0049C4A1 /* VcsMapResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A382FEA26C1788F0049C4A1 /* VcsMapResource.h */; };
+		3A382FF026C178C30049C4A1 /* VersionControlManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A382FEE26C178C20049C4A1 /* VersionControlManager.cpp */; };
+		3A382FF126C178C30049C4A1 /* VersionControlManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A382FEF26C178C20049C4A1 /* VersionControlManager.h */; };
+		3A382FF326C17E470049C4A1 /* incoming_commits.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A382F9C26C176330049C4A1 /* incoming_commits.png */; };
+		3A382FF426C17E470049C4A1 /* merge_arrow.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A382F9726C176310049C4A1 /* merge_arrow.png */; };
+		3A382FF526C17E470049C4A1 /* merge_fork.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A382F9826C176320049C4A1 /* merge_fork.png */; };
+		3A382FF626C17E470049C4A1 /* merge_selection_mode.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A382F9E26C176340049C4A1 /* merge_selection_mode.png */; };
+		3A382FF726C17E470049C4A1 /* outgoing_commits.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A382F9D26C176340049C4A1 /* outgoing_commits.png */; };
+		3A382FF826C17E470049C4A1 /* preserveAspect.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A382F9926C176320049C4A1 /* preserveAspect.png */; };
+		3A382FF926C17E470049C4A1 /* three_way_merge.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A382F9A26C176330049C4A1 /* three_way_merge.png */; };
+		3A382FFA26C17E470049C4A1 /* two_way_merge.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A382F9B26C176330049C4A1 /* two_way_merge.png */; };
+		3A382FFB26C17E720049C4A1 /* mergecontroldialog.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A382FA926C176AD0049C4A1 /* mergecontroldialog.xrc */; };
+		3A382FFC26C17E720049C4A1 /* vcscommitdialog.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A382FAA26C176AD0049C4A1 /* vcscommitdialog.xrc */; };
+		3A382FFD26C17E720049C4A1 /* vcsstatusbar.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A382FA826C176AC0049C4A1 /* vcsstatusbar.xrc */; };
+		3A382FFE26C17EA20049C4A1 /* incoming_commits.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A382F9C26C176330049C4A1 /* incoming_commits.png */; };
+		3A382FFF26C17EA20049C4A1 /* merge_arrow.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A382F9726C176310049C4A1 /* merge_arrow.png */; };
+		3A38300026C17EA20049C4A1 /* merge_fork.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A382F9826C176320049C4A1 /* merge_fork.png */; };
+		3A38300126C17EA20049C4A1 /* merge_selection_mode.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A382F9E26C176340049C4A1 /* merge_selection_mode.png */; };
+		3A38300226C17EA20049C4A1 /* outgoing_commits.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A382F9D26C176340049C4A1 /* outgoing_commits.png */; };
+		3A38300326C17EA20049C4A1 /* preserveAspect.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A382F9926C176320049C4A1 /* preserveAspect.png */; };
+		3A38300426C17EA20049C4A1 /* three_way_merge.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A382F9A26C176330049C4A1 /* three_way_merge.png */; };
+		3A38300526C17EA20049C4A1 /* two_way_merge.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A382F9B26C176330049C4A1 /* two_way_merge.png */; };
+		3A38300626C17EBE0049C4A1 /* mergecontroldialog.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A382FA926C176AD0049C4A1 /* mergecontroldialog.xrc */; };
+		3A38300726C17EBE0049C4A1 /* vcscommitdialog.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A382FAA26C176AD0049C4A1 /* vcscommitdialog.xrc */; };
+		3A38300826C17EBE0049C4A1 /* vcsstatusbar.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A382FA826C176AC0049C4A1 /* vcsstatusbar.xrc */; };
 		3A8D4CC0263C7895000C068E /* Bitmap.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A8D4CBE263C7893000C068E /* Bitmap.h */; };
 		3A8D4CC1263C7895000C068E /* LocalBitmapArtProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A8D4CBF263C7894000C068E /* LocalBitmapArtProvider.h */; };
 		3AA6E07923B2343200BF9AD7 /* ParticleEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F3F623B1B764008A1B2D /* ParticleEditor.cpp */; };
@@ -492,8 +559,6 @@
 		3AE5C25526392ADC00643850 /* tiles.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AE5C24526392A4A00643850 /* tiles.png */; };
 		3AE5C25626392ADC00643850 /* videomap.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AE5C24626392A4A00643850 /* videomap.png */; };
 		3AE5C25726392ADC00643850 /* visible.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AE5C24726392A4A00643850 /* visible.png */; };
-		3AE5C25926392B3400643850 /* ui in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AE5C25826392B1A00643850 /* ui */; };
-		3AE5C25A26392B6100643850 /* ui in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AE5C25826392B1A00643850 /* ui */; };
 		3AE5C26226392C0300643850 /* cube.ase in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AE5C25D26392BBE00643850 /* cube.ase */; };
 		3AE5C26326392C0300643850 /* room_cuboid.ase in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AE5C25E26392BBE00643850 /* room_cuboid.ase */; };
 		3AE5C26426392C0300643850 /* sphere.ase in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3AE5C25F26392BBE00643850 /* sphere.ase */; };
@@ -1958,6 +2023,14 @@
 			dstPath = Contents/Resources/bitmaps;
 			dstSubfolderSpec = 1;
 			files = (
+				3A382FFE26C17EA20049C4A1 /* incoming_commits.png in CopyFiles */,
+				3A382FFF26C17EA20049C4A1 /* merge_arrow.png in CopyFiles */,
+				3A38300026C17EA20049C4A1 /* merge_fork.png in CopyFiles */,
+				3A38300126C17EA20049C4A1 /* merge_selection_mode.png in CopyFiles */,
+				3A38300226C17EA20049C4A1 /* outgoing_commits.png in CopyFiles */,
+				3A38300326C17EA20049C4A1 /* preserveAspect.png in CopyFiles */,
+				3A38300426C17EA20049C4A1 /* three_way_merge.png in CopyFiles */,
+				3A38300526C17EA20049C4A1 /* two_way_merge.png in CopyFiles */,
 				3AE5C25026392ADC00643850 /* cube.png in CopyFiles */,
 				3AE5C25126392ADC00643850 /* invisible.png in CopyFiles */,
 				3AE5C25226392ADC00643850 /* soundmap_wave.png in CopyFiles */,
@@ -2290,7 +2363,10 @@
 			dstPath = Resources/ui;
 			dstSubfolderSpec = 16;
 			files = (
-				3AE5C25A26392B6100643850 /* ui in CopyFiles */,
+				3A382FFB26C17E720049C4A1 /* mergecontroldialog.xrc in CopyFiles */,
+				3A382FFC26C17E720049C4A1 /* vcscommitdialog.xrc in CopyFiles */,
+				3A382FFD26C17E720049C4A1 /* vcsstatusbar.xrc in CopyFiles */,
+				3A2C48E5263D2FAC00FCE0C0 /* materialeditor.xrc in CopyFiles */,
 				3AA6E08F23BB539B00BF9AD7 /* stimresponseeditor.xrc in CopyFiles */,
 				3AE6F2211FDD3A6C008A1B2D /* missioninforeadmedialog.xrc in CopyFiles */,
 				3AE6F2021FD1AB66008A1B2D /* missioninfoeditdialog.xrc in CopyFiles */,
@@ -2371,6 +2447,14 @@
 			dstPath = Resources/bitmaps;
 			dstSubfolderSpec = 16;
 			files = (
+				3A382FF326C17E470049C4A1 /* incoming_commits.png in CopyFiles */,
+				3A382FF426C17E470049C4A1 /* merge_arrow.png in CopyFiles */,
+				3A382FF526C17E470049C4A1 /* merge_fork.png in CopyFiles */,
+				3A382FF626C17E470049C4A1 /* merge_selection_mode.png in CopyFiles */,
+				3A382FF726C17E470049C4A1 /* outgoing_commits.png in CopyFiles */,
+				3A382FF826C17E470049C4A1 /* preserveAspect.png in CopyFiles */,
+				3A382FF926C17E470049C4A1 /* three_way_merge.png in CopyFiles */,
+				3A382FFA26C17E470049C4A1 /* two_way_merge.png in CopyFiles */,
 				3AE5C24826392ABA00643850 /* cube.png in CopyFiles */,
 				3AE5C24926392ABA00643850 /* invisible.png in CopyFiles */,
 				3AE5C24A26392ABA00643850 /* soundmap_wave.png in CopyFiles */,
@@ -2614,7 +2698,10 @@
 			dstPath = Contents/Resources/ui;
 			dstSubfolderSpec = 1;
 			files = (
-				3AE5C25926392B3400643850 /* ui in CopyFiles */,
+				3A38300626C17EBE0049C4A1 /* mergecontroldialog.xrc in CopyFiles */,
+				3A38300726C17EBE0049C4A1 /* vcscommitdialog.xrc in CopyFiles */,
+				3A38300826C17EBE0049C4A1 /* vcsstatusbar.xrc in CopyFiles */,
+				3A2C48E6263D2FD200FCE0C0 /* materialeditor.xrc in CopyFiles */,
 				3AA6E08E23BB510900BF9AD7 /* stimresponseeditor.xrc in CopyFiles */,
 				3AE6F2221FDD3A83008A1B2D /* missioninforeadmedialog.xrc in CopyFiles */,
 				3AE6F2031FD1ACAD008A1B2D /* missioninfoeditdialog.xrc in CopyFiles */,
@@ -2984,6 +3071,55 @@
 		3A01232F1E503D3200A62BC1 /* white.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; name = white.bmp; path = ../../install/bitmaps/white.bmp; sourceTree = SOURCE_ROOT; };
 		3A0123301E503D3200A62BC1 /* wireframe.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = wireframe.png; path = ../../install/bitmaps/wireframe.png; sourceTree = SOURCE_ROOT; };
 		3A0123311E503D3200A62BC1 /* wireframeMode16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = wireframeMode16.png; path = ../../install/bitmaps/wireframeMode16.png; sourceTree = SOURCE_ROOT; };
+		3A2C48E3263D2F5F00FCE0C0 /* materialeditor.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = materialeditor.xrc; path = ../../install/ui/materialeditor.xrc; sourceTree = SOURCE_ROOT; };
+		3A382F8F26C175580049C4A1 /* iuserinterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iuserinterface.h; path = ../../include/iuserinterface.h; sourceTree = SOURCE_ROOT; };
+		3A382F9026C175590049C4A1 /* imapmerge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = imapmerge.h; path = ../../include/imapmerge.h; sourceTree = SOURCE_ROOT; };
+		3A382F9126C1755A0049C4A1 /* icomparablenode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = icomparablenode.h; path = ../../include/icomparablenode.h; sourceTree = SOURCE_ROOT; };
+		3A382F9226C1755E0049C4A1 /* iversioncontrol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iversioncontrol.h; path = ../../include/iversioncontrol.h; sourceTree = SOURCE_ROOT; };
+		3A382F9726C176310049C4A1 /* merge_arrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = merge_arrow.png; path = ../../install/bitmaps/merge_arrow.png; sourceTree = SOURCE_ROOT; };
+		3A382F9826C176320049C4A1 /* merge_fork.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = merge_fork.png; path = ../../install/bitmaps/merge_fork.png; sourceTree = SOURCE_ROOT; };
+		3A382F9926C176320049C4A1 /* preserveAspect.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = preserveAspect.png; path = ../../install/bitmaps/preserveAspect.png; sourceTree = SOURCE_ROOT; };
+		3A382F9A26C176330049C4A1 /* three_way_merge.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = three_way_merge.png; path = ../../install/bitmaps/three_way_merge.png; sourceTree = SOURCE_ROOT; };
+		3A382F9B26C176330049C4A1 /* two_way_merge.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = two_way_merge.png; path = ../../install/bitmaps/two_way_merge.png; sourceTree = SOURCE_ROOT; };
+		3A382F9C26C176330049C4A1 /* incoming_commits.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = incoming_commits.png; path = ../../install/bitmaps/incoming_commits.png; sourceTree = SOURCE_ROOT; };
+		3A382F9D26C176340049C4A1 /* outgoing_commits.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = outgoing_commits.png; path = ../../install/bitmaps/outgoing_commits.png; sourceTree = SOURCE_ROOT; };
+		3A382F9E26C176340049C4A1 /* merge_selection_mode.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = merge_selection_mode.png; path = ../../install/bitmaps/merge_selection_mode.png; sourceTree = SOURCE_ROOT; };
+		3A382FA826C176AC0049C4A1 /* vcsstatusbar.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = vcsstatusbar.xrc; path = ../../install/ui/vcsstatusbar.xrc; sourceTree = SOURCE_ROOT; };
+		3A382FA926C176AD0049C4A1 /* mergecontroldialog.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = mergecontroldialog.xrc; path = ../../install/ui/mergecontroldialog.xrc; sourceTree = SOURCE_ROOT; };
+		3A382FAA26C176AD0049C4A1 /* vcscommitdialog.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = vcscommitdialog.xrc; path = ../../install/ui/vcscommitdialog.xrc; sourceTree = SOURCE_ROOT; };
+		3A382FAE26C176FF0049C4A1 /* SHA256.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SHA256.cpp; path = ../../libs/math/SHA256.cpp; sourceTree = SOURCE_ROOT; };
+		3A382FAF26C176FF0049C4A1 /* Hash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Hash.h; path = ../../libs/math/Hash.h; sourceTree = SOURCE_ROOT; };
+		3A382FB026C176FF0049C4A1 /* SHA256.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SHA256.h; path = ../../libs/math/SHA256.h; sourceTree = SOURCE_ROOT; };
+		3A382FB526C1774B0049C4A1 /* PointTrace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PointTrace.h; path = ../../libs/scene/PointTrace.h; sourceTree = SOURCE_ROOT; };
+		3A382FB826C1778D0049C4A1 /* SelectionGroupMergerBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SelectionGroupMergerBase.h; path = ../../libs/scene/merge/SelectionGroupMergerBase.h; sourceTree = SOURCE_ROOT; };
+		3A382FB926C1778D0049C4A1 /* LayerMerger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LayerMerger.h; path = ../../libs/scene/merge/LayerMerger.h; sourceTree = SOURCE_ROOT; };
+		3A382FBA26C1778E0049C4A1 /* MergeOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MergeOperation.cpp; path = ../../libs/scene/merge/MergeOperation.cpp; sourceTree = SOURCE_ROOT; };
+		3A382FBB26C1778E0049C4A1 /* ThreeWayMergeOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ThreeWayMergeOperation.h; path = ../../libs/scene/merge/ThreeWayMergeOperation.h; sourceTree = SOURCE_ROOT; };
+		3A382FBC26C1778E0049C4A1 /* MergeActionNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MergeActionNode.cpp; path = ../../libs/scene/merge/MergeActionNode.cpp; sourceTree = SOURCE_ROOT; };
+		3A382FBD26C1778F0049C4A1 /* MergeActionNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MergeActionNode.h; path = ../../libs/scene/merge/MergeActionNode.h; sourceTree = SOURCE_ROOT; };
+		3A382FBE26C1778F0049C4A1 /* ThreeWayMergeOperation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ThreeWayMergeOperation.cpp; path = ../../libs/scene/merge/ThreeWayMergeOperation.cpp; sourceTree = SOURCE_ROOT; };
+		3A382FBF26C1778F0049C4A1 /* LayerMergerBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LayerMergerBase.h; path = ../../libs/scene/merge/LayerMergerBase.h; sourceTree = SOURCE_ROOT; };
+		3A382FC026C177900049C4A1 /* ThreeWaySelectionGroupMerger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ThreeWaySelectionGroupMerger.h; path = ../../libs/scene/merge/ThreeWaySelectionGroupMerger.h; sourceTree = SOURCE_ROOT; };
+		3A382FC126C177900049C4A1 /* MergeLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MergeLib.h; path = ../../libs/scene/merge/MergeLib.h; sourceTree = SOURCE_ROOT; };
+		3A382FC226C177900049C4A1 /* MergeOperationBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MergeOperationBase.h; path = ../../libs/scene/merge/MergeOperationBase.h; sourceTree = SOURCE_ROOT; };
+		3A382FC326C177900049C4A1 /* ComparisonResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ComparisonResult.h; path = ../../libs/scene/merge/ComparisonResult.h; sourceTree = SOURCE_ROOT; };
+		3A382FC426C177910049C4A1 /* SelectionGroupMerger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SelectionGroupMerger.h; path = ../../libs/scene/merge/SelectionGroupMerger.h; sourceTree = SOURCE_ROOT; };
+		3A382FC526C177910049C4A1 /* MergeOperationBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MergeOperationBase.cpp; path = ../../libs/scene/merge/MergeOperationBase.cpp; sourceTree = SOURCE_ROOT; };
+		3A382FC626C177910049C4A1 /* NodeUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NodeUtils.h; path = ../../libs/scene/merge/NodeUtils.h; sourceTree = SOURCE_ROOT; };
+		3A382FC726C177920049C4A1 /* MergeAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MergeAction.h; path = ../../libs/scene/merge/MergeAction.h; sourceTree = SOURCE_ROOT; };
+		3A382FC826C177920049C4A1 /* GraphComparer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GraphComparer.cpp; path = ../../libs/scene/merge/GraphComparer.cpp; sourceTree = SOURCE_ROOT; };
+		3A382FC926C177920049C4A1 /* MergeOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MergeOperation.h; path = ../../libs/scene/merge/MergeOperation.h; sourceTree = SOURCE_ROOT; };
+		3A382FCA26C177930049C4A1 /* ThreeWayLayerMerger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ThreeWayLayerMerger.h; path = ../../libs/scene/merge/ThreeWayLayerMerger.h; sourceTree = SOURCE_ROOT; };
+		3A382FCB26C177930049C4A1 /* GraphComparer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GraphComparer.h; path = ../../libs/scene/merge/GraphComparer.h; sourceTree = SOURCE_ROOT; };
+		3A382FE026C177C20049C4A1 /* AutoSaveRequestBlocker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AutoSaveRequestBlocker.h; path = ../../libs/wxutil/dialog/AutoSaveRequestBlocker.h; sourceTree = SOURCE_ROOT; };
+		3A382FE226C178180049C4A1 /* PointFileChooser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PointFileChooser.cpp; path = ../../radiant/ui/PointFileChooser.cpp; sourceTree = SOURCE_ROOT; };
+		3A382FE326C178190049C4A1 /* PointFileChooser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PointFileChooser.h; path = ../../radiant/ui/PointFileChooser.h; sourceTree = SOURCE_ROOT; };
+		3A382FE626C178530049C4A1 /* MergeControlDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MergeControlDialog.h; path = ../../radiant/ui/merge/MergeControlDialog.h; sourceTree = SOURCE_ROOT; };
+		3A382FE726C178530049C4A1 /* MergeControlDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MergeControlDialog.cpp; path = ../../radiant/ui/merge/MergeControlDialog.cpp; sourceTree = SOURCE_ROOT; };
+		3A382FE926C1788E0049C4A1 /* VcsMapResource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VcsMapResource.cpp; path = ../../radiantcore/map/VcsMapResource.cpp; sourceTree = SOURCE_ROOT; };
+		3A382FEA26C1788F0049C4A1 /* VcsMapResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VcsMapResource.h; path = ../../radiantcore/map/VcsMapResource.h; sourceTree = SOURCE_ROOT; };
+		3A382FEE26C178C20049C4A1 /* VersionControlManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VersionControlManager.cpp; path = ../../radiantcore/versioncontrol/VersionControlManager.cpp; sourceTree = SOURCE_ROOT; };
+		3A382FEF26C178C20049C4A1 /* VersionControlManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VersionControlManager.h; path = ../../radiantcore/versioncontrol/VersionControlManager.h; sourceTree = SOURCE_ROOT; };
 		3A8D4CBE263C7893000C068E /* Bitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Bitmap.h; path = ../../libs/wxutil/Bitmap.h; sourceTree = SOURCE_ROOT; };
 		3A8D4CBF263C7894000C068E /* LocalBitmapArtProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LocalBitmapArtProvider.h; path = ../../libs/wxutil/LocalBitmapArtProvider.h; sourceTree = SOURCE_ROOT; };
 		3AA6E08623BB4E9F00BF9AD7 /* GLWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLWidget.h; path = ../../libs/wxutil/GLWidget.h; sourceTree = SOURCE_ROOT; };
@@ -3080,7 +3216,6 @@
 		3AE5C24526392A4A00643850 /* tiles.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tiles.png; path = ../../install/bitmaps/tiles.png; sourceTree = SOURCE_ROOT; };
 		3AE5C24626392A4A00643850 /* videomap.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = videomap.png; path = ../../install/bitmaps/videomap.png; sourceTree = SOURCE_ROOT; };
 		3AE5C24726392A4A00643850 /* visible.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = visible.png; path = ../../install/bitmaps/visible.png; sourceTree = SOURCE_ROOT; };
-		3AE5C25826392B1A00643850 /* ui */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = folder; name = ui; path = ../../install/ui; sourceTree = SOURCE_ROOT; };
 		3AE5C25D26392BBE00643850 /* cube.ase */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = cube.ase; path = ../../install/resources/preview/cube.ase; sourceTree = SOURCE_ROOT; };
 		3AE5C25E26392BBE00643850 /* room_cuboid.ase */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = room_cuboid.ase; path = ../../install/resources/preview/room_cuboid.ase; sourceTree = SOURCE_ROOT; };
 		3AE5C25F26392BBE00643850 /* sphere.ase */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = sphere.ase; path = ../../install/resources/preview/sphere.ase; sourceTree = SOURCE_ROOT; };
@@ -4876,6 +5011,7 @@
 		3A011FD71E50278400A62BC1 /* dialog */ = {
 			isa = PBXGroup;
 			children = (
+				3A382FE026C177C20049C4A1 /* AutoSaveRequestBlocker.h */,
 				3AFF03E824548655002B1472 /* DialogBase.cpp */,
 				3A011FD81E50278400A62BC1 /* Dialog.cpp */,
 				3A011FD91E50278400A62BC1 /* Dialog.h */,
@@ -4947,6 +5083,8 @@
 		3A0120741E502F7800A62BC1 /* scene */ = {
 			isa = PBXGroup;
 			children = (
+				3A382FB726C1776A0049C4A1 /* merge */,
+				3A382FB526C1774B0049C4A1 /* PointTrace.h */,
 				3AC88AC325BC10A100E6CCCE /* AABBAccumulateWalker.h */,
 				3AC88AC525BC10A100E6CCCE /* PrefabBoundsAccumulator.h */,
 				3A01207E1E50300A00A62BC1 /* BasicRootNode.h */,
@@ -4977,12 +5115,21 @@
 				3AFF0620253AE7EC002B1472 /* Traverse.cpp */,
 				3AFF0621253AE7EC002B1472 /* Traverse.h */,
 			);
-			path = scene;
-			sourceTree = "<group>";
+			name = scene;
+			path = ../../libs/scene;
+			sourceTree = SOURCE_ROOT;
 		};
 		3A0122531E503C4D00A62BC1 /* bitmaps */ = {
 			isa = PBXGroup;
 			children = (
+				3A382F9C26C176330049C4A1 /* incoming_commits.png */,
+				3A382F9726C176310049C4A1 /* merge_arrow.png */,
+				3A382F9826C176320049C4A1 /* merge_fork.png */,
+				3A382F9E26C176340049C4A1 /* merge_selection_mode.png */,
+				3A382F9D26C176340049C4A1 /* outgoing_commits.png */,
+				3A382F9926C176320049C4A1 /* preserveAspect.png */,
+				3A382F9A26C176330049C4A1 /* three_way_merge.png */,
+				3A382F9B26C176330049C4A1 /* two_way_merge.png */,
 				3AE5C24026392A4A00643850 /* cube.png */,
 				3AE5C24126392A4A00643850 /* invisible.png */,
 				3AE5C24226392A4A00643850 /* soundmap_wave.png */,
@@ -5258,6 +5405,51 @@
 				3AE5C34C263967FF00643850 /* eigen3.xcconfig */,
 			);
 			name = Configuration;
+			sourceTree = "<group>";
+		};
+		3A382FB726C1776A0049C4A1 /* merge */ = {
+			isa = PBXGroup;
+			children = (
+				3A382FC326C177900049C4A1 /* ComparisonResult.h */,
+				3A382FC826C177920049C4A1 /* GraphComparer.cpp */,
+				3A382FCB26C177930049C4A1 /* GraphComparer.h */,
+				3A382FB926C1778D0049C4A1 /* LayerMerger.h */,
+				3A382FBF26C1778F0049C4A1 /* LayerMergerBase.h */,
+				3A382FC726C177920049C4A1 /* MergeAction.h */,
+				3A382FBC26C1778E0049C4A1 /* MergeActionNode.cpp */,
+				3A382FBD26C1778F0049C4A1 /* MergeActionNode.h */,
+				3A382FC126C177900049C4A1 /* MergeLib.h */,
+				3A382FBA26C1778E0049C4A1 /* MergeOperation.cpp */,
+				3A382FC926C177920049C4A1 /* MergeOperation.h */,
+				3A382FC526C177910049C4A1 /* MergeOperationBase.cpp */,
+				3A382FC226C177900049C4A1 /* MergeOperationBase.h */,
+				3A382FC626C177910049C4A1 /* NodeUtils.h */,
+				3A382FC426C177910049C4A1 /* SelectionGroupMerger.h */,
+				3A382FB826C1778D0049C4A1 /* SelectionGroupMergerBase.h */,
+				3A382FCA26C177930049C4A1 /* ThreeWayLayerMerger.h */,
+				3A382FBE26C1778F0049C4A1 /* ThreeWayMergeOperation.cpp */,
+				3A382FBB26C1778E0049C4A1 /* ThreeWayMergeOperation.h */,
+				3A382FC026C177900049C4A1 /* ThreeWaySelectionGroupMerger.h */,
+			);
+			name = merge;
+			sourceTree = "<group>";
+		};
+		3A382FE526C178410049C4A1 /* merge */ = {
+			isa = PBXGroup;
+			children = (
+				3A382FE726C178530049C4A1 /* MergeControlDialog.cpp */,
+				3A382FE626C178530049C4A1 /* MergeControlDialog.h */,
+			);
+			name = merge;
+			sourceTree = "<group>";
+		};
+		3A382FED26C178AB0049C4A1 /* versioncontrol */ = {
+			isa = PBXGroup;
+			children = (
+				3A382FEE26C178C20049C4A1 /* VersionControlManager.cpp */,
+				3A382FEF26C178C20049C4A1 /* VersionControlManager.h */,
+			);
+			name = versioncontrol;
 			sourceTree = "<group>";
 		};
 		3AC88715253C1D0A00E6CCCE /* picomodel */ = {
@@ -6525,7 +6717,10 @@
 		3AEBE4E31E5229AB0062D9AF /* ui */ = {
 			isa = PBXGroup;
 			children = (
-				3AE5C25826392B1A00643850 /* ui */,
+				3A382FA926C176AD0049C4A1 /* mergecontroldialog.xrc */,
+				3A382FAA26C176AD0049C4A1 /* vcscommitdialog.xrc */,
+				3A382FA826C176AC0049C4A1 /* vcsstatusbar.xrc */,
+				3A2C48E3263D2F5F00FCE0C0 /* materialeditor.xrc */,
 				3AA6E08C23BB50DE00BF9AD7 /* stimresponseeditor.xrc */,
 				3AE6F2201FDD3A36008A1B2D /* missioninforeadmedialog.xrc */,
 				3AE6F2001FD1AB24008A1B2D /* missioninfoeditdialog.xrc */,
@@ -6627,6 +6822,10 @@
 		3AF475D21E6BEE74006B26C2 /* Include */ = {
 			isa = PBXGroup;
 			children = (
+				3A382F9126C1755A0049C4A1 /* icomparablenode.h */,
+				3A382F9026C175590049C4A1 /* imapmerge.h */,
+				3A382F8F26C175580049C4A1 /* iuserinterface.h */,
+				3A382F9226C1755E0049C4A1 /* iversioncontrol.h */,
 				3AE5C23C26392A0D00643850 /* imenumanager.h */,
 				3AE5C23D26392A0D00643850 /* ishaderlayer.h */,
 				3AE5C23E26392A0D00643850 /* istatusbarmanager.h */,
@@ -7263,6 +7462,9 @@
 		3AF744971E4F861B003465B5 /* ui */ = {
 			isa = PBXGroup;
 			children = (
+				3A382FE526C178410049C4A1 /* merge */,
+				3A382FE226C178180049C4A1 /* PointFileChooser.cpp */,
+				3A382FE326C178190049C4A1 /* PointFileChooser.h */,
 				3AE5C30326392F3D00643850 /* toolbar */,
 				3AE5C2E026392EDA00643850 /* menu */,
 				3AF744981E4F861B003465B5 /* aas */,
@@ -7752,6 +7954,9 @@
 		3AF746651E4FACC9003465B5 /* mathlib */ = {
 			isa = PBXGroup;
 			children = (
+				3A382FAF26C176FF0049C4A1 /* Hash.h */,
+				3A382FAE26C176FF0049C4A1 /* SHA256.cpp */,
+				3A382FB026C176FF0049C4A1 /* SHA256.h */,
 				3AF7466F1E4FAD01003465B5 /* AABB.cpp */,
 				3AF746701E4FAD01003465B5 /* AABB.h */,
 				3AF746711E4FAD01003465B5 /* curve.h */,
@@ -7882,6 +8087,7 @@
 		3AFF0468253AB7D5002B1472 /* DarkRadiantCore */ = {
 			isa = PBXGroup;
 			children = (
+				3A382FED26C178AB0049C4A1 /* versioncontrol */,
 				3AC88A9325BC0FD300E6CCCE /* decl */,
 				3AF7430F1E4F861A003465B5 /* brush */,
 				3AFF05A0253AE3BD002B1472 /* camera */,
@@ -7954,6 +8160,8 @@
 		3AFF04DD253ADD64002B1472 /* map */ = {
 			isa = PBXGroup;
 			children = (
+				3A382FE926C1788E0049C4A1 /* VcsMapResource.cpp */,
+				3A382FEA26C1788F0049C4A1 /* VcsMapResource.h */,
 				3AC88A5E2596F5AC00E6CCCE /* NodeCounter.h */,
 				3AC88A562596F58C00E6CCCE /* ArchivedMapResource.cpp */,
 				3AC88A572596F58C00E6CCCE /* ArchivedMapResource.h */,
@@ -8203,6 +8411,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3A8D4CC1263C7895000C068E /* LocalBitmapArtProvider.h in Headers */,
+				3A382FE126C177C20049C4A1 /* AutoSaveRequestBlocker.h in Headers */,
 				3AE5C27326392D3900643850 /* FilterPopupMenu.h in Headers */,
 				3A0120331E50278400A62BC1 /* DirChooser.h in Headers */,
 				3AE6F1E81FD1A529008A1B2D /* GuiView.h in Headers */,
@@ -8272,12 +8481,19 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3A382FCC26C177930049C4A1 /* SelectionGroupMergerBase.h in Headers */,
 				3AFF0623253AE7EC002B1472 /* ChildPrimitives.h in Headers */,
+				3A382FB626C1774B0049C4A1 /* PointTrace.h in Headers */,
 				3A01208D1E50300A00A62BC1 /* LayerValidityCheckWalker.h in Headers */,
 				3AC88AC725BC10A100E6CCCE /* PrefabBoundsAccumulator.h in Headers */,
+				3A382FD426C177930049C4A1 /* ThreeWaySelectionGroupMerger.h in Headers */,
+				3A382FD726C177930049C4A1 /* ComparisonResult.h in Headers */,
 				3A0120931E50300A00A62BC1 /* TraversableNodeSet.h in Headers */,
 				3A0120911E50300A00A62BC1 /* SelectableNode.h in Headers */,
 				3AFF062F253AE7EC002B1472 /* SelectionIndex.h in Headers */,
+				3A382FD626C177930049C4A1 /* MergeOperationBase.h in Headers */,
+				3A382FCF26C177930049C4A1 /* ThreeWayMergeOperation.h in Headers */,
+				3A382FDF26C177930049C4A1 /* GraphComparer.h in Headers */,
 				3AFF062B253AE7EC002B1472 /* ModelBreakdown.h in Headers */,
 				3AC88AC625BC10A100E6CCCE /* AABBAccumulateWalker.h in Headers */,
 				3AFF0632253AE7EC002B1472 /* Traverse.h in Headers */,
@@ -8289,9 +8505,18 @@
 				3AFF0630253AE7EC002B1472 /* ShaderBreakdown.h in Headers */,
 				3AFF0626253AE7EC002B1472 /* EntitySelector.h in Headers */,
 				3AFF0628253AE7EC002B1472 /* GroupNodeChecker.h in Headers */,
+				3A382FD126C177930049C4A1 /* MergeActionNode.h in Headers */,
+				3A382FDA26C177930049C4A1 /* NodeUtils.h in Headers */,
+				3A382FD326C177930049C4A1 /* LayerMergerBase.h in Headers */,
 				3AFF0624253AE7EC002B1472 /* Clone.h in Headers */,
+				3A382FDD26C177930049C4A1 /* MergeOperation.h in Headers */,
+				3A382FCD26C177930049C4A1 /* LayerMerger.h in Headers */,
+				3A382FD826C177930049C4A1 /* SelectionGroupMerger.h in Headers */,
 				3AFF0625253AE7EC002B1472 /* EntityBreakdown.h in Headers */,
 				3A01208C1E50300A00A62BC1 /* InstanceWalkers.h in Headers */,
+				3A382FDE26C177930049C4A1 /* ThreeWayLayerMerger.h in Headers */,
+				3A382FD526C177930049C4A1 /* MergeLib.h in Headers */,
+				3A382FDB26C177930049C4A1 /* MergeAction.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8579,6 +8804,7 @@
 				3AF746A51E4FAD01003465B5 /* ViewProjection.h in Headers */,
 				3AF7469C1E4FAD01003465B5 /* Segment.h in Headers */,
 				3AF746A11E4FAD01003465B5 /* Vector2.h in Headers */,
+				3A382FB226C177000049C4A1 /* Hash.h in Headers */,
 				3AF746951E4FAD01003465B5 /* Matrix4.h in Headers */,
 				3AF746931E4FAD01003465B5 /* lrint.h in Headers */,
 				3AF746921E4FAD01003465B5 /* Line.h in Headers */,
@@ -8587,6 +8813,7 @@
 				3AF7468E1E4FAD01003465B5 /* curve.h in Headers */,
 				3AF746911E4FAD01003465B5 /* Frustum.h in Headers */,
 				3AF746A31E4FAD01003465B5 /* Vector4.h in Headers */,
+				3A382FB326C177000049C4A1 /* SHA256.h in Headers */,
 				3AF7468F1E4FAD01003465B5 /* FloatTools.h in Headers */,
 				3AF7469A1E4FAD01003465B5 /* Quaternion.h in Headers */,
 				3AF7468D1E4FAD01003465B5 /* AABB.h in Headers */,
@@ -8649,6 +8876,8 @@
 				3AC88A412596F4EC00E6CCCE /* FileVisitor.h in Headers */,
 				3AE5C32D2639305800643850 /* StaticModelNode.h in Headers */,
 				3AFF05A6253AE3D1002B1472 /* Camera.h in Headers */,
+				3A382FEC26C1788F0049C4A1 /* VcsMapResource.h in Headers */,
+				3A382FF126C178C30049C4A1 /* VersionControlManager.h in Headers */,
 				3AE5C348263930D900643850 /* SoundMapExpression.h in Headers */,
 				3AE5C34A263930D900643850 /* TextureMatrix.h in Headers */,
 				3AFF0591253AE342002B1472 /* EntityModule.h in Headers */,
@@ -9156,9 +9385,21 @@
 				3AC88A7E2596F71200E6CCCE /* treeView16.png in Resources */,
 				3AC88A7D2596F71200E6CCCE /* package.png in Resources */,
 				3AF475D11E6B247B006B26C2 /* darkradiant.icns in Resources */,
+				3A382FA126C176340049C4A1 /* preserveAspect.png in Resources */,
+				3A382FA726C176800049C4A1 /* two_way_merge.png in Resources */,
 				3AC88AC925BC10EE00E6CCCE /* favourite.png in Resources */,
+				3A2C48E4263D2F5F00FCE0C0 /* materialeditor.xrc in Resources */,
+				3A382FA226C176340049C4A1 /* three_way_merge.png in Resources */,
 				3AE6F1DB1F6E953F008A1B2D /* prey.game in Resources */,
+				3A382FAD26C176AD0049C4A1 /* vcscommitdialog.xrc in Resources */,
+				3A382FA426C176340049C4A1 /* incoming_commits.png in Resources */,
+				3A382FAB26C176AD0049C4A1 /* vcsstatusbar.xrc in Resources */,
+				3A382FA626C176340049C4A1 /* merge_selection_mode.png in Resources */,
+				3A382F9F26C176340049C4A1 /* merge_arrow.png in Resources */,
 				3AE6F2011FD1AB24008A1B2D /* missioninfoeditdialog.xrc in Resources */,
+				3A382FAC26C176AD0049C4A1 /* mergecontroldialog.xrc in Resources */,
+				3A382FA526C176340049C4A1 /* outgoing_commits.png in Resources */,
+				3A382FA026C176340049C4A1 /* merge_fork.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9227,11 +9468,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3A382FCE26C177930049C4A1 /* MergeOperation.cpp in Sources */,
+				3A382FD926C177930049C4A1 /* MergeOperationBase.cpp in Sources */,
+				3A382FD226C177930049C4A1 /* ThreeWayMergeOperation.cpp in Sources */,
 				3A0120921E50300A00A62BC1 /* TraversableNodeSet.cpp in Sources */,
 				3AFF062E253AE7EC002B1472 /* SelectionIndex.cpp in Sources */,
 				3AFF062C253AE7EC002B1472 /* ModelFinder.cpp in Sources */,
 				3A0120901E50300A00A62BC1 /* SelectableNode.cpp in Sources */,
+				3A382FDC26C177930049C4A1 /* GraphComparer.cpp in Sources */,
 				3A01208B1E50300A00A62BC1 /* InstanceWalkers.cpp in Sources */,
+				3A382FD026C177930049C4A1 /* MergeActionNode.cpp in Sources */,
 				3AFF0622253AE7EC002B1472 /* ChildPrimitives.cpp in Sources */,
 				3A01208E1E50300A00A62BC1 /* Node.cpp in Sources */,
 				3AFF0631253AE7EC002B1472 /* Traverse.cpp in Sources */,
@@ -9498,6 +9744,7 @@
 				3AC88A9225BC0FB600E6CCCE /* ModelTreeView.cpp in Sources */,
 				3AFF05E7253AE660002B1472 /* ScriptUserInterfaceModule.cpp in Sources */,
 				3AF746061E4F861B003465B5 /* TexToolItem.cpp in Sources */,
+				3A382FE426C178190049C4A1 /* PointFileChooser.cpp in Sources */,
 				3AFF0498253ABBC6002B1472 /* LocalisationModule.cpp in Sources */,
 				3AF746011E4F861B003465B5 /* FaceItem.cpp in Sources */,
 				3AF7463C1E4F861C003465B5 /* ShaderInfoTab.cpp in Sources */,
@@ -9507,6 +9754,7 @@
 				3AF745AD1E4F861B003465B5 /* StartupMapLoader.cpp in Sources */,
 				3AF7461E1E4F861B003465B5 /* ModelPropertyEditor.cpp in Sources */,
 				3AE5C2F126392EED00643850 /* MenuItem.cpp in Sources */,
+				3A382FE826C178530049C4A1 /* MergeControlDialog.cpp in Sources */,
 				3AF7460C1E4F861B003465B5 /* ShortcutChooser.cpp in Sources */,
 				3AF7462B1E4F861B003465B5 /* LayerContextMenu.cpp in Sources */,
 				3AF746351E4F861B003465B5 /* ScreenUpdateBlocker.cpp in Sources */,
@@ -9649,6 +9897,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3A382FB126C177000049C4A1 /* SHA256.cpp in Sources */,
 				3AF746941E4FAD01003465B5 /* Matrix4.cpp in Sources */,
 				3AF746901E4FAD01003465B5 /* Frustum.cpp in Sources */,
 				3AF746971E4FAD01003465B5 /* Plane3.cpp in Sources */,
@@ -9722,6 +9971,7 @@
 				3AFF0534253AE06B002B1472 /* MapImporter.cpp in Sources */,
 				3AFF04CD253ADC3E002B1472 /* RenderSystemFactory.cpp in Sources */,
 				3AFF0531253AE06B002B1472 /* Export.cpp in Sources */,
+				3A382FEB26C1788F0049C4A1 /* VcsMapResource.cpp in Sources */,
 				3AC88A9825BC0FE600E6CCCE /* FavouritesManager.cpp in Sources */,
 				3AFF04A6253ABD19002B1472 /* ManipulationPivot.cpp in Sources */,
 				3AFF0518253ADF6C002B1472 /* MD5Surface.cpp in Sources */,
@@ -9898,6 +10148,7 @@
 				3AFF0581253AE2ED002B1472 /* TargetManager.cpp in Sources */,
 				3AFF050E253ADF3F002B1472 /* AseExporter.cpp in Sources */,
 				3AFF0472253AB96C002B1472 /* Doom3FileSystemModule.cpp in Sources */,
+				3A382FF026C178C30049C4A1 /* VersionControlManager.cpp in Sources */,
 				3AFF0511253ADF3F002B1472 /* WavefrontExporter.cpp in Sources */,
 				3AFF058C253AE32F002B1472 /* RotationMatrix.cpp in Sources */,
 				3AFF04B7253ABD6A002B1472 /* SelectionSetManager.cpp in Sources */,
