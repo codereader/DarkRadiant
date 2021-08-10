@@ -199,7 +199,7 @@
 								<flag>wxALL</flag>
 								<border>5</border>
 								<object class="wxBitmapButton" name="RespawnSelectedButton">
-									<bitmap stock_id="darkradiant:sr_response.png" stock_client="">undefined.png</bitmap>
+									<bitmap stock_id="darkradiant:refresh.png" stock_client="">undefined.png</bitmap>
 									<default>0</default>
 								</object>
 							</object>
@@ -208,7 +208,7 @@
 								<flag>wxALL</flag>
 								<border>5</border>
 								<object class="wxBitmapButton" name="PauseGameButton">
-									<bitmap stock_id="darkradiant:sr_response.png" stock_client="">undefined.png</bitmap>
+									<bitmap stock_id="darkradiant:media-playback-pause.png" stock_client="">undefined.png</bitmap>
 									<default>0</default>
 								</object>
 							</object>
