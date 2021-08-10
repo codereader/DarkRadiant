@@ -829,20 +829,15 @@ void GameConnection::initialiseModule(const IApplicationContext& ctx)
         sigc::mem_fun(this, &GameConnection::addToolbarItems)
     );
 
-    // Add menu items
-    ui::menu::IMenuManager& mm = GlobalMenuManager();
-    mm.insert("main/help", "connection", ui::menu::ItemType::Folder, _("Connection"), "", "");
     // Add menu button which shows up the dialog
     GlobalCommandSystem().addCommand("GameConnectionDialogToggle", gameconn::GameConnectionDialog::toggleDialog);
-    // Add the menu item
-    GlobalMenuManager().add(
-        "main/connection", 	// menu location path
-        "GameConnectionDialog", // name
-        ui::menu::ItemType::Item,	// type
-        _("Game Connection..."),	// caption
-        "stimresponse.png",	// icon
-        "GameConnectionDialogToggle" // event name
-    );
+	GlobalMenuManager().add("main/map",
+		"GameConnectionDialog",
+        ui::menu::ItemType::Item,
+		_("Game Connection..."), // caption
+		"", // icon
+		"GameConnectionDialogToggle"
+	);
 }
 
 void GameConnection::shutdownModule()
