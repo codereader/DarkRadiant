@@ -6,6 +6,7 @@
 #include "ieventmanager.h"
 #include "ipreferencesystem.h"
 #include "ientityinspector.h"
+#include "ieclass.h"
 #include "iorthoview.h"
 #include "iregistry.h"
 #include "iradiant.h"
@@ -48,7 +49,8 @@ namespace ui
 
 MainFrame::MainFrame() :
 	_topLevelWindow(NULL),
-	_screenUpdatesEnabled(false) // not enabled until constructed
+	_screenUpdatesEnabled(false), // not enabled until constructed
+    _defLoadingBlocksUpdates(false)
 {}
 
 // RegisterableModule implementation
@@ -70,6 +72,7 @@ const StringSet& MainFrame::getDependencies() const
 		_dependencies.insert(MODULE_EVENTMANAGER);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
 		_dependencies.insert(MODULE_ORTHOVIEWMANAGER);
+		_dependencies.insert(MODULE_ECLASSMANAGER);
 		_dependencies.insert(MODULE_MAP);
 	}
 
@@ -144,6 +147,17 @@ void MainFrame::initialiseModule(const IApplicationContext& ctx)
 	_mapModifiedChangedConn = GlobalMapModule().signal_modifiedChanged().connect(
 		sigc::mem_fun(this, &MainFrame::updateTitle)
 	);
+
+    // When the eclass defs are in progress of being loaded, block all updates
+    GlobalEntityClassManager().defsLoadingSignal().connect(
+        [this]() { _defLoadingBlocksUpdates = true; }
+    );
+
+    GlobalEntityClassManager().defsLoadedSignal().connect([this]()
+        { 
+            _defLoadingBlocksUpdates = false;
+        }
+    );
 
 	// Subscribe for the post-module init event
 	module::GlobalModuleRegistry().signal_allModulesInitialised().connect(
@@ -483,8 +497,9 @@ void MainFrame::saveWindowPosition()
 	}
 }
 
-bool MainFrame::screenUpdatesEnabled() {
-	return _screenUpdatesEnabled;
+bool MainFrame::screenUpdatesEnabled()
+{
+	return _screenUpdatesEnabled && !_defLoadingBlocksUpdates;
 }
 
 void MainFrame::enableScreenUpdates() {

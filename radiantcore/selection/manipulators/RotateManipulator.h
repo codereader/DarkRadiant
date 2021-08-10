@@ -79,6 +79,9 @@ public:
 	bool isSelected() const override;
 
 	void rotate(const Quaternion& rotation) override;
+
+private:
+    std::string getRotationAxisName() const;
 };
 
 }

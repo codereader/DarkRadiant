@@ -41,6 +41,9 @@
     <ClCompile Include="..\..\..\test\math\Vector.cpp">
       <Filter>math</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\test\Transformation.cpp" />
+    <ClCompile Include="..\..\..\test\MapMerging.cpp" />
+    <ClCompile Include="..\..\..\test\PointTrace.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\HeadlessOpenGLContext.h" />
@@ -60,6 +63,9 @@
       <Filter>math</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\test\TdmMissionSetup.h" />
+    <ClInclude Include="..\..\..\test\algorithm\View.h">
+      <Filter>algorithm</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -35,6 +35,7 @@ public:
 	{
 		std::string prefabPath; // VFS path of the prefab
 		bool insertAsGroup; // whether to insert the prefab as group
+		bool recalculatePrefabOrigin; // whether to correct the origin of off-center prefabs
 	};
 
 private:
@@ -63,6 +64,7 @@ private:
     wxComboBox* _recentPathSelector;
     wxutil::PathEntry* _customPath;
 	wxCheckBox* _insertAsGroupBox;
+	wxCheckBox* _recalculatePrefabOriginBox;
 
     std::list<std::string> _recentPaths;
 
@@ -94,6 +96,7 @@ private:
 	// Return the selected prefab path
 	std::string getSelectedPath();
 	bool getInsertAsGroup();
+	bool getRecalculatePrefabOrigin();
 
 	void updateUsageInfo();
     void addCustomPathToRecentList();

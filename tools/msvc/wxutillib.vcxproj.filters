@@ -150,6 +150,9 @@
     </ClInclude>
     <ClInclude Include="..\..\libs\wxutil\Bitmap.h" />
     <ClInclude Include="..\..\libs\wxutil\LocalBitmapArtProvider.h" />
+    <ClInclude Include="..\..\libs\wxutil\dialog\AutoSaveRequestBlocker.h">
+      <Filter>dialog</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\wxutil\dialog\MessageBox.cpp">

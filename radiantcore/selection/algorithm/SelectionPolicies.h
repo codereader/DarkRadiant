@@ -104,3 +104,36 @@ public:
 		return true;
 	}
 };
+
+/**
+  SelectionPolicy for SelectByBounds
+  Returns true if the AABB of instance is completely inside box.
+  Bounding boxes with their planes flush on the selection box are discarded.
+*/
+class SelectionPolicy_FullyInside
+{
+public:
+    bool evaluate(const AABB& box, const scene::INodePtr& node) const
+    {
+        AABB other = node->worldAABB();
+
+        // greebo: Perform a special selection test for lights
+        // as the small diamond should be tested against selection only
+        ILightNodePtr light = Node_getLightNode(node);
+
+        if (light)
+        {
+            other = light->getSelectAABB();
+        }
+
+        for (unsigned int i = 0; i < 3; ++i) 
+        {
+            if (std::abs(box.origin[i] - other.origin[i]) >= (box.extents[i] - other.extents[i])) 
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+};

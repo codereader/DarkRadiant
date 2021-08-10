@@ -54,6 +54,12 @@ inline scene::INodePtr findFirstBrush(const scene::INodePtr& parent,
     return candidate;
 }
 
+// Produces a predicate object to check if a node is a brush with a certain material
+inline std::function<bool(const scene::INodePtr&)> brushHasMaterial(const std::string& material)
+{
+    return [material](const scene::INodePtr& node) { return Node_isBrush(node) && Node_getIBrush(node)->hasShader(material); };
+}
+
 // Finds the first matching child brush of the given parent node, with any of the brush's faces matching the given material
 inline scene::INodePtr findFirstBrushWithMaterial(const scene::INodePtr& parent, const std::string& material)
 {
@@ -113,6 +119,14 @@ inline scene::INodePtr findFirstEntity(const scene::INodePtr& parent,
     });
 
     return candidate;
+}
+
+inline scene::INodePtr findWorldspawn(const scene::INodePtr& root)
+{
+    return findFirstEntity(root, [&](IEntityNode& entity)
+    {
+        return entity.getEntity().isWorldspawn();
+    });
 }
 
 inline scene::INodePtr getEntityByName(const scene::INodePtr& parent, const std::string& name)

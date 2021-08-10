@@ -57,6 +57,10 @@
 
 #include <fmt/format.h>
 #include "scene/ChildPrimitives.h"
+#include "scene/merge/GraphComparer.h"
+#include "scene/merge/MergeOperation.h"
+#include "scene/merge/ThreeWayMergeOperation.h"
+#include "scene/merge/MergeLib.h"
 
 namespace map
 {
@@ -103,6 +107,9 @@ void Map::loadMapResourceFromLocation(const MapLocation& location)
 
 	// Map loading started
 	emitMapEvent(MapLoading);
+
+    // Abort any ongoing merge
+    abortMergeOperation();
 
 	_resource = location.isArchive ?
         GlobalMapResourceManager().createFromArchiveFile(location.path, location.archiveRelativePath) :
@@ -158,6 +165,80 @@ void Map::loadMapResourceFromLocation(const MapLocation& location)
 
     // Clear the modified flag
     setModified(false);
+}
+
+void Map::finishMergeOperation()
+{
+    if (getEditMode() != EditMode::Merge)
+    {
+        rWarning() << "Not in merge edit mode, cannot finish any operation" << std::endl;
+        return;
+    }
+
+    if (!_mergeOperation)
+    {
+        rError() << "Cannot merge, no active operation attached to this map." << std::endl;
+        return;
+    }
+
+    // Prepare the scene, let the merge nodes know about the upcoming merge
+    // and remove them from the scene, to leave it untouched
+    for (const auto& mergeActionNode : _mergeActionNodes)
+    {
+        mergeActionNode->prepareForMerge();
+
+        scene::removeNodeFromParent(mergeActionNode);
+
+        // Clear any references this node holds
+        mergeActionNode->clear();
+    }
+
+    _mergeActionNodes.clear();
+
+    // At this point the scene should look the same as before the merge
+    {
+        UndoableCommand cmd("mergeMap");
+        _mergeOperation->applyActions();
+
+        cleanupMergeOperation();
+    }
+    setEditMode(EditMode::Normal);
+    emitMapEvent(IMap::MapMergeOperationFinished);
+}
+
+void Map::cleanupMergeOperation()
+{
+    for (const auto& mergeActionNode : _mergeActionNodes)
+    {
+        // If the node is already removed from the scene, this does nothing
+        scene::removeNodeFromParent(mergeActionNode);
+
+        // Clear any references this node holds
+        mergeActionNode->clear();
+    }
+
+    _mergeOperationListener.disconnect();
+    _mergeActionNodes.clear();
+    _mergeOperation.reset();
+}
+
+void Map::abortMergeOperation()
+{
+    bool mergeWasActive = _mergeOperation != nullptr;
+
+    // Remove the nodes and switch back to normal without applying the operation
+    cleanupMergeOperation();
+    setEditMode(EditMode::Normal);
+
+    if (mergeWasActive)
+    {
+        emitMapEvent(IMap::MapMergeOperationAborted);
+    }
+}
+
+scene::merge::IMergeOperation::Ptr Map::getActiveMergeOperation()
+{
+    return _editMode == EditMode::Merge ? _mergeOperation : scene::merge::IMergeOperation::Ptr();
 }
 
 void Map::setMapName(const std::string& newName)
@@ -230,7 +311,7 @@ void Map::forEachPointfile(PointfileFunctor func) const
         // Ignore anything which isn't a .lin file
         auto entryPath = entry.path();
         if (entryPath.extension() == LIN_EXT
-            && pointfileNameMatch(entryPath.stem(), mapStem))
+            && pointfileNameMatch(entryPath.stem().string(), mapStem.string()))
         {
             paths.insert(entryPath);
         }
@@ -270,6 +351,34 @@ Map::MapEventSignal Map::signal_mapEvent() const
 	return _mapEvent;
 }
 
+Map::EditMode Map::getEditMode()
+{
+    return _editMode;
+}
+
+void Map::setEditMode(EditMode mode)
+{
+    _editMode = mode;
+
+    if (_editMode == EditMode::Merge)
+    {
+        GlobalSelectionSystem().setSelectedAll(false);
+        GlobalSelectionSystem().SetMode(SelectionSystem::eMergeAction);
+    }
+    else
+    {
+        GlobalSelectionSystem().SetMode(SelectionSystem::ePrimitive);
+    }
+
+    signal_editModeChanged().emit(_editMode);
+    SceneChangeNotify();
+}
+
+sigc::signal<void, IMap::EditMode>& Map::signal_editModeChanged()
+{
+    return _mapEditModeChangedSignal;
+}
+
 const scene::INodePtr& Map::getWorldspawn()
 {
     return _worldSpawnNode;
@@ -294,6 +403,9 @@ MapFormatPtr Map::getFormat()
 // free all map elements, reinitialize the structures that depend on them
 void Map::freeMap()
 {
+    // Abort any ongoing merge
+    abortMergeOperation();
+
 	// Fire the map unloading event,
 	// This will de-select stuff, clear the pointfile, etc.
     emitMapEvent(MapUnloading);
@@ -343,6 +455,17 @@ void Map::focusViews(const Vector3& point, const Vector3& angles)
     {
         GlobalXYWndManager().setOrigin(point);
     }
+}
+
+void Map::focusViewCmd(const cmd::ArgumentList& args)
+{
+    if (args.size() != 2)
+    {
+        rWarning() << "Usage: FocusViews <origin:Vector3> <angles:Vector3>" << std::endl;
+        return;
+    }
+
+    focusViews(args[0].getVector3(), args[1].getVector3());
 }
 
 scene::INodePtr Map::findWorldspawn()
@@ -484,7 +607,7 @@ bool Map::import(const std::string& filename)
             // Adjust all new names to fit into the existing map namespace
             algorithm::prepareNamesForImport(getRoot(), otherRoot);
 
-            algorithm::mergeMap(otherRoot);
+            algorithm::importMap(otherRoot);
             success = true;
         }
 
@@ -692,16 +815,17 @@ void Map::saveCopyAs(const std::string& absolutePath, const MapFormatPtr& mapFor
 
 void Map::loadPrefabAt(const cmd::ArgumentList& args)
 {
-    if (args.size() < 2 || args.size() > 3)
+    if (args.size() < 2 || args.size() > 4)
     {
         rWarning() << "Usage: " << LOAD_PREFAB_AT_CMD <<
-            " <prefabPath:String> <targetCoords:Vector3> [insertAsGroup:0|1]" << std::endl;
+            " <prefabPath:String> <targetCoords:Vector3> [insertAsGroup:0|1] [recalculatePrefabOrigin:0|1]" << std::endl;
         return;
     }
 
     auto prefabPath = args[0].getString();
     auto targetCoords = args[1].getVector3();
     auto insertAsGroup = args.size() > 2 ? args[2].getBoolean() : false;
+    auto recalculatePrefabOrigin = args.size() > 3 ? args[3].getBoolean() : true;
 
 	if (!prefabPath.empty())
 	{
@@ -717,17 +841,20 @@ void Map::loadPrefabAt(const cmd::ArgumentList& args)
         scene::PrefabBoundsAccumulator accumulator;
         GlobalSelectionSystem().foreachSelected(accumulator);
 
-        auto prefabCenter = accumulator.getBounds().getOrigin().getSnapped(GlobalGrid().getGridSize());
+        if (recalculatePrefabOrigin)
+        {
+            auto prefabCenter = accumulator.getBounds().getOrigin().getSnapped(GlobalGrid().getGridSize());
 
-        // Switch texture lock on
-        bool prevTexLockState = GlobalBrush().textureLockEnabled();
-        GlobalBrush().setTextureLock(true);
+            // Switch texture lock on
+            bool prevTexLockState = GlobalBrush().textureLockEnabled();
+            GlobalBrush().setTextureLock(true);
 
-        // Translate the selection to the given point
-        selection::algorithm::translateSelected(targetCoords - prefabCenter);
+            // Translate the selection to the given point
+            selection::algorithm::translateSelected(targetCoords - prefabCenter);
 
-        // Revert to previous state
-        GlobalBrush().setTextureLock(prevTexLockState);
+            // Revert to previous state
+            GlobalBrush().setTextureLock(prevTexLockState);
+        }
 
 		// Check whether we should group the prefab parts
 		if (insertAsGroup && GlobalSelectionSystem().countSelected() > 1)
@@ -765,8 +892,12 @@ void Map::registerCommands()
     GlobalCommandSystem().addCommand("OpenMap", Map::openMap, { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
     GlobalCommandSystem().addCommand("OpenMapFromArchive", Map::openMapFromArchive, { cmd::ARGTYPE_STRING, cmd::ARGTYPE_STRING });
     GlobalCommandSystem().addCommand("ImportMap", Map::importMap);
-    GlobalCommandSystem().addCommand(LOAD_PREFAB_AT_CMD, std::bind(&Map::loadPrefabAt, this, std::placeholders::_1),
-        { cmd::ARGTYPE_STRING, cmd::ARGTYPE_VECTOR3, cmd::ARGTYPE_INT|cmd::ARGTYPE_OPTIONAL });
+    GlobalCommandSystem().addCommand("StartMergeOperation", std::bind(&Map::startMergeOperationCmd, this, std::placeholders::_1), 
+        { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL, cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
+    GlobalCommandSystem().addCommand("AbortMergeOperation", std::bind(&Map::abortMergeOperationCmd, this, std::placeholders::_1));
+    GlobalCommandSystem().addCommand("FinishMergeOperation", std::bind(&Map::finishMergeOperationCmd, this, std::placeholders::_1));
+    GlobalCommandSystem().addCommand(LOAD_PREFAB_AT_CMD, std::bind(&Map::loadPrefabAt, this, std::placeholders::_1), 
+        { cmd::ARGTYPE_STRING, cmd::ARGTYPE_VECTOR3, cmd::ARGTYPE_INT|cmd::ARGTYPE_OPTIONAL, cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL });
     GlobalCommandSystem().addCommand("SaveSelectedAsPrefab", Map::saveSelectedAsPrefab);
     GlobalCommandSystem().addCommand("SaveMap", std::bind(&Map::saveMapCmd, this, std::placeholders::_1));
     GlobalCommandSystem().addCommand("SaveMapAs", Map::saveMapAs);
@@ -774,6 +905,7 @@ void Map::registerCommands()
     GlobalCommandSystem().addCommand("ExportMap", Map::exportMap);
     GlobalCommandSystem().addCommand("SaveSelected", Map::exportSelection);
 	GlobalCommandSystem().addCommand("ReloadSkins", map::algorithm::reloadSkins);
+    GlobalCommandSystem().addCommand("FocusViews", std::bind(&Map::focusViewCmd, this, std::placeholders::_1), { cmd::ARGTYPE_VECTOR3, cmd::ARGTYPE_VECTOR3 });
 	GlobalCommandSystem().addCommand("ExportSelectedAsModel", map::algorithm::exportSelectedAsModelCmd,
         { cmd::ARGTYPE_STRING,
           cmd::ARGTYPE_STRING,
@@ -977,6 +1109,218 @@ void Map::exportSelected(std::ostream& out, const MapFormatPtr& format)
     exporter.exportMap(GlobalSceneGraph().root(), scene::traverseSelected);
 }
 
+void Map::onMergeActionAdded(const scene::merge::IMergeAction::Ptr& action)
+{
+    UndoableCommand cmd("insertMergeAction");
+
+    _mergeActionNodes.emplace_back(std::make_shared<scene::RegularMergeActionNode>(action));
+    getRoot()->addChildNode(_mergeActionNodes.back());
+}
+
+void Map::createMergeActions()
+{
+    // Group spawnarg actions into one single node if applicable
+    std::map<scene::INodePtr, std::vector<scene::merge::IMergeAction::Ptr>> entityChanges;
+    std::vector<scene::merge::IMergeAction::Ptr> otherChanges;
+
+    _mergeOperation->foreachAction([&](const scene::merge::IMergeAction::Ptr& action)
+    {
+        if (scene::merge::actionIsTargetingKeyValue(action))
+        {
+            auto& actions = entityChanges.try_emplace(action->getAffectedNode()).first->second;
+            actions.push_back(action);
+        }
+        else // regular change, add it to the misc pile
+        {
+            otherChanges.push_back(action);
+        }
+    });
+
+    _mergeOperationListener = _mergeOperation->sig_ActionAdded().connect(sigc::mem_fun(this, &Map::onMergeActionAdded));
+
+    UndoableCommand cmd("createMergeOperation");
+
+    // Construct all entity changes...
+    for (const auto& pair : entityChanges)
+    {
+        _mergeActionNodes.emplace_back(std::make_shared<scene::KeyValueMergeActionNode>(pair.second));
+        getRoot()->addChildNode(_mergeActionNodes.back());
+    }
+
+    // ...and the regular ones
+    for (const auto& action : otherChanges)
+    {
+        _mergeActionNodes.emplace_back(std::make_shared<scene::RegularMergeActionNode>(action));
+        getRoot()->addChildNode(_mergeActionNodes.back());
+    }
+}
+
+void Map::prepareMergeOperation()
+{
+    if (!getRoot())
+    {
+        throw cmd::ExecutionNotPossible(_("No map loaded, cannot merge"));
+    }
+
+    {
+        // Make sure we have a worldspawn in this map
+        UndoableCommand cmd("ensureWorldSpawn");
+        findOrInsertWorldspawn();
+    }
+
+    // Stop any pending merge operation
+    abortMergeOperation();
+}
+
+void Map::startMergeOperation(const std::string& sourceMap)
+{
+    if (!os::fileOrDirExists(sourceMap))
+    {
+        throw cmd::ExecutionFailure(fmt::format(_("File doesn't exist: {0}"), sourceMap));
+    }
+
+    prepareMergeOperation();
+
+    auto sourceMapResource = GlobalMapResourceManager().createFromPath(sourceMap);
+
+    try
+    {
+        if (sourceMapResource->load())
+        {
+            // Compare the scenes and get the report
+            auto result = scene::merge::GraphComparer::Compare(sourceMapResource->getRootNode(), getRoot());
+
+            // Create the merge actions
+            _mergeOperation = scene::merge::MergeOperation::CreateFromComparisonResult(*result);
+
+            if (_mergeOperation->hasActions())
+            {
+                // Create renderable merge actions
+                createMergeActions();
+
+                // Switch to merge mode
+                setEditMode(EditMode::Merge);
+
+                emitMapEvent(IMap::MapMergeOperationStarted);
+            }
+            else
+            {
+                radiant::NotificationMessage::SendInformation(_("The Merge Operation turns out to be empty, nothing to do."));
+            }
+
+            // Dispose of the resource, we don't need it anymore
+            sourceMapResource->clear();
+        }
+    }
+    catch (const IMapResource::OperationException& ex)
+    {
+        radiant::NotificationMessage::SendError(ex.what());
+    }
+}
+
+void Map::startMergeOperation(const std::string& sourceMap, const std::string& baseMap)
+{
+    prepareMergeOperation();
+
+    auto baseMapResource = GlobalMapResourceManager().createFromPath(baseMap);
+    auto sourceMapResource = GlobalMapResourceManager().createFromPath(sourceMap);
+
+    try
+    {
+        if (sourceMapResource->load() && baseMapResource->load())
+        {
+            _mergeOperation = scene::merge::ThreeWayMergeOperation::Create(
+                baseMapResource->getRootNode(), sourceMapResource->getRootNode(), getRoot());
+
+            if (_mergeOperation->hasActions())
+            {
+                // Create renderable merge actions
+                createMergeActions();
+
+                // Switch to merge mode
+                setEditMode(EditMode::Merge);
+
+                emitMapEvent(IMap::MapMergeOperationStarted);
+            }
+            else
+            {
+                radiant::NotificationMessage::SendInformation(_("The Merge Operation turns out to be empty, nothing to do."));
+            }
+
+            // Dispose of the resources, we don't need it anymore
+            sourceMapResource->clear();
+            baseMapResource->clear();
+        }
+    }
+    catch (const IMapResource::OperationException& ex)
+    {
+        radiant::NotificationMessage::SendError(ex.what());
+    }
+}
+
+void Map::startMergeOperationCmd(const cmd::ArgumentList& args)
+{
+    if (!getRoot())
+    {
+        throw cmd::ExecutionNotPossible(_("No map loaded, cannot merge"));
+    }
+
+    std::string sourceCandidate;
+    std::string baseCandidate;
+
+    if (!args.empty())
+    {
+        sourceCandidate = args[0].getString();
+    }
+    else
+    {
+        // No arguments passed, get the map file name to load
+        auto fileInfo = MapFileManager::getMapFileSelection(true, _("Select Map File to merge"), filetype::TYPE_MAP);
+
+        if (fileInfo.fullPath.empty())
+        {
+            return; // operation cancelled
+        }
+
+        sourceCandidate = fileInfo.fullPath;
+    }
+
+    if (!os::fileOrDirExists(sourceCandidate))
+    {
+        throw cmd::ExecutionFailure(fmt::format(_("File doesn't exist: {0}"), sourceCandidate));
+    }
+
+    // Do we have a second argument (base map)
+    if (args.size() > 1)
+    {
+        baseCandidate = args[1].getString();
+
+        if (!os::fileOrDirExists(baseCandidate))
+        {
+            throw cmd::ExecutionFailure(fmt::format(_("File doesn't exist: {0}"), baseCandidate));
+        }
+    }
+
+    if (!baseCandidate.empty())
+    {
+        startMergeOperation(sourceCandidate, baseCandidate);
+    }
+    else
+    {
+        startMergeOperation(sourceCandidate);
+    }
+}
+
+void Map::abortMergeOperationCmd(const cmd::ArgumentList& args)
+{
+    abortMergeOperation();
+}
+
+void Map::finishMergeOperationCmd(const cmd::ArgumentList& args)
+{
+    finishMergeOperation();
+}
+
 void Map::emitMapEvent(MapEvent ev)
 {
     try
@@ -1053,6 +1397,8 @@ void Map::initialiseModule(const IApplicationContext& ctx)
 
 void Map::shutdownModule()
 {
+    abortMergeOperation();
+
     GlobalRadiantCore().getMessageBus().removeListener(_shutdownListener);
 
     _scaledModelExporter.shutdown();

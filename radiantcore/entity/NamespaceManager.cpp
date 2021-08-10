@@ -8,14 +8,16 @@
 namespace entity 
 {
 
-// The registry key pointing towards the "name" spawnarg
-const char* const GKEY_NAME_KEY("/defaults/nameKey");
+namespace
+{
+    const char* const NAME_KEY("name");
+}
 
 NamespaceManager::NamespaceManager(SpawnArgs& entity) :
     _namespace(nullptr),
     _entity(entity),
     _updateMutex(false),
-    _nameKey(game::current::getValue<std::string>(GKEY_NAME_KEY))
+    _nameKey(NAME_KEY)
 {
     // Attach <self> to the observed entity
     _entity.attachObserver(this);

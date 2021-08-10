@@ -218,6 +218,9 @@ void RenderPreview::initialisePreview()
         setLightingModeEnabled(false);
     }
 
+    // In case it didn't happen until now, make sure the rendersystem is realised
+    _renderSystem->realise();
+
     updateModelViewMatrix();
 }
 
@@ -489,7 +492,7 @@ bool RenderPreview::drawPreview()
 	}
 
 	// Front-end render phase, collect OpenGLRenderable objects from the scene
-    render::CamRenderer renderer(_volumeTest);
+    render::CamRenderer renderer(_volumeTest, _shaders);
     render::SceneRenderWalker sceneWalker(renderer, _volumeTest);
     getScene()->foreachVisibleNodeInVolume(_volumeTest, sceneWalker);
 
@@ -516,7 +519,7 @@ void RenderPreview::renderWireFrame()
     Matrix4 projection = camera::calculateProjectionMatrix(0.1f, 10000, PREVIEW_FOV, _previewWidth, _previewHeight);
 
     // Front-end render phase, collect OpenGLRenderable objects from the scene
-    render::CamRenderer renderer(_volumeTest);
+    render::CamRenderer renderer(_volumeTest, _shaders);
     render::SceneRenderWalker sceneWalker(renderer, _volumeTest);
     getScene()->foreachVisibleNodeInVolume(_volumeTest, sceneWalker);
 

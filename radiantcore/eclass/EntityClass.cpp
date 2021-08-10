@@ -31,10 +31,8 @@ EntityClass::EntityClass(const std::string& name, const vfs::FileInfo& fileInfo,
   _inheritanceResolved(false),
   _modName("base"),
   _emptyAttribute("", "", ""),
-  _parseStamp(0)
-{}
-
-EntityClass::~EntityClass()
+  _parseStamp(0),
+  _blockChangeSignal(false)
 {}
 
 std::string EntityClass::getName() const
@@ -109,7 +107,7 @@ void EntityClass::setColour(const Vector3& colour)
 
     _wireShader = fmt::format("<{0:f} {1:f} {2:f}>", _colour[0], _colour[1], _colour[2]);
 
-    _changedSignal.emit();
+    emitChangedSignal();
 }
 
 void EntityClass::resetColour()
@@ -430,8 +428,11 @@ void EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
             parseEditorSpawnarg(key, value);
         }
 
+        // We're only interested in non-inherited key/values when parsing
+        auto& attribute = getAttribute(key, false);
+
         // Add the EntityClassAttribute for this key/val
-        if (getAttribute(key).getType().empty())
+        if (attribute.getType().empty())
         {
             // Following key-specific processing, add the keyvalue to the eclass
             EntityClassAttribute attribute("text", key, value, "");
@@ -439,10 +440,10 @@ void EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
             // Type is empty, attribute does not exist, add it.
             addAttribute(attribute);
         }
-        else if (getAttribute(key).getValue().empty())
+        else if (attribute.getValue().empty())
         {
             // Attribute type is set, but value is empty, set the value.
-            getAttribute(key).setValue(value);
+            attribute.setValue(value);
         }
         else
         {
@@ -453,7 +454,7 @@ void EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
     } // while true
 
     // Notify the observers
-    _changedSignal.emit();
+    emitChangedSignal();
 }
 
 } // namespace eclass

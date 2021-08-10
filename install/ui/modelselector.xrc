@@ -76,17 +76,35 @@
 						<flag>wxRIGHT</flag>
 						<border>6</border>
 						<object class="wxButton" name="ModelSelectorReloadSkinsButton">
+							<tooltip>Reload Skin declarations. Will rescan the model folders afterwards.</tooltip>
 							<label>Reload Skins</label>
 							<default>0</default>
+							<markup>0</markup>
+							<bitmap />
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxRIGHT</flag>
+						<border>6</border>
+						<object class="wxButton" name="ModelSelectorReloadModelsButton">
+							<tooltip>Reload all model to display geometry or material changes. Will also rescan the folders afterwards.</tooltip>
+							<label>Reload Models</label>
+							<default>0</default>
+							<markup>0</markup>
+							<bitmap />
 						</object>
 					</object>
 					<object class="sizeritem">
 						<option>0</option>
 						<flag>wxRIGHT</flag>
 						<border>24</border>
-						<object class="wxButton" name="ModelSelectorReloadModelsButton">
-							<label>Reload Models</label>
+						<object class="wxButton" name="ModelSelectorRescanFoldersButton">
+							<tooltip>Look for newly added files in the model folders</tooltip>
+							<label>Rescan Folders</label>
 							<default>0</default>
+							<markup>0</markup>
+							<bitmap />
 						</object>
 					</object>
 					<object class="sizeritem">
@@ -96,6 +114,8 @@
 						<object class="wxButton" name="ModelSelectorCancelButton">
 							<label>Cancel</label>
 							<default>0</default>
+							<markup>0</markup>
+							<bitmap />
 						</object>
 					</object>
 					<object class="sizeritem">
@@ -105,6 +125,8 @@
 						<object class="wxButton" name="ModelSelectorOkButton">
 							<label>OK</label>
 							<default>0</default>
+							<markup>0</markup>
+							<bitmap />
 						</object>
 					</object>
 				</object>

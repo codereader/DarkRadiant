@@ -9,6 +9,7 @@
 #include "dataview/ResourceTreeViewToolbar.h"
 #include "XmlResourceBasedWidget.h"
 #include "PanedPosition.h"
+#include "WindowPosition.h"
 
 #include <memory>
 #include <sigc++/connection.h>
@@ -23,7 +24,7 @@ typedef std::shared_ptr<EntityClassChooser> EntityClassChooserPtr;
  * Dialog window displaying a tree of Entity Classes, allowing the selection
  * of a class to create at the current location.
  */
-class EntityClassChooser :
+class EntityClassChooser final :
     public DialogBase,
     private XmlResourceBasedWidget
 {
@@ -38,12 +39,14 @@ private:
     // Model preview widget
     ModelPreviewPtr _modelPreview;
 
+    WindowPosition _windowPosition;
     PanedPosition _panedPosition;
 
     sigc::connection _defsReloaded;
 
 private:
     EntityClassChooser();
+    ~EntityClassChooser();
 
     void loadEntityClasses();
 

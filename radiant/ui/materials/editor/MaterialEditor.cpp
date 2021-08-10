@@ -181,6 +181,7 @@ MaterialEditor::MaterialEditor() :
 
 MaterialEditor::~MaterialEditor()
 {
+    _materialChanged.disconnect();
     _materialBindings.clear();
     _stageBindings.clear();
 
@@ -819,7 +820,7 @@ void MaterialEditor::setupMaterialShaderFlags()
         cullTypes->AppendString(pair.first);
     }
 
-    cullTypes->Bind(wxEVT_CHOICE, [=](wxCommandEvent& ev)
+    cullTypes->Bind(wxEVT_CHOICE, [this, cullTypes](wxCommandEvent& ev)
     {
         if (!_material || _materialUpdateInProgress) return;
         _material->setCullType(shaders::getCullTypeForString(cullTypes->GetStringSelection().ToStdString()));
@@ -847,22 +848,22 @@ void MaterialEditor::setupMaterialShaderFlags()
     // DECAL_MACRO
     _materialBindings.emplace(std::make_shared<CheckBoxBinding<MaterialPtr>>(getControl<wxCheckBox>("MaterialHasDecalMacro"),
         [](const MaterialPtr& material) { return material->getParseFlags() & Material::PF_HasDecalMacro; },
-        [=](const MaterialPtr& material, const bool& newValue) {}));
+        [](const MaterialPtr& material, const bool& newValue) {}));
 
     // TWOSIDED_DECAL_MACRO
     _materialBindings.emplace(std::make_shared<CheckBoxBinding<MaterialPtr>>(getControl<wxCheckBox>("MaterialHasTwoSidedDecalMacro"),
         [](const MaterialPtr& material) { return material->getParseFlags() & Material::PF_HasTwoSidedDecalMacro; },
-        [=](const MaterialPtr& material, const bool& newValue) {}));
+        [](const MaterialPtr& material, const bool& newValue) {}));
 
     // GLASS_MACRO
     _materialBindings.emplace(std::make_shared<CheckBoxBinding<MaterialPtr>>(getControl<wxCheckBox>("MaterialHasGlassMacro"),
         [](const MaterialPtr& material) { return material->getParseFlags() & Material::PF_HasGlassMacro; },
-        [=](const MaterialPtr& material, const bool& newValue) {}));
+        [](const MaterialPtr& material, const bool& newValue) {}));
 
     // PARTICLE_MACRO
     _materialBindings.emplace(std::make_shared<CheckBoxBinding<MaterialPtr>>(getControl<wxCheckBox>("MaterialHasParticleMacro"),
         [](const MaterialPtr& material) { return material->getParseFlags() & Material::PF_HasParticleMacro; },
-        [=](const MaterialPtr& material, const bool& newValue) {}));
+        [](const MaterialPtr& material, const bool& newValue) {}));
 }
 
 void MaterialEditor::setupMaterialSurfaceFlags()
@@ -1269,7 +1270,7 @@ void MaterialEditor::setupMaterialStageProperties()
 
     _stageBindings.emplace(std::make_shared<CheckBoxBinding<IShaderLayer::Ptr>>(getControl<wxCheckBox>("MaterialStageColored"),
         [](const IShaderLayer::Ptr& layer) { return stageQualifiesAsColoured(layer); },
-        [=](const IEditableShaderLayer::Ptr& layer, const bool& value) { _onStageColoredChecked(layer, value); },
+        [this](const IEditableShaderLayer::Ptr& layer, const bool& value) { _onStageColoredChecked(layer, value); },
         std::bind(&MaterialEditor::onMaterialChanged, this),
         std::bind(&MaterialEditor::getEditableStageForSelection, this)));
 
@@ -1484,7 +1485,7 @@ void MaterialEditor::handleMaterialSelectionChange()
     {
         _material = GlobalMaterialManager().getMaterial(_treeView->GetSelectedFullname());
 
-        _material->sig_materialChanged().connect([this]()
+        _materialChanged = _material->sig_materialChanged().connect([this]()
         {
             updateSourceView();
             updateMaterialTreeItem();

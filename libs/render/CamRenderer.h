@@ -1,6 +1,7 @@
 #pragma once
 
 #include "irenderable.h"
+#include "imap.h"
 #include "ivolumetest.h"
 
 #include "VectorLightList.h"
@@ -11,20 +12,34 @@ namespace render
 {
 
 /// RenderableCollector for use with 3D camera views or preview widgets
-class CamRenderer: public RenderableCollector
+class CamRenderer : 
+    public RenderableCollector
 {
+public:
+    struct HighlightShaders
+    {
+        ShaderPtr faceHighlightShader;
+        ShaderPtr primitiveHighlightShader;
+        ShaderPtr mergeActionShaderAdd;
+        ShaderPtr mergeActionShaderChange;
+        ShaderPtr mergeActionShaderRemove;
+        ShaderPtr mergeActionShaderConflict;
+    };
+
+private:
     // The VolumeTest object for object culling
     const VolumeTest& _view;
+
+    IMap::EditMode _editMode;
 
     // Render statistics
     int _totalLights = 0;
     int _visibleLights = 0;
 
     // Highlight state
-    bool _highlightFaces = false;
-    bool _highlightPrimitives = false;
-    Shader* _highlightedPrimitiveShader = nullptr;
-    Shader* _highlightedFaceShader = nullptr;
+    std::size_t _flags = Highlight::Flags::NoHighlight;
+
+    const HighlightShaders& _shaders;
 
     // All lights we have received from the scene
     std::list<const RendererLight*> _sceneLights;
@@ -72,11 +87,10 @@ class CamRenderer: public RenderableCollector
 public:
 
     /// Initialise CamRenderer with optional highlight shaders
-    CamRenderer(const VolumeTest& view, Shader* primHighlightShader = nullptr,
-                Shader* faceHighlightShader = nullptr)
+    CamRenderer(const VolumeTest& view, const HighlightShaders& shaders)
     : _view(view),
-      _highlightedPrimitiveShader(primHighlightShader),
-      _highlightedFaceShader(faceHighlightShader)
+      _editMode(GlobalMapModule().getEditMode()),
+      _shaders(shaders)
     {}
 
     /**
@@ -125,14 +139,13 @@ public:
 
     void setHighlightFlag(Highlight::Flags flags, bool enabled) override
     {
-        if (flags & Highlight::Faces)
+        if (enabled)
         {
-            _highlightFaces = enabled;
+            _flags |= flags;
         }
-
-        if (flags & Highlight::Primitives)
+        else
         {
-            _highlightPrimitives = enabled;
+            _flags &= ~flags;
         }
     }
 
@@ -159,13 +172,27 @@ public:
                        const LitObject* litObject = nullptr,
                        const IRenderEntity* entity = nullptr) override
     {
-        if (_highlightPrimitives && _highlightedPrimitiveShader)
-            _highlightedPrimitiveShader->addRenderable(renderable, localToWorld,
-                                                       nullptr, entity);
+        if (_editMode == IMap::EditMode::Merge && (_flags & Highlight::Flags::MergeAction) != 0)
+        {
+            const auto& mergeShader = (_flags & Highlight::Flags::MergeActionAdd) != 0 ? _shaders.mergeActionShaderAdd :
+                (_flags & Highlight::Flags::MergeActionRemove) != 0 ? _shaders.mergeActionShaderRemove : 
+                (_flags & Highlight::Flags::MergeActionConflict) != 0 ? _shaders.mergeActionShaderConflict : _shaders.mergeActionShaderChange;
+            
+            if (mergeShader)
+            {
+                mergeShader->addRenderable(renderable, localToWorld, nullptr, entity);
+            }
+        }
 
-        if (_highlightFaces && _highlightedFaceShader)
-            _highlightedFaceShader->addRenderable(renderable, localToWorld,
-                                                  nullptr, entity);
+        if ((_flags & Highlight::Flags::Primitives) != 0 && _shaders.primitiveHighlightShader)
+        {
+            _shaders.primitiveHighlightShader->addRenderable(renderable, localToWorld, nullptr, entity);
+        }
+
+        if ((_flags & Highlight::Flags::Faces) != 0 && _shaders.faceHighlightShader)
+        {
+            _shaders.faceHighlightShader->addRenderable(renderable, localToWorld, nullptr, entity);
+        }
 
         // Construct an entry for this shader in the map if it is the first
         // time we've seen it

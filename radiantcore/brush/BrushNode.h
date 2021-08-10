@@ -4,6 +4,7 @@
 #include "ibrush.h"
 #include "itraceable.h"
 #include "iscenegraph.h"
+#include "icomparablenode.h"
 
 #include "Brush.h"
 #include "scene/SelectableNode.h"
@@ -29,7 +30,8 @@ class BrushNode :
 	public PlaneSelectable,
 	public LitObject,
 	public Transformable,
-	public ITraceable
+	public ITraceable,
+    public scene::IComparableNode
 {
 	// The actual contained brush (NO reference)
 	Brush m_brush;
@@ -71,7 +73,7 @@ public:
 
 	virtual ~BrushNode();
 
-	// IBrushNode implementtation
+	// IBrushNode implementation
 	virtual Brush& getBrush() override;
 	virtual IBrush& getIBrush() override;
 
@@ -81,6 +83,9 @@ public:
 	}
 
 	Type getNodeType() const override;
+
+    // IComparable implementation
+    std::string getFingerprint() override;
 
 	// Bounded implementation
 	virtual const AABB& localAABB() const override;

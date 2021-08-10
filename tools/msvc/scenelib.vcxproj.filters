@@ -4,6 +4,9 @@
     <Filter Include="scene">
       <UniqueIdentifier>{7effd458-1286-4c86-a9c4-cd4922f14c82}</UniqueIdentifier>
     </Filter>
+    <Filter Include="scene\merge">
+      <UniqueIdentifier>{b3592cff-e97d-4da2-ade5-caef2835f906}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\scene\InstanceWalkers.cpp">
@@ -32,6 +35,21 @@
     </ClCompile>
     <ClCompile Include="..\..\libs\scene\ModelFinder.cpp">
       <Filter>scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\scene\merge\GraphComparer.cpp">
+      <Filter>scene\merge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\scene\merge\MergeOperation.cpp">
+      <Filter>scene\merge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\scene\merge\ThreeWayMergeOperation.cpp">
+      <Filter>scene\merge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\scene\merge\MergeOperationBase.cpp">
+      <Filter>scene\merge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\scene\merge\MergeActionNode.cpp">
+      <Filter>scene\merge</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -96,6 +114,54 @@
     </ClInclude>
     <ClInclude Include="..\..\libs\scene\PrefabBoundsAccumulator.h">
       <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\merge\MergeAction.h">
+      <Filter>scene\merge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\merge\MergeOperation.h">
+      <Filter>scene\merge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\merge\GraphComparer.h">
+      <Filter>scene\merge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\merge\ComparisonResult.h">
+      <Filter>scene\merge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\PointTrace.h">
+      <Filter>scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\merge\SelectionGroupMerger.h">
+      <Filter>scene\merge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\merge\NodeUtils.h">
+      <Filter>scene\merge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\merge\LayerMerger.h">
+      <Filter>scene\merge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\merge\ThreeWayMergeOperation.h">
+      <Filter>scene\merge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\merge\MergeOperationBase.h">
+      <Filter>scene\merge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\merge\ThreeWaySelectionGroupMerger.h">
+      <Filter>scene\merge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\merge\SelectionGroupMergerBase.h">
+      <Filter>scene\merge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\merge\ThreeWayLayerMerger.h">
+      <Filter>scene\merge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\merge\LayerMergerBase.h">
+      <Filter>scene\merge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\merge\MergeLib.h">
+      <Filter>scene\merge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\scene\merge\MergeActionNode.h">
+      <Filter>scene\merge</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

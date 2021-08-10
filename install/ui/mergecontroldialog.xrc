@@ -1,0 +1,589 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
+	<object class="wxPanel" name="MergeControlDialogMainPanel">
+		<style>wxTAB_TRAVERSAL</style>
+		<size>391,-1</size>
+		<object class="wxBoxSizer">
+			<orient>wxVERTICAL</orient>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxEXPAND</flag>
+				<border>0</border>
+				<object class="wxBoxSizer">
+					<minsize>-1,40</minsize>
+					<orient>wxHORIZONTAL</orient>
+					<object class="sizeritem">
+						<option>1</option>
+						<flag>wxALL|wxEXPAND</flag>
+						<border>0</border>
+						<object class="wxToggleButton" name="ThreeWayMode">
+							<label>3-Way Merge</label>
+							<checked>1</checked>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>1</option>
+						<flag>wxALL|wxEXPAND</flag>
+						<border>0</border>
+						<object class="wxToggleButton" name="TwoWayMode">
+							<label>Differential Merge</label>
+							<checked>0</checked>
+						</object>
+					</object>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxALL|wxEXPAND</flag>
+				<border>12</border>
+				<object class="wxBoxSizer">
+					<orient>wxVERTICAL</orient>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxEXPAND</flag>
+						<border>0</border>
+						<object class="wxPanel" name="MapFileSelectors">
+							<style>wxTAB_TRAVERSAL</style>
+							<object class="wxBoxSizer">
+								<orient>wxVERTICAL</orient>
+								<object class="sizeritem">
+									<option>1</option>
+									<flag>wxEXPAND</flag>
+									<border>5</border>
+									<object class="wxFlexGridSizer">
+										<rows>2</rows>
+										<cols>3</cols>
+										<vgap>0</vgap>
+										<hgap>0</hgap>
+										<growablecols>0,2</growablecols>
+										<growablerows></growablerows>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxBOTTOM</flag>
+											<border>6</border>
+											<object class="wxStaticText" name="MergeMapSelector">
+												<tooltip>The map file to merge into the target map</tooltip>
+												<label>Map to be merged</label>
+												<wrap>-1</wrap>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag></flag>
+											<border>5</border>
+											<object class="wxBoxSizer">
+												<orient>wxVERTICAL</orient>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxBOTTOM|wxRIGHT</flag>
+											<border>6</border>
+											<object class="wxStaticText" name="TargetMapLabel">
+												<label>Merge Target</label>
+												<wrap>-1</wrap>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>1</option>
+											<flag>wxEXPAND|wxRIGHT</flag>
+											<border>0</border>
+											<object class="wxTextCtrl" name="MergeMapFilename">
+												<tooltip>The map file to merge into the target map</tooltip>
+												<value></value>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
+											<border>3</border>
+											<object class="wxStaticBitmap" name="m_bitmap2">
+												<bitmap stock_id="darkradiant:merge_arrow.png" stock_client="">undefined.png</bitmap>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxEXPAND</flag>
+											<border>0</border>
+											<object class="wxTextCtrl" name="TargetMapFilename">
+												<tooltip>The target map (this is the currently loaded one)</tooltip>
+												<value></value>
+											</object>
+										</object>
+									</object>
+								</object>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxALIGN_CENTER</flag>
+									<border>0</border>
+									<object class="wxPanel" name="BaseMapPanel">
+										<style>wxTAB_TRAVERSAL</style>
+										<object class="wxBoxSizer">
+											<orient>wxVERTICAL</orient>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxALIGN_CENTER|wxALL</flag>
+												<border>0</border>
+												<object class="wxStaticBitmap" name="m_bitmap1">
+													<bitmap stock_id="darkradiant:merge_fork.png" stock_client="">undefined.png</bitmap>
+												</object>
+											</object>
+											<object class="sizeritem">
+												<option>1</option>
+												<flag>wxEXPAND</flag>
+												<border>0</border>
+												<object class="wxTextCtrl" name="BaseMapFilename">
+													<tooltip>A common base map both maps have started from, makes detecting merge conflicts much easier.</tooltip>
+													<value></value>
+												</object>
+											</object>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxALIGN_CENTER|wxTOP</flag>
+												<border>6</border>
+												<object class="wxStaticText" name="BaseMapLabel">
+													<tooltip>A common base map both maps have started from, makes detecting merge conflicts much easier.</tooltip>
+													<label>Common Ancestor</label>
+													<wrap>-1</wrap>
+												</object>
+											</object>
+										</object>
+									</object>
+								</object>
+							</object>
+						</object>
+					</object>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxEXPAND</flag>
+				<border>0</border>
+				<object class="wxBoxSizer">
+					<minsize>-1,30</minsize>
+					<orient>wxHORIZONTAL</orient>
+					<object class="sizeritem">
+						<option>1</option>
+						<flag>wxEXPAND|wxRIGHT</flag>
+						<border>0</border>
+						<object class="wxButton" name="LoadAndCompareButton">
+							<font>
+								<style>normal</style>
+								<weight>bold</weight>
+								<underlined>0</underlined>
+							</font>
+							<label>Start Merge</label>
+							<default>0</default>
+							<markup>0</markup>
+							<bitmap />
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>1</option>
+						<flag>wxEXPAND</flag>
+						<border>0</border>
+						<object class="wxButton" name="AbortMergeButton">
+							<label>Abort Merge</label>
+							<default>0</default>
+							<markup>0</markup>
+							<bitmap />
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>1</option>
+						<flag>wxEXPAND</flag>
+						<border>0</border>
+						<object class="wxButton" name="FinishMergeButton">
+							<font>
+								<style>normal</style>
+								<weight>bold</weight>
+								<underlined>0</underlined>
+							</font>
+							<tooltip>Apply the visible set of changes to the current map and finish the merge operation.</tooltip>
+							<label>Finish Merge</label>
+							<default>0</default>
+							<markup>0</markup>
+							<bitmap />
+						</object>
+					</object>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxALL|wxEXPAND</flag>
+				<border>12</border>
+				<object class="wxBoxSizer">
+					<orient>wxVERTICAL</orient>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxEXPAND</flag>
+						<border>0</border>
+						<object class="wxBoxSizer">
+							<orient>wxVERTICAL</orient>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxEXPAND|wxLEFT</flag>
+								<border>0</border>
+								<object class="wxPanel" name="SummaryPanel">
+									<style>wxTAB_TRAVERSAL</style>
+									<object class="wxBoxSizer">
+										<orient>wxVERTICAL</orient>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxTOP</flag>
+											<border>6</border>
+											<object class="wxStaticText" name="m_staticText14">
+												<font>
+													<style>normal</style>
+													<weight>bold</weight>
+													<underlined>0</underlined>
+												</font>
+												<label>Merge Summary</label>
+												<wrap>-1</wrap>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>1</option>
+											<flag>wxEXPAND|wxLEFT|wxTOP</flag>
+											<border>12</border>
+											<object class="wxFlexGridSizer">
+												<rows>4</rows>
+												<cols>4</cols>
+												<vgap>6</vgap>
+												<hgap>0</hgap>
+												<growablecols>1,3</growablecols>
+												<growablerows></growablerows>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxRIGHT</flag>
+													<border>6</border>
+													<object class="wxStaticText" name="EntitiesAdded">
+														<font>
+															<style>normal</style>
+															<weight>bold</weight>
+															<underlined>0</underlined>
+														</font>
+														<label>0</label>
+														<wrap>-1</wrap>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+													<border>0</border>
+													<object class="wxStaticText" name="m_staticText42">
+														<label>Entities to be added</label>
+														<wrap>-1</wrap>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxRIGHT</flag>
+													<border>6</border>
+													<object class="wxStaticText" name="EntitiesRemoved">
+														<font>
+															<style>normal</style>
+															<weight>bold</weight>
+															<underlined>0</underlined>
+														</font>
+														<label>0</label>
+														<wrap>-1</wrap>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+													<border>0</border>
+													<object class="wxStaticText" name="m_staticText24">
+														<label>Entities to be removed</label>
+														<wrap>-1</wrap>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxRIGHT</flag>
+													<border>6</border>
+													<object class="wxStaticText" name="EntitiesModified">
+														<font>
+															<style>normal</style>
+															<weight>bold</weight>
+															<underlined>0</underlined>
+														</font>
+														<label>0</label>
+														<wrap>-1</wrap>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+													<border>0</border>
+													<object class="wxStaticText" name="m_staticText28">
+														<label>Entities to be modified</label>
+														<wrap>-1</wrap>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>1</option>
+													<flag>wxEXPAND</flag>
+													<border>5</border>
+													<object class="wxBoxSizer">
+														<orient>wxVERTICAL</orient>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>1</option>
+													<flag>wxEXPAND</flag>
+													<border>5</border>
+													<object class="wxBoxSizer">
+														<orient>wxVERTICAL</orient>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxRIGHT</flag>
+													<border>6</border>
+													<object class="wxStaticText" name="PrimitivesAdded">
+														<font>
+															<style>normal</style>
+															<weight>bold</weight>
+															<underlined>0</underlined>
+														</font>
+														<label>0</label>
+														<wrap>-1</wrap>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+													<border>0</border>
+													<object class="wxStaticText" name="m_staticText29">
+														<label>Primitives to be added</label>
+														<wrap>-1</wrap>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxRIGHT</flag>
+													<border>6</border>
+													<object class="wxStaticText" name="PrimitivesRemoved">
+														<font>
+															<style>normal</style>
+															<weight>bold</weight>
+															<underlined>0</underlined>
+														</font>
+														<label>0</label>
+														<wrap>-1</wrap>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+													<border>0</border>
+													<object class="wxStaticText" name="m_staticText22">
+														<label>Primitives to be removed</label>
+														<wrap>-1</wrap>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxRIGHT</flag>
+													<border>6</border>
+													<object class="wxStaticText" name="UnresolvedConflicts">
+														<font>
+															<style>normal</style>
+															<weight>bold</weight>
+															<underlined>0</underlined>
+														</font>
+														<label>0</label>
+														<wrap>-1</wrap>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>1</option>
+													<flag>wxEXPAND</flag>
+													<border>5</border>
+													<object class="wxBoxSizer">
+														<orient>wxHORIZONTAL</orient>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+															<border>0</border>
+															<object class="wxStaticText" name="UnresolvedConflictsLabel">
+																<label>Unresolved Conflicts</label>
+																<wrap>-1</wrap>
+															</object>
+														</object>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxLEFT</flag>
+															<border>6</border>
+															<object class="wxBitmapButton" name="JumpToNextConflictButton">
+																<tooltip>Jump to next conflict</tooltip>
+																<bitmap stock_id="wxART_GO_FORWARD" stock_client="">undefined.png</bitmap>
+																<default>0</default>
+															</object>
+														</object>
+													</object>
+												</object>
+											</object>
+										</object>
+									</object>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxEXPAND</flag>
+								<border>6</border>
+								<object class="wxPanel" name="ConflictDetailsPanel">
+									<style>wxTAB_TRAVERSAL</style>
+									<object class="wxBoxSizer">
+										<orient>wxVERTICAL</orient>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxBOTTOM|wxTOP</flag>
+											<border>6</border>
+											<object class="wxStaticText" name="m_staticText142">
+												<font>
+													<style>normal</style>
+													<weight>bold</weight>
+													<underlined>0</underlined>
+												</font>
+												<label>Details</label>
+												<wrap>-1</wrap>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxEXPAND|wxLEFT</flag>
+											<border>12</border>
+											<object class="wxBoxSizer">
+												<orient>wxVERTICAL</orient>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxALL</flag>
+													<border>5</border>
+													<object class="wxStaticText" name="NoMergeNodeSelected">
+														<font>
+															<style>italic</style>
+															<weight>normal</weight>
+															<underlined>0</underlined>
+														</font>
+														<label>Select a single merge action to display its details here</label>
+														<wrap>-1</wrap>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxEXPAND | wxALL</flag>
+													<border>5</border>
+													<object class="wxPanel" name="ActionDescriptionPanel">
+														<style>wxTAB_TRAVERSAL</style>
+														<object class="wxBoxSizer">
+															<orient>wxVERTICAL</orient>
+														</object>
+													</object>
+												</object>
+												<object class="sizeritem">
+													<option>0</option>
+													<flag>wxEXPAND</flag>
+													<border>0</border>
+													<object class="wxBoxSizer">
+														<orient>wxHORIZONTAL</orient>
+														<object class="sizeritem">
+															<option>1</option>
+															<flag>wxRIGHT</flag>
+															<border>6</border>
+															<object class="wxButton" name="ResolveAcceptButton">
+																<label>Accept Changes</label>
+																<default>0</default>
+																<markup>0</markup>
+																<bitmap />
+															</object>
+														</object>
+														<object class="sizeritem">
+															<option>1</option>
+															<flag>wxALL</flag>
+															<border>0</border>
+															<object class="wxButton" name="ResolveRejectButton">
+																<label>Reject Changes</label>
+																<default>0</default>
+																<markup>0</markup>
+																<bitmap />
+															</object>
+														</object>
+														<object class="sizeritem">
+															<option>1</option>
+															<flag>wxLEFT</flag>
+															<border>6</border>
+															<object class="wxButton" name="ResolveKeepBothButton">
+																<tooltip>Keeps both versions of this entity</tooltip>
+																<label>Keep both Entities</label>
+																<default>0</default>
+																<markup>0</markup>
+																<bitmap />
+															</object>
+														</object>
+													</object>
+												</object>
+											</object>
+										</object>
+									</object>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxEXPAND|wxTOP</flag>
+								<border>12</border>
+								<object class="wxBoxSizer">
+									<orient>wxVERTICAL</orient>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxBOTTOM</flag>
+										<border>6</border>
+										<object class="wxStaticText" name="m_staticText141">
+											<font>
+												<style>normal</style>
+												<weight>bold</weight>
+												<underlined>0</underlined>
+											</font>
+											<label>Options</label>
+											<wrap>-1</wrap>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxLEFT</flag>
+										<border>12</border>
+										<object class="wxBoxSizer">
+											<orient>wxVERTICAL</orient>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxBOTTOM|wxTOP</flag>
+												<border>6</border>
+												<object class="wxCheckBox" name="KeepSelectionGroupsIntact">
+													<tooltip>With this option checked, DarkRadiant will attempt to keep all links between selection groups intact. There&apos;s no guarantee that this will work 100%, since it&apos;s usually problematic when both maps have seen changes to the same elements and their grouping.</tooltip>
+													<label>Merge Selection Group Information</label>
+													<checked>0</checked>
+												</object>
+											</object>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxTOP</flag>
+												<border>6</border>
+												<object class="wxCheckBox" name="MergeLayers">
+													<tooltip>With this option checked the layers in this map are going to be adjusted to fit the incoming map, i.e. any changes made to layers in the merged map are applied to this map. New layers in the imported map are going to be created here. Layers in this map that are not present in the incoming map will be removed.\nLeave this option unchecked to reject any layer changes from the incoming map, all newly created elements will be placed in the active layer in this case.</tooltip>
+													<label>Merge Layers (cannot be undone!)</label>
+													<checked>0</checked>
+												</object>
+											</object>
+										</object>
+									</object>
+								</object>
+							</object>
+						</object>
+					</object>
+				</object>
+			</object>
+		</object>
+	</object>
+</resource>

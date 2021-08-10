@@ -144,6 +144,7 @@
     <ClCompile Include="..\..\radiantcore\map\PointFile.cpp" />
     <ClCompile Include="..\..\radiantcore\map\RegionManager.cpp" />
     <ClCompile Include="..\..\radiantcore\map\RootNode.cpp" />
+    <ClCompile Include="..\..\radiantcore\map\VcsMapResource.cpp" />
     <ClCompile Include="..\..\radiantcore\model\export\AseExporter.cpp" />
     <ClCompile Include="..\..\radiantcore\model\export\Lwo2Chunk.cpp" />
     <ClCompile Include="..\..\radiantcore\model\export\Lwo2Exporter.cpp" />
@@ -673,6 +674,7 @@
     <ClCompile Include="..\..\radiantcore\shaders\textures\TextureManipulator.cpp" />
     <ClCompile Include="..\..\radiantcore\skins\Doom3SkinCache.cpp" />
     <ClCompile Include="..\..\radiantcore\undo\UndoSystem.cpp" />
+    <ClCompile Include="..\..\radiantcore\versioncontrol\VersionControlManager.cpp" />
     <ClCompile Include="..\..\radiantcore\vfs\DeflatedInputStream.cpp" />
     <ClCompile Include="..\..\radiantcore\vfs\DirectoryArchive.cpp" />
     <ClCompile Include="..\..\radiantcore\vfs\Doom3FileSystem.cpp" />
@@ -854,6 +856,7 @@
     <ClInclude Include="..\..\radiantcore\map\RegionWalkers.h" />
     <ClInclude Include="..\..\radiantcore\map\RootNode.h" />
     <ClInclude Include="..\..\radiantcore\map\ShaderBreakdown.h" />
+    <ClInclude Include="..\..\radiantcore\map\VcsMapResource.h" />
     <ClInclude Include="..\..\radiantcore\model\export\AseExporter.h" />
     <ClInclude Include="..\..\radiantcore\model\export\Lwo2Chunk.h" />
     <ClInclude Include="..\..\radiantcore\model\export\Lwo2Exporter.h" />
@@ -1028,6 +1031,7 @@
     <ClInclude Include="..\..\radiantcore\undo\Stack.h" />
     <ClInclude Include="..\..\radiantcore\undo\StackFiller.h" />
     <ClInclude Include="..\..\radiantcore\undo\UndoSystem.h" />
+    <ClInclude Include="..\..\radiantcore\versioncontrol\VersionControlManager.h" />
     <ClInclude Include="..\..\radiantcore\vfs\AssetsList.h" />
     <ClInclude Include="..\..\radiantcore\vfs\DeflatedArchiveFile.h" />
     <ClInclude Include="..\..\radiantcore\vfs\DeflatedArchiveTextFile.h" />

@@ -23,15 +23,22 @@ class ThreadedDefLoader
     typedef std::function<ReturnType()> LoadFunction;
 
     LoadFunction _loadFunc;
+    std::function<void()> _finishedFunc;
 
     std::shared_future<ReturnType> _result;
+    std::shared_future<void> _finisher;
     std::mutex _mutex;
 
     bool _loadingStarted;
 
 public:
     ThreadedDefLoader(const LoadFunction& loadFunc) :
+        ThreadedDefLoader(loadFunc, std::function<void()>())
+    {}
+
+    ThreadedDefLoader(const LoadFunction& loadFunc, const std::function<void()>& finishedFunc) :
         _loadFunc(loadFunc),
+        _finishedFunc(finishedFunc),
         _loadingStarted(false)
     {}
 
@@ -49,7 +56,7 @@ public:
         ensureLoaderStarted();
     }
 
-    // Ensrues that the worker thread has been started and is done processing
+    // Ensures that the worker thread has been started and is done processing
     // This will block and wait for the worker execution before returning to the caller.
     void ensureFinished()
     {
@@ -84,11 +91,36 @@ public:
                 _result.get();
             }
 
+            if (_finisher.valid())
+            {
+                _finisher.get();
+            }
+
             _result = std::shared_future<ReturnType>();
+            _finisher = std::shared_future<void>();
         }
     }
 
 private:
+    struct FinishFunctionCaller
+    {
+        std::function<void()> _function;
+        std::shared_future<void>& _targetFuture;
+
+        FinishFunctionCaller(const std::function<void()>& function, std::shared_future<void>& targetFuture) :
+            _function(function),
+            _targetFuture(targetFuture)
+        {}
+
+        ~FinishFunctionCaller()
+        {
+            if (_function)
+            {
+                _targetFuture = std::async(std::launch::async, _function);
+            }
+        }
+    };
+
     void ensureLoaderStarted()
     {
         std::lock_guard<std::mutex> lock(_mutex);
@@ -96,7 +128,12 @@ private:
         if (!_loadingStarted)
         {
             _loadingStarted = true;
-            _result = std::async(std::launch::async, _loadFunc);
+            _result = std::async(std::launch::async, [&]()
+            {
+                // When going out of scope, this instance invokes the finished callback in a separate thread
+                FinishFunctionCaller finisher(_finishedFunc, _finisher);
+                return _loadFunc();
+            });
         }
     }
 };

@@ -8,8 +8,15 @@ namespace map {
  *
  * @exclude: set to TRUE if you want to exclude the node.
  */
-inline void excludeNode(scene::INodePtr node, bool exclude) {
-	if (exclude) {
+inline void excludeNode(scene::INodePtr node, bool exclude) 
+{
+    if (!node->supportsStateFlag(scene::Node::eExcluded))
+    {
+        return;
+    }
+
+	if (exclude) 
+    {
 		node->enable(scene::Node::eExcluded);
 	}
 	else {

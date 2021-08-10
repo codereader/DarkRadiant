@@ -32,6 +32,8 @@ public:
      */
     void FitToScreen(float xProp, float yProp);
 
+    virtual int ShowModal() override;
+
 protected:
     // Overrideable: return true to prevent the window from being deleted
     virtual bool _onDeleteEvent()

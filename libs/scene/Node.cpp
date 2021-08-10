@@ -89,6 +89,11 @@ bool Node::checkStateFlag(unsigned int state) const
     return (_state & state) != 0;
 }
 
+bool Node::supportsStateFlag(unsigned int state) const
+{
+    return true;
+}
+
 bool Node::visible() const
 {
 	// Only instantiated nodes can be considered visible

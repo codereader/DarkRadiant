@@ -7,12 +7,17 @@ __commandDisplayName__ = 'Shift Textures randomly upwards'
 
 def execute():
 	import random
-	s = random.randint(0, 256)
+	import darkradiant as dr
 
-	for i in range(0, s+1):
-		GlobalCommandSystem.execute('texshiftup "' + str(s) + '"')
-	else:
-		print("texture translated over " + str(s) )
+	class FaceVisitor(dr.SelectedFaceVisitor) :
+		def visitFace(self, face):
+			t = random.randint(0, 100) / 100
+			face.shiftTexdef(0, t)
+
+	visitor = FaceVisitor()
+	GlobalSelectionSystem.foreachSelectedFace(visitor)
+
+	GlobalCameraManager.getActiveView().refresh()
 
 # The variable __executeCommand__ evaluates to true
 # when DarkRadiant executes this command

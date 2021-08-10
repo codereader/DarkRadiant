@@ -70,6 +70,7 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
 	_id(id),
 	_wxGLWidget(new wxutil::GLWidget(parent, std::bind(&XYWnd::onRender, this), "XYWnd")),
     _drawing(false),
+    _updateRequested(false),
 	_minWorldCoord(game::current::getValue<float>("/defaults/minWorldCoord")),
 	_maxWorldCoord(game::current::getValue<float>("/defaults/maxWorldCoord")),
 	_defaultCursor(wxCURSOR_DEFAULT),
@@ -221,14 +222,24 @@ int XYWnd::getDeviceHeight() const
 
 void XYWnd::captureStates()
 {
-    _selectedShader = GlobalRenderSystem().capture("$XY_OVERLAY");
-	_selectedShaderGroup = GlobalRenderSystem().capture("$XY_OVERLAY_GROUP");
+    _highlightShaders.selectedShader = GlobalRenderSystem().capture("$XY_OVERLAY");
+    _highlightShaders.selectedShaderGroup = GlobalRenderSystem().capture("$XY_OVERLAY_GROUP");
+    _highlightShaders.mergeActionShaderAdd = GlobalRenderSystem().capture("$XY_MERGE_ACTION_ADD");
+    _highlightShaders.mergeActionShaderChange = GlobalRenderSystem().capture("$XY_MERGE_ACTION_CHANGE");
+    _highlightShaders.mergeActionShaderRemove = GlobalRenderSystem().capture("$XY_MERGE_ACTION_REMOVE");
+    _highlightShaders.mergeActionShaderConflict = GlobalRenderSystem().capture("$XY_MERGE_ACTION_CONFLICT");
+    _highlightShaders.nonMergeActionNodeShader = GlobalRenderSystem().capture("$XY_INACTIVE_NODE");
 }
 
 void XYWnd::releaseStates()
 {
-	_selectedShader.reset();
-	_selectedShaderGroup.reset();
+	_highlightShaders.selectedShader.reset();
+	_highlightShaders.selectedShaderGroup.reset();
+    _highlightShaders.mergeActionShaderAdd.reset();
+    _highlightShaders.mergeActionShaderChange.reset();
+    _highlightShaders.mergeActionShaderRemove.reset();
+    _highlightShaders.mergeActionShaderConflict.reset();
+    _highlightShaders.nonMergeActionNodeShader.reset();
 }
 
 void XYWnd::ensureFont()
@@ -281,15 +292,11 @@ void XYWnd::forceRedraw()
 
 void XYWnd::queueDraw()
 {
-    if (_drawing)
-    {
-        return; // deny redraw requests if we're currently drawing
-    }
-
-	_wxGLWidget->Refresh(false);
+    _updateRequested = true;
 }
 
-void XYWnd::onSceneGraphChange() {
+void XYWnd::onSceneGraphChange()
+{
     // Pass the call to queueDraw.
     queueDraw();
 }
@@ -897,6 +904,13 @@ void XYWnd::drawGrid()
         }
     }
 
+    if (GlobalMapModule().getEditMode() == IMap::EditMode::Merge)
+    {
+        glColor3d(0.9, 0, 0);
+        glRasterPos2d(_origin[nDim1] - 50 / _scale, _origin[nDim2] + h - 30 / _scale);
+        _font->drawString("Merge Mode");
+    }
+
     if (GlobalXYWnd().showAxes())
     {
         const char* g_AxisName[3] = { "X", "Y", "Z" };
@@ -1087,6 +1101,11 @@ void XYWnd::drawCameraIcon()
 // which is not an excuse, just a fact
 void XYWnd::drawSizeInfo(int nDim1, int nDim2, const Vector3& vMinBounds, const Vector3& vMaxBounds)
 {
+    if (GlobalMapModule().getEditMode() == IMap::EditMode::Merge)
+    {
+        return;
+    }
+
   if (vMinBounds == vMaxBounds) {
     return;
   }
@@ -1349,9 +1368,14 @@ void XYWnd::draw()
         flagsMask |= RENDER_LINESTIPPLE;
     }
 
+    if (GlobalMapModule().getEditMode() == IMap::EditMode::Merge)
+    {
+        flagsMask |= RENDER_BLEND;
+    }
+
     {
         // Construct the renderer and render the scene
-        XYRenderer renderer(flagsMask, _selectedShader.get(), _selectedShaderGroup.get());
+        XYRenderer renderer(flagsMask, _highlightShaders);
 
         // First pass (scenegraph traversal)
         render::RenderableCollectionWalker::CollectRenderablesInScene(renderer,
@@ -1537,7 +1561,7 @@ void XYWnd::zoomOut()
 
 void XYWnd::zoomIn()
 {
-    float max_scale = 64;
+    float max_scale = GlobalXYWnd().maxZoomFactor();
     float scale = getScale() * 5.0f / 4.0f;
 
     if (scale > max_scale) {
@@ -1560,6 +1584,12 @@ void XYWnd::onIdle(wxIdleEvent& ev)
 	{
 		performChaseMouse();
 	}
+
+    if (_updateRequested)
+    {
+        _updateRequested = false;
+        _wxGLWidget->Refresh(false);
+    }
 }
 
 void XYWnd::onGLResize(wxSizeEvent& ev)
@@ -1706,7 +1736,6 @@ IInteractiveView& XYWnd::getInteractiveView()
 }
 
 /* STATICS */
-ShaderPtr XYWnd::_selectedShader;
-ShaderPtr XYWnd::_selectedShaderGroup;
+XYRenderer::HighlightShaders XYWnd::_highlightShaders;
 
 } // namespace

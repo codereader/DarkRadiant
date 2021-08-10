@@ -1,35 +1,39 @@
 #pragma once
 
+#include "irender.h"
 #include "irenderable.h"
+#include "imap.h"
 
 /// RenderableCollector implementation for the ortho view
-class XYRenderer: public RenderableCollector
+class XYRenderer : 
+    public RenderableCollector
 {
-    // State type structure
-    struct State
+public:
+    struct HighlightShaders
     {
-        bool highlightPrimitives;
-        bool highlightAsGroupMember;
-
-        // Constructor
-        State() : 
-            highlightPrimitives(false), 
-            highlightAsGroupMember(false)
-        {}
+        ShaderPtr selectedShader;
+        ShaderPtr selectedShaderGroup;
+        ShaderPtr mergeActionShaderAdd;
+        ShaderPtr mergeActionShaderChange;
+        ShaderPtr mergeActionShaderRemove;
+        ShaderPtr mergeActionShaderConflict;
+        ShaderPtr nonMergeActionNodeShader;
     };
 
-    State _state;
+private:
+    std::size_t _flags;
     RenderStateFlags _globalstate;
 
-    // Shader to use for highlighted objects
-    Shader* _selectedShader;
-    Shader* _selectedShaderGroup;
+    IMap::EditMode _editMode;
+
+    const HighlightShaders& _shaders;
 
 public:
-    XYRenderer(RenderStateFlags globalstate, Shader* selected, Shader* selectedGroup) :
+    XYRenderer(RenderStateFlags globalstate, const HighlightShaders& shaders) :
+        _flags(Highlight::Flags::NoHighlight),
         _globalstate(globalstate),
-        _selectedShader(selected),
-        _selectedShaderGroup(selectedGroup)
+        _editMode(GlobalMapModule().getEditMode()),
+        _shaders(shaders)
     {}
 
     bool supportsFullMaterials() const override
@@ -39,14 +43,13 @@ public:
 
     void setHighlightFlag(Highlight::Flags flags, bool enabled) override
     {
-        if (flags & Highlight::Primitives)
+        if (enabled)
         {
-            _state.highlightPrimitives = enabled;
+            _flags |= flags;
         }
-
-        if (flags & Highlight::GroupMember)
+        else
         {
-            _state.highlightAsGroupMember = enabled;
+            _flags &= ~flags;
         }
     }
 
@@ -59,13 +62,46 @@ public:
                        const LitObject* /* litObject */,
                        const IRenderEntity* entity = nullptr) override
     {
-        if (_state.highlightPrimitives)
+        if (_editMode == IMap::EditMode::Merge)
         {
-            if (_state.highlightAsGroupMember)
-                _selectedShaderGroup->addRenderable(renderable, localToWorld,
-                                                    nullptr, entity);
+            if (_flags & Highlight::Flags::MergeAction)
+            {
+                // This is a merge-relevant node that should be rendered in a special colour
+                const auto& mergeShader = (_flags & Highlight::Flags::MergeActionAdd) != 0 ? _shaders.mergeActionShaderAdd :
+                    (_flags & Highlight::Flags::MergeActionRemove) != 0 ? _shaders.mergeActionShaderRemove : 
+                    (_flags & Highlight::Flags::MergeActionConflict) != 0 ? _shaders.mergeActionShaderConflict : _shaders.mergeActionShaderChange;
+
+                if (mergeShader)
+                {
+                    mergeShader->addRenderable(renderable, localToWorld, nullptr, entity);
+                }
+            }
             else
-                _selectedShader->addRenderable(renderable, localToWorld, nullptr, entity);
+            {
+                // Everything else is using the shader for non-merge-affected nodes
+                _shaders.nonMergeActionNodeShader->addRenderable(renderable, localToWorld, nullptr, entity);
+            }
+
+            // Elements can still be selected in merge mode
+            if ((_flags & Highlight::Flags::Primitives) != 0)
+            {
+                _shaders.selectedShader->addRenderable(renderable, localToWorld, nullptr, entity);
+            }
+
+            return;
+        }
+        
+        // Regular editing mode, add all highlighted nodes to the corresponding shader
+        if ((_flags & Highlight::Flags::Primitives) != 0)
+        {
+            if ((_flags & Highlight::Flags::GroupMember) != 0)
+            {
+                _shaders.selectedShaderGroup->addRenderable(renderable, localToWorld, nullptr, entity);
+            }
+            else
+            {
+                _shaders.selectedShader->addRenderable(renderable, localToWorld, nullptr, entity);
+            }
         }
 
         shader.addRenderable(renderable, localToWorld, nullptr, entity);

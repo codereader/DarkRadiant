@@ -4,6 +4,7 @@
 #include "iundo.h"
 #include "imap.h"
 #include "imapformat.h"
+#include "imapresource.h"
 #include "ifilesystem.h"
 #include "iradiant.h"
 #include "iselectiongroup.h"
@@ -180,10 +181,9 @@ TEST_F(MapLoadingTest, openMapWithEmptyStringAsksForPath)
 }
 
 // Checks the main map info (brushes, entities, spawnargs), no layers or grouping
-void checkAltarSceneGeometry()
+void checkAltarSceneGeometry(const scene::IMapRootNodePtr& root)
 {
-    auto root = GlobalMapModule().getRoot();
-    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto worldspawn = algorithm::findWorldspawn(root);
 
     // Check a specific spawnarg on worldspawn
     EXPECT_EQ(Node_getEntity(worldspawn)->getKeyValue("_color"), "0.286 0.408 0.259");
@@ -225,12 +225,15 @@ void checkAltarSceneGeometry()
     EXPECT_EQ(religiousSymbol->getKeyValue("origin"), "-0.0448253 12.0322 -177");
 }
 
-// Check entire map including geometry, entities, layers, groups
-void checkAltarScene()
+void checkAltarSceneGeometry()
 {
-    checkAltarSceneGeometry();
+    checkAltarSceneGeometry(GlobalMapModule().getRoot());
+}
 
-    auto root = GlobalMapModule().getRoot();
+// Check entire map including geometry, entities, layers, groups
+void checkAltarScene(const scene::IMapRootNodePtr& root)
+{
+    checkAltarSceneGeometry(root);
 
     // Check layers
     EXPECT_TRUE(root->getLayerManager().getLayerID("Default") != -1);
@@ -254,6 +257,11 @@ void checkAltarScene()
     EXPECT_EQ(groupCounts.count(2), 1); // 1 group with 2 members
     EXPECT_EQ(groupCounts.count(3), 2); // 2 groups with 3 members
     EXPECT_EQ(groupCounts.count(12), 1); // 1 group with 12 members
+}
+
+void checkAltarScene()
+{
+    checkAltarScene(GlobalMapModule().getRoot());
 }
 
 TEST_F(MapLoadingTest, openMapFromAbsolutePath)
@@ -433,6 +441,43 @@ TEST_F(MapLoadingTest, loadingCanBeCancelled)
     EXPECT_EQ(GlobalMapModule().getMapName(), "unnamed.map");
 
     GlobalRadiantCore().getMessageBus().removeListener(msgSubscription);
+}
+
+// Loading a map through MapResource::load without inserting the nodes into a scene,
+// this should produce a valid scene too including the group information (which was a problem before)
+TEST_F(MapLoadingTest, loadMapInResourceOnly)
+{
+    std::string modRelativePath = "maps/altar.map";
+
+    auto resource = GlobalMapResourceManager().createFromPath(modRelativePath);
+    EXPECT_TRUE(resource->load()) << "Test map not found: " << modRelativePath;
+
+    checkAltarScene(resource->getRootNode());
+}
+
+TEST_F(MapLoadingTest, loadMapxInResourceOnly)
+{
+    // Save a mapx copy of the altar map
+    GlobalCommandSystem().executeCommand("OpenMap", cmd::Argument("maps/altar.map"));
+    checkAltarScene();
+
+    // Select the format based on the mapx extension
+    fs::path tempPath = _context.getTemporaryDataPath();
+    tempPath /= "altar_copy.mapx";
+
+    auto format = GlobalMapFormatManager().getMapFormatForFilename(tempPath.string());
+    EXPECT_EQ(format->getMapFormatName(), map::PORTABLE_MAP_FORMAT_NAME);
+
+    FileSelectionHelper responder(tempPath.string(), format);
+    EXPECT_FALSE(os::fileOrDirExists(tempPath));
+    GlobalCommandSystem().executeCommand("SaveMapCopyAs");
+    EXPECT_TRUE(os::fileOrDirExists(tempPath));
+
+    // Now load the mapx copy and expect we have an intact scene
+    auto resource = GlobalMapResourceManager().createFromPath(tempPath.string());
+    EXPECT_TRUE(resource->load()) << "Copied map not found: " << tempPath.string();
+
+    checkAltarScene(resource->getRootNode());
 }
 
 TEST_F(MapSavingTest, saveMapWithoutModification)

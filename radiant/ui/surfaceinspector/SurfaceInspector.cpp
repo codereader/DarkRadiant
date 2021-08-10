@@ -243,26 +243,26 @@ wxBoxSizer* SurfaceInspector::createFitTextureRow()
 	_fitTexture.label = new wxStaticText(this, wxID_ANY, _(LABEL_FIT_TEXTURE));
 	_fitTexture.width = makeFitSpinBox(Axis::X);
     _fitTexture.width->SetToolTip(
-        "Number of whole texture images to fit horizontally. Use the spin "
-        "buttons to change the value and apply the result immediately."
+        _("Number of whole texture images to fit horizontally. Use the spin "
+          "buttons to change the value and apply the result immediately.")
     );
     _fitTexture.x = new wxStaticText(this, wxID_ANY, "x");
     _fitTexture.height = makeFitSpinBox(Axis::Y);
     _fitTexture.height->SetToolTip(
-        "Number of whole texture images to fit vertically. Use the spin "
-        "buttons to change the value and apply the result immediately."
+        _("Number of whole texture images to fit vertically. Use the spin "
+          "buttons to change the value and apply the result immediately.")
     );
 	_fitTexture.fitButton = new wxButton(this, wxID_ANY, _(LABEL_FIT));
     _fitTexture.fitButton->SetToolTip(
-        "Fit texture using the current values for both axes (ignoring texture "
-        "aspect ratio)"
+        _("Fit texture using the current values for both axes (ignoring texture "
+          "aspect ratio)")
     );
     _fitTexture.preserveAspectButton = new wxBitmapToggleButton(
         this, wxID_ANY, wxutil::GetLocalBitmap("preserveAspect.png")
     );
     _fitTexture.preserveAspectButton->SetToolTip(
-        "When fitting texture on one axis using the spin buttons, adjust the "
-        "other axis automatically to preserve texture aspect ratio"
+        _("When fitting texture on one axis using the spin buttons, adjust the "
+          "other axis automatically to preserve texture aspect ratio")
     );
 
     // Add widgets to the sizer
@@ -305,7 +305,7 @@ void SurfaceInspector::populateWindow()
         this, wxID_ANY, wxutil::GetLocalBitmap(FOLDER_ICON)
     );
     _selectShaderButton->SetToolTip(
-        "Choose shader using the shader selection dialog")
+        _("Choose shader using the shader selection dialog"))
     ;
     _selectShaderButton->Connect(
         wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onShaderSelect),

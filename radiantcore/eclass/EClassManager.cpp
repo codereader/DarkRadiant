@@ -24,9 +24,15 @@ namespace eclass {
 // Constructor
 EClassManager::EClassManager() :
     _realised(false),
-    _defLoader(std::bind(&EClassManager::loadDefAndResolveInheritance, this)),
+    _defLoader(std::bind(&EClassManager::loadDefAndResolveInheritance, this),
+               std::bind(&EClassManager::onDefLoadingCompleted, this)),
 	_curParseStamp(0)
 {}
+
+sigc::signal<void> EClassManager::defsLoadingSignal() const
+{
+    return _defsLoadingSignal;
+}
 
 sigc::signal<void> EClassManager::defsLoadedSignal() const
 {
@@ -181,11 +187,19 @@ void EClassManager::ensureDefsLoaded()
 
 void EClassManager::loadDefAndResolveInheritance()
 {
+    _defsLoadingSignal.emit();
+
+    // Hold back all changed signals
+    for (const auto& eclass : _entityClasses)
+    {
+        eclass.second->blockChangedSignal(true);
+    }
+
     parseDefFiles();
     resolveInheritance();
     applyColours();
 
-	_defsLoadedSignal.emit();
+    // The loaded signal will be invoked in the onDefLoadingCompleted() method
 }
 
 void EClassManager::applyColours()
@@ -341,6 +355,8 @@ void EClassManager::shutdownModule()
 
 	// Don't notify anyone anymore
 	_defsReloadedSignal.clear();
+    _defsLoadedSignal.clear();
+    _defsLoadingSignal.clear();
 
 	// Clear member structures
 	_entityClasses.clear();
@@ -431,7 +447,6 @@ void EClassManager::parse(TextInputStream& inStr, const vfs::FileInfo& fileInfo,
 			}
 
 			// At this point, i is pointing to a valid entityclass
-
 			i->second->setParseStamp(_curParseStamp);
 
         	// Parse the contents of the eclass (excluding name)
@@ -495,6 +510,17 @@ void EClassManager::parseFile(const vfs::FileInfo& fileInfo)
 		rError() << "[eclassmgr] failed to parse " << fileInfo.fullPath()
 				 << " (" << e.what() << ")" << std::endl;
 	}
+}
+
+void EClassManager::onDefLoadingCompleted()
+{
+    for (const auto& eclass : _entityClasses)
+    {
+        eclass.second->blockChangedSignal(false);
+        eclass.second->emitChangedSignal();
+    }
+
+    _defsLoadedSignal.emit();
 }
 
 // Static module instance

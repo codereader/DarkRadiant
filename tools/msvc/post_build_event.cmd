@@ -2,6 +2,7 @@ for %%i in (..\..\install\*.dll) do if not "%%~nxi"=="DarkRadiantCore.dll" del "
 
 del ..\..\install\python*.zip
 
+copy ..\..\w32deps\libgit2\bin\git2.dll ..\..\install /Y
 copy ..\..\w32deps\openal\bin\OpenAL32.dll ..\..\install /Y
 copy ..\..\w32deps\openal\bin\wrap_oal.dll ..\..\install /Y
 copy ..\..\w32deps\glew\bin\glew32.dll ..\..\install /Y
@@ -23,6 +24,7 @@ copy ..\..\w32deps\wxWidgets\bin\wxbase313%WXLIB_SUFFIX%_xml_vc*.dll  ..\..\inst
 copy ..\..\w32deps\wxWidgets\bin\wxmsw313%WXLIB_SUFFIX%_adv_vc*.dll   ..\..\install /Y
 copy ..\..\w32deps\wxWidgets\bin\wxmsw313%WXLIB_SUFFIX%_core_vc*.dll  ..\..\install /Y
 copy ..\..\w32deps\wxWidgets\bin\wxmsw313%WXLIB_SUFFIX%_aui_vc*.dll  ..\..\install /Y
+copy ..\..\w32deps\wxWidgets\bin\wxbase313%WXLIB_SUFFIX%_net_vc*.dll  ..\..\install /Y
 
 IF "%1" == "Debug" (SET DEBUG_SUFFIX=-d) ELSE (SET DEBUG_SUFFIX=)
 

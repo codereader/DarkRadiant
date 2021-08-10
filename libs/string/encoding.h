@@ -3,6 +3,7 @@
 #include <string>
 #include <codecvt>
 #include <locale>
+#include <vector>
 
 namespace string
 {

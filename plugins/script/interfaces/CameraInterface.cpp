@@ -60,6 +60,11 @@ void ScriptCameraView::setFarClipPlaneDistance(float distance)
 	_cameraView.setFarClipPlaneDistance(distance);
 }
 
+void ScriptCameraView::refresh()
+{
+    _cameraView.queueDraw();
+}
+
 ScriptCameraView CameraInterface::getActiveView()
 {
 	return ScriptCameraView(GlobalCameraManager().getActiveView());
@@ -80,12 +85,13 @@ void CameraInterface::registerInterface(py::module& scope, py::dict& globals)
 	camera.def("getForwardVector", &ScriptCameraView::getForwardVector, py::return_value_policy::reference);
 	camera.def("getFarClipPlaneDistance", &ScriptCameraView::getFarClipPlaneDistance);
 	camera.def("setFarClipPlaneDistance", &ScriptCameraView::setFarClipPlaneDistance);
+	camera.def("refresh", &ScriptCameraView::refresh);
 
 	// Define the BrushCreator interface
 	py::class_<CameraInterface> cameraManager(scope, "Camera");
 	cameraManager.def("getActiveView", &CameraInterface::getActiveView);
 
-	// Now point the Python variable "CameraInterface" to this instance
+	// Now point the Python variable "GlobalCameraManager" to this instance
 	globals["GlobalCameraManager"] = this;
 }
 

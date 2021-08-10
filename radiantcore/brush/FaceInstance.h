@@ -159,34 +159,3 @@ public:
 
 typedef std::vector<FaceInstance> FaceInstances;
 
-/*class FaceInstanceSet
-{
-	typedef SelectionList<FaceInstance> FaceInstances;
-	FaceInstances m_faceInstances;
-public:
-	void insert(FaceInstance& faceInstance) {
-		m_faceInstances.append(faceInstance);
-	}
-	void erase(FaceInstance& faceInstance) {
-		m_faceInstances.erase(faceInstance);
-	}
-
-	template<typename Functor>
-	void foreach(Functor& functor) {
-		for (FaceInstances::iterator i = m_faceInstances.begin(); i != m_faceInstances.end(); ++i) {
-			functor(*(*i));
-		}
-	}
-
-	bool empty() const {
-		return m_faceInstances.empty();
-	}
-
-	FaceInstance& last() const {
-		return m_faceInstances.back();
-	}
-
-	std::size_t size() const {
-		return m_faceInstances.size();
-	}
-};*/

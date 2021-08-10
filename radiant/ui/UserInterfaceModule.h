@@ -3,7 +3,7 @@
 #include <sigc++/connection.h>
 #include <wx/event.h>
 
-#include "imodule.h"
+#include "iuserinterface.h"
 #include "iorthocontextmenu.h"
 #include "icommandsystem.h"
 
@@ -35,7 +35,7 @@ namespace ui
  */
 class UserInterfaceModule :
 	public wxEvtHandler,
-	public RegisterableModule
+	public IUserInterfaceModule
 {
 private:
 	std::unique_ptr<LongRunningOperationHandler> _longOperationHandler;
@@ -51,6 +51,7 @@ private:
 
 	sigc::connection _entitySettingsConn;
 	sigc::connection _coloursUpdatedConn;
+    sigc::connection _mapEditModeChangedConn;
 
 	std::size_t _execFailedListener;
 	std::size_t _textureChangedListener;
@@ -68,7 +69,7 @@ public:
 	// Runs the specified action in the UI thread 
 	// this happens when the application has a chance to, usually during event processing
 	// This method is safe to be called from any thread.
-	void dispatch(const std::function<void()>& action);
+	void dispatch(const std::function<void()>& action) override;
 
 private:
 	void registerUICommands();

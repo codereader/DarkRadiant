@@ -57,7 +57,7 @@ public:
 	virtual ~TransientWindow() {}
 
 	// Override wxWindow::Show
-	virtual bool Show(bool show = true);
+	virtual bool Show(bool show = true) override;
 
 	virtual void ToggleVisibility();
 

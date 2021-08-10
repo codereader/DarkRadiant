@@ -8,6 +8,7 @@
 #include <map>
 
 #include "SceneGraphInterface.h"
+#include "BrushInterface.h"
 
 namespace script 
 {
@@ -31,6 +32,31 @@ public:
 	}
 };
 
+// Special interface only used by Python scripts to visit selected faces
+class SelectedFaceVisitor
+{
+public:
+    virtual ~SelectedFaceVisitor() {}
+
+    virtual void visitFace(IFace& face) = 0;
+};
+
+class SelectedFaceVisitorWrapper :
+    public SelectedFaceVisitor
+{
+public:
+    void visitFace(IFace& face) override
+    {
+        // Wrap this method to python
+        PYBIND11_OVERLOAD_PURE(
+            void,			/* Return type */
+            SelectedFaceVisitor,    /* Parent class */
+            visitFace,			/* Name of function in C++ (must match Python name) */
+            ScriptFace(face)			/* Argument(s) */
+        );
+    }
+};
+
 class SelectionInterface :
 	public IScriptInterface
 {
@@ -40,6 +66,7 @@ public:
 
 	void foreachSelected(const SelectionSystem::Visitor& visitor);
 	void foreachSelectedComponent(const SelectionSystem::Visitor& visitor);
+	void foreachSelectedFace(SelectedFaceVisitor& visitor);
 
 	void setSelectedAll(int selected);
 	void setSelectedAllComponents(int selected);

@@ -36,10 +36,13 @@ public:
         SORT_INTERACTION = 2,       // used by the DBS pass
         SORT_FULLBRIGHT = 1025,     // used by non-translucent editor passes
         SORT_TRANSLUCENT = 1026,    // used by blend-type editor passes
-        SORT_HIGHLIGHT = 1027,      // used by the (red) selection system overlay
         SORT_OVERLAY_FIRST = 1028,  // used by decals
+        SORT_OVERLAY_SECOND = 1029,  // used by merge actions
+        SORT_OVERLAY_THIRD = 1030,   // used by merge actions
+        SORT_OVERLAY_ONE_BEFORE_LAST = 2046, // used by merge actions
         SORT_OVERLAY_LAST = 2047,
-        SORT_POINT_FIRST = 2048,    // used by POINT renderers
+        SORT_HIGHLIGHT = 2048,      // used by the (red) selection system overlay
+        SORT_POINT_FIRST = 2049,    // used by POINT renderers
         SORT_POINT_LAST = 3071,
         SORT_GUI0 = 3072,           // used by selection system controls, pivots (visible)
         SORT_GUI1 = 3073,           // used by selection system controls, pivots (obscured)

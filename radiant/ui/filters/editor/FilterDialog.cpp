@@ -25,6 +25,7 @@ namespace
 		WIDGET_ADD_FILTER_BUTTON,
 		WIDGET_EDIT_FILTER_BUTTON,
 		WIDGET_VIEW_FILTER_BUTTON, 
+		WIDGET_COPY_FILTER_BUTTON, 
 		WIDGET_DELETE_FILTER_BUTTON,
 	};
 }
@@ -168,27 +169,25 @@ void FilterDialog::createFiltersPanel()
 
 	parent->GetSizer()->Add(_filterView, 1, wxEXPAND | wxLEFT, 12);
 
-		// Display name column with icon
-		_filterView->AppendTextColumn(_("Name"), _columns.name.getColumnIndex(), 
-			wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+	// Display name column with icon
+	_filterView->AppendTextColumn(_("Name"), _columns.name.getColumnIndex(), 
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
-		_filterView->AppendTextColumn(_("State"), _columns.state.getColumnIndex(), 
-			wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+	_filterView->AppendTextColumn(_("State"), _columns.state.getColumnIndex(), 
+		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
 	// Action buttons
 	_buttons[WIDGET_ADD_FILTER_BUTTON] = findNamedObject<wxButton>(this, "FilterDialogAddButton");
 	_buttons[WIDGET_EDIT_FILTER_BUTTON] = findNamedObject<wxButton>(this, "FilterDialogEditButton");;
 	_buttons[WIDGET_VIEW_FILTER_BUTTON] = findNamedObject<wxButton>(this, "FilterDialogViewButton");;
 	_buttons[WIDGET_DELETE_FILTER_BUTTON] = findNamedObject<wxButton>(this, "FilterDialogDeleteButton");;
+	_buttons[WIDGET_COPY_FILTER_BUTTON] = findNamedObject<wxButton>(this, "FilterDialogCopyButton");;
 
-	_buttons[WIDGET_ADD_FILTER_BUTTON]->Connect(
-		wxEVT_BUTTON, wxCommandEventHandler(FilterDialog::onAddFilter), NULL, this);
-	_buttons[WIDGET_EDIT_FILTER_BUTTON]->Connect(
-		wxEVT_BUTTON, wxCommandEventHandler(FilterDialog::onEditFilter), NULL, this);
-	_buttons[WIDGET_VIEW_FILTER_BUTTON]->Connect(
-		wxEVT_BUTTON, wxCommandEventHandler(FilterDialog::onViewFilter), NULL, this);
-	_buttons[WIDGET_DELETE_FILTER_BUTTON]->Connect(
-		wxEVT_BUTTON, wxCommandEventHandler(FilterDialog::onDeleteFilter), NULL, this);
+	_buttons[WIDGET_ADD_FILTER_BUTTON]->Bind(wxEVT_BUTTON, &FilterDialog::onAddFilter, this);
+	_buttons[WIDGET_EDIT_FILTER_BUTTON]->Bind(wxEVT_BUTTON, &FilterDialog::onEditFilter, this);
+	_buttons[WIDGET_VIEW_FILTER_BUTTON]->Bind(wxEVT_BUTTON, &FilterDialog::onViewFilter, this);
+	_buttons[WIDGET_DELETE_FILTER_BUTTON]->Bind(wxEVT_BUTTON, &FilterDialog::onDeleteFilter, this);
+	_buttons[WIDGET_COPY_FILTER_BUTTON]->Bind(wxEVT_BUTTON, &FilterDialog::onCopyFilter, this);
 }
 
 void FilterDialog::updateWidgetSensitivity()
@@ -208,6 +207,7 @@ void FilterDialog::updateWidgetSensitivity()
 			_buttons[WIDGET_DELETE_FILTER_BUTTON]->Enable(!i->second->readOnly);
 			_buttons[WIDGET_EDIT_FILTER_BUTTON]->Enable(!i->second->readOnly);
 			_buttons[WIDGET_VIEW_FILTER_BUTTON]->Enable(i->second->readOnly);
+			_buttons[WIDGET_COPY_FILTER_BUTTON]->Enable(true); // always possible to copy filters
 
 			return;
 		}
@@ -217,11 +217,12 @@ void FilterDialog::updateWidgetSensitivity()
 	_buttons[WIDGET_DELETE_FILTER_BUTTON]->Enable(false);
 	_buttons[WIDGET_EDIT_FILTER_BUTTON]->Enable(false);
 	_buttons[WIDGET_VIEW_FILTER_BUTTON]->Enable(false);
+	_buttons[WIDGET_COPY_FILTER_BUTTON]->Enable(false);
 
 	_buttons[WIDGET_EDIT_FILTER_BUTTON]->Hide();
 	_buttons[WIDGET_VIEW_FILTER_BUTTON]->Show();
 
-	_buttons[WIDGET_EDIT_FILTER_BUTTON]->GetContainingSizer()->Layout();	
+	_buttons[WIDGET_EDIT_FILTER_BUTTON]->GetContainingSizer()->Layout();
 }
 
 void FilterDialog::ShowDialog(const cmd::ArgumentList& args)
@@ -248,50 +249,53 @@ void FilterDialog::onSave(wxCommandEvent& ev)
 	EndModal(wxID_OK);
 }
 
+void FilterDialog::showEditDialogForNewFilter(const FilterPtr& newFilter)
+{
+    // Instantiate a new editor, will block
+    auto* editor = new FilterEditor(*newFilter, this, false);
+
+    auto editorResult = editor->ShowModal();
+
+    editor->Destroy();
+
+    if (editorResult != wxID_OK)
+    {
+        // User hit cancel, we're done
+        return;
+    }
+
+    if (newFilter->rules.empty())
+    {
+        // Empty ruleset, notify user
+        auto dialog = GlobalDialogManager().createMessageBox(_("Empty Filter"),
+            _("No rules defined for this filter, cannot insert."), ui::IDialog::MESSAGE_ERROR);
+
+        dialog->run();
+        return;
+    }
+
+    auto result = _filters.emplace(newFilter->name, newFilter);
+
+    if (!result.second)
+    {
+        // Empty ruleset, notify user
+        auto dialog = GlobalDialogManager().createMessageBox(_("Name Conflict"),
+            _("Cannot add, filter with same name already exists."), ui::IDialog::MESSAGE_ERROR);
+
+        dialog->run();
+        return;
+    }
+
+    update();
+}
+
 void FilterDialog::onAddFilter(wxCommandEvent& ev)
 {
 	// Construct a new filter with an empty name (this indicates it has not been there before when saving)
-	FilterPtr workingCopy(new Filter("", false, false));
-	workingCopy->name = _("NewFilter");
+	auto newFilter = std::make_shared<Filter>("", false, false);
+    newFilter->name = _("NewFilter");
 
-	// Instantiate a new editor, will block
-	FilterEditor* editor = new FilterEditor(*workingCopy, this, false);
-
-	int editorResult = editor->ShowModal();
-	
-	editor->Destroy();
-
-	if (editorResult != wxID_OK)
-	{
-		// User hit cancel, we're done
-		return;
-	}
-
-	if (workingCopy->rules.empty())
-	{
-		// Empty ruleset, notify user
-		IDialogPtr dialog = GlobalDialogManager().createMessageBox(_("Empty Filter"),
-			_("No rules defined for this filter, cannot insert."), ui::IDialog::MESSAGE_ERROR);
-
-		dialog->run();
-		return;
-	}
-
-	std::pair<FilterMap::iterator, bool> result = _filters.insert(
-		FilterMap::value_type(workingCopy->name, workingCopy)
-	);
-
-	if (!result.second)
-	{
-		// Empty ruleset, notify user
-		IDialogPtr dialog = GlobalDialogManager().createMessageBox(_("Name Conflict"),
-			_("Cannot add, filter with same name already exists."), ui::IDialog::MESSAGE_ERROR);
-
-		dialog->run();
-		return;
-	}
-
-	update();
+    showEditDialogForNewFilter(newFilter);
 }
 
 void FilterDialog::onViewFilter(wxCommandEvent& ev)
@@ -390,6 +394,29 @@ void FilterDialog::onDeleteFilter(wxCommandEvent& ev)
 
 	// Update all widgets
 	update();
+}
+
+void FilterDialog::onCopyFilter(wxCommandEvent& ev)
+{
+    // Lookup the Filter object
+    FilterMap::iterator f = _filters.find(_selectedFilter);
+
+    if (f == _filters.end())
+    {
+        return; // not found or read-only
+    }
+
+    // Construct a new filter with an empty name (this indicates it has not been there before when saving)
+    auto newFilter = std::make_shared<Filter>("", false, false);
+    newFilter->name = f->second->name + " " + _("Copy");
+
+    // Copy all the rules
+    for (const auto& existingRule : f->second->rules)
+    {
+        newFilter->rules.push_back(existingRule);
+    }
+
+    showEditDialogForNewFilter(newFilter);
 }
 
 void FilterDialog::onFilterSelectionChanged(wxDataViewEvent& ev)

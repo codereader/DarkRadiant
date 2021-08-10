@@ -4,6 +4,7 @@
 #include "inode.h"
 #include "imapexporter.h"
 #include "imapformat.h"
+#include "imapmerge.h"
 #include "ikeyvaluestore.h"
 #include <sigc++/signal.h>
 
@@ -105,12 +106,30 @@ public:
 		MapUnloaded,    // emitted after a map has been unloaded
 		MapSaving,		// emitted before a map is about to be saved (changes are possible)
 		MapSaved,		// emitted right after a map has been saved
+		MapMergeOperationStarted,		// emitted after a merge operation has been started
+		MapMergeOperationAborted,		// emitted after a merge operation has been aborted
+		MapMergeOperationFinished,		// emitted after a merge operation has been finished
 	};
 
 	typedef sigc::signal<void, MapEvent> MapEventSignal;
 
 	/// Returns the signal that is emitted on various events
 	virtual MapEventSignal signal_mapEvent() const = 0;
+
+    enum class EditMode
+    {
+        Normal,
+        Merge,
+    };
+
+    // The currently active edit mode
+    virtual EditMode getEditMode() = 0;
+
+    // Change the edit mode to the specified value
+    virtual void setEditMode(EditMode mode) = 0;
+
+    // Signal fired when the map edit mode has been changed
+    virtual sigc::signal<void, EditMode>& signal_editModeChanged() = 0;
 
 	/**
 	 * Returns the worldspawn node of this map. The worldspawn
@@ -171,6 +190,25 @@ public:
 
     // Exports the current selection to the given output stream, using the given map format
     virtual void exportSelected(std::ostream& out, const map::MapFormatPtr& format) = 0;
+
+    // Starts a merge operation which imports differences from the given sourceMap into this one
+    // Will throw exceptions when the given map cannot be found, or this map doesn't have a root
+    virtual void startMergeOperation(const std::string& sourceMap) = 0;
+
+    // Starts a merge operation which imports the changes made to the source map into this one
+    // baseMap defines the path to a map that both the source map and this map started from,
+    // which makes the merge process more precise and enables conflict detection.
+    // Will throw exceptions when the given map cannot be found, or this map doesn't have a root
+    virtual void startMergeOperation(const std::string& sourceMap, const std::string& baseMap) = 0;
+
+    // When called in EditMode::Merge, this will apply the currently active set of actions
+    virtual void finishMergeOperation() = 0;
+
+    // Can be called when in EditMode::Merge, will abort the current merge process
+    virtual void abortMergeOperation() = 0;
+
+    // Returns the currently active merge operation (or an empty reference if no merge is ongoing)
+    virtual scene::merge::IMergeOperation::Ptr getActiveMergeOperation() = 0;
 
     /* POINTFILE MANAGEMENT */
 

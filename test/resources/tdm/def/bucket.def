@@ -1,0 +1,167 @@
+
+entityDef bucket_moveable_base 
+{
+	"inherit"							"atdm:frobable_base"
+
+	"editor_displayFolder"				"x doom3 junk"
+
+	"editor_color"						"0 .5 .8"
+	"editor_rotatable"					"1"
+
+	"editor_usage2"						"Moveable object. Will drop to the floor and rest untill activated."
+	"editor_usage3"						"The visual model set with the 'model' key can also be used for"
+	"editor_usage4"						"collision detection. However the model may not be too complex."
+	"editor_usage5"						"max vertices = 32"
+	"editor_usage6"						"max edges = 32"
+	"editor_usage7"						"max polygons = 16"
+	"editor_usage8"						"max edges per polygon = 16"
+	"editor_usage9"						"The collision model must be an enclosed hull. Dangling polygons or"
+	"editor_usage10"					"edges are not allowed. If the visual model is too complex or does"
+	"editor_usage11"					"not meet these requirements it can be contained in a less complex"
+	"editor_usage12"					"model for collision detection. Such a collision model is specified with the"
+	"editor_usage13"					"'clipmodel' key."
+								
+	"editor_var density"				"Volume of the object times the density is the mass. Overridden by the 'mass' spawnarg."
+	"editor_var friction"				"Friction with contacting surfaces in the range [0-1] where 0 is no friction."
+	"editor_var bouncyness"				"How much the object bounces in the range [0-1] where 0 is no bounce."
+	"editor_float mass"					"Mass of the object (overrides density) in kg."
+	"editor_model clipmodel"			"Model to be used for collision detection."
+	"editor_var clipshrink"				"Shrink the visual model with an epsilon and use it as a clip model."
+	"editor_bool allowStep"				"Set to 0 to prevent monsters from ever walking over this object."
+	"editor_bool solid"					"Make the object solid."
+	"editor_bool nodrop"				"Do not drop to the floor."
+	"editor_bool noimpact"				"Do not activate by the impact of other objects."
+	"editor_bool unbindOnDeath"			"Unbind entity when health drops down to or below zero."
+	"editor_int unbindOnAlertIndex"		"Unbind this entity from its bind master when the bind master reaches this alert index. Setting it f.i. to 3 means the AI will drop this entity when going investigating. 0 => Relaxed, 1 => Observant, 2 => Suspicious, 3 => Investigating, 4 => Agitated search, 5 => combat."
+	"editor_var health"					"If set the visual model changes to 'broken' when the health drops down to or below zero."
+	"editor_model broken"				"Visual model to be used when the health drops down to or below zero."
+	"editor_bool explode"				"If set to 1 the moveable explodes and is removed when the health drops down to or below zero."
+	"editor_float init_velocity"		"Initial linear velocity set when activated."
+	"editor_float init_avelocity"		"Initial angular velocity set when activated."
+	"editor_var init_velocityDelay"		"Delay in seconds before the initial linear velocity is set after being activated."
+	"editor_var init_avelocityDelay"	"Delay in seconds before the initial angular velocity is set after being activated."
+	"editor_var initialSplineTime"		"Number of milliseconds the moveable should follow the initial spline path."
+	"editor_var damage"					"Damage definition if it damages things it collides with"
+	"editor_bool damageWhenActive"		"Only damage when active ( currently for the vagary and influence stuff )"
+	"editor_var fx_collide"				"FX system to start at impact position when object collides."
+	"editor_snd snd_water"				"Sound when the moveable collides with water"
+	"editor_snd snd_bounce"				"Sound when the moveable collides with another solid brush or object"
+	"editor_bool armed"					"If set to true, the mine is armed."
+
+	"spawnclass"						"idMoveable"
+
+	"density"						"0.5"
+	"friction"						"0.05"
+	"bouncyness"					"0.6"
+	"explode"						"0"
+	"unbindondeath"					"0"
+	"health"						"0"
+	"nodrop"						"0"
+	"noimpact"						"0"
+	"solid"							"1"
+	"notPushable"					"0"
+	"clipshrink"					"0"
+	"allowStep"						"1"
+
+	"snd_bounce"						"tdm_impact_carpet_heavy"
+	"snd_bounce_cloth"				"tdm_impact_carpet_heavy"
+	"snd_bounce_carpet"				"tdm_impact_carpet_heavy"
+	"snd_bounce_grass"				"tdm_impact_carpet_heavy"
+	"snd_bounce_dirt"				"tdm_impact_carpet_heavy"
+	"snd_bounce_snow"				"tdm_impact_carpet_heavy"
+
+	"frobable"						"1"
+	"frob_action_script"			""
+
+	"snd_water"						"water_hit_by_small_object"
+
+	 // grayman #2816
+	"def_damage"					"atdm:damage_moveable"
+	"damage_mult_armor_leath"		"0.50"
+	"damage_mult_armor_chain"		"0.25"
+	"damage_mult_armor_plate"		"0.00"
+}
+
+entityDef bucket_base
+{
+	"inherit"					"bucket_moveable_base"
+
+	"editor_displayFolder"		"Moveables/Misc"
+	"editor_usage"				"Don't use. Base class for all TDM moveables."
+
+	// if the model has an origin set to the bottom, move it to the center
+	"origin"					"0 0 0"
+
+        "editor_var friction"   "How easily an object slides along a surface.  A value of .1 or .2 seems to be decent.  Setting to 0 results in unrealistic sliding"
+
+	"editor_int collide_script_counter"	"How often to call the collision script defined with 'script_collide'. 0 => never, -1 => always, positive number X => exactly X times."
+	"editor_int script_collide"	"A script that is called when this entity collides with something, the number of times it is called depends on 'collide_script_counter'."
+
+	"editor_snd snd_bounce" 		"Default sound when this moveables collides with something solid."
+	"editor_snd snd_bounce_carpet"  "Sound when this moveables collides with a carpet material."
+	"editor_snd snd_bounce_cloth"   "Sound when this moveables collides with a cloth material."
+	"editor_snd snd_bounce_dirt"    "Sound when this moveables collides with a dirt material."
+	"editor_snd snd_bounce_grass"   "Sound when this moveables collides with a grass material."
+	"editor_snd snd_bounce_snow"    "Sound when this moveables collides with a snow material."
+
+	"editor_bool on_attach_nonsolid"			"If true, the item will become nonsolid when attached to an idActor."
+	"editor_bool on_attach_alert_become_solid"	"If true, and this moveables is attached to an AI, it will become solid when the AI is alerted (and nonsolid if the AI is not alerted).  Often used in conjunction with on_attach_nonsolid.  This also happens by default for any object with the CMeleeWeapon spawnclass."
+	"editor_bool on_attach_contents_corpse"		"If true, the item will clear the contents_solid flag and set the contents_corpse flag when attached to an idActor."
+	"editor_bool on_attach_not_frobable"		"If true, the item will be set not frobable when attached to an idActor."
+
+	"editor_bool drop_on_ragdoll"		"If attached to an actor, this item will be detached and dropped when the actor goes from conscious to ragdoll (dead or KO'd)."
+	"editor_bool drop_when_drawn"		"If true, this item is only dropped if the actor has drawn it into their hand (e.g., sword that starts out strapped to back)."
+	"editor_bool drop_set_frobable"		"If true, the item becomes frobable after being dropped by the AI that carried it. Occurs f.i. when a guard dies and drops his hammer."
+	"editor_bool drop_add_contents_solid"	"If true, this item will have contents_solid added to its contents flags when dropped by an actor."
+
+	"editor_bool inv_droppable"			"If true, the item can, once aquired, be dropped from the player inventory, otherwise not."
+	"editor_var inv_icon"			"path\name of icon to be showed in player inventory, eg, guis/assets/hud/inventory_icons/default."
+	"editor_var inv_name"			"name to show in player inventory. Must be unique."
+
+	"editor_var sprS_bounce"			"Points to the used default propagated sound definition."
+        "editor_var sprS_bounce_carpet"		"Points to the used propagated sound definition for collision with carpet material. The value after the colon : is an optional volume modifier (in dB)."
+	"editor_var sprS_bounce_cloth"		"Points to the used propagated sound definition for collision with cloth material. The value after the colon : is an optional volume modifier (in dB)."
+	"editor_var sprS_bounce_dirt"		"Points to the used propagated sound definition for collision with dirt material. The value after the colon : is an optional volume modifier (in dB)."
+	"editor_var sprS_bounce_grass"		"Points to the used propagated sound definition for collision with grass material. The value after the colon : is an optional volume modifier (in dB)."
+	"editor_var sprS_bounce_snow"		"Points to the used propagated sound definition for collision with snow material. The value after the colon : is an optional volume modifier (in dB)."
+
+        //these might replace the above:
+        "editor_var spr_object_size"  "Used to calculate propogated sound to AI.  Set as either small, medium or large.  Defaults to medium."
+        "editor_var spr_object_hardness"  "Used to calculate propogated sound to AI.  Set as either soft or hard.  Defaults to hard."
+
+        //not sure if this is in the right place:
+        "tdm_bounce_sound_max_vel"                   "At velocities higher than this value, collision sounds are played at the loudest possible volume. Default 400."
+        "tdm_bounce_sound_min_vel"                   "At velocities below this value, no collision sound is played.  Default 80.  The decrease of the propagated volume between the max and min velocity is the spawn arg min_velocity_volume_decrease, which is currently 20 db."
+
+	"editor_bool is_mantleable"			"If true, the item can be mantled on. Set to false for small items like spoons to prevent the player from climbing on stacks of small things."
+
+	"editor_float min_velocity_volume_decrease"	"The volume of the bounce sound will be decreased by this amount (in db) when the moveable hits at a low velocity"
+
+	"min_velocity_volume_decrease"		"20"
+
+	"snd_bounce_carpet"                                 "tdm_impact_carpet"
+        "snd_bounce_cloth"                                "tdm_impact_carpet"
+	"snd_bounce_grass"					"human_grass"
+	"snd_bounce_dirt"				"tdm_impact_dirt"
+	"snd_bounce_snow"				"tdm_impact_dirt"   //needs something better
+        "snd_water"                                   "water_hit_by_medium_object"
+
+}
+
+entityDef bucket_metal
+{
+	"editor_usage"			"So you can kick the bucket."
+	"editor_displayFolder"	"Moveables/Containers"
+	"mass"					"8"
+	"inherit"				"bucket_base"
+	"model" 				"models/darkmod/containers/bucket.lwo"
+	"friction"				"0.2"
+	"clipmodel"				"models/darkmod/misc/clipmodels/bucket_cm.lwo"
+	"bouncyness"			"0.5"
+	"snd_bounce"			"tdm_impact_metal_bucket"
+	"snd_bounce_carpet"     "tdm_impact_metal_bucket_on_soft"
+	"snd_bounce_cloth"      "tdm_impact_metal_bucket_on_soft"
+	"snd_bounce_grass"      "tdm_impact_metal_bucket_on_soft"
+	"snd_bounce_dirt"       "tdm_impact_metal_bucket_on_soft"
+
+}

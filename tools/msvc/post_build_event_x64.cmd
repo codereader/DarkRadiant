@@ -23,6 +23,7 @@ copy ..\..\w64deps\wxWidgets\bin\wxbase313%WXLIB_SUFFIX%_xml_vc*_x64.dll  ..\..\
 copy ..\..\w64deps\wxWidgets\bin\wxmsw313%WXLIB_SUFFIX%_adv_vc*_x64.dll   ..\..\install /Y
 copy ..\..\w64deps\wxWidgets\bin\wxmsw313%WXLIB_SUFFIX%_core_vc*_x64.dll  ..\..\install /Y
 copy ..\..\w64deps\wxWidgets\bin\wxmsw313%WXLIB_SUFFIX%_aui_vc*_x64.dll  ..\..\install /Y
+copy ..\..\w64deps\wxWidgets\bin\wxbase313%WXLIB_SUFFIX%_net_vc*_x64.dll  ..\..\install /Y
 
 IF "%1" == "Debug" (SET DEBUG_SUFFIX=-d) ELSE (SET DEBUG_SUFFIX=)
 
@@ -34,3 +35,6 @@ copy "..\..\w64deps\libsigc++\bin\libsigc++%DEBUG_SUFFIX%-%2.dll" ..\..\install 
 
 @echo Copying libxml2 library (64 bit)
 copy ..\..\w64deps\libxml2\bin\libxml2%DEBUG_SUFFIX%-%2.dll ..\..\install /Y
+
+@echo Copying libgit2 library (64-bit)
+copy ..\..\w64deps\libgit2\bin\libgit2%DEBUG_SUFFIX%.dll ..\..\install /Y

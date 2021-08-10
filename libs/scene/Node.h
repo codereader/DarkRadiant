@@ -25,8 +25,8 @@ public:
 		eVisible = 0,
 		eHidden = 1 << 0,    // manually hidden by the user
 		eFiltered = 1 << 1,  // excluded due to filter settings
-		eExcluded = 1 << 2,  // excluded due to regioning
-		eLayered = 1 << 3    // invisible at the current layer settings
+		eExcluded = 1 << 2,  // excluded due to regioning or merging
+		eLayered = 1 << 3,    // invisible at the current layer settings
 	};
 
 private:
@@ -94,6 +94,7 @@ public:
 	void enable(unsigned int state) override;
 	void disable(unsigned int state) override;
     bool checkStateFlag(unsigned int state) const override;
+    virtual bool supportsStateFlag(unsigned int state) const override;
 
 	bool visible() const override;
 	bool excluded() const override;

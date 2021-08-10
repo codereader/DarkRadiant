@@ -6,6 +6,7 @@
 #include "iselectable.h"
 #include "ipatch.h"
 #include "ibrush.h"
+#include "icameraview.h"
 
 #include "scene/Node.h"
 
@@ -261,25 +262,41 @@ public:
 // Copies all visibility flags from the source to the target
 inline void assignVisibilityFlagsFromNode(INode& target, const INode& source)
 {
-    if (source.checkStateFlag(scene::Node::eHidden))
+    if (source.checkStateFlag(Node::eHidden) && target.supportsStateFlag(Node::eHidden))
     {
-        target.enable(scene::Node::eHidden);
+        target.enable(Node::eHidden);
     }
 
-    if (source.checkStateFlag(scene::Node::eFiltered))
+    if (source.checkStateFlag(Node::eFiltered) && target.supportsStateFlag(Node::eFiltered))
     {
-        target.enable(scene::Node::eFiltered);
+        target.enable(Node::eFiltered);
     }
 
-    if (source.checkStateFlag(scene::Node::eExcluded))
+    if (source.checkStateFlag(Node::eExcluded) && target.supportsStateFlag(Node::eExcluded))
     {
-        target.enable(scene::Node::eExcluded);
+        target.enable(Node::eExcluded);
     }
 
-    if (source.checkStateFlag(scene::Node::eLayered))
+    if (source.checkStateFlag(Node::eLayered) && target.supportsStateFlag(Node::eLayered))
     {
-        target.enable(scene::Node::eLayered);
+        target.enable(Node::eLayered);
     }
+}
+
+inline std::pair<Vector3, Vector3> getOriginAndAnglesToLookAtNode(const scene::INode& node)
+{
+    const AABB& aabb = node.worldAABB();
+    Vector3 origin(aabb.origin);
+
+    // Move the camera a bit off the AABB origin
+    origin += Vector3(aabb.extents.getLength() * 5, 0, aabb.extents.getLength() * 5);
+
+    // Rotate the camera a bit towards the "ground"
+    Vector3 angles(0, 0, 0);
+    angles[camera::CAMERA_PITCH] = -40;
+    angles[camera::CAMERA_YAW] = 180;
+
+    return std::make_pair(origin, angles);
 }
 
 } // namespace scene

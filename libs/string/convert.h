@@ -3,6 +3,7 @@
 #include "math/Vector3.h"
 #include "math/Vector4.h"
 #include <sstream>
+#include <cstdlib>
 
 namespace string
 {
@@ -18,7 +19,7 @@ inline float convert<float, std::string>(const std::string& str, float defaultVa
 {
 	try
 	{
-		return std::stof(str);
+		return str.empty() ? defaultVal : std::stof(str);
 	}
 	catch (const std::logic_error&) // logic_error is base of invalid_argument out_of_range exceptions
 	{
@@ -32,7 +33,7 @@ inline double convert<double, std::string>(const std::string& str, double defaul
 {
 	try
 	{
-		return std::stod(str);
+		return str.empty() ? defaultVal : std::stod(str);
 	}
 	catch (const std::logic_error&) // logic_error is base of invalid_argument out_of_range exceptions
 	{
@@ -46,7 +47,7 @@ inline short convert<short, std::string>(const std::string& str, short defaultVa
 {
 	try
 	{
-		return static_cast<short>(std::stoi(str));
+		return str.empty() ? defaultVal : static_cast<short>(std::stoi(str));
 	}
 	catch (const std::logic_error&) // logic_error is base of invalid_argument out_of_range exceptions
 	{
@@ -60,7 +61,7 @@ inline unsigned short convert<unsigned short, std::string>(const std::string& st
 {
 	try
 	{
-		return static_cast<unsigned short>(std::stoul(str));
+		return str.empty() ? defaultVal : static_cast<unsigned short>(std::stoul(str));
 	}
 	catch (const std::logic_error&) // logic_error is base of invalid_argument out_of_range exceptions
 	{
@@ -74,7 +75,7 @@ inline int convert<int, std::string>(const std::string& str, int defaultVal)
 {
 	try
 	{
-		return std::stoi(str);
+		return str.empty() ? defaultVal : std::stoi(str);
 	}
 	catch (const std::logic_error&) // logic_error is base of invalid_argument out_of_range exceptions
 	{
@@ -88,7 +89,7 @@ inline unsigned int convert<unsigned int, std::string>(const std::string& str, u
 {
 	try
 	{
-		return static_cast<unsigned int>(std::stoul(str));
+		return str.empty() ? defaultVal : static_cast<unsigned int>(std::stoul(str));
 	}
 	catch (const std::logic_error&) // logic_error is base of invalid_argument out_of_range exceptions
 	{
@@ -102,7 +103,7 @@ inline long convert<long, std::string>(const std::string& str, long defaultVal)
 {
 	try
 	{
-		return std::stol(str);
+		return str.empty() ? defaultVal : std::stol(str);
 	}
 	catch (const std::logic_error&) // logic_error is base of invalid_argument out_of_range exceptions
 	{
@@ -116,7 +117,7 @@ inline long long convert<long long, std::string>(const std::string& str, long lo
 {
 	try
 	{
-		return std::stoll(str);
+		return str.empty() ? defaultVal : std::stoll(str);
 	}
 	catch (const std::logic_error&) // logic_error is base of invalid_argument out_of_range exceptions
 	{
@@ -130,7 +131,7 @@ inline unsigned long convert<unsigned long, std::string>(const std::string& str,
 {
 	try
 	{
-		return std::stoul(str);
+		return str.empty() ? defaultVal : std::stoul(str);
 	}
 	catch (const std::logic_error&) // logic_error is base of invalid_argument out_of_range exceptions
 	{
@@ -144,7 +145,7 @@ inline unsigned long long convert<unsigned long long, std::string>(const std::st
 {
 	try
 	{
-		return std::stoull(str);
+		return str.empty() ? defaultVal : std::stoull(str);
 	}
 	catch (const std::logic_error&) // logic_error is base of invalid_argument out_of_range exceptions
 	{
@@ -164,6 +165,9 @@ inline bool convert<bool, std::string>(const std::string& str, bool defaultVal)
 template<>
 inline Vector3 convert<Vector3, std::string>(const std::string& str, Vector3 defaultVal)
 {
+    // Quickly return if nothing to parse
+    if (str.empty()) return defaultVal;
+
 	try
 	{
 		Vector3 vec;
@@ -185,6 +189,9 @@ inline Vector3 convert<Vector3, std::string>(const std::string& str, Vector3 def
 template<>
 inline Vector4 convert<Vector4, std::string>(const std::string& str, Vector4 defaultVal)
 {
+    // Quickly return if nothing to parse
+    if (str.empty()) return defaultVal;
+
 	try
 	{
 		Vector4 vec;
@@ -235,6 +242,20 @@ template<typename Src> float to_float(const Src& src)
     return convert<float>(src, 0.0f);
 }
 #endif
+
+// Attempts to convert the given source string to a float value,
+// returning true on success. The value reference will then be holding
+// the resulting float value (or 0 in case of failure).
+// Note: this is using the exception-less std::strtof, making it preferable
+// over the string::convert<float> method (in certain hot code paths).
+inline bool tryConvertToFloat(const std::string& src, float& value)
+{
+    char* lastChar;
+    auto* firstChar = src.c_str();
+    value = std::strtof(firstChar, &lastChar);
+
+    return lastChar != firstChar;
+}
 
 // Convert the given type to a std::string
 template<typename Src> 

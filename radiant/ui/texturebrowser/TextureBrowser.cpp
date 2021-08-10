@@ -51,7 +51,7 @@ namespace
     }
 
     const int VIEWPORT_BORDER = 12;
-    const int TILE_BORDER = 6;
+    const int TILE_BORDER = 2;
 }
 
 class TextureBrowser::TextureTile
@@ -103,8 +103,8 @@ private:
         // draw an additional square around with 0.5 1 0.5 color
         if (shader_equal(_owner.getSelectedShader(), material->getName()))
         {
-            glLineWidth(3);
-            glColor3f(1, 0, 0);
+            glLineWidth(2);
+            glColor3f(0.8f, 0, 0);
             glDisable(GL_TEXTURE_2D);
 
             glBegin(GL_LINE_LOOP);
@@ -126,9 +126,9 @@ private:
             glLineWidth(1);
 
             // material border:
-            if (!material->IsDefault())
+            if (true && !material->IsDefault())
             {
-                glColor3f(1, 1, 1);
+                glColor3f(0.5f, 0.5f, 0.5f);
                 glDisable(GL_TEXTURE_2D);
 
                 glBegin(GL_LINE_LOOP);
@@ -144,6 +144,7 @@ private:
                 glEnable(GL_TEXTURE_2D);
             }
 
+#if false
             // highlight in-use textures
             if (!_owner._hideUnused && material->IsInUse())
             {
@@ -161,6 +162,7 @@ private:
                 glEnd();
                 glEnable(GL_TEXTURE_2D);
             }
+#endif
         }
     }
 
@@ -185,7 +187,7 @@ private:
     void drawTextureName()
     {
         glDisable(GL_TEXTURE_2D);
-        glColor3f(1, 1, 1);
+        glColor3f(0.7f, 0.7f, 0.7f);
 
         const static int FONT_OFFSET = 6;
         glRasterPos2i(position.x(), position.y() - FONT_HEIGHT() + FONT_OFFSET);
@@ -226,6 +228,8 @@ TextureBrowser::TextureBrowser(wxWindow* parent) :
     _hideUnused(registry::getValue<bool>(RKEY_TEXTURES_HIDE_UNUSED)),
     _showFavouritesOnly(registry::getValue<bool>(RKEY_TEXTURES_SHOW_FAVOURITES_ONLY)),
     _showNamesKey(RKEY_TEXTURES_SHOW_NAMES),
+    _textureScale(50),
+    _useUniformScale(registry::getValue<bool>(RKEY_TEXTURE_USE_UNIFORM_SCALE)),
     _showOtherMaterials(registry::getValue<bool>(RKEY_TEXTURES_SHOW_OTHER_MATERIALS)),
     _uniformTextureSize(registry::getValue<int>(RKEY_TEXTURE_UNIFORM_SIZE)),
     _maxNameLength(registry::getValue<int>(RKEY_TEXTURE_MAX_NAME_LENGTH)),
@@ -234,13 +238,15 @@ TextureBrowser::TextureBrowser(wxWindow* parent) :
     observeKey(RKEY_TEXTURES_HIDE_UNUSED);
     observeKey(RKEY_TEXTURES_SHOW_OTHER_MATERIALS);
     observeKey(RKEY_TEXTURE_UNIFORM_SIZE);
+    observeKey(RKEY_TEXTURE_USE_UNIFORM_SCALE);
+    observeKey(RKEY_TEXTURE_SCALE);
     observeKey(RKEY_TEXTURE_SHOW_SCROLLBAR);
     observeKey(RKEY_TEXTURE_MOUSE_WHEEL_INCR);
     observeKey(RKEY_TEXTURE_SHOW_FILTER);
     observeKey(RKEY_TEXTURE_MAX_NAME_LENGTH);
     observeKey(RKEY_TEXTURES_SHOW_FAVOURITES_ONLY);
 
-    SetToolTip("Texture brwoser");
+    loadScaleFromRegistry();
 
     _shader = texdef_name_default();
 
@@ -357,6 +363,23 @@ TextureBrowser::~TextureBrowser()
     GlobalTextureBrowser().unregisterTextureBrowser(this);
 }
 
+void TextureBrowser::loadScaleFromRegistry()
+{
+    int index = registry::getValue<int>(RKEY_TEXTURE_SCALE);
+
+    switch (index)
+    {
+    case 0: _textureScale = 5; break;
+    case 1: _textureScale = 10; break;
+    case 2: _textureScale = 25; break;
+    case 3: _textureScale = 50; break;
+    case 4: _textureScale = 100; break;
+    case 5: _textureScale = 200; break;
+    };
+
+    queueDraw();
+}
+
 void TextureBrowser::observeKey(const std::string& key)
 {
     GlobalRegistry().signalForKey(key).connect(
@@ -401,9 +424,12 @@ void TextureBrowser::keyChanged()
     _showOtherMaterials = registry::getValue<bool>(RKEY_TEXTURES_SHOW_OTHER_MATERIALS);
     _showTextureFilter = registry::getValue<bool>(RKEY_TEXTURE_SHOW_FILTER);
     _uniformTextureSize = registry::getValue<int>(RKEY_TEXTURE_UNIFORM_SIZE);
+    _useUniformScale = registry::getValue<bool>(RKEY_TEXTURE_USE_UNIFORM_SCALE);
     _showTextureScrollbar = registry::getValue<bool>(RKEY_TEXTURE_SHOW_SCROLLBAR);
     _mouseWheelScrollIncrement = registry::getValue<int>(RKEY_TEXTURE_MOUSE_WHEEL_INCR);
     _maxNameLength = registry::getValue<int>(RKEY_TEXTURE_MAX_NAME_LENGTH);
+
+    loadScaleFromRegistry();
 
     if (_showTextureScrollbar)
     {
@@ -437,7 +463,12 @@ void TextureBrowser::onFavouritesChanged()
 // Return the display width of a texture in the texture browser
 int TextureBrowser::getTextureWidth(const Texture& tex) const
 {
-    if (tex.getWidth() >= tex.getHeight())
+    if (!_useUniformScale)
+    {
+        // Don't use uniform scale
+        return static_cast<int>(tex.getWidth() * (static_cast<float>(_textureScale) / 100));
+    }
+    else if (tex.getWidth() >= tex.getHeight())
     {
         // Texture is square, or wider than it is tall
         return _uniformTextureSize;
@@ -453,7 +484,12 @@ int TextureBrowser::getTextureWidth(const Texture& tex) const
 
 int TextureBrowser::getTextureHeight(const Texture& tex) const
 {
-    if (tex.getHeight() >= tex.getWidth())
+    if (!_useUniformScale)
+    {
+        // Don't use uniform scale
+        return static_cast<int>(tex.getHeight() * (static_cast<float>(_textureScale) / 100));
+    }
+    else if (tex.getHeight() >= tex.getWidth())
     {
         // Texture is square, or taller than it is wide
         return _uniformTextureSize;

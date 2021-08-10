@@ -7,6 +7,7 @@
 #include <wx/button.h>
 
 #include "shaderlib.h"
+#include "util/ScopedBoolLock.h"
 
 namespace ui
 {
@@ -58,13 +59,13 @@ void FilterEditor::populateWindow()
     loadNamedPanel(this, "FilterEditorMainPanel");
 
     // Create the name entry box
-    wxStaticText* topLabel = findNamedObject<wxStaticText>(this, "FilterEditorTopLabel");
+    auto* topLabel = findNamedObject<wxStaticText>(this, "FilterEditorTopLabel");
     topLabel->SetFont(topLabel->GetFont().Bold());
 
-    wxStaticText* ruleLabel = findNamedObject<wxStaticText>(this, "FilterEditorRuleLabel");
+    auto* ruleLabel = findNamedObject<wxStaticText>(this, "FilterEditorRuleLabel");
     ruleLabel->SetFont(ruleLabel->GetFont().Bold());
 
-    wxTextCtrl* nameEntry = findNamedObject<wxTextCtrl>(this, "FilterEditorNameEntry");
+    auto* nameEntry = findNamedObject<wxTextCtrl>(this, "FilterEditorNameEntry");
     nameEntry->Connect(wxEVT_TEXT, wxCommandEventHandler(FilterEditor::onNameEdited), NULL, this);
 
     createCriteriaPanel();
@@ -75,19 +76,18 @@ void FilterEditor::populateWindow()
         findNamedObject<wxStaticText>(this, "FilterEditorHelpText")->Hide();
     }
 
-    wxButton* okButton = findNamedObject<wxButton>(this, "FilterEditorOkButton");
-    wxButton* cancelButton = findNamedObject<wxButton>(this, "FilterEditorCancelButton");
-    wxButton* saveButton = findNamedObject<wxButton>(this, "FilterEditorSaveButton");
+    auto* okButton = findNamedObject<wxButton>(this, "FilterEditorOkButton");
+    auto* cancelButton = findNamedObject<wxButton>(this, "FilterEditorCancelButton");
+    auto* saveButton = findNamedObject<wxButton>(this, "FilterEditorSaveButton");
 
     okButton->Show(_viewOnly);
     cancelButton->Show(!_viewOnly);
     saveButton->Show(!_viewOnly);
 
     // Connect the OK button to the "CANCEL" event
-    okButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(FilterEditor::onCancel), NULL, this);
-
-    saveButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(FilterEditor::onSave), NULL, this);
-    cancelButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(FilterEditor::onCancel), NULL, this);
+    okButton->Bind(wxEVT_BUTTON, &FilterEditor::onCancel, this);
+    saveButton->Bind(wxEVT_BUTTON, &FilterEditor::onSave, this);
+    cancelButton->Bind(wxEVT_BUTTON, &FilterEditor::onCancel, this);
 }
 
 void FilterEditor::update()
@@ -142,6 +142,8 @@ void FilterEditor::createCriteriaPanel()
     _ruleList->AppendTextColumn(_("Index"), wxDATAVIEW_CELL_INERT,
                                 -1, wxALIGN_CENTER, FLAGS);
 
+    auto cellMode = _viewOnly ? wxDATAVIEW_CELL_INERT : wxDATAVIEW_CELL_EDITABLE;
+
     // TYPE_STRING (col 1)
     wxArrayString typeChoices;
     typeChoices.Add("entityclass");
@@ -150,7 +152,7 @@ void FilterEditor::createCriteriaPanel()
     typeChoices.Add("entitykeyvalue");
 
     wxDataViewChoiceRenderer* typeChoiceRenderer = 
-        new wxDataViewChoiceRenderer(typeChoices, wxDATAVIEW_CELL_EDITABLE, wxALIGN_LEFT);
+        new wxDataViewChoiceRenderer(typeChoices, cellMode, wxALIGN_LEFT);
     
     wxDataViewColumn* typeColumn = new wxDataViewColumn(
         _("Type"), typeChoiceRenderer, Columns::TYPE_STRING,
@@ -161,10 +163,10 @@ void FilterEditor::createCriteriaPanel()
     _ruleList->AppendColumn(typeColumn);
 
     // ENTITY_KEY (col 2)
-    _ruleList->AppendTextColumn(_("Entity Key"), wxDATAVIEW_CELL_EDITABLE,
+    _ruleList->AppendTextColumn(_("Entity Key"), cellMode,
                                 INITIAL_WIDTH, wxALIGN_NOT, FLAGS);
 
-    // MATCH (col 3)
+    // MATCH (col 3) - this column is always "editable" to allow for copying the text
     _ruleList->AppendTextColumn(_("Match"), wxDATAVIEW_CELL_EDITABLE,
                                 INITIAL_WIDTH, wxALIGN_NOT, FLAGS);
 
@@ -174,7 +176,7 @@ void FilterEditor::createCriteriaPanel()
     actionChoices.Add(_("hide"));
 
     wxDataViewChoiceRenderer* actionChoiceRenderer = new wxDataViewChoiceRenderer(
-        actionChoices, wxDATAVIEW_CELL_EDITABLE, wxALIGN_LEFT
+        actionChoices, cellMode, wxALIGN_LEFT
     );
     
     wxDataViewColumn* actionColumn = new wxDataViewColumn(
@@ -185,12 +187,8 @@ void FilterEditor::createCriteriaPanel()
     _ruleList->AppendColumn(actionColumn);
 
     // Get notified when the user edits an item
-    _ruleList->Connect(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED,
-                       wxDataViewEventHandler(FilterEditor::onItemEdited),
-                       NULL, this);
-    _ruleList->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED,
-                       wxDataViewEventHandler(FilterEditor::onRuleSelectionChanged),
-                       NULL, this);
+    _ruleList->Bind(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED, &FilterEditor::onItemEdited, this);
+    _ruleList->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &FilterEditor::onRuleSelectionChanged, this);
 
     // Action buttons
     wxButton* addRuleButton =       findNamedObject<wxButton>(this, "FilterEditorAddButton");
@@ -198,10 +196,10 @@ void FilterEditor::createCriteriaPanel()
     wxButton* moveRuleDownButton =  findNamedObject<wxButton>(this, "FilterEditorDownButton");
     wxButton* deleteRuleButton =    findNamedObject<wxButton>(this, "FilterEditorDeleteButton");
 
-    addRuleButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(FilterEditor::onAddRule), NULL, this);
-    moveRuleUpButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(FilterEditor::onMoveRuleUp), NULL, this);
-    moveRuleDownButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(FilterEditor::onMoveRuleDown), NULL, this);
-    deleteRuleButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(FilterEditor::onDeleteRule), NULL, this);
+    addRuleButton->Bind(wxEVT_BUTTON, &FilterEditor::onAddRule, this);
+    moveRuleUpButton->Bind(wxEVT_BUTTON, &FilterEditor::onMoveRuleUp, this);
+    moveRuleDownButton->Bind(wxEVT_BUTTON, &FilterEditor::onMoveRuleDown, this);
+    deleteRuleButton->Bind(wxEVT_BUTTON, &FilterEditor::onDeleteRule, this);
 }
 
 std::string FilterEditor::getStringForType(const FilterRule::Type type)
@@ -250,8 +248,6 @@ void FilterEditor::updateWidgetSensitivity() {
     {
         findNamedObject<wxWindowBase>(this, "FilterEditorNameEntry")->Enable(false);
 
-        _ruleList->Enable(false);
-
         findNamedObject<wxButton>(this, "FilterEditorAddButton")->Enable(false);
         findNamedObject<wxButton>(this, "FilterEditorUpButton")->Enable(false);
         findNamedObject<wxButton>(this, "FilterEditorDownButton")->Enable(false);
@@ -291,6 +287,11 @@ void FilterEditor::onCancel(wxCommandEvent& ev)
 
 void FilterEditor::onItemEdited(wxDataViewEvent& ev)
 {
+    if (_updateActive)
+    {
+        return;
+    }
+
     // Determine which row and column was edited and retrieve the current value
     // (note that ev.GetValue() does not return anything on Linux).
     int row = _ruleList->ItemToRow(ev.GetItem());
@@ -308,7 +309,18 @@ void FilterEditor::onItemEdited(wxDataViewEvent& ev)
 
     if (col == MATCH)
     {
-        _filter.rules[ruleIndex].match = value.GetString();
+        if (!_viewOnly)
+        {
+            _filter.rules[ruleIndex].match = value.GetString();
+        }
+        else
+        {
+            util::ScopedBoolLock lock(_updateActive); // block recursions
+
+            // It's possible to "edit" the text in read-only mode for selection purposes
+            // revert the edit once the user is done in that case
+            _ruleList->SetTextValue(_filter.rules[ruleIndex].match, row, col);
+        }
     }
     else if (col == ENTITY_KEY)
     {

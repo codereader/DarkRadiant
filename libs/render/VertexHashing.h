@@ -2,6 +2,7 @@
 
 #include "math/Vector3.h"
 #include "render/ArbitraryMeshVertex.h"
+#include "math/Hash.h"
 
 /**
 * greebo: When creating model surfaces from ASE models, the in-game loading code 
@@ -25,21 +26,6 @@
 */
 namespace render
 {
-    namespace detail
-    {
-        // A hash combination function based on the one used in boost and found on stackoverflow
-        inline void combineHash(std::size_t& seed, std::size_t hash)
-        {
-            seed ^= hash + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-        }
-
-        // Delivers 10.0^signficantDigits
-        constexpr double RoundingFactor(std::size_t significantVertexDigits)
-        {
-            return significantVertexDigits == 1 ? 10.0 : 10.0 * RoundingFactor(significantVertexDigits - 1);
-        }
-    }
-
     // These epsilons below correspond to the CVARs in the game code
     constexpr double VertexEpsilon = 0.01; // r_slopVertex
     constexpr double NormalEpsilon = 0.02; // r_slopNormal
@@ -57,14 +43,7 @@ struct std::hash<Vector3>
 
     size_t operator()(const Vector3& v) const
     {
-        auto xHash = static_cast<std::size_t>(v.x() * render::detail::RoundingFactor(SignificantVertexDigits));
-        auto yHash = static_cast<std::size_t>(v.y() * render::detail::RoundingFactor(SignificantVertexDigits));
-        auto zHash = static_cast<std::size_t>(v.z() * render::detail::RoundingFactor(SignificantVertexDigits));
-
-        render::detail::combineHash(xHash, yHash);
-        render::detail::combineHash(xHash, zHash);
-
-        return xHash;
+        return math::hashVector3(v, SignificantVertexDigits);
     }
 };
 

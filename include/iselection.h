@@ -145,6 +145,7 @@ public:
     ePrimitive,
 	eGroupPart,
     eComponent,
+    eMergeAction,
   };
 
 	// The possible modes when in "component manipulation mode"

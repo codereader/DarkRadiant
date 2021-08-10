@@ -1,10 +1,13 @@
 #include "UserInterfaceModule.h"
 
+#include <sigc++/functors/ptr_fun.h>
+
 #include "i18n.h"
 #include "ilayer.h"
 #include "ifilter.h"
 #include "ientity.h"
 #include "imru.h"
+#include "imap.h"
 #include "ibrush.h"
 #include "ipatch.h"
 #include "iorthocontextmenu.h"
@@ -61,6 +64,7 @@
 #include "ui/brush/FindBrush.h"
 #include "ui/mousetool/RegistrationHelper.h"
 #include "ui/mapselector/MapSelector.h"
+#include "ui/merge/MergeControlDialog.h"
 #include "ui/PointFileChooser.h"
 
 #include <wx/version.h>
@@ -83,7 +87,7 @@ namespace
 
 const std::string& UserInterfaceModule::getName() const
 {
-	static std::string _name("UserInterfaceModule");
+	static std::string _name(MODULE_USERINTERFACE);
 	return _name;
 }
 
@@ -99,7 +103,8 @@ const StringSet& UserInterfaceModule::getDependencies() const
         MODULE_RADIANT_CORE,
         MODULE_MRU_MANAGER,
         MODULE_MAINFRAME,
-        MODULE_MOUSETOOLMANAGER
+        MODULE_MOUSETOOLMANAGER,
+        MODULE_MAP
     };
 
 	return _dependencies;
@@ -217,6 +222,10 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
 	MouseToolRegistrationHelper::RegisterTools();
 
 	wxTheApp->Bind(DISPATCH_EVENT, &UserInterfaceModule::onDispatchEvent, this);
+
+    _mapEditModeChangedConn = GlobalMapModule().signal_editModeChanged().connect(
+        sigc::ptr_fun(&MergeControlDialog::OnMapEditModeChanged)
+    );
 }
 
 void UserInterfaceModule::shutdownModule()
@@ -229,6 +238,7 @@ void UserInterfaceModule::shutdownModule()
 
 	_coloursUpdatedConn.disconnect();
 	_entitySettingsConn.disconnect();
+    _mapEditModeChangedConn.disconnect();
 
 	_longOperationHandler.reset();
 	_mapFileProgressHandler.reset();
@@ -364,6 +374,7 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addCommand("ToggleLightInspector", LightInspector::toggleInspector);
 	GlobalCommandSystem().addCommand("SurfaceInspector", SurfaceInspector::toggle);
 	GlobalCommandSystem().addCommand("PatchInspector", PatchInspector::toggle);
+	GlobalCommandSystem().addCommand("MergeControlDialog", MergeControlDialog::ShowDialog);
 	GlobalCommandSystem().addCommand("OverlayDialog", OverlayDialog::toggle);
 	GlobalCommandSystem().addCommand("TransformDialog", TransformDialog::toggle);
     GlobalCommandSystem().addCommand("ChooseAndTogglePointfile",

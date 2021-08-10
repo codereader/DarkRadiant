@@ -242,20 +242,43 @@ void Namespace::nameChanged(const std::string& oldName, const std::string& newNa
     }
 }
 
-void Namespace::ensureNoConflicts(const scene::INodePtr& root)
+void Namespace::ensureNoConflicts(const scene::INodePtr& foreignRoot)
+{
+    // Collect all namespaced items from the foreign root
+    GatherNamespacedWalker walker;
+    foreignRoot->traverse(walker);
+
+    ensureNoConflicts(foreignRoot, walker.result);
+}
+
+void Namespace::ensureNoConflicts(const scene::INodePtr& foreignRoot, const std::set<scene::INodePtr>& foreignNodes)
+{
+    // Filter out all namespaced items from the given scene node list
+    std::set<NamespacedPtr> foreignItems;
+
+    for (const auto& node : foreignNodes)
+    {
+        auto namespaced = Node_getNamespaced(node);
+
+        if (namespaced)
+        {
+            foreignItems.emplace(std::move(namespaced));
+        }
+    }
+
+    ensureNoConflicts(foreignRoot, foreignItems);
+}
+
+void Namespace::ensureNoConflicts(const scene::INodePtr& foreignRoot, const std::set<NamespacedPtr>& foreignNodes)
 {
     // Instantiate a new, temporary namespace for the nodes below root
     Namespace foreignNamespace;
 
     // Move all nodes below (and including) root into this temporary namespace
-    foreignNamespace.connect(root);
+    foreignNamespace.connect(foreignRoot);
 
-    // Collect all namespaced items from the foreign root
-    GatherNamespacedWalker walker;
-    root->traverse(walker);
-
-    rDebug() << "Namespace::ensureNoConflicts(): imported set of "
-             << walker.result.size() << " namespaced nodes" << std::endl;
+    rDebug() << "Namespace::ensureNoConflicts(): importing set of "
+        << foreignNodes.size() << " namespaced nodes" << std::endl;
 
     // Build a union set containing all imported names and all existing names.
     // We need to know all existing names to ensure that newly created names are
@@ -265,29 +288,29 @@ void Namespace::ensureNoConflicts(const scene::INodePtr& root)
 
     // Process each object in the to-be-imported tree of nodes, ensuring that it
     // has a unique name
-    for (const NamespacedPtr& n : walker.result)
+    for (const auto& foreignNode : foreignNodes)
     {
         // If the imported node conflicts with a name in THIS namespace, then it
         // needs to be given a new name which is unique in BOTH namespaces.
-        if (_uniqueNames.nameExists(n->getName()))
+        if (_uniqueNames.nameExists(foreignNode->getName()))
         {
             // Name exists in the target namespace, get a new name
-            std::string uniqueName = allNames.insertUnique(n->getName());
+            std::string uniqueName = allNames.insertUnique(foreignNode->getName());
 
-            rMessage() << "Namespace::ensureNoConflicts(): '" << n->getName()
-                       << "' already exists in this namespace. Rename it to '"
-                       << uniqueName << "'\n";
+            rMessage() << "Namespace::ensureNoConflicts(): '" << foreignNode->getName()
+                << "' already exists in this namespace. Rename it to '"
+                << uniqueName << "'\n";
 
             // Change the name of the imported node, this should trigger all
             // observers in the foreign namespace
-            n->changeName(uniqueName);
+            foreignNode->changeName(uniqueName);
         }
         else
         {
             // Name does not exist yet, insert it into the local combined
             // namespace (but not our destination namespace, this will be
             // populated in the subsequent call to connect()).
-            allNames.insert(n->getName());
+            allNames.insert(foreignNode->getName());
         }
     }
 
@@ -296,5 +319,5 @@ void Namespace::ensureNoConflicts(const scene::INodePtr& root)
     // nodes into this namespace without name conflicts
 
     // Disconnect the root from the foreign namespace again, it will be destroyed now
-    foreignNamespace.disconnect(root);
+    foreignNamespace.disconnect(foreignRoot);
 }

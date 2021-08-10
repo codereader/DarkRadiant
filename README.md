@@ -62,6 +62,7 @@ To compile DarkRadiant, a number of libraries (with development headers) and a s
 * libvorbis-dev
 * libgtest-dev
 * libeigen3-dev
+* libgit2-dev (optional)
 
 This does not include core development tools such as g++ or the git client
 to download the sources (use sudo apt-get install git for that). One possible set of packages might be:

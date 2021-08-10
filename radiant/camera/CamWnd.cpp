@@ -73,6 +73,7 @@ CamWnd::CamWnd(wxWindow* parent) :
     _view(true),
     _camera(GlobalCameraManager().createCamera(_view, std::bind(&CamWnd::requestRedraw, this, std::placeholders::_1))),
     _drawing(false),
+    _updateRequested(false),
     _wxGLWidget(new wxutil::GLWidget(_mainWxWidget, std::bind(&CamWnd::onRender, this), "CamWnd")),
     _timer(this),
     _timerLock(false),
@@ -85,6 +86,7 @@ CamWnd::CamWnd(wxWindow* parent) :
 {
     Bind(wxEVT_TIMER, &CamWnd::onFrame, this, _timer.GetId());
     Bind(wxEVT_TIMER, &CamWnd::onFreeMoveTimer, this, _freeMoveTimer.GetId());
+    _wxGLWidget->Bind(wxEVT_IDLE, &CamWnd::onIdle, this);
 
     setFarClipPlaneDistance(calculateFarPlaneDistance(getCameraSettings()->cubicScale()));
     setFarClipPlaneEnabled(getCameraSettings()->farClipEnabled());
@@ -777,8 +779,7 @@ void CamWnd::Cam_Draw()
     // Main scene render
     {
         // Front end (renderable collection from scene)
-        render::CamRenderer renderer(_view, _primitiveHighlightShader.get(),
-                                     _faceHighlightShader.get());
+        render::CamRenderer renderer(_view, _shaders);
         render::RenderableCollectionWalker::CollectRenderablesInScene(renderer, _view);
 
         // Accumulate render statistics
@@ -957,22 +958,34 @@ camera::ICameraView& CamWnd::getCamera()
 
 void CamWnd::captureStates()
 {
-    _faceHighlightShader = GlobalRenderSystem().capture("$CAM_HIGHLIGHT");
-    _primitiveHighlightShader = GlobalRenderSystem().capture("$CAM_OVERLAY");
+    _shaders.faceHighlightShader = GlobalRenderSystem().capture("$CAM_HIGHLIGHT");
+    _shaders.primitiveHighlightShader = GlobalRenderSystem().capture("$CAM_OVERLAY");
+    _shaders.mergeActionShaderAdd = GlobalRenderSystem().capture("$MERGE_ACTION_ADD");
+    _shaders.mergeActionShaderChange = GlobalRenderSystem().capture("$MERGE_ACTION_CHANGE");
+    _shaders.mergeActionShaderRemove = GlobalRenderSystem().capture("$MERGE_ACTION_REMOVE");
+    _shaders.mergeActionShaderConflict = GlobalRenderSystem().capture("$MERGE_ACTION_CONFLICT");
 }
 
-void CamWnd::releaseStates() {
-    _faceHighlightShader = ShaderPtr();
-    _primitiveHighlightShader = ShaderPtr();
+void CamWnd::releaseStates() 
+{
+    _shaders.faceHighlightShader.reset();
+    _shaders.primitiveHighlightShader.reset();
+    _shaders.mergeActionShaderAdd.reset();
+    _shaders.mergeActionShaderChange.reset();
+    _shaders.mergeActionShaderRemove.reset();
+    _shaders.mergeActionShaderConflict.reset();
 }
 
 void CamWnd::queueDraw()
 {
-    if (_drawing)
-    {
-        return;
-    }
+    _updateRequested = true;
+}
 
+void CamWnd::onIdle(wxIdleEvent& ev)
+{
+    if (!_updateRequested) return;
+
+    _updateRequested = false;
     _wxGLWidget->Refresh(false);
 }
 
@@ -1378,8 +1391,7 @@ void CamWnd::rotateRightDiscrete()
 
 // -------------------------------------------------------------------------------
 
-ShaderPtr CamWnd::_faceHighlightShader;
-ShaderPtr CamWnd::_primitiveHighlightShader;
+render::CamRenderer::HighlightShaders CamWnd::_shaders;
 int CamWnd::_maxId = 0;
 
 } // namespace

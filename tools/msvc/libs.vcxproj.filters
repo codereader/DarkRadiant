@@ -293,6 +293,13 @@
     <ClInclude Include="..\..\libs\render\VertexHashing.h">
       <Filter>render</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\VersionControlLib.h" />
+    <ClInclude Include="..\..\libs\stream\VcsMapResourceStream.h">
+      <Filter>stream</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\selection\SelectedPlaneSet.h">
+      <Filter>selection</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

@@ -49,6 +49,15 @@ public:
 
 		_context = _tempContext;
 		_tempContext = nullptr;
+
+        // Initialise the openGL function pointers
+        auto err = glewInit();
+
+        if (err != GLEW_OK)
+        {
+            // glewInit failed
+            rError() << "GLEW error: " << reinterpret_cast<const char*>(glewGetErrorString(err));
+        }
 	}
 
 	~HeadlessOpenGLContext()

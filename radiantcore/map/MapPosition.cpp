@@ -2,6 +2,7 @@
 
 #include "ientity.h"
 #include "icameraview.h"
+#include "icommandsystem.h"
 #include "itextstream.h"
 #include "string/string.h"
 #include "map/Map.h"
@@ -149,7 +150,7 @@ void MapPosition::recall(const cmd::ArgumentList& args)
         rMessage() << "Restoring map position #" << _index << std::endl;
 
         // Focus the view with the default angle
-        Map::focusViews(_position, _angle);
+        GlobalCommandSystem().executeCommand("FocusViews", cmd::ArgumentList{ _position, _angle });
     }
     else
     {

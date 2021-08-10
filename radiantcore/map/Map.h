@@ -18,6 +18,8 @@
 
 #include <sigc++/signal.h>
 #include "time/StopWatch.h"
+#include "scene/merge/MergeOperation.h"
+#include "scene/merge/MergeActionNode.h"
 
 class TextInputStream;
 
@@ -32,6 +34,9 @@ class Map :
 	public IMap,
 	public scene::Graph::Observer
 {
+private:
+    EditMode _editMode;
+
 	// The map name
 	std::string _mapName;
 
@@ -40,6 +45,7 @@ class Map :
 
 	sigc::signal<void> _mapNameChangedSignal;
 	sigc::signal<void> _mapModifiedChangedSignal;
+	sigc::signal<void, EditMode> _mapEditModeChangedSignal;
 
 	// Pointer to the resource for this map
 	IMapResourcePtr _resource;
@@ -62,6 +68,10 @@ class Map :
 	MapEventSignal _mapEvent;
 	std::size_t _shutdownListener;
 
+    scene::merge::IMergeOperation::Ptr _mergeOperation;
+    std::list<scene::MergeActionNodeBase::Ptr> _mergeActionNodes;
+    sigc::connection _mergeOperationListener;
+
     // Point trace for leak detection
     std::unique_ptr<PointFile> _pointTrace;
 
@@ -72,6 +82,12 @@ public:
 	Map();
 
 	MapEventSignal signal_mapEvent() const override;
+
+    EditMode getEditMode() override;
+    void setEditMode(EditMode mode) override;
+
+    sigc::signal<void, EditMode>& signal_editModeChanged() override;
+
 	const scene::INodePtr& getWorldspawn() override;
 	const scene::INodePtr& findOrInsertWorldspawn() override;
 	scene::IMapRootNodePtr getRoot() override;
@@ -154,6 +170,12 @@ public:
 	void exportSelected(std::ostream& out) override;
 	void exportSelected(std::ostream& out, const MapFormatPtr& format) override;
 
+    void startMergeOperation(const std::string& sourceMap) override;
+    void startMergeOperation(const std::string& sourceMap, const std::string& baseMap) override;
+    void finishMergeOperation() override;
+    void abortMergeOperation() override;
+    scene::merge::IMergeOperation::Ptr getActiveMergeOperation() override;
+
 	// free all map elements, reinitialize the structures that depend on them
 	void freeMap();
 
@@ -178,10 +200,6 @@ public:
 	/** greebo: Returns the map format for this map
 	 */
 	MapFormatPtr getFormat();
-
-	/** greebo: Focus the XYViews and the Camera to the given point/angle.
-	 */
-	static void focusViews(const Vector3& point, const Vector3& angles);
 
 	/** greebo: Registers the commands with the EventManager.
 	 */
@@ -243,11 +261,25 @@ private:
 	void loadMapResourceFromPath(const std::string& path);
 	void loadMapResourceFromArchive(const std::string& archive, const std::string& archiveRelativePath);
 
+    void startMergeOperationCmd(const cmd::ArgumentList& args);
+    void abortMergeOperationCmd(const cmd::ArgumentList& args);
+    void finishMergeOperationCmd(const cmd::ArgumentList& args);
+
+    void createMergeActions();
+    void prepareMergeOperation();
+    void onMergeActionAdded(const scene::merge::IMergeAction::Ptr& action);
+
 	void emitMapEvent(MapEvent ev);
 
 	void clearMapResource();
 
-}; // class Map
+    void cleanupMergeOperation();
+
+    /** greebo: Focus the XYViews and the Camera to the given point/angle.
+     */
+    void focusViews(const Vector3& point, const Vector3& angles);
+    void focusViewCmd(const cmd::ArgumentList& args);
+};
 
 } // namespace map
 

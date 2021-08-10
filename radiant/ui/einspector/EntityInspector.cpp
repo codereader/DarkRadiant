@@ -8,6 +8,7 @@
 #include "iregistry.h"
 #include "ieventmanager.h"
 #include "igame.h"
+#include "imap.h"
 #include "iundo.h"
 #include "igroupdialog.h"
 #include "imainframe.h"
@@ -17,9 +18,11 @@
 #include "selectionlib.h"
 #include "scene/SelectionIndex.h"
 #include "scenelib.h"
+#include "eclass.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/menu/IconTextMenuItem.h"
 #include "wxutil/dataview/TreeModel.h"
+#include "wxutil/dataview/TreeViewItemStyle.h"
 #include "xmlutil/Document.h"
 
 #include <map>
@@ -61,8 +64,13 @@ EntityInspector::EntityInspector() :
     _showHelpColumnCheckbox(nullptr),
     _primitiveNumLabel(nullptr),
     _keyValueTreeView(nullptr),
+    _booleanColumn(nullptr),
+    _valueColumn(nullptr),
+    _oldValueColumn(nullptr),
+    _newValueColumn(nullptr),
     _keyEntry(nullptr),
-    _valEntry(nullptr)
+    _valEntry(nullptr),
+    _setButton(nullptr)
 {}
 
 void EntityInspector::construct()
@@ -133,6 +141,10 @@ void EntityInspector::construct()
     // Register self to the SelectionSystem to get notified upon selection
     // changes.
     GlobalSelectionSystem().addObserver(this);
+    
+    _defsReloadedHandler = GlobalEntityClassManager().defsReloadedSignal().connect(
+        sigc::mem_fun(this, &EntityInspector::onDefsReloaded)
+    );
 
     // Observe the Undo system for undo/redo operations, to refresh the
     // keyvalues when this happens
@@ -140,6 +152,10 @@ void EntityInspector::construct()
         sigc::mem_fun(this, &EntityInspector::onUndoRedoOperation));
     _redoHandler = GlobalUndoSystem().signal_postRedo().connect(
         sigc::mem_fun(this, &EntityInspector::onUndoRedoOperation));
+
+    _mapEditModeChangedHandler = GlobalMapModule().signal_editModeChanged().connect(
+        sigc::mem_fun(this, &EntityInspector::onMapEditModeChanged)
+    );
 
     // initialise the properties
     loadPropertyMap();
@@ -159,6 +175,13 @@ void EntityInspector::restoreSettings()
     }
 }
 
+void EntityInspector::onMapEditModeChanged(IMap::EditMode mode)
+{
+    // Clear the selection to not hold any references to merge nodes
+    changeSelectedEntity(scene::INodePtr(), scene::INodePtr());
+    requestIdleCallback();
+}
+
 // Entity::Observer implementation
 
 void EntityInspector::onKeyInsert(const std::string& key,
@@ -175,7 +198,7 @@ void EntityInspector::onKeyChange(const std::string& key,
 
     // Check if we already have an iter for this key (i.e. this is a
     // modification).
-    TreeIterMap::const_iterator i = _keyValueIterMap.find(key);
+    auto i = _keyValueIterMap.find(key);
 
     if (i != _keyValueIterMap.end())
     {
@@ -212,6 +235,35 @@ void EntityInspector::onKeyChange(const std::string& key,
     // Set the values for the row
     wxutil::TreeModel::Row row(keyValueIter, *_kvStore);
 
+    wxDataViewItemAttr style;
+
+    // Check if this key is affected by a merge operation
+    auto action = _mergeActions.find(key);
+
+    if (action != _mergeActions.end())
+    {
+        switch (action->second->getType())
+        {
+        case scene::merge::ActionType::AddKeyValue:
+            wxutil::TreeViewItemStyle::ApplyKeyValueAddedStyle(style);
+            break;
+        case scene::merge::ActionType::ChangeKeyValue:
+            wxutil::TreeViewItemStyle::ApplyKeyValueChangedStyle(style);
+            break;
+        case scene::merge::ActionType::RemoveKeyValue:
+            wxutil::TreeViewItemStyle::ApplyKeyValueRemovedStyle(style);
+            break;
+        }
+    }
+
+    // Conflicting actions get a special render style
+    auto conflict = _conflictActions.find(key);
+
+    if (conflict != _conflictActions.end() && conflict->second->getResolution() == scene::merge::ResolutionType::Unresolved)
+    {
+        wxutil::TreeViewItemStyle::ApplyKeyValueConflictStyle(style);
+    }
+
     wxIcon icon;
     icon.CopyFromBitmap(parms.type.empty() ? _emptyIcon : PropertyEditorFactory::getBitmapFor(parms.type));
 
@@ -232,8 +284,41 @@ void EntityInspector::onKeyChange(const std::string& key,
         row[_columns.booleanValue].setEnabled(false);
     }
 
+    if (action != _mergeActions.end())
+    {
+        if (action->second->getType() == scene::merge::ActionType::AddKeyValue)
+        {
+            row[_columns.oldValue] = std::string(); // no old value to show
+            row[_columns.oldValue] = style;
+        }
+        else
+        {
+            wxDataViewItemAttr oldAttr = style;
+            wxutil::TreeViewItemStyle::SetStrikethrough(oldAttr, true);
+            row[_columns.oldValue] = value;
+            row[_columns.oldValue] = oldAttr;
+        }
+
+        row[_columns.newValue] = action->second->getValue();
+
+        wxDataViewItemAttr newAttr = style;
+        newAttr.SetBold(true);
+
+        row[_columns.newValue] = newAttr;
+    }
+    else
+    {
+        row[_columns.oldValue] = std::string();
+        row[_columns.newValue] = std::string();
+    }
+
+    // Apply background style to all other columns
+    row[_columns.name] = style;
+    row[_columns.value] = style;
+    row[_columns.booleanValue] = style;
+
     row[_columns.isInherited] = false;
-    row[_columns.hasHelpText] = hasDescription;
+    row[_columns.hasHelpText] = key == "classname" || hasDescription; // classname always has a description
 
     if (added)
     {
@@ -317,6 +402,22 @@ void EntityInspector::createContextMenu()
         std::bind(&EntityInspector::_onPasteKey, this),
         std::bind(&EntityInspector::_testPasteKey, this)
     );
+
+    _contextMenu->addSeparator();
+
+    _contextMenu->addItem(
+        new wxutil::StockIconTextMenuItem(_("Accept selected Changes"), wxART_TICK_MARK),
+        std::bind(&EntityInspector::_onAcceptMergeAction, this),
+        std::bind(&EntityInspector::_testAcceptMergeAction, this),
+        [] { return GlobalMapModule().getEditMode() == IMap::EditMode::Merge; }
+    );
+
+    _contextMenu->addItem(
+        new wxutil::StockIconTextMenuItem(_("Reject selected Changes"), wxART_UNDO),
+        std::bind(&EntityInspector::_onRejectMergeAction, this),
+        std::bind(&EntityInspector::_testRejectMergeAction, this),
+        [] { return GlobalMapModule().getEditMode() == IMap::EditMode::Merge; }
+    );
 }
 
 void EntityInspector::onMainFrameConstructed()
@@ -336,8 +437,13 @@ void EntityInspector::onMainFrameConstructed()
 
 void EntityInspector::onMainFrameShuttingDown()
 {
+    _mergeActions.clear();
+    _conflictActions.clear();
+
+    _mapEditModeChangedHandler.disconnect();
     _undoHandler.disconnect();
     _redoHandler.disconnect();
+    _defsReloadedHandler.disconnect();
 
     // Remove all previously stored pane information
     _panedPosition.saveToPath(RKEY_PANE_STATE);
@@ -349,8 +455,18 @@ void EntityInspector::onMainFrameShuttingDown()
 
 void EntityInspector::onUndoRedoOperation()
 {
+    refresh();
+}
+
+void EntityInspector::onDefsReloaded()
+{
+    refresh();
+}
+
+void EntityInspector::refresh()
+{
     // Clear the previous entity (detaches this class as observer)
-    changeSelectedEntity(nullptr);
+    changeSelectedEntity(scene::INodePtr(), scene::INodePtr());
 
     // Now rescan the selection and update the stores
     requestIdleCallback();
@@ -435,13 +551,14 @@ wxWindow* EntityInspector::createTreeViewPane(wxWindow* parent)
     _kvStore = new wxutil::TreeModel(_columns, true); // this is a list model
 
     _keyValueTreeView = wxutil::TreeView::CreateWithModel(treeViewPanel, _kvStore.get(), wxDV_MULTIPLE);
+    _keyValueTreeView->EnableAutoColumnWidthFix(true);
 
     // Search in both name and value columns
     _keyValueTreeView->AddSearchColumn(_columns.name);
     _keyValueTreeView->AddSearchColumn(_columns.value);
 
     // Add the checkbox for boolean properties
-    _keyValueTreeView->AppendToggleColumn("", _columns.booleanValue.getColumnIndex(),
+    _booleanColumn = _keyValueTreeView->AppendToggleColumn("", _columns.booleanValue.getColumnIndex(),
         wxDATAVIEW_CELL_ACTIVATABLE, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
 
     // Create the Property column (has an icon)
@@ -450,20 +567,24 @@ wxWindow* EntityInspector::createTreeViewPane(wxWindow* parent)
         wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_SORTABLE);
 
     // Create the value column
-    _keyValueTreeView->AppendTextColumn(_("Value"),
+    _valueColumn = _keyValueTreeView->AppendTextColumn(_("Value"),
         _columns.value.getColumnIndex(), wxDATAVIEW_CELL_INERT,
         wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_SORTABLE);
 
+    _oldValueColumn = _keyValueTreeView->AppendTextColumn(_("Old Value"),
+        _columns.oldValue.getColumnIndex(), wxDATAVIEW_CELL_INERT,
+        wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_SORTABLE);
+    _newValueColumn = _keyValueTreeView->AppendTextColumn(_("New Value"),
+        _columns.newValue.getColumnIndex(), wxDATAVIEW_CELL_INERT,
+        wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_RESIZABLE | wxDATAVIEW_COL_SORTABLE);
+
     // Used to update the help text
-    _keyValueTreeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED,
-        wxDataViewEventHandler(EntityInspector::_onTreeViewSelectionChanged), NULL, this);
-    _keyValueTreeView->Connect(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU,
-        wxDataViewEventHandler(EntityInspector::_onContextMenu), NULL, this);
+    _keyValueTreeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &EntityInspector::_onTreeViewSelectionChanged, this);
+    _keyValueTreeView->Bind(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, &EntityInspector::_onContextMenu, this);
 
     // When the toggle column is clicked to check/uncheck the box, the model's column value
     // is directly changed by the wxWidgets event handlers. On model value change, this event is fired afterwards
-    _keyValueTreeView->Connect(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED,
-        wxDataViewEventHandler(EntityInspector::_onDataViewItemChanged), NULL, this);
+    _keyValueTreeView->Bind(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED, &EntityInspector::_onDataViewItemChanged, this);
 
     wxBoxSizer* buttonHbox = new wxBoxSizer(wxHORIZONTAL);
 
@@ -472,18 +593,18 @@ wxWindow* EntityInspector::createTreeViewPane(wxWindow* parent)
     _valEntry = new wxTextCtrl(treeViewPanel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
 
     wxBitmap icon = wxArtProvider::GetBitmap(wxART_TICK_MARK, wxART_MENU);
-    wxBitmapButton* setButton = new wxBitmapButton(treeViewPanel, wxID_APPLY, icon);
+    _setButton = new wxBitmapButton(treeViewPanel, wxID_APPLY, icon);
 
     buttonHbox->Add(_valEntry, 1, wxEXPAND);
-    buttonHbox->Add(setButton, 0, wxEXPAND);
+    buttonHbox->Add(_setButton, 0, wxEXPAND);
 
     treeViewPanel->GetSizer()->Add(_keyValueTreeView, 1, wxEXPAND);
     treeViewPanel->GetSizer()->Add(_keyEntry, 0, wxEXPAND);
     treeViewPanel->GetSizer()->Add(buttonHbox, 0, wxEXPAND);
 
-    setButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(EntityInspector::_onSetProperty), NULL, this);
-    _keyEntry->Connect(wxEVT_TEXT_ENTER, wxCommandEventHandler(EntityInspector::_onEntryActivate), NULL, this);
-    _valEntry->Connect(wxEVT_TEXT_ENTER, wxCommandEventHandler(EntityInspector::_onEntryActivate), NULL, this);
+    _setButton->Bind(wxEVT_BUTTON, &EntityInspector::_onSetProperty, this);
+    _keyEntry->Bind(wxEVT_TEXT_ENTER, &EntityInspector::_onEntryActivate, this);
+    _valEntry->Bind(wxEVT_TEXT_ENTER, &EntityInspector::_onEntryActivate, this);
 
     return treeViewPanel;
 }
@@ -545,21 +666,43 @@ bool EntityInspector::getListSelectionBool(const wxutil::TreeModel::Column& col)
     return row[col].getBool();
 }
 
+bool EntityInspector::canUpdateEntity()
+{
+    return GlobalMapModule().getEditMode() != IMap::EditMode::Merge;
+}
+
 // Redraw the GUI elements
 void EntityInspector::updateGUIElements()
 {
     // Update from selection system
     getEntityFromSelectionSystem();
 
+    auto entityCanBeUpdated = canUpdateEntity();
+
+    auto isMergeMode = GlobalMapModule().getEditMode() == IMap::EditMode::Merge;
+    _oldValueColumn->SetHidden(!isMergeMode);
+    _newValueColumn->SetHidden(!isMergeMode);
+
+    // Set the value column back to the default AUTO setting
+    _valueColumn->SetWidth(wxCOL_WIDTH_AUTOSIZE);
+
     if (!_selectedEntity.expired())
     {
-        _editorFrame->Enable(true);
+        _editorFrame->Enable(entityCanBeUpdated);
         _keyValueTreeView->Enable(true);
         _showInheritedCheckbox->Enable(true);
         _showHelpColumnCheckbox->Enable(true);
+        _keyEntry->Enable(entityCanBeUpdated);
+        _valEntry->Enable(entityCanBeUpdated);
+        _setButton->Enable(entityCanBeUpdated);
+        _booleanColumn->GetRenderer()->SetMode(entityCanBeUpdated ? wxDATAVIEW_CELL_ACTIVATABLE : wxDATAVIEW_CELL_INERT);
 
+        if (!entityCanBeUpdated)
+        {
+            _currentPropertyEditor.reset();
+        }
 		// Update the target entity on any active property editor (#5092)
-		if (_currentPropertyEditor)
+        else if (_currentPropertyEditor)
 		{
 			auto newEntity = Node_getEntity(_selectedEntity.lock());
 			assert(newEntity != nullptr);
@@ -672,7 +815,7 @@ void EntityInspector::_onAddKey()
 
 bool EntityInspector::_testAddKey()
 {
-    return !_selectedEntity.expired();
+    return !_selectedEntity.expired() && canUpdateEntity();
 }
 
 void EntityInspector::_onDeleteKey()
@@ -721,7 +864,7 @@ void EntityInspector::_onCopyKey()
 
     if (selectedItems.Count() == 0) return;
 
-    _clipBoard.clear();
+    _clipboard.clear();
 
     for (const wxDataViewItem& item : selectedItems)
     {
@@ -732,7 +875,7 @@ void EntityInspector::_onCopyKey()
         std::string key = iconAndName.GetText().ToStdString();
         std::string value = row[_columns.value];
 
-        _clipBoard.emplace_back(key, value);
+        _clipboard.emplace_back(key, value);
     }
 }
 
@@ -751,7 +894,7 @@ void EntityInspector::_onCutKey()
     assert(!_selectedEntity.expired());
     Entity* selectedEntity = Node_getEntity(_selectedEntity.lock());
 
-    _clipBoard.clear();
+    _clipboard.clear();
     std::unique_ptr<UndoableCommand> cmd;
 
     for (const wxDataViewItem& item : selectedItems)
@@ -772,7 +915,7 @@ void EntityInspector::_onCutKey()
         auto key = iconAndName.GetText().ToStdString();
         auto value = row[_columns.value];
 
-        _clipBoard.emplace_back(key, value);
+        _clipboard.emplace_back(key, value);
 
         // Clear the key after copying
         selectedEntity->setKeyValue(key, "");
@@ -795,7 +938,7 @@ bool EntityInspector::isItemDeletable(const wxutil::TreeModel::Row& row)
 
 bool EntityInspector::_testNonEmptyAndDeletableSelection()
 {
-    if (_selectedEntity.expired()) return false;
+    if (_selectedEntity.expired() || !canUpdateEntity()) return false;
 
     wxDataViewItemArray selectedItems;
     _keyValueTreeView->GetSelections(selectedItems);
@@ -824,7 +967,7 @@ void EntityInspector::_onPasteKey()
     // greebo: Instantiate a scoped object to make this operation undoable
     UndoableCommand command("entitySetProperties");
 
-    for (const KeyValuePair& kv : _clipBoard)
+    for (const KeyValuePair& kv : _clipboard)
     {
         // skip empty entries
         if (kv.first.empty() || kv.second.empty()) continue;
@@ -843,7 +986,141 @@ bool EntityInspector::_testPasteKey()
     }
 
     // Return true if the clipboard contains data
-    return !_clipBoard.empty();
+    return !_clipboard.empty() && canUpdateEntity();
+}
+
+void EntityInspector::_onAcceptMergeAction()
+{
+    wxDataViewItemArray selectedItems;
+    _keyValueTreeView->GetSelections(selectedItems);
+
+    for (const wxDataViewItem& item : selectedItems)
+    {
+        wxutil::TreeModel::Row row(item, *_kvStore);
+
+        auto key = row[_columns.name].getString().ToStdString();
+
+        auto conflict = _conflictActions.find(key);
+
+        if (conflict != _conflictActions.end())
+        {
+            conflict->second->setResolution(scene::merge::ResolutionType::ApplySourceChange);
+        }
+    }
+
+    // We perform a full refresh of the view
+    changeSelectedEntity(scene::INodePtr(), scene::INodePtr());
+    getEntityFromSelectionSystem();
+}
+
+void EntityInspector::_onRejectMergeAction()
+{
+    wxDataViewItemArray selectedItems;
+    _keyValueTreeView->GetSelections(selectedItems);
+
+    for (const wxDataViewItem& item : selectedItems)
+    {
+        wxutil::TreeModel::Row row(item, *_kvStore);
+
+        auto key = row[_columns.name].getString().ToStdString();
+        
+        auto conflict = _conflictActions.find(key);
+
+        if (conflict != _conflictActions.end())
+        {
+            conflict->second->setResolution(scene::merge::ResolutionType::RejectSourceChange);
+            // Deactivate the conflict action itself too, such that the node can be removed once the last action is gone
+            conflict->second->deactivate();
+        }
+
+        auto action = _mergeActions.find(key);
+        
+        if (action != _mergeActions.end())
+        {
+            action->second->deactivate();
+        }
+    }
+
+    // Check if the merge node is now completely empty, then remove it from the scene
+    // A single entity must be selected
+    if (GlobalSelectionSystem().countSelected() == 1)
+    {
+        auto selectedNode = GlobalSelectionSystem().ultimateSelected();
+
+        if (selectedNode && selectedNode->getNodeType() == scene::INode::Type::MergeAction)
+        {
+            auto mergeNode = std::dynamic_pointer_cast<scene::IMergeActionNode>(selectedNode);
+            assert(mergeNode);
+
+            if (!mergeNode->hasActiveActions())
+            {
+                // Remove this node from the scene, it's empty now
+                scene::removeNodeFromParent(mergeNode);
+            }
+        }
+    }
+
+    // We perform a full refresh of the view
+    changeSelectedEntity(scene::INodePtr(), scene::INodePtr());
+    getEntityFromSelectionSystem();
+}
+
+bool EntityInspector::_testAcceptMergeAction()
+{
+    if (GlobalMapModule().getEditMode() != IMap::EditMode::Merge)
+    {
+        return false;
+    }
+
+    wxDataViewItemArray selectedItems;
+    _keyValueTreeView->GetSelections(selectedItems);
+
+    for (const wxDataViewItem& item : selectedItems)
+    {
+        wxutil::TreeModel::Row row(item, *_kvStore);
+
+        if (isItemAffecedByMergeConflict(row))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool EntityInspector::_testRejectMergeAction()
+{
+    if (GlobalMapModule().getEditMode() != IMap::EditMode::Merge)
+    {
+        return false;
+    }
+
+    wxDataViewItemArray selectedItems;
+    _keyValueTreeView->GetSelections(selectedItems);
+
+    for (const wxDataViewItem& item : selectedItems)
+    {
+        wxutil::TreeModel::Row row(item, *_kvStore);
+
+        if (isItemAffecedByMergeOperation(row))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool EntityInspector::isItemAffecedByMergeConflict(const wxutil::TreeModel::Row& row)
+{
+    auto key = row[_columns.name].getString().ToStdString();
+    return _mergeActions.count(key) > 0 && _conflictActions.count(key) > 0;
+}
+
+bool EntityInspector::isItemAffecedByMergeOperation(const wxutil::TreeModel::Row& row)
+{
+    auto key = row[_columns.name].getString().ToStdString();
+    return _mergeActions.count(key) > 0 || _conflictActions.count(key) > 0;
 }
 
 // wxWidget callbacks
@@ -950,16 +1227,23 @@ void EntityInspector::updateHelpText(const wxutil::TreeModel::Row& row)
     // Get the key pointed at
     bool hasHelp = row[_columns.hasHelpText].getBool();
 
-    if (hasHelp)
+    if (!hasHelp) return;
+    
+    std::string key = getSelectedKey();
+
+    assert(!_selectedEntity.expired());
+    auto* selectedEntity = Node_getEntity(_selectedEntity.lock());
+
+    auto eclass = selectedEntity->getEntityClass();
+    assert(eclass);
+
+    if (key == "classname")
     {
-        std::string key = getSelectedKey();
-
-        assert(!_selectedEntity.expired());
-        Entity* selectedEntity = Node_getEntity(_selectedEntity.lock());
-
-        IEntityClassConstPtr eclass = selectedEntity->getEntityClass();
-        assert(eclass != NULL);
-
+        // #5621: Show the editor_usage string when the classname is selected
+        _helpText->SetValue(eclass::getUsage(*eclass));
+    }
+    else
+    {
         // Find the attribute on the eclass, that's where the descriptions are defined
         const EntityClassAttribute& attr = eclass->getAttribute(key);
 
@@ -1002,30 +1286,6 @@ void EntityInspector::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
         std::string key = getSelectedKey();
         std::string value = getListSelection(_columns.value);
 
-        // Get the type for this key if it exists, and the options
-        PropertyParms parms = getPropertyParmsForKey(key);
-
-        Entity* selectedEntity = Node_getEntity(_selectedEntity.lock());
-
-        // If the type was not found, also try looking on the entity class
-        if (parms.type.empty())
-        {
-            IEntityClassConstPtr eclass = selectedEntity->getEntityClass();
-            parms.type = eclass->getAttribute(key).getType();
-        }
-
-        // Construct and add a new PropertyEditor
-        _currentPropertyEditor = PropertyEditorFactory::create(_editorFrame,
-            parms.type, selectedEntity, key, parms.options);
-
-        if (_currentPropertyEditor)
-        {
-            // Don't use wxEXPAND to allow for horizontal centering, just add a 6 pixel border
-            // Using wxALIGN_CENTER_HORIZONTAL will position the property editor's panel in the middle
-            _editorFrame->GetSizer()->Add(_currentPropertyEditor->getWidget(), 1, wxALIGN_CENTER_HORIZONTAL | wxALL, 6);
-            _editorFrame->GetSizer()->Layout();
-        }
-
         // Update key and value entry boxes, but only if there is a key value. If
         // there is no selection we do not clear the boxes, to allow keyval copying
         // between entities.
@@ -1033,6 +1293,34 @@ void EntityInspector::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
         {
             _keyEntry->SetValue(key);
             _valEntry->SetValue(value);
+        }
+
+        // Update property editor, unless we're in merge mode
+        if (canUpdateEntity())
+        {
+            // Get the type for this key if it exists, and the options
+            PropertyParms parms = getPropertyParmsForKey(key);
+
+            Entity* selectedEntity = Node_getEntity(_selectedEntity.lock());
+
+            // If the type was not found, also try looking on the entity class
+            if (parms.type.empty())
+            {
+                IEntityClassConstPtr eclass = selectedEntity->getEntityClass();
+                parms.type = eclass->getAttribute(key).getType();
+            }
+
+            // Construct and add a new PropertyEditor
+            _currentPropertyEditor = PropertyEditorFactory::create(_editorFrame,
+                parms.type, selectedEntity, key, parms.options);
+
+            if (_currentPropertyEditor)
+            {
+                // Don't use wxEXPAND to allow for horizontal centering, just add a 6 pixel border
+                // Using wxALIGN_CENTER_HORIZONTAL will position the property editor's panel in the middle
+                _editorFrame->GetSizer()->Add(_currentPropertyEditor->getWidget(), 1, wxALIGN_CENTER_HORIZONTAL | wxALL, 6);
+                _editorFrame->GetSizer()->Layout();
+            }
         }
     }
     else if (selectedItems.Count() > 1)
@@ -1097,6 +1385,8 @@ void EntityInspector::addClassAttribute(const EntityClassAttribute& a)
 
         row[_columns.name] = grey;
         row[_columns.value] = grey;
+        row[_columns.oldValue] = std::string();
+        row[_columns.newValue] = std::string();
 
         row[_columns.isInherited] = true;
         row[_columns.hasHelpText] = hasDescription;
@@ -1151,18 +1441,18 @@ void EntityInspector::getEntityFromSelectionSystem()
     // A single entity must be selected
     if (GlobalSelectionSystem().countSelected() != 1)
     {
-        changeSelectedEntity(scene::INodePtr());
+        changeSelectedEntity(scene::INodePtr(), scene::INodePtr());
         _primitiveNumLabel->SetLabelText("");
         return;
     }
 
-    scene::INodePtr selectedNode = GlobalSelectionSystem().ultimateSelected();
+    auto selectedNode = GlobalSelectionSystem().ultimateSelected();
 
     // The root node must not be selected (this can happen if Invert Selection is
     // activated with an empty scene, or by direct selection in the entity list).
     if (selectedNode->isRoot())
     {
-        changeSelectedEntity(scene::INodePtr());
+        changeSelectedEntity(scene::INodePtr(), selectedNode);
         _primitiveNumLabel->SetLabelText("");
         return;
     }
@@ -1174,7 +1464,7 @@ void EntityInspector::getEntityFromSelectionSystem()
     if (newSelectedEntity)
     {
         // Node was an entity, use this
-        changeSelectedEntity(selectedNode);
+        changeSelectedEntity(selectedNode, selectedNode);
 
         // Just set the entity number
         auto indices = scene::getNodeIndices(selectedNode);
@@ -1183,9 +1473,30 @@ void EntityInspector::getEntityFromSelectionSystem()
     }
     else
     {
+        // Check if this is a special merge node
+        if (selectedNode->getNodeType() == scene::INode::Type::MergeAction &&
+            GlobalMapModule().getEditMode() == IMap::EditMode::Merge)
+        {
+            auto mergeAction = std::dynamic_pointer_cast<scene::IMergeActionNode>(selectedNode);
+            assert(mergeAction);
+
+            if (mergeAction && Node_isEntity(mergeAction->getAffectedNode()))
+            {
+                // Use the entity of the merge node
+                changeSelectedEntity(mergeAction->getAffectedNode(), selectedNode);
+                _primitiveNumLabel->SetLabelText(_("Merge Preview"));
+                return;
+            }
+        }
+
         // Node was not an entity, try parent instead
         scene::INodePtr selectedNodeParent = selectedNode->getParent();
-        changeSelectedEntity(selectedNodeParent);
+        changeSelectedEntity(selectedNodeParent, selectedNode);
+
+        if (!_selectedEntity.lock())
+        {
+            return;
+        }
 
         try
         {
@@ -1201,8 +1512,7 @@ void EntityInspector::getEntityFromSelectionSystem()
     }
 }
 
-// Change selected entity pointer
-void EntityInspector::changeSelectedEntity(const scene::INodePtr& newEntity)
+void EntityInspector::changeSelectedEntity(const scene::INodePtr& newEntity, const scene::INodePtr& selectedNode)
 {
     // Check what we need to do with the existing entity
     scene::INodePtr oldEntity = _selectedEntity.lock();
@@ -1231,14 +1541,19 @@ void EntityInspector::changeSelectedEntity(const scene::INodePtr& newEntity)
     // a chance to disconnect the list store might contain remnants
     _keyValueIterMap.clear();
     _kvStore->Clear();
+    _mergeActions.clear();
+    _conflictActions.clear();
 
     // Reset the sorting when changing entities
     _keyValueTreeView->ResetSortingOnAllColumns();
 
     // Attach to new entity if it is non-NULL
-    if (newEntity)
+    if (newEntity && newEntity->getNodeType() == scene::INode::Type::Entity)
     {
         _selectedEntity = newEntity;
+
+        // Any possible merge actions go in first
+        handleMergeActions(selectedNode);
 
         // Attach as observer to fill the listview
         Node_getEntity(newEntity)->attachObserver(this);
@@ -1249,6 +1564,71 @@ void EntityInspector::changeSelectedEntity(const scene::INodePtr& newEntity)
             addClassProperties();
         }
     }
+}
+
+void EntityInspector::handleKeyValueMergeAction(const scene::merge::IEntityKeyValueMergeAction::Ptr& mergeAction)
+{
+    // Remember this action in the map, it will be used in onKeyChange()
+    _mergeActions[mergeAction->getKey()] = mergeAction;
+
+    auto selectedEntity = _selectedEntity.lock();
+
+    // Keys added by a merge operation won't be handled in onKeyChange(), so do this here
+    if (mergeAction->getType() == scene::merge::ActionType::AddKeyValue ||
+        (mergeAction->getType() == scene::merge::ActionType::ChangeKeyValue && selectedEntity && 
+         Node_getEntity(selectedEntity)->getKeyValue(mergeAction->getKey()).empty()))
+    {
+        onKeyChange(mergeAction->getKey(), mergeAction->getValue());
+    }
+}
+
+void EntityInspector::handleMergeActions(const scene::INodePtr& selectedNode)
+{
+    // Any possible merge actions go in first
+    if (GlobalMapModule().getEditMode() != IMap::EditMode::Merge || !selectedNode ||
+        selectedNode->getNodeType() != scene::INode::Type::MergeAction)
+    {
+        return;
+    }
+
+    auto mergeNode = std::dynamic_pointer_cast<scene::IMergeActionNode>(selectedNode);
+
+    if (!mergeNode) return;
+    
+    mergeNode->foreachMergeAction([&](const scene::merge::IMergeAction::Ptr& action)
+    {
+        if (!action->isActive()) return; // don't apply inactive actions to our view
+
+        auto entityKeyValueAction = std::dynamic_pointer_cast<scene::merge::IEntityKeyValueMergeAction>(action);
+
+        if (entityKeyValueAction)
+        {
+            handleKeyValueMergeAction(entityKeyValueAction);
+        }
+
+        auto conflictAction = std::dynamic_pointer_cast<scene::merge::IConflictResolutionAction>(action);
+
+        if (conflictAction)
+        {
+            bool conflictIsUnresolved = conflictAction->getResolution() == scene::merge::ResolutionType::Unresolved;
+
+            if (conflictIsUnresolved || conflictAction->getResolution() == scene::merge::ResolutionType::ApplySourceChange)
+            {
+                auto sourceAction = std::dynamic_pointer_cast<scene::merge::IEntityKeyValueMergeAction>(conflictAction->getSourceAction());
+
+                if (sourceAction)
+                {
+                    handleKeyValueMergeAction(sourceAction);
+
+                    // Remember the conflict action if it's not yet resolved
+                    if (conflictIsUnresolved)
+                    {
+                        _conflictActions[sourceAction->getKey()] = conflictAction;
+                    }
+                }
+            }
+        }
+    });
 }
 
 void EntityInspector::toggle(const cmd::ArgumentList& args)

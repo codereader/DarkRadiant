@@ -4,7 +4,9 @@
 
 #include "ientityinspector.h"
 #include "iradiant.h"
+#include "imap.h"
 #include "icommandsystem.h"
+#include "imapmerge.h"
 #include "iselection.h"
 #include "ientity.h"
 #include "string/string.h"
@@ -27,6 +29,8 @@ class EntityClassAttribute;
 class wxCheckBox;
 class wxStaticText;
 class wxTextCtrl;
+class wxBitmapButton;
+class wxDataViewColumn;
 
 namespace ui
 {
@@ -55,7 +59,9 @@ public:
 			value(add(wxutil::TreeModel::Column::String)),
 			isInherited(add(wxutil::TreeModel::Column::Boolean)),
 			hasHelpText(add(wxutil::TreeModel::Column::Boolean)),
-			booleanValue(add(wxutil::TreeModel::Column::Boolean))
+			booleanValue(add(wxutil::TreeModel::Column::Boolean)),
+            oldValue(add(wxutil::TreeModel::Column::String)),
+            newValue(add(wxutil::TreeModel::Column::String))
 		{}
 
 		wxutil::TreeModel::Column name;
@@ -63,6 +69,8 @@ public:
 		wxutil::TreeModel::Column isInherited;
 		wxutil::TreeModel::Column hasHelpText;
 		wxutil::TreeModel::Column booleanValue;
+		wxutil::TreeModel::Column oldValue; // when displaying merge changes
+		wxutil::TreeModel::Column newValue; // when displaying merge changes
 	};
 
 private:
@@ -88,6 +96,10 @@ private:
 	wxutil::TreeView* _keyValueTreeView;
 	TreeColumns _columns;
 	wxutil::TreeModel::Ptr _kvStore;
+    wxDataViewColumn* _booleanColumn;
+    wxDataViewColumn* _valueColumn;
+    wxDataViewColumn* _oldValueColumn;
+    wxDataViewColumn* _newValueColumn;
 
 	wxIcon _emptyIcon;
 
@@ -100,6 +112,7 @@ private:
     // selections.
 	wxTextCtrl* _keyEntry;
 	wxTextCtrl* _valEntry;
+    wxBitmapButton* _setButton;
 
 	wxTextCtrl* _helpText;
 
@@ -118,7 +131,7 @@ private:
 	// The clipboard for spawnargs
 	typedef std::pair<std::string, std::string> KeyValuePair;
 	typedef std::vector<KeyValuePair> ClipBoard;
-	ClipBoard _clipBoard;
+	ClipBoard _clipboard;
 
 	// Data structure to store the type (vector3, text etc) and the options
 	// string for a single property.
@@ -134,8 +147,15 @@ private:
 
 	sigc::connection _undoHandler;
 	sigc::connection _redoHandler;
+	sigc::connection _defsReloadedHandler;
+	sigc::connection _mapEditModeChangedHandler;
+
+    // Maps the key names to a possible merge action that should be displayed
+    std::map<std::string, scene::merge::IEntityKeyValueMergeAction::Ptr> _mergeActions;
+    std::map<std::string, scene::merge::IConflictResolutionAction::Ptr> _conflictActions;
 
 private:
+    bool canUpdateEntity();
 
     // Utility functions to construct the Gtk components
 	void construct();
@@ -157,16 +177,22 @@ private:
 	void _onCopyKey();
 	void _onCutKey();
 	void _onPasteKey();
+	void _onAcceptMergeAction();
+	void _onRejectMergeAction();
 
 	bool _testAddKey();
 	bool _testDeleteKey();
 	bool _testCopyKey();
 	bool _testCutKey();
 	bool _testPasteKey();
+	bool _testAcceptMergeAction();
+	bool _testRejectMergeAction();
 
 	// Shared by cut and delete keys
 	bool _testNonEmptyAndDeletableSelection();
 	bool isItemDeletable(const wxutil::TreeModel::Row& row);
+	bool isItemAffecedByMergeConflict(const wxutil::TreeModel::Row& row);
+	bool isItemAffecedByMergeOperation(const wxutil::TreeModel::Row& row);
 
     // callbacks
 	void _onEntryActivate(wxCommandEvent& ev);
@@ -189,7 +215,10 @@ private:
     void getEntityFromSelectionSystem();
 
     // Change the selected entity pointer, setting up the observer
-    void changeSelectedEntity(const scene::INodePtr& newEntity);
+    void changeSelectedEntity(const scene::INodePtr& newEntity, const scene::INodePtr& selectedNode);
+
+    void handleMergeActions(const scene::INodePtr& selectedNode);
+    void handleKeyValueMergeAction(const scene::merge::IEntityKeyValueMergeAction::Ptr& mergeAction);
 
     // Set the keyval on all selected entities from the key and value textboxes
 	void setPropertyFromEntries();
@@ -208,8 +237,13 @@ private:
     // Update tree view contents and property editor
     void updateGUIElements();
 
+    // Release the current entity and rescan the selection
+    void refresh();
+
 	// Gets called after an undo operation
 	void onUndoRedoOperation();
+    void onMapEditModeChanged(IMap::EditMode mode);
+	void onDefsReloaded();
 
 protected:
     // Called when the app is idle

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.12)
 
 # Project name and version
-project(darkradiant VERSION 2.12.0)
+project(darkradiant VERSION 2.13.0)
 
 # C++ standard
 set(CMAKE_CXX_STANDARD 17)
@@ -102,6 +102,11 @@ add_subdirectory(libs/module)
 add_subdirectory(plugins/script)
 add_subdirectory(plugins/sound)
 
+pkg_check_modules(LIBGIT libgit2)
+if (${LIBGIT_FOUND})
+    add_subdirectory(plugins/vcs)
+endif()
+
 # Dark Mod plugins
 if (${ENABLE_DM_PLUGINS})
     add_subdirectory(plugins/dm.conversation)
@@ -144,6 +149,11 @@ install(TARGETS radiantcore script sound
 if (${ENABLE_DM_PLUGINS})
     install(TARGETS dm_stimresponse dm_objectives dm_difficulty dm_editing
                     dm_gui dm_gameconnection dm_conversation
+            LIBRARY DESTINATION ${PKGLIBDIR}/plugins)
+endif()
+
+if (${LIBGIT_FOUND})
+    install(TARGETS vcs 
             LIBRARY DESTINATION ${PKGLIBDIR}/plugins)
 endif()
 

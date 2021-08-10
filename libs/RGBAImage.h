@@ -68,13 +68,25 @@ public:
         if (role == Role::NORMAL_MAP) {
             format = GL_RG8;
         }
-        glTexImage2D(GL_TEXTURE_2D, 0, format, static_cast<GLint>(getWidth()),
-                     static_cast<GLint>(getHeight()), 0, GL_RGBA,
-                     GL_UNSIGNED_BYTE, getPixels());
-        if (GLEW_VERSION_3_0) {
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-                            GL_LINEAR_MIPMAP_LINEAR);
+
+        if (GLEW_VERSION_3_0)
+        {
+            glTexImage2D(GL_TEXTURE_2D, 0, format, static_cast<GLint>(getWidth()),
+                         static_cast<GLint>(getHeight()), 0, GL_RGBA,
+                         GL_UNSIGNED_BYTE, getPixels());
+
             glGenerateMipmap(GL_TEXTURE_2D);
+        }
+        else // no openGL 3+ context, run the old-fashioned code
+        {
+            glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+
+            // Download the image to OpenGL
+            gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA,
+                static_cast<GLint>(getWidth()), static_cast<GLint>(getHeight()),
+                GL_RGBA, GL_UNSIGNED_BYTE,
+                getPixels()
+            );
         }
 
         // Un-bind the texture

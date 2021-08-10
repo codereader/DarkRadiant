@@ -10,6 +10,7 @@
 #include "ieventmanager.h"
 #include "imainframe.h"
 #include "igroupdialog.h"
+#include "iundo.h"
 
 #include "interfaces/MathInterface.h"
 #include "interfaces/RegistryInterface.h"
@@ -133,7 +134,6 @@ void ScriptingSystem::initialise()
 
 void ScriptingSystem::runScriptFile(const cmd::ArgumentList& args)
 {
-	// Start the test script
 	if (args.empty()) return;
 
 	executeScriptFile(args[0].getString());
@@ -141,7 +141,6 @@ void ScriptingSystem::runScriptFile(const cmd::ArgumentList& args)
 
 void ScriptingSystem::runScriptCommand(const cmd::ArgumentList& args) 
 {
-	// Start the test script
 	if (args.empty()) return;
 
 	executeCommand(args[0].getString());
@@ -170,6 +169,8 @@ void ScriptingSystem::executeCommand(const std::string& name)
 		rError() << "Couldn't find command " << name << std::endl;
 		return;
 	}
+
+    UndoableCommand cmd("runScriptCommand " + name);
 
 	// Execute the script file behind this command
 	executeScriptFile(found->second->getFilename(), true);

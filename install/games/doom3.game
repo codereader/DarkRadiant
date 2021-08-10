@@ -145,7 +145,6 @@
 		<curveCatmullRomKey value="curve_CatmullRomSpline" />
 		<bindKey value="bind" />
 		<playerHeight value="64" />
-		<nameKey value="name" />
         <speakerMinRadius value="24" />
         <speakerMaxRadius value="32" />
 		<guiSmallFontLimit value="0.15" />
@@ -220,6 +219,7 @@
 		<property match="s_omni" category="Sound" type="bool" />
 		<property match="s_volume" category="Sound" type="text" />
 		<property match="s_global" category="Sound" type="bool" />
+    <property match="def_.+" category="Basic" type="classname" hidden="1" />
 	</entityInspector>
 
 	<!-- Game-specific values for light entities -->
@@ -329,4 +329,9 @@
 		<appTypeIgnore value="_IGNORE" />
 		<difficultyMenuEclass value="difficultyMenu" />
 	</difficulty>
+    
+    <materialPreview>
+        <defaultRoomMaterial value="textures/base_wall/lfwall13f3" />
+        <defaultLightDef value="lights/defaultPointLight" />
+    </materialPreview>
 </game>

@@ -3,6 +3,10 @@
 #include "itextstream.h"
 #include <algorithm>
 
+#ifdef min
+#undef min
+#endif
+
 namespace stream
 {
 

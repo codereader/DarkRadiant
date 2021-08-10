@@ -61,7 +61,15 @@ void TextureBrowserManager::registerPreferencePage()
     // Add a page to the given group
 	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Texture Browser"));
 
-    page.appendEntry(_("Uniform texture thumbnail size (pixels)"), RKEY_TEXTURE_UNIFORM_SIZE);
+    std::list<std::string> textureScaleList
+    {
+        "5%", "10%", "25%", "50%", "100%", "200%",
+    };
+
+    page.appendCombo(_("Texture Thumbnail Scale"), RKEY_TEXTURE_SCALE, textureScaleList);
+
+    page.appendCheckBox(_("Scale Thumbnails to Uniform size"), RKEY_TEXTURE_USE_UNIFORM_SCALE);
+    page.appendEntry(_("Uniform Thumbnail Size (pixels)"), RKEY_TEXTURE_UNIFORM_SIZE);
     page.appendCheckBox(_("Texture scrollbar"), RKEY_TEXTURE_SHOW_SCROLLBAR);
     page.appendEntry(_("Mousewheel Increment"), RKEY_TEXTURE_MOUSE_WHEEL_INCR);
     page.appendSpinner(_("Max shadername length"), RKEY_TEXTURE_MAX_NAME_LENGTH, 4, 100, 1);
@@ -101,6 +109,7 @@ void TextureBrowserManager::initialiseModule(const IApplicationContext& ctx)
 {
     rMessage() << getName() << "::initialiseModule called." << std::endl;
 
+    GlobalEventManager().addRegistryToggle("TextureBrowserToggleUniformScale", RKEY_TEXTURE_USE_UNIFORM_SCALE);
     GlobalEventManager().addRegistryToggle("TextureBrowserHideUnused", RKEY_TEXTURES_HIDE_UNUSED);
     GlobalEventManager().addRegistryToggle("TextureBrowserShowFavouritesOnly", RKEY_TEXTURES_SHOW_FAVOURITES_ONLY);
     GlobalEventManager().addRegistryToggle("TextureBrowserShowNames",

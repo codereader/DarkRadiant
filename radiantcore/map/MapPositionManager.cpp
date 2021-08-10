@@ -208,8 +208,7 @@ void MapPositionManager::gotoLastCameraPosition()
 		tryGetStartPositionFromPlayerStart(origin, angles))
 	{
 		// Focus the view with the given parameters
-		Map::focusViews(origin, angles);
-		return;
+        GlobalCommandSystem().executeCommand("FocusViews", cmd::ArgumentList{ origin, angles });
 	}
 }
 

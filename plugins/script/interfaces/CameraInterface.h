@@ -31,6 +31,8 @@ public:
 
 	float getFarClipPlaneDistance() const;
 	void setFarClipPlaneDistance(float distance);
+
+	void refresh();
 };
 
 class CameraInterface :

@@ -61,6 +61,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\..\test\algorithm\Primitives.h" />
     <ClInclude Include="..\..\..\test\algorithm\Scene.h" />
+    <ClInclude Include="..\..\..\test\algorithm\View.h" />
     <ClInclude Include="..\..\..\test\algorithm\XmlUtils.h" />
     <ClInclude Include="..\..\..\test\HeadlessOpenGLContext.h" />
     <ClInclude Include="..\..\..\test\math\MatrixUtils.h" />
@@ -82,6 +83,7 @@
     <ClCompile Include="..\..\..\test\ImageLoading.cpp" />
     <ClCompile Include="..\..\..\test\LayerManipulation.cpp" />
     <ClCompile Include="..\..\..\test\MapExport.cpp" />
+    <ClCompile Include="..\..\..\test\MapMerging.cpp" />
     <ClCompile Include="..\..\..\test\MapSavingLoading.cpp" />
     <ClCompile Include="..\..\..\test\MaterialExport.cpp" />
     <ClCompile Include="..\..\..\test\Materials.cpp" />
@@ -96,10 +98,12 @@
     <ClCompile Include="..\..\..\test\Parsing.cpp" />
     <ClCompile Include="..\..\..\test\PatchIterators.cpp" />
     <ClCompile Include="..\..\..\test\PatchWelding.cpp" />
+    <ClCompile Include="..\..\..\test\PointTrace.cpp" />
     <ClCompile Include="..\..\..\test\Prefabs.cpp" />
     <ClCompile Include="..\..\..\test\Renderer.cpp" />
     <ClCompile Include="..\..\..\test\Selection.cpp" />
     <ClCompile Include="..\..\..\test\SelectionAlgorithm.cpp" />
+    <ClCompile Include="..\..\..\test\Transformation.cpp" />
     <ClCompile Include="..\..\..\test\VFS.cpp" />
     <ClCompile Include="..\..\..\test\WorldspawnColour.cpp" />
   </ItemGroup>

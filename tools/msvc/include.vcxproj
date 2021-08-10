@@ -106,6 +106,7 @@
     <ClInclude Include="..\..\include\iclipper.h" />
     <ClInclude Include="..\..\include\icolourscheme.h" />
     <ClInclude Include="..\..\include\icommandsystem.h" />
+    <ClInclude Include="..\..\include\icomparablenode.h" />
     <ClInclude Include="..\..\include\icounter.h" />
     <ClInclude Include="..\..\include\icurve.h" />
     <ClInclude Include="..\..\include\idatastream.h" />
@@ -143,6 +144,7 @@
     <ClInclude Include="..\..\include\imapexporter.h" />
     <ClInclude Include="..\..\include\imapformat.h" />
     <ClInclude Include="..\..\include\imapinfofile.h" />
+    <ClInclude Include="..\..\include\imapmerge.h" />
     <ClInclude Include="..\..\include\imapresource.h" />
     <ClInclude Include="..\..\include\imd5anim.h" />
     <ClInclude Include="..\..\include\imd5model.h" />
@@ -199,6 +201,8 @@
     <ClInclude Include="..\..\include\itransformable.h" />
     <ClInclude Include="..\..\include\itransformnode.h" />
     <ClInclude Include="..\..\include\iundo.h" />
+    <ClInclude Include="..\..\include\iuserinterface.h" />
+    <ClInclude Include="..\..\include\iversioncontrol.h" />
     <ClInclude Include="..\..\include\ivolumetest.h" />
     <ClInclude Include="..\..\include\iwxgl.h" />
     <ClInclude Include="..\..\include\mapfile.h" />

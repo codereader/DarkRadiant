@@ -20,74 +20,12 @@
 #include "selection/SelectionVolume.h"
 #include "Rectangle.h"
 #include "registry/registry.h"
+#include "algorithm/View.h"
 
 namespace test
 {
 
 using SelectionTest = RadiantTest;
-
-constexpr std::size_t DeviceWidth = 640;
-constexpr std::size_t DeviceHeight = 640;
-constexpr const char* const RKEY_SELECT_EPSILON = "user/ui/selectionEpsilon";
-
-void constructCenteredOrthoview(render::View& view, const Vector3& origin)
-{
-    // Move the orthoview exactly to the center of this object
-    double scale = 1.0;
-
-    Matrix4 projection;
-
-    projection[0] = 1.0 / static_cast<double>(DeviceWidth / 2);
-    projection[5] = 1.0 / static_cast<double>(DeviceHeight / 2);
-    projection[10] = 1.0 / (32768 * scale);
-
-    projection[12] = 0.0;
-    projection[13] = 0.0;
-    projection[14] = -1.0;
-
-    projection[1] = projection[2] = projection[3] =
-        projection[4] = projection[6] = projection[7] =
-        projection[8] = projection[9] = projection[11] = 0.0;
-
-    projection[15] = 1.0f;
-
-    // Modelview
-    Matrix4 modelView;
-
-    // Translate the view to the center of the brush
-    modelView[12] = -origin.x() * scale;
-    modelView[13] = -origin.y() * scale;
-    modelView[14] = 32768 * scale;
-
-    // axis base
-    modelView[0] = scale;
-    modelView[1] = 0;
-    modelView[2] = 0;
-
-    modelView[4] = 0;
-    modelView[5] = scale;
-    modelView[6] = 0;
-
-    modelView[8] = 0;
-    modelView[9] = 0;
-    modelView[10] = -scale;
-
-    modelView[3] = modelView[7] = modelView[11] = 0;
-    modelView[15] = 1;
-
-    view.construct(projection, modelView, DeviceWidth, DeviceHeight);
-}
-
-SelectionVolume constructOrthoviewSelectionTest(const render::View& orthoView)
-{
-    render::View scissored(orthoView);
-
-    auto epsilon = registry::getValue<float>(RKEY_SELECT_EPSILON);
-    Vector2 deviceEpsilon(epsilon / DeviceWidth, epsilon / DeviceHeight);
-    ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromPoint(Vector2(0, 0), deviceEpsilon));
-
-    return SelectionVolume(scissored);
-}
 
 TEST_F(SelectionTest, ApplyShadersToForcedVisibleObjects)
 {
@@ -194,9 +132,9 @@ TEST_F(SelectionTest, PivotIsResetAfterCancelingOperation)
 
     // Construct an orthoview to test-select the manipulator
     render::View view(false);
-    constructCenteredOrthoview(view, originalBrushPosition);
+    algorithm::constructCenteredOrthoview(view, originalBrushPosition);
 
-    SelectionVolume test = constructOrthoviewSelectionTest(view);
+    SelectionVolume test = algorithm::constructOrthoviewSelectionTest(view);
     activeManipulator->testSelect(test, originalPivot);
 
     EXPECT_TRUE(activeManipulator->isSelected());
@@ -243,8 +181,8 @@ TEST_F(SelectionTest, WorkzoneIsRecalculatedAfterSelectionChange)
     render::View orthoView(false);
 
     // Construct an orthoview to test-select the tall brush
-    constructCenteredOrthoview(orthoView, tallBrush->worldAABB().getOrigin());
-    auto tallBrushTest = constructOrthoviewSelectionTest(orthoView);
+    algorithm::constructCenteredOrthoview(orthoView, tallBrush->worldAABB().getOrigin());
+    auto tallBrushTest = algorithm::constructOrthoviewSelectionTest(orthoView);
 
     // Select and de-select first brush
     GlobalSelectionSystem().selectPoint(tallBrushTest, SelectionSystem::eToggle, false);
@@ -261,8 +199,8 @@ TEST_F(SelectionTest, WorkzoneIsRecalculatedAfterSelectionChange)
     EXPECT_EQ(GlobalSelectionSystem().getWorkZone().bounds, tallBounds);
 
     // Construct an orthoview to test-select the smaller brush
-    constructCenteredOrthoview(orthoView, smallBrush->worldAABB().getOrigin());
-    auto smallBrushTest = constructOrthoviewSelectionTest(orthoView);
+    algorithm::constructCenteredOrthoview(orthoView, smallBrush->worldAABB().getOrigin());
+    auto smallBrushTest = algorithm::constructOrthoviewSelectionTest(orthoView);
 
     // Select and de-select second brush (no getWorkZone() call in between)
     GlobalSelectionSystem().selectPoint(smallBrushTest, SelectionSystem::eToggle, false);
@@ -285,7 +223,7 @@ protected:
     void performViewSelectionTest(render::View& view, const scene::INodePtr& node, bool expectNodeIsSelectable)
     {
         // Selection Point
-        auto rectangle = selection::Rectangle::ConstructFromPoint(Vector2(0, 0), Vector2(8.0 / DeviceWidth, 8.0 / DeviceHeight));
+        auto rectangle = selection::Rectangle::ConstructFromPoint(Vector2(0, 0), Vector2(8.0 / algorithm::DeviceWidth, 8.0 / algorithm::DeviceHeight));
         ConstructSelectionTest(view, rectangle);
 
         EXPECT_FALSE(Node_isSelected(node));
@@ -352,7 +290,7 @@ protected:
 
     virtual void constructView(render::View& view, const AABB& objectAABB) override
     {
-        constructCenteredOrthoview(view, objectAABB.getOrigin());
+        algorithm::constructCenteredOrthoview(view, objectAABB.getOrigin());
     }
 };
 
@@ -373,10 +311,10 @@ protected:
         Vector3 angles(-90, 0, 0);
 
         auto farClip = 32768.0f;
-        Matrix4 projection = camera::calculateProjectionMatrix(farClip / 4096.0f, farClip, 75.0f, DeviceWidth, DeviceHeight);
+        Matrix4 projection = camera::calculateProjectionMatrix(farClip / 4096.0f, farClip, 75.0f, algorithm::DeviceWidth, algorithm::DeviceHeight);
         Matrix4 modelview = camera::calculateModelViewMatrix(origin, angles);
 
-        view.construct(projection, modelview, DeviceWidth, DeviceHeight);
+        view.construct(projection, modelview, algorithm::DeviceWidth, algorithm::DeviceHeight);
     }
 };
 

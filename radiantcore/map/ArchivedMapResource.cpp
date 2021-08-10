@@ -2,6 +2,7 @@
 
 #include "i18n.h"
 #include "ifilesystem.h"
+#include "gamelib.h"
 
 namespace map
 {
@@ -37,7 +38,7 @@ stream::MapResourceStream::Ptr ArchivedMapResource::openInfofileStream()
     try
     {
         auto infoFilename = _filePathWithinArchive.substr(0, _filePathWithinArchive.rfind('.'));
-        infoFilename += GetInfoFileExtension();
+        infoFilename += game::current::getInfoFileExtension();
 
         return openFileInArchive(infoFilename);
     }

@@ -58,7 +58,7 @@ void PointFileChooser::chooseAndToggle()
         // Construct list of wxString filenames
         wxArrayString filenames;
         for (const fs::path& p: pointfiles)
-            filenames.Add(static_cast<std::string>(p.filename()));
+            filenames.Add(p.filename().string());
 
         // Show dialog with list of pointfiles
         PointFileChooser chooser(filenames);

@@ -46,9 +46,6 @@ private:
 
 	void createCriteriaPanel();
 
-	void createTypeStore();
-	void createActionStore();
-
 	// Converts the given enum into a string "entityclass", "object"
 	std::string getStringForType(const FilterRule::Type type);
 	FilterRule::Type getTypeForString(const std::string& typeStr);

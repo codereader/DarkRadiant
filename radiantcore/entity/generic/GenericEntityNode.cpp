@@ -172,7 +172,7 @@ void GenericEntityNode::rotate(const Quaternion& rotation)
 	}
 }
 
-void GenericEntityNode::revertTransform()
+void GenericEntityNode::_revertTransform()
 {
 	m_origin = m_originKey.get();
 
@@ -186,7 +186,7 @@ void GenericEntityNode::revertTransform()
 	}
 }
 
-void GenericEntityNode::freezeTransform()
+void GenericEntityNode::_freezeTransform()
 {
 	m_originKey.set(m_origin);
 	m_originKey.write(_spawnArgs);
@@ -225,7 +225,7 @@ void GenericEntityNode::_onTransformationChanged()
 {
 	if (getType() == TRANSFORM_PRIMITIVE)
 	{
-		revertTransform();
+        _revertTransform();
 
 		m_origin += getTranslation();
 		rotate(getRotation());
@@ -238,12 +238,12 @@ void GenericEntityNode::_applyTransformation()
 {
 	if (getType() == TRANSFORM_PRIMITIVE)
 	{
-		revertTransform();
+		_revertTransform();
 
 		m_origin += getTranslation();
 		rotate(getRotation());
 
-		freezeTransform();
+        _freezeTransform();
 	}
 }
 

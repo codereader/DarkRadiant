@@ -46,6 +46,8 @@ class XYWndManager :
     int _fontSize;
     IGLFont::Style _fontStyle;
 
+    std::size_t _maxZoomFactor;
+
 private:
 
 	// Get a unique ID for the XYWnd map
@@ -72,6 +74,7 @@ public:
 	bool showSizeInfo() const;
 	int fontSize() const;
     IGLFont::Style fontStyle() const;
+    float maxZoomFactor() const;
 
 	unsigned int defaultBlockSize() const;
 

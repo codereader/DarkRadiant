@@ -1,6 +1,7 @@
 #pragma once
 
 #include "iselection.h"
+#include "imapmerge.h"
 #include "ientity.h"
 #include "ieclass.h"
 #include "iscenegraph.h"
@@ -57,10 +58,65 @@ public:
 
 		std::size_t highlightFlags = node->getHighlightFlags();
 
-		if (parent)
+        auto nodeType = node->getNodeType();
+
+        // Particle nodes shouldn't inherit the highlight flags from their parent, 
+        // as it obstructs the view when their wireframe gets rendered (#5682)
+		if (parent && nodeType != scene::INode::Type::Particle)
 		{
 			highlightFlags |= parent->getHighlightFlags();
 		}
+
+        if (nodeType == scene::INode::Type::MergeAction)
+        {
+            _collector.setHighlightFlag(RenderableCollector::Highlight::MergeAction, true);
+
+            auto mergeActionNode = std::dynamic_pointer_cast<scene::IMergeActionNode>(node);
+            assert(mergeActionNode);
+
+            switch (mergeActionNode->getActionType())
+            {
+            case scene::merge::ActionType::AddChildNode:
+            case scene::merge::ActionType::AddEntity:
+                _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionAdd, true);
+                _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionChange, false);
+                _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionRemove, false);
+                _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionConflict, false);
+                break;
+
+            case scene::merge::ActionType::AddKeyValue:
+            case scene::merge::ActionType::ChangeKeyValue:
+            case scene::merge::ActionType::RemoveKeyValue:
+                _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionChange, true);
+                _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionAdd, false);
+                _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionRemove, false);
+                _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionConflict, false);
+                break;
+
+            case scene::merge::ActionType::RemoveChildNode:
+            case scene::merge::ActionType::RemoveEntity:
+                _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionRemove, true);
+                _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionAdd, false);
+                _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionChange, false);
+                _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionConflict, false);
+                break;
+
+            case scene::merge::ActionType::ConflictResolution:
+                _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionConflict, true);
+                _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionAdd, false);
+                _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionChange, false);
+                _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionRemove, false);
+                break;
+            }
+        }
+        else
+        {
+            _collector.setHighlightFlag(RenderableCollector::Highlight::MergeAction, false);
+            _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionAdd, false);
+            _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionChange, false);
+            _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionRemove, false);
+            _collector.setHighlightFlag(RenderableCollector::Highlight::MergeActionConflict, false);
+        }
 
         if (highlightFlags & Renderable::Highlight::Selected)
         {

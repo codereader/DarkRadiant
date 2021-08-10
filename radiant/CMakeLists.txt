@@ -107,6 +107,7 @@ add_executable(darkradiant
                ui/materials/editor/MaterialPreview.cpp
                ui/materials/MaterialPopulator.cpp
                ui/materials/MaterialTreeView.cpp
+               ui/merge/MergeControlDialog.cpp
                ui/animationpreview/AnimationPreview.cpp
                ui/animationpreview/MD5AnimationChooser.cpp
                ui/animationpreview/MD5AnimationViewer.cpp

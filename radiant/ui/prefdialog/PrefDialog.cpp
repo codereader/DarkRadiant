@@ -100,7 +100,7 @@ void PrefDialog::showModal(const std::string& requestedPage)
 		_notebook->ExpandNode(page, true);
 	}
 
-	FitToScreen(0.7f, 0.5f);
+	FitToScreen(0.7f, 0.6f);
 
 	// Is there a specific page display request?
 	if (!requestedPage.empty())

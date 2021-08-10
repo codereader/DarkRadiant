@@ -195,6 +195,7 @@ private:
 
 	void toggleEntityMode(const cmd::ArgumentList& args);
 	void toggleGroupPartMode(const cmd::ArgumentList& args);
+	void toggleMergeActionMode(const cmd::ArgumentList& args);
 
 	void toggleComponentMode(EComponentMode mode);
 	void toggleComponentModeCmd(const cmd::ArgumentList& args);

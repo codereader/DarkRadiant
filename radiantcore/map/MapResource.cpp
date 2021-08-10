@@ -41,8 +41,6 @@ namespace map
 
 namespace
 {
-	const char* const GKEY_INFO_FILE_EXTENSION = "/mapFormat/infoFileExtension";
-
 	// name may be absolute or relative
 	inline std::string rootPath(const std::string& name) {
 		return GlobalFileSystem().findRoot(
@@ -167,7 +165,7 @@ bool MapResource::saveBackup()
 		}
 
 		fs::path auxFile = fullpath;
-		auxFile.replace_extension(GetInfoFileExtension());
+		auxFile.replace_extension(game::current::getInfoFileExtension());
 
 		fs::path backup = fullpath;
 		backup.replace_extension(".bak");
@@ -239,6 +237,12 @@ void MapResource::setRootNode(const scene::IMapRootNodePtr& root)
 
 void MapResource::clear()
 {
+    // Disconnect from the old root first
+    if (_mapRoot)
+    {
+        _mapRoot->getUndoChangeTracker().setChangedCallback(Callback());
+    }
+
     _mapRoot = std::make_shared<RootNode>("");
 	connectMap();
 }
@@ -352,7 +356,7 @@ stream::MapResourceStream::Ptr MapResource::openInfofileStream()
     {
         auto fullpath = getAbsoluteResourcePath();
         auto infoFilename = fullpath.substr(0, fullpath.rfind('.'));
-        infoFilename += GetInfoFileExtension();
+        infoFilename += game::current::getInfoFileExtension();
 
         return openFileStream(infoFilename);
     }
@@ -373,18 +377,6 @@ void MapResource::refreshLastModifiedTime()
         // Remember the last modified timestamp after a successful load
         _lastKnownModificationTime = fs::last_write_time(fullPath);
     }
-}
-
-std::string MapResource::GetInfoFileExtension()
-{
-    std::string extension = game::current::getValue<std::string>(GKEY_INFO_FILE_EXTENSION);
-
-    if (!extension.empty() && extension[0] != '.')
-    {
-        extension = "." + extension;
-    }
-
-    return extension;
 }
 
 bool MapResource::FileIsWriteable(const fs::path& path)
@@ -410,7 +402,7 @@ void MapResource::saveFile(const MapFormat& format, const scene::IMapRootNodePtr
 	// Actual output file paths
 	fs::path outFile = filename;
 	fs::path auxFile = outFile;
-	auxFile.replace_extension(GetInfoFileExtension());
+	auxFile.replace_extension(game::current::getInfoFileExtension());
 
 	// Check writeability of the primary output file
 	throwIfNotWriteable(outFile);

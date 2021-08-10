@@ -5,6 +5,8 @@
 #include "icounter.h"
 #include "imodel.h"
 #include "itransformable.h"
+#include "math/Hash.h"
+#include "string/case_conv.h"
 
 #include "EntitySettings.h"
 
@@ -200,6 +202,48 @@ float EntityNode::getShaderParm(int parmNum) const
 const Vector3& EntityNode::getDirection() const
 {
 	return _direction;
+}
+
+std::string EntityNode::getFingerprint()
+{
+    std::map<std::string, std::string> sortedKeyValues;
+
+    // Entities are just a collection of key/value pairs, 
+    // use them in lower case form, ignore inherited keys, sort before hashing
+    _spawnArgs.forEachKeyValue([&](const std::string& key, const std::string& value)
+    {
+        sortedKeyValues.emplace(string::to_lower_copy(key), string::to_lower_copy(value));
+    }, false);
+
+    math::Hash hash;
+
+    for (const auto& pair : sortedKeyValues)
+    {
+        hash.addString(pair.first);
+        hash.addString(pair.second);
+    }
+
+    // Entities need to include any child hashes, but be insensitive to their order
+    std::set<std::string> childFingerprints;
+
+    foreachNode([&](const scene::INodePtr& child)
+    {
+        auto comparable = std::dynamic_pointer_cast<scene::IComparableNode>(child);
+
+        if (comparable)
+        {
+            childFingerprints.insert(comparable->getFingerprint());
+        }
+
+        return true;
+    });
+
+    for (auto childFingerprint : childFingerprints)
+    {
+        hash.addString(childFingerprint);
+    }
+
+    return hash;
 }
 
 void EntityNode::testSelect(Selector& selector, SelectionTest& test)

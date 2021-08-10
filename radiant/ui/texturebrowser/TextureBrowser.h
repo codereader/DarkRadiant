@@ -32,6 +32,8 @@ namespace
     const char* const RKEY_TEXTURES_SHOW_OTHER_MATERIALS = "user/ui/textures/browser/showOtherMaterials";
     const char* const RKEY_TEXTURES_SHOW_NAMES = "user/ui/textures/browser/showNames";
     const char* const RKEY_TEXTURE_UNIFORM_SIZE = "user/ui/textures/browser/uniformSize";
+    const char* const RKEY_TEXTURE_USE_UNIFORM_SCALE = "user/ui/textures/browser/useUniformScale";
+    const char* const RKEY_TEXTURE_SCALE = "user/ui/textures/browser/textureScale";
     const char* const RKEY_TEXTURE_SHOW_SCROLLBAR = "user/ui/textures/browser/showScrollBar";
     const char* const RKEY_TEXTURE_MOUSE_WHEEL_INCR = "user/ui/textures/browser/mouseWheelIncrement";
     const char* const RKEY_TEXTURE_SHOW_FILTER = "user/ui/textures/browser/showFilter";
@@ -110,6 +112,8 @@ class TextureBrowser :
     bool _hideUnused;
     bool _showFavouritesOnly;
     registry::CachedKey<bool> _showNamesKey;
+    int _textureScale;
+    bool _useUniformScale;
 
     // Cached set of material favourites
     std::set<std::string> _favourites;
@@ -179,6 +183,7 @@ private:
 
     void observeKey(const std::string& key);
     void keyChanged();
+    void loadScaleFromRegistry();
 
     void onFavouritesChanged();
 

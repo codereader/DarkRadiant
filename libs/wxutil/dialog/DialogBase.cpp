@@ -1,5 +1,7 @@
 #include "DialogBase.h"
 
+#include "AutoSaveRequestBlocker.h"
+
 namespace wxutil
 {
 
@@ -55,6 +57,14 @@ void DialogBase::FitToScreen(float xProp, float yProp)
 
     SetSize(newWidth, newHeight);
     CenterOnScreen();
+}
+
+int DialogBase::ShowModal()
+{
+    // While this dialog is active, block any auto save requests
+    AutoSaveRequestBlocker blocker("Modal Dialog is active");
+
+    return wxDialog::ShowModal();
 }
 
 }

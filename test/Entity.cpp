@@ -13,6 +13,8 @@
 #include "string/convert.h"
 #include "transformlib.h"
 #include "registry/registry.h"
+#include "eclass.h"
+#include "string/join.h"
 
 namespace test
 {
@@ -30,7 +32,7 @@ IEntityNodePtr createByClassName(const std::string& className)
 }
 
 // Obtain entity attachments as a simple std::list
-std::list<Entity::Attachment> getAttachments(const IEntityNodePtr node)
+std::list<Entity::Attachment> getAttachments(const IEntityNodePtr& node)
 {
     std::list<Entity::Attachment> attachments;
     if (node)
@@ -126,6 +128,69 @@ TEST_F(EntityTest, VisitInheritedClassAttributes)
     EXPECT_EQ(attributes.at("maxs"), false);
     EXPECT_EQ(attributes.at("clipmodel_contents"), false);
     EXPECT_EQ(attributes.at("editor_displayFolder"), false);
+}
+
+// #5621: When the classname key is selected in the entity inspector, the description of that
+// attribute should deliver the text that is stored in the editor_usage attributes
+TEST_F(EntityTest, MultiLineEditorUsage)
+{
+    auto eclass = GlobalEntityClassManager().findClass("eclass_with_usage_attribute");
+    ASSERT_TRUE(eclass);
+
+    // Assume we have non-empty editor_usage/1/2 attributes
+    EXPECT_NE(eclass->getAttribute("editor_usage").getValue(), "");
+    EXPECT_NE(eclass->getAttribute("editor_usage1").getValue(), "");
+    EXPECT_NE(eclass->getAttribute("editor_usage2").getValue(), "");
+
+    auto editor_usage = eclass::getUsage(*eclass);
+
+    std::vector<std::string> singleAttributes =
+    {
+        eclass->getAttribute("editor_usage").getValue(),
+        eclass->getAttribute("editor_usage1").getValue(),
+        eclass->getAttribute("editor_usage2").getValue()
+    };
+
+    EXPECT_EQ(editor_usage, string::join(singleAttributes, "\n"));
+}
+
+void checkBucketEntityDef(const IEntityClassPtr& eclass)
+{
+    // These spawnargs are all defined directly on bucket_metal
+    EXPECT_EQ(eclass->getAttribute("editor_usage").getValue(), "So you can kick the bucket.");
+    EXPECT_EQ(eclass->getAttribute("editor_displayFolder").getValue(), "Moveables/Containers");
+    EXPECT_EQ(eclass->getAttribute("mass").getValue(), "8");
+    EXPECT_EQ(eclass->getAttribute("inherit").getValue(), "bucket_base");
+    EXPECT_EQ(eclass->getAttribute("model").getValue(), "models/darkmod/containers/bucket.lwo");
+    EXPECT_EQ(eclass->getAttribute("friction").getValue(), "0.2");
+    EXPECT_EQ(eclass->getAttribute("clipmodel").getValue(), "models/darkmod/misc/clipmodels/bucket_cm.lwo");
+    EXPECT_EQ(eclass->getAttribute("bouncyness").getValue(), "0.5");
+    EXPECT_EQ(eclass->getAttribute("snd_bounce").getValue(), "tdm_impact_metal_bucket");
+    EXPECT_EQ(eclass->getAttribute("snd_bounce_carpet").getValue(), "tdm_impact_metal_bucket_on_soft");
+    EXPECT_EQ(eclass->getAttribute("snd_bounce_cloth").getValue(), "tdm_impact_metal_bucket_on_soft");
+    EXPECT_EQ(eclass->getAttribute("snd_bounce_grass").getValue(), "tdm_impact_metal_bucket_on_soft");
+    EXPECT_EQ(eclass->getAttribute("snd_bounce_dirt").getValue(), "tdm_impact_metal_bucket_on_soft");
+
+    // This is defined in the parent entityDef:
+    EXPECT_EQ(eclass->getAttribute("snd_bounce_snow").getValue(), "tdm_impact_dirt");
+}
+
+// #5652: Reloading DEFs must not mess up the eclass attributes
+TEST_F(EntityTest, ReloadDefsOnUnchangedFiles)
+{
+    auto eclass = GlobalEntityClassManager().findClass("bucket_metal");
+    auto parent = eclass->getParent();
+
+    // Check the parent, it defines an editor_usage which will mess up the child (when the #5652 problem was unfixed)
+    EXPECT_TRUE(parent != nullptr);
+    EXPECT_EQ(parent->getAttribute("editor_usage").getValue(), "Don't use. Base class for all TDM moveables.");
+
+    checkBucketEntityDef(eclass);
+
+    // Reload the defs and re-use the same eclass reference we got above, it ought to be still valid
+    GlobalEntityClassManager().reloadDefs();
+
+    checkBucketEntityDef(eclass);
 }
 
 TEST_F(EntityTest, CannotCreateEntityWithoutClass)

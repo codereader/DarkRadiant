@@ -32,6 +32,10 @@ void paste(const cmd::ArgumentList& args);
  */
 void pasteToCamera(const cmd::ArgumentList& args);
 
+// If the system clipboard holds a valid material name, this method will return the string
+// Returns empty in case none was found.
+std::string getMaterialNameFromClipboard();
+
 } // namespace
 
 } // namespace

@@ -557,11 +557,11 @@ void LightNode::evaluateTransform()
 		else
         {
 			// Ordinary Drag manipulator
-			//_dragPlanes.m_bounds = _light.aabb();
-			// greebo: Be sure to use the actual lightAABB for evaluating the drag operation, NOT
-			// the aabb() or localABB() method, that returns the bounding box including the light center,
-			// which may be positioned way out of the volume
-			_dragPlanes.m_bounds = _light.lightAABB();
+			// greebo: To evaluate the drag operation use a fresh AABB as starting point.
+			// We don't use the aabb() or localABB() methods, those return the bounding box 
+            // including the light center, which may be positioned way out of the volume
+            _dragPlanes.m_bounds = AABB(_light._originTransformed, _light.m_doom3Radius.m_radiusTransformed);
+
 			_light.setLightRadius(_dragPlanes.evaluateResize(getTranslation(), rotation()));
 		}
 	}

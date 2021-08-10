@@ -13,6 +13,7 @@ add_executable(drtest
                ImageLoading.cpp
                LayerManipulation.cpp
                MapExport.cpp
+               MapMerging.cpp
                MapSavingLoading.cpp
                MaterialExport.cpp
                Materials.cpp
@@ -31,6 +32,7 @@ add_executable(drtest
                Renderer.cpp
                SelectionAlgorithm.cpp
                Selection.cpp
+               Transformation.cpp
                VFS.cpp
                WorldspawnColour.cpp)
 

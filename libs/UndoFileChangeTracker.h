@@ -27,20 +27,27 @@ public:
 		_pending(0)
 	{}
 
-	void print() {
+	void print()
+    {
 		rMessage() << "saved: " << _saved << " size: " << _size << std::endl;
 	}
 
-	void push() {
-		++_size;
-		_changed();
-		//print();
+	void push() 
+    {
+        ++_size;
+        if (_changed)
+        {
+            _changed();
+        }
 	}
 
-	void pop() {
-		--_size;
-		_changed();
-		//print();
+	void pop() 
+    {
+        --_size;
+        if (_changed)
+        {
+            _changed();
+        }
 	}
 
 	void pushOperation() {
@@ -51,10 +58,14 @@ public:
 		push();
 	}
 
-	void clear() override {
+	void clear() override
+    {
 		_size = 0;
-		_changed();
-		//print();
+
+        if (_changed)
+        {
+            _changed();
+        }
 	}
 
 	void begin() override 
@@ -79,21 +90,31 @@ public:
 		}
 	}
 
-    void save() override {
+    void save() override 
+    {
 		_saved = _size;
-		_changed();
+        if (_changed)
+        {
+            _changed();
+        }
 	}
 
     bool saved() const override {
 		return _saved == _size;
 	}
 
-    void setChangedCallback(const std::function<void()>& changed) override {
+    void setChangedCallback(const std::function<void()>& changed) override
+    {
 		_changed = changed;
-		_changed();
+
+        if (_changed)
+        {
+            _changed();
+        }
 	}
 
-    std::size_t changes() const override {
+    std::size_t changes() const override
+    {
 		return _size;
 	}
 };

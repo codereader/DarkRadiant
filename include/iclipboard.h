@@ -25,6 +25,9 @@ public:
 
     /// Copy the given string to the system clipboard
     virtual void setString(const std::string& str) = 0;
+
+    // A signal that is emitted when the contents of the system clipboard changes
+    virtual sigc::signal<void>& signal_clipboardContentChanged() = 0;
 };
 
 }

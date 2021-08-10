@@ -7,12 +7,19 @@
 #include "module/StaticModule.h"
 #include "MapResource.h"
 #include "ArchivedMapResource.h"
+#include "VersionControlLib.h"
+#include "VcsMapResource.h"
 
 namespace map
 {
 
 IMapResourcePtr MapResourceManager::createFromPath(const std::string& path)
 {
+    if (vcs::pathIsVcsUri(path))
+    {
+        return std::make_shared<VcsMapResource>(path);
+    }
+
 	return std::make_shared<MapResource>(path);
 }
 

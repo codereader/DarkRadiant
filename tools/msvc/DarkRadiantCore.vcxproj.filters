@@ -200,6 +200,9 @@
     <Filter Include="src\model\import">
       <UniqueIdentifier>{a98a0273-a99f-4a0d-b181-14479a01cecd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\versioncontrol">
+      <UniqueIdentifier>{6e21fce5-68dc-4b21-8856-b219352b5f02}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiantcore\modulesystem\ModuleLoader.cpp">
@@ -1047,6 +1050,12 @@
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\log\SegFaultHandler.cpp">
       <Filter>src\log</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\versioncontrol\VersionControlManager.cpp">
+      <Filter>src\versioncontrol</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\map\VcsMapResource.cpp">
+      <Filter>src\map</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2138,6 +2147,12 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\log\SegFaultHandler.h">
       <Filter>src\log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\versioncontrol\VersionControlManager.h">
+      <Filter>src\versioncontrol</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\VcsMapResource.h">
+      <Filter>src\map</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

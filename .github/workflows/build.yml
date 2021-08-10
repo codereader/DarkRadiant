@@ -76,6 +76,9 @@ jobs:
   Linux-Build:
     runs-on: ubuntu-latest
 
+    env:
+      BUILD_TYPE: Release
+
     steps:
     - uses: actions/checkout@v2
     

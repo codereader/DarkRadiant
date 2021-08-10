@@ -4,12 +4,16 @@
 #include "imap.h"
 #include "iselectiontest.h"
 #include "iscenegraph.h"
+#include "ishaders.h"
+#include "iclipboard.h"
+#include "string/trim.h"
 #include "ClosestTexturableFinder.h"
 
 #include "util/ScopedBoolLock.h"
 #include "patch/PatchNode.h"
 #include "brush/BrushNode.h"
 #include "module/StaticModule.h"
+#include "../clipboard/Clipboard.h"
 
 namespace selection 
 {
@@ -227,6 +231,10 @@ void ShaderClipboard::initialiseModule(const IApplicationContext& ctx)
 		sigc::mem_fun(this, &ShaderClipboard::onMapEvent));
 
 	clear();
+
+    module::GlobalModuleRegistry().signal_allModulesInitialised().connect(
+        sigc::mem_fun(this, &ShaderClipboard::postModuleInitialisation)
+    );
 }
 
 void ShaderClipboard::shutdownModule()
@@ -234,6 +242,31 @@ void ShaderClipboard::shutdownModule()
 	_postUndoConn.disconnect();
 	_postRedoConn.disconnect();
 	_mapEventConn.disconnect();
+    _clipboardContentsChangedConn.disconnect();
+}
+
+void ShaderClipboard::postModuleInitialisation()
+{
+    if (module::GlobalModuleRegistry().moduleExists(MODULE_CLIPBOARD))
+    {
+        // Subscribe to clipboard changes to check for copied material names
+        _clipboardContentsChangedConn = GlobalClipboard().signal_clipboardContentChanged().connect(
+            sigc::mem_fun(this, &ShaderClipboard::onSystemClipboardContentsChanged)
+        );
+    }
+}
+
+void ShaderClipboard::onSystemClipboardContentsChanged()
+{
+    if (_updatesDisabled) return;
+
+    auto candidate = clipboard::getMaterialNameFromClipboard();
+
+    if (!candidate.empty())
+    {
+        rMessage() << "Found a valid material name in the system clipboard: " << candidate << std::endl;
+        setSourceShader(candidate);
+    }
 }
 
 // Define the static module

@@ -2,6 +2,7 @@
 
 #include "wxutil/dataview/TreeView.h"
 #include "wxutil/dataview/TreeModel.h"
+#include "wxutil/menu/PopupMenu.h"
 #include <memory>
 #include <sigc++/signal.h>
 
@@ -28,8 +29,13 @@ private:
 
     sigc::signal<void> _visibilityChangedSignal;
 
+    wxutil::PopupMenuPtr _contextMenu;
+
 private:
     void onShaderToggled(wxDataViewEvent& ev);
+    void onContextMenu(wxDataViewEvent& ev);
+    void onShowShaderDefinition();
+    std::string getSelectedMaterial();
 
 public:
 

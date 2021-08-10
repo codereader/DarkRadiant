@@ -238,6 +238,7 @@ void RadiantApp::onModulesUnloading()
 	if (wxTheApp != nullptr)
 	{
 		wxTheApp->ProcessIdle();
+        wxTheApp->DeletePendingEvents();
 	}
 
 	_modulesUnloadingHandler.disconnect();

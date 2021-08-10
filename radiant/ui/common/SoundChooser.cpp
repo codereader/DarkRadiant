@@ -32,6 +32,9 @@ namespace
 
     const char* const SHOW_SHADER_DEF_TEXT = N_("Show Shader Definition");
     const char* const SHOW_SHADER_DEF_ICON = "icon_script.png";
+
+    const char* const RKEY_WINDOW_STATE = "user/ui/soundChooser/window";
+    const char* const RKEY_LAST_SELECTED_SHADER = "user/ui/soundChooser/lastSelectedShader";
 }
 
 /**
@@ -166,7 +169,7 @@ SoundChooser::SoundChooser(wxWindow* parent) :
         std::bind(&SoundChooser::testShowShaderDefinition, this)
     ));
 
-	FitToScreen(0.5f, 0.7f);
+    _windowPosition.initialise(this, RKEY_WINDOW_STATE, 0.5f, 0.7f);
 
     // Load the shaders
     loadSoundShaders();
@@ -267,6 +270,8 @@ bool SoundChooser::testShowShaderDefinition()
 
 int SoundChooser::ShowModal()
 {
+    _windowPosition.applyPosition();
+
     _shadersReloaded = GlobalSoundManager().signal_soundShadersReloaded()
         .connect(sigc::mem_fun(this, &SoundChooser::onShadersReloaded));
 
@@ -276,6 +281,8 @@ int SoundChooser::ShowModal()
 	{
 		_selectedShader.clear();
 	}
+
+    _windowPosition.saveToPath(RKEY_WINDOW_STATE);
 
 	return returnCode;
 }
@@ -298,8 +305,11 @@ void SoundChooser::onShadersReloaded()
     });
 }
 
-std::string SoundChooser::chooseResource(const std::string& preselected)
+std::string SoundChooser::chooseResource(const std::string& shaderToPreselect)
 {
+    auto preselected = !shaderToPreselect.empty() ? shaderToPreselect :
+        registry::getValue<std::string>(RKEY_LAST_SELECTED_SHADER);
+
 	if (!preselected.empty())
 	{
 		setSelectedShader(preselected);
@@ -310,6 +320,11 @@ std::string SoundChooser::chooseResource(const std::string& preselected)
 	if (ShowModal() == wxID_OK)
 	{
 		selectedShader = getSelectedShader();
+
+        if (!selectedShader.empty())
+        {
+            registry::setValue(RKEY_LAST_SELECTED_SHADER, selectedShader);
+        }
 	}
 
 	return selectedShader;

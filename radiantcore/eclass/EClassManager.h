@@ -49,6 +49,7 @@ class EClassManager :
 	// definitions have been parsed
 	std::size_t _curParseStamp;
 
+    sigc::signal<void> _defsLoadingSignal;
     sigc::signal<void> _defsLoadedSignal;
     sigc::signal<void> _defsReloadedSignal;
 
@@ -59,6 +60,7 @@ public:
 	EClassManager();
 
     // IEntityClassManager implementation
+    sigc::signal<void> defsLoadingSignal() const override;
     sigc::signal<void> defsLoadedSignal() const override;
     sigc::signal<void> defsReloadedSignal() const override;
     virtual IEntityClassPtr findOrInsert(const std::string& name,
@@ -96,6 +98,9 @@ private:
 
     // Worker function usually done in a separate thread
     void loadDefAndResolveInheritance();
+
+    // Invokes the change notifications that have been buffered during parsing
+    void onDefLoadingCompleted();
 
     // Applies possible colour overrides to all affected eclasses
     void applyColours();
