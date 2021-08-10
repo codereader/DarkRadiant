@@ -53,6 +53,7 @@
 										<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
 										<border>5</border>
 										<object class="wxButton" name="RestartGameButton">
+											<tooltip>Restarts current map in game, starting TheDarkMod if necessary.\n\n* Note that it saves the current map first.\n* Make sure to configure &quot;File :: Game Setup&quot; settings.\n* Can attach to running game if &quot;com__automation 1&quot; is set in game console.\n</tooltip>
 											<label>(Re)Start game</label>
 											<default>0</default>
 											<markup>0</markup>
@@ -64,8 +65,9 @@
 										<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
 										<border>5</border>
 										<object class="wxCheckBox" name="DmapCheckbox">
+											<tooltip>Dmap every time &quot;Restart game&quot; button is clicked.</tooltip>
 											<label>dmap</label>
-											<checked>0</checked>
+											<checked>1</checked>
 										</object>
 									</object>
 								</object>
@@ -105,6 +107,7 @@
 								<flag>wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</flag>
 								<border>5</border>
 								<object class="wxButton" name="CameraLoadFromGameButton">
+									<tooltip>Set preview camera to player&apos;s location in game.</tooltip>
 									<label>Load from game</label>
 									<default>0</default>
 									<markup>0</markup>
@@ -116,6 +119,7 @@
 								<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
 								<border>5</border>
 								<object class="wxCheckBox" name="CameraSendToGameCheckbox">
+									<tooltip>Player&apos;s location in game constantly follows preview camera.\n\n* Also enables &quot;ghost mode&quot;: noclip + notarget +god.</tooltip>
 									<label>Send to game</label>
 									<checked>0</checked>
 								</object>
@@ -134,6 +138,7 @@
 								<flag>wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</flag>
 								<border>5</border>
 								<object class="wxButton" name="MapFileReloadNowButton">
+									<tooltip>Reload game entities from .map file on disk.\n\n* You should save your map before doing this.\n* Game only updates entities which have changed since last hot reload update of any kind.</tooltip>
 									<label>Reload now</label>
 									<default>0</default>
 									<markup>0</markup>
@@ -145,6 +150,7 @@
 								<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
 								<border>5</border>
 								<object class="wxCheckBox" name="MapFileReloadOnSaveCheckbox">
+									<tooltip>Reload game entities from .map file every time you save it.\n\nThis has same effect as clicking &quot;Reload now&quot; after every save.</tooltip>
 									<label>Reload on save</label>
 									<checked>0</checked>
 								</object>
@@ -163,6 +169,7 @@
 								<flag>wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</flag>
 								<border>5</border>
 								<object class="wxButton" name="HotReloadUpdateNowButton">
+									<tooltip>Quickly update game entities to their current state in DarkRadiant.\n\n* The .map file is not touched: modifications are sent directly to game.\n* To enable &quot;Hot reload&quot; mode: save map and click &quot;Reload now&quot;.</tooltip>
 									<label>Update now</label>
 									<default>0</default>
 									<markup>0</markup>
@@ -174,6 +181,7 @@
 								<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
 								<border>5</border>
 								<object class="wxCheckBox" name="HotReloadUpdateOnChangeCheckbox">
+									<tooltip>Update game entities automatically after every change.\n\nThis has same effect as clicking &quot;Update now&quot; very often.</tooltip>
 									<label>Update on change</label>
 									<checked>0</checked>
 								</object>
@@ -199,6 +207,7 @@
 								<flag>wxALL</flag>
 								<border>5</border>
 								<object class="wxBitmapButton" name="RespawnSelectedButton">
+									<tooltip>Respawns currently selected entities in game.\n\nRespawning means that existing game entity is deleted, and a fresh one is spawned. It allows to force in-game update of a modified entity after ordinary hot reload did not work.</tooltip>
 									<bitmap stock_id="darkradiant:refresh.png" stock_client="">undefined.png</bitmap>
 									<default>0</default>
 								</object>
@@ -208,6 +217,7 @@
 								<flag>wxALL</flag>
 								<border>5</border>
 								<object class="wxBitmapButton" name="PauseGameButton">
+									<tooltip>Pause/unpause the game.</tooltip>
 									<bitmap stock_id="darkradiant:media-playback-pause.png" stock_client="">undefined.png</bitmap>
 									<default>0</default>
 								</object>
