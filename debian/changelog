@@ -1,3 +1,18 @@
+darkradiant (2.13.0~focal1) focal; urgency=medium
+
+  * New major release on all platforms.
+  * Git integration with three-way map comparison and diffing.
+  * Ability to choose between several different pointfiles.
+  * Improved workflow for adjusting light brightness.
+  * Entity Inspector can show editor_usage information.
+  * BC5/RGTC normal map support.
+  * Aspect ratio-preserving Fit Texture option.
+  * Shader selector can show material definitions.
+  * Restore texture browser ability to show variable size thumbnails.
+  * Numerous other bug fixes and improvements.
+
+ -- Matthew Mott <orbweaver3d@gmail.com>  Tue, 10 Aug 2021 19:41:21 +0100
+
 darkradiant (2.12.0~focal3) focal; urgency=medium
 
   * Include resources needed by the Material Editor preview.
