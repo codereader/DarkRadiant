@@ -18,6 +18,12 @@ Depends: darkradiant, ${shlibs:Depends}, ${misc:Depends}
 Description: DarkMod-specific plugins for DarkRadiant
  These plugins are used for editing Dark Mod missions.
 
+Package: darkradiant-plugin-git
+Architecture: any
+Depends: darkradiant, ${shlibs:Depends}, ${misc:Depends}
+Description: Git integration plugin for DarkRadiant
+ This plugin allows DarkRadiant to integrate with Git version control.
+
 Package: darkradiant-i18n
 Architecture: any
 Depends: darkradiant, ${misc:Depends}
