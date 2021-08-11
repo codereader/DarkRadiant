@@ -77,6 +77,7 @@ GameConnectionDialog::GameConnectionDialog() :
     _connectedActivityIndicator = findNamedObject<wxStaticBitmap>(this, "ConnectedActivityIndicator");
     panel;  //fix warning
 #endif
+    SetMinSize(panel->GetEffectiveMinSize());
     Layout();
 
     //don't want to call findNamedObject every time, risking a typo
