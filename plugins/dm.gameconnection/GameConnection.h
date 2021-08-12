@@ -127,8 +127,8 @@ private:
     bool _restartInProgress = false;
 
     // IEventPtrs corresponding to activatable menu options.
-    IEventPtr _camSyncToggle;
-    IEventPtr _camSyncBackButton;
+    IEventPtr _event_toggleCameraSync;
+    IEventPtr _event_backSyncCamera;
 
 private:
 

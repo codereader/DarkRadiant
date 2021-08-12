@@ -805,8 +805,31 @@ const StringSet& GameConnection::getDependencies() const
 
 void GameConnection::initialiseModule(const IApplicationContext& ctx)
 {
-    // Construct toggles
-    _camSyncToggle = GlobalEventManager().addAdvancedToggle(
+    // Show/hide GUI window
+    GlobalCommandSystem().addCommand(
+        "GameConnectionDialogToggle",
+        gameconn::GameConnectionDialog::toggleDialog
+    );
+    GlobalMenuManager().add(
+        "main/map", "GameConnectionDialog",
+        ui::menu::ItemType::Item, _("Game Connection..."), "",
+        "GameConnectionDialogToggle"
+    );
+
+    // Restart game
+    GlobalCommandSystem().addCommand(
+        "GameConnectionRestartGame",
+        [this](const cmd::ArgumentList& args) {
+            bool dmap = false;
+            for (int i = 0; i < args.size(); i++)
+                if (args[i].getString() == "dmap")
+                    dmap = true;
+            restartGame(dmap);
+        }
+    );
+
+    // Camera sync
+    _event_toggleCameraSync = GlobalEventManager().addAdvancedToggle(
         "GameConnectionToggleCameraSync",
         [this](bool v) {
             bool oldEnabled = isCameraSyncEnabled();
@@ -814,30 +837,68 @@ void GameConnection::initialiseModule(const IApplicationContext& ctx)
             return isCameraSyncEnabled() != oldEnabled;
         }
     );
-    // Add one-shot commands and associated toolbar buttons
     GlobalCommandSystem().addCommand(
         "GameConnectionBackSyncCamera",
         [this](const cmd::ArgumentList&) {
             backSyncCamera();
         }
     );
-    _camSyncBackButton = GlobalEventManager().addCommand(
+    _event_backSyncCamera = GlobalEventManager().addCommand(
         "GameConnectionBackSyncCamera", "GameConnectionBackSyncCamera", false
     );
+
+    // Reload map
+    GlobalCommandSystem().addCommand(
+        "GameConnectionReloadMap",
+        [this](const cmd::ArgumentList&) {
+            reloadMap();
+        }
+    );
+    GlobalEventManager().addAdvancedToggle(
+        "GameConnectionToggleAutoMapReload",
+        [this](bool v) {
+            bool oldEnabled = isAutoReloadMapEnabled();
+            setAutoReloadMapEnabled(v);
+            return isAutoReloadMapEnabled() != oldEnabled;
+        }
+    );
+
+    // Update map
+    GlobalCommandSystem().addCommand(
+        "GameConnectionUpdateMap",
+        [this](const cmd::ArgumentList&) {
+            doUpdateMap();
+        }
+    );
+    GlobalEventManager().addAdvancedToggle(
+        "GameConnectionToggleAutoMapUpdate",
+        [this](bool v) {
+            bool oldEnabled = isAlwaysUpdateMapEnabled();
+            setAlwaysUpdateMapEnabled(v);
+            return isAlwaysUpdateMapEnabled() != oldEnabled;
+
+        }
+    );
+
+    // Respawn selected
+    GlobalCommandSystem().addCommand(
+        "GameConnectionRespawnSelected",
+        [this](const cmd::ArgumentList&) {
+            respawnSelectedEntities();
+        }
+    );
+    // Pause game
+    GlobalCommandSystem().addCommand(
+        "GameConnectionPauseGame",
+        [this](const cmd::ArgumentList&) {
+            togglePauseGame();
+        }
+    );
+
     // Toolbar button(s)
     GlobalMainFrame().signal_MainFrameConstructed().connect(
         sigc::mem_fun(this, &GameConnection::addToolbarItems)
     );
-
-    // Add menu button which shows up the dialog
-    GlobalCommandSystem().addCommand("GameConnectionDialogToggle", gameconn::GameConnectionDialog::toggleDialog);
-	GlobalMenuManager().add("main/map",
-		"GameConnectionDialog",
-        ui::menu::ItemType::Item,
-		_("Game Connection..."), // caption
-		"", // icon
-		"GameConnectionDialogToggle"
-	);
 }
 
 void GameConnection::shutdownModule()
@@ -859,12 +920,12 @@ void GameConnection::addToolbarItems()
             _("Enable game camera sync with DarkRadiant camera"),
             wxITEM_CHECK
         );
-        _camSyncToggle->connectToolItem(camSyncT);
+        _event_toggleCameraSync->connectToolItem(camSyncT);
         auto camSyncBackT = camTB->AddTool(
             wxID_ANY, "B", wxutil::GetLocalBitmap("CameraSyncBack.png"),
             _("Move camera to current game position")
         );
-        _camSyncBackButton->connectToolItem(camSyncBackT);
+        _event_backSyncCamera->connectToolItem(camSyncBackT);
 
         camTB->Realize();
     }
