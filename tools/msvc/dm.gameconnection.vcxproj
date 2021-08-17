@@ -89,7 +89,7 @@
     <ClCompile />
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>scenelib.lib;wsock32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wxutillib.lib;scenelib.lib;wsock32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ClCompile />
     <ClCompile>
@@ -104,7 +104,7 @@ copy $(SolutionDir)..\..\plugins\dm.gameconnection\*.png $(SolutionDir)..\..\ins
     <ClCompile />
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>scenelib.lib;wsock32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wxutillib.lib;scenelib.lib;wsock32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ClCompile />
     <ClCompile>
@@ -120,7 +120,7 @@ copy $(SolutionDir)..\..\plugins\dm.gameconnection\*.png $(SolutionDir)..\..\ins
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>scenelib.lib;wsock32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wxutillib.lib;scenelib.lib;wsock32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ClCompile />
     <ClCompile>
@@ -136,7 +136,7 @@ copy $(SolutionDir)..\..\plugins\dm.gameconnection\*.png $(SolutionDir)..\..\ins
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>scenelib.lib;wsock32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>wxutillib.lib;scenelib.lib;wsock32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ClCompile />
     <ClCompile>
@@ -148,15 +148,18 @@ copy $(SolutionDir)..\..\plugins\dm.gameconnection\*.png $(SolutionDir)..\..\ins
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\plugins\dm.gameconnection\AutomationEngine.cpp" />
     <ClCompile Include="..\..\plugins\dm.gameconnection\clsocket\ActiveSocket.cpp" />
     <ClCompile Include="..\..\plugins\dm.gameconnection\clsocket\PassiveSocket.cpp" />
     <ClCompile Include="..\..\plugins\dm.gameconnection\clsocket\SimpleSocket.cpp" />
     <ClCompile Include="..\..\plugins\dm.gameconnection\DiffDoom3MapWriter.cpp" />
     <ClCompile Include="..\..\plugins\dm.gameconnection\GameConnection.cpp" />
+    <ClCompile Include="..\..\plugins\dm.gameconnection\GameConnectionDialog.cpp" />
     <ClCompile Include="..\..\plugins\dm.gameconnection\MapObserver.cpp" />
     <ClCompile Include="..\..\plugins\dm.gameconnection\MessageTcp.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\plugins\dm.gameconnection\AutomationEngine.h" />
     <ClInclude Include="..\..\plugins\dm.gameconnection\clsocket\ActiveSocket.h" />
     <ClInclude Include="..\..\plugins\dm.gameconnection\clsocket\Host.h" />
     <ClInclude Include="..\..\plugins\dm.gameconnection\clsocket\PassiveSocket.h" />
@@ -165,6 +168,7 @@ copy $(SolutionDir)..\..\plugins\dm.gameconnection\*.png $(SolutionDir)..\..\ins
     <ClInclude Include="..\..\plugins\dm.gameconnection\DiffDoom3MapWriter.h" />
     <ClInclude Include="..\..\plugins\dm.gameconnection\DiffStatus.h" />
     <ClInclude Include="..\..\plugins\dm.gameconnection\GameConnection.h" />
+    <ClInclude Include="..\..\plugins\dm.gameconnection\GameConnectionDialog.h" />
     <ClInclude Include="..\..\plugins\dm.gameconnection\MapObserver.h" />
     <ClInclude Include="..\..\plugins\dm.gameconnection\MessageTcp.h" />
   </ItemGroup>
