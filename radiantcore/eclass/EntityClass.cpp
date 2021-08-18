@@ -1,6 +1,7 @@
 #include "EntityClass.h"
 
 #include "itextstream.h"
+#include "ieclasscolours.h"
 #include "os/path.h"
 #include "string/convert.h"
 
@@ -112,16 +113,18 @@ void EntityClass::setColour(const Vector3& colour)
 
 void EntityClass::resetColour()
 {
+    // An override colour which matches this exact class is final, and overrides
+    // everything else
+    if (GlobalEclassColourManager().applyColours(*this))
+        return;
+
     // Look for an editor_color on this class only
     const EntityClassAttribute& attr = getAttribute("editor_color", false);
     if (!attr.getValue().empty())
-    {
         return setColour(string::convert<Vector3>(attr.getValue()));
-    }
 
-    // If there is a parent, use its getColour() directly, rather than its
-    // editor_color attribute, to take into account overrides through the
-    // EClassColourManager
+    // If there is a parent, inherit its getColour() directly, which takes into
+    // account any EClassColourManager overrides at the parent level.
     if (_parent)
         return setColour(_parent->getColour());
 
