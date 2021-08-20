@@ -137,17 +137,27 @@ void Lwo2Exporter::exportToStream(std::ostream& stream)
 	Lwo2Chunk::Ptr pols = fileChunk.addChunk("POLS");
 	Lwo2Chunk::Ptr ptag = fileChunk.addChunk("PTAG");
 	Lwo2Chunk::Ptr vmap = fileChunk.addChunk("VMAP");
+	Lwo2Chunk::Ptr colourVmap = fileChunk.addChunk("VMAP");
 
 	// We only ever export FACE polygons
 	pols->stream.write("FACE", 4);
 	ptag->stream.write("SURF", 4); // we tag the surfaces
 
+	// Texture UV Coordinates go into one VMAP
 	// VMAP { type[ID4], dimension[U2], name[S0], ...) }
 	vmap->stream.write("TXUV", 4);		// "TXUV"
-	stream::writeBigEndian<uint16_t>(vmap->stream, 2); // dimension
+	stream::writeBigEndian<uint16_t>(vmap->stream, 2); // dimension (2 vector components)
 	
 	std::string uvmapName = "UVMap";
 	stream::writeString(vmap->stream, uvmapName);
+
+	// Vertex Colours go into another VMAP
+	// VMAP { type[ID4], dimension[U2], name[S0], ...) }
+	colourVmap->stream.write("RGBA", 4); // type [ID4] == "RGBA"
+	stream::writeBigEndian<uint16_t>(colourVmap->stream, 4); // dimension (4 colour components)
+
+	std::string vertColourMapName = "VertexColourMap";
+	stream::writeString(colourVmap->stream, vertColourMapName); // map name [S0]
 
 	std::size_t vertexIdxStart = 0;
 	std::size_t polyNum = 0; // poly index is used across all surfaces
@@ -174,6 +184,13 @@ void Lwo2Exporter::exportToStream(std::ostream& stream)
 			stream::writeVariableIndex(vmap->stream, vertNum);
 			stream::writeBigEndian<float>(vmap->stream, static_cast<float>(vertex.texcoord.x()));
 			stream::writeBigEndian<float>(vmap->stream, 1.0f - static_cast<float>(vertex.texcoord.y()));
+
+			// Write the vertex colour data
+			stream::writeVariableIndex(colourVmap->stream, vertNum);
+			stream::writeBigEndian<float>(colourVmap->stream, static_cast<float>(vertex.colour.x()));
+			stream::writeBigEndian<float>(colourVmap->stream, static_cast<float>(vertex.colour.y()));
+			stream::writeBigEndian<float>(colourVmap->stream, static_cast<float>(vertex.colour.z()));
+			stream::writeBigEndian<float>(colourVmap->stream, 1.0f);
 
 			// Accumulate the BBOX
 			bounds.includePoint(vertex.vertex);
@@ -214,6 +231,13 @@ void Lwo2Exporter::exportToStream(std::ostream& stream)
 		stream::writeBigEndian<float>(colr->stream, 1.0f);
 		stream::writeBigEndian<float>(colr->stream, 1.0f);
 		stream::writeVariableIndex(colr->stream, 0);
+
+		// Reference the name of the vertex colour map
+		Lwo2Chunk::Ptr vcol = surf->addSubChunk("VCOL");
+		stream::writeBigEndian<float>(vcol->stream, 1.0f); // intensity [F4]
+		stream::writeVariableIndex(vcol->stream, 0); // [VX]
+		vcol->stream.write("RGBA", 4); // vmap-type [ID4]
+		stream::writeString(vcol->stream, vertColourMapName); // name [S0]
 
 		// Smoothing angle
 		Lwo2Chunk::Ptr sman = surf->addSubChunk("SMAN");

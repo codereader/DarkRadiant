@@ -65,12 +65,13 @@ public:
 			for (const auto& meshVertex : vertices)
 			{
 				// Copy-construct based on the incoming meshVertex, transform the vertex.
-				// Transform the normal using the inverse transpose
-				// We discard the tangent and bitangent vectors here, none of the exporters is using them.
-				surface.vertices.emplace_back(
-					localToWorld.transformPoint(meshVertex.vertex),
-					invTranspTransform.transformPoint(meshVertex.normal).getNormalised(),
-					meshVertex.texcoord);
+                // Transform the normal using the inverse transpose
+                // We discard the tangent and bitangent vectors here, none of the exporters is using them.
+                surface.vertices.emplace_back(
+                    localToWorld.transformPoint(meshVertex.vertex),
+                    invTranspTransform.transformPoint(meshVertex.normal).getNormalised(),
+                    meshVertex.texcoord,
+                    meshVertex.colour);
 			}
 			
 			surface.indices.reserve(surface.indices.size() + indices.size());
