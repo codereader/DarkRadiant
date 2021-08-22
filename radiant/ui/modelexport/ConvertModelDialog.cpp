@@ -5,6 +5,7 @@
 #include "iselection.h"
 #include "ifiletypes.h"
 #include "icommandsystem.h"
+#include "imodel.h"
 #include "igame.h"
 
 #include <stdexcept>
@@ -15,6 +16,7 @@
 #include <wx/sizer.h>
 #include "string/case_conv.h"
 #include "string/split.h"
+#include "string/convert.h"
 
 #include "selectionlib.h"
 #include "os/path.h"
@@ -55,6 +57,7 @@ void ConvertModelDialog::populateWindow()
 	makeLabelBold(this, "InputPathLabel");
 	makeLabelBold(this, "OutputPathLabel");
 	makeLabelBold(this, "OptionsLabel");
+	makeLabelBold(this, "InfoLabel");
 
 	wxButton* exportButton = findNamedObject<wxButton>(this, "ConvertButton");
 	wxButton* cancelButton = findNamedObject<wxButton>(this, "CancelButton");
@@ -115,6 +118,7 @@ void ConvertModelDialog::populateWindow()
     replaceControl(existing, pathEntry);
 
     pathEntry->setValue(recentInputPath);
+    pathEntry->Bind(wxutil::EV_PATH_ENTRY_CHANGED, &ConvertModelDialog::onInputPathChanged, this);
 
 	// Replace the filepicker control with our own PathEntry
     existing = findNamedObject<wxWindow>(this, "OutputPathFilePicker");
@@ -130,7 +134,15 @@ void ConvertModelDialog::populateWindow()
 	bool centerObjects = registry::getValue<bool>(RKEY_MODEL_CONVERSION_CENTER_OBJECTS);
 	findNamedObject<wxCheckBox>(this, "CenterObjects")->SetValue(centerObjects);
 
+    auto* infoPanel = findNamedObject<wxPanel>(this, "InfoPanel");
+
+    // Create info panel
+    _infoTable = new wxutil::KeyValueTable(infoPanel);
+    _infoTable->SetMinClientSize(wxSize(-1, 90));
+    infoPanel->GetSizer()->Add(_infoTable, 0, wxEXPAND | wxLEFT, 12);
+
 	handleFormatSelectionChange();
+	handleInputPathChanged();
 
 	Layout();
 	Fit();
@@ -189,6 +201,46 @@ void ConvertModelDialog::onCancel(wxCommandEvent& ev)
 
 	// destroy dialog without saving
 	EndModal(wxID_CANCEL);
+}
+
+void ConvertModelDialog::onInputPathChanged(wxCommandEvent& ev)
+{
+    handleInputPathChanged();
+}
+
+void ConvertModelDialog::handleInputPathChanged()
+{
+    _infoTable->Clear();
+
+    // Try to load the model and display some stats
+    std::string inputFilename = findNamedObject<wxutil::PathEntry>(this, "InputPathFilePicker")->getValue();
+
+    if (inputFilename.empty())
+    {
+        // Clear model info
+        findNamedObject<wxPanel>(this, "InfoPanel")->Enable(false);
+        return;
+    }
+
+    model::IModelPtr model;
+
+    GlobalModelFormatManager().foreachImporter([&](const model::IModelImporterPtr& importer)
+    {
+        if (!model)
+        {
+            model = importer->loadModelFromPath(inputFilename);
+        }
+    });
+
+    findNamedObject<wxPanel>(this, "InfoPanel")->Enable(model != nullptr);
+    
+    if (model)
+    {
+        // Update model info
+        _infoTable->Append(_("Total vertices"), string::to_string(model->getVertexCount()));
+        _infoTable->Append(_("Total polys"), string::to_string(model->getPolyCount()));
+        _infoTable->Append(_("Material surfaces"), string::to_string(model->getSurfaceCount()));
+    }
 }
 
 void ConvertModelDialog::handleFormatSelectionChange()

@@ -48,6 +48,11 @@ PathEntry::PathEntry(wxWindow* parent, bool foldersOnly, bool open,
         // Fire the PathEntryChanged event on enter
         wxQueueEvent(_entry->GetEventHandler(), new wxCommandEvent(EV_PATH_ENTRY_CHANGED, _entry->GetId()));
     });
+    _entry->Bind(wxEVT_TEXT, [&](wxCommandEvent& ev)
+    {
+        // Fire the PathEntryChanged event on typing
+        wxQueueEvent(_entry->GetEventHandler(), new wxCommandEvent(EV_PATH_ENTRY_CHANGED, _entry->GetId()));
+    });
 
 	// Generate browse button image
 	const auto& appCtx = module::GlobalModuleRegistry().getApplicationContext();
