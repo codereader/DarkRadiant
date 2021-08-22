@@ -1066,6 +1066,9 @@
     <ClCompile Include="..\..\radiantcore\model\import\FbxModelLoader.cpp">
       <Filter>src\model\import</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\model\picomodel\lib\pm_iqm.c">
+      <Filter>src\model\picomodel\lib</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
