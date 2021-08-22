@@ -131,6 +131,7 @@ add_executable(darkradiant
                ui/mapinfo/ShaderInfoTab.cpp
                ui/mediabrowser/MediaBrowser.cpp
                ui/mediabrowser/MediaBrowserTreeView.cpp
+               ui/modelexport/ConvertModelDialog.cpp
                ui/modelexport/ExportAsModelDialog.cpp
                ui/modelexport/ExportCollisionModelDialog.cpp
                ui/modelselector/MaterialsList.cpp

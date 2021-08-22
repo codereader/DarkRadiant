@@ -20,6 +20,8 @@
 		<menuItem name="createCM" caption="Export selected as Collision Model..." command="ExportCollisionModelDialog" />
 		<menuItem name="saveRegion" caption="Export &amp;Region..." command="SaveRegion" />
 		<menuSeparator />
+		<menuItem name="ConvertModel" caption="Import/Convert Model..." command="ConvertModelDialog" />
+		<menuSeparator />
 		<menuItem name="refreshModels" caption="&amp;Reload Models" command="RefreshModels" icon="model16red.png" />
 		<menuItem name="refreshSelectedModels" caption="Reload Selected Models" command="RefreshSelectedModels" icon="model16red.png" />
 		<menuItem name="reloadSkins" caption="Reload S&amp;kins" command="ReloadSkins" icon="skin16.png" />

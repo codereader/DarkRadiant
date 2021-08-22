@@ -51,6 +51,7 @@
 #include "ui/patch/CapDialog.h"
 #include "ui/patch/PatchThickenDialog.h"
 #include "textool/TexTool.h"
+#include "modelexport/ConvertModelDialog.h"
 #include "modelexport/ExportAsModelDialog.h"
 #include "modelexport/ExportCollisionModelDialog.h"
 #include "ui/filters/FilterOrthoContextMenuItem.h"
@@ -393,6 +394,7 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addCommand("About", AboutDialog::showDialog);
 	GlobalCommandSystem().addCommand("ShowUserGuide", Documentation::showUserGuide);
 	GlobalCommandSystem().addCommand("ExportSelectedAsModelDialog", ExportAsModelDialog::ShowDialog);
+	GlobalCommandSystem().addCommand("ConvertModelDialog", ConvertModelDialog::ShowDialog);
 
 	GlobalCommandSystem().addCommand("EntityClassTree", EClassTree::ShowDialog);
 	GlobalCommandSystem().addCommand("EntityList", EntityList::toggle);

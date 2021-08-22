@@ -15,7 +15,44 @@
 						<option>0</option>
 						<flag>wxBOTTOM</flag>
 						<border>6</border>
-						<object class="wxStaticText" name="ExportDialogOutputLabel">
+						<object class="wxStaticText" name="InputPathLabel">
+							<label>Input File</label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxEXPAND|wxLEFT</flag>
+						<border>12</border>
+						<object class="wxBoxSizer">
+							<orient>wxHORIZONTAL</orient>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxALIGN_CENTER_VERTICAL</flag>
+								<border>6</border>
+								<object class="wxStaticText" name="m_staticText91">
+									<label>File Path:</label>
+									<wrap>-1</wrap>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>1</option>
+								<flag>wxLEFT|wxRIGHT</flag>
+								<border>6</border>
+								<object class="wxFilePickerCtrl" name="InputPathFilePicker">
+									<value></value>
+									<message>Select a file</message>
+									<wildcard>*.*</wildcard>
+									<style>wxFLP_DEFAULT_STYLE</style>
+								</object>
+							</object>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxBOTTOM|wxTOP</flag>
+						<border>6</border>
+						<object class="wxStaticText" name="OutputPathLabel">
 							<label>Output File</label>
 							<wrap>-1</wrap>
 						</object>
@@ -44,7 +81,7 @@
 								<option>0</option>
 								<flag>wxALL|wxEXPAND</flag>
 								<border>5</border>
-								<object class="wxChoice" name="ExportDialogFormatChoice">
+								<object class="wxChoice" name="OutputFormatChoice">
 									<selection>0</selection>
 									<content>
 										<item>ASCII Scene Export (.ase)</item>
@@ -64,7 +101,7 @@
 								<option>0</option>
 								<flag>wxALL|wxEXPAND</flag>
 								<border>5</border>
-								<object class="wxFilePickerCtrl" name="ExportDialogFilePicker">
+								<object class="wxFilePickerCtrl" name="OutputPathFilePicker">
 									<value></value>
 									<message>Select a file</message>
 									<wildcard>*.*</wildcard>
@@ -77,7 +114,7 @@
 						<option>0</option>
 						<flag>wxBOTTOM|wxTOP</flag>
 						<border>6</border>
-						<object class="wxStaticText" name="ExportDialogOptionLabel">
+						<object class="wxStaticText" name="OptionsLabel">
 							<label>Export Options</label>
 							<wrap>-1</wrap>
 						</object>
@@ -92,44 +129,8 @@
 								<option>0</option>
 								<flag>wxBOTTOM|wxTOP</flag>
 								<border>6</border>
-								<object class="wxCheckBox" name="ExportDialogCenterObjects">
+								<object class="wxCheckBox" name="CenterObjects">
 									<label>Center Objects around Origin</label>
-									<checked>0</checked>
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxBOTTOM|wxTOP</flag>
-								<border>6</border>
-								<object class="wxCheckBox" name="ExportDialogSkipCaulk">
-									<label>Skip Surfaces textured with Caulk</label>
-									<checked>0</checked>
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxBOTTOM|wxTOP</flag>
-								<border>6</border>
-								<object class="wxCheckBox" name="ExportDialogReplaceWithModel">
-									<label>Replace Selection with exported Model</label>
-									<checked>0</checked>
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxBOTTOM|wxTOP</flag>
-								<border>6</border>
-								<object class="wxCheckBox" name="ExportDialogUseEntityOrigin">
-									<label>Use Entity Origin as export Origin</label>
-									<checked>0</checked>
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxBOTTOM|wxTOP</flag>
-								<border>6</border>
-								<object class="wxCheckBox" name="ExportDialogExportLightsAsObjects">
-									<label>Export Lights as Objects (small octahedrons)</label>
 									<checked>0</checked>
 								</object>
 							</object>
@@ -145,7 +146,7 @@
 								<option>0</option>
 								<flag>wxLEFT</flag>
 								<border>6</border>
-								<object class="wxButton" name="ExportDialogCancelButton">
+								<object class="wxButton" name="CancelButton">
 									<label>Cancel</label>
 									<default>0</default>
 									<markup>0</markup>
@@ -156,8 +157,8 @@
 								<option>0</option>
 								<flag>wxLEFT</flag>
 								<border>6</border>
-								<object class="wxButton" name="ExportDialogExportButton">
-									<label>Export</label>
+								<object class="wxButton" name="ConvertButton">
+									<label>Convert</label>
 									<default>0</default>
 									<markup>0</markup>
 									<bitmap />

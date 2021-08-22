@@ -724,6 +724,9 @@
     <ClCompile Include="..\..\radiant\ui\PointFileChooser.cpp">
       <Filter>src\ui</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\modelexport\ConvertModelDialog.cpp">
+      <Filter>src\ui\modelexport</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h">
@@ -1400,6 +1403,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\PointFileChooser.h">
       <Filter>src\ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\modelexport\ConvertModelDialog.h">
+      <Filter>src\ui\modelexport</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
