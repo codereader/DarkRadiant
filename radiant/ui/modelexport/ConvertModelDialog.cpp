@@ -35,7 +35,6 @@ namespace
 {
 	const char* const WINDOW_TITLE = N_("Convert Model");
 
-	const char* RKEY_MODEL_CONVERSION_CENTER_OBJECTS = "user/ui/convertModel/centerObjects";
 	const char* RKEY_MODEL_CONVERSION_INPUT_PATH = "user/ui/convertModel/inputPath";
 	const char* RKEY_MODEL_CONVERSION_OUTPUT_PATH = "user/ui/convertModel/outputPath";
 	const char* RKEY_MODEL_CONVERSION_OUTPUT_FORMAT = "user/ui/convertModel/outputFormat";
@@ -56,7 +55,6 @@ void ConvertModelDialog::populateWindow()
 	
 	makeLabelBold(this, "InputPathLabel");
 	makeLabelBold(this, "OutputPathLabel");
-	makeLabelBold(this, "OptionsLabel");
 	makeLabelBold(this, "InfoLabel");
 
 	wxButton* exportButton = findNamedObject<wxButton>(this, "ConvertButton");
@@ -99,13 +97,6 @@ void ConvertModelDialog::populateWindow()
 		}
 
 		recentOutputPath = os::standardPathWithSlash(recentOutputPath) + "models/";
-
-		if (!os::fileOrDirExists(recentOutputPath))
-		{
-			rMessage() << "Creating default model output folder: " << recentOutputPath << std::endl;
-
-			os::makeDirectory(recentOutputPath);
-		}
 	}
 
 	if (!recentFormat.empty())
@@ -131,9 +122,6 @@ void ConvertModelDialog::populateWindow()
 	// we do this ourselves in this class when the user hits OK
 	pathEntry->setAskForOverwrite(false);
 
-	bool centerObjects = registry::getValue<bool>(RKEY_MODEL_CONVERSION_CENTER_OBJECTS);
-	findNamedObject<wxCheckBox>(this, "CenterObjects")->SetValue(centerObjects);
-
     auto* infoPanel = findNamedObject<wxPanel>(this, "InfoPanel");
 
     // Create info panel
@@ -151,10 +139,9 @@ void ConvertModelDialog::populateWindow()
 
 void ConvertModelDialog::onConvert(wxCommandEvent& ev)
 {
-	bool centerObjects = findNamedObject<wxCheckBox>(this, "CenterObjects")->GetValue();
-	std::string inputFilename = findNamedObject<wxutil::PathEntry>(this, "InputPathFilePicker")->getValue();
-	std::string outputFilename = findNamedObject<wxutil::PathEntry>(this, "OutputPathFilePicker")->getValue();
-	std::string outputFormat = wxutil::ChoiceHelper::GetSelectedStoredString(findNamedObject<wxChoice>(this, "OutputFormatChoice"));
+	auto inputFilename = findNamedObject<wxutil::PathEntry>(this, "InputPathFilePicker")->getValue();
+	auto outputFilename = findNamedObject<wxutil::PathEntry>(this, "OutputPathFilePicker")->getValue();
+	auto outputFormat = wxutil::ChoiceHelper::GetSelectedStoredString(findNamedObject<wxChoice>(this, "OutputFormatChoice"));
 
 	if (inputFilename.empty())
 	{
@@ -181,13 +168,12 @@ void ConvertModelDialog::onConvert(wxCommandEvent& ev)
 
 	try
 	{
-		// ConvertModel <InputPath> <OutputPath> <ExportFormat> [<CenterObjects>]
+		// ConvertModel <InputPath> <OutputPath> <ExportFormat>
 		cmd::ArgumentList argList;
 
 		argList.push_back(inputFilename);
 		argList.push_back(outputFilename);
 		argList.push_back(outputFormat);
-		argList.push_back(centerObjects);
 
 		GlobalCommandSystem().executeCommand("ConvertModel", argList);
 
@@ -292,9 +278,6 @@ void ConvertModelDialog::saveOptionsToRegistry()
 		findNamedObject<wxutil::PathEntry>(this, "OutputPathFilePicker")->getValue());
     registry::setValue(RKEY_MODEL_CONVERSION_INPUT_PATH,
         findNamedObject<wxutil::PathEntry>(this, "InputPathFilePicker")->getValue());
-
-	registry::setValue(RKEY_MODEL_CONVERSION_CENTER_OBJECTS, 
-		findNamedObject<wxCheckBox>(this, "CenterObjects")->GetValue());
 }
 
 void ConvertModelDialog::ShowDialog(const cmd::ArgumentList& args)

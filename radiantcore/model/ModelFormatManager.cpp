@@ -12,6 +12,8 @@
 #include "export/AseExporter.h"
 #include "export/Lwo2Exporter.h"
 #include "export/WavefrontExporter.h"
+#include "command/ExecutionFailure.h"
+#include "os/fs.h"
 
 namespace model
 {
@@ -24,7 +26,7 @@ const std::string& ModelFormatManager::getName() const
 
 const StringSet& ModelFormatManager::getDependencies() const
 {
-	static StringSet _dependencies;
+    static StringSet _dependencies { MODULE_COMMANDSYSTEM };
 	return _dependencies;
 }
 
@@ -42,6 +44,9 @@ void ModelFormatManager::initialiseModule(const IApplicationContext& ctx)
 	registerExporter(std::make_shared<AseExporter>());
 	registerExporter(std::make_shared<Lwo2Exporter>());
 	registerExporter(std::make_shared<WavefrontExporter>());
+
+    GlobalCommandSystem().addCommand("ConvertModel", std::bind(&ModelFormatManager::convertModelCmd, this, std::placeholders::_1),
+        { cmd::ARGTYPE_STRING, cmd::ARGTYPE_STRING, cmd::ARGTYPE_STRING });
 }
 
 void ModelFormatManager::postModuleInitialisation()
@@ -78,9 +83,9 @@ void ModelFormatManager::registerImporter(const IModelImporterPtr& importer)
 {
 	assert(importer);
 
-	std::string extension = string::to_upper_copy(importer->getExtension());
+	auto extension = string::to_upper_copy(importer->getExtension());
 
-	if (_importers.find(extension) != _importers.end())
+	if (_importers.count(extension) > 0)
 	{
 		rWarning() << "Cannot register more than one model importer for extension " << extension << std::endl;
 		return;
@@ -93,9 +98,9 @@ void ModelFormatManager::unregisterImporter(const IModelImporterPtr& importer)
 {
 	assert(importer);
 
-	std::string extension = string::to_upper_copy(importer->getExtension());
+	auto extension = string::to_upper_copy(importer->getExtension());
 
-	if (_importers.find(extension) != _importers.end())
+	if (_importers.count(extension) > 0)
 	{
 		_importers.erase(extension);
 		return;
@@ -106,9 +111,9 @@ void ModelFormatManager::unregisterImporter(const IModelImporterPtr& importer)
 
 IModelImporterPtr ModelFormatManager::getImporter(const std::string& extension)
 {
-	std::string extensionUpper = string::to_upper_copy(extension);
+	auto extensionUpper = string::to_upper_copy(extension);
 
-	ImporterMap::const_iterator found = _importers.find(extensionUpper);
+	auto found = _importers.find(extensionUpper);
 
 	return found != _importers.end() ? found->second : _nullModelLoader;
 }
@@ -117,9 +122,9 @@ void ModelFormatManager::registerExporter(const IModelExporterPtr& exporter)
 {
 	assert(exporter);
 
-	std::string extension = string::to_upper_copy(exporter->getExtension());
+	auto extension = string::to_upper_copy(exporter->getExtension());
 
-	if (_exporters.find(extension) != _exporters.end())
+	if (_exporters.count(extension) > 0)
 	{
 		rWarning() << "Cannot register more than one model exporter for extension " << extension << std::endl;
 		return;
@@ -132,9 +137,9 @@ void ModelFormatManager::unregisterExporter(const IModelExporterPtr& exporter)
 {
 	assert(exporter);
 
-	std::string extension = string::to_upper_copy(exporter->getExtension());
+	auto extension = string::to_upper_copy(exporter->getExtension());
 
-	if (_exporters.find(extension) != _exporters.end())
+	if (_exporters.count(extension) > 0)
 	{
 		_exporters.erase(extension);
 		return;
@@ -145,9 +150,9 @@ void ModelFormatManager::unregisterExporter(const IModelExporterPtr& exporter)
 
 IModelExporterPtr ModelFormatManager::getExporter(const std::string& extension)
 {
-	std::string extensionUpper = string::to_upper_copy(extension);
+	auto extensionUpper = string::to_upper_copy(extension);
 
-	ExporterMap::const_iterator found = _exporters.find(extensionUpper);
+	auto found = _exporters.find(extensionUpper);
 
 	// Return a cloned instance if we found a matching exporter
 	return found != _exporters.end() ? found->second->clone() : IModelExporterPtr();
@@ -167,6 +172,63 @@ void ModelFormatManager::foreachExporter(const std::function<void(const IModelEx
 	{
 		functor(pair.second);
 	}
+}
+
+void ModelFormatManager::convertModelCmd(const cmd::ArgumentList& args)
+{
+    if (args.size() != 3)
+    {
+        rWarning() << "Usage: ConvertModel <InputPath> <OutputPath> <ExportFormat>" << std::endl;
+        return;
+    }
+
+    auto inputPath = args[0].getString();
+    auto outputPathRaw = args[1].getString();
+    auto outputFormat = args[2].getString();
+
+    // Get the exporter
+    auto exporter = getExporter(outputFormat);
+
+    if (!exporter)
+    {
+        throw cmd::ExecutionFailure(fmt::format(_("Could not find any exporter for this format: {0}"), outputFormat));
+    }
+
+    // Load the input model
+    IModelPtr model;
+
+    foreachImporter([&](const model::IModelImporterPtr& importer)
+    {
+        if (!model)
+        {
+            model = importer->loadModelFromPath(inputPath);
+        }
+    });
+
+    if (!model)
+    {
+        throw cmd::ExecutionFailure(fmt::format(_("Could not load model file {0}"), inputPath));
+    }
+
+    // Stream all model surfaces to the exporter
+    for (int i = 0; i < model->getSurfaceCount(); ++i)
+    {
+        auto& surface = model->getSurface(static_cast<unsigned int>(i));
+        exporter->addSurface(surface, Matrix4::getIdentity());
+    }
+
+    fs::path outputPath = outputPathRaw;
+
+    rMessage() << "Exporting model to " << outputPath.string() << std::endl;
+
+    try
+    {
+        exporter->exportToPath(outputPath.parent_path().string(), outputPath.filename().string());
+    }
+    catch (const std::runtime_error& ex)
+    {
+        throw cmd::ExecutionFailure(fmt::format(_("Failed to export model to {0}: {1}"), outputPath.string(), ex.what()));
+    }
 }
 
 module::StaticModule<ModelFormatManager> _staticModelFormatManagerModule;

@@ -132,32 +132,6 @@
 					</object>
 					<object class="sizeritem">
 						<option>0</option>
-						<flag>wxBOTTOM|wxTOP</flag>
-						<border>6</border>
-						<object class="wxStaticText" name="OptionsLabel">
-							<label>Export Options</label>
-							<wrap>-1</wrap>
-						</object>
-					</object>
-					<object class="sizeritem">
-						<option>0</option>
-						<flag>wxEXPAND|wxLEFT</flag>
-						<border>12</border>
-						<object class="wxBoxSizer">
-							<orient>wxVERTICAL</orient>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxBOTTOM|wxTOP</flag>
-								<border>6</border>
-								<object class="wxCheckBox" name="CenterObjects">
-									<label>Center Objects around Origin</label>
-									<checked>0</checked>
-								</object>
-							</object>
-						</object>
-					</object>
-					<object class="sizeritem">
-						<option>0</option>
 						<flag>wxALIGN_RIGHT|wxLEFT|wxTOP</flag>
 						<border>12</border>
 						<object class="wxBoxSizer">

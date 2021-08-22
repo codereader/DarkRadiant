@@ -2,6 +2,7 @@
 
 #include <map>
 #include "imodel.h"
+#include "icommandsystem.h"
 #include "NullModelLoader.h"
 
 namespace model
@@ -41,6 +42,7 @@ public:
 
 private:
 	void postModuleInitialisation();
+    void convertModelCmd(const cmd::ArgumentList& args);
 };
 
 }
