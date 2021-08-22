@@ -5,6 +5,7 @@
 #include "imap.h"
 #include "ieclass.h"
 #include "ientity.h"
+#include "algorithm/Primitives.h"
 #include "algorithm/Scene.h"
 #include "scenelib.h"
 #include "os/path.h"
@@ -106,6 +107,23 @@ const Vector3 VertexColour1(0.1, 0.2, 0.3);
 const Vector3 VertexColour2(0.4, 0.5, 0.6);
 const Vector3 VertexColour3(0.7, 0.8, 0.9);
 
+inline model::ModelNodePtr getChildModelNode(const scene::INodePtr& entity)
+{
+    // Locate the IModel node among the entity's children
+    model::ModelNodePtr model;
+
+    entity->foreachNode([&](const scene::INodePtr& node)
+    {
+        if (Node_isModel(node))
+        {
+            model = Node_getModel(node);
+        }
+        return true;
+    });
+
+    return model;
+}
+
 inline void checkVertexColoursOfExportedModel(const model::IModelExporterPtr& exporter, const std::string& outputPath_)
 {
     fs::path outputPath = outputPath_;
@@ -130,15 +148,7 @@ inline void checkVertexColoursOfExportedModel(const model::IModelExporterPtr& ex
         Node_getEntity(entity)->setKeyValue("model", "models/" + filename.string());
 
         // Locate the IModel node among the entity's children
-        model::ModelNodePtr model;
-        entity->foreachNode([&](const scene::INodePtr& node)
-        {
-            if (Node_isModel(node))
-            {
-                model = Node_getModel(node);
-            }
-            return true;
-        });
+        model::ModelNodePtr model = getChildModelNode(entity);
 
         EXPECT_TRUE(model) << "Could not locate the model node of the entity";
 
@@ -323,6 +333,54 @@ TEST_F(ModelExportTest, ConvertAseToLwo)
 
     auto lwoOutputPath = _context.getTemporaryDataPath() + "conversiontest.lwo";
     runConverterCode(aseOutputPath, lwoOutputPath);
+}
+
+// #5659: Exporting a model should be reloaded automatically
+TEST_F(ModelExportTest, ExportedModelTriggersEntityRefresh)
+{
+    auto modelMaterial1 = "textures/numbers/1";
+    auto modelMaterial2 = "textures/numbers/2";
+    auto modRelativePath = "models/refresh_test.ase";
+    auto aseOutputPath = _context.getTestProjectPath() + modRelativePath;
+
+    auto brush = algorithm::createCubicBrush(
+        GlobalMapModule().findOrInsertWorldspawn(), Vector3(0, 0, 0), modelMaterial1);
+
+    GlobalSelectionSystem().setSelectedAll(false);
+    Node_setSelected(brush, true);
+
+    // Export this model to the mod-relative location
+    GlobalCommandSystem().executeCommand("ExportSelectedAsModel", { aseOutputPath, cmd::Argument("ase") });
+
+    // Create an entity referencing this new model
+    auto eclass = GlobalEntityClassManager().findClass("func_static");
+    auto entity = GlobalEntityModule().createEntity(eclass);
+
+    scene::addNodeToContainer(entity, GlobalMapModule().getRoot());
+
+    // This should assign the model node to the entity
+    Node_getEntity(entity)->setKeyValue("model", modRelativePath);
+    model::ModelNodePtr model = getChildModelNode(entity);
+
+    EXPECT_TRUE(model) << "Could not locate the model node of the entity";
+    EXPECT_EQ(model->getIModel().getSurface(0).getDefaultMaterial(), modelMaterial1);
+
+    // Now change the brush texture and re-export the model
+    Node_getIBrush(brush)->setShader(modelMaterial2);
+
+    GlobalSelectionSystem().setSelectedAll(false);
+    Node_setSelected(brush, true);
+
+    // Re-export this model to the mod-relative location
+    GlobalCommandSystem().executeCommand("ExportSelectedAsModel", { aseOutputPath, cmd::Argument("ase") });
+
+    // If all went well, the entity has automatically refreshed its model
+    model = getChildModelNode(entity);
+
+    EXPECT_TRUE(model) << "Could not locate the model node of the entity";
+    EXPECT_EQ(model->getIModel().getSurface(0).getDefaultMaterial(), modelMaterial2);
+
+    fs::remove(aseOutputPath);
 }
 
 }
