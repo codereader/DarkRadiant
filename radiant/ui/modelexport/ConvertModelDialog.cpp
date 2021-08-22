@@ -156,11 +156,17 @@ void ConvertModelDialog::onConvert(wxCommandEvent& ev)
 	std::string outputFilename = findNamedObject<wxutil::PathEntry>(this, "OutputPathFilePicker")->getValue();
 	std::string outputFormat = wxutil::ChoiceHelper::GetSelectedStoredString(findNamedObject<wxChoice>(this, "OutputFormatChoice"));
 
-	if (outputFilename.empty())
+	if (inputFilename.empty())
 	{
-		wxutil::Messagebox::Show(_("Empty Filename"), _("No filename specified, cannot run exporter"), IDialog::MessageType::MESSAGE_ERROR);
+		wxutil::Messagebox::Show(_("Empty Input Filename"), _("No input filename specified, cannot run converter"), IDialog::MessageType::MESSAGE_ERROR);
 		return;
 	}
+
+    if (outputFilename.empty() || os::getExtension(outputFilename).empty())
+    {
+        wxutil::Messagebox::Show(_("Empty Filename"), _("No valid output filename specified, cannot run converter"), IDialog::MessageType::MESSAGE_ERROR);
+        return;
+    }
 
 	// Check if the target file already exists
 	if (os::fileOrDirExists(outputFilename) &&
