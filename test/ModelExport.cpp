@@ -8,6 +8,7 @@
 #include "algorithm/Scene.h"
 #include "scenelib.h"
 #include "os/path.h"
+#include "string/case_conv.h"
 
 namespace test
 {
@@ -263,6 +264,42 @@ TEST_F(ModelExportTest, LwoVertexColoursAddedBySurface)
     exporter->addSurface(surface, Matrix4::getIdentity());
 
     checkVertexColoursOfExportedModel(exporter, _context.getTestProjectPath());
+}
+
+inline void runConverterCode(const std::string& inputPath, const std::string& outputPath)
+{
+    auto extension = string::to_upper_copy(os::getExtension(outputPath));
+
+    EXPECT_FALSE(fs::exists(outputPath)) << outputPath << " already exists";
+
+    // Invoke the converter code
+    GlobalCommandSystem().executeCommand("ConvertModel", cmd::ArgumentList{ inputPath, outputPath, extension });
+
+    EXPECT_TRUE(fs::exists(outputPath)) << outputPath << " should have been created";
+
+    auto importer = GlobalModelFormatManager().getImporter(extension);
+    auto exportedModel = importer->loadModelFromPath(outputPath);
+
+    EXPECT_TRUE(exportedModel);
+    EXPECT_EQ(exportedModel->getSurfaceCount(), 3);
+    EXPECT_EQ(exportedModel->getVertexCount(), 180);
+    EXPECT_EQ(exportedModel->getPolyCount(), 258);
+}
+
+TEST_F(ModelExportTest, ConvertLwoToAse)
+{
+    auto outputPath = _context.getTemporaryDataPath() + "conversiontest.ase";
+    runConverterCode(_context.getTestProjectPath() + "models/torch.lwo", outputPath);
+}
+
+TEST_F(ModelExportTest, ConvertAseToLwo)
+{
+    // Convert the torch to ASE first, then back to LWO
+    auto aseOutputPath = _context.getTemporaryDataPath() + "conversiontest.ase";
+    runConverterCode(_context.getTestProjectPath() + "models/torch.lwo", aseOutputPath);
+
+    auto lwoOutputPath = _context.getTemporaryDataPath() + "conversiontest.lwo";
+    runConverterCode(aseOutputPath, lwoOutputPath);
 }
 
 }
