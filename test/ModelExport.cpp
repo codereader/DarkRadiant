@@ -294,7 +294,7 @@ TEST_F(ModelExportTest, ConvertLwoToAse)
 
 TEST_F(ModelExportTest, ConvertFbxToAse)
 {
-    auto outputPath = _context.getTemporaryDataPath() + "conversiontest.lwo";
+    auto outputPath = _context.getTemporaryDataPath() + "conversiontest.ase";
     auto extension = string::to_upper_copy(os::getExtension(outputPath));
     auto inputPath = _context.getTestResourcePath() + "fbx/test_cube.fbx";
 
