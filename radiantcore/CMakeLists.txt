@@ -159,6 +159,7 @@ add_library(radiantcore MODULE
             model/import/AseModel.cpp
             model/import/AseModelLoader.cpp
             model/import/ModelImporterBase.cpp
+            model/import/openfbx/ofbx.cpp
             model/picomodel/PicoModelLoader.cpp
             model/picomodel/PicoModelModule.cpp
             model/StaticModel.cpp

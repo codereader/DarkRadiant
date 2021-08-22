@@ -156,6 +156,7 @@
     <ClCompile Include="..\..\radiantcore\model\import\AseModel.cpp" />
     <ClCompile Include="..\..\radiantcore\model\import\AseModelLoader.cpp" />
     <ClCompile Include="..\..\radiantcore\model\import\ModelImporterBase.cpp" />
+    <ClCompile Include="..\..\radiantcore\model\import\openfbx\ofbx.cpp" />
     <ClCompile Include="..\..\radiantcore\model\md5\MD5Anim.cpp" />
     <ClCompile Include="..\..\radiantcore\model\md5\MD5AnimationCache.cpp" />
     <ClCompile Include="..\..\radiantcore\model\md5\MD5Model.cpp" />
@@ -869,6 +870,7 @@
     <ClInclude Include="..\..\radiantcore\model\import\AseModel.h" />
     <ClInclude Include="..\..\radiantcore\model\import\AseModelLoader.h" />
     <ClInclude Include="..\..\radiantcore\model\import\ModelImporterBase.h" />
+    <ClInclude Include="..\..\radiantcore\model\import\openfbx\ofbx.h" />
     <ClInclude Include="..\..\radiantcore\model\md5\MD5Anim.h" />
     <ClInclude Include="..\..\radiantcore\model\md5\MD5AnimationCache.h" />
     <ClInclude Include="..\..\radiantcore\model\md5\MD5DataStructures.h" />

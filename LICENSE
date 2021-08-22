@@ -1,4 +1,4 @@
-DarkRadiant License (last update: 2021-05-23)
+DarkRadiant License (last update: 2021-08-22)
 ----------------------------------------------------------------------------------------------
 
 DarkRadiant is free software originally based on GtkRadiant, which has been licensed under
@@ -33,5 +33,6 @@ PicoModel Library - published under the modified Berkeley Software Distribution 
 DDS Library - published under the modified Berkeley Software Distribution (BSD) license
 pybind11 Library - see the LICENSE file in the libs/pybind folder
 fmtlib Library - see the LICENSE file in the libs/libfmt folder (BSD 2-clause "Simplified" License)
+OpenFBX library - see the LICENSE file in radiantcore/model/import/openfbx (MIT license)
 SHA256 implementation - by Brad Conte, released into the public domain, see this URL: 
     (https://github.com/B-Con/crypto-algorithms/tree/master#readme)

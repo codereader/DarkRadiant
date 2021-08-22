@@ -203,6 +203,9 @@
     <Filter Include="src\versioncontrol">
       <UniqueIdentifier>{6e21fce5-68dc-4b21-8856-b219352b5f02}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\model\import\openfbx">
+      <UniqueIdentifier>{fe243505-dda8-4a93-9a9e-eb98a4c535e8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiantcore\modulesystem\ModuleLoader.cpp">
@@ -1056,6 +1059,9 @@
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\map\VcsMapResource.cpp">
       <Filter>src\map</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\model\import\openfbx\ofbx.cpp">
+      <Filter>src\model\import\openfbx</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2153,6 +2159,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\map\VcsMapResource.h">
       <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\model\import\openfbx\ofbx.h">
+      <Filter>src\model\import\openfbx</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
