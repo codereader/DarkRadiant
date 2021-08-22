@@ -269,7 +269,7 @@ const std::string& MD5Surface::getDefaultMaterial() const
 
 const std::string& MD5Surface::getActiveMaterial() const
 {
-	return _activeMaterial;
+	return !_activeMaterial.empty() ? _activeMaterial : _originalShaderName;
 }
 
 void MD5Surface::setActiveMaterial(const std::string& activeMaterial)

@@ -248,7 +248,7 @@ void StaticModelSurface::setDefaultMaterial(const std::string& defaultMaterial)
 
 const std::string& StaticModelSurface::getActiveMaterial() const
 {
-	return _activeMaterial;
+    return !_activeMaterial.empty() ? _activeMaterial : _defaultMaterial;
 }
 
 void StaticModelSurface::setActiveMaterial(const std::string& activeMaterial)
