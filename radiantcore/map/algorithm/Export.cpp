@@ -19,6 +19,7 @@
 #include "registry/registry.h"
 #include "scene/Traverse.h"
 #include "command/ExecutionFailure.h"
+#include "Models.h"
 
 namespace map
 {
@@ -101,40 +102,38 @@ void exportSelectedAsModel(const ModelExportOptions& options)
 
     expFormat->exportToPath(outputPath, outputFile);
 
-	if (!options.replaceSelectionWithModel)
-	{
-		return; // done here
-	}
+    std::string relativeModelPath = os::getRelativePath(absOutputPath, rootPath);
 
-	std::string relativeModelPath = os::getRelativePath(absOutputPath, rootPath);
+    if (options.replaceSelectionWithModel)
+    {
+        UndoableCommand command("replaceModel");
 
-	UndoableCommand command("replaceModel");
+        // Remove the selection
+        selection::algorithm::deleteSelection();
 
-	// Remove the selection
-	selection::algorithm::deleteSelection();
+        // Create a func_static in its place
+        try
+        {
+            // Place the model in the world origin, unless we set "center objects" to true
+            Vector3 modelPos(0, 0, 0);
 
-	// Create a func_static in its place
-	try
-	{
-		// Place the model in the world origin, unless we set "center objects" to true
-		Vector3 modelPos(0, 0, 0);
+            if (options.centerObjects)
+            {
+                modelPos = -exporter.getCenterTransform().tCol().getVector3();
+            }
 
-		if (options.centerObjects)
-		{
-			modelPos = -exporter.getCenterTransform().tCol().getVector3();
-		}
+            scene::INodePtr modelNode = GlobalEntityModule().createEntityFromSelection("func_static", modelPos);
 
-		scene::INodePtr modelNode = GlobalEntityModule().createEntityFromSelection("func_static", modelPos);
-
-		Node_getEntity(modelNode)->setKeyValue("model", relativeModelPath);
-
-		// It's possible that the export overwrote a model we're already using in this map, refresh it
-		GlobalModelCache().refreshSelectedModels(false);
-	}
-	catch (cmd::ExecutionFailure& ex)
-	{
-		throw std::runtime_error(fmt::format(_("Unable to create model: {0}"), ex.what()));
-	}
+            Node_getEntity(modelNode)->setKeyValue("model", relativeModelPath);
+        }
+        catch (cmd::ExecutionFailure& ex)
+        {
+            throw std::runtime_error(fmt::format(_("Unable to create model: {0}"), ex.what()));
+        }
+    }
+    
+    // It's possible that the export overwrote a model we're already using in this map, refresh it
+    refreshModelsByPath(relativeModelPath);
 }
 
 void exportSelectedAsModelCmd(const cmd::ArgumentList& args)

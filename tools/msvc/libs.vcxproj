@@ -187,7 +187,6 @@
     <ClInclude Include="..\..\libs\parser\ParseException.h" />
     <ClInclude Include="..\..\libs\parser\Tokeniser.h" />
     <ClInclude Include="..\..\libs\patch\PatchIterators.h" />
-    <ClInclude Include="..\..\libs\picomodel.h" />
     <ClInclude Include="..\..\libs\pivot.h" />
     <ClInclude Include="..\..\libs\RandomOrigin.h" />
     <ClInclude Include="..\..\libs\Rectangle.h" />

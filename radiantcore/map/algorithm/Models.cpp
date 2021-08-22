@@ -140,6 +140,31 @@ void refreshSelectedModels(bool blockScreenUpdates)
 	}
 }
 
+// Reloads all entities with their model spawnarg referencing the given model path.
+// The given model path denotes a VFS path, i.e. it is mod/game-relative
+void refreshModelsByPath(const std::string& relativeModelPath)
+{
+    std::size_t refreshedEntityCount = 0;
+
+    GlobalModelCache().removeModel(relativeModelPath);
+
+    GlobalMapModule().getRoot()->foreachNode([&](const scene::INodePtr& node)
+    {
+        auto entity = std::dynamic_pointer_cast<IEntityNode>(node);
+
+        if (entity && entity->getEntity().getKeyValue("model") == relativeModelPath)
+        {
+            entity->refreshModel();
+            ++refreshedEntityCount;
+            return false;
+        }
+
+        return true;
+    });
+
+    rMessage() << "Refreshed " << refreshedEntityCount << " entities using the model " << relativeModelPath << std::endl;
+}
+
 }
 
 }
