@@ -181,6 +181,7 @@ add_library(radiantcore MODULE
             model/picomodel/lib/picomodules.c
             model/picomodel/lib/pm_3ds.c
             model/picomodel/lib/pm_fm.c
+            model/picomodel/lib/pm_iqm.c
             model/picomodel/lib/pm_lwo.c
             model/picomodel/lib/pm_md2.c
             model/picomodel/lib/pm_md3.c
