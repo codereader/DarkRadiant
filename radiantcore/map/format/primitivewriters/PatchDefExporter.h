@@ -159,11 +159,11 @@ private:
 			if (string::starts_with(shaderName, GlobalTexturePrefix_get()))
 			{
 				// Q3-style patchDef2 doesn't write the "textures/" prefix to the map, cut it off
-				stream << "" << shader_get_textureName(shaderName.c_str()) << " ";
+				stream << shader_get_textureName(shaderName.c_str());
 			}
 			else
 			{
-				stream << "" << shaderName << " ";
+				stream << shaderName;
 			}
 		}
 		stream << "\n";
