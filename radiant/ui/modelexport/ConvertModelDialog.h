@@ -24,7 +24,7 @@ protected:
 private:
 	void populateWindow();
 
-	void onExport(wxCommandEvent& ev);
+	void onConvert(wxCommandEvent& ev);
 	void onCancel(wxCommandEvent& ev);
 	void onFormatSelection(wxCommandEvent& ev);
 

@@ -28,7 +28,7 @@
 							<orient>wxHORIZONTAL</orient>
 							<object class="sizeritem">
 								<option>0</option>
-								<flag>wxALIGN_CENTER_VERTICAL</flag>
+								<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
 								<border>6</border>
 								<object class="wxStaticText" name="m_staticText91">
 									<label>File Path:</label>

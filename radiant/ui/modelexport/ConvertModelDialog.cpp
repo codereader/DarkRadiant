@@ -34,6 +34,7 @@ namespace
 	const char* const WINDOW_TITLE = N_("Convert Model");
 
 	const char* RKEY_MODEL_CONVERSION_CENTER_OBJECTS = "user/ui/convertModel/centerObjects";
+	const char* RKEY_MODEL_CONVERSION_INPUT_PATH = "user/ui/convertModel/inputPath";
 	const char* RKEY_MODEL_CONVERSION_OUTPUT_PATH = "user/ui/convertModel/outputPath";
 	const char* RKEY_MODEL_CONVERSION_OUTPUT_FORMAT = "user/ui/convertModel/outputFormat";
 }
@@ -58,7 +59,7 @@ void ConvertModelDialog::populateWindow()
 	wxButton* exportButton = findNamedObject<wxButton>(this, "ConvertButton");
 	wxButton* cancelButton = findNamedObject<wxButton>(this, "CancelButton");
 
-	exportButton->Bind(wxEVT_BUTTON, &ConvertModelDialog::onExport, this);
+	exportButton->Bind(wxEVT_BUTTON, &ConvertModelDialog::onConvert, this);
 	cancelButton->Bind(wxEVT_BUTTON, &ConvertModelDialog::onCancel, this);
 
 	wxChoice* formatChoice = findNamedObject<wxChoice>(this, "OutputFormatChoice");
@@ -80,26 +81,27 @@ void ConvertModelDialog::populateWindow()
 	// Select the first format for starters
 	formatChoice->Select(0);
 
-	std::string recentFormat = registry::getValue<std::string>(RKEY_MODEL_CONVERSION_OUTPUT_FORMAT);
-	std::string recentPath = registry::getValue<std::string>(RKEY_MODEL_CONVERSION_OUTPUT_PATH);
+	auto recentFormat = registry::getValue<std::string>(RKEY_MODEL_CONVERSION_OUTPUT_FORMAT);
+	auto recentInputPath = registry::getValue<std::string>(RKEY_MODEL_CONVERSION_INPUT_PATH);
+	auto recentOutputPath = registry::getValue<std::string>(RKEY_MODEL_CONVERSION_OUTPUT_PATH);
 
 	// Default to the models path of the current mod or game
-	if (recentPath.empty())
+	if (recentOutputPath.empty())
 	{
-		recentPath = GlobalGameManager().getModPath();
+		recentOutputPath = GlobalGameManager().getModPath();
 
-		if (recentPath.empty())
+		if (recentOutputPath.empty())
 		{
-			recentPath = GlobalGameManager().getUserEnginePath();
+			recentOutputPath = GlobalGameManager().getUserEnginePath();
 		}
 
-		recentPath = os::standardPathWithSlash(recentPath) + "models/";
+		recentOutputPath = os::standardPathWithSlash(recentOutputPath) + "models/";
 
-		if (!os::fileOrDirExists(recentPath))
+		if (!os::fileOrDirExists(recentOutputPath))
 		{
-			rMessage() << "Creating default model output folder: " << recentPath << std::endl;
+			rMessage() << "Creating default model output folder: " << recentOutputPath << std::endl;
 
-			os::makeDirectory(recentPath);
+			os::makeDirectory(recentOutputPath);
 		}
 	}
 
@@ -108,12 +110,18 @@ void ConvertModelDialog::populateWindow()
 		wxutil::ChoiceHelper::SelectItemByStoredString(formatChoice, recentFormat);
 	}
 
-	// Replace the filepicker control with our own PathEntry
-    auto* existing = findNamedObject<wxWindow>(this, "OutputPathFilePicker");
-	auto* pathEntry = new wxutil::PathEntry(existing->GetParent(), filetype::TYPE_MODEL_EXPORT, false, recentFormat);
+    auto* existing = findNamedObject<wxWindow>(this, "InputPathFilePicker");
+    auto* pathEntry = new wxutil::PathEntry(existing->GetParent(), false);
     replaceControl(existing, pathEntry);
 
-    pathEntry->setValue(recentPath);
+    pathEntry->setValue(recentInputPath);
+
+	// Replace the filepicker control with our own PathEntry
+    existing = findNamedObject<wxWindow>(this, "OutputPathFilePicker");
+	pathEntry = new wxutil::PathEntry(existing->GetParent(), filetype::TYPE_MODEL_EXPORT, false, recentFormat);
+    replaceControl(existing, pathEntry);
+
+    pathEntry->setValue(recentOutputPath);
 
 	// We don't want the FileChooser to ask for permission overwriting an existing file,
 	// we do this ourselves in this class when the user hits OK
@@ -129,7 +137,7 @@ void ConvertModelDialog::populateWindow()
 	CenterOnScreen();
 }
 
-void ConvertModelDialog::onExport(wxCommandEvent& ev)
+void ConvertModelDialog::onConvert(wxCommandEvent& ev)
 {
 	bool centerObjects = findNamedObject<wxCheckBox>(this, "CenterObjects")->GetValue();
 	std::string inputFilename = findNamedObject<wxutil::PathEntry>(this, "InputPathFilePicker")->getValue();
@@ -190,7 +198,7 @@ void ConvertModelDialog::handleFormatSelectionChange()
 
 	if (!selectedFormat.empty())
 	{
-		wxutil::PathEntry* pathEntry = findNamedObject<wxutil::PathEntry>(this, "OutputPathFilePicker");
+		auto* pathEntry = findNamedObject<wxutil::PathEntry>(this, "OutputPathFilePicker");
 
 		pathEntry->setDefaultExtension(selectedFormat);
 
@@ -224,6 +232,8 @@ void ConvertModelDialog::saveOptionsToRegistry()
 
 	registry::setValue(RKEY_MODEL_CONVERSION_OUTPUT_PATH,
 		findNamedObject<wxutil::PathEntry>(this, "OutputPathFilePicker")->getValue());
+    registry::setValue(RKEY_MODEL_CONVERSION_INPUT_PATH,
+        findNamedObject<wxutil::PathEntry>(this, "InputPathFilePicker")->getValue());
 
 	registry::setValue(RKEY_MODEL_CONVERSION_CENTER_OBJECTS, 
 		findNamedObject<wxCheckBox>(this, "CenterObjects")->GetValue());
