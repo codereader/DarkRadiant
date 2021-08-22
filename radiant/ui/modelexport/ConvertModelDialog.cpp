@@ -214,11 +214,12 @@ void ConvertModelDialog::handleInputPathChanged()
         return;
     }
 
+    auto modelExtension = string::to_upper_copy(os::getExtension(inputFilename));
     model::IModelPtr model;
 
     GlobalModelFormatManager().foreachImporter([&](const model::IModelImporterPtr& importer)
     {
-        if (!model)
+        if (!model && importer->getExtension() == modelExtension)
         {
             model = importer->loadModelFromPath(inputFilename);
         }
