@@ -9,6 +9,7 @@
 
 #include "module/StaticModule.h"
 
+#include "import/FbxModelLoader.h"
 #include "export/AseExporter.h"
 #include "export/Lwo2Exporter.h"
 #include "export/WavefrontExporter.h"
@@ -39,6 +40,9 @@ void ModelFormatManager::initialiseModule(const IApplicationContext& ctx)
 	module::GlobalModuleRegistry().signal_allModulesInitialised().connect(
 		sigc::mem_fun(this, &ModelFormatManager::postModuleInitialisation)
 	);
+
+    // Register the built-in model importers
+    registerImporter(std::make_shared<FbxModelLoader>());
 
 	// Register the built-in model exporters
 	registerExporter(std::make_shared<AseExporter>());

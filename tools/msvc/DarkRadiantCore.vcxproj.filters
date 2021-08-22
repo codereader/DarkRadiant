@@ -1063,6 +1063,9 @@
     <ClCompile Include="..\..\radiantcore\model\import\openfbx\ofbx.cpp">
       <Filter>src\model\import\openfbx</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\model\import\FbxModelLoader.cpp">
+      <Filter>src\model\import</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
@@ -2162,6 +2165,12 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\model\import\openfbx\ofbx.h">
       <Filter>src\model\import\openfbx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\model\import\FbxModelLoader.h">
+      <Filter>src\model\import</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\model\import\FbxSurface.h">
+      <Filter>src\model\import</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

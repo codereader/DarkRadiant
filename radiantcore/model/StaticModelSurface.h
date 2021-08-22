@@ -60,18 +60,12 @@ private:
     GLuint _dlProgramNoVCol;
 
 private:
-
-	// Get a colour vector from an unsigned char array (may be NULL)
-	Vector3 getColourVector(unsigned char* array);
-
 	// Calculate tangent and bitangent vectors for all vertices.
 	void calculateTangents();
 
 	// Create the display lists
     GLuint compileProgramList(bool includeColour);
 	void createDisplayLists();
-
-	std::string cleanupShaderName(const std::string& mapName);
 
 public:
     // Move-construct this static model surface from the given vertex- and index array

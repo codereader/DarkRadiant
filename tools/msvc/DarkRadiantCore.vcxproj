@@ -155,6 +155,7 @@
     <ClCompile Include="..\..\radiantcore\model\export\WavefrontExporter.cpp" />
     <ClCompile Include="..\..\radiantcore\model\import\AseModel.cpp" />
     <ClCompile Include="..\..\radiantcore\model\import\AseModelLoader.cpp" />
+    <ClCompile Include="..\..\radiantcore\model\import\FbxModelLoader.cpp" />
     <ClCompile Include="..\..\radiantcore\model\import\ModelImporterBase.cpp" />
     <ClCompile Include="..\..\radiantcore\model\import\openfbx\ofbx.cpp" />
     <ClCompile Include="..\..\radiantcore\model\md5\MD5Anim.cpp" />
@@ -869,6 +870,8 @@
     <ClInclude Include="..\..\radiantcore\model\export\WavefrontExporter.h" />
     <ClInclude Include="..\..\radiantcore\model\import\AseModel.h" />
     <ClInclude Include="..\..\radiantcore\model\import\AseModelLoader.h" />
+    <ClInclude Include="..\..\radiantcore\model\import\FbxModelLoader.h" />
+    <ClInclude Include="..\..\radiantcore\model\import\FbxSurface.h" />
     <ClInclude Include="..\..\radiantcore\model\import\ModelImporterBase.h" />
     <ClInclude Include="..\..\radiantcore\model\import\openfbx\ofbx.h" />
     <ClInclude Include="..\..\radiantcore\model\md5\MD5Anim.h" />

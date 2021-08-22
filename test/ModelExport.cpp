@@ -311,7 +311,7 @@ TEST_F(ModelExportTest, ConvertFbxToAse)
     EXPECT_TRUE(exportedModel) << "No FBX model has been created";
     EXPECT_EQ(exportedModel->getSurfaceCount(), 1);
     EXPECT_EQ(exportedModel->getSurface(0).getDefaultMaterial(), "phong1");
-    EXPECT_EQ(exportedModel->getVertexCount(), 8);
+    EXPECT_EQ(exportedModel->getVertexCount(), 24);
     EXPECT_EQ(exportedModel->getPolyCount(), 12);
 }
 

@@ -449,7 +449,7 @@ TEST_F(ModelTest, LoadFbxModel)
     EXPECT_TRUE(model) << "No FBX model has been loaded";
     EXPECT_EQ(model->getSurfaceCount(), 1);
     EXPECT_EQ(model->getSurface(0).getDefaultMaterial(), "phong1");
-    EXPECT_EQ(model->getVertexCount(), 8);
+    EXPECT_EQ(model->getVertexCount(), 24);
     EXPECT_EQ(model->getPolyCount(), 12);
 }
 
