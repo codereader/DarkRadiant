@@ -437,4 +437,20 @@ TEST_F(AseImportTest, ParseGeomObjectWithoutMaterialRef)
     }
 }
 
+TEST_F(ModelTest, LoadFbxModel)
+{
+    auto inputPath = _context.getTestResourcePath() + "fbx/test_cube.fbx";
+
+    auto importer = GlobalModelFormatManager().getImporter("FBX");
+    EXPECT_TRUE(importer) << "No FBX importer available";
+
+    auto model = importer->loadModelFromPath(inputPath);
+
+    EXPECT_TRUE(model) << "No FBX model has been loaded";
+    EXPECT_EQ(model->getSurfaceCount(), 1);
+    EXPECT_EQ(model->getSurface(0).getDefaultMaterial(), "phong1");
+    EXPECT_EQ(model->getVertexCount(), 8);
+    EXPECT_EQ(model->getPolyCount(), 12);
+}
+
 }

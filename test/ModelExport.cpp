@@ -292,6 +292,29 @@ TEST_F(ModelExportTest, ConvertLwoToAse)
     runConverterCode(_context.getTestProjectPath() + "models/torch.lwo", outputPath);
 }
 
+TEST_F(ModelExportTest, ConvertFbxToAse)
+{
+    auto outputPath = _context.getTemporaryDataPath() + "conversiontest.lwo";
+    auto extension = string::to_upper_copy(os::getExtension(outputPath));
+    auto inputPath = _context.getTestResourcePath() + "fbx/test_cube.fbx";
+
+    EXPECT_FALSE(fs::exists(outputPath)) << outputPath << " already exists";
+
+    // Invoke the converter code
+    GlobalCommandSystem().executeCommand("ConvertModel", cmd::ArgumentList{ inputPath, outputPath, extension });
+
+    EXPECT_TRUE(fs::exists(outputPath)) << outputPath << " should have been created";
+
+    auto importer = GlobalModelFormatManager().getImporter(extension);
+    auto exportedModel = importer->loadModelFromPath(outputPath);
+
+    EXPECT_TRUE(exportedModel) << "No FBX model has been created";
+    EXPECT_EQ(exportedModel->getSurfaceCount(), 1);
+    EXPECT_EQ(exportedModel->getSurface(0).getDefaultMaterial(), "phong1");
+    EXPECT_EQ(exportedModel->getVertexCount(), 8);
+    EXPECT_EQ(exportedModel->getPolyCount(), 12);
+}
+
 TEST_F(ModelExportTest, ConvertAseToLwo)
 {
     // Convert the torch to ASE first, then back to LWO
