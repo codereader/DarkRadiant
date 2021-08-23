@@ -406,6 +406,7 @@ TEST_F(ModelExportTest, ExportedModelInheritsSpawnargs)
     auto entity2 = GlobalEntityModule().createEntity(eclass);
     scene::addNodeToContainer(entity2, GlobalMapModule().getRoot());
     Node_getEntity(entity2)->setKeyValue("name", "HenryTheFifth");
+    Node_getEntity(entity2)->setKeyValue("henrys_key", "henrys_value");
 
     // Set some spawnargs which should be preserved after export and give it a name
     Node_getEntity(entity)->setKeyValue("name", "HarryTheTorch");
@@ -449,6 +450,9 @@ TEST_F(ModelExportTest, ExportedModelInheritsSpawnargs)
     EXPECT_EQ(newEntity->getKeyValue("model"), exportedModelPath);
     EXPECT_EQ(newEntity->getKeyValue("dummy1"), "value1");
     EXPECT_EQ(newEntity->getKeyValue("dummy2"), "value2");
+
+    // This one should not have been inherited, it was belonging to the other entity
+    EXPECT_EQ(newEntity->getKeyValue("henrys_key"), "");
     
     fs::remove(fullModelPath);
 }

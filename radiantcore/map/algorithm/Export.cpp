@@ -108,6 +108,10 @@ void exportSelectedAsModel(const ModelExportOptions& options)
     {
         UndoableCommand command("replaceModel");
 
+        // Remember the last selected entity to preserve spawnargs
+        auto lastSelectedNode = GlobalSelectionSystem().ultimateSelected();
+        auto lastSelectedEntity = Node_getEntity(lastSelectedNode);
+
         // Remove the selection
         selection::algorithm::deleteSelection();
 
@@ -122,9 +126,24 @@ void exportSelectedAsModel(const ModelExportOptions& options)
                 modelPos = -exporter.getCenterTransform().tCol().getVector3();
             }
 
-            scene::INodePtr modelNode = GlobalEntityModule().createEntityFromSelection("func_static", modelPos);
+            auto modelNode = GlobalEntityModule().createEntityFromSelection("func_static", modelPos);
 
-            Node_getEntity(modelNode)->setKeyValue("model", relativeModelPath);
+            auto newEntity = Node_getEntity(modelNode);
+            newEntity->setKeyValue("model", relativeModelPath);
+
+            if (lastSelectedEntity)
+            {
+                // Preserve all spawnargs of the last selected entity, except for a few
+                std::set<std::string> spawnargsToDiscard{ "model", "classname", "origin", "rotation" };
+
+                lastSelectedEntity->forEachKeyValue([&](const std::string& key, const std::string& value)
+                {
+                    if (spawnargsToDiscard.count(string::to_lower_copy(key)) > 0) return;
+
+                    rMessage() << "Replaced entity inherits the key " << key << " with value " << value << std::endl;
+                    newEntity->setKeyValue(key, value);
+                });
+            }
         }
         catch (cmd::ExecutionFailure& ex)
         {
