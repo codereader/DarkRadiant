@@ -383,4 +383,74 @@ TEST_F(ModelExportTest, ExportedModelTriggersEntityRefresh)
     fs::remove(aseOutputPath);
 }
 
+// #5705: "Replace Selection with exported Model" should preserve spawnargs
+TEST_F(ModelExportTest, ExportedModelInheritsSpawnargs)
+{
+    auto modelPath = "models/torch.lwo";
+    auto exportedModelPath = "models/export_test.lwo";
+    auto fullModelPath = _context.getTestProjectPath() + exportedModelPath;
+
+    // Create an entity referencing this new model
+    auto eclass = GlobalEntityClassManager().findClass("func_static");
+    auto entity = GlobalEntityModule().createEntity(eclass);
+
+    scene::addNodeToContainer(entity, GlobalMapModule().getRoot());
+
+    // This should assign the model node to the entity
+    Node_getEntity(entity)->setKeyValue("model", modelPath);
+
+    auto brush = algorithm::createCubicBrush(
+        GlobalMapModule().findOrInsertWorldspawn(), Vector3(0, 0, 0), "textures/numbers/1");
+
+    // Add another entity, which is just around to be selected
+    auto entity2 = GlobalEntityModule().createEntity(eclass);
+    scene::addNodeToContainer(entity2, GlobalMapModule().getRoot());
+    Node_getEntity(entity2)->setKeyValue("name", "HenryTheFifth");
+
+    // Set some spawnargs which should be preserved after export and give it a name
+    Node_getEntity(entity)->setKeyValue("name", "HarryTheTorch");
+    Node_getEntity(entity)->setKeyValue("dummy1", "value1");
+    Node_getEntity(entity)->setKeyValue("dummy2", "value2");
+
+    // Select the named entity as last item, it should dictate which spawnargs to preserve
+    GlobalSelectionSystem().setSelectedAll(false);
+    Node_setSelected(brush, true);
+    Node_setSelected(entity2, true);
+    Node_setSelected(entity, true);
+
+    // Export this model to a mod-relative location
+
+    // ExportSelectedAsModel <Path> <ExportFormat> [<CenterObjects>] [<SkipCaulk>] [<ReplaceSelectionWithModel>] [<UseEntityOrigin>] [<ExportLightsAsObjects>]
+    cmd::ArgumentList argList;
+
+    argList.emplace_back(fullModelPath);
+    argList.emplace_back(os::getExtension(exportedModelPath)); // lwo
+    argList.emplace_back(false); // center objects
+    argList.emplace_back(false); // skip caulk
+    argList.emplace_back(true); // replace selection
+
+    GlobalCommandSystem().executeCommand("ExportSelectedAsModel", argList);
+
+    // The entities and the brush should have been replaced (remove from the scene, no parent)
+    EXPECT_FALSE(entity->getParent());
+    EXPECT_FALSE(entity2->getParent());
+    EXPECT_FALSE(brush->getParent());
+
+    // Henry the fifth should be gone
+    auto henry = algorithm::getEntityByName(GlobalMapModule().getRoot(), "HenryTheFifth");
+    EXPECT_FALSE(henry);
+
+    auto newEntityNode = algorithm::getEntityByName(GlobalMapModule().getRoot(), "HarryTheTorch");
+
+    EXPECT_TRUE(newEntityNode) << "Could not locate the named entity after replacing it with a model";
+    auto newEntity = Node_getEntity(newEntityNode);
+
+    EXPECT_EQ(newEntity->getKeyValue("name"), "HarryTheTorch");
+    EXPECT_EQ(newEntity->getKeyValue("model"), exportedModelPath);
+    EXPECT_EQ(newEntity->getKeyValue("dummy1"), "value1");
+    EXPECT_EQ(newEntity->getKeyValue("dummy2"), "value2");
+    
+    fs::remove(fullModelPath);
+}
+
 }
