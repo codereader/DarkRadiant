@@ -224,13 +224,16 @@ wxSpinCtrlDouble* SurfaceInspector::makeFitSpinBox(Axis axis)
 
     // Set visual parameters
     box->SetMinSize(wxSize(box->GetCharWidth() * 16, -1));
-    box->SetRange(1.0, 1000.0);
+    box->SetRange(0.0, 1000.0);
     box->SetIncrement(1.0);
     box->SetValue(1.0);
     box->SetDigits(2);
 
     // Perform a fit operation when the value changes
-    box->Bind(wxEVT_SPINCTRLDOUBLE, [=](wxSpinDoubleEvent&) { onFit(axis); });
+    box->Bind(wxEVT_SPINCTRLDOUBLE, [=](wxSpinDoubleEvent& e) {
+                  if (e.GetValue() > 0)
+                      onFit(axis);
+              });
 
     return box;
 }
