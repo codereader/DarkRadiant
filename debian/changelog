@@ -1,3 +1,9 @@
+darkradiant (2.13.0~focal4) focal; urgency=medium
+
+  * Fix for incorrect entity/brush colours in canvas windows.
+
+ -- Matthew Mott <orbweaver3d@gmail.com>  Tue, 24 Aug 2021 19:45:54 +0100
+
 darkradiant (2.13.0~focal1) focal; urgency=medium
 
   * New major release on all platforms.

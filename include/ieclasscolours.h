@@ -27,8 +27,15 @@ public:
     // The colour is given in RGB values with each component in the interval [0..1].
     virtual void addOverrideColour(const std::string& eclass, const Vector3& colour) = 0;
 
-    // Applies a possible colour override to the given entity class
-    virtual void applyColours(IEntityClass& eclass) = 0;
+    /**
+     * \brief Applies a possible colour override to the given entity class.
+     *
+     * If an override was found, the entity class's colour will be changed with
+     * setColour().
+     *
+     * \return true if an override was found, false otherwise.
+     */
+    virtual bool applyColours(IEntityClass& eclass) = 0;
 
     // Visit each override definition with the given functor
     virtual void foreachOverrideColour(const std::function<void(const std::string&, const Vector3&)>& functor) = 0;

@@ -207,12 +207,8 @@ void EClassManager::applyColours()
     GlobalEclassColourManager().foreachOverrideColour([&](const std::string& eclass, const Vector3& colour)
     {
         auto foundEclass = _entityClasses.find(string::to_lower_copy(eclass));
-
         if (foundEclass != _entityClasses.end())
-        {
-            rDebug() << "Applying colour " << colour << " to eclass " << eclass << std::endl;
             foundEclass->second->setColour(colour);
-        }
     });
 }
 
