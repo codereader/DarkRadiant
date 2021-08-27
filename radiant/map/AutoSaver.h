@@ -5,6 +5,7 @@
 #include "iregistry.h"
 #include "imodule.h"
 #include "imap.h"
+#include "iautosaver.h"
 
 #include <vector>
 #include <sigc++/connection.h>
@@ -19,9 +20,9 @@
 namespace map
 {
 
-class AutoMapSaver : 
+class AutoMapSaver final : 
     public wxEvtHandler,
-	public RegisterableModule
+	public IAutomaticMapSaver
 {
 	// TRUE, if autosaving is enabled
 	bool _enabled;
@@ -58,6 +59,12 @@ public:
 	// Clears the _changes member variable that indicates how many changes have been made
 	void clearChanges();
 
+    // This performs is called to check if the map is valid/changed/should be saved
+    // and calls the save routines accordingly.
+    bool runAutosaveCheck() override;
+
+    void performAutosave() override;
+
 private:
 	// Adds the elements to the according preference page
 	void constructPreferences();
@@ -65,10 +72,6 @@ private:
 	void registryKeyChanged();
 
 	void onMapEvent(IMap::MapEvent ev);
-
-	// This performs is called to check if the map is valid/changed/should be saved
-	// and calls the save routines accordingly.
-	void checkSave();
 
 	// Saves a snapshot of the currently active map (only named maps)
 	void saveSnapshot();

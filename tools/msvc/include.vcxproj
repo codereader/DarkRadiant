@@ -100,6 +100,7 @@
     <ClInclude Include="..\..\include\iaasfile.h" />
     <ClInclude Include="..\..\include\ianimationchooser.h" />
     <ClInclude Include="..\..\include\iarchive.h" />
+    <ClInclude Include="..\..\include\iautosaver.h" />
     <ClInclude Include="..\..\include\ibrush.h" />
     <ClInclude Include="..\..\include\icameraview.h" />
     <ClInclude Include="..\..\include\iclipboard.h" />
