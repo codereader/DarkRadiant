@@ -112,6 +112,8 @@ void TextureBrowserManager::initialiseModule(const IApplicationContext& ctx)
     GlobalEventManager().addRegistryToggle("TextureBrowserToggleUniformScale", RKEY_TEXTURE_USE_UNIFORM_SCALE);
     GlobalEventManager().addRegistryToggle("TextureBrowserHideUnused", RKEY_TEXTURES_HIDE_UNUSED);
     GlobalEventManager().addRegistryToggle("TextureBrowserShowFavouritesOnly", RKEY_TEXTURES_SHOW_FAVOURITES_ONLY);
+    GlobalEventManager().addRegistryToggle("TextureBrowserShowNames",
+                                           RKEY_TEXTURES_SHOW_NAMES);
     GlobalCommandSystem().addCommand("ViewTextures", TextureBrowserManager::toggleGroupDialogTexturesTab);
 
     registerPreferencePage();

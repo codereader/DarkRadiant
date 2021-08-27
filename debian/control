@@ -2,8 +2,8 @@ Source: darkradiant
 Section: editors
 Priority: optional
 Maintainer: Matthew Mott <orbweaver3d@gmail.com>
-Build-Depends: debhelper (>= 10), cmake (>= 3.12), pkg-config, libxml2-dev, libglew-dev, python-dev, libvorbis-dev, libopenal-dev, libalut-dev, libjpeg-dev, libftgl-dev, libwxbase3.0-dev, libwxgtk3.0-gtk3-dev, libsigc++-2.0-dev, libglib2.0-dev, libeigen3-dev
-Standards-Version: 4.4.1
+Build-Depends: debhelper (>= 10), cmake (>= 3.12), pkg-config, libxml2-dev, libglew-dev, python-dev, libvorbis-dev, libopenal-dev, libalut-dev, libjpeg-dev, libftgl-dev, libwxbase3.0-dev, libwxgtk3.0-gtk3-dev, libsigc++-2.0-dev, libglib2.0-dev, libeigen3-dev, libgit2-dev
+Standards-Version: 4.5.1
 
 Package: darkradiant
 Architecture: any
@@ -17,6 +17,12 @@ Architecture: any
 Depends: darkradiant, ${shlibs:Depends}, ${misc:Depends}
 Description: DarkMod-specific plugins for DarkRadiant
  These plugins are used for editing Dark Mod missions.
+
+Package: darkradiant-plugin-git
+Architecture: any
+Depends: darkradiant, ${shlibs:Depends}, ${misc:Depends}
+Description: Git integration plugin for DarkRadiant
+ This plugin allows DarkRadiant to integrate with Git version control.
 
 Package: darkradiant-i18n
 Architecture: any

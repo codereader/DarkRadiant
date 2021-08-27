@@ -7,6 +7,7 @@
 
 #include "texturelib.h"
 #include "wxutil/menu/PopupMenu.h"
+#include "registry/CachedKey.h"
 
 #include "TextureBrowserManager.h"
 #include <wx/panel.h>
@@ -21,7 +22,7 @@ class wxScrollBar;
 class wxScrollEvent;
 class wxToolBar;
 
-namespace ui 
+namespace ui
 {
 
 namespace
@@ -29,6 +30,7 @@ namespace
     const char* const RKEY_TEXTURES_HIDE_UNUSED = "user/ui/textures/browser/hideUnused";
     const char* const RKEY_TEXTURES_SHOW_FAVOURITES_ONLY = "user/ui/textures/browser/showFavouritesOnly";
     const char* const RKEY_TEXTURES_SHOW_OTHER_MATERIALS = "user/ui/textures/browser/showOtherMaterials";
+    const char* const RKEY_TEXTURES_SHOW_NAMES = "user/ui/textures/browser/showNames";
     const char* const RKEY_TEXTURE_UNIFORM_SIZE = "user/ui/textures/browser/uniformSize";
     const char* const RKEY_TEXTURE_USE_UNIFORM_SCALE = "user/ui/textures/browser/useUniformScale";
     const char* const RKEY_TEXTURE_SCALE = "user/ui/textures/browser/textureScale";
@@ -40,8 +42,8 @@ namespace
 }
 
 /**
- * \brief
- * Widget for rendering active textures as tiles in a scrollable container.
+ * \brief Widget for rendering active textures as tiles in a scrollable
+ * container.
  *
  * Uses an OpenGL widget to render a rectangular view into a "virtual space"
  * containing all active texture tiles.
@@ -96,9 +98,9 @@ class TextureBrowser :
 
     bool _heightChanged;
     bool _originInvalid;
-    
+
     wxutil::FreezePointer _freezePointer;
-    
+
     // the increment step we use against the wheel mouse
     std::size_t _mouseWheelScrollIncrement;
 
@@ -109,6 +111,7 @@ class TextureBrowser :
     // if false, all the shaders in memory are displayed
     bool _hideUnused;
     bool _showFavouritesOnly;
+    registry::CachedKey<bool> _showNamesKey;
     int _textureScale;
     bool _useUniformScale;
 
@@ -117,7 +120,7 @@ class TextureBrowser :
 
     // Whether materials not starting with "textures/" should be visible
     bool _showOtherMaterials;
-    
+
     // The uniform size (in pixels) that textures are resized to when m_resizeTextures is true.
     int _uniformTextureSize;
 
@@ -127,7 +130,7 @@ class TextureBrowser :
 
     // renderable items will be updated next round
     bool _updateNeeded;
-    
+
 public:
     // Constructor
     TextureBrowser(wxWindow* parent);
@@ -218,7 +221,7 @@ private:
     int getOriginY();
     void setOriginY(int newOriginY);
 
-    /** 
+    /**
      * greebo: Returns the shader at the given coords.
      * The coords are window coords, not the virtual coords
      * which span the entire scrollable area.

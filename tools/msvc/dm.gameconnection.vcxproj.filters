@@ -30,6 +30,12 @@
     <ClCompile Include="..\..\plugins\dm.gameconnection\MessageTcp.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.gameconnection\GameConnectionDialog.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\dm.gameconnection\AutomationEngine.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\plugins\dm.gameconnection\clsocket\ActiveSocket.h">
@@ -60,6 +66,12 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\dm.gameconnection\MessageTcp.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.gameconnection\GameConnectionDialog.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\dm.gameconnection\AutomationEngine.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

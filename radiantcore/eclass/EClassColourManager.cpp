@@ -12,16 +12,15 @@ void EClassColourManager::addOverrideColour(const std::string& eclass, const Vec
     _overrideChangedSignal.emit(eclass, false); // false ==> colour added
 }
 
-void EClassColourManager::applyColours(IEntityClass& eclass)
+bool EClassColourManager::applyColours(IEntityClass& eclass)
 {
     auto foundOverride = _overrides.find(eclass.getName());
-
     if (foundOverride != _overrides.end())
     {
-        rDebug() << "Applying colour " << foundOverride->second << " to eclass " << eclass.getName() << std::endl;
-
         eclass.setColour(foundOverride->second);
+        return true;
     }
+    return false;
 }
 
 void EClassColourManager::foreachOverrideColour(

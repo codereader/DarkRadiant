@@ -55,7 +55,7 @@ FavouritesBrowser::FavouritesBrowser(wxWindow* parent) :
     _listView->SetImageList(_iconList.get(), wxIMAGE_LIST_SMALL);
 
     setupCategories();
-    
+
     auto* toolHBox = new wxBoxSizer(wxHORIZONTAL);
     toolHBox->Add(createLeftToolBar(), 1, wxEXPAND);
     toolHBox->Add(createRightToolBar(), 0, wxEXPAND);
@@ -123,7 +123,7 @@ void FavouritesBrowser::setupCategories()
         nullptr
     });
     _categories.emplace_back(FavouriteCategory{
-        decl::Type::Model, _("Models"), "icon_model.png",
+        decl::Type::Model, _("Models"), "model16green.png",
         _iconList->Add(wxutil::GetLocalBitmap("icon_model.png")),
         nullptr
     });
@@ -249,7 +249,7 @@ void FavouritesBrowser::onItemActivated(wxListEvent& ev)
     if (selection.size() != 1) return;
 
     auto* data = reinterpret_cast<FavouriteItem*>(_listView->GetItemData(selection.front()));
-    
+
     switch (data->type)
     {
     case decl::Type::Material:
@@ -317,7 +317,7 @@ void FavouritesBrowser::onApplyTextureToSelection()
     if (selection.size() != 1) return;
 
     auto* data = reinterpret_cast<FavouriteItem*>(_listView->GetItemData(selection.front()));
-    
+
     GlobalCommandSystem().executeCommand("SetShaderOnSelection", data->fullPath);
 }
 

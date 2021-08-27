@@ -61,7 +61,6 @@ public:
 		glGenTextures(1, &textureNum);
 		glBindTexture(GL_TEXTURE_2D, textureNum);
 
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 		// Upload the image to OpenGL, choosing an internal format based on role
