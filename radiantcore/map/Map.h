@@ -218,7 +218,7 @@ public:
 	/** greebo: Queries a filename from the user and saves a copy
 	 *          of the current map to the specified filename.
 	 */
-	static void saveMapCopyAs(const cmd::ArgumentList& args);
+	void saveMapCopyAs(const cmd::ArgumentList& args);
 
 	/** greebo: Asks the user for the .pfb file and exports the file/selection
 	 */

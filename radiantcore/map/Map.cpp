@@ -877,12 +877,12 @@ void Map::saveMapCopyAs(const cmd::ArgumentList& args)
     if (args.size() == 0 || args[0].getString().empty())
     {
         // Use the overload without arguments, it will ask for a file name
-        GlobalMap().saveCopyAs();
+        saveCopyAs();
     }
     else
     {
         // Pass the first argument we got
-        GlobalMap().saveCopyAs(args[0].getString());
+        saveCopyAs(args[0].getString());
     }
 }
 
@@ -901,7 +901,7 @@ void Map::registerCommands()
     GlobalCommandSystem().addCommand("SaveSelectedAsPrefab", Map::saveSelectedAsPrefab);
     GlobalCommandSystem().addCommand("SaveMap", std::bind(&Map::saveMapCmd, this, std::placeholders::_1));
     GlobalCommandSystem().addCommand("SaveMapAs", Map::saveMapAs);
-    GlobalCommandSystem().addCommand("SaveMapCopyAs", Map::saveMapCopyAs, { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
+    GlobalCommandSystem().addCommand("SaveMapCopyAs", std::bind(&Map::saveMapCopyAs, this, std::placeholders::_1), { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
     GlobalCommandSystem().addCommand("ExportMap", Map::exportMap);
     GlobalCommandSystem().addCommand("SaveSelected", Map::exportSelection);
 	GlobalCommandSystem().addCommand("ReloadSkins", map::algorithm::reloadSkins);
