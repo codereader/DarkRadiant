@@ -886,6 +886,12 @@ void Map::saveMapCopyAs(const cmd::ArgumentList& args)
     }
 }
 
+void Map::saveAutomaticMapBackup(const cmd::ArgumentList& args)
+{
+    // Use the saveDirect routine to not change with the _lastCopyMapName member
+    saveDirect(args[0].getString());
+}
+
 void Map::registerCommands()
 {
     GlobalCommandSystem().addCommand("NewMap", Map::newMap);
@@ -902,6 +908,8 @@ void Map::registerCommands()
     GlobalCommandSystem().addCommand("SaveMap", std::bind(&Map::saveMapCmd, this, std::placeholders::_1));
     GlobalCommandSystem().addCommand("SaveMapAs", Map::saveMapAs);
     GlobalCommandSystem().addCommand("SaveMapCopyAs", std::bind(&Map::saveMapCopyAs, this, std::placeholders::_1), { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
+    // Command used by the autosaver to save a copy without messing with the remembered paths
+    GlobalCommandSystem().addCommand("SaveAutomaticBackup", std::bind(&Map::saveAutomaticMapBackup, this, std::placeholders::_1), { cmd::ARGTYPE_STRING });
     GlobalCommandSystem().addCommand("ExportMap", Map::exportMap);
     GlobalCommandSystem().addCommand("SaveSelected", Map::exportSelection);
 	GlobalCommandSystem().addCommand("ReloadSkins", map::algorithm::reloadSkins);

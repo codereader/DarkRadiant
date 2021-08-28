@@ -220,6 +220,9 @@ public:
 	 */
 	void saveMapCopyAs(const cmd::ArgumentList& args);
 
+    // Used by the auto saver
+	void saveAutomaticMapBackup(const cmd::ArgumentList& args);
+
 	/** greebo: Asks the user for the .pfb file and exports the file/selection
 	 */
 	static void saveSelectedAsPrefab(const cmd::ArgumentList& args);

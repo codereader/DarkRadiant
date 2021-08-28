@@ -26,6 +26,7 @@
 #include "module/StaticModule.h"
 #include "messages/NotificationMessage.h"
 #include "messages/AutomaticMapSaveRequest.h"
+#include "map/Map.h"
 
 #include <fmt/format.h>
 
@@ -103,7 +104,7 @@ void AutoMapSaver::saveSnapshot()
 		rMessage() << "Autosaving snapshot to " << filename << std::endl;
 
 		// Dump to map to the next available filename
-        GlobalCommandSystem().executeCommand("SaveMapCopyAs", filename);
+        GlobalCommandSystem().executeCommand("SaveAutomaticBackup", filename);
 
 		handleSnapshotSizeLimit(existingSnapshots, snapshotPath, mapName);
 	}
@@ -245,7 +246,7 @@ void AutoMapSaver::performAutosave()
             rMessage() << "Autosaving unnamed map to " << autoSaveFilename << std::endl;
 
             // Invoke the save call
-            GlobalCommandSystem().executeCommand("SaveMapCopyAs", autoSaveFilename);
+            GlobalCommandSystem().executeCommand("SaveAutomaticBackup", autoSaveFilename);
         }
         else
         {
@@ -261,7 +262,7 @@ void AutoMapSaver::performAutosave()
             rMessage() << "Autosaving map to " << filename << std::endl;
 
             // Invoke the save call
-            GlobalCommandSystem().executeCommand("SaveMapCopyAs", filename);
+            GlobalCommandSystem().executeCommand("SaveAutomaticBackup", filename);
         }
     }
 }
