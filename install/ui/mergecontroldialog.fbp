@@ -1078,7 +1078,7 @@
                 <object class="sizeritem" expanded="1">
                     <property name="border">12</property>
                     <property name="flag">wxALL|wxEXPAND</property>
-                    <property name="proportion">0</property>
+                    <property name="proportion">1</property>
                     <object class="wxBoxSizer" expanded="1">
                         <property name="minimum_size"></property>
                         <property name="name">bSizer13</property>
@@ -1087,7 +1087,7 @@
                         <object class="sizeritem" expanded="1">
                             <property name="border">0</property>
                             <property name="flag">wxEXPAND</property>
-                            <property name="proportion">0</property>
+                            <property name="proportion">1</property>
                             <object class="wxBoxSizer" expanded="1">
                                 <property name="minimum_size"></property>
                                 <property name="name">bSizer151</property>
@@ -2075,7 +2075,7 @@
                                 <object class="sizeritem" expanded="1">
                                     <property name="border">6</property>
                                     <property name="flag">wxEXPAND</property>
-                                    <property name="proportion">0</property>
+                                    <property name="proportion">1</property>
                                     <object class="wxPanel" expanded="1">
                                         <property name="BottomDockable">1</property>
                                         <property name="LeftDockable">1</property>
@@ -2196,7 +2196,7 @@
                                             <object class="sizeritem" expanded="1">
                                                 <property name="border">12</property>
                                                 <property name="flag">wxEXPAND|wxLEFT</property>
-                                                <property name="proportion">0</property>
+                                                <property name="proportion">1</property>
                                                 <object class="wxBoxSizer" expanded="1">
                                                     <property name="minimum_size"></property>
                                                     <property name="name">bSizer261</property>
@@ -2266,7 +2266,7 @@
                                                     <object class="sizeritem" expanded="1">
                                                         <property name="border">0</property>
                                                         <property name="flag">wxEXPAND | wxALL</property>
-                                                        <property name="proportion">0</property>
+                                                        <property name="proportion">1</property>
                                                         <object class="wxPanel" expanded="1">
                                                             <property name="BottomDockable">1</property>
                                                             <property name="LeftDockable">1</property>
@@ -2326,11 +2326,11 @@
                                                             </object>
                                                         </object>
                                                     </object>
-                                                    <object class="sizeritem" expanded="0">
+                                                    <object class="sizeritem" expanded="1">
                                                         <property name="border">0</property>
                                                         <property name="flag">wxEXPAND</property>
                                                         <property name="proportion">0</property>
-                                                        <object class="wxBoxSizer" expanded="0">
+                                                        <object class="wxBoxSizer" expanded="1">
                                                             <property name="minimum_size"></property>
                                                             <property name="name">bSizer272</property>
                                                             <property name="orient">wxHORIZONTAL</property>

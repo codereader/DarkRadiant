@@ -115,7 +115,7 @@ MergeControlDialog::MergeControlDialog() :
     listView->SetMinClientSize(wxSize(-1, 70));
     listView->AppendTextColumn("-", COLUMNS().description.getColumnIndex(), wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE);
 
-    actionDescriptionPanel->GetSizer()->Add(listView, 0, wxEXPAND | wxBOTTOM, 6);
+    actionDescriptionPanel->GetSizer()->Add(listView, 1, wxEXPAND | wxBOTTOM, 6);
 
     updateControls();
     Bind(wxEVT_IDLE, &MergeControlDialog::onIdle, this);

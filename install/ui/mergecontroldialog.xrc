@@ -209,13 +209,13 @@
 				</object>
 			</object>
 			<object class="sizeritem">
-				<option>0</option>
+				<option>1</option>
 				<flag>wxALL|wxEXPAND</flag>
 				<border>12</border>
 				<object class="wxBoxSizer">
 					<orient>wxVERTICAL</orient>
 					<object class="sizeritem">
-						<option>0</option>
+						<option>1</option>
 						<flag>wxEXPAND</flag>
 						<border>0</border>
 						<object class="wxBoxSizer">
@@ -431,7 +431,7 @@
 								</object>
 							</object>
 							<object class="sizeritem">
-								<option>0</option>
+								<option>1</option>
 								<flag>wxEXPAND</flag>
 								<border>6</border>
 								<object class="wxPanel" name="ConflictDetailsPanel">
@@ -453,7 +453,7 @@
 											</object>
 										</object>
 										<object class="sizeritem">
-											<option>0</option>
+											<option>1</option>
 											<flag>wxEXPAND|wxLEFT</flag>
 											<border>12</border>
 											<object class="wxBoxSizer">
@@ -473,7 +473,7 @@
 													</object>
 												</object>
 												<object class="sizeritem">
-													<option>0</option>
+													<option>1</option>
 													<flag>wxEXPAND | wxALL</flag>
 													<border>0</border>
 													<object class="wxPanel" name="ActionDescriptionPanel">
