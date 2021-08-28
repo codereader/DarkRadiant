@@ -1423,6 +1423,11 @@ void Map::handleShutdownRequest(radiant::ApplicationShutdownRequest& request)
     {
         request.deny();
     }
+
+    if (!request.isDenied())
+    {
+        abortMergeOperation();
+    }
 }
 
 } // namespace map
