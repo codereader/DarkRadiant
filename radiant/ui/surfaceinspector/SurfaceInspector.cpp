@@ -223,7 +223,7 @@ wxSpinCtrlDouble* SurfaceInspector::makeFitSpinBox(Axis axis)
     wxSpinCtrlDouble* box = new wxSpinCtrlDouble(this, wxID_ANY);
 
     // Set visual parameters
-    box->SetMinSize(wxSize(box->GetCharWidth() * 16, -1));
+    box->SetMinSize(wxSize(box->GetCharWidth() * 5, -1));
     box->SetRange(0.0, 1000.0);
     box->SetIncrement(1.0);
     box->SetValue(1.0);
@@ -240,7 +240,7 @@ wxSpinCtrlDouble* SurfaceInspector::makeFitSpinBox(Axis axis)
 
 wxBoxSizer* SurfaceInspector::createFitTextureRow()
 {
-	wxBoxSizer* fitTextureHBox = new wxBoxSizer(wxHORIZONTAL);
+	auto* fitTextureHBox = new wxBoxSizer(wxHORIZONTAL);
 
     // Create widgets from left to right
 	_fitTexture.label = new wxStaticText(this, wxID_ANY, _(LABEL_FIT_TEXTURE));
@@ -269,13 +269,15 @@ wxBoxSizer* SurfaceInspector::createFitTextureRow()
     );
 
     // Add widgets to the sizer
-    fitTextureHBox->Add(_fitTexture.width, 1, wxALIGN_CENTER_VERTICAL);
-    fitTextureHBox->Add(_fitTexture.x, 0, wxALIGN_CENTER | wxLEFT | wxRIGHT, 3);
-    fitTextureHBox->Add(_fitTexture.height, 1, wxALIGN_CENTER_VERTICAL);
-    fitTextureHBox->Add(_fitTexture.preserveAspectButton, 0,
-                        wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
-    fitTextureHBox->Add(_fitTexture.fitButton, 1,
-                        wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
+    auto* widthTimesHeight = new wxBoxSizer(wxHORIZONTAL);
+
+    widthTimesHeight->Add(_fitTexture.width, 1, wxALIGN_CENTER_VERTICAL);
+    widthTimesHeight->Add(_fitTexture.x, 0, wxALIGN_CENTER | wxLEFT | wxRIGHT, 3);
+    widthTimesHeight->Add(_fitTexture.height, 1, wxALIGN_CENTER_VERTICAL);
+
+    fitTextureHBox->Add(widthTimesHeight, 1, wxALIGN_CENTER_VERTICAL);
+    fitTextureHBox->Add(_fitTexture.preserveAspectButton, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
+    fitTextureHBox->Add(_fitTexture.fitButton, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
 
     return fitTextureHBox;
 }
