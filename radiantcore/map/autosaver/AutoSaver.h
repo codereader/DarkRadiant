@@ -2,24 +2,20 @@
 
 #include <map>
 
-#include "iregistry.h"
-#include "imodule.h"
 #include "imap.h"
 #include "iautosaver.h"
 
 #include <vector>
 #include <sigc++/connection.h>
 #include "os/fs.h"
-#include <wx/timer.h>
-#include <wx/sharedptr.h>
-
-/* greebo: The AutoMapSaver class lets itself being called in distinct intervals
- * and saves the map files either to snapshots or to a single yyyy.autosave.map file.
- */
 
 namespace map
 {
 
+/**
+ * greebo: The AutoMapSaver class lets itself being called in distinct intervals
+ * and saves the map files either to snapshots or to a single yyyy.autosave.map file.
+ */
 class AutoMapSaver final : 
 	public IAutomaticMapSaver
 {
@@ -65,7 +61,6 @@ private:
 
 	void handleSnapshotSizeLimit(const std::map<int, std::string>& existingSnapshots,
 		const fs::path& snapshotPath, const std::string& mapName);
-
-}; // class AutoMapSaver
+};
 
 } // namespace map

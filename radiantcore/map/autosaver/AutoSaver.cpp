@@ -7,6 +7,7 @@
 #include "itextstream.h"
 #include "iscenegraph.h"
 #include "iradiant.h"
+#include "iregistry.h"
 #include "igame.h"
 #include "ipreferencesystem.h"
 #include "icommandsystem.h"

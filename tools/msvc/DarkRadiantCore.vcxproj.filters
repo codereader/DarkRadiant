@@ -206,6 +206,9 @@
     <Filter Include="src\model\import\openfbx">
       <UniqueIdentifier>{fe243505-dda8-4a93-9a9e-eb98a4c535e8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\map\autosaver">
+      <UniqueIdentifier>{e3d5bb4e-6b61-4537-ab0f-30c7be429c65}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiantcore\modulesystem\ModuleLoader.cpp">
@@ -1068,6 +1071,9 @@
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\model\picomodel\lib\pm_iqm.c">
       <Filter>src\model\picomodel\lib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\map\autosaver\AutoSaver.cpp">
+      <Filter>src\map\autosaver</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2174,6 +2180,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\model\import\FbxSurface.h">
       <Filter>src\model\import</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\autosaver\AutoSaver.h">
+      <Filter>src\map\autosaver</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

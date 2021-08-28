@@ -1,7 +1,8 @@
 #pragma once
 
-#include <wx/timer.h>
 #include <sigc++/trackable.h>
+#include <wx/timer.h>
+#include <wx/sharedptr.h>
 
 namespace map
 {

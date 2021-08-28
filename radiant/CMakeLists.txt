@@ -14,7 +14,6 @@ add_executable(darkradiant
                eventmanager/WidgetToggle.cpp
                log/Console.cpp
                main.cpp
-               map/AutoSaver.cpp
                map/AutoSaveTimer.cpp
                map/StartupMapLoader.cpp
                RadiantApp.cpp
