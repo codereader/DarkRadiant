@@ -4,6 +4,7 @@
 #include "iundo.h"
 #include "imap.h"
 #include "imapformat.h"
+#include "iautosaver.h"
 #include "imapresource.h"
 #include "ifilesystem.h"
 #include "iradiant.h"
@@ -1216,6 +1217,59 @@ TEST_F(MapSavingTest, saveWarnsAboutOverwriteAndUserCancels)
     contents << writtenFile.rdbuf();
 
     EXPECT_EQ(contents.str(), tempContents);
+}
+
+// #5729: Autosaver overwrites the stored filename that has been previously used for "Save Copy As"
+TEST_F(MapSavingTest, AutoSaverDoesntChangeSaveCopyAsFilename)
+{
+    std::string modRelativePath = "maps/altar.map";
+
+    GlobalCommandSystem().executeCommand("OpenMap", modRelativePath);
+    checkAltarScene();
+
+    std::string pathThatWasSentAsDefaultPath;
+
+    fs::path tempPath = _context.getTemporaryDataPath();
+    tempPath /= "altar_copy.map";
+
+    // Subscribe to the event asking for the target path
+    auto msgSubscription = GlobalRadiantCore().getMessageBus().addListener(
+        radiant::IMessage::Type::FileSelectionRequest,
+        radiant::TypeListener<radiant::FileSelectionRequest>(
+            [&](radiant::FileSelectionRequest& msg)
+    {
+        pathThatWasSentAsDefaultPath = msg.getDefaultFile();
+
+        auto format = GlobalMapFormatManager().getMapFormatForFilename(tempPath.string());
+
+        msg.setHandled(true);
+        msg.setResult(radiant::FileSelectionRequest::Result{ tempPath.string(), format->getMapFormatName() });
+    }));
+
+    EXPECT_FALSE(os::fileOrDirExists(tempPath));
+
+    // This will ask for a file name, and we respond with the "altar_copy.map"
+    GlobalCommandSystem().executeCommand("SaveMapCopyAs");
+    GlobalCommandSystem().executeCommand("SaveMapCopyAs");
+
+    // Check that the file got created and remove it again
+    EXPECT_TRUE(os::fileOrDirExists(tempPath));
+    if (fs::exists(tempPath)) fs::remove(tempPath);
+    EXPECT_FALSE(os::fileOrDirExists(tempPath));
+
+    // Now trigger an autosave
+    GlobalAutoSaver().performAutosave();
+
+    // This will (again) ask for a file name, now we check what map file name it remembered and 
+    // sent to the request handler as default file name
+    GlobalCommandSystem().executeCommand("SaveMapCopyAs");
+
+    EXPECT_TRUE(os::fileOrDirExists(tempPath));
+    if (fs::exists(tempPath)) fs::remove(tempPath);
+
+    EXPECT_EQ(pathThatWasSentAsDefaultPath, tempPath.string()) << "Autosaver overwrote the stored file name for 'Save Copy As'";
+
+    GlobalRadiantCore().getMessageBus().removeListener(msgSubscription);
 }
 
 }
