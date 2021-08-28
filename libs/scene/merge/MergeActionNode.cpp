@@ -78,7 +78,14 @@ bool MergeActionNodeBase::supportsStateFlag(unsigned int state) const
 
 const AABB& MergeActionNodeBase::localAABB() const
 {
-    return _affectedNode->localAABB();
+    // We report the contained node's world AABB and an identity transform
+    return _affectedNode->worldAABB();
+}
+
+const Matrix4& MergeActionNodeBase::localToWorld() const
+{
+    // We report the contained node's world AABB and an identity transform
+    return Matrix4::getIdentity();
 }
 
 void MergeActionNodeBase::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const

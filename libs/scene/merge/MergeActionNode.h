@@ -48,6 +48,7 @@ public:
     bool supportsStateFlag(unsigned int state) const override;
 
     const AABB& localAABB() const override;
+    const Matrix4& localToWorld() const override;
 
     void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
     void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
