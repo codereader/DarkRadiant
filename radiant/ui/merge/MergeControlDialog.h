@@ -6,6 +6,7 @@
 #include <sigc++/connection.h>
 #include "wxutil/window/TransientWindow.h"
 #include "wxutil/XmlResourceBasedWidget.h"
+#include "wxutil/dataview/TreeModel.h"
 
 namespace ui
 {
@@ -24,6 +25,8 @@ private:
 
     bool _updateNeeded;
     std::size_t _numUnresolvedConflicts;
+
+    wxutil::TreeModel::Ptr _descriptionStore;
 
 public:
     MergeControlDialog();

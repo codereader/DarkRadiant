@@ -475,7 +475,7 @@
 												<object class="sizeritem">
 													<option>0</option>
 													<flag>wxEXPAND | wxALL</flag>
-													<border>5</border>
+													<border>0</border>
 													<object class="wxPanel" name="ActionDescriptionPanel">
 														<style>wxTAB_TRAVERSAL</style>
 														<object class="wxBoxSizer">

@@ -9,6 +9,7 @@
 #include "imap.h"
 #include "wxutil/PathEntry.h"
 #include "wxutil/Bitmap.h"
+#include "wxutil/dataview/TreeView.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "scenelib.h"
 #include "string/convert.h"
@@ -33,6 +34,28 @@ namespace
 
     const std::string RKEY_ROOT = "user/ui/mergeControlDialog/";
     const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
+}
+
+namespace
+{
+
+// Column setup for the list store
+struct Columns :
+    public wxutil::TreeModel::ColumnRecord
+{
+    Columns() :
+        description(add(wxutil::TreeModel::Column::String))
+    {}
+
+    wxutil::TreeModel::Column description;
+};
+
+const Columns& COLUMNS()
+{
+    static const Columns _instance;
+    return _instance;
+}
+
 }
 
 MergeControlDialog::MergeControlDialog() :
@@ -83,6 +106,16 @@ MergeControlDialog::MergeControlDialog() :
     auto threeWayButton = findNamedObject<wxToggleButton>(this, "ThreeWayMode");
     threeWayButton->SetBitmap(wxutil::GetLocalBitmap("three_way_merge.png"));
     threeWayButton->Bind(wxEVT_TOGGLEBUTTON, &MergeControlDialog::onMergeModeChanged, this);
+
+    auto actionDescriptionPanel = findNamedObject<wxPanel>(this, "ActionDescriptionPanel");
+
+    // Create the action list view
+    _descriptionStore = new wxutil::TreeModel(COLUMNS(), true);
+    auto listView = wxutil::TreeView::CreateWithModel(actionDescriptionPanel, _descriptionStore.get(), wxDV_NO_HEADER | wxDV_SINGLE);
+    listView->SetMinClientSize(wxSize(-1, 70));
+    listView->AppendTextColumn("-", COLUMNS().description.getColumnIndex(), wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE);
+
+    actionDescriptionPanel->GetSizer()->Add(listView, 0, wxEXPAND | wxBOTTOM, 6);
 
     updateControls();
     Bind(wxEVT_IDLE, &MergeControlDialog::onIdle, this);
@@ -296,7 +329,7 @@ void MergeControlDialog::onFinishMerge(wxCommandEvent& ev)
     update();
 }
 
-inline void addActionDescription(wxPanel* panel, const scene::INodePtr& candidate)
+inline void addActionDescription(const wxutil::TreeModel::Ptr& listStore, const scene::INodePtr& candidate)
 {
     auto node = std::dynamic_pointer_cast<scene::IMergeActionNode>(candidate);
 
@@ -363,10 +396,10 @@ inline void addActionDescription(wxPanel* panel, const scene::INodePtr& candidat
             }
         }
 
-        auto* staticText = new wxStaticText(panel, wxID_ANY, text);
-        staticText->Wrap(panel->GetSize().x);
-        staticText->Layout();
-        panel->GetSizer()->Add(staticText, 0, wxBOTTOM, 6);
+        auto row = listStore->AddItem();
+        row[COLUMNS().description] = text;
+
+        row.SendItemAdded();
     });
 }
 
@@ -388,15 +421,17 @@ void MergeControlDialog::updateControls()
     // Fill in the map names in case the merge operation has already been started by the time the dialog is shown
     if (mergeInProgress)
     {
-        if (baseMapPath.empty() && GlobalMapModule().getActiveMergeOperation())
+        auto mergeOperation = GlobalMapModule().getActiveMergeOperation();
+
+        if (baseMapPath.empty() && mergeOperation && mergeOperation->getBasePath() != baseMapPath)
         {
-            baseMapPath = GlobalMapModule().getActiveMergeOperation()->getBasePath();
+            baseMapPath = mergeOperation->getBasePath();
             baseMapPathEntry->setValue(baseMapPath);
         }
 
-        if (sourceMapPath.empty() && GlobalMapModule().getActiveMergeOperation())
+        if (sourceMapPath.empty() && mergeOperation && mergeOperation->getSourcePath() != sourceMapPath)
         {
-            sourceMapPath = GlobalMapModule().getActiveMergeOperation()->getSourcePath();
+            sourceMapPath = mergeOperation->getSourcePath();
             sourceMapPathEntry->setValue(sourceMapPath);
         }
     }
@@ -423,11 +458,11 @@ void MergeControlDialog::updateControls()
     findNamedObject<wxButton>(this, "JumpToNextConflictButton")->Enable(mergeInProgress && _numUnresolvedConflicts > 0);
 
     actionDescriptionPanel->Show(selectedMergeNodes.size() == 1);
-    actionDescriptionPanel->DestroyChildren();
+    _descriptionStore->Clear();
 
     if (selectedMergeNodes.size() == 1)
     {
-        addActionDescription(actionDescriptionPanel, selectedMergeNodes.front());
+        addActionDescription(_descriptionStore, selectedMergeNodes.front());
     }
 
     InvalidateBestSize();
