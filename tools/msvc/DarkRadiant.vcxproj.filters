@@ -727,6 +727,9 @@
     <ClCompile Include="..\..\radiant\ui\modelexport\ConvertModelDialog.cpp">
       <Filter>src\ui\modelexport</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\map\AutoSaveTimer.cpp">
+      <Filter>src\map</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h">
@@ -1406,6 +1409,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\modelexport\ConvertModelDialog.h">
       <Filter>src\ui\modelexport</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\map\AutoSaveTimer.h">
+      <Filter>src\map</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

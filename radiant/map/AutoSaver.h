@@ -21,20 +21,11 @@ namespace map
 {
 
 class AutoMapSaver final : 
-    public wxEvtHandler,
 	public IAutomaticMapSaver
 {
-	// TRUE, if autosaving is enabled
-	bool _enabled;
-
+private:
 	// TRUE, if the autosaver generates snapshots
 	bool _snapshotsEnabled;
-
-	// The autosave interval stored in seconds
-	unsigned long _interval;
-
-    // The timer object that triggers the callback
-    wxSharedPtr<wxTimer> _timer;
 
 	std::size_t _changes;
 
@@ -50,12 +41,6 @@ public:
 	void initialiseModule(const IApplicationContext& ctx) override;
 	void shutdownModule() override;
 
-	~AutoMapSaver();
-
-	// Starts/stops the autosave "countdown"
-	void startTimer();
-	void stopTimer();
-
 	// Clears the _changes member variable that indicates how many changes have been made
 	void clearChanges();
 
@@ -66,7 +51,6 @@ public:
     void performAutosave() override;
 
 private:
-	// Adds the elements to the according preference page
 	void constructPreferences();
 
 	void registryKeyChanged();
@@ -76,9 +60,6 @@ private:
 	// Saves a snapshot of the currently active map (only named maps)
 	void saveSnapshot();
 
-	// This gets called when the interval time is over
-    void onIntervalReached(wxTimerEvent& ev);
-
 	void collectExistingSnapshots(std::map<int, std::string>& existingSnapshots,
 		const fs::path& snapshotPath, const std::string& mapName);
 
@@ -86,8 +67,5 @@ private:
 		const fs::path& snapshotPath, const std::string& mapName);
 
 }; // class AutoMapSaver
-
-// The accessor function for the static AutoSaver instance
-AutoMapSaver& AutoSaver();
 
 } // namespace map

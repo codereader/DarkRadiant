@@ -22,6 +22,7 @@
 #include "messages/NotificationMessage.h"
 #include "ui/mru/MRUMenu.h"
 #include "DispatchEvent.h"
+#include "map/AutoSaveTimer.h"
 
 namespace ui
 {
@@ -58,6 +59,8 @@ private:
 	std::size_t _notificationListener;
 
 	std::unique_ptr<MRUMenu> _mruMenu;
+
+	std::unique_ptr<map::AutoSaveTimer> _autosaveTimer;
 
 public:
 	// RegisterableModule

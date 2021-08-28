@@ -227,10 +227,15 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
     _mapEditModeChangedConn = GlobalMapModule().signal_editModeChanged().connect(
         sigc::ptr_fun(&MergeControlDialog::OnMapEditModeChanged)
     );
+
+    _autosaveTimer.reset(new map::AutoSaveTimer);
+    _autosaveTimer->initialise();
 }
 
 void UserInterfaceModule::shutdownModule()
 {
+    _autosaveTimer.reset();
+
 	wxTheApp->Unbind(DISPATCH_EVENT, &UserInterfaceModule::onDispatchEvent, this);
 
 	GlobalRadiantCore().getMessageBus().removeListener(_textureChangedListener);

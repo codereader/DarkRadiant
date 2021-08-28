@@ -15,6 +15,7 @@ add_executable(darkradiant
                log/Console.cpp
                main.cpp
                map/AutoSaver.cpp
+               map/AutoSaveTimer.cpp
                map/StartupMapLoader.cpp
                RadiantApp.cpp
                selection/ManipulateMouseTool.cpp

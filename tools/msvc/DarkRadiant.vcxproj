@@ -206,6 +206,7 @@
     <ClCompile Include="..\..\radiant\eventmanager\WidgetToggle.cpp" />
     <ClCompile Include="..\..\radiant\main.cpp" />
     <ClCompile Include="..\..\radiant\map\AutoSaver.cpp" />
+    <ClCompile Include="..\..\radiant\map\AutoSaveTimer.cpp" />
     <ClCompile Include="..\..\radiant\map\StartupMapLoader.cpp" />
     <ClCompile Include="..\..\radiant\precompiled.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -407,6 +408,7 @@
     <ClInclude Include="..\..\radiant\eventmanager\Toggle.h" />
     <ClInclude Include="..\..\radiant\eventmanager\WidgetToggle.h" />
     <ClInclude Include="..\..\radiant\map\AutoSaver.h" />
+    <ClInclude Include="..\..\radiant\map\AutoSaveTimer.h" />
     <ClInclude Include="..\..\radiant\map\StartupMapLoader.h" />
     <ClInclude Include="..\..\radiant\precompiled.h" />
     <ClInclude Include="..\..\radiant\RadiantApp.h" />

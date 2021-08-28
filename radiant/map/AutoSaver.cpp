@@ -34,8 +34,6 @@ namespace map
 namespace 
 {
 	// Registry key names
-	const char* RKEY_AUTOSAVE_ENABLED = "user/ui/map/autoSaveEnabled";
-	const char* RKEY_AUTOSAVE_INTERVAL = "user/ui/map/autoSaveInterval";
 	const char* GKEY_MAP_EXTENSION = "/mapFormat/fileExtension";
 
 	std::string constructSnapshotName(const fs::path& snapshotPath, const std::string& mapName, int num)
@@ -56,50 +54,18 @@ namespace
 }
 
 AutoMapSaver::AutoMapSaver() :
-	_enabled(false),
 	_snapshotsEnabled(false),
-	_interval(5*60),
 	_changes(0)
 {}
 
-AutoMapSaver::~AutoMapSaver() 
+void AutoMapSaver::registryKeyChanged()
 {
-	assert(!_timer);
-}
-
-void AutoMapSaver::registryKeyChanged() 
-{
-	// Stop the current timer
-	stopTimer();
-
-	_enabled = registry::getValue<bool>(RKEY_AUTOSAVE_ENABLED);
 	_snapshotsEnabled = registry::getValue<bool>(RKEY_AUTOSAVE_SNAPSHOTS_ENABLED);
-	_interval = registry::getValue<int>(RKEY_AUTOSAVE_INTERVAL) * 60;
-	
-	// Start the timer with the new interval
-	if (_enabled)
-	{
-		startTimer();
-	}
 }
 
 void AutoMapSaver::clearChanges()
 {
 	_changes = 0;
-}
-
-void AutoMapSaver::startTimer()
-{
-	if (!_timer) return;
-
-    _timer->Start(static_cast<int>(_interval * 1000));
-}
-
-void AutoMapSaver::stopTimer()
-{
-	if (!_timer) return;
-
-	_timer->Stop();
 }
 
 void AutoMapSaver::saveSnapshot() 
@@ -304,27 +270,9 @@ void AutoMapSaver::constructPreferences()
 	// Add a page to the given group
 	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Autosave"));
 
-	// Add the checkboxes and connect them with the registry key and the according observer
-	page.appendCheckBox(_("Enable Autosave"), RKEY_AUTOSAVE_ENABLED);
-	page.appendSlider(_("Autosave Interval (in minutes)"), RKEY_AUTOSAVE_INTERVAL, 1, 61, 1, 1);
-
 	page.appendCheckBox(_("Save Snapshots"), RKEY_AUTOSAVE_SNAPSHOTS_ENABLED);
 	page.appendEntry(_("Snapshot folder (relative to map folder)"), RKEY_AUTOSAVE_SNAPSHOTS_FOLDER);
 	page.appendEntry(_("Max total Snapshot size per map (MB)"), RKEY_AUTOSAVE_MAX_SNAPSHOT_FOLDER_SIZE);
-}
-
-void AutoMapSaver::onIntervalReached(wxTimerEvent& ev)
-{
-    if (_enabled && runAutosaveCheck())
-    {
-        // Stop the timer before saving
-        stopTimer();
-
-        performAutosave();
-
-        // Re-start the timer after saving has finished
-        startTimer();
-    }
 }
 
 void AutoMapSaver::onMapEvent(IMap::MapEvent ev)
@@ -368,19 +316,7 @@ void AutoMapSaver::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 
-    _timer.reset(new wxTimer(this));
-
-    Bind(wxEVT_TIMER, &AutoMapSaver::onIntervalReached, this);
-
-	constructPreferences();
-
-	_signalConnections.push_back(GlobalRegistry().signalForKey(RKEY_AUTOSAVE_INTERVAL).connect(
-		sigc::mem_fun(this, &AutoMapSaver::registryKeyChanged)
-	));
 	_signalConnections.push_back(GlobalRegistry().signalForKey(RKEY_AUTOSAVE_SNAPSHOTS_ENABLED).connect(
-		sigc::mem_fun(this, &AutoMapSaver::registryKeyChanged)
-	));
-	_signalConnections.push_back(GlobalRegistry().signalForKey(RKEY_AUTOSAVE_ENABLED).connect(
 		sigc::mem_fun(this, &AutoMapSaver::registryKeyChanged)
 	));
 
@@ -391,6 +327,12 @@ void AutoMapSaver::initialiseModule(const IApplicationContext& ctx)
 
 	// Refresh all values from the registry right now (this might also start the timer)
 	registryKeyChanged();
+
+    // Add the autosave options after all the modules are done. A cheap solution to let
+    // the options appear below the Enabled / Interval setting added by the UI
+    module::GlobalModuleRegistry().signal_allModulesInitialised().connect(
+        sigc::mem_fun(*this, &AutoMapSaver::constructPreferences)
+    );
 }
 
 void AutoMapSaver::shutdownModule()
@@ -402,20 +344,8 @@ void AutoMapSaver::shutdownModule()
 	}
 
 	_signalConnections.clear();
-
-	_enabled = false;
-	stopTimer();
-
-	// Destroy the timer
-	_timer.reset();
 }
 
 module::StaticModule<AutoMapSaver> staticAutoSaverModule;
-
-AutoMapSaver& AutoSaver()
-{
-	return *std::static_pointer_cast<AutoMapSaver>(
-		module::GlobalModuleRegistry().getModule(MODULE_AUTOSAVER));
-}
 
 } // namespace map
