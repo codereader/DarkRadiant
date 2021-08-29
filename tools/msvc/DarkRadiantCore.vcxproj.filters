@@ -2187,5 +2187,8 @@
     <ClInclude Include="..\..\radiantcore\map\format\primitivewriters\ExportUtil.h">
       <Filter>src\map\format\primitivewriters</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\format\primitivewriters\LegacyBrushDefExporter.h">
+      <Filter>src\map\format\primitivewriters</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

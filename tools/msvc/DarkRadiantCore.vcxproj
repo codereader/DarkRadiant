@@ -848,6 +848,7 @@
     <ClInclude Include="..\..\radiantcore\map\format\primitivewriters\BrushDef3Exporter.h" />
     <ClInclude Include="..\..\radiantcore\map\format\primitivewriters\BrushDefExporter.h" />
     <ClInclude Include="..\..\radiantcore\map\format\primitivewriters\ExportUtil.h" />
+    <ClInclude Include="..\..\radiantcore\map\format\primitivewriters\LegacyBrushDefExporter.h" />
     <ClInclude Include="..\..\radiantcore\map\format\primitivewriters\PatchDefExporter.h" />
     <ClInclude Include="..\..\radiantcore\map\format\Quake3MapFormat.h" />
     <ClInclude Include="..\..\radiantcore\map\format\Quake3MapReader.h" />

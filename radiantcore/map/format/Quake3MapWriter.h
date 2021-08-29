@@ -2,6 +2,7 @@
 
 #include "Doom3MapWriter.h"
 #include "primitivewriters/BrushDefExporter.h"
+#include "primitivewriters/LegacyBrushDefExporter.h"
 #include "primitivewriters/PatchDefExporter.h"
 #include "Quake3MapFormat.h"
 
@@ -26,8 +27,8 @@ public:
 		// Primitive count comment
 		stream << "// brush " << _primitiveCount++ << std::endl;
 
-		// Export brushDef definition to stream
-		BrushDefExporter::exportBrush(stream, brush); // TODO
+		// Export old brush syntax to stream
+		LegacyBrushDefExporter::exportBrush(stream, brush);
 	}
 
 	virtual void beginWritePatch(const IPatchNodePtr& patch, std::ostream& stream) override
