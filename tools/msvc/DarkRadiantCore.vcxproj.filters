@@ -2184,5 +2184,8 @@
     <ClInclude Include="..\..\radiantcore\map\autosaver\AutoSaver.h">
       <Filter>src\map\autosaver</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\format\primitivewriters\ExportUtil.h">
+      <Filter>src\map\format\primitivewriters</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

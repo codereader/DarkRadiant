@@ -27,7 +27,7 @@ public:
 		stream << "// brush " << _primitiveCount++ << std::endl;
 
 		// Export brushDef definition to stream
-		BrushDefExporter::exportBrush(stream, brush);
+		BrushDefExporter::exportBrush(stream, brush); // TODO
 	}
 
 	virtual void beginWritePatch(const IPatchNodePtr& patch, std::ostream& stream) override
@@ -38,6 +38,21 @@ public:
 		// Export patchDef2 to stream (patchDef3 is not supported)
 		PatchDefExporter::exportQ3PatchDef2(stream, patch);
 	}
+};
+
+class Quake3AlternateMapWriter :
+    public Doom3MapWriter
+{
+public:
+    // Q3 alternate is writing the newer brushDef syntax
+    virtual void beginWriteBrush(const IBrushNodePtr& brush, std::ostream& stream) override
+    {
+        // Primitive count comment
+        stream << "// brush " << _primitiveCount++ << std::endl;
+
+        // Export brushDef definition to stream
+        BrushDefExporter::exportBrush(stream, brush);
+    }
 };
 
 } // namespace

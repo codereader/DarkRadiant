@@ -90,7 +90,7 @@ const std::string& Quake3MapFormat::getName() const
 
 IMapWriterPtr Quake3MapFormat::getMapWriter() const
 {
-    return std::make_shared<Quake3MapWriter>(); // TODO
+    return std::make_shared<Quake3MapWriter>();
 }
 
 // Quake 3 with alternate brush format
@@ -115,7 +115,7 @@ const std::string& Quake3AlternateMapFormat::getName() const
 
 IMapWriterPtr Quake3AlternateMapFormat::getMapWriter() const
 {
-    return std::make_shared<Quake3MapWriter>(); // TODO
+    return std::make_shared<Quake3AlternateMapWriter>();
 }
 
 module::StaticModule<Quake3MapFormat> q3MapModule;

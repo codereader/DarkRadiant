@@ -4,32 +4,10 @@
 #include "ipatch.h"
 
 #include "string/predicate.h"
+#include "ExportUtil.h"
 
 namespace map
 {
-
-namespace
-{
-	inline void writePatchDouble(const double d, std::ostream& os)
-	{
-		if (isValid(d))
-		{
-			if (d == -0.0)
-			{
-				os << 0; // convert -0 to 0
-			}
-			else
-			{
-				os << d;
-			}
-		}
-		else
-		{
-			// Is infinity or NaN, write 0
-			os << "0";
-		}
-	}
-}
 
 class PatchDefExporter
 {
@@ -181,15 +159,15 @@ private:
 			for (std::size_t r = 0; r < patch.getHeight(); r++)
 			{
 				stream << "( ";
-				writePatchDouble(patch.ctrlAt(r,c).vertex[0], stream);
+				writeDoubleSafe(patch.ctrlAt(r,c).vertex[0], stream);
 				stream << " ";
-				writePatchDouble(patch.ctrlAt(r,c).vertex[1], stream);
+                writeDoubleSafe(patch.ctrlAt(r,c).vertex[1], stream);
 				stream << " ";
-				writePatchDouble(patch.ctrlAt(r,c).vertex[2], stream);
+                writeDoubleSafe(patch.ctrlAt(r,c).vertex[2], stream);
 				stream << " ";
-				writePatchDouble(patch.ctrlAt(r,c).texcoord[0], stream);
+                writeDoubleSafe(patch.ctrlAt(r,c).texcoord[0], stream);
 				stream << " ";
-				writePatchDouble(patch.ctrlAt(r,c).texcoord[1], stream);
+                writeDoubleSafe(patch.ctrlAt(r,c).texcoord[1], stream);
 				stream << " ) ";
 			}
 
