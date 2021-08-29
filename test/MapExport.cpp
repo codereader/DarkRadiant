@@ -139,6 +139,30 @@ TEST_F(MapExportTest, exportQuake3Brush)
     EXPECT_NE(brushTextIndex, std::string::npos) << "Could not locate the exported brush in the expected format";
 }
 
+TEST_F(MapExportTest, exportQuake3AlternateBrush)
+{
+    fs::path tempPath = _context.getTemporaryDataPath();
+    tempPath /= "brushexport.map";
+
+    auto text = exportDefaultBrushUsingFormat("quake3alternate", tempPath.string());
+
+    // Quake 3 alternate format is  writing the newer brushDef format including the brushDef keyword
+    auto brushTextIndex = text.find(R"BRUSH(// brush 0
+{
+brushDef
+{
+( 64 128 -256 ) ( 64 -128 256 ) ( 64 128 256 ) ( ( 0.00390625 0 0.5 ) ( 0 0.001953125 0.5 ) ) darkmod/numbers/1 0 0 0
+( -64 -128 -256 ) ( -64 128 256 ) ( -64 -128 256 ) ( ( 0.00390625 0 0.5 ) ( 0 0.001953125 0.5 ) ) darkmod/numbers/1 0 0 0
+( -64 128 -256 ) ( 64 128 256 ) ( -64 128 256 ) ( ( 0.0078125 0 0.5 ) ( 0 0.001953125 0.5 ) ) darkmod/numbers/1 0 0 0
+( 64 -128 -256 ) ( -64 -128 256 ) ( 64 -128 256 ) ( ( 0.0078125 0 0.5 ) ( 0 0.001953125 0.5 ) ) darkmod/numbers/1 0 0 0
+( -64 128 256 ) ( 64 -128 256 ) ( -64 -128 256 ) ( ( 0.00390625 0 0.5 ) ( 0 0.0078125 0.5 ) ) darkmod/numbers/1 0 0 0
+( -64 128 -256 ) ( 64 -128 -256 ) ( 64 128 -256 ) ( ( 0.00390625 0 0.5 ) ( 0 0.0078125 0.5 ) ) darkmod/numbers/1 0 0 0
+}
+})BRUSH");
+
+    EXPECT_NE(brushTextIndex, std::string::npos) << "Could not locate the exported brush in the expected format";
+}
+
 TEST_F(MapExportTest, exportQuake4Brush)
 {
     fs::path tempPath = _context.getTemporaryDataPath();
