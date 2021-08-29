@@ -69,6 +69,7 @@
     <ClInclude Include="..\..\..\test\TdmMissionSetup.h" />
     <ClInclude Include="..\..\..\test\TestContext.h" />
     <ClInclude Include="..\..\..\test\TestLogFile.h" />
+    <ClInclude Include="..\..\..\test\testutil\FileSelectionHelper.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\test\Basic.cpp" />
