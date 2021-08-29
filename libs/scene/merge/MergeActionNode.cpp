@@ -85,7 +85,8 @@ const AABB& MergeActionNodeBase::localAABB() const
 const Matrix4& MergeActionNodeBase::localToWorld() const
 {
     // We report the contained node's world AABB and an identity transform
-    return Matrix4::getIdentity();
+    static Matrix4 identity = Matrix4::getIdentity();
+    return identity;
 }
 
 void MergeActionNodeBase::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
