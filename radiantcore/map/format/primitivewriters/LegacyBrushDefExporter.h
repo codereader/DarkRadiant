@@ -20,9 +20,7 @@ public:
 	{
 		const IBrush& brush = brushNode->getIBrush();
 
-		// Brush decl header
-		stream << "{" << std::endl;
-		stream << "brushDef" << std::endl;
+		// Curly braces surround the brush contents
 		stream << "{" << std::endl;
 
 		// Iterate over each brush face, exporting the tokens from all faces
@@ -31,21 +29,20 @@ public:
 			writeFace(stream, brush.getFace(i), brush.getDetailFlag());
 		}
 
-		// Close brush contents and header
-		stream << "}" << std::endl << "}" << std::endl;
+		// Close brush contents
+		stream << "}" << std::endl;
 	}
 
-	/* 
-	brushDef
-	{
-	( -64 64 64 ) ( 64 -64 64 ) ( -64 -64 64 ) ( ( 0.015625 0 -0 ) ( -0 0.015625 0 ) ) common/caulk 0 0 0
-	( -64 64 64 ) ( 64 64 -64 ) ( 64 64 64 ) ( ( 0.015625 0 0 ) ( 0 0.015625 0 ) ) common/caulk 0 0 0
-	( 64 64 64 ) ( 64 -64 -64 ) ( 64 -64 64 ) ( ( 0.015625 0 -0 ) ( -0 0.015625 0 ) ) common/caulk 0 0 0
-	( 64 64 -64 ) ( -64 -64 -64 ) ( 64 -64 -64 ) ( ( 0.015625 0 -0 ) ( -0 0.015625 0 ) ) common/caulk 0 0 0
-	( 64 -64 -64 ) ( -64 -64 64 ) ( 64 -64 64 ) ( ( 0.015625 0 -0 ) ( -0 0.015625 0 ) ) common/caulk 0 0 0
-	( -64 -64 64 ) ( -64 64 -64 ) ( -64 64 64 ) ( ( 0.015625 0 -0 ) ( -0 0.015625 0 ) ) common/caulk 0 0 0
-	}
-	*/
+    /*
+    {
+    ( 16 192 96 ) ( 16 128 96 ) ( 0 192 96 ) shared_vega/trim03a 0 0 0 0.125 0.125 134217728 0 0
+    ( 0 208 96 ) ( 0 208 80 ) ( 16 192 96 ) common/caulk 0 0 0 0.5 0.5 134217728 0 0
+    ( 0 208 80 ) ( 0 208 96 ) ( 0 112 96 ) shared_vega/trim03a 64 0 90 0.125 0.125 134217728 0 0
+    ( 0 112 80 ) ( 16 128 80 ) ( 0 192 80 ) common/caulk 0 0 0 0.5 0.5 134217728 0 0
+    ( 16 128 96 ) ( 16 128 80 ) ( 0 112 96 ) shared_vega/trim03a 64 0 90 0.125 0.125 134217728 0 0
+    ( 16 128 80 ) ( 16 128 96 ) ( 16 192 80 ) common/caulk 0 0 0 0.5 0.5 134217728 0 0
+    }
+    */
 
 private:
 
@@ -58,6 +55,9 @@ private:
 		{
 			return;
 		}
+
+        // ( 16 192 96 ) ( 16 128 96 ) ( 0 192 96 ) shared_vega/trim03a 0 0 0 0.125 0.125 134217728 0 0
+        // ( Point 1 ) ( Point 2 ) ( Point 3 ) path/to/material shiftS shiftT rotate scaleS scaleT DetailFlag 0 0
 
 		// Each face plane is defined by three points
 
@@ -88,28 +88,6 @@ private:
 		stream << " ";
 		stream << ") ";
 
-		// Write TexDef
-		Matrix4 texdef = face.getTexDefMatrix();
-		stream << "( ";
-
-		stream << "( ";
-		writeDoubleSafe(texdef.xx(), stream);
-		stream << " ";
-		writeDoubleSafe(texdef.yx(), stream);
-		stream << " ";
-		writeDoubleSafe(texdef.tx(), stream);
-		stream << " ) ";
-
-		stream << "( ";
-		writeDoubleSafe(texdef.xy(), stream);
-		stream << " ";
-		writeDoubleSafe(texdef.yy(), stream);
-		stream << " ";
-		writeDoubleSafe(texdef.ty(), stream);
-		stream << " ) ";
-
-		stream << ") ";
-
 		// Write Shader (without quotes)
 		const std::string& shaderName = face.getShader();
 
@@ -121,16 +99,30 @@ private:
 		{
 			if (string::starts_with(shaderName, GlobalTexturePrefix_get()))
 			{
-				// brushDef has an implicit "textures/" not written to the map, cut it off
-				stream << "" << shader_get_textureName(shaderName.c_str()) << " ";
+				// Q3 has an implicit "textures/" not written to the map, cut it off
+				stream << shader_get_textureName(shaderName.c_str()) << " ";
 			}
 			else
 			{
-				stream << "" << shaderName << " ";
+				stream << shaderName << " ";
 			}
 		}
 
-		// Export (dummy) contents/flags
+        // Write Texture Shift/Scale/Rotation
+        auto shiftScaleRotate = face.getShiftScaleRotation();
+
+        writeDoubleSafe(shiftScaleRotate.shift[0], stream);
+        stream << " ";
+        writeDoubleSafe(shiftScaleRotate.shift[1], stream);
+        stream << " ";
+        writeDoubleSafe(shiftScaleRotate.rotate, stream);
+        stream << " ";
+        writeDoubleSafe(shiftScaleRotate.scale[0], stream);
+        stream << " ";
+        writeDoubleSafe(shiftScaleRotate.scale[1], stream);
+        stream << " ";
+
+		// Export contents flags and the two zeroes at the end
 		stream << detailFlag << " 0 0";
 		
 		stream << std::endl;

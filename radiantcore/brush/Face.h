@@ -142,7 +142,7 @@ public:
     // The incoming values are measured in pixels and will be scaled internally.
     void setTexdef(const TexDef& texDef);
 
-	ShiftScaleRotation getShiftScaleRotation() override;
+	ShiftScaleRotation getShiftScaleRotation() const override;
 	void setShiftScaleRotation(const ShiftScaleRotation& scr) override;
 
 	/**

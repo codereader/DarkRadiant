@@ -182,7 +182,7 @@ public:
 	 * This is not what is actually saved to the .map file, but it makes
 	 * texture manipulations in the Surface Inspector much more human-readable.
 	 */
-	virtual ShiftScaleRotation getShiftScaleRotation() = 0;
+	virtual ShiftScaleRotation getShiftScaleRotation() const = 0;
 	virtual void setShiftScaleRotation(const ShiftScaleRotation& scr) = 0;
 
     // Transforms this face plane with the given transformation matrix

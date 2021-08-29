@@ -442,7 +442,7 @@ void Face::setTexdef(const TexDef& texDef)
     SetTexdef(projection);
 }
 
-ShiftScaleRotation Face::getShiftScaleRotation()
+ShiftScaleRotation Face::getShiftScaleRotation() const
 {
     TextureProjection curProjection = _texdef;
 
