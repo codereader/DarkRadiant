@@ -812,6 +812,85 @@ TEST_F(MapMergeTest, DeactivatedChangePrimitiveActions)
     EXPECT_EQ(getChildPrimitiveCount(entityNode), 2);
 }
 
+// Start and finish the merge operation through the map module interface
+TEST_F(MapMergeTest, StartAndFinishMergeOperation)
+{
+    GlobalCommandSystem().executeCommand("OpenMap", cmd::Argument("maps/fingerprinting.mapx"));
+
+    auto changedMap = _context.getTestProjectPath() + "maps/fingerprinting_2.mapx";
+    auto resource = GlobalMapResourceManager().createFromPath(changedMap);
+    EXPECT_TRUE(resource->load()) << "Test map not found in path " << changedMap;
+
+    auto result = GraphComparer::Compare(resource->getRootNode(), GlobalMapModule().getRoot());
+
+    // The result should have differences
+    EXPECT_FALSE(result->differingEntities.empty());
+
+    // Start and finish the regular merge operation
+    GlobalMapModule().startMergeOperation(changedMap);
+    GlobalMapModule().finishMergeOperation();
+
+    auto resultAfterExecution = GraphComparer::Compare(resource->getRootNode(), GlobalMapModule().getRoot());
+
+    // The result should not list any differences anymore
+    EXPECT_TRUE(resultAfterExecution->differingEntities.empty());
+}
+
+// Finish the merge operation with a few merge action nodes hidden
+TEST_F(MapMergeTest, FinishMergeOperationWithHiddenNodes)
+{
+    GlobalCommandSystem().executeCommand("OpenMap", cmd::Argument("maps/fingerprinting.mapx"));
+
+    auto changedMap = _context.getTestProjectPath() + "maps/fingerprinting_2.mapx";
+    auto resource = GlobalMapResourceManager().createFromPath(changedMap);
+    EXPECT_TRUE(resource->load()) << "Test map not found in path " << changedMap;
+
+    auto result = GraphComparer::Compare(resource->getRootNode(), GlobalMapModule().getRoot());
+
+    // The result should have differences
+    EXPECT_FALSE(result->differingEntities.empty());
+
+    // Start and finish the regular merge operation
+    GlobalMapModule().startMergeOperation(changedMap);
+
+    std::vector<scene::INodePtr> mergeNodes;
+
+    // Hide a few merge action nodes
+    GlobalMapModule().getRoot()->foreachNode([&](const scene::INodePtr& node)
+    {
+        if (node->getNodeType() == scene::INode::Type::MergeAction)
+        {
+            mergeNodes.push_back(node);
+        }
+
+        return true;
+    });
+
+    EXPECT_NE(mergeNodes.size(), 0) << "No merge action nodes found in the scene";
+
+    // Pick and hide every other node 
+    for (auto i = 0; i < mergeNodes.size(); i += 2)
+    {
+        EXPECT_TRUE(mergeNodes[i]->visible()) << "Node should not be hidden: " << mergeNodes[i]->name();
+        Node_setSelected(mergeNodes[i], true);
+    }
+
+    GlobalCommandSystem().executeCommand("HideSelected");
+
+    for (auto i = 0; i < mergeNodes.size(); i += 2)
+    {
+        EXPECT_FALSE(mergeNodes[i]->visible()) << "Node should be hidden: " << mergeNodes[i]->name();
+    }
+
+    GlobalMapModule().finishMergeOperation();
+
+    // The hidden merge action nodes should still have their actions applied
+    auto resultAfterExecution = GraphComparer::Compare(resource->getRootNode(), GlobalMapModule().getRoot());
+
+    // The result should not list any differences anymore
+    EXPECT_TRUE(resultAfterExecution->differingEntities.empty());
+}
+
 inline bool hasChange(const std::vector<SelectionGroupMerger::Change>& log, 
     const std::function<bool(const SelectionGroupMerger::Change&)>& predicate)
 {
