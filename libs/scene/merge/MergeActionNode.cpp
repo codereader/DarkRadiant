@@ -10,6 +10,12 @@ MergeActionNodeBase::MergeActionNodeBase() :
 void MergeActionNodeBase::prepareForMerge()
 {
     _syncActionStatus = false;
+
+    // Unhide ourselves before merging
+    if (checkStateFlag(eHidden))
+    {
+        disable(eHidden);
+    }
 }
 
 INodePtr MergeActionNodeBase::getAffectedNode()
@@ -68,7 +74,7 @@ INode::Type MergeActionNodeBase::getNodeType() const
 
 bool MergeActionNodeBase::supportsStateFlag(unsigned int state) const
 {
-    if ((state & (eHidden | eFiltered | eExcluded | eLayered)) != 0)
+    if ((state & (eFiltered | eExcluded | eLayered)) != 0)
     {
         return false; // don't allow this node to be hidden
     }
