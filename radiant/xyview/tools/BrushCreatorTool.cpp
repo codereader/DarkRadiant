@@ -29,9 +29,9 @@ MouseTool::Result BrushCreatorTool::onMouseDown(Event& ev)
 {
     try
     {
-        if (GlobalClipper().clipMode())
+        if (GlobalClipper().clipMode() || GlobalMapModule().getEditMode() == IMap::EditMode::Merge)
         {
-            return Result::Ignored; // no brush creation in clip mode
+            return Result::Ignored; // no brush creation in clip or merge mode
         }
 
         // We only operate on XY view events, so attempt to cast
