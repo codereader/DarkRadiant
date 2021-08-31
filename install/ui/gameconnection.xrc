@@ -2,226 +2,224 @@
 <resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
 	<object class="wxPanel" name="GameConnectionMainPanel">
 		<style>wxTAB_TRAVERSAL</style>
-		<size>360,222</size>
+		<size>557,310</size>
 		<object class="wxBoxSizer">
 			<orient>wxVERTICAL</orient>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxEXPAND</flag>
+				<border>5</border>
+				<object class="wxBoxSizer">
+					<orient>wxHORIZONTAL</orient>
+					<object class="sizeritem">
+						<option>1</option>
+						<flag>wxEXPAND</flag>
+						<border>5</border>
+						<object class="wxBoxSizer">
+							<orient>wxHORIZONTAL</orient>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+								<border>5</border>
+								<object class="wxCheckBox" name="ConnectedCheckbox">
+									<label>Connected</label>
+									<checked>0</checked>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+								<border>5</border>
+								<object class="wxStaticBitmap" name="ConnectedActivityIndicator">
+									<bitmap stock_id="darkradiant:activityindicator.png" stock_client="">undefined.png</bitmap>
+								</object>
+							</object>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>1</option>
+						<flag>wxEXPAND</flag>
+						<border>5</border>
+						<object class="wxBoxSizer">
+							<orient>wxHORIZONTAL</orient>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+								<border>5</border>
+								<object class="wxButton" name="RestartGameButton">
+									<tooltip>Restarts current map in game, starting TheDarkMod if necessary.\n\n* Note that it saves the current map first.\n* Make sure to configure &quot;File :: Game Setup&quot; settings.\n* Can attach to running game if &quot;com__automation 1&quot; is set in game console.\n</tooltip>
+									<label>(Re)Start game</label>
+									<default>0</default>
+									<auth_needed>0</auth_needed>
+									<markup>0</markup>
+									<bitmap />
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+								<border>5</border>
+								<object class="wxCheckBox" name="DmapCheckbox">
+									<tooltip>Dmap every time &quot;Restart game&quot; button is clicked.</tooltip>
+									<label>dmap</label>
+									<checked>1</checked>
+								</object>
+							</object>
+						</object>
+					</object>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxEXPAND | wxALL</flag>
+				<border>5</border>
+				<object class="wxStaticLine" name="m_staticline3">
+					<style>wxLI_HORIZONTAL</style>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>1</option>
+				<flag>wxEXPAND</flag>
+				<border>5</border>
+				<object class="wxFlexGridSizer">
+					<rows>3</rows>
+					<cols>3</cols>
+					<vgap>0</vgap>
+					<hgap>0</hgap>
+					<growablecols></growablecols>
+					<growablerows></growablerows>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<object class="wxStaticText" name="m_staticText8">
+							<label>Camera sync</label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</flag>
+						<border>5</border>
+						<object class="wxButton" name="CameraLoadFromGameButton">
+							<tooltip>Set preview camera to player&apos;s location in game.</tooltip>
+							<label>Load from game</label>
+							<default>0</default>
+							<auth_needed>0</auth_needed>
+							<markup>0</markup>
+							<bitmap />
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<object class="wxCheckBox" name="CameraSendToGameCheckbox">
+							<tooltip>Player&apos;s location in game constantly follows preview camera.\n\n* Also enables &quot;ghost mode&quot;: noclip + notarget +god.</tooltip>
+							<label>Send to game</label>
+							<checked>0</checked>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<object class="wxStaticText" name="m_staticText9">
+							<label>Map file</label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</flag>
+						<border>5</border>
+						<object class="wxButton" name="MapFileReloadNowButton">
+							<tooltip>Reload game entities from .map file on disk.\n\n* You should save your map before doing this.\n* Game only updates entities which have changed since last hot reload update of any kind.</tooltip>
+							<label>Reload now</label>
+							<default>0</default>
+							<auth_needed>0</auth_needed>
+							<markup>0</markup>
+							<bitmap />
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<object class="wxCheckBox" name="MapFileReloadOnSaveCheckbox">
+							<tooltip>Reload game entities from .map file every time you save it.\n\nThis has same effect as clicking &quot;Reload now&quot; after every save.</tooltip>
+							<label>Reload on save</label>
+							<checked>0</checked>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<object class="wxStaticText" name="m_staticText10">
+							<label>Hot reload</label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</flag>
+						<border>5</border>
+						<object class="wxButton" name="HotReloadUpdateNowButton">
+							<tooltip>Quickly update game entities to their current state in DarkRadiant.\n\n* The .map file is not touched: modifications are sent directly to game.\n* To enable &quot;Hot reload&quot; mode: save map and click &quot;Reload now&quot;.</tooltip>
+							<label>Update now</label>
+							<default>0</default>
+							<auth_needed>0</auth_needed>
+							<markup>0</markup>
+							<bitmap />
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
+						<border>5</border>
+						<object class="wxCheckBox" name="HotReloadUpdateOnChangeCheckbox">
+							<tooltip>Update game entities automatically after every change.\n\nThis has same effect as clicking &quot;Update now&quot; very often.</tooltip>
+							<label>Update on change</label>
+							<checked>0</checked>
+						</object>
+					</object>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxEXPAND | wxALL</flag>
+				<border>5</border>
+				<object class="wxStaticLine" name="m_staticline4">
+					<style>wxLI_HORIZONTAL</style>
+				</object>
+			</object>
 			<object class="sizeritem">
 				<option>1</option>
 				<flag>wxEXPAND</flag>
 				<border>5</border>
 				<object class="wxBoxSizer">
-					<orient>wxVERTICAL</orient>
+					<orient>wxHORIZONTAL</orient>
 					<object class="sizeritem">
 						<option>0</option>
-						<flag>wxEXPAND</flag>
+						<flag>wxALL</flag>
 						<border>5</border>
-						<object class="wxBoxSizer">
-							<orient>wxHORIZONTAL</orient>
-							<object class="sizeritem">
-								<option>1</option>
-								<flag>wxEXPAND</flag>
-								<border>5</border>
-								<object class="wxBoxSizer">
-									<orient>wxHORIZONTAL</orient>
-									<object class="sizeritem">
-										<option>0</option>
-										<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-										<border>5</border>
-										<object class="wxCheckBox" name="ConnectedCheckbox">
-											<label>Connected</label>
-											<checked>0</checked>
-										</object>
-									</object>
-									<object class="sizeritem">
-										<option>0</option>
-										<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-										<border>5</border>
-										<object class="wxStaticBitmap" name="ConnectedActivityIndicator">
-											<bitmap stock_id="darkradiant:activityindicator.png" stock_client="">undefined.png</bitmap>
-										</object>
-									</object>
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>1</option>
-								<flag>wxEXPAND</flag>
-								<border>5</border>
-								<object class="wxBoxSizer">
-									<orient>wxHORIZONTAL</orient>
-									<object class="sizeritem">
-										<option>0</option>
-										<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-										<border>5</border>
-										<object class="wxButton" name="RestartGameButton">
-											<tooltip>Restarts current map in game, starting TheDarkMod if necessary.\n\n* Note that it saves the current map first.\n* Make sure to configure &quot;File :: Game Setup&quot; settings.\n* Can attach to running game if &quot;com__automation 1&quot; is set in game console.\n</tooltip>
-											<label>(Re)Start game</label>
-											<default>0</default>
-											<markup>0</markup>
-											<bitmap />
-										</object>
-									</object>
-									<object class="sizeritem">
-										<option>0</option>
-										<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
-										<border>5</border>
-										<object class="wxCheckBox" name="DmapCheckbox">
-											<tooltip>Dmap every time &quot;Restart game&quot; button is clicked.</tooltip>
-											<label>dmap</label>
-											<checked>1</checked>
-										</object>
-									</object>
-								</object>
-							</object>
+						<object class="wxBitmapButton" name="RespawnSelectedButton">
+							<tooltip>Respawns currently selected entities in game.\n\nRespawning means that existing game entity is deleted, and a fresh one is spawned. It allows to force in-game update of a modified entity after ordinary hot reload did not work.</tooltip>
+							<bitmap stock_id="darkradiant:refresh.png" stock_client="">undefined.png</bitmap>
+							<default>0</default>
+							<auth_needed>0</auth_needed>
 						</object>
 					</object>
 					<object class="sizeritem">
 						<option>0</option>
-						<flag>wxEXPAND | wxALL</flag>
+						<flag>wxALL</flag>
 						<border>5</border>
-						<object class="wxStaticLine" name="m_staticline1">
-							<style>wxLI_HORIZONTAL</style>
-						</object>
-					</object>
-					<object class="sizeritem">
-						<option>1</option>
-						<flag>wxEXPAND</flag>
-						<border>5</border>
-						<object class="wxFlexGridSizer">
-							<rows>3</rows>
-							<cols>3</cols>
-							<vgap>0</vgap>
-							<hgap>0</hgap>
-							<growablecols></growablecols>
-							<growablerows></growablerows>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
-								<border>5</border>
-								<object class="wxStaticText" name="m_staticText8">
-									<label>Camera sync</label>
-									<wrap>-1</wrap>
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</flag>
-								<border>5</border>
-								<object class="wxButton" name="CameraLoadFromGameButton">
-									<tooltip>Set preview camera to player&apos;s location in game.</tooltip>
-									<label>Load from game</label>
-									<default>0</default>
-									<markup>0</markup>
-									<bitmap />
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
-								<border>5</border>
-								<object class="wxCheckBox" name="CameraSendToGameCheckbox">
-									<tooltip>Player&apos;s location in game constantly follows preview camera.\n\n* Also enables &quot;ghost mode&quot;: noclip + notarget +god.</tooltip>
-									<label>Send to game</label>
-									<checked>0</checked>
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
-								<border>5</border>
-								<object class="wxStaticText" name="m_staticText9">
-									<label>Map file</label>
-									<wrap>-1</wrap>
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</flag>
-								<border>5</border>
-								<object class="wxButton" name="MapFileReloadNowButton">
-									<tooltip>Reload game entities from .map file on disk.\n\n* You should save your map before doing this.\n* Game only updates entities which have changed since last hot reload update of any kind.</tooltip>
-									<label>Reload now</label>
-									<default>0</default>
-									<markup>0</markup>
-									<bitmap />
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
-								<border>5</border>
-								<object class="wxCheckBox" name="MapFileReloadOnSaveCheckbox">
-									<tooltip>Reload game entities from .map file every time you save it.\n\nThis has same effect as clicking &quot;Reload now&quot; after every save.</tooltip>
-									<label>Reload on save</label>
-									<checked>0</checked>
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
-								<border>5</border>
-								<object class="wxStaticText" name="m_staticText10">
-									<label>Hot reload</label>
-									<wrap>-1</wrap>
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</flag>
-								<border>5</border>
-								<object class="wxButton" name="HotReloadUpdateNowButton">
-									<tooltip>Quickly update game entities to their current state in DarkRadiant.\n\n* The .map file is not touched: modifications are sent directly to game.\n* To enable &quot;Hot reload&quot; mode: save map and click &quot;Reload now&quot;.</tooltip>
-									<label>Update now</label>
-									<default>0</default>
-									<markup>0</markup>
-									<bitmap />
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxALL|wxALIGN_CENTER_VERTICAL</flag>
-								<border>5</border>
-								<object class="wxCheckBox" name="HotReloadUpdateOnChangeCheckbox">
-									<tooltip>Update game entities automatically after every change.\n\nThis has same effect as clicking &quot;Update now&quot; very often.</tooltip>
-									<label>Update on change</label>
-									<checked>0</checked>
-								</object>
-							</object>
-						</object>
-					</object>
-					<object class="sizeritem">
-						<option>0</option>
-						<flag>wxEXPAND | wxALL</flag>
-						<border>5</border>
-						<object class="wxStaticLine" name="m_staticline11">
-							<style>wxLI_HORIZONTAL</style>
-						</object>
-					</object>
-					<object class="sizeritem">
-						<option>1</option>
-						<flag>wxEXPAND</flag>
-						<border>5</border>
-						<object class="wxBoxSizer">
-							<orient>wxHORIZONTAL</orient>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxALL</flag>
-								<border>5</border>
-								<object class="wxBitmapButton" name="RespawnSelectedButton">
-									<tooltip>Respawns currently selected entities in game.\n\nRespawning means that existing game entity is deleted, and a fresh one is spawned. It allows to force in-game update of a modified entity after ordinary hot reload did not work.</tooltip>
-									<bitmap stock_id="darkradiant:refresh.png" stock_client="">undefined.png</bitmap>
-									<default>0</default>
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxALL</flag>
-								<border>5</border>
-								<object class="wxBitmapButton" name="PauseGameButton">
-									<tooltip>Pause/unpause the game.</tooltip>
-									<bitmap stock_id="darkradiant:media-playback-pause.png" stock_client="">undefined.png</bitmap>
-									<default>0</default>
-								</object>
-							</object>
+						<object class="wxBitmapButton" name="PauseGameButton">
+							<tooltip>Pause/unpause the game.</tooltip>
+							<bitmap stock_id="darkradiant:media-playback-pause.png" stock_client="">undefined.png</bitmap>
+							<default>0</default>
+							<auth_needed>0</auth_needed>
 						</object>
 					</object>
 				</object>
