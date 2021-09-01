@@ -446,4 +446,19 @@ TEST(MathTest, Vector3fAsCArray)
     EXPECT_EQ(array[2], 0);
 }
 
+TEST(MathTest, Vector4AsCArray)
+{
+    Vector4 vec(-15, 15, 36.9, -0.5);
+
+    EXPECT_EQ(&vec.y(), &vec.x() + 1);
+    EXPECT_EQ(&vec.z(), &vec.y() + 1);
+    EXPECT_EQ(&vec.w(), &vec.z() + 1);
+
+    double* array = vec;
+    EXPECT_EQ(array[0], -15);
+    EXPECT_EQ(array[1], 15);
+    EXPECT_EQ(array[2], 36.9);
+    EXPECT_EQ(array[3], -0.5);
+}
+
 }

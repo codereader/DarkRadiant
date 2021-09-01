@@ -268,19 +268,11 @@ public:
             _v[2] / _v[3]);
     }
 
-    /** Implicit cast to C-style array. This allows a Vector4 to be
-     * passed directly to GL functions that expect an array (e.g.
-     * glFloat4dv()). These functions implicitly provide operator[]
-     * as well, since the C-style array provides this function.
-     */
+    /// Cast to const raw array
+    operator const Element* () const { return _v; }
 
-    operator const Element* () const {
-        return _v;
-    }
-
-    operator Element* () {
-        return _v;
-    }
+    // Cast to non-const raw array
+    operator Element* () { return _v; }
 
     /*  Cast this Vector4 onto a Vector3, both const and non-const
      */
