@@ -96,7 +96,7 @@ TEST(MathTest, Vector3EqualityComparison)
     EXPECT_NE(v1, v2);
 }
 
-TEST(MathTest, VectorEpsilonComparison)
+TEST(MathTest, Vector3EpsilonComparison)
 {
     const Vector3 v(1, 8, 320);
     const Vector3 increment(1e-8, 1e-7, 1e-8);
@@ -118,6 +118,19 @@ TEST(MathTest, Vector4EqualityComparison)
     EXPECT_EQ(v1, v1);
     EXPECT_EQ(v1, v1a);
     EXPECT_NE(v1, v2);
+}
+
+TEST(MathTest, Vector4EpsilonComparison)
+{
+    const Vector4 v(256, -18, -0.5);
+    const Vector4 increment(1e-8, 1e-8, 1e-8, 1e-8);
+
+    EXPECT_NE(v, v + increment);
+    EXPECT_TRUE(math::isNear(v, v, 1e-10));
+    EXPECT_TRUE(math::isNear(v, v + increment, 1e-6));
+    EXPECT_TRUE(math::isNear(v, v - increment, 1e-6));
+    EXPECT_FALSE(math::isNear(v, v + increment, 1e-10));
+    EXPECT_FALSE(math::isNear(v, v - increment, 1e-10));
 }
 
 TEST(MathTest, NegateVector3)

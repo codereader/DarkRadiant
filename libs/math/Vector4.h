@@ -291,19 +291,6 @@ public:
     const BasicVector3<Element>& getVector3() const {
         return *reinterpret_cast<const BasicVector3<Element>*>(_v);
     }
-
-    /**
-     * Equality check with tolerance epsilon.
-     */
-    template<typename OtherElement>
-    bool isEqual(const BasicVector4<OtherElement>& other, Element epsilon) const
-    {
-        return float_equal_epsilon(x(), other.x(), epsilon) &&
-               float_equal_epsilon(y(), other.y(), epsilon) &&
-               float_equal_epsilon(z(), other.z(), epsilon) &&
-               float_equal_epsilon(w(), other.w(), epsilon);
-    }
-
 }; // BasicVector4
 
 /// Multiply BasicVector4 with a scalar
