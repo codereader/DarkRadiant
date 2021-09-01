@@ -100,28 +100,6 @@ public:
         return !(*this == other);
     }
 
-    /*  Define the addition operators + and += with any other BasicVector4 of type OtherElement
-     *  The vectors are added to each other element-wise
-     */
-    template<typename OtherElement>
-    BasicVector4<Element> operator+ (const BasicVector4<OtherElement>& other) const {
-        return BasicVector4<Element>(
-            _v[0] + static_cast<Element>(other.x()),
-            _v[1] + static_cast<Element>(other.y()),
-            _v[2] + static_cast<Element>(other.z()),
-            _v[3] + static_cast<Element>(other.w())
-        );
-    }
-
-    template<typename OtherElement>
-	BasicVector4<Element>& operator+= (const BasicVector4<OtherElement>& other) {
-        _v[0] += static_cast<Element>(other.x());
-        _v[1] += static_cast<Element>(other.y());
-        _v[2] += static_cast<Element>(other.z());
-        _v[3] += static_cast<Element>(other.w());
-		return *this;
-    }
-
     /*  Define the substraction operators - and -= with any other BasicVector4 of type OtherElement
      *  The vectors are substracted from each other element-wise
      */
@@ -277,6 +255,26 @@ public:
         return *reinterpret_cast<const BasicVector3<Element>*>(_v);
     }
 }; // BasicVector4
+
+/// Componentwise addition of two vectors
+template <typename T>
+BasicVector4<T> operator+(const BasicVector4<T>& v1, const BasicVector4<T>& v2)
+{
+    return BasicVector4<T>(v1.x() + v2.x(),
+                           v1.y() + v2.y(),
+                           v1.z() + v2.z(),
+                           v1.w() + v2.w());
+}
+
+template <typename T>
+BasicVector4<T>& operator+=(BasicVector4<T>& v1, const BasicVector4<T>& v2)
+{
+    v1.x() += v2.x();
+    v1.y() += v2.y();
+    v1.z() += v2.z();
+    v1.w() += v2.w();
+    return v1;
+}
 
 /// Multiply BasicVector4 with a scalar
 template <
