@@ -80,8 +80,8 @@ public:
     }
 
     /**
-     * \brief
-     * Return a readable (pretty-printed) string representation of the vector
+     * \brief Return a readable (pretty-printed) string representation of the
+     * vector.
      *
      * We need a dedicated function for this because the standard operator<< is
      * already used for serialisation to the less readable space-separated text
@@ -94,8 +94,7 @@ public:
         return ss.str();
     }
 
-    /** Compare this BasicVector4 against another for equality.
-     */
+    /// Compare this BasicVector4 against another for equality.
     bool operator== (const BasicVector4& other) const {
         return (other.x() == x()
                 && other.y() == y()
@@ -103,8 +102,7 @@ public:
                 && other.w() == w());
     }
 
-    /** Compare this BasicVector4 against another for inequality.
-     */
+    /// Compare this BasicVector4 against another for inequality.
     bool operator!= (const BasicVector4& other) const {
         return !(*this == other);
     }

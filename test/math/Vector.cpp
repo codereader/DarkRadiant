@@ -30,6 +30,30 @@ TEST(MathTest, ConstructVector3FromArray)
     EXPECT_EQ(vec, Vector3(1.0, 14.0, -96.5));
 }
 
+TEST(MathTest, ConstructVector4)
+{
+    Vector4 vec(25.0, -356, 128.25, 14);
+
+    EXPECT_EQ(vec.x(), 25.0);
+    EXPECT_EQ(vec.y(), -356);
+    EXPECT_EQ(vec.z(), 128.25);
+    EXPECT_EQ(vec.w(), 14);
+}
+
+TEST(MathTest, ConstructVector4DefaultW)
+{
+    Vector4 vec(16, 2, 8);
+
+    EXPECT_EQ(vec.w(), 1);
+}
+
+TEST(MathTest, DefaultConstructVector4)
+{
+    Vector4 vec;
+
+    EXPECT_EQ(vec, Vector4(0, 0, 0, 0));
+}
+
 TEST(MathTest, SetVector3Components)
 {
     Vector3 vec(-16, 256, 0.95);
@@ -83,6 +107,17 @@ TEST(MathTest, VectorEpsilonComparison)
     EXPECT_FALSE(math::isNear(v, v + increment, 1e-9));
     EXPECT_FALSE(math::isNear(v, v - increment, 1e-9));
     EXPECT_TRUE(math::isNear(v, v + Vector3(1000, 10000, 20000), 1e6));
+}
+
+TEST(MathTest, Vector4EqualityComparison)
+{
+    Vector4 v1(-5, 27, 9562);
+    Vector4 v1a(-5, 27, 9562);
+    Vector4 v2(350, 0.025, 16);
+
+    EXPECT_EQ(v1, v1);
+    EXPECT_EQ(v1, v1a);
+    EXPECT_NE(v1, v2);
 }
 
 TEST(MathTest, NegateVector3)
