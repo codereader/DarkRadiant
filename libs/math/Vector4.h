@@ -72,13 +72,6 @@ public:
     const Element& z() const { return _v[2]; }
     const Element& w() const { return _v[3]; }
 
-    Element index(std::size_t i) const {
-        return _v[i];
-    }
-    Element& index(std::size_t i) {
-        return _v[i];
-    }
-
     /**
      * \brief Return a readable (pretty-printed) string representation of the
      * vector.
