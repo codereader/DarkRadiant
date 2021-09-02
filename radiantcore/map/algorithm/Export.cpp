@@ -27,6 +27,20 @@ namespace map
 namespace algorithm
 {
 
+// Returns the union set of layer IDs of the current selection
+scene::LayerList getAllLayersOfSelection()
+{
+    scene::LayerList unionSet;
+
+    GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
+    {
+        const auto& layers = node->getLayers();
+        unionSet.insert(layers.begin(), layers.end());
+    });
+
+    return unionSet;
+}
+
 void exportSelectedAsModel(const ModelExportOptions& options)
 {
 	if (!path_is_absolute(options.outputFilename.c_str()))
@@ -112,7 +126,8 @@ void exportSelectedAsModel(const ModelExportOptions& options)
         auto lastSelectedNode = GlobalSelectionSystem().ultimateSelected();
         auto lastSelectedEntity = Node_getEntity(lastSelectedNode);
 
-        // Remove the selection
+        // Remove the selection, but remember its layers first
+        auto previousLayerSet = getAllLayersOfSelection();
         selection::algorithm::deleteSelection();
 
         // Create a func_static in its place
@@ -130,6 +145,7 @@ void exportSelectedAsModel(const ModelExportOptions& options)
 
             auto newEntity = Node_getEntity(modelNode);
             newEntity->setKeyValue("model", relativeModelPath);
+            modelNode->assignToLayers(previousLayerSet);
 
             if (lastSelectedEntity)
             {
