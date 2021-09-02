@@ -457,4 +457,78 @@ TEST_F(ModelExportTest, ExportedModelInheritsSpawnargs)
     fs::remove(fullModelPath);
 }
 
+// #55687: "Replace Selection with exported Model" should accumulate layers of selection
+TEST_F(ModelExportTest, ExportedModelInheritsLayers)
+{
+    auto modelPath = "models/torch.lwo";
+    auto exportedModelPath = "models/export_test.lwo";
+    auto fullModelPath = _context.getTestProjectPath() + exportedModelPath;
+
+    // Create an entity referencing this new model
+    auto eclass = GlobalEntityClassManager().findClass("func_static");
+    auto entity = GlobalEntityModule().createEntity(eclass);
+
+    scene::addNodeToContainer(entity, GlobalMapModule().getRoot());
+
+    // This should assign the model node to the entity
+    Node_getEntity(entity)->setKeyValue("model", modelPath);
+
+    auto brush1 = algorithm::createCubicBrush(
+        GlobalMapModule().findOrInsertWorldspawn(), Vector3(0, 0, 0), "textures/numbers/1");
+    auto brush2 = algorithm::createCubicBrush(
+        GlobalMapModule().findOrInsertWorldspawn(), Vector3(0, 0, 0), "textures/numbers/2");
+    auto brush3 = algorithm::createCubicBrush(
+        GlobalMapModule().findOrInsertWorldspawn(), Vector3(0, 0, 0), "textures/numbers/3");
+
+    auto layer1 = GlobalMapModule().getRoot()->getLayerManager().createLayer("Layer1");
+    auto layer2 = GlobalMapModule().getRoot()->getLayerManager().createLayer("Layer2");
+    auto layer3 = GlobalMapModule().getRoot()->getLayerManager().createLayer("Layer3");
+
+    // Assign the objects to a few layers
+    entity->assignToLayers(scene::LayerList{ layer1, layer2 });
+    brush1->assignToLayers(scene::LayerList{ layer1 });
+    brush2->assignToLayers(scene::LayerList{ layer2 });
+    brush3->assignToLayers(scene::LayerList{ layer3 });
+
+    // Select the objects
+    GlobalSelectionSystem().setSelectedAll(false);
+    Node_setSelected(entity, true);
+    Node_setSelected(brush1, true);
+    Node_setSelected(brush2, true);
+    Node_setSelected(brush3, true);
+
+    // Export this model to a mod-relative location
+
+    // ExportSelectedAsModel <Path> <ExportFormat> [<CenterObjects>] [<SkipCaulk>] [<ReplaceSelectionWithModel>] [<UseEntityOrigin>] [<ExportLightsAsObjects>]
+    cmd::ArgumentList argList;
+
+    argList.emplace_back(fullModelPath);
+    argList.emplace_back(os::getExtension(exportedModelPath)); // lwo
+    argList.emplace_back(false); // center objects
+    argList.emplace_back(false); // skip caulk
+    argList.emplace_back(true); // replace selection
+
+    GlobalCommandSystem().executeCommand("ExportSelectedAsModel", argList);
+
+    // The entities and the brush should have been replaced (remove from the scene, no parent)
+    EXPECT_FALSE(entity->getParent()) << "Node should have been removed from the scene";
+    EXPECT_FALSE(brush1->getParent()) << "Node should have been removed from the scene";
+    EXPECT_FALSE(brush2->getParent()) << "Node should have been removed from the scene";
+    EXPECT_FALSE(brush3->getParent()) << "Node should have been removed from the scene";
+
+    EXPECT_EQ(GlobalSelectionSystem().countSelected(), 1) << "One item should be selected after export";
+    auto newEntity = GlobalSelectionSystem().ultimateSelected();
+
+    EXPECT_EQ(Node_getEntity(newEntity)->getKeyValue("model"), exportedModelPath);
+
+    // Check the layers of this new entity, it should contain the union of all layers
+    auto layers = newEntity->getLayers();
+    EXPECT_EQ(layers.size(), 3) << "New model should be part of 3 layers";
+    EXPECT_EQ(layers.count(layer1), 1) << "New model should be part of Layer 1";
+    EXPECT_EQ(layers.count(layer2), 1) << "New model should be part of Layer 2";
+    EXPECT_EQ(layers.count(layer3), 1) << "New model should be part of Layer 3";
+
+    fs::remove(fullModelPath);
+}
+
 }
