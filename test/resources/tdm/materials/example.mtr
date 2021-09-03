@@ -3,3 +3,8 @@ textures/orbweaver/drain_grille
     diffusemap textures/darkmod/metal/flat/heavy_rust_pocked01
     bumpmap textures/orbweaver/draingrille_n.tga
 }
+
+textures/a_1024x512
+{
+	diffusemap textures/a_1024x512
+}

@@ -185,4 +185,11 @@ inline std::size_t getChildCount(const scene::INodePtr& parent,
     return count;
 }
 
+// Returns the number of children of the given parent node
+inline std::size_t getChildCount(const scene::INodePtr& parent)
+{
+    return getChildCount(parent, [](const scene::INodePtr&) { return true; });
+}
+
+
 }

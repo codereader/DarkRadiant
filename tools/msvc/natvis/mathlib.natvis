@@ -10,4 +10,14 @@
       <Item Name="Z">(*((Eigen::PlainObjectBase&lt;Eigen::Matrix&lt;double,3,1,0,3,1&gt; &gt;*)&amp;_v)).m_storage.m_data.array[2]</Item>
     </Expand>
   </Type>
+  <Type Name="Matrix4">
+    <DisplayString>
+      {(*((Eigen::PlainObjectBase&lt;Eigen::Matrix&lt;double,4,4,0,4,4&gt; &gt;*)&amp;_transform.m_matrix)).m_storage.m_data.array}
+    </DisplayString>
+    <Expand>
+      <Item Name="Data">
+        (*((Eigen::PlainObjectBase&lt;Eigen::Matrix&lt;double,4,4,0,4,4&gt; &gt;*)&amp;_transform.m_matrix)).m_storage.m_data.array
+      </Item>
+    </Expand>
+  </Type>
 </AutoVisualizer>

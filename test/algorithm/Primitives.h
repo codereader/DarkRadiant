@@ -59,6 +59,36 @@ inline scene::INodePtr createCuboidBrush(const scene::INodePtr& parent,
     return brushNode;
 }
 
+inline const IFace* findBrushFaceWithNormal(const IBrush* brush, const Vector3& normal)
+{
+    for (auto i = 0; brush->getNumFaces(); ++i)
+    {
+        const auto& face = brush->getFace(i);
+
+        if (math::isNear(face.getPlane3().normal(), normal, 0.01))
+        {
+            return &face;
+        }
+    }
+
+    return nullptr;
+}
+
+inline bool faceHasVertex(const IFace* face, const std::function<bool(const WindingVertex&)>& predicate)
+{
+    const auto& winding = face->getWinding();
+    
+    for (const auto& vertex : winding)
+    {
+        if (predicate(vertex))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 }
 
 }

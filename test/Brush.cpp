@@ -6,6 +6,9 @@
 #include "itransformable.h"
 #include "scenelib.h"
 #include "math/Quaternion.h"
+#include "algorithm/Scene.h"
+#include "algorithm/Primitives.h"
+#include "math/Vector3.h"
 
 namespace test
 {
@@ -18,6 +21,8 @@ void expectNear(const Plane3& p1, const Plane3& p2, double epsilon)
     EXPECT_NEAR(p1.normal().z(), p2.normal().z(), epsilon);
     EXPECT_NEAR(p1.dist(), p2.dist(), epsilon);
 }
+
+using Quake3BrushTest = RadiantTest;
 
 class BrushTest: public RadiantTest
 {
@@ -175,6 +180,76 @@ TEST_F(BrushTest, FacePlaneTranslate)
 
         return false;
     });
+}
+
+inline bool faceHasVertex(const IFace* face, const Vector3& expectedXYZ, const Vector2& expectedUV)
+{
+    return algorithm::faceHasVertex(face, [&](const WindingVertex& vertex)
+    {
+        return math::isNear(vertex.vertex, expectedXYZ, 0.01) && math::isNear(vertex.texcoord, expectedUV, 0.01);
+    });
+}
+
+// Load a brush with one vertex at 0,0,0, and an identity shift/scale/rotation texdef
+TEST_F(Quake3BrushTest, LoadBrushWithIdentityTexDef)
+{
+    std::string mapPath = "maps/quake3maps/brush_no_transform.map";
+    GlobalCommandSystem().executeCommand("OpenMap", mapPath);
+
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    EXPECT_EQ(algorithm::getChildCount(worldspawn), 1) << "Scene has not exactly 1 brush";
+
+    // Check that we have exactly one brush loaded
+    auto brushNode = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/a_1024x512");
+    EXPECT_TRUE(brushNode && brushNode->getNodeType() == scene::INode::Type::Brush) << "Couldn't locate the test brush";
+
+    auto face = algorithm::findBrushFaceWithNormal(Node_getIBrush(brushNode), Vector3(0, 0, 1));
+    EXPECT_TRUE(face != nullptr) << "No brush plane is facing upwards?";
+
+    EXPECT_TRUE(faceHasVertex(face, Vector3(64,  0, 64), Vector2(0.0625, 0)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3( 0,  0, 64), Vector2(0, 0)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3( 0, 64, 64), Vector2(0, -0.125)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(64, 64, 64), Vector2(0.0625, -0.125)));
+
+    face = algorithm::findBrushFaceWithNormal(Node_getIBrush(brushNode), Vector3(0, 0, -1));
+    EXPECT_TRUE(face != nullptr) << "No brush plane is facing down?";
+
+    EXPECT_TRUE(faceHasVertex(face, Vector3(0, 0, 0), Vector2(0, 0)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(64, 0, 0), Vector2(0.0625, 0)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(64, 64, 0), Vector2(0.0625, -0.125)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(0, 64, 64), Vector2(0, -0.125)));
+
+    face = algorithm::findBrushFaceWithNormal(Node_getIBrush(brushNode), Vector3(0, -1, 0));
+    EXPECT_TRUE(face != nullptr) << "No brush plane with normal 0,-1,0?";
+
+    EXPECT_TRUE(faceHasVertex(face, Vector3(64, 0, 0), Vector2(0.0625, 0)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(0, 0, 0), Vector2(0, 0)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(0, 64, 64), Vector2(0, -0.125)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(64, 0, 64), Vector2(0.0625, -0.125)));
+
+    face = algorithm::findBrushFaceWithNormal(Node_getIBrush(brushNode), Vector3(0, 1, 0));
+    EXPECT_TRUE(face != nullptr) << "No brush plane with normal 0,1,0?";
+
+    EXPECT_TRUE(faceHasVertex(face, Vector3(0, 64, 0), Vector2(0, 0)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(64, 64, 0), Vector2(0.0625, 0)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(64, 64, 64), Vector2(0.0625, -0.125)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(0, 64, 64), Vector2(0, -0.125)));
+
+    face = algorithm::findBrushFaceWithNormal(Node_getIBrush(brushNode), Vector3(1, 0, 0));
+    EXPECT_TRUE(face != nullptr) << "No brush plane with normal 1,0,0?";
+
+    EXPECT_TRUE(faceHasVertex(face, Vector3(64, 64, 0), Vector2(0.0625, 0)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(64, 0, 0), Vector2(0, 0)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(64, 0, 64), Vector2(0, -0.125)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(64, 64, 64), Vector2(0.0625, -0.125)));
+
+    face = algorithm::findBrushFaceWithNormal(Node_getIBrush(brushNode), Vector3(-1, 0, 0));
+    EXPECT_TRUE(face != nullptr) << "No brush plane with normal -1,0,0?";
+
+    EXPECT_TRUE(faceHasVertex(face, Vector3(0, 0, 0), Vector2(0, 0)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(0, 64, 0), Vector2(0.0625, 0)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(0, 64, 64), Vector2(0.0625, -0.125)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(0, 0, 64), Vector2(0, -0.125)));
 }
 
 }
