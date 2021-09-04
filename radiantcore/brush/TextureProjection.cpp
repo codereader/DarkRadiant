@@ -78,33 +78,6 @@ void TextureProjection::normalise(float width, float height) {
     matrix.normalise(width, height);
 }
 
-/* greebo: This returns the basis vectors of the texture (plane) space.
- * The vectors are normalised and stored within the basis matrix <basis>
- * as line vectors.
- *
- * Note: the normal vector MUST be normalised already when this function is called,
- * but this should be fulfilled as it represents a FacePlane vector (which is usually normalised)
- */
-Matrix4 TextureProjection::getBasisForNormal(const Vector3& normal) const {
-
-    Matrix4 basis;
-
-    basis = Matrix4::getIdentity();
-    ComputeAxisBase(normal, basis.xCol().getVector3(), basis.yCol().getVector3());
-    basis.zCol().getVector3() = normal;
-
-    // At this point the basis matrix contains three lines that are
-    // perpendicular to each other.
-
-    // The x-line of <basis> contains the <texS> basis vector (within the face plane)
-    // The y-line of <basis> contains the <texT> basis vector (within the face plane)
-    // The z-line of <basis> contains the <normal> basis vector (perpendicular to the face plane)
-
-    basis.transpose();
-
-    return basis;
-}
-
 void TextureProjection::transformLocked(std::size_t width, std::size_t height, const Plane3& plane, const Matrix4& identity2transformed) {
     //rMessage() << "identity2transformed: " << identity2transformed << "\n";
 
@@ -122,10 +95,10 @@ void TextureProjection::transformLocked(std::size_t width, std::size_t height, c
 
   // stTransformed2stOriginal = stTransformed -> transformed -> identity -> stIdentity -> stOriginal
 
-    Matrix4 identity2stIdentity = getBasisForNormal(plane.normal());
+    Matrix4 identity2stIdentity = getBasisTransformForNormal(plane.normal());
     //rMessage() << "identity2stIdentity: " << identity2stIdentity << "\n";
 
-    Matrix4 transformed2stTransformed = getBasisForNormal(normalTransformed);
+    Matrix4 transformed2stTransformed = getBasisTransformForNormal(normalTransformed);
 
     Matrix4 stTransformed2identity(
         transformed2stTransformed.getMultipliedBy(identity2transformed).getInverse()
@@ -187,7 +160,7 @@ void TextureProjection::fitTexture(std::size_t width, std::size_t height,
     Matrix4 local2tex = st2tex;
     {
         Matrix4 xyz2st;
-        xyz2st = getBasisForNormal(normal);
+        xyz2st = getBasisTransformForNormal(normal);
         local2tex.multiplyBy(xyz2st);
     }
 
@@ -329,7 +302,7 @@ Matrix4 TextureProjection::getWorldToTexture(const Vector3& normal, const Matrix
         // we don't care if it's not normalised...
 
         // Retrieve the basis vectors of the texture plane space, they are perpendicular to <normal>
-        Matrix4 xyz2st = getBasisForNormal(localToWorld.transformDirection(normal));
+        Matrix4 xyz2st = getBasisTransformForNormal(localToWorld.transformDirection(normal));
 
         // Transform the basis vectors with the according texture scale, rotate and shift operations
         // These are contained in the local2tex matrix, so the matrices have to be multiplied.
@@ -367,7 +340,7 @@ void TextureProjection::emitTextureCoordinates(Winding& w, const Vector3& normal
         // we don't care if it's not normalised...
 
         // Retrieve the basis vectors of the texture plane space, they are perpendicular to <normal>
-        Matrix4 xyz2st = getBasisForNormal(localToWorld.transformDirection(normal));
+        Matrix4 xyz2st = getBasisTransformForNormal(localToWorld.transformDirection(normal));
 
         // Transform the basis vectors with the according texture scale, rotate and shift operations
         // These are contained in the local2tex matrix, so the matrices have to be multiplied.

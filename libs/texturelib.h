@@ -202,8 +202,24 @@ inline void Normal_GetTransform(const Vector3& normal, Matrix4& transform) {
 	transform[15] = 1;
 }
 
-/* greebo: This method calculates the normalised basis vectors of the texture plane as defined by <normal>
- *
+/* greebo: This method calculates the normalised texture basis vectors of the texture plane 
+ * as defined by <normal>.
+ * 
+ * Why is this needed? To calculate the texture coords of a brush winding, 
+ * the texture projection matrix is used to transform the 3D vertex coords into 2D UV space. 
+ * But *before* this happens the world system has to be rotated to align with 
+ * the face's UV space. We only need the face normal to calculate the UV base vectors.
+ * 
+ * There are two special cases coded into this method dealing with normals pointing 
+ * straight up or straight down - in theses cases the world XY plane is
+ * rotated by 90 degrees.
+ * 
+ * The idTech4 game engine is doing the same, even though the algorithm for the
+ * method "ComputeAxisBase" is implemented differently, based on atan2 instead
+ * of if-else and cross-products.
+ * 
+ * The output basis vectors will be normalised.
+ * 
  * If the normal vector points to the z-direction, the basis vectors are part
  * of the xy-plane: texS = <0,1,0> and texT = <1,0,0>
  *
@@ -216,16 +232,17 @@ inline void Normal_GetTransform(const Vector3& normal, Matrix4& transform) {
  *
  * Note: the vector <normal> MUST be normalised for this to function correctly.
  */
-inline void ComputeAxisBase(const Vector3& normal, Vector3& texS, Vector3& texT) {
-	const Vector3 up(0, 0, 1);
-	const Vector3 down(0, 0, -1);
+inline void ComputeAxisBase(const Vector3& normal, Vector3& texS, Vector3& texT)
+{
+	static const Vector3 up(0, 0, 1);
+	static const Vector3 down(0, 0, -1);
 
-	if (math::isNear(normal, up, 1e-6))
+	if (math::isNear(normal, up, 1e-6)) // straight up?
 	{
 		texS = Vector3(0, 1, 0);
 		texT = Vector3(1, 0, 0);
 	}
-	else if (math::isNear(normal, down, 1e-6))
+	else if (math::isNear(normal, down, 1e-6)) // straight down?
 	{
 		texS = Vector3(0, 1, 0);
 		texT = Vector3(-1, 0, 0);
@@ -236,6 +253,31 @@ inline void ComputeAxisBase(const Vector3& normal, Vector3& texS, Vector3& texT)
 		texT = normal.cross(texS).getNormalised();
 		texS = -texS;
 	}
+}
+
+/* greebo: This returns the basis vectors of the texture (plane) space needed for projection.
+ * The vectors are normalised and stored within the basis matrix <basis>
+ * as column vectors.
+ *
+ * Note: the normal vector MUST be normalised already when this function is called,
+ * but this should be fulfilled as it represents a FacePlane vector (which is usually normalised)
+ */
+inline Matrix4 getBasisTransformForNormal(const Vector3& normal)
+{
+    auto basis = Matrix4::getIdentity();
+
+    ComputeAxisBase(normal, basis.xCol().getVector3(), basis.yCol().getVector3());
+    basis.zCol().getVector3() = normal;
+
+    // At this point the basis matrix contains three column vectors that are
+    // perpendicular to each other.
+
+    // The x-line of <basis> contains the <texS> basis vector (within the face plane)
+    // The y-line of <basis> contains the <texT> basis vector (within the face plane)
+    // The z-line of <basis> contains the <normal> basis vector (perpendicular to the face plane)
+
+    // invert this matrix and return
+    return basis.getTransposed(); 
 }
 
 /* greebo: this is used to calculate the directions the patch is "flattened" in.
