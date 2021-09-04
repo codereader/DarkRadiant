@@ -15,7 +15,6 @@ public:
 
     scene::INodePtr parse(parser::DefTokeniser& tok) const;
 };
-typedef std::shared_ptr<BrushDefParser> BrushDefParserPtr;
 
 // For really old map formats, we don't even have the brushDef keyword
 class LegacyBrushDefParser :
@@ -27,9 +26,7 @@ public:
     scene::INodePtr parse(parser::DefTokeniser& tok) const;
 
 private:
-    static Matrix4 getTexDef(const std::string& shader, const Vector3& normal, 
-        float shiftS, float shiftT, float rotation, float scaleS, float scaleT);
+    static Matrix4 calculateTextureMatrix(const std::string& shader, const Vector3& normal, const ShiftScaleRotation& ssr);
 };
-typedef std::shared_ptr<LegacyBrushDefParser> LegacyBrushDefParserPtr;
 
 }
