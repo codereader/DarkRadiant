@@ -27,7 +27,8 @@ public:
     scene::INodePtr parse(parser::DefTokeniser& tok) const;
 
 private:
-    static Matrix4 getTexDef(std::string shader, float shiftS, float shiftT, float rotation, float scaleS, float scaleT);
+    static Matrix4 getTexDef(const std::string& shader, const Vector3& normal, 
+        float shiftS, float shiftT, float rotation, float scaleS, float scaleT);
 };
 typedef std::shared_ptr<LegacyBrushDefParser> LegacyBrushDefParserPtr;
 

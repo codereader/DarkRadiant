@@ -10,6 +10,7 @@
 #include "math/Matrix4.h"
 #include "math/Plane3.h"
 #include "shaderlib.h"
+#include "texturelib.h"
 #include "i18n.h"
 #include <fmt/format.h>
 
@@ -217,10 +218,10 @@ scene::INodePtr LegacyBrushDefParser::parse(parser::DefTokeniser& tok) const
             float scaleS = string::to_float(tok.nextToken());
             float scaleT = string::to_float(tok.nextToken());
 
-            Matrix4 texdef = getTexDef(shader, shiftS, shiftT, rotation, scaleS, scaleT);
+            auto texdef = getTexDef(shader, plane.normal(), shiftS, shiftT, rotation, scaleS, scaleT);
 
 			// Parse Flags (usually each brush has all faces detail or all faces structural)
-			IBrush::DetailFlag flag = static_cast<IBrush::DetailFlag>(
+			auto flag = static_cast<IBrush::DetailFlag>(
 				string::convert<std::size_t>(tok.nextToken(), IBrush::Structural));
 			brush.setDetailFlag(flag);
 
@@ -228,7 +229,7 @@ scene::INodePtr LegacyBrushDefParser::parse(parser::DefTokeniser& tok) const
 			tok.skipTokens(2);
 
 			// Finally, add the new face to the brush
-			/*IFace& face = */brush.addFace(plane, texdef, shader);
+			brush.addFace(plane, texdef, shader);
 		}
 		else
 		{
@@ -240,36 +241,172 @@ scene::INodePtr LegacyBrushDefParser::parse(parser::DefTokeniser& tok) const
 	return node;
 }
 
-Matrix4 LegacyBrushDefParser::getTexDef(std::string shader, float shiftS, float shiftT, float rotation, float scaleS, float scaleT)
+// Code ported from GtkRadiant to calculate the texture projection matrix as done in Q3
+// without the ComputeAxisBase preprocessing that is happening in idTech4 before applying texcoords
+// https://github.com/TTimo/GtkRadiant/blob/a1ae77798f434bf8fb31a7d91cd137d1ce554e33/radiant/brush.cpp#L85
+Vector3 baseaxis[18] =
 {
-	Matrix4 transform;
-	double inverse_scale[2];
+    {0,0,1}, {1,0,0}, {0,-1,0},     // floor
+    {0,0,-1}, {1,0,0}, {0,-1,0},    // ceiling
+    {1,0,0}, {0,1,0}, {0,0,-1},     // west wall
+    {-1,0,0}, {0,1,0}, {0,0,-1},    // east wall
+    {0,1,0}, {1,0,0}, {0,0,-1},     // south wall
+    {0,-1,0}, {1,0,0}, {0,0,-1}     // north wall
+};
+
+void TextureAxisFromPlane(const Vector3& normal, Vector3& xv, Vector3& yv)
+{
+    Vector3::ElementType best = 0;
+    int bestaxis = 0;
+
+    for (int i = 0; i < 6; i++)
+    {
+        auto dot = normal.dot(baseaxis[i * 3]);
+
+        if (dot > best)
+        {
+            best = dot;
+            bestaxis = i;
+        }
+    }
+
+    xv = baseaxis[bestaxis * 3 + 1];
+    yv = baseaxis[bestaxis * 3 + 2];
+}
+
+// Ported from GtkRadiant:
+// https://github.com/TTimo/GtkRadiant/blob/a1ae77798f434bf8fb31a7d91cd137d1ce554e33/radiant/brush.cpp#L331
+inline void getTextureVectorsForFace(const Vector3& normal, float shiftS, float shiftT, float rotation, 
+    float scaleS, float scaleT, float texWidth, float texHeight, float STfromXYZ[2][4])
+{
+    Vector3 pvecs[2];
+    int sv, tv;
+    Vector3::ElementType ang, sinv, cosv;
+    Vector3::ElementType ns, nt;
+    int i, j;
+    float scale[2] = { scaleS, scaleT };
+
+    memset(STfromXYZ, 0, 8 * sizeof(float));
+
+    if (!scale[0]) {
+        scale[0] = 2;
+    }
+    if (!scale[1]) {
+        scale[1] = 2;
+    }
+
+    // get natural texture axis
+    TextureAxisFromPlane(normal, pvecs[0], pvecs[1]);
+
+    // rotate axis
+    if (rotation == 0) {
+        sinv = 0; cosv = 1;
+    }
+    else if (rotation == 90) {
+        sinv = 1; cosv = 0;
+    }
+    else if (rotation == 180) {
+        sinv = 0; cosv = -1;
+    }
+    else if (rotation == 270) {
+        sinv = -1; cosv = 0;
+    }
+    else
+    {
+        ang = rotation / 180 * math::PI;
+        sinv = sin(ang);
+        cosv = cos(ang);
+    }
+
+    if (pvecs[0][0]) {
+        sv = 0;
+    }
+    else if (pvecs[0][1]) {
+        sv = 1;
+    }
+    else {
+        sv = 2;
+    }
+
+    if (pvecs[1][0]) {
+        tv = 0;
+    }
+    else if (pvecs[1][1]) {
+        tv = 1;
+    }
+    else {
+        tv = 2;
+    }
+
+    for (i = 0; i < 2; i++) {
+        ns = cosv * pvecs[i][sv] - sinv * pvecs[i][tv];
+        nt = sinv * pvecs[i][sv] + cosv * pvecs[i][tv];
+        STfromXYZ[i][sv] = static_cast<float>(ns);
+        STfromXYZ[i][tv] = static_cast<float>(nt);
+    }
+
+    // scale
+    for (i = 0; i < 2; i++)
+        for (j = 0; j < 3; j++)
+            STfromXYZ[i][j] = STfromXYZ[i][j] / scale[i];
+
+    // shift
+    STfromXYZ[0][3] = shiftS;
+    STfromXYZ[1][3] = shiftT;
+
+    for (j = 0; j < 4; j++)
+    {
+        STfromXYZ[0][j] /= texWidth;
+        STfromXYZ[1][j] /= texHeight;
+    }
+}
+
+Matrix4 LegacyBrushDefParser::getTexDef(const std::string& shader, const Vector3& normal, float shiftS, float shiftT, float rotation, float scaleS, float scaleT)
+{
 	float image_width = 0;
 	float image_height = 0;
 
-	TexturePtr texture = GlobalMaterialManager().getMaterial( shader )->getEditorImage();
+	auto texture = GlobalMaterialManager().getMaterial(shader)->getEditorImage();
 
-	if (texture) {
+	if (texture)
+    {
 		image_width = static_cast<float>(texture->getWidth());
 		image_height = static_cast<float>(texture->getHeight());
 	}
 
-	if (image_width == 0 || image_height == 0) {
+	if (image_width == 0 || image_height == 0)
+    {
 		rError() << "LegacyBrushDefParser: Failed to load image: " << shader << std::endl;
 		image_width = 128;
 		image_height = 128;
 	}
-#if 0
-	else {
-		rMessage() << "LegacyBrushDefParser: Loaded image: " << shader << ", width: " << image_width << ", height: " << image_height << std::endl;
-	}
-#endif
 
+    auto transform = Matrix4::getIdentity();
+
+#if 1
+    // Take the matrix calculation used in GtkRadiant ("Face_TextureVectors in brush.cpp")
+    float STfromXYZ[2][4];
+    getTextureVectorsForFace(normal, shiftS, shiftT, rotation, scaleS, scaleT, image_width, image_height, STfromXYZ);
+
+    transform.xx() = STfromXYZ[0][0];
+    transform.yx() = STfromXYZ[0][1];
+    transform.zx() = STfromXYZ[0][2];
+
+    transform.xy() = STfromXYZ[1][0];
+    transform.yy() = STfromXYZ[1][1];
+    transform.zy() = STfromXYZ[1][2];
+
+    transform.tx() = STfromXYZ[0][3];
+    transform.ty() = STfromXYZ[1][3];
+
+#else
 	// transform to texdef shift/scale/rotate
+    double inverse_scale[2];
 	inverse_scale[0] = 1 / (scaleS * image_width);
-	inverse_scale[1] = 1 / (scaleT * -image_height);
+	inverse_scale[1] = -1 / (scaleT * image_height);
+
 	transform[12] = shiftS / image_width;
-	transform[13] = -shiftT / -image_height;
+	transform[13] = -shiftT / image_height;
 
 	double c = cos(degrees_to_radians(-rotation));
 	double s = sin(degrees_to_radians(-rotation));
@@ -278,8 +415,17 @@ Matrix4 LegacyBrushDefParser::getTexDef(std::string shader, float shiftS, float 
 	transform[1] = s * inverse_scale[1];
 	transform[4] = -s * inverse_scale[0];
 	transform[5] = c * inverse_scale[1];
-	transform[2] = transform[3] = transform[6] = transform[7] = transform[8] = transform[9] = transform[11] = transform[14] = 0;
-	transform[10] = transform[15] = 1;
+#endif
+
+    // DarkRadiant's texture emission algorithm is applying a base transform before
+    // projecting the vertices to UV space - something that is done in the D3 game engine too,
+    // so we have to keep that behaviour.
+    // To compensate that effect we're applying an inverse base transformation matrix
+    // to this texture transform so we get the same visuals as in Q3.
+    auto axisBase = getBasisTransformForNormal(normal);
+    
+    // The axis base matrix is orthonormal, so we can invert it by transposing
+    transform.multiplyBy(axisBase.getTransposed());
 
 	return transform;
 }

@@ -217,14 +217,14 @@ TEST_F(Quake3BrushTest, LoadBrushWithIdentityTexDef)
     EXPECT_TRUE(faceHasVertex(face, Vector3(0, 0, 0), Vector2(0, 0)));
     EXPECT_TRUE(faceHasVertex(face, Vector3(64, 0, 0), Vector2(0.0625, 0)));
     EXPECT_TRUE(faceHasVertex(face, Vector3(64, 64, 0), Vector2(0.0625, -0.125)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(0, 64, 64), Vector2(0, -0.125)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(0, 64, 0), Vector2(0, -0.125)));
 
     face = algorithm::findBrushFaceWithNormal(Node_getIBrush(brushNode), Vector3(0, -1, 0));
     EXPECT_TRUE(face != nullptr) << "No brush plane with normal 0,-1,0?";
 
     EXPECT_TRUE(faceHasVertex(face, Vector3(64, 0, 0), Vector2(0.0625, 0)));
     EXPECT_TRUE(faceHasVertex(face, Vector3(0, 0, 0), Vector2(0, 0)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(0, 64, 64), Vector2(0, -0.125)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(0, 0, 64), Vector2(0, -0.125)));
     EXPECT_TRUE(faceHasVertex(face, Vector3(64, 0, 64), Vector2(0.0625, -0.125)));
 
     face = algorithm::findBrushFaceWithNormal(Node_getIBrush(brushNode), Vector3(0, 1, 0));
