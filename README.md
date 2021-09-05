@@ -1,3 +1,5 @@
+<img align="right" src="https://github.com/codereader/DarkRadiant/blob/master/install/bitmaps/repository_logo.png?raw=true" alt="DarkRadiant Logo">
+
 # DarkRadiant
 
 DarkRadiant is a level (map) editor for the **The Dark Mod**, an open-source Doom 3 modification which is available at www.thedarkmod.com. Its primary use is creating missions for The Dark Mod as well as maps for idTech4-based games like Doom 3, Quake 4 and Prey.
