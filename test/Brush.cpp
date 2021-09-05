@@ -9,6 +9,8 @@
 #include "algorithm/Scene.h"
 #include "algorithm/Primitives.h"
 #include "math/Vector3.h"
+#include "os/path.h"
+#include "testutil/FileSelectionHelper.h"
 
 namespace test
 {
@@ -272,6 +274,41 @@ TEST_F(Quake3BrushTest, LoadAxisAlignedBrushWithTransform)
     EXPECT_TRUE(faceHasVertex(face, Vector3(-688, 800, 64), Vector2(5.5, 13)));
     EXPECT_TRUE(faceHasVertex(face, Vector3(-688, 1024, 64), Vector2(5.5, 16.5)));
     EXPECT_TRUE(faceHasVertex(face, Vector3(-624, 1024, 64), Vector2(5, 16.5)));
+}
+
+// This loads the same brush as in the LoadAxisAlignedBrushWithTransform test
+// and stores it again using the Quake3 brush format
+TEST_F(Quake3BrushTest, SaveAxisAlignedBrushWithTransform)
+{
+    std::string mapPath = "maps/quake3maps/brush_with_transform.map";
+    GlobalCommandSystem().executeCommand("OpenMap", mapPath);
+
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    EXPECT_EQ(algorithm::getChildCount(worldspawn), 1) << "Scene has not exactly 1 brush";
+
+    fs::path tempPath = _context.getTemporaryDataPath();
+    tempPath /= "brushexport.map";
+
+    auto format = GlobalMapFormatManager().getMapFormatForGameType("quake3", os::getExtension(tempPath.string()));
+
+    EXPECT_FALSE(fs::exists(tempPath)) << "File already exists: " << tempPath;
+
+    FileSelectionHelper helper(tempPath.string(), format);
+    GlobalCommandSystem().executeCommand("ExportMap");
+
+    EXPECT_TRUE(fs::exists(tempPath)) << "File still doesn't exist: " << tempPath;
+
+    std::ifstream tempFile(tempPath);
+    std::stringstream content;
+    content << tempFile.rdbuf();
+
+    auto savedContent = content.str();
+
+    // This is checking the actual face string as written by the LegacyBrushDefExporter
+    // including whitespace and all the syntax details
+    constexpr const char* const expectedBrushFace =
+        "(-688 928 64) (-624 832 64) (-688 832 64) a_1024x512 128 256 180 0.125000 0.125000 134217728 0 0";
+    EXPECT_NE(savedContent.find(expectedBrushFace), std::string::npos) << "Couldn't locate the brush face " << expectedBrushFace;
 }
 
 #if 0
