@@ -2190,5 +2190,8 @@
     <ClInclude Include="..\..\radiantcore\map\format\primitivewriters\LegacyBrushDefExporter.h">
       <Filter>src\map\format\primitivewriters</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\format\Quake3Utils.h">
+      <Filter>src\map\format</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

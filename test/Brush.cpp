@@ -306,9 +306,15 @@ TEST_F(Quake3BrushTest, SaveAxisAlignedBrushWithTransform)
 
     // This is checking the actual face string as written by the LegacyBrushDefExporter
     // including whitespace and all the syntax details
+    // The incoming brush had a rotation of 180 degrees and a positive scale
+    // the map exporter code will re-calculate that and spit out 0 rotation and a negative scale.
+    // The incoming also had the plane points picked from the middle of the brush edge,
+    // the DR exporter is using the winding vertices as points
     constexpr const char* const expectedBrushFace =
-        "(-688 928 64) (-624 832 64) (-688 832 64) a_1024x512 128 256 180 0.125000 0.125000 134217728 0 0";
-    EXPECT_NE(savedContent.find(expectedBrushFace), std::string::npos) << "Couldn't locate the brush face " << expectedBrushFace;
+        "( -688 1024 64 ) ( -624 800 64 ) ( -688 800 64 ) a_1024x512 128 256 0 -0.125 -0.125 134217728 0 0";
+
+    EXPECT_NE(savedContent.find(expectedBrushFace), std::string::npos) <<
+        "Couldn't locate the brush face " << expectedBrushFace;
 }
 
 #if 0

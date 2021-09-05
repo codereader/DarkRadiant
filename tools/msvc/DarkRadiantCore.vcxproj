@@ -853,6 +853,7 @@
     <ClInclude Include="..\..\radiantcore\map\format\Quake3MapFormat.h" />
     <ClInclude Include="..\..\radiantcore\map\format\Quake3MapReader.h" />
     <ClInclude Include="..\..\radiantcore\map\format\Quake3MapWriter.h" />
+    <ClInclude Include="..\..\radiantcore\map\format\Quake3Utils.h" />
     <ClInclude Include="..\..\radiantcore\map\format\Quake4MapFormat.h" />
     <ClInclude Include="..\..\radiantcore\map\format\Quake4MapReader.h" />
     <ClInclude Include="..\..\radiantcore\map\format\Quake4MapWriter.h" />

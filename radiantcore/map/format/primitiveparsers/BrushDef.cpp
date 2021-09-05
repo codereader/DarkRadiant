@@ -3,6 +3,7 @@
 
 #include "BrushDef.h"
 
+#include "../Quake3Utils.h"
 #include "string/convert.h"
 #include "imap.h"
 #include "ibrush.h"
@@ -254,160 +255,10 @@ scene::INodePtr LegacyBrushDefParser::parse(parser::DefTokeniser& tok) const
 	return node;
 }
 
-namespace quake3
-{
-
-// Code ported from GtkRadiant to calculate the texture projection matrix as done in Q3
-// without the ComputeAxisBase preprocessing that is happening in idTech4 before applying texcoords
-// https://github.com/TTimo/GtkRadiant/blob/a1ae77798f434bf8fb31a7d91cd137d1ce554e33/radiant/brush.cpp#L85
-Vector3 baseaxis[18] =
-{
-    {0,0,1}, {1,0,0}, {0,-1,0},     // floor
-    {0,0,-1}, {1,0,0}, {0,-1,0},    // ceiling
-    {1,0,0}, {0,1,0}, {0,0,-1},     // west wall
-    {-1,0,0}, {0,1,0}, {0,0,-1},    // east wall
-    {0,1,0}, {1,0,0}, {0,0,-1},     // south wall
-    {0,-1,0}, {1,0,0}, {0,0,-1}     // north wall
-};
-
-void TextureAxisFromPlane(const Vector3& normal, Vector3& xv, Vector3& yv)
-{
-    Vector3::ElementType best = 0;
-    int bestaxis = 0;
-
-    for (int i = 0; i < 6; i++)
-    {
-        auto dot = normal.dot(baseaxis[i * 3]);
-
-        if (dot > best)
-        {
-            best = dot;
-            bestaxis = i;
-        }
-    }
-
-    xv = baseaxis[bestaxis * 3 + 1];
-    yv = baseaxis[bestaxis * 3 + 2];
-}
-
-// Originally ported from GtkRadiant, made to work with DarkRadiant's data structures
-// https://github.com/TTimo/GtkRadiant/blob/a1ae77798f434bf8fb31a7d91cd137d1ce554e33/radiant/brush.cpp#L331
-inline void getTextureVectorsForFace(const Vector3& normal, const ShiftScaleRotation& ssr, float texWidth, float texHeight, double STfromXYZ[2][4])
-{
-    memset(STfromXYZ, 0, 8 * sizeof(double));
-
-    // get natural texture axis
-    Vector3 pvecs[2];
-    TextureAxisFromPlane(normal, pvecs[0], pvecs[1]);
-
-    Vector3::ElementType sinv, cosv;
-
-    // rotate axis
-    if (ssr.rotate == 0)
-    {
-        sinv = 0; cosv = 1;
-    }
-    else if (ssr.rotate == 90)
-    {
-        sinv = 1; cosv = 0;
-    }
-    else if (ssr.rotate == 180)
-    {
-        sinv = 0; cosv = -1;
-    }
-    else if (ssr.rotate == 270)
-    {
-        sinv = -1; cosv = 0;
-    }
-    else
-    {
-        auto angle = ssr.rotate / 180 * math::PI;
-        sinv = sin(angle);
-        cosv = cos(angle);
-    }
-
-    int sv, tv;
-
-    if (pvecs[0][0])
-    {
-        sv = 0;
-    }
-    else if (pvecs[0][1])
-    {
-        sv = 1;
-    }
-    else
-    {
-        sv = 2;
-    }
-
-    if (pvecs[1][0])
-    {
-        tv = 0;
-    }
-    else if (pvecs[1][1])
-    {
-        tv = 1;
-    }
-    else
-    {
-        tv = 2;
-    }
-
-    for (int i = 0; i < 2; i++)
-    {
-        auto ns = cosv * pvecs[i][sv] - sinv * pvecs[i][tv];
-        auto nt = sinv * pvecs[i][sv] + cosv * pvecs[i][tv];
-        STfromXYZ[i][sv] = ns;
-        STfromXYZ[i][tv] = nt;
-    }
-
-    // scale
-    for (int j = 0; j < 3; j++)
-    {
-        STfromXYZ[0][j] /= ssr.scale[0];
-        STfromXYZ[1][j] /= ssr.scale[1];
-    }
-
-    // shift
-    STfromXYZ[0][3] = ssr.shift[0];
-    STfromXYZ[1][3] = ssr.shift[1];
-
-    for (int j = 0; j < 4; j++)
-    {
-        STfromXYZ[0][j] /= texWidth;
-        STfromXYZ[1][j] /= texHeight;
-    }
-}
-
-inline Matrix4 calculateTextureMatrix(const Vector3& normal, const ShiftScaleRotation& ssr, float imageWidth, float imageHeight)
-{
-    auto transform = Matrix4::getIdentity();
-
-    // Call the Q3 texture matrix calculation code as used in GtkRadiant
-    double STfromXYZ[2][4];
-    quake3::getTextureVectorsForFace(normal, ssr, imageWidth, imageHeight, STfromXYZ);
-
-    transform.xx() = STfromXYZ[0][0];
-    transform.yx() = STfromXYZ[0][1];
-    transform.zx() = STfromXYZ[0][2];
-
-    transform.xy() = STfromXYZ[1][0];
-    transform.yy() = STfromXYZ[1][1];
-    transform.zy() = STfromXYZ[1][2];
-
-    transform.tx() = STfromXYZ[0][3];
-    transform.ty() = STfromXYZ[1][3];
-
-    return transform;
-}
-
-} // namespace
-
 Matrix4 LegacyBrushDefParser::calculateTextureMatrix(const std::string& shader, const Vector3& normal, const ShiftScaleRotation& ssr)
 {
-	float imageWidth = 0;
-	float imageHeight = 0;
+	float imageWidth = 128;
+	float imageHeight = 128;
 
 	auto texture = GlobalMaterialManager().getMaterial(shader)->getEditorImage();
 
@@ -420,8 +271,6 @@ Matrix4 LegacyBrushDefParser::calculateTextureMatrix(const std::string& shader, 
 	if (imageWidth == 0 || imageHeight == 0)
     {
 		rError() << "LegacyBrushDefParser: Failed to load image: " << shader << std::endl;
-        imageWidth = 128;
-        imageHeight = 128;
 	}
 
     // Call the Q3 texture matrix calculation code as used in GtkRadiant
