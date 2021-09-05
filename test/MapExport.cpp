@@ -136,12 +136,12 @@ TEST_F(MapExportTest, exportQuake3Brush)
     // brushDef header, using the shift/scale/rotation tex def syntax
     auto brushTextIndex = text.find(R"BRUSH(// brush 0
 {
-( 64 128 -256 ) ( 64 -128 256 ) ( 64 128 256 ) darkmod/numbers/1 32 32 0 4 8 0 0 0
-( -64 -128 -256 ) ( -64 128 256 ) ( -64 -128 256 ) darkmod/numbers/1 32 32 0 4 8 0 0 0
-( -64 128 -256 ) ( 64 128 256 ) ( -64 128 256 ) darkmod/numbers/1 32 32 0 2 8 0 0 0
-( 64 -128 -256 ) ( -64 -128 256 ) ( 64 -128 256 ) darkmod/numbers/1 32 32 0 2 8 0 0 0
-( -64 128 256 ) ( 64 -128 256 ) ( -64 -128 256 ) darkmod/numbers/1 32 32 0 4 2 0 0 0
-( -64 128 -256 ) ( 64 -128 -256 ) ( 64 128 -256 ) darkmod/numbers/1 32 32 0 4 2 0 0 0
+( 64 128 -256 ) ( 64 -128 256 ) ( 64 128 256 ) darkmod/numbers/1 32 32 -180 -4 -8 0 0 0
+( -64 -128 -256 ) ( -64 128 256 ) ( -64 -128 256 ) darkmod/numbers/1 32 32 0 -4 8 0 0 0
+( -64 128 -256 ) ( 64 128 256 ) ( -64 128 256 ) darkmod/numbers/1 32 32 0 -2 8 0 0 0
+( 64 -128 -256 ) ( -64 -128 256 ) ( 64 -128 256 ) darkmod/numbers/1 32 32 -180 -2 -8 0 0 0
+( -64 128 256 ) ( 64 -128 256 ) ( -64 -128 256 ) darkmod/numbers/1 32 32 90 4 2 0 0 0
+( -64 128 -256 ) ( 64 -128 -256 ) ( 64 128 -256 ) darkmod/numbers/1 32 32 90 4 -2 0 0 0
 })BRUSH");
 
     EXPECT_NE(brushTextIndex, std::string::npos) << "Could not locate the exported brush in the expected format";
