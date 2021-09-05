@@ -314,7 +314,7 @@ TEST_F(Quake3BrushTest, SaveAxisAlignedBrushWithTransform)
         "( -688 1024 64 ) ( -624 800 64 ) ( -688 800 64 ) a_1024x512 128 256 0 -0.125 -0.125 134217728 0 0";
 
     EXPECT_NE(savedContent.find(expectedBrushFace), std::string::npos) <<
-        "Couldn't locate the brush face " << expectedBrushFace;
+        "Couldn't locate the brush face " << expectedBrushFace << "\n, Saved Content is:\n" << savedContent;
 }
 
 #if 0
