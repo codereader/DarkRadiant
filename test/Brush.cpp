@@ -252,6 +252,28 @@ TEST_F(Quake3BrushTest, LoadBrushWithIdentityTexDef)
     EXPECT_TRUE(faceHasVertex(face, Vector3(0, 0, 64), Vector2(0, -0.125)));
 }
 
+// Load an axis-aligned brush somewhere at (-600 1000 56) and some shift/scale/rotation values
+TEST_F(Quake3BrushTest, LoadAxisAlignedBrushWithTransform)
+{
+    std::string mapPath = "maps/quake3maps/brush_with_transform.map";
+    GlobalCommandSystem().executeCommand("OpenMap", mapPath);
+
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    EXPECT_EQ(algorithm::getChildCount(worldspawn), 1) << "Scene has not exactly 1 brush";
+
+    // Check that we have exactly one brush loaded
+    auto brushNode = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/a_1024x512");
+    EXPECT_TRUE(brushNode && brushNode->getNodeType() == scene::INode::Type::Brush) << "Couldn't locate the test brush";
+
+    auto face = algorithm::findBrushFaceWithNormal(Node_getIBrush(brushNode), Vector3(0, 0, 1));
+    EXPECT_TRUE(face != nullptr) << "No brush plane is facing upwards?";
+
+    EXPECT_TRUE(faceHasVertex(face, Vector3(-624, 800, 64), Vector2(5, 13)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(-688, 800, 64), Vector2(5.5, 13)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(-688, 1024, 64), Vector2(5.5, 16.5)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(-624, 1024, 64), Vector2(5, 16.5)));
+}
+
 #if 0
 // This test case is not working since the Q3 texture projection mechanics
 // are different from idTech4, so DR cannot render angled faces as they would
