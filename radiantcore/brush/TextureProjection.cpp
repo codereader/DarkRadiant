@@ -336,16 +336,15 @@ void TextureProjection::emitTextureCoordinates(Winding& w, const Vector3& normal
     // Now combine the face normal vector with the local2tex matrix
     // to retrieve the final transformation that transforms brush vertex
     // coordinates into the texture plane.
-    {
-        // we don't care if it's not normalised...
 
-        // Retrieve the basis vectors of the texture plane space, they are perpendicular to <normal>
-        Matrix4 xyz2st = getBasisTransformForNormal(localToWorld.transformDirection(normal));
+    // we don't care if it's not normalised...
 
-        // Transform the basis vectors with the according texture scale, rotate and shift operations
-        // These are contained in the local2tex matrix, so the matrices have to be multiplied.
-        local2tex.multiplyBy(xyz2st);
-    }
+    // Retrieve the basis vectors of the texture plane space, they are perpendicular to <normal>
+    Matrix4 xyz2st = getBasisTransformForNormal(localToWorld.transformDirection(normal));
+
+    // Transform the basis vectors with the according texture scale, rotate and shift operations
+    // These are contained in the local2tex matrix, so the matrices have to be multiplied.
+    local2tex.multiplyBy(xyz2st);
 
     // Calculate the tangent and bitangent vectors to allow the correct openGL transformations
     Vector3 tangent(local2tex.getTransposed().xCol().getVector3().getNormalised());

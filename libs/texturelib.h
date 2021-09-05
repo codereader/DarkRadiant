@@ -216,7 +216,8 @@ inline void Normal_GetTransform(const Vector3& normal, Matrix4& transform) {
  * 
  * The idTech4 game engine is doing the same, even though the algorithm for the
  * method "ComputeAxisBase" is implemented differently, based on atan2 instead
- * of if-else and cross-products.
+ * of if-else and cross-products. Note that this behaviour seems to be different
+ * from Quake3, which appears to use one of six possibly axis-aligned projection bases.
  * 
  * The output basis vectors will be normalised.
  * 
@@ -226,6 +227,9 @@ inline void Normal_GetTransform(const Vector3& normal, Matrix4& transform) {
  * If normal vector points to the negative z-direction, the above case applies, but with
  * the x-direction inversed: texS = <0,1,0> and texT = <-1,0,0> (note the minus)
  *
+ * (I assume that the rotation of the vectors is to make images appear upright instead
+ * of vertically flipped for faces that are pointing towards -z or +z.)
+ * 
  * If none of the two above cases apply, the basis is calculated via cross products
  * that result in vectors perpendicular to <normal>. These lie within the plane
  * that is defined by the normal vector itself.

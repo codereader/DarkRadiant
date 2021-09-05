@@ -9,6 +9,7 @@
 #include "parser/DefTokeniser.h"
 #include "math/Matrix4.h"
 #include "math/Plane3.h"
+#include "math/Vector3.h"
 #include "shaderlib.h"
 #include "texturelib.h"
 #include "i18n.h"
@@ -431,6 +432,8 @@ Matrix4 LegacyBrushDefParser::calculateTextureMatrix(const std::string& shader, 
     // idTech4 dmap compiler too, so we have to keep that behaviour.
     // To compensate that effect we're applying an inverse base transformation matrix
     // to this texture transform so we get the same visuals as in Q3.
+    // This fix will only work effectively for axis-aligned faces, everything else
+    // will not be stored in the 8 floats forming DR's TextureProjections.
     auto axisBase = getBasisTransformForNormal(normal);
     
     // The axis base matrix is orthonormal, so we can invert it by transposing
