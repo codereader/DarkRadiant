@@ -252,4 +252,25 @@ TEST_F(Quake3BrushTest, LoadBrushWithIdentityTexDef)
     EXPECT_TRUE(faceHasVertex(face, Vector3(0, 0, 64), Vector2(0, -0.125)));
 }
 
+TEST_F(Quake3BrushTest, TextureOnAngledBrush)
+{
+    std::string mapPath = "maps/quake3maps/angled_brush.map";
+    GlobalCommandSystem().executeCommand("OpenMap", mapPath);
+
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    EXPECT_EQ(algorithm::getChildCount(worldspawn), 1) << "Scene has not exactly 1 brush";
+
+    // Check that we have exactly one brush loaded
+    auto brushNode = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/a_1024x512");
+    EXPECT_TRUE(brushNode && brushNode->getNodeType() == scene::INode::Type::Brush) << "Couldn't locate the test brush";
+
+    auto face = algorithm::findBrushFaceWithNormal(Node_getIBrush(brushNode), Vector3(0, -0.351123, +0.936329));
+    EXPECT_TRUE(face != nullptr) << "Couldn't find the upwards facing brush face?";
+
+    EXPECT_TRUE(faceHasVertex(face, Vector3(-624, 1040, 64), Vector2(5, 16.5)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(-688, 1040, 64), Vector2(5.5, 16.5)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(-688, 1168, 112), Vector2(5.5, 18.5)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(-624, 1168, 112), Vector2(5, 18.5)));
+}
+
 }
