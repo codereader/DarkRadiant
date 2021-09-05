@@ -6,6 +6,7 @@
 #include "irenderable.h"
 
 #include "shaderlib.h"
+#include "texturelib.h"
 #include "Winding.h"
 
 #include "Brush.h"
@@ -405,7 +406,7 @@ Matrix4 Face::getProjectionMatrix()
 
 void Face::setProjectionMatrix(const Matrix4& projection)
 {
-    getProjection().setTransform(1, 1, projection);
+    getProjection().setTransform(projection);
     texdefChanged();
 }
 
@@ -525,9 +526,98 @@ void Face::scaleTexdef(float sFactor, float tFactor) {
     texdefChanged();
 }
 
-void Face::rotateTexdef(float angle) {
+void Face::rotateTexdef(float angle)
+{
+    if (m_winding.size() < 3) return;
+
     undoSave();
-    _texdef.rotate(angle, _shader.getWidth(), _shader.getHeight());
+
+    // Calculate the pivot of rotation (which will be the UV centroid)
+    Vector2 centroid = m_winding[0].texcoord;
+
+    for (std::size_t i = 1; i < m_winding.size(); ++i)
+    {
+        centroid += m_winding[i].texcoord;
+    }
+
+    centroid /= static_cast<Vector2::ElementType>(m_winding.size());
+
+    auto rad = degrees_to_radians(angle);
+
+    Vector2 uvs[] =
+    {
+        m_winding[0].texcoord,
+        m_winding[1].texcoord,
+        m_winding[2].texcoord,
+    };
+
+    // Translate to origin, then rotate, then translate back
+    for (std::size_t i = 0; i < 3; ++i)
+    {
+        auto texcoord = uvs[i] - centroid;
+        
+        auto texcoordX = texcoord.x();
+        auto texcoordY = texcoord.y();
+
+        texcoord.x() = cos(rad) * texcoordX - sin(rad) * texcoordY;
+        texcoord.y() = sin(rad) * texcoordX + cos(rad) * texcoordY;
+
+        uvs[i] = texcoord + centroid;
+    }
+
+    // Get the axis base for this face, we need the XYZ points in that state
+    // to calculate the desired texture transform
+    auto axisBase = getBasisTransformForNormal(getPlane3().normal());
+
+    // Pick 3 arbitrary winding vertices and apply the axis base on them
+    Vector3 points[] =
+    {
+        axisBase.transformPoint(m_winding[0].vertex),
+        axisBase.transformPoint(m_winding[1].vertex),
+        axisBase.transformPoint(m_winding[2].vertex),
+    };
+
+    // Calculate the texture projection for these calculated vertices
+    Eigen::Matrix3d mat;
+    mat(0, 0) = points[0].x();
+    mat(1, 0) = points[0].y();
+    mat(2, 0) = 1;
+
+    mat(0, 1) = points[1].x();
+    mat(1, 1) = points[1].y();
+    mat(2, 1) = 1;
+
+    mat(0, 2) = points[2].x();
+    mat(1, 2) = points[2].y();
+    mat(2, 2) = 1;
+
+    Eigen::Matrix3d uvMatrix;
+    uvMatrix(0, 0) = uvs[0].x();
+    uvMatrix(1, 0) = uvs[0].y();
+    uvMatrix(2, 0) = 1;
+
+    uvMatrix(0, 1) = uvs[1].x();
+    uvMatrix(1, 1) = uvs[1].y();
+    uvMatrix(2, 1) = 1;
+
+    uvMatrix(0, 2) = uvs[2].x();
+    uvMatrix(1, 2) = uvs[2].y();
+    uvMatrix(2, 2) = 1;
+
+    Eigen::Matrix3d textureMatrix = uvMatrix * mat.inverse();
+
+    auto newMatrix = Matrix4::getIdentity();
+
+    newMatrix.xx() = textureMatrix(0, 0);
+    newMatrix.xy() = textureMatrix(1, 0);
+    newMatrix.yx() = textureMatrix(0, 1);
+    newMatrix.yy() = textureMatrix(1, 1);
+    newMatrix.tx() = textureMatrix(0, 2);
+    newMatrix.ty() = textureMatrix(1, 2);
+
+    _texdef.setTransform(newMatrix);
+
+    //_texdef.rotate(angle, _shader.getWidth(), _shader.getHeight());
     texdefChanged();
 }
 

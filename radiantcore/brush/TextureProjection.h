@@ -35,7 +35,7 @@ public:
 
     void assign(const TextureProjection& other);
 
-    void setTransform(double width, double height, const Matrix4& transform);
+    void setTransform(const Matrix4& transform);
     Matrix4 getTransform() const;
 
 	// s and t are texture coordinates, not pixels

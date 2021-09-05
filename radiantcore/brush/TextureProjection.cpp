@@ -42,11 +42,15 @@ void TextureProjection::assign(const TextureProjection& other)
  * definitions. Checks the matrix for validity and passes it on to
  * the according internal texture definitions (TexDef or BPTexDef)
  */
-void TextureProjection::setTransform(double width, double height, const Matrix4& transform) {
+void TextureProjection::setTransform(const Matrix4& transform)
+{
     // Check the matrix for validity
-    if ((transform[0] != 0 || transform[4] != 0) && (transform[1] != 0 || transform[5] != 0)) {
+    if ((transform[0] != 0 || transform[4] != 0) && (transform[1] != 0 || transform[5] != 0))
+    {
         matrix = TextureMatrix(transform);
-    } else {
+    }
+    else
+    {
         rError() << "invalid texture matrix" << std::endl;
     }
 }
@@ -140,7 +144,7 @@ void TextureProjection::transformLocked(std::size_t width, std::size_t height, c
 
         Matrix4 stTransformed2stOriginal = identity2stOriginal.getMultipliedBy(stTransformed2identity);
 
-        setTransform((float)width, (float)height, stTransformed2stOriginal);
+        setTransform(stTransformed2stOriginal);
         normalise((float)width, (float)height);
 }
 
@@ -185,7 +189,7 @@ void TextureProjection::fitTexture(std::size_t width, std::size_t height,
     // apply the difference to the current texture transform
     st2tex.premultiplyBy(diffMatrix);
 
-    setTransform((float)width, (float)height, st2tex);
+    setTransform(st2tex);
     normalise((float)width, (float)height);
 }
 
