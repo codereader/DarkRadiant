@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Vector2.h"
 #include "Vector3.h"
 #include "eigen.h"
 
@@ -126,6 +127,59 @@ public:
     static Matrix3 byRows(double xx, double yx, double zx,
         double xy, double yy, double zy,
         double xz, double yz, double zz);
+
+    /// Return the result of this matrix post-multiplied by another matrix.
+    Matrix3 getMultipliedBy(const Matrix3& other) const
+    {
+        return Matrix3(_transform * other.eigen());
+    }
+
+    /// Post-multiply this matrix by another matrix, in-place.
+    void multiplyBy(const Matrix3& other)
+    {
+        *this = getMultipliedBy(other);
+    }
+
+    /// Returns this matrix pre-multiplied by the other
+    Matrix3 getPremultipliedBy(const Matrix3& other) const
+    {
+        return other.getMultipliedBy(*this);
+    }
+
+    /// Pre-multiplies this matrix by other in-place.
+    void premultiplyBy(const Matrix3& other)
+    {
+        *this = getPremultipliedBy(other);
+    }
+
+    /// Return the full inverse of this matrix.
+    Matrix3 getFullInverse() const
+    {
+        return Matrix3(_transform.inverse(Eigen::Projective));
+    }
+
+    /// Invert this matrix in-place.
+    void invertFull()
+    {
+        *this = getFullInverse();
+    }
+
+    /**
+     * \brief Returns the given 2-component point transformed by this matrix.
+     *
+     * The point is assumed to have a W component of 1, and no division by W is
+     * performed before returning the 3-component vector.
+     */
+    template<typename T>
+    BasicVector2<T> transformPoint(const BasicVector2<T>& point) const
+    {
+        auto transformed = transform(BasicVector3<T>(point.x(), point.y(), 1));
+        return BasicVector2<T>(transformed.x(), transformed.y());
+    }
+
+    /// Return the given 3-component vector transformed by this matrix.
+    template<typename T>
+    BasicVector3<T> transform(const BasicVector3<T>& vector3) const;
 };
 
 // Private constructor
@@ -164,6 +218,14 @@ inline Matrix3 Matrix3::byRows(double xx, double yx, double zx,
         zx, zy, zz);
 }
 
+template<typename T>
+BasicVector3<T> Matrix3::transform(const BasicVector3<T>& vector3) const
+{
+    Eigen::Matrix<T, 3, 1> eVec(static_cast<const double*>(vector3));
+    auto result = _transform * eVec;
+    return BasicVector3<T>(result[0], result[1], result[2]);
+}
+
 /// Compare two matrices elementwise for equality
 inline bool operator==(const Matrix3& l, const Matrix3& r)
 {
@@ -174,4 +236,33 @@ inline bool operator==(const Matrix3& l, const Matrix3& r)
 inline bool operator!=(const Matrix3& l, const Matrix3& r)
 {
     return !(l == r);
+}
+
+/// Multiply two matrices together
+inline Matrix3 operator*(const Matrix3& m1, const Matrix3& m2)
+{
+    return m1.getMultipliedBy(m2);
+}
+
+/**
+ * \brief Multiply a 3-component vector by this matrix.
+ *
+ * Equivalent to m.transform(v).
+ */
+template<typename T>
+BasicVector3<T> operator*(const Matrix3& m, const BasicVector3<T>& v)
+{
+    return m.transform(v);
+}
+
+/**
+ * \brief Multiply a 2-component vector by this matrix.
+ *
+ * The vector is upgraded to a 3-component vector with a Z (or W) component of 1, i.e.
+ * equivalent to m.transformPoint(v).
+ */
+template<typename T>
+BasicVector2<T> operator*(const Matrix3& m, const BasicVector2<T>& v)
+{
+    return m.transformPoint(v);
 }

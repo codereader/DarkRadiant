@@ -87,4 +87,71 @@ TEST(Matrix3Test, MatrixEquality)
     EXPECT_TRUE(m2 != Matrix3::getIdentity());
 }
 
+TEST(Matrix3Test, MatrixMultiplication)
+{
+    auto a = Matrix3::byColumns(3, 5, 7, 11, 13, 17, 19, 23, 29);
+    auto b = Matrix3::byColumns(61, 67, 71, 73, 79, 83, 89, 97, 101);
+
+    // Check multiplied result
+    auto c = a.getMultipliedBy(b);
+    EXPECT_EQ(c, Matrix3::byColumns(2269, 2809, 3625,
+        2665, 3301, 4261,
+        3253, 4029, 5201));
+
+    // Multiplication has not changed original
+    EXPECT_NE(a, c);
+
+    // Check operator multiplication as well
+    EXPECT_EQ(a * b, c);
+
+    // Test Pre-Multiplication
+    EXPECT_EQ(b.getMultipliedBy(a), a.getPremultipliedBy(b)) << "Matrix pre-multiplication mismatch";
+}
+
+TEST(Matrix3Test, MatrixFullInverse)
+{
+    auto a = Matrix3::byColumns(3, 5, 7, 11, 13, 17, 19, 23, 29);
+
+    auto inv = a.getFullInverse();
+
+    EXPECT_DOUBLE_EQ(inv.xx(), -7.0 / 10) << "Matrix inversion failed on xx";
+    EXPECT_DOUBLE_EQ(inv.xy(), 4.0 / 5) << "Matrix inversion failed on xy";
+    EXPECT_DOUBLE_EQ(inv.xz(), -3.0 / 10) << "Matrix inversion failed on xz";
+
+    EXPECT_DOUBLE_EQ(inv.yx(), 1.0 / 5) << "Matrix inversion failed on yx";
+    EXPECT_DOUBLE_EQ(inv.yy(), -23.0 / 10) << "Matrix inversion failed on yy";
+    EXPECT_DOUBLE_EQ(inv.yz(), 13.0 / 10) << "Matrix inversion failed on yz";
+
+    EXPECT_DOUBLE_EQ(inv.zx(), 3.0 / 10) << "Matrix inversion failed on zx";
+    EXPECT_DOUBLE_EQ(inv.zy(), 13.0 / 10) << "Matrix inversion failed on zy";
+    EXPECT_DOUBLE_EQ(inv.zz(), -4.0 / 5) << "Matrix inversion failed on zz";
+}
+
+TEST(Matrix3Test, MatrixTransformation)
+{
+    auto a = Matrix3::byColumns(3, 5, 7, 11, 13, 17, 19, 23, 29);
+
+    {
+        Vector2 v(61, 67);
+
+        Vector2 transformed = a.transformPoint(v);
+
+        EXPECT_EQ(transformed.x(), 939) << "Vector2 transformation failed";
+        EXPECT_EQ(transformed.y(), 1199) << "Vector2 transformation failed";
+
+        EXPECT_EQ(a * v, a.transformPoint(v));
+    }
+
+    {
+        Vector3 vector(83, 89, 97);
+        Vector3 transformed = a.transform(vector);
+
+        EXPECT_EQ(transformed.x(), 3071) << "Vector3 transformation failed";
+        EXPECT_EQ(transformed.y(), 3803) << "Vector3 transformation failed";
+        EXPECT_EQ(transformed.z(), 4907) << "Vector3 transformation failed";
+
+        EXPECT_EQ(a * vector, a.transform(vector));
+    }
+}
+
 }
