@@ -68,6 +68,38 @@ public:
      * \}
      */
 
+     /**
+      * Return columns of the matrix as vectors.
+      * \{
+      */
+    Vector3& xCol()
+    {
+        return reinterpret_cast<Vector3&>(xx());
+    }
+    const Vector3& xCol() const
+    {
+        return reinterpret_cast<const Vector3&>(xx());
+    }
+    Vector3& yCol()
+    {
+        return reinterpret_cast<Vector3&>(yx());
+    }
+    const Vector3& yCol() const
+    {
+        return reinterpret_cast<const Vector3&>(yx());
+    }
+    Vector3& zCol()
+    {
+        return reinterpret_cast<Vector3&>(zx());
+    }
+    const Vector3& zCol() const
+    {
+        return reinterpret_cast<const Vector3&>(zx());
+    }
+    /**
+     * \}
+     */
+
     /// Obtain the identity matrix.
     static Matrix3 getIdentity()
     {
@@ -136,4 +168,10 @@ inline Matrix3 Matrix3::byRows(double xx, double yx, double zx,
 inline bool operator==(const Matrix3& l, const Matrix3& r)
 {
     return l.eigen().matrix() == r.eigen().matrix();
+}
+
+/// Compare two matrices elementwise for inequality
+inline bool operator!=(const Matrix3& l, const Matrix3& r)
+{
+    return !(l == r);
 }

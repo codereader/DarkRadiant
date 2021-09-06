@@ -17,6 +17,7 @@ add_executable(drtest
                MapSavingLoading.cpp
                MaterialExport.cpp
                Materials.cpp
+               math/Matrix3.cpp
                math/Matrix4.cpp
                math/Plane3.cpp
                math/Quaternion.cpp
