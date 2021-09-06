@@ -24,7 +24,7 @@ namespace
     }
 }
 
-TEST(MatrixTest, CreateIdentityMatrix)
+TEST(Matrix4Test, CreateIdentityMatrix)
 {
     const Matrix4 identity = Matrix4::getIdentity();
     EXPECT_EQ(identity, Matrix4::byRows(1, 0, 0, 0,
@@ -33,7 +33,7 @@ TEST(MatrixTest, CreateIdentityMatrix)
                                         0, 0, 0, 1));
 }
 
-TEST(MatrixTest, AssignMatrixComponents)
+TEST(Matrix4Test, AssignMatrixComponents)
 {
     Matrix4 identity;
 
@@ -60,7 +60,7 @@ TEST(MatrixTest, AssignMatrixComponents)
     EXPECT_EQ(identity, Matrix4::getIdentity());
 }
 
-TEST(MatrixTest, ConstructMatrixByRows)
+TEST(Matrix4Test, ConstructMatrixByRows)
 {
     auto m = Matrix4::byRows(1, 2.5, 3, 0.34,
         51, -6, 7, 9,
@@ -89,7 +89,7 @@ TEST(MatrixTest, ConstructMatrixByRows)
     EXPECT_EQ(m.tw(), 32);
 }
 
-TEST(MatrixTest, ConstructTranslationMatrix)
+TEST(Matrix4Test, ConstructTranslationMatrix)
 {
     const Vector3 TRANS(1.5, -2939, 357);
     Matrix4 tm = Matrix4::getTranslation(TRANS);
@@ -101,7 +101,7 @@ TEST(MatrixTest, ConstructTranslationMatrix)
     EXPECT_EQ(tm.translation(), TRANS);
 }
 
-TEST(MatrixTest, ConstructScaleMatrix)
+TEST(Matrix4Test, ConstructScaleMatrix)
 {
     const Vector3 SCALE(0.75, 1.25, 960);
     Matrix4 sm = Matrix4::getScale(SCALE);
@@ -113,7 +113,7 @@ TEST(MatrixTest, ConstructScaleMatrix)
     EXPECT_EQ(sm.getScale(), SCALE);
 }
 
-TEST(MatrixTest, AccessMatrixColumnVectors)
+TEST(Matrix4Test, AccessMatrixColumnVectors)
 {
     Matrix4 m = Matrix4::byRows(1, 4, 8, -5,
                                 2, 9, 7, 13,
@@ -138,7 +138,7 @@ TEST(MatrixTest, AccessMatrixColumnVectors)
                                     1.3, 1.4, 1.5, 1.6));
 }
 
-TEST(MatrixTest, MatrixRawArrayData)
+TEST(Matrix4Test, MatrixRawArrayData)
 {
     Matrix4 m = Matrix4::byRows(1, 0.2, 35, 4,
                                 5, -6, 17, 300,
@@ -166,7 +166,7 @@ TEST(MatrixTest, MatrixRawArrayData)
     EXPECT_EQ(data[15], -4.5);
 }
 
-TEST(MatrixTest, MatrixEquality)
+TEST(Matrix4Test, MatrixEquality)
 {
     Matrix4 m1 = Matrix4::byRows(1, 2, 3.5, 4,
                                  5, -6, 17, 800,
@@ -179,7 +179,7 @@ TEST(MatrixTest, MatrixEquality)
     EXPECT_TRUE(m2 != Matrix4::getIdentity());
 }
 
-TEST(MatrixTest, MatrixTranspose)
+TEST(Matrix4Test, MatrixTranspose)
 {
     Matrix4 m = Matrix4::byRows(1, 2, 3, 4,
                                 5, 6, 7, 8,
@@ -199,7 +199,7 @@ TEST(MatrixTest, MatrixTranspose)
     EXPECT_EQ(m, mT);
 }
 
-TEST(MatrixTest, ConvertDegreesAndRadians)
+TEST(Matrix4Test, ConvertDegreesAndRadians)
 {
     math::Degrees thirtyD(30);
     EXPECT_DOUBLE_EQ(thirtyD.asDegrees(), 30);
@@ -210,7 +210,7 @@ TEST(MatrixTest, ConvertDegreesAndRadians)
     EXPECT_DOUBLE_EQ(twoPiBy3R.asRadians(), 2 * math::PI / 3.0);
 }
 
-TEST(MatrixTest, MatrixRotationAboutZDegrees)
+TEST(Matrix4Test, MatrixRotationAboutZDegrees)
 {
     math::Degrees angle(60.0);
     double cosAngle = cos(angle.asRadians());
@@ -224,7 +224,7 @@ TEST(MatrixTest, MatrixRotationAboutZDegrees)
                                      0, 0, 0, 1));
 }
 
-TEST(MatrixTest, MatrixRotationAboutZRadians)
+TEST(Matrix4Test, MatrixRotationAboutZRadians)
 {
     double angle = math::PI / 3.0; // 60 degrees in radians
     double cosAngle = cos(angle);
@@ -238,7 +238,7 @@ TEST(MatrixTest, MatrixRotationAboutZRadians)
                                      0, 0, 0, 1));
 }
 
-TEST(MatrixTest, MatrixRotationForAxisAngle)
+TEST(Matrix4Test, MatrixRotationForAxisAngle)
 {
     // Rotation with a zero angle should do nothing
     Matrix4 noRot = Matrix4::getRotation(Vector3(0, 0, 1), 0);
@@ -257,7 +257,7 @@ TEST(MatrixTest, MatrixRotationForAxisAngle)
     expectNear(rot45 * Vector3(1, 0, 0), Vector3(0, 1, 0));
 }
 
-TEST(MatrixTest, MatrixRotationForEulerXYZDegrees)
+TEST(Matrix4Test, MatrixRotationForEulerXYZDegrees)
 {
     // Test euler angle constructors
     Vector3 euler(30, -55, 75);
@@ -301,7 +301,7 @@ TEST(MatrixTest, MatrixRotationForEulerXYZDegrees)
     EXPECT_DOUBLE_EQ(testEuler.z(), euler.z()) << "getEulerAnglesXYZDegrees fault at z()";
 }
 
-TEST(MatrixTest, MatrixMultiplication)
+TEST(Matrix4Test, MatrixMultiplication)
 {
     auto a = Matrix4::byColumns(3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59);
     auto b = Matrix4::byColumns(61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127, 131, 137);
@@ -323,7 +323,7 @@ TEST(MatrixTest, MatrixMultiplication)
     EXPECT_EQ(b.getMultipliedBy(a), a.getPremultipliedBy(b)) << "Matrix pre-multiplication mismatch";
 }
 
-TEST(MatrixTest, MatrixTransformation)
+TEST(Matrix4Test, MatrixTransformation)
 {
     auto a = Matrix4::byColumns(3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59);
 
@@ -358,7 +358,7 @@ TEST(MatrixTest, MatrixTransformation)
     EXPECT_EQ(a.tCol().z(), 53) << "Matrix4::t failed";
 }
 
-TEST(MatrixTest, MatrixTransformVectorEqualsMultiplication)
+TEST(Matrix4Test, MatrixTransformVectorEqualsMultiplication)
 {
     const Vector3 TRANSLATION(2, 5, -7);
     auto t = Matrix4::getTranslation(TRANSLATION)
@@ -387,7 +387,7 @@ TEST(MatrixTest, MatrixTransformVectorEqualsMultiplication)
     EXPECT_EQ((t * Vector4(vec3, 0)).getVector3(), t.transformDirection(vec3));
 }
 
-TEST(MatrixTest, MatrixScaleAffineInverse)
+TEST(Matrix4Test, MatrixScaleAffineInverse)
 {
     // Construct a scale matrix
     Vector3 SCALE(2, 4, 8);
@@ -405,7 +405,7 @@ TEST(MatrixTest, MatrixScaleAffineInverse)
               Vector3(1.0 / SCALE.x(), 1.0 / SCALE.y(), 1.0 / SCALE.z()));
 }
 
-TEST(MatrixTest, MatrixTranslationAffineInverse)
+TEST(Matrix4Test, MatrixTranslationAffineInverse)
 {
     // Construct a translation matrix
     Vector3 TRANS(4, 32, -8);
@@ -425,7 +425,7 @@ TEST(MatrixTest, MatrixTranslationAffineInverse)
                                        0, 0, 0, 1));
 }
 
-TEST(MatrixTest, MatrixRotationAffineInverse)
+TEST(Matrix4Test, MatrixRotationAffineInverse)
 {
     // Construct a translation matrix
     const math::Degrees ANGLE(60);
@@ -440,7 +440,7 @@ TEST(MatrixTest, MatrixRotationAffineInverse)
     expectNear(inverse, backRotMat);
 }
 
-TEST(MatrixTest, MatrixAffineInverseMatchesFullInverse)
+TEST(Matrix4Test, MatrixAffineInverseMatchesFullInverse)
 {
     // Create an affine transformation
     Matrix4 affTrans = Matrix4::getRotationAboutZ(math::Degrees(78))
@@ -468,7 +468,7 @@ TEST(MatrixTest, MatrixAffineInverseMatchesFullInverse)
     EXPECT_GT(diffInv.ty(), 8);
 }
 
-TEST(MatrixTest, MatrixFullInverse)
+TEST(Matrix4Test, MatrixFullInverse)
 {
     auto a = Matrix4::byColumns(3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59);
 
@@ -495,7 +495,7 @@ TEST(MatrixTest, MatrixFullInverse)
     EXPECT_DOUBLE_EQ(inv.tw(), 0.3571428571428571) << "Matrix inversion failed on tw";
 }
 
-TEST(MatrixTest, MatrixTranslateBy)
+TEST(Matrix4Test, MatrixTranslateBy)
 {
     const Vector3 TRANS(27, -16, 0.84);
 
@@ -525,7 +525,7 @@ TEST(MatrixTest, MatrixTranslateBy)
     expectNear(m.translation(), SCALE * ONE);
 }
 
-TEST(MatrixTest, GetInverseScale)
+TEST(Matrix4Test, GetInverseScale)
 {
     // Create an arbitrary transformation
     Matrix4 m = Matrix4::getRotationAboutZ(math::Degrees(15))

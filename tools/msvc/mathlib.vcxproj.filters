@@ -27,6 +27,8 @@
     <ClInclude Include="..\..\libs\math\Vector4.h" />
     <ClInclude Include="..\..\libs\math\Viewer.h" />
     <ClInclude Include="..\..\libs\math\ViewProjection.h" />
+    <ClInclude Include="..\..\libs\math\Matrix3.h" />
+    <ClInclude Include="..\..\libs\math\eigen.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="natvis">

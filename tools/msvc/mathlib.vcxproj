@@ -146,11 +146,13 @@
   <ItemGroup>
     <ClInclude Include="..\..\libs\math\AABB.h" />
     <ClInclude Include="..\..\libs\math\curve.h" />
+    <ClInclude Include="..\..\libs\math\eigen.h" />
     <ClInclude Include="..\..\libs\math\FloatTools.h" />
     <ClInclude Include="..\..\libs\math\Frustum.h" />
     <ClInclude Include="..\..\libs\math\Hash.h" />
     <ClInclude Include="..\..\libs\math\Line.h" />
     <ClInclude Include="..\..\libs\math\lrint.h" />
+    <ClInclude Include="..\..\libs\math\Matrix3.h" />
     <ClInclude Include="..\..\libs\math\Matrix4.h" />
     <ClInclude Include="..\..\libs\math\pi.h" />
     <ClInclude Include="..\..\libs\math\Plane3.h" />

@@ -3,20 +3,10 @@
 /// \file
 /// \brief Matrix data types and related operations.
 
-#include "math/Vector3.h"
-#include "math/Vector4.h"
-#include "math/pi.h"
-
-#undef Success // get rid of fuckwit X.h macro
-
-// Silence C++17 deprecation warnings from Eigen\src\Core\util\Meta.h(373), will be unsilenced at the bottom of this file
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable : 4996)
-#pragma warning(disable : 4127)
-#endif
-
-#include <Eigen/Geometry>
+#include "Vector3.h"
+#include "Vector4.h"
+#include "pi.h"
+#include "eigen.h"
 
 class Quaternion;
 

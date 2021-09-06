@@ -184,6 +184,61 @@ TEST_F(BrushTest, FacePlaneTranslate)
     });
 }
 
+// Calculate the texture projection matrix from a given set of XYZ and UV coords
+TEST_F(BrushTest, TextureProjectionFromPoints)
+{
+    Eigen::Vector3d points[4] =
+    {
+        { -64, 64, 0 },
+        { +64, 64, 0 },
+        { +64, -64, 0 },
+        { -64, -64, 0 }
+    };
+
+    Vector2 uvs[4] =
+    {
+        { 0, 0 },
+        { 0.5, 0 },
+        { 0.5, 0.6 },
+        { 0, 0.6 }
+    };
+
+    Eigen::Matrix3d mat;
+    mat(0, 0) = points[0].x();
+    mat(1, 0) = points[0].y();
+    mat(2, 0) = 1;
+
+    mat(0, 1) = points[1].x();
+    mat(1, 1) = points[1].y();
+    mat(2, 1) = 1;
+
+    mat(0, 2) = points[2].x();
+    mat(1, 2) = points[2].y();
+    mat(2, 2) = 1;
+
+    Eigen::Matrix3d uvMatrix;
+    uvMatrix(0, 0) = uvs[0].x();
+    uvMatrix(1, 0) = uvs[0].y();
+    uvMatrix(2, 0) = 1;
+
+    uvMatrix(0, 1) = uvs[1].x();
+    uvMatrix(1, 1) = uvs[1].y();
+    uvMatrix(2, 1) = 1;
+
+    uvMatrix(0, 2) = uvs[2].x();
+    uvMatrix(1, 2) = uvs[2].y();
+    uvMatrix(2, 2) = 1;
+
+    //auto det = mat.determinant();
+
+    Eigen::Matrix3d textureMatrix = uvMatrix * mat.inverse();
+
+    Eigen::Vector3d uv0 = textureMatrix * Eigen::Vector3d(points[0].x(), points[0].y(), 1);
+    Eigen::Vector3d uv1 = textureMatrix * Eigen::Vector3d(points[1].x(), points[1].y(), 1);
+    Eigen::Vector3d uv2 = textureMatrix * Eigen::Vector3d(points[2].x(), points[2].y(), 1);
+    Eigen::Vector3d uv3 = textureMatrix * Eigen::Vector3d(points[3].x(), points[3].y(), 1);
+}
+
 inline bool faceHasVertex(const IFace* face, const Vector3& expectedXYZ, const Vector2& expectedUV)
 {
     return algorithm::faceHasVertex(face, [&](const WindingVertex& vertex)
