@@ -88,6 +88,7 @@
     <ClCompile Include="..\..\..\test\MapSavingLoading.cpp" />
     <ClCompile Include="..\..\..\test\MaterialExport.cpp" />
     <ClCompile Include="..\..\..\test\Materials.cpp" />
+    <ClCompile Include="..\..\..\test\math\Matrix3.cpp" />
     <ClCompile Include="..\..\..\test\math\Matrix4.cpp" />
     <ClCompile Include="..\..\..\test\math\Plane3.cpp" />
     <ClCompile Include="..\..\..\test\math\Quaternion.cpp" />
