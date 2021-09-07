@@ -793,8 +793,22 @@ the current *Step* value.
 rotate the texture clockwise or anticlockwise by the current *Step* value.
 |Fit Texture|These controls allow you to fit an exact number of copies of the
 texture across the face, so that the texture edges correspond to the face edges.
-The numeric spin boxes control how many copies of the texture are tiled, and the
-operation is performed by clicking the *Fit* button.
+
+The numeric spin boxes control how many copies of the texture are tiled on each
+axis. You can enter a value manually (including fractional values above or below
+1.0) or use the spin buttons to quickly increase or decrease the number of
+tiles. Using the spin buttons will apply the fit immediately, so you can quickly
+preview the results in the camera view.
+
+Toggle the image:preserveAspect.png[] button to *preserve aspect ratio* when
+using the spin buttons to fit the texture on one axis. This automatically
+adjusts the other axis so that the aspect ratio of the texture image is
+preserved, ignoring the value in the other axis' spin box. This can be useful
+for textures like wooden planks, where you might want an exact number of plank
+_widths_ on a certain brush face but the number of _lengths_ is not important
+(since the texture is seamless); in this case, avoiding aspect ratio distortion
+is more useful than fitting an exact number of lengths.
+
 |Align Texture|These buttons shift the texture so that the Top/Bottom/Left/Right
 edge of the face are aligned with a texture boundary, but otherwise do not
 modify the scaling of the texture (unlike the *Fit* operation).
@@ -1724,9 +1738,11 @@ partially-complete maps.
  configuring game-specific settings.
 
 *Pointfile*:: Load and show the <<PointFile,pointfile>> for the current map, if
- there is one. An error dialog will be displayed if there is no current
- pointfile (which is usually the case if the current map has not leaked during
- compilation).
+there is one. If more than pointfile is available, a dialog will be shown
+allowing you to choose which pointfile to load. An error dialog will be
+displayed if there is no current pointfile (which is usually the case if the
+current map has not leaked during compilation). Choose this option a second time
+to hide the rendered pointfile.
 
 *Exit*:: Exit DarkRadiant, prompting to save the current map if necessary.
 
