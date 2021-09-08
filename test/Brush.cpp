@@ -24,6 +24,14 @@ void expectNear(const Plane3& p1, const Plane3& p2, double epsilon)
     EXPECT_NEAR(p1.dist(), p2.dist(), epsilon);
 }
 
+inline bool faceHasVertex(const IFace* face, const Vector3& expectedXYZ, const Vector2& expectedUV)
+{
+    return algorithm::faceHasVertex(face, [&](const WindingVertex& vertex)
+    {
+        return math::isNear(vertex.vertex, expectedXYZ, 0.01) && math::isNear(vertex.texcoord, expectedUV, 0.01);
+    });
+}
+
 using Quake3BrushTest = RadiantTest;
 
 class BrushTest: public RadiantTest
@@ -184,67 +192,78 @@ TEST_F(BrushTest, FacePlaneTranslate)
     });
 }
 
-// Calculate the texture projection matrix from a given set of XYZ and UV coords
-TEST_F(BrushTest, TextureProjectionFromPoints)
+TEST_F(BrushTest, FaceRotateTexDef)
 {
-    Eigen::Vector3d points[4] =
-    {
-        { -64, 64, 0 },
-        { +64, 64, 0 },
-        { +64, -64, 0 },
-        { -64, -64, 0 }
-    };
+    std::string mapPath = "maps/simple_brushes.map";
+    GlobalCommandSystem().executeCommand("OpenMap", mapPath);
 
-    Vector2 uvs[4] =
-    {
-        { 0, 0 },
-        { 0.5, 0 },
-        { 0.5, 0.6 },
-        { 0, 0.6 }
-    };
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
 
-    Eigen::Matrix3d mat;
-    mat(0, 0) = points[0].x();
-    mat(1, 0) = points[0].y();
-    mat(2, 0) = 1;
+    // Find the brush that is centered at origin
+    auto brushNode = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/2");
+    EXPECT_TRUE(brushNode && brushNode->getNodeType() == scene::INode::Type::Brush) << "Couldn't locate the test brush";
 
-    mat(0, 1) = points[1].x();
-    mat(1, 1) = points[1].y();
-    mat(2, 1) = 1;
+    // Pick a few faces and run the algorithm against it, checking hardcoded results
 
-    mat(0, 2) = points[2].x();
-    mat(1, 2) = points[2].y();
-    mat(2, 2) = 1;
+    // Facing 0,0,1
+    auto face = algorithm::findBrushFaceWithNormal(Node_getIBrush(brushNode), Vector3(0, 0, 1));
 
-    Eigen::Matrix3d uvMatrix;
-    uvMatrix(0, 0) = uvs[0].x();
-    uvMatrix(1, 0) = uvs[0].y();
-    uvMatrix(2, 0) = 1;
+    EXPECT_TRUE(faceHasVertex(face, Vector3(64, -64, -160), Vector2(0, 1)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(-64, -64, -160), Vector2(0, 0)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(-64, 64, -160), Vector2(1, 0)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(64, 64, -160), Vector2(1, 1)));
 
-    uvMatrix(0, 1) = uvs[1].x();
-    uvMatrix(1, 1) = uvs[1].y();
-    uvMatrix(2, 1) = 1;
+    face->rotateTexdef(15); // degrees
 
-    uvMatrix(0, 2) = uvs[2].x();
-    uvMatrix(1, 2) = uvs[2].y();
-    uvMatrix(2, 2) = 1;
+    EXPECT_TRUE(faceHasVertex(face, Vector3(64, -64, -160), Vector2(-0.112372, 0.853553)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(-64, -64, -160), Vector2(0.146447, -0.112372)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(-64, 64, -160), Vector2(1.11237, 0.146447)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(64, 64, -160), Vector2(0.853553, 1.11237)));
 
-    //auto det = mat.determinant();
+    // Facing 1,0,0
+    face = algorithm::findBrushFaceWithNormal(Node_getIBrush(brushNode), Vector3(1, 0, 0));
 
-    Eigen::Matrix3d textureMatrix = uvMatrix * mat.inverse();
+    EXPECT_TRUE(faceHasVertex(face, Vector3(64, -64, -288), Vector2(0, 65)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(64, -64, -160), Vector2(0, 64)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(64, 64, -160), Vector2(1, 64)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(64, 64, -288), Vector2(1, 65)));
+    
+    face->rotateTexdef(15); // degrees
+    
+    EXPECT_TRUE(faceHasVertex(face, Vector3(64, -64, -288), Vector2(-0.112372, 64.8536)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(64, -64, -160), Vector2(0.146447, 63.8876)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(64, 64, -160), Vector2(1.11237, 64.1464)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(64, 64, -288), Vector2(0.853553, 65.1124)));
 
-    Eigen::Vector3d uv0 = textureMatrix * Eigen::Vector3d(points[0].x(), points[0].y(), 1);
-    Eigen::Vector3d uv1 = textureMatrix * Eigen::Vector3d(points[1].x(), points[1].y(), 1);
-    Eigen::Vector3d uv2 = textureMatrix * Eigen::Vector3d(points[2].x(), points[2].y(), 1);
-    Eigen::Vector3d uv3 = textureMatrix * Eigen::Vector3d(points[3].x(), points[3].y(), 1);
-}
+    // Facing 0,0,-1
+    face = algorithm::findBrushFaceWithNormal(Node_getIBrush(brushNode), Vector3(0, 0, -1));
 
-inline bool faceHasVertex(const IFace* face, const Vector3& expectedXYZ, const Vector2& expectedUV)
-{
-    return algorithm::faceHasVertex(face, [&](const WindingVertex& vertex)
-    {
-        return math::isNear(vertex.vertex, expectedXYZ, 0.01) && math::isNear(vertex.texcoord, expectedUV, 0.01);
-    });
+    EXPECT_TRUE(faceHasVertex(face, Vector3(-64, -64, -288), Vector2(0, 1)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(64, -64, -288), Vector2(0, 0)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(64, 64, -288), Vector2(1, 0)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(-64, 64, -288), Vector2(1, 1)));
+    
+    face->rotateTexdef(15); // degrees
+
+    EXPECT_TRUE(faceHasVertex(face, Vector3(-64, -64, -288), Vector2(-0.112372, 0.853553)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(64, -64, -288), Vector2(0.146447, -0.112372)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(64, 64, -288), Vector2(1.11237, 0.146447)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(-64, 64, -288), Vector2(0.853553, 1.11237)));
+
+    // Facing 0,-1,0, this time rotate -15 degrees
+    face = algorithm::findBrushFaceWithNormal(Node_getIBrush(brushNode), Vector3(0, -1, 0));
+
+    EXPECT_TRUE(faceHasVertex(face, Vector3(-64, -64, -160), Vector2(0, 64)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(64, -64, -160), Vector2(1, 64)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(64, -64, -288), Vector2(1, 65)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(-64, -64, -288), Vector2(0, 65)));
+
+    face->rotateTexdef(-15); // degrees
+
+    EXPECT_TRUE(faceHasVertex(face, Vector3(-64, -64, -160), Vector2(-0.112372, 64.1464)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(64, -64, -160), Vector2(0.853553, 63.8876)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(64, -64, -288), Vector2(1.11237, 64.8536)));
+    EXPECT_TRUE(faceHasVertex(face, Vector3(-64, -64, -288), Vector2(0.146447, 65.1124)));
 }
 
 // Load a brush with one vertex at 0,0,0, and an identity shift/scale/rotation texdef

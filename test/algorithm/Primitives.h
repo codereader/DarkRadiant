@@ -59,11 +59,11 @@ inline scene::INodePtr createCuboidBrush(const scene::INodePtr& parent,
     return brushNode;
 }
 
-inline const IFace* findBrushFaceWithNormal(const IBrush* brush, const Vector3& normal)
+inline IFace* findBrushFaceWithNormal(IBrush* brush, const Vector3& normal)
 {
     for (auto i = 0; brush->getNumFaces(); ++i)
     {
-        const auto& face = brush->getFace(i);
+        auto& face = brush->getFace(i);
 
         if (math::isNear(face.getPlane3().normal(), normal, 0.01))
         {
