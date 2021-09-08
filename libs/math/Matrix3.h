@@ -107,6 +107,24 @@ public:
         return Matrix3(Eigen::Projective2d::Identity());
     }
 
+    /// Get a matrix representing the given 2D translation.
+    static Matrix3 getTranslation(const Vector2& translation)
+    {
+        return Matrix3(Transform(Eigen::Translation2d(translation.x(), translation.y())));
+    }
+
+    /// Get a matrix representing the given 2D rotation (counter-clockwise, angle in radians)
+    static Matrix3 getRotation(double angle)
+    {
+        return Matrix3(Transform(Eigen::Rotation2D(angle)));
+    }
+
+    /// Get a matrix representing the given 2D scale
+    static Matrix3 getScale(const Vector2& scale)
+    {
+        return Matrix3(Transform(Eigen::Scaling(scale.x(), scale.y())));
+    }
+
     /**
      * \brief
      * Construct a matrix containing the given elements.

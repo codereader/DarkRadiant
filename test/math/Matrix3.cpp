@@ -154,4 +154,35 @@ TEST(Matrix3Test, MatrixTransformation)
     }
 }
 
+TEST(Matrix3Test, ConstructTranslationMatrix)
+{
+    const Vector2 translation(1.5, -2939);
+    auto tm = Matrix3::getTranslation(translation);
+
+    EXPECT_EQ(tm, Matrix3::byRows(1, 0, translation.x(),
+        0, 1, translation.y(),
+        0, 0, 1));
+    EXPECT_EQ(tm.zCol(), Vector3(translation.x(), translation.y(), 1));
+}
+
+TEST(Matrix3Test, ConstructRotationMatrix)
+{
+    const double angle = degrees_to_radians(15);
+    auto tm = Matrix3::getRotation(angle);
+
+    EXPECT_EQ(tm, Matrix3::byRows(cos(angle), -sin(angle), 0,
+        sin(angle), cos(angle), 0,
+        0, 0, 1));
+}
+
+TEST(Matrix3Test, ConstructScaleMatrix)
+{
+    const Vector2 scale(1.5, -3.2);
+    auto tm = Matrix3::getScale(scale);
+
+    EXPECT_EQ(tm, Matrix3::byRows(scale.x(), 0, 0,
+        0, scale.y(), 0,
+        0, 0, 1));
+}
+
 }
