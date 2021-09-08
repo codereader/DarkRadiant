@@ -100,28 +100,6 @@ public:
         return !(*this == other);
     }
 
-    /*  Define the substraction operators - and -= with any other BasicVector4 of type OtherElement
-     *  The vectors are substracted from each other element-wise
-     */
-    template<typename OtherElement>
-    BasicVector4<Element> operator- (const BasicVector4<OtherElement>& other) const {
-        return BasicVector4<Element>(
-            _v[0] - static_cast<Element>(other.x()),
-            _v[1] - static_cast<Element>(other.y()),
-            _v[2] - static_cast<Element>(other.z()),
-            _v[3] - static_cast<Element>(other.w())
-        );
-    }
-
-    template<typename OtherElement>
-	BasicVector4<Element>& operator-= (const BasicVector4<OtherElement>& other) {
-        _v[0] -= static_cast<Element>(other.x());
-        _v[1] -= static_cast<Element>(other.y());
-        _v[2] -= static_cast<Element>(other.z());
-        _v[3] -= static_cast<Element>(other.w());
-		return *this;
-    }
-
     /*  Define the multiplication operators * and *= with another Vector4 of type OtherElement
      *
      *  The vectors are multiplied element-wise
@@ -273,6 +251,26 @@ BasicVector4<T>& operator+=(BasicVector4<T>& v1, const BasicVector4<T>& v2)
     v1.y() += v2.y();
     v1.z() += v2.z();
     v1.w() += v2.w();
+    return v1;
+}
+
+/// Componentwise subtraction of two vectors
+template<typename T>
+BasicVector4<T> operator- (const BasicVector4<T>& v1, const BasicVector4<T>& v2)
+{
+    return BasicVector4<T>(v1.x() - v2.x(),
+                           v1.y() - v2.y(),
+                           v1.z() - v2.z(),
+                           v1.w() - v2.w());
+}
+
+template<typename T>
+BasicVector4<T>& operator-= (BasicVector4<T>& v1, const BasicVector4<T>& v2)
+{
+    v1.x() -= v2.x();
+    v1.y() -= v2.y();
+    v1.z() -= v2.z();
+    v1.w() -= v2.w();
     return v1;
 }
 

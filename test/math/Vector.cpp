@@ -219,7 +219,15 @@ TEST(MathTest, SubtractVector4)
     Vector4 v1(0, 96, 457, -3.5);
     Vector4 v2(0.125, 4, 7.5, 90);
 
+    // Subtract and return
     EXPECT_EQ(v1 - v2, Vector4(-0.125, 92, 449.5, -93.5));
+    EXPECT_EQ(v2 - v2, Vector4());
+
+    // Subtract in place
+    auto v1Copy = v1;
+    v1 -= v2;
+    EXPECT_NE(v1, v1Copy);
+    EXPECT_EQ(v1, Vector4(-0.125, 92, 449.5, -93.5));
 }
 
 TEST(MathTest, ScalarMultiplyVector3)
