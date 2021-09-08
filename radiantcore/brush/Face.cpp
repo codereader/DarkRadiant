@@ -508,6 +508,66 @@ void Face::applyShaderFromFace(const Face& other)
     shiftTexdef(static_cast<float>(dist.x()), static_cast<float>(dist.y()));
 }
 
+void Face::setTexDefFromPoints(const Vector3 points[3], const Vector2 uvs[3])
+{
+    // Calculate the texture projection for these desired set of UVs and XYZ
+
+    // The texture projection matrix is applied to the vertices after they have been
+    // transformed by the axis base transform (which depends on this face's normal):
+    // T * AB * vertex = UV
+    // 
+    // Applying AB to the vertices will yield: T * P = texcoord
+    // with P containing the axis-based transformed vertices.
+    // 
+    // If the above should be solved for T, expanding the above multiplication 
+    // sets up six equations to calculate the 6 unknown components of T.
+    // 
+    // We can arrange the 6 equations in matrix form: T * A = B
+    // T is the 3x3 texture matrix.
+    // A contains the XY coords in its columns (Z is ignored since we 
+    // applied the axis base), B contains the UV coords in its columns.
+    // The third component of all columns in both matrices is 1.
+    // 
+    // We can solve the above by inverting A: T = B * inv(A)
+
+    // Get the axis base for this face, we need the XYZ points in that state
+    // to reverse-calculate the desired texture transform
+    auto axisBase = getBasisTransformForNormal(getPlane3().normal());
+
+    // Rotate the three incoming world vertices into the local face plane
+    Vector3 localPoints[] =
+    {
+        axisBase * points[0],
+        axisBase * points[1],
+        axisBase * points[2],
+    };
+
+    // Arrange the XYZ coords into the columns of matrix A
+    auto xyz = Matrix3::byColumns(localPoints[0].x(), localPoints[0].y(), 1,
+        localPoints[1].x(), localPoints[1].y(), 1,
+        localPoints[2].x(), localPoints[2].y(), 1);
+
+    auto uv = Matrix3::byColumns(uvs[0].x(), uvs[0].y(), 1,
+        uvs[1].x(), uvs[1].y(), 1,
+        uvs[2].x(), uvs[2].y(), 1);
+
+    auto textureMatrix = uv * xyz.getFullInverse();
+
+    // Extract the matrix components and pass the 4x4 matrix to our texdef
+    auto newMatrix = Matrix4::getIdentity();
+
+    newMatrix.xx() = textureMatrix.xx();
+    newMatrix.xy() = textureMatrix.xy();
+    newMatrix.yx() = textureMatrix.yx();
+    newMatrix.yy() = textureMatrix.yy();
+    newMatrix.tx() = textureMatrix.zx();
+    newMatrix.ty() = textureMatrix.zy();
+
+    _texdef.setTransform(newMatrix);
+
+    texdefChanged();
+}
+
 void Face::shiftTexdef(float s, float t)
 {
     undoSave();
@@ -558,47 +618,15 @@ void Face::rotateTexdef(float angle)
         pivotedRotation * m_winding[2].texcoord,
     };
 
-    // Get the axis base for this face, we need the XYZ points in that state
-    // to calculate the desired texture transform
-    auto axisBase = getBasisTransformForNormal(getPlane3().normal());
-
-    // Pick 3 arbitrary winding vertices and apply the axis base on them
+    // Prepare the winding vertex XYZ coordinates
     Vector3 points[] =
     {
-        axisBase * m_winding[0].vertex,
-        axisBase * m_winding[1].vertex,
-        axisBase * m_winding[2].vertex,
+        m_winding[0].vertex,
+        m_winding[1].vertex,
+        m_winding[2].vertex,
     };
 
-    // Calculate the texture projection for these desired set of UVs and XYZ
-
-    // The texture projection matrix is applied to the vertices after they have been
-    // transformed by the axis base, so T*AB*vertex = texcoord
-    // If the above is to be solved for T, we have to solve a set of linear equations:
-    // T * Av = Ast => solve by right-multiplying the Av^-1 onto both sides
-
-    auto pointMatrix = Matrix3::byColumns(points[0].x(), points[0].y(), 1,
-            points[1].x(), points[1].y(), 1,
-            points[2].x(), points[2].y(), 1);
-
-    auto uvMatrix = Matrix3::byColumns(uvs[0].x(), uvs[0].y(), 1,
-        uvs[1].x(), uvs[1].y(), 1,
-        uvs[2].x(), uvs[2].y(), 1);
-
-    auto textureMatrix = uvMatrix * pointMatrix.getFullInverse();
-
-    auto newMatrix = Matrix4::getIdentity();
-
-    newMatrix.xx() = textureMatrix.xx();
-    newMatrix.xy() = textureMatrix.xy();
-    newMatrix.yx() = textureMatrix.yx();
-    newMatrix.yy() = textureMatrix.yy();
-    newMatrix.tx() = textureMatrix.zx();
-    newMatrix.ty() = textureMatrix.zy();
-
-    _texdef.setTransform(newMatrix);
-
-    texdefChanged();
+    setTexDefFromPoints(points, uvs);
 }
 
 void Face::fitTexture(float s_repeat, float t_repeat) {

@@ -142,6 +142,11 @@ public:
     // The incoming values are measured in pixels and will be scaled internally.
     void setTexdef(const TexDef& texDef);
 
+    // Constructs the texture projection matrix from the given (world) vertex and texture coords.
+    // Three vertices and their UV coordinates are enough to construct the texdef.
+    // Will fire texDefChanged() after assigning the new texture matrix.
+    void setTexDefFromPoints(const Vector3 points[3], const Vector2 uvs[3]);
+
 	ShiftScaleRotation getShiftScaleRotation() const override;
 	void setShiftScaleRotation(const ShiftScaleRotation& scr) override;
 
