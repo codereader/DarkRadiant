@@ -5,6 +5,7 @@
 #include "itextstream.h"
 #include "irenderable.h"
 
+#include "math/Matrix3.h"
 #include "shaderlib.h"
 #include "texturelib.h"
 #include "Winding.h"
@@ -542,28 +543,20 @@ void Face::rotateTexdef(float angle)
 
     centroid /= static_cast<Vector2::ElementType>(m_winding.size());
 
-    auto rad = degrees_to_radians(angle);
-
-    Vector2 uvs[] =
-    {
-        m_winding[0].texcoord,
-        m_winding[1].texcoord,
-        m_winding[2].texcoord,
-    };
+    auto angleInRadians = degrees_to_radians(angle);
 
     // Translate to origin, then rotate, then translate back
-    for (std::size_t i = 0; i < 3; ++i)
+    auto pivotedRotation = Matrix3::getTranslation(-centroid)
+        .getPremultipliedBy(Matrix3::getRotation(angleInRadians))
+        .getPremultipliedBy(Matrix3::getTranslation(centroid));
+
+    // Calculate the desired set of UV coordinates
+    Vector2 uvs[] =
     {
-        auto texcoord = uvs[i] - centroid;
-        
-        auto texcoordX = texcoord.x();
-        auto texcoordY = texcoord.y();
-
-        texcoord.x() = cos(rad) * texcoordX - sin(rad) * texcoordY;
-        texcoord.y() = sin(rad) * texcoordX + cos(rad) * texcoordY;
-
-        uvs[i] = texcoord + centroid;
-    }
+        pivotedRotation * m_winding[0].texcoord,
+        pivotedRotation * m_winding[1].texcoord,
+        pivotedRotation * m_winding[2].texcoord,
+    };
 
     // Get the axis base for this face, we need the XYZ points in that state
     // to calculate the desired texture transform
@@ -572,52 +565,39 @@ void Face::rotateTexdef(float angle)
     // Pick 3 arbitrary winding vertices and apply the axis base on them
     Vector3 points[] =
     {
-        axisBase.transformPoint(m_winding[0].vertex),
-        axisBase.transformPoint(m_winding[1].vertex),
-        axisBase.transformPoint(m_winding[2].vertex),
+        axisBase * m_winding[0].vertex,
+        axisBase * m_winding[1].vertex,
+        axisBase * m_winding[2].vertex,
     };
 
-    // Calculate the texture projection for these calculated vertices
-    Eigen::Matrix3d mat;
-    mat(0, 0) = points[0].x();
-    mat(1, 0) = points[0].y();
-    mat(2, 0) = 1;
+    // Calculate the texture projection for these desired set of UVs and XYZ
 
-    mat(0, 1) = points[1].x();
-    mat(1, 1) = points[1].y();
-    mat(2, 1) = 1;
+    // The texture projection matrix is applied to the vertices after they have been
+    // transformed by the axis base, so T*AB*vertex = texcoord
+    // If the above is to be solved for T, we have to solve a set of linear equations:
+    // T * Av = Ast => solve by right-multiplying the Av^-1 onto both sides
 
-    mat(0, 2) = points[2].x();
-    mat(1, 2) = points[2].y();
-    mat(2, 2) = 1;
+    auto pointMatrix = Matrix3::byColumns(points[0].x(), points[0].y(), 1,
+            points[1].x(), points[1].y(), 1,
+            points[2].x(), points[2].y(), 1);
 
-    Eigen::Matrix3d uvMatrix;
-    uvMatrix(0, 0) = uvs[0].x();
-    uvMatrix(1, 0) = uvs[0].y();
-    uvMatrix(2, 0) = 1;
+    auto uvMatrix = Matrix3::byColumns(uvs[0].x(), uvs[0].y(), 1,
+        uvs[1].x(), uvs[1].y(), 1,
+        uvs[2].x(), uvs[2].y(), 1);
 
-    uvMatrix(0, 1) = uvs[1].x();
-    uvMatrix(1, 1) = uvs[1].y();
-    uvMatrix(2, 1) = 1;
-
-    uvMatrix(0, 2) = uvs[2].x();
-    uvMatrix(1, 2) = uvs[2].y();
-    uvMatrix(2, 2) = 1;
-
-    Eigen::Matrix3d textureMatrix = uvMatrix * mat.inverse();
+    auto textureMatrix = uvMatrix * pointMatrix.getFullInverse();
 
     auto newMatrix = Matrix4::getIdentity();
 
-    newMatrix.xx() = textureMatrix(0, 0);
-    newMatrix.xy() = textureMatrix(1, 0);
-    newMatrix.yx() = textureMatrix(0, 1);
-    newMatrix.yy() = textureMatrix(1, 1);
-    newMatrix.tx() = textureMatrix(0, 2);
-    newMatrix.ty() = textureMatrix(1, 2);
+    newMatrix.xx() = textureMatrix.xx();
+    newMatrix.xy() = textureMatrix.xy();
+    newMatrix.yx() = textureMatrix.yx();
+    newMatrix.yy() = textureMatrix.yy();
+    newMatrix.tx() = textureMatrix.zx();
+    newMatrix.ty() = textureMatrix.zy();
 
     _texdef.setTransform(newMatrix);
 
-    //_texdef.rotate(angle, _shader.getWidth(), _shader.getHeight());
     texdefChanged();
 }
 
