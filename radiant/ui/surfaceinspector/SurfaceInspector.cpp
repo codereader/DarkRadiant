@@ -53,20 +53,20 @@ namespace
     const char* const FOLDER_ICON = "treeView16.png";
     const char* const LABEL_STEP = N_("Step:");
 
-    const char* LABEL_FIT_TEXTURE = N_("Fit Texture:");
+    const char* LABEL_FIT_TEXTURE = N_("Fit:");
     const char* LABEL_FIT = N_("Fit");
 
-    const char* LABEL_ALIGN_TEXTURE = N_("Align Texture:");
+    const char* LABEL_ALIGN_TEXTURE = N_("Align:");
     const char* LABEL_ALIGN_TOP = N_("Top");
     const char* LABEL_ALIGN_BOTTOM = N_("Bottom");
     const char* LABEL_ALIGN_RIGHT = N_("Right");
     const char* LABEL_ALIGN_LEFT = N_("Left");
 
-    const char* LABEL_FLIP_TEXTURE = N_("Flip Texture:");
+    const char* LABEL_FLIP_TEXTURE = N_("Flip:");
     const char* LABEL_FLIPX = N_("Flip Horizontal");
     const char* LABEL_FLIPY = N_("Flip Vertical");
 
-    const char* LABEL_MODIFY_TEXTURE = N_("Modify Texture:");
+    const char* LABEL_MODIFY_TEXTURE = N_("Modify:");
     const char* LABEL_NATURAL = N_("Natural");
     const char* LABEL_NORMALISE = N_("Normalise");
 
@@ -223,7 +223,7 @@ wxSpinCtrlDouble* SurfaceInspector::makeFitSpinBox(Axis axis)
     wxSpinCtrlDouble* box = new wxSpinCtrlDouble(this, wxID_ANY);
 
     // Set visual parameters
-    box->SetMinSize(wxSize(box->GetCharWidth() * 5, -1));
+    box->SetMinSize(wxSize(box->GetCharWidth() * 7, -1));
     box->SetRange(0.0, 1000.0);
     box->SetIncrement(1.0);
     box->SetValue(1.0);
@@ -267,6 +267,9 @@ wxBoxSizer* SurfaceInspector::createFitTextureRow()
         _("When fitting texture on one axis using the spin buttons, adjust the "
           "other axis automatically to preserve texture aspect ratio")
     );
+
+    _fitTexture.preserveAspectButton->SetMinSize(wxSize(30, -1));
+    _fitTexture.fitButton->SetMinSize(wxSize(30, -1));
 
     // Add widgets to the sizer
     auto* widthTimesHeight = new wxBoxSizer(wxHORIZONTAL);
@@ -361,7 +364,12 @@ void SurfaceInspector::populateWindow()
 	_alignTexture.left = new wxButton(this, wxID_ANY, _(LABEL_ALIGN_LEFT));
 	_alignTexture.right = new wxButton(this, wxID_ANY, _(LABEL_ALIGN_RIGHT));
 
-	wxGridSizer* alignTextureBox = new wxGridSizer(1, 4, 0, 6);
+    _alignTexture.top->SetMinSize(wxSize(20, -1));
+    _alignTexture.bottom->SetMinSize(wxSize(20, -1));
+    _alignTexture.left->SetMinSize(wxSize(20, -1));
+    _alignTexture.right->SetMinSize(wxSize(20, -1));
+
+	auto* alignTextureBox = new wxGridSizer(1, 4, 0, 6);
 
 	alignTextureBox->Add(_alignTexture.top, 1, wxEXPAND);
 	alignTextureBox->Add(_alignTexture.bottom, 1, wxEXPAND);
@@ -406,7 +414,7 @@ void SurfaceInspector::populateWindow()
 	wxStaticText* defaultScaleLabel = new wxStaticText(this, wxID_ANY, _(LABEL_DEFAULT_SCALE));
 
 	_defaultTexScale = new wxSpinCtrlDouble(this, wxID_ANY);
-	_defaultTexScale->SetMinSize(wxSize(55, -1));
+	_defaultTexScale->SetMinSize(wxSize(50, -1));
 	_defaultTexScale->SetRange(0.0, 1000.0);
 	_defaultTexScale->SetIncrement(0.1);
 	_defaultTexScale->SetDigits(3);
@@ -442,8 +450,8 @@ SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
 
 	// Create the entry field
 	manipRow.value = new wxTextCtrl(parent, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
-	manipRow.value->SetMinSize(wxSize(60, -1));
-	manipRow.value->Connect(wxEVT_TEXT_ENTER, wxCommandEventHandler(SurfaceInspector::onValueEntryActivate), NULL, this);
+	manipRow.value->SetMinSize(wxSize(50, -1));
+	manipRow.value->Bind(wxEVT_TEXT_ENTER, &SurfaceInspector::onValueEntryActivate, this);
 
     // Create the nudge buttons
 	wxBoxSizer* controlButtonBox = new wxBoxSizer(wxHORIZONTAL);
@@ -460,6 +468,7 @@ SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
 
 	// Create the entry field
 	manipRow.stepEntry = new wxTextCtrl(parent, wxID_ANY, "");
+    manipRow.stepEntry->SetMinSize(wxSize(30, -1));
 
 	// Arrange all items in a row
     hbox->Add(manipRow.value, 1, wxALIGN_CENTER_VERTICAL);
