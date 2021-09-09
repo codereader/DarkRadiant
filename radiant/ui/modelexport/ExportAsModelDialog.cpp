@@ -179,6 +179,14 @@ void ExportAsModelDialog::onExport(wxCommandEvent& ev)
 		return;
 	}
 
+    // Warn the user if the output file extension doesn't match what the format says (#5741)
+    if (string::to_lower_copy(os::getExtension(outputFilename)) != string::to_lower_copy(outputFormat) &&
+        wxutil::Messagebox::Show(_("Format/Extension Mismatch"), _("The file extension doesn't match the selected format - continue?"), 
+            IDialog::MessageType::MESSAGE_ASK) == IDialog::RESULT_NO)
+    {
+        return; // abort
+    }
+
 	// Check if the target file already exists
 	if (os::fileOrDirExists(outputFilename) &&
 		wxutil::Messagebox::Show(_("Confirm Replacement"), 
