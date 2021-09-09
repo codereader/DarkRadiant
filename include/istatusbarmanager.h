@@ -18,12 +18,11 @@ struct StandardPosition
     enum
     {
         Front = 0,
-        Command = 10,
-        OrthoViewPosition = 20,
-        MapStatistics = 30,
+        MapStatistics = 10,
+        GridSize = 20,
+        OrthoViewPosition = 30,
         ShaderClipboard = 40,
-        GridSize = 50,
-        MapEditStopwatch = 60,
+        MapEditStopwatch = 50,
         Back = 9000,
     };
 };

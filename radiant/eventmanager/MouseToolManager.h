@@ -27,7 +27,7 @@ protected:
     unsigned int _activeModifierState;
 
     wxTimer _hintCloseTimer;
-    std::unique_ptr<ModifierHintPopup> _hintPopup;
+    ModifierHintPopup* _hintPopup;
 
 public:
     MouseToolManager();
@@ -60,6 +60,7 @@ private:
     void saveToolMappings();
 
     void onCloseTimerIntervalReached(wxTimerEvent& ev);
+    void closeHintPopup();
 };
 
 } // namespace

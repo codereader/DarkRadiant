@@ -1,7 +1,6 @@
 #include "MouseToolManager.h"
 
 #include "iradiant.h"
-#include "istatusbarmanager.h"
 #include "iregistry.h"
 #include "itextstream.h"
 #include "imainframe.h"
@@ -17,12 +16,13 @@ namespace ui
 
 namespace
 {
-    constexpr const char* const STATUS_BAR_ELEMENT = "Command";
+    constexpr int HINT_POPUP_CLOSE_TIMEOUT_MSECS = 1000;
 }
 
 MouseToolManager::MouseToolManager() :
     _activeModifierState(0),
-    _hintCloseTimer(this)
+    _hintCloseTimer(this),
+    _hintPopup(nullptr)
 {
     Bind(wxEVT_TIMER, &MouseToolManager::onCloseTimerIntervalReached, this);
 }
@@ -41,7 +41,6 @@ const StringSet& MouseToolManager::getDependencies() const
     if (_dependencies.empty())
     {
         _dependencies.insert(MODULE_MAINFRAME);
-        _dependencies.insert(MODULE_STATUSBARMANAGER);
     }
 
     return _dependencies;
@@ -51,14 +50,6 @@ void MouseToolManager::initialiseModule(const IApplicationContext& ctx)
 {
     GlobalMainFrame().signal_MainFrameConstructed().connect(
         sigc::mem_fun(this, &MouseToolManager::onMainFrameConstructed));
-
-    // Add the statusbar command text item
-    GlobalStatusBarManager().addTextElement(
-        STATUS_BAR_ELEMENT,
-        "",  // no icon
-        statusbar::StandardPosition::Command,
-        _("Describes available Mouse Commands")
-    );
 }
 
 void MouseToolManager::loadGroupMapping(MouseToolGroup::Type type, const xml::NodeList& userMappings, const xml::NodeList& defaultMappings)
@@ -153,6 +144,9 @@ void MouseToolManager::saveToolMappings()
 
 void MouseToolManager::shutdownModule()
 {
+    _hintCloseTimer.Stop();
+    closeHintPopup();
+
     // Save tool mappings
     saveToolMappings();
 
@@ -161,12 +155,12 @@ void MouseToolManager::shutdownModule()
 
 MouseToolGroup& MouseToolManager::getGroup(IMouseToolGroup::Type group)
 {
-    GroupMap::iterator found = _mouseToolGroups.find(group);
+    auto found = _mouseToolGroups.find(group);
 
     // Insert if not there yet
     if (found == _mouseToolGroups.end())
     {
-        found = _mouseToolGroups.insert(std::make_pair(group, std::make_shared<MouseToolGroup>(group))).first;
+        found = _mouseToolGroups.emplace(group, std::make_shared<MouseToolGroup>(group)).first;
     }
 
     return *found->second;
@@ -228,45 +222,46 @@ void MouseToolManager::updateStatusbar(unsigned int newState)
     if (statusText.empty())
     {
         _hintCloseTimer.Stop();
-
-        if (_hintPopup)
-        {
-            _hintPopup->Close();
-            _hintPopup.reset();
-        }
-
+        closeHintPopup();
         return;
     }
 
-    _hintCloseTimer.StartOnce(1000);
+    // (Re-)start the timer
+    _hintCloseTimer.StartOnce(HINT_POPUP_CLOSE_TIMEOUT_MSECS);
 
+    // Ensure the popup exists
     if (!_hintPopup)
     {
-        _hintPopup.reset(new ModifierHintPopup(GlobalMainFrame().getWxTopLevelWindow()));
+        _hintPopup = new ModifierHintPopup(GlobalMainFrame().getWxTopLevelWindow());
         _hintPopup->Show();
     }
 
     _hintPopup->SetText(statusText);
+}
 
-    // Pass the call
-    //GlobalStatusBarManager().setText(STATUS_BAR_ELEMENT, statusText);
+void MouseToolManager::closeHintPopup()
+{
+    if (_hintPopup)
+    {
+        _hintPopup->Hide();
+        _hintPopup->Destroy();
+        _hintPopup = nullptr;
+    }
 }
 
 void MouseToolManager::onCloseTimerIntervalReached(wxTimerEvent& ev)
 {
     // If no modifiers are held anymore, close the popup
-    bool modifierHeld = wxGetKeyState(WXK_SHIFT) || wxGetKeyState(WXK_CONTROL) || wxGetKeyState(WXK_ALT);
-
-    if (modifierHeld)
+    if (wxutil::Modifier::AnyModifierKeyHeldDown())
     {
-        ev.GetTimer().StartOnce(1000);
+        // Another round of waiting
+        ev.GetTimer().StartOnce(HINT_POPUP_CLOSE_TIMEOUT_MSECS);
         return;
     }
 
     if (_hintPopup)
     {
-        _hintPopup->Close();
-        _hintPopup.reset();
+        closeHintPopup();
         return;
     }
 }

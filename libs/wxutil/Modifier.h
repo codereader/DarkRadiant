@@ -150,6 +150,12 @@ public:
         return mod;
     }
 
+    // Returns true if any of Shift, Ctrl or Alt is currently held down
+    static bool AnyModifierKeyHeldDown()
+    {
+        return wxGetKeyState(WXK_SHIFT) || wxGetKeyState(WXK_CONTROL) || wxGetKeyState(WXK_ALT);
+    }
+
     static void SaveToNode(unsigned int state, xml::Node& node)
     {
         node.setAttributeValue(ATTR_MODIFIER, GetModifierString(state));
