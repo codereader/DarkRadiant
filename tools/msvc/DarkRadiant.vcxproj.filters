@@ -1407,6 +1407,9 @@
     <ClInclude Include="..\..\radiant\map\AutoSaveTimer.h">
       <Filter>src\map</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\eventmanager\ModifierHintPopup.h">
+      <Filter>src\eventmanager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />

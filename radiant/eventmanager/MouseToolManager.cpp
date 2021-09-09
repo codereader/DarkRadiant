@@ -21,8 +21,11 @@ namespace
 }
 
 MouseToolManager::MouseToolManager() :
-    _activeModifierState(0)
-{}
+    _activeModifierState(0),
+    _hintCloseTimer(this)
+{
+    Bind(wxEVT_TIMER, &MouseToolManager::onCloseTimerIntervalReached, this);
+}
 
 // RegisterableModule implementation
 const std::string& MouseToolManager::getName() const
@@ -222,8 +225,50 @@ void MouseToolManager::updateStatusbar(unsigned int newState)
         });
     }
 
+    if (statusText.empty())
+    {
+        _hintCloseTimer.Stop();
+
+        if (_hintPopup)
+        {
+            _hintPopup->Close();
+            _hintPopup.reset();
+        }
+
+        return;
+    }
+
+    _hintCloseTimer.StartOnce(1000);
+
+    if (!_hintPopup)
+    {
+        _hintPopup.reset(new ModifierHintPopup(GlobalMainFrame().getWxTopLevelWindow()));
+        _hintPopup->Show();
+    }
+
+    _hintPopup->SetText(statusText);
+
     // Pass the call
-    GlobalStatusBarManager().setText(STATUS_BAR_ELEMENT, statusText);
+    //GlobalStatusBarManager().setText(STATUS_BAR_ELEMENT, statusText);
+}
+
+void MouseToolManager::onCloseTimerIntervalReached(wxTimerEvent& ev)
+{
+    // If no modifiers are held anymore, close the popup
+    bool modifierHeld = wxGetKeyState(WXK_SHIFT) || wxGetKeyState(WXK_CONTROL) || wxGetKeyState(WXK_ALT);
+
+    if (modifierHeld)
+    {
+        ev.GetTimer().StartOnce(1000);
+        return;
+    }
+
+    if (_hintPopup)
+    {
+        _hintPopup->Close();
+        _hintPopup.reset();
+        return;
+    }
 }
 
 module::StaticModule<MouseToolManager> mouseToolManagerModule;

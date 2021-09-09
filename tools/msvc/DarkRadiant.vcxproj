@@ -399,6 +399,7 @@
     <ClInclude Include="..\..\radiant\eventmanager\EventManager.h" />
     <ClInclude Include="..\..\radiant\eventmanager\GlobalKeyEventFilter.h" />
     <ClInclude Include="..\..\radiant\eventmanager\KeyEvent.h" />
+    <ClInclude Include="..\..\radiant\eventmanager\ModifierHintPopup.h" />
     <ClInclude Include="..\..\radiant\eventmanager\MouseToolGroup.h" />
     <ClInclude Include="..\..\radiant\eventmanager\MouseToolManager.h" />
     <ClInclude Include="..\..\radiant\eventmanager\RegistryToggle.h" />

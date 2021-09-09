@@ -5,6 +5,9 @@
 #include "imousetoolmanager.h"
 #include "xmlutil/Node.h"
 #include "MouseToolGroup.h"
+#include "ModifierHintPopup.h"
+#include <wx/event.h>
+#include <wx/timer.h>
 
 namespace ui
 {
@@ -14,6 +17,7 @@ namespace ui
 * This is used by the GlobalXYWnd and GlobalCamera instances.
 */
 class MouseToolManager :
+    public wxEvtHandler,
     public IMouseToolManager
 {
 protected:
@@ -21,6 +25,9 @@ protected:
     GroupMap _mouseToolGroups;
 
     unsigned int _activeModifierState;
+
+    wxTimer _hintCloseTimer;
+    std::unique_ptr<ModifierHintPopup> _hintPopup;
 
 public:
     MouseToolManager();
@@ -51,6 +58,8 @@ private:
 	void loadGroupMapping(MouseToolGroup::Type type, const xml::NodeList& userMappings, const xml::NodeList& defaultMappings);
 
     void saveToolMappings();
+
+    void onCloseTimerIntervalReached(wxTimerEvent& ev);
 };
 
 } // namespace
