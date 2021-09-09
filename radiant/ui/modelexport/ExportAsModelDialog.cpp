@@ -237,10 +237,7 @@ void ExportAsModelDialog::handleFormatSelectionChange()
 		std::string extLower = string::to_lower_copy(selectedFormat);
 
 		// Adjust the extension of the current file name
-		if (!os::getExtension(pathEntry->getValue()).empty())
-		{
-			pathEntry->setValue(os::replaceExtension(pathEntry->getValue(), extLower));
-		}
+		pathEntry->setValue(os::replaceExtension(pathEntry->getValue(), extLower));
 
 		// Check if the replace current selection option is available
 		std::string extensions = GlobalGameManager().currentGame()->getKeyValue("modeltypes");
