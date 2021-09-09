@@ -38,6 +38,19 @@ void TextureProjection::assign(const TextureProjection& other)
     matrix = other.matrix;
 }
 
+void TextureProjection::setTransform(const Matrix3& transform)
+{
+    // Check the matrix for validity
+    if ((transform.xx() != 0 || transform.yx() != 0) && (transform.xy() != 0 || transform.yy() != 0))
+    {
+        matrix = TextureMatrix(transform);
+    }
+    else
+    {
+        rError() << "invalid texture matrix" << std::endl;
+    }
+}
+
 /* greebo: Uses the transformation matrix <transform> to set the internal texture
  * definitions. Checks the matrix for validity and passes it on to
  * the according internal texture definitions (TexDef or BPTexDef)
@@ -70,11 +83,6 @@ void TextureProjection::shift(double s, double t)
 void TextureProjection::scale(double s, double t, std::size_t shaderWidth, std::size_t shaderHeight)
 {
     matrix.scale(s, t, shaderWidth, shaderHeight);
-}
-
-void TextureProjection::rotate(double angle, std::size_t shaderWidth, std::size_t shaderHeight)
-{
-    matrix.rotate(angle, shaderWidth, shaderHeight);
 }
 
 // Normalise projection for a given texture width and height.

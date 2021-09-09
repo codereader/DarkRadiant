@@ -553,17 +553,7 @@ void Face::setTexDefFromPoints(const Vector3 points[3], const Vector2 uvs[3])
 
     auto textureMatrix = uv * xyz.getFullInverse();
 
-    // Extract the matrix components and pass the 4x4 matrix to our texdef
-    auto newMatrix = Matrix4::getIdentity();
-
-    newMatrix.xx() = textureMatrix.xx();
-    newMatrix.xy() = textureMatrix.xy();
-    newMatrix.yx() = textureMatrix.yx();
-    newMatrix.yy() = textureMatrix.yy();
-    newMatrix.tx() = textureMatrix.zx();
-    newMatrix.ty() = textureMatrix.zy();
-
-    _texdef.setTransform(newMatrix);
+    _texdef.setTransform(textureMatrix);
 
     texdefChanged();
 }

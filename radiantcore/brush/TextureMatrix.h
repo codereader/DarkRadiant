@@ -3,8 +3,36 @@
 #include "TexDef.h"
 
 class Matrix4;
+class Matrix3;
 
 // Encapsulates the 2x3 matrix transforming world coordinates into texture space
+// 
+// greebo: A brief note on why just 6 defined matrix components are enough here: 
+// Normally projecting 3D coordinates might require a full 4x4 matrix such that every 
+// XYZ component can be contributing. But in idTech engines the vertices are preprocessed
+// using an "axis base" transformation as first step, which is rotating the world such that 
+// the Z direction is aligned with the "direction" of the projection.
+// 
+// The full path from XYZ to UV is therefore: T x AB x XYZ = UV
+// 
+// The final texture matrix can just ignore the Z component of every vertex and 
+// transform the remaining, meaningful XY components of the vector using a homegeneous 
+// 3x3 matrix transformation. (The third component of the vector is used as 
+// the W coordinate and is set to 1, to make it translatable by tx and ty):
+// 
+//  | xx yx tx |   | x |   | u |
+//  | xy yy ty | X | y |   | v |
+//  | 0  0  1  |   | 1 | = | 1 |
+// 
+// Therefore only 6 compontents are really needed to define the matrix.
+// The trick to rotate the world space such that it is "oriented" along a plane changed 
+// over time, from what I gathered reading the engine code.
+// Q3-type engines seemed to pick one of the 6 axis-aligned planes (picking the one matching
+// the face normal the most), whereas Doom 3 goes a step further and aligns the Z axis 
+// of the world system to the normal of the face plane. That's why the values of shift/scale/rotation
+// texdef defined in a Q3 map file will never look the same in idTech4 engines when placed on
+// angled brush faces - there will always be a stretch in some direction, which the D3 engine
+// completely works around by using the actual face normal - no stretching.
 struct TextureMatrix
 {
 	double coords[2][3];
@@ -13,8 +41,12 @@ struct TextureMatrix
 	TextureMatrix();
 
 	// Construct the BP Definition out of the transformation matrix
-	// Basically copies over the values from the according components
+	// Basically copies over the values from the corresponding components
 	TextureMatrix(const Matrix4& transform);
+
+    // Copy-construct from the relevant components from the given transform 
+    // (which is everything except the last row: xz() and yz() are 0, zz() is 1)
+	TextureMatrix(const Matrix3& transform);
 
 	// Construct a TextureMatrix out of "fake" shift scale rot definitions
 	TextureMatrix(const TexDef& texdef);
@@ -24,9 +56,6 @@ struct TextureMatrix
 
 	// Scales texture by the given float values (1.05 scales texture to 105%)
 	void scale(double s, double t, std::size_t shaderWidth, std::size_t shaderHeight);
-
-	// apply same rotation as the spinner button of the surface inspector
-	void rotate(double angle, std::size_t shaderWidth, std::size_t shaderHeight);
 
 	/* greebo: This removes the texture scaling from the
 	 * coordinates. The resulting coordinates are absolute

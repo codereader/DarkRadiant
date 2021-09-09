@@ -2,6 +2,8 @@
 
 #include "texturelib.h"
 #include "math/Vector2.h"
+#include "math/Matrix3.h"
+#include "math/Matrix4.h"
 
 // Constructor with empty arguments
 TextureMatrix::TextureMatrix()
@@ -14,8 +16,6 @@ TextureMatrix::TextureMatrix()
 	coords[1][2] = 0.f;
 }
 
-// Construct the BP Definition out of the transformation matrix
-// Basically copies over the values from the according components
 TextureMatrix::TextureMatrix(const Matrix4& transform)
 {
 	coords[0][0] = transform.xx();
@@ -24,6 +24,16 @@ TextureMatrix::TextureMatrix(const Matrix4& transform)
 	coords[1][0] = transform.xy();
 	coords[1][1] = transform.yy();
 	coords[1][2] = transform.ty();
+}
+
+TextureMatrix::TextureMatrix(const Matrix3& transform)
+{
+    coords[0][0] = transform.xx();
+    coords[0][1] = transform.yx();
+    coords[0][2] = transform.zx();
+    coords[1][0] = transform.xy();
+    coords[1][1] = transform.yy();
+    coords[1][2] = transform.zy();
 }
 
 // Construct a TextureMatrix out of "fake" shift scale rot definitions
@@ -88,25 +98,6 @@ void TextureMatrix::scale(double s, double t, std::size_t shaderWidth, std::size
 	scale[0] = newXScale;
 	scale[1] = newYScale;
 	texdef.setScale(scale);
-
-	// compute new normalized texture matrix
-	*this = TextureMatrix(texdef);
-
-    // Undo the previous step of adding the texture scale
-    addScale(shaderWidth, shaderHeight);
-}
-
-// apply same rotation as the spinner button of the surface inspector
-void TextureMatrix::rotate(double angle, std::size_t shaderWidth, std::size_t shaderHeight)
-{
-    // We need to have the shader dimensions applied before calling getFakeTexCoords()
-    applyShaderDimensions(shaderWidth, shaderHeight);
-
-	// compute fake shift scale rot
-	TexDef texdef = getFakeTexCoords();
-
-	// update
-	texdef.setRotation(texdef.getRotation() + angle);
 
 	// compute new normalized texture matrix
 	*this = TextureMatrix(texdef);

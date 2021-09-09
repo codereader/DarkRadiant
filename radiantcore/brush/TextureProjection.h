@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ibrush.h"
+#include "math/Matrix3.h"
 #include "texturelib.h"
 #include "Winding.h"
 #include "math/AABB.h"
@@ -35,13 +36,13 @@ public:
 
     void assign(const TextureProjection& other);
 
+    void setTransform(const Matrix3& transform);
     void setTransform(const Matrix4& transform);
     Matrix4 getTransform() const;
 
 	// s and t are texture coordinates, not pixels
     void shift(double s, double t);
     void scale(double s, double t, std::size_t shaderWidth, std::size_t shaderHeight);
-    void rotate(double angle, std::size_t shaderWidth, std::size_t shaderHeight);
 
     // Normalise projection for a given texture width and height.
     void normalise(float width, float height);
