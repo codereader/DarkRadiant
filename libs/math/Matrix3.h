@@ -16,8 +16,7 @@
  */
 class alignas(16) Matrix3
 {
-    // Underlying Eigen transform object (which can in turn be reduced to a 3x3
-    // Matrix)
+    // Underlying Eigen transform object (which can in turn be reduced to a 3x3 Matrix)
     using Transform = Eigen::Projective2d;
     Transform _transform;
 
@@ -201,7 +200,7 @@ public:
 };
 
 // Private constructor
-Matrix3::Matrix3(double xx_, double xy_, double xz_,
+inline Matrix3::Matrix3(double xx_, double xy_, double xz_,
     double yx_, double yy_, double yz_,
     double zx_, double zy_, double zz_)
 {
@@ -237,7 +236,7 @@ inline Matrix3 Matrix3::byRows(double xx, double yx, double zx,
 }
 
 template<typename T>
-BasicVector3<T> Matrix3::transform(const BasicVector3<T>& vector3) const
+inline BasicVector3<T> Matrix3::transform(const BasicVector3<T>& vector3) const
 {
     Eigen::Matrix<T, 3, 1> eVec(static_cast<const double*>(vector3));
     auto result = _transform * eVec;
@@ -268,7 +267,7 @@ inline Matrix3 operator*(const Matrix3& m1, const Matrix3& m2)
  * Equivalent to m.transform(v).
  */
 template<typename T>
-BasicVector3<T> operator*(const Matrix3& m, const BasicVector3<T>& v)
+inline BasicVector3<T> operator*(const Matrix3& m, const BasicVector3<T>& v)
 {
     return m.transform(v);
 }
@@ -280,7 +279,7 @@ BasicVector3<T> operator*(const Matrix3& m, const BasicVector3<T>& v)
  * equivalent to m.transformPoint(v).
  */
 template<typename T>
-BasicVector2<T> operator*(const Matrix3& m, const BasicVector2<T>& v)
+inline BasicVector2<T> operator*(const Matrix3& m, const BasicVector2<T>& v)
 {
     return m.transformPoint(v);
 }
