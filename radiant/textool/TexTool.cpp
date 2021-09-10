@@ -74,6 +74,10 @@ TexTool::TexTool() :
         sigc::bind(sigc::mem_fun(this, &TexTool::setGridActive), true),
         sigc::bind(sigc::mem_fun(this, &TexTool::setGridActive), false)
     );
+
+    _freezePointer.connectMouseEvents(
+        std::bind(&TexTool::onMouseDown, this, std::placeholders::_1),
+        std::bind(&TexTool::onMouseUp, this, std::placeholders::_1));
 }
 
 TexToolPtr& TexTool::InstancePtr()
@@ -91,22 +95,22 @@ void TexTool::setGridActive(bool active)
 void TexTool::populateWindow()
 {
 	// Connect all relevant events
-	_glWidget->Connect(wxEVT_SIZE, wxSizeEventHandler(TexTool::onGLResize), NULL, this);
-	_glWidget->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(TexTool::onMouseScroll), NULL, this);
-	_glWidget->Connect(wxEVT_MOTION, wxMouseEventHandler(TexTool::onMouseMotion), NULL, this);
+	_glWidget->Bind(wxEVT_SIZE, &TexTool::onGLResize, this);
+	_glWidget->Bind(wxEVT_MOUSEWHEEL, &TexTool::onMouseScroll, this);
+	_glWidget->Bind(wxEVT_MOTION, &TexTool::onMouseMotion, this);
 
-	_glWidget->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(TexTool::onMouseDown), NULL, this);
-    _glWidget->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(TexTool::onMouseDown), NULL, this);
-	_glWidget->Connect(wxEVT_LEFT_UP, wxMouseEventHandler(TexTool::onMouseUp), NULL, this);
-	_glWidget->Connect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(TexTool::onMouseDown), NULL, this);
-    _glWidget->Connect(wxEVT_RIGHT_DCLICK, wxMouseEventHandler(TexTool::onMouseDown), NULL, this);
-	_glWidget->Connect(wxEVT_RIGHT_UP, wxMouseEventHandler(TexTool::onMouseUp), NULL, this);
-	_glWidget->Connect(wxEVT_MIDDLE_DOWN, wxMouseEventHandler(TexTool::onMouseDown), NULL, this);
-    _glWidget->Connect(wxEVT_MIDDLE_DCLICK, wxMouseEventHandler(TexTool::onMouseDown), NULL, this);
-	_glWidget->Connect(wxEVT_MIDDLE_UP, wxMouseEventHandler(TexTool::onMouseUp), NULL, this);
+	_glWidget->Bind(wxEVT_LEFT_DOWN, &TexTool::onMouseDown, this);
+    _glWidget->Bind(wxEVT_LEFT_DCLICK, &TexTool::onMouseDown, this);
+	_glWidget->Bind(wxEVT_LEFT_UP, &TexTool::onMouseUp, this);
+	_glWidget->Bind(wxEVT_RIGHT_DOWN, &TexTool::onMouseDown, this);
+    _glWidget->Bind(wxEVT_RIGHT_DCLICK, &TexTool::onMouseDown, this);
+	_glWidget->Bind(wxEVT_RIGHT_UP, &TexTool::onMouseUp, this);
+	_glWidget->Bind(wxEVT_MIDDLE_DOWN, &TexTool::onMouseDown, this);
+    _glWidget->Bind(wxEVT_MIDDLE_DCLICK, &TexTool::onMouseDown, this);
+	_glWidget->Bind(wxEVT_MIDDLE_UP, &TexTool::onMouseUp, this);
 
 	// Connect our own key handler afterwards to receive events before the event manager
-	_glWidget->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(TexTool::onKeyPress), NULL, this);
+	_glWidget->Bind(wxEVT_KEY_DOWN, &TexTool::onKeyPress, this);
 
 	SetSizer(new wxBoxSizer(wxVERTICAL));
 
@@ -900,47 +904,58 @@ void TexTool::onGLResize(wxSizeEvent& ev)
 
 void TexTool::onMouseUp(wxMouseEvent& ev)
 {
+    // Regular mouse tool processing
+    MouseToolHandler::onGLMouseButtonRelease(ev);
+
 	// Calculate the texture coords from the x/y click coordinates
 	Vector2 texCoords = getTextureCoords(ev.GetX(), ev.GetY());
 
 	// Pass the call to the member method
 	doMouseUp(texCoords, ev);
 
+#if 0
 	// Check for view origin movements
     if (ev.RightDown() && !ev.HasAnyModifiers())
 	{
 		_viewOriginMove = false;
 	}
-
+#endif
 	ev.Skip();
 }
 
 void TexTool::onMouseDown(wxMouseEvent& ev)
 {
+    // Send the event to the mouse tool handler
+    MouseToolHandler::onGLMouseButtonPress(ev);
+
 	// Calculate the texture coords from the x/y click coordinates
 	Vector2 texCoords = getTextureCoords(ev.GetX(), ev.GetY());
 
 	// Pass the call to the member method
 	doMouseDown(texCoords, ev);
 
+#if 0
     // Check for view origin movements
     if (ev.RightDown() && !ev.HasAnyModifiers())
 	{
 		_moveOriginRectangle.topLeft = Vector2(ev.GetX(), ev.GetY());
 		_viewOriginMove = true;
 	}
-
+#endif
 	ev.Skip();
 }
 
 void TexTool::onMouseMotion(wxMouseEvent& ev)
 {
+    MouseToolHandler::onGLMouseMove(ev);
+
 	// Calculate the texture coords from the x/y click coordinates
 	Vector2 texCoords = getTextureCoords(ev.GetX(), ev.GetY());
 
 	// Pass the call to the member routine
 	doMouseMove(texCoords, ev);
 
+#if 0
 	// Check for view origin movements
 	if (_viewOriginMove)
 	{
@@ -963,7 +978,7 @@ void TexTool::onMouseMotion(wxMouseEvent& ev)
 		// Redraw to visualise the changes
 		draw();
 	}
-
+#endif
 	ev.Skip();
 }
 
@@ -1071,15 +1086,53 @@ MouseTool::Result TexTool::processMouseMoveEvent(const MouseToolPtr& tool, int x
     return tool->onMouseMove(ev);
 }
 
+void TexTool::handleGLCapturedMouseMotion(const MouseToolPtr& tool, int x, int y, unsigned int mouseState)
+{
+    if (!tool) return;
+
+#if 0
+    bool mouseToolReceivesDeltas = (tool->getPointerMode() & MouseTool::PointerMode::MotionDeltas) != 0;
+#endif
+    bool pointerFrozen = (tool->getPointerMode() & MouseTool::PointerMode::Freeze) != 0;
+
+    // Check if the mouse has reached exceeded the window borders for chase mouse behaviour
+    // In FreezePointer mode there's no need to check for chase since the cursor is fixed anyway
+    if (tool->allowChaseMouse() && !pointerFrozen /* && checkChaseMouse(mouseState)*/)
+    {
+        // Chase mouse activated, an idle callback will kick in soon
+        return;
+    }
+
+    // Send mouse move events to the active tool and all inactive tools that want them
+    MouseToolHandler::onGLCapturedMouseMove(x, y, mouseState);
+}
 
 void TexTool::startCapture(const MouseToolPtr& tool)
 {
+    if (_freezePointer.isCapturing(_glWidget))
+    {
+        return;
+    }
 
+    unsigned int pointerMode = tool->getPointerMode();
+
+    _freezePointer.startCapture(_glWidget,
+        [&, tool](int x, int y, unsigned int state) { handleGLCapturedMouseMotion(tool, x, y, state); }, // Motion Functor
+        [&, tool]() { MouseToolHandler::handleCaptureLost(tool); }, // called when the capture is lost.
+        (pointerMode & MouseTool::PointerMode::Freeze) != 0,
+        (pointerMode & MouseTool::PointerMode::Hidden) != 0,
+        (pointerMode & MouseTool::PointerMode::MotionDeltas) != 0
+    );
 }
 
 void TexTool::endCapture()
 {
+    if (!_freezePointer.isCapturing(_glWidget))
+    {
+        return;
+    }
 
+    _freezePointer.endCapture();
 }
 
 

@@ -8,11 +8,13 @@
 #include "ishaders.h"
 #include "iinteractiveview.h"
 #include "iradiant.h"
+#include "imousetool.h"
 #include "iselection.h"
 #include "iregistry.h"
 #include <sigc++/connection.h>
 #include <sigc++/trackable.h>
 #include "wxutil/MouseToolHandler.h"
+#include "wxutil/FreezePointer.h"
 #include "tools/TextureToolMouseEvent.h"
 #include "render/View.h"
 
@@ -46,6 +48,8 @@ private:
 	wxutil::GLWidget* _glWidget;
 
     render::View _view;
+
+    wxutil::FreezePointer _freezePointer;
 
 	// The shader we're working with (shared ptr)
 	MaterialPtr _shader;
@@ -287,6 +291,8 @@ protected:
 
 private:
     TextureToolMouseEvent createMouseEvent(const Vector2& point, const Vector2& delta = Vector2(0, 0));
+
+    void handleGLCapturedMouseMotion(const MouseToolPtr& tool, int x, int y, unsigned int mouseState);
 };
 
 } // namespace ui

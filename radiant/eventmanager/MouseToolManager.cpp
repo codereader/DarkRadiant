@@ -99,6 +99,7 @@ void MouseToolManager::loadToolMappings()
 
 	loadGroupMapping(MouseToolGroup::Type::CameraView, userMappings, defaultMappings);
 	loadGroupMapping(MouseToolGroup::Type::OrthoView, userMappings, defaultMappings);
+	loadGroupMapping(MouseToolGroup::Type::TextureTool, userMappings, defaultMappings);
 }
 
 void MouseToolManager::resetBindingsToDefault()
