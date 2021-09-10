@@ -1,5 +1,6 @@
 #pragma once
 
+#include "itexturetoolview.h"
 #include "imousetoolevent.h"
 
 namespace ui
@@ -9,14 +10,24 @@ namespace ui
 class TextureToolMouseEvent :
     public MouseToolEvent
 {
+private:
+    ITextureToolView& _view;
+
 public:
-    TextureToolMouseEvent(IInteractiveView& view, const Vector2& devicePosition) :
-        MouseToolEvent(view, devicePosition)
+    TextureToolMouseEvent(ITextureToolView& view, const Vector2& devicePosition) :
+        MouseToolEvent(view, devicePosition),
+        _view(view)
     {}
 
-    TextureToolMouseEvent(IInteractiveView& view, const Vector2& devicePosition, const Vector2& delta) :
-        MouseToolEvent(view, devicePosition, delta)
+    TextureToolMouseEvent(ITextureToolView& view, const Vector2& devicePosition, const Vector2& delta) :
+        MouseToolEvent(view, devicePosition, delta),
+        _view(view)
     {}
+
+    ITextureToolView& getView()
+    {
+        return _view;
+    }
 };
 
 }

@@ -40,7 +40,6 @@ namespace
 	const std::string RKEY_GRID_STATE = RKEY_TEXTOOL_ROOT + "gridActive";
     const char* const RKEY_SELECT_EPSILON = "user/ui/selectionEpsilon";
 
-	const float DEFAULT_ZOOM_FACTOR = 1.5f;
 	const float ZOOM_MODIFIER = 1.25f;
 	const float MOVE_FACTOR = 2.0f;
 
@@ -54,7 +53,6 @@ TexTool::TexTool() :
     MouseToolHandler(IMouseToolGroup::Type::TextureTool),
     _glWidget(new wxutil::GLWidget(this, std::bind(&TexTool::onGLDraw, this), "TexTool")),
     _selectionInfo(GlobalSelectionSystem().getSelectionInfo()),
-    _zoomFactor(DEFAULT_ZOOM_FACTOR),
     _dragRectangle(false),
     _manipulatorMode(false),
     _viewOriginMove(false),
@@ -312,6 +310,17 @@ void TexTool::queueDraw()
 	_updateNeeded = true;
 }
 
+void TexTool::scrollByPixels(int x, int y)
+{
+    auto& texSpaceAABB = getVisibleTexSpace();
+
+    auto uPerPixel = texSpaceAABB.extents[0] * 2 / _windowDims[0];
+    auto vPerPixel = texSpaceAABB.extents[1] * 2 / _windowDims[1];
+    
+    texSpaceAABB.origin[0] -= x * uPerPixel;
+    texSpaceAABB.origin[1] -= y * vPerPixel;
+}
+
 void TexTool::flipSelected(int axis) {
 	if (countSelected() > 0) {
 		beginOperation();
@@ -397,27 +406,25 @@ bool TexTool::setAllSelected(bool selected) {
 	}
 }
 
-void TexTool::recalculateVisibleTexSpace() {
+void TexTool::recalculateVisibleTexSpace()
+{
 	// Get the selection extents
-	AABB& selAABB = getExtents();
-
-	// Reset the viewport zoom
-	_zoomFactor = DEFAULT_ZOOM_FACTOR;
-
-	// Relocate and resize the texSpace AABB
-	_texSpaceAABB = AABB(selAABB.origin, selAABB.extents);
+	_texSpaceAABB = getExtents();
+    _texSpaceAABB.extents *= 1.5; // add some padding around the selection
 
 	// Normalise the plane to be square
 	_texSpaceAABB.extents[0] = std::max(_texSpaceAABB.extents[0], _texSpaceAABB.extents[1]);
 	_texSpaceAABB.extents[1] = std::max(_texSpaceAABB.extents[0], _texSpaceAABB.extents[1]);
 }
 
-AABB& TexTool::getExtents() {
+AABB& TexTool::getExtents()
+{
 	_selAABB = AABB();
 
-	for (std::size_t i = 0; i < _items.size(); i++) {
+	for (const auto& item : _items)
+    {
 		// Expand the selection AABB by the extents of the item
-		_selAABB.includeAABB(_items[i]->getExtents());
+		_selAABB.includeAABB(item->getExtents());
 	}
 
 	return _selAABB;
@@ -431,8 +438,8 @@ Vector2 TexTool::getTextureCoords(const double& x, const double& y) {
 	Vector2 result;
 
 	if (_selAABB.isValid()) {
-		Vector3 aabbTL = _texSpaceAABB.origin - _texSpaceAABB.extents * _zoomFactor;
-		Vector3 aabbBR = _texSpaceAABB.origin + _texSpaceAABB.extents * _zoomFactor;
+		Vector3 aabbTL = _texSpaceAABB.origin - _texSpaceAABB.extents;
+		Vector3 aabbBR = _texSpaceAABB.origin + _texSpaceAABB.extents;
 
 		Vector2 topLeft(aabbTL[0], aabbTL[1]);
 		Vector2 bottomRight(aabbBR[0], aabbBR[1]);
@@ -483,7 +490,7 @@ textool::TexToolItemVec TexTool::getSelectables(const Vector2& coords) {
 	// of the visible texture space
 	textool::Rectangle testRectangle;
 
-	Vector3 extents = getVisibleTexSpace().extents * _zoomFactor;
+	Vector3 extents = getVisibleTexSpace().extents;
 
 	testRectangle.topLeft[0] = coords[0] - extents[0]*0.02;
 	testRectangle.topLeft[1] = coords[1] - extents[1]*0.02;
@@ -542,7 +549,7 @@ void TexTool::doMouseUp(const Vector2& coords, wxMouseEvent& event)
 		_selectionRectangle.sortCorners();
 
 		// The minimim rectangle diameter for a rectangle test (3 % of visible texspace)
-		float minDist = _texSpaceAABB.extents[0] * _zoomFactor * 0.03;
+		float minDist = _texSpaceAABB.extents[0] * 0.03;
 
 		textool::TexToolItemVec selectables;
 
@@ -673,8 +680,8 @@ void TexTool::drawGrid()
 
 	AABB& texSpaceAABB = getVisibleTexSpace();
 
-	Vector3 topLeft = texSpaceAABB.origin - texSpaceAABB.extents * _zoomFactor;
-	Vector3 bottomRight = texSpaceAABB.origin + texSpaceAABB.extents * _zoomFactor;
+	Vector3 topLeft = texSpaceAABB.origin - texSpaceAABB.extents;
+	Vector3 bottomRight = texSpaceAABB.origin + texSpaceAABB.extents;
 
 	if (topLeft[0] > bottomRight[0])
 	{
@@ -774,7 +781,7 @@ void TexTool::drawGrid()
 
 	for (float x = startX; x <= endX; x += xIntStep)
 	{
-		glRasterPos2f(x + 0.05f, topLeft[1] + 0.03f * _zoomFactor);
+		glRasterPos2f(x + 0.05f, topLeft[1] + 0.03f);
 		std::string xcoordStr = string::to_string(trunc(x)) + ".0";
 		GlobalOpenGL().drawString(xcoordStr);
 	}
@@ -818,8 +825,8 @@ bool TexTool::onGLDraw()
 	AABB& texSpaceAABB = getVisibleTexSpace();
 
 	// Get the upper left and lower right corner coordinates
-	Vector3 orthoTopLeft = texSpaceAABB.origin - texSpaceAABB.extents * _zoomFactor;
-	Vector3 orthoBottomRight = texSpaceAABB.origin + texSpaceAABB.extents * _zoomFactor;
+	Vector3 orthoTopLeft = texSpaceAABB.origin - texSpaceAABB.extents;
+	Vector3 orthoBottomRight = texSpaceAABB.origin + texSpaceAABB.extents;
 
 	// Initialise the 2D projection matrix with: left, right, bottom, top, znear, zfar
 	glOrtho(orthoTopLeft[0], 	// left
@@ -1002,12 +1009,12 @@ void TexTool::onMouseScroll(wxMouseEvent& ev)
 {
 	if (ev.GetWheelRotation() > 0)
 	{
-		_zoomFactor /= ZOOM_MODIFIER;
+        _texSpaceAABB.extents /= ZOOM_MODIFIER;
 		draw();
 	}
 	else if (ev.GetWheelRotation() < 0)
 	{
-		_zoomFactor *= ZOOM_MODIFIER;
+        _texSpaceAABB.extents *= ZOOM_MODIFIER;
 		draw();
 	}
 }

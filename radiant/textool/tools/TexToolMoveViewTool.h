@@ -55,7 +55,7 @@ public:
             auto& texToolEvent = dynamic_cast<TextureToolMouseEvent&>(ev);
 
             // Scroll the view
-            //texToolEvent.getView().scroll(-texToolEvent.getDeviceDelta().x(), texToolEvent.getDeviceDelta().y());
+            texToolEvent.getView().scrollByPixels(texToolEvent.getDeviceDelta().x(), texToolEvent.getDeviceDelta().y());
 
             return Result::Continued;
         }

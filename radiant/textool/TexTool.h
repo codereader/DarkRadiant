@@ -6,7 +6,7 @@
 #include "math/Vector3.h"
 #include "math/AABB.h"
 #include "ishaders.h"
-#include "iinteractiveview.h"
+#include "itexturetoolview.h"
 #include "iradiant.h"
 #include "imousetool.h"
 #include "iselection.h"
@@ -39,7 +39,7 @@ typedef std::shared_ptr<TexTool> TexToolPtr;
 
 class TexTool : 
 	public wxutil::TransientWindow,
-    public IInteractiveView,
+    public ITextureToolView,
 	public sigc::trackable,
     protected wxutil::MouseToolHandler
 {
@@ -65,9 +65,6 @@ private:
 
 	// The dimensions of the GL widget in pixels.
 	Vector2 _windowDims;
-
-	// The zoomfactor of this window (default = 1.1)
-	float _zoomFactor;
 
 	// The currently active objects in the textool window
 	textool::TexToolItemVec _items;
@@ -234,6 +231,8 @@ public:
     // Request a deferred update of the UI elements
     void queueDraw() override;
     void forceRedraw() override;
+
+    void scrollByPixels(int x, int y) override;
 
 	/** greebo: Updates the GL window
 	 */
