@@ -32,6 +32,10 @@ public:
 
     // Scrolls the view by the specified amount of screen pixels
     virtual void scrollByPixels(int x, int y) = 0;
+
+    // Increase / decrease zoom factor
+    virtual void zoomIn() = 0;
+    virtual void zoomOut() = 0;
 };
 
 class IOrthoView :
@@ -63,10 +67,6 @@ public:
 
     // Sets the mouse cursor type of this view
     virtual void setCursorType(CursorType type) = 0;
-
-    // Increase / decrease zoom factor
-    virtual void zoomIn() = 0;
-    virtual void zoomOut() = 0;
 };
 
 class IXWndManager :

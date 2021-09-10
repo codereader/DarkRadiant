@@ -220,6 +220,9 @@ public:
     int getWidth() const override;
     int getHeight() const override;
 
+    void zoomIn() override;
+    void zoomOut() override;
+
     SelectionTestPtr createSelectionTestForPoint(const Vector2& point) override;
     int getDeviceWidth() const override;
     int getDeviceHeight() const override;

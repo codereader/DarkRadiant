@@ -262,6 +262,18 @@ int TexTool::getHeight() const
     return static_cast<int>(_windowDims[1]);
 }
 
+void TexTool::zoomIn()
+{
+    _texSpaceAABB.extents *= ZOOM_MODIFIER;
+    updateProjection();
+}
+
+void TexTool::zoomOut()
+{
+    _texSpaceAABB.extents /= ZOOM_MODIFIER;
+    updateProjection();
+}
+
 SelectionTestPtr TexTool::createSelectionTestForPoint(const Vector2& point)
 {
     float selectEpsilon = registry::getValue<float>(RKEY_SELECT_EPSILON);
@@ -1039,10 +1051,15 @@ void TexTool::onKeyPress(wxKeyEvent& ev)
 
 void TexTool::onMouseScroll(wxMouseEvent& ev)
 {
-    double factor = ev.GetWheelRotation() > 0 ? 1 / ZOOM_MODIFIER : ZOOM_MODIFIER;
-    _texSpaceAABB.extents *= factor;
+    if (ev.GetWheelRotation() > 0)
+    {
+        zoomOut();
+    }
+    else
+    {
+        zoomIn();
+    }
 
-    updateProjection();
     draw();
 }
 
