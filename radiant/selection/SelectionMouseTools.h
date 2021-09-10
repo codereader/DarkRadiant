@@ -54,7 +54,6 @@ protected:
 class BasicSelectionTool: public SelectMouseTool
 {
 private:
-
     Vector2 _start;		// Position at mouseDown
     Vector2 _current;	// Position during mouseMove
 
@@ -79,7 +78,7 @@ protected:
     }
 
     // Performs a drag- or point-selection test
-    void testSelect(Event& ev) override;
+    virtual void testSelect(Event& ev) override;
 
     // Recalculates the rectangle used to draw the GUI overlay
     void updateDragSelectionRectangle(Event& ev);

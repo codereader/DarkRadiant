@@ -5,6 +5,7 @@
 #include "selection/ManipulateMouseTool.h"
 #include "xyview/tools/MoveViewTool.h"
 #include "xyview/tools/ZoomTool.h"
+#include "textool/tools/TextureToolSelectionTool.h"
 
 namespace ui
 {
@@ -34,6 +35,7 @@ public:
 
         texToolGroup.registerMouseTool(std::make_shared<MoveViewTool>());
         texToolGroup.registerMouseTool(std::make_shared<ZoomTool>());
+        texToolGroup.registerMouseTool(std::make_shared<TextureToolSelectionTool>());
 	}
 };
 

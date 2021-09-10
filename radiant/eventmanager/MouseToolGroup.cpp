@@ -23,6 +23,8 @@ std::string MouseToolGroup::getDisplayName()
         return _("XY View");
     case Type::CameraView:
         return _("Camera View");
+    case Type::TextureTool:
+        return _("Texture Tool");
     default:
         return _("Unknown");
     };

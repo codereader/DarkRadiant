@@ -52,7 +52,9 @@ TexTool::TexTool() :
     MouseToolHandler(IMouseToolGroup::Type::TextureTool),
     _glWidget(new wxutil::GLWidget(this, std::bind(&TexTool::onGLDraw, this), "TexTool")),
     _selectionInfo(GlobalSelectionSystem().getSelectionInfo()),
+#if 0
     _dragRectangle(false),
+#endif
     _manipulatorMode(false),
     _grid(GRID_DEFAULT),
     _gridActive(registry::getValue<bool>(RKEY_GRID_STATE)),
@@ -570,7 +572,7 @@ void TexTool::doMouseUp(const Vector2& coords, wxMouseEvent& event)
 		// Finish the undo recording, store the accumulated undomementos
 		endOperation("TexToolDrag");
 	}
-
+#if 0
 	// If we are in selection mode, end the selection
     if ((event.LeftUp() && event.ShiftDown())
 		 && _dragRectangle)
@@ -599,18 +601,21 @@ void TexTool::doMouseUp(const Vector2& coords, wxMouseEvent& event)
 			selectables[i]->toggle();
 		}
 	}
-
+#endif
 	draw();
 }
 
 void TexTool::doMouseMove(const Vector2& coords, wxMouseEvent& event)
 {
+#if 0
 	if (_dragRectangle)
 	{
 		_selectionRectangle.bottomRight = coords;
 		draw();
 	}
-	else if (_manipulatorMode)
+	else
+#endif
+    if (_manipulatorMode)
 	{
 		Vector2 delta = coords - _manipulateRectangle.topLeft;
 
@@ -660,7 +665,9 @@ void TexTool::doMouseMove(const Vector2& coords, wxMouseEvent& event)
 void TexTool::doMouseDown(const Vector2& coords, wxMouseEvent& event)
 {
 	_manipulatorMode = false;
+#if 0
 	_dragRectangle = false;
+#endif
 
 	if (event.LeftDown() && !event.HasAnyModifiers())
 	{
@@ -679,6 +686,7 @@ void TexTool::doMouseDown(const Vector2& coords, wxMouseEvent& event)
 			beginOperation();
 		}
 	}
+#if 0
     else if (event.LeftDown() && event.ShiftDown())
 	{
 		// Start a drag or click operation
@@ -686,6 +694,7 @@ void TexTool::doMouseDown(const Vector2& coords, wxMouseEvent& event)
 		_selectionRectangle.topLeft = coords;
 		_selectionRectangle.bottomRight = coords;
 	}
+#endif
 }
 
 void TexTool::selectRelatedItems() {
@@ -964,7 +973,7 @@ bool TexTool::onGLDraw()
         }
     }
 
-#if 1
+#if 0
 	if (_dragRectangle) {
 		// Create a working reference to save typing
 		textool::Rectangle& rectangle = _selectionRectangle;

@@ -33,7 +33,7 @@
     </mouseToolMapping>
       <!-- ID 2 = textool -->
     <mouseToolMapping name="TextureTool" id="2">
-        <tool name="TexToolMoveViewTool" button="RMB" modifiers="" />
+        <tool name="TextureToolSelectionTool" button="LMB" modifiers="SHIFT" />
     </mouseToolMapping>
   </mouseToolMappings>
 	<cameraview>
