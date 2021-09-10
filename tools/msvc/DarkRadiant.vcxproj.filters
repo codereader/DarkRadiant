@@ -1416,9 +1416,6 @@
     <ClInclude Include="..\..\radiant\textool\tools\TextureToolMouseEvent.h">
       <Filter>src\textool\tools</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\textool\tools\TexToolMoveViewTool.h">
-      <Filter>src\textool\tools</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />

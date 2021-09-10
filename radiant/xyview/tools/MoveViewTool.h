@@ -2,6 +2,7 @@
 
 #include "i18n.h"
 #include "imousetool.h"
+#include "imousetoolevent.h"
 #include "iorthoview.h"
 
 namespace ui
@@ -38,7 +39,7 @@ public:
     {
         try
         {
-            dynamic_cast<XYMouseToolEvent&>(ev).getScale();
+            dynamic_cast<OrthoViewMouseToolEvent&>(ev).getOrthoView();
             return Result::Activated;
         }
         catch (std::bad_cast&)
@@ -52,11 +53,11 @@ public:
     {
         try
         {
-            // We use capture mode, so xy event will contain the delta only
-            XYMouseToolEvent& xyEvent = dynamic_cast<XYMouseToolEvent&>(ev);
+            // We use capture mode, so orthoview event will contain the delta only
+            auto& xyEvent = dynamic_cast<OrthoViewMouseToolEvent&>(ev);
 
             // Scroll the view
-            xyEvent.getView().scroll(-xyEvent.getDeviceDelta().x(), xyEvent.getDeviceDelta().y());
+            xyEvent.getOrthoView().scrollByPixels(xyEvent.getDeviceDelta().x(), xyEvent.getDeviceDelta().y());
 
             return Result::Continued;
         }
@@ -71,8 +72,8 @@ public:
     {
         try
         {
-            // We only operate on XY view events, so attempt to cast
-            dynamic_cast<XYMouseToolEvent&>(ev).getScale();
+            // We only operate on orthoview events, so attempt to cast
+            dynamic_cast<OrthoViewMouseToolEvent&>(ev).getOrthoView();
             return Result::Finished;
         }
         catch (std::bad_cast&)

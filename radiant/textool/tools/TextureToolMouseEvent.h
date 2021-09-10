@@ -8,19 +8,19 @@ namespace ui
 
 // Special event subtype for Texture Tool View events
 class TextureToolMouseEvent :
-    public MouseToolEvent
+    public OrthoViewMouseToolEvent
 {
 private:
     ITextureToolView& _view;
 
 public:
     TextureToolMouseEvent(ITextureToolView& view, const Vector2& devicePosition) :
-        MouseToolEvent(view, devicePosition),
+        OrthoViewMouseToolEvent(view, devicePosition),
         _view(view)
     {}
 
     TextureToolMouseEvent(ITextureToolView& view, const Vector2& devicePosition, const Vector2& delta) :
-        MouseToolEvent(view, devicePosition, delta),
+        OrthoViewMouseToolEvent(view, devicePosition, delta),
         _view(view)
     {}
 

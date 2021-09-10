@@ -3,7 +3,7 @@
 #include "imousetool.h"
 #include "selection/SelectionMouseTools.h"
 #include "selection/ManipulateMouseTool.h"
-#include "textool/tools/TexToolMoveViewTool.h"
+#include "xyview/tools/MoveViewTool.h"
 
 namespace ui
 {
@@ -31,7 +31,7 @@ public:
 
         auto& texToolGroup = GlobalMouseToolManager().getGroup(IMouseToolGroup::Type::TextureTool);
 
-        texToolGroup.registerMouseTool(std::make_shared<TexToolMoveViewTool>());
+        texToolGroup.registerMouseTool(std::make_shared<MoveViewTool>());
 	}
 };
 

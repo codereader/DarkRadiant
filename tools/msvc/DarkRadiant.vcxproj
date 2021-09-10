@@ -417,7 +417,6 @@
     <ClInclude Include="..\..\radiant\settings\LocalisationModule.h" />
     <ClInclude Include="..\..\radiant\settings\LocalisationProvider.h" />
     <ClInclude Include="..\..\radiant\settings\Win32Registry.h" />
-    <ClInclude Include="..\..\radiant\textool\tools\TexToolMoveViewTool.h" />
     <ClInclude Include="..\..\radiant\textool\tools\TextureToolMouseEvent.h" />
     <ClInclude Include="..\..\radiant\ui\aas\AasControl.h" />
     <ClInclude Include="..\..\radiant\ui\aas\AasControlDialog.h" />

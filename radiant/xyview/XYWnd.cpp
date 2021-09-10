@@ -327,11 +327,11 @@ void XYWnd::setOrigin(const Vector3& origin) {
     queueDraw();
 }
 
-void XYWnd::scroll(int x, int y)
+void XYWnd::scrollByPixels(int x, int y)
 {
     int nDim1 = (_viewType == YZ) ? 1 : 0;
     int nDim2 = (_viewType == XY) ? 1 : 2;
-    _origin[nDim1] += x / _scale;
+    _origin[nDim1] -= x / _scale;
     _origin[nDim2] += y / _scale;
     updateModelview();
     queueDraw();
@@ -344,7 +344,7 @@ void XYWnd::scroll(int x, int y)
 void XYWnd::performChaseMouse()
 {
 	float multiplier = _chaseMouseTimer.Time() / 10.0f;
-	scroll(float_to_integer(multiplier * _chasemouseDeltaX), float_to_integer(multiplier * -_chasemouseDeltaY));
+    scrollByPixels(float_to_integer(-multiplier * _chasemouseDeltaX), float_to_integer(multiplier * -_chasemouseDeltaY));
 
 	//rMessage() << "chasemouse: multiplier=" << multiplier << " x=" << _chasemouseDeltaX << " y=" << _chasemouseDeltaY << std::endl;
 

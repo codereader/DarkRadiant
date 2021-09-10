@@ -9,7 +9,7 @@ namespace ui
 // Special event subtype for XY View events. Provides
 // information about view type, for example.
 class XYMouseToolEvent :
-    public MouseToolEvent
+    public OrthoViewMouseToolEvent
 {
 private:
     IOrthoView& _view;
@@ -19,13 +19,13 @@ private:
 
 public:
     XYMouseToolEvent(IOrthoView& view, const Vector3& worldPos, const Vector2& devicePos) :
-        MouseToolEvent(view, devicePos),
+        OrthoViewMouseToolEvent(view, devicePos),
         _view(view),
         _worldPos(worldPos)
     {}
 
     XYMouseToolEvent(IOrthoView& view, const Vector3& worldPos, const Vector2& devicePos, const Vector2& delta) :
-        MouseToolEvent(view, devicePos, delta),
+        OrthoViewMouseToolEvent(view, devicePos, delta),
         _view(view),
         _worldPos(worldPos)
     {}

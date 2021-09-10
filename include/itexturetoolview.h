@@ -1,18 +1,15 @@
 #pragma once
 
-#include "iinteractiveview.h"
+#include "iorthoview.h"
 
 namespace ui
 {
 
 class ITextureToolView :
-    public IInteractiveView
+    public IOrthoViewBase
 {
 public:
     virtual ~ITextureToolView() {}
-
-    // Scrolls the view by the specified amount of screen pixels
-    virtual void scrollByPixels(int x, int y) = 0;
 };
 
 }

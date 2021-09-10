@@ -1,6 +1,7 @@
 #pragma once
 
 #include "icameraview.h"
+#include "iorthoview.h"
 #include "math/Vector2.h"
 
 namespace ui
@@ -49,6 +50,31 @@ public:
     IInteractiveView& getInteractiveView()
     {
         return _view;
+    }
+};
+
+class OrthoViewMouseToolEvent :
+    public MouseToolEvent
+{
+private:
+    IOrthoViewBase& _orthoView;
+
+public:
+    OrthoViewMouseToolEvent(IOrthoViewBase& view, const Vector2& devicePosition) :
+        MouseToolEvent(view, devicePosition),
+        _orthoView(view)
+    {}
+
+    OrthoViewMouseToolEvent(IOrthoViewBase& view, const Vector2& devicePosition, const Vector2& delta) :
+        MouseToolEvent(view, devicePosition, delta),
+        _orthoView(view)
+    {}
+
+    virtual ~OrthoViewMouseToolEvent() {}
+
+    IOrthoViewBase& getOrthoView()
+    {
+        return _orthoView;
     }
 };
 

@@ -197,9 +197,9 @@ void TexTool::onMainFrameShuttingDown()
 
 TexTool& TexTool::Instance()
 {
-	TexToolPtr& instancePtr = InstancePtr();
+	auto& instancePtr = InstancePtr();
 
-	if (instancePtr == NULL)
+	if (!instancePtr)
 	{
 		// Not yet instantiated, do it now
 		instancePtr.reset(new TexTool);
@@ -252,6 +252,16 @@ void TexTool::update()
 	recalculateVisibleTexSpace();
 }
 
+int TexTool::getWidth() const
+{
+    return static_cast<int>(_windowDims[0]);
+}
+
+int TexTool::getHeight() const
+{
+    return static_cast<int>(_windowDims[1]);
+}
+
 SelectionTestPtr TexTool::createSelectionTestForPoint(const Vector2& point)
 {
     float selectEpsilon = registry::getValue<float>(RKEY_SELECT_EPSILON);
@@ -268,12 +278,12 @@ SelectionTestPtr TexTool::createSelectionTestForPoint(const Vector2& point)
 
 int TexTool::getDeviceWidth() const
 {
-    return static_cast<int>(_windowDims[0]);
+    return getWidth();
 }
 
 int TexTool::getDeviceHeight() const
 {
-    return static_cast<int>(_windowDims[1]);
+    return getHeight();
 }
 
 const VolumeTest& TexTool::getVolumeTest() const
@@ -410,11 +420,11 @@ void TexTool::recalculateVisibleTexSpace()
 {
 	// Get the selection extents
 	_texSpaceAABB = getExtents();
-    _texSpaceAABB.extents *= 1.5; // add some padding around the selection
+    _texSpaceAABB.extents *= 2; // add some padding around the selection
 
 	// Normalise the plane to be square
 	_texSpaceAABB.extents[0] = std::max(_texSpaceAABB.extents[0], _texSpaceAABB.extents[1]);
-	_texSpaceAABB.extents[1] = std::max(_texSpaceAABB.extents[0], _texSpaceAABB.extents[1]);
+	_texSpaceAABB.extents[1] = _texSpaceAABB.extents[0];
 
     // Make the visible space non-uniform if the texture has a width/height ratio != 1
     double aspect = getTextureAspectRatio();

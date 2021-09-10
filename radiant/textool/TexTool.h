@@ -217,6 +217,9 @@ public:
 	 */
 	static TexTool& Instance();
 
+    int getWidth() const override;
+    int getHeight() const override;
+
     SelectionTestPtr createSelectionTestForPoint(const Vector2& point) override;
     int getDeviceWidth() const override;
     int getDeviceHeight() const override;
