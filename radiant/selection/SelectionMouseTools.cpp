@@ -124,10 +124,20 @@ void BasicSelectionTool::renderOverlay()
     glDisable(GL_BLEND);
 }
 
+void BasicSelectionTool::performSelectionTest(SelectionVolume& volume, SelectionType type, MouseTool::Event& ev)
+{
+    if (type == SelectionType::Area)
+    {
+        GlobalSelectionSystem().selectArea(volume, SelectionSystem::eToggle, selectFacesOnly());
+    }
+    else
+    {
+        GlobalSelectionSystem().selectPoint(volume, SelectionSystem::eToggle, selectFacesOnly());
+    }
+}
+
 void BasicSelectionTool::testSelect(MouseTool::Event& ev)
 {
-    bool isFaceOperation = selectFacesOnly();
-
     // Get the distance of the mouse pointer from the starting point
     Vector2 delta(ev.getDevicePosition() - _start);
 
@@ -139,12 +149,12 @@ void BasicSelectionTool::testSelect(MouseTool::Event& ev)
         ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromArea(_start, delta));
 
         SelectionVolume volume(scissored);
-
-        // Call the selectArea command that does the actual selecting
-        GlobalSelectionSystem().selectArea(volume, SelectionSystem::eToggle, isFaceOperation);
+        performSelectionTest(volume, SelectionType::Area, ev);
     }
     else
     {
+        // Mouse has barely moved, call the point selection routine
+        // 
         // Copy the view to create a scissored volume
         render::View scissored(_view);
         // Create a volume out of a small box with 2*epsilon edge length
@@ -153,9 +163,7 @@ void BasicSelectionTool::testSelect(MouseTool::Event& ev)
 
         // Create a selection test using that volume
         SelectionVolume volume(scissored);
-
-        // Mouse has barely moved, call the point selection routine
-        GlobalSelectionSystem().selectPoint(volume, SelectionSystem::eToggle, isFaceOperation);
+        performSelectionTest(volume, SelectionType::Point, ev);
     }
 
     // Reset the mouse position to zero, this mouse operation is finished so far

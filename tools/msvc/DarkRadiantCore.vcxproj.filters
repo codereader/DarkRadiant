@@ -1890,9 +1890,6 @@
     <ClInclude Include="..\..\radiantcore\selection\SelectedNodeList.h">
       <Filter>src\selection</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\selection\SelectionPool.h">
-      <Filter>src\selection</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\selection\TransformationVisitors.h">
       <Filter>src\selection</Filter>
     </ClInclude>

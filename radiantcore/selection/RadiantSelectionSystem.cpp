@@ -8,7 +8,7 @@
 #include "iradiant.h"
 #include "ieventmanager.h"
 #include "ipreferencesystem.h"
-#include "SelectionPool.h"
+#include "selection/SelectionPool.h"
 #include "module/StaticModule.h"
 #include "brush/csg/CSG.h"
 #include "selection/algorithm/General.h"

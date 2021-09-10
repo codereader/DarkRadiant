@@ -222,6 +222,7 @@
     <ClInclude Include="..\..\libs\selection\OccludeSelector.h" />
     <ClInclude Include="..\..\libs\selection\Pivot2World.h" />
     <ClInclude Include="..\..\libs\selection\SelectedPlaneSet.h" />
+    <ClInclude Include="..\..\libs\selection\SelectionPool.h" />
     <ClInclude Include="..\..\libs\selection\SelectionVolume.h" />
     <ClInclude Include="..\..\libs\selection\SingleItemSelector.h" />
     <ClInclude Include="..\..\libs\SequentialTaskQueue.h" />

@@ -4,6 +4,9 @@
 #include "iselectiontest.h"
 #include "iselectable.h"
 
+namespace selection
+{
+
 /** 
  * Selector implementation which sorts the incoming selectables by 
  * their respective intersection values.
@@ -123,3 +126,5 @@ public:
 		return _pool.empty();
 	}
 };
+
+}

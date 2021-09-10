@@ -299,6 +299,9 @@
     <ClInclude Include="..\..\libs\selection\SelectedPlaneSet.h">
       <Filter>selection</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\selection\SelectionPool.h">
+      <Filter>selection</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

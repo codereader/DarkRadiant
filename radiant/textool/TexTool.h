@@ -236,6 +236,7 @@ public:
     void forceRedraw() override;
 
     void scrollByPixels(int x, int y) override;
+    void testSelect(SelectionTest& test) override;
 
 	/** greebo: Updates the GL window
 	 */

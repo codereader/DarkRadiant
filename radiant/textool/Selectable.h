@@ -1,13 +1,17 @@
-#ifndef TEXTOOL_SELECTABLE_H_
-#define TEXTOOL_SELECTABLE_H_
+#pragma once
 
+#include "iselectable.h"
+#include "iselectiontest.h"
 #include "math/Vector2.h"
 #include "math/AABB.h"
 #include "Rectangle.h"
 
-namespace textool {
+namespace textool
+{
 
-class Selectable
+class Selectable :
+    public ISelectable,
+    public SelectionTestable
 {
 protected:
 	bool _selected;
@@ -19,6 +23,11 @@ public:
 
 	virtual ~Selectable()
 	{}
+
+    virtual void testSelect(Selector& selector, SelectionTest& test)
+    {
+        // empty default for the moment being
+    }
 
 	/** greebo: Tests if this can be selected within the given
 	 * 			rectangle (s/t coordinates).
@@ -33,13 +42,15 @@ public:
 
 	/** greebo: Sets the selection status to <selected>
 	 */
-	virtual void setSelected(bool selected) {
+	virtual void setSelected(bool selected) override
+    {
 		_selected = selected;
 	}
 
 	/** greebo: Returns TRUE if this object is selected
 	 */
-	virtual bool isSelected() const {
+	virtual bool isSelected() const override
+    {
 		return _selected;
 	}
 
@@ -62,5 +73,3 @@ public:
 }; // class Selectable
 
 } // namespace textool
-
-#endif /*TEXTOOL_SELECTABLE_H_*/

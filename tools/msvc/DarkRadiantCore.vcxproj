@@ -1014,7 +1014,6 @@
     <ClInclude Include="..\..\radiantcore\selection\Renderables.h" />
     <ClInclude Include="..\..\radiantcore\selection\SceneWalkers.h" />
     <ClInclude Include="..\..\radiantcore\selection\SelectedNodeList.h" />
-    <ClInclude Include="..\..\radiantcore\selection\SelectionPool.h" />
     <ClInclude Include="..\..\radiantcore\selection\selectionset\SelectionSet.h" />
     <ClInclude Include="..\..\radiantcore\selection\selectionset\SelectionSetInfoFileModule.h" />
     <ClInclude Include="..\..\radiantcore\selection\selectionset\SelectionSetManager.h" />

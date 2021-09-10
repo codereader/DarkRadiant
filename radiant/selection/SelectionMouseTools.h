@@ -4,6 +4,8 @@
 #include "render/View.h"
 #include "Rectangle.h"
 
+class SelectionVolume;
+
 namespace ui
 {
 
@@ -53,11 +55,17 @@ protected:
  */
 class BasicSelectionTool: public SelectMouseTool
 {
-private:
+protected:
     Vector2 _start;		// Position at mouseDown
     Vector2 _current;	// Position during mouseMove
 
     selection::Rectangle _dragSelectionRect;
+
+    enum class SelectionType
+    {
+        Point,
+        Area,
+    };
 
 public:
     virtual const std::string& getName() override;
@@ -82,6 +90,8 @@ protected:
 
     // Recalculates the rectangle used to draw the GUI overlay
     void updateDragSelectionRectangle(Event& ev);
+
+    virtual void performSelectionTest(SelectionVolume& volume, SelectionType type, MouseTool::Event& ev);
 };
 
 /**

@@ -17,6 +17,7 @@
 #include "wxutil/GLWidget.h"
 #include "selection/Device.h"
 #include "selection/SelectionVolume.h"
+#include "selection/SelectionPool.h"
 #include "Rectangle.h"
 
 #include "textool/Selectable.h"
@@ -343,6 +344,36 @@ void TexTool::scrollByPixels(int x, int y)
     texSpaceAABB.origin[1] -= y * vPerPixel;
 
     updateProjection();
+}
+
+void TexTool::testSelect(SelectionTest& test)
+{
+    textool::TexToolItemVec selectables;
+    selection::SelectionPool selectionPool;
+
+    // Cycle through all the toplevel items and test them for selectability
+    for (const auto& item : _items) 
+    {
+        item->testSelect(selectionPool, test);
+    }
+
+#if 0
+    // Cycle through all the items and ask them to deliver the list of child selectables
+    // residing within the test rectangle
+    for (const auto& item : _items)
+    {
+        // Get the list from each item
+        auto found = item->getSelectableChildren(rectangle);
+
+        // and append the vector to the existing vector
+        selectables.insert(selectables.end(), found.begin(), found.end());
+    }
+#endif
+    
+    if (selectionPool.empty()) return;
+
+    auto bestSelectable = *selectionPool.begin();
+    bestSelectable.second->setSelected(true);
 }
 
 void TexTool::flipSelected(int axis) {
