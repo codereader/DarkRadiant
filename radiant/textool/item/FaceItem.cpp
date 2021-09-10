@@ -1,6 +1,7 @@
 #include "FaceItem.h"
 
 #include "igl.h"
+#include "iselectiontest.h"
 #include "math/FloatTools.h"
 
 #include "FaceVertexItem.h"
@@ -139,6 +140,26 @@ bool FaceItem::testSelect(const Rectangle& rectangle)
 	texCentroid /= _winding.size();
 
 	return rectangle.contains(texCentroid);
+}
+
+void FaceItem::testSelect(Selector& selector, SelectionTest& test)
+{
+    // Arrange the UV coordinates in a Vector3 array for testing
+    std::vector<Vector3> uvs;
+    uvs.reserve(_winding.size());
+
+    for (const auto& vertex : _winding)
+    {
+        uvs.emplace_back(vertex.texcoord.x(), vertex.texcoord.y(), 1);
+    }
+
+    SelectionIntersection best;
+    test.TestPolygon(VertexPointer(uvs.data(), sizeof(Vector3)), uvs.size(), best);
+
+    if (best.isValid())
+    {
+        Selector_add(selector, *this);
+    }
 }
 
 void FaceItem::snapSelectedToGrid(float grid)

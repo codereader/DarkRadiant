@@ -92,6 +92,7 @@ private:
 
 	// For idle callbacks
 	bool _updateNeeded;
+	bool _selectionRescanNeeded;
 
 	sigc::connection _selectionChanged;
 	sigc::connection _undoHandler;

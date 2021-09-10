@@ -35,6 +35,8 @@ public:
 	 */
 	virtual bool testSelect(const Rectangle& rectangle) override;
 
+    virtual void testSelect(Selector& selector, SelectionTest& test) override;
+
 	/** greebo: Snaps the face translation to the grid.
 	 */
 	virtual void snapSelectedToGrid(float grid) override;

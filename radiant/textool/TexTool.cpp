@@ -59,7 +59,8 @@ TexTool::TexTool() :
     _manipulatorMode(false),
     _grid(GRID_DEFAULT),
     _gridActive(registry::getValue<bool>(RKEY_GRID_STATE)),
-    _updateNeeded(false)
+    _updateNeeded(false),
+    _selectionRescanNeeded(false)
 {
 	Bind(wxEVT_IDLE, &TexTool::onIdle, this);
     Bind(wxEVT_KEY_DOWN, &TexTool::onKeyPress, this);
@@ -151,7 +152,7 @@ void TexTool::_preShow()
 
 	// Register self to the SelSystem to get notified upon selection changes.
 	_selectionChanged = GlobalSelectionSystem().signal_selectionChanged().connect(
-		[this](const ISelectable&) { queueDraw(); });
+        [this](const ISelectable&) { _selectionRescanNeeded = true; });
 
 	_undoHandler = GlobalUndoSystem().signal_postUndo().connect(
 		sigc::mem_fun(this, &TexTool::onUndoRedoOperation));
@@ -159,6 +160,7 @@ void TexTool::_preShow()
 		sigc::mem_fun(this, &TexTool::onUndoRedoOperation));
 
 	// Trigger an update of the current selection
+    _selectionRescanNeeded = true;
     queueDraw();
 }
 
@@ -319,11 +321,16 @@ void TexTool::draw()
 
 void TexTool::onIdle(wxIdleEvent& ev)
 {
+    if (_selectionRescanNeeded)
+    {
+        _selectionRescanNeeded = false;
+        update();
+        _updateNeeded = true;
+    }
+
 	if (_updateNeeded)
 	{
 		_updateNeeded = false;
-
-		update();
 		draw();
 	}
 }
