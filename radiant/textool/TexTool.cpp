@@ -19,6 +19,7 @@
 #include "selection/SelectionVolume.h"
 #include "selection/SelectionPool.h"
 #include "Rectangle.h"
+#include "fmt/format.h"
 
 #include "textool/Selectable.h"
 #include "textool/Transformable.h"
@@ -853,14 +854,14 @@ void TexTool::drawGrid()
 	for (float y = startY; y <= endY; y += yIntStep)
 	{
 		glRasterPos2f(topLeft[0] + 0.05f, y + 0.05f);
-		std::string ycoordStr = string::to_string(trunc(y)) + ".0";
+        auto ycoordStr = fmt::format("{0:.1f}", trunc(y));
 		GlobalOpenGL().drawString(ycoordStr);
 	}
 
 	for (float x = startX; x <= endX; x += xIntStep)
 	{
 		glRasterPos2f(x + 0.05f, topLeft[1] + 0.03f);
-		std::string xcoordStr = string::to_string(trunc(x)) + ".0";
+		auto xcoordStr = fmt::format("{0:.1f}", trunc(x));
 		GlobalOpenGL().drawString(xcoordStr);
 	}
 }
