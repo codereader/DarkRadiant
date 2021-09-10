@@ -949,6 +949,22 @@ bool TexTool::onGLDraw()
 	// Draw the u/v coordinates
 	drawUVCoords();
 
+    if (!_activeMouseTools.empty())
+    {
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        glOrtho(0, _windowDims[0], 0, _windowDims[1], 0, 1);
+
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+
+        for (const ActiveMouseTools::value_type& i : _activeMouseTools)
+        {
+            i.second->renderOverlay();
+        }
+    }
+
+#if 1
 	if (_dragRectangle) {
 		// Create a working reference to save typing
 		textool::Rectangle& rectangle = _selectionRectangle;
@@ -977,7 +993,7 @@ bool TexTool::onGLDraw()
 		glEnd();
 		glDisable(GL_BLEND);
 	}
-
+#endif
 	return true;
 }
 
