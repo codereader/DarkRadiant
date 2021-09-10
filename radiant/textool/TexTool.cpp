@@ -418,6 +418,18 @@ void TexTool::recalculateVisibleTexSpace()
 	_texSpaceAABB.extents[0] = std::max(_texSpaceAABB.extents[0], _texSpaceAABB.extents[1]);
 	_texSpaceAABB.extents[1] = std::max(_texSpaceAABB.extents[0], _texSpaceAABB.extents[1]);
 
+    // Make the visible space non-uniform if the texture has a width/height ratio != 1
+    double aspect = getTextureAspectRatio();
+
+    if (aspect < 1)
+    {
+        _texSpaceAABB.extents.x() /= getTextureAspectRatio();
+    }
+    else
+    {
+        _texSpaceAABB.extents.y() *= getTextureAspectRatio();
+    }
+
     updateProjection();
 }
 
@@ -434,7 +446,8 @@ AABB& TexTool::getExtents()
 	return _selAABB;
 }
 
-AABB& TexTool::getVisibleTexSpace() {
+AABB& TexTool::getVisibleTexSpace()
+{
 	return _texSpaceAABB;
 }
 
@@ -789,6 +802,16 @@ void TexTool::drawGrid()
 		std::string xcoordStr = string::to_string(trunc(x)) + ".0";
 		GlobalOpenGL().drawString(xcoordStr);
 	}
+}
+
+double TexTool::getTextureAspectRatio()
+{
+    if (!_shader) return 1;
+    
+    auto editorImage = _shader->getEditorImage();
+    if (!editorImage) return 1;
+
+    return static_cast<double>(editorImage->getWidth()) / editorImage->getHeight();
 }
 
 void TexTool::updateProjection()
