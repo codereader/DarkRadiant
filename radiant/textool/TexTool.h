@@ -289,6 +289,8 @@ protected:
     IInteractiveView& getInteractiveView() override;
 
 private:
+    void updateProjection();
+
     TextureToolMouseEvent createMouseEvent(const Vector2& point, const Vector2& delta = Vector2(0, 0));
 
     void handleGLCapturedMouseMotion(const MouseToolPtr& tool, int x, int y, unsigned int mouseState);

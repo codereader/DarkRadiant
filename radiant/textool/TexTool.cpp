@@ -319,6 +319,8 @@ void TexTool::scrollByPixels(int x, int y)
     
     texSpaceAABB.origin[0] -= x * uPerPixel;
     texSpaceAABB.origin[1] -= y * vPerPixel;
+
+    updateProjection();
 }
 
 void TexTool::flipSelected(int axis) {
@@ -415,6 +417,8 @@ void TexTool::recalculateVisibleTexSpace()
 	// Normalise the plane to be square
 	_texSpaceAABB.extents[0] = std::max(_texSpaceAABB.extents[0], _texSpaceAABB.extents[1]);
 	_texSpaceAABB.extents[1] = std::max(_texSpaceAABB.extents[0], _texSpaceAABB.extents[1]);
+
+    updateProjection();
 }
 
 AABB& TexTool::getExtents()
@@ -787,6 +791,48 @@ void TexTool::drawGrid()
 	}
 }
 
+void TexTool::updateProjection()
+{
+    double windowAspect = _windowDims[0] / _windowDims[1];
+
+    // Set up the orthographic projection matrix to [b,l..t,r] => [-1,-1..+1,+1]
+    // with b,l,t,r set to values centered at origin
+    double left = -_texSpaceAABB.extents.x();
+    double right = _texSpaceAABB.extents.x();
+
+    double top = _texSpaceAABB.extents.y() / windowAspect;
+    double bottom = -_texSpaceAABB.extents.y() / windowAspect;
+
+    auto rMinusL = right - left;
+    auto rPlusL = right + left;
+
+    auto tMinusB = top - bottom;
+    auto tPlusB = top + bottom;
+
+    auto projection = Matrix4::getIdentity();
+
+    projection[0] = 2.0f / rMinusL;
+    projection[5] = 2.0f / tMinusB;
+    projection[10] = 1;
+
+    projection[12] = rPlusL / rMinusL;
+    projection[13] = tPlusB / tMinusB;
+    projection[14] = 0;
+
+    auto modelView = Matrix4::getIdentity();
+
+    // We have to invert the Y axis to have the negative tex coords in the upper quadrants
+    modelView.xx() = 1;
+    modelView.yy() = -1;
+
+    // Shift the visible UV space such that it is centered around origin before projecting it
+    modelView.tx() = -_texSpaceAABB.origin.x();
+    modelView.ty() = _texSpaceAABB.origin.y();
+
+    _view.construct(projection, modelView, 
+            static_cast<std::size_t>(_windowDims[0]), static_cast<std::size_t>(_windowDims[1]));
+}
+
 bool TexTool::onGLDraw()
 {
 	if (_updateNeeded)
@@ -822,18 +868,16 @@ bool TexTool::onGLDraw()
 		return true;
 	}
 
-	AABB& texSpaceAABB = getVisibleTexSpace();
+	auto& texSpaceAABB = getVisibleTexSpace();
 
 	// Get the upper left and lower right corner coordinates
-	Vector3 orthoTopLeft = texSpaceAABB.origin - texSpaceAABB.extents;
-	Vector3 orthoBottomRight = texSpaceAABB.origin + texSpaceAABB.extents;
+	auto orthoTopLeft = texSpaceAABB.origin - texSpaceAABB.extents;
+	auto orthoBottomRight = texSpaceAABB.origin + texSpaceAABB.extents;
 
-	// Initialise the 2D projection matrix with: left, right, bottom, top, znear, zfar
-	glOrtho(orthoTopLeft[0], 	// left
-			orthoBottomRight[0], // right
-			orthoBottomRight[1], // bottom
-			orthoTopLeft[1], 	// top
-			-1, 1);
+    glMatrixMode(GL_PROJECTION);
+    glLoadMatrixd(_view.GetProjection());
+    glMatrixMode(GL_MODELVIEW);
+    glLoadMatrixd(_view.GetModelview());
 
 	glColor3f(1, 1, 1);
 	// Tell openGL to draw front and back of the polygons in textured mode
@@ -904,6 +948,8 @@ void TexTool::onGLResize(wxSizeEvent& ev)
 {
 	// Store the window dimensions for later calculations
 	_windowDims = Vector2(ev.GetSize().GetWidth(), ev.GetSize().GetHeight());
+
+    updateProjection();
 
 	// Queue an expose event
 	_glWidget->Refresh();
@@ -1007,16 +1053,11 @@ void TexTool::onKeyPress(wxKeyEvent& ev)
 
 void TexTool::onMouseScroll(wxMouseEvent& ev)
 {
-	if (ev.GetWheelRotation() > 0)
-	{
-        _texSpaceAABB.extents /= ZOOM_MODIFIER;
-		draw();
-	}
-	else if (ev.GetWheelRotation() < 0)
-	{
-        _texSpaceAABB.extents *= ZOOM_MODIFIER;
-		draw();
-	}
+    double factor = ev.GetWheelRotation() > 0 ? 1 / ZOOM_MODIFIER : ZOOM_MODIFIER;
+    _texSpaceAABB.extents *= factor;
+
+    updateProjection();
+    draw();
 }
 
 // Static command targets
