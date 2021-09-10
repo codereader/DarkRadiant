@@ -41,7 +41,6 @@ namespace
     const char* const RKEY_SELECT_EPSILON = "user/ui/selectionEpsilon";
 
 	const float ZOOM_MODIFIER = 1.25f;
-	const float MOVE_FACTOR = 2.0f;
 
 	const float GRID_MAX = 1.0f;
 	const float GRID_DEFAULT = 0.0625f;
@@ -55,7 +54,6 @@ TexTool::TexTool() :
     _selectionInfo(GlobalSelectionSystem().getSelectionInfo()),
     _dragRectangle(false),
     _manipulatorMode(false),
-    _viewOriginMove(false),
     _grid(GRID_DEFAULT),
     _gridActive(registry::getValue<bool>(RKEY_GRID_STATE)),
     _updateNeeded(false)
@@ -542,11 +540,6 @@ void TexTool::endOperation(const std::string& commandName)
 
 void TexTool::doMouseUp(const Vector2& coords, wxMouseEvent& event)
 {
-	// End the origin move, if it was active before
-	if (event.RightUp() && !event.HasAnyModifiers()) {
-		_viewOriginMove = false;
-	}
-
 	// If we are in manipulation mode, end the move
     if (event.LeftUp() && !event.HasAnyModifiers() && _manipulatorMode)
     {
@@ -646,7 +639,6 @@ void TexTool::doMouseDown(const Vector2& coords, wxMouseEvent& event)
 {
 	_manipulatorMode = false;
 	_dragRectangle = false;
-	_viewOriginMove = false;
 
 	if (event.LeftDown() && !event.HasAnyModifiers())
 	{
@@ -989,13 +981,6 @@ void TexTool::onMouseUp(wxMouseEvent& ev)
 	// Pass the call to the member method
 	doMouseUp(texCoords, ev);
 
-#if 0
-	// Check for view origin movements
-    if (ev.RightDown() && !ev.HasAnyModifiers())
-	{
-		_viewOriginMove = false;
-	}
-#endif
 	ev.Skip();
 }
 
@@ -1010,14 +995,6 @@ void TexTool::onMouseDown(wxMouseEvent& ev)
 	// Pass the call to the member method
 	doMouseDown(texCoords, ev);
 
-#if 0
-    // Check for view origin movements
-    if (ev.RightDown() && !ev.HasAnyModifiers())
-	{
-		_moveOriginRectangle.topLeft = Vector2(ev.GetX(), ev.GetY());
-		_viewOriginMove = true;
-	}
-#endif
 	ev.Skip();
 }
 
@@ -1031,30 +1008,6 @@ void TexTool::onMouseMotion(wxMouseEvent& ev)
 	// Pass the call to the member routine
 	doMouseMove(texCoords, ev);
 
-#if 0
-	// Check for view origin movements
-	if (_viewOriginMove)
-	{
-		// Calculate the movement delta relative to the old window x,y coords
-		Vector2 delta = Vector2(ev.GetX(), ev.GetY()) - _moveOriginRectangle.topLeft;
-
-		AABB& texSpaceAABB = getVisibleTexSpace();
-
-		float speedFactor = _zoomFactor * MOVE_FACTOR;
-
-		float factorX = texSpaceAABB.extents[0] / _windowDims[0] * speedFactor;
-		float factorY = texSpaceAABB.extents[1] / _windowDims[1] * speedFactor;
-
-		texSpaceAABB.origin[0] -= delta[0] * factorX;
-		texSpaceAABB.origin[1] -= delta[1] * factorY;
-
-		// Store the new coordinates
-		_moveOriginRectangle.topLeft = Vector2(ev.GetX(), ev.GetY());
-
-		// Redraw to visualise the changes
-		draw();
-	}
-#endif
 	ev.Skip();
 }
 

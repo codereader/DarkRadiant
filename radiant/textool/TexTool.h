@@ -75,17 +75,11 @@ private:
 	// The rectangle defining the manipulation's start and end point
 	textool::Rectangle _manipulateRectangle;
 
-	// The rectangle defining the moveOrigin operation's start and end point
-	textool::Rectangle _moveOriginRectangle;
-
 	// TRUE if we are in selection mode
 	bool _dragRectangle;
 
 	// TRUE if a manipulation is currently ongoing
 	bool _manipulatorMode;
-
-	// TRUE if the texspace center is being dragged around
-	bool _viewOriginMove;
 
 	// The current grid size
 	float _grid;
