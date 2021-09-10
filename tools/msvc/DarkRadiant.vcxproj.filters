@@ -188,6 +188,9 @@
     <Filter Include="src\ui\merge">
       <UniqueIdentifier>{dcd24411-0e8c-45d3-8f5d-8b4f7faab72b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\textool\tools">
+      <UniqueIdentifier>{05468cce-ffef-47f1-9a5e-d4278f0ae3c4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\main.cpp">
@@ -1409,6 +1412,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\eventmanager\ModifierHintPopup.h">
       <Filter>src\eventmanager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\textool\tools\TextureToolMouseEvent.h">
+      <Filter>src\textool\tools</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

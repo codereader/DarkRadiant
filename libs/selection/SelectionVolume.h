@@ -1,7 +1,7 @@
 #pragma once
 
 #include "iscenegraph.h"
-#include "Rectangle.h"
+#include "../Rectangle.h"
 #include "math/Matrix4.h"
 #include "math/Vector3.h"
 #include "iselectiontest.h"

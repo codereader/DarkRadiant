@@ -6,11 +6,15 @@
 #include "math/Vector3.h"
 #include "math/AABB.h"
 #include "ishaders.h"
+#include "iinteractiveview.h"
 #include "iradiant.h"
 #include "iselection.h"
 #include "iregistry.h"
 #include <sigc++/connection.h>
 #include <sigc++/trackable.h>
+#include "wxutil/MouseToolHandler.h"
+#include "tools/TextureToolMouseEvent.h"
+#include "render/View.h"
 
 #include "TexToolItem.h"
 
@@ -33,11 +37,15 @@ typedef std::shared_ptr<TexTool> TexToolPtr;
 
 class TexTool : 
 	public wxutil::TransientWindow,
-	public sigc::trackable
+    public IInteractiveView,
+	public sigc::trackable,
+    protected wxutil::MouseToolHandler
 {
 private:
 	// GL widget
 	wxutil::GLWidget* _glWidget;
+
+    render::View _view;
 
 	// The shader we're working with (shared ptr)
 	MaterialPtr _shader;
@@ -214,12 +222,18 @@ public:
 	 */
 	static TexTool& Instance();
 
+    SelectionTestPtr createSelectionTestForPoint(const Vector2& point) override;
+    int getDeviceWidth() const override;
+    int getDeviceHeight() const override;
+    const VolumeTest& getVolumeTest() const override;
+
+    // Request a deferred update of the UI elements
+    void queueDraw() override;
+    void forceRedraw() override;
+
 	/** greebo: Updates the GL window
 	 */
 	void draw();
-
-	// Request a deferred update of the UI elements (is performed when GTK is idle)
-	void queueUpdate();
 
 	/** greebo: Increases/Decreases the grid size.
 	 */
@@ -261,6 +275,18 @@ public:
 	 */
 	static void registerCommands();
 
-}; // class TexTool
+protected:
+    MouseTool::Result processMouseDownEvent(const MouseToolPtr& tool, const Vector2& point) override;
+    MouseTool::Result processMouseUpEvent(const MouseToolPtr& tool, const Vector2& point) override;
+    MouseTool::Result processMouseMoveEvent(const MouseToolPtr& tool, int x, int y) override;
+
+    void startCapture(const MouseToolPtr& tool) override;
+    void endCapture() override;
+
+    IInteractiveView& getInteractiveView() override;
+
+private:
+    TextureToolMouseEvent createMouseEvent(const Vector2& point, const Vector2& delta = Vector2(0, 0));
+};
 
 } // namespace ui

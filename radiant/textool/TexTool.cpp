@@ -15,12 +15,16 @@
 #include "selectionlib.h"
 #include "camera/CameraWndManager.h"
 #include "wxutil/GLWidget.h"
+#include "selection/Device.h"
+#include "selection/SelectionVolume.h"
+#include "Rectangle.h"
 
 #include "textool/Selectable.h"
 #include "textool/Transformable.h"
 #include "textool/item/PatchItem.h"
 #include "textool/item/BrushItem.h"
 #include "textool/item/FaceItem.h"
+#include "textool/tools/TextureToolMouseEvent.h"
 
 #include <wx/sizer.h>
 #include <wx/toolbar.h>
@@ -34,6 +38,7 @@ namespace
 
 	const std::string RKEY_WINDOW_STATE = RKEY_TEXTOOL_ROOT + "window";
 	const std::string RKEY_GRID_STATE = RKEY_TEXTOOL_ROOT + "gridActive";
+    const char* const RKEY_SELECT_EPSILON = "user/ui/selectionEpsilon";
 
 	const float DEFAULT_ZOOM_FACTOR = 1.5f;
 	const float ZOOM_MODIFIER = 1.25f;
@@ -44,20 +49,21 @@ namespace
 	const float GRID_MIN = 0.00390625f;
 }
 
-TexTool::TexTool()
-: TransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getWxTopLevelWindow(), true),
-  _glWidget(new wxutil::GLWidget(this, std::bind(&TexTool::onGLDraw, this), "TexTool")),
-  _selectionInfo(GlobalSelectionSystem().getSelectionInfo()),
-  _zoomFactor(DEFAULT_ZOOM_FACTOR),
-  _dragRectangle(false),
-  _manipulatorMode(false),
-  _viewOriginMove(false),
-  _grid(GRID_DEFAULT),
-  _gridActive(registry::getValue<bool>(RKEY_GRID_STATE)),
-  _updateNeeded(false)
+TexTool::TexTool() : 
+    TransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getWxTopLevelWindow(), true),
+    MouseToolHandler(IMouseToolGroup::Type::TextureTool),
+    _glWidget(new wxutil::GLWidget(this, std::bind(&TexTool::onGLDraw, this), "TexTool")),
+    _selectionInfo(GlobalSelectionSystem().getSelectionInfo()),
+    _zoomFactor(DEFAULT_ZOOM_FACTOR),
+    _dragRectangle(false),
+    _manipulatorMode(false),
+    _viewOriginMove(false),
+    _grid(GRID_DEFAULT),
+    _gridActive(registry::getValue<bool>(RKEY_GRID_STATE)),
+    _updateNeeded(false)
 {
-	Connect(wxEVT_IDLE, wxIdleEventHandler(TexTool::onIdle), NULL, this);
-	Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(TexTool::onKeyPress), NULL, this);
+	Bind(wxEVT_IDLE, &TexTool::onIdle, this);
+    Bind(wxEVT_KEY_DOWN, &TexTool::onKeyPress, this);
 
 	populateWindow();
 
@@ -142,7 +148,7 @@ void TexTool::_preShow()
 
 	// Register self to the SelSystem to get notified upon selection changes.
 	_selectionChanged = GlobalSelectionSystem().signal_selectionChanged().connect(
-		[this](const ISelectable&) { queueUpdate(); });
+		[this](const ISelectable&) { queueDraw(); });
 
 	_undoHandler = GlobalUndoSystem().signal_postUndo().connect(
 		sigc::mem_fun(this, &TexTool::onUndoRedoOperation));
@@ -150,12 +156,12 @@ void TexTool::_preShow()
 		sigc::mem_fun(this, &TexTool::onUndoRedoOperation));
 
 	// Trigger an update of the current selection
-	queueUpdate();
+    queueDraw();
 }
 
 void TexTool::onUndoRedoOperation()
 {
-	queueUpdate();
+    queueDraw();
 }
 
 void TexTool::gridUp() {
@@ -246,6 +252,40 @@ void TexTool::update()
 	recalculateVisibleTexSpace();
 }
 
+SelectionTestPtr TexTool::createSelectionTestForPoint(const Vector2& point)
+{
+    float selectEpsilon = registry::getValue<float>(RKEY_SELECT_EPSILON);
+
+    // Generate the epsilon
+    Vector2 deviceEpsilon(selectEpsilon / _windowDims[0], selectEpsilon / _windowDims[1]);
+
+    // Copy the current view and constrain it to a small rectangle
+    render::View scissored(_view);
+    ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromPoint(point, deviceEpsilon));
+
+    return SelectionTestPtr(new SelectionVolume(scissored));
+}
+
+int TexTool::getDeviceWidth() const
+{
+    return static_cast<int>(_windowDims[0]);
+}
+
+int TexTool::getDeviceHeight() const
+{
+    return static_cast<int>(_windowDims[1]);
+}
+
+const VolumeTest& TexTool::getVolumeTest() const
+{
+    return _view;
+}
+
+void TexTool::forceRedraw()
+{
+    draw();
+}
+
 void TexTool::draw()
 {
 	// Redraw
@@ -263,7 +303,7 @@ void TexTool::onIdle(wxIdleEvent& ev)
 	}
 }
 
-void TexTool::queueUpdate()
+void TexTool::queueDraw()
 {
 	_updateNeeded = true;
 }
@@ -1005,6 +1045,57 @@ void TexTool::registerCommands()
 
 	GlobalEventManager().addRegistryToggle("TexToolToggleGrid", RKEY_GRID_STATE);
 	GlobalEventManager().addRegistryToggle("TexToolToggleFaceVertexScalePivot", RKEY_FACE_VERTEX_SCALE_PIVOT_IS_CENTROID);
+}
+
+MouseTool::Result TexTool::processMouseDownEvent(const MouseToolPtr& tool, const Vector2& point)
+{
+    TextureToolMouseEvent ev = createMouseEvent(point);
+    return tool->onMouseDown(ev);
+}
+
+MouseTool::Result TexTool::processMouseUpEvent(const MouseToolPtr& tool, const Vector2& point)
+{
+    TextureToolMouseEvent ev = createMouseEvent(point);
+    return tool->onMouseUp(ev);
+}
+
+MouseTool::Result TexTool::processMouseMoveEvent(const MouseToolPtr& tool, int x, int y)
+{
+    bool mouseToolReceivesDeltas = (tool->getPointerMode() & MouseTool::PointerMode::MotionDeltas) != 0;
+
+    // New MouseTool event, optionally passing the delta only
+    TextureToolMouseEvent ev = mouseToolReceivesDeltas ?
+        createMouseEvent(Vector2(0, 0), Vector2(x, y)) :
+        createMouseEvent(Vector2(x, y));
+
+    return tool->onMouseMove(ev);
+}
+
+
+void TexTool::startCapture(const MouseToolPtr& tool)
+{
+
+}
+
+void TexTool::endCapture()
+{
+
+}
+
+
+IInteractiveView& TexTool::getInteractiveView()
+{
+    return *this;
+}
+
+TextureToolMouseEvent TexTool::createMouseEvent(const Vector2& point, const Vector2& delta)
+{
+    Vector2 normalisedDeviceCoords = device_constrained(
+        window_to_normalised_device(point, 
+            static_cast<std::size_t>(_windowDims[0]), 
+            static_cast<std::size_t>(_windowDims[1])));
+
+    return TextureToolMouseEvent(*this, normalisedDeviceCoords, delta);
 }
 
 } // namespace ui
