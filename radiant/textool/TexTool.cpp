@@ -480,15 +480,28 @@ void TexTool::recalculateVisibleTexSpace()
 	_texSpaceAABB.extents[1] = _texSpaceAABB.extents[0];
 
     // Make the visible space non-uniform if the texture has a width/height ratio != 1
-    double aspect = getTextureAspectRatio();
+    double textureAspect = getTextureAspectRatio();
 
-    if (aspect < 1)
+    if (textureAspect < 1)
     {
-        _texSpaceAABB.extents.x() /= getTextureAspectRatio();
+        _texSpaceAABB.extents.x() /= textureAspect;
     }
     else
     {
-        _texSpaceAABB.extents.y() *= getTextureAspectRatio();
+        _texSpaceAABB.extents.y() *= textureAspect;
+    }
+
+    // Initially grow this texture space to match/fit the window aspect
+    double windowAspect = _windowDims.x() / _windowDims.y();
+    double currentAspect = _texSpaceAABB.extents.x() / _texSpaceAABB.extents.y();
+
+    if (currentAspect < windowAspect)
+    {
+        _texSpaceAABB.extents.x() = windowAspect * _texSpaceAABB.extents.y();
+    }
+    else
+    {
+        _texSpaceAABB.extents.y() = 1 / windowAspect * _texSpaceAABB.extents.x();
     }
 
     updateProjection();
@@ -858,9 +871,12 @@ void TexTool::drawGrid()
 		GlobalOpenGL().drawString(ycoordStr);
 	}
 
+    float uvPerPixel = _texSpaceAABB.extents.y() / _windowDims.y();
+    float uvFontHeight = (GlobalOpenGL().getFontHeight() + 3) * uvPerPixel;
+
 	for (float x = startX; x <= endX; x += xIntStep)
 	{
-		glRasterPos2f(x + 0.05f, topLeft.y() + 0.1f);
+		glRasterPos2f(x + 0.05f, topLeft.y() + uvFontHeight);
 		auto xcoordStr = fmt::format("{0:.1f}", trunc(x));
 		GlobalOpenGL().drawString(xcoordStr);
 	}
@@ -878,15 +894,13 @@ double TexTool::getTextureAspectRatio()
 
 void TexTool::updateProjection()
 {
-    double windowAspect = _windowDims[0] / _windowDims[1];
-
     // Set up the orthographic projection matrix to [b,l..t,r] => [-1,-1..+1,+1]
     // with b,l,t,r set to values centered at origin
     double left = -_texSpaceAABB.extents.x();
     double right = _texSpaceAABB.extents.x();
 
-    double top = _texSpaceAABB.extents.y() / windowAspect;
-    double bottom = -_texSpaceAABB.extents.y() / windowAspect;
+    double top = _texSpaceAABB.extents.y();
+    double bottom = -_texSpaceAABB.extents.y();
 
     auto rMinusL = right - left;
     auto rPlusL = right + left;
@@ -1049,6 +1063,19 @@ void TexTool::onGLResize(wxSizeEvent& ev)
 {
 	// Store the window dimensions for later calculations
 	_windowDims = Vector2(ev.GetSize().GetWidth(), ev.GetSize().GetHeight());
+
+    // Adjust the texture space to match up the new window aspect
+    double texSpaceAspect = _texSpaceAABB.extents.x() / _texSpaceAABB.extents.y();
+    double windowAspect = _windowDims.x() / _windowDims.y();
+
+    if (windowAspect > texSpaceAspect)
+    {
+        _texSpaceAABB.extents.x() = windowAspect * _texSpaceAABB.extents.y();
+    }
+    else
+    {
+        _texSpaceAABB.extents.y() = 1 / windowAspect * _texSpaceAABB.extents.x();
+    }
 
     updateProjection();
 
