@@ -257,6 +257,7 @@ void TreeView::_onItemActivated(wxDataViewEvent& ev)
 	if (!IsExpanded(ev.GetItem()))
 	{
 		Expand(ev.GetItem());
+        wxQueueEvent( GetParent()->GetEventHandler(), new wxCommandEvent( EV_TREE_DOUBLE_CLICK ) );
 	}
 	else
 	{
@@ -631,4 +632,5 @@ void TreeView::JumpToSearchMatch(const wxDataViewItem& item)
 	}
 }
 
+wxDEFINE_EVENT( EV_TREE_DOUBLE_CLICK, wxCommandEvent );
 } // namespace
