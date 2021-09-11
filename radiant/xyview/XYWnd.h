@@ -135,6 +135,7 @@ public:
 
     void zoomIn() override;
     void zoomOut() override;
+    void zoomInOn( wxPoint cursor, int zoom );
 
     void setActive(bool b);
     bool isActive() const;

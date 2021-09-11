@@ -1574,6 +1574,22 @@ void XYWnd::zoomIn()
     }
 }
 
+void XYWnd::zoomInOn( wxPoint cursor, int zoom ) {
+    float min_scale = std::min( getWidth(), getHeight() ) / ( 1.1f * ( _maxWorldCoord - _minWorldCoord ) );
+    float max_scale = GlobalXYWnd().maxZoomFactor();
+    float fZoom = pow( 5.0f / 4.0f, zoom );
+    float scale = getScale() * fZoom;
+    if ( scale > max_scale ) {
+        scale = max_scale;
+    }
+    if ( scale < min_scale) {
+        scale = max_scale;
+    }
+    scroll( cursor.x - _width/2, _height / 2 - cursor.y );
+    setScale( scale );
+    scroll( ( _width / 2 - cursor.x ) / fZoom, ( cursor.y - _height / 2 ) / fZoom );
+}
+
 // ================ CALLBACKS ======================================
 
 // This is the chase mouse handler that gets connected by XYWnd::chaseMouseMotion()
@@ -1621,6 +1637,9 @@ bool XYWnd::onRender()
 
 void XYWnd::onGLWindowScroll(wxMouseEvent& ev)
 {
+    if ( !ev.ShiftDown() ) {
+        zoomInOn( ev.GetPosition(), ev.GetWheelRotation() / ev.GetWheelDelta() );
+    }
 	if (ev.GetWheelRotation() > 0)
 	{
 		zoomIn();
