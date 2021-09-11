@@ -150,8 +150,10 @@ void FaceItem::testSelect(Selector& selector, SelectionTest& test)
 
     for (const auto& vertex : _winding)
     {
-        uvs.emplace_back(vertex.texcoord.x(), vertex.texcoord.y(), 1);
+        uvs.emplace_back(vertex.texcoord.x(), vertex.texcoord.y(), 0);
     }
+
+    test.BeginMesh(Matrix4::getIdentity(), true);
 
     SelectionIntersection best;
     test.TestPolygon(VertexPointer(uvs.data(), sizeof(Vector3)), uvs.size(), best);

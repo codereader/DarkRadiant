@@ -860,7 +860,7 @@ void TexTool::drawGrid()
 
 	for (float x = startX; x <= endX; x += xIntStep)
 	{
-		glRasterPos2f(x + 0.05f, topLeft[1] + 0.03f);
+		glRasterPos2f(x + 0.05f, topLeft.y() + 0.1f);
 		auto xcoordStr = fmt::format("{0:.1f}", trunc(x));
 		GlobalOpenGL().drawString(xcoordStr);
 	}
@@ -898,7 +898,7 @@ void TexTool::updateProjection()
 
     projection[0] = 2.0f / rMinusL;
     projection[5] = 2.0f / tMinusB;
-    projection[10] = 1;
+    projection[10] = -1;
 
     projection[12] = rPlusL / rMinusL;
     projection[13] = tPlusB / tMinusB;
