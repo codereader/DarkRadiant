@@ -141,6 +141,7 @@
     <ClInclude Include="..\..\include\ilogwriter.h" />
     <ClInclude Include="..\..\include\imainframe.h" />
     <ClInclude Include="..\..\include\imainframelayout.h" />
+    <ClInclude Include="..\..\include\imanipulator.h" />
     <ClInclude Include="..\..\include\imap.h" />
     <ClInclude Include="..\..\include\imapexporter.h" />
     <ClInclude Include="..\..\include\imapformat.h" />
