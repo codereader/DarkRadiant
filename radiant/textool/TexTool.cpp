@@ -54,9 +54,6 @@ TexTool::TexTool() :
     MouseToolHandler(IMouseToolGroup::Type::TextureTool),
     _glWidget(new wxutil::GLWidget(this, std::bind(&TexTool::onGLDraw, this), "TexTool")),
     _selectionInfo(GlobalSelectionSystem().getSelectionInfo()),
-#if 0
-    _dragRectangle(false),
-#endif
     _manipulatorMode(false),
     _grid(GRID_DEFAULT),
     _gridActive(registry::getValue<bool>(RKEY_GRID_STATE)),
@@ -624,49 +621,12 @@ void TexTool::doMouseUp(const Vector2& coords, wxMouseEvent& event)
 		// Finish the undo recording, store the accumulated undomementos
 		endOperation("TexToolDrag");
 	}
-#if 0
-	// If we are in selection mode, end the selection
-    if ((event.LeftUp() && event.ShiftDown())
-		 && _dragRectangle)
-	{
-		_dragRectangle = false;
 
-		// Make sure the corners are in the correct order
-		_selectionRectangle.sortCorners();
-
-		// The minimim rectangle diameter for a rectangle test (3 % of visible texspace)
-		float minDist = _texSpaceAABB.extents[0] * 0.03;
-
-		textool::TexToolItemVec selectables;
-
-		if ((coords - _selectionRectangle.topLeft).getLength() < minDist) {
-			// Perform a point selection test
-			selectables = getSelectables(_selectionRectangle.topLeft);
-		}
-		else {
-			// Perform the regular selectiontest
-			selectables = getSelectables(_selectionRectangle);
-		}
-
-		// Toggle the selection
-		for (std::size_t i = 0; i < selectables.size(); i++) {
-			selectables[i]->toggle();
-		}
-	}
-#endif
-	draw();
+    draw();
 }
 
 void TexTool::doMouseMove(const Vector2& coords, wxMouseEvent& event)
 {
-#if 0
-	if (_dragRectangle)
-	{
-		_selectionRectangle.bottomRight = coords;
-		draw();
-	}
-	else
-#endif
     if (_manipulatorMode)
 	{
 		Vector2 delta = coords - _manipulateRectangle.topLeft;
@@ -717,9 +677,6 @@ void TexTool::doMouseMove(const Vector2& coords, wxMouseEvent& event)
 void TexTool::doMouseDown(const Vector2& coords, wxMouseEvent& event)
 {
 	_manipulatorMode = false;
-#if 0
-	_dragRectangle = false;
-#endif
 
 	if (event.LeftDown() && !event.HasAnyModifiers())
 	{
@@ -738,15 +695,6 @@ void TexTool::doMouseDown(const Vector2& coords, wxMouseEvent& event)
 			beginOperation();
 		}
 	}
-#if 0
-    else if (event.LeftDown() && event.ShiftDown())
-	{
-		// Start a drag or click operation
-		_dragRectangle = true;
-		_selectionRectangle.topLeft = coords;
-		_selectionRectangle.bottomRight = coords;
-	}
-#endif
 }
 
 void TexTool::selectRelatedItems() {
@@ -1026,36 +974,6 @@ bool TexTool::onGLDraw()
         }
     }
 
-#if 0
-	if (_dragRectangle) {
-		// Create a working reference to save typing
-		textool::Rectangle& rectangle = _selectionRectangle;
-
-		// Define the blend function for transparency
-		glEnable(GL_BLEND);
-		glBlendColor(0,0,0, 0.2f);
-		glBlendFunc(GL_CONSTANT_ALPHA_EXT, GL_ONE_MINUS_CONSTANT_ALPHA_EXT);
-
-		glColor3f(0.8f, 0.8f, 1);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		// The transparent fill rectangle
-		glBegin(GL_QUADS);
-		glVertex2d(rectangle.topLeft[0], rectangle.topLeft[1]);
-		glVertex2d(rectangle.bottomRight[0], rectangle.topLeft[1]);
-		glVertex2d(rectangle.bottomRight[0], rectangle.bottomRight[1]);
-		glVertex2d(rectangle.topLeft[0], rectangle.bottomRight[1]);
-		glEnd();
-		// The solid borders
-		glBlendColor(0,0,0, 0.8f);
-		glBegin(GL_LINE_LOOP);
-		glVertex2d(rectangle.topLeft[0], rectangle.topLeft[1]);
-		glVertex2d(rectangle.bottomRight[0], rectangle.topLeft[1]);
-		glVertex2d(rectangle.bottomRight[0], rectangle.bottomRight[1]);
-		glVertex2d(rectangle.topLeft[0], rectangle.bottomRight[1]);
-		glEnd();
-		glDisable(GL_BLEND);
-	}
-#endif
 	return true;
 }
 

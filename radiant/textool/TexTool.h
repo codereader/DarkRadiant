@@ -69,17 +69,8 @@ private:
 	// The currently active objects in the textool window
 	textool::TexToolItemVec _items;
 
-#if 0
-	// The draggable selection rectangle
-	textool::Rectangle _selectionRectangle;
-#endif
 	// The rectangle defining the manipulation's start and end point
 	textool::Rectangle _manipulateRectangle;
-
-#if 0
-	// TRUE if we are in selection mode
-	bool _dragRectangle;
-#endif
 
 	// TRUE if a manipulation is currently ongoing
 	bool _manipulatorMode;
