@@ -75,6 +75,21 @@ int GlobalKeyEventFilter::FilterEvent(wxEvent& event)
     return Event_Skip;
 }
 
+bool FilterInTextControls( wxKeyEvent& keyEvent ) {
+    if ( keyEvent.ControlDown() ) {
+        if ( keyEvent.GetKeyCode() > 32 && keyEvent.GetKeyCode() < 127 ) {
+            switch ( keyEvent.GetKeyCode() ) {
+            case 'C':case 'V':case 'X':case 'Y':case 'Z':
+                return false;
+            default:
+                return true;
+            }
+        }
+    }
+    // For tool windows we let the ESC key propagate, since it's used to de-select stuff.
+    return keyEvent.GetKeyCode() == WXK_ESCAPE;
+}
+
 GlobalKeyEventFilter::EventCheckResult GlobalKeyEventFilter::checkEvent(wxKeyEvent& keyEvent)
 {
     // Check if the event object can handle the event
@@ -103,9 +118,7 @@ GlobalKeyEventFilter::EventCheckResult GlobalKeyEventFilter::checkEvent(wxKeyEve
         wxDynamicCast(eventObject, wxComboBox) || wxDynamicCast(eventObject, wxSpinCtrl) ||
         wxDynamicCast(eventObject, wxSpinCtrlDouble))
     {
-        // For tool windows we let the ESC key propagate, since it's used to
-        // de-select stuff.
-        return keyEvent.GetKeyCode() == WXK_ESCAPE ? EventShouldBeProcessed : EventShouldBeIgnored;
+        return FilterInTextControls(keyEvent) ? EventShouldBeProcessed : EventShouldBeIgnored;
     }
 
     // Special handling for our treeviews with type ahead search
