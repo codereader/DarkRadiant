@@ -18,7 +18,7 @@ namespace selection
 {
 
 class ManipulatorComponentBase :
-	public Manipulator::Component
+	public IManipulator::Component
 {
 public:
 	virtual ~ManipulatorComponentBase()

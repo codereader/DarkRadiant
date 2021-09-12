@@ -80,7 +80,7 @@ TexTool::TexTool() :
 #if 0
     registerManipulator(std::make_shared<RotateManipulator>(_pivot, 8, 64.0f));
 #endif
-    _defaultManipulatorType = selection::Manipulator::Rotate;
+    _defaultManipulatorType = selection::IManipulator::Rotate;
     setActiveManipulator(_defaultManipulatorType);
 }
 
@@ -1217,7 +1217,7 @@ TextureToolMouseEvent TexTool::createMouseEvent(const Vector2& point, const Vect
     return TextureToolMouseEvent(*this, normalisedDeviceCoords, delta);
 }
 
-std::size_t TexTool::registerManipulator(const selection::ManipulatorPtr& manipulator)
+std::size_t TexTool::registerManipulator(const selection::IManipulator::Ptr& manipulator)
 {
     std::size_t newId = 1;
 
@@ -1243,7 +1243,7 @@ std::size_t TexTool::registerManipulator(const selection::ManipulatorPtr& manipu
     return newId;
 }
 
-void TexTool::unregisterManipulator(const selection::ManipulatorPtr& manipulator)
+void TexTool::unregisterManipulator(const selection::IManipulator::Ptr& manipulator)
 {
     for (Manipulators::const_iterator i = _manipulators.begin(); i != _manipulators.end(); ++i)
     {
@@ -1256,12 +1256,12 @@ void TexTool::unregisterManipulator(const selection::ManipulatorPtr& manipulator
     }
 }
 
-selection::Manipulator::Type TexTool::getActiveManipulatorType()
+selection::IManipulator::Type TexTool::getActiveManipulatorType()
 {
     return _activeManipulator->getType();
 }
 
-const selection::ManipulatorPtr& TexTool::getActiveManipulator()
+const selection::IManipulator::Ptr& TexTool::getActiveManipulator()
 {
     return _activeManipulator;
 }
@@ -1285,7 +1285,7 @@ void TexTool::setActiveManipulator(std::size_t manipulatorId)
 #endif
 }
 
-void TexTool::setActiveManipulator(selection::Manipulator::Type manipulatorType)
+void TexTool::setActiveManipulator(selection::IManipulator::Type manipulatorType)
 {
     for (const Manipulators::value_type& pair : _manipulators)
     {
@@ -1305,7 +1305,7 @@ void TexTool::setActiveManipulator(selection::Manipulator::Type manipulatorType)
     rError() << "Cannot activate non-existent manipulator by type " << manipulatorType << std::endl;
 }
 
-sigc::signal<void, selection::Manipulator::Type>& TexTool::signal_activeManipulatorChanged()
+sigc::signal<void, selection::IManipulator::Type>& TexTool::signal_activeManipulatorChanged()
 {
     return _sigActiveManipulatorChanged;
 }

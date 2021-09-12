@@ -146,7 +146,7 @@ bool TextureToolManipulateMouseTool::selectManipulator(const render::View& view,
 
 void TextureToolManipulateMouseTool::handleMouseMove(const render::View& view, const Vector2& devicePoint)
 {
-	const selection::ManipulatorPtr& activeManipulator = TexTool::Instance().getActiveManipulator();
+	const auto& activeManipulator = TexTool::Instance().getActiveManipulator();
 	assert(activeManipulator);
 
 	// Check if the active manipulator is selected in the first place
@@ -181,12 +181,12 @@ void TextureToolManipulateMouseTool::handleMouseMove(const render::View& view, c
 #endif
 
 	// Query keyboard modifier state and pass them as flags
-	int constraintFlag = selection::Manipulator::Component::Constraint::Unconstrained;
-	constraintFlag |= wxGetKeyState(WXK_SHIFT) ? selection::Manipulator::Component::Constraint::Type1 : 0;
-	constraintFlag |= wxGetKeyState(WXK_ALT) ? selection::Manipulator::Component::Constraint::Type3 : 0;
+	int constraintFlag = selection::IManipulator::Component::Constraint::Unconstrained;
+	constraintFlag |= wxGetKeyState(WXK_SHIFT) ? selection::IManipulator::Component::Constraint::Type1 : 0;
+	constraintFlag |= wxGetKeyState(WXK_ALT) ? selection::IManipulator::Component::Constraint::Type3 : 0;
 
 	// Grid constraint is ON by default, unless CTRL is held
-	constraintFlag |= wxGetKeyState(WXK_CONTROL) ? 0 : selection::Manipulator::Component::Constraint::Grid;
+	constraintFlag |= wxGetKeyState(WXK_CONTROL) ? 0 : selection::IManipulator::Component::Constraint::Grid;
 
 	// Get the component of the currently active manipulator (done by selection test)
 	// and call the transform method
@@ -204,7 +204,7 @@ void TextureToolManipulateMouseTool::endMove()
 {
 	freezeTransforms();
 
-	const selection::ManipulatorPtr& activeManipulator = TexTool::Instance().getActiveManipulator();
+	const auto& activeManipulator = TexTool::Instance().getActiveManipulator();
 	assert(activeManipulator);
 
 	_manipulationActive = false;
@@ -224,7 +224,7 @@ void TextureToolManipulateMouseTool::endMove()
 
 void TextureToolManipulateMouseTool::cancelMove()
 {
-	const selection::ManipulatorPtr& activeManipulator = TexTool::Instance().getActiveManipulator();
+	const auto& activeManipulator = TexTool::Instance().getActiveManipulator();
 	assert(activeManipulator);
 
 	_manipulationActive = false;

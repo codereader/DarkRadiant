@@ -57,13 +57,13 @@ public:
 	}
 
 private:
-	void onActiveManipulatorChanged(selection::Manipulator::Type type)
+	void onActiveManipulatorChanged(selection::IManipulator::Type type)
 	{
 		GlobalEventManager().setToggled("ToggleClipper", GlobalClipper().clipMode());
-		GlobalEventManager().setToggled("MouseTranslate", type == selection::Manipulator::Translate);
-		GlobalEventManager().setToggled("MouseRotate", type == selection::Manipulator::Rotate);
-		GlobalEventManager().setToggled("MouseDrag", type == selection::Manipulator::Drag);
-		GlobalEventManager().setToggled("ToggleModelScaleManipulator", type == selection::Manipulator::ModelScale);
+		GlobalEventManager().setToggled("MouseTranslate", type == selection::IManipulator::Translate);
+		GlobalEventManager().setToggled("MouseRotate", type == selection::IManipulator::Rotate);
+		GlobalEventManager().setToggled("MouseDrag", type == selection::IManipulator::Drag);
+		GlobalEventManager().setToggled("ToggleModelScaleManipulator", type == selection::IManipulator::ModelScale);
 	}
 };
 

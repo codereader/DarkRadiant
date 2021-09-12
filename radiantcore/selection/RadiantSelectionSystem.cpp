@@ -41,7 +41,7 @@ namespace
 
 RadiantSelectionSystem::RadiantSelectionSystem() :
     _requestWorkZoneRecalculation(true),
-    _defaultManipulatorType(Manipulator::Drag),
+    _defaultManipulatorType(IManipulator::Drag),
     _mode(ePrimitive),
     _componentMode(eDefault),
     _countPrimitive(0),
@@ -235,7 +235,7 @@ sigc::signal<void, SelectionSystem::EComponentMode>& RadiantSelectionSystem::sig
     return _sigComponentModeChanged;
 }
 
-std::size_t RadiantSelectionSystem::registerManipulator(const ManipulatorPtr& manipulator)
+std::size_t RadiantSelectionSystem::registerManipulator(const IManipulator::Ptr& manipulator)
 {
 	std::size_t newId = 1;
 
@@ -261,7 +261,7 @@ std::size_t RadiantSelectionSystem::registerManipulator(const ManipulatorPtr& ma
 	return newId;
 }
 
-void RadiantSelectionSystem::unregisterManipulator(const ManipulatorPtr& manipulator)
+void RadiantSelectionSystem::unregisterManipulator(const IManipulator::Ptr& manipulator)
 {
 	for (Manipulators::const_iterator i = _manipulators.begin(); i != _manipulators.end(); ++i)
 	{
@@ -274,12 +274,12 @@ void RadiantSelectionSystem::unregisterManipulator(const ManipulatorPtr& manipul
 	}
 }
 
-Manipulator::Type RadiantSelectionSystem::getActiveManipulatorType()
+IManipulator::Type RadiantSelectionSystem::getActiveManipulatorType()
 {
 	return _activeManipulator->getType();
 }
 
-const ManipulatorPtr& RadiantSelectionSystem::getActiveManipulator()
+const IManipulator::Ptr& RadiantSelectionSystem::getActiveManipulator()
 {
 	return _activeManipulator;
 }
@@ -302,7 +302,7 @@ void RadiantSelectionSystem::setActiveManipulator(std::size_t manipulatorId)
 	pivotChanged();
 }
 
-void RadiantSelectionSystem::setActiveManipulator(Manipulator::Type manipulatorType)
+void RadiantSelectionSystem::setActiveManipulator(IManipulator::Type manipulatorType)
 {
 	for (const Manipulators::value_type& pair : _manipulators)
 	{
@@ -321,7 +321,7 @@ void RadiantSelectionSystem::setActiveManipulator(Manipulator::Type manipulatorT
 	rError() << "Cannot activate non-existent manipulator by type " << manipulatorType << std::endl;
 }
 
-sigc::signal<void, selection::Manipulator::Type>& RadiantSelectionSystem::signal_activeManipulatorChanged()
+sigc::signal<void, selection::IManipulator::Type>& RadiantSelectionSystem::signal_activeManipulatorChanged()
 {
     return _sigActiveManipulatorChanged;
 }
@@ -787,12 +787,12 @@ void RadiantSelectionSystem::onManipulationEnd()
 	// The selection bounds have possibly changed
 	_requestWorkZoneRecalculation = true;
 
-    const selection::ManipulatorPtr& activeManipulator = getActiveManipulator();
+    const auto& activeManipulator = getActiveManipulator();
     assert(activeManipulator);
 
     // greebo: Deselect all faces if we are in brush and drag mode
     if ((Mode() == SelectionSystem::ePrimitive || Mode() == SelectionSystem::eGroupPart) &&
-        activeManipulator->getType() == selection::Manipulator::Drag)
+        activeManipulator->getType() == selection::IManipulator::Drag)
     {
         SelectAllComponentWalker faceSelector(false, SelectionSystem::eFace);
         GlobalSceneGraph().root()->traverse(faceSelector);
@@ -809,7 +809,7 @@ void RadiantSelectionSystem::onManipulationEnd()
 
 void RadiantSelectionSystem::onManipulationCancelled()
 {
-    const selection::ManipulatorPtr& activeManipulator = getActiveManipulator();
+    const auto& activeManipulator = getActiveManipulator();
     assert(activeManipulator);
 
     // Unselect any currently selected manipulators to be sure
@@ -843,7 +843,7 @@ void RadiantSelectionSystem::onManipulationCancelled()
     });
 
     // greebo: Deselect all faces if we are in brush and drag mode
-    if (Mode() == SelectionSystem::ePrimitive && activeManipulator->getType() == selection::Manipulator::Drag)
+    if (Mode() == SelectionSystem::ePrimitive && activeManipulator->getType() == selection::IManipulator::Drag)
     {
         SelectAllComponentWalker faceSelector(false, SelectionSystem::eFace);
         GlobalSceneGraph().root()->traverse(faceSelector);
@@ -990,7 +990,7 @@ void RadiantSelectionSystem::initialiseModule(const IApplicationContext& ctx)
 	registerManipulator(std::make_shared<RotateManipulator>(_pivot, 8, 64.0f));
 	registerManipulator(std::make_shared<ModelScaleManipulator>(_pivot));
 
-	_defaultManipulatorType = Manipulator::Drag;
+	_defaultManipulatorType = IManipulator::Drag;
 	setActiveManipulator(_defaultManipulatorType);
     pivotChanged();
 
@@ -1086,7 +1086,7 @@ void RadiantSelectionSystem::checkComponentModeSelectionMode(const ISelectable& 
 	}
 }
 
-std::size_t RadiantSelectionSystem::getManipulatorIdForType(Manipulator::Type type)
+std::size_t RadiantSelectionSystem::getManipulatorIdForType(IManipulator::Type type)
 {
 	for (const Manipulators::value_type& pair : _manipulators)
 	{
@@ -1115,7 +1115,7 @@ void RadiantSelectionSystem::toggleManipulatorModeById(std::size_t manipId)
 	}
 	else // we're not in <mode> yet
 	{
-		std::size_t clipperId = getManipulatorIdForType(Manipulator::Clip);
+		std::size_t clipperId = getManipulatorIdForType(IManipulator::Clip);
 
 		if (manipId == clipperId)
 		{
@@ -1152,31 +1152,31 @@ void RadiantSelectionSystem::toggleManipulatorModeCmd(const cmd::ArgumentList& a
 
     if (manip == "drag")
     {
-        toggleManipulatorModeById(getManipulatorIdForType(Manipulator::Drag));
+        toggleManipulatorModeById(getManipulatorIdForType(IManipulator::Drag));
     }
     else if (manip == "translate")
     {
-        toggleManipulatorModeById(getManipulatorIdForType(Manipulator::Translate));
+        toggleManipulatorModeById(getManipulatorIdForType(IManipulator::Translate));
     }
     else if (manip == "rotate")
     {
-        toggleManipulatorModeById(getManipulatorIdForType(Manipulator::Rotate));
+        toggleManipulatorModeById(getManipulatorIdForType(IManipulator::Rotate));
     }
     else if (manip == "scale")
     {
-        toggleManipulatorModeById(getManipulatorIdForType(Manipulator::Drag));
+        toggleManipulatorModeById(getManipulatorIdForType(IManipulator::Drag));
     }
     else if (manip == "clip")
     {
-        toggleManipulatorModeById(getManipulatorIdForType(Manipulator::Clip));
+        toggleManipulatorModeById(getManipulatorIdForType(IManipulator::Clip));
     }
     else if (manip == "modelscale")
     {
-        toggleManipulatorModeById(getManipulatorIdForType(Manipulator::ModelScale));
+        toggleManipulatorModeById(getManipulatorIdForType(IManipulator::ModelScale));
     }
 }
 
-void RadiantSelectionSystem::toggleManipulatorMode(Manipulator::Type type)
+void RadiantSelectionSystem::toggleManipulatorMode(IManipulator::Type type)
 {
 	// Switch back to the default mode if we're already in <mode>
 	if (_activeManipulator->getType() == type && _defaultManipulatorType != type)
@@ -1185,7 +1185,7 @@ void RadiantSelectionSystem::toggleManipulatorMode(Manipulator::Type type)
 	}
 	else // we're not in <mode> yet
 	{
-		if (type == Manipulator::Clip)
+		if (type == IManipulator::Clip)
 		{
 			activateDefaultMode();
 			GlobalClipper().onClipMode(true);

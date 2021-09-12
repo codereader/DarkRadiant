@@ -13,7 +13,7 @@ namespace selection
  * around specific axes.
  */
 class ManipulatorBase :
-	public Manipulator
+	public IManipulator
 {
 private:
 	std::size_t _id;

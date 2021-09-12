@@ -94,11 +94,11 @@ unsigned int ManipulateMouseTool::getRefreshMode()
 
 bool ManipulateMouseTool::selectManipulator(const render::View& view, const Vector2& devicePoint, const Vector2& deviceEpsilon)
 {
-	const selection::ManipulatorPtr& activeManipulator = GlobalSelectionSystem().getActiveManipulator();
+	const auto& activeManipulator = GlobalSelectionSystem().getActiveManipulator();
 
 	assert(activeManipulator);
 	
-	bool dragComponentMode = activeManipulator->getType() == selection::Manipulator::Drag && 
+	bool dragComponentMode = activeManipulator->getType() == selection::IManipulator::Drag &&
 		GlobalSelectionSystem().Mode() == SelectionSystem::eComponent;
 
 	if (!nothingSelected() || dragComponentMode)
@@ -144,7 +144,7 @@ bool ManipulateMouseTool::selectManipulator(const render::View& view, const Vect
 
 void ManipulateMouseTool::handleMouseMove(const render::View& view, const Vector2& devicePoint)
 {
-	const selection::ManipulatorPtr& activeManipulator = GlobalSelectionSystem().getActiveManipulator();
+	const auto& activeManipulator = GlobalSelectionSystem().getActiveManipulator();
 	assert(activeManipulator);
 
 	// Check if the active manipulator is selected in the first place
@@ -179,12 +179,12 @@ void ManipulateMouseTool::handleMouseMove(const render::View& view, const Vector
 #endif
 
 	// Query keyboard modifier state and pass them as flags
-	int constraintFlag = selection::Manipulator::Component::Constraint::Unconstrained;
-	constraintFlag |= wxGetKeyState(WXK_SHIFT) ? selection::Manipulator::Component::Constraint::Type1 : 0;
-	constraintFlag |= wxGetKeyState(WXK_ALT) ? selection::Manipulator::Component::Constraint::Type3 : 0;
+	int constraintFlag = selection::IManipulator::Component::Constraint::Unconstrained;
+	constraintFlag |= wxGetKeyState(WXK_SHIFT) ? selection::IManipulator::Component::Constraint::Type1 : 0;
+	constraintFlag |= wxGetKeyState(WXK_ALT) ? selection::IManipulator::Component::Constraint::Type3 : 0;
 
 	// Grid constraint is ON by default, unless CTRL is held
-	constraintFlag |= wxGetKeyState(WXK_CONTROL) ? 0 : selection::Manipulator::Component::Constraint::Grid;
+	constraintFlag |= wxGetKeyState(WXK_CONTROL) ? 0 : selection::IManipulator::Component::Constraint::Grid;
 
 	// Get the component of the currently active manipulator (done by selection test)
 	// and call the transform method
@@ -202,7 +202,7 @@ void ManipulateMouseTool::endMove()
 {
 	freezeTransforms();
 
-	const selection::ManipulatorPtr& activeManipulator = GlobalSelectionSystem().getActiveManipulator();
+	const auto& activeManipulator = GlobalSelectionSystem().getActiveManipulator();
 	assert(activeManipulator);
 
 	_manipulationActive = false;
@@ -215,26 +215,26 @@ void ManipulateMouseTool::endMove()
 	{
 		std::ostringstream command;
 
-		if (activeManipulator->getType() == selection::Manipulator::Translate)
+		if (activeManipulator->getType() == selection::IManipulator::Translate)
 		{
 			command << "translateTool";
 			//outputTranslation(command);
 		}
-		else if (activeManipulator->getType() == selection::Manipulator::Rotate)
+		else if (activeManipulator->getType() == selection::IManipulator::Rotate)
 		{
 			command << "rotateTool";
 			//outputRotation(command);
 		}
-		else if (activeManipulator->getType() == selection::Manipulator::Scale)
+		else if (activeManipulator->getType() == selection::IManipulator::Scale)
 		{
 			command << "scaleTool";
 			//outputScale(command);
 		}
-		else if (activeManipulator->getType() == selection::Manipulator::Drag)
+		else if (activeManipulator->getType() == selection::IManipulator::Drag)
 		{
 			command << "dragTool";
 		}
-		else if (activeManipulator->getType() == selection::Manipulator::ModelScale)
+		else if (activeManipulator->getType() == selection::IManipulator::ModelScale)
 		{
 			command << "modelScaleTool";
 		}
@@ -248,7 +248,7 @@ void ManipulateMouseTool::endMove()
 
 void ManipulateMouseTool::cancelMove()
 {
-	const selection::ManipulatorPtr& activeManipulator = GlobalSelectionSystem().getActiveManipulator();
+	const auto& activeManipulator = GlobalSelectionSystem().getActiveManipulator();
 	assert(activeManipulator);
 
 	_manipulationActive = false;

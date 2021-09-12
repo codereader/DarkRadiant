@@ -22,9 +22,11 @@ struct WorkZone;
 * example, the rotation Manipulator draws several circles which cause rotations
 * around specific axes.
 */
-class Manipulator
+class IManipulator
 {
 public:
+    using Ptr = std::shared_ptr<IManipulator>;
+
 	// Manipulator type enum, user-defined manipulators should return "Custom"
 	enum Type
 	{
@@ -75,7 +77,7 @@ public:
 		virtual void transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, unsigned int flags) = 0;
 	};
 
-	virtual ~Manipulator() {}
+	virtual ~IManipulator() {}
 
 	// ID and Type management
 	virtual std::size_t getId() const = 0;
@@ -100,6 +102,5 @@ public:
 	// Manipulators should indicate whether component editing is supported or not
 	virtual bool supportsComponentManipulation() const = 0;
 };
-typedef std::shared_ptr<Manipulator> ManipulatorPtr;
 
 }

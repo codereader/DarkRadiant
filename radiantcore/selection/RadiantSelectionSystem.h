@@ -44,12 +44,12 @@ private:
 
     sigc::signal<void, const ISelectable&> _sigSelectionChanged;
 
-	typedef std::map<std::size_t, ManipulatorPtr> Manipulators;
+	typedef std::map<std::size_t, IManipulator::Ptr> Manipulators;
 	Manipulators _manipulators;
 
 	// The currently active manipulator
-	ManipulatorPtr _activeManipulator;
-	Manipulator::Type _defaultManipulatorType;
+	IManipulator::Ptr _activeManipulator;
+    IManipulator::Type _defaultManipulatorType;
 
 	// state
 	EMode _mode;
@@ -68,7 +68,7 @@ private:
 
 	bool nothingSelected() const;
 
-	sigc::signal<void, selection::Manipulator::Type> _sigActiveManipulatorChanged;
+	sigc::signal<void, selection::IManipulator::Type> _sigActiveManipulatorChanged;
 	sigc::signal<void, EMode> _sigSelectionModeChanged;
 	sigc::signal<void, EComponentMode> _sigComponentModeChanged;
 
@@ -101,14 +101,14 @@ public:
 	sigc::signal<void, EComponentMode>& signal_componentModeChanged() override;
 
 	// Returns the ID of the registered manipulator
-	std::size_t registerManipulator(const ManipulatorPtr& manipulator) override;
-	void unregisterManipulator(const ManipulatorPtr& manipulator) override;
+	std::size_t registerManipulator(const IManipulator::Ptr& manipulator) override;
+	void unregisterManipulator(const IManipulator::Ptr& manipulator) override;
 
-	Manipulator::Type getActiveManipulatorType() override;
-	const ManipulatorPtr& getActiveManipulator() override;
+    IManipulator::Type getActiveManipulatorType() override;
+	const IManipulator::Ptr& getActiveManipulator() override;
 	void setActiveManipulator(std::size_t manipulatorId) override;
-	void setActiveManipulator(Manipulator::Type manipulatorType) override;
-	sigc::signal<void, selection::Manipulator::Type>& signal_activeManipulatorChanged() override;
+	void setActiveManipulator(IManipulator::Type manipulatorType) override;
+	sigc::signal<void, selection::IManipulator::Type>& signal_activeManipulatorChanged() override;
 
 	std::size_t countSelected() const override;
 	std::size_t countSelectedComponents() const override;
@@ -184,11 +184,11 @@ private:
 
 	void notifyObservers(const scene::INodePtr& node, bool isComponent);
 
-	std::size_t getManipulatorIdForType(Manipulator::Type type);
+	std::size_t getManipulatorIdForType(IManipulator::Type type);
 
 	// Command targets used to connect to the event system
 	void toggleManipulatorModeCmd(const cmd::ArgumentList& args);
-	void toggleManipulatorMode(Manipulator::Type type);
+	void toggleManipulatorMode(IManipulator::Type type);
 	void toggleManipulatorModeById(std::size_t manipId);
 
 	void activateDefaultMode();

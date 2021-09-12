@@ -90,14 +90,14 @@ private:
 	sigc::connection _undoHandler;
 	sigc::connection _redoHandler;
 
-    typedef std::map<std::size_t, selection::ManipulatorPtr> Manipulators;
+    typedef std::map<std::size_t, selection::IManipulator::Ptr> Manipulators;
     Manipulators _manipulators;
 
     // The currently active manipulator
-    selection::ManipulatorPtr _activeManipulator;
-    selection::Manipulator::Type _defaultManipulatorType;
+    selection::IManipulator::Ptr _activeManipulator;
+    selection::IManipulator::Type _defaultManipulatorType;
 
-    sigc::signal<void, selection::Manipulator::Type> _sigActiveManipulatorChanged;
+    sigc::signal<void, selection::IManipulator::Type> _sigActiveManipulatorChanged;
 
 private:
 	// This is where the static shared_ptr of the singleton instance is held.
@@ -281,14 +281,14 @@ public:
 	static void registerCommands();
 
     // Returns the ID of the registered manipulator
-    std::size_t registerManipulator(const selection::ManipulatorPtr& manipulator);
-    void unregisterManipulator(const selection::ManipulatorPtr& manipulator);
+    std::size_t registerManipulator(const selection::IManipulator::Ptr& manipulator);
+    void unregisterManipulator(const selection::IManipulator::Ptr& manipulator);
 
-    selection::Manipulator::Type getActiveManipulatorType();
-    const selection::ManipulatorPtr& getActiveManipulator();
+    selection::IManipulator::Type getActiveManipulatorType();
+    const selection::IManipulator::Ptr& getActiveManipulator();
     void setActiveManipulator(std::size_t manipulatorId);
-    void setActiveManipulator(selection::Manipulator::Type manipulatorType);
-    sigc::signal<void, selection::Manipulator::Type>& signal_activeManipulatorChanged();
+    void setActiveManipulator(selection::IManipulator::Type manipulatorType);
+    sigc::signal<void, selection::IManipulator::Type>& signal_activeManipulatorChanged();
 
     /** greebo: Returns the number of selected TexToolItems.
      */

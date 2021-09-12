@@ -118,7 +118,7 @@ TEST_F(SelectionTest, PivotIsResetAfterCancelingOperation)
     auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
     auto brush = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/1");
 
-    GlobalSelectionSystem().setActiveManipulator(selection::Manipulator::Translate);
+    GlobalSelectionSystem().setActiveManipulator(selection::IManipulator::Translate);
 
     // Select the node, the pivot should now be at the node center
     Node_setSelected(brush, true);
