@@ -6,6 +6,7 @@
 #include "math/Vector3.h"
 #include "math/AABB.h"
 #include "ishaders.h"
+#include "imanipulator.h"
 #include "itexturetoolview.h"
 #include "iradiant.h"
 #include "imousetool.h"
@@ -89,6 +90,15 @@ private:
 	sigc::connection _undoHandler;
 	sigc::connection _redoHandler;
 
+    typedef std::map<std::size_t, selection::ManipulatorPtr> Manipulators;
+    Manipulators _manipulators;
+
+    // The currently active manipulator
+    selection::ManipulatorPtr _activeManipulator;
+    selection::Manipulator::Type _defaultManipulatorType;
+
+    sigc::signal<void, selection::Manipulator::Type> _sigActiveManipulatorChanged;
+
 private:
 	// This is where the static shared_ptr of the singleton instance is held.
 	static TexToolPtr& InstancePtr();
@@ -149,10 +159,6 @@ private:
 	/** greebo: Passes the given visitor to every Item in the hierarchy.
 	 */
 	void foreachItem(textool::ItemVisitor& visitor);
-
-	/** greebo: Returns the number of selected TexToolItems.
-	 */
-	int countSelected();
 
 	/** greebo: Sets all selectables to <selected>
 	 * 			If selected == false and no items are selected,
@@ -273,6 +279,27 @@ public:
 	/** greebo: Registers the commands in the EventManager
 	 */
 	static void registerCommands();
+
+    // Returns the ID of the registered manipulator
+    std::size_t registerManipulator(const selection::ManipulatorPtr& manipulator);
+    void unregisterManipulator(const selection::ManipulatorPtr& manipulator);
+
+    selection::Manipulator::Type getActiveManipulatorType();
+    const selection::ManipulatorPtr& getActiveManipulator();
+    void setActiveManipulator(std::size_t manipulatorId);
+    void setActiveManipulator(selection::Manipulator::Type manipulatorType);
+    sigc::signal<void, selection::Manipulator::Type>& signal_activeManipulatorChanged();
+
+    /** greebo: Returns the number of selected TexToolItems.
+     */
+    int countSelected();
+
+    Matrix4 getPivot2World();
+
+    void onManipulationStart();
+    void onManipulationChanged();
+    void onManipulationEnd();
+    void onManipulationCancelled();
 
 protected:
     MouseTool::Result processMouseDownEvent(const MouseToolPtr& tool, const Vector2& point) override;

@@ -730,6 +730,9 @@
     <ClCompile Include="..\..\radiant\map\AutoSaveTimer.cpp">
       <Filter>src\map</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\textool\tools\TextureToolManipulateMouseTool.cpp">
+      <Filter>src\textool\tools</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h">
@@ -1417,6 +1420,9 @@
       <Filter>src\textool\tools</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\textool\tools\TextureToolSelectionTool.h">
+      <Filter>src\textool\tools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\textool\tools\TextureToolManipulateMouseTool.h">
       <Filter>src\textool\tools</Filter>
     </ClInclude>
   </ItemGroup>

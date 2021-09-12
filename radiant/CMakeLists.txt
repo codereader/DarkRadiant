@@ -27,6 +27,7 @@ add_executable(darkradiant
                textool/item/FaceVertexItem.cpp
                textool/item/PatchItem.cpp
                textool/item/PatchVertexItem.cpp
+               textool/tools/TextureToolManipulateMouseTool.cpp
                textool/TexTool.cpp
                textool/TexToolItem.cpp
                ui/aas/AasControl.cpp

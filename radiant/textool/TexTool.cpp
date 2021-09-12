@@ -76,6 +76,12 @@ TexTool::TexTool() :
     _freezePointer.connectMouseEvents(
         std::bind(&TexTool::onMouseDown, this, std::placeholders::_1),
         std::bind(&TexTool::onMouseUp, this, std::placeholders::_1));
+
+#if 0
+    registerManipulator(std::make_shared<RotateManipulator>(_pivot, 8, 64.0f));
+#endif
+    _defaultManipulatorType = selection::Manipulator::Rotate;
+    setActiveManipulator(_defaultManipulatorType);
 }
 
 TexToolPtr& TexTool::InstancePtr()
@@ -1210,5 +1216,124 @@ TextureToolMouseEvent TexTool::createMouseEvent(const Vector2& point, const Vect
 
     return TextureToolMouseEvent(*this, normalisedDeviceCoords, delta);
 }
+
+std::size_t TexTool::registerManipulator(const selection::ManipulatorPtr& manipulator)
+{
+    std::size_t newId = 1;
+
+    while (_manipulators.find(newId) != _manipulators.end())
+    {
+        ++newId;
+
+        if (newId == std::numeric_limits<std::size_t>::max())
+        {
+            throw std::runtime_error("Out of manipulator IDs");
+        }
+    }
+
+    _manipulators.insert(std::make_pair(newId, manipulator));
+
+    manipulator->setId(newId);
+
+    if (!_activeManipulator)
+    {
+        _activeManipulator = manipulator;
+    }
+
+    return newId;
+}
+
+void TexTool::unregisterManipulator(const selection::ManipulatorPtr& manipulator)
+{
+    for (Manipulators::const_iterator i = _manipulators.begin(); i != _manipulators.end(); ++i)
+    {
+        if (i->second == manipulator)
+        {
+            i->second->setId(0);
+            _manipulators.erase(i);
+            return;
+        }
+    }
+}
+
+selection::Manipulator::Type TexTool::getActiveManipulatorType()
+{
+    return _activeManipulator->getType();
+}
+
+const selection::ManipulatorPtr& TexTool::getActiveManipulator()
+{
+    return _activeManipulator;
+}
+
+void TexTool::setActiveManipulator(std::size_t manipulatorId)
+{
+    Manipulators::const_iterator found = _manipulators.find(manipulatorId);
+
+    if (found == _manipulators.end())
+    {
+        rError() << "Cannot activate non-existent manipulator ID " << manipulatorId << std::endl;
+        return;
+    }
+
+    _activeManipulator = found->second;
+#if 0
+    // Release the user lock when switching manipulators
+    _pivot.setUserLocked(false);
+
+    pivotChanged();
+#endif
+}
+
+void TexTool::setActiveManipulator(selection::Manipulator::Type manipulatorType)
+{
+    for (const Manipulators::value_type& pair : _manipulators)
+    {
+        if (pair.second->getType() == manipulatorType)
+        {
+            _activeManipulator = pair.second;
+#if 0
+            // Release the user lock when switching manipulators
+            _pivot.setUserLocked(false);
+
+            pivotChanged();
+#endif
+            return;
+        }
+    }
+
+    rError() << "Cannot activate non-existent manipulator by type " << manipulatorType << std::endl;
+}
+
+sigc::signal<void, selection::Manipulator::Type>& TexTool::signal_activeManipulatorChanged()
+{
+    return _sigActiveManipulatorChanged;
+}
+
+Matrix4 TexTool::getPivot2World()
+{
+    return Matrix4::getTranslation(Vector3(0,0,0));
+}
+
+void TexTool::onManipulationStart()
+{
+
+}
+
+void TexTool::onManipulationChanged()
+{
+
+}
+
+void TexTool::onManipulationEnd()
+{
+
+}
+
+void TexTool::onManipulationCancelled()
+{
+
+}
+
 
 } // namespace ui
