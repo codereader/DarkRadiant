@@ -102,9 +102,6 @@ public:
 
 	virtual void setSelected(bool select) = 0;
 	virtual bool isSelected() const = 0;
-
-	// Manipulators should indicate whether component editing is supported or not
-	virtual bool supportsComponentManipulation() const = 0;
 };
 
 /**
@@ -121,6 +118,9 @@ public:
 
     // Renders the manipulator's visual representation to the scene
     virtual void render(RenderableCollector& collector, const VolumeTest& volume) = 0;
+
+    // Manipulators should indicate whether component editing is supported or not
+    virtual bool supportsComponentManipulation() const = 0;
 };
 
 // Factory interface instantiating new IManipulator instances for a given purpose

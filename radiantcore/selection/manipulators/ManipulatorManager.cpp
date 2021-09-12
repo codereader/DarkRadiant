@@ -3,6 +3,7 @@
 #include <map>
 #include "module/StaticModule.h"
 #include "string/convert.h"
+#include "TextureToolRotateManipulator.h"
 
 namespace selection
 {
@@ -52,7 +53,8 @@ public:
         _manipulatorsByContext.emplace(IManipulator::Context::Scene, ManipulatorsByType());
         _manipulatorsByContext.emplace(IManipulator::Context::TextureTool, ManipulatorsByType());
 
-        //  TODO
+        _manipulatorsByContext[IManipulator::Context::TextureTool].emplace(
+            IManipulator::Rotate, [] { return std::make_shared<TextureToolRotateManipulator>(); });
     }
 
     void shutdownModule()

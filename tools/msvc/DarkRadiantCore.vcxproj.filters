@@ -1078,6 +1078,9 @@
     <ClCompile Include="..\..\radiantcore\selection\manipulators\ManipulatorManager.cpp">
       <Filter>src\selection\manipulators</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\selection\manipulators\TextureToolRotateManipulator.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
@@ -2192,6 +2195,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\map\format\Quake3Utils.h">
       <Filter>src\map\format</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\selection\manipulators\TextureToolRotateManipulator.h">
+      <Filter>src\selection\manipulators</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

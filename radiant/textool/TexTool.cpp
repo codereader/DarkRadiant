@@ -77,9 +77,9 @@ TexTool::TexTool() :
         std::bind(&TexTool::onMouseDown, this, std::placeholders::_1),
         std::bind(&TexTool::onMouseUp, this, std::placeholders::_1));
 
-#if 0
-    registerManipulator(std::make_shared<RotateManipulator>(_pivot, 8, 64.0f));
-#endif
+    registerManipulator(GlobalManipulatorManager().createManipulator(
+        selection::IManipulator::Context::TextureTool, selection::IManipulator::Rotate));
+
     _defaultManipulatorType = selection::IManipulator::Rotate;
     setActiveManipulator(_defaultManipulatorType);
 }

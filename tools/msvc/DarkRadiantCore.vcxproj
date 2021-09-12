@@ -661,6 +661,7 @@
     <ClCompile Include="..\..\radiantcore\selection\manipulators\ModelScaleManipulator.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\manipulators\RotateManipulator.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\manipulators\ScaleManipulator.cpp" />
+    <ClCompile Include="..\..\radiantcore\selection\manipulators\TextureToolRotateManipulator.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\manipulators\TranslateManipulator.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\RadiantSelectionSystem.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\SelectedNodeList.cpp" />
@@ -1009,6 +1010,7 @@
     <ClInclude Include="..\..\radiantcore\selection\manipulators\ModelScaleManipulator.h" />
     <ClInclude Include="..\..\radiantcore\selection\manipulators\RotateManipulator.h" />
     <ClInclude Include="..\..\radiantcore\selection\manipulators\ScaleManipulator.h" />
+    <ClInclude Include="..\..\radiantcore\selection\manipulators\TextureToolRotateManipulator.h" />
     <ClInclude Include="..\..\radiantcore\selection\manipulators\TranslateManipulator.h" />
     <ClInclude Include="..\..\radiantcore\selection\RadiantSelectionSystem.h" />
     <ClInclude Include="..\..\radiantcore\selection\Remap.h" />

@@ -103,7 +103,7 @@ bool TextureToolManipulateMouseTool::selectManipulator(const render::View& view,
 	bool dragComponentMode = activeManipulator->getType() == selection::Manipulator::Drag && 
 		GlobalSelectionSystem().Mode() == SelectionSystem::eComponent;
 #endif
-	if (!nothingSelected()/* || dragComponentMode*/)
+	if (true/*!nothingSelected()/* || dragComponentMode*/)
 	{
 		// Unselect any currently selected manipulators to be sure
 		activeManipulator->setSelected(false);
@@ -111,7 +111,7 @@ bool TextureToolManipulateMouseTool::selectManipulator(const render::View& view,
 		const Matrix4& pivot2World = TexTool::Instance().getPivot2World();
 
 		// Test, if the current manipulator can be selected
-		if (!nothingSelected()/* || dragComponentMode*/)
+		if (true/*!nothingSelected()/* || dragComponentMode*/)
 		{
 			render::View scissored(view);
 			ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromPoint(devicePoint, deviceEpsilon));

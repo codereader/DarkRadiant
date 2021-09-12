@@ -6,12 +6,6 @@
 namespace selection
 {
 
-/**
- * A Manipulator is a renderable object which contains one or more
- * ManipulatorComponents, each of which can be manipulated by the user. For
- * example, the rotation Manipulator draws several circles which cause rotations
- * around specific axes.
- */
 class ManipulatorBase :
 	public ISceneManipulator
 {
