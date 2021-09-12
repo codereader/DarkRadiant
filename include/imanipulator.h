@@ -17,7 +17,7 @@ namespace selection
 struct WorkZone;
 
 /**
-* A Manipulator is a renderable object which contains one or more
+* A Manipulator is an object which contains one or more
 * ManipulatorComponents, each of which can be manipulated by the user. For
 * example, the rotation Manipulator draws several circles which cause rotations
 * around specific axes.
@@ -93,14 +93,27 @@ public:
 
 	virtual void testSelect(SelectionTest& test, const Matrix4& pivot2world) {}
 
-	// Renders the manipulator's visual representation to the scene
-	virtual void render(RenderableCollector& collector, const VolumeTest& volume) = 0;
-
 	virtual void setSelected(bool select) = 0;
 	virtual bool isSelected() const = 0;
 
 	// Manipulators should indicate whether component editing is supported or not
 	virtual bool supportsComponentManipulation() const = 0;
+};
+
+/**
+* A Scene Manipulator is a renderable object that can submit renderable components
+* to a RenderableCollector to show in the XY and Camera views.
+*/
+class ISceneManipulator :
+    public IManipulator
+{
+public:
+    using Ptr = std::shared_ptr<ISceneManipulator>;
+
+    virtual ~ISceneManipulator() {}
+
+    // Renders the manipulator's visual representation to the scene
+    virtual void render(RenderableCollector& collector, const VolumeTest& volume) = 0;
 };
 
 }

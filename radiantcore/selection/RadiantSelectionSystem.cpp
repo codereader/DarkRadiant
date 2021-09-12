@@ -235,11 +235,11 @@ sigc::signal<void, SelectionSystem::EComponentMode>& RadiantSelectionSystem::sig
     return _sigComponentModeChanged;
 }
 
-std::size_t RadiantSelectionSystem::registerManipulator(const IManipulator::Ptr& manipulator)
+std::size_t RadiantSelectionSystem::registerManipulator(const ISceneManipulator::Ptr& manipulator)
 {
 	std::size_t newId = 1;
 
-	while (_manipulators.find(newId) != _manipulators.end())
+	while (_manipulators.count(newId) > 0)
 	{
 		++newId;
 
@@ -249,7 +249,7 @@ std::size_t RadiantSelectionSystem::registerManipulator(const IManipulator::Ptr&
 		}
 	}
 
-	_manipulators.insert(std::make_pair(newId, manipulator));
+	_manipulators.emplace(newId, manipulator);
 
 	manipulator->setId(newId);
 
@@ -261,7 +261,7 @@ std::size_t RadiantSelectionSystem::registerManipulator(const IManipulator::Ptr&
 	return newId;
 }
 
-void RadiantSelectionSystem::unregisterManipulator(const IManipulator::Ptr& manipulator)
+void RadiantSelectionSystem::unregisterManipulator(const ISceneManipulator::Ptr& manipulator)
 {
 	for (Manipulators::const_iterator i = _manipulators.begin(); i != _manipulators.end(); ++i)
 	{
@@ -279,7 +279,7 @@ IManipulator::Type RadiantSelectionSystem::getActiveManipulatorType()
 	return _activeManipulator->getType();
 }
 
-const IManipulator::Ptr& RadiantSelectionSystem::getActiveManipulator()
+const ISceneManipulator::Ptr& RadiantSelectionSystem::getActiveManipulator()
 {
 	return _activeManipulator;
 }

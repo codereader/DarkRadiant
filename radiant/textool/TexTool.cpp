@@ -1221,7 +1221,7 @@ std::size_t TexTool::registerManipulator(const selection::IManipulator::Ptr& man
 {
     std::size_t newId = 1;
 
-    while (_manipulators.find(newId) != _manipulators.end())
+    while (_manipulators.count(newId) > 0)
     {
         ++newId;
 
@@ -1231,7 +1231,7 @@ std::size_t TexTool::registerManipulator(const selection::IManipulator::Ptr& man
         }
     }
 
-    _manipulators.insert(std::make_pair(newId, manipulator));
+    _manipulators.emplace(newId, manipulator);
 
     manipulator->setId(newId);
 
@@ -1268,7 +1268,7 @@ const selection::IManipulator::Ptr& TexTool::getActiveManipulator()
 
 void TexTool::setActiveManipulator(std::size_t manipulatorId)
 {
-    Manipulators::const_iterator found = _manipulators.find(manipulatorId);
+    auto found = _manipulators.find(manipulatorId);
 
     if (found == _manipulators.end())
     {

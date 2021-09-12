@@ -44,11 +44,11 @@ private:
 
     sigc::signal<void, const ISelectable&> _sigSelectionChanged;
 
-	typedef std::map<std::size_t, IManipulator::Ptr> Manipulators;
+	typedef std::map<std::size_t, ISceneManipulator::Ptr> Manipulators;
 	Manipulators _manipulators;
 
 	// The currently active manipulator
-	IManipulator::Ptr _activeManipulator;
+    ISceneManipulator::Ptr _activeManipulator;
     IManipulator::Type _defaultManipulatorType;
 
 	// state
@@ -101,11 +101,11 @@ public:
 	sigc::signal<void, EComponentMode>& signal_componentModeChanged() override;
 
 	// Returns the ID of the registered manipulator
-	std::size_t registerManipulator(const IManipulator::Ptr& manipulator) override;
-	void unregisterManipulator(const IManipulator::Ptr& manipulator) override;
+	std::size_t registerManipulator(const ISceneManipulator::Ptr& manipulator) override;
+	void unregisterManipulator(const ISceneManipulator::Ptr& manipulator) override;
 
     IManipulator::Type getActiveManipulatorType() override;
-	const IManipulator::Ptr& getActiveManipulator() override;
+	const ISceneManipulator::Ptr& getActiveManipulator() override;
 	void setActiveManipulator(std::size_t manipulatorId) override;
 	void setActiveManipulator(IManipulator::Type manipulatorType) override;
 	sigc::signal<void, selection::IManipulator::Type>& signal_activeManipulatorChanged() override;

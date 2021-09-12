@@ -85,13 +85,13 @@ public:
 	virtual void removeObserver(Observer* observer) = 0;
 
 	// Returns the ID of the registered manipulator
-	virtual std::size_t registerManipulator(const selection::IManipulator::Ptr& manipulator) = 0;
-	virtual void unregisterManipulator(const selection::IManipulator::Ptr& manipulator) = 0;
+	virtual std::size_t registerManipulator(const selection::ISceneManipulator::Ptr& manipulator) = 0;
+	virtual void unregisterManipulator(const selection::ISceneManipulator::Ptr& manipulator) = 0;
 
 	virtual selection::IManipulator::Type getActiveManipulatorType() = 0;
 
 	// Returns the currently active Manipulator, which is always non-null
-	virtual const selection::IManipulator::Ptr& getActiveManipulator() = 0;
+	virtual const selection::ISceneManipulator::Ptr& getActiveManipulator() = 0;
 	virtual void setActiveManipulator(std::size_t manipulatorId) = 0;
 	virtual void setActiveManipulator(selection::IManipulator::Type manipulatorType) = 0;
 
