@@ -38,7 +38,7 @@ ShaderChooser::ShaderChooser(wxWindow* parent, wxTextCtrl* targetEntry) :
 
 		// Set the cursor of the tree view to the currently selected shader
 		_selector->setSelection(_initialShader);
-        Bind( wxutil::EV_TREE_DOUBLE_CLICK, [&, this]( wxCommandEvent& ev )
+        Bind( wxEVT_DATAVIEW_ITEM_ACTIVATED, [&]( wxCommandEvent& ev )
             {
                 if ( !this->_selector->getSelection().empty() ) {
                     _targetEntry->SetValue( _selector->getSelection() );

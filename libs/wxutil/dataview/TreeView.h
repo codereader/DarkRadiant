@@ -100,6 +100,4 @@ private:
 	void _onChar(wxKeyEvent& ev);
 	void _onItemActivated(wxDataViewEvent& ev);
 };
-
-wxDECLARE_EVENT( EV_TREE_DOUBLE_CLICK, wxCommandEvent );
 } // namespace

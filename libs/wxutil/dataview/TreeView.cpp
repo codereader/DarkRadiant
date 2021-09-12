@@ -257,7 +257,7 @@ void TreeView::_onItemActivated(wxDataViewEvent& ev)
 	if (!IsExpanded(ev.GetItem()))
 	{
 		Expand(ev.GetItem());
-        wxQueueEvent( GetParent()->GetEventHandler(), new wxCommandEvent( EV_TREE_DOUBLE_CLICK ) );
+        ev.Skip(); // let parent dialogs handle double clicks (e.g. auto close)
 	}
 	else
 	{
@@ -631,6 +631,4 @@ void TreeView::JumpToSearchMatch(const wxDataViewItem& item)
         SendSelectionChangeEvent(item);
 	}
 }
-
-wxDEFINE_EVENT( EV_TREE_DOUBLE_CLICK, wxCommandEvent );
 } // namespace
