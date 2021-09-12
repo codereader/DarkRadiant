@@ -133,6 +133,7 @@ public:
 
     void mouseToPoint(int x, int y, Vector3& point);
 
+    float getZoomedScale( int steps );
     void zoomIn() override;
     void zoomOut() override;
     void zoomInOn( wxPoint cursor, int zoom );

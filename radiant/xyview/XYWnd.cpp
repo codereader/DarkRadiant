@@ -1546,48 +1546,36 @@ void XYWnd::mouseToPoint(int x, int y, Vector3& point)
 // NOTE: the zoom out factor is 4/5, we could think about customizing it
 //  we don't go below a zoom factor corresponding to 10% of the max world size
 //  (this has to be computed against the window size)
+float XYWnd::getZoomedScale( int steps ) {
+    const float min_scale = std::min( getWidth(), getHeight() ) / ( 1.1f * ( _maxWorldCoord - _minWorldCoord ) );
+    const float max_scale = GlobalXYWnd().maxZoomFactor();
+    const float fZoom = pow( 5.0f / 4.0f, steps );
+    const float scale = getScale() * fZoom;
+    if ( scale > max_scale ) {
+        return max_scale;
+    }
+    if ( scale < min_scale ) {
+        return min_scale;
+    }
+    return scale;
+}
+
 void XYWnd::zoomOut()
 {
-    float min_scale = std::min(getWidth(),getHeight()) / ( 1.1f * (_maxWorldCoord - _minWorldCoord));
-    float scale = getScale() * 4.0f / 5.0f;
-    if (scale < min_scale) {
-        if (getScale() != min_scale) {
-            setScale(min_scale);
-        }
-    } else {
-        setScale(scale);
-    }
+    setScale( getZoomedScale( -1 ) );
 }
 
 void XYWnd::zoomIn()
 {
-    float max_scale = GlobalXYWnd().maxZoomFactor();
-    float scale = getScale() * 5.0f / 4.0f;
-
-    if (scale > max_scale) {
-        if (getScale() != max_scale) {
-            setScale(max_scale);
-        }
-    }
-    else {
-        setScale(scale);
-    }
+    setScale( getZoomedScale( 1 ) );
 }
 
 void XYWnd::zoomInOn( wxPoint cursor, int zoom ) {
-    float min_scale = std::min( getWidth(), getHeight() ) / ( 1.1f * ( _maxWorldCoord - _minWorldCoord ) );
-    float max_scale = GlobalXYWnd().maxZoomFactor();
-    float fZoom = pow( 5.0f / 4.0f, zoom );
-    float scale = getScale() * fZoom;
-    if ( scale > max_scale ) {
-        scale = max_scale;
-    }
-    if ( scale < min_scale) {
-        scale = max_scale;
-    }
+    const float oldScale = _scale;
+    const float newScale = getZoomedScale( zoom );
     scroll( cursor.x - _width/2, _height / 2 - cursor.y );
-    setScale( scale );
-    scroll( ( _width / 2 - cursor.x ) / fZoom, ( cursor.y - _height / 2 ) / fZoom );
+    setScale( newScale );
+    scroll( ( _width / 2 - cursor.x ) * oldScale / newScale, ( cursor.y - _height / 2 ) * oldScale / newScale );
 }
 
 // ================ CALLBACKS ======================================
