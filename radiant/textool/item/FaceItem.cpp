@@ -68,6 +68,8 @@ void FaceItem::render()
 
 	glEnd();
 
+    glDisable(GL_BLEND);
+
 	// Now invoke the default render method (calls render() on all children)
 	TexToolItem::render();
 }

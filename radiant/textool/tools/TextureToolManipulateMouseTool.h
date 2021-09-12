@@ -51,7 +51,6 @@ public:
     virtual unsigned int getRefreshMode() override;
 
 	void renderOverlay() override;
-	void render(RenderSystem& renderSystem, RenderableCollector& collector, const VolumeTest& volume) override;
 
 private:
 	bool selectManipulator(const render::View& view, const Vector2& devicePoint, const Vector2& deviceEpsilon);

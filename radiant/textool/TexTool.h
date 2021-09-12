@@ -90,14 +90,16 @@ private:
 	sigc::connection _undoHandler;
 	sigc::connection _redoHandler;
 
-    typedef std::map<std::size_t, selection::IManipulator::Ptr> Manipulators;
+    typedef std::map<std::size_t, selection::ITextureToolManipulator::Ptr> Manipulators;
     Manipulators _manipulators;
 
     // The currently active manipulator
-    selection::IManipulator::Ptr _activeManipulator;
+    selection::ITextureToolManipulator::Ptr _activeManipulator;
     selection::IManipulator::Type _defaultManipulatorType;
 
     sigc::signal<void, selection::IManipulator::Type> _sigActiveManipulatorChanged;
+
+    Matrix4 _pivot2World;
 
 private:
 	// This is where the static shared_ptr of the singleton instance is held.
@@ -281,11 +283,11 @@ public:
 	static void registerCommands();
 
     // Returns the ID of the registered manipulator
-    std::size_t registerManipulator(const selection::IManipulator::Ptr& manipulator);
-    void unregisterManipulator(const selection::IManipulator::Ptr& manipulator);
+    std::size_t registerManipulator(const selection::ITextureToolManipulator::Ptr& manipulator);
+    void unregisterManipulator(const selection::ITextureToolManipulator::Ptr& manipulator);
 
     selection::IManipulator::Type getActiveManipulatorType();
-    const selection::IManipulator::Ptr& getActiveManipulator();
+    const selection::ITextureToolManipulator::Ptr& getActiveManipulator();
     void setActiveManipulator(std::size_t manipulatorId);
     void setActiveManipulator(selection::IManipulator::Type manipulatorType);
     sigc::signal<void, selection::IManipulator::Type>& signal_activeManipulatorChanged();

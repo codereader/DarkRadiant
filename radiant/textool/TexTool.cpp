@@ -58,7 +58,8 @@ TexTool::TexTool() :
     _grid(GRID_DEFAULT),
     _gridActive(registry::getValue<bool>(RKEY_GRID_STATE)),
     _updateNeeded(false),
-    _selectionRescanNeeded(false)
+    _selectionRescanNeeded(false),
+    _pivot2World(Matrix4::getIdentity())
 {
 	Bind(wxEVT_IDLE, &TexTool::onIdle, this);
     Bind(wxEVT_KEY_DOWN, &TexTool::onKeyPress, this);
@@ -77,8 +78,9 @@ TexTool::TexTool() :
         std::bind(&TexTool::onMouseDown, this, std::placeholders::_1),
         std::bind(&TexTool::onMouseUp, this, std::placeholders::_1));
 
-    registerManipulator(GlobalManipulatorManager().createManipulator(
-        selection::IManipulator::Context::TextureTool, selection::IManipulator::Rotate));
+    registerManipulator(std::static_pointer_cast<selection::ITextureToolManipulator>(
+        GlobalManipulatorManager().createManipulator(
+            selection::IManipulator::Context::TextureTool, selection::IManipulator::Rotate)));
 
     _defaultManipulatorType = selection::IManipulator::Rotate;
     setActiveManipulator(_defaultManipulatorType);
@@ -363,7 +365,7 @@ void TexTool::testSelect(SelectionTest& test)
     selection::SelectionPool selectionPool;
 
     // Cycle through all the toplevel items and test them for selectability
-    for (const auto& item : _items) 
+    for (const auto& item : _items)
     {
         item->testSelect(selectionPool, test);
     }
@@ -385,6 +387,30 @@ void TexTool::testSelect(SelectionTest& test)
 
     auto bestSelectable = *selectionPool.begin();
     bestSelectable.second->setSelected(true);
+
+    // Check the centerpoint of all selected items
+    Vector2 sum;
+    std::size_t count = 0;
+
+    for (const auto& item : _items)
+    {
+        if (item->isSelected())
+        {
+            auto bounds = item->getSelectedExtents();
+            sum += Vector2(bounds.origin.x(), bounds.origin.y());
+            count++;
+        }
+    }
+
+    if (count > 0)
+    {
+        sum /= count;
+        _pivot2World = Matrix4::getTranslation(Vector3(sum.x(), sum.y(), 0));
+    }
+    else
+    {
+        _pivot2World = Matrix4::getIdentity();
+    }
 }
 
 void TexTool::flipSelected(int axis) {
@@ -965,6 +991,11 @@ bool TexTool::onGLDraw()
 	// Draw the u/v coordinates
 	drawUVCoords();
 
+    if (_activeManipulator)
+    {
+        _activeManipulator->renderComponents(_pivot2World);
+    }
+
     if (!_activeMouseTools.empty())
     {
         glMatrixMode(GL_PROJECTION);
@@ -974,7 +1005,7 @@ bool TexTool::onGLDraw()
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
 
-        for (const ActiveMouseTools::value_type& i : _activeMouseTools)
+        for (const auto& i : _activeMouseTools)
         {
             i.second->renderOverlay();
         }
@@ -1217,7 +1248,7 @@ TextureToolMouseEvent TexTool::createMouseEvent(const Vector2& point, const Vect
     return TextureToolMouseEvent(*this, normalisedDeviceCoords, delta);
 }
 
-std::size_t TexTool::registerManipulator(const selection::IManipulator::Ptr& manipulator)
+std::size_t TexTool::registerManipulator(const selection::ITextureToolManipulator::Ptr& manipulator)
 {
     std::size_t newId = 1;
 
@@ -1243,9 +1274,9 @@ std::size_t TexTool::registerManipulator(const selection::IManipulator::Ptr& man
     return newId;
 }
 
-void TexTool::unregisterManipulator(const selection::IManipulator::Ptr& manipulator)
+void TexTool::unregisterManipulator(const selection::ITextureToolManipulator::Ptr& manipulator)
 {
-    for (Manipulators::const_iterator i = _manipulators.begin(); i != _manipulators.end(); ++i)
+    for (auto i = _manipulators.begin(); i != _manipulators.end(); ++i)
     {
         if (i->second == manipulator)
         {
@@ -1261,7 +1292,7 @@ selection::IManipulator::Type TexTool::getActiveManipulatorType()
     return _activeManipulator->getType();
 }
 
-const selection::IManipulator::Ptr& TexTool::getActiveManipulator()
+const selection::ITextureToolManipulator::Ptr& TexTool::getActiveManipulator()
 {
     return _activeManipulator;
 }
@@ -1312,7 +1343,7 @@ sigc::signal<void, selection::IManipulator::Type>& TexTool::signal_activeManipul
 
 Matrix4 TexTool::getPivot2World()
 {
-    return Matrix4::getTranslation(Vector3(0,0,0));
+    return _pivot2World;
 }
 
 void TexTool::onManipulationStart()

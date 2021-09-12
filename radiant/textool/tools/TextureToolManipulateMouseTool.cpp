@@ -261,28 +261,4 @@ void TextureToolManipulateMouseTool::renderOverlay()
 #endif
 }
 
-void TextureToolManipulateMouseTool::render(RenderSystem& renderSystem, RenderableCollector& collector, const VolumeTest& volume)
-{
-#if 0
-	if (nothingSelected()) return;
-
-	const selection::ManipulatorPtr& activeManipulator = _selectionSystem.getActiveManipulator();
-
-	if (!activeManipulator) return;
-
-	if (!_pointShader)
-	{
-		_pointShader = renderSystem.capture("$POINT");
-	}
-
-	collector.setHighlightFlag(RenderableCollector::Highlight::Faces, false);
-	collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
-
-	collector.SetState(_pointShader, RenderableCollector::eWireframeOnly);
-	collector.SetState(_pointShader, RenderableCollector::eFullMaterials);
-
-	activeManipulator->render(collector, volume);
-#endif
-}
-
 }

@@ -123,6 +123,22 @@ public:
     virtual bool supportsComponentManipulation() const = 0;
 };
 
+/**
+* A Texture Tool Manipulator is a 2D-renderable object that does the rendering itself
+* without taking the path of a RenderableCollector.
+*/
+class ITextureToolManipulator :
+    public IManipulator
+{
+public:
+    using Ptr = std::shared_ptr<ITextureToolManipulator>;
+
+    virtual ~ITextureToolManipulator() {}
+
+    // Renders the manipulator's visual representation to the scene (absolute UV coordinates)
+    virtual void renderComponents(const Matrix4& pivot2World) = 0;
+};
+
 // Factory interface instantiating new IManipulator instances for a given purpose
 class IManipulatorManager :
     public RegisterableModule
