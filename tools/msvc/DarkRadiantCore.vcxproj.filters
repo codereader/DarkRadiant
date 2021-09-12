@@ -1075,6 +1075,9 @@
     <ClCompile Include="..\..\radiantcore\map\autosaver\AutoSaver.cpp">
       <Filter>src\map\autosaver</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\selection\manipulators\ManipulatorManager.cpp">
+      <Filter>src\selection\manipulators</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">

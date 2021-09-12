@@ -244,6 +244,7 @@ add_library(radiantcore MODULE
             selection/manipulators/DragManipulator.cpp
             selection/manipulators/ManipulatorBase.cpp
             selection/manipulators/ManipulatorComponents.cpp
+            selection/manipulators/ManipulatorManager.cpp
             selection/manipulators/ModelScaleManipulator.cpp
             selection/manipulators/RotateManipulator.cpp
             selection/manipulators/ScaleManipulator.cpp

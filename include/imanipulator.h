@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <string>
+#include "imodule.h"
 
 template<typename Element> class BasicVector2;
 typedef BasicVector2<double> Vector2;
@@ -38,6 +39,12 @@ public:
 		ModelScale,
 		Custom
 	};
+
+    enum class Context
+    {
+        Scene,          // manipulate regular map elements
+        TextureTool,    // manipualte UV coordinates
+    };
 
 	/**
 	* Part of a Manipulator which can be operated upon by the user.
@@ -116,4 +123,23 @@ public:
     virtual void render(RenderableCollector& collector, const VolumeTest& volume) = 0;
 };
 
+// Factory interface instantiating new IManipulator instances for a given purpose
+class IManipulatorManager :
+    public RegisterableModule
+{
+public:
+    virtual ~IManipulatorManager() {}
+
+    // Acquire a new instance of the given manipulator for the given context and type
+    virtual IManipulator::Ptr createManipulator(IManipulator::Context context, IManipulator::Type type) = 0;
+};
+
+}
+
+const char* const MODULE_MANIPULATORMANAGER("ManipulatorManager");
+
+inline selection::IManipulatorManager& GlobalManipulatorManager()
+{
+    static module::InstanceReference<selection::IManipulatorManager> _reference(MODULE_MANIPULATORMANAGER);
+    return _reference;
 }
