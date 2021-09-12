@@ -101,6 +101,8 @@ void TextureToolRotateManipulator::renderComponents(const Matrix4& pivot2World)
 
     const auto& translation = pivot2World.tCol().getVector3();
 
+    _renderableCircle.setColour(Colour4b(255, isSelected() ? 255 : 0, 0, 255));
+
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glTranslated(translation.x(), translation.y(), 0);

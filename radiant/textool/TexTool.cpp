@@ -316,7 +316,8 @@ const VolumeTest& TexTool::getVolumeTest() const
 
 void TexTool::forceRedraw()
 {
-    draw();
+    _glWidget->Refresh();
+    _glWidget->Update();
 }
 
 void TexTool::draw()
@@ -1189,7 +1190,6 @@ void TexTool::handleGLCapturedMouseMotion(const MouseToolPtr& tool, int x, int y
 
 #if 0
     bool mouseToolReceivesDeltas = (tool->getPointerMode() & MouseTool::PointerMode::MotionDeltas) != 0;
-#endif
     bool pointerFrozen = (tool->getPointerMode() & MouseTool::PointerMode::Freeze) != 0;
 
     // Check if the mouse has reached exceeded the window borders for chase mouse behaviour
@@ -1199,6 +1199,7 @@ void TexTool::handleGLCapturedMouseMotion(const MouseToolPtr& tool, int x, int y
         // Chase mouse activated, an idle callback will kick in soon
         return;
     }
+#endif
 
     // Send mouse move events to the active tool and all inactive tools that want them
     MouseToolHandler::onGLCapturedMouseMove(x, y, mouseState);
@@ -1358,7 +1359,7 @@ void TexTool::onManipulationChanged()
 
 void TexTool::onManipulationEnd()
 {
-
+    _activeManipulator->setSelected(false);
 }
 
 void TexTool::onManipulationCancelled()

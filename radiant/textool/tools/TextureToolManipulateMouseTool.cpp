@@ -90,7 +90,7 @@ unsigned int TextureToolManipulateMouseTool::getPointerMode()
 
 unsigned int TextureToolManipulateMouseTool::getRefreshMode()
 {
-    return RefreshMode::Force | RefreshMode::AllViews; // update cam view too
+    return RefreshMode::Force | RefreshMode::ActiveView;
 }
 
 bool TextureToolManipulateMouseTool::selectManipulator(const render::View& view, const Vector2& devicePoint, const Vector2& deviceEpsilon)
