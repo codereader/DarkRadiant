@@ -673,6 +673,7 @@
     <ClCompile Include="..\..\radiantcore\selection\shaderclipboard\ClosestTexturableFinder.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\shaderclipboard\ShaderClipboard.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\shaderclipboard\Texturable.cpp" />
+    <ClCompile Include="..\..\radiantcore\selection\textool\TextureToolSceneGraph.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\TransformationVisitors.cpp" />
     <ClCompile Include="..\..\radiantcore\settings\ColourScheme.cpp" />
     <ClCompile Include="..\..\radiantcore\settings\ColourSchemeManager.cpp" />
@@ -1024,6 +1025,7 @@
     <ClInclude Include="..\..\radiantcore\selection\shaderclipboard\ClosestTexturableFinder.h" />
     <ClInclude Include="..\..\radiantcore\selection\shaderclipboard\ShaderClipboard.h" />
     <ClInclude Include="..\..\radiantcore\selection\shaderclipboard\Texturable.h" />
+    <ClInclude Include="..\..\radiantcore\selection\textool\TextureToolSceneGraph.h" />
     <ClInclude Include="..\..\radiantcore\selection\TransformationVisitors.h" />
     <ClInclude Include="..\..\radiantcore\settings\ColourScheme.h" />
     <ClInclude Include="..\..\radiantcore\settings\ColourSchemeManager.h" />

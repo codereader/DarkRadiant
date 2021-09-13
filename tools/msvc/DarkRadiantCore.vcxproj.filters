@@ -209,6 +209,9 @@
     <Filter Include="src\map\autosaver">
       <UniqueIdentifier>{e3d5bb4e-6b61-4537-ab0f-30c7be429c65}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\selection\textool">
+      <UniqueIdentifier>{24592976-64c8-4027-81b7-5b83f62c43d1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiantcore\modulesystem\ModuleLoader.cpp">
@@ -1080,6 +1083,9 @@
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\selection\manipulators\TextureToolRotateManipulator.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\selection\textool\TextureToolSceneGraph.cpp">
+      <Filter>src\selection\textool</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2198,6 +2204,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\selection\manipulators\TextureToolRotateManipulator.h">
       <Filter>src\selection\manipulators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\selection\textool\TextureToolSceneGraph.h">
+      <Filter>src\selection\textool</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
