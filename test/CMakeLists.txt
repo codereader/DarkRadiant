@@ -33,6 +33,7 @@ add_executable(drtest
                Renderer.cpp
                SelectionAlgorithm.cpp
                Selection.cpp
+               TextureTool.cpp
                Transformation.cpp
                VFS.cpp
                WorldspawnColour.cpp)
