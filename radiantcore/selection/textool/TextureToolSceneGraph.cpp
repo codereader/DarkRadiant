@@ -1,10 +1,20 @@
 #include "TextureToolSceneGraph.h"
 
 #include "iselection.h"
+#include "ibrush.h"
+#include "ipatch.h"
 #include "module/StaticModule.h"
+#include "selectionlib.h"
+
+#include "FaceNode.h"
+#include "PatchNode.h"
 
 namespace textool
 {
+
+TextureToolSceneGraph::TextureToolSceneGraph() :
+    _selectionNeedsRescan(true)
+{}
 
 const std::string& TextureToolSceneGraph::getName() const
 {
@@ -29,17 +39,69 @@ void TextureToolSceneGraph::initialiseModule(const IApplicationContext& ctx)
 
 void TextureToolSceneGraph::shutdownModule()
 {
+    _selectionNeedsRescan = false;
+    _nodes.clear();
     _sceneSelectionChanged.disconnect();
 }
 
 void TextureToolSceneGraph::foreachNode(const std::function<bool(const INode::Ptr&)>& functor)
 {
+    ensureSceneIsAnalysed();
 
+    for (const auto& node : _nodes)
+    {
+        if (!functor(node))
+        {
+            break;
+        }
+    }
+}
+
+void TextureToolSceneGraph::ensureSceneIsAnalysed()
+{
+    if (!_selectionNeedsRescan) return;
+    
+    _selectionNeedsRescan = false;
+
+    _nodes.clear();
+
+    auto selectedShader = selection::getShaderFromSelection();
+    if (selectedShader.empty()) return;
+
+    if (GlobalSelectionSystem().countSelectedComponents() > 0)
+    {
+        // Check each selected face
+        GlobalSelectionSystem().foreachFace([&](IFace& face)
+        {
+            _nodes.emplace_back(std::make_shared<FaceNode>(face));
+        });
+    }
+    else
+    {
+        GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
+        {
+            if (Node_isBrush(node))
+            {
+                auto brush = Node_getIBrush(node);
+                assert(brush);
+
+                for (auto i = 0; i < brush->getNumFaces(); ++i)
+                {
+                    _nodes.emplace_back(std::make_shared<FaceNode>(brush->getFace(i)));
+                }
+            }
+            else if (Node_isPatch(node))
+            {
+                _nodes.emplace_back(std::make_shared<PatchNode>(*Node_getIPatch(node)));
+            }
+        });
+    }
 }
 
 void TextureToolSceneGraph::onSceneSelectionChanged(const ISelectable& selectable)
 {
     // Mark our own selection as dirty
+    _selectionNeedsRescan = true;
 }
 
 module::StaticModule<TextureToolSceneGraph> _textureToolSceneGraphModule;

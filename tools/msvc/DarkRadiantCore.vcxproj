@@ -1025,6 +1025,9 @@
     <ClInclude Include="..\..\radiantcore\selection\shaderclipboard\ClosestTexturableFinder.h" />
     <ClInclude Include="..\..\radiantcore\selection\shaderclipboard\ShaderClipboard.h" />
     <ClInclude Include="..\..\radiantcore\selection\shaderclipboard\Texturable.h" />
+    <ClInclude Include="..\..\radiantcore\selection\textool\FaceNode.h" />
+    <ClInclude Include="..\..\radiantcore\selection\textool\NodeBase.h" />
+    <ClInclude Include="..\..\radiantcore\selection\textool\PatchNode.h" />
     <ClInclude Include="..\..\radiantcore\selection\textool\TextureToolSceneGraph.h" />
     <ClInclude Include="..\..\radiantcore\selection\TransformationVisitors.h" />
     <ClInclude Include="..\..\radiantcore\settings\ColourScheme.h" />

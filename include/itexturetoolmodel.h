@@ -13,9 +13,6 @@ public:
     virtual ~INode() {}
 
     using Ptr = std::shared_ptr<INode>;
-
-    // The scene node this texture tool node is relating to
-    virtual scene::INodePtr getSceneNode() = 0;
 };
 
 /**
@@ -37,6 +34,7 @@ public:
     virtual ~ITextureToolSceneGraph() {}
 
     // Iterate over every node in this graph calling the given functor
+    // Collection should not be modified during iteration
     virtual void foreachNode(const std::function<bool(const INode::Ptr&)>& functor) = 0;
 };
 
