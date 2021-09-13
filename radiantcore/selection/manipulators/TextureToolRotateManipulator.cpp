@@ -3,18 +3,48 @@
 #include "iselectiontest.h"
 #include "selection/BestPoint.h"
 #include "selection/SelectionPool.h"
+#include "pivot.h"
 
 namespace selection
 {
 
 void TextureRotator::beginTransformation(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint)
 {
+    auto device2Pivot = constructDevice2Pivot(pivot2world, view);
+    auto pivotPoint = device2Pivot.transformPoint(Vector3(devicePoint.x(), devicePoint.y(), 0));
+    _start = Vector2(pivotPoint.x(), pivotPoint.y());
 
+    auto length = _start.getLength();
+    if (length > 0)
+    {
+        _start /= length;
+    }
 }
 
-void TextureRotator::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, unsigned int constraints)
+void TextureRotator::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, unsigned int constraintFlags)
 {
+    auto device2Pivot = constructDevice2Pivot(pivot2world, view);
 
+    auto current3D = device2Pivot.transformPoint(Vector3(devicePoint.x(), devicePoint.y(), 0));
+    auto current = Vector2(current3D.x(), current3D.y());
+    
+    auto length = current.getLength();
+    if (length > 0)
+    {
+        current /= length;
+    }
+
+    _curAngle = acos(_start.dot(current));
+
+    if (constraintFlags & Constraint::Type1)
+    {
+        _curAngle = float_snapped(_curAngle, 5 * c_DEG2RADMULT);
+    }
+
+    auto sign = _start.crossProduct(current) < 0 ? +1 : -1;
+    _curAngle *= sign;
+
+    //rMessage() << "Angle " << radians_to_degrees(angle) << std::endl;
 }
 
 void TextureRotator::resetCurAngle()

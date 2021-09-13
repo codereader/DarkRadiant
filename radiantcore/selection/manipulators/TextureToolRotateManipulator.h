@@ -12,11 +12,10 @@ class TextureRotator :
 	public ManipulatorComponentBase
 {
 private:
-	Vector3 _axis;
-	Vector3 _start;
+	Vector2 _start;
 
 	// The most recently calculated angle for rendering purposes
-	Vector3::ElementType _curAngle;
+	Vector2::ElementType _curAngle;
 public:
     TextureRotator() :
 		_curAngle(0)
@@ -28,7 +27,7 @@ public:
 	void transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, unsigned int constraints) override;
 
     void resetCurAngle();
-    Vector3::ElementType getCurAngle() const;
+    Vector2::ElementType getCurAngle() const;
 };
 
 class TextureToolRotateManipulator :
