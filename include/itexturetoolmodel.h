@@ -2,12 +2,36 @@
 
 #include "imodule.h"
 #include "inode.h"
+#include "Bounded.h"
+
+class Matrix3;
 
 namespace textool
 {
 
+/**
+ * A transformable node in the texture tool scene. This is usually
+ * implemented by Faces and Patches. They will accept a given transformation
+ * and apply it to their selected child elements.
+ * For faces, this could mean that three selected vertices (out of four)
+ * will be transformed by the given matrix. It's possible that unselected
+ * winding vertices will be affected by this transformation, due to the nature
+ * of the texture projection. 
+ * Patch vertices can be transformed independently.
+ */
+class ITransformable
+{
+public:
+    /**
+     * Applies the given transform to all selected components of this node.
+     */
+    virtual void applyTransformToSelected(const Matrix3& transform) = 0;
+};
+
 // The base element of every node in the ITextureToolSceneGraph
-class INode
+class INode :
+    public ITransformable,
+    public Bounded
 {
 public:
     virtual ~INode() {}

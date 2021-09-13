@@ -2,6 +2,7 @@
 
 #include "i18n.h"
 #include "ieventmanager.h"
+#include "itexturetoolmodel.h"
 #include "imainframe.h"
 #include "igl.h"
 #include "iundo.h"
@@ -229,6 +230,7 @@ void TexTool::update()
 	std::string selectedShader = selection::getShaderFromSelection();
 	_shader = GlobalMaterialManager().getMaterial(selectedShader);
 
+#if 0
 	// Clear the list to remove all the previously allocated items
 	_items.clear();
 
@@ -259,7 +261,7 @@ void TexTool::update()
 			});
 		}
 	}
-
+#endif
 	recalculateVisibleTexSpace();
 }
 
@@ -541,11 +543,12 @@ AABB& TexTool::getExtents()
 {
 	_selAABB = AABB();
 
-	for (const auto& item : _items)
+    GlobalTextureToolSceneGraph().foreachNode([&](const textool::INode::Ptr& node)
     {
-		// Expand the selection AABB by the extents of the item
-		_selAABB.includeAABB(item->getExtents());
-	}
+        // Expand the selection AABB by the extents of the item
+        _selAABB.includeAABB(node->localAABB());
+        return true;
+    });
 
 	return _selAABB;
 }
