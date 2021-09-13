@@ -26,6 +26,19 @@ inline std::size_t getTextureToolNodeCount()
     return count;
 }
 
+inline textool::INode::Ptr getFirstTextureToolNode()
+{
+    textool::INode::Ptr returnValue;
+
+    GlobalTextureToolSceneGraph().foreachNode([&](const textool::INode::Ptr& node)
+    {
+        returnValue = node;
+        return false;
+    });
+
+    return returnValue;
+}
+
 // Checks that changing the regular scene selection will have an effect on the tex tool scene
 TEST_F(TextureToolTest, SceneGraphObservesSelection)
 {
@@ -102,6 +115,42 @@ TEST_F(TextureToolTest, SceneGraphRecognisesPatches)
 
     // We don't know how many tex tool nodes there are, but it should be more than 0
     EXPECT_GT(getTextureToolNodeCount(), 0) << "There should be some tex tool nodes now";
+}
+
+TEST_F(TextureToolTest, PatchNodeBounds)
+{
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto patchNode = GlobalPatchModule().createPatch(patch::PatchDefType::Def2);
+
+    auto patch = Node_getIPatch(patchNode);
+    patch->setDims(3, 3);
+
+    auto origin = Vector2(5.4, -78.3);
+    auto step = 0.45;
+    // Accumulate the test bounds
+    AABB checkedBounds;
+
+    for (auto col = 0; col < 3; ++col)
+    {
+        for (auto row = 0; row < 3; ++row)
+        {
+            auto& ctrl = patch->ctrlAt(row, col);
+
+            ctrl.texcoord = Vector2(origin.x() + step * col, origin.y() + step * row);
+            checkedBounds.includePoint({ ctrl.texcoord.x(), ctrl.texcoord.y(), 0 });
+        }
+    }
+
+    scene::addNodeToContainer(patchNode, worldspawn);
+    Node_setSelected(patchNode, true);
+
+    auto node = getFirstTextureToolNode();
+    EXPECT_TRUE(node) << "No texture tool node here";
+
+    EXPECT_TRUE(math::isNear(node->localAABB().getOrigin(), checkedBounds.getOrigin(), 0.01)) << 
+        "Bounds mismatch, got " << node->localAABB().getOrigin() << " instead of " << checkedBounds.getOrigin();
+    EXPECT_TRUE(math::isNear(node->localAABB().getExtents(), checkedBounds.getExtents(), 0.01)) <<
+        "Bounds mismatch, got " << node->localAABB().getExtents() << " instead of " << checkedBounds.getExtents();
 }
 
 }
