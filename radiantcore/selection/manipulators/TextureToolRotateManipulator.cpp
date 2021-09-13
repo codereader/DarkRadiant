@@ -44,7 +44,7 @@ void TextureRotator::transform(const Matrix4& pivot2world, const VolumeTest& vie
     auto sign = _start.crossProduct(current) < 0 ? +1 : -1;
     _curAngle *= sign;
 
-    //rMessage() << "Angle " << radians_to_degrees(angle) << std::endl;
+    _rotateFunctor(_curAngle);
 }
 
 void TextureRotator::resetCurAngle()
@@ -58,6 +58,7 @@ Vector3::ElementType TextureRotator::getCurAngle() const
 }
 
 TextureToolRotateManipulator::TextureToolRotateManipulator() :
+    _rotator(std::bind(&TextureToolRotateManipulator::rotateSelected, this, std::placeholders::_1)),
     _renderableCircle(8 << 3)
 {
     draw_circle(8, 1.0f, &_renderableCircle.front(), RemapXYZ());
@@ -110,13 +111,7 @@ void TextureToolRotateManipulator::testSelect(SelectionTest& test, const Matrix4
 
     if (!selector.empty())
     {
-        //rMessage() << "Got the circle!" << std::endl;
-
         selector.begin()->second->setSelected(true);
-    }
-    else
-    {
-        //rMessage() << "MISSED" << std::endl;
     }
 }
 
@@ -146,6 +141,11 @@ void TextureToolRotateManipulator::renderComponents(const Matrix4& pivot2World)
     glDisableClientState(GL_COLOR_ARRAY);
 
     glPopMatrix();
+}
+
+void TextureToolRotateManipulator::rotateSelected(double angle)
+{
+    // TODO
 }
 
 }
