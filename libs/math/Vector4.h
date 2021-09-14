@@ -100,29 +100,6 @@ public:
         return !(*this == other);
     }
 
-    /*  Define the scalar divisions / and /=
-     */
-    template<typename OtherElement>
-    BasicVector4<Element> operator/ (const OtherElement& other) const {
-        Element divisor = static_cast<Element>(other);
-        return BasicVector4<Element>(
-            _v[0] / divisor,
-            _v[1] / divisor,
-            _v[2] / divisor,
-            _v[3] / divisor
-        );
-    }
-
-    template<typename OtherElement>
-	BasicVector4<Element>& operator/= (const OtherElement& other) {
-        Element divisor = static_cast<Element>(other);
-        _v[0] /= divisor;
-        _v[1] /= divisor;
-        _v[2] /= divisor;
-        _v[3] /= divisor;
-		return *this;
-    }
-
     /* Scalar product this vector with another Vector4,
      * returning the projection of <self> onto <other>
      *
@@ -241,6 +218,26 @@ BasicVector4<T>& operator*= (BasicVector4<T>& v, S s)
     v.z() *= s;
     v.w() *= s;
     return v;
+}
+
+/// Divide and assign BasicVector4 by a scalar
+template<typename T, typename S>
+BasicVector4<T>& operator/= (BasicVector4<T>& v, S s)
+{
+    v.x() /= s;
+    v.y() /= s;
+    v.z() /= s;
+    v.w() /= s;
+    return v;
+}
+
+/// Divide a BasicVector4 by a scalar
+template<typename T, typename S>
+BasicVector4<T> operator/ (const BasicVector4<T>& v, S s)
+{
+    auto result = v;
+    result /= s;
+    return result;
 }
 
 /// Stream insertion for BasicVector4

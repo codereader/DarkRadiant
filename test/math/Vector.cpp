@@ -268,6 +268,22 @@ TEST(VectorTest, ScalarDivideVector3)
     EXPECT_EQ(vec, Vector3(-1, 2, 6));
 }
 
+TEST(VectorTest, ScalarDivideVector4)
+{
+    Vector4 vec(32, 168, -25, 0.8);
+
+    // Divide and return
+    EXPECT_EQ(vec / 2, Vector4(16, 84, -12.5, 0.4));
+    EXPECT_EQ(vec / 0.5, Vector4(64, 336, -50, 1.6));
+    EXPECT_EQ(vec / -1, Vector4(-32, -168, 25, -0.8));
+
+    // Divide in place
+    const Vector4 orig = vec;
+    EXPECT_EQ(vec, orig);
+    vec /= 2;
+    EXPECT_EQ(vec, Vector4(16, 84, -12.5, 0.4));
+}
+
 TEST(VectorTest, ScalarMultiplyVector4)
 {
     Vector4 vec(8, -14, 26, 1.8);
