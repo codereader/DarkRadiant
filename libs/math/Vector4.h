@@ -100,34 +100,6 @@ public:
         return !(*this == other);
     }
 
-    /*  Define the multiplication operators * and *= with another Vector4 of type OtherElement
-     *
-     *  The vectors are multiplied element-wise
-     *
-     *  greebo: This is mathematically kind of senseless, as this is a mixture of
-     *  a dot product and scalar multiplication. It can be used to scale each
-     *  vector component by a different factor, so maybe this comes in handy.
-     */
-    template<typename OtherElement>
-    BasicVector4<Element> operator* (const BasicVector4<OtherElement>& other) const {
-        return BasicVector4<Element>(
-            _v[0] * static_cast<Element>(other.x()),
-            _v[1] * static_cast<Element>(other.y()),
-            _v[2] * static_cast<Element>(other.z()),
-            _v[3] * static_cast<Element>(other.w())
-        );
-    }
-
-    template<typename OtherElement>
-	BasicVector4<Element>& operator*= (const BasicVector4<OtherElement>& other) {
-        _v[0] *= static_cast<Element>(other.x());
-        _v[1] *= static_cast<Element>(other.y());
-        _v[2] *= static_cast<Element>(other.z());
-        _v[3] *= static_cast<Element>(other.w());
-		return *this;
-    }
-
-
     /*  Define the multiplications * and *= with a scalar
      */
     template<typename OtherElement>
@@ -284,7 +256,7 @@ BasicVector4<T> operator*(const BasicVector4<T>& v, S s)
     return BasicVector4<T>(v.x() * s, v.y() * s, v.z() * s, v.w() * s);
 }
 
-/// Multiply BasicVector3 with a scalar
+/// Multiply BasicVector4 with a scalar
 template <
     typename T, typename S,
     typename = typename std::enable_if<std::is_arithmetic<S>::value, S>::type
