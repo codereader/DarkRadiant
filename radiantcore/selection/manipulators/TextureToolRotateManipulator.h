@@ -17,10 +17,10 @@ private:
 	// The most recently calculated angle for rendering purposes
 	Vector2::ElementType _curAngle;
 
-    std::function<void(Vector2::ElementType)> _rotateFunctor;
+    std::function<void(const Vector2&, Vector2::ElementType)> _rotateFunctor;
 
 public:
-    TextureRotator(const std::function<void(Vector2::ElementType)>& rotateFunctor) :
+    TextureRotator(const std::function<void(const Vector2&, Vector2::ElementType)>& rotateFunctor) :
 		_curAngle(0),
         _rotateFunctor(rotateFunctor)
 	{}
@@ -61,7 +61,7 @@ public:
     virtual void renderComponents(const Matrix4& pivot2World) override;
 
 private:
-    void rotateSelected(double angle);
+    void rotateSelected(const Vector2& pivot, double angle);
 };
 
 }

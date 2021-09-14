@@ -2,6 +2,7 @@
 
 #include "ibrush.h"
 #include "NodeBase.h"
+#include "math/Matrix3.h"
 
 namespace textool
 {
@@ -20,7 +21,15 @@ public:
 
     void applyTransformToSelected(const Matrix3& transform) override
     {
-        // TODO
+        for (auto& vertex : _face.getWinding())
+        {
+            vertex.texcoord = transform * vertex.texcoord;
+        }
+
+        Vector3 vertices[3] = { _face.getWinding().at(0).vertex, _face.getWinding().at(1).vertex, _face.getWinding().at(2).vertex };
+        Vector2 texcoords[3] = { _face.getWinding().at(0).texcoord, _face.getWinding().at(1).texcoord, _face.getWinding().at(2).texcoord };
+
+        _face.setTexDefFromPoints(vertices, texcoords);
     }
 
     const AABB& localAABB() const

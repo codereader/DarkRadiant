@@ -5,6 +5,7 @@
 #include "selection/BestPoint.h"
 #include "selection/SelectionPool.h"
 #include "pivot.h"
+#include "math/Matrix3.h"
 
 namespace selection
 {
@@ -45,7 +46,7 @@ void TextureRotator::transform(const Matrix4& pivot2world, const VolumeTest& vie
     auto sign = _start.crossProduct(current) < 0 ? +1 : -1;
     _curAngle *= sign;
 
-    _rotateFunctor(_curAngle);
+    _rotateFunctor(Vector2(pivot2world.tx(), pivot2world.ty()), _curAngle);
 }
 
 void TextureRotator::resetCurAngle()
@@ -59,7 +60,7 @@ Vector3::ElementType TextureRotator::getCurAngle() const
 }
 
 TextureToolRotateManipulator::TextureToolRotateManipulator() :
-    _rotator(std::bind(&TextureToolRotateManipulator::rotateSelected, this, std::placeholders::_1)),
+    _rotator(std::bind(&TextureToolRotateManipulator::rotateSelected, this, std::placeholders::_1, std::placeholders::_2)),
     _renderableCircle(8 << 3)
 {
     draw_circle(8, 1.0f, &_renderableCircle.front(), RemapXYZ());
@@ -144,8 +145,18 @@ void TextureToolRotateManipulator::renderComponents(const Matrix4& pivot2World)
     glPopMatrix();
 }
 
-void TextureToolRotateManipulator::rotateSelected(double angle)
+void TextureToolRotateManipulator::rotateSelected(const Vector2& pivot, double angle)
 {
+    // Construct the full rotation around the pivot point
+    auto transform = Matrix3::getTranslation(-pivot);
+    transform.premultiplyBy(Matrix3::getRotation(angle));
+    transform.premultiplyBy(Matrix3::getTranslation(pivot));
+
+    GlobalTextureToolSceneGraph().foreachSelectedNode([&](const textool::INode::Ptr& node)
+    {
+        node->applyTransformToSelected(transform);
+        return true;
+    });
 }
 
 }

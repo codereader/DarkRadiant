@@ -177,6 +177,10 @@ public:
 
 	virtual void setProjectionMatrix(const Matrix4& projection) = 0;
 
+    // Constructs the texture projection matrix from the given (world) vertex and texture coords.
+    // Three vertices and their UV coordinates are enough to construct the texdef.
+    virtual void setTexDefFromPoints(const Vector3 points[3], const Vector2 uvs[3]) = 0;
+
 	/**
 	 * Calculates and returns the texture definition as shift/scale/rotate.
 	 * This is not what is actually saved to the .map file, but it makes
