@@ -3,6 +3,7 @@
 #include "imodule.h"
 #include "inode.h"
 #include "Bounded.h"
+#include "iselection.h"
 
 class Matrix3;
 
@@ -31,7 +32,8 @@ public:
 // The base element of every node in the ITextureToolSceneGraph
 class INode :
     public ITransformable,
-    public Bounded
+    public Bounded,
+    public ISelectable
 {
 public:
     virtual ~INode() {}
@@ -60,6 +62,10 @@ public:
     // Iterate over every node in this graph calling the given functor
     // Collection should not be modified during iteration
     virtual void foreachNode(const std::function<bool(const INode::Ptr&)>& functor) = 0;
+
+    // Iterate over every selected node in this graph calling the given functor
+    // Collection should not be modified during iteration
+    virtual void foreachSelectedNode(const std::function<bool(const INode::Ptr&)>& functor) = 0;
 };
 
 }

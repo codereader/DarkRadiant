@@ -57,6 +57,21 @@ void TextureToolSceneGraph::foreachNode(const std::function<bool(const INode::Pt
     }
 }
 
+void TextureToolSceneGraph::foreachSelectedNode(const std::function<bool(const INode::Ptr&)>& functor)
+{
+    ensureSceneIsAnalysed();
+
+    for (const auto& node : _nodes)
+    {
+        if (!node->isSelected()) continue;
+
+        if (!functor(node))
+        {
+            break;
+        }
+    }
+}
+
 void TextureToolSceneGraph::ensureSceneIsAnalysed()
 {
     if (!_selectionNeedsRescan) return;

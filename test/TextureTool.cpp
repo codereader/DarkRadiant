@@ -1,5 +1,6 @@
 #include "RadiantTest.h"
 
+#include <set>
 #include "imap.h"
 #include "ipatch.h"
 #include "iselectable.h"
@@ -151,6 +152,49 @@ TEST_F(TextureToolTest, PatchNodeBounds)
         "Bounds mismatch, got " << node->localAABB().getOrigin() << " instead of " << checkedBounds.getOrigin();
     EXPECT_TRUE(math::isNear(node->localAABB().getExtents(), checkedBounds.getExtents(), 0.01)) <<
         "Bounds mismatch, got " << node->localAABB().getExtents() << " instead of " << checkedBounds.getExtents();
+}
+
+TEST_F(TextureToolTest, ForeachSelectedNode)
+{
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto brush1 = algorithm::createCubicBrush(worldspawn, Vector3(0, 0, 0), "textures/numbers/1");
+    auto brush2 = algorithm::createCubicBrush(worldspawn, Vector3(0, 256, 256), "textures/numbers/1");
+    auto patchNode = GlobalPatchModule().createPatch(patch::PatchDefType::Def2);
+    Node_getIPatch(patchNode)->setDims(3, 3);
+    Node_getIPatch(patchNode)->setShader("textures/numbers/1");
+
+    Node_setSelected(brush1, true);
+    Node_setSelected(brush2, true);
+    Node_setSelected(patchNode, true);
+    EXPECT_EQ(GlobalSelectionSystem().countSelected(), 3) << "3 items must be selected";
+
+    // We don't know how many tex tool nodes there are, but it should be more than 0
+    EXPECT_GT(getTextureToolNodeCount(), 0) << "There should be some tex tool nodes now";
+
+    std::set<textool::INode::Ptr> selectedNodes;
+    std::size_t i = 0;
+
+    // Selected every odd node
+    GlobalTextureToolSceneGraph().foreachNode([&](const textool::INode::Ptr& node)
+    {
+        if (++i % 2 == 1)
+        {
+            node->setSelected(true);
+            selectedNodes.emplace(node);
+        }
+
+        return true;
+    });
+
+    std::size_t selectedCount = 0;
+    GlobalTextureToolSceneGraph().foreachSelectedNode([&](const textool::INode::Ptr& node)
+    {
+        ++selectedCount;
+        EXPECT_TRUE(selectedNodes.count(node) > 0) << "Node shouldn't be selected";
+        return true;
+    });
+
+    EXPECT_EQ(selectedCount, selectedNodes.size()) << "Selection count didn't match";
 }
 
 }

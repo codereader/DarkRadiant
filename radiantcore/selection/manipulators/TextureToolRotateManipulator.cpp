@@ -1,6 +1,7 @@
 #include "TextureToolRotateManipulator.h"
 
 #include "iselectiontest.h"
+#include "itexturetoolmodel.h"
 #include "selection/BestPoint.h"
 #include "selection/SelectionPool.h"
 #include "pivot.h"
@@ -145,7 +146,6 @@ void TextureToolRotateManipulator::renderComponents(const Matrix4& pivot2World)
 
 void TextureToolRotateManipulator::rotateSelected(double angle)
 {
-    // TODO
 }
 
 }
