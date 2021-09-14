@@ -7,9 +7,6 @@ project(darkradiant VERSION 2.13.0)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-# Global compiler options and warnings (TODO: may need updating for CLang)
-add_compile_options(-Werror=return-local-addr)
-
 # GCC 8 and earlier require explicit linking against stdc++fs
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 9)
 	link_libraries(stdc++fs)
@@ -153,7 +150,7 @@ if (${ENABLE_DM_PLUGINS})
 endif()
 
 if (${LIBGIT_FOUND})
-    install(TARGETS vcs 
+    install(TARGETS vcs
             LIBRARY DESTINATION ${PKGLIBDIR}/plugins)
 endif()
 
