@@ -100,28 +100,6 @@ public:
         return !(*this == other);
     }
 
-    /*  Define the division operators / and /= with another Vector4 of type OtherElement
-     *  The vectors are divided element-wise
-     */
-    template<typename OtherElement>
-    BasicVector4<Element> operator/ (const BasicVector4<OtherElement>& other) const {
-        return BasicVector4<Element>(
-            _v[0] / static_cast<Element>(other.x()),
-            _v[1] / static_cast<Element>(other.y()),
-            _v[2] / static_cast<Element>(other.z()),
-            _v[3] / static_cast<Element>(other.w())
-        );
-    }
-
-    template<typename OtherElement>
-	BasicVector4<Element>& operator/= (const BasicVector4<OtherElement>& other) {
-        _v[0] /= static_cast<Element>(other.x());
-        _v[1] /= static_cast<Element>(other.y());
-        _v[2] /= static_cast<Element>(other.z());
-        _v[3] /= static_cast<Element>(other.w());
-		return *this;
-    }
-
     /*  Define the scalar divisions / and /=
      */
     template<typename OtherElement>
