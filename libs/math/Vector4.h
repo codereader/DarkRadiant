@@ -100,18 +100,6 @@ public:
         return !(*this == other);
     }
 
-    /*  Define the multiplications * and *= with a scalar
-     */
-    template<typename OtherElement>
-	BasicVector4<Element>& operator*= (const OtherElement& other) {
-        Element factor = static_cast<Element>(other);
-        _v[0] *= factor;
-        _v[1] *= factor;
-        _v[2] *= factor;
-        _v[3] *= factor;
-		return *this;
-    }
-
     /*  Define the division operators / and /= with another Vector4 of type OtherElement
      *  The vectors are divided element-wise
      */
@@ -264,6 +252,17 @@ template <
 BasicVector4<T> operator*(S s, const BasicVector4<T>& v)
 {
     return v * s;
+}
+
+/// Multiply BasicVector4 with a scalar and modify in place
+template<typename T, typename S>
+BasicVector4<T>& operator*= (BasicVector4<T>& v, S s)
+{
+    v.x() *= s;
+    v.y() *= s;
+    v.z() *= s;
+    v.w() *= s;
+    return v;
 }
 
 /// Stream insertion for BasicVector4

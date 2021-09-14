@@ -277,6 +277,12 @@ TEST(MathTest, ScalarMultiplyVector4)
 
     EXPECT_EQ(vec * 0.5, Vector4(4, -7, 13, 0.9));
     EXPECT_EQ(0.5 * vec, Vector4(4, -7, 13, 0.9));
+
+    // Multiply in place
+    Vector4 v2 = vec * 3.5;
+    EXPECT_NE(vec, v2);
+    vec *= 3.5;
+    EXPECT_EQ(vec, v2);
 }
 
 TEST(MathTest, ComponentwiseMultiplyVector3)
