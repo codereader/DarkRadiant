@@ -553,9 +553,12 @@ void Face::setTexDefFromPoints(const Vector3 points[3], const Vector2 uvs[3])
 
     auto textureMatrix = uv * xyz.getFullInverse();
 
-    _texdef.setTransform(textureMatrix);
+    m_texdefTransformed.setTransform(textureMatrix);
 
-    texdefChanged();
+    EmitTextureCoordinates();
+
+    // Fire the signal to update the Texture Tools
+    signal_texdefChanged().emit();
 }
 
 void Face::shiftTexdef(float s, float t)

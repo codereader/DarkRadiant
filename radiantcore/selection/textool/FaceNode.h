@@ -19,6 +19,16 @@ public:
         _face(face)
     {}
 
+    void beginTransformation() override
+    {
+        _face.undoSave();
+    }
+
+    void revertTransformation() override
+    {
+        _face.revertTransform();
+    }
+
     void applyTransformToSelected(const Matrix3& transform) override
     {
         for (auto& vertex : _face.getWinding())
@@ -30,6 +40,11 @@ public:
         Vector2 texcoords[3] = { _face.getWinding().at(0).texcoord, _face.getWinding().at(1).texcoord, _face.getWinding().at(2).texcoord };
 
         _face.setTexDefFromPoints(vertices, texcoords);
+    }
+
+    void commitTransformation() override
+    {
+        _face.freezeTransform();
     }
 
     const AABB& localAABB() const
@@ -64,6 +79,47 @@ public:
         {
             Selector_add(selector, *this);
         }
+    }
+
+    void render() override
+    {
+        glEnable(GL_BLEND);
+        glBlendColor(0, 0, 0, 0.3f);
+        glBlendFunc(GL_CONSTANT_ALPHA_EXT, GL_ONE_MINUS_CONSTANT_ALPHA_EXT);
+
+        if (isSelected())
+        {
+            glColor3f(1, 0.5f, 0);
+        }
+        else {
+            glColor3f(0.8f, 0.8f, 0.8f);
+        }
+
+        glBegin(GL_TRIANGLE_FAN);
+
+        for (const auto& vertex : _face.getWinding())
+        {
+            glVertex2d(vertex.texcoord[0], vertex.texcoord[1]);
+        }
+
+        glEnd();
+        glDisable(GL_BLEND);
+
+        glPointSize(5);
+        glBegin(GL_POINTS);
+        /*for (Winding::const_iterator i = _winding.begin(); i != _winding.end(); ++i)
+        {
+            glVertex2f(i->texcoord[0], i->texcoord[1]);
+        }*/
+
+        //glColor3f(1, 1, 1);
+
+        //Vector2 centroid = _face.getWinding();
+        //glVertex2d(centroid[0], centroid[1]);
+
+        glEnd();
+
+        glDisable(GL_BLEND);
     }
 };
 

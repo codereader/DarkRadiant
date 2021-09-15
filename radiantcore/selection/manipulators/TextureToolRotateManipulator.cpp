@@ -46,6 +46,8 @@ void TextureRotator::transform(const Matrix4& pivot2world, const VolumeTest& vie
     auto sign = _start.crossProduct(current) < 0 ? +1 : -1;
     _curAngle *= sign;
 
+    rMessage() << "Current angle: " << _curAngle << std::endl;
+
     _rotateFunctor(Vector2(pivot2world.tx(), pivot2world.ty()), _curAngle);
 }
 
@@ -154,6 +156,7 @@ void TextureToolRotateManipulator::rotateSelected(const Vector2& pivot, double a
 
     GlobalTextureToolSceneGraph().foreachSelectedNode([&](const textool::INode::Ptr& node)
     {
+        node->revertTransformation();
         node->applyTransformToSelected(transform);
         return true;
     });

@@ -586,11 +586,19 @@ Vector2 TexTool::getTextureCoords(const double& x, const double& y) {
 	return result;
 }
 
-void TexTool::drawUVCoords() {
+void TexTool::drawUVCoords()
+{
+    GlobalTextureToolSceneGraph().foreachNode([&](const textool::INode::Ptr& node)
+    {
+        node->render();
+        return true;
+    });
+#if 0
 	// Cycle through the items and tell them to render themselves
 	for (std::size_t i = 0; i < _items.size(); i++) {
 		_items[i]->render();
-	}
+    }
+#endif
 }
 
 textool::TexToolItemVec
@@ -1362,22 +1370,35 @@ Matrix4 TexTool::getPivot2World()
 
 void TexTool::onManipulationStart()
 {
-
+    GlobalTextureToolSceneGraph().foreachSelectedNode([&] (const textool::INode::Ptr& node)
+    {
+        node->beginTransformation();
+        return true;
+    });
 }
 
 void TexTool::onManipulationChanged()
 {
-
 }
 
 void TexTool::onManipulationEnd()
 {
+    GlobalTextureToolSceneGraph().foreachSelectedNode([&](const textool::INode::Ptr& node)
+    {
+        node->commitTransformation();
+        return true;
+    });
+
     _activeManipulator->setSelected(false);
 }
 
 void TexTool::onManipulationCancelled()
 {
-
+    GlobalTextureToolSceneGraph().foreachSelectedNode([&](const textool::INode::Ptr& node)
+    {
+        node->revertTransformation();
+        return true;
+    });
 }
 
 

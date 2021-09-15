@@ -18,9 +18,21 @@ public:
         _patch(patch)
     {}
 
+    void beginTransformation() override
+    {
+    }
+
+    void revertTransformation() override
+    {
+    }
+
     void applyTransformToSelected(const Matrix3& transform) override
     {
         // TODO
+    }
+
+    void commitTransformation() override
+    {
     }
 
     const AABB& localAABB() const
@@ -41,7 +53,12 @@ public:
 
     void testSelect(Selector& selector, SelectionTest& test) override
     {
+        // TODO
+    }
 
+    void render() override
+    {
+        // TODO
     }
 };
 

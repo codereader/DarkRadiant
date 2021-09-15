@@ -24,10 +24,19 @@ namespace textool
 class ITransformable
 {
 public:
-    /**
-     * Applies the given transform to all selected components of this node.
-     */
+    // Let this object save a snapshot of its current texture state to have something
+    // to base the upcoming transformation on
+    virtual void beginTransformation() = 0;
+
+    // Move the state back to the base state we saved in beginTransformation()
+    // Is called right before applyTransformationToSelected() is invoked with a new transform
+    virtual void revertTransformation() = 0;
+
+    // Applies the given transform to all selected components of this node.
     virtual void applyTransformToSelected(const Matrix3& transform) = 0;
+
+    // "Saves" the current transformed state as the new base state
+    virtual void commitTransformation() = 0;
 };
 
 // The base element of every node in the ITextureToolSceneGraph
@@ -41,6 +50,9 @@ public:
     virtual ~INode() {}
 
     using Ptr = std::shared_ptr<INode>;
+
+    // Renders this node, with all coords relative to UV space origin
+    virtual void render() = 0;
 };
 
 /**

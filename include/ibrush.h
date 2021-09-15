@@ -156,6 +156,12 @@ public:
 	// If possible, aligns the assigned texture at the given anchor edge
 	virtual void alignTexture(AlignEdge alignType) = 0;
 
+    // Reverts any transform that has been applied since the last time freezeTransform() was called
+    virtual void revertTransform() = 0;
+
+    // Promotes the current transformed state to the new base state
+    virtual void freezeTransform() = 0;
+
 	// Get access to the actual Winding object
 	virtual IWinding& getWinding() = 0;
 	virtual const IWinding& getWinding() const = 0;
