@@ -95,18 +95,10 @@ public:
              + w() * other.w();
     }
 
-    /** Project this homogeneous Vector4 into a Cartesian Vector3
-     * by dividing by w.
-     *
-     * @returns
-     * A Vector3 representing the Cartesian equivalent of this
-     * homogeneous vector.
-     */
-    BasicVector3<Element> getProjected() {
-        return BasicVector3<Element>(
-            _v[0] / _v[3],
-            _v[1] / _v[3],
-            _v[2] / _v[3]);
+    /// Project homogeneous BasicVector4 into 3 dimensions by dividing by W
+    BasicVector3<Element> getProjected() const
+    {
+        return getVector3() / w();
     }
 
     /// Cast to const raw array

@@ -503,4 +503,15 @@ TEST(VectorTest, Vector4AsCArray)
     EXPECT_EQ(array[3], -0.5);
 }
 
+TEST(VectorTest, ProjectVector4To3)
+{
+    Vector4 v1(128, 56, 5, 1);
+    Vector4 v2(1500, -12, 18, 2);
+
+    EXPECT_EQ(v1.getProjected(), Vector3(128, 56, 5));
+    EXPECT_EQ(v2.getProjected(), Vector3(750, -6, 9));
+    v2.w() = 3;
+    EXPECT_EQ(v2.getProjected(), Vector3(500, -4, 6));
+}
+
 }
