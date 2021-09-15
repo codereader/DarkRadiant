@@ -350,6 +350,18 @@ TEST(VectorTest, Vector3DotProduct)
     EXPECT_EQ(v3.dot(v3), v3.getLengthSquared());
 }
 
+TEST(VectorTest, Vector4DotProduct)
+{
+    const Vector4 v1(-8, 0.5, 128, 26);
+    const Vector4 v2(0.5, 256, -18, 4);
+    const Vector4 v3(25, 0.1, 0.75, 800);
+
+    EXPECT_EQ(v1.dot(v2), -2076);
+    EXPECT_EQ(v2.dot(v1), v1.dot(v2));
+    EXPECT_EQ(v2.dot(v3), 3224.6);
+    EXPECT_EQ(v3.dot(v2), v2.dot(v3));
+}
+
 TEST(VectorTest, Vector3CrossProduct)
 {
     const Vector3 i(1, 0, 0);

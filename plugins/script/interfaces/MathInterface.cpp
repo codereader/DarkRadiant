@@ -82,7 +82,7 @@ void MathInterface::registerInterface(py::module& scope, py::dict& globals)
 	vec4.def("w", static_cast<double& (Vector4::*)()>(&Vector4::w), py::return_value_policy::reference);
 	vec4.def("getVector3", static_cast<Vector3& (Vector4::*)()>(&Vector4::getVector3), py::return_value_policy::reference);
 	vec4.def("getProjected", &Vector4::getProjected);
-	vec4.def("dot", &Vector4::dot<double>);
+	vec4.def("dot", &Vector4::dot);
 	// Most important operators
 	vec4.def(py::self + py::self);		// __add__
 	vec4.def(py::self - py::self);		// __sub__

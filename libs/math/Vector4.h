@@ -100,22 +100,12 @@ public:
         return !(*this == other);
     }
 
-    /* Scalar product this vector with another Vector4,
-     * returning the projection of <self> onto <other>
-     *
-     * @param other
-     * The Vector4 to dot-product with this Vector4.
-     *
-     * @returns
-     * The inner product (a scalar): a[0]*b[0] + a[1]*b[1] + a[2]*b[2] + a[3]*b[3]
-     */
-
-    template<typename OtherT>
-    Element dot(const BasicVector4<OtherT>& other) const {
-        return  Element(_v[0] * other.x() +
-                        _v[1] * other.y() +
-                        _v[2] * other.z() +
-                        _v[3] * other.w());
+    /// Dot product this BasicVector4 with another vector
+    Element dot(const BasicVector4<Element>& other) const {
+        return x() * other.x()
+             + y() * other.y()
+             + z() * other.z()
+             + w() * other.w();
     }
 
     /** Project this homogeneous Vector4 into a Cartesian Vector3
