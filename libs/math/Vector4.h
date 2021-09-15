@@ -87,19 +87,6 @@ public:
         return ss.str();
     }
 
-    /// Compare this BasicVector4 against another for equality.
-    bool operator== (const BasicVector4& other) const {
-        return (other.x() == x()
-                && other.y() == y()
-                && other.z() == z()
-                && other.w() == w());
-    }
-
-    /// Compare this BasicVector4 against another for inequality.
-    bool operator!= (const BasicVector4& other) const {
-        return !(*this == other);
-    }
-
     /// Dot product this BasicVector4 with another vector
     Element dot(const BasicVector4<Element>& other) const {
         return x() * other.x()
@@ -138,6 +125,23 @@ public:
         return *reinterpret_cast<const BasicVector3<Element>*>(_v);
     }
 }; // BasicVector4
+
+/// Equality comparison for BasicVector4
+template<typename T>
+bool operator== (const BasicVector4<T>& v1, const BasicVector4<T>& v2)
+{
+    return (v1.x() == v2.x()
+            && v1.y() == v2.y()
+            && v1.z() == v2.z()
+            && v1.w() == v2.w());
+}
+
+/// Inequality comparison for BasicVector4
+template<typename T>
+bool operator!= (const BasicVector4<T>& v1, const BasicVector4<T>& v2)
+{
+    return !(v1 == v2);
+}
 
 /// Componentwise addition of two vectors
 template <typename T>
