@@ -4,6 +4,7 @@
 #include "inode.h"
 #include "Bounded.h"
 #include "iselection.h"
+#include "iselectiontest.h"
 
 class Matrix3;
 
@@ -33,7 +34,8 @@ public:
 class INode :
     public ITransformable,
     public Bounded,
-    public ISelectable
+    public ISelectable,
+    public SelectionTestable
 {
 public:
     virtual ~INode() {}

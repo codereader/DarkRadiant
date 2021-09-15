@@ -38,6 +38,11 @@ public:
 
         return _bounds;
     }
+
+    void testSelect(Selector& selector, SelectionTest& test) override
+    {
+
+    }
 };
 
 }

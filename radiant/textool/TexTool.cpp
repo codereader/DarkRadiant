@@ -367,13 +367,19 @@ void TexTool::testSelect(SelectionTest& test)
     textool::TexToolItemVec selectables;
     selection::SelectionPool selectionPool;
 
+    GlobalTextureToolSceneGraph().foreachNode([&](const textool::INode::Ptr& node)
+    {
+        node->testSelect(selectionPool, test);
+        return true;
+    });
+
+#if 0
     // Cycle through all the toplevel items and test them for selectability
     for (const auto& item : _items)
     {
         item->testSelect(selectionPool, test);
     }
 
-#if 0
     // Cycle through all the items and ask them to deliver the list of child selectables
     // residing within the test rectangle
     for (const auto& item : _items)
@@ -386,24 +392,28 @@ void TexTool::testSelect(SelectionTest& test)
     }
 #endif
     
+#if 1
     if (selectionPool.empty()) return;
 
     auto bestSelectable = *selectionPool.begin();
     bestSelectable.second->setSelected(true);
+#endif
 
     // Check the centerpoint of all selected items
     Vector2 sum;
     std::size_t count = 0;
 
-    for (const auto& item : _items)
+    GlobalTextureToolSceneGraph().foreachSelectedNode([&](const textool::INode::Ptr& node)
     {
-        if (item->isSelected())
+        if (node->isSelected())
         {
-            auto bounds = item->getSelectedExtents();
+            auto bounds = node->localAABB();
             sum += Vector2(bounds.origin.x(), bounds.origin.y());
             count++;
         }
-    }
+
+        return true;
+    });
 
     if (count > 0)
     {

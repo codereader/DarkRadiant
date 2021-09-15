@@ -43,6 +43,28 @@ public:
 
         return _bounds;
     }
+
+    void testSelect(Selector& selector, SelectionTest& test) override
+    {
+        // Arrange the UV coordinates in a Vector3 array for testing
+        std::vector<Vector3> uvs;
+        uvs.reserve(_face.getWinding().size());
+
+        for (const auto& vertex : _face.getWinding())
+        {
+            uvs.emplace_back(vertex.texcoord.x(), vertex.texcoord.y(), 0);
+        }
+
+        test.BeginMesh(Matrix4::getIdentity(), true);
+
+        SelectionIntersection best;
+        test.TestPolygon(VertexPointer(uvs.data(), sizeof(Vector3)), uvs.size(), best);
+
+        if (best.isValid())
+        {
+            Selector_add(selector, *this);
+        }
+    }
 };
 
 }
