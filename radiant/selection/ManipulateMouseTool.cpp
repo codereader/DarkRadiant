@@ -211,6 +211,8 @@ void ManipulateMouseTool::endMove()
 
 		// Finish the undo move
 		GlobalUndoSystem().finish(command.str());
+
+        activeManipulator->setSelected(false);
 	}
 }
 

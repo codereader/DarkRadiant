@@ -13,6 +13,7 @@ class TextureRotator :
 {
 private:
 	Vector2 _start;
+	Vector2 _current;
 
 	// The most recently calculated angle for rendering purposes
 	Vector2::ElementType _curAngle;
@@ -32,6 +33,12 @@ public:
 
     void resetCurAngle();
     Vector2::ElementType getCurAngle() const;
+
+    // The vector from the pivot to the starting point of the manipulation (normalised)
+    const Vector2& getStartDirection() const;
+
+    // The vector from the pivot to the current point of manipulation (normalised)
+    const Vector2& getCurrentDirection() const;
 };
 
 class TextureToolRotateManipulator :
@@ -45,6 +52,9 @@ private:
     RenderableCircle _renderableCircle;
 
     ShaderPtr _shader;
+    IGLFont::Ptr _glFont;
+
+    float _circleRadius;
 
 public:
     TextureToolRotateManipulator();

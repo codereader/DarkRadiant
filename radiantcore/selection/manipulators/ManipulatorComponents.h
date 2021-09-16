@@ -17,6 +17,12 @@
 namespace selection
 {
 
+namespace
+{
+    constexpr const char* const RKEY_MANIPULATOR_FONTSTYLE = "user/ui/manipulatorFontStyle";
+    constexpr const char* const RKEY_MANIPULATOR_FONTSIZE = "user/ui/manipulatorFontSize";
+}
+
 class ManipulatorComponentBase :
 	public IManipulator::Component
 {

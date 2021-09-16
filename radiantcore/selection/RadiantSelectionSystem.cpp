@@ -31,12 +31,6 @@
 namespace selection
 {
 
-namespace
-{
-    const std::string RKEY_MANIPULATOR_FONTSTYLE = "user/ui/manipulatorFontStyle";
-    const std::string RKEY_MANIPULATOR_FONTSIZE = "user/ui/manipulatorFontSize";
-}
-
 // --------- RadiantSelectionSystem Implementation ------------------------------------------
 
 RadiantSelectionSystem::RadiantSelectionSystem() :
