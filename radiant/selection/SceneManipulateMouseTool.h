@@ -1,7 +1,5 @@
 #pragma once
 
-#include "render/View.h"
-#include "math/Vector2.h"
 #include "selection/ManipulateMouseTool.h"
 
 namespace ui
@@ -20,12 +18,14 @@ public:
 
 protected:
     selection::IManipulator::Ptr getActiveManipulator() override;
-	bool selectManipulator(const render::View& view, const Vector2& devicePoint, const Vector2& deviceEpsilon) override;
 
+    void onManipulationStart() override;
     void onManipulationChanged() override;
     void onManipulationCancelled() override;
 	void onManipulationFinished() override;
 
+    bool manipulationIsPossible() override;
+    Matrix4 getPivot2World() override;
 private:
     bool nothingSelected() const;
 };

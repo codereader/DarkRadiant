@@ -25,7 +25,7 @@ selection::IManipulator::Ptr SceneManipulateMouseTool::getActiveManipulator()
     return GlobalSelectionSystem().getActiveManipulator();
 }
 
-bool SceneManipulateMouseTool::selectManipulator(const render::View& view, const Vector2& devicePoint, const Vector2& deviceEpsilon)
+bool SceneManipulateMouseTool::manipulationIsPossible()
 {
     auto activeManipulator = getActiveManipulator();
     assert(activeManipulator);
@@ -33,40 +33,17 @@ bool SceneManipulateMouseTool::selectManipulator(const render::View& view, const
     bool dragComponentMode = activeManipulator->getType() == selection::IManipulator::Drag &&
         GlobalSelectionSystem().Mode() == SelectionSystem::eComponent;
 
-    if (!nothingSelected() || dragComponentMode)
-    {
-        // Unselect any currently selected manipulators to be sure
-        activeManipulator->setSelected(false);
+    return dragComponentMode || !nothingSelected();
+}
 
-        const Matrix4& pivot2World = GlobalSelectionSystem().getPivot2World();
+Matrix4 SceneManipulateMouseTool::getPivot2World()
+{
+    return GlobalSelectionSystem().getPivot2World();
+}
 
-        // Perform a selection test on this manipulator's components
-        render::View scissored(view);
-        ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromPoint(devicePoint, deviceEpsilon));
-
-        SelectionVolume test(scissored);
-        activeManipulator->testSelect(test, pivot2World);
-
-        // Save the pivot2world matrix
-        _pivot2worldStart = pivot2World;
-
-        GlobalSelectionSystem().onManipulationStart();
-
-        // This is true, if a manipulator could be selected
-        _manipulationActive = activeManipulator->isSelected();
-
-        // is a manipulator selected / the pivot moving?
-        if (_manipulationActive)
-        {
-            activeManipulator->getActiveComponent()->beginTransformation(_pivot2worldStart, view, devicePoint);
-
-            _deviceStart = devicePoint;
-
-            _undoBegun = false;
-        }
-    }
-
-    return _manipulationActive;
+void SceneManipulateMouseTool::onManipulationStart()
+{
+    GlobalSelectionSystem().onManipulationStart();
 }
 
 void SceneManipulateMouseTool::onManipulationChanged()

@@ -4,6 +4,7 @@
 #include "imousetool.h"
 #include "render/View.h"
 #include "math/Vector2.h"
+#include "math/Matrix4.h"
 
 namespace ui
 {
@@ -50,11 +51,15 @@ public:
 
 protected:
     virtual selection::IManipulator::Ptr getActiveManipulator() = 0;
-	virtual bool selectManipulator(const render::View& view, const Vector2& devicePoint, const Vector2& deviceEpsilon) = 0;
+	virtual bool selectManipulator(const render::View& view, const Vector2& devicePoint, const Vector2& deviceEpsilon);
 
+    virtual void onManipulationStart() = 0;
     virtual void onManipulationChanged() = 0;
     virtual void onManipulationCancelled() = 0;
 	virtual void onManipulationFinished() = 0;
+
+    virtual bool manipulationIsPossible() = 0;
+    virtual Matrix4 getPivot2World() = 0;
 
 private:
 	void handleMouseMove(const render::View& view, const Vector2& devicePoint);
