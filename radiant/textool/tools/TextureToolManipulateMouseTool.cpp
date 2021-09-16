@@ -93,17 +93,17 @@ unsigned int TextureToolManipulateMouseTool::getRefreshMode()
     return RefreshMode::Force | RefreshMode::AllViews;
 }
 
+selection::IManipulator::Ptr TextureToolManipulateMouseTool::getActiveManipulator()
+{
+    return TexTool::Instance().getActiveManipulator();
+}
+
 bool TextureToolManipulateMouseTool::selectManipulator(const render::View& view, const Vector2& devicePoint, const Vector2& deviceEpsilon)
 {
-	const auto& activeManipulator = TexTool::Instance().getActiveManipulator();
-
+	auto activeManipulator = getActiveManipulator();
 	assert(activeManipulator);
 	
-#if 0
-	bool dragComponentMode = activeManipulator->getType() == selection::Manipulator::Drag && 
-		GlobalSelectionSystem().Mode() == SelectionSystem::eComponent;
-#endif
-	if (true/*!nothingSelected()/* || dragComponentMode*/)
+	if (true)
 	{
 		// Unselect any currently selected manipulators to be sure
 		activeManipulator->setSelected(false);
@@ -148,7 +148,7 @@ bool TextureToolManipulateMouseTool::selectManipulator(const render::View& view,
 
 void TextureToolManipulateMouseTool::handleMouseMove(const render::View& view, const Vector2& devicePoint)
 {
-	const auto& activeManipulator = TexTool::Instance().getActiveManipulator();
+	auto activeManipulator = getActiveManipulator();
 	assert(activeManipulator);
 
 	// Check if the active manipulator is selected in the first place
@@ -206,7 +206,7 @@ void TextureToolManipulateMouseTool::endMove()
 {
 	freezeTransforms();
 
-	const auto& activeManipulator = TexTool::Instance().getActiveManipulator();
+	auto activeManipulator = getActiveManipulator();
 	assert(activeManipulator);
 
 	_manipulationActive = false;
@@ -226,7 +226,7 @@ void TextureToolManipulateMouseTool::endMove()
 
 void TextureToolManipulateMouseTool::cancelMove()
 {
-	const auto& activeManipulator = TexTool::Instance().getActiveManipulator();
+	auto activeManipulator = getActiveManipulator();
 	assert(activeManipulator);
 
 	_manipulationActive = false;
@@ -247,20 +247,6 @@ void TextureToolManipulateMouseTool::cancelMove()
 bool TextureToolManipulateMouseTool::nothingSelected() const
 {
     return TexTool::Instance().countSelected() == 0;
-}
-
-void TextureToolManipulateMouseTool::renderOverlay()
-{
-#ifdef _DEBUG
-	std::vector<std::string> lines;
-	string::split(lines, _debugText, "\n");
-
-	for (std::size_t i = 0; i < lines.size(); ++i)
-	{
-		glRasterPos3f(1.0f, 15.0f + (12.0f*lines.size() - 1) - 12.0f*i, 0.0f);
-		GlobalOpenGL().drawString(lines[i]);
-	}
-#endif
 }
 
 }

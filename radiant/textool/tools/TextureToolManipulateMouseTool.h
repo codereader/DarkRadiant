@@ -4,6 +4,7 @@
 #include "imousetool.h"
 #include "render/View.h"
 #include "math/Vector2.h"
+#include "selection/ManipulateMouseTool.h"
 
 namespace ui
 {
@@ -11,11 +12,10 @@ namespace ui
 class TexTool;
 
 /**
- * greebo: This is the tool handling the manipulation mouse operations for the texture tool.
- * TODO: It's similar to the ManipulateMouseTool, so it could #share a lot of code.
+ * Specialised manipulation operations for the texture tool
  */
 class TextureToolManipulateMouseTool :
-    public MouseTool
+    public ManipulateMouseTool
 {
 private:
     float _selectEpsilon;
@@ -27,10 +27,6 @@ private:
 
 	Vector2 _deviceStart;
 	bool _undoBegun;
-
-#ifdef _DEBUG
-	std::string _debugText;
-#endif
 
 	ShaderPtr _pointShader;
 
@@ -50,7 +46,8 @@ public:
     virtual unsigned int getPointerMode() override;
     virtual unsigned int getRefreshMode() override;
 
-	void renderOverlay() override;
+protected:
+    virtual selection::IManipulator::Ptr getActiveManipulator() override;
 
 private:
 	bool selectManipulator(const render::View& view, const Vector2& devicePoint, const Vector2& deviceEpsilon);

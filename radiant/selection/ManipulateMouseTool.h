@@ -29,10 +29,12 @@ private:
 	Vector2 _deviceStart;
 	bool _undoBegun;
 
+protected:
 #ifdef _DEBUG
 	std::string _debugText;
 #endif
 
+private:
 	ShaderPtr _pointShader;
 
 public:
@@ -52,7 +54,9 @@ public:
     virtual unsigned int getRefreshMode() override;
 
 	void renderOverlay() override;
-	void render(RenderSystem& renderSystem, RenderableCollector& collector, const VolumeTest& volume) override;
+
+protected:
+    virtual selection::IManipulator::Ptr getActiveManipulator();
 
 private:
 	bool selectManipulator(const render::View& view, const Vector2& devicePoint, const Vector2& deviceEpsilon);

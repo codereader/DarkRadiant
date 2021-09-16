@@ -92,10 +92,14 @@ unsigned int ManipulateMouseTool::getRefreshMode()
     return RefreshMode::Force | RefreshMode::AllViews; // update cam view too
 }
 
+selection::IManipulator::Ptr ManipulateMouseTool::getActiveManipulator()
+{
+    return GlobalSelectionSystem().getActiveManipulator();
+}
+
 bool ManipulateMouseTool::selectManipulator(const render::View& view, const Vector2& devicePoint, const Vector2& deviceEpsilon)
 {
-	const auto& activeManipulator = GlobalSelectionSystem().getActiveManipulator();
-
+    auto activeManipulator = getActiveManipulator();
 	assert(activeManipulator);
 	
 	bool dragComponentMode = activeManipulator->getType() == selection::IManipulator::Drag &&
@@ -144,7 +148,7 @@ bool ManipulateMouseTool::selectManipulator(const render::View& view, const Vect
 
 void ManipulateMouseTool::handleMouseMove(const render::View& view, const Vector2& devicePoint)
 {
-	const auto& activeManipulator = GlobalSelectionSystem().getActiveManipulator();
+	auto activeManipulator = getActiveManipulator();
 	assert(activeManipulator);
 
 	// Check if the active manipulator is selected in the first place
@@ -202,7 +206,7 @@ void ManipulateMouseTool::endMove()
 {
 	freezeTransforms();
 
-	const auto& activeManipulator = GlobalSelectionSystem().getActiveManipulator();
+	auto activeManipulator = getActiveManipulator();
 	assert(activeManipulator);
 
 	_manipulationActive = false;
@@ -248,7 +252,7 @@ void ManipulateMouseTool::endMove()
 
 void ManipulateMouseTool::cancelMove()
 {
-	const auto& activeManipulator = GlobalSelectionSystem().getActiveManipulator();
+	auto activeManipulator = getActiveManipulator();
 	assert(activeManipulator);
 
 	_manipulationActive = false;
@@ -294,30 +298,6 @@ void ManipulateMouseTool::renderOverlay()
 		glRasterPos3f(1.0f, 15.0f + (12.0f*lines.size() - 1) - 12.0f*i, 0.0f);
 		GlobalOpenGL().drawString(lines[i]);
 	}
-#endif
-}
-
-void ManipulateMouseTool::render(RenderSystem& renderSystem, RenderableCollector& collector, const VolumeTest& volume)
-{
-#if 0
-	if (nothingSelected()) return;
-
-	const selection::ManipulatorPtr& activeManipulator = _selectionSystem.getActiveManipulator();
-
-	if (!activeManipulator) return;
-
-	if (!_pointShader)
-	{
-		_pointShader = renderSystem.capture("$POINT");
-	}
-
-	collector.setHighlightFlag(RenderableCollector::Highlight::Faces, false);
-	collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
-
-	collector.SetState(_pointShader, RenderableCollector::eWireframeOnly);
-	collector.SetState(_pointShader, RenderableCollector::eFullMaterials);
-
-	activeManipulator->render(collector, volume);
 #endif
 }
 
