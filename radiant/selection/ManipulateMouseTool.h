@@ -21,24 +21,20 @@ class ManipulateMouseTool :
 private:
     float _selectEpsilon;
 
-    render::View _view;
-
+protected:
 	Matrix4 _pivot2worldStart;
 	bool _manipulationActive;
 
 	Vector2 _deviceStart;
 	bool _undoBegun;
 
-protected:
 #ifdef _DEBUG
 	std::string _debugText;
 #endif
 
-private:
-	ShaderPtr _pointShader;
-
 public:
     ManipulateMouseTool();
+    virtual ~ManipulateMouseTool() {}
 
     const std::string& getName() override;
     const std::string& getDisplayName() override;
@@ -57,11 +53,14 @@ public:
 
 protected:
     virtual selection::IManipulator::Ptr getActiveManipulator();
+	virtual bool selectManipulator(const render::View& view, const Vector2& devicePoint, const Vector2& deviceEpsilon);
+	virtual void freezeTransforms();
+
+    virtual void onManipulationChanged();
+    virtual void onManipulationCancelled();
 
 private:
-	bool selectManipulator(const render::View& view, const Vector2& devicePoint, const Vector2& deviceEpsilon);
 	void handleMouseMove(const render::View& view, const Vector2& devicePoint);
-	void freezeTransforms();
 	void endMove();
 	void cancelMove();
 	bool nothingSelected() const;

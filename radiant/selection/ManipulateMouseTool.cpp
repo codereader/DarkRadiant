@@ -40,12 +40,12 @@ const std::string& ManipulateMouseTool::getDisplayName()
 
 ManipulateMouseTool::Result ManipulateMouseTool::onMouseDown(Event& ev)
 {
-    _view = render::View(ev.getInteractiveView().getVolumeTest());
+    auto view = render::View(ev.getInteractiveView().getVolumeTest());
 
     Vector2 epsilon(_selectEpsilon / ev.getInteractiveView().getDeviceWidth(),
                     _selectEpsilon / ev.getInteractiveView().getDeviceHeight());
 
-    if (selectManipulator(_view, ev.getDevicePosition(), epsilon))
+    if (selectManipulator(view, ev.getDevicePosition(), epsilon))
     {
         return Result::Activated;
     }
@@ -56,9 +56,9 @@ ManipulateMouseTool::Result ManipulateMouseTool::onMouseDown(Event& ev)
 ManipulateMouseTool::Result ManipulateMouseTool::onMouseMove(Event& ev)
 {
     // Get the view afresh each time, chasemouse might have changed the view since onMouseDown
-    _view = render::View(ev.getInteractiveView().getVolumeTest());
+    auto view = render::View(ev.getInteractiveView().getVolumeTest());
 
-    handleMouseMove(_view, ev.getDevicePosition());
+    handleMouseMove(view, ev.getDevicePosition());
 
     return Result::Continued;
 }
@@ -112,17 +112,12 @@ bool ManipulateMouseTool::selectManipulator(const render::View& view, const Vect
 
 		const Matrix4& pivot2World = GlobalSelectionSystem().getPivot2World();
 
-		// Test, if the current manipulator can be selected
-		if (!nothingSelected() || dragComponentMode)
-		{
-			render::View scissored(view);
-			ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromPoint(devicePoint, deviceEpsilon));
+		// Perform a selection test on this manipulator's components
+		render::View scissored(view);
+		ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromPoint(devicePoint, deviceEpsilon));
 
-			SelectionVolume test(scissored);
-
-			// The manipulator class checks on its own, if any of its components can be selected
-			activeManipulator->testSelect(test, pivot2World);
-		}
+		SelectionVolume test(scissored);
+		activeManipulator->testSelect(test, pivot2World);
 
 		// Save the pivot2world matrix
 		_pivot2worldStart = pivot2World;
@@ -144,6 +139,11 @@ bool ManipulateMouseTool::selectManipulator(const render::View& view, const Vect
 	}
 
 	return _manipulationActive;
+}
+
+void ManipulateMouseTool::onManipulationChanged()
+{
+    GlobalSelectionSystem().onManipulationChanged();
 }
 
 void ManipulateMouseTool::handleMouseMove(const render::View& view, const Vector2& devicePoint)
@@ -194,7 +194,7 @@ void ManipulateMouseTool::handleMouseMove(const render::View& view, const Vector
 	// and call the transform method
 	activeManipulator->getActiveComponent()->transform(_pivot2worldStart, view, devicePoint, constraintFlag);
 
-	GlobalSelectionSystem().onManipulationChanged();
+    onManipulationChanged();
 }
 
 void ManipulateMouseTool::freezeTransforms()
@@ -222,17 +222,14 @@ void ManipulateMouseTool::endMove()
 		if (activeManipulator->getType() == selection::IManipulator::Translate)
 		{
 			command << "translateTool";
-			//outputTranslation(command);
 		}
 		else if (activeManipulator->getType() == selection::IManipulator::Rotate)
 		{
 			command << "rotateTool";
-			//outputRotation(command);
 		}
 		else if (activeManipulator->getType() == selection::IManipulator::Scale)
 		{
 			command << "scaleTool";
-			//outputScale(command);
 		}
 		else if (activeManipulator->getType() == selection::IManipulator::Drag)
 		{
@@ -250,6 +247,11 @@ void ManipulateMouseTool::endMove()
 	}
 }
 
+void ManipulateMouseTool::onManipulationCancelled()
+{
+    GlobalSelectionSystem().onManipulationCancelled();
+}
+
 void ManipulateMouseTool::cancelMove()
 {
 	auto activeManipulator = getActiveManipulator();
@@ -257,7 +259,7 @@ void ManipulateMouseTool::cancelMove()
 
 	_manipulationActive = false;
 
-	GlobalSelectionSystem().onManipulationCancelled();
+    onManipulationCancelled();
 
 	if (_undoBegun)
 	{
