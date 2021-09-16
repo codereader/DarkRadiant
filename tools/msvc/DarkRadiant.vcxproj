@@ -219,6 +219,7 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\RadiantApp.cpp" />
     <ClCompile Include="..\..\radiant\selection\ManipulateMouseTool.cpp" />
+    <ClCompile Include="..\..\radiant\selection\SceneManipulateMouseTool.cpp" />
     <ClCompile Include="..\..\radiant\selection\SelectionMouseTools.cpp" />
     <ClCompile Include="..\..\radiant\settings\LocalisationModule.cpp" />
     <ClCompile Include="..\..\radiant\settings\LocalisationProvider.cpp" />
@@ -414,6 +415,7 @@
     <ClInclude Include="..\..\radiant\RadiantApp.h" />
     <ClInclude Include="..\..\radiant\render\RenderStatistics.h" />
     <ClInclude Include="..\..\radiant\selection\ManipulateMouseTool.h" />
+    <ClInclude Include="..\..\radiant\selection\SceneManipulateMouseTool.h" />
     <ClInclude Include="..\..\radiant\selection\SelectionMouseTools.h" />
     <ClInclude Include="..\..\radiant\settings\LocalisationModule.h" />
     <ClInclude Include="..\..\radiant\settings\LocalisationProvider.h" />

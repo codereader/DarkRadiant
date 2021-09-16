@@ -2,7 +2,7 @@
 
 #include "imousetool.h"
 #include "selection/SelectionMouseTools.h"
-#include "selection/ManipulateMouseTool.h"
+#include "selection/SceneManipulateMouseTool.h"
 #include "xyview/tools/MoveViewTool.h"
 #include "xyview/tools/ZoomTool.h"
 #include "textool/tools/TextureToolSelectionTool.h"
@@ -20,14 +20,14 @@ public:
         // Orthoview: manipulate and all the non-face selection tools
         auto& orthoGroup = GlobalMouseToolManager().getGroup(IMouseToolGroup::Type::OrthoView);
 
-        orthoGroup.registerMouseTool(std::make_shared<ManipulateMouseTool>());
+        orthoGroup.registerMouseTool(std::make_shared<SceneManipulateMouseTool>());
         orthoGroup.registerMouseTool(std::make_shared<BasicSelectionTool>());
         orthoGroup.registerMouseTool(std::make_shared<CycleSelectionMouseTool>());
 
         // Camera: manipulation plus all selection tools, including the face-only tools
         auto& camGroup = GlobalMouseToolManager().getGroup(IMouseToolGroup::Type::CameraView);
 
-        camGroup.registerMouseTool(std::make_shared<ManipulateMouseTool>());
+        camGroup.registerMouseTool(std::make_shared<SceneManipulateMouseTool>());
         camGroup.registerMouseTool(std::make_shared<BasicSelectionTool>());
         camGroup.registerMouseTool(std::make_shared<DragSelectionMouseToolFaceOnly>());
         camGroup.registerMouseTool(std::make_shared<CycleSelectionMouseTool>());

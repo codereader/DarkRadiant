@@ -77,7 +77,7 @@ void TextureToolManipulateMouseTool::onManipulationChanged()
     TexTool::Instance().onManipulationChanged();
 }
 
-void TextureToolManipulateMouseTool::freezeTransforms()
+void TextureToolManipulateMouseTool::onManipulationFinished()
 {
     TexTool::Instance().onManipulationEnd();
 }

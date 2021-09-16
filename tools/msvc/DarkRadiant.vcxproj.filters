@@ -733,6 +733,9 @@
     <ClCompile Include="..\..\radiant\textool\tools\TextureToolManipulateMouseTool.cpp">
       <Filter>src\textool\tools</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\SceneManipulateMouseTool.cpp">
+      <Filter>src\selection</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h">
@@ -1424,6 +1427,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\textool\tools\TextureToolManipulateMouseTool.h">
       <Filter>src\textool\tools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\SceneManipulateMouseTool.h">
+      <Filter>src\selection</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

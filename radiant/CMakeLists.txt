@@ -17,6 +17,7 @@ add_executable(darkradiant
                map/AutoSaveTimer.cpp
                map/StartupMapLoader.cpp
                RadiantApp.cpp
+               selection/SceneManipulateMouseTool.cpp
                selection/ManipulateMouseTool.cpp
                selection/SelectionMouseTools.cpp
                settings/LocalisationModule.cpp

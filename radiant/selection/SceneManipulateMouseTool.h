@@ -8,9 +8,10 @@ namespace ui
 {
 
 /**
- * Specialised manipulation operations for the texture tool
+ * Specialised manipulation operations targeting the selection as
+ * currently active in the global selection system.
  */
-class TextureToolManipulateMouseTool :
+class SceneManipulateMouseTool :
     public ManipulateMouseTool
 {
 public:
@@ -24,6 +25,9 @@ protected:
     void onManipulationChanged() override;
     void onManipulationCancelled() override;
 	void onManipulationFinished() override;
+
+private:
+    bool nothingSelected() const;
 };
 
 }
