@@ -90,7 +90,7 @@ unsigned int TextureToolManipulateMouseTool::getPointerMode()
 
 unsigned int TextureToolManipulateMouseTool::getRefreshMode()
 {
-    return RefreshMode::Force | RefreshMode::ActiveView;
+    return RefreshMode::Force | RefreshMode::AllViews;
 }
 
 bool TextureToolManipulateMouseTool::selectManipulator(const render::View& view, const Vector2& devicePoint, const Vector2& deviceEpsilon)
@@ -138,6 +138,8 @@ bool TextureToolManipulateMouseTool::selectManipulator(const render::View& view,
 			_deviceStart = devicePoint;
 
 			_undoBegun = false;
+
+            TexTool::Instance().forceRedraw();
 		}
 	}
 

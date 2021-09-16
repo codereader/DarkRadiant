@@ -107,10 +107,13 @@ public:
 
         glPointSize(5);
         glBegin(GL_POINTS);
-        /*for (Winding::const_iterator i = _winding.begin(); i != _winding.end(); ++i)
+
+        glColor3f(0.7f, 0.7f, 0.7f);
+
+        for (const auto& vertex : _face.getWinding())
         {
-            glVertex2f(i->texcoord[0], i->texcoord[1]);
-        }*/
+            glVertex2d(vertex.texcoord[0], vertex.texcoord[1]);
+        }
 
         //glColor3f(1, 1, 1);
 

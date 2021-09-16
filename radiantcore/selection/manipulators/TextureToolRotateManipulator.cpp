@@ -46,8 +46,6 @@ void TextureRotator::transform(const Matrix4& pivot2world, const VolumeTest& vie
     auto sign = _start.crossProduct(current) < 0 ? +1 : -1;
     _curAngle *= sign;
 
-    rMessage() << "Current angle: " << _curAngle << std::endl;
-
     _rotateFunctor(Vector2(pivot2world.tx(), pivot2world.ty()), _curAngle);
 }
 
@@ -66,7 +64,7 @@ TextureToolRotateManipulator::TextureToolRotateManipulator() :
     _renderableCircle(8 << 3)
 {
     draw_circle(8, 1.0f, &_renderableCircle.front(), RemapXYZ());
-    _renderableCircle.setColour(Colour4b(255, 0, 0, 255));
+    _renderableCircle.setColour(Colour4b(200, 200, 200, 200));
 }
 
 std::size_t TextureToolRotateManipulator::getId() const
@@ -130,7 +128,8 @@ void TextureToolRotateManipulator::renderComponents(const Matrix4& pivot2World)
 
     const auto& translation = pivot2World.tCol().getVector3();
 
-    _renderableCircle.setColour(Colour4b(255, isSelected() ? 255 : 0, 0, 255));
+    _renderableCircle.setColour(isSelected() ? 
+        Colour4b(255, 255, 0, 200) : Colour4b(200, 200, 200, 200));
 
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();

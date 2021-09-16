@@ -21,6 +21,7 @@
 #include "ui/mainframe/ScreenUpdateBlocker.h"
 #include "ui/mainframe/AuiLayout.h"
 #include "ui/mainframe/TopLevelFrame.h"
+#include "textool/TexTool.h"
 
 #include "module/StaticModule.h"
 #include "messages/ApplicationShutdownRequest.h"
@@ -524,6 +525,18 @@ void MainFrame::updateAllWindows(bool force)
     }
 
     GlobalXYWndManager().updateAllViews(force);
+
+    if (TexTool::Instance().IsShown())
+    {
+        if (force)
+        {
+            TexTool::Instance().forceRedraw();
+        }
+        else
+        {
+            TexTool::Instance().queueDraw();
+        }
+    }
 }
 
 void MainFrame::setActiveLayoutName(const std::string& name)
