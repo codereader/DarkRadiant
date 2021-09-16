@@ -151,7 +151,7 @@ void TextureToolRotateManipulator::rotateSelected(const Vector2& pivot, double a
 {
     // Construct the full rotation around the pivot point
     auto transform = Matrix3::getTranslation(-pivot);
-    transform.premultiplyBy(Matrix3::getRotation(angle));
+    transform.premultiplyBy(Matrix3::getRotation(-angle));
     transform.premultiplyBy(Matrix3::getTranslation(pivot));
 
     GlobalTextureToolSceneGraph().foreachSelectedNode([&](const textool::INode::Ptr& node)
