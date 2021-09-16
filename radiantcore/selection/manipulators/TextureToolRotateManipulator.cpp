@@ -167,9 +167,28 @@ void TextureToolRotateManipulator::renderComponents(const Matrix4& pivot2World)
         glVertex3d(0, 0, 0);
 
         auto startingPointOnCircle = _rotator.getStartDirection() * _circleRadius;
+        glVertex3d(startingPointOnCircle.x(), startingPointOnCircle.y(), 0);
+
+        // 3 degree steps
+        auto stepSize = degrees_to_radians(3.0);
+
+        if (stepSize < std::abs(angle))
+        {
+            auto steps = floor(std::abs(angle) / stepSize);
+            stepSize = angle < 0 ? stepSize : -stepSize;
+
+            for (auto i = 0; i < steps; ++i)
+            {
+                auto curAngle = i * stepSize;
+                auto pointOnCircle = Matrix3::getRotation(curAngle).transformPoint(startingPointOnCircle);
+                pointOnCircle /= pointOnCircle.getLength();
+
+                glVertex3d(pointOnCircle.x(), pointOnCircle.y(), 0);
+            }
+        }
+
         auto currentPointOnCircle = _rotator.getCurrentDirection() * _circleRadius;
 
-        glVertex3d(startingPointOnCircle.x(), startingPointOnCircle.y(), 0);
         glVertex3d(currentPointOnCircle.x(), currentPointOnCircle.y(), 0);
 
         glEnd();
