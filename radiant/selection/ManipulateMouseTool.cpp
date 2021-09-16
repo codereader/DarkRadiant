@@ -22,7 +22,6 @@ namespace
 
 ManipulateMouseTool::ManipulateMouseTool() :
     _selectEpsilon(registry::getValue<float>(RKEY_SELECT_EPSILON)),
-	_manipulationActive(false),
 	_undoBegun(false)
 {}
 
@@ -85,40 +84,40 @@ bool ManipulateMouseTool::selectManipulator(const render::View& view, const Vect
     auto activeManipulator = getActiveManipulator();
     assert(activeManipulator);
 
-    if (manipulationIsPossible())
+    // Check if the scene selection is ready for manipulation
+    if (!manipulationIsPossible())
     {
-        // Unselect any currently selected manipulators to be sure
-        activeManipulator->setSelected(false);
-
-        auto pivot2World = getPivot2World();
-
-        // Perform a selection test on this manipulator's components
-        render::View scissored(view);
-        ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromPoint(devicePoint, deviceEpsilon));
-
-        SelectionVolume test(scissored);
-        activeManipulator->testSelect(test, pivot2World);
-
-        // Save the pivot2world matrix
-        _pivot2worldStart = pivot2World;
-
-        onManipulationStart();
-
-        // This is true, if a manipulator could be selected
-        _manipulationActive = activeManipulator->isSelected();
-
-        // is a manipulator selected / the pivot moving?
-        if (_manipulationActive)
-        {
-            activeManipulator->getActiveComponent()->beginTransformation(_pivot2worldStart, view, devicePoint);
-
-            _deviceStart = devicePoint;
-
-            _undoBegun = false;
-        }
+        return false;
     }
 
-    return _manipulationActive;
+    // Unselect all components to be sure
+    activeManipulator->setSelected(false);
+
+    // Perform a selection test on this manipulator's components
+    render::View scissored(view);
+    ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromPoint(devicePoint, deviceEpsilon));
+
+    auto pivot2World = getPivot2World();
+    SelectionVolume test(scissored);
+    activeManipulator->testSelect(test, pivot2World);
+
+    // Save the pivot2world matrix
+    _pivot2worldStart = pivot2World;
+
+    // We can start the manipulation if we successfully selected a component
+    if (!activeManipulator->isSelected())
+    {
+        return false;
+    }
+
+    onManipulationStart();
+
+    activeManipulator->getActiveComponent()->beginTransformation(_pivot2worldStart, view, devicePoint);
+
+    _deviceStart = devicePoint;
+    _undoBegun = false;
+
+    return true;
 }
 
 void ManipulateMouseTool::handleMouseMove(const render::View& view, const Vector2& devicePoint)
@@ -179,8 +178,6 @@ void ManipulateMouseTool::endMove()
 	auto activeManipulator = getActiveManipulator();
 	assert(activeManipulator);
 
-	_manipulationActive = false;
-
 	// Update the views
 	SceneChangeNotify();
 
@@ -221,8 +218,6 @@ void ManipulateMouseTool::cancelMove()
 {
 	auto activeManipulator = getActiveManipulator();
 	assert(activeManipulator);
-
-	_manipulationActive = false;
 
     onManipulationCancelled();
 

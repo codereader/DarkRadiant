@@ -22,11 +22,9 @@ class ManipulateMouseTool :
 private:
     float _selectEpsilon;
 
-protected:
 	Matrix4 _pivot2worldStart;
-	bool _manipulationActive;
-
 	Vector2 _deviceStart;
+
 	bool _undoBegun;
 
 #ifdef _DEBUG
