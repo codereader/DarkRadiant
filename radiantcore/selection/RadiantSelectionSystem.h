@@ -12,7 +12,7 @@
 #include "math/Matrix4.h"
 #include "SelectedNodeList.h"
 
-#include "ManipulationPivot.h"
+#include "SceneManipulationPivot.h"
 
 namespace selection
 {
@@ -21,7 +21,8 @@ class RadiantSelectionSystem :
 	public SelectionSystem,
 	public Renderable
 {
-	ManipulationPivot _pivot;
+private:
+	SceneManipulationPivot _pivot;
 
 	typedef std::set<Observer*> ObserverList;
 	ObserverList _observers;

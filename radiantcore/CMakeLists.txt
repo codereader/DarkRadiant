@@ -241,6 +241,7 @@ add_library(radiantcore MODULE
             selection/group/SelectionGroupManager.cpp
             selection/group/SelectionGroupModule.cpp
             selection/ManipulationPivot.cpp
+            selection/SceneManipulationPivot.cpp
             selection/manipulators/DragManipulator.cpp
             selection/manipulators/ManipulatorBase.cpp
             selection/manipulators/ManipulatorComponents.cpp

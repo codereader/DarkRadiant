@@ -1087,6 +1087,9 @@
     <ClCompile Include="..\..\radiantcore\selection\textool\TextureToolSelectionSystem.cpp">
       <Filter>src\selection\textool</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\selection\SceneManipulationPivot.cpp">
+      <Filter>src\selection</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
@@ -2219,6 +2222,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\selection\textool\TextureToolSelectionSystem.h">
       <Filter>src\selection\textool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\selection\SceneManipulationPivot.h">
+      <Filter>src\selection</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

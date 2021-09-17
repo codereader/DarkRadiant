@@ -1021,7 +1021,7 @@ void RadiantSelectionSystem::initialiseModule(const IApplicationContext& ctx)
 	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Selection"));
 
 	page.appendCheckBox(_("Ignore light volume bounds when calculating default rotation pivot location"),
-		ManipulationPivot::RKEY_DEFAULT_PIVOT_LOCATION_IGNORES_LIGHT_VOLUMES);
+		SceneManipulationPivot::RKEY_DEFAULT_PIVOT_LOCATION_IGNORES_LIGHT_VOLUMES);
 
     // Connect the bounds changed caller
     GlobalSceneGraph().signal_boundsChanged().connect(
