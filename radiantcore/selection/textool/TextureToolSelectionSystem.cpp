@@ -112,9 +112,7 @@ void TextureToolSelectionSystem::setActiveManipulator(std::size_t manipulatorId)
 
     // Release the user lock when switching manipulators
     _manipulationPivot.setUserLocked(false);
-#if 0
-    pivotChanged();
-#endif
+    _manipulationPivot.updateFromSelection();
 }
 
 void TextureToolSelectionSystem::setActiveManipulator(selection::IManipulator::Type manipulatorType)
@@ -127,9 +125,7 @@ void TextureToolSelectionSystem::setActiveManipulator(selection::IManipulator::T
 
             // Release the user lock when switching manipulators
             _manipulationPivot.setUserLocked(false);
-#if 0
-            pivotChanged();
-#endif
+            _manipulationPivot.updateFromSelection();
             return;
         }
     }
@@ -139,12 +135,14 @@ void TextureToolSelectionSystem::setActiveManipulator(selection::IManipulator::T
 
 Matrix4 TextureToolSelectionSystem::getPivot2World()
 {
+    _manipulationPivot.updateFromSelection();
+
     return _manipulationPivot.getMatrix4();
 }
 
 void TextureToolSelectionSystem::onManipulationStart()
 {
-    foreachSelectedNode([&](const textool::INode::Ptr& node)
+    foreachSelectedNode([&](const INode::Ptr& node)
     {
         node->beginTransformation();
         return true;
@@ -157,7 +155,7 @@ void TextureToolSelectionSystem::onManipulationChanged()
 
 void TextureToolSelectionSystem::onManipulationFinished()
 {
-    foreachSelectedNode([&](const textool::INode::Ptr& node)
+    foreachSelectedNode([&](const INode::Ptr& node)
     {
         node->commitTransformation();
         return true;
@@ -168,7 +166,7 @@ void TextureToolSelectionSystem::onManipulationFinished()
 
 void TextureToolSelectionSystem::onManipulationCancelled()
 {
-    foreachSelectedNode([&](const textool::INode::Ptr& node)
+    foreachSelectedNode([&](const INode::Ptr& node)
     {
         node->revertTransformation();
         return true;
