@@ -1,6 +1,7 @@
 #pragma once
 
 #include "itexturetoolmodel.h"
+#include "TextureToolManipulationPivot.h"
 
 namespace textool
 {
@@ -16,7 +17,8 @@ private:
     selection::IManipulator::Type _defaultManipulatorType;
 
     sigc::signal<void, selection::IManipulator::Type> _sigActiveManipulatorChanged;
-    Matrix4 _pivot2World;
+
+    TextureToolManipulationPivot _manipulationPivot;
 
 public:
     const std::string& getName() const override;

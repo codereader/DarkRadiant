@@ -23,7 +23,7 @@ void TextureToolSelectionSystem::initialiseModule(const IApplicationContext& ctx
 {
     rMessage() << getName() << "::initialiseModule called." << std::endl;
 
-    _pivot2World = Matrix4::getIdentity();
+    _manipulationPivot.setFromMatrix(Matrix4::getIdentity());
     registerManipulator(std::make_shared<selection::TextureToolRotateManipulator>());
 
     _defaultManipulatorType = selection::IManipulator::Rotate;
@@ -109,10 +109,10 @@ void TextureToolSelectionSystem::setActiveManipulator(std::size_t manipulatorId)
     }
 
     _activeManipulator = found->second;
-#if 0
-    // Release the user lock when switching manipulators
-    _pivot.setUserLocked(false);
 
+    // Release the user lock when switching manipulators
+    _manipulationPivot.setUserLocked(false);
+#if 0
     pivotChanged();
 #endif
 }
@@ -124,10 +124,10 @@ void TextureToolSelectionSystem::setActiveManipulator(selection::IManipulator::T
         if (pair.second->getType() == manipulatorType)
         {
             _activeManipulator = pair.second;
-#if 0
-            // Release the user lock when switching manipulators
-            _pivot.setUserLocked(false);
 
+            // Release the user lock when switching manipulators
+            _manipulationPivot.setUserLocked(false);
+#if 0
             pivotChanged();
 #endif
             return;
@@ -139,30 +139,7 @@ void TextureToolSelectionSystem::setActiveManipulator(selection::IManipulator::T
 
 Matrix4 TextureToolSelectionSystem::getPivot2World()
 {
-    // Check the centerpoint of all selected items
-    Vector2 sum;
-    std::size_t count = 0;
-
-    foreachSelectedNode([&](const textool::INode::Ptr& node)
-    {
-        auto bounds = node->localAABB();
-        sum += Vector2(bounds.origin.x(), bounds.origin.y());
-        count++;
-
-        return true;
-    });
-
-    if (count > 0)
-    {
-        sum /= count;
-        _pivot2World = Matrix4::getTranslation(Vector3(sum.x(), sum.y(), 0));
-    }
-    else
-    {
-        _pivot2World = Matrix4::getIdentity();
-    }
-
-    return _pivot2World;
+    return _manipulationPivot.getMatrix4();
 }
 
 void TextureToolSelectionSystem::onManipulationStart()

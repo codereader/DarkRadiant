@@ -673,6 +673,7 @@
     <ClCompile Include="..\..\radiantcore\selection\shaderclipboard\ClosestTexturableFinder.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\shaderclipboard\ShaderClipboard.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\shaderclipboard\Texturable.cpp" />
+    <ClCompile Include="..\..\radiantcore\selection\textool\TextureToolManipulationPivot.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\textool\TextureToolSceneGraph.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\textool\TextureToolSelectionSystem.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\TransformationVisitors.cpp" />
@@ -1030,6 +1031,7 @@
     <ClInclude Include="..\..\radiantcore\selection\textool\FaceNode.h" />
     <ClInclude Include="..\..\radiantcore\selection\textool\NodeBase.h" />
     <ClInclude Include="..\..\radiantcore\selection\textool\PatchNode.h" />
+    <ClInclude Include="..\..\radiantcore\selection\textool\TextureToolManipulationPivot.h" />
     <ClInclude Include="..\..\radiantcore\selection\textool\TextureToolSceneGraph.h" />
     <ClInclude Include="..\..\radiantcore\selection\textool\TextureToolSelectionSystem.h" />
     <ClInclude Include="..\..\radiantcore\selection\TransformationVisitors.h" />

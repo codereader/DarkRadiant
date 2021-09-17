@@ -1078,9 +1078,6 @@
     <ClCompile Include="..\..\radiantcore\map\autosaver\AutoSaver.cpp">
       <Filter>src\map\autosaver</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiantcore\selection\manipulators\TextureToolRotateManipulator.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiantcore\selection\textool\TextureToolSceneGraph.cpp">
       <Filter>src\selection\textool</Filter>
     </ClCompile>
@@ -1089,6 +1086,12 @@
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\selection\SceneManipulationPivot.cpp">
       <Filter>src\selection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\selection\manipulators\TextureToolRotateManipulator.cpp">
+      <Filter>src\selection\manipulators</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\selection\textool\TextureToolManipulationPivot.cpp">
+      <Filter>src\selection\textool</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2225,6 +2228,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\selection\SceneManipulationPivot.h">
       <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\selection\textool\TextureToolManipulationPivot.h">
+      <Filter>src\selection\textool</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
