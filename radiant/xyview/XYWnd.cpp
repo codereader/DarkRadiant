@@ -1546,17 +1546,23 @@ void XYWnd::mouseToPoint(int x, int y, Vector3& point)
 // NOTE: the zoom out factor is 4/5, we could think about customizing it
 //  we don't go below a zoom factor corresponding to 10% of the max world size
 //  (this has to be computed against the window size)
-float XYWnd::getZoomedScale( int steps ) {
-    const float min_scale = std::min( getWidth(), getHeight() ) / ( 1.1f * ( _maxWorldCoord - _minWorldCoord ) );
+float XYWnd::getZoomedScale(int steps)
+{
+    const float min_scale = std::min(getWidth(), getHeight()) / (1.1f * (_maxWorldCoord - _minWorldCoord));
     const float max_scale = GlobalXYWnd().maxZoomFactor();
-    const float fZoom = pow( 5.0f / 4.0f, steps );
+    const float fZoom = pow(5.0f / 4.0f, steps);
     const float scale = getScale() * fZoom;
-    if ( scale > max_scale ) {
+
+    if (scale > max_scale)
+    {
         return max_scale;
     }
-    if ( scale < min_scale ) {
+
+    if (scale < min_scale)
+    {
         return min_scale;
     }
+
     return scale;
 }
 
