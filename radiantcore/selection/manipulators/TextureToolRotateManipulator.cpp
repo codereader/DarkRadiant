@@ -69,7 +69,8 @@ const Vector2& TextureRotator::getCurrentDirection() const
     return _current;
 }
 
-TextureToolRotateManipulator::TextureToolRotateManipulator() :
+TextureToolRotateManipulator::TextureToolRotateManipulator(textool::TextureToolManipulationPivot& pivot) :
+    _pivot(pivot),
     _rotator(std::bind(&TextureToolRotateManipulator::rotateSelected, this, std::placeholders::_1, std::placeholders::_2)),
     _renderableCircle(8 << 3),
     _circleRadius(1.0f)

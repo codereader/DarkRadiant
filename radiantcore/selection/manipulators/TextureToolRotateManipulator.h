@@ -4,6 +4,7 @@
 #include "../BasicSelectable.h"
 #include "ManipulatorComponents.h"
 #include "../Renderables.h"
+#include "selection/textool/TextureToolManipulationPivot.h"
 
 namespace selection
 {
@@ -45,6 +46,8 @@ class TextureToolRotateManipulator :
     public ITextureToolManipulator
 {
 private:
+    textool::TextureToolManipulationPivot& _pivot;
+
     std::size_t _id;
 
     BasicSelectable _selectableZ;
@@ -57,7 +60,7 @@ private:
     float _circleRadius;
 
 public:
-    TextureToolRotateManipulator();
+    TextureToolRotateManipulator(textool::TextureToolManipulationPivot& pivot);
 
     virtual std::size_t getId() const override;
     virtual void setId(std::size_t id) override;
