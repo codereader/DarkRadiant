@@ -100,5 +100,4 @@ private:
 	void _onChar(wxKeyEvent& ev);
 	void _onItemActivated(wxDataViewEvent& ev);
 };
-
 } // namespace

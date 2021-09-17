@@ -257,6 +257,7 @@ void TreeView::_onItemActivated(wxDataViewEvent& ev)
 	if (!IsExpanded(ev.GetItem()))
 	{
 		Expand(ev.GetItem());
+        ev.Skip(); // let parent dialogs handle double clicks (e.g. auto close)
 	}
 	else
 	{
@@ -630,5 +631,4 @@ void TreeView::JumpToSearchMatch(const wxDataViewItem& item)
         SendSelectionChangeEvent(item);
 	}
 }
-
 } // namespace
