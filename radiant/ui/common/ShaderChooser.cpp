@@ -32,20 +32,22 @@ ShaderChooser::ShaderChooser(wxWindow* parent, wxTextCtrl* targetEntry) :
 
 	_selector = new ShaderSelector(mainPanel, this, SHADER_PREFIXES);
 
-	if (_targetEntry != NULL)
+	if (_targetEntry != nullptr)
 	{
-		_initialShader = targetEntry->GetValue();
+		_initialShader = _targetEntry->GetValue();
 
 		// Set the cursor of the tree view to the currently selected shader
 		_selector->setSelection(_initialShader);
-        Bind( wxEVT_DATAVIEW_ITEM_ACTIVATED, [&]( wxCommandEvent& ev )
+
+        Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, [&](wxCommandEvent& ev)
+        {
+            if (!_selector->getSelection().empty())
             {
-                if ( !this->_selector->getSelection().empty() ) {
-                    _targetEntry->SetValue( _selector->getSelection() );
-                    shutdown();
-                    EndModal( wxID_OK );
-                }
-            } );
+                _targetEntry->SetValue(_selector->getSelection());
+                shutdown();
+                EndModal(wxID_OK);
+            }
+        });
 	}
 
 	// Pack in the ShaderSelector and buttons panel
