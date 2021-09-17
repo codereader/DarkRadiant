@@ -1,6 +1,7 @@
 #pragma once
 
 #include "i18n.h"
+#include "itexturetoolmodel.h"
 #include "math/Vector2.h"
 #include "selection/SelectionMouseTools.h"
 #include "selection/SelectionVolume.h"
@@ -36,7 +37,14 @@ public:
         auto mouseEvent = dynamic_cast<TextureToolMouseEvent*>(&ev);
         if (mouseEvent == nullptr) return;
 
-        mouseEvent->getView().testSelect(volume);
+        if (type == SelectionType::Area)
+        {
+            GlobalTextureToolSelectionSystem().selectArea(volume, SelectionSystem::eToggle);
+        }
+        else
+        {
+            GlobalTextureToolSelectionSystem().selectPoint(volume, SelectionSystem::eToggle);
+        }
     }
 };
 

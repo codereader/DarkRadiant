@@ -28,6 +28,9 @@ public:
 
     void foreachSelectedNode(const std::function<bool(const INode::Ptr&)>& functor) override;
 
+    void selectPoint(SelectionTest& test, SelectionSystem::EModifier modifier) override;
+    void selectArea(SelectionTest& test, SelectionSystem::EModifier modifier) override;
+
     // Returns the ID of the registered manipulator
     std::size_t registerManipulator(const selection::ITextureToolManipulator::Ptr& manipulator) override;
     void unregisterManipulator(const selection::ITextureToolManipulator::Ptr& manipulator) override;

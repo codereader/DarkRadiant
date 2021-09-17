@@ -12,9 +12,6 @@ class ITextureToolView :
 {
 public:
     virtual ~ITextureToolView() {}
-
-    // Perform a selection test using the given test instance
-    virtual void testSelect(SelectionTest& test) = 0;
 };
 
 }

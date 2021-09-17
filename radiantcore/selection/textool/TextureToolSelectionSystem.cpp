@@ -3,6 +3,7 @@
 #include "itextstream.h"
 #include "module/StaticModule.h"
 #include "../textool/TextureToolRotateManipulator.h"
+#include "selection/SelectionPool.h"
 
 namespace textool
 {
@@ -176,6 +177,80 @@ void TextureToolSelectionSystem::onManipulationCancelled()
 sigc::signal<void, selection::IManipulator::Type>& TextureToolSelectionSystem::signal_activeManipulatorChanged()
 {
     return _sigActiveManipulatorChanged;
+}
+
+void TextureToolSelectionSystem::selectPoint(SelectionTest& test, SelectionSystem::EModifier modifier)
+{
+    selection::SelectionPool selectionPool;
+
+    GlobalTextureToolSceneGraph().foreachNode([&](const INode::Ptr& node)
+    {
+        node->testSelect(selectionPool, test);
+        return true;
+    });
+
+    if (selectionPool.empty()) return;
+
+    auto bestSelectable = *selectionPool.begin();
+
+    switch (modifier)
+    {
+    case SelectionSystem::eToggle:
+        bestSelectable.second->setSelected(!bestSelectable.second->isSelected());
+        break;
+
+    case SelectionSystem::eReplace:
+        bestSelectable.second->setSelected(bestSelectable.second->isSelected());
+        break;
+
+    case SelectionSystem::eCycle:
+        {
+            // Cycle through the selection pool and activate the item right after the currently selected
+            auto i = selectionPool.begin();
+
+            while (i != selectionPool.end())
+            {
+                if (i->second->isSelected())
+                {
+                    // unselect the currently selected one
+                    i->second->setSelected(false);
+
+                    // check if there is a "next" item in the list, if not: select the first item
+                    ++i;
+
+                    if (i != selectionPool.end())
+                    {
+                        i->second->setSelected(true);
+                    }
+                    else
+                    {
+                        selectionPool.begin()->second->setSelected(true);
+                    }
+                    break;
+                }
+
+                ++i;
+            }
+        }
+        break;
+    }
+    
+}
+
+void TextureToolSelectionSystem::selectArea(SelectionTest& test, SelectionSystem::EModifier modifier)
+{
+    selection::SelectionPool selectionPool;
+
+    GlobalTextureToolSceneGraph().foreachNode([&](const INode::Ptr& node)
+    {
+        node->testSelect(selectionPool, test);
+        return true;
+    });
+
+    for (const auto& pair : selectionPool)
+    {
+        pair.second->setSelected(!pair.second->isSelected());
+    }
 }
 
 module::StaticModule<TextureToolSelectionSystem> _textureToolSelectionSystemModule;

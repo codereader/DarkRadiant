@@ -88,6 +88,9 @@ public:
     // Collection should not be modified during iteration
     virtual void foreachSelectedNode(const std::function<bool(const INode::Ptr&)>& functor) = 0;
 
+    virtual void selectPoint(SelectionTest& test, SelectionSystem::EModifier modifier) = 0;
+    virtual void selectArea(SelectionTest& test, SelectionSystem::EModifier modifier) = 0;
+
     // Returns the ID of the registered manipulator
     virtual std::size_t registerManipulator(const selection::ITextureToolManipulator::Ptr& manipulator) = 0;
     virtual void unregisterManipulator(const selection::ITextureToolManipulator::Ptr& manipulator) = 0;

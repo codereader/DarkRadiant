@@ -354,44 +354,6 @@ void TexTool::scrollByPixels(int x, int y)
     updateProjection();
 }
 
-void TexTool::testSelect(SelectionTest& test)
-{
-    textool::TexToolItemVec selectables;
-    selection::SelectionPool selectionPool;
-
-    GlobalTextureToolSceneGraph().foreachNode([&](const textool::INode::Ptr& node)
-    {
-        node->testSelect(selectionPool, test);
-        return true;
-    });
-
-#if 0
-    // Cycle through all the toplevel items and test them for selectability
-    for (const auto& item : _items)
-    {
-        item->testSelect(selectionPool, test);
-    }
-
-    // Cycle through all the items and ask them to deliver the list of child selectables
-    // residing within the test rectangle
-    for (const auto& item : _items)
-    {
-        // Get the list from each item
-        auto found = item->getSelectableChildren(rectangle);
-
-        // and append the vector to the existing vector
-        selectables.insert(selectables.end(), found.begin(), found.end());
-    }
-#endif
-    
-#if 1
-    if (selectionPool.empty()) return;
-
-    auto bestSelectable = *selectionPool.begin();
-    bestSelectable.second->setSelected(true);
-#endif
-}
-
 void TexTool::flipSelected(int axis) {
 	if (countSelected() > 0) {
 		beginOperation();
