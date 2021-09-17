@@ -7,7 +7,7 @@
 #include "pivot.h"
 #include "math/Matrix3.h"
 
-namespace selection
+namespace textool
 {
 
 void TextureRotator::beginTransformation(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint)
@@ -89,12 +89,12 @@ void TextureToolRotateManipulator::setId(std::size_t id)
     _id = id;
 }
 
-IManipulator::Type TextureToolRotateManipulator::getType() const
+selection::IManipulator::Type TextureToolRotateManipulator::getType() const
 {
     return IManipulator::Rotate;
 }
 
-IManipulator::Component* TextureToolRotateManipulator::getActiveComponent()
+selection::IManipulator::Component* TextureToolRotateManipulator::getActiveComponent()
 {
     return &_rotator;
 }
@@ -111,7 +111,7 @@ bool TextureToolRotateManipulator::isSelected() const
 
 void TextureToolRotateManipulator::testSelect(SelectionTest& test, const Matrix4& pivot2world)
 {
-    SelectionPool selector;
+    selection::SelectionPool selector;
 
     test.BeginMesh(pivot2world, false);
 
@@ -135,9 +135,9 @@ void TextureToolRotateManipulator::renderComponents(const Matrix4& pivot2World)
     {
         _shader = GlobalRenderSystem().capture("$WIRE_OVERLAY");
 
-        auto manipulatorFontStyle = registry::getValue<std::string>(RKEY_MANIPULATOR_FONTSTYLE) == "Sans" ?
+        auto manipulatorFontStyle = registry::getValue<std::string>(selection::RKEY_MANIPULATOR_FONTSTYLE) == "Sans" ?
             IGLFont::Style::Sans : IGLFont::Style::Mono;
-        auto manipulatorFontSize = registry::getValue<int>(RKEY_MANIPULATOR_FONTSIZE);
+        auto manipulatorFontSize = registry::getValue<int>(selection::RKEY_MANIPULATOR_FONTSIZE);
 
         _glFont = GlobalOpenGL().getFont(manipulatorFontStyle, manipulatorFontSize);
     }

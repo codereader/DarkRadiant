@@ -2,15 +2,15 @@
 
 #include "imanipulator.h"
 #include "../BasicSelectable.h"
-#include "ManipulatorComponents.h"
+#include "selection/manipulators/ManipulatorComponents.h"
 #include "../Renderables.h"
 #include "selection/textool/TextureToolManipulationPivot.h"
 
-namespace selection
+namespace textool
 {
 
 class TextureRotator : 
-	public ManipulatorComponentBase
+    public selection::ManipulatorComponentBase
 {
 private:
 	Vector2 _start;
@@ -43,14 +43,14 @@ public:
 };
 
 class TextureToolRotateManipulator :
-    public ITextureToolManipulator
+    public selection::ITextureToolManipulator
 {
 private:
     textool::TextureToolManipulationPivot& _pivot;
 
     std::size_t _id;
 
-    BasicSelectable _selectableZ;
+    selection::BasicSelectable _selectableZ;
     TextureRotator _rotator;
     RenderableCircle _renderableCircle;
 

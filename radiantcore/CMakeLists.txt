@@ -248,7 +248,6 @@ add_library(radiantcore MODULE
             selection/manipulators/ModelScaleManipulator.cpp
             selection/manipulators/RotateManipulator.cpp
             selection/manipulators/ScaleManipulator.cpp
-            selection/manipulators/TextureToolRotateManipulator.cpp
             selection/manipulators/TranslateManipulator.cpp
             selection/RadiantSelectionSystem.cpp
             selection/SelectedNodeList.cpp
@@ -261,6 +260,7 @@ add_library(radiantcore MODULE
             selection/shaderclipboard/ShaderClipboard.cpp
             selection/shaderclipboard/Texturable.cpp
             selection/textool/TextureToolManipulationPivot.cpp
+            selection/textool/TextureToolRotateManipulator.cpp
             selection/textool/TextureToolSceneGraph.cpp
             selection/textool/TextureToolSelectionSystem.cpp
             selection/TransformationVisitors.cpp

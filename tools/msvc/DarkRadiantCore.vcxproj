@@ -660,7 +660,6 @@
     <ClCompile Include="..\..\radiantcore\selection\manipulators\ModelScaleManipulator.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\manipulators\RotateManipulator.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\manipulators\ScaleManipulator.cpp" />
-    <ClCompile Include="..\..\radiantcore\selection\manipulators\TextureToolRotateManipulator.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\manipulators\TranslateManipulator.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\RadiantSelectionSystem.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\SceneManipulationPivot.cpp" />
@@ -674,6 +673,7 @@
     <ClCompile Include="..\..\radiantcore\selection\shaderclipboard\ShaderClipboard.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\shaderclipboard\Texturable.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\textool\TextureToolManipulationPivot.cpp" />
+    <ClCompile Include="..\..\radiantcore\selection\textool\TextureToolRotateManipulator.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\textool\TextureToolSceneGraph.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\textool\TextureToolSelectionSystem.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\TransformationVisitors.cpp" />
@@ -1013,7 +1013,6 @@
     <ClInclude Include="..\..\radiantcore\selection\manipulators\ModelScaleManipulator.h" />
     <ClInclude Include="..\..\radiantcore\selection\manipulators\RotateManipulator.h" />
     <ClInclude Include="..\..\radiantcore\selection\manipulators\ScaleManipulator.h" />
-    <ClInclude Include="..\..\radiantcore\selection\manipulators\TextureToolRotateManipulator.h" />
     <ClInclude Include="..\..\radiantcore\selection\manipulators\TranslateManipulator.h" />
     <ClInclude Include="..\..\radiantcore\selection\RadiantSelectionSystem.h" />
     <ClInclude Include="..\..\radiantcore\selection\Remap.h" />
@@ -1032,6 +1031,7 @@
     <ClInclude Include="..\..\radiantcore\selection\textool\NodeBase.h" />
     <ClInclude Include="..\..\radiantcore\selection\textool\PatchNode.h" />
     <ClInclude Include="..\..\radiantcore\selection\textool\TextureToolManipulationPivot.h" />
+    <ClInclude Include="..\..\radiantcore\selection\textool\TextureToolRotateManipulator.h" />
     <ClInclude Include="..\..\radiantcore\selection\textool\TextureToolSceneGraph.h" />
     <ClInclude Include="..\..\radiantcore\selection\textool\TextureToolSelectionSystem.h" />
     <ClInclude Include="..\..\radiantcore\selection\TransformationVisitors.h" />
