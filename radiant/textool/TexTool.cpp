@@ -59,8 +59,7 @@ TexTool::TexTool() :
     _grid(GRID_DEFAULT),
     _gridActive(registry::getValue<bool>(RKEY_GRID_STATE)),
     _updateNeeded(false),
-    _selectionRescanNeeded(false),
-    _pivot2World(Matrix4::getIdentity())
+    _selectionRescanNeeded(false)
 {
 	Bind(wxEVT_IDLE, &TexTool::onIdle, this);
     Bind(wxEVT_KEY_DOWN, &TexTool::onKeyPress, this);
@@ -391,29 +390,6 @@ void TexTool::testSelect(SelectionTest& test)
     auto bestSelectable = *selectionPool.begin();
     bestSelectable.second->setSelected(true);
 #endif
-
-    // Check the centerpoint of all selected items
-    Vector2 sum;
-    std::size_t count = 0;
-
-    GlobalTextureToolSelectionSystem().foreachSelectedNode([&](const textool::INode::Ptr& node)
-    {
-        auto bounds = node->localAABB();
-        sum += Vector2(bounds.origin.x(), bounds.origin.y());
-        count++;
-
-        return true;
-    });
-
-    if (count > 0)
-    {
-        sum /= count;
-        _pivot2World = Matrix4::getTranslation(Vector3(sum.x(), sum.y(), 0));
-    }
-    else
-    {
-        _pivot2World = Matrix4::getIdentity();
-    }
 }
 
 void TexTool::flipSelected(int axis) {
@@ -1003,12 +979,7 @@ bool TexTool::onGLDraw()
 	// Draw the u/v coordinates
 	drawUVCoords();
 
-    auto activeManipulator = GlobalTextureToolSelectionSystem().getActiveManipulator();
-
-    if (activeManipulator)
-    {
-        activeManipulator->renderComponents(_pivot2World);
-    }
+    GlobalTextureToolSelectionSystem().getActiveManipulator()->renderComponents(GlobalTextureToolSelectionSystem().getPivot2World());
 
     if (!_activeMouseTools.empty())
     {
@@ -1261,44 +1232,5 @@ TextureToolMouseEvent TexTool::createMouseEvent(const Vector2& point, const Vect
 
     return TextureToolMouseEvent(*this, normalisedDeviceCoords, delta);
 }
-
-Matrix4 TexTool::getPivot2World()
-{
-    return _pivot2World;
-}
-
-void TexTool::onManipulationStart()
-{
-    GlobalTextureToolSelectionSystem().foreachSelectedNode([&] (const textool::INode::Ptr& node)
-    {
-        node->beginTransformation();
-        return true;
-    });
-}
-
-void TexTool::onManipulationChanged()
-{
-}
-
-void TexTool::onManipulationEnd()
-{
-    GlobalTextureToolSelectionSystem().foreachSelectedNode([&](const textool::INode::Ptr& node)
-    {
-        node->commitTransformation();
-        return true;
-    });
-
-    GlobalTextureToolSelectionSystem().getActiveManipulator()->setSelected(false);
-}
-
-void TexTool::onManipulationCancelled()
-{
-    GlobalTextureToolSelectionSystem().foreachSelectedNode([&](const textool::INode::Ptr& node)
-    {
-        node->revertTransformation();
-        return true;
-    });
-}
-
 
 } // namespace ui

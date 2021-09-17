@@ -16,6 +16,7 @@ private:
     selection::IManipulator::Type _defaultManipulatorType;
 
     sigc::signal<void, selection::IManipulator::Type> _sigActiveManipulatorChanged;
+    Matrix4 _pivot2World;
 
 public:
     const std::string& getName() const override;
@@ -35,6 +36,12 @@ public:
     void setActiveManipulator(selection::IManipulator::Type manipulatorType) override;
 
     sigc::signal<void, selection::IManipulator::Type>& signal_activeManipulatorChanged() override;
+
+    Matrix4 getPivot2World() override;
+    void onManipulationStart() override;
+    void onManipulationChanged() override;
+    void onManipulationFinished() override;
+    void onManipulationCancelled() override;
 };
 
 }

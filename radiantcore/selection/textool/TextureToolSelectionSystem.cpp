@@ -23,6 +23,7 @@ void TextureToolSelectionSystem::initialiseModule(const IApplicationContext& ctx
 {
     rMessage() << getName() << "::initialiseModule called." << std::endl;
 
+    _pivot2World = Matrix4::getIdentity();
     registerManipulator(std::make_shared<selection::TextureToolRotateManipulator>());
 
     _defaultManipulatorType = selection::IManipulator::Rotate;
@@ -134,6 +135,67 @@ void TextureToolSelectionSystem::setActiveManipulator(selection::IManipulator::T
     }
 
     rError() << "Cannot activate non-existent manipulator by type " << manipulatorType << std::endl;
+}
+
+Matrix4 TextureToolSelectionSystem::getPivot2World()
+{
+    // Check the centerpoint of all selected items
+    Vector2 sum;
+    std::size_t count = 0;
+
+    foreachSelectedNode([&](const textool::INode::Ptr& node)
+    {
+        auto bounds = node->localAABB();
+        sum += Vector2(bounds.origin.x(), bounds.origin.y());
+        count++;
+
+        return true;
+    });
+
+    if (count > 0)
+    {
+        sum /= count;
+        _pivot2World = Matrix4::getTranslation(Vector3(sum.x(), sum.y(), 0));
+    }
+    else
+    {
+        _pivot2World = Matrix4::getIdentity();
+    }
+
+    return _pivot2World;
+}
+
+void TextureToolSelectionSystem::onManipulationStart()
+{
+    foreachSelectedNode([&](const textool::INode::Ptr& node)
+    {
+        node->beginTransformation();
+        return true;
+    });
+}
+
+void TextureToolSelectionSystem::onManipulationChanged()
+{
+}
+
+void TextureToolSelectionSystem::onManipulationFinished()
+{
+    foreachSelectedNode([&](const textool::INode::Ptr& node)
+    {
+        node->commitTransformation();
+        return true;
+    });
+
+    getActiveManipulator()->setSelected(false);
+}
+
+void TextureToolSelectionSystem::onManipulationCancelled()
+{
+    foreachSelectedNode([&](const textool::INode::Ptr& node)
+    {
+        node->revertTransformation();
+        return true;
+    });
 }
 
 sigc::signal<void, selection::IManipulator::Type>& TextureToolSelectionSystem::signal_activeManipulatorChanged()

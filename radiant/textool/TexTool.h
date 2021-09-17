@@ -90,8 +90,6 @@ private:
 	sigc::connection _undoHandler;
 	sigc::connection _redoHandler;
 
-    Matrix4 _pivot2World;
-
 private:
 	// This is where the static shared_ptr of the singleton instance is held.
 	static TexToolPtr& InstancePtr();
@@ -276,13 +274,6 @@ public:
     /** greebo: Returns the number of selected TexToolItems.
      */
     int countSelected();
-
-    Matrix4 getPivot2World();
-
-    void onManipulationStart();
-    void onManipulationChanged();
-    void onManipulationEnd();
-    void onManipulationCancelled();
 
 protected:
     MouseTool::Result processMouseDownEvent(const MouseToolPtr& tool, const Vector2& point) override;

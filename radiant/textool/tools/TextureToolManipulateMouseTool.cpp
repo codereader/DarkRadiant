@@ -31,27 +31,27 @@ bool TextureToolManipulateMouseTool::manipulationIsPossible()
 
 Matrix4 TextureToolManipulateMouseTool::getPivot2World()
 {
-    return TexTool::Instance().getPivot2World();
+    return GlobalTextureToolSelectionSystem().getPivot2World();
 }
 
 void TextureToolManipulateMouseTool::onManipulationStart()
 {
-    TexTool::Instance().onManipulationStart();
+    GlobalTextureToolSelectionSystem().onManipulationStart();
 }
 
 void TextureToolManipulateMouseTool::onManipulationChanged()
 {
-    TexTool::Instance().onManipulationChanged();
+    GlobalTextureToolSelectionSystem().onManipulationChanged();
 }
 
 void TextureToolManipulateMouseTool::onManipulationFinished()
 {
-    TexTool::Instance().onManipulationEnd();
+    GlobalTextureToolSelectionSystem().onManipulationFinished();
 }
 
 void TextureToolManipulateMouseTool::onManipulationCancelled()
 {
-    TexTool::Instance().onManipulationCancelled();
+    GlobalTextureToolSelectionSystem().onManipulationCancelled();
 }
 
 }

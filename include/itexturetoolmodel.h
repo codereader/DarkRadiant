@@ -100,6 +100,12 @@ public:
     virtual void setActiveManipulator(selection::IManipulator::Type manipulatorType) = 0;
 
     virtual sigc::signal<void, selection::IManipulator::Type>& signal_activeManipulatorChanged() = 0;
+
+    virtual Matrix4 getPivot2World() = 0;
+    virtual void onManipulationStart() = 0;
+    virtual void onManipulationChanged() = 0;
+    virtual void onManipulationFinished() = 0;
+    virtual void onManipulationCancelled() = 0;
 };
 
 }
