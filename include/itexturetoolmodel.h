@@ -5,6 +5,8 @@
 #include "Bounded.h"
 #include "iselection.h"
 #include "iselectiontest.h"
+#include "imanipulator.h"
+#include <sigc++/signal.h>
 
 class Matrix3;
 
@@ -76,18 +78,44 @@ public:
     // Iterate over every node in this graph calling the given functor
     // Collection should not be modified during iteration
     virtual void foreachNode(const std::function<bool(const INode::Ptr&)>& functor) = 0;
+};
 
+class ITextureToolSelectionSystem :
+    public RegisterableModule
+{
+public:
     // Iterate over every selected node in this graph calling the given functor
     // Collection should not be modified during iteration
     virtual void foreachSelectedNode(const std::function<bool(const INode::Ptr&)>& functor) = 0;
+
+    // Returns the ID of the registered manipulator
+    virtual std::size_t registerManipulator(const selection::ITextureToolManipulator::Ptr& manipulator) = 0;
+    virtual void unregisterManipulator(const selection::ITextureToolManipulator::Ptr& manipulator) = 0;
+
+    virtual selection::IManipulator::Type getActiveManipulatorType() = 0;
+
+    // Returns the currently active Manipulator, which is always non-null
+    virtual const selection::ITextureToolManipulator::Ptr& getActiveManipulator() = 0;
+    virtual void setActiveManipulator(std::size_t manipulatorId) = 0;
+    virtual void setActiveManipulator(selection::IManipulator::Type manipulatorType) = 0;
+
+    virtual sigc::signal<void, selection::IManipulator::Type>& signal_activeManipulatorChanged() = 0;
 };
 
 }
 
 constexpr const char* const MODULE_TEXTOOL_SCENEGRAPH("TextureToolSceneGraph");
+constexpr const char* const MODULE_TEXTOOL_SELECTIONSYSTEM("TextureToolSelectionSystem");
 
 inline textool::ITextureToolSceneGraph& GlobalTextureToolSceneGraph()
 {
     static module::InstanceReference<textool::ITextureToolSceneGraph> _reference(MODULE_TEXTOOL_SCENEGRAPH);
     return _reference;
 }
+
+inline textool::ITextureToolSelectionSystem& GlobalTextureToolSelectionSystem()
+{
+    static module::InstanceReference<textool::ITextureToolSelectionSystem> _reference(MODULE_TEXTOOL_SELECTIONSYSTEM);
+    return _reference;
+}
+

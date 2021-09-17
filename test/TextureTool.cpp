@@ -187,7 +187,7 @@ TEST_F(TextureToolTest, ForeachSelectedNode)
     });
 
     std::size_t selectedCount = 0;
-    GlobalTextureToolSceneGraph().foreachSelectedNode([&](const textool::INode::Ptr& node)
+    GlobalTextureToolSelectionSystem().foreachSelectedNode([&](const textool::INode::Ptr& node)
     {
         ++selectedCount;
         EXPECT_TRUE(selectedNodes.count(node) > 0) << "Node shouldn't be selected";

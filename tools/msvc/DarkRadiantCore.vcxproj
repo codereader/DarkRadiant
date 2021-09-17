@@ -657,7 +657,6 @@
     <ClCompile Include="..\..\radiantcore\selection\manipulators\DragManipulator.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\manipulators\ManipulatorBase.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\manipulators\ManipulatorComponents.cpp" />
-    <ClCompile Include="..\..\radiantcore\selection\manipulators\ManipulatorManager.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\manipulators\ModelScaleManipulator.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\manipulators\RotateManipulator.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\manipulators\ScaleManipulator.cpp" />
@@ -674,6 +673,7 @@
     <ClCompile Include="..\..\radiantcore\selection\shaderclipboard\ShaderClipboard.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\shaderclipboard\Texturable.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\textool\TextureToolSceneGraph.cpp" />
+    <ClCompile Include="..\..\radiantcore\selection\textool\TextureToolSelectionSystem.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\TransformationVisitors.cpp" />
     <ClCompile Include="..\..\radiantcore\settings\ColourScheme.cpp" />
     <ClCompile Include="..\..\radiantcore\settings\ColourSchemeManager.cpp" />
@@ -1029,6 +1029,7 @@
     <ClInclude Include="..\..\radiantcore\selection\textool\NodeBase.h" />
     <ClInclude Include="..\..\radiantcore\selection\textool\PatchNode.h" />
     <ClInclude Include="..\..\radiantcore\selection\textool\TextureToolSceneGraph.h" />
+    <ClInclude Include="..\..\radiantcore\selection\textool\TextureToolSelectionSystem.h" />
     <ClInclude Include="..\..\radiantcore\selection\TransformationVisitors.h" />
     <ClInclude Include="..\..\radiantcore\settings\ColourScheme.h" />
     <ClInclude Include="..\..\radiantcore\settings\ColourSchemeManager.h" />

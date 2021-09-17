@@ -26,7 +26,6 @@ public:
     void shutdownModule() override;
 
     void foreachNode(const std::function<bool(const INode::Ptr&)>& functor) override;
-    void foreachSelectedNode(const std::function<bool(const INode::Ptr&)>& functor) override;
 
 private:
     void onSceneSelectionChanged(const ISelectable& selectable);

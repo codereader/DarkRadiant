@@ -139,23 +139,4 @@ public:
     virtual void renderComponents(const Matrix4& pivot2World) = 0;
 };
 
-// Factory interface instantiating new IManipulator instances for a given purpose
-class IManipulatorManager :
-    public RegisterableModule
-{
-public:
-    virtual ~IManipulatorManager() {}
-
-    // Acquire a new instance of the given manipulator for the given context and type
-    virtual IManipulator::Ptr createManipulator(IManipulator::Context context, IManipulator::Type type) = 0;
-};
-
-}
-
-const char* const MODULE_MANIPULATORMANAGER("ManipulatorManager");
-
-inline selection::IManipulatorManager& GlobalManipulatorManager()
-{
-    static module::InstanceReference<selection::IManipulatorManager> _reference(MODULE_MANIPULATORMANAGER);
-    return _reference;
 }

@@ -1,6 +1,7 @@
 #include "TextureToolManipulateMouseTool.h"
 
 #include "i18n.h"
+#include "itexturetoolmodel.h"
 #include "textool/TexTool.h"
 
 namespace ui
@@ -20,7 +21,7 @@ const std::string& TextureToolManipulateMouseTool::getDisplayName()
 
 selection::IManipulator::Ptr TextureToolManipulateMouseTool::getActiveManipulator()
 {
-    return TexTool::Instance().getActiveManipulator();
+    return GlobalTextureToolSelectionSystem().getActiveManipulator();
 }
 
 bool TextureToolManipulateMouseTool::manipulationIsPossible()

@@ -90,15 +90,6 @@ private:
 	sigc::connection _undoHandler;
 	sigc::connection _redoHandler;
 
-    typedef std::map<std::size_t, selection::ITextureToolManipulator::Ptr> Manipulators;
-    Manipulators _manipulators;
-
-    // The currently active manipulator
-    selection::ITextureToolManipulator::Ptr _activeManipulator;
-    selection::IManipulator::Type _defaultManipulatorType;
-
-    sigc::signal<void, selection::IManipulator::Type> _sigActiveManipulatorChanged;
-
     Matrix4 _pivot2World;
 
 private:
@@ -281,16 +272,6 @@ public:
 	/** greebo: Registers the commands in the EventManager
 	 */
 	static void registerCommands();
-
-    // Returns the ID of the registered manipulator
-    std::size_t registerManipulator(const selection::ITextureToolManipulator::Ptr& manipulator);
-    void unregisterManipulator(const selection::ITextureToolManipulator::Ptr& manipulator);
-
-    selection::IManipulator::Type getActiveManipulatorType();
-    const selection::ITextureToolManipulator::Ptr& getActiveManipulator();
-    void setActiveManipulator(std::size_t manipulatorId);
-    void setActiveManipulator(selection::IManipulator::Type manipulatorType);
-    sigc::signal<void, selection::IManipulator::Type>& signal_activeManipulatorChanged();
 
     /** greebo: Returns the number of selected TexToolItems.
      */

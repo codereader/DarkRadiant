@@ -78,13 +78,6 @@ TexTool::TexTool() :
     _freezePointer.connectMouseEvents(
         std::bind(&TexTool::onMouseDown, this, std::placeholders::_1),
         std::bind(&TexTool::onMouseUp, this, std::placeholders::_1));
-
-    registerManipulator(std::static_pointer_cast<selection::ITextureToolManipulator>(
-        GlobalManipulatorManager().createManipulator(
-            selection::IManipulator::Context::TextureTool, selection::IManipulator::Rotate)));
-
-    _defaultManipulatorType = selection::IManipulator::Rotate;
-    setActiveManipulator(_defaultManipulatorType);
 }
 
 TexToolPtr& TexTool::InstancePtr()
@@ -403,14 +396,11 @@ void TexTool::testSelect(SelectionTest& test)
     Vector2 sum;
     std::size_t count = 0;
 
-    GlobalTextureToolSceneGraph().foreachSelectedNode([&](const textool::INode::Ptr& node)
+    GlobalTextureToolSelectionSystem().foreachSelectedNode([&](const textool::INode::Ptr& node)
     {
-        if (node->isSelected())
-        {
-            auto bounds = node->localAABB();
-            sum += Vector2(bounds.origin.x(), bounds.origin.y());
-            count++;
-        }
+        auto bounds = node->localAABB();
+        sum += Vector2(bounds.origin.x(), bounds.origin.y());
+        count++;
 
         return true;
     });
@@ -1013,9 +1003,11 @@ bool TexTool::onGLDraw()
 	// Draw the u/v coordinates
 	drawUVCoords();
 
-    if (_activeManipulator)
+    auto activeManipulator = GlobalTextureToolSelectionSystem().getActiveManipulator();
+
+    if (activeManipulator)
     {
-        _activeManipulator->renderComponents(_pivot2World);
+        activeManipulator->renderComponents(_pivot2World);
     }
 
     if (!_activeMouseTools.empty())
@@ -1270,99 +1262,6 @@ TextureToolMouseEvent TexTool::createMouseEvent(const Vector2& point, const Vect
     return TextureToolMouseEvent(*this, normalisedDeviceCoords, delta);
 }
 
-std::size_t TexTool::registerManipulator(const selection::ITextureToolManipulator::Ptr& manipulator)
-{
-    std::size_t newId = 1;
-
-    while (_manipulators.count(newId) > 0)
-    {
-        ++newId;
-
-        if (newId == std::numeric_limits<std::size_t>::max())
-        {
-            throw std::runtime_error("Out of manipulator IDs");
-        }
-    }
-
-    _manipulators.emplace(newId, manipulator);
-
-    manipulator->setId(newId);
-
-    if (!_activeManipulator)
-    {
-        _activeManipulator = manipulator;
-    }
-
-    return newId;
-}
-
-void TexTool::unregisterManipulator(const selection::ITextureToolManipulator::Ptr& manipulator)
-{
-    for (auto i = _manipulators.begin(); i != _manipulators.end(); ++i)
-    {
-        if (i->second == manipulator)
-        {
-            i->second->setId(0);
-            _manipulators.erase(i);
-            return;
-        }
-    }
-}
-
-selection::IManipulator::Type TexTool::getActiveManipulatorType()
-{
-    return _activeManipulator->getType();
-}
-
-const selection::ITextureToolManipulator::Ptr& TexTool::getActiveManipulator()
-{
-    return _activeManipulator;
-}
-
-void TexTool::setActiveManipulator(std::size_t manipulatorId)
-{
-    auto found = _manipulators.find(manipulatorId);
-
-    if (found == _manipulators.end())
-    {
-        rError() << "Cannot activate non-existent manipulator ID " << manipulatorId << std::endl;
-        return;
-    }
-
-    _activeManipulator = found->second;
-#if 0
-    // Release the user lock when switching manipulators
-    _pivot.setUserLocked(false);
-
-    pivotChanged();
-#endif
-}
-
-void TexTool::setActiveManipulator(selection::IManipulator::Type manipulatorType)
-{
-    for (const Manipulators::value_type& pair : _manipulators)
-    {
-        if (pair.second->getType() == manipulatorType)
-        {
-            _activeManipulator = pair.second;
-#if 0
-            // Release the user lock when switching manipulators
-            _pivot.setUserLocked(false);
-
-            pivotChanged();
-#endif
-            return;
-        }
-    }
-
-    rError() << "Cannot activate non-existent manipulator by type " << manipulatorType << std::endl;
-}
-
-sigc::signal<void, selection::IManipulator::Type>& TexTool::signal_activeManipulatorChanged()
-{
-    return _sigActiveManipulatorChanged;
-}
-
 Matrix4 TexTool::getPivot2World()
 {
     return _pivot2World;
@@ -1370,7 +1269,7 @@ Matrix4 TexTool::getPivot2World()
 
 void TexTool::onManipulationStart()
 {
-    GlobalTextureToolSceneGraph().foreachSelectedNode([&] (const textool::INode::Ptr& node)
+    GlobalTextureToolSelectionSystem().foreachSelectedNode([&] (const textool::INode::Ptr& node)
     {
         node->beginTransformation();
         return true;
@@ -1383,18 +1282,18 @@ void TexTool::onManipulationChanged()
 
 void TexTool::onManipulationEnd()
 {
-    GlobalTextureToolSceneGraph().foreachSelectedNode([&](const textool::INode::Ptr& node)
+    GlobalTextureToolSelectionSystem().foreachSelectedNode([&](const textool::INode::Ptr& node)
     {
         node->commitTransformation();
         return true;
     });
 
-    _activeManipulator->setSelected(false);
+    GlobalTextureToolSelectionSystem().getActiveManipulator()->setSelected(false);
 }
 
 void TexTool::onManipulationCancelled()
 {
-    GlobalTextureToolSceneGraph().foreachSelectedNode([&](const textool::INode::Ptr& node)
+    GlobalTextureToolSelectionSystem().foreachSelectedNode([&](const textool::INode::Ptr& node)
     {
         node->revertTransformation();
         return true;

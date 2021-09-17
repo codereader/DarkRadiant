@@ -222,7 +222,7 @@ void TextureToolRotateManipulator::rotateSelected(const Vector2& pivot, double a
     transform.premultiplyBy(Matrix3::getRotation(-angle));
     transform.premultiplyBy(Matrix3::getTranslation(pivot));
 
-    GlobalTextureToolSceneGraph().foreachSelectedNode([&](const textool::INode::Ptr& node)
+    GlobalTextureToolSelectionSystem().foreachSelectedNode([&](const textool::INode::Ptr& node)
     {
         node->revertTransformation();
         node->applyTransformToSelected(transform);
