@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ibrush.h"
+#include "ipatch.h"
 #include "math/Plane3.h"
 #include "math/AABB.h"
 
