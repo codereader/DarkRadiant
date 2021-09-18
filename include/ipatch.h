@@ -211,6 +211,12 @@ public:
 
 	// Alligns the assigned texture at the given edge (if possible)
 	virtual void alignTexture(AlignEdge type) = 0;
+
+    // Reverts any transform that has been applied since the last time freezeTransform() was called
+    virtual void revertTransform() = 0;
+
+    // Promotes the current transformed state to the new base state
+    virtual void freezeTransform() = 0;
 };
 
 namespace patch

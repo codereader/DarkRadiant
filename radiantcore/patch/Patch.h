@@ -146,9 +146,9 @@ public:
 	void evaluateTransform();
 
 	// Revert the changes, fall back to the saved state in <m_ctrl>
-	void revertTransform();
+	void revertTransform() override;
 	// Apply the transformed control array, save it into <m_ctrl> and overwrite the old values
-	void freezeTransform();
+	void freezeTransform() override;
 
 	// callback for changed control points
 	void controlPointsChanged() override;
