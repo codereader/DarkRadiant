@@ -17,13 +17,22 @@ void TextureTranslator::beginTransformation(const Matrix4& pivot2world,
 }
 
 void TextureTranslator::transform(const Matrix4& pivot2world, const VolumeTest& view,
-    const Vector2& devicePoint, unsigned int constraints)
+    const Vector2& devicePoint, unsigned int constraintFlags)
 {
     auto device2Pivot = constructDevice2Pivot(pivot2world, view);
     auto current3D = device2Pivot.transformPoint(Vector3(devicePoint.x(), devicePoint.y(), 0));
     Vector2 current(current3D.x(), current3D.y());
 
-    _translateFunctor(current - _start);
+    auto diff = current - _start;
+
+    if (constraintFlags & Constraint::Type1)
+    {
+        // Locate the index of the component carrying the largest abs value
+        // Zero out the other component
+        diff[fabs(diff.y()) > fabs(diff.x()) ? 0 : 1] = 0;
+    }
+
+    _translateFunctor(diff);
 }
 
 TextureToolDragManipulator::TextureToolDragManipulator() :
