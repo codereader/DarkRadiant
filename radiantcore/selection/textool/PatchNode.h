@@ -79,7 +79,14 @@ public:
         glBlendColor(0, 0, 0, 0.3f);
         glBlendFunc(GL_CONSTANT_ALPHA_EXT, GL_ONE_MINUS_CONSTANT_ALPHA_EXT);
 
-        glColor3f(1, 1, 1);
+        if (isSelected())
+        {
+            glColor3f(1, 0.5f, 0);
+        }
+        else 
+        {
+            glColor3f(0.8f, 0.8f, 0.8f);
+        }
 
         // Get the tesselation and the first
         auto tess = _patch.getTesselatedPatchMesh();

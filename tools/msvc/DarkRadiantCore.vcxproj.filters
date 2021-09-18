@@ -1093,6 +1093,9 @@
     <ClCompile Include="..\..\radiantcore\selection\textool\TextureToolRotateManipulator.cpp">
       <Filter>src\selection\textool</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\selection\textool\TextureToolDragManipulator.cpp">
+      <Filter>src\selection\textool</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
@@ -2230,6 +2233,9 @@
       <Filter>src\selection\textool</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\selection\textool\TextureToolRotateManipulator.h">
+      <Filter>src\selection\textool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\selection\textool\TextureToolDragManipulator.h">
       <Filter>src\selection\textool</Filter>
     </ClInclude>
   </ItemGroup>

@@ -29,7 +29,6 @@ public:
 
 	void beginTransformation(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint) override;
 
-	/// \brief Converts current position to a normalised vector orthogonal to axis.
 	void transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, unsigned int constraints) override;
 
     void resetCurAngle();
@@ -46,7 +45,7 @@ class TextureToolRotateManipulator :
     public selection::ITextureToolManipulator
 {
 private:
-    textool::TextureToolManipulationPivot& _pivot;
+    TextureToolManipulationPivot& _pivot;
 
     std::size_t _id;
 
@@ -60,7 +59,7 @@ private:
     float _circleRadius;
 
 public:
-    TextureToolRotateManipulator(textool::TextureToolManipulationPivot& pivot);
+    TextureToolRotateManipulator(TextureToolManipulationPivot& pivot);
 
     virtual std::size_t getId() const override;
     virtual void setId(std::size_t id) override;

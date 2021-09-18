@@ -3,6 +3,7 @@
 #include "itextstream.h"
 #include "module/StaticModule.h"
 #include "../textool/TextureToolRotateManipulator.h"
+#include "../textool/TextureToolDragManipulator.h"
 #include "selection/SelectionPool.h"
 
 namespace textool
@@ -26,8 +27,9 @@ void TextureToolSelectionSystem::initialiseModule(const IApplicationContext& ctx
 
     _manipulationPivot.setFromMatrix(Matrix4::getIdentity());
     registerManipulator(std::make_shared<TextureToolRotateManipulator>(_manipulationPivot));
+    registerManipulator(std::make_shared<TextureToolDragManipulator>());
 
-    _defaultManipulatorType = selection::IManipulator::Rotate;
+    _defaultManipulatorType = selection::IManipulator::Drag;
     setActiveManipulator(_defaultManipulatorType);
 }
 

@@ -91,7 +91,8 @@ public:
         {
             glColor3f(1, 0.5f, 0);
         }
-        else {
+        else
+        {
             glColor3f(0.8f, 0.8f, 0.8f);
         }
 

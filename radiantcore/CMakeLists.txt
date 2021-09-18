@@ -260,6 +260,7 @@ add_library(radiantcore MODULE
             selection/shaderclipboard/ShaderClipboard.cpp
             selection/shaderclipboard/Texturable.cpp
             selection/textool/TextureToolManipulationPivot.cpp
+            selection/textool/TextureToolDragManipulator.cpp
             selection/textool/TextureToolRotateManipulator.cpp
             selection/textool/TextureToolSceneGraph.cpp
             selection/textool/TextureToolSelectionSystem.cpp
