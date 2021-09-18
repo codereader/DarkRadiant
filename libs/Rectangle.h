@@ -42,7 +42,7 @@ public:
 		return Rectangle(point - epsilon, point + epsilon);
 	}
 
-	// greebo: Constructs a Rectangle from (start - delta) to (start + delta) and ensures
+	// greebo: Constructs a Rectangle from (start) to (start + delta) and ensures
 	// that the resulting Rectangle's min is smaller than its max, in case delta has negative components
 	static Rectangle ConstructFromArea(const Vector2& start, const Vector2& delta)
 	{

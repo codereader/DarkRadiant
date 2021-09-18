@@ -219,18 +219,25 @@ inline AABB getTextureSpaceBounds(const IPatch& patch)
 constexpr int TEXTOOL_WIDTH = 500;
 constexpr int TEXTOOL_HEIGHT = 400;
 
-TEST_F(TextureToolTest, TestSelectPatchVertex)
+inline scene::INodePtr setupPatchNodeForTextureTool()
 {
     auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
     auto patchNode = algorithm::createPatchFromBounds(worldspawn, AABB(Vector3(4, 50, 60), Vector3(64, 128, 256)), "textures/numbers/1");
-    
+
     auto patch = Node_getIPatch(patchNode);
     patch->scaleTextureNaturally();
     patch->controlPointsChanged();
 
-
     // Select this node in the scene, to make it available in the texture tool
     Node_setSelected(patchNode, true);
+
+    return patchNode;
+}
+
+TEST_F(TextureToolTest, TestSelectPatchByPoint)
+{
+    auto patchNode = setupPatchNodeForTextureTool();
+    auto patch = Node_getIPatch(patchNode);
 
     // Get the texture space bounds of this patch
     auto bounds = getTextureSpaceBounds(*patch);
@@ -251,6 +258,37 @@ TEST_F(TextureToolTest, TestSelectPatchVertex)
 
     SelectionVolume test(view);
     GlobalTextureToolSelectionSystem().selectPoint(test, SelectionSystem::eToggle);
+
+    // Check if the node was selected
+    std::vector<textool::INode::Ptr> selectedNodes;
+    GlobalTextureToolSelectionSystem().foreachSelectedNode([&](const textool::INode::Ptr& node)
+    {
+        selectedNodes.push_back(node);
+        return true;
+    });
+
+    EXPECT_EQ(selectedNodes.size(), 1) << "Only one patch should be selected";
+}
+
+TEST_F(TextureToolTest, TestSelectPatchByArea)
+{
+    auto patchNode = setupPatchNodeForTextureTool();
+    auto patch = Node_getIPatch(patchNode);
+
+    // Get the texture space bounds of this patch
+    auto bounds = getTextureSpaceBounds(*patch);
+
+    // Construct a view that includes the patch UV bounds
+    bounds.extents *= 1.2f;
+
+    render::TextureToolView view;
+    view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
+
+    // Use the device point we calculated for this vertex and use it to construct a selection test
+    ConstructSelectionTest(view, selection::Rectangle::ConstructFromArea(Vector2(-0.95f, -0.95f), Vector2(0.95f*2, 0.95f*2)));
+
+    SelectionVolume test(view);
+    GlobalTextureToolSelectionSystem().selectArea(test, SelectionSystem::eToggle);
 
     // Check if the node was selected
     std::vector<textool::INode::Ptr> selectedNodes;
