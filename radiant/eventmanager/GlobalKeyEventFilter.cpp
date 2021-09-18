@@ -29,6 +29,27 @@ namespace ui
             
             return view != nullptr ? view : dynamic_cast<wxutil::TreeView*>(window->GetParent());
         }
+
+        // Checks if the key event refers to a well-knnown shortcut that 
+        // needs to be propagated to input controls. Returns false if the shortcut should be propagated.
+        bool FilterInTextControls(wxKeyEvent& keyEvent)
+        {
+            if (keyEvent.ControlDown() && keyEvent.GetKeyCode() > 32 && keyEvent.GetKeyCode() < 127)
+            {
+                switch (keyEvent.GetKeyCode())
+                {
+                case 'C':case 'V':case 'X': // copy/paste
+                case 'Y':case 'Z': // redo/undo
+                case 'A': // select all
+                    return false;
+                default:
+                    return true;
+                }
+            }
+
+            // For tool windows we let the ESC key propagate, since it's used to de-select stuff.
+            return keyEvent.GetKeyCode() == WXK_ESCAPE;
+        }
     }
 
 GlobalKeyEventFilter::GlobalKeyEventFilter(EventManager& eventManager) :
@@ -103,9 +124,7 @@ GlobalKeyEventFilter::EventCheckResult GlobalKeyEventFilter::checkEvent(wxKeyEve
         wxDynamicCast(eventObject, wxComboBox) || wxDynamicCast(eventObject, wxSpinCtrl) ||
         wxDynamicCast(eventObject, wxSpinCtrlDouble))
     {
-        // For tool windows we let the ESC key propagate, since it's used to
-        // de-select stuff.
-        return keyEvent.GetKeyCode() == WXK_ESCAPE ? EventShouldBeProcessed : EventShouldBeIgnored;
+        return FilterInTextControls(keyEvent) ? EventShouldBeProcessed : EventShouldBeIgnored;
     }
 
     // Special handling for our treeviews with type ahead search

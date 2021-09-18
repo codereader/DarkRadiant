@@ -32,9 +32,9 @@ ShaderChooser::ShaderChooser(wxWindow* parent, wxTextCtrl* targetEntry) :
 
 	_selector = new ShaderSelector(mainPanel, this, SHADER_PREFIXES);
 
-	if (_targetEntry != NULL)
+	if (_targetEntry != nullptr)
 	{
-		_initialShader = targetEntry->GetValue();
+		_initialShader = _targetEntry->GetValue();
 
 		// Set the cursor of the tree view to the currently selected shader
 		_selector->setSelection(_initialShader);

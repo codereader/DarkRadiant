@@ -135,6 +135,7 @@ public:
 
     void zoomIn() override;
     void zoomOut() override;
+    void zoomInOn( wxPoint cursor, int zoom );
 
     void setActive(bool b);
     bool isActive() const;
@@ -177,6 +178,7 @@ private:
     void onContextMenu();
     void drawSizeInfo(int nDim1, int nDim2, const Vector3& vMinBounds, const Vector3& vMaxBounds);
     void drawCameraIcon();
+    float getZoomedScale(int steps);
 
     // callbacks
     bool checkChaseMouse(unsigned int state);
