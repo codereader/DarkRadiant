@@ -89,6 +89,35 @@ inline bool faceHasVertex(const IFace* face, const std::function<bool(const Wind
     return false;
 }
 
+inline scene::INodePtr createPatchFromBounds(const scene::INodePtr& parent,
+    const AABB& bounds = AABB(Vector3(0, 0, 0), Vector3(64, 256, 128)),
+    const std::string& material = "_default")
+{
+    auto patchNode = GlobalPatchModule().createPatch(patch::PatchDefType::Def2);
+    parent->addChildNode(patchNode);
+
+    auto patch = Node_getIPatch(patchNode);
+    patch->setDims(3, 3);
+    patch->setShader(material);
+
+    for (std::size_t col = 0; col < patch->getWidth(); ++col)
+    {
+        auto extents = bounds.getExtents();
+
+        for (std::size_t row = 0; row < patch->getHeight(); ++row)
+        {
+            patch->ctrlAt(row, col).vertex = bounds.getOrigin() - bounds.getExtents();
+
+            patch->ctrlAt(row, col).vertex.x() += 2 * col * extents.x();
+            patch->ctrlAt(row, col).vertex.y() += 2 * row * extents.y();
+        }
+    }
+
+    patch->controlPointsChanged();
+
+    return patchNode;
+}
+
 }
 
 }
