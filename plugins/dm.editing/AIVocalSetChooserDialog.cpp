@@ -84,6 +84,12 @@ AIVocalSetChooserDialog::AIVocalSetChooserDialog() :
 
 	// Load the found sets into the GtkListStore
 	populateSetStore();
+
+    Bind( wxEVT_DATAVIEW_ITEM_ACTIVATED, &AIVocalSetChooserDialog::_onItemActivated, this );
+}
+
+void AIVocalSetChooserDialog::_onItemActivated( wxDataViewEvent& ev ) {
+    EndModal( wxID_OK );
 }
 
 void AIVocalSetChooserDialog::setSelectedVocalSet(const std::string& setName)

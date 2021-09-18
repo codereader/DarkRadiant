@@ -99,6 +99,8 @@ void SkinChooser::populateWindow()
 	// Overall vbox for treeview/preview and buttons
 	vbox->Add(splitter, 1, wxEXPAND);
 	vbox->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT | wxTOP, 12);
+
+    Bind( wxEVT_DATAVIEW_ITEM_ACTIVATED, &SkinChooser::_onItemActivated, this );
 }
 
 int SkinChooser::ShowModal()
@@ -126,6 +128,11 @@ int SkinChooser::ShowModal()
 	_preview->setModel(""); // release model
 
 	return returnCode;
+}
+
+void SkinChooser::_onItemActivated( wxDataViewEvent& ev ) {
+    _lastSkin = getSelectedSkin();
+    EndModal( wxID_OK );
 }
 
 // Populate the list of skins

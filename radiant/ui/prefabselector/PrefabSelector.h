@@ -107,6 +107,7 @@ private:
     void onFileViewTreePopulated();
 
 	void onMainFrameShuttingDown();
+    void _onItemActivated( wxDataViewEvent& ev );
 
 public:
 	int ShowModal() override;

@@ -60,6 +60,7 @@ private:
 
 	void handleSetSelectionChanged();
 	void onSetSelectionChanged(wxDataViewEvent& ev);
+    void _onItemActivated( wxDataViewEvent& ev );
 };
 
 } // namespace ui

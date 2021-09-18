@@ -70,6 +70,12 @@ AIHeadChooserDialog::AIHeadChooserDialog() :
 
     // Load the found heads into the GtkListStore
     populateHeadStore();
+
+    Bind( wxEVT_DATAVIEW_ITEM_ACTIVATED, &AIHeadChooserDialog::_onItemActivated, this );
+}
+
+void AIHeadChooserDialog::_onItemActivated( wxDataViewEvent& ev ) {
+    EndModal( wxID_OK );
 }
 
 void AIHeadChooserDialog::setSelectedHead(const std::string& headDef)
