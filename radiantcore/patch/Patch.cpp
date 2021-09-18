@@ -406,6 +406,11 @@ const PatchControl& Patch::ctrlAt(std::size_t row, std::size_t col) const {
     return _ctrl[row*_width+col];
 }
 
+PatchControl& Patch::getTransformedCtrlAt(std::size_t row, std::size_t col)
+{
+    return _ctrlTransformed[row * _width + col];
+}
+
 // called just before an action to save the undo state
 void Patch::undoSave()
 {
@@ -518,10 +523,10 @@ bool Patch::isDegenerate() const {
     return true;
 }
 
-void Patch::updateTesselation()
+void Patch::updateTesselation(bool force)
 {
     // Only do something if the tesselation has actually changed
-    if (!_tesselationChanged) return;
+    if (!_tesselationChanged && !force) return;
 
     _tesselationChanged = false;
 

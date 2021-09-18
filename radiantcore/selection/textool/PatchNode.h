@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ipatch.h"
+#include "itextstream.h"
 #include "NodeBase.h"
 
 namespace textool
@@ -20,13 +21,15 @@ public:
 
     void beginTransformation() override
     {
+        // We call undoSave() here for consistency, but technically it's too early -
+        // the undo operation hasn't started yet
         _patch.undoSave();
     }
 
     void revertTransformation() override
     {
         _patch.revertTransform();
-        _patch.controlPointsChanged();
+        _patch.updateTesselation();
     }
 
     void applyTransformToSelected(const Matrix3& transform) override
@@ -36,11 +39,15 @@ public:
             vertex.texcoord = transform * vertex.texcoord;
         });
 
-        _patch.controlPointsChanged();
+        // We have to force the patch to update its tesselation since
+        // modifying the "transformed" control point set won't trigger this
+        _patch.updateTesselation(true);
     }
 
     void commitTransformation() override
     {
+        // Patch::freezeTransform will call undoSave() before overwriting
+        // the control point set with the transformed ones
         _patch.freezeTransform();
     }
 
@@ -118,7 +125,7 @@ private:
         {
             for (std::size_t row = 0; row < _patch.getHeight(); ++row)
             {
-                functor(_patch.ctrlAt(row, col));
+                functor(_patch.getTransformedCtrlAt(row, col));
             }
         }
     }

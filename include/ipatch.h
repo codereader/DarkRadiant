@@ -215,8 +215,18 @@ public:
     // Reverts any transform that has been applied since the last time freezeTransform() was called
     virtual void revertTransform() = 0;
 
+    // Returns the transformable control point (not the one returned by ctrlAt) - this one is
+    // part of the "transformed" working set of the patch which will either be saved on freezeTransform()
+    // or discarded on revertTransform().
+    virtual PatchControl& getTransformedCtrlAt(std::size_t row, std::size_t col) = 0;
+
     // Promotes the current transformed state to the new base state
     virtual void freezeTransform() = 0;
+
+    // Updates the patch tesselation based on the transformed set of control vertices
+    // Setting force to true will update the tesselation even if controlPointsChanged() 
+    // hasn't been called in the meantime.
+    virtual void updateTesselation(bool force = false) = 0;
 };
 
 namespace patch
