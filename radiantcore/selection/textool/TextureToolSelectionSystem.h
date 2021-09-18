@@ -1,6 +1,7 @@
 #pragma once
 
 #include "itexturetoolmodel.h"
+#include "icommandsystem.h"
 #include "TextureToolManipulationPivot.h"
 
 namespace textool
@@ -47,6 +48,11 @@ public:
     void onManipulationChanged() override;
     void onManipulationFinished() override;
     void onManipulationCancelled() override;
+
+private:
+    void toggleManipulatorModeCmd(const cmd::ArgumentList& args);
+    void toggleManipulatorModeById(std::size_t manipId);
+    std::size_t getManipulatorIdForType(selection::IManipulator::Type type);
 };
 
 }
