@@ -23,6 +23,7 @@
 #include "ui/mru/MRUMenu.h"
 #include "DispatchEvent.h"
 #include "map/AutoSaveTimer.h"
+#include "textool/TexToolManipulatorToggle.h"
 
 namespace ui
 {
@@ -49,6 +50,7 @@ private:
 	std::unique_ptr<statusbar::MapStatistics> _mapStatisticsStatus;
 	std::unique_ptr<ManipulatorToggle> _manipulatorToggle;
 	std::unique_ptr<SelectionModeToggle> _selectionModeToggle;
+	std::unique_ptr<TextureToolManipulatorToggle> _textureToolManipulatorModeToggle;
 
 	sigc::connection _entitySettingsConn;
 	sigc::connection _coloursUpdatedConn;

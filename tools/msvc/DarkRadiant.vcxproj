@@ -420,6 +420,7 @@
     <ClInclude Include="..\..\radiant\settings\LocalisationModule.h" />
     <ClInclude Include="..\..\radiant\settings\LocalisationProvider.h" />
     <ClInclude Include="..\..\radiant\settings\Win32Registry.h" />
+    <ClInclude Include="..\..\radiant\textool\TexToolManipulatorToggle.h" />
     <ClInclude Include="..\..\radiant\textool\tools\TextureToolManipulateMouseTool.h" />
     <ClInclude Include="..\..\radiant\textool\tools\TextureToolMouseEvent.h" />
     <ClInclude Include="..\..\radiant\textool\tools\TextureToolSelectionTool.h" />
