@@ -89,6 +89,7 @@ private:
 	sigc::connection _selectionChanged;
 	sigc::connection _undoHandler;
 	sigc::connection _redoHandler;
+	sigc::connection _manipulatorChanged;
 
 private:
 	// This is where the static shared_ptr of the singleton instance is held.
@@ -287,6 +288,7 @@ protected:
 private:
     void updateProjection();
     double getTextureAspectRatio();
+    void onManipulatorModeChanged(selection::IManipulator::Type type);
 
     TextureToolMouseEvent createMouseEvent(const Vector2& point, const Vector2& delta = Vector2(0, 0));
 
