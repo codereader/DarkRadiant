@@ -408,6 +408,11 @@ const PatchControl& Patch::ctrlAt(std::size_t row, std::size_t col) const {
 
 PatchControl& Patch::getTransformedCtrlAt(std::size_t row, std::size_t col)
 {
+    if (_ctrlTransformed.empty())
+    {
+        _ctrlTransformed = _ctrl;
+    }
+
     return _ctrlTransformed[row * _width + col];
 }
 

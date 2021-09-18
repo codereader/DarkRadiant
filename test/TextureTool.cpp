@@ -5,6 +5,7 @@
 #include "ipatch.h"
 #include "iselectable.h"
 #include "itexturetoolmodel.h"
+#include "icommandsystem.h"
 #include "iselection.h"
 #include "scenelib.h"
 #include "algorithm/Primitives.h"
@@ -232,6 +233,36 @@ inline scene::INodePtr setupPatchNodeForTextureTool()
     Node_setSelected(patchNode, true);
 
     return patchNode;
+}
+
+// Default manipulator mode should be "Drag"
+TEST_F(TextureToolTest, DefaultManipulatorMode)
+{
+    EXPECT_EQ(GlobalTextureToolSelectionSystem().getActiveManipulatorType(), selection::IManipulator::Drag);
+    EXPECT_EQ(GlobalTextureToolSelectionSystem().getActiveManipulator()->getType(), selection::IManipulator::Drag);
+}
+
+TEST_F(TextureToolTest, ToggleManipulatorModes)
+{
+    // We're starting in "Drag" mode, so toggling the default mode should do nothing
+    GlobalCommandSystem().executeCommand("ToggleTextureToolManipulatorMode", { "Drag" });
+    EXPECT_EQ(GlobalTextureToolSelectionSystem().getActiveManipulatorType(), selection::IManipulator::Drag);
+
+    // Toggle to Rotate
+    GlobalCommandSystem().executeCommand("ToggleTextureToolManipulatorMode", { "Rotate" });
+    EXPECT_EQ(GlobalTextureToolSelectionSystem().getActiveManipulatorType(), selection::IManipulator::Rotate);
+
+    // Toggle from Rotate back to Drag
+    GlobalCommandSystem().executeCommand("ToggleTextureToolManipulatorMode", { "Rotate" });
+    EXPECT_EQ(GlobalTextureToolSelectionSystem().getActiveManipulatorType(), selection::IManipulator::Drag);
+
+    // Toggle to Rotate again
+    GlobalCommandSystem().executeCommand("ToggleTextureToolManipulatorMode", { "Rotate" });
+    EXPECT_EQ(GlobalTextureToolSelectionSystem().getActiveManipulatorType(), selection::IManipulator::Rotate);
+
+    // Toggle Drag explicitly
+    GlobalCommandSystem().executeCommand("ToggleTextureToolManipulatorMode", { "Drag" });
+    EXPECT_EQ(GlobalTextureToolSelectionSystem().getActiveManipulatorType(), selection::IManipulator::Drag);
 }
 
 TEST_F(TextureToolTest, TestSelectPatchByPoint)
