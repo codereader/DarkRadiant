@@ -824,42 +824,9 @@ double TexTool::getTextureAspectRatio()
 
 void TexTool::updateProjection()
 {
-    // Set up the orthographic projection matrix to [b,l..t,r] => [-1,-1..+1,+1]
-    // with b,l,t,r set to values centered at origin
-    double left = -_texSpaceAABB.extents.x();
-    double right = _texSpaceAABB.extents.x();
-
-    double top = _texSpaceAABB.extents.y();
-    double bottom = -_texSpaceAABB.extents.y();
-
-    auto rMinusL = right - left;
-    auto rPlusL = right + left;
-
-    auto tMinusB = top - bottom;
-    auto tPlusB = top + bottom;
-
-    auto projection = Matrix4::getIdentity();
-
-    projection[0] = 2.0f / rMinusL;
-    projection[5] = 2.0f / tMinusB;
-    projection[10] = -1;
-
-    projection[12] = rPlusL / rMinusL;
-    projection[13] = tPlusB / tMinusB;
-    projection[14] = 0;
-
-    auto modelView = Matrix4::getIdentity();
-
-    // We have to invert the Y axis to have the negative tex coords in the upper quadrants
-    modelView.xx() = 1;
-    modelView.yy() = -1;
-
-    // Shift the visible UV space such that it is centered around origin before projecting it
-    modelView.tx() = -_texSpaceAABB.origin.x();
-    modelView.ty() = _texSpaceAABB.origin.y();
-
-    _view.construct(projection, modelView, 
-            static_cast<std::size_t>(_windowDims[0]), static_cast<std::size_t>(_windowDims[1]));
+    _view.constructFromTextureSpaceBounds(_texSpaceAABB,
+        static_cast<std::size_t>(_windowDims[0]),
+        static_cast<std::size_t>(_windowDims[1]));
 }
 
 bool TexTool::onGLDraw()

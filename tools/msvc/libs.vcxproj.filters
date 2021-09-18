@@ -302,6 +302,9 @@
     <ClInclude Include="..\..\libs\selection\SelectionPool.h">
       <Filter>selection</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\render\TextureToolView.h">
+      <Filter>render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

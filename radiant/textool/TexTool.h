@@ -17,7 +17,7 @@
 #include "wxutil/MouseToolHandler.h"
 #include "wxutil/FreezePointer.h"
 #include "tools/TextureToolMouseEvent.h"
-#include "render/View.h"
+#include "render/TextureToolView.h"
 
 #include "TexToolItem.h"
 
@@ -48,7 +48,7 @@ private:
 	// GL widget
 	wxutil::GLWidget* _glWidget;
 
-    render::View _view;
+    render::TextureToolView _view;
 
     wxutil::FreezePointer _freezePointer;
 
