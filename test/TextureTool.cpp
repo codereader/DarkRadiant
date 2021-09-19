@@ -527,7 +527,7 @@ TEST_F(TextureToolTest, TestSelectPatchVertexByPoint)
     EXPECT_EQ(getAllSelectedComponentNodes().size(), 1) << "Only one patch should be selected";
 
     // Hitting another vertex should not de-select the patch
-    auto secondVertex = patch->ctrlAt(3, 0).texcoord;
+    auto secondVertex = patch->ctrlAt(2, 0).texcoord;
     performPointSelection(secondVertex, view);
     EXPECT_EQ(getAllSelectedComponentNodes().size(), 1) << "Only one patch should still be selected";
 

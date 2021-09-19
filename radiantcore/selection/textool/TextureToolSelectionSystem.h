@@ -64,6 +64,8 @@ private:
 
     void toggleSelectionMode(SelectionMode mode);
     void toggleSelectionModeCmd(const cmd::ArgumentList& args);
+
+    void performSelectionTest(Selector& selector, SelectionTest& test);
 };
 
 }

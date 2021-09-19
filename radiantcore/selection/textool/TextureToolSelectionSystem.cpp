@@ -324,11 +324,7 @@ void TextureToolSelectionSystem::selectPoint(SelectionTest& test, SelectionSyste
 {
     selection::SelectionPool selectionPool;
 
-    GlobalTextureToolSceneGraph().foreachNode([&](const INode::Ptr& node)
-    {
-        node->testSelect(selectionPool, test);
-        return true;
-    });
+    performSelectionTest(selectionPool, test);
 
     if (selectionPool.empty()) return;
 
@@ -375,23 +371,40 @@ void TextureToolSelectionSystem::selectPoint(SelectionTest& test, SelectionSyste
         }
         break;
     }
-    
 }
 
 void TextureToolSelectionSystem::selectArea(SelectionTest& test, SelectionSystem::EModifier modifier)
 {
     selection::SelectionPool selectionPool;
 
-    GlobalTextureToolSceneGraph().foreachNode([&](const INode::Ptr& node)
-    {
-        node->testSelect(selectionPool, test);
-        return true;
-    });
+    performSelectionTest(selectionPool, test);
 
     for (const auto& pair : selectionPool)
     {
         pair.second->setSelected(!pair.second->isSelected());
     }
+}
+
+void TextureToolSelectionSystem::performSelectionTest(Selector& selector, SelectionTest& test)
+{
+    GlobalTextureToolSceneGraph().foreachNode([&](const INode::Ptr& node)
+    {
+        if (getMode() == SelectionMode::Surface)
+        {
+            node->testSelect(selector, test);
+        }
+        else
+        {
+            auto componentSelectable = std::dynamic_pointer_cast<IComponentSelectable>(node);
+
+            if (componentSelectable)
+            {
+                componentSelectable->testSelectComponents(selector, test);
+            }
+        }
+
+        return true;
+    });
 }
 
 module::StaticModule<TextureToolSelectionSystem> _textureToolSelectionSystemModule;

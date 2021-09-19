@@ -103,34 +103,44 @@ public:
         {
             Selector_add(selector, *this);
         }
-#if 0
-        foreachVertex([&](PatchControl& vertex)
-        {
-            SelectionIntersection intersection;
-
-            test.TestPoint(Vector3(vertex.texcoord.x(), vertex.texcoord.y(), 0), intersection);
-
-            if (intersection.isValid())
-            {
-                Selector_add(selector, *this);
-            }
-        });
-#endif
     }
 
     bool hasSelectedComponents() const override
     {
+        for (auto& vertex : _vertices)
+        {
+            if (vertex.isSelected())
+            {
+                return true;
+            }
+        }
+
         return false;
     }
 
     void clearComponentSelection() override
     {
-
+        for (auto& vertex : _vertices)
+        {
+            vertex.setSelected(false);
+        }
     }
 
     void testSelectComponents(Selector& selector, SelectionTest& test) override
     {
+        test.BeginMesh(Matrix4::getIdentity(), true);
 
+        for (auto& vertex : _vertices)
+        {
+            SelectionIntersection intersection;
+
+            test.TestPoint(Vector3(vertex.getVertex().x(), vertex.getVertex().y(), 0), intersection);
+
+            if (intersection.isValid())
+            {
+                Selector_add(selector, vertex);
+            }
+        }
     }
 
     void render(SelectionMode mode) override
