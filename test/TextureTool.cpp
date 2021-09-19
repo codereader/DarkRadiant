@@ -525,14 +525,14 @@ TEST_F(TextureToolTest, TestSelectPatchVertexByPoint)
     
     performPointSelection(firstVertex, view);
 
-    // Hitting a vertex will select the patch itself
+    // Hitting a vertex will select the patch componentselectable
     EXPECT_EQ(getAllSelectedComponentNodes().size(), 1) << "Only one patch should be selected";
 
-    // Hitting another vertex should not de-select the patch
+    // Hitting another vertex should not de-select the componentselectable
     performPointSelection(secondVertex, view);
     EXPECT_EQ(getAllSelectedComponentNodes().size(), 1) << "Only one patch should still be selected";
 
-    // De-selecting the first and the second vertex should release the patch itself
+    // De-selecting the first and the second vertex should release the patch
     performPointSelection(secondVertex, view);
     EXPECT_EQ(getAllSelectedComponentNodes().size(), 1) << "Only one patch should still be selected";
     performPointSelection(firstVertex, view);
@@ -570,6 +570,52 @@ TEST_F(TextureToolTest, TestSelectFaceSurfaceByPoint)
     EXPECT_EQ(selectedNodes.size(), 1) << "Only one item should be selected";
     EXPECT_EQ(selectedNodes.front(), textoolFace) << "The face should be selected";
     EXPECT_TRUE(std::dynamic_pointer_cast<textool::IFaceNode>(selectedNodes.front())) << "Couldn't cast to special type";
+}
+
+TEST_F(TextureToolTest, TestSelectFaceVertexByPoint)
+{
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto brush = algorithm::createCubicBrush(worldspawn, Vector3(0, 256, 256), "textures/numbers/1");
+    scene::addNodeToContainer(brush, worldspawn);
+
+    // Put all faces into the tex tool scene
+    Node_setSelected(brush, true);
+
+    auto faceUp = algorithm::findBrushFaceWithNormal(Node_getIBrush(brush), Vector3(0, 0, 1));
+
+    // Get the texture space bounds of this face
+    auto bounds = getTextureSpaceBounds(*faceUp);
+
+    // Construct a view that includes the patch UV bounds
+    bounds.extents *= 1.2f;
+
+    render::TextureToolView view;
+    view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
+
+    // Switch to vertex selection mode
+    GlobalTextureToolSelectionSystem().setMode(textool::SelectionMode::Vertex);
+
+    // Get the texcoords of the first vertex
+    auto firstVertex = faceUp->getWinding()[0].texcoord;
+    auto secondVertex = faceUp->getWinding()[1].texcoord;
+
+    // Selecting something in the middle of two vertices should not do anything
+    performPointSelection((firstVertex + secondVertex) / 2, view);
+    EXPECT_TRUE(getAllSelectedComponentNodes().empty()) << "Test-selecting a face in between vertices should not have succeeded";
+
+    // Hitting a vertex will select the face
+    performPointSelection(firstVertex, view);
+    EXPECT_EQ(getAllSelectedComponentNodes().size(), 1) << "Only one face should be selected";
+
+    // Hitting another vertex should not de-select the face
+    performPointSelection(secondVertex, view);
+    EXPECT_EQ(getAllSelectedComponentNodes().size(), 1) << "Only one face should still be selected";
+
+    // De-selecting the first and the second vertex should release the face
+    performPointSelection(secondVertex, view);
+    EXPECT_EQ(getAllSelectedComponentNodes().size(), 1) << "Only one face should still be selected";
+    performPointSelection(firstVertex, view);
+    EXPECT_TRUE(getAllSelectedComponentNodes().empty()) << "Selection should be empty now";
 }
 
 TEST_F(TextureToolTest, TestSelectPatchByArea)
