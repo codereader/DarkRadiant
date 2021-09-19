@@ -13,6 +13,13 @@ class Matrix3;
 namespace textool
 {
 
+// Enumeration of possible texture tool selection modes
+enum class SelectionMode
+{
+    Surface,
+    Vertex,
+};
+
 /**
  * A transformable node in the texture tool scene. This is usually
  * implemented by Faces and Patches. They will accept a given transformation
@@ -99,6 +106,10 @@ public:
     // Iterate over every selected node in this graph calling the given functor
     // Collection should not be modified during iteration
     virtual void foreachSelectedNode(const std::function<bool(const INode::Ptr&)>& functor) = 0;
+
+    virtual SelectionMode getMode() const = 0;
+    virtual void setMode(SelectionMode mode) = 0;
+    virtual sigc::signal<void, SelectionMode>& signal_selectionModeChanged() = 0;
 
     virtual void selectPoint(SelectionTest& test, SelectionSystem::EModifier modifier) = 0;
     virtual void selectArea(SelectionTest& test, SelectionSystem::EModifier modifier) = 0;

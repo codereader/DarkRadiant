@@ -1,6 +1,7 @@
 #include "RadiantTest.h"
 
 #include <set>
+#include <sigc++/connection.h>
 #include "imap.h"
 #include "ipatch.h"
 #include "iselectable.h"
@@ -281,6 +282,11 @@ TEST_F(TextureToolTest, DefaultManipulatorMode)
     EXPECT_EQ(GlobalTextureToolSelectionSystem().getActiveManipulator()->getType(), selection::IManipulator::Drag);
 }
 
+TEST_F(TextureToolTest, DefaultSelectionMode)
+{
+    EXPECT_EQ(GlobalTextureToolSelectionSystem().getMode(), textool::SelectionMode::Surface);
+}
+
 TEST_F(TextureToolTest, ToggleManipulatorModes)
 {
     // We're starting in "Drag" mode, so toggling the default mode should do nothing
@@ -302,6 +308,88 @@ TEST_F(TextureToolTest, ToggleManipulatorModes)
     // Toggle Drag explicitly
     GlobalCommandSystem().executeCommand("ToggleTextureToolManipulatorMode", { "Drag" });
     EXPECT_EQ(GlobalTextureToolSelectionSystem().getActiveManipulatorType(), selection::IManipulator::Drag);
+}
+
+TEST_F(TextureToolTest, ManipulatorModeChangedSignal)
+{
+    bool signalFired = false;
+    selection::IManipulator::Type signalArgument;
+
+    // Subscribe to the changed signal
+    sigc::connection conn = GlobalTextureToolSelectionSystem().signal_activeManipulatorChanged().connect(
+        [&](selection::IManipulator::Type type)
+    {
+        signalFired = true;
+        signalArgument = type;
+    });
+
+    // We're starting in drag mode, so no changed expected
+    GlobalCommandSystem().executeCommand("ToggleTextureToolManipulatorMode", { "Drag" });
+    EXPECT_FALSE(signalFired) << "Signal shouldn't have fired";
+    signalFired = false;
+
+    // Changing to Rotate should fire the signal
+    GlobalCommandSystem().executeCommand("ToggleTextureToolManipulatorMode", { "Rotate" });
+    EXPECT_TRUE(signalFired) << "Signal should have fired";
+    EXPECT_EQ(signalArgument, selection::IManipulator::Rotate) << "Signal communicated wrong mode";
+    signalFired = false;
+
+    // Toggle Rotate, should switch back to Drag
+    GlobalCommandSystem().executeCommand("ToggleTextureToolManipulatorMode", { "Rotate" });
+    EXPECT_TRUE(signalFired) << "Signal should have fired";
+    EXPECT_EQ(signalArgument, selection::IManipulator::Drag) << "Signal communicated wrong mode";
+    signalFired = false;
+
+    // Changing to Rotate (again) should fire the signal
+    GlobalCommandSystem().executeCommand("ToggleTextureToolManipulatorMode", { "Rotate" });
+    EXPECT_TRUE(signalFired) << "Signal should have fired";
+    EXPECT_EQ(signalArgument, selection::IManipulator::Rotate) << "Signal communicated wrong mode";
+    signalFired = false;
+
+    // Directly toggle to Drag, should fire
+    GlobalCommandSystem().executeCommand("ToggleTextureToolManipulatorMode", { "Drag" });
+    EXPECT_TRUE(signalFired) << "Signal should have fired";
+    EXPECT_EQ(signalArgument, selection::IManipulator::Drag) << "Signal communicated wrong mode";
+    signalFired = false;
+
+    conn.disconnect();
+}
+
+TEST_F(TextureToolTest, SelectionModeChangedSignal)
+{
+    bool signalFired = false;
+    textool::SelectionMode signalArgument;
+
+    // Subscribe to the changed signal
+    sigc::connection conn = GlobalTextureToolSelectionSystem().signal_selectionModeChanged().connect(
+        [&] (textool::SelectionMode mode)
+        {
+            signalFired = true;
+            signalArgument = mode;
+        });
+
+    // We're starting in Surface mode, so no changed expected
+    GlobalTextureToolSelectionSystem().setMode(textool::SelectionMode::Surface);
+    EXPECT_FALSE(signalFired) << "Signal shouldn't have fired";
+    signalFired = false;
+
+    GlobalTextureToolSelectionSystem().setMode(textool::SelectionMode::Vertex);
+    EXPECT_TRUE(signalFired) << "Signal should have fired";
+    EXPECT_EQ(signalArgument, textool::SelectionMode::Vertex) << "Signal communicated wrong mode";
+    signalFired = false;
+
+    // Switch to the same mode again => no signal expected
+    GlobalTextureToolSelectionSystem().setMode(textool::SelectionMode::Vertex);
+    EXPECT_FALSE(signalFired) << "Signal shouldn't have fired";
+    signalFired = false;
+
+    // Back to surface mode
+    GlobalTextureToolSelectionSystem().setMode(textool::SelectionMode::Surface);
+    EXPECT_TRUE(signalFired) << "Signal should have fired";
+    EXPECT_EQ(signalArgument, textool::SelectionMode::Surface) << "Signal communicated wrong mode";
+    signalFired = false;
+
+    conn.disconnect();
 }
 
 TEST_F(TextureToolTest, TestSelectPatchByPoint)

@@ -26,6 +26,8 @@ void TextureToolSelectionSystem::initialiseModule(const IApplicationContext& ctx
 {
     rMessage() << getName() << "::initialiseModule called." << std::endl;
 
+    _mode = SelectionMode::Surface;
+
     _manipulationPivot.setFromMatrix(Matrix4::getIdentity());
     registerManipulator(std::make_shared<TextureToolRotateManipulator>(_manipulationPivot));
     registerManipulator(std::make_shared<TextureToolDragManipulator>());
@@ -42,6 +44,25 @@ void TextureToolSelectionSystem::shutdownModule()
 {
     _sigActiveManipulatorChanged.clear();
     _manipulators.clear();
+}
+
+SelectionMode TextureToolSelectionSystem::getMode() const
+{
+    return _mode;
+}
+
+void TextureToolSelectionSystem::setMode(SelectionMode mode)
+{
+    if (mode != _mode)
+    {
+        _mode = mode;
+        _sigSelectionModeChanged.emit(_mode);
+    }
+}
+
+sigc::signal<void, SelectionMode>& TextureToolSelectionSystem::signal_selectionModeChanged()
+{
+    return _sigSelectionModeChanged;
 }
 
 void TextureToolSelectionSystem::toggleManipulatorModeCmd(const cmd::ArgumentList& args)
@@ -191,7 +212,7 @@ void TextureToolSelectionSystem::toggleManipulatorModeById(std::size_t manipId)
     {
         toggleManipulatorModeById(defaultManipId);
     }
-    else // we're not in <mode> yet
+    else if (_activeManipulator->getId() != manipId) // switch, if we're not in <mode> yet
     {
         setActiveManipulator(manipId);
         _sigActiveManipulatorChanged.emit(getActiveManipulatorType());

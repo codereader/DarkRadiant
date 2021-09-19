@@ -11,6 +11,8 @@ class TextureToolSelectionSystem :
     public ITextureToolSelectionSystem
 {
 private:
+    SelectionMode _mode;
+
     std::map<std::size_t, selection::ITextureToolManipulator::Ptr> _manipulators;
 
     // The currently active manipulator
@@ -18,6 +20,7 @@ private:
     selection::IManipulator::Type _defaultManipulatorType;
 
     sigc::signal<void, selection::IManipulator::Type> _sigActiveManipulatorChanged;
+    sigc::signal<void, SelectionMode> _sigSelectionModeChanged;
 
     TextureToolManipulationPivot _manipulationPivot;
 
@@ -26,6 +29,10 @@ public:
     const StringSet& getDependencies() const override;
     void initialiseModule(const IApplicationContext& ctx) override;
     void shutdownModule() override;
+
+    SelectionMode getMode() const override;
+    void setMode(SelectionMode mode) override;
+    sigc::signal<void, SelectionMode>& signal_selectionModeChanged() override;
 
     void foreachSelectedNode(const std::function<bool(const INode::Ptr&)>& functor) override;
 
