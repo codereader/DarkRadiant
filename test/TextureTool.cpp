@@ -464,14 +464,14 @@ TEST_F(TextureToolTest, SelectionModeChangedSignal)
 
 void performPointSelection(const Vector2& texcoord, const render::View& view)
 {
-    auto centroidTransformed = view.GetViewProjection().transformPoint(Vector3(texcoord.x(), texcoord.y(), 0));
-    Vector2 devicePoint(centroidTransformed.x(), centroidTransformed.y());
+    auto texcoordTransformed = view.GetViewProjection().transformPoint(Vector3(texcoord.x(), texcoord.y(), 0));
+    Vector2 devicePoint(texcoordTransformed.x(), texcoordTransformed.y());
 
     // Use the device point we calculated for this vertex and use it to construct a selection test
-    render::View scissored;
+    render::View scissored(view);
     ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromPoint(devicePoint, Vector2(0.02f, 0.02f)));
 
-    SelectionVolume test(view);
+    SelectionVolume test(scissored);
     GlobalTextureToolSelectionSystem().selectPoint(test, SelectionSystem::eToggle);
 }
 
@@ -515,19 +515,20 @@ TEST_F(TextureToolTest, TestSelectPatchVertexByPoint)
     // Switch to vertex selection mode
     GlobalTextureToolSelectionSystem().setMode(textool::SelectionMode::Vertex);
 
-    // Selecting something in the middle of the patch should not do anything
-    performPointSelection(Vector2(bounds.origin.x(), bounds.origin.y()), view);
-    EXPECT_TRUE(getAllSelectedComponentNodes().empty()) << "Test-selecting a patch in its middle should not have succeeded";
-    
     // Get the texcoords of the first vertex
     auto firstVertex = patch->ctrlAt(2, 1).texcoord;
+    auto secondVertex = patch->ctrlAt(2, 0).texcoord;
+
+    // Selecting something in the middle of two vertices should not do anything
+    performPointSelection((firstVertex + secondVertex) / 2, view);
+    EXPECT_TRUE(getAllSelectedComponentNodes().empty()) << "Test-selecting a patch in between vertices should not have succeeded";
+    
     performPointSelection(firstVertex, view);
 
     // Hitting a vertex will select the patch itself
     EXPECT_EQ(getAllSelectedComponentNodes().size(), 1) << "Only one patch should be selected";
 
     // Hitting another vertex should not de-select the patch
-    auto secondVertex = patch->ctrlAt(2, 0).texcoord;
     performPointSelection(secondVertex, view);
     EXPECT_EQ(getAllSelectedComponentNodes().size(), 1) << "Only one patch should still be selected";
 
