@@ -38,6 +38,9 @@ void TextureToolSelectionSystem::initialiseModule(const IApplicationContext& ctx
     GlobalCommandSystem().addCommand("ToggleTextureToolManipulatorMode",
         std::bind(&TextureToolSelectionSystem::toggleManipulatorModeCmd, this, std::placeholders::_1),
         { cmd::ARGTYPE_STRING });
+    GlobalCommandSystem().addCommand("ToggleTextureToolSelectionMode",
+        std::bind(&TextureToolSelectionSystem::toggleSelectionModeCmd, this, std::placeholders::_1),
+        { cmd::ARGTYPE_STRING });
 }
 
 void TextureToolSelectionSystem::shutdownModule()
@@ -57,6 +60,21 @@ void TextureToolSelectionSystem::setMode(SelectionMode mode)
     {
         _mode = mode;
         _sigSelectionModeChanged.emit(_mode);
+    }
+}
+
+void TextureToolSelectionSystem::toggleSelectionMode(SelectionMode mode)
+{
+    // Switch back to Surface mode if toggling a non-default mode again
+    if (mode == _mode && mode != SelectionMode::Surface)
+    {
+        // Toggle back to Surface mode
+        toggleSelectionMode(SelectionMode::Surface);
+    }
+    else
+    {
+        // setMode will only do something if we're not already in the target mode
+        setMode(mode);
     }
 }
 
@@ -85,6 +103,29 @@ void TextureToolSelectionSystem::toggleManipulatorModeCmd(const cmd::ArgumentLis
     else if (manip == "rotate")
     {
         toggleManipulatorModeById(getManipulatorIdForType(selection::IManipulator::Rotate));
+    }
+}
+
+void TextureToolSelectionSystem::toggleSelectionModeCmd(const cmd::ArgumentList& args)
+{
+    if (args.size() != 1)
+    {
+        rWarning() << "Usage: ToggleTextureToolSelectionMode <mode>" << std::endl;
+        rWarning() << " with <mode> being one of the following: " << std::endl;
+        rWarning() << "      Surface" << std::endl;
+        rWarning() << "      Vertex" << std::endl;
+        return;
+    }
+
+    auto manip = string::to_lower_copy(args[0].getString());
+
+    if (manip == "surface")
+    {
+        toggleSelectionMode(SelectionMode::Surface);
+    }
+    else if (manip == "vertex")
+    {
+        toggleSelectionMode(SelectionMode::Vertex);
     }
 }
 

@@ -355,6 +355,50 @@ TEST_F(TextureToolTest, ManipulatorModeChangedSignal)
     conn.disconnect();
 }
 
+TEST_F(TextureToolTest, ToggleSelectionMode)
+{
+    bool signalFired = false;
+    textool::SelectionMode signalArgument;
+
+    // Subscribe to the changed signal
+    sigc::connection conn = GlobalTextureToolSelectionSystem().signal_selectionModeChanged().connect(
+        [&](textool::SelectionMode mode)
+    {
+        signalFired = true;
+        signalArgument = mode;
+    });
+
+    // We're starting in Surface mode, toggle to Surface again
+    GlobalCommandSystem().executeCommand("ToggleTextureToolSelectionMode", { "Surface" });
+    EXPECT_EQ(GlobalTextureToolSelectionSystem().getMode(), textool::SelectionMode::Surface);
+    EXPECT_FALSE(signalFired) << "Signal shouldn't have fired";
+    signalFired = false;
+
+    // Switch to vertex mode
+    GlobalCommandSystem().executeCommand("ToggleTextureToolSelectionMode", { "Vertex" });
+    EXPECT_EQ(GlobalTextureToolSelectionSystem().getMode(), textool::SelectionMode::Vertex);
+    EXPECT_TRUE(signalFired) << "Signal should have fired";
+    signalFired = false;
+
+    // Toggle vertex mode again => back to surface mode
+    GlobalCommandSystem().executeCommand("ToggleTextureToolSelectionMode", { "Vertex" });
+    EXPECT_EQ(GlobalTextureToolSelectionSystem().getMode(), textool::SelectionMode::Surface);
+    EXPECT_TRUE(signalFired) << "Signal should have fired";
+    signalFired = false;
+
+    // Switch to vertex mode (again)
+    GlobalCommandSystem().executeCommand("ToggleTextureToolSelectionMode", { "Vertex" });
+    EXPECT_EQ(GlobalTextureToolSelectionSystem().getMode(), textool::SelectionMode::Vertex);
+    EXPECT_TRUE(signalFired) << "Signal should have fired";
+    signalFired = false;
+
+    // Directly toggle surface mode
+    GlobalCommandSystem().executeCommand("ToggleTextureToolSelectionMode", { "Surface" });
+    EXPECT_EQ(GlobalTextureToolSelectionSystem().getMode(), textool::SelectionMode::Surface);
+    EXPECT_TRUE(signalFired) << "Signal should have fired";
+    signalFired = false;
+}
+
 TEST_F(TextureToolTest, SelectionModeChangedSignal)
 {
     bool signalFired = false;

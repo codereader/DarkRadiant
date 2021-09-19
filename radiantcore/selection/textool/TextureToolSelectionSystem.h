@@ -60,6 +60,9 @@ private:
     void toggleManipulatorModeCmd(const cmd::ArgumentList& args);
     void toggleManipulatorModeById(std::size_t manipId);
     std::size_t getManipulatorIdForType(selection::IManipulator::Type type);
+
+    void toggleSelectionMode(SelectionMode mode);
+    void toggleSelectionModeCmd(const cmd::ArgumentList& args);
 };
 
 }
