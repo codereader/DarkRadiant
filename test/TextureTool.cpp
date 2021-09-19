@@ -201,18 +201,26 @@ TEST_F(TextureToolTest, ForeachSelectedNode)
     EXPECT_EQ(selectedCount, selectedNodes.size()) << "Selection count didn't match";
 }
 
-inline AABB getTextureSpaceBounds(const IPatch& patch)
+inline void foreachPatchVertex(const IPatch& patch, const std::function<void(const PatchControl&)>& functor)
 {
-    AABB bounds;
-
     for (std::size_t col = 0; col < patch.getWidth(); ++col)
     {
         for (std::size_t row = 0; row < patch.getHeight(); ++row)
         {
-            const auto& uv = patch.ctrlAt(row, col).texcoord;
-            bounds.includePoint({ uv.x(), uv.y(), 0 });
+            functor(patch.ctrlAt(row, col));
         }
     }
+}
+
+inline AABB getTextureSpaceBounds(const IPatch& patch)
+{
+    AABB bounds;
+
+    foreachPatchVertex(patch, [&](const PatchControl& control)
+    {
+        const auto& uv = control.texcoord;
+        bounds.includePoint({ uv.x(), uv.y(), 0 });
+    });
 
     return bounds;
 }
@@ -421,6 +429,36 @@ inline std::vector<Vector2> getTexcoords(const IFace* face)
     return uvs;
 }
 
+void dragManipulateSelectionTowardsLowerRight(const Vector2& startTexcoord, const render::View& view)
+{
+    auto centroid = startTexcoord;
+    auto centroidTransformed = view.GetViewProjection().transformPoint(Vector3(centroid.x(), centroid.y(), 0));
+    Vector2 devicePoint(centroidTransformed.x(), centroidTransformed.y());
+
+    GlobalTextureToolSelectionSystem().onManipulationStart();
+
+    // Simulate a transformation by click-and-drag
+    auto manipulator = GlobalTextureToolSelectionSystem().getActiveManipulator();
+    EXPECT_EQ(manipulator->getType(), selection::IManipulator::Drag) << "Wrong manipulator";
+
+    render::View scissored(view);
+    ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromPoint(devicePoint, Vector2(0.05, 0.05)));
+
+    auto manipComponent = manipulator->getActiveComponent();
+    auto pivot2World = GlobalTextureToolSelectionSystem().getPivot2World();
+    manipComponent->beginTransformation(pivot2World, scissored, devicePoint);
+
+    // Move the device point a bit to the lower right
+    auto secondDevicePoint = devicePoint + (Vector2(1, -1) - devicePoint) / 2;
+
+    render::View scissored2(view);
+    ConstructSelectionTest(scissored2, selection::Rectangle::ConstructFromPoint(secondDevicePoint, Vector2(0.05, 0.05)));
+
+    manipComponent->transform(pivot2World, scissored2, secondDevicePoint, selection::IManipulator::Component::Constraint::Unconstrained);
+
+    GlobalTextureToolSelectionSystem().onManipulationFinished();
+}
+
 TEST_F(TextureToolTest, DragManipulateFace)
 {
     auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
@@ -448,33 +486,9 @@ TEST_F(TextureToolTest, DragManipulateFace)
     render::TextureToolView view;
     view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
 
-    // Check the device coords of the face centroid
+    // Check the device coords of the face centroid and manipulate from that point
     auto centroid = algorithm::getFaceCentroid(faceUp);
-    auto centroidTransformed = view.GetViewProjection().transformPoint(Vector3(centroid.x(), centroid.y(), 0));
-    Vector2 devicePoint(centroidTransformed.x(), centroidTransformed.y());
-
-    GlobalTextureToolSelectionSystem().onManipulationStart();
-
-    // Simulate a transformation by click-and-drag
-    auto manipulator = GlobalTextureToolSelectionSystem().getActiveManipulator();
-    EXPECT_EQ(manipulator->getType(), selection::IManipulator::Drag) << "Wrong manipulator";
-
-    render::View scissored(view);
-    ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromPoint(devicePoint, Vector2(0.05, 0.05)));
-
-    auto manipComponent = manipulator->getActiveComponent();
-    auto pivot2World = GlobalTextureToolSelectionSystem().getPivot2World();
-    manipComponent->beginTransformation(pivot2World, scissored, devicePoint);
-
-    // Move the device point a bit to the lower right
-    auto secondDevicePoint = devicePoint + (Vector2(1, -1) - devicePoint) / 2;
-
-    render::View scissored2(view);
-    ConstructSelectionTest(scissored2, selection::Rectangle::ConstructFromPoint(secondDevicePoint, Vector2(0.05, 0.05)));
-
-    manipComponent->transform(pivot2World, scissored2, secondDevicePoint, selection::IManipulator::Component::Constraint::Unconstrained);
-
-    GlobalTextureToolSelectionSystem().onManipulationFinished();
+    dragManipulateSelectionTowardsLowerRight(centroid, view);
 
     // All the texcoords should have been moved to the lower right (U increased, V increased)
     auto oldUv = oldFaceUpUvs.begin();
@@ -493,6 +507,39 @@ TEST_F(TextureToolTest, DragManipulateFace)
         EXPECT_EQ(oldUv->y(), vertex.texcoord.y());
         ++oldUv;
     }
+}
+
+TEST_F(TextureToolTest, DragManipulatePatch)
+{
+    auto patchNode = setupPatchNodeForTextureTool();
+    auto patch = Node_getIPatch(patchNode);
+
+    // Remember the texcoords before manipulation
+    std::vector<Vector2> oldTexcoords;
+    foreachPatchVertex(*patch, [&](const PatchControl& control) { oldTexcoords.push_back(control.texcoord); });
+
+    auto texToolPatch = getFirstTextureToolNode();
+    texToolPatch->setSelected(true);
+
+    // Get the texture space bounds of this patch
+    auto bounds = getTextureSpaceBounds(*patch);
+    bounds.extents *= 1.2f;
+
+    render::TextureToolView view;
+    view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
+
+    // Check the device coords of the face centroid
+    auto centroid = Vector2(bounds.origin.x(), bounds.origin.y());
+    dragManipulateSelectionTowardsLowerRight(centroid, view);
+
+    // All the texcoords should have been moved to the lower right (U increased, V increased)
+    auto oldUv = oldTexcoords.begin();
+    foreachPatchVertex(*patch, [&](const PatchControl& control)
+    {
+        EXPECT_LT(oldUv->x(), control.texcoord.x());
+        EXPECT_LT(oldUv->y(), control.texcoord.y());
+        ++oldUv;
+    });
 }
 
 }
