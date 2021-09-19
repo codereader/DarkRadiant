@@ -872,4 +872,62 @@ TEST_F(TextureToolTest, CancelDragManipulationOfPatchVertices)
     performPatchVertexManipulationTest(true); // cancel
 }
 
+// When switching from Vertex to Surface mode, the pivot should be recalculated
+TEST_F(TextureToolTest, PivotIsRecalculatedWhenSwitchingModes)
+{
+    auto patchNode = setupPatchNodeForTextureTool();
+    auto patch = Node_getIPatch(patchNode);
+
+    // Get the texture space bounds of this patch
+    auto bounds = getTextureSpaceBounds(*patch);
+
+    // Construct a view that includes the patch UV bounds
+    bounds.extents *= 1.2f;
+
+    render::TextureToolView view;
+    view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
+
+    // Get the texcoords of the first vertex
+    auto firstVertex = patch->ctrlAt(2, 1).texcoord;
+    auto secondVertex = patch->ctrlAt(2, 0).texcoord;
+
+    // Select the patch itself
+    performPointSelection(secondVertex, view);
+
+    // Check the manipulation pivot
+    auto pivot2world = GlobalTextureToolSelectionSystem().getPivot2World();
+
+    // The pivot should be near the center of the patch
+    auto boundsOrigin = getTextureSpaceBounds(*patch).origin;
+    EXPECT_TRUE(math::isNear(pivot2world.tCol().getVector3(), boundsOrigin, 0.01)) <<
+        "Pivot should be at the center of the patch";
+
+    // Switch to vertex selection mode and select two vertices
+    GlobalTextureToolSelectionSystem().setMode(textool::SelectionMode::Vertex);
+
+    performPointSelection(firstVertex, view);
+    EXPECT_EQ(getAllSelectedComponentNodes().size(), 1) << "Only one patch should still be selected";
+
+    // Pivot should be right at the first vertex
+    auto componentPivot2world = GlobalTextureToolSelectionSystem().getPivot2World();
+    EXPECT_TRUE(math::isNear(componentPivot2world.tCol().getVector3(),
+        Vector3(firstVertex.x(), firstVertex.y(), 0), 0.01)) << "Pivot should be at the single selected vertex";
+
+    // Selecting a second point, the pivot should move to the middle of the two
+    performPointSelection(secondVertex, view);
+    EXPECT_EQ(getAllSelectedComponentNodes().size(), 1) << "Only one patch should still be selected";
+
+    componentPivot2world = GlobalTextureToolSelectionSystem().getPivot2World();
+
+    // The pivot should now be in the middle of the two selected vertices
+    auto midPoint = (firstVertex + secondVertex) * 0.5;
+    EXPECT_TRUE(math::isNear(componentPivot2world.tCol().getVector3(), 
+        Vector3(midPoint.x(), midPoint.y(), 0), 0.01)) << "Pivot should be in between the two selected vertices";
+
+    // Switching back to surface selection mode, the pivot needs to move to the bounds origin again
+    GlobalTextureToolSelectionSystem().setMode(textool::SelectionMode::Surface);
+    EXPECT_TRUE(math::isNear(pivot2world.tCol().getVector3(), boundsOrigin, 0.01)) <<
+        "Pivot should be at the center of the patch after switching back to surface mode";
+}
+
 }
