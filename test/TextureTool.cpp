@@ -310,10 +310,10 @@ TEST_F(TextureToolTest, TestSelectPatchByPoint)
     render::TextureToolView view;
     view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
 
-    // Check the device coords of the patch vertex
-    auto firstTexcoord = patch->ctrlAt(2, 1).texcoord;
-    auto firstTexcoordsTransformed = view.GetViewProjection().transformPoint(Vector3(firstTexcoord.x(), firstTexcoord.y(), 0));
-    Vector2 devicePoint(firstTexcoordsTransformed.x(), firstTexcoordsTransformed.y());
+    // Check the device coords of the patch centroid
+    auto centroid = bounds.origin;
+    auto centroidTransformed = view.GetViewProjection().transformPoint(Vector3(centroid.x(), centroid.y(), 0));
+    Vector2 devicePoint(centroidTransformed.x(), centroidTransformed.y());
 
     // Use the device point we calculated for this vertex and use it to construct a selection test
     ConstructSelectionTest(view, selection::Rectangle::ConstructFromPoint(devicePoint, Vector2(0.02f, 0.02f)));

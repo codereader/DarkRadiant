@@ -67,6 +67,29 @@ public:
     {
         test.BeginMesh(Matrix4::getIdentity(), true);
 
+        auto mesh = _patch.getTesselatedPatchMesh();
+        auto indices = _patch.getRenderIndices();
+
+        // Copy the UV coords to the XYZ part to be able to use the TestQuadStrip method
+        for (auto& vertex : mesh.vertices)
+        {
+            vertex.vertex.set(vertex.texcoord.x(), vertex.texcoord.y(), 0);
+        }
+
+        SelectionIntersection best;
+        auto* pIndex = &indices.indices.front();
+
+        for (auto s = 0; s < indices.numStrips; s++) 
+        {
+            test.TestQuadStrip(VertexPointer(&mesh.vertices.front().vertex, sizeof(VertexNT)), IndexPointer(pIndex, indices.lenStrips), best);
+            pIndex += indices.lenStrips;
+        }
+
+        if (best.isValid())
+        {
+            Selector_add(selector, *this);
+        }
+#if 0
         foreachVertex([&](PatchControl& vertex)
         {
             SelectionIntersection intersection;
@@ -78,6 +101,7 @@ public:
                 Selector_add(selector, *this);
             }
         });
+#endif
     }
 
     void render() override
