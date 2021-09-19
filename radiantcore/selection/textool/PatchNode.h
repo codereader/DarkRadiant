@@ -3,6 +3,7 @@
 #include "ipatch.h"
 #include "itextstream.h"
 #include "NodeBase.h"
+#include "SelectableVertex.h"
 
 namespace textool
 {
@@ -14,10 +15,17 @@ private:
     IPatch& _patch;
     mutable AABB _bounds;
 
+    std::vector<SelectableVertex> _vertices;
+
 public:
     PatchNode(IPatch& patch) :
         _patch(patch)
-    {}
+    {
+        foreachVertex([&](PatchControl& vertex)
+        {
+            _vertices.emplace_back(vertex.texcoord);
+        });
+    }
 
     void beginTransformation() override
     {
@@ -110,11 +118,15 @@ public:
         glBlendColor(0, 0, 0, 0.3f);
         glBlendFunc(GL_CONSTANT_ALPHA_EXT, GL_ONE_MINUS_CONSTANT_ALPHA_EXT);
 
-        if (isSelected())
+        if (mode == SelectionMode::Surface && isSelected())
         {
             glColor3f(1, 0.5f, 0);
         }
-        else 
+        else if (mode == SelectionMode::Vertex)
+        {
+            glColor3f(0.6f, 0.6f, 0.6f);
+        }
+        else
         {
             glColor3f(0.8f, 0.8f, 0.8f);
         }
@@ -140,6 +152,28 @@ public:
         }
 
         glDisable(GL_BLEND);
+
+        if (mode == SelectionMode::Vertex)
+        {
+            glPointSize(5);
+            glBegin(GL_POINTS);
+
+            for (const auto& vertex : _vertices)
+            {
+                if (vertex.isSelected())
+                {
+                    glColor3f(1, 0.5f, 0);
+                }
+                else
+                {
+                    glColor3f(0.8f, 0.8f, 0.8f);
+                }
+
+                glVertex2d(vertex.getVertex().x(), vertex.getVertex().y());
+            }
+
+            glEnd();
+        }
     }
 
 private:

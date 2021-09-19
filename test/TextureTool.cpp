@@ -436,6 +436,19 @@ TEST_F(TextureToolTest, SelectionModeChangedSignal)
     conn.disconnect();
 }
 
+void performPointSelection(const Vector2& texcoord, const render::View& view)
+{
+    auto centroidTransformed = view.GetViewProjection().transformPoint(Vector3(texcoord.x(), texcoord.y(), 0));
+    Vector2 devicePoint(centroidTransformed.x(), centroidTransformed.y());
+
+    // Use the device point we calculated for this vertex and use it to construct a selection test
+    render::View scissored;
+    ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromPoint(devicePoint, Vector2(0.02f, 0.02f)));
+
+    SelectionVolume test(view);
+    GlobalTextureToolSelectionSystem().selectPoint(test, SelectionSystem::eToggle);
+}
+
 TEST_F(TextureToolTest, TestSelectPatchByPoint)
 {
     auto patchNode = setupPatchNodeForTextureTool();
@@ -450,16 +463,8 @@ TEST_F(TextureToolTest, TestSelectPatchByPoint)
     render::TextureToolView view;
     view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
 
-    // Check the device coords of the patch centroid
-    auto centroid = bounds.origin;
-    auto centroidTransformed = view.GetViewProjection().transformPoint(Vector3(centroid.x(), centroid.y(), 0));
-    Vector2 devicePoint(centroidTransformed.x(), centroidTransformed.y());
-
-    // Use the device point we calculated for this vertex and use it to construct a selection test
-    ConstructSelectionTest(view, selection::Rectangle::ConstructFromPoint(devicePoint, Vector2(0.02f, 0.02f)));
-
-    SelectionVolume test(view);
-    GlobalTextureToolSelectionSystem().selectPoint(test, SelectionSystem::eToggle);
+    // Test-select in the middle of the patch bounds
+    performPointSelection(Vector2(bounds.origin.x(), bounds.origin.y()), view);
 
     // Check if the node was selected
     std::vector<textool::INode::Ptr> selectedNodes;
@@ -495,16 +500,8 @@ TEST_F(TextureToolTest, TestSelectFaceByPoint)
     render::TextureToolView view;
     view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
 
-    // Check the device coords of the face centroid
-    auto centroid = algorithm::getFaceCentroid(faceUp);
-    auto centroidTransformed = view.GetViewProjection().transformPoint(Vector3(centroid.x(), centroid.y(), 0));
-    Vector2 devicePoint(centroidTransformed.x(), centroidTransformed.y());
-
-    // Use the device point we calculated for this vertex and use it to construct a selection test
-    ConstructSelectionTest(view, selection::Rectangle::ConstructFromPoint(devicePoint, Vector2(0.02f, 0.02f)));
-
-    SelectionVolume test(view);
-    GlobalTextureToolSelectionSystem().selectPoint(test, SelectionSystem::eToggle);
+    // Point-select in the middle of the face
+    performPointSelection(algorithm::getFaceCentroid(faceUp), view);
 
     // Check if the node was selected
     std::vector<textool::INode::Ptr> selectedNodes;
