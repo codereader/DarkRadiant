@@ -187,6 +187,8 @@ public:
         if (mode == SelectionMode::Vertex)
         {
             glPointSize(5);
+            glEnable(GL_DEPTH_TEST);
+            glDepthFunc(GL_LEQUAL);
             glBegin(GL_POINTS);
 
             for (const auto& vertex : _vertices)
@@ -200,9 +202,11 @@ public:
                     glColor3f(0.8f, 0.8f, 0.8f);
                 }
 
-                glVertex2d(vertex.getVertex().x(), vertex.getVertex().y());
+                // Move the selected vertices a bit up in the Z area
+                glVertex3d(vertex.getVertex().x(), vertex.getVertex().y(), vertex.isSelected() ? 0.1f : 0);
             }
 
+            glDisable(GL_DEPTH_TEST);
             glEnd();
         }
     }
