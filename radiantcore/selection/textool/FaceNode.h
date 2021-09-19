@@ -95,6 +95,21 @@ public:
         }
     }
 
+    bool hasSelectedComponents() const override
+    {
+        return false;
+    }
+
+    void clearComponentSelection() override
+    {
+
+    }
+
+    void testSelectComponents(Selector& selector, SelectionTest& test) override
+    {
+
+    }
+
     void render(SelectionMode mode) override
     {
         glEnable(GL_BLEND);

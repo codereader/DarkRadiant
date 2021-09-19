@@ -9,7 +9,8 @@ namespace textool
 {
 
 class PatchNode :
-    public NodeBase
+    public NodeBase,
+    public IPatchNode
 {
 private:
     IPatch& _patch;
@@ -25,6 +26,11 @@ public:
         {
             _vertices.emplace_back(vertex.texcoord);
         });
+    }
+
+    IPatch& getPatch() override
+    {
+        return _patch;
     }
 
     void beginTransformation() override
@@ -110,6 +116,21 @@ public:
             }
         });
 #endif
+    }
+
+    bool hasSelectedComponents() const override
+    {
+        return false;
+    }
+
+    void clearComponentSelection() override
+    {
+
+    }
+
+    void testSelectComponents(Selector& selector, SelectionTest& test) override
+    {
+
     }
 
     void render(SelectionMode mode) override

@@ -142,6 +142,21 @@ void TextureToolSelectionSystem::foreachSelectedNode(const std::function<bool(co
     });
 }
 
+void TextureToolSelectionSystem::foreachSelectedComponentNode(const std::function<bool(const IComponentSelectable::Ptr&)>& functor)
+{
+    GlobalTextureToolSceneGraph().foreachNode([&](const INode::Ptr& node)
+    {
+        auto componentSelectable = std::dynamic_pointer_cast<IComponentSelectable>(node);
+
+        if (componentSelectable && componentSelectable->hasSelectedComponents())
+        {
+            return functor(componentSelectable);
+        }
+
+        return true;
+    });
+}
+
 std::size_t TextureToolSelectionSystem::registerManipulator(const selection::ITextureToolManipulator::Ptr& manipulator)
 {
     std::size_t newId = 1;

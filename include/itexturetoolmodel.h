@@ -9,6 +9,8 @@
 #include <sigc++/signal.h>
 
 class Matrix3;
+class IFace;
+class IPatch;
 
 namespace textool
 {
@@ -48,6 +50,24 @@ public:
     virtual void commitTransformation() = 0;
 };
 
+// A Texture Tool node that consists of one or more selectable components
+class IComponentSelectable
+{
+public:
+    using Ptr = std::shared_ptr<IComponentSelectable>;
+
+    virtual ~IComponentSelectable() {}
+
+    // True if this node has at least one selected component (e.g. a vertex)
+    virtual bool hasSelectedComponents() const = 0;
+
+    // Unselect all components of this node
+    virtual void clearComponentSelection() = 0;
+
+    // Perform a selection test using the given selector and test volume
+    virtual void testSelectComponents(Selector& selector, SelectionTest& test) = 0;
+};
+
 // The base element of every node in the ITextureToolSceneGraph
 class INode :
     public ITransformable,
@@ -66,7 +86,8 @@ public:
 
 // Node representing a single brush face
 class IFaceNode :
-    public virtual INode
+    public virtual INode,
+    public IComponentSelectable
 {
 public:
     virtual ~IFaceNode() {}
@@ -74,6 +95,19 @@ public:
     using Ptr = std::shared_ptr<IFaceNode>;
 
     virtual IFace& getFace() = 0;
+};
+
+// Node representing a patch
+class IPatchNode :
+    public virtual INode,
+    public IComponentSelectable
+{
+public:
+    virtual ~IPatchNode() {}
+
+    using Ptr = std::shared_ptr<IPatchNode>;
+
+    virtual IPatch& getPatch() = 0;
 };
 
 /**
@@ -106,6 +140,10 @@ public:
     // Iterate over every selected node in this graph calling the given functor
     // Collection should not be modified during iteration
     virtual void foreachSelectedNode(const std::function<bool(const INode::Ptr&)>& functor) = 0;
+
+    // Iterate over every node that has at least one component selected, visiting the given functor
+    // Collection should not be modified during iteration
+    virtual void foreachSelectedComponentNode(const std::function<bool(const IComponentSelectable::Ptr&)>& functor) = 0;
 
     virtual SelectionMode getMode() const = 0;
     virtual void setMode(SelectionMode mode) = 0;

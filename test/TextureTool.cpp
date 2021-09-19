@@ -45,6 +45,32 @@ inline textool::INode::Ptr getFirstTextureToolNode()
     return returnValue;
 }
 
+std::vector<textool::INode::Ptr> getAllSelectedTextoolNodes()
+{
+    std::vector<textool::INode::Ptr> selectedNodes;
+
+    GlobalTextureToolSelectionSystem().foreachSelectedNode([&](const textool::INode::Ptr& node)
+    {
+        selectedNodes.push_back(node);
+        return true;
+    });
+
+    return selectedNodes;
+}
+
+std::vector<textool::IComponentSelectable::Ptr> getAllSelectedComponentNodes()
+{
+    std::vector<textool::IComponentSelectable::Ptr> selectedNodes;
+
+    GlobalTextureToolSelectionSystem().foreachSelectedComponentNode([&](const textool::IComponentSelectable::Ptr& node)
+    {
+        selectedNodes.push_back(node);
+        return true;
+    });
+
+    return selectedNodes;
+}
+
 // Checks that changing the regular scene selection will have an effect on the tex tool scene
 TEST_F(TextureToolTest, SceneGraphObservesSelection)
 {
@@ -449,7 +475,7 @@ void performPointSelection(const Vector2& texcoord, const render::View& view)
     GlobalTextureToolSelectionSystem().selectPoint(test, SelectionSystem::eToggle);
 }
 
-TEST_F(TextureToolTest, TestSelectPatchByPoint)
+TEST_F(TextureToolTest, TestSelectPatchSurfaceByPoint)
 {
     auto patchNode = setupPatchNodeForTextureTool();
     auto patch = Node_getIPatch(patchNode);
@@ -467,17 +493,52 @@ TEST_F(TextureToolTest, TestSelectPatchByPoint)
     performPointSelection(Vector2(bounds.origin.x(), bounds.origin.y()), view);
 
     // Check if the node was selected
-    std::vector<textool::INode::Ptr> selectedNodes;
-    GlobalTextureToolSelectionSystem().foreachSelectedNode([&](const textool::INode::Ptr& node)
-    {
-        selectedNodes.push_back(node);
-        return true;
-    });
-
+    auto selectedNodes = getAllSelectedTextoolNodes();
     EXPECT_EQ(selectedNodes.size(), 1) << "Only one patch should be selected";
+    EXPECT_TRUE(std::dynamic_pointer_cast<textool::IPatchNode>(selectedNodes.front())) << "Couldn't cast to special type";
 }
 
-TEST_F(TextureToolTest, TestSelectFaceByPoint)
+TEST_F(TextureToolTest, TestSelectPatchVertexByPoint)
+{
+    auto patchNode = setupPatchNodeForTextureTool();
+    auto patch = Node_getIPatch(patchNode);
+
+    // Get the texture space bounds of this patch
+    auto bounds = getTextureSpaceBounds(*patch);
+
+    // Construct a view that includes the patch UV bounds
+    bounds.extents *= 1.2f;
+
+    render::TextureToolView view;
+    view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
+
+    // Switch to vertex selection mode
+    GlobalTextureToolSelectionSystem().setMode(textool::SelectionMode::Vertex);
+
+    // Selecting something in the middle of the patch should not do anything
+    performPointSelection(Vector2(bounds.origin.x(), bounds.origin.y()), view);
+    EXPECT_TRUE(getAllSelectedComponentNodes().empty()) << "Test-selecting a patch in its middle should not have succeeded";
+    
+    // Get the texcoords of the first vertex
+    auto firstVertex = patch->ctrlAt(2, 1).texcoord;
+    performPointSelection(firstVertex, view);
+
+    // Hitting a vertex will select the patch itself
+    EXPECT_EQ(getAllSelectedComponentNodes().size(), 1) << "Only one patch should be selected";
+
+    // Hitting another vertex should not de-select the patch
+    auto secondVertex = patch->ctrlAt(3, 0).texcoord;
+    performPointSelection(secondVertex, view);
+    EXPECT_EQ(getAllSelectedComponentNodes().size(), 1) << "Only one patch should still be selected";
+
+    // De-selecting the first and the second vertex should release the patch itself
+    performPointSelection(secondVertex, view);
+    EXPECT_EQ(getAllSelectedComponentNodes().size(), 1) << "Only one patch should still be selected";
+    performPointSelection(firstVertex, view);
+    EXPECT_TRUE(getAllSelectedComponentNodes().empty()) << "Selection should be empty now";
+}
+
+TEST_F(TextureToolTest, TestSelectFaceSurfaceByPoint)
 {
     auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
     auto brush = algorithm::createCubicBrush(worldspawn, Vector3(0, 256, 256), "textures/numbers/1");
@@ -504,15 +565,10 @@ TEST_F(TextureToolTest, TestSelectFaceByPoint)
     performPointSelection(algorithm::getFaceCentroid(faceUp), view);
 
     // Check if the node was selected
-    std::vector<textool::INode::Ptr> selectedNodes;
-    GlobalTextureToolSelectionSystem().foreachSelectedNode([&](const textool::INode::Ptr& node)
-    {
-        selectedNodes.push_back(node);
-        return true;
-    });
-
+    auto selectedNodes = getAllSelectedTextoolNodes();
     EXPECT_EQ(selectedNodes.size(), 1) << "Only one item should be selected";
     EXPECT_EQ(selectedNodes.front(), textoolFace) << "The face should be selected";
+    EXPECT_TRUE(std::dynamic_pointer_cast<textool::IFaceNode>(selectedNodes.front())) << "Couldn't cast to special type";
 }
 
 TEST_F(TextureToolTest, TestSelectPatchByArea)
@@ -536,14 +592,9 @@ TEST_F(TextureToolTest, TestSelectPatchByArea)
     GlobalTextureToolSelectionSystem().selectArea(test, SelectionSystem::eToggle);
 
     // Check if the node was selected
-    std::vector<textool::INode::Ptr> selectedNodes;
-    GlobalTextureToolSelectionSystem().foreachSelectedNode([&](const textool::INode::Ptr& node)
-    {
-        selectedNodes.push_back(node);
-        return true;
-    });
-
+    auto selectedNodes = getAllSelectedTextoolNodes();
     EXPECT_EQ(selectedNodes.size(), 1) << "Only one patch should be selected";
+    EXPECT_TRUE(std::dynamic_pointer_cast<textool::IPatchNode>(selectedNodes.front())) << "Couldn't cast to special type";
 }
 
 inline std::vector<Vector2> getTexcoords(const IFace* face)

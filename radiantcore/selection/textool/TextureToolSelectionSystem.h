@@ -35,6 +35,7 @@ public:
     sigc::signal<void, SelectionMode>& signal_selectionModeChanged() override;
 
     void foreachSelectedNode(const std::function<bool(const INode::Ptr&)>& functor) override;
+    void foreachSelectedComponentNode(const std::function<bool(const IComponentSelectable::Ptr&)>& functor) override;
 
     void selectPoint(SelectionTest& test, SelectionSystem::EModifier modifier) override;
     void selectArea(SelectionTest& test, SelectionSystem::EModifier modifier) override;
