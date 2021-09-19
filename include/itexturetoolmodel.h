@@ -87,7 +87,7 @@ public:
 // Node representing a single brush face
 class IFaceNode :
     public virtual INode,
-    public IComponentSelectable
+    public virtual IComponentSelectable
 {
 public:
     virtual ~IFaceNode() {}
@@ -100,7 +100,7 @@ public:
 // Node representing a patch
 class IPatchNode :
     public virtual INode,
-    public IComponentSelectable
+    public virtual IComponentSelectable
 {
 public:
     virtual ~IPatchNode() {}
