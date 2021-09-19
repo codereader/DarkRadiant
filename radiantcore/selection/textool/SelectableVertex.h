@@ -20,6 +20,11 @@ public:
     {
         return _texcoord;
     }
+
+    Vector2& getVertex()
+    {
+        return _texcoord;
+    }
 };
 
 }

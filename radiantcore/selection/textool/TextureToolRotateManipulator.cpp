@@ -223,12 +223,30 @@ void TextureToolRotateManipulator::rotateSelected(const Vector2& pivot, double a
     transform.premultiplyBy(Matrix3::getRotation(-angle));
     transform.premultiplyBy(Matrix3::getTranslation(pivot));
 
-    GlobalTextureToolSelectionSystem().foreachSelectedNode([&](const textool::INode::Ptr& node)
+    if (GlobalTextureToolSelectionSystem().getMode() == SelectionMode::Surface)
     {
-        node->revertTransformation();
-        node->applyTransformToSelected(transform);
-        return true;
-    });
+        GlobalTextureToolSelectionSystem().foreachSelectedNode([&](const textool::INode::Ptr& node)
+        {
+            node->revertTransformation();
+            node->transform(transform);
+            return true;
+        });
+    }
+    else
+    {
+        GlobalTextureToolSelectionSystem().foreachSelectedComponentNode([&](const INode::Ptr& node)
+        {
+            node->revertTransformation();
+
+            auto componentTransformable = std::dynamic_pointer_cast<IComponentTransformable>(node);
+
+            if (componentTransformable)
+            {
+                componentTransformable->transformComponents(transform);
+            }
+            return true;
+        });
+    }
 }
 
 }

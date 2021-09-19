@@ -73,9 +73,24 @@ void TextureToolDragManipulator::testSelect(SelectionTest& test, const Matrix4& 
 {
     selection::SelectionPool selectionPool;
 
+    auto selectionMode = GlobalTextureToolSelectionSystem().getMode();
+
     GlobalTextureToolSceneGraph().foreachNode([&](const INode::Ptr& node)
     {
-        node->testSelect(selectionPool, test);
+        if (selectionMode == SelectionMode::Surface)
+        {
+            node->testSelect(selectionPool, test);
+        }
+        else
+        {
+            auto componentSelectable = std::dynamic_pointer_cast<IComponentSelectable>(node);
+
+            if (componentSelectable)
+            {
+                componentSelectable->testSelectComponents(selectionPool, test);
+            }
+        }
+
         return true;
     });
 
@@ -99,12 +114,30 @@ void TextureToolDragManipulator::translateSelected(const Vector2& translation)
 {
     auto transform = Matrix3::getTranslation(translation);
 
-    GlobalTextureToolSelectionSystem().foreachSelectedNode([&](const textool::INode::Ptr& node)
+    if (GlobalTextureToolSelectionSystem().getMode() == SelectionMode::Surface)
     {
-        node->revertTransformation();
-        node->applyTransformToSelected(transform);
-        return true;
-    });
+        GlobalTextureToolSelectionSystem().foreachSelectedNode([&](const textool::INode::Ptr& node)
+        {
+            node->revertTransformation();
+            node->transform(transform);
+            return true;
+        });
+    }
+    else
+    {
+        GlobalTextureToolSelectionSystem().foreachSelectedComponentNode([&](const INode::Ptr& node)
+        {
+            node->revertTransformation();
+
+            auto componentTransformable = std::dynamic_pointer_cast<IComponentTransformable>(node);
+
+            if (componentTransformable)
+            {
+                componentTransformable->transformComponents(transform);
+            }
+            return true;
+        });
+    }
 }
 
 }

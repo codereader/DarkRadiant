@@ -44,7 +44,7 @@ public:
     virtual void revertTransformation() = 0;
 
     // Applies the given transform to all selected components of this node.
-    virtual void applyTransformToSelected(const Matrix3& transform) = 0;
+    virtual void transform(const Matrix3& transform) = 0;
 
     // "Saves" the current transformed state as the new base state
     virtual void commitTransformation() = 0;
@@ -68,6 +68,16 @@ public:
     virtual void testSelectComponents(Selector& selector, SelectionTest& test) = 0;
 };
 
+// A Texture Tool node that allows its components to be transformed
+class IComponentTransformable
+{
+public:
+    virtual ~IComponentTransformable() {}
+
+    // Apply the given transformation matrix to all selected components
+    virtual void transformComponents(const Matrix3& transform) = 0;
+};
+
 // The base element of every node in the ITextureToolSceneGraph
 class INode :
     public ITransformable,
@@ -87,7 +97,8 @@ public:
 // Node representing a single brush face
 class IFaceNode :
     public virtual INode,
-    public virtual IComponentSelectable
+    public virtual IComponentSelectable,
+    public virtual IComponentTransformable
 {
 public:
     virtual ~IFaceNode() {}
@@ -100,7 +111,8 @@ public:
 // Node representing a patch
 class IPatchNode :
     public virtual INode,
-    public virtual IComponentSelectable
+    public virtual IComponentSelectable,
+    public virtual IComponentTransformable
 {
 public:
     virtual ~IPatchNode() {}
@@ -143,7 +155,7 @@ public:
 
     // Iterate over every node that has at least one component selected, visiting the given functor
     // Collection should not be modified during iteration
-    virtual void foreachSelectedComponentNode(const std::function<bool(const IComponentSelectable::Ptr&)>& functor) = 0;
+    virtual void foreachSelectedComponentNode(const std::function<bool(const INode::Ptr&)>& functor) = 0;
 
     virtual SelectionMode getMode() const = 0;
     virtual void setMode(SelectionMode mode) = 0;

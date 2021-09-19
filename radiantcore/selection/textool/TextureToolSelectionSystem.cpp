@@ -142,7 +142,7 @@ void TextureToolSelectionSystem::foreachSelectedNode(const std::function<bool(co
     });
 }
 
-void TextureToolSelectionSystem::foreachSelectedComponentNode(const std::function<bool(const IComponentSelectable::Ptr&)>& functor)
+void TextureToolSelectionSystem::foreachSelectedComponentNode(const std::function<bool(const INode::Ptr&)>& functor)
 {
     GlobalTextureToolSceneGraph().foreachNode([&](const INode::Ptr& node)
     {
@@ -150,7 +150,7 @@ void TextureToolSelectionSystem::foreachSelectedComponentNode(const std::functio
 
         if (componentSelectable && componentSelectable->hasSelectedComponents())
         {
-            return functor(componentSelectable);
+            return functor(node);
         }
 
         return true;

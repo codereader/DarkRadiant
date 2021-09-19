@@ -58,11 +58,11 @@ std::vector<textool::INode::Ptr> getAllSelectedTextoolNodes()
     return selectedNodes;
 }
 
-std::vector<textool::IComponentSelectable::Ptr> getAllSelectedComponentNodes()
+std::vector<textool::INode::Ptr> getAllSelectedComponentNodes()
 {
-    std::vector<textool::IComponentSelectable::Ptr> selectedNodes;
+    std::vector<textool::INode::Ptr> selectedNodes;
 
-    GlobalTextureToolSelectionSystem().foreachSelectedComponentNode([&](const textool::IComponentSelectable::Ptr& node)
+    GlobalTextureToolSelectionSystem().foreachSelectedComponentNode([&](const textool::INode::Ptr& node)
     {
         selectedNodes.push_back(node);
         return true;

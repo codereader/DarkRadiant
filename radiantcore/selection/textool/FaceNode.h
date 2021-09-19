@@ -41,7 +41,7 @@ public:
         _face.revertTransform();
     }
 
-    void applyTransformToSelected(const Matrix3& transform) override
+    void transform(const Matrix3& transform) override
     {
         for (auto& vertex : _face.getWinding())
         {
@@ -52,6 +52,11 @@ public:
         Vector2 texcoords[3] = { _face.getWinding().at(0).texcoord, _face.getWinding().at(1).texcoord, _face.getWinding().at(2).texcoord };
 
         _face.setTexDefFromPoints(vertices, texcoords);
+    }
+
+    void transformComponents(const Matrix3& transform) override
+    {
+        // TODO
     }
 
     void commitTransformation() override

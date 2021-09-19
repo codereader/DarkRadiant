@@ -44,12 +44,26 @@ public:
         _patch.updateTesselation();
     }
 
-    void applyTransformToSelected(const Matrix3& transform) override
+    void transform(const Matrix3& transform) override
     {
         foreachVertex([&](PatchControl& vertex)
         {
             vertex.texcoord = transform * vertex.texcoord;
         });
+
+        // We have to force the patch to update its tesselation since
+        // modifying the "transformed" control point set won't trigger this
+        _patch.updateTesselation(true);
+    }
+
+    void transformComponents(const Matrix3& transform) override
+    {
+        for (auto& vertex : _vertices)
+        {
+            if (!vertex.isSelected()) continue;
+
+            vertex.getVertex() = transform * vertex.getVertex();
+        }
 
         // We have to force the patch to update its tesselation since
         // modifying the "transformed" control point set won't trigger this
