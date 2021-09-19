@@ -66,6 +66,20 @@ public:
         }
     }
 
+    virtual AABB getSelectedComponentBounds() override
+    {
+        AABB bounds;
+
+        for (const auto& vertex : _vertices)
+        {
+            if (!vertex.isSelected()) continue;
+
+            bounds.includePoint({ vertex.getVertex().x(), vertex.getVertex().y(), 0 });
+        }
+
+        return bounds;
+    }
+
 protected:
     virtual void renderComponents()
     {

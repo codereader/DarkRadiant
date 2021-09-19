@@ -45,6 +45,7 @@ void TextureToolSelectionSystem::initialiseModule(const IApplicationContext& ctx
 
 void TextureToolSelectionSystem::shutdownModule()
 {
+    _sigSelectionModeChanged.clear();
     _sigActiveManipulatorChanged.clear();
     _manipulators.clear();
 }
@@ -60,6 +61,9 @@ void TextureToolSelectionSystem::setMode(SelectionMode mode)
     {
         _mode = mode;
         _sigSelectionModeChanged.emit(_mode);
+
+        _manipulationPivot.setUserLocked(false);
+        _manipulationPivot.setNeedsRecalculation(true);
     }
 }
 
@@ -289,7 +293,8 @@ void TextureToolSelectionSystem::toggleManipulatorModeById(std::size_t manipId)
 
 Matrix4 TextureToolSelectionSystem::getPivot2World()
 {
-    _manipulationPivot.updateFromSelection();
+    // For now, we recalculate the whole thing every time it is requested
+    _manipulationPivot.setNeedsRecalculation(true);
 
     return _manipulationPivot.getMatrix4();
 }

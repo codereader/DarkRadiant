@@ -66,6 +66,9 @@ public:
 
     // Perform a selection test using the given selector and test volume
     virtual void testSelectComponents(Selector& selector, SelectionTest& test) = 0;
+
+    // Returns the bounds containing all the selected vertices
+    virtual AABB getSelectedComponentBounds() = 0;
 };
 
 // A Texture Tool node that allows its components to be transformed

@@ -11,22 +11,34 @@ void TextureToolManipulationPivot::updateFromSelection()
     _userLocked = false;
 
     // Check the centerpoint of all selected items
-    Vector2 sum(0, 0);
-    std::size_t count = 0;
+    AABB bounds;
 
-    GlobalTextureToolSelectionSystem().foreachSelectedNode([&](const INode::Ptr& node)
+    if (GlobalTextureToolSelectionSystem().getMode() == SelectionMode::Surface)
     {
-        auto bounds = node->localAABB();
-        sum += Vector2(bounds.origin.x(), bounds.origin.y());
-        count++;
-
-        return true;
-    });
-
-    if (count > 0)
+        GlobalTextureToolSelectionSystem().foreachSelectedNode([&](const INode::Ptr& node)
+        {
+            bounds.includeAABB(node->localAABB());
+            return true;
+        });
+    }
+    else
     {
-        sum /= count;
-        setFromMatrix(Matrix4::getTranslation(Vector3(sum.x(), sum.y(), 0)));
+        GlobalTextureToolSelectionSystem().foreachSelectedComponentNode([&](const INode::Ptr& node)
+        {
+            auto componentSelectable = std::dynamic_pointer_cast<IComponentSelectable>(node);
+
+            if (componentSelectable)
+            {
+                bounds.includeAABB(componentSelectable->getSelectedComponentBounds());
+            }
+
+            return true;
+        });
+    }
+
+    if (bounds.isValid())
+    {
+        setFromMatrix(Matrix4::getTranslation(Vector3(bounds.origin.x(), bounds.origin.y(), 0)));
     }
     else
     {
