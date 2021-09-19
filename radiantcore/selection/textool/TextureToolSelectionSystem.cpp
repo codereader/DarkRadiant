@@ -284,11 +284,22 @@ Matrix4 TextureToolSelectionSystem::getPivot2World()
 
 void TextureToolSelectionSystem::onManipulationStart()
 {
-    foreachSelectedNode([&](const INode::Ptr& node)
+    if (getMode() == SelectionMode::Surface)
     {
-        node->beginTransformation();
-        return true;
-    });
+        foreachSelectedNode([&](const INode::Ptr& node)
+        {
+            node->beginTransformation();
+            return true;
+        });
+    }
+    else
+    {
+        foreachSelectedComponentNode([&](const INode::Ptr& node)
+        {
+            node->beginTransformation();
+            return true;
+        });
+    }
 }
 
 void TextureToolSelectionSystem::onManipulationChanged()
@@ -297,22 +308,44 @@ void TextureToolSelectionSystem::onManipulationChanged()
 
 void TextureToolSelectionSystem::onManipulationFinished()
 {
-    foreachSelectedNode([&](const INode::Ptr& node)
+    if (getMode() == SelectionMode::Surface)
     {
-        node->commitTransformation();
-        return true;
-    });
+        foreachSelectedNode([&](const INode::Ptr& node)
+        {
+            node->commitTransformation();
+            return true;
+        });
+    }
+    else
+    {
+        foreachSelectedComponentNode([&](const INode::Ptr& node)
+        {
+            node->commitTransformation();
+            return true;
+        });
+    }
 
     getActiveManipulator()->setSelected(false);
 }
 
 void TextureToolSelectionSystem::onManipulationCancelled()
 {
-    foreachSelectedNode([&](const INode::Ptr& node)
+    if (getMode() == SelectionMode::Surface)
     {
-        node->revertTransformation();
-        return true;
-    });
+        foreachSelectedNode([&](const INode::Ptr& node)
+        {
+            node->revertTransformation();
+            return true;
+        });
+    }
+    else
+    {
+        foreachSelectedComponentNode([&](const INode::Ptr& node)
+        {
+            node->revertTransformation();
+            return true;
+        });
+    }
 }
 
 sigc::signal<void, selection::IManipulator::Type>& TextureToolSelectionSystem::signal_activeManipulatorChanged()

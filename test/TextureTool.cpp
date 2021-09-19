@@ -769,4 +769,56 @@ TEST_F(TextureToolTest, DragManipulatePatch)
     });
 }
 
+TEST_F(TextureToolTest, DragManipulatePatchVertices)
+{
+    auto patchNode = setupPatchNodeForTextureTool();
+    auto patch = Node_getIPatch(patchNode);
+
+    // Remember the texcoords before manipulation
+    std::vector<Vector2> oldTexcoords;
+    foreachPatchVertex(*patch, [&](const PatchControl& control) { oldTexcoords.push_back(control.texcoord); });
+
+    // Get the texture space bounds of this patch
+    auto bounds = getTextureSpaceBounds(*patch);
+    bounds.extents *= 1.2f;
+
+    render::TextureToolView view;
+    view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
+
+    GlobalTextureToolSelectionSystem().setMode(textool::SelectionMode::Vertex);
+    
+    // Select every odd vertex
+    for (auto i = 0; i < oldTexcoords.size(); ++i)
+    {
+        if (i % 2 == 1)
+        {
+            performPointSelection(oldTexcoords[i], view);
+        }
+    }
+
+    EXPECT_EQ(getAllSelectedComponentNodes().size(), 1) << "No component node selected";
+
+    // Drag-manipulate the first odd vertex
+    dragManipulateSelectionTowardsLowerRight(oldTexcoords[1], view);
+
+    std::vector<Vector2> changedTexcoords;
+    foreachPatchVertex(*patch, [&](const PatchControl& control) { changedTexcoords.push_back(control.texcoord); });
+
+    // All odd texcoords should have been moved to the lower right (U increased, V increased)
+    for (auto i = 0; i < oldTexcoords.size(); ++i)
+    {
+        if (i % 2 == 1)
+        {
+            EXPECT_LT(oldTexcoords[i].x(), changedTexcoords[i].x());
+            EXPECT_LT(oldTexcoords[i].y(), changedTexcoords[i].y());
+        }
+        else
+        {
+            // should be unchanged
+            EXPECT_NEAR(oldTexcoords[i].x(), changedTexcoords[i].x(), 0.01);
+            EXPECT_NEAR(oldTexcoords[i].y(), changedTexcoords[i].y(), 0.01);
+        }
+    }
+}
+
 }
