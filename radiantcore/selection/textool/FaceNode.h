@@ -8,7 +8,8 @@ namespace textool
 {
 
 class FaceNode :
-    public NodeBase
+    public NodeBase,
+    public IFaceNode
 {
 private:
     IFace& _face;
@@ -18,6 +19,11 @@ public:
     FaceNode(IFace& face) :
         _face(face)
     {}
+
+    IFace& getFace() override
+    {
+        return _face;
+    }
 
     void beginTransformation() override
     {

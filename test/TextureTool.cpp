@@ -217,6 +217,18 @@ inline AABB getTextureSpaceBounds(const IPatch& patch)
     return bounds;
 }
 
+inline AABB getTextureSpaceBounds(const IFace& face)
+{
+    AABB bounds;
+
+    for (const auto& vertex : face.getWinding())
+    {
+        bounds.includePoint({ vertex.texcoord.x(), vertex.texcoord.y(), 0 });
+    }
+
+    return bounds;
+}
+
 constexpr int TEXTOOL_WIDTH = 500;
 constexpr int TEXTOOL_HEIGHT = 400;
 
@@ -233,6 +245,25 @@ inline scene::INodePtr setupPatchNodeForTextureTool()
     Node_setSelected(patchNode, true);
 
     return patchNode;
+}
+
+inline textool::IFaceNode::Ptr findTexToolFaceWithNormal(const Vector3& normal)
+{
+    textool::IFaceNode::Ptr result;
+
+    GlobalTextureToolSceneGraph().foreachNode([&](const textool::INode::Ptr& node)
+    {
+        auto faceNode = std::dynamic_pointer_cast<textool::IFaceNode>(node);
+
+        if (faceNode && math::isNear(faceNode->getFace().getPlane3().normal(), normal, 0.01))
+        {
+            result = faceNode;
+        }
+
+        return result == nullptr;
+    });
+
+    return result;
 }
 
 // Default manipulator mode should be "Drag"
@@ -301,6 +332,52 @@ TEST_F(TextureToolTest, TestSelectPatchByPoint)
     EXPECT_EQ(selectedNodes.size(), 1) << "Only one patch should be selected";
 }
 
+TEST_F(TextureToolTest, TestSelectFaceByPoint)
+{
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto brush = algorithm::createCubicBrush(worldspawn, Vector3(0, 256, 256), "textures/numbers/1");
+    scene::addNodeToContainer(brush, worldspawn);
+
+    // Put all faces into the tex tool scene
+    Node_setSelected(brush, true);
+
+    auto faceUp = algorithm::findBrushFaceWithNormal(Node_getIBrush(brush), Vector3(0, 0, 1));
+
+    // Check the face
+    auto textoolFace = findTexToolFaceWithNormal(faceUp->getPlane3().normal());
+    EXPECT_FALSE(textoolFace->isSelected()) << "Face should be unselected at start";
+
+    // Get the texture space bounds of this face
+    // Construct a view that includes the patch UV bounds
+    auto bounds = getTextureSpaceBounds(*faceUp);
+    bounds.extents *= 1.2f;
+
+    render::TextureToolView view;
+    view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
+
+    // Check the device coords of the face centroid
+    auto centroid = algorithm::getFaceCentroid(faceUp);
+    auto centroidTransformed = view.GetViewProjection().transformPoint(Vector3(centroid.x(), centroid.y(), 0));
+    Vector2 devicePoint(centroidTransformed.x(), centroidTransformed.y());
+
+    // Use the device point we calculated for this vertex and use it to construct a selection test
+    ConstructSelectionTest(view, selection::Rectangle::ConstructFromPoint(devicePoint, Vector2(0.02f, 0.02f)));
+
+    SelectionVolume test(view);
+    GlobalTextureToolSelectionSystem().selectPoint(test, SelectionSystem::eToggle);
+
+    // Check if the node was selected
+    std::vector<textool::INode::Ptr> selectedNodes;
+    GlobalTextureToolSelectionSystem().foreachSelectedNode([&](const textool::INode::Ptr& node)
+    {
+        selectedNodes.push_back(node);
+        return true;
+    });
+
+    EXPECT_EQ(selectedNodes.size(), 1) << "Only one item should be selected";
+    EXPECT_EQ(selectedNodes.front(), textoolFace) << "The face should be selected";
+}
+
 TEST_F(TextureToolTest, TestSelectPatchByArea)
 {
     auto patchNode = setupPatchNodeForTextureTool();
@@ -330,6 +407,92 @@ TEST_F(TextureToolTest, TestSelectPatchByArea)
     });
 
     EXPECT_EQ(selectedNodes.size(), 1) << "Only one patch should be selected";
+}
+
+inline std::vector<Vector2> getTexcoords(const IFace* face)
+{
+    std::vector<Vector2> uvs;
+
+    for (const auto& vertex : face->getWinding())
+    {
+        uvs.push_back(vertex.texcoord);
+    }
+
+    return uvs;
+}
+
+TEST_F(TextureToolTest, DragManipulateFace)
+{
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto brush = algorithm::createCubicBrush(worldspawn, Vector3(0, 256, 256), "textures/numbers/1");
+
+    // Put all faces into the tex tool scene
+    Node_setSelected(brush, true);
+
+    auto faceUp = algorithm::findBrushFaceWithNormal(Node_getIBrush(brush), Vector3(0, 0, 1));
+    auto faceDown = algorithm::findBrushFaceWithNormal(Node_getIBrush(brush), Vector3(0, 0, -1));
+
+    // Remember the texcoords of this face
+    auto oldFaceUpUvs = getTexcoords(faceUp);
+    auto oldFaceDownUvs = getTexcoords(faceDown);
+
+    // Select the face
+    auto textoolFace = findTexToolFaceWithNormal(faceUp->getPlane3().normal());
+    textoolFace->setSelected(true);
+
+    // Get the texture space bounds of this face
+    // Construct a view that includes the patch UV bounds
+    auto bounds = getTextureSpaceBounds(*faceUp);
+    bounds.extents *= 1.2f;
+
+    render::TextureToolView view;
+    view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
+
+    // Check the device coords of the face centroid
+    auto centroid = algorithm::getFaceCentroid(faceUp);
+    auto centroidTransformed = view.GetViewProjection().transformPoint(Vector3(centroid.x(), centroid.y(), 0));
+    Vector2 devicePoint(centroidTransformed.x(), centroidTransformed.y());
+
+    GlobalTextureToolSelectionSystem().onManipulationStart();
+
+    // Simulate a transformation by click-and-drag
+    auto manipulator = GlobalTextureToolSelectionSystem().getActiveManipulator();
+    EXPECT_EQ(manipulator->getType(), selection::IManipulator::Drag) << "Wrong manipulator";
+
+    render::View scissored(view);
+    ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromPoint(devicePoint, Vector2(0.05, 0.05)));
+
+    auto manipComponent = manipulator->getActiveComponent();
+    auto pivot2World = GlobalTextureToolSelectionSystem().getPivot2World();
+    manipComponent->beginTransformation(pivot2World, scissored, devicePoint);
+
+    // Move the device point a bit to the lower right
+    auto secondDevicePoint = devicePoint + (Vector2(1, -1) - devicePoint) / 2;
+
+    render::View scissored2(view);
+    ConstructSelectionTest(scissored2, selection::Rectangle::ConstructFromPoint(secondDevicePoint, Vector2(0.05, 0.05)));
+
+    manipComponent->transform(pivot2World, scissored2, secondDevicePoint, selection::IManipulator::Component::Constraint::Unconstrained);
+
+    GlobalTextureToolSelectionSystem().onManipulationFinished();
+
+    // All the texcoords should have been moved to the lower right (U increased, V increased)
+    auto oldUv = oldFaceUpUvs.begin();
+    for (const auto& vertex : faceUp->getWinding())
+    {
+        EXPECT_LT(oldUv->x(), vertex.texcoord.x());
+        EXPECT_LT(oldUv->y(), vertex.texcoord.y());
+        ++oldUv;
+    }
+
+    // The texcoords of the other face should not have been changed
+    oldUv = oldFaceDownUvs.begin();
+    for (const auto& vertex : faceDown->getWinding())
+    {
+        EXPECT_EQ(oldUv->x(), vertex.texcoord.x());
+        EXPECT_EQ(oldUv->y(), vertex.texcoord.y());
+        ++oldUv;
+    }
 }
 
 }

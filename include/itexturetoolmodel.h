@@ -57,6 +57,18 @@ public:
     virtual void render() = 0;
 };
 
+// Node representing a single brush face
+class IFaceNode :
+    public virtual INode
+{
+public:
+    virtual ~IFaceNode() {}
+
+    using Ptr = std::shared_ptr<IFaceNode>;
+
+    virtual IFace& getFace() = 0;
+};
+
 /**
  * The scene graph of all texture tool items. From all the selected
  * items in the regular SceneGraph the texture-editable elements

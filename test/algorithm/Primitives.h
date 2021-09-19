@@ -62,7 +62,7 @@ inline scene::INodePtr createCuboidBrush(const scene::INodePtr& parent,
 
 inline IFace* findBrushFaceWithNormal(IBrush* brush, const Vector3& normal)
 {
-    for (auto i = 0; brush->getNumFaces(); ++i)
+    for (auto i = 0; i < brush->getNumFaces(); ++i)
     {
         auto& face = brush->getFace(i);
 
@@ -88,6 +88,22 @@ inline bool faceHasVertex(const IFace* face, const std::function<bool(const Wind
     }
 
     return false;
+}
+
+inline Vector2 getFaceCentroid(const IFace* face)
+{
+    if (face->getWinding().empty()) return { 0, 0 };
+
+    Vector2 centroid = face->getWinding()[0].texcoord;
+
+    for (std::size_t i = 1; i < face->getWinding().size(); ++i)
+    {
+        centroid += face->getWinding()[i].texcoord;
+    }
+
+    centroid /= static_cast<Vector2::ElementType>(face->getWinding().size());
+
+    return centroid;
 }
 
 inline scene::INodePtr createPatchFromBounds(const scene::INodePtr& parent,

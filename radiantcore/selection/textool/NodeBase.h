@@ -7,7 +7,7 @@ namespace textool
 {
 
 class NodeBase :
-    public INode
+    public virtual INode
 {
 private:
     selection::BasicSelectable _selectable;
