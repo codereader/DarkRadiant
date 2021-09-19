@@ -157,6 +157,18 @@ void TextureToolSelectionSystem::foreachSelectedComponentNode(const std::functio
     });
 }
 
+void TextureToolSelectionSystem::foreachSelectedNodeOfAnyType(const std::function<bool(const INode::Ptr&)>& functor)
+{
+    if (getMode() == SelectionMode::Surface)
+    {
+        foreachSelectedNode(functor);
+    }
+    else
+    {
+        foreachSelectedComponentNode(functor);
+    }
+}
+
 std::size_t TextureToolSelectionSystem::registerManipulator(const selection::ITextureToolManipulator::Ptr& manipulator)
 {
     std::size_t newId = 1;
@@ -284,22 +296,11 @@ Matrix4 TextureToolSelectionSystem::getPivot2World()
 
 void TextureToolSelectionSystem::onManipulationStart()
 {
-    if (getMode() == SelectionMode::Surface)
+    foreachSelectedNodeOfAnyType([&](const INode::Ptr& node)
     {
-        foreachSelectedNode([&](const INode::Ptr& node)
-        {
-            node->beginTransformation();
-            return true;
-        });
-    }
-    else
-    {
-        foreachSelectedComponentNode([&](const INode::Ptr& node)
-        {
-            node->beginTransformation();
-            return true;
-        });
-    }
+        node->beginTransformation();
+        return true;
+    });
 }
 
 void TextureToolSelectionSystem::onManipulationChanged()
@@ -308,44 +309,22 @@ void TextureToolSelectionSystem::onManipulationChanged()
 
 void TextureToolSelectionSystem::onManipulationFinished()
 {
-    if (getMode() == SelectionMode::Surface)
+    foreachSelectedNodeOfAnyType([&](const INode::Ptr& node)
     {
-        foreachSelectedNode([&](const INode::Ptr& node)
-        {
-            node->commitTransformation();
-            return true;
-        });
-    }
-    else
-    {
-        foreachSelectedComponentNode([&](const INode::Ptr& node)
-        {
-            node->commitTransformation();
-            return true;
-        });
-    }
+        node->commitTransformation();
+        return true;
+    });
 
     getActiveManipulator()->setSelected(false);
 }
 
 void TextureToolSelectionSystem::onManipulationCancelled()
 {
-    if (getMode() == SelectionMode::Surface)
+    foreachSelectedNodeOfAnyType([&](const INode::Ptr& node)
     {
-        foreachSelectedNode([&](const INode::Ptr& node)
-        {
-            node->revertTransformation();
-            return true;
-        });
-    }
-    else
-    {
-        foreachSelectedComponentNode([&](const INode::Ptr& node)
-        {
-            node->revertTransformation();
-            return true;
-        });
-    }
+        node->revertTransformation();
+        return true;
+    });
 }
 
 sigc::signal<void, selection::IManipulator::Type>& TextureToolSelectionSystem::signal_activeManipulatorChanged()

@@ -656,7 +656,7 @@ inline std::vector<Vector2> getTexcoords(const IFace* face)
     return uvs;
 }
 
-void dragManipulateSelectionTowardsLowerRight(const Vector2& startTexcoord, const render::View& view)
+void dragManipulateSelectionTowardsLowerRight(const Vector2& startTexcoord, const render::View& view, bool cancelInsteadOfFinish = false)
 {
     auto centroid = startTexcoord;
     auto centroidTransformed = view.GetViewProjection().transformPoint(Vector3(centroid.x(), centroid.y(), 0));
@@ -683,7 +683,14 @@ void dragManipulateSelectionTowardsLowerRight(const Vector2& startTexcoord, cons
 
     manipComponent->transform(pivot2World, scissored2, secondDevicePoint, selection::IManipulator::Component::Constraint::Unconstrained);
 
-    GlobalTextureToolSelectionSystem().onManipulationFinished();
+    if (!cancelInsteadOfFinish)
+    {
+        GlobalTextureToolSelectionSystem().onManipulationFinished();
+    }
+    else
+    {
+        GlobalTextureToolSelectionSystem().onManipulationCancelled();
+    }
 }
 
 TEST_F(TextureToolTest, DragManipulateFace)
@@ -736,7 +743,7 @@ TEST_F(TextureToolTest, DragManipulateFace)
     }
 }
 
-TEST_F(TextureToolTest, DragManipulatePatch)
+void performPatchManipulationTest(bool cancelOperation)
 {
     auto patchNode = setupPatchNodeForTextureTool();
     auto patch = Node_getIPatch(patchNode);
@@ -755,21 +762,45 @@ TEST_F(TextureToolTest, DragManipulatePatch)
     render::TextureToolView view;
     view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
 
-    // Check the device coords of the face centroid
+    // Check the device coords of a point in the middle of the patch
     auto centroid = Vector2(bounds.origin.x(), bounds.origin.y());
-    dragManipulateSelectionTowardsLowerRight(centroid, view);
+    dragManipulateSelectionTowardsLowerRight(centroid, view, cancelOperation); // optionally cancel
 
-    // All the texcoords should have been moved to the lower right (U increased, V increased)
-    auto oldUv = oldTexcoords.begin();
-    foreachPatchVertex(*patch, [&](const PatchControl& control)
+    std::vector<Vector2> changedTexcoords;
+    foreachPatchVertex(*patch, [&](const PatchControl& control) { changedTexcoords.push_back(control.texcoord); });
+
+    if (!cancelOperation)
     {
-        EXPECT_LT(oldUv->x(), control.texcoord.x());
-        EXPECT_LT(oldUv->y(), control.texcoord.y());
-        ++oldUv;
-    });
+        // All the texcoords should have been moved to the lower right (U increased, V increased)
+        for (auto i = 0; i < oldTexcoords.size(); ++i)
+        {
+            EXPECT_LT(oldTexcoords[i].x(), changedTexcoords[i].x());
+            EXPECT_LT(oldTexcoords[i].y(), changedTexcoords[i].y());
+        }
+    }
+    else
+    {
+        // All texcoords should remain unchanged
+        for (auto i = 0; i < oldTexcoords.size(); ++i)
+        {
+            // should be unchanged
+            EXPECT_NEAR(oldTexcoords[i].x(), changedTexcoords[i].x(), 0.01);
+            EXPECT_NEAR(oldTexcoords[i].y(), changedTexcoords[i].y(), 0.01);
+        }
+    }
 }
 
-TEST_F(TextureToolTest, DragManipulatePatchVertices)
+TEST_F(TextureToolTest, DragManipulatePatch)
+{
+    performPatchManipulationTest(false); // don't cancel
+}
+
+TEST_F(TextureToolTest, CancelDragManipulationOfPatch)
+{
+    performPatchManipulationTest(true); // cancel
+}
+
+void performPatchVertexManipulationTest(bool cancelOperation)
 {
     auto patchNode = setupPatchNodeForTextureTool();
     auto patch = Node_getIPatch(patchNode);
@@ -786,39 +817,59 @@ TEST_F(TextureToolTest, DragManipulatePatchVertices)
     view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
 
     GlobalTextureToolSelectionSystem().setMode(textool::SelectionMode::Vertex);
-    
+
     // Select every odd vertex
-    for (auto i = 0; i < oldTexcoords.size(); ++i)
+    for (auto i = 1; i < oldTexcoords.size(); i += 2)
     {
-        if (i % 2 == 1)
-        {
-            performPointSelection(oldTexcoords[i], view);
-        }
+        performPointSelection(oldTexcoords[i], view);
     }
 
     EXPECT_EQ(getAllSelectedComponentNodes().size(), 1) << "No component node selected";
 
     // Drag-manipulate the first odd vertex
-    dragManipulateSelectionTowardsLowerRight(oldTexcoords[1], view);
+    dragManipulateSelectionTowardsLowerRight(oldTexcoords[1], view, cancelOperation); // optionally cancel the operation
 
     std::vector<Vector2> changedTexcoords;
     foreachPatchVertex(*patch, [&](const PatchControl& control) { changedTexcoords.push_back(control.texcoord); });
 
-    // All odd texcoords should have been moved to the lower right (U increased, V increased)
-    for (auto i = 0; i < oldTexcoords.size(); ++i)
+    if (!cancelOperation)
     {
-        if (i % 2 == 1)
+        // All odd texcoords should have been moved to the lower right (U increased, V increased)
+        for (auto i = 0; i < oldTexcoords.size(); ++i)
         {
-            EXPECT_LT(oldTexcoords[i].x(), changedTexcoords[i].x());
-            EXPECT_LT(oldTexcoords[i].y(), changedTexcoords[i].y());
+            if (i % 2 == 1)
+            {
+                EXPECT_LT(oldTexcoords[i].x(), changedTexcoords[i].x());
+                EXPECT_LT(oldTexcoords[i].y(), changedTexcoords[i].y());
+            }
+            else
+            {
+                // should be unchanged
+                EXPECT_NEAR(oldTexcoords[i].x(), changedTexcoords[i].x(), 0.01);
+                EXPECT_NEAR(oldTexcoords[i].y(), changedTexcoords[i].y(), 0.01);
+            }
         }
-        else
+    }
+    else // operation cancelled
+    {
+        // All texcoords should remain unchanged
+        for (auto i = 0; i < oldTexcoords.size(); ++i)
         {
             // should be unchanged
             EXPECT_NEAR(oldTexcoords[i].x(), changedTexcoords[i].x(), 0.01);
             EXPECT_NEAR(oldTexcoords[i].y(), changedTexcoords[i].y(), 0.01);
         }
     }
+}
+
+TEST_F(TextureToolTest, DragManipulatePatchVertices)
+{
+    performPatchVertexManipulationTest(false); // don't cancel
+}
+
+TEST_F(TextureToolTest, CancelDragManipulationOfPatchVertices)
+{
+    performPatchVertexManipulationTest(true); // cancel
 }
 
 }

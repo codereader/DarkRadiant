@@ -58,6 +58,9 @@ public:
     void onManipulationCancelled() override;
 
 private:
+    // Internally switches between the selection modes and iterates over the corresponding collection
+    void foreachSelectedNodeOfAnyType(const std::function<bool(const INode::Ptr&)>& functor);
+
     void toggleManipulatorModeCmd(const cmd::ArgumentList& args);
     void toggleManipulatorModeById(std::size_t manipId);
     std::size_t getManipulatorIdForType(selection::IManipulator::Type type);
