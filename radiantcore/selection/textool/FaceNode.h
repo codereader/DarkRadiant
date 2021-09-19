@@ -105,6 +105,10 @@ public:
         {
             glColor3f(1, 0.5f, 0);
         }
+        else if (mode == SelectionMode::Vertex)
+        {
+            glColor3f(0.6f, 0.6f, 0.6f);
+        }
         else
         {
             glColor3f(0.8f, 0.8f, 0.8f);

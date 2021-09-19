@@ -1431,7 +1431,7 @@
     <ClInclude Include="..\..\radiant\selection\SceneManipulateMouseTool.h">
       <Filter>src\selection</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\textool\TexToolManipulatorToggle.h">
+    <ClInclude Include="..\..\radiant\textool\TexToolModeToggles.h">
       <Filter>src\textool</Filter>
     </ClInclude>
   </ItemGroup>

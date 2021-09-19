@@ -307,6 +307,9 @@
       <toggletoolbutton name="textoolrotate" action="TextureToolRotateMode" tooltip="Rotate" icon="select_mouserotate.png"/>
       <toggletoolbutton name="textooldrag" action="TextureToolDragMode" tooltip="Drag-Manipulate" icon="select_mouseresize.png"/>
       <separator/>
+      <toggletoolbutton name="textoolsurfacemode" action="TextureToolSurfaceSelectionMode" tooltip="Select Surfaces" icon="modify_faces.png"/>
+      <toggletoolbutton name="textoolvertexmode" action="TextureToolVertexSelectionMode" tooltip="Select Vertices" icon="modify_vertices.png"/>
+      <separator/>
       <toolbutton name="mergeitems" action="TexToolMergeItems" tooltip="Merge Selection" icon="textool_merge.png"/>
       <toolbutton name="texflips" action="TexToolFlipS" tooltip="Flip Selection Horiz (S-Axis)" icon="tex_flips.png"/>
       <toolbutton name="texflipt" action="TexToolFlipT" tooltip="Flip Selection Vertical (T-Axis)" icon="tex_flipt.png"/>

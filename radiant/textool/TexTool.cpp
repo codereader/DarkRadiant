@@ -135,6 +135,7 @@ void TexTool::_preHide()
 
 	_selectionChanged.disconnect();
     _manipulatorChanged.disconnect();
+    _selectionModeChanged.disconnect();
 
 	// Clear items to prevent us from running into stale references
 	// when the textool is shown again
@@ -150,6 +151,7 @@ void TexTool::_preShow()
 	_undoHandler.disconnect();
 	_redoHandler.disconnect();
     _manipulatorChanged.disconnect();
+    _selectionModeChanged.disconnect();
 
 	// Register self to the SelSystem to get notified upon selection changes.
 	_selectionChanged = GlobalSelectionSystem().signal_selectionChanged().connect(
@@ -163,6 +165,9 @@ void TexTool::_preShow()
     _manipulatorChanged = GlobalTextureToolSelectionSystem().signal_activeManipulatorChanged().connect(
         sigc::mem_fun(this, &TexTool::onManipulatorModeChanged)
     );
+    _selectionModeChanged = GlobalTextureToolSelectionSystem().signal_selectionModeChanged().connect(
+        sigc::mem_fun(this, &TexTool::onSelectionModeChanged)
+    );
 
 	// Trigger an update of the current selection
     _selectionRescanNeeded = true;
@@ -175,6 +180,11 @@ void TexTool::onUndoRedoOperation()
 }
 
 void TexTool::onManipulatorModeChanged(selection::IManipulator::Type type)
+{
+    queueDraw();
+}
+
+void TexTool::onSelectionModeChanged(textool::SelectionMode mode)
 {
     queueDraw();
 }

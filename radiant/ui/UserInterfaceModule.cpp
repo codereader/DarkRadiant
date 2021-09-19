@@ -218,7 +218,7 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
 	_editStopwatchStatus.reset(new statusbar::EditingStopwatchStatus);
     _mapStatisticsStatus.reset(new statusbar::MapStatistics);
 	_manipulatorToggle.reset(new ManipulatorToggle);
-    _textureToolManipulatorModeToggle.reset(new TextureToolManipulatorToggle);
+    _textureToolModeToggles.reset(new TexToolModeToggles);
 	_selectionModeToggle.reset(new SelectionModeToggle);
 
 	MouseToolRegistrationHelper::RegisterTools();
@@ -257,6 +257,7 @@ void UserInterfaceModule::shutdownModule()
 	_editStopwatchStatus.reset();
 	_manipulatorToggle.reset();
 	_selectionModeToggle.reset();
+    _textureToolModeToggles.reset();
 
 	_mruMenu.reset();
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "icommandsystem.h"
+#include "itexturetoolmodel.h"
 
 #include "wxutil/window/TransientWindow.h"
 #include "math/Vector3.h"
@@ -90,6 +91,7 @@ private:
 	sigc::connection _undoHandler;
 	sigc::connection _redoHandler;
 	sigc::connection _manipulatorChanged;
+	sigc::connection _selectionModeChanged;
 
 private:
 	// This is where the static shared_ptr of the singleton instance is held.
@@ -289,6 +291,7 @@ private:
     void updateProjection();
     double getTextureAspectRatio();
     void onManipulatorModeChanged(selection::IManipulator::Type type);
+    void onSelectionModeChanged(textool::SelectionMode mode);
 
     TextureToolMouseEvent createMouseEvent(const Vector2& point, const Vector2& delta = Vector2(0, 0));
 
