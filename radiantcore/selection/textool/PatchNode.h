@@ -104,7 +104,7 @@ public:
 #endif
     }
 
-    void render() override
+    void render(SelectionMode mode) override
     {
         glEnable(GL_BLEND);
         glBlendColor(0, 0, 0, 0.3f);

@@ -529,7 +529,7 @@ void TexTool::drawUVCoords()
 {
     GlobalTextureToolSceneGraph().foreachNode([&](const textool::INode::Ptr& node)
     {
-        node->render();
+        node->render(GlobalTextureToolSelectionSystem().getMode());
         return true;
     });
 #if 0

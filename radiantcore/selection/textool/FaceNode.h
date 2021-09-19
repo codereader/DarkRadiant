@@ -3,6 +3,7 @@
 #include "ibrush.h"
 #include "NodeBase.h"
 #include "math/Matrix3.h"
+#include "SelectableVertex.h"
 
 namespace textool
 {
@@ -15,10 +16,17 @@ private:
     IFace& _face;
     mutable AABB _bounds;
 
+    std::vector<SelectableVertex> _vertices;
+
 public:
     FaceNode(IFace& face) :
         _face(face)
-    {}
+    {
+        for (auto& vertex : _face.getWinding())
+        {
+            _vertices.emplace_back(vertex.texcoord);
+        }
+    }
 
     IFace& getFace() override
     {
@@ -87,13 +95,13 @@ public:
         }
     }
 
-    void render() override
+    void render(SelectionMode mode) override
     {
         glEnable(GL_BLEND);
         glBlendColor(0, 0, 0, 0.3f);
         glBlendFunc(GL_CONSTANT_ALPHA_EXT, GL_ONE_MINUS_CONSTANT_ALPHA_EXT);
 
-        if (isSelected())
+        if (mode == SelectionMode::Surface && isSelected())
         {
             glColor3f(1, 0.5f, 0);
         }
@@ -112,22 +120,27 @@ public:
         glEnd();
         glDisable(GL_BLEND);
 
-        glPointSize(5);
-        glBegin(GL_POINTS);
-
-        glColor3f(0.7f, 0.7f, 0.7f);
-
-        for (const auto& vertex : _face.getWinding())
+        if (mode == SelectionMode::Vertex)
         {
-            glVertex2d(vertex.texcoord[0], vertex.texcoord[1]);
+            glPointSize(5);
+            glBegin(GL_POINTS);
+
+            for (const auto& vertex : _vertices)
+            {
+                if (vertex.isSelected())
+                {
+                    glColor3f(1, 0.5f, 0);
+                }
+                else
+                {
+                    glColor3f(0.8f, 0.8f, 0.8f);
+                }
+
+                glVertex2d(vertex.getVertex().x(), vertex.getVertex().y());
+            }
+
+            glEnd();
         }
-
-        //glColor3f(1, 1, 1);
-
-        //Vector2 centroid = _face.getWinding();
-        //glVertex2d(centroid[0], centroid[1]);
-
-        glEnd();
 
         glDisable(GL_BLEND);
     }

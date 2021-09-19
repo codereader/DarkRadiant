@@ -61,7 +61,7 @@ public:
     using Ptr = std::shared_ptr<INode>;
 
     // Renders this node, with all coords relative to UV space origin
-    virtual void render() = 0;
+    virtual void render(SelectionMode mode) = 0;
 };
 
 // Node representing a single brush face

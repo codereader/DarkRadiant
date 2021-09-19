@@ -1031,6 +1031,7 @@
     <ClInclude Include="..\..\radiantcore\selection\textool\FaceNode.h" />
     <ClInclude Include="..\..\radiantcore\selection\textool\NodeBase.h" />
     <ClInclude Include="..\..\radiantcore\selection\textool\PatchNode.h" />
+    <ClInclude Include="..\..\radiantcore\selection\textool\SelectableVertex.h" />
     <ClInclude Include="..\..\radiantcore\selection\textool\TextureToolDragManipulator.h" />
     <ClInclude Include="..\..\radiantcore\selection\textool\TextureToolManipulationPivot.h" />
     <ClInclude Include="..\..\radiantcore\selection\textool\TextureToolRotateManipulator.h" />
