@@ -930,4 +930,171 @@ TEST_F(TextureToolTest, PivotIsRecalculatedWhenSwitchingModes)
         "Pivot should be at the center of the patch after switching back to surface mode";
 }
 
+void performFaceVertexManipulationTest(bool cancelOperation, std::vector<std::size_t> vertexIndicesToManipulate,
+    std::function<void(IFace&, const std::vector<Vector2>&, const std::vector<Vector2>&)> assertionFunc)
+{
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto brush = algorithm::createCubicBrush(worldspawn, Vector3(0, 256, 256), "textures/numbers/1");
+    scene::addNodeToContainer(brush, worldspawn);
+
+    // Put all faces into the tex tool scene
+    Node_setSelected(brush, true);
+
+    auto faceUp = algorithm::findBrushFaceWithNormal(Node_getIBrush(brush), Vector3(0, 0, 1));
+
+    // Remember the texcoords before manipulation
+    std::vector<Vector2> oldTexcoords;
+    for (const auto& vertex : faceUp->getWinding()) { oldTexcoords.push_back(vertex.texcoord); }
+
+    // Get the texture space bounds of this face
+    auto bounds = getTextureSpaceBounds(*faceUp);
+    bounds.extents *= 1.2f;
+
+    render::TextureToolView view;
+    view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
+
+    GlobalTextureToolSelectionSystem().setMode(textool::SelectionMode::Vertex);
+
+    // Select a certain number of vertices
+    for (auto index : vertexIndicesToManipulate)
+    {
+        performPointSelection(oldTexcoords[index], view);
+    }
+
+    EXPECT_EQ(getAllSelectedComponentNodes().size(), 1) << "No component node selected";
+
+    // Drag-manipulate the first odd vertex
+    auto firstIndex = vertexIndicesToManipulate.front();
+    dragManipulateSelectionTowardsLowerRight(oldTexcoords[firstIndex], view, cancelOperation); // optionally cancel the operation
+
+    std::vector<Vector2> changedTexcoords;
+    for (const auto& vertex : faceUp->getWinding()) { changedTexcoords.push_back(vertex.texcoord); }
+
+    assertionFunc(*faceUp, oldTexcoords, changedTexcoords);
+}
+
+inline void assertAllCoordsUnchanged(IFace&, const std::vector<Vector2>& oldTexcoords, const std::vector<Vector2>& changedTexcoords)
+{
+    // All texcoords should remain unchanged
+    for (auto i = 0; i < oldTexcoords.size(); ++i)
+    {
+        // should be unchanged
+        EXPECT_NEAR(oldTexcoords[i].x(), changedTexcoords[i].x(), 0.01);
+        EXPECT_NEAR(oldTexcoords[i].y(), changedTexcoords[i].y(), 0.01);
+    }
+}
+
+inline void assertAllCoordsMovedBySameAmount(IFace&, const std::vector<Vector2>& oldTexcoords, const std::vector<Vector2>& changedTexcoords)
+{
+    // All manipulated vertices should have been changed by the same amount
+    auto draggedDistanceOfFirst = (changedTexcoords[0] - oldTexcoords[0]).getLengthSquared();
+
+    EXPECT_GT(draggedDistanceOfFirst, 0) << "Vertex 0 hasn't been moved at all";
+
+    for (int i = 1; i < changedTexcoords.size(); ++i)
+    {
+        auto draggedDistance = (changedTexcoords[i] - oldTexcoords[i]).getLengthSquared();
+        EXPECT_NEAR(draggedDistance, draggedDistanceOfFirst, 0.01)
+            << "The vertex " << i << " should have been moved by the same amount as vertex 0";
+    }
+}
+
+// When manipulating one vertex, the "opposite" vertex should remain the same as it is chosen as fixed point
+TEST_F(TextureToolTest, DragManipulateSingleFaceVertex)
+{
+    performFaceVertexManipulationTest(false, { 0 }, [](IFace& face, 
+        const std::vector<Vector2>& oldTexcoords, const std::vector<Vector2>& changedTexcoords)
+    {
+        // Find out which face vertex was the farthest away from the modified one
+        int farthestIndex = 1;
+        double largestDistance = 0;
+        for (int i = 1; i < oldTexcoords.size(); ++i)
+        {
+            auto candidateDistance = (oldTexcoords[i] - oldTexcoords[0]).getLengthSquared();
+            if (candidateDistance > largestDistance)
+            {
+                farthestIndex = i;
+                largestDistance = candidateDistance;
+            }
+        }
+
+        // The farthest vertex should remain unchanged
+        EXPECT_NEAR(oldTexcoords[farthestIndex].x(), changedTexcoords[farthestIndex].x(), 0.01) << "Opposite vertex X should remain unchanged";
+        EXPECT_NEAR(oldTexcoords[farthestIndex].y(), changedTexcoords[farthestIndex].y(), 0.01) << "Opposite vertex Y should remain unchanged";
+
+        // All the others will have changed in some way
+        for (int i = 0; i < oldTexcoords.size(); ++i)
+        {
+            if (i == farthestIndex) continue;
+
+            EXPECT_FALSE(float_equal_epsilon(oldTexcoords[i].x(), changedTexcoords[i].x(), 0.05)) << "Vertex " << i << " x should have changed";
+            EXPECT_FALSE(float_equal_epsilon(oldTexcoords[i].y(), changedTexcoords[i].y(), 0.05)) << "Vertex " << i << " y should have changed";;
+        }
+    }); 
+}
+
+// Dragging two selected vertices chooses the one vertex as anchor point which is farthest away from the clicked vertex
+TEST_F(TextureToolTest, DragManipulateTwoFaceVertices)
+{
+    // Vertices 0 and 2 are opposite of each other, but 0 takes the lead
+    std::size_t firstVertex = 0;
+    std::size_t secondVertex = 2;
+    performFaceVertexManipulationTest(false, { firstVertex, secondVertex }, [&](IFace& face,
+        const std::vector<Vector2>& oldTexcoords, const std::vector<Vector2>& changedTexcoords)
+    {
+        // Find out which face vertex was the farthest away from the first one
+        int farthestIndex = 1;
+        double largestDistance = 0;
+        for (int i = 0; i < oldTexcoords.size(); ++i)
+        {
+            if (i == firstVertex || i == secondVertex) continue;
+
+            auto candidateDistance = (oldTexcoords[i] - oldTexcoords[firstVertex]).getLengthSquared();
+            if (candidateDistance > largestDistance)
+            {
+                farthestIndex = i;
+                largestDistance = candidateDistance;
+            }
+        }
+
+        // The farthest vertex should remain unchanged
+        EXPECT_NEAR(oldTexcoords[farthestIndex].x(), changedTexcoords[farthestIndex].x(), 0.01) << "Opposite vertex X should remain unchanged";
+        EXPECT_NEAR(oldTexcoords[farthestIndex].y(), changedTexcoords[farthestIndex].y(), 0.01) << "Opposite vertex Y should remain unchanged";
+
+        // The two manipulated vertices should have been changed by the same amount
+        auto draggedDistanceOfFirst = changedTexcoords[firstVertex] - oldTexcoords[firstVertex];
+        auto draggedDistanceOfSecond = changedTexcoords[secondVertex] - oldTexcoords[secondVertex];
+
+        EXPECT_NEAR(draggedDistanceOfFirst.getLengthSquared(), draggedDistanceOfSecond.getLengthSquared(), 0.01);
+
+        // All the other non-fixed vertices will have changed in some way
+        for (int i = 0; i < oldTexcoords.size(); ++i)
+        {
+            if (i == firstVertex || i == secondVertex || i == farthestIndex) continue;
+
+            EXPECT_FALSE(float_equal_epsilon(oldTexcoords[i].x(), changedTexcoords[i].x(), 0.05)) << "Vertex " << i << " x should have changed";
+            EXPECT_FALSE(float_equal_epsilon(oldTexcoords[i].y(), changedTexcoords[i].y(), 0.05)) << "Vertex " << i << " y should have changed";;
+        }
+    });
+}
+
+// Dragging three (or more) selected vertices should move all of the face vertices by the same amount
+TEST_F(TextureToolTest, DragManipulateThreeFaceVertices)
+{
+    // Select three vertices
+    performFaceVertexManipulationTest(false, { 0, 1, 2 }, assertAllCoordsMovedBySameAmount);
+}
+
+// Dragging three (or more) selected vertices should move all of the face vertices by the same amount
+TEST_F(TextureToolTest, DragManipulateFourFaceVertices)
+{
+    // Select four vertices
+    performFaceVertexManipulationTest(false, { 0, 1, 2, 3 }, assertAllCoordsMovedBySameAmount);
+}
+
+TEST_F(TextureToolTest, CancelDragManipulationOfFaceVertices)
+{
+    performFaceVertexManipulationTest(true, { 0 }, assertAllCoordsUnchanged); // cancel
+}
+
 }
