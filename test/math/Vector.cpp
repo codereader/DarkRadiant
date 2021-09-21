@@ -514,4 +514,19 @@ TEST(VectorTest, ProjectVector4To3)
     EXPECT_EQ(v2.getProjected(), Vector3(500, -4, 6));
 }
 
+TEST(VectorTest, TruncateVector4To3)
+{
+    // Const truncation
+    const Vector4 v1(56, 58, 40, 2);
+    Vector3 v1Trunc = v1.getVector3();
+    EXPECT_EQ(v1Trunc, Vector3(56, 58, 40));
+    EXPECT_NE(v1Trunc, v1.getProjected());
+
+    // Non-const truncation and editing
+    Vector4 v2(-5, 18, 0.96, -0.1);
+    EXPECT_EQ(v2.getVector3(), Vector3(-5, 18, 0.96));
+    v2.getVector3() = Vector3(128, -128, 256);
+    EXPECT_EQ(v2, Vector4(128, -128, 256, -0.1));
+}
+
 }
