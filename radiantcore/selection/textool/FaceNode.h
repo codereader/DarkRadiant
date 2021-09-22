@@ -58,14 +58,23 @@ public:
     {
         std::vector<std::size_t> selectedIndices;
 
+        // We need to remember the old texture coordinates to determine the fixed points
+        std::vector<Vector2> unchangedTexcoords;
+        AABB selectionBounds;
+
         // Manipulate every selected vertex using the given transform
         for (std::size_t i = 0; i < _vertices.size(); ++i)
         {
             auto& vertex = _vertices[i];
 
+            unchangedTexcoords.push_back(vertex.getTexcoord());
+
             if (!vertex.isSelected()) continue;
 
+            selectionBounds.includePoint({ vertex.getTexcoord().x(), vertex.getTexcoord().y(), 0 });
             selectedIndices.push_back(i);
+
+            // Apply the transform to the selected texcoord
             vertex.getTexcoord() = transform * vertex.getTexcoord();
         }
 
@@ -94,10 +103,9 @@ public:
         else if (selectionCount == 2)
         {
             // Calculate the center point of the selection and pick the vertex that is farthest from it
-            auto selectionBounds = getSelectedComponentBounds();
             auto farthestIndex = findIndexFarthestFrom(
                 { selectionBounds.origin.x(), selectionBounds.origin.y() },
-                selectedIndices);
+                unchangedTexcoords, selectedIndices);
 
             for (std::size_t i = 0; i < 2; ++i)
             {
@@ -115,12 +123,13 @@ public:
             assert(selectionCount == 1);
             std::vector<std::size_t> fixedVerts{ selectedIndices[0] };
 
-            auto secondIndex = findIndexFarthestFrom(_vertices[selectedIndices[0]].getTexcoord(), fixedVerts);
+            auto secondIndex = findIndexFarthestFrom(unchangedTexcoords[selectedIndices[0]], 
+                unchangedTexcoords, fixedVerts);
             fixedVerts.push_back(secondIndex);
 
             // Now we've got two vertices, calculate the center and take the farthest of that one
-            auto center = (_vertices[secondIndex].getTexcoord() + _vertices[selectedIndices[0]].getTexcoord()) * 0.5;
-            auto thirdIndex = findIndexFarthestFrom(center, fixedVerts);
+            auto center = (unchangedTexcoords[secondIndex] + unchangedTexcoords[selectedIndices[0]]) * 0.5;
+            auto thirdIndex = findIndexFarthestFrom(center, unchangedTexcoords, fixedVerts);
             fixedVerts.push_back(thirdIndex);
 
             for (std::size_t i = 0; i < 3; ++i)
@@ -210,18 +219,19 @@ public:
 private:
     // Locates the index of the vertex that is farthest away from the given texcoord
     // the indices contained in exludedIndices are not returned
-    std::size_t findIndexFarthestFrom(const Vector2& texcoord, const std::vector<std::size_t>& excludedIndices)
+    static std::size_t findIndexFarthestFrom(const Vector2& texcoord, 
+        const std::vector<Vector2>& allCoords, const std::vector<std::size_t>& excludedIndices)
     {
-        assert(!_vertices.empty());
+        assert(!allCoords.empty());
 
         std::size_t farthestIndex = 0;
         double largestDistanceSquared = 0;
 
-        for (std::size_t i = 0; i < _vertices.size(); ++i)
+        for (std::size_t i = 0; i < allCoords.size(); ++i)
         {
             if (std::find(excludedIndices.begin(), excludedIndices.end(), i) != excludedIndices.end()) continue;
 
-            auto candidateDistanceSquared = (_vertices[i].getTexcoord() - texcoord).getLengthSquared();
+            auto candidateDistanceSquared = (allCoords[i] - texcoord).getLengthSquared();
 
             if (candidateDistanceSquared > largestDistanceSquared)
             {
