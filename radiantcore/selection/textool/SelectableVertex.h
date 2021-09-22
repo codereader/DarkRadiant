@@ -9,19 +9,31 @@ class SelectableVertex :
     public selection::BasicSelectable
 {
 private:
+    Vector3& _vertex;
     Vector2& _texcoord;
 
 public:
-    SelectableVertex(Vector2& texcoord) :
+    SelectableVertex(Vector3& vertex, Vector2& texcoord) :
+        _vertex(vertex),
         _texcoord(texcoord)
     {}
 
-    const Vector2& getVertex() const
+    const Vector3& getVertex() const
+    {
+        return _vertex;
+    }
+
+    Vector3& getVertex()
+    {
+        return _vertex;
+    }
+
+    const Vector2& getTexcoord() const
     {
         return _texcoord;
     }
 
-    Vector2& getVertex()
+    Vector2& getTexcoord()
     {
         return _texcoord;
     }

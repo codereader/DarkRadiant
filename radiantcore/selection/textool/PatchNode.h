@@ -22,7 +22,7 @@ public:
     {
         foreachVertex([&](PatchControl& vertex)
         {
-            _vertices.emplace_back(vertex.texcoord);
+            _vertices.emplace_back(vertex.vertex, vertex.texcoord);
         });
     }
 
@@ -62,7 +62,7 @@ public:
         {
             if (!vertex.isSelected()) continue;
 
-            vertex.getVertex() = transform * vertex.getVertex();
+            vertex.getTexcoord() = transform * vertex.getTexcoord();
         }
 
         // We have to force the patch to update its tesselation since

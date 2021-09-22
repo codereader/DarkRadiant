@@ -57,7 +57,7 @@ public:
         for (auto& vertex : _vertices)
         {
             SelectionIntersection intersection;
-            test.TestPoint(Vector3(vertex.getVertex().x(), vertex.getVertex().y(), 0), intersection);
+            test.TestPoint(Vector3(vertex.getTexcoord().x(), vertex.getTexcoord().y(), 0), intersection);
 
             if (intersection.isValid())
             {
@@ -74,7 +74,7 @@ public:
         {
             if (!vertex.isSelected()) continue;
 
-            bounds.includePoint({ vertex.getVertex().x(), vertex.getVertex().y(), 0 });
+            bounds.includePoint({ vertex.getTexcoord().x(), vertex.getTexcoord().y(), 0 });
         }
 
         return bounds;
@@ -100,7 +100,7 @@ protected:
             }
 
             // Move the selected vertices a bit up in the Z area
-            glVertex3d(vertex.getVertex().x(), vertex.getVertex().y(), vertex.isSelected() ? 0.1f : 0);
+            glVertex3d(vertex.getTexcoord().x(), vertex.getTexcoord().y(), vertex.isSelected() ? 0.1f : 0);
         }
 
         glEnd();

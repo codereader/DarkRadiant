@@ -22,7 +22,7 @@ public:
     {
         for (auto& vertex : _face.getWinding())
         {
-            _vertices.emplace_back(vertex.texcoord);
+            _vertices.emplace_back(vertex.vertex, vertex.texcoord);
         }
     }
 
@@ -56,7 +56,39 @@ public:
 
     void transformComponents(const Matrix3& transform) override
     {
-        // TODO
+        std::vector<std::size_t> selectedIndices;
+
+        // Manipulate every selected vertex using the given transform
+        for (std::size_t i = 0; i < _vertices.size(); ++i)
+        {
+            auto& vertex = _vertices[i];
+
+            if (!vertex.isSelected()) continue;
+
+            selectedIndices.push_back(i);
+            vertex.getTexcoord() = transform * vertex.getTexcoord();
+        }
+
+        // Now we need to pick three vertices to calculate the tex def from
+        // we have certain options, depending on the number of selected vertices
+        auto selectionCount = selectedIndices.size();
+
+        Vector3 vertices[3];
+        Vector2 texcoords[2];
+        const auto& winding = _face.getWinding();
+
+        if (selectionCount >= 3)
+        {
+            // Manipulating 3+ vertices means that the whole face is transformed 
+            // the same way. We can pick any of the three selected vertices.
+            for (std::size_t i = 0; i < 3; ++i)
+            {
+                vertices[i] = _vertices[selectedIndices[i]].getVertex();
+                texcoords[i] = _vertices[selectedIndices[i]].getTexcoord();
+            }
+
+            _face.setTexDefFromPoints(vertices, texcoords);
+        }
     }
 
     void commitTransformation() override
