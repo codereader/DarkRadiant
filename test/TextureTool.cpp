@@ -1036,24 +1036,27 @@ TEST_F(TextureToolTest, DragManipulateSingleFaceVertex)
 // Dragging two selected vertices chooses the one vertex as anchor point which is farthest away from the clicked vertex
 TEST_F(TextureToolTest, DragManipulateTwoFaceVertices)
 {
-    // Vertices 0 and 2 are opposite of each other, but 0 takes the lead
+    // Vertices 0 and 2 are opposite of each other
     std::size_t firstVertex = 0;
     std::size_t secondVertex = 2;
     performFaceVertexManipulationTest(false, { firstVertex, secondVertex }, [&](IFace& face,
         const std::vector<Vector2>& oldTexcoords, const std::vector<Vector2>& changedTexcoords)
     {
-        // Find out which face vertex was the farthest away from the first one
-        int farthestIndex = 1;
-        double largestDistance = 0;
-        for (int i = 0; i < oldTexcoords.size(); ++i)
+        auto center = (changedTexcoords[firstVertex] + changedTexcoords[secondVertex]) * 0.5;
+        // Find out which face vertex was the farthest away from the bounds center of the selection
+        std::size_t farthestIndex = 0;
+        double largestDistanceSquared = 0;
+
+        for (std::size_t i = 0; i < changedTexcoords.size(); ++i)
         {
             if (i == firstVertex || i == secondVertex) continue;
 
-            auto candidateDistance = (oldTexcoords[i] - oldTexcoords[firstVertex]).getLengthSquared();
-            if (candidateDistance > largestDistance)
+            auto candidateDistanceSquared = (changedTexcoords[i] - center).getLengthSquared();
+
+            if (candidateDistanceSquared > largestDistanceSquared)
             {
                 farthestIndex = i;
-                largestDistance = candidateDistance;
+                largestDistanceSquared = candidateDistanceSquared;
             }
         }
 

@@ -74,7 +74,7 @@ public:
         auto selectionCount = selectedIndices.size();
 
         Vector3 vertices[3];
-        Vector2 texcoords[2];
+        Vector2 texcoords[3];
         const auto& winding = _face.getWinding();
 
         if (selectionCount >= 3)
@@ -86,6 +86,23 @@ public:
                 vertices[i] = _vertices[selectedIndices[i]].getVertex();
                 texcoords[i] = _vertices[selectedIndices[i]].getTexcoord();
             }
+
+            _face.setTexDefFromPoints(vertices, texcoords);
+        }
+        else if (selectionCount == 2)
+        {
+            // Calculate the center point of the selection and pick the vertex that is farthest from it
+            auto selectionBounds = getSelectedComponentBounds();
+            auto farthestIndex = findIndexFarthestFrom({ selectionBounds.origin.x(), selectionBounds.origin.y() });
+
+            for (std::size_t i = 0; i < 2; ++i)
+            {
+                vertices[i] = _vertices[selectedIndices[i]].getVertex();
+                texcoords[i] = _vertices[selectedIndices[i]].getTexcoord();
+            }
+
+            vertices[2] = _vertices[farthestIndex].getVertex();
+            texcoords[2] = _vertices[farthestIndex].getTexcoord();
 
             _face.setTexDefFromPoints(vertices, texcoords);
         }
@@ -163,6 +180,31 @@ public:
         {
             renderComponents();
         }
+    }
+
+private:
+    // Locates the index of the unselected vertex that is farthest away from the given texcoord
+    std::size_t findIndexFarthestFrom(const Vector2& texcoord)
+    {
+        assert(!_vertices.empty());
+
+        std::size_t farthestIndex = 0;
+        double largestDistanceSquared = 0;
+
+        for (std::size_t i = 0; i < _vertices.size(); ++i)
+        {
+            if (_vertices[i].isSelected()) continue;
+
+            auto candidateDistanceSquared = (_vertices[i].getTexcoord() - texcoord).getLengthSquared();
+
+            if (candidateDistanceSquared > largestDistanceSquared)
+            {
+                farthestIndex = i;
+                largestDistanceSquared = candidateDistanceSquared;
+            }
+        }
+
+        return farthestIndex;
     }
 };
 
