@@ -195,9 +195,9 @@ private:
 	static Matrix4 getMatrixForComponents(const Vector3& translation, const Quaternion& rotation, const Vector3& scale)
 	{
 		Matrix4 result(Matrix4::getRotationQuantised(rotation));
-		result.xCol().getVector3() *= scale.x();
-		result.yCol().getVector3() *= scale.y();
-		result.zCol().getVector3() *= scale.z();
+		result.xCol3() *= scale.x();
+		result.yCol3() *= scale.y();
+		result.zCol3() *= scale.z();
 		result.tx() = translation.x();
 		result.ty() = translation.y();
 		result.tz() = translation.z();

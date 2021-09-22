@@ -45,7 +45,7 @@ private:
 		_viewpointSpace.multiplyBy(scale);
 
 		billboard_viewpointOriented(scale, pivot2screen);
-		_axisScreen = scale.zCol().getVector3();
+		_axisScreen = scale.zCol3();
 		_viewpointSpace.multiplyBy(scale);
 
 		scale = getPerspectiveScale(pivot2screen);

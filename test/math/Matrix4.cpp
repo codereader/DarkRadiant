@@ -121,20 +121,20 @@ TEST(MatrixTest, AccessMatrixColumnVectors)
                                 26, -100, 0.5, 3);
 
     // Read column values
-    EXPECT_EQ(m.xCol(), Vector4(1, 2, 11, 26));
-    EXPECT_EQ(m.yCol(), Vector4(4, 9, -2, -100));
-    EXPECT_EQ(m.zCol(), Vector4(8, 7, 10, 0.5));
+    EXPECT_EQ(m.xCol3(), Vector3(1, 2, 11));
+    EXPECT_EQ(m.yCol3(), Vector3(4, 9, -2));
+    EXPECT_EQ(m.zCol3(), Vector3(8, 7, 10));
     EXPECT_EQ(m.tCol(), Vector4(-5, 13, 14, 3));
     EXPECT_EQ(m.translation(), Vector3(-5, 13, 14));
 
     // Write column values
-    m.xCol() = Vector4(0.1, 0.2, 0.3, 0.4);
-    m.yCol() = Vector4(0.5, 0.6, 0.7, 0.8);
-    m.zCol() = Vector4(0.9, 1.0, 1.1, 1.2);
+    m.xCol3() = Vector3(0.1, 0.2, 0.3);
+    m.yCol3() = Vector3(0.5, 0.6, 0.7);
+    m.zCol3() = Vector3(0.9, 1.0, 1.1);
     m.tCol() = Vector4(1.3, 1.4, 1.5, 1.6);
-    EXPECT_EQ(m, Matrix4::byColumns(0.1, 0.2, 0.3, 0.4,
-                                    0.5, 0.6, 0.7, 0.8,
-                                    0.9, 1.0, 1.1, 1.2,
+    EXPECT_EQ(m, Matrix4::byColumns(0.1, 0.2, 0.3, 26,
+                                    0.5, 0.6, 0.7, -100,
+                                    0.9, 1.0, 1.1, 0.5,
                                     1.3, 1.4, 1.5, 1.6));
 }
 
@@ -536,9 +536,9 @@ TEST(MatrixTest, GetInverseScale)
     Matrix4 invSc = getInverseScale(m);
 
     // Result should be a diagonal matrix containing only a scale
-    EXPECT_TRUE(math::isNear(invSc.xCol(), Vector4(1.0 / 3, 0, 0, 0), 1E-6));
-    EXPECT_TRUE(math::isNear(invSc.yCol(), Vector4(0, 1.0 / 2.5, 0, 0), 1E-6));
-    EXPECT_TRUE(math::isNear(invSc.zCol(), Vector4(0, 0, 1.0 / 8.2, 0), 1E-6));
+    EXPECT_TRUE(math::isNear(invSc.xCol3(), Vector3(1.0 / 3, 0, 0), 1E-6));
+    EXPECT_TRUE(math::isNear(invSc.yCol3(), Vector3(0, 1.0 / 2.5, 0), 1E-6));
+    EXPECT_TRUE(math::isNear(invSc.zCol3(), Vector3(0, 0, 1.0 / 8.2), 1E-6));
     EXPECT_TRUE(math::isNear(invSc.tCol(), Vector4(0, 0, 0, 1), 1E-6));
 }
 

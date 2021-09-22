@@ -211,29 +211,29 @@ public:
      * Return columns of the matrix as vectors.
      * \{
      */
-    Vector4& xCol()
+    Vector3& xCol3()
     {
-        return reinterpret_cast<Vector4&>(xx());
+        return reinterpret_cast<Vector3&>(xx());
     }
-    const Vector4& xCol() const
+    const Vector3& xCol3() const
     {
-        return reinterpret_cast<const Vector4&>(xx());
+        return reinterpret_cast<const Vector3&>(xx());
     }
-    Vector4& yCol()
+    Vector3& yCol3()
     {
-        return reinterpret_cast<Vector4&>(yx());
+        return reinterpret_cast<Vector3&>(yx());
     }
-    const Vector4& yCol() const
+    const Vector3& yCol3() const
     {
-        return reinterpret_cast<const Vector4&>(yx());
+        return reinterpret_cast<const Vector3&>(yx());
     }
-    Vector4& zCol()
+    Vector3& zCol3()
     {
-        return reinterpret_cast<Vector4&>(zx());
+        return reinterpret_cast<Vector3&>(zx());
     }
-    const Vector4& zCol() const
+    const Vector3& zCol3() const
     {
-        return reinterpret_cast<const Vector4&>(zx());
+        return reinterpret_cast<const Vector3&>(zx());
     }
     Vector4& tCol()
     {
@@ -526,7 +526,7 @@ inline bool operator!=(const Matrix4& l, const Matrix4& r)
 
 inline Matrix4::Handedness Matrix4::getHandedness() const
 {
-    return (xCol().getVector3().cross(yCol().getVector3()).dot(zCol().getVector3()) < 0.0f) ? LEFTHANDED : RIGHTHANDED;
+    return (xCol3().cross(yCol3()).dot(zCol3()) < 0.0f) ? LEFTHANDED : RIGHTHANDED;
 }
 
 template<typename T>
@@ -569,9 +569,9 @@ inline Vector3 Matrix4::getEulerAnglesXYZDegrees() const
 inline Vector3 Matrix4::getScale() const
 {
     return Vector3(
-        xCol().getVector3().getLength(),
-        yCol().getVector3().getLength(),
-        zCol().getVector3().getLength()
+        xCol3().getLength(),
+        yCol3().getLength(),
+        zCol3().getLength()
     );
 }
 
