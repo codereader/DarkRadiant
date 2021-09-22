@@ -999,6 +999,27 @@ inline void assertAllCoordsMovedBySameAmount(IFace&, const std::vector<Vector2>&
     }
 }
 
+inline std::size_t getFarthestIndex(const std::vector<Vector2>& texcoords, const Vector2& point, std::vector<std::size_t> fixedIndices)
+{
+    std::size_t farthestIndex = 1;
+    double largestDistance = 0;
+
+    for (std::size_t i = 0; i < texcoords.size(); ++i)
+    {
+        if (std::find(fixedIndices.begin(), fixedIndices.end(), i) != fixedIndices.end()) continue;
+
+        auto candidateDistance = (texcoords[i] - point).getLengthSquared();
+
+        if (candidateDistance > largestDistance)
+        {
+            farthestIndex = i;
+            largestDistance = candidateDistance;
+        }
+    }
+
+    return farthestIndex;
+}
+
 // When manipulating one vertex, the "opposite" vertex should remain the same as it is chosen as fixed point
 TEST_F(TextureToolTest, DragManipulateSingleFaceVertex)
 {
@@ -1006,26 +1027,21 @@ TEST_F(TextureToolTest, DragManipulateSingleFaceVertex)
         const std::vector<Vector2>& oldTexcoords, const std::vector<Vector2>& changedTexcoords)
     {
         // Find out which face vertex was the farthest away from the modified one
-        int farthestIndex = 1;
-        double largestDistance = 0;
-        for (int i = 1; i < oldTexcoords.size(); ++i)
-        {
-            auto candidateDistance = (oldTexcoords[i] - oldTexcoords[0]).getLengthSquared();
-            if (candidateDistance > largestDistance)
-            {
-                farthestIndex = i;
-                largestDistance = candidateDistance;
-            }
-        }
+        auto farthestIndex = getFarthestIndex(oldTexcoords, oldTexcoords[0], { 0 });
 
         // The farthest vertex should remain unchanged
         EXPECT_NEAR(oldTexcoords[farthestIndex].x(), changedTexcoords[farthestIndex].x(), 0.01) << "Opposite vertex X should remain unchanged";
         EXPECT_NEAR(oldTexcoords[farthestIndex].y(), changedTexcoords[farthestIndex].y(), 0.01) << "Opposite vertex Y should remain unchanged";
 
+        // The algorithm will pick a third vertex that should remain unchanged
+        // it will be the farthest from the center of the first two vertices
+        auto center = (oldTexcoords[farthestIndex] + oldTexcoords[0]) * 0.5;
+        auto thirdIndex = getFarthestIndex(oldTexcoords, center, { 0, farthestIndex });
+
         // All the others will have changed in some way
         for (int i = 0; i < oldTexcoords.size(); ++i)
         {
-            if (i == farthestIndex) continue;
+            if (i == farthestIndex || i == thirdIndex) continue;
 
             EXPECT_FALSE(float_equal_epsilon(oldTexcoords[i].x(), changedTexcoords[i].x(), 0.05)) << "Vertex " << i << " x should have changed";
             EXPECT_FALSE(float_equal_epsilon(oldTexcoords[i].y(), changedTexcoords[i].y(), 0.05)) << "Vertex " << i << " y should have changed";;
