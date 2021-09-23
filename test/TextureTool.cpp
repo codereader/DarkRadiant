@@ -644,6 +644,94 @@ TEST_F(TextureToolTest, TestSelectPatchByArea)
     EXPECT_TRUE(std::dynamic_pointer_cast<textool::IPatchNode>(selectedNodes.front())) << "Couldn't cast to special type";
 }
 
+TEST_F(TextureToolTest, ClearSelectionUsingCommand)
+{
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto brush1 = algorithm::createCubicBrush(worldspawn, Vector3(0, 0, 0), "textures/numbers/1");
+    auto brush2 = algorithm::createCubicBrush(worldspawn, Vector3(0, 256, 256), "textures/numbers/1");
+    auto patchNode = GlobalPatchModule().createPatch(patch::PatchDefType::Def2);
+    scene::addNodeToContainer(patchNode, worldspawn);
+    Node_getIPatch(patchNode)->setDims(3, 3);
+    Node_getIPatch(patchNode)->setShader("textures/numbers/1");
+
+    Node_setSelected(brush1, true);
+    Node_setSelected(brush2, true);
+    Node_setSelected(patchNode, true);
+    EXPECT_EQ(GlobalSelectionSystem().countSelected(), 3) << "3 items must be selected";
+
+    // We don't know how many tex tool nodes there are, but it should be more than 0
+    EXPECT_GT(getTextureToolNodeCount(), 0) << "There should be some tex tool nodes now";
+
+    std::set<textool::INode::Ptr> selectedNodes;
+    std::size_t i = 0;
+
+    // Select every single node
+    GlobalTextureToolSceneGraph().foreachNode([&](const textool::INode::Ptr& node)
+    {
+        node->setSelected(true);
+        selectedNodes.emplace(node);
+        return true;
+    });
+
+    // We should have a non-empty selection
+    EXPECT_GT(GlobalTextureToolSelectionSystem().countSelected(), 0) << "No nodes selected";
+
+    // Switch to vertex mode
+    GlobalTextureToolSelectionSystem().setMode(textool::SelectionMode::Vertex);
+
+    // Get the texture space bounds of this patch
+    render::TextureToolView view;
+    auto bounds = getTextureSpaceBounds(*Node_getIPatch(patchNode));
+    bounds.extents *= 1.2f;
+    view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
+
+    // Select patch vertices
+    foreachPatchVertex(*Node_getIPatch(patchNode), [&](const PatchControl& control)
+    {
+        performPointSelection(control.texcoord, view);
+    });
+
+    // Select face vertices
+    auto faceUp = algorithm::findBrushFaceWithNormal(Node_getIBrush(brush1), Vector3(0, 0, 1));
+
+    // Get the texture space bounds of this face
+    bounds = getTextureSpaceBounds(*faceUp);
+    bounds.extents *= 1.2f;
+    view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
+
+    for (const auto& vertex : faceUp->getWinding())
+    {
+        performPointSelection(vertex.texcoord, view);
+    }
+
+    // We should have two selected component nodes
+    EXPECT_GT(GlobalTextureToolSelectionSystem().countSelectedComponentNodes(), 0) << "No components selected";
+    EXPECT_GT(GlobalSelectionSystem().countSelected(), 0) << "Scene selection count should be > 0";
+
+    // Hitting ESC once will deselect the components
+    GlobalCommandSystem().executeCommand("UnSelectSelection");
+
+    EXPECT_EQ(GlobalTextureToolSelectionSystem().countSelectedComponentNodes(), 0) << "Component selection should be gone";
+    EXPECT_GT(GlobalTextureToolSelectionSystem().countSelected(), 0) << "Surface selection should not have been touched";
+    EXPECT_GT(GlobalSelectionSystem().countSelected(), 0) << "Scene selection count should still be > 0";
+    EXPECT_EQ(GlobalTextureToolSelectionSystem().getMode(), textool::SelectionMode::Vertex) << "We should still be in vertex mode";
+
+    // Next deselection will exit vertex mode
+    GlobalCommandSystem().executeCommand("UnSelectSelection");
+    EXPECT_EQ(GlobalTextureToolSelectionSystem().getMode(), textool::SelectionMode::Surface) << "We should be in Surface mode now";
+    EXPECT_GT(GlobalTextureToolSelectionSystem().countSelected(), 0) << "Surface selection should not have been touched";
+    EXPECT_GT(GlobalSelectionSystem().countSelected(), 0) << "Scene selection count should still be > 0";
+
+    // Next will de-select the regular selection
+    GlobalCommandSystem().executeCommand("UnSelectSelection");
+    EXPECT_EQ(GlobalTextureToolSelectionSystem().countSelected(), 0) << "Surface selection should be gone now";
+    EXPECT_GT(GlobalSelectionSystem().countSelected(), 0) << "Scene selection count should still be > 0";
+
+    // Now that the tex tool selection is gone, we should affect the scene selection
+    GlobalCommandSystem().executeCommand("UnSelectSelection");
+    EXPECT_EQ(GlobalSelectionSystem().countSelected(), 0) << "Scene selection should be gone now";
+}
+
 inline std::vector<Vector2> getTexcoords(const IFace* face)
 {
     std::vector<Vector2> uvs;

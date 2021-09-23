@@ -160,6 +160,12 @@ public:
     // Collection should not be modified during iteration
     virtual void foreachSelectedComponentNode(const std::function<bool(const INode::Ptr&)>& functor) = 0;
 
+    virtual std::size_t countSelected() = 0;
+    virtual std::size_t countSelectedComponentNodes() = 0;
+
+    virtual void clearSelection() = 0;
+    virtual void clearComponentSelection() = 0;
+
     virtual SelectionMode getMode() const = 0;
     virtual void setMode(SelectionMode mode) = 0;
     virtual sigc::signal<void, SelectionMode>& signal_selectionModeChanged() = 0;

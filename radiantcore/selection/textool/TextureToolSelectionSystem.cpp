@@ -1,6 +1,7 @@
 #include "TextureToolSelectionSystem.h"
 
 #include "itextstream.h"
+#include "iradiant.h"
 #include "module/StaticModule.h"
 #include "../textool/TextureToolRotateManipulator.h"
 #include "../textool/TextureToolDragManipulator.h"
@@ -18,7 +19,8 @@ const std::string& TextureToolSelectionSystem::getName() const
 
 const StringSet& TextureToolSelectionSystem::getDependencies() const
 {
-    static StringSet _dependencies{ MODULE_TEXTOOL_SCENEGRAPH, MODULE_COMMANDSYSTEM };
+    static StringSet _dependencies{ MODULE_TEXTOOL_SCENEGRAPH, 
+        MODULE_COMMANDSYSTEM, MODULE_RADIANT_CORE };
     return _dependencies;
 }
 
@@ -41,10 +43,17 @@ void TextureToolSelectionSystem::initialiseModule(const IApplicationContext& ctx
     GlobalCommandSystem().addCommand("ToggleTextureToolSelectionMode",
         std::bind(&TextureToolSelectionSystem::toggleSelectionModeCmd, this, std::placeholders::_1),
         { cmd::ARGTYPE_STRING });
+
+    _unselectListener = GlobalRadiantCore().getMessageBus().addListener(
+        radiant::IMessage::Type::UnselectSelectionRequest,
+        radiant::TypeListener<selection::UnselectSelectionRequest>(
+            sigc::mem_fun(this, &TextureToolSelectionSystem::handleUnselectRequest)));
 }
 
 void TextureToolSelectionSystem::shutdownModule()
 {
+    GlobalRadiantCore().getMessageBus().removeListener(_unselectListener);
+
     _sigSelectionModeChanged.clear();
     _sigActiveManipulatorChanged.clear();
     _manipulators.clear();
@@ -170,6 +179,81 @@ void TextureToolSelectionSystem::foreachSelectedNodeOfAnyType(const std::functio
     else
     {
         foreachSelectedComponentNode(functor);
+    }
+}
+
+std::size_t TextureToolSelectionSystem::countSelected()
+{
+    std::size_t count = 0;
+
+    foreachSelectedNode([&](const INode::Ptr& node)
+    {
+        ++count;
+        return true;
+    });
+
+    return count;
+}
+
+std::size_t TextureToolSelectionSystem::countSelectedComponentNodes()
+{
+    std::size_t count = 0;
+
+    foreachSelectedComponentNode([&](const INode::Ptr& node)
+    {
+        ++count;
+        return true;
+    });
+
+    return count;
+}
+
+void TextureToolSelectionSystem::clearSelection()
+{
+    foreachSelectedNode([&](const INode::Ptr& node)
+    {
+        node->setSelected(false);
+        return true;
+    });
+}
+
+void TextureToolSelectionSystem::clearComponentSelection()
+{
+    foreachSelectedComponentNode([&](const INode::Ptr& node)
+    {
+        auto componentSelectable = std::dynamic_pointer_cast<IComponentSelectable>(node);
+
+        if (componentSelectable)
+        {
+            componentSelectable->clearComponentSelection();
+        }
+
+        return true;
+    });
+}
+
+void TextureToolSelectionSystem::handleUnselectRequest(selection::UnselectSelectionRequest& request)
+{
+    if (getMode() == SelectionMode::Vertex)
+    {
+        if (countSelectedComponentNodes() > 0)
+        {
+            clearComponentSelection();
+        }
+        else // no selection, just switch modes
+        {
+            setMode(SelectionMode::Surface);
+        }
+
+        request.setHandled(true);
+    }
+    else
+    {
+        if (countSelected() > 0)
+        {
+            clearSelection();
+            request.setHandled(true);
+        }
     }
 }
 

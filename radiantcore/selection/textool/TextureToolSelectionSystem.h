@@ -3,6 +3,7 @@
 #include "itexturetoolmodel.h"
 #include "icommandsystem.h"
 #include "TextureToolManipulationPivot.h"
+#include "messages/UnselectSelectionRequest.h"
 
 namespace textool
 {
@@ -24,6 +25,8 @@ private:
 
     TextureToolManipulationPivot _manipulationPivot;
 
+    std::size_t _unselectListener;
+
 public:
     const std::string& getName() const override;
     const StringSet& getDependencies() const override;
@@ -36,6 +39,12 @@ public:
 
     void foreachSelectedNode(const std::function<bool(const INode::Ptr&)>& functor) override;
     void foreachSelectedComponentNode(const std::function<bool(const INode::Ptr&)>& functor) override;
+
+    std::size_t countSelected() override;
+    std::size_t countSelectedComponentNodes() override;
+
+    void clearSelection() override;
+    void clearComponentSelection() override;
 
     void selectPoint(SelectionTest& test, SelectionSystem::EModifier modifier) override;
     void selectArea(SelectionTest& test, SelectionSystem::EModifier modifier) override;
@@ -58,6 +67,8 @@ public:
     void onManipulationCancelled() override;
 
 private:
+    void handleUnselectRequest(selection::UnselectSelectionRequest& request);
+
     // Internally switches between the selection modes and iterates over the corresponding collection
     void foreachSelectedNodeOfAnyType(const std::function<bool(const INode::Ptr&)>& functor);
 
