@@ -18,6 +18,7 @@
 #include "SelectionTestWalkers.h"
 #include "command/ExecutionFailure.h"
 #include "string/case_conv.h"
+#include "messages/UnselectSelectionRequest.h"
 
 #include "manipulators/DragManipulator.h"
 #include "manipulators/ClipManipulator.h"
@@ -1353,6 +1354,16 @@ void RadiantSelectionSystem::onComponentModeChanged()
 // called when the escape key is used (either on the main window or on an inspector)
 void RadiantSelectionSystem::deselectCmd(const cmd::ArgumentList& args)
 {
+    // First send out the request to let other systems like the texture tool
+    // react to the deselection event
+    UnselectSelectionRequest request;
+    GlobalRadiantCore().getMessageBus().sendMessage(request);
+
+    if (request.isHandled())
+    {
+        return; // already handled by other systems
+    }
+
 	if (Mode() == eComponent)
 	{
 		if (countSelectedComponents() != 0)

@@ -50,6 +50,7 @@ public:
         TextureChanged,
         ApplicationIsActiveQuery,
         FileOverwriteConfirmation,
+        UnselectSelectionRequest,
 
         UserDefinedMessagesGoHigherThanThis = 999,
     };

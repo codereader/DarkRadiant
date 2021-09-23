@@ -174,6 +174,7 @@
     <ClInclude Include="..\..\libs\messages\NotificationMessage.h" />
     <ClInclude Include="..\..\libs\messages\ScopedLongRunningOperation.h" />
     <ClInclude Include="..\..\libs\messages\TextureChanged.h" />
+    <ClInclude Include="..\..\libs\messages\UnselectSelectionRequest.h" />
     <ClInclude Include="..\..\libs\ObservedSelectable.h" />
     <ClInclude Include="..\..\libs\ObservedUndoable.h" />
     <ClInclude Include="..\..\libs\os\dir.h" />
