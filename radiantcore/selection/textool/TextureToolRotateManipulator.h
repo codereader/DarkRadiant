@@ -56,7 +56,7 @@ private:
     ShaderPtr _shader;
     IGLFont::Ptr _glFont;
 
-    float _circleRadius;
+    double _circleRadius;
 
 public:
     TextureToolRotateManipulator(TextureToolManipulationPivot& pivot);
@@ -70,7 +70,7 @@ public:
     virtual void setSelected(bool select) override;
     virtual bool isSelected() const override;
     virtual void testSelect(SelectionTest& test, const Matrix4& pivot2world) override;
-    virtual void renderComponents(const Matrix4& pivot2World) override;
+    virtual void renderComponents(const render::IRenderView& view, const Matrix4& pivot2World) override;
 
 private:
     void rotateSelected(const Vector2& pivot, double angle);

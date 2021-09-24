@@ -689,7 +689,7 @@ bool TexTool::onGLDraw()
 	// Draw the u/v coordinates
 	drawUVCoords();
 
-    GlobalTextureToolSelectionSystem().getActiveManipulator()->renderComponents(GlobalTextureToolSelectionSystem().getPivot2World());
+    GlobalTextureToolSelectionSystem().getActiveManipulator()->renderComponents(_view, GlobalTextureToolSelectionSystem().getPivot2World());
 
     if (!_activeMouseTools.empty())
     {

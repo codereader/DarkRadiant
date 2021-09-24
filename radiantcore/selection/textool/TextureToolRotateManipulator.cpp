@@ -69,13 +69,16 @@ const Vector2& TextureRotator::getCurrentDirection() const
     return _current;
 }
 
+constexpr std::size_t CircleSegments = 8;
+constexpr double DefaultCircleRadius= 0.3; // Is measured in device coords (-1..+1), will be scaled back to UV space on the fly
+
 TextureToolRotateManipulator::TextureToolRotateManipulator(TextureToolManipulationPivot& pivot) :
     _pivot(pivot),
     _rotator(std::bind(&TextureToolRotateManipulator::rotateSelected, this, std::placeholders::_1, std::placeholders::_2)),
-    _renderableCircle(8 << 3),
-    _circleRadius(1.0f)
+    _renderableCircle(CircleSegments << 3),
+    _circleRadius(DefaultCircleRadius)
 {
-    draw_circle(8, _circleRadius, &_renderableCircle.front(), RemapXYZ());
+    draw_circle(CircleSegments, static_cast<float>(DefaultCircleRadius), &_renderableCircle.front(), RemapXYZ());
     _renderableCircle.setColour(Colour4b(200, 200, 200, 200));
 }
 
@@ -129,7 +132,7 @@ void TextureToolRotateManipulator::testSelect(SelectionTest& test, const Matrix4
     }
 }
 
-void TextureToolRotateManipulator::renderComponents(const Matrix4& pivot2World)
+void TextureToolRotateManipulator::renderComponents(const render::IRenderView& view, const Matrix4& pivot2World)
 {
     if (!_shader)
     {
@@ -145,6 +148,13 @@ void TextureToolRotateManipulator::renderComponents(const Matrix4& pivot2World)
     if (_renderableCircle.empty()) return;
 
     const auto& translation = pivot2World.tCol().getVector3();
+
+    // Transform the 0.3,0,0 device vector back to UV space
+    auto transformedRadius = view.GetViewProjection().getFullInverse().transformDirection(Vector3(DefaultCircleRadius, 0, 0));
+    _circleRadius = transformedRadius.x();
+
+    // Recalculate the circle radius based on the view
+    draw_circle(CircleSegments, static_cast<float>(_circleRadius), &_renderableCircle.front(), RemapXYZ());
 
     _renderableCircle.setColour(isSelected() ? 
         Colour4b(255, 255, 0, 200) : Colour4b(200, 200, 200, 200));
@@ -180,8 +190,8 @@ void TextureToolRotateManipulator::renderComponents(const Matrix4& pivot2World)
 
         glVertex3d(0, 0, 0);
 
-        auto startingPointOnCircle = _rotator.getStartDirection() * _circleRadius;
-        glVertex3d(startingPointOnCircle.x(), startingPointOnCircle.y(), 0);
+        auto startingPointOnCircle = _rotator.getStartDirection();
+        glVertex3d(startingPointOnCircle.x() * _circleRadius, startingPointOnCircle.y() * _circleRadius, 0);
 
         // 3 degree steps
         auto stepSize = degrees_to_radians(3.0);
@@ -196,6 +206,7 @@ void TextureToolRotateManipulator::renderComponents(const Matrix4& pivot2World)
                 auto curAngle = i * stepSize;
                 auto pointOnCircle = Matrix3::getRotation(curAngle).transformPoint(startingPointOnCircle);
                 pointOnCircle /= pointOnCircle.getLength();
+                pointOnCircle *= _circleRadius;
 
                 glVertex3d(pointOnCircle.x(), pointOnCircle.y(), 0);
             }

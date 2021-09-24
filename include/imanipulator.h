@@ -3,6 +3,7 @@
 #include <memory>
 #include <string>
 #include "imodule.h"
+#include "irenderview.h"
 
 template<typename Element> class BasicVector2;
 typedef BasicVector2<double> Vector2;
@@ -136,7 +137,7 @@ public:
     virtual ~ITextureToolManipulator() {}
 
     // Renders the manipulator's visual representation to the scene (absolute UV coordinates)
-    virtual void renderComponents(const Matrix4& pivot2World) = 0;
+    virtual void renderComponents(const render::IRenderView& view, const Matrix4& pivot2World) = 0;
 };
 
 }

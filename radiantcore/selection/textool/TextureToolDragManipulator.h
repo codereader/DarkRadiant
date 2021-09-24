@@ -46,7 +46,7 @@ public:
     virtual void setSelected(bool select) override;
     virtual bool isSelected() const override;
     virtual void testSelect(SelectionTest& test, const Matrix4& pivot2world) override;
-    virtual void renderComponents(const Matrix4& pivot2World) override;
+    virtual void renderComponents(const render::IRenderView& view, const Matrix4& pivot2World) override;
 
 private:
     void translateSelected(const Vector2& translation);

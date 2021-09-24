@@ -107,7 +107,7 @@ void TextureToolDragManipulator::testSelect(SelectionTest& test, const Matrix4& 
     }
 }
 
-void TextureToolDragManipulator::renderComponents(const Matrix4& pivot2World)
+void TextureToolDragManipulator::renderComponents(const render::IRenderView& view, const Matrix4& pivot2World)
 {}
 
 void TextureToolDragManipulator::translateSelected(const Vector2& translation)
