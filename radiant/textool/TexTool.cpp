@@ -12,21 +12,12 @@
 #include "itextstream.h"
 
 #include "registry/adaptors.h"
-#include "texturelib.h"
-#include "selectionlib.h"
-#include "camera/CameraWndManager.h"
 #include "wxutil/GLWidget.h"
 #include "selection/Device.h"
 #include "selection/SelectionVolume.h"
 #include "selection/SelectionPool.h"
-#include "Rectangle.h"
 #include "fmt/format.h"
 
-#include "textool/Selectable.h"
-#include "textool/Transformable.h"
-#include "textool/item/PatchItem.h"
-#include "textool/item/BrushItem.h"
-#include "textool/item/FaceItem.h"
 #include "textool/tools/TextureToolMouseEvent.h"
 
 #include <wx/sizer.h>
