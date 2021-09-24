@@ -428,7 +428,7 @@ bool TexTool::setAllSelected(bool selected) {
 void TexTool::recalculateVisibleTexSpace()
 {
 	// Get the selection extents
-	_texSpaceAABB = getExtents();
+	_texSpaceAABB = getUvBoundsFromSceneSelection();
     _texSpaceAABB.extents *= 2; // add some padding around the selection
 
 	// Normalise the plane to be square
@@ -463,18 +463,18 @@ void TexTool::recalculateVisibleTexSpace()
     updateProjection();
 }
 
-AABB& TexTool::getExtents()
+AABB TexTool::getUvBoundsFromSceneSelection()
 {
-	_selAABB = AABB();
+	AABB bounds;
 
     GlobalTextureToolSceneGraph().foreachNode([&](const textool::INode::Ptr& node)
     {
         // Expand the selection AABB by the extents of the item
-        _selAABB.includeAABB(node->localAABB());
+        bounds.includeAABB(node->localAABB());
         return true;
     });
 
-	return _selAABB;
+	return bounds;
 }
 
 const AABB& TexTool::getVisibleTexSpace()
@@ -684,16 +684,8 @@ bool TexTool::onGLDraw()
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
 
-	// Do nothing, if the shader name is empty
-	if (_shader == NULL || _shader->getName().empty())
-	{
-		return true;
-	}
-
-	AABB& selAABB = getExtents();
-
-	// Is there a valid selection?
-	if (!selAABB.isValid())
+	// Do nothing if the shader name is empty
+	if (!_shader || _shader->getName().empty())
 	{
 		return true;
 	}

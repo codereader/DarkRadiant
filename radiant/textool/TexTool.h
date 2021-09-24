@@ -53,11 +53,8 @@ private:
 
     wxutil::FreezePointer _freezePointer;
 
-	// The shader we're working with (shared ptr)
+	// The shader we're working with
 	MaterialPtr _shader;
-
-	// The extents of the selected objects in texture space
-	AABB _selAABB;
 
 	// The extents of the visible rectangle in texture space
 	AABB _texSpaceAABB;
@@ -110,13 +107,12 @@ private:
 	// Creates, packs and connects the child widgets
 	void populateWindow();
 
-	/** greebo: Calculates the extents the selection has in
-	 * texture space.
+	/** greebo: Calculates the extents of the entire scene selection in texture space.
 	 *
-	 * @returns: the reference to the internal AABB with the z-component set to 0.
-	 * 			 Can return an invalid AABB as well (if no selection was found).
+	 * @returns: the bounds with the z-component set to 0.
+	 * Returns an invalid AABB if no selection was found.
 	 */
-	AABB& getExtents();
+	AABB getUvBoundsFromSceneSelection();
 
 	/** greebo: Returns the AABB of the currently visible texture space.
 	 */
