@@ -106,13 +106,15 @@ public:
 // Checks that changing the regular scene selection will have an effect on the tex tool scene
 TEST_F(TextureToolTest, SceneGraphObservesSelection)
 {
+    std::string material = "textures/numbers/1";
     auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
-    auto brush1 = algorithm::createCubicBrush(worldspawn, Vector3(0,0,0), "textures/numbers/1");
-    auto brush2 = algorithm::createCubicBrush(worldspawn, Vector3(0,256,256), "textures/numbers/1");
+    auto brush1 = algorithm::createCubicBrush(worldspawn, Vector3(0,0,0), material);
+    auto brush2 = algorithm::createCubicBrush(worldspawn, Vector3(0,256,256), material);
 
     // Empty tex tool scenegraph on empty scene selection
     EXPECT_EQ(GlobalSelectionSystem().countSelected(), 0) << "Non-empty selection at startup";
     EXPECT_EQ(getTextureToolNodeCount(), 0) << "There shouldn't be any textool nodes when the scene is empty";
+    EXPECT_EQ(GlobalTextureToolSceneGraph().getActiveMaterial(), "") << "Active material shoud be empty";
 
     Node_setSelected(brush1, true);
     EXPECT_EQ(GlobalSelectionSystem().countSelected(), 1) << "1 Brush must be selected";
@@ -120,9 +122,11 @@ TEST_F(TextureToolTest, SceneGraphObservesSelection)
     // We don't know how many tex tool nodes there are, but it should be more than 0
     auto nodeCount = getTextureToolNodeCount();
     EXPECT_GT(nodeCount, 0) << "There should be some tex tool nodes now";
+    EXPECT_EQ(GlobalTextureToolSceneGraph().getActiveMaterial(), material) << "Active material mismatch";
 
     Node_setSelected(brush2, true);
     EXPECT_EQ(GlobalSelectionSystem().countSelected(), 2) << "2 Brushes must be selected";
+    EXPECT_EQ(GlobalTextureToolSceneGraph().getActiveMaterial(), material) << "Active material mismatch";
 
     // Should be even more now
     auto nodeCount2 = getTextureToolNodeCount();
@@ -131,16 +135,20 @@ TEST_F(TextureToolTest, SceneGraphObservesSelection)
     GlobalSelectionSystem().setSelectedAll(false);
     EXPECT_EQ(GlobalSelectionSystem().countSelected(), 0) << "Non-empty selection at shutdown";
     EXPECT_EQ(getTextureToolNodeCount(), 0) << "There shouldn't be any textool nodes when the scene is empty";
+    EXPECT_EQ(GlobalTextureToolSceneGraph().getActiveMaterial(), "") << "Active material should be empty again";
 }
 
 TEST_F(TextureToolTest, SceneGraphNeedsUniqueShader)
 {
+    std::string material1 = "textures/numbers/1";
+    std::string material2 = "textures/numbers/2";
     auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
-    auto brush1 = algorithm::createCubicBrush(worldspawn, Vector3(0, 0, 0), "textures/numbers/1");
-    auto brush2 = algorithm::createCubicBrush(worldspawn, Vector3(0, 256, 256), "textures/numbers/2");
+    auto brush1 = algorithm::createCubicBrush(worldspawn, Vector3(0, 0, 0), material1);
+    auto brush2 = algorithm::createCubicBrush(worldspawn, Vector3(0, 256, 256), material2);
 
     Node_setSelected(brush1, true);
     EXPECT_EQ(GlobalSelectionSystem().countSelected(), 1) << "1 Brush must be selected";
+    EXPECT_EQ(GlobalTextureToolSceneGraph().getActiveMaterial(), material1) << "Active material mismatch";
 
     // We don't know how many tex tool nodes there are, but it should be more than 0
     EXPECT_GT(getTextureToolNodeCount(), 0) << "There should be some tex tool nodes now";
@@ -149,11 +157,13 @@ TEST_F(TextureToolTest, SceneGraphNeedsUniqueShader)
     EXPECT_EQ(GlobalSelectionSystem().countSelected(), 2) << "2 Brushes must be selected";
 
     EXPECT_EQ(getTextureToolNodeCount(), 0) << "There should be no nodes now, since the material is non unique";
+    EXPECT_EQ(GlobalTextureToolSceneGraph().getActiveMaterial(), "") << "Active material mismatch";
 
     // Deselect brush 1, now only brush 2 is selected
     Node_setSelected(brush1, false);
     EXPECT_EQ(GlobalSelectionSystem().countSelected(), 1) << "1 Brush must be selected";
     EXPECT_GT(getTextureToolNodeCount(), 0) << "There should be some tex tool nodes again";
+    EXPECT_EQ(GlobalTextureToolSceneGraph().getActiveMaterial(), material2) << "Active material mismatch";
 }
 
 TEST_F(TextureToolTest, SceneGraphRecognisesBrushes)

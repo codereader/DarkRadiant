@@ -143,6 +143,11 @@ class ITextureToolSceneGraph :
 public:
     virtual ~ITextureToolSceneGraph() {}
 
+    // Returns the name of the single material that all the tex tool nodes are sharing.
+    // This is an empty string if this scene graph is empty, i.e. the map selection doesn't
+    // boil down to a single selected material.
+    virtual const std::string& getActiveMaterial() = 0;
+
     // Iterate over every node in this graph calling the given functor
     // Collection should not be modified during iteration
     virtual void foreachNode(const std::function<bool(const INode::Ptr&)>& functor) = 0;

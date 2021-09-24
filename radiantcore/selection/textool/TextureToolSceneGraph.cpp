@@ -57,6 +57,13 @@ void TextureToolSceneGraph::foreachNode(const std::function<bool(const INode::Pt
     }
 }
 
+const std::string& TextureToolSceneGraph::getActiveMaterial()
+{
+    ensureSceneIsAnalysed();
+
+    return _activeMaterial;
+}
+
 void TextureToolSceneGraph::ensureSceneIsAnalysed()
 {
     if (!_selectionNeedsRescan) return;
@@ -65,8 +72,8 @@ void TextureToolSceneGraph::ensureSceneIsAnalysed()
 
     _nodes.clear();
 
-    auto selectedShader = selection::getShaderFromSelection();
-    if (selectedShader.empty()) return;
+    _activeMaterial = selection::getShaderFromSelection();
+    if (_activeMaterial.empty()) return;
 
     if (GlobalSelectionSystem().countSelectedComponents() > 0)
     {

@@ -17,6 +17,9 @@ private:
 
     std::list<INode::Ptr> _nodes;
 
+    // The single active material. Is empty if the scene graph has no items
+    std::string _activeMaterial;
+
 public:
     TextureToolSceneGraph();
 
@@ -26,6 +29,8 @@ public:
     void shutdownModule() override;
 
     void foreachNode(const std::function<bool(const INode::Ptr&)>& functor) override;
+
+    const std::string& getActiveMaterial() override;
 
 private:
     void onSceneSelectionChanged(const ISelectable& selectable);
