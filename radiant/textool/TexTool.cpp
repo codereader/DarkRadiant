@@ -55,14 +55,12 @@ TexTool::TexTool() :
     MouseToolHandler(IMouseToolGroup::Type::TextureTool),
     _glWidget(new wxutil::GLWidget(this, std::bind(&TexTool::onGLDraw, this), "TexTool")),
     _selectionInfo(GlobalSelectionSystem().getSelectionInfo()),
-    _manipulatorMode(false),
     _grid(GRID_DEFAULT),
     _gridActive(registry::getValue<bool>(RKEY_GRID_STATE)),
     _updateNeeded(false),
     _selectionRescanNeeded(false)
 {
 	Bind(wxEVT_IDLE, &TexTool::onIdle, this);
-    Bind(wxEVT_KEY_DOWN, &TexTool::onKeyPress, this);
 
 	populateWindow();
 
@@ -107,9 +105,6 @@ void TexTool::populateWindow()
 	_glWidget->Bind(wxEVT_MIDDLE_DOWN, &TexTool::onMouseDown, this);
     _glWidget->Bind(wxEVT_MIDDLE_DCLICK, &TexTool::onMouseDown, this);
 	_glWidget->Bind(wxEVT_MIDDLE_UP, &TexTool::onMouseUp, this);
-
-	// Connect our own key handler afterwards to receive events before the event manager
-	_glWidget->Bind(wxEVT_KEY_DOWN, &TexTool::onKeyPress, this);
 
 	SetSizer(new wxBoxSizer(wxVERTICAL));
 
@@ -248,38 +243,6 @@ void TexTool::update()
 	std::string selectedShader = selection::getShaderFromSelection();
 	_shader = GlobalMaterialManager().getMaterial(selectedShader);
 
-#if 0
-	// Clear the list to remove all the previously allocated items
-	_items.clear();
-
-	// Does the selection use one single shader?
-	if (!_shader->getName().empty())
-	{
-		if (GlobalSelectionSystem().countSelectedComponents() > 0)
-		{
-			// Check each selected face
-			GlobalSelectionSystem().foreachFace([&](IFace& face)
-			{
-				// Allocate a new FaceItem
-				_items.emplace_back(new textool::FaceItem(face));
-			});
-		}
-		else
-		{
-			GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
-			{
-				if (Node_isBrush(node))
-				{
-					_items.emplace_back(new textool::BrushItem(*Node_getIBrush(node)));
-				}
-				else if (Node_isPatch(node))
-				{
-					_items.emplace_back(new textool::PatchItem(*Node_getIPatch(node)));
-				}
-			});
-		}
-	}
-#endif
 	recalculateVisibleTexSpace();
 }
 
@@ -369,13 +332,11 @@ void TexTool::queueDraw()
 
 void TexTool::scrollByPixels(int x, int y)
 {
-    auto& texSpaceAABB = getVisibleTexSpace();
-
-    auto uPerPixel = texSpaceAABB.extents[0] * 2 / _windowDims[0];
-    auto vPerPixel = texSpaceAABB.extents[1] * 2 / _windowDims[1];
+    auto uPerPixel = _texSpaceAABB.extents[0] * 2 / _windowDims[0];
+    auto vPerPixel = _texSpaceAABB.extents[1] * 2 / _windowDims[1];
     
-    texSpaceAABB.origin[0] -= x * uPerPixel;
-    texSpaceAABB.origin[1] -= y * vPerPixel;
+    _texSpaceAABB.origin[0] -= x * uPerPixel;
+    _texSpaceAABB.origin[1] -= y * vPerPixel;
 
     updateProjection();
 }
@@ -517,7 +478,7 @@ AABB& TexTool::getExtents()
 	return _selAABB;
 }
 
-AABB& TexTool::getVisibleTexSpace()
+const AABB& TexTool::getVisibleTexSpace()
 {
 	return _texSpaceAABB;
 }
@@ -547,12 +508,6 @@ void TexTool::drawUVCoords()
         node->render(GlobalTextureToolSelectionSystem().getMode());
         return true;
     });
-#if 0
-	// Cycle through the items and tell them to render themselves
-	for (std::size_t i = 0; i < _items.size(); i++) {
-		_items[i]->render();
-    }
-#endif
 }
 
 textool::TexToolItemVec
@@ -619,92 +574,6 @@ void TexTool::endOperation(const std::string& commandName)
 	GlobalUndoSystem().finish(commandName);
 }
 
-void TexTool::doMouseUp(const Vector2& coords, wxMouseEvent& event)
-{
-	// If we are in manipulation mode, end the move
-    if (event.LeftUp() && !event.HasAnyModifiers() && _manipulatorMode)
-    {
-		_manipulatorMode = false;
-
-		// Finish the undo recording, store the accumulated undomementos
-		endOperation("TexToolDrag");
-	}
-
-    draw();
-}
-
-void TexTool::doMouseMove(const Vector2& coords, wxMouseEvent& event)
-{
-    if (_manipulatorMode)
-	{
-		Vector2 delta = coords - _manipulateRectangle.topLeft;
-
-		// Snap the operations to the grid
-		Vector3 snapped(0,0,0);
-
-		if (_gridActive)
-		{
-			snapped[0] = (fabs(delta[0]) > 0.0f) ?
-				floor(fabs(delta[0]) / _grid)*_grid * delta[0]/fabs(delta[0]) :
-				0.0f;
-
-			snapped[1] = (fabs(delta[1]) > 0.0f) ?
-				floor(fabs(delta[1]) / _grid)*_grid * delta[1]/fabs(delta[1]) :
-				0.0f;
-		}
-		else {
-			snapped[0] = delta[0];
-			snapped[1] = delta[1];
-		}
-
-		if (snapped.getLength() > 0)
-		{
-			// Create the transformation matrix
-			Matrix4 transform = Matrix4::getTranslation(snapped);
-
-			// Transform the selected
-			// The transformSelected() call is propagated down the entire tree
-			// of available items (e.g. PatchItem > PatchVertexItems)
-			for (std::size_t i = 0; i < _items.size(); i++)
-			{
-				_items[i]->transformSelected(transform);
-			}
-
-			// Move the starting point by the effective translation
-			_manipulateRectangle.topLeft[0] += transform.tx();
-			_manipulateRectangle.topLeft[1] += transform.ty();
-
-			draw();
-
-			// Update the camera to reflect the changes
-			GlobalCamera().update();
-		}
-	}
-}
-
-void TexTool::doMouseDown(const Vector2& coords, wxMouseEvent& event)
-{
-	_manipulatorMode = false;
-
-	if (event.LeftDown() && !event.HasAnyModifiers())
-	{
-		// Get the list of selectables of this point
-		textool::TexToolItemVec selectables = getSelectables(coords);
-
-		// Any selectables under the mouse pointer?
-		if (!selectables.empty())
-		{
-			// Activate the manipulator mode
-			_manipulatorMode = true;
-			_manipulateRectangle.topLeft = coords;
-			_manipulateRectangle.bottomRight = coords;
-
-			// Begin the undoable operation
-			beginOperation();
-		}
-	}
-}
-
 void TexTool::selectRelatedItems() {
 	for (std::size_t i = 0; i < _items.size(); i++) {
 		_items[i]->selectRelated();
@@ -726,7 +595,7 @@ void TexTool::drawGrid()
 {
 	const float MAX_NUMBER_OF_GRID_LINES = 1024;
 
-	AABB& texSpaceAABB = getVisibleTexSpace();
+	const auto& texSpaceAABB = getVisibleTexSpace();
 
 	Vector3 topLeft = texSpaceAABB.origin - texSpaceAABB.extents;
 	Vector3 bottomRight = texSpaceAABB.origin + texSpaceAABB.extents;
@@ -983,12 +852,6 @@ void TexTool::onMouseUp(wxMouseEvent& ev)
     // Regular mouse tool processing
     MouseToolHandler::onGLMouseButtonRelease(ev);
 
-	// Calculate the texture coords from the x/y click coordinates
-	Vector2 texCoords = getTextureCoords(ev.GetX(), ev.GetY());
-
-	// Pass the call to the member method
-	doMouseUp(texCoords, ev);
-
 	ev.Skip();
 }
 
@@ -997,40 +860,12 @@ void TexTool::onMouseDown(wxMouseEvent& ev)
     // Send the event to the mouse tool handler
     MouseToolHandler::onGLMouseButtonPress(ev);
 
-	// Calculate the texture coords from the x/y click coordinates
-	Vector2 texCoords = getTextureCoords(ev.GetX(), ev.GetY());
-
-	// Pass the call to the member method
-	doMouseDown(texCoords, ev);
-
 	ev.Skip();
 }
 
 void TexTool::onMouseMotion(wxMouseEvent& ev)
 {
     MouseToolHandler::onGLMouseMove(ev);
-
-	// Calculate the texture coords from the x/y click coordinates
-	Vector2 texCoords = getTextureCoords(ev.GetX(), ev.GetY());
-
-	// Pass the call to the member routine
-	doMouseMove(texCoords, ev);
-
-	ev.Skip();
-}
-
-void TexTool::onKeyPress(wxKeyEvent& ev)
-{
-	// Check for ESC to deselect all items
-	if (ev.GetKeyCode() == WXK_ESCAPE)
-	{
-		// Don't propage the keypress if the ESC could be processed
-		// setAllSelected returns TRUE in that case
-		if (setAllSelected(false))
-		{
-			return; // without skip
-		}
-	}
 
 	ev.Skip();
 }
@@ -1126,19 +961,6 @@ MouseTool::Result TexTool::processMouseMoveEvent(const MouseToolPtr& tool, int x
 void TexTool::handleGLCapturedMouseMotion(const MouseToolPtr& tool, int x, int y, unsigned int mouseState)
 {
     if (!tool) return;
-
-#if 0
-    bool mouseToolReceivesDeltas = (tool->getPointerMode() & MouseTool::PointerMode::MotionDeltas) != 0;
-    bool pointerFrozen = (tool->getPointerMode() & MouseTool::PointerMode::Freeze) != 0;
-
-    // Check if the mouse has reached exceeded the window borders for chase mouse behaviour
-    // In FreezePointer mode there's no need to check for chase since the cursor is fixed anyway
-    if (tool->allowChaseMouse() && !pointerFrozen /* && checkChaseMouse(mouseState)*/)
-    {
-        // Chase mouse activated, an idle callback will kick in soon
-        return;
-    }
-#endif
 
     // Send mouse move events to the active tool and all inactive tools that want them
     MouseToolHandler::onGLCapturedMouseMove(x, y, mouseState);

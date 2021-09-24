@@ -211,6 +211,7 @@ void MouseToolHandler::onGLMouseButtonRelease(wxMouseEvent& ev)
 
         if (result == ui::MouseTool::Result::Finished)
         {
+            handleViewRefresh(i->second->getRefreshMode());
             clearActiveMouseTool(i->second);
         }
     }

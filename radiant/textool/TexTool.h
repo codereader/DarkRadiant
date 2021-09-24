@@ -71,12 +71,6 @@ private:
 	// The currently active objects in the textool window
 	textool::TexToolItemVec _items;
 
-	// The rectangle defining the manipulation's start and end point
-	textool::Rectangle _manipulateRectangle;
-
-	// TRUE if a manipulation is currently ongoing
-	bool _manipulatorMode;
-
 	// The current grid size
 	float _grid;
 
@@ -129,7 +123,7 @@ private:
 
 	/** greebo: Returns the AABB of the currently visible texture space.
 	 */
-	AABB& getVisibleTexSpace();
+	const AABB& getVisibleTexSpace();
 
 	/** greebo: Recalculates and relocates the visible texture space.
 	 * 			It's basically centered onto the current selection
@@ -171,14 +165,6 @@ private:
 	 */
 	textool::TexToolItemVec getSelectables(const Vector2& coords);
 
-	/** greebo: These two get called by the callback and handle the event
-	 *
-	 * @coords: this has already been converted into texture space.
-	 */
-	void doMouseUp(const Vector2& coords, wxMouseEvent& event);
-	void doMouseDown(const Vector2& coords, wxMouseEvent& event);
-	void doMouseMove(const Vector2& coords, wxMouseEvent& event);
-
 	/** greebo: Converts the mouse/window coordinates into texture coords.
 	 */
 	Vector2 getTextureCoords(const double& x, const double& y);
@@ -191,9 +177,6 @@ private:
 	void onMouseDown(wxMouseEvent& ev);
 	void onMouseMotion(wxMouseEvent& ev);
 	void onMouseScroll(wxMouseEvent& ev);
-
-	// The keyboard callback to catch the ESC key
-	void onKeyPress(wxKeyEvent& ev);
 
 	// UndoSystem event handler
 	void onUndoRedoOperation();
