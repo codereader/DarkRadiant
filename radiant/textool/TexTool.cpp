@@ -133,9 +133,10 @@ void TexTool::_preHide()
 	_undoHandler.disconnect();
 	_redoHandler.disconnect();
 
-	_selectionChanged.disconnect();
+	_sceneSelectionChanged.disconnect();
     _manipulatorChanged.disconnect();
     _selectionModeChanged.disconnect();
+    _selectionChanged.disconnect();
 
 	// Clear items to prevent us from running into stale references
 	// when the textool is shown again
@@ -147,14 +148,15 @@ void TexTool::_preShow()
 {
 	TransientWindow::_preShow();
 
-	_selectionChanged.disconnect();
+	_sceneSelectionChanged.disconnect();
 	_undoHandler.disconnect();
 	_redoHandler.disconnect();
     _manipulatorChanged.disconnect();
     _selectionModeChanged.disconnect();
+    _selectionChanged.disconnect();
 
 	// Register self to the SelSystem to get notified upon selection changes.
-	_selectionChanged = GlobalSelectionSystem().signal_selectionChanged().connect(
+	_sceneSelectionChanged = GlobalSelectionSystem().signal_selectionChanged().connect(
         [this](const ISelectable&) { _selectionRescanNeeded = true; });
 
 	_undoHandler = GlobalUndoSystem().signal_postUndo().connect(
@@ -167,6 +169,9 @@ void TexTool::_preShow()
     );
     _selectionModeChanged = GlobalTextureToolSelectionSystem().signal_selectionModeChanged().connect(
         sigc::mem_fun(this, &TexTool::onSelectionModeChanged)
+    );
+    _selectionChanged = GlobalTextureToolSelectionSystem().signal_selectionChanged().connect(
+        sigc::mem_fun(this, &TexTool::queueDraw)
     );
 
 	// Trigger an update of the current selection

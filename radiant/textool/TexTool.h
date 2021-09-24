@@ -87,11 +87,12 @@ private:
 	bool _updateNeeded;
 	bool _selectionRescanNeeded;
 
-	sigc::connection _selectionChanged;
+	sigc::connection _sceneSelectionChanged;
 	sigc::connection _undoHandler;
 	sigc::connection _redoHandler;
 	sigc::connection _manipulatorChanged;
 	sigc::connection _selectionModeChanged;
+	sigc::connection _selectionChanged;
 
 private:
 	// This is where the static shared_ptr of the singleton instance is held.
