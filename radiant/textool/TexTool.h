@@ -237,10 +237,6 @@ public:
 	 */
 	static void registerCommands();
 
-    /** greebo: Returns the number of selected TexToolItems.
-     */
-    int countSelected();
-
 protected:
     MouseTool::Result processMouseDownEvent(const MouseToolPtr& tool, const Vector2& point) override;
     MouseTool::Result processMouseUpEvent(const MouseToolPtr& tool, const Vector2& point) override;

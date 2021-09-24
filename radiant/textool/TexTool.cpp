@@ -340,8 +340,10 @@ void TexTool::scrollByPixels(int x, int y)
     updateProjection();
 }
 
-void TexTool::flipSelected(int axis) {
-	if (countSelected() > 0) {
+void TexTool::flipSelected(int axis)
+{
+	if (GlobalTextureToolSelectionSystem().countSelected() > 0)
+    {
 		beginOperation();
 
 		for (std::size_t i = 0; i < _items.size(); i++) {
@@ -353,8 +355,10 @@ void TexTool::flipSelected(int axis) {
 	}
 }
 
-void TexTool::mergeSelectedItems() {
-	if (countSelected() > 0) {
+void TexTool::mergeSelectedItems()
+{
+	if (GlobalTextureToolSelectionSystem().countSelected() > 0)
+    {
 		AABB selExtents;
 
 		for (std::size_t i = 0; i < _items.size(); i++) {
@@ -394,35 +398,25 @@ void TexTool::snapToGrid() {
 	}
 }
 
-int TexTool::countSelected() {
-	// The storage variable for use in the visitor class
-	int selCount = 0;
-
-	// Create the visitor class and let it walk
-	textool::SelectedCounter counter(selCount);
-	foreachItem(counter);
-
-	return selCount;
-}
-
-bool TexTool::setAllSelected(bool selected) {
-
-	if (countSelected() == 0 && !selected) {
+bool TexTool::setAllSelected(bool selected)
+{
+	if (GlobalTextureToolSelectionSystem().countSelected() == 0 && !selected)
+    {
 		// Nothing selected and de-selection requested,
 		// return FALSE to propagate the command
 		return false;
 	}
-	else {
-		// Clear the selection using a visitor class
-		textool::SetSelectedWalker visitor(selected);
-		foreachItem(visitor);
+	
 
-		// Redraw to visualise the changes
-		draw();
+	// Clear the selection using a visitor class
+	textool::SetSelectedWalker visitor(selected);
+	foreachItem(visitor);
 
-		// Return success
-		return true;
-	}
+	// Redraw to visualise the changes
+	draw();
+
+	// Return success
+	return true;
 }
 
 void TexTool::recalculateVisibleTexSpace()

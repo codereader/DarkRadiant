@@ -1,5 +1,4 @@
-#ifndef TEXTOOLITEM_H_
-#define TEXTOOLITEM_H_
+#pragma once
 
 #include "Selectable.h"
 #include "Transformable.h"
@@ -126,24 +125,4 @@ public:
 	}
 };
 
-/** greebo: Visitor class to count the selected items
- */
-class SelectedCounter :
-	public textool::ItemVisitor
-{
-	int& _counter;
-public:
-	SelectedCounter(int& counter) :
-		_counter(counter)
-	{}
-
-	void visit(const TexToolItemPtr& texToolItem) {
-		if (texToolItem->isSelected()) {
-			_counter++;
-		}
-	}
-};
-
 } // namespace textool
-
-#endif /*TEXTOOLITEM_H_*/
