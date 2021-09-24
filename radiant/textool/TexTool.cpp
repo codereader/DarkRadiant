@@ -483,24 +483,6 @@ const AABB& TexTool::getVisibleTexSpace()
 	return _texSpaceAABB;
 }
 
-Vector2 TexTool::getTextureCoords(const double& x, const double& y) {
-	Vector2 result;
-
-	if (_selAABB.isValid()) {
-		Vector3 aabbTL = _texSpaceAABB.origin - _texSpaceAABB.extents;
-		Vector3 aabbBR = _texSpaceAABB.origin + _texSpaceAABB.extents;
-
-		Vector2 topLeft(aabbTL[0], aabbTL[1]);
-		Vector2 bottomRight(aabbBR[0], aabbBR[1]);
-
-		// Determine the texcoords by the according proportionality factors
-		result[0] = topLeft[0] + x * (bottomRight[0]-topLeft[0]) / _windowDims[0];
-		result[1] = topLeft[1] + y * (bottomRight[1]-topLeft[1]) / _windowDims[1];
-	}
-
-	return result;
-}
-
 void TexTool::drawUVCoords()
 {
     GlobalTextureToolSceneGraph().foreachNode([&](const textool::INode::Ptr& node)
@@ -508,48 +490,6 @@ void TexTool::drawUVCoords()
         node->render(GlobalTextureToolSelectionSystem().getMode());
         return true;
     });
-}
-
-textool::TexToolItemVec
-	TexTool::getSelectables(const textool::Rectangle& rectangle)
-{
-	textool::TexToolItemVec selectables;
-
-	// Cycle through all the toplevel items and test them for selectability
-	for (std::size_t i = 0; i < _items.size(); i++) {
-		if (_items[i]->testSelect(rectangle)) {
-			selectables.push_back(_items[i]);
-		}
-	}
-
-	// Cycle through all the items and ask them to deliver the list of child selectables
-	// residing within the test rectangle
-	for (std::size_t i = 0; i < _items.size(); i++) {
-		// Get the list from each item
-		textool::TexToolItemVec found =
-			_items[i]->getSelectableChildren(rectangle);
-
-		// and append the vector to the existing vector
-		selectables.insert(selectables.end(), found.begin(), found.end());
-	}
-
-	return selectables;
-}
-
-textool::TexToolItemVec TexTool::getSelectables(const Vector2& coords) {
-	// Construct a test rectangle with 2% of the width/height
-	// of the visible texture space
-	textool::Rectangle testRectangle;
-
-	Vector3 extents = getVisibleTexSpace().extents;
-
-	testRectangle.topLeft[0] = coords[0] - extents[0]*0.02;
-	testRectangle.topLeft[1] = coords[1] - extents[1]*0.02;
-	testRectangle.bottomRight[0] = coords[0] + extents[0]*0.02;
-	testRectangle.bottomRight[1] = coords[1] + extents[1]*0.02;
-
-	// Pass the call on to the getSelectables(<RECTANGLE>) method
-	return getSelectables(testRectangle);
 }
 
 void TexTool::beginOperation()

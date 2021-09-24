@@ -156,19 +156,6 @@ private:
 	 */
 	bool setAllSelected(bool selected);
 
-	/** greebo: Returns a list of selectables for the given rectangle.
-	 */
-	textool::TexToolItemVec getSelectables(const textool::Rectangle& rectangle);
-
-	/** greebo: Returns a list of selectables for the given point.
-	 * (A small rectangle is constructed to perform the selection test)
-	 */
-	textool::TexToolItemVec getSelectables(const Vector2& coords);
-
-	/** greebo: Converts the mouse/window coordinates into texture coords.
-	 */
-	Vector2 getTextureCoords(const double& x, const double& y);
-
 	bool onGLDraw();
 	void onGLResize(wxSizeEvent& ev);
 
