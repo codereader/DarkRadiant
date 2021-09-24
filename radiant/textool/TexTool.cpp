@@ -54,7 +54,6 @@ TexTool::TexTool() :
     TransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getWxTopLevelWindow(), true),
     MouseToolHandler(IMouseToolGroup::Type::TextureTool),
     _glWidget(new wxutil::GLWidget(this, std::bind(&TexTool::onGLDraw, this), "TexTool")),
-    _selectionInfo(GlobalSelectionSystem().getSelectionInfo()),
     _grid(GRID_DEFAULT),
     _gridActive(registry::getValue<bool>(RKEY_GRID_STATE)),
     _updateNeeded(false),
@@ -240,8 +239,8 @@ TexTool& TexTool::Instance()
 
 void TexTool::update()
 {
-	std::string selectedShader = selection::getShaderFromSelection();
-	_shader = GlobalMaterialManager().getMaterial(selectedShader);
+    const auto& activeMaterial = GlobalTextureToolSceneGraph().getActiveMaterial();
+    _shader = !activeMaterial.empty() ? GlobalMaterialManager().getMaterial(activeMaterial) : MaterialPtr();
 
 	recalculateVisibleTexSpace();
 }

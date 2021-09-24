@@ -56,9 +56,6 @@ private:
 	// The shader we're working with (shared ptr)
 	MaterialPtr _shader;
 
-	// A reference to the SelectionInfo structure (with the counters)
-	const SelectionInfo& _selectionInfo;
-
 	// The extents of the selected objects in texture space
 	AABB _selAABB;
 
