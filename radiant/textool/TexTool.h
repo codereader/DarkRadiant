@@ -20,8 +20,6 @@
 #include "tools/TextureToolMouseEvent.h"
 #include "render/TextureToolView.h"
 
-#include "TexToolItem.h"
-
 class Winding;
 class Patch;
 
@@ -61,9 +59,6 @@ private:
 
 	// The dimensions of the GL widget in pixels.
 	Vector2 _windowDims;
-
-	// The currently active objects in the textool window
-	textool::TexToolItemVec _items;
 
 	// The current grid size
 	float _grid;
@@ -138,17 +133,6 @@ private:
 	 */
 	void update();
 
-	/** greebo: Passes the given visitor to every Item in the hierarchy.
-	 */
-	void foreachItem(textool::ItemVisitor& visitor);
-
-	/** greebo: Sets all selectables to <selected>
-	 * 			If selected == false and no items are selected,
-	 * 			the call is propagated to the main window to
-	 * 			trigger a scene deselection.
-	 */
-	bool setAllSelected(bool selected);
-
 	bool onGLDraw();
 	void onGLResize(wxSizeEvent& ev);
 
@@ -161,14 +145,14 @@ private:
 	// UndoSystem event handler
 	void onUndoRedoOperation();
 
+    /**
+     * greebo: Shutdown listeners de-registering from
+     * the SelectionSystem, saving the window state, etc.
+     */
+    void onMainFrameShuttingDown();
+
 public:
 	TexTool();
-
-	/** 
-	 * greebo: Shutdown listeners de-registering from 
-	 * the SelectionSystem, saving the window state, etc.
-	 */
-	void onMainFrameShuttingDown();
 
 	/** greebo: This is the static accessor method containing
 	 * the static instance of the TexTool class. Use this to access

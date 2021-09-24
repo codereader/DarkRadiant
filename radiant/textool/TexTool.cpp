@@ -131,10 +131,6 @@ void TexTool::_preHide()
     _manipulatorChanged.disconnect();
     _selectionModeChanged.disconnect();
     _selectionChanged.disconnect();
-
-	// Clear items to prevent us from running into stale references
-	// when the textool is shown again
-	_items.clear();
 }
 
 // Pre-show callback
@@ -345,11 +341,11 @@ void TexTool::flipSelected(int axis)
 	if (GlobalTextureToolSelectionSystem().countSelected() > 0)
     {
 		beginOperation();
-
+#if 0
 		for (std::size_t i = 0; i < _items.size(); i++) {
 			_items[i]->flipSelected(axis);
 		}
-
+#endif
 		draw();
 		endOperation("TexToolMergeItems");
 	}
@@ -360,11 +356,11 @@ void TexTool::mergeSelectedItems()
 	if (GlobalTextureToolSelectionSystem().countSelected() > 0)
     {
 		AABB selExtents;
-
+#if 0
 		for (std::size_t i = 0; i < _items.size(); i++) {
 			selExtents.includeAABB(_items[i]->getSelectedExtents());
 		}
-
+#endif
 		if (selExtents.isValid()) {
 			beginOperation();
 
@@ -372,11 +368,11 @@ void TexTool::mergeSelectedItems()
 				selExtents.origin[0],
 				selExtents.origin[1]
 			);
-
+#if 0
 			for (std::size_t i = 0; i < _items.size(); i++) {
 				_items[i]->moveSelectedTo(centroid);
 			}
-
+#endif
 			draw();
 
 			endOperation("TexToolMergeItems");
@@ -387,36 +383,15 @@ void TexTool::mergeSelectedItems()
 void TexTool::snapToGrid() {
 	if (_gridActive) {
 		beginOperation();
-
+#if 0
 		for (std::size_t i = 0; i < _items.size(); i++) {
 			_items[i]->snapSelectedToGrid(_grid);
 		}
-
+#endif
 		endOperation("TexToolSnapToGrid");
 
 		draw();
 	}
-}
-
-bool TexTool::setAllSelected(bool selected)
-{
-	if (GlobalTextureToolSelectionSystem().countSelected() == 0 && !selected)
-    {
-		// Nothing selected and de-selection requested,
-		// return FALSE to propagate the command
-		return false;
-	}
-	
-
-	// Clear the selection using a visitor class
-	textool::SetSelectedWalker visitor(selected);
-	foreachItem(visitor);
-
-	// Redraw to visualise the changes
-	draw();
-
-	// Return success
-	return true;
 }
 
 void TexTool::recalculateVisibleTexSpace()
@@ -489,39 +464,34 @@ void TexTool::beginOperation()
 {
 	// Start an undo recording session
 	GlobalUndoSystem().start();
-
+#if 0
 	// Tell all the items to save their memento
 	for (std::size_t i = 0; i < _items.size(); i++)
 	{
 		_items[i]->beginTransformation();
 	}
+#endif
 }
 
 void TexTool::endOperation(const std::string& commandName)
 {
+#if 0
 	for (std::size_t i = 0; i < _items.size(); i++)
 	{
 		_items[i]->endTransformation();
 	}
-
+#endif
 	GlobalUndoSystem().finish(commandName);
 }
 
-void TexTool::selectRelatedItems() {
+void TexTool::selectRelatedItems()
+{
+#if 0
 	for (std::size_t i = 0; i < _items.size(); i++) {
 		_items[i]->selectRelated();
 	}
+#endif
 	draw();
-}
-
-void TexTool::foreachItem(textool::ItemVisitor& visitor) {
-	for (std::size_t i = 0; i < _items.size(); i++) {
-		// Visit the class
-		visitor.visit(_items[i]);
-
-		// Now propagate the visitor down the hierarchy
-		_items[i]->foreachItem(visitor);
-	}
 }
 
 void TexTool::drawGrid()
