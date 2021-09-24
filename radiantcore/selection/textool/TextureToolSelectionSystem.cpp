@@ -394,6 +394,9 @@ Matrix4 TextureToolSelectionSystem::getPivot2World()
 
 void TextureToolSelectionSystem::onManipulationStart()
 {
+    // Save the pivot state now that the transformation is starting
+    _manipulationPivot.beginOperation();
+
     foreachSelectedNodeOfAnyType([&](const INode::Ptr& node)
     {
         node->beginTransformation();
@@ -414,6 +417,7 @@ void TextureToolSelectionSystem::onManipulationFinished()
     });
 
     getActiveManipulator()->setSelected(false);
+    _manipulationPivot.endOperation();
 }
 
 void TextureToolSelectionSystem::onManipulationCancelled()
