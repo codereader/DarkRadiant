@@ -155,6 +155,19 @@ void TextureToolRotateManipulator::renderComponents(const Matrix4& pivot2World)
 
     auto angle = _rotator.getCurAngle();
 
+    // Crosshair
+    glColor3f(0.8f, 0.8f, 0.8f);
+    glBegin(GL_LINES);
+
+    auto crossHairAngle = _selectableZ.isSelected() ? angle : 0;
+    glVertex2d(cos(crossHairAngle) * 0.05, -sin(crossHairAngle) * 0.05);
+    glVertex2d(-cos(crossHairAngle) * 0.05, sin(crossHairAngle) * 0.05);
+
+    glVertex2d(-cos(crossHairAngle + c_half_pi) * 0.05, sin(crossHairAngle + c_half_pi) * 0.05);
+    glVertex2d(cos(crossHairAngle + c_half_pi) * 0.05, -sin(crossHairAngle + c_half_pi) * 0.05);
+
+    glEnd();
+
     if (_selectableZ.isSelected())
     {
         glEnable(GL_BLEND);
