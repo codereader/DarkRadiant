@@ -163,6 +163,8 @@ public:
     virtual std::size_t countSelected() = 0;
     virtual std::size_t countSelectedComponentNodes() = 0;
 
+    virtual sigc::signal<void>& signal_selectionChanged() = 0;
+
     virtual void clearSelection() = 0;
     virtual void clearComponentSelection() = 0;
 
@@ -191,6 +193,9 @@ public:
     virtual void onManipulationChanged() = 0;
     virtual void onManipulationFinished() = 0;
     virtual void onManipulationCancelled() = 0;
+
+    // Feedback method which is invoked by selectable nodes to report a selection status change
+    virtual void onNodeSelectionChanged(ISelectable& selectable) = 0;
 };
 
 }

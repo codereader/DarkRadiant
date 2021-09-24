@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include "itexturetoolmodel.h"
 #include "icommandsystem.h"
 #include "TextureToolManipulationPivot.h"
@@ -23,6 +24,8 @@ private:
     sigc::signal<void, selection::IManipulator::Type> _sigActiveManipulatorChanged;
     sigc::signal<void, SelectionMode> _sigSelectionModeChanged;
 
+    sigc::signal<void> _sigSelectionChanged;
+
     TextureToolManipulationPivot _manipulationPivot;
 
     std::size_t _unselectListener;
@@ -42,6 +45,8 @@ public:
 
     std::size_t countSelected() override;
     std::size_t countSelectedComponentNodes() override;
+
+    sigc::signal<void>& signal_selectionChanged() override;
 
     void clearSelection() override;
     void clearComponentSelection() override;
@@ -65,6 +70,8 @@ public:
     void onManipulationChanged() override;
     void onManipulationFinished() override;
     void onManipulationCancelled() override;
+
+    void onNodeSelectionChanged(ISelectable& selectable) override;
 
 private:
     void handleUnselectRequest(selection::UnselectSelectionRequest& request);

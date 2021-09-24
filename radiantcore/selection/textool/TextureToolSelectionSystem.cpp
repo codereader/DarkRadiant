@@ -52,8 +52,12 @@ void TextureToolSelectionSystem::initialiseModule(const IApplicationContext& ctx
 
 void TextureToolSelectionSystem::shutdownModule()
 {
+    clearComponentSelection();
+    clearSelection();
+
     GlobalRadiantCore().getMessageBus().removeListener(_unselectListener);
 
+    _sigSelectionChanged.clear();
     _sigSelectionModeChanged.clear();
     _sigActiveManipulatorChanged.clear();
     _manipulators.clear();
@@ -206,6 +210,11 @@ std::size_t TextureToolSelectionSystem::countSelectedComponentNodes()
     });
 
     return count;
+}
+
+sigc::signal<void>& TextureToolSelectionSystem::signal_selectionChanged()
+{
+    return _sigSelectionChanged;
 }
 
 void TextureToolSelectionSystem::clearSelection()
@@ -506,6 +515,11 @@ void TextureToolSelectionSystem::performSelectionTest(Selector& selector, Select
 
         return true;
     });
+}
+
+void TextureToolSelectionSystem::onNodeSelectionChanged(ISelectable& selectable)
+{
+    _sigSelectionChanged.emit();
 }
 
 module::StaticModule<TextureToolSelectionSystem> _textureToolSelectionSystemModule;

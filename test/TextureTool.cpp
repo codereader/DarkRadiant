@@ -71,6 +71,38 @@ std::vector<textool::INode::Ptr> getAllSelectedComponentNodes()
     return selectedNodes;
 }
 
+class SelectionChangedCatcher
+{
+private:
+    bool _signalFired;
+    sigc::connection _connection;
+
+public:
+    SelectionChangedCatcher() :
+        _signalFired(false)
+    {
+        _connection = GlobalTextureToolSelectionSystem().signal_selectionChanged().connect([this]
+        {
+            _signalFired = true;
+        });
+    }
+
+    bool signalHasFired() const
+    {
+        return _signalFired;
+    }
+
+    void reset()
+    {
+        _signalFired = false;
+    }
+
+    ~SelectionChangedCatcher()
+    {
+        _connection.disconnect();
+    }
+};
+
 // Checks that changing the regular scene selection will have an effect on the tex tool scene
 TEST_F(TextureToolTest, SceneGraphObservesSelection)
 {
@@ -489,8 +521,12 @@ TEST_F(TextureToolTest, TestSelectPatchSurfaceByPoint)
     render::TextureToolView view;
     view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
 
+    SelectionChangedCatcher signalObserver;
+
     // Test-select in the middle of the patch bounds
     performPointSelection(Vector2(bounds.origin.x(), bounds.origin.y()), view);
+
+    EXPECT_TRUE(signalObserver.signalHasFired()) << "No selection changed signal emitted";
 
     // Check if the node was selected
     auto selectedNodes = getAllSelectedTextoolNodes();
@@ -519,24 +555,37 @@ TEST_F(TextureToolTest, TestSelectPatchVertexByPoint)
     auto firstVertex = patch->ctrlAt(2, 1).texcoord;
     auto secondVertex = patch->ctrlAt(2, 0).texcoord;
 
+    SelectionChangedCatcher signalObserver;
+
     // Selecting something in the middle of two vertices should not do anything
     performPointSelection((firstVertex + secondVertex) / 2, view);
     EXPECT_TRUE(getAllSelectedComponentNodes().empty()) << "Test-selecting a patch in between vertices should not have succeeded";
-    
+    EXPECT_FALSE(signalObserver.signalHasFired()) << "Selection Changed Signal shouldn't have fired";
+    signalObserver.reset();
+
     performPointSelection(firstVertex, view);
 
     // Hitting a vertex will select the patch componentselectable
     EXPECT_EQ(getAllSelectedComponentNodes().size(), 1) << "Only one patch should be selected";
+    EXPECT_TRUE(signalObserver.signalHasFired()) << "Selection Changed Signal should have fired";
+    signalObserver.reset();
 
     // Hitting another vertex should not de-select the componentselectable
     performPointSelection(secondVertex, view);
     EXPECT_EQ(getAllSelectedComponentNodes().size(), 1) << "Only one patch should still be selected";
+    EXPECT_TRUE(signalObserver.signalHasFired()) << "Selection Changed Signal should have fired";
+    signalObserver.reset();
 
     // De-selecting the first and the second vertex should release the patch
     performPointSelection(secondVertex, view);
     EXPECT_EQ(getAllSelectedComponentNodes().size(), 1) << "Only one patch should still be selected";
+    EXPECT_TRUE(signalObserver.signalHasFired()) << "Selection Changed Signal should have fired";
+    signalObserver.reset();
+
     performPointSelection(firstVertex, view);
     EXPECT_TRUE(getAllSelectedComponentNodes().empty()) << "Selection should be empty now";
+    EXPECT_TRUE(signalObserver.signalHasFired()) << "Selection Changed Signal should have fired";
+    signalObserver.reset();
 }
 
 TEST_F(TextureToolTest, TestSelectFaceSurfaceByPoint)
@@ -562,8 +611,12 @@ TEST_F(TextureToolTest, TestSelectFaceSurfaceByPoint)
     render::TextureToolView view;
     view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
 
+    SelectionChangedCatcher signalObserver;
+
     // Point-select in the middle of the face
     performPointSelection(algorithm::getFaceCentroid(faceUp), view);
+
+    EXPECT_TRUE(signalObserver.signalHasFired()) << "Selection Changed Signal should have fired";
 
     // Check if the node was selected
     auto selectedNodes = getAllSelectedTextoolNodes();
@@ -595,6 +648,8 @@ TEST_F(TextureToolTest, TestSelectFaceVertexByPoint)
     // Switch to vertex selection mode
     GlobalTextureToolSelectionSystem().setMode(textool::SelectionMode::Vertex);
 
+    SelectionChangedCatcher signalObserver;
+
     // Get the texcoords of the first vertex
     auto firstVertex = faceUp->getWinding()[0].texcoord;
     auto secondVertex = faceUp->getWinding()[1].texcoord;
@@ -602,20 +657,31 @@ TEST_F(TextureToolTest, TestSelectFaceVertexByPoint)
     // Selecting something in the middle of two vertices should not do anything
     performPointSelection((firstVertex + secondVertex) / 2, view);
     EXPECT_TRUE(getAllSelectedComponentNodes().empty()) << "Test-selecting a face in between vertices should not have succeeded";
+    EXPECT_FALSE(signalObserver.signalHasFired()) << "Selection Changed Signal shouldn't have fired";
+    signalObserver.reset();
 
     // Hitting a vertex will select the face
     performPointSelection(firstVertex, view);
     EXPECT_EQ(getAllSelectedComponentNodes().size(), 1) << "Only one face should be selected";
+    EXPECT_TRUE(signalObserver.signalHasFired()) << "Selection Changed Signal should have fired";
+    signalObserver.reset();
 
     // Hitting another vertex should not de-select the face
     performPointSelection(secondVertex, view);
     EXPECT_EQ(getAllSelectedComponentNodes().size(), 1) << "Only one face should still be selected";
+    EXPECT_TRUE(signalObserver.signalHasFired()) << "Selection Changed Signal should have fired";
+    signalObserver.reset();
 
     // De-selecting the first and the second vertex should release the face
     performPointSelection(secondVertex, view);
     EXPECT_EQ(getAllSelectedComponentNodes().size(), 1) << "Only one face should still be selected";
+    EXPECT_TRUE(signalObserver.signalHasFired()) << "Selection Changed Signal should have fired";
+    signalObserver.reset();
+
     performPointSelection(firstVertex, view);
     EXPECT_TRUE(getAllSelectedComponentNodes().empty()) << "Selection should be empty now";
+    EXPECT_TRUE(signalObserver.signalHasFired()) << "Selection Changed Signal should have fired";
+    signalObserver.reset();
 }
 
 TEST_F(TextureToolTest, TestSelectPatchByArea)
@@ -636,7 +702,11 @@ TEST_F(TextureToolTest, TestSelectPatchByArea)
     ConstructSelectionTest(view, selection::Rectangle::ConstructFromArea(Vector2(-0.95f, -0.95f), Vector2(0.95f*2, 0.95f*2)));
 
     SelectionVolume test(view);
+    SelectionChangedCatcher signalObserver;
+
     GlobalTextureToolSelectionSystem().selectArea(test, SelectionSystem::eToggle);
+
+    EXPECT_TRUE(signalObserver.signalHasFired()) << "Selection Changed Signal should have fired";
 
     // Check if the node was selected
     auto selectedNodes = getAllSelectedTextoolNodes();
@@ -705,6 +775,8 @@ TEST_F(TextureToolTest, ClearSelectionUsingCommand)
     EXPECT_GT(GlobalTextureToolSelectionSystem().countSelectedComponentNodes(), 0) << "No components selected";
     EXPECT_GT(GlobalSelectionSystem().countSelected(), 0) << "Scene selection count should be > 0";
 
+    SelectionChangedCatcher signalObserver;
+
     // Hitting ESC once will deselect the components
     GlobalCommandSystem().executeCommand("UnSelectSelection");
 
@@ -712,21 +784,28 @@ TEST_F(TextureToolTest, ClearSelectionUsingCommand)
     EXPECT_GT(GlobalTextureToolSelectionSystem().countSelected(), 0) << "Surface selection should not have been touched";
     EXPECT_GT(GlobalSelectionSystem().countSelected(), 0) << "Scene selection count should still be > 0";
     EXPECT_EQ(GlobalTextureToolSelectionSystem().getMode(), textool::SelectionMode::Vertex) << "We should still be in vertex mode";
+    EXPECT_TRUE(signalObserver.signalHasFired()) << "Selection Changed Signal should have fired";
+    signalObserver.reset();
 
     // Next deselection will exit vertex mode
     GlobalCommandSystem().executeCommand("UnSelectSelection");
     EXPECT_EQ(GlobalTextureToolSelectionSystem().getMode(), textool::SelectionMode::Surface) << "We should be in Surface mode now";
     EXPECT_GT(GlobalTextureToolSelectionSystem().countSelected(), 0) << "Surface selection should not have been touched";
     EXPECT_GT(GlobalSelectionSystem().countSelected(), 0) << "Scene selection count should still be > 0";
+    EXPECT_FALSE(signalObserver.signalHasFired()) << "Selection Changed Signal shouldn't have fired";
+    signalObserver.reset();
 
     // Next will de-select the regular selection
     GlobalCommandSystem().executeCommand("UnSelectSelection");
     EXPECT_EQ(GlobalTextureToolSelectionSystem().countSelected(), 0) << "Surface selection should be gone now";
     EXPECT_GT(GlobalSelectionSystem().countSelected(), 0) << "Scene selection count should still be > 0";
+    EXPECT_TRUE(signalObserver.signalHasFired()) << "Selection Changed Signal should have fired";
+    signalObserver.reset();
 
     // Now that the tex tool selection is gone, we should affect the scene selection
     GlobalCommandSystem().executeCommand("UnSelectSelection");
     EXPECT_EQ(GlobalSelectionSystem().countSelected(), 0) << "Scene selection should be gone now";
+    EXPECT_FALSE(signalObserver.signalHasFired()) << "Selection Changed Signal shouldn't have fired";
 }
 
 TEST_F(TextureToolTest, ClearSelection)
@@ -755,8 +834,12 @@ TEST_F(TextureToolTest, ClearSelection)
     // We should have a non-empty selection
     EXPECT_GT(GlobalTextureToolSelectionSystem().countSelected(), 0) << "No nodes selected";
 
+    SelectionChangedCatcher signalObserver;
+
     // Deselect
     GlobalTextureToolSelectionSystem().clearSelection();
+
+    EXPECT_TRUE(signalObserver.signalHasFired()) << "Selection Changed Signal should have fired";
 
     EXPECT_EQ(GlobalTextureToolSelectionSystem().countSelected(), 0) << "Surface selection should be gone now";
     EXPECT_EQ(GlobalSelectionSystem().countSelected(), 3) << "3 scene nodes must be selected";
@@ -789,9 +872,12 @@ TEST_F(TextureToolTest, ClearComponentSelection)
 
     EXPECT_EQ(GlobalTextureToolSelectionSystem().countSelectedComponentNodes(), 1) << "We should have 1 selected component node";
 
+    SelectionChangedCatcher signalObserver;
+
     // Deselect all components
     GlobalTextureToolSelectionSystem().clearComponentSelection();
 
+    EXPECT_TRUE(signalObserver.signalHasFired()) << "Selection Changed Signal should have fired";
     EXPECT_EQ(GlobalTextureToolSelectionSystem().countSelectedComponentNodes(), 0) << "Component selection should be gone now";
     EXPECT_EQ(GlobalTextureToolSelectionSystem().getMode(), textool::SelectionMode::Vertex) << "Should still be in vertex mode";
 }

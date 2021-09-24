@@ -2,7 +2,9 @@
 
 #include <vector>
 #include "itexturetoolmodel.h"
-#include "../BasicSelectable.h"
+#include <sigc++/functors/mem_fun.h>
+#include "itexturetoolmodel.h"
+#include "ObservedSelectable.h"
 #include "SelectableVertex.h"
 
 namespace textool
@@ -10,15 +12,20 @@ namespace textool
 
 class NodeBase :
     public virtual INode,
-    public virtual IComponentSelectable
+    public virtual IComponentSelectable,
+    public std::enable_shared_from_this<NodeBase>
 {
 private:
-    selection::BasicSelectable _selectable;
+    selection::ObservedSelectable _selectable;
 
 protected:
     std::vector<SelectableVertex> _vertices;
 
 public:
+    NodeBase() :
+        _selectable(sigc::mem_fun(*this, &NodeBase::onSelectionStatusChanged))
+    {}
+
     virtual void setSelected(bool select) override
     {
         _selectable.setSelected(select);
@@ -105,6 +112,12 @@ protected:
 
         glEnd();
         glDisable(GL_DEPTH_TEST);
+    }
+
+private:
+    void onSelectionStatusChanged(const ISelectable& selectable)
+    {
+        GlobalTextureToolSelectionSystem().onNodeSelectionChanged(*this);
     }
 };
 
