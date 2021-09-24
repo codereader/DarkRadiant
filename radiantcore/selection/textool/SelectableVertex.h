@@ -1,12 +1,13 @@
 #pragma once
 
-#include "selection/BasicSelectable.h"
+#include "itexturetoolmodel.h"
+#include "ObservedSelectable.h"
 
 namespace textool
 {
 
 class SelectableVertex :
-    public selection::BasicSelectable
+    public selection::ObservedSelectable
 {
 private:
     Vector3& _vertex;
@@ -14,6 +15,7 @@ private:
 
 public:
     SelectableVertex(Vector3& vertex, Vector2& texcoord) :
+        ObservedSelectable(sigc::mem_fun(*this, &SelectableVertex::onSelectionStatusChanged)),
         _vertex(vertex),
         _texcoord(texcoord)
     {}
@@ -36,6 +38,12 @@ public:
     Vector2& getTexcoord()
     {
         return _texcoord;
+    }
+
+private:
+    void onSelectionStatusChanged(const ISelectable& selectable)
+    {
+        GlobalTextureToolSelectionSystem().onComponentSelectionChanged(*this);
     }
 };
 

@@ -72,6 +72,7 @@ public:
     void onManipulationCancelled() override;
 
     void onNodeSelectionChanged(ISelectable& selectable) override;
+    void onComponentSelectionChanged(ISelectable& selectable) override;
 
 private:
     void handleUnselectRequest(selection::UnselectSelectionRequest& request);

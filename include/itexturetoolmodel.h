@@ -194,8 +194,9 @@ public:
     virtual void onManipulationFinished() = 0;
     virtual void onManipulationCancelled() = 0;
 
-    // Feedback method which is invoked by selectable nodes to report a selection status change
+    // Feedback methods which are invoked by selectable nodes to report a selection status change
     virtual void onNodeSelectionChanged(ISelectable& selectable) = 0;
+    virtual void onComponentSelectionChanged(ISelectable& selectable) = 0;
 };
 
 }

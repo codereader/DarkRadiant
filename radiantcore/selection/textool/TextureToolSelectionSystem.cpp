@@ -522,6 +522,11 @@ void TextureToolSelectionSystem::onNodeSelectionChanged(ISelectable& selectable)
     _sigSelectionChanged.emit();
 }
 
+void TextureToolSelectionSystem::onComponentSelectionChanged(ISelectable& selectable)
+{
+    _sigSelectionChanged.emit();
+}
+
 module::StaticModule<TextureToolSelectionSystem> _textureToolSelectionSystemModule;
 
 }
