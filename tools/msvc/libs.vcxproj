@@ -170,6 +170,7 @@
     <ClInclude Include="..\..\libs\messages\FileSelectionRequest.h" />
     <ClInclude Include="..\..\libs\messages\GameConfigNeededMessage.h" />
     <ClInclude Include="..\..\libs\messages\LongRunningOperationMessage.h" />
+    <ClInclude Include="..\..\libs\messages\ManipulatorModeToggleRequest.h" />
     <ClInclude Include="..\..\libs\messages\MapFileOperation.h" />
     <ClInclude Include="..\..\libs\messages\NotificationMessage.h" />
     <ClInclude Include="..\..\libs\messages\ScopedLongRunningOperation.h" />

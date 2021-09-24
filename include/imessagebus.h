@@ -51,6 +51,7 @@ public:
         ApplicationIsActiveQuery,
         FileOverwriteConfirmation,
         UnselectSelectionRequest,
+        ManipulatorModeToggleRequest,
 
         UserDefinedMessagesGoHigherThanThis = 999,
     };

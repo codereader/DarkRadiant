@@ -19,6 +19,7 @@
 #include "command/ExecutionFailure.h"
 #include "string/case_conv.h"
 #include "messages/UnselectSelectionRequest.h"
+#include "messages/ManipulatorModeToggleRequest.h"
 
 #include "manipulators/DragManipulator.h"
 #include "manipulators/ClipManipulator.h"
@@ -1144,30 +1145,46 @@ void RadiantSelectionSystem::toggleManipulatorModeCmd(const cmd::ArgumentList& a
     }
 
     auto manip = string::to_lower_copy(args[0].getString());
+    IManipulator::Type type;
 
     if (manip == "drag")
     {
-        toggleManipulatorModeById(getManipulatorIdForType(IManipulator::Drag));
+        type = IManipulator::Drag;
     }
     else if (manip == "translate")
     {
-        toggleManipulatorModeById(getManipulatorIdForType(IManipulator::Translate));
+        type = IManipulator::Translate;
     }
     else if (manip == "rotate")
     {
-        toggleManipulatorModeById(getManipulatorIdForType(IManipulator::Rotate));
+        type = IManipulator::Rotate;
     }
     else if (manip == "scale")
     {
-        toggleManipulatorModeById(getManipulatorIdForType(IManipulator::Drag));
+        type = IManipulator::Drag;
     }
     else if (manip == "clip")
     {
-        toggleManipulatorModeById(getManipulatorIdForType(IManipulator::Clip));
+        type = IManipulator::Clip;
     }
     else if (manip == "modelscale")
     {
-        toggleManipulatorModeById(getManipulatorIdForType(IManipulator::ModelScale));
+        type = IManipulator::ModelScale;
+    }
+    else
+    {
+        rError() << "Unknown manipulator type: " << manip << std::endl;
+        return;
+    }
+
+    // Send out the event for the other views like the texture tool
+    ManipulatorModeToggleRequest request(type);
+    GlobalRadiantCore().getMessageBus().sendMessage(request);
+
+    if (!request.isHandled())
+    {
+        // Handle it ourselves
+        toggleManipulatorModeById(getManipulatorIdForType(type));
     }
 }
 
