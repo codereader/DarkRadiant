@@ -1,5 +1,6 @@
 #include "TexTool.h"
 
+#include <limits>
 #include "i18n.h"
 #include "ieventmanager.h"
 #include "itexturetoolmodel.h"
@@ -7,6 +8,7 @@
 #include "igl.h"
 #include "iundo.h"
 #include "ibrush.h"
+#include "iradiant.h"
 #include "ipatch.h"
 #include "itoolbarmanager.h"
 #include "itextstream.h"
@@ -48,7 +50,8 @@ TexTool::TexTool() :
     _grid(GRID_DEFAULT),
     _gridActive(registry::getValue<bool>(RKEY_GRID_STATE)),
     _updateNeeded(false),
-    _selectionRescanNeeded(false)
+    _selectionRescanNeeded(false),
+    _manipulatorModeToggleRequestHandler(std::numeric_limits<std::size_t>::max())
 {
 	Bind(wxEVT_IDLE, &TexTool::onIdle, this);
 
@@ -122,6 +125,9 @@ void TexTool::_preHide()
     _manipulatorChanged.disconnect();
     _selectionModeChanged.disconnect();
     _selectionChanged.disconnect();
+
+    GlobalRadiantCore().getMessageBus().removeListener(_manipulatorModeToggleRequestHandler);
+    _manipulatorModeToggleRequestHandler = std::numeric_limits<std::size_t>::max();
 }
 
 // Pre-show callback
@@ -139,6 +145,10 @@ void TexTool::_preShow()
 	// Register self to the SelSystem to get notified upon selection changes.
 	_sceneSelectionChanged = GlobalSelectionSystem().signal_selectionChanged().connect(
         [this](const ISelectable&) { _selectionRescanNeeded = true; });
+
+    _manipulatorModeToggleRequestHandler = GlobalRadiantCore().getMessageBus().addListener(radiant::IMessage::ManipulatorModeToggleRequest,
+        radiant::TypeListener<selection::ManipulatorModeToggleRequest>(
+            sigc::mem_fun(this, &TexTool::handleManipulatorModeToggleRequest)));
 
 	_undoHandler = GlobalUndoSystem().signal_postUndo().connect(
 		sigc::mem_fun(this, &TexTool::onUndoRedoOperation));
@@ -158,6 +168,24 @@ void TexTool::_preShow()
 	// Trigger an update of the current selection
     _selectionRescanNeeded = true;
     queueDraw();
+}
+
+void TexTool::handleManipulatorModeToggleRequest(selection::ManipulatorModeToggleRequest& request)
+{
+    if (!HasFocus() && !_glWidget->HasFocus())
+    {
+        return;
+    }
+
+    // Catch specific manipulator types, let the others slip through
+    switch (request.getType())
+    {
+    case selection::IManipulator::Drag:
+    case selection::IManipulator::Rotate:
+        GlobalTextureToolSelectionSystem().toggleManipulatorMode(request.getType());
+        request.setHandled(true);
+        break;
+    };
 }
 
 void TexTool::onUndoRedoOperation()

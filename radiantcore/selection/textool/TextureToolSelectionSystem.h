@@ -62,6 +62,7 @@ public:
     const selection::ITextureToolManipulator::Ptr& getActiveManipulator() override;
     void setActiveManipulator(std::size_t manipulatorId) override;
     void setActiveManipulator(selection::IManipulator::Type manipulatorType) override;
+    void toggleManipulatorMode(selection::IManipulator::Type manipulatorType) override;
 
     sigc::signal<void, selection::IManipulator::Type>& signal_activeManipulatorChanged() override;
 

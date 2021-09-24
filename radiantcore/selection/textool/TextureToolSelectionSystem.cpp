@@ -384,6 +384,11 @@ void TextureToolSelectionSystem::toggleManipulatorModeById(std::size_t manipId)
     }
 }
 
+void TextureToolSelectionSystem::toggleManipulatorMode(selection::IManipulator::Type manipulatorType)
+{
+    toggleManipulatorModeById(getManipulatorIdForType(manipulatorType));
+}
+
 Matrix4 TextureToolSelectionSystem::getPivot2World()
 {
     // For now, we recalculate the whole thing every time it is requested

@@ -19,6 +19,7 @@
 #include "wxutil/FreezePointer.h"
 #include "tools/TextureToolMouseEvent.h"
 #include "render/TextureToolView.h"
+#include "messages/ManipulatorModeToggleRequest.h"
 
 class Winding;
 class Patch;
@@ -76,6 +77,7 @@ private:
 	sigc::connection _manipulatorChanged;
 	sigc::connection _selectionModeChanged;
 	sigc::connection _selectionChanged;
+	std::size_t _manipulatorModeToggleRequestHandler;
 
 private:
 	// This is where the static shared_ptr of the singleton instance is held.
@@ -150,6 +152,8 @@ private:
      * the SelectionSystem, saving the window state, etc.
      */
     void onMainFrameShuttingDown();
+
+    void handleManipulatorModeToggleRequest(selection::ManipulatorModeToggleRequest& request);
 
 public:
 	TexTool();

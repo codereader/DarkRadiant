@@ -191,6 +191,10 @@ public:
     virtual void setActiveManipulator(std::size_t manipulatorId) = 0;
     virtual void setActiveManipulator(selection::IManipulator::Type manipulatorType) = 0;
 
+    // Toggles the given manipulator mode. If the current mode is already set to <manipulatorType>,
+    // the system will switch back to default mode.
+    virtual void toggleManipulatorMode(selection::IManipulator::Type manipulatorType) = 0;
+
     virtual sigc::signal<void, selection::IManipulator::Type>& signal_activeManipulatorChanged() = 0;
 
     virtual Matrix4 getPivot2World() = 0;

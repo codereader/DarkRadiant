@@ -355,7 +355,7 @@ TEST_F(TextureToolTest, DefaultSelectionMode)
     EXPECT_EQ(GlobalTextureToolSelectionSystem().getMode(), textool::SelectionMode::Surface);
 }
 
-TEST_F(TextureToolTest, ToggleManipulatorModes)
+TEST_F(TextureToolTest, ToggleManipulatorModesByCmd)
 {
     // We're starting in "Drag" mode, so toggling the default mode should do nothing
     GlobalCommandSystem().executeCommand("ToggleTextureToolManipulatorMode", { "Drag" });
@@ -375,6 +375,29 @@ TEST_F(TextureToolTest, ToggleManipulatorModes)
 
     // Toggle Drag explicitly
     GlobalCommandSystem().executeCommand("ToggleTextureToolManipulatorMode", { "Drag" });
+    EXPECT_EQ(GlobalTextureToolSelectionSystem().getActiveManipulatorType(), selection::IManipulator::Drag);
+}
+
+TEST_F(TextureToolTest, ToggleManipulatorMode)
+{
+    // We're starting in "Drag" mode, so toggling the default mode should do nothing
+    GlobalTextureToolSelectionSystem().toggleManipulatorMode(selection::IManipulator::Drag);
+    EXPECT_EQ(GlobalTextureToolSelectionSystem().getActiveManipulatorType(), selection::IManipulator::Drag);
+
+    // Toggle to Rotate
+    GlobalTextureToolSelectionSystem().toggleManipulatorMode(selection::IManipulator::Rotate);
+    EXPECT_EQ(GlobalTextureToolSelectionSystem().getActiveManipulatorType(), selection::IManipulator::Rotate);
+
+    // Toggle from Rotate back to Drag
+    GlobalTextureToolSelectionSystem().toggleManipulatorMode(selection::IManipulator::Rotate);
+    EXPECT_EQ(GlobalTextureToolSelectionSystem().getActiveManipulatorType(), selection::IManipulator::Drag);
+
+    // Toggle to Rotate again
+    GlobalTextureToolSelectionSystem().toggleManipulatorMode(selection::IManipulator::Rotate);
+    EXPECT_EQ(GlobalTextureToolSelectionSystem().getActiveManipulatorType(), selection::IManipulator::Rotate);
+
+    // Toggle Drag explicitly
+    GlobalTextureToolSelectionSystem().toggleManipulatorMode(selection::IManipulator::Drag);
     EXPECT_EQ(GlobalTextureToolSelectionSystem().getActiveManipulatorType(), selection::IManipulator::Drag);
 }
 
