@@ -17,10 +17,10 @@ class SelectAllComponentWalker :
 	public scene::NodeVisitor
 {
 	bool _select;
-	SelectionSystem::EComponentMode _mode;
+    selection::ComponentSelectionMode _mode;
 
 public:
-	SelectAllComponentWalker(bool select, SelectionSystem::EComponentMode mode) :
+	SelectAllComponentWalker(bool select, selection::ComponentSelectionMode mode) :
 		_select(select),
 		_mode(mode)
 	{}
@@ -41,7 +41,7 @@ public:
 // Traverses through the scenegraph and removes degenerated brushes from the selected.
 // greebo: The actual erasure is performed in the destructor to keep the scenegraph intact during traversal.
 class RemoveDegenerateBrushWalker :
-	public SelectionSystem::Visitor
+    public selection::SelectionSystem::Visitor
 {
 	mutable std::list<scene::INodePtr> _eraseList;
 public:

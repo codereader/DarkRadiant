@@ -177,8 +177,8 @@ public:
     virtual void setMode(SelectionMode mode) = 0;
     virtual sigc::signal<void, SelectionMode>& signal_selectionModeChanged() = 0;
 
-    virtual void selectPoint(SelectionTest& test, SelectionSystem::EModifier modifier) = 0;
-    virtual void selectArea(SelectionTest& test, SelectionSystem::EModifier modifier) = 0;
+    virtual void selectPoint(SelectionTest& test, selection::SelectionSystem::EModifier modifier) = 0;
+    virtual void selectArea(SelectionTest& test, selection::SelectionSystem::EModifier modifier) = 0;
 
     // Returns the ID of the registered manipulator
     virtual std::size_t registerManipulator(const selection::ITextureToolManipulator::Ptr& manipulator) = 0;

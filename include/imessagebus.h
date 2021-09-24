@@ -52,6 +52,7 @@ public:
         FileOverwriteConfirmation,
         UnselectSelectionRequest,
         ManipulatorModeToggleRequest,
+        ComponentSelectionModeToggleRequest,
 
         UserDefinedMessagesGoHigherThanThis = 999,
     };

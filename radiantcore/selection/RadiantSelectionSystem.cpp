@@ -39,7 +39,7 @@ RadiantSelectionSystem::RadiantSelectionSystem() :
     _requestWorkZoneRecalculation(true),
     _defaultManipulatorType(IManipulator::Drag),
     _mode(ePrimitive),
-    _componentMode(eDefault),
+    _componentMode(ComponentSelectionMode::Default),
     _countPrimitive(0),
     _countComponent(0)
 {}
@@ -72,8 +72,7 @@ void RadiantSelectionSystem::notifyObservers(const scene::INodePtr& node, bool i
 }
 
 void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, SelectionTest& test,
-                                             const VolumeTest& view, SelectionSystem::EMode mode,
-                                             SelectionSystem::EComponentMode componentMode)
+    const VolumeTest& view, SelectionSystem::EMode mode, ComponentSelectionMode componentMode)
 {
     // The (temporary) storage pool
     SelectionPool selector;
@@ -206,7 +205,7 @@ SelectionSystem::EMode RadiantSelectionSystem::Mode() const {
 }
 
 // Set the current component mode to <mode>
-void RadiantSelectionSystem::SetComponentMode(EComponentMode mode)
+void RadiantSelectionSystem::SetComponentMode(ComponentSelectionMode mode)
 {
     if (_componentMode != mode)
     {
@@ -217,7 +216,8 @@ void RadiantSelectionSystem::SetComponentMode(EComponentMode mode)
 }
 
 // returns the current component mode
-SelectionSystem::EComponentMode RadiantSelectionSystem::ComponentMode() const {
+ComponentSelectionMode RadiantSelectionSystem::ComponentMode() const
+{
     return _componentMode;
 }
 
@@ -226,7 +226,7 @@ sigc::signal<void, SelectionSystem::EMode>& RadiantSelectionSystem::signal_selec
     return _sigSelectionModeChanged;
 }
 
-sigc::signal<void, SelectionSystem::EComponentMode>& RadiantSelectionSystem::signal_componentModeChanged()
+sigc::signal<void, ComponentSelectionMode>& RadiantSelectionSystem::signal_componentModeChanged()
 {
     return _sigComponentModeChanged;
 }
@@ -460,9 +460,9 @@ void RadiantSelectionSystem::setSelectedAllComponents(bool selected)
 
 			if (componentSelectionTestable)
 			{
-				componentSelectionTestable->setSelectedComponents(selected, SelectionSystem::eVertex);
-				componentSelectionTestable->setSelectedComponents(selected, SelectionSystem::eEdge);
-				componentSelectionTestable->setSelectedComponents(selected, SelectionSystem::eFace);
+				componentSelectionTestable->setSelectedComponents(selected, ComponentSelectionMode::Vertex);
+				componentSelectionTestable->setSelectedComponents(selected, ComponentSelectionMode::Edge);
+				componentSelectionTestable->setSelectedComponents(selected, ComponentSelectionMode::Face);
 			}
 
 			return true;
@@ -588,7 +588,7 @@ void RadiantSelectionSystem::selectPoint(SelectionTest& test, EModifier modifier
     {
         SelectionPool selector;
 
-        ComponentSelector selectionTester(selector, test, eFace);
+        ComponentSelector selectionTester(selector, test, ComponentSelectionMode::Face);
         GlobalSceneGraph().foreachVisibleNodeInVolume(test.getVolume(), selectionTester);
 
         // Load them all into the vector
@@ -720,7 +720,7 @@ void RadiantSelectionSystem::selectArea(SelectionTest& test, SelectionSystem::EM
 
     if (face)
     {
-        ComponentSelector selectionTester(pool, test, eFace);
+        ComponentSelector selectionTester(pool, test, ComponentSelectionMode::Face);
         GlobalSceneGraph().foreachVisibleNodeInVolume(test.getVolume(), selectionTester);
 
         // Load them all into the vector
@@ -790,7 +790,7 @@ void RadiantSelectionSystem::onManipulationEnd()
     if ((Mode() == SelectionSystem::ePrimitive || Mode() == SelectionSystem::eGroupPart) &&
         activeManipulator->getType() == selection::IManipulator::Drag)
     {
-        SelectAllComponentWalker faceSelector(false, SelectionSystem::eFace);
+        SelectAllComponentWalker faceSelector(false, ComponentSelectionMode::Face);
         GlobalSceneGraph().root()->traverse(faceSelector);
     }
 
@@ -841,7 +841,7 @@ void RadiantSelectionSystem::onManipulationCancelled()
     // greebo: Deselect all faces if we are in brush and drag mode
     if (Mode() == SelectionSystem::ePrimitive && activeManipulator->getType() == selection::IManipulator::Drag)
     {
-        SelectAllComponentWalker faceSelector(false, SelectionSystem::eFace);
+        SelectAllComponentWalker faceSelector(false, ComponentSelectionMode::Face);
         GlobalSceneGraph().root()->traverse(faceSelector);
     }
 
@@ -1216,12 +1216,12 @@ void RadiantSelectionSystem::toggleManipulatorMode(IManipulator::Type type)
 void RadiantSelectionSystem::activateDefaultMode()
 {
 	SetMode(ePrimitive);
-	SetComponentMode(eDefault);
+	SetComponentMode(ComponentSelectionMode::Default);
 
 	SceneChangeNotify();
 }
 
-void RadiantSelectionSystem::toggleComponentMode(EComponentMode mode)
+void RadiantSelectionSystem::toggleComponentMode(ComponentSelectionMode mode)
 {
 	if (Mode() == eComponent && ComponentMode() == mode)
 	{
@@ -1259,15 +1259,15 @@ void RadiantSelectionSystem::toggleComponentModeCmd(const cmd::ArgumentList& arg
 
     if (mode == "vertex")
     {
-        toggleComponentMode(eVertex);
+        toggleComponentMode(ComponentSelectionMode::Vertex);
     }
     else if (mode == "edge")
     {
-        toggleComponentMode(eEdge);
+        toggleComponentMode(ComponentSelectionMode::Edge);
     }
     else if (mode == "face")
     {
-        toggleComponentMode(eFace);
+        toggleComponentMode(ComponentSelectionMode::Face);
     }
 }
 
@@ -1280,7 +1280,7 @@ void RadiantSelectionSystem::toggleEntityMode(const cmd::ArgumentList& args)
 	else
 	{
 		SetMode(eEntity);
-		SetComponentMode(eDefault);
+		SetComponentMode(ComponentSelectionMode::Default);
 	}
 
 	onManipulatorModeChanged();
@@ -1324,7 +1324,7 @@ void RadiantSelectionSystem::toggleGroupPartMode(const cmd::ArgumentList& args)
         });
 
 		SetMode(eGroupPart);
-		SetComponentMode(eDefault);
+		SetComponentMode(ComponentSelectionMode::Default);
 	}
 
 	onManipulatorModeChanged();
@@ -1347,7 +1347,7 @@ void RadiantSelectionSystem::toggleMergeActionMode(const cmd::ArgumentList& args
         setSelectedAllComponents(false);
 
         SetMode(eMergeAction);
-        SetComponentMode(eDefault);
+        SetComponentMode(ComponentSelectionMode::Default);
     }
 
     if (oldMode != Mode())

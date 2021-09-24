@@ -8,7 +8,7 @@
 namespace scene {
 
 class AddToLayerWalker :
-	public SelectionSystem::Visitor,
+    public selection::SelectionSystem::Visitor,
 	public NodeVisitor
 {
 	int _layer;

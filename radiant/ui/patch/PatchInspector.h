@@ -24,7 +24,7 @@ namespace ui
 
 class PatchInspector : 
 	public wxutil::TransientWindow,
-	public SelectionSystem::Observer,
+    public selection::SelectionSystem::Observer,
 	public IPatch::Observer,
 	private wxutil::XmlResourceBasedWidget,
 	public sigc::trackable

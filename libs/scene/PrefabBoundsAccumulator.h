@@ -14,7 +14,7 @@ namespace scene
  */
 class PrefabBoundsAccumulator final :
     public scene::NodeVisitor,
-    public SelectionSystem::Visitor
+    public selection::SelectionSystem::Visitor
 {
 private:
     mutable AABB _bounds;

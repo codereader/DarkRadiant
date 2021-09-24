@@ -19,7 +19,7 @@ namespace algorithm
 {
 
 class ModelFinder :
-	public SelectionSystem::Visitor,
+    public selection::SelectionSystem::Visitor,
 	public scene::NodeVisitor
 {
 public:

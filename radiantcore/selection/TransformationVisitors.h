@@ -15,7 +15,7 @@
  * The visit function is called with the scene::instance to be modified.
  */
 class TranslateSelected :
-	public SelectionSystem::Visitor
+    public selection::SelectionSystem::Visitor
 {
 	// The translation vector3 (initialised in the constructor)
   	const Vector3& m_translate;
@@ -31,7 +31,7 @@ public:
 // -------------------------------------------------------------------------------
 
 class RotateSelected : 
-    public SelectionSystem::Visitor
+    public selection::SelectionSystem::Visitor
 {
 	// The internal transformation vectors
   	const Quaternion& _rotation;
@@ -48,7 +48,8 @@ public:
 
 // -------------------------------------------------------------------------------
 
-class ScaleSelected : public SelectionSystem::Visitor
+class ScaleSelected : 
+    public selection::SelectionSystem::Visitor
 {
   // The internal vectors of the transformation to be applied
   const Vector3& m_scale;
@@ -67,7 +68,9 @@ public:
  * Note: This probably could be merged into the other three visitor classes, passing a bool
  * which tells the visitor if components or primitives are to be transformed
  */
-class TranslateComponentSelected : public SelectionSystem::Visitor {
+class TranslateComponentSelected : 
+    public selection::SelectionSystem::Visitor
+{
 	// Internally stored translation vector
 	const Vector3& m_translate;
 public:
@@ -80,7 +83,9 @@ public:
 
 // -------------------------------------------------------------------------------
 
-class RotateComponentSelected : public SelectionSystem::Visitor {
+class RotateComponentSelected : 
+    public selection::SelectionSystem::Visitor
+{
 	// The internal transformation vectors
 	const Quaternion& m_rotate;
 	const Vector3& m_world_pivot;
@@ -95,7 +100,9 @@ public:
 
 // -------------------------------------------------------------------------------
 
-class ScaleComponentSelected : public SelectionSystem::Visitor {
+class ScaleComponentSelected :
+    public selection::SelectionSystem::Visitor
+{
 	// The internal vectors of the transformation to be applied
 	const Vector3& m_scale;
 	const Vector3& m_world_pivot;

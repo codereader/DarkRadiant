@@ -439,7 +439,7 @@ sigc::signal<void, selection::IManipulator::Type>& TextureToolSelectionSystem::s
     return _sigActiveManipulatorChanged;
 }
 
-void TextureToolSelectionSystem::selectPoint(SelectionTest& test, SelectionSystem::EModifier modifier)
+void TextureToolSelectionSystem::selectPoint(SelectionTest& test, selection::SelectionSystem::EModifier modifier)
 {
     selection::SelectionPool selectionPool;
 
@@ -451,15 +451,15 @@ void TextureToolSelectionSystem::selectPoint(SelectionTest& test, SelectionSyste
 
     switch (modifier)
     {
-    case SelectionSystem::eToggle:
+    case selection::SelectionSystem::eToggle:
         bestSelectable.second->setSelected(!bestSelectable.second->isSelected());
         break;
 
-    case SelectionSystem::eReplace:
+    case selection::SelectionSystem::eReplace:
         bestSelectable.second->setSelected(bestSelectable.second->isSelected());
         break;
 
-    case SelectionSystem::eCycle:
+    case selection::SelectionSystem::eCycle:
         {
             // Cycle through the selection pool and activate the item right after the currently selected
             auto i = selectionPool.begin();
@@ -492,7 +492,7 @@ void TextureToolSelectionSystem::selectPoint(SelectionTest& test, SelectionSyste
     }
 }
 
-void TextureToolSelectionSystem::selectArea(SelectionTest& test, SelectionSystem::EModifier modifier)
+void TextureToolSelectionSystem::selectArea(SelectionTest& test, selection::SelectionSystem::EModifier modifier)
 {
     selection::SelectionPool selectionPool;
 

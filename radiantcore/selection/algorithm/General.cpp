@@ -102,7 +102,7 @@ void selectAllOfType(const cmd::ArgumentList& args)
 		{
 			if (shaders.find(instance.getFace().getShader()) != shaders.end())
 			{
-				instance.setSelected(SelectionSystem::eFace, true);
+				instance.setSelected(selection::ComponentSelectionMode::Face, true);
 			}
 		});
 
@@ -236,9 +236,9 @@ inline void setComponentSelection(const scene::INodePtr& node, bool selected)
 
 	if (componentSelectionTestable)
 	{
-		componentSelectionTestable->setSelectedComponents(selected, SelectionSystem::eVertex);
-		componentSelectionTestable->setSelectedComponents(selected, SelectionSystem::eEdge);
-		componentSelectionTestable->setSelectedComponents(selected, SelectionSystem::eFace);
+		componentSelectionTestable->setSelectedComponents(selected, selection::ComponentSelectionMode::Vertex);
+		componentSelectionTestable->setSelectedComponents(selected, selection::ComponentSelectionMode::Edge);
+		componentSelectionTestable->setSelectedComponents(selected, selection::ComponentSelectionMode::Face);
 	}
 }
 
@@ -427,10 +427,10 @@ public:
 class InvertComponentSelectionWalker :
 	public scene::NodeVisitor
 {
-	SelectionSystem::EComponentMode _mode;
+    selection::ComponentSelectionMode _mode;
 	ComponentSelectionTestablePtr _selectable;
 public:
-	InvertComponentSelectionWalker(SelectionSystem::EComponentMode mode) :
+	InvertComponentSelectionWalker(selection::ComponentSelectionMode mode) :
 		_mode(mode)
 	{}
 

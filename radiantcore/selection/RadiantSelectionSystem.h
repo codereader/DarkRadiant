@@ -54,7 +54,7 @@ private:
 
 	// state
 	EMode _mode;
-	EComponentMode _componentMode;
+    ComponentSelectionMode _componentMode;
 
 	std::size_t _countPrimitive;
 	std::size_t _countComponent;
@@ -71,7 +71,7 @@ private:
 
 	sigc::signal<void, selection::IManipulator::Type> _sigActiveManipulatorChanged;
 	sigc::signal<void, EMode> _sigSelectionModeChanged;
-	sigc::signal<void, EComponentMode> _sigComponentModeChanged;
+	sigc::signal<void, ComponentSelectionMode> _sigComponentModeChanged;
 
 public:
 
@@ -95,11 +95,11 @@ public:
 	void SetMode(EMode mode) override;
 	EMode Mode() const override;
 
-	void SetComponentMode(EComponentMode mode) override;
-	EComponentMode ComponentMode() const override;
+	void SetComponentMode(ComponentSelectionMode mode) override;
+    ComponentSelectionMode ComponentMode() const override;
 
 	sigc::signal<void, EMode>& signal_selectionModeChanged() override;
-	sigc::signal<void, EComponentMode>& signal_componentModeChanged() override;
+	sigc::signal<void, ComponentSelectionMode>& signal_componentModeChanged() override;
 
 	// Returns the ID of the registered manipulator
 	std::size_t registerManipulator(const ISceneManipulator::Ptr& manipulator) override;
@@ -177,8 +177,8 @@ public:
 protected:
 	// Traverses the scene and adds any selectable nodes matching the given SelectionTest to the "targetList".
 	void testSelectScene(SelectablesList& targetList, SelectionTest& test,
-						 const VolumeTest& view, SelectionSystem::EMode mode,
-						 SelectionSystem::EComponentMode componentMode);
+        const VolumeTest& view, SelectionSystem::EMode mode,
+        ComponentSelectionMode componentMode);
 
 private:
 	bool higherEntitySelectionPriority() const;
@@ -198,7 +198,7 @@ private:
 	void toggleGroupPartMode(const cmd::ArgumentList& args);
 	void toggleMergeActionMode(const cmd::ArgumentList& args);
 
-	void toggleComponentMode(EComponentMode mode);
+	void toggleComponentMode(ComponentSelectionMode mode);
 	void toggleComponentModeCmd(const cmd::ArgumentList& args);
 
 	void onManipulatorModeChanged();

@@ -188,20 +188,20 @@ bool PatchNode::isSelectedComponents() const {
 	return false;
 }
 
-void PatchNode::setSelectedComponents(bool select, SelectionSystem::EComponentMode mode) {
+void PatchNode::setSelectedComponents(bool select, selection::ComponentSelectionMode mode) {
 	// If we are in vertex edit mode, set the control vertices to <select>
-	if (mode == SelectionSystem::eVertex) {
+	if (mode == selection::ComponentSelectionMode::Vertex) {
 		selectCtrl(select);
 	}
 	// If we are in vertex edit mode, set the dragplanes to <select>
-	else if (mode == SelectionSystem::eFace) {
+	else if (mode == selection::ComponentSelectionMode::Face) {
 		m_dragPlanes.setSelected(select);
 	}
 }
 
-void PatchNode::invertSelectedComponents(SelectionSystem::EComponentMode mode)
+void PatchNode::invertSelectedComponents(selection::ComponentSelectionMode mode)
 {
-	if (mode == SelectionSystem::eVertex)
+	if (mode == selection::ComponentSelectionMode::Vertex)
 	{
 		// Cycle through the transformed patch vertices and set the colour of all selected control vertices to BLUE (hardcoded)
 		for (PatchControlInstance& i : m_ctrl_instances)
@@ -211,12 +211,12 @@ void PatchNode::invertSelectedComponents(SelectionSystem::EComponentMode mode)
 	}
 }
 
-void PatchNode::testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode) {
+void PatchNode::testSelectComponents(Selector& selector, SelectionTest& test, selection::ComponentSelectionMode mode) {
 	test.BeginMesh(localToWorld());
 
 	// Only react to eVertex selection mode
 	switch(mode) {
-		case SelectionSystem::eVertex: {
+        case selection::ComponentSelectionMode::Vertex: {
 			// Cycle through all the control instances and test them for selection
 			for (PatchControlInstances::iterator i = m_ctrl_instances.begin(); i != m_ctrl_instances.end(); ++i) {
 				i->testSelect(selector, test);
@@ -284,7 +284,7 @@ void PatchNode::onRemoveFromScene(scene::IMapRootNode& root)
 	setSelected(false);
 
 	// De-select all child components as well
-	setSelectedComponents(false, SelectionSystem::eVertex);
+	setSelectedComponents(false, selection::ComponentSelectionMode::Vertex);
 
 	GlobalCounters().getCounter(counterPatches).decrement();
 
@@ -369,7 +369,7 @@ void PatchNode::renderComponents(RenderableCollector& collector, const VolumeTes
 	const_cast<Patch&>(m_patch).evaluateTransform();
 
 	// Only render the components, if we are in the according ComponentMode
-	if (GlobalSelectionSystem().ComponentMode() == SelectionSystem::eVertex)
+	if (GlobalSelectionSystem().ComponentMode() == selection::ComponentSelectionMode::Vertex)
     {
 		m_patch.submitRenderablePoints(collector, volume, localToWorld());
 	}

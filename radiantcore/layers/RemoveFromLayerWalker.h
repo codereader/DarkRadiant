@@ -6,7 +6,7 @@
 namespace scene {
 
 class RemoveFromLayerWalker :
-	public SelectionSystem::Visitor,
+    public selection::SelectionSystem::Visitor,
 	public NodeVisitor
 {
 	int _layer;

@@ -107,8 +107,8 @@ void LightNode::onRemoveFromScene(scene::IMapRootNode& root)
 	EntityNode::onRemoveFromScene(root);
 
 	// De-select all child components as well
-	setSelectedComponents(false, SelectionSystem::eVertex);
-	setSelectedComponents(false, SelectionSystem::eFace);
+	setSelectedComponents(false, selection::ComponentSelectionMode::Vertex);
+	setSelectedComponents(false, selection::ComponentSelectionMode::Face);
 }
 
 void LightNode::testSelect(Selector& selector, SelectionTest& test)
@@ -135,12 +135,13 @@ bool LightNode::isSelectedComponents() const {
 }
 
 // greebo: Selects/deselects all components, depending on the chosen componentmode
-void LightNode::setSelectedComponents(bool select, SelectionSystem::EComponentMode mode) {
-	if (mode == SelectionSystem::eFace) {
+void LightNode::setSelectedComponents(bool select, selection::ComponentSelectionMode mode)
+{
+	if (mode == selection::ComponentSelectionMode::Face) {
 		_dragPlanes.setSelected(false);
 	}
 
-	if (mode == SelectionSystem::eVertex) {
+	if (mode == selection::ComponentSelectionMode::Vertex) {
 		_lightCenterInstance.setSelected(false);
 		_lightTargetInstance.setSelected(false);
 		_lightRightInstance.setSelected(false);
@@ -150,9 +151,9 @@ void LightNode::setSelectedComponents(bool select, SelectionSystem::EComponentMo
 	}
 }
 
-void LightNode::invertSelectedComponents(SelectionSystem::EComponentMode mode)
+void LightNode::invertSelectedComponents(selection::ComponentSelectionMode mode)
 {
-	if (mode == SelectionSystem::eVertex)
+	if (mode == selection::ComponentSelectionMode::Vertex)
 	{
 		_lightCenterInstance.invertSelected();
 		_lightTargetInstance.invertSelected();
@@ -163,9 +164,9 @@ void LightNode::invertSelectedComponents(SelectionSystem::EComponentMode mode)
 	}
 }
 
-void LightNode::testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode)
+void LightNode::testSelectComponents(Selector& selector, SelectionTest& test, selection::ComponentSelectionMode mode)
 {
-	if (mode == SelectionSystem::eVertex)
+	if (mode == selection::ComponentSelectionMode::Vertex)
     {
         // Use the full rotation matrix for the test
         test.BeginMesh(localToWorld());
@@ -359,7 +360,7 @@ void LightNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 void LightNode::renderComponents(RenderableCollector& collector, const VolumeTest& volume) const
 {
 	// Render the components (light center) as selected/deselected, if we are in the according mode
-	if (GlobalSelectionSystem().ComponentMode() == SelectionSystem::eVertex)
+	if (GlobalSelectionSystem().ComponentMode() == selection::ComponentSelectionMode::Vertex)
 	{
 		if (_light.isProjected())
 		{
@@ -409,7 +410,7 @@ void LightNode::renderInactiveComponents(RenderableCollector& collector, const V
 	// greebo: We are not in component selection mode (and the light is still selected),
 	// check if we should draw the center of the light anyway
 	if (selected
-		&& GlobalSelectionSystem().ComponentMode() != SelectionSystem::eVertex
+		&& GlobalSelectionSystem().ComponentMode() != selection::ComponentSelectionMode::Vertex
 		&& EntitySettings::InstancePtr()->getAlwaysShowLightVertices())
 	{
 		if (_light.isProjected())
@@ -486,7 +487,7 @@ void LightNode::evaluateTransform()
 	else
     {
 		// Check if the light center is selected, if yes, transform it, if not, it's a drag plane operation
-		if (GlobalSelectionSystem().ComponentMode() == SelectionSystem::eVertex)
+		if (GlobalSelectionSystem().ComponentMode() == selection::ComponentSelectionMode::Vertex)
         {
 			// When the user is mouse-moving a vertex in the orthoviews he/she is operating
             // in world space. It's expected that the selected vertex follows the mouse.

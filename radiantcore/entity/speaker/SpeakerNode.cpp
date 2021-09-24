@@ -215,20 +215,20 @@ bool SpeakerNode::isSelectedComponents() const
 	return _dragPlanes.isSelected();
 }
 
-void SpeakerNode::setSelectedComponents(bool select, SelectionSystem::EComponentMode mode)
+void SpeakerNode::setSelectedComponents(bool select, selection::ComponentSelectionMode mode)
 {
-	if (mode == SelectionSystem::eFace)
+	if (mode == selection::ComponentSelectionMode::Face)
 	{
 		_dragPlanes.setSelected(false);
 	}
 }
 
-void SpeakerNode::invertSelectedComponents(SelectionSystem::EComponentMode mode)
+void SpeakerNode::invertSelectedComponents(selection::ComponentSelectionMode mode)
 {
 	// nothing, planes are selected via selectPlanes()
 }
 
-void SpeakerNode::testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode)
+void SpeakerNode::testSelectComponents(Selector& selector, SelectionTest& test, selection::ComponentSelectionMode mode)
 {
 	// nothing, planes are selected via selectPlanes()
 }

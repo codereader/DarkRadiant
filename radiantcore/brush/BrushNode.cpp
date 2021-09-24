@@ -141,57 +141,59 @@ bool BrushNode::isSelectedComponents() const {
 	return false;
 }
 
-void BrushNode::setSelectedComponents(bool select, SelectionSystem::EComponentMode mode) {
+void BrushNode::setSelectedComponents(bool select, selection::ComponentSelectionMode mode)
+{
 	for (FaceInstances::iterator i = m_faceInstances.begin(); i != m_faceInstances.end(); ++i) {
 		i->setSelected(mode, select);
 	}
 }
 
-void BrushNode::invertSelectedComponents(SelectionSystem::EComponentMode mode)
+void BrushNode::invertSelectedComponents(selection::ComponentSelectionMode mode)
 {
 	// Component mode, invert the component selection
 	switch (mode)
 	{
-	case SelectionSystem::eVertex:
+	case selection::ComponentSelectionMode::Vertex:
 		for (brush::VertexInstance& vertex : m_vertexInstances)
 		{
 			vertex.invertSelected();
 		}
 		break;
-	case SelectionSystem::eEdge:
+	case selection::ComponentSelectionMode::Edge:
 		for (EdgeInstance& edge : m_edgeInstances)
 		{
 			edge.invertSelected();
 		}
 		break;
-	case SelectionSystem::eFace:
+	case selection::ComponentSelectionMode::Face:
 		for (FaceInstance& face : m_faceInstances)
 		{
 			face.invertSelected();
 		}
 		break;
-	case SelectionSystem::eDefault:
+	case selection::ComponentSelectionMode::Default:
 		break;
 	} // switch
 }
 
-void BrushNode::testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode) {
+void BrushNode::testSelectComponents(Selector& selector, SelectionTest& test, selection::ComponentSelectionMode mode)
+{
 	test.BeginMesh(localToWorld());
 
 	switch (mode) {
-		case SelectionSystem::eVertex: {
+		case selection::ComponentSelectionMode::Vertex: {
 				for (VertexInstances::iterator i = m_vertexInstances.begin(); i != m_vertexInstances.end(); ++i) {
 					i->testSelect(selector, test);
 				}
 			}
 		break;
-		case SelectionSystem::eEdge: {
+		case selection::ComponentSelectionMode::Edge: {
 				for (EdgeInstances::iterator i = m_edgeInstances.begin(); i != m_edgeInstances.end(); ++i) {
 					i->testSelect(selector, test);
 				}
 			}
 			break;
-		case SelectionSystem::eFace: {
+		case selection::ComponentSelectionMode::Face: {
 				if (test.getVolume().fill()) {
 					for (FaceInstances::iterator i = m_faceInstances.begin(); i != m_faceInstances.end(); ++i) {
 						i->testSelect(selector, test);
@@ -282,9 +284,9 @@ void BrushNode::onRemoveFromScene(scene::IMapRootNode& root)
 	setSelected(false);
 
 	// De-select all child components as well
-	setSelectedComponents(false, SelectionSystem::eVertex);
-	setSelectedComponents(false, SelectionSystem::eEdge);
-	setSelectedComponents(false, SelectionSystem::eFace);
+	setSelectedComponents(false, selection::ComponentSelectionMode::Vertex);
+	setSelectedComponents(false, selection::ComponentSelectionMode::Edge);
+	setSelectedComponents(false, selection::ComponentSelectionMode::Face);
 
 	GlobalCounters().getCounter(counterBrushes).decrement();
     m_brush.disconnectUndoSystem(root.getUndoChangeTracker());
@@ -350,7 +352,7 @@ void BrushNode::renderComponents(RenderableCollector& collector, const VolumeTes
 
 	const Matrix4& l2w = localToWorld();
 
-	if (volume.fill() && GlobalSelectionSystem().ComponentMode() == SelectionSystem::eFace)
+	if (volume.fill() && GlobalSelectionSystem().ComponentMode() == selection::ComponentSelectionMode::Face)
 	{
 		evaluateViewDependent(volume, l2w);
 		collector.addRenderable(*m_brush.m_state_point, _faceCentroidPointsCulled, l2w);

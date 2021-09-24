@@ -537,7 +537,7 @@ void performPointSelection(const Vector2& texcoord, const render::View& view)
     ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromPoint(devicePoint, Vector2(0.02f, 0.02f)));
 
     SelectionVolume test(scissored);
-    GlobalTextureToolSelectionSystem().selectPoint(test, SelectionSystem::eToggle);
+    GlobalTextureToolSelectionSystem().selectPoint(test, selection::SelectionSystem::eToggle);
 }
 
 TEST_F(TextureToolTest, TestSelectPatchSurfaceByPoint)
@@ -737,7 +737,7 @@ TEST_F(TextureToolTest, TestSelectPatchByArea)
     SelectionVolume test(view);
     SelectionChangedCatcher signalObserver;
 
-    GlobalTextureToolSelectionSystem().selectArea(test, SelectionSystem::eToggle);
+    GlobalTextureToolSelectionSystem().selectArea(test, selection::SelectionSystem::eToggle);
 
     EXPECT_TRUE(signalObserver.signalHasFired()) << "Selection Changed Signal should have fired";
 

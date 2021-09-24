@@ -8,12 +8,12 @@ const SelectionInfo& SelectionInterface::getSelectionInfo()
 	return GlobalSelectionSystem().getSelectionInfo();
 }
 
-void SelectionInterface::foreachSelected(const SelectionSystem::Visitor& visitor)
+void SelectionInterface::foreachSelected(const selection::SelectionSystem::Visitor& visitor)
 {
 	GlobalSelectionSystem().foreachSelected(visitor);
 }
 
-void SelectionInterface::foreachSelectedComponent(const SelectionSystem::Visitor& visitor)
+void SelectionInterface::foreachSelectedComponent(const selection::SelectionSystem::Visitor& visitor)
 {
 	GlobalSelectionSystem().foreachSelectedComponent(visitor);
 }
@@ -59,9 +59,9 @@ void SelectionInterface::registerInterface(py::module& scope, py::dict& globals)
 	selInfo.def_readonly("componentCount", &SelectionInfo::componentCount);
 
 	// Expose the SelectionSystem::Visitor interface
-	py::class_<SelectionSystem::Visitor, SelectionVisitorWrapper> visitor(scope, "SelectionVisitor");
+	py::class_<selection::SelectionSystem::Visitor, SelectionVisitorWrapper> visitor(scope, "SelectionVisitor");
 	visitor.def(py::init<>());
-	visitor.def("visit", &SelectionSystem::Visitor::visit);
+	visitor.def("visit", &selection::SelectionSystem::Visitor::visit);
 
     // Expose the SelectionFaceVisitor interface
     py::class_<SelectedFaceVisitor, SelectedFaceVisitorWrapper> faceVisitor(scope, "SelectedFaceVisitor");

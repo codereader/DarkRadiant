@@ -9,7 +9,7 @@ namespace scene
 
 // Visitor that checks the current selection for models
 class ModelFinder :
-	public SelectionSystem::Visitor
+    public selection::SelectionSystem::Visitor
 {
 public:
 	typedef std::vector<scene::INodePtr> ModelList;

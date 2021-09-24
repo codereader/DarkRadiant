@@ -128,11 +128,11 @@ void BasicSelectionTool::performSelectionTest(SelectionVolume& volume, Selection
 {
     if (type == SelectionType::Area)
     {
-        GlobalSelectionSystem().selectArea(volume, SelectionSystem::eToggle, selectFacesOnly());
+        GlobalSelectionSystem().selectArea(volume, selection::SelectionSystem::eToggle, selectFacesOnly());
     }
     else
     {
-        GlobalSelectionSystem().selectPoint(volume, SelectionSystem::eToggle, selectFacesOnly());
+        GlobalSelectionSystem().selectPoint(volume, selection::SelectionSystem::eToggle, selectFacesOnly());
     }
 }
 
@@ -254,7 +254,7 @@ void CycleSelectionMouseTool::testSelect(MouseTool::Event& ev)
 
     // If we already replaced a selection, switch to cycle mode
     // eReplace should only be active during the first call without mouse movement
-    SelectionSystem::EModifier modifier = _mouseMovedSinceLastSelect ? SelectionSystem::eReplace : SelectionSystem::eCycle;
+    auto modifier = _mouseMovedSinceLastSelect ? selection::SelectionSystem::eReplace : selection::SelectionSystem::eCycle;
     
     // Copy the view to create a scissored volume
     render::View scissored(_view);

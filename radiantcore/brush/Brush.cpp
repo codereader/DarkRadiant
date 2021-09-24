@@ -270,18 +270,18 @@ const AABB& Brush::localAABB() const {
     return m_aabb_local;
 }
 
-void Brush::renderComponents(SelectionSystem::EComponentMode mode, RenderableCollector& collector,
+void Brush::renderComponents(selection::ComponentSelectionMode mode, RenderableCollector& collector,
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
     switch (mode)
 	{
-        case SelectionSystem::eVertex:
+        case selection::ComponentSelectionMode::Vertex:
             collector.addRenderable(*m_state_point, _uniqueVertexPoints, localToWorld);
             break;
-        case SelectionSystem::eEdge:
+        case selection::ComponentSelectionMode::Edge:
             collector.addRenderable(*m_state_point, _uniqueEdgePoints, localToWorld);
             break;
-        case SelectionSystem::eFace:
+        case selection::ComponentSelectionMode::Face:
             collector.addRenderable(*m_state_point, _faceCentroidPoints, localToWorld);
             break;
         default:

@@ -160,17 +160,17 @@ bool Doom3GroupNode::isSelectedComponents() const {
 	return _nurbsEditInstance.isSelected() || _catmullRomEditInstance.isSelected() || (_d3Group.isModel() && _originInstance.isSelected());
 }
 
-void Doom3GroupNode::setSelectedComponents(bool selected, SelectionSystem::EComponentMode mode) {
-	if (mode == SelectionSystem::eVertex) {
+void Doom3GroupNode::setSelectedComponents(bool selected, selection::ComponentSelectionMode mode) {
+	if (mode == selection::ComponentSelectionMode::Vertex) {
 		_nurbsEditInstance.setSelected(selected);
 		_catmullRomEditInstance.setSelected(selected);
 		_originInstance.setSelected(selected);
 	}
 }
 
-void Doom3GroupNode::invertSelectedComponents(SelectionSystem::EComponentMode mode)
+void Doom3GroupNode::invertSelectedComponents(selection::ComponentSelectionMode mode)
 {
-	if (mode == SelectionSystem::eVertex)
+	if (mode == selection::ComponentSelectionMode::Vertex)
 	{
 		_nurbsEditInstance.invertSelected();
 		_catmullRomEditInstance.invertSelected();
@@ -178,9 +178,9 @@ void Doom3GroupNode::invertSelectedComponents(SelectionSystem::EComponentMode mo
 	}
 }
 
-void Doom3GroupNode::testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode)
+void Doom3GroupNode::testSelectComponents(Selector& selector, SelectionTest& test, selection::ComponentSelectionMode mode)
 {
-	if (mode == SelectionSystem::eVertex)
+	if (mode == selection::ComponentSelectionMode::Vertex)
 	{
 		test.BeginMesh(localToWorld());
 
@@ -242,7 +242,7 @@ void Doom3GroupNode::onRemoveFromScene(scene::IMapRootNode& root)
 	EntityNode::onRemoveFromScene(root);
 
 	// De-select all child components as well
-	setSelectedComponents(false, SelectionSystem::eVertex);
+	setSelectedComponents(false, selection::ComponentSelectionMode::Vertex);
 
     // A D3GroupNode supports child primitives, so disconnect
     // the Node's TraversableNodeSet to the UndoSystem
@@ -304,7 +304,7 @@ void Doom3GroupNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 
 void Doom3GroupNode::renderComponents(RenderableCollector& collector, const VolumeTest& volume) const
 {
-	if (GlobalSelectionSystem().ComponentMode() == SelectionSystem::eVertex)
+	if (GlobalSelectionSystem().ComponentMode() == selection::ComponentSelectionMode::Vertex)
 	{
 		_nurbsEditInstance.renderComponents(collector, volume, Matrix4::getIdentity());
 

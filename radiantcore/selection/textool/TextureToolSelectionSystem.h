@@ -51,8 +51,8 @@ public:
     void clearSelection() override;
     void clearComponentSelection() override;
 
-    void selectPoint(SelectionTest& test, SelectionSystem::EModifier modifier) override;
-    void selectArea(SelectionTest& test, SelectionSystem::EModifier modifier) override;
+    void selectPoint(SelectionTest& test, selection::SelectionSystem::EModifier modifier) override;
+    void selectArea(SelectionTest& test, selection::SelectionSystem::EModifier modifier) override;
 
     // Returns the ID of the registered manipulator
     std::size_t registerManipulator(const selection::ITextureToolManipulator::Ptr& manipulator) override;

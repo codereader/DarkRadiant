@@ -96,31 +96,35 @@ bool FaceInstance::selectedComponents() const
 	return !m_vertexSelection.empty() || !m_edgeSelection.empty() || m_selectable.isSelected();
 }
 
-bool FaceInstance::selectedComponents(SelectionSystem::EComponentMode mode) const {
-	switch (mode) {
-		case SelectionSystem::eVertex:
+bool FaceInstance::selectedComponents(selection::ComponentSelectionMode mode) const
+{
+	switch (mode)
+    {
+		case selection::ComponentSelectionMode::Vertex:
 			return selectedVertices();
-		case SelectionSystem::eEdge:
+		case selection::ComponentSelectionMode::Edge:
 			return selectedEdges();
-		case SelectionSystem::eFace:
+		case selection::ComponentSelectionMode::Face:
 			return isSelected();
 		default:
 			return false;
-		}
+	}
 }
 
-void FaceInstance::setSelected(SelectionSystem::EComponentMode mode, bool select) {
-	switch (mode) {
-		case SelectionSystem::eFace:
+void FaceInstance::setSelected(selection::ComponentSelectionMode mode, bool select)
+{
+	switch (mode)
+    {
+		case selection::ComponentSelectionMode::Face:
 			m_selectable.setSelected(select);
 			break;
-		case SelectionSystem::eVertex:
+		case selection::ComponentSelectionMode::Vertex:
 			ASSERT_MESSAGE(!select, "select-all not supported");
 
 			m_vertexSelection.clear();
 			m_selectableVertices.setSelected(false);
 			break;
-		case SelectionSystem::eEdge:
+		case selection::ComponentSelectionMode::Edge:
 			ASSERT_MESSAGE(!select, "select-all not supported");
 
 			m_edgeSelection.clear();
@@ -131,14 +135,16 @@ void FaceInstance::setSelected(SelectionSystem::EComponentMode mode, bool select
 	}
 }
 
-void FaceInstance::invertSelected() {
-	switch (GlobalSelectionSystem().ComponentMode()) {
-		case SelectionSystem::eFace:
+void FaceInstance::invertSelected()
+{
+	switch (GlobalSelectionSystem().ComponentMode()) 
+    {
+        case selection::ComponentSelectionMode::Face:
 			m_selectable.setSelected(!m_selectable.isSelected());
 			break;
-		case SelectionSystem::eVertex:
+		case selection::ComponentSelectionMode::Vertex:
 			break;
-		case SelectionSystem::eEdge:
+		case selection::ComponentSelectionMode::Edge:
 			break;
 		default:
 			break;

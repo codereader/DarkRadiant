@@ -39,11 +39,11 @@ public:
 
         if (type == SelectionType::Area)
         {
-            GlobalTextureToolSelectionSystem().selectArea(volume, SelectionSystem::eToggle);
+            GlobalTextureToolSelectionSystem().selectArea(volume, selection::SelectionSystem::eToggle);
         }
         else
         {
-            GlobalTextureToolSelectionSystem().selectPoint(volume, SelectionSystem::eToggle);
+            GlobalTextureToolSelectionSystem().selectPoint(volume, selection::SelectionSystem::eToggle);
         }
     }
 };

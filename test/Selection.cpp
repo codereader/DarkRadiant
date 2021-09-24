@@ -185,14 +185,14 @@ TEST_F(SelectionTest, WorkzoneIsRecalculatedAfterSelectionChange)
     auto tallBrushTest = algorithm::constructOrthoviewSelectionTest(orthoView);
 
     // Select and de-select first brush
-    GlobalSelectionSystem().selectPoint(tallBrushTest, SelectionSystem::eToggle, false);
+    GlobalSelectionSystem().selectPoint(tallBrushTest, selection::SelectionSystem::eToggle, false);
     EXPECT_TRUE(Node_isSelected(tallBrush));
 
     // Workzone should match the size of the tall brush
     EXPECT_EQ(GlobalSelectionSystem().getWorkZone().bounds, tallBounds);
 
     // De-select the tall brush
-    GlobalSelectionSystem().selectPoint(tallBrushTest, SelectionSystem::eToggle, false);
+    GlobalSelectionSystem().selectPoint(tallBrushTest, selection::SelectionSystem::eToggle, false);
     EXPECT_FALSE(Node_isSelected(tallBrush));
 
     // Workzone should still match the size of the tall brush
@@ -203,9 +203,9 @@ TEST_F(SelectionTest, WorkzoneIsRecalculatedAfterSelectionChange)
     auto smallBrushTest = algorithm::constructOrthoviewSelectionTest(orthoView);
 
     // Select and de-select second brush (no getWorkZone() call in between)
-    GlobalSelectionSystem().selectPoint(smallBrushTest, SelectionSystem::eToggle, false);
+    GlobalSelectionSystem().selectPoint(smallBrushTest, selection::SelectionSystem::eToggle, false);
     EXPECT_TRUE(Node_isSelected(smallBrush));
-    GlobalSelectionSystem().selectPoint(smallBrushTest, SelectionSystem::eToggle, false);
+    GlobalSelectionSystem().selectPoint(smallBrushTest, selection::SelectionSystem::eToggle, false);
     EXPECT_FALSE(Node_isSelected(smallBrush));
 
     // Workzone should match the size of the small brush now
@@ -229,7 +229,7 @@ protected:
         EXPECT_FALSE(Node_isSelected(node));
 
         SelectionVolume test(view);
-        GlobalSelectionSystem().selectPoint(test, SelectionSystem::eToggle, false);
+        GlobalSelectionSystem().selectPoint(test, selection::SelectionSystem::eToggle, false);
 
         EXPECT_EQ(Node_isSelected(node), expectNodeIsSelectable);
 

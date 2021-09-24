@@ -120,7 +120,7 @@ public:
 
         if (highlightFlags & Renderable::Highlight::Selected)
         {
-            if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent)
+            if (GlobalSelectionSystem().Mode() != selection::SelectionSystem::eComponent)
             {
 				_collector.setHighlightFlag(RenderableCollector::Highlight::Faces, true);
             }

@@ -36,7 +36,23 @@ class IFace;
 class Brush;
 class IPatch;
 
-namespace selection { struct WorkZone; }
+namespace selection
+{ 
+    struct WorkZone; 
+
+    // The possible modes when in "component manipulation mode"
+    // Used by the SelectionSystem as well as the Texture Tool
+    enum class ComponentSelectionMode
+    {
+        Default,
+        Vertex,
+        Edge,
+        Face,
+    };
+}
+
+namespace selection
+{
 
 class SelectionSystem :
 	public RegisterableModule
@@ -58,14 +74,6 @@ public:
     eMergeAction,
   };
 
-	// The possible modes when in "component manipulation mode"
-	enum EComponentMode {
-		eDefault,
-		eVertex,
-		eEdge,
-		eFace,
-	};
-
 	/** greebo: An SelectionSystem::Observer gets notified
 	 * as soon as the selection is changed.
 	 */
@@ -85,27 +93,27 @@ public:
 	virtual void removeObserver(Observer* observer) = 0;
 
 	// Returns the ID of the registered manipulator
-	virtual std::size_t registerManipulator(const selection::ISceneManipulator::Ptr& manipulator) = 0;
-	virtual void unregisterManipulator(const selection::ISceneManipulator::Ptr& manipulator) = 0;
+	virtual std::size_t registerManipulator(const ISceneManipulator::Ptr& manipulator) = 0;
+	virtual void unregisterManipulator(const ISceneManipulator::Ptr& manipulator) = 0;
 
-	virtual selection::IManipulator::Type getActiveManipulatorType() = 0;
+	virtual IManipulator::Type getActiveManipulatorType() = 0;
 
 	// Returns the currently active Manipulator, which is always non-null
-	virtual const selection::ISceneManipulator::Ptr& getActiveManipulator() = 0;
+	virtual const ISceneManipulator::Ptr& getActiveManipulator() = 0;
 	virtual void setActiveManipulator(std::size_t manipulatorId) = 0;
-	virtual void setActiveManipulator(selection::IManipulator::Type manipulatorType) = 0;
+	virtual void setActiveManipulator(IManipulator::Type manipulatorType) = 0;
 
-	virtual sigc::signal<void, selection::IManipulator::Type>& signal_activeManipulatorChanged() = 0;
+	virtual sigc::signal<void, IManipulator::Type>& signal_activeManipulatorChanged() = 0;
 
 	virtual const SelectionInfo& getSelectionInfo() = 0;
 
   virtual void SetMode(EMode mode) = 0;
   virtual EMode Mode() const = 0;
-  virtual void SetComponentMode(EComponentMode mode) = 0;
-  virtual EComponentMode ComponentMode() const = 0;
+    virtual void SetComponentMode(ComponentSelectionMode mode) = 0;
+    virtual ComponentSelectionMode ComponentMode() const = 0;
 
 	virtual sigc::signal<void, EMode>& signal_selectionModeChanged() = 0;
-	virtual sigc::signal<void, EComponentMode>& signal_componentModeChanged() = 0;
+	virtual sigc::signal<void, ComponentSelectionMode>& signal_componentModeChanged() = 0;
 
   virtual std::size_t countSelected() const = 0;
   virtual std::size_t countSelectedComponents() const = 0;
@@ -216,16 +224,18 @@ public:
 	 *
 	 * Note: the struct is defined in selectionlib.h.
 	 */
-	virtual const selection::WorkZone& getWorkZone() = 0;
+	virtual const WorkZone& getWorkZone() = 0;
 
 	// Returns the center point of the current selection
 	virtual Vector3 getCurrentSelectionCenter() = 0;
 };
 
-const char* const MODULE_SELECTIONSYSTEM("SelectionSystem");
+}
 
-inline SelectionSystem& GlobalSelectionSystem()
+constexpr const char* const MODULE_SELECTIONSYSTEM("SelectionSystem");
+
+inline selection::SelectionSystem& GlobalSelectionSystem()
 {
-	static module::InstanceReference<SelectionSystem> _reference(MODULE_SELECTIONSYSTEM);
+	static module::InstanceReference<selection::SelectionSystem> _reference(MODULE_SELECTIONSYSTEM);
 	return _reference;
 }

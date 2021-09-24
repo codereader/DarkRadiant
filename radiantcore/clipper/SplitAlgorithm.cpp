@@ -9,7 +9,7 @@ namespace algorithm
 {
 
 class BrushSetClipPlane :
-	public SelectionSystem::Visitor
+    public selection::SelectionSystem::Visitor
 {
 	Plane3 _plane;
 public:

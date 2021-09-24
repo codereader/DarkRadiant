@@ -99,9 +99,9 @@ public:
 	// greebo: Returns true if drag planes or the light center is selected (both are components)
 	bool isSelectedComponents() const override;
 	// greebo: Selects/deselects all components, depending on the chosen componentmode
-	void setSelectedComponents(bool select, SelectionSystem::EComponentMode mode) override;
-	void invertSelectedComponents(SelectionSystem::EComponentMode mode) override;
-	void testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode) override;
+	void setSelectedComponents(bool select, selection::ComponentSelectionMode mode) override;
+	void invertSelectedComponents(selection::ComponentSelectionMode mode) override;
+	void testSelectComponents(Selector& selector, SelectionTest& test, selection::ComponentSelectionMode mode) override;
 
 	/**
 	 * greebo: This returns the AABB of all the selectable vertices. This method
