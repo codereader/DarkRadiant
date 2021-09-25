@@ -192,11 +192,6 @@ public:
 	 */
 	void draw();
 
-	/** greebo: Increases/Decreases the grid size.
-	 */
-	void gridUp();
-	void gridDown();
-
 	// Idle callback, used for deferred updates
 	void onIdle(wxIdleEvent& ev);
 
@@ -220,8 +215,6 @@ public:
 	/** greebo: Static command targets
 	 */
 	static void toggle(const cmd::ArgumentList& args);
-	static void texToolGridUp(const cmd::ArgumentList& args);
-	static void texToolGridDown(const cmd::ArgumentList& args);
 	static void texToolSnapToGrid(const cmd::ArgumentList& args);
 	static void texToolMergeItems(const cmd::ArgumentList& args);
 	static void texToolFlipS(const cmd::ArgumentList& args);

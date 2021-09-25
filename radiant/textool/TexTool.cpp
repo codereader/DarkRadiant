@@ -245,20 +245,6 @@ void TexTool::onSelectionModeChanged(textool::SelectionMode mode)
     queueDraw();
 }
 
-void TexTool::gridUp() {
-	if (_grid*2 <= GRID_MAX && _gridActive) {
-		_grid *= 2;
-		draw();
-	}
-}
-
-void TexTool::gridDown() {
-	if (_grid/2 >= GRID_MIN && _gridActive) {
-		_grid /= 2;
-		draw();
-	}
-}
-
 void TexTool::onMainFrameShuttingDown()
 {
 	rMessage() << "TexTool shutting down." << std::endl;
@@ -881,14 +867,6 @@ void TexTool::toggle(const cmd::ArgumentList& args)
 	Instance().ToggleVisibility();
 }
 
-void TexTool::texToolGridUp(const cmd::ArgumentList& args) {
-	Instance().gridUp();
-}
-
-void TexTool::texToolGridDown(const cmd::ArgumentList& args) {
-	Instance().gridDown();
-}
-
 void TexTool::texToolSnapToGrid(const cmd::ArgumentList& args) {
 	Instance().snapToGrid();
 }
@@ -912,8 +890,6 @@ void TexTool::selectRelated(const cmd::ArgumentList& args) {
 void TexTool::registerCommands()
 {
 	GlobalCommandSystem().addCommand("TextureTool", TexTool::toggle);
-	GlobalCommandSystem().addCommand("TexToolGridUp", TexTool::texToolGridUp);
-	GlobalCommandSystem().addCommand("TexToolGridDown", TexTool::texToolGridDown);
 	GlobalCommandSystem().addCommand("TexToolSnapToGrid", TexTool::texToolSnapToGrid);
 	GlobalCommandSystem().addCommand("TexToolMergeItems", TexTool::texToolMergeItems);
 	GlobalCommandSystem().addCommand("TexToolFlipS", TexTool::texToolFlipS);
