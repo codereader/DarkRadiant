@@ -1,6 +1,8 @@
 #include "RadiantTest.h"
 
 #include "igrid.h"
+#include "icommandsystem.h"
+#include <sigc++/connection.h>
 
 namespace test
 {
@@ -87,6 +89,51 @@ TEST_F(GridTest, TextureGridPower)
     checkGridPower(GRID_64, grid::Space::Texture, -1);
     checkGridPower(GRID_128, grid::Space::Texture, 0); // upper bound
     checkGridPower(GRID_256, grid::Space::Texture, 0);
+}
+
+TEST_F(GridTest, ChangedSignal)
+{
+    // Set to the default
+    GlobalGrid().setGridSize(GRID_1);
+
+    bool signalFired = false;
+    sigc::connection conn = GlobalGrid().signal_gridChanged().connect([&]()
+    {
+        signalFired = true;
+    });
+
+    GlobalGrid().setGridSize(GRID_64);
+    EXPECT_TRUE(signalFired) << "Signal didn't fire after changing grid size";
+
+    signalFired = false;
+
+    // Set the same grid size again, the signal shouldn't fire since we don't change anything
+    GlobalGrid().setGridSize(GRID_64);
+    EXPECT_FALSE(signalFired) << "Signal fired even when grid size didn't change";
+
+    conn.disconnect();
+}
+
+inline void checkGridSizeByCmd(const std::string& size, grid::Space space, float expectedSize)
+{
+    GlobalCommandSystem().executeCommand("SetGrid", size);
+    EXPECT_EQ(GlobalGrid().getGridSize(space), expectedSize);
+}
+
+TEST_F(GridTest, SetGridSizeByCmd)
+{
+    checkGridSizeByCmd(grid::getStringForSize(GRID_0125), grid::Space::World, 0.125f);
+    checkGridSizeByCmd(grid::getStringForSize(GRID_025), grid::Space::World, 0.25f);
+    checkGridSizeByCmd(grid::getStringForSize(GRID_05), grid::Space::World, 0.5f);
+    checkGridSizeByCmd(grid::getStringForSize(GRID_1), grid::Space::World, 1.0f);
+    checkGridSizeByCmd(grid::getStringForSize(GRID_2), grid::Space::World, 2.0f);
+    checkGridSizeByCmd(grid::getStringForSize(GRID_4), grid::Space::World, 4.0f);
+    checkGridSizeByCmd(grid::getStringForSize(GRID_8), grid::Space::World, 8.0f);
+    checkGridSizeByCmd(grid::getStringForSize(GRID_16), grid::Space::World, 16.0f);
+    checkGridSizeByCmd(grid::getStringForSize(GRID_32), grid::Space::World, 32.0f);
+    checkGridSizeByCmd(grid::getStringForSize(GRID_64), grid::Space::World, 64.0f);
+    checkGridSizeByCmd(grid::getStringForSize(GRID_128), grid::Space::World, 128.0f);
+    checkGridSizeByCmd(grid::getStringForSize(GRID_256), grid::Space::World, 256.0f);
 }
 
 }

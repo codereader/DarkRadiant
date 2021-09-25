@@ -220,9 +220,11 @@ void GridManager::gridUp()
 
 void GridManager::setGridSize(GridSize gridSize) 
 {
-	_activeGridSize = gridSize;
-
-	gridChangeNotify();
+    if (_activeGridSize != gridSize)
+    {
+        _activeGridSize = gridSize;
+        gridChangeNotify();
+    }
 }
 
 float GridManager::getGridSize(grid::Space space) const
