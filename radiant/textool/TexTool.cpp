@@ -541,28 +541,9 @@ void TexTool::selectRelatedItems()
 	draw();
 }
 
-float TexTool::getGridSize()
-{
-    // The Texture Tool is using the same grid "size" as the main orthographic views
-    // but since grid spacings >1 barely make sense when editing UV coordinates
-    // we offset the grid size such that GRID_1 refers to a UV spacing of 2^(-7) instead of 2^0.
-    int exponent = GlobalGrid().getGridPower() - 7;
-
-    if (exponent < -7)
-    {
-        exponent = -7; // not smaller than 2^-7
-    }
-    else if (exponent > 0)
-    {
-        exponent = 0; // not greater than 1.0
-    }
-
-    return pow(2.0f, exponent);
-}
-
 void TexTool::drawGrid()
 {
-    auto gridSpacing = getGridSize();
+    auto gridSpacing = GlobalGrid().getGridSize(grid::Space::Texture);
 
 	const auto& texSpaceAABB = getVisibleTexSpace();
     auto uPerPixel = texSpaceAABB.extents.x() / _windowDims.x();
@@ -575,7 +556,7 @@ void TexTool::drawGrid()
     // Ensure that the grid spacing is at least 10 pixels wide
     while (gridSpacingInPixels < 12)
     {
-        gridSpacing *= 2.0f;
+        gridSpacing *= GlobalGrid().getGridBase(grid::Space::Texture);
         gridSpacingInPixels = gridSpacing / smallestUvPerPixel;
     }
 
