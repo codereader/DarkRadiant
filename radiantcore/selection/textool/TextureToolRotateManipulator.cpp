@@ -247,7 +247,7 @@ void TextureToolRotateManipulator::rotateSelected(const Vector2& pivot, double a
     transform.premultiplyBy(Matrix3::getRotation(-angle));
     transform.premultiplyBy(Matrix3::getTranslation(pivot));
 
-    if (GlobalTextureToolSelectionSystem().getMode() == SelectionMode::Surface)
+    if (GlobalTextureToolSelectionSystem().getSelectionMode() == SelectionMode::Surface)
     {
         GlobalTextureToolSelectionSystem().foreachSelectedNode([&](const textool::INode::Ptr& node)
         {

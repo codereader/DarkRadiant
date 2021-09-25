@@ -13,7 +13,7 @@ class TextureToolSelectionSystem :
     public ITextureToolSelectionSystem
 {
 private:
-    SelectionMode _mode;
+    SelectionMode _selectionMode;
 
     std::map<std::size_t, selection::ITextureToolManipulator::Ptr> _manipulators;
 
@@ -36,8 +36,9 @@ public:
     void initialiseModule(const IApplicationContext& ctx) override;
     void shutdownModule() override;
 
-    SelectionMode getMode() const override;
-    void setMode(SelectionMode mode) override;
+    SelectionMode getSelectionMode() const override;
+    void setSelectionMode(SelectionMode mode) override;
+    void toggleSelectionMode(SelectionMode mode) override;
     sigc::signal<void, SelectionMode>& signal_selectionModeChanged() override;
 
     void foreachSelectedNode(const std::function<bool(const INode::Ptr&)>& functor) override;
@@ -85,7 +86,6 @@ private:
     void toggleManipulatorModeById(std::size_t manipId);
     std::size_t getManipulatorIdForType(selection::IManipulator::Type type);
 
-    void toggleSelectionMode(SelectionMode mode);
     void toggleSelectionModeCmd(const cmd::ArgumentList& args);
 
     void performSelectionTest(Selector& selector, SelectionTest& test);

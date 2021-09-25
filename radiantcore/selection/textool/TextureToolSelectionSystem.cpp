@@ -28,7 +28,7 @@ void TextureToolSelectionSystem::initialiseModule(const IApplicationContext& ctx
 {
     rMessage() << getName() << "::initialiseModule called." << std::endl;
 
-    _mode = SelectionMode::Surface;
+    _selectionMode = SelectionMode::Surface;
 
     _manipulationPivot.setFromMatrix(Matrix4::getIdentity());
     registerManipulator(std::make_shared<TextureToolRotateManipulator>(_manipulationPivot));
@@ -63,17 +63,17 @@ void TextureToolSelectionSystem::shutdownModule()
     _manipulators.clear();
 }
 
-SelectionMode TextureToolSelectionSystem::getMode() const
+SelectionMode TextureToolSelectionSystem::getSelectionMode() const
 {
-    return _mode;
+    return _selectionMode;
 }
 
-void TextureToolSelectionSystem::setMode(SelectionMode mode)
+void TextureToolSelectionSystem::setSelectionMode(SelectionMode mode)
 {
-    if (mode != _mode)
+    if (mode != _selectionMode)
     {
-        _mode = mode;
-        _sigSelectionModeChanged.emit(_mode);
+        _selectionMode = mode;
+        _sigSelectionModeChanged.emit(_selectionMode);
 
         _manipulationPivot.setUserLocked(false);
         _manipulationPivot.setNeedsRecalculation(true);
@@ -83,7 +83,7 @@ void TextureToolSelectionSystem::setMode(SelectionMode mode)
 void TextureToolSelectionSystem::toggleSelectionMode(SelectionMode mode)
 {
     // Switch back to Surface mode if toggling a non-default mode again
-    if (mode == _mode && mode != SelectionMode::Surface)
+    if (mode == _selectionMode && mode != SelectionMode::Surface)
     {
         // Toggle back to Surface mode
         toggleSelectionMode(SelectionMode::Surface);
@@ -91,7 +91,7 @@ void TextureToolSelectionSystem::toggleSelectionMode(SelectionMode mode)
     else
     {
         // setMode will only do something if we're not already in the target mode
-        setMode(mode);
+        setSelectionMode(mode);
     }
 }
 
@@ -176,7 +176,7 @@ void TextureToolSelectionSystem::foreachSelectedComponentNode(const std::functio
 
 void TextureToolSelectionSystem::foreachSelectedNodeOfAnyType(const std::function<bool(const INode::Ptr&)>& functor)
 {
-    if (getMode() == SelectionMode::Surface)
+    if (getSelectionMode() == SelectionMode::Surface)
     {
         foreachSelectedNode(functor);
     }
@@ -243,7 +243,7 @@ void TextureToolSelectionSystem::clearComponentSelection()
 
 void TextureToolSelectionSystem::handleUnselectRequest(selection::UnselectSelectionRequest& request)
 {
-    if (getMode() == SelectionMode::Vertex)
+    if (getSelectionMode() == SelectionMode::Vertex)
     {
         if (countSelectedComponentNodes() > 0)
         {
@@ -251,7 +251,7 @@ void TextureToolSelectionSystem::handleUnselectRequest(selection::UnselectSelect
         }
         else // no selection, just switch modes
         {
-            setMode(SelectionMode::Surface);
+            setSelectionMode(SelectionMode::Surface);
         }
 
         request.setHandled(true);
@@ -508,7 +508,7 @@ void TextureToolSelectionSystem::performSelectionTest(Selector& selector, Select
 {
     GlobalTextureToolSceneGraph().foreachNode([&](const INode::Ptr& node)
     {
-        if (getMode() == SelectionMode::Surface)
+        if (getSelectionMode() == SelectionMode::Surface)
         {
             node->testSelect(selector, test);
         }

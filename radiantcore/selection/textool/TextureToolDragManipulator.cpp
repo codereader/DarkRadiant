@@ -73,7 +73,7 @@ void TextureToolDragManipulator::testSelect(SelectionTest& test, const Matrix4& 
 {
     selection::SelectionPool selectionPool;
 
-    auto selectionMode = GlobalTextureToolSelectionSystem().getMode();
+    auto selectionMode = GlobalTextureToolSelectionSystem().getSelectionMode();
 
     GlobalTextureToolSceneGraph().foreachNode([&](const INode::Ptr& node)
     {
@@ -114,7 +114,7 @@ void TextureToolDragManipulator::translateSelected(const Vector2& translation)
 {
     auto transform = Matrix3::getTranslation(translation);
 
-    if (GlobalTextureToolSelectionSystem().getMode() == SelectionMode::Surface)
+    if (GlobalTextureToolSelectionSystem().getSelectionMode() == SelectionMode::Surface)
     {
         GlobalTextureToolSelectionSystem().foreachSelectedNode([&](const textool::INode::Ptr& node)
         {

@@ -352,7 +352,7 @@ TEST_F(TextureToolTest, DefaultManipulatorMode)
 
 TEST_F(TextureToolTest, DefaultSelectionMode)
 {
-    EXPECT_EQ(GlobalTextureToolSelectionSystem().getMode(), textool::SelectionMode::Surface);
+    EXPECT_EQ(GlobalTextureToolSelectionSystem().getSelectionMode(), textool::SelectionMode::Surface);
 }
 
 TEST_F(TextureToolTest, ToggleManipulatorModesByCmd)
@@ -446,7 +446,7 @@ TEST_F(TextureToolTest, ManipulatorModeChangedSignal)
     conn.disconnect();
 }
 
-TEST_F(TextureToolTest, ToggleSelectionMode)
+TEST_F(TextureToolTest, ToggleSelectionModeByCmd)
 {
     bool signalFired = false;
     textool::SelectionMode signalArgument;
@@ -461,31 +461,75 @@ TEST_F(TextureToolTest, ToggleSelectionMode)
 
     // We're starting in Surface mode, toggle to Surface again
     GlobalCommandSystem().executeCommand("ToggleTextureToolSelectionMode", { "Surface" });
-    EXPECT_EQ(GlobalTextureToolSelectionSystem().getMode(), textool::SelectionMode::Surface);
+    EXPECT_EQ(GlobalTextureToolSelectionSystem().getSelectionMode(), textool::SelectionMode::Surface);
     EXPECT_FALSE(signalFired) << "Signal shouldn't have fired";
     signalFired = false;
 
     // Switch to vertex mode
     GlobalCommandSystem().executeCommand("ToggleTextureToolSelectionMode", { "Vertex" });
-    EXPECT_EQ(GlobalTextureToolSelectionSystem().getMode(), textool::SelectionMode::Vertex);
+    EXPECT_EQ(GlobalTextureToolSelectionSystem().getSelectionMode(), textool::SelectionMode::Vertex);
     EXPECT_TRUE(signalFired) << "Signal should have fired";
     signalFired = false;
 
     // Toggle vertex mode again => back to surface mode
     GlobalCommandSystem().executeCommand("ToggleTextureToolSelectionMode", { "Vertex" });
-    EXPECT_EQ(GlobalTextureToolSelectionSystem().getMode(), textool::SelectionMode::Surface);
+    EXPECT_EQ(GlobalTextureToolSelectionSystem().getSelectionMode(), textool::SelectionMode::Surface);
     EXPECT_TRUE(signalFired) << "Signal should have fired";
     signalFired = false;
 
     // Switch to vertex mode (again)
     GlobalCommandSystem().executeCommand("ToggleTextureToolSelectionMode", { "Vertex" });
-    EXPECT_EQ(GlobalTextureToolSelectionSystem().getMode(), textool::SelectionMode::Vertex);
+    EXPECT_EQ(GlobalTextureToolSelectionSystem().getSelectionMode(), textool::SelectionMode::Vertex);
     EXPECT_TRUE(signalFired) << "Signal should have fired";
     signalFired = false;
 
     // Directly toggle surface mode
     GlobalCommandSystem().executeCommand("ToggleTextureToolSelectionMode", { "Surface" });
-    EXPECT_EQ(GlobalTextureToolSelectionSystem().getMode(), textool::SelectionMode::Surface);
+    EXPECT_EQ(GlobalTextureToolSelectionSystem().getSelectionMode(), textool::SelectionMode::Surface);
+    EXPECT_TRUE(signalFired) << "Signal should have fired";
+    signalFired = false;
+}
+
+TEST_F(TextureToolTest, ToggleSelectionMode)
+{
+    bool signalFired = false;
+    textool::SelectionMode signalArgument;
+
+    // Subscribe to the changed signal
+    sigc::connection conn = GlobalTextureToolSelectionSystem().signal_selectionModeChanged().connect(
+        [&](textool::SelectionMode mode)
+    {
+        signalFired = true;
+        signalArgument = mode;
+    });
+
+    // We're starting in Surface mode, toggle to Surface again
+    GlobalTextureToolSelectionSystem().toggleSelectionMode(textool::SelectionMode::Surface);
+    EXPECT_EQ(GlobalTextureToolSelectionSystem().getSelectionMode(), textool::SelectionMode::Surface);
+    EXPECT_FALSE(signalFired) << "Signal shouldn't have fired";
+    signalFired = false;
+
+    // Switch to vertex mode
+    GlobalTextureToolSelectionSystem().toggleSelectionMode(textool::SelectionMode::Vertex);
+    EXPECT_EQ(GlobalTextureToolSelectionSystem().getSelectionMode(), textool::SelectionMode::Vertex);
+    EXPECT_TRUE(signalFired) << "Signal should have fired";
+    signalFired = false;
+
+    // Toggle vertex mode again => back to surface mode
+    GlobalTextureToolSelectionSystem().toggleSelectionMode(textool::SelectionMode::Vertex);
+    EXPECT_EQ(GlobalTextureToolSelectionSystem().getSelectionMode(), textool::SelectionMode::Surface);
+    EXPECT_TRUE(signalFired) << "Signal should have fired";
+    signalFired = false;
+
+    // Switch to vertex mode (again)
+    GlobalTextureToolSelectionSystem().toggleSelectionMode(textool::SelectionMode::Vertex);
+    EXPECT_EQ(GlobalTextureToolSelectionSystem().getSelectionMode(), textool::SelectionMode::Vertex);
+    EXPECT_TRUE(signalFired) << "Signal should have fired";
+    signalFired = false;
+
+    // Directly toggle surface mode
+    GlobalTextureToolSelectionSystem().toggleSelectionMode(textool::SelectionMode::Surface);
+    EXPECT_EQ(GlobalTextureToolSelectionSystem().getSelectionMode(), textool::SelectionMode::Surface);
     EXPECT_TRUE(signalFired) << "Signal should have fired";
     signalFired = false;
 }
@@ -504,22 +548,22 @@ TEST_F(TextureToolTest, SelectionModeChangedSignal)
         });
 
     // We're starting in Surface mode, so no changed expected
-    GlobalTextureToolSelectionSystem().setMode(textool::SelectionMode::Surface);
+    GlobalTextureToolSelectionSystem().setSelectionMode(textool::SelectionMode::Surface);
     EXPECT_FALSE(signalFired) << "Signal shouldn't have fired";
     signalFired = false;
 
-    GlobalTextureToolSelectionSystem().setMode(textool::SelectionMode::Vertex);
+    GlobalTextureToolSelectionSystem().setSelectionMode(textool::SelectionMode::Vertex);
     EXPECT_TRUE(signalFired) << "Signal should have fired";
     EXPECT_EQ(signalArgument, textool::SelectionMode::Vertex) << "Signal communicated wrong mode";
     signalFired = false;
 
     // Switch to the same mode again => no signal expected
-    GlobalTextureToolSelectionSystem().setMode(textool::SelectionMode::Vertex);
+    GlobalTextureToolSelectionSystem().setSelectionMode(textool::SelectionMode::Vertex);
     EXPECT_FALSE(signalFired) << "Signal shouldn't have fired";
     signalFired = false;
 
     // Back to surface mode
-    GlobalTextureToolSelectionSystem().setMode(textool::SelectionMode::Surface);
+    GlobalTextureToolSelectionSystem().setSelectionMode(textool::SelectionMode::Surface);
     EXPECT_TRUE(signalFired) << "Signal should have fired";
     EXPECT_EQ(signalArgument, textool::SelectionMode::Surface) << "Signal communicated wrong mode";
     signalFired = false;
@@ -582,7 +626,7 @@ TEST_F(TextureToolTest, TestSelectPatchVertexByPoint)
     view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
 
     // Switch to vertex selection mode
-    GlobalTextureToolSelectionSystem().setMode(textool::SelectionMode::Vertex);
+    GlobalTextureToolSelectionSystem().setSelectionMode(textool::SelectionMode::Vertex);
 
     // Get the texcoords of the first vertex
     auto firstVertex = patch->ctrlAt(2, 1).texcoord;
@@ -679,7 +723,7 @@ TEST_F(TextureToolTest, TestSelectFaceVertexByPoint)
     view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
 
     // Switch to vertex selection mode
-    GlobalTextureToolSelectionSystem().setMode(textool::SelectionMode::Vertex);
+    GlobalTextureToolSelectionSystem().setSelectionMode(textool::SelectionMode::Vertex);
 
     SelectionChangedCatcher signalObserver;
 
@@ -777,7 +821,7 @@ TEST_F(TextureToolTest, ClearSelectionUsingCommand)
     EXPECT_GT(GlobalTextureToolSelectionSystem().countSelected(), 0) << "No nodes selected";
 
     // Switch to vertex mode
-    GlobalTextureToolSelectionSystem().setMode(textool::SelectionMode::Vertex);
+    GlobalTextureToolSelectionSystem().setSelectionMode(textool::SelectionMode::Vertex);
 
     // Get the texture space bounds of this patch
     render::TextureToolView view;
@@ -816,13 +860,13 @@ TEST_F(TextureToolTest, ClearSelectionUsingCommand)
     EXPECT_EQ(GlobalTextureToolSelectionSystem().countSelectedComponentNodes(), 0) << "Component selection should be gone";
     EXPECT_GT(GlobalTextureToolSelectionSystem().countSelected(), 0) << "Surface selection should not have been touched";
     EXPECT_GT(GlobalSelectionSystem().countSelected(), 0) << "Scene selection count should still be > 0";
-    EXPECT_EQ(GlobalTextureToolSelectionSystem().getMode(), textool::SelectionMode::Vertex) << "We should still be in vertex mode";
+    EXPECT_EQ(GlobalTextureToolSelectionSystem().getSelectionMode(), textool::SelectionMode::Vertex) << "We should still be in vertex mode";
     EXPECT_TRUE(signalObserver.signalHasFired()) << "Selection Changed Signal should have fired";
     signalObserver.reset();
 
     // Next deselection will exit vertex mode
     GlobalCommandSystem().executeCommand("UnSelectSelection");
-    EXPECT_EQ(GlobalTextureToolSelectionSystem().getMode(), textool::SelectionMode::Surface) << "We should be in Surface mode now";
+    EXPECT_EQ(GlobalTextureToolSelectionSystem().getSelectionMode(), textool::SelectionMode::Surface) << "We should be in Surface mode now";
     EXPECT_GT(GlobalTextureToolSelectionSystem().countSelected(), 0) << "Surface selection should not have been touched";
     EXPECT_GT(GlobalSelectionSystem().countSelected(), 0) << "Scene selection count should still be > 0";
     EXPECT_FALSE(signalObserver.signalHasFired()) << "Selection Changed Signal shouldn't have fired";
@@ -889,7 +933,7 @@ TEST_F(TextureToolTest, ClearComponentSelection)
     EXPECT_EQ(GlobalSelectionSystem().countSelected(), 1) << "1 scene node must be selected";
 
     // Switch to vertex mode
-    GlobalTextureToolSelectionSystem().setMode(textool::SelectionMode::Vertex);
+    GlobalTextureToolSelectionSystem().setSelectionMode(textool::SelectionMode::Vertex);
 
     // Get the texture space bounds of this patch
     render::TextureToolView view;
@@ -912,7 +956,7 @@ TEST_F(TextureToolTest, ClearComponentSelection)
 
     EXPECT_TRUE(signalObserver.signalHasFired()) << "Selection Changed Signal should have fired";
     EXPECT_EQ(GlobalTextureToolSelectionSystem().countSelectedComponentNodes(), 0) << "Component selection should be gone now";
-    EXPECT_EQ(GlobalTextureToolSelectionSystem().getMode(), textool::SelectionMode::Vertex) << "Should still be in vertex mode";
+    EXPECT_EQ(GlobalTextureToolSelectionSystem().getSelectionMode(), textool::SelectionMode::Vertex) << "Should still be in vertex mode";
 }
 
 inline std::vector<Vector2> getTexcoords(const IFace* face)
@@ -1087,7 +1131,7 @@ void performPatchVertexManipulationTest(bool cancelOperation)
     render::TextureToolView view;
     view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
 
-    GlobalTextureToolSelectionSystem().setMode(textool::SelectionMode::Vertex);
+    GlobalTextureToolSelectionSystem().setSelectionMode(textool::SelectionMode::Vertex);
 
     // Select every odd vertex
     for (auto i = 1; i < oldTexcoords.size(); i += 2)
@@ -1174,7 +1218,7 @@ TEST_F(TextureToolTest, PivotIsRecalculatedWhenSwitchingModes)
         "Pivot should be at the center of the patch";
 
     // Switch to vertex selection mode and select two vertices
-    GlobalTextureToolSelectionSystem().setMode(textool::SelectionMode::Vertex);
+    GlobalTextureToolSelectionSystem().setSelectionMode(textool::SelectionMode::Vertex);
 
     performPointSelection(firstVertex, view);
     EXPECT_EQ(getAllSelectedComponentNodes().size(), 1) << "Only one patch should still be selected";
@@ -1196,7 +1240,7 @@ TEST_F(TextureToolTest, PivotIsRecalculatedWhenSwitchingModes)
         Vector3(midPoint.x(), midPoint.y(), 0), 0.01)) << "Pivot should be in between the two selected vertices";
 
     // Switching back to surface selection mode, the pivot needs to move to the bounds origin again
-    GlobalTextureToolSelectionSystem().setMode(textool::SelectionMode::Surface);
+    GlobalTextureToolSelectionSystem().setSelectionMode(textool::SelectionMode::Surface);
     EXPECT_TRUE(math::isNear(pivot2world.tCol().getVector3(), boundsOrigin, 0.01)) <<
         "Pivot should be at the center of the patch after switching back to surface mode";
 }
@@ -1224,7 +1268,7 @@ void performFaceVertexManipulationTest(bool cancelOperation, std::vector<std::si
     render::TextureToolView view;
     view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
 
-    GlobalTextureToolSelectionSystem().setMode(textool::SelectionMode::Vertex);
+    GlobalTextureToolSelectionSystem().setSelectionMode(textool::SelectionMode::Vertex);
 
     // Select a certain number of vertices
     for (auto index : vertexIndicesToManipulate)

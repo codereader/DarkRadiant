@@ -47,7 +47,7 @@ public:
             GlobalCommandSystem().executeCommand("ToggleTextureToolSelectionMode", { "Vertex" });
         });
 
-        onSelectionModeChanged(GlobalTextureToolSelectionSystem().getMode());
+        onSelectionModeChanged(GlobalTextureToolSelectionSystem().getSelectionMode());
         onActiveManipulatorChanged(GlobalTextureToolSelectionSystem().getActiveManipulatorType());
     }
 

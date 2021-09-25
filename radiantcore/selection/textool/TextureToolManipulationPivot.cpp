@@ -13,7 +13,7 @@ void TextureToolManipulationPivot::updateFromSelection()
     // Check the centerpoint of all selected items
     AABB bounds;
 
-    if (GlobalTextureToolSelectionSystem().getMode() == SelectionMode::Surface)
+    if (GlobalTextureToolSelectionSystem().getSelectionMode() == SelectionMode::Surface)
     {
         GlobalTextureToolSelectionSystem().foreachSelectedNode([&](const INode::Ptr& node)
         {

@@ -173,8 +173,12 @@ public:
     virtual void clearSelection() = 0;
     virtual void clearComponentSelection() = 0;
 
-    virtual SelectionMode getMode() const = 0;
-    virtual void setMode(SelectionMode mode) = 0;
+    virtual SelectionMode getSelectionMode() const = 0;
+    virtual void setSelectionMode(SelectionMode mode) = 0;
+
+    // Will switch to the given selection mode. If already in mode, this switches back to Default mode (Surface).
+    virtual void toggleSelectionMode(SelectionMode mode) = 0;
+
     virtual sigc::signal<void, SelectionMode>& signal_selectionModeChanged() = 0;
 
     virtual void selectPoint(SelectionTest& test, selection::SelectionSystem::EModifier modifier) = 0;
