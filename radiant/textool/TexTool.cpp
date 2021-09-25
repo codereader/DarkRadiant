@@ -128,6 +128,7 @@ void TexTool::_preHide()
     _manipulatorChanged.disconnect();
     _selectionModeChanged.disconnect();
     _selectionChanged.disconnect();
+    _gridChanged.disconnect();
 
     GlobalRadiantCore().getMessageBus().removeListener(_manipulatorModeToggleRequestHandler);
     _manipulatorModeToggleRequestHandler = std::numeric_limits<std::size_t>::max();
@@ -147,6 +148,7 @@ void TexTool::_preShow()
     _manipulatorChanged.disconnect();
     _selectionModeChanged.disconnect();
     _selectionChanged.disconnect();
+    _gridChanged.disconnect();
 
 	// Register self to the SelSystem to get notified upon selection changes.
 	_sceneSelectionChanged = GlobalSelectionSystem().signal_selectionChanged().connect(
@@ -176,6 +178,8 @@ void TexTool::_preShow()
     _selectionChanged = GlobalTextureToolSelectionSystem().signal_selectionChanged().connect(
         sigc::mem_fun(this, &TexTool::queueDraw)
     );
+
+    _gridChanged = GlobalGrid().signal_gridChanged().connect(sigc::mem_fun(this, &TexTool::queueDraw));
 
 	// Trigger an update of the current selection
     _selectionRescanNeeded = true;

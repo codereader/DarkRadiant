@@ -78,6 +78,7 @@ private:
 	sigc::connection _manipulatorChanged;
 	sigc::connection _selectionModeChanged;
 	sigc::connection _selectionChanged;
+	sigc::connection _gridChanged;
 	std::size_t _manipulatorModeToggleRequestHandler;
 	std::size_t _componentSelectionModeToggleRequestHandler;
 
