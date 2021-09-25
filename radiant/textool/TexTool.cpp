@@ -672,7 +672,17 @@ void TexTool::drawGrid()
 
 	glEnd();
 
-	// Draw coordinate strings
+	// Draw coordinate strings, with a higher minimum spacing than the lines
+    while (yIntStep / vPerPixel < 32)
+    {
+        yIntStep *= 2;
+    }
+
+    while (xIntStep / uPerPixel < 64)
+    {
+        xIntStep *= 2;
+    }
+
 	for (float y = startY; y <= endY; y += yIntStep)
 	{
 		glRasterPos2f(topLeft[0] + 0.05f, y + 0.05f);
