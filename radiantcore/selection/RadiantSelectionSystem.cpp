@@ -20,6 +20,7 @@
 #include "string/case_conv.h"
 #include "messages/UnselectSelectionRequest.h"
 #include "messages/ManipulatorModeToggleRequest.h"
+#include "messages/ComponentSelectionModeToggleRequest.h"
 
 #include "manipulators/DragManipulator.h"
 #include "manipulators/ClipManipulator.h"
@@ -1249,25 +1250,40 @@ void RadiantSelectionSystem::toggleComponentModeCmd(const cmd::ArgumentList& arg
     {
         rWarning() << "Usage: ToggleComponentSelectionMode <mode>" << std::endl;
         rWarning() << " with <mode> being one of the following: " << std::endl;
+        rWarning() << "      Default" << std::endl;
         rWarning() << "      Vertex" << std::endl;
         rWarning() << "      Edge" << std::endl;
         rWarning() << "      Face" << std::endl;
         return;
     }
 
-    auto mode = string::to_lower_copy(args[0].getString());
+    auto modeStr = string::to_lower_copy(args[0].getString());
+    ComponentSelectionMode mode;
 
-    if (mode == "vertex")
+    if (modeStr == "vertex")
     {
-        toggleComponentMode(ComponentSelectionMode::Vertex);
+        mode = ComponentSelectionMode::Vertex;
     }
-    else if (mode == "edge")
+    else if (modeStr == "edge")
     {
-        toggleComponentMode(ComponentSelectionMode::Edge);
+        mode = ComponentSelectionMode::Edge;
     }
-    else if (mode == "face")
+    else if (modeStr == "face")
     {
-        toggleComponentMode(ComponentSelectionMode::Face);
+        mode = ComponentSelectionMode::Face;
+    }
+    else if (modeStr == "default")
+    {
+        mode = ComponentSelectionMode::Default;
+    }
+
+    ComponentSelectionModeToggleRequest request(mode);
+    GlobalRadiantCore().getMessageBus().sendMessage(request);
+
+    if (!request.isHandled())
+    {
+        // Handle it ourselves
+        toggleComponentMode(mode);
     }
 }
 

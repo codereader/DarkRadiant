@@ -3,6 +3,7 @@
 #include <limits>
 #include "i18n.h"
 #include "ieventmanager.h"
+#include "icommandsystem.h"
 #include "itexturetoolmodel.h"
 #include "imainframe.h"
 #include "igl.h"
@@ -51,7 +52,8 @@ TexTool::TexTool() :
     _gridActive(registry::getValue<bool>(RKEY_GRID_STATE)),
     _updateNeeded(false),
     _selectionRescanNeeded(false),
-    _manipulatorModeToggleRequestHandler(std::numeric_limits<std::size_t>::max())
+    _manipulatorModeToggleRequestHandler(std::numeric_limits<std::size_t>::max()),
+    _componentSelectionModeToggleRequestHandler(std::numeric_limits<std::size_t>::max())
 {
 	Bind(wxEVT_IDLE, &TexTool::onIdle, this);
 
@@ -128,6 +130,9 @@ void TexTool::_preHide()
 
     GlobalRadiantCore().getMessageBus().removeListener(_manipulatorModeToggleRequestHandler);
     _manipulatorModeToggleRequestHandler = std::numeric_limits<std::size_t>::max();
+
+    GlobalRadiantCore().getMessageBus().removeListener(_componentSelectionModeToggleRequestHandler);
+    _componentSelectionModeToggleRequestHandler = std::numeric_limits<std::size_t>::max();
 }
 
 // Pre-show callback
@@ -146,9 +151,15 @@ void TexTool::_preShow()
 	_sceneSelectionChanged = GlobalSelectionSystem().signal_selectionChanged().connect(
         [this](const ISelectable&) { _selectionRescanNeeded = true; });
 
-    _manipulatorModeToggleRequestHandler = GlobalRadiantCore().getMessageBus().addListener(radiant::IMessage::ManipulatorModeToggleRequest,
+    _manipulatorModeToggleRequestHandler = GlobalRadiantCore().getMessageBus().addListener(
+        radiant::IMessage::ManipulatorModeToggleRequest,
         radiant::TypeListener<selection::ManipulatorModeToggleRequest>(
             sigc::mem_fun(this, &TexTool::handleManipulatorModeToggleRequest)));
+
+    _componentSelectionModeToggleRequestHandler = GlobalRadiantCore().getMessageBus().addListener(
+        radiant::IMessage::ComponentSelectionModeToggleRequest,
+        radiant::TypeListener<selection::ComponentSelectionModeToggleRequest>(
+            sigc::mem_fun(this, &TexTool::handleComponentSelectionModeToggleRequest)));
 
 	_undoHandler = GlobalUndoSystem().signal_postUndo().connect(
 		sigc::mem_fun(this, &TexTool::onUndoRedoOperation));
@@ -170,9 +181,14 @@ void TexTool::_preShow()
     queueDraw();
 }
 
+bool TexTool::textureToolHasFocus()
+{
+    return HasFocus() || _glWidget->HasFocus();
+}
+
 void TexTool::handleManipulatorModeToggleRequest(selection::ManipulatorModeToggleRequest& request)
 {
-    if (!HasFocus() && !_glWidget->HasFocus())
+    if (!textureToolHasFocus())
     {
         return;
     }
@@ -183,6 +199,27 @@ void TexTool::handleManipulatorModeToggleRequest(selection::ManipulatorModeToggl
     case selection::IManipulator::Drag:
     case selection::IManipulator::Rotate:
         GlobalTextureToolSelectionSystem().toggleManipulatorMode(request.getType());
+        request.setHandled(true);
+        break;
+    };
+}
+
+void TexTool::handleComponentSelectionModeToggleRequest(selection::ComponentSelectionModeToggleRequest& request)
+{
+    if (!textureToolHasFocus())
+    {
+        return;
+    }
+
+    // Catch specific mode types, let the others slip through
+    switch (request.getMode())
+    {
+    case selection::ComponentSelectionMode::Default:
+        GlobalCommandSystem().executeCommand("ToggleTextureToolSelectionMode", { "Surface" });
+        request.setHandled(true);
+        break;
+    case selection::ComponentSelectionMode::Vertex:
+        GlobalCommandSystem().executeCommand("ToggleTextureToolSelectionMode", { "Vertex" });
         request.setHandled(true);
         break;
     };

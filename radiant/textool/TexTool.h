@@ -20,6 +20,7 @@
 #include "tools/TextureToolMouseEvent.h"
 #include "render/TextureToolView.h"
 #include "messages/ManipulatorModeToggleRequest.h"
+#include "messages/ComponentSelectionModeToggleRequest.h"
 
 class Winding;
 class Patch;
@@ -78,6 +79,7 @@ private:
 	sigc::connection _selectionModeChanged;
 	sigc::connection _selectionChanged;
 	std::size_t _manipulatorModeToggleRequestHandler;
+	std::size_t _componentSelectionModeToggleRequestHandler;
 
 private:
 	// This is where the static shared_ptr of the singleton instance is held.
@@ -154,6 +156,10 @@ private:
     void onMainFrameShuttingDown();
 
     void handleManipulatorModeToggleRequest(selection::ManipulatorModeToggleRequest& request);
+    void handleComponentSelectionModeToggleRequest(selection::ComponentSelectionModeToggleRequest& request);
+
+    // Returns true if the texture tool window or the GL widget has focus
+    bool textureToolHasFocus();
 
 public:
 	TexTool();
