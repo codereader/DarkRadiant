@@ -8,6 +8,7 @@
 #include "imainframe.h"
 #include "igl.h"
 #include "iundo.h"
+#include "igrid.h"
 #include "ibrush.h"
 #include "iradiant.h"
 #include "ipatch.h"
@@ -550,12 +551,45 @@ void TexTool::selectRelatedItems()
 	draw();
 }
 
+float TexTool::getGridSize()
+{
+    // The Texture Tool is using the same grid "size" as the main orthographic views
+    // but since grid spacings >1 barely make sense when editing UV coordinates
+    // we offset the grid size such that GRID_1 refers to a UV spacing of 2^(-7) instead of 2^0.
+    int exponent = GlobalGrid().getGridPower() - 7;
+
+    if (exponent < -7)
+    {
+        exponent = -7; // not smaller than 2^-7
+    }
+    else if (exponent > 0)
+    {
+        exponent = 0; // not greater than 1.0
+    }
+
+    return pow(2.0f, exponent);
+}
+
 void TexTool::drawGrid()
 {
-	const float MAX_NUMBER_OF_GRID_LINES = 1024;
+    auto gridSpacing = getGridSize();
 
 	const auto& texSpaceAABB = getVisibleTexSpace();
+    auto uPerPixel = texSpaceAABB.extents.x() / _windowDims.x();
+    auto vPerPixel = texSpaceAABB.extents.y() / _windowDims.y();
 
+    auto smallestUvPerPixel = uPerPixel > vPerPixel ? vPerPixel : uPerPixel;
+
+    auto gridSpacingInPixels = gridSpacing / smallestUvPerPixel;
+
+    // Ensure that the grid spacing is at least 10 pixels wide
+    while (gridSpacingInPixels < 12)
+    {
+        gridSpacing *= 2.0f;
+        gridSpacingInPixels = gridSpacing / smallestUvPerPixel;
+    }
+
+	const float MAX_NUMBER_OF_GRID_LINES = 256;
 	Vector3 topLeft = texSpaceAABB.origin - texSpaceAABB.extents;
 	Vector3 bottomRight = texSpaceAABB.origin + texSpaceAABB.extents;
 
@@ -615,22 +649,13 @@ void TexTool::drawGrid()
 		// Draw the manipulation grid
 		glColor4f(0.2f, 0.2f, 0.2f, 0.4f);
 
-		float grid = _grid;
-
-		// scale up the grid interval such that only a maximum number of lines are drawn
-		while (abs(endX - startX) / grid > MAX_NUMBER_OF_GRID_LINES ||
-			   abs(endY - startY) / grid > MAX_NUMBER_OF_GRID_LINES)
-		{
-			grid *= 2;
-		}
-
-		for (float y = startY; y <= endY; y += grid)
+		for (float y = startY; y <= endY; y += gridSpacing)
 		{
 			glVertex2f(startX, y);
 			glVertex2f(endX, y);
 		}
 
-		for (float x = startX; x <= endX; x += grid)
+		for (float x = startX; x <= endX; x += gridSpacing)
 		{
 			glVertex2f(x, startY);
 			glVertex2f(x, endY);
