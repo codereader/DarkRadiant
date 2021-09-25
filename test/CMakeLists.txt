@@ -9,6 +9,7 @@ add_executable(drtest
                Entity.cpp
                Favourites.cpp
                FileTypes.cpp
+               Grid.cpp
                HeadlessOpenGLContext.cpp
                ImageLoading.cpp
                LayerManipulation.cpp
