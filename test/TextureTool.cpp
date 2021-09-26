@@ -1873,12 +1873,22 @@ TEST_F(TextureToolTest, MergeTwoVerticesOfSameFace)
     EXPECT_NE(vertex1.x(), vertex2.x()) << "Vertex 1 is alredy merged with Vertex 2";
     EXPECT_NE(vertex1.y(), vertex2.y()) << "Vertex 1 is alredy merged with Vertex 2";
 
-    // We expect the vertices to be at the center if merge items is called with no arguments
-    auto center = (vertex1 + vertex2 + vertex3) / 3;
+    AABB selectionBounds;
+
+    GlobalTextureToolSelectionSystem().foreachSelectedComponentNode([&](const textool::INode::Ptr& node)
+    {
+        auto componentSelectable = std::dynamic_pointer_cast<textool::IComponentSelectable>(node);
+        if (!componentSelectable) return true;
+
+        selectionBounds.includeAABB(componentSelectable->getSelectedComponentBounds());
+
+        return true;
+    });
 
     GlobalCommandSystem().executeCommand("TexToolMergeItems");
 
     // Only one face vertex should be at the center
+    auto center = selectionBounds.origin;
     EXPECT_TRUE((vertex1.x() == center.x() && vertex1.y() == center.y()) || 
                 (vertex1.x() == center.x() && vertex3.y() == center.y())) 
         << "Vertex 1 or 3 should be at center " << center;

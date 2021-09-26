@@ -193,7 +193,16 @@ public:
 
     void mergeComponentsWith(const Vector2& center) override
     {
-        // TODO
+        // We can only merge exactly one of the face vertices, keep track
+        bool centerAssigned = false;
+
+        transformSelectedAndRecalculateTexDef([&](Vector2& selectedTexcoord)
+        {
+            if (centerAssigned) return;
+
+            selectedTexcoord = center;
+            centerAssigned = true;
+        });
     }
 
 private:
