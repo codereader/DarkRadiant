@@ -612,15 +612,25 @@ void TextureToolSelectionSystem::mergeSelectionCmd(const cmd::ArgumentList& args
 
     AABB selectionBounds;
 
-    foreachSelectedComponentNode([&](const INode::Ptr& node)
+    // An optional argument will define the center
+    if (args.size() == 1)
     {
-        auto componentSelectable = std::dynamic_pointer_cast<IComponentSelectable>(node);
-        if (!componentSelectable) return true;
+        auto center = args[0].getVector2();
+        selectionBounds.includePoint({ center.x(), center.y(), 0 });
+    }
+    else
+    {
+        // Calculate the center based on the component selection
+        foreachSelectedComponentNode([&](const INode::Ptr& node)
+        {
+            auto componentSelectable = std::dynamic_pointer_cast<IComponentSelectable>(node);
+            if (!componentSelectable) return true;
 
-        selectionBounds.includeAABB(componentSelectable->getSelectedComponentBounds());
+            selectionBounds.includeAABB(componentSelectable->getSelectedComponentBounds());
 
-        return true;
-    });
+            return true;
+        });
+    }
 
     if (selectionBounds.isValid())
     {

@@ -1743,7 +1743,7 @@ TEST_F(TextureToolTest, SnapPatchVerticesToGrid)
     }
 }
 
-TEST_F(TextureToolTest, MergePatchVertices)
+void performPatchVertexMergeTest(bool useBoundsOrigin)
 {
     auto patchNode1 = setupPatchNodeForTextureTool();
     auto patchNode2 = setupPatchNodeForTextureTool();
@@ -1781,12 +1781,34 @@ TEST_F(TextureToolTest, MergePatchVertices)
     // We expect the vertices to be at the center if merge items is called with no arguments
     auto center = (vertex1 + vertex2) * 0.5;
 
-    GlobalCommandSystem().executeCommand("TexToolMergeItems");
+    if (useBoundsOrigin)
+    {
+        // When using bounds origin, call the command without argument
+        GlobalCommandSystem().executeCommand("TexToolMergeItems");
+    }
+    else
+    {
+        // Use an arbitrary position that is somewhere near other than center
+        center += Vector2(-0.7, -0.3);
+        GlobalCommandSystem().executeCommand("TexToolMergeItems", { cmd::Argument(center) });
+    }
 
     EXPECT_EQ(vertex1.x(), center.x()) << "Vertex 1 should be at center " << center;
     EXPECT_EQ(vertex1.y(), center.y()) << "Vertex 1 should be at center " << center;
     EXPECT_EQ(vertex2.x(), center.x()) << "Vertex 2 should be at center " << center;
     EXPECT_EQ(vertex2.y(), center.y()) << "Vertex 2 should be at center " << center;
+}
+
+TEST_F(TextureToolTest, MergePatchVertices)
+{
+    // Perform the test using the bounds origin
+    performPatchVertexMergeTest(true);
+}
+
+TEST_F(TextureToolTest, MergePatchVerticesAtCoords)
+{
+    // Perform the test using some other point
+    performPatchVertexMergeTest(false);
 }
 
 TEST_F(TextureToolTest, MergeFaceVertices)
