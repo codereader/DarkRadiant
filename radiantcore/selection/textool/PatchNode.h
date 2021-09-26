@@ -9,7 +9,7 @@ class IPatch;
 namespace textool
 {
 
-class PatchNode :
+class PatchNode final :
     public Node,
     public IPatchNode
 {
