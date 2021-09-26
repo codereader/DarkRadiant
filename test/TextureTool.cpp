@@ -1930,7 +1930,7 @@ void expectVerticesHaveBeenFlipped(int axis, const IPatch& patch, const std::vec
     });
 }
 
-void performFlipPatchTest(int axis)
+void performPatchFlipTest(int axis)
 {
     auto patchNode = setupPatchNodeForTextureTool();
     auto patch = Node_getIPatch(patchNode);
@@ -1959,14 +1959,14 @@ void performFlipPatchTest(int axis)
     expectVerticesHaveBeenFlipped(axis, *patch, oldTexCoords, { patchBounds.origin.x(), patchBounds.origin.y() });
 }
 
-TEST_F(TextureToolTest, FlipPatchS)
+TEST_F(TextureToolTest, FlipSinglePatchS)
 {
-    performFlipPatchTest(0);
+    performPatchFlipTest(0);
 }
 
-TEST_F(TextureToolTest, FlipPatchT)
+TEST_F(TextureToolTest, FlipSinglePatchT)
 {
-    performFlipPatchTest(1);
+    performPatchFlipTest(1);
 }
 
 void performFlipTestWithTwoPatches(int axis)
@@ -2011,14 +2011,64 @@ void performFlipTestWithTwoPatches(int axis)
     expectVerticesHaveBeenFlipped(axis, *patch2, oldTexCoords2, flipCenter);
 }
 
-TEST_F(TextureToolTest, FlipPatchesS)
+TEST_F(TextureToolTest, FlipTwoPatchesS)
 {
     performFlipTestWithTwoPatches(0);
 }
 
-TEST_F(TextureToolTest, FlipPatchesT)
+TEST_F(TextureToolTest, FlipTwoPatchesT)
 {
     performFlipTestWithTwoPatches(1);
+}
+
+void performFaceFlipTest(int axis)
+{
+    auto brush = setupBrushNodeForTextureTool();
+    auto faceUp = algorithm::findBrushFaceWithNormal(Node_getIBrush(brush), Vector3(0, 0, 1));
+
+    // Get the texture space bounds of this face
+    auto bounds = getTextureSpaceBounds(*faceUp);
+    bounds.extents *= 1.2f;
+
+    render::TextureToolView view;
+    view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
+
+    // Test-select in the middle of the face
+    performPointSelection(Vector2(bounds.origin.x(), bounds.origin.y()), view);
+
+    // Face should be selected
+    EXPECT_EQ(getAllSelectedTextoolNodes().size(), 1) << "Only one face should be selected";
+
+    std::vector<Vector2> oldTexCoords;
+    for (const auto& vertex : faceUp->getWinding())
+    {
+        oldTexCoords.push_back(vertex.texcoord);
+    }
+
+    auto cmd = axis == 0 ? "TexToolFlipS" : "TexToolFlipT";
+    GlobalCommandSystem().executeCommand(cmd);
+
+    // Every face vertex should have been flipped about the bounds origin
+    auto old = oldTexCoords.begin();
+    for (const auto& vertex : faceUp->getWinding())
+    {
+        // Calculate the mirrored coordinate
+        auto expectedTexcoord = *(old++);
+        expectedTexcoord[axis] = 2 * bounds.origin[axis] - expectedTexcoord[axis];
+
+        EXPECT_EQ(vertex.texcoord.x(), expectedTexcoord.x()) << "Mirrored vertex should be at " << expectedTexcoord;
+        EXPECT_EQ(vertex.texcoord.y(), expectedTexcoord.y()) << "Mirrored vertex should be at " << expectedTexcoord;
+    }
+}
+
+TEST_F(TextureToolTest, FlipSingleFaceS)
+{
+    performFaceFlipTest(0);
+}
+
+TEST_F(TextureToolTest, FlipSingleFaceT)
+{
+    performFaceFlipTest(1);
 }
 
 }
