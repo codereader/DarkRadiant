@@ -9,9 +9,7 @@
 #include "igl.h"
 #include "iundo.h"
 #include "igrid.h"
-#include "ibrush.h"
 #include "iradiant.h"
-#include "ipatch.h"
 #include "itoolbarmanager.h"
 #include "itextstream.h"
 
@@ -40,18 +38,13 @@ namespace
 	const std::string RKEY_GRID_STATE = RKEY_TEXTOOL_ROOT + "gridActive";
     const char* const RKEY_SELECT_EPSILON = "user/ui/selectionEpsilon";
 
-	const float ZOOM_MODIFIER = 1.25f;
-
-	const float GRID_MAX = 1.0f;
-	const float GRID_DEFAULT = 0.0625f;
-	const float GRID_MIN = 0.00390625f;
+	constexpr const float ZOOM_MODIFIER = 1.25f;
 }
 
 TexTool::TexTool() : 
     TransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getWxTopLevelWindow(), true),
     MouseToolHandler(IMouseToolGroup::Type::TextureTool),
     _glWidget(new wxutil::GLWidget(this, std::bind(&TexTool::onGLDraw, this), "TexTool")),
-    _grid(GRID_DEFAULT),
     _gridActive(registry::getValue<bool>(RKEY_GRID_STATE)),
     _selectionRescanNeeded(false),
     _manipulatorModeToggleRequestHandler(std::numeric_limits<std::size_t>::max()),
@@ -749,17 +742,14 @@ void TexTool::onMouseScroll(wxMouseEvent& ev)
     draw();
 }
 
-// Static command targets
 void TexTool::toggle(const cmd::ArgumentList& args)
 {
-	// Call the toggle() method of the static instance
 	Instance().ToggleVisibility();
 }
 
 void TexTool::registerCommands()
 {
 	GlobalCommandSystem().addCommand("TextureTool", TexTool::toggle);
-
 	GlobalEventManager().addRegistryToggle("TexToolToggleGrid", RKEY_GRID_STATE);
 }
 

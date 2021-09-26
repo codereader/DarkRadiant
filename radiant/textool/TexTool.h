@@ -57,9 +57,6 @@ private:
 	// The dimensions of the GL widget in pixels.
 	Vector2 _windowDims;
 
-	// The current grid size
-	float _grid;
-
 	// TRUE if the grid is active
 	bool _gridActive;
 
