@@ -134,7 +134,12 @@ void Face::setupSurfaceShader()
     }
 }
 
-Brush& Face::getBrush()
+IBrush& Face::getBrush()
+{
+    return _owner;
+}
+
+Brush& Face::getBrushInternal()
 {
     return _owner;
 }

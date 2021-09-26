@@ -79,7 +79,9 @@ public:
 	virtual ~Face();
 
 	// Get the parent brush object
-	Brush& getBrush();
+	IBrush& getBrush() override;
+
+    Brush& getBrushInternal();
 
 	void planeChanged();
 

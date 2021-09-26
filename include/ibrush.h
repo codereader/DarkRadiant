@@ -105,12 +105,17 @@ struct ShiftScaleRotation
     }
 };
 
+class IBrush;
+
 // Interface for a face plane
 class IFace
 {
 public:
 	// Destructor
 	virtual ~IFace() {}
+
+    // Returns a reference to the brush containing this face
+    virtual IBrush& getBrush() = 0;
 
 	// Submits the current state to the UndoSystem, to make further actions undo-able
 	virtual void undoSave() = 0;

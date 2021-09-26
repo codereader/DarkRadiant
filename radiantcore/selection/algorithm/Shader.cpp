@@ -352,7 +352,7 @@ public:
 			// Downcast the IFace reference
 			Face& targetFace = dynamic_cast<Face&>(face);
 			target.face = &targetFace;
-			target.node = targetFace.getBrush().getBrushNode().shared_from_this();
+			target.node = targetFace.getBrushInternal().getBrushNode().shared_from_this();
 
 			// Apply the shader (projected, not to the entire brush)
 			applyClipboardToTexturable(target, !_natural, false);
