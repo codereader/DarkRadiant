@@ -324,6 +324,18 @@ inline scene::INodePtr setupPatchNodeForTextureTool()
     return patchNode;
 }
 
+inline scene::INodePtr setupBrushNodeForTextureTool(const std::string& material = "textures/numbers/1")
+{
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto brush = algorithm::createCubicBrush(worldspawn, Vector3(0, 256, 256), material);
+    scene::addNodeToContainer(brush, worldspawn);
+
+    // Put all faces into the tex tool scene
+    Node_setSelected(brush, true);
+
+    return brush;
+}
+
 inline textool::IFaceNode::Ptr findTexToolFaceWithNormal(const Vector3& normal)
 {
     textool::IFaceNode::Ptr result;
@@ -667,13 +679,7 @@ TEST_F(TextureToolTest, TestSelectPatchVertexByPoint)
 
 TEST_F(TextureToolTest, TestSelectFaceSurfaceByPoint)
 {
-    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
-    auto brush = algorithm::createCubicBrush(worldspawn, Vector3(0, 256, 256), "textures/numbers/1");
-    scene::addNodeToContainer(brush, worldspawn);
-
-    // Put all faces into the tex tool scene
-    Node_setSelected(brush, true);
-
+    auto brush = setupBrushNodeForTextureTool();
     auto faceUp = algorithm::findBrushFaceWithNormal(Node_getIBrush(brush), Vector3(0, 0, 1));
 
     // Check the face
@@ -704,13 +710,7 @@ TEST_F(TextureToolTest, TestSelectFaceSurfaceByPoint)
 
 TEST_F(TextureToolTest, TestSelectFaceVertexByPoint)
 {
-    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
-    auto brush = algorithm::createCubicBrush(worldspawn, Vector3(0, 256, 256), "textures/numbers/1");
-    scene::addNodeToContainer(brush, worldspawn);
-
-    // Put all faces into the tex tool scene
-    Node_setSelected(brush, true);
-
+    auto brush = setupBrushNodeForTextureTool();
     auto faceUp = algorithm::findBrushFaceWithNormal(Node_getIBrush(brush), Vector3(0, 0, 1));
 
     // Get the texture space bounds of this face
@@ -1010,12 +1010,7 @@ void dragManipulateSelectionTowardsLowerRight(const Vector2& startTexcoord, cons
 
 TEST_F(TextureToolTest, DragManipulateFace)
 {
-    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
-    auto brush = algorithm::createCubicBrush(worldspawn, Vector3(0, 256, 256), "textures/numbers/1");
-
-    // Put all faces into the tex tool scene
-    Node_setSelected(brush, true);
-
+    auto brush = setupBrushNodeForTextureTool();
     auto faceUp = algorithm::findBrushFaceWithNormal(Node_getIBrush(brush), Vector3(0, 0, 1));
     auto faceDown = algorithm::findBrushFaceWithNormal(Node_getIBrush(brush), Vector3(0, 0, -1));
 
@@ -1248,13 +1243,7 @@ TEST_F(TextureToolTest, PivotIsRecalculatedWhenSwitchingModes)
 void performFaceVertexManipulationTest(bool cancelOperation, std::vector<std::size_t> vertexIndicesToManipulate,
     std::function<void(IFace&, const std::vector<Vector2>&, const std::vector<Vector2>&)> assertionFunc)
 {
-    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
-    auto brush = algorithm::createCubicBrush(worldspawn, Vector3(0, 256, 256), "textures/numbers/1");
-    scene::addNodeToContainer(brush, worldspawn);
-
-    // Put all faces into the tex tool scene
-    Node_setSelected(brush, true);
-
+    auto brush = setupBrushNodeForTextureTool();
     auto faceUp = algorithm::findBrushFaceWithNormal(Node_getIBrush(brush), Vector3(0, 0, 1));
 
     // Remember the texcoords before manipulation
@@ -1471,13 +1460,7 @@ TEST_F(TextureToolTest, SelectRelatedOfPatchVertex)
 
 TEST_F(TextureToolTest, SelectRelatedOfFaceVertex)
 {
-    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
-    auto brush = algorithm::createCubicBrush(worldspawn, Vector3(0, 256, 256), "textures/numbers/1");
-    scene::addNodeToContainer(brush, worldspawn);
-
-    // Put all faces into the tex tool scene
-    Node_setSelected(brush, true);
-
+    auto brush = setupBrushNodeForTextureTool();
     auto faceUp = algorithm::findBrushFaceWithNormal(Node_getIBrush(brush), Vector3(0, 0, 1));
 
     // Get the texture space bounds of this face
@@ -1515,13 +1498,7 @@ TEST_F(TextureToolTest, SelectRelatedOfFaceVertex)
 
 TEST_F(TextureToolTest, SelectRelatedOfFaceNode)
 {
-    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
-    auto brush = algorithm::createCubicBrush(worldspawn, Vector3(0, 256, 256), "textures/numbers/1");
-    scene::addNodeToContainer(brush, worldspawn);
-
-    // Put all faces into the tex tool scene
-    Node_setSelected(brush, true);
-
+    auto brush = setupBrushNodeForTextureTool();
     auto faceUp = algorithm::findBrushFaceWithNormal(Node_getIBrush(brush), Vector3(0, 0, 1));
 
     EXPECT_EQ(getAllSelectedTextoolNodes().size(), 0) << "No item should be selected";
