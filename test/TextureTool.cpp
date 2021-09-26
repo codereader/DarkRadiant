@@ -4,6 +4,7 @@
 #include <sigc++/connection.h>
 #include "imap.h"
 #include "ipatch.h"
+#include "igrid.h"
 #include "iselectable.h"
 #include "itexturetoolmodel.h"
 #include "icommandsystem.h"
@@ -1477,7 +1478,7 @@ TEST_F(TextureToolTest, SelectRelatedOfFaceVertex)
     auto firstVertex = faceUp->getWinding()[0].texcoord;
     performPointSelection(firstVertex, view);
 
-    // Hitting a vertex will select the patch componentselectable
+    // Hitting a vertex will select the face componentselectable
     EXPECT_EQ(getAllSelectedComponentNodes().size(), 1) << "Only one face should be selected";
 
     textool::IComponentSelectable::Ptr componentSelectable;
@@ -1520,6 +1521,231 @@ TEST_F(TextureToolTest, SelectRelatedOfFaceNode)
     GlobalCommandSystem().executeCommand("TexToolSelectRelated");
 
     EXPECT_EQ(getAllSelectedTextoolNodes().size(), 6) << "All 6 faces should be selected";
+}
+
+inline void assumeFaceVerticesGridSnapped(const IFace& face, bool shouldBeSnapped)
+{
+    auto gridSize = GlobalGrid().getGridSize(grid::Space::Texture);
+
+    for (const auto& vertex : face.getWinding())
+    {
+        if (shouldBeSnapped)
+        {
+            EXPECT_EQ(vertex.texcoord.x(), float_snapped(vertex.texcoord.x(), gridSize)) << "U should be grid-snapped";
+            EXPECT_EQ(vertex.texcoord.y(), float_snapped(vertex.texcoord.y(), gridSize)) << "V should be grid-snapped";
+        }
+        else
+        {
+            EXPECT_NE(vertex.texcoord.x(), float_snapped(vertex.texcoord.x(), gridSize)) << "U should not be grid-snapped";
+            EXPECT_NE(vertex.texcoord.y(), float_snapped(vertex.texcoord.y(), gridSize)) << "V should not be grid-snapped";
+        }
+    }
+}
+
+inline void assumePatchVerticesGridSnapped(const IPatch& patch, bool shouldBeSnapped)
+{
+    auto gridSize = GlobalGrid().getGridSize(grid::Space::Texture);
+
+    for (std::size_t col = 0; col < patch.getWidth(); ++col)
+    {
+        for (std::size_t row = 0; row < patch.getHeight(); ++row)
+        {
+            const auto& texcoord = patch.ctrlAt(row, col).texcoord;
+
+            if (shouldBeSnapped)
+            {
+                EXPECT_EQ(texcoord.x(), float_snapped(texcoord.x(), gridSize)) << "U should be grid-snapped";
+                EXPECT_EQ(texcoord.y(), float_snapped(texcoord.y(), gridSize)) << "V should be grid-snapped";
+            }
+            else
+            {
+                EXPECT_NE(texcoord.x(), float_snapped(texcoord.x(), gridSize)) << "U should not be grid-snapped";
+                EXPECT_NE(texcoord.y(), float_snapped(texcoord.y(), gridSize)) << "V should not be grid-snapped";
+            }
+        }
+    }
+}
+
+TEST_F(TextureToolTest, SnapFaceToGrid)
+{
+    auto brush = setupBrushNodeForTextureTool();
+    auto faceUp = algorithm::findBrushFaceWithNormal(Node_getIBrush(brush), Vector3(0, 0, 1));
+    auto faceRight = algorithm::findBrushFaceWithNormal(Node_getIBrush(brush), Vector3(1, 0, 0));
+
+    EXPECT_EQ(getAllSelectedTextoolNodes().size(), 0) << "No item should be selected";
+
+    // Get the texture space bounds of this face
+    // Construct a view that includes the face UV bounds
+    auto bounds = getTextureSpaceBounds(*faceUp);
+    bounds.extents *= 1.2f;
+
+    render::TextureToolView view;
+    view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
+
+    // Point-select in the middle of the face
+    performPointSelection(algorithm::getFaceCentroid(faceUp), view);
+
+    GlobalGrid().setGridSize(GRID_8);
+    auto gridSize = GlobalGrid().getGridSize(grid::Space::Texture);
+
+    // Assume some non-grid snapped texcoords on both faces
+    faceUp->fitTexture(1, 1);
+    faceUp->shiftTexdef(0.133f, 0.111f);
+
+    faceRight->fitTexture(1, 1);
+    faceRight->shiftTexdef(0.133f, 0.111f);
+
+    assumeFaceVerticesGridSnapped(*faceUp, false);
+    assumeFaceVerticesGridSnapped(*faceRight, false);
+
+    EXPECT_EQ(getAllSelectedTextoolNodes().size(), 1) << "Only one face should be selected";
+
+    // Snap selection to grid
+    GlobalCommandSystem().executeCommand("TexToolSnapToGrid");
+
+    // The selected face should be grid-snapped
+    assumeFaceVerticesGridSnapped(*faceUp, true);
+    // The second face should stay unchanged
+    assumeFaceVerticesGridSnapped(*faceRight, false);
+}
+
+TEST_F(TextureToolTest, SnapFaceVerticesToGrid)
+{
+    auto brush = setupBrushNodeForTextureTool();
+    auto faceUp = algorithm::findBrushFaceWithNormal(Node_getIBrush(brush), Vector3(0, 0, 1));
+
+    // Get the texture space bounds of this face
+    auto bounds = getTextureSpaceBounds(*faceUp);
+    bounds.extents *= 1.2f;
+
+    faceUp->fitTexture(1, 1);
+    faceUp->shiftTexdef(0.133f, 0.111f);
+
+    render::TextureToolView view;
+    view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
+
+    // Switch to vertex selection mode
+    GlobalTextureToolSelectionSystem().setSelectionMode(textool::SelectionMode::Vertex);
+
+    // Get the texcoords of the first vertex
+    auto firstIndex = 0;
+    auto secondIndex = 0;
+
+    auto firstVertex = faceUp->getWinding()[firstIndex].texcoord;
+    auto secondVertex = faceUp->getWinding()[secondIndex].texcoord;
+    performPointSelection(firstVertex, view);
+    performPointSelection(secondVertex, view);
+
+    // Hitting a vertex will select the face componentselectable
+    EXPECT_EQ(getAllSelectedComponentNodes().size(), 1) << "Only one face should be selected";
+
+    GlobalGrid().setGridSize(GRID_8);
+    auto gridSize = GlobalGrid().getGridSize(grid::Space::Texture);
+
+    // All vertices should be off-grid
+    assumeFaceVerticesGridSnapped(*faceUp, false);
+
+    // Snap selection to grid
+    GlobalCommandSystem().executeCommand("TexToolSnapToGrid");
+
+    for (auto i = 0; i < faceUp->getWinding().size(); ++i)
+    {
+        const auto& vertex = faceUp->getWinding()[i];
+
+        // Only the two selected ones should have been grid-aligned
+        if (i == firstIndex || i == secondIndex)
+        {
+            EXPECT_EQ(vertex.texcoord.x(), float_snapped(vertex.texcoord.x(), gridSize)) << "U should be grid-snapped";
+            EXPECT_EQ(vertex.texcoord.y(), float_snapped(vertex.texcoord.y(), gridSize)) << "V should be grid-snapped";
+        }
+        else
+        {
+            EXPECT_NE(vertex.texcoord.x(), float_snapped(vertex.texcoord.x(), gridSize)) << "U should not be grid-snapped";
+            EXPECT_NE(vertex.texcoord.y(), float_snapped(vertex.texcoord.y(), gridSize)) << "V should not be grid-snapped";
+        }
+    }
+}
+
+TEST_F(TextureToolTest, SnapPatchToGrid)
+{
+    auto patchNode = setupPatchNodeForTextureTool();
+    auto patch = Node_getIPatch(patchNode);
+
+    patch->fitTexture(1, 1);
+    patch->translateTexture(0.133f, 0.111f);
+
+    // Get the texture space bounds of this patch
+    auto bounds = getTextureSpaceBounds(*patch);
+    bounds.extents *= 1.2f;
+
+    render::TextureToolView view;
+    view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
+
+    // Test-select in the middle of the patch bounds
+    performPointSelection(Vector2(bounds.origin.x(), bounds.origin.y()), view);
+
+    // Patch should be selected
+    EXPECT_EQ(getAllSelectedTextoolNodes().size(), 1) << "Only one patch should be selected";
+
+    GlobalGrid().setGridSize(GRID_8);
+    assumePatchVerticesGridSnapped(*patch, false);
+
+    GlobalCommandSystem().executeCommand("TexToolSnapToGrid");
+
+    assumePatchVerticesGridSnapped(*patch, true);
+}
+
+TEST_F(TextureToolTest, SnapPatchVerticesToGrid)
+{
+    auto patchNode = setupPatchNodeForTextureTool();
+    auto patch = Node_getIPatch(patchNode);
+
+    patch->fitTexture(1, 1);
+    patch->translateTexture(0.133f, 0.111f);
+
+    // Get the texture space bounds of this patch
+    auto bounds = getTextureSpaceBounds(*patch);
+    bounds.extents *= 1.2f;
+
+    render::TextureToolView view;
+    view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
+
+    // Switch to vertex mode
+    GlobalTextureToolSelectionSystem().setSelectionMode(textool::SelectionMode::Vertex);
+
+    // Get the texcoords of the first vertex
+    auto definedRow = 2;
+    auto definedCol = 1;
+
+    auto firstVertex = patch->ctrlAt(definedRow, definedCol).texcoord;
+    performPointSelection(firstVertex, view);
+
+    GlobalGrid().setGridSize(GRID_8);
+    assumePatchVerticesGridSnapped(*patch, false);
+
+    GlobalCommandSystem().executeCommand("TexToolSnapToGrid");
+
+    auto gridSize = GlobalGrid().getGridSize(grid::Space::Texture);
+
+    // Check the patch tex coords, only the selected vertex should have been snapped
+    for (std::size_t col = 0; col < patch->getWidth(); ++col)
+    {
+        for (std::size_t row = 0; row < patch->getHeight(); ++row)
+        {
+            const auto& texcoord = patch->ctrlAt(row, col).texcoord;
+
+            if (row == definedRow && col == definedCol)
+            {
+                EXPECT_EQ(texcoord.x(), float_snapped(texcoord.x(), gridSize)) << "U should be grid-snapped";
+                EXPECT_EQ(texcoord.y(), float_snapped(texcoord.y(), gridSize)) << "V should be grid-snapped";
+            }
+            else
+            {
+                EXPECT_NE(texcoord.x(), float_snapped(texcoord.x(), gridSize)) << "U should not be grid-snapped";
+                EXPECT_NE(texcoord.y(), float_snapped(texcoord.y(), gridSize)) << "V should not be grid-snapped";
+            }
+        }
+    }
 }
 
 }
