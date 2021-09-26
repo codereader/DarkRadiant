@@ -1099,6 +1099,9 @@
     <ClCompile Include="..\..\radiantcore\selection\textool\FaceNode.cpp">
       <Filter>src\selection\textool</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\selection\textool\PatchNode.cpp">
+      <Filter>src\selection\textool</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
