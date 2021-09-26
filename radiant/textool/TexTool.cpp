@@ -882,8 +882,6 @@ void TexTool::selectRelated(const cmd::ArgumentList& args) {
 void TexTool::registerCommands()
 {
 	GlobalCommandSystem().addCommand("TextureTool", TexTool::toggle);
-	GlobalCommandSystem().addCommand("TexToolFlipS", TexTool::texToolFlipS);
-	GlobalCommandSystem().addCommand("TexToolFlipT", TexTool::texToolFlipT);
 
 	GlobalEventManager().addRegistryToggle("TexToolToggleGrid", RKEY_GRID_STATE);
 	GlobalEventManager().addRegistryToggle("TexToolToggleFaceVertexScalePivot", RKEY_FACE_VERTEX_SCALE_PIVOT_IS_CENTROID);

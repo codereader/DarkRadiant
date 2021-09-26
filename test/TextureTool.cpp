@@ -1976,7 +1976,9 @@ void performFlipTestWithTwoPatches(int axis)
     auto patch1 = Node_getIPatch(patchNode1);
     auto patch2 = Node_getIPatch(patchNode2);
 
-    patch2->translateTexture(154, -189);
+    patch1->fitTexture(1, 1);
+    patch2->fitTexture(1, 1);
+    patch2->translateTexture(45, -40);
 
     // Get the texture space bounds of both patches
     auto patchBounds1 = getTextureSpaceBounds(*patch1);

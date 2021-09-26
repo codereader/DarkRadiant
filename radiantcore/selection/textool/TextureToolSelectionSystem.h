@@ -90,7 +90,10 @@ private:
     void selectRelatedCmd(const cmd::ArgumentList& args);
     void snapSelectionToGridCmd(const cmd::ArgumentList& args);
     void mergeSelectionCmd(const cmd::ArgumentList& args);
+    void flipHorizontallyCmd(const cmd::ArgumentList& args);
+    void flipVerticallyCmd(const cmd::ArgumentList& args);
 
+    void flipSelected(int axis);
     void performSelectionTest(Selector& selector, SelectionTest& test);
 };
 

@@ -8,6 +8,7 @@
 #include "../textool/TextureToolDragManipulator.h"
 #include "selection/SelectionPool.h"
 #include "string/case_conv.h"
+#include "math/Matrix3.h"
 
 namespace textool
 {
@@ -51,6 +52,11 @@ void TextureToolSelectionSystem::initialiseModule(const IApplicationContext& ctx
     GlobalCommandSystem().addCommand("TexToolMergeItems", 
         std::bind(&TextureToolSelectionSystem::mergeSelectionCmd, this, std::placeholders::_1),
         { cmd::ARGTYPE_VECTOR2 | cmd::ARGTYPE_OPTIONAL });
+
+    GlobalCommandSystem().addCommand("TexToolFlipS", 
+        std::bind(&TextureToolSelectionSystem::flipHorizontallyCmd, this, std::placeholders::_1));
+    GlobalCommandSystem().addCommand("TexToolFlipT", 
+        std::bind(&TextureToolSelectionSystem::flipVerticallyCmd, this, std::placeholders::_1));
 
     _unselectListener = GlobalRadiantCore().getMessageBus().addListener(
         radiant::IMessage::Type::UnselectSelectionRequest,
@@ -653,6 +659,68 @@ void TextureToolSelectionSystem::mergeSelectionCmd(const cmd::ArgumentList& args
         
         radiant::TextureChangedMessage::Send();
     }
+}
+
+void TextureToolSelectionSystem::flipSelected(int axis)
+{
+    if (getSelectionMode() != SelectionMode::Surface)
+    {
+        rWarning() << "This command can only be executed in Surface manipulation mode" << std::endl;
+        return;
+    }
+
+    AABB selectionBounds;
+
+    // Calculate the center based on the selection
+    foreachSelectedNode([&](const INode::Ptr& node)
+    {
+        selectionBounds.includeAABB(node->localAABB());
+        return true;
+    });
+
+    if (!selectionBounds.isValid())
+    {
+        return;
+    }
+
+    // Move center to origin, flip around the specified axis, and move back
+    Vector2 flipCenter(selectionBounds.origin.x(), selectionBounds.origin.y());
+    auto flipMatrix = Matrix3::getIdentity();
+
+    if (axis == 0)
+    {
+        flipMatrix.xx() = -1;
+    }
+    else // axis == 1
+    {
+        flipMatrix.yy() = -1;
+    }
+
+    auto flipTransformation = Matrix3::getTranslation(-flipCenter);
+    flipTransformation.premultiplyBy(flipMatrix);
+    flipTransformation.premultiplyBy(Matrix3::getTranslation(+flipCenter));
+
+    UndoableCommand cmd("flipSelectedTexcoords " + string::to_string(axis));
+
+    foreachSelectedNode([&](const INode::Ptr& node)
+    {
+        node->beginTransformation();
+        node->transform(flipTransformation);
+        node->commitTransformation();
+        return true;
+    });
+
+    radiant::TextureChangedMessage::Send();
+}
+
+void TextureToolSelectionSystem::flipVerticallyCmd(const cmd::ArgumentList& args)
+{
+    flipSelected(1);
+}
+
+void TextureToolSelectionSystem::flipHorizontallyCmd(const cmd::ArgumentList& args)
+{
+    flipSelected(0);
 }
 
 module::StaticModule<TextureToolSelectionSystem> _textureToolSelectionSystemModule;
