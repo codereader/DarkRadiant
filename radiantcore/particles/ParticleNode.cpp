@@ -49,9 +49,9 @@ Matrix4 ParticleNode::localToParent() const
 		_local2Parent = parent->localToWorld();
 
 		// compensate the parent rotation only
-		_local2Parent.tCol().x() = 0;
-		_local2Parent.tCol().y() = 0;
-		_local2Parent.tCol().z() = 0;
+		_local2Parent.tColRef().x() = 0;
+		_local2Parent.tColRef().y() = 0;
+		_local2Parent.tColRef().z() = 0;
 
 		_local2Parent.invert();
 	}
@@ -95,7 +95,7 @@ void ParticleNode::update(const VolumeTest& viewVolume) const
 {
 	// Get the view rotation and cancel out the translation part
 	Matrix4 viewRotation = viewVolume.GetModelview();
-	viewRotation.tCol() = Vector4(0,0,0,1);
+	viewRotation.tColRef() = Vector4(0,0,0,1);
 
 	// Get the main direction of our parent entity
 	_renderableParticle->setMainDirection(_renderEntity->getDirection());

@@ -128,10 +128,10 @@ TEST(MatrixTest, AccessMatrixColumnVectors)
     EXPECT_EQ(m.translation(), Vector3(-5, 13, 14));
 
     // Write column values
-    m.xCol3() = Vector3(0.1, 0.2, 0.3);
-    m.yCol3() = Vector3(0.5, 0.6, 0.7);
-    m.zCol3() = Vector3(0.9, 1.0, 1.1);
-    m.tCol() = Vector4(1.3, 1.4, 1.5, 1.6);
+    m.xCol3Ref() = Vector3(0.1, 0.2, 0.3);
+    m.yCol3Ref() = Vector3(0.5, 0.6, 0.7);
+    m.zCol3Ref() = Vector3(0.9, 1.0, 1.1);
+    m.tColRef() = Vector4(1.3, 1.4, 1.5, 1.6);
     EXPECT_EQ(m, Matrix4::byColumns(0.1, 0.2, 0.3, 26,
                                     0.5, 0.6, 0.7, -100,
                                     0.9, 1.0, 1.1, 0.5,

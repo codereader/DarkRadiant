@@ -211,35 +211,35 @@ public:
      * Return columns of the matrix as vectors.
      * \{
      */
-    Vector3& xCol3()
+    Vector3& xCol3Ref()
     {
         return reinterpret_cast<Vector3&>(xx());
     }
-    const Vector3& xCol3() const
+    Vector3 xCol3() const
     {
         return reinterpret_cast<const Vector3&>(xx());
     }
-    Vector3& yCol3()
+    Vector3& yCol3Ref()
     {
         return reinterpret_cast<Vector3&>(yx());
     }
-    const Vector3& yCol3() const
+    Vector3 yCol3() const
     {
         return reinterpret_cast<const Vector3&>(yx());
     }
-    Vector3& zCol3()
+    Vector3& zCol3Ref()
     {
         return reinterpret_cast<Vector3&>(zx());
     }
-    const Vector3& zCol3() const
+    Vector3 zCol3() const
     {
         return reinterpret_cast<const Vector3&>(zx());
     }
-    Vector4& tCol()
+    Vector4& tColRef()
     {
         return reinterpret_cast<Vector4&>(tx());
     }
-    const Vector4& tCol() const
+    Vector4 tCol() const
     {
         return reinterpret_cast<const Vector4&>(tx());
     }
@@ -407,7 +407,7 @@ public:
     Handedness getHandedness() const;
 
     /// Return the 3-element translation component of this matrix
-    const Vector3& translation() const
+    Vector3 translation() const
     {
         return tCol().getVector3();
     }

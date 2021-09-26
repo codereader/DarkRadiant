@@ -100,8 +100,8 @@ void RotateManipulator::updateCircleTransforms()
     if(_circleX_visible)
     {
       _local2worldX = Matrix4::getIdentity();
-      _local2worldX.yCol3() = g_vector3_axis_x.cross(localViewpoint).getNormalised();
-      _local2worldX.zCol3() = _local2worldX.xCol3().cross(
+      _local2worldX.yCol3Ref() = g_vector3_axis_x.cross(localViewpoint).getNormalised();
+      _local2worldX.zCol3Ref() = _local2worldX.xCol3().cross(
         											_local2worldX.yCol3()).getNormalised();
 	  _local2worldX.premultiplyBy(_pivot2World._worldSpace);
     }
@@ -110,8 +110,8 @@ void RotateManipulator::updateCircleTransforms()
     if(_circleY_visible)
     {
       _local2worldY = Matrix4::getIdentity();
-      _local2worldY.zCol3() = g_vector3_axis_y.cross(localViewpoint).getNormalised();
-      _local2worldY.xCol3() = _local2worldY.yCol3().cross(
+      _local2worldY.zCol3Ref() = g_vector3_axis_y.cross(localViewpoint).getNormalised();
+      _local2worldY.xCol3Ref() = _local2worldY.yCol3().cross(
       													_local2worldY.zCol3()).getNormalised();
       _local2worldY.premultiplyBy(_pivot2World._worldSpace);
     }
@@ -120,8 +120,8 @@ void RotateManipulator::updateCircleTransforms()
     if(_circleZ_visible)
     {
       _local2worldZ = Matrix4::getIdentity();
-      _local2worldZ.xCol3() = g_vector3_axis_z.cross(localViewpoint).getNormalised();
-      _local2worldZ.yCol3() = _local2worldZ.zCol3().cross(
+      _local2worldZ.xCol3Ref() = g_vector3_axis_z.cross(localViewpoint).getNormalised();
+      _local2worldZ.yCol3Ref() = _local2worldZ.zCol3().cross(
       												_local2worldZ.xCol3()).getNormalised();
 	  _local2worldZ.premultiplyBy(_pivot2World._worldSpace);
     }

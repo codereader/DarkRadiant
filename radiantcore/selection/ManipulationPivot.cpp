@@ -58,7 +58,7 @@ const Vector3& ManipulationPivot::getVector3()
 		updateFromSelection();
 	}
 
-	return _pivot2World.tCol().getVector3();
+	return _pivot2World.tColRef().getVector3();
 }
 
 void ManipulationPivot::setFromMatrix(const Matrix4& newPivot2World)
@@ -112,7 +112,7 @@ void ManipulationPivot::applyTranslation(const Vector3& translation)
 	if (_snapPivotToGrid)
 	{
 		// The resulting pivot should be grid-snapped
-		_pivot2World.tCol().getVector3().snap(GlobalGrid().getGridSize());
+		_pivot2World.tColRef().getVector3().snap(GlobalGrid().getGridSize());
 	}
 }
 

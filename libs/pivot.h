@@ -12,10 +12,10 @@ inline void billboard_viewplaneOriented(Matrix4& rotation, const Matrix4& world2
   Vector3 x(world2screen.xCol3().getNormalised());
   Vector3 y(world2screen.yCol3().getNormalised());
   Vector3 z(world2screen.zCol3().getNormalised());
-  rotation.yCol3() = Vector3(x.y(), y.y(), z.y());
-  rotation.zCol3() = -Vector3(x.z(), y.z(), z.z());
-  rotation.xCol3() = rotation.yCol3().cross(rotation.zCol3()).getNormalised();
-  rotation.yCol3() = rotation.zCol3().cross(rotation.xCol3());
+  rotation.yCol3Ref() = Vector3(x.y(), y.y(), z.y());
+  rotation.zCol3Ref() = -Vector3(x.z(), y.z(), z.z());
+  rotation.xCol3Ref() = rotation.yCol3().cross(rotation.zCol3()).getNormalised();
+  rotation.yCol3Ref() = rotation.zCol3().cross(rotation.xCol3());
 #else
   Matrix4 screen2world(matrix4_full_inverse(world2screen));
 
@@ -54,10 +54,10 @@ inline void billboard_viewpointOriented(Matrix4& rotation, const Matrix4& world2
 
 #if 1
   rotation = Matrix4::getIdentity();
-  rotation.yCol3() = screen2world.yCol3().getNormalised();
-  rotation.zCol3() = -screen2world.zCol3().getNormalised();
-  rotation.xCol3() = rotation.yCol3().cross(rotation.zCol3()).getNormalised();
-  rotation.yCol3() = rotation.zCol3().cross(rotation.xCol3());
+  rotation.yCol3Ref() = screen2world.yCol3().getNormalised();
+  rotation.zCol3Ref() = -screen2world.zCol3().getNormalised();
+  rotation.xCol3Ref() = rotation.yCol3().cross(rotation.zCol3()).getNormalised();
+  rotation.yCol3Ref() = rotation.zCol3().cross(rotation.xCol3());
 #else
   Vector3 near_(
       matrix4_transformed_vector4(
