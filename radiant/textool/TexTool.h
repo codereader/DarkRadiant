@@ -70,7 +70,6 @@ private:
 	bool _gridActive;
 
 	// For idle callbacks
-	bool _updateNeeded;
 	bool _selectionRescanNeeded;
 
 	sigc::connection _sceneSelectionChanged;

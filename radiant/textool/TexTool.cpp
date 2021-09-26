@@ -52,7 +52,6 @@ TexTool::TexTool() :
     _glWidget(new wxutil::GLWidget(this, std::bind(&TexTool::onGLDraw, this), "TexTool")),
     _grid(GRID_DEFAULT),
     _gridActive(registry::getValue<bool>(RKEY_GRID_STATE)),
-    _updateNeeded(false),
     _selectionRescanNeeded(false),
     _manipulatorModeToggleRequestHandler(std::numeric_limits<std::size_t>::max()),
     _componentSelectionModeToggleRequestHandler(std::numeric_limits<std::size_t>::max()),
@@ -368,19 +367,13 @@ void TexTool::onIdle(wxIdleEvent& ev)
     {
         _selectionRescanNeeded = false;
         update();
-        _updateNeeded = true;
+        queueDraw();
     }
-
-	if (_updateNeeded)
-	{
-		_updateNeeded = false;
-		draw();
-	}
 }
 
 void TexTool::queueDraw()
 {
-	_updateNeeded = true;
+    _glWidget->Refresh();
 }
 
 void TexTool::scrollByPixels(int x, int y)
@@ -702,11 +695,6 @@ void TexTool::updateProjection()
 
 bool TexTool::onGLDraw()
 {
-	if (_updateNeeded)
-	{
-		return false; // stop here, wait for the next idle event to refresh
-	}
-
 	// Initialise the viewport
 	glViewport(0, 0, _windowDims[0], _windowDims[1]);
 	glMatrixMode(GL_PROJECTION);
