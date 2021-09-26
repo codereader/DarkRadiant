@@ -3,6 +3,7 @@
 #include "itextstream.h"
 #include "iradiant.h"
 #include "module/StaticModule.h"
+#include "messages/TextureChanged.h"
 #include "../textool/TextureToolRotateManipulator.h"
 #include "../textool/TextureToolDragManipulator.h"
 #include "selection/SelectionPool.h"
@@ -571,7 +572,7 @@ void TextureToolSelectionSystem::selectRelatedCmd(const cmd::ArgumentList& args)
 
 void TextureToolSelectionSystem::snapSelectionToGridCmd(const cmd::ArgumentList& args)
 {
-    UndoableCommand cmd("snapTexcoordToGrid");
+    UndoableCommand cmd("snapTexcoordsToGrid");
 
     // Accumulate all selected nodes in a copied list, we're going to alter the selection
     foreachSelectedNodeOfAnyType([&](const INode::Ptr& node)
@@ -595,6 +596,8 @@ void TextureToolSelectionSystem::snapSelectionToGridCmd(const cmd::ArgumentList&
         node->commitTransformation();
         return true;
     });
+
+    radiant::TextureChangedMessage::Send();
 }
 
 module::StaticModule<TextureToolSelectionSystem> _textureToolSelectionSystemModule;

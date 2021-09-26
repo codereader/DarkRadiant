@@ -21,6 +21,7 @@
 #include "render/TextureToolView.h"
 #include "messages/ManipulatorModeToggleRequest.h"
 #include "messages/ComponentSelectionModeToggleRequest.h"
+#include "messages/TextureChanged.h"
 
 class Winding;
 class Patch;
@@ -81,6 +82,7 @@ private:
 	sigc::connection _gridChanged;
 	std::size_t _manipulatorModeToggleRequestHandler;
 	std::size_t _componentSelectionModeToggleRequestHandler;
+	std::size_t _textureMessageHandler;
 
 private:
 	// This is where the static shared_ptr of the singleton instance is held.

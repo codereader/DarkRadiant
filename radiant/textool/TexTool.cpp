@@ -20,6 +20,7 @@
 #include "selection/Device.h"
 #include "selection/SelectionVolume.h"
 #include "selection/SelectionPool.h"
+#include "messages/TextureChanged.h"
 #include "fmt/format.h"
 
 #include "textool/tools/TextureToolMouseEvent.h"
@@ -54,7 +55,8 @@ TexTool::TexTool() :
     _updateNeeded(false),
     _selectionRescanNeeded(false),
     _manipulatorModeToggleRequestHandler(std::numeric_limits<std::size_t>::max()),
-    _componentSelectionModeToggleRequestHandler(std::numeric_limits<std::size_t>::max())
+    _componentSelectionModeToggleRequestHandler(std::numeric_limits<std::size_t>::max()),
+    _textureMessageHandler(std::numeric_limits<std::size_t>::max())
 {
 	Bind(wxEVT_IDLE, &TexTool::onIdle, this);
 
@@ -135,6 +137,9 @@ void TexTool::_preHide()
 
     GlobalRadiantCore().getMessageBus().removeListener(_componentSelectionModeToggleRequestHandler);
     _componentSelectionModeToggleRequestHandler = std::numeric_limits<std::size_t>::max();
+    
+    GlobalRadiantCore().getMessageBus().removeListener(_textureMessageHandler);
+    _textureMessageHandler = std::numeric_limits<std::size_t>::max();
 }
 
 // Pre-show callback
@@ -163,6 +168,12 @@ void TexTool::_preShow()
         radiant::IMessage::ComponentSelectionModeToggleRequest,
         radiant::TypeListener<selection::ComponentSelectionModeToggleRequest>(
             sigc::mem_fun(this, &TexTool::handleComponentSelectionModeToggleRequest)));
+
+    // Get notified about texture changes
+    _textureMessageHandler = GlobalRadiantCore().getMessageBus().addListener(
+        radiant::IMessage::Type::TextureChanged,
+        radiant::TypeListener<radiant::TextureChangedMessage>(
+            [this](radiant::TextureChangedMessage& msg) { queueDraw(); }));
 
 	_undoHandler = GlobalUndoSystem().signal_postUndo().connect(
 		sigc::mem_fun(this, &TexTool::onUndoRedoOperation));
