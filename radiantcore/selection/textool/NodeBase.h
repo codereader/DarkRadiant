@@ -49,6 +49,21 @@ public:
         return false;
     }
 
+    virtual std::size_t getNumSelectedComponents() const override
+    {
+        std::size_t count = 0;
+
+        for (const auto& vertex : _vertices)
+        {
+            if (vertex.isSelected())
+            {
+                ++count;
+            }
+        }
+
+        return count;
+    }
+
     virtual void clearComponentSelection() override
     {
         for (auto& vertex : _vertices)

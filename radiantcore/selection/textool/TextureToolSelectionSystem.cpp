@@ -43,6 +43,8 @@ void TextureToolSelectionSystem::initialiseModule(const IApplicationContext& ctx
     GlobalCommandSystem().addCommand("ToggleTextureToolSelectionMode",
         std::bind(&TextureToolSelectionSystem::toggleSelectionModeCmd, this, std::placeholders::_1),
         { cmd::ARGTYPE_STRING });
+    GlobalCommandSystem().addCommand("TexToolSelectRelated", 
+        std::bind(&TextureToolSelectionSystem::selectRelatedCmd, this, std::placeholders::_1));
 
     _unselectListener = GlobalRadiantCore().getMessageBus().addListener(
         radiant::IMessage::Type::UnselectSelectionRequest,
@@ -534,6 +536,11 @@ void TextureToolSelectionSystem::onNodeSelectionChanged(ISelectable& selectable)
 void TextureToolSelectionSystem::onComponentSelectionChanged(ISelectable& selectable)
 {
     _sigSelectionChanged.emit();
+}
+
+void TextureToolSelectionSystem::selectRelatedCmd(const cmd::ArgumentList& args)
+{
+    // TODO
 }
 
 module::StaticModule<TextureToolSelectionSystem> _textureToolSelectionSystemModule;

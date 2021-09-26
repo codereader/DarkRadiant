@@ -875,7 +875,6 @@ void TexTool::registerCommands()
 	GlobalCommandSystem().addCommand("TexToolMergeItems", TexTool::texToolMergeItems);
 	GlobalCommandSystem().addCommand("TexToolFlipS", TexTool::texToolFlipS);
 	GlobalCommandSystem().addCommand("TexToolFlipT", TexTool::texToolFlipT);
-	GlobalCommandSystem().addCommand("TexToolSelectRelated", TexTool::selectRelated);
 
 	GlobalEventManager().addRegistryToggle("TexToolToggleGrid", RKEY_GRID_STATE);
 	GlobalEventManager().addRegistryToggle("TexToolToggleFaceVertexScalePivot", RKEY_FACE_VERTEX_SCALE_PIVOT_IS_CENTROID);

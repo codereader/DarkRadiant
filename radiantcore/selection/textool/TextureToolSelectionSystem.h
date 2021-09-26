@@ -87,6 +87,7 @@ private:
     std::size_t getManipulatorIdForType(selection::IManipulator::Type type);
 
     void toggleSelectionModeCmd(const cmd::ArgumentList& args);
+    void selectRelatedCmd(const cmd::ArgumentList& args);
 
     void performSelectionTest(Selector& selector, SelectionTest& test);
 };

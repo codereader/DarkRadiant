@@ -61,6 +61,9 @@ public:
     // True if this node has at least one selected component (e.g. a vertex)
     virtual bool hasSelectedComponents() const = 0;
 
+    // Returns the number of selected components
+    virtual std::size_t getNumSelectedComponents() const = 0;
+
     // Unselect all components of this node
     virtual void clearComponentSelection() = 0;
 

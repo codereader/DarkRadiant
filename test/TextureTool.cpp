@@ -681,7 +681,7 @@ TEST_F(TextureToolTest, TestSelectFaceSurfaceByPoint)
     EXPECT_FALSE(textoolFace->isSelected()) << "Face should be unselected at start";
 
     // Get the texture space bounds of this face
-    // Construct a view that includes the patch UV bounds
+    // Construct a view that includes the face UV bounds
     auto bounds = getTextureSpaceBounds(*faceUp);
     bounds.extents *= 1.2f;
 
@@ -1429,6 +1429,120 @@ TEST_F(TextureToolTest, DragManipulateFourFaceVertices)
 TEST_F(TextureToolTest, CancelDragManipulationOfFaceVertices)
 {
     performFaceVertexManipulationTest(true, { 0 }, assertAllCoordsUnchanged); // cancel
+}
+
+TEST_F(TextureToolTest, SelectRelatedOfPatchVertex)
+{
+    auto patchNode = setupPatchNodeForTextureTool();
+    auto patch = Node_getIPatch(patchNode);
+
+    // Get the texture space bounds of this patch
+    auto bounds = getTextureSpaceBounds(*patch);
+    bounds.extents *= 1.2f;
+
+    render::TextureToolView view;
+    view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
+
+    // Switch to vertex selection mode
+    GlobalTextureToolSelectionSystem().setSelectionMode(textool::SelectionMode::Vertex);
+
+    // Get the texcoords of the first vertex
+    auto firstVertex = patch->ctrlAt(2, 1).texcoord;
+    performPointSelection(firstVertex, view);
+
+    // Hitting a vertex will select the patch componentselectable
+    EXPECT_EQ(getAllSelectedComponentNodes().size(), 1) << "Only one patch should be selected";
+    
+    textool::IComponentSelectable::Ptr componentSelectable;
+    GlobalTextureToolSelectionSystem().foreachSelectedComponentNode([&](const textool::INode::Ptr& node)
+    {
+        componentSelectable = std::dynamic_pointer_cast<textool::IComponentSelectable>(node);
+        return false;
+    });
+
+    EXPECT_EQ(componentSelectable->getNumSelectedComponents(), 1) << "1 vertex should be selected";
+
+    // Execute "Select Related"
+    GlobalCommandSystem().executeCommand("TexToolSelectRelated");
+
+    EXPECT_EQ(getAllSelectedComponentNodes().size(), 1) << "Only one patch should be selected";
+    EXPECT_EQ(componentSelectable->getNumSelectedComponents(), 9) << "all 3x3 vertices should be selected";
+}
+
+TEST_F(TextureToolTest, SelectRelatedOfFaceVertex)
+{
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto brush = algorithm::createCubicBrush(worldspawn, Vector3(0, 256, 256), "textures/numbers/1");
+    scene::addNodeToContainer(brush, worldspawn);
+
+    // Put all faces into the tex tool scene
+    Node_setSelected(brush, true);
+
+    auto faceUp = algorithm::findBrushFaceWithNormal(Node_getIBrush(brush), Vector3(0, 0, 1));
+
+    // Get the texture space bounds of this face
+    auto bounds = getTextureSpaceBounds(*faceUp);
+    bounds.extents *= 1.2f;
+
+    render::TextureToolView view;
+    view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
+
+    // Switch to vertex selection mode
+    GlobalTextureToolSelectionSystem().setSelectionMode(textool::SelectionMode::Vertex);
+
+    // Get the texcoords of the first vertex
+    auto firstVertex = faceUp->getWinding()[0].texcoord;
+    performPointSelection(firstVertex, view);
+
+    // Hitting a vertex will select the patch componentselectable
+    EXPECT_EQ(getAllSelectedComponentNodes().size(), 1) << "Only one face should be selected";
+
+    textool::IComponentSelectable::Ptr componentSelectable;
+    GlobalTextureToolSelectionSystem().foreachSelectedComponentNode([&](const textool::INode::Ptr& node)
+    {
+        componentSelectable = std::dynamic_pointer_cast<textool::IComponentSelectable>(node);
+        return false;
+    });
+
+    EXPECT_EQ(componentSelectable->getNumSelectedComponents(), 1) << "1 vertex should be selected";
+
+    // Execute "Select Related"
+    GlobalCommandSystem().executeCommand("TexToolSelectRelated");
+
+    EXPECT_EQ(getAllSelectedComponentNodes().size(), 1) << "Only one face should be selected";
+    EXPECT_EQ(componentSelectable->getNumSelectedComponents(), faceUp->getWinding().size()) << "All winding vertices should be selected";
+}
+
+TEST_F(TextureToolTest, SelectRelatedOfFaceNode)
+{
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto brush = algorithm::createCubicBrush(worldspawn, Vector3(0, 256, 256), "textures/numbers/1");
+    scene::addNodeToContainer(brush, worldspawn);
+
+    // Put all faces into the tex tool scene
+    Node_setSelected(brush, true);
+
+    auto faceUp = algorithm::findBrushFaceWithNormal(Node_getIBrush(brush), Vector3(0, 0, 1));
+
+    EXPECT_EQ(getAllSelectedTextoolNodes().size(), 0) << "No item should be selected";
+
+    // Get the texture space bounds of this face
+    // Construct a view that includes the face UV bounds
+    auto bounds = getTextureSpaceBounds(*faceUp);
+    bounds.extents *= 1.2f;
+
+    render::TextureToolView view;
+    view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
+
+    // Point-select in the middle of the face
+    performPointSelection(algorithm::getFaceCentroid(faceUp), view);
+
+    EXPECT_EQ(getAllSelectedTextoolNodes().size(), 1) << "Only one face should be selected";
+
+    // Execute "Select Related"
+    GlobalCommandSystem().executeCommand("TexToolSelectRelated");
+
+    EXPECT_EQ(getAllSelectedComponentNodes().size(), 6) << "All 6 faces should be selected";
 }
 
 }
