@@ -1667,7 +1667,7 @@ TEST_F(TextureToolTest, SnapPatchToGrid)
     auto patch = Node_getIPatch(patchNode);
 
     patch->fitTexture(1, 1);
-    patch->translateTexture(0.133f, 0.111f);
+    patch->translateTexture(13, 11);
 
     // Get the texture space bounds of this patch
     auto bounds = getTextureSpaceBounds(*patch);
@@ -1752,7 +1752,7 @@ TEST_F(TextureToolTest, MergePatchVertices)
 
     patch1->fitTexture(1, 1);
     patch2->fitTexture(1, 1);
-    patch2->translateTexture(0.2f, -0.2f);
+    patch2->translateTexture(20, -20);
 
     // Get the texture space bounds of both patches
     auto bounds = getTextureSpaceBounds(*patch1);
@@ -1768,8 +1768,8 @@ TEST_F(TextureToolTest, MergePatchVertices)
     // Get the texcoords of the first vertex
     auto definedRow = 2;
     auto definedCol = 1;
-    auto vertex1 = patch1->ctrlAt(definedRow, definedCol).texcoord;
-    auto vertex2 = patch1->ctrlAt(definedRow, definedCol).texcoord;
+    const auto& vertex1 = patch1->ctrlAt(definedRow, definedCol).texcoord;
+    const auto& vertex2 = patch2->ctrlAt(definedRow, definedCol).texcoord;
 
     performPointSelection(vertex1, view);
     performPointSelection(vertex2, view);
@@ -1813,8 +1813,8 @@ TEST_F(TextureToolTest, MergeFaceVertices)
     GlobalTextureToolSelectionSystem().setSelectionMode(textool::SelectionMode::Vertex);
 
     // Get the texcoords of the first vertex
-    auto vertex1 = face1->getWinding()[0].texcoord;
-    auto vertex2 = face2->getWinding()[0].texcoord;
+    const auto& vertex1 = face1->getWinding()[0].texcoord;
+    const auto& vertex2 = face2->getWinding()[0].texcoord;
 
     performPointSelection(vertex1, view);
     performPointSelection(vertex2, view);
@@ -1859,11 +1859,11 @@ TEST_F(TextureToolTest, MergeTwoVerticesOfSameFace)
     GlobalTextureToolSelectionSystem().setSelectionMode(textool::SelectionMode::Vertex);
 
     // Get the texcoords of two vertices
-    auto vertex1 = face1->getWinding()[0].texcoord;
-    auto vertex2 = face2->getWinding()[0].texcoord;
+    const auto& vertex1 = face1->getWinding()[0].texcoord;
+    const auto& vertex2 = face2->getWinding()[0].texcoord;
 
     // The third vertex is from the first face
-    auto vertex3 = face1->getWinding()[1].texcoord;
+    const auto& vertex3 = face1->getWinding()[1].texcoord;
 
     performPointSelection(vertex1, view);
     performPointSelection(vertex2, view);

@@ -48,6 +48,9 @@ void TextureToolSelectionSystem::initialiseModule(const IApplicationContext& ctx
         std::bind(&TextureToolSelectionSystem::selectRelatedCmd, this, std::placeholders::_1));
     GlobalCommandSystem().addCommand("TexToolSnapToGrid", 
         std::bind(&TextureToolSelectionSystem::snapSelectionToGridCmd, this, std::placeholders::_1));
+    GlobalCommandSystem().addCommand("TexToolMergeItems", 
+        std::bind(&TextureToolSelectionSystem::mergeSelectionCmd, this, std::placeholders::_1),
+        { cmd::ARGTYPE_VECTOR2 | cmd::ARGTYPE_OPTIONAL });
 
     _unselectListener = GlobalRadiantCore().getMessageBus().addListener(
         radiant::IMessage::Type::UnselectSelectionRequest,
@@ -574,7 +577,6 @@ void TextureToolSelectionSystem::snapSelectionToGridCmd(const cmd::ArgumentList&
 {
     UndoableCommand cmd("snapTexcoordsToGrid");
 
-    // Accumulate all selected nodes in a copied list, we're going to alter the selection
     foreachSelectedNodeOfAnyType([&](const INode::Ptr& node)
     {
         node->beginTransformation();
@@ -598,6 +600,49 @@ void TextureToolSelectionSystem::snapSelectionToGridCmd(const cmd::ArgumentList&
     });
 
     radiant::TextureChangedMessage::Send();
+}
+
+void TextureToolSelectionSystem::mergeSelectionCmd(const cmd::ArgumentList& args)
+{
+    if (getSelectionMode() != SelectionMode::Vertex)
+    {
+        rWarning() << "This command can only be executed in Vertex manipulation mode" << std::endl;
+        return;
+    }
+
+    AABB selectionBounds;
+
+    foreachSelectedComponentNode([&](const INode::Ptr& node)
+    {
+        auto componentSelectable = std::dynamic_pointer_cast<IComponentSelectable>(node);
+        if (!componentSelectable) return true;
+
+        selectionBounds.includeAABB(componentSelectable->getSelectedComponentBounds());
+
+        return true;
+    });
+
+    if (selectionBounds.isValid())
+    {
+        UndoableCommand cmd("mergeSelectedTexcoords");
+
+        foreachSelectedNodeOfAnyType([&](const INode::Ptr& node)
+        {
+            node->beginTransformation();
+
+            auto componentTransformable = std::dynamic_pointer_cast<IComponentTransformable>(node);
+
+            if (componentTransformable)
+            {
+                componentTransformable->mergeComponentsWith({ selectionBounds.origin.x(), selectionBounds.origin.y() });
+            }
+
+            node->commitTransformation();
+            return true;
+        });
+        
+        radiant::TextureChangedMessage::Send();
+    }
 }
 
 module::StaticModule<TextureToolSelectionSystem> _textureToolSelectionSystemModule;

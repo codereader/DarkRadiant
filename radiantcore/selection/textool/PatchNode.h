@@ -196,7 +196,15 @@ public:
 
     void mergeComponentsWith(const Vector2& center) override
     {
-        // TODO
+        for (auto& vertex : _vertices)
+        {
+            if (vertex.isSelected())
+            {
+                vertex.getTexcoord() = center;
+            }
+        }
+
+        _patch.updateTesselation(true);
     }
 
 private:
