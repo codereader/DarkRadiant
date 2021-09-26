@@ -102,6 +102,19 @@ public:
         return bounds;
     }
 
+    virtual void expandComponentSelectionToRelated() override
+    {
+        if (!hasSelectedComponents())
+        {
+            return;
+        }
+
+        for (auto& vertex : _vertices)
+        {
+            vertex.setSelected(true);
+        }
+    }
+
 protected:
     virtual void renderComponents()
     {

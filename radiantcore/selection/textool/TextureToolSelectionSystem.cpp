@@ -540,7 +540,31 @@ void TextureToolSelectionSystem::onComponentSelectionChanged(ISelectable& select
 
 void TextureToolSelectionSystem::selectRelatedCmd(const cmd::ArgumentList& args)
 {
-    // TODO
+    // Accumulate all selected nodes in a copied list, we're going to alter the selection
+    std::vector<INode::Ptr> nodes;
+
+    foreachSelectedNodeOfAnyType([&](const INode::Ptr& node)
+    {
+        nodes.push_back(node);
+        return true;
+    });
+
+    for (const auto& node : nodes)
+    {
+        if (getSelectionMode() == textool::SelectionMode::Surface)
+        {
+            node->expandSelectionToRelated();
+        }
+        else
+        {
+            auto componentSelectable = std::dynamic_pointer_cast<IComponentSelectable>(node);
+
+            if (componentSelectable)
+            {
+                componentSelectable->expandComponentSelectionToRelated();
+            }
+        }
+    }
 }
 
 module::StaticModule<TextureToolSelectionSystem> _textureToolSelectionSystemModule;

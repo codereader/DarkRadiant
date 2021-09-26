@@ -164,6 +164,9 @@ public:
         }
     }
 
+    void expandSelectionToRelated() override
+    {}
+
 private:
     void foreachVertex(const std::function<void(PatchControl&)>& functor) const
     {

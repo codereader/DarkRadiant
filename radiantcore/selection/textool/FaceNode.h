@@ -216,6 +216,29 @@ public:
         }
     }
 
+    void expandSelectionToRelated() override
+    {
+        if (!isSelected())
+        {
+            return;
+        }
+
+        // Expand the selection to all faces with the same brush
+        auto& brush = _face.getBrush();
+
+        GlobalTextureToolSceneGraph().foreachNode([&](const INode::Ptr& node)
+        {
+            auto face = std::dynamic_pointer_cast<FaceNode>(node);
+
+            if (face && &(face->getFace().getBrush()) == &brush)
+            {
+                face->setSelected(true);
+            }
+
+            return true;
+        });
+    }
+
 private:
     // Locates the index of the vertex that is farthest away from the given texcoord
     // the indices contained in exludedIndices are not returned

@@ -72,6 +72,10 @@ public:
 
     // Returns the bounds containing all the selected vertices
     virtual AABB getSelectedComponentBounds() = 0;
+
+    // If this node has selected components, this selects all related items too
+    // E.g. a single winding vertex expands to the entire winding
+    virtual void expandComponentSelectionToRelated() = 0;
 };
 
 // A Texture Tool node that allows its components to be transformed
@@ -98,6 +102,10 @@ public:
 
     // Renders this node, with all coords relative to UV space origin
     virtual void render(SelectionMode mode) = 0;
+
+    // If this node is selected, this selects all related items too:
+    // a single face expands to all faces of the same brush
+    virtual void expandSelectionToRelated() = 0;
 };
 
 // Node representing a single brush face

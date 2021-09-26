@@ -1542,7 +1542,7 @@ TEST_F(TextureToolTest, SelectRelatedOfFaceNode)
     // Execute "Select Related"
     GlobalCommandSystem().executeCommand("TexToolSelectRelated");
 
-    EXPECT_EQ(getAllSelectedComponentNodes().size(), 6) << "All 6 faces should be selected";
+    EXPECT_EQ(getAllSelectedTextoolNodes().size(), 6) << "All 6 faces should be selected";
 }
 
 }
