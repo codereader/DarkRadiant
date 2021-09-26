@@ -10,10 +10,9 @@
 namespace textool
 {
 
-class NodeBase :
+class Node :
     public virtual INode,
-    public virtual IComponentSelectable,
-    public std::enable_shared_from_this<NodeBase>
+    public virtual IComponentSelectable
 {
 private:
     selection::ObservedSelectable _selectable;
@@ -22,8 +21,8 @@ protected:
     std::vector<SelectableVertex> _vertices;
 
 public:
-    NodeBase() :
-        _selectable(sigc::mem_fun(*this, &NodeBase::onSelectionStatusChanged))
+    Node() :
+        _selectable(sigc::mem_fun(*this, &Node::onSelectionStatusChanged))
     {}
 
     virtual void setSelected(bool select) override

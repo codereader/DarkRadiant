@@ -2,7 +2,7 @@
 
 #include <functional>
 #include "math/AABB.h"
-#include "NodeBase.h"
+#include "Node.h"
 
 class IPatch;
 
@@ -10,7 +10,7 @@ namespace textool
 {
 
 class PatchNode :
-    public NodeBase,
+    public Node,
     public IPatchNode
 {
 private:

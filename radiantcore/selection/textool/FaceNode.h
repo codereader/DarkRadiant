@@ -1,7 +1,7 @@
 #pragma once
 
 #include "math/AABB.h"
-#include "NodeBase.h"
+#include "Node.h"
 
 class Matrix3;
 class IFace;
@@ -13,7 +13,7 @@ namespace textool
  * Represents a single face in the Texture Tool scene.
  */
 class FaceNode final :
-    public NodeBase,
+    public Node,
     public IFaceNode
 {
 private:

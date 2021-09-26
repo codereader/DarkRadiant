@@ -2223,7 +2223,7 @@
     <ClInclude Include="..\..\radiantcore\selection\textool\FaceNode.h">
       <Filter>src\selection\textool</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\selection\textool\NodeBase.h">
+    <ClInclude Include="..\..\radiantcore\selection\textool\Node.h">
       <Filter>src\selection\textool</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\selection\textool\PatchNode.h">

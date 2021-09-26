@@ -1031,7 +1031,7 @@
     <ClInclude Include="..\..\radiantcore\selection\shaderclipboard\ShaderClipboard.h" />
     <ClInclude Include="..\..\radiantcore\selection\shaderclipboard\Texturable.h" />
     <ClInclude Include="..\..\radiantcore\selection\textool\FaceNode.h" />
-    <ClInclude Include="..\..\radiantcore\selection\textool\NodeBase.h" />
+    <ClInclude Include="..\..\radiantcore\selection\textool\Node.h" />
     <ClInclude Include="..\..\radiantcore\selection\textool\PatchNode.h" />
     <ClInclude Include="..\..\radiantcore\selection\textool\SelectableVertex.h" />
     <ClInclude Include="..\..\radiantcore\selection\textool\TextureToolDragManipulator.h" />
