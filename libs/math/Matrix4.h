@@ -217,7 +217,7 @@ public:
     }
     Vector3 xCol3() const
     {
-        return reinterpret_cast<const Vector3&>(xx());
+        return Vector3(_transform.matrix().col(0).head(3));
     }
     Vector3& yCol3Ref()
     {
@@ -225,7 +225,7 @@ public:
     }
     Vector3 yCol3() const
     {
-        return reinterpret_cast<const Vector3&>(yx());
+        return Vector3(_transform.matrix().col(1).head(3));
     }
     Vector3& zCol3Ref()
     {
@@ -233,7 +233,7 @@ public:
     }
     Vector3 zCol3() const
     {
-        return reinterpret_cast<const Vector3&>(zx());
+        return Vector3(_transform.matrix().col(2).head(3));
     }
     Vector4& tColRef()
     {
@@ -241,7 +241,7 @@ public:
     }
     Vector4 tCol() const
     {
-        return reinterpret_cast<const Vector4&>(tx());
+        return Vector4(Vector3(_transform.matrix().col(3).head(3)), tw());
     }
     /**
      * \}
