@@ -56,90 +56,10 @@ public:
 
     void transformComponents(const Matrix3& transform) override
     {
-        std::vector<std::size_t> selectedIndices;
-
-        // We need to remember the old texture coordinates to determine the fixed points
-        std::vector<Vector2> unchangedTexcoords;
-        AABB selectionBounds;
-
-        // Manipulate every selected vertex using the given transform
-        for (std::size_t i = 0; i < _vertices.size(); ++i)
+        transformSelectedAndRecalculateTexDef([&](Vector2& selectedTexcoord)
         {
-            auto& vertex = _vertices[i];
-
-            unchangedTexcoords.push_back(vertex.getTexcoord());
-
-            if (!vertex.isSelected()) continue;
-
-            selectionBounds.includePoint({ vertex.getTexcoord().x(), vertex.getTexcoord().y(), 0 });
-            selectedIndices.push_back(i);
-
-            // Apply the transform to the selected texcoord
-            vertex.getTexcoord() = transform * vertex.getTexcoord();
-        }
-
-        if (selectedIndices.empty()) return; // nothing happened
-
-        // Now we need to pick three vertices to calculate the tex def from
-        // we have certain options, depending on the number of selected vertices
-        auto selectionCount = selectedIndices.size();
-
-        Vector3 vertices[3];
-        Vector2 texcoords[3];
-        const auto& winding = _face.getWinding();
-
-        if (selectionCount >= 3)
-        {
-            // Manipulating 3+ vertices means that the whole face is transformed 
-            // the same way. We can pick any of the three selected vertices.
-            for (std::size_t i = 0; i < 3; ++i)
-            {
-                vertices[i] = _vertices[selectedIndices[i]].getVertex();
-                texcoords[i] = _vertices[selectedIndices[i]].getTexcoord();
-            }
-
-            _face.setTexDefFromPoints(vertices, texcoords);
-        }
-        else if (selectionCount == 2)
-        {
-            // Calculate the center point of the selection and pick the vertex that is farthest from it
-            auto farthestIndex = findIndexFarthestFrom(
-                { selectionBounds.origin.x(), selectionBounds.origin.y() },
-                unchangedTexcoords, selectedIndices);
-
-            for (std::size_t i = 0; i < 2; ++i)
-            {
-                vertices[i] = _vertices[selectedIndices[i]].getVertex();
-                texcoords[i] = _vertices[selectedIndices[i]].getTexcoord();
-            }
-
-            vertices[2] = _vertices[farthestIndex].getVertex();
-            texcoords[2] = _vertices[farthestIndex].getTexcoord();
-
-            _face.setTexDefFromPoints(vertices, texcoords);
-        }
-        else // selectionCount == 1
-        {
-            assert(selectionCount == 1);
-            std::vector<std::size_t> fixedVerts{ selectedIndices[0] };
-
-            auto secondIndex = findIndexFarthestFrom(unchangedTexcoords[selectedIndices[0]], 
-                unchangedTexcoords, fixedVerts);
-            fixedVerts.push_back(secondIndex);
-
-            // Now we've got two vertices, calculate the center and take the farthest of that one
-            auto center = (unchangedTexcoords[secondIndex] + unchangedTexcoords[selectedIndices[0]]) * 0.5;
-            auto thirdIndex = findIndexFarthestFrom(center, unchangedTexcoords, fixedVerts);
-            fixedVerts.push_back(thirdIndex);
-
-            for (std::size_t i = 0; i < 3; ++i)
-            {
-                vertices[i] = _vertices[fixedVerts[i]].getVertex();
-                texcoords[i] = _vertices[fixedVerts[i]].getTexcoord();
-            }
-
-            _face.setTexDefFromPoints(vertices, texcoords);
-        }
+            selectedTexcoord = transform * selectedTexcoord;
+        });
     }
 
     void commitTransformation() override
@@ -241,37 +161,121 @@ public:
 
     void snapto(float snap) override
     {
-#if 0
-        for (const auto& vertex : _face.getWinding())
-        {
-            _bounds.includePoint({ vertex.texcoord.x(), vertex.texcoord.y(), 0 });
-        }
-
         for (auto& vertex : _vertices)
         {
             auto& texcoord = vertex.getTexcoord();
             texcoord.x() = float_snapped(texcoord.x(), snap);
             texcoord.y() = float_snapped(texcoord.y(), snap);
         }
-#endif
+
+        // Take three vertices and calculate a new tex def
+        Vector3 vertices[3];
+        Vector2 texcoords[3];
+
+        for (std::size_t i = 0; i < 3; ++i)
+        {
+            vertices[i] = _vertices[i].getVertex();
+            texcoords[i] = _vertices[i].getTexcoord();
+        }
+
+        _face.setTexDefFromPoints(vertices, texcoords);
     }
 
     void snapComponents(float snap) override
     {
-#if 0
-        for (auto& vertex : _vertices)
+        transformSelectedAndRecalculateTexDef([&](Vector2& selectedTexcoord)
         {
-            if (vertex.isSelected())
-            {
-                auto& texcoord = vertex.getTexcoord();
-                texcoord.x() = float_snapped(texcoord.x(), snap);
-                texcoord.y() = float_snapped(texcoord.y(), snap);
-            }
-        }
-#endif
+            // Snap the selection to the grid
+            selectedTexcoord.x() = float_snapped(selectedTexcoord.x(), snap);
+            selectedTexcoord.y() = float_snapped(selectedTexcoord.y(), snap);
+        });
     }
 
 private:
+    void transformSelectedAndRecalculateTexDef(const std::function<void(Vector2&)>& transform)
+    {
+        std::vector<std::size_t> selectedIndices;
+
+        // We need to remember the old texture coordinates to determine the fixed points
+        std::vector<Vector2> unchangedTexcoords;
+        AABB selectionBounds;
+
+        // Manipulate every selected vertex using the given transform
+        for (std::size_t i = 0; i < _vertices.size(); ++i)
+        {
+            auto& vertex = _vertices[i];
+
+            unchangedTexcoords.push_back(vertex.getTexcoord());
+
+            if (!vertex.isSelected()) continue;
+
+            selectionBounds.includePoint({ vertex.getTexcoord().x(), vertex.getTexcoord().y(), 0 });
+            selectedIndices.push_back(i);
+
+            // Apply the transform to the selected texcoord
+            transform(vertex.getTexcoord());
+        }
+
+        if (selectedIndices.empty()) return; // nothing happened
+
+        // Now we need to pick three vertices to calculate the tex def from
+        // we have certain options, depending on the number of selected vertices
+        auto selectionCount = selectedIndices.size();
+
+        Vector3 vertices[3];
+        Vector2 texcoords[3];
+        const auto& winding = _face.getWinding();
+
+        if (selectionCount >= 3)
+        {
+            // Manipulating 3+ vertices means that the whole face is transformed 
+            // the same way. We can pick any of the three selected vertices.
+            for (std::size_t i = 0; i < 3; ++i)
+            {
+                vertices[i] = _vertices[selectedIndices[i]].getVertex();
+                texcoords[i] = _vertices[selectedIndices[i]].getTexcoord();
+            }
+        }
+        else if (selectionCount == 2)
+        {
+            // Calculate the center point of the selection and pick the vertex that is farthest from it
+            auto farthestIndex = findIndexFarthestFrom(
+                { selectionBounds.origin.x(), selectionBounds.origin.y() },
+                unchangedTexcoords, selectedIndices);
+
+            for (std::size_t i = 0; i < 2; ++i)
+            {
+                vertices[i] = _vertices[selectedIndices[i]].getVertex();
+                texcoords[i] = _vertices[selectedIndices[i]].getTexcoord();
+            }
+
+            vertices[2] = _vertices[farthestIndex].getVertex();
+            texcoords[2] = _vertices[farthestIndex].getTexcoord();
+        }
+        else // selectionCount == 1
+        {
+            assert(selectionCount == 1);
+            std::vector<std::size_t> fixedVerts{ selectedIndices[0] };
+
+            auto secondIndex = findIndexFarthestFrom(unchangedTexcoords[selectedIndices[0]],
+                unchangedTexcoords, fixedVerts);
+            fixedVerts.push_back(secondIndex);
+
+            // Now we've got two vertices, calculate the center and take the farthest of that one
+            auto center = (unchangedTexcoords[secondIndex] + unchangedTexcoords[selectedIndices[0]]) * 0.5;
+            auto thirdIndex = findIndexFarthestFrom(center, unchangedTexcoords, fixedVerts);
+            fixedVerts.push_back(thirdIndex);
+
+            for (std::size_t i = 0; i < 3; ++i)
+            {
+                vertices[i] = _vertices[fixedVerts[i]].getVertex();
+                texcoords[i] = _vertices[fixedVerts[i]].getTexcoord();
+            }
+        }
+
+        _face.setTexDefFromPoints(vertices, texcoords);
+    }
+
     // Locates the index of the vertex that is farthest away from the given texcoord
     // the indices contained in exludedIndices are not returned
     static std::size_t findIndexFarthestFrom(const Vector2& texcoord, 

@@ -1572,6 +1572,13 @@ TEST_F(TextureToolTest, SnapFaceToGrid)
     auto faceUp = algorithm::findBrushFaceWithNormal(Node_getIBrush(brush), Vector3(0, 0, 1));
     auto faceRight = algorithm::findBrushFaceWithNormal(Node_getIBrush(brush), Vector3(1, 0, 0));
 
+    // Assume some non-grid snapped texcoords on both faces
+    faceUp->fitTexture(1, 1);
+    faceUp->shiftTexdef(0.133f, 0.111f);
+
+    faceRight->fitTexture(1, 1);
+    faceRight->shiftTexdef(0.133f, 0.111f);
+
     EXPECT_EQ(getAllSelectedTextoolNodes().size(), 0) << "No item should be selected";
 
     // Get the texture space bounds of this face
@@ -1587,13 +1594,6 @@ TEST_F(TextureToolTest, SnapFaceToGrid)
 
     GlobalGrid().setGridSize(GRID_8);
     auto gridSize = GlobalGrid().getGridSize(grid::Space::Texture);
-
-    // Assume some non-grid snapped texcoords on both faces
-    faceUp->fitTexture(1, 1);
-    faceUp->shiftTexdef(0.133f, 0.111f);
-
-    faceRight->fitTexture(1, 1);
-    faceRight->shiftTexdef(0.133f, 0.111f);
 
     assumeFaceVerticesGridSnapped(*faceUp, false);
     assumeFaceVerticesGridSnapped(*faceRight, false);
@@ -1614,12 +1614,12 @@ TEST_F(TextureToolTest, SnapFaceVerticesToGrid)
     auto brush = setupBrushNodeForTextureTool();
     auto faceUp = algorithm::findBrushFaceWithNormal(Node_getIBrush(brush), Vector3(0, 0, 1));
 
+    faceUp->fitTexture(1, 1);
+    faceUp->shiftTexdef(0.133f, 0.111f);
+
     // Get the texture space bounds of this face
     auto bounds = getTextureSpaceBounds(*faceUp);
     bounds.extents *= 1.2f;
-
-    faceUp->fitTexture(1, 1);
-    faceUp->shiftTexdef(0.133f, 0.111f);
 
     render::TextureToolView view;
     view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
@@ -1629,7 +1629,7 @@ TEST_F(TextureToolTest, SnapFaceVerticesToGrid)
 
     // Get the texcoords of the first vertex
     auto firstIndex = 0;
-    auto secondIndex = 0;
+    auto secondIndex = 1;
 
     auto firstVertex = faceUp->getWinding()[firstIndex].texcoord;
     auto secondVertex = faceUp->getWinding()[secondIndex].texcoord;
@@ -1652,16 +1652,11 @@ TEST_F(TextureToolTest, SnapFaceVerticesToGrid)
     {
         const auto& vertex = faceUp->getWinding()[i];
 
-        // Only the two selected ones should have been grid-aligned
+        // At least the the two selected ones should have been grid-aligned, the rest is not checked
         if (i == firstIndex || i == secondIndex)
         {
             EXPECT_EQ(vertex.texcoord.x(), float_snapped(vertex.texcoord.x(), gridSize)) << "U should be grid-snapped";
             EXPECT_EQ(vertex.texcoord.y(), float_snapped(vertex.texcoord.y(), gridSize)) << "V should be grid-snapped";
-        }
-        else
-        {
-            EXPECT_NE(vertex.texcoord.x(), float_snapped(vertex.texcoord.x(), gridSize)) << "U should not be grid-snapped";
-            EXPECT_NE(vertex.texcoord.y(), float_snapped(vertex.texcoord.y(), gridSize)) << "V should not be grid-snapped";
         }
     }
 }
