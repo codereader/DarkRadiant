@@ -6,6 +6,7 @@
 #include "iselection.h"
 #include "iselectiontest.h"
 #include "imanipulator.h"
+#include "editable.h"
 #include <sigc++/signal.h>
 
 class Matrix3;
@@ -93,7 +94,8 @@ class INode :
     public ITransformable,
     public Bounded,
     public ISelectable,
-    public SelectionTestable
+    public SelectionTestable,
+    public Snappable
 {
 public:
     virtual ~INode() {}
@@ -112,7 +114,8 @@ public:
 class IFaceNode :
     public virtual INode,
     public virtual IComponentSelectable,
-    public virtual IComponentTransformable
+    public virtual IComponentTransformable,
+    public virtual ComponentSnappable
 {
 public:
     virtual ~IFaceNode() {}
@@ -126,7 +129,8 @@ public:
 class IPatchNode :
     public virtual INode,
     public virtual IComponentSelectable,
-    public virtual IComponentTransformable
+    public virtual IComponentTransformable,
+    public virtual ComponentSnappable
 {
 public:
     virtual ~IPatchNode() {}

@@ -45,6 +45,8 @@ void TextureToolSelectionSystem::initialiseModule(const IApplicationContext& ctx
         { cmd::ARGTYPE_STRING });
     GlobalCommandSystem().addCommand("TexToolSelectRelated", 
         std::bind(&TextureToolSelectionSystem::selectRelatedCmd, this, std::placeholders::_1));
+    GlobalCommandSystem().addCommand("TexToolSnapToGrid", 
+        std::bind(&TextureToolSelectionSystem::snapSelectionToGridCmd, this, std::placeholders::_1));
 
     _unselectListener = GlobalRadiantCore().getMessageBus().addListener(
         radiant::IMessage::Type::UnselectSelectionRequest,
@@ -565,6 +567,34 @@ void TextureToolSelectionSystem::selectRelatedCmd(const cmd::ArgumentList& args)
             }
         }
     }
+}
+
+void TextureToolSelectionSystem::snapSelectionToGridCmd(const cmd::ArgumentList& args)
+{
+    UndoableCommand cmd("snapTexcoordToGrid");
+
+    // Accumulate all selected nodes in a copied list, we're going to alter the selection
+    foreachSelectedNodeOfAnyType([&](const INode::Ptr& node)
+    {
+        node->beginTransformation();
+
+        if (getSelectionMode() == textool::SelectionMode::Surface)
+        {
+            node->snapto(GlobalGrid().getGridSize(grid::Space::Texture));
+        }
+        else
+        {
+            auto componentSnappable = std::dynamic_pointer_cast<ComponentSnappable>(node);
+
+            if (componentSnappable)
+            {
+                componentSnappable->snapComponents(GlobalGrid().getGridSize(grid::Space::Texture));
+            }
+        }
+
+        node->commitTransformation();
+        return true;
+    });
 }
 
 module::StaticModule<TextureToolSelectionSystem> _textureToolSelectionSystemModule;

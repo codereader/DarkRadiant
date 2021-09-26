@@ -239,6 +239,38 @@ public:
         });
     }
 
+    void snapto(float snap) override
+    {
+#if 0
+        for (const auto& vertex : _face.getWinding())
+        {
+            _bounds.includePoint({ vertex.texcoord.x(), vertex.texcoord.y(), 0 });
+        }
+
+        for (auto& vertex : _vertices)
+        {
+            auto& texcoord = vertex.getTexcoord();
+            texcoord.x() = float_snapped(texcoord.x(), snap);
+            texcoord.y() = float_snapped(texcoord.y(), snap);
+        }
+#endif
+    }
+
+    void snapComponents(float snap) override
+    {
+#if 0
+        for (auto& vertex : _vertices)
+        {
+            if (vertex.isSelected())
+            {
+                auto& texcoord = vertex.getTexcoord();
+                texcoord.x() = float_snapped(texcoord.x(), snap);
+                texcoord.y() = float_snapped(texcoord.y(), snap);
+            }
+        }
+#endif
+    }
+
 private:
     // Locates the index of the vertex that is farthest away from the given texcoord
     // the indices contained in exludedIndices are not returned

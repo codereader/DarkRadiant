@@ -167,6 +167,33 @@ public:
     void expandSelectionToRelated() override
     {}
 
+    void snapto(float snap) override
+    {
+        for (auto& vertex : _vertices)
+        {
+            auto& texcoord = vertex.getTexcoord();
+            texcoord.x() = float_snapped(texcoord.x(), snap);
+            texcoord.y() = float_snapped(texcoord.y(), snap);
+        }
+
+        _patch.updateTesselation(true);
+    }
+
+    void snapComponents(float snap) override
+    {
+        for (auto& vertex : _vertices)
+        {
+            if (vertex.isSelected())
+            {
+                auto& texcoord = vertex.getTexcoord();
+                texcoord.x() = float_snapped(texcoord.x(), snap);
+                texcoord.y() = float_snapped(texcoord.y(), snap);
+            }
+        }
+
+        _patch.updateTesselation(true);
+    }
+
 private:
     void foreachVertex(const std::function<void(PatchControl&)>& functor) const
     {

@@ -871,7 +871,6 @@ void TexTool::selectRelated(const cmd::ArgumentList& args) {
 void TexTool::registerCommands()
 {
 	GlobalCommandSystem().addCommand("TextureTool", TexTool::toggle);
-	GlobalCommandSystem().addCommand("TexToolSnapToGrid", TexTool::texToolSnapToGrid);
 	GlobalCommandSystem().addCommand("TexToolMergeItems", TexTool::texToolMergeItems);
 	GlobalCommandSystem().addCommand("TexToolFlipS", TexTool::texToolFlipS);
 	GlobalCommandSystem().addCommand("TexToolFlipT", TexTool::texToolFlipT);

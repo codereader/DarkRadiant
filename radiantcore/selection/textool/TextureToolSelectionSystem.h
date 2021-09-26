@@ -88,6 +88,7 @@ private:
 
     void toggleSelectionModeCmd(const cmd::ArgumentList& args);
     void selectRelatedCmd(const cmd::ArgumentList& args);
+    void snapSelectionToGridCmd(const cmd::ArgumentList& args);
 
     void performSelectionTest(Selector& selector, SelectionTest& test);
 };
