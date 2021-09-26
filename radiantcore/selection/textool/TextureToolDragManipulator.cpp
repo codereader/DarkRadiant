@@ -32,6 +32,14 @@ void TextureTranslator::transform(const Matrix4& pivot2world, const VolumeTest& 
         diff[fabs(diff.y()) > fabs(diff.x()) ? 0 : 1] = 0;
     }
 
+    // Snap to grid if the constraint flag is set
+    if (constraintFlags & Constraint::Grid)
+    {
+        auto gridSize = GlobalGrid().getGridSize(grid::Space::Texture);
+        diff.x() = float_snapped(diff.x(), gridSize);
+        diff.y() = float_snapped(diff.y(), gridSize);
+    }
+
     _translateFunctor(diff);
 }
 
