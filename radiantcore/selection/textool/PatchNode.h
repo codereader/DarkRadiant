@@ -194,6 +194,11 @@ public:
         _patch.updateTesselation(true);
     }
 
+    void mergeComponentsWith(const Vector2& center) override
+    {
+        // TODO
+    }
+
 private:
     void foreachVertex(const std::function<void(PatchControl&)>& functor) const
     {

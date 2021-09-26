@@ -191,6 +191,11 @@ public:
         });
     }
 
+    void mergeComponentsWith(const Vector2& center) override
+    {
+        // TODO
+    }
+
 private:
     void transformSelectedAndRecalculateTexDef(const std::function<void(Vector2&)>& transform)
     {

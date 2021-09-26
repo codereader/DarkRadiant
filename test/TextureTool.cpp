@@ -1743,4 +1743,145 @@ TEST_F(TextureToolTest, SnapPatchVerticesToGrid)
     }
 }
 
+TEST_F(TextureToolTest, MergePatchVertices)
+{
+    auto patchNode1 = setupPatchNodeForTextureTool();
+    auto patchNode2 = setupPatchNodeForTextureTool();
+    auto patch1 = Node_getIPatch(patchNode1);
+    auto patch2 = Node_getIPatch(patchNode2);
+
+    patch1->fitTexture(1, 1);
+    patch2->fitTexture(1, 1);
+    patch2->translateTexture(0.2f, -0.2f);
+
+    // Get the texture space bounds of both patches
+    auto bounds = getTextureSpaceBounds(*patch1);
+    bounds.includeAABB(getTextureSpaceBounds(*patch2));
+    bounds.extents *= 1.2f;
+
+    render::TextureToolView view;
+    view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
+
+    // Switch to vertex mode
+    GlobalTextureToolSelectionSystem().setSelectionMode(textool::SelectionMode::Vertex);
+
+    // Get the texcoords of the first vertex
+    auto definedRow = 2;
+    auto definedCol = 1;
+    auto vertex1 = patch1->ctrlAt(definedRow, definedCol).texcoord;
+    auto vertex2 = patch1->ctrlAt(definedRow, definedCol).texcoord;
+
+    performPointSelection(vertex1, view);
+    performPointSelection(vertex2, view);
+
+    EXPECT_EQ(getAllSelectedComponentNodes().size(), 2) << "2 patches should be selected";
+    EXPECT_NE(vertex1.x(), vertex2.x()) << "Vertex 1 is alredy merged with Vertex 2";
+    EXPECT_NE(vertex1.y(), vertex2.y()) << "Vertex 1 is alredy merged with Vertex 2";
+
+    // We expect the vertices to be at the center if merge items is called with no arguments
+    auto center = (vertex1 + vertex2) * 0.5;
+
+    GlobalCommandSystem().executeCommand("TexToolMergeItems");
+
+    EXPECT_EQ(vertex1.x(), center.x()) << "Vertex 1 should be at center " << center;
+    EXPECT_EQ(vertex1.y(), center.y()) << "Vertex 1 should be at center " << center;
+    EXPECT_EQ(vertex2.x(), center.x()) << "Vertex 2 should be at center " << center;
+    EXPECT_EQ(vertex2.y(), center.y()) << "Vertex 2 should be at center " << center;
+}
+
+TEST_F(TextureToolTest, MergeFaceVertices)
+{
+    auto brush1 = setupBrushNodeForTextureTool();
+    auto brush2 = setupBrushNodeForTextureTool();
+    auto face1 = algorithm::findBrushFaceWithNormal(Node_getIBrush(brush1), Vector3(0, 0, 1));
+    auto face2 = algorithm::findBrushFaceWithNormal(Node_getIBrush(brush2), Vector3(0, 0, 1));
+
+    face1->fitTexture(1, 1);
+
+    face2->fitTexture(1, 1);
+    face2->shiftTexdef(0.2f, -0.2f);
+
+    // Get the texture space bounds
+    auto bounds = getTextureSpaceBounds(*face1);
+    bounds.includeAABB(getTextureSpaceBounds(*face2));
+    bounds.extents *= 1.2f;
+
+    render::TextureToolView view;
+    view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
+
+    // Switch to vertex mode
+    GlobalTextureToolSelectionSystem().setSelectionMode(textool::SelectionMode::Vertex);
+
+    // Get the texcoords of the first vertex
+    auto vertex1 = face1->getWinding()[0].texcoord;
+    auto vertex2 = face2->getWinding()[0].texcoord;
+
+    performPointSelection(vertex1, view);
+    performPointSelection(vertex2, view);
+
+    EXPECT_EQ(getAllSelectedComponentNodes().size(), 2) << "2 faces should be selected";
+    EXPECT_NE(vertex1.x(), vertex2.x()) << "Vertex 1 is alredy merged with Vertex 2";
+    EXPECT_NE(vertex1.y(), vertex2.y()) << "Vertex 1 is alredy merged with Vertex 2";
+
+    // We expect the vertices to be at the center if merge items is called with no arguments
+    auto center = (vertex1 + vertex2) * 0.5;
+
+    GlobalCommandSystem().executeCommand("TexToolMergeItems");
+
+    EXPECT_EQ(vertex1.x(), center.x()) << "Vertex 1 should be at center " << center;
+    EXPECT_EQ(vertex1.y(), center.y()) << "Vertex 1 should be at center " << center;
+    EXPECT_EQ(vertex2.x(), center.x()) << "Vertex 2 should be at center " << center;
+    EXPECT_EQ(vertex2.y(), center.y()) << "Vertex 2 should be at center " << center;
+}
+
+// Two selected face vertices will refuse to be merged since that produces an unusable tex def
+TEST_F(TextureToolTest, MergeTwoVerticesOfSameFace)
+{
+    auto brush1 = setupBrushNodeForTextureTool();
+    auto brush2 = setupBrushNodeForTextureTool();
+    auto face1 = algorithm::findBrushFaceWithNormal(Node_getIBrush(brush1), Vector3(0, 0, 1));
+    auto face2 = algorithm::findBrushFaceWithNormal(Node_getIBrush(brush2), Vector3(0, 0, 1));
+
+    face1->fitTexture(1, 1);
+
+    face2->fitTexture(1, 1);
+    face2->shiftTexdef(0.2f, -0.2f);
+
+    // Get the texture space bounds
+    auto bounds = getTextureSpaceBounds(*face1);
+    bounds.includeAABB(getTextureSpaceBounds(*face2));
+    bounds.extents *= 1.2f;
+
+    render::TextureToolView view;
+    view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
+
+    // Switch to vertex mode
+    GlobalTextureToolSelectionSystem().setSelectionMode(textool::SelectionMode::Vertex);
+
+    // Get the texcoords of two vertices
+    auto vertex1 = face1->getWinding()[0].texcoord;
+    auto vertex2 = face2->getWinding()[0].texcoord;
+
+    // The third vertex is from the first face
+    auto vertex3 = face1->getWinding()[1].texcoord;
+
+    performPointSelection(vertex1, view);
+    performPointSelection(vertex2, view);
+    performPointSelection(vertex3, view);
+
+    EXPECT_EQ(getAllSelectedComponentNodes().size(), 2) << "2 faces should be selected";
+    EXPECT_NE(vertex1.x(), vertex2.x()) << "Vertex 1 is alredy merged with Vertex 2";
+    EXPECT_NE(vertex1.y(), vertex2.y()) << "Vertex 1 is alredy merged with Vertex 2";
+
+    // We expect the vertices to be at the center if merge items is called with no arguments
+    auto center = (vertex1 + vertex2 + vertex3) / 3;
+
+    GlobalCommandSystem().executeCommand("TexToolMergeItems");
+
+    // Only one face vertex should be at the center
+    EXPECT_TRUE((vertex1.x() == center.x() && vertex1.y() == center.y()) || 
+                (vertex1.x() == center.x() && vertex3.y() == center.y())) 
+        << "Vertex 1 or 3 should be at center " << center;
+}
+
 }

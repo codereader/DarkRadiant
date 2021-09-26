@@ -87,6 +87,9 @@ public:
 
     // Apply the given transformation matrix to all selected components
     virtual void transformComponents(const Matrix3& transform) = 0;
+
+    // Tries to merge selected components with the given point
+    virtual void mergeComponentsWith(const Vector2& center) = 0;
 };
 
 // The base element of every node in the ITextureToolSceneGraph
