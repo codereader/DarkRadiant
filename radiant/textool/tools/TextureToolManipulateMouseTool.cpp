@@ -2,7 +2,6 @@
 
 #include "i18n.h"
 #include "itexturetoolmodel.h"
-#include "textool/TexTool.h"
 
 namespace ui
 {

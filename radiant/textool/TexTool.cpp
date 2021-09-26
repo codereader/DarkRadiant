@@ -35,6 +35,7 @@ namespace
 {
 	const char* const WINDOW_TITLE = N_("Texture Tool");
 
+    const std::string RKEY_TEXTOOL_ROOT = "user/ui/textures/texTool/";
 	const std::string RKEY_WINDOW_STATE = RKEY_TEXTOOL_ROOT + "window";
 	const std::string RKEY_GRID_STATE = RKEY_TEXTOOL_ROOT + "gridActive";
     const char* const RKEY_SELECT_EPSILON = "user/ui/selectionEpsilon";
@@ -387,64 +388,6 @@ void TexTool::scrollByPixels(int x, int y)
     updateProjection();
 }
 
-void TexTool::flipSelected(int axis)
-{
-	if (GlobalTextureToolSelectionSystem().countSelected() > 0)
-    {
-		beginOperation();
-#if 0
-		for (std::size_t i = 0; i < _items.size(); i++) {
-			_items[i]->flipSelected(axis);
-		}
-#endif
-		draw();
-		endOperation("TexToolMergeItems");
-	}
-}
-
-void TexTool::mergeSelectedItems()
-{
-	if (GlobalTextureToolSelectionSystem().countSelected() > 0)
-    {
-		AABB selExtents;
-#if 0
-		for (std::size_t i = 0; i < _items.size(); i++) {
-			selExtents.includeAABB(_items[i]->getSelectedExtents());
-		}
-#endif
-		if (selExtents.isValid()) {
-			beginOperation();
-
-			Vector2 centroid(
-				selExtents.origin[0],
-				selExtents.origin[1]
-			);
-#if 0
-			for (std::size_t i = 0; i < _items.size(); i++) {
-				_items[i]->moveSelectedTo(centroid);
-			}
-#endif
-			draw();
-
-			endOperation("TexToolMergeItems");
-		}
-	}
-}
-
-void TexTool::snapToGrid() {
-	if (_gridActive) {
-		beginOperation();
-#if 0
-		for (std::size_t i = 0; i < _items.size(); i++) {
-			_items[i]->snapSelectedToGrid(_grid);
-		}
-#endif
-		endOperation("TexToolSnapToGrid");
-
-		draw();
-	}
-}
-
 void TexTool::recalculateVisibleTexSpace()
 {
 	// Get the selection extents
@@ -509,40 +452,6 @@ void TexTool::drawUVCoords()
         node->render(GlobalTextureToolSelectionSystem().getSelectionMode());
         return true;
     });
-}
-
-void TexTool::beginOperation()
-{
-	// Start an undo recording session
-	GlobalUndoSystem().start();
-#if 0
-	// Tell all the items to save their memento
-	for (std::size_t i = 0; i < _items.size(); i++)
-	{
-		_items[i]->beginTransformation();
-	}
-#endif
-}
-
-void TexTool::endOperation(const std::string& commandName)
-{
-#if 0
-	for (std::size_t i = 0; i < _items.size(); i++)
-	{
-		_items[i]->endTransformation();
-	}
-#endif
-	GlobalUndoSystem().finish(commandName);
-}
-
-void TexTool::selectRelatedItems()
-{
-#if 0
-	for (std::size_t i = 0; i < _items.size(); i++) {
-		_items[i]->selectRelated();
-	}
-#endif
-	draw();
 }
 
 void TexTool::drawGrid()
@@ -847,32 +756,11 @@ void TexTool::toggle(const cmd::ArgumentList& args)
 	Instance().ToggleVisibility();
 }
 
-void TexTool::texToolSnapToGrid(const cmd::ArgumentList& args) {
-	Instance().snapToGrid();
-}
-
-void TexTool::texToolMergeItems(const cmd::ArgumentList& args) {
-	Instance().mergeSelectedItems();
-}
-
-void TexTool::texToolFlipS(const cmd::ArgumentList& args) {
-	Instance().flipSelected(0);
-}
-
-void TexTool::texToolFlipT(const cmd::ArgumentList& args) {
-	Instance().flipSelected(1);
-}
-
-void TexTool::selectRelated(const cmd::ArgumentList& args) {
-	Instance().selectRelatedItems();
-}
-
 void TexTool::registerCommands()
 {
 	GlobalCommandSystem().addCommand("TextureTool", TexTool::toggle);
 
 	GlobalEventManager().addRegistryToggle("TexToolToggleGrid", RKEY_GRID_STATE);
-	GlobalEventManager().addRegistryToggle("TexToolToggleFaceVertexScalePivot", RKEY_FACE_VERTEX_SCALE_PIVOT_IS_CENTROID);
 }
 
 MouseTool::Result TexTool::processMouseDownEvent(const MouseToolPtr& tool, const Vector2& point)

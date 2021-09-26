@@ -14,9 +14,6 @@
     <Filter Include="src\textool">
       <UniqueIdentifier>{d3a05c23-9351-4bd7-aaee-8f88331f691d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\textool\item">
-      <UniqueIdentifier>{fcf62559-bc3a-4bf2-9fdd-b0f74db0de5d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\ui">
       <UniqueIdentifier>{6ab81c73-2824-43aa-a528-7287cd029266}</UniqueIdentifier>
     </Filter>
@@ -207,24 +204,6 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\textool\TexTool.cpp">
       <Filter>src\textool</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\textool\TexToolItem.cpp">
-      <Filter>src\textool</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\textool\item\BrushItem.cpp">
-      <Filter>src\textool\item</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\textool\item\FaceItem.cpp">
-      <Filter>src\textool\item</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\textool\item\FaceVertexItem.cpp">
-      <Filter>src\textool\item</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\textool\item\PatchItem.cpp">
-      <Filter>src\textool\item</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\textool\item\PatchVertexItem.cpp">
-      <Filter>src\textool\item</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\about\AboutDialog.cpp">
       <Filter>src\ui\about</Filter>
@@ -747,38 +726,8 @@
     <ClInclude Include="..\..\radiant\camera\FloatingCamWnd.h">
       <Filter>src\camera</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\textool\Rectangle.h">
-      <Filter>src\textool</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\textool\RenderableItem.h">
-      <Filter>src\textool</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\textool\Selectable.h">
-      <Filter>src\textool</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\textool\TexTool.h">
       <Filter>src\textool</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\textool\TexToolItem.h">
-      <Filter>src\textool</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\textool\Transformable.h">
-      <Filter>src\textool</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\textool\item\BrushItem.h">
-      <Filter>src\textool\item</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\textool\item\FaceItem.h">
-      <Filter>src\textool\item</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\textool\item\FaceVertexItem.h">
-      <Filter>src\textool\item</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\textool\item\PatchItem.h">
-      <Filter>src\textool\item</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\textool\item\PatchVertexItem.h">
-      <Filter>src\textool\item</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\about\AboutDialog.h">
       <Filter>src\ui\about</Filter>

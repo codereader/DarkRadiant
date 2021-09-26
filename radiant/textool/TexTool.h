@@ -31,12 +31,6 @@ namespace wxutil { class GLWidget; }
 namespace ui
 {
 
-namespace
-{
-	const std::string RKEY_TEXTOOL_ROOT = "user/ui/textures/texTool/";
-	const std::string RKEY_FACE_VERTEX_SCALE_PIVOT_IS_CENTROID = RKEY_TEXTOOL_ROOT + "faceVertexScalePivotIsCentroid";
-}
-
 class TexTool;
 typedef std::shared_ptr<TexTool> TexToolPtr;
 
@@ -92,18 +86,6 @@ private:
 	virtual void _preShow();
 
 	void setGridActive(bool active);
-
-	/** greebo: Selects all items that are related / connected
-	 * 			to the currently selected ones. E.g. if one patch
-	 * 			vertex is selected, all the vertices of the patch
-	 * 			get selected as well.
-	 */
-	void selectRelatedItems();
-
-	/** greebo: Helper methods that start/end an undoable operation.
-	 */
-	void beginOperation();
-	void endOperation(const std::string& commandName);
 
 	// Creates, packs and connects the child widgets
 	void populateWindow();
@@ -196,31 +178,9 @@ public:
 	// Idle callback, used for deferred updates
 	void onIdle(wxIdleEvent& ev);
 
-	/** greebo: Snaps the current TexTool selection to the active grid.
-	 */
-	void snapToGrid();
-
-	/** greebo: Merges the selected items in terms of their UV coordinates.
-	 * 			Mainly useful for stitching patch control vertices.
-	 */
-	void mergeSelectedItems();
-
-	/** greebo: This flips the selection in texture space. This is the equivalent
-	 * 			of the according buttons in the Surface Inspector, but it only affects
-	 * 			the items selected in the TexTool.
-	 *
-	 * @axis: 0 = s-Axis flip, 1 = t-axis flip
-	 */
-	void flipSelected(int axis);
-
 	/** greebo: Static command targets
 	 */
 	static void toggle(const cmd::ArgumentList& args);
-	static void texToolSnapToGrid(const cmd::ArgumentList& args);
-	static void texToolMergeItems(const cmd::ArgumentList& args);
-	static void texToolFlipS(const cmd::ArgumentList& args);
-	static void texToolFlipT(const cmd::ArgumentList& args);
-	static void selectRelated(const cmd::ArgumentList& args);
 
 	/** greebo: Registers the commands in the EventManager
 	 */
