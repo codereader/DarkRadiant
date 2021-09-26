@@ -2,6 +2,7 @@
 
 #include "ipatch.h"
 #include "itextstream.h"
+#include "math/Matrix3.h"
 #include "NodeBase.h"
 #include "SelectableVertex.h"
 
