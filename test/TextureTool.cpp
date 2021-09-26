@@ -1916,4 +1916,109 @@ TEST_F(TextureToolTest, MergeTwoVerticesOfSameFace)
         << "Vertex 1 or 3 should be at center " << center;
 }
 
+void expectVerticesHaveBeenFlipped(int axis, const IPatch& patch, const std::vector<Vector2>& oldTexcoords, const Vector2& flipCenter)
+{
+    auto old = oldTexcoords.begin();
+    foreachPatchVertex(patch, [&](const PatchControl& ctrl)
+    {
+        // Calculate the mirrored coordinate
+        auto expectedTexcoord = *(old++);
+        expectedTexcoord[axis] = 2 * flipCenter[axis] - expectedTexcoord[axis];
+
+        EXPECT_EQ(ctrl.texcoord.x(), expectedTexcoord.x()) << "Mirrored vertex should be at " << expectedTexcoord;
+        EXPECT_EQ(ctrl.texcoord.y(), expectedTexcoord.y()) << "Mirrored vertex should be at " << expectedTexcoord;
+    });
+}
+
+void performFlipPatchTest(int axis)
+{
+    auto patchNode = setupPatchNodeForTextureTool();
+    auto patch = Node_getIPatch(patchNode);
+
+    // Get the texture space bounds of this patch
+    auto patchBounds = getTextureSpaceBounds(*patch);
+    auto bounds = patchBounds;
+    bounds.extents *= 1.2f;
+
+    render::TextureToolView view;
+    view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
+
+    // Test-select in the middle of the patch bounds
+    performPointSelection(Vector2(bounds.origin.x(), bounds.origin.y()), view);
+
+    // Patch should be selected
+    EXPECT_EQ(getAllSelectedTextoolNodes().size(), 1) << "Only one patch should be selected";
+
+    std::vector<Vector2> oldTexCoords;
+    foreachPatchVertex(*patch, [&](const PatchControl& ctrl) { oldTexCoords.push_back(ctrl.texcoord); });
+
+    auto cmd = axis == 0 ? "TexToolFlipS" : "TexToolFlipT";
+    GlobalCommandSystem().executeCommand(cmd);
+
+    // Every changed vertex should have been flipped about the bounds origin
+    expectVerticesHaveBeenFlipped(axis, *patch, oldTexCoords, { patchBounds.origin.x(), patchBounds.origin.y() });
+}
+
+TEST_F(TextureToolTest, FlipPatchS)
+{
+    performFlipPatchTest(0);
+}
+
+TEST_F(TextureToolTest, FlipPatchT)
+{
+    performFlipPatchTest(1);
+}
+
+void performFlipTestWithTwoPatches(int axis)
+{
+    auto patchNode1 = setupPatchNodeForTextureTool();
+    auto patchNode2 = setupPatchNodeForTextureTool();
+    auto patch1 = Node_getIPatch(patchNode1);
+    auto patch2 = Node_getIPatch(patchNode2);
+
+    patch2->translateTexture(154, -189);
+
+    // Get the texture space bounds of both patches
+    auto patchBounds1 = getTextureSpaceBounds(*patch1);
+    auto patchBounds2 = getTextureSpaceBounds(*patch2);
+
+    auto bounds = patchBounds1;
+    bounds.includeAABB(patchBounds2);
+    bounds.extents *= 1.2f;
+
+    render::TextureToolView view;
+    view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
+
+    // Test-select in the middle of the patch bounds
+    performPointSelection(Vector2(patchBounds1.origin.x(), patchBounds1.origin.y()), view);
+    performPointSelection(Vector2(patchBounds2.origin.x(), patchBounds2.origin.y()), view);
+
+    EXPECT_EQ(getAllSelectedTextoolNodes().size(), 2) << "Both patches should be selected";
+
+    std::vector<Vector2> oldTexCoords1;
+    foreachPatchVertex(*patch1, [&](const PatchControl& ctrl) { oldTexCoords1.push_back(ctrl.texcoord); });
+    std::vector<Vector2> oldTexCoords2;
+    foreachPatchVertex(*patch2, [&](const PatchControl& ctrl) { oldTexCoords2.push_back(ctrl.texcoord); });
+
+    Vector2 flipCenter(bounds.origin.x(), bounds.origin.y());
+
+    auto cmd = axis == 0 ? "TexToolFlipS" : "TexToolFlipT";
+    GlobalCommandSystem().executeCommand(cmd);
+
+    // Every changed vertex should have been flipped about the common bounds origin
+    // Check patch 1 and 2
+    expectVerticesHaveBeenFlipped(axis, *patch1, oldTexCoords1, flipCenter);
+    expectVerticesHaveBeenFlipped(axis, *patch2, oldTexCoords2, flipCenter);
+}
+
+TEST_F(TextureToolTest, FlipPatchesS)
+{
+    performFlipTestWithTwoPatches(0);
+}
+
+TEST_F(TextureToolTest, FlipPatchesT)
+{
+    performFlipTestWithTwoPatches(1);
+}
+
 }
