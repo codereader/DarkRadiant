@@ -626,6 +626,7 @@ void Face::rotateTexdef(float angle)
     };
 
     setTexDefFromPoints(points, uvs);
+    _texdef = m_texdefTransformed;
 }
 
 void Face::fitTexture(float s_repeat, float t_repeat) {
