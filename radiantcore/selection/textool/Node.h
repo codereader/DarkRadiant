@@ -34,6 +34,7 @@ public:
 
 protected:
     virtual void renderComponents();
+    virtual Colour4 getSurfaceColour(SelectionMode mode);
 
 private:
     void onSelectionStatusChanged(const ISelectable& selectable);

@@ -37,7 +37,24 @@ public:
         {
             { SchemeElement::GridText, { 0, 0, 0, 0.8f } },
             { SchemeElement::MajorGrid, { 0, 0, 0, 0.8f } },
-            { SchemeElement::MinorGrid, { 0.2f, 0.2f, 0.2f, 1.0f} },
+            { SchemeElement::MinorGrid, { 0.2f, 0.2f, 0.2f, 0.4f} },
+            { SchemeElement::SurfaceInSurfaceMode, { 0.1f, 0.1f, 0.1f, 1.0f} },
+            { SchemeElement::SurfaceInComponentMode, { 0.3f, 0.3f, 0.3f, 1.0f} },
+            { SchemeElement::SelectedSurface, { 1.0f, 0.2f, 0, 1.0f} },
+            { SchemeElement::SelectedVertex, { 1.0f, 0.2f, 0, 1.0f} },
+            { SchemeElement::Vertex, { 0.1f, 0.1f, 0.1f, 1.0f} },
+        };
+
+        _schemes[ColourScheme::Light] = SchemeMap
+        {
+            { SchemeElement::GridText, { 1, 1, 1, 0.8f } },
+            { SchemeElement::MajorGrid, { 0.9f, 0.9f, 0.9f, 0.8f } },
+            { SchemeElement::MinorGrid, { 0.5f, 0.5f, 0.5f, 0.4f} },
+            { SchemeElement::SurfaceInSurfaceMode, { 0.8f, 0.8f, 0.8f, 1.0f} },
+            { SchemeElement::SurfaceInComponentMode, { 0.6f, 0.6f, 0.6f, 1.0f} },
+            { SchemeElement::SelectedSurface, { 1.0f, 0.5f, 0, 1.0f} },
+            { SchemeElement::SelectedVertex, { 1.0f, 0.5f, 0, 1.0f} },
+            { SchemeElement::Vertex, { 0.8f, 0.8f, 0.8f, 1.0f} },
         };
     }
 

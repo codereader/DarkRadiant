@@ -1,6 +1,7 @@
 #include "FaceNode.h"
 
 #include "ibrush.h"
+#include "itexturetoolcolours.h"
 #include "math/Matrix3.h"
 
 namespace textool
@@ -127,18 +128,8 @@ void FaceNode::render(SelectionMode mode)
     glBlendColor(0, 0, 0, 0.3f);
     glBlendFunc(GL_CONSTANT_ALPHA_EXT, GL_ONE_MINUS_CONSTANT_ALPHA_EXT);
 
-    if (mode == SelectionMode::Surface && isSelected())
-    {
-        glColor3f(1, 0.5f, 0);
-    }
-    else if (mode == SelectionMode::Vertex)
-    {
-        glColor3f(0.6f, 0.6f, 0.6f);
-    }
-    else
-    {
-        glColor3f(0.8f, 0.8f, 0.8f);
-    }
+    auto surfaceColour = getSurfaceColour(mode);
+    glColor4fv(surfaceColour);
 
     glBegin(GL_TRIANGLE_FAN);
 

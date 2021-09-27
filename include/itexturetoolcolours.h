@@ -18,6 +18,11 @@ enum class SchemeElement
     GridText,
     MinorGrid,
     MajorGrid,
+    SurfaceInSurfaceMode,
+    SurfaceInComponentMode,
+    Vertex,
+    SelectedSurface,
+    SelectedVertex,
 };
 
 class IColourSchemeManager :

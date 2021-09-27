@@ -1,5 +1,6 @@
 #include "Node.h"
 
+#include "itexturetoolcolours.h"
 #include <sigc++/functors/mem_fun.h>
 
 namespace textool
@@ -98,6 +99,22 @@ void Node::expandComponentSelectionToRelated()
     }
 }
 
+Colour4 Node::getSurfaceColour(SelectionMode mode)
+{
+    if (mode == SelectionMode::Surface && isSelected())
+    {
+        return GlobalTextureToolColourSchemeManager().getColour(SchemeElement::SelectedSurface);
+    }
+    else if (mode == SelectionMode::Vertex)
+    {
+        return GlobalTextureToolColourSchemeManager().getColour(SchemeElement::SurfaceInComponentMode);
+    }
+    else
+    {
+        return GlobalTextureToolColourSchemeManager().getColour(SchemeElement::SurfaceInSurfaceMode);
+    }
+}
+
 void Node::renderComponents()
 {
     glPointSize(5);
@@ -105,15 +122,18 @@ void Node::renderComponents()
     glDepthFunc(GL_LEQUAL);
     glBegin(GL_POINTS);
 
+    auto deselectedColour = GlobalTextureToolColourSchemeManager().getColour(SchemeElement::Vertex);
+    auto selectedColour = GlobalTextureToolColourSchemeManager().getColour(SchemeElement::SelectedVertex);
+
     for (const auto& vertex : _vertices)
     {
         if (vertex.isSelected())
         {
-            glColor3f(1, 0.5f, 0);
+            glColor4fv(selectedColour);
         }
         else
         {
-            glColor3f(0.8f, 0.8f, 0.8f);
+            glColor4fv(deselectedColour);
         }
 
         // Move the selected vertices a bit up in the Z area
