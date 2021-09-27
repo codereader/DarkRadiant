@@ -675,6 +675,7 @@
     <ClCompile Include="..\..\radiantcore\selection\textool\FaceNode.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\textool\Node.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\textool\PatchNode.cpp" />
+    <ClCompile Include="..\..\radiantcore\selection\textool\ColourSchemeManager.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\textool\TextureToolDragManipulator.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\textool\TextureToolManipulationPivot.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\textool\TextureToolRotateManipulator.cpp" />

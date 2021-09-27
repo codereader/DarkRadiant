@@ -5,6 +5,7 @@
 #include "ieventmanager.h"
 #include "icommandsystem.h"
 #include "itexturetoolmodel.h"
+#include "itexturetoolcolours.h"
 #include "imainframe.h"
 #include "igl.h"
 #include "iundo.h"
