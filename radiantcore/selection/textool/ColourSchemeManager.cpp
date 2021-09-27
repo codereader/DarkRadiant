@@ -1,7 +1,10 @@
 #include "itexturetoolcolours.h"
 
 #include <map>
+#include "icommandsystem.h"
+#include "itextstream.h"
 #include "module/StaticModule.h"
+#include "string/case_conv.h"
 
 namespace textool
 {
@@ -24,7 +27,7 @@ public:
 
     const StringSet& getDependencies() const override
     {
-        static StringSet _dependencies;
+        static StringSet _dependencies{ MODULE_COMMANDSYSTEM };
         return _dependencies;
     }
 
@@ -62,6 +65,9 @@ public:
             { SchemeElement::SelectedManipulator, { 1.0f, 0.5f, 0, 1.0f} },
             { SchemeElement::ManipulatorSurface, { 1.0f, 0.2f, 0, 1.0f} },
         };
+
+        GlobalCommandSystem().addCommand("SwitchTextureToolColourScheme",
+            sigc::mem_fun(this, &ColourSchemeManager::setColourScheme), { cmd::ARGTYPE_STRING });
     }
 
     void setActiveScheme(ColourScheme scheme) override
@@ -72,6 +78,27 @@ public:
     Colour4 getColour(SchemeElement element) override
     {
         return _schemes[_activeScheme][element];
+    }
+
+private:
+    void setColourScheme(const cmd::ArgumentList& args)
+    {
+        if (args.size() != 1)
+        {
+            rWarning() << "Usage: SwitchTextureToolColourScheme [light|dark]" << std::endl;
+            return;
+        }
+
+        auto themeName = string::to_lower_copy(args[0].getString());
+
+        if (themeName == "dark")
+        {
+            setActiveScheme(ColourScheme::Dark);
+        }
+        else
+        {
+            setActiveScheme(ColourScheme::Light);
+        }
     }
 };
 
