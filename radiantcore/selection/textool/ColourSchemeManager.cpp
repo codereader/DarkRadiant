@@ -1,6 +1,7 @@
 #include "itexturetoolcolours.h"
 
 #include <map>
+#include "module/StaticModule.h"
 
 namespace textool
 {
@@ -9,7 +10,7 @@ class ColourSchemeManager final :
     public IColourSchemeManager
 {
 private:
-    using SchemeMap = std::map<SchemeElement, Colour4b>;
+    using SchemeMap = std::map<SchemeElement, Colour4>;
     std::map<ColourScheme, SchemeMap> _schemes;
 
     ColourScheme _activeScheme;
@@ -29,24 +30,28 @@ public:
 
     void initialiseModule(const IApplicationContext& ctx) override
     {
-        _activeScheme = ColourScheme::Light;
+        _activeScheme = ColourScheme::Dark;
 
         // Fill in the default scheme values
         _schemes[ColourScheme::Dark] = SchemeMap
         {
-            { SchemeElement::MajorGrid, { 0, 0, 0, 0 } }
+            { SchemeElement::GridText, { 0, 0, 0, 0.8f } },
+            { SchemeElement::MajorGrid, { 0, 0, 0, 0.8f } },
+            { SchemeElement::MinorGrid, { 0.2f, 0.2f, 0.2f, 1.0f} },
         };
     }
 
-    void setActiveScheme(ColourScheme scheme)
+    void setActiveScheme(ColourScheme scheme) override
     {
         _activeScheme = scheme;
     }
 
-    Colour4b getColour(SchemeElement element)
+    Colour4 getColour(SchemeElement element) override
     {
         return _schemes[_activeScheme][element];
     }
 };
+
+module::StaticModule<ColourSchemeManager> _textureToolColourSchemeManager;
 
 }

@@ -515,6 +515,25 @@ void TexTool::drawGrid()
 
 	glBegin(GL_LINES);
 
+    if (_gridActive)
+    {
+        // Draw the manipulation grid
+        auto minorGrid = GlobalTextureToolColourSchemeManager().getColour(textool::SchemeElement::MinorGrid);
+        glColor4fv(minorGrid);
+
+        for (float y = startY; y <= endY; y += gridSpacing)
+        {
+            glVertex2f(startX, y);
+            glVertex2f(endX, y);
+        }
+
+        for (float x = startX; x <= endX; x += gridSpacing)
+        {
+            glVertex2f(x, startY);
+            glVertex2f(x, endY);
+        }
+    }
+
 	// To avoid drawing millions of grid lines in a window, scale up the grid interval
 	// such that only a maximum number of lines are drawn
 	float yIntStep = 1.0f;
@@ -530,7 +549,8 @@ void TexTool::drawGrid()
 	}
 
 	// Draw the integer grid
-	glColor4f(0.4f, 0.4f, 0.4f, 0.4f);
+    auto majorGrid = GlobalTextureToolColourSchemeManager().getColour(textool::SchemeElement::MajorGrid);
+    glColor4fv(majorGrid);
 
 	for (float y = startY; y <= endY; y += yIntStep)
 	{
@@ -544,26 +564,8 @@ void TexTool::drawGrid()
 		glVertex2f(x, endY);
 	}
 
-	if (_gridActive)
-	{
-		// Draw the manipulation grid
-		glColor4f(0.2f, 0.2f, 0.2f, 0.4f);
-
-		for (float y = startY; y <= endY; y += gridSpacing)
-		{
-			glVertex2f(startX, y);
-			glVertex2f(endX, y);
-		}
-
-		for (float x = startX; x <= endX; x += gridSpacing)
-		{
-			glVertex2f(x, startY);
-			glVertex2f(x, endY);
-		}
-	}
-
 	// Draw the axes through the origin
-	glColor4f(1, 1, 1, 0.5f);
+	glColor4fv(majorGrid);
 	glVertex2f(0, startY);
 	glVertex2f(0, endY);
 
@@ -583,15 +585,18 @@ void TexTool::drawGrid()
         xIntStep *= 2;
     }
 
-	for (float y = startY; y <= endY; y += yIntStep)
-	{
-		glRasterPos2f(topLeft[0] + 0.05f, y + 0.05f);
-        auto ycoordStr = fmt::format("{0:.1f}", trunc(y));
-		GlobalOpenGL().drawString(ycoordStr);
-	}
+    auto gridText = GlobalTextureToolColourSchemeManager().getColour(textool::SchemeElement::GridText);
+    glColor4fv(gridText);
 
     float uvPerPixel = _texSpaceAABB.extents.y() / _windowDims.y();
     float uvFontHeight = (GlobalOpenGL().getFontHeight() + 3) * uvPerPixel;
+
+	for (float y = startY; y <= endY; y += yIntStep)
+	{
+		glRasterPos2f(topLeft[0] + 0.05f, y + uvFontHeight);
+        auto ycoordStr = fmt::format("{0:.1f}", trunc(y));
+		GlobalOpenGL().drawString(ycoordStr);
+	}
 
 	for (float x = startX; x <= endX; x += xIntStep)
 	{

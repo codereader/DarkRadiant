@@ -1,7 +1,7 @@
 #pragma once
 
 #include "imodule.h"
-#include "render/Colour4b.h"
+#include "render/Colour4.h"
 
 namespace textool
 {
@@ -15,6 +15,7 @@ enum class ColourScheme
 
 enum class SchemeElement
 {
+    GridText,
     MinorGrid,
     MajorGrid,
 };
@@ -28,7 +29,7 @@ public:
     // Activates the given scheme
     virtual void setActiveScheme(ColourScheme scheme) = 0;
 
-    virtual Colour4b getColour(SchemeElement element) = 0;
+    virtual Colour4 getColour(SchemeElement element) = 0;
 };
 
 }
