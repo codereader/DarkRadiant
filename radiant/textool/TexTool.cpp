@@ -779,6 +779,28 @@ void TexTool::registerCommands()
 {
 	GlobalCommandSystem().addCommand("TextureTool", TexTool::toggle);
 	GlobalEventManager().addRegistryToggle("TexToolToggleGrid", RKEY_GRID_STATE);
+
+    GlobalEventManager().addToggle("TextureToolUseLightTheme", [](bool toggled)
+    {
+        if (toggled)
+        {
+            GlobalTextureToolColourSchemeManager().setActiveScheme(textool::ColourScheme::Light);
+            GlobalEventManager().setToggled("TextureToolUseDarkTheme", false);
+            Instance().queueDraw();
+        }
+    });
+
+    GlobalEventManager().addToggle("TextureToolUseDarkTheme", [](bool toggled)
+    {
+        if (toggled)
+        {
+            GlobalTextureToolColourSchemeManager().setActiveScheme(textool::ColourScheme::Dark);
+            GlobalEventManager().setToggled("TextureToolUseLightTheme", false);
+            Instance().queueDraw();
+        }
+    });
+
+    GlobalEventManager().setToggled("TextureToolUseLightTheme", true);
 }
 
 MouseTool::Result TexTool::processMouseDownEvent(const MouseToolPtr& tool, const Vector2& point)
