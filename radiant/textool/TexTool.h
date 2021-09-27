@@ -22,6 +22,7 @@
 #include "messages/ManipulatorModeToggleRequest.h"
 #include "messages/ComponentSelectionModeToggleRequest.h"
 #include "messages/TextureChanged.h"
+#include "messages/GridSnapRequest.h"
 
 class Winding;
 class Patch;
@@ -73,6 +74,7 @@ private:
 	std::size_t _manipulatorModeToggleRequestHandler;
 	std::size_t _componentSelectionModeToggleRequestHandler;
 	std::size_t _textureMessageHandler;
+	std::size_t _gridSnapHandler;
 
 private:
 	// This is where the static shared_ptr of the singleton instance is held.
@@ -138,6 +140,7 @@ private:
 
     void handleManipulatorModeToggleRequest(selection::ManipulatorModeToggleRequest& request);
     void handleComponentSelectionModeToggleRequest(selection::ComponentSelectionModeToggleRequest& request);
+    void handleGridSnapRequest(selection::GridSnapRequest& request);
 
     // Returns true if the texture tool window or the GL widget has focus
     bool textureToolHasFocus();

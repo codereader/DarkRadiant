@@ -314,6 +314,9 @@
     <ClInclude Include="..\..\libs\messages\ComponentSelectionModeToggleRequest.h">
       <Filter>messages</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\messages\GridSnapRequest.h">
+      <Filter>messages</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

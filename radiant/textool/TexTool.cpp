@@ -49,7 +49,8 @@ TexTool::TexTool() :
     _selectionRescanNeeded(false),
     _manipulatorModeToggleRequestHandler(std::numeric_limits<std::size_t>::max()),
     _componentSelectionModeToggleRequestHandler(std::numeric_limits<std::size_t>::max()),
-    _textureMessageHandler(std::numeric_limits<std::size_t>::max())
+    _textureMessageHandler(std::numeric_limits<std::size_t>::max()),
+    _gridSnapHandler(std::numeric_limits<std::size_t>::max())
 {
 	Bind(wxEVT_IDLE, &TexTool::onIdle, this);
 
@@ -133,6 +134,9 @@ void TexTool::_preHide()
     
     GlobalRadiantCore().getMessageBus().removeListener(_textureMessageHandler);
     _textureMessageHandler = std::numeric_limits<std::size_t>::max();
+    
+    GlobalRadiantCore().getMessageBus().removeListener(_gridSnapHandler);
+    _gridSnapHandler = std::numeric_limits<std::size_t>::max();
 }
 
 // Pre-show callback
@@ -167,6 +171,12 @@ void TexTool::_preShow()
         radiant::IMessage::Type::TextureChanged,
         radiant::TypeListener<radiant::TextureChangedMessage>(
             [this](radiant::TextureChangedMessage& msg) { queueDraw(); }));
+    
+    // Intercept the grid snap message
+    _gridSnapHandler = GlobalRadiantCore().getMessageBus().addListener(
+        radiant::IMessage::Type::GridSnapRequest,
+        radiant::TypeListener<selection::GridSnapRequest>(
+            sigc::mem_fun(this, &TexTool::handleGridSnapRequest)));
 
 	_undoHandler = GlobalUndoSystem().signal_postUndo().connect(
 		sigc::mem_fun(this, &TexTool::onUndoRedoOperation));
@@ -211,6 +221,18 @@ void TexTool::handleManipulatorModeToggleRequest(selection::ManipulatorModeToggl
         request.setHandled(true);
         break;
     };
+}
+
+void TexTool::handleGridSnapRequest(selection::GridSnapRequest& request)
+{
+    if (!textureToolHasFocus())
+    {
+        return;
+    }
+
+    // Redirect this call to our own grid snap command
+    GlobalCommandSystem().executeCommand("TexToolSnapToGrid");
+    request.setHandled(true);
 }
 
 void TexTool::handleComponentSelectionModeToggleRequest(selection::ComponentSelectionModeToggleRequest& request)

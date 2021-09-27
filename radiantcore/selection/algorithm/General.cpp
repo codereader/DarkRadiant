@@ -4,6 +4,7 @@
 #include "iselection.h"
 #include "iundo.h"
 #include "igrid.h"
+#include "iradiant.h"
 #include "imodelsurface.h"
 #include "scenelib.h"
 #include "iselectiontest.h"
@@ -29,6 +30,7 @@
 #include "brush/BrushVisit.h"
 #include "patch/Patch.h"
 #include "patch/PatchNode.h"
+#include "messages/GridSnapRequest.h"
 
 #include <stack>
 
@@ -756,7 +758,16 @@ Vector3 getCurrentSelectionCenter()
 
 void snapSelectionToGrid(const cmd::ArgumentList& args)
 {
-	float gridSize = GlobalGrid().getGridSize();
+    // Send out the event in case other views want that event
+    GridSnapRequest request;
+    GlobalRadiantCore().getMessageBus().sendMessage(request);
+
+    if (request.isHandled())
+    {
+        return; // done here
+    }
+
+	auto gridSize = GlobalGrid().getGridSize();
 	UndoableCommand undo("snapSelected -grid " + string::to_string(gridSize));
 
 	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
@@ -770,7 +781,7 @@ void snapSelectionToGrid(const cmd::ArgumentList& args)
     		// Check if the visited instance is componentSnappable
 			ComponentSnappablePtr componentSnappable = Node_getComponentSnappable(node);
 
-			if (componentSnappable != NULL)
+			if (componentSnappable)
 			{
 				componentSnappable->snapComponents(gridSize);
 			}
@@ -786,7 +797,7 @@ void snapSelectionToGrid(const cmd::ArgumentList& args)
 
 			SnappablePtr snappable = Node_getSnappable(node);
 
-			if (snappable != NULL)
+			if (snappable)
 			{
 				snappable->snapto(gridSize);
 			}

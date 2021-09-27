@@ -53,6 +53,7 @@ public:
         UnselectSelectionRequest,
         ManipulatorModeToggleRequest,
         ComponentSelectionModeToggleRequest,
+        GridSnapRequest,
 
         UserDefinedMessagesGoHigherThanThis = 999,
     };
