@@ -2,6 +2,7 @@
 
 #include "iselectiontest.h"
 #include "itexturetoolmodel.h"
+#include "itexturetoolcolours.h"
 #include "selection/BestPoint.h"
 #include "selection/SelectionPool.h"
 #include "pivot.h"
@@ -150,14 +151,22 @@ void TextureToolRotateManipulator::renderComponents(const render::IRenderView& v
     const auto& translation = pivot2World.tCol().getVector3();
 
     // Transform the 0.3,0,0 device vector back to UV space
-    auto transformedRadius = view.GetViewProjection().getFullInverse().transformDirection(Vector3(DefaultCircleRadius, 0, 0));
+    auto inverseView = view.GetViewProjection().getFullInverse();
+    auto transformedRadius = inverseView.transformDirection(Vector3(DefaultCircleRadius, 0, 0));
     _circleRadius = transformedRadius.x();
 
     // Recalculate the circle radius based on the view
     draw_circle(CircleSegments, static_cast<float>(_circleRadius), &_renderableCircle.front(), RemapXYZ());
 
-    _renderableCircle.setColour(isSelected() ? 
-        Colour4b(255, 255, 0, 200) : Colour4b(200, 200, 200, 200));
+    auto deselectedColour = GlobalTextureToolColourSchemeManager().getColour(SchemeElement::Manipulator);
+    auto selectedColour = GlobalTextureToolColourSchemeManager().getColour(SchemeElement::SelectedManipulator);
+
+    auto colour = isSelected() ? selectedColour : deselectedColour;
+    Colour4b byteColour(static_cast<unsigned char>(colour.x() * 255),
+        static_cast<unsigned char>(colour.y() * 255),
+        static_cast<unsigned char>(colour.z() * 255),
+        static_cast<unsigned char>(colour.w() * 255));
+    _renderableCircle.setColour(byteColour);
 
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
@@ -166,7 +175,7 @@ void TextureToolRotateManipulator::renderComponents(const render::IRenderView& v
     auto angle = _rotator.getCurAngle();
 
     // Crosshair
-    glColor3f(0.8f, 0.8f, 0.8f);
+    glColor3fv(deselectedColour);
     glBegin(GL_LINES);
 
     auto crossHairAngle = _selectableZ.isSelected() ? angle : 0;
@@ -184,7 +193,8 @@ void TextureToolRotateManipulator::renderComponents(const render::IRenderView& v
         glBlendColor(0, 0, 0, 0.3f);
         glBlendFunc(GL_CONSTANT_ALPHA_EXT, GL_ONE_MINUS_CONSTANT_ALPHA_EXT);
 
-        glColor3f(0.6f, 0.6f, 0.6f);
+        auto surfaceColour = GlobalTextureToolColourSchemeManager().getColour(SchemeElement::ManipulatorSurface);
+        glColor3fv(surfaceColour);
 
         glBegin(GL_TRIANGLE_FAN);
 
@@ -231,8 +241,10 @@ void TextureToolRotateManipulator::renderComponents(const render::IRenderView& v
 
     if (_selectableZ.isSelected())
     {
-        glColor3f(0.75f, 0.75f, 0.75f);
-        glRasterPos3dv(Vector3(0, 0, 0));
+        glColor3fv(deselectedColour);
+
+        auto transformedOffset = inverseView.transformDirection(Vector3(0.02, 0.02, 0));
+        glRasterPos3dv(transformedOffset);
 
         _glFont->drawString(fmt::format("Rotate: {0:3.2f} degrees", static_cast<float>(c_RAD2DEGMULT * angle)));
     }

@@ -10,7 +10,6 @@ enum class ColourScheme
 {
     Light,
     Dark,
-    Colourful,
 };
 
 enum class SchemeElement
@@ -23,6 +22,9 @@ enum class SchemeElement
     Vertex,
     SelectedSurface,
     SelectedVertex,
+    Manipulator,
+    SelectedManipulator,
+    ManipulatorSurface,
 };
 
 class IColourSchemeManager :

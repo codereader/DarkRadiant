@@ -43,6 +43,9 @@ public:
             { SchemeElement::SelectedSurface, { 1.0f, 0.2f, 0, 1.0f} },
             { SchemeElement::SelectedVertex, { 1.0f, 0.2f, 0, 1.0f} },
             { SchemeElement::Vertex, { 0.1f, 0.1f, 0.1f, 1.0f} },
+            { SchemeElement::Manipulator, { 0.1f, 0.1f, 0.1f, 1.0f} },
+            { SchemeElement::SelectedManipulator, { 0.6f, 0.0f, 0, 1.0f} },
+            { SchemeElement::ManipulatorSurface, { 0.3f, 0.3f, 0.3f, 1.0f} },
         };
 
         _schemes[ColourScheme::Light] = SchemeMap
@@ -55,6 +58,9 @@ public:
             { SchemeElement::SelectedSurface, { 1.0f, 0.5f, 0, 1.0f} },
             { SchemeElement::SelectedVertex, { 1.0f, 0.5f, 0, 1.0f} },
             { SchemeElement::Vertex, { 0.8f, 0.8f, 0.8f, 1.0f} },
+            { SchemeElement::Manipulator, { 0.8f, 0.8f, 0.8f, 1.0f} },
+            { SchemeElement::SelectedManipulator, { 1.0f, 0.5f, 0, 1.0f} },
+            { SchemeElement::ManipulatorSurface, { 1.0f, 0.2f, 0, 1.0f} },
         };
     }
 
