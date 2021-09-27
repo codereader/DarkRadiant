@@ -51,7 +51,8 @@ TexTool::TexTool() :
     _manipulatorModeToggleRequestHandler(std::numeric_limits<std::size_t>::max()),
     _componentSelectionModeToggleRequestHandler(std::numeric_limits<std::size_t>::max()),
     _textureMessageHandler(std::numeric_limits<std::size_t>::max()),
-    _gridSnapHandler(std::numeric_limits<std::size_t>::max())
+    _gridSnapHandler(std::numeric_limits<std::size_t>::max()),
+    _determineThemeFromImage(false)
 {
 	Bind(wxEVT_IDLE, &TexTool::onIdle, this);
 
@@ -198,6 +199,7 @@ void TexTool::_preShow()
 
 	// Trigger an update of the current selection
     _selectionRescanNeeded = true;
+    updateThemeButtons();
     queueDraw();
 }
 
@@ -309,10 +311,16 @@ TexTool& TexTool::Instance()
 
 void TexTool::update()
 {
-    const auto& activeMaterial = GlobalTextureToolSceneGraph().getActiveMaterial();
-    _shader = !activeMaterial.empty() ? GlobalMaterialManager().getMaterial(activeMaterial) : MaterialPtr();
+    auto material = GlobalTextureToolSceneGraph().getActiveMaterial();
+    _shader = !material.empty() ? GlobalMaterialManager().getMaterial(material) : MaterialPtr();
 
 	recalculateVisibleTexSpace();
+
+    if (material != _material)
+    {
+        _material = material;
+        _determineThemeFromImage = true;
+    }
 }
 
 int TexTool::getWidth() const
@@ -664,6 +672,18 @@ bool TexTool::onGLDraw()
 	TexturePtr tex = _shader->getEditorImage();
 	glBindTexture(GL_TEXTURE_2D, tex->getGLTexNum());
 
+    if (_determineThemeFromImage)
+    {
+        _determineThemeFromImage = false;
+
+        // Download the pixel data from openGL
+        std::vector<unsigned char> pixels;
+        pixels.resize(tex->getWidth() * tex->getHeight() * 3);
+        glGetTexImage(GL_TEXTURE_2D, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels.data());
+
+        determineThemeBasedOnPixelData(pixels);
+    }
+
 	// Draw the background texture
 	glEnable(GL_TEXTURE_2D);
 	glBegin(GL_QUADS);
@@ -785,7 +805,7 @@ void TexTool::registerCommands()
         if (toggled)
         {
             GlobalTextureToolColourSchemeManager().setActiveScheme(textool::ColourScheme::Light);
-            GlobalEventManager().setToggled("TextureToolUseDarkTheme", false);
+            Instance().updateThemeButtons();
             Instance().queueDraw();
         }
     });
@@ -795,12 +815,10 @@ void TexTool::registerCommands()
         if (toggled)
         {
             GlobalTextureToolColourSchemeManager().setActiveScheme(textool::ColourScheme::Dark);
-            GlobalEventManager().setToggled("TextureToolUseLightTheme", false);
+            Instance().updateThemeButtons();
             Instance().queueDraw();
         }
     });
-
-    GlobalEventManager().setToggled("TextureToolUseLightTheme", true);
 }
 
 MouseTool::Result TexTool::processMouseDownEvent(const MouseToolPtr& tool, const Vector2& point)
@@ -877,6 +895,32 @@ TextureToolMouseEvent TexTool::createMouseEvent(const Vector2& point, const Vect
             static_cast<std::size_t>(_windowDims[1])));
 
     return TextureToolMouseEvent(*this, normalisedDeviceCoords, delta);
+}
+
+void TexTool::updateThemeButtons()
+{
+    auto activeScheme = GlobalTextureToolColourSchemeManager().getActiveScheme();
+
+    GlobalEventManager().setToggled("TextureToolUseDarkTheme", activeScheme == textool::ColourScheme::Dark);
+    GlobalEventManager().setToggled("TextureToolUseLightTheme", activeScheme == textool::ColourScheme::Light);
+}
+
+void TexTool::determineThemeBasedOnPixelData(const std::vector<unsigned char>& pixels)
+{
+    std::size_t average = 0;
+    auto numPixels = pixels.size();
+
+    for (auto i = 0; i < numPixels; ++i)
+    {
+        average += pixels[i];
+    }
+
+    average /= numPixels;
+
+    auto scheme = average > 128 ? textool::ColourScheme::Dark : textool::ColourScheme::Light;
+
+    GlobalTextureToolColourSchemeManager().setActiveScheme(scheme);
+    updateThemeButtons();
 }
 
 } // namespace ui

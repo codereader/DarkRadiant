@@ -33,6 +33,8 @@ class IColourSchemeManager :
 public:
     virtual ~IColourSchemeManager() {}
 
+    virtual ColourScheme getActiveScheme() const = 0;
+
     // Activates the given scheme
     virtual void setActiveScheme(ColourScheme scheme) = 0;
 

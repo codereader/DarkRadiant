@@ -51,6 +51,7 @@ private:
 
 	// The shader we're working with
 	MaterialPtr _shader;
+	std::string _material;
 
 	// The extents of the visible rectangle in texture space
 	AABB _texSpaceAABB;
@@ -75,6 +76,8 @@ private:
 	std::size_t _componentSelectionModeToggleRequestHandler;
 	std::size_t _textureMessageHandler;
 	std::size_t _gridSnapHandler;
+
+    bool _determineThemeFromImage;
 
 private:
 	// This is where the static shared_ptr of the singleton instance is held.
@@ -144,6 +147,9 @@ private:
 
     // Returns true if the texture tool window or the GL widget has focus
     bool textureToolHasFocus();
+
+    void updateThemeButtons();
+    void determineThemeBasedOnPixelData(const std::vector<unsigned char>& pixels);
 
 public:
 	TexTool();

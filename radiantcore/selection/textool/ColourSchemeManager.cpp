@@ -55,7 +55,7 @@ public:
         {
             { SchemeElement::GridText, { 1, 1, 1, 0.8f } },
             { SchemeElement::MajorGrid, { 0.9f, 0.9f, 0.9f, 0.8f } },
-            { SchemeElement::MinorGrid, { 0.5f, 0.5f, 0.5f, 0.4f} },
+            { SchemeElement::MinorGrid, { 0.7f, 0.7f, 0.7f, 0.4f} },
             { SchemeElement::SurfaceInSurfaceMode, { 0.8f, 0.8f, 0.8f, 1.0f} },
             { SchemeElement::SurfaceInComponentMode, { 0.6f, 0.6f, 0.6f, 1.0f} },
             { SchemeElement::SelectedSurface, { 1.0f, 0.5f, 0, 1.0f} },
@@ -68,6 +68,11 @@ public:
 
         GlobalCommandSystem().addCommand("SwitchTextureToolColourScheme",
             sigc::mem_fun(this, &ColourSchemeManager::setColourScheme), { cmd::ARGTYPE_STRING });
+    }
+
+    ColourScheme getActiveScheme() const override
+    {
+        return _activeScheme;
     }
 
     void setActiveScheme(ColourScheme scheme) override
