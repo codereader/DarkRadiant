@@ -2,7 +2,9 @@
 
 #include "igrid.h"
 #include "icommandsystem.h"
+#include "iradiant.h"
 #include <sigc++/connection.h>
+#include "messages/GridSnapRequest.h"
 
 namespace test
 {
@@ -134,6 +136,23 @@ TEST_F(GridTest, SetGridSizeByCmd)
     checkGridSizeByCmd(grid::getStringForSize(GRID_64), grid::Space::World, 64.0f);
     checkGridSizeByCmd(grid::getStringForSize(GRID_128), grid::Space::World, 128.0f);
     checkGridSizeByCmd(grid::getStringForSize(GRID_256), grid::Space::World, 256.0f);
+}
+
+TEST_F(GridTest, GridSnapMessageIsSent)
+{
+    bool messageReceived = false;
+
+    auto handler = GlobalRadiantCore().getMessageBus().addListener(
+        radiant::IMessage::Type::GridSnapRequest,
+        radiant::TypeListener<selection::GridSnapRequest>(
+            [&](selection::GridSnapRequest& msg) { messageReceived = true; }));
+
+    // Fire the command, this should send out the request
+    GlobalCommandSystem().executeCommand("SnapToGrid");
+
+    EXPECT_TRUE(messageReceived) << "No message received during SnapToGrid";
+
+    GlobalRadiantCore().getMessageBus().removeListener(handler);
 }
 
 }
