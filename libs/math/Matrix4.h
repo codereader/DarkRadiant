@@ -237,7 +237,7 @@ public:
     }
     Vector4 tCol() const
     {
-        return Vector4(Vector3(_transform.matrix().col(3).head(3)), tw());
+        return Vector4(translation(), tw());
     }
     /**
      * \}
@@ -405,7 +405,7 @@ public:
     /// Return the 3-element translation component of this matrix
     Vector3 translation() const
     {
-        return tCol().getVector3();
+        return Vector3(_transform.matrix().col(3).head(3));
     }
 
     /// Set the translation component of this matrix
