@@ -8,8 +8,8 @@
 #include "math/AABB.h"
 #include "ishaders.h"
 #include "imanipulator.h"
-#include "itexturetoolview.h"
 #include "iradiant.h"
+#include "iorthoview.h"
 #include "imousetool.h"
 #include "iselection.h"
 #include "iregistry.h"
@@ -37,7 +37,7 @@ typedef std::shared_ptr<TexTool> TexToolPtr;
 
 class TexTool : 
 	public wxutil::TransientWindow,
-    public ITextureToolView,
+    public IOrthoViewBase,
 	public sigc::trackable,
     protected wxutil::MouseToolHandler
 {
