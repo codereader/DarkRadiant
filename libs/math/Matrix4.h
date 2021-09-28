@@ -412,6 +412,12 @@ public:
         return tCol().getVector3();
     }
 
+    /// Set the translation component of this matrix
+    void setTranslation(const Vector3& translation)
+    {
+        _transform.matrix().col(3).head(3) = translation.eigen();
+    }
+
     /**
      * Concatenates this with the rotation transform produced
      * by euler angles (degrees) in the order (x, y, z).

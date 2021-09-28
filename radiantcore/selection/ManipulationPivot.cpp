@@ -51,14 +51,14 @@ const Matrix4& ManipulationPivot::getMatrix4()
 }
 
 // Returns the position of the pivot point relative to origin
-const Vector3& ManipulationPivot::getVector3()
+Vector3 ManipulationPivot::getVector3()
 {
 	if (_needsRecalculation && !_operationActive && !_userLocked)
 	{
 		updateFromSelection();
 	}
 
-	return _pivot2World.tColRef().getVector3();
+	return _pivot2World.translation();
 }
 
 void ManipulationPivot::setFromMatrix(const Matrix4& newPivot2World)
@@ -112,8 +112,10 @@ void ManipulationPivot::applyTranslation(const Vector3& translation)
 	if (_snapPivotToGrid)
 	{
 		// The resulting pivot should be grid-snapped
-		_pivot2World.tColRef().getVector3().snap(GlobalGrid().getGridSize());
-	}
+        _pivot2World.setTranslation(
+            _pivot2World.translation().getSnapped(GlobalGrid().getGridSize())
+        );
+    }
 }
 
 void ManipulationPivot::updateFromSelection()
