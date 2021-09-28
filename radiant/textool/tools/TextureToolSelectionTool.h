@@ -2,7 +2,6 @@
 
 #include "i18n.h"
 #include "itexturetoolmodel.h"
-#include "math/Vector2.h"
 #include "selection/SelectionMouseTools.h"
 #include "selection/SelectionVolume.h"
 
@@ -12,10 +11,6 @@ namespace ui
 class TextureToolSelectionTool :
     public BasicSelectionTool
 {
-private:
-    Vector2 _start;		// Position at mouseDown
-    Vector2 _current;	// Position during mouseMove
-
 public:
     TextureToolSelectionTool()
     {}
@@ -34,9 +29,6 @@ public:
 
     virtual void performSelectionTest(SelectionVolume& volume, SelectionType type, MouseTool::Event& ev) override
     {
-        auto mouseEvent = dynamic_cast<TextureToolMouseEvent*>(&ev);
-        if (mouseEvent == nullptr) return;
-
         if (type == SelectionType::Area)
         {
             GlobalTextureToolSelectionSystem().selectArea(volume, selection::SelectionSystem::eToggle);
