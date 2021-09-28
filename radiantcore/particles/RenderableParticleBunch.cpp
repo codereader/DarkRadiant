@@ -563,7 +563,7 @@ void RenderableParticleBunch::pushQuad(ParticleRenderInfo& particle, const Vecto
     // greebo: Create a (rotated) quad facing the z axis
     // then rotate it to fit the requested orientation
     // finally translate it to its position.
-    const Vector3& normal = _viewRotation.zCol3();
+    const Vector3 normal = _viewRotation.zCol3();
 
     _quads.push_back(ParticleQuad(particle.size, particle.aspect, particle.angle, colour, normal, s0, sWidth));
     _quads.back().transform(_viewRotation);
@@ -625,7 +625,7 @@ void RenderableParticleBunch::pushAimedParticles(ParticleRenderInfo& particle, s
         Matrix4 local2aimed = getAimedMatrix(velocity);
 
         {
-            const Vector3& normal = local2aimed.zCol3();
+            const Vector3 normal = local2aimed.zCol3();
 
             // Ignore the angle for aimed orientation
             ParticleQuad curQuad(aimedParticle.size, aimedParticle.aspect, 0,
