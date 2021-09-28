@@ -235,10 +235,6 @@ public:
     {
         return Vector3(_transform.matrix().col(2).head(3));
     }
-    Vector4& tColRef()
-    {
-        return reinterpret_cast<Vector4&>(tx());
-    }
     Vector4 tCol() const
     {
         return Vector4(Vector3(_transform.matrix().col(3).head(3)), tw());

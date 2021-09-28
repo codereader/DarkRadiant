@@ -131,11 +131,11 @@ TEST(MatrixTest, AccessMatrixColumnVectors)
     m.xCol3Ref() = Vector3(0.1, 0.2, 0.3);
     m.yCol3Ref() = Vector3(0.5, 0.6, 0.7);
     m.zCol3Ref() = Vector3(0.9, 1.0, 1.1);
-    m.tColRef() = Vector4(1.3, 1.4, 1.5, 1.6);
+    m.setTranslation({1.3, 1.4, 1.5});
     EXPECT_EQ(m, Matrix4::byColumns(0.1, 0.2, 0.3, 26,
                                     0.5, 0.6, 0.7, -100,
                                     0.9, 1.0, 1.1, 0.5,
-                                    1.3, 1.4, 1.5, 1.6));
+                                    1.3, 1.4, 1.5, 3));
 }
 
 TEST(MatrixTest, MatrixRawArrayData)
