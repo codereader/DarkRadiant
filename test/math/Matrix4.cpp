@@ -138,6 +138,35 @@ TEST(MatrixTest, AccessMatrixColumnVectors)
                                     1.3, 1.4, 1.5, 3));
 }
 
+TEST(MatrixTest, SetMatrixColumnVectors)
+{
+    Matrix4 m = Matrix4::byRows(1, 1.5, 2, 8,
+                                -1, 3, 4.5, 678,
+                                0.1, -0.8, 16, 2,
+                                75, 0, 1, -9);
+
+    // Overwrite X column
+    m.setXCol({5, -5, 9});
+    EXPECT_EQ(m, Matrix4::byRows(5, 1.5, 2, 8,
+                                -5, 3, 4.5, 678,
+                                9, -0.8, 16, 2,
+                                75, 0, 1, -9));
+
+    // Overwrite Y column
+    m.setYCol({27, 14, 600});
+    EXPECT_EQ(m, Matrix4::byRows(5, 27, 2, 8,
+                                -5, 14, 4.5, 678,
+                                9, 600, 16, 2,
+                                75, 0, 1, -9));
+
+    // Overwrite Z column
+    m.setZCol({-100, 150, 0.5});
+    EXPECT_EQ(m, Matrix4::byRows(5, 27, -100, 8,
+                                -5, 14, 150, 678,
+                                9, 600, 0.5, 2,
+                                75, 0, 1, -9));
+}
+
 TEST(MatrixTest, MatrixRawArrayData)
 {
     Matrix4 m = Matrix4::byRows(1, 0.2, 35, 4,

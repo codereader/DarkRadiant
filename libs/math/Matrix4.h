@@ -243,6 +243,24 @@ public:
      * \}
      */
 
+    /// Set the X column from a Vector3
+    void setXCol(const Vector3& vec)
+    {
+        _transform.matrix().col(0).head(3) = vec.eigen();
+    }
+
+    /// Set the Y column from a Vector3
+    void setYCol(const Vector3& vec)
+    {
+        _transform.matrix().col(1).head(3) = vec.eigen();
+    }
+
+    /// Set the Z column from a Vector3
+    void setZCol(const Vector3& vec)
+    {
+        _transform.matrix().col(2).head(3) = vec.eigen();
+    }
+
     /**
      * Cast to double* for use with GL functions that accept a double
      * array, also provides operator[].
