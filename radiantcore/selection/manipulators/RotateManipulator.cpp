@@ -172,7 +172,7 @@ void RotateManipulator::render(const RenderInfo& info) const
 	{
 		glColor3d(0.75, 0, 0);
 
-		glRasterPos3dv(_pivot2World._worldSpace.tCol().getVector3() - Vector3(10, 10, 10));
+		glRasterPos3dv(_pivot2World._worldSpace.translation() - Vector3(10, 10, 10));
 
 		double angle = static_cast<double>(c_RAD2DEGMULT * _rotateAxis.getCurAngle());
         auto rotationAxisName = getRotationAxisName();

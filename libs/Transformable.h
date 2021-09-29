@@ -75,7 +75,7 @@ public:
         // and a translation part. Calculate the translation part and apply it.
 
         // Translate the world pivot into local coordinates (we only care about the translation part)
-        Vector3 localPivot = worldPivot - localToWorld.tCol().getVector3();
+        Vector3 localPivot = worldPivot - localToWorld.translation();
 
         Matrix4 rotation = Matrix4::getRotationQuantised(value);
 

@@ -121,7 +121,7 @@ void exportSelectedAsModel(const ModelExportOptions& options)
 
 		if (options.centerObjects)
 		{
-			modelPos = -exporter.getCenterTransform().tCol().getVector3();
+			modelPos = -exporter.getCenterTransform().translation();
 		}
 
 		scene::INodePtr modelNode = GlobalEntityModule().createEntityFromSelection("func_static", modelPos);

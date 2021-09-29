@@ -320,7 +320,7 @@ void ModelScaleComponent::transform(const Matrix4& pivot2world, const VolumeTest
 	}
 
 	// Calculate the origin relative to the pivot
-	Vector3 relOrigin = _startOrigin - _scalePivot2World.tCol().getVector3();
+	Vector3 relOrigin = _startOrigin - _scalePivot2World.translation();
 
 	Vector3 relOriginScaled = relOrigin * scale;
 

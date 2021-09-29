@@ -5,47 +5,17 @@
 #include "irenderable.h"
 #include "render.h"
 
-inline void billboard_viewplaneOriented(Matrix4& rotation, const Matrix4& world2screen)
+inline void billboard_viewplaneOriented(Matrix4& rotation,
+                                        const Matrix4& world2screen)
 {
-#if 1
-  rotation = Matrix4::getIdentity();
-  Vector3 x(world2screen.xCol3().getNormalised());
-  Vector3 y(world2screen.yCol3().getNormalised());
-  Vector3 z(world2screen.zCol3().getNormalised());
-  rotation.yCol3Ref() = Vector3(x.y(), y.y(), z.y());
-  rotation.zCol3Ref() = -Vector3(x.z(), y.z(), z.z());
-  rotation.xCol3Ref() = rotation.yCol3().cross(rotation.zCol3()).getNormalised();
-  rotation.yCol3Ref() = rotation.zCol3().cross(rotation.xCol3());
-#else
-  Matrix4 screen2world(matrix4_full_inverse(world2screen));
-
-  Vector3 near_(
-    matrix4_transformed_vector4(
-        screen2world,
-        Vector4(0, 0, -1, 1)
-      ).getProjected()
-  );
-
-  Vector3 far_(
-      matrix4_transformed_vector4(
-        screen2world,
-        Vector4(0, 0, 1, 1)
-      ).getProjected()
-  );
-
-  Vector3 up(
-      matrix4_transformed_vector4(
-        screen2world,
-        Vector4(0, 1, -1, 1)
-      ).getProjected()
-  );
-
-  rotation = Matrix4::getIdentity();
-  rotation.y().getVector3() = (up - near_).getNormalised();
-  rotation.z().getVector3() = (near_ - far_).getNormalised();
-  rotation.x().getVector3() = rotation.y().getVector3().cross(rotation.z().getVector3()).getNormalised();
-  rotation.y().getVector3() = rotation.z().getVector3().cross(rotation.x().getVector3());
-#endif
+    rotation = Matrix4::getIdentity();
+    Vector3 x(world2screen.xCol3().getNormalised());
+    Vector3 y(world2screen.yCol3().getNormalised());
+    Vector3 z(world2screen.zCol3().getNormalised());
+    rotation.yCol3Ref() = Vector3(x.y(), y.y(), z.y());
+    rotation.zCol3Ref() = -Vector3(x.z(), y.z(), z.z());
+    rotation.xCol3Ref() = rotation.yCol3().cross(rotation.zCol3()).getNormalised();
+    rotation.yCol3Ref() = rotation.zCol3().cross(rotation.xCol3());
 }
 
 inline void billboard_viewpointOriented(Matrix4& rotation, const Matrix4& world2screen)

@@ -460,7 +460,7 @@ void PatchNode::transformComponents(const Matrix4& matrix) {
 	// this should only be true when the transform is a pure translation.
 	if (m_dragPlanes.isSelected())
 	{
-		m_patch.transform(m_dragPlanes.evaluateTransform(matrix.tCol().getVector3()));
+		m_patch.transform(m_dragPlanes.evaluateTransform(matrix.translation()));
 	}
 }
 
