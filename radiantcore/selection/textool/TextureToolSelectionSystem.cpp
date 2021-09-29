@@ -455,6 +455,18 @@ sigc::signal<void, selection::IManipulator::Type>& TextureToolSelectionSystem::s
 
 void TextureToolSelectionSystem::selectPoint(SelectionTest& test, selection::SelectionSystem::EModifier modifier)
 {
+    if (modifier == selection::SelectionSystem::eReplace)
+    {
+        if (getSelectionMode() == SelectionMode::Vertex)
+        {
+            clearComponentSelection();
+        }
+        else
+        {
+            clearSelection();
+        }
+    }
+
     selection::SelectionPool selectionPool;
 
     performSelectionTest(selectionPool, test);
@@ -470,7 +482,7 @@ void TextureToolSelectionSystem::selectPoint(SelectionTest& test, selection::Sel
         break;
 
     case selection::SelectionSystem::eReplace:
-        bestSelectable.second->setSelected(bestSelectable.second->isSelected());
+        bestSelectable.second->setSelected(true);
         break;
 
     case selection::SelectionSystem::eCycle:

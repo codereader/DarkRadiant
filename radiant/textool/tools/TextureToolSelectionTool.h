@@ -12,9 +12,6 @@ class TextureToolSelectionTool :
     public BasicSelectionTool
 {
 public:
-    TextureToolSelectionTool()
-    {}
-
     virtual const std::string& getName() override
     {
         static std::string name("TextureToolSelectionTool");

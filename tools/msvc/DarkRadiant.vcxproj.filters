@@ -1383,6 +1383,9 @@
     <ClInclude Include="..\..\radiant\textool\TexToolModeToggles.h">
       <Filter>src\textool</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\textool\tools\TextureToolCycleSelectionTool.h">
+      <Filter>src\textool\tools</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />

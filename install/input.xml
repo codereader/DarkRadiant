@@ -34,6 +34,7 @@
       <!-- ID 2 = textool -->
     <mouseToolMapping name="TextureTool" id="2">
         <tool name="TextureToolSelectionTool" button="LMB" modifiers="SHIFT" />
+        <tool name="TextureToolCycleSelectionTool" button="LMB" modifiers="ALT+SHIFT" />
         <tool name="TextureToolManipulateMouseTool" button="LMB" modifiers="" />
     </mouseToolMapping>
   </mouseToolMappings>

@@ -242,6 +242,11 @@ CycleSelectionMouseTool::Result CycleSelectionMouseTool::onCancel(IInteractiveVi
     return Result::Finished;
 }
 
+void CycleSelectionMouseTool::performPointSelection(SelectionVolume& volume, selection::SelectionSystem::EModifier modifier)
+{
+    GlobalSelectionSystem().selectPoint(volume, modifier, selectFacesOnly());
+}
+
 void CycleSelectionMouseTool::testSelect(MouseTool::Event& ev)
 {
     const Vector2& curPos = ev.getDevicePosition();
@@ -263,7 +268,9 @@ void CycleSelectionMouseTool::testSelect(MouseTool::Event& ev)
 
     // Create a selection test using that volume
     SelectionVolume volume(scissored);
-    GlobalSelectionSystem().selectPoint(volume, modifier, selectFacesOnly());
+
+    // Invoke the virtual function to dispatch the selection request
+    performPointSelection(volume, modifier);
 
     // Remember this position
     _lastSelectPos = curPos;

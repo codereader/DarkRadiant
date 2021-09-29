@@ -144,6 +144,9 @@ protected:
     }
 
     void testSelect(Event& ev) override;
+
+    // Call the selection system to perform the point selection using the given modifier flag
+    virtual void performPointSelection(SelectionVolume& volume, selection::SelectionSystem::EModifier modifier);
 };
 
 /**
