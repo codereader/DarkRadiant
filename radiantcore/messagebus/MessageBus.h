@@ -62,7 +62,7 @@ public:
 
         if (channel == _channels.end())
         {
-            rWarning() << "MessageBus: No channel for message ID " << message.getId() << std::endl;
+            // No listeners for this message
             return;
         }
 
