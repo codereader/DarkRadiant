@@ -1579,9 +1579,9 @@ void XYWnd::zoomIn()
 void XYWnd::zoomInOn( wxPoint cursor, int zoom ) {
     const float oldScale = _scale;
     const float newScale = getZoomedScale( zoom );
-    scroll( cursor.x - _width/2, _height / 2 - cursor.y );
+    scrollByPixels( cursor.x - _width/2, _height / 2 - cursor.y );
     setScale( newScale );
-    scroll( ( _width / 2 - cursor.x ) * oldScale / newScale, ( cursor.y - _height / 2 ) * oldScale / newScale );
+    scrollByPixels( ( _width / 2 - cursor.x ) * oldScale / newScale, ( cursor.y - _height / 2 ) * oldScale / newScale );
 }
 
 // ================ CALLBACKS ======================================
