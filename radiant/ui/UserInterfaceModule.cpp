@@ -15,6 +15,7 @@
 #include "imousetool.h"
 #include "imainframe.h"
 #include "ishaders.h"
+#include "icameraview.h"
 
 #include "wxutil/menu/CommandMenuItem.h"
 #include "wxutil/MultiMonitor.h"
@@ -200,10 +201,6 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
 		radiant::TypeListener<radiant::CommandExecutionFailedMessage>(
 			sigc::mem_fun(this, &UserInterfaceModule::handleCommandExecutionFailure)));
 
-	_textureChangedListener = GlobalRadiantCore().getMessageBus().addListener(
-		radiant::IMessage::Type::TextureChanged,
-        radiant::TypeListener<radiant::TextureChangedMessage>(UserInterfaceModule::HandleTextureChanged));
-
 	_notificationListener = GlobalRadiantCore().getMessageBus().addListener(
 		radiant::IMessage::Type::Notification,
         radiant::TypeListener<radiant::NotificationMessage>(UserInterfaceModule::HandleNotificationMessage));
@@ -218,6 +215,7 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
 	_editStopwatchStatus.reset(new statusbar::EditingStopwatchStatus);
     _mapStatisticsStatus.reset(new statusbar::MapStatistics);
 	_manipulatorToggle.reset(new ManipulatorToggle);
+    _textureToolModeToggles.reset(new TexToolModeToggles);
 	_selectionModeToggle.reset(new SelectionModeToggle);
 
 	MouseToolRegistrationHelper::RegisterTools();
@@ -238,7 +236,6 @@ void UserInterfaceModule::shutdownModule()
 
 	wxTheApp->Unbind(DISPATCH_EVENT, &UserInterfaceModule::onDispatchEvent, this);
 
-	GlobalRadiantCore().getMessageBus().removeListener(_textureChangedListener);
 	GlobalRadiantCore().getMessageBus().removeListener(_execFailedListener);
 	GlobalRadiantCore().getMessageBus().removeListener(_notificationListener);
 
@@ -256,6 +253,7 @@ void UserInterfaceModule::shutdownModule()
 	_editStopwatchStatus.reset();
 	_manipulatorToggle.reset();
 	_selectionModeToggle.reset();
+    _textureToolModeToggles.reset();
 
 	_mruMenu.reset();
 }
@@ -434,11 +432,6 @@ void UserInterfaceModule::registerUICommands()
 
 	GlobalCommandSystem().addCommand("LoadPrefab", ui::loadPrefabDialog);
 	GlobalCommandSystem().addCommand("OpenMapFromProject", ui::MapSelector::OpenMapFromProject);
-}
-
-void UserInterfaceModule::HandleTextureChanged(radiant::TextureChangedMessage& msg)
-{
-	SurfaceInspector::update();
 }
 
 // Static module registration

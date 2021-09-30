@@ -241,6 +241,7 @@ add_library(radiantcore MODULE
             selection/group/SelectionGroupManager.cpp
             selection/group/SelectionGroupModule.cpp
             selection/ManipulationPivot.cpp
+            selection/SceneManipulationPivot.cpp
             selection/manipulators/DragManipulator.cpp
             selection/manipulators/ManipulatorBase.cpp
             selection/manipulators/ManipulatorComponents.cpp
@@ -258,6 +259,15 @@ add_library(radiantcore MODULE
             selection/shaderclipboard/ClosestTexturableFinder.cpp
             selection/shaderclipboard/ShaderClipboard.cpp
             selection/shaderclipboard/Texturable.cpp
+            selection/textool/ColourSchemeManager.cpp
+            selection/textool/FaceNode.cpp
+            selection/textool/Node.cpp
+            selection/textool/PatchNode.cpp
+            selection/textool/TextureToolManipulationPivot.cpp
+            selection/textool/TextureToolDragManipulator.cpp
+            selection/textool/TextureToolRotateManipulator.cpp
+            selection/textool/TextureToolSceneGraph.cpp
+            selection/textool/TextureToolSelectionSystem.cpp
             selection/TransformationVisitors.cpp
             settings/ColourScheme.cpp
             settings/ColourSchemeManager.cpp

@@ -319,7 +319,7 @@ public:
 			worldSpawnNode->addChildNode(patchNode);
 
 			// Deselect the face instance
-			(*i)->setSelected(SelectionSystem::eFace, false);
+			(*i)->setSelected(selection::ComponentSelectionMode::Face, false);
 
 			// Select the patch
 			Node_setSelected(patchNode, true);
@@ -336,7 +336,7 @@ public:
 		else
 		{
 			// Fail on this winding, de-select and skip
-			faceInstance.setSelected(SelectionSystem::eFace, false);
+			faceInstance.setSelected(selection::ComponentSelectionMode::Face, false);
 			_unsuitableWindings++;
 		}
 	}

@@ -52,7 +52,7 @@ public:
         {
             GlobalCommandSystem().executeCommand("ToggleMergeActionSelectionMode");
 
-            return GlobalSelectionSystem().Mode() == SelectionSystem::eMergeAction;
+            return GlobalSelectionSystem().Mode() == selection::SelectionSystem::eMergeAction;
         });
 
 		onSelectionModeChanged(GlobalSelectionSystem().Mode());
@@ -66,39 +66,39 @@ public:
 	}
 
 private:
-	void onSelectionModeChanged(SelectionSystem::EMode selectionMode)
+	void onSelectionModeChanged(selection::SelectionSystem::EMode selectionMode)
 	{
 		auto componentMode = GlobalSelectionSystem().ComponentMode();
 
 		updateToggleState(selectionMode, componentMode);
 	}
 
-	void onComponentModeChanged(SelectionSystem::EComponentMode componentMode)
+	void onComponentModeChanged(selection::ComponentSelectionMode componentMode)
 	{
 		auto selectionMode = GlobalSelectionSystem().Mode();
 
 		updateToggleState(selectionMode, componentMode);
 	}
 
-	void updateToggleState(SelectionSystem::EMode selectionMode, SelectionSystem::EComponentMode componentMode)
+	void updateToggleState(selection::SelectionSystem::EMode selectionMode, selection::ComponentSelectionMode componentMode)
 	{
 		GlobalEventManager().setToggled("DragVertices",
-			selectionMode == SelectionSystem::eComponent && componentMode == SelectionSystem::eVertex);
+			selectionMode == selection::SelectionSystem::eComponent && componentMode == selection::ComponentSelectionMode::Vertex);
 
 		GlobalEventManager().setToggled("DragEdges",
-			selectionMode == SelectionSystem::eComponent && componentMode == SelectionSystem::eEdge);
+			selectionMode == selection::SelectionSystem::eComponent && componentMode == selection::ComponentSelectionMode::Edge);
 
 		GlobalEventManager().setToggled("DragFaces",
-			selectionMode == SelectionSystem::eComponent && componentMode == SelectionSystem::eFace);
+			selectionMode == selection::SelectionSystem::eComponent && componentMode == selection::ComponentSelectionMode::Face);
 
 		GlobalEventManager().setToggled("DragEntities",
-			selectionMode == SelectionSystem::eEntity && componentMode == SelectionSystem::eDefault);
+			selectionMode == selection::SelectionSystem::eEntity && componentMode == selection::ComponentSelectionMode::Default);
 
 		GlobalEventManager().setToggled("SelectionModeGroupPart",
-			selectionMode == SelectionSystem::eGroupPart && componentMode == SelectionSystem::eDefault);
+			selectionMode == selection::SelectionSystem::eGroupPart && componentMode == selection::ComponentSelectionMode::Default);
 
         GlobalEventManager().setToggled("SelectionModeMergeActions",
-            selectionMode == SelectionSystem::eMergeAction && componentMode == SelectionSystem::eDefault);
+            selectionMode == selection::SelectionSystem::eMergeAction && componentMode == selection::ComponentSelectionMode::Default);
 	}
 };
 

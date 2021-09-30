@@ -44,6 +44,7 @@ public:
     {
         OrthoView   = 0,
         CameraView  = 1,
+        TextureTool  = 2,
     };
 
     // Returns the type of this group

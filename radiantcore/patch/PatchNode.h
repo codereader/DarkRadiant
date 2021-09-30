@@ -85,11 +85,11 @@ public:
 	// Returns true if any of the patch components is selected
 	bool isSelectedComponents() const override;
 	// Set the components (control points or dragplanes) selection to <select>
-	void setSelectedComponents(bool select, SelectionSystem::EComponentMode mode) override;
+	void setSelectedComponents(bool select, selection::ComponentSelectionMode mode) override;
 	// Invert the component selection
-	void invertSelectedComponents(SelectionSystem::EComponentMode mode) override;
+	void invertSelectedComponents(selection::ComponentSelectionMode mode) override;
 	// Tests the patch components on selection using the passed SelectionTest
-	void testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode) override;
+	void testSelectComponents(Selector& selector, SelectionTest& test, selection::ComponentSelectionMode mode) override;
 
 	// override scene::Inode::onRemoveFromScene to deselect the child components
     virtual void onInsertIntoScene(scene::IMapRootNode& root) override;

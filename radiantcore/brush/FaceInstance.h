@@ -50,9 +50,9 @@ public:
 	bool isSelected() const;
 
 	bool selectedComponents() const;
-	bool selectedComponents(SelectionSystem::EComponentMode mode) const;
+	bool selectedComponents(selection::ComponentSelectionMode mode) const;
 
-	void setSelected(SelectionSystem::EComponentMode mode, bool select);
+	void setSelected(selection::ComponentSelectionMode mode, bool select);
 	void invertSelected();
 
 	template<typename Functor>

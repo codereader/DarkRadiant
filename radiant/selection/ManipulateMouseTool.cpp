@@ -22,30 +22,17 @@ namespace
 
 ManipulateMouseTool::ManipulateMouseTool() :
     _selectEpsilon(registry::getValue<float>(RKEY_SELECT_EPSILON)),
-	_manipulationActive(false),
 	_undoBegun(false)
 {}
 
-const std::string& ManipulateMouseTool::getName()
-{
-    static std::string name("ManipulateMouseTool");
-    return name;
-}
-
-const std::string& ManipulateMouseTool::getDisplayName()
-{
-    static std::string displayName(_("Manipulate"));
-    return displayName;
-}
-
 ManipulateMouseTool::Result ManipulateMouseTool::onMouseDown(Event& ev)
 {
-    _view = render::View(ev.getInteractiveView().getVolumeTest());
+    auto view = render::View(ev.getInteractiveView().getVolumeTest());
 
     Vector2 epsilon(_selectEpsilon / ev.getInteractiveView().getDeviceWidth(),
                     _selectEpsilon / ev.getInteractiveView().getDeviceHeight());
 
-    if (selectManipulator(_view, ev.getDevicePosition(), epsilon))
+    if (selectManipulator(view, ev.getDevicePosition(), epsilon))
     {
         return Result::Activated;
     }
@@ -56,9 +43,9 @@ ManipulateMouseTool::Result ManipulateMouseTool::onMouseDown(Event& ev)
 ManipulateMouseTool::Result ManipulateMouseTool::onMouseMove(Event& ev)
 {
     // Get the view afresh each time, chasemouse might have changed the view since onMouseDown
-    _view = render::View(ev.getInteractiveView().getVolumeTest());
+    auto view = render::View(ev.getInteractiveView().getVolumeTest());
 
-    handleMouseMove(_view, ev.getDevicePosition());
+    handleMouseMove(view, ev.getDevicePosition());
 
     return Result::Continued;
 }
@@ -94,57 +81,48 @@ unsigned int ManipulateMouseTool::getRefreshMode()
 
 bool ManipulateMouseTool::selectManipulator(const render::View& view, const Vector2& devicePoint, const Vector2& deviceEpsilon)
 {
-	const selection::ManipulatorPtr& activeManipulator = GlobalSelectionSystem().getActiveManipulator();
+    auto activeManipulator = getActiveManipulator();
+    assert(activeManipulator);
 
-	assert(activeManipulator);
-	
-	bool dragComponentMode = activeManipulator->getType() == selection::Manipulator::Drag && 
-		GlobalSelectionSystem().Mode() == SelectionSystem::eComponent;
+    // Check if the scene selection is ready for manipulation
+    if (!manipulationIsPossible())
+    {
+        return false;
+    }
 
-	if (!nothingSelected() || dragComponentMode)
-	{
-		// Unselect any currently selected manipulators to be sure
-		activeManipulator->setSelected(false);
+    // Unselect all components to be sure
+    activeManipulator->setSelected(false);
 
-		const Matrix4& pivot2World = GlobalSelectionSystem().getPivot2World();
+    // Perform a selection test on this manipulator's components
+    render::View scissored(view);
+    ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromPoint(devicePoint, deviceEpsilon));
 
-		// Test, if the current manipulator can be selected
-		if (!nothingSelected() || dragComponentMode)
-		{
-			render::View scissored(view);
-			ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromPoint(devicePoint, deviceEpsilon));
+    auto pivot2World = getPivot2World();
+    SelectionVolume test(scissored);
+    activeManipulator->testSelect(test, pivot2World);
 
-			SelectionVolume test(scissored);
+    // Save the pivot2world matrix
+    _pivot2worldStart = pivot2World;
 
-			// The manipulator class checks on its own, if any of its components can be selected
-			activeManipulator->testSelect(test, pivot2World);
-		}
+    // We can start the manipulation if we successfully selected a component
+    if (!activeManipulator->isSelected())
+    {
+        return false;
+    }
 
-		// Save the pivot2world matrix
-		_pivot2worldStart = pivot2World;
+    onManipulationStart();
 
-		GlobalSelectionSystem().onManipulationStart();
+    activeManipulator->getActiveComponent()->beginTransformation(_pivot2worldStart, view, devicePoint);
 
-		// This is true, if a manipulator could be selected
-		_manipulationActive = activeManipulator->isSelected();
+    _deviceStart = devicePoint;
+    _undoBegun = false;
 
-		// is a manipulator selected / the pivot moving?
-		if (_manipulationActive)
-		{
-			activeManipulator->getActiveComponent()->beginTransformation(_pivot2worldStart, view, devicePoint);
-
-			_deviceStart = devicePoint;
-
-			_undoBegun = false;
-		}
-	}
-
-	return _manipulationActive;
+    return true;
 }
 
 void ManipulateMouseTool::handleMouseMove(const render::View& view, const Vector2& devicePoint)
 {
-	const selection::ManipulatorPtr& activeManipulator = GlobalSelectionSystem().getActiveManipulator();
+	auto activeManipulator = getActiveManipulator();
 	assert(activeManipulator);
 
 	// Check if the active manipulator is selected in the first place
@@ -179,33 +157,26 @@ void ManipulateMouseTool::handleMouseMove(const render::View& view, const Vector
 #endif
 
 	// Query keyboard modifier state and pass them as flags
-	int constraintFlag = selection::Manipulator::Component::Constraint::Unconstrained;
-	constraintFlag |= wxGetKeyState(WXK_SHIFT) ? selection::Manipulator::Component::Constraint::Type1 : 0;
-	constraintFlag |= wxGetKeyState(WXK_ALT) ? selection::Manipulator::Component::Constraint::Type3 : 0;
+	int constraintFlag = selection::IManipulator::Component::Constraint::Unconstrained;
+	constraintFlag |= wxGetKeyState(WXK_SHIFT) ? selection::IManipulator::Component::Constraint::Type1 : 0;
+	constraintFlag |= wxGetKeyState(WXK_ALT) ? selection::IManipulator::Component::Constraint::Type3 : 0;
 
 	// Grid constraint is ON by default, unless CTRL is held
-	constraintFlag |= wxGetKeyState(WXK_CONTROL) ? 0 : selection::Manipulator::Component::Constraint::Grid;
+	constraintFlag |= wxGetKeyState(WXK_CONTROL) ? 0 : selection::IManipulator::Component::Constraint::Grid;
 
 	// Get the component of the currently active manipulator (done by selection test)
 	// and call the transform method
 	activeManipulator->getActiveComponent()->transform(_pivot2worldStart, view, devicePoint, constraintFlag);
 
-	GlobalSelectionSystem().onManipulationChanged();
-}
-
-void ManipulateMouseTool::freezeTransforms()
-{
-	GlobalSelectionSystem().onManipulationEnd();
+    onManipulationChanged();
 }
 
 void ManipulateMouseTool::endMove()
 {
-	freezeTransforms();
+	onManipulationFinished();
 
-	const selection::ManipulatorPtr& activeManipulator = GlobalSelectionSystem().getActiveManipulator();
+	auto activeManipulator = getActiveManipulator();
 	assert(activeManipulator);
-
-	_manipulationActive = false;
 
 	// Update the views
 	SceneChangeNotify();
@@ -215,26 +186,23 @@ void ManipulateMouseTool::endMove()
 	{
 		std::ostringstream command;
 
-		if (activeManipulator->getType() == selection::Manipulator::Translate)
+		if (activeManipulator->getType() == selection::IManipulator::Translate)
 		{
 			command << "translateTool";
-			//outputTranslation(command);
 		}
-		else if (activeManipulator->getType() == selection::Manipulator::Rotate)
+		else if (activeManipulator->getType() == selection::IManipulator::Rotate)
 		{
 			command << "rotateTool";
-			//outputRotation(command);
 		}
-		else if (activeManipulator->getType() == selection::Manipulator::Scale)
+		else if (activeManipulator->getType() == selection::IManipulator::Scale)
 		{
 			command << "scaleTool";
-			//outputScale(command);
 		}
-		else if (activeManipulator->getType() == selection::Manipulator::Drag)
+		else if (activeManipulator->getType() == selection::IManipulator::Drag)
 		{
 			command << "dragTool";
 		}
-		else if (activeManipulator->getType() == selection::Manipulator::ModelScale)
+		else if (activeManipulator->getType() == selection::IManipulator::ModelScale)
 		{
 			command << "modelScaleTool";
 		}
@@ -243,17 +211,17 @@ void ManipulateMouseTool::endMove()
 
 		// Finish the undo move
 		GlobalUndoSystem().finish(command.str());
+
+        activeManipulator->setSelected(false);
 	}
 }
 
 void ManipulateMouseTool::cancelMove()
 {
-	const selection::ManipulatorPtr& activeManipulator = GlobalSelectionSystem().getActiveManipulator();
+	auto activeManipulator = getActiveManipulator();
 	assert(activeManipulator);
 
-	_manipulationActive = false;
-
-	GlobalSelectionSystem().onManipulationCancelled();
+    onManipulationCancelled();
 
 	if (_undoBegun)
 	{
@@ -264,23 +232,6 @@ void ManipulateMouseTool::cancelMove()
 
 	// Update the views
 	SceneChangeNotify();
-}
-
-bool ManipulateMouseTool::nothingSelected() const
-{
-	switch (GlobalSelectionSystem().Mode())
-	{
-	case SelectionSystem::eComponent:
-		return GlobalSelectionSystem().countSelectedComponents() == 0;
-
-	case SelectionSystem::eGroupPart:
-	case SelectionSystem::ePrimitive:
-	case SelectionSystem::eEntity:
-		return GlobalSelectionSystem().countSelected() == 0;
-
-	default:
-		return false;
-	};
 }
 
 void ManipulateMouseTool::renderOverlay()
@@ -294,30 +245,6 @@ void ManipulateMouseTool::renderOverlay()
 		glRasterPos3f(1.0f, 15.0f + (12.0f*lines.size() - 1) - 12.0f*i, 0.0f);
 		GlobalOpenGL().drawString(lines[i]);
 	}
-#endif
-}
-
-void ManipulateMouseTool::render(RenderSystem& renderSystem, RenderableCollector& collector, const VolumeTest& volume)
-{
-#if 0
-	if (nothingSelected()) return;
-
-	const selection::ManipulatorPtr& activeManipulator = _selectionSystem.getActiveManipulator();
-
-	if (!activeManipulator) return;
-
-	if (!_pointShader)
-	{
-		_pointShader = renderSystem.capture("$POINT");
-	}
-
-	collector.setHighlightFlag(RenderableCollector::Highlight::Faces, false);
-	collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
-
-	collector.SetState(_pointShader, RenderableCollector::eWireframeOnly);
-	collector.SetState(_pointShader, RenderableCollector::eFullMaterials);
-
-	activeManipulator->render(collector, volume);
 #endif
 }
 

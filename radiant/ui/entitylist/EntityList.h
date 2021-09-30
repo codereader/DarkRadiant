@@ -27,7 +27,7 @@ typedef std::shared_ptr<EntityList> EntityListPtr;
 
 class EntityList :
 	public wxutil::TransientWindow,
-	public SelectionSystem::Observer
+    public selection::SelectionSystem::Observer
 {
 private:
 	// The GraphTreeModel instance

@@ -95,9 +95,9 @@ public:
 
 	// ComponentSelectionTestable
 	bool isSelectedComponents() const override;
-	void setSelectedComponents(bool select, SelectionSystem::EComponentMode mode) override;
-	void invertSelectedComponents(SelectionSystem::EComponentMode mode) override;
-	void testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode) override;
+	void setSelectedComponents(bool select, selection::ComponentSelectionMode mode) override;
+	void invertSelectedComponents(selection::ComponentSelectionMode mode) override;
+	void testSelectComponents(Selector& selector, SelectionTest& test, selection::ComponentSelectionMode mode) override;
 
 	// override scene::Inode::onRemoveFromScene to deselect the child components
     virtual void onInsertIntoScene(scene::IMapRootNode& root) override;

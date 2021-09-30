@@ -207,7 +207,7 @@ void LightInspector::update()
     // light entities
 
     class LightEntityFinder
-    : public SelectionSystem::Visitor
+    : public selection::SelectionSystem::Visitor
     {
         // List of light entities to add to
         EntityList& _entityList;

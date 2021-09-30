@@ -31,6 +31,12 @@
       <tool name="CycleSelectionMouseTool" button="LMB" modifiers="ALT+SHIFT" />
       <tool name="CycleSelectionMouseToolFaceOnly" button="LMB" modifiers="SHIFT+CONTROL+ALT" />
     </mouseToolMapping>
+      <!-- ID 2 = textool -->
+    <mouseToolMapping name="TextureTool" id="2">
+        <tool name="TextureToolSelectionTool" button="LMB" modifiers="SHIFT" />
+        <tool name="TextureToolCycleSelectionTool" button="LMB" modifiers="ALT+SHIFT" />
+        <tool name="TextureToolManipulateMouseTool" button="LMB" modifiers="" />
+    </mouseToolMapping>
   </mouseToolMappings>
 	<cameraview>
 		<strafemode toggle="CONTROL" forward="SHIFT" speed="0.65" forwardFactor="-1" />

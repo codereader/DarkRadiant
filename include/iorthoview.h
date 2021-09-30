@@ -20,8 +20,26 @@ enum EViewType
 namespace ui
 {
 
-class IOrthoView :
+// Common interface used by all orthographic/2D views, i.e. XY/YZ/XZ and Texture Tool
+class IOrthoViewBase : 
     public IInteractiveView
+{
+public:
+    virtual ~IOrthoViewBase() {}
+
+    virtual int getWidth() const = 0;
+    virtual int getHeight() const = 0;
+
+    // Scrolls the view by the specified amount of screen pixels
+    virtual void scrollByPixels(int x, int y) = 0;
+
+    // Increase / decrease zoom factor
+    virtual void zoomIn() = 0;
+    virtual void zoomOut() = 0;
+};
+
+class IOrthoView :
+    public IOrthoViewBase
 {
 public:
     virtual ~IOrthoView() {}
@@ -37,9 +55,6 @@ public:
     virtual const Vector3& getOrigin() const = 0;
     virtual void setOrigin(const Vector3& origin) = 0;
 
-    virtual int getWidth() const = 0;
-    virtual int getHeight() const = 0;
-
     // Returns the scale factor of this view
     virtual float getScale() const = 0;
 
@@ -52,13 +67,6 @@ public:
 
     // Sets the mouse cursor type of this view
     virtual void setCursorType(CursorType type) = 0;
-
-    // Increase / decrease zoom factor
-    virtual void zoomIn() = 0;
-    virtual void zoomOut() = 0;
-
-    // Scrolls the view by the specified amount of screen pixels
-    virtual void scroll(int x, int y) = 0;
 };
 
 class IXWndManager :

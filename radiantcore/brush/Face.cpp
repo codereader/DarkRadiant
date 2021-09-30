@@ -134,7 +134,12 @@ void Face::setupSurfaceShader()
     }
 }
 
-Brush& Face::getBrush()
+IBrush& Face::getBrush()
+{
+    return _owner;
+}
+
+Brush& Face::getBrushInternal()
 {
     return _owner;
 }
@@ -292,6 +297,7 @@ void Face::revertTransform()
     planepts_assign(m_move_planeptsTransformed, m_move_planepts);
     m_texdefTransformed = _texdef;
     updateWinding();
+    EmitTextureCoordinates();
 }
 
 void Face::freezeTransform() {
@@ -553,9 +559,12 @@ void Face::setTexDefFromPoints(const Vector3 points[3], const Vector2 uvs[3])
 
     auto textureMatrix = uv * xyz.getFullInverse();
 
-    _texdef.setTransform(textureMatrix);
+    m_texdefTransformed.setTransform(textureMatrix);
 
-    texdefChanged();
+    EmitTextureCoordinates();
+
+    // Fire the signal to update the Texture Tools
+    signal_texdefChanged().emit();
 }
 
 void Face::shiftTexdef(float s, float t)
@@ -617,6 +626,7 @@ void Face::rotateTexdef(float angle)
     };
 
     setTexDefFromPoints(points, uvs);
+    _texdef = m_texdefTransformed;
 }
 
 void Face::fitTexture(float s_repeat, float t_repeat) {

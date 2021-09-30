@@ -14,9 +14,6 @@
     <Filter Include="src\textool">
       <UniqueIdentifier>{d3a05c23-9351-4bd7-aaee-8f88331f691d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\textool\item">
-      <UniqueIdentifier>{fcf62559-bc3a-4bf2-9fdd-b0f74db0de5d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\ui">
       <UniqueIdentifier>{6ab81c73-2824-43aa-a528-7287cd029266}</UniqueIdentifier>
     </Filter>
@@ -188,6 +185,9 @@
     <Filter Include="src\ui\merge">
       <UniqueIdentifier>{dcd24411-0e8c-45d3-8f5d-8b4f7faab72b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\textool\tools">
+      <UniqueIdentifier>{05468cce-ffef-47f1-9a5e-d4278f0ae3c4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\main.cpp">
@@ -204,24 +204,6 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\textool\TexTool.cpp">
       <Filter>src\textool</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\textool\TexToolItem.cpp">
-      <Filter>src\textool</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\textool\item\BrushItem.cpp">
-      <Filter>src\textool\item</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\textool\item\FaceItem.cpp">
-      <Filter>src\textool\item</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\textool\item\FaceVertexItem.cpp">
-      <Filter>src\textool\item</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\textool\item\PatchItem.cpp">
-      <Filter>src\textool\item</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\textool\item\PatchVertexItem.cpp">
-      <Filter>src\textool\item</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\about\AboutDialog.cpp">
       <Filter>src\ui\about</Filter>
@@ -727,6 +709,12 @@
     <ClCompile Include="..\..\radiant\map\AutoSaveTimer.cpp">
       <Filter>src\map</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\textool\tools\TextureToolManipulateMouseTool.cpp">
+      <Filter>src\textool\tools</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\selection\SceneManipulateMouseTool.cpp">
+      <Filter>src\selection</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h">
@@ -738,38 +726,8 @@
     <ClInclude Include="..\..\radiant\camera\FloatingCamWnd.h">
       <Filter>src\camera</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\textool\Rectangle.h">
-      <Filter>src\textool</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\textool\RenderableItem.h">
-      <Filter>src\textool</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\textool\Selectable.h">
-      <Filter>src\textool</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\textool\TexTool.h">
       <Filter>src\textool</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\textool\TexToolItem.h">
-      <Filter>src\textool</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\textool\Transformable.h">
-      <Filter>src\textool</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\textool\item\BrushItem.h">
-      <Filter>src\textool\item</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\textool\item\FaceItem.h">
-      <Filter>src\textool\item</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\textool\item\FaceVertexItem.h">
-      <Filter>src\textool\item</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\textool\item\PatchItem.h">
-      <Filter>src\textool\item</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\textool\item\PatchVertexItem.h">
-      <Filter>src\textool\item</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\about\AboutDialog.h">
       <Filter>src\ui\about</Filter>
@@ -1409,6 +1367,24 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\eventmanager\ModifierHintPopup.h">
       <Filter>src\eventmanager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\textool\tools\TextureToolMouseEvent.h">
+      <Filter>src\textool\tools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\textool\tools\TextureToolSelectionTool.h">
+      <Filter>src\textool\tools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\textool\tools\TextureToolManipulateMouseTool.h">
+      <Filter>src\textool\tools</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\selection\SceneManipulateMouseTool.h">
+      <Filter>src\selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\textool\TexToolModeToggles.h">
+      <Filter>src\textool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\textool\tools\TextureToolCycleSelectionTool.h">
+      <Filter>src\textool\tools</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

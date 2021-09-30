@@ -42,7 +42,7 @@ public:
         try
         {
             // Perform a dynamic cast to ensure we're on the correct view
-            dynamic_cast<XYMouseToolEvent&>(ev).getScale();
+            dynamic_cast<OrthoViewMouseToolEvent&>(ev).getOrthoView();
 
             _dragZoom = 0;
 
@@ -59,8 +59,8 @@ public:
     {
         try
         {
-            // We use capture mode, so xy event will contain the delta only
-            XYMouseToolEvent& xyEvent = dynamic_cast<XYMouseToolEvent&>(ev);
+            // We use capture mode, so orthoview event will contain the delta only
+            auto& xyEvent = dynamic_cast<OrthoViewMouseToolEvent&>(ev);
 
             if (xyEvent.getDeviceDelta().y() != 0)
             {
@@ -70,12 +70,12 @@ public:
                 {
                     if (_dragZoom > 0)
                     {
-                        xyEvent.getView().zoomOut();
+                        xyEvent.getOrthoView().zoomOut();
                         _dragZoom -= 8;
                     }
                     else
                     {
-                        xyEvent.getView().zoomIn();
+                        xyEvent.getOrthoView().zoomIn();
                         _dragZoom += 8;
                     }
                 }
@@ -94,8 +94,8 @@ public:
     {
         try
         {
-            // We only operate on XY view events, so attempt to cast
-            dynamic_cast<XYMouseToolEvent&>(ev).getScale();
+            // We only operate on orthoview events, so attempt to cast
+            dynamic_cast<OrthoViewMouseToolEvent&>(ev).getOrthoView();
             return Result::Finished;
         }
         catch (std::bad_cast&)

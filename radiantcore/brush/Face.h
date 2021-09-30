@@ -79,7 +79,9 @@ public:
 	virtual ~Face();
 
 	// Get the parent brush object
-	Brush& getBrush();
+	IBrush& getBrush() override;
+
+    Brush& getBrushInternal();
 
 	void planeChanged();
 
@@ -114,8 +116,8 @@ public:
 	void assign_planepts(const PlanePoints planepts);
 
 	/// \brief Reverts the transformable state of the brush to identity.
-	void revertTransform();
-	void freezeTransform();
+	void revertTransform() override;
+	void freezeTransform() override;
 
 	void update_move_planepts_vertex(std::size_t index, PlanePoints planePoints);
 
@@ -144,7 +146,6 @@ public:
 
     // Constructs the texture projection matrix from the given (world) vertex and texture coords.
     // Three vertices and their UV coordinates are enough to construct the texdef.
-    // Will fire texDefChanged() after assigning the new texture matrix.
     void setTexDefFromPoints(const Vector3 points[3], const Vector2 uvs[3]);
 
 	ShiftScaleRotation getShiftScaleRotation() const override;

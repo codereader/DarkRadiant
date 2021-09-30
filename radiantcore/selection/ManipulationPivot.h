@@ -9,13 +9,13 @@ namespace selection
 /**
  * Represents the anchor point for manipulation operations
  * in the scene. Usually this is defined by the origin of the
- * current selection AABB.
+ * current selection AABB, but it can be modified by the user.
  *
  * Use the getMatrix4() method to acquire a pivot-to-world matrix.
  */
 class ManipulationPivot
 {
-private:
+protected:
 	Matrix4 _pivot2World;
 
 	// The untransformed pivot2world matrix
@@ -24,17 +24,8 @@ private:
 	// operation, they are applied on top of the pivot2WorldStart.
 	Matrix4 _pivot2WorldStart;
 
-	// Use a single Entity's "origin" keyvalue as pivot
-	bool _entityPivotIsOrigin;
-
-	// Whether to snap the pivot to grid after movement
-	bool _snapPivotToGrid;
-
 	// "dirty" flag
 	bool _needsRecalculation;
-
-	// Whether to consider light volumes when calculating the selection bounds
-	bool _defaultPivotLocationIgnoresLightVolumes;
 
 	// During operations, we want to block pivot recalculations
 	bool _operationActive;
@@ -43,13 +34,7 @@ private:
 	bool _userLocked;
 
 public:
-	static const std::string RKEY_ENTITY_PIVOT_IS_ORIGIN;
-	static const std::string RKEY_SNAP_ROTATION_PIVOT_TO_GRID;
-	static const std::string RKEY_DEFAULT_PIVOT_LOCATION_IGNORES_LIGHT_VOLUMES;
-
 	ManipulationPivot();
-
-	void initialise();
 
 	// Returns the pivot-to-world transform
 	const Matrix4& getMatrix4();
@@ -79,14 +64,11 @@ public:
     // Operation cancelled, this reverts the pivot to where we started
     void cancelOperation();
 
-	void applyTranslation(const Vector3& translation);
+	virtual void applyTranslation(const Vector3& translation);
 
 	// Rescans the selection and calculates the pivot afresh,
 	// respecting the currently active settings
-	void updateFromSelection();
-
-private:
-	void onRegistryKeyChanged();
+	virtual void updateFromSelection() = 0;
 };
 
 }

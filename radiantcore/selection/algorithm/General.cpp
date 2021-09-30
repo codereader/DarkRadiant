@@ -4,6 +4,7 @@
 #include "iselection.h"
 #include "iundo.h"
 #include "igrid.h"
+#include "iradiant.h"
 #include "imodelsurface.h"
 #include "scenelib.h"
 #include "iselectiontest.h"
@@ -29,6 +30,7 @@
 #include "brush/BrushVisit.h"
 #include "patch/Patch.h"
 #include "patch/PatchNode.h"
+#include "messages/GridSnapRequest.h"
 
 #include <stack>
 
@@ -102,7 +104,7 @@ void selectAllOfType(const cmd::ArgumentList& args)
 		{
 			if (shaders.find(instance.getFace().getShader()) != shaders.end())
 			{
-				instance.setSelected(SelectionSystem::eFace, true);
+				instance.setSelected(selection::ComponentSelectionMode::Face, true);
 			}
 		});
 
@@ -236,9 +238,9 @@ inline void setComponentSelection(const scene::INodePtr& node, bool selected)
 
 	if (componentSelectionTestable)
 	{
-		componentSelectionTestable->setSelectedComponents(selected, SelectionSystem::eVertex);
-		componentSelectionTestable->setSelectedComponents(selected, SelectionSystem::eEdge);
-		componentSelectionTestable->setSelectedComponents(selected, SelectionSystem::eFace);
+		componentSelectionTestable->setSelectedComponents(selected, selection::ComponentSelectionMode::Vertex);
+		componentSelectionTestable->setSelectedComponents(selected, selection::ComponentSelectionMode::Edge);
+		componentSelectionTestable->setSelectedComponents(selected, selection::ComponentSelectionMode::Face);
 	}
 }
 
@@ -427,10 +429,10 @@ public:
 class InvertComponentSelectionWalker :
 	public scene::NodeVisitor
 {
-	SelectionSystem::EComponentMode _mode;
+    selection::ComponentSelectionMode _mode;
 	ComponentSelectionTestablePtr _selectable;
 public:
-	InvertComponentSelectionWalker(SelectionSystem::EComponentMode mode) :
+	InvertComponentSelectionWalker(selection::ComponentSelectionMode mode) :
 		_mode(mode)
 	{}
 
@@ -756,7 +758,16 @@ Vector3 getCurrentSelectionCenter()
 
 void snapSelectionToGrid(const cmd::ArgumentList& args)
 {
-	float gridSize = GlobalGrid().getGridSize();
+    // Send out the event in case other views want that event
+    GridSnapRequest request;
+    GlobalRadiantCore().getMessageBus().sendMessage(request);
+
+    if (request.isHandled())
+    {
+        return; // done here
+    }
+
+	auto gridSize = GlobalGrid().getGridSize();
 	UndoableCommand undo("snapSelected -grid " + string::to_string(gridSize));
 
 	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
@@ -770,7 +781,7 @@ void snapSelectionToGrid(const cmd::ArgumentList& args)
     		// Check if the visited instance is componentSnappable
 			ComponentSnappablePtr componentSnappable = Node_getComponentSnappable(node);
 
-			if (componentSnappable != NULL)
+			if (componentSnappable)
 			{
 				componentSnappable->snapComponents(gridSize);
 			}
@@ -786,7 +797,7 @@ void snapSelectionToGrid(const cmd::ArgumentList& args)
 
 			SnappablePtr snappable = Node_getSnappable(node);
 
-			if (snappable != NULL)
+			if (snappable)
 			{
 				snappable->snapto(gridSize);
 			}

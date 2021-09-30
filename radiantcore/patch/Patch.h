@@ -146,9 +146,9 @@ public:
 	void evaluateTransform();
 
 	// Revert the changes, fall back to the saved state in <m_ctrl>
-	void revertTransform();
+	void revertTransform() override;
 	// Apply the transformed control array, save it into <m_ctrl> and overwrite the old values
-	void freezeTransform();
+	void freezeTransform() override;
 
 	// callback for changed control points
 	void controlPointsChanged() override;
@@ -217,6 +217,8 @@ public:
 	PatchControl& ctrlAt(std::size_t row, std::size_t col) override;
 	// The same as above just for const
 	const PatchControl& ctrlAt(std::size_t row, std::size_t col) const override;
+
+    PatchControl& getTransformedCtrlAt(std::size_t row, std::size_t col) override;
 
  	/** greebo: Inserts two columns before and after the column with index <colIndex>.
  	 * 			Throws an GenericPatchException if an error occurs.
@@ -359,11 +361,11 @@ public:
 	// Static signal holder, signal is emitted after any patch texture has changed
 	static sigc::signal<void>& signal_patchTextureChanged();
 
+    void updateTesselation(bool force = false);
+
 private:
 	// This notifies the surfaceinspector/patchinspector about the texture change
 	void textureChanged();
-
-	void updateTesselation();
 
 	// greebo: checks, if the shader name is valid
 	void check_shader();

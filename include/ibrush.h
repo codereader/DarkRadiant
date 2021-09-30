@@ -105,12 +105,17 @@ struct ShiftScaleRotation
     }
 };
 
+class IBrush;
+
 // Interface for a face plane
 class IFace
 {
 public:
 	// Destructor
 	virtual ~IFace() {}
+
+    // Returns a reference to the brush containing this face
+    virtual IBrush& getBrush() = 0;
 
 	// Submits the current state to the UndoSystem, to make further actions undo-able
 	virtual void undoSave() = 0;
@@ -156,6 +161,12 @@ public:
 	// If possible, aligns the assigned texture at the given anchor edge
 	virtual void alignTexture(AlignEdge alignType) = 0;
 
+    // Reverts any transform that has been applied since the last time freezeTransform() was called
+    virtual void revertTransform() = 0;
+
+    // Promotes the current transformed state to the new base state
+    virtual void freezeTransform() = 0;
+
 	// Get access to the actual Winding object
 	virtual IWinding& getWinding() = 0;
 	virtual const IWinding& getWinding() const = 0;
@@ -176,6 +187,10 @@ public:
 	virtual Matrix4 getProjectionMatrix() = 0;
 
 	virtual void setProjectionMatrix(const Matrix4& projection) = 0;
+
+    // Constructs the texture projection matrix from the given (world) vertex and texture coords.
+    // Three vertices and their UV coordinates are enough to construct the texdef.
+    virtual void setTexDefFromPoints(const Vector3 points[3], const Vector2 uvs[3]) = 0;
 
 	/**
 	 * Calculates and returns the texture definition as shift/scale/rotate.

@@ -48,6 +48,14 @@ inline const char* getStringForSize(GridSize size)
 	};
 }
 
+// The space the grid is dividing. Regular map editing is using the
+// World grid, while the Texture Tool is working in UV space.
+enum class Space
+{
+    World,
+    Texture,
+};
+
 }
 
 // grid renderings
@@ -62,7 +70,7 @@ enum GridLook
 	GRIDLOOK_SQUARES,
 };
 
-const char* const MODULE_GRID("Grid");
+constexpr const char* const MODULE_GRID("Grid");
 
 class IGridManager :
 	public RegisterableModule
@@ -71,9 +79,15 @@ public:
 	virtual ~IGridManager() {}
 
 	virtual void setGridSize(GridSize gridSize) = 0;
-	virtual float getGridSize() const = 0;
+	
+    // Returns the grid spacing in units of the given space
+    virtual float getGridSize(grid::Space = grid::Space::World) const = 0;
 
-	virtual int getGridPower() const = 0;
+    // Returns the grid power of the currently active grid size
+	virtual int getGridPower(grid::Space = grid::Space::World) const = 0;
+
+    // Returns the base number the exponent is applied to (e.g. 2)
+	virtual int getGridBase(grid::Space = grid::Space::World) const = 0;
 
 	virtual void gridDown() = 0;
 	virtual void gridUp() = 0;
@@ -83,8 +97,7 @@ public:
 
     /// Signal emitted when the grid is changed
 	virtual sigc::signal<void> signal_gridChanged() const = 0;
-
-}; // class IGridManager
+};
 
 // This is the accessor for the grid module
 inline IGridManager& GlobalGrid()

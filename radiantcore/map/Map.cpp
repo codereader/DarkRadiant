@@ -363,11 +363,11 @@ void Map::setEditMode(EditMode mode)
     if (_editMode == EditMode::Merge)
     {
         GlobalSelectionSystem().setSelectedAll(false);
-        GlobalSelectionSystem().SetMode(SelectionSystem::eMergeAction);
+        GlobalSelectionSystem().SetMode(selection::SelectionSystem::eMergeAction);
     }
     else
     {
-        GlobalSelectionSystem().SetMode(SelectionSystem::ePrimitive);
+        GlobalSelectionSystem().SetMode(selection::SelectionSystem::ePrimitive);
     }
 
     signal_editModeChanged().emit(_editMode);

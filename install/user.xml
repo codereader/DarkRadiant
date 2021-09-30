@@ -114,7 +114,6 @@
       </surfaceInspector>
       <texTool>
         <gridActive value="1" />
-        <faceVertexScalePivotIsCentroid value="0" />
       </texTool>
     </textures>
     <grid>
@@ -299,17 +298,24 @@
       <toolbutton name="findandreplace" action="FindReplaceTextures" tooltip="Find &amp; Replace" icon="texwindow_findandreplace.png"/>
     </toolbar>
     <toolbar name="textool" align="horizontal">
-      <toolbutton name="griddown" action="TexToolGridDown" tooltip="Decrease Grid Size" icon="grid_down.png"/>
-      <toolbutton name="gridup" action="TexToolGridUp" tooltip="Increase Grid Size" icon="grid_up.png"/>
+      <toolbutton name="griddown" action="GridDown" tooltip="Decrease Grid Size" icon="grid_down.png"/>
+      <toolbutton name="gridup" action="GridUp" tooltip="Increase Grid Size" icon="grid_up.png"/>
       <toolbutton name="gridsnap" action="TexToolSnapToGrid" tooltip="Snap to Grid" icon="grid_snap.png"/>
       <toggletoolbutton name="usegrid" action="TexToolToggleGrid" tooltip="Toggle Grid" icon="grid_toggle.png"/>
+      <separator/>
+      <toggletoolbutton name="textoolrotate" action="TextureToolRotateMode" tooltip="Rotate" icon="select_mouserotate.png"/>
+      <toggletoolbutton name="textooldrag" action="TextureToolDragMode" tooltip="Drag-Manipulate" icon="select_mouseresize.png"/>
+      <separator/>
+      <toggletoolbutton name="textoolsurfacemode" action="TextureToolSurfaceSelectionMode" tooltip="Select Surfaces" icon="modify_faces.png"/>
+      <toggletoolbutton name="textoolvertexmode" action="TextureToolVertexSelectionMode" tooltip="Select Vertices" icon="modify_vertices.png"/>
       <separator/>
       <toolbutton name="mergeitems" action="TexToolMergeItems" tooltip="Merge Selection" icon="textool_merge.png"/>
       <toolbutton name="texflips" action="TexToolFlipS" tooltip="Flip Selection Horiz (S-Axis)" icon="tex_flips.png"/>
       <toolbutton name="texflipt" action="TexToolFlipT" tooltip="Flip Selection Vertical (T-Axis)" icon="tex_flipt.png"/>
       <toolbutton name="selectrelated" action="TexToolSelectRelated" tooltip="Select Related Items" icon="textool_select_related.png"/>
       <separator/>
-      <toggletoolbutton name="togglefacevertexscalepivot" action="TexToolToggleFaceVertexScalePivot" tooltip="Center Pivot when scaling faces" icon="textool_facescale_pivot.png"/>
+      <toggletoolbutton name="uselighttheme" action="TextureToolUseLightTheme" tooltip="Use Light Colour Theme" icon="bulb_lit.png" />
+      <toggletoolbutton name="usedarktheme" action="TextureToolUseDarkTheme" tooltip="Use Dark Colour Theme" icon="bulb_unlit.png" />
     </toolbar>
     <userGuideUrl value="https://www.darkradiant.net/userguide" />
     <vcs>

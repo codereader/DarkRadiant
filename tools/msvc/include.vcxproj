@@ -141,6 +141,7 @@
     <ClInclude Include="..\..\include\ilogwriter.h" />
     <ClInclude Include="..\..\include\imainframe.h" />
     <ClInclude Include="..\..\include\imainframelayout.h" />
+    <ClInclude Include="..\..\include\imanipulator.h" />
     <ClInclude Include="..\..\include\imap.h" />
     <ClInclude Include="..\..\include\imapexporter.h" />
     <ClInclude Include="..\..\include\imapformat.h" />
@@ -196,7 +197,9 @@
     <ClInclude Include="..\..\include\ispacepartition.h" />
     <ClInclude Include="..\..\include\ispeakernode.h" />
     <ClInclude Include="..\..\include\istatusbarmanager.h" />
+    <ClInclude Include="..\..\include\itexturetoolcolours.h" />
     <ClInclude Include="..\..\include\itextstream.h" />
+    <ClInclude Include="..\..\include\itexturetoolmodel.h" />
     <ClInclude Include="..\..\include\itoolbarmanager.h" />
     <ClInclude Include="..\..\include\itraceable.h" />
     <ClInclude Include="..\..\include\itransformable.h" />

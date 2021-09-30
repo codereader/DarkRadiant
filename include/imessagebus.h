@@ -50,6 +50,10 @@ public:
         TextureChanged,
         ApplicationIsActiveQuery,
         FileOverwriteConfirmation,
+        UnselectSelectionRequest,
+        ManipulatorModeToggleRequest,
+        ComponentSelectionModeToggleRequest,
+        GridSnapRequest,
 
         UserDefinedMessagesGoHigherThanThis = 999,
     };

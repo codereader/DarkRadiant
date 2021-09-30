@@ -1,7 +1,7 @@
 #include "TranslateManipulator.h"
 
 #include "../Remap.h"
-#include "../SelectionPool.h"
+#include "selection/SelectionPool.h"
 #include "selection/BestPoint.h"
 
 #include "registry/registry.h"

@@ -17,7 +17,7 @@ namespace script
 
 // Wrap around the SelectionSystem::Visitor interface
 class SelectionVisitorWrapper :
-	public SelectionSystem::Visitor
+    public selection::SelectionSystem::Visitor
 {
 public:
     void visit(const scene::INodePtr& node) const override
@@ -25,7 +25,7 @@ public:
 		// Wrap this method to python
 		PYBIND11_OVERLOAD_PURE(
 			void,			/* Return type */
-			SelectionSystem::Visitor,    /* Parent class */
+			selection::SelectionSystem::Visitor,    /* Parent class */
 			visit,			/* Name of function in C++ (must match Python name) */
 			ScriptSceneNode(node)			/* Argument(s) */
 		);
@@ -64,8 +64,8 @@ public:
 	// SelectionSystem wrappers
 	const SelectionInfo& getSelectionInfo();
 
-	void foreachSelected(const SelectionSystem::Visitor& visitor);
-	void foreachSelectedComponent(const SelectionSystem::Visitor& visitor);
+	void foreachSelected(const selection::SelectionSystem::Visitor& visitor);
+	void foreachSelectedComponent(const selection::SelectionSystem::Visitor& visitor);
 	void foreachSelectedFace(SelectedFaceVisitor& visitor);
 
 	void setSelectedAll(int selected);

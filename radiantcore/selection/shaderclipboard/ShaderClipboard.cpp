@@ -147,7 +147,7 @@ void ShaderClipboard::setSource(Face& sourceFace)
 
 	_source.clear();
 	_source.face = &sourceFace;
-	_source.node = sourceFace.getBrush().getBrushNode().shared_from_this();
+	_source.node = sourceFace.getBrushInternal().getBrushNode().shared_from_this();
 
 	sourceChanged();
 }

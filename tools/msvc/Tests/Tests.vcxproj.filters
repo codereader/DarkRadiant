@@ -47,6 +47,8 @@
     <ClCompile Include="..\..\..\test\math\Matrix3.cpp">
       <Filter>math</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\test\TextureTool.cpp" />
+    <ClCompile Include="..\..\..\test\Grid.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\HeadlessOpenGLContext.h" />

@@ -299,6 +299,24 @@
     <ClInclude Include="..\..\libs\selection\SelectedPlaneSet.h">
       <Filter>selection</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\selection\SelectionPool.h">
+      <Filter>selection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\render\TextureToolView.h">
+      <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\messages\UnselectSelectionRequest.h">
+      <Filter>messages</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\messages\ManipulatorModeToggleRequest.h">
+      <Filter>messages</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\messages\ComponentSelectionModeToggleRequest.h">
+      <Filter>messages</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\messages\GridSnapRequest.h">
+      <Filter>messages</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

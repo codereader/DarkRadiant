@@ -383,14 +383,14 @@ void nudgeSelected(ENudgeDirection direction, float amount, EViewType viewtype)
 	//Vector3 view_direction(-axes.z);
 	Vector3 nudge(AxisBase_axisForDirection(axes, direction) * amount);
 
-	if (GlobalSelectionSystem().getActiveManipulatorType() == selection::Manipulator::Translate ||
-        GlobalSelectionSystem().getActiveManipulatorType() == selection::Manipulator::Drag ||
-        GlobalSelectionSystem().getActiveManipulatorType() == selection::Manipulator::Clip)
+	if (GlobalSelectionSystem().getActiveManipulatorType() == selection::IManipulator::Translate ||
+        GlobalSelectionSystem().getActiveManipulatorType() == selection::IManipulator::Drag ||
+        GlobalSelectionSystem().getActiveManipulatorType() == selection::IManipulator::Clip)
     {
         translateSelected(nudge);
 
         // In clip mode, update the clipping plane
-        if (GlobalSelectionSystem().getActiveManipulatorType() == selection::Manipulator::Clip)
+        if (GlobalSelectionSystem().getActiveManipulatorType() == selection::IManipulator::Clip)
         {
             GlobalClipper().update();
         }

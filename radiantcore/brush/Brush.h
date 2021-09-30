@@ -212,7 +212,7 @@ public:
 
 	const AABB& localAABB() const;
 
-	void renderComponents(SelectionSystem::EComponentMode mode, RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
+	void renderComponents(selection::ComponentSelectionMode mode, RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
 
 	void transform(const Matrix4& matrix);
 

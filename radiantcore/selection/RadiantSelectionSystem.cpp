@@ -8,7 +8,7 @@
 #include "iradiant.h"
 #include "ieventmanager.h"
 #include "ipreferencesystem.h"
-#include "SelectionPool.h"
+#include "selection/SelectionPool.h"
 #include "module/StaticModule.h"
 #include "brush/csg/CSG.h"
 #include "selection/algorithm/General.h"
@@ -18,6 +18,9 @@
 #include "SelectionTestWalkers.h"
 #include "command/ExecutionFailure.h"
 #include "string/case_conv.h"
+#include "messages/UnselectSelectionRequest.h"
+#include "messages/ManipulatorModeToggleRequest.h"
+#include "messages/ComponentSelectionModeToggleRequest.h"
 
 #include "manipulators/DragManipulator.h"
 #include "manipulators/ClipManipulator.h"
@@ -31,19 +34,13 @@
 namespace selection
 {
 
-namespace
-{
-    const std::string RKEY_MANIPULATOR_FONTSTYLE = "user/ui/manipulatorFontStyle";
-    const std::string RKEY_MANIPULATOR_FONTSIZE = "user/ui/manipulatorFontSize";
-}
-
 // --------- RadiantSelectionSystem Implementation ------------------------------------------
 
 RadiantSelectionSystem::RadiantSelectionSystem() :
     _requestWorkZoneRecalculation(true),
-    _defaultManipulatorType(Manipulator::Drag),
+    _defaultManipulatorType(IManipulator::Drag),
     _mode(ePrimitive),
-    _componentMode(eDefault),
+    _componentMode(ComponentSelectionMode::Default),
     _countPrimitive(0),
     _countComponent(0)
 {}
@@ -76,8 +73,7 @@ void RadiantSelectionSystem::notifyObservers(const scene::INodePtr& node, bool i
 }
 
 void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, SelectionTest& test,
-                                             const VolumeTest& view, SelectionSystem::EMode mode,
-                                             SelectionSystem::EComponentMode componentMode)
+    const VolumeTest& view, SelectionSystem::EMode mode, ComponentSelectionMode componentMode)
 {
     // The (temporary) storage pool
     SelectionPool selector;
@@ -210,7 +206,7 @@ SelectionSystem::EMode RadiantSelectionSystem::Mode() const {
 }
 
 // Set the current component mode to <mode>
-void RadiantSelectionSystem::SetComponentMode(EComponentMode mode)
+void RadiantSelectionSystem::SetComponentMode(ComponentSelectionMode mode)
 {
     if (_componentMode != mode)
     {
@@ -221,7 +217,8 @@ void RadiantSelectionSystem::SetComponentMode(EComponentMode mode)
 }
 
 // returns the current component mode
-SelectionSystem::EComponentMode RadiantSelectionSystem::ComponentMode() const {
+ComponentSelectionMode RadiantSelectionSystem::ComponentMode() const
+{
     return _componentMode;
 }
 
@@ -230,16 +227,16 @@ sigc::signal<void, SelectionSystem::EMode>& RadiantSelectionSystem::signal_selec
     return _sigSelectionModeChanged;
 }
 
-sigc::signal<void, SelectionSystem::EComponentMode>& RadiantSelectionSystem::signal_componentModeChanged()
+sigc::signal<void, ComponentSelectionMode>& RadiantSelectionSystem::signal_componentModeChanged()
 {
     return _sigComponentModeChanged;
 }
 
-std::size_t RadiantSelectionSystem::registerManipulator(const ManipulatorPtr& manipulator)
+std::size_t RadiantSelectionSystem::registerManipulator(const ISceneManipulator::Ptr& manipulator)
 {
 	std::size_t newId = 1;
 
-	while (_manipulators.find(newId) != _manipulators.end())
+	while (_manipulators.count(newId) > 0)
 	{
 		++newId;
 
@@ -249,7 +246,7 @@ std::size_t RadiantSelectionSystem::registerManipulator(const ManipulatorPtr& ma
 		}
 	}
 
-	_manipulators.insert(std::make_pair(newId, manipulator));
+	_manipulators.emplace(newId, manipulator);
 
 	manipulator->setId(newId);
 
@@ -261,7 +258,7 @@ std::size_t RadiantSelectionSystem::registerManipulator(const ManipulatorPtr& ma
 	return newId;
 }
 
-void RadiantSelectionSystem::unregisterManipulator(const ManipulatorPtr& manipulator)
+void RadiantSelectionSystem::unregisterManipulator(const ISceneManipulator::Ptr& manipulator)
 {
 	for (Manipulators::const_iterator i = _manipulators.begin(); i != _manipulators.end(); ++i)
 	{
@@ -274,12 +271,12 @@ void RadiantSelectionSystem::unregisterManipulator(const ManipulatorPtr& manipul
 	}
 }
 
-Manipulator::Type RadiantSelectionSystem::getActiveManipulatorType()
+IManipulator::Type RadiantSelectionSystem::getActiveManipulatorType()
 {
 	return _activeManipulator->getType();
 }
 
-const ManipulatorPtr& RadiantSelectionSystem::getActiveManipulator()
+const ISceneManipulator::Ptr& RadiantSelectionSystem::getActiveManipulator()
 {
 	return _activeManipulator;
 }
@@ -302,7 +299,7 @@ void RadiantSelectionSystem::setActiveManipulator(std::size_t manipulatorId)
 	pivotChanged();
 }
 
-void RadiantSelectionSystem::setActiveManipulator(Manipulator::Type manipulatorType)
+void RadiantSelectionSystem::setActiveManipulator(IManipulator::Type manipulatorType)
 {
 	for (const Manipulators::value_type& pair : _manipulators)
 	{
@@ -321,7 +318,7 @@ void RadiantSelectionSystem::setActiveManipulator(Manipulator::Type manipulatorT
 	rError() << "Cannot activate non-existent manipulator by type " << manipulatorType << std::endl;
 }
 
-sigc::signal<void, selection::Manipulator::Type>& RadiantSelectionSystem::signal_activeManipulatorChanged()
+sigc::signal<void, selection::IManipulator::Type>& RadiantSelectionSystem::signal_activeManipulatorChanged()
 {
     return _sigActiveManipulatorChanged;
 }
@@ -464,9 +461,9 @@ void RadiantSelectionSystem::setSelectedAllComponents(bool selected)
 
 			if (componentSelectionTestable)
 			{
-				componentSelectionTestable->setSelectedComponents(selected, SelectionSystem::eVertex);
-				componentSelectionTestable->setSelectedComponents(selected, SelectionSystem::eEdge);
-				componentSelectionTestable->setSelectedComponents(selected, SelectionSystem::eFace);
+				componentSelectionTestable->setSelectedComponents(selected, ComponentSelectionMode::Vertex);
+				componentSelectionTestable->setSelectedComponents(selected, ComponentSelectionMode::Edge);
+				componentSelectionTestable->setSelectedComponents(selected, ComponentSelectionMode::Face);
 			}
 
 			return true;
@@ -592,7 +589,7 @@ void RadiantSelectionSystem::selectPoint(SelectionTest& test, EModifier modifier
     {
         SelectionPool selector;
 
-        ComponentSelector selectionTester(selector, test, eFace);
+        ComponentSelector selectionTester(selector, test, ComponentSelectionMode::Face);
         GlobalSceneGraph().foreachVisibleNodeInVolume(test.getVolume(), selectionTester);
 
         // Load them all into the vector
@@ -724,7 +721,7 @@ void RadiantSelectionSystem::selectArea(SelectionTest& test, SelectionSystem::EM
 
     if (face)
     {
-        ComponentSelector selectionTester(pool, test, eFace);
+        ComponentSelector selectionTester(pool, test, ComponentSelectionMode::Face);
         GlobalSceneGraph().foreachVisibleNodeInVolume(test.getVolume(), selectionTester);
 
         // Load them all into the vector
@@ -787,14 +784,14 @@ void RadiantSelectionSystem::onManipulationEnd()
 	// The selection bounds have possibly changed
 	_requestWorkZoneRecalculation = true;
 
-    const selection::ManipulatorPtr& activeManipulator = getActiveManipulator();
+    const auto& activeManipulator = getActiveManipulator();
     assert(activeManipulator);
 
     // greebo: Deselect all faces if we are in brush and drag mode
     if ((Mode() == SelectionSystem::ePrimitive || Mode() == SelectionSystem::eGroupPart) &&
-        activeManipulator->getType() == selection::Manipulator::Drag)
+        activeManipulator->getType() == selection::IManipulator::Drag)
     {
-        SelectAllComponentWalker faceSelector(false, SelectionSystem::eFace);
+        SelectAllComponentWalker faceSelector(false, ComponentSelectionMode::Face);
         GlobalSceneGraph().root()->traverse(faceSelector);
     }
 
@@ -809,7 +806,7 @@ void RadiantSelectionSystem::onManipulationEnd()
 
 void RadiantSelectionSystem::onManipulationCancelled()
 {
-    const selection::ManipulatorPtr& activeManipulator = getActiveManipulator();
+    const auto& activeManipulator = getActiveManipulator();
     assert(activeManipulator);
 
     // Unselect any currently selected manipulators to be sure
@@ -843,9 +840,9 @@ void RadiantSelectionSystem::onManipulationCancelled()
     });
 
     // greebo: Deselect all faces if we are in brush and drag mode
-    if (Mode() == SelectionSystem::ePrimitive && activeManipulator->getType() == selection::Manipulator::Drag)
+    if (Mode() == SelectionSystem::ePrimitive && activeManipulator->getType() == selection::IManipulator::Drag)
     {
-        SelectAllComponentWalker faceSelector(false, SelectionSystem::eFace);
+        SelectAllComponentWalker faceSelector(false, ComponentSelectionMode::Face);
         GlobalSceneGraph().root()->traverse(faceSelector);
     }
 
@@ -990,7 +987,7 @@ void RadiantSelectionSystem::initialiseModule(const IApplicationContext& ctx)
 	registerManipulator(std::make_shared<RotateManipulator>(_pivot, 8, 64.0f));
 	registerManipulator(std::make_shared<ModelScaleManipulator>(_pivot));
 
-	_defaultManipulatorType = Manipulator::Drag;
+	_defaultManipulatorType = IManipulator::Drag;
 	setActiveManipulator(_defaultManipulatorType);
     pivotChanged();
 
@@ -1027,7 +1024,7 @@ void RadiantSelectionSystem::initialiseModule(const IApplicationContext& ctx)
 	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Selection"));
 
 	page.appendCheckBox(_("Ignore light volume bounds when calculating default rotation pivot location"),
-		ManipulationPivot::RKEY_DEFAULT_PIVOT_LOCATION_IGNORES_LIGHT_VOLUMES);
+		SceneManipulationPivot::RKEY_DEFAULT_PIVOT_LOCATION_IGNORES_LIGHT_VOLUMES);
 
     // Connect the bounds changed caller
     GlobalSceneGraph().signal_boundsChanged().connect(
@@ -1086,7 +1083,7 @@ void RadiantSelectionSystem::checkComponentModeSelectionMode(const ISelectable& 
 	}
 }
 
-std::size_t RadiantSelectionSystem::getManipulatorIdForType(Manipulator::Type type)
+std::size_t RadiantSelectionSystem::getManipulatorIdForType(IManipulator::Type type)
 {
 	for (const Manipulators::value_type& pair : _manipulators)
 	{
@@ -1115,7 +1112,7 @@ void RadiantSelectionSystem::toggleManipulatorModeById(std::size_t manipId)
 	}
 	else // we're not in <mode> yet
 	{
-		std::size_t clipperId = getManipulatorIdForType(Manipulator::Clip);
+		std::size_t clipperId = getManipulatorIdForType(IManipulator::Clip);
 
 		if (manipId == clipperId)
 		{
@@ -1149,34 +1146,50 @@ void RadiantSelectionSystem::toggleManipulatorModeCmd(const cmd::ArgumentList& a
     }
 
     auto manip = string::to_lower_copy(args[0].getString());
+    IManipulator::Type type;
 
     if (manip == "drag")
     {
-        toggleManipulatorModeById(getManipulatorIdForType(Manipulator::Drag));
+        type = IManipulator::Drag;
     }
     else if (manip == "translate")
     {
-        toggleManipulatorModeById(getManipulatorIdForType(Manipulator::Translate));
+        type = IManipulator::Translate;
     }
     else if (manip == "rotate")
     {
-        toggleManipulatorModeById(getManipulatorIdForType(Manipulator::Rotate));
+        type = IManipulator::Rotate;
     }
     else if (manip == "scale")
     {
-        toggleManipulatorModeById(getManipulatorIdForType(Manipulator::Drag));
+        type = IManipulator::Drag;
     }
     else if (manip == "clip")
     {
-        toggleManipulatorModeById(getManipulatorIdForType(Manipulator::Clip));
+        type = IManipulator::Clip;
     }
     else if (manip == "modelscale")
     {
-        toggleManipulatorModeById(getManipulatorIdForType(Manipulator::ModelScale));
+        type = IManipulator::ModelScale;
+    }
+    else
+    {
+        rError() << "Unknown manipulator type: " << manip << std::endl;
+        return;
+    }
+
+    // Send out the event for the other views like the texture tool
+    ManipulatorModeToggleRequest request(type);
+    GlobalRadiantCore().getMessageBus().sendMessage(request);
+
+    if (!request.isHandled())
+    {
+        // Handle it ourselves
+        toggleManipulatorModeById(getManipulatorIdForType(type));
     }
 }
 
-void RadiantSelectionSystem::toggleManipulatorMode(Manipulator::Type type)
+void RadiantSelectionSystem::toggleManipulatorMode(IManipulator::Type type)
 {
 	// Switch back to the default mode if we're already in <mode>
 	if (_activeManipulator->getType() == type && _defaultManipulatorType != type)
@@ -1185,7 +1198,7 @@ void RadiantSelectionSystem::toggleManipulatorMode(Manipulator::Type type)
 	}
 	else // we're not in <mode> yet
 	{
-		if (type == Manipulator::Clip)
+		if (type == IManipulator::Clip)
 		{
 			activateDefaultMode();
 			GlobalClipper().onClipMode(true);
@@ -1204,12 +1217,12 @@ void RadiantSelectionSystem::toggleManipulatorMode(Manipulator::Type type)
 void RadiantSelectionSystem::activateDefaultMode()
 {
 	SetMode(ePrimitive);
-	SetComponentMode(eDefault);
+	SetComponentMode(ComponentSelectionMode::Default);
 
 	SceneChangeNotify();
 }
 
-void RadiantSelectionSystem::toggleComponentMode(EComponentMode mode)
+void RadiantSelectionSystem::toggleComponentMode(ComponentSelectionMode mode)
 {
 	if (Mode() == eComponent && ComponentMode() == mode)
 	{
@@ -1237,25 +1250,40 @@ void RadiantSelectionSystem::toggleComponentModeCmd(const cmd::ArgumentList& arg
     {
         rWarning() << "Usage: ToggleComponentSelectionMode <mode>" << std::endl;
         rWarning() << " with <mode> being one of the following: " << std::endl;
+        rWarning() << "      Default" << std::endl;
         rWarning() << "      Vertex" << std::endl;
         rWarning() << "      Edge" << std::endl;
         rWarning() << "      Face" << std::endl;
         return;
     }
 
-    auto mode = string::to_lower_copy(args[0].getString());
+    auto modeStr = string::to_lower_copy(args[0].getString());
+    ComponentSelectionMode mode;
 
-    if (mode == "vertex")
+    if (modeStr == "vertex")
     {
-        toggleComponentMode(eVertex);
+        mode = ComponentSelectionMode::Vertex;
     }
-    else if (mode == "edge")
+    else if (modeStr == "edge")
     {
-        toggleComponentMode(eEdge);
+        mode = ComponentSelectionMode::Edge;
     }
-    else if (mode == "face")
+    else if (modeStr == "face")
     {
-        toggleComponentMode(eFace);
+        mode = ComponentSelectionMode::Face;
+    }
+    else if (modeStr == "default")
+    {
+        mode = ComponentSelectionMode::Default;
+    }
+
+    ComponentSelectionModeToggleRequest request(mode);
+    GlobalRadiantCore().getMessageBus().sendMessage(request);
+
+    if (!request.isHandled())
+    {
+        // Handle it ourselves
+        toggleComponentMode(mode);
     }
 }
 
@@ -1268,7 +1296,7 @@ void RadiantSelectionSystem::toggleEntityMode(const cmd::ArgumentList& args)
 	else
 	{
 		SetMode(eEntity);
-		SetComponentMode(eDefault);
+		SetComponentMode(ComponentSelectionMode::Default);
 	}
 
 	onManipulatorModeChanged();
@@ -1312,7 +1340,7 @@ void RadiantSelectionSystem::toggleGroupPartMode(const cmd::ArgumentList& args)
         });
 
 		SetMode(eGroupPart);
-		SetComponentMode(eDefault);
+		SetComponentMode(ComponentSelectionMode::Default);
 	}
 
 	onManipulatorModeChanged();
@@ -1335,7 +1363,7 @@ void RadiantSelectionSystem::toggleMergeActionMode(const cmd::ArgumentList& args
         setSelectedAllComponents(false);
 
         SetMode(eMergeAction);
-        SetComponentMode(eDefault);
+        SetComponentMode(ComponentSelectionMode::Default);
     }
 
     if (oldMode != Mode())
@@ -1359,6 +1387,16 @@ void RadiantSelectionSystem::onComponentModeChanged()
 // called when the escape key is used (either on the main window or on an inspector)
 void RadiantSelectionSystem::deselectCmd(const cmd::ArgumentList& args)
 {
+    // First send out the request to let other systems like the texture tool
+    // react to the deselection event
+    UnselectSelectionRequest request;
+    GlobalRadiantCore().getMessageBus().sendMessage(request);
+
+    if (request.isHandled())
+    {
+        return; // already handled by other systems
+    }
+
 	if (Mode() == eComponent)
 	{
 		if (countSelectedComponents() != 0)

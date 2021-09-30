@@ -45,7 +45,7 @@ typedef std::shared_ptr<EntityInspector> EntityInspectorPtr;
  */
 class EntityInspector :
 	public IEntityInspector,
- 	public SelectionSystem::Observer,
+    public selection::SelectionSystem::Observer,
     public wxutil::SingleIdleCallback,
     public Entity::Observer,
 	public std::enable_shared_from_this<EntityInspector>

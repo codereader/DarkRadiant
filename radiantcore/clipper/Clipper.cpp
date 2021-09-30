@@ -200,7 +200,7 @@ void Clipper::splitClip() {
 }
 
 bool Clipper::clipMode() const {
-	return GlobalSelectionSystem().getActiveManipulatorType() == selection::Manipulator::Clip;
+	return GlobalSelectionSystem().getActiveManipulatorType() == selection::IManipulator::Clip;
 }
 
 void Clipper::onClipMode(bool enabled) {

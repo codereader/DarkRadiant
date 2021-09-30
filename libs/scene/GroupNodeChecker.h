@@ -9,7 +9,7 @@ namespace scene
 // Checks the current selection to see whether it consists of
 // group nodes only.
 class GroupNodeChecker :
-	public SelectionSystem::Visitor
+    public selection::SelectionSystem::Visitor
 {
 private:
 	mutable bool _onlyGroups;

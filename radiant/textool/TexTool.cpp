@@ -1,26 +1,28 @@
 #include "TexTool.h"
 
+#include <limits>
 #include "i18n.h"
 #include "ieventmanager.h"
+#include "icommandsystem.h"
+#include "itexturetoolmodel.h"
+#include "itexturetoolcolours.h"
 #include "imainframe.h"
 #include "igl.h"
 #include "iundo.h"
-#include "ibrush.h"
-#include "ipatch.h"
+#include "igrid.h"
+#include "iradiant.h"
 #include "itoolbarmanager.h"
 #include "itextstream.h"
 
 #include "registry/adaptors.h"
-#include "texturelib.h"
-#include "selectionlib.h"
-#include "camera/CameraWndManager.h"
 #include "wxutil/GLWidget.h"
+#include "selection/Device.h"
+#include "selection/SelectionVolume.h"
+#include "selection/SelectionPool.h"
+#include "messages/TextureChanged.h"
+#include "fmt/format.h"
 
-#include "textool/Selectable.h"
-#include "textool/Transformable.h"
-#include "textool/item/PatchItem.h"
-#include "textool/item/BrushItem.h"
-#include "textool/item/FaceItem.h"
+#include "textool/tools/TextureToolMouseEvent.h"
 
 #include <wx/sizer.h>
 #include <wx/toolbar.h>
@@ -32,32 +34,27 @@ namespace
 {
 	const char* const WINDOW_TITLE = N_("Texture Tool");
 
+    const std::string RKEY_TEXTOOL_ROOT = "user/ui/textures/texTool/";
 	const std::string RKEY_WINDOW_STATE = RKEY_TEXTOOL_ROOT + "window";
 	const std::string RKEY_GRID_STATE = RKEY_TEXTOOL_ROOT + "gridActive";
+    const char* const RKEY_SELECT_EPSILON = "user/ui/selectionEpsilon";
 
-	const float DEFAULT_ZOOM_FACTOR = 1.5f;
-	const float ZOOM_MODIFIER = 1.25f;
-	const float MOVE_FACTOR = 2.0f;
-
-	const float GRID_MAX = 1.0f;
-	const float GRID_DEFAULT = 0.0625f;
-	const float GRID_MIN = 0.00390625f;
+	constexpr const float ZOOM_MODIFIER = 1.25f;
 }
 
-TexTool::TexTool()
-: TransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getWxTopLevelWindow(), true),
-  _glWidget(new wxutil::GLWidget(this, std::bind(&TexTool::onGLDraw, this), "TexTool")),
-  _selectionInfo(GlobalSelectionSystem().getSelectionInfo()),
-  _zoomFactor(DEFAULT_ZOOM_FACTOR),
-  _dragRectangle(false),
-  _manipulatorMode(false),
-  _viewOriginMove(false),
-  _grid(GRID_DEFAULT),
-  _gridActive(registry::getValue<bool>(RKEY_GRID_STATE)),
-  _updateNeeded(false)
+TexTool::TexTool() : 
+    TransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getWxTopLevelWindow(), true),
+    MouseToolHandler(IMouseToolGroup::Type::TextureTool),
+    _glWidget(new wxutil::GLWidget(this, std::bind(&TexTool::onGLDraw, this), "TexTool")),
+    _gridActive(registry::getValue<bool>(RKEY_GRID_STATE)),
+    _selectionRescanNeeded(false),
+    _manipulatorModeToggleRequestHandler(std::numeric_limits<std::size_t>::max()),
+    _componentSelectionModeToggleRequestHandler(std::numeric_limits<std::size_t>::max()),
+    _textureMessageHandler(std::numeric_limits<std::size_t>::max()),
+    _gridSnapHandler(std::numeric_limits<std::size_t>::max()),
+    _determineThemeFromImage(false)
 {
-	Connect(wxEVT_IDLE, wxIdleEventHandler(TexTool::onIdle), NULL, this);
-	Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(TexTool::onKeyPress), NULL, this);
+	Bind(wxEVT_IDLE, &TexTool::onIdle, this);
 
 	populateWindow();
 
@@ -68,6 +65,10 @@ TexTool::TexTool()
         sigc::bind(sigc::mem_fun(this, &TexTool::setGridActive), true),
         sigc::bind(sigc::mem_fun(this, &TexTool::setGridActive), false)
     );
+
+    _freezePointer.connectMouseEvents(
+        std::bind(&TexTool::onMouseDown, this, std::placeholders::_1),
+        std::bind(&TexTool::onMouseUp, this, std::placeholders::_1));
 }
 
 TexToolPtr& TexTool::InstancePtr()
@@ -85,22 +86,19 @@ void TexTool::setGridActive(bool active)
 void TexTool::populateWindow()
 {
 	// Connect all relevant events
-	_glWidget->Connect(wxEVT_SIZE, wxSizeEventHandler(TexTool::onGLResize), NULL, this);
-	_glWidget->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(TexTool::onMouseScroll), NULL, this);
-	_glWidget->Connect(wxEVT_MOTION, wxMouseEventHandler(TexTool::onMouseMotion), NULL, this);
+	_glWidget->Bind(wxEVT_SIZE, &TexTool::onGLResize, this);
+	_glWidget->Bind(wxEVT_MOUSEWHEEL, &TexTool::onMouseScroll, this);
+	_glWidget->Bind(wxEVT_MOTION, &TexTool::onMouseMotion, this);
 
-	_glWidget->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(TexTool::onMouseDown), NULL, this);
-    _glWidget->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(TexTool::onMouseDown), NULL, this);
-	_glWidget->Connect(wxEVT_LEFT_UP, wxMouseEventHandler(TexTool::onMouseUp), NULL, this);
-	_glWidget->Connect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(TexTool::onMouseDown), NULL, this);
-    _glWidget->Connect(wxEVT_RIGHT_DCLICK, wxMouseEventHandler(TexTool::onMouseDown), NULL, this);
-	_glWidget->Connect(wxEVT_RIGHT_UP, wxMouseEventHandler(TexTool::onMouseUp), NULL, this);
-	_glWidget->Connect(wxEVT_MIDDLE_DOWN, wxMouseEventHandler(TexTool::onMouseDown), NULL, this);
-    _glWidget->Connect(wxEVT_MIDDLE_DCLICK, wxMouseEventHandler(TexTool::onMouseDown), NULL, this);
-	_glWidget->Connect(wxEVT_MIDDLE_UP, wxMouseEventHandler(TexTool::onMouseUp), NULL, this);
-
-	// Connect our own key handler afterwards to receive events before the event manager
-	_glWidget->Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(TexTool::onKeyPress), NULL, this);
+	_glWidget->Bind(wxEVT_LEFT_DOWN, &TexTool::onMouseDown, this);
+    _glWidget->Bind(wxEVT_LEFT_DCLICK, &TexTool::onMouseDown, this);
+	_glWidget->Bind(wxEVT_LEFT_UP, &TexTool::onMouseUp, this);
+	_glWidget->Bind(wxEVT_RIGHT_DOWN, &TexTool::onMouseDown, this);
+    _glWidget->Bind(wxEVT_RIGHT_DCLICK, &TexTool::onMouseDown, this);
+	_glWidget->Bind(wxEVT_RIGHT_UP, &TexTool::onMouseUp, this);
+	_glWidget->Bind(wxEVT_MIDDLE_DOWN, &TexTool::onMouseDown, this);
+    _glWidget->Bind(wxEVT_MIDDLE_DCLICK, &TexTool::onMouseDown, this);
+	_glWidget->Bind(wxEVT_MIDDLE_UP, &TexTool::onMouseUp, this);
 
 	SetSizer(new wxBoxSizer(wxVERTICAL));
 
@@ -124,11 +122,23 @@ void TexTool::_preHide()
 	_undoHandler.disconnect();
 	_redoHandler.disconnect();
 
-	_selectionChanged.disconnect();
+	_sceneSelectionChanged.disconnect();
+    _manipulatorChanged.disconnect();
+    _selectionModeChanged.disconnect();
+    _selectionChanged.disconnect();
+    _gridChanged.disconnect();
 
-	// Clear items to prevent us from running into stale references
-	// when the textool is shown again
-	_items.clear();
+    GlobalRadiantCore().getMessageBus().removeListener(_manipulatorModeToggleRequestHandler);
+    _manipulatorModeToggleRequestHandler = std::numeric_limits<std::size_t>::max();
+
+    GlobalRadiantCore().getMessageBus().removeListener(_componentSelectionModeToggleRequestHandler);
+    _componentSelectionModeToggleRequestHandler = std::numeric_limits<std::size_t>::max();
+    
+    GlobalRadiantCore().getMessageBus().removeListener(_textureMessageHandler);
+    _textureMessageHandler = std::numeric_limits<std::size_t>::max();
+    
+    GlobalRadiantCore().getMessageBus().removeListener(_gridSnapHandler);
+    _gridSnapHandler = std::numeric_limits<std::size_t>::max();
 }
 
 // Pre-show callback
@@ -136,40 +146,132 @@ void TexTool::_preShow()
 {
 	TransientWindow::_preShow();
 
-	_selectionChanged.disconnect();
+	_sceneSelectionChanged.disconnect();
 	_undoHandler.disconnect();
 	_redoHandler.disconnect();
+    _manipulatorChanged.disconnect();
+    _selectionModeChanged.disconnect();
+    _selectionChanged.disconnect();
+    _gridChanged.disconnect();
 
 	// Register self to the SelSystem to get notified upon selection changes.
-	_selectionChanged = GlobalSelectionSystem().signal_selectionChanged().connect(
-		[this](const ISelectable&) { queueUpdate(); });
+	_sceneSelectionChanged = GlobalSelectionSystem().signal_selectionChanged().connect(
+        [this](const ISelectable&) { _selectionRescanNeeded = true; });
+
+    _manipulatorModeToggleRequestHandler = GlobalRadiantCore().getMessageBus().addListener(
+        radiant::IMessage::ManipulatorModeToggleRequest,
+        radiant::TypeListener<selection::ManipulatorModeToggleRequest>(
+            sigc::mem_fun(this, &TexTool::handleManipulatorModeToggleRequest)));
+
+    _componentSelectionModeToggleRequestHandler = GlobalRadiantCore().getMessageBus().addListener(
+        radiant::IMessage::ComponentSelectionModeToggleRequest,
+        radiant::TypeListener<selection::ComponentSelectionModeToggleRequest>(
+            sigc::mem_fun(this, &TexTool::handleComponentSelectionModeToggleRequest)));
+
+    // Get notified about texture changes
+    _textureMessageHandler = GlobalRadiantCore().getMessageBus().addListener(
+        radiant::IMessage::Type::TextureChanged,
+        radiant::TypeListener<radiant::TextureChangedMessage>(
+            [this](radiant::TextureChangedMessage& msg) { queueDraw(); }));
+    
+    // Intercept the grid snap message
+    _gridSnapHandler = GlobalRadiantCore().getMessageBus().addListener(
+        radiant::IMessage::Type::GridSnapRequest,
+        radiant::TypeListener<selection::GridSnapRequest>(
+            sigc::mem_fun(this, &TexTool::handleGridSnapRequest)));
 
 	_undoHandler = GlobalUndoSystem().signal_postUndo().connect(
 		sigc::mem_fun(this, &TexTool::onUndoRedoOperation));
 	_redoHandler = GlobalUndoSystem().signal_postRedo().connect(
 		sigc::mem_fun(this, &TexTool::onUndoRedoOperation));
 
+    _manipulatorChanged = GlobalTextureToolSelectionSystem().signal_activeManipulatorChanged().connect(
+        sigc::mem_fun(this, &TexTool::onManipulatorModeChanged)
+    );
+    _selectionModeChanged = GlobalTextureToolSelectionSystem().signal_selectionModeChanged().connect(
+        sigc::mem_fun(this, &TexTool::onSelectionModeChanged)
+    );
+    _selectionChanged = GlobalTextureToolSelectionSystem().signal_selectionChanged().connect(
+        sigc::mem_fun(this, &TexTool::queueDraw)
+    );
+
+    _gridChanged = GlobalGrid().signal_gridChanged().connect(sigc::mem_fun(this, &TexTool::queueDraw));
+
 	// Trigger an update of the current selection
-	queueUpdate();
+    _selectionRescanNeeded = true;
+    updateThemeButtons();
+    queueDraw();
+}
+
+bool TexTool::textureToolHasFocus()
+{
+    return HasFocus() || _glWidget->HasFocus();
+}
+
+void TexTool::handleManipulatorModeToggleRequest(selection::ManipulatorModeToggleRequest& request)
+{
+    if (!textureToolHasFocus())
+    {
+        return;
+    }
+
+    // Catch specific manipulator types, let the others slip through
+    switch (request.getType())
+    {
+    case selection::IManipulator::Drag:
+    case selection::IManipulator::Rotate:
+        GlobalTextureToolSelectionSystem().toggleManipulatorMode(request.getType());
+        request.setHandled(true);
+        break;
+    };
+}
+
+void TexTool::handleGridSnapRequest(selection::GridSnapRequest& request)
+{
+    if (!textureToolHasFocus())
+    {
+        return;
+    }
+
+    // Redirect this call to our own grid snap command
+    GlobalCommandSystem().executeCommand("TexToolSnapToGrid");
+    request.setHandled(true);
+}
+
+void TexTool::handleComponentSelectionModeToggleRequest(selection::ComponentSelectionModeToggleRequest& request)
+{
+    if (!textureToolHasFocus())
+    {
+        return;
+    }
+
+    // Catch specific mode types, let the others slip through
+    switch (request.getMode())
+    {
+    case selection::ComponentSelectionMode::Default:
+        GlobalCommandSystem().executeCommand("ToggleTextureToolSelectionMode", { "Surface" });
+        request.setHandled(true);
+        break;
+    case selection::ComponentSelectionMode::Vertex:
+        GlobalCommandSystem().executeCommand("ToggleTextureToolSelectionMode", { "Vertex" });
+        request.setHandled(true);
+        break;
+    };
 }
 
 void TexTool::onUndoRedoOperation()
 {
-	queueUpdate();
+    queueDraw();
 }
 
-void TexTool::gridUp() {
-	if (_grid*2 <= GRID_MAX && _gridActive) {
-		_grid *= 2;
-		draw();
-	}
+void TexTool::onManipulatorModeChanged(selection::IManipulator::Type type)
+{
+    queueDraw();
 }
 
-void TexTool::gridDown() {
-	if (_grid/2 >= GRID_MIN && _gridActive) {
-		_grid /= 2;
-		draw();
-	}
+void TexTool::onSelectionModeChanged(textool::SelectionMode mode)
+{
+    queueDraw();
 }
 
 void TexTool::onMainFrameShuttingDown()
@@ -191,9 +293,9 @@ void TexTool::onMainFrameShuttingDown()
 
 TexTool& TexTool::Instance()
 {
-	TexToolPtr& instancePtr = InstancePtr();
+	auto& instancePtr = InstancePtr();
 
-	if (instancePtr == NULL)
+	if (!instancePtr)
 	{
 		// Not yet instantiated, do it now
 		instancePtr.reset(new TexTool);
@@ -209,41 +311,73 @@ TexTool& TexTool::Instance()
 
 void TexTool::update()
 {
-	std::string selectedShader = selection::getShaderFromSelection();
-	_shader = GlobalMaterialManager().getMaterial(selectedShader);
-
-	// Clear the list to remove all the previously allocated items
-	_items.clear();
-
-	// Does the selection use one single shader?
-	if (!_shader->getName().empty())
-	{
-		if (GlobalSelectionSystem().countSelectedComponents() > 0)
-		{
-			// Check each selected face
-			GlobalSelectionSystem().foreachFace([&](IFace& face)
-			{
-				// Allocate a new FaceItem
-				_items.emplace_back(new textool::FaceItem(face));
-			});
-		}
-		else
-		{
-			GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
-			{
-				if (Node_isBrush(node))
-				{
-					_items.emplace_back(new textool::BrushItem(*Node_getIBrush(node)));
-				}
-				else if (Node_isPatch(node))
-				{
-					_items.emplace_back(new textool::PatchItem(*Node_getIPatch(node)));
-				}
-			});
-		}
-	}
+    auto material = GlobalTextureToolSceneGraph().getActiveMaterial();
+    _shader = !material.empty() ? GlobalMaterialManager().getMaterial(material) : MaterialPtr();
 
 	recalculateVisibleTexSpace();
+
+    if (material != _material)
+    {
+        _material = material;
+        _determineThemeFromImage = true;
+    }
+}
+
+int TexTool::getWidth() const
+{
+    return static_cast<int>(_windowDims[0]);
+}
+
+int TexTool::getHeight() const
+{
+    return static_cast<int>(_windowDims[1]);
+}
+
+void TexTool::zoomIn()
+{
+    _texSpaceAABB.extents *= ZOOM_MODIFIER;
+    updateProjection();
+}
+
+void TexTool::zoomOut()
+{
+    _texSpaceAABB.extents /= ZOOM_MODIFIER;
+    updateProjection();
+}
+
+SelectionTestPtr TexTool::createSelectionTestForPoint(const Vector2& point)
+{
+    float selectEpsilon = registry::getValue<float>(RKEY_SELECT_EPSILON);
+
+    // Generate the epsilon
+    Vector2 deviceEpsilon(selectEpsilon / _windowDims[0], selectEpsilon / _windowDims[1]);
+
+    // Copy the current view and constrain it to a small rectangle
+    render::View scissored(_view);
+    ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromPoint(point, deviceEpsilon));
+
+    return SelectionTestPtr(new SelectionVolume(scissored));
+}
+
+int TexTool::getDeviceWidth() const
+{
+    return getWidth();
+}
+
+int TexTool::getDeviceHeight() const
+{
+    return getHeight();
+}
+
+const VolumeTest& TexTool::getVolumeTest() const
+{
+    return _view;
+}
+
+void TexTool::forceRedraw()
+{
+    _glWidget->Refresh();
+    _glWidget->Update();
 }
 
 void TexTool::draw()
@@ -254,383 +388,118 @@ void TexTool::draw()
 
 void TexTool::onIdle(wxIdleEvent& ev)
 {
-	if (_updateNeeded)
-	{
-		_updateNeeded = false;
-
-		update();
-		draw();
-	}
+    if (_selectionRescanNeeded)
+    {
+        _selectionRescanNeeded = false;
+        update();
+        queueDraw();
+    }
 }
 
-void TexTool::queueUpdate()
+void TexTool::queueDraw()
 {
-	_updateNeeded = true;
+    _glWidget->Refresh();
 }
 
-void TexTool::flipSelected(int axis) {
-	if (countSelected() > 0) {
-		beginOperation();
+void TexTool::scrollByPixels(int x, int y)
+{
+    auto uPerPixel = _texSpaceAABB.extents[0] * 2 / _windowDims[0];
+    auto vPerPixel = _texSpaceAABB.extents[1] * 2 / _windowDims[1];
+    
+    _texSpaceAABB.origin[0] -= x * uPerPixel;
+    _texSpaceAABB.origin[1] -= y * vPerPixel;
 
-		for (std::size_t i = 0; i < _items.size(); i++) {
-			_items[i]->flipSelected(axis);
-		}
-
-		draw();
-		endOperation("TexToolMergeItems");
-	}
+    updateProjection();
 }
 
-void TexTool::mergeSelectedItems() {
-	if (countSelected() > 0) {
-		AABB selExtents;
-
-		for (std::size_t i = 0; i < _items.size(); i++) {
-			selExtents.includeAABB(_items[i]->getSelectedExtents());
-		}
-
-		if (selExtents.isValid()) {
-			beginOperation();
-
-			Vector2 centroid(
-				selExtents.origin[0],
-				selExtents.origin[1]
-			);
-
-			for (std::size_t i = 0; i < _items.size(); i++) {
-				_items[i]->moveSelectedTo(centroid);
-			}
-
-			draw();
-
-			endOperation("TexToolMergeItems");
-		}
-	}
-}
-
-void TexTool::snapToGrid() {
-	if (_gridActive) {
-		beginOperation();
-
-		for (std::size_t i = 0; i < _items.size(); i++) {
-			_items[i]->snapSelectedToGrid(_grid);
-		}
-
-		endOperation("TexToolSnapToGrid");
-
-		draw();
-	}
-}
-
-int TexTool::countSelected() {
-	// The storage variable for use in the visitor class
-	int selCount = 0;
-
-	// Create the visitor class and let it walk
-	textool::SelectedCounter counter(selCount);
-	foreachItem(counter);
-
-	return selCount;
-}
-
-bool TexTool::setAllSelected(bool selected) {
-
-	if (countSelected() == 0 && !selected) {
-		// Nothing selected and de-selection requested,
-		// return FALSE to propagate the command
-		return false;
-	}
-	else {
-		// Clear the selection using a visitor class
-		textool::SetSelectedWalker visitor(selected);
-		foreachItem(visitor);
-
-		// Redraw to visualise the changes
-		draw();
-
-		// Return success
-		return true;
-	}
-}
-
-void TexTool::recalculateVisibleTexSpace() {
+void TexTool::recalculateVisibleTexSpace()
+{
 	// Get the selection extents
-	AABB& selAABB = getExtents();
-
-	// Reset the viewport zoom
-	_zoomFactor = DEFAULT_ZOOM_FACTOR;
-
-	// Relocate and resize the texSpace AABB
-	_texSpaceAABB = AABB(selAABB.origin, selAABB.extents);
+	_texSpaceAABB = getUvBoundsFromSceneSelection();
+    _texSpaceAABB.extents *= 2; // add some padding around the selection
 
 	// Normalise the plane to be square
 	_texSpaceAABB.extents[0] = std::max(_texSpaceAABB.extents[0], _texSpaceAABB.extents[1]);
-	_texSpaceAABB.extents[1] = std::max(_texSpaceAABB.extents[0], _texSpaceAABB.extents[1]);
+	_texSpaceAABB.extents[1] = _texSpaceAABB.extents[0];
+
+    // Make the visible space non-uniform if the texture has a width/height ratio != 1
+    double textureAspect = getTextureAspectRatio();
+
+    if (textureAspect < 1)
+    {
+        _texSpaceAABB.extents.x() /= textureAspect;
+    }
+    else
+    {
+        _texSpaceAABB.extents.y() *= textureAspect;
+    }
+
+    // Initially grow this texture space to match/fit the window aspect
+    double windowAspect = _windowDims.x() / _windowDims.y();
+    double currentAspect = _texSpaceAABB.extents.x() / _texSpaceAABB.extents.y();
+
+    if (currentAspect < windowAspect)
+    {
+        _texSpaceAABB.extents.x() = windowAspect * _texSpaceAABB.extents.y();
+    }
+    else
+    {
+        _texSpaceAABB.extents.y() = 1 / windowAspect * _texSpaceAABB.extents.x();
+    }
+
+    updateProjection();
 }
 
-AABB& TexTool::getExtents() {
-	_selAABB = AABB();
+AABB TexTool::getUvBoundsFromSceneSelection()
+{
+	AABB bounds;
 
-	for (std::size_t i = 0; i < _items.size(); i++) {
-		// Expand the selection AABB by the extents of the item
-		_selAABB.includeAABB(_items[i]->getExtents());
-	}
+    GlobalTextureToolSceneGraph().foreachNode([&](const textool::INode::Ptr& node)
+    {
+        // Expand the selection AABB by the extents of the item
+        bounds.includeAABB(node->localAABB());
+        return true;
+    });
 
-	return _selAABB;
+	return bounds;
 }
 
-AABB& TexTool::getVisibleTexSpace() {
+const AABB& TexTool::getVisibleTexSpace()
+{
 	return _texSpaceAABB;
 }
 
-Vector2 TexTool::getTextureCoords(const double& x, const double& y) {
-	Vector2 result;
-
-	if (_selAABB.isValid()) {
-		Vector3 aabbTL = _texSpaceAABB.origin - _texSpaceAABB.extents * _zoomFactor;
-		Vector3 aabbBR = _texSpaceAABB.origin + _texSpaceAABB.extents * _zoomFactor;
-
-		Vector2 topLeft(aabbTL[0], aabbTL[1]);
-		Vector2 bottomRight(aabbBR[0], aabbBR[1]);
-
-		// Determine the texcoords by the according proportionality factors
-		result[0] = topLeft[0] + x * (bottomRight[0]-topLeft[0]) / _windowDims[0];
-		result[1] = topLeft[1] + y * (bottomRight[1]-topLeft[1]) / _windowDims[1];
-	}
-
-	return result;
-}
-
-void TexTool::drawUVCoords() {
-	// Cycle through the items and tell them to render themselves
-	for (std::size_t i = 0; i < _items.size(); i++) {
-		_items[i]->render();
-	}
-}
-
-textool::TexToolItemVec
-	TexTool::getSelectables(const textool::Rectangle& rectangle)
+void TexTool::drawUVCoords()
 {
-	textool::TexToolItemVec selectables;
-
-	// Cycle through all the toplevel items and test them for selectability
-	for (std::size_t i = 0; i < _items.size(); i++) {
-		if (_items[i]->testSelect(rectangle)) {
-			selectables.push_back(_items[i]);
-		}
-	}
-
-	// Cycle through all the items and ask them to deliver the list of child selectables
-	// residing within the test rectangle
-	for (std::size_t i = 0; i < _items.size(); i++) {
-		// Get the list from each item
-		textool::TexToolItemVec found =
-			_items[i]->getSelectableChildren(rectangle);
-
-		// and append the vector to the existing vector
-		selectables.insert(selectables.end(), found.begin(), found.end());
-	}
-
-	return selectables;
-}
-
-textool::TexToolItemVec TexTool::getSelectables(const Vector2& coords) {
-	// Construct a test rectangle with 2% of the width/height
-	// of the visible texture space
-	textool::Rectangle testRectangle;
-
-	Vector3 extents = getVisibleTexSpace().extents * _zoomFactor;
-
-	testRectangle.topLeft[0] = coords[0] - extents[0]*0.02;
-	testRectangle.topLeft[1] = coords[1] - extents[1]*0.02;
-	testRectangle.bottomRight[0] = coords[0] + extents[0]*0.02;
-	testRectangle.bottomRight[1] = coords[1] + extents[1]*0.02;
-
-	// Pass the call on to the getSelectables(<RECTANGLE>) method
-	return getSelectables(testRectangle);
-}
-
-void TexTool::beginOperation()
-{
-	// Start an undo recording session
-	GlobalUndoSystem().start();
-
-	// Tell all the items to save their memento
-	for (std::size_t i = 0; i < _items.size(); i++)
-	{
-		_items[i]->beginTransformation();
-	}
-}
-
-void TexTool::endOperation(const std::string& commandName)
-{
-	for (std::size_t i = 0; i < _items.size(); i++)
-	{
-		_items[i]->endTransformation();
-	}
-
-	GlobalUndoSystem().finish(commandName);
-}
-
-void TexTool::doMouseUp(const Vector2& coords, wxMouseEvent& event)
-{
-	// End the origin move, if it was active before
-	if (event.RightUp() && !event.HasAnyModifiers()) {
-		_viewOriginMove = false;
-	}
-
-	// If we are in manipulation mode, end the move
-    if (event.LeftUp() && !event.HasAnyModifiers() && _manipulatorMode)
+    GlobalTextureToolSceneGraph().foreachNode([&](const textool::INode::Ptr& node)
     {
-		_manipulatorMode = false;
-
-		// Finish the undo recording, store the accumulated undomementos
-		endOperation("TexToolDrag");
-	}
-
-	// If we are in selection mode, end the selection
-    if ((event.LeftUp() && event.ShiftDown())
-		 && _dragRectangle)
-	{
-		_dragRectangle = false;
-
-		// Make sure the corners are in the correct order
-		_selectionRectangle.sortCorners();
-
-		// The minimim rectangle diameter for a rectangle test (3 % of visible texspace)
-		float minDist = _texSpaceAABB.extents[0] * _zoomFactor * 0.03;
-
-		textool::TexToolItemVec selectables;
-
-		if ((coords - _selectionRectangle.topLeft).getLength() < minDist) {
-			// Perform a point selection test
-			selectables = getSelectables(_selectionRectangle.topLeft);
-		}
-		else {
-			// Perform the regular selectiontest
-			selectables = getSelectables(_selectionRectangle);
-		}
-
-		// Toggle the selection
-		for (std::size_t i = 0; i < selectables.size(); i++) {
-			selectables[i]->toggle();
-		}
-	}
-
-	draw();
-}
-
-void TexTool::doMouseMove(const Vector2& coords, wxMouseEvent& event)
-{
-	if (_dragRectangle)
-	{
-		_selectionRectangle.bottomRight = coords;
-		draw();
-	}
-	else if (_manipulatorMode)
-	{
-		Vector2 delta = coords - _manipulateRectangle.topLeft;
-
-		// Snap the operations to the grid
-		Vector3 snapped(0,0,0);
-
-		if (_gridActive)
-		{
-			snapped[0] = (fabs(delta[0]) > 0.0f) ?
-				floor(fabs(delta[0]) / _grid)*_grid * delta[0]/fabs(delta[0]) :
-				0.0f;
-
-			snapped[1] = (fabs(delta[1]) > 0.0f) ?
-				floor(fabs(delta[1]) / _grid)*_grid * delta[1]/fabs(delta[1]) :
-				0.0f;
-		}
-		else {
-			snapped[0] = delta[0];
-			snapped[1] = delta[1];
-		}
-
-		if (snapped.getLength() > 0)
-		{
-			// Create the transformation matrix
-			Matrix4 transform = Matrix4::getTranslation(snapped);
-
-			// Transform the selected
-			// The transformSelected() call is propagated down the entire tree
-			// of available items (e.g. PatchItem > PatchVertexItems)
-			for (std::size_t i = 0; i < _items.size(); i++)
-			{
-				_items[i]->transformSelected(transform);
-			}
-
-			// Move the starting point by the effective translation
-			_manipulateRectangle.topLeft[0] += transform.tx();
-			_manipulateRectangle.topLeft[1] += transform.ty();
-
-			draw();
-
-			// Update the camera to reflect the changes
-			GlobalCamera().update();
-		}
-	}
-}
-
-void TexTool::doMouseDown(const Vector2& coords, wxMouseEvent& event)
-{
-	_manipulatorMode = false;
-	_dragRectangle = false;
-	_viewOriginMove = false;
-
-	if (event.LeftDown() && !event.HasAnyModifiers())
-	{
-		// Get the list of selectables of this point
-		textool::TexToolItemVec selectables = getSelectables(coords);
-
-		// Any selectables under the mouse pointer?
-		if (!selectables.empty())
-		{
-			// Activate the manipulator mode
-			_manipulatorMode = true;
-			_manipulateRectangle.topLeft = coords;
-			_manipulateRectangle.bottomRight = coords;
-
-			// Begin the undoable operation
-			beginOperation();
-		}
-	}
-    else if (event.LeftDown() && event.ShiftDown())
-	{
-		// Start a drag or click operation
-		_dragRectangle = true;
-		_selectionRectangle.topLeft = coords;
-		_selectionRectangle.bottomRight = coords;
-	}
-}
-
-void TexTool::selectRelatedItems() {
-	for (std::size_t i = 0; i < _items.size(); i++) {
-		_items[i]->selectRelated();
-	}
-	draw();
-}
-
-void TexTool::foreachItem(textool::ItemVisitor& visitor) {
-	for (std::size_t i = 0; i < _items.size(); i++) {
-		// Visit the class
-		visitor.visit(_items[i]);
-
-		// Now propagate the visitor down the hierarchy
-		_items[i]->foreachItem(visitor);
-	}
+        node->render(GlobalTextureToolSelectionSystem().getSelectionMode());
+        return true;
+    });
 }
 
 void TexTool::drawGrid()
 {
-	const float MAX_NUMBER_OF_GRID_LINES = 1024;
+    auto gridSpacing = GlobalGrid().getGridSize(grid::Space::Texture);
 
-	AABB& texSpaceAABB = getVisibleTexSpace();
+	const auto& texSpaceAABB = getVisibleTexSpace();
+    auto uPerPixel = texSpaceAABB.extents.x() / _windowDims.x();
+    auto vPerPixel = texSpaceAABB.extents.y() / _windowDims.y();
 
-	Vector3 topLeft = texSpaceAABB.origin - texSpaceAABB.extents * _zoomFactor;
-	Vector3 bottomRight = texSpaceAABB.origin + texSpaceAABB.extents * _zoomFactor;
+    auto smallestUvPerPixel = uPerPixel > vPerPixel ? vPerPixel : uPerPixel;
+
+    auto gridSpacingInPixels = gridSpacing / smallestUvPerPixel;
+
+    // Ensure that the grid spacing is at least 10 pixels wide
+    while (gridSpacingInPixels < 12)
+    {
+        gridSpacing *= GlobalGrid().getGridBase(grid::Space::Texture);
+        gridSpacingInPixels = gridSpacing / smallestUvPerPixel;
+    }
+
+	const float MAX_NUMBER_OF_GRID_LINES = 256;
+	Vector3 topLeft = texSpaceAABB.origin - texSpaceAABB.extents;
+	Vector3 bottomRight = texSpaceAABB.origin + texSpaceAABB.extents;
 
 	if (topLeft[0] > bottomRight[0])
 	{
@@ -654,6 +523,25 @@ void TexTool::drawGrid()
 
 	glBegin(GL_LINES);
 
+    if (_gridActive)
+    {
+        // Draw the manipulation grid
+        auto minorGrid = GlobalTextureToolColourSchemeManager().getColour(textool::SchemeElement::MinorGrid);
+        glColor4fv(minorGrid);
+
+        for (float y = startY; y <= endY; y += gridSpacing)
+        {
+            glVertex2f(startX, y);
+            glVertex2f(endX, y);
+        }
+
+        for (float x = startX; x <= endX; x += gridSpacing)
+        {
+            glVertex2f(x, startY);
+            glVertex2f(x, endY);
+        }
+    }
+
 	// To avoid drawing millions of grid lines in a window, scale up the grid interval
 	// such that only a maximum number of lines are drawn
 	float yIntStep = 1.0f;
@@ -669,7 +557,8 @@ void TexTool::drawGrid()
 	}
 
 	// Draw the integer grid
-	glColor4f(0.4f, 0.4f, 0.4f, 0.4f);
+    auto majorGrid = GlobalTextureToolColourSchemeManager().getColour(textool::SchemeElement::MajorGrid);
+    glColor4fv(majorGrid);
 
 	for (float y = startY; y <= endY; y += yIntStep)
 	{
@@ -683,35 +572,8 @@ void TexTool::drawGrid()
 		glVertex2f(x, endY);
 	}
 
-	if (_gridActive)
-	{
-		// Draw the manipulation grid
-		glColor4f(0.2f, 0.2f, 0.2f, 0.4f);
-
-		float grid = _grid;
-
-		// scale up the grid interval such that only a maximum number of lines are drawn
-		while (abs(endX - startX) / grid > MAX_NUMBER_OF_GRID_LINES ||
-			   abs(endY - startY) / grid > MAX_NUMBER_OF_GRID_LINES)
-		{
-			grid *= 2;
-		}
-
-		for (float y = startY; y <= endY; y += grid)
-		{
-			glVertex2f(startX, y);
-			glVertex2f(endX, y);
-		}
-
-		for (float x = startX; x <= endX; x += grid)
-		{
-			glVertex2f(x, startY);
-			glVertex2f(x, endY);
-		}
-	}
-
 	// Draw the axes through the origin
-	glColor4f(1, 1, 1, 0.5f);
+	glColor4fv(majorGrid);
 	glVertex2f(0, startY);
 	glVertex2f(0, endY);
 
@@ -720,29 +582,57 @@ void TexTool::drawGrid()
 
 	glEnd();
 
-	// Draw coordinate strings
+	// Draw coordinate strings, with a higher minimum spacing than the lines
+    while (yIntStep / vPerPixel < 32)
+    {
+        yIntStep *= 2;
+    }
+
+    while (xIntStep / uPerPixel < 64)
+    {
+        xIntStep *= 2;
+    }
+
+    auto gridText = GlobalTextureToolColourSchemeManager().getColour(textool::SchemeElement::GridText);
+    glColor4fv(gridText);
+
+    float uvPerPixel = _texSpaceAABB.extents.y() / _windowDims.y();
+    float uvFontHeight = (GlobalOpenGL().getFontHeight() + 3) * uvPerPixel;
+
 	for (float y = startY; y <= endY; y += yIntStep)
 	{
-		glRasterPos2f(topLeft[0] + 0.05f, y + 0.05f);
-		std::string ycoordStr = string::to_string(trunc(y)) + ".0";
+		glRasterPos2f(topLeft[0] + 0.05f, y + uvFontHeight);
+        auto ycoordStr = fmt::format("{0:.1f}", trunc(y));
 		GlobalOpenGL().drawString(ycoordStr);
 	}
 
 	for (float x = startX; x <= endX; x += xIntStep)
 	{
-		glRasterPos2f(x + 0.05f, topLeft[1] + 0.03f * _zoomFactor);
-		std::string xcoordStr = string::to_string(trunc(x)) + ".0";
+		glRasterPos2f(x + 0.05f, topLeft.y() + uvFontHeight);
+		auto xcoordStr = fmt::format("{0:.1f}", trunc(x));
 		GlobalOpenGL().drawString(xcoordStr);
 	}
 }
 
+double TexTool::getTextureAspectRatio()
+{
+    if (!_shader) return 1;
+    
+    auto editorImage = _shader->getEditorImage();
+    if (!editorImage) return 1;
+
+    return static_cast<double>(editorImage->getWidth()) / editorImage->getHeight();
+}
+
+void TexTool::updateProjection()
+{
+    _view.constructFromTextureSpaceBounds(_texSpaceAABB,
+        static_cast<std::size_t>(_windowDims[0]),
+        static_cast<std::size_t>(_windowDims[1]));
+}
+
 bool TexTool::onGLDraw()
 {
-	if (_updateNeeded)
-	{
-		return false; // stop here, wait for the next idle event to refresh
-	}
-
 	// Initialise the viewport
 	glViewport(0, 0, _windowDims[0], _windowDims[1]);
 	glMatrixMode(GL_PROJECTION);
@@ -757,32 +647,22 @@ bool TexTool::onGLDraw()
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
 
-	// Do nothing, if the shader name is empty
-	if (_shader == NULL || _shader->getName().empty())
+	// Do nothing if the shader name is empty
+	if (!_shader || _shader->getName().empty())
 	{
 		return true;
 	}
 
-	AABB& selAABB = getExtents();
-
-	// Is there a valid selection?
-	if (!selAABB.isValid())
-	{
-		return true;
-	}
-
-	AABB& texSpaceAABB = getVisibleTexSpace();
+	auto& texSpaceAABB = getVisibleTexSpace();
 
 	// Get the upper left and lower right corner coordinates
-	Vector3 orthoTopLeft = texSpaceAABB.origin - texSpaceAABB.extents * _zoomFactor;
-	Vector3 orthoBottomRight = texSpaceAABB.origin + texSpaceAABB.extents * _zoomFactor;
+	auto orthoTopLeft = texSpaceAABB.origin - texSpaceAABB.extents;
+	auto orthoBottomRight = texSpaceAABB.origin + texSpaceAABB.extents;
 
-	// Initialise the 2D projection matrix with: left, right, bottom, top, znear, zfar
-	glOrtho(orthoTopLeft[0], 	// left
-			orthoBottomRight[0], // right
-			orthoBottomRight[1], // bottom
-			orthoTopLeft[1], 	// top
-			-1, 1);
+    glMatrixMode(GL_PROJECTION);
+    glLoadMatrixd(_view.GetProjection());
+    glMatrixMode(GL_MODELVIEW);
+    glLoadMatrixd(_view.GetModelview());
 
 	glColor3f(1, 1, 1);
 	// Tell openGL to draw front and back of the polygons in textured mode
@@ -791,6 +671,18 @@ bool TexTool::onGLDraw()
 	// Acquire the texture number of the active texture
 	TexturePtr tex = _shader->getEditorImage();
 	glBindTexture(GL_TEXTURE_2D, tex->getGLTexNum());
+
+    if (_determineThemeFromImage)
+    {
+        _determineThemeFromImage = false;
+
+        // Download the pixel data from openGL
+        std::vector<unsigned char> pixels;
+        pixels.resize(tex->getWidth() * tex->getHeight() * 3);
+        glGetTexImage(GL_TEXTURE_2D, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels.data());
+
+        determineThemeBasedOnPixelData(pixels);
+    }
 
 	// Draw the background texture
 	glEnable(GL_TEXTURE_2D);
@@ -817,34 +709,22 @@ bool TexTool::onGLDraw()
 	// Draw the u/v coordinates
 	drawUVCoords();
 
-	if (_dragRectangle) {
-		// Create a working reference to save typing
-		textool::Rectangle& rectangle = _selectionRectangle;
+    GlobalTextureToolSelectionSystem().getActiveManipulator()->renderComponents(_view, GlobalTextureToolSelectionSystem().getPivot2World());
 
-		// Define the blend function for transparency
-		glEnable(GL_BLEND);
-		glBlendColor(0,0,0, 0.2f);
-		glBlendFunc(GL_CONSTANT_ALPHA_EXT, GL_ONE_MINUS_CONSTANT_ALPHA_EXT);
+    if (!_activeMouseTools.empty())
+    {
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        glOrtho(0, _windowDims[0], 0, _windowDims[1], 0, 1);
 
-		glColor3f(0.8f, 0.8f, 1);
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		// The transparent fill rectangle
-		glBegin(GL_QUADS);
-		glVertex2d(rectangle.topLeft[0], rectangle.topLeft[1]);
-		glVertex2d(rectangle.bottomRight[0], rectangle.topLeft[1]);
-		glVertex2d(rectangle.bottomRight[0], rectangle.bottomRight[1]);
-		glVertex2d(rectangle.topLeft[0], rectangle.bottomRight[1]);
-		glEnd();
-		// The solid borders
-		glBlendColor(0,0,0, 0.8f);
-		glBegin(GL_LINE_LOOP);
-		glVertex2d(rectangle.topLeft[0], rectangle.topLeft[1]);
-		glVertex2d(rectangle.bottomRight[0], rectangle.topLeft[1]);
-		glVertex2d(rectangle.bottomRight[0], rectangle.bottomRight[1]);
-		glVertex2d(rectangle.topLeft[0], rectangle.bottomRight[1]);
-		glEnd();
-		glDisable(GL_BLEND);
-	}
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+
+        for (const auto& i : _activeMouseTools)
+        {
+            i.second->renderOverlay();
+        }
+    }
 
 	return true;
 }
@@ -854,157 +734,193 @@ void TexTool::onGLResize(wxSizeEvent& ev)
 	// Store the window dimensions for later calculations
 	_windowDims = Vector2(ev.GetSize().GetWidth(), ev.GetSize().GetHeight());
 
+    // Adjust the texture space to match up the new window aspect
+    double texSpaceAspect = _texSpaceAABB.extents.x() / _texSpaceAABB.extents.y();
+    double windowAspect = _windowDims.x() / _windowDims.y();
+
+    if (windowAspect > texSpaceAspect)
+    {
+        _texSpaceAABB.extents.x() = windowAspect * _texSpaceAABB.extents.y();
+    }
+    else
+    {
+        _texSpaceAABB.extents.y() = 1 / windowAspect * _texSpaceAABB.extents.x();
+    }
+
+    updateProjection();
+
 	// Queue an expose event
 	_glWidget->Refresh();
 }
 
 void TexTool::onMouseUp(wxMouseEvent& ev)
 {
-	// Calculate the texture coords from the x/y click coordinates
-	Vector2 texCoords = getTextureCoords(ev.GetX(), ev.GetY());
-
-	// Pass the call to the member method
-	doMouseUp(texCoords, ev);
-
-	// Check for view origin movements
-    if (ev.RightDown() && !ev.HasAnyModifiers())
-	{
-		_viewOriginMove = false;
-	}
+    // Regular mouse tool processing
+    MouseToolHandler::onGLMouseButtonRelease(ev);
 
 	ev.Skip();
 }
 
 void TexTool::onMouseDown(wxMouseEvent& ev)
 {
-	// Calculate the texture coords from the x/y click coordinates
-	Vector2 texCoords = getTextureCoords(ev.GetX(), ev.GetY());
-
-	// Pass the call to the member method
-	doMouseDown(texCoords, ev);
-
-    // Check for view origin movements
-    if (ev.RightDown() && !ev.HasAnyModifiers())
-	{
-		_moveOriginRectangle.topLeft = Vector2(ev.GetX(), ev.GetY());
-		_viewOriginMove = true;
-	}
+    // Send the event to the mouse tool handler
+    MouseToolHandler::onGLMouseButtonPress(ev);
 
 	ev.Skip();
 }
 
 void TexTool::onMouseMotion(wxMouseEvent& ev)
 {
-	// Calculate the texture coords from the x/y click coordinates
-	Vector2 texCoords = getTextureCoords(ev.GetX(), ev.GetY());
-
-	// Pass the call to the member routine
-	doMouseMove(texCoords, ev);
-
-	// Check for view origin movements
-	if (_viewOriginMove)
-	{
-		// Calculate the movement delta relative to the old window x,y coords
-		Vector2 delta = Vector2(ev.GetX(), ev.GetY()) - _moveOriginRectangle.topLeft;
-
-		AABB& texSpaceAABB = getVisibleTexSpace();
-
-		float speedFactor = _zoomFactor * MOVE_FACTOR;
-
-		float factorX = texSpaceAABB.extents[0] / _windowDims[0] * speedFactor;
-		float factorY = texSpaceAABB.extents[1] / _windowDims[1] * speedFactor;
-
-		texSpaceAABB.origin[0] -= delta[0] * factorX;
-		texSpaceAABB.origin[1] -= delta[1] * factorY;
-
-		// Store the new coordinates
-		_moveOriginRectangle.topLeft = Vector2(ev.GetX(), ev.GetY());
-
-		// Redraw to visualise the changes
-		draw();
-	}
-
-	ev.Skip();
-}
-
-void TexTool::onKeyPress(wxKeyEvent& ev)
-{
-	// Check for ESC to deselect all items
-	if (ev.GetKeyCode() == WXK_ESCAPE)
-	{
-		// Don't propage the keypress if the ESC could be processed
-		// setAllSelected returns TRUE in that case
-		if (setAllSelected(false))
-		{
-			return; // without skip
-		}
-	}
+    MouseToolHandler::onGLMouseMove(ev);
 
 	ev.Skip();
 }
 
 void TexTool::onMouseScroll(wxMouseEvent& ev)
 {
-	if (ev.GetWheelRotation() > 0)
-	{
-		_zoomFactor /= ZOOM_MODIFIER;
-		draw();
-	}
-	else if (ev.GetWheelRotation() < 0)
-	{
-		_zoomFactor *= ZOOM_MODIFIER;
-		draw();
-	}
+    if (ev.GetWheelRotation() > 0)
+    {
+        zoomOut();
+    }
+    else
+    {
+        zoomIn();
+    }
+
+    draw();
 }
 
-// Static command targets
 void TexTool::toggle(const cmd::ArgumentList& args)
 {
-	// Call the toggle() method of the static instance
 	Instance().ToggleVisibility();
-}
-
-void TexTool::texToolGridUp(const cmd::ArgumentList& args) {
-	Instance().gridUp();
-}
-
-void TexTool::texToolGridDown(const cmd::ArgumentList& args) {
-	Instance().gridDown();
-}
-
-void TexTool::texToolSnapToGrid(const cmd::ArgumentList& args) {
-	Instance().snapToGrid();
-}
-
-void TexTool::texToolMergeItems(const cmd::ArgumentList& args) {
-	Instance().mergeSelectedItems();
-}
-
-void TexTool::texToolFlipS(const cmd::ArgumentList& args) {
-	Instance().flipSelected(0);
-}
-
-void TexTool::texToolFlipT(const cmd::ArgumentList& args) {
-	Instance().flipSelected(1);
-}
-
-void TexTool::selectRelated(const cmd::ArgumentList& args) {
-	Instance().selectRelatedItems();
 }
 
 void TexTool::registerCommands()
 {
 	GlobalCommandSystem().addCommand("TextureTool", TexTool::toggle);
-	GlobalCommandSystem().addCommand("TexToolGridUp", TexTool::texToolGridUp);
-	GlobalCommandSystem().addCommand("TexToolGridDown", TexTool::texToolGridDown);
-	GlobalCommandSystem().addCommand("TexToolSnapToGrid", TexTool::texToolSnapToGrid);
-	GlobalCommandSystem().addCommand("TexToolMergeItems", TexTool::texToolMergeItems);
-	GlobalCommandSystem().addCommand("TexToolFlipS", TexTool::texToolFlipS);
-	GlobalCommandSystem().addCommand("TexToolFlipT", TexTool::texToolFlipT);
-	GlobalCommandSystem().addCommand("TexToolSelectRelated", TexTool::selectRelated);
-
 	GlobalEventManager().addRegistryToggle("TexToolToggleGrid", RKEY_GRID_STATE);
-	GlobalEventManager().addRegistryToggle("TexToolToggleFaceVertexScalePivot", RKEY_FACE_VERTEX_SCALE_PIVOT_IS_CENTROID);
+
+    GlobalEventManager().addToggle("TextureToolUseLightTheme", [](bool toggled)
+    {
+        if (toggled)
+        {
+            GlobalTextureToolColourSchemeManager().setActiveScheme(textool::ColourScheme::Light);
+            Instance().updateThemeButtons();
+            Instance().queueDraw();
+        }
+    });
+
+    GlobalEventManager().addToggle("TextureToolUseDarkTheme", [](bool toggled)
+    {
+        if (toggled)
+        {
+            GlobalTextureToolColourSchemeManager().setActiveScheme(textool::ColourScheme::Dark);
+            Instance().updateThemeButtons();
+            Instance().queueDraw();
+        }
+    });
+}
+
+MouseTool::Result TexTool::processMouseDownEvent(const MouseToolPtr& tool, const Vector2& point)
+{
+    TextureToolMouseEvent ev = createMouseEvent(point);
+    return tool->onMouseDown(ev);
+}
+
+MouseTool::Result TexTool::processMouseUpEvent(const MouseToolPtr& tool, const Vector2& point)
+{
+    TextureToolMouseEvent ev = createMouseEvent(point);
+    return tool->onMouseUp(ev);
+}
+
+MouseTool::Result TexTool::processMouseMoveEvent(const MouseToolPtr& tool, int x, int y)
+{
+    bool mouseToolReceivesDeltas = (tool->getPointerMode() & MouseTool::PointerMode::MotionDeltas) != 0;
+
+    // New MouseTool event, optionally passing the delta only
+    TextureToolMouseEvent ev = mouseToolReceivesDeltas ?
+        createMouseEvent(Vector2(0, 0), Vector2(x, y)) :
+        createMouseEvent(Vector2(x, y));
+
+    return tool->onMouseMove(ev);
+}
+
+void TexTool::handleGLCapturedMouseMotion(const MouseToolPtr& tool, int x, int y, unsigned int mouseState)
+{
+    if (!tool) return;
+
+    // Send mouse move events to the active tool and all inactive tools that want them
+    MouseToolHandler::onGLCapturedMouseMove(x, y, mouseState);
+}
+
+void TexTool::startCapture(const MouseToolPtr& tool)
+{
+    if (_freezePointer.isCapturing(_glWidget))
+    {
+        return;
+    }
+
+    unsigned int pointerMode = tool->getPointerMode();
+
+    _freezePointer.startCapture(_glWidget,
+        [&, tool](int x, int y, unsigned int state) { handleGLCapturedMouseMotion(tool, x, y, state); }, // Motion Functor
+        [&, tool]() { MouseToolHandler::handleCaptureLost(tool); }, // called when the capture is lost.
+        (pointerMode & MouseTool::PointerMode::Freeze) != 0,
+        (pointerMode & MouseTool::PointerMode::Hidden) != 0,
+        (pointerMode & MouseTool::PointerMode::MotionDeltas) != 0
+    );
+}
+
+void TexTool::endCapture()
+{
+    if (!_freezePointer.isCapturing(_glWidget))
+    {
+        return;
+    }
+
+    _freezePointer.endCapture();
+}
+
+
+IInteractiveView& TexTool::getInteractiveView()
+{
+    return *this;
+}
+
+TextureToolMouseEvent TexTool::createMouseEvent(const Vector2& point, const Vector2& delta)
+{
+    Vector2 normalisedDeviceCoords = device_constrained(
+        window_to_normalised_device(point, 
+            static_cast<std::size_t>(_windowDims[0]), 
+            static_cast<std::size_t>(_windowDims[1])));
+
+    return TextureToolMouseEvent(*this, normalisedDeviceCoords, delta);
+}
+
+void TexTool::updateThemeButtons()
+{
+    auto activeScheme = GlobalTextureToolColourSchemeManager().getActiveScheme();
+
+    GlobalEventManager().setToggled("TextureToolUseDarkTheme", activeScheme == textool::ColourScheme::Dark);
+    GlobalEventManager().setToggled("TextureToolUseLightTheme", activeScheme == textool::ColourScheme::Light);
+}
+
+void TexTool::determineThemeBasedOnPixelData(const std::vector<unsigned char>& pixels)
+{
+    std::size_t average = 0;
+    auto numPixels = pixels.size();
+
+    for (auto i = 0; i < numPixels; ++i)
+    {
+        average += pixels[i];
+    }
+
+    average /= numPixels;
+
+    auto scheme = average > 128 ? textool::ColourScheme::Dark : textool::ColourScheme::Light;
+
+    GlobalTextureToolColourSchemeManager().setActiveScheme(scheme);
+    updateThemeButtons();
 }
 
 } // namespace ui

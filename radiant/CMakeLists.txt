@@ -17,18 +17,14 @@ add_executable(darkradiant
                map/AutoSaveTimer.cpp
                map/StartupMapLoader.cpp
                RadiantApp.cpp
+               selection/SceneManipulateMouseTool.cpp
                selection/ManipulateMouseTool.cpp
                selection/SelectionMouseTools.cpp
                settings/LocalisationModule.cpp
                settings/LocalisationProvider.cpp
                settings/Win32Registry.cpp
-               textool/item/BrushItem.cpp
-               textool/item/FaceItem.cpp
-               textool/item/FaceVertexItem.cpp
-               textool/item/PatchItem.cpp
-               textool/item/PatchVertexItem.cpp
+               textool/tools/TextureToolManipulateMouseTool.cpp
                textool/TexTool.cpp
-               textool/TexToolItem.cpp
                ui/aas/AasControl.cpp
                ui/aas/AasControlDialog.cpp
                ui/aas/RenderableAasFile.cpp

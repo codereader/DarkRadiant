@@ -124,10 +124,20 @@ void BasicSelectionTool::renderOverlay()
     glDisable(GL_BLEND);
 }
 
+void BasicSelectionTool::performSelectionTest(SelectionVolume& volume, SelectionType type, MouseTool::Event& ev)
+{
+    if (type == SelectionType::Area)
+    {
+        GlobalSelectionSystem().selectArea(volume, selection::SelectionSystem::eToggle, selectFacesOnly());
+    }
+    else
+    {
+        GlobalSelectionSystem().selectPoint(volume, selection::SelectionSystem::eToggle, selectFacesOnly());
+    }
+}
+
 void BasicSelectionTool::testSelect(MouseTool::Event& ev)
 {
-    bool isFaceOperation = selectFacesOnly();
-
     // Get the distance of the mouse pointer from the starting point
     Vector2 delta(ev.getDevicePosition() - _start);
 
@@ -139,12 +149,12 @@ void BasicSelectionTool::testSelect(MouseTool::Event& ev)
         ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromArea(_start, delta));
 
         SelectionVolume volume(scissored);
-
-        // Call the selectArea command that does the actual selecting
-        GlobalSelectionSystem().selectArea(volume, SelectionSystem::eToggle, isFaceOperation);
+        performSelectionTest(volume, SelectionType::Area, ev);
     }
     else
     {
+        // Mouse has barely moved, call the point selection routine
+        // 
         // Copy the view to create a scissored volume
         render::View scissored(_view);
         // Create a volume out of a small box with 2*epsilon edge length
@@ -153,9 +163,7 @@ void BasicSelectionTool::testSelect(MouseTool::Event& ev)
 
         // Create a selection test using that volume
         SelectionVolume volume(scissored);
-
-        // Mouse has barely moved, call the point selection routine
-        GlobalSelectionSystem().selectPoint(volume, SelectionSystem::eToggle, isFaceOperation);
+        performSelectionTest(volume, SelectionType::Point, ev);
     }
 
     // Reset the mouse position to zero, this mouse operation is finished so far
@@ -234,6 +242,11 @@ CycleSelectionMouseTool::Result CycleSelectionMouseTool::onCancel(IInteractiveVi
     return Result::Finished;
 }
 
+void CycleSelectionMouseTool::performPointSelection(SelectionVolume& volume, selection::SelectionSystem::EModifier modifier)
+{
+    GlobalSelectionSystem().selectPoint(volume, modifier, selectFacesOnly());
+}
+
 void CycleSelectionMouseTool::testSelect(MouseTool::Event& ev)
 {
     const Vector2& curPos = ev.getDevicePosition();
@@ -246,7 +259,7 @@ void CycleSelectionMouseTool::testSelect(MouseTool::Event& ev)
 
     // If we already replaced a selection, switch to cycle mode
     // eReplace should only be active during the first call without mouse movement
-    SelectionSystem::EModifier modifier = _mouseMovedSinceLastSelect ? SelectionSystem::eReplace : SelectionSystem::eCycle;
+    auto modifier = _mouseMovedSinceLastSelect ? selection::SelectionSystem::eReplace : selection::SelectionSystem::eCycle;
     
     // Copy the view to create a scissored volume
     render::View scissored(_view);
@@ -255,7 +268,9 @@ void CycleSelectionMouseTool::testSelect(MouseTool::Event& ev)
 
     // Create a selection test using that volume
     SelectionVolume volume(scissored);
-    GlobalSelectionSystem().selectPoint(volume, modifier, selectFacesOnly());
+
+    // Invoke the virtual function to dispatch the selection request
+    performPointSelection(volume, modifier);
 
     // Remember this position
     _lastSelectPos = curPos;

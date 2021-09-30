@@ -15,7 +15,7 @@ namespace ui
 class MergeControlDialog final :
     public wxutil::TransientWindow,
     private wxutil::XmlResourceBasedWidget,
-    public SelectionSystem::Observer,
+    public selection::SelectionSystem::Observer,
     public sigc::trackable
 {
 private:

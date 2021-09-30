@@ -102,11 +102,11 @@ class ComponentSelector :
 	public SelectionSystem::Visitor
 {
 private:
-	SelectionSystem::EComponentMode _mode;
+    selection::ComponentSelectionMode _mode;
 
 public:
 	ComponentSelector(Selector& selector, SelectionTest& test,
-		SelectionSystem::EComponentMode mode) :
+        selection::ComponentSelectionMode mode) :
 		SelectionTestWalker(selector, test),
 		_mode(mode)
 	{}

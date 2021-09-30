@@ -31,9 +31,10 @@ public:
 	void gridDown() override;
 
 	void setGridSize(GridSize gridSize) override;
-	float getGridSize() const override;
+	float getGridSize(grid::Space space) const override;
 
-	int getGridPower() const override;
+	int getGridPower(grid::Space space) const override;
+	int getGridBase(grid::Space space) const override;
 
 	GridLook getMajorLook() const override;
 	GridLook getMinorLook() const override;

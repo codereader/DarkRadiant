@@ -27,6 +27,7 @@
 #include "tools/CameraMouseToolEvent.h"
 #include "render/RenderStatistics.h"
 #include "render/CamRenderer.h"
+#include "messages/TextureChanged.h"
 
 const int CAMWND_MINSIZE_X = 240;
 const int CAMWND_MINSIZE_Y = 200;
@@ -106,6 +107,8 @@ class CamWnd :
     bool _strafeForward; // true when in strafemode by ctrl-key and shift is pressed for forward strafing
 
     IGLFont::Ptr _glFont;
+
+    std::size_t _textureChangedHandler;
 
 public:
     // Constructor and destructor
@@ -253,6 +256,8 @@ private:
     // Gets called with the accumulated delta values, as buffered by wxutil::DeferredMotionDelta
     void onDeferredMotionDelta(int x, int y);
     void performFreeMove(int dx, int dy);
+
+    void handleTextureChanged(radiant::TextureChangedMessage& msg);
 };
 
 /**

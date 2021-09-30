@@ -101,9 +101,9 @@ public:
 
     // ComponentSelectionTestable implementation
     bool isSelectedComponents() const override;
-    void setSelectedComponents(bool selected, SelectionSystem::EComponentMode mode) override;
-	void invertSelectedComponents(SelectionSystem::EComponentMode mode) override;
-    void testSelectComponents(Selector& selector, SelectionTest& test, SelectionSystem::EComponentMode mode) override;
+    void setSelectedComponents(bool selected, selection::ComponentSelectionMode mode) override;
+	void invertSelectedComponents(selection::ComponentSelectionMode mode) override;
+    void testSelectComponents(Selector& selector, SelectionTest& test, selection::ComponentSelectionMode mode) override;
 
     // SelectionTestable implementation
     void testSelect(Selector& selector, SelectionTest& test) override;

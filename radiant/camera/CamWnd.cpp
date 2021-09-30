@@ -123,6 +123,11 @@ CamWnd::CamWnd(wxWindow* parent) :
 
     _glExtensionsInitialisedNotifier = GlobalRenderSystem().signal_extensionsInitialised().connect(
         sigc::mem_fun(this, &CamWnd::onGLExtensionsInitialised));
+
+    _textureChangedHandler = GlobalRadiantCore().getMessageBus().addListener(
+        radiant::IMessage::Type::TextureChanged,
+        radiant::TypeListener<radiant::TextureChangedMessage>(
+            sigc::mem_fun(this, &CamWnd::handleTextureChanged)));
 }
 
 wxWindow* CamWnd::getMainWidget() const
@@ -242,6 +247,8 @@ void CamWnd::constructGUIComponents()
 
 CamWnd::~CamWnd()
 {
+    GlobalRadiantCore().getMessageBus().removeListener(_textureChangedHandler);
+
     const wxToolBarToolBase* gridButton = getToolBarToolByLabel(_camToolbar, "drawGridButton");
     auto toggleCameraGridEvent = GlobalEventManager().findEvent("ToggleCameraGrid");
     toggleCameraGridEvent->disconnectToolItem(gridButton);
@@ -1387,6 +1394,11 @@ void CamWnd::rotateRightDiscrete()
     Vector3 angles = getCameraAngles();
     angles[camera::CAMERA_YAW] -= SPEED_TURN;
     setCameraAngles(angles);
+}
+
+void CamWnd::handleTextureChanged(radiant::TextureChangedMessage& msg)
+{
+    queueDraw();
 }
 
 // -------------------------------------------------------------------------------

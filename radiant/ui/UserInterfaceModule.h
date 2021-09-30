@@ -23,6 +23,7 @@
 #include "ui/mru/MRUMenu.h"
 #include "DispatchEvent.h"
 #include "map/AutoSaveTimer.h"
+#include "textool/TexToolModeToggles.h"
 
 namespace ui
 {
@@ -49,13 +50,13 @@ private:
 	std::unique_ptr<statusbar::MapStatistics> _mapStatisticsStatus;
 	std::unique_ptr<ManipulatorToggle> _manipulatorToggle;
 	std::unique_ptr<SelectionModeToggle> _selectionModeToggle;
+	std::unique_ptr<TexToolModeToggles> _textureToolModeToggles;
 
 	sigc::connection _entitySettingsConn;
 	sigc::connection _coloursUpdatedConn;
     sigc::connection _mapEditModeChangedConn;
 
 	std::size_t _execFailedListener;
-	std::size_t _textureChangedListener;
 	std::size_t _notificationListener;
 
 	std::unique_ptr<MRUMenu> _mruMenu;
@@ -83,7 +84,6 @@ private:
 	void refreshShadersCmd(const cmd::ArgumentList& args);
 
 	void handleCommandExecutionFailure(radiant::CommandExecutionFailedMessage& msg);
-	static void HandleTextureChanged(radiant::TextureChangedMessage& msg);
 	static void HandleNotificationMessage(radiant::NotificationMessage& msg);
 
 	void onDispatchEvent(DispatchEvent& evt);

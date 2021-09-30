@@ -121,7 +121,7 @@ public:
     void positionView(const Vector3& position);
     const Vector3& getOrigin() const override;
     void setOrigin(const Vector3& origin) override;
-    void scroll(int x, int y) override;
+    void scrollByPixels(int x, int y) override;
     Vector4 getWindowCoordinates();
 
     void draw();
