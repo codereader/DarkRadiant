@@ -38,16 +38,7 @@ ShaderChooser::ShaderChooser(wxWindow* parent, wxTextCtrl* targetEntry) :
 
 		// Set the cursor of the tree view to the currently selected shader
 		_selector->setSelection(_initialShader);
-
-        Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, [&](wxCommandEvent& ev)
-        {
-            if (!_selector->getSelection().empty())
-            {
-                _targetEntry->SetValue(_selector->getSelection());
-                shutdown();
-                EndModal(wxID_OK);
-            }
-        });
+        Bind( wxEVT_DATAVIEW_ITEM_ACTIVATED, &ShaderChooser::_onItemActivated, this );
 	}
 
 	// Pack in the ShaderSelector and buttons panel
@@ -66,6 +57,14 @@ void ShaderChooser::shutdown()
 {
 	// Tell the position tracker to save the information
 	_windowPosition.saveToPath(RKEY_WINDOW_STATE);
+}
+
+void ShaderChooser::_onItemActivated( wxDataViewEvent& ev ) {
+    if ( !_selector->getSelection().empty() ) {
+        _targetEntry->SetValue( _selector->getSelection() );
+        shutdown();
+        EndModal( wxID_OK );
+    }
 }
 
 // Construct the buttons

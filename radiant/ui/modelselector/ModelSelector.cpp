@@ -287,6 +287,15 @@ void ModelSelector::setupTreeView(wxWindow* parent)
 	parent->GetSizer()->Prepend(_treeView, 1, wxEXPAND);
     parent->GetSizer()->Prepend(toolbar, 0, wxEXPAND | wxALIGN_LEFT | wxBOTTOM | wxLEFT | wxRIGHT, 6);
     parent->GetSizer()->Layout();
+
+    Bind( wxEVT_DATAVIEW_ITEM_ACTIVATED, &ModelSelector::_onItemActivated, this );
+}
+
+void ModelSelector::_onItemActivated( wxDataViewEvent& ev ) {
+    std::string modelName = _treeView->GetSelectedModelPath();
+    if ( !modelName.empty() ) {
+        onOK( ev );
+    }
 }
 
 void ModelSelector::populateModels()

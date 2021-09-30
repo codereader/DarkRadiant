@@ -154,6 +154,11 @@ SoundChooser::SoundChooser(wxWindow* parent) :
     reloadButton->Bind(wxEVT_BUTTON, &SoundChooser::_onReloadSounds, this);
 
     buttonSizer->Prepend(reloadButton, 0, wxRIGHT, 32);
+    auto* dblClickHint = new wxStaticText( this, wxID_ANY, _( "Ctrl + Double Click on treeview items for quick play" ), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
+    auto* grid = new wxFlexGridSizer( 2 );
+    grid->AddGrowableCol( 1 );
+    grid->Add( dblClickHint, 0, wxALIGN_CENTER_VERTICAL );
+    grid->Add( buttonSizer, 0, wxALIGN_RIGHT );
 
     auto* treeView = createTreeView(this);
     auto* toolbar = new wxutil::ResourceTreeViewToolbar(this, treeView);
@@ -161,7 +166,7 @@ SoundChooser::SoundChooser(wxWindow* parent) :
 	GetSizer()->Add(toolbar, 0, wxEXPAND | wxALIGN_LEFT | wxALL, 12);
 	GetSizer()->Add(treeView, 1, wxEXPAND | wxLEFT | wxRIGHT, 12);
     GetSizer()->Add(_preview, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 12);
-	GetSizer()->Add(buttonSizer, 0, wxALIGN_RIGHT | wxBOTTOM | wxLEFT | wxRIGHT, 12);
+	GetSizer()->Add(grid, 0, wxEXPAND | wxBOTTOM | wxLEFT | wxRIGHT, 12);
 
     _treeView->AddCustomMenuItem(std::make_shared<wxutil::MenuItem>(
         new wxutil::IconTextMenuItem(_(SHOW_SHADER_DEF_TEXT), SHOW_SHADER_DEF_ICON),
@@ -250,6 +255,11 @@ void SoundChooser::_onItemActivated(wxDataViewEvent& ev)
 
 			return;
 		}
+
+        if ( !wxGetKeyState( WXK_CONTROL ) ) { // simple double click closes modal, ctrl+dblclk plays sound
+            EndModal( wxID_OK ); 
+            return;
+        }
 
 		// It's a regular item, try to play it back
 		_preview->playRandomSoundFile();

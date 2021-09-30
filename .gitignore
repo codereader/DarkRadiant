@@ -84,3 +84,5 @@ Makefile.in
 /tools/msvc/packages
 /install/*.testdurations
 *.ilk
+.vs/
+windeps.7z

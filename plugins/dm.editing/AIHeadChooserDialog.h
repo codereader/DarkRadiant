@@ -58,6 +58,7 @@ private:
 
 	void handleSelectionChanged();
 	void onHeadSelectionChanged(wxDataViewEvent& ev);
+    void _onItemActivated( wxDataViewEvent& ev );
 };
 
 } // namespace ui

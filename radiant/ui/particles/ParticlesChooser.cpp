@@ -45,6 +45,8 @@ ParticlesChooser::ParticlesChooser() :
     GlobalParticlesManager().signal_particlesReloaded().connect(
         sigc::mem_fun(this, &ParticlesChooser::reloadParticles)
     );
+
+    Bind( wxEVT_DATAVIEW_ITEM_ACTIVATED, &ParticlesChooser::_onItemActivated, this );
 }
 
 // Create the tree view
@@ -67,6 +69,10 @@ wxutil::ResourceTreeView* ParticlesChooser::createTreeView(wxWindow* parent)
 	_treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &ParticlesChooser::_onSelChanged, this);
 
 	return _treeView;
+}
+
+void ParticlesChooser::_onItemActivated( wxDataViewEvent& ev ) {
+    EndModal( wxID_OK );
 }
 
 /**

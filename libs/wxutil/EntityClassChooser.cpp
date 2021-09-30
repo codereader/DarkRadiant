@@ -297,10 +297,24 @@ void EntityClassChooser::setupTreeView()
     _treeView->AppendIconTextColumn(_("Classname"), _columns.iconAndName.getColumnIndex(),
         wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
+    Bind( wxEVT_DATAVIEW_ITEM_ACTIVATED, &EntityClassChooser::_onItemActivated, this );
+
     _treeViewToolbar = new ResourceTreeViewToolbar(parent, _treeView);
 
     parent->GetSizer()->Prepend(_treeView, 1, wxEXPAND | wxBOTTOM | wxRIGHT, 6);
     parent->GetSizer()->Prepend(_treeViewToolbar, 0, wxEXPAND | wxALIGN_LEFT | wxBOTTOM | wxLEFT | wxRIGHT, 6);
+}
+
+// tree double click or enter key
+void EntityClassChooser::_onItemActivated( wxDataViewEvent& ev ) {
+    wxDataViewItem item = _treeView->GetSelection();
+    if ( item.IsOk() ) {
+        TreeModel::Row row( item, *_treeView->GetModel() );
+
+        if ( !row[_columns.isFolder].getBool() ) {
+            onOK( ev );
+        }
+    }
 }
 
 // Update the usage information

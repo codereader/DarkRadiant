@@ -70,6 +70,7 @@ private:
 	// button callbacks
 	void callbackCancel(wxCommandEvent& ev);
 	void callbackOK(wxCommandEvent& ev);
+    void _onItemActivated( wxDataViewEvent& ev );
 };
 
 } // namespace ui

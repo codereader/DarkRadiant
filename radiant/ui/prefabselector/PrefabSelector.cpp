@@ -137,6 +137,14 @@ PrefabSelector::PrefabSelector() :
 
     // Update the controls right now, this also triggers a prefab rescan
     onPrefabPathSelectionChanged();
+ 
+    Bind( wxEVT_DATAVIEW_ITEM_ACTIVATED, &PrefabSelector::_onItemActivated, this );
+}
+
+void PrefabSelector::_onItemActivated( wxDataViewEvent& ev ) {
+    if ( !getSelectedPath().empty() && !_treeView->GetIsFolderSelected() ) {
+        EndModal( wxID_OK );
+    }
 }
 
 void PrefabSelector::setupPathSelector(wxSizer* parentSizer)

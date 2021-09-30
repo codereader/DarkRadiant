@@ -48,6 +48,7 @@ private:
 	void populateParticleList();
 
 	void setSelectedParticle(const std::string& particleName);
+    void _onItemActivated( wxDataViewEvent& ev );
 
 private:
 	void reloadParticles();

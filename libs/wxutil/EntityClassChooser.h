@@ -71,6 +71,8 @@ private:
     // Sets the tree selection to the given entity class
     const std::string& getSelectedEntityClass() const;
 
+    void _onItemActivated( wxDataViewEvent& ev );
+
     // Overridden from wxDialog
     int ShowModal() override;
 

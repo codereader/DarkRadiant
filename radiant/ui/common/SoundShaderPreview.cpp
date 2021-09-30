@@ -131,7 +131,8 @@ void SoundShaderPreview::playRandomSoundFile()
 
 	if (numFiles > 0)
 	{
-		int selected = rand() % numFiles;
+        static int nextFileToPlay = 0;
+		int selected = nextFileToPlay++ % numFiles;
 		_treeView->Select(children[selected]);
 		handleSelectionChange();
 

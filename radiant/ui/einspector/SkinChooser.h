@@ -87,6 +87,8 @@ private:
     void handleSelectionChange();
 	void onMainFrameShuttingDown();
 
+    void _onItemActivated( wxDataViewEvent& ev );
+
 public:
 
 	// Override Dialogbase
