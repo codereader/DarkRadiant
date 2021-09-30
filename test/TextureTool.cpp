@@ -46,6 +46,19 @@ inline textool::INode::Ptr getFirstTextureToolNode()
     return returnValue;
 }
 
+inline std::vector<textool::INode::Ptr> getAllTextureToolNodes()
+{
+    std::vector<textool::INode::Ptr> list;
+
+    GlobalTextureToolSceneGraph().foreachNode([&](const textool::INode::Ptr& node)
+    {
+        list.push_back(node);
+        return true;
+    });
+
+    return list;
+}
+
 std::vector<textool::INode::Ptr> getAllSelectedTextoolNodes()
 {
     std::vector<textool::INode::Ptr> selectedNodes;
@@ -584,7 +597,7 @@ TEST_F(TextureToolTest, SelectionModeChangedSignal)
     conn.disconnect();
 }
 
-void performPointSelection(const Vector2& texcoord, const render::View& view)
+void performPointSelection(const Vector2& texcoord, const render::View& view, selection::SelectionSystem::EModifier mode = selection::SelectionSystem::eToggle)
 {
     auto texcoordTransformed = view.GetViewProjection().transformPoint(Vector3(texcoord.x(), texcoord.y(), 0));
     Vector2 devicePoint(texcoordTransformed.x(), texcoordTransformed.y());
@@ -594,7 +607,7 @@ void performPointSelection(const Vector2& texcoord, const render::View& view)
     ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromPoint(devicePoint, Vector2(0.02f, 0.02f)));
 
     SelectionVolume test(scissored);
-    GlobalTextureToolSelectionSystem().selectPoint(test, selection::SelectionSystem::eToggle);
+    GlobalTextureToolSelectionSystem().selectPoint(test, mode);
 }
 
 TEST_F(TextureToolTest, TestSelectPatchSurfaceByPoint)
@@ -622,6 +635,68 @@ TEST_F(TextureToolTest, TestSelectPatchSurfaceByPoint)
     auto selectedNodes = getAllSelectedTextoolNodes();
     EXPECT_EQ(selectedNodes.size(), 1) << "Only one patch should be selected";
     EXPECT_TRUE(std::dynamic_pointer_cast<textool::IPatchNode>(selectedNodes.front())) << "Couldn't cast to special type";
+}
+
+inline int getIndexOfSingleSelectedNode(const std::vector<textool::INode::Ptr>& nodes)
+{
+    int selectedIndex = -1;
+
+    for (int i = 0; i < nodes.size(); ++i)
+    {
+        if (nodes[i]->isSelected())
+        {
+            EXPECT_EQ(selectedIndex, -1) << "More than one node selected";
+            selectedIndex = i;
+        }
+    }
+
+    return selectedIndex;
+}
+
+TEST_F(TextureToolTest, CycleSelectPatchSurface)
+{
+    std::vector<scene::INodePtr> patchNodes =
+    {
+        setupPatchNodeForTextureTool(),
+        setupPatchNodeForTextureTool(),
+        setupPatchNodeForTextureTool(),
+    };
+
+    // Get the texture space bounds of a single patch (the others are the same)
+    auto bounds = getTextureSpaceBounds(*Node_getIPatch(patchNodes[0]));
+    bounds.extents *= 1.2f;
+
+    render::TextureToolView view;
+    view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
+
+    auto allNodes = getAllTextureToolNodes();
+    EXPECT_EQ(allNodes.size(), 3) << "We should have 3 nodes in the scene";
+
+    // Test-select in the middle of the patch bounds
+    performPointSelection(Vector2(bounds.origin.x(), bounds.origin.y()), view, selection::SelectionSystem::eReplace);
+
+    auto curSelectedIndex = getIndexOfSingleSelectedNode(allNodes);
+    EXPECT_NE(curSelectedIndex, -1) << "A single node should be selected";
+    std::set<int> allVisitedIndices;
+
+    allVisitedIndices.insert(curSelectedIndex);
+
+    // Cycle through the selection (twice)
+    for (int i = 0; i < allNodes.size()*2; ++i)
+    {
+        // Test-select in the middle of the patch bounds
+        performPointSelection(Vector2(bounds.origin.x(), bounds.origin.y()), view, selection::SelectionSystem::eCycle);
+
+        auto newIndex = getIndexOfSingleSelectedNode(allNodes);
+        EXPECT_NE(newIndex, -1) << "A single node should be selected";
+
+        EXPECT_NE(newIndex, curSelectedIndex) << "The selected node should have been switched to another one";
+
+        allVisitedIndices.insert(newIndex);
+        curSelectedIndex = newIndex;
+    }
+
+    EXPECT_EQ(allVisitedIndices.size(), allNodes.size()) << "All nodes should have been selected after cycling through them";
 }
 
 TEST_F(TextureToolTest, TestSelectPatchVertexByPoint)
