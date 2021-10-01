@@ -145,6 +145,56 @@ inline bool faceHasVertex(const IFace* face, const Vector3& expectedXYZ, const V
     });
 }
 
+inline void foreachPatchVertex(const IPatch& patch, const std::function<void(const PatchControl&)>& functor)
+{
+    for (std::size_t col = 0; col < patch.getWidth(); ++col)
+    {
+        for (std::size_t row = 0; row < patch.getHeight(); ++row)
+        {
+            functor(patch.ctrlAt(row, col));
+        }
+    }
+}
+
+inline AABB getTextureSpaceBounds(const IPatch& patch)
+{
+    AABB bounds;
+
+    foreachPatchVertex(patch, [&](const PatchControl& control)
+    {
+        const auto& uv = control.texcoord;
+        bounds.includePoint({ uv.x(), uv.y(), 0 });
+    });
+
+    return bounds;
+}
+
+inline AABB getTextureSpaceBounds(const IFace& face)
+{
+    AABB bounds;
+
+    for (const auto& vertex : face.getWinding())
+    {
+        bounds.includePoint({ vertex.texcoord.x(), vertex.texcoord.y(), 0 });
+    }
+
+    return bounds;
+}
+
+inline void expectVerticesHaveBeenFlipped(int axis, const IPatch& patch, const std::vector<Vector2>& oldTexcoords, const Vector2& flipCenter)
+{
+    auto old = oldTexcoords.begin();
+    algorithm::foreachPatchVertex(patch, [&](const PatchControl& ctrl)
+    {
+        // Calculate the mirrored coordinate
+        auto expectedTexcoord = *(old++);
+        expectedTexcoord[axis] = 2 * flipCenter[axis] - expectedTexcoord[axis];
+
+        EXPECT_EQ(ctrl.texcoord.x(), expectedTexcoord.x()) << "Mirrored vertex should be at " << expectedTexcoord;
+        EXPECT_EQ(ctrl.texcoord.y(), expectedTexcoord.y()) << "Mirrored vertex should be at " << expectedTexcoord;
+    });
+}
+
 }
 
 }

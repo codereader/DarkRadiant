@@ -284,42 +284,6 @@ TEST_F(TextureToolTest, ForeachSelectedNode)
     EXPECT_EQ(selectedCount, selectedNodes.size()) << "Selection count didn't match";
 }
 
-inline void foreachPatchVertex(const IPatch& patch, const std::function<void(const PatchControl&)>& functor)
-{
-    for (std::size_t col = 0; col < patch.getWidth(); ++col)
-    {
-        for (std::size_t row = 0; row < patch.getHeight(); ++row)
-        {
-            functor(patch.ctrlAt(row, col));
-        }
-    }
-}
-
-inline AABB getTextureSpaceBounds(const IPatch& patch)
-{
-    AABB bounds;
-
-    foreachPatchVertex(patch, [&](const PatchControl& control)
-    {
-        const auto& uv = control.texcoord;
-        bounds.includePoint({ uv.x(), uv.y(), 0 });
-    });
-
-    return bounds;
-}
-
-inline AABB getTextureSpaceBounds(const IFace& face)
-{
-    AABB bounds;
-
-    for (const auto& vertex : face.getWinding())
-    {
-        bounds.includePoint({ vertex.texcoord.x(), vertex.texcoord.y(), 0 });
-    }
-
-    return bounds;
-}
-
 constexpr int TEXTOOL_WIDTH = 500;
 constexpr int TEXTOOL_HEIGHT = 400;
 
@@ -616,7 +580,7 @@ TEST_F(TextureToolTest, TestSelectPatchSurfaceByPoint)
     auto patch = Node_getIPatch(patchNode);
 
     // Get the texture space bounds of this patch
-    auto bounds = getTextureSpaceBounds(*patch);
+    auto bounds = algorithm::getTextureSpaceBounds(*patch);
 
     // Construct a view that includes the patch UV bounds
     bounds.extents *= 1.2f;
@@ -663,7 +627,7 @@ TEST_F(TextureToolTest, CycleSelectPatchSurface)
     };
 
     // Get the texture space bounds of a single patch (the others are the same)
-    auto bounds = getTextureSpaceBounds(*Node_getIPatch(patchNodes[0]));
+    auto bounds = algorithm::getTextureSpaceBounds(*Node_getIPatch(patchNodes[0]));
     bounds.extents *= 1.2f;
 
     render::TextureToolView view;
@@ -705,7 +669,7 @@ TEST_F(TextureToolTest, TestSelectPatchVertexByPoint)
     auto patch = Node_getIPatch(patchNode);
 
     // Get the texture space bounds of this patch
-    auto bounds = getTextureSpaceBounds(*patch);
+    auto bounds = algorithm::getTextureSpaceBounds(*patch);
 
     // Construct a view that includes the patch UV bounds
     bounds.extents *= 1.2f;
@@ -764,7 +728,7 @@ TEST_F(TextureToolTest, TestSelectFaceSurfaceByPoint)
 
     // Get the texture space bounds of this face
     // Construct a view that includes the face UV bounds
-    auto bounds = getTextureSpaceBounds(*faceUp);
+    auto bounds = algorithm::getTextureSpaceBounds(*faceUp);
     bounds.extents *= 1.2f;
 
     render::TextureToolView view;
@@ -790,7 +754,7 @@ TEST_F(TextureToolTest, TestSelectFaceVertexByPoint)
     auto faceUp = algorithm::findBrushFaceWithNormal(Node_getIBrush(brush), Vector3(0, 0, 1));
 
     // Get the texture space bounds of this face
-    auto bounds = getTextureSpaceBounds(*faceUp);
+    auto bounds = algorithm::getTextureSpaceBounds(*faceUp);
 
     // Construct a view that includes the patch UV bounds
     bounds.extents *= 1.2f;
@@ -843,7 +807,7 @@ TEST_F(TextureToolTest, TestSelectPatchByArea)
     auto patch = Node_getIPatch(patchNode);
 
     // Get the texture space bounds of this patch
-    auto bounds = getTextureSpaceBounds(*patch);
+    auto bounds = algorithm::getTextureSpaceBounds(*patch);
 
     // Construct a view that includes the patch UV bounds
     bounds.extents *= 1.2f;
@@ -901,12 +865,12 @@ TEST_F(TextureToolTest, ClearSelectionUsingCommand)
 
     // Get the texture space bounds of this patch
     render::TextureToolView view;
-    auto bounds = getTextureSpaceBounds(*Node_getIPatch(patchNode));
+    auto bounds = algorithm::getTextureSpaceBounds(*Node_getIPatch(patchNode));
     bounds.extents *= 1.2f;
     view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
 
     // Select patch vertices
-    foreachPatchVertex(*Node_getIPatch(patchNode), [&](const PatchControl& control)
+    algorithm::foreachPatchVertex(*Node_getIPatch(patchNode), [&](const PatchControl& control)
     {
         performPointSelection(control.texcoord, view);
     });
@@ -915,7 +879,7 @@ TEST_F(TextureToolTest, ClearSelectionUsingCommand)
     auto faceUp = algorithm::findBrushFaceWithNormal(Node_getIBrush(brush1), Vector3(0, 0, 1));
 
     // Get the texture space bounds of this face
-    bounds = getTextureSpaceBounds(*faceUp);
+    bounds = algorithm::getTextureSpaceBounds(*faceUp);
     bounds.extents *= 1.2f;
     view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
 
@@ -1013,12 +977,12 @@ TEST_F(TextureToolTest, ClearComponentSelection)
 
     // Get the texture space bounds of this patch
     render::TextureToolView view;
-    auto bounds = getTextureSpaceBounds(*Node_getIPatch(patchNode));
+    auto bounds = algorithm::getTextureSpaceBounds(*Node_getIPatch(patchNode));
     bounds.extents *= 1.2f;
     view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
 
     // Select patch vertices
-    foreachPatchVertex(*Node_getIPatch(patchNode), [&](const PatchControl& control)
+    algorithm::foreachPatchVertex(*Node_getIPatch(patchNode), [&](const PatchControl& control)
     {
         performPointSelection(control.texcoord, view);
     });
@@ -1100,7 +1064,7 @@ TEST_F(TextureToolTest, DragManipulateFace)
 
     // Get the texture space bounds of this face
     // Construct a view that includes the patch UV bounds
-    auto bounds = getTextureSpaceBounds(*faceUp);
+    auto bounds = algorithm::getTextureSpaceBounds(*faceUp);
     bounds.extents *= 1.2f;
 
     render::TextureToolView view;
@@ -1136,13 +1100,13 @@ void performPatchManipulationTest(bool cancelOperation)
 
     // Remember the texcoords before manipulation
     std::vector<Vector2> oldTexcoords;
-    foreachPatchVertex(*patch, [&](const PatchControl& control) { oldTexcoords.push_back(control.texcoord); });
+    algorithm::foreachPatchVertex(*patch, [&](const PatchControl& control) { oldTexcoords.push_back(control.texcoord); });
 
     auto texToolPatch = getFirstTextureToolNode();
     texToolPatch->setSelected(true);
 
     // Get the texture space bounds of this patch
-    auto bounds = getTextureSpaceBounds(*patch);
+    auto bounds = algorithm::getTextureSpaceBounds(*patch);
     bounds.extents *= 1.2f;
 
     render::TextureToolView view;
@@ -1153,7 +1117,7 @@ void performPatchManipulationTest(bool cancelOperation)
     dragManipulateSelectionTowardsLowerRight(centroid, view, cancelOperation); // optionally cancel
 
     std::vector<Vector2> changedTexcoords;
-    foreachPatchVertex(*patch, [&](const PatchControl& control) { changedTexcoords.push_back(control.texcoord); });
+    algorithm::foreachPatchVertex(*patch, [&](const PatchControl& control) { changedTexcoords.push_back(control.texcoord); });
 
     if (!cancelOperation)
     {
@@ -1193,10 +1157,10 @@ void performPatchVertexManipulationTest(bool cancelOperation)
 
     // Remember the texcoords before manipulation
     std::vector<Vector2> oldTexcoords;
-    foreachPatchVertex(*patch, [&](const PatchControl& control) { oldTexcoords.push_back(control.texcoord); });
+    algorithm::foreachPatchVertex(*patch, [&](const PatchControl& control) { oldTexcoords.push_back(control.texcoord); });
 
     // Get the texture space bounds of this patch
-    auto bounds = getTextureSpaceBounds(*patch);
+    auto bounds = algorithm::getTextureSpaceBounds(*patch);
     bounds.extents *= 1.2f;
 
     render::TextureToolView view;
@@ -1216,7 +1180,7 @@ void performPatchVertexManipulationTest(bool cancelOperation)
     dragManipulateSelectionTowardsLowerRight(oldTexcoords[1], view, cancelOperation); // optionally cancel the operation
 
     std::vector<Vector2> changedTexcoords;
-    foreachPatchVertex(*patch, [&](const PatchControl& control) { changedTexcoords.push_back(control.texcoord); });
+    algorithm::foreachPatchVertex(*patch, [&](const PatchControl& control) { changedTexcoords.push_back(control.texcoord); });
 
     if (!cancelOperation)
     {
@@ -1265,7 +1229,7 @@ TEST_F(TextureToolTest, PivotIsRecalculatedWhenSwitchingModes)
     auto patch = Node_getIPatch(patchNode);
 
     // Get the texture space bounds of this patch
-    auto bounds = getTextureSpaceBounds(*patch);
+    auto bounds = algorithm::getTextureSpaceBounds(*patch);
 
     // Construct a view that includes the patch UV bounds
     bounds.extents *= 1.2f;
@@ -1284,7 +1248,7 @@ TEST_F(TextureToolTest, PivotIsRecalculatedWhenSwitchingModes)
     auto pivot2world = GlobalTextureToolSelectionSystem().getPivot2World();
 
     // The pivot should be near the center of the patch
-    auto boundsOrigin = getTextureSpaceBounds(*patch).origin;
+    auto boundsOrigin = algorithm::getTextureSpaceBounds(*patch).origin;
     EXPECT_TRUE(math::isNear(pivot2world.tCol().getVector3(), boundsOrigin, 0.01)) <<
         "Pivot should be at the center of the patch";
 
@@ -1327,7 +1291,7 @@ void performFaceVertexManipulationTest(bool cancelOperation, std::vector<std::si
     for (const auto& vertex : faceUp->getWinding()) { oldTexcoords.push_back(vertex.texcoord); }
 
     // Get the texture space bounds of this face
-    auto bounds = getTextureSpaceBounds(*faceUp);
+    auto bounds = algorithm::getTextureSpaceBounds(*faceUp);
     bounds.extents *= 1.2f;
 
     render::TextureToolView view;
@@ -1502,7 +1466,7 @@ TEST_F(TextureToolTest, SelectRelatedOfPatchVertex)
     auto patch = Node_getIPatch(patchNode);
 
     // Get the texture space bounds of this patch
-    auto bounds = getTextureSpaceBounds(*patch);
+    auto bounds = algorithm::getTextureSpaceBounds(*patch);
     bounds.extents *= 1.2f;
 
     render::TextureToolView view;
@@ -1540,7 +1504,7 @@ TEST_F(TextureToolTest, SelectRelatedOfFaceVertex)
     auto faceUp = algorithm::findBrushFaceWithNormal(Node_getIBrush(brush), Vector3(0, 0, 1));
 
     // Get the texture space bounds of this face
-    auto bounds = getTextureSpaceBounds(*faceUp);
+    auto bounds = algorithm::getTextureSpaceBounds(*faceUp);
     bounds.extents *= 1.2f;
 
     render::TextureToolView view;
@@ -1581,7 +1545,7 @@ TEST_F(TextureToolTest, SelectRelatedOfFaceNode)
 
     // Get the texture space bounds of this face
     // Construct a view that includes the face UV bounds
-    auto bounds = getTextureSpaceBounds(*faceUp);
+    auto bounds = algorithm::getTextureSpaceBounds(*faceUp);
     bounds.extents *= 1.2f;
 
     render::TextureToolView view;
@@ -1658,7 +1622,7 @@ TEST_F(TextureToolTest, SnapFaceToGrid)
 
     // Get the texture space bounds of this face
     // Construct a view that includes the face UV bounds
-    auto bounds = getTextureSpaceBounds(*faceUp);
+    auto bounds = algorithm::getTextureSpaceBounds(*faceUp);
     bounds.extents *= 1.2f;
 
     render::TextureToolView view;
@@ -1693,7 +1657,7 @@ TEST_F(TextureToolTest, SnapFaceVerticesToGrid)
     faceUp->shiftTexdef(0.133f, 0.111f);
 
     // Get the texture space bounds of this face
-    auto bounds = getTextureSpaceBounds(*faceUp);
+    auto bounds = algorithm::getTextureSpaceBounds(*faceUp);
     bounds.extents *= 1.2f;
 
     render::TextureToolView view;
@@ -1745,7 +1709,7 @@ TEST_F(TextureToolTest, SnapPatchToGrid)
     patch->translateTexture(13, 11);
 
     // Get the texture space bounds of this patch
-    auto bounds = getTextureSpaceBounds(*patch);
+    auto bounds = algorithm::getTextureSpaceBounds(*patch);
     bounds.extents *= 1.2f;
 
     render::TextureToolView view;
@@ -1774,7 +1738,7 @@ TEST_F(TextureToolTest, SnapPatchVerticesToGrid)
     patch->translateTexture(0.133f, 0.111f);
 
     // Get the texture space bounds of this patch
-    auto bounds = getTextureSpaceBounds(*patch);
+    auto bounds = algorithm::getTextureSpaceBounds(*patch);
     bounds.extents *= 1.2f;
 
     render::TextureToolView view;
@@ -1830,8 +1794,8 @@ void performPatchVertexMergeTest(bool useBoundsOrigin)
     patch2->translateTexture(20, -20);
 
     // Get the texture space bounds of both patches
-    auto bounds = getTextureSpaceBounds(*patch1);
-    bounds.includeAABB(getTextureSpaceBounds(*patch2));
+    auto bounds = algorithm::getTextureSpaceBounds(*patch1);
+    bounds.includeAABB(algorithm::getTextureSpaceBounds(*patch2));
     bounds.extents *= 1.2f;
 
     render::TextureToolView view;
@@ -1899,8 +1863,8 @@ TEST_F(TextureToolTest, MergeFaceVertices)
     face2->shiftTexdef(0.2f, -0.2f);
 
     // Get the texture space bounds
-    auto bounds = getTextureSpaceBounds(*face1);
-    bounds.includeAABB(getTextureSpaceBounds(*face2));
+    auto bounds = algorithm::getTextureSpaceBounds(*face1);
+    bounds.includeAABB(algorithm::getTextureSpaceBounds(*face2));
     bounds.extents *= 1.2f;
 
     render::TextureToolView view;
@@ -1945,8 +1909,8 @@ TEST_F(TextureToolTest, MergeTwoVerticesOfSameFace)
     face2->shiftTexdef(0.2f, -0.2f);
 
     // Get the texture space bounds
-    auto bounds = getTextureSpaceBounds(*face1);
-    bounds.includeAABB(getTextureSpaceBounds(*face2));
+    auto bounds = algorithm::getTextureSpaceBounds(*face1);
+    bounds.includeAABB(algorithm::getTextureSpaceBounds(*face2));
     bounds.extents *= 1.2f;
 
     render::TextureToolView view;
@@ -1991,27 +1955,13 @@ TEST_F(TextureToolTest, MergeTwoVerticesOfSameFace)
         << "Vertex 1 or 3 should be at center " << center;
 }
 
-void expectVerticesHaveBeenFlipped(int axis, const IPatch& patch, const std::vector<Vector2>& oldTexcoords, const Vector2& flipCenter)
-{
-    auto old = oldTexcoords.begin();
-    foreachPatchVertex(patch, [&](const PatchControl& ctrl)
-    {
-        // Calculate the mirrored coordinate
-        auto expectedTexcoord = *(old++);
-        expectedTexcoord[axis] = 2 * flipCenter[axis] - expectedTexcoord[axis];
-
-        EXPECT_EQ(ctrl.texcoord.x(), expectedTexcoord.x()) << "Mirrored vertex should be at " << expectedTexcoord;
-        EXPECT_EQ(ctrl.texcoord.y(), expectedTexcoord.y()) << "Mirrored vertex should be at " << expectedTexcoord;
-    });
-}
-
 void performPatchFlipTest(int axis)
 {
     auto patchNode = setupPatchNodeForTextureTool();
     auto patch = Node_getIPatch(patchNode);
 
     // Get the texture space bounds of this patch
-    auto patchBounds = getTextureSpaceBounds(*patch);
+    auto patchBounds = algorithm::getTextureSpaceBounds(*patch);
     auto bounds = patchBounds;
     bounds.extents *= 1.2f;
 
@@ -2025,13 +1975,13 @@ void performPatchFlipTest(int axis)
     EXPECT_EQ(getAllSelectedTextoolNodes().size(), 1) << "Only one patch should be selected";
 
     std::vector<Vector2> oldTexCoords;
-    foreachPatchVertex(*patch, [&](const PatchControl& ctrl) { oldTexCoords.push_back(ctrl.texcoord); });
+    algorithm::foreachPatchVertex(*patch, [&](const PatchControl& ctrl) { oldTexCoords.push_back(ctrl.texcoord); });
 
     auto cmd = axis == 0 ? "TexToolFlipS" : "TexToolFlipT";
     GlobalCommandSystem().executeCommand(cmd);
 
     // Every changed vertex should have been flipped about the bounds origin
-    expectVerticesHaveBeenFlipped(axis, *patch, oldTexCoords, { patchBounds.origin.x(), patchBounds.origin.y() });
+    algorithm::expectVerticesHaveBeenFlipped(axis, *patch, oldTexCoords, { patchBounds.origin.x(), patchBounds.origin.y() });
 }
 
 TEST_F(TextureToolTest, FlipSinglePatchS)
@@ -2056,8 +2006,8 @@ void performFlipTestWithTwoPatches(int axis)
     patch2->translateTexture(45, -40);
 
     // Get the texture space bounds of both patches
-    auto patchBounds1 = getTextureSpaceBounds(*patch1);
-    auto patchBounds2 = getTextureSpaceBounds(*patch2);
+    auto patchBounds1 = algorithm::getTextureSpaceBounds(*patch1);
+    auto patchBounds2 = algorithm::getTextureSpaceBounds(*patch2);
 
     auto bounds = patchBounds1;
     bounds.includeAABB(patchBounds2);
@@ -2073,9 +2023,9 @@ void performFlipTestWithTwoPatches(int axis)
     EXPECT_EQ(getAllSelectedTextoolNodes().size(), 2) << "Both patches should be selected";
 
     std::vector<Vector2> oldTexCoords1;
-    foreachPatchVertex(*patch1, [&](const PatchControl& ctrl) { oldTexCoords1.push_back(ctrl.texcoord); });
+    algorithm::foreachPatchVertex(*patch1, [&](const PatchControl& ctrl) { oldTexCoords1.push_back(ctrl.texcoord); });
     std::vector<Vector2> oldTexCoords2;
-    foreachPatchVertex(*patch2, [&](const PatchControl& ctrl) { oldTexCoords2.push_back(ctrl.texcoord); });
+    algorithm::foreachPatchVertex(*patch2, [&](const PatchControl& ctrl) { oldTexCoords2.push_back(ctrl.texcoord); });
 
     Vector2 flipCenter(bounds.origin.x(), bounds.origin.y());
 
@@ -2084,8 +2034,8 @@ void performFlipTestWithTwoPatches(int axis)
 
     // Every changed vertex should have been flipped about the common bounds origin
     // Check patch 1 and 2
-    expectVerticesHaveBeenFlipped(axis, *patch1, oldTexCoords1, flipCenter);
-    expectVerticesHaveBeenFlipped(axis, *patch2, oldTexCoords2, flipCenter);
+    algorithm::expectVerticesHaveBeenFlipped(axis, *patch1, oldTexCoords1, flipCenter);
+    algorithm::expectVerticesHaveBeenFlipped(axis, *patch2, oldTexCoords2, flipCenter);
 }
 
 TEST_F(TextureToolTest, FlipTwoPatchesS)
@@ -2104,7 +2054,7 @@ void performFaceFlipTest(int axis)
     auto faceUp = algorithm::findBrushFaceWithNormal(Node_getIBrush(brush), Vector3(0, 0, 1));
 
     // Get the texture space bounds of this face
-    auto bounds = getTextureSpaceBounds(*faceUp);
+    auto bounds = algorithm::getTextureSpaceBounds(*faceUp);
     bounds.extents *= 1.2f;
 
     render::TextureToolView view;
