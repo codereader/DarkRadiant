@@ -9,6 +9,7 @@
 #include "selection/SelectionPool.h"
 #include "string/case_conv.h"
 #include "math/Matrix3.h"
+#include "selection/algorithm/Texturing.h"
 
 namespace textool
 {
@@ -697,30 +698,11 @@ void TextureToolSelectionSystem::flipSelected(int axis)
 
     // Move center to origin, flip around the specified axis, and move back
     Vector2 flipCenter(selectionBounds.origin.x(), selectionBounds.origin.y());
-    auto flipMatrix = Matrix3::getIdentity();
-
-    if (axis == 0)
-    {
-        flipMatrix.xx() = -1;
-    }
-    else // axis == 1
-    {
-        flipMatrix.yy() = -1;
-    }
-
-    auto flipTransformation = Matrix3::getTranslation(-flipCenter);
-    flipTransformation.premultiplyBy(flipMatrix);
-    flipTransformation.premultiplyBy(Matrix3::getTranslation(+flipCenter));
 
     UndoableCommand cmd("flipSelectedTexcoords " + string::to_string(axis));
 
-    foreachSelectedNode([&](const INode::Ptr& node)
-    {
-        node->beginTransformation();
-        node->transform(flipTransformation);
-        node->commitTransformation();
-        return true;
-    });
+    selection::algorithm::TextureFlipper flipper(flipCenter, axis);
+    foreachSelectedNode(flipper);
 
     radiant::TextureChangedMessage::Send();
 }

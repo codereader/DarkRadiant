@@ -648,6 +648,7 @@
     <ClCompile Include="..\..\radiantcore\selection\algorithm\Planes.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\algorithm\Primitives.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\algorithm\Shader.cpp" />
+    <ClCompile Include="..\..\radiantcore\selection\algorithm\Texturing.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\algorithm\Transformation.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\clipboard\Clipboard.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\group\SelectionGroupInfoFileModule.cpp" />
@@ -1003,6 +1004,7 @@
     <ClInclude Include="..\..\radiantcore\selection\algorithm\Primitives.h" />
     <ClInclude Include="..\..\radiantcore\selection\algorithm\SelectionPolicies.h" />
     <ClInclude Include="..\..\radiantcore\selection\algorithm\Shader.h" />
+    <ClInclude Include="..\..\radiantcore\selection\algorithm\Texturing.h" />
     <ClInclude Include="..\..\radiantcore\selection\algorithm\Transformation.h" />
     <ClInclude Include="..\..\radiantcore\selection\BasicSelectable.h" />
     <ClInclude Include="..\..\radiantcore\selection\BestSelector.h" />

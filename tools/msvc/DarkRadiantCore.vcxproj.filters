@@ -1108,6 +1108,9 @@
     <ClCompile Include="..\..\radiantcore\selection\textool\ColourSchemeManager.cpp">
       <Filter>src\selection\textool</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\selection\algorithm\Texturing.cpp">
+      <Filter>src\selection\algorithm</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
@@ -2252,6 +2255,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\selection\textool\SelectableVertex.h">
       <Filter>src\selection\textool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\selection\algorithm\Texturing.h">
+      <Filter>src\selection\algorithm</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

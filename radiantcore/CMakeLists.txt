@@ -235,6 +235,7 @@ add_library(radiantcore MODULE
             selection/algorithm/Planes.cpp
             selection/algorithm/Primitives.cpp
             selection/algorithm/Shader.cpp
+            selection/algorithm/Texturing.cpp
             selection/algorithm/Transformation.cpp
             selection/clipboard/Clipboard.cpp
             selection/group/SelectionGroupInfoFileModule.cpp
