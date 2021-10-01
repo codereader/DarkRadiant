@@ -201,39 +201,6 @@ void TextureProjection::fitTexture(std::size_t width, std::size_t height,
     normalise((float)width, (float)height);
 }
 
-void TextureProjection::flipTexture(unsigned int flipAxis)
-{
-    // Retrieve the "fake" texture coordinates (shift, scale, rotation)
-    TexDef texdef = matrix.getFakeTexCoords();
-
-    // Check for x flip (x-component not zero)
-    if (flipAxis == 0)
-    {
-        // Invert the x scale and rotate 180�
-        auto scale = texdef.getScale();
-        scale[0] *= -1;
-        texdef.setScale(scale);
-
-        texdef.setRotation(texdef.getRotation() - 180);
-    }
-    else if (flipAxis == 1)
-    {
-        // Invert the y scale and rotate 180�
-        auto scale = texdef.getScale();
-        scale[1] *= -1;
-        texdef.setScale(scale);
-
-        texdef.setRotation(texdef.getRotation() - 180);
-    }
-    else
-    {
-        // Do nothing, leave the TextureMatrix untouched
-        return;
-    }
-
-    matrix = TextureMatrix(texdef);
-}
-
 void TextureProjection::alignTexture(IFace::AlignEdge align, const Winding& winding)
 {
     if (winding.empty()) return;

@@ -9,6 +9,7 @@
 #include "shaderlib.h"
 #include "texturelib.h"
 #include "Winding.h"
+#include "selection/algorithm/Texturing.h"
 
 #include "Brush.h"
 #include "BrushNode.h"
@@ -635,10 +636,9 @@ void Face::fitTexture(float s_repeat, float t_repeat) {
     texdefChanged();
 }
 
-void Face::flipTexture(unsigned int flipAxis) {
-    undoSave();
-    _texdef.flipTexture(flipAxis);
-    texdefChanged();
+void Face::flipTexture(unsigned int flipAxis)
+{
+    selection::algorithm::TextureFlipper::FlipFace(*this, flipAxis);
 }
 
 void Face::alignTexture(AlignEdge align)

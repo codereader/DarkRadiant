@@ -52,12 +52,6 @@ public:
     // Fits a texture to a brush face
     void fitTexture(std::size_t width, std::size_t height, const Vector3& normal, const Winding& w, float s_repeat, float t_repeat);
 
-    /** greebo: Mirrors the texture around the given axis.
-     *
-     * @flipAxis: 0 = flip x, 1 = flip y
-     */
-    void flipTexture(unsigned int flipAxis);
-
     // Aligns this texture to the given edge of the winding
     void alignTexture(IFace::AlignEdge align, const Winding& winding);
 

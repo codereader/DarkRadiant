@@ -4,6 +4,9 @@
 #include "math/AABB.h"
 #include "math/Matrix3.h"
 
+class IPatch;
+class IFace;
+
 namespace selection
 {
 
@@ -54,6 +57,12 @@ public:
 
     // Directly flip the texture of the given patch
     static void FlipPatch(IPatch& patch, int flipAxis);
+
+    // Directly flip the texture of the given face
+    static void FlipFace(IFace& face, int flipAxis);
+
+private:
+    static void FlipNode(const textool::INode::Ptr& node, int flipAxis);
 };
 
 }
