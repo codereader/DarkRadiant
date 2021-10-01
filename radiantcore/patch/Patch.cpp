@@ -15,6 +15,7 @@
 #include "brush/Winding.h"
 #include "command/ExecutionFailure.h"
 #include "selection/algorithm/Shader.h"
+#include "selection/algorithm/Texturing.h"
 
 #include "PatchSavedState.h"
 #include "PatchNode.h"
@@ -858,14 +859,7 @@ Patch* Patch::MakeCap(Patch* patch, patch::CapType eType, EMatrixMajor mt, bool 
 
 void Patch::flipTexture(int nAxis)
 {
-	undoSave();
-
-	for(PatchControlIter i = _ctrl.begin(); i != _ctrl.end(); ++i)
-	{
-		i->texcoord[nAxis] = -i->texcoord[nAxis];
-	}
-
-	controlPointsChanged();
+    selection::algorithm::TextureFlipper::FlipPatch(*this, nAxis);
 }
 
 /** greebo: Helper function that shifts all control points in

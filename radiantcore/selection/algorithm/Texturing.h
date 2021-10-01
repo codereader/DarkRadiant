@@ -51,6 +51,9 @@ public:
     TextureFlipper(const Vector2& flipCenter, int axis);
 
     bool processNode(const textool::INode::Ptr& node) override;
+
+    // Directly flip the texture of the given patch
+    static void FlipPatch(IPatch& patch, int flipAxis);
 };
 
 }

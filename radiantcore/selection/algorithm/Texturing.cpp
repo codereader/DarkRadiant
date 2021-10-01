@@ -1,5 +1,7 @@
 #include "Texturing.h"
 
+#include "selection/textool/PatchNode.h"
+
 namespace selection
 {
 
@@ -44,6 +46,16 @@ bool TextureFlipper::processNode(const textool::INode::Ptr& node)
     node->transform(_transform);
     node->commitTransformation();
     return true;
+}
+
+void TextureFlipper::FlipPatch(IPatch& patch, int flipAxis)
+{
+    auto node = std::make_shared<textool::PatchNode>(patch);
+
+    const auto& bounds = node->localAABB();
+    TextureFlipper flipper({ bounds.origin.x(), bounds.origin.y() }, flipAxis);
+
+    flipper.processNode(node);
 }
 
 }
