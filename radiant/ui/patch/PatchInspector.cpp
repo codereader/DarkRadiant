@@ -52,9 +52,6 @@ PatchInspector::PatchInspector() :
 	// Create all the widgets and pack them into the window
 	populateWindow();
 
-	// Update the widget status
-	rescanSelection();
-
 	InitialiseWindowPosition(410, 480, RKEY_WINDOW_STATE);
 }
 

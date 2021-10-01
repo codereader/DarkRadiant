@@ -624,10 +624,6 @@ void SurfaceInspector::doUpdate()
 	{
 		updateTexDef();
 	}
-
-	// Update the TexTool instance as well
-	ui::TexTool::Instance().draw();
-	ui::PatchInspector::Instance().queueUpdate();
 }
 
 void SurfaceInspector::fitTexture(Axis axis)
