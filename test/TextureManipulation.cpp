@@ -3,13 +3,15 @@
 #include "algorithm/Scene.h"
 #include "algorithm/Primitives.h"
 #include "scenelib.h"
+#include "math/Matrix3.h"
+#include "registry/registry.h"
 
 namespace test
 {
 
 using TextureManipulationTest = RadiantTest;
 
-TEST_F(TextureManipulationTest, FaceRotateTexDef)
+TEST_F(TextureManipulationTest, RotateFace)
 {
     std::string mapPath = "maps/simple_brushes.map";
     GlobalCommandSystem().executeCommand("OpenMap", mapPath);
@@ -81,6 +83,56 @@ TEST_F(TextureManipulationTest, FaceRotateTexDef)
     EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(64, -64, -160), Vector2(0.853553, 63.8876)));
     EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(64, -64, -288), Vector2(1.11237, 64.8536)));
     EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(-64, -64, -288), Vector2(0.146447, 65.1124)));
+}
+
+namespace
+{
+
+void performPatchRotateTest(bool clockwise)
+{
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto patchNode = algorithm::createPatchFromBounds(worldspawn, AABB(Vector3(4, 50, 60), Vector3(64, 128, 256)), "textures/numbers/1");
+
+    auto patch = Node_getIPatch(patchNode);
+    patch->scaleTextureNaturally();
+    patch->controlPointsChanged();
+
+    Node_setSelected(patchNode, true);
+
+    auto bounds = algorithm::getTextureSpaceBounds(*patch);
+
+    std::vector<Vector2> oldTexCoords;
+    algorithm::foreachPatchVertex(*patch, [&](const PatchControl& ctrl) { oldTexCoords.push_back(ctrl.texcoord); });
+
+    // Set the rotation in the registry, TexRotate will pick it up
+    constexpr auto angle = 15.0f;
+    registry::setValue("user/ui/textures/surfaceInspector/rotStep", angle);
+    GlobalCommandSystem().executeCommand("TexRotate", { cmd::Argument(clockwise ? "1" : "-1") });
+
+    // Rotate each texture coordinate around the patch center with a manual transform
+    auto transform = Matrix3::getTranslation({ -bounds.origin.x(), -bounds.origin.y() });
+    transform.premultiplyBy(Matrix3::getRotation(angle));
+    transform.premultiplyBy(Matrix3::getTranslation({ bounds.origin.x(), bounds.origin.y() }));
+
+    auto old = oldTexCoords.begin();
+    algorithm::foreachPatchVertex(*patch, [&](const PatchControl& ctrl)
+    {
+        auto transformed = transform * (*old++);
+        EXPECT_TRUE(math::isNear(transformed, ctrl.texcoord, 0.02)) 
+            << "Transformed UV coords should be " << transformed << " but was " << ctrl.texcoord;
+    });
+}
+
+}
+
+TEST_F(TextureManipulationTest, RotatePatchClockwise)
+{
+    performPatchRotateTest(true); // clockwise
+}
+
+TEST_F(TextureManipulationTest, RotatePatchCounterClockwise)
+{
+    performPatchRotateTest(false); // clockwise
 }
 
 namespace
