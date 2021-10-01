@@ -3,6 +3,7 @@
 #include "imousetoolmanager.h"
 
 #include <wx/event.h>
+#include <wx/app.h>
 #include <wx/window.h>
 #include <wx/textctrl.h>
 #include <wx/combobox.h>
@@ -12,7 +13,6 @@
 #include "wxutil/Modifier.h"
 #include "wxutil/dialog/DialogBase.h"
 
-#include "itextstream.h"
 #include "EventManager.h"
 
 namespace ui
@@ -84,8 +84,11 @@ int GlobalKeyEventFilter::FilterEvent(wxEvent& event)
 				// Attempt to find an accelerator
 				bool acceleratorFound = handleAccelerator(keyEvent);
 
-				// Update the status bar in any case
-				GlobalMouseToolManager().updateStatusbar(wxutil::Modifier::GetStateForKeyEvent(keyEvent));
+				// Update the status bar if the app is active
+                if (wxTheApp->IsActive())
+                {
+                    GlobalMouseToolManager().updateStatusbar(wxutil::Modifier::GetStateForKeyEvent(keyEvent));
+                }
 
 				return acceleratorFound ? Event_Processed : Event_Skip;
 			}

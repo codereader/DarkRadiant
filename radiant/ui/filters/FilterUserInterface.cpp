@@ -3,6 +3,7 @@
 #include "ifilter.h"
 #include "ieventmanager.h"
 #include "imainframe.h"
+#include "imenumanager.h"
 #include "icommandsystem.h"
 #include <sigc++/functors/mem_fun.h>
 
@@ -28,6 +29,7 @@ const StringSet& FilterUserInterface::getDependencies() const
 		_dependencies.insert(MODULE_FILTERSYSTEM);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
 		_dependencies.insert(MODULE_EVENTMANAGER);
+		_dependencies.insert(MODULE_MENUMANAGER);
 	}
 
 	return _dependencies;

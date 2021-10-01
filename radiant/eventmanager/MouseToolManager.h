@@ -5,19 +5,21 @@
 #include "imousetoolmanager.h"
 #include "xmlutil/Node.h"
 #include "MouseToolGroup.h"
-#include "ModifierHintPopup.h"
 #include <wx/event.h>
 #include <wx/timer.h>
+#include "wxutil/event/SingleIdleCallback.h"
 
 namespace ui
 {
+
+class ModifierHintPopup;
 
 /**
 * Implementation of the IMouseToolManager interface.
 * This is used by the GlobalXYWnd and GlobalCamera instances.
 */
 class MouseToolManager :
-    public wxEvtHandler,
+    public wxutil::SingleIdleCallback,
     public IMouseToolManager
 {
 protected:
@@ -28,6 +30,7 @@ protected:
 
     wxTimer _hintCloseTimer;
     ModifierHintPopup* _hintPopup;
+    bool _shouldClosePopup;
 
 public:
     MouseToolManager();
@@ -50,6 +53,10 @@ public:
     void updateStatusbar(unsigned int newState);
 
     void resetBindingsToDefault();
+    void closeHintPopup();
+
+protected:
+    void onIdle() override;
 
 private:
     void onMainFrameConstructed();
@@ -60,7 +67,6 @@ private:
     void saveToolMappings();
 
     void onCloseTimerIntervalReached(wxTimerEvent& ev);
-    void closeHintPopup();
 };
 
 } // namespace

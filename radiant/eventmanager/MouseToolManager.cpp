@@ -10,6 +10,7 @@
 #include "wxutil/MouseButton.h"
 #include "wxutil/Modifier.h"
 #include "module/StaticModule.h"
+#include "ModifierHintPopup.h"
 
 namespace ui
 {
@@ -22,7 +23,8 @@ namespace
 MouseToolManager::MouseToolManager() :
     _activeModifierState(0),
     _hintCloseTimer(this),
-    _hintPopup(nullptr)
+    _hintPopup(nullptr),
+    _shouldClosePopup(false)
 {
     Bind(wxEVT_TIMER, &MouseToolManager::onCloseTimerIntervalReached, this);
 }
@@ -229,12 +231,12 @@ void MouseToolManager::updateStatusbar(unsigned int newState)
 
     // (Re-)start the timer
     _hintCloseTimer.StartOnce(HINT_POPUP_CLOSE_TIMEOUT_MSECS);
+    _shouldClosePopup = false;
 
     // Ensure the popup exists
     if (!_hintPopup)
     {
-        _hintPopup = new ModifierHintPopup(GlobalMainFrame().getWxTopLevelWindow());
-        _hintPopup->Show();
+        _hintPopup = new ModifierHintPopup(GlobalMainFrame().getWxTopLevelWindow(), *this);
     }
 
     _hintPopup->SetText(statusText);
@@ -242,6 +244,16 @@ void MouseToolManager::updateStatusbar(unsigned int newState)
 
 void MouseToolManager::closeHintPopup()
 {
+    _shouldClosePopup = true;
+    requestIdleCallback();
+}
+
+void MouseToolManager::onIdle()
+{
+    if (!_shouldClosePopup) return;
+
+    _shouldClosePopup = false;
+
     if (_hintPopup)
     {
         _hintPopup->Hide();
