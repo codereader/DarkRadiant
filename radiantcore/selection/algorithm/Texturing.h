@@ -78,6 +78,9 @@ public:
     // Directly rotate the texture of the given patch around its UV center
     static void RotatePatch(IPatch& patch, double angle);
 
+    // Directly rotate the texture of the given face around its UV center
+    static void RotateFace(IFace& face, double angle);
+
 private:
     static void RotateNode(const textool::INode::Ptr& node, double angle);
 };

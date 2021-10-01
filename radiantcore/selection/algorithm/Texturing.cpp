@@ -97,6 +97,11 @@ void TextureRotator::RotatePatch(IPatch& patch, double angle)
     RotateNode(std::make_shared<textool::PatchNode>(patch), angle);
 }
 
+void TextureRotator::RotateFace(IFace& face, double angle)
+{
+    RotateNode(std::make_shared<textool::FaceNode>(face), angle);
+}
+
 void TextureRotator::RotateNode(const textool::INode::Ptr& node, double angle)
 {
     const auto& bounds = node->localAABB();

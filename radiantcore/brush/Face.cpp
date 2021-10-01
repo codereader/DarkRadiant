@@ -589,45 +589,7 @@ void Face::scaleTexdef(float sFactor, float tFactor) {
 
 void Face::rotateTexdef(float angle)
 {
-    if (m_winding.size() < 3) return;
-
-    undoSave();
-
-    // Calculate the pivot of rotation (which will be the UV centroid)
-    Vector2 centroid = m_winding[0].texcoord;
-
-    for (std::size_t i = 1; i < m_winding.size(); ++i)
-    {
-        centroid += m_winding[i].texcoord;
-    }
-
-    centroid /= static_cast<Vector2::ElementType>(m_winding.size());
-
-    auto angleInRadians = degrees_to_radians(angle);
-
-    // Translate to origin, then rotate, then translate back
-    auto pivotedRotation = Matrix3::getTranslation(-centroid)
-        .getPremultipliedBy(Matrix3::getRotation(angleInRadians))
-        .getPremultipliedBy(Matrix3::getTranslation(centroid));
-
-    // Calculate the desired set of UV coordinates
-    Vector2 uvs[] =
-    {
-        pivotedRotation * m_winding[0].texcoord,
-        pivotedRotation * m_winding[1].texcoord,
-        pivotedRotation * m_winding[2].texcoord,
-    };
-
-    // Prepare the winding vertex XYZ coordinates
-    Vector3 points[] =
-    {
-        m_winding[0].vertex,
-        m_winding[1].vertex,
-        m_winding[2].vertex,
-    };
-
-    setTexDefFromPoints(points, uvs);
-    _texdef = m_texdefTransformed;
+    selection::algorithm::TextureRotator::RotateFace(*this, degrees_to_radians(angle));
 }
 
 void Face::fitTexture(float s_repeat, float t_repeat) {
