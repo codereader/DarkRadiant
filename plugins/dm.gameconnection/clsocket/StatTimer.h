@@ -71,13 +71,9 @@
 /// This class is designed
 class CStatTimer {
 public:
-    CStatTimer()
-    {
-    };
+    CStatTimer() = default;
 
-    ~CStatTimer()
-    {
-    };
+    ~CStatTimer() = default;
 
     void Initialize()
     {

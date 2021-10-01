@@ -28,8 +28,8 @@ namespace
     };
 }
 
-AutomationEngine::AutomationEngine()
-{}
+AutomationEngine::AutomationEngine() = default;
+
 AutomationEngine::~AutomationEngine()
 {
     disconnect(true);
@@ -51,7 +51,7 @@ bool AutomationEngine::connect()
 
     // Make connection using clsocket
     // TODO: make port configurable, as it is in TDM?
-    std::unique_ptr<CActiveSocket> connection(new CActiveSocket());
+    auto connection = std::make_unique<CActiveSocket>(CActiveSocket());
     if (
         !connection->Initialize() ||
         !connection->SetNonblocking() ||
@@ -121,12 +121,12 @@ void AutomationEngine::think() {
             int responseSeqno, lineLen;
             int ret = sscanf(responseBytes.data(), "response %d\n%n", &responseSeqno, &lineLen);
             assert(ret == 1); ret;
-            std::string response(responseBytes.begin() + lineLen, responseBytes.end());
 
             //find request, mark it as "no longer in progress"
             if (Request* req = findRequest(responseSeqno)) {
+                std::string response(responseBytes.begin() + lineLen, responseBytes.end());
                 req->_finished = true;
-                req->_response = response;
+                req->_response = std::move(response);
             }
         }
     }

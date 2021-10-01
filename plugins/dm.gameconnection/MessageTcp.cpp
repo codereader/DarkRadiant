@@ -6,8 +6,8 @@
 namespace gameconn
 {
 
-MessageTcp::~MessageTcp() {}
-MessageTcp::MessageTcp() {}
+MessageTcp::~MessageTcp() = default;
+MessageTcp::MessageTcp() = default;
 
 void MessageTcp::init(std::unique_ptr<CActiveSocket> &&connection) {
     tcp = std::move(connection);

@@ -1644,7 +1644,7 @@ int PicoFindSurfaceVertexNum( picoSurface_t *surface, picoVec3_t xyz, picoVec3_t
 		{
 			for( j = 0; j < numSTs; j++ )
 			{
-				if( *((int*) surface->color[ j ]) != *((int*) color[ j ]) )
+				if( *((ptrdiff_t*) surface->color[ j ]) != *((ptrdiff_t*) color[ j ]) )
 					break;
 			}
 			if( j != numColors )
