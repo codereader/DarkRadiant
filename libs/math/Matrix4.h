@@ -136,8 +136,7 @@ public:
     }
 
     /**
-     * \brief
-     * Construct a matrix containing the given elements.
+     * \brief Construct a matrix containing the given elements.
      *
      * The elements are specified column-wise, starting with the left-most
      * column.
@@ -148,8 +147,7 @@ public:
                              double tx, double ty, double tz, double tw);
 
     /**
-     * \brief
-     * Construct a matrix containing the given elements.
+     * \brief Construct a matrix containing the given elements.
      *
      * The elements are specified row-wise, starting with the top row.
      */
@@ -211,25 +209,13 @@ public:
      * Return columns of the matrix as vectors.
      * \{
      */
-    Vector3& xCol3Ref()
-    {
-        return reinterpret_cast<Vector3&>(xx());
-    }
     Vector3 xCol3() const
     {
         return Vector3(_transform.matrix().col(0).head(3));
     }
-    Vector3& yCol3Ref()
-    {
-        return reinterpret_cast<Vector3&>(yx());
-    }
     Vector3 yCol3() const
     {
         return Vector3(_transform.matrix().col(1).head(3));
-    }
-    Vector3& zCol3Ref()
-    {
-        return reinterpret_cast<Vector3&>(zx());
     }
     Vector3 zCol3() const
     {

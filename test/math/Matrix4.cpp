@@ -126,16 +126,6 @@ TEST(MatrixTest, AccessMatrixColumnVectors)
     EXPECT_EQ(m.zCol3(), Vector3(8, 7, 10));
     EXPECT_EQ(m.tCol(), Vector4(-5, 13, 14, 3));
     EXPECT_EQ(m.translation(), Vector3(-5, 13, 14));
-
-    // Write column values
-    m.xCol3Ref() = Vector3(0.1, 0.2, 0.3);
-    m.yCol3Ref() = Vector3(0.5, 0.6, 0.7);
-    m.zCol3Ref() = Vector3(0.9, 1.0, 1.1);
-    m.setTranslation({1.3, 1.4, 1.5});
-    EXPECT_EQ(m, Matrix4::byColumns(0.1, 0.2, 0.3, 26,
-                                    0.5, 0.6, 0.7, -100,
-                                    0.9, 1.0, 1.1, 0.5,
-                                    1.3, 1.4, 1.5, 3));
 }
 
 TEST(MatrixTest, SetMatrixColumnVectors)
@@ -164,6 +154,13 @@ TEST(MatrixTest, SetMatrixColumnVectors)
     EXPECT_EQ(m, Matrix4::byRows(5, 27, -100, 8,
                                 -5, 14, 150, 678,
                                 9, 600, 0.5, 2,
+                                75, 0, 1, -9));
+
+    // Set translation column
+    m.setTranslation({-0.8, -6, 27});
+    EXPECT_EQ(m, Matrix4::byRows(5, 27, -100, -0.8,
+                                -5, 14, 150, -6,
+                                9, 600, 0.5, 27,
                                 75, 0, 1, -9));
 }
 
