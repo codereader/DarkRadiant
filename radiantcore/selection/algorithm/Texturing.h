@@ -16,8 +16,7 @@ namespace algorithm
 class TextureNodeManipulator
 {
 protected:
-    TextureNodeManipulator()
-    {}
+    TextureNodeManipulator() = default;
 
 public:
     // Conversion operator, to be able to pass an instance reference directly to 
@@ -63,6 +62,24 @@ public:
 
 private:
     static void FlipNode(const textool::INode::Ptr& node, int flipAxis);
+};
+
+class TextureRotator :
+    public TextureNodeManipulator
+{
+private:
+    Matrix3 _transform;
+
+public:
+    TextureRotator(const Vector2& pivot, double angle);
+
+    bool processNode(const textool::INode::Ptr& node) override;
+
+    // Directly rotate the texture of the given patch around its UV center
+    static void RotatePatch(IPatch& patch, double angle);
+
+private:
+    static void RotateNode(const textool::INode::Ptr& node, double angle);
 };
 
 }

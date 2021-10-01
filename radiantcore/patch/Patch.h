@@ -268,7 +268,7 @@ public:
 	// This is the same as above, but with undoSave() for use in command sequences
 	void translateTexture(float s, float t) override;
 	void scaleTexture(float s, float t) override;
-	void rotateTexture(float angle) override;
+	void rotateTexture(float angle) override; // angle in degrees
 	void fitTexture(float repeatS, float repeatT) override; // call with s=1 t=1 for FIT
 
 	/* uses longest parallel chord to calculate texture coords for each row/col

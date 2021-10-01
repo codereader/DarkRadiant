@@ -111,7 +111,7 @@ void performPatchRotateTest(bool clockwise)
 
     // Rotate each texture coordinate around the patch center with a manual transform
     auto transform = Matrix3::getTranslation({ -bounds.origin.x(), -bounds.origin.y() });
-    transform.premultiplyBy(Matrix3::getRotation(angle));
+    transform.premultiplyBy(Matrix3::getRotation(degrees_to_radians(clockwise ? angle : -angle)));
     transform.premultiplyBy(Matrix3::getTranslation({ bounds.origin.x(), bounds.origin.y() }));
 
     auto old = oldTexCoords.begin();

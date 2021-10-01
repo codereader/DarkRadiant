@@ -901,20 +901,7 @@ void Patch::scaleTexture(float s, float t)
 
 void Patch::rotateTexture(float angle)
 {
-  undoSave();
-
-  const double s = sin(degrees_to_radians(angle));
-  const double c = cos(degrees_to_radians(angle));
-
-  for(PatchControlIter i = _ctrl.begin(); i != _ctrl.end(); ++i)
-  {
-    const double x = i->texcoord[0];
-    const double y = i->texcoord[1];
-    i->texcoord[0] = (x * c) - (y * s);
-    i->texcoord[1] = (y * c) + (x * s);
-  }
-
-  controlPointsChanged();
+    selection::algorithm::TextureRotator::RotatePatch(*this, degrees_to_radians(angle));
 }
 
 void Patch::fitTexture(float s, float t)
