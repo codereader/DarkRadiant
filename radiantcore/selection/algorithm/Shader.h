@@ -107,7 +107,7 @@ namespace selection
 	 *
 	 * @flipAxis: 0 = flip S, 1 = flip T
 	 */
-	void flipTexture(unsigned int flipAxis);
+	void flipTexture(int flipAxis);
 
 	/** greebo: The command Targets for flipping the textures about the
 	 * 			S and T axes respectively.

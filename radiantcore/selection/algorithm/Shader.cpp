@@ -17,6 +17,9 @@
 #include "brush/TextureProjection.h"
 #include "patch/PatchNode.h"
 #include "selection/algorithm/Primitives.h"
+#include "selection/algorithm/Texturing.h"
+#include "selection/textool/FaceNode.h"
+#include "selection/textool/PatchNode.h"
 #include "selection/shaderclipboard/ShaderClipboard.h"
 #include "selection/shaderclipboard/ClosestTexturableFinder.h"
 #include "scene/Traverse.h"
@@ -460,14 +463,26 @@ void fitTextureCmd(const cmd::ArgumentList& args)
 	fitTexture(args[0].getDouble(), args[1].getDouble());
 }
 
-void flipTexture(unsigned int flipAxis)
+void flipTexture(int flipAxis)
 {
 	UndoableCommand undo("flipTexture");
 
-	GlobalSelectionSystem().foreachFace([&] (IFace& face) { face.flipTexture(flipAxis); });
-	GlobalSelectionSystem().foreachPatch([&] (IPatch& patch) { patch.flipTexture(flipAxis); });
+    // Create texture nodes around the selection and pass it on to the specialised flip algorithm
+    std::vector<textool::INode::Ptr> nodes;
 
-	SceneChangeNotify();
+    GlobalSelectionSystem().foreachFace([&](IFace& face) { nodes.emplace_back(std::make_shared<textool::FaceNode>(face)); });
+	GlobalSelectionSystem().foreachPatch([&] (IPatch& patch) { nodes.emplace_back(std::make_shared<textool::PatchNode>(patch)); });
+
+    // Flip every node about its own center point
+    for (const auto& node : nodes)
+    {
+        const auto& bounds = node->localAABB();
+        TextureFlipper flipper({ bounds.origin.x(), bounds.origin.y() }, flipAxis);
+
+        flipper.processNode(node);
+    }
+
+    radiant::TextureChangedMessage::Send();
 }
 
 void flipTextureS(const cmd::ArgumentList& args)

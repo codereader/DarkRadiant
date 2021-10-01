@@ -6,7 +6,15 @@ namespace selection
 namespace algorithm
 {
 
-bool TextureBoundsAccumulator::operator()(const textool::INode::Ptr& node)
+TextureNodeManipulator::operator std::function<bool(const textool::INode::Ptr& node)>()
+{
+    return [this](const textool::INode::Ptr& node)
+    {
+        return processNode(node);
+    };
+}
+
+bool TextureBoundsAccumulator::processNode(const textool::INode::Ptr& node)
 {
     _bounds.includeAABB(node->localAABB());
     return true;
@@ -30,7 +38,7 @@ TextureFlipper::TextureFlipper(const Vector2& flipCenter, int axis)
     _transform.premultiplyBy(Matrix3::getTranslation(+flipCenter));
 }
 
-bool TextureFlipper::operator()(const textool::INode::Ptr& node)
+bool TextureFlipper::processNode(const textool::INode::Ptr& node)
 {
     node->beginTransformation();
     node->transform(_transform);

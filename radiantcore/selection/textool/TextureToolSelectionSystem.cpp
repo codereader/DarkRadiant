@@ -684,6 +684,7 @@ void TextureToolSelectionSystem::flipSelected(int axis)
 
     // Calculate the center based on the selection
     selection::algorithm::TextureBoundsAccumulator accumulator;
+    foreachSelectedNode(accumulator);
 
     if (!accumulator.getBounds().isValid())
     {
