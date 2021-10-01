@@ -34,6 +34,7 @@ add_executable(drtest
                Renderer.cpp
                SelectionAlgorithm.cpp
                Selection.cpp
+               TextureManipulation.cpp
                TextureTool.cpp
                Transformation.cpp
                VFS.cpp

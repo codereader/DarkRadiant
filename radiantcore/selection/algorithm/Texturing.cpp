@@ -6,6 +6,12 @@ namespace selection
 namespace algorithm
 {
 
+bool TextureBoundsAccumulator::operator()(const textool::INode::Ptr& node)
+{
+    _bounds.includeAABB(node->localAABB());
+    return true;
+}
+
 TextureFlipper::TextureFlipper(const Vector2& flipCenter, int axis)
 {
     auto flipMatrix = Matrix3::getIdentity();

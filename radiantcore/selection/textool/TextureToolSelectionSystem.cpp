@@ -682,22 +682,16 @@ void TextureToolSelectionSystem::flipSelected(int axis)
         return;
     }
 
-    AABB selectionBounds;
-
     // Calculate the center based on the selection
-    foreachSelectedNode([&](const INode::Ptr& node)
-    {
-        selectionBounds.includeAABB(node->localAABB());
-        return true;
-    });
+    selection::algorithm::TextureBoundsAccumulator accumulator;
 
-    if (!selectionBounds.isValid())
+    if (!accumulator.getBounds().isValid())
     {
         return;
     }
 
     // Move center to origin, flip around the specified axis, and move back
-    Vector2 flipCenter(selectionBounds.origin.x(), selectionBounds.origin.y());
+    Vector2 flipCenter(accumulator.getBounds().origin.x(), accumulator.getBounds().origin.y());
 
     UndoableCommand cmd("flipSelectedTexcoords " + string::to_string(axis));
 

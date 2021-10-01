@@ -2,7 +2,9 @@
 
 #include "ibrush.h"
 #include "ipatch.h"
+#include "math/Vector3.h"
 #include "math/Plane3.h"
+#include "render/TexCoord2f.h"
 #include "math/AABB.h"
 
 namespace test
@@ -133,6 +135,14 @@ inline scene::INodePtr createPatchFromBounds(const scene::INodePtr& parent,
     patch->controlPointsChanged();
 
     return patchNode;
+}
+
+inline bool faceHasVertex(const IFace* face, const Vector3& expectedXYZ, const Vector2& expectedUV)
+{
+    return algorithm::faceHasVertex(face, [&](const WindingVertex& vertex)
+    {
+        return math::isNear(vertex.vertex, expectedXYZ, 0.01) && math::isNear(vertex.texcoord, expectedUV, 0.01);
+    });
 }
 
 }

@@ -24,14 +24,6 @@ void expectNear(const Plane3& p1, const Plane3& p2, double epsilon)
     EXPECT_NEAR(p1.dist(), p2.dist(), epsilon);
 }
 
-inline bool faceHasVertex(const IFace* face, const Vector3& expectedXYZ, const Vector2& expectedUV)
-{
-    return algorithm::faceHasVertex(face, [&](const WindingVertex& vertex)
-    {
-        return math::isNear(vertex.vertex, expectedXYZ, 0.01) && math::isNear(vertex.texcoord, expectedUV, 0.01);
-    });
-}
-
 using Quake3BrushTest = RadiantTest;
 
 class BrushTest: public RadiantTest
@@ -192,80 +184,6 @@ TEST_F(BrushTest, FacePlaneTranslate)
     });
 }
 
-TEST_F(BrushTest, FaceRotateTexDef)
-{
-    std::string mapPath = "maps/simple_brushes.map";
-    GlobalCommandSystem().executeCommand("OpenMap", mapPath);
-
-    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
-
-    // Find the brush that is centered at origin
-    auto brushNode = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/2");
-    EXPECT_TRUE(brushNode && brushNode->getNodeType() == scene::INode::Type::Brush) << "Couldn't locate the test brush";
-
-    // Pick a few faces and run the algorithm against it, checking hardcoded results
-
-    // Facing 0,0,1
-    auto face = algorithm::findBrushFaceWithNormal(Node_getIBrush(brushNode), Vector3(0, 0, 1));
-
-    EXPECT_TRUE(faceHasVertex(face, Vector3(64, -64, -160), Vector2(0, 1)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(-64, -64, -160), Vector2(0, 0)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(-64, 64, -160), Vector2(1, 0)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(64, 64, -160), Vector2(1, 1)));
-
-    face->rotateTexdef(15); // degrees
-
-    EXPECT_TRUE(faceHasVertex(face, Vector3(64, -64, -160), Vector2(-0.112372, 0.853553)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(-64, -64, -160), Vector2(0.146447, -0.112372)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(-64, 64, -160), Vector2(1.11237, 0.146447)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(64, 64, -160), Vector2(0.853553, 1.11237)));
-
-    // Facing 1,0,0
-    face = algorithm::findBrushFaceWithNormal(Node_getIBrush(brushNode), Vector3(1, 0, 0));
-
-    EXPECT_TRUE(faceHasVertex(face, Vector3(64, -64, -288), Vector2(0, 65)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(64, -64, -160), Vector2(0, 64)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(64, 64, -160), Vector2(1, 64)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(64, 64, -288), Vector2(1, 65)));
-    
-    face->rotateTexdef(15); // degrees
-    
-    EXPECT_TRUE(faceHasVertex(face, Vector3(64, -64, -288), Vector2(-0.112372, 64.8536)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(64, -64, -160), Vector2(0.146447, 63.8876)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(64, 64, -160), Vector2(1.11237, 64.1464)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(64, 64, -288), Vector2(0.853553, 65.1124)));
-
-    // Facing 0,0,-1
-    face = algorithm::findBrushFaceWithNormal(Node_getIBrush(brushNode), Vector3(0, 0, -1));
-
-    EXPECT_TRUE(faceHasVertex(face, Vector3(-64, -64, -288), Vector2(0, 1)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(64, -64, -288), Vector2(0, 0)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(64, 64, -288), Vector2(1, 0)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(-64, 64, -288), Vector2(1, 1)));
-    
-    face->rotateTexdef(15); // degrees
-
-    EXPECT_TRUE(faceHasVertex(face, Vector3(-64, -64, -288), Vector2(-0.112372, 0.853553)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(64, -64, -288), Vector2(0.146447, -0.112372)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(64, 64, -288), Vector2(1.11237, 0.146447)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(-64, 64, -288), Vector2(0.853553, 1.11237)));
-
-    // Facing 0,-1,0, this time rotate -15 degrees
-    face = algorithm::findBrushFaceWithNormal(Node_getIBrush(brushNode), Vector3(0, -1, 0));
-
-    EXPECT_TRUE(faceHasVertex(face, Vector3(-64, -64, -160), Vector2(0, 64)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(64, -64, -160), Vector2(1, 64)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(64, -64, -288), Vector2(1, 65)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(-64, -64, -288), Vector2(0, 65)));
-
-    face->rotateTexdef(-15); // degrees
-
-    EXPECT_TRUE(faceHasVertex(face, Vector3(-64, -64, -160), Vector2(-0.112372, 64.1464)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(64, -64, -160), Vector2(0.853553, 63.8876)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(64, -64, -288), Vector2(1.11237, 64.8536)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(-64, -64, -288), Vector2(0.146447, 65.1124)));
-}
-
 // Load a brush with one vertex at 0,0,0, and an identity shift/scale/rotation texdef
 TEST_F(Quake3BrushTest, LoadBrushWithIdentityTexDef)
 {
@@ -282,50 +200,50 @@ TEST_F(Quake3BrushTest, LoadBrushWithIdentityTexDef)
     auto face = algorithm::findBrushFaceWithNormal(Node_getIBrush(brushNode), Vector3(0, 0, 1));
     EXPECT_TRUE(face != nullptr) << "No brush plane is facing upwards?";
 
-    EXPECT_TRUE(faceHasVertex(face, Vector3(64,  0, 64), Vector2(0.0625, 0)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3( 0,  0, 64), Vector2(0, 0)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3( 0, 64, 64), Vector2(0, -0.125)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(64, 64, 64), Vector2(0.0625, -0.125)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(64,  0, 64), Vector2(0.0625, 0)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3( 0,  0, 64), Vector2(0, 0)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3( 0, 64, 64), Vector2(0, -0.125)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(64, 64, 64), Vector2(0.0625, -0.125)));
 
     face = algorithm::findBrushFaceWithNormal(Node_getIBrush(brushNode), Vector3(0, 0, -1));
     EXPECT_TRUE(face != nullptr) << "No brush plane is facing down?";
 
-    EXPECT_TRUE(faceHasVertex(face, Vector3(0, 0, 0), Vector2(0, 0)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(64, 0, 0), Vector2(0.0625, 0)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(64, 64, 0), Vector2(0.0625, -0.125)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(0, 64, 0), Vector2(0, -0.125)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(0, 0, 0), Vector2(0, 0)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(64, 0, 0), Vector2(0.0625, 0)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(64, 64, 0), Vector2(0.0625, -0.125)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(0, 64, 0), Vector2(0, -0.125)));
 
     face = algorithm::findBrushFaceWithNormal(Node_getIBrush(brushNode), Vector3(0, -1, 0));
     EXPECT_TRUE(face != nullptr) << "No brush plane with normal 0,-1,0?";
 
-    EXPECT_TRUE(faceHasVertex(face, Vector3(64, 0, 0), Vector2(0.0625, 0)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(0, 0, 0), Vector2(0, 0)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(0, 0, 64), Vector2(0, -0.125)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(64, 0, 64), Vector2(0.0625, -0.125)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(64, 0, 0), Vector2(0.0625, 0)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(0, 0, 0), Vector2(0, 0)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(0, 0, 64), Vector2(0, -0.125)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(64, 0, 64), Vector2(0.0625, -0.125)));
 
     face = algorithm::findBrushFaceWithNormal(Node_getIBrush(brushNode), Vector3(0, 1, 0));
     EXPECT_TRUE(face != nullptr) << "No brush plane with normal 0,1,0?";
 
-    EXPECT_TRUE(faceHasVertex(face, Vector3(0, 64, 0), Vector2(0, 0)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(64, 64, 0), Vector2(0.0625, 0)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(64, 64, 64), Vector2(0.0625, -0.125)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(0, 64, 64), Vector2(0, -0.125)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(0, 64, 0), Vector2(0, 0)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(64, 64, 0), Vector2(0.0625, 0)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(64, 64, 64), Vector2(0.0625, -0.125)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(0, 64, 64), Vector2(0, -0.125)));
 
     face = algorithm::findBrushFaceWithNormal(Node_getIBrush(brushNode), Vector3(1, 0, 0));
     EXPECT_TRUE(face != nullptr) << "No brush plane with normal 1,0,0?";
 
-    EXPECT_TRUE(faceHasVertex(face, Vector3(64, 64, 0), Vector2(0.0625, 0)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(64, 0, 0), Vector2(0, 0)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(64, 0, 64), Vector2(0, -0.125)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(64, 64, 64), Vector2(0.0625, -0.125)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(64, 64, 0), Vector2(0.0625, 0)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(64, 0, 0), Vector2(0, 0)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(64, 0, 64), Vector2(0, -0.125)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(64, 64, 64), Vector2(0.0625, -0.125)));
 
     face = algorithm::findBrushFaceWithNormal(Node_getIBrush(brushNode), Vector3(-1, 0, 0));
     EXPECT_TRUE(face != nullptr) << "No brush plane with normal -1,0,0?";
 
-    EXPECT_TRUE(faceHasVertex(face, Vector3(0, 0, 0), Vector2(0, 0)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(0, 64, 0), Vector2(0.0625, 0)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(0, 64, 64), Vector2(0.0625, -0.125)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(0, 0, 64), Vector2(0, -0.125)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(0, 0, 0), Vector2(0, 0)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(0, 64, 0), Vector2(0.0625, 0)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(0, 64, 64), Vector2(0.0625, -0.125)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(0, 0, 64), Vector2(0, -0.125)));
 }
 
 // Load an axis-aligned brush somewhere at (-600 1000 56) and some shift/scale/rotation values
@@ -344,10 +262,10 @@ TEST_F(Quake3BrushTest, LoadAxisAlignedBrushWithTransform)
     auto face = algorithm::findBrushFaceWithNormal(Node_getIBrush(brushNode), Vector3(0, 0, 1));
     EXPECT_TRUE(face != nullptr) << "No brush plane is facing upwards?";
 
-    EXPECT_TRUE(faceHasVertex(face, Vector3(-624, 800, 64), Vector2(5, 13)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(-688, 800, 64), Vector2(5.5, 13)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(-688, 1024, 64), Vector2(5.5, 16.5)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(-624, 1024, 64), Vector2(5, 16.5)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(-624, 800, 64), Vector2(5, 13)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(-688, 800, 64), Vector2(5.5, 13)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(-688, 1024, 64), Vector2(5.5, 16.5)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(-624, 1024, 64), Vector2(5, 16.5)));
 }
 
 // This loads the same brush as in the LoadAxisAlignedBrushWithTransform test
@@ -410,10 +328,10 @@ TEST_F(Quake3BrushTest, TextureOnAngledBrush)
     auto face = algorithm::findBrushFaceWithNormal(Node_getIBrush(brushNode), Vector3(0, -0.351123, +0.936329));
     EXPECT_TRUE(face != nullptr) << "Couldn't find the upwards facing brush face?";
 
-    EXPECT_TRUE(faceHasVertex(face, Vector3(-624, 1040, 64), Vector2(5, 16.5)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(-688, 1040, 64), Vector2(5.5, 16.5)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(-688, 1168, 112), Vector2(5.5, 18.5)));
-    EXPECT_TRUE(faceHasVertex(face, Vector3(-624, 1168, 112), Vector2(5, 18.5)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(-624, 1040, 64), Vector2(5, 16.5)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(-688, 1040, 64), Vector2(5.5, 16.5)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(-688, 1168, 112), Vector2(5.5, 18.5)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(-624, 1168, 112), Vector2(5, 18.5)));
 }
 #endif
 
