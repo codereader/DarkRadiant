@@ -12,50 +12,22 @@ inline void billboard_viewplaneOriented(Matrix4& rotation,
     Vector3 x(world2screen.xCol3().getNormalised());
     Vector3 y(world2screen.yCol3().getNormalised());
     Vector3 z(world2screen.zCol3().getNormalised());
-    rotation.yCol3Ref() = Vector3(x.y(), y.y(), z.y());
-    rotation.zCol3Ref() = -Vector3(x.z(), y.z(), z.z());
-    rotation.xCol3Ref() = rotation.yCol3().cross(rotation.zCol3()).getNormalised();
-    rotation.yCol3Ref() = rotation.zCol3().cross(rotation.xCol3());
+
+    Vector3 yCol{x.y(), y.y(), z.y()};
+    Vector3 zCol{-x.z(), -y.z(), -z.z()};
+    rotation.setXCol(yCol.cross(zCol).getNormalised());
+    rotation.setYCol(zCol.cross(rotation.xCol3()));
 }
 
 inline void billboard_viewpointOriented(Matrix4& rotation, const Matrix4& world2screen)
 {
   Matrix4 screen2world(world2screen.getFullInverse());
 
-#if 1
   rotation = Matrix4::getIdentity();
-  rotation.yCol3Ref() = screen2world.yCol3().getNormalised();
-  rotation.zCol3Ref() = -screen2world.zCol3().getNormalised();
-  rotation.xCol3Ref() = rotation.yCol3().cross(rotation.zCol3()).getNormalised();
-  rotation.yCol3Ref() = rotation.zCol3().cross(rotation.xCol3());
-#else
-  Vector3 near_(
-      matrix4_transformed_vector4(
-        screen2world,
-        Vector4(world2screen[12] / world2screen[15], world2screen[13] / world2screen[15], -1, 1)
-      ).getProjected()
-  );
-
-  Vector3 far_(
-      matrix4_transformed_vector4(
-        screen2world,
-        Vector4(world2screen[12] / world2screen[15], world2screen[13] / world2screen[15], 1, 1)
-      ).getProjected()
-  );
-
-  Vector3 up(
-      matrix4_transformed_vector4(
-        screen2world,
-        Vector4(world2screen[12] / world2screen[15], world2screen[13] / world2screen[15] + 1, -1, 1)
-      ).getProjected()
-  );
-
-  rotation = Matrix4::getIdentity();
-  rotation.y().getVector3() = (up - near_).getNormalised();
-  rotation.z().getVector3() = (near_ - far_).getNormalised();
-  rotation.x().getVector3() = rotation.y().getVector3().cross(rotation.z().getVector3()).getNormalised();
-  rotation.y().getVector3() = rotation.z().getVector3().cross(rotation.x().getVector3());
-#endif
+  rotation.setYCol(screen2world.yCol3().getNormalised());
+  rotation.setZCol(-screen2world.zCol3().getNormalised());
+  rotation.setXCol(rotation.yCol3().cross(rotation.zCol3()).getNormalised());
+  rotation.setYCol(rotation.zCol3().cross(rotation.xCol3()));
 }
 
 /**
