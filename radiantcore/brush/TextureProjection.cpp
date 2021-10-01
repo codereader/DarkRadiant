@@ -87,11 +87,13 @@ void TextureProjection::normalise(float width, float height) {
  */
 Matrix4 TextureProjection::getBasisForNormal(const Vector3& normal) const {
 
-    Matrix4 basis;
+    Vector3 texS, texT;
+    ComputeAxisBase(normal, texS, texT);
 
-    basis = Matrix4::getIdentity();
-    ComputeAxisBase(normal, basis.xCol3Ref(), basis.yCol3Ref());
-    basis.zCol3Ref() = normal;
+    Matrix4 basis = Matrix4::getIdentity();
+    basis.setXCol(texS);
+    basis.setYCol(texT);
+    basis.setZCol(normal);
 
     // At this point the basis matrix contains three lines that are
     // perpendicular to each other.
