@@ -142,7 +142,6 @@ void performFaceFlipTest(int axis)
 {
     auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
     auto brush = algorithm::createCubicBrush(worldspawn, Vector3(0, 256, 256), "textures/numbers/1");
-    scene::addNodeToContainer(brush, worldspawn);
     Node_setSelected(brush, true);
 
     auto faceUp = algorithm::findBrushFaceWithNormal(Node_getIBrush(brush), Vector3(0, 0, 1));
@@ -199,24 +198,86 @@ void performPatchFlipTest(int axis)
 
 }
 
-TEST_F(TextureManipulationTest, FaceFlipS)
+TEST_F(TextureManipulationTest, FlipFaceHorizontally)
 {
     performFaceFlipTest(0);
 }
 
-TEST_F(TextureManipulationTest, FaceFlipT)
+TEST_F(TextureManipulationTest, FlipFaceVertically)
 {
     performFaceFlipTest(1);
 }
 
-TEST_F(TextureManipulationTest, PatchFlipS)
+TEST_F(TextureManipulationTest, FlipPatchHorizontally)
 {
     performPatchFlipTest(0);
 }
 
-TEST_F(TextureManipulationTest, PatchFlipT)
+TEST_F(TextureManipulationTest, FlipPatchVertically)
 {
     performPatchFlipTest(1);
+}
+
+namespace
+{
+
+void assumeVerticesHaveBeenScaled(const std::vector<Vector2>& oldCoords, const std::vector<Vector2>& newCoords, const Vector2& scale, const Vector2& pivot)
+{
+    auto oldCoord = oldCoords.begin();
+    auto newCoord = newCoords.begin();
+
+    auto transform = Matrix3::getTranslation(-pivot);
+    transform.premultiplyBy(Matrix3::getScale(scale));
+    transform.premultiplyBy(Matrix3::getTranslation(pivot));
+
+    while (newCoord != newCoords.end())
+    {
+        auto expected = transform * (*oldCoord++);
+        auto actual = *newCoord++;
+        EXPECT_TRUE(math::isNear(actual, expected, 0.01)) << "Vertex should be " << expected << ", but was " << actual;
+    }
+}
+
+void performFaceScaleTest(const Vector2& scale)
+{
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto brush = algorithm::createCubicBrush(worldspawn, Vector3(0, 256, 256), "textures/numbers/1");
+    Node_setSelected(brush, true);
+
+    auto faceUp = algorithm::findBrushFaceWithNormal(Node_getIBrush(brush), Vector3(0, 0, 1));
+
+    std::vector<Vector2> oldTexCoords;
+    for (const auto& vertex : faceUp->getWinding())
+    {
+        oldTexCoords.push_back(vertex.texcoord);
+    }
+
+    // The incoming scale values are absolute 1.05 == 105%, the command accepts relative values, 0.05 == 105%
+    auto zeroBasedScale = scale - Vector2(1, 1);
+    GlobalCommandSystem().executeCommand("TexScale", { cmd::Argument(zeroBasedScale) });
+
+    auto faceUvBounds = algorithm::getTextureSpaceBounds(*faceUp);
+
+    std::vector<Vector2> newTexCoords;
+    for (const auto& vertex : faceUp->getWinding())
+    {
+        newTexCoords.push_back(vertex.texcoord);
+    }
+
+    Vector2 pivot(faceUvBounds.origin.x(), faceUvBounds.origin.y());
+    assumeVerticesHaveBeenScaled(oldTexCoords, newTexCoords, scale, pivot);
+}
+
+}
+
+TEST_F(TextureManipulationTest, ScaleFaceUniformly)
+{
+    performFaceScaleTest({ 1.1, 1.1 });
+}
+
+TEST_F(TextureManipulationTest, ScaleFaceNonUniformly)
+{
+    performFaceScaleTest({ 1.2, 0.9 });
 }
 
 }

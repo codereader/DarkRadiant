@@ -6,6 +6,7 @@
 #include "math/Plane3.h"
 #include "render/TexCoord2f.h"
 #include "math/AABB.h"
+#include "scenelib.h"
 
 namespace test
 {
@@ -19,7 +20,7 @@ inline scene::INodePtr createCubicBrush(const scene::INodePtr& parent,
     const std::string& material = "_default")
 {
     auto brushNode = GlobalBrushCreator().createBrush();
-    parent->addChildNode(brushNode);
+    scene::addNodeToContainer(brushNode, parent);
 
     auto& brush = *Node_getIBrush(brushNode);
 
