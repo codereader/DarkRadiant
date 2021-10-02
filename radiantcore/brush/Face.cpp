@@ -453,6 +453,35 @@ void Face::setTexdef(const TexDef& texDef)
 
 ShiftScaleRotation Face::getShiftScaleRotation() const
 {
+    auto texdef = _texdef.matrix.getFakeTexCoords();
+    auto ssr = texdef.getShiftScaleRotation();
+
+    // These values are going to show up in the Surface Inspector, so
+    // we need to make some adjustments:
+   
+    // We want the shift values appear in pixels of the editor image,
+    // so scale up the UV values by the editor image dimensions
+    ssr.shift[0] *= _shader.getWidth();
+    ssr.shift[1] *= _shader.getHeight();
+
+    // We only need to display shift values in the range of the texture dimensions
+    ssr.shift[0] = float_mod(ssr.shift[0], _shader.getWidth());
+    ssr.shift[1] = float_mod(ssr.shift[1], _shader.getHeight());
+
+    // Surface Inspector wants to display values such that scale == 1.0 means:
+    // a 512-unit wide face can display the full 512px of the editor image.
+    // The corresponding texture matrix transform features a scale value like 1/512
+    // to scale the 512 XYZ coord down to 1.0 in UV space.
+    // Now, getFakeTexCoords() yields the reciprocal 1/scale (=> 512), to have larger scale
+    // values correspond to a higher "texture zoom" factor (is more intuitive that way):
+    // => 1024 in getFakeTexcoords() means a 512 editor image appears twice as large visually, 
+    // even though the UV coords shrunk only span half the range.
+    // We divide by the image dims to receive the 1.0-like values we want to see in the entry box.
+    ssr.scale[0] /= _shader.getWidth();
+    ssr.scale[1] /= _shader.getHeight();
+
+    return ssr;
+#if 0
     TextureProjection curProjection = _texdef;
 
     // Multiply the texture dimensions to the projection matrix such that
@@ -472,6 +501,7 @@ ShiftScaleRotation Face::getShiftScaleRotation() const
     }
 
     return texdef.getShiftScaleRotation();
+#endif
 }
 
 void Face::setShiftScaleRotation(const ShiftScaleRotation& scr)

@@ -524,13 +524,6 @@ void SurfaceInspector::emitTexDef()
 	{
 		face.setShiftScaleRotation(shiftScaleRotate);
 	});
-
-	SceneChangeNotify();
-
-	// Update the Texture Tools
-	radiant::TextureChangedMessage::Send();
-	// Update the TexTool instance as well
-	ui::TexTool::Instance().draw();
 }
 
 void SurfaceInspector::updateTexDef()

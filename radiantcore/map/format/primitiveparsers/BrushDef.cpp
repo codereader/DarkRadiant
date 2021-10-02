@@ -282,7 +282,7 @@ Matrix4 LegacyBrushDefParser::calculateTextureMatrix(const std::string& shader, 
     // To compensate that effect we're applying an inverse base transformation matrix
     // to this texture transform so we get the same visuals as in Q3.
     // This fix will only work effectively for axis-aligned faces, everything else
-    // will not be stored in the 8 floats forming DR's TextureProjections.
+    // will not be stored in the 6 floats forming DR's TextureProjections.
     auto axisBase = getBasisTransformForNormal(normal);
     
     // The axis base matrix is orthonormal, so we can invert it by transposing
