@@ -454,7 +454,7 @@ void Face::setTexdef(const TexDef& texDef)
 ShiftScaleRotation Face::getShiftScaleRotation() const
 {
     auto texdef = _texdef.matrix.getFakeTexCoords();
-    auto ssr = texdef.getShiftScaleRotation();
+    auto ssr = texdef.toShiftScaleRotation();
 
     // These values are going to show up in the Surface Inspector, so
     // we need to make some adjustments:
@@ -504,9 +504,25 @@ ShiftScaleRotation Face::getShiftScaleRotation() const
 #endif
 }
 
-void Face::setShiftScaleRotation(const ShiftScaleRotation& scr)
+void Face::setShiftScaleRotation(const ShiftScaleRotation& ssr)
 {
-    setTexdef(TexDef::CreateFromShiftScaleRotation(scr));
+    // We need to do the opposite adjustments as in Face::getShiftScaleRotation()
+    // The incoming values are scaled up and down, respectively.
+    auto texdef = TexDef::CreateFromShiftScaleRotation(ssr);
+
+    // Scale the pixel value in SSR to relative UV coords
+    texdef.setShift({ texdef.getShift().x() / _shader.getWidth(),
+                      texdef.getShift().y() / _shader.getHeight() });
+
+    // Add the texture dimensions to the scale.
+    texdef.setScale({ texdef.getScale().x() * _shader.getWidth(),
+                      texdef.getScale().y() * _shader.getHeight() });
+   
+    // Construct the BPTexDef out of this TexDef
+    TextureProjection projection;
+    projection.matrix = TextureMatrix(texdef);
+
+    SetTexdef(projection);
 }
 
 void Face::applyShaderFromFace(const Face& other)

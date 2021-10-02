@@ -149,7 +149,7 @@ public:
     void setTexDefFromPoints(const Vector3 points[3], const Vector2 uvs[3]);
 
 	ShiftScaleRotation getShiftScaleRotation() const override;
-	void setShiftScaleRotation(const ShiftScaleRotation& scr) override;
+	void setShiftScaleRotation(const ShiftScaleRotation& ssr) override;
 
 	/**
 	 * greebo: Copies the shader (texdef) from the other face,

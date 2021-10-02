@@ -23,6 +23,7 @@ public:
 	virtual ~TexDef() {}
 
 	Vector2 getShift() const;
+	void setShift(const Vector2& shift);
 	Vector2 getScale() const;
 	void setScale(const Vector2& scale);
 	double getRotation() const;
@@ -48,7 +49,7 @@ public:
 	// Converts this instance's values to a ShiftScaleRotation structure
 	// Since TexDef is using the same format to store its values internally
 	// this is equivalent to a few simple assignment or copy operations.
-	ShiftScaleRotation getShiftScaleRotation() const;
+	ShiftScaleRotation toShiftScaleRotation() const;
 
 	static TexDef CreateFromShiftScaleRotation(const ShiftScaleRotation& scr);
 

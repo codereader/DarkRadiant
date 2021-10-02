@@ -60,6 +60,12 @@ Vector2 TexDef::getShift() const
 	return Vector2(_shift);
 }
 
+void TexDef::setShift(const Vector2& shift)
+{
+    _shift[0] = shift.x();
+    _shift[1] = shift.y();
+}
+
 Vector2 TexDef::getScale() const
 {
 	return Vector2(_scale);
@@ -133,7 +139,7 @@ Matrix4 TexDef::getTransform(double width, double height) const
 	return transform;
 }
 
-ShiftScaleRotation TexDef::getShiftScaleRotation() const
+ShiftScaleRotation TexDef::toShiftScaleRotation() const
 {
 	ShiftScaleRotation result;
 
