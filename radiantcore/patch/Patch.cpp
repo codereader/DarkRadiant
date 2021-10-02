@@ -888,15 +888,7 @@ void Patch::translateTexture(float s, float t)
 
 void Patch::scaleTexture(float s, float t)
 {
-	undoSave();
-
-	for(PatchControlIter i = _ctrl.begin(); i != _ctrl.end(); ++i)
-	{
-		i->texcoord[0] *= s;
-		i->texcoord[1] *= t;
-	}
-
-	controlPointsChanged();
+    selection::algorithm::TextureScaler::ScalePatch(*this, { s, t });
 }
 
 void Patch::rotateTexture(float angle)

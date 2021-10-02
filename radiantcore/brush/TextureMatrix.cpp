@@ -67,45 +67,6 @@ void TextureMatrix::shift(double s, double t)
 	coords[1][2] += t;
 }
 
-// apply same scale as the spinner button of the surface inspector
-void TextureMatrix::scale(double s, double t, std::size_t shaderWidth, std::size_t shaderHeight)
-{
-    // We need to have the shader dimensions applied before calling getFakeTexCoords()
-    applyShaderDimensions(shaderWidth, shaderHeight);
-
-	// compute fake shift scale rot
-	TexDef texdef = getFakeTexCoords();
-
-	auto scale = texdef.getScale();
-	double newXScale = scale[0] + s;
-	double newYScale = scale[1] + t;
-
-	// Don't allow zero (or almost zero) scale values
-	if (float_equal_epsilon(newXScale, 0, 1e-5) ||
-		float_equal_epsilon(newYScale, 0, 1e-5))
-	{
-		return;
-	}
-
-	// Don't allow sign changes
-	if ((newXScale*scale[0]) < 0.0 ||
-		(newYScale*scale[1]) < 0.0)
-	{
-		return;
-	}
-
-	// update
-	scale[0] = newXScale;
-	scale[1] = newYScale;
-	texdef.setScale(scale);
-
-	// compute new normalized texture matrix
-	*this = TextureMatrix(texdef);
-
-    // Undo the previous step of adding the texture scale
-    addScale(shaderWidth, shaderHeight);
-}
-
 /* greebo: This removes the texture scaling from the
  * coordinates. The resulting coordinates are absolute
  * values within the shader image.

@@ -540,35 +540,10 @@ void scaleTexture(const Vector2& scale)
 
 	// Prepare the 1.0-based scale value (incoming values are relative to 0)
 	Vector2 patchScale = scale + Vector2(1, 1);
-#if 0
-	// We need to have 1.05 for a +0.05 scale
-	// and a 1/1.05 for a -0.05 scale
-	for (int i = 0; i < 2; i++)
-	{
-		if (scale[i] >= 0.0f)
-		{
-			patchScale[i] = 1.0f + scale[i];
-		}
-		else
-		{
-			patchScale[i] = 1/(1.0f + fabs(scale[i]));
-		}
-	}
-#endif
+
     // Flip every node about its own center point
     GlobalSelectionSystem().foreachFace([&](IFace& face) { TextureScaler::ScaleFace(face, patchScale); });
     GlobalSelectionSystem().foreachPatch([&](IPatch& patch) { TextureScaler::ScalePatch(patch, patchScale); });
-
-#if 0
-	GlobalSelectionSystem().foreachFace([&] (IFace& face) 
-    {
-        face.scaleTexdef(static_cast<float>(scale[0]), static_cast<float>(scale[1]));
-    });
-	GlobalSelectionSystem().foreachPatch([&] (IPatch& patch)
-    { 
-        patch.scaleTexture(static_cast<float>(patchScale[0]), static_cast<float>(patchScale[1]));
-    });
-#endif
 
 	// Update the Texture Tools
 	radiant::TextureChangedMessage::Send();

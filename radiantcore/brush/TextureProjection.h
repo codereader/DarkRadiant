@@ -42,7 +42,6 @@ public:
 
 	// s and t are texture coordinates, not pixels
     void shift(double s, double t);
-    void scale(double s, double t, std::size_t shaderWidth, std::size_t shaderHeight);
 
     // Normalise projection for a given texture width and height.
     void normalise(float width, float height);

@@ -581,10 +581,9 @@ void Face::shiftTexdefByPixels(float sPixels, float tPixels)
     shiftTexdef(sPixels / _shader.getWidth(), tPixels / _shader.getHeight());
 }
 
-void Face::scaleTexdef(float sFactor, float tFactor) {
-    undoSave();
-    _texdef.scale(sFactor, tFactor, _shader.getWidth(), _shader.getHeight());
-    texdefChanged();
+void Face::scaleTexdef(float sFactor, float tFactor)
+{
+    selection::algorithm::TextureScaler::ScaleFace(*this, { sFactor, tFactor });
 }
 
 void Face::rotateTexdef(float angle)

@@ -80,11 +80,6 @@ void TextureProjection::shift(double s, double t)
     matrix.shift(s, t);
 }
 
-void TextureProjection::scale(double s, double t, std::size_t shaderWidth, std::size_t shaderHeight)
-{
-    matrix.scale(s, t, shaderWidth, shaderHeight);
-}
-
 // Normalise projection for a given texture width and height.
 void TextureProjection::normalise(float width, float height) {
     matrix.normalise(width, height);

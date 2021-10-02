@@ -54,9 +54,6 @@ struct TextureMatrix
 	// shift a texture (texture adjustments) along it's current texture axes
 	void shift(double s, double t);
 
-	// Scales texture by the given float values (1.05 scales texture to 105%)
-	void scale(double s, double t, std::size_t shaderWidth, std::size_t shaderHeight);
-
 	/* greebo: This removes the texture scaling from the
 	 * coordinates. The resulting coordinates are absolute
 	 * values within the shader image.
