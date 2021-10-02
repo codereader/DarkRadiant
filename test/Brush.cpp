@@ -335,4 +335,17 @@ TEST_F(Quake3BrushTest, TextureOnAngledBrush)
 }
 #endif
 
+// #5770: Brushes disappear due to transformation being applied twice while freezing the brush node (first face is transformed twice)
+TEST_F(BrushTest, RotateBrushZ90Degrees)
+{
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto brush = algorithm::createCuboidBrush(worldspawn, AABB({ 192, 8, 48 }, { 48, 8, 50 }), "textures/numbers/1");
+    Node_setSelected(brush, true);
+
+    GlobalCommandSystem().executeCommand("RotateSelectionZ");
+
+    Node_getIBrush(brush)->evaluateBRep();
+    EXPECT_TRUE(Node_getIBrush(brush)->hasContributingFaces()) << "Failed to transform this brush, it seems to have disappeared";
+}
+
 }
