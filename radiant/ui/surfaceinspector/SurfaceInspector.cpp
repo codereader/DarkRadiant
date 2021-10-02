@@ -196,12 +196,12 @@ void SurfaceInspector::connectEvents()
 	wxutil::button::connectToCommand(_manipulators[HSHIFT].larger, "TexShiftRight");
 	wxutil::button::connectToCommand(_manipulators[VSHIFT].larger, "TexShiftUp");
 	wxutil::button::connectToCommand(_manipulators[VSHIFT].smaller, "TexShiftDown");
-	wxutil::button::connectToCommand(_manipulators[HSCALE].smaller, "TexScaleLeft");
-	wxutil::button::connectToCommand(_manipulators[HSCALE].larger, "TexScaleRight");
-	wxutil::button::connectToCommand(_manipulators[VSCALE].larger, "TexScaleUp");
-	wxutil::button::connectToCommand(_manipulators[VSCALE].smaller, "TexScaleDown");
-	wxutil::button::connectToCommand(_manipulators[ROTATION].larger, "TexRotateClock");
-	wxutil::button::connectToCommand(_manipulators[ROTATION].smaller, "TexRotateCounter");
+	wxutil::button::connectToCommand(_manipulators[HSCALE].smaller, "TexScaleRight");
+	wxutil::button::connectToCommand(_manipulators[HSCALE].larger, "TexScaleLeft");
+	wxutil::button::connectToCommand(_manipulators[VSCALE].larger, "TexScaleDown");
+	wxutil::button::connectToCommand(_manipulators[VSCALE].smaller, "TexScaleUp");
+	wxutil::button::connectToCommand(_manipulators[ROTATION].larger, "TexRotateCounter");
+	wxutil::button::connectToCommand(_manipulators[ROTATION].smaller, "TexRotateClock");
 }
 
 void SurfaceInspector::keyChanged()
