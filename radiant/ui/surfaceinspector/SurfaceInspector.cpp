@@ -456,12 +456,12 @@ SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
     // Create the nudge buttons
 	wxBoxSizer* controlButtonBox = new wxBoxSizer(wxHORIZONTAL);
     manipRow.smaller = new wxutil::ControlButton(parent,
-        wxutil::GetLocalBitmap("arrow_left.png"));
-    controlButtonBox->Add(manipRow.smaller, 0);
+        wxutil::GetLocalBitmap("decrease.png"));
+    controlButtonBox->Add(manipRow.smaller, 0, wxEXPAND);
     controlButtonBox->AddSpacer(2);
     manipRow.larger = new wxutil::ControlButton(parent,
-        wxutil::GetLocalBitmap("arrow_right.png"));
-    controlButtonBox->Add(manipRow.larger, 0);
+        wxutil::GetLocalBitmap("increase.png"));
+    controlButtonBox->Add(manipRow.larger, 0, wxEXPAND);
 
 	// Create the label
 	wxStaticText* steplabel = new wxStaticText(parent, wxID_ANY, _(LABEL_STEP));
