@@ -110,6 +110,39 @@ void TextureRotator::RotateNode(const textool::INode::Ptr& node, double angle)
     rotator.processNode(node);
 }
 
+// Scaling
+
+TextureScaler::TextureScaler(const Vector2& pivot, const Vector2& scale)
+{
+    _transform = Matrix3::getTranslation(-pivot);
+    _transform.premultiplyBy(Matrix3::getScale(scale));
+    _transform.premultiplyBy(Matrix3::getTranslation(pivot));
+}
+
+bool TextureScaler::processNode(const textool::INode::Ptr& node)
+{
+    applyTransform(node, _transform);
+    return true;
+}
+
+void TextureScaler::ScalePatch(IPatch& patch, const Vector2& scale)
+{
+    ScaleNode(std::make_shared<textool::PatchNode>(patch), scale);
+}
+
+void TextureScaler::ScaleFace(IFace& face, const Vector2& scale)
+{
+    ScaleNode(std::make_shared<textool::FaceNode>(face), scale);
+}
+
+void TextureScaler::ScaleNode(const textool::INode::Ptr& node, const Vector2& scale)
+{
+    const auto& bounds = node->localAABB();
+    TextureScaler scaler({ bounds.origin.x(), bounds.origin.y() }, scale);
+
+    scaler.processNode(node);
+}
+
 }
 
 }

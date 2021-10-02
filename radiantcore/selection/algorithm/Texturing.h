@@ -85,6 +85,28 @@ private:
     static void RotateNode(const textool::INode::Ptr& node, double angle);
 };
 
+class TextureScaler :
+    public TextureNodeManipulator
+{
+private:
+    Matrix3 _transform;
+
+public:
+    // A scale component value of 1.0 == 100%
+    TextureScaler(const Vector2& pivot, const Vector2& scale);
+
+    bool processNode(const textool::INode::Ptr& node) override;
+
+    // Directly scale the texture of the given patch with its UV center as pivot
+    static void ScalePatch(IPatch& patch, const Vector2& scale);
+
+    // Directly scale the texture of the given face with its UV center as pivot
+    static void ScaleFace(IFace& face, const Vector2& scale);
+
+private:
+    static void ScaleNode(const textool::INode::Ptr& node, const Vector2& scale);
+};
+
 }
 
 }

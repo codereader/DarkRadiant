@@ -467,20 +467,9 @@ void flipTexture(int flipAxis)
 {
 	UndoableCommand undo("flipTexture");
 
-    // Create texture nodes around the selection and pass it on to the specialised flip algorithm
-    std::vector<textool::INode::Ptr> nodes;
-
-    GlobalSelectionSystem().foreachFace([&](IFace& face) { nodes.emplace_back(std::make_shared<textool::FaceNode>(face)); });
-	GlobalSelectionSystem().foreachPatch([&] (IPatch& patch) { nodes.emplace_back(std::make_shared<textool::PatchNode>(patch)); });
-
     // Flip every node about its own center point
-    for (const auto& node : nodes)
-    {
-        const auto& bounds = node->localAABB();
-        TextureFlipper flipper({ bounds.origin.x(), bounds.origin.y() }, flipAxis);
-
-        flipper.processNode(node);
-    }
+    GlobalSelectionSystem().foreachFace([&](IFace& face) { TextureFlipper::FlipFace(face, flipAxis); });
+	GlobalSelectionSystem().foreachPatch([&] (IPatch& patch) { TextureFlipper::FlipPatch(patch, flipAxis); });
 
     radiant::TextureChangedMessage::Send();
 }
@@ -549,9 +538,9 @@ void scaleTexture(const Vector2& scale)
 
 	UndoableCommand undo(command);
 
-	// Prepare the according patch scale value (they are relatively scaled)
-	Vector2 patchScale;
-
+	// Prepare the 1.0-based scale value (incoming values are relative to 0)
+	Vector2 patchScale = scale + Vector2(1, 1);
+#if 0
 	// We need to have 1.05 for a +0.05 scale
 	// and a 1/1.05 for a -0.05 scale
 	for (int i = 0; i < 2; i++)
@@ -565,7 +554,12 @@ void scaleTexture(const Vector2& scale)
 			patchScale[i] = 1/(1.0f + fabs(scale[i]));
 		}
 	}
+#endif
+    // Flip every node about its own center point
+    GlobalSelectionSystem().foreachFace([&](IFace& face) { TextureScaler::ScaleFace(face, patchScale); });
+    GlobalSelectionSystem().foreachPatch([&](IPatch& patch) { TextureScaler::ScalePatch(patch, patchScale); });
 
+#if 0
 	GlobalSelectionSystem().foreachFace([&] (IFace& face) 
     {
         face.scaleTexdef(static_cast<float>(scale[0]), static_cast<float>(scale[1]));
@@ -574,8 +568,8 @@ void scaleTexture(const Vector2& scale)
     { 
         patch.scaleTexture(static_cast<float>(patchScale[0]), static_cast<float>(patchScale[1]));
     });
+#endif
 
-	SceneChangeNotify();
 	// Update the Texture Tools
 	radiant::TextureChangedMessage::Send();
 }
@@ -611,20 +605,30 @@ void shiftTextureDown() {
 	shiftTexture(Vector2(0.0f, -registry::getValue<float>("user/ui/textures/surfaceInspector/vShiftStep")));
 }
 
-void scaleTextureLeft() {
-	scaleTexture(Vector2(-registry::getValue<float>("user/ui/textures/surfaceInspector/hScaleStep"), 0.0f));
+void scaleTextureLeft()
+{
+    // Correct the factor such that clicking the down and up button in the surface inspector
+    // brings us back to the original state
+    auto step = registry::getValue<float>("user/ui/textures/surfaceInspector/hScaleStep");
+	scaleTexture(Vector2(1 / (1 + step) - 1, 0.0f));
 }
 
-void scaleTextureRight() {
+void scaleTextureRight()
+{
 	scaleTexture(Vector2(registry::getValue<float>("user/ui/textures/surfaceInspector/hScaleStep"), 0.0f));
 }
 
-void scaleTextureUp() {
+void scaleTextureUp()
+{
 	scaleTexture(Vector2(0.0f, registry::getValue<float>("user/ui/textures/surfaceInspector/vScaleStep")));
 }
 
-void scaleTextureDown() {
-	scaleTexture(Vector2(0.0f, -registry::getValue<float>("user/ui/textures/surfaceInspector/vScaleStep")));
+void scaleTextureDown() 
+{
+    // Correct the factor such that clicking the down and up button in the surface inspector
+    // brings us back to the original state
+    auto step = registry::getValue<float>("user/ui/textures/surfaceInspector/vScaleStep");
+	scaleTexture(Vector2(0.0f, 1/(1+step) - 1));
 }
 
 void rotateTextureClock() {
