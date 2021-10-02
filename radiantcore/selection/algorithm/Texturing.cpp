@@ -2,6 +2,7 @@
 
 #include "selection/textool/FaceNode.h"
 #include "selection/textool/PatchNode.h"
+#include "messages/TextureChanged.h"
 
 namespace selection
 {
@@ -39,6 +40,19 @@ bool TextureNodeManipulator::processNode(const textool::INode::Ptr& node)
 {
     applyTransform(node, _transform);
     return true;
+}
+
+TextureNodeManipulator::TextureNodeManipulator() :
+    _numProcessedNodes(0)
+{}
+
+TextureNodeManipulator::~TextureNodeManipulator()
+{
+    // Dispatch the texture changed signal if we processed at least one node
+    if (_numProcessedNodes)
+    {
+        radiant::TextureChangedMessage::Send();
+    }
 }
 
 TextureFlipper::TextureFlipper(const Vector2& flipCenter, int axis)

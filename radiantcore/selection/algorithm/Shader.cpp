@@ -470,8 +470,6 @@ void flipTexture(int flipAxis)
     // Flip every node about its own center point
     GlobalSelectionSystem().foreachFace([&](IFace& face) { TextureFlipper::FlipFace(face, flipAxis); });
 	GlobalSelectionSystem().foreachPatch([&] (IPatch& patch) { TextureFlipper::FlipPatch(patch, flipAxis); });
-
-    radiant::TextureChangedMessage::Send();
 }
 
 void flipTextureS(const cmd::ArgumentList& args)
@@ -544,9 +542,6 @@ void scaleTexture(const Vector2& scale)
     // Flip every node about its own center point
     GlobalSelectionSystem().foreachFace([&](IFace& face) { TextureScaler::ScaleFace(face, patchScale); });
     GlobalSelectionSystem().foreachPatch([&](IPatch& patch) { TextureScaler::ScalePatch(patch, patchScale); });
-
-	// Update the Texture Tools
-	radiant::TextureChangedMessage::Send();
 }
 
 void rotateTexture(const float angle)
@@ -558,10 +553,6 @@ void rotateTexture(const float angle)
 
 	GlobalSelectionSystem().foreachFace([&] (IFace& face) { face.rotateTexdef(angle); });
 	GlobalSelectionSystem().foreachPatch([&] (IPatch& patch) { patch.rotateTexture(angle); });
-
-	SceneChangeNotify();
-	// Update the Texture Tools
-	radiant::TextureChangedMessage::Send();
 }
 
 void shiftTextureLeft() {

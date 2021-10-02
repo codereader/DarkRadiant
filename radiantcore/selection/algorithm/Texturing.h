@@ -42,13 +42,19 @@ public:
     }
 };
 
+// Will dispatch a TextureChangedMessage after processing at least one node
 class TextureNodeManipulator :
     public TextureNodeProcessor
 {
 protected:
     Matrix3 _transform;
+    std::size_t _numProcessedNodes;
+
+    TextureNodeManipulator();
 
 public:
+    virtual ~TextureNodeManipulator();
+
     bool processNode(const textool::INode::Ptr& node) override;
 };
 

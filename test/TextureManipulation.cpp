@@ -270,29 +270,43 @@ void performFaceScaleTest(const Vector2& scale)
 
 void performPatchScaleTest(const Vector2& scale)
 {
+    // We create two patches, each of them should be scaled independently
     auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
-    auto patchNode = algorithm::createPatchFromBounds(worldspawn, AABB(Vector3(4, 50, 60), Vector3(64, 128, 256)), "textures/numbers/1");
+    auto patchNode1 = algorithm::createPatchFromBounds(worldspawn, AABB(Vector3(4, 50, 60), Vector3(64, 128, 256)), "textures/numbers/1");
+    auto patchNode2 = algorithm::createPatchFromBounds(worldspawn, AABB(Vector3(4, 50, -5), Vector3(64, 128, 64)), "textures/numbers/1");
 
-    auto patch = Node_getIPatch(patchNode);
-    patch->scaleTextureNaturally();
-    patch->controlPointsChanged();
+    auto patch1 = Node_getIPatch(patchNode1);
+    auto patch2 = Node_getIPatch(patchNode2);
+    patch1->scaleTextureNaturally();
+    patch1->controlPointsChanged();
+    patch2->scaleTextureNaturally();
+    patch2->controlPointsChanged();
 
-    Node_setSelected(patchNode, true);
+    Node_setSelected(patchNode1, true);
+    Node_setSelected(patchNode2, true);
 
-    std::vector<Vector2> oldTexCoords;
-    algorithm::foreachPatchVertex(*patch, [&](const PatchControl& ctrl) { oldTexCoords.push_back(ctrl.texcoord); });
+    std::vector<Vector2> oldTexCoords1;
+    std::vector<Vector2> oldTexCoords2;
+    algorithm::foreachPatchVertex(*patch1, [&](const PatchControl& ctrl) { oldTexCoords1.push_back(ctrl.texcoord); });
+    algorithm::foreachPatchVertex(*patch2, [&](const PatchControl& ctrl) { oldTexCoords2.push_back(ctrl.texcoord); });
 
     // The incoming scale values are absolute 1.05 == 105%, the command accepts relative values, 0.05 == 105%
     auto zeroBasedScale = scale - Vector2(1, 1);
     GlobalCommandSystem().executeCommand("TexScale", { cmd::Argument(zeroBasedScale) });
 
-    auto uvBounds = algorithm::getTextureSpaceBounds(*patch);
+    auto uvBounds1 = algorithm::getTextureSpaceBounds(*patch1);
+    auto uvBounds2 = algorithm::getTextureSpaceBounds(*patch2);
 
-    std::vector<Vector2> newTexCoords;
-    algorithm::foreachPatchVertex(*patch, [&](const PatchControl& ctrl) { newTexCoords.push_back(ctrl.texcoord); });
+    std::vector<Vector2> newTexCoords1;
+    std::vector<Vector2> newTexCoords2;
+    algorithm::foreachPatchVertex(*patch1, [&](const PatchControl& ctrl) { newTexCoords1.push_back(ctrl.texcoord); });
+    algorithm::foreachPatchVertex(*patch2, [&](const PatchControl& ctrl) { newTexCoords2.push_back(ctrl.texcoord); });
 
-    Vector2 pivot(uvBounds.origin.x(), uvBounds.origin.y());
-    assumeVerticesHaveBeenScaled(oldTexCoords, newTexCoords, scale, pivot);
+    Vector2 pivot(uvBounds1.origin.x(), uvBounds1.origin.y());
+    assumeVerticesHaveBeenScaled(oldTexCoords1, newTexCoords1, scale, pivot);
+
+    Vector2 pivot2(uvBounds2.origin.x(), uvBounds2.origin.y());
+    assumeVerticesHaveBeenScaled(oldTexCoords2, newTexCoords2, scale, pivot2);
 }
 
 }
