@@ -268,6 +268,33 @@ void performFaceScaleTest(const Vector2& scale)
     assumeVerticesHaveBeenScaled(oldTexCoords, newTexCoords, scale, pivot);
 }
 
+void performPatchScaleTest(const Vector2& scale)
+{
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto patchNode = algorithm::createPatchFromBounds(worldspawn, AABB(Vector3(4, 50, 60), Vector3(64, 128, 256)), "textures/numbers/1");
+
+    auto patch = Node_getIPatch(patchNode);
+    patch->scaleTextureNaturally();
+    patch->controlPointsChanged();
+
+    Node_setSelected(patchNode, true);
+
+    std::vector<Vector2> oldTexCoords;
+    algorithm::foreachPatchVertex(*patch, [&](const PatchControl& ctrl) { oldTexCoords.push_back(ctrl.texcoord); });
+
+    // The incoming scale values are absolute 1.05 == 105%, the command accepts relative values, 0.05 == 105%
+    auto zeroBasedScale = scale - Vector2(1, 1);
+    GlobalCommandSystem().executeCommand("TexScale", { cmd::Argument(zeroBasedScale) });
+
+    auto uvBounds = algorithm::getTextureSpaceBounds(*patch);
+
+    std::vector<Vector2> newTexCoords;
+    algorithm::foreachPatchVertex(*patch, [&](const PatchControl& ctrl) { newTexCoords.push_back(ctrl.texcoord); });
+
+    Vector2 pivot(uvBounds.origin.x(), uvBounds.origin.y());
+    assumeVerticesHaveBeenScaled(oldTexCoords, newTexCoords, scale, pivot);
+}
+
 }
 
 TEST_F(TextureManipulationTest, ScaleFaceUniformly)
@@ -278,6 +305,16 @@ TEST_F(TextureManipulationTest, ScaleFaceUniformly)
 TEST_F(TextureManipulationTest, ScaleFaceNonUniformly)
 {
     performFaceScaleTest({ 1.2, 0.9 });
+}
+
+TEST_F(TextureManipulationTest, ScalePatchUniformly)
+{
+    performPatchScaleTest({ 1.1, 1.1 });
+}
+
+TEST_F(TextureManipulationTest, ScalePatchNonUniformly)
+{
+    performPatchScaleTest({ 1.2, 0.9 });
 }
 
 }
