@@ -21,7 +21,7 @@ inline void applyTransform(const textool::INode::Ptr& node, const Matrix3& trans
 
 }
 
-TextureNodeManipulator::operator std::function<bool(const textool::INode::Ptr& node)>()
+TextureNodeProcessor::operator std::function<bool(const textool::INode::Ptr& node)>()
 {
     return [this](const textool::INode::Ptr& node)
     {
@@ -32,6 +32,12 @@ TextureNodeManipulator::operator std::function<bool(const textool::INode::Ptr& n
 bool TextureBoundsAccumulator::processNode(const textool::INode::Ptr& node)
 {
     _bounds.includeAABB(node->localAABB());
+    return true;
+}
+
+bool TextureNodeManipulator::processNode(const textool::INode::Ptr& node)
+{
+    applyTransform(node, _transform);
     return true;
 }
 
@@ -51,12 +57,6 @@ TextureFlipper::TextureFlipper(const Vector2& flipCenter, int axis)
     _transform = Matrix3::getTranslation(-flipCenter);
     _transform.premultiplyBy(flipMatrix);
     _transform.premultiplyBy(Matrix3::getTranslation(+flipCenter));
-}
-
-bool TextureFlipper::processNode(const textool::INode::Ptr& node)
-{
-    applyTransform(node, _transform);
-    return true;
 }
 
 void TextureFlipper::FlipNode(const textool::INode::Ptr& node, int flipAxis)
@@ -86,12 +86,6 @@ TextureRotator::TextureRotator(const Vector2& pivot, double angle)
     _transform.premultiplyBy(Matrix3::getTranslation(pivot));
 }
 
-bool TextureRotator::processNode(const textool::INode::Ptr& node)
-{
-    applyTransform(node, _transform);
-    return true;
-}
-
 void TextureRotator::RotatePatch(IPatch& patch, double angle)
 {
     RotateNode(std::make_shared<textool::PatchNode>(patch), angle);
@@ -117,12 +111,6 @@ TextureScaler::TextureScaler(const Vector2& pivot, const Vector2& scale)
     _transform = Matrix3::getTranslation(-pivot);
     _transform.premultiplyBy(Matrix3::getScale(scale));
     _transform.premultiplyBy(Matrix3::getTranslation(pivot));
-}
-
-bool TextureScaler::processNode(const textool::INode::Ptr& node)
-{
-    applyTransform(node, _transform);
-    return true;
 }
 
 void TextureScaler::ScalePatch(IPatch& patch, const Vector2& scale)

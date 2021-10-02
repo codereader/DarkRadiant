@@ -13,10 +13,10 @@ namespace selection
 namespace algorithm
 {
 
-class TextureNodeManipulator
+class TextureNodeProcessor
 {
 protected:
-    TextureNodeManipulator() = default;
+    TextureNodeProcessor() = default;
 
 public:
     // Conversion operator, to be able to pass an instance reference directly to 
@@ -28,7 +28,7 @@ public:
 };
 
 class TextureBoundsAccumulator :
-    public TextureNodeManipulator
+    public TextureNodeProcessor
 {
 private:
     AABB _bounds;
@@ -42,17 +42,22 @@ public:
     }
 };
 
+class TextureNodeManipulator :
+    public TextureNodeProcessor
+{
+protected:
+    Matrix3 _transform;
+
+public:
+    bool processNode(const textool::INode::Ptr& node) override;
+};
+
 // Flips all the visited node about the given axis and the given flip center point (in UV space)
 class TextureFlipper :
     public TextureNodeManipulator
 {
-private:
-    Matrix3 _transform;
-
 public:
     TextureFlipper(const Vector2& flipCenter, int axis);
-
-    bool processNode(const textool::INode::Ptr& node) override;
 
     // Directly flip the texture of the given patch
     static void FlipPatch(IPatch& patch, int flipAxis);
@@ -67,13 +72,8 @@ private:
 class TextureRotator :
     public TextureNodeManipulator
 {
-private:
-    Matrix3 _transform;
-
 public:
     TextureRotator(const Vector2& pivot, double angle);
-
-    bool processNode(const textool::INode::Ptr& node) override;
 
     // Directly rotate the texture of the given patch around its UV center
     static void RotatePatch(IPatch& patch, double angle);
@@ -88,14 +88,9 @@ private:
 class TextureScaler :
     public TextureNodeManipulator
 {
-private:
-    Matrix3 _transform;
-
 public:
     // A scale component value of 1.0 == 100%
     TextureScaler(const Vector2& pivot, const Vector2& scale);
-
-    bool processNode(const textool::INode::Ptr& node) override;
 
     // Directly scale the texture of the given patch with its UV center as pivot
     static void ScalePatch(IPatch& patch, const Vector2& scale);
