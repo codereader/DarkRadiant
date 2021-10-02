@@ -79,12 +79,12 @@ namespace
 	const char* const LAYER_ICON = "layers.png";
 	const char* const CREATE_LAYER_TEXT = N_("Create Layer...");
 
-	const char* const ADD_TO_LAYER_TEXT = N_("Add to Layer...");
-	const char* const MOVE_TO_LAYER_TEXT = N_("Move to Layer...");
-	const char* const REMOVE_FROM_LAYER_TEXT = N_("Remove from Layer...");
+	const char* const ADD_TO_LAYER_TEXT = N_("Add to Layer");
+	const char* const MOVE_TO_LAYER_TEXT = N_("Move to Layer");
+	const char* const REMOVE_FROM_LAYER_TEXT = N_("Remove from Layer");
 
-	const char* const SELECT_BY_FILTER_TEXT = N_("Select by Filter...");
-	const char* const DESELECT_BY_FILTER_TEXT = N_("Deselect by Filter...");
+    const char* const SELECT_BY_FILTER_TEXT = N_( "Select by Filter" );
+    const char* const DESELECT_BY_FILTER_TEXT = N_( "Deselect by Filter" );
 }
 
 const std::string& UserInterfaceModule::getName() const
