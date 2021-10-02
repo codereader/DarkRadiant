@@ -438,6 +438,8 @@ void TextureToolSelectionSystem::onManipulationFinished()
 
     getActiveManipulator()->setSelected(false);
     _manipulationPivot.endOperation();
+
+    radiant::TextureChangedMessage::Send();
 }
 
 void TextureToolSelectionSystem::onManipulationCancelled()
