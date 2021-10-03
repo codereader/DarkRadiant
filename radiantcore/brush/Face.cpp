@@ -525,6 +525,17 @@ void Face::setShiftScaleRotation(const ShiftScaleRotation& ssr)
     SetTexdef(projection);
 }
 
+// Returns the index pair forming an edge, keeping the winding direction intact
+inline std::pair<std::size_t, std::size_t> getEdgeIndexPair(std::size_t first, std::size_t second, std::size_t windingSize)
+{
+    if (first > second || second == windingSize - 1 && first == 0)
+    {
+        std::swap(first, second);
+    }
+
+    return std::make_pair(first, second);
+}
+
 void Face::applyShaderFromFace(const Face& other)
 {
     undoSave();
@@ -540,6 +551,7 @@ void Face::applyShaderFromFace(const Face& other)
     std::vector<std::pair<std::size_t, std::size_t>> sharedVertices;
 
     // Let's see whether this face is sharing any 3D coordinates with the other one
+    // It's important to iterate over ascending indices of the other face, since we need to keep the winding order
     for (std::size_t i = 0; i < other.m_winding.size(); ++i)
     {
         for (std::size_t j = 0; j < m_winding.size(); ++j)
@@ -557,20 +569,32 @@ void Face::applyShaderFromFace(const Face& other)
     // Do we have a shared edge?
     if (sharedVertices.size() == 2)
     {
+        auto edgeIndices = getEdgeIndexPair(sharedVertices[0].first, sharedVertices[1].first, other.m_winding.size());
+
         // We wrap the texture around the shared edge, check the UV scale perpendicular to that edge
-        auto edgeCenter = (other.m_winding[sharedVertices[0].first].vertex + other.m_winding[sharedVertices[1].first].vertex) * 0.5;
-        auto centroidToEdgeCenter = edgeCenter - other.m_centroid;
-        
-        // Pick a point outside face, following the ray from the centroid through the edge center
-        auto extrapolatedPoint = edgeCenter + centroidToEdgeCenter;
-        auto extrapolationLength = centroidToEdgeCenter.getLength();
+        auto edgeCenter = (other.m_winding[edgeIndices.first].vertex + other.m_winding[edgeIndices.second].vertex) * 0.5;
+
+        // Construct an edge vector, following the winding direction
+        auto edge = other.m_winding[edgeIndices.second].vertex - other.m_winding[edgeIndices.first].vertex;
+
+        // Construct a vector that is orthogonal to the edge, pointing outwards
+        auto outwardsDirection = edge.cross(other.m_planeTransformed.getPlane().normal());
+
+        // Pick a point outside face, placing that orthogonal vector on the edge center
+        auto extrapolatedPoint = edgeCenter + outwardsDirection;
+        auto extrapolationLength = outwardsDirection.getLength();
         auto extrapolatedTexcoords = other.m_texdefTransformed.getTextureCoordsForVertex(
             extrapolatedPoint, other.m_planeTransformed.getPlane().normal(), Matrix4::getIdentity()
         );
 
-        // Both faces share the same edge center
-        // Calculate a point on this face plane, with the same distance from the edge center
-        auto pointOnThisFacePlane = edgeCenter + (m_centroid - edgeCenter).getNormalised() * extrapolationLength;
+        // Construct an edge vector on this target face, keeping the winding order
+        edgeIndices = getEdgeIndexPair(sharedVertices[0].second, sharedVertices[1].second, m_winding.size());
+
+        auto targetFaceEdge = m_winding[edgeIndices.second].vertex - m_winding[edgeIndices.first].vertex;
+        auto inwardsDirection = -targetFaceEdge.cross(m_planeTransformed.getPlane().normal()).getNormalised();
+
+        // Calculate a point on this face plane, with the same distance from the edge center as on the source face
+        auto pointOnThisFacePlane = edgeCenter + inwardsDirection * extrapolationLength;
 
         // Now we have 3 vertices and 3 texcoords to calculate the matching texdef
         Vector3 vertices[3] =
