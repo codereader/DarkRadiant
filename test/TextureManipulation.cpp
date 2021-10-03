@@ -1,10 +1,13 @@
 #include "RadiantTest.h"
 
+#include "ishaderclipboard.h"
 #include "algorithm/Scene.h"
 #include "algorithm/Primitives.h"
 #include "scenelib.h"
 #include "math/Matrix3.h"
 #include "registry/registry.h"
+#include "render/CameraView.h"
+#include "algorithm/View.h"
 
 namespace test
 {
@@ -329,6 +332,70 @@ TEST_F(TextureManipulationTest, ScalePatchUniformly)
 TEST_F(TextureManipulationTest, ScalePatchNonUniformly)
 {
     performPatchScaleTest({ 1.2, 0.9 });
+}
+
+std::vector<std::pair<const WindingVertex*, const WindingVertex*>> findSharedVertices(const IFace& face1, const IFace& face2)
+{
+    std::vector<std::pair<const WindingVertex*, const WindingVertex*>> vertexPairs;
+
+    for (const auto& vertex1 : face1.getWinding())
+    {
+        for (const auto& vertex2 : face2.getWinding())
+        {
+            if (math::isNear(vertex1.vertex, vertex2.vertex, 0.01))
+            {
+                vertexPairs.emplace_back(std::make_pair(&vertex1, &vertex2));
+            }
+        }
+    }
+
+    return vertexPairs;
+}
+
+TEST_F(TextureManipulationTest, PasteTextureToOrthogonalFace)
+{
+    std::string mapPath = "maps/simple_brushes.map";
+    GlobalCommandSystem().executeCommand("OpenMap", mapPath);
+
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto brushNode = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/3");
+
+    auto faceUp = algorithm::findBrushFaceWithNormal(Node_getIBrush(brushNode), Vector3(0, 0, 1));
+    auto faceRight = algorithm::findBrushFaceWithNormal(Node_getIBrush(brushNode), Vector3(1, 0, 0));
+
+    // Find the shared vertices of the two faces
+    auto sharedVertices = findSharedVertices(*faceUp, *faceRight);
+    EXPECT_EQ(sharedVertices.size(), 2) << "There should be 2 shared 3D vertices between the two faces";
+
+    for (const auto& pair : sharedVertices)
+    {
+        EXPECT_FALSE(math::isNear(pair.first->texcoord, pair.second->texcoord, 0.01)) 
+            << "Texture coordinates are the same before pasting the texture projection";
+    }
+
+    // Position the camera top-down, similar to what an XY view is seeing
+    render::View viewFaceUp(true);
+    algorithm::constructCameraView(viewFaceUp, brushNode->localAABB(), { 0, 0, -1 }, { -90, 0, 0 });
+
+    SelectionVolume testFaceUp(viewFaceUp);
+    GlobalShaderClipboard().pickFromSelectionTest(testFaceUp);
+
+    EXPECT_EQ(GlobalShaderClipboard().getSourceType(), selection::IShaderClipboard::SourceType::Face) 
+        << "Selection test failed to select the face";
+
+    render::View viewFaceRight(true);
+    algorithm::constructCameraView(viewFaceRight, brushNode->localAABB(), { -1, 0, 0 }, { 0, 180, 0 });
+
+    ConstructSelectionTest(viewFaceRight, selection::Rectangle::ConstructFromPoint({ 0, 0 }, { 0.1, 0.1 }));
+
+    SelectionVolume testFaceRight(viewFaceRight);
+    GlobalShaderClipboard().pasteShader(testFaceRight, selection::PasteMode::Natural, false);
+
+    for (const auto& pair : sharedVertices)
+    {
+        EXPECT_TRUE(math::isNear(pair.first->texcoord, pair.second->texcoord, 0.01))
+            << "Texture coordinates should be the same after pasting the texture projection";
+    }
 }
 
 }

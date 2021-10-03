@@ -305,16 +305,7 @@ protected:
 
     virtual void constructView(render::View& view, const AABB& objectAABB) override
     {
-        // Position the camera top-down, similar to what an XY view is seeing
-        auto objectHeight = std::max(objectAABB.getExtents().z(), 20.0); // use a minimum height
-        Vector3 origin = objectAABB.getOrigin() + Vector3(0, 0, objectHeight * 3);
-        Vector3 angles(-90, 0, 0);
-
-        auto farClip = 32768.0f;
-        Matrix4 projection = camera::calculateProjectionMatrix(farClip / 4096.0f, farClip, 75.0f, algorithm::DeviceWidth, algorithm::DeviceHeight);
-        Matrix4 modelview = camera::calculateModelViewMatrix(origin, angles);
-
-        view.construct(projection, modelview, algorithm::DeviceWidth, algorithm::DeviceHeight);
+        algorithm::constructCameraView(view, objectAABB, Vector3(0, 0, -1), Vector3(-90, 0, 0));
     }
 };
 

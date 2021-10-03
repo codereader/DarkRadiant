@@ -1,6 +1,7 @@
 #pragma once
 
 #include "render/View.h"
+#include "render/CameraView.h"
 #include "registry/registry.h"
 #include "selection/SelectionVolume.h"
 
@@ -71,6 +72,22 @@ inline SelectionVolume constructOrthoviewSelectionTest(const render::View& ortho
     ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromPoint(Vector2(0, 0), deviceEpsilon));
 
     return SelectionVolume(scissored);
+}
+
+// Constructs the given view with a camera projection
+// - with the view origin being located at three times the bounding box size away (following the view direction)
+// - with the given view angles (pitch, yaw, roll)
+inline void constructCameraView(render::View& view, const AABB& objectAABB, const Vector3& viewDirection, const Vector3& angles)
+{
+    // Position the camera top-down, similar to what an XY view is seeing
+    auto objectHeight = std::max(objectAABB.getExtents().getLength(), 20.0); // use a minimum height
+    Vector3 origin = objectAABB.getOrigin() - (viewDirection * objectHeight * 3);
+
+    auto farClip = 32768.0f;
+    Matrix4 projection = camera::calculateProjectionMatrix(farClip / 4096.0f, farClip, 75.0f, algorithm::DeviceWidth, algorithm::DeviceHeight);
+    Matrix4 modelview = camera::calculateModelViewMatrix(origin, angles);
+
+    view.construct(projection, modelview, algorithm::DeviceWidth, algorithm::DeviceHeight);
 }
 
 }
