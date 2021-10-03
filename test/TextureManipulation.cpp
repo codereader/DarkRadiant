@@ -352,7 +352,8 @@ std::vector<std::pair<const WindingVertex*, const WindingVertex*>> findSharedVer
     return vertexPairs;
 }
 
-TEST_F(TextureManipulationTest, PasteTextureToOrthogonalFace)
+// Paste texture from the top face of a brush to the one one the front side (X)
+TEST_F(TextureManipulationTest, PasteTextureToOrthogonalFace1)
 {
     std::string mapPath = "maps/simple_brushes.map";
     GlobalCommandSystem().executeCommand("OpenMap", mapPath);
@@ -390,6 +391,53 @@ TEST_F(TextureManipulationTest, PasteTextureToOrthogonalFace)
 
     SelectionVolume testFaceRight(viewFaceRight);
     GlobalShaderClipboard().pasteShader(testFaceRight, selection::PasteMode::Natural, false);
+
+    for (const auto& pair : sharedVertices)
+    {
+        EXPECT_TRUE(math::isNear(pair.first->texcoord, pair.second->texcoord, 0.01))
+            << "Texture coordinates should be the same after pasting the texture projection";
+    }
+}
+
+// Paste shader from top face of a brush to the one on the left (Y)
+TEST_F(TextureManipulationTest, PasteTextureToOrthogonalFace2)
+{
+    std::string mapPath = "maps/simple_brushes.map";
+    GlobalCommandSystem().executeCommand("OpenMap", mapPath);
+
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto brushNode = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/4");
+
+    auto faceUp = algorithm::findBrushFaceWithNormal(Node_getIBrush(brushNode), Vector3(0, 0, 1));
+    auto faceYDown = algorithm::findBrushFaceWithNormal(Node_getIBrush(brushNode), Vector3(0, -1, 0));
+
+    // Find the shared vertices of the two faces
+    auto sharedVertices = findSharedVertices(*faceUp, *faceYDown);
+    EXPECT_EQ(sharedVertices.size(), 2) << "There should be 2 shared 3D vertices between the two faces";
+
+    for (const auto& pair : sharedVertices)
+    {
+        EXPECT_FALSE(math::isNear(pair.first->texcoord, pair.second->texcoord, 0.01))
+            << "Texture coordinates are the same before pasting the texture projection";
+    }
+
+    // Position the camera top-down, similar to what an XY view is seeing
+    render::View viewFaceUp(true);
+    algorithm::constructCameraView(viewFaceUp, brushNode->localAABB(), { 0, 0, -1 }, { -90, 0, 0 });
+
+    SelectionVolume testFaceUp(viewFaceUp);
+    GlobalShaderClipboard().pickFromSelectionTest(testFaceUp);
+
+    EXPECT_EQ(GlobalShaderClipboard().getSourceType(), selection::IShaderClipboard::SourceType::Face)
+        << "Selection test failed to select the face";
+
+    render::View viewFacingYUp(true);
+    algorithm::constructCameraView(viewFacingYUp, brushNode->localAABB(), { 0, 1, 0 }, { 0, 90, 0 });
+
+    ConstructSelectionTest(viewFacingYUp, selection::Rectangle::ConstructFromPoint({ 0, 0 }, { 0.1, 0.1 }));
+
+    SelectionVolume testFacingYUp(viewFacingYUp);
+    GlobalShaderClipboard().pasteShader(testFacingYUp, selection::PasteMode::Natural, false);
 
     for (const auto& pair : sharedVertices)
     {
