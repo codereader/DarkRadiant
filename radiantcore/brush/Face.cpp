@@ -298,7 +298,6 @@ void Face::revertTransform()
     planepts_assign(m_move_planeptsTransformed, m_move_planepts);
     m_texdefTransformed = _texdef;
     updateWinding();
-    EmitTextureCoordinates();
 }
 
 void Face::freezeTransform() {
