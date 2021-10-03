@@ -49,7 +49,7 @@ void applyShaderToSelectionCmd(const cmd::ArgumentList& args)
 void applyClipboardFaceToFace(Face& target)
 {
 	// Get a reference to the source Texturable in the clipboard
-	Texturable& source = ShaderClipboard::Instance().getSource();
+	auto& source = ShaderClipboard::Instance().getSource();
 
 	target.applyShaderFromFace(*(source.face));
 }
@@ -75,95 +75,97 @@ void applyClipboardPatchToFace(Face& target)
 // Function may leak a cmd::ExecutionFailure if the source/target combination doesn't work out
 void applyClipboardToTexturable(Texturable& target, bool projected, bool entireBrush)
 {
-	// Get a reference to the source Texturable in the clipboard
-	Texturable& source = ShaderClipboard::Instance().getSource();
+    // Get a reference to the source Texturable in the clipboard
+    auto& source = ShaderClipboard::Instance().getSource();
 
-	// Check the basic conditions
-	if (!target.empty() && !source.empty())
+    // Check the basic conditions
+    if (target.empty() || source.empty())
     {
-		// Do we have a Face to copy from?
-		if (source.isFace())
-        {
-			if (target.isFace() && entireBrush)
-            {
-				// Copy Face >> Whole Brush
-				for (Brush::const_iterator i = target.brush->begin();
-					 i != target.brush->end();
-					 i++)
-				{
-					applyClipboardFaceToFace(*(*i));
-				}
-			}
-			else if (target.isFace() && !entireBrush) 
-            {
-				// Copy Face >> Face
-				applyClipboardFaceToFace(*target.face);
-			}
-			else if (target.isPatch() && !entireBrush)
-            {
-				// Copy Face >> Patch
+        return;
+    }
 
-				// Set the shader name first
-				target.patch->setShader(source.face->getShader());
+    // Do we have a Face to copy from?
+    if (source.isFace())
+    {
+        if (target.isFace() && entireBrush)
+        {
+            // Copy Face >> Whole Brush
+            for (Brush::const_iterator i = target.brush->begin();
+                i != target.brush->end();
+                i++)
+            {
+                applyClipboardFaceToFace(*(*i));
+            }
+        }
+        else if (target.isFace() && !entireBrush)
+        {
+            // Copy Face >> Face
+            applyClipboardFaceToFace(*target.face);
+        }
+        else if (target.isPatch() && !entireBrush)
+        {
+            // Copy Face >> Patch
 
-				// Either paste the texture projected or naturally
-				if (projected) 
-                {
-					target.patch->pasteTextureProjected(source.face);
-				}
-				else 
-                {
-					target.patch->pasteTextureNatural(source.face);
-				}
-			}
-		}
-		else if (source.isPatch())
+            // Set the shader name first
+            target.patch->setShader(source.face->getShader());
+
+            // Either paste the texture projected or naturally
+            if (projected)
+            {
+                target.patch->pasteTextureProjected(source.face);
+            }
+            else
+            {
+                target.patch->pasteTextureNatural(source.face);
+            }
+        }
+    }
+    else if (source.isPatch())
+    {
+        // Source holds a patch
+        if (target.isFace() && entireBrush)
         {
-			// Source holds a patch
-			if (target.isFace() && entireBrush) 
+            // Copy patch >> whole brush
+            for (Brush::const_iterator i = target.brush->begin();
+                i != target.brush->end();
+                i++)
             {
-				// Copy patch >> whole brush
-				for (Brush::const_iterator i = target.brush->begin();
-					 i != target.brush->end();
-					 i++)
-				{
-					applyClipboardPatchToFace(*(*i));
-				}
-			}
-			else if (target.isFace() && !entireBrush)
-            {
-				// Copy patch >> face
-				applyClipboardPatchToFace(*target.face);
-			}
-			else if (target.isPatch() && !entireBrush) 
-            {
-				// Copy patch >> patch
-				target.patch->setShader(source.patch->getShader());
-				target.patch->pasteTextureNatural(*source.patch);
-			}
-		}
-		else if (source.isShader())
+                applyClipboardPatchToFace(*(*i));
+            }
+        }
+        else if (target.isFace() && !entireBrush)
         {
-			if (target.isFace() && entireBrush)
+            // Copy patch >> face
+            applyClipboardPatchToFace(*target.face);
+        }
+        else if (target.isPatch() && !entireBrush)
+        {
+            // Copy patch >> patch
+            target.patch->setShader(source.patch->getShader());
+            target.patch->pasteTextureNatural(*source.patch);
+        }
+    }
+    else if (source.isShader())
+    {
+        if (target.isFace() && entireBrush)
+        {
+            // Copy patch >> whole brush
+            for (Brush::const_iterator i = target.brush->begin();
+                i != target.brush->end();
+                i++)
             {
-				// Copy patch >> whole brush
-				for (Brush::const_iterator i = target.brush->begin();
-					 i != target.brush->end();
-					 i++)
-				{
-					(*i)->setShader(source.getShader());
-				}
-			}
-			else if (target.isFace() && !entireBrush)
-            {
-				target.face->setShader(source.getShader());
-			}
-			else if (target.isPatch() && !entireBrush) 
-            {
-				target.patch->setShader(source.getShader());
-			}
-		}
-	}
+                (*i)->setShader(source.getShader());
+            }
+        }
+        else if (target.isFace() && !entireBrush)
+        {
+            target.face->setShader(source.getShader());
+        }
+        else if (target.isPatch() && !entireBrush)
+        {
+            target.patch->setShader(source.getShader());
+        }
+    }
 }
 
 void pasteShader(SelectionTest& test, bool projected, bool entireBrush)

@@ -527,38 +527,109 @@ void Face::setShiftScaleRotation(const ShiftScaleRotation& ssr)
 
 void Face::applyShaderFromFace(const Face& other)
 {
+    undoSave();
+
+    rMessage() << "Other Winding: " << std::endl;
+    for (std::size_t i = 0; i < other.m_winding.size(); ++i)
+    {
+        rMessage() << i << ": XYZ=" << other.m_winding[i].vertex << ", UV=" << other.m_winding[i].texcoord << std::endl;
+    }
+
+    rMessage() << "This Winding: " << std::endl;
+    for (std::size_t i = 0; i < m_winding.size(); ++i)
+    {
+        rMessage() << i << ": XYZ=" << m_winding[i].vertex << ", UV=" << m_winding[i].texcoord << std::endl;
+    }
+
+    // Apply the material of the other face
+    setShader(other.getShader());
+
     // Retrieve the textureprojection from the source face
     TextureProjection projection;
     other.GetTexdef(projection);
 
-    setShader(other.getShader());
-    SetTexdef(projection);
-
-    // The list of shared vertices
-    std::vector<Winding::const_iterator> thisVerts, otherVerts;
+    // The list of shared vertices (other face index => this face index)
+    using SharedVertexIndices = std::vector<std::pair<std::size_t, std::size_t>>;
+    SharedVertexIndices sharedVertices;
 
     // Let's see whether this face is sharing any 3D coordinates with the other one
-    for (Winding::const_iterator i = other.m_winding.begin(); i != other.m_winding.end(); ++i) {
-        for (Winding::const_iterator j = m_winding.begin(); j != m_winding.end(); ++j) {
+    for (std::size_t i = 0; i < other.m_winding.size(); ++i)
+    {
+        for (std::size_t j = 0; j < m_winding.size(); ++j)
+        {
             // Check if the vertices are matching
-            if (math::isNear(j->vertex, i->vertex, 0.001))
+            if (math::isNear(m_winding[j].vertex, other.m_winding[i].vertex, 0.001))
             {
                 // Match found, add to list
-                thisVerts.push_back(j);
-                otherVerts.push_back(i);
+                sharedVertices.emplace_back(std::make_pair(i, j));
+                break;
             }
         }
     }
 
-    if (thisVerts.empty() || thisVerts.size() != otherVerts.size()) {
-        return; // nothing to do
+    SetTexdef(projection);
+
+    if (sharedVertices.empty())
+    {
+        return; // nothing more to do
     }
 
-    // Calculate the distance in texture space of the first shared vertices
-    Vector2 dist = thisVerts[0]->texcoord - otherVerts[0]->texcoord;
+    // Apply this texture matrix to all our winding vertices to be able to measure distances
+    emitTextureCoordinates();
 
-    // Shift the texture to match
-    shiftTexdef(static_cast<float>(dist.x()), static_cast<float>(dist.y()));
+    // Pick one or two non-shared vertices to calculate the distance in UV space
+    // When shifting the texture we want to keep that distance intact
+    std::vector<std::pair<std::size_t, Vector2>> uvDistanceToNonshared;
+
+    // First shared vertex of this face
+    auto firstSharedVertex = sharedVertices[0].second;
+
+    // If we have two shared vertices, calculate the UV distance to one more vertex
+    for (std::size_t j = 0; j < m_winding.size(); ++j)
+    {
+        if (std::find_if(sharedVertices.begin(), sharedVertices.end(), [&](const SharedVertexIndices::value_type& indexPair)
+            { return indexPair.second == j; }) != sharedVertices.end())
+        {
+            continue; // this is a shared vertex
+        }
+
+        // Remember this distance
+        uvDistanceToNonshared.emplace_back(j, m_winding[j].texcoord - m_winding[firstSharedVertex].texcoord);
+    }
+
+    if (uvDistanceToNonshared.empty())
+    {
+        return;
+    }
+
+    // Assemble three vertices we can calculate the shift-corrected texture matrix from
+    Vector3 vertices[3];
+    Vector2 texcoords[3];
+
+    if (sharedVertices.size() == 2)
+    {
+        // Two vertices are shared anyway
+        vertices[0] = m_winding[sharedVertices[0].second].vertex;
+        vertices[1] = m_winding[sharedVertices[1].second].vertex;
+
+        // Use the texcoord of the other face
+        texcoords[0] = other.m_winding[sharedVertices[0].first].texcoord;
+        texcoords[1] = other.m_winding[sharedVertices[1].first].texcoord;
+
+        // The third vertex is a non-shared one
+        // Use the world coordinates of this face
+        vertices[2] = m_winding[uvDistanceToNonshared[0].first].vertex;
+        // The texture coordinate will have the same distance as before the fix
+        texcoords[2] = texcoords[0] + uvDistanceToNonshared[0].second;
+    }
+    else if (sharedVertices.size() == 1)
+    {
+        rWarning() << "Algorithm for 1 shared vertex not implemented";
+        return;
+    }
+
+    setTexDefFromPoints(vertices, texcoords);
+    _texdef = m_texdefTransformed;
 }
 
 void Face::setTexDefFromPoints(const Vector3 points[3], const Vector2 uvs[3])
