@@ -335,17 +335,89 @@ TEST_F(Quake3BrushTest, TextureOnAngledBrush)
 }
 #endif
 
+inline void checkFaceNormalAndShader(IBrush* brush, int faceIndex, const Vector3& expectedNormal, const std::string& expectedMaterial)
+{
+    EXPECT_TRUE(math::isNear(brush->getFace(faceIndex).getPlane3().normal(), expectedNormal, 0.01)) <<
+        "Face " << faceIndex << " failed the normal check";
+    EXPECT_EQ(brush->getFace(faceIndex).getShader(), expectedMaterial) << "Face " << faceIndex << " doesn't have the expected material";
+}
+
+// Create a defined brush with a certain AABB for the rotation tests
+// Face with (0,0,1) will have textures/numbers/10
+// Face with (0,1,0) will have textures/numbers/11
+inline scene::INodePtr createBrushForRotationTest()
+{
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto brushNode = algorithm::createCuboidBrush(worldspawn, AABB({ 192, 8, 48 }, { 48, 8, 50 }), "textures/numbers/1");
+    Node_setSelected(brushNode, true);
+
+    auto brush = Node_getIBrush(brushNode);
+
+    // Set up two faces with defined materials to later detect how the brush has been rotated
+    algorithm::findBrushFaceWithNormal(brush, { 0, 0, 1 })->setShader("textures/numbers/10");
+    algorithm::findBrushFaceWithNormal(brush, { 0, 1, 0 })->setShader("textures/numbers/11");
+
+    // Check the faces explicitly
+    checkFaceNormalAndShader(brush, 0, { 1, 0, 0 }, "textures/numbers/1");
+    checkFaceNormalAndShader(brush, 1, {-1, 0, 0 }, "textures/numbers/1");
+    checkFaceNormalAndShader(brush, 2, { 0, 1, 0 }, "textures/numbers/11");
+    checkFaceNormalAndShader(brush, 3, { 0,-1, 0 }, "textures/numbers/1");
+    checkFaceNormalAndShader(brush, 4, { 0, 0, 1 }, "textures/numbers/10");
+    checkFaceNormalAndShader(brush, 5, { 0, 0,-1 }, "textures/numbers/1");
+
+    return brushNode;
+}
+
 // #5770: Brushes disappear due to transformation being applied twice while freezing the brush node (first face is transformed twice)
 TEST_F(BrushTest, RotateBrushZ90Degrees)
 {
-    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
-    auto brush = algorithm::createCuboidBrush(worldspawn, AABB({ 192, 8, 48 }, { 48, 8, 50 }), "textures/numbers/1");
-    Node_setSelected(brush, true);
+    auto brushNode = createBrushForRotationTest();
 
     GlobalCommandSystem().executeCommand("RotateSelectionZ");
 
-    Node_getIBrush(brush)->evaluateBRep();
-    EXPECT_TRUE(Node_getIBrush(brush)->hasContributingFaces()) << "Failed to transform this brush, it seems to have disappeared";
+    auto brush = Node_getIBrush(brushNode);
+    
+    // Check the faces explicitly, normals should have been rotated, order of faces unchanged
+    checkFaceNormalAndShader(brush, 0, { 0,-1, 0 }, "textures/numbers/1");
+    checkFaceNormalAndShader(brush, 1, { 0, 1, 0 }, "textures/numbers/1");
+    checkFaceNormalAndShader(brush, 2, { 1, 0, 0 }, "textures/numbers/11");
+    checkFaceNormalAndShader(brush, 3, {-1, 0, 0 }, "textures/numbers/1");
+    checkFaceNormalAndShader(brush, 4, { 0, 0, 1 }, "textures/numbers/10");
+    checkFaceNormalAndShader(brush, 5, { 0, 0,-1 }, "textures/numbers/1");
+}
+
+TEST_F(BrushTest, RotateBrushX90Degrees)
+{
+    auto brushNode = createBrushForRotationTest();
+
+    GlobalCommandSystem().executeCommand("RotateSelectionX");
+
+    auto brush = Node_getIBrush(brushNode);
+
+    // Check the faces explicitly, normals should have been rotated, order of faces unchanged
+    checkFaceNormalAndShader(brush, 0, { 1, 0, 0 }, "textures/numbers/1");
+    checkFaceNormalAndShader(brush, 1, {-1, 0, 0 }, "textures/numbers/1");
+    checkFaceNormalAndShader(brush, 2, { 0, 0,-1 }, "textures/numbers/11");
+    checkFaceNormalAndShader(brush, 3, { 0, 0, 1 }, "textures/numbers/1");
+    checkFaceNormalAndShader(brush, 4, { 0, 1, 0 }, "textures/numbers/10");
+    checkFaceNormalAndShader(brush, 5, { 0,-1, 0 }, "textures/numbers/1");
+}
+
+TEST_F(BrushTest, RotateBrushY90Degrees)
+{
+    auto brushNode = createBrushForRotationTest();
+
+    GlobalCommandSystem().executeCommand("RotateSelectionY");
+
+    auto brush = Node_getIBrush(brushNode);
+
+    // Check the faces explicitly, normals should have been rotated, order of faces unchanged
+    checkFaceNormalAndShader(brush, 0, { 0, 0,-1 }, "textures/numbers/1");
+    checkFaceNormalAndShader(brush, 1, { 0, 0, 1 }, "textures/numbers/1");
+    checkFaceNormalAndShader(brush, 2, { 0, 1, 0 }, "textures/numbers/11");
+    checkFaceNormalAndShader(brush, 3, { 0,-1, 0 }, "textures/numbers/1");
+    checkFaceNormalAndShader(brush, 4, { 1, 0, 0 }, "textures/numbers/10");
+    checkFaceNormalAndShader(brush, 5, {-1, 0, 0 }, "textures/numbers/1");
 }
 
 }
