@@ -264,7 +264,8 @@ void TextureProjection::alignTexture(IFace::AlignEdge align, const Winding& wind
     shift(-delta.x(), delta.y());
 }
 
-Matrix4 TextureProjection::getWorldToTexture(const Vector3& normal, const Matrix4& localToWorld) const {
+Matrix4 TextureProjection::getWorldToTexture(const Vector3& normal, const Matrix4& localToWorld) const
+{
     // Get the transformation matrix, that contains the shift, scale and rotation
     // of the texture in "condensed" form (as matrix components).
     Matrix4 local2tex = getTransform();
@@ -342,4 +343,13 @@ void TextureProjection::emitTextureCoordinates(Winding& w, const Vector3& normal
         i->tangent = tangent;
         i->bitangent = bitangent;
     }
+}
+
+Vector2 TextureProjection::getTextureCoordsForVertex(const Vector3& point, const Vector3& normal, const Matrix4& localToWorld) const
+{
+    auto local2tex = getWorldToTexture(normal, localToWorld);
+    
+    auto texcoord = local2tex.transformPoint(point);
+
+    return { texcoord.x(), texcoord.y() };
 }

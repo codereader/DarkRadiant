@@ -57,6 +57,9 @@ public:
     // greebo: Saves the texture definitions into the brush winding points
     void emitTextureCoordinates(Winding& w, const Vector3& normal, const Matrix4& localToWorld) const;
 
+    // Calculates the UV coords of a single point
+    Vector2 getTextureCoordsForVertex(const Vector3& point, const Vector3& normal, const Matrix4& localToWorld) const;
+
     // greebo: This returns a matrix transforming world vertex coordinates into texture space
     Matrix4 getWorldToTexture(const Vector3& normal, const Matrix4& localToWorld) const;
 

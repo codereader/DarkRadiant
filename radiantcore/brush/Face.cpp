@@ -529,18 +529,6 @@ void Face::applyShaderFromFace(const Face& other)
 {
     undoSave();
 
-    rMessage() << "Other Winding: " << std::endl;
-    for (std::size_t i = 0; i < other.m_winding.size(); ++i)
-    {
-        rMessage() << i << ": XYZ=" << other.m_winding[i].vertex << ", UV=" << other.m_winding[i].texcoord << std::endl;
-    }
-
-    rMessage() << "This Winding: " << std::endl;
-    for (std::size_t i = 0; i < m_winding.size(); ++i)
-    {
-        rMessage() << i << ": XYZ=" << m_winding[i].vertex << ", UV=" << m_winding[i].texcoord << std::endl;
-    }
-
     // Apply the material of the other face
     setShader(other.getShader());
 
@@ -549,8 +537,7 @@ void Face::applyShaderFromFace(const Face& other)
     other.GetTexdef(projection);
 
     // The list of shared vertices (other face index => this face index)
-    using SharedVertexIndices = std::vector<std::pair<std::size_t, std::size_t>>;
-    SharedVertexIndices sharedVertices;
+    std::vector<std::pair<std::size_t, std::size_t>> sharedVertices;
 
     // Let's see whether this face is sharing any 3D coordinates with the other one
     for (std::size_t i = 0; i < other.m_winding.size(); ++i)
@@ -567,69 +554,49 @@ void Face::applyShaderFromFace(const Face& other)
         }
     }
 
-    SetTexdef(projection);
-
-    if (sharedVertices.empty())
-    {
-        return; // nothing more to do
-    }
-
-    // Apply this texture matrix to all our winding vertices to be able to measure distances
-    emitTextureCoordinates();
-
-    // Pick one or two non-shared vertices to calculate the distance in UV space
-    // When shifting the texture we want to keep that distance intact
-    std::vector<std::pair<std::size_t, Vector2>> uvDistanceToNonshared;
-
-    // First shared vertex of this face
-    auto firstSharedVertex = sharedVertices[0].second;
-
-    // If we have two shared vertices, calculate the UV distance to one more vertex
-    for (std::size_t j = 0; j < m_winding.size(); ++j)
-    {
-        if (std::find_if(sharedVertices.begin(), sharedVertices.end(), [&](const SharedVertexIndices::value_type& indexPair)
-            { return indexPair.second == j; }) != sharedVertices.end())
-        {
-            continue; // this is a shared vertex
-        }
-
-        // Remember this distance
-        uvDistanceToNonshared.emplace_back(j, m_winding[j].texcoord - m_winding[firstSharedVertex].texcoord);
-    }
-
-    if (uvDistanceToNonshared.empty())
-    {
-        return;
-    }
-
-    // Assemble three vertices we can calculate the shift-corrected texture matrix from
-    Vector3 vertices[3];
-    Vector2 texcoords[3];
-
+    // Do we have a shared edge?
     if (sharedVertices.size() == 2)
     {
-        // Two vertices are shared anyway
-        vertices[0] = m_winding[sharedVertices[0].second].vertex;
-        vertices[1] = m_winding[sharedVertices[1].second].vertex;
+        // We wrap the texture around the shared edge, check the UV scale perpendicular to that edge
+        auto edgeCenter = (other.m_winding[sharedVertices[0].first].vertex + other.m_winding[sharedVertices[1].first].vertex) * 0.5;
+        auto centroidToEdgeCenter = edgeCenter - other.m_centroid;
+        
+        // Pick a point outside face, following the ray from the centroid through the edge center
+        auto extrapolatedPoint = edgeCenter + centroidToEdgeCenter;
+        auto extrapolationLength = centroidToEdgeCenter.getLength();
+        auto extrapolatedTexcoords = other.m_texdefTransformed.getTextureCoordsForVertex(
+            extrapolatedPoint, other.m_planeTransformed.getPlane().normal(), Matrix4::getIdentity()
+        );
 
-        // Use the texcoord of the other face
-        texcoords[0] = other.m_winding[sharedVertices[0].first].texcoord;
-        texcoords[1] = other.m_winding[sharedVertices[1].first].texcoord;
+        // Both faces share the same edge center
+        // Calculate a point on this face plane, with the same distance from the edge center
+        auto pointOnThisFacePlane = edgeCenter + (m_centroid - edgeCenter).getNormalised() * extrapolationLength;
 
-        // The third vertex is a non-shared one
-        // Use the world coordinates of this face
-        vertices[2] = m_winding[uvDistanceToNonshared[0].first].vertex;
-        // The texture coordinate will have the same distance as before the fix
-        texcoords[2] = texcoords[0] + uvDistanceToNonshared[0].second;
-    }
-    else if (sharedVertices.size() == 1)
-    {
-        rWarning() << "Algorithm for 1 shared vertex not implemented";
+        // Now we have 3 vertices and 3 texcoords to calculate the matching texdef
+        Vector3 vertices[3] =
+        {
+            m_winding[sharedVertices[0].second].vertex,
+            m_winding[sharedVertices[1].second].vertex,
+            pointOnThisFacePlane
+        };
+
+        // Use the shared texcoords we found on the other face, and the third one we calculated
+        Vector2 texcoords[3] =
+        {
+            other.m_winding[sharedVertices[0].first].texcoord,
+            other.m_winding[sharedVertices[1].first].texcoord,
+            extrapolatedTexcoords
+        };
+
+        setTexDefFromPoints(vertices, texcoords);
+        _texdef = m_texdefTransformed; // freeze that matrix
         return;
     }
-
-    setTexDefFromPoints(vertices, texcoords);
-    _texdef = m_texdefTransformed;
+    else
+    {
+        // Just use the other projection, as-is
+        SetTexdef(projection);
+    }
 }
 
 void Face::setTexDefFromPoints(const Vector3 points[3], const Vector2 uvs[3])
