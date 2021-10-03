@@ -1134,7 +1134,7 @@ bool Brush::buildWindings() {
                 }
 
                 // update texture coordinates
-                f.EmitTextureCoordinates();
+                f.emitTextureCoordinates();
             }
 
             // greebo: Update the winding, now that it's constructed

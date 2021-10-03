@@ -298,6 +298,7 @@ void Face::revertTransform()
     planepts_assign(m_move_planeptsTransformed, m_move_planepts);
     m_texdefTransformed = _texdef;
     updateWinding();
+    emitTextureCoordinates();
 }
 
 void Face::freezeTransform() {
@@ -351,7 +352,7 @@ void Face::testSelect_centroid(SelectionTest& test, SelectionIntersection& best)
 
 void Face::shaderChanged()
 {
-    EmitTextureCoordinates();
+    emitTextureCoordinates();
     _owner.onFaceShaderChanged();
 
     // Update the visibility flag, but leave out the contributes() check
@@ -390,7 +391,7 @@ void Face::revertTexdef()
 void Face::texdefChanged()
 {
     revertTexdef();
-    EmitTextureCoordinates();
+    emitTextureCoordinates();
 
     // Fire the signal to update the Texture Tools
     signal_texdefChanged().emit();
@@ -607,7 +608,7 @@ void Face::setTexDefFromPoints(const Vector3 points[3], const Vector2 uvs[3])
 
     m_texdefTransformed.setTransform(textureMatrix);
 
-    EmitTextureCoordinates();
+    emitTextureCoordinates();
 
     // Fire the signal to update the Texture Tools
     signal_texdefChanged().emit();
@@ -654,8 +655,9 @@ void Face::alignTexture(AlignEdge align)
     texdefChanged();
 }
 
-void Face::EmitTextureCoordinates() {
-    m_texdefTransformed.emitTextureCoordinates(m_winding, plane3().normal(), Matrix4::getIdentity());
+void Face::emitTextureCoordinates() 
+{
+    m_texdefTransformed.emitTextureCoordinates(m_winding, m_planeTransformed.getPlane().normal(), Matrix4::getIdentity());
 }
 
 void Face::applyDefaultTextureScale()

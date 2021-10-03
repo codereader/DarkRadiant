@@ -177,7 +177,7 @@ public:
 	 */
 	void normaliseTexture();
 
-	void EmitTextureCoordinates();
+	void emitTextureCoordinates();
 
     // When constructing faces with a default-constructed TextureProjection the scale is very small
     // fix that by calling this method.
