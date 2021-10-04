@@ -446,4 +446,63 @@ TEST_F(TextureManipulationTest, PasteTextureToOrthogonalFace2)
     }
 }
 
+TEST_F(TextureManipulationTest, NormaliseFace)
+{
+    std::string mapPath = "maps/simple_brushes.map";
+    GlobalCommandSystem().executeCommand("OpenMap", mapPath);
+
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+
+    // Find the brush that is centered at origin
+    auto brushNode = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/4");
+    EXPECT_TRUE(brushNode && brushNode->getNodeType() == scene::INode::Type::Brush) << "Couldn't locate the test brush";
+
+    // Pick a few faces and run the algorithm against it, checking hardcoded results
+
+    // Facing 0,1,0
+    auto face = algorithm::findBrushFaceWithNormal(Node_getIBrush(brushNode), Vector3(0, 1, 0));
+
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(-760.0,-24.0, 208.0), Vector2(61.13169449567795,-0.5979519486427307)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(-760.0,-24.0, 376.0), Vector2(61.13169449567795,-1.4489692151546478)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(-992.0,-24.0, 376.0), Vector2(62.102946043014526,-1.4489692151546478)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(-992.0,-24.0, 208.0), Vector2(62.102946043014526,-0.5979519486427307)));
+
+    face->normaliseTexture();
+
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(-760.0, -24.0, 208.0), Vector2(0.13169449567795, -0.5979519486427307)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(-760.0, -24.0, 376.0), Vector2(0.13169449567795, -1.4489692151546478)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(-992.0, -24.0, 376.0), Vector2(1.102946043014526, -1.4489692151546478)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(-992.0, -24.0, 208.0), Vector2(1.102946043014526, -0.5979519486427307)));
+
+    // Facing 1,0,0
+    face = algorithm::findBrushFaceWithNormal(Node_getIBrush(brushNode), Vector3(1, 0, 0));
+
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(-760.0, -280.0, 376.0), Vector2(-0.1557292342185974,53.89497980847955)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(-760.0, -24.0, 376.0),  Vector2(0.8797785639762878,54.230962846428156)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(-760.0, -24.0, 208.0),  Vector2(0.6975563578307629,55.053220719099045)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(-760.0, -280.0, 208.0), Vector2(-0.3379514403641224,54.717237681150436)));
+
+    face->normaliseTexture();
+
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(-760.0, -280.0, 376.0), Vector2(-0.1557292342185974, 0.89497980847955)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(-760.0, -24.0, 376.0), Vector2(0.8797785639762878, 1.230962846428156)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(-760.0, -24.0, 208.0), Vector2(0.6975563578307629, 2.053220719099045)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(-760.0, -280.0, 208.0), Vector2(-0.3379514403641224, 1.717237681150436)));
+
+    // Facing 0,-1,0
+    face = algorithm::findBrushFaceWithNormal(Node_getIBrush(brushNode), Vector3(0, -1, 0));
+
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(-992.0, -280.0, 376.0), Vector2(-15.5, -5.875)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(-760.0, -280.0, 376.0), Vector2(-11.875, -5.875)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(-760.0, -280.0, 208.0), Vector2(-11.875, -3.25)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(-992.0, -280.0, 208.0), Vector2(-15.5, -3.25)));
+
+    face->normaliseTexture();
+
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(-992.0,-280.0,376.0), Vector2(-4.5,-2.875)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(-760.0,-280.0,376.0), Vector2(-0.875,-2.875)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(-760.0,-280.0,208.0), Vector2(-0.875,-0.25)));
+    EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(-992.0,-280.0,208.0), Vector2(-4.5,-0.25)));
+}
+
 }
