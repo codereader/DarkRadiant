@@ -145,6 +145,37 @@ void TextureScaler::ScaleNode(const textool::INode::Ptr& node, const Vector2& sc
     scaler.processNode(node);
 }
 
+// Normalise
+
+TextureNormaliser::TextureNormaliser(const Vector2& boundsCenter)
+{
+    Vector2 roundedCenter
+    {
+        boundsCenter.x() > 0 ? floor(boundsCenter.x()) : ceil(boundsCenter.x()),
+        boundsCenter.y() > 0 ? floor(boundsCenter.y()) : ceil(boundsCenter.y())
+    };
+
+    _transform = Matrix3::getTranslation(-roundedCenter);
+}
+
+void TextureNormaliser::NormalisePatch(IPatch& patch)
+{
+    NormaliseNode(std::make_shared<textool::PatchNode>(patch));
+}
+
+void TextureNormaliser::NormaliseFace(IFace& face)
+{
+    NormaliseNode(std::make_shared<textool::FaceNode>(face));
+}
+
+void TextureNormaliser::NormaliseNode(const textool::INode::Ptr& node)
+{
+    const auto& bounds = node->localAABB();
+    TextureNormaliser normaliser({ bounds.origin.x(), bounds.origin.y() });
+
+    normaliser.processNode(node);
+}
+
 }
 
 }

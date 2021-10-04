@@ -108,6 +108,24 @@ private:
     static void ScaleNode(const textool::INode::Ptr& node, const Vector2& scale);
 };
 
+// Will shift the texture coordinates towards the origin,
+// using the integer part of the given bounds center
+class TextureNormaliser :
+    public TextureNodeManipulator
+{
+public:
+    TextureNormaliser(const Vector2& boundsCenter);
+
+    // Normalise the texture of the given patch
+    static void NormalisePatch(IPatch& patch);
+
+    // Normalise the texture of the given face
+    static void NormaliseFace(IFace& face);
+
+private:
+    static void NormaliseNode(const textool::INode::Ptr& node);
+};
+
 }
 
 }
