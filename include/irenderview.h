@@ -19,7 +19,7 @@ public:
 
 	virtual void construct(const Matrix4& projection, const Matrix4& modelview, std::size_t width, std::size_t height) = 0;
 
-	virtual const Vector3& getViewer() const = 0;
+	virtual Vector3 getViewer() const = 0;
 
 	virtual const Frustum& getFrustum() const = 0;
 

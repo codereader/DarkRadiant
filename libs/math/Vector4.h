@@ -95,6 +95,11 @@ public:
              + w() * other.w();
     }
 
+    /// Truncate this Vector4 into a Vector3 (no division by W)
+    BasicVector3<Element> getVector3() const {
+        return BasicVector3<Element>(x(), y(), z());
+    }
+
     /// Project homogeneous BasicVector4 into 3 dimensions by dividing by W
     BasicVector3<Element> getProjected() const
     {
@@ -104,19 +109,9 @@ public:
     /// Cast to const raw array
     operator const Element* () const { return _v; }
 
-    // Cast to non-const raw array
+    /// Cast to non-const raw array
     operator Element* () { return _v; }
-
-    /*  Cast this Vector4 onto a Vector3, both const and non-const
-     */
-    BasicVector3<Element>& getVector3() {
-        return *reinterpret_cast<BasicVector3<Element>*>(_v);
-    }
-
-    const BasicVector3<Element>& getVector3() const {
-        return *reinterpret_cast<const BasicVector3<Element>*>(_v);
-    }
-}; // BasicVector4
+};
 
 /// Equality comparison for BasicVector4
 template<typename T>
