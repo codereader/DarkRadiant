@@ -2634,46 +2634,9 @@ void Patch::stitchTextureFrom(Patch& sourcePatch) {
     controlPointsChanged();
 }
 
-void Patch::normaliseTexture() {
-    // Find the nearest control vertex
-
-    // Initialise the compare value
-    PatchControlIter nearestControl = _ctrl.begin();
-
-    // Cycle through all the control points with an iterator
-    for (PatchControlIter i = _ctrl.begin(); i != _ctrl.end(); ++i) {
-        // Take the according value (e.g. s = x, t = y, depending on the nAxis argument)
-        // and apply the appropriate texture coordinate
-        if (i->texcoord.getLength() < nearestControl->texcoord.getLength()) {
-            nearestControl = i;
-        }
-    }
-
-    // Get the nearest texcoord
-    Vector2 texcoord = nearestControl->texcoord;
-
-    // The floored values
-    Vector2 floored(floor(fabs(texcoord[0])), floor(fabs(texcoord[1])));
-
-    // Compute the shift applicable to all vertices
-    Vector2 shift;
-    shift[0] = (fabs(texcoord[0])>1.0E-4) ? -floored[0] * texcoord[0]/fabs(texcoord[0]) : 0.0f;
-    shift[1] = (fabs(texcoord[1])>1.0E-4) ? -floored[1] * texcoord[1]/fabs(texcoord[1]) : 0.0f;
-
-    // Is there anything to do at all?
-    if (shift.getLength() > 0.0f) {
-        // Save the undo memento
-        undoSave();
-
-        // Now shift all the texture vertices in the right direction, so that this patch
-        // is getting as close as possible to the origin in texture space.
-        for (PatchControlIter i = _ctrl.begin(); i != _ctrl.end(); ++i) {
-            i->texcoord += shift;
-        }
-
-        // Notify the patch about the change
-        controlPointsChanged();
-    }
+void Patch::normaliseTexture()
+{
+    selection::algorithm::TextureNormaliser::NormalisePatch(*this);
 }
 
 const Subdivisions& Patch::getSubdivisions() const

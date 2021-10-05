@@ -526,15 +526,15 @@ TEST_F(TextureManipulationTest, NormalisePatch)
 
     patch->normaliseTexture();
 
-    EXPECT_TRUE(math::isNear(patch->ctrlAt(0, 0).texcoord,{ 3.2263, 6.4018}, 0.01));
-    EXPECT_TRUE(math::isNear(patch->ctrlAt(1, 0).texcoord,{ 1.855,  3.9462}, 0.01));
-    EXPECT_TRUE(math::isNear(patch->ctrlAt(2, 0).texcoord,{ 0.4838, 1.4907}, 0.01));
-    EXPECT_TRUE(math::isNear(patch->ctrlAt(0, 1).texcoord,{ 4.8088, 5.5181}, 0.01));
-    EXPECT_TRUE(math::isNear(patch->ctrlAt(1, 1).texcoord,{ 3.4375, 3.0625}, 0.01));
-    EXPECT_TRUE(math::isNear(patch->ctrlAt(2, 1).texcoord,{ 2.0662, 0.6069}, 0.01));
-    EXPECT_TRUE(math::isNear(patch->ctrlAt(0, 2).texcoord,{ 6.3912, 4.6343}, 0.01));
-    EXPECT_TRUE(math::isNear(patch->ctrlAt(1, 2).texcoord,{ 5.02,   2.1788}, 0.01));
-    EXPECT_TRUE(math::isNear(patch->ctrlAt(2, 2).texcoord,{ 3.6487, 0.2768}, 0.01));
+    EXPECT_TRUE(math::isNear(patch->ctrlAt(0, 0).texcoord, { 0.226303, 3.40177 }, 0.01));
+    EXPECT_TRUE(math::isNear(patch->ctrlAt(1, 0).texcoord, { -1.14497, 0.946209 }, 0.01));
+    EXPECT_TRUE(math::isNear(patch->ctrlAt(2, 0).texcoord, { -2.51625, -1.50935 }, 0.01));
+    EXPECT_TRUE(math::isNear(patch->ctrlAt(0, 1).texcoord, { 1.80877, 2.51806 }, 0.01));
+    EXPECT_TRUE(math::isNear(patch->ctrlAt(1, 1).texcoord, { 0.4375, 0.0625 }, 0.01));
+    EXPECT_TRUE(math::isNear(patch->ctrlAt(2, 1).texcoord, { -0.933773, -2.39306 }, 0.01));
+    EXPECT_TRUE(math::isNear(patch->ctrlAt(0, 2).texcoord, { 3.39125, 1.63435 }, 0.01));
+    EXPECT_TRUE(math::isNear(patch->ctrlAt(1, 2).texcoord, { 2.01997, -0.821211 }, 0.01));
+    EXPECT_TRUE(math::isNear(patch->ctrlAt(2, 2).texcoord, { 0.648697, -3.27677 }, 0.01));
 }
 
 }
