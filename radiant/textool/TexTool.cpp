@@ -790,6 +790,12 @@ void TexTool::onMouseScroll(wxMouseEvent& ev)
     draw();
 }
 
+void TexTool::resetViewCmd(const cmd::ArgumentList& args)
+{
+    Instance().recalculateVisibleTexSpace();
+    Instance().queueDraw();
+}
+
 void TexTool::toggle(const cmd::ArgumentList& args)
 {
 	Instance().ToggleVisibility();
@@ -798,6 +804,7 @@ void TexTool::toggle(const cmd::ArgumentList& args)
 void TexTool::registerCommands()
 {
 	GlobalCommandSystem().addCommand("TextureTool", TexTool::toggle);
+	GlobalCommandSystem().addCommand("TextureToolResetView", TexTool::resetViewCmd);
 	GlobalEventManager().addRegistryToggle("TexToolToggleGrid", RKEY_GRID_STATE);
 
     GlobalEventManager().addToggle("TextureToolUseLightTheme", [](bool toggled)

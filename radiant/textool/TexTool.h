@@ -203,6 +203,7 @@ protected:
     IInteractiveView& getInteractiveView() override;
 
 private:
+    static void resetViewCmd(const cmd::ArgumentList& args);
     void updateProjection();
     double getTextureAspectRatio();
     void onManipulatorModeChanged(selection::IManipulator::Type type);

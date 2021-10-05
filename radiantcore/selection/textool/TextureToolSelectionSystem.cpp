@@ -716,6 +716,12 @@ void TextureToolSelectionSystem::flipHorizontallyCmd(const cmd::ArgumentList& ar
 
 void TextureToolSelectionSystem::normaliseSelectionCmd(const cmd::ArgumentList& args)
 {
+    if (getSelectionMode() != SelectionMode::Surface)
+    {
+        rWarning() << "This command can only be executed in Surface manipulation mode" << std::endl;
+        return;
+    }
+
     // Calculate the center based on the selection
     selection::algorithm::TextureBoundsAccumulator accumulator;
     foreachSelectedNode(accumulator);
