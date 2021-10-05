@@ -50,6 +50,8 @@ void TextureToolSelectionSystem::initialiseModule(const IApplicationContext& ctx
         std::bind(&TextureToolSelectionSystem::selectRelatedCmd, this, std::placeholders::_1));
     GlobalCommandSystem().addCommand("TexToolSnapToGrid", 
         std::bind(&TextureToolSelectionSystem::snapSelectionToGridCmd, this, std::placeholders::_1));
+    GlobalCommandSystem().addCommand("TexToolNormaliseItems",
+        std::bind(&TextureToolSelectionSystem::normaliseSelectionCmd, this, std::placeholders::_1));
     GlobalCommandSystem().addCommand("TexToolMergeItems", 
         std::bind(&TextureToolSelectionSystem::mergeSelectionCmd, this, std::placeholders::_1),
         { cmd::ARGTYPE_VECTOR2 | cmd::ARGTYPE_OPTIONAL });
@@ -700,8 +702,6 @@ void TextureToolSelectionSystem::flipSelected(int axis)
 
     selection::algorithm::TextureFlipper flipper(flipCenter, axis);
     foreachSelectedNode(flipper);
-
-    radiant::TextureChangedMessage::Send();
 }
 
 void TextureToolSelectionSystem::flipVerticallyCmd(const cmd::ArgumentList& args)
@@ -712,6 +712,25 @@ void TextureToolSelectionSystem::flipVerticallyCmd(const cmd::ArgumentList& args
 void TextureToolSelectionSystem::flipHorizontallyCmd(const cmd::ArgumentList& args)
 {
     flipSelected(0);
+}
+
+void TextureToolSelectionSystem::normaliseSelectionCmd(const cmd::ArgumentList& args)
+{
+    // Calculate the center based on the selection
+    selection::algorithm::TextureBoundsAccumulator accumulator;
+    foreachSelectedNode(accumulator);
+
+    if (!accumulator.getBounds().isValid())
+    {
+        return;
+    }
+
+    Vector2 normaliseCenter(accumulator.getBounds().origin.x(), accumulator.getBounds().origin.y());
+
+    UndoableCommand cmd("normaliseTexcoords");
+
+    selection::algorithm::TextureNormaliser normaliser(normaliseCenter);
+    foreachSelectedNode(normaliser);
 }
 
 module::StaticModule<TextureToolSelectionSystem> _textureToolSelectionSystemModule;
