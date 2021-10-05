@@ -505,4 +505,36 @@ TEST_F(TextureManipulationTest, NormaliseFace)
     EXPECT_TRUE(algorithm::faceHasVertex(face, Vector3(-992.0,-280.0,208.0), Vector2(-2.5, 0.75)));
 }
 
+TEST_F(TextureManipulationTest, NormalisePatch)
+{
+    std::string mapPath = "maps/simple_brushes.map";
+    GlobalCommandSystem().executeCommand("OpenMap", mapPath);
+
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto patchNode = algorithm::findFirstPatchWithMaterial(worldspawn, "textures/numbers/4");
+    auto patch = Node_getIPatch(patchNode);
+
+    EXPECT_TRUE(math::isNear(patch->ctrlAt(0, 0).texcoord, { 45.2263, 28.4018}, 0.01));
+    EXPECT_TRUE(math::isNear(patch->ctrlAt(1, 0).texcoord, { 43.855, 25.9462}, 0.01));
+    EXPECT_TRUE(math::isNear(patch->ctrlAt(2, 0).texcoord, { 42.4838, 23.4907}, 0.01));
+    EXPECT_TRUE(math::isNear(patch->ctrlAt(0, 1).texcoord, { 46.8088, 27.5181}, 0.01));
+    EXPECT_TRUE(math::isNear(patch->ctrlAt(1, 1).texcoord, { 45.4375, 25.0625}, 0.01));
+    EXPECT_TRUE(math::isNear(patch->ctrlAt(2, 1).texcoord, { 44.0662, 22.6069}, 0.01));
+    EXPECT_TRUE(math::isNear(patch->ctrlAt(0, 2).texcoord, { 48.3912, 26.6343}, 0.01));
+    EXPECT_TRUE(math::isNear(patch->ctrlAt(1, 2).texcoord, { 47.02, 24.1788}, 0.01));
+    EXPECT_TRUE(math::isNear(patch->ctrlAt(2, 2).texcoord, { 45.6487, 21.7232}, 0.01));
+
+    patch->normaliseTexture();
+
+    EXPECT_TRUE(math::isNear(patch->ctrlAt(0, 0).texcoord,{ 3.2263, 6.4018}, 0.01));
+    EXPECT_TRUE(math::isNear(patch->ctrlAt(1, 0).texcoord,{ 1.855,  3.9462}, 0.01));
+    EXPECT_TRUE(math::isNear(patch->ctrlAt(2, 0).texcoord,{ 0.4838, 1.4907}, 0.01));
+    EXPECT_TRUE(math::isNear(patch->ctrlAt(0, 1).texcoord,{ 4.8088, 5.5181}, 0.01));
+    EXPECT_TRUE(math::isNear(patch->ctrlAt(1, 1).texcoord,{ 3.4375, 3.0625}, 0.01));
+    EXPECT_TRUE(math::isNear(patch->ctrlAt(2, 1).texcoord,{ 2.0662, 0.6069}, 0.01));
+    EXPECT_TRUE(math::isNear(patch->ctrlAt(0, 2).texcoord,{ 6.3912, 4.6343}, 0.01));
+    EXPECT_TRUE(math::isNear(patch->ctrlAt(1, 2).texcoord,{ 5.02,   2.1788}, 0.01));
+    EXPECT_TRUE(math::isNear(patch->ctrlAt(2, 2).texcoord,{ 3.6487, 0.2768}, 0.01));
+}
+
 }
