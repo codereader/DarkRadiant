@@ -62,6 +62,9 @@ public:
     BasicVector4(const Eigen_T& vec): _v(vec)
     {}
 
+    /// Return the underlying Eigen vector
+    const Eigen_T& eigen() const { return _v; }
+
     // Return non-constant references to the components
     T& x() { return _v[0]; }
     T& y() { return _v[1]; }

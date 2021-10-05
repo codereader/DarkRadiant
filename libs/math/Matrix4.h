@@ -538,9 +538,7 @@ inline Matrix4::Handedness Matrix4::getHandedness() const
 template<typename T>
 BasicVector4<T> Matrix4::transform(const BasicVector4<T>& vector4) const
 {
-    Eigen::Matrix<T, 4, 1> eVec(&vector4.x());
-    auto result = _transform * eVec;
-    return BasicVector4<T>(result[0], result[1], result[2], result[3]);
+    return _transform * vector4.eigen();
 }
 
 inline Vector3 Matrix4::getEulerAnglesXYZ() const
