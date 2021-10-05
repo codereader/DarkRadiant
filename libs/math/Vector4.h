@@ -4,7 +4,7 @@
 
 /* greebo: This file contains the templated class definition of the three-component vector
  *
- * BasicVector4: A vector with three components of type <Element>
+ * BasicVector4: A vector with three components of type <T>
  *
  * The BasicVector4 is equipped with the most important operators like *, *= and so on.
  *
@@ -19,40 +19,38 @@
 #include "FloatTools.h"
 #include "Vector3.h"
 
-/// A 4-element vector of type <Element>
-template<typename Element>
+/// A 4-element vector of type <T>
+template<typename T>
 class BasicVector4
 {
-    // The components of this vector
-    Element _v[4];
+public:
+    /// Eigen vector type to store data
+    using Eigen_T = Eigen::Matrix<T, 4, 1>;
+
+    /// Public typedef to read the type of our elements
+    using ElementType = T;
+
+private:
+    // Eigen vector for storage and calculations
+    Eigen_T _v;
 
 public:
-    // Public typedef to read the type of our elements
-    typedef Element ElementType;
 
-    // Constructor (no arguments)
-    BasicVector4() {
-        _v[0] = 0;
-        _v[1] = 0;
-        _v[2] = 0;
-        _v[3] = 0;
-    }
+    /// Default construct a zero vector
+    BasicVector4(): _v(0, 0, 0, 0)
+    {}
 
     /**
      * \brief Construct a BasicVector4 out of 4 explicit values.
      *
      * If the W coordinate is unspecified it will default to 1.
      */
-    BasicVector4(Element x_, Element y_, Element z_, Element w_ = 1)
-    {
-        _v[0] = x_;
-        _v[1] = y_;
-        _v[2] = z_;
-        _v[3] = w_;
-    }
+    BasicVector4(T x_, T y_, T z_, T w_ = 1)
+    : _v(x_, y_, z_, w_)
+    {}
 
     // Construct a BasicVector4 out of a Vector3 plus a W value (default 1)
-    BasicVector4(const BasicVector3<Element>& other, Element w_ = 1)
+    BasicVector4(const BasicVector3<T>& other, T w_ = 1)
     {
         _v[0] = other.x();
         _v[1] = other.y();
@@ -60,17 +58,21 @@ public:
         _v[3] = w_;
     }
 
+    /// Construct directly from Eigen type
+    BasicVector4(const Eigen_T& vec): _v(vec)
+    {}
+
     // Return non-constant references to the components
-    Element& x() { return _v[0]; }
-    Element& y() { return _v[1]; }
-    Element& z() { return _v[2]; }
-    Element& w() { return _v[3]; }
+    T& x() { return _v[0]; }
+    T& y() { return _v[1]; }
+    T& z() { return _v[2]; }
+    T& w() { return _v[3]; }
 
     // Return constant references to the components
-    const Element& x() const { return _v[0]; }
-    const Element& y() const { return _v[1]; }
-    const Element& z() const { return _v[2]; }
-    const Element& w() const { return _v[3]; }
+    const T& x() const { return _v[0]; }
+    const T& y() const { return _v[1]; }
+    const T& z() const { return _v[2]; }
+    const T& w() const { return _v[3]; }
 
     /**
      * \brief Return a readable (pretty-printed) string representation of the
@@ -88,7 +90,7 @@ public:
     }
 
     /// Dot product this BasicVector4 with another vector
-    Element dot(const BasicVector4<Element>& other) const {
+    T dot(const BasicVector4<T>& other) const {
         return x() * other.x()
              + y() * other.y()
              + z() * other.z()
@@ -96,21 +98,21 @@ public:
     }
 
     /// Truncate this Vector4 into a Vector3 (no division by W)
-    BasicVector3<Element> getVector3() const {
-        return BasicVector3<Element>(x(), y(), z());
+    BasicVector3<T> getVector3() const {
+        return BasicVector3<T>(x(), y(), z());
     }
 
     /// Project homogeneous BasicVector4 into 3 dimensions by dividing by W
-    BasicVector3<Element> getProjected() const
+    BasicVector3<T> getProjected() const
     {
         return getVector3() / w();
     }
 
     /// Cast to const raw array
-    operator const Element* () const { return _v; }
+    operator const T* () const { return _v.data(); }
 
     /// Cast to non-const raw array
-    operator Element* () { return _v; }
+    operator T* () { return _v.data(); }
 };
 
 /// Equality comparison for BasicVector4
