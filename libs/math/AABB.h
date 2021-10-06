@@ -5,15 +5,15 @@
 #include "VolumeIntersectionValue.h"
 
 // Forward declaration, include Matrix4.h for definition
-class Matrix4; 
+class Matrix4;
 
-/** 
+/**
  * An Axis Aligned Bounding Box is a simple cuboid which encloses a given set
  * of points, such as the vertices of a model. It is defined by an origin,
  * located at the centre of the AABB, and symmetrical extents in 3 dimension
  * which determine its size.
  *
- * A valid extents vector has all components >= 0, an assumption allowing for 
+ * A valid extents vector has all components >= 0, an assumption allowing for
  * a few optimisations.
  */
 class AABB
@@ -26,18 +26,18 @@ public:
   	Vector3 extents;
 
 	/// Construct an AABB with default origin and invalid extents.
-	AABB() : 
-		origin(0, 0, 0), 
+	AABB() :
+		origin(0, 0, 0),
 		extents(-1,-1,-1)
 	{}
 
 	/// Construct an AABB with the provided origin and extents vectors.
-	AABB(const Vector3& origin_, const Vector3& extents_) : 
-		origin(origin_), 
+	AABB(const Vector3& origin_, const Vector3& extents_) :
+		origin(origin_),
 		extents(extents_)
 	{}
 
-	/** 
+	/**
 	 * Static named constructor to create an AABB that encloses the provided
 	 * minimum and maximum points.
 	 */
@@ -123,7 +123,7 @@ public:
 
 	/**
 	 * Classifies the position of this AABB with respect to the given plane.
-	 * 
+	 *
 	 * @returns: intersection classification, where VOLUME_INSIDE refers to
      * the AABB being completely on the positive side of the plane (where the
      * normal vector is pointing to).
@@ -134,7 +134,7 @@ public:
 	 * Like classifyPlane, but uses the given matrix to transform the plane.
 	 *
 	 * TODO: Better documentation. TODO: Use enum as return value
-	 * 
+	 *
 	 * @returns: 0 = totally outside, 1 = partially inside, 2 = totally inside
 	 */
 	unsigned int classifyOrientedPlane(const Matrix4& transform, const Plane3& plane) const;
@@ -201,7 +201,7 @@ inline bool AABB::isValid() const
 	// +/- FLT_MAX, and the extents between 0 and FLT_MAX.
 	for (int i = 0; i < 3; ++i)
 	{
-		if (origin[i] < -FLT_MAX || origin[i] > FLT_MAX || 
+		if (origin[i] < -FLT_MAX || origin[i] > FLT_MAX ||
 			extents[i] < 0 || extents[i] > FLT_MAX)
 		{
 			return false;
@@ -284,8 +284,8 @@ inline void AABB::getPlanes(Plane3 planes[6]) const
 /// Stream insertion for AABB class.
 inline std::ostream& operator<< (std::ostream& os, const AABB& aabb)
 {
-	return os << "AABB(origin=" << aabb.getOrigin().pp()
-              << ", extents=" << aabb.getExtents().pp() << ")";
+	return os << "AABB(origin=" << math::pp(aabb.getOrigin())
+              << ", extents=" << math::pp(aabb.getExtents()) << ")";
 }
 
 class AABBExtendByPoint

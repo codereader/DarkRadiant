@@ -77,21 +77,6 @@ public:
     const T& z() const { return _v[2]; }
     const T& w() const { return _v[3]; }
 
-    /**
-     * \brief Return a readable (pretty-printed) string representation of the
-     * vector.
-     *
-     * We need a dedicated function for this because the standard operator<< is
-     * already used for serialisation to the less readable space-separated text
-     * format.
-     */
-    std::string pp() const
-    {
-        std::stringstream ss;
-        ss << "(" << x() << ", " << y() << ", " << z() << ", " << w() << ")";
-        return ss.str();
-    }
-
     /// Dot product this BasicVector4 with another vector
     T dot(const BasicVector4<T>& other) const {
         return x() * other.x()
@@ -256,6 +241,21 @@ inline bool isNear(const BasicVector4<T>& v1, const BasicVector4<T>& v2, double 
     BasicVector4<T> diff = v1 - v2;
     return std::abs(diff.x()) < epsilon && std::abs(diff.y()) < epsilon
         && std::abs(diff.z()) < epsilon && std::abs(diff.w()) < epsilon;
+}
+
+/**
+ * \brief Return a readable (pretty-printed) string representation of a
+ * BasicVector4.
+ *
+ * We need a dedicated function for this because the standard operator<< is
+ * already used for serialisation to the less readable space-separated text
+ * format.
+ */
+template<typename T> std::string pp(const BasicVector4<T>& v)
+{
+    std::stringstream ss;
+    ss << "(" << v.x() << ", " << v.y() << ", " << v.z() << ", " << v.w() << ")";
+    return ss.str();
 }
 
 }
