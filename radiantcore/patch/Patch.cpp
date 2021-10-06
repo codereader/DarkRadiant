@@ -935,114 +935,89 @@ void Patch::fitTexture(float s, float t)
     controlPointsChanged();
 }
 
-void Patch::scaleTextureNaturally() {
-
+void Patch::scaleTextureNaturally()
+{
     // Save the undo memento
     undoSave();
 
     // Retrieve the default scale from the registry
-    float defaultScale = registry::getValue<float>("user/ui/textures/defaultTextureScale");
+    auto defaultScale = registry::getValue<float>("user/ui/textures/defaultTextureScale");
 
-    /* In this next block, the routine cycles through all the patch columns and
-     * measures the distances to the next column.
-     *
-     * During each column cycle, the longest distance from this column to the
-     * next is determined. The distance is added to tex and if the sum
-     * is longer than texBest, the sum will be the new texBest.
-     *
-     * I'm not sure in which case the sum will ever by smaller than texBest,
-     * as the distance to the next column is always >= 0 and hence the sum should
-     * always be greater than texBest, but maybe there are some cases where
-     * the next column is equal to the current one.
-     *
-     * All the distances are converted into "texture lengths" (i.e. multiples of
-     * the scaled texture size in pixels.
-     */
+    // Cycles through all the patch columns and assigns s/t coordinates.
+    // During each column or row cycle, the highest world distance between columns or rows 
+    // determines the distance in UV space (longest distance is taken).
+    // World distances are scaled to UV space with the actual texture width/height,
+    // scaled by the value in the registry.
+
+    auto horizScale = 1.0f / (static_cast<float>(_shader.getWidth()) * defaultScale);
+
+    double texcoordX = 0;
+
+    // Cycle through the patch width,
+    for (std::size_t w = 0; w < _width; w++)
     {
-        float fSize = (float)_shader.getWidth() * defaultScale;
-
-        double texBest = 0;
-        double tex = 0;
-
-        // Cycle through the patch width,
-        for (std::size_t w=0; w<_width; w++)
+        // Apply the currently active <tex> value to the control point texture coordinates.
+        for (std::size_t h = 0; h < _height; h++)
         {
-            // Apply the currently active <tex> value to the control point texture coordinates.
-            for (std::size_t h = 0; h < _height; h++)
-            {
-                // Set the x-coord (or better s-coord?) of the texture to tex.
-                // For the first width cycle this is tex=0, so the texture is not shifted at the first vertex
-                ctrlAt(h, w).texcoord[0] = static_cast<float>(tex);
-            }
-
-            // If we reached the last row (_width - 1) we are finished (all coordinates are applied)
-            if (w + 1 == _width)
-                break;
-
-            // Determine the longest distance to the next column.
-            {
-                // Again, cycle through the current column
-                for (std::size_t h = 0; h < _height; h++)
-                {
-                    // v is the vector pointing from one control point to the next neighbour
-                    Vector3 v = ctrlAt(h, w).vertex - ctrlAt(h, w+1).vertex;
-
-                    // translate the distance in world coordinates into texture coords
-                    // (i.e. divide it by the scaled texture size) and add it to the
-                    // current tex value
-                    double length = tex + (v.getLength() / fSize);
-
-                    // Now compare this calculated "texture length"
-                    // to the value stored in texBest. If the length is larger,
-                    // replace texBest with it, so texBest contains the largest
-                    // width found so far (in texture coordinates)
-                    if (fabs(length) > texBest)
-                    {
-                        texBest = length;
-                    }
-                }
-            }
-
-            // texBest is stored in <tex>, it gets applied in the next column sweep
-            tex = texBest;
+            // Set the x-coord (or better s-coord?) of the texture to tex.
+            // For the first width cycle this is tex=0, so the texture is not shifted at the first vertex
+            ctrlAt(h, w).texcoord[0] = texcoordX;
         }
+
+        // If we reached the last row (_width - 1) we are finished (all coordinates are applied)
+        if (w + 1 == _width) break;
+
+        // Determine the texcoord of the next column
+        double highestNextTexCoord = 0;
+
+        // Determine the longest distance to the next column.
+        // Again, cycle through the current column
+        for (std::size_t h = 0; h < _height; h++)
+        {
+            // v is the vector pointing from one control point to the next neighbour
+            auto worldDistance = ctrlAt(h, w).vertex - ctrlAt(h, w + 1).vertex;
+
+            // Scale the distance in world coordinates into texture coords
+            double nextTexcoordX = texcoordX + worldDistance.getLength() * horizScale;
+
+            // Use the farthest extrapolated texture cooord
+            highestNextTexCoord = std::max(highestNextTexCoord, nextTexcoordX);
+        }
+
+        // Remember the highest found texcoord, assign it to the next column
+        texcoordX = highestNextTexCoord;
     }
 
     // Now the same goes for the texture height, cycle through all the rows
     // and calculate the longest distances, convert them to texture coordinates
     // and apply them to the according texture coordinates.
+    auto vertScale = 1.0f / (static_cast<float>(_shader.getHeight()) * defaultScale);
+
+    double texcoordY = 0;
+
+    // Each row is visited once
+    for (std::size_t h = 0; h < _height; h++)
     {
-        float fSize = -(float)_shader.getHeight() * defaultScale;
-
-        double texBest = 0;
-        double tex = 0;
-
-        // Each row is visited once
-        for (std::size_t h = 0; h < _height; h++)
+        // Visit every vertex in this row, assigning the current texCoordY
+        for (std::size_t w = 0; w < _width; w++)
         {
-            // During each row, we cycle through every height point
-            for (std::size_t w = 0; w < _width; w++)
-            {
-                ctrlAt(h, w).texcoord[1] = static_cast<float>(tex);
-            }
-
-            if (h + 1 == _height)
-                break;
-
-            for (std::size_t w = 0; w < _width; w++)
-            {
-                Vector3 v = ctrlAt(h, w).vertex - ctrlAt(h+1, w).vertex;
-
-                double length = tex + (v.getLength() / fSize);
-
-                if (fabs(length) > texBest)
-                {
-                    texBest = length;
-                }
-            }
-
-            tex = texBest;
+            ctrlAt(h, w).texcoord[1] = -texcoordY;
         }
+
+        if (h + 1 == _height) break;
+
+        double highestNextTexCoord = 0;
+
+        for (std::size_t w = 0; w < _width; w++)
+        {
+            auto worldDistance = ctrlAt(h, w).vertex - ctrlAt(h + 1, w).vertex;
+
+            double nextTexcoordY = texcoordY + worldDistance.getLength() * vertScale;
+
+            highestNextTexCoord = std::max(highestNextTexCoord, nextTexcoordY);
+        }
+
+        texcoordY = highestNextTexCoord;
     }
 
     // Notify the patch that it control points got changed
