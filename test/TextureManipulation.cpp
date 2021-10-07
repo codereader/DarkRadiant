@@ -1,5 +1,6 @@
 #include "RadiantTest.h"
 
+#include "itransformable.h"
 #include "ishaderclipboard.h"
 #include "algorithm/Scene.h"
 #include "algorithm/Primitives.h"
@@ -535,6 +536,44 @@ TEST_F(TextureManipulationTest, NormalisePatch)
     EXPECT_TRUE(math::isNear(patch->ctrlAt(0, 2).texcoord, { 3.39125, 1.63435 }, 0.01));
     EXPECT_TRUE(math::isNear(patch->ctrlAt(1, 2).texcoord, { 2.01997, -0.821211 }, 0.01));
     EXPECT_TRUE(math::isNear(patch->ctrlAt(2, 2).texcoord, { 0.648697, -3.27677 }, 0.01));
+}
+
+// Move a brush with texture lock enabled
+TEST_F(TextureManipulationTest, MoveTextureLocked)
+{
+    registry::setValue(RKEY_ENABLE_TEXTURE_LOCK, true);
+
+    std::string mapPath = "maps/simple_brushes.map";
+    GlobalCommandSystem().executeCommand("OpenMap", mapPath);
+
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto brushNode = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/1");
+    auto brush = Node_getIBrush(brushNode);
+
+    const auto& face = brush->getFace(0);
+    std::vector<Vector2> oldTexCoords;
+    for (const auto& vertex : face.getWinding())
+    {
+        oldTexCoords.push_back(vertex.texcoord);
+    }
+
+    auto transform = Node_getTransformable(brushNode);
+
+    if (transform)
+    {
+        transform->setType(TRANSFORM_PRIMITIVE);
+        transform->setTranslation(Vector3(45, 66, 100));
+        transform->freezeTransform();
+    }
+
+    // We need the texture coords to be up to date
+    brush->evaluateBRep();
+
+    auto old = oldTexCoords.begin();
+    for (const auto& vertex : face.getWinding())
+    {
+        EXPECT_TRUE(math::isNear(*(old++), vertex.texcoord, 0.01)) << "Texture coord has been changed by transform";
+    }
 }
 
 }
