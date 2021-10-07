@@ -6,6 +6,7 @@
 #include "algorithm/Primitives.h"
 #include "scenelib.h"
 #include "math/Matrix3.h"
+#include "math/Quaternion.h"
 #include "registry/registry.h"
 #include "render/CameraView.h"
 #include "algorithm/View.h"
@@ -538,8 +539,10 @@ TEST_F(TextureManipulationTest, NormalisePatch)
     EXPECT_TRUE(math::isNear(patch->ctrlAt(2, 2).texcoord, { 0.648697, -3.27677 }, 0.01));
 }
 
-// Move a brush with texture lock enabled
-TEST_F(TextureManipulationTest, MoveTextureLocked)
+namespace
+{
+
+void performTextureLockBrushTransformationTest(const std::function<void(ITransformablePtr)>& doTransform)
 {
     registry::setValue(RKEY_ENABLE_TEXTURE_LOCK, true);
 
@@ -557,13 +560,12 @@ TEST_F(TextureManipulationTest, MoveTextureLocked)
         oldTexCoords.push_back(vertex.texcoord);
     }
 
-    auto transform = Node_getTransformable(brushNode);
+    auto transformable = Node_getTransformable(brushNode);
 
-    if (transform)
+    if (transformable)
     {
-        transform->setType(TRANSFORM_PRIMITIVE);
-        transform->setTranslation(Vector3(45, 66, 100));
-        transform->freezeTransform();
+        doTransform(transformable);
+        transformable->freezeTransform();
     }
 
     // We need the texture coords to be up to date
@@ -574,6 +576,27 @@ TEST_F(TextureManipulationTest, MoveTextureLocked)
     {
         EXPECT_TRUE(math::isNear(*(old++), vertex.texcoord, 0.01)) << "Texture coord has been changed by transform";
     }
+}
+
+}
+
+// Move a brush with texture lock enabled
+TEST_F(TextureManipulationTest, MoveTextureLocked)
+{
+    performTextureLockBrushTransformationTest([&](const ITransformablePtr& transformable)
+    {
+        transformable->setType(TRANSFORM_PRIMITIVE);
+        transformable->setTranslation(Vector3(45, 66, 100));
+    });
+}
+
+TEST_F(TextureManipulationTest, RotateTextureLocked)
+{
+    performTextureLockBrushTransformationTest([&](const ITransformablePtr& transformable)
+    {
+        transformable->setType(TRANSFORM_PRIMITIVE);
+        transformable->setRotation(Quaternion::createForEulerXYZDegrees({ 5, 35, 75 }));
+    });
 }
 
 }
