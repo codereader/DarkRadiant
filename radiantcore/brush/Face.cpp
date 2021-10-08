@@ -406,7 +406,19 @@ const std::string& Face::getShader() const
 void Face::setShader(const std::string& name)
 {
     undoSave();
+
+    auto ssr = getShiftScaleRotation();
+
     _shader.setMaterialName(name);
+
+    // Adjust the scale to match the previous material
+    auto newSsr = getShiftScaleRotation();
+
+    newSsr.scale[0] = ssr.scale[0];
+    newSsr.scale[1] = ssr.scale[1];
+
+    setShiftScaleRotation(newSsr);
+
     shaderChanged();
 }
 
