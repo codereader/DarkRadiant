@@ -644,4 +644,37 @@ TEST_F(TextureManipulationTest, FaceGetTexelScale)
     EXPECT_NEAR(texelScale.y(), expectedTexelScaleY, 0.01) << "Texel scale Y is off";
 }
 
+TEST_F(TextureManipulationTest, FaceTextureChangePreservesTexelScale)
+{
+    auto largeTexture = "textures/a_1024x512";
+    auto smallTexture = "textures/numbers/0";
+
+    // Get a face and check the texture bounds (brush setup is checked in FaceGetTexelScale)
+    auto brushNode = create512CubeTextured1x1(largeTexture);
+    auto& face = Node_getIBrush(brushNode)->getFace(0);
+
+    // Get the texture dimensions
+    auto editorImage = GlobalMaterialManager().getMaterial(largeTexture)->getEditorImage();
+    auto textureWidth = editorImage->getWidth();
+    auto textureHeight = editorImage->getHeight();
+
+    auto texelScaleBefore = face.getTexelScale();
+
+    // Get the texture dimensions
+    auto numberImage = GlobalMaterialManager().getMaterial(smallTexture)->getEditorImage();
+    auto numberImageWidth = numberImage->getWidth();
+    auto numberImageHeight = numberImage->getHeight();
+
+    // We need the textures to be different
+    EXPECT_NE(numberImageWidth, textureWidth);
+    EXPECT_NE(numberImageHeight, textureHeight);
+
+    face.setShader(smallTexture);
+
+    auto texelScaleAfter = face.getTexelScale();
+
+    EXPECT_NEAR(texelScaleBefore.x(), texelScaleAfter.x(), 0.01) << "Texel scale X changed after applying new material";
+    EXPECT_NEAR(texelScaleBefore.y(), texelScaleAfter.y(), 0.01) << "Texel scale Y changed after applying new material";
+}
+
 }
