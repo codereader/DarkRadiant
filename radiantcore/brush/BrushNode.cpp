@@ -549,15 +549,11 @@ void BrushNode::evaluateTransform()
         return;
     }
 
-	Matrix4 matrix(calculateTransform());
-	//rMessage() << "matrix: " << matrix << "\n";
-
 	if (getType() == TRANSFORM_PRIMITIVE)
     {
         // If this is a pure translation (no other bits set), call the specialised method
         if (getTransformationType() == Translation)
         {
-            // TODO: Take care of texture lock
             for (auto face : m_brush)
             {
                 face->translate(getTranslation());
@@ -565,11 +561,12 @@ void BrushNode::evaluateTransform()
         }
         else
         {
-            m_brush.transform(matrix);
+            m_brush.transform(calculateTransform());
         }
 	}
-	else {
-		transformComponents(matrix);
+	else
+    {
+		transformComponents(calculateTransform());
 	}
 }
 
