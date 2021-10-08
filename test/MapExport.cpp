@@ -125,6 +125,62 @@ brushDef3
     EXPECT_NE(brushTextIndex, std::string::npos) << "Could not locate the exported brush in the expected format";
 }
 
+TEST_F(MapExportTest, exportDoom3BrushPortable)
+{
+    fs::path tempPath = _context.getTemporaryDataPath();
+    tempPath /= "brushexport.mapx";
+
+    auto text = exportDefaultBrushUsingFormat("doom3", tempPath.string());
+
+    auto brushTextIndex = text.find(R"BRUSH(<brush number="0">
+        <faces>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="-64.000000"/>
+            <textureProjection xx="0.003906" yx="0" tx="0.500000" xy="0" yy="0.001953" ty="0.500000"/>
+            <material name="textures/darkmod/numbers/1"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="-64.000000"/>
+            <textureProjection xx="0.003906" yx="0" tx="0.500000" xy="0" yy="0.001953" ty="0.500000"/>
+            <material name="textures/darkmod/numbers/1"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="-128.000000"/>
+            <textureProjection xx="0.007813" yx="0" tx="0.500000" xy="0" yy="0.001953" ty="0.500000"/>
+            <material name="textures/darkmod/numbers/1"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="-128.000000"/>
+            <textureProjection xx="0.007813" yx="0" tx="0.500000" xy="0" yy="0.001953" ty="0.500000"/>
+            <material name="textures/darkmod/numbers/1"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-256.000000"/>
+            <textureProjection xx="0.003906" yx="0" tx="0.500000" xy="0" yy="0.007813" ty="0.500000"/>
+            <material name="textures/darkmod/numbers/1"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="-256.000000"/>
+            <textureProjection xx="0.003906" yx="0" tx="0.500000" xy="0" yy="0.007813" ty="0.500000"/>
+            <material name="textures/darkmod/numbers/1"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="0"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>)BRUSH");
+
+    EXPECT_NE(brushTextIndex, std::string::npos) << "Could not locate the exported brush in the expected format";
+}
+
 TEST_F(MapExportTest, exportQuake3Brush)
 {
     fs::path tempPath = _context.getTemporaryDataPath();
