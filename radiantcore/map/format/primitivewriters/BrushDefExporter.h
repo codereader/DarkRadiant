@@ -89,7 +89,7 @@ private:
 		stream << ") ";
 
 		// Write TexDef
-		Matrix4 texdef = face.getTexDefMatrix();
+		auto texdef = face.getProjectionMatrix();
 		stream << "( ";
 
 		stream << "( ";
@@ -97,7 +97,7 @@ private:
 		stream << " ";
 		writeDoubleSafe(texdef.yx(), stream);
 		stream << " ";
-		writeDoubleSafe(texdef.tx(), stream);
+		writeDoubleSafe(texdef.zx(), stream);
 		stream << " ) ";
 
 		stream << "( ";
@@ -105,7 +105,7 @@ private:
 		stream << " ";
 		writeDoubleSafe(texdef.yy(), stream);
 		stream << " ";
-		writeDoubleSafe(texdef.ty(), stream);
+		writeDoubleSafe(texdef.zy(), stream);
 		stream << " ) ";
 
 		stream << ") ";

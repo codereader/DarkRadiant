@@ -192,15 +192,15 @@ void PortableMapWriter::beginWriteBrush(const IBrushNodePtr& brushNode, std::ost
 		planeTag.setAttributeValue(ATTR_FACE_PLANE_D, getSafeDouble(-plane.dist()));
 
 		// Write TexDef
-		Matrix4 texdef = face.getTexDefMatrix();
+		auto textureMatrix = face.getProjectionMatrix();
 
 		auto texTag = faceTag.createChild(TAG_FACE_TEXPROJ);
-		texTag.setAttributeValue(ATTR_FACE_TEXTPROJ_XX, getSafeDouble(texdef.xx()));
-		texTag.setAttributeValue(ATTR_FACE_TEXTPROJ_YX, getSafeDouble(texdef.yx()));
-		texTag.setAttributeValue(ATTR_FACE_TEXTPROJ_TX, getSafeDouble(texdef.tx()));
-		texTag.setAttributeValue(ATTR_FACE_TEXTPROJ_XY, getSafeDouble(texdef.xy()));
-		texTag.setAttributeValue(ATTR_FACE_TEXTPROJ_YY, getSafeDouble(texdef.yy()));
-		texTag.setAttributeValue(ATTR_FACE_TEXTPROJ_TY, getSafeDouble(texdef.ty()));
+		texTag.setAttributeValue(ATTR_FACE_TEXTPROJ_XX, getSafeDouble(textureMatrix.xx()));
+		texTag.setAttributeValue(ATTR_FACE_TEXTPROJ_YX, getSafeDouble(textureMatrix.yx()));
+		texTag.setAttributeValue(ATTR_FACE_TEXTPROJ_TX, getSafeDouble(textureMatrix.zx()));
+		texTag.setAttributeValue(ATTR_FACE_TEXTPROJ_XY, getSafeDouble(textureMatrix.xy()));
+		texTag.setAttributeValue(ATTR_FACE_TEXTPROJ_YY, getSafeDouble(textureMatrix.yy()));
+		texTag.setAttributeValue(ATTR_FACE_TEXTPROJ_TY, getSafeDouble(textureMatrix.zy()));
 
 		// Write Shader
 		auto shaderTag = faceTag.createChild(TAG_FACE_MATERIAL);

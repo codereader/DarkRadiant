@@ -109,7 +109,7 @@ private:
             }
         }
 
-        auto transform = face.getTexDefMatrix();
+        auto transform = getMatrix4FromTextureMatrix(face.getProjectionMatrix());
 
         // Bake the ComputeAxisBase calculations done in idTech4 into the texdef matrix
         // before converting it back using the GtkRadiant algorithms

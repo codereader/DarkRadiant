@@ -2,12 +2,30 @@
 
 #include "math/Vector3.h"
 #include "math/Vector2.h"
+#include "math/Matrix3.h"
 #include "math/Matrix4.h"
 #include <vector>
 #include <limits.h>
 
 #include "iimage.h"
 #include "ishaders.h"
+
+// Promotes the given 3x3 texture projection matrix to the 4x4 type
+inline Matrix4 getMatrix4FromTextureMatrix(const Matrix3& matrix3)
+{
+    auto matrix4 = Matrix4::getIdentity();
+
+    matrix4.xx() = matrix3.xx();
+    matrix4.xy() = matrix3.xy();
+    matrix4.yy() = matrix3.yy();
+    matrix4.yx() = matrix3.yx();
+
+    // Z => T
+    matrix4.tx() = matrix3.zx();
+    matrix4.ty() = matrix3.zy();
+
+    return matrix4;
+}
 
 enum ProjectionAxis {
 	eProjectionAxisX = 0,
