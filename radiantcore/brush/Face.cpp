@@ -446,7 +446,7 @@ TextureProjection& Face::getProjection()
     return _texdef;
 }
 
-Matrix3 Face::getProjectionMatrix()
+Matrix3 Face::getProjectionMatrix() const
 {
     return getProjection().getMatrix();
 }
@@ -548,7 +548,7 @@ Vector2 Face::getTexelScale() const
     auto imageWidth = _shader.getWidth();
     auto imageHeight = _shader.getHeight();
 
-    auto textureMatrix = _texdef.getTransform();
+    auto textureMatrix = _texdef.getMatrix();
     return Vector2(textureMatrix.xx() * imageWidth, textureMatrix.yy() * imageHeight);
 }
 

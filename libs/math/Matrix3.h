@@ -14,7 +14,7 @@
  * | xz  yz  zz |
  * 
  */
-class alignas(16) Matrix3
+class Matrix3
 {
     // Underlying Eigen transform object (which can in turn be reduced to a 3x3 Matrix)
     using Transform = Eigen::Projective2d;

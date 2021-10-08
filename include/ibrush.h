@@ -183,14 +183,19 @@ public:
 	 *
 	 * xx, yx, xy and yy hold the scale and rotation
 	 * tx and ty hold the shift
+     * 
+     * OBSOLETE
 	 */
 	virtual Matrix4 getTexDefMatrix() const = 0;
 
 	/**
 	 * The matrix used to project world coordinates to U/V space, after the winding vertices
      * have been transformed to this face's axis base system.
+     * The components of this matrix correspond to the matrix values written to the idTech4 
+     * brushDef3 face definition (with <zx, zy> holding the translation part):
+     * e.g. ( plane ) ( ( xx yx zx ) ( yx yy zy ) ) "textures/path/to/material" 0 0 0
 	 */
-	virtual Matrix3 getProjectionMatrix() = 0;
+	virtual Matrix3 getProjectionMatrix() const = 0;
 
 	virtual void setProjectionMatrix(const Matrix3& projection) = 0;
 
