@@ -542,7 +542,13 @@ void BrushNode::renderSelectedPoints(RenderableCollector& collector,
 	}
 }
 
-void BrushNode::evaluateTransform() {
+void BrushNode::evaluateTransform()
+{
+    if (getTransformationType() == NoTransform)
+    {
+        return;
+    }
+
 	Matrix4 matrix(calculateTransform());
 	//rMessage() << "matrix: " << matrix << "\n";
 
