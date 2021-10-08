@@ -1,138 +1,19 @@
-/*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
+#pragma once
 
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
-#if !defined (INCLUDED_TEXTURELIB_H)
-#define INCLUDED_TEXTURELIB_H
-
-#include "debugging/debugging.h"
 #include "math/Vector3.h"
 #include "math/Vector2.h"
 #include "math/Matrix4.h"
-#include "math/Plane3.h"
-#include "igl.h"
 #include <vector>
 #include <limits.h>
 
 #include "iimage.h"
 #include "ishaders.h"
 
-typedef unsigned int GLuint;
-
 enum ProjectionAxis {
 	eProjectionAxisX = 0,
 	eProjectionAxisY = 1,
 	eProjectionAxisZ = 2,
 };
-
-inline Matrix4 matrix4_rotation_for_vector3(const Vector3& x, const Vector3& y, const Vector3& z) {
-	return Matrix4::byColumns(
-		x.x(), x.y(), x.z(), 0,
-		y.x(), y.y(), y.z(), 0,
-		z.x(), z.y(), z.z(), 0,
-		0, 0, 0, 1
-	);
-}
-
-inline Matrix4 matrix4_swap_axes(const Vector3& from, const Vector3& to) {
-	if(from.x() != 0 && to.y() != 0) {
-		return matrix4_rotation_for_vector3(to, from, g_vector3_axis_z);
-	}
-
-	if(from.x() != 0 && to.z() != 0) {
-		return matrix4_rotation_for_vector3(to, g_vector3_axis_y, from);
-	}
-
-	if(from.y() != 0 && to.z() != 0) {
-		return matrix4_rotation_for_vector3(g_vector3_axis_x, to, from);
-	}
-
-	if(from.y() != 0 && to.x() != 0) {
-		return matrix4_rotation_for_vector3(from, to, g_vector3_axis_z);
-	}
-
-	if(from.z() != 0 && to.x() != 0) {
-		return matrix4_rotation_for_vector3(from, g_vector3_axis_y, to);
-	}
-
-	if(from.z() != 0 && to.y() != 0) {
-		return matrix4_rotation_for_vector3(g_vector3_axis_x, from, to);
-	}
-
-	ERROR_MESSAGE("unhandled axis swap case");
-
-	return Matrix4::getIdentity();
-}
-
-inline Matrix4 matrix4_reflection_for_plane(const Plane3& plane) {
-	return Matrix4::byColumns(
-		1 - (2 * plane.normal().x() * plane.normal().x()),
-		-2 * plane.normal().x() * plane.normal().y(),
-		-2 * plane.normal().x() * plane.normal().z(),
-		0,
-		-2 * plane.normal().y() * plane.normal().x(),
-		1 - (2 * plane.normal().y() * plane.normal().y()),
-		-2 * plane.normal().y() * plane.normal().z(),
-		0,
-		-2 * plane.normal().z() * plane.normal().x(),
-		-2 * plane.normal().z() * plane.normal().y(),
-		1 - (2 * plane.normal().z() * plane.normal().z()),
-		0,
-		-2 * plane.dist() * plane.normal().x(),
-		-2 * plane.dist() * plane.normal().y(),
-		-2 * plane.dist() * plane.normal().z(),
-		1
-	);
-}
-
-inline Matrix4 matrix4_reflection_for_plane45(const Plane3& plane, const Vector3& from, const Vector3& to) {
-	Vector3 first = from;
-	Vector3 second = to;
-
-	if ((from.dot(plane.normal()) > 0) == (to.dot(plane.normal()) > 0))
-    {
-		first = -first;
-		second = -second;
-	}
-
-#if 0
-  rMessage() << "normal: ";
-  print_vector3(plane.normal());
-
-  rMessage() << "from: ";
-  print_vector3(first);
-
-  rMessage() << "to: ";
-  print_vector3(second);
-#endif
-
-	Matrix4 swap = matrix4_swap_axes(first, second);
-
-	//Matrix4 tmp = matrix4_reflection_for_plane(plane);
-
-	swap.tx() = -(-2 * plane.normal().x() * plane.dist());
-	swap.ty() = -(-2 * plane.normal().y() * plane.dist());
-	swap.tz() = -(-2 * plane.normal().z() * plane.dist());
-
-	return swap;
-}
 
 const double ProjectionAxisEpsilon = 0.0001;
 
@@ -349,5 +230,3 @@ inline std::size_t findBestEdgeForDirection(const Vector2& direction, const std:
 
 	return bestIndex;
 }
-
-#endif

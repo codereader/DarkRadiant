@@ -46,8 +46,6 @@ public:
     // Normalise projection for a given texture width and height.
     void normalise(float width, float height);
 
-    void transformLocked(std::size_t width, std::size_t height, const Plane3& plane, const Matrix4& identity2transformed);
-
     // Fits a texture to a brush face
     void fitTexture(std::size_t width, std::size_t height, const Vector3& normal, const Winding& w, float s_repeat, float t_repeat);
 
