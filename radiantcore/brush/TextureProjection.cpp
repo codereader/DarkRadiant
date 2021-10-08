@@ -51,11 +51,7 @@ void TextureProjection::setTransform(const Matrix3& transform)
     }
 }
 
-/* greebo: Uses the transformation matrix <transform> to set the internal texture
- * definitions. Checks the matrix for validity and passes it on to
- * the according internal texture definitions (TexDef or BPTexDef)
- */
-void TextureProjection::setTransform(const Matrix4& transform)
+void TextureProjection::setTransformFromMatrix4(const Matrix4& transform)
 {
     // Check the matrix for validity
     if ((transform[0] != 0 || transform[4] != 0) && (transform[1] != 0 || transform[5] != 0))
@@ -129,7 +125,7 @@ void TextureProjection::fitTexture(std::size_t width, std::size_t height,
     // apply the difference to the current texture transform
     st2tex.premultiplyBy(diffMatrix);
 
-    setTransform(st2tex);
+    setTransformFromMatrix4(st2tex);
     normalise((float)width, (float)height);
 }
 

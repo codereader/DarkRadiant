@@ -36,9 +36,8 @@ public:
 
     void assign(const TextureProjection& other);
 
-    void setTransform(const Matrix3& transform);
-    void setTransform(const Matrix4& transform);
     Matrix4 getTransform() const;
+    void setTransform(const Matrix3& transform);
     Matrix3 getMatrix() const;
 
 	// s and t are texture coordinates, not pixels
@@ -64,6 +63,8 @@ public:
     void calculateFromPoints(const Vector3 points[3], const Vector2 uvs[3], const Vector3& normal);
 
 private:
+    void setTransformFromMatrix4(const Matrix4& transform);
+
     // Normalise projection for a given texture width and height.
     void normalise(float width, float height);
 };
