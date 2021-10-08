@@ -39,13 +39,12 @@ public:
     void setTransform(const Matrix3& transform);
     void setTransform(const Matrix4& transform);
     Matrix4 getTransform() const;
+    Matrix3 getMatrix() const;
 
 	// s and t are texture coordinates, not pixels
     void shift(double s, double t);
 
-    // Normalise projection for a given texture width and height.
-    void normalise(float width, float height);
-
+public:
     // Fits a texture to a brush face
     void fitTexture(std::size_t width, std::size_t height, const Vector3& normal, const Winding& w, float s_repeat, float t_repeat);
 
@@ -53,7 +52,7 @@ public:
     void alignTexture(IFace::AlignEdge align, const Winding& winding);
 
     // greebo: Saves the texture definitions into the brush winding points
-    void emitTextureCoordinates(Winding& w, const Vector3& normal, const Matrix4& localToWorld) const;
+    void emitTextureCoordinates(Winding& winding, const Vector3& normal, const Matrix4& localToWorld) const;
 
     // Calculates the UV coords of a single point
     Vector2 getTextureCoordsForVertex(const Vector3& point, const Vector3& normal, const Matrix4& localToWorld) const;
@@ -64,4 +63,7 @@ public:
     // Calculate the texture projection for the desired set of UVs and XYZ
     void calculateFromPoints(const Vector3 points[3], const Vector2 uvs[3], const Vector3& normal);
 
-}; // class TextureProjection
+private:
+    // Normalise projection for a given texture width and height.
+    void normalise(float width, float height);
+};

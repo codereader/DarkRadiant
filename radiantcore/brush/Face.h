@@ -203,8 +203,8 @@ public:
 
 	Matrix4 getTexDefMatrix() const;
 
-	Matrix4 getProjectionMatrix() override;
-	void setProjectionMatrix(const Matrix4& projection) override;
+	Matrix3 getProjectionMatrix() override;
+	void setProjectionMatrix(const Matrix3& projection) override;
 
 	SurfaceShader& getFaceShader();
 	const SurfaceShader& getFaceShader() const;

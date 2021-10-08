@@ -446,12 +446,12 @@ TextureProjection& Face::getProjection()
     return _texdef;
 }
 
-Matrix4 Face::getProjectionMatrix()
+Matrix3 Face::getProjectionMatrix()
 {
-    return getProjection().getTransform();
+    return getProjection().getMatrix();
 }
 
-void Face::setProjectionMatrix(const Matrix4& projection)
+void Face::setProjectionMatrix(const Matrix3& projection)
 {
     getProjection().setTransform(projection);
     texdefChanged();

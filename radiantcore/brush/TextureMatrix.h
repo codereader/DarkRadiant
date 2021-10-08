@@ -84,6 +84,9 @@ struct TextureMatrix
 	 */
 	Matrix4 getTransform() const;
 
+    // Returns the Matrix3 form of this instance
+    Matrix3 getMatrix3() const;
+
     // Checks if any of the matrix components are NaN or INF (in which case the matrix is not sane)
     bool isSane() const;
 };

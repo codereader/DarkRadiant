@@ -145,7 +145,8 @@ void TextureMatrix::normalise(float width, float height) {
  * As the member variables already ARE the matrix
  * components, they are just copied into the right places.
  */
-Matrix4 TextureMatrix::getTransform() const {
+Matrix4 TextureMatrix::getTransform() const
+{
 	// Initialise the return value with the identity matrix
 	Matrix4 transform = Matrix4::getIdentity();
 
@@ -158,6 +159,15 @@ Matrix4 TextureMatrix::getTransform() const {
 	transform.ty() = coords[1][2];
 
 	return transform;
+}
+
+Matrix3 TextureMatrix::getMatrix3() const
+{
+    return Matrix3::byRows(
+        coords[0][0], coords[0][1], coords[0][2],
+        coords[1][0], coords[1][1], coords[1][2],
+        0, 0, 1
+    );
 }
 
 bool TextureMatrix::isSane() const

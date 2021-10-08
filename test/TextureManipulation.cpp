@@ -637,8 +637,8 @@ TEST_F(TextureManipulationTest, FaceGetTexelScale)
 
     // A 1024 texture width fit to a 512px wide face: texel scale = 2
     // A 512 texture height fit to a 512px wide face: texel scale = 1
-    auto expectedTexelScaleX = textureWidth / 512;
-    auto expectedTexelScaleY = textureHeight / 512;
+    auto expectedTexelScaleX = textureWidth / 512.0;
+    auto expectedTexelScaleY = textureHeight / 512.0;
 
     EXPECT_NEAR(texelScale.x(), expectedTexelScaleX, 0.01) << "Texel scale X is off";
     EXPECT_NEAR(texelScale.y(), expectedTexelScaleY, 0.01) << "Texel scale Y is off";

@@ -5,6 +5,7 @@
 
 #include "math/Vector2.h"
 #include "math/Vector3.h"
+#include "math/Matrix3.h"
 #include "math/Matrix4.h"
 #include <vector>
 
@@ -186,11 +187,12 @@ public:
 	virtual Matrix4 getTexDefMatrix() const = 0;
 
 	/**
-	 * The matrix used to project world coordinates to U/V space.
+	 * The matrix used to project world coordinates to U/V space, after the winding vertices
+     * have been transformed to this face's axis base system.
 	 */
-	virtual Matrix4 getProjectionMatrix() = 0;
+	virtual Matrix3 getProjectionMatrix() = 0;
 
-	virtual void setProjectionMatrix(const Matrix4& projection) = 0;
+	virtual void setProjectionMatrix(const Matrix3& projection) = 0;
 
     // Constructs the texture projection matrix from the given (world) vertex and texture coords.
     // Three vertices and their UV coordinates are enough to construct the texdef.

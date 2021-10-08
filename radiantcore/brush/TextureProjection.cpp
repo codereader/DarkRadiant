@@ -68,11 +68,14 @@ void TextureProjection::setTransform(const Matrix4& transform)
     }
 }
 
-/* greebo: Returns the transformation matrix from the
- * texture definitions members.
- */
-Matrix4 TextureProjection::getTransform() const {
+Matrix4 TextureProjection::getTransform() const
+{
     return matrix.getTransform();
+}
+
+Matrix3 TextureProjection::getMatrix() const
+{
+    return matrix.getMatrix3();
 }
 
 void TextureProjection::shift(double s, double t)
@@ -80,17 +83,18 @@ void TextureProjection::shift(double s, double t)
     matrix.shift(s, t);
 }
 
-// Normalise projection for a given texture width and height.
-void TextureProjection::normalise(float width, float height) {
+void TextureProjection::normalise(float width, float height)
+{
     matrix.normalise(width, height);
 }
 
 // Fits a texture to a brush face
 void TextureProjection::fitTexture(std::size_t width, std::size_t height,
-                                   const Vector3& normal, const Winding& w,
+                                   const Vector3& normal, const Winding& winding,
                                    float s_repeat, float t_repeat)
 {
-    if (w.size() < 3) {
+    if (winding.size() < 3)
+    {
         return;
     }
 
@@ -100,16 +104,15 @@ void TextureProjection::fitTexture(std::size_t width, std::size_t height,
     // the current texture transform
     Matrix4 local2tex = st2tex;
     {
-        Matrix4 xyz2st;
-        xyz2st = getBasisTransformForNormal(normal);
+        Matrix4 xyz2st = getBasisTransformForNormal(normal);
         local2tex.multiplyBy(xyz2st);
     }
 
     // the bounds of the current texture transform
     AABB bounds;
-    for (Winding::const_iterator i = w.begin(); i != w.end(); ++i) {
-        Vector3 texcoord = local2tex.transformPoint(i->vertex);
-        bounds.includePoint(texcoord);
+    for (const auto& vertex : winding)
+    {
+        bounds.includePoint(local2tex.transformPoint(vertex.vertex));
     }
     bounds.origin.z() = 0;
     bounds.extents.z() = 1;
@@ -225,16 +228,11 @@ Matrix4 TextureProjection::getWorldToTexture(const Vector3& normal, const Matrix
     return local2tex;
 }
 
-/* greebo: This method calculates the texture coordinates for the brush winding vertices
- * via matrix operations and stores the results into the Winding vertices (together with the
- * tangent and bitangent vectors)
- *
- * Note: The matrix localToWorld is basically useless at the moment, as it is the identity matrix for faces, and this method
- * gets called on face operations only... */
-void TextureProjection::emitTextureCoordinates(Winding& w, const Vector3& normal, const Matrix4& localToWorld) const {
-
-    // Quit, if we have less than three points (degenerate brushes?)
-    if (w.size() < 3) {
+void TextureProjection::emitTextureCoordinates(Winding& winding, const Vector3& normal, const Matrix4& localToWorld) const
+{
+    // Quit if we have less than three points (degenerate brushes?)
+    if (winding.size() < 3)
+    {
         return;
     }
 
@@ -265,17 +263,17 @@ void TextureProjection::emitTextureCoordinates(Winding& w, const Vector3& normal
 
     // Cycle through the winding vertices and apply the texture transformation matrix
     // onto each of them.
-    for (Winding::iterator i = w.begin(); i != w.end(); ++i)
+    for (auto& vertex : winding)
     {
-        Vector3 texcoord = local2tex.transformPoint(i->vertex);
+        Vector3 texcoord = local2tex.transformPoint(vertex.vertex);
 
         // Store the s,t coordinates into the winding texcoord vector
-        i->texcoord[0] = texcoord[0];
-        i->texcoord[1] = texcoord[1];
+        vertex.texcoord[0] = texcoord[0];
+        vertex.texcoord[1] = texcoord[1];
 
         // Save the tangent and bitangent vectors, they are the same for all the face vertices
-        i->tangent = tangent;
-        i->bitangent = bitangent;
+        vertex.tangent = tangent;
+        vertex.bitangent = bitangent;
     }
 }
 

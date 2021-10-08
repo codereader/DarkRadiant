@@ -56,17 +56,16 @@ protected:
     }
 };
 
-inline bool isSane(const Matrix4& matrix)
+inline bool isSane(double value)
 {
-    for (std::size_t i = 0; i < 15; ++i)
-    {
-        if (std::isnan(matrix[i]) || std::isinf(matrix[i]))
-        {
-            return false;
-        }
-    }
+    return !std::isnan(value) && !std::isinf(value);
+}
 
-    return true;
+inline bool isSane(const Matrix3& matrix)
+{
+    return isSane(matrix.xx()) && isSane(matrix.xy()) && isSane(matrix.xz()) &&
+        isSane(matrix.yx()) && isSane(matrix.yy()) && isSane(matrix.yz()) &&
+        isSane(matrix.zx()) && isSane(matrix.zy()) && isSane(matrix.zz());
 }
 
 TEST_F(BrushTest, FitTextureWithZeroScale)
