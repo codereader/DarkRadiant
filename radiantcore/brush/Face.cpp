@@ -256,50 +256,54 @@ void Face::setRenderSystem(const RenderSystemPtr& renderSystem)
     }
 }
 
+void Face::transformTexDefLocked(const Matrix4& transform)
+{
+    Vector3 vertices[3] =
+    {
+        m_winding[0].vertex,
+        m_winding[1].vertex,
+        m_winding[2].vertex
+    };
+
+    Vector2 texcoords[3] =
+    {
+        m_winding[0].texcoord,
+        m_winding[1].texcoord,
+        m_winding[2].texcoord
+    };
+
+    // Transform the vertices
+    vertices[0] = transform.transformPoint(vertices[0]);
+    vertices[1] = transform.transformPoint(vertices[1]);
+    vertices[2] = transform.transformPoint(vertices[2]);
+
+    // Keep the texture coords, recalculate the texture projection
+    m_texdefTransformed.calculateFromPoints(vertices, texcoords, m_planeTransformed.getPlane().normal());
+}
+
 void Face::translate(const Vector3& translation)
 {
+    m_planeTransformed.translate(translation);
+    
     if (GlobalBrush().textureLockEnabled() && m_winding.size() >= 3)
     {
-        Vector3 vertices[3] =
-        {
-            m_winding[0].vertex,
-            m_winding[1].vertex,
-            m_winding[2].vertex
-        };
-
-        Vector2 texcoords[3] =
-        {
-            m_winding[0].texcoord,
-            m_winding[1].texcoord,
-            m_winding[2].texcoord
-        };
-
-        auto transform = Matrix4::getTranslation(translation);
-
-        // Transform the vertices
-        vertices[0] = transform.transformPoint(vertices[0]);
-        vertices[1] = transform.transformPoint(vertices[1]);
-        vertices[2] = transform.transformPoint(vertices[2]);
-
-        // Keep the texture coords, recalculate the texture projection
-        m_texdefTransformed.calculateFromPoints(vertices, texcoords, m_planeTransformed.getPlane().normal());
+        transformTexDefLocked(Matrix4::getTranslation(translation));
     }
-
-    m_planeTransformed.translate(translation);
 
     _owner.onFacePlaneChanged();
     updateWinding();
 }
 
-void Face::transform(const Matrix4& matrix)
+void Face::transform(const Matrix4& transform)
 {
-    if (GlobalBrush().textureLockEnabled())
+    // Transform the FacePlane using the given matrix (before the tex def is recalculated)
+    m_planeTransformed.transform(transform);
+
+    if (GlobalBrush().textureLockEnabled() && m_winding.size() >= 3)
     {
-        m_texdefTransformed.transformLocked(_shader.getWidth(), _shader.getHeight(), m_plane.getPlane(), matrix);
+        transformTexDefLocked(transform);
     }
 
-    // Transform the FacePlane using the given matrix
-    m_planeTransformed.transform(matrix);
     _owner.onFacePlaneChanged();
     updateWinding();
 }

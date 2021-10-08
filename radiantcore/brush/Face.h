@@ -222,4 +222,8 @@ private:
 	// Connects surface shader signals and calls realiseShader() if possible
 	void setupSurfaceShader();
 
+    // Transforms the texdef using the given world transform, with the goal
+    // to keep the texture coordinates of the winding unaltered by the transform
+    void transformTexDefLocked(const Matrix4& transform);
+
 }; // class Face
