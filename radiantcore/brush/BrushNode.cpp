@@ -90,13 +90,13 @@ std::string BrushNode::getFingerprint()
         hash.addString(face->getShader());
 
         // Texture Matrix
-        auto texdef = face->getTexDefMatrix();
+        auto texdef = face->getProjectionMatrix();
         hash.addDouble(texdef.xx(), SignificantDigits);
         hash.addDouble(texdef.yx(), SignificantDigits);
-        hash.addDouble(texdef.tx(), SignificantDigits);
+        hash.addDouble(texdef.zx(), SignificantDigits);
         hash.addDouble(texdef.xy(), SignificantDigits);
         hash.addDouble(texdef.yy(), SignificantDigits);
-        hash.addDouble(texdef.ty(), SignificantDigits);
+        hash.addDouble(texdef.zy(), SignificantDigits);
     }
 
     return hash;

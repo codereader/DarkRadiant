@@ -746,11 +746,6 @@ const FacePlane& Face::getPlane() const {
     return m_plane;
 }
 
-Matrix4 Face::getTexDefMatrix() const
-{
-    return _texdef.matrix.getTransform();
-}
-
 SurfaceShader& Face::getFaceShader() {
     return _shader;
 }

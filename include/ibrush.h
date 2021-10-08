@@ -179,16 +179,6 @@ public:
 	virtual const Plane3& getPlane3() const = 0;
 
 	/**
-	 * Returns the 3x3 texture matrix for this face, containing shift, scale and rotation.
-	 *
-	 * xx, yx, xy and yy hold the scale and rotation
-	 * tx and ty hold the shift
-     * 
-     * OBSOLETE
-	 */
-	virtual Matrix4 getTexDefMatrix() const = 0;
-
-	/**
 	 * The matrix used to project world coordinates to U/V space, after the winding vertices
      * have been transformed to this face's axis base system.
      * The components of this matrix correspond to the matrix values written to the idTech4 

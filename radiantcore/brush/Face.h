@@ -201,8 +201,6 @@ public:
 	FacePlane& getPlane();
 	const FacePlane& getPlane() const;
 
-	Matrix4 getTexDefMatrix() const;
-
 	Matrix3 getProjectionMatrix() const override;
 	void setProjectionMatrix(const Matrix3& projection) override;
 
