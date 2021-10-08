@@ -63,4 +63,7 @@ public:
     // greebo: This returns a matrix transforming world vertex coordinates into texture space
     Matrix4 getWorldToTexture(const Vector3& normal, const Matrix4& localToWorld) const;
 
+    // Calculate the texture projection for the desired set of UVs and XYZ
+    void calculateFromPoints(const Vector3 points[3], const Vector2 uvs[3], const Vector3& normal);
+
 }; // class TextureProjection

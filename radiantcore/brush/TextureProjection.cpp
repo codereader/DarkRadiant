@@ -353,3 +353,49 @@ Vector2 TextureProjection::getTextureCoordsForVertex(const Vector3& point, const
 
     return { texcoord.x(), texcoord.y() };
 }
+
+void TextureProjection::calculateFromPoints(const Vector3 points[3], const Vector2 uvs[3], const Vector3& normal)
+{
+    // Calculate the texture projection for the desired set of UVs and XYZ
+
+    // The texture projection matrix is applied to the vertices after they have been
+    // transformed by the axis base transform (which depends on this face's normal):
+    // T * AB * vertex = UV
+    // 
+    // Applying AB to the vertices will yield: T * P = texcoord
+    // with P containing the axis-based transformed vertices.
+    // 
+    // If the above should be solved for T, expanding the above multiplication 
+    // sets up six equations to calculate the 6 unknown components of T.
+    // 
+    // We can arrange the 6 equations in matrix form: T * A = B
+    // T is the 3x3 texture matrix.
+    // A contains the XY coords in its columns (Z is ignored since we 
+    // applied the axis base), B contains the UV coords in its columns.
+    // The third component of all columns in both matrices is 1.
+    // 
+    // We can solve the above by inverting A: T = B * inv(A)
+
+    // Get the axis base for this face, we need the XYZ points in that state
+    // to reverse-calculate the desired texture transform
+    auto axisBase = getBasisTransformForNormal(normal);
+
+    // Rotate the three incoming world vertices into the local face plane
+    Vector3 localPoints[] =
+    {
+        axisBase * points[0],
+        axisBase * points[1],
+        axisBase * points[2],
+    };
+
+    // Arrange the XYZ coords into the columns of matrix A
+    auto xyz = Matrix3::byColumns(localPoints[0].x(), localPoints[0].y(), 1,
+        localPoints[1].x(), localPoints[1].y(), 1,
+        localPoints[2].x(), localPoints[2].y(), 1);
+
+    auto uv = Matrix3::byColumns(uvs[0].x(), uvs[0].y(), 1,
+        uvs[1].x(), uvs[1].y(), 1,
+        uvs[2].x(), uvs[2].y(), 1);
+
+    setTransform(uv * xyz.getFullInverse());
+}

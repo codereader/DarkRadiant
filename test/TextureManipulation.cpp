@@ -586,7 +586,7 @@ TEST_F(TextureManipulationTest, MoveTextureLocked)
     performTextureLockBrushTransformationTest([&](const ITransformablePtr& transformable)
     {
         transformable->setType(TRANSFORM_PRIMITIVE);
-        transformable->setTranslation(Vector3(45, 66, 100));
+        transformable->setTranslation(Vector3(-45.1, 66.3, 10.7));
     });
 }
 

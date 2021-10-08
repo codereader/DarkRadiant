@@ -258,13 +258,35 @@ void Face::setRenderSystem(const RenderSystemPtr& renderSystem)
 
 void Face::translate(const Vector3& translation)
 {
-    if (GlobalBrush().textureLockEnabled())
+    if (GlobalBrush().textureLockEnabled() && m_winding.size() >= 3)
     {
-        m_texdefTransformed.transformLocked(_shader.getWidth(), _shader.getHeight(),
-            m_plane.getPlane(), Matrix4::getTranslation(translation));
+        Vector3 vertices[3] =
+        {
+            m_winding[0].vertex,
+            m_winding[1].vertex,
+            m_winding[2].vertex
+        };
+
+        Vector2 texcoords[3] =
+        {
+            m_winding[0].texcoord,
+            m_winding[1].texcoord,
+            m_winding[2].texcoord
+        };
+
+        auto transform = Matrix4::getTranslation(translation);
+
+        // Transform the vertices
+        vertices[0] = transform.transformPoint(vertices[0]);
+        vertices[1] = transform.transformPoint(vertices[1]);
+        vertices[2] = transform.transformPoint(vertices[2]);
+
+        // Keep the texture coords, recalculate the texture projection
+        m_texdefTransformed.calculateFromPoints(vertices, texcoords, m_planeTransformed.getPlane().normal());
     }
 
     m_planeTransformed.translate(translation);
+
     _owner.onFacePlaneChanged();
     updateWinding();
 }
@@ -301,7 +323,8 @@ void Face::revertTransform()
     emitTextureCoordinates();
 }
 
-void Face::freezeTransform() {
+void Face::freezeTransform()
+{
     undoSave();
     m_plane = m_planeTransformed;
     planepts_assign(m_move_planepts, m_move_planeptsTransformed);
@@ -625,50 +648,7 @@ void Face::applyShaderFromFace(const Face& other)
 
 void Face::setTexDefFromPoints(const Vector3 points[3], const Vector2 uvs[3])
 {
-    // Calculate the texture projection for these desired set of UVs and XYZ
-
-    // The texture projection matrix is applied to the vertices after they have been
-    // transformed by the axis base transform (which depends on this face's normal):
-    // T * AB * vertex = UV
-    // 
-    // Applying AB to the vertices will yield: T * P = texcoord
-    // with P containing the axis-based transformed vertices.
-    // 
-    // If the above should be solved for T, expanding the above multiplication 
-    // sets up six equations to calculate the 6 unknown components of T.
-    // 
-    // We can arrange the 6 equations in matrix form: T * A = B
-    // T is the 3x3 texture matrix.
-    // A contains the XY coords in its columns (Z is ignored since we 
-    // applied the axis base), B contains the UV coords in its columns.
-    // The third component of all columns in both matrices is 1.
-    // 
-    // We can solve the above by inverting A: T = B * inv(A)
-
-    // Get the axis base for this face, we need the XYZ points in that state
-    // to reverse-calculate the desired texture transform
-    auto axisBase = getBasisTransformForNormal(getPlane3().normal());
-
-    // Rotate the three incoming world vertices into the local face plane
-    Vector3 localPoints[] =
-    {
-        axisBase * points[0],
-        axisBase * points[1],
-        axisBase * points[2],
-    };
-
-    // Arrange the XYZ coords into the columns of matrix A
-    auto xyz = Matrix3::byColumns(localPoints[0].x(), localPoints[0].y(), 1,
-        localPoints[1].x(), localPoints[1].y(), 1,
-        localPoints[2].x(), localPoints[2].y(), 1);
-
-    auto uv = Matrix3::byColumns(uvs[0].x(), uvs[0].y(), 1,
-        uvs[1].x(), uvs[1].y(), 1,
-        uvs[2].x(), uvs[2].y(), 1);
-
-    auto textureMatrix = uv * xyz.getFullInverse();
-
-    m_texdefTransformed.setTransform(textureMatrix);
+    m_texdefTransformed.calculateFromPoints(points, uvs, getPlane3().normal());
 
     emitTextureCoordinates();
 
