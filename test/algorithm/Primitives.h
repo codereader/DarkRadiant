@@ -196,6 +196,14 @@ inline void expectVerticesHaveBeenFlipped(int axis, const IPatch& patch, const s
     });
 }
 
+inline void foreachFace(IBrush& brush, const std::function<void(IFace&)>& functor)
+{
+    for (int i = 0; i < brush.getNumFaces(); ++i)
+    {
+        functor(brush.getFace(i));
+    }
+}
+
 }
 
 }

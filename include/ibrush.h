@@ -141,6 +141,10 @@ public:
 	// Rotates the texture by the given angle
 	virtual void rotateTexdef(float angle) = 0;
 
+    // Returns the amount of texture pixels per game unit shown on this face
+    // This is based on the image returned by the material, usually the editor image
+    virtual Vector2 getTexelScale() const = 0;
+
 	// Fits the texture on this face
 	virtual void fitTexture(float s_repeat, float t_repeat) = 0;
 

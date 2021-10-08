@@ -508,27 +508,6 @@ ShiftScaleRotation Face::getShiftScaleRotation() const
     ssr.scale[1] /= _shader.getHeight();
 
     return ssr;
-#if 0
-    TextureProjection curProjection = _texdef;
-
-    // Multiply the texture dimensions to the projection matrix such that
-    // the shift/scale/rotation represent pixel values within the image.
-    Vector2 shaderDims(_shader.getWidth(), _shader.getHeight());
-
-    TextureMatrix bpTexDef = curProjection.matrix;
-    bpTexDef.applyShaderDimensions(static_cast<std::size_t>(shaderDims[0]), static_cast<std::size_t>(shaderDims[1]));
-
-    // Calculate the "fake" texture properties (shift/scale/rotation)
-    TexDef texdef = bpTexDef.getFakeTexCoords();
-
-    if (shaderDims != Vector2(0, 0))
-    {
-        // normalize again to hide the ridiculously high scale values that get created when using texlock
-        texdef.normalise(shaderDims[0], shaderDims[1]);
-    }
-
-    return texdef.getShiftScaleRotation();
-#endif
 }
 
 void Face::setShiftScaleRotation(const ShiftScaleRotation& ssr)
@@ -550,6 +529,15 @@ void Face::setShiftScaleRotation(const ShiftScaleRotation& ssr)
     projection.matrix = TextureMatrix(texdef);
 
     SetTexdef(projection);
+}
+
+Vector2 Face::getTexelScale() const
+{
+    auto imageWidth = _shader.getWidth();
+    auto imageHeight = _shader.getHeight();
+
+    auto textureMatrix = _texdef.getTransform();
+    return Vector2(textureMatrix.xx() * imageWidth, textureMatrix.yy() * imageHeight);
 }
 
 // Returns the index pair forming an edge, keeping the winding direction intact

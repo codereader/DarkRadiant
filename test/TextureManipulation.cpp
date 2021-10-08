@@ -1,6 +1,7 @@
 #include "RadiantTest.h"
 
 #include "itransformable.h"
+#include "ishaders.h"
 #include "ishaderclipboard.h"
 #include "algorithm/Scene.h"
 #include "algorithm/Primitives.h"
@@ -597,6 +598,50 @@ TEST_F(TextureManipulationTest, RotateTextureLocked)
         transformable->setType(TRANSFORM_PRIMITIVE);
         transformable->setRotation(Quaternion::createForEulerXYZDegrees({ 5, 35, 75 }));
     });
+}
+
+namespace
+{
+
+inline scene::INodePtr create512CubeTextured1x1(const std::string& material)
+{
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto test1024x512Node = algorithm::createCuboidBrush(worldspawn, AABB({ 30, 40, -60}, { 256, 256, 256 }), material);
+    auto test1024x512 = Node_getIBrush(test1024x512Node);
+
+    algorithm::foreachFace(*Node_getIBrush(test1024x512Node), [](IFace& face) { face.fitTexture(1, 1); });
+
+    return test1024x512Node;
+}
+
+}
+
+TEST_F(TextureManipulationTest, FaceGetTexelScale)
+{
+    auto brushNode = create512CubeTextured1x1("textures/a_1024x512");
+    
+    // Get the texture dimensions
+    auto editorImage = GlobalMaterialManager().getMaterial("textures/a_1024x512")->getEditorImage();
+    auto textureWidth = editorImage->getWidth();
+    auto textureHeight = editorImage->getHeight();
+
+    // Get a face and check the texture bounds
+    auto& face = Node_getIBrush(brushNode)->getFace(0);
+    auto uvBounds = algorithm::getTextureSpaceBounds(face);
+
+    // Check that the face is showing a 1x1 tile
+    EXPECT_NEAR(uvBounds.extents.x(), 0.5, 0.01) << "Texture not fit to face (X)";
+    EXPECT_NEAR(uvBounds.extents.y(), 0.5, 0.01) << "Texture not fit to face (Y)";
+
+    auto texelScale = face.getTexelScale();
+
+    // A 1024 texture width fit to a 512px wide face: texel scale = 2
+    // A 512 texture height fit to a 512px wide face: texel scale = 1
+    auto expectedTexelScaleX = textureWidth / 512;
+    auto expectedTexelScaleY = textureHeight / 512;
+
+    EXPECT_NEAR(texelScale.x(), expectedTexelScaleX, 0.01) << "Texel scale X is off";
+    EXPECT_NEAR(texelScale.y(), expectedTexelScaleY, 0.01) << "Texel scale Y is off";
 }
 
 }
