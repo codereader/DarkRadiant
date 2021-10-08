@@ -169,6 +169,9 @@ public:
     // Should only be used by the internal Brush object
     bool facesAreForcedVisible();
 
+    void onPostUndo() override;
+    void onPostRedo() override;
+
 protected:
 	// Gets called by the Transformable implementation whenever
 	// scale, rotation or translation is changed.

@@ -617,6 +617,20 @@ bool BrushNode::facesAreForcedVisible()
     return isForcedVisible();
 }
 
+void BrushNode::onPostUndo()
+{
+    // The windings are usually lazy-evaluated when some code
+    // is calling localAABB() during rendering.
+    // To avoid the texture tool from rendering old texture coords
+    // We evaluate the windings right after undo
+    m_brush.evaluateBRep();
+}
+
+void BrushNode::onPostRedo()
+{
+    m_brush.evaluateBRep();
+}
+
 void BrushNode::_onTransformationChanged()
 {
 	m_brush.transformChanged();
