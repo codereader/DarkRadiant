@@ -87,17 +87,16 @@ Face::Face(Brush& owner, const Plane3& plane) :
     shaderChanged();
 }
 
-Face::Face(Brush& owner, const Plane3& plane, const Matrix4& texdef,
-           const std::string& shader) :
+Face::Face(Brush& owner, const Plane3& plane, const Matrix3& textureProjection, const std::string& material) :
     _owner(owner),
-    _shader(shader, _owner.getBrushNode().getRenderSystem()),
+    _shader(material, _owner.getBrushNode().getRenderSystem()),
     _undoStateSaver(nullptr),
     _faceIsVisible(true)
 {
     setupSurfaceShader();
     m_plane.setPlane(plane);
 
-    _texdef.setTransformFromMatrix4(texdef);
+    _texdef.setTransform(textureProjection);
 
     planeChanged();
     shaderChanged();

@@ -43,7 +43,6 @@ public:
     void assign(const TextureProjection& other);
 
     void setTransform(const Matrix3& transform);
-    void setTransformFromMatrix4(const Matrix4& transform);
     void setFromTexDef(const TexDef& texDef);
 
     Matrix3 getMatrix() const;
@@ -71,6 +70,7 @@ public:
 
 private:
     Matrix4 getMatrix4() const;
+    void setTransformFromMatrix4(const Matrix4& transform);
 
     // Normalise projection for a given texture width and height.
     void normalise(float width, float height);

@@ -80,19 +80,19 @@ scene::INodePtr BrushDef3Parser::parse(parser::DefTokeniser& tok) const
 			tok.assertNextToken(")");
 
 			// Parse TexDef
-			Matrix4 texdef;
+			Matrix3 texdef;
 			tok.assertNextToken("(");
 
 			tok.assertNextToken("(");
 			texdef.xx() = string::to_float(tok.nextToken());
 			texdef.yx() = string::to_float(tok.nextToken());
-			texdef.tx() = string::to_float(tok.nextToken());
+			texdef.zx() = string::to_float(tok.nextToken());
 			tok.assertNextToken(")");
 
 			tok.assertNextToken("(");
 			texdef.xy() = string::to_float(tok.nextToken());
 			texdef.yy() = string::to_float(tok.nextToken());
-			texdef.ty() = string::to_float(tok.nextToken());
+			texdef.zy() = string::to_float(tok.nextToken());
 			tok.assertNextToken(")");
 
 			tok.assertNextToken(")");
@@ -159,19 +159,19 @@ scene::INodePtr BrushDef3ParserQuake4::parse(parser::DefTokeniser& tok) const
 			tok.assertNextToken(")");
 
 			// Parse TexDef
-			Matrix4 texdef;
+			Matrix3 texdef;
 			tok.assertNextToken("(");
 
 			tok.assertNextToken("(");
 			texdef.xx() = string::to_float(tok.nextToken());
 			texdef.yx() = string::to_float(tok.nextToken());
-			texdef.tx() = string::to_float(tok.nextToken());
+			texdef.zx() = string::to_float(tok.nextToken());
 			tok.assertNextToken(")");
 
 			tok.assertNextToken("(");
 			texdef.xy() = string::to_float(tok.nextToken());
 			texdef.yy() = string::to_float(tok.nextToken());
-			texdef.ty() = string::to_float(tok.nextToken());
+			texdef.zy() = string::to_float(tok.nextToken());
 			tok.assertNextToken(")");
 
 			tok.assertNextToken(")");

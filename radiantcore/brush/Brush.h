@@ -162,8 +162,8 @@ public:
 	IFace& getFace(std::size_t index);
 	const IFace& getFace(std::size_t index) const;
 
-	IFace& addFace(const Plane3& plane);
-	IFace& addFace(const Plane3& plane, const Matrix4& texDef, const std::string& shader);
+	IFace& addFace(const Plane3& plane) override;
+	IFace& addFace(const Plane3& plane, const Matrix3& textureProjection, const std::string& material) override;
 
     // Translatable implementation
 	void translate(const Vector3& translation);

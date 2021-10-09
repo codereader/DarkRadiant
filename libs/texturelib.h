@@ -27,6 +27,22 @@ inline Matrix4 getMatrix4FromTextureMatrix(const Matrix3& matrix3)
     return matrix4;
 }
 
+inline Matrix3 getTextureMatrixFromMatrix4(const Matrix4& matrix4)
+{
+    auto matrix3 = Matrix3::getIdentity();
+
+    matrix3.xx() = matrix4.xx();
+    matrix3.xy() = matrix4.xy();
+    matrix3.yy() = matrix4.yy();
+    matrix3.yx() = matrix4.yx();
+
+    // T => Z
+    matrix3.zx() = matrix4.tx();
+    matrix3.zy() = matrix4.ty();
+
+    return matrix3;
+}
+
 enum ProjectionAxis {
 	eProjectionAxisX = 0,
 	eProjectionAxisY = 1,

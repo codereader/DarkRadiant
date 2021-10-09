@@ -1,7 +1,7 @@
 #pragma once
 
 #include "imapformat.h"
-#include "math/Matrix4.h"
+#include "math/Matrix3.h"
 
 namespace map
 {
@@ -26,7 +26,7 @@ public:
     scene::INodePtr parse(parser::DefTokeniser& tok) const;
 
 private:
-    static Matrix4 calculateTextureMatrix(const std::string& shader, const Vector3& normal, const ShiftScaleRotation& ssr);
+    static Matrix3 calculateTextureMatrix(const std::string& shader, const Vector3& normal, const ShiftScaleRotation& ssr);
 };
 
 }

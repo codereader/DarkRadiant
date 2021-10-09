@@ -244,8 +244,8 @@ public:
 	// Add a new face to this brush, using the given plane object, returns a reference to the new face
 	virtual IFace& addFace(const Plane3& plane) = 0;
 
-	// Add a new face to this brush, using the given plane, texdef matrix and shader name
-	virtual IFace& addFace(const Plane3& plane, const Matrix4& texDef, const std::string& shader) = 0;
+	// Add a new face to this brush, using the given plane, projection matrix and material name
+	virtual IFace& addFace(const Plane3& plane, const Matrix3& textureProjection, const std::string& material) = 0;
 
     // Removes all faces from this brush
     virtual void clear() = 0;

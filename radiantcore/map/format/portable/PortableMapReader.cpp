@@ -242,14 +242,14 @@ void PortableMapReader::readBrush(const xml::Node& brushTag, const scene::INodeP
 			auto texProjTag = getNamedChild(faceTag, TAG_FACE_TEXPROJ);
 
 			// Parse TexDef
-			Matrix4 texdef;
+			Matrix3 texdef;
 
 			texdef.xx() = string::to_float(texProjTag.getAttributeValue(ATTR_FACE_TEXTPROJ_XX));
 			texdef.yx() = string::to_float(texProjTag.getAttributeValue(ATTR_FACE_TEXTPROJ_YX));
-			texdef.tx() = string::to_float(texProjTag.getAttributeValue(ATTR_FACE_TEXTPROJ_TX));
+			texdef.zx() = string::to_float(texProjTag.getAttributeValue(ATTR_FACE_TEXTPROJ_TX));
 			texdef.xy() = string::to_float(texProjTag.getAttributeValue(ATTR_FACE_TEXTPROJ_XY));
 			texdef.yy() = string::to_float(texProjTag.getAttributeValue(ATTR_FACE_TEXTPROJ_YY));
-			texdef.ty() = string::to_float(texProjTag.getAttributeValue(ATTR_FACE_TEXTPROJ_TY));
+			texdef.zy() = string::to_float(texProjTag.getAttributeValue(ATTR_FACE_TEXTPROJ_TY));
 
 			// Parse Shader
 			auto shaderTag = getNamedChild(faceTag, TAG_FACE_MATERIAL);

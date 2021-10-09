@@ -69,8 +69,7 @@ public:
 		const std::string& shader, const TextureProjection& projection);
 
 	Face(Brush& owner, const Plane3& plane);
-	Face(Brush& owner, const Plane3& plane, const Matrix4& texdef,
-		 const std::string& shader);
+	Face(Brush& owner, const Plane3& plane, const Matrix3& textureProjection, const std::string& material);
 
 	// Copy Constructor
 	Face(Brush& owner, const Face& other);

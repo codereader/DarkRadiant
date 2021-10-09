@@ -96,11 +96,11 @@ IFace& Brush::addFace(const Plane3& plane)
     return *m_faces.back();
 }
 
-IFace& Brush::addFace(const Plane3& plane, const Matrix4& texDef, const std::string& shader)
+IFace& Brush::addFace(const Plane3& plane, const Matrix3& textureProjection, const std::string& material)
 {
     // Allocate a new Face
     undoSave();
-    push_back(FacePtr(new Face(*this, plane, texDef, shader)));
+    push_back(FacePtr(new Face(*this, plane, textureProjection, material)));
 
     return *m_faces.back();
 }

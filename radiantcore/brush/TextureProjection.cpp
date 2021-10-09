@@ -219,7 +219,7 @@ Matrix4 TextureProjection::getWorldToTexture(const Vector3& normal, const Matrix
     // Texture Projection
     auto local2tex = getMatrix4();
 
-    // Axs Base
+    // Axis Base
     auto xyz2st = getBasisTransformForNormal(localToWorld.transformDirection(normal));
     local2tex.multiplyBy(xyz2st);
 
