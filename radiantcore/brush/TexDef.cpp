@@ -104,22 +104,3 @@ void TexDef::normalise(double width, double height)
 	_def.shift[0] = float_mod(_def.shift[0], width);
 	_def.shift[1] = float_mod(_def.shift[1], height);
 }
-
-ShiftScaleRotation TexDef::toShiftScaleRotation() const
-{
-	ShiftScaleRotation result;
-
-	result.shift[0] = _def.shift[0];
-	result.shift[1] = _def.shift[1];
-	result.rotate = _def.rotate;
-	result.scale[0] = _def.scale[0];
-	result.scale[1] = _def.scale[1];
-
-	return result;
-}
-
-TexDef TexDef::CreateFromShiftScaleRotation(const ShiftScaleRotation& scr)
-{
-	return TexDef(scr);
-}
-

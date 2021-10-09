@@ -139,10 +139,6 @@ public:
 	void GetTexdef(TextureProjection& projection) const;
 	void SetTexdef(const TextureProjection& projection);
 
-    // Applies the given shift/scale/rotation values to this face's texture projection
-    // The incoming values are measured in pixels and will be scaled internally.
-    void setTexdef(const TexDef& texDef);
-
     // Constructs the texture projection matrix from the given (world) vertex and texture coords.
     // Three vertices and their UV coordinates are enough to construct the texdef.
     void setTexDefFromPoints(const Vector3 points[3], const Vector2 uvs[3]);

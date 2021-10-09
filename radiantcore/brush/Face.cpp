@@ -468,19 +468,6 @@ void Face::SetTexdef(const TextureProjection& projection)
     texdefChanged();
 }
 
-void Face::setTexdef(const TexDef& texDef)
-{
-    TextureProjection projection;
-
-    // Construct the BPTexDef out of the TexDef
-    projection.setFromShiftScaleRotate(texDef.toShiftScaleRotation());
-
-    // The bprimitive texdef needs to be scaled using our current texture dims
-    projection.getTextureMatrix().addScale(_shader.getWidth(), _shader.getHeight());
-
-    SetTexdef(projection);
-}
-
 ShiftScaleRotation Face::getShiftScaleRotation() const
 {
     auto ssr = _texdef.getTextureMatrix().getShiftScaleRotation();

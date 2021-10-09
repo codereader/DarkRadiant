@@ -33,13 +33,6 @@ public:
 	// This function normalises shift values to the smallest positive congruent values.
 	void normalise(double width, double height);
 
-	// Converts this instance's values to a ShiftScaleRotation structure
-	// Since TexDef is using the same format to store its values internally
-	// this is equivalent to a few simple assignment or copy operations.
-	ShiftScaleRotation toShiftScaleRotation() const;
-
-	static TexDef CreateFromShiftScaleRotation(const ShiftScaleRotation& scr);
-
 	friend std::ostream& operator<<(std::ostream& st, const TexDef& texdef);
 };
 
