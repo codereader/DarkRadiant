@@ -66,6 +66,11 @@ void TextureProjection::setTransformFromMatrix4(const Matrix4& transform)
     setTransform(getTextureMatrixFromMatrix4(transform));
 }
 
+ShiftScaleRotation TextureProjection::getShiftScaleRotation() const
+{
+    return _matrix.getShiftScaleRotation();
+}
+
 void TextureProjection::setFromShiftScaleRotate(const ShiftScaleRotation& ssr)
 {
     _matrix = TextureMatrix(ssr);

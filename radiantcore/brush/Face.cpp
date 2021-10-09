@@ -465,7 +465,7 @@ void Face::SetTexdef(const TextureProjection& projection)
 
 ShiftScaleRotation Face::getShiftScaleRotation() const
 {
-    auto ssr = _texdef.getTextureMatrix().getShiftScaleRotation();
+    auto ssr = _texdef.getShiftScaleRotation();
 
     // These values are going to show up in the Surface Inspector, so
     // we need to make some adjustments:

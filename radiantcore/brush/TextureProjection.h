@@ -41,6 +41,8 @@ public:
     TextureProjection& operator=(const TextureProjection& other);
 
     void setTransform(const Matrix3& transform);
+
+    ShiftScaleRotation getShiftScaleRotation() const;
     void setFromShiftScaleRotate(const ShiftScaleRotation& ssr);
 
     Matrix3 getMatrix() const;
