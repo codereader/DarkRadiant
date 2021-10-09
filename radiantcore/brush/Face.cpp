@@ -97,7 +97,7 @@ Face::Face(Brush& owner, const Plane3& plane, const Matrix4& texdef,
     setupSurfaceShader();
     m_plane.setPlane(plane);
 
-    _texdef.matrix = TextureMatrix(texdef);
+    _texdef.setTransformFromMatrix4(texdef);
 
     planeChanged();
     shaderChanged();
@@ -473,26 +473,26 @@ void Face::setTexdef(const TexDef& texDef)
 {
     TextureProjection projection;
 
-    // Construct the BPTexDef out of the TexDef by using the according constructor
-    projection.matrix = TextureMatrix(texDef);
+    // Construct the BPTexDef out of the TexDef
+    projection.setFromTexDef(texDef);
 
     // The bprimitive texdef needs to be scaled using our current texture dims
     auto width = static_cast<double>(_shader.getWidth());
     auto height = static_cast<double>(_shader.getHeight());
 
-    projection.matrix.coords[0][0] /= width;
-    projection.matrix.coords[0][1] /= width;
-    projection.matrix.coords[0][2] /= width;
-    projection.matrix.coords[1][0] /= height;
-    projection.matrix.coords[1][1] /= height;
-    projection.matrix.coords[1][2] /= height;
+    projection._matrix.coords[0][0] /= width;
+    projection._matrix.coords[0][1] /= width;
+    projection._matrix.coords[0][2] /= width;
+    projection._matrix.coords[1][0] /= height;
+    projection._matrix.coords[1][1] /= height;
+    projection._matrix.coords[1][2] /= height;
 
     SetTexdef(projection);
 }
 
 ShiftScaleRotation Face::getShiftScaleRotation() const
 {
-    auto texdef = _texdef.matrix.getFakeTexCoords();
+    auto texdef = _texdef._matrix.getFakeTexCoords();
     auto ssr = texdef.toShiftScaleRotation();
 
     // These values are going to show up in the Surface Inspector, so
@@ -538,7 +538,7 @@ void Face::setShiftScaleRotation(const ShiftScaleRotation& ssr)
    
     // Construct the BPTexDef out of this TexDef
     TextureProjection projection;
-    projection.matrix = TextureMatrix(texdef);
+    projection.setFromTexDef(texdef);
 
     SetTexdef(projection);
 }
@@ -708,7 +708,7 @@ void Face::emitTextureCoordinates()
 
 void Face::applyDefaultTextureScale()
 {
-    _texdef.matrix.addScale(_shader.getWidth(), _shader.getHeight());
+    _texdef._matrix.addScale(_shader.getWidth(), _shader.getHeight());
     texdefChanged();
 }
 
