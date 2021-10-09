@@ -8,7 +8,6 @@
 class TextureProjection;
 class Face;
 class SelectionTest;
-class TexDef;
 
 enum EAlignType
 {
@@ -180,17 +179,6 @@ namespace selection
 	 * 			The texture is translated in multiples of 1.0
 	 */
 	void normaliseTexture(const cmd::ArgumentList& args);
-
-	/** greebo: Replaces all <find> shaders with <replace>.
-	 *
-	 * @find/replace: the full shadernames ("textures/darkmod/bleh")
-	 * @selectedOnly: if TRUE, searches the current selection only.
-	 *
-	 * @returns: the number of replaced occurrences.
-	 */
-	int findAndReplaceShader(const std::string& find,
-							 const std::string& replace,
-							 bool selectedOnly);
 
 	/**
 	 * greebo: (De-)selects all map nodes that match the given shaderName.

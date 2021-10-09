@@ -1,6 +1,5 @@
 #pragma once
 
-#include "TexDef.h"
 #include "ibrush.h"
 #include "itraceable.h"
 #include "iscenegraph.h"

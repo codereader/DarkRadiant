@@ -13,7 +13,6 @@
 #include "PatchControl.h"
 #include "PatchTesselation.h"
 #include "PatchRenderables.h"
-#include "brush/TexDef.h"
 #include "brush/FacePlane.h"
 #include "brush/Face.h"
 #include <sigc++/signal.h>

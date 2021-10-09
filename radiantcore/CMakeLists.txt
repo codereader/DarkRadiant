@@ -12,7 +12,6 @@ add_library(radiantcore MODULE
             brush/FaceInstance.cpp
             brush/FacePlane.cpp
             brush/FixedWinding.cpp
-            brush/TexDef.cpp
             brush/TextureMatrix.cpp
             brush/TextureProjection.cpp
             brush/Winding.cpp

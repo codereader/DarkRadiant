@@ -1,7 +1,6 @@
 #include "RegionManager.h"
 
 #include "i18n.h"
-#include "brush/TexDef.h"
 #include "ibrush.h"
 #include "icameraview.h"
 #include "iorthoview.h"

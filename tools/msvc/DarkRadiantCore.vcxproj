@@ -28,7 +28,6 @@
     <ClCompile Include="..\..\radiantcore\brush\FaceInstance.cpp" />
     <ClCompile Include="..\..\radiantcore\brush\FacePlane.cpp" />
     <ClCompile Include="..\..\radiantcore\brush\FixedWinding.cpp" />
-    <ClCompile Include="..\..\radiantcore\brush\TexDef.cpp" />
     <ClCompile Include="..\..\radiantcore\brush\TextureMatrix.cpp" />
     <ClCompile Include="..\..\radiantcore\brush\TextureProjection.cpp" />
     <ClCompile Include="..\..\radiantcore\brush\Winding.cpp" />
@@ -733,7 +732,6 @@
     <ClInclude Include="..\..\radiantcore\brush\PlanePoints.h" />
     <ClInclude Include="..\..\radiantcore\brush\RenderableWireFrame.h" />
     <ClInclude Include="..\..\radiantcore\brush\SelectableComponents.h" />
-    <ClInclude Include="..\..\radiantcore\brush\TexDef.h" />
     <ClInclude Include="..\..\radiantcore\brush\TextureMatrix.h" />
     <ClInclude Include="..\..\radiantcore\brush\TextureProjection.h" />
     <ClInclude Include="..\..\radiantcore\brush\VertexInstance.h" />

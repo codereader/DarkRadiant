@@ -5,7 +5,6 @@
 #include "iregistry.h"
 #include "imodule.h"
 
-#include "brush/TexDef.h"
 #include "ibrush.h"
 #include "BrushSettings.h"
 
