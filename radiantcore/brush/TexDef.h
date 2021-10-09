@@ -6,19 +6,14 @@
 class TexDef final
 {
 private:
-	double	_shift[2];
-	double	_rotate;
-	double	_scale[2];
+    ShiftScaleRotation _def;
 
 public:
-	// Constructor
-	TexDef();
-
 	// Constructs a TexDef out of the given transformation matrix plus width/height
 	TexDef(double width, double height, const Matrix4& transform);
 
-	// Destructor
-	virtual ~TexDef() {}
+    // Construct this TexDef from the given SSR structure
+    TexDef(const ShiftScaleRotation& ssr);
 
 	Vector2 getShift() const;
 	void setShift(const Vector2& shift);
@@ -50,7 +45,7 @@ public:
 
 inline std::ostream& operator<<(std::ostream& st, const TexDef& texdef)
 {
-	st << "Scale: <" << texdef._scale[0] << ", " << texdef._scale[1] << ">, ";
-	st << "Rotation: <" << texdef._rotate << ">";
+	st << "Scale: <" << texdef.getScale()[0] << ", " << texdef.getScale()[1] << ">, ";
+	st << "Rotation: <" << texdef.getRotation() << ">";
 	return st;
 }

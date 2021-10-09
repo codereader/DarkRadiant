@@ -473,7 +473,7 @@ void Face::setTexdef(const TexDef& texDef)
     TextureProjection projection;
 
     // Construct the BPTexDef out of the TexDef
-    projection.setFromTexDef(texDef);
+    projection.setFromShiftScaleRotate(texDef.toShiftScaleRotation());
 
     // The bprimitive texdef needs to be scaled using our current texture dims
     projection.getTextureMatrix().addScale(_shader.getWidth(), _shader.getHeight());
@@ -516,19 +516,19 @@ void Face::setShiftScaleRotation(const ShiftScaleRotation& ssr)
 {
     // We need to do the opposite adjustments as in Face::getShiftScaleRotation()
     // The incoming values are scaled up and down, respectively.
-    auto texdef = TexDef::CreateFromShiftScaleRotation(ssr);
+    ShiftScaleRotation corrected = ssr;
 
     // Scale the pixel value in SSR to relative UV coords
-    texdef.setShift({ texdef.getShift().x() / _shader.getWidth(),
-                      texdef.getShift().y() / _shader.getHeight() });
+    corrected.shift[0] = ssr.shift[0] / _shader.getWidth();
+    corrected.shift[1] = ssr.shift[1] / _shader.getHeight();
 
     // Add the texture dimensions to the scale.
-    texdef.setScale({ texdef.getScale().x() * _shader.getWidth(),
-                      texdef.getScale().y() * _shader.getHeight() });
+    corrected.scale[0] = ssr.scale[0] * _shader.getWidth();
+    corrected.scale[1] = ssr.scale[1] * _shader.getHeight();
    
-    // Construct the BPTexDef out of this TexDef
+    // Construct the matrix from the adjusted shift/scale/rotate values
     TextureProjection projection;
-    projection.setFromTexDef(texdef);
+    projection.setFromShiftScaleRotate(corrected);
 
     SetTexdef(projection);
 }

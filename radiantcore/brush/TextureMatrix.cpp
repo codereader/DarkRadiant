@@ -25,23 +25,21 @@ TextureMatrix::TextureMatrix(const Matrix3& transform)
     coords[1][2] = transform.zy();
 }
 
-TextureMatrix::TextureMatrix(const TexDef& texdef)
+TextureMatrix::TextureMatrix(const ShiftScaleRotation& ssr)
 {
-	auto r = degrees_to_radians(-texdef.getRotation());
+	auto r = degrees_to_radians(-ssr.rotate);
 	auto c = cos(r);
 	auto s = sin(r);
 
-	auto scale = texdef.getScale();
-	auto x = 1.0 / scale[0];
-	auto y = 1.0 / scale[1];
+	auto x = 1.0 / ssr.scale[0];
+	auto y = 1.0 / ssr.scale[1];
 
-	auto shift = texdef.getShift();
 	coords[0][0] = x * c;
 	coords[1][0] = x * s;
 	coords[0][1] = y * -s;
 	coords[1][1] = y * c;
-	coords[0][2] = -shift[0];
-	coords[1][2] = shift[1];
+	coords[0][2] = -ssr.shift[0];
+	coords[1][2] = ssr.shift[1];
 }
 
 void TextureMatrix::shift(double s, double t)

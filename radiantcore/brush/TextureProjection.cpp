@@ -34,12 +34,12 @@ TextureMatrix TextureProjection::GetDefaultProjection()
         "user/ui/textures/defaultTextureScale"
     );
 
-    TexDef tempTexDef;
+    ShiftScaleRotation ssr;
 
     double scale = scaleKey.get();
-    tempTexDef.setScale(Vector2(scale, scale));
+    ssr.scale[0] = ssr.scale[1] = scale;
 
-    return TextureMatrix(tempTexDef);
+    return TextureMatrix(ssr);
 }
 
 // Assigns an <other> projection to this one
@@ -66,9 +66,9 @@ void TextureProjection::setTransformFromMatrix4(const Matrix4& transform)
     setTransform(getTextureMatrixFromMatrix4(transform));
 }
 
-void TextureProjection::setFromTexDef(const TexDef& texDef)
+void TextureProjection::setFromShiftScaleRotate(const ShiftScaleRotation& ssr)
 {
-    _matrix = TextureMatrix(texDef);
+    _matrix = TextureMatrix(ssr);
 }
 
 Matrix4 TextureProjection::getMatrix4() const

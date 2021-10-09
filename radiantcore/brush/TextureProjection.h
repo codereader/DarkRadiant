@@ -43,7 +43,7 @@ public:
     void assign(const TextureProjection& other);
 
     void setTransform(const Matrix3& transform);
-    void setFromTexDef(const TexDef& texDef);
+    void setFromShiftScaleRotate(const ShiftScaleRotation& ssr);
 
     Matrix3 getMatrix() const;
 

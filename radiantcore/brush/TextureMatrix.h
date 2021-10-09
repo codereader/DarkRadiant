@@ -1,8 +1,8 @@
 #pragma once
 
-#include "TexDef.h"
-
-class Matrix3;
+#include <ostream>
+#include "ibrush.h"
+#include "math/Matrix3.h"
 
 // Encapsulates the 2x3 matrix transforming world coordinates into texture space
 // 
@@ -45,7 +45,7 @@ public:
 	TextureMatrix(const Matrix3& transform);
 
 	// Construct a TextureMatrix out of "fake" shift scale rot definitions
-	TextureMatrix(const TexDef& texdef);
+	TextureMatrix(const ShiftScaleRotation& ssr);
 
 	// shift a texture (texture adjustments) along it's current texture axes
 	void shift(double s, double t);
