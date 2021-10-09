@@ -2,10 +2,8 @@
 
 #include "ibrush.h"
 #include "math/Matrix3.h"
-#include "texturelib.h"
+#include "math/Matrix4.h"
 #include "Winding.h"
-#include "math/AABB.h"
-#include "iregistry.h"
 #include "TextureMatrix.h"
 #include "selection/algorithm/Shader.h"
 
@@ -34,9 +32,6 @@ public:
 
     // Construct using an existing texture matrix
     TextureProjection(const TextureMatrix& otherMatrix);
-
-    const TextureMatrix& getTextureMatrix() const;
-    TextureMatrix& getTextureMatrix();
 
     TextureProjection& operator=(const TextureProjection& other);
 
@@ -67,6 +62,9 @@ public:
 
     // Calculate the texture projection for the desired set of UVs and XYZ
     void calculateFromPoints(const Vector3 points[3], const Vector2 uvs[3], const Vector3& normal);
+
+    // Returns a texture projection using the default scale for the given texture dimensions
+    static TextureProjection ConstructDefault(std::size_t width, std::size_t height);
 
 private:
     static TextureMatrix Default();

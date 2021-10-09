@@ -61,12 +61,8 @@ void applyClipboardPatchToFace(Face& target)
 	// Get a reference to the source Texturable in the clipboard
 	Texturable& source = ShaderClipboard::Instance().getSource();
 
-	// Apply a default projection to the face
-	TextureProjection projection;
-
 	// Copy just the shader name, the rest is default value
 	target.setShader(source.patch->getShader());
-	target.SetTexdef(projection);
 
     // To fix the extremely small scale we get when applying a default TextureProjection
     target.applyDefaultTextureScale();

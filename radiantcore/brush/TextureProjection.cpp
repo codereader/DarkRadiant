@@ -17,14 +17,15 @@ TextureProjection::TextureProjection(const TextureMatrix& otherMatrix) :
     _matrix(otherMatrix)
 {}
 
-const TextureMatrix& TextureProjection::getTextureMatrix() const
+TextureProjection TextureProjection::ConstructDefault(std::size_t width, std::size_t height)
 {
-    return _matrix;
-}
+    // Default-construct to get the default matrix
+    TextureProjection projection;
 
-TextureMatrix& TextureProjection::getTextureMatrix()
-{
-    return _matrix;
+    // Scale the matrix components to fit the texture dimensions
+    projection._matrix.addScale(width, height);
+
+    return projection;
 }
 
 TextureMatrix TextureProjection::Default()

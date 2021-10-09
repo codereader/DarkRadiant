@@ -680,7 +680,7 @@ void Face::emitTextureCoordinates()
 
 void Face::applyDefaultTextureScale()
 {
-    _texdef.getTextureMatrix().addScale(_shader.getWidth(), _shader.getHeight());
+    _texdef = TextureProjection::ConstructDefault(_shader.getWidth(), _shader.getHeight());
     texdefChanged();
 }
 
