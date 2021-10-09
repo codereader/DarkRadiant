@@ -102,7 +102,7 @@ void TextureProjection::fitTexture(std::size_t width, std::size_t height,
     }
 
     // Sanity-check the matrix, if it contains any NaNs or INFs we fall back to the default projection (#5371)
-    Matrix4 st2tex = _matrix.isSane() ? getMatrix4() : GetDefaultProjection().getTransform();
+    Matrix4 st2tex = _matrix.isSane() ? getMatrix4() : getMatrix4FromTextureMatrix(GetDefaultProjection().getMatrix3());
 
     // the current texture transform
     Matrix4 local2tex = st2tex;

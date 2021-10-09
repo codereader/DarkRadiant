@@ -1,9 +1,9 @@
 #include "TextureMatrix.h"
 
 #include "texturelib.h"
+#include "math/pi.h"
 #include "math/Vector2.h"
 #include "math/Matrix3.h"
-#include "math/Matrix4.h"
 
 // Constructor with empty arguments
 TextureMatrix::TextureMatrix()
@@ -126,26 +126,6 @@ ShiftScaleRotation TextureMatrix::getShiftScaleRotation() const
 void TextureMatrix::normalise(float width, float height) {
 	coords[0][2] = float_mod(coords[0][2], width);
 	coords[1][2] = float_mod(coords[1][2], height);
-}
-
-/* greebo: This returns the transformation matrix.
- * As the member variables already ARE the matrix
- * components, they are just copied into the right places.
- */
-Matrix4 TextureMatrix::getTransform() const
-{
-	// Initialise the return value with the identity matrix
-	Matrix4 transform = Matrix4::getIdentity();
-
-	// Just copy the member variables to the according matrix components
-	transform.xx() = coords[0][0];
-	transform.yx() = coords[0][1];
-	transform.tx() = coords[0][2];
-	transform.xy() = coords[1][0];
-	transform.yy() = coords[1][1];
-	transform.ty() = coords[1][2];
-
-	return transform;
 }
 
 Matrix3 TextureMatrix::getMatrix3() const

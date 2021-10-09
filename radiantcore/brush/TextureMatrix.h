@@ -2,7 +2,6 @@
 
 #include "TexDef.h"
 
-class Matrix4;
 class Matrix3;
 
 // Encapsulates the 2x3 matrix transforming world coordinates into texture space
@@ -74,12 +73,6 @@ public:
 	// All texture-projection translation (shift) values are congruent modulo the dimensions of the texture.
 	// This function normalises shift values to the smallest positive congruent values.
 	void normalise(float width, float height);
-
-	/* greebo: This returns the transformation matrix.
-	 * As the member variables already ARE the matrix
-	 * components, they are just copied into the right places.
-	 */
-	Matrix4 getTransform() const;
 
     // Returns the Matrix3 form of this instance
     Matrix3 getMatrix3() const;
