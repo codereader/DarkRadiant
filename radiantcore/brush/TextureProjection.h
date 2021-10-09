@@ -38,9 +38,7 @@ public:
     const TextureMatrix& getTextureMatrix() const;
     TextureMatrix& getTextureMatrix();
 
-    static TextureMatrix GetDefaultProjection();
-
-    void assign(const TextureProjection& other);
+    TextureProjection& operator=(const TextureProjection& other);
 
     void setTransform(const Matrix3& transform);
     void setFromShiftScaleRotate(const ShiftScaleRotation& ssr);
@@ -69,6 +67,8 @@ public:
     void calculateFromPoints(const Vector3 points[3], const Vector2 uvs[3], const Vector3& normal);
 
 private:
+    static TextureMatrix Default();
+
     Matrix4 getMatrix4() const;
     void setTransformFromMatrix4(const Matrix4& transform);
 

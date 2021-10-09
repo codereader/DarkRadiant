@@ -35,10 +35,13 @@
 class TextureMatrix final
 {
 private:
-	double coords[2][3];
+	double _coords[2][3];
 
 public:
 	TextureMatrix();
+
+    TextureMatrix(const TextureMatrix& other) = default;
+    TextureMatrix& operator=(const TextureMatrix& other) = default;
 
     // Copy-construct from the relevant components from the given transform 
     // (which is everything except the last row: xz() and yz() are 0, zz() is 1)
@@ -75,7 +78,7 @@ public:
 
 inline std::ostream& operator<<(std::ostream& st, const TextureMatrix& texdef)
 {
-	st << "<" << texdef.coords[0][0] << ", " << texdef.coords[0][1] << ", " << texdef.coords[0][2] << ">\n";
-	st << "<" << texdef.coords[1][0] << ", " << texdef.coords[1][1] << ", " << texdef.coords[1][2] << ">";
+	st << "<" << texdef._coords[0][0] << ", " << texdef._coords[0][1] << ", " << texdef._coords[0][2] << ">\n";
+	st << "<" << texdef._coords[1][0] << ", " << texdef._coords[1][1] << ", " << texdef._coords[1][2] << ">";
 	return st;
 }

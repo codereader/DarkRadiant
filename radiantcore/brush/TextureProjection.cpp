@@ -6,7 +6,7 @@
 #include <limits>
 
 TextureProjection::TextureProjection() :
-    TextureProjection(GetDefaultProjection())
+    TextureProjection(Default())
 {}
 
 TextureProjection::TextureProjection(const TextureProjection& other) :
@@ -27,7 +27,7 @@ TextureMatrix& TextureProjection::getTextureMatrix()
     return _matrix;
 }
 
-TextureMatrix TextureProjection::GetDefaultProjection()
+TextureMatrix TextureProjection::Default()
 {
     // Cache the registry key because this constructor is called a lot
     static registry::CachedKey<float> scaleKey(
@@ -42,10 +42,10 @@ TextureMatrix TextureProjection::GetDefaultProjection()
     return TextureMatrix(ssr);
 }
 
-// Assigns an <other> projection to this one
-void TextureProjection::assign(const TextureProjection& other)
+TextureProjection& TextureProjection::operator=(const TextureProjection& other)
 {
     _matrix = other._matrix;
+    return *this;
 }
 
 void TextureProjection::setTransform(const Matrix3& transform)
@@ -102,7 +102,7 @@ void TextureProjection::fitTexture(std::size_t width, std::size_t height,
     }
 
     // Sanity-check the matrix, if it contains any NaNs or INFs we fall back to the default projection (#5371)
-    Matrix4 st2tex = _matrix.isSane() ? getMatrix4() : getMatrix4FromTextureMatrix(GetDefaultProjection().getMatrix3());
+    Matrix4 st2tex = _matrix.isSane() ? getMatrix4() : getMatrix4FromTextureMatrix(Default().getMatrix3());
 
     // the current texture transform
     Matrix4 local2tex = st2tex;

@@ -7,22 +7,22 @@
 
 TextureMatrix::TextureMatrix()
 {
-	coords[0][0] = 2.0f;
-	coords[0][1] = 0.f;
-	coords[0][2] = 0.f;
-	coords[1][0] = 0.f;
-	coords[1][1] = 2.0f;
-	coords[1][2] = 0.f;
+	_coords[0][0] = 2.0f;
+	_coords[0][1] = 0.f;
+	_coords[0][2] = 0.f;
+	_coords[1][0] = 0.f;
+	_coords[1][1] = 2.0f;
+	_coords[1][2] = 0.f;
 }
 
 TextureMatrix::TextureMatrix(const Matrix3& transform)
 {
-    coords[0][0] = transform.xx();
-    coords[0][1] = transform.yx();
-    coords[0][2] = transform.zx();
-    coords[1][0] = transform.xy();
-    coords[1][1] = transform.yy();
-    coords[1][2] = transform.zy();
+    _coords[0][0] = transform.xx();
+    _coords[0][1] = transform.yx();
+    _coords[0][2] = transform.zx();
+    _coords[1][0] = transform.xy();
+    _coords[1][1] = transform.yy();
+    _coords[1][2] = transform.zy();
 }
 
 TextureMatrix::TextureMatrix(const ShiftScaleRotation& ssr)
@@ -34,12 +34,12 @@ TextureMatrix::TextureMatrix(const ShiftScaleRotation& ssr)
 	auto x = 1.0 / ssr.scale[0];
 	auto y = 1.0 / ssr.scale[1];
 
-	coords[0][0] = x * c;
-	coords[1][0] = x * s;
-	coords[0][1] = y * -s;
-	coords[1][1] = y * c;
-	coords[0][2] = -ssr.shift[0];
-	coords[1][2] = ssr.shift[1];
+	_coords[0][0] = x * c;
+	_coords[1][0] = x * s;
+	_coords[0][1] = y * -s;
+	_coords[1][1] = y * c;
+	_coords[0][2] = -ssr.shift[0];
+	_coords[1][2] = ssr.shift[1];
 }
 
 void TextureMatrix::shift(double s, double t)
@@ -48,34 +48,34 @@ void TextureMatrix::shift(double s, double t)
 	// this depends on the texture size and the pixel/texel ratio
 	// as a ratio against texture size
 	// the scale of the texture is not relevant here (we work directly on a transformation from the base vectors)
-	coords[0][2] -= s;
-	coords[1][2] += t;
+	_coords[0][2] -= s;
+	_coords[1][2] += t;
 }
 
 void TextureMatrix::addScale(std::size_t width, std::size_t height)
 {
-	coords[0][0] /= width;
-	coords[0][1] /= width;
-	coords[0][2] /= width;
-	coords[1][0] /= height;
-	coords[1][1] /= height;
-	coords[1][2] /= height;
+	_coords[0][0] /= width;
+	_coords[0][1] /= width;
+	_coords[0][2] /= width;
+	_coords[1][0] /= height;
+	_coords[1][1] /= height;
+	_coords[1][2] /= height;
 }
 
 ShiftScaleRotation TextureMatrix::getShiftScaleRotation() const
 {
 	ShiftScaleRotation ssr;
 
-	ssr.scale[0] = 1.0 / Vector2(coords[0][0], coords[1][0]).getLength();
-	ssr.scale[1] = 1.0 / Vector2(coords[0][1], coords[1][1]).getLength();
+	ssr.scale[0] = 1.0 / Vector2(_coords[0][0], _coords[1][0]).getLength();
+	ssr.scale[1] = 1.0 / Vector2(_coords[0][1], _coords[1][1]).getLength();
 
-	ssr.rotate = -radians_to_degrees(arctangent_yx(coords[1][0], coords[0][0]));
+	ssr.rotate = -radians_to_degrees(arctangent_yx(_coords[1][0], _coords[0][0]));
 
-	ssr.shift[0] = -coords[0][2];
-	ssr.shift[1] = coords[1][2];
+	ssr.shift[0] = -_coords[0][2];
+	ssr.shift[1] = _coords[1][2];
 
 	// determine whether or not an axis is flipped using a 2d cross-product
-	auto cross = Vector2(coords[0][0], coords[0][1]).crossProduct(Vector2(coords[1][0], coords[1][1]));
+	auto cross = Vector2(_coords[0][0], _coords[0][1]).crossProduct(Vector2(_coords[1][0], _coords[1][1]));
 
 	if (cross < 0)
 	{
@@ -99,25 +99,25 @@ ShiftScaleRotation TextureMatrix::getShiftScaleRotation() const
 
 void TextureMatrix::normalise(float width, float height)
 {
-	coords[0][2] = float_mod(coords[0][2], width);
-	coords[1][2] = float_mod(coords[1][2], height);
+	_coords[0][2] = float_mod(_coords[0][2], width);
+	_coords[1][2] = float_mod(_coords[1][2], height);
 }
 
 Matrix3 TextureMatrix::getMatrix3() const
 {
     return Matrix3::byRows(
-        coords[0][0], coords[0][1], coords[0][2],
-        coords[1][0], coords[1][1], coords[1][2],
+        _coords[0][0], _coords[0][1], _coords[0][2],
+        _coords[1][0], _coords[1][1], _coords[1][2],
         0, 0, 1
     );
 }
 
 bool TextureMatrix::isSane() const
 {
-    return !std::isnan(coords[0][0]) && !std::isinf(coords[0][0]) &&
-           !std::isnan(coords[0][1]) && !std::isinf(coords[0][1]) &&
-           !std::isnan(coords[0][2]) && !std::isinf(coords[0][2]) &&
-           !std::isnan(coords[1][0]) && !std::isinf(coords[1][0]) &&
-           !std::isnan(coords[1][1]) && !std::isinf(coords[1][1]) &&
-           !std::isnan(coords[1][2]) && !std::isinf(coords[1][2]);
+    return !std::isnan(_coords[0][0]) && !std::isinf(_coords[0][0]) &&
+           !std::isnan(_coords[0][1]) && !std::isinf(_coords[0][1]) &&
+           !std::isnan(_coords[0][2]) && !std::isinf(_coords[0][2]) &&
+           !std::isnan(_coords[1][0]) && !std::isinf(_coords[1][0]) &&
+           !std::isnan(_coords[1][1]) && !std::isinf(_coords[1][1]) &&
+           !std::isnan(_coords[1][2]) && !std::isinf(_coords[1][2]);
 }

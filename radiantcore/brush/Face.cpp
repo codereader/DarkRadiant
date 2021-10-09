@@ -16,7 +16,7 @@
 #include "BrushModule.h"
 
 // The structure that is saved in the undostack
-class Face::SavedState :
+class Face::SavedState final :
     public IUndoMemento
 {
 public:
@@ -29,15 +29,6 @@ public:
         _texdefState(face.getProjection()),
         _materialName(face.getShader())
     {}
-
-    virtual ~SavedState() {}
-
-    void exportState(Face& face) const
-    {
-        _planeState.exportState(face.getPlane());
-        face.setShader(_materialName);
-        face.getProjection().assign(_texdefState);
-    }
 };
 
 Face::Face(Brush& owner) :
@@ -184,14 +175,18 @@ void Face::undoSave()
 // undoable
 IUndoMementoPtr Face::exportState() const
 {
-    return IUndoMementoPtr(new SavedState(*this));
+    return std::make_shared<SavedState>(*this);
 }
 
 void Face::importState(const IUndoMementoPtr& data)
 {
     undoSave();
 
-    std::static_pointer_cast<SavedState>(data)->exportState(*this);
+    auto state = std::static_pointer_cast<SavedState>(data);
+
+    state->_planeState.exportState(getPlane());
+    setShader(state->_materialName);
+    _texdef = state->_texdefState;
 
     planeChanged();
     _owner.onFaceConnectivityChanged();
@@ -464,7 +459,7 @@ void Face::GetTexdef(TextureProjection& projection) const
 void Face::SetTexdef(const TextureProjection& projection)
 {
     undoSave();
-    _texdef.assign(projection);
+    _texdef = projection;
     texdefChanged();
 }
 
