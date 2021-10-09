@@ -9,14 +9,15 @@
 #include "TextureMatrix.h"
 #include "selection/algorithm/Shader.h"
 
-/* greebo: A texture projection houses the 6 floating points
-   necessary to project world coords to texture space.
+/**
+ * The TextureProjection type contains the TextureMatrix (the six
+ * components necessary to produce UV coords from winding vertices)
+ * next to a couple of projection algorithms.
  */
 class TextureProjection
 {
 private:
     TextureMatrix _matrix;
-    friend class Face;
 
 public:
     /**
@@ -34,6 +35,9 @@ public:
     // Construct using an existing texture matrix
     TextureProjection(const TextureMatrix& otherMatrix);
 
+    const TextureMatrix& getTextureMatrix() const;
+    TextureMatrix& getTextureMatrix();
+
     static TextureMatrix GetDefaultProjection();
 
     void assign(const TextureProjection& other);
@@ -47,7 +51,6 @@ public:
 	// s and t are texture coordinates, not pixels
     void shift(double s, double t);
 
-public:
     // Fits a texture to a brush face
     void fitTexture(std::size_t width, std::size_t height, const Vector3& normal, const Winding& w, float s_repeat, float t_repeat);
 

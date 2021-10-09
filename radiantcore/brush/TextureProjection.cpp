@@ -17,6 +17,16 @@ TextureProjection::TextureProjection(const TextureMatrix& otherMatrix) :
     _matrix(otherMatrix)
 {}
 
+const TextureMatrix& TextureProjection::getTextureMatrix() const
+{
+    return _matrix;
+}
+
+TextureMatrix& TextureProjection::getTextureMatrix()
+{
+    return _matrix;
+}
+
 TextureMatrix TextureProjection::GetDefaultProjection()
 {
     // Cache the registry key because this constructor is called a lot

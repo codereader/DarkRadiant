@@ -480,19 +480,19 @@ void Face::setTexdef(const TexDef& texDef)
     auto width = static_cast<double>(_shader.getWidth());
     auto height = static_cast<double>(_shader.getHeight());
 
-    projection._matrix.coords[0][0] /= width;
-    projection._matrix.coords[0][1] /= width;
-    projection._matrix.coords[0][2] /= width;
-    projection._matrix.coords[1][0] /= height;
-    projection._matrix.coords[1][1] /= height;
-    projection._matrix.coords[1][2] /= height;
+    projection.getTextureMatrix().coords[0][0] /= width;
+    projection.getTextureMatrix().coords[0][1] /= width;
+    projection.getTextureMatrix().coords[0][2] /= width;
+    projection.getTextureMatrix().coords[1][0] /= height;
+    projection.getTextureMatrix().coords[1][1] /= height;
+    projection.getTextureMatrix().coords[1][2] /= height;
 
     SetTexdef(projection);
 }
 
 ShiftScaleRotation Face::getShiftScaleRotation() const
 {
-    auto texdef = _texdef._matrix.getFakeTexCoords();
+    auto texdef = _texdef.getTextureMatrix().getFakeTexCoords();
     auto ssr = texdef.toShiftScaleRotation();
 
     // These values are going to show up in the Surface Inspector, so
@@ -708,7 +708,7 @@ void Face::emitTextureCoordinates()
 
 void Face::applyDefaultTextureScale()
 {
-    _texdef._matrix.addScale(_shader.getWidth(), _shader.getHeight());
+    _texdef.getTextureMatrix().addScale(_shader.getWidth(), _shader.getHeight());
     texdefChanged();
 }
 
