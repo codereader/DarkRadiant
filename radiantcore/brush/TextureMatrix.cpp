@@ -5,7 +5,6 @@
 #include "math/Vector2.h"
 #include "math/Matrix3.h"
 
-// Constructor with empty arguments
 TextureMatrix::TextureMatrix()
 {
 	coords[0][0] = 2.0f;
@@ -26,7 +25,6 @@ TextureMatrix::TextureMatrix(const Matrix3& transform)
     coords[1][2] = transform.zy();
 }
 
-// Construct a TextureMatrix out of "fake" shift scale rot definitions
 TextureMatrix::TextureMatrix(const TexDef& texdef)
 {
 	auto r = degrees_to_radians(-texdef.getRotation());
@@ -46,7 +44,6 @@ TextureMatrix::TextureMatrix(const TexDef& texdef)
 	coords[1][2] = shift[1];
 }
 
-// shift a texture (texture adjustments) along it's current texture axes
 void TextureMatrix::shift(double s, double t)
 {
 	// x and y are geometric values, which we must compute as ST increments
@@ -57,27 +54,8 @@ void TextureMatrix::shift(double s, double t)
 	coords[1][2] += t;
 }
 
-/* greebo: This removes the texture scaling from the
- * coordinates. The resulting coordinates are absolute
- * values within the shader image.
- *
- * An 128x256 texture with scaled coordinates 0.5,0.5
- * would be translated into the coordinates 64,128,
- * pointing to a defined pixel within the texture image.
- */
-void TextureMatrix::applyShaderDimensions(std::size_t width, std::size_t height) {
-	coords[0][0] *= width;
-	coords[0][1] *= width;
-	coords[0][2] *= width;
-	coords[1][0] *= height;
-	coords[1][1] *= height;
-	coords[1][2] *= height;
-}
-
-/* greebo: this converts absolute coordinates into
- * relative ones, where everything is measured
- * in multiples of the texture x/y dimensions. */
-void TextureMatrix::addScale(std::size_t width, std::size_t height) {
+void TextureMatrix::addScale(std::size_t width, std::size_t height)
+{
 	coords[0][0] /= width;
 	coords[0][1] /= width;
 	coords[0][2] /= width;
@@ -121,9 +99,8 @@ ShiftScaleRotation TextureMatrix::getShiftScaleRotation() const
 	return ssr;
 }
 
-// All texture-projection translation (shift) values are congruent modulo the dimensions of the texture.
-// This function normalises shift values to the smallest positive congruent values.
-void TextureMatrix::normalise(float width, float height) {
+void TextureMatrix::normalise(float width, float height)
+{
 	coords[0][2] = float_mod(coords[0][2], width);
 	coords[1][2] = float_mod(coords[1][2], height);
 }

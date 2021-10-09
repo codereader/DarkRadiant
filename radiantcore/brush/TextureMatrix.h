@@ -32,7 +32,7 @@ class Matrix3;
 // texdef defined in a Q3 map file will never look the same in idTech4 engines when placed on
 // angled brush faces - there will always be a stretch in some direction, which the D3 engine
 // completely works around by using the actual face normal - no stretching.
-class TextureMatrix
+class TextureMatrix final
 {
 private:
 	double coords[2][3];
@@ -49,16 +49,6 @@ public:
 
 	// shift a texture (texture adjustments) along it's current texture axes
 	void shift(double s, double t);
-
-	/* greebo: This removes the texture scaling from the
-	 * coordinates. The resulting coordinates are absolute
-	 * values within the shader image.
-	 *
-	 * An 128x256 texture with scaled coordinates 0.5,0.5
-	 * would be translated into the coordinates 64,128,
-	 * pointing to a defined pixel within the texture image.
-	 */
-	void applyShaderDimensions(std::size_t width, std::size_t height);
 
 	/* greebo: this converts absolute coordinates into
 	 * relative ones, where everything is measured

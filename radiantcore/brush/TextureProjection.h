@@ -14,7 +14,7 @@
  * components necessary to produce UV coords from winding vertices)
  * next to a couple of projection algorithms.
  */
-class TextureProjection
+class TextureProjection final
 {
 private:
     TextureMatrix _matrix;
