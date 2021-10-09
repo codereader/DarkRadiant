@@ -54,7 +54,6 @@ public:
 	static TexDef CreateFromShiftScaleRotation(const ShiftScaleRotation& scr);
 
 	friend std::ostream& operator<<(std::ostream& st, const TexDef& texdef);
-	friend struct TextureMatrix; // for TextureMatrix::getFakeTexCoords
 };
 
 inline std::ostream& operator<<(std::ostream& st, const TexDef& texdef)

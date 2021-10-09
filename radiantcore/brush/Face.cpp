@@ -476,23 +476,14 @@ void Face::setTexdef(const TexDef& texDef)
     projection.setFromTexDef(texDef);
 
     // The bprimitive texdef needs to be scaled using our current texture dims
-    auto width = static_cast<double>(_shader.getWidth());
-    auto height = static_cast<double>(_shader.getHeight());
-
-    projection.getTextureMatrix().coords[0][0] /= width;
-    projection.getTextureMatrix().coords[0][1] /= width;
-    projection.getTextureMatrix().coords[0][2] /= width;
-    projection.getTextureMatrix().coords[1][0] /= height;
-    projection.getTextureMatrix().coords[1][1] /= height;
-    projection.getTextureMatrix().coords[1][2] /= height;
+    projection.getTextureMatrix().addScale(_shader.getWidth(), _shader.getHeight());
 
     SetTexdef(projection);
 }
 
 ShiftScaleRotation Face::getShiftScaleRotation() const
 {
-    auto texdef = _texdef.getTextureMatrix().getFakeTexCoords();
-    auto ssr = texdef.toShiftScaleRotation();
+    auto ssr = _texdef.getTextureMatrix().getShiftScaleRotation();
 
     // These values are going to show up in the Surface Inspector, so
     // we need to make some adjustments:

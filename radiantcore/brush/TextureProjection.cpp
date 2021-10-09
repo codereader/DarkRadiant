@@ -63,15 +63,7 @@ void TextureProjection::setTransform(const Matrix3& transform)
 
 void TextureProjection::setTransformFromMatrix4(const Matrix4& transform)
 {
-    // Check the matrix for validity
-    if ((transform[0] != 0 || transform[4] != 0) && (transform[1] != 0 || transform[5] != 0))
-    {
-        _matrix = TextureMatrix(transform);
-    }
-    else
-    {
-        rError() << "invalid texture matrix" << std::endl;
-    }
+    setTransform(getTextureMatrixFromMatrix4(transform));
 }
 
 void TextureProjection::setFromTexDef(const TexDef& texDef)
