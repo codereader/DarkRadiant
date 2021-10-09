@@ -293,8 +293,8 @@ void SurfaceInspector::populateWindow()
 	wxStaticText* topLabel = new wxStaticText(this, wxID_ANY, _(LABEL_PROPERTIES));
 	topLabel->SetFont(topLabel->GetFont().Bold());
 
-	// 6x2 table with 12 pixel hspacing and 6 pixels vspacing
-	wxFlexGridSizer* table = new wxFlexGridSizer(6, 2, 6, 12);
+	// 7x2 table with 12 pixel hspacing and 6 pixels vspacing
+	auto table = new wxFlexGridSizer(7, 2, 6, 12);
 	table->AddGrowableCol(1);
 
 	// Create the entry field and pack it into the first table row
@@ -331,6 +331,25 @@ void SurfaceInspector::populateWindow()
 	_manipulators[HSHIFT] = createManipulatorRow(this, _(LABEL_HSHIFT), table);
 	_manipulators[VSHIFT] = createManipulatorRow(this, _(LABEL_VSHIFT), table);
 	_manipulators[HSCALE] = createManipulatorRow(this, _(LABEL_HSCALE), table);
+
+    // Scale link widgets
+    table->AddSpacer(1); // instead of a label
+
+    auto scaleLinkSizer = new wxBoxSizer(wxHORIZONTAL);
+
+    _useHorizScale = new wxBitmapButton(this, wxID_ANY, wxutil::GetLocalBitmap("arrow_down_blue.png"));
+    _useHorizScale->SetToolTip(_("Assign horizontal scale to vertical scale"));
+    scaleLinkSizer->Add(_useHorizScale, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 24);
+
+    _useVertScale = new wxBitmapButton(this, wxID_ANY, wxutil::GetLocalBitmap("arrow_up_blue.png"));
+    _useVertScale->SetToolTip(_("Assign vertical scale to horizontal scale"));
+    scaleLinkSizer->Add(_useVertScale, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
+
+    _useHorizScale->Bind(wxEVT_BUTTON, [&](wxCommandEvent& ev) { onHarmoniseScale(true); });
+    _useVertScale->Bind(wxEVT_BUTTON, [&](wxCommandEvent& ev) { onHarmoniseScale(false); });
+
+    table->Add(scaleLinkSizer, 1, wxEXPAND);
+
 	_manipulators[VSCALE] = createManipulatorRow(this, _(LABEL_VSCALE), table);
 	_manipulators[ROTATION] = createManipulatorRow(this, _(LABEL_ROTATION), table);
 
@@ -501,6 +520,25 @@ SurfaceInspector& SurfaceInspector::Instance()
 	return *instancePtr;
 }
 
+void SurfaceInspector::onHarmoniseScale(bool useHorizontal)
+{
+    auto horizValue = _manipulators[HSCALE].value->GetValue();
+    auto vertValue = _manipulators[VSCALE].value->GetValue();
+
+    if (horizValue == vertValue) return; // nothing to do
+
+    if (useHorizontal)
+    {
+        _manipulators[VSCALE].value->SetValue(horizValue);
+    }
+    else
+    {
+        _manipulators[HSCALE].value->SetValue(vertValue);
+    }
+
+    emitTexDef();
+}
+
 void SurfaceInspector::emitShader()
 {
 	// Apply it to the selection
@@ -589,6 +627,9 @@ void SurfaceInspector::doUpdate()
 	_manipulators[HSCALE].value->Enable(valueSensitivity);
 	_manipulators[VSCALE].value->Enable(valueSensitivity);
 	_manipulators[ROTATION].value->Enable(valueSensitivity);
+
+    _useHorizScale->Enable(valueSensitivity);
+    _useVertScale->Enable(valueSensitivity);
 
 	// The fit widget sensitivity
     _fitTexture.enable(haveSelection);

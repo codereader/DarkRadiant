@@ -92,6 +92,8 @@ class SurfaceInspector :
 
 	wxSpinCtrlDouble* _defaultTexScale;
 	wxToggleButton* _texLockButton;
+    wxButton* _useHorizScale;
+    wxButton* _useVertScale;
 
 	// To avoid key changed loopbacks when the registry is updated
 	bool _callbackActive;
@@ -182,6 +184,8 @@ private:
 	void onIdle(wxIdleEvent& ev);
 
 	void handleTextureChangedMessage(radiant::TextureChangedMessage& msg);
+
+    void onHarmoniseScale(bool useHorizontal);
 
 }; // class SurfaceInspector
 
