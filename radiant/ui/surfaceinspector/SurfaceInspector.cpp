@@ -196,12 +196,36 @@ void SurfaceInspector::connectEvents()
 	wxutil::button::connectToCommand(_manipulators[HSHIFT].larger, "TexShiftRight");
 	wxutil::button::connectToCommand(_manipulators[VSHIFT].larger, "TexShiftUp");
 	wxutil::button::connectToCommand(_manipulators[VSHIFT].smaller, "TexShiftDown");
-	wxutil::button::connectToCommand(_manipulators[HSCALE].smaller, "TexScaleRight");
-	wxutil::button::connectToCommand(_manipulators[HSCALE].larger, "TexScaleLeft");
-	wxutil::button::connectToCommand(_manipulators[VSCALE].larger, "TexScaleDown");
-	wxutil::button::connectToCommand(_manipulators[VSCALE].smaller, "TexScaleUp");
+
+    _manipulators[HSCALE].smaller->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { onScale(HSCALE, false); });
+    _manipulators[HSCALE].larger->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { onScale(HSCALE, true); });
+    _manipulators[VSCALE].smaller->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { onScale(VSCALE, false); });
+    _manipulators[VSCALE].larger->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { onScale(VSCALE, true); });
+
 	wxutil::button::connectToCommand(_manipulators[ROTATION].larger, "TexRotateCounter");
 	wxutil::button::connectToCommand(_manipulators[ROTATION].smaller, "TexRotateClock");
+}
+
+void SurfaceInspector::onScale(const std::string& scaleId, bool larger)
+{
+    if (_scaleLinkToggle->GetValue())
+    {
+        auto scaleValue = string::convert<float>(_manipulators[HSCALE].stepEntry->GetValue().ToStdString());
+        scaleValue *= larger ? -1 : 1;
+
+        GlobalCommandSystem().executeCommand("TexScale", Vector2(scaleValue, scaleValue));
+    }
+    else
+    {
+        if (scaleId == HSCALE)
+        {
+            GlobalCommandSystem().executeCommand(larger ? "TexScaleLeft" : "TexScaleRight");
+        }
+        else
+        {
+            GlobalCommandSystem().executeCommand(larger ? "TexScaleUp" : "TexScaleDown");
+        }
+    }
 }
 
 void SurfaceInspector::keyChanged()
@@ -347,6 +371,13 @@ void SurfaceInspector::populateWindow()
 
     _useHorizScale->Bind(wxEVT_BUTTON, [&](wxCommandEvent& ev) { onHarmoniseScale(true); });
     _useVertScale->Bind(wxEVT_BUTTON, [&](wxCommandEvent& ev) { onHarmoniseScale(false); });
+
+    auto linkToggle = new wxBitmapToggleButton(this, wxID_ANY, wxutil::GetLocalBitmap("link_inactive.png"));
+    linkToggle->SetBitmapSelected(wxutil::GetLocalBitmap("link_active.png"));
+    linkToggle->SetToolTip(_("Linked Scaling: when active, scale changes will affect horizontal and vertical values proportionally"));
+    linkToggle->SetMaxClientSize(wxSize(35, -1));
+    _scaleLinkToggle = linkToggle;
+    scaleLinkSizer->Add(_scaleLinkToggle, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 24);
 
     table->Add(scaleLinkSizer, 1, wxEXPAND);
 
@@ -631,8 +662,10 @@ void SurfaceInspector::doUpdate()
     _useHorizScale->Enable(valueSensitivity);
     _useVertScale->Enable(valueSensitivity);
 
-	// The fit widget sensitivity
+    // The fit widget sensitivity
     _fitTexture.enable(haveSelection);
+
+    _scaleLinkToggle->Enable(haveSelection);
 
 	// The align texture widget sensitivity
 	_alignTexture.bottom->Enable(haveSelection);
