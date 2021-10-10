@@ -15,6 +15,7 @@
 #include "itextstream.h"
 
 #include "registry/adaptors.h"
+#include "registry/Widgets.h"
 #include "wxutil/GLWidget.h"
 #include "selection/Device.h"
 #include "selection/SelectionVolume.h"
@@ -38,6 +39,9 @@ namespace
 	const std::string RKEY_WINDOW_STATE = RKEY_TEXTOOL_ROOT + "window";
 	const std::string RKEY_GRID_STATE = RKEY_TEXTOOL_ROOT + "gridActive";
     const char* const RKEY_SELECT_EPSILON = "user/ui/selectionEpsilon";
+
+    const std::string RKEY_HSCALE_FACTOR = RKEY_TEXTOOL_ROOT + "horizontalScaleFactor";
+    const std::string RKEY_VSCALE_FACTOR = RKEY_TEXTOOL_ROOT + "verticalScaleFactor";
 
 	constexpr const float ZOOM_MODIFIER = 1.25f;
 }
@@ -131,10 +135,16 @@ wxWindow* TexTool::createManipulationPanel()
     makeLabelBold(panel, "ShiftLabel");
     makeLabelBold(panel, "ScaleLabel");
 
-    findNamedObject<wxButton>(panel, "ScaleHorizSmallerButton")->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { onScaleSelected("down"); });
-    findNamedObject<wxButton>(panel, "ScaleHorizLargerButton")->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { onScaleSelected("up"); });
-    findNamedObject<wxButton>(panel, "ScaleVertSmallerButton")->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { onScaleSelected("left"); });
-    findNamedObject<wxButton>(panel, "ScaleVertLargerButton")->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { onScaleSelected("right"); });
+    findNamedObject<wxButton>(panel, "ScaleHorizSmallerButton")->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { onScaleSelected("left"); });
+    findNamedObject<wxButton>(panel, "ScaleHorizLargerButton")->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { onScaleSelected("right"); });
+    findNamedObject<wxButton>(panel, "ScaleVertSmallerButton")->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { onScaleSelected("down"); });
+    findNamedObject<wxButton>(panel, "ScaleVertLargerButton")->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { onScaleSelected("up"); });
+
+    convertToSpinCtrlDouble(panel, "HorizScaleFactor", 0.1, 1000, 0.5, 1);
+    convertToSpinCtrlDouble(panel, "VertScaleFactor", 0.1, 1000, 0.5, 1);
+
+    registry::bindWidget(findNamedObject<wxSpinCtrlDouble>(panel, "HorizScaleFactor"), RKEY_HSCALE_FACTOR);
+    registry::bindWidget(findNamedObject<wxSpinCtrlDouble>(panel, "VertScaleFactor"), RKEY_VSCALE_FACTOR);
 
     return panel;
 }
@@ -966,22 +976,22 @@ void TexTool::onScaleSelected(const std::string& direction)
 
     if (direction == "up")
     {
-        auto factor = string::convert<double>(findNamedObject<wxTextCtrl>(this, "VertScaleFactor")->GetValue().ToStdString());
+        auto factor = findNamedObject<wxSpinCtrlDouble>(this, "VertScaleFactor")->GetValue();
         scale = Vector2(1, 1 + factor/100);
     }
     else if (direction == "down")
     {
-        auto factor = string::convert<double>(findNamedObject<wxTextCtrl>(this, "VertScaleFactor")->GetValue().ToStdString());
+        auto factor = findNamedObject<wxSpinCtrlDouble>(this, "VertScaleFactor")->GetValue();
         scale = Vector2(1, 1 / (1 + factor / 100));
     }
     else if (direction == "left")
     {
-        auto factor = string::convert<double>(findNamedObject<wxTextCtrl>(this, "HorizScaleFactor")->GetValue().ToStdString());
+        auto factor = findNamedObject<wxSpinCtrlDouble>(this, "HorizScaleFactor")->GetValue();
         scale = Vector2(1 / (1 + factor / 100), 1);
     }
     else if (direction == "right")
     {
-        auto factor = string::convert<double>(findNamedObject<wxTextCtrl>(this, "HorizScaleFactor")->GetValue().ToStdString());
+        auto factor = findNamedObject<wxSpinCtrlDouble>(this, "HorizScaleFactor")->GetValue();
         scale = Vector2(1 + factor / 100, 1);
     }
 

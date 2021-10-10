@@ -21,23 +21,14 @@
 						</object>
 					</object>
 					<object class="sizeritem">
-						<option>0</option>
-						<flag>wxALIGN_CENTER</flag>
-						<border>0</border>
-						<object class="wxBitmapButton" name="ShiftUpButton">
-							<bitmap stock_id="darkradiant:arrow_up_blue.png" stock_client="">undefined.png</bitmap>
-							<default>0</default>
-						</object>
-					</object>
-					<object class="sizeritem">
 						<option>1</option>
-						<flag>wxALIGN_CENTER|wxBOTTOM|wxTOP</flag>
-						<border>3</border>
+						<flag>wxALIGN_CENTER|wxBOTTOM</flag>
+						<border>6</border>
 						<object class="wxBoxSizer">
 							<orient>wxHORIZONTAL</orient>
 							<object class="sizeritem">
 								<option>0</option>
-								<flag>wxALIGN_CENTER|wxBOTTOM</flag>
+								<flag>wxALIGN_CENTER_VERTICAL</flag>
 								<border>0</border>
 								<object class="wxBitmapButton" name="ShiftLeftButton">
 									<bitmap stock_id="darkradiant:arrow_left_blue.png" stock_client="">undefined.png</bitmap>
@@ -45,23 +36,40 @@
 								</object>
 							</object>
 							<object class="sizeritem">
+								<option>1</option>
+								<flag>wxALIGN_CENTER|wxLEFT|wxRIGHT</flag>
+								<border>3</border>
+								<object class="wxBoxSizer">
+									<orient>wxVERTICAL</orient>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxALIGN_CENTER</flag>
+										<border>0</border>
+										<object class="wxBitmapButton" name="ShiftUpButton">
+											<bitmap stock_id="darkradiant:arrow_up_blue.png" stock_client="">undefined.png</bitmap>
+											<default>0</default>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxALIGN_CENTER</flag>
+										<border>0</border>
+										<object class="wxBitmapButton" name="ShiftDownButton">
+											<bitmap stock_id="darkradiant:arrow_down_blue.png" stock_client="">undefined.png</bitmap>
+											<default>0</default>
+										</object>
+									</object>
+								</object>
+							</object>
+							<object class="sizeritem">
 								<option>0</option>
-								<flag>wxLEFT</flag>
-								<border>6</border>
+								<flag>wxALIGN_CENTER_VERTICAL</flag>
+								<border>0</border>
 								<object class="wxBitmapButton" name="ShiftRightButton">
 									<bitmap stock_id="darkradiant:arrow_right_blue.png" stock_client="">undefined.png</bitmap>
 									<default>0</default>
 								</object>
 							</object>
-						</object>
-					</object>
-					<object class="sizeritem">
-						<option>0</option>
-						<flag>wxALIGN_CENTER</flag>
-						<border>0</border>
-						<object class="wxBitmapButton" name="ShiftDownButton">
-							<bitmap stock_id="darkradiant:arrow_down_blue.png" stock_client="">undefined.png</bitmap>
-							<default>0</default>
 						</object>
 					</object>
 				</object>
@@ -117,11 +125,14 @@
 							</object>
 							<object class="sizeritem">
 								<option>0</option>
-								<flag>wxEXPAND|wxLEFT</flag>
+								<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
 								<border>6</border>
-								<object class="wxTextCtrl" name="HorizScaleFactor">
-									<size>40,-1</size>
-									<value></value>
+								<object class="wxSpinCtrl" name="HorizScaleFactor">
+									<style>wxSP_ARROW_KEYS</style>
+									<size>60,-1</size>
+									<value>0</value>
+									<min>1</min>
+									<max>999</max>
 								</object>
 							</object>
 							<object class="sizeritem">
@@ -146,7 +157,7 @@
 								<flag>wxALIGN_CENTER|wxBOTTOM</flag>
 								<border>0</border>
 								<object class="wxBitmapButton" name="ScaleVertSmallerButton">
-									<bitmap stock_id="darkradiant:arrow_left_blue.png" stock_client="">undefined.png</bitmap>
+									<bitmap stock_id="darkradiant:arrow_down_blue.png" stock_client="">undefined.png</bitmap>
 									<default>0</default>
 								</object>
 							</object>
@@ -155,17 +166,20 @@
 								<flag>wxLEFT</flag>
 								<border>6</border>
 								<object class="wxBitmapButton" name="ScaleVertLargerButton">
-									<bitmap stock_id="darkradiant:arrow_right_blue.png" stock_client="">undefined.png</bitmap>
+									<bitmap stock_id="darkradiant:arrow_up_blue.png" stock_client="">undefined.png</bitmap>
 									<default>0</default>
 								</object>
 							</object>
 							<object class="sizeritem">
 								<option>0</option>
-								<flag>wxEXPAND|wxLEFT</flag>
+								<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
 								<border>6</border>
-								<object class="wxTextCtrl" name="VertScaleFactor">
-									<size>40,-1</size>
-									<value></value>
+								<object class="wxSpinCtrl" name="VertScaleFactor">
+									<style>wxSP_ARROW_KEYS</style>
+									<size>60,-1</size>
+									<value>0</value>
+									<min>1</min>
+									<max>999</max>
 								</object>
 							</object>
 							<object class="sizeritem">
