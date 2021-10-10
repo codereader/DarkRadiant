@@ -51,6 +51,9 @@ void ModelTreeView::SetShowSkins(bool showSkins)
 
     SetupTreeModelFilter(); // refresh the view
 
+    // The modelDefs folder should start in collapsed state
+    CollapseModelDefsFolder();
+
     if (!previousSelection.empty())
     {
         SetSelectedFullname(previousSelection);
