@@ -23,7 +23,9 @@ StatusBarManager::StatusBarManager() :
 {
     _tempParent->SetName("StatusBarTemporaryParent");
 	_statusBar->SetName("Statusbar");
-
+#ifdef __WXMSW__
+    _statusBar->SetBackgroundColour(wxColour("#ABABAB"));
+#endif
 	_tempParent->Hide();
 
 	wxBoxSizer* sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -88,7 +90,7 @@ void StatusBarManager::addTextElement(const std::string& name, const std::string
 	// Get a free position
 	int freePos = getFreePosition(pos);
 
-	wxPanel* textPanel = new wxPanel(_statusBar, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS);
+	auto textPanel = new wxPanel(_statusBar, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS);
 	textPanel->SetSizer(new wxBoxSizer(wxHORIZONTAL));
 	textPanel->SetName("Statusbarconainer " + name);
 
@@ -99,12 +101,12 @@ void StatusBarManager::addTextElement(const std::string& name, const std::string
 
 	if (!icon.empty())
 	{
-		wxStaticBitmap* img = new wxStaticBitmap(textPanel, wxID_ANY, wxutil::GetLocalBitmap(icon));
-		textPanel->GetSizer()->Add(img, 0, wxEXPAND | wxALL, 1);
+		auto img = new wxStaticBitmap(textPanel, wxID_ANY, wxutil::GetLocalBitmap(icon));
+		textPanel->GetSizer()->Add(img, 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 2);
 	}
 
-	wxStaticText* label = new wxStaticText(textPanel, wxID_ANY, "");
-	textPanel->GetSizer()->Add(label, 1, wxEXPAND | wxALL, 1);
+	auto label = new wxStaticText(textPanel, wxID_ANY, "");
+	textPanel->GetSizer()->Add(label, 1, wxALIGN_CENTER_VERTICAL);
 
 	if (!description.empty())
 	{
@@ -219,19 +221,16 @@ void StatusBarManager::rebuildStatusBar()
 
 	for (PositionMap::const_iterator i = _positions.begin(); i != _positions.end(); ++i)
 	{
-		int flags = wxEXPAND | wxTOP | wxBOTTOM;
+		int flags = wxEXPAND | wxLEFT | wxRIGHT;
 
-		// The first and the last status bar widget get a left/right border
-		if (col == 0)
-		{
-			flags |= wxLEFT;
-		}
-		else if (col == _positions.size() - 1)
-		{
-			flags |= wxRIGHT;
-		}
+		// The first and the last status bar widget get a smaller left/right border
+        auto spacing = col == 0 || col == _positions.size() - 1 ? 6 : 24;
+      
+        // A few default elements don't need to use 1 as proportion
+        auto proportion = i->first == StandardPosition::MapStatistics || i->first == StandardPosition::GridSize ||
+            i->first == StandardPosition::MapEditStopwatch ? 0 : 1;
 
-		_statusBar->GetSizer()->Add(i->second->toplevel, 10, flags, 3);
+		_statusBar->GetSizer()->Add(i->second->toplevel, proportion, flags, spacing);
 
 		col++;
 	}
