@@ -587,7 +587,7 @@
                                         <property name="aui_row"></property>
                                         <property name="best_size"></property>
                                         <property name="bg"></property>
-                                        <property name="bitmap">Load From Art Provider; darkradiant:arrow_left_blue.png; </property>
+                                        <property name="bitmap">Load From Art Provider; darkradiant:hscale_down.png; </property>
                                         <property name="caption"></property>
                                         <property name="caption_visible">1</property>
                                         <property name="center_pane">0</property>
@@ -659,7 +659,7 @@
                                         <property name="aui_row"></property>
                                         <property name="best_size"></property>
                                         <property name="bg"></property>
-                                        <property name="bitmap">Load From Art Provider; darkradiant:arrow_right_blue.png; </property>
+                                        <property name="bitmap">Load From Art Provider; darkradiant:hscale_up.png; </property>
                                         <property name="caption"></property>
                                         <property name="caption_visible">1</property>
                                         <property name="center_pane">0</property>
@@ -865,7 +865,7 @@
                                         <property name="aui_row"></property>
                                         <property name="best_size"></property>
                                         <property name="bg"></property>
-                                        <property name="bitmap">Load From Art Provider; darkradiant:arrow_down_blue.png; </property>
+                                        <property name="bitmap">Load From Art Provider; darkradiant:vscale_down.png; </property>
                                         <property name="caption"></property>
                                         <property name="caption_visible">1</property>
                                         <property name="center_pane">0</property>
@@ -937,7 +937,7 @@
                                         <property name="aui_row"></property>
                                         <property name="best_size"></property>
                                         <property name="bg"></property>
-                                        <property name="bitmap">Load From Art Provider; darkradiant:arrow_up_blue.png; </property>
+                                        <property name="bitmap">Load From Art Provider; darkradiant:vscale_up.png; </property>
                                         <property name="caption"></property>
                                         <property name="caption_visible">1</property>
                                         <property name="center_pane">0</property>
