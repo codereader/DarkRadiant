@@ -64,11 +64,16 @@ MaterialsList::MaterialsList(wxWindow* parent, const RenderSystemPtr& renderSyst
     );
 }
 
+void MaterialsList::clear()
+{
+    _store->Clear();
+}
+
 void MaterialsList::updateFromModel(const model::IModel& model)
 {
-    // Add the list of active materials
-    _store->Clear();
+    clear();
 
+    // Add the list of active materials
     const auto& matList(model.getActiveMaterials());
 
     for (const auto& material : matList)

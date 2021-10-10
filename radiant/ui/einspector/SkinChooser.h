@@ -1,5 +1,7 @@
 #pragma once
 
+#include <sigc++/connection.h>
+#include "imodel.h"
 #include "modelskin.h"
 
 #include "iradiant.h"
@@ -9,6 +11,7 @@
 #include <string>
 
 #include "wxutil/dataview/TreeModel.h"
+#include "ui/modelselector/MaterialsList.h"
 
 namespace wxutil { class TreeView; }
 
@@ -47,6 +50,7 @@ private:
 	// Tree store, view and selection
 	wxutil::TreeModel::Ptr _treeStore;
 	wxutil::TreeView* _treeView;
+    MaterialsList* _materialsList;
 
 	// The model name to use for skin matching
 	std::string _model;
@@ -60,6 +64,8 @@ private:
 
     wxDataViewItem _allSkinsItem;
     wxDataViewItem _matchingSkinsItem;
+
+    sigc::connection _modelLoadedConn;
 
 private:
 	// Constructor creates widgets
@@ -85,9 +91,11 @@ private:
     void setSelectedSkin(const std::string& skin);
 
     void handleSelectionChange();
+    void updateMaterialsList();
 	void onMainFrameShuttingDown();
 
     void _onItemActivated( wxDataViewEvent& ev );
+    void _onPreviewModelLoaded(const model::ModelNodePtr& model);
 
 public:
 

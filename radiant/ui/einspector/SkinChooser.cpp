@@ -30,6 +30,7 @@ SkinChooser::SkinChooser() :
 	DialogBase(_(WINDOW_TITLE)),
 	_treeStore(new wxutil::TreeModel(_columns)),
 	_treeView(nullptr),
+    _materialsList(nullptr),
 	_lastSkin("")
 {
 	FitToScreen(0.6f, 0.6f);
@@ -72,8 +73,11 @@ void SkinChooser::populateWindow()
                                                       wxDefaultSize, wxSP_3D | wxSP_LIVE_UPDATE);
     splitter->SetMinimumPaneSize(10); // disallow unsplitting
 
+    auto leftPanel = new wxPanel(splitter, wxID_ANY);
+    leftPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
+
 	// Create the tree view
-    _treeView = wxutil::TreeView::CreateWithModel(splitter, _treeStore.get(), wxDV_NO_HEADER);
+    _treeView = wxutil::TreeView::CreateWithModel(leftPanel, _treeStore.get(), wxDV_NO_HEADER);
 	_treeView->SetMinClientSize(wxSize(GetSize().GetWidth() / 5, -1));
 	
 	// Single column to display the skin name
@@ -84,12 +88,23 @@ void SkinChooser::populateWindow()
 	// Connect up selection changed callback
 	_treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &SkinChooser::_onSelChanged, this);
 
-	// Preview
+    // Preview
     _preview.reset(new wxutil::ModelPreview(splitter));
 	_preview->getWidget()->SetMinClientSize(wxSize(GetSize().GetWidth() / 3, -1));
 
+    _materialsList = new MaterialsList(leftPanel, _preview->getRenderSystem());
+    _materialsList->SetMinClientSize(wxSize(-1, 140));
+
+    // Refresh preview when material visibility changed
+    _materialsList->signal_visibilityChanged().connect(
+        sigc::mem_fun(*_preview, &wxutil::ModelPreview::queueDraw)
+    );
+
+    leftPanel->GetSizer()->Add(_treeView, 1, wxEXPAND);
+    leftPanel->GetSizer()->Add(_materialsList, 0, wxEXPAND | wxTOP, 6);
+
 	// Pack treeview and preview
-    splitter->SplitVertically(_treeView, _preview->getWidget());
+    splitter->SplitVertically(leftPanel, _preview->getWidget());
 
     FitToScreen(0.6f, 0.8f);
 
@@ -110,6 +125,11 @@ int SkinChooser::ShowModal()
 	// Display the model in the window title
 	SetTitle(std::string(_(WINDOW_TITLE)) + ": " + _model);
 
+    // Models are lazy-loaded, subscribe to the preview's event
+    _modelLoadedConn.disconnect();
+    _modelLoadedConn = _preview->signal_ModelLoaded().connect(
+        sigc::mem_fun(this, &SkinChooser::_onPreviewModelLoaded));
+
     setSelectedSkin(_prevSkin);
 
 	int returnCode = DialogBase::ShowModal();
@@ -125,14 +145,19 @@ int SkinChooser::ShowModal()
 		_lastSkin = _prevSkin;
 	}
 
+    _modelLoadedConn.disconnect();
 	_preview->setModel(""); // release model
 
 	return returnCode;
 }
 
-void SkinChooser::_onItemActivated( wxDataViewEvent& ev ) {
+void SkinChooser::_onItemActivated(wxDataViewEvent& ev)
+{
+    // Don't respond to double clicks other than the skin tree view
+    if (ev.GetEventObject() != _treeView) return;
+
     _lastSkin = getSelectedSkin();
-    EndModal( wxID_OK );
+    EndModal(wxID_OK);
 }
 
 // Populate the list of skins
@@ -281,6 +306,27 @@ void SkinChooser::handleSelectionChange()
     // Set the model preview to show the model with the selected skin
     _preview->setModel(_model);
     _preview->setSkin(getSelectedSkin());
+
+    updateMaterialsList();
+}
+
+void SkinChooser::updateMaterialsList()
+{
+    // Update the material list
+    auto modelNode = Node_getModel(_preview->getModelNode());
+
+    if (!modelNode)
+    {
+        _materialsList->clear();
+        return;
+    }
+
+    _materialsList->updateFromModel(modelNode->getIModel());
+}
+
+void SkinChooser::_onPreviewModelLoaded(const model::ModelNodePtr& model)
+{
+    updateMaterialsList();
 }
 
 void SkinChooser::_onSelChanged(wxDataViewEvent& ev)

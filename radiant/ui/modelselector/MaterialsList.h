@@ -53,6 +53,8 @@ public:
     // Populate the table entries using the given model node
     void updateFromModel(const model::IModel& model);
 
+    void clear();
+
     /**
      * \brief
      * Signal emitted when material visibility has changed.
