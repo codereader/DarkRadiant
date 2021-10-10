@@ -145,7 +145,8 @@ private:
 	 * @returns: the structure containing the widget pointers.
 	 */
 	ManipulatorRow createManipulatorRow(wxWindow* parent,
-		const std::string& label, wxFlexGridSizer* table);
+		const std::string& label, wxFlexGridSizer* table, 
+        const std::string& bitmapSmaller, const std::string& bitmapLarger);
 
     // Widget construction
 	void populateWindow();

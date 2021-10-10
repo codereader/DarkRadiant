@@ -199,11 +199,11 @@ void SurfaceInspector::connectEvents()
 
     _manipulators[HSCALE].smaller->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { onScale(HSCALE, false); });
     _manipulators[HSCALE].larger->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { onScale(HSCALE, true); });
-    _manipulators[VSCALE].smaller->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { onScale(VSCALE, false); });
-    _manipulators[VSCALE].larger->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { onScale(VSCALE, true); });
+    _manipulators[VSCALE].smaller->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { onScale(VSCALE, true); });
+    _manipulators[VSCALE].larger->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { onScale(VSCALE, false); });
 
-	wxutil::button::connectToCommand(_manipulators[ROTATION].larger, "TexRotateCounter");
-	wxutil::button::connectToCommand(_manipulators[ROTATION].smaller, "TexRotateClock");
+	wxutil::button::connectToCommand(_manipulators[ROTATION].larger, "TexRotateClock");
+	wxutil::button::connectToCommand(_manipulators[ROTATION].smaller, "TexRotateCounter");
 }
 
 void SurfaceInspector::onScale(const std::string& scaleId, bool larger)
@@ -352,9 +352,9 @@ void SurfaceInspector::populateWindow()
 	dialogVBox->Add(table, 0, wxEXPAND | wxLEFT, 18); // 18 pixels left indentation
 
 	// Populate the table with the according widgets
-	_manipulators[HSHIFT] = createManipulatorRow(this, _(LABEL_HSHIFT), table);
-	_manipulators[VSHIFT] = createManipulatorRow(this, _(LABEL_VSHIFT), table);
-	_manipulators[HSCALE] = createManipulatorRow(this, _(LABEL_HSCALE), table);
+	_manipulators[HSHIFT] = createManipulatorRow(this, _(LABEL_HSHIFT), table, "arrow_left_blue.png", "arrow_right_blue.png");
+	_manipulators[VSHIFT] = createManipulatorRow(this, _(LABEL_VSHIFT), table, "arrow_down_blue.png", "arrow_up_blue.png");
+	_manipulators[HSCALE] = createManipulatorRow(this, _(LABEL_HSCALE), table, "hscale_down.png", "hscale_up.png");
 
     // Scale link widgets
     table->AddSpacer(1); // instead of a label
@@ -381,8 +381,8 @@ void SurfaceInspector::populateWindow()
 
     table->Add(scaleLinkSizer, 1, wxEXPAND);
 
-	_manipulators[VSCALE] = createManipulatorRow(this, _(LABEL_VSCALE), table);
-	_manipulators[ROTATION] = createManipulatorRow(this, _(LABEL_ROTATION), table);
+	_manipulators[VSCALE] = createManipulatorRow(this, _(LABEL_VSCALE), table, "vscale_down.png", "vscale_up.png");
+	_manipulators[ROTATION] = createManipulatorRow(this, _(LABEL_ROTATION), table, "rotate_cw.png", "rotate_ccw.png");
 
 	// ======================== Texture Operations ====================================
 
@@ -489,7 +489,8 @@ void SurfaceInspector::populateWindow()
 }
 
 SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
-	wxWindow* parent, const std::string& label, wxFlexGridSizer* table)
+	wxWindow* parent, const std::string& label, wxFlexGridSizer* table,
+    const std::string& bitmapSmaller, const std::string& bitmapLarger)
 {
 	ManipulatorRow manipRow;
 
@@ -505,12 +506,10 @@ SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
 
     // Create the nudge buttons
 	wxBoxSizer* controlButtonBox = new wxBoxSizer(wxHORIZONTAL);
-    manipRow.smaller = new wxutil::ControlButton(parent,
-        wxutil::GetLocalBitmap("decrease.png"));
+    manipRow.smaller = new wxutil::ControlButton(parent, wxutil::GetLocalBitmap(bitmapSmaller));
     controlButtonBox->Add(manipRow.smaller, 0, wxEXPAND);
     controlButtonBox->AddSpacer(2);
-    manipRow.larger = new wxutil::ControlButton(parent,
-        wxutil::GetLocalBitmap("increase.png"));
+    manipRow.larger = new wxutil::ControlButton(parent, wxutil::GetLocalBitmap(bitmapLarger));
     controlButtonBox->Add(manipRow.larger, 0, wxEXPAND);
 
 	// Create the label
