@@ -524,6 +524,7 @@ void RenderPreview::renderWireFrame()
     getScene()->foreachVisibleNodeInVolume(_volumeTest, sceneWalker);
 
     // Launch the back end rendering
+    renderer.submitToShaders();
     _renderSystem->render(flags, _volumeTest.GetModelview(), projection, _viewOrigin);
 }
 
