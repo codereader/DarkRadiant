@@ -261,15 +261,7 @@ void ModelSelector::onModelLoaded(const model::ModelNodePtr& modelNode)
         }
     }
 
-	// Add the list of active materials
-	_materialsList->clear();
-
-	const model::StringList& matList(model.getActiveMaterials());
-
-	for (const auto& material : matList)
-	{
-		_materialsList->addMaterial(material);
-	}
+    _materialsList->updateFromModel(model);
 }
 
 // Helper function to create the TreeView

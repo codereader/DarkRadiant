@@ -64,6 +64,19 @@ MaterialsList::MaterialsList(wxWindow* parent, const RenderSystemPtr& renderSyst
     );
 }
 
+void MaterialsList::updateFromModel(const model::IModel& model)
+{
+    // Add the list of active materials
+    _store->Clear();
+
+    const auto& matList(model.getActiveMaterials());
+
+    for (const auto& material : matList)
+    {
+        addMaterial(material);
+    }
+}
+
 void MaterialsList::onShaderToggled(wxDataViewEvent& ev)
 {
 	wxDataViewItem item = ev.GetItem();
@@ -93,11 +106,6 @@ void MaterialsList::onShowShaderDefinition()
     auto view = new MaterialDefinitionView(getSelectedMaterial());
     view->ShowModal();
     view->Destroy();
-}
-
-void MaterialsList::clear()
-{
-    _store->Clear();
 }
 
 void MaterialsList::addMaterial(const std::string& name)

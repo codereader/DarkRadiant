@@ -1,5 +1,6 @@
 #pragma once
 
+#include "imodel.h"
 #include "wxutil/dataview/TreeView.h"
 #include "wxutil/dataview/TreeModel.h"
 #include "wxutil/menu/PopupMenu.h"
@@ -49,11 +50,8 @@ public:
      */
     MaterialsList(wxWindow* parent, const RenderSystemPtr& renderSystem);
 
-    /// Clear all entries
-    void clear();
-
-    /// Add a material
-    void addMaterial(const std::string& name);
+    // Populate the table entries using the given model node
+    void updateFromModel(const model::IModel& model);
 
     /**
      * \brief
@@ -66,6 +64,9 @@ public:
     {
         return _visibilityChangedSignal;
     }
+
+private:
+    void addMaterial(const std::string& name);
 };
 
 }
