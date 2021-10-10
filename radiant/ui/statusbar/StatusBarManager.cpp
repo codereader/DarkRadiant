@@ -88,7 +88,7 @@ void StatusBarManager::addTextElement(const std::string& name, const std::string
 	// Get a free position
 	int freePos = getFreePosition(pos);
 
-	wxPanel* textPanel = new wxPanel(_statusBar, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSTATIC_BORDER | wxWANTS_CHARS);
+	wxPanel* textPanel = new wxPanel(_statusBar, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS);
 	textPanel->SetSizer(new wxBoxSizer(wxHORIZONTAL));
 	textPanel->SetName("Statusbarconainer " + name);
 
