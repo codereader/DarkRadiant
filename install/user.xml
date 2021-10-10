@@ -322,6 +322,7 @@
       <toggletoolbutton name="usedarktheme" action="TextureToolUseDarkTheme" tooltip="Use Dark Colour Theme" icon="bulb_unlit.png" />
     </toolbar>
     <userGuideUrl value="https://www.darkradiant.net/userguide" />
+    <forumUrl value="https://forums.thedarkmod.com/index.php?/forum/51-darkradiant-feedback-and-development/" />
     <vcs>
       <git>
           <autoFetchEnabled value="1" />

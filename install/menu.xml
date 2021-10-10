@@ -328,6 +328,7 @@
 
 	<subMenu name="help" caption="&amp;Help">
 		<menuItem name="about" caption="&amp;About" command="About" />
+        <menuItem name="openForumLink" caption="&amp;Community Forum" command="OpenForumUrl" />
 		<menuItem name="userGuide" caption="&amp;User Guide" command="ShowUserGuide" />
 	</subMenu>
 </menu>

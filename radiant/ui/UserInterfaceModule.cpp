@@ -396,6 +396,7 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addCommand("ShowCommandList", CommandList::ShowDialog);
 	GlobalCommandSystem().addCommand("About", AboutDialog::showDialog);
 	GlobalCommandSystem().addCommand("ShowUserGuide", Documentation::showUserGuide);
+	GlobalCommandSystem().addCommand("OpenForumUrl", Documentation::OpenForumUrl);
 	GlobalCommandSystem().addCommand("ExportSelectedAsModelDialog", ExportAsModelDialog::ShowDialog);
 	GlobalCommandSystem().addCommand("ConvertModelDialog", ConvertModelDialog::ShowDialog);
 

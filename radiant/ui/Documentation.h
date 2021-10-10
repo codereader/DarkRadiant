@@ -12,6 +12,9 @@ public:
 
     /// Show the user guide
     static void showUserGuide(const cmd::ArgumentList&);
+
+    // Open the TDM forums
+    static void OpenForumUrl(const cmd::ArgumentList&);
 };
 
 }
