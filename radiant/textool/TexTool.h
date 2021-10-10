@@ -17,6 +17,7 @@
 #include <sigc++/trackable.h>
 #include "wxutil/MouseToolHandler.h"
 #include "wxutil/FreezePointer.h"
+#include "wxutil/XmlResourceBasedWidget.h"
 #include "tools/TextureToolMouseEvent.h"
 #include "render/TextureToolView.h"
 #include "messages/ManipulatorModeToggleRequest.h"
@@ -39,7 +40,8 @@ class TexTool :
 	public wxutil::TransientWindow,
     public IOrthoViewBase,
 	public sigc::trackable,
-    protected wxutil::MouseToolHandler
+    protected wxutil::MouseToolHandler,
+    protected wxutil::XmlResourceBasedWidget
 {
 private:
 	// GL widget
@@ -91,6 +93,7 @@ private:
 
 	// Creates, packs and connects the child widgets
 	void populateWindow();
+	wxWindow* createManipulationPanel();
 
 	/** greebo: Calculates the extents of the entire scene selection in texture space.
 	 *
@@ -131,6 +134,8 @@ private:
 	void onMouseDown(wxMouseEvent& ev);
 	void onMouseMotion(wxMouseEvent& ev);
 	void onMouseScroll(wxMouseEvent& ev);
+
+    void onShiftSelected(const std::string& direction);
 
 	// UndoSystem event handler
 	void onUndoRedoOperation();
@@ -212,6 +217,8 @@ private:
     TextureToolMouseEvent createMouseEvent(const Vector2& point, const Vector2& delta = Vector2(0, 0));
 
     void handleGLCapturedMouseMotion(const MouseToolPtr& tool, int x, int y, unsigned int mouseState);
+
+    void updateManipulationPanel();
 };
 
 } // namespace ui

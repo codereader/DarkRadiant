@@ -111,7 +111,26 @@ void TexTool::populateWindow()
 		GetSizer()->Add(textoolbar, 0, wxEXPAND);
     }
 
-	GetSizer()->Add(_glWidget, 1, wxEXPAND);
+    auto horizontalSizer = new wxBoxSizer(wxHORIZONTAL);
+
+	horizontalSizer->Add(_glWidget, 1, wxEXPAND);
+	horizontalSizer->Add(createManipulationPanel(), 0, wxEXPAND);
+
+    GetSizer()->Add(horizontalSizer, 1, wxEXPAND);
+}
+
+wxWindow* TexTool::createManipulationPanel()
+{
+    auto panel = loadNamedPanel(this, "TextureToolManipulatorPanel");
+
+    findNamedObject<wxButton>(panel, "ShiftUpButton")->Bind(wxEVT_BUTTON, [this] (wxCommandEvent&) { onShiftSelected("up"); });
+    findNamedObject<wxButton>(panel, "ShiftDownButton")->Bind(wxEVT_BUTTON, [this] (wxCommandEvent&) { onShiftSelected("down"); });
+    findNamedObject<wxButton>(panel, "ShiftLeftButton")->Bind(wxEVT_BUTTON, [this] (wxCommandEvent&) { onShiftSelected("left"); });
+    findNamedObject<wxButton>(panel, "ShiftRightButton")->Bind(wxEVT_BUTTON, [this] (wxCommandEvent&) { onShiftSelected("right"); });
+
+    makeLabelBold(panel, "ShiftLabel");
+
+    return panel;
 }
 
 // Pre-hide callback
@@ -928,6 +947,16 @@ void TexTool::determineThemeBasedOnPixelData(const std::vector<unsigned char>& p
 
     GlobalTextureToolColourSchemeManager().setActiveScheme(scheme);
     updateThemeButtons();
+}
+
+void TexTool::onShiftSelected(const std::string& direction)
+{
+    GlobalCommandSystem().executeCommand("TexToolShiftSelected", direction);
+}
+
+void TexTool::updateManipulationPanel()
+{
+
 }
 
 } // namespace ui

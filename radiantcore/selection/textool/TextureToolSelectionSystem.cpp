@@ -56,6 +56,10 @@ void TextureToolSelectionSystem::initialiseModule(const IApplicationContext& ctx
         std::bind(&TextureToolSelectionSystem::mergeSelectionCmd, this, std::placeholders::_1),
         { cmd::ARGTYPE_VECTOR2 | cmd::ARGTYPE_OPTIONAL });
 
+    GlobalCommandSystem().addCommand("TexToolShiftSelected",
+        std::bind(&TextureToolSelectionSystem::shiftSelectionCmd, this, std::placeholders::_1),
+        { cmd::ARGTYPE_STRING });
+
     GlobalCommandSystem().addCommand("TexToolFlipS", 
         std::bind(&TextureToolSelectionSystem::flipHorizontallyCmd, this, std::placeholders::_1));
     GlobalCommandSystem().addCommand("TexToolFlipT", 
@@ -737,6 +741,59 @@ void TextureToolSelectionSystem::normaliseSelectionCmd(const cmd::ArgumentList& 
 
     selection::algorithm::TextureNormaliser normaliser(normaliseCenter);
     foreachSelectedNode(normaliser);
+}
+
+void TextureToolSelectionSystem::shiftSelectionCmd(const cmd::ArgumentList& args)
+{
+    UndoableCommand cmd("shiftTexcoords");
+
+    Vector2 translation(0, 0);
+
+    if (args.size() > 0)
+    {
+        auto gridSize = GlobalGrid().getGridSize(grid::Space::Texture);
+
+        if (args[0].getString() == "up")
+        {
+            translation = Vector2(0, -gridSize);
+        }
+        else if (args[0].getString() == "down")
+        {
+            translation = Vector2(0, gridSize);
+        }
+        else if (args[0].getString() == "left")
+        {
+            translation = Vector2(-gridSize, 0);
+        }
+        else if (args[0].getString() == "right")
+        {
+            translation = Vector2(gridSize, 0);
+        }
+    }
+
+    auto transform = Matrix3::getTranslation(translation);
+
+    foreachSelectedNodeOfAnyType([&](const INode::Ptr& node)
+    {
+        node->beginTransformation();
+
+        if (getSelectionMode() == textool::SelectionMode::Surface)
+        {
+            node->transform(transform);
+        }
+        else
+        {
+            auto componentTransformable = std::dynamic_pointer_cast<IComponentTransformable>(node);
+
+            if (componentTransformable)
+            {
+                componentTransformable->transformComponents(transform);
+            }
+        }
+
+        node->commitTransformation();
+        return true;
+    });
 }
 
 module::StaticModule<TextureToolSelectionSystem> _textureToolSelectionSystemModule;

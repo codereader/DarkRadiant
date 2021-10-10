@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
+	<object class="wxPanel" name="TextureToolManipulatorPanel">
+		<style>wxTAB_TRAVERSAL</style>
+		<object class="wxBoxSizer">
+			<orient>wxVERTICAL</orient>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxALL|wxEXPAND</flag>
+				<border>12</border>
+				<object class="wxBoxSizer">
+					<orient>wxVERTICAL</orient>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_CENTER|wxBOTTOM</flag>
+						<border>6</border>
+						<object class="wxStaticText" name="ShiftLabel">
+							<label>Shift</label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_CENTER</flag>
+						<border>0</border>
+						<object class="wxBitmapButton" name="ShiftUpButton">
+							<bitmap stock_id="darkradiant:arrow_up_blue.png" stock_client="">undefined.png</bitmap>
+							<default>0</default>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>1</option>
+						<flag>wxALIGN_CENTER|wxBOTTOM|wxTOP</flag>
+						<border>3</border>
+						<object class="wxBoxSizer">
+							<orient>wxHORIZONTAL</orient>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxALIGN_CENTER|wxBOTTOM</flag>
+								<border>0</border>
+								<object class="wxBitmapButton" name="ShiftLeftButton">
+									<bitmap stock_id="darkradiant:arrow_left_blue.png" stock_client="">undefined.png</bitmap>
+									<default>0</default>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxLEFT</flag>
+								<border>6</border>
+								<object class="wxBitmapButton" name="ShiftRightButton">
+									<bitmap stock_id="darkradiant:arrow_right_blue.png" stock_client="">undefined.png</bitmap>
+									<default>0</default>
+								</object>
+							</object>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_CENTER</flag>
+						<border>0</border>
+						<object class="wxBitmapButton" name="ShiftDownButton">
+							<bitmap stock_id="darkradiant:arrow_down_blue.png" stock_client="">undefined.png</bitmap>
+							<default>0</default>
+						</object>
+					</object>
+				</object>
+			</object>
+		</object>
+	</object>
+</resource>
