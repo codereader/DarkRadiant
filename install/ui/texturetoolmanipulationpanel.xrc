@@ -2,12 +2,13 @@
 <resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
 	<object class="wxPanel" name="TextureToolManipulatorPanel">
 		<style>wxTAB_TRAVERSAL</style>
+		<bg>#ababab</bg>
 		<object class="wxBoxSizer">
 			<orient>wxVERTICAL</orient>
 			<object class="sizeritem">
 				<option>0</option>
 				<flag>wxALL|wxEXPAND</flag>
-				<border>12</border>
+				<border>8</border>
 				<object class="wxBoxSizer">
 					<orient>wxVERTICAL</orient>
 					<object class="sizeritem">
@@ -63,6 +64,131 @@
 							<default>0</default>
 						</object>
 					</object>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxEXPAND | wxALL</flag>
+				<border>0</border>
+				<object class="wxPanel" name="m_panel1">
+					<size>-1,1</size>
+					<bg>#303030</bg>
+					<enabled>0</enabled>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxALL|wxEXPAND</flag>
+				<border>8</border>
+				<object class="wxBoxSizer">
+					<orient>wxVERTICAL</orient>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_CENTER|wxBOTTOM</flag>
+						<border>6</border>
+						<object class="wxStaticText" name="ScaleLabel">
+							<label>Scale</label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_CENTER|wxBOTTOM</flag>
+						<border>6</border>
+						<object class="wxBoxSizer">
+							<orient>wxHORIZONTAL</orient>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxALIGN_CENTER|wxBOTTOM</flag>
+								<border>0</border>
+								<object class="wxBitmapButton" name="ScaleHorizSmallerButton">
+									<bitmap stock_id="darkradiant:arrow_left_blue.png" stock_client="">undefined.png</bitmap>
+									<default>0</default>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxLEFT</flag>
+								<border>6</border>
+								<object class="wxBitmapButton" name="ScaleHorizLargerButton">
+									<bitmap stock_id="darkradiant:arrow_right_blue.png" stock_client="">undefined.png</bitmap>
+									<default>0</default>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxEXPAND|wxLEFT</flag>
+								<border>6</border>
+								<object class="wxTextCtrl" name="m_textCtrl1">
+									<size>40,-1</size>
+									<value></value>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+								<border>3</border>
+								<object class="wxStaticText" name="m_staticText4">
+									<label>%</label>
+									<wrap>-1</wrap>
+								</object>
+							</object>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>1</option>
+						<flag>wxALIGN_CENTER|wxBOTTOM</flag>
+						<border>6</border>
+						<object class="wxBoxSizer">
+							<orient>wxHORIZONTAL</orient>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxALIGN_CENTER|wxBOTTOM</flag>
+								<border>0</border>
+								<object class="wxBitmapButton" name="ScaleVertSmallerButton">
+									<bitmap stock_id="darkradiant:arrow_left_blue.png" stock_client="">undefined.png</bitmap>
+									<default>0</default>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxLEFT</flag>
+								<border>6</border>
+								<object class="wxBitmapButton" name="ScaleVertLargerButton">
+									<bitmap stock_id="darkradiant:arrow_right_blue.png" stock_client="">undefined.png</bitmap>
+									<default>0</default>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxEXPAND|wxLEFT</flag>
+								<border>6</border>
+								<object class="wxTextCtrl" name="m_textCtrl11">
+									<size>40,-1</size>
+									<value></value>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+								<border>3</border>
+								<object class="wxStaticText" name="m_staticText41">
+									<label>%</label>
+									<wrap>-1</wrap>
+								</object>
+							</object>
+						</object>
+					</object>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxEXPAND</flag>
+				<border>0</border>
+				<object class="wxPanel" name="m_panel11">
+					<size>-1,1</size>
+					<bg>#303030</bg>
+					<enabled>0</enabled>
 				</object>
 			</object>
 		</object>

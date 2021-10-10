@@ -129,6 +129,12 @@ wxWindow* TexTool::createManipulationPanel()
     findNamedObject<wxButton>(panel, "ShiftRightButton")->Bind(wxEVT_BUTTON, [this] (wxCommandEvent&) { onShiftSelected("right"); });
 
     makeLabelBold(panel, "ShiftLabel");
+    makeLabelBold(panel, "ScaleLabel");
+
+    findNamedObject<wxButton>(panel, "ScaleHorizSmallerButton")->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { onScaleSelected("up"); });
+    findNamedObject<wxButton>(panel, "ScaleHorizLargerButton")->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { onScaleSelected("down"); });
+    findNamedObject<wxButton>(panel, "ScaleVertSmallerButton")->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { onScaleSelected("up"); });
+    findNamedObject<wxButton>(panel, "ScaleVertLargerButton")->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { onScaleSelected("down"); });
 
     return panel;
 }
@@ -952,6 +958,11 @@ void TexTool::determineThemeBasedOnPixelData(const std::vector<unsigned char>& p
 void TexTool::onShiftSelected(const std::string& direction)
 {
     GlobalCommandSystem().executeCommand("TexToolShiftSelected", direction);
+}
+
+void TexTool::onScaleSelected(const std::string& direction)
+{
+    // TODO GlobalCommandSystem().executeCommand("TexToolShiftSelected", direction);
 }
 
 void TexTool::updateManipulationPanel()

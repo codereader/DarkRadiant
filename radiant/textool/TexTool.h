@@ -136,6 +136,7 @@ private:
 	void onMouseScroll(wxMouseEvent& ev);
 
     void onShiftSelected(const std::string& direction);
+    void onScaleSelected(const std::string& direction);
 
 	// UndoSystem event handler
 	void onUndoRedoOperation();
