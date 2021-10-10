@@ -8,6 +8,16 @@
 			<object class="sizeritem">
 				<option>0</option>
 				<flag>wxEXPAND | wxALL</flag>
+				<border>0</border>
+				<object class="wxPanel" name="m_panel12">
+					<size>-1,1</size>
+					<bg>#303030</bg>
+					<enabled>0</enabled>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxEXPAND | wxALL</flag>
 				<border>8</border>
 				<object class="wxPanel" name="ShiftPanel">
 					<style>wxTAB_TRAVERSAL</style>

@@ -113,6 +113,9 @@ void TexTool::populateWindow()
 
 	if (textoolbar != nullptr)
 	{
+#ifdef __WXMSW__
+        textoolbar->SetBackgroundColour(wxColor("#ababab"));
+#endif
 		textoolbar->SetCanFocus(false);
 		GetSizer()->Add(textoolbar, 0, wxEXPAND);
     }
