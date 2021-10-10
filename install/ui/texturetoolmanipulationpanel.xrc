@@ -88,107 +88,110 @@
 				<option>0</option>
 				<flag>wxALL|wxEXPAND</flag>
 				<border>8</border>
-				<object class="wxBoxSizer">
-					<orient>wxVERTICAL</orient>
-					<object class="sizeritem">
-						<option>0</option>
-						<flag>wxALIGN_CENTER|wxBOTTOM</flag>
-						<border>6</border>
-						<object class="wxStaticText" name="ScaleLabel">
-							<label>Scale</label>
-							<wrap>-1</wrap>
-						</object>
-					</object>
-					<object class="sizeritem">
-						<option>0</option>
-						<flag>wxALIGN_CENTER|wxBOTTOM</flag>
-						<border>6</border>
-						<object class="wxBoxSizer">
-							<orient>wxHORIZONTAL</orient>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxALIGN_CENTER|wxBOTTOM</flag>
-								<border>0</border>
-								<object class="wxBitmapButton" name="ScaleHorizSmallerButton">
-									<bitmap stock_id="darkradiant:hscale_down.png" stock_client="">undefined.png</bitmap>
-									<default>0</default>
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxLEFT</flag>
-								<border>6</border>
-								<object class="wxBitmapButton" name="ScaleHorizLargerButton">
-									<bitmap stock_id="darkradiant:hscale_up.png" stock_client="">undefined.png</bitmap>
-									<default>0</default>
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
-								<border>6</border>
-								<object class="wxSpinCtrl" name="HorizScaleFactor">
-									<style>wxSP_ARROW_KEYS</style>
-									<size>60,-1</size>
-									<value>0</value>
-									<min>1</min>
-									<max>999</max>
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
-								<border>3</border>
-								<object class="wxStaticText" name="m_staticText4">
-									<label>%</label>
-									<wrap>-1</wrap>
-								</object>
+				<object class="wxPanel" name="ScalePanel">
+					<style>wxTAB_TRAVERSAL</style>
+					<object class="wxBoxSizer">
+						<orient>wxVERTICAL</orient>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALIGN_CENTER|wxBOTTOM</flag>
+							<border>6</border>
+							<object class="wxStaticText" name="ScaleLabel">
+								<label>Scale</label>
+								<wrap>-1</wrap>
 							</object>
 						</object>
-					</object>
-					<object class="sizeritem">
-						<option>1</option>
-						<flag>wxALIGN_CENTER|wxBOTTOM</flag>
-						<border>6</border>
-						<object class="wxBoxSizer">
-							<orient>wxHORIZONTAL</orient>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxALIGN_CENTER|wxBOTTOM</flag>
-								<border>0</border>
-								<object class="wxBitmapButton" name="ScaleVertSmallerButton">
-									<bitmap stock_id="darkradiant:vscale_down.png" stock_client="">undefined.png</bitmap>
-									<default>0</default>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALIGN_CENTER|wxBOTTOM</flag>
+							<border>6</border>
+							<object class="wxBoxSizer">
+								<orient>wxHORIZONTAL</orient>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxALIGN_CENTER|wxBOTTOM</flag>
+									<border>0</border>
+									<object class="wxBitmapButton" name="ScaleHorizSmallerButton">
+										<bitmap stock_id="darkradiant:hscale_down.png" stock_client="">undefined.png</bitmap>
+										<default>0</default>
+									</object>
+								</object>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxLEFT</flag>
+									<border>6</border>
+									<object class="wxBitmapButton" name="ScaleHorizLargerButton">
+										<bitmap stock_id="darkradiant:hscale_up.png" stock_client="">undefined.png</bitmap>
+										<default>0</default>
+									</object>
+								</object>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+									<border>6</border>
+									<object class="wxSpinCtrl" name="HorizScaleFactor">
+										<style>wxSP_ARROW_KEYS</style>
+										<size>60,-1</size>
+										<value>0</value>
+										<min>1</min>
+										<max>999</max>
+									</object>
+								</object>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+									<border>3</border>
+									<object class="wxStaticText" name="m_staticText4">
+										<label>%</label>
+										<wrap>-1</wrap>
+									</object>
 								</object>
 							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxLEFT</flag>
-								<border>6</border>
-								<object class="wxBitmapButton" name="ScaleVertLargerButton">
-									<bitmap stock_id="darkradiant:vscale_up.png" stock_client="">undefined.png</bitmap>
-									<default>0</default>
+						</object>
+						<object class="sizeritem">
+							<option>1</option>
+							<flag>wxALIGN_CENTER|wxBOTTOM</flag>
+							<border>6</border>
+							<object class="wxBoxSizer">
+								<orient>wxHORIZONTAL</orient>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxALIGN_CENTER|wxBOTTOM</flag>
+									<border>0</border>
+									<object class="wxBitmapButton" name="ScaleVertSmallerButton">
+										<bitmap stock_id="darkradiant:vscale_down.png" stock_client="">undefined.png</bitmap>
+										<default>0</default>
+									</object>
 								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
-								<border>6</border>
-								<object class="wxSpinCtrl" name="VertScaleFactor">
-									<style>wxSP_ARROW_KEYS</style>
-									<size>60,-1</size>
-									<value>0</value>
-									<min>1</min>
-									<max>999</max>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxLEFT</flag>
+									<border>6</border>
+									<object class="wxBitmapButton" name="ScaleVertLargerButton">
+										<bitmap stock_id="darkradiant:vscale_up.png" stock_client="">undefined.png</bitmap>
+										<default>0</default>
+									</object>
 								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
-								<border>3</border>
-								<object class="wxStaticText" name="m_staticText41">
-									<label>%</label>
-									<wrap>-1</wrap>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+									<border>6</border>
+									<object class="wxSpinCtrl" name="VertScaleFactor">
+										<style>wxSP_ARROW_KEYS</style>
+										<size>60,-1</size>
+										<value>0</value>
+										<min>1</min>
+										<max>999</max>
+									</object>
+								</object>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+									<border>3</border>
+									<object class="wxStaticText" name="m_staticText41">
+										<label>%</label>
+										<wrap>-1</wrap>
+									</object>
 								</object>
 							</object>
 						</object>
@@ -207,62 +210,65 @@
 			</object>
 			<object class="sizeritem">
 				<option>0</option>
-				<flag>wxBOTTOM|wxEXPAND|wxLEFT|wxRIGHT|wxTOP</flag>
+				<flag>wxEXPAND | wxALL</flag>
 				<border>8</border>
-				<object class="wxBoxSizer">
-					<orient>wxVERTICAL</orient>
-					<object class="sizeritem">
-						<option>0</option>
-						<flag>wxALIGN_CENTER|wxBOTTOM</flag>
-						<border>6</border>
-						<object class="wxStaticText" name="RotateLabel">
-							<label>Rotate</label>
-							<wrap>-1</wrap>
+				<object class="wxPanel" name="RotatePanel">
+					<style>wxTAB_TRAVERSAL</style>
+					<object class="wxBoxSizer">
+						<orient>wxVERTICAL</orient>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALIGN_CENTER|wxBOTTOM</flag>
+							<border>6</border>
+							<object class="wxStaticText" name="RotateLabel">
+								<label>Rotate</label>
+								<wrap>-1</wrap>
+							</object>
 						</object>
-					</object>
-					<object class="sizeritem">
-						<option>0</option>
-						<flag>wxALIGN_CENTER|wxBOTTOM</flag>
-						<border>6</border>
-						<object class="wxBoxSizer">
-							<orient>wxHORIZONTAL</orient>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxALIGN_CENTER|wxBOTTOM</flag>
-								<border>0</border>
-								<object class="wxBitmapButton" name="RotateClockWiseButton">
-									<bitmap stock_id="darkradiant:rotate_cw.png" stock_client="">undefined.png</bitmap>
-									<default>0</default>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALIGN_CENTER|wxBOTTOM</flag>
+							<border>6</border>
+							<object class="wxBoxSizer">
+								<orient>wxHORIZONTAL</orient>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxALIGN_CENTER|wxBOTTOM</flag>
+									<border>0</border>
+									<object class="wxBitmapButton" name="RotateClockWiseButton">
+										<bitmap stock_id="darkradiant:rotate_cw.png" stock_client="">undefined.png</bitmap>
+										<default>0</default>
+									</object>
 								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxLEFT</flag>
-								<border>6</border>
-								<object class="wxBitmapButton" name="RotateCounterClockWiseButton">
-									<bitmap stock_id="darkradiant:rotate_ccw.png" stock_client="">undefined.png</bitmap>
-									<default>0</default>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxLEFT</flag>
+									<border>6</border>
+									<object class="wxBitmapButton" name="RotateCounterClockWiseButton">
+										<bitmap stock_id="darkradiant:rotate_ccw.png" stock_client="">undefined.png</bitmap>
+										<default>0</default>
+									</object>
 								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
-								<border>6</border>
-								<object class="wxSpinCtrl" name="RotateAngle">
-									<style>wxSP_ARROW_KEYS</style>
-									<size>60,-1</size>
-									<value>0</value>
-									<min>1</min>
-									<max>999</max>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+									<border>6</border>
+									<object class="wxSpinCtrl" name="RotateAngle">
+										<style>wxSP_ARROW_KEYS</style>
+										<size>60,-1</size>
+										<value>0</value>
+										<min>1</min>
+										<max>999</max>
+									</object>
 								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
-								<border>3</border>
-								<object class="wxStaticText" name="m_staticText42">
-									<label>°</label>
-									<wrap>-1</wrap>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxALIGN_CENTER_VERTICAL|wxLEFT</flag>
+									<border>3</border>
+									<object class="wxStaticText" name="m_staticText42">
+										<label>°</label>
+										<wrap>-1</wrap>
+									</object>
 								</object>
 							</object>
 						</object>

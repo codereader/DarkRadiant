@@ -243,6 +243,7 @@ void TexTool::_preShow()
 	// Trigger an update of the current selection
     _selectionRescanNeeded = true;
     updateThemeButtons();
+    updateManipulationPanel();
     queueDraw();
 }
 
@@ -317,6 +318,7 @@ void TexTool::onManipulatorModeChanged(selection::IManipulator::Type type)
 void TexTool::onSelectionModeChanged(textool::SelectionMode mode)
 {
     queueDraw();
+    updateManipulationPanel();
 }
 
 void TexTool::onMainFrameShuttingDown()
@@ -1041,7 +1043,10 @@ void TexTool::onRotateSelected(const std::string& direction)
 
 void TexTool::updateManipulationPanel()
 {
+    bool isInComponentMode = GlobalTextureToolSelectionSystem().getSelectionMode() == textool::SelectionMode::Vertex;
 
+    findNamedObject<wxWindow>(this, "ScalePanel")->Enable(!isInComponentMode);
+    findNamedObject<wxWindow>(this, "RotatePanel")->Enable(!isInComponentMode);
 }
 
 } // namespace ui
