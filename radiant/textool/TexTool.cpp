@@ -127,6 +127,7 @@ void TexTool::populateWindow()
 wxWindow* TexTool::createManipulationPanel()
 {
     auto panel = loadNamedPanel(this, "TextureToolManipulatorPanel");
+    panel->SetCanFocus(false);
 
     makeLabelBold(panel, "ShiftLabel");
     makeLabelBold(panel, "ScaleLabel");
@@ -247,7 +248,9 @@ void TexTool::_preShow()
 
 bool TexTool::textureToolHasFocus()
 {
-    return HasFocus() || _glWidget->HasFocus();
+    auto manipulationPanel = findNamedObject<wxWindow>(this, "TextureToolManipulatorPanel");
+
+    return HasFocus() || _glWidget->HasFocus() || manipulationPanel->HasFocus() || manipulationPanel->FindFocus() != nullptr;
 }
 
 void TexTool::handleManipulatorModeToggleRequest(selection::ManipulatorModeToggleRequest& request)
