@@ -127,13 +127,13 @@ wxWindow* TexTool::createManipulationPanel()
 {
     auto panel = loadNamedPanel(this, "TextureToolManipulatorPanel");
 
+    makeLabelBold(panel, "ShiftLabel");
+    makeLabelBold(panel, "ScaleLabel");
+
     findNamedObject<wxButton>(panel, "ShiftUpButton")->Bind(wxEVT_BUTTON, [this] (wxCommandEvent&) { onShiftSelected("up"); });
     findNamedObject<wxButton>(panel, "ShiftDownButton")->Bind(wxEVT_BUTTON, [this] (wxCommandEvent&) { onShiftSelected("down"); });
     findNamedObject<wxButton>(panel, "ShiftLeftButton")->Bind(wxEVT_BUTTON, [this] (wxCommandEvent&) { onShiftSelected("left"); });
     findNamedObject<wxButton>(panel, "ShiftRightButton")->Bind(wxEVT_BUTTON, [this] (wxCommandEvent&) { onShiftSelected("right"); });
-
-    makeLabelBold(panel, "ShiftLabel");
-    makeLabelBold(panel, "ScaleLabel");
 
     findNamedObject<wxButton>(panel, "ScaleHorizSmallerButton")->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { onScaleSelected("left"); });
     findNamedObject<wxButton>(panel, "ScaleHorizLargerButton")->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { onScaleSelected("right"); });
@@ -967,7 +967,28 @@ void TexTool::determineThemeBasedOnPixelData(const std::vector<unsigned char>& p
 
 void TexTool::onShiftSelected(const std::string& direction)
 {
-    GlobalCommandSystem().executeCommand("TexToolShiftSelected", direction);
+    Vector2 translation(0, 0);
+
+    auto gridSize = GlobalGrid().getGridSize(grid::Space::Texture);
+
+    if (direction == "up")
+    {
+        translation = Vector2(0, -gridSize);
+    }
+    else if (direction == "down")
+    {
+        translation = Vector2(0, gridSize);
+    }
+    else if (direction == "left")
+    {
+        translation = Vector2(-gridSize, 0);
+    }
+    else if (direction == "right")
+    {
+        translation = Vector2(gridSize, 0);
+    }
+
+    GlobalCommandSystem().executeCommand("TexToolShiftSelected", translation);
 }
 
 void TexTool::onScaleSelected(const std::string& direction)

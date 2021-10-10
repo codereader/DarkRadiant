@@ -59,7 +59,7 @@ void TextureToolSelectionSystem::initialiseModule(const IApplicationContext& ctx
 
     GlobalCommandSystem().addCommand("TexToolShiftSelected",
         std::bind(&TextureToolSelectionSystem::shiftSelectionCmd, this, std::placeholders::_1),
-        { cmd::ARGTYPE_STRING });
+        { cmd::ARGTYPE_VECTOR2 });
     GlobalCommandSystem().addCommand("TexToolScaleSelected",
         std::bind(&TextureToolSelectionSystem::scaleSelectionCmd, this, std::placeholders::_1),
         { cmd::ARGTYPE_VECTOR2 });
@@ -751,30 +751,9 @@ void TextureToolSelectionSystem::shiftSelectionCmd(const cmd::ArgumentList& args
 {
     UndoableCommand cmd("shiftTexcoords");
 
-    Vector2 translation(0, 0);
+    if (args.empty()) return;
 
-    if (args.size() > 0)
-    {
-        auto gridSize = GlobalGrid().getGridSize(grid::Space::Texture);
-
-        if (args[0].getString() == "up")
-        {
-            translation = Vector2(0, -gridSize);
-        }
-        else if (args[0].getString() == "down")
-        {
-            translation = Vector2(0, gridSize);
-        }
-        else if (args[0].getString() == "left")
-        {
-            translation = Vector2(-gridSize, 0);
-        }
-        else if (args[0].getString() == "right")
-        {
-            translation = Vector2(gridSize, 0);
-        }
-    }
-
+    auto translation = args[0].getVector2();
     auto transform = Matrix3::getTranslation(translation);
 
     foreachSelectedNodeOfAnyType([&](const INode::Ptr& node)
