@@ -1034,7 +1034,7 @@ void TexTool::onScaleSelected(const std::string& direction)
 void TexTool::onRotateSelected(const std::string& direction)
 {
     double angle = findNamedObject<wxSpinCtrlDouble>(this, "RotateAngle")->GetValue();
-    angle *= direction == "cw" ? -1 : +1;
+    angle *= direction == "cw" ? +1 : -1;
 
     GlobalCommandSystem().executeCommand("TexToolRotateSelected", angle);
 }
