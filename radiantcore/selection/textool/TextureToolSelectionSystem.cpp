@@ -63,6 +63,9 @@ void TextureToolSelectionSystem::initialiseModule(const IApplicationContext& ctx
     GlobalCommandSystem().addCommand("TexToolScaleSelected",
         std::bind(&TextureToolSelectionSystem::scaleSelectionCmd, this, std::placeholders::_1),
         { cmd::ARGTYPE_VECTOR2 });
+    GlobalCommandSystem().addCommand("TexToolRotateSelected",
+        std::bind(&TextureToolSelectionSystem::rotateSelectionCmd, this, std::placeholders::_1),
+        { cmd::ARGTYPE_DOUBLE });
 
     GlobalCommandSystem().addCommand("TexToolFlipS", 
         std::bind(&TextureToolSelectionSystem::flipHorizontallyCmd, this, std::placeholders::_1));
@@ -813,6 +816,37 @@ void TextureToolSelectionSystem::scaleSelectionCmd(const cmd::ArgumentList& args
     Vector2 pivot{ accumulator.getBounds().origin.x(), accumulator.getBounds().origin.y() };
     selection::algorithm::TextureScaler scaler(pivot, scale);
     foreachSelectedNode(scaler);
+}
+
+void TextureToolSelectionSystem::rotateSelectionCmd(const cmd::ArgumentList& args)
+{
+    if (getSelectionMode() != SelectionMode::Surface)
+    {
+        rWarning() << "This command can only be executed in Surface manipulation mode" << std::endl;
+        return;
+    }
+
+    UndoableCommand cmd("rotateTexcoords");
+
+    if (args.size() < 1)
+    {
+        return;
+    }
+
+    auto angle = degrees_to_radians(args[0].getDouble());
+
+    // Calculate the center based on the selection
+    selection::algorithm::TextureBoundsAccumulator accumulator;
+    foreachSelectedNode(accumulator);
+
+    if (!accumulator.getBounds().isValid())
+    {
+        return;
+    }
+
+    Vector2 pivot{ accumulator.getBounds().origin.x(), accumulator.getBounds().origin.y() };
+    selection::algorithm::TextureRotator rotator(pivot, angle);
+    foreachSelectedNode(rotator);
 }
 
 module::StaticModule<TextureToolSelectionSystem> _textureToolSelectionSystemModule;

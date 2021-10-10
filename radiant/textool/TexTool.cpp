@@ -42,6 +42,7 @@ namespace
 
     const std::string RKEY_HSCALE_FACTOR = RKEY_TEXTOOL_ROOT + "horizontalScaleFactor";
     const std::string RKEY_VSCALE_FACTOR = RKEY_TEXTOOL_ROOT + "verticalScaleFactor";
+    const std::string RKEY_ROTATE_ANGLE = RKEY_TEXTOOL_ROOT + "rotateAngle";
 
 	constexpr const float ZOOM_MODIFIER = 1.25f;
 }
@@ -129,6 +130,7 @@ wxWindow* TexTool::createManipulationPanel()
 
     makeLabelBold(panel, "ShiftLabel");
     makeLabelBold(panel, "ScaleLabel");
+    makeLabelBold(panel, "RotateLabel");
 
     findNamedObject<wxButton>(panel, "ShiftUpButton")->Bind(wxEVT_BUTTON, [this] (wxCommandEvent&) { onShiftSelected("up"); });
     findNamedObject<wxButton>(panel, "ShiftDownButton")->Bind(wxEVT_BUTTON, [this] (wxCommandEvent&) { onShiftSelected("down"); });
@@ -140,11 +142,16 @@ wxWindow* TexTool::createManipulationPanel()
     findNamedObject<wxButton>(panel, "ScaleVertSmallerButton")->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { onScaleSelected("down"); });
     findNamedObject<wxButton>(panel, "ScaleVertLargerButton")->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { onScaleSelected("up"); });
 
+    findNamedObject<wxButton>(panel, "RotateClockWiseButton")->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { onRotateSelected("cw"); });
+    findNamedObject<wxButton>(panel, "RotateCounterClockWiseButton")->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { onRotateSelected("ccw"); });
+
     convertToSpinCtrlDouble(panel, "HorizScaleFactor", 0.1, 1000, 0.5, 1);
     convertToSpinCtrlDouble(panel, "VertScaleFactor", 0.1, 1000, 0.5, 1);
+    convertToSpinCtrlDouble(panel, "RotateAngle", 0, 360, 0.5, 1);
 
     registry::bindWidget(findNamedObject<wxSpinCtrlDouble>(panel, "HorizScaleFactor"), RKEY_HSCALE_FACTOR);
     registry::bindWidget(findNamedObject<wxSpinCtrlDouble>(panel, "VertScaleFactor"), RKEY_VSCALE_FACTOR);
+    registry::bindWidget(findNamedObject<wxSpinCtrlDouble>(panel, "RotateAngle"), RKEY_ROTATE_ANGLE);
 
     return panel;
 }
@@ -798,6 +805,8 @@ void TexTool::onMouseUp(wxMouseEvent& ev)
 
 void TexTool::onMouseDown(wxMouseEvent& ev)
 {
+    _glWidget->SetFocus();
+
     // Send the event to the mouse tool handler
     MouseToolHandler::onGLMouseButtonPress(ev);
 
@@ -1017,6 +1026,14 @@ void TexTool::onScaleSelected(const std::string& direction)
     }
 
     GlobalCommandSystem().executeCommand("TexToolScaleSelected", scale);
+}
+
+void TexTool::onRotateSelected(const std::string& direction)
+{
+    double angle = findNamedObject<wxSpinCtrlDouble>(this, "RotateAngle")->GetValue();
+    angle *= direction == "cw" ? -1 : +1;
+
+    GlobalCommandSystem().executeCommand("TexToolRotateSelected", angle);
 }
 
 void TexTool::updateManipulationPanel()

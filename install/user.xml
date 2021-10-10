@@ -116,6 +116,7 @@
         <gridActive value="1" />
         <horizontalScaleFactor value="10" />
         <verticalScaleFactor value="10" />
+        <rotateAngle value="45" />
       </texTool>
     </textures>
     <grid>
