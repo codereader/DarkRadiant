@@ -131,10 +131,10 @@ wxWindow* TexTool::createManipulationPanel()
     makeLabelBold(panel, "ShiftLabel");
     makeLabelBold(panel, "ScaleLabel");
 
-    findNamedObject<wxButton>(panel, "ScaleHorizSmallerButton")->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { onScaleSelected("up"); });
-    findNamedObject<wxButton>(panel, "ScaleHorizLargerButton")->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { onScaleSelected("down"); });
-    findNamedObject<wxButton>(panel, "ScaleVertSmallerButton")->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { onScaleSelected("up"); });
-    findNamedObject<wxButton>(panel, "ScaleVertLargerButton")->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { onScaleSelected("down"); });
+    findNamedObject<wxButton>(panel, "ScaleHorizSmallerButton")->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { onScaleSelected("down"); });
+    findNamedObject<wxButton>(panel, "ScaleHorizLargerButton")->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { onScaleSelected("up"); });
+    findNamedObject<wxButton>(panel, "ScaleVertSmallerButton")->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { onScaleSelected("left"); });
+    findNamedObject<wxButton>(panel, "ScaleVertLargerButton")->Bind(wxEVT_BUTTON, [this](wxCommandEvent&) { onScaleSelected("right"); });
 
     return panel;
 }
@@ -962,7 +962,30 @@ void TexTool::onShiftSelected(const std::string& direction)
 
 void TexTool::onScaleSelected(const std::string& direction)
 {
-    // TODO GlobalCommandSystem().executeCommand("TexToolShiftSelected", direction);
+    Vector2 scale(1, 1);
+
+    if (direction == "up")
+    {
+        auto factor = string::convert<double>(findNamedObject<wxTextCtrl>(this, "VertScaleFactor")->GetValue().ToStdString());
+        scale = Vector2(1, 1 + factor/100);
+    }
+    else if (direction == "down")
+    {
+        auto factor = string::convert<double>(findNamedObject<wxTextCtrl>(this, "VertScaleFactor")->GetValue().ToStdString());
+        scale = Vector2(1, 1 / (1 + factor / 100));
+    }
+    else if (direction == "left")
+    {
+        auto factor = string::convert<double>(findNamedObject<wxTextCtrl>(this, "HorizScaleFactor")->GetValue().ToStdString());
+        scale = Vector2(1 / (1 + factor / 100), 1);
+    }
+    else if (direction == "right")
+    {
+        auto factor = string::convert<double>(findNamedObject<wxTextCtrl>(this, "HorizScaleFactor")->GetValue().ToStdString());
+        scale = Vector2(1 + factor / 100, 1);
+    }
+
+    GlobalCommandSystem().executeCommand("TexToolScaleSelected", scale);
 }
 
 void TexTool::updateManipulationPanel()

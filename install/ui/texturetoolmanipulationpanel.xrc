@@ -119,7 +119,7 @@
 								<option>0</option>
 								<flag>wxEXPAND|wxLEFT</flag>
 								<border>6</border>
-								<object class="wxTextCtrl" name="m_textCtrl1">
+								<object class="wxTextCtrl" name="HorizScaleFactor">
 									<size>40,-1</size>
 									<value></value>
 								</object>
@@ -163,7 +163,7 @@
 								<option>0</option>
 								<flag>wxEXPAND|wxLEFT</flag>
 								<border>6</border>
-								<object class="wxTextCtrl" name="m_textCtrl11">
+								<object class="wxTextCtrl" name="VertScaleFactor">
 									<size>40,-1</size>
 									<value></value>
 								</object>

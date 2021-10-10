@@ -10,6 +10,7 @@
 #include "string/case_conv.h"
 #include "math/Matrix3.h"
 #include "selection/algorithm/Texturing.h"
+#include "command/ExecutionFailure.h"
 
 namespace textool
 {
@@ -59,6 +60,9 @@ void TextureToolSelectionSystem::initialiseModule(const IApplicationContext& ctx
     GlobalCommandSystem().addCommand("TexToolShiftSelected",
         std::bind(&TextureToolSelectionSystem::shiftSelectionCmd, this, std::placeholders::_1),
         { cmd::ARGTYPE_STRING });
+    GlobalCommandSystem().addCommand("TexToolScaleSelected",
+        std::bind(&TextureToolSelectionSystem::scaleSelectionCmd, this, std::placeholders::_1),
+        { cmd::ARGTYPE_VECTOR2 });
 
     GlobalCommandSystem().addCommand("TexToolFlipS", 
         std::bind(&TextureToolSelectionSystem::flipHorizontallyCmd, this, std::placeholders::_1));
@@ -794,6 +798,42 @@ void TextureToolSelectionSystem::shiftSelectionCmd(const cmd::ArgumentList& args
         node->commitTransformation();
         return true;
     });
+}
+
+void TextureToolSelectionSystem::scaleSelectionCmd(const cmd::ArgumentList& args)
+{
+    if (getSelectionMode() != SelectionMode::Surface)
+    {
+        rWarning() << "This command can only be executed in Surface manipulation mode" << std::endl;
+        return;
+    }
+
+    UndoableCommand cmd("scaleTexcoords");
+
+    if (args.size() < 1)
+    {
+        return;
+    }
+
+    auto scale = args[0].getVector2();
+
+    if (scale.x() == 0 || scale.y() == 0)
+    {
+        throw cmd::ExecutionFailure("Scale factor cannot be zero");
+    }
+
+    // Calculate the center based on the selection
+    selection::algorithm::TextureBoundsAccumulator accumulator;
+    foreachSelectedNode(accumulator);
+
+    if (!accumulator.getBounds().isValid())
+    {
+        return;
+    }
+
+    Vector2 pivot{ accumulator.getBounds().origin.x(), accumulator.getBounds().origin.y() };
+    selection::algorithm::TextureScaler scaler(pivot, scale);
+    foreachSelectedNode(scaler);
 }
 
 module::StaticModule<TextureToolSelectionSystem> _textureToolSelectionSystemModule;

@@ -94,6 +94,7 @@ private:
     void flipVerticallyCmd(const cmd::ArgumentList& args);
     void normaliseSelectionCmd(const cmd::ArgumentList& args);
     void shiftSelectionCmd(const cmd::ArgumentList& args);
+    void scaleSelectionCmd(const cmd::ArgumentList& args);
 
     void flipSelected(int axis);
     void performSelectionTest(Selector& selector, SelectionTest& test);
