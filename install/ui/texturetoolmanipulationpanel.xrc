@@ -7,67 +7,70 @@
 			<orient>wxVERTICAL</orient>
 			<object class="sizeritem">
 				<option>0</option>
-				<flag>wxALL|wxEXPAND</flag>
+				<flag>wxEXPAND | wxALL</flag>
 				<border>8</border>
-				<object class="wxBoxSizer">
-					<orient>wxVERTICAL</orient>
-					<object class="sizeritem">
-						<option>0</option>
-						<flag>wxALIGN_CENTER|wxBOTTOM</flag>
-						<border>6</border>
-						<object class="wxStaticText" name="ShiftLabel">
-							<label>Shift</label>
-							<wrap>-1</wrap>
+				<object class="wxPanel" name="ShiftPanel">
+					<style>wxTAB_TRAVERSAL</style>
+					<object class="wxBoxSizer">
+						<orient>wxVERTICAL</orient>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALIGN_CENTER|wxBOTTOM</flag>
+							<border>6</border>
+							<object class="wxStaticText" name="ShiftLabel">
+								<label>Shift</label>
+								<wrap>-1</wrap>
+							</object>
 						</object>
-					</object>
-					<object class="sizeritem">
-						<option>1</option>
-						<flag>wxALIGN_CENTER|wxBOTTOM</flag>
-						<border>6</border>
-						<object class="wxBoxSizer">
-							<orient>wxHORIZONTAL</orient>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxALIGN_CENTER_VERTICAL</flag>
-								<border>0</border>
-								<object class="wxBitmapButton" name="ShiftLeftButton">
-									<bitmap stock_id="darkradiant:arrow_left_blue.png" stock_client="">undefined.png</bitmap>
-									<default>0</default>
-								</object>
-							</object>
-							<object class="sizeritem">
-								<option>1</option>
-								<flag>wxALIGN_CENTER|wxLEFT|wxRIGHT</flag>
-								<border>3</border>
-								<object class="wxBoxSizer">
-									<orient>wxVERTICAL</orient>
-									<object class="sizeritem">
-										<option>0</option>
-										<flag>wxALIGN_CENTER</flag>
-										<border>0</border>
-										<object class="wxBitmapButton" name="ShiftUpButton">
-											<bitmap stock_id="darkradiant:arrow_up_blue.png" stock_client="">undefined.png</bitmap>
-											<default>0</default>
-										</object>
-									</object>
-									<object class="sizeritem">
-										<option>0</option>
-										<flag>wxALIGN_CENTER</flag>
-										<border>0</border>
-										<object class="wxBitmapButton" name="ShiftDownButton">
-											<bitmap stock_id="darkradiant:arrow_down_blue.png" stock_client="">undefined.png</bitmap>
-											<default>0</default>
-										</object>
+						<object class="sizeritem">
+							<option>1</option>
+							<flag>wxALIGN_CENTER|wxBOTTOM</flag>
+							<border>6</border>
+							<object class="wxBoxSizer">
+								<orient>wxHORIZONTAL</orient>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxALIGN_CENTER_VERTICAL</flag>
+									<border>0</border>
+									<object class="wxBitmapButton" name="ShiftLeftButton">
+										<bitmap stock_id="darkradiant:arrow_left_blue.png" stock_client="">undefined.png</bitmap>
+										<default>0</default>
 									</object>
 								</object>
-							</object>
-							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxALIGN_CENTER_VERTICAL</flag>
-								<border>0</border>
-								<object class="wxBitmapButton" name="ShiftRightButton">
-									<bitmap stock_id="darkradiant:arrow_right_blue.png" stock_client="">undefined.png</bitmap>
-									<default>0</default>
+								<object class="sizeritem">
+									<option>1</option>
+									<flag>wxALIGN_CENTER|wxLEFT|wxRIGHT</flag>
+									<border>3</border>
+									<object class="wxBoxSizer">
+										<orient>wxVERTICAL</orient>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxALIGN_CENTER</flag>
+											<border>0</border>
+											<object class="wxBitmapButton" name="ShiftUpButton">
+												<bitmap stock_id="darkradiant:arrow_up_blue.png" stock_client="">undefined.png</bitmap>
+												<default>0</default>
+											</object>
+										</object>
+										<object class="sizeritem">
+											<option>0</option>
+											<flag>wxALIGN_CENTER</flag>
+											<border>0</border>
+											<object class="wxBitmapButton" name="ShiftDownButton">
+												<bitmap stock_id="darkradiant:arrow_down_blue.png" stock_client="">undefined.png</bitmap>
+												<default>0</default>
+											</object>
+										</object>
+									</object>
+								</object>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxALIGN_CENTER_VERTICAL</flag>
+									<border>0</border>
+									<object class="wxBitmapButton" name="ShiftRightButton">
+										<bitmap stock_id="darkradiant:arrow_right_blue.png" stock_client="">undefined.png</bitmap>
+										<default>0</default>
+									</object>
 								</object>
 							</object>
 						</object>

@@ -66,6 +66,7 @@ private:
 
 	// For idle callbacks
 	bool _selectionRescanNeeded;
+    bool _manipulatorPanelNeedsUpdate;
 
 	sigc::connection _sceneSelectionChanged;
 	sigc::connection _undoHandler;
@@ -215,6 +216,7 @@ private:
     double getTextureAspectRatio();
     void onManipulatorModeChanged(selection::IManipulator::Type type);
     void onSelectionModeChanged(textool::SelectionMode mode);
+    void onSelectionChanged();
 
     TextureToolMouseEvent createMouseEvent(const Vector2& point, const Vector2& delta = Vector2(0, 0));
 

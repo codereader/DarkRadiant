@@ -53,6 +53,7 @@ TexTool::TexTool() :
     _glWidget(new wxutil::GLWidget(this, std::bind(&TexTool::onGLDraw, this), "TexTool")),
     _gridActive(registry::getValue<bool>(RKEY_GRID_STATE)),
     _selectionRescanNeeded(false),
+    _manipulatorPanelNeedsUpdate(true),
     _manipulatorModeToggleRequestHandler(std::numeric_limits<std::size_t>::max()),
     _componentSelectionModeToggleRequestHandler(std::numeric_limits<std::size_t>::max()),
     _textureMessageHandler(std::numeric_limits<std::size_t>::max()),
@@ -235,7 +236,7 @@ void TexTool::_preShow()
         sigc::mem_fun(this, &TexTool::onSelectionModeChanged)
     );
     _selectionChanged = GlobalTextureToolSelectionSystem().signal_selectionChanged().connect(
-        sigc::mem_fun(this, &TexTool::queueDraw)
+        sigc::mem_fun(this, &TexTool::onSelectionChanged)
     );
 
     _gridChanged = GlobalGrid().signal_gridChanged().connect(sigc::mem_fun(this, &TexTool::queueDraw));
@@ -318,7 +319,13 @@ void TexTool::onManipulatorModeChanged(selection::IManipulator::Type type)
 void TexTool::onSelectionModeChanged(textool::SelectionMode mode)
 {
     queueDraw();
-    updateManipulationPanel();
+    _manipulatorPanelNeedsUpdate = true;
+}
+
+void TexTool::onSelectionChanged()
+{
+    queueDraw();
+    _manipulatorPanelNeedsUpdate = true;
 }
 
 void TexTool::onMainFrameShuttingDown()
@@ -440,6 +447,12 @@ void TexTool::onIdle(wxIdleEvent& ev)
         _selectionRescanNeeded = false;
         update();
         queueDraw();
+    }
+
+    if (_manipulatorPanelNeedsUpdate)
+    {
+        _manipulatorPanelNeedsUpdate = false;
+        updateManipulationPanel();
     }
 }
 
@@ -1045,8 +1058,12 @@ void TexTool::updateManipulationPanel()
 {
     bool isInComponentMode = GlobalTextureToolSelectionSystem().getSelectionMode() == textool::SelectionMode::Vertex;
 
-    findNamedObject<wxWindow>(this, "ScalePanel")->Enable(!isInComponentMode);
-    findNamedObject<wxWindow>(this, "RotatePanel")->Enable(!isInComponentMode);
+    bool anythingSelected = !isInComponentMode && GlobalTextureToolSelectionSystem().countSelected() > 0 ||
+        isInComponentMode && GlobalTextureToolSelectionSystem().countSelectedComponentNodes() > 0;
+
+    findNamedObject<wxWindow>(this, "ShiftPanel")->Enable(anythingSelected);
+    findNamedObject<wxWindow>(this, "ScalePanel")->Enable(anythingSelected && !isInComponentMode);
+    findNamedObject<wxWindow>(this, "RotatePanel")->Enable(anythingSelected && !isInComponentMode);
 }
 
 } // namespace ui
