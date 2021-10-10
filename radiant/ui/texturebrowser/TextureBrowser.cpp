@@ -23,6 +23,7 @@
 #include "shaderlib.h"
 
 #include "string/predicate.h"
+#include "string/split.h"
 #include <functional>
 
 #include <wx/panel.h>
@@ -592,10 +593,11 @@ bool TextureBrowser::materialIsVisible(const MaterialPtr& material)
         return false;
     }
 
-    if (!getFilter().empty())
+    auto filterText = getFilter();
+
+    if (!filterText.empty())
     {
-        std::string textureNameCache(materialName);
-        std::string textureName = shader_get_textureName(textureNameCache.c_str()); // can't use temporary material->getName() here
+        std::string textureName = shader_get_textureName(materialName.c_str());
 
 		if (_filterIgnoresTexturePath)
         {
@@ -609,9 +611,20 @@ bool TextureBrowser::materialIsVisible(const MaterialPtr& material)
 
 		string::to_lower(textureName);
 
+        // Split the filter text into words, every word must match (#5738)
+        std::vector<std::string> filters;
+        string::split(filters, string::to_lower_copy(filterText), " ");
+
 		// case insensitive substring match
-		if (textureName.find(string::to_lower_copy(getFilter())) == std::string::npos)
-			return false;
+        for (const auto& filter : filters)
+        {
+            if (textureName.find(filter) == std::string::npos)
+            {
+                return false;
+            }
+        }
+		
+		return true;
     }
 
     return true;
