@@ -54,6 +54,19 @@ void StatusBarManager::initialiseModule(const IApplicationContext& ctx)
 
     GlobalMainFrame().signal_MainFrameShuttingDown().connect(
         sigc::mem_fun(this, &StatusBarManager::onMainFrameShuttingDown));
+
+    // Do a full re-paint when the mainframe is resized
+    GlobalMainFrame().signal_MainFrameReady().connect([this]()
+    {
+        GlobalMainFrame().getWxTopLevelWindow()->Bind(wxEVT_SIZE, [this](wxSizeEvent& ev)
+        {
+            ev.Skip();
+            if (_statusBar)
+            {
+                _statusBar->Refresh(true);
+            }
+        });
+    });
 }
 
 wxWindow* StatusBarManager::getStatusBar()
@@ -228,7 +241,7 @@ void StatusBarManager::rebuildStatusBar()
       
         // A few default elements don't need to use 1 as proportion
         auto proportion = i->first == StandardPosition::MapStatistics || i->first == StandardPosition::GridSize ||
-            i->first == StandardPosition::MapEditStopwatch ? 0 : 1;
+            i->first == StandardPosition::MapEditStopwatch || i->first == StandardPosition::OrthoViewPosition ? 0 : 1;
 
 		_statusBar->GetSizer()->Add(i->second->toplevel, proportion, flags, spacing);
 
@@ -242,6 +255,7 @@ void StatusBarManager::onMainFrameShuttingDown()
 {
     flushIdleCallback();
 
+    _statusBar = nullptr;
     _tempParent->Destroy();
     _tempParent = nullptr;
 }
