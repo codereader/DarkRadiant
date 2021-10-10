@@ -39,6 +39,7 @@ bool TextureBoundsAccumulator::processNode(const textool::INode::Ptr& node)
 bool TextureNodeManipulator::processNode(const textool::INode::Ptr& node)
 {
     applyTransform(node, _transform);
+    _numProcessedNodes++;
     return true;
 }
 
