@@ -26,9 +26,9 @@ When installing Studio please make sure to enable the "Desktop Development with 
 
 ## Build
 
-The main Visual C++ solution file is located in:
+The main Visual C++ solution file is located in the root folder of this repository:
 
-`tools/msvc/DarkRadiant.sln`
+`DarkRadiant.sln`
 
 Open this file with Visual Studio and start a build by right-clicking on the top-level 
 "Solution 'DarkRadiant'" item and choosing Build Solution. The `DarkRadiant.exe` file will be placed in the `install/` folder.
