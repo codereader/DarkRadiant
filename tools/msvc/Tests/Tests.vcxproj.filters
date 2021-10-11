@@ -77,9 +77,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <Filter Include="algorithm">
       <UniqueIdentifier>{519b0a02-8afc-4b67-9fa3-aeed09412562}</UniqueIdentifier>
     </Filter>
@@ -89,5 +86,8 @@
     <Filter Include="testutil">
       <UniqueIdentifier>{9a9dc6e7-3354-49f6-8a77-01fa9659504f}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

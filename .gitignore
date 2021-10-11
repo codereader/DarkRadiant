@@ -86,3 +86,4 @@ Makefile.in
 *.ilk
 .vs/
 windeps.7z
+/packages
