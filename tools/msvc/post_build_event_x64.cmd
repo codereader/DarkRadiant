@@ -1,4 +1,4 @@
-for %%i in (..\..\install\*.dll) do if not "%%~nxi"=="DarkRadiantCore.dll" del "%%i"
+for %%i in (..\..\install\*.dll) do del "%%i"
 
 del ..\..\install\python*.zip
 

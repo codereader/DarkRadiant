@@ -91,10 +91,6 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)\..\..\install\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)\..\..\install\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)\..\..\install\</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)\..\..\install\</OutDir>
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
@@ -127,7 +123,7 @@
       </DataExecutionPrevention>
     </Link>
     <PostBuildEvent>
-      <Command>$(SolutionDir)/post_build_event.cmd $(Configuration) vc$(PlatformToolsetVersion)</Command>
+      <Command>$(DarkRadiantRoot)\tools\msvc\post_build_event.cmd $(Configuration) vc$(PlatformToolsetVersion)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -150,7 +146,7 @@
       </DataExecutionPrevention>
     </Link>
     <PostBuildEvent>
-      <Command>$(SolutionDir)/post_build_event_x64.cmd $(Configuration) vc$(PlatformToolsetVersion)</Command>
+      <Command>$(DarkRadiantRoot)tools\msvc\post_build_event_x64.cmd $(Configuration) vc$(PlatformToolsetVersion)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -168,7 +164,7 @@
       </DataExecutionPrevention>
     </Link>
     <PostBuildEvent>
-      <Command>$(SolutionDir)/post_build_event.cmd $(Configuration) vc$(PlatformToolsetVersion)</Command>
+      <Command>$(DarkRadiantRoot)\tools\msvc\post_build_event.cmd $(Configuration) vc$(PlatformToolsetVersion)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -190,7 +186,7 @@
       </DataExecutionPrevention>
     </Link>
     <PostBuildEvent>
-      <Command>$(SolutionDir)/post_build_event_x64.cmd $(Configuration) vc$(PlatformToolsetVersion)</Command>
+      <Command>$(DarkRadiantRoot)tools\msvc\post_build_event_x64.cmd $(Configuration) vc$(PlatformToolsetVersion)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
