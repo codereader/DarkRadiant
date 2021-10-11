@@ -97,7 +97,7 @@
     </ClCompile>
     <PostBuildEvent>
       <Command>@echo Copying bitmaps to Output Folder...
-copy $(SolutionDir)..\..\plugins\dm.gameconnection\*.png $(SolutionDir)..\..\install\bitmaps /Y</Command>
+copy $(DarkRadiantRoot)plugins\dm.gameconnection\*.png $(DarkRadiantRoot)install\bitmaps /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -112,7 +112,7 @@ copy $(SolutionDir)..\..\plugins\dm.gameconnection\*.png $(SolutionDir)..\..\ins
     </ClCompile>
     <PostBuildEvent>
       <Command>@echo Copying bitmaps to Output Folder...
-copy $(SolutionDir)..\..\plugins\dm.gameconnection\*.png $(SolutionDir)..\..\install\bitmaps /Y</Command>
+copy $(DarkRadiantRoot)plugins\dm.gameconnection\*.png $(DarkRadiantRoot)install\bitmaps /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -128,7 +128,7 @@ copy $(SolutionDir)..\..\plugins\dm.gameconnection\*.png $(SolutionDir)..\..\ins
     </ClCompile>
     <PostBuildEvent>
       <Command>@echo Copying bitmaps to Output Folder...
-copy $(SolutionDir)..\..\plugins\dm.gameconnection\*.png $(SolutionDir)..\..\install\bitmaps /Y</Command>
+copy $(DarkRadiantRoot)plugins\dm.gameconnection\*.png $(DarkRadiantRoot)install\bitmaps /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -144,7 +144,7 @@ copy $(SolutionDir)..\..\plugins\dm.gameconnection\*.png $(SolutionDir)..\..\ins
     </ClCompile>
     <PostBuildEvent>
       <Command>@echo Copying bitmaps to Output Folder...
-copy $(SolutionDir)..\..\plugins\dm.gameconnection\*.png $(SolutionDir)..\..\install\bitmaps /Y</Command>
+copy $(DarkRadiantRoot)plugins\dm.gameconnection\*.png $(DarkRadiantRoot)install\bitmaps /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

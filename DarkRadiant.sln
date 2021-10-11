@@ -44,6 +44,7 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dm.difficulty", "tools\msvc\dm.difficulty.vcxproj", "{68B95079-09DF-48F7-BAD9-81C33118BEFD}"
 	ProjectSection(ProjectDependencies) = postProject
 		{0D4BE190-97F4-4DB9-BEAB-B0196868EC0A} = {0D4BE190-97F4-4DB9-BEAB-B0196868EC0A}
+		{3C9FB5AA-7118-476E-B33D-D3AC1C8412BB} = {3C9FB5AA-7118-476E-B33D-D3AC1C8412BB}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "scenelib", "tools\msvc\scenelib.vcxproj", "{F7408B46-E4A9-470C-9731-9A1564247385}"
@@ -58,6 +59,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "include", "tools\msvc\inclu
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dm.conversation", "tools\msvc\dm.conversation.vcxproj", "{435F29EA-7236-49AD-BF1A-5DB8AD566B5D}"
 	ProjectSection(ProjectDependencies) = postProject
+		{A15EFB56-927F-411D-A57B-0328321456A2} = {A15EFB56-927F-411D-A57B-0328321456A2}
 		{0D4BE190-97F4-4DB9-BEAB-B0196868EC0A} = {0D4BE190-97F4-4DB9-BEAB-B0196868EC0A}
 	EndProjectSection
 EndProject

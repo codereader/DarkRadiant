@@ -3,8 +3,8 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
     <DarkRadiantRoot>$(SolutionDir)</DarkRadiantRoot>
-    <W32DepsDir>$(DarkRadiantRoot)\w32deps\</W32DepsDir>
-    <W64DepsDir>$(DarkRadiantRoot)\w64deps\</W64DepsDir>
+    <W32DepsDir>$(DarkRadiantRoot)w32deps\</W32DepsDir>
+    <W64DepsDir>$(DarkRadiantRoot)w64deps\</W64DepsDir>
   </PropertyGroup>
   <PropertyGroup>
     <IntDir>$(DarkRadiantRoot)build\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
