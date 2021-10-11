@@ -3,7 +3,7 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <OutDir>$(SolutionDir)\..\..\install\</OutDir>
+    <OutDir>$(DarkRadiantRoot)install\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <Link>

@@ -3,11 +3,8 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <OutDir>$(DarkRadiantRoot)install\plugins\</OutDir>
+    <OutDir>$(DarkRadiantRoot)build\libs\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
-  <ItemDefinitionGroup>
-    <Link />
-    <Link />
-  </ItemDefinitionGroup>
+  <ItemDefinitionGroup />
   <ItemGroup />
 </Project>
