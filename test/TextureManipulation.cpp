@@ -698,4 +698,24 @@ TEST_F(TextureManipulationTest, FaceTextureChangePreservesTexelScale)
     EXPECT_NEAR(texelScaleBefore.y(), texelScaleAfter.y(), 0.01) << "Texel scale Y changed after applying new material";
 }
 
+TEST_F(TextureManipulationTest, FaceRotationPreservesTexelScale)
+{
+    auto material = "textures/a_1024x512";
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto test1024x512Node = algorithm::createCuboidBrush(worldspawn, AABB({ 128, 32, 16 }, { 128, 32, 16 }), material);
+    algorithm::foreachFace(*Node_getIBrush(test1024x512Node), [](IFace& face) { face.fitTexture(1, 1); });
+
+    auto& face = *algorithm::findBrushFaceWithNormal(Node_getIBrush(test1024x512Node), { 0, 0, 1 });
+
+    auto texelScaleBefore = face.getTexelScale();
+
+    face.rotateTexdef(45); // degrees
+    face.rotateTexdef(45);
+
+    auto texelScaleAfter = face.getTexelScale();
+
+    EXPECT_NEAR(texelScaleBefore.x(), texelScaleAfter.x(), 0.01) << "Texel scale X changed after rotation by 90 degrees";
+    EXPECT_NEAR(texelScaleBefore.y(), texelScaleAfter.y(), 0.01) << "Texel scale Y changed after rotation by 90 degrees";
+}
+
 }

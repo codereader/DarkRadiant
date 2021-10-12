@@ -521,7 +521,13 @@ Vector2 Face::getTexelScale() const
     auto imageHeight = _shader.getHeight();
 
     auto textureMatrix = _texdef.getMatrix();
-    return Vector2(textureMatrix.xx() * imageWidth, textureMatrix.yy() * imageHeight);
+
+    // Multiplying the image dimensions onto the texture matrix yields
+    // the base vectors in texel space. Take the length to get the covered texels per world unit
+    return Vector2(
+        Vector2(textureMatrix.xx() * imageWidth, textureMatrix.xy() * imageHeight).getLength(),
+        Vector2(textureMatrix.yx() * imageWidth, textureMatrix.yy() * imageHeight).getLength()
+    );
 }
 
 float Face::getTextureAspectRatio() const
