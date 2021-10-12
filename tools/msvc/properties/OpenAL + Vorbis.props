@@ -9,7 +9,7 @@
       <AdditionalDependencies>libvorbis$(LibSuffix)-vc$(PlatformToolsetVersion).lib;OpenAL32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(DarkRadiantRoot)\w32deps\openal\include;$(DarkRadiantRoot)\w32deps\openal\include\AL;$(DarkRadiantRoot)\w32deps\libvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WinDepsDir)openal\include;$(WinDepsDir)openal\include\AL;$(WinDepsDir)libvorbis\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup />

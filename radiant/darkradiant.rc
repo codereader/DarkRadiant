@@ -1,4 +1,4 @@
-#include "../w32deps/wxWidgets/include/wx/msw/wx.rc"
+#include "../windeps/wxWidgets/include/wx/msw/wx.rc"
 #include "../include/version.h"
 
 //Microsoft Developer Studio generated resource script.

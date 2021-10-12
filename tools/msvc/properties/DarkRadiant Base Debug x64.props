@@ -4,7 +4,7 @@
     <Import Project="DarkRadiant Base.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros">
-    <PlatformDepsDir>$(DarkRadiantRoot)\w64deps\</PlatformDepsDir>
+    <PlatformDepsDir>$(DarkRadiantRoot)\windeps\</PlatformDepsDir>
     <LibSuffix>-d</LibSuffix>
     <WxWidgetsLibDir>vc14x_x64_dll</WxWidgetsLibDir>
   </PropertyGroup>
