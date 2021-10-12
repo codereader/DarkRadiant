@@ -718,4 +718,40 @@ TEST_F(TextureManipulationTest, FaceRotationPreservesTexelScale)
     EXPECT_NEAR(texelScaleBefore.y(), texelScaleAfter.y(), 0.01) << "Texel scale Y changed after rotation by 90 degrees";
 }
 
+TEST_F(TextureManipulationTest, FaceGetShiftScaleRotation)
+{
+    // These materials have an editor image with 2:1 aspect ratio
+    auto materialA = "textures/a_1024x512";
+    auto materialB = "textures/b_1024x512";
+    
+    std::string mapPath = "maps/simple_brushes.map";
+    GlobalCommandSystem().executeCommand("OpenMap", mapPath);
+
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+
+    // Brush A
+    auto brushNode = algorithm::findFirstBrushWithMaterial(worldspawn, materialA);
+    auto brush = Node_getIBrush(brushNode);
+
+    auto& faceA = *algorithm::findBrushFaceWithNormal(brush, { 0, 0, 1 });
+
+    auto ssr = faceA.getShiftScaleRotation();
+
+    EXPECT_NEAR(ssr.scale[0], 0.25, 0.01) << "Brush A: Horizontal Scale is off";
+    EXPECT_NEAR(ssr.scale[1], 0.25, 0.01) << "Brush A: Vertical Scale is off";
+    EXPECT_NEAR(ssr.rotate, 90, 0.01) << "Brush A: Rotation Value is off";
+
+    // Brush B (is rotated, but should show the same scale values
+    brushNode = algorithm::findFirstBrushWithMaterial(worldspawn, materialB);
+    brush = Node_getIBrush(brushNode);
+
+    auto& faceB = *algorithm::findBrushFaceWithNormal(brush, { 0, 0, 1 });
+
+    ssr = faceB.getShiftScaleRotation();
+
+    EXPECT_NEAR(ssr.scale[0], 0.25, 0.01) << "Brush B: Horizontal Scale is off";
+    EXPECT_NEAR(ssr.scale[1], 0.25, 0.01) << "Brush B: Vertical Scale is off";
+    EXPECT_NEAR(ssr.rotate, 75, 0.01) << "Brush B: Rotation Value is off";
+}
+
 }

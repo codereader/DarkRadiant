@@ -8,3 +8,13 @@ textures/a_1024x512
 {
 	diffusemap textures/a_1024x512
 }
+
+textures/b_1024x512
+{
+	diffusemap textures/a_1024x512
+}
+
+textures/c_1024x512
+{
+	diffusemap textures/a_1024x512
+}
