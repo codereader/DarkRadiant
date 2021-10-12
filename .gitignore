@@ -85,5 +85,6 @@ Makefile.in
 /install/*.testdurations
 *.ilk
 .vs/
-windeps.7z
+windeps*.7z
 /packages
+/windeps

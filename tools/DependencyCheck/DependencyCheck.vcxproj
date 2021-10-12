@@ -92,7 +92,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PreBuildEvent>
-      <Command>if not exist $(DarkRadiantRoot)\w32deps (powershell -ExecutionPolicy Bypass -NoProfile -NonInteractive -File "$(DarkRadiantRoot)\tools\scripts\download_windeps.ps1")</Command>
+      <Command>powershell -ExecutionPolicy Bypass -NoProfile -NonInteractive -File "$(DarkRadiantRoot)\tools\scripts\download_windeps.ps1"</Command>
       <Message>Ensure Windows Dependencies are downloaded and extracted</Message>
     </PreBuildEvent>
   </ItemDefinitionGroup>
@@ -112,7 +112,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PreBuildEvent>
-      <Command>if not exist $(DarkRadiantRoot)\w32deps (powershell -ExecutionPolicy Bypass -NoProfile -NonInteractive -File "$(DarkRadiantRoot)\tools\scripts\download_windeps.ps1")</Command>
+      <Command>powershell -ExecutionPolicy Bypass -NoProfile -NonInteractive -File "$(DarkRadiantRoot)\tools\scripts\download_windeps.ps1"</Command>
       <Message>Ensure Windows Dependencies are downloaded and extracted</Message>
     </PreBuildEvent>
   </ItemDefinitionGroup>
@@ -128,7 +128,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PreBuildEvent>
-      <Command>if not exist $(DarkRadiantRoot)\w32deps (powershell -ExecutionPolicy Bypass -NoProfile -NonInteractive -File "$(DarkRadiantRoot)\tools\scripts\download_windeps.ps1")</Command>
+      <Command>powershell -ExecutionPolicy Bypass -NoProfile -NonInteractive -File "$(DarkRadiantRoot)\tools\scripts\download_windeps.ps1"</Command>
       <Message>Ensure Windows Dependencies are downloaded and extracted</Message>
     </PreBuildEvent>
   </ItemDefinitionGroup>
@@ -148,7 +148,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PreBuildEvent>
-      <Command>if not exist $(DarkRadiantRoot)\w32deps (powershell -ExecutionPolicy Bypass -NoProfile -NonInteractive -File "$(DarkRadiantRoot)\tools\scripts\download_windeps.ps1")</Command>
+      <Command>powershell -ExecutionPolicy Bypass -NoProfile -NonInteractive -File "$(DarkRadiantRoot)\tools\scripts\download_windeps.ps1"</Command>
       <Message>Ensure Windows Dependencies are downloaded and extracted</Message>
     </PreBuildEvent>
   </ItemDefinitionGroup>
