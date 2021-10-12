@@ -37,7 +37,8 @@ public:
 
     void setTransform(const Matrix3& transform);
 
-    ShiftScaleRotation getShiftScaleRotation() const;
+    // Returns the Shift/Scale/Rotation values scaled to the given image dimensions
+    ShiftScaleRotation getShiftScaleRotation(std::size_t width, std::size_t height) const;
     void setFromShiftScaleRotate(const ShiftScaleRotation& ssr);
 
     Matrix3 getMatrix() const;

@@ -62,17 +62,30 @@ void TextureMatrix::addScale(std::size_t width, std::size_t height)
 	_coords[1][2] /= height;
 }
 
-ShiftScaleRotation TextureMatrix::getShiftScaleRotation() const
+ShiftScaleRotation TextureMatrix::getShiftScaleRotation(std::size_t width, std::size_t height) const
 {
 	ShiftScaleRotation ssr;
 
-	ssr.scale[0] = 1.0 / Vector2(_coords[0][0], _coords[1][0]).getLength();
-	ssr.scale[1] = 1.0 / Vector2(_coords[0][1], _coords[1][1]).getLength();
+    // These values are going to show up in the Surface Inspector, which takes the image
+    // dimensions into account. We stretch UV space using the image dimensions.
 
-	ssr.rotate = -radians_to_degrees(arctangent_yx(_coords[1][0], _coords[0][0]));
+    // Surface Inspector wants to display values such that scale == 1.0 means:
+    // a 512-unit wide face can display the full 512px of the editor image.
+    // The corresponding texture matrix transform features a scale value like 1/512
+    // to scale the 512 XYZ coord down to 1.0 in UV space.
+	ssr.scale[0] = 1.0 / Vector2(_coords[0][0] * width, _coords[1][0] * height).getLength();
+	ssr.scale[1] = 1.0 / Vector2(_coords[0][1] * width, _coords[1][1] * height).getLength();
 
-	ssr.shift[0] = -_coords[0][2];
-	ssr.shift[1] = _coords[1][2];
+	ssr.rotate = -radians_to_degrees(arctangent_yx(_coords[1][0] * height, _coords[0][0] * width));
+
+    // We want the shift values appear in pixels of the editor image,
+    // so scale up the UV values by the editor image dimensions
+	ssr.shift[0] = -_coords[0][2] * width;
+	ssr.shift[1] = _coords[1][2] * height;
+
+    // We only need to display shift values in the range of the texture dimensions
+    ssr.shift[0] = float_mod(ssr.shift[0], width);
+    ssr.shift[1] = float_mod(ssr.shift[1], height);
 
 	// determine whether or not an axis is flipped using a 2d cross-product
 	auto cross = Vector2(_coords[0][0], _coords[0][1]).crossProduct(Vector2(_coords[1][0], _coords[1][1]));

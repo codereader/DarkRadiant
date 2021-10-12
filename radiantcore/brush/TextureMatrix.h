@@ -60,8 +60,7 @@ public:
 
 	// compute a fake shift scale rot representation from the texture matrix
 	// these shift scale rot values are to be understood in the local axis base
-	// Note: this code looks similar to Texdef_fromTransform, but the algorithm is slightly different.
-    ShiftScaleRotation getShiftScaleRotation() const;
+    ShiftScaleRotation getShiftScaleRotation(std::size_t width, std::size_t height) const;
 
 	// All texture-projection translation (shift) values are congruent modulo the dimensions of the texture.
 	// This function normalises shift values to the smallest positive congruent values.
