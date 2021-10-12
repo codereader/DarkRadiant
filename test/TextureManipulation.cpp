@@ -644,6 +644,27 @@ TEST_F(TextureManipulationTest, FaceGetTexelScale)
     EXPECT_NEAR(texelScale.y(), expectedTexelScaleY, 0.01) << "Texel scale Y is off";
 }
 
+TEST_F(TextureManipulationTest, FaceGetTextureAspectRatio)
+{
+    auto brushNode = create512CubeTextured1x1("textures/a_1024x512");
+    
+    // Get the texture dimensions
+    auto editorImage = GlobalMaterialManager().getMaterial("textures/a_1024x512")->getEditorImage();
+    auto textureWidth = editorImage->getWidth();
+    auto textureHeight = editorImage->getHeight();
+
+    // Get a face and check the texture bounds
+    auto& face = Node_getIBrush(brushNode)->getFace(0);
+    
+    EXPECT_NEAR(face.getTextureAspectRatio(), static_cast<float>(textureWidth) / textureHeight, 0.01) 
+        << "Wrong texture aspect ratio reported";
+
+    brushNode = create512CubeTextured1x1("textures/numbers/0");
+    auto& anotherFace = Node_getIBrush(brushNode)->getFace(0);
+    EXPECT_NEAR(anotherFace.getTextureAspectRatio(), 1.0, 0.001)
+        << "Number texture aspect ratio should be 1.0";
+}
+
 TEST_F(TextureManipulationTest, FaceTextureChangePreservesTexelScale)
 {
     auto largeTexture = "textures/a_1024x512";

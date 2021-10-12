@@ -165,6 +165,7 @@ public:
 	void rotateTexdef(float angle) override;
 
     Vector2 getTexelScale() const override;
+    float getTextureAspectRatio() const override;
 
 	void fitTexture(float s_repeat, float t_repeat) override;
 	void flipTexture(unsigned int flipAxis) override;

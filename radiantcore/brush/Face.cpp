@@ -524,6 +524,14 @@ Vector2 Face::getTexelScale() const
     return Vector2(textureMatrix.xx() * imageWidth, textureMatrix.yy() * imageHeight);
 }
 
+float Face::getTextureAspectRatio() const
+{
+    auto imageWidth = _shader.getWidth();
+    auto imageHeight = _shader.getHeight();
+    
+    return static_cast<float>(imageWidth) / imageHeight;
+}
+
 // Returns the index pair forming an edge, keeping the winding direction intact
 inline std::pair<std::size_t, std::size_t> getEdgeIndexPair(std::size_t first, std::size_t second, std::size_t windingSize)
 {

@@ -146,6 +146,9 @@ public:
     // This is based on the image returned by the material, usually the editor image
     virtual Vector2 getTexelScale() const = 0;
 
+    // Returns the texture aspect ratio width/height
+    virtual float getTextureAspectRatio() const = 0;
+
 	// Fits the texture on this face
 	virtual void fitTexture(float s_repeat, float t_repeat) = 0;
 
