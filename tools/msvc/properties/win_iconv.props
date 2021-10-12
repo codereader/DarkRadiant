@@ -16,6 +16,9 @@
     <ClCompile>
       <AdditionalIncludeDirectories>$(WinDepsDir)win_iconv\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>$(PlatformDepsDir)\win_iconv\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
   </ItemDefinitionGroup>
   <ItemGroup />
 </Project>
