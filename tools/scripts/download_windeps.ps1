@@ -8,7 +8,7 @@ try
 
     $latest = $releases | sort created_at -Descending | select -First 1
 
-    $windeps_package = $latest.assets | ? { $_.name -eq "windeps_update.7z" }
+    $windeps_package = $latest.assets | ? { $_.name -eq "windeps.7z" }
 
     if ($null -eq $windeps_package)
     {
@@ -16,7 +16,7 @@ try
     }
 
     $package_filename = [System.IO.Path]::GetFileNameWithoutExtension($windeps_package.name) + `
-                        $windeps_package.id + [System.IO.Path]::GetExtension($windeps_package.name)
+                        "_" + $windeps_package.id + [System.IO.Path]::GetExtension($windeps_package.name)
 
     $target_folder = Join-Path (Get-Location) "..\..\"
     $package_path = Join-Path $target_folder $package_filename
