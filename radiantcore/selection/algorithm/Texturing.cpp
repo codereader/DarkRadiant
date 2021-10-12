@@ -94,27 +94,29 @@ void TextureFlipper::FlipFace(IFace& face, int flipAxis)
 
 // Rotation
 
-TextureRotator::TextureRotator(const Vector2& pivot, double angle)
+TextureRotator::TextureRotator(const Vector2& pivot, double angle, double textureAspectRatio)
 {
     _transform = Matrix3::getTranslation(-pivot);
+    _transform.premultiplyBy(Matrix3::getScale({ textureAspectRatio, 1 }));
     _transform.premultiplyBy(Matrix3::getRotation(angle));
+    _transform.premultiplyBy(Matrix3::getScale({ 1 / textureAspectRatio, 1 }));
     _transform.premultiplyBy(Matrix3::getTranslation(pivot));
 }
 
 void TextureRotator::RotatePatch(IPatch& patch, double angle)
 {
-    RotateNode(std::make_shared<textool::PatchNode>(patch), angle);
+    RotateNode(std::make_shared<textool::PatchNode>(patch), angle, 1.0);
 }
 
 void TextureRotator::RotateFace(IFace& face, double angle)
 {
-    RotateNode(std::make_shared<textool::FaceNode>(face), angle);
+    RotateNode(std::make_shared<textool::FaceNode>(face), angle, face.getTextureAspectRatio());
 }
 
-void TextureRotator::RotateNode(const textool::INode::Ptr& node, double angle)
+void TextureRotator::RotateNode(const textool::INode::Ptr& node, double angle, double textureAspectRatio)
 {
     const auto& bounds = node->localAABB();
-    TextureRotator rotator({ bounds.origin.x(), bounds.origin.y() }, angle);
+    TextureRotator rotator({ bounds.origin.x(), bounds.origin.y() }, angle, textureAspectRatio);
 
     rotator.processNode(node);
 }

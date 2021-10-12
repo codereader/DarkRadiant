@@ -845,7 +845,7 @@ void TextureToolSelectionSystem::rotateSelectionCmd(const cmd::ArgumentList& arg
     }
 
     Vector2 pivot{ accumulator.getBounds().origin.x(), accumulator.getBounds().origin.y() };
-    selection::algorithm::TextureRotator rotator(pivot, angle);
+    selection::algorithm::TextureRotator rotator(pivot, angle, 1.0);
     foreachSelectedNode(rotator);
 }
 

@@ -79,7 +79,7 @@ class TextureRotator :
     public TextureNodeManipulator
 {
 public:
-    TextureRotator(const Vector2& pivot, double angle);
+    TextureRotator(const Vector2& pivot, double angle, double aspect);
 
     // Directly rotate the texture of the given patch around its UV center
     static void RotatePatch(IPatch& patch, double angle);
@@ -88,7 +88,7 @@ public:
     static void RotateFace(IFace& face, double angle);
 
 private:
-    static void RotateNode(const textool::INode::Ptr& node, double angle);
+    static void RotateNode(const textool::INode::Ptr& node, double angle, double aspect);
 };
 
 class TextureScaler :
