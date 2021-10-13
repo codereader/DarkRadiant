@@ -479,35 +479,22 @@ void TexTool::recalculateVisibleTexSpace()
 {
 	// Get the selection extents
 	_texSpaceAABB = getUvBoundsFromSceneSelection();
-    _texSpaceAABB.extents *= 2; // add some padding around the selection
-
-	// Normalise the plane to be square
-	_texSpaceAABB.extents[0] = std::max(_texSpaceAABB.extents[0], _texSpaceAABB.extents[1]);
-	_texSpaceAABB.extents[1] = _texSpaceAABB.extents[0];
+    _texSpaceAABB.extents *= 1.5; // add some padding around the selection
 
     // Make the visible space non-uniform if the texture has a width/height ratio != 1
     double textureAspect = getTextureAspectRatio();
 
-    if (textureAspect < 1)
-    {
-        _texSpaceAABB.extents.x() /= textureAspect;
-    }
-    else
-    {
-        _texSpaceAABB.extents.y() *= textureAspect;
-    }
-
-    // Initially grow this texture space to match/fit the window aspect
+    // Take the window aspect into account
     double windowAspect = _windowDims.x() / _windowDims.y();
-    double currentAspect = _texSpaceAABB.extents.x() / _texSpaceAABB.extents.y();
+    double stretchFactor = textureAspect / windowAspect;
 
-    if (currentAspect < windowAspect)
+    if (stretchFactor > 1)
     {
-        _texSpaceAABB.extents.x() = windowAspect * _texSpaceAABB.extents.y();
+        _texSpaceAABB.extents.y() *= stretchFactor;
     }
     else
     {
-        _texSpaceAABB.extents.y() = 1 / windowAspect * _texSpaceAABB.extents.x();
+        _texSpaceAABB.extents.x() /= stretchFactor;
     }
 
     updateProjection();
