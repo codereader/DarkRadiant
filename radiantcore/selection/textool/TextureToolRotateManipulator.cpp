@@ -72,6 +72,7 @@ const Vector2& TextureRotator::getCurrentDirection() const
 
 constexpr std::size_t CircleSegments = 8;
 constexpr double DefaultCircleRadius= 150; // Is measured in device pixels, will be scaled back to UV space on the fly
+constexpr double DefaultCrossHairSize = 10; // in device pixels
 
 TextureToolRotateManipulator::TextureToolRotateManipulator(TextureToolManipulationPivot& pivot) :
     _pivot(pivot),
@@ -152,11 +153,12 @@ void TextureToolRotateManipulator::renderComponents(const render::IRenderView& v
 
     // Transform the ellipse radii back to UV space
     auto inverseView = view.GetViewProjection().getPremultipliedBy(view.GetViewport()).getFullInverse();
-    auto transformedRadius = inverseView.transformDirection(Vector3(DefaultCircleRadius, DefaultCircleRadius, 0));
-    _circleRadius = transformedRadius.x();
+    auto transformedDeviceUnit = inverseView.transformDirection(Vector3(1, 1, 0));
+    auto transformedRadius = transformedDeviceUnit * DefaultCircleRadius;
+    _circleRadius = transformedRadius.x() * DefaultCircleRadius;
 
     // Recalculate the circle radius based on the view
-    draw_ellipse(CircleSegments, static_cast<float>(std::abs(transformedRadius.x())), 
+    draw_ellipse(CircleSegments, static_cast<float>(std::abs(transformedRadius.x())),
         static_cast<float>(std::abs(transformedRadius.y())), &_renderableCircle.front(), RemapXYZ());
 
     auto deselectedColour = GlobalTextureToolColourSchemeManager().getColour(SchemeElement::Manipulator);
@@ -179,12 +181,13 @@ void TextureToolRotateManipulator::renderComponents(const render::IRenderView& v
     glColor3fv(deselectedColour);
     glBegin(GL_LINES);
 
+    auto crossHairSize = transformedDeviceUnit * DefaultCrossHairSize;
     auto crossHairAngle = _selectableZ.isSelected() ? angle : 0;
-    glVertex2d(cos(crossHairAngle) * 0.05, -sin(crossHairAngle) * 0.05);
-    glVertex2d(-cos(crossHairAngle) * 0.05, sin(crossHairAngle) * 0.05);
+    glVertex2d(cos(crossHairAngle) * crossHairSize.x(), sin(crossHairAngle) * crossHairSize.y());
+    glVertex2d(-cos(crossHairAngle) * crossHairSize.x(), -sin(crossHairAngle) * crossHairSize.y());
 
-    glVertex2d(-cos(crossHairAngle + c_half_pi) * 0.05, sin(crossHairAngle + c_half_pi) * 0.05);
-    glVertex2d(cos(crossHairAngle + c_half_pi) * 0.05, -sin(crossHairAngle + c_half_pi) * 0.05);
+    glVertex2d(cos(crossHairAngle + c_half_pi) * crossHairSize.x(), sin(crossHairAngle + c_half_pi) * crossHairSize.y());
+    glVertex2d(-cos(crossHairAngle + c_half_pi) * crossHairSize.x(), -sin(crossHairAngle + c_half_pi) * crossHairSize.y());
 
     glEnd();
 
