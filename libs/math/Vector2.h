@@ -283,6 +283,29 @@ public:
 		return lenSquared;
 	}
 
+    /**
+     * \brief Normalise this vector in-place by scaling by the inverse of its
+     * size.
+
+     * \return The length of the vector before normalisation.
+     */
+    double normalise()
+    {
+        auto length = getLength();
+
+        _v[0] /= length;
+        _v[1] /= length;
+
+        return length;
+    }
+
+    /// Return the result of normalising this vector
+    BasicVector2<Element> getNormalised() const
+    {
+        auto length = getLength();
+        return { _v[0] / length, _v[1] / length };
+    }
+
 	/* Scalar product this vector with another Vector2,
 	 * returning the projection of <self> onto <other>
 	 *
