@@ -346,7 +346,8 @@ public:
 
 class RemapXYZ {
 public:
-	static void set(Vertex3f& vertex, float x, float y, float z) {
+	static void set(Vertex3f& vertex, Vertex3f::ElementType x, Vertex3f::ElementType y, Vertex3f::ElementType z)
+    {
 		vertex.x() = x;
 		vertex.y() = y;
 		vertex.z() = z;
@@ -355,7 +356,8 @@ public:
 
 class RemapYZX {
 public:
-	static void set(Vertex3f& vertex, float x, float y, float z) {
+	static void set(Vertex3f& vertex, Vertex3f::ElementType x, Vertex3f::ElementType y, Vertex3f::ElementType z)
+    {
 		vertex.x() = z;
 		vertex.y() = x;
 		vertex.z() = y;
@@ -364,7 +366,8 @@ public:
 
 class RemapZXY {
 public:
-	static void set(Vertex3f& vertex, float x, float y, float z) {
+	static void set(Vertex3f& vertex, Vertex3f::ElementType x, Vertex3f::ElementType y, Vertex3f::ElementType z)
+    {
 		vertex.x() = y;
 		vertex.y() = z;
 		vertex.z() = x;
@@ -372,42 +375,28 @@ public:
 };
 
 template<typename remap_policy>
-inline void draw_circle(const std::size_t segments, const float radius, VertexCb* vertices, remap_policy remap) {
-	const double increment = math::PI / double(segments << 2);
+inline void draw_ellipse(const std::size_t numSegments, const float radiusX, const float radiusY, VertexCb* vertices, remap_policy remap)
+{
+    // Per half circle we push in (Segments x 4) vertices (the caller made room for that)
+    const auto numVerticesPerHalf = numSegments << 2;
+	const auto increment = math::PI / numVerticesPerHalf;
 
-	std::size_t count = 0;
-	float x = radius;
-	float y = 0;
-	while(count < segments) {
-		VertexCb* i = vertices + count;
-		VertexCb* j = vertices + ((segments << 1) - (count + 1));
+    for (std::size_t curSegment = 0; curSegment < numVerticesPerHalf; ++curSegment)
+    {
+        auto curAngle = curSegment * increment;
 
-		VertexCb* k = i + (segments << 1);
-		VertexCb* l = j + (segments << 1);
+        auto x = radiusX * cos(curAngle);
+        auto y = radiusY * sin(curAngle);
 
-		VertexCb* m = i + (segments << 2);
-		VertexCb* n = j + (segments << 2);
-		VertexCb* o = k + (segments << 2);
-		VertexCb* p = l + (segments << 2);
+        remap_policy::set((vertices + curSegment)->vertex, x, y, 0);
+        remap_policy::set((vertices + curSegment + numVerticesPerHalf)->vertex, -x, -y, 0);
+    }
+}
 
-		remap_policy::set(i->vertex, x,-y, 0);
-		remap_policy::set(k->vertex,-y,-x, 0);
-		remap_policy::set(m->vertex,-x, y, 0);
-		remap_policy::set(o->vertex, y, x, 0);
-
-		++count;
-
-		{
-			const double theta = increment * count;
-			x = static_cast<float>(radius * cos(theta));
-			y = static_cast<float>(radius * sin(theta));
-		}
-
-		remap_policy::set(j->vertex, y,-x, 0);
-		remap_policy::set(l->vertex,-x,-y, 0);
-		remap_policy::set(n->vertex,-y, x, 0);
-		remap_policy::set(p->vertex, x, y, 0);
-	}
+template<typename remap_policy>
+inline void draw_circle(const std::size_t segments, const float radius, VertexCb* vertices, remap_policy remap)
+{
+    draw_ellipse(segments, radius, radius, vertices, remap);
 }
 
 inline void draw_quad(const float radius, VertexCb* quad) {

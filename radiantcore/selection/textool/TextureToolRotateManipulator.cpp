@@ -71,7 +71,7 @@ const Vector2& TextureRotator::getCurrentDirection() const
 }
 
 constexpr std::size_t CircleSegments = 8;
-constexpr double DefaultCircleRadius= 0.3; // Is measured in device coords (-1..+1), will be scaled back to UV space on the fly
+constexpr double DefaultCircleRadius= 150; // Is measured in device pixels, will be scaled back to UV space on the fly
 
 TextureToolRotateManipulator::TextureToolRotateManipulator(TextureToolManipulationPivot& pivot) :
     _pivot(pivot),
@@ -79,7 +79,7 @@ TextureToolRotateManipulator::TextureToolRotateManipulator(TextureToolManipulati
     _renderableCircle(CircleSegments << 3),
     _circleRadius(DefaultCircleRadius)
 {
-    draw_circle(CircleSegments, static_cast<float>(DefaultCircleRadius), &_renderableCircle.front(), RemapXYZ());
+    draw_ellipse(CircleSegments, static_cast<float>(DefaultCircleRadius), static_cast<float>(DefaultCircleRadius), &_renderableCircle.front(), RemapXYZ());
     _renderableCircle.setColour(Colour4b(200, 200, 200, 200));
 }
 
@@ -150,13 +150,14 @@ void TextureToolRotateManipulator::renderComponents(const render::IRenderView& v
 
     const auto& translation = pivot2World.tCol().getVector3();
 
-    // Transform the 0.3,0,0 device vector back to UV space
-    auto inverseView = view.GetViewProjection().getFullInverse();
-    auto transformedRadius = inverseView.transformDirection(Vector3(DefaultCircleRadius, 0, 0));
+    // Transform the ellipse radii back to UV space
+    auto inverseView = view.GetViewProjection().getPremultipliedBy(view.GetViewport()).getFullInverse();
+    auto transformedRadius = inverseView.transformDirection(Vector3(DefaultCircleRadius, DefaultCircleRadius, 0));
     _circleRadius = transformedRadius.x();
 
     // Recalculate the circle radius based on the view
-    draw_circle(CircleSegments, static_cast<float>(_circleRadius), &_renderableCircle.front(), RemapXYZ());
+    draw_ellipse(CircleSegments, static_cast<float>(std::abs(transformedRadius.x())), 
+        static_cast<float>(std::abs(transformedRadius.y())), &_renderableCircle.front(), RemapXYZ());
 
     auto deselectedColour = GlobalTextureToolColourSchemeManager().getColour(SchemeElement::Manipulator);
     auto selectedColour = GlobalTextureToolColourSchemeManager().getColour(SchemeElement::SelectedManipulator);
