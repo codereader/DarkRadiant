@@ -26,17 +26,13 @@ void TextureRotator::beginTransformation(const Matrix4& pivot2world, const Volum
 
     // Screen start is relative to the pivot
     _screenStart -= pivotInScreenSpace;
-    _screenStart /= _screenStart.getLength();
+    _screenStart.normalise();
 
     auto device2Pivot = constructDevice2Pivot(pivot2world, view);
     auto startRelativeToPivot = device2Pivot.transformPoint(Vector3(devicePoint.x(), devicePoint.y(), 0));
-    _start = Vector2(startRelativeToPivot.x(), startRelativeToPivot.y());
 
-    auto length = _start.getLength();
-    if (length > 0)
-    {
-        _start /= length;
-    }
+    _start = Vector2(startRelativeToPivot.x(), startRelativeToPivot.y());
+    _start.normalise();
 }
 
 void TextureRotator::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, unsigned int constraintFlags)
@@ -55,20 +51,14 @@ void TextureRotator::transform(const Matrix4& pivot2world, const VolumeTest& vie
     auto pivotInScreenSpace = Vector2(pivotInScreenSpace3D.x(), pivotInScreenSpace3D.y());
 
     // Get the angle the mouse is currently drawing
-    auto currentVec = _screenCurrent - pivotInScreenSpace;
-    currentVec /= currentVec.getLength();
+    auto currentVec = (_screenCurrent - pivotInScreenSpace).getNormalised();
 
     _curAngle = acos(_screenStart.dot(currentVec));
 
     auto device2Pivot = constructDevice2Pivot(pivot2world, view);
     auto current3D = device2Pivot.transformPoint(Vector3(devicePoint.x(), devicePoint.y(), 0));
     _current = Vector2(current3D.x(), current3D.y());
-    
-    auto length = _current.getLength();
-    if (length > 0)
-    {
-        _current /= length;
-    }
+    _current.normalise();
 
     if (constraintFlags & Constraint::Type1)
     {
