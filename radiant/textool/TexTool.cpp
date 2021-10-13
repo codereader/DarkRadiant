@@ -484,6 +484,13 @@ void TexTool::recalculateVisibleTexSpace()
     // Make the visible space non-uniform if the texture has a width/height ratio != 1
     double textureAspect = getTextureAspectRatio();
 
+    if (textureAspect == 1.0)
+    {
+        // tex space bounds should be quadratic if texture aspect is 1
+        _texSpaceAABB.extents.x() = std::max(_texSpaceAABB.extents.x(), _texSpaceAABB.extents.y());
+        _texSpaceAABB.extents.y() = _texSpaceAABB.extents.x();
+    }
+
     // Take the window aspect into account
     double windowAspect = _windowDims.x() / _windowDims.y();
     double stretchFactor = textureAspect / windowAspect;
@@ -781,21 +788,17 @@ bool TexTool::onGLDraw()
 
 void TexTool::onGLResize(wxSizeEvent& ev)
 {
+    Vector2 scaleFactors(
+        ev.GetSize().GetWidth() / _windowDims.x(),
+        ev.GetSize().GetHeight() / _windowDims.y()
+    );
+
 	// Store the window dimensions for later calculations
 	_windowDims = Vector2(ev.GetSize().GetWidth(), ev.GetSize().GetHeight());
 
-    // Adjust the texture space to match up the new window aspect
-    double texSpaceAspect = _texSpaceAABB.extents.x() / _texSpaceAABB.extents.y();
-    double windowAspect = _windowDims.x() / _windowDims.y();
-
-    if (windowAspect > texSpaceAspect)
-    {
-        _texSpaceAABB.extents.x() = windowAspect * _texSpaceAABB.extents.y();
-    }
-    else
-    {
-        _texSpaceAABB.extents.y() = 1 / windowAspect * _texSpaceAABB.extents.x();
-    }
+    // Adjust the texture space by the same amounts
+    _texSpaceAABB.extents.x() *= scaleFactors.x();
+    _texSpaceAABB.extents.y() *= scaleFactors.y();
 
     updateProjection();
 
