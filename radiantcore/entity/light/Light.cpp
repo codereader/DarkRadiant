@@ -822,56 +822,61 @@ void Light::updateProjection() const
     const Vector3& u = _lightUpTransformed;
     const Vector3& r = _lightRightTransformed;
 
-    // Pre-calculate the local2Texture matrix which will be needed in getLightTextureTransformation()
-    // The only thing missing in this matrix will be the world rotation and world translation
-    _localToTexture = Matrix4::getIdentity();
-
     // Scale the light volume such that it is in a [-0.5..0.5] cube, including light origin
-    Vector3 boundsOrigin = (t - _lightStartTransformed) * 0.5f;
+    Vector3 boundsOrigin = (t - start) * 0.5f;
     Vector3 boundsExtents = u + r;
     boundsExtents.z() = fabs(t.z() * 0.5f);
 
     AABB bounds(boundsOrigin, boundsExtents);
 
+    // Pre-calculate the local2Texture matrix which will be needed in getLightTextureTransformation()
+    // The only thing missing in this matrix will be the world rotation and world translation
+
     // Do the mapping and mirror the z axis, we need to have q=1 at the light target plane
-    _localToTexture.premultiplyBy(Matrix4::getScale(
-        Vector3(0.5f / bounds.extents.x(),
-        -0.5f / bounds.extents.y(),
-        -0.5f / bounds.extents.z())
-        ));
+    auto S = Matrix4::getScale(Vector3(0.5f / bounds.extents.x(),
+                                       -0.5f / bounds.extents.y(),
+                                       -0.5f / bounds.extents.z()));
 
     // Scale the lightstart vector into the same space, we need it to calculate the projection
-    double lightStart = _lightStartTransformed.getLength() * 0.5f / bounds.extents.z();
+    double lightStart = start.getLength() * 0.5f / bounds.extents.z();
     double a = 1 / (1 - lightStart);
     double b = lightStart / (lightStart - 1);
 
     // This matrix projects the [-0.5..0.5] cube into the light frustum
     // It also maps the z coordinate into the [lightstart..lightend] volume
-    Matrix4 projection = Matrix4::byColumns(
+    Matrix4 projection = Matrix4::byRows(
         1, 0, 0, 0,
         0, 1, 0, 0,
-        0, 0, a, 1,
-        0, 0, b, 0
+        0, 0, a, b,
+        0, 0, 1, 0
     );
 
-    _localToTexture.premultiplyBy(projection);
+#if defined(DEBUG_LIGHT_MATRIX)
+    using math::pp;
+
+    std::cout << "S: " << S << "\n";
+    std::cout << "projection: " << projection << "\n";
+#endif
 
     // Now move the cube to [0..1] and we're done
-    _localToTexture.premultiplyBy(Matrix4::getTranslation(Vector3(0.5f, 0.5f, 0)));
+    _localToTexture = Matrix4::getTranslation(Vector3(0.5f, 0.5f, 0))
+                    * projection * S;
 
 #if defined(DEBUG_LIGHT_MATRIX)
+
     Vector4 t4(t);
     Vector4 o(0, 0, 0, 1);
     Vector4 topRight = t + u + r;
     Vector4 bottomLeft = t - u - r;
 
-    std::cout << "_localToTexture:"
-        << "\n\tOrigin -> " << (_localToTexture * o).pp()
-        << "\n\tt: " << t4.pp() << " -> " << (_localToTexture * t4).pp()
-        << "\n\tt + u + r: " << topRight.pp() << " -> "
-                             << (_localToTexture * topRight).pp()
-        << "\n\tt - u - r: " << bottomLeft.pp() << " -> "
-                             << (_localToTexture * bottomLeft).pp()
+    std::cout << "_localToTexture:" << _localToTexture
+        << "\n\nTransforms:"
+        << "\n\tOrigin -> " << pp(_localToTexture * o)
+        << "\n\tt: " << pp(t4) << " -> " << pp(_localToTexture * t4)
+        << "\n\tt + u + r: " << pp(topRight) << " -> "
+                             << pp(_localToTexture * topRight)
+        << "\n\tt - u - r: " << pp(bottomLeft) << " -> "
+                             << pp(_localToTexture * bottomLeft)
         << "\n";
 #endif
 }
