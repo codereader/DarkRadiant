@@ -13,9 +13,24 @@ namespace textool
 
 void TextureRotator::beginTransformation(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint)
 {
+    _deviceStart = devicePoint;
+
+    auto device2Screen = view.GetViewport();
+    auto screenStart3D = device2Screen.transformPoint(Vector3(_deviceStart.x(), _deviceStart.y(), 0));
+    _screenStart = Vector2(screenStart3D.x(), screenStart3D.y());
+
+    // Pivot in screen space
+    auto pivot2Screen = constructPivot2Device(pivot2world, view).getPremultipliedBy(device2Screen);
+    auto pivotInScreenSpace3D = pivot2Screen.transformPoint(Vector3(0, 0, 0));
+    auto pivotInScreenSpace = Vector2(pivotInScreenSpace3D.x(), pivotInScreenSpace3D.y());
+
+    // Screen start is relative to the pivot
+    _screenStart -= pivotInScreenSpace;
+    _screenStart /= _screenStart.getLength();
+
     auto device2Pivot = constructDevice2Pivot(pivot2world, view);
-    auto pivotPoint = device2Pivot.transformPoint(Vector3(devicePoint.x(), devicePoint.y(), 0));
-    _start = Vector2(pivotPoint.x(), pivotPoint.y());
+    auto startRelativeToPivot = device2Pivot.transformPoint(Vector3(devicePoint.x(), devicePoint.y(), 0));
+    _start = Vector2(startRelativeToPivot.x(), startRelativeToPivot.y());
 
     auto length = _start.getLength();
     if (length > 0)
@@ -26,8 +41,26 @@ void TextureRotator::beginTransformation(const Matrix4& pivot2world, const Volum
 
 void TextureRotator::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, unsigned int constraintFlags)
 {
-    auto device2Pivot = constructDevice2Pivot(pivot2world, view);
+    _deviceCurrent = devicePoint;
 
+    auto device2Screen = view.GetViewport();
+
+    auto screenCurrent3D = device2Screen.transformPoint(Vector3(_deviceCurrent.x(), _deviceCurrent.y(), 0));
+    _screenCurrent = Vector2(screenCurrent3D.x(), screenCurrent3D.y());
+
+    // Get the pivot in screen space
+    auto pivot2Screen = constructPivot2Device(pivot2world, view).getPremultipliedBy(device2Screen);
+
+    auto pivotInScreenSpace3D = pivot2Screen.transformPoint(Vector3(0, 0, 0));
+    auto pivotInScreenSpace = Vector2(pivotInScreenSpace3D.x(), pivotInScreenSpace3D.y());
+
+    // Get the angle the mouse is currently drawing
+    auto currentVec = _screenCurrent - pivotInScreenSpace;
+    currentVec /= currentVec.getLength();
+
+    _curAngle = acos(_screenStart.dot(currentVec));
+
+    auto device2Pivot = constructDevice2Pivot(pivot2world, view);
     auto current3D = device2Pivot.transformPoint(Vector3(devicePoint.x(), devicePoint.y(), 0));
     _current = Vector2(current3D.x(), current3D.y());
     
@@ -37,14 +70,12 @@ void TextureRotator::transform(const Matrix4& pivot2world, const VolumeTest& vie
         _current /= length;
     }
 
-    _curAngle = acos(_start.dot(_current));
-
     if (constraintFlags & Constraint::Type1)
     {
         _curAngle = float_snapped(_curAngle, 5 * c_DEG2RADMULT);
     }
 
-    auto sign = _start.crossProduct(_current) < 0 ? +1 : -1;
+    auto sign = _screenStart.crossProduct(currentVec) < 0 ? +1 : -1;
     _curAngle *= sign;
 
     _rotateFunctor(Vector2(pivot2world.tx(), pivot2world.ty()), _curAngle);
@@ -65,9 +96,9 @@ const Vector2& TextureRotator::getStartDirection() const
     return _start;
 }
 
-const Vector2& TextureRotator::getCurrentDirection() const
+const Vector2& TextureRotator::getStartDirectionInScreenSpace() const
 {
-    return _current;
+    return _screenStart;
 }
 
 constexpr std::size_t CircleSegments = 8;
@@ -152,14 +183,13 @@ void TextureToolRotateManipulator::renderComponents(const render::IRenderView& v
     const auto& translation = pivot2World.tCol().getVector3();
 
     // Transform the ellipse radii back to UV space
-    auto inverseView = view.GetViewProjection().getPremultipliedBy(view.GetViewport()).getFullInverse();
+    auto viewTransform = view.GetViewProjection().getPremultipliedBy(view.GetViewport());
+    auto inverseView = viewTransform.getFullInverse();
     auto transformedDeviceUnit = inverseView.transformDirection(Vector3(1, 1, 0));
-    auto transformedRadius = transformedDeviceUnit * DefaultCircleRadius;
-    _circleRadius = transformedRadius.x() * DefaultCircleRadius;
 
     // Recalculate the circle radius based on the view
-    draw_ellipse(CircleSegments, static_cast<float>(std::abs(transformedRadius.x())),
-        static_cast<float>(std::abs(transformedRadius.y())), &_renderableCircle.front(), RemapXYZ());
+    // Raw circle is R=DefaultCircleRadius centered around origin
+    draw_ellipse(CircleSegments, DefaultCircleRadius, DefaultCircleRadius, &_renderableCircle.front(), RemapXYZ());
 
     auto deselectedColour = GlobalTextureToolColourSchemeManager().getColour(SchemeElement::Manipulator);
     auto selectedColour = GlobalTextureToolColourSchemeManager().getColour(SchemeElement::SelectedManipulator);
@@ -171,6 +201,15 @@ void TextureToolRotateManipulator::renderComponents(const render::IRenderView& v
         static_cast<unsigned char>(colour.w() * 255));
     _renderableCircle.setColour(byteColour);
 
+    // Move the raw circle vertices to pivot space for rendering
+    auto screen2Pivot = constructPivot2Device(pivot2World, view).getMultipliedBy(view.GetViewport()).getFullInverse();
+
+    for (auto i = 0; i < _renderableCircle.size(); ++i)
+    {
+        _renderableCircle[i].vertex = screen2Pivot.transformPoint(_renderableCircle[i].vertex);
+    }
+
+    // Set up the model view such that we can render vertices relative to the pivot
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glTranslated(translation.x(), translation.y(), 0);
@@ -182,7 +221,7 @@ void TextureToolRotateManipulator::renderComponents(const render::IRenderView& v
     glBegin(GL_LINES);
 
     auto crossHairSize = transformedDeviceUnit * DefaultCrossHairSize;
-    auto crossHairAngle = _selectableZ.isSelected() ? angle : 0;
+    auto crossHairAngle = _selectableZ.isSelected() ? -angle : 0;
     glVertex2d(cos(crossHairAngle) * crossHairSize.x(), sin(crossHairAngle) * crossHairSize.y());
     glVertex2d(-cos(crossHairAngle) * crossHairSize.x(), -sin(crossHairAngle) * crossHairSize.y());
 
@@ -204,8 +243,11 @@ void TextureToolRotateManipulator::renderComponents(const render::IRenderView& v
 
         glVertex3d(0, 0, 0);
 
-        auto startingPointOnCircle = _rotator.getStartDirection();
-        glVertex3d(startingPointOnCircle.x() * _circleRadius, startingPointOnCircle.y() * _circleRadius, 0);
+        // Construct the circle sector in screen space coords, then transform it to pivot space
+        auto startDirection = _rotator.getStartDirectionInScreenSpace();
+        Vector2 startingPointOnCircle = startDirection * DefaultCircleRadius;
+
+        glVertex3dv(screen2Pivot.transformPoint(Vector3(startingPointOnCircle.x(), startingPointOnCircle.y(), 0)));
 
         // 3 degree steps
         auto stepSize = degrees_to_radians(3.0);
@@ -219,16 +261,13 @@ void TextureToolRotateManipulator::renderComponents(const render::IRenderView& v
             {
                 auto curAngle = i * stepSize;
                 auto pointOnCircle = Matrix3::getRotation(curAngle).transformPoint(startingPointOnCircle);
-                pointOnCircle /= pointOnCircle.getLength();
-                pointOnCircle *= _circleRadius;
 
-                glVertex3d(pointOnCircle.x(), pointOnCircle.y(), 0);
+                glVertex3dv(screen2Pivot.transformPoint(Vector3(pointOnCircle.x(), pointOnCircle.y(), 0)));
             }
         }
 
-        auto currentPointOnCircle = _rotator.getCurrentDirection() * _circleRadius;
-
-        glVertex3d(currentPointOnCircle.x(), currentPointOnCircle.y(), 0);
+        auto currentPointOnCircle = Matrix3::getRotation(-angle).transformPoint(startingPointOnCircle);
+        glVertex3dv(screen2Pivot.transformPoint(Vector3(currentPointOnCircle.x(), currentPointOnCircle.y(), 0)));
 
         glEnd();
 
@@ -258,9 +297,16 @@ void TextureToolRotateManipulator::renderComponents(const render::IRenderView& v
 
 void TextureToolRotateManipulator::rotateSelected(const Vector2& pivot, double angle)
 {
+    // Check the aspect ratio of the active material
+    auto material = GlobalMaterialManager().getMaterial(GlobalTextureToolSceneGraph().getActiveMaterial());
+    auto texture = material->getEditorImage();
+    auto aspectRatio = static_cast<float>(texture->getWidth()) / texture->getHeight();
+
     // Construct the full rotation around the pivot point
     auto transform = Matrix3::getTranslation(-pivot);
-    transform.premultiplyBy(Matrix3::getRotation(-angle));
+    transform.premultiplyBy(Matrix3::getScale({ aspectRatio, 1 }));
+    transform.premultiplyBy(Matrix3::getRotation(angle));
+    transform.premultiplyBy(Matrix3::getScale({ 1 / aspectRatio, 1 }));
     transform.premultiplyBy(Matrix3::getTranslation(pivot));
 
     if (GlobalTextureToolSelectionSystem().getSelectionMode() == SelectionMode::Surface)

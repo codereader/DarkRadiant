@@ -14,7 +14,11 @@ class TextureRotator :
 {
 private:
 	Vector2 _start;
+	Vector2 _deviceStart;
+	Vector2 _screenStart;
 	Vector2 _current;
+	Vector2 _deviceCurrent;
+	Vector2 _screenCurrent;
 
 	// The most recently calculated angle for rendering purposes
 	Vector2::ElementType _curAngle;
@@ -34,11 +38,10 @@ public:
     void resetCurAngle();
     Vector2::ElementType getCurAngle() const;
 
-    // The vector from the pivot to the starting point of the manipulation (normalised)
+    // The vector from the pivot to the starting point of the manipulation (screen space, normalised)
     const Vector2& getStartDirection() const;
 
-    // The vector from the pivot to the current point of manipulation (normalised)
-    const Vector2& getCurrentDirection() const;
+    const Vector2& getStartDirectionInScreenSpace() const;
 };
 
 class TextureToolRotateManipulator :
