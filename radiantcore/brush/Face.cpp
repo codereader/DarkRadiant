@@ -470,23 +470,12 @@ ShiftScaleRotation Face::getShiftScaleRotation() const
 
 void Face::setShiftScaleRotation(const ShiftScaleRotation& ssr)
 {
-    // We need to do the opposite adjustments as in Face::getShiftScaleRotation()
-    // The incoming values are scaled up and down, respectively.
-    ShiftScaleRotation corrected = ssr;
+    undoSave();
 
-    // Scale the pixel value in SSR to relative UV coords
-    corrected.shift[0] = ssr.shift[0] / _shader.getWidth();
-    corrected.shift[1] = ssr.shift[1] / _shader.getHeight();
-
-    // Add the texture dimensions to the scale.
-    corrected.scale[0] = ssr.scale[0] * _shader.getWidth();
-    corrected.scale[1] = ssr.scale[1] * _shader.getHeight();
-   
     // Construct the matrix from the adjusted shift/scale/rotate values
-    TextureProjection projection;
-    projection.setFromShiftScaleRotate(corrected);
+    _texdef.setFromShiftScaleRotate(ssr, _shader.getWidth(), _shader.getHeight());
 
-    SetTexdef(projection);
+    texdefChanged();
 }
 
 Vector2 Face::getTexelScale() const

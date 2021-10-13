@@ -72,9 +72,13 @@ ShiftScaleRotation TextureProjection::getShiftScaleRotation(std::size_t width, s
     return _matrix.getShiftScaleRotation(width, height);
 }
 
-void TextureProjection::setFromShiftScaleRotate(const ShiftScaleRotation& ssr)
+void TextureProjection::setFromShiftScaleRotate(const ShiftScaleRotation& ssr, std::size_t width, std::size_t height)
 {
     _matrix = TextureMatrix(ssr);
+
+    // We need to do the opposite adjustments as in getShiftScaleRotation()
+    // The incoming values need to be scaled down, respectively.
+    _matrix.addScale(width, height);
 }
 
 Matrix4 TextureProjection::getMatrix4() const
