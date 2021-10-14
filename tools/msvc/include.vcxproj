@@ -158,7 +158,6 @@
     <ClInclude Include="..\..\include\inameobserver.h" />
     <ClInclude Include="..\..\include\inamespace.h" />
     <ClInclude Include="..\..\include\inode.h" />
-    <ClInclude Include="..\..\include\iorthocontextmenu.h" />
     <ClInclude Include="..\..\include\iorthoview.h" />
     <ClInclude Include="..\..\include\iparticlenode.h" />
     <ClInclude Include="..\..\include\iparticles.h" />
@@ -173,7 +172,6 @@
     <ClInclude Include="..\..\include\irenderable.h" />
     <ClInclude Include="..\..\include\irendersystemfactory.h" />
     <ClInclude Include="..\..\include\irenderview.h" />
-    <ClInclude Include="..\..\include\iresourcechooser.h" />
     <ClInclude Include="..\..\include\iscenegraph.h" />
     <ClInclude Include="..\..\include\iscenegraphfactory.h" />
     <ClInclude Include="..\..\include\iscript.h" />
@@ -222,6 +220,8 @@
     <ClInclude Include="..\..\include\ui\imediabrowser.h" />
     <ClInclude Include="..\..\include\ui\imenu.h" />
     <ClInclude Include="..\..\include\ui\imenumanager.h" />
+    <ClInclude Include="..\..\include\ui\iorthocontextmenu.h" />
+    <ClInclude Include="..\..\include\ui\iresourcechooser.h" />
     <ClInclude Include="..\..\include\version.h" />
     <ClInclude Include="..\..\include\VolumeIntersectionValue.h" />
   </ItemGroup>

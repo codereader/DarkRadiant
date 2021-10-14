@@ -4,7 +4,7 @@
 #include <wx/event.h>
 
 #include "iuserinterface.h"
-#include "iorthocontextmenu.h"
+#include "ui/iorthocontextmenu.h"
 #include "icommandsystem.h"
 
 #include "LongRunningOperationHandler.h"

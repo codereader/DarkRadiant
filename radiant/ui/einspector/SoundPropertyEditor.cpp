@@ -1,7 +1,7 @@
 #include "SoundPropertyEditor.h"
 #include "PropertyEditorFactory.h"
 
-#include "iresourcechooser.h"
+#include "ui/iresourcechooser.h"
 #include "ui/idialogmanager.h"
 #include "i18n.h"
 #include "ientity.h"

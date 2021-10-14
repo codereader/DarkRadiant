@@ -7,7 +7,6 @@
 #include "imapinfofile.h"
 #include "icommandsystem.h"
 #include "iselection.h"
-#include "iorthocontextmenu.h"
 #include "module/StaticModule.h"
 #include "selection/algorithm/Group.h"
 

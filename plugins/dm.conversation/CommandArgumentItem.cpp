@@ -2,7 +2,7 @@
 
 #include "ui/ianimationchooser.h"
 #include "ui/idialogmanager.h"
-#include "iresourcechooser.h"
+#include "ui/iresourcechooser.h"
 #include "i18n.h"
 #include "string/convert.h"
 #include <wx/checkbox.h>

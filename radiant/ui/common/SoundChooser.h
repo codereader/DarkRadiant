@@ -1,6 +1,6 @@
 #pragma once
 
-#include "iresourcechooser.h"
+#include "ui/iresourcechooser.h"
 #include "wxutil/dialog/DialogBase.h"
 #include "wxutil/dataview/ResourceTreeView.h"
 #include "wxutil/menu/PopupMenu.h"

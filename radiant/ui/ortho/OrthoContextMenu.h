@@ -1,6 +1,6 @@
 #pragma once
 
-#include "iorthocontextmenu.h"
+#include "ui/iorthocontextmenu.h"
 #include "iradiant.h"
 
 #include <map>

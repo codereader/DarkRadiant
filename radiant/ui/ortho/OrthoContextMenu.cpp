@@ -4,7 +4,7 @@
 #include "selectionlib.h"
 #include "ibrush.h"
 #include "isound.h"
-#include "iresourcechooser.h"
+#include "ui/iresourcechooser.h"
 #include "ui/idialogmanager.h"
 #include "entitylib.h" // EntityFindByClassnameWalker
 #include "selectionlib.h"

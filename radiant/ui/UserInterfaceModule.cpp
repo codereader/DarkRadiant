@@ -10,7 +10,6 @@
 #include "imap.h"
 #include "ibrush.h"
 #include "ipatch.h"
-#include "iorthocontextmenu.h"
 #include "ui/ieventmanager.h"
 #include "imousetool.h"
 #include "ui/imainframe.h"
