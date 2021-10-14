@@ -11,6 +11,7 @@
 #include "iselectiongroup.h"
 #include "ilightnode.h"
 #include "icommandsystem.h"
+#include "messages/ApplicationShutdownRequest.h"
 #include "messages/FileSelectionRequest.h"
 #include "messages/FileOverwriteConfirmation.h"
 #include "messages/MapFileOperation.h"
@@ -1296,7 +1297,7 @@ void checkBehaviourWithoutUnsavedChanges(std::function<void()> action)
     EXPECT_FALSE(GlobalMapModule().isModified()) << "New Map should be unmodified";
 }
 
-void checkBehaviourDiscardingUnsavedChanges(const std::string& testProjectPath, std::function<void()> action)
+void checkBehaviourDiscardingUnsavedChanges(const std::string& testProjectPath, std::function<void()> action, bool expectUnmodifiedMapAfterAction = true)
 {
     std::string modRelativePath = "maps/altar.map";
     GlobalCommandSystem().executeCommand("OpenMap", modRelativePath);
@@ -1316,7 +1317,12 @@ void checkBehaviourDiscardingUnsavedChanges(const std::string& testProjectPath, 
 
     EXPECT_TRUE(helper.messageReceived()) << "Map must ask for save";
     EXPECT_EQ(fs::file_size(mapPath), sizeBefore) << "File size has changed after discarding";
-    EXPECT_FALSE(GlobalMapModule().isModified()) << "Map should be unmodified again";
+
+    // In some scenario like app shutdown the map modified flag is not cleared
+    if (expectUnmodifiedMapAfterAction)
+    {
+        EXPECT_FALSE(GlobalMapModule().isModified()) << "Map should be unmodified again";
+    }
 }
 
 void checkBehaviourSavingUnsavedChanges(const std::string& fullMapPath, std::function<void()> action)
@@ -1371,6 +1377,15 @@ void openMapFromArchive(const radiant::TestContext& context)
     GlobalCommandSystem().executeCommand("OpenMapFromArchive", pakPath.string(), archiveRelativePath);
 }
 
+void sendShutdownRequest(bool expectDenial)
+{
+    // Send the shutdown request, the Map Module should be receiving this
+    radiant::ApplicationShutdownRequest request;
+    GlobalRadiantCore().getMessageBus().sendMessage(request);
+
+    EXPECT_EQ(expectDenial, request.isDenied()) << "Shutdown Request denial flag has unexpected value";
+}
+
 }
 
 TEST_F(MapSavingTest, NewMapWithoutUnsavedChanges)
@@ -1399,6 +1414,14 @@ TEST_F(MapSavingTest, OpenMapFromArchiveWithoutUnsavedChanges)
     });
 }
 
+TEST_F(MapSavingTest, RadiantShutdownWithoutUnsavedChanges)
+{
+    checkBehaviourWithoutUnsavedChanges([]()
+    {
+        sendShutdownRequest(false); // no denial
+    });
+}
+
 TEST_F(MapSavingTest, NewMapDiscardingUnsavedChanges)
 {
     checkBehaviourDiscardingUnsavedChanges(_context.getTestProjectPath(), []()
@@ -1423,6 +1446,15 @@ TEST_F(MapSavingTest, OpenMapFromArchiveDiscardingUnsavedChanges)
     {
         openMapFromArchive(_context);
     });
+}
+
+TEST_F(MapSavingTest, RadiantShutdownDiscardingUnsavedChanges)
+{
+    // Pass false to expectUnmodifiedMapAfterAction => discarding the map on shutdown will not clear the modified flag
+    checkBehaviourDiscardingUnsavedChanges(_context.getTestProjectPath(), []()
+    {
+        sendShutdownRequest(false); // no denial
+    }, false);
 }
 
 TEST_F(MapSavingTest, NewMapSavingChanges)
@@ -1457,6 +1489,16 @@ TEST_F(MapSavingTest, OpenMapFromArchiveSavingChanges)
     });
 }
 
+TEST_F(MapSavingTest, RadiantShutdownSavingChanges)
+{
+    auto mapPath = createMapCopyInTempDataPath("altar.map", "altar_NewMapSavingChanges.map");
+
+    checkBehaviourSavingUnsavedChanges(mapPath.string(), []()
+    {
+        sendShutdownRequest(false); // no denial
+    });
+}
+
 TEST_F(MapSavingTest, NewMapCancelWithUnsavedChanges)
 {
     auto mapPath = createMapCopyInTempDataPath("altar.map", "altar_NewMapCancelWithUnsavedChanges.map");
@@ -1486,6 +1528,16 @@ TEST_F(MapSavingTest, OpenMapFromArchiveCancelWithUnsavedChanges)
     checkBehaviourCancellingMapChange(mapPath.string(), [&]()
     {
         openMapFromArchive(_context);
+    });
+}
+
+TEST_F(MapSavingTest, RadiantShutdownCancelWithUnsavedChanges)
+{
+    auto mapPath = createMapCopyInTempDataPath("altar.map", "altar_NewMapCancelWithUnsavedChanges.map");
+
+    checkBehaviourCancellingMapChange(mapPath.string(), []()
+    {
+        sendShutdownRequest(true); // request should be denied
     });
 }
 
