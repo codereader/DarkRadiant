@@ -4,7 +4,7 @@
 #include <fmt/format.h>
 
 #include "i18n.h"
-#include "istatusbarmanager.h"
+#include "ui/istatusbarmanager.h"
 #include "ui/ieventmanager.h"
 #include "ui/imainframe.h"
 

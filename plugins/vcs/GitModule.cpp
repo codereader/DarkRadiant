@@ -5,7 +5,7 @@
 #include "ui/imainframe.h"
 #include "imap.h"
 #include "ipreferencesystem.h"
-#include "istatusbarmanager.h"
+#include "ui/istatusbarmanager.h"
 #include "icommandsystem.h"
 #include <git2.h>
 #include "Repository.h"

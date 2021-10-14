@@ -2,7 +2,7 @@
 
 #include "ieditstopwatch.h"
 #include "i18n.h"
-#include "istatusbarmanager.h"
+#include "ui/istatusbarmanager.h"
 #include "ui/imainframe.h"
 #include <sigc++/functors/mem_fun.h>
 #include <fmt/format.h>

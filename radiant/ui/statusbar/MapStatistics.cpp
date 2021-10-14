@@ -1,7 +1,7 @@
 #include "MapStatistics.h"
 
 #include "i18n.h"
-#include "istatusbarmanager.h"
+#include "ui/istatusbarmanager.h"
 #include "iselection.h"
 #include "icounter.h"
 #include "selectionlib.h"

@@ -2,7 +2,7 @@
 
 #include "i18n.h"
 #include "ishaderclipboard.h"
-#include "istatusbarmanager.h"
+#include "ui/istatusbarmanager.h"
 #include <sigc++/connection.h>
 #include <sigc++/functors/mem_fun.h>
 #include <fmt/format.h>

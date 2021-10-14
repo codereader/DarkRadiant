@@ -3,7 +3,7 @@
 
 #include "i18n.h"
 #include "ui/ieventmanager.h"
-#include "istatusbarmanager.h"
+#include "ui/istatusbarmanager.h"
 #include "ipreferencesystem.h"
 #include "itextstream.h"
 

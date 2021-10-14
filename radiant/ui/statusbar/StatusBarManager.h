@@ -1,6 +1,6 @@
 #pragma once
 
-#include "istatusbarmanager.h"
+#include "ui/istatusbarmanager.h"
 #include <map>
 #include "wxutil/event/SingleIdleCallback.h"
 

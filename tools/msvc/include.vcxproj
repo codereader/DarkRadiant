@@ -187,7 +187,6 @@
     <ClInclude Include="..\..\include\isound.h" />
     <ClInclude Include="..\..\include\ispacepartition.h" />
     <ClInclude Include="..\..\include\ispeakernode.h" />
-    <ClInclude Include="..\..\include\istatusbarmanager.h" />
     <ClInclude Include="..\..\include\itexturetoolcolours.h" />
     <ClInclude Include="..\..\include\itextstream.h" />
     <ClInclude Include="..\..\include\itexturetoolmodel.h" />
@@ -222,6 +221,7 @@
     <ClInclude Include="..\..\include\ui\imenumanager.h" />
     <ClInclude Include="..\..\include\ui\iorthocontextmenu.h" />
     <ClInclude Include="..\..\include\ui\iresourcechooser.h" />
+    <ClInclude Include="..\..\include\ui\istatusbarmanager.h" />
     <ClInclude Include="..\..\include\version.h" />
     <ClInclude Include="..\..\include\VolumeIntersectionValue.h" />
   </ItemGroup>

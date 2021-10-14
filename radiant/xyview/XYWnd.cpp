@@ -8,7 +8,7 @@
 #include "ientity.h"
 #include "igrid.h"
 #include "iregion.h"
-#include "istatusbarmanager.h"
+#include "ui/istatusbarmanager.h"
 
 #include "wxutil/MouseButton.h"
 #include "wxutil/GLWidget.h"

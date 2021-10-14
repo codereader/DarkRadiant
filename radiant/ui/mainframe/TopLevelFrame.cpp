@@ -3,7 +3,7 @@
 #include "itextstream.h"
 #include "i18n.h"
 #include "ui/imenumanager.h"
-#include "istatusbarmanager.h"
+#include "ui/istatusbarmanager.h"
 #include "itoolbarmanager.h"
 #include "wxutil/Bitmap.h"
 #include <wx/toolbar.h>
