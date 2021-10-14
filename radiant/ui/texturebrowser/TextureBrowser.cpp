@@ -5,7 +5,7 @@
 #include "imainframe.h"
 #include "itoolbarmanager.h"
 #include "icolourscheme.h"
-#include "igroupdialog.h"
+#include "ui/igroupdialog.h"
 #include "iradiant.h"
 #include "ifavourites.h"
 #include "ipreferencesystem.h"

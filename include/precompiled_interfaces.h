@@ -29,7 +29,6 @@
 #include "iglprogram.h"
 #include "iglrender.h"
 #include "igrid.h"
-#include "igroupdialog.h"
 #include "igroupnode.h"
 #include "iimage.h"
 #include "iinteractiveview.h"

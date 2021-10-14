@@ -3,7 +3,7 @@
 #include "i18n.h"
 #include "imainframe.h"
 #include "imap.h"
-#include "igroupdialog.h"
+#include "ui/igroupdialog.h"
 #include "ipreferencesystem.h"
 #include "ishaders.h"
 #include "ishaderclipboard.h"

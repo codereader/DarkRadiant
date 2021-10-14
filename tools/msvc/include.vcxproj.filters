@@ -33,7 +33,6 @@
     <ClInclude Include="..\..\include\iglprogram.h" />
     <ClInclude Include="..\..\include\iglrender.h" />
     <ClInclude Include="..\..\include\igrid.h" />
-    <ClInclude Include="..\..\include\igroupdialog.h" />
     <ClInclude Include="..\..\include\igroupnode.h" />
     <ClInclude Include="..\..\include\igui.h" />
     <ClInclude Include="..\..\include\iimage.h" />
@@ -136,6 +135,9 @@
       <Filter>ui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\ui\ifilechooser.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\ui\igroupdialog.h">
       <Filter>ui</Filter>
     </ClInclude>
   </ItemGroup>

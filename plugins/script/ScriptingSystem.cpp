@@ -8,7 +8,7 @@
 #include "itextstream.h"
 #include "iradiant.h"
 #include "imainframe.h"
-#include "igroupdialog.h"
+#include "ui/igroupdialog.h"
 #include "iundo.h"
 
 #include "interfaces/MathInterface.h"

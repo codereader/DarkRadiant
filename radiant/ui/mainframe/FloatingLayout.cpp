@@ -3,7 +3,7 @@
 #include "i18n.h"
 #include "itextstream.h"
 #include "ui/ieventmanager.h"
-#include "igroupdialog.h"
+#include "ui/igroupdialog.h"
 #include "ui/ientityinspector.h"
 
 #include "registry/registry.h"

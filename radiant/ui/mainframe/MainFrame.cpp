@@ -1,7 +1,7 @@
 #include "MainFrame.h"
 
 #include "i18n.h"
-#include "igroupdialog.h"
+#include "ui/igroupdialog.h"
 #include "imap.h"
 #include "ui/ieventmanager.h"
 #include "ipreferencesystem.h"

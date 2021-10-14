@@ -1,7 +1,7 @@
 #include "ScriptWindow.h"
 
 #include "iscript.h"
-#include "igroupdialog.h"
+#include "ui/igroupdialog.h"
 #include "iundo.h"
 #include "i18n.h"
 

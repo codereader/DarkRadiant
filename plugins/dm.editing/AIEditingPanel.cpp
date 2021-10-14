@@ -7,7 +7,7 @@
 #include "ui/ientityinspector.h"
 #include "imainframe.h"
 #include "iundo.h"
-#include "igroupdialog.h"
+#include "ui/igroupdialog.h"
 #include "selectionlib.h"
 
 #include "SpawnargLinkedCheckbox.h"

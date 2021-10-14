@@ -9,3 +9,4 @@
 #include "ui/ianimationchooser.h"
 #include "ui/ientityinspector.h"
 #include "ui/ieventmanager.h"
+#include "ui/igroupdialog.h"

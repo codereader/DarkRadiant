@@ -1,6 +1,6 @@
 #include "Console.h"
 
-#include "igroupdialog.h"
+#include "ui/igroupdialog.h"
 #include "iradiant.h"
 
 #include "wxutil/ConsoleView.h"

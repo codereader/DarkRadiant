@@ -9,7 +9,7 @@
 #include "igame.h"
 #include "imap.h"
 #include "iundo.h"
-#include "igroupdialog.h"
+#include "ui/igroupdialog.h"
 #include "imainframe.h"
 #include "itextstream.h"
 

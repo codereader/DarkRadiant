@@ -129,7 +129,6 @@
     <ClInclude Include="..\..\include\iglprogram.h" />
     <ClInclude Include="..\..\include\iglrender.h" />
     <ClInclude Include="..\..\include\igrid.h" />
-    <ClInclude Include="..\..\include\igroupdialog.h" />
     <ClInclude Include="..\..\include\igroupnode.h" />
     <ClInclude Include="..\..\include\igui.h" />
     <ClInclude Include="..\..\include\iimage.h" />
@@ -222,6 +221,7 @@
     <ClInclude Include="..\..\include\ui\ientityinspector.h" />
     <ClInclude Include="..\..\include\ui\ieventmanager.h" />
     <ClInclude Include="..\..\include\ui\ifilechooser.h" />
+    <ClInclude Include="..\..\include\ui\igroupdialog.h" />
     <ClInclude Include="..\..\include\version.h" />
     <ClInclude Include="..\..\include\VolumeIntersectionValue.h" />
   </ItemGroup>

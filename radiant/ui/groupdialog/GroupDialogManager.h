@@ -1,6 +1,6 @@
 #pragma once
 
-#include "igroupdialog.h"
+#include "ui/igroupdialog.h"
 #include <memory>
 
 namespace ui

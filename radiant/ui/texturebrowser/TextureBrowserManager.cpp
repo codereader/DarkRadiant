@@ -7,7 +7,7 @@
 #include "ui/ieventmanager.h"
 #include "ishaderclipboard.h"
 #include "icommandsystem.h"
-#include "igroupdialog.h"
+#include "ui/igroupdialog.h"
 #include "ipreferencesystem.h"
 #include "itextstream.h"
 #include "module/StaticModule.h"

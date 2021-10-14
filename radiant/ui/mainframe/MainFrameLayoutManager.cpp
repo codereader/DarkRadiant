@@ -2,7 +2,7 @@
 
 #include "itextstream.h"
 #include "imainframe.h"
-#include "igroupdialog.h"
+#include "ui/igroupdialog.h"
 #include "icommandsystem.h"
 
 #include "module/StaticModule.h"

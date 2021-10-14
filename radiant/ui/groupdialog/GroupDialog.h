@@ -3,7 +3,7 @@
 #include <memory>
 #include <map>
 #include "iradiant.h"
-#include "igroupdialog.h"
+#include "ui/igroupdialog.h"
 #include "wxutil/window/TransientWindow.h"
 
 #include <wx/windowptr.h>

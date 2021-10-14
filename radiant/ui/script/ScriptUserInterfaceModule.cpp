@@ -5,7 +5,7 @@
 #include "imenumanager.h"
 #include "imainframe.h"
 #include "i18n.h"
-#include "igroupdialog.h"
+#include "ui/igroupdialog.h"
 #include "module/StaticModule.h"
 
 #include "ScriptMenu.h"

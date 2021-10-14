@@ -4,7 +4,7 @@
 #include "itextstream.h"
 #include "ui/ieventmanager.h"
 #include "imenumanager.h"
-#include "igroupdialog.h"
+#include "ui/igroupdialog.h"
 #include "imainframe.h"
 #include "ui/ientityinspector.h"
 

@@ -1,7 +1,7 @@
 #include "ifavourites.h"
 #include "imainframe.h"
 #include "icommandsystem.h"
-#include "igroupdialog.h"
+#include "ui/igroupdialog.h"
 #include "i18n.h"
 #include "itextstream.h"
 

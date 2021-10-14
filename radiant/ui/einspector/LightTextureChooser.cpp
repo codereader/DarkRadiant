@@ -4,7 +4,6 @@
 #include "ishaders.h"
 #include "imainframe.h"
 #include "igame.h"
-#include "igroupdialog.h"
 #include "texturelib.h"
 #include "iregistry.h"
 
