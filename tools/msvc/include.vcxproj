@@ -120,7 +120,6 @@
     <ClInclude Include="..\..\include\ieditstopwatch.h" />
     <ClInclude Include="..\..\include\ientity.h" />
     <ClInclude Include="..\..\include\ifavourites.h" />
-    <ClInclude Include="..\..\include\ifilechooser.h" />
     <ClInclude Include="..\..\include\ifilesystem.h" />
     <ClInclude Include="..\..\include\ifiletypes.h" />
     <ClInclude Include="..\..\include\ifilter.h" />
@@ -222,6 +221,7 @@
     <ClInclude Include="..\..\include\ui\idialogmanager.h" />
     <ClInclude Include="..\..\include\ui\ientityinspector.h" />
     <ClInclude Include="..\..\include\ui\ieventmanager.h" />
+    <ClInclude Include="..\..\include\ui\ifilechooser.h" />
     <ClInclude Include="..\..\include\version.h" />
     <ClInclude Include="..\..\include\VolumeIntersectionValue.h" />
   </ItemGroup>

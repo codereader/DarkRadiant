@@ -20,7 +20,6 @@
 #include "idatastream.h"
 #include "ieclass.h"
 #include "ientity.h"
-#include "ifilechooser.h"
 #include "ifilesystem.h"
 #include "ifiletypes.h"
 #include "ifilter.h"

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ifilechooser.h"
+#include "ui/ifilechooser.h"
 #include <string>
 #include <memory>
 #include <wx/filedlg.h>

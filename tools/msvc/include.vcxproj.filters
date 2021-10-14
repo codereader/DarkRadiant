@@ -24,7 +24,6 @@
     <ClInclude Include="..\..\include\ieditstopwatch.h" />
     <ClInclude Include="..\..\include\ientity.h" />
     <ClInclude Include="..\..\include\ifavourites.h" />
-    <ClInclude Include="..\..\include\ifilechooser.h" />
     <ClInclude Include="..\..\include\ifilesystem.h" />
     <ClInclude Include="..\..\include\ifiletypes.h" />
     <ClInclude Include="..\..\include\ifilter.h" />
@@ -134,6 +133,9 @@
       <Filter>ui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\ui\ieventmanager.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\ui\ifilechooser.h">
       <Filter>ui</Filter>
     </ClInclude>
   </ItemGroup>
