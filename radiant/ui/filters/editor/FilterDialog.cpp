@@ -3,7 +3,7 @@
 #include "i18n.h"
 #include "ifilter.h"
 #include "imainframe.h"
-#include "idialogmanager.h"
+#include "ui/idialogmanager.h"
 
 #include "ui/filters/FiltersMainMenu.h"
 

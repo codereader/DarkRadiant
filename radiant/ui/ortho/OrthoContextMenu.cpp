@@ -6,7 +6,7 @@
 #include "isound.h"
 #include "ieventmanager.h"
 #include "iresourcechooser.h"
-#include "idialogmanager.h"
+#include "ui/idialogmanager.h"
 #include "entitylib.h" // EntityFindByClassnameWalker
 #include "selectionlib.h"
 #include "ientity.h" // Node_getEntity()

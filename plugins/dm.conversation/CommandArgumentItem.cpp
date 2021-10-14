@@ -1,7 +1,7 @@
 #include "CommandArgumentItem.h"
 
 #include "ianimationchooser.h"
-#include "idialogmanager.h"
+#include "ui/idialogmanager.h"
 #include "iresourcechooser.h"
 #include "i18n.h"
 #include "string/convert.h"

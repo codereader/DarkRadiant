@@ -1,6 +1,6 @@
 #pragma once
 
-#include "idialogmanager.h"
+#include "ui/idialogmanager.h"
 #include "DialogBase.h"
 #include <map>
 

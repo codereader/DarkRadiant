@@ -1,7 +1,6 @@
 #include "DialogInterface.h"
 
 #include <pybind11/pybind11.h>
-#include "idialogmanager.h"
 
 namespace script
 {

@@ -2,7 +2,7 @@
 
 #include "icommandsystem.h"
 #include "wxutil/dialog/DialogBase.h"
-#include "idialogmanager.h"
+#include "ui/idialogmanager.h"
 #include "wxutil/XmlResourceBasedWidget.h"
 #include "wxutil/preview/ParticlePreview.h"
 #include "wxutil/dataview/TreeView.h"

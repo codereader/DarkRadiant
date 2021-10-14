@@ -1,6 +1,6 @@
 #pragma once
 
-#include "idialogmanager.h"
+#include "ui/idialogmanager.h"
 #include "iradiant.h"
 #include "i18n.h"
 #include "messages/FileSaveConfirmation.h"

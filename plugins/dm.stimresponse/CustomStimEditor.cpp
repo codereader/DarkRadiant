@@ -1,6 +1,6 @@
 #include "CustomStimEditor.h"
 
-#include "idialogmanager.h"
+#include "ui/idialogmanager.h"
 
 #include "string/convert.h"
 #include "i18n.h"

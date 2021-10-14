@@ -1,101 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug|Win32">
-      <Configuration>Debug</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug|x64">
-      <Configuration>Debug</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|Win32">
-      <Configuration>Release</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|x64">
-      <Configuration>Release</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-  </ItemGroup>
-  <PropertyGroup Label="Globals">
-    <ProjectGuid>{41CAAD78-9E48-4C6E-B8F8-A04A859C16F9}</ProjectGuid>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-  </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Utility</ConfigurationType>
-    <PlatformToolset>v142</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Utility</ConfigurationType>
-    <PlatformToolset>v142</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Utility</ConfigurationType>
-    <PlatformToolset>v142</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Utility</ConfigurationType>
-    <PlatformToolset>v142</PlatformToolset>
-  </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <ImportGroup Label="ExtensionSettings">
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="properties\DarkRadiant Base Release Win32.props" />
-    <Import Project="properties\GLEW.props" />
-    <Import Project="properties\wxWidgets.props" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="properties\DarkRadiant Base Debug Win32.props" />
-    <Import Project="properties\GLEW.props" />
-    <Import Project="properties\wxWidgets.props" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="properties\DarkRadiant Base Release x64.props" />
-    <Import Project="properties\GLEW.props" />
-    <Import Project="properties\wxWidgets.props" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="properties\DarkRadiant Base Debug x64.props" />
-    <Import Project="properties\GLEW.props" />
-    <Import Project="properties\wxWidgets.props" />
-  </ImportGroup>
-  <PropertyGroup Label="UserMacros" />
-  <PropertyGroup>
-    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(DarkRadiantRoot)\libs;$(W32DepsDir)\libsigc++\include;$(IncludePath)</IncludePath>
-    <OutDir>$(DarkRadiantRoot)build\output\$(ProjectName)\$(Platform)\$(Configuration)\</OutDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>$(DarkRadiantRoot)\libs;$(W32DepsDir)\libsigc++\include;$(IncludePath)</IncludePath>
-    <OutDir>$(DarkRadiantRoot)build\output\$(ProjectName)\$(Platform)\$(Configuration)\</OutDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(DarkRadiantRoot)\libs;$(W32DepsDir)\libsigc++\include;$(IncludePath)</IncludePath>
-    <OutDir>$(DarkRadiantRoot)build\output\$(ProjectName)\$(Platform)\$(Configuration)\</OutDir>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(DarkRadiantRoot)\libs;$(W32DepsDir)\libsigc++\include;$(IncludePath)</IncludePath>
-    <OutDir>$(DarkRadiantRoot)build\output\$(ProjectName)\$(Platform)\$(Configuration)\</OutDir>
-  </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <Midl>
-      <TargetEnvironment>X64</TargetEnvironment>
-    </Midl>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <Midl>
-      <TargetEnvironment>X64</TargetEnvironment>
-    </Midl>
-  </ItemDefinitionGroup>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="..\..\include\Bounded.h" />
     <ClInclude Include="..\..\include\editable.h" />
@@ -218,14 +122,18 @@
     <ClInclude Include="..\..\include\precompiled_interfaces.h" />
     <ClInclude Include="..\..\include\precompiled_main.h" />
     <ClInclude Include="..\..\include\precompiled_math.h" />
-    <ClInclude Include="..\..\include\precompiled_ui_interfaces.h" />
     <ClInclude Include="..\..\include\StringSerialisable.h" />
     <ClInclude Include="..\..\include\Texture.h" />
-    <ClInclude Include="..\..\include\ui\idialogmanager.h" />
     <ClInclude Include="..\..\include\version.h" />
     <ClInclude Include="..\..\include\VolumeIntersectionValue.h" />
+    <ClInclude Include="..\..\include\ui\idialogmanager.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\precompiled_ui_interfaces.h" />
   </ItemGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-  </ImportGroup>
+  <ItemGroup>
+    <Filter Include="ui">
+      <UniqueIdentifier>{ad8b842b-a8bc-4260-9851-ef6e87d90e59}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
 </Project>

@@ -1,7 +1,7 @@
 #include "FindBrush.h"
 
 #include "i18n.h"
-#include "idialogmanager.h"
+#include "ui/idialogmanager.h"
 #include "iselection.h"
 #include "scene/SelectionIndex.h"
 

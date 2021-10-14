@@ -7,7 +7,7 @@
 #include "iradiant.h"
 #include "imainframe.h"
 #include "itextstream.h"
-#include "idialogmanager.h"
+#include "ui/idialogmanager.h"
 
 #include <wx/combobox.h>
 #include <wx/toolbar.h>

@@ -2,7 +2,7 @@
 
 #include "iscript.h"
 #include "iscriptinterface.h"
-#include "idialogmanager.h"
+#include "ui/idialogmanager.h"
 
 namespace script
 {

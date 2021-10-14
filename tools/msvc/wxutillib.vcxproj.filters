@@ -33,9 +33,6 @@
     <ClInclude Include="..\..\libs\wxutil\dialog\MessageBox.h">
       <Filter>dialog</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\libs\wxutil\dialog\MessageboxDialogAdapter.h">
-      <Filter>dialog</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\libs\wxutil\dialog\ScrollEventPropagationFilter.h">
       <Filter>dialog</Filter>
     </ClInclude>

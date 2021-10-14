@@ -2,7 +2,7 @@
 #include "PropertyEditorFactory.h"
 
 #include "iresourcechooser.h"
-#include "idialogmanager.h"
+#include "ui/idialogmanager.h"
 #include "i18n.h"
 #include "ientity.h"
 

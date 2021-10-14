@@ -15,6 +15,11 @@
 	#include "precompiled_interfaces.h"
 #endif
 
+#ifdef DR_PRECOMPILED_UI_INTERFACES
+    // Add DarkRadiant UI interfaces
+    #include "precompiled_ui_interfaces.h"
+#endif
+
 #ifdef DR_PRECOMPILED_MATH
 	// Add DarkRadiant math libraries
 	#include "precompiled_math.h"

@@ -25,7 +25,7 @@
 #include "ientity.h"
 #include "imap.h"
 #include "igame.h"
-#include "idialogmanager.h"
+#include "ui/idialogmanager.h"
 
 #include <wx/sizer.h>
 #include <wx/textctrl.h>

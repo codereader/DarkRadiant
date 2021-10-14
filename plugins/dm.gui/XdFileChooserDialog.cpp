@@ -10,7 +10,7 @@
 #include <wx/stattext.h>
 #include <wx/sizer.h>
 
-#include "idialogmanager.h"
+#include "ui/idialogmanager.h"
 
 namespace ui
 {

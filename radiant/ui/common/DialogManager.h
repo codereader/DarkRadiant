@@ -1,6 +1,6 @@
 #pragma once
 
-#include "idialogmanager.h"
+#include "ui/idialogmanager.h"
 #include <list>
 
 #include "wxutil/dialog/Dialog.h"

@@ -5,8 +5,8 @@
 
 #define DR_PRECOMPILED_WXWIDGETS
 #define DR_PRECOMPILED_INTERFACES
+#define DR_PRECOMPILED_UI_INTERFACES
 #define DR_PRECOMPILED_MATH
-#define DR_PRECOMPILED_REGISTRY
 
 // The actual inclusions are handled by the main precompiled header file
 #include "precompiled_main.h"

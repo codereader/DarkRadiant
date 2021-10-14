@@ -18,7 +18,6 @@
 #include "icounter.h"
 #include "icurve.h"
 #include "idatastream.h"
-#include "idialogmanager.h"
 #include "ieclass.h"
 #include "ientity.h"
 #include "ientityinspector.h"
