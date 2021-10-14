@@ -1,6 +1,6 @@
 #pragma once
 
-#include "itoolbarmanager.h"
+#include "ui/itoolbarmanager.h"
 
 #include <set>
 #include <string>

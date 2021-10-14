@@ -3,7 +3,7 @@
 #include "i18n.h"
 #include "itextstream.h"
 #include "ui/imainframe.h"
-#include "itoolbarmanager.h"
+#include "ui/itoolbarmanager.h"
 #include "icolourscheme.h"
 #include "ui/igroupdialog.h"
 #include "iradiant.h"

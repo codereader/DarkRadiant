@@ -2,7 +2,7 @@
 
 #include "i18n.h"
 #include "imap.h"
-#include "iuserinterface.h"
+#include "ui/iuserinterface.h"
 #include "ui/imainframe.h"
 #include "imapformat.h"
 

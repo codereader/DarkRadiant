@@ -3,7 +3,7 @@
 #include <sigc++/connection.h>
 #include <wx/event.h>
 
-#include "iuserinterface.h"
+#include "ui/iuserinterface.h"
 #include "ui/iorthocontextmenu.h"
 #include "icommandsystem.h"
 

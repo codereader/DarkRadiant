@@ -94,12 +94,10 @@
     <ClInclude Include="..\..\include\itexturetoolcolours.h" />
     <ClInclude Include="..\..\include\itextstream.h" />
     <ClInclude Include="..\..\include\itexturetoolmodel.h" />
-    <ClInclude Include="..\..\include\itoolbarmanager.h" />
     <ClInclude Include="..\..\include\itraceable.h" />
     <ClInclude Include="..\..\include\itransformable.h" />
     <ClInclude Include="..\..\include\itransformnode.h" />
     <ClInclude Include="..\..\include\iundo.h" />
-    <ClInclude Include="..\..\include\iuserinterface.h" />
     <ClInclude Include="..\..\include\iversioncontrol.h" />
     <ClInclude Include="..\..\include\ivolumetest.h" />
     <ClInclude Include="..\..\include\iwxgl.h" />
@@ -154,6 +152,12 @@
       <Filter>ui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\ui\istatusbarmanager.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\ui\itoolbarmanager.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\ui\iuserinterface.h">
       <Filter>ui</Filter>
     </ClInclude>
   </ItemGroup>

@@ -11,7 +11,7 @@
 #include "iundo.h"
 #include "igrid.h"
 #include "iradiant.h"
-#include "itoolbarmanager.h"
+#include "ui/itoolbarmanager.h"
 #include "itextstream.h"
 
 #include "registry/adaptors.h"
