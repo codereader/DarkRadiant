@@ -50,6 +50,7 @@ public:
         TextureChanged,
         ApplicationIsActiveQuery,
         FileOverwriteConfirmation,
+        FileSaveConfirmation,
         UnselectSelectionRequest,
         ManipulatorModeToggleRequest,
         ComponentSelectionModeToggleRequest,

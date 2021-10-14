@@ -172,6 +172,7 @@
     <ClInclude Include="..\..\libs\messages\CommandExecutionFailed.h" />
     <ClInclude Include="..\..\libs\messages\ComponentSelectionModeToggleRequest.h" />
     <ClInclude Include="..\..\libs\messages\FileOverwriteConfirmation.h" />
+    <ClInclude Include="..\..\libs\messages\FileSaveConfirmation.h" />
     <ClInclude Include="..\..\libs\messages\FileSelectionRequest.h" />
     <ClInclude Include="..\..\libs\messages\GameConfigNeededMessage.h" />
     <ClInclude Include="..\..\libs\messages\GridSnapRequest.h" />
