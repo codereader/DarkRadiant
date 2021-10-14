@@ -477,32 +477,34 @@ void TexTool::scrollByPixels(int x, int y)
 
 void TexTool::recalculateVisibleTexSpace()
 {
-	// Get the selection extents
-	_texSpaceAABB = getUvBoundsFromSceneSelection();
-    _texSpaceAABB.extents *= 1.5; // add some padding around the selection
+	// Get the selection extents, add some padding
+    auto selectionBounds = getUvBoundsFromSceneSelection();
+    selectionBounds.extents *= 1.5;
+
+    // Center the visible tex space at the selection
+    _texSpaceAABB.origin = selectionBounds.origin;
+
+    // Use the window's aspect ratio
+    _texSpaceAABB.extents.x() = _windowDims.x();
+    _texSpaceAABB.extents.y() = _windowDims.y();
 
     // Make the visible space non-uniform if the texture has a width/height ratio != 1
     double textureAspect = getTextureAspectRatio();
-
-    if (textureAspect == 1.0)
+    
+    if (textureAspect > 1)
     {
-        // tex space bounds should be quadratic if texture aspect is 1
-        _texSpaceAABB.extents.x() = std::max(_texSpaceAABB.extents.x(), _texSpaceAABB.extents.y());
-        _texSpaceAABB.extents.y() = _texSpaceAABB.extents.x();
+        _texSpaceAABB.extents.y() *= textureAspect;
+    }
+    else if (textureAspect < 1)
+    {
+        _texSpaceAABB.extents.x() /= textureAspect;
     }
 
-    // Take the window aspect into account
-    double windowAspect = _windowDims.x() / _windowDims.y();
-    double stretchFactor = textureAspect / windowAspect;
+    // Proportionally shrink the visible bounds to fit the selection
+    auto scale = std::max(selectionBounds.extents.x() / _texSpaceAABB.extents.x(),
+        selectionBounds.extents.y() / _texSpaceAABB.extents.y());
 
-    if (stretchFactor > 1)
-    {
-        _texSpaceAABB.extents.y() *= stretchFactor;
-    }
-    else
-    {
-        _texSpaceAABB.extents.x() /= stretchFactor;
-    }
+    _texSpaceAABB.extents *= scale;
 
     updateProjection();
 }
