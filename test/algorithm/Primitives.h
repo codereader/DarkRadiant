@@ -2,6 +2,7 @@
 
 #include "ibrush.h"
 #include "ipatch.h"
+#include "iundo.h"
 #include "math/Vector3.h"
 #include "math/Plane3.h"
 #include "render/TexCoord2f.h"
@@ -19,6 +20,8 @@ inline scene::INodePtr createCubicBrush(const scene::INodePtr& parent,
     const Vector3& origin = Vector3(0,0,0),
     const std::string& material = "_default")
 {
+    UndoableCommand cmd("createBrush");
+
     auto brushNode = GlobalBrushCreator().createBrush();
     scene::addNodeToContainer(brushNode, parent);
 
@@ -43,6 +46,8 @@ inline scene::INodePtr createCuboidBrush(const scene::INodePtr& parent,
     const AABB& bounds = AABB(Vector3(0, 0, 0), Vector3(64,256,128)),
     const std::string& material = "_default")
 {
+    UndoableCommand cmd("createBrush");
+
     auto brushNode = GlobalBrushCreator().createBrush();
     parent->addChildNode(brushNode);
 
