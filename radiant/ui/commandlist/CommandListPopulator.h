@@ -1,12 +1,12 @@
 #pragma once
 
-#include "ieventmanager.h"
+#include "ui/ieventmanager.h"
 #include "CommandList.h"
 #include "wxutil/dataview/TreeModel.h"
 
 /* greebo: The CommandListPopulator is an Event visitor class that cycles
  * through all the registered events and stores the name and the associated
- * shortcut representation into the given GtkListStore widget.
+ * shortcut representation into the given TreeModel.
  */
 namespace ui
 {

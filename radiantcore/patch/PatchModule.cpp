@@ -3,7 +3,6 @@
 #include "ifilter.h"
 #include "ilayer.h"
 #include "imap.h"
-#include "ieventmanager.h"
 #include "ipreferencesystem.h"
 #include "itextstream.h"
 #include "i18n.h"

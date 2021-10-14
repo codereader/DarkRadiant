@@ -2,7 +2,6 @@
 
 #include "imodule.h"
 #include "igrid.h"
-#include "ieventmanager.h"
 #include <map>
 #include <sigc++/connection.h>
 

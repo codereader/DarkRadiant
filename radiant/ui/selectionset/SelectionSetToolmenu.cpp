@@ -2,7 +2,6 @@
 
 #include "i18n.h"
 #include "iselection.h"
-#include "ieventmanager.h"
 #include "imap.h"
 #include "iradiant.h"
 #include "imainframe.h"

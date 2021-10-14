@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include "ieventmanager.h"
 #include "wxutil/dialog/DialogBase.h"
 #include <wx/event.h>
 

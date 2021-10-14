@@ -3,7 +3,7 @@
 #include "i18n.h"
 #include "igroupdialog.h"
 #include "imap.h"
-#include "ieventmanager.h"
+#include "ui/ieventmanager.h"
 #include "ipreferencesystem.h"
 #include "ui/ientityinspector.h"
 #include "ieclass.h"
@@ -70,7 +70,6 @@ const StringSet& MainFrame::getDependencies() const
 		_dependencies.insert(MODULE_MAINFRAME_LAYOUT_MANAGER);
 		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_PREFERENCESYSTEM);
-		_dependencies.insert(MODULE_EVENTMANAGER);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
 		_dependencies.insert(MODULE_ORTHOVIEWMANAGER);
 		_dependencies.insert(MODULE_ECLASSMANAGER);

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ieventmanager.h"
+#include "ui/ieventmanager.h"
 #include "iregistry.h"
 
 #include "xmlutil/Node.h"

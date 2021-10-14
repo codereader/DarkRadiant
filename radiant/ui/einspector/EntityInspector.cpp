@@ -6,7 +6,6 @@
 #include "ientity.h"
 #include "ieclass.h"
 #include "iregistry.h"
-#include "ieventmanager.h"
 #include "igame.h"
 #include "imap.h"
 #include "iundo.h"
@@ -488,7 +487,6 @@ const StringSet& EntityInspector::getDependencies() const
         MODULE_UNDOSYSTEM,
         MODULE_GAMEMANAGER,
         MODULE_COMMANDSYSTEM,
-        MODULE_EVENTMANAGER,
         MODULE_MAINFRAME
     };
 

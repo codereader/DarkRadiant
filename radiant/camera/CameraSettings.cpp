@@ -1,7 +1,6 @@
 #include "CameraSettings.h"
 
 #include "i18n.h"
-#include "ieventmanager.h"
 #include "ipreferencesystem.h"
 
 #include "registry/registry.h"

@@ -1,7 +1,6 @@
 #include "MapInfoDialog.h"
 
 #include "i18n.h"
-#include "ieventmanager.h"
 #include "imainframe.h"
 
 #include "EntityInfoTab.h"

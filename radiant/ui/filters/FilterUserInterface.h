@@ -2,8 +2,8 @@
 
 #include <map>
 #include <sigc++/connection.h>
+#include "ui/ieventmanager.h"
 #include "imodule.h"
-#include "ieventmanager.h"
 
 namespace ui
 {

@@ -1,7 +1,6 @@
 #include "imodule.h"
 
 #include "i18n.h"
-#include "ieventmanager.h"
 #include "iradiant.h"
 #include "imenumanager.h"
 #include "iselection.h"

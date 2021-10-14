@@ -2,7 +2,7 @@
 
 #include "icommandsystem.h"
 #include "iscenegraph.h"
-#include "ieventmanager.h"
+#include "ui/ieventmanager.h"
 
 #include "MapObserver.h"
 

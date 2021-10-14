@@ -1,7 +1,6 @@
 #include "imodule.h"
 
 #include "i18n.h"
-#include "ieventmanager.h"
 #include "itextstream.h"
 #include "ieclass.h"
 #include "iscenegraph.h"

@@ -9,7 +9,6 @@
 #include "ifiletypes.h"
 #include "ipreferencesystem.h"
 #include "imainframe.h"
-#include "ieventmanager.h"
 #include "iradiant.h"
 #include "igame.h"
 #include "iarchive.h"

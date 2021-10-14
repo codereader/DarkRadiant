@@ -1,7 +1,6 @@
 #include "TextureBrowser.h"
 
 #include "i18n.h"
-#include "ieventmanager.h"
 #include "itextstream.h"
 #include "imainframe.h"
 #include "itoolbarmanager.h"

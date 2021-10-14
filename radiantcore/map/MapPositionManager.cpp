@@ -4,7 +4,6 @@
 #include "ientity.h"
 #include "icameraview.h"
 #include "gamelib.h"
-#include "ieventmanager.h"
 #include "iregistry.h"
 #include "itextstream.h"
 #include "imapresource.h"

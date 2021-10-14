@@ -2,7 +2,6 @@
 
 #include "i18n.h"
 #include "iradiant.h"
-#include "ieventmanager.h"
 #include "ui/idialogmanager.h"
 #include "icolourscheme.h"
 #include "wxutil/dialog/Dialog.h"

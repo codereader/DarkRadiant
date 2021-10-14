@@ -5,7 +5,6 @@
 #include "imodel.h"
 #include "imd5model.h"
 #include "imd5anim.h"
-#include "ieventmanager.h"
 #include "iparticles.h"
 #include "iparticlenode.h"
 

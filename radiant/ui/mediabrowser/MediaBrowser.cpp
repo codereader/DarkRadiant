@@ -7,7 +7,6 @@
 #include "ipreferencesystem.h"
 #include "ishaders.h"
 #include "ishaderclipboard.h"
-#include "ieventmanager.h"
 #include "ifavourites.h"
 
 #include "wxutil/MultiMonitor.h"
@@ -175,7 +174,6 @@ const StringSet& MediaBrowser::getDependencies() const
     static StringSet _dependencies
     {
         MODULE_COMMANDSYSTEM,
-        MODULE_EVENTMANAGER,
         MODULE_SHADERSYSTEM,
         MODULE_GROUPDIALOG,
         MODULE_SHADERCLIPBOARD,

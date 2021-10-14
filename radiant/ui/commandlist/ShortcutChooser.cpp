@@ -3,6 +3,7 @@
 #include "imainframe.h"
 #include "i18n.h"
 #include "ui/idialogmanager.h"
+#include "ui/ieventmanager.h"
 
 #include <wx/sizer.h>
 #include <wx/stattext.h>

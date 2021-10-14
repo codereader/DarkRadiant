@@ -1,7 +1,7 @@
 #pragma once
 
 #include "itexturetoolmodel.h"
-#include "ieventmanager.h"
+#include "ui/ieventmanager.h"
 
 #include <sigc++/connection.h>
 

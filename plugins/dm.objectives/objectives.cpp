@@ -2,7 +2,6 @@
 
 #include "i18n.h"
 #include "imodule.h"
-#include "ieventmanager.h"
 #include "imenumanager.h"
 #include "iradiant.h"
 #include "iscenegraph.h"
@@ -41,7 +40,6 @@ public:
 		static StringSet _dependencies;
 
 		if (_dependencies.empty()) {
-			_dependencies.insert(MODULE_EVENTMANAGER);
 			_dependencies.insert(MODULE_MENUMANAGER);
 			_dependencies.insert(MODULE_COMMANDSYSTEM);
 		}

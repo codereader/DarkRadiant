@@ -1,6 +1,5 @@
 #include "EntityList.h"
 
-#include "ieventmanager.h"
 #include "imainframe.h"
 #include "icommandsystem.h"
 

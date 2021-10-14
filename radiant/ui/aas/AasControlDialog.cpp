@@ -5,7 +5,6 @@
 #include "iradiant.h"
 #include "imainframe.h"
 #include "itextstream.h"
-#include "ieventmanager.h"
 #include "imap.h"
 
 #include <wx/button.h>

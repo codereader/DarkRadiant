@@ -2,7 +2,6 @@
 
 #include "i18n.h"
 #include "itextstream.h"
-#include "ieventmanager.h"
 #include "ilayer.h"
 #include "imainframe.h"
 #include "iselection.h"

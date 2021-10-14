@@ -3,7 +3,7 @@
 #include "iscenegraph.h"
 #include "imousetool.h"
 #include "icameraview.h"
-#include "ieventmanager.h"
+#include "ui/ieventmanager.h"
 #include "igl.h"
 #include "irender.h"
 #include "wxutil/GLWidget.h"

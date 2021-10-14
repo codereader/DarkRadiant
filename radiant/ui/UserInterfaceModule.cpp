@@ -11,7 +11,7 @@
 #include "ibrush.h"
 #include "ipatch.h"
 #include "iorthocontextmenu.h"
-#include "ieventmanager.h"
+#include "ui/ieventmanager.h"
 #include "imousetool.h"
 #include "imainframe.h"
 #include "ishaders.h"

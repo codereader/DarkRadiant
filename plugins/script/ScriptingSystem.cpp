@@ -7,7 +7,6 @@
 #include "i18n.h"
 #include "itextstream.h"
 #include "iradiant.h"
-#include "ieventmanager.h"
 #include "imainframe.h"
 #include "igroupdialog.h"
 #include "iundo.h"

@@ -10,7 +10,6 @@
 // Modules
 #include "icommandsystem.h"
 #include "ientity.h"
-#include "ieventmanager.h"
 #include "ifilesystem.h"
 #include "ifonts.h"
 #include "igame.h"

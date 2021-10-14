@@ -4,7 +4,6 @@
 #include "selectionlib.h"
 #include "ibrush.h"
 #include "isound.h"
-#include "ieventmanager.h"
 #include "iresourcechooser.h"
 #include "ui/idialogmanager.h"
 #include "entitylib.h" // EntityFindByClassnameWalker
@@ -608,7 +607,6 @@ const StringSet& OrthoContextMenu::getDependencies() const
     static StringSet _dependencies
     {
         MODULE_COMMANDSYSTEM,
-        MODULE_EVENTMANAGER,
         MODULE_MAINFRAME,
     };
 

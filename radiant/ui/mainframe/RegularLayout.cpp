@@ -1,7 +1,6 @@
 #include "RegularLayout.h"
 
 #include "itextstream.h"
-#include "ieventmanager.h"
 #include "imenumanager.h"
 #include "igroupdialog.h"
 #include "imainframe.h"

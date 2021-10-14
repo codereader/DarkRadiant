@@ -1,7 +1,6 @@
 #pragma once
 
 #include "i18n.h"
-#include "ieventmanager.h"
 #include "imenumanager.h"
 #include "icommandsystem.h"
 #include "imainframe.h"

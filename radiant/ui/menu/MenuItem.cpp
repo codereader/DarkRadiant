@@ -1,7 +1,7 @@
 #include "MenuItem.h"
 
 #include "itextstream.h"
-#include "ieventmanager.h"
+#include "ui/ieventmanager.h"
 
 #include "MenuFolder.h"
 #include "wxutil/Bitmap.h"

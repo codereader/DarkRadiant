@@ -2,7 +2,6 @@
 
 #include "i18n.h"
 #include "itextstream.h"
-#include "ieventmanager.h"
 #include "icommandsystem.h"
 #include "imenumanager.h"
 #include "generic/callback.h"

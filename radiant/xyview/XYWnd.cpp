@@ -3,7 +3,6 @@
 #include "i18n.h"
 #include "iscenegraph.h"
 #include "iundo.h"
-#include "ieventmanager.h"
 #include "imainframe.h"
 #include "icolourscheme.h"
 #include "ientity.h"

@@ -1,7 +1,6 @@
 #include "MainFrameLayoutManager.h"
 
 #include "itextstream.h"
-#include "ieventmanager.h"
 #include "imainframe.h"
 #include "igroupdialog.h"
 #include "icommandsystem.h"
@@ -70,7 +69,6 @@ const StringSet& MainFrameLayoutManager::getDependencies() const
 {
     static StringSet _dependencies
     {
-        MODULE_EVENTMANAGER,
         MODULE_GROUPDIALOG,
         MODULE_COMMANDSYSTEM
     };

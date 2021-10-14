@@ -2,7 +2,7 @@
 
 #include <limits>
 #include "i18n.h"
-#include "ieventmanager.h"
+#include "ui/ieventmanager.h"
 #include "icommandsystem.h"
 #include "itexturetoolmodel.h"
 #include "itexturetoolcolours.h"

@@ -2,7 +2,6 @@
 
 #include <map>
 
-#include "ieventmanager.h"
 #include "ientity.h"
 #include "icommandsystem.h"
 #include "iradiant.h"

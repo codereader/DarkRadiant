@@ -1,7 +1,6 @@
 #include "FilterUserInterface.h"
 
 #include "ifilter.h"
-#include "ieventmanager.h"
 #include "imainframe.h"
 #include "imenumanager.h"
 #include "icommandsystem.h"

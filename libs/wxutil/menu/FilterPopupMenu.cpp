@@ -1,6 +1,6 @@
 #include "FilterPopupMenu.h"
 
-#include "ieventmanager.h"
+#include "ui/ieventmanager.h"
 #include <wx/menu.h>
 
 #include "wxutil/menu/IconTextMenuItem.h"

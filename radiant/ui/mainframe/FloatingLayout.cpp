@@ -2,7 +2,7 @@
 
 #include "i18n.h"
 #include "itextstream.h"
-#include "ieventmanager.h"
+#include "ui/ieventmanager.h"
 #include "igroupdialog.h"
 #include "ui/ientityinspector.h"
 

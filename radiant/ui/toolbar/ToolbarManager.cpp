@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 #include "itextstream.h"
-#include "ieventmanager.h"
+#include "ui/ieventmanager.h"
 #include "iregistry.h"
 #include "i18n.h"
 

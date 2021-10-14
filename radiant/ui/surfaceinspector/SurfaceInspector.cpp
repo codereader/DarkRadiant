@@ -12,7 +12,7 @@
 #include <wx/tglbtn.h>
 
 #include "iscenegraph.h"
-#include "ieventmanager.h"
+#include "ui/ieventmanager.h"
 #include "itextstream.h"
 #include "imainframe.h"
 #include "iundo.h"

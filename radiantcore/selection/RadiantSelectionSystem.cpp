@@ -6,7 +6,6 @@
 #include "igl.h"
 #include "iselectiongroup.h"
 #include "iradiant.h"
-#include "ieventmanager.h"
 #include "ipreferencesystem.h"
 #include "selection/SelectionPool.h"
 #include "module/StaticModule.h"

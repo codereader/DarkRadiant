@@ -12,7 +12,6 @@
 #include "ientity.h"
 #include "iselection.h"
 #include "imenumanager.h"
-#include "ieventmanager.h"
 #include "imainframe.h"
 
 #include "scene/Traverse.h"

@@ -2,7 +2,6 @@
 
 #include "iregistry.h"
 #include "imainframe.h"
-#include "ieventmanager.h"
 #include "i18n.h"
 #include <iostream>
 #include <vector>

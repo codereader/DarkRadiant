@@ -6,7 +6,6 @@
 #include "RenderableParticle.h"
 
 #include "icommandsystem.h"
-#include "ieventmanager.h"
 #include "itextstream.h"
 #include "ifilesystem.h"
 #include "ifiletypes.h"

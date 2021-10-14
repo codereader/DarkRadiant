@@ -4,7 +4,8 @@
  */
 #pragma once
 
-// Add DarkRadiant interfaces
+// Add UI-related interfaces
 #include "ui/idialogmanager.h"
 #include "ui/ianimationchooser.h"
 #include "ui/ientityinspector.h"
+#include "ui/ieventmanager.h"

@@ -4,7 +4,7 @@
 #include <list>
 #include <sigc++/functors/mem_fun.h>
 #include "i18n.h"
-#include "ieventmanager.h"
+#include "ui/ieventmanager.h"
 #include "ishaderclipboard.h"
 #include "icommandsystem.h"
 #include "igroupdialog.h"

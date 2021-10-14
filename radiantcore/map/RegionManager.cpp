@@ -11,7 +11,6 @@
 #include "ifiletypes.h"
 #include "iscenegraph.h"
 #include "iselection.h"
-#include "ieventmanager.h"
 #include "imapformat.h"
 
 #include "scenelib.h"

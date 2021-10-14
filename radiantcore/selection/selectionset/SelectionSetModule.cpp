@@ -1,7 +1,6 @@
 #include "iselectionset.h"
 #include "itextstream.h"
 #include "imapinfofile.h"
-#include "ieventmanager.h"
 #include "iselection.h"
 #include "icommandsystem.h"
 #include "imap.h"

@@ -2,7 +2,7 @@
 
 #include <map>
 #include "icommandsystem.h"
-#include "ieventmanager.h"
+#include "ui/ieventmanager.h"
 #include "imousetoolmanager.h"
 
 #include "CamWnd.h"
