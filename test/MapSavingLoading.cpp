@@ -1374,12 +1374,30 @@ TEST_F(MapSavingTest, NewMapWithoutUnsavedChanges)
     });
 }
 
+TEST_F(MapSavingTest, OpenMapWithoutUnsavedChanges)
+{
+    checkBehaviourWithoutUnsavedChanges([]()
+    {
+        // Opening a new map will not ask for save, since it hasn't been changed
+        GlobalCommandSystem().executeCommand("OpenMap", cmd::Argument("maps/csg_merge.map"));
+    });
+}
+
 TEST_F(MapSavingTest, NewMapDiscardingUnsavedChanges)
 {
     checkBehaviourDiscardingUnsavedChanges(_context.getTestProjectPath(), []()
     {
         // Creating a new map must ask for save, since the file has been changed
         GlobalCommandSystem().executeCommand("NewMap");
+    });
+}
+
+TEST_F(MapSavingTest, OpenMapDiscardingUnsavedChanges)
+{
+    checkBehaviourDiscardingUnsavedChanges(_context.getTestProjectPath(), []()
+    {
+        // Opening a new map must ask for save, since the file has been changed
+        GlobalCommandSystem().executeCommand("OpenMap", cmd::Argument("maps/csg_merge.map"));
     });
 }
 
@@ -1394,6 +1412,17 @@ TEST_F(MapSavingTest, NewMapSavingChanges)
     });
 }
 
+TEST_F(MapSavingTest, OpenMapSavingChanges)
+{
+    auto mapPath = createMapCopyInTempDataPath("altar.map", "altar_NewMapSavingChanges.map");
+
+    checkBehaviourSavingUnsavedChanges(mapPath.string(), []()
+    {
+        // Opening a new map must ask for save, since the file has been changed
+        GlobalCommandSystem().executeCommand("OpenMap", cmd::Argument("maps/csg_merge.map"));
+    });
+}
+
 TEST_F(MapSavingTest, NewMapCancelWithUnsavedChanges)
 {
     auto mapPath = createMapCopyInTempDataPath("altar.map", "altar_NewMapCancelWithUnsavedChanges.map");
@@ -1402,6 +1431,17 @@ TEST_F(MapSavingTest, NewMapCancelWithUnsavedChanges)
     {
         // Creating a new map must ask for save, since the file has been changed
         GlobalCommandSystem().executeCommand("NewMap");
+    });
+}
+
+TEST_F(MapSavingTest, OpenMapCancelWithUnsavedChanges)
+{
+    auto mapPath = createMapCopyInTempDataPath("altar.map", "altar_NewMapCancelWithUnsavedChanges.map");
+
+    checkBehaviourCancellingMapChange(mapPath.string(), []()
+    {
+        // Opening a new map must ask for save, since the file has been changed
+        GlobalCommandSystem().executeCommand("OpenMap", cmd::Argument("maps/csg_merge.map"));
     });
 }
 
