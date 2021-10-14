@@ -1363,6 +1363,14 @@ void checkBehaviourCancellingMapChange(const std::string& fullMapPath, std::func
     EXPECT_EQ(fs::file_size(fullMapPath), sizeBefore) << "File size has changed after discarding";
 }
 
+void openMapFromArchive(const radiant::TestContext& context)
+{
+    auto pakPath = fs::path(context.getTestResourcePath()) / "map_loading_test.pk4";
+    std::string archiveRelativePath = "maps/altar_packed.map";
+
+    GlobalCommandSystem().executeCommand("OpenMapFromArchive", pakPath.string(), archiveRelativePath);
+}
+
 }
 
 TEST_F(MapSavingTest, NewMapWithoutUnsavedChanges)
@@ -1383,6 +1391,14 @@ TEST_F(MapSavingTest, OpenMapWithoutUnsavedChanges)
     });
 }
 
+TEST_F(MapSavingTest, OpenMapFromArchiveWithoutUnsavedChanges)
+{
+    checkBehaviourWithoutUnsavedChanges([&]()
+    {
+        openMapFromArchive(_context);
+    });
+}
+
 TEST_F(MapSavingTest, NewMapDiscardingUnsavedChanges)
 {
     checkBehaviourDiscardingUnsavedChanges(_context.getTestProjectPath(), []()
@@ -1398,6 +1414,14 @@ TEST_F(MapSavingTest, OpenMapDiscardingUnsavedChanges)
     {
         // Opening a new map must ask for save, since the file has been changed
         GlobalCommandSystem().executeCommand("OpenMap", cmd::Argument("maps/csg_merge.map"));
+    });
+}
+
+TEST_F(MapSavingTest, OpenMapFromArchiveDiscardingUnsavedChanges)
+{
+    checkBehaviourDiscardingUnsavedChanges(_context.getTestProjectPath(), [&]()
+    {
+        openMapFromArchive(_context);
     });
 }
 
@@ -1423,6 +1447,16 @@ TEST_F(MapSavingTest, OpenMapSavingChanges)
     });
 }
 
+TEST_F(MapSavingTest, OpenMapFromArchiveSavingChanges)
+{
+    auto mapPath = createMapCopyInTempDataPath("altar.map", "altar_NewMapSavingChanges.map");
+
+    checkBehaviourSavingUnsavedChanges(mapPath.string(), [&]()
+    {
+        openMapFromArchive(_context);
+    });
+}
+
 TEST_F(MapSavingTest, NewMapCancelWithUnsavedChanges)
 {
     auto mapPath = createMapCopyInTempDataPath("altar.map", "altar_NewMapCancelWithUnsavedChanges.map");
@@ -1442,6 +1476,16 @@ TEST_F(MapSavingTest, OpenMapCancelWithUnsavedChanges)
     {
         // Opening a new map must ask for save, since the file has been changed
         GlobalCommandSystem().executeCommand("OpenMap", cmd::Argument("maps/csg_merge.map"));
+    });
+}
+
+TEST_F(MapSavingTest, OpenMapFromArchiveCancelWithUnsavedChanges)
+{
+    auto mapPath = createMapCopyInTempDataPath("altar.map", "altar_NewMapCancelWithUnsavedChanges.map");
+
+    checkBehaviourCancellingMapChange(mapPath.string(), [&]()
+    {
+        openMapFromArchive(_context);
     });
 }
 
