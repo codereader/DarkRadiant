@@ -246,6 +246,7 @@ void UserInterfaceModule::shutdownModule()
 
 	_longOperationHandler.reset();
 	_mapFileProgressHandler.reset();
+    _fileSaveConfirmationHandler.reset();
     _fileOverwriteConfirmationHandler.reset();
 	_fileSelectionRequestHandler.reset();
 	_autoSaveRequestHandler.reset();
