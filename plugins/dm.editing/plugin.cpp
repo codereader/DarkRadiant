@@ -5,7 +5,7 @@
 #include "iradiant.h"
 #include "imenumanager.h"
 #include "iselection.h"
-#include "ientityinspector.h"
+#include "ui/ientityinspector.h"
 #include "icommandsystem.h"
 #include "itextstream.h"
 #include "imainframe.h"

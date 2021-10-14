@@ -5,7 +5,7 @@
 #include "imap.h"
 #include "ieventmanager.h"
 #include "ipreferencesystem.h"
-#include "ientityinspector.h"
+#include "ui/ientityinspector.h"
 #include "ieclass.h"
 #include "iorthoview.h"
 #include "iregistry.h"

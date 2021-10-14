@@ -2,7 +2,7 @@
 
 #include "PropertyEditor.h"
 
-#include "ientityinspector.h"
+#include "ui/ientityinspector.h"
 #include "iradiant.h"
 #include "imap.h"
 #include "icommandsystem.h"

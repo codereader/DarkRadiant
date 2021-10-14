@@ -20,7 +20,6 @@
 #include "idatastream.h"
 #include "ieclass.h"
 #include "ientity.h"
-#include "ientityinspector.h"
 #include "ieventmanager.h"
 #include "ifilechooser.h"
 #include "ifilesystem.h"

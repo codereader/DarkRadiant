@@ -5,7 +5,7 @@
 #include "imenumanager.h"
 #include "igroupdialog.h"
 #include "imainframe.h"
-#include "ientityinspector.h"
+#include "ui/ientityinspector.h"
 
 #include "camera/CameraWndManager.h"
 #include "camera/CamWnd.h"

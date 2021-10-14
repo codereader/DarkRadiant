@@ -6,7 +6,7 @@
 #include "imenumanager.h"
 #include "igroupdialog.h"
 #include "imainframe.h"
-#include "ientityinspector.h"
+#include "ui/ientityinspector.h"
 
 #include "registry/registry.h"
 

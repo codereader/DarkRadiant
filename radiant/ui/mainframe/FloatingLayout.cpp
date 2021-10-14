@@ -4,7 +4,7 @@
 #include "itextstream.h"
 #include "ieventmanager.h"
 #include "igroupdialog.h"
-#include "ientityinspector.h"
+#include "ui/ientityinspector.h"
 
 #include "registry/registry.h"
 

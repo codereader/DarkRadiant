@@ -1,7 +1,7 @@
 #pragma once
 
 #include <wx/event.h>
-#include "ientityinspector.h"
+#include "ui/ientityinspector.h"
 
 namespace ui
 {

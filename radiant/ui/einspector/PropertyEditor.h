@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ientityinspector.h"
+#include "ui/ientityinspector.h"
 #include <wx/event.h>
 
 #include <string>
