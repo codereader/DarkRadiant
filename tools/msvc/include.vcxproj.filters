@@ -6,7 +6,6 @@
     <ClInclude Include="..\..\include\GLProgramAttributes.h" />
     <ClInclude Include="..\..\include\i18n.h" />
     <ClInclude Include="..\..\include\iaasfile.h" />
-    <ClInclude Include="..\..\include\ianimationchooser.h" />
     <ClInclude Include="..\..\include\iarchive.h" />
     <ClInclude Include="..\..\include\iautosaver.h" />
     <ClInclude Include="..\..\include\ibrush.h" />
@@ -130,6 +129,9 @@
       <Filter>ui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\precompiled_ui_interfaces.h" />
+    <ClInclude Include="..\..\include\ui\ianimationchooser.h">
+      <Filter>ui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ui">

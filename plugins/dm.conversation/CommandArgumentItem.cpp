@@ -1,6 +1,6 @@
 #include "CommandArgumentItem.h"
 
-#include "ianimationchooser.h"
+#include "ui/ianimationchooser.h"
 #include "ui/idialogmanager.h"
 #include "iresourcechooser.h"
 #include "i18n.h"

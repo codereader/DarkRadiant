@@ -6,3 +6,4 @@
 
 // Add DarkRadiant interfaces
 #include "ui/idialogmanager.h"
+#include "ui/ianimationchooser.h"

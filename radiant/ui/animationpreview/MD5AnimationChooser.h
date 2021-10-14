@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ianimationchooser.h"
+#include "ui/ianimationchooser.h"
 #include "MD5AnimationViewer.h"
 
 namespace ui
