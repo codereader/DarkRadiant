@@ -2,7 +2,7 @@
 
 #include "igl.h"
 #include "itextstream.h"
-#include "iwxgl.h"
+#include "ui/iwxgl.h"
 
 #include "GLContext.h"
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <set>
-#include "iwxgl.h"
+#include "ui/iwxgl.h"
 
 namespace ui
 {

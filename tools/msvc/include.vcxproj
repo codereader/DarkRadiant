@@ -196,7 +196,6 @@
     <ClInclude Include="..\..\include\iundo.h" />
     <ClInclude Include="..\..\include\iversioncontrol.h" />
     <ClInclude Include="..\..\include\ivolumetest.h" />
-    <ClInclude Include="..\..\include\iwxgl.h" />
     <ClInclude Include="..\..\include\mapfile.h" />
     <ClInclude Include="..\..\include\modelskin.h" />
     <ClInclude Include="..\..\include\ModResource.h" />
@@ -222,6 +221,7 @@
     <ClInclude Include="..\..\include\ui\istatusbarmanager.h" />
     <ClInclude Include="..\..\include\ui\itoolbarmanager.h" />
     <ClInclude Include="..\..\include\ui\iuserinterface.h" />
+    <ClInclude Include="..\..\include\ui\iwxgl.h" />
     <ClInclude Include="..\..\include\version.h" />
     <ClInclude Include="..\..\include\VolumeIntersectionValue.h" />
   </ItemGroup>
