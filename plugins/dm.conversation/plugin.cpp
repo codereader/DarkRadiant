@@ -3,7 +3,7 @@
 #include "i18n.h"
 #include "itextstream.h"
 #include "icommandsystem.h"
-#include "imenumanager.h"
+#include "ui/imenumanager.h"
 #include "generic/callback.h"
 #include "debugging/debugging.h"
 

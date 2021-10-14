@@ -2,7 +2,7 @@
 
 #include "ifilter.h"
 #include "ui/imainframe.h"
-#include "imenumanager.h"
+#include "ui/imenumanager.h"
 #include "icommandsystem.h"
 #include <sigc++/functors/mem_fun.h>
 

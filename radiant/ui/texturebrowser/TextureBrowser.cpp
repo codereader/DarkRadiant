@@ -9,7 +9,7 @@
 #include "iradiant.h"
 #include "ifavourites.h"
 #include "ipreferencesystem.h"
-#include "imediabrowser.h"
+#include "ui/imediabrowser.h"
 #include "ishaderclipboard.h"
 
 #include "wxutil/menu/IconTextMenuItem.h"

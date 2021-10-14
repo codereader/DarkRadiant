@@ -2,7 +2,7 @@
 
 #include "itextstream.h"
 #include "i18n.h"
-#include "imenumanager.h"
+#include "ui/imenumanager.h"
 #include "istatusbarmanager.h"
 #include "itoolbarmanager.h"
 #include "wxutil/Bitmap.h"

@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include "imenu.h"
+#include "ui/imenu.h"
 #include "ifilter.h"
 
 #include "FilterContextMenu.h"

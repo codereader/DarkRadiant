@@ -4,7 +4,7 @@
 #include "itextstream.h"
 #include "ieclass.h"
 #include "iscenegraph.h"
-#include "imenumanager.h"
+#include "ui/imenumanager.h"
 #include "iregistry.h"
 #include "iselection.h"
 #include "iradiant.h"

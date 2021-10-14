@@ -2,7 +2,7 @@
 
 #include "i18n.h"
 #include "iradiant.h"
-#include "imenumanager.h"
+#include "ui/imenumanager.h"
 #include "iselection.h"
 #include "ui/ientityinspector.h"
 #include "icommandsystem.h"

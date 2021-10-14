@@ -2,7 +2,7 @@
 #include <wx/frame.h>
 
 #include "iscript.h"
-#include "imenumanager.h"
+#include "ui/imenumanager.h"
 #include "ui/imainframe.h"
 #include "i18n.h"
 #include "ui/igroupdialog.h"

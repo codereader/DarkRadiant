@@ -1,7 +1,7 @@
 #pragma once
 
 #include "imodule.h"
-#include "imenu.h"
+#include "ui/imenu.h"
 
 namespace ui
 {

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "xmlutil/Node.h"
-#include "imenumanager.h"
+#include "ui/imenumanager.h"
 #include <vector>
 #include <memory>
 

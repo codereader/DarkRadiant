@@ -146,9 +146,6 @@
     <ClInclude Include="..\..\include\imapresource.h" />
     <ClInclude Include="..\..\include\imd5anim.h" />
     <ClInclude Include="..\..\include\imd5model.h" />
-    <ClInclude Include="..\..\include\imediabrowser.h" />
-    <ClInclude Include="..\..\include\imenu.h" />
-    <ClInclude Include="..\..\include\imenumanager.h" />
     <ClInclude Include="..\..\include\imessagebus.h" />
     <ClInclude Include="..\..\include\imodel.h" />
     <ClInclude Include="..\..\include\imodelcache.h" />
@@ -222,6 +219,9 @@
     <ClInclude Include="..\..\include\ui\igroupdialog.h" />
     <ClInclude Include="..\..\include\ui\imainframe.h" />
     <ClInclude Include="..\..\include\ui\imainframelayout.h" />
+    <ClInclude Include="..\..\include\ui\imediabrowser.h" />
+    <ClInclude Include="..\..\include\ui\imenu.h" />
+    <ClInclude Include="..\..\include\ui\imenumanager.h" />
     <ClInclude Include="..\..\include\version.h" />
     <ClInclude Include="..\..\include\VolumeIntersectionValue.h" />
   </ItemGroup>

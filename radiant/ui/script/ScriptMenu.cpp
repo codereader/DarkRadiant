@@ -1,6 +1,6 @@
 #include "ScriptMenu.h"
 
-#include "imenumanager.h"
+#include "ui/imenumanager.h"
 #include "iscript.h"
 #include "i18n.h"
 #include <map>

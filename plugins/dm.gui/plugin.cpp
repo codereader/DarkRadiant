@@ -21,7 +21,7 @@
 #include "iregistry.h"
 #include "irender.h"
 #include "ishaders.h"
-#include "imenumanager.h"
+#include "ui/imenumanager.h"
 #include "iarchive.h"
 
 class GuiModule :

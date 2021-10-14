@@ -2,7 +2,7 @@
 
 #include "i18n.h"
 #include "imodule.h"
-#include "imenumanager.h"
+#include "ui/imenumanager.h"
 #include "iradiant.h"
 #include "iscenegraph.h"
 #include "ieclass.h"

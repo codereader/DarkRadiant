@@ -2,7 +2,7 @@
 
 #include <sigc++/connection.h>
 
-#include "imediabrowser.h"
+#include "ui/imediabrowser.h"
 #include "iradiant.h"
 #include "imodule.h"
 #include "imap.h"

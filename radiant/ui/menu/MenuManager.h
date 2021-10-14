@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include "imenumanager.h"
+#include "ui/imenumanager.h"
 
 /** 
  * greebo: The MenuManager takes care of adding and inserting the

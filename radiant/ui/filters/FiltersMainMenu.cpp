@@ -2,7 +2,7 @@
 
 #include "i18n.h"
 #include "ifilter.h"
-#include "imenumanager.h"
+#include "ui/imenumanager.h"
 
 namespace ui 
 {

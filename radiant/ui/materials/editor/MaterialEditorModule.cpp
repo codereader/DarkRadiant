@@ -4,7 +4,7 @@
 #include "imodule.h"
 #include "icommandsystem.h"
 #include "itextstream.h"
-#include "imenumanager.h"
+#include "ui/imenumanager.h"
 #include "module/StaticModule.h"
 
 namespace ui

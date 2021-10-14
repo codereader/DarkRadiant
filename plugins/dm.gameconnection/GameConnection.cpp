@@ -11,7 +11,7 @@
 #include "imap.h"
 #include "ientity.h"
 #include "iselection.h"
-#include "imenumanager.h"
+#include "ui/imenumanager.h"
 #include "ui/imainframe.h"
 
 #include "scene/Traverse.h"

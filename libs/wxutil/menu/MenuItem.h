@@ -1,6 +1,6 @@
 #pragma once
 
-#include "imenu.h"
+#include "ui/imenu.h"
 
 #include <wx/menuitem.h>
 

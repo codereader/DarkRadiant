@@ -1,7 +1,7 @@
 #pragma once
 
 #include "imru.h"
-#include "imenumanager.h"
+#include "ui/imenumanager.h"
 
 #include <list>
 #include <sigc++/connection.h>

@@ -11,3 +11,4 @@
 #include "ui/ieventmanager.h"
 #include "ui/igroupdialog.h"
 #include "ui/imainframe.h"
+#include "ui/imenumanager.h"
