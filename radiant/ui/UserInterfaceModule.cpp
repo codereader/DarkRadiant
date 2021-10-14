@@ -193,6 +193,7 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
 	_autoSaveRequestHandler.reset(new AutoSaveRequestHandler);
 	_fileSelectionRequestHandler.reset(new FileSelectionRequestHandler);
     _fileOverwriteConfirmationHandler.reset(new FileOverwriteConfirmationHandler);
+    _fileSaveConfirmationHandler.reset(new FileSaveConfirmationHandler);
 
 	initialiseEntitySettings();
 

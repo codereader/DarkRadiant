@@ -10,6 +10,7 @@
 #include "LongRunningOperationHandler.h"
 #include "FileSelectionRequestHandler.h"
 #include "FileOverwriteConfirmationHandler.h"
+#include "FileSaveConfirmationHandler.h"
 #include "AutoSaveRequestHandler.h"
 #include "MapFileProgressHandler.h"
 #include "ManipulatorToggle.h"
@@ -45,6 +46,7 @@ private:
 	std::unique_ptr<AutoSaveRequestHandler> _autoSaveRequestHandler;
 	std::unique_ptr<FileSelectionRequestHandler> _fileSelectionRequestHandler;
 	std::unique_ptr<FileOverwriteConfirmationHandler> _fileOverwriteConfirmationHandler;
+	std::unique_ptr<FileSaveConfirmationHandler> _fileSaveConfirmationHandler;
 	std::unique_ptr<statusbar::ShaderClipboardStatus> _shaderClipboardStatus;
 	std::unique_ptr<statusbar::EditingStopwatchStatus> _editStopwatchStatus;
 	std::unique_ptr<statusbar::MapStatistics> _mapStatisticsStatus;

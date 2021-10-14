@@ -441,6 +441,7 @@
     <ClInclude Include="..\..\radiant\ui\entitylist\GraphTreeNode.h" />
     <ClInclude Include="..\..\radiant\ui\favourites\FavouritesBrowser.h" />
     <ClInclude Include="..\..\radiant\ui\FileOverwriteConfirmationHandler.h" />
+    <ClInclude Include="..\..\radiant\ui\FileSaveConfirmationHandler.h" />
     <ClInclude Include="..\..\radiant\ui\FileSelectionRequestHandler.h" />
     <ClInclude Include="..\..\radiant\ui\filters\editor\Filter.h" />
     <ClInclude Include="..\..\radiant\ui\filters\editor\FilterDialog.h" />

@@ -6,9 +6,6 @@
 #include "itextstream.h"
 #include "iscenegraph.h"
 #include "icameraview.h"
-#include "imainframe.h"
-#include "idialogmanager.h"
-#include "ieventmanager.h"
 #include "imodel.h"
 #include "igrid.h"
 #include "ifilesystem.h"
@@ -46,6 +43,7 @@
 #include "map/algorithm/Skins.h"
 #include "messages/ScopedLongRunningOperation.h"
 #include "messages/FileOverwriteConfirmation.h"
+#include "messages/FileSaveConfirmation.h"
 #include "selection/algorithm/Primitives.h"
 #include "selection/algorithm/Group.h"
 #include "scene/Group.h"
@@ -709,20 +707,14 @@ bool Map::askForSave(const std::string& title)
     }
 
     // Ask the user
-    auto msgBox = GlobalDialogManager().createMessageBox(
-        title,
-        getSaveConfirmationText(),
-        ui::IDialog::MESSAGE_SAVECONFIRMATION
-    );
+    auto answer = radiant::FileSaveConfirmation::SendAndReceiveAnswer(getSaveConfirmationText(), title);
 
-    auto result = msgBox->run();
-
-    if (result == ui::IDialog::RESULT_CANCELLED)
+    if (answer == radiant::FileSaveConfirmation::Action::Cancel)
     {
         return false;
     }
 
-    if (result == ui::IDialog::RESULT_YES)
+    if (answer == radiant::FileSaveConfirmation::Action::SaveChanges)
     {
         // The user wants to save the map
         if (isUnnamed())
@@ -738,7 +730,7 @@ bool Map::askForSave(const std::string& title)
         }
     }
 
-    // Default behaviour: allow the save
+    // Default behaviour: allow the action
     return true;
 }
 
