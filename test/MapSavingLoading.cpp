@@ -1276,7 +1276,10 @@ TEST_F(MapSavingTest, AutoSaverDoesntChangeSaveCopyAsFilename)
     GlobalRadiantCore().getMessageBus().removeListener(msgSubscription);
 }
 
-TEST_F(MapSavingTest, NewMapWithoutUnsavedChanges)
+namespace
+{
+
+void checkBehaviourWithoutUnsavedChanges(std::function<void()> action)
 {
     std::string modRelativePath = "maps/altar.map";
     GlobalCommandSystem().executeCommand("OpenMap", modRelativePath);
@@ -1285,20 +1288,20 @@ TEST_F(MapSavingTest, NewMapWithoutUnsavedChanges)
 
     // The map has not been changed
     EXPECT_FALSE(GlobalMapModule().isModified()) << "Map was marked as modified after loading";
-    
-    // Creating a new map will not ask for save, since it hasn't been changed
-    GlobalCommandSystem().executeCommand("NewMap");
+
+    // Performing the action will not ask for save, since it hasn't been changed
+    action();
 
     EXPECT_FALSE(helper.messageReceived()) << "Map shouldn't have asked for save";
     EXPECT_FALSE(GlobalMapModule().isModified()) << "New Map should be unmodified";
 }
 
-TEST_F(MapSavingTest, NewMapDiscardingUnsavedChanges)
+void checkBehaviourDiscardingUnsavedChanges(const std::string& testProjectPath, std::function<void()> action)
 {
     std::string modRelativePath = "maps/altar.map";
     GlobalCommandSystem().executeCommand("OpenMap", modRelativePath);
 
-    fs::path mapPath = _context.getTestProjectPath() + modRelativePath;
+    fs::path mapPath = testProjectPath + modRelativePath;
     auto sizeBefore = fs::file_size(mapPath);
 
     // Create a brush to mark the map as modified
@@ -1308,20 +1311,19 @@ TEST_F(MapSavingTest, NewMapDiscardingUnsavedChanges)
     // Discard the changes
     FileSaveConfirmationHelper helper(radiant::FileSaveConfirmation::Action::DiscardChanges);
 
-    // Creating a new map must ask for save, since the file has been changed
-    GlobalCommandSystem().executeCommand("NewMap");
+    // Performing the action must ask for save, since the file has been changed
+    action();
 
     EXPECT_TRUE(helper.messageReceived()) << "Map must ask for save";
     EXPECT_EQ(fs::file_size(mapPath), sizeBefore) << "File size has changed after discarding";
     EXPECT_FALSE(GlobalMapModule().isModified()) << "Map should be unmodified again";
 }
 
-TEST_F(MapSavingTest, NewMapSavingChanges)
+void checkBehaviourSavingUnsavedChanges(const std::string& fullMapPath, std::function<void()> action)
 {
-    auto mapPath = createMapCopyInTempDataPath("altar.map", "altar_NewMapSavingChanges.map");
-    GlobalCommandSystem().executeCommand("OpenMap", mapPath.string());
+    GlobalCommandSystem().executeCommand("OpenMap", fullMapPath);
 
-    auto sizeBefore = fs::file_size(mapPath);
+    auto sizeBefore = fs::file_size(fullMapPath);
 
     // Create a brush to mark the map as modified
     algorithm::createCubicBrush(GlobalMapModule().findOrInsertWorldspawn());
@@ -1330,20 +1332,19 @@ TEST_F(MapSavingTest, NewMapSavingChanges)
     // Save the changes
     FileSaveConfirmationHelper helper(radiant::FileSaveConfirmation::Action::SaveChanges);
 
-    // Creating a new map must ask for save, since the file has been changed
-    GlobalCommandSystem().executeCommand("NewMap");
+    // Performing the action must ask for save, since the file has been changed
+    action();
 
     EXPECT_TRUE(helper.messageReceived()) << "Map must ask for save";
-    EXPECT_NE(fs::file_size(mapPath), sizeBefore) << "File size must have changed after saving";
+    EXPECT_NE(fs::file_size(fullMapPath), sizeBefore) << "File size must have changed after saving";
     EXPECT_FALSE(GlobalMapModule().isModified()) << "Map should be unmodified again";
 }
 
-TEST_F(MapSavingTest, NewMapCancelWithUnsavedChanges)
+void checkBehaviourCancellingMapChange(const std::string& fullMapPath, std::function<void()> action)
 {
-    auto mapPath = createMapCopyInTempDataPath("altar.map", "altar_NewMapCancelWithUnsavedChanges.map");
-    GlobalCommandSystem().executeCommand("OpenMap", mapPath.string());
+    GlobalCommandSystem().executeCommand("OpenMap", fullMapPath);
 
-    auto sizeBefore = fs::file_size(mapPath);
+    auto sizeBefore = fs::file_size(fullMapPath);
 
     // Create a brush to mark the map as modified
     algorithm::createCubicBrush(GlobalMapModule().findOrInsertWorldspawn());
@@ -1359,7 +1360,49 @@ TEST_F(MapSavingTest, NewMapCancelWithUnsavedChanges)
     EXPECT_TRUE(GlobalMapModule().isModified()) << "Map was not marked as modified after brush creation";
 
     EXPECT_TRUE(helper.messageReceived()) << "Map must ask for save";
-    EXPECT_EQ(fs::file_size(mapPath), sizeBefore) << "File size has changed after discarding";
+    EXPECT_EQ(fs::file_size(fullMapPath), sizeBefore) << "File size has changed after discarding";
+}
+
+}
+
+TEST_F(MapSavingTest, NewMapWithoutUnsavedChanges)
+{
+    checkBehaviourWithoutUnsavedChanges([]()
+    {
+        // Creating a new map will not ask for save, since it hasn't been changed
+        GlobalCommandSystem().executeCommand("NewMap");
+    });
+}
+
+TEST_F(MapSavingTest, NewMapDiscardingUnsavedChanges)
+{
+    checkBehaviourDiscardingUnsavedChanges(_context.getTestProjectPath(), []()
+    {
+        // Creating a new map must ask for save, since the file has been changed
+        GlobalCommandSystem().executeCommand("NewMap");
+    });
+}
+
+TEST_F(MapSavingTest, NewMapSavingChanges)
+{
+    auto mapPath = createMapCopyInTempDataPath("altar.map", "altar_NewMapSavingChanges.map");
+
+    checkBehaviourSavingUnsavedChanges(mapPath.string(), []()
+    {
+        // Creating a new map must ask for save, since the file has been changed
+        GlobalCommandSystem().executeCommand("NewMap");
+    });
+}
+
+TEST_F(MapSavingTest, NewMapCancelWithUnsavedChanges)
+{
+    auto mapPath = createMapCopyInTempDataPath("altar.map", "altar_NewMapCancelWithUnsavedChanges.map");
+
+    checkBehaviourCancellingMapChange(mapPath.string(), []()
+    {
+        // Creating a new map must ask for save, since the file has been changed
+        GlobalCommandSystem().executeCommand("NewMap");
+    });
 }
 
 }
