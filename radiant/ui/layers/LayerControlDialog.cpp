@@ -3,7 +3,7 @@
 #include "i18n.h"
 #include "itextstream.h"
 #include "ilayer.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "iselection.h"
 
 #include "registry/registry.h"

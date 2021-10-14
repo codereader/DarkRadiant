@@ -4,7 +4,7 @@
 #include "iregistry.h"
 #include "iundo.h"
 #include "ieclass.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "iscenegraph.h"
 #include "string/string.h"
 

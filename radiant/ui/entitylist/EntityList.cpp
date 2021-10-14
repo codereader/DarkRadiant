@@ -1,6 +1,6 @@
 #include "EntityList.h"
 
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "icommandsystem.h"
 
 #include "registry/Widgets.h"

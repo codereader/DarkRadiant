@@ -1,7 +1,7 @@
 #include "ScreenUpdateBlocker.h"
 
 #include "iradiant.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 
 #include <wx/app.h>
 #include <wx/frame.h>

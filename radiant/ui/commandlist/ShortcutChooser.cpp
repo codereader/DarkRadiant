@@ -1,6 +1,6 @@
 #include "ShortcutChooser.h"
 
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "i18n.h"
 #include "ui/idialogmanager.h"
 #include "ui/ieventmanager.h"

@@ -1,7 +1,7 @@
 #include "MD5AnimationViewer.h"
 
 #include "i18n.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "imodelcache.h"
 #include "imd5anim.h"
 

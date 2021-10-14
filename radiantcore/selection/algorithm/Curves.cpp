@@ -4,7 +4,6 @@
 #include "icurve.h"
 #include "iundo.h"
 #include "ieclass.h"
-#include "imainframe.h"
 #include "itransformable.h"
 #include "ientity.h"
 #include "iorthoview.h"

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "wxutil/PanedPosition.h"
-#include "imainframelayout.h"
+#include "ui/imainframelayout.h"
 
 namespace ui
 {

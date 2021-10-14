@@ -1,7 +1,7 @@
 #include "FindShader.h"
 
 #include "i18n.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "imousetoolmanager.h"
 #include "ishaderclipboard.h"
 

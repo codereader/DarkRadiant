@@ -2,7 +2,7 @@
 
 #include "i18n.h"
 #include "iundo.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "iscenegraph.h"
 
 #include "gamelib.h"

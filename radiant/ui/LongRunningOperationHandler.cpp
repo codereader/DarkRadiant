@@ -2,7 +2,6 @@
 
 #include <functional>
 #include "iradiant.h"
-#include "imainframe.h"
 #include "i18n.h"
 #include "UserInterfaceModule.h"
 #include <wx/app.h>

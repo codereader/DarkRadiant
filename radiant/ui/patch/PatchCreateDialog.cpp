@@ -1,7 +1,7 @@
 #include "PatchCreateDialog.h"
 
 #include "i18n.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "selectionlib.h"
 #include "string/convert.h"
 

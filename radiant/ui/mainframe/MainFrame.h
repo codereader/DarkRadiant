@@ -3,8 +3,8 @@
 #include <map>
 #include <sigc++/connection.h>
 #include "icommandsystem.h"
-#include "imainframe.h"
-#include "imainframelayout.h"
+#include "ui/imainframe.h"
+#include "ui/imainframelayout.h"
 #include "wxutil/WindowPosition.h"
 
 namespace ui

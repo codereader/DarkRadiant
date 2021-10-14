@@ -2,7 +2,7 @@
 #include "GameConnection.h"
 
 #include "i18n.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "ui/idialogmanager.h"
 
 #if HAVE_ACTIVITYINDICATOR

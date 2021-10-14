@@ -4,7 +4,7 @@
 #include <wx/app.h>
 #include <wx/frame.h>
 #include <wx/display.h>
-#include "imainframe.h"
+#include "ui/imainframe.h"
 
 namespace wxutil
 {

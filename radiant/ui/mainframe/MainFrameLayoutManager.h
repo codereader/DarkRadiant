@@ -1,7 +1,6 @@
-#ifndef _MAINFRAME_LAYOUT_MANAGER_H_
-#define _MAINFRAME_LAYOUT_MANAGER_H_
+#pragma once
 
-#include "imainframelayout.h"
+#include "ui/imainframelayout.h"
 #include <map>
 #include <vector>
 #include <string>
@@ -38,6 +37,3 @@ public:
 };
 
 } // namespace ui
-
-#endif /* _MAINFRAME_LAYOUT_MANAGER_H_ */
-

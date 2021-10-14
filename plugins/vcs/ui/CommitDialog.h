@@ -1,7 +1,7 @@
 #pragma once
 
 #include "i18n.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "wxutil/dialog/DialogBase.h"
 #include "wxutil/XmlResourceBasedWidget.h"
 #include <wx/textctrl.h>

@@ -1,7 +1,7 @@
 #include "MediaBrowser.h"
 
 #include "i18n.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "imap.h"
 #include "ui/igroupdialog.h"
 #include "ipreferencesystem.h"

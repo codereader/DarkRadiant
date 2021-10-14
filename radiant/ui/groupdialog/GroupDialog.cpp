@@ -1,7 +1,7 @@
 #include "GroupDialog.h"
 
 #include "iregistry.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "i18n.h"
 #include <iostream>
 #include <vector>

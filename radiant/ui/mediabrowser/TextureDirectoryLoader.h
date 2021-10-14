@@ -1,6 +1,6 @@
 #pragma once
 
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "ishaders.h"
 
 #include "wxutil/ModalProgressDialog.h"

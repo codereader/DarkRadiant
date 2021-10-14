@@ -1,7 +1,7 @@
 #include "ColourSchemeEditor.h"
 
 #include "iregistry.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "iscenegraph.h"
 #include "iradiant.h"
 #include "i18n.h"

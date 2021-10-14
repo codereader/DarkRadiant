@@ -1,7 +1,6 @@
 #include "Patch.h"
 
 #include "i18n.h"
-#include "imainframe.h"
 #include "ipatch.h"
 #include "selectionlib.h"
 #include "command/ExecutionNotPossible.h"

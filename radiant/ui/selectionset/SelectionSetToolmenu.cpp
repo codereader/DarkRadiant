@@ -4,7 +4,7 @@
 #include "iselection.h"
 #include "imap.h"
 #include "iradiant.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "itextstream.h"
 #include "ui/idialogmanager.h"
 

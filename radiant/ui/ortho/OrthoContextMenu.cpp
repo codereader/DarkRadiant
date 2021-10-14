@@ -10,7 +10,7 @@
 #include "selectionlib.h"
 #include "ientity.h" // Node_getEntity()
 #include "iregistry.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/menu/IconTextMenuItem.h"

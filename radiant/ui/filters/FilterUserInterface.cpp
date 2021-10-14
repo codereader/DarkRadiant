@@ -1,7 +1,7 @@
 #include "FilterUserInterface.h"
 
 #include "ifilter.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "imenumanager.h"
 #include "icommandsystem.h"
 #include <sigc++/functors/mem_fun.h>

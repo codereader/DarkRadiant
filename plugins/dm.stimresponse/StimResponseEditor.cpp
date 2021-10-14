@@ -4,7 +4,7 @@
 #include "iundo.h"
 #include "iscenegraph.h"
 #include "itextstream.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "selectionlib.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "string/string.h"

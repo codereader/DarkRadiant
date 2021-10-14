@@ -13,7 +13,7 @@
 #include "iorthocontextmenu.h"
 #include "ui/ieventmanager.h"
 #include "imousetool.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "ishaders.h"
 #include "icameraview.h"
 

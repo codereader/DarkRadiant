@@ -2,7 +2,7 @@
 
 #include "ieclass.h"
 #include "ientity.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "iselection.h"
 
 #include "EClassTreeBuilder.h"

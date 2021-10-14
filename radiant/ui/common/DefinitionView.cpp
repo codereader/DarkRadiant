@@ -2,7 +2,7 @@
 
 #include "i18n.h"
 #include "ishaders.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 
 #include "wxutil/SourceView.h"
 

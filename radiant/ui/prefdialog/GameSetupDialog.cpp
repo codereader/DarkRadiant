@@ -1,6 +1,6 @@
 #include "GameSetupDialog.h"
 
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "i18n.h"
 #include "igame.h"
 

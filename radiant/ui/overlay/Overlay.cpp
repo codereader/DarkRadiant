@@ -1,6 +1,6 @@
 #include "Overlay.h"
 
-#include "imainframe.h"
+#include "ui/imainframe.h"
 
 #include "registry/registry.h"
 #include "math/Vector3.h"

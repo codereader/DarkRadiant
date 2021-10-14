@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ui/idialogmanager.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include <wx/msgdlg.h>
 #include <wx/frame.h>
 

@@ -1,7 +1,7 @@
 #include "MainFrameLayoutManager.h"
 
 #include "itextstream.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "ui/igroupdialog.h"
 #include "icommandsystem.h"
 

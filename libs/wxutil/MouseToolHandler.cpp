@@ -2,7 +2,7 @@
 
 #include "itextstream.h"
 #include "MouseButton.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 
 namespace wxutil
 {

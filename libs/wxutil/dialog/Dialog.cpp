@@ -1,6 +1,6 @@
 #include "Dialog.h"
 
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "itextstream.h"
 
 #include "DialogElements.h"

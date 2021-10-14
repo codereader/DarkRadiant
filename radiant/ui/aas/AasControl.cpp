@@ -2,7 +2,7 @@
 
 #include "i18n.h"
 #include "iarchive.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "ifilesystem.h"
 
 #include <wx/event.h>

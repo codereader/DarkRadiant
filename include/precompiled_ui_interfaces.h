@@ -10,3 +10,4 @@
 #include "ui/ientityinspector.h"
 #include "ui/ieventmanager.h"
 #include "ui/igroupdialog.h"
+#include "ui/imainframe.h"

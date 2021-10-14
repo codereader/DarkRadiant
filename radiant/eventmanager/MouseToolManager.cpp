@@ -3,7 +3,7 @@
 #include "iradiant.h"
 #include "iregistry.h"
 #include "itextstream.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 
 #include "string/convert.h"
 #include "string/join.h"

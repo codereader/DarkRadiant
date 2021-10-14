@@ -41,8 +41,6 @@
     <ClInclude Include="..\..\include\ilayer.h" />
     <ClInclude Include="..\..\include\ilightnode.h" />
     <ClInclude Include="..\..\include\ilogwriter.h" />
-    <ClInclude Include="..\..\include\imainframe.h" />
-    <ClInclude Include="..\..\include\imainframelayout.h" />
     <ClInclude Include="..\..\include\imanipulator.h" />
     <ClInclude Include="..\..\include\imap.h" />
     <ClInclude Include="..\..\include\imapexporter.h" />
@@ -138,6 +136,12 @@
       <Filter>ui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\ui\igroupdialog.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\ui\imainframe.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\ui\imainframelayout.h">
       <Filter>ui</Filter>
     </ClInclude>
   </ItemGroup>

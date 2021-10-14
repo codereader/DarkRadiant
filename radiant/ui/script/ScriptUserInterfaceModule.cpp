@@ -3,7 +3,7 @@
 
 #include "iscript.h"
 #include "imenumanager.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "i18n.h"
 #include "ui/igroupdialog.h"
 #include "module/StaticModule.h"

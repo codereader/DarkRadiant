@@ -5,7 +5,6 @@
 #include "itransformable.h"
 #include "ieclass.h"
 #include "selectionlib.h"
-#include "imainframe.h"
 #include "iregistry.h"
 #include "inamespace.h"
 #include "itextstream.h"

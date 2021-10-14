@@ -4,7 +4,7 @@
 #include "igrid.h"
 #include "iclipper.h"
 #include "iselection.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "XYMouseToolEvent.h"
 
 namespace ui

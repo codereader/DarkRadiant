@@ -1,6 +1,6 @@
 #include "PrefDialog.h"
 
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "itextstream.h"
 #include "ipreferencesystem.h"
 

@@ -6,7 +6,6 @@
 #include "iorthoview.h"
 #include "ientity.h"
 #include "ieclass.h"
-#include "imainframe.h"
 #include "imru.h"
 #include "ifiletypes.h"
 #include "iscenegraph.h"

@@ -1,7 +1,7 @@
 #include "StatusBarManager.h"
 
 #include "itextstream.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 
 #include <wx/sizer.h>
 #include <wx/artprov.h>

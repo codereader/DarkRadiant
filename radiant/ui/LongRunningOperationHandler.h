@@ -1,7 +1,7 @@
 #pragma once
 
 #include <mutex>
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "messages/LongRunningOperationMessage.h"
 
 namespace ui

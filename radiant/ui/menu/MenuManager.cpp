@@ -2,7 +2,7 @@
 
 #include "itextstream.h"
 #include "iregistry.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 
 #include "MenuBar.h"
 #include "MenuFolder.h"

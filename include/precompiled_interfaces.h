@@ -34,8 +34,6 @@
 #include "iinteractiveview.h"
 #include "ilayer.h"
 #include "ilightnode.h"
-#include "imainframe.h"
-#include "imainframelayout.h"
 #include "imap.h"
 #include "imapformat.h"
 #include "imapinfofile.h"

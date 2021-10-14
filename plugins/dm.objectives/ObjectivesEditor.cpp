@@ -10,7 +10,7 @@
 
 #include "i18n.h"
 #include "iscenegraph.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "iregistry.h"
 #include "ieclass.h"
 #include "igame.h"

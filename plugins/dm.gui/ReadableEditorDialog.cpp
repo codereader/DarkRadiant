@@ -21,7 +21,7 @@
 
 // Modules
 #include "iundo.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "ientity.h"
 #include "imap.h"
 #include "igame.h"

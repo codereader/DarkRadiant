@@ -1,7 +1,7 @@
 #include "AIVocalSetChooserDialog.h"
 
 #include "i18n.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "ieclass.h"
 #include "isound.h"
 

@@ -5,7 +5,7 @@
 #include <wx/display.h>
 #include <wx/panel.h>
 #include <wx/sizer.h>
-#include "imainframe.h"
+#include "ui/imainframe.h"
 
 namespace wxutil
 {

@@ -7,7 +7,7 @@
 #include "ui/ientityinspector.h"
 #include "icommandsystem.h"
 #include "itextstream.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "debugging/debugging.h"
 
 #include "AIHeadPropertyEditor.h"

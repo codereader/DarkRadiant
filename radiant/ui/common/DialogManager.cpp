@@ -1,7 +1,7 @@
 #include "DialogManager.h"
 
 #include "itextstream.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/FileChooser.h"

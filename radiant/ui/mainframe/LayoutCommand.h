@@ -3,7 +3,7 @@
 #include "i18n.h"
 #include "imenumanager.h"
 #include "icommandsystem.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 
 #include "wxutil/dialog/MessageBox.h"
 

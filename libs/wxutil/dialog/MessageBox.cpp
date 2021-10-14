@@ -1,6 +1,6 @@
 #include "MessageBox.h"
 
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "itextstream.h"
 #include "i18n.h"
 

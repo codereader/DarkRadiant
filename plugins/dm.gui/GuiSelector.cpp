@@ -3,7 +3,7 @@
 #include "wxutil/dataview/VFSTreePopulator.h"
 
 #include "i18n.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "gui/GuiManager.h"
 #include "wxutil/dialog/MessageBox.h"
 

@@ -14,7 +14,7 @@
 #include "ifonts.h"
 #include "igame.h"
 #include "igl.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "imap.h"
 #include "ipreferencesystem.h"
 #include "iradiant.h"

@@ -1,7 +1,7 @@
 #include "MapInfoDialog.h"
 
 #include "i18n.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 
 #include "EntityInfoTab.h"
 #include "ShaderInfoTab.h"

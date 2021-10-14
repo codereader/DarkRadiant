@@ -3,7 +3,7 @@
 #include "i18n.h"
 #include "iaasfile.h"
 #include "iradiant.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "itextstream.h"
 #include "imap.h"
 

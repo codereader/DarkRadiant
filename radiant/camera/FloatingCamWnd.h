@@ -2,7 +2,7 @@
 
 #include "wxutil/window/TransientWindow.h"
 #include <memory>
-#include "imainframe.h"
+#include "ui/imainframe.h"
 
 #include "CamWnd.h"
 

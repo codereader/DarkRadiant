@@ -1,7 +1,8 @@
 #include "PointFileChooser.h"
 
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "imap.h"
+#include "i18n.h"
 #include "icommandsystem.h"
 #include "os/fs.h"
 #include "command/ExecutionFailure.h"
@@ -16,7 +17,7 @@ namespace ui
 
 PointFileChooser::PointFileChooser(const wxArrayString& files)
 : wxDialog(GlobalMainFrame().getWxTopLevelWindow(), wxID_ANY,
-           "Choose pointfile")
+           _("Choose pointfile"))
 {
     SetSizer(new wxBoxSizer(wxVERTICAL));
 

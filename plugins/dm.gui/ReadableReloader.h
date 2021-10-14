@@ -4,7 +4,7 @@
 #include "wxutil/dataview/VFSTreePopulator.h"
 #include "wxutil/ModalProgressDialog.h"
 #include "EventRateLimiter.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "i18n.h"
 
 namespace ui

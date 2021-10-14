@@ -14,7 +14,7 @@
 #include "iscenegraph.h"
 #include "ui/ieventmanager.h"
 #include "itextstream.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "iundo.h"
 
 #include "wxutil/ControlButton.h"

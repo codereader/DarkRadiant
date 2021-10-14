@@ -5,7 +5,7 @@
 #include "itextstream.h"
 #include "iregistry.h"
 #include "ieclass.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "imodelcache.h"
 #include "imodel.h"
 #include "modelskin.h"

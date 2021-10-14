@@ -6,7 +6,7 @@
 #include "parser/DefTokeniser.h"
 #include "ifilesystem.h"
 #include "iarchive.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 
 #include <iostream>
 

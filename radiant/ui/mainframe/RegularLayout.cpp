@@ -3,7 +3,7 @@
 #include "itextstream.h"
 #include "imenumanager.h"
 #include "ui/igroupdialog.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "ui/ientityinspector.h"
 
 #include "camera/CameraWndManager.h"

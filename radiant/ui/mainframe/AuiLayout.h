@@ -2,7 +2,7 @@
 
 #include <memory>
 #include "wxutil/PanedPosition.h"
-#include "imainframelayout.h"
+#include "ui/imainframelayout.h"
 
 #include "camera/CamWnd.h"
 #include "wxutil/Splitter.h"

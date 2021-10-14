@@ -6,7 +6,7 @@
 #include "igame.h"
 #include "ishaders.h"
 #include "iradiant.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "iselection.h"
 #include "iundo.h"
 

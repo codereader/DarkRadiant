@@ -2,7 +2,7 @@
 
 #include "i18n.h"
 #include "igame.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "imap.h"
 #include "ipreferencesystem.h"
 #include "istatusbarmanager.h"

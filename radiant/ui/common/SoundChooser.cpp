@@ -2,7 +2,7 @@
 
 #include "i18n.h"
 #include "isound.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "ifavourites.h"
 
 #include "wxutil/dataview/ThreadedResourceTreePopulator.h"

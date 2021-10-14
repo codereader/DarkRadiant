@@ -1,6 +1,6 @@
 #include "TransientWindow.h"
 
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "iregistry.h"
 #include "wxutil/Bitmap.h"
 

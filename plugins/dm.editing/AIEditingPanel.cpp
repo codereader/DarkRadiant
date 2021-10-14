@@ -5,7 +5,7 @@
 #include "ieclass.h"
 #include "itextstream.h"
 #include "ui/ientityinspector.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "iundo.h"
 #include "ui/igroupdialog.h"
 #include "selectionlib.h"

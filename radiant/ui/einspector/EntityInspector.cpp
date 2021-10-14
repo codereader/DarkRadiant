@@ -10,7 +10,7 @@
 #include "imap.h"
 #include "iundo.h"
 #include "ui/igroupdialog.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "itextstream.h"
 
 #include "module/StaticModule.h"

@@ -2,7 +2,7 @@
 
 #include <wx/frame.h>
 
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "messages/AutomaticMapSaveRequest.h"
 
 namespace ui

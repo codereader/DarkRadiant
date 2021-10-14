@@ -8,7 +8,7 @@
 #include "icommandsystem.h"
 #include "itextstream.h"
 #include "igame.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "imru.h"
 #include "module/StaticModule.h"
 

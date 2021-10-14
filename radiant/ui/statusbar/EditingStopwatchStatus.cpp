@@ -3,7 +3,7 @@
 #include "ieditstopwatch.h"
 #include "i18n.h"
 #include "istatusbarmanager.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include <sigc++/functors/mem_fun.h>
 #include <fmt/format.h>
 #include "ui/UserInterfaceModule.h"

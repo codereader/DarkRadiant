@@ -2,7 +2,7 @@
 
 #include "i18n.h"
 #include "itextstream.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "itoolbarmanager.h"
 #include "icolourscheme.h"
 #include "ui/igroupdialog.h"

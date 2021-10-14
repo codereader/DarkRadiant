@@ -3,7 +3,7 @@
 #include "i18n.h"
 #include "inode.h"
 #include "ientity.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "iscenegraph.h"
 
 #include <wx/panel.h>

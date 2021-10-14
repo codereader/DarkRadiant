@@ -1,7 +1,7 @@
 #include "AIHeadChooserDialog.h"
 
 #include "i18n.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "ieclass.h"
 
 #include "eclass.h"

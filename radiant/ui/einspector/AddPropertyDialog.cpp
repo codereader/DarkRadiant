@@ -2,7 +2,7 @@
 #include "PropertyEditorFactory.h"
 
 #include "i18n.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "ieclass.h"
 #include "igame.h"
 #include "ientity.h"

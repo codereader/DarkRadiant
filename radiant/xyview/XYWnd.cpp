@@ -3,7 +3,7 @@
 #include "i18n.h"
 #include "iscenegraph.h"
 #include "iundo.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "icolourscheme.h"
 #include "ientity.h"
 #include "igrid.h"

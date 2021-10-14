@@ -2,7 +2,7 @@
 
 #include "i18n.h"
 #include "igl.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "version.h"
 #include "registry/registry.h"
 #include "string/string.h"

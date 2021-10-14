@@ -8,7 +8,6 @@
 #include "ifilesystem.h"
 #include "ifiletypes.h"
 #include "ipreferencesystem.h"
-#include "imainframe.h"
 #include "iradiant.h"
 #include "igame.h"
 #include "iarchive.h"

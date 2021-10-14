@@ -137,8 +137,6 @@
     <ClInclude Include="..\..\include\ilayer.h" />
     <ClInclude Include="..\..\include\ilightnode.h" />
     <ClInclude Include="..\..\include\ilogwriter.h" />
-    <ClInclude Include="..\..\include\imainframe.h" />
-    <ClInclude Include="..\..\include\imainframelayout.h" />
     <ClInclude Include="..\..\include\imanipulator.h" />
     <ClInclude Include="..\..\include\imap.h" />
     <ClInclude Include="..\..\include\imapexporter.h" />
@@ -222,6 +220,8 @@
     <ClInclude Include="..\..\include\ui\ieventmanager.h" />
     <ClInclude Include="..\..\include\ui\ifilechooser.h" />
     <ClInclude Include="..\..\include\ui\igroupdialog.h" />
+    <ClInclude Include="..\..\include\ui\imainframe.h" />
+    <ClInclude Include="..\..\include\ui\imainframelayout.h" />
     <ClInclude Include="..\..\include\version.h" />
     <ClInclude Include="..\..\include\VolumeIntersectionValue.h" />
   </ItemGroup>

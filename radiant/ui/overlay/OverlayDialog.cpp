@@ -1,7 +1,7 @@
 #include "OverlayDialog.h"
 
 #include "i18n.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "iscenegraph.h"
 #include "itextstream.h"
 #include "iradiant.h"

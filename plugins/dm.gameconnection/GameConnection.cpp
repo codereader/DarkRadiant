@@ -12,7 +12,7 @@
 #include "ientity.h"
 #include "iselection.h"
 #include "imenumanager.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 
 #include "scene/Traverse.h"
 #include "wxutil/Bitmap.h"

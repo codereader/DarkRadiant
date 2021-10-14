@@ -2,7 +2,7 @@
 
 #include "i18n.h"
 #include "itextstream.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "iundo.h"
 
 #include <wx/sizer.h>

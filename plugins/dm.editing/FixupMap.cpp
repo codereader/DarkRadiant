@@ -6,7 +6,7 @@
 #include "i18n.h"
 #include "iscenegraph.h"
 #include "iundo.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "ieclass.h"
 
 #include "wxutil/dialog/MessageBox.h"

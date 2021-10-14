@@ -5,7 +5,7 @@
 #include "ui/ieventmanager.h"
 #include "imenumanager.h"
 #include "ui/igroupdialog.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "ui/ientityinspector.h"
 
 #include "registry/registry.h"

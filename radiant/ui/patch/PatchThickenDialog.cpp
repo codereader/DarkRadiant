@@ -1,7 +1,7 @@
 #include "PatchThickenDialog.h"
 
 #include "i18n.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "string/convert.h"
 #include "selectionlib.h"
 #include "command/ExecutionNotPossible.h"

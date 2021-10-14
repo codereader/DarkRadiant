@@ -2,7 +2,7 @@
 
 #include <memory>
 #include <map>
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include <wx/frame.h>
 #include <wx/sizer.h>
 #include <wx/windowptr.h>

@@ -4,7 +4,6 @@
 #include "ientity.h"
 #include "imap.h"
 #include "iradiant.h"
-#include "imainframe.h"
 
 #include <fmt/format.h>
 #include "registry/registry.h"

@@ -4,7 +4,7 @@
 #include "ibrush.h"
 #include "iclipper.h"
 #include "icolourscheme.h"
-#include "imainframe.h"
+#include "ui/imainframe.h"
 #include "itextstream.h"
 #include "iorthoview.h"
 #include "icameraview.h"

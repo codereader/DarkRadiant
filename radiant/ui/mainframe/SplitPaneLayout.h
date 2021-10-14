@@ -2,7 +2,7 @@
 
 #include <map>
 #include "wxutil/PanedPosition.h"
-#include "imainframelayout.h"
+#include "ui/imainframelayout.h"
 
 #include "xyview/GlobalXYWnd.h"
 
