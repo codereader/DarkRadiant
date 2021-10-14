@@ -31,7 +31,7 @@
  * As long as no external module/plugin files are removed this number is safe to stay 
  * as it is. Keep this number compatible to std::size_t, i.e. unsigned.
  */
-#define MODULE_COMPATIBILITY_LEVEL 20210717
+#define MODULE_COMPATIBILITY_LEVEL 20211014
 
 // A function taking an error title and an error message string, invoked in debug builds
 // for things like ASSERT_MESSAGE and ERROR_MESSAGE
@@ -212,7 +212,7 @@ typedef std::shared_ptr<RegisterableModule> RegisterableModulePtr;
  * RegisterableModules defined in DLLs and the main binary.
  *
  * For obvious reasons, the ModuleRegistry itself is not a module, but a static
- * object owned by the main binary and returned through a globally-accessible
+ * object owned by the core binary and returned through a globally-accessible
  * method.
  *
  * \ingroup module
@@ -220,9 +220,6 @@ typedef std::shared_ptr<RegisterableModule> RegisterableModulePtr;
 class IModuleRegistry 
 {
 public:
-    /**
-     * Destructor
-     */
     virtual ~IModuleRegistry() {}
 
     /**
@@ -323,12 +320,6 @@ public:
 	// on top of that they can actively query this number from the registry
 	// to check whether they are being loaded into an incompatible binary.
 	virtual std::size_t getCompatibilityLevel() const = 0;
-
-	typedef std::uintptr_t InstanceId;
-
-	// Returns the instance ID of this registry. This is a numeric type used by
-	// InstanceReference classes to check if their references are still valid.
-	virtual InstanceId getInstanceId() const = 0;
 };
 
 namespace module
@@ -340,14 +331,12 @@ namespace module
      * \ingroup module
      */
 
-	/** greebo: This is a container holding a reference to the registry.
-	 *          The getRegistry() symbol above is not exported to the
-	 *          modules in Win32 compiles. That's why this structure
-	 * 			has to be initialised in the RegisterModule() routine.
-	 *
-	 * As soon as it's initialised, the module can access the ModuleRegistry
-	 * with the routine GlobalModuleRegistry() below.
-	 */
+    /** 
+     * greebo: A module-wide accessible container holding a registry reference.
+     * The reference it holds has to be initialised in the RegisterModule() 
+     * routine of each .so/.dll binary.
+     * Use GlobalModuleRegistry() to access the instance.
+     */
 	class RegistryReference {
 		IModuleRegistry* _registry;
 	public:
@@ -394,7 +383,7 @@ namespace module
 
 	// Reference container to hold the cached module references.
 	// It automatically invalidates its reference as soon as the IModuleRegistry
-	// changes its instance ID.
+	// un-initialises the registered modules.
 	template<typename ModuleType>
 	class InstanceReference
 	{

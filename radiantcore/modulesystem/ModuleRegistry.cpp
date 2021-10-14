@@ -297,11 +297,6 @@ std::size_t ModuleRegistry::getCompatibilityLevel() const
 	return MODULE_COMPATIBILITY_LEVEL;
 }
 
-ModuleRegistry::InstanceId ModuleRegistry::getInstanceId() const
-{
-	return reinterpret_cast<InstanceId>(this);
-}
-
 std::string ModuleRegistry::getModuleList(const std::string& separator)
 {
 	std::string returnValue;
