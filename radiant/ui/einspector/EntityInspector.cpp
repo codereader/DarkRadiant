@@ -23,6 +23,7 @@
 #include "wxutil/dataview/TreeModel.h"
 #include "wxutil/dataview/TreeViewItemStyle.h"
 #include "xmlutil/Document.h"
+#include "selection/EntitySelection.h"
 
 #include <map>
 #include <string>
@@ -140,6 +141,7 @@ void EntityInspector::construct()
     // Register self to the SelectionSystem to get notified upon selection
     // changes.
     GlobalSelectionSystem().addObserver(this);
+    _entitySelection.reset(new selection::EntitySelection);
     
     _defsReloadedHandler = GlobalEntityClassManager().defsReloadedSignal().connect(
         sigc::mem_fun(this, &EntityInspector::onDefsReloaded)
@@ -436,6 +438,13 @@ void EntityInspector::onMainFrameConstructed()
 
 void EntityInspector::onMainFrameShuttingDown()
 {
+    // Clear the selection and unsubscribe from the selection system
+    changeSelectedEntity(scene::INodePtr(), scene::INodePtr());
+    _selectedEntity.reset();
+
+    GlobalSelectionSystem().removeObserver(this);
+    _entitySelection.reset();
+
     _mergeActions.clear();
     _conflictActions.clear();
 

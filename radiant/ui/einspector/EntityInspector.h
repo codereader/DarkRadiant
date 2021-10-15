@@ -32,6 +32,8 @@ class wxTextCtrl;
 class wxBitmapButton;
 class wxDataViewColumn;
 
+namespace selection { class EntitySelection; }
+
 namespace ui
 {
 
@@ -78,6 +80,7 @@ private:
 	// Currently selected entity, this pointer is only non-NULL if the
 	// current entity selection includes exactly 1 entity.
 	scene::INodeWeakPtr _selectedEntity;
+    std::unique_ptr<selection::EntitySelection> _entitySelection;
 
 	// Main EntityInspector widget
 	wxPanel* _mainWidget;

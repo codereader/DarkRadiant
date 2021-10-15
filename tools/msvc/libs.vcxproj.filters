@@ -320,6 +320,9 @@
     <ClInclude Include="..\..\libs\messages\FileSaveConfirmation.h">
       <Filter>messages</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\selection\EntitySelection.h">
+      <Filter>selection</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">
