@@ -1445,7 +1445,25 @@ void EntityInspector::removeClassProperties()
 // Update the selected Entity pointer from the selection system
 void EntityInspector::getEntityFromSelectionSystem()
 {
+    _entitySelection->update();
+
     // A single entity must be selected
+    auto numSelectedEntities = _entitySelection->size();
+
+    if (numSelectedEntities == 0)
+    {
+        changeSelectedEntity(scene::INodePtr(), scene::INodePtr());
+        _primitiveNumLabel->SetLabelText("");
+        return;
+    }
+    else if (numSelectedEntities > 1)
+    {
+        changeSelectedEntity(scene::INodePtr(), scene::INodePtr());
+        _primitiveNumLabel->SetLabelText(fmt::format("[{0} Entities]", numSelectedEntities));
+        return;
+    }
+
+#if 0
     if (GlobalSelectionSystem().countSelected() != 1)
     {
         changeSelectedEntity(scene::INodePtr(), scene::INodePtr());
@@ -1454,7 +1472,10 @@ void EntityInspector::getEntityFromSelectionSystem()
     }
 
     auto selectedNode = GlobalSelectionSystem().ultimateSelected();
+#endif
+    auto selectedNode = _entitySelection->getSingleSelectedEntity();
 
+#if 0
     // The root node must not be selected (this can happen if Invert Selection is
     // activated with an empty scene, or by direct selection in the entity list).
     if (selectedNode->isRoot())
@@ -1463,6 +1484,7 @@ void EntityInspector::getEntityFromSelectionSystem()
         _primitiveNumLabel->SetLabelText("");
         return;
     }
+#endif
 
     // Try both the selected node (if an entity is selected) or the parent node
     // (if a brush is selected).
