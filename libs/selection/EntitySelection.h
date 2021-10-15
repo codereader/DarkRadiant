@@ -6,6 +6,7 @@
 #include "iselection.h"
 #include "iselectable.h"
 #include "imapmerge.h"
+#include "CollectiveSpawnargs.h"
 
 namespace selection
 {
@@ -19,13 +20,13 @@ private:
         public Entity::Observer
     {
     private:
-        EntitySelection& _owner;
+        CollectiveSpawnargs& _spawnargCollection;
         Entity* _entity;
         scene::INodeWeakPtr _node;
 
     public:
-        SpawnargTracker(EntitySelection& owner, const scene::INodePtr& node) :
-            _owner(owner),
+        SpawnargTracker(CollectiveSpawnargs& spawnargCollection, const scene::INodePtr& node) :
+            _spawnargCollection(spawnargCollection),
             _entity(Node_getEntity(node)),
             _node(node)
         {
@@ -44,7 +45,7 @@ private:
             }
 
             _entity->detachObserver(this);
-            _owner.cleanupEntity(_entity);
+            _spawnargCollection.cleanupEntity(_entity);
         }
 
         scene::INodePtr getNode() const
@@ -54,31 +55,30 @@ private:
 
         void onKeyInsert(const std::string& key, EntityKeyValue& value) override
         {
-            _owner.onKeyInsert(_entity, key, value);
+            _spawnargCollection.onKeyInsert(_entity, key, value);
         }
 
         void onKeyChange(const std::string& key, const std::string& value) override
         {
-            _owner.onKeyChange(_entity, key, value);
+            _spawnargCollection.onKeyChange(_entity, key, value);
         }
 
         void onKeyErase(const std::string& key, EntityKeyValue& value) override
         {
-            _owner.onKeyErase(_entity, key, value);
+            _spawnargCollection.onKeyErase(_entity, key, value);
         }
     };
 
     std::list<SpawnargTracker> _trackedEntities;
 
-    using KeyValues = std::map<std::string, std::string>;
-
-    // Map Entity instances to key value pairs
-    std::map<Entity*, KeyValues> _keyValuesByEntity;
-
-    // Map Keys to Entities
-    std::map<std::string, std::set<Entity*>> _entitiesByKey;
+    CollectiveSpawnargs _spawnargs;
 
 public:
+    CollectiveSpawnargs& getSpawnargs()
+    {
+        return _spawnargs;
+    }
+
     std::size_t size() const
     {
         return _trackedEntities.size();
@@ -128,17 +128,14 @@ public:
             }
 
             // Not yet registered, create a new tracker
-            _trackedEntities.emplace_back(*this, entity);
+            _trackedEntities.emplace_back(_spawnargs, entity);
             selectedAndTracked.emplace(std::move(entity));
         });
     }
 
     void foreachKey(const std::function<void(const std::string&, const std::set<Entity*>&)>& functor)
     {
-        for (const auto& pair : _entitiesByKey)
-        {
-            functor(pair.first, pair.second);
-        }
+        _spawnargs.foreachKey(functor);
     }
 
 private:
@@ -176,52 +173,6 @@ private:
         }
 
         return {}; // nothing of interest
-    }
-
-    void onKeyInsert(Entity* entity, const std::string& key, EntityKeyValue& value)
-    {
-        auto kv = _keyValuesByEntity.try_emplace(entity);
-        kv.first->second.emplace(key, value.get());
-
-        auto entityList = _entitiesByKey.try_emplace(key);
-        entityList.first->second.emplace(entity);
-    }
-
-    void onKeyChange(Entity* entity, const std::string& key, const std::string& value)
-    {
-        auto kv = _keyValuesByEntity.try_emplace(entity);
-        kv.first->second[key] = value;
-
-        // On key change, we don't need to update the entitiesByKey map
-    }
-
-    void onKeyErase(Entity* entity, const std::string& key, EntityKeyValue& value)
-    {
-        auto kv = _keyValuesByEntity.try_emplace(entity);
-        kv.first->second.erase(key);
-
-        auto entityList = _entitiesByKey.find(key);
-
-        if (entityList != _entitiesByKey.end())
-        {
-            entityList->second.erase(entity);
-
-            if (entityList->second.empty())
-            {
-                _entitiesByKey.erase(entityList);
-            }
-        }
-    }
-
-    void cleanupEntity(Entity* entity)
-    {
-        _keyValuesByEntity.erase(entity);
-
-        // Remove the entity from all key-mapped lists
-        for (auto& entityList : _entitiesByKey)
-        {
-            entityList.second.erase(entity);
-        }
     }
 };
 

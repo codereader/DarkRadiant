@@ -323,6 +323,9 @@
     <ClInclude Include="..\..\libs\selection\EntitySelection.h">
       <Filter>selection</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\selection\CollectiveSpawnargs.h">
+      <Filter>selection</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

@@ -50,6 +50,7 @@
     <ClCompile Include="..\..\..\test\TextureTool.cpp" />
     <ClCompile Include="..\..\..\test\Grid.cpp" />
     <ClCompile Include="..\..\..\test\TextureManipulation.cpp" />
+    <ClCompile Include="..\..\..\test\EntityInspector.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\HeadlessOpenGLContext.h" />
