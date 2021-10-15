@@ -30,10 +30,18 @@ private:
     selection::EntitySelection _selectionTracker;
 
 public:
+    static constexpr const char* DifferingValues = "[differing values]";
+
     KeyValueStore()
     {
         _selectionTracker.getSpawnargs().signal_KeyAdded().connect(
             sigc::mem_fun(this, &KeyValueStore::onKeyAdded)
+        );
+        _selectionTracker.getSpawnargs().signal_KeyRemoved().connect(
+            sigc::mem_fun(this, &KeyValueStore::onKeyRemoved)
+        );
+        _selectionTracker.getSpawnargs().signal_KeyValueSetChanged().connect(
+            sigc::mem_fun(this, &KeyValueStore::onKeyValueSetChanged)
         );
     }
 
@@ -50,9 +58,19 @@ public:
     }
 
 private:
-    void onKeyAdded()
+    void onKeyAdded(const std::string& key, const std::string& value)
     {
+        store[key] = value;
+    }
 
+    void onKeyRemoved(const std::string& key)
+    {
+        store.erase(key);
+    }
+
+    void onKeyValueSetChanged(const std::string& key, const std::string& uniqueValue)
+    {
+        store[key] = uniqueValue.empty() ? DifferingValues : uniqueValue;
     }
 };
 
@@ -76,8 +94,9 @@ inline void expectNonUnique(const KeyValueStore& keyValueStore, const std::strin
         return;
     }
 
-    EXPECT_EQ(keyValueStore.store.at(key), "[differing values]") <<
-        "Key Value Store should contain " << key << " = [differing values], but value was " << keyValueStore.store.at(key);
+    EXPECT_EQ(keyValueStore.store.at(key), KeyValueStore::DifferingValues) <<
+        "Key Value Store should contain " << key << " = " << KeyValueStore::DifferingValues << 
+        ", but value was " << keyValueStore.store.at(key);
 }
 
 inline void expectNotListed(const KeyValueStore& keyValueStore, const std::string& key)

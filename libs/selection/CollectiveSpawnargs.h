@@ -24,23 +24,25 @@ private:
     // Map Keys to Entities
     std::map<std::string, std::set<Entity*>> _entitiesByKey;
 
-    sigc::signal<void()> _sigKeyAdded;
-    sigc::signal<void()> _sigKeyRemoved;
-    sigc::signal<void()> _sigKeyValueSetChanged;
+    sigc::signal<void(const std::string&, const std::string&)> _sigKeyAdded;
+    sigc::signal<void(const std::string&)> _sigKeyRemoved;
+    sigc::signal<void(const std::string&, const std::string&)> _sigKeyValueSetChanged;
 
 public:
     // Signal emitted when a new key is added to the collection
-    sigc::signal<void()>& signal_KeyAdded()
+    sigc::signal<void(const std::string&, const std::string&)>& signal_KeyAdded()
     {
         return _sigKeyAdded;
     }
 
-    sigc::signal<void()>& signal_KeyValueSetChanged()
+    // Emitted when the value set of the given key changes. The second argument will contain the value
+    // provided it is the same for all entities
+    sigc::signal<void(const std::string&, const std::string&)>& signal_KeyValueSetChanged()
     {
         return _sigKeyValueSetChanged;
     }
 
-    sigc::signal<void()>& signal_KeyRemoved()
+    sigc::signal<void(const std::string&)>& signal_KeyRemoved()
     {
         return _sigKeyRemoved;
     }
