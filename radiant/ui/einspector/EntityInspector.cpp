@@ -192,6 +192,12 @@ void EntityInspector::onKeyInsert(const std::string& key,
 }
 
 void EntityInspector::onKeyChange(const std::string& key,
+    const std::string& value)
+{
+    onKeyChange(nullptr, key, value);
+}
+
+void EntityInspector::onKeyChange(Entity* entity, const std::string& key,
                                   const std::string& value)
 {
     wxDataViewItem keyValueIter;
@@ -219,19 +225,25 @@ void EntityInspector::onKeyChange(const std::string& key,
     // Get the type for this key if it exists, and the options
     PropertyParms parms = getPropertyParmsForKey(key);
 
-    assert(!_selectedEntity.expired());
-    Entity* selectedEntity = Node_getEntity(_selectedEntity.lock());
+    //assert(!_selectedEntity.expired());
+    //Entity* selectedEntity = Node_getEntity(_selectedEntity.lock());
+    auto selectedEntity = entity;
 
-    // Check the entityclass (which will return blank if not found)
-    IEntityClassConstPtr eclass = selectedEntity->getEntityClass();
-    const EntityClassAttribute& attr = eclass->getAttribute(key);
+    bool hasDescription = false;
 
-    if (parms.type.empty())
+    if (selectedEntity != nullptr)
     {
-        parms.type = attr.getType();
-    }
+        // Check the entityclass (which will return blank if not found)
+        auto eclass = selectedEntity->getEntityClass();
+        const auto& attr = eclass->getAttribute(key);
 
-    bool hasDescription = !attr.getDescription().empty();
+        if (parms.type.empty())
+        {
+            parms.type = attr.getType();
+        }
+
+        hasDescription = !attr.getDescription().empty();
+    }
 
     // Set the values for the row
     wxutil::TreeModel::Row row(keyValueIter, *_kvStore);
@@ -1447,7 +1459,6 @@ void EntityInspector::getEntityFromSelectionSystem()
 {
     _entitySelection->update();
 
-    // A single entity must be selected
     auto numSelectedEntities = _entitySelection->size();
 
     if (numSelectedEntities == 0)
@@ -1456,12 +1467,14 @@ void EntityInspector::getEntityFromSelectionSystem()
         _primitiveNumLabel->SetLabelText("");
         return;
     }
-    else if (numSelectedEntities > 1)
+
+    if (numSelectedEntities > 1)
     {
         changeSelectedEntity(scene::INodePtr(), scene::INodePtr());
         _primitiveNumLabel->SetLabelText(fmt::format("[{0} Entities]", numSelectedEntities));
-        return;
     }
+
+    updateTreeView();
 
 #if 0
     if (GlobalSelectionSystem().countSelected() != 1)
@@ -1473,8 +1486,9 @@ void EntityInspector::getEntityFromSelectionSystem()
 
     auto selectedNode = GlobalSelectionSystem().ultimateSelected();
 #endif
+#if 0
     auto selectedNode = _entitySelection->getSingleSelectedEntity();
-
+#endif
 #if 0
     // The root node must not be selected (this can happen if Invert Selection is
     // activated with an empty scene, or by direct selection in the entity list).
@@ -1486,6 +1500,7 @@ void EntityInspector::getEntityFromSelectionSystem()
     }
 #endif
 
+#if 0
     // Try both the selected node (if an entity is selected) or the parent node
     // (if a brush is selected).
     Entity* newSelectedEntity = Node_getEntity(selectedNode);
@@ -1539,10 +1554,38 @@ void EntityInspector::getEntityFromSelectionSystem()
             _primitiveNumLabel->SetLabelText("-");
         }
     }
+#endif
+}
+
+void EntityInspector::updateTreeView()
+{
+    // Clear the view. If the old entity has been destroyed before we had
+    // a chance to disconnect the list store might contain remnants
+    _keyValueIterMap.clear();
+    _kvStore->Clear();
+    _mergeActions.clear();
+    _conflictActions.clear();
+
+    // Reset the sorting when changing entities
+    _keyValueTreeView->ResetSortingOnAllColumns();
+
+    _entitySelection->foreachKey([&](const std::string& key, const std::set<Entity*>& entities)
+    {
+        if (entities.size() == 1)
+        {
+            auto entity = *entities.begin();
+            onKeyChange(entity, key, entity->getKeyValue(key));
+        }
+        else
+        {
+            onKeyChange(key, _("[multiple values]"));
+        }
+    });
 }
 
 void EntityInspector::changeSelectedEntity(const scene::INodePtr& newEntity, const scene::INodePtr& selectedNode)
 {
+#if 0
     // Check what we need to do with the existing entity
     scene::INodePtr oldEntity = _selectedEntity.lock();
 
@@ -1561,10 +1604,13 @@ void EntityInspector::changeSelectedEntity(const scene::INodePtr& newEntity, con
             return;
         }
     }
+#endif
 
+#if 0
     // At this point, we either disconnected from the old entity or
     // it has already been deleted (no disconnection necessary)
     _selectedEntity.reset();
+#endif
 
     // Clear the view. If the old entity has been destroyed before we had
     // a chance to disconnect the list store might contain remnants
@@ -1576,6 +1622,20 @@ void EntityInspector::changeSelectedEntity(const scene::INodePtr& newEntity, con
     // Reset the sorting when changing entities
     _keyValueTreeView->ResetSortingOnAllColumns();
 
+    _entitySelection->foreachKey([&](const std::string& key, const std::set<Entity*>& entities)
+    {
+        if (entities.size() == 1)
+        {
+            auto entity = *entities.begin();
+            onKeyChange(key, entity->getKeyValue(key));
+        }
+        else
+        {
+            onKeyChange(key, _("[multiple values]"));
+        }
+    });
+
+#if 0
     // Attach to new entity if it is non-NULL
     if (newEntity && newEntity->getNodeType() == scene::INode::Type::Entity)
     {
@@ -1593,6 +1653,7 @@ void EntityInspector::changeSelectedEntity(const scene::INodePtr& newEntity, con
             addClassProperties();
         }
     }
+#endif
 }
 
 void EntityInspector::handleKeyValueMergeAction(const scene::merge::IEntityKeyValueMergeAction::Ptr& mergeAction)

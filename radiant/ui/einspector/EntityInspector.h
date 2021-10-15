@@ -239,6 +239,7 @@ private:
 
     // Update tree view contents and property editor
     void updateGUIElements();
+    void updateTreeView();
 
     // Release the current entity and rescan the selection
     void refresh();
@@ -273,6 +274,7 @@ public:
 	/* Entity::Observer implementation */
     void onKeyInsert(const std::string& key, EntityKeyValue& value);
     void onKeyChange(const std::string& key, const std::string& value);
+    void onKeyChange(Entity* entity, const std::string& key, const std::string& value);
     void onKeyErase(const std::string& key, EntityKeyValue& value);
 
 	// greebo: Tells the inspector to reload the window settings from the registry.
