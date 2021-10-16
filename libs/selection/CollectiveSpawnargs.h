@@ -39,7 +39,8 @@ public:
     };
 
 private:
-    using KeyValues = std::map<std::string, std::string>;
+    using KeyValuePair = std::pair<const std::string, std::string>;
+    using KeyValues = std::map<KeyValuePair::first_type, KeyValuePair::second_type>;
     using KeyValuesByEntity = std::map<Entity*, KeyValues>;
 
     // Map Entity instances to key value pairs
@@ -108,8 +109,11 @@ public:
             // We must find such an entity, the entity set size is > 1
             assert(otherEntity != keyValueSet.entities.end());
 
+            // Get the stored key values for this other entity, this must succeed
+            const auto& otherKeyValuePair = getCachedKeyValuePairForEntity(*otherEntity, key);
+
             // If the value differs, the value set changes state
-            auto valueIsUnique = (*otherEntity)->getKeyValue(key) == valueString;
+            auto valueIsUnique = otherKeyValuePair.second == valueString;
 
             if (!valueIsUnique)
             {
@@ -123,9 +127,12 @@ public:
         else if (keyValueSet.entities.size() == _keyValuesByEntity.size())
         {
             auto valueIsUnique = std::all_of(
-                keyValueSet.entities.begin(), keyValueSet.entities.end(), [&](Entity* entity)
+                keyValueSet.entities.begin(), keyValueSet.entities.end(), [&](Entity* existing)
                 {
-                    return entity->getKeyValue(key) == valueString;
+                    if (entity == existing) return true; // don't check against self
+
+                    const auto& kv = getCachedKeyValuePairForEntity(existing, key);
+                    return kv.second == valueString;
                 });
 
             if (valueIsUnique)
@@ -277,13 +284,9 @@ private:
             assert(otherEntity != keyValueSet.entities.end());
 
             // Get the stored key values for this other entity, this must succeed
-            const auto& otherKeyValues = _keyValuesByEntity.at(*otherEntity);
-            auto otherKeyValuePair = otherKeyValues.find(key);
+            const auto& otherKeyValuePair = getCachedKeyValuePairForEntity(*otherEntity, key);
 
-            // This must also succeed, it was mapped
-            assert(otherKeyValuePair != otherKeyValues.end());
-
-            if (otherKeyValuePair->second != newValue)
+            if (otherKeyValuePair.second != newValue)
             {
                 // Value differs, the set is no longer sharing a single value
                 keyValueSet.valueIsEqualOnAllEntities = false;
@@ -327,6 +330,18 @@ private:
             keyValueSet.valueIsEqualOnAllEntities = false;
             _sigKeyRemoved.emit(key);
         }
+    }
+
+    // The given entity must have been tracked
+    const KeyValuePair& getCachedKeyValuePairForEntity(Entity* entity, const std::string& key) const
+    {
+        const auto& keyValues = _keyValuesByEntity.at(entity);
+        auto keyValuePair = keyValues.find(key);
+
+        // This must also succeed, it was mapped
+        assert(keyValuePair != keyValues.end());
+
+        return *keyValuePair;
     }
 };
 
