@@ -80,10 +80,7 @@ public:
 	};
 
 private:
-
-	// Currently selected entity, this pointer is only non-NULL if the
-	// current entity selection includes exactly 1 entity.
-	scene::INodeWeakPtr _selectedEntity;
+    // Tracking helpers to organise the selected entities and their key values
     std::unique_ptr<selection::CollectiveSpawnargs> _spawnargs;
     std::unique_ptr<selection::EntitySelection> _entitySelection;
 
@@ -165,6 +162,8 @@ private:
     // Maps the key names to a possible merge action that should be displayed
     std::map<std::string, scene::merge::IEntityKeyValueMergeAction::Ptr> _mergeActions;
     std::map<std::string, scene::merge::IConflictResolutionAction::Ptr> _conflictActions;
+
+    bool _selectionNeedsUpdate;
 
 private:
     bool canUpdateEntity();

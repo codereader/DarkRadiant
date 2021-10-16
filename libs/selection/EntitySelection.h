@@ -2,6 +2,7 @@
 
 #include <list>
 #include "inode.h"
+#include "ieclass.h"
 #include "ientity.h"
 #include "iselection.h"
 #include "iselectable.h"
@@ -111,6 +112,11 @@ public:
         _trackedEntities.clear();
     }
 
+    bool empty() const
+    {
+        return _trackedEntities.empty();
+    }
+
     std::size_t size() const
     {
         return _trackedEntities.size();
@@ -124,6 +130,55 @@ public:
         }
 
         return _trackedEntities.front().getNode();
+    }
+
+    // Returns non-empty reference if all selected entities share the same eclass
+    IEntityClassPtr getSingleSharedEntityClass()
+    {
+        try
+        {
+            IEntityClassPtr result;
+
+            foreachEntity([&](Entity* entity)
+            {
+                auto eclass = entity->getEntityClass();
+
+                if (!result)
+                {
+                    result = std::move(eclass);
+                    return;
+                }
+
+                if (result != eclass)
+                {
+                    throw std::runtime_error("Non-unique eclass");
+                }
+            });
+
+            return result;
+        }
+        catch (const std::runtime_error&)
+        {
+            return {};
+        }
+    }
+
+    void foreachEntity(const std::function<void(Entity*)>& functor)
+    {
+        for (auto& tracked : _trackedEntities)
+        {
+            auto node = tracked.getNode();
+            
+            if (!node) continue;
+
+            auto entity = Node_getEntity(node);
+            assert(entity != nullptr);
+            
+            if (entity)
+            {
+                functor(entity);
+            }
+        }
     }
 
     // Rescan the selection system for entities to observe

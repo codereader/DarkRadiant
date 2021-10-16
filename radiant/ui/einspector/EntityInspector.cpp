@@ -70,7 +70,8 @@ EntityInspector::EntityInspector() :
     _newValueColumn(nullptr),
     _keyEntry(nullptr),
     _valEntry(nullptr),
-    _setButton(nullptr)
+    _setButton(nullptr),
+    _selectionNeedsUpdate(true)
 {}
 
 void EntityInspector::construct()
@@ -462,7 +463,6 @@ void EntityInspector::onMainFrameShuttingDown()
 {
     // Clear the selection and unsubscribe from the selection system
     changeSelectedEntity(scene::INodePtr(), scene::INodePtr());
-    _selectedEntity.reset();
 
     GlobalSelectionSystem().removeObserver(this);
     _keyValueAddedHandler.disconnect();
@@ -737,9 +737,6 @@ bool EntityInspector::canUpdateEntity()
 // Redraw the GUI elements
 void EntityInspector::updateGUIElements()
 {
-    // Update from selection system
-    getEntityFromSelectionSystem();
-
     auto entityCanBeUpdated = canUpdateEntity();
 
     auto isMergeMode = GlobalMapModule().getEditMode() == IMap::EditMode::Merge;
@@ -749,7 +746,7 @@ void EntityInspector::updateGUIElements()
     // Set the value column back to the default AUTO setting
     _valueColumn->SetWidth(wxCOL_WIDTH_AUTOSIZE);
 
-    if (!_selectedEntity.expired())
+    if (!_entitySelection->empty())
     {
         _editorFrame->Enable(entityCanBeUpdated);
         _keyValueTreeView->Enable(true);
@@ -767,10 +764,12 @@ void EntityInspector::updateGUIElements()
 		// Update the target entity on any active property editor (#5092)
         else if (_currentPropertyEditor)
 		{
+#if 0
 			auto newEntity = Node_getEntity(_selectedEntity.lock());
 			assert(newEntity != nullptr);
 
 			_currentPropertyEditor->setEntity(newEntity);
+#endif
 		}
     }
     else  // no selected entity
@@ -790,12 +789,21 @@ void EntityInspector::updateGUIElements()
 
 void EntityInspector::onIdle()
 {
+    if (_selectionNeedsUpdate)
+    {
+        _selectionNeedsUpdate = false;
+        _entitySelection->update();
+    }
+
     updateGUIElements();
 }
 
 // Selection changed callback
 void EntityInspector::selectionChanged(const scene::INodePtr& node, bool isComponent)
 {
+    if (isComponent) return; // ignore component changes
+
+    _selectionNeedsUpdate = true;
     requestIdleCallback();
 }
 
@@ -853,22 +861,22 @@ void EntityInspector::loadPropertyMap()
 
 void EntityInspector::_onAddKey()
 {
-    assert(!_selectedEntity.expired());
+    assert(_entitySelection->size() == 1);
 
-    Entity* selectedEntity = Node_getEntity(_selectedEntity.lock());
+    auto selectedEntity = Node_getEntity(_entitySelection->getSingleSelectedEntity());
 
     // Obtain the entity class to provide to the AddPropertyDialog
-    IEntityClassConstPtr ec = selectedEntity->getEntityClass();
+    auto ec = selectedEntity->getEntityClass();
 
     // Choose a property, and add to entity with a default value
-    AddPropertyDialog::PropertyList properties = AddPropertyDialog::chooseProperty(selectedEntity);
+    auto properties = AddPropertyDialog::chooseProperty(selectedEntity);
 
     for (std::size_t i = 0; i < properties.size(); ++i)
     {
         const std::string& key = properties[i];
 
         // Add all keys, skipping existing ones to not overwrite any values on the entity
-        if (selectedEntity->getKeyValue(key) == "" || selectedEntity->isInherited(key))
+        if (selectedEntity->getKeyValue(key).empty() || selectedEntity->isInherited(key))
         {
             // Add the keyvalue on the entity (triggering the refresh)
             selectedEntity->setKeyValue(key, "-");
@@ -878,7 +886,7 @@ void EntityInspector::_onAddKey()
 
 bool EntityInspector::_testAddKey()
 {
-    return !_selectedEntity.expired() && canUpdateEntity();
+    return _entitySelection->size() == 1 && canUpdateEntity();
 }
 
 void EntityInspector::_onDeleteKey()
@@ -888,8 +896,7 @@ void EntityInspector::_onDeleteKey()
 
     if (selectedItems.Count() == 0) return;
 
-    assert(!_selectedEntity.expired());
-    Entity* selectedEntity = Node_getEntity(_selectedEntity.lock());
+    assert(!_entitySelection->empty());
 
     std::unique_ptr<UndoableCommand> cmd;
 
@@ -910,8 +917,7 @@ void EntityInspector::_onDeleteKey()
         auto iconAndName = static_cast<wxDataViewIconText>(row[_columns.name]);
         auto key = iconAndName.GetText().ToStdString();
 
-        // Clear the key after copying
-        selectedEntity->setKeyValue(key, "");
+        applyKeyValueToSelection(key, "");
     }
 }
 
@@ -954,8 +960,7 @@ void EntityInspector::_onCutKey()
 
     if (selectedItems.Count() == 0) return;
 
-    assert(!_selectedEntity.expired());
-    Entity* selectedEntity = Node_getEntity(_selectedEntity.lock());
+    assert(!_entitySelection->empty());
 
     _clipboard.clear();
     std::unique_ptr<UndoableCommand> cmd;
@@ -981,7 +986,7 @@ void EntityInspector::_onCutKey()
         _clipboard.emplace_back(key, value);
 
         // Clear the key after copying
-        selectedEntity->setKeyValue(key, "");
+        applyKeyValueToSelection(key, "");
     }
 }
 
@@ -1001,7 +1006,7 @@ bool EntityInspector::isItemDeletable(const wxutil::TreeModel::Row& row)
 
 bool EntityInspector::_testNonEmptyAndDeletableSelection()
 {
-    if (_selectedEntity.expired() || !canUpdateEntity()) return false;
+    if (_entitySelection->empty() || !canUpdateEntity()) return false;
 
     wxDataViewItemArray selectedItems;
     _keyValueTreeView->GetSelections(selectedItems);
@@ -1294,11 +1299,9 @@ void EntityInspector::updateHelpText(const wxutil::TreeModel::Row& row)
     
     std::string key = getSelectedKey();
 
-    assert(!_selectedEntity.expired());
-    auto* selectedEntity = Node_getEntity(_selectedEntity.lock());
+    auto eclass = _entitySelection->getSingleSharedEntityClass();
 
-    auto eclass = selectedEntity->getEntityClass();
-    assert(eclass);
+    if (!eclass) return; // non-unique eclass, cannot show any reliable help
 
     if (key == "classname")
     {
@@ -1308,7 +1311,7 @@ void EntityInspector::updateHelpText(const wxutil::TreeModel::Row& row)
     else
     {
         // Find the attribute on the eclass, that's where the descriptions are defined
-        const EntityClassAttribute& attr = eclass->getAttribute(key);
+        const auto& attr = eclass->getAttribute(key);
 
         if (!attr.getDescription().empty())
         {
@@ -1326,7 +1329,7 @@ void EntityInspector::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
 
     // Abort if called without a valid entity selection (may happen during
     // various cleanup operations).
-    if (_selectedEntity.expired()) return;
+    if (_entitySelection->empty()) return;
 
     wxDataViewItemArray selectedItems;
     _keyValueTreeView->GetSelections(selectedItems);
@@ -1364,18 +1367,20 @@ void EntityInspector::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
             // Get the type for this key if it exists, and the options
             PropertyParms parms = getPropertyParmsForKey(key);
 
-            Entity* selectedEntity = Node_getEntity(_selectedEntity.lock());
-
             // If the type was not found, also try looking on the entity class
             if (parms.type.empty())
             {
-                IEntityClassConstPtr eclass = selectedEntity->getEntityClass();
-                parms.type = eclass->getAttribute(key).getType();
+                auto eclass = _entitySelection->getSingleSharedEntityClass();
+
+                if (eclass)
+                {
+                    parms.type = eclass->getAttribute(key).getType();
+                }
             }
 
             // Construct and add a new PropertyEditor
             _currentPropertyEditor = PropertyEditorFactory::create(_editorFrame,
-                parms.type, selectedEntity, key, parms.options);
+                parms.type, nullptr, key, parms.options);
 
             if (_currentPropertyEditor)
             {
@@ -1461,31 +1466,19 @@ void EntityInspector::addClassAttribute(const EntityClassAttribute& a)
 // Append inherited (entityclass) properties
 void EntityInspector::addClassProperties()
 {
-    auto selectedNode = _selectedEntity.lock();
-
-    if (!selectedNode)
-    {
-        return;
-    }
-
-    Entity* selectedEntity = Node_getEntity(selectedNode);
-
-    // Get the entityclass for the current entity
-    std::string className = selectedEntity->getKeyValue("classname");
-    IEntityClassPtr eclass = GlobalEntityClassManager().findOrInsert(
-        className, true
-    );
+    // Get the entityclass for the current entities
+    auto eclass = _entitySelection->getSingleSharedEntityClass();
 
     if (!eclass)
     {
-        rWarning() << "No classname on entity '" << selectedEntity->getKeyValue("name") << "'" << std::endl;
         return;
     }
 
     // Visit the entity class
-    eclass->forEachAttribute(
-        [&](const EntityClassAttribute& a, bool) { addClassAttribute(a); }
-    );
+    eclass->forEachAttribute([&] (const EntityClassAttribute& a, bool) 
+    { 
+        addClassAttribute(a);
+    });
 }
 
 // Remove the inherited properties
@@ -1501,6 +1494,8 @@ void EntityInspector::removeClassProperties()
 // Update the selected Entity pointer from the selection system
 void EntityInspector::getEntityFromSelectionSystem()
 {
+    return;
+
     _entitySelection->update();
 
     auto numSelectedEntities = _entitySelection->size();
@@ -1707,17 +1702,16 @@ void EntityInspector::changeSelectedEntity(const scene::INodePtr& newEntity, con
 
 void EntityInspector::handleKeyValueMergeAction(const scene::merge::IEntityKeyValueMergeAction::Ptr& mergeAction)
 {
-    // Remember this action in the map, it will be used in onKeyChange()
-    _mergeActions[mergeAction->getKey()] = mergeAction;
+    const auto& key = mergeAction->getKey();
 
-    auto selectedEntity = _selectedEntity.lock();
+    // Remember this action in the map, it will be used in onKeyChange()
+    _mergeActions[key] = mergeAction;
 
     // Keys added by a merge operation won't be handled in onKeyChange(), so do this here
     if (mergeAction->getType() == scene::merge::ActionType::AddKeyValue ||
-        (mergeAction->getType() == scene::merge::ActionType::ChangeKeyValue && selectedEntity && 
-         Node_getEntity(selectedEntity)->getKeyValue(mergeAction->getKey()).empty()))
+        (mergeAction->getType() == scene::merge::ActionType::ChangeKeyValue && !_spawnargs->containsKey(key)))
     {
-        onKeyChange(mergeAction->getKey(), mergeAction->getValue());
+        onKeyChange(key, mergeAction->getValue());
     }
 }
 

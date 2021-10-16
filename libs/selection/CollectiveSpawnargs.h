@@ -72,6 +72,11 @@ public:
         return _sigKeyRemoved;
     }
 
+    bool containsKey(const std::string& key) const
+    {
+        return _entitiesByKey.count(key) > 0;
+    }
+
     void foreachKey(const std::function<void(const std::string&, const KeyValueSet&)>& functor)
     {
         for (const auto& pair : _entitiesByKey)
