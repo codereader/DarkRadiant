@@ -11,8 +11,18 @@ namespace selection
 {
 
 /**
- * Container keeping track of entity key value sets
- * of one or more selected entities in the scene.
+ * Helper class to keep the Entity Inspector key/value list view up to date 
+ * when one or more entities are selected in the scene.
+ * 
+ * It not only knows which entity contributes which key value pair,
+ * it also tracks the uniqueness of all the values for a given key.
+ * 
+ * The signals emitted by this class help the client code (i.e. Entity Inspector)
+ * to update only those rows that actually changed their meaning.
+ * 
+ * Keys that are now shared but were not listed before => signal_KeyAdded
+ * Values that are no longer shared will disappear from the list => signal_KeyRemoved
+ * Keys changing their value (shared or not) => signal_KeyValueSetChanged
  */
 class CollectiveSpawnargs
 {
@@ -130,7 +140,26 @@ public:
         auto kv = _keyValuesByEntity.try_emplace(entity);
         kv.first->second[key] = value;
 
-        // On key change, we don't need to update the entitiesByKey map
+        // On key value change, we don't need to update the entity set in _entitiesByKey
+        // But since the value changed its uniqueness might have changed with it
+        auto e = _entitiesByKey.find(key);
+
+        if (e != _entitiesByKey.end())
+        {
+            if (e->second.entities.size() > 1)
+            {
+                // We have more than one entity check the set
+                checkKeyValueSetAfterChange(entity, key, value, e->second);
+            }
+            else
+            {
+                // We only have one entity for this key, it should have been unique in the first place
+                assert(e->second.valueIsEqualOnAllEntities);
+
+                // Signal will be emitted nonetheless, the value got changed
+                _sigKeyValueSetChanged.emit(key, value);
+            }
+        }
     }
 
     void onKeyErase(Entity* entity, const std::string& key, EntityKeyValue& value)
@@ -204,40 +233,98 @@ private:
                 // This was the last occurrence of this key, remove it
                 _entitiesByKey.erase(entityList);
                 _sigKeyRemoved.emit(key);
+                return;
             }
-            // If the value was not shared before, this could be the case now
-            else if (!keyValueSet.valueIsEqualOnAllEntities)
+
+            checkKeyValueSetAfterRemoval(key, keyValueSet);
+        }
+    }
+
+    void checkKeyValueSetAfterChange(Entity* entity, const std::string& key, const std::string& newValue, KeyValueSet& keyValueSet)
+    {
+        assert(keyValueSet.entities.size() > 1);
+
+        // If the value was not shared before, it might have changed to be the same for all entities now
+        if (!keyValueSet.valueIsEqualOnAllEntities)
+        {
+            // std::all_of will still return true if the range is empty
+            bool valueIsUnique = std::all_of(_keyValuesByEntity.begin(), _keyValuesByEntity.end(),
+                [&](const KeyValuesByEntity::value_type& pair)
             {
-                // Get the key value of the first remaining entity
-                auto firstEntity = _keyValuesByEntity.begin();
-                auto firstKey = firstEntity->second.find(key);
+                // No need to compare the value of the entity that got changed
+                if (entity == pair.first) return true;
 
-                // For comparison it's enough to fall back to an empty value if the key is not present
-                auto remainingValue = firstKey != firstEntity->second.end() ? firstKey->second : "";
+                auto existingKey = pair.second.find(key);
+                return existingKey != pair.second.end() && existingKey->second == newValue;
+            });
 
-                // Skip beyond the first entity and check the rest for uniqueness
-                // std::all_of will still return true if the range is empty
-                bool valueIsUnique = std::all_of(++firstEntity, _keyValuesByEntity.end(),
-                    [&](const KeyValuesByEntity::value_type& pair)
-                    {
-                        auto existingKey = pair.second.find(key);
-                        return existingKey != pair.second.end() && existingKey->second == remainingValue;
-                    });
-
-                if (valueIsUnique)
-                {
-                    keyValueSet.valueIsEqualOnAllEntities = true;
-                    _sigKeyValueSetChanged.emit(key, remainingValue);
-                }
+            if (valueIsUnique)
+            {
+                keyValueSet.valueIsEqualOnAllEntities = true;
+                _sigKeyValueSetChanged.emit(key, newValue);
             }
-            // The value was shared on all entities before, but maybe that's no longer the case
-            // it must still be present on *all* involved entities
-            else if (keyValueSet.entities.size() != _keyValuesByEntity.size())
+        }
+        // The value was shared on all entities before, but maybe that's no longer the case
+        // If the value is different to any one other existing entity, the set diverged
+        else
+        {
+            // Pick an entity that is not the same as the entity firing this event
+            auto otherEntity = std::find_if(keyValueSet.entities.begin(), keyValueSet.entities.end(),
+                [&](Entity* existing) { return entity != existing; });
+
+            // We must find such an entity, the entity set size is > 1
+            assert(otherEntity != keyValueSet.entities.end());
+
+            // Get the stored key values for this other entity, this must succeed
+            const auto& otherKeyValues = _keyValuesByEntity.at(*otherEntity);
+            auto otherKeyValuePair = otherKeyValues.find(key);
+
+            // This must also succeed, it was mapped
+            assert(otherKeyValuePair != otherKeyValues.end());
+
+            if (otherKeyValuePair->second != newValue)
             {
-                // Size differs, we have more entities in play than we have entities for this key
+                // Value differs, the set is no longer sharing a single value
                 keyValueSet.valueIsEqualOnAllEntities = false;
                 _sigKeyRemoved.emit(key);
             }
+        }
+    }
+
+    void checkKeyValueSetAfterRemoval(const std::string& key, KeyValueSet& keyValueSet)
+    {
+        // If the value was not shared before, this could be the case now
+        if (!keyValueSet.valueIsEqualOnAllEntities)
+        {
+            // Get the key value of the first remaining entity
+            auto firstEntity = _keyValuesByEntity.begin();
+            auto firstKey = firstEntity->second.find(key);
+
+            // For comparison it's enough to fall back to an empty value if the key is not present
+            auto remainingValue = firstKey != firstEntity->second.end() ? firstKey->second : "";
+
+            // Skip beyond the first entity and check the rest for uniqueness
+            // std::all_of will still return true if the range is empty
+            bool valueIsUnique = std::all_of(++firstEntity, _keyValuesByEntity.end(),
+                [&](const KeyValuesByEntity::value_type& pair)
+            {
+                auto existingKey = pair.second.find(key);
+                return existingKey != pair.second.end() && existingKey->second == remainingValue;
+            });
+
+            if (valueIsUnique)
+            {
+                keyValueSet.valueIsEqualOnAllEntities = true;
+                _sigKeyValueSetChanged.emit(key, remainingValue);
+            }
+        }
+        // The value was shared on all entities before, but maybe that's no longer the case
+        // it must still be present on *all* involved entities
+        else if (keyValueSet.entities.size() != _keyValuesByEntity.size())
+        {
+            // Size differs, we have more entities in play than we have entities for this key
+            keyValueSet.valueIsEqualOnAllEntities = false;
+            _sigKeyRemoved.emit(key);
         }
     }
 };

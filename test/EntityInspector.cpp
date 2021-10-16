@@ -274,6 +274,23 @@ TEST_F(EntityInspectorTest, AssignDifferingKeyValues)
     expectNonUnique(keyValueStore, "light_center");
 }
 
+TEST_F(EntityInspectorTest, ChangeUniqueKeyValue)
+{
+    KeyValueStore keyValueStore;
+    GlobalCommandSystem().executeCommand("OpenMap", cmd::Argument("maps/entityinspector.map"));
+
+    auto entity1 = selectEntity("light_torchflame_1");
+    keyValueStore.rescanSelection();
+
+    expectUnique(keyValueStore, "light_center", "0 0 0");
+
+    // Change the light_center value
+    Node_getEntity(entity1)->setKeyValue("light_center", "0 0 1");
+    keyValueStore.rescanSelection();
+
+    expectUnique(keyValueStore, "light_center", "0 0 1");
+}
+
 TEST_F(EntityInspectorTest, RemoveUniqueKeyValue)
 {
     KeyValueStore keyValueStore;
