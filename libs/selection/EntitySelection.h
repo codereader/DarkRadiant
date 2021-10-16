@@ -11,8 +11,24 @@
 namespace selection
 {
 
-// Helper object used by the Entity Inspector to track the 
-// selected entities in the scene.
+/**
+ * Helper object used by the Entity Inspector to track all selected entities
+ * in the scene and keep the list of their spawnargs up to date.
+ * 
+ * On update() it rescans the entity selection in the scene, triggering
+ * the contained CollectiveSpawnargs object to emit its signals. The signals
+ * are emitted such that the listening EntityInspector will show the 
+ * correct set of keys: the ones with shared values will show just that,
+ * the keys with differing values will show a placeholder text instead.
+ * 
+ * This instance will monitor the selected entities to dispatch all 
+ * key value changes to the CollectiveSpawnargs.
+ * Selection updates will not take effect until update() is called, which 
+ * ideally should happen in an idle processing loop after a selection change.
+ * 
+ * This class keeps weak references to the scene::Nodes to not interfere with
+ * node destruction.
+ */
 class EntitySelection final
 {
 private:
@@ -44,7 +60,7 @@ private:
                 return; // cannot unsubscribe, the node is gone
             }
 
-            // Call the cleanupEntity method instead of relying on the onKeyErase()
+            // Call the onEntityRemoved method instead of relying on the onKeyErase()
             // invocations when detaching the observer. This allows us to keep some
             // assumptions about entity count in the CollectiveSpawnargs::onKeyErase method
             _spawnargCollection.onEntityRemoved(_entity);
@@ -83,17 +99,16 @@ private:
 
     std::list<SpawnargTracker> _trackedEntities;
 
-    CollectiveSpawnargs _spawnargs;
+    CollectiveSpawnargs& _spawnargs;
 
 public:
+    EntitySelection(CollectiveSpawnargs& spawnargs) :
+        _spawnargs(spawnargs)
+    {}
+
     ~EntitySelection()
     {
         _trackedEntities.clear();
-    }
-
-    CollectiveSpawnargs& getSpawnargs()
-    {
-        return _spawnargs;
     }
 
     std::size_t size() const
@@ -158,11 +173,6 @@ public:
             // Notify that the spawnarg collection about newly selected entities
             _spawnargs.onEntityCountChanged();
         }
-    }
-
-    void foreachKey(const std::function<void(const std::string&, const CollectiveSpawnargs::KeyValueSet&)>& functor)
-    {
-        _spawnargs.foreachKey(functor);
     }
 
 private:

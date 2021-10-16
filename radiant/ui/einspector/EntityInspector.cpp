@@ -141,18 +141,20 @@ void EntityInspector::construct()
     // Register self to the SelectionSystem to get notified upon selection
     // changes.
     GlobalSelectionSystem().addObserver(this);
-    _entitySelection.reset(new selection::EntitySelection);
+    _spawnargs.reset(new selection::CollectiveSpawnargs);
 
     // Connect the signals
-    _keyValueAddedHandler = _entitySelection->getSpawnargs().signal_KeyAdded().connect(
+    _keyValueAddedHandler = _spawnargs->signal_KeyAdded().connect(
         sigc::mem_fun(this, &EntityInspector::onKeyAdded)
     );
-    _keyValueRemovedHandler = _entitySelection->getSpawnargs().signal_KeyRemoved().connect(
+    _keyValueRemovedHandler = _spawnargs->signal_KeyRemoved().connect(
         sigc::mem_fun(this, &EntityInspector::onKeyRemoved)
     );
-    _keyValueSetChangedHandler = _entitySelection->getSpawnargs().signal_KeyValueSetChanged().connect(
+    _keyValueSetChangedHandler = _spawnargs->signal_KeyValueSetChanged().connect(
         sigc::mem_fun(this, &EntityInspector::onKeyValueSetChanged)
     );
+
+    _entitySelection = std::make_unique<selection::EntitySelection>(*_spawnargs);
     
     _defsReloadedHandler = GlobalEntityClassManager().defsReloadedSignal().connect(
         sigc::mem_fun(this, &EntityInspector::onDefsReloaded)
@@ -467,6 +469,7 @@ void EntityInspector::onMainFrameShuttingDown()
     _keyValueRemovedHandler.disconnect();
     _keyValueSetChangedHandler.disconnect();
     _entitySelection.reset();
+    _spawnargs.reset();
 
     _mergeActions.clear();
     _conflictActions.clear();
@@ -1667,6 +1670,7 @@ void EntityInspector::changeSelectedEntity(const scene::INodePtr& newEntity, con
     // Reset the sorting when changing entities
     _keyValueTreeView->ResetSortingOnAllColumns();
 
+#if 0
     _entitySelection->foreachKey([&](const std::string& key, const selection::CollectiveSpawnargs::KeyValueSet& set)
     {
         if (set.valueIsEqualOnAllEntities)
@@ -1679,7 +1683,7 @@ void EntityInspector::changeSelectedEntity(const scene::INodePtr& newEntity, con
             onKeyChange(key, _("[multiple values]"));
         }
     });
-
+#endif
 #if 0
     // Attach to new entity if it is non-NULL
     if (newEntity && newEntity->getNodeType() == scene::INode::Type::Entity)

@@ -27,6 +27,7 @@ class KeyValueStore :
     public sigc::trackable
 {
 private:
+    std::unique_ptr<selection::CollectiveSpawnargs> _spawnargs;
     std::unique_ptr<selection::EntitySelection> _selectionTracker;
 
 public:
@@ -34,15 +35,16 @@ public:
 
     KeyValueStore()
     {
-        _selectionTracker.reset(new selection::EntitySelection);
+        _spawnargs.reset(new selection::CollectiveSpawnargs);
+        _selectionTracker.reset(new selection::EntitySelection(*_spawnargs));
 
-        _selectionTracker->getSpawnargs().signal_KeyAdded().connect(
+        _spawnargs->signal_KeyAdded().connect(
             sigc::mem_fun(this, &KeyValueStore::onKeyAdded)
         );
-        _selectionTracker->getSpawnargs().signal_KeyRemoved().connect(
+        _spawnargs->signal_KeyRemoved().connect(
             sigc::mem_fun(this, &KeyValueStore::onKeyRemoved)
         );
-        _selectionTracker->getSpawnargs().signal_KeyValueSetChanged().connect(
+        _spawnargs->signal_KeyValueSetChanged().connect(
             sigc::mem_fun(this, &KeyValueStore::onKeyValueSetChanged)
         );
     }
@@ -50,14 +52,10 @@ public:
     ~KeyValueStore()
     {
         _selectionTracker.reset();
+        _spawnargs.reset();
     }
 
     std::map<std::string, std::string> store;
-
-    selection::CollectiveSpawnargs& getSpawnargs()
-    {
-        return _selectionTracker->getSpawnargs();
-    }
 
     void rescanSelection()
     {
