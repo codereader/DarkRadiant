@@ -89,17 +89,37 @@ public:
         // We only bother checking if the already existing set had the same value
         else if (keyValueSet.valueIsEqualOnAllEntities)
         {
-            // Value was the shared before, let's check it now
+            // Pick an entity that is not the same as the entity firing this event
+            auto otherEntity = std::find_if(keyValueSet.entities.begin(), keyValueSet.entities.end(),
+                [&](Entity* existing) { return entity != existing; });
+
+            // We must find such an entity, the entity set size is > 1
+            assert(otherEntity != keyValueSet.entities.end());
+
+            // If the value differs, the value set changes state
+            auto valueIsUnique = (*otherEntity)->getKeyValue(key) == valueString;
+
+            if (!valueIsUnique)
+            {
+                keyValueSet.valueIsEqualOnAllEntities = false;
+                _sigKeyValueSetChanged.emit(key, "");
+            }
+        }
+        // The value was not equal for all entities up till now, 
+        // but may be this entity is completing the set
+        // Only bother checking if the entity count is the same as the value count
+        else if (keyValueSet.entities.size() == _keyValuesByEntity.size())
+        {
             auto valueIsUnique = std::all_of(
                 keyValueSet.entities.begin(), keyValueSet.entities.end(), [&](Entity* entity)
                 {
                     return entity->getKeyValue(key) == valueString;
                 });
 
-            if (!valueIsUnique)
+            if (valueIsUnique)
             {
-                keyValueSet.valueIsEqualOnAllEntities = false;
-                _sigKeyValueSetChanged.emit(key, "");
+                keyValueSet.valueIsEqualOnAllEntities = true;
+                _sigKeyValueSetChanged.emit(key, valueString);
             }
         }
     }
@@ -114,8 +134,6 @@ public:
 
     void onKeyErase(Entity* entity, const std::string& key, EntityKeyValue& value)
     {
-        const auto& valueString = value.get();
-
         auto kv = _keyValuesByEntity.find(entity);
 
         if (kv != _keyValuesByEntity.end())
@@ -170,6 +188,24 @@ public:
                 // Size differs, we have more entities in play than we have entities for this key
                 keyValueSet.valueIsEqualOnAllEntities = false;
                 _sigKeyRemoved.emit(key);
+            }
+        }
+    }
+
+    void onEntityCountIncreased()
+    {
+        // There are cases that cannot be tracked on the spawnarg level only
+        // like keys that are not present on the newly selected entities
+        // In these cases, those keys should disappear from the set
+        for (auto& pair : _entitiesByKey)
+        {
+            if (pair.second.valueIsEqualOnAllEntities &&
+                pair.second.entities.size() != _keyValuesByEntity.size())
+            {
+                // We got more entities in the tracked set than we have values for this key
+                // This means it should be removed from the visible set
+                pair.second.valueIsEqualOnAllEntities = false;
+                _sigKeyRemoved.emit(pair.first);
             }
         }
     }

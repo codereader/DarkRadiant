@@ -120,6 +120,8 @@ public:
             ++tracked;
         }
 
+        auto trackersGotAdded = false;
+
         // Check the selection system for new candidates
         GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& selected)
         {
@@ -135,7 +137,14 @@ public:
             // Not yet registered, create a new tracker
             _trackedEntities.emplace_back(_spawnargs, entity);
             selectedAndTracked.emplace(std::move(entity));
+            trackersGotAdded = true;
         });
+
+        if (trackersGotAdded)
+        {
+            // Notify that the spawnarg collection about newly selected entities
+            _spawnargs.onEntityCountIncreased();
+        }
     }
 
     void foreachKey(const std::function<void(const std::string&, const CollectiveSpawnargs::KeyValueSet&)>& functor)

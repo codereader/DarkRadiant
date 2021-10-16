@@ -338,7 +338,7 @@ TEST_F(EntityInspectorTest, ReAddOneSharedKeyValue)
     // Since entity 2 doesn't have the ligh_center key, it should not be listed
     expectNotListed(keyValueStore, "light_center");
 
-    auto sharedValue = Node_getEntity(entity2)->getKeyValue("light_center");
+    auto sharedValue = Node_getEntity(entity1)->getKeyValue("light_center");
     Node_getEntity(entity2)->setKeyValue("light_center", sharedValue);
     keyValueStore.rescanSelection();
 
