@@ -1569,11 +1569,11 @@ void EntityInspector::updateTreeView()
     // Reset the sorting when changing entities
     _keyValueTreeView->ResetSortingOnAllColumns();
 
-    _entitySelection->foreachKey([&](const std::string& key, const std::set<Entity*>& entities)
+    _entitySelection->foreachKey([&](const std::string& key, const selection::CollectiveSpawnargs::KeyValueSet& set)
     {
-        if (entities.size() == 1)
+        if (set.valueIsEqualOnAllEntities)
         {
-            auto entity = *entities.begin();
+            auto entity = *set.entities.begin();
             onKeyChange(entity, key, entity->getKeyValue(key));
         }
         else
@@ -1622,11 +1622,11 @@ void EntityInspector::changeSelectedEntity(const scene::INodePtr& newEntity, con
     // Reset the sorting when changing entities
     _keyValueTreeView->ResetSortingOnAllColumns();
 
-    _entitySelection->foreachKey([&](const std::string& key, const std::set<Entity*>& entities)
+    _entitySelection->foreachKey([&](const std::string& key, const selection::CollectiveSpawnargs::KeyValueSet& set)
     {
-        if (entities.size() == 1)
+        if (set.valueIsEqualOnAllEntities)
         {
-            auto entity = *entities.begin();
+            auto entity = *set.entities.begin();
             onKeyChange(key, entity->getKeyValue(key));
         }
         else

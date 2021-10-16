@@ -138,7 +138,7 @@ public:
         });
     }
 
-    void foreachKey(const std::function<void(const std::string&, const std::set<Entity*>&)>& functor)
+    void foreachKey(const std::function<void(const std::string&, const CollectiveSpawnargs::KeyValueSet&)>& functor)
     {
         _spawnargs.foreachKey(functor);
     }

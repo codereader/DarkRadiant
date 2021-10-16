@@ -3,6 +3,7 @@
 #include "ientity.h"
 #include <map>
 #include <set>
+#include <algorithm>
 #include <string>
 #include <sigc++/signal.h>
 
@@ -15,14 +16,25 @@ namespace selection
  */
 class CollectiveSpawnargs
 {
+public:
+    struct KeyValueSet
+    {
+        KeyValueSet() :
+            valueIsEqualOnAllEntities(false)
+        {}
+
+        bool valueIsEqualOnAllEntities;
+        std::set<Entity*> entities;
+    };
+
 private:
     using KeyValues = std::map<std::string, std::string>;
 
     // Map Entity instances to key value pairs
     std::map<Entity*, KeyValues> _keyValuesByEntity;
 
-    // Map Keys to Entities
-    std::map<std::string, std::set<Entity*>> _entitiesByKey;
+    // Map Keys to KeyValueSets
+    std::map<std::string, KeyValueSet> _entitiesByKey;
 
     sigc::signal<void(const std::string&, const std::string&)> _sigKeyAdded;
     sigc::signal<void(const std::string&)> _sigKeyRemoved;
@@ -47,7 +59,7 @@ public:
         return _sigKeyRemoved;
     }
 
-    void foreachKey(const std::function<void(const std::string&, const std::set<Entity*>&)>& functor)
+    void foreachKey(const std::function<void(const std::string&, const KeyValueSet&)>& functor)
     {
         for (const auto& pair : _entitiesByKey)
         {
@@ -57,21 +69,38 @@ public:
 
     void onKeyInsert(Entity* entity, const std::string& key, EntityKeyValue& value)
     {
+        const auto& valueString = value.get();
+
         auto kv = _keyValuesByEntity.try_emplace(entity);
-        kv.first->second.emplace(key, value.get());
+        kv.first->second.emplace(key, valueString);
 
         auto entityList = _entitiesByKey.try_emplace(key);
-        auto result = entityList.first->second.emplace(entity);
 
-        if (result.second)
+        auto& keyValueSet = entityList.first->second;
+        keyValueSet.entities.emplace(entity);
+
+        if (keyValueSet.entities.size() == 1)
         {
             // The set was newly created, this was a new (and therefore unique) keyvalue
+            keyValueSet.valueIsEqualOnAllEntities = true;
             _sigKeyAdded.emit(key, value.get());
         }
-        else
+        // This was not the first entity using this key, check if the values are unique
+        // We only bother checking if the already existing set had the same value
+        else if (keyValueSet.valueIsEqualOnAllEntities)
         {
-            // The set was already present, check if the values are unique
-            // TODO
+            // Value was the shared before, let's check it now
+            auto valueIsUnique = std::all_of(
+                keyValueSet.entities.begin(), keyValueSet.entities.end(), [&](Entity* entity)
+                {
+                    return entity->getKeyValue(key) == valueString;
+                });
+
+            if (!valueIsUnique)
+            {
+                keyValueSet.valueIsEqualOnAllEntities = false;
+                _sigKeyValueSetChanged.emit(key, "");
+            }
         }
     }
 
@@ -85,20 +114,34 @@ public:
 
     void onKeyErase(Entity* entity, const std::string& key, EntityKeyValue& value)
     {
-        auto kv = _keyValuesByEntity.try_emplace(entity);
-        kv.first->second.erase(key);
+        auto kv = _keyValuesByEntity.find(entity);
+
+        if (kv != _keyValuesByEntity.end())
+        {
+            kv->second.erase(key);
+
+            if (kv->second.empty())
+            {
+                // The entity-specific map is now empty, remove it
+                _keyValuesByEntity.erase(kv);
+            }
+        }
 
         auto entityList = _entitiesByKey.find(key);
 
         if (entityList != _entitiesByKey.end())
         {
-            entityList->second.erase(entity);
+            entityList->second.entities.erase(entity);
 
-            if (entityList->second.empty())
+            if (entityList->second.entities.empty())
             {
                 _entitiesByKey.erase(entityList);
                 // This was the last occurrence of this key, remove it
                 _sigKeyRemoved.emit(key);
+            }
+            else
+            {
+
             }
         }
     }
@@ -110,7 +153,9 @@ public:
         // Remove the entity from all key-mapped lists
         for (auto& entityList : _entitiesByKey)
         {
-            entityList.second.erase(entity);
+            entityList.second.entities.erase(entity);
+
+            // TODO: Check uniqueness
         }
     }
 };
