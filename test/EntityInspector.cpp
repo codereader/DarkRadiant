@@ -324,6 +324,28 @@ TEST_F(EntityInspectorTest, RemoveOneSharedKeyValue)
     expectNotListed(keyValueStore, "light_center");
 }
 
+TEST_F(EntityInspectorTest, ReAddOneSharedKeyValue)
+{
+    KeyValueStore keyValueStore;
+    GlobalCommandSystem().executeCommand("OpenMap", cmd::Argument("maps/entityinspector.map"));
+
+    auto entity1 = selectEntity("light_torchflame_1");
+    auto entity2 = selectEntity("light_torchflame_2");
+    auto entity3 = selectEntity("light_torchflame_3");
+    Node_getEntity(entity2)->setKeyValue("light_center", "");
+    keyValueStore.rescanSelection();
+
+    // Since entity 2 doesn't have the ligh_center key, it should not be listed
+    expectNotListed(keyValueStore, "light_center");
+
+    auto sharedValue = Node_getEntity(entity2)->getKeyValue("light_center");
+    Node_getEntity(entity2)->setKeyValue("light_center", sharedValue);
+    keyValueStore.rescanSelection();
+
+    // It should be listed again
+    expectUnique(keyValueStore, "light_center", "0 0 0");
+}
+
 TEST_F(EntityInspectorTest, DeselectOneEntity)
 {
     KeyValueStore keyValueStore;
@@ -341,6 +363,7 @@ TEST_F(EntityInspectorTest, DeselectOneEntity)
 
     // De-select entity3, it should make the canBeBlownOut key value unique
     Node_setSelected(entity3, false);
+    keyValueStore.rescanSelection();
 
     // This one is unique now
     expectUnique(keyValueStore, "canBeBlownOut", "0");

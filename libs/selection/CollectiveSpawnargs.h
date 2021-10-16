@@ -114,6 +114,8 @@ public:
 
     void onKeyErase(Entity* entity, const std::string& key, EntityKeyValue& value)
     {
+        const auto& valueString = value.get();
+
         auto kv = _keyValuesByEntity.find(entity);
 
         if (kv != _keyValuesByEntity.end())
@@ -131,17 +133,43 @@ public:
 
         if (entityList != _entitiesByKey.end())
         {
-            entityList->second.entities.erase(entity);
+            auto& keyValueSet = entityList->second;
 
-            if (entityList->second.entities.empty())
+            keyValueSet.entities.erase(entity);
+
+            if (keyValueSet.entities.empty())
             {
-                _entitiesByKey.erase(entityList);
                 // This was the last occurrence of this key, remove it
+                _entitiesByKey.erase(entityList);
                 _sigKeyRemoved.emit(key);
             }
-            else
+            // If the value was not shared before, this could be the case now
+            else if (!keyValueSet.valueIsEqualOnAllEntities)
             {
+                auto firstEntity = keyValueSet.entities.begin();
+                auto remainingValue = (*firstEntity)->getKeyValue(key);
 
+                // Skip the first entity and check the others for uniqueness
+                // std::all_of will still return true if the range is empty
+                bool valueIsUnique = std::all_of(
+                    ++firstEntity, keyValueSet.entities.end(), [&](Entity* entity)
+                {
+                    return entity->getKeyValue(key) == remainingValue;
+                });
+
+                if (valueIsUnique)
+                {
+                    keyValueSet.valueIsEqualOnAllEntities = true;
+                    _sigKeyValueSetChanged.emit(key, remainingValue);
+                }
+            }
+            // The value was shared on all entities before, but maybe that's no longer the case
+            // it must still be present on *all* involved entities
+            else if (keyValueSet.entities.size() != _keyValuesByEntity.size())
+            {
+                // Size differs, we have more entities in play than we have entities for this key
+                keyValueSet.valueIsEqualOnAllEntities = false;
+                _sigKeyRemoved.emit(key);
             }
         }
     }
