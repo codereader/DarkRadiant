@@ -74,6 +74,11 @@ private:
     CollectiveSpawnargs _spawnargs;
 
 public:
+    ~EntitySelection()
+    {
+        _trackedEntities.clear();
+    }
+
     CollectiveSpawnargs& getSpawnargs()
     {
         return _spawnargs;

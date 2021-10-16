@@ -15,8 +15,8 @@ namespace
 
 scene::INodePtr selectEntity(const std::string& name)
 {
-    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
-    auto entity = algorithm::getEntityByName(worldspawn, name);
+    auto parent = GlobalMapModule().getRoot();
+    auto entity = algorithm::getEntityByName(parent, name);
     Node_setSelected(entity, true);
 
     return entity;
@@ -27,34 +27,41 @@ class KeyValueStore :
     public sigc::trackable
 {
 private:
-    selection::EntitySelection _selectionTracker;
+    std::unique_ptr<selection::EntitySelection> _selectionTracker;
 
 public:
     static constexpr const char* DifferingValues = "[differing values]";
 
     KeyValueStore()
     {
-        _selectionTracker.getSpawnargs().signal_KeyAdded().connect(
+        _selectionTracker.reset(new selection::EntitySelection);
+
+        _selectionTracker->getSpawnargs().signal_KeyAdded().connect(
             sigc::mem_fun(this, &KeyValueStore::onKeyAdded)
         );
-        _selectionTracker.getSpawnargs().signal_KeyRemoved().connect(
+        _selectionTracker->getSpawnargs().signal_KeyRemoved().connect(
             sigc::mem_fun(this, &KeyValueStore::onKeyRemoved)
         );
-        _selectionTracker.getSpawnargs().signal_KeyValueSetChanged().connect(
+        _selectionTracker->getSpawnargs().signal_KeyValueSetChanged().connect(
             sigc::mem_fun(this, &KeyValueStore::onKeyValueSetChanged)
         );
+    }
+
+    ~KeyValueStore()
+    {
+        _selectionTracker.reset();
     }
 
     std::map<std::string, std::string> store;
 
     selection::CollectiveSpawnargs& getSpawnargs()
     {
-        return _selectionTracker.getSpawnargs();
+        return _selectionTracker->getSpawnargs();
     }
 
     void rescanSelection()
     {
-        _selectionTracker.update();
+        _selectionTracker->update();
     }
 
 private:
@@ -265,6 +272,38 @@ TEST_F(EntityInspectorTest, AssignDifferingKeyValues)
     Node_getEntity(entity3)->setKeyValue("light_center", "0 0 1");
     keyValueStore.rescanSelection();
     expectNonUnique(keyValueStore, "light_center");
+}
+
+TEST_F(EntityInspectorTest, RemoveUniqueKeyValue)
+{
+    KeyValueStore keyValueStore;
+    GlobalCommandSystem().executeCommand("OpenMap", cmd::Argument("maps/entityinspector.map"));
+
+    auto entity1 = selectEntity("light_torchflame_1");
+    keyValueStore.rescanSelection();
+
+    expectUnique(keyValueStore, "light_center", "0 0 0");
+
+    // Remove the light_center key from entity 2, it should disappear
+    Node_getEntity(entity1)->setKeyValue("light_center", "");
+    keyValueStore.rescanSelection();
+    expectNotListed(keyValueStore, "light_center");
+}
+
+TEST_F(EntityInspectorTest, AddKeyValueToSingleSelectedEntity)
+{
+    KeyValueStore keyValueStore;
+    GlobalCommandSystem().executeCommand("OpenMap", cmd::Argument("maps/entityinspector.map"));
+
+    auto entity1 = selectEntity("light_torchflame_1");
+    keyValueStore.rescanSelection();
+
+    assumeLightTorchflame1Spawnargs(keyValueStore);
+
+    // Add a new key, it should appear
+    Node_getEntity(entity1)->setKeyValue("custom_key", "do it");
+    keyValueStore.rescanSelection();
+    expectUnique(keyValueStore, "custom_key", "do it");
 }
 
 TEST_F(EntityInspectorTest, RemoveOneSharedKeyValue)

@@ -61,7 +61,18 @@ public:
         kv.first->second.emplace(key, value.get());
 
         auto entityList = _entitiesByKey.try_emplace(key);
-        entityList.first->second.emplace(entity);
+        auto result = entityList.first->second.emplace(entity);
+
+        if (result.second)
+        {
+            // The set was newly created, this was a new (and therefore unique) keyvalue
+            _sigKeyAdded.emit(key, value.get());
+        }
+        else
+        {
+            // The set was already present, check if the values are unique
+            // TODO
+        }
     }
 
     void onKeyChange(Entity* entity, const std::string& key, const std::string& value)
@@ -86,6 +97,8 @@ public:
             if (entityList->second.empty())
             {
                 _entitiesByKey.erase(entityList);
+                // This was the last occurrence of this key, remove it
+                _sigKeyRemoved.emit(key);
             }
         }
     }
