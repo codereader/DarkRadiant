@@ -29,9 +29,10 @@ public:
 
 private:
     using KeyValues = std::map<std::string, std::string>;
+    using KeyValuesByEntity = std::map<Entity*, KeyValues>;
 
     // Map Entity instances to key value pairs
-    std::map<Entity*, KeyValues> _keyValuesByEntity;
+    KeyValuesByEntity _keyValuesByEntity;
 
     // Map Keys to KeyValueSets
     std::map<std::string, KeyValueSet> _entitiesByKey;
@@ -134,6 +135,49 @@ public:
 
     void onKeyErase(Entity* entity, const std::string& key, EntityKeyValue& value)
     {
+        removeKey(entity, key);
+    }
+
+    void onEntityCountChanged()
+    {
+        // There are cases that cannot be tracked on the spawnarg level only
+        // like keys that are not present on the new set of selected entities
+        // In these cases, those keys should disappear from the set
+        for (auto& pair : _entitiesByKey)
+        {
+            if (pair.second.valueIsEqualOnAllEntities &&
+                pair.second.entities.size() != _keyValuesByEntity.size())
+            {
+                // We got more entities in the tracked set than we have values for this key
+                // This means it should be removed from the visible set
+                pair.second.valueIsEqualOnAllEntities = false;
+                _sigKeyRemoved.emit(pair.first);
+            }
+        }
+    }
+
+    void onEntityRemoved(Entity* entity)
+    {
+        // Don't de-reference the entity pointer, it might have been erased already
+        
+        // Remove the entity from the entity-to-kv mapping first
+        // The entity count should be reduced when we invoke removeKey()
+        // We do this by move-extracting the value pairs from the map
+        KeyValues keyValues(std::move(_keyValuesByEntity.extract(entity).mapped()));
+
+        // Remove the entity from all key-mapped lists
+        for (const auto& pair : keyValues)
+        {
+            removeKey(entity, pair.first);
+        }
+    }
+
+private:
+    void removeKey(Entity* entity, const std::string& key)
+    {
+        // The incoming Entity* pointer is only used as key and should not be de-referenced
+        // as the owning scene::Node might already have turned its toes up to the daisies
+
         auto kv = _keyValuesByEntity.find(entity);
 
         if (kv != _keyValuesByEntity.end())
@@ -164,16 +208,21 @@ public:
             // If the value was not shared before, this could be the case now
             else if (!keyValueSet.valueIsEqualOnAllEntities)
             {
-                auto firstEntity = keyValueSet.entities.begin();
-                auto remainingValue = (*firstEntity)->getKeyValue(key);
+                // Get the key value of the first remaining entity
+                auto firstEntity = _keyValuesByEntity.begin();
+                auto firstKey = firstEntity->second.find(key);
 
-                // Skip the first entity and check the others for uniqueness
+                // For comparison it's enough to fall back to an empty value if the key is not present
+                auto remainingValue = firstKey != firstEntity->second.end() ? firstKey->second : "";
+
+                // Skip beyond the first entity and check the rest for uniqueness
                 // std::all_of will still return true if the range is empty
-                bool valueIsUnique = std::all_of(
-                    ++firstEntity, keyValueSet.entities.end(), [&](Entity* entity)
-                {
-                    return entity->getKeyValue(key) == remainingValue;
-                });
+                bool valueIsUnique = std::all_of(++firstEntity, _keyValuesByEntity.end(),
+                    [&](const KeyValuesByEntity::value_type& pair)
+                    {
+                        auto existingKey = pair.second.find(key);
+                        return existingKey != pair.second.end() && existingKey->second == remainingValue;
+                    });
 
                 if (valueIsUnique)
                 {
@@ -189,37 +238,6 @@ public:
                 keyValueSet.valueIsEqualOnAllEntities = false;
                 _sigKeyRemoved.emit(key);
             }
-        }
-    }
-
-    void onEntityCountIncreased()
-    {
-        // There are cases that cannot be tracked on the spawnarg level only
-        // like keys that are not present on the newly selected entities
-        // In these cases, those keys should disappear from the set
-        for (auto& pair : _entitiesByKey)
-        {
-            if (pair.second.valueIsEqualOnAllEntities &&
-                pair.second.entities.size() != _keyValuesByEntity.size())
-            {
-                // We got more entities in the tracked set than we have values for this key
-                // This means it should be removed from the visible set
-                pair.second.valueIsEqualOnAllEntities = false;
-                _sigKeyRemoved.emit(pair.first);
-            }
-        }
-    }
-
-    void cleanupEntity(Entity* entity)
-    {
-        _keyValuesByEntity.erase(entity);
-
-        // Remove the entity from all key-mapped lists
-        for (auto& entityList : _entitiesByKey)
-        {
-            entityList.second.entities.erase(entity);
-
-            // TODO: Check uniqueness
         }
     }
 };

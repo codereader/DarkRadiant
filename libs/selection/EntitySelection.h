@@ -44,8 +44,17 @@ private:
                 return; // cannot unsubscribe, the node is gone
             }
 
-            _entity->detachObserver(this);
-            _spawnargCollection.cleanupEntity(_entity);
+            // Call the cleanupEntity method instead of relying on the onKeyErase()
+            // invocations when detaching the observer. This allows us to keep some
+            // assumptions about entity count in the CollectiveSpawnargs::onKeyErase method
+            _spawnargCollection.onEntityRemoved(_entity);
+
+            // Clear the reference to disable the observer callbacks
+            auto entity = _entity;
+            _entity = nullptr;
+
+            // Detaching the observer won't do anything here anymore
+            entity->detachObserver(this);
         }
 
         scene::INodePtr getNode() const
@@ -55,16 +64,19 @@ private:
 
         void onKeyInsert(const std::string& key, EntityKeyValue& value) override
         {
+            if (!_entity) return;
             _spawnargCollection.onKeyInsert(_entity, key, value);
         }
 
         void onKeyChange(const std::string& key, const std::string& value) override
         {
+            if (!_entity) return;
             _spawnargCollection.onKeyChange(_entity, key, value);
         }
 
         void onKeyErase(const std::string& key, EntityKeyValue& value) override
         {
+            if (!_entity) return;
             _spawnargCollection.onKeyErase(_entity, key, value);
         }
     };
@@ -104,6 +116,8 @@ public:
     {
         std::set<scene::INodePtr> selectedAndTracked;
 
+        auto trackerCountChanged = false;
+
         // Untrack all nodes that have been deleted or deselected in the meantime
         for (auto tracked = _trackedEntities.begin(); tracked != _trackedEntities.end();)
         {
@@ -113,14 +127,13 @@ public:
             {
                 // This entity is gone, remove the tracker entry
                 _trackedEntities.erase(tracked++);
+                trackerCountChanged = true;
                 continue;
             }
 
             selectedAndTracked.insert(node);
             ++tracked;
         }
-
-        auto trackersGotAdded = false;
 
         // Check the selection system for new candidates
         GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& selected)
@@ -137,13 +150,13 @@ public:
             // Not yet registered, create a new tracker
             _trackedEntities.emplace_back(_spawnargs, entity);
             selectedAndTracked.emplace(std::move(entity));
-            trackersGotAdded = true;
+            trackerCountChanged = true;
         });
 
-        if (trackersGotAdded)
+        if (trackerCountChanged)
         {
             // Notify that the spawnarg collection about newly selected entities
-            _spawnargs.onEntityCountIncreased();
+            _spawnargs.onEntityCountChanged();
         }
     }
 
