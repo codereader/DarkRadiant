@@ -1,11 +1,12 @@
 #pragma once
 
-#include "ientity.h"
 #include <map>
 #include <set>
 #include <algorithm>
 #include <string>
 #include <sigc++/signal.h>
+#include "ientity.h"
+#include "i18n.h"
 
 namespace selection
 {
@@ -286,7 +287,7 @@ private:
             {
                 // Value differs, the set is no longer sharing a single value
                 keyValueSet.valueIsEqualOnAllEntities = false;
-                _sigKeyRemoved.emit(key);
+                _sigKeyValueSetChanged.emit(key, "");
             }
         }
     }
